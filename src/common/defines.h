@@ -61,8 +61,8 @@
 /* maximum MAJOR/MINOR/PATCH version that counts as 'outdated' (should be 0-15). */
 #define VERSION_MAJOR_OUTDATED	4
 #define VERSION_MINOR_OUTDATED	4
-#define VERSION_PATCH_OUTDATED	3
-#define VERSION_EXTRA_OUTDATED	2
+#define VERSION_PATCH_OUTDATED	4
+#define VERSION_EXTRA_OUTDATED	1
 #define VERSION_BRANCH_OUTDATED	0
 #define VERSION_BUILD_OUTDATED	0
 
@@ -86,14 +86,14 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	4
-#define SF_VERSION_PATCH	1
+#define SF_VERSION_PATCH	4
 #define SF_VERSION_EXTRA	0
 
 
 
 /* Client-side only: Client release version tag
    (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG "a"
+#define CLIENT_VERSION_TAG "b"
 
 
 
@@ -161,6 +161,7 @@
 #define NEW_ANTIMAGIC_RATIO	/* new darksword-vs-skill ratio for antimagic: weapon up to 30%, skill up to 50% */
 
 #define ANTI_SEVEN_EXPLOIT	/* prevent ball-spell/explosion casters from exploiting monster movement by using a 7-shaped corridor */
+//#define STEAL_CHEEZEREDUCTION	/* reduce cheeziness of stealing by giving more expensive items a chance to turn level 0 */
 
 /* --------------------- Server-type dependant features -------------------- */
 
@@ -226,6 +227,10 @@
 
 /* Allow monsters with AI_ASTAR r_info flag to use A* pathfinding algorithm? - C. Blue */
 #define MONSTER_ASTAR
+#ifdef MONSTER_ASTAR
+ #define ASTAR_MAX_NODES 1000		/* max size of open/closed pathfinding table in an A* instance */
+ #define ASTAR_MAX_INSTANCES 20		/* how many spawned monsters can use A* at once */
+#endif
 
 /* C. Blue - Note about flow_by_sound/flow_by_smell:
    Smell is currently not distinct from sound, but code is kind of incomplete or mixed up in some parts.
@@ -4847,13 +4852,29 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define LF1_NO_MAGIC		0x00000400L /* very nasty */
 #define LF1_NO_GHOST		0x00000800L /* Players who die on this level are erased completely! */
 #define LF1_IRON_RECALL		0x00001000L /* Recalling is allowed on this floor of an IRONMAN dungeon/tower */
+
+#define LF1_WATER		0x01000000L	/* for DIGGING: water rivers or base grids are being used */
+#define LF1_LAVA		0x02000000L	/* for DIGGING: lava rivers or base grids are being used */
+#define LF1_NO_WATER		0x040000000L	/* for DIGGING: water rivers or base grids are being used */
+#define LF1_NO_LAVA		0x080000000L	/* for DIGGING: lava rivers or base grids are being used */
+
 #define LF1_NO_MULTIPLY		0x80000000L /* for scrolls of vermin control */
 
 #define LF1_FEELING_MASK \
 	(LF1_NO_GENO | LF1_NO_MAP | LF1_NO_MAGIC_MAP | \
 	 LF1_NO_DESTROY | LF1_NO_MAGIC | LF1_NO_GHOST)
+/*
+ * Possible flags for the future:
+ *
+ * (generation:)
+ * LF1_ALL_PERMAWALL
+ * LF1_WATERY
+ * LF1_LAVA
+ *
+ * (gameplay:)
+ */
 
-/* extra level flags for dun_level */
+/* extra level flags for dun_level -- for 'extra feeling' generation */
 #define LF2_UNIQUE	0x00000001L	/* a unique monster has been generated */
 #define LF2_OOD		0x00000002L	/* a freely roaming ood has been generated */
 #define LF2_OOD_FREE	0x00000004L	/* a freely roaming ood has been generated */
@@ -4891,16 +4912,6 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define VF1_NO_MIRROR		0x40000000L /* not suitable for mirroring */
 #define VF1_NO_ROTATE		0x80000000L /* not suitable for rotation */
 
-/*
- * Possible flags for the future:
- *
- * (generation:)
- * LF1_ALL_PERMAWALL
- * LF1_WATERY
- * LF1_LAVA
- *
- * (gameplay:)
- */
 
 /*
  * Hack -- choose "intelligent" spells when desperate
@@ -6488,7 +6499,7 @@ extern int PlayerUID;
 #define SKF1_HIDDEN             0x00000001	/* Starts hidden */
 #define SKF1_AUTO_HIDE		0x00000002	/* Starts hidden */
 #define SKF1_DUMMY		0x00000004	/* Just for visual ordering */
-#define SKF1_MAX_1		0x00000008	/* Maxes out at value 1.000 */
+#define SKF1_MAX_1		0x00000008	/* Skill maxes at 1.000 */
 
 #define SKF1_MKEY_SCHOOL	0x04000000	/* mkey is school type */
 #define SKF1_MKEY_HARDCODE	0x08000000	/* mkey uses hard-coded routine */
@@ -7147,7 +7158,7 @@ extern int PlayerUID;
 
 #define MAX_RSPELL_SEL 697 //Max entries in rspell selector
 
-#define rget_level(x) ((s_av*x)/50) //No longer uses spell level: not used in fail rate calculator
+#define rget_level(x) ((s_av * (x)) / 50) //No longer uses spell level: not used in fail rate calculator
 
 #endif //ENABLE_RCRAFT
 

@@ -2066,7 +2066,7 @@ void do_slash_cmd(int Ind, char *message)
 			else kidx = k;
 //			if (kidx == 238 || kidx == 909 || kidx == 888 || kidx == 920) return; /* Invuln pots, Learning pots, Invinc + Highland ammys */
 			if (kidx == 239 || kidx == 616 || kidx == 626 || kidx == 595 || kidx == 179) return; /* ..and rumour scrolls (spam) */
-			msg_print(Ind, format("%d",kidx));
+			msg_format(Ind, "%d", kidx);
 			invcopy(o_ptr, kidx);
 
 			if(tk > 2) o_ptr->pval = (atoi(token[3]) < 15) ? atoi(token[3]) : 15;
@@ -2214,7 +2214,7 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "Usage: /bbs <line of text for others to read>");
 				return;
 			}
-			msg_broadcast(0, format("\377s[%s->BBS] \377W%s", p_ptr->name, message3));
+			msg_broadcast_format(0, "\374\377s[%s->BBS] \377W%s", p_ptr->name, message3);
 //			bbs_add_line(format("%s %s: %s",showtime() + 7, p_ptr->name, message3));
 			bbs_add_line(format("\377s%s %s: \377W%s",showdate(), p_ptr->name, message3));
 			return;
@@ -2595,6 +2595,22 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			return;
 		}
+#if 0
+		else if (prefix(message, "/info")) { /* set a personal info message - C. Blue */
+			char to_strip[80];
+			if (strlen(message2) > 6) {
+				strncpy(to_strip, message2 + 6, 80);
+				if (strlen(message2 + 6) >= 80) to_strip[79] = '\0';
+				else to_strip[strlen(message2 + 6)] = '\0';
+				strip_control_codes(p_ptr->info_msg, to_strip);
+				msg_print(Ind, "Personal info message has been changed.");
+			} else {
+				strcpy(p_ptr->info_msg, "");
+				msg_print(Ind, "Personal info message has been cleared.");
+			}
+			return;
+		}
+#endif
 
 
 		/*
@@ -3471,10 +3487,11 @@ void do_slash_cmd(int Ind, char *message)
 				wilderness_type *wild = &wild_info[tpos->wy][tpos->wx];
 
 				/* more mad code to change RPG_SERVER dungeon flags.. */
-				for(x=0;x<(tk?64:1);x++)
-				for(y=0;y<(tk?64:1);y++) {
-					if (!tk) {tpos=&p_ptr->wpos;} else {tpos->wx=x;tpos->wy=y;tpos->wz=0;}
-					wild=&wild_info[tpos->wy][tpos->wx];
+				for(x = 0; x < (tk ? 64 : 1); x++)
+				for(y = 0; y < (tk ? 64 : 1); y++) {
+					if (!tk) {tpos = &p_ptr->wpos;}
+					else {tpos->wx = x; tpos->wy = y; tpos->wz = 0;}
+					wild = &wild_info[tpos->wy][tpos->wx];
 
 					if ((d_ptr = wild->tower)) {
 						type = d_ptr->type;
@@ -3488,8 +3505,8 @@ void do_slash_cmd(int Ind, char *message)
 //						if (!(d_info[type].flags1 & DF1_NO_UP))	d_ptr->flags1 &= ~DF1_NO_UP;
 						if (!(d_ptr->flags2 & DF2_NO_DEATH)) {
 							found_town = FALSE;
-						        for(i=0;i<numtowns;i++) {
-	    	        					if(town[i].x==tpos->wx && town[i].y==tpos->wy) {
+						        for(i = 0; i < numtowns; i++) {
+	    	        					if(town[i].x == tpos->wx && town[i].y == tpos->wy) {
 									found_town = TRUE;
 									if (tpos->wx == cfg.town_x && tpos->wy == cfg.town_y) {
 										/* exempt training tower since it might be needed for global events */
@@ -3502,8 +3519,10 @@ void do_slash_cmd(int Ind, char *message)
 								}
 							}
 							if (!found_town) {
-								d_ptr->flags2 |= DF2_IRON | DF2_IRONRND1; /* Wilderness dungeons */
-//								d_ptr->flags1 |= DF1_NO_UP; /* Wilderness dungeons */
+								/* hack - exempt the Shores of Valinor! */
+								if (d_ptr->baselevel != 200)
+									d_ptr->flags2 |= DF2_IRON | DF2_IRONRND1; /* Wilderness dungeons */
+//									d_ptr->flags1 |= DF1_NO_UP; /* Wilderness dungeons */
 							}
 						}
 #endif
@@ -3522,8 +3541,8 @@ void do_slash_cmd(int Ind, char *message)
 //						if (!(d_info[type].flags1 & DF1_NO_UP))	d_ptr->flags1 &= ~DF1_NO_UP;
 						if (!(d_ptr->flags2 & DF2_NO_DEATH)) {
 							found_town = FALSE;
-						        for(i=0;i<numtowns;i++) {
-	    	        					if(town[i].x==tpos->wx && town[i].y==tpos->wy) {
+						        for(i = 0; i < numtowns; i++) {
+	    	        					if(town[i].x == tpos->wx && town[i].y == tpos->wy) {
 									found_town = TRUE;
 									if (tpos->wx == cfg.town_x && tpos->wy == cfg.town_y) {
 										d_ptr->flags2 |= DF2_IRON; /* Barrow-downs only */
@@ -3533,8 +3552,10 @@ void do_slash_cmd(int Ind, char *message)
 								}
 							}
 							if (!found_town) {
-								d_ptr->flags2 |= DF2_IRON | DF2_IRONRND1; /* Wilderness dungeons */
-		//						d_ptr->flags1 |= DF1_NO_UP; /* Wilderness dungeons */
+								/* hack - exempt the Shores of Valinor! */
+								if (d_ptr->baselevel != 200)
+									d_ptr->flags2 |= DF2_IRON | DF2_IRONRND1; /* Wilderness dungeons */
+//									d_ptr->flags1 |= DF1_NO_UP; /* Wilderness dungeons */
 							}
 						}
 #endif
@@ -3549,7 +3570,7 @@ void do_slash_cmd(int Ind, char *message)
 				   startup positions in Bree (px, py) */
 				new_level_rand_x(&p_ptr->wpos, atoi(token[1]));
 				new_level_rand_y(&p_ptr->wpos, atoi(token[2]));
-				msg_print(Ind, format("Set x=%d, y=%d for this wpos.",atoi(token[1]),atoi(token[2])));
+				msg_format(Ind, "Set x=%d, y=%d for this wpos.",atoi(token[1]),atoi(token[2]));
 				return;
 			}
 			else if (prefix(message, "/anotes"))
@@ -3638,7 +3659,7 @@ void do_slash_cmd(int Ind, char *message)
 			{
 				for (i = 0; i < MAX_ADMINNOTES; i++)
 					if (strcmp(admin_note[i], ""))
-						msg_broadcast(0, format("\377sGlobal Admin Note: %s", admin_note[i]));
+						msg_broadcast_format(0, "\377sGlobal Admin Note: %s", admin_note[i]);
 				return;
 			}
 			else if (prefix(message, "/reart")) /* re-roll a random artifact */

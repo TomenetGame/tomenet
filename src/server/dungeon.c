@@ -2378,11 +2378,11 @@ static void process_player_begin(int Ind)
 		everyone_lite_spot(&p_ptr->wpos, oy, ox);
 		everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 		/* Summon 'monsters' */
-		place_monster_aux(&p_ptr->wpos, 7, 10, 1100, FALSE, FALSE, 0, 0);
+		place_monster_one(&p_ptr->wpos, 7, 10, 1100, 0, 0, 0, 0, 0);
 		everyone_lite_spot(&p_ptr->wpos, 7, 10);
-		place_monster_aux(&p_ptr->wpos, 7, 15, 1100, FALSE, FALSE, 0, 0);
+		place_monster_one(&p_ptr->wpos, 7, 15, 1100, 0, 0, 0, 0, 0);
 		everyone_lite_spot(&p_ptr->wpos, 7, 15);
-		place_monster_aux(&p_ptr->wpos, 10, 25, 1098, FALSE, FALSE, 0, 0);
+		place_monster_one(&p_ptr->wpos, 10, 25, 1098, 0, 0, 0, 0, 0);
 		everyone_lite_spot(&p_ptr->wpos, 10, 25);
 		p_ptr->update |= PU_LITE;
 		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
@@ -2392,25 +2392,30 @@ static void process_player_begin(int Ind)
 		break;
 	case AT_VALINOR3:	/* Orome mumbles */
 		if (turn % 300) break; /* cool down.. */
-		msg_print(Ind, "\377oOrome, The Hunter, mumbles something about a spear..");
+		msg_print(Ind, "\374 ");
+		msg_print(Ind, "\374\377oOrome, The Hunter, mumbles something about a spear..");
 		p_ptr->auto_transport = AT_VALINOR4;
 		break;
 	case AT_VALINOR4:	/* Orome looks */
 		if (turn % 500) break; /* cool down.. */
-		msg_print(Ind, "\377oOrome, The Hunter, notices you and surprise crosses his face!");
+		msg_print(Ind, "\374 ");
+		msg_print(Ind, "\374\377oOrome, The Hunter, notices you and surprise crosses his face!");
 		p_ptr->auto_transport = AT_VALINOR5;
 		break;
 	case AT_VALINOR5:	/* Orome laughs */
 		if (turn % 500) break; /* cool down.. */
-		msg_print(Ind, "\377oOrome, The Hunter, laughs out loudly!");
+		msg_print(Ind, "\374 ");
+		msg_print(Ind, "\374\377oOrome, The Hunter, laughs out loudly!");
 		set_afraid(Ind, 8);
 		p_ptr->auto_transport = AT_VALINOR6;
 		break;
 	case AT_VALINOR6:	/* Orome offers */
 		if (turn % 500) break; /* cool down.. */
-		msg_print(Ind, "\377oOrome, The Hunter, offers you to stay here!");
-		msg_print(Ind, "\377y(You may hit the suicide keys in order to retire here,");
-		msg_print(Ind, "\377yor take the staircase back to the mundane world.)");
+		msg_print(Ind, "\374 ");
+		msg_print(Ind, "\374\377oOrome, The Hunter, offers you to stay here!");
+		msg_print(Ind, "\374\377y  (You may hit the suicide keys in order to retire here,");
+		msg_print(Ind, "\374\377y  or take the staircase back to the mundane world.)");
+		msg_print(Ind, "\374 ");
 		p_ptr->auto_transport = 0;
 		break;
 	}
@@ -2890,7 +2895,7 @@ static bool process_player_end_aux(int Ind)
 							!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ))
 				{
 					int hit = p_ptr->mhp>>6;
-					int swim = get_skill_scale(p_ptr, SKILL_SWIM, 90);
+					int swim = get_skill_scale(p_ptr, SKILL_SWIM, 4500);
 					hit += randint(p_ptr->mhp>>5);
 					if(!hit) hit=1;
 
@@ -2914,23 +2919,20 @@ static bool process_player_end_aux(int Ind)
 
 						if (magik(swim)) hit = 0;
 
-						if (hit)
-						{
-							msg_print(Ind,"\377rYou're drowning!");
-						}
+						if (hit) msg_print(Ind,"\377rYou're drowning!");
 
 						/* harm equipments (even hit == 0) */
 						if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
-							magik(WATER_ITEM_DAMAGE_CHANCE) && !p_ptr->fly &&
-							!p_ptr->immune_water)
-						{
-						    if (!p_ptr->resist_water || magik(50)) {
-							inven_damage(Ind, set_water_destroy, 1);
-							equip_damage(Ind, GF_WATER);
-						    }
+						    magik(WATER_ITEM_DAMAGE_CHANCE) && !p_ptr->fly &&
+						    !p_ptr->immune_water) {
+							if (!p_ptr->resist_water || magik(50)) {
+								if (!magik(get_skill_scale(p_ptr, SKILL_SWIM, 4900)))
+									inven_damage(Ind, set_water_destroy, 1);
+								equip_damage(Ind, GF_WATER);
+							}
 						}
 
-						if(randint(1000-factor)<10)
+						if(randint(1000 - factor) < 10)
 						{
 							msg_print(Ind,"\377oYou are weakened by the exertion of swimming!");
 							//							do_dec_stat(Ind, A_STR, STAT_DEC_TEMPORARY);
@@ -3008,10 +3010,28 @@ static bool process_player_end_aux(int Ind)
 				/* Currently it only serves to reduce 'stuck' players' HP,
 				   so we might lower it a bit - C. Blue */
 				int amt = 1 + ((p_ptr->lev)/10) + p_ptr->mhp / 100;
+				int amt2 = p_ptr->msp / 35;
 
-				//			cave_no_regen = TRUE;
-				if (amt > p_ptr->chp - 1) amt = p_ptr->chp - 1;
-				take_hit(Ind, amt, " walls ...", 0);
+				/* hack: disruption shield suffers a lot, it's got to withstand the walls oO */
+				if (p_ptr->tim_manashield) {
+					amt += amt2;
+
+					/* Be nice and don't let the disruption shield dissipate */
+					if (p_ptr->pclass == CLASS_MAGE) {
+						if (amt > p_ptr->csp - 1) amt = p_ptr->csp - 1;
+					} else {
+						/* Other classes take double damage */
+						if (2 * amt > p_ptr->csp - 1) amt = (p_ptr->csp - 1) / 2;
+					}
+
+					/* Disruption shield protects from this type of damage */
+					bypass_invuln = FALSE;
+					take_hit(Ind, amt, " walls ...", 0);
+					bypass_invuln = TRUE;
+				} else {
+					if (amt > p_ptr->chp - 1) amt = p_ptr->chp - 1;
+					take_hit(Ind, amt, " walls ...", 0);
+				}
 			}
 		}
 	}
@@ -5407,7 +5427,7 @@ static void process_player_change_wpos(int Ind)
 	   start counting turns we spend on this floor. */
 	if (p_ptr->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)
 		p_ptr->distinct_floor_feeling = TRUE;
-	else 
+	else
 		p_ptr->distinct_floor_feeling = FALSE;
 	if (p_ptr->new_level_method != LEVEL_OUTSIDE &&
 	    p_ptr->new_level_method != LEVEL_OUTSIDE_RAND &&
@@ -5416,7 +5436,7 @@ static void process_player_change_wpos(int Ind)
 
 	/* being on different floors destabilizes mind fusion */
 	if (p_ptr->esp_link_type && p_ptr->esp_link)
-		change_mind(Ind);
+		change_mind(Ind, FALSE);
 
 	/* Check "maximum depth" to make sure it's still correct */
 	if (wpos->wz != 0)
@@ -5628,6 +5648,15 @@ static void process_player_change_wpos(int Ind)
 		}
 		break;
 	}
+
+	/* Highlander Tournament hack: pseudo-teleport the player
+	   after he took a staircase inside the highlander dungeon */
+//	if (sector00separation &&
+	if (p_ptr->wpos.wx == WPOS_HIGHLANDER_DUN_X &&
+	    p_ptr->wpos.wy == WPOS_HIGHLANDER_DUN_Y &&
+	    (p_ptr->wpos.wz * WPOS_HIGHLANDER_DUN_Z) > 0
+	    && l_ptr)
+		starty = l_ptr->hgt + 1; /* for the code right below :) ("Hack -- handle smaller floors") */
 
 	/* Hack -- handle smaller floors */
 	if (l_ptr && (starty > l_ptr->hgt || startx > l_ptr->wid))
@@ -5849,7 +5878,7 @@ static void process_player_change_wpos(int Ind)
 		msg_print(Ind, "\374\377y    from your inventory to wield!");
 		msg_print(Ind, "\374\377y    (If you plan to train 'Martial Arts' skill, ignore this warning.)");
 	}
-	else if (p_ptr->max_plv == 1 && p_ptr->warning_run == 0) {
+	else if (p_ptr->max_plv <= 2 && p_ptr->warning_run == 0) {
 		p_ptr->warning_run = 1;
 		msg_print(Ind, "\374\377yHINT: To run fast, use \377RSHIFT + direction\377y keys.");
 		msg_print(Ind, "\374\377y      for that, Numlock must be OFF, and no awake monster in sight!");

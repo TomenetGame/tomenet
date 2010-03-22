@@ -2183,6 +2183,7 @@ static byte player_color(int Ind)
  */
 static int manipulate_cave_color(cave_type *c_ptr, worldpos *wpos, int x, int y, int color)
 {
+	bool old_rand = Rand_quick;
 	u32b tmp_seed = Rand_value; /* save RNG */
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 
@@ -2395,7 +2396,7 @@ static int manipulate_cave_color(cave_type *c_ptr, worldpos *wpos, int x, int y,
 	}
 
 
-	Rand_quick = FALSE; /* resume complex rng - mikaelh */
+	Rand_quick = old_rand; /* resume complex rng - mikaelh */
 	Rand_value = tmp_seed; /* restore RNG */
 	return (color);
 }
@@ -6853,7 +6854,7 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 	if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) return;
 
 	/* in Nether Realm, floor is always nether mist (or lava)! */
-	if (getlevel(wpos) >= 166) switch (feat) {
+	if (getlevel(wpos) >= 166 && getlevel(wpos) < 200) switch (feat) {
 		case FEAT_IVY:
 		case FEAT_SHAL_WATER:
 		case FEAT_DEEP_WATER:
@@ -6906,7 +6907,7 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 	int i;
 //	struct town_type *t_ptr; /* have town keep track of number of feature changes (not yet implemented) */
 
-	if(!(zcave=getcave(wpos))) return;
+	if(!(zcave = getcave(wpos))) return;
 	if (!in_bounds(y, x)) return;
 	c_ptr = &zcave[y][x];
 
@@ -6997,7 +6998,7 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 		return;
 
 	/* in Nether Realm, floor is always nether mist (or lava)! */
-	if (getlevel(wpos) >= 166) switch (feat) {
+	if (getlevel(wpos) >= 166 && getlevel(wpos) < 200) switch (feat) {
 		case FEAT_IVY:
 		case FEAT_SHAL_WATER:
 		case FEAT_DEEP_WATER:

@@ -1326,6 +1326,9 @@ static char *object_desc_per(char *t, sint v)
  *   1 -- The Cloak of Death [1,+3]
  *   2 -- The Cloak of Death [1,+3] (+2 to Stealth)
  *   3 -- The Cloak of Death [1,+3] (+2 to Stealth) {nifty}
+ *   4 -- The Cloak of Death\373\5nifty [1,+3] (+2 to Stealth)
+ *        same as 3, just preceed #-inscription by a char \373 and a char
+ *        specifying its length, to make auto-inscriptions work.
  *
  *  +8 -- Cloak Death [1,+3](+2stl){nifty}
  *  +16 - Replace full owner name by a symbol to shorten the string - C. Blue
@@ -2015,6 +2018,13 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 				
 				t = object_desc_chr(t, ' ');
 				*/
+
+				/* auto-inscription hack */
+				if ((mode & 7) == 4) {
+					t = object_desc_chr(t, '\373');
+					t = object_desc_chr(t, strlen(str + 1) + 1); /* in case len is 0, avoid char \0 */
+				}
+
 				t = object_desc_str(t, &str[1]);
 			}
 		}
@@ -5642,7 +5652,10 @@ void display_inven(int Ind)
 		tmp_val[0] = index_to_label(i);
 
 		/* Obtain an item description */
-		object_desc(Ind, o_name, o_ptr, TRUE, 3);
+		if (is_newer_than(&p_ptr->version, 4, 4, 4, 1, 0, 0))
+			object_desc(Ind, o_name, o_ptr, TRUE, 4);
+		else
+			object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 		/* Obtain the length of the description */
 		n = strlen(o_name);

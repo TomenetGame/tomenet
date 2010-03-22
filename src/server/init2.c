@@ -2640,6 +2640,14 @@ static errr init_other(void)
 
 	prepare_distance();
 
+#ifdef MONSTER_ASTAR
+	{
+		int i;
+		for (i = 0; i < ASTAR_MAX_INSTANCES; i++)
+			astar_info_open[i].m_idx = -1;
+	}
+#endif
+
 	/* Success */
 	return (0);
 }

@@ -731,8 +731,10 @@ struct cave_type
 	byte when_smell;	/* Hack -- when cost was computed */
 #endif
 
-#ifdef MONSTER_ASTAR		/* A* path finding - C. Blue */
-	byte astarF, astarG, astarH; /* grid score (F=G+H), starting point distance cost, estimated goal distance cost */
+#if 0 /* since monsters might track different players, with paths leading over same grids though, I'm adding this to astar_list instead - C. Blue */
+#ifdef MONSTER_ASTAR
+	int astarF, astarG, astarH; /* grid score (F=G+H), starting point distance cost, estimated goal distance cost */
+#endif
 #endif
 
 	struct c_special *special;	/* Special pointer to various struct */
@@ -1012,6 +1014,10 @@ struct monster_type
 
    bool no_esp_phase;	/* for WEIRD_MIND esp flickering */
    int extra;	/* extra flag for debugging/testing purpose */
+
+#ifdef MONSTER_ASTAR
+    int astar_idx;		/* index in available A* arrays. A* is expensive, so we only provide a couple of instances for a few monsters to use */
+#endif
 };
 
 typedef struct monster_ego monster_ego;
@@ -1844,11 +1850,12 @@ struct skill_type
 typedef struct skill_player skill_player;
 struct skill_player
 {
+	s32b base_value;                         /* Base value */
 	s32b value;                             /* Actual value */
 	u16b mod;                               /* Modifier(1 skill point = modifier skill) */
 	bool dev;                               /* Is the branch developped ? */
 	bool touched;				/* need refresh? */
-	char flags1;
+	char flags1;                            /* Skill flags */
 };
 
 /* account flags */
@@ -2567,6 +2574,7 @@ struct player_type
 	long int idle_char;   	/* character is idling for <idle_char> seconds (player still might be chatting etc) */
 	bool	afk;		/* player is afk */
 	char	afk_msg[80];	/* afk reason */
+	char	info_msg[80];	/* public info message (display gets overridden by an afk reason, if specified) */
 	bool	use_r_gfx;	/* hack - client uses gfx? */
 	player_list_type	*afk_noticed; /* Only display AFK messages once in private conversations */
 
@@ -2835,21 +2843,13 @@ struct dungeon_info_type
 	u32b text;                      /* Description */
 	char short_name[3];             /* Short name */
 
-	s16b floor1;                    /* Floor tile 1 */
-	byte floor_percent1[2];         /* Chance of type 1 */
-	s16b floor2;                    /* Floor tile 2 */
-	byte floor_percent2[2];         /* Chance of type 2 */
-	s16b floor3;                    /* Floor tile 3 */
-	byte floor_percent3[2];         /* Chance of type 3 */
+	s16b floor[5];                    /* Floor tile n */
+	s16b floor_percent[5][2];         /* Chance of type n [0]; End chance of type n [1] */
 	s16b outer_wall;                /* Outer wall tile */
 	s16b inner_wall;                /* Inner wall tile */
-	s16b fill_type1;                /* Cave tile 1 */
-	byte fill_percent1[2];          /* Chance of type 1 */
-	s16b fill_type2;                /* Cave tile 2 */
-	byte fill_percent2[2];          /* Chance of type 2 */
-	s16b fill_type3;                /* Cave tile 3 */
-	byte fill_percent3[2];          /* Chance of type 3 */
-	byte fill_method;				/* Smoothing parameter for the above */
+	s16b fill_type[5];                /* Cave tile n */
+	s16b fill_percent[5][2];          /* Chance of type n [0]; End chance of type n [1] */
+	byte fill_method;		/* Smoothing parameter for the above */
 
 	s16b mindepth;                  /* Minimal depth */
 	s16b maxdepth;                  /* Maximal depth */
@@ -3297,3 +3297,20 @@ struct auction_type
 	time_t		start;
 	time_t		duration;
 };
+
+#ifdef MONSTER_ASTAR		/* A* path finding - C. Blue */
+typedef struct astar_list_open astar_list_open;
+struct astar_list_open {
+	int m_idx; /* monster which currently uses this index in the available A* arrays, or -1 for 'unused' ie available */
+	int nodes; /* current amount of nodes stored in this list */
+	int node_x[ASTAR_MAX_NODES], node_y[ASTAR_MAX_NODES]; /* unsigned char would do, but maybe we want to stop using that one for floor grids (compiler warnings in other files too, etc..) */
+	int astarF[ASTAR_MAX_NODES], astarG[ASTAR_MAX_NODES], astarH[ASTAR_MAX_NODES]; /* grid score (F=G+H), starting point distance cost, estimated goal distance cost */
+	int closed_parent_idx[ASTAR_MAX_NODES]; /* the idx of the grid in the closed list, which is the parent of this grid */
+};
+typedef struct astar_list_closed astar_list_closed;
+struct astar_list_closed {
+	int nodes; /* current amount of nodes stored in this list */
+	int node_x[ASTAR_MAX_NODES], node_y[ASTAR_MAX_NODES]; /* unsigned char would do, but maybe we want to stop using that one for floor grids (compiler warnings in other files too, etc..) */
+	int closed_parent_idx[ASTAR_MAX_NODES]; /* the idx of the grid in the closed list, which is the parent of this grid */
+};
+#endif

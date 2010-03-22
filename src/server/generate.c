@@ -263,6 +263,12 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
 #define DUN_WAT_CHG    50	/* 1 in 50 chance of junction in river */
 
 #define DUN_SANDWALL   10   /* percentage for Sandwall being generated [10] */
+
+
+/* specify behaviour/possibility of vaults/rooms in 'maze' levels */
+#define VAULTS_OVERRIDE_MAZE	/* make vault walls override maze emptiness. otherwise, mazes can 'unwall' vaults! */
+
+
 /*
  * Simple structure to hold a map location
  */
@@ -350,8 +356,8 @@ static dun_data *dun;
 /* ToME variables -- not implemented, but needed to have it work */
 static byte feat_wall_outer = FEAT_WALL_OUTER;	/* Outer wall of rooms */
 static byte feat_wall_inner = FEAT_WALL_INNER;	/* Inner wall of rooms */
-s16b floor_type[100];	/* Dungeon floor */
-s16b fill_type[100];	/* Dungeon filler */
+s16b floor_type[1000];	/* Dungeon floor */
+s16b fill_type[1000];	/* Dungeon filler */
 
 static bool good_item_flag;		/* True if "Artifact" on this level */
 
@@ -515,17 +521,16 @@ static void place_rubble(struct worldpos *wpos, int y, int x)
 /*
  * Create a fountain here.
  */
-static void place_fountain(struct worldpos *wpos, int y, int x)
-{
+void place_fountain(struct worldpos *wpos, int y, int x) {
 	cave_type **zcave;
 	cave_type *c_ptr;
 	int dun_lev;
 	c_special *cs_ptr;
 	int svals[SV_POTION_LAST + SV_POTION2_LAST + 1], maxsval = 0, k;
 
-	if(!(zcave=getcave(wpos))) return;
+	if(!(zcave = getcave(wpos))) return;
 	dun_lev = getlevel(wpos);
-	c_ptr=&zcave[y][x];
+	c_ptr = &zcave[y][x];
 
 
 	/* No fountains over traps/house doors etc */
@@ -807,7 +812,7 @@ static void place_secret_door(struct worldpos *wpos, int y, int x)
 		}
 		else
 		{
-			cs_ptr->sc.omni = fill_type[rand_int(100)];
+			cs_ptr->sc.omni = fill_type[rand_int(1000)];
 		}
 	}
 
@@ -890,11 +895,42 @@ static void place_random_door(struct worldpos *wpos, int y, int x)
  */
 static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls)
 {
-	int                 y, x, i, j, flag, tries;
-
-	cave_type		*c_ptr;
+	int y, x, i, j, flag, tries = 0;
+	int emergency_flag = TRUE, new_feat = -1, nlev_down = FALSE, nlev_up = FALSE;
+	int starty, startx;
+	cave_type *c_ptr;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if(!(zcave = getcave(wpos))) return;
+
+	/* Town -- must go down */
+	if (!can_go_up_simple(wpos)) {
+		/* Clear previous contents, add down stairs */
+		if (can_go_down(wpos, 0x1)) new_feat = FEAT_MORE;
+		if(!istown(wpos)) nlev_up = TRUE;
+	}
+	/* Quest -- must go up */
+	else if (is_quest(wpos) || !can_go_down_simple(wpos)) {
+		/* Clear previous contents, add up stairs */
+		if (can_go_up(wpos, 0x1)) new_feat = FEAT_LESS;
+		/* Set this to be the starting location for people going down */
+		nlev_down = TRUE;
+	}
+	/* Requested type */
+	else {
+		/* Clear previous contents, add stairs */
+		if ((can_go_up(wpos, 0x1) && (feat == FEAT_LESS || feat == FEAT_WAY_LESS)) ||
+		    (can_go_down(wpos, 0x1) && (feat == FEAT_MORE || feat == FEAT_WAY_MORE)))
+			new_feat = feat;
+
+		if (feat == FEAT_LESS || feat == FEAT_WAY_LESS) {
+			/* Set this to be the starting location for people going down */
+			nlev_down = TRUE;
+		}
+		if (feat == FEAT_MORE || feat == FEAT_WAY_MORE) {
+			/* Set this to be the starting location for people going up */
+			nlev_up = TRUE;
+		}
+	}
 
 	/* Place "num" stairs */
 	for (i = 0; i < num; i++)
@@ -923,58 +959,47 @@ static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls)
 				/* Access the grid */
 				c_ptr = &zcave[y][x];
 
-				/* Town -- must go down */
-				if (!can_go_up_simple(wpos))
-				{
-					/* Clear previous contents, add down stairs */
-					if (can_go_down(wpos, 0x1)) c_ptr->feat = FEAT_MORE;
-
-					if(!istown(wpos)){
-						new_level_up_y(wpos,y);
-						new_level_up_x(wpos,x);
-					}
+				if (new_feat != -1) c_ptr->feat = new_feat;
+				if (nlev_up) {
+					new_level_up_y(wpos, y);
+					new_level_up_x(wpos, x);
 				}
-
-				/* Quest -- must go up */
-				else if (is_quest(wpos) || !can_go_down_simple(wpos))
-				{
-					/* Clear previous contents, add up stairs */
-					if (can_go_up(wpos, 0x1)) c_ptr->feat = FEAT_LESS;
-
-					/* Set this to be the starting location for people going down */
-					new_level_down_y(wpos,y);
-					new_level_down_x(wpos,x);
-				}
-
-				/* Requested type */
-				else
-				{
-					/* Clear previous contents, add stairs */
-					if ((can_go_up(wpos, 0x1) && (feat == FEAT_LESS || feat == FEAT_WAY_LESS)) ||
-					    (can_go_down(wpos, 0x1) && (feat == FEAT_MORE || feat == FEAT_WAY_MORE)))
-						c_ptr->feat = feat;
-
-					if (feat == FEAT_LESS || feat == FEAT_WAY_LESS)
-					{
-						/* Set this to be the starting location for people going down */
-						new_level_down_y(wpos, y);
-						new_level_down_x(wpos, x);
-					}
-					if (feat == FEAT_MORE || feat == FEAT_WAY_MORE)
-					{
-						/* Set this to be the starting location for people going up */
-						new_level_up_y(wpos, y);
-						new_level_up_x(wpos, x);
-					}
+				if (nlev_down) {
+					new_level_down_y(wpos, y);
+					new_level_down_x(wpos, x);
 				}
 
 				/* All done */
 				flag = TRUE;
+				emergency_flag = FALSE;
 			}
 
 			/* Require fewer walls */
 			if (walls) walls--;
 		}
+	}
+
+	if (!emergency_flag) return;
+	s_printf("Staircase-generation emergency at (%d, %d, %d)\n", wpos->wx, wpos->wy, wpos->wz);
+	/* Emergency! We were unable to place a staircase.
+	   This can happen if a huge vault nearly completely fills out a level */
+	/* note: tries == 0 here, actually, from above code */
+
+	/* note: if we reach 10000 tries now, we just accept the grid anyway! */
+	do {
+		starty = rand_int(dun->l_ptr->hgt - 3) + 1;
+		startx = rand_int(dun->l_ptr->wid - 3) + 1;
+	} while (!cave_floor_bold(zcave, starty, startx) && (++tries < 10000));
+
+	c_ptr = &zcave[starty][startx];
+	if (new_feat != -1) c_ptr->feat = new_feat;
+	if (nlev_up) {
+		new_level_up_y(wpos, starty);
+		new_level_up_x(wpos, startx);
+	}
+	if (nlev_down) {
+		new_level_down_y(wpos, starty);
+		new_level_down_x(wpos, startx);
 	}
 }
 
@@ -1167,11 +1192,14 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 			else
 			{
 				/* Only convert "granite" walls */
-				if ((c_ptr->feat != feat_wall_inner) &&
-					(c_ptr->feat != feat_wall_outer) &&
-					(c_ptr->feat != d_info[dun_type].fill_type1) &&
-					(c_ptr->feat != d_info[dun_type].fill_type2) &&
-					(c_ptr->feat != d_info[dun_type].fill_type3)) continue;
+				if (!(c_ptr->feat == feat_wall_inner) &&
+				    !(c_ptr->feat == feat_wall_outer) &&
+				    !(c_ptr->feat == d_info[dun_type].fill_type[0]) &&
+				    !(c_ptr->feat == d_info[dun_type].fill_type[1]) &&
+				    !(c_ptr->feat == d_info[dun_type].fill_type[2]) &&
+				    !(c_ptr->feat == d_info[dun_type].fill_type[3]) &&
+				    !(c_ptr->feat == d_info[dun_type].fill_type[4]))
+					continue;
 
 #if 0
 				if (c_ptr->feat < FEAT_WALL_EXTRA) continue;
@@ -1690,7 +1718,7 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num)
  */
 static void place_filler(worldpos *wpos, int y, int x)
 {
-	cave_set_feat(wpos, y, x, fill_type[rand_int(100)]);
+	cave_set_feat(wpos, y, x, fill_type[rand_int(1000)]);
 }
 
 /*
@@ -1700,23 +1728,32 @@ static void place_filler(worldpos *wpos, int y, int x)
  * outside of generate.c */
 void place_floor(worldpos *wpos, int y, int x)
 {
-	cave_set_feat(wpos, y, x, floor_type[rand_int(100)]);
+	cave_set_feat(wpos, y, x, floor_type[rand_int(1000)]);
 }
 void place_floor_live(worldpos *wpos, int y, int x)
 {
-	cave_set_feat_live(wpos, y, x, floor_type[rand_int(100)]);
+	cave_set_feat_live(wpos, y, x, floor_type[rand_int(1000)]);
 }
 
 /*
  * Place floor terrain at (y, x) according to dungeon info
+ * NOTE: Currently ONLY used for 'maze' levels!
+         For that reason, it contains a hack preventing un-walling
+         any vaults, to keep them sane. - C. Blue
  */
 static void place_floor_respectedly(worldpos *wpos, int y, int x)
 {
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
+#ifndef VAULTS_OVERRIDE_MAZE /* this is actually 'normal', but we need a hack since we allow room/vault generation in mazes currently */
 	if (dun->no_penetr && zcave[y][x].info & CAVE_ICKY) return;
-	cave_set_feat(wpos, y, x, floor_type[rand_int(100)]);
+#else /* ..and here it is: no harming of vault walls at all */
+	if (zcave[y][x].info & CAVE_ICKY) return; /* works fine */
+//	if (zcave[y][x].info & CAVE_NEST_PIT) return; /* no effect, because the limiting walls don't have the flag actually. Also, accessibility unclear? */
+//	if (zcave[y][x].info & CAVE_ROOM) return; /* lacks door generation! Rooms won't be accessible (although otherwise fine) */
+#endif
+	cave_set_feat(wpos, y, x, floor_type[rand_int(1000)]);
 }
 
 /*
@@ -2076,6 +2113,8 @@ static void recursive_river(worldpos *wpos, int x1,int y1, int x2, int y2,
  */
 static void add_river(worldpos *wpos, int feat1, int feat2)
 {
+	struct dun_level *l_ptr = getfloor(wpos);
+
 	int y2, x2;
 	int y1 = 0, x1 = 0, wid;
 
@@ -2083,7 +2122,15 @@ static void add_river(worldpos *wpos, int feat1, int feat2)
 	int cur_wid = dun->l_ptr->wid;
 
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if(!(zcave = getcave(wpos))) return;
+
+	/* for DIGGING */
+	if (feat1 == FEAT_SHAL_WATER || feat1 == FEAT_DEEP_WATER ||
+	    feat2 == FEAT_SHAL_WATER || feat2 == FEAT_DEEP_WATER)
+		l_ptr->flags1 |= LF1_WATER;
+	if (feat1 == FEAT_SHAL_LAVA || feat1 == FEAT_DEEP_LAVA ||
+	    feat2 == FEAT_SHAL_LAVA || feat2 == FEAT_DEEP_LAVA)
+		l_ptr->flags1 |= LF1_LAVA;
 
 	/* Hack -- Choose starting point */
 	y2 = randint(cur_hgt / 2 - 2) + cur_hgt / 2;
@@ -7769,10 +7816,11 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 		}
 
 		/* Tunnel through all other walls */
-		else if ((c_ptr->feat == d_info[dun_type].fill_type1) ||
-		         (c_ptr->feat == d_info[dun_type].fill_type2) ||
-		         (c_ptr->feat == d_info[dun_type].fill_type3))
-		{
+		else if ((c_ptr->feat == d_info[dun_type].fill_type[0]) ||
+		         (c_ptr->feat == d_info[dun_type].fill_type[1]) ||
+		         (c_ptr->feat == d_info[dun_type].fill_type[2]) ||
+		         (c_ptr->feat == d_info[dun_type].fill_type[3]) ||
+		         (c_ptr->feat == d_info[dun_type].fill_type[4])) {
 			/* Accept this location */
 			row1 = tmp_row;
 			col1 = tmp_col;
@@ -7795,10 +7843,12 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 				c_ptr = &zcave[row1 + col_dir][col1 + row_dir];
 
 				/* Make sure it's a wall we want to tunnel */
-				if ((c_ptr->feat == d_info[dun_type].fill_type1) ||
-						(c_ptr->feat == d_info[dun_type].fill_type2) ||
-						(c_ptr->feat == d_info[dun_type].fill_type3)
-						|| c_ptr->feat == FEAT_WALL_EXTRA)
+				if ((c_ptr->feat == d_info[dun_type].fill_type[0]) ||
+				    (c_ptr->feat == d_info[dun_type].fill_type[1]) ||
+				    (c_ptr->feat == d_info[dun_type].fill_type[2]) ||
+				    (c_ptr->feat == d_info[dun_type].fill_type[3]) ||
+				    (c_ptr->feat == d_info[dun_type].fill_type[4]) ||
+				    c_ptr->feat == FEAT_WALL_EXTRA)
 				{
 					/* Save the tunnel location */
 					if (dun->tunn_n < TUNN_MAX)
@@ -7983,12 +8033,12 @@ static int next_to_corr(struct worldpos *wpos, int y1, int x1)
 		c_ptr = &zcave[y][x];
 
 		/* Skip non "empty floor" grids */
-		if ((c_ptr->feat != d_info[dun_type].floor1) &&
-		    (c_ptr->feat != d_info[dun_type].floor2) &&
-		    (c_ptr->feat != d_info[dun_type].floor3))
-		{
+		if ((c_ptr->feat != d_info[dun_type].floor[0]) &&
+		    (c_ptr->feat != d_info[dun_type].floor[1]) &&
+		    (c_ptr->feat != d_info[dun_type].floor[2]) &&
+		    (c_ptr->feat != d_info[dun_type].floor[3]) &&
+		    (c_ptr->feat != d_info[dun_type].floor[4]))
 			continue;
-		}
 
 		/* Skip grids inside rooms */
 		if (c_ptr->info & CAVE_ROOM) continue;
@@ -8346,16 +8396,17 @@ static bool room_build(struct worldpos *wpos, int y, int x, int typ, player_type
  */
 static void init_feat_info(worldpos *wpos)
 {
-	int i;
+	int i, j;
 	int cur_depth, max_depth;
 	int p1, p2;
-	int floor_lim1, floor_lim2, floor_lim3;
-	int fill_lim1, fill_lim2, fill_lim3;
+	int floor_lim[5];
+	int fill_lim[5];
 
 	int dun_lev = getlevel(wpos);
 	dungeon_type *dt_ptr = getdungeon(wpos);
 	int dun_type = dt_ptr->type;
 	dungeon_info_type *d_ptr = &d_info[dun_type];
+	dun_level *l_ptr = getfloor(wpos); /* for DIGGING */
 
 	/* Default dungeon? */
 	if (!dun_type)
@@ -8363,7 +8414,7 @@ static void init_feat_info(worldpos *wpos)
 		feat_wall_outer = FEAT_WALL_OUTER;	/* Outer wall of rooms */
 		feat_wall_inner = FEAT_WALL_INNER;	/* Inner wall of rooms */
 
-		for (i = 0; i < 100; i++)
+		for (i = 0; i < 1000; i++)
 		{
 			floor_type[i] = FEAT_FLOOR;
 			fill_type[i] = FEAT_WALL_EXTRA;	/* Dungeon filler */
@@ -8380,40 +8431,60 @@ static void init_feat_info(worldpos *wpos)
 	/* Set room wall types */
 	feat_wall_outer = d_ptr->outer_wall;
 	feat_wall_inner = d_ptr->inner_wall;
+	/* for DIGGING */
+	if (feat_wall_outer == FEAT_SHAL_WATER || feat_wall_inner == FEAT_SHAL_WATER ||
+	    feat_wall_outer == FEAT_DEEP_WATER || feat_wall_inner == FEAT_DEEP_WATER)
+		l_ptr->flags1 |= LF1_WATER | LF1_NO_LAVA;
+	if (feat_wall_outer == FEAT_SHAL_LAVA || feat_wall_inner == FEAT_SHAL_LAVA ||
+	    feat_wall_outer == FEAT_DEEP_LAVA || feat_wall_inner == FEAT_DEEP_LAVA)
+		l_ptr->flags1 |= LF1_LAVA | LF1_NO_WATER;
 
 
 	/* Setup probability info -- Floors */
-	p1 = d_ptr->floor_percent1[0];
-	p2 = d_ptr->floor_percent1[1];
-	floor_lim1 = p1 + (p2 - p1) * cur_depth / max_depth;
-
-	p1 = d_ptr->floor_percent2[0];
-	p2 = d_ptr->floor_percent2[1];
-	floor_lim2 = floor_lim1 + p1 + (p2 - p1) * cur_depth / max_depth;
-
-	floor_lim3 = 100;
+	for (i = 0; i < 5; i++) {
+		p1 = d_ptr->floor_percent[i][0];
+		p2 = d_ptr->floor_percent[i][1];
+		floor_lim[i] = (i == 5 - 1 ? 100 : (i > 0 ? floor_lim[i - 1] : 0) + p1 + (p2 - p1) * cur_depth / max_depth);
+		/* for DIGGING */
+		if (p1 != 0 || p2 != 0) {
+			if (d_ptr->floor[i] == FEAT_SHAL_WATER || d_ptr->floor[i] == FEAT_DEEP_WATER)
+				l_ptr->flags1 |= LF1_WATER | LF1_NO_LAVA;
+			if (d_ptr->floor[i] == FEAT_SHAL_LAVA || d_ptr->floor[i] == FEAT_DEEP_LAVA)
+				l_ptr->flags1 |= LF1_LAVA | LF1_NO_WATER;
+		}
+	}
 
 	/* Setup probability info -- Fillers */
-	p1 = d_ptr->fill_percent1[0];
-	p2 = d_ptr->fill_percent1[1];
-	fill_lim1 = p1 + (p2 - p1) * cur_depth / max_depth;
+	for (i = 0; i < 5; i++) {
+		p1 = d_ptr->fill_percent[i][0];
+		p2 = d_ptr->fill_percent[i][1];
+		fill_lim[i] = (i == 5 - 1 ? 100 : (i > 0 ? fill_lim[i - 1] : 0) + p1 + (p2 - p1) * cur_depth / max_depth);
+		/* for DIGGING */
+		if (p1 != 0 || p2 != 0) {
+			if (d_ptr->fill_type[i] == FEAT_SHAL_WATER || d_ptr->fill_type[i] == FEAT_DEEP_WATER)
+				l_ptr->flags1 |= LF1_WATER | LF1_NO_LAVA;
+			if (d_ptr->fill_type[i] == FEAT_SHAL_LAVA || d_ptr->fill_type[i] == FEAT_DEEP_LAVA)
+				l_ptr->flags1 |= LF1_LAVA | LF1_NO_WATER;
+		}
+	}
+	/* fix double-negative flag */
+	if ((l_ptr->flags1 & LF1_NO_WATER) && (l_ptr->flags1 & LF1_NO_LAVA))
+		l_ptr->flags1 &= ~(LF1_NO_WATER | LF1_NO_LAVA);
 
-	p1 = d_ptr->fill_percent2[0];
-	p2 = d_ptr->fill_percent2[1];
-	fill_lim2 = fill_lim1 + p1 + (p2 - p1) * cur_depth / max_depth;
-
-	fill_lim3 = 100;
-
-
+#if 0
+	/* for DIGGING */
+	if (get_skill(SKILL_DRUID) &&
+	    (p_ptr->druid_extra & CLASS_FLOOD_LEVEL))
+		l_ptr->flags1 |= LF1_WATER | LF1_NO_LAVA;
+#endif
 	/* Fill the arrays of floors and walls in the good proportions */
-	for (i = 0; i < 100; i++)
-	{
+	for (i = 0; i < 1000; i++) {
 #if 0
 		/* Mega-HACK -- if a druid request a flooded level, he/she obtains it */
 		if (get_skill(SKILL_DRUID) &&
 		    (p_ptr->druid_extra & CLASS_FLOOD_LEVEL))
 		{
-			if (i < 33)
+			if (i < 333)
 			{
 				floor_type[i] = FEAT_DEEP_WATER;
 			}
@@ -8425,31 +8496,19 @@ static void init_feat_info(worldpos *wpos)
 		else
 #endif	/* 0 */
 		{
-			if (i < floor_lim1)
-			{
-				floor_type[i] = d_ptr->floor1;
-			}
-			else if (i < floor_lim2)
-			{
-				floor_type[i] = d_ptr->floor2;
-			}
-			else
-			{
-				floor_type[i] = d_ptr->floor3;
+			for (j = 0; j < 5; j++) {
+				if (i < floor_lim[j] || j == 5 - 1) {
+					floor_type[i] = d_ptr->floor[j];
+					break;
+				}
 			}
 		}
 
-		if (i < fill_lim1)
-		{
-			fill_type[i] = d_ptr->fill_type1;
-		}
-		else if (i < fill_lim2)
-		{
-			fill_type[i] = d_ptr->fill_type2;
-		}
-		else
-		{
-			fill_type[i] = d_ptr->fill_type3;
+		for (j = 0; j < 5; j++) {
+			if (i < fill_lim[j] || j == 5 - 1) {
+				fill_type[i] = d_ptr->fill_type[j];
+				break;
+			}
 		}
 	}
 }
@@ -8466,7 +8525,7 @@ static void init_feat_info(worldpos *wpos)
  *
  * smooth  behaviour
  * ------  ------------------------------------------------------------
- * 0       Fill the entire level with fill_type1 / floor1
+ * 0       Fill the entire level with fill_type[0] / floor[0]
  * 1       All the grids are randomly selected (== --P5.1.2)
  * 2       Slightly smoothed -- look like scattered patches
  * 3       More smoothed -- tend to look like caverns / small scale map
@@ -8529,8 +8588,8 @@ static void fill_level(worldpos *wpos, bool use_floor, byte smooth)
 		byte filler;
 
 		/* Pick a filler XXX XXX XXX */
-		if (use_floor) filler = d_info[dun_type].floor1;
-		else filler = d_info[dun_type].fill_type1;
+		if (use_floor) filler = d_info[dun_type].floor[0];
+		else filler = d_info[dun_type].fill_type[0];
 
 		/* Fill the level with the filler without calling RNG */
 		for (y = 1; y < cur_hgt - 1; y++)
@@ -8921,7 +8980,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	else fill_level(wpos, empty_level, d_info[d_ptr->type].fill_method);
 #endif	/* 0 */
 
-	if (cavern)	build_cavern(wpos);
+	if (cavern) build_cavern(wpos);
 
 
 	/* Actual maximum number of rooms on this level */
@@ -8933,12 +8992,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 
 	/* Initialize the room table */
 	for (y = 0; y < dun->row_rooms; y++)
-	{
 		for (x = 0; x < dun->col_rooms; x++)
-		{
 			dun->room_map[y][x] = FALSE;
-		}
-	}
 
 
 	/* No "crowded" rooms yet */
@@ -9222,12 +9277,12 @@ if (!nether_bottom) {
 		/* Hack -- Add some water streamers */
 		if (dun->watery)
 		{
-#if 0
+ #if 0
 			get_mon_num_hook = vault_aux_aquatic;
 
 			/* Prepare allocation table */
 			get_mon_num_prep();
-#endif	/* 0 */
+ #endif	/* 0 */
 
 			for (i = 0; i < DUN_STR_WAT; i++)
 			{
@@ -9236,13 +9291,13 @@ if (!nether_bottom) {
 
 			lake_level(wpos);
 
-#if 0
+ #if 0
 			/* Remove restriction */
 			get_mon_num_hook = dungeon_aux;
 
 			/* Prepare allocation table */
 			get_mon_num_prep();
-#endif	/* 0 */
+ #endif	/* 0 */
 		}
 #endif	/* 0 */
 
@@ -10950,8 +11005,10 @@ void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, in
 			}
 		}
 	if (!found_town) {
-		d_ptr->flags2 |= DF2_IRON | DF2_IRONRND1;
-//		d_ptr->flags1 |= DF1_NO_UP;
+		/* hack - exempt the Shores of Valinor! */
+		if (d_ptr->baselevel != 200)
+			d_ptr->flags2 |= DF2_IRON | DF2_IRONRND1;
+//			d_ptr->flags1 |= DF1_NO_UP;
 	}
 #endif
 

@@ -1096,7 +1096,7 @@ static cptr s_info_flags1[] =
         "HIDDEN",
         "AUTO_HIDE",
 	"DUMMY",
-	"XXX1",
+	"MAX_1",
 
 	"XXX1",
 	"XXX1",
@@ -5964,35 +5964,26 @@ errr init_d_info_txt(FILE *fp, char *buf)
 		/* Process 'L' for "fLoor type" (one line only) */
 		if (buf[0] == 'L')
 		{
-			int f1, f2, f3;
-			int p1, p2, p3;
-			int i;
+			int f[5], p[5];
+			int i, j;
 
 			/* Scan for the values */
-			if (6 != sscanf(buf+2, "%d:%d:%d:%d:%d:%d",
-				&f1, &p1, &f2, &p2, &f3, &p3)) {
+			if (10 != sscanf(buf+2, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+				&f[0], &p[0], &f[1], &p[1], &f[2], &p[2], &f[3], &p[3], &f[4], &p[4])) {
 				/* Scan for the values - part ii*/
-				if (3 != sscanf(buf+2, "%d:%d:%d", &p1, &p2,
-						&p3)) return (1);
+				if (5 != sscanf(buf+2, "%d:%d:%d:%d:%d", &p[0], &p[1],
+						&p[2], &p[3], &p[4])) return (1);
 
 				/* Save the values */
-				d_ptr->floor_percent1[1] = p1;
-				d_ptr->floor_percent2[1] = p2;
-				d_ptr->floor_percent3[1] = p3;
+				for (i = 0; i < 5; i++) d_ptr->floor_percent[i][1] = p[i];
 
 				continue;
 			}
 
 			/* Save the values */
-			d_ptr->floor1 = f1;
-			d_ptr->floor2 = f2;
-			d_ptr->floor3 = f3;
-
-			for (i=0; i<2; i++)
-			{
-				d_ptr->floor_percent1[i] = p1;
-				d_ptr->floor_percent2[i] = p2;
-				d_ptr->floor_percent3[i] = p3;
+			for (i = 0; i < 5; i++) {
+				d_ptr->floor[i] = f[i];
+				for (j = 0; j <= 1; j++) d_ptr->floor_percent[i][j] = p[i];
 			}
 
 			/* Next... */
@@ -6021,35 +6012,28 @@ errr init_d_info_txt(FILE *fp, char *buf)
 		/* Process 'A' for "wAll type" (one line only) */
 		if (buf[0] == 'A')
 		{
-			int w1, w2, w3, outer, inner;
-			int p1, p2, p3;
-			int i;
+			int outer, inner;
+			int w[5], p[5];
+			int i, j;
 
 			/* Scan for the values */
-			if (8 != sscanf(buf+2, "%d:%d:%d:%d:%d:%d:%d:%d",
-				&w1, &p1, &w2, &p2, &w3, &p3, &outer, &inner))
+			if (12 != sscanf(buf+2, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+				&w[0], &p[0], &w[1], &p[1], &w[2], &p[2], &w[3], &p[3], &w[4], &p[4], &outer, &inner))
 			{
 				/* Scan for the values - part ii*/
-				if (3 != sscanf(buf+2, "%d:%d:%d", &p1, &p2,
-						&p3)) return (1);
+				if (5 != sscanf(buf+2, "%d:%d:%d:%d:%d", &p[0], &p[1],
+				    &p[2], &p[3], &p[4])) return (1);
 
 				/* Save the values */
-				d_ptr->fill_percent1[1] = p1;
-				d_ptr->fill_percent2[1] = p2;
-				d_ptr->fill_percent3[1] = p3;
+				for (i = 0; i < 5; i++) d_ptr->fill_percent[i][1] = p[i];
+
 				continue;
 			}
 
 			/* Save the values */
-			d_ptr->fill_type1 = w1;
-			d_ptr->fill_type2 = w2;
-			d_ptr->fill_type3 = w3;
-
-			for (i=0; i<2; i++)
-			{
-				d_ptr->fill_percent1[i] = p1;
-				d_ptr->fill_percent2[i] = p2;
-				d_ptr->fill_percent3[i] = p3;
+			for (i = 0; i < 5; i++) {
+				d_ptr->fill_type[i] = w[i];
+				for (j = 0; j <= 1; j++) d_ptr->fill_percent[i][j] = p[i];
 			}
 
 			d_ptr->outer_wall = outer;

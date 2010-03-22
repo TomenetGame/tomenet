@@ -864,6 +864,12 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y)
 		}	
 	}
 
+	/* save the RNG */
+	tmp_seed = Rand_value;
+	
+	/* randomize, so food doesn't grow at always same garden coordinates */
+	Rand_value = turn;
+
 	/* initially clear all previous items from it! */
 	if (!(w_ptr->flags & WILD_F_GARDENS))
 	for (i = 0; i < o_max; i++) {
@@ -879,12 +885,6 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y)
 		    o_ptr->ix >= x1 && o_ptr->ix <= x2)
 			delete_object_idx(i, TRUE);
 	}
-
-	/* save the RNG */
-	tmp_seed = Rand_value;
-	
-	/* randomize, so food doesn't grow at always same garden coordinates */
-	Rand_value = turn;
 	
 	/* alternating rows of crops */
 	for (y = y1+1; y <= y2-1; y ++)
@@ -2020,13 +2020,13 @@ static void wild_add_hotspot(struct worldpos *wpos)
 		if (x_cen < max_mag) max_mag = x_cen;
 		if ((MAX_HGT - y_cen) < max_mag) max_mag = MAX_HGT - y_cen;
 		if ((MAX_WID - x_cen) < max_mag) max_mag = MAX_WID - x_cen;
-	
+
 		/* determine the magnitude of the feature.  the triple rand is done to
 	   	keep most features small, but have a rare large one. */
-	  
+
 		magnitude = rand_int(rand_int(rand_int(max_mag)));
 	}
-	
+
 	/* hack -- take the square to avoid square roots */
 	magsqr = magnitude * magnitude;
 	
@@ -2860,26 +2860,26 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 	if (w_ptr->type == WILD_UNDEFINED) w_ptr->type = determine_wilderness_type(wpos);
 
 	/* initialize the terrain */
-	terrain.type = w_ptr->type;	
-	init_terrain(&terrain,w_ptr->radius);	
-	
+	terrain.type = w_ptr->type;
+	init_terrain(&terrain,w_ptr->radius);
+
 	/* hack -- set the monster level */
-	monster_level = terrain.monst_lev;	
-			
+	monster_level = terrain.monst_lev;
+
 	/* Hack -- Start with basic floors */
 	for (y = 1; y < MAX_HGT - 1; y++)
 	{
 		for (x = 1; x < MAX_WID - 1; x++)
 		{
 			c_ptr = &zcave[y][x];
-			c_ptr->feat = terrain_spot(&terrain);			
+			c_ptr->feat = terrain_spot(&terrain);
 		}
 	}
 
 	/* to make the borders between wilderness levels more seamless, "bleed"
 	   the levels together */
-	
-	bleed_with_neighbors(wpos); 
+
+	bleed_with_neighbors(wpos);
 
 	/* hack -- reseed, just to make sure everything stays consistent. */
 
@@ -2887,7 +2887,7 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 
 	/* to make the level more interesting, add some "hotspots" */
 	for (y = 0; y < terrain.hotspot; y++) wild_add_hotspot(wpos);
-	   
+
 	/* HACK -- if close to the town, make dwellings more likely */
 #ifdef DEVEL_TOWN_COMPATIBILITY
 	if (w_ptr->radius == 1) terrain.dwelling *= 21;
@@ -2898,7 +2898,9 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 	if (w_ptr->radius == 2) terrain.dwelling *= 20;
 	if (w_ptr->radius == 3) terrain.dwelling *= 3;
 #endif
-	      
+
+//	wild_add_uhouses(wpos);
+
 
 #ifndef DEVEL_TOWN_COMPATIBILITY
 	/* Hack -- 50% of the time on a radius 1 level there will be a "park" which will make
@@ -2908,8 +2910,7 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 		reserve_building_plot(wpos, &x1,&y1, &x2,&y2, rand_int(30)+15, rand_int(20)+10, -1, -1);
 	}
 #endif
-		
-	   
+
 	/* add wilderness dwellings */
 	/* hack -- the number of dwellings is proportional to their chance of existing */
 	while (terrain.dwelling > 0)
@@ -2919,7 +2920,7 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 			wild_add_dwelling(wpos, -1, -1);
 		}
 		terrain.dwelling -= 50;
-	}		
+	}
 
 	wild_add_uhouses(wpos);
 
@@ -2951,10 +2952,10 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 			}
 		}
 	}
-	
+
 	/* Hack -- use the "complex" RNG */
 	Rand_quick = rand_old;
-		
+
 	/* Hack -- reattach existing objects to the map */
 	setup_objects();
 	/* Hack -- reattach existing monsters to the map */
@@ -2963,7 +2964,6 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 
 
 /* Generates a wilderness level. */
-          
 void wilderness_gen(struct worldpos *wpos)
 {
 	int        i, y, x;

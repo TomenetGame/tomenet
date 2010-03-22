@@ -98,7 +98,7 @@ void do_cmd_go_up(int Ind)
 		}
 #endif
 	}
-	if(wpos->wz==0)
+	if(wpos->wz == 0)
 	{
 		if (!(wild_info[wpos->wy][wpos->wx].flags&WILD_F_UP)) {
 			msg_print(Ind, "There is nothing above you.");
@@ -110,13 +110,13 @@ void do_cmd_go_up(int Ind)
 			if (!is_admin(p_ptr)) return;
 		}
 	}
-	if(wpos->wz>0 && wild_info[wpos->wy][wpos->wx].tower->maxdepth==wpos->wz){
+	if(wpos->wz > 0 && wild_info[wpos->wy][wpos->wx].tower->maxdepth==wpos->wz){
 		msg_print(Ind,"You are at the top of the tower!");
 		return;
 	}
 
 #ifdef RPG_SERVER /* Exclude NO_DEATH dungeons from the gameplay */
-	if ((wpos->wz==0) && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_DEATH)) {
+	if ((wpos->wz == 0) && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_DEATH)) {
 		/* needed for 'Arena Monster Challenge' again, NO_DEATH are now simply empty (no items/monsters) */
 		if (!(wpos->wx == cfg.town_x && wpos->wy == cfg.town_y) && !is_admin(p_ptr)) {
 			msg_print(Ind,"\377sOnly ivy-clad ruins of a former tower remain at this place..");
@@ -126,7 +126,7 @@ void do_cmd_go_up(int Ind)
 #endif
 
 /*	if(wpos->wz<0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON){*/
-	if(wpos->wz<0 && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON ||
+	if(wpos->wz < 0 && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON ||
 			 wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)) &&
 			 (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS))
 	{
@@ -150,8 +150,8 @@ void do_cmd_go_up(int Ind)
 	}
 #endif
 #ifndef ARCADE_SERVER
-	if(wpos->wz==0){
-		dungeon_type *d_ptr=wild_info[wpos->wy][wpos->wx].tower;
+	if(wpos->wz == 0){
+		dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].tower;
 		//if(d_ptr->baselevel-p_ptr->max_dlv>2){
 		if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
 			(d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev))
@@ -173,7 +173,7 @@ void do_cmd_go_up(int Ind)
 		}
 	}
 #endif
-	if(p_ptr->inval && p_ptr->wpos.wz>=10){
+	if(p_ptr->inval && p_ptr->wpos.wz >= 10){
 		msg_print(Ind, "\377You may go no higher without a valid account.");
 		return;
 	}
@@ -349,10 +349,10 @@ void do_cmd_go_down(int Ind)
 #ifdef RPG_SERVER
 	int i;
 #endif
-	if(!(zcave=getcave(wpos))) return;
+	if(!(zcave = getcave(wpos))) return;
 
 	/* Are we entering/inside a dungeon or a tower? */
-	if (wpos->wz>0) tower=TRUE;
+	if (wpos->wz > 0) tower=TRUE;
 
 	/* Make sure he hasn't just changed depth */
 	if (p_ptr->new_level_flag)
@@ -365,7 +365,7 @@ void do_cmd_go_down(int Ind)
 		return;
 	}
 
-	if(cfg.runlevel<5 && !p_ptr->wpos.wz){
+	if(cfg.runlevel < 5 && !p_ptr->wpos.wz){
 		msg_print(Ind,"The dungeon is closed");
 		return;
 	}
@@ -444,7 +444,7 @@ void do_cmd_go_down(int Ind)
 		}
 #endif
 	}
-	if (wpos->wz==0)
+	if (wpos->wz == 0)
 	{
 		if (!(wild_info[wpos->wy][wpos->wx].flags&WILD_F_DOWN)) {
 			msg_print(Ind, "There is nothing below you.");
@@ -465,7 +465,7 @@ void do_cmd_go_down(int Ind)
 	}
 
 #ifdef RPG_SERVER /* Exclude NO_DEATH dungeons from the gameplay */
-	if ((wpos->wz==0) && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_DEATH)) {
+	if ((wpos->wz == 0) && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_DEATH)) {
 		msg_print(Ind,"\377sOnly mud-filled ruins of a former cave remain at this place..");
 		if (!is_admin(p_ptr)) return;
 	}
@@ -477,7 +477,7 @@ void do_cmd_go_down(int Ind)
 	}
 
 /*	if(wpos->wz>0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON){*/
-	if(wpos->wz>0 && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON ||
+	if(wpos->wz > 0 && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON ||
 			 wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)) &&
 			(c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE))
 	{
@@ -501,7 +501,7 @@ void do_cmd_go_down(int Ind)
 	}
 #endif
 #ifndef ARCADE_SERVER
-	if(wpos->wz==0){
+	if(wpos->wz == 0){
 		dungeon_type *d_ptr=wild_info[wpos->wy][wpos->wx].dungeon;
 		//if(d_ptr->baselevel-p_ptr->max_dlv>2){
 		if(d_ptr->baselevel-p_ptr->max_dlv>2 ||
@@ -526,7 +526,7 @@ void do_cmd_go_down(int Ind)
 		}
 	}
 #endif
-	if(p_ptr->inval && p_ptr->wpos.wz<=-10){
+	if(p_ptr->inval && p_ptr->wpos.wz <= -10){
 		msg_print(Ind, "\377You may go no lower without a valid account.");
 		return;
 	}
@@ -1646,7 +1646,7 @@ byte twall_erosion(worldpos *wpos, int y, int x)
 	byte feat = FEAT_FLOOR; /* todo: use something like 'place_floor'*/
 	cave_type **zcave;
 	cave_type *c_ptr;
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	if(!(zcave = getcave(wpos))) return(FALSE);
 
 	for (d = 1; d <= 9; d++)
 	{
@@ -1657,7 +1657,7 @@ byte twall_erosion(worldpos *wpos, int y, int x)
 
 		if (!in_bounds(ty, tx)) continue;
 
-		c_ptr=&zcave[ty][tx];
+		c_ptr = &zcave[ty][tx];
 		if (c_ptr->feat == FEAT_DEEP_WATER)
 		{
 //			feat = FEAT_DEEP_WATER; /* <- this is only if FEAT_DEEP_WATER is also terraformable in turn (see cave_set_feat_live) */
@@ -1682,12 +1682,12 @@ byte twall_erosion(worldpos *wpos, int y, int x)
 bool twall(int Ind, int y, int x)
 {
 	player_type *p_ptr = Players[Ind];
-	byte            *w_ptr = &p_ptr->cave_flag[y][x];
-	struct worldpos *wpos=&p_ptr->wpos;
+	byte *w_ptr = &p_ptr->cave_flag[y][x];
+	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 	cave_type *c_ptr;
-	if(!(zcave=getcave(wpos))) return(FALSE);
-	c_ptr=&zcave[y][x];
+	if(!(zcave = getcave(wpos))) return(FALSE);
+	c_ptr = &zcave[y][x];
 
 	/* Paranoia -- Require a wall or door or some such */
 	if (cave_floor_bold(zcave, y, x)) return (FALSE);
@@ -1730,19 +1730,21 @@ void do_cmd_tunnel(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[INVEN_TOOL];
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 
-	int                     y, x, power = p_ptr->skill_dig;
+	int y, x, power = p_ptr->skill_dig;
 	int mining = get_skill(p_ptr, SKILL_DIG);
+	int dug_feat = FEAT_NONE, special_k_idx = 0, tval, sval;
+	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
-	cave_type               *c_ptr;
+	cave_type *c_ptr;
 
 	bool old_floor = FALSE;
 
 	bool more = FALSE;
 	feature_type *f_ptr;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if(!(zcave = getcave(wpos))) return;
 
 	/* Ghosts have no need to tunnel ; not in WRAITHFORM */
 	if ((p_ptr->ghost) || (p_ptr->tim_wraith)) 
@@ -1823,6 +1825,49 @@ void do_cmd_tunnel(int Ind, int dir)
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
+			/* prepare to discover a special feature */
+			if (l_ptr) { /* not on world surface: wpos->wz == 0 ! */
+				if ((rand_int(2000) <= mining + 20) && !(l_ptr->flags1 & LF1_NO_WATER)) dug_feat = FEAT_FOUNTAIN;
+				else if (rand_int(1000) < ((l_ptr->flags1 & LF1_NO_LAVA) ? 0 : ((l_ptr->flags1 & LF1_LAVA) ? 50 : 3))) dug_feat = FEAT_SHAL_LAVA;
+				else if (rand_int(1000) < ((l_ptr->flags1 & LF1_NO_WATER) ? 0 : ((l_ptr->flags1 & LF1_WATER) ? 50 : 8))) dug_feat = FEAT_SHAL_WATER;
+				else if ((rand_int(1000) < 5) && can_go_up(wpos, 0x1)) dug_feat = FEAT_WAY_LESS;
+				else if ((rand_int(1000) < 5) && can_go_down(wpos, 0x1)) dug_feat = FEAT_WAY_MORE;
+			}
+
+			/* prepare to find a special object */
+			else if (rand_int(1000) <= mining) {
+				tval = TV_CHEST;
+#if 0
+				sval = ((rand_int(mining) + rand_int(75)) / 21) + 1; /* 1,2,3, 5,6,7 - according to k_info.txt */
+				if (sval == 4) sval++;
+#else
+				sval = 2510 / (rand_int(mining) * rand_int(50) + 10);
+				/* 1,2,3, 5,6,7 - according to k_info.txt */
+				if (rand_int(50) > sval) sval = 7;
+				else if (rand_int(70) > sval) sval = 6;
+				else if (rand_int(90) > sval) sval = 5;
+				else if (rand_int(150) > sval) sval = 3;
+				else if (rand_int(300) > sval) sval = 2;
+				else sval = 1;
+
+				special_k_idx = lookup_kind(tval, sval);
+#endif
+			} else if (rand_int(1000) < (mining + 2) / 2) {
+				tval = TV_GOLEM;
+				sval = 2510 / (rand_int(mining) * rand_int(50) + 10);
+				/* 0..7 - according to k_info.txt */
+				if (rand_int(50) > sval) sval = 7;
+				else if (rand_int(60) > sval) sval = 6;
+				else if (rand_int(80) > sval) sval = 5;
+				else if (rand_int(120) > sval) sval = 4;
+				else if (rand_int(200) > sval) sval = 3;
+				else if (rand_int(300) > sval) sval = 2;
+				else if (rand_int(500) > sval) sval = 1;
+				else sval = 0;
+
+				special_k_idx = lookup_kind(tval, sval);
+			}
+
 #if 0
 			/* Titanium */
 			if (c_ptr->feat >= FEAT_PERM_EXTRA)
@@ -1870,8 +1915,8 @@ void do_cmd_tunnel(int Ind, int dir)
 			else if (c_ptr->feat == FEAT_RUBBLE)
 			{
 				/* Remove the rubble */
-				if ((power > rand_int(200)) && twall(Ind, y, x))
-				{
+				if (power > rand_int(200) && twall(Ind, y, x)) {
+
 					break_cloaking(Ind, 0);
 					break_shadow_running(Ind); 
 					stop_precision(Ind);
@@ -1882,12 +1927,31 @@ void do_cmd_tunnel(int Ind, int dir)
 					/* Hack -- place an object - Not in town (Khazad becomes l00t source) */
 					if ((rand_int(100) < 10 + mining) && !istown(wpos))
 					{
-						place_object_restrictor = RESF_NONE;
-						place_object(wpos, y, x, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_LOW, 
-								default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
-						if (player_can_see_bold(Ind, y, x))
-						{
+						/* discovered a special feature? */
+						if (dug_feat == FEAT_FOUNTAIN) {
+							place_fountain(wpos, y, x);
+							note_spot_depth(wpos, y, x);
+							everyone_lite_spot(wpos, y, x);
+							msg_print(Ind, "You have laid open a fountain!");
+						} else if (dug_feat != FEAT_NONE) {
+							cave_set_feat_live(wpos, y, x, dug_feat);
+							if (dug_feat == FEAT_WAY_MORE || dug_feat == FEAT_WAY_LESS)
+								msg_print(Ind, "You have uncovered a stairway!");
+						} else if (special_k_idx) {
+							object_type forge;
+							invcopy(&forge, special_k_idx);
+							apply_magic(wpos, &forge, -1, TRUE, TRUE, TRUE, FALSE, TRUE);
+							forge.number = 1;
+//							forge.level = ;
+							forge.marked2 = ITEM_REMOVAL_NORMAL;
 							msg_print(Ind, "You have found something!");
+							drop_near(&forge, -1, wpos, y, x);
+						} else {
+							place_object_restrictor = RESF_NONE;
+							place_object(wpos, y, x, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_LOW,
+								default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
+							if (player_can_see_bold(Ind, y, x))
+								msg_print(Ind, "You have found something!");
 						}
 					}
 
@@ -2034,35 +2098,29 @@ void do_cmd_tunnel(int Ind, int dir)
 
 				/* Found gold */
 				if ((c_ptr->feat >= FEAT_MAGMA_H) &&
-					(c_ptr->feat <= FEAT_QUARTZ_K)) gold = TRUE;
+				    (c_ptr->feat <= FEAT_QUARTZ_K)) gold = TRUE;
 
 				if ((c_ptr->feat == FEAT_SANDWALL_H) ||
-					(c_ptr->feat == FEAT_SANDWALL_K))
-				{
+				    (c_ptr->feat == FEAT_SANDWALL_K)) {
 					gold = TRUE;
 					soft = TRUE;
-				}
-				else
+				} else
 				/* Extract "quartz" flag XXX XXX XXX */
 				if ((c_ptr->feat - FEAT_MAGMA) & 0x01) hard = TRUE;
 
 				/* Quartz */
-				if (hard)
-				{
+				if (hard) {
 					okay = (power > 20 + rand_int(800)); /* 800 */
 				}
-
 				/* Sandwall */
-				else if (soft)
-				{
+				else if (soft) {
 					okay = (p_ptr->skill_dig > 5 + rand_int(250));
 				}
-
 				/* Magma */
-				else
-				{
+				else {
 					okay = (power > 10 + rand_int(400)); /* 400 */
 				}
+
 				if (istown(wpos)) gold = FALSE;
 
 				break_cloaking(Ind, 0);
@@ -2071,32 +2129,36 @@ void do_cmd_tunnel(int Ind, int dir)
 				stop_shooting_till_kill(Ind);
 
 				/* Success */
-				if (okay && twall(Ind, y, x))
-				{
+				if (okay && twall(Ind, y, x)) {
+					msg_print(Ind, "You have finished the tunnel.");
+
 					/* Found treasure */
-					if (gold)
-					{
-						do
-						{
+					if (gold) {
+						tval = rand_int(mining / 5);
+						for (sval = 0; sval <= tval; sval++) {
 							/* Place some gold */
 							place_gold(wpos, y, x, 0);
-						} while (magik(mining));
-
-						/* Notice it */
+						}
 						note_spot_depth(wpos, y, x);
-
-						/* Display it */
 						everyone_lite_spot(wpos, y, x);
-
-						/* Message */
 						msg_print(Ind, "You have found something!");
 					}
+					else if (istown(wpos)) {
+						/* nothing */
 
-					/* Found nothing */
-					else
-					{
-						/* Message */
-						msg_print(Ind, "You have finished the tunnel.");
+					/* found special feature */
+					} else if (dug_feat == FEAT_FOUNTAIN) {
+						if (magik(35)) {
+							place_fountain(wpos, y, x);
+							note_spot_depth(wpos, y, x);
+							everyone_lite_spot(wpos, y, x);
+							msg_print(Ind, "You have laid open a fountain!");
+						}
+					} else if (dug_feat != FEAT_NONE &&
+					    dug_feat != FEAT_WAY_MORE &&
+					    dug_feat != FEAT_WAY_LESS) {
+						if (magik(50))
+							cave_set_feat_live(wpos, y, x, dug_feat);
 					}
 				}
 
@@ -2156,6 +2218,21 @@ void do_cmd_tunnel(int Ind, int dir)
 				if ((power > 40 + rand_int(1600)) && twall(Ind, y, x))        /* 1600 */
 				{
 					msg_print(Ind, "You have finished the tunnel.");
+
+					/* found special feature */
+					if (dug_feat == FEAT_FOUNTAIN) {
+						if (magik(10)) {
+							place_fountain(wpos, y, x);
+							note_spot_depth(wpos, y, x);
+							everyone_lite_spot(wpos, y, x);
+							msg_print(Ind, "You have laid open a fountain!");
+						}
+					} else if (dug_feat != FEAT_NONE &&
+					    dug_feat != FEAT_WAY_MORE &&
+					    dug_feat != FEAT_WAY_LESS) {
+						if (magik(20))
+							cave_set_feat_live(wpos, y, x, dug_feat);
+					}
 				}
 
 				/* Keep trying */

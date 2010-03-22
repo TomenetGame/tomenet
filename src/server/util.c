@@ -1353,8 +1353,14 @@ void msg_print(int Ind, cptr msg)
 				if ((text_len == line_len) && (msg[msg_scan] != '\0') &&
 				    ((msg[msg_scan - 1] >= 'A' && msg[msg_scan - 1] <= 'Z') ||
 				    (msg[msg_scan - 1] >= '0' && msg[msg_scan - 1] <= '9') ||
+				    (msg[msg_scan - 1] == '(' || msg[msg_scan - 1] == ')') ||
+				    (msg[msg_scan - 1] == '[' || msg[msg_scan - 1] == ']') ||
+				    (msg[msg_scan - 1] == '{' || msg[msg_scan - 1] == '}') ||
 				    (msg[msg_scan - 1] >= 'a' && msg[msg_scan - 1] <= 'z')) &&
 				    ((msg[msg_scan] >= 'A' && msg[msg_scan] <= 'Z') ||
+				    (msg[msg_scan] == '(' || msg[msg_scan] == ')') ||
+				    (msg[msg_scan] == '[' || msg[msg_scan] == ']') ||
+				    (msg[msg_scan] == '{' || msg[msg_scan] == '}') ||
 				    (msg[msg_scan] >= '0' && msg[msg_scan] <= '9') ||
 				    (msg[msg_scan] >= 'a' && msg[msg_scan] <= 'z'))) {
 					space_scan = msg_scan;
@@ -1363,6 +1369,9 @@ void msg_print(int Ind, cptr msg)
 					} while (((msg[space_scan - 1] >= 'A' && msg[space_scan - 1] <= 'Z') ||
 						(msg[space_scan - 1] >= '0' && msg[space_scan - 1] <= '9') ||
 						(msg[space_scan - 1] >= 'a' && msg[space_scan - 1] <= 'z') ||
+						(msg[space_scan - 1] == '(' || msg[space_scan - 1] == ')') ||
+						(msg[space_scan - 1] == '[' || msg[space_scan - 1] == ']') ||
+						(msg[space_scan - 1] == '{' || msg[space_scan - 1] == '}') ||
 						(msg[space_scan - 1] == '\377')) &&
 						space_scan > 0);
 
@@ -2562,13 +2571,13 @@ void toggle_afk(int Ind, char *msg)
 		if (strlen(p_ptr->afk_msg) == 0)
 			msg_print(Ind, "AFK mode is turned \377GOFF\377w.");
 		else
-			msg_format(Ind, "AFK mode is turned \377GOFF\377w. (%s)", p_ptr->afk_msg);
+			msg_format(Ind, "AFK mode is turned \377GOFF\377w. (%s\377w)", p_ptr->afk_msg);
 		if (!p_ptr->admin_dm)
 		{
 			if (strlen(p_ptr->afk_msg) == 0)
-				snprintf(afk, sizeof(afk), "\377%c%s has returned from AFK.", COLOUR_AFK, p_ptr->name);
+				snprintf(afk, sizeof(afk), "\374\377%c%s has returned from AFK.", COLOUR_AFK, p_ptr->name);
 			else
-				snprintf(afk, sizeof(afk), "\377%c%s has returned from AFK. (%s)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg);
+				snprintf(afk, sizeof(afk), "\374\377%c%s has returned from AFK. (%s%c)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg, COLOUR_AFK);
 		}
 		p_ptr->afk = FALSE;
 
@@ -2606,13 +2615,13 @@ void toggle_afk(int Ind, char *msg)
 		if (strlen(p_ptr->afk_msg) == 0)
 			msg_print(Ind, "AFK mode is turned \377rON\377w.");
 		else
-			msg_format(Ind, "AFK mode is turned \377rON\377w. (%s)", p_ptr->afk_msg);
+			msg_format(Ind, "AFK mode is turned \377rON\377w. (%s\377w)", p_ptr->afk_msg);
 		if (!p_ptr->admin_dm)
 		{
 			if (strlen(p_ptr->afk_msg) == 0)
 				snprintf(afk, sizeof(afk), "\374\377%c%s seems to be AFK now.", COLOUR_AFK, p_ptr->name);
 			else
-				snprintf(afk, sizeof(afk), "\374\377%c%s seems to be AFK now. (%s)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg);
+				snprintf(afk, sizeof(afk), "\374\377%c%s seems to be AFK now. (%s%c)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg, COLOUR_AFK);
 		}
 		p_ptr->afk = TRUE;
 
@@ -3854,3 +3863,27 @@ cptr timediff(struct timeval *begin, struct timeval *end) {
 	snprintf(buf, 20, "%d.%03d", sec, msec);
 	return buf;
 }
+
+/* Strip special chars off player input 's', to prevent any problems/colours */
+void strip_control_codes(char *ss, char *s) {
+	char *sp = s, *ssp = ss;
+	bool skip = FALSE;
+	while(TRUE) {
+		if (*sp == '\0') { /* end of string has top priority */
+			*ssp = '\0';
+			break;
+		} else if (skip) skip = FALSE; /* a 'code parameter', needs to be stripped too */
+		else if ((*sp >= 32) && (*sp <= 127)) { /* normal characters */
+			*ssp = *sp;
+			ssp++;
+		} else if (*sp == '\377') {
+			if (*(sp + 1) == '\377') { /* make two '{' become one real '{' */
+				*ssp = '{';
+				ssp++;
+			}
+			skip = TRUE; /* strip colour codes */
+		}
+		sp++;
+	}
+}
+

@@ -968,8 +968,6 @@ break;
 
 		/* Trap of Curse Weapon */
 		case TRAP_OF_CURSE_WEAPON:
-		break; //ill-minded
-#if 0
 		{
 			if (rand_int(120) < p_ptr->skill_sav)
 			{
@@ -980,11 +978,8 @@ break;
 			destroy_chest(i_ptr); 
 			break;
 		}
-#endif
 		/* Trap of Curse Armor */
 		case TRAP_OF_CURSE_ARMOR:
-		break; //ill-minded
-#if 0
 		{
 			if (rand_int(120) < p_ptr->skill_sav)
 			{
@@ -995,7 +990,6 @@ break;
 			destroy_chest(i_ptr); 
 			break;
 		}
-#endif
 		/* Earthquake Trap */
 		case TRAP_OF_EARTHQUAKE:
 		{
@@ -1359,9 +1353,8 @@ break;
 			break;
 		}
 		/* Trap of No Return */
-		case TRAP_OF_NO_RETURN:
-		break; //basically ok, but we need fireproof WoR in BM before this gets enabled!
-#if 0
+		case TRAP_OF_NO_RETURN: //basically ok, but we need fireproof WoR in BM before this gets enabled!
+#if 1
 		{
 			object_type *j_ptr;
 			s16b j;
@@ -1708,9 +1701,7 @@ break;
 
 		/* Trap of Scatter Items */
 		case TRAP_OF_SCATTER_ITEMS:
-		break; //ill-minded, especially since it's often found in vaults.
-		// Please play the game before introducing stuff like this.
-#if 0
+#if 1
 		{
 			ident = do_player_scatter_items(Ind, 70, 15);
 			break;
@@ -1781,10 +1772,8 @@ break;
 			ident = FALSE;
 			break;
 		}
-		case TRAP_OF_DRAIN_SPEED:
-		break; //ill-minded. If someone spends all his savings for a speed item
-		// or is extremely lucky in finding one.. this is simply SO ill-minded.
-#if 0
+		case TRAP_OF_DRAIN_SPEED: /* slightly insane, hence disabled */
+#if 1
 		{
 			object_type *j_ptr;
 			s16b j, chance = 75;
@@ -2069,9 +2058,10 @@ break;
 
 		}
 		/* Trap of Divine Anger */
-		case TRAP_OF_DIVINE_ANGER:
+		case TRAP_OF_DIVINE_ANGER: // No hell below us above us only sky o/~
 		{
-#if 0	// No hell below us above us only sky o/~  // DG - lol :)  -C. Blue: John Lennon? :)
+#if 0 /* completely insane */
+		
 			{
 				if (p_ptr->pgod == 0)
 				{
@@ -2468,11 +2458,8 @@ break;
 		}
 		/* Scribble Trap */
 		case TRAP_OF_SCRIBBLE:
-		//Ill-minded. The loss can be *immense* and existential. It's not contributing to the gameplay really.
-		//Maybe even worse than seasoned traveller although it only affects scrolls,
-		//since all WoR / Tele will be lost, and player might be stuck at a *deep* level -> death.
 		break;
-#if 0
+#if 0	/* insane - this COULD be cool if it was adjusted to be more sane */
 		{
 			int i, j, k, k_idx;
 			object_type *o_ptr;

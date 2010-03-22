@@ -1328,6 +1328,11 @@ static int return_level(store_type *st_ptr)
 
 //	if (sti_ptr->flags1 & SF1_ALL_ITEM) level += p_ptr->lev;
 
+	/* Better books in bookstores outside Bree */
+	if (st_ptr->st_idx == STORE_BOOK) {
+		level += town[st_ptr->town].baselevel;
+	}
+
 	return (level);
 }
 
@@ -2485,6 +2490,11 @@ s_printf("Stealing: %s (%d) succ. %s (chance %d%%0 (%d) %d,%d,%d).\n", p_ptr->na
 		/* Stolen items cannot be sold */
 		sell_obj.discount = 100;
 		sell_obj.note = quark_add("stolen");
+#ifdef STEAL_CHEEZEREDUCTION
+//		if (!magik((5000000 / tbest) + 5))
+		if (!magik((5000000 / object_value_real(0, o_ptr)) + 5))
+			sell_obj.level = 0;
+#endif
 
 		/* Message */
 		msg_format(Ind, "You stole %s.", o_name);
@@ -4673,6 +4683,8 @@ void home_purchase(int Ind, int item, int amt)
 					p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
 					object_value_real(0, o_ptr), o_ptr->discount, o_name);
  #endif
+			/* Highlander Tournament: Don't allow transactions before it begins */
+			if (!p_ptr->max_exp) gain_exp(Ind, 1);
 		}
 #endif  // CHEEZELOG_LEVEL
 

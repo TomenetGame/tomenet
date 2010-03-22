@@ -3885,7 +3885,7 @@ void check_experience(int Ind)
 #if 0 
 				/* New: reset skill tree and teleport them (hopefully to a safe location...) */
 				/* Do this before since respec_skills reinit from tables.c */
-				respec_skills(Ind);	
+				respec_skills(Ind, FALSE);
 				teleport_player(Ind, 200, TRUE);
 #endif
 				if (p_ptr->r_killed[MONSTER_RIDX_CANDLEBEARER]!=0 && p_ptr->r_killed[MONSTER_RIDX_DARKLING]==0) {
@@ -4224,14 +4224,14 @@ void check_experience(int Ind)
 				p_ptr->free_mimic = 1;
 			}
 			if(p_ptr->lev == MID_PVP_LEVEL) {
-				msg_broadcast(Ind, format("\374\377G* %s has raised in ranks greatly! *", p_ptr->name));
+				msg_broadcast_format(Ind, "\374\377G* %s has raised in ranks greatly! *", p_ptr->name);
 				msg_print(Ind, "\375\377G* You have raised quite a bit in ranks of PvP characters!         *");
 				msg_print(Ind, "\375\377G*   For that, you just received a reward, and if you die you will *");
 				msg_print(Ind, "\375\377G*   also receive a deed on the next character you log in with.    *");
 		                give_reward(Ind, RESF_MID, "Gladiator's reward", 1, 0);
 			}
 			if(p_ptr->lev == MAX_PVP_LEVEL) {
-				msg_broadcast(Ind, format("\374\377G* %s has reached the highest level available to PvP characters! *", p_ptr->name));
+				msg_broadcast_format(Ind, "\374\377G* %s has reached the highest level available to PvP characters! *", p_ptr->name);
 				msg_print(Ind, "\375\377G* You have reached the highest level available to PvP characters! *");
 				msg_print(Ind, "\375\377G*   For that, you just received a reward, and if you die you will *");
 				msg_print(Ind, "\375\377G*   also receive a deed on the next character you log in with.    *");
@@ -4564,8 +4564,8 @@ void monster_death(int Ind, int m_idx)
 		for (i = NumPlayers; i > 0; i--)
 		{	
 			if (m_ptr->owner == Players[i]->id) {
-				msg_format(i, "\377R%s has killed your pet!", Players[Ind]->name);
-				msg_format(Ind, "\377RYou have killed %s's pet!", Players[i]->name);
+				msg_format(i, "\374\377R%s has killed your pet!", Players[Ind]->name);
+				msg_format(Ind, "\374\377RYou have killed %s's pet!", Players[i]->name);
 				Players[i]->has_pet=0;
 				FREE(m_ptr->r_ptr, monster_race); //no drop, no exp.
 				return;
@@ -4590,7 +4590,7 @@ void monster_death(int Ind, int m_idx)
 	    wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y &&
 	    wpos->wz == WPOS_ARENA_Z) {
 		monster_desc(0, m_name, m_idx, 0x00);
-		msg_broadcast(0, format("\377S** %s has defeated %s! **", p_ptr->name, m_name));
+		msg_broadcast_format(0, "\376\377S** %s has defeated %s! **", p_ptr->name, m_name);
 		s_printf("EVENT_RESULT: %s (%d) has defeated %s.\n", p_ptr->name, p_ptr->lev, m_name);
 	}
  
@@ -4602,7 +4602,7 @@ void monster_death(int Ind, int m_idx)
 if (season_halloween) {
 	/* let everyone know, so they are prepared.. >:) */
 	if (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088) {
-		msg_broadcast(0, format("\377o%s has defeated a tasty halloween spirit!", p_ptr->name));
+		msg_broadcast_format(0, "\374\377o%s has defeated a tasty halloween spirit!", p_ptr->name);
 		s_printf("HALLOWEEN: %s has defeated %s.\n", p_ptr->name, m_name);
 		great_pumpkin_timer = 15 + rand_int(45);
 	}
@@ -6031,10 +6031,10 @@ void player_death(int Ind)
 					}
 				}
 				if (k) { /* usual */
-					msg_broadcast(0, format("\374\377A** %s has defeated %s! **", m_name_extra, p_ptr->name));
+					msg_broadcast_format(0, "\376\377A** %s has defeated %s! **", m_name_extra, p_ptr->name);
 					s_printf("EVENT_RESULT: %s has defeated %s (%d) (%d damage).\n", m_name_extra, p_ptr->name, p_ptr->lev, p_ptr->deathblow);
 				} else { /* can happen if monster dies first, then player dies to monster DoT */
-					msg_broadcast(0, format("\374\377A** %s didn't survive! **", p_ptr->name));
+					msg_broadcast_format(0, "\376\377A** %s didn't survive! **", p_ptr->name);
 					s_printf("EVENT_RESULT: %s (%d) was defeated (%d damage).\n", p_ptr->name, p_ptr->lev, p_ptr->deathblow);
 				}
 				recall_player(Ind, "\377oYou die.. at least it felt like you did..!");
@@ -6646,7 +6646,10 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", p_ptr->mode & MODE_PV
 s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title);
 	}
 	else if (!p_ptr->total_winner) {
-		snprintf(buf, sizeof(buf), "\376\377D%s committed suicide.", p_ptr->name);
+		if (p_ptr->max_plv >= 5)
+			snprintf(buf, sizeof(buf), "\374\377D%s committed suicide.", p_ptr->name);
+		else
+			snprintf(buf, sizeof(buf), "\376\377D%s committed suicide.", p_ptr->name);
 		s_printf("%s (%d) committed suicide.\n", p_ptr->name, p_ptr->lev);
 		death_type = 3;
 s_printf("CHARACTER_TERMINATION: SUICIDE race=%s ; class=%s\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title);
@@ -6690,11 +6693,11 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 #ifdef NEW_DUNGEON
 /* FIXME */
 /*
-		msg_broadcast(Ind, format("%d(%d) and %d(%d) are no more owned.", p_ptr->own1, p_ptr->own2, p_ptr->own1 * 50, p_ptr->own2 * 50));
+		msg_broadcast_format(Ind, "%d(%d) and %d(%d) are no more owned.", p_ptr->own1, p_ptr->own2, p_ptr->own1 * 50, p_ptr->own2 * 50);
 		wild_info[p_ptr->own1].own = wild_info[p_ptr->own2].own = 0;
 */
 #else
-		msg_broadcast(Ind, format("%d(%d) and %d(%d) are no more owned.", p_ptr->own1, p_ptr->own2, p_ptr->own1 * 50, p_ptr->own2 * 50));
+		msg_broadcast_format(Ind, "%d(%d) and %d(%d) are no more owned.", p_ptr->own1, p_ptr->own2, p_ptr->own1 * 50, p_ptr->own2 * 50);
 		wild_info[p_ptr->own1].own = wild_info[p_ptr->own2].own = 0;
 #endif
 	}	
@@ -9512,6 +9515,9 @@ if (is_weapon(q_ptr->tval) && !(k_info[q_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_
 		object_desc_store(Ind, o_name, q_ptr, TRUE, 3);
 		s_printf("(Tele) Item transaction from %s(%d) to %s(%d):\n  %s\n", p_ptr->name, p_ptr->lev, Players[Ind2]->name, Players[Ind2]->lev, o_name);
 
+		/* Highlander Tournament: Don't allow transactions before it begins */
+		if (!p2_ptr->max_exp) gain_exp(Ind2, 1);
+
 		/* Remove dangerous inscriptions - mikaelh */
 		if (q_ptr->note) {
 			scan = inscription = strdup(quark_str(q_ptr->note));
@@ -9788,7 +9794,7 @@ void blood_bond(int Ind, object_type *o_ptr)
 	s_printf("BLOOD_BOND: %s blood bonds with %s\n", p_ptr->name, p2_ptr->name);
 	msg_format(Ind, "\374\377cYou blood bond with %s.", p2_ptr->name);
 	msg_format(Ind2, "\374%s blood bonds with you.", p_ptr->name);
-	msg_broadcast(Ind, format("\374\377c%s blood bonds with %s.", p_ptr->name, p2_ptr->name));
+	msg_broadcast_format(Ind, "\374\377c%s blood bonds with %s.", p_ptr->name, p2_ptr->name);
 
 	/* new: auto-hostile, circumventing town peace zone functionality: */
 	add_hostility(Ind, p2_ptr->name, TRUE);

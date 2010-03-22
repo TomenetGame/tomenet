@@ -2524,8 +2524,10 @@ void self_knowledge(int Ind)
 bool lose_all_info(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
+	int i;
 
-	int                 i;
+	char note2[80], noteid[10];
+
 
 	if (safe_area(Ind)) return(TRUE);
 
@@ -2543,6 +2545,7 @@ bool lose_all_info(int Ind)
 		/* Remove "default inscriptions" */
 		if (o_ptr->note && (o_ptr->ident & ID_SENSE))
 		{
+#if 0
 			/* Access the inscription */
 			cptr q = quark_str(o_ptr->note);
 
@@ -2559,6 +2562,11 @@ bool lose_all_info(int Ind)
 				/* Forget the inscription */
 				o_ptr->note = 0;
 			}
+#else
+			note_crop_pseudoid(note2, noteid, quark_str(o_ptr->note));
+			if (!note2[0]) o_ptr->note = 0;
+			else o_ptr->note = quark_add(note2);
+#endif
 		}
 
 		/* Hack -- Clear the "empty" flag */
@@ -3873,6 +3881,9 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 bool create_artifact(int Ind)
 {
   player_type *p_ptr = Players[Ind];
+
+  /* just in case */
+  s_printf("(%s) Player %s initiates Artifact Creation.\n", showtime(), p_ptr->name);
 
   clear_current(Ind);
 
@@ -7690,6 +7701,24 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 	m_ptr->org_ac = m_ptr->ac;
 	/* CON */
 	m_ptr->org_maxhp = m_ptr->maxhp;
+
+#ifdef MONSTER_ASTAR
+	if (r_ptr->flags0 & RF0_ASTAR) {
+		/* search for an available A* table to use */
+		for (j = 0; j < ASTAR_MAX_INSTANCES; j++) {
+			/* found an available instance? */
+			if (astar_info_open[j].m_idx == -1) {
+				astar_info_open[j].m_idx = c_ptr->m_idx;
+				astar_info_open[j].nodes = 0; /* init: start with empty set of nodes */
+				astar_info_closed[j].nodes = 0; /* init: start with empty set of nodes */
+				m_ptr->astar_idx = j;
+				break;
+			}
+		}
+		/* no instance available? Mark us (-1) to use normal movement instead */
+		if (j == ASTAR_MAX_INSTANCES) m_ptr->astar_idx = -1;
+	}
+#endif
 
 	return (TRUE);
 }

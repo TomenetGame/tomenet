@@ -1583,6 +1583,8 @@ void carry(int Ind, int pickup, int confirm)
 						p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
 						o_ptr->pval);
  #endif
+				/* Highlander Tournament: Don't allow transactions before it begins */
+				if (!p_ptr->max_exp) gain_exp(Ind, 1);
 			}
 		}
 #endif	// CHEEZELOG_LEVEL
@@ -2000,6 +2002,9 @@ if (o_ptr->tval == TV_RUNE2) {
 							p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
 							object_value_real(0, o_ptr), o_ptr->discount, o_name);
  #endif
+
+					/* Highlander Tournament: Don't allow transactions before it begins */
+					if (!p_ptr->max_exp) gain_exp(Ind, 1);
 				}
 #endif	// CHEEZELOG_LEVEL
 
@@ -2228,7 +2233,8 @@ if (o_ptr->tval == TV_RUNE2) {
 //			magik(WATER_ITEM_DAMAGE_CHANCE))
 	    magik(3) && !p_ptr->fly && !p_ptr->immune_water && !(p_ptr->resist_water && magik(50)))
 	{
-		inven_damage(Ind, set_water_destroy, 1);
+		if (!magik(get_skill_scale(p_ptr, SKILL_SWIM, 4900)))
+			inven_damage(Ind, set_water_destroy, 1);
 		equip_damage(Ind, GF_WATER);
 	}
 
@@ -4305,12 +4311,9 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
 		}
 
 		/* If any damage is done, then 25% chance of getting the Black Breath */
-		if (*k)
-		{
-			if (magik(25))
-			{
-				set_black_breath(Ind);
-			}
+		if ((*k) && magik(25) && !Players[Ind]->black_breath) {
+			s_printf("EFFECT: BLACK-BREATH - %s was infected by a Nazgul\n", Players[Ind]->name);
+			set_black_breath(Ind);
 		}
 	}
 }
@@ -5413,12 +5416,12 @@ void black_breath_infection(int Ind, int Ind2)
 	/* Prevent players who are AFK from getting infected in towns - mikaelh */
 	if (p_ptr->black_breath && magik(25) && !(q_ptr->afk && istown(&q_ptr->wpos)))
 	{
-		s_printf("BLACK-BREATH: %s was infected by %s\n", q_ptr->name, p_ptr->name);
+		s_printf("EFFECT: BLACK-BREATH - %s was infected by %s\n", q_ptr->name, p_ptr->name);
 		set_black_breath(Ind2);
 	}
 	if (q_ptr->black_breath && magik(25) && !(p_ptr->afk && istown(&p_ptr->wpos)))
 	{
-		s_printf("BLACK-BREATH: %s was infected by %s\n", p_ptr->name, q_ptr->name);
+		s_printf("EFFECT: BLACK-BREATH - %s was infected by %s\n", p_ptr->name, q_ptr->name);
 		set_black_breath(Ind);
 	}
 }
@@ -5862,7 +5865,7 @@ static bool run_test(int Ind)
 	int                     row, col;
 	int                     i, max, inv;
 	int                     option, option2;
-	bool	aqua = p_ptr->can_swim || p_ptr->fly || (get_skill(p_ptr, SKILL_SWIM) > 29) ||
+	bool	aqua = p_ptr->can_swim || p_ptr->fly || (get_skill_scale(p_ptr, SKILL_SWIM, 500) >= 7) ||
 					((p_ptr->body_monster) && (
 					(r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC) ||
 					(r_info[p_ptr->body_monster].flags3 & RF3_UNDEAD) ));

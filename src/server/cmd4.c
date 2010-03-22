@@ -938,10 +938,13 @@ void do_cmd_check_players(int Ind, int line)
 				fprintf(fff, " [%s]", guilds[q_ptr->guild].name);
 			fprintf(fff, " \377%c", (q_ptr->quest_id ? 'Q' : ' '));
 		}
-		if ((!q_ptr->afk) || !strlen(q_ptr->afk_msg))
-			fprintf(fff, "\n\n");
-		else
-			fprintf(fff, "\n     \377U(%s)\n", q_ptr->afk_msg);
+		if ((!q_ptr->afk) || !strlen(q_ptr->afk_msg)) {
+			if (!q_ptr->info_msg[0])
+				fprintf(fff, "\n\n");
+			else
+				fprintf(fff, "\n     \377U(%s\377U)\n", q_ptr->info_msg);
+		} else
+			fprintf(fff, "\n     \377u(%s\377u)\n", q_ptr->afk_msg);
 
 		lines += 4;
 	}
@@ -1068,10 +1071,13 @@ void do_admin_cmd_check_players(int Ind, int line)
 				fprintf(fff, " [%s]", guilds[q_ptr->guild].name);
 			fprintf(fff, " \377%c", (q_ptr->quest_id ? 'Q' : ' '));
 		}
-		if ((!q_ptr->afk) || !strlen(q_ptr->afk_msg))
-			fprintf(fff, "\n\n");
-		else
-			fprintf(fff, "\n     \377U(%s)\n", q_ptr->afk_msg);
+		if ((!q_ptr->afk) || !strlen(q_ptr->afk_msg)) {
+			if (!q_ptr->info_msg[0])
+				fprintf(fff, "\n\n");
+			else
+				fprintf(fff, "\n     \377U(%s\377U)\n", q_ptr->info_msg);
+		} else
+			fprintf(fff, "\n     \377u(%s\377u)\n", q_ptr->afk_msg);
 
 		lines += 4;
 	}

@@ -347,7 +347,12 @@ void delete_monster_idx(int i, bool unfound_arts)
 	/* Get location */
 	y = m_ptr->fy;
 	x = m_ptr->fx;
-	wpos=&m_ptr->wpos;
+	wpos = &m_ptr->wpos;
+
+#ifdef MONSTER_ASTAR
+	if ((r_ptr->flags0 & RF0_ASTAR) && (m_ptr->astar_idx != -1))
+		astar_info_open[m_ptr->astar_idx].m_idx = -1;
+#endif
 
 	/* Hack -- Reduce the racial counter */
 	if (r_ptr->cur_num != 0) /* don't overflow - mikaelh */
@@ -383,8 +388,8 @@ void delete_monster_idx(int i, bool unfound_arts)
 	/* Make sure the level is allocated, it won't be if we are
 	 * clearing an abandoned wilderness level of monsters
 	 */
-	if((zcave=getcave(wpos))){
-		zcave[y][x].m_idx=0;
+	if((zcave = getcave(wpos))){
+		zcave[y][x].m_idx = 0;
 	}
 	/* Visual update */
 	everyone_lite_spot(wpos, y, x);
@@ -437,19 +442,19 @@ void delete_monster(struct worldpos *wpos, int y, int x, bool unfound_arts)
 	/* Paranoia */
 	cave_type **zcave;
 	if (!in_bounds(y, x)) return;
-	if((zcave=getcave(wpos))){
+	if((zcave = getcave(wpos))){
 		/* Check the grid */
-		c_ptr=&zcave[y][x];
+		c_ptr = &zcave[y][x];
 		/* Delete the monster (if any) */
 		if (c_ptr->m_idx > 0) delete_monster_idx(c_ptr->m_idx, unfound_arts);
 	}
-	else{                           /* still delete the monster, just slower method */
+	else{ /* still delete the monster, just slower method */
 		int i;
-		for(i=0;i<m_max;i++){
-			monster_type *m_ptr=&m_list[i];
+		for(i = 0; i < m_max; i++){
+			monster_type *m_ptr = &m_list[i];
 			if(m_ptr->r_idx && inarea(wpos, &m_ptr->wpos))
 			{
-				if(y==m_ptr->fy && x==m_ptr->fx)
+				if(y == m_ptr->fy && x == m_ptr->fx)
 					delete_monster_idx(i, unfound_arts);
 			}
 		}
@@ -3245,6 +3250,25 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	/* CON */
 	m_ptr->org_maxhp = m_ptr->maxhp;
 
+#ifdef MONSTER_ASTAR
+	if (r_ptr->flags0 & RF0_ASTAR) {
+		/* search for an available A* table to use */
+		for (j = 0; j < ASTAR_MAX_INSTANCES; j++) {
+			/* found an available instance? */
+			if (astar_info_open[j].m_idx == -1) {
+				astar_info_open[j].m_idx = c_ptr->m_idx;
+				astar_info_open[j].nodes = 0; /* init: start with empty set of nodes */
+				astar_info_closed[j].nodes = 0; /* init: start with empty set of nodes */
+				m_ptr->astar_idx = j;
+				break;
+			}
+		}
+		/* no instance available? Mark us (-1) to use normal movement instead */
+		if (j == ASTAR_MAX_INSTANCES) m_ptr->astar_idx = -1;
+	}
+#endif
+
+
 	/* Success */
 	/* Report some very interesting monster creating: */
 	if (r_idx == 860) s_printf("Sauron was created on %d\n", dlev);
@@ -3452,8 +3476,8 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 	monster_race    *r_ptr = &r_info[r_idx];
 
 	cave_type **zcave;
-	int level=getlevel(wpos);
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	int level = getlevel(wpos);
+	if(!(zcave = getcave(wpos))) return(FALSE);
 
 #ifdef ARCADE_SERVER
 	if(wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0) return(FALSE);

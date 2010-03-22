@@ -894,3 +894,8 @@ int timer_pvparena1 = 1, timer_pvparena2 = 1, timer_pvparena3 = 0; /* defaults *
 
 /* Recall-shutdown timer for /shutrec */
 int shutdown_recall_timer = 0, shutdown_recall_state = 0;
+
+#ifdef MONSTER_ASTAR
+astar_list_open astar_info_open[ASTAR_MAX_INSTANCES];
+astar_list_closed astar_info_closed[ASTAR_MAX_INSTANCES];
+#endif

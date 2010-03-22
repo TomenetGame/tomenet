@@ -5586,7 +5586,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 				case SV_RING_ACCURACY:
 				{
 					/* Bonus to hit */
-					o_ptr->to_h = 5 + randint(8) + m_bonus(10, level);
+//					o_ptr->to_h = 5 + randint(8) + m_bonus(10, level);
+					o_ptr->to_h = 10 + rand_int(11) + m_bonus(5, level);
 
 					/* Cursed */
 					if (power < 0)

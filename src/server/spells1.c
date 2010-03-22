@@ -5294,7 +5294,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		case GF_CHAOS:
 		{
 			if (seen) obvious = TRUE;
-			do_poly = TRUE;
+			if (rand_int(r_ptr->level) < 15) do_poly = TRUE;
 			do_conf = (5 + randint(11)) / div;
 			if ((r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS))
 			{
@@ -7225,25 +7225,30 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				}
 				/* Ok, noone else to go after, so we have to go for the one who actually hit us */
 				if (!got_potential_target) {
-					if (m_ptr->previous_direction == 0) {
-						/* note: instead of closest dis to ANY player we just save m_ptr->cdis
-						   at this time - relatively ineffective but also not mattering much probably.  */
-						m_ptr->cdis_on_damage = m_ptr->cdis;
-						/* start behaving special */
-						m_ptr->previous_direction = -1;
-						/* accept any epicenter of damage (which is closer than 999,999: always TRUE) */
-						m_ptr->damage_tx = 999;
-						m_ptr->damage_ty = 999;
-						m_ptr->damage_dis = 999;
-					}
 					/* if we got hit by anything closer than last time, go for this one instead */
 					p = distance(m_ptr->fy, m_ptr->fx, y_origin, x_origin);
-					if (p < m_ptr->damage_dis) {
-						m_ptr->damage_ty = y_origin;
-						m_ptr->damage_tx = x_origin;
-						m_ptr->damage_dis = p;
-						m_ptr->p_tx = p_ptr->px;
-						m_ptr->p_ty = p_ptr->py;
+					/* paranoia probably, but doesn't cost much: avoid silliness */
+					if (!p) m_ptr->previous_direction = 0;
+					/* start ANTI_SEVEN_EXPLOIT: */
+					else {
+						if (m_ptr->previous_direction == 0) {
+							/* note: instead of closest dis to ANY player we just save m_ptr->cdis
+							   at this time - relatively ineffective but also not mattering much probably.  */
+							m_ptr->cdis_on_damage = m_ptr->cdis;
+							/* start behaving special */
+							m_ptr->previous_direction = -1;
+							/* accept any epicenter of damage (which is closer than 999,999: always TRUE) */
+							m_ptr->damage_tx = 999;
+							m_ptr->damage_ty = 999;
+							m_ptr->damage_dis = 999;
+						}
+						if (p < m_ptr->damage_dis) {
+							m_ptr->damage_ty = y_origin;
+							m_ptr->damage_tx = x_origin;
+							m_ptr->damage_dis = p;
+							m_ptr->p_tx = p_ptr->px;
+							m_ptr->p_ty = p_ptr->py;
+						}
 					}
 				}
 			}
@@ -7527,7 +7532,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			(typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
                         (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
 			(typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
-			(typ != GF_MINDBOOST_PLAYER) && 
+			(typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 			(typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
 		{
 			/* If this was intentional, make target hostile */
@@ -7636,6 +7641,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	(typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||*/
 	(typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
 	(typ == GF_HEALINGCLOUD) || /* shoo ghost, shoo */
+	(typ == GF_IDENTIFY) ||
 	(typ == GF_OLD_POLY) || (typ == GF_MINDBOOST_PLAYER)))) &&
 	/* ADMIN CHECK */
 	((!(is_admin(p_ptr) && ((typ == GF_HEAL_PLAYER) || (typ == GF_AWAY_ALL) ||
@@ -7657,7 +7663,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	(typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
 	(typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
 	(typ == GF_HEALINGCLOUD) || (typ == GF_MINDBOOST_PLAYER) ||
-	(typ == GF_OLD_POLY))))))
+	(typ == GF_OLD_POLY) || (typ == GF_IDENTIFY))))))
 	{ /* No effect on ghosts / admins */
 
 
@@ -9924,7 +9930,8 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 		 (typ == GF_ZEAL_PLAYER) || (typ == GF_MINDBOOST_PLAYER) ||
 		 (typ == GF_RESTORESTATS_PLAYER) || (typ == GF_RESTORELIFE_PLAYER) ||
 		 (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
-		 (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER))
+		 (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
+		 (typ == GF_IDENTIFY))
 		players_only = TRUE;
 
 

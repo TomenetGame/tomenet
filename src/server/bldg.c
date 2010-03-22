@@ -1644,9 +1644,9 @@ static void sell_quest_monster(void)
 		/* Hack -- Maximal info */
 		r_ptr = &r_info[bounties[0][0]];
 
-		msg_print(format("Well done! As a reward I'll teach you everything "
+		msg_format("Well done! As a reward I'll teach you everything "
 		                 "about the %s, (check your recall)",
-		                 r_name + r_ptr->name));
+		                 r_name + r_ptr->name);
 
 		r_ptr->r_wake = r_ptr->r_ignore = MAX_UCHAR;
 

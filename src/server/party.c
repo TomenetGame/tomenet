@@ -1190,7 +1190,7 @@ int party_remove(int remover, cptr name)
 				for (j = 1; j <= NumPlayers; j++)
 					if (Players[j]->party == Players[i]->party && j != i) {
 						Send_party(j);
-						msg_print(j, format("\374\377y%s is now the party owner.", Players[i]->name));
+						msg_format(j, "\374\377y%s is now the party owner.", Players[i]->name);
 					}
 				break;
 			}

@@ -4259,15 +4259,20 @@ static bool get_moves_aux(int Ind, int m_idx, int *yp, int *xp)
 
 
 #ifdef MONSTER_ASTAR
-/* Get monster moves for A* pathfinding */
+/* Get monster moves for A* pathfinding - C. Blue */
 static bool get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
-	int i, y, x, y1, x1, cost = 999;
-	byte astarF = 0, astarG = 0, astarH = 0;
+	int i, y, x, y1, x1;
 	monster_type *m_ptr = &m_list[m_idx];
         monster_race *r_ptr = race_inf(m_ptr);
 	player_type *p_ptr = Players[Ind];
 	cave_type **zcave, *c_ptr;
-	if(!(zcave=getcave(&m_ptr->wpos))) return FALSE;
+
+	astar_list_open *ao = &astar_info_open[m_ptr->astar_idx];
+	astar_list_closed *ac = &astar_info_closed[m_ptr->astar_idx];
+	int astarF = 0, astarG = 0, astarH = 0;
+	int cost = 999;
+
+	if(!(zcave = getcave(&m_ptr->wpos))) return FALSE;
 
 return (FALSE);
 
@@ -4284,6 +4289,8 @@ return (FALSE);
 	/* Monster grid */
 	c_ptr = &zcave[y1][x1];
 
+	
+
 	/* Check nearby grids, diagonals first */
 	for (i = 7; i >= 0; i--)
 	{
@@ -4293,10 +4300,10 @@ return (FALSE);
 		if (!in_bounds(y, x)) continue;
 
 		/* Ignore distant locations */
-		if (zcave[y][x].astarF > cost) continue;
+//		if (zcave[y][x].astarF > cost) continue;
 
 		/* Save the cost and time */
-		cost = zcave[y][x].astarF;
+//		cost = zcave[y][x].astarF;
 
 		/* Hack -- Save the "twiddled" location */
 		(*yp) = p_ptr->py + 16 * ddy_ddd[i];
@@ -4304,7 +4311,7 @@ return (FALSE);
 	}
 
 	/* Monster is too far away to notice the player */
-	if (c_ptr->astarF > r_ptr->aaf) return (FALSE);
+//	if (c_ptr->astarF > r_ptr->aaf) return (FALSE);
 
 	/* No legal move (?) */
 	if (!cost) return (FALSE);
@@ -5025,8 +5032,10 @@ static void get_moves(int Ind, int m_idx, int *mm)
 
 #ifdef MONSTER_ASTAR
 	/* Monster uses A* pathfinding algorithm? - C. Blue */
-	if (r_ptr->flags0 & RF0_ASTAR) (void)get_moves_astar(Ind, m_idx, &y2, &x2);
+	if ((r_ptr->flags0 & RF0_ASTAR) && (m_ptr->astar_idx != -1))
+		(void)get_moves_astar(Ind, m_idx, &y2, &x2);
 #endif
+
 
 #if 0 /* moved to process_monsters */
 	/* for C_BLUE_AI (to remember if the player stood beside us and
@@ -6438,6 +6447,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 #endif
 
 	int		mm[8];
+#ifdef ANTI_SEVEN_EXPLOIT
+	int		mm2[8];
+#endif
 	bool		random_move = FALSE;
 
 	cave_type    	*c_ptr;
@@ -6888,7 +6900,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 #ifdef ANTI_SEVEN_EXPLOIT /* code part: 'monster has planned an actual movement' */
 	if (!random_move) {
+		mm2[0] = 0; /* paranoia: pre-terminate array */
 		if (m_ptr->previous_direction) {
+			/* if monster has clean LoS to player, cancel anti-exploit and resume normal behaviour */
 			if (projectable_wall(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px, MAX_RANGE))
 				m_ptr->previous_direction = 0;
  #ifdef ANTI_SEVEN_EXPLOIT_VAR2
@@ -6899,7 +6913,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				m_ptr->previous_direction = 0;
  #endif
 		}
- #if 1 /* enable? */
+// #if 1 /* enable? */
 		if (m_ptr->previous_direction == -1) {
 			/* would none regularly planned move _not decrease_ distance to target _player_ ? */
 			/* ok this gets not checked either this time, not that important probably =p
@@ -6917,11 +6931,11 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 					if (distance(oy + ddy[i], ox + ddx[i], m_ptr->damage_ty, m_ptr->damage_tx) > m_ptr->damage_dis)
 						continue;
  #endif
-					mm[d] = i;
+					mm2[d] = i;
 					d++;
 				}
 				/* zero-terminate movement array */
-				mm[d] = 0;
+				mm2[d] = 0;
 			}
 		} else if (m_ptr->previous_direction > 0) {
 			/* are we already standing on epicentrum x,y ? */
@@ -6936,11 +6950,11 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 					if (((p_ptr->py - oy) * ddy[i] <= 0) &&
 					    ((p_ptr->px - ox) * ddx[i] <= 0))
 						continue;
-					mm[d] = i;
+					mm2[d] = i;
 					d++;
 				}
 				/* zero-terminate movement array */
-				mm[d] = 0;
+				mm2[d] = 0;
 				/* ..END optional hack. */
 				/* reset direction to signal end of our special behaviour. */
 				m_ptr->previous_direction = 0;
@@ -6952,19 +6966,29 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 					if (((m_ptr->damage_ty - oy) * ddy[i] <= 0) &&
 					    ((m_ptr->damage_tx - ox) * ddx[i] <= 0))
 						continue;
+					/* latest fix, for 2-space-passages!
+					   avoid retreating into the exact direction we came from */
+					if (i == 10 - m_ptr->previous_direction) continue;
  #ifdef ANTI_SEVEN_EXPLOIT_VAR1
 					/* tweaked: prevent (probably harmless) ping-pong'ing when adjacent to destination */
 					if (distance(oy + ddy[i], ox + ddx[i], m_ptr->damage_ty, m_ptr->damage_tx) > m_ptr->damage_dis)
 						continue;
  #endif
-					mm[d] = i;
+					mm2[d] = i;
 					d++;
 				}
 				/* zero-terminate movement array */
-				mm[d] = 0;
+				mm2[d] = 0;
 			}
 		}
- #endif /* enabled? */
+// #endif /* enabled? */
+		/* paranoia probably, but might fix odd behaviour (possibly observed
+		   'temporarily getting stuck' in monster arena) in special levels
+		   where FF1_PROTECTED grids occur. well, doesn't cost much anyway:
+		   instead of overwriting mm[] directly, we used mm2[] and now check if we
+		   have at least 1 direction, otherwise cancel the anti-exploit! */
+		if (mm2[0]) for(i = 0; i < 8; i++) mm[i] = mm2[i];
+		else m_ptr->previous_direction = 0;
 	}
 #endif
 

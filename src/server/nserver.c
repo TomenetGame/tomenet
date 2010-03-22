@@ -976,9 +976,11 @@ static bool forbidden_name(char *name){
 	/* Note: Character names always start upper-case, so some of these aren't really needed. (Paranoia) */
 	/* Hardcode some critically important ones */
 	if (!strcmp("server", name)) return TRUE; /* server save file is stored in same folder as player save files */
+	if (strstr(name, "guild") && strstr(name, ".data")) return TRUE; /* moved guild hall save files to save folder, from data folder */
+	if (strlen(name) >= 5 && name[0] == 's' && name[1] == 'a' && name[2] == 'v' && name[3] == 'e' &&
+	    name[4] >= '0' && name[4] <= '9') return TRUE; /* backup save file folders, save00..saveNN */
 	if (!strcmp("tomenet.acc", name)) return TRUE; /* just in case someone copies it over into save folder */
 	if (!strcmp("Insanity", name)) return TRUE; /* just in case someone copies it over into save folder */
-	if (strstr(name, "guild") && strstr(name, ".data")) return TRUE; /* moved guild hall save files to save folder, from data folder */
 	/* Hardcode some not so important ones */
 	if (!strcmp("tBot", name)) return TRUE; /* Sandman's internal chat bot */
 	if (!strcmp("8ball", name)) return TRUE; /* Sandman's internal chat bot */
@@ -4099,11 +4101,13 @@ int Send_skill_info(int ind, int i)
 	if (mkey == MKEY_RANGED && Players[ind]->ranged_techniques == 0x0000) mkey = 0;
 
 	if (!is_newer_than(&connp->version, 4, 4, 1, 2, 0, 0))
-	        return Packet_printf(&connp->c, "%c%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].hidden);
+	        return Packet_printf(&connp->c, "%c%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1 & SKF1_HIDDEN);
 	else if (!is_newer_than(&connp->version, 4, 4, 1, 7, 0, 0)) {
-	        return Packet_printf(&connp->c, "%c%d%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].hidden, mkey);
+	        return Packet_printf(&connp->c, "%c%d%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1 & SKF1_HIDDEN, mkey);
+	} else if (!is_newer_than(&connp->version, 4, 4, 4, 1, 0, 0)) {
+	        return Packet_printf(&connp->c, "%c%d%d%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1 & SKF1_HIDDEN, mkey, p_ptr->s_info[i].flags1 & SKF1_DUMMY);
 	} else {
-	        return Packet_printf(&connp->c, "%c%d%d%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].hidden, mkey, p_ptr->s_info[i].dummy);
+	        return Packet_printf(&connp->c, "%c%d%d%d%d%c%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1, mkey);
 	}
 }
 
@@ -4282,7 +4286,7 @@ int Send_various(int ind, int hgt, int wgt, int age, int sc, cptr body)
 	return Packet_printf(&connp->c, "%c%hu%hu%hu%hu%s", PKT_VARIOUS, hgt, wgt, age, sc, body);
 }
 
-int Send_stat(int ind, int stat, int max, int cur, int s_ind, int cur_base)
+int Send_stat(int ind, int stat, int max, int cur, int s_ind, int max_base)
 {
 	connection_t *connp = Conn[Players[ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
@@ -4297,10 +4301,10 @@ int Send_stat(int ind, int stat, int max, int cur, int s_ind, int cur_base)
 
 	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		Packet_printf(&connp2->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind, cur_base);
+		Packet_printf(&connp2->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind, max_base);
 	}
 
-	return Packet_printf(&connp->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind, cur_base);
+	return Packet_printf(&connp->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind, max_base);
 }
 
 int Send_history(int ind, int line, cptr hist)
@@ -6809,7 +6813,7 @@ static int Receive_mind(int ind)
 
 	if (connp->id != -1)
 	{
-		change_mind(player);
+		change_mind(player, TRUE);
 		return 2;
 	}
 	return 1;
@@ -9432,12 +9436,16 @@ static int Receive_cloak(int ind) {
 	return 1;
 }
 
-void change_mind(int Ind) {
+void change_mind(int Ind, bool open_or_close) {
 	int Ind2;
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	bool d = TRUE;
 
-	if ((Ind2 = get_esp_link(Ind, 0x0, &p_ptr2))) {
+	/* 'hidden link' is unaffected by 'passive' change_mind() calls */
+	if ((p_ptr->esp_link_flags & LINKF_HIDDEN) && !open_or_close) return;
+
+	if ((Ind2 = get_esp_link(Ind, 0x0, &p_ptr2)) &&
+	    !(p_ptr->esp_link_flags & LINKF_HIDDEN)) {
 		if (p_ptr->esp_link_type == LINK_DOMINATED) {
 			if (!p_ptr->esp_link_end) {
 				p_ptr->esp_link_end = rand_int(6) + 15;

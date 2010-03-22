@@ -37,19 +37,23 @@ bool init_s_info()
 /*
  * Initialize a skill with given values
  */
-void init_skill(player_type *p_ptr, u32b value, s16b mod, int i)
-{
+void init_skill(player_type *p_ptr, u32b value, s16b mod, int i) {
+        p_ptr->s_info[i].base_value = value;
         p_ptr->s_info[i].value = value;
         p_ptr->s_info[i].mod = mod;
+	p_ptr->s_info[i].touched = TRUE;
+#if 0 //SMOOTHSKILLS
         if (s_info[i].flags1 & SKF1_HIDDEN)
 		p_ptr->s_info[i].hidden = TRUE;
         else
 		p_ptr->s_info[i].hidden = FALSE;
-	p_ptr->s_info[i].touched = TRUE;
         if (s_info[i].flags1 & SKF1_DUMMY)
 		p_ptr->s_info[i].dummy = TRUE;
         else
 		p_ptr->s_info[i].dummy = FALSE;
+#else
+	p_ptr->s_info[i].flags1 = (char)(s_info[i].flags1 & 0xFF);
+#endif
 }
 
 /*
@@ -660,9 +664,7 @@ void increase_skill(int Ind, int i)
 	/* The skill is already maxed */
 	/* Some extra ability skills don't go over 1 ('1' meaning 'learnt') */
 	if ((p_ptr->s_info[i].value >= SKILL_MAX) ||
-	    ((p_ptr->s_info[i].value >= 1000) &&
-	    ((i == SKILL_CLIMB) || (i == SKILL_FLY) ||
-	    (i == SKILL_FREEACT) || (i == SKILL_RESCONF))))
+	    ((p_ptr->s_info[i].flags1 & SKF1_MAX_1) && (p_ptr->s_info[i].value >= 1000)))
 	{
 		Send_skill_info(Ind, i);
 		return;
@@ -690,9 +692,7 @@ void increase_skill(int Ind, int i)
 	if (p_ptr->s_info[i].value >= SKILL_MAX) p_ptr->s_info[i].value = SKILL_MAX;
 
 	/* extra abilities cap at 1000 */
-	if ((p_ptr->s_info[i].value >= 1000) &&
-	    ((i == SKILL_CLIMB) || (i == SKILL_FLY) ||
-	    (i == SKILL_FREEACT) || (i == SKILL_RESCONF)))
+	if ((p_ptr->s_info[i].flags1 & SKF1_MAX_1) && (p_ptr->s_info[i].value >= 1000))
 		p_ptr->s_info[i].value = 1000;
 
 	/* Increase the skill */
@@ -893,9 +893,7 @@ void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 			else color = TERM_ORANGE;
 		}
 		else if ((s_info[i].value == SKILL_MAX) ||
-			((s_info[i].value == 1000) &&
-	    		((i == SKILL_CLIMB) || (i == SKILL_FLY) ||
-			(i == SKILL_FREEACT) || (i == SKILL_RESCONF))))
+			((s_info[i].flags1 & SKF1_MAX_1) && (s_info[i].value == 1000)))
 			color = TERM_L_BLUE;
 
 		if (s_info[i].hidden) color = TERM_L_RED;
@@ -1702,8 +1700,10 @@ static s32b modified_by_related(player_type *p_ptr, int i) {
 			jv = 0; jm = 0;
 			compute_skills(p_ptr, &jv, &jm, j);
 			/* calc amount of points the user spent into the increasing skill */
-			if (jm)
-				points = (p_ptr->s_info[j].value - jv - modified_by_related(p_ptr, j)) / jm;
+//			if (jm)
+			if (p_ptr->s_info[j].mod)
+//				points = (p_ptr->s_info[j].value - p_ptr->s_info[j].base_value - modified_by_related(p_ptr, j)) / jm;
+				points = (p_ptr->s_info[j].value - p_ptr->s_info[j].base_value - modified_by_related(p_ptr, j)) / p_ptr->s_info[j].mod;
 			else
 				points = 0;
 			/* calc and stack up amount of the increase that skill 'i' experienced by that */
@@ -1739,8 +1739,9 @@ static s32b modified_by_related(player_type *p_ptr, int i) {
    'optimize' the skill point spending for the users. It can't return
    more points than the user actually could spend in an 'ideal skill chart'.
    So it wouldn't hurt really, if we allow this to correct any waste
-   of skill points the user did. - C. Blue */
-void respec_skill(int Ind, int i) {
+   of skill points the user did. - C. Blue
+   update_skills: Change base values and base mods to up-to-date values. */
+void respec_skill(int Ind, int i, bool update_skill) {
 	player_type *p_ptr = Players[Ind];
 	int j;
 	s32b v = 0, m = 0; /* base starting skill value, skill modifier */
@@ -1753,7 +1754,7 @@ void respec_skill(int Ind, int i) {
 	/* Calculate amount of 'manual increase' to this skill.
 	   Manual meaning either direct increases or indirect
 	   increases from related skills. */
-	real_user_increase = p_ptr->s_info[i].value - v;
+	real_user_increase = p_ptr->s_info[i].value - p_ptr->s_info[i].base_value;
 	/* Now get rid of amount of indirect increases we got
 	   from related skills. */
 	real_user_increase = real_user_increase - modified_by_related(p_ptr, i); /* recursive */
@@ -1762,7 +1763,11 @@ void respec_skill(int Ind, int i) {
 	   various other skills -> would end at -1.000) */
 	if (real_user_increase < 0) real_user_increase = 0;
 	/* calculate skill points spent into this skill */
-	spent_points = real_user_increase / m;
+//	spent_points = real_user_increase / m;
+	if (p_ptr->s_info[i].mod)
+		spent_points = real_user_increase / p_ptr->s_info[i].mod;
+	else
+		spent_points = 0;
 
 	/* modify related skills */
 	for (j = 1; j < MAX_SKILLS; j++)
@@ -1776,7 +1781,8 @@ void respec_skill(int Ind, int i) {
 			jv = 0; jm = 0;
 			compute_skills(p_ptr, &jv, &jm, j);
 			/* Turn it on again (!) */
-			p_ptr->s_info[j].value = jv;
+//			p_ptr->s_info[j].value = jv;
+			p_ptr->s_info[j].value = p_ptr->s_info[j].base_value;
 		} else { /* Non-exclusive skills */
 			/* Decrease with a % */
 			val = p_ptr->s_info[j].value -
@@ -1786,10 +1792,11 @@ void respec_skill(int Ind, int i) {
 			if (val < 0) val = 0;
 			/* It cannot exceed SKILL_MAX */
 			if (val > SKILL_MAX) val = SKILL_MAX;
+			if ((p_ptr->s_info[j].flags1 & SKF1_MAX_1) && (val > 1000)) val = 1000;
 
 			/* Save the modified value */
 			p_ptr->s_info[j].value = val;
-			
+
 			/* Update the client */
 			Send_skill_info(Ind, j);
 		}
@@ -1801,6 +1808,12 @@ void respec_skill(int Ind, int i) {
 	/* Free the points, making them available */
 	p_ptr->skill_points += spent_points;
 
+	if (update_skill) { /* hack: fix skill.mod */
+		p_ptr->s_info[i].mod = m;
+		p_ptr->s_info[i].value = v;
+		p_ptr->s_info[i].base_value = v;
+	}
+
 	/* Update the client */
 	calc_techniques(Ind);
 	Send_skill_info(Ind, i);
@@ -1811,8 +1824,9 @@ void respec_skill(int Ind, int i) {
 	p_ptr->redraw |= (PR_SKILLS | PR_PLUSSES);
 }
 
-/* Complete skill-chart reset (full respec) - C. Blue */
-void respec_skills(int Ind) {
+/* Complete skill-chart reset (full respec) - C. Blue
+   update_skill: Change base value and base mod to up-to-date values. */
+void respec_skills(int Ind, bool update_skills) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 	s32b v, m; /* base starting skill value, skill modifier */
@@ -1820,9 +1834,14 @@ void respec_skills(int Ind) {
 	/* Remove the points, ie set skills to its starting base values again */
 	for (i = 1; i < MAX_SKILLS; i++) {
 		v = 0; m = 0;
-		compute_skills(p_ptr, &v, &m, i);
-		p_ptr->s_info[i].value = v;
-		p_ptr->s_info[i].mod = m;
+		if (update_skills) {
+			compute_skills(p_ptr, &v, &m, i);
+			p_ptr->s_info[i].base_value = v;
+			p_ptr->s_info[i].value = v;
+			p_ptr->s_info[i].mod = m;
+		} else {
+			p_ptr->s_info[i].value = p_ptr->s_info[i].base_value;
+		}
 		/* Update the client */
 		Send_skill_info(Ind, i);
 	}
@@ -1851,7 +1870,7 @@ int invested_skill_points(int Ind, int i) {
 	/* Calculate amount of 'manual increase' to this skill.
 	   Manual meaning either direct increases or indirect
 	   increases from related skills. */
-	real_user_increase = p_ptr->s_info[i].value - v;
+	real_user_increase = p_ptr->s_info[i].value - p_ptr->s_info[i].base_value;
 	/* Now get rid of amount of indirect increases we got
 	   from related skills. */
 	real_user_increase = real_user_increase - modified_by_related(p_ptr, i); /* recursive */

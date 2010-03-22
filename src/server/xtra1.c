@@ -120,7 +120,7 @@ s16b modify_stat_value(int value, int amount)
 static void prt_stat(int Ind, int stat)
 {	
 	player_type *p_ptr = Players[Ind];
-	Send_stat(Ind, stat, p_ptr->stat_top[stat], p_ptr->stat_use[stat], p_ptr->stat_ind[stat], p_ptr->stat_cur[stat]);
+	Send_stat(Ind, stat, p_ptr->stat_top[stat], p_ptr->stat_use[stat], p_ptr->stat_ind[stat], p_ptr->stat_max[stat]);
 }
 
 
@@ -3982,6 +3982,7 @@ void calc_boni(int Ind)
 		/* damage from sun light */
 		if (!p_ptr->wpos.wz && !night_surface && //!(zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY) &&
 		    !p_ptr->resist_lite && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_WRAPPING) &&
+//		    !(p_ptr->inventory[INVEN_NECK].k_idx && p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_HIGHLANDS2) &&
 		    !(zcave[p_ptr->py][p_ptr->px].info & CAVE_PROT) &&
 		    !(f_info[zcave[p_ptr->py][p_ptr->px].feat].flags1 & FF1_PROTECTED)) {
 			p_ptr->drain_life++;
@@ -4298,21 +4299,21 @@ void calc_boni(int Ind)
 	/* -APD- adding "stealth mode" for rogues... will probably need to tweek this */
 	/* XXX this can be out of place; maybe better done
 	 * after skill bonuses are added?	- Jir - */
-	if (p_ptr->searching) 
-	{
+	if (p_ptr->searching) {
 		int stealth = get_skill(p_ptr, SKILL_STEALTH);
 		int sneakiness = get_skill(p_ptr, SKILL_SNEAKINESS);
-//		p_ptr->pspeed -= 10;
 		p_ptr->pspeed -= 10 - sneakiness / 7;
-
-		if (stealth >= 10)
-		{
+#if 1
+		if (stealth >= 10) {
 //			p_ptr->skill_stl *= 3;
-			p_ptr->skill_stl = p_ptr->skill_stl * stealth / 10;
+//			p_ptr->skill_stl = p_ptr->skill_stl * stealth / 10;
+			p_ptr->skill_stl = p_ptr->skill_stl + stealth / 10;
 		}
-		if (sneakiness >= 10)
-		{
-			p_ptr->skill_srh = p_ptr->skill_srh * sneakiness / 10;
+#endif
+		if (sneakiness >= 0) {
+			/* prevent TLs from getting glitched abysmal stealth here.. */
+			if (p_ptr->skill_srh >= 0) p_ptr->skill_srh = (p_ptr->skill_srh * (sneakiness + 50)) / 50;
+//			p_ptr->skill_srh = p_ptr->skill_srh + sneakiness / 3;
 //			p_ptr->skill_fos = p_ptr->skill_fos * sneakiness / 10;
 		}
 	}
@@ -5543,21 +5544,21 @@ void calc_boni(int Ind)
 				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
 				break;
 			case 1: p_ptr->weapon_parry = (p_ptr->weapon_parry * 12) / 10;
-				p_ptr->dis_to_d = (p_ptr->dis_to_d * 6) / 10;
-				p_ptr->to_d = (p_ptr->to_d * 6) / 10;
-				p_ptr->to_d_melee = (p_ptr->to_d_melee * 6) / 10;
+				p_ptr->dis_to_d = (p_ptr->dis_to_d * 5) / 10;
+				p_ptr->to_d = (p_ptr->to_d * 5) / 10;
+				p_ptr->to_d_melee = (p_ptr->to_d_melee * 5) / 10;
 				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
 				break;
 			case 2: p_ptr->weapon_parry = (p_ptr->weapon_parry * 13) / 10;
-				p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
-				p_ptr->to_d = (p_ptr->to_d * 7) / 10;
-				p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
+				p_ptr->dis_to_d = (p_ptr->dis_to_d * 5) / 10;
+				p_ptr->to_d = (p_ptr->to_d * 5) / 10;
+				p_ptr->to_d_melee = (p_ptr->to_d_melee * 5) / 10;
 				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
 				break;
 			case 3: p_ptr->weapon_parry = (p_ptr->weapon_parry * 17) / 10;
-				p_ptr->dis_to_d = (p_ptr->dis_to_d * 8) / 10;
-				p_ptr->to_d = (p_ptr->to_d * 8) / 10;
-				p_ptr->to_d_melee = (p_ptr->to_d_melee * 8) / 10;
+				p_ptr->dis_to_d = (p_ptr->dis_to_d * 5) / 10;
+				p_ptr->to_d = (p_ptr->to_d * 5) / 10;
+				p_ptr->to_d_melee = (p_ptr->to_d_melee * 5) / 10;
 				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
 				break;
 		}
@@ -6038,7 +6039,7 @@ void update_stuff(int Ind)
                         if (s_info[i].name && p_ptr->s_info[i].touched)
                         {
                                 Send_skill_info(Ind, i);
-				p_ptr->s_info[i].touched=FALSE;
+				p_ptr->s_info[i].touched = FALSE;
                         }
                 }
 		Send_skill_points(Ind);
@@ -6518,8 +6519,11 @@ int start_global_event(int Ind, int getype, char *parm)
 		strcpy(ge->description[1], " You're teleported into a dungeon and you have 10 minutes to level up. ");
 		strcpy(ge->description[2], " After that, everyone will meet under the sky for a bloody slaughter.  ");
 		strcpy(ge->description[3], " Add amulets of defeated opponents to yours to increase its power!     ");
-		strcpy(ge->description[4], " HINT: Buy your equipment BEFORE it starts. Or you'll go naked.        ");
-		strcpy(ge->description[5], " HINT: Make sure that you don't gain any experience until it starts.   ");
+		strcpy(ge->description[4], " Hints: When it starts you receive an amulet, don't forget to wear it! ");
+		strcpy(ge->description[5], "        Buy your equipment BEFORE it starts. Or you'll go naked.       ");
+		strcpy(ge->description[6], " Rules: Make sure that you don't gain ANY experience until it starts.  ");
+		strcpy(ge->description[7], "        Also, you aren't allowed to pick up ANY gold/items from another");
+		strcpy(ge->description[8], "        player before the tournament begins!                           ");
 		ge->end_turn = ge->start_turn + cfg.fps * 60 * 90 ; /* 90 minutes max. duration,
 								most of the time is just for announcing it
 								so players will sign on via /gesign <n> */
@@ -6604,7 +6608,7 @@ void stop_global_event(int Ind, int n){
 	global_event_type *ge = &global_event[n];
 	msg_format(Ind, "Wiping event #%d of type %d.", n+1, ge->getype);
 	s_printf("%s EVENT_STOP: #%d of type %d\n", showtime(), n+1, ge->getype);
-	if (ge->getype) msg_broadcast(0, format("\377y[Event '%s' (%d) was cancelled.]", ge->title, n+1));
+	if (ge->getype) msg_broadcast_format(0, "\377y[Event '%s' (%d) was cancelled.]", ge->title, n+1);
 #if 0
 	ge->getype = GE_NONE;
 	for (i = 1; i <= NumPlayers; i++) Players[i]->global_event_type[n] = GE_NONE;
@@ -6620,13 +6624,13 @@ void announce_global_event(int ge_id) {
 	int time_left = ge->announcement_time - ((turn - ge->start_turn) / cfg.fps);
 
 	/* display minutes, if at least 120s left */
-	if (time_left >= 120) msg_broadcast(0, format("\377W[%s (%d) starts in %d minutes]", ge->title, ge_id+1, time_left / 60));
+	if (time_left >= 120) msg_broadcast_format(0, "\377W[%s (%d) starts in %d minutes]", ge->title, ge_id+1, time_left / 60);
 	/* otherwise just seconds */
-	else msg_broadcast(0, format("\377W[%s (%d) starts in %d seconds!]", ge->title, ge_id+1, time_left));
+	else msg_broadcast_format(0, "\377W[%s (%d) starts in %d seconds!]", ge->title, ge_id+1, time_left);
 
 	/* display additional commands on first advertisement */
 	if (ge->first_announcement) {
-		msg_broadcast(0, format("\377WType '/geinfo %d' and '/gesign %d' to learn more or to sign up.", ge_id+1, ge_id+1));
+		msg_broadcast_format(0, "\377WType '/geinfo %d' and '/gesign %d' to learn more or to sign up.", ge_id+1, ge_id+1);
 		ge->first_announcement = FALSE;
 	}
 }
@@ -6778,7 +6782,7 @@ void global_event_signup(int Ind, int n, cptr parm){
 			ge->extra[1] = r_found;
 #ifndef GE_ARENA_ALLOW_EGO
 			monster_race_desc(0, c, r_found, 0x88);
-			msg_broadcast(0, format("\374\377c** %s challenges %s! **", p_ptr->name, c));
+			msg_broadcast_format(0, "\376\377c** %s challenges %s! **", p_ptr->name, c);
 #else
 			ge->extra[3] = re_found;
 			ge->extra[5] = Ind;
@@ -6812,7 +6816,7 @@ void global_event_signup(int Ind, int n, cptr parm){
 	   However, player_type has MAX_GLOBAL_EVENTS sized data arrays for each event, so a player *could*
 	   theoretically participate in all events at once at this time.. */
 	msg_format(Ind, "\377c>>You signed up for %s!<<", ge->title);
-	msg_broadcast(Ind, format("\377s%s signed up for %s", p_ptr->name, ge->title));
+	msg_broadcast_format(Ind, "\377s%s signed up for %s", p_ptr->name, ge->title);
 	ge->participant[p] = p_ptr->id;
 	p_ptr->global_event_type[n] = ge->getype;
 	time(&p_ptr->global_event_signup[n]);
@@ -6872,7 +6876,7 @@ static void process_global_event(int ge_id)
 				}
 				/* enough participants? Don't hand out reward for free to someone. */
 				if (ge->min_participants && (participants < ge->min_participants)) {
-					msg_broadcast(0, format("\377y%s needs at least %d participants.", ge->title, ge->min_participants));
+					msg_broadcast_format(0, "\377y%s needs at least %d participants.", ge->title, ge->min_participants);
 					s_printf("%s EVENT_NOPLAYERS: %d (%s) has only %d/%d participants.\n", showtime(), ge_id+1, ge->title, participants, ge->min_participants);
 					/* remove players who DID sign up from being 'participants' */
 					for (j = 1; j <= NumPlayers; j++)
@@ -6880,7 +6884,7 @@ static void process_global_event(int ge_id)
 							Players[j]->global_event_type[ge_id] = GE_NONE;
 					ge->getype = GE_NONE;
 				} else {
-					msg_broadcast(0, format("\377C[>>%s starts now!<<]", ge->title));
+					msg_broadcast_format(0, "\377C[>>%s starts now!<<]", ge->title);
 				}
 			}
 		} else {
@@ -6893,7 +6897,7 @@ static void process_global_event(int ge_id)
 	    (ge->ending && now >= ge->ending)) {
 		timeout = TRUE; /* d'oh */
 		ge->state[0] = 255; /* state[0] is used as indicator for clean-up phase of any event */
-		msg_broadcast(0, format("\377y>>%s ends due to time limit!<<", ge->title));
+		msg_broadcast_format(0, "\377y>>%s ends due to time limit!<<", ge->title);
 		s_printf("%s EVENT_TIMEOUT: %d - %s.\n", showtime(), ge_id+1, ge->title);
 	}
 	/* Time warning at T-5minutes! (only if the whole event lasts MORE THAN 10 minutes) */
@@ -6901,7 +6905,7 @@ static void process_global_event(int ge_id)
 	if ((ge->end_turn && ge->end_turn - ge->start_turn - ge->paused_turns > 600 * cfg.fps && turn - ge->paused_turns == ge->end_turn - 300 * cfg.fps) ||
 	    /* However, paused turns will be ignored if the event end is given as absolute time! */
 	    (!ge->end_turn && ge->ending && ge->ending - ge->started > 600 && now == ge->ending - 360)) {
-		msg_broadcast(0, format("\377y[%s comes to an end in 6 more minutes!]", ge->title));
+		msg_broadcast_format(0, "\377y[%s comes to an end in 6 more minutes!]", ge->title);
 	}
 
 	/* Event is running! Process its stages... */
@@ -7178,7 +7182,7 @@ static void process_global_event(int ge_id)
 			if (j <= NumPlayers) { /* Make sure the winner didn't die in the 1 turn that just passed! */
 			    p_ptr = Players[j];
 			    if (!p_ptr->wpos.wx && !p_ptr->wpos.wy) { /* ok then.. */
-				msg_broadcast(0, format("\374\377a>>%s wins %s!<<", p_ptr->name, ge->title));
+				msg_broadcast_format(0, "\374\377a>>%s wins %s!<<", p_ptr->name, ge->title);
 				if (!p_ptr->max_exp) gain_exp(j, 1); /* may only take part in one tournament per char */
 
 				/* don't create a actual reward here, but just a signed deed that can be turned in (at mayor's office)! */
@@ -7307,7 +7311,7 @@ static void process_global_event(int ge_id)
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
 			wipe_o_list_safely(&wpos); /* and objects too */
 			ge->state[0] = 1;
-			msg_broadcast(0, format("\377WType '/geinfo %d' and '/gesign %d' to learn more or to sign up.", ge_id+1, ge_id+1));
+			msg_broadcast_format(0, "\377WType '/geinfo %d' and '/gesign %d' to learn more or to sign up.", ge_id+1, ge_id+1);
 			break;
 		case 1: /* running - not much to do here actually :) it's all handled by global_event_signup */
 			if (ge->extra[1]) { /* new challenge to process? */
@@ -7326,7 +7330,7 @@ static void process_global_event(int ge_id)
 				while (!(m_idx = summon_detailed_one_somewhere(&wpos, ge->extra[1], ge->extra[3], FALSE, 101))
 				    && (++tries < 1000));
 				monster_desc(0, m_name, m_idx, 0x08);
-				msg_broadcast(0, format("\374\377c** %s challenges %s! **", Players[ge->extra[5]]->name, m_name));
+				msg_broadcast_format(0, "\376\377c** %s challenges %s! **", Players[ge->extra[5]]->name, m_name);
 #endif
 				summon_override_checks = SO_NONE;
 
@@ -7374,7 +7378,7 @@ static void process_global_event(int ge_id)
 	
 	/* Check for end of event */
 	if (ge->getype == GE_NONE) {
-		msg_broadcast(0, format("\377s[%s has ended]", ge->title));
+		msg_broadcast_format(0, "\377s[%s has ended]", ge->title);
 		s_printf("%s EVENT_END: %d - '%s'.\n", showtime(), ge_id+1, ge->title);
 	}
 }

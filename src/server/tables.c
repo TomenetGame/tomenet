@@ -1544,6 +1544,11 @@ player_race race_info[MAX_RACES] =
                                 '+', 50,
                         },
                         {
+                                SKILL_SWIM,
+                                '+', 0,
+                                '+', 50,
+                        },
+                        {
                                 SKILL_SHOOT_TILL_KILL,
                                 '+', 1000,
                                 '+', 0,
@@ -1579,6 +1584,11 @@ player_race race_info[MAX_RACES] =
                                 SKILL_CLIMB,
                                 '+', 0,
                                 '+', 40,
+                        },
+                        {
+                                SKILL_SWIM,
+                                '+', 0,
+                                '+', 50,
                         },
                         {
                                 SKILL_SHOOT_TILL_KILL,
@@ -1644,6 +1654,11 @@ player_race race_info[MAX_RACES] =
                                 '+', 40,
                         },
                         {
+                                SKILL_SWIM,
+                                '+', 0,
+                                '+', 50,
+                        },
+                        {
                                 SKILL_SHOOT_TILL_KILL,
                                 '+', 1000,
                                 '+', 0,
@@ -1694,6 +1709,11 @@ player_race race_info[MAX_RACES] =
                                 '+', 40,
                         },
                         {
+                                SKILL_SWIM,
+                                '+', 0,
+                                '+', 50,
+                        },
+                        {
                                 SKILL_SHOOT_TILL_KILL,
                                 '+', 1000,
                                 '+', 0,
@@ -1742,6 +1762,11 @@ player_race race_info[MAX_RACES] =
                                 '+', 40,
                         },
                         {
+                                SKILL_SWIM,
+                                '+', 0,
+                                '+', 50,
+                        },
+                        {
                                 SKILL_SHOOT_TILL_KILL,
                                 '+', 1000,
                                 '+', 0,
@@ -1778,6 +1803,11 @@ player_race race_info[MAX_RACES] =
                                 SKILL_CLIMB,
                                 '+', 0,
                                 '+', 60,
+                        },
+                        {
+                                SKILL_SWIM,
+                                '+', 0,
+                                '+', 40,
                         },
                         {
                                 SKILL_SHOOT_TILL_KILL,
@@ -1842,6 +1872,11 @@ player_race race_info[MAX_RACES] =
                                 '+', 40,
                         },
                         {
+                                SKILL_SWIM,
+                                '+', 0,
+                                '+', 40,
+                        },
+                        {
                                 SKILL_SHOOT_TILL_KILL,
                                 '+', 1000,
                                 '+', 0,
@@ -1876,8 +1911,8 @@ player_race race_info[MAX_RACES] =
                         },
                         {
                                 SKILL_SWIM,
-                                '+', 2000,
-                                '%', 120,
+                                '+', 0,
+                                '%', 80,
                         },
                         /* Not banned, but *hard* */
                         {
@@ -1892,6 +1927,11 @@ player_race race_info[MAX_RACES] =
                         },
                         {
                                 SKILL_CLIMB,
+                                '+', 0,
+                                '+', 40,
+                        },
+                        {
+                                SKILL_SWIM,
                                 '+', 0,
                                 '+', 40,
                         },
@@ -1936,6 +1976,11 @@ player_race race_info[MAX_RACES] =
                                 SKILL_CLIMB,
                                 '+', 0,
                                 '+', 40,
+                        },
+                        {
+                                SKILL_SWIM,
+                                '+', 0,
+                                '+', 60,
                         },
                         {
                                 SKILL_SHOOT_TILL_KILL,
@@ -2003,6 +2048,11 @@ player_race race_info[MAX_RACES] =
                                 '+', 40,
                         },
                         {
+                                SKILL_SWIM,
+                                '+', 0,
+                                '+', 60,
+                        },
+                        {
                                 SKILL_SHOOT_TILL_KILL,
                                 '+', 1000,
                                 '+', 0,
@@ -2028,6 +2078,11 @@ player_race race_info[MAX_RACES] =
                                 SKILL_CLIMB,
                                 '+', 0,
                                 '+', 40,
+                        },
+                        {
+                                SKILL_SWIM,
+                                '+', 0,
+                                '+', 60,
                         },
                         {
                                 SKILL_SHOOT_TILL_KILL,
@@ -2068,6 +2123,11 @@ player_race race_info[MAX_RACES] =
                                 SKILL_CLIMB,
                                 '+', 0,
                                 '+', 40,
+                        },
+                        {
+                                SKILL_SWIM,
+                                '+', 0,
+                                '+', 50,
                         },
                         {
                                 SKILL_SHOOT_TILL_KILL,
@@ -2135,6 +2195,11 @@ player_race race_info[MAX_RACES] =
                                 '+', 40,
                         },
                         {
+                                SKILL_SWIM,
+                                '+', 0,
+                                '%', 0,
+                        },
+                        {
                                 SKILL_SHOOT_TILL_KILL,
                                 '+', 1000,
                                 '+', 0,
@@ -2182,6 +2247,11 @@ player_race race_info[MAX_RACES] =
                                 SKILL_CLIMB,
                                 '+', 0,
                                 '+', 40,
+                        },
+                        {
+                                SKILL_SWIM,
+                                '+', 0,
+                                '+', 60,
                         },
                         {
                                 SKILL_SHOOT_TILL_KILL,
@@ -2235,6 +2305,11 @@ player_race race_info[MAX_RACES] =
                                 SKILL_CLIMB,
                                 '+', 0,
                                 '+', 40,
+                        },
+                        {
+                                SKILL_SWIM,
+                                '+', 0,
+                                '+', 50,
                         },
                         {
                                 SKILL_SHOOT_TILL_KILL,
@@ -2346,6 +2421,11 @@ player_race race_info[MAX_RACES] =
                         },
                         {
                                 SKILL_CLIMB,
+                                '+', 0,
+                                '+', 40,
+                        },
+                        {
+                                SKILL_SWIM,
                                 '+', 0,
                                 '+', 40,
                         },
@@ -2613,6 +2693,11 @@ Only 70%-ify the skills that could potentially be updated when the player mutate
                                 '+', 40,
                         },
                         {
+                                SKILL_SWIM,
+                                '+', 0,
+                                '%', 0,
+                        },
+                        {
                                 SKILL_SHOOT_TILL_KILL,
                                 '+', 1000,
                                 '+', 0,
@@ -2704,7 +2789,7 @@ player_class class_info[MAX_CLASS] =
                 "Warrior",
                 TERM_UMBER,
 		{ 5, -2, -2, 2, 2, -1},
-		{ 21+100, 0, 0, 0+100, 0, 0},
+		{ 22+100, 0, 0, 0+100, 0, 0},
 		20, 18, 18, 1,  14, 2, 70, 55,
 		10, 7,  10, 0,  0,  0,  45, 45,
 		10, 0,//6,  10,//9, 10,
@@ -2854,8 +2939,8 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_SWIM,
-                                '+', 1000,
-                                '+', 1400,
+                                '+', 0,
+                                '%', 120,
                         },
 #if 0
                         {
@@ -2939,11 +3024,6 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_CALMNESS,
                                 '+', 0,
                                 '+', 800,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 1000,
-                                '+', 600,
                         },
 #if 0
                         {
@@ -3170,11 +3250,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 1000,
                         },
-                        {
-                                SKILL_SWIM,
-                                '+', 1000,
-                                '+', 1100,
-                        },
 #if 0
                         {
                                 SKILL_TRAINING,
@@ -3391,8 +3466,8 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_SWIM,
-                                '+', 1000,
-                                '+', 1200,
+                                '+', 0,
+                                '%', 120,
                         },
 #if 0
                         {
@@ -3569,11 +3644,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 900,
                         },
                         {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '+', 900,
-                        },
-                        {
                                 SKILL_DIG,
                                 '+', 0,
                                 '+', 1200,
@@ -3722,11 +3792,6 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_HEALTH,
                                 '+', 1000,
                                 '+', 1000,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 1000,
-                                '+', 1200,
                         },
 #if 0
                         {
@@ -3901,11 +3966,6 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_HEALTH,
                                 '+', 2000,
                                 '+', 1000,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 1000,
-                                '+', 900,
                         },
 #if 0
                         {
@@ -4167,8 +4227,8 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_SWIM,
-                                '+', 1000,
-                                '+', 1400,
+                                '+', 0,
+                                '%', 120,
                         },
 #if 0
                         {
@@ -4565,8 +4625,8 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_SWIM,
-                                '+', 1000,
-                                '+', 1250,
+                                '+', 0,
+                                '%', 140,
                         },
 #if 0
                         {
@@ -4731,8 +4791,8 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_SWIM,
-                                '+', 1000,
-                                '+', 1400,
+                                '+', 0,
+                                '%', 120,
                         },
 #if 0
                         {
@@ -4974,11 +5034,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 1000,
                         },
-                        {
-                                SKILL_SWIM,
-                                '+', 1000,
-                                '+', 1000,
-                        },
 #if 0
                         {
                                 SKILL_TRAINING,
@@ -5180,11 +5235,6 @@ player_class class_info[MAX_CLASS] =
                         /* Health tree */
                         {
                                 SKILL_HEALTH,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_SWIM,
                                 '+', 1000,
                                 '+', 1000,
                         },
@@ -5421,7 +5471,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SWIM,
                                 '+', 0,
-                                '+', 900,
+                                '%', 110,
                         },
                         {
                                 SKILL_DIG,
@@ -5440,7 +5490,8 @@ player_class class_info[MAX_CLASS] =
                 TERM_SLATE,
 //		{ -1, 3, 0, -1, -1, 1},
 		{ 0, 2, 0, 0, 0, 1},
-		{21+100, 0+100, 0, 19+100, 0, 0},
+//		{21+100, 0+100, 0, 19+100, 0, 0}, 18/30;10 pretty unreachable with {0,2,0,0,0,1}
+		{19+100, 0+100, 0, 10+100, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
@@ -5604,11 +5655,6 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_HEALTH,
                                 '+', 1000,
                                 '+', 1000,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 1000,
-                                '+', 900,
                         },
 #if 0
                         {

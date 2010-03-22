@@ -731,6 +731,7 @@ extern void alloc_dungeon_level(struct worldpos *wpos);
 extern void dealloc_dungeon_level(struct worldpos *wpos);
 extern void generate_cave(struct worldpos *wpos, player_type *p_ptr);
 extern bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, player_type *p_ptr);
+extern void place_fountain(struct worldpos *wpos, int y, int x);
 
 extern void place_floor(worldpos *wpos, int y, int x);
 extern void place_floor_live(worldpos *wpos, int y, int x);
@@ -894,7 +895,7 @@ extern int Send_stamina(int Ind, int mst, int cst);
 extern int Send_sp(int Ind, int msp, int csp);
 extern int Send_char_info(int Ind, int race, int class, int sex, int mode);
 extern int Send_various(int ind, int hgt, int wgt, int age, int sc, cptr body);
-extern int Send_stat(int Ind, int stat, int max, int cur, int s_ind, int cur_base);
+extern int Send_stat(int Ind, int stat, int max, int cur, int s_ind, int max_base);
 extern int Send_history(int Ind, int line, cptr hist);
 extern int Send_inven(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, s16b pval, cptr name);
 extern int Send_inven_wide(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, s16b pval,
@@ -963,7 +964,7 @@ extern void init_players(void);
 extern int is_inactive(int Ind);
 
 extern int Send_extra_status(int Ind, cptr status);
-extern void change_mind(int Ind);
+extern void change_mind(int Ind, bool open_or_close);
 
 
 
@@ -1490,7 +1491,7 @@ extern void do_benchmark(int Ind);
 #if (MAX_PING_RECVS_LOGGED > 0)
 extern cptr timediff(struct timeval *begin, struct timeval *end);
 #endif
-
+extern void strip_control_codes(char *ss, char *s);
 
 /* xtra1.c */
 extern void cnv_stat(int val, char *out_val);
@@ -1722,8 +1723,8 @@ extern s16b get_skill_scale_fine(player_type *p_ptr, int skill, u32b scale);
 extern void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i);
 extern s16b find_skill(cptr name);
 extern void msg_gained_abilities(int Ind, int old_value, int i);
-extern void respec_skill(int Ind, int i);
-extern void respec_skills(int Ind);
+extern void respec_skill(int Ind, int i, bool update_skill);
+extern void respec_skills(int Ind, bool update_skills);
 extern int invested_skill_points(int Ind, int i);
 
 /* hooks.c */
@@ -1865,3 +1866,7 @@ extern r_spell runespell_list[RT_MAX];
 extern rspell_sel rspell_selector[MAX_RSPELL_SEL];
 #endif
 
+#ifdef MONSTER_ASTAR
+extern astar_list_open astar_info_open[ASTAR_MAX_INSTANCES];
+extern astar_list_closed astar_info_closed[ASTAR_MAX_INSTANCES];
+#endif

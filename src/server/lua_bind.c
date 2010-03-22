@@ -404,7 +404,7 @@ bool alloc_room(int by0, int bx0, int ysize, int xsize, int *y1, int *x1, int *y
 		for (x = *x1 - 1; x <= *x2 + 1; x++)
 		{
 			cave_type *c_ptr = &cave[y][x];
-			cave_set_feat(y, x, floor_type[rand_int(100)]);
+			cave_set_feat(y, x, floor_type[rand_int(1000)]);
 			c_ptr->info |= (CAVE_ROOM);
 			c_ptr->info |= (CAVE_GLOW);
 		}
@@ -867,15 +867,15 @@ void lua_set_floor_flags(int Ind, u32b flags) {
 s32b lua_get_skill_mod(int Ind, int i) {
 	s32b value = 0, mod = 0;
 	player_type *p_ptr = Players[Ind];
-	compute_skills(p_ptr, &value, &mod, i); 
+	compute_skills(p_ptr, &value, &mod, i);
 	return mod;
 }
 
 s32b lua_get_skill_value(int Ind, int i) {
 	s32b value = 0, mod = 0;
 	player_type *p_ptr = Players[Ind];
-	compute_skills(p_ptr, &value, &mod, i); 
-	return value; 
+	compute_skills(p_ptr, &value, &mod, i);
+	return value;
 }
 
 /* fix dual-wield slot position change */
@@ -972,6 +972,7 @@ void lua_fix_skill_chart(int Ind) {
 //	        compute_skills(p_ptr, &value, &mod, i);
 //	        init_skill(p_ptr, value, mod, i);
 		/* pseudo-init-skill */
+#if 0 //SMOOTH_SKILLS
 	        if (s_info[i].flags1 & SKF1_HIDDEN) {
 		        p_ptr->s_info[i].hidden = TRUE;
 	        } else {
@@ -982,6 +983,9 @@ void lua_fix_skill_chart(int Ind) {
 	        } else {
 	                p_ptr->s_info[i].dummy = FALSE;
 	        }
+#else
+		p_ptr->s_info[i].flags1 = (char)(s_info[i].flags1 & 0xFF);
+#endif
                 /* Develop only revelant branches */
                 if (p_ptr->s_info[i].value || p_ptr->s_info[i].mod) {
                         j = s_info[i].father;
@@ -992,6 +996,16 @@ void lua_fix_skill_chart(int Ind) {
                         }
                 }
         }
+
+	/* hack - fix SKILL_STANCE skill */
+	if (get_skill(p_ptr, SKILL_STANCE) && p_ptr->lev <= 50) {
+		p_ptr->s_info[SKILL_STANCE].value = p_ptr->lev * 1000;
+		/* Update the client */
+		Send_skill_info(Ind, SKILL_STANCE);
+		/* Also update the client's 'm' menu for fighting techniques */
+		calc_techniques(Ind);
+		Send_skill_info(Ind, SKILL_MASTERY);
+	}
 
         p_ptr->update |= PU_SKILL_INFO | PU_SKILL_MOD;
         update_stuff(Ind);

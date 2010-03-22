@@ -1590,7 +1590,7 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative)
 		return 0;
 	
 	if(check_antimagic(Ind))
-		return;
+		return 0;
 	
 	if(s_av<=0)
 	{

@@ -298,11 +298,11 @@ struct object_type
  */
 struct skill_player
 {
+	s32b base_value;                             /* Actual value */
 	s32b value;                             /* Actual value */
 	u16b mod;                               /* Modifier(1 skill point = modifier skill) */
 	bool dev;                               /* Is the branch developped ? */
-        bool hidden;                            /* Innactive */
-	bool dummy;                             /* Just for visuals */
+	char flags1;
 };
 
 struct version_type {	/* Extended version structure */
@@ -354,6 +354,8 @@ struct player_type
 	bool alive;		/* Are we alive */
 	bool death;		/* Have we died */
 	int deathblow;		/* How much damage the final blow afflicted */
+	u16b deaths;		/* how often we died / safely died */
+	u16b soft_deaths;
 	s16b ghost;		/* Are we a ghost */
 	s16b fruit_bat;		/* Are we a fruit bat */
 	byte lives;		/* number of times we have ressurected */
@@ -941,8 +943,8 @@ extern bool interfere(int Ind, int chance);
 extern void telekinesis_aux(int Ind, int item);
 extern void recall_player(int Ind, char *message);
 extern int apply_dodge_chance(int Ind, int attack_level);
-extern void respec_skill(int Ind, int i);
-extern void respec_skills(int Ind);
+extern void respec_skill(int Ind, int i, bool update_skill);
+extern void respec_skills(int Ind, bool update_skills);
 extern int invested_skill_points(int Ind, int i);
 
 extern int get_inven_sval(int Ind, int inven_slot);

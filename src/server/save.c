@@ -1213,11 +1213,33 @@ static void wr_extra(int Ind)
                 wr_s32b(p_ptr->s_info[i].value);
                 wr_u16b(p_ptr->s_info[i].mod);
                 wr_byte(p_ptr->s_info[i].dev);
+#if 0 //SMOOTHSKILLS
                 wr_byte(p_ptr->s_info[i].hidden);
                 wr_byte(p_ptr->s_info[i].dummy);
+#else
+		wr_byte(p_ptr->s_info[i].flags1);
+		wr_s32b(p_ptr->s_info[i].base_value);
+#endif
         }
 	wr_s16b(p_ptr->skill_points);
 //	wr_s16b(p_ptr->skill_last_level);
+
+	/* /undoskills - mikaelh */
+	for (i = 0; i < MAX_SKILLS; ++i)
+	{
+                wr_s32b(p_ptr->s_info_old[i].value);
+                wr_u16b(p_ptr->s_info_old[i].mod);
+                wr_byte(p_ptr->s_info_old[i].dev);
+#if 0 //SMOOTHSKILLS
+                wr_byte(p_ptr->s_info_old[i].hidden);
+                wr_byte(p_ptr->s_info_old[i].dummy);
+#else
+		wr_byte(p_ptr->s_info_old[i].flags1);
+		wr_s32b(p_ptr->s_info_old[i].base_value);
+#endif
+	}
+	wr_s16b(p_ptr->skill_points_old);
+	wr_byte(p_ptr->reskill_possible);
 
 	wr_s32b(p_ptr->id);
 	wr_u32b(p_ptr->dna);
@@ -1440,8 +1462,10 @@ static void wr_extra(int Ind)
 	wr_u16b(p_ptr->deaths);
 	wr_u16b(p_ptr->soft_deaths);
 
-	tmp16u = 0x0;
+	tmp16u = 0x0; /* atm unused, ehe */
 	wr_u16b(tmp16u); /* array of 'warnings' and hints aimed at newbies */
+
+	wr_string(p_ptr->info_msg);
 }
 
 /*

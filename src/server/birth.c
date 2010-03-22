@@ -1221,7 +1221,7 @@ static byte player_init[2][MAX_CLASS][5][3] =
 		{ TV_CLOAK, SV_CLOAK, 0 },
 		{ TV_AMULET, SV_AMULET_INFRA, 3 },
 		{ TV_POTION, SV_POTION_CURE_POISON, 0 },
-		{ TV_SWORD, SV_SHADOW_BLADE, 0 }, /* just a placeholder! */
+		{ TV_HELM, SV_CLOTH_CAP, 0 }, /* just a placeholder! */
 	},
 	{
 		/* Runemaster */
@@ -2376,7 +2376,15 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		p_ptr->mode |= MODE_FRUIT_BAT;
 	}
 #endif
-	
+
+#if 0
+	/* hack? disallow 'pvp mode' for new players? */
+	if (p_ptr->inval && (p_ptr->mode & MODE_PVP)) {
+		p_ptr->mode &= ~MODE_PVP;
+		msg_print(Ind, "Because you're a new, your mode has been changed from 'pvp' to 'normal'.");
+	}
+#endif
+
 	/* fix potential exploits */
 	if (p_ptr->mode & MODE_EVERLASTING) p_ptr->mode &= ~(MODE_HARD | MODE_NO_GHOST);
 	if (p_ptr->mode & MODE_PVP) p_ptr->mode &= ~(MODE_EVERLASTING | MODE_HARD | MODE_NO_GHOST | MODE_FRUIT_BAT);

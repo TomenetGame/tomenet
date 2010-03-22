@@ -1274,21 +1274,55 @@ static bool rd_extra(int Ind)
 			rd_byte(&tmp8u);
 			p_ptr->s_info[i].dev = tmp8u;
 			rd_byte(&tmp8u);
-			p_ptr->s_info[i].hidden = tmp8u;
-			p_ptr->s_info[i].touched = TRUE;
-			if (!older_than(4, 3, 17)) {
-				rd_byte(&tmp8u);
-				p_ptr->s_info[i].dummy = (tmp8u) ? TRUE : FALSE;
+			if (!older_than(4, 4, 3)) {
+				p_ptr->s_info[i].flags1 = tmp8u;
+				rd_s32b(&p_ptr->s_info[i].base_value);
 			} else {
-				p_ptr->s_info[i].dummy = FALSE;
+#if 0 //SMOOTHSKILLS
+				p_ptr->s_info[i].hidden = tmp8u;
+#else
+				if (tmp8u) p_ptr->s_info[i].flags1 |= SKF1_HIDDEN;
+#endif
+				if (!older_than(4, 3, 17)) {
+					rd_byte(&tmp8u);
+#if 0 //SMOOTHSKILLS
+					p_ptr->s_info[i].dummy = (tmp8u) ? TRUE : FALSE;
+#else
+					if (tmp8u) p_ptr->s_info[i].flags1 |= SKF1_DUMMY;
+#endif
+				} else {
+#if 0 //SMOOTHSKILLS
+					p_ptr->s_info[i].dummy = FALSE;
+#else
+					p_ptr->s_info[i].flags1 &= ~SKF1_DUMMY;
+#endif
+				}
 			}
+			p_ptr->s_info[i].touched = TRUE;
 		}
 		rd_s16b(&p_ptr->skill_points);
+
+		/* /undoskills - mikaelh */
+		if (!older_than(4, 4, 4)) {
+			for (i = 0; i < tmp16b; ++i)
+			{
+				rd_s32b(&p_ptr->s_info_old[i].value);
+				rd_u16b(&p_ptr->s_info_old[i].mod);
+				rd_byte(&tmp8u);
+				p_ptr->s_info_old[i].dev = tmp8u;
+				rd_byte(&tmp8u);
+				p_ptr->s_info_old[i].flags1 = tmp8u;
+				rd_s32b(&p_ptr->s_info_old[i].base_value);
+				p_ptr->s_info_old[i].touched = TRUE;
+			}
+			rd_s16b(&p_ptr->skill_points_old);
+			rd_byte((byte *) &p_ptr->reskill_possible);
+		}
 	}
 
 	/* Make a copy of the skills - mikaelh */
-	memcpy(p_ptr->s_info_old, p_ptr->s_info, MAX_SKILLS * sizeof(skill_player));
-	p_ptr->skill_points_old = p_ptr->skill_points;
+//	memcpy(p_ptr->s_info_old, p_ptr->s_info, MAX_SKILLS * sizeof(skill_player));
+//	p_ptr->skill_points_old = p_ptr->skill_points;
 
 	rd_s32b(&p_ptr->id);
 
@@ -1637,13 +1671,15 @@ if (p_ptr->updated_savegame == 0) {
 		rd_u16b(&p_ptr->deaths);
 		rd_u16b(&p_ptr->soft_deaths);
 
-		rd_u16b(&tmp16b); /* array of 'warnings' and hints aimed at newbies */
+		rd_u16b(&tmp16b); /* array of 'warnings' and hints aimed at newbies -- atm unused */
 	} else {
 		/* auto-enable for now (MAX_AURAS) */
 		if (get_skill(p_ptr, SKILL_AURA_FEAR)) p_ptr->aura[0] = TRUE;
 		if (get_skill(p_ptr, SKILL_AURA_SHIVER)) p_ptr->aura[1] = TRUE;
 		if (get_skill(p_ptr, SKILL_AURA_DEATH)) p_ptr->aura[2] = TRUE;
 	}
+
+	if (!older_than(4, 4, 2)) rd_string(p_ptr->info_msg, 80);
 
 	/* Success */
 	return FALSE;

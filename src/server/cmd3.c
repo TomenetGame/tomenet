@@ -1687,6 +1687,9 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription)
 	msg_format(Ind, "Inscribing %s.", o_name);
 	msg_print(Ind, NULL);
 
+	/* hack to fix auto-inscriptions: convert empty inscription to a #-type inscription */
+	if (inscription[0] == '\0') inscription = "#";
+
 	/* Save the inscription */
 	o_ptr->note = quark_add(inscription);
 
