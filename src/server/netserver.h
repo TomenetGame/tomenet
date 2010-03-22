@@ -177,6 +177,8 @@ static int Receive_inventory_revision(int ind);
 static int Receive_account_info(int ind);
 static int Receive_change_password(int ind);
 
+static int Receive_force_stack(int ind);
+
 static void Handle_item(int Ind, int item);
 
 int Setup_net_server(void);
