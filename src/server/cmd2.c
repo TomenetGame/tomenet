@@ -1828,14 +1828,14 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 			/* not in monster KILL_WALL form; not on world surface: wpos->wz == 0 ! */
 			if (l_ptr && !quiet_borer) {
 				/* prepare to discover a special feature */
-				if ((rand_int(2000) <= mining + 20) && !(l_ptr->flags1 & LF1_NO_WATER)) dug_feat = FEAT_FOUNTAIN;
-				else if (rand_int(1000) < ((l_ptr->flags1 & LF1_NO_LAVA) ? 0 : ((l_ptr->flags1 & LF1_LAVA) ? 50 : 3))) dug_feat = FEAT_SHAL_LAVA;
-				else if (rand_int(1000) < ((l_ptr->flags1 & LF1_NO_WATER) ? 0 : ((l_ptr->flags1 & LF1_WATER) ? 50 : 8))) dug_feat = FEAT_SHAL_WATER;
-				else if ((rand_int(1000) < 5) && can_go_up(wpos, 0x1)) dug_feat = FEAT_WAY_LESS;
-				else if ((rand_int(1000) < 5) && can_go_down(wpos, 0x1)) dug_feat = FEAT_WAY_MORE;
+				if ((rand_int(5000) <= mining + 5) && can_go_up(wpos, 0x1)) dug_feat = FEAT_WAY_LESS;
+				else if ((rand_int(5000) <= mining + 5) && can_go_down(wpos, 0x1)) dug_feat = FEAT_WAY_MORE;
+				else if ((rand_int(3000) <= mining + 10) && !(l_ptr->flags1 & LF1_NO_WATER)) dug_feat = FEAT_FOUNTAIN;
+				else if (rand_int(500) < ((l_ptr->flags1 & LF1_NO_LAVA) ? 0 : ((l_ptr->flags1 & LF1_LAVA) ? 50 : 3))) dug_feat = FEAT_SHAL_LAVA;
+				else if (rand_int(500) < ((l_ptr->flags1 & LF1_NO_WATER) ? 0 : ((l_ptr->flags1 & LF1_WATER) ? 50 : 8))) dug_feat = FEAT_SHAL_WATER;
 
 				/* prepare to find a special object */
-				else if (rand_int(1000) <= mining) {
+				else if (rand_int(2000) <= mining) {
 					tval = TV_CHEST;
 #if 0
 					sval = ((rand_int(mining) + rand_int(75)) / 21) + 1; /* 1,2,3, 5,6,7 - according to k_info.txt */
@@ -2155,7 +2155,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					} else if (dug_feat != FEAT_NONE &&
 					    dug_feat != FEAT_WAY_MORE &&
 					    dug_feat != FEAT_WAY_LESS) {
-						if (magik(50))
+						if (magik(100))
 							cave_set_feat_live(wpos, y, x, dug_feat);
 					}
 				}
@@ -2220,7 +2220,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					if (!istown(wpos)) {
 						/* found special feature */
 						if (dug_feat == FEAT_FOUNTAIN) {
-							if (magik(10)) {
+							if (magik(50)) {
 								place_fountain(wpos, y, x);
 								note_spot_depth(wpos, y, x);
 								everyone_lite_spot(wpos, y, x);
@@ -2229,7 +2229,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 						} else if (dug_feat != FEAT_NONE &&
 						    dug_feat != FEAT_WAY_MORE &&
 						    dug_feat != FEAT_WAY_LESS) {
-							if (magik(20))
+							if (magik(100))
 								cave_set_feat_live(wpos, y, x, dug_feat);
 						}
 					}
