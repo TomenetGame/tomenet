@@ -4632,14 +4632,14 @@ void move_player(int Ind, int dir, int do_pickup)
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos, nwpos;
 
-	int                     y, x, oldx, oldy;
+	int y, x, oldx, oldy;
 	int i;
 	//bool do_move = FALSE;
 
 	cave_type               *c_ptr;
 	struct c_special	*cs_ptr;
 	object_type             *o_ptr;
-	monster_type    *m_ptr;
+	monster_type            *m_ptr;
 	byte                    *w_ptr;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	cave_type **zcave;
@@ -4647,7 +4647,7 @@ void move_player(int Ind, int dir, int do_pickup)
 	
 	bool old_grid_sunlit = FALSE, new_grid_sunlit = FALSE; /* for vampires */
 
-	if(!(zcave=getcave(wpos))) return;
+	if(!(zcave = getcave(wpos))) return;
 
 
 	/* (S)He's no longer AFK, lol */
@@ -5184,35 +5184,28 @@ void move_player(int Ind, int dir, int do_pickup)
 		{
 			//struct c_special *cs_ptr;
 			/* Closed doors */
-			if ((c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_DOOR_HEAD) || 
-				 (c_ptr->feat == FEAT_HOME))
-			{
+			if ((c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_DOOR_HEAD) ||
+				 (c_ptr->feat == FEAT_HOME)) {
 				msg_print(Ind, "There is a closed door blocking your way.");
-			}
-
-			else if (p_ptr->easy_tunnel || (p_ptr->skill_dig > 4000))
-			{
+			} else if (p_ptr->auto_tunnel) {
+				i = twall_erosion(wpos, y, x);
+				cave_set_feat_live(wpos, y, x, (i == FEAT_FLOOR) ? FEAT_DIRT : i);
+			} else if (p_ptr->easy_tunnel) {
 				do_cmd_tunnel(Ind, dir);
-			}
-			else
-			{
+			} else {
 				/* Rubble */
-				if (c_ptr->feat == FEAT_RUBBLE)
-				{
+				if (c_ptr->feat == FEAT_RUBBLE) {
 					msg_print(Ind, "There is rubble blocking your way.");
 				}
 				/* Tree */
-				else if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_DEAD_TREE || c_ptr->feat==FEAT_BUSH)
-				{
+				else if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_DEAD_TREE ||
+				    c_ptr->feat==FEAT_BUSH) {
 					msg_print(Ind, "There is a tree blocking your way.");
-				}
-				else if (c_ptr->feat == FEAT_DARK_PIT)
-				{
+				} else if (c_ptr->feat == FEAT_DARK_PIT) {
 					msg_print(Ind, "There is a dark pit in your way.");
 				}
 				/* Wall (or secret door) */
-				else
-				{
+				else {
 					msg_print(Ind, "There is a wall blocking your way.");
 				}
 			}

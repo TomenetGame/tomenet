@@ -2348,9 +2348,7 @@ static void calc_body_bonus(int Ind)
 		}
 		p_ptr->drain_life++;
 	}
-	//        if(r_ptr->flags2 & RF2_KILL_WALL) p_ptr->auto_tunnel = 100;
-	/* quick hack */
-	if(r_ptr->flags2 & RF2_KILL_WALL) p_ptr->skill_dig = 20000;
+	if(r_ptr->flags2 & RF2_KILL_WALL) p_ptr->auto_tunnel = TRUE;
 	if(r_ptr->flags2 & RF2_AURA_FIRE) p_ptr->sh_fire = TRUE;
 	if(r_ptr->flags2 & RF2_AURA_ELEC) p_ptr->sh_elec = TRUE;
 	if(r_ptr->flags2 & RF3_AURA_COLD) p_ptr->sh_cold = TRUE;
