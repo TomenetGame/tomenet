@@ -2243,6 +2243,16 @@ if (o_ptr->tval == TV_RUNE2) {
 	stop_shooting_till_kill(Ind);
 }
 
+/* forcibly stack a level 0 item with normal-level items in your inventory */
+void do_cmd_force_stack(int Ind, int item) {
+	player_type *p_ptr = Players[Ind];
+
+	/* Get the item (must be in the pack) */
+	if (item < 0) return;
+	p_ptr->current_force_stack = item + 1;
+	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+}
+
 #if 0
 /*
  * Determine if a trap affects the player.

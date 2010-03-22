@@ -341,6 +341,8 @@ static void Init_receive(void)
 	playing_receive[PKT_INVENTORY_REV]	= Receive_inventory_revision;
 	playing_receive[PKT_ACCOUNT_INFO]	= Receive_account_info;
 	playing_receive[PKT_CHANGE_PASSWORD]	= Receive_change_password;
+
+	playing_receive[PKT_FORCE_STACK]	= Receive_force_stack;
 }
 
 static int Init_setup(void)
@@ -9571,6 +9573,45 @@ static int Receive_change_password(int ind) {
 		/* Wipe the passwords from memory */
 		memset(old_pass, 0, MAX_CHARS);
 		memset(new_pass, 0, MAX_CHARS);
+	}
+
+	return 1;
+}
+
+static int Receive_force_stack(int ind) {
+	connection_t *connp = Conn[ind];
+	char ch;
+	int n, player = -1;
+	s16b item;
+	player_type *p_ptr = NULL;
+
+	if (connp->id != -1)
+	{
+		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
+		p_ptr = Players[player];
+	}
+
+	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0)
+	{
+		if (n == -1)
+			Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	/* Sanity check - mikaelh */
+	if (item >= INVEN_PACK)
+		return 1;
+
+	if (connp->id != -1) {
+		item = replay_inven_changes(player, item);
+		if (item == 0xFF)
+		{
+			msg_print(player, "Command failed because item is gone.");
+			return 1;
+		}
+
+		do_cmd_force_stack(player, item);
 	}
 
 	return 1;

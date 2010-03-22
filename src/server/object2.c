@@ -2933,7 +2933,8 @@ s64b object_value(int Ind, object_type *o_ptr)
  *
  * 'tolerance' flag:
  * 0	- no tolerance
- * 0x1	- tolerance for ammo to_h and to_d enchantment
+ * +0x1	- tolerance for ammo to_h and to_d enchantment
+ * +0x2	- tolerance for level 0 items
  * -- C. Blue
  */
 bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolerance)
@@ -2949,7 +2950,10 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 	if (o_ptr->k_idx != j_ptr->k_idx) return (FALSE);
 
 	/* Level 0 items and other items won't merge, since level 0 can't be sold to shops */
-	if ((!o_ptr->level || !j_ptr->level) && (o_ptr->level != j_ptr->level)) return (FALSE);
+	if (!(tolerance & 0x2) &&
+	    (!o_ptr->level || !j_ptr->level) &&
+	    (o_ptr->level != j_ptr->level))
+		return (FALSE);
 
 		/* Require same owner or convertable to same owner */
 //
@@ -10276,8 +10280,11 @@ void combine_pack(int Ind)
 			if (!j_ptr->k_idx) continue;
 
 			/* Can we drop "o_ptr" onto "j_ptr"? */
-			if (object_similar(Ind, j_ptr, o_ptr, 0x0))
+			if (object_similar(Ind, j_ptr, o_ptr, p_ptr->current_force_stack - 1 == i ? 0x2 : 0x0))
 			{
+				/* clear if used */
+				if (p_ptr->current_force_stack - 1 == i) p_ptr->current_force_stack = 0;
+
 				/* Take note */
 				flag = TRUE;
 
@@ -10312,6 +10319,12 @@ void combine_pack(int Ind)
 
 	/* Message */
 	if (flag) msg_print(Ind, "You combine some items in your pack.");
+
+	/* clear */
+	if (p_ptr->current_force_stack) {
+		if (!flag) msg_print(Ind, "Nothing to combine.");
+		p_ptr->current_force_stack = 0;
+	}
 }
 
 
