@@ -1,5 +1,8 @@
 #include "angband.h"
 
+/* Hack - main-gcu.c wants to set this to TRUE */
+bool multi_key_macros = FALSE;
+
 static bool flush_later = FALSE;
 
 void move_cursor(int row, int col)
