@@ -2622,7 +2622,7 @@ bool detect_treasure(int Ind, int rad)
 
 	object_type	*o_ptr;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	if(!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
 	/* Scan the current panel */
@@ -2697,6 +2697,75 @@ bool detect_treasure(int Ind, int rad)
 		}
 	}
 
+	return (detect);
+}
+/* detect treasures level-wide, for DIGGING skill */
+bool floor_detect_treasure(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+
+	struct worldpos *wpos = &p_ptr->wpos;
+	dun_level *l_ptr;
+	int y, x;
+	bool detect = FALSE;
+	cave_type *c_ptr;
+	byte *w_ptr;
+	object_type *o_ptr;
+	cave_type **zcave;
+	if(!(zcave = getcave(wpos))) return(FALSE);
+	if(!(l_ptr = getfloor(wpos))) return(FALSE); /* doesn't work on surface levels (wpos.wz == 0) */
+
+	/* Scan the whole level */
+	for (y = 0; y < l_ptr->hgt; y++) {
+		for (x = 0; x < l_ptr->wid; x++) {
+			/* Reject locations outside of dungeon */
+			if (!in_bounds4(l_ptr, y, x)) continue;
+
+			c_ptr = &zcave[y][x];
+			w_ptr = &p_ptr->cave_flag[y][x];
+			o_ptr = &o_list[c_ptr->o_idx];
+
+			/* Magma/Quartz + Known Gold */
+			if ((c_ptr->feat == FEAT_MAGMA_K) ||
+			    (c_ptr->feat == FEAT_QUARTZ_K)) {
+				/* Notice detected gold */
+				if (!(*w_ptr & CAVE_MARK)) {
+					/* Detect */
+					detect = TRUE;
+					/* Hack -- memorize the feature */
+					*w_ptr |= CAVE_MARK;
+					/* Redraw */
+					lite_spot(Ind, y, x);
+				}
+			}
+
+			/* Notice embedded gold */
+			if ((c_ptr->feat == FEAT_MAGMA_H) ||
+			    (c_ptr->feat == FEAT_QUARTZ_H)) {
+				/* Expose the gold */
+				c_ptr->feat += 0x02;
+				/* Detect */
+				detect = TRUE;
+				/* Hack -- memorize the item */
+				*w_ptr |= CAVE_MARK;
+				/* Redraw */
+				lite_spot(Ind, y, x);
+			}
+
+			/* Notice gold */
+			if (o_ptr->tval == TV_GOLD) {
+				/* Notice new items */
+				if (!(p_ptr->obj_vis[c_ptr->o_idx])) {
+					/* Detect */
+					detect = TRUE;
+					/* Hack -- memorize the item */
+					p_ptr->obj_vis[c_ptr->o_idx] = TRUE;
+					/* Redraw */
+					lite_spot(Ind, y, x);
+				}
+			}
+		}
+	}
 	return (detect);
 }
 

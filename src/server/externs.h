@@ -1246,6 +1246,7 @@ extern void self_knowledge(int Ind);
 extern bool lose_all_info(int Ind);
 extern bool detect_monsters_xxx(int Ind, u32b match_flag);
 extern bool detect_treasure(int Ind, int rad);
+extern bool floor_detect_treasure(int Ind);
 extern bool detect_magic(int Ind, int rad);
 extern bool detect_invisible(int Ind);
 extern bool detect_evil(int Ind);

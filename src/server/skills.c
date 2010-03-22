@@ -582,6 +582,11 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 	case SKILL_AURA_FEAR: if (old_value == 0 && new_value > 0) p_ptr->aura[0] = TRUE; break; /* MAX_AURAS */
 	case SKILL_AURA_SHIVER: if (old_value == 0 && new_value > 0) p_ptr->aura[1] = TRUE; break;
 	case SKILL_AURA_DEATH: if (old_value == 0 && new_value > 0) p_ptr->aura[2] = TRUE; break;
+	case SKILL_DIG:
+                if (old_value < 300 && new_value >= 300) {
+                        msg_print(Ind, "\374\377GYou've become much better at prospecting.");
+                }
+                break;
 	}
 }
 
