@@ -246,6 +246,7 @@ I:1000:0
 N:36:Swimming
 D:Ability to cross water without drowning even under heavier load.
 I:1000:0
+F:MAX_1
 
 N:37:Martial Arts
 D:Ability to fight bare-handed. Also provides various special abilities.
@@ -491,18 +492,22 @@ $ENABLE_MCRAFT$F:DUMMY
 N:90:Climbing
 D:Ability to climb highest mountains withouth problems (Requires 1.000).
 I:1000:0
+F:MAX_1
 
 #N:91:Flying
 #D:Ability to fly over the ground
 #I:1000:0
+#F:MAX_1
 #
 #N:92:Free Action
 #D:Immunity to paralyzing attacks
 #I:1000:0
+#F:MAX_1
 #
 #N:93:Confusion Resistance
 #D:Resistance to confusion in general
 #I:1000:0
+#F:MAX_1
 
 $ENABLE_RCRAFT$N:95:Runecraft
 $ENABLE_RCRAFT$D:
@@ -844,8 +849,8 @@ T:Main:Antimagic
 T:Main:Health
 #T:Health:Training
 T:Health:Agility
-T:Health:Swimming
 T:Health:Digging
+T:Health:Swimming
 T:Health:Climbing
 #T:Health:Flying
 #T:Health:Free Action

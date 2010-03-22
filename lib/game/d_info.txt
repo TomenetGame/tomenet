@@ -11,11 +11,15 @@
 # Some store indexes are defined in "defines.h", and must not be
 # changed.
 
+# NOTE: Changed L and A to permille instead of percent after increasing arrays from 3 to 5 - C. Blue
+
 # N:<index>:<name>
 # D:<3 letter short name>:<long name>
 # W:<min depth>:<max depth>:<min player level>:<next dungeon>:<min alloc>:<max alloc chance>
-# L:<floor1>:<%1>:<floor2>:<%2>:<floor3>:<%3>
-# A:<wall1>:<%1>:<wall2>:<%2>:<wall3>:<%3>:<outer wall>:<inner wall>
+# L:<floor1>:<%1>:<floor2>:<%2>:<floor3>:<%3>:<floor4>:<%2>:<floor5>:<%3>
+# L:<%end1>:<%end2>:<%end3>:<%end4>:<%end5>
+# A:<wall1>:<%1>:<wall2>:<%2>:<wall3>:<%3>:<wall4>:<%4>:<wall5>:<%5>:<outer wall>:<inner wall>
+# A:<%end1>:<%end2>:<%end3>:<%end4>:<%end5>
 # O:<%treasure>:<%combat>:<%magic>:<%tools>
 # E:<dices>d<sides>:<frequency>:<attack type>
 # F:<flags>
@@ -40,8 +44,8 @@ V:4.0.0
 N:0:Wilderness
 D:Wil:a way to the Wilderness
 W:0:0:0:0:0:14:500
-L:89:80:199:20:1:0
-A:96:100:56:0:56:0:57:58
+L:89:800:199:200:1:0:0:0:0:0
+A:96:1000:56:0:56:0:0:0:0:0:57:58
 O:20:20:20:20
 F:PRINCIPAL | FLAT | NO_RECALL
 R:100:0
@@ -51,8 +55,8 @@ R:100:0
 N:1:Mirkwood
 D:Mkw:a way to the Mirkwood Forest.
 W:11:34:5:0:14:160
-L:89:95:199:5:88:0
-A:96:100:97:0:56:0:202:96
+L:89:950:199:50:88:0:0:0:0:0
+A:96:1000:97:0:56:0:0:0:0:0:202:96
 O:20:20:20:20
 F:PRINCIPAL | NO_DOORS | NO_DESTROY | FLAT
 F:FILL_METHOD_0
@@ -61,10 +65,10 @@ R:100:0
 N:2:Mordor
 D:Mdr:a door to the Land of Mordor.
 W:34:66:15:0:14:160
-L:88:67:93:33:1:0
-L:0:100:0
-A:97:50:56:50:56:0:57:97
-A:0:100:0
+L:88:667:93:333:1:0:0:0:0:0
+L:0:1000:0:0:0
+A:97:500:56:500:56:0:0:0:0:0:57:97
+A:0:1000:0:0:0
 O:20:20:20:20
 F:PRINCIPAL | LAVA_RIVER | CAVERN | NO_STREAMERS
 F:FILL_METHOD_2
@@ -73,8 +77,8 @@ R:100:0
 N:3:Angband
 D:Ang:an entrance to the Pits of Angband.
 W:67:127:30:0:14:160
-L:1:100:1:0:1:0
-A:56:100:56:0:56:0:57:58
+L:1:1000:1:0:1:0:0:0:0:0
+A:56:1000:56:0:56:0:0:0:0:0:57:58
 O:20:20:20:20
 F:PRINCIPAL | CAVERN
 F:ADJUST_LEVEL_1_2 | ADJUST_LEVEL_1
@@ -86,10 +90,10 @@ D:BDw:a way to the Barrow-Downs.
 # tmp. Made deeper (consider building Mirkwood near Bree)
 #W:1:10:1:0:14:160
 W:1:35:1:0:14:160
-L:88:78:89:18:199:4
-L:0:95:5
-A:96:29:97:61:219:10:57:97
-A:100:0:0
+L:88:780:89:180:199:40:0:0:0:0
+L:0:950:50:0:0
+A:96:290:97:610:219:100:0:0:0:0:57:97
+A:1000:0:0:0:0
 O:20:20:20:20
 F:PRINCIPAL | FLAT
 F:FILL_METHOD_3
@@ -104,11 +108,11 @@ R:75:0
 N:5:Mount Doom
 D:MDm:a way to the top of the Mount Doom.
 W:85:100:38:0:14:160
-L:86:90:205:10:1:0
+L:86:900:205:100:1:0:0:0:0:0
 #eek! pits with essentially no walls? - adam
-#A:177:100:0:0:0:0:85:87
+#A:177:1000:0:0:0:0:85:87
 #changed to sandwall instead
-A:177:100:0:0:0:0:85:99
+A:177:1000:0:0:0:0:0:0:0:0:85:99
 O:10:10:30:30
 E:2d10:10:FIRE
 F:CAVE | LAVA_RIVER | NO_RECALL | NO_STREAMERS
@@ -124,10 +128,10 @@ N:6:Nether Realm
 D:Nth:a magical portal to the Nether Realm.
 #W:666:696:40:0:14:160
 W:166:196:40:0:14:160
-L:102:80:86:15:85:5
-A:85:80:87:20:87:0:57:85
-#A:86:80:210:20:210:0:57:85
-A:50:50:0
+L:102:800:86:150:85:50:0:0:0:0
+A:85:800:87:200:87:0:0:0:0:0:57:85
+#A:86:800:210:200:210:0:57:85
+A:500:500:0:0:0
 O:25:25:25:25
 E:10d10:3:NETHER
 #F:EMPTY | FORGET | # LAVA_RIVER | 
@@ -144,9 +148,9 @@ M:RES_NETH | R_CHAR_G | R_CHAR_W | R_CHAR_U | R_CHAR_x | R_CHAR_N
 N:7:Submerged Ruins
 D:Num:a submerged way to the lost land of Numenor.
 W:35:51:15:0:14:160
-L:84:95:187:5:1:0
-A:187:80:84:10:56:10:57:187
-A:60:0:40
+L:84:950:187:50:1:0:0:0:0:0
+A:187:800:84:100:56:10:0:0:0:0:57:187
+A:600:0:400:0:0
 O:30:30:10:10
 E:1d1:1:ACID
 F:NO_STREAMERS
@@ -160,9 +164,9 @@ M:AQUATIC | CAN_SWIM | CAN_FLY
 N:8:The Halls of Mandos
 D:HMa:*A BUG*
 W:1:98:1:0:14:160
-L:1:100:1:0:1:0
+L:1:1000:1:0:1:0:0:0:0:0
 O:20:20:20:20
-A:56:100:56:0:56:0:57:58
+A:56:100:56:0:56:0:0:0:0:0:57:58
 F:RANDOM_TOWNS | NO_RECALL | NO_SHAFT
 F:FILL_METHOD_0
 R:100:2
@@ -175,8 +179,8 @@ M:UNIQUE
 N:9:Cirith Ungol
 D:CUg:an entrance to Cirith Ungol.
 W:25:51:10:0:14:160
-L:87:5:88:65:16:30
-A:97:90:16:10:56:0:16:58
+L:87:50:88:650:16:300:0:0:0:0
+A:97:900:16:100:56:0:0:0:0:0:16:58
 O:30:30:30:10
 E:4d4:20:POISON
 F:FINAL_GUARDIAN_481
@@ -194,8 +198,8 @@ M:ORC | R_CHAR_w | R_CHAR_m | R_CHAR_j
 N:10:The Heart of the Earth
 D:HoE:a passage leading into the very heart of the world.
 W:25:37:10:0:14:160
-L:1:100:1:0:1:0
-A:56:100:56:0:56:0:57:58
+L:1:1000:1:0:1:0:0:0:0:0
+A:56:1000:56:0:56:0:0:0:0:0:57:58
 O:40:10:10:20
 F:LIFE_LEVEL | EVOLVE | FINAL_GUARDIAN_1035 | NO_RECALL
 R:40:3
@@ -210,8 +214,8 @@ R:30:0
 N:16:The Paths of the Dead
 D:PoD:the entrance to the Paths of the Dead.
 W:40:70:20:0:24:100
-L:88:85:84:15:1:0
-A:56:75:87:25:56:0:57:58
+L:88:850:84:150:1:0:0:0:0:0
+A:56:750:87:250:56:0:0:0:0:0:57:58
 O:30:30:30:2
 E:1d1:20:RAISE
 F:FINAL_GUARDIAN_804 | FINAL_ARTIFACT_91
@@ -228,8 +232,8 @@ M:UNDEAD | NONLIVING
 N:17:The Illusory Castle
 D:Ill:an entrance to the Illusory Castle.
 W:35:52:10:0:24:100
-L:1:98:188:2:1:0
-A:56:50:189:50:56:0:57:58
+L:1:980:188:20:1:0:0:0:0:0
+A:56:500:189:500:56:0:0:0:0:0:57:58
 O:50:10:20:20
 E:6d2:6:CONFUSION
 F:RANDOM_TOWNS | NO_STREAMERS
@@ -248,8 +252,8 @@ S:BR_CONF | BR_CHAO | BA_CHAO | CONF | FORGET | TRAPS
 N:18:The Maze
 D:Maz:a small tunnel leading to a maze of twisty little passages, all alike.
 W:25:38:15:0:20:160
-L:1:100:1:0:1:0
-A:56:98:48:2:56:0:57:58
+L:1:1000:1:0:1:0:0:0:0:0
+A:56:980:48:20:56:0:0:0:0:0:57:58
 O:2:40:10:40
 F:MAZE | SMALLEST | FORGET
 F:FINAL_GUARDIAN_1029 | FINAL_ARTIFACT_38
@@ -263,10 +267,10 @@ M:R_CHAR_p
 N:19:The Orc Cave
 D:Orc:a dark tunnel leading to an Orc Cave.
 W:10:23:3:0:35:200
-L:88:100:1:0:1:0
-A:97:100:56:0:56:0:57:97
+L:88:1000:1:0:1:0:0:0:0:0
+A:97:1000:56:0:56:0:0:0:0:0:57:97
 O:5:50:10:25
-F:RANDOM_TOWNS | 
+F:RANDOM_TOWNS |
 F:FINAL_OBJECT_810 | FINAL_GUARDIAN_373 | CAVE |
 F:FILL_METHOD_0
 R:30:3
@@ -281,8 +285,8 @@ M:ORC | R_CHAR_k | R_CHAR_o | R_CHAR_O
 N:20:Erebor
 D:Ere:a tunnel leading into depths of the Lonely Mountain.
 W:50:61:35:0:20:140
-L:88:100:1:0:1:0
-A:97:90:87:10:56:0:57:97
+L:88:1000:1:0:1:0:0:0:0:0
+A:97:900:87:100:56:0:0:0:0:0:57:97
 O:40:40:40:40
 F:BIG | LAVA_RIVER | CAVERN | FORCE_DOWN | NO_STREAMERS
 F:CAVE | DOUBLE | FINAL_GUARDIAN_715 | 
@@ -301,9 +305,9 @@ M:R_CHAR_A
 N:21:The Old Forest
 D:OFr:a path into the Old Forest.
 W:13:26:5:0:15:100
-L:88:76:84:16:199:8
-L:68:16:16
-A:96:100:56:0:56:0:202:96
+L:88:760:84:160:199:80:0:0:0:0
+L:680:160:160:0:0
+A:96:1000:56:0:56:0:0:0:0:0:202:96
 O:20:5:15:30
 F:WATER_RIVERS | NO_DOORS | NO_DESTROY | FLAT | NO_STREAMERS
 F:RANDOM_TOWNS | FINAL_GUARDIAN_206
@@ -317,11 +321,11 @@ M:UNDEAD | R_CHAR_h
 # The Mines of Moria
 # levels 30-50
 # There is the Balrog of Moria with The Quarterstaff of Olorin
-N:22:Moria
+N:22:The Mines of Moria
 D:MoM:a stone door leading to the Mines of Moria.
 W:30:50:15:0:40:40
-L:88:100:1:0:1:0
-A:97:100:56:0:56:0:57:97
+L:88:995:49:5:1:0:0:0:0:0
+A:97:1000:56:0:56:0:0:0:0:0:57:97
 O:30:50:10:5
 F:FINAL_GUARDIAN_872 | WATER_RIVER | BIG | NO_STREAMERS
 F:FORCE_DOWN
@@ -342,8 +346,8 @@ R:10:0
 N:23:Dol Guldur
 D:TDG:a gate leading to the tower of Dol Guldur.
 W:57:71:28:0:24:160
-L:1:80:174:20:1:0
-A:56:100:56:0:56:0:57:58
+L:1:800:174:200:1:0:0:0:0:0
+A:56:1000:56:0:56:0:0:0:0:0:57:58
 O:20:1:70:9
 F:SMALL | FINAL_GUARDIAN_819 | FINAL_ARTIFACT_205
 F:FILL_METHOD_3
@@ -365,8 +369,8 @@ R:10:0
 N:24:The Small Water Cave
 D:SWC:the entrance to a small water cave.
 W:32:35:15:0:14:160
-L:84:100:84:0:84:0
-A:97:100:56:0:56:0:57:58
+L:84:1000:84:0:84:0:0:0:0:0
+A:97:1000:56:0:56:0:0:0:0:0:57:58
 O:10:10:30:30
 E:1d1:20:ACID
 F:FINAL_GUARDIAN_517 | NO_RECALL
@@ -387,8 +391,8 @@ M:IM_COLD
 N:25:The Sacred Land Of Mountains
 D:LoM:the way to The Sacred Land Of Mountains.
 W:40:45:20:0:14:160
-L:89:100:89:0:89:0
-A:97:100:56:0:56:0:97:97
+L:89:1000:89:0:89:0:0:0:0:0
+A:97:1000:56:0:56:0:0:0:0:0:97:97
 O:20:20:20:20
 F:RANDOM_TOWNS | FLAT | NO_STREAMERS
 F:FINAL_GUARDIAN_789 | FINAL_ARTIFACT_27
@@ -407,8 +411,8 @@ M:R_CHAR_A
 N:26:The Land Of Rhun
 D:LoR:a way to the the Land Of Rhun.
 W:26:41:13:0:14:160
-L:89:100:1:0:1:0
-A:89:50:96:25:84:25:57:58
+L:89:1000:1:0:1:0:0:0:0:0
+A:89:500:96:250:84:250:0:0:0:0:57:58
 O:20:20:20:20
 F:RANDOM_TOWNS | FLAT | NO_STREAMERS | FINAL_GUARDIAN_990
 F:FILL_METHOD_1
@@ -424,8 +428,8 @@ R:40:0
 N:27:The Sandworm lair
 D:SwL:a sandhole.
 W:22:30:12:0:5:200
-L:91:85:94:10:93:5
-A:98:100:96:0:84:0:94:94
+L:91:850:94:100:93:50:0:0:0:0
+A:98:1000:96:0:84:0:0:0:0:0:94:94
 O:15:5:60:20
 F:NO_DOORS | SAND_VEIN |
 F:FINAL_GUARDIAN_1030 | FINAL_ARTIFACT_153
@@ -440,8 +444,8 @@ M:MULTIPLY
 N:28:Death fate
 D:Dth:a fated death.
 W:1:1:1:0:30:255
-L:1:100:1:0:1:0
-A:1:100:1:0:1:0:1:1
+L:1:1000:1:0:1:0:0:0:0:0
+A:1:1000:1:0:1:0:0:0:0:0:1:1
 O:1:1:1:1
 F:EMPTY | SMALLEST | NO_RECALL | NO_STREAMERS
 F:FILL_METHOD_0
@@ -453,10 +457,10 @@ R:100:0
 N:29:The Helcaraxe
 D:Ice:the entrance to the Grinding Ice of the Helcaraxe.
 W:20:41:10:0:14:160
-L:90:0:88:70:84:30
-L:90:0:10
-A:95:0:56:100:56:0:57:58
-A:100:0:0
+L:90:0:88:700:84:300:0:0:0:0
+L:900:0:100:0:0
+A:95:0:56:1000:56:0:0:0:0:0:57:58
+A:1000:0:0:0:0
 O:20:20:20:20
 E:1d4:15:COLD
 F:DOUBLE | WATER_RIVER | CAVERN | NO_STREAMERS
@@ -471,8 +475,8 @@ N:30:The Training Tower
 D:Nwb:A tower for newbies.
 $ARCADE_SERVER!W:1:2:1:0:14:160
 $ARCADE_SERVER$W:1:98:1:0:14:160
-L:1:80:174:20:1:0
-A:56:100:56:0:56:0:57:58
+L:1:800:174:200:1:0:0:0:0:0
+A:56:1000:56:0:56:0:0:0:0:0:57:58
 O:20:20:20:20
 F:PRINCIPAL | TOWER | EMPTY | NO_DEATH
 F:FILL_METHOD_3
@@ -482,15 +486,15 @@ R:75:0
 
 
 # For the Ring Of Phasing's activation:
-# 
+#
 # levels 1-2
 N:31:The Shores of Valinor
 D:SOV:Valinor, for retirement.
 W:200:200:1:0:14:160
-L:1:100:1:0:1:0
-A:56:100:56:0:56:0:95:95
+L:89:1000:0:0:0:0:0:0:0:0
+A:101:1000:0:0:0:0:0:0:0:0:101:101
 O:0:0:0:0
-F:PRINCIPAL | TOWER | EMPTY | NO_DEATH | SMALLEST 
+F:PRINCIPAL | TOWER | EMPTY | NO_DEATH | SMALLEST
 F:FILL_METHOD_3 | NO_STREAMERS
 F:NO_ENTRY_STAIR | NO_ENTRY_WOR | NO_ENTRY_PROB | NO_ENTRY_FLOAT
 F:FILL_METHOD_9

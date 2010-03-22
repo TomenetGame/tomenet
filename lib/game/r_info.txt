@@ -400,7 +400,7 @@ O:25:50:20:5
 B:HIT:HURT:1d4
 B:TOUCH:EAT_ITEM
 B:INSULT:*
-F:MALE | DROP_CORPSE | DROP_SKELETON | ASTAR |
+F:MALE | DROP_CORPSE | DROP_SKELETON |
 F:DROP_90 | WILD_TOWN | WILD_ONLY | 
 #F:WILD_SWAMP | WILD_WOOD | WILD_GRASS | WILD_MOUNTAIN | 
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR |
@@ -20445,6 +20445,15 @@ O:0:0:0:0
 F:CHAR_CLEAR | NO_DEATH | IM_TELE | BLUEBAND
 D:Just a dummy placeholder for making grids inaccessible
 D:to means such as teleport.
+
+N:1133:Star Test Blob
+G:j:p
+I:100:1d1:0:0:0
+W:127:255:0:0
+E:0:0:0:0:0:0
+O:0:0:0:0
+F:BLUEBAND | ASTAR
+D:For testing
 
 
 

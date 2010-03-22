@@ -601,7 +601,8 @@ F:SHOW_MODS | SHOULD2H
 N:70:& Broad Axe~
 G:/:s
 I:24:11:0
-W:15:0:160:304
+#W:15:0:160:304 for the sake of getting 2 bpr at 18/40 str..
+W:15:0:150:304
 A:15/1
 P:0:2d6:0:0:0
 F:SHOW_MODS | COULD2H
@@ -5977,7 +5978,8 @@ F:SHOW_MODS
 N:804:& Light War Axe~
 G:/:s
 I:24:8:0
-W:12:0:140:300
+#W:12:0:140:300 since broad axe went from 160->150, keep the weight distance to it
+W:12:0:130:300
 A:12/1
 P:0:2d5:0:0:0
 F:SHOW_MODS
@@ -6362,7 +6364,8 @@ I:40:32:1
 W:127:255:3:1
 A:127/255
 F:WIS | STR | INT | DEX | CON | CHR | LIFE | INFRA | SPEED | HIDE_TYPE |
-F:REGEN_MANA | REGEN | FREE_ACT
+F:REGEN_MANA | REGEN | FREE_ACT | RES_FEAR
+F:AUTO_ID
 
 N:889:the Moon
 G:":d
@@ -7184,7 +7187,7 @@ I:40:42:1
 W:127:255:3:1
 A:127/255
 F:WIS | STR | INT | DEX | CON | CHR | LIFE | INFRA | SPEED | HIDE_TYPE |
-F:REGEN_MANA | REGEN | ESP_ALL | SEE_INVIS | FREE_ACT
+F:REGEN_MANA | REGEN | ESP_ALL | SEE_INVIS | FREE_ACT | RES_FEAR
 
 # Goggles that allow a player to spot hidden DMs (for testing purpose)
 #N:981:& Set~ of goggles
