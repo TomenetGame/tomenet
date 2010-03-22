@@ -5530,28 +5530,21 @@ if(cfg.unikill_format){
 #endif	// SEMI_PROMISED_ARTS_MODIFIER
 
 //			if ((a_idx > 0) && ((randint(99)<chance) || (wizard)))
-			if ((a_idx > 0) && (magik(chance)) && (!cfg.arts_disabled)
-			    && !(make_resf(p_ptr) & RESF_NOTRUEART))
-			{
-				if (a_info[a_idx].cur_num == 0)
-				{
-					a_ptr = &a_info[a_idx];
+			if ((a_idx > 0) && magik(chance) && !cfg.arts_disabled &&
+			    (a_info[a_idx].cur_num == 0)) {
+				a_ptr = &a_info[a_idx];
+				/* Get local object */
+				qq_ptr = &forge;
+				/* Wipe the object */
+				object_wipe(qq_ptr);
+				/* Acquire the "kind" index */
+				I_kind = lookup_kind(a_ptr->tval, a_ptr->sval);
+				/* Create the artifact */
+				invcopy(qq_ptr, I_kind);
+				/* Save the name */
+				qq_ptr->name1 = a_idx;
 
-					/* Get local object */
-					qq_ptr = &forge;
-
-					/* Wipe the object */
-					object_wipe(qq_ptr);
-
-					/* Acquire the "kind" index */
-					I_kind = lookup_kind(a_ptr->tval, a_ptr->sval);
-
-					/* Create the artifact */
-					invcopy(qq_ptr, I_kind);
-
-					/* Save the name */
-					qq_ptr->name1 = a_idx;
-
+				if (!(make_resf(p_ptr) & RESF_NOTRUEART) || winner_artifact_p(qq_ptr)) {
 					/* Extract the fields */
 					qq_ptr->pval = a_ptr->pval;
 					qq_ptr->ac = a_ptr->ac;
