@@ -6068,6 +6068,11 @@ Note that not every skill is available to every profession (class).
                                 steal until the shopkeepers stop to watch you
                                 so intensely. The watchlist runs out slower
                                 than the blacklist, but allows you to be AFK.
+                                Note that usually people don't want to be seen
+                                with stolen goods, which means that very
+                                expensive items, depending on their value, have
+                                a certain chance of their level becoming 0,
+                                making them untradable.
                                 Your chance to steal an item from a shop
                                 depends on your dexterity, your stealing skill
                                 and the price and weight of the item. Stealth
