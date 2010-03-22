@@ -5188,10 +5188,9 @@ void move_player(int Ind, int dir, int do_pickup)
 				 (c_ptr->feat == FEAT_HOME)) {
 				msg_print(Ind, "There is a closed door blocking your way.");
 			} else if (p_ptr->auto_tunnel) {
-				i = twall_erosion(wpos, y, x);
-				cave_set_feat_live(wpos, y, x, (i == FEAT_FLOOR) ? FEAT_DIRT : i);
+				do_cmd_tunnel(Ind, dir, TRUE);
 			} else if (p_ptr->easy_tunnel) {
-				do_cmd_tunnel(Ind, dir);
+				do_cmd_tunnel(Ind, dir, FALSE);
 			} else {
 				/* Rubble */
 				if (c_ptr->feat == FEAT_RUBBLE) {

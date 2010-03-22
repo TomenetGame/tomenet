@@ -1726,13 +1726,13 @@ bool twall(int Ind, int y, int x)
  * accomplished by strong players using heavy weapons.
  */
 /* XXX possibly wrong */
-void do_cmd_tunnel(int Ind, int dir)
+void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[INVEN_TOOL];
 	struct worldpos *wpos = &p_ptr->wpos;
 
-	int y, x, power = p_ptr->skill_dig;
+	int y, x, power = p_ptr->skill_dig + (quiet_borer ? 20000 : 0);
 	int mining = get_skill(p_ptr, SKILL_DIG);
 	int dug_feat = FEAT_NONE, special_k_idx = 0, tval, sval;
 	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
@@ -1747,7 +1747,7 @@ void do_cmd_tunnel(int Ind, int dir)
 	if(!(zcave = getcave(wpos))) return;
 
 	/* Ghosts have no need to tunnel ; not in WRAITHFORM */
-	if ((p_ptr->ghost) || (p_ptr->tim_wraith)) 
+	if ((p_ptr->ghost) || (p_ptr->tim_wraith))
 	{
 		/* Message */
 		msg_print(Ind, "You cannot tunnel.");
@@ -1825,47 +1825,48 @@ void do_cmd_tunnel(int Ind, int dir)
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-			/* prepare to discover a special feature */
-			if (l_ptr) { /* not on world surface: wpos->wz == 0 ! */
+			/* not in monster KILL_WALL form; not on world surface: wpos->wz == 0 ! */
+			if (l_ptr && !quiet_borer) {
+				/* prepare to discover a special feature */
 				if ((rand_int(2000) <= mining + 20) && !(l_ptr->flags1 & LF1_NO_WATER)) dug_feat = FEAT_FOUNTAIN;
 				else if (rand_int(1000) < ((l_ptr->flags1 & LF1_NO_LAVA) ? 0 : ((l_ptr->flags1 & LF1_LAVA) ? 50 : 3))) dug_feat = FEAT_SHAL_LAVA;
 				else if (rand_int(1000) < ((l_ptr->flags1 & LF1_NO_WATER) ? 0 : ((l_ptr->flags1 & LF1_WATER) ? 50 : 8))) dug_feat = FEAT_SHAL_WATER;
 				else if ((rand_int(1000) < 5) && can_go_up(wpos, 0x1)) dug_feat = FEAT_WAY_LESS;
 				else if ((rand_int(1000) < 5) && can_go_down(wpos, 0x1)) dug_feat = FEAT_WAY_MORE;
-			}
 
-			/* prepare to find a special object */
-			else if (rand_int(1000) <= mining) {
-				tval = TV_CHEST;
+				/* prepare to find a special object */
+				else if (rand_int(1000) <= mining) {
+					tval = TV_CHEST;
 #if 0
-				sval = ((rand_int(mining) + rand_int(75)) / 21) + 1; /* 1,2,3, 5,6,7 - according to k_info.txt */
-				if (sval == 4) sval++;
+					sval = ((rand_int(mining) + rand_int(75)) / 21) + 1; /* 1,2,3, 5,6,7 - according to k_info.txt */
+					if (sval == 4) sval++;
 #else
-				sval = 2510 / (rand_int(mining) * rand_int(50) + 10);
-				/* 1,2,3, 5,6,7 - according to k_info.txt */
-				if (rand_int(50) > sval) sval = 7;
-				else if (rand_int(70) > sval) sval = 6;
-				else if (rand_int(90) > sval) sval = 5;
-				else if (rand_int(150) > sval) sval = 3;
-				else if (rand_int(300) > sval) sval = 2;
-				else sval = 1;
+					sval = 2510 / (rand_int(mining) * rand_int(50) + 10);
+					/* 1,2,3, 5,6,7 - according to k_info.txt */
+					if (rand_int(50) > sval) sval = 7;
+					else if (rand_int(70) > sval) sval = 6;
+					else if (rand_int(90) > sval) sval = 5;
+					else if (rand_int(150) > sval) sval = 3;
+					else if (rand_int(300) > sval) sval = 2;
+					else sval = 1;
 
-				special_k_idx = lookup_kind(tval, sval);
+					special_k_idx = lookup_kind(tval, sval);
 #endif
-			} else if (rand_int(1000) < (mining + 2) / 2) {
-				tval = TV_GOLEM;
-				sval = 2510 / (rand_int(mining) * rand_int(50) + 10);
-				/* 0..7 - according to k_info.txt */
-				if (rand_int(50) > sval) sval = 7;
-				else if (rand_int(60) > sval) sval = 6;
-				else if (rand_int(80) > sval) sval = 5;
-				else if (rand_int(120) > sval) sval = 4;
-				else if (rand_int(200) > sval) sval = 3;
-				else if (rand_int(300) > sval) sval = 2;
-				else if (rand_int(500) > sval) sval = 1;
-				else sval = 0;
+				} else if (rand_int(1000) < (mining + 2) / 2) {
+					tval = TV_GOLEM;
+					sval = 2510 / (rand_int(mining) * rand_int(50) + 10);
+					/* 0..7 - according to k_info.txt */
+					if (rand_int(50) > sval) sval = 7;
+					else if (rand_int(60) > sval) sval = 6;
+					else if (rand_int(80) > sval) sval = 5;
+					else if (rand_int(120) > sval) sval = 4;
+					else if (rand_int(200) > sval) sval = 3;
+					else if (rand_int(300) > sval) sval = 2;
+					else if (rand_int(500) > sval) sval = 1;
+					else sval = 0;
 
-				special_k_idx = lookup_kind(tval, sval);
+					special_k_idx = lookup_kind(tval, sval);
+				}
 			}
 
 #if 0
@@ -1875,7 +1876,7 @@ void do_cmd_tunnel(int Ind, int dir)
 				msg_print(Ind, "This seems to be permanent rock.");
 			}
 #else	// 0
-			//do_cmd_tunnel_test(int y, int x)
+			//do_cmd_tunnel_test(int y, int x, FALSE)
 			/* Must be tunnelable */
 			if (!(f_info[c_ptr->feat].flags1 & FF1_TUNNELABLE) ||
 				(f_info[c_ptr->feat].flags1 & FF1_PERMANENT))
@@ -2114,7 +2115,7 @@ void do_cmd_tunnel(int Ind, int dir)
 				}
 				/* Sandwall */
 				else if (soft) {
-					okay = (p_ptr->skill_dig > 5 + rand_int(250));
+					okay = (power > 5 + rand_int(250));
 				}
 				/* Magma */
 				else {

@@ -4871,7 +4871,7 @@ void calc_boni(int Ind)
 		p_ptr->skill_dig += o_ptr->to_d;
 
 		p_ptr->skill_dig += p_ptr->skill_dig *
-			get_skill_scale(p_ptr, SKILL_DIG, 300) / 100;
+			get_skill_scale(p_ptr, SKILL_DIG, 200) / 100;
 	}
 
 

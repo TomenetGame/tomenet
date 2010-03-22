@@ -6251,7 +6251,7 @@ static int Receive_tunnel(int ind)
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
-		do_cmd_tunnel(player, dir);
+		do_cmd_tunnel(player, dir, FALSE);
 		if (p_ptr->command_rep) Packet_printf(&connp->q, "%c%c", ch, dir);
 
 		return 2;

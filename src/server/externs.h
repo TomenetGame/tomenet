@@ -527,7 +527,7 @@ extern void do_cmd_toggle_search(int Ind);
 extern void do_cmd_open(int Ind, int dir);
 extern void do_cmd_close(int Ind, int dir);
 extern byte twall_erosion(worldpos *wpos, int y, int x);
-extern void do_cmd_tunnel(int Ind, int dir);
+extern void do_cmd_tunnel(int Ind, int dir, bool quiet_borer);
 extern void do_cmd_disarm(int Ind, int dir);
 extern void do_cmd_bash(int Ind, int dir);
 extern void do_cmd_spike(int Ind, int dir);
