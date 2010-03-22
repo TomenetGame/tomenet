@@ -4493,7 +4493,11 @@ bool player_can_enter(int Ind, byte feature)
 	bool only_wall = FALSE;
 
 	/* Dungeon Master pass through everything (cept array boundary :) */
-	if (p_ptr->admin_dm && feature != FEAT_PERM_SOLID && feature != FEAT_HIGH_MOUNT_SOLID)
+	if (p_ptr->admin_dm &&
+	    feature != FEAT_PERM_SOLID &&
+	    feature != FEAT_HIGH_MOUNT_SOLID &&
+	    feature != FEAT_GLIT_WATER)
+//	if (p_ptr->admin_dm && !(f_info[feature].flags1 & FF1_BOUNDARY))
 		return (TRUE);
 
 	/* Player can not walk through "walls" unless in Shadow Form */

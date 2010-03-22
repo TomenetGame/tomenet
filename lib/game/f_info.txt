@@ -704,11 +704,17 @@ F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN
 D:0:The nether mist engulfs you
 
 N:103:glittering water
-G:~:B
-S:B:B:B:b:W:g:w
+#G:~:B
+#S:B:B:B:b:W:g:w
+#G:~:e
+#S:e:e:e:e:e:e:e
+G:~:b
+S:b:B:B:B:B:b:B
+#S:b:b:b:b:b:b:b
 F:ATTR_MULTI
-F:FLOOR | CAN_LEVITATE | CAN_FLY | REMEMBER | SUPPORT_LIGHT | CAN_RUN
+#F:FLOOR | CAN_LEVITATE | CAN_FLY | REMEMBER | SUPPORT_LIGHT | CAN_RUN
 F:DONT_NOTICE_RUNNING
+F:WALL | NO_WALK | NO_VISION | PERMANENT
 
 #impassable by admins, like PERM_FEAT_SOLID just as mountain chain
 N:104:high mountain chain

@@ -2365,6 +2365,9 @@ static void process_player_begin(int Ind)
                 wipe_m_list(&p_ptr->wpos);
 		/* Regenerate the level from fixed layout */
 		process_dungeon_file("t_valinor.txt", &p_ptr->wpos, &ystart, &xstart, 21, 67, TRUE);
+		for (x = 0; x <= 65; x++) zcave[21][x].feat = FEAT_GLIT_WATER;
+		zcave[20][0].feat = FEAT_GLIT_WATER;
+		zcave[20][65].feat = FEAT_GLIT_WATER;
 		/* Some lil hacks */
 		msg_print(Ind, "\377uYou enter the shores of Valinor..");
 		wiz_lite(Ind);
