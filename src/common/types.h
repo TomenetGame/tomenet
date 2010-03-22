@@ -2262,6 +2262,7 @@ struct player_type
 	object_type *current_telekinesis;
 	s16b current_curse;
 	s16b current_tome_creation; /* adding a spell scroll to a custom tome - C. Blue */
+	s16b current_force_stack; /* which level 0 item we're planning to stack */
 
 	s16b current_selling;
 	s16b current_sell_amt;
