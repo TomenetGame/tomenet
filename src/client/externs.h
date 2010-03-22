@@ -374,6 +374,7 @@ extern void cmd_BBS(void);
 extern void cmd_telekinesis(void);
 extern void cmd_cloak(void);
 extern void cmd_lagometer(void);
+extern void cmd_force_stack(void);
 
 /* c-files.c */
 extern void text_to_ascii(char *buf, cptr str);
@@ -619,6 +620,7 @@ extern int Send_options(void);
 extern int Send_master(s16b command, cptr buf);
 extern int Send_clear_buffer(void);
 extern int Send_King(byte type);
+extern int Send_force_stack(int item);
 extern int Send_admin_house(int dir, cptr buf);
 extern int Send_spike(int dir);
 extern int Send_skill_mod(int i);

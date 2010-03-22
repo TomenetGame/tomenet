@@ -314,6 +314,9 @@ void process_command()
 			cmd_king();
 			break;
 #endif
+		case 'K':
+			cmd_force_stack();
+			break;
 
 		case '{':
 			cmd_inscribe();
@@ -3033,4 +3036,11 @@ void cmd_lagometer(void)
 	Term_load();
 
 	Flush_queue();
+}
+
+void cmd_force_stack()
+{
+	int item;
+	if (!c_get_item(&item, "Forcibly stack what? ", USE_INVEN)) return;
+	Send_force_stack(item);
 }

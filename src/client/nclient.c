@@ -4510,6 +4510,13 @@ int Send_inventory_revision(int revision) {
 	return 1;
 }
 
+int Send_force_stack(int item) {
+	int n;
+
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_FORCE_STACK, item)) <= 0) return n;
+	return 1;
+}
+
 /* Returns the amount of microseconds to the next frame (according to fps) - mikaelh */
 int next_frame() {
 	struct timeval tv;
