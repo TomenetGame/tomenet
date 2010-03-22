@@ -6237,6 +6237,9 @@ Note that not every skill is available to every profession (class).
                                 your chance to find items, for the items to
                                 be good or even great, and affects the amount
                                 of cash if you mine treasure.
+                                Depending on the skill, you might also uncover
+                                special things.
+                                At 30, you'll get automatic treasure detection.
     .Swimming                   Allows you to swim even while carrying more
                                 weight and protect your items from water.
                                 Skill maxes at 01.000, with the ability to
