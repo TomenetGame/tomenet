@@ -1734,7 +1734,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 
 	int y, x, power = p_ptr->skill_dig + (quiet_borer ? 20000 : 0);
 	int mining = get_skill(p_ptr, SKILL_DIG);
-	int dug_feat = FEAT_NONE, special_k_idx = 0, tval, sval;
+	int dug_feat = FEAT_NONE, special_k_idx = 0, tval = 0, sval;
 	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
 	cave_type *c_ptr;
@@ -1925,9 +1925,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					/* Message */
 					msg_print(Ind, "You have removed the rubble.");
 
-					/* Hack -- place an object - Not in town (Khazad becomes l00t source) */
-					if ((rand_int(100) < 10 + mining) && !istown(wpos))
-					{
+					if (!istown(wpos)) {
 						/* discovered a special feature? */
 						if (dug_feat == FEAT_FOUNTAIN) {
 							place_fountain(wpos, y, x);
@@ -1938,7 +1936,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 							cave_set_feat_live(wpos, y, x, dug_feat);
 							if (dug_feat == FEAT_WAY_MORE || dug_feat == FEAT_WAY_LESS)
 								msg_print(Ind, "You have uncovered a stairway!");
-						} else if (special_k_idx) {
+						} else if (special_k_idx && tval != TV_GOLEM) {
 							object_type forge;
 							invcopy(&forge, special_k_idx);
 							apply_magic(wpos, &forge, -1, TRUE, TRUE, TRUE, FALSE, TRUE);
@@ -1947,7 +1945,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 							forge.marked2 = ITEM_REMOVAL_NORMAL;
 							msg_print(Ind, "You have found something!");
 							drop_near(&forge, -1, wpos, y, x);
-						} else {
+						/* Hack -- place an object - Not in town (Khazad becomes l00t source) */
+						} else if (rand_int(100) < 10 + mining) {
 							place_object_restrictor = RESF_NONE;
 							place_object(wpos, y, x, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_LOW,
 								default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
@@ -2143,10 +2142,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 						note_spot_depth(wpos, y, x);
 						everyone_lite_spot(wpos, y, x);
 						msg_print(Ind, "You have found something!");
-					}
-					else if (istown(wpos)) {
+					} else if (istown(wpos)) {
 						/* nothing */
-
 					/* found special feature */
 					} else if (dug_feat == FEAT_FOUNTAIN) {
 						if (magik(35)) {
@@ -2220,19 +2217,21 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 				{
 					msg_print(Ind, "You have finished the tunnel.");
 
-					/* found special feature */
-					if (dug_feat == FEAT_FOUNTAIN) {
-						if (magik(10)) {
-							place_fountain(wpos, y, x);
-							note_spot_depth(wpos, y, x);
-							everyone_lite_spot(wpos, y, x);
-							msg_print(Ind, "You have laid open a fountain!");
+					if (!istown(wpos)) {
+						/* found special feature */
+						if (dug_feat == FEAT_FOUNTAIN) {
+							if (magik(10)) {
+								place_fountain(wpos, y, x);
+								note_spot_depth(wpos, y, x);
+								everyone_lite_spot(wpos, y, x);
+								msg_print(Ind, "You have laid open a fountain!");
+							}
+						} else if (dug_feat != FEAT_NONE &&
+						    dug_feat != FEAT_WAY_MORE &&
+						    dug_feat != FEAT_WAY_LESS) {
+							if (magik(20))
+								cave_set_feat_live(wpos, y, x, dug_feat);
 						}
-					} else if (dug_feat != FEAT_NONE &&
-					    dug_feat != FEAT_WAY_MORE &&
-					    dug_feat != FEAT_WAY_LESS) {
-						if (magik(20))
-							cave_set_feat_live(wpos, y, x, dug_feat);
 					}
 				}
 
