@@ -4299,6 +4299,8 @@ Chaos           Chaos attacks can also have nasty side-effects if you don't
                 -Drain some experience. Resisting 'Nether' will also prevent
                  this.
                 Resisting chaos will also make you resist confusion attacks.
+                Resisting chaos will prevent hallucination from certain mind
+                blast attacks.
                 Resistance will cut down damage to 6/7..6/12.
                 Breath damage is monster HP/6. Chaos breath caps at 600.
                 Raw chaos invocation (chaos ball) does (level*4)+(10d10) dam.
