@@ -3,13 +3,15 @@ function setskill(skill, v)
 end
 
 function get_skill_formatted(p, skill)
---	return (players(p).s_info[skill + 1].value / 1000) .. "." .. mod(players(p).s_info[skill + 1].value, 1000)
 	local m = mod(players(p).s_info[skill + 1].value, 1000)
+--	return (players(p).s_info[skill + 1].value / 1000) .. "." .. mod(players(p).s_info[skill + 1].value, 1000)
+
 	if m < 10 then
 	    m = "00" .. m
 	elseif m < 100 then
 	    m = "0" .. m
 	end
+
 	return (players(p).s_info[skill + 1].value / 1000) .. "." .. m
 end
 

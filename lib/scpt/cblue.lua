@@ -187,10 +187,39 @@ function status(name)
 	wchlst = ""
     end
 
-    msg_print(Ind, "\255UStatus for "..players(p).name.." (Ind "..p..", id "..players(p).id..", party "..players(p).party..")")
+    if players(p).max_lev < players(p).max_plv then
+	mlvc = "\255g"
+    else
+	mlvc = "\255G"
+    end
+    if players(p).lev < players(p).max_lev then
+	clvc = "\255y"
+    else
+	clvc = mlvc
+    end
+
+    if band(players(p).mode, 16) ~= 0 then
+	cmode = "ypvp"
+    elseif band(players(p).mode, 8) ~= 0 then
+	cmode = "Beverlasting"
+    elseif band(players(p).mode, 2) ~= 0 then
+	if band(players(p).mode, 4) ~= 0 then
+	    cmode = "rhellish"
+	else
+	    cmode = "Whard"
+	end
+    else
+	if players(p).mode == 0 then
+	    cmode = "wnormal"
+	else
+	    cmode = "Dnoghost"
+	end
+    end
+
+    msg_print(Ind, "\255UStatus for "..players(p).name.." (Ind "..p..", id "..players(p).id..", party "..players(p).party..", \255"..cmode.."\255U)")
     msg_print(Ind, "HP: "..players(p).chp.."/"..players(p).mhp.."    SP: "..players(p).csp.."/"..players(p).msp.."    San: "..players(p).csane.."/"..players(p).msane.."    St: "..players(p).cst.."/"..players(p).mst..ks)
     msg_print(Ind, "Base Spd: "..bspeed.."   Spd: "..players(p).pspeed.."   MDLev: "..players(p).max_dlv..blklst)
-    msg_print(Ind, "Lev: "..players(p).lev.."   Max Lev: "..players(p).max_lev.."   Top Lev: "..players(p).max_plv..wchlst)
+    msg_print(Ind, "Lev: "..clvc..players(p).lev.."\255w   Max Lev: "..mlvc..players(p).max_lev.."\255w   Top Lev: \255G"..players(p).max_plv..wchlst)
     msg_print(Ind, "Body: "..rs)
     msg_print(Ind, "AC : "..players(p).ac.."   +AC: "..players(p).to_a.."   Total AC: "..(players(p).ac+players(p).to_a))
     msg_print(Ind, "ToH: "..players(p).to_h.."   THM: "..players(p).to_h_melee.."   THR: "..players(p).to_h_ranged.."   *TMH*: "..players(p).dis_to_h+players(p).to_h_melee)
@@ -203,11 +232,16 @@ function status(name)
 		estr = "\255y"
 	end
 --        msg_print(Ind, "Exp: "..players(p).exp.."   MEx: "..players(p).max_exp.."   E2A: "..(player_exp[players(p).lev] / 100 * players(p).expfact))
-	if players(p).mode ~= 16 then
-            msg_print(Ind, estr.."Exp:\255w "..players(p).exp.."   MEx: "..players(p).max_exp.."   E2A: "..(player_exp[players(p).lev]))
+	if players(p).kills == 0 then
+	    kills = "Kills: 0"
 	else
-            msg_print(Ind, estr.."Exp:\255w "..players(p).exp.."   MEx: "..players(p).max_exp.."   E2A: "..(player_exp[players(p).lev]).."   Kills: "..players(p).kills)
+	    if players(p).mode ~= 16 then
+		kills = "Kills: \255r"..players(p).kills
+	    else
+		kills = "Kills: \255y"..players(p).kills
+	    end
 	end
+        msg_print(Ind, "Deaths: \255D"..players(p).deaths.."\255g("..players(p).soft_deaths..")  "..estr.."Exp:\255w "..players(p).exp.."  MEx: "..players(p).max_exp.."  E2A: "..(player_exp[players(p).lev]).."  "..kills)
     end
     msg_print(Ind, "Lifes: "..players(p).lives.."  -  Houses: "..players(p).houses_owned.."  -  Combat Stance: "..players(p).combat_stance.."  - Dodge level: "..players(p).dodge_level.."/"..apply_dodge_chance(p, players(p).lev))
 end
@@ -222,11 +256,11 @@ function resist(name)
     msg_print(Ind, "  \255bELEC: "..players(p).immune_elec.."  \255wFROST: "..players(p).immune_cold.."  \255sACID: "..players(p).immune_acid.."  \255rFIRE: "..players(p).immune_fire.."  \255gPOISON: "..players(p).immune_poison.."  \255BWATER: "..players(p).immune_water)
 --.."\255W-  \255gNETHER: "..players(p).immune_neth)
 --    msg_print(Ind, "  \255belec: "..players(p).sensible_elec.."  \255wfrost: "..players(p).sensible_cold.."  \255sacid: "..players(p).sensible_acid.."  \255rfire:  "..players(p).sensible_fire.."  \255gpoison:  "..players(p).sensible_pois)
-    msg_print(Ind, "  \255sNeth: "..players(p).resist_neth.."  \255vChaos: "..players(p).resist_chaos.."  \255vNexu: "..players(p).resist_nexus.."  \255oDise: "..players(p).resist_disen.."  \255uShards: "..players(p).resist_shard.."  \255ySound: "..players(p).resist_sound)
+    msg_print(Ind, "  \255DNeth: "..players(p).resist_neth.."  \255vChaos: "..players(p).resist_chaos.."  \255oDise: "..players(p).resist_disen.."  \255vNexus: "..players(p).resist_nexus.."  \255ySound: "..players(p).resist_sound.."  \255uShards: "..players(p).resist_shard)
 --    msg_print(Ind, "  \255DDark: "..players(p).resist_dark.."  \255WLight: "..players(p).resist_lite.."  \255vMana: "..players(p).resist_mana.."  \255BTime: "..players(p).resist_time.."  \255rRH \255vRM \255rDH \255vDM \255oDX \255w: \255r"..players(p).regenerate.." \255v"..players(p).regen_mana.." \255r"..players(p).drain_life.." \255v"..players(p).drain_mana.." \255o"..players(p).drain_exp)
-    msg_print(Ind, "  \255DDark: "..players(p).resist_dark.."  \255WLight: "..players(p).resist_lite.."  \255vMana: "..players(p).resist_mana.."  \255BTime: "..players(p).resist_time.."  \255rRH \255rDH \255vDM \255oDX \255w: \255r"..players(p).regenerate.." \255r"..players(p).drain_life.." \255v"..players(p).drain_mana.." \255o"..players(p).drain_exp)
+    msg_print(Ind, "  \255DDark: "..players(p).resist_dark.."  \255WLight: "..players(p).resist_lite.."  \255vMana: "..players(p).resist_mana.."  \255BTime: "..players(p).resist_time.."  \255rRH\255D-\255rDH \255vRM\255D-\255vDM \255oDX \255w: \255r"..players(p).regenerate.."\255D-\255r"..players(p).drain_life.." \255v"..players(p).regen_mana.."\255D-\255v"..players(p).drain_mana.." \255o"..players(p).drain_exp)
 --.."  \255RPlasma: "..players(p).resist_plasma)
-    msg_print(Ind, "  \255sFear: "..players(p).resist_fear.."  \255BConfusion: "..players(p).resist_conf.."  \255bFeather Falling: "..players(p).feather_fall.."  \255rFA:  "..players(p).free_act.."  \255gBlind: "..players(p).resist_blind)
+    msg_print(Ind, "  \255DHL:  "..players(p).hold_life.."  \255GFeather Falling: "..players(p).feather_fall.."  \255yFear: "..players(p).resist_fear.."  \255oConfusion: "..players(p).resist_conf.."  \255rBlind: "..players(p).resist_blind.."  \255RFA:  "..players(p).free_act)
 --    msg_print(Ind, "  \255yReflect: "..players(p).reflect.."  \255uNo-cut: "..players(p).no_cut.."  \255oRes.Tele.: "..players(p).feather_fall.."  \255rFA:  "..players(p).free_act.."  \255gBlind: "..players(p).res_tele)
 -- display sustenances:
     susstr = "---"
@@ -291,6 +325,8 @@ end
 function encum(name)
     local p = ind(name)
     combo = " "
+    combo2 = " "
+
     if players(p).cumber_armor == TRUE then
 	ca = "\255u("
     else
@@ -308,11 +344,13 @@ function encum(name)
     end
     if players(p).awkward_wield == TRUE then
 	aw = "\255y/"
+	combo2 = "\255y/"
     else
 	aw = " "
     end
     if players(p).easy_wield == TRUE then
 	ew = "\255g|"
+	combo2 = "\255g|"
     else
 	ew = " "
     end
@@ -336,17 +374,17 @@ function encum(name)
     else
 	cw = " "
     end
-    if players(p).rogue_heavyarmor == TRUE then
-	rh = "\255y("
-	combo = "\255y("
-    else
-	rh = " "
-    end
     if players(p).monk_heavyarmor == TRUE then
 	mh = "\255y("
 	combo = "\255y("
     else
 	mh = " "
+    end
+    if players(p).rogue_heavyarmor == TRUE then
+	rh = "\255b("
+	combo = "\255b("
+    else
+	rh = " "
     end
     if players(p).awkward_armor == TRUE then
 	aa = "\255v("
@@ -383,7 +421,8 @@ function encum(name)
 	fly = "    "
     end
 
-    msg_print(Ind, "\255UEncumberments: "..ca..hw..iw..aw..ew..hs..hst..as..cw..combo..aa..cg.."  \255UExtra: "..fly..climb..swim..inv)
+--    msg_print(Ind, "\255UEncumberments: "..ca..hw..iw..aw..ew..hs..hst..as..cw..combo..aa..cg.."  \255UExtra: "..fly..climb..swim..inv)
+    msg_print(Ind, "\255UEncumberments: "..ca..hw..iw..combo2..hs..hst..as..cw..mh..rh..aa..cg.."  \255UExtra: "..fly..climb..swim..inv)
 ]]
 
     if players(p).black_breath == TRUE then
@@ -392,7 +431,8 @@ function encum(name)
 	bb = "             "
     end
 
-    msg_print(Ind, "\255UEncumberments: "..ca..hw..iw..aw..ew..hs..hst..as..cw..combo..aa..cg..bb)
+--    msg_print(Ind, "\255UEncumberments: "..ca..hw..iw..aw..ew..hs..hst..as..cw..combo..aa..cg..bb)
+    msg_print(Ind, "\255UEncumberments: "..ca..hw..iw..combo2..hs..hst..as..cw..mh..rh..aa..cg..bb)
 end
 
 -- Show miscellaneous character abilities of a player
@@ -669,14 +709,28 @@ end
 function rsk(name, skill)
     local p
     p = ind(name)
-    respec_skill(p, skill)
+    respec_skill(p, skill, 0)
+end
+
+--reset one skill, making the invested points available again, and update it to latest version
+function fsk(name, skill)
+    local p
+    p = ind(name)
+    respec_skill(p, skill, 1)
 end
 
 --reset whole skill chart, making all invested skill points available again
 function rskc(name)
     local p
     p = ind(name)
-    respec_skills(p)
+    respec_skills(p, 0)
+end
+
+--reset whole skill chart, making all invested skill points available again, and update it to latest version
+function fskc(name)
+    local p
+    p = ind(name)
+    respec_skills(p, 1)
 end
 
 --mhh
