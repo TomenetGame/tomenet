@@ -3358,12 +3358,16 @@ int Receive_inventory_revision(void)
 				/* hack 'ex' to make this special inscription known */
 				ex = ex_buf + strlen(ex_buf) - 2;
 				/* add the fake-name inscription */
+				i = strlen(ex_buf);
 				strncat(ex_buf, inventory_name[v] + inventory_inscription[v], inventory_inscription_len[v]);
+				ex_buf[i + inventory_inscription_len[v]] = '\0'; /* terminate string after strncat() */
 				strcat(ex_buf, "}");
 			} else {
 				ex_buf[strlen(ex_buf) - 1] = '\0'; /* cut off final '}' */
 				strcat(ex_buf, "#"); /* add the fake-name inscription */
+				i = strlen(ex_buf);
 				strncat(ex_buf, inventory_name[v] + inventory_inscription[v], inventory_inscription_len[v]);
+				ex_buf[i + inventory_inscription_len[v]] = '\0'; /* terminate string after strncat() */
 				strcat(ex_buf, "}"); /* restore final '}' */
 			}
 		}
