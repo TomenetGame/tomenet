@@ -3386,7 +3386,7 @@ int Receive_inventory_revision(void)
 		if (!auto_inscribe) continue;
  #else
 		/* save for checking for already existing target inscription */
-		if (ex) {
+		if (ex && strlen(ex) > 2) {
 			strncpy(tag_buf, ex + 1, strlen(ex) - 2);
 			tag_buf[strlen(ex) - 2] = '\0'; /* terminate */
 		}
