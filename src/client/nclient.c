@@ -1258,9 +1258,12 @@ int Receive_inven(void)
 	bool auto_inscribe = FALSE, found;
 #endif
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, name)) <= 0)
-	{
-		return n;
+	if (is_newer_than(&server_version, 4, 4, 4, 2, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, name)) <= 0)
+			return n;
+	} else {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%s", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, name)) <= 0)
+			return n;
 	}
 
 	/* Check that the inventory slot is valid - mikaelh */
@@ -1389,9 +1392,15 @@ int Receive_inven_wide(void)
 	bool auto_inscribe = FALSE;
 #endif
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval,
-	    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9, name)) <= 0)
-		return n;
+	if (is_newer_than(&server_version, 4, 4, 4, 2, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval,
+		    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9, name)) <= 0)
+			return n;
+	} else {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%s", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval,
+		    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9, name)) <= 0)
+			return n;
+	}
 
 	/* Check that the inventory slot is valid - mikaelh */
 	if (pos < 'a' || pos > 'x') return 0;
@@ -1557,8 +1566,13 @@ int Receive_equip(void)
 	s16b wgt, amt, pval;
 	char name[ONAME_LEN];
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, name)) <= 0)
-		return n;
+	if (is_newer_than(&server_version, 4, 4, 4, 2, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, name)) <= 0)
+			return n;
+	} else {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%s", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, name)) <= 0)
+			return n;
+	}
 
 	/* Check that the equipment slot is valid - mikaelh */
 	if (pos < 'a' || pos > 'n') return 0;
