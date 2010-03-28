@@ -1083,7 +1083,7 @@ static void display_inven(void)
 
 	object_type *o_ptr;
 
-	char	o_name[80];
+	char	o_name[ONAME_LEN];
 
 	char	tmp_val[80];
 
@@ -1169,7 +1169,7 @@ static void display_equip(void)
 
 	object_type *o_ptr;
 
-	char	o_name[80];
+	char	o_name[ONAME_LEN];
 
 	char	tmp_val[80];
 
@@ -1240,7 +1240,7 @@ void show_inven(void)
 
 	object_type *o_ptr;
 
-	char	o_name[80];
+	char	o_name[ONAME_LEN];
 
 	char	tmp_val[80];
 
@@ -1371,7 +1371,7 @@ void show_equip(void)
 
 	object_type *o_ptr;
 
-	char	o_name[80];
+	char	o_name[ONAME_LEN];
 
 	char	tmp_val[80];
 

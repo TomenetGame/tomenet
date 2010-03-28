@@ -54,7 +54,7 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		4
 #define VERSION_PATCH		4
-#define VERSION_EXTRA		2
+#define VERSION_EXTRA		3
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -93,7 +93,7 @@
 
 /* Client-side only: Client release version tag
    (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG "b"
+#define CLIENT_VERSION_TAG "c"
 
 
 
@@ -321,6 +321,8 @@
  */
 #define MAX_CHARS 80
 
+/* max length of item names including inscription */
+#define ONAME_LEN	160
 
 /*
  * The maximum number of player ID's / accounts

@@ -54,9 +54,9 @@ static bool get_item_okay(int i)
 
 static bool verify(cptr prompt, int item)
 {
-	char	o_name[80];
+	char	o_name[ONAME_LEN];
 
-	char	out_val[160];
+	char	out_val[MSG_LEN];
 
 
 	/* Describe */

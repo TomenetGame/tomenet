@@ -26,7 +26,7 @@ byte hist_chat_end = 0;
 bool hist_chat_looped = FALSE;
 
 object_type inventory[INVEN_TOTAL];	/* The client-side copy of the inventory */
-char inventory_name[INVEN_TOTAL][80];	/* The client-side copy of the inventory names */
+char inventory_name[INVEN_TOTAL][ONAME_LEN];	/* The client-side copy of the inventory names */
 int inventory_inscription[INVEN_TOTAL];	/* Position in an item name where a special inscription begins */
 int inventory_inscription_len[INVEN_TOTAL];	/* Length of a special inscription */
 

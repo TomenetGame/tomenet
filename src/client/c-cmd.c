@@ -919,7 +919,7 @@ void cmd_take_off(void)
 void cmd_destroy(void)
 {
 	int item, amt;
-	char out_val[160];
+	char out_val[MSG_LEN];
 
 	if (!c_get_item(&item, "Destroy what? ", (USE_EQUIP | USE_INVEN)))
 	{

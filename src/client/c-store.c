@@ -30,8 +30,8 @@ static void display_entry(int pos)
 {
 	object_type *o_ptr;
 	int i, x;
-	char o_name[80];
-	char out_val[160];
+	char o_name[ONAME_LEN];
+	char out_val[MSG_LEN];
 
 	int maxwid = 75;
 

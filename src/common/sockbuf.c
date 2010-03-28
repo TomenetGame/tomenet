@@ -570,8 +570,9 @@ int Packet_printf(va_alist)
 		}
 		break;
 	    case 'S':	/* Big strings */
+	    case 'I':	/* Semi-big strings: Item name (including inscription) */
 	    case 's':	/* Small strings */
-		max_str_size = (fmt[i] == 'S') ? MSG_LEN : MAX_CHARS;
+		max_str_size = (fmt[i] == 'S') ? MSG_LEN : ((fmt[i] == 'I') ? ONAME_LEN : MAX_CHARS);
 		str = va_arg(ap, char *);
 		if (buf + max_str_size >= end) {
 		    stop = end;
@@ -789,8 +790,9 @@ int Packet_scanf(va_alist)
 		}
 		break;
 	    case 'S':	/* Big strings */
+	    case 'I':	/* Semi-big strings: Item name (including inscription) */
 	    case 's':	/* Small strings */
-		max_str_size = (fmt[i] == 'S') ? MSG_LEN : MAX_CHARS;
+		max_str_size = (fmt[i] == 'S') ? MSG_LEN : ((fmt[i] == 'I') ? ONAME_LEN : MAX_CHARS);
 		str = va_arg(ap, char *);
 		k = 0;
 		for (;;) {

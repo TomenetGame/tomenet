@@ -1250,15 +1250,15 @@ int Receive_inven(void)
 	char	ch;
 	char pos, attr, tval, sval, *insc;
 	s16b wgt, amt, pval;
-	char name[MAX_CHARS];
+	char name[ONAME_LEN];
 
 #if 0
 	int i;
-	char *ex, ex_buf[MAX_CHARS], *ex2, ex_buf2[MAX_CHARS];
+	char *ex, ex_buf[ONAME_LEN], *ex2, ex_buf2[ONAME_LEN];
 	bool auto_inscribe = FALSE, found;
 #endif
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%s", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, name)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, name)) <= 0)
 	{
 		return n;
 	}
@@ -1288,7 +1288,7 @@ int Receive_inven(void)
 		} while (*(insc + 1));
 	} else inventory_inscription[pos - 'a'] = 0;
 
-	strncpy(inventory_name[pos - 'a'], name, MAX_CHARS - 1);
+	strncpy(inventory_name[pos - 'a'], name, ONAME_LEN - 1);
 
 #if 0 /* AUTOINSCRIBE */
 	/* apply auto-inscriptions - C. Blue */
@@ -1381,19 +1381,17 @@ int Receive_inven_wide(void)
 	char pos, attr, tval, sval, *insc;
 	byte xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9;
 	s16b wgt, amt, pval;
-	char name[MAX_CHARS];
+	char name[ONAME_LEN];
 
 #if 0
 	int i;
-	char *ex, ex_buf[MAX_CHARS];
+	char *ex, ex_buf[ONAME_LEN];
 	bool auto_inscribe = FALSE;
 #endif
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%s", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval,
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval,
 	    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9, name)) <= 0)
-	{
 		return n;
-	}
 
 	/* Check that the inventory slot is valid - mikaelh */
 	if (pos < 'a' || pos > 'x') return 0;
@@ -1430,7 +1428,7 @@ int Receive_inven_wide(void)
 		} while (*(insc + 1));
 	} else inventory_inscription[pos - 'a'] = 0;
 
-	strncpy(inventory_name[pos - 'a'], name, MAX_CHARS - 1);
+	strncpy(inventory_name[pos - 'a'], name, ONAME_LEN - 1);
 
 #if 0 /* AUTOINSCRIBE - moved to Receive_inventory_revision() */
 	/* apply auto-inscriptions - C. Blue */
@@ -1557,12 +1555,10 @@ int Receive_equip(void)
 	char 	ch;
 	char pos, attr, tval, sval;
 	s16b wgt, amt, pval;
-	char name[MAX_CHARS];
+	char name[ONAME_LEN];
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%s", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, name)) <= 0)
-	{
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, name)) <= 0)
 		return n;
-	}
 
 	/* Check that the equipment slot is valid - mikaelh */
 	if (pos < 'a' || pos > 'n') return 0;
@@ -1577,7 +1573,7 @@ int Receive_equip(void)
 	if (!strcmp(name, "(nothing)"))
 		strcpy(inventory_name[pos - 'a' + INVEN_WIELD], equipment_slot_names[pos - 'a']);
 	else
-		strncpy(inventory_name[pos - 'a' + INVEN_WIELD], name, MAX_CHARS - 1);
+		strncpy(inventory_name[pos - 'a' + INVEN_WIELD], name, ONAME_LEN - 1);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_EQUIP);
@@ -2593,7 +2589,7 @@ int Receive_store_action(void)
 int Receive_store(void)
 {
 	int	n, price;
-	char	ch, pos, name[MAX_CHARS], tval, sval;
+	char	ch, pos, name[ONAME_LEN], tval, sval;
 	byte	attr;
 	s16b	wgt, num, pval;
 
@@ -2623,7 +2619,7 @@ int Receive_store(void)
 int Receive_store_wide(void)
 {
 	int	n, price;
-	char	ch, pos, name[MAX_CHARS], tval, sval;
+	char	ch, pos, name[ONAME_LEN], tval, sval;
 	byte	attr;
 	s16b	wgt, num, pval;
 	byte	xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9;
@@ -3323,9 +3319,9 @@ int Receive_inventory_revision(void)
 	int revision;
 
 	int i, v;
-	char *ex, ex_buf[MAX_CHARS];
-	char *ex2, ex_buf2[MAX_CHARS];
-	char *match, tag_buf[MAX_CHARS];
+	char *ex, ex_buf[ONAME_LEN];
+	char *ex2, ex_buf2[ONAME_LEN];
+	char *match, tag_buf[ONAME_LEN];
 	bool auto_inscribe, found;
 
 	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &revision)) <= 0)
