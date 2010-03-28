@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 20. Mar 2010 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.4b - official websites are:
+| Latest update: 28. Mar 2010 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.4c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 +---
@@ -2182,6 +2182,7 @@ Example 2: Assumed you have the spell Manathrust somewhere in your books and
 want to cast it by name, what you enter in the q'n'd field is:
     m@Manathrust\*
 and it will automatically be expanded to '\e)m@11\r@Manathrust\r*t', voila.
+Another example: 'm@Phase Door\'.
 
 
 
@@ -2418,6 +2419,8 @@ manathrust with '\e)m@11\r9a*t' you could also just make a macro
 '\e)m@11\r@Manathrust\r*t' without the need to inscribe your book.
 
 In fact you could make a macro '\e)m@Cast a spell\r@Manathrust\r*t'.
+
+Another example: '\e)m@11\r@Phase Door\r'.
 
 IMPORTANT: Keep in mind that call-by-name is actually case-sensitive!
 (So in the example above, 'manathrust' would not work.)
