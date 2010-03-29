@@ -264,7 +264,7 @@ int mkstemp(char *template)
 	rand_ext[1] = valid_characters[rand_int(sizeof (valid_characters))];
 	rand_ext[2] = valid_characters[rand_int(sizeof (valid_characters))];
 	rand_ext[3] = '\0';
-	strnfmt(f, 256, "%s/xfer_%ud.%s", ANGBAND_DIR_XTRA, tmp_counter, rand_ext);
+	strnfmt(f, 256, "%s/xfer_%ud.%s", ANGBAND_DIR, tmp_counter, rand_ext);
 	tmp_counter++;
 
 	fd = open(f, O_RDWR | O_CREAT);
