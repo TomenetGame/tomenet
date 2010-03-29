@@ -327,7 +327,7 @@ errr path_temp(char *buf, int max)
 	rand_ext[1] = valid_characters[rand_int(sizeof (valid_characters))];
 	rand_ext[2] = valid_characters[rand_int(sizeof (valid_characters))];
 	rand_ext[3] = '\0';
-	strnfmt(buf, max, "%s/server_%ud.%s", ANGBAND_DIR_XTRA, tmp_counter, rand_ext);
+	strnfmt(buf, max, "%s/server_%ud.%s", ANGBAND_DIR_DATA, tmp_counter, rand_ext);
 	tmp_counter++;
 #else 
 	cptr s;
@@ -336,7 +336,7 @@ errr path_temp(char *buf, int max)
 	s = tmpnam(NULL);
 
 	/* Oops */
-	if (!s) return ( -1);
+	if (!s) return (-1);
 
 	/* Format to length */
 	strnfmt(buf, max, "%s", s);
