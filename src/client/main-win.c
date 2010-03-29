@@ -421,8 +421,12 @@ static cptr AngList  = "AngList";
  * Directory names
  */
 static cptr ANGBAND_DIR_XTRA_FONT;
+#ifdef USE_GRAPHICS
 static cptr ANGBAND_DIR_XTRA_GRAF;
+#endif
+#ifdef USE_SOUND
 static cptr ANGBAND_DIR_XTRA_SOUND;
+#endif
 
 /*
  * The Angband color set:
