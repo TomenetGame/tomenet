@@ -808,7 +808,7 @@ static void save_prefs(void)
 static void load_prefs_aux(term_data *td, cptr sec_name)
 {
 	char tmp[128];
-	int i;
+	int i = 0;
 
 	/* Visibility (Sub-window) */
 	if (td != &data[0])
@@ -2381,6 +2381,7 @@ static void init_windows(void)
 }
 
 
+#if 0
 /*
  * Hack -- disables new and open from file menu
  */
@@ -2391,6 +2392,7 @@ static void disable_start(void)
 	EnableMenuItem(hm, IDM_FILE_NEW, MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
 	EnableMenuItem(hm, IDM_FILE_OPEN, MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
 }
+#endif
 
 
 /*
@@ -2453,6 +2455,7 @@ static void setup_menus(void)
 }
 
 
+#if 0
 /*
  * Check for double clicked (or dragged) savefile
  *
@@ -2492,6 +2495,7 @@ static void check_for_save_file(LPSTR cmd_line)
 	/* Play game */
 /*	play_game(FALSE);	-changed to network call -GP */
 }
+#endif
 
 
 /*

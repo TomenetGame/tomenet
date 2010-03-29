@@ -249,22 +249,24 @@ int get_xfers_num() {
  * Silly windows
  * DarkGod slaps windows
  */
-/* Hmm... at least Cygwin seems to have this? - mikaelh */
 #ifndef CYGWIN
 #ifdef WIN32
 int mkstemp(char *template)
 {
-	char f[256], *fp;	/* was 30 if it overflows, it overflows.. */
+	static u32b tmp_counter;
+	static char valid_characters[] =
+			"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	char f[256];
 	int fd;
+	char rand_ext[4];
 
-#ifndef __MINGW32__
-	if (!tmpnam(f)) return -1;
-#else /* on Windows, we'd just get files on C:\ from tmpnam. */
-//	if (!(fp = tempnam("./lib/temp", "L")) return -1; /* have files start with an L, like LUA ;) */
-	path_build(f, 1024, ANGBAND_DIR, "");
-	if (!(fp = tempnam(f, "tomenet_"))) return -1; /* have temporary files start with tomenet_ */
-	strcpy(f, fp);
-#endif
+	rand_ext[0] = valid_characters[rand_int(sizeof (valid_characters))];
+	rand_ext[1] = valid_characters[rand_int(sizeof (valid_characters))];
+	rand_ext[2] = valid_characters[rand_int(sizeof (valid_characters))];
+	rand_ext[3] = '\0';
+	strnfmt(f, 256, "%s/xfer_%ud.%s", ANGBAND_DIR_XTRA, tmp_counter, rand_ext);
+	tmp_counter++;
+
 	fd = open(f, O_RDWR | O_CREAT);
 	strcpy(template, f);	/* give back our filename */
 	return fd;

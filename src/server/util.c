@@ -317,17 +317,30 @@ errr path_parse(char *buf, int max, cptr file)
  */
 errr path_temp(char *buf, int max)
 {
+#ifdef WINDOWS
+	static u32b tmp_counter;
+	static char valid_characters[] =
+			"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	char rand_ext[4];
+
+	rand_ext[0] = valid_characters[rand_int(sizeof (valid_characters))];
+	rand_ext[1] = valid_characters[rand_int(sizeof (valid_characters))];
+	rand_ext[2] = valid_characters[rand_int(sizeof (valid_characters))];
+	rand_ext[3] = '\0';
+	strnfmt(buf, max, "%s/server_%ud.%s", ANGBAND_DIR_XTRA, tmp_counter, rand_ext);
+	tmp_counter++;
+#else 
 	cptr s;
 
 	/* Temp file */
 	s = tmpnam(NULL);
 
 	/* Oops */
-	if (!s) return (-1);
+	if (!s) return ( -1);
 
 	/* Format to length */
 	strnfmt(buf, max, "%s", s);
-
+#endif
 	/* Success */
 	return (0);
 }
