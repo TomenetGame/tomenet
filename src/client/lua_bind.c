@@ -86,8 +86,10 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus)
         {
                 tmp += bonus;
                 lvl = (tmp * (max * (SKILL_STEP / 10)) / (SKILL_MAX / 10)) / (SKILL_STEP / 10);
-                lvl *= (100 + get_skill_scale(p_ptr, SKILL_SPELL, 40));
-                lvl /= 100;
+		if (school_spells[s].spell_power) {
+			lvl *= (100 + get_skill_scale(p_ptr, SKILL_SPELL, 40));
+			lvl /= 100;
+		}
         }
         return lvl;
 }

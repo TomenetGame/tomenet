@@ -31,6 +31,7 @@ struct spell_type
 	byte mana_max;			/* Required mana at max lvl */
 	byte fail;			/* Minimum chance of failure */
         s16b level;                     /* Spell level(0 = not learnt) */
+        byte spell_power;		/* affected by spell-power skill? */
 };
 
 struct school_type
