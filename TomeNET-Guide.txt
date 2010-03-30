@@ -6782,6 +6782,8 @@ Druid
     Druids are able to call upon the mystical powers of nature and very good
     at it. Their wisdom is of primary importance to determine their mana and
     success chances when casting spells.
+    Druids fight using Martial Arts (the only melee skill they are able to
+    train) as well as spells.
     Druids can shapechange into several animal forms without having to fight
     or kill them in order to learn about their form. They learn one or more
     new forms at each character level that is dividable by 5. Druids are able
