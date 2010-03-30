@@ -196,7 +196,7 @@ static void choose_race(void)
 {
 	player_race *rp_ptr;
 	int i, j, l, m, n;
-	char c;
+	char c = '\0';
 	char out_val[160];
 	bool hazard = FALSE;
 
