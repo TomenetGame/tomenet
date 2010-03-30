@@ -6790,7 +6790,9 @@ Druid
     fair enough; they despise the use of weapons though.
     A specialty of druids is, that they are still able to wear their full
     equipment even if their appearent shape is not human but of an animal.
-    Druids learn how to quickly pass through thick forest at level 10.
+    Druids learn how to quickly pass through thick forest at level 10 --
+    note though that they can already do this at level 5 by simply polymorphing
+    into an animal ('m' key), since all animals can pass forest easily.
     (Special note (compare 6.7): If they wield a weapon while using a form
     which usually cannot use weapons, they will only get 1 blow per round.)
     To recheck which forms you can transform into, use the /ex command.
