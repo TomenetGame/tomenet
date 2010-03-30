@@ -5999,7 +5999,7 @@ Note that not every skill is available to every profession (class).
                                 (It won't raise the level of spells which you
                                 haven't learned yet.)
                                 Note that Spell-power does not affect druid
-                                or mindcrafter spells.
+                                or mindcrafter spells, nor runemastery.
     .Sorcery                    Learn to use spells of ALL magic schools at
                                 once, instead of training a particular branch!
 << For more information about learning spells, see (6.8) >>
