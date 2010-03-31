@@ -462,6 +462,9 @@ TAB or CTRL+I
         displays lag-o-meter.
 !       look at the in-game bulletin board. Players can write lines of text to
         it by using the /bbs <text> command.
+c  while in a store:
+        Pastes an item to chat, including its currently displayed store price
+        and the symbol of the store.
 K       forcibly combines a level 0 item in your inventory with other items of
         the same type that aren't level 0. Be warned, that this will change the
         level of all the items involved to 0.
@@ -613,7 +616,7 @@ They all start with a slash '/':
             inscription. Helpful for looting in conjunction with /dis command.
             If a slot (a..w) is specified, it only tags the item in that
             particular inventory slot (if not yet inscribed already).
-	    Will not affect equipped items.
+            Will not affect equipped items.
 /tar <x> <y>
  (/target)
             Allows you to target a specific grid specified by X,Y as offset
@@ -623,7 +626,7 @@ They all start with a slash '/':
             in your backpack which are exactly '!k' (as done by /tag command).
             Ohterwise it removes inscriptions of all items which are exactly
             inscribed as specified by <inscription>.
-			Will not affect equipped items (except for '/untag *').
+            Will not affect equipped items (except for '/untag *').
 /untag *    Will remove all pseudo-id tags from your inventory items.
             Note: This will work on equipped items too!
 /at         Apply auto-inscription settings to current inventory.
