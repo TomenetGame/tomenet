@@ -341,47 +341,44 @@ void Receive_login(void)
 	else if (s_FUN) c_put_str(TERM_SLATE, "The server is running 'FUN_SERVER' settings.", 22, 10);
 	if (s_PARTY) c_put_str(TERM_SLATE, "This server is running 'PARTY_SERVER' settings.", 23, 10);
 
-	c_put_str(TERM_L_BLUE, "Character Overview", 0, 30);
+	c_put_str(TERM_GREEN, "Character Overview", 0, 30);
 	if (!s_RPG || s_RPG_ADMIN)
-		c_put_str(TERM_L_BLUE, format("(You can create up to %d different characters to play with)", max_cpa), 1, 10);
+		c_put_str(TERM_GREEN, format("(You can create up to %d different characters to play with)", max_cpa), 1, 10);
 	else
-		c_put_str(TERM_L_BLUE, "(You can create only ONE characters at a time to play with)", 1, 10);
-	c_put_str(TERM_L_BLUE, "Choose an existing character:", 3, 8);
-	while((n = Packet_scanf(&rbuf, "%c%s%s%hd%hd%hd", &ch, colour_sequence, c_name, &level, &c_race, &c_class)) >0){
+		c_put_str(TERM_GREEN, "(You can create only ONE characters at a time to play with)", 1, 10);
+	c_put_str(TERM_GREEN, "Choose an existing character:", 3, 8);
+	while((n = Packet_scanf(&rbuf, "%c%s%s%hd%hd%hd", &ch, colour_sequence, c_name, &level, &c_race, &c_class)) > 0){
 		if(!strlen(c_name)){
 			break;
 		}
 		strcpy(names[i], c_name);
-		sprintf(tmp, "%c) %s%s the level %d %s %s", 'a'+i, colour_sequence, c_name, level, race_info[c_race].title, class_info[c_class].title);
-		c_put_str(TERM_WHITE, tmp, 5+i, 11);
+		sprintf(tmp, "%c) %s%s the level %d %s %s", 'a' + i, colour_sequence, c_name, level, race_info[c_race].title, class_info[c_class].title);
+		c_put_str(TERM_WHITE, tmp, 5 + i, 11);
 		i++;
-		if(i==max_cpa + 1) break; /* should be changed to max_cpa + 0 */
+		if(i == max_cpa + 1) break; /* should be changed to max_cpa + 0 */
 	}
 	for (n = (max_cpa - i); n > 0; n--)
-		c_put_str(TERM_SLATE, "<free slot>", 5+i+n-1, 11);
-	if (i < max_cpa)
-	{
-		c_put_str(TERM_L_BLUE, "N) Create a new character", 6+max_cpa, 8);
+		c_put_str(TERM_SLATE, "<free slot>", 5 + i + n - 1, 11);
+	if (i < max_cpa) {
+		c_put_str(TERM_GREEN, "N) Create a new character", 6 + max_cpa, 8);
+	} else {
+		c_put_str(TERM_GREEN, format("(Maximum of %d character reached.", max_cpa), 6 + max_cpa, 8);
+		c_put_str(TERM_GREEN, " Get rid of one (suicide) before creating another.)", 7 + max_cpa, 8);
 	}
-	else
-	{
-		c_put_str(TERM_L_BLUE, format("(Maximum of %d character reached.", max_cpa), 6+max_cpa, 8);
-		c_put_str(TERM_L_BLUE, " Get rid of one (suicide) before creating another.)", 7+max_cpa, 8);
-	}
-	c_put_str(TERM_L_BLUE, "Q) Quit the game", 11+max_cpa, 8);
-	while((ch<'a' || ch>='a'+i) && (ch != 'N' || i > (max_cpa-1))){
-		ch=inkey();
+	c_put_str(TERM_GREEN, "Q) Quit the game", 11 + max_cpa, 8);
+	while((ch < 'a' || ch >= 'a' + i) && (ch != 'N' || i > (max_cpa - 1))){
+		ch = inkey();
 		if (ch == 'Q') quit(NULL);
 	}
-	if(ch=='N'){
+	if(ch == 'N'){
 		if (!strlen(cname)) strcpy(c_name, nick);
 		else strcpy(c_name, cname);
 
-		c_put_str(TERM_WHITE, "(ESC to pick a random name)", 9+max_cpa, 11);
+		c_put_str(TERM_SLATE, "(ESC to pick a random name)", 9 + max_cpa, 11);
 
 		while (1)
 		{
-			c_put_str(TERM_YELLOW, "New name: ", 8+max_cpa, 11);
+			c_put_str(TERM_YELLOW, "New name: ", 8 + max_cpa, 11);
 			askfor_aux(c_name, 15, 0, 0);//was 20/19 once
 			if (strlen(c_name)) break;
 			create_random_name(0, c_name);
@@ -390,7 +387,7 @@ void Receive_login(void)
 		/* Capitalize the name */
 		c_name[0] = toupper(c_name[0]);
 	}
-	else strcpy(c_name, names[ch-'a']);
+	else strcpy(c_name, names[ch - 'a']);
 	Term_clear();
 	strcpy(cname, c_name);
 }
