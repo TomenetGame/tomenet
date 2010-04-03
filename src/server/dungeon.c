@@ -1728,7 +1728,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 			{
 				if(choice < 0 || choice >= 8) 
 					choice = 0;
-				execute_rspell(Ind, 5, r_elements[o_ptr->sval].self | runespell_types[choice].type, 0);
+				execute_rspell(Ind, 5, r_elements[o_ptr->sval].self | runespell_types[choice].type, 1);
 				//execute_rspell(Ind, 5, NULL, 0, r_elements[o_ptr->sval].self | R_BOLT, 0); //choice sometimes has wrong value
 				return TRUE;
 			}

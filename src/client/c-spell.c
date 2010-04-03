@@ -1349,15 +1349,15 @@ static void print_rune_imperatives()
 	int col = 10, j = 2;
 
 	/* Title the list */
-	prt("", 1, col); put_str("Name         ( cost%,   damage%, fail%   )", 1, col);
-	prt("", j, col); put_str("a) minimized ( 50%,     60%,     60%     )", j++, col);
-	prt("", j, col); put_str("b) tiny      ( 80%,     90%,     90%     )", j++, col);
-	prt("", j, col); put_str("c) small     ( 100%,    100%,    100%    )", j++, col);
-	prt("", j, col); put_str("d) moderate  ( 110%,    130%,    120%    )", j++, col);
-	prt("", j, col); put_str("e) large     ( 130%,    150%,    140%    )", j++, col);
-	prt("", j, col); put_str("f) massive   ( 150%,    170%,    160%    )", j++, col);
-	prt("", j, col); put_str("g) maximized ( 170%,    200%,    180%    )", j++, col);
-	prt("", j, col); put_str("h) chaotic   ( 50-250%, 50-250%, 50-250% )", j++, col);
+	prt("", 1, col); put_str("Name          ( Lvl, Dam%, Cost%, Fail% )", 1, col);
+	prt("", j, col); put_str("a) minimized  (  -1,  60%,   50%,   60% )", j++, col);
+	prt("", j, col); put_str("b) moderate   (  +0, 100%,  100%,  100% )", j++, col);
+	prt("", j, col); put_str("c) maximized  (  +1, 150%,  140%,  140% )", j++, col);
+	prt("", j, col); put_str("d) sparse     (  +0,  80%,  100%,  100% )", j++, col);
+	prt("", j, col); put_str("e) dense      (  +0, 120%,  100%,  100% )", j++, col);
+	prt("", j, col); put_str("f) lengthened (  +1, 100%,  120%,  100% )", j++, col);
+	prt("", j, col); put_str("g) widened    (  +1, 100%,  120%,  100% )", j++, col);
+	prt("", j, col); put_str("h) chaotic    (  +1, ???%,  ???%,  ???% )", j++, col);
 	
 	/* Clear the bottom line */
 	prt("", j++, col);
@@ -1368,15 +1368,15 @@ static void print_rune_methods()
 	int col = 10, j = 2;
 
 	/* Title the list */
-	prt("", 1, col); put_str("Name     ( cost% )", 1, col);
-	prt("", j, col); put_str("a) Melee ( 50%   )", j++, col);
-	prt("", j, col); put_str("b) Self  ( 100%  )", j++, col);
-	prt("", j, col); put_str("c) Bolt  ( 100%  )", j++, col);
-	prt("", j, col); put_str("d) Beam  ( 110%  )", j++, col);
-	prt("", j, col); put_str("e) Ball  ( 130%  )", j++, col);
-	prt("", j, col); put_str("f) Wave  ( 120%  )", j++, col);
-	prt("", j, col); put_str("g) Cloud ( 150%  )", j++, col);
-	prt("", j, col); put_str("h) Sight ( 400%  )", j++, col);
+	prt("", 1, col); put_str("Name     ( Lvl, Cost% )", 1, col);
+	prt("", j, col); put_str("a) Melee (  +0,   50% )", j++, col);
+	prt("", j, col); put_str("b) Self  (  +0,  100% )", j++, col);
+	prt("", j, col); put_str("c) Bolt  (  +1,  100% )", j++, col);
+	prt("", j, col); put_str("d) Beam  (  +2,  110% )", j++, col);
+	prt("", j, col); put_str("e) Ball  (  +3,  130% )", j++, col);
+	prt("", j, col); put_str("f) Wave  (  +4,  120% )", j++, col);
+	prt("", j, col); put_str("g) Cloud (  +8,  150% )", j++, col);
+	prt("", j, col); put_str("h) Sight ( +10,  400% )", j++, col);
 
 	/* Clear the bottom line */
 	prt("", j++, col);

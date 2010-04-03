@@ -3248,6 +3248,7 @@ struct r_spell
 	byte pen; /* MP multiplier */
 	byte level; /* Minimum level to cast */
 	byte fail; /* Fail rate multiplier */
+	byte radius; /* Radius at 50 before multipliers: linear scale */
 	u16b gf_type; /* Projection type */
 };
 
@@ -3257,10 +3258,13 @@ struct r_imper
 {
 	int id;
 	char * name;
+	s16b level; //Level +/-
 	byte cost; //Cost multiplier
 	byte fail; //Fail multiplier
 	byte dam; //Damage multipler
 	byte danger; //Danger multiplier
+	s16b radius; //Radius +/-
+	byte duration; //Duration multiplier
 };
 
 typedef struct rspell_sel rspell_sel;
