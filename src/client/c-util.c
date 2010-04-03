@@ -2955,16 +2955,16 @@ void interact_macros(void)
 		Term_putstr(5,  2, -1, TERM_WHITE, "(\377y1\377w) Load macros from a pref file");
 		Term_putstr(5,  3, -1, TERM_WHITE, "(\377y2\377w) Save macros to a pref file");
 		Term_putstr(5,  4, -1, TERM_WHITE, "(\377y3\377w) Enter a new macro action");
-		Term_putstr(5,  5, -1, TERM_SLATE, "(\377y4\377w) Create a normal macro       (persists everywhere)");
+		Term_putstr(5,  5, -1, TERM_SLATE, "(\377y4\377s) Create a normal macro       (persists everywhere)");
 		Term_putstr(5,  6, -1, TERM_WHITE, "(\377y5\377w) Create a hybrid macro       (recommended for most cases)");
-		Term_putstr(5,  7, -1, TERM_SLATE, "(\377y6\377w) Create a command macro      (eg for using / and * key)");
-//		Term_putstr(5,  8, -1, TERM_SLATE, "(\377y7\377w) Create a identity macro  (erases a macro)");
-		Term_putstr(5,  8, -1, TERM_SLATE, "(\377y7\377w) Delete a macro from a key");
-		Term_putstr(5,  9, -1, TERM_SLATE, "(\377y8\377w) Create an empty macro       (completely disables a key)");
+		Term_putstr(5,  7, -1, TERM_SLATE, "(\377y6\377s) Create a command macro      (eg for using / and * key)");
+//		Term_putstr(5,  8, -1, TERM_SLATE, "(\377y7\377s) Create a identity macro  (erases a macro)");
+		Term_putstr(5,  8, -1, TERM_SLATE, "(\377y7\377s) Delete a macro from a key");
+		Term_putstr(5,  9, -1, TERM_SLATE, "(\377y8\377s) Create an empty macro       (completely disables a key)");
 		Term_putstr(5, 10, -1, TERM_WHITE, "(\377y9\377w) Query an existing macro on a key");
 		Term_putstr(5, 11, -1, TERM_WHITE, "(\377yl\377w) List all macros");
-//		Term_putstr(5, 12, -1, TERM_SLATE, "(\377yq\377w/\377yQ\377w) Enter and create a 'quick & dirty' macro / set preferences"),
-		Term_putstr(5, 12, -1, TERM_SLATE, "(\377yq\377w) Enter and create a 'quick & dirty' macro"),
+//		Term_putstr(5, 12, -1, TERM_SLATE, "(\377yq\377s/\377yQ\377w) Enter and create a 'quick & dirty' macro / set preferences"),
+		Term_putstr(5, 12, -1, TERM_WHITE, "(\377yq\377w) Enter and create a 'quick & dirty' macro"),
 //		Term_putstr(5, 13, -1, TERM_WHITE, "(\377yr\377w/\377yR\377w) Record a macro / set preferences");
 		Term_putstr(5, 13, -1, TERM_WHITE, "(\377yr\377w) Record a macro");
 		Term_putstr(5, 14, -1, TERM_WHITE, "(\377yW\377w) Wipe all macros and (\377yw\377w) reload default macro files (use both!)");
