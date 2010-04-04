@@ -296,6 +296,7 @@ int Send_file_end(int ind, unsigned short id) {
 	return 0;
 }
 
+#define CHARSCREEN_COLOUR TERM_L_GREEN
 void Receive_login(void)
 {
 	int n;
@@ -341,12 +342,12 @@ void Receive_login(void)
 	else if (s_FUN) c_put_str(TERM_SLATE, "The server is running 'FUN_SERVER' settings.", 22, 10);
 	if (s_PARTY) c_put_str(TERM_SLATE, "This server is running 'PARTY_SERVER' settings.", 23, 10);
 
-	c_put_str(TERM_GREEN, "Character Overview", 0, 30);
+	c_put_str(CHARSCREEN_COLOUR, "Character Overview", 0, 30);
 	if (!s_RPG || s_RPG_ADMIN)
-		c_put_str(TERM_GREEN, format("(You can create up to %d different characters to play with)", max_cpa), 1, 10);
+		c_put_str(CHARSCREEN_COLOUR, format("(You can create up to %d different characters to play with)", max_cpa), 1, 10);
 	else
-		c_put_str(TERM_GREEN, "(You can create only ONE characters at a time to play with)", 1, 10);
-	c_put_str(TERM_GREEN, "Choose an existing character:", 3, 8);
+		c_put_str(CHARSCREEN_COLOUR, "(You can create only ONE characters at a time to play with)", 1, 10);
+	c_put_str(CHARSCREEN_COLOUR, "Choose an existing character:", 3, 8);
 	while((n = Packet_scanf(&rbuf, "%c%s%s%hd%hd%hd", &ch, colour_sequence, c_name, &level, &c_race, &c_class)) > 0){
 		if(!strlen(c_name)){
 			break;
@@ -360,12 +361,12 @@ void Receive_login(void)
 	for (n = (max_cpa - i); n > 0; n--)
 		c_put_str(TERM_SLATE, "<free slot>", 5 + i + n - 1, 11);
 	if (i < max_cpa) {
-		c_put_str(TERM_GREEN, "N) Create a new character", 6 + max_cpa, 8);
+		c_put_str(CHARSCREEN_COLOUR, "N) Create a new character", 6 + max_cpa, 8);
 	} else {
-		c_put_str(TERM_GREEN, format("(Maximum of %d character reached.", max_cpa), 6 + max_cpa, 8);
-		c_put_str(TERM_GREEN, " Get rid of one (suicide) before creating another.)", 7 + max_cpa, 8);
+		c_put_str(CHARSCREEN_COLOUR, format("(Maximum of %d character reached.", max_cpa), 6 + max_cpa, 8);
+		c_put_str(CHARSCREEN_COLOUR, " Get rid of one (suicide) before creating another.)", 7 + max_cpa, 8);
 	}
-	c_put_str(TERM_GREEN, "Q) Quit the game", 11 + max_cpa, 8);
+	c_put_str(CHARSCREEN_COLOUR, "Q) Quit the game", 11 + max_cpa, 8);
 	while((ch < 'a' || ch >= 'a' + i) && (ch != 'N' || i > (max_cpa - 1))){
 		ch = inkey();
 		if (ch == 'Q') quit(NULL);
