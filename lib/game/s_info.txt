@@ -89,6 +89,7 @@ I:1000:0
 
 N:11:Backstabbing
 D:Ability to backstab sleeping and fleeing monsters.
+D:*** REQUIRES SWORD-TYPE WEAPONS ***
 #D:Much more effective in the dark
 I:1000:0
 
@@ -245,6 +246,7 @@ I:1000:0
 
 N:36:Swimming
 D:Ability to cross water without drowning even under heavier load.
+D:Also reduces chance of items getting damaged by water while swimming.
 I:1000:0
 F:MAX_1
 
@@ -287,6 +289,7 @@ I:1000:0
 
 N:44:Digging
 D:Allows you to tunnel through walls and obstacles faster.
+D:Also affects finding items, treasure, and special features.
 I:1000:0
 
 ## DELETEME
@@ -738,6 +741,8 @@ f:Martial Arts:Dodging%20
 
 T:Main:Combat
 T:Combat:Weaponmastery
+T:Combat:Martial Arts
+T:Combat:Interception
 $DUAL_WIELD$T:Combat:Dual-Wield
 T:Weaponmastery:Sword-mastery
 T:Sword-mastery:Critical-strike
@@ -751,20 +756,20 @@ T:Archery:Bow-mastery
 T:Archery:Crossbow-mastery
 #T:Archery:Boomerang-mastery
 T:Combat:Boomerang-mastery
-T:Combat:Martial Arts
 
 T:Main:Magic
-T:Magic:Magic-device
-T:Magic:Mimicry
-#T:Magic:Spell-learning
-T:Magic:Spell-power
 
 T:Magic:Magic Schools
 T:Magic:Prayer Schools
+$ENABLE_DIVINE$T:Magic:Astral Knowledge
+#T:Magic:Spell-learning
+T:Magic:Spell-power
 T:Magic:Druidic Schools
-$ENABLE_RCRAFT!T:Magic:Runemastery
-$ENABLE_RCRAFT$T:Magic:Runecraft
 $ENABLE_MCRAFT$T:Magic:Mindcraft Schools
+$ENABLE_RCRAFT$T:Magic:Runecraft
+$ENABLE_RCRAFT!T:Magic:Runemastery
+T:Magic:Mimicry
+T:Magic:Magic-device
 
 T:Magic Schools:Sorcery
 T:Magic Schools:Mana
@@ -795,7 +800,6 @@ T:Prayer Schools:Holy Support
 T:Druidic Schools:Arcane Lore
 T:Druidic Schools:Physical Lore
 
-$ENABLE_DIVINE$T:Magic:Astral Knowledge
 
 $ENABLE_MCRAFT$T:Mindcraft Schools:Psycho-Power
 $ENABLE_MCRAFT$T:Mindcraft Schools:Thought Contact
@@ -816,27 +820,6 @@ $ENABLE_RCRAFT$T:Runecraft:Mind and Nexus
 #T:Spirituality:Mindcraft
 #T:Spirituality:Music
 
-#T:Main:Monster-lore
-#T:Monster-lore:Summoning
-#T:Monster-lore:Corpse-preservation
-#T:Monster-lore:Possession
-#T:Monster-lore:Symbiosis
-#T:Monster-lore:Mimicry
-
-T:Main:Sneakiness
-T:Sneakiness:Stealth
-T:Sneakiness:Disarming
-#T:Sneakiness:Trapping
-T:Disarming:Trapping
-T:Sneakiness:Backstabbing
-T:Sneakiness:Stealing
-T:Sneakiness:Dodging
-#T:Dodging:Calmness
-#T:Dodging:Interception
-T:Sneakiness:Calmness
-#T:Sneakiness:Interception
-T:Combat:Interception
-
 T:Main:Necromancy
 #T:Necromancy:Aura power
 T:Necromancy:Traumaturgy
@@ -846,12 +829,32 @@ T:Necromancy:Aura of Death
 
 T:Main:Antimagic
 
+#T:Main:Monster-lore
+#T:Monster-lore:Summoning
+#T:Monster-lore:Corpse-preservation
+#T:Monster-lore:Possession
+#T:Monster-lore:Symbiosis
+#T:Monster-lore:Mimicry
+
+T:Main:Sneakiness
+T:Sneakiness:Stealth
+T:Sneakiness:Stealing
+#T:Sneakiness:Trapping
+T:Sneakiness:Backstabbing
+T:Sneakiness:Dodging
+#T:Dodging:Calmness
+#T:Dodging:Interception
+T:Sneakiness:Calmness
+#T:Sneakiness:Interception
+T:Sneakiness:Disarming
+T:Disarming:Trapping
+
 T:Main:Health
 #T:Health:Training
 T:Health:Agility
-T:Health:Digging
 T:Health:Swimming
 T:Health:Climbing
+T:Health:Digging
 #T:Health:Flying
 #T:Health:Free Action
 #T:Health:Confusion Resistance

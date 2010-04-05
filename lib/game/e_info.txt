@@ -647,8 +647,8 @@ C:0:0:0:10
 T:30:0:99
 R:100
 F:SPEED | HIDE_TYPE
-R:10
-F:PVAL_M3
+#R:10
+#F:PVAL_M3
 
 # 61 Metal boots only
 

@@ -1870,7 +1870,7 @@ F:BASH_DOOR | DROP_CORPSE
 F:ANIMAL | MORTAL | BASEANGBAND
 D:It looks poisonous. 
 
-N:122:Dark elf
+N:122:Dark-elf
 G:h:D
 I:110:7d10:20:16:20
 W:7:2:1200:25
@@ -2705,7 +2705,7 @@ D:its arms were longer than its entire body. it was a crushed slug, a thing
 D:that had been frozen and thawed before it was fully baked. It was - 
 D:'It is the Borshin', said the Lord of Bats." 
 
-N:178:Dark elven mage
+N:178:Dark-elven mage
 G:h:r
 I:120:7d10:20:16:20
 W:10:1:1200:50
@@ -2774,7 +2774,7 @@ S:CURSE | SCARE
 D:"...the hand of a corpse -- bloodless and skeletal, and with 
 D:impossibly long, cracked nails." 
 
-N:182:Dark elven warrior
+N:182:Dark-elven warrior
 G:h:u
 I:110:10d11:20:16:20
 W:10:1:1400:50
@@ -3457,7 +3457,7 @@ S:HEAL | SCARE | CURSE |
 S:S_MONSTER
 D:A robed man dedicated to his god. 
 
-N:226:Dark elven priest
+N:226:Dark-elven priest
 G:h:g
 I:120:7d10:20:30:30
 W:12:1:1200:50
@@ -5389,7 +5389,7 @@ F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | DROP_SKELETON |
 F:ANIMAL | EVIL | MORTAL | BASEANGBAND
 D:It is a huge wolf with eyes that glow with manly intelligence. 
 
-N:348:Dark elven lord
+N:348:Dark-elven lord
 G:h:s
 I:120:18d15:20:40:30
 W:20:2:1400:500
@@ -5817,7 +5817,7 @@ F:RES_NETH | RES_NEXU | RES_DISE | RES_PLAS | ZANGBAND
 D:A revolting canine creature, a huge demon hound with a somewhat 
 D:reptilian head. 
 
-N:375:Dark-Elven warlock
+N:375:Dark-elven warlock
 G:h:v
 I:120:7d10:20:16:20
 W:23:1:1700:75
@@ -6233,7 +6233,7 @@ F:NO_CONF | ZANGBAND
 D:It looks like an anteater, and there is a static feeling 
 D:crackling around its long trunk. 
 
-N:400:Dark elven druid
+N:400:Dark-elven druid
 G:h:G
 I:120:20d20:15:75:10
 W:25:3:1200:500
@@ -10920,7 +10920,7 @@ S:BO_POIS | S_UNDEAD
 D:Another Dark Judge, he is a rotting humanoid with a cow's skull as 
 D:his head. 
 
-N:657:Dark elven sorcerer
+N:657:Dark-elven sorcerer
 G:h:r
 I:130:80d10:20:70:10
 W:41:2:1300:3000
@@ -10986,7 +10986,7 @@ D:winged things... not altogether crows, nor moles, nor buzzards,
 D:nor ants, nor decomposed human beings, but something I cannot 
 D:and must not recall." 
 
-N:660:Eol, the Dark Elf
+N:660:Eol, the Dark-Elf
 G:h:D
 I:130:80d30:20:100:60
 W:49:2:1400:25000
@@ -14624,7 +14624,7 @@ F:HAS_LITE
 S:1_IN_6 | 
 S:S_MONSTERS | S_WRAITH | S_HI_UNDEAD | 
 S:S_HI_DRAGON | S_HI_DEMON | S_UNIQUE | S_ANIMALS
-D:The son of Eol the Dark Elf, Maeglin is every bit as evil as his father 
+D:The son of Eol the Dark-Elf, Maeglin is every bit as evil as his father 
 D:and more.  His greed for gold led him to betray the Hidden Kingdom of 
 D:Gondolin to Morgoth's forces.  He is a mighty warrior himself, and some 
 D:of Morgoth's greatest servants answer to his call. 

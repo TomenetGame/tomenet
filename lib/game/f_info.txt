@@ -708,6 +708,7 @@ N:103:glittering water
 #S:B:B:B:b:W:g:w
 #G:~:e
 #S:e:e:e:e:e:e:e
+#G:~:c
 G:~:b
 S:b:B:B:B:B:b:B
 #S:b:b:b:b:b:b:b
