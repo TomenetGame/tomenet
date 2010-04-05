@@ -707,11 +707,11 @@ static bool update_acc_file_version(void) {
 
 #ifdef NETBSD
         fd_old = open("tomenet.acc_old", O_RDONLY);
-        fd = open("tomenet.acc", O_RDWR|O_EXLOCK|O_NONBLOCK|O_CREAT);
+        fd = open("tomenet.acc", O_RDWR|O_EXLOCK|O_NONBLOCK|O_CREAT, 0777);
 #else
         fd_old = open("tomenet.acc_old", O_RDONLY);
  #ifdef WINDOWS
-        fd = open("tomenet.acc", O_RDWR|O_CREAT);
+        fd = open("tomenet.acc", O_RDWR|O_CREAT, 0777);
  #else
         fd = open("tomenet.acc", O_RDWR|O_NONBLOCK|O_CREAT, 0777);
  #endif
