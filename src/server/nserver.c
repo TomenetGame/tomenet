@@ -713,7 +713,7 @@ static bool update_acc_file_version(void) {
  #ifdef WINDOWS
         fd = open("tomenet.acc", O_RDWR|O_CREAT);
  #else
-        fd = open("tomenet.acc", O_RDWR|O_NONBLOCK|O_CREAT);
+        fd = open("tomenet.acc", O_RDWR|O_NONBLOCK|O_CREAT, 0777);
  #endif
 #endif
 
