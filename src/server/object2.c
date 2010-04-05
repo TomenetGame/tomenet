@@ -6476,7 +6476,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	s32b ego_value1, ego_value2, ovr, fc;
 	long depth = ABS(getlevel(wpos)), depth_value;
 	int i, rolls, chance1, chance2, power; //, j;
-        char o_name[80];
+        char o_name[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, esp; /* for RESF checks */
 
 #if 0 /* moved to make_resf() */
@@ -8586,7 +8586,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	int base = (min_lv + max_lv) / 2; /* base object level */
 //	int base = 100;
 	int tries = 0, i = 0, j = 0;
-	char o_name[160];
+	char o_name[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, esp;
 	bool mha, rha; /* monk heavy armor, rogue heavy armor */
 
@@ -9352,7 +9352,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 					if ((bx == nx) && (by == ny)) inside_house = TRUE;
 	if (undepositable_artifact_p(o_ptr) && cfg.anti_arts_house && inside_house)
 	{
-//		char	o_name[160];
+//		char	o_name[ONAME_LEN];
 //		object_desc(Ind, o_name, o_ptr, TRUE, 0);
 //		msg_format(Ind, "%s fades into the air!", o_name);
 		handle_art_d(o_ptr->name1);
@@ -9506,7 +9506,7 @@ s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *
 	    (cfg.anti_arts_hoard || (p_ptr->total_winner && !winner_artifact_p(o_ptr))))
 	    //(cfg.anti_arts_hoard || (cfg.anti_arts_house && 0)) would be cleaner sometime in the future..
 	{
-		char	o_name[160];
+		char	o_name[ONAME_LEN];
 		object_desc(Ind, o_name, o_ptr, TRUE, 0);
 
 		msg_format(Ind, "%s fades into the air!", o_name);
@@ -9661,7 +9661,7 @@ void inven_item_describe(int Ind, int item)
 
 	object_type	*o_ptr = &p_ptr->inventory[item];
 
-	char	o_name[160];
+	char	o_name[ONAME_LEN];
 
 	/* Hack -- suppress msg */
 	if (p_ptr->taciturn_messages) return;

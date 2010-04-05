@@ -1329,6 +1329,12 @@ static bool rd_extra(int Ind)
 	rd_u32b(&p_ptr->dna);
 	rd_s32b(&p_ptr->turn);
 
+	if (!older_than(4, 4, 5)) {
+		rd_s32b(&p_ptr->turns_online);
+		rd_s32b(&p_ptr->turns_afk);
+		rd_s32b(&p_ptr->turns_idle);
+	}
+
 	/* If he was created in the pre-ID days, give him one */
 	if (!p_ptr->id)
 		p_ptr->id = newid();

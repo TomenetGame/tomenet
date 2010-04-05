@@ -855,6 +855,9 @@ int cloud_x1[MAX_CLOUDS], cloud_y1[MAX_CLOUDS], cloud_x2[MAX_CLOUDS], cloud_y2[M
 int cloud_xm100[MAX_CLOUDS], cloud_ym100[MAX_CLOUDS], cloud_mdur[MAX_CLOUDS], cloud_xfrac[MAX_CLOUDS], cloud_yfrac[MAX_CLOUDS];
 int cloud_dur[MAX_CLOUDS], cloud_state[MAX_CLOUDS];
 int clouds; /* tracking variable */
+int max_clouds_seasonal = MAX_CLOUDS; /* maximum number of clouds to use depending
+					 on current season, thereby determining the
+					 weather frequency (ie rain/snow probability). */
 /* Winds. Moving clouds and determining direction and speed of raindrops and snowflakes.
    Winds affect a very large area, so we need only few of them.
    It's efficient if we reduce the possible winds a bit, sufficient should be:

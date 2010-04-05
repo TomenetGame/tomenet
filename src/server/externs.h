@@ -490,6 +490,7 @@ extern void season_change(int s, bool force);
 extern void player_weather(int Ind, bool entered_level, bool weather_changed, bool panel_redraw);
 
 /* cmd1.c */
+extern byte cycle[], chome[];
 extern bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x, int y);
 extern bool test_hit_fire(int chance, int ac, int vis);
 extern bool test_hit_melee(int chance, int ac, int vis);
@@ -514,6 +515,7 @@ extern void hit_trap(int Ind);
 extern int apply_dodge_chance(int Ind, int attack_level);
 extern int apply_block_chance(player_type *p_ptr, int n);
 extern int apply_parry_chance(player_type *p_ptr, int n);
+extern void do_cmd_force_stack(int Ind, int item);
 
 /* cmd2.c */
 extern cptr get_house_owner(struct c_special *cs_ptr);
@@ -596,7 +598,7 @@ extern void do_cmd_check_other(int Ind, int line);
 extern void do_cmd_check_other_prepare(int Ind, char *path);
 
 /* cmd5.c */
-extern bool check_antimagic(int Ind);
+extern bool check_antimagic(int Ind, int percentage);
 extern void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux);
 extern void do_cmd_browse(int Ind, object_type *o_ptr);
 extern void do_cmd_study(int Ind, int book, int spell);
@@ -683,6 +685,8 @@ extern void player_night(int Ind);
 
 extern void process_timers(void);
 extern int timer_pvparena1, timer_pvparena2, timer_pvparena3;
+
+extern void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr);
 
 /* files.c */
 extern int highscore_send(char *buffer, int max);
@@ -1078,11 +1082,13 @@ extern void inven_confirm_revision(int Ind, int revision);
 extern void account_check(int Ind);
 extern bool WriteAccount(struct account *r_acc, bool new);
 extern int validate(char *name);
-extern int makeadmin(char *name);
 extern int invalidate(char *name);
+extern int makeadmin(char *name);
+extern int acc_set_flags(char *name, u32b flags, bool clear);
+extern u32b acc_get_flags(char *name);
 extern void sf_delete(const char *name);
 extern struct account *GetAccount(cptr name, char *pass, bool leavepass);
-extern struct account *GetAccountID(u32b id);
+extern struct account *GetAccountID(u32b id, bool leavepass);
 extern struct account *Admin_GetAccount(cptr name);
 extern void set_pkill(int Ind, int delay);
 extern int guild_lookup(cptr name);
@@ -1777,6 +1783,7 @@ extern int get_inven_sval(int Ind, int inven_slot);
 extern int get_inven_xtra(int Ind, int inven_slot, int n);
 extern void lua_fix_skill_chart(int Ind);
 extern void lua_takeoff_costumes(int Ind);
+extern bool lua_is_unique(int r_idx);
 
 /* only called once, in util.c, referring to new file slash.c */
 extern void do_slash_cmd(int Ind, char *message);
@@ -1835,6 +1842,7 @@ extern int cloud_x1[MAX_CLOUDS], cloud_y1[MAX_CLOUDS], cloud_x2[MAX_CLOUDS], clo
 extern int cloud_xm100[MAX_CLOUDS], cloud_ym100[MAX_CLOUDS], cloud_mdur[MAX_CLOUDS], cloud_xfrac[MAX_CLOUDS], cloud_yfrac[MAX_CLOUDS];
 extern int cloud_dur[MAX_CLOUDS], cloud_state[MAX_CLOUDS];
 extern int clouds;
+extern int max_clouds_seasonal;
 /* winds, moving clouds and affecting rain/snow */
 extern int wind_dur[16], wind_dir[16];
 

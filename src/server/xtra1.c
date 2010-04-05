@@ -6773,7 +6773,7 @@ void global_event_signup(int Ind, int n, cptr parm){
 				return;
 			}
 			if (!re_found && strlen(parm2e)) {
-				msg_print(Ind, "\377yCouldn't find fitting ego power, going with normal monster..");
+				msg_print(Ind, "\377yCouldn't find matching ego power, going with base version..");
 			}
 #endif
 
@@ -6802,7 +6802,8 @@ void global_event_signup(int Ind, int n, cptr parm){
 			return;
 		}
 
-		msg_format(Ind, "\377yCouldn't find that monster, do upper/lowercase letters match?", n);
+//		msg_format(Ind, "\377yCouldn't find that monster, do upper/lowercase letters match?", n);
+		msg_format(Ind, "\377yCouldn't find base monster (punctuation and name must be exact).", n);
 		return;
 	}
 

@@ -1104,7 +1104,7 @@ static void compare_weapon_aux1(object_type *o_ptr, int col, int r)
  */
 static void list_weapon(object_type *o_ptr, int row, int col)
 {
-	char o_name[80];
+	char o_name[ONAME_LEN];
 
 	char tmp_str[80];
 

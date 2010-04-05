@@ -5898,7 +5898,7 @@ void player_death(int Ind)
 	monster_type *m_ptr;
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
-	char buf[1024], o_name[160], m_name_extra[80], msg_layout = 'a';
+	char buf[1024], o_name[ONAME_LEN], m_name_extra[80], msg_layout = 'a';
 	int i, inventory_loss = 0, equipment_loss = 0, k, j, tries = 0;
 //	int inven_sort_map[INVEN_TOTAL];
 	//wilderness_type *wild;
@@ -5962,10 +5962,10 @@ void player_death(int Ind)
 			(p_ptr->inventory[INVEN_NECK].k_idx &&
 			p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_LIFE_SAVING)))
 	{
-		if (!secure)
-		{
-			msg_print(Ind, "\377oYour amulet shatters into pieces!");
+		s_printf("%s (%d) was pseudo-killed by %s for %d damage at %d, %d, %d.\n", p_ptr->name, p_ptr->lev, p_ptr->really_died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
+		if (!secure) {
+			msg_print(Ind, "\377oYour amulet shatters into pieces!");
 			inven_item_increase(Ind, INVEN_NECK, -99);
 			//inven_item_describe(Ind, INVEN_NECK);
 			inven_item_optimize(Ind, INVEN_NECK);
@@ -5981,7 +5981,7 @@ void player_death(int Ind)
 		if (p_ptr->stun) (void)set_stun(Ind, 0);
 		if (p_ptr->cut) (void)set_cut(Ind, 0, 0);
 		/* if (p_ptr->food < PY_FOOD_ALERT) */
-			(void)set_food(Ind, PY_FOOD_FULL - 1);
+		(void)set_food(Ind, PY_FOOD_FULL - 1);
 
 		/* Teleport him */
 		teleport_player(Ind, 200, TRUE);
@@ -6107,7 +6107,9 @@ void player_death(int Ind)
 		msg_broadcast(0, "Uh oh, somethin's not right here.");
 	}
 	if ((p_ptr->global_event_temp & PEVF_SAFEDUN_00) && (p_ptr->csane >= 0) && p_ptr->wpos.wx == WPOS_SECTOR00_X && p_ptr->wpos.wy == WPOS_SECTOR00_Y && p_ptr->wpos.wz != 0) {
-s_printf("DEBUG_TOURNEY: player %s revived.\n", p_ptr->name);
+		s_printf("DEBUG_TOURNEY: player %s revived.\n", p_ptr->name);
+		s_printf("%s (%d) was pseudo-killed by %s for %d damage at %d, %d, %d.\n", p_ptr->name, p_ptr->lev, p_ptr->really_died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+
 		if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
 		if (p_ptr->cut) (void)set_cut(Ind, 0, 0);
 		(void)set_food(Ind, PY_FOOD_FULL - 1);
@@ -8220,9 +8222,14 @@ cptr look_mon_desc(int m_idx)
 
 
 	/* Healthy monsters */
-	if (m_ptr->hp >= m_ptr->maxhp)
-	{
-		/* No damage */
+	if (m_ptr->hp >= m_ptr->maxhp) {
+		/* asleep even? */
+		if (m_ptr->csleep) return("asleep");
+		/* albeit stunned? */
+		if (m_ptr->stunned > 100) return("knocked out");
+		if (m_ptr->stunned > 50) return("heavily dazed");
+		if (m_ptr->stunned) return("dazed");
+		/* No damage (and no other effect either) */
 		return (living ? "unhurt" : "undamaged");
 	}
 
@@ -9460,7 +9467,7 @@ void telekinesis_aux(int Ind, int item)
 	}
 	else
 	{
-		char o_name[160];
+		char o_name[ONAME_LEN];
 		/* If they're not within the same dungeon level,
 		   they cannot reach each other if
 		   one is in an IRON or NO_RECALL dungeon/tower */

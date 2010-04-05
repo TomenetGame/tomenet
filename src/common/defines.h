@@ -86,7 +86,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	4
-#define SF_VERSION_PATCH	4
+#define SF_VERSION_PATCH	5
 #define SF_VERSION_EXTRA	0
 
 
@@ -152,9 +152,7 @@
 
 #define CLIENT_SIDE_WEATHER	/* server uses Send_weather() instead of displaying own weather animation */
 //#define CLIENT_WEATHER_GLOBAL	/* use global weather instead of sector-specific (requires CLIENT_SIDE_WEATHER) */
-#if !defined RPG_SERVER && !defined TEST_SERVER
- #define MAX_CLOUDS 1000
-#endif
+#define MAX_CLOUDS 2000
 
 #define EXTRA_LEVEL_FEELINGS	/* enable extra level feelings, remotely angband-style, warning about dangers */
 #define M_EGO_NEW_FLICKER	/* ego monsters flicker between base r_ptr and ego colour */
@@ -177,7 +175,6 @@
  #define OPTIMIZED_ANIMATIONS	/* testing */
 
  #define CLIENT_SIDE_WEATHER	/* server uses Send_weather() instead of displaying own weather animation */
- #define MAX_CLOUDS 1000
 // #define CLIENT_WEATHER_GLOBAL	/* use global weather instead of sector-specific (requires CLIENT_SIDE_WEATHER) */
 #endif
 
@@ -193,7 +190,10 @@
  #define OPTIMIZED_ANIMATIONS	/* testing */
 
  #define CLIENT_SIDE_WEATHER	/* server uses Send_weather() instead of displaying own weather animation */
- #define MAX_CLOUDS 1
+ #ifdef MAX_CLOUDS
+  #undef MAX_CLOUDS
+  #define MAX_CLOUDS 1
+ #endif
 // #define CLIENT_WEATHER_GLOBAL	/* use global weather instead of sector-specific (requires CLIENT_SIDE_WEATHER) */
 #endif
 
@@ -319,7 +319,7 @@
 /*
  * Define the maximum number of characters to use in many things
  */
-#define MAX_CHARS 80
+#define MAX_CHARS	80
 
 /* max length of item names including inscription */
 #define ONAME_LEN	160
@@ -1637,6 +1637,7 @@ that keeps many algorithms happy.
 #define FEAT_AGOAL	208
 #define FEAT_BGOAL	209
 
+#define FEAT_DECO_WATER	211
 #define FEAT_BUSH	219
 
 #define FEAT_SEALED_DOOR	224	/* for pvp-arena, like Andur suggested */
@@ -6816,6 +6817,7 @@ extern int PlayerUID;
 #define GE_HIGHLANDER		1	/* Highlander Tournament */
 #define GE_HIGHLANDER_NEW	2	/* not yet implemented (with highlander town and set-up cash+items etc) */
 #define GE_ARENA_MONSTER	3	/* Areana Monster Challenge */
+#define GE_GAME_RUGBY		4	/* Evileye's good ole game of rugby, now in event-form ;) */
 
 /* player flags while participating in global events (p_ptr->global_event_temp) */
 #define PEVF_NONE		0x00000000

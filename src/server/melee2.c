@@ -7781,7 +7781,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			{
 				char m_name[80];
 				char m_name_real[80];
-				char o_name[160];
+				char o_name[ONAME_LEN];
 
 				/* Check the grid */
 				o_ptr = &o_list[c_ptr->o_idx];
@@ -9373,7 +9373,7 @@ void curse_equipment(int Ind, int chance, int heavy_chance)
 	/* Extra, biased saving throw for blessed items */
 	if ((o3 & (TR3_BLESSED)) && (randint(888) > chance))
 	{   
-		char o_name[256];
+		char o_name[ONAME_LEN];
 		object_desc(Ind, o_name, o_ptr, FALSE, 0);
 		msg_format(Ind, "Your %s resist%s cursing!", o_name,
 			((o_ptr->number > 1) ? "" : "s"));

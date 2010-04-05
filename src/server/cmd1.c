@@ -20,7 +20,7 @@
 /* Anti-(nothing)-hack, following Tony Zeigler's (Ravyn) suggestion */
 bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x, int y)
 {
-	char o_name[80];
+	char o_name[ONAME_LEN];
 
 	if ((o_ptr->wpos.wx != wpos->wx) || (o_ptr->wpos.wy != wpos->wy) || (o_ptr->wpos.wz != wpos->wz) ||
 	    (o_ptr->ix && (o_ptr->ix != x)) || (o_ptr->iy && (o_ptr->iy != y))) {
@@ -1408,7 +1408,7 @@ static void whats_under_your_feet(int Ind)
 {
 	object_type *o_ptr;
 
-	char    o_name[160];
+	char    o_name[ONAME_LEN];
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type *c_ptr;
@@ -1450,7 +1450,7 @@ void carry(int Ind, int pickup, int confirm)
 {
 	object_type *o_ptr;
 
-	char    o_name[160], o_name_real[160];
+	char    o_name[ONAME_LEN], o_name_real[ONAME_LEN];
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type *c_ptr;
@@ -1853,8 +1853,8 @@ void carry(int Ind, int pickup, int confirm)
 			/* Hack -- query every item */
 			if (p_ptr->carry_query_flag && !confirm)
 			{
-				char out_val[160];
-				snprintf(out_val, 160, "Pick up %s? ", o_name);
+				char out_val[ONAME_LEN];
+				snprintf(out_val, ONAME_LEN, "Pick up %s? ", o_name);
 				Send_pickup_check(Ind, out_val);
 				return;
 			}
@@ -5688,13 +5688,13 @@ static int see_nothing(int dir, int Ind, int y, int x)
 /*
  * Hack -- allow quick "cycling" through the legal directions
  */
-static byte cycle[] =
+byte cycle[] =
 { 1, 2, 3, 6, 9, 8, 7, 4, 1, 2, 3, 6, 9, 8, 7, 4, 1 };
 
 /*
  * Hack -- map each direction into the "middle" of the "cycle[]" array
  */
-static byte chome[] =
+byte chome[] =
 { 0, 8, 9, 10, 7, 0, 11, 6, 5, 4 };
 
 /*
@@ -5742,7 +5742,7 @@ static void run_init(int Ind, int dir)
 	int             i, shortleft, shortright;
 
 	cave_type **zcave;
-	if(!(zcave=getcave(&p_ptr->wpos))) return;
+	if(!(zcave = getcave(&p_ptr->wpos))) return;
 
 	/* Manual direction changes reset the corner counter
 	   (for safety reasons only, might be serious running
@@ -6338,37 +6338,11 @@ void run_step(int Ind, int dir)
 
 	/* slower 'running' movement over certain terrain */
 	int real_speed = cfg.running_speed;
-	cave_type               *c_ptr;
-	cave_type **zcave;
-	if(!(zcave=getcave(&p_ptr->wpos))) return;
+	cave_type *c_ptr, **zcave;
+	if(!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
-#if 1 /* NEW_RUNNING_FEAT */
-	if (!is_admin(p_ptr) && !p_ptr->ghost && !p_ptr->tim_wraith) {
-		/* are we in fact running-flying? */
-		//if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) {
-		if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN))) {
-			/* Allow level 50 druids to run at full speed */
-			if (!(p_ptr->pclass == CLASS_DRUID &&  p_ptr->lev >= 50)) {
-				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_1) real_speed /= 2;
-				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_2) real_speed /= 4;
- 			}
-		}
-		/* or running-swimming? */
-		else if ((c_ptr->feat == 84 || c_ptr->feat == 103 || c_ptr->feat == 174 || c_ptr->feat == 187) && p_ptr->can_swim) {
-			/* Allow Aquatic players run/swim at full speed */
-			if (!r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC) {
-				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) real_speed /= 2;
-				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) real_speed /= 4;
-			}
-		}
-		/* or just normally running? */
-		else {
-			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_1) real_speed /= 2;
-			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_2) real_speed /= 4;
-		}
-	}
-#endif
+	eff_running_speed(&real_speed, p_ptr, c_ptr);
 
 	/* Check for just changed level */
 	if (p_ptr->new_level_flag) return;

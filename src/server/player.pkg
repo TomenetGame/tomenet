@@ -341,6 +341,11 @@ struct player_type
 	u32b account;           /* account group id */
 	u32b dna;		/* DNA - psuedo unique to each player life */
 
+	s32b turn;
+	s32b turns_online;
+	s32b turns_afk;
+	s32b turns_idle;
+
 	hostile_type *hostile;	/* List of players we wish to attack */
 
 	const char *savefile;	/* Name of the savefile */
@@ -929,7 +934,7 @@ struct player_type
 };
 
 extern bool imprison(int Ind, int time, char *reason);
-bool check_antimagic(int Ind);
+bool check_antimagic(int Ind, int percentage);
 
 extern int NumPlayers;
 extern player_type *Players[0xFFFFF] @ Players_real;

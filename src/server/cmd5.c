@@ -112,17 +112,16 @@ static s16b spell_chance(int Ind, int realm, magic_type *s_ptr)
 /* ok, it's hacked :) */
 /* of course, you can optimize it further by bandling
  * monsters and players into one loop..		- Jir - */
-bool check_antimagic(int Ind)
-{
+bool check_antimagic(int Ind, int percentage) {
 	player_type *p_ptr = Players[Ind];
 	worldpos *wpos = &p_ptr->wpos;
 	monster_type *m_ptr;
 	monster_race *r_ptr;
 	cave_type **zcave;
 	int i, x, y, x2 = p_ptr->px, y2 = p_ptr->py, m_idx;
-		int dis, antichance, antidis;
+	int dis, antichance, antidis;
 
-	if (!(zcave=getcave(wpos))) return(FALSE);
+	if (!percentage || !(zcave = getcave(wpos))) return(FALSE);
 
 	for (i = 1; i <= NumPlayers; i++)
 	{
@@ -154,8 +153,7 @@ bool check_antimagic(int Ind)
 #endif	// 0
 
 		/* Got disrupted ? */
-		if (magik(antichance))
-		{
+		if (magik((antichance * percentage) / 100)) {
 			if (i == Ind) msg_format(Ind, "\377%cYour own anti-magic field disrupts your attempts.", COLOUR_AM_OWN);
 			else msg_format(Ind, "\377%c%s's anti-magic field disrupts your attempts.", COLOUR_AM_PLY, q_ptr->name);
 			return TRUE;
@@ -185,23 +183,19 @@ bool check_antimagic(int Ind)
 
 		if (!(r_ptr->flags7 & RF7_DISBELIEVE)) continue;
 
-		antichance = r_ptr->level / 2 + 20;
+		antichance = r_ptr->level / 2 + 30;
 		antidis = r_ptr->level / 15 + 3;
 
 		if (dis > antidis) continue;
 		if (antichance > ANTIMAGIC_CAP) antichance = ANTIMAGIC_CAP; /* AM cap */
 
 		/* Got disrupted ? */
-		if (magik(antichance))
-		{
-			if (p_ptr->mon_vis[m_idx])
-			{
+		if (magik((antichance * percentage) / 100)) {
+			if (p_ptr->mon_vis[m_idx]) {
 				char m_name[80];
 				monster_desc(Ind, m_name, m_idx, 0);
 				msg_format(Ind, "\377%c%^s's anti-magic field disrupts your attempts.", COLOUR_AM_MON, m_name);
-			}
-			else
-			{
+			} else {
 				msg_format(Ind, "\377%cAn anti-magic field disrupts your attempts.", COLOUR_AM_MON);
 			}
 			return TRUE;
@@ -278,7 +272,7 @@ static void brand_weapon(int Ind)
 	{
 		cptr act = NULL;
 
-		char o_name[160];
+		char o_name[ONAME_LEN];
 
 		if (rand_int(100) < 25)
 		{
@@ -1351,7 +1345,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 
 	/* No anti-magic fields around ? */
 	/* Innate powers aren't hindered */
-	if ((!spell || spell - 3 >= 32) && check_antimagic(Ind)) { /* -3 -> 3 polymorph powers */
+	if ((!spell || spell - 3 >= 32) && check_antimagic(Ind, 100)) { /* -3 -> 3 polymorph powers */
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		return;
 	}

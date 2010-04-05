@@ -36,7 +36,7 @@ void inven_takeoff(int Ind, int item, int amt)
 
 	cptr		act;
 
-	char		o_name[160];
+	char		o_name[ONAME_LEN];
 
 
 	/* Get the item to take off */
@@ -248,7 +248,7 @@ void inven_drop(int Ind, int item, int amt)
 	cptr		act;
 //	int		j;
 
-	char		o_name[160];
+	char		o_name[ONAME_LEN];
 
 
 
@@ -641,13 +641,15 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots)
 	bool slot2 = (p_ptr->inventory[INVEN_ARM].k_idx != 0);
 	bool alt = ((alt_slots & 0x2) != 0);
 
+	bool ma_warning_weapon = FALSE, ma_warning_shield = FALSE;
+
 	object_type tmp_obj;
 	object_type *o_ptr;
 	object_type *x_ptr;
 
 	cptr act;
 
-	char o_name[160];
+	char o_name[ONAME_LEN];
         u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
 
 
@@ -790,8 +792,8 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots)
    after taking off the shield/2nd weapon, item letters in inventory will
    CHANGE and the WRONG item will be equipped. - C. Blue */
 return;
-		if( check_guard_inscription(p_ptr->inventory[INVEN_ARM].note, 'T' )) {
-			msg_print(Ind, "Your second equipped item's inscription prevents taking it off.");
+		if (check_guard_inscription(p_ptr->inventory[INVEN_ARM].note, 't' )) {
+			msg_print(Ind, "Your second wielded item's inscription prevents taking it off.");
 			return;
 		};
 		if (cursed_p(&p_ptr->inventory[INVEN_ARM]) && !is_admin(p_ptr)) {
@@ -828,8 +830,8 @@ return;
 
 	x_ptr = &(p_ptr->inventory[slot]);
 
-	if( check_guard_inscription( x_ptr->note, 't' )) {
-		msg_print(Ind, "The item's inscription prevents it.");
+	if (check_guard_inscription(x_ptr->note, 't')) {
+		msg_print(Ind, "The inscription of your equipped item prevents it.");
 		return;
 	};
 
@@ -867,6 +869,18 @@ return;
 			msg_print(Ind, "You are far too weak to wield the mighty Grond.");
 			return;
 		}
+	}
+
+	/* display some warnings if the item will severely conflict with Martial Arts skill */
+	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS)) {
+		if ((is_weapon(o_ptr->tval) || o_ptr->tval == TV_BOW || o_ptr->tval == TV_BOOMERANG)
+		    && !p_ptr->inventory[INVEN_BOW].k_idx
+		    && !p_ptr->inventory[INVEN_WIELD].k_idx
+		    && (!p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) /* for dual-wielders */
+			ma_warning_weapon = TRUE;
+		else if (o_ptr->tval == TV_SHIELD &&
+		    (!p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) /* for dual-wielders */
+			ma_warning_shield = TRUE;
 	}
 
 	process_hooks(HOOK_WIELD, "d", Ind);
@@ -940,7 +954,7 @@ return;
 				// tmp_obj.number += o_ptr->number;
 				object_absorb(Ind, &tmp_obj, o_ptr);
 			}
-		}                
+		}
 	}
 #endif	// 0
 
@@ -1043,6 +1057,12 @@ return;
 			msg_print(Ind, "You stop preparations for barrage.");
 		}
 	}
+
+	/* display warnings, possibly */
+	if (ma_warning_weapon)
+		msg_print(Ind, "\374\377RWarning: Using any sort of weapon renders Martial Arts skill effectless.");
+	else if (ma_warning_shield)
+		msg_print(Ind, "\374\377RWarning: Using a shield will prevent Martial Arts combat styles.");
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -1322,7 +1342,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 
 	object_type		*o_ptr;
 
-	char		o_name[160];
+	char		o_name[ONAME_LEN];
 
 	u32b f1, f2, f3, f4, f5, esp;
 
@@ -1488,7 +1508,7 @@ void do_cmd_observe(int Ind, int item)
 {
 	player_type *p_ptr = Players[Ind];
 	object_type		*o_ptr;
-	char		o_name[160];
+	char		o_name[ONAME_LEN];
         u32b f1, f2, f3, f4, f5, esp;
         int hold;
 						      
@@ -1656,7 +1676,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription)
 
 	object_type		*o_ptr;
 
-	char		o_name[160];
+	char		o_name[ONAME_LEN];
 
 
 	/* Get the item (in the pack) */
@@ -2133,7 +2153,7 @@ void do_cmd_steal(int Ind, int dir)
 		{
 			int item;
 			object_type *o_ptr, forge;
-			char o_name[160];
+			char o_name[ONAME_LEN];
 
 			/* Steal an item */
 			item = rand_int(q_ptr->inven_cnt);
@@ -2802,9 +2822,9 @@ void do_cmd_look(int Ind, int dir)
 	cptr p1 = "A ", p2 = "", info = "";
 	struct c_special *cs_ptr;
 
-	char o_name[160];
-	char out_val[160], tmp_val[160];
-	if(!(zcave=getcave(wpos))) return;
+	char o_name[ONAME_LEN];
+	char out_val[ONAME_LEN], tmp_val[ONAME_LEN];
+	if(!(zcave = getcave(wpos))) return;
 
 	/* Blind */
 	if (p_ptr->blind)

@@ -265,7 +265,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 	monster_type *m_ptr;
 
 	object_type *o_ptr;
-	char o_name[160];
+	char o_name[ONAME_LEN];
 
 	cave_type **zcave;
 	bool flag = FALSE;
@@ -7687,6 +7687,33 @@ void season_change(int s, bool force) {
 	int x, y;
 	struct worldpos wpos;
 
+	/* if 'force' is off, at least ensure correct weather frequency here: */
+#if defined CLIENT_WEATHER_GLOBAL || !defined CLIENT_SIDE_WEATHER
+	/* adjust weather somewhat according to season! (server-side or global weather) */
+	switch (s) {
+	case SEASON_SPRING: /* rain relatively often */
+		weather_frequency = 2; break;
+	case SEASON_SUMMER: /* rain rarely */
+		weather_frequency = 1; break;
+	case SEASON_AUTUMN: /* rain very often */
+		weather_frequency = 3; break;
+	case SEASON_WINTER: /* snow relatively often */
+		weather_frequency = 2; break;
+	}
+#else
+	/* adjust weather somewhat according to season! (client-side non-global weather) */
+	switch (s) {
+	case SEASON_SPRING: /* rain relatively often */
+		max_clouds_seasonal = MAX_CLOUDS / 2; break;
+	case SEASON_SUMMER: /* rain rarely */
+		max_clouds_seasonal = MAX_CLOUDS / 4; break;
+	case SEASON_AUTUMN: /* rain very often */
+		max_clouds_seasonal = (MAX_CLOUDS * 3) / 4; break;
+	case SEASON_WINTER: /* snow relatively often */
+		max_clouds_seasonal = MAX_CLOUDS / 2; break;
+	}
+#endif
+
 	if ((season == s) && !force) return;
 	season = s;
 	
@@ -7722,18 +7749,6 @@ void season_change(int s, bool force) {
 		world_surface_msg("\374\377GWinter embraces the lands.");
 	}
 	s_printf("\n");
-
-	/* adjust weather somewhat according to season! */
-	switch (s) {
-	case SEASON_SPRING: /* rain relatively often */
-		weather_frequency = 2; break;
-	case SEASON_SUMMER: /* rain rarely */
-		weather_frequency = 1; break;
-	case SEASON_AUTUMN: /* rain very often */
-		weather_frequency = 3; break;
-	case SEASON_WINTER: /* snow relatively often */
-		weather_frequency = 2; break;
-	}
 
 	/* redraw map for all players */
 	for (x = 1; x <= NumPlayers; x++) Players[x]->redraw |= PR_MAP;

@@ -1249,7 +1249,7 @@ static void store_delete(store_type *st_ptr)
 	int what, num;
 	object_type *o_ptr;
 
-	char o_name[160];
+	char o_name[ONAME_LEN];
 	cptr s_name;
 
 	/* Pick a random slot */
@@ -1388,7 +1388,7 @@ static void store_create(store_type *st_ptr)
 	bool black_market = (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM);
 	bool carry_ok;
 
-	char o_name[160];
+	char o_name[ONAME_LEN];
 	cptr s_name;
 
 	/* Paranoia -- no room left */
@@ -1929,7 +1929,7 @@ static void display_entry(int Ind, int pos)
 	object_type		*o_ptr;
 	s64b		x;
 
-	char		o_name[160];
+	char		o_name[ONAME_LEN];
 	byte		attr;
 	int		wgt;
 	int		i;
@@ -2285,7 +2285,7 @@ void store_stole(int Ind, int item)
 	s64b best, tbest, tcadd, tccompare;
 
 	object_type sell_obj, *o_ptr;
-	char o_name[160];
+	char o_name[ONAME_LEN];
 
 	/* Get town or dungeon the store is located within */
 	i=gettown(Ind);
@@ -2391,24 +2391,18 @@ void store_stole(int Ind, int item)
 	 * are being dropped, it makes for a neater message to leave the original 
 	 * stack's pval alone. -LM-
 	 */
-	if (o_ptr->tval == TV_WAND)
-	{
-		if (o_ptr->tval == TV_WAND)
-		{
-			sell_obj.pval = divide_charged_item(o_ptr, amt);
-		}
+	if (o_ptr->tval == TV_WAND) {
+		sell_obj.pval = divide_charged_item(o_ptr, amt);
 	}
 
 	/* Hack -- require room in pack */
-	if (!inven_carry_okay(Ind, &sell_obj))
-	{
+	if (!inven_carry_okay(Ind, &sell_obj)) {
 		msg_print(Ind, "You cannot carry that many different items.");
 		return;
 	}
 
 	/* shopkeepers in special shops are often especially careful */
-	if (st_info[st_ptr->st_idx].flags1 & SF1_NO_STEAL)
-	{
+	if (st_info[st_ptr->st_idx].flags1 & SF1_NO_STEAL) {
 		msg_print(Ind, "The shopkeeper watches the items extremely cautiously!");
 		return;
 	}
@@ -2477,29 +2471,24 @@ void store_stole(int Ind, int item)
 	/* 1% pfft. 5% and rising... */
 	if (rand_int(chance) <= 10 && !magik(5))
 	{
-//s_printf("Stealing: %s (%d) succ. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance<10?10:chance), chance);
-/* let's instead display the chance without regards to 5% chance to fail, since very small % numbers become more accurate! */
-//if (chance > 10)
-s_printf("Stealing: %s (%d) succ. %s (chance %d%%0 (%d) %d,%d,%d).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance<10?10:chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		/* Hack -- buying an item makes you aware of it */
 		object_aware(Ind, &sell_obj);
 
 		/* Hack -- clear the "fixed" flag from the item */
 		sell_obj.ident &= ~ID_FIXED;
-		
+
 		/* Stolen items cannot be sold */
 		sell_obj.discount = 100;
 		sell_obj.note = quark_add("stolen");
+
 #ifdef STEAL_CHEEZEREDUCTION
 //		if (!magik((5000000 / tbest) + 5))
-		if (!magik((5000000 / object_value_real(0, o_ptr)) + 5))
+		if (!magik((5000000 / object_value_real(0, &sell_obj)) + 5))
 			sell_obj.level = 0;
 #endif
 
 		/* Message */
 		msg_format(Ind, "You stole %s.", o_name);
-if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
-        s_printf("ARTSCROLL stolen by %s.\n", p_ptr->name);
 
 		/* Let the player carry it (as if he picked it up) */
 		item_new = inven_carry(Ind, &sell_obj);
@@ -2507,9 +2496,15 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 		/* Describe the final result */
 		object_desc(Ind, o_name, &p_ptr->inventory[item_new], TRUE, 3);
 
+//		s_printf("Stealing: %s (%d) succ. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance<10?10:chance), chance);
+		/* let's instead display the chance without regards to 5% chance to fail, since very small % numbers become more accurate! */
+//		if (chance > 10)
+		s_printf("Stealing: %s (%d) succ. %s (chance %d%%0 (%d) %d,%d,%d).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance < 10 ? 10 : chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+		if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
+		        s_printf("ARTSCROLL stolen by %s.\n", p_ptr->name);
+
 		/* Message */
-		msg_format(Ind, "You have %s (%c).",
-				o_name, index_to_label(item_new));
+		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item_new));
 
 		/* Handle stuff */
 		handle_stuff(Ind);
@@ -2688,7 +2683,7 @@ void store_purchase(int Ind, int item, int amt)
 	object_type		sell_obj;
 	object_type		*o_ptr;
 
-	char		o_name[160];
+	char		o_name[ONAME_LEN];
 
 	if (amt < 1)
 	{
@@ -3073,7 +3068,7 @@ void store_sell(int Ind, int item, int amt)
 	object_type		sold_obj;
 	object_type		*o_ptr;
 
-	char		o_name[160];
+	char		o_name[ONAME_LEN];
 
 	/* Check for client-side exploit! */
 	if (p_ptr->inventory[item].number < amt) {
@@ -3263,7 +3258,7 @@ void store_confirm(int Ind)
 	s64b price, price_redundance, value;
 
 	object_type *o_ptr, sold_obj;
-	char o_name[160];
+	char o_name[ONAME_LEN];
 	int item_pos = -1;
 	bool museum;
 
@@ -3443,7 +3438,7 @@ void store_examine(int Ind, int item)
 	object_type		sell_obj;
 	object_type		*o_ptr;
 
-	char		o_name[160];
+	char		o_name[ONAME_LEN];
 
 	if (p_ptr->store_num == STORE_HOME)
 	{
@@ -4371,7 +4366,7 @@ void home_sell(int Ind, int item, int amt)
 	object_type		sold_obj;
 	object_type		*o_ptr;
 
-	char		o_name[160];
+	char		o_name[ONAME_LEN];
 
 	house_type *h_ptr;
 
@@ -4532,7 +4527,7 @@ void home_purchase(int Ind, int item, int amt)
 	object_type		sell_obj;
 	object_type		*o_ptr;
 
-	char		o_name[160];
+	char		o_name[ONAME_LEN];
 
 	house_type *h_ptr;
 
@@ -4744,7 +4739,7 @@ void home_examine(int Ind, int item)
 	object_type		sell_obj;
 	object_type		*o_ptr;
 
-	char		o_name[160];
+	char		o_name[ONAME_LEN];
 	
 	house_type *h_ptr;
 
@@ -4912,7 +4907,7 @@ static void display_house_entry(int Ind, int pos)
 
 	object_type		*o_ptr;
 
-	char		o_name[160];
+	char		o_name[ONAME_LEN];
 	byte		attr;
 	int		wgt;
 	int		h_idx;
@@ -5273,7 +5268,7 @@ void store_debug_stock()
 	int i, j, n, maintain_num, what;
 	store_type *st_ptr;
 	object_type *o_ptr;
-	char o_name[160];
+	char o_name[ONAME_LEN];
 	cptr s_name;
 
 	/* process all stores in all towns */

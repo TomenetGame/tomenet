@@ -1359,7 +1359,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	char		b1 = '[', b2 = ']';
 	char		c1 = '{', c2 = '}';
 
-	char		tmp_val[160];
+	char		tmp_val[ONAME_LEN];
 	
 	bool 		short_item_names = FALSE;
 
@@ -1977,12 +1977,11 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 			if(o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPECIAL){
 				monster_race *r_ptr=&r_info[o_ptr->bpval];
-				t=object_desc_str(t, "of ");
+				t = object_desc_str(t, "of ");
 				if(!(r_ptr->flags7 & RF7_NAZGUL)){
-					t=object_desc_str(t, "bug");
-				}
-				else{
-					t=object_desc_str(t, r_name+r_ptr->name);
+					t = object_desc_str(t, "bug");
+				} else {
+					t = object_desc_str(t, r_name + r_ptr->name);
 				}
 				
 			}
@@ -2010,8 +2009,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			cptr str = strchr(quark_str(o_ptr->note), '#');
 
 			/* Add the false name */
-			if (str)
-			{
+			if (str) {
 				/* the_sandman: lets omit the space so we 
 				   can make cool names like
 				   'Cloak'->'Cloaking Device' =)
@@ -2533,14 +2531,10 @@ if (!(mode & 32)) {
 
 
 	/* No more details wanted */
-	if ((mode & 7) < 3)
-	{
-		if (t - buf <= 65 || mode & 8)
-		{
+	if ((mode & 7) < 3) {
+		if (t - buf <= 65 || mode & 8) {
 			return;
-		}
-		else
-		{
+		} else {
 			object_desc(Ind, buf, o_ptr, pref, mode + 8);
 			return;
 		}
@@ -2551,8 +2545,7 @@ if (!(mode & 32)) {
 	tmp_val[0] = '\0';
 
 	/* Use the standard inscription if available */
-        if (o_ptr->note)
-	{
+        if (o_ptr->note) {
                 char *u = tmp_val;
 
 		strcpy(tmp_val, quark_str(o_ptr->note));
@@ -2610,13 +2603,20 @@ if (!(mode & 32)) {
 
 		/* Hack -- shrink the inscription */
 		tmp_val[75 - n] = '\0';
-#else
+#endif
+#if 0
 		/* Paranoia -- do not be stupid */
 		if (n > 90) n = 90;
 
 		/* Hack -- shrink the inscription */
 		tmp_val[90 - n] = '\0';
 #endif
+#if 1
+		/* Hack -- shrink too long inscriptions; 3 additional chars used for ' ', '{', '}' -> -1-3 */
+		if (n >= ONAME_LEN - 4) n = ONAME_LEN - 4;
+		tmp_val[(ONAME_LEN - 4) - n] = '\0';
+#endif
+
 		/* Append the inscription */
 		if (!(mode & 8)) t = object_desc_chr(t, ' ');
 		t = object_desc_chr(t, c1);
@@ -2625,14 +2625,10 @@ if (!(mode & 32)) {
 	}
 
 	/* This should always be true, but still.. */
-	if ((mode & 7) < 4)
-	{
-		if (t - buf <= 65 || mode >= 8)
-		{
+	if ((mode & 7) < 4) {
+		if (t - buf <= 65 || mode >= 8) {
 			return;
-		}
-		else
-		{
+		} else {
 			object_desc(Ind, buf, o_ptr, pref, mode + 8);
 			return;
 		}
@@ -4133,7 +4129,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	//        byte            color[400];
 
 	FILE *fff;
-	char    buf[1024], o_name[150];
+	char    buf[1024], o_name[ONAME_LEN];
 	
 	char	*ca_ptr = "";
 
@@ -5622,7 +5618,7 @@ void display_inven(int Ind)
 
 	char	tmp_val[80];
 
-	char	o_name[160];
+	char	o_name[ONAME_LEN];
 
 	int wgt;
 
@@ -5711,7 +5707,7 @@ void display_equip(int Ind)
 
 	char	tmp_val[80];
 
-	char	o_name[160];
+	char	o_name[ONAME_LEN];
 
 	int wgt;
 

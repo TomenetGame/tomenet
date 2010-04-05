@@ -226,7 +226,7 @@ static bool do_eat_item(int Ind, int m_idx)
 	monster_race    *r_ptr = race_inf(m_ptr);
 #endif	// 0
 	object_type		*o_ptr;
-	char			o_name[160];
+	char			o_name[ONAME_LEN];
 	int i, k;
 
         /* Amulet of Immortality */
@@ -331,7 +331,7 @@ static bool do_seduce(int Ind, int m_idx)
 	monster_race    *r_ptr = race_inf(m_ptr);
 	object_type		*o_ptr;
 	char            m_name[80];
-	char			o_name[160];
+	char		o_name[ONAME_LEN];
 	int d, i, j, ty, tx, chance, crowd = 0, piece = 0;
 	bool done = FALSE;
 	u32b f1, f2, f3, f4, f5, esp;
@@ -512,7 +512,7 @@ bool make_attack_melee(int Ind, int m_idx)
 
 	object_type     *o_ptr;
 
-	char            o_name[160];
+	char            o_name[ONAME_LEN];
 	char            m_name[80], m_name_gen[80];
 	char            ddesc[80];
 	char		dam_msg[80] = { '\0' };

@@ -1244,6 +1244,9 @@ static void wr_extra(int Ind)
 	wr_s32b(p_ptr->id);
 	wr_u32b(p_ptr->dna);
 	wr_s32b(p_ptr->turn);
+	wr_s32b(p_ptr->turns_online);
+	wr_s32b(p_ptr->turns_afk);
+	wr_s32b(p_ptr->turns_idle);
 
 	/* Ignore the transient stats */
 	for (i = 0; i < 10; ++i) wr_s16b(0);

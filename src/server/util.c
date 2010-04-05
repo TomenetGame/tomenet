@@ -1369,13 +1369,19 @@ void msg_print(int Ind, cptr msg)
 				    (msg[msg_scan - 1] == '(' || msg[msg_scan - 1] == ')') ||
 				    (msg[msg_scan - 1] == '[' || msg[msg_scan - 1] == ']') ||
 				    (msg[msg_scan - 1] == '{' || msg[msg_scan - 1] == '}') ||
-				    (msg[msg_scan - 1] >= 'a' && msg[msg_scan - 1] <= 'z')) &&
+				    (msg[msg_scan - 1] >= 'a' && msg[msg_scan - 1] <= 'z') ||
+				    /* (maybe too much) for pasting items to chat, (+1) or (-2,0) : */
+				    (msg[msg_scan - 1] == '+' || msg[msg_scan - 1] == '-') ||
+				    (msg[msg_scan - 1] == '\377')) &&
 				    ((msg[msg_scan] >= 'A' && msg[msg_scan] <= 'Z') ||
 				    (msg[msg_scan] == '(' || msg[msg_scan] == ')') ||
 				    (msg[msg_scan] == '[' || msg[msg_scan] == ']') ||
 				    (msg[msg_scan] == '{' || msg[msg_scan] == '}') ||
 				    (msg[msg_scan] >= '0' && msg[msg_scan] <= '9') ||
-				    (msg[msg_scan] >= 'a' && msg[msg_scan] <= 'z'))) {
+				    (msg[msg_scan] >= 'a' && msg[msg_scan] <= 'z') ||
+				    /* (maybe too much) for pasting items to chat, (+1) or (-2,0) : */
+				    (msg[msg_scan] == '+' || msg[msg_scan] == '-') ||
+				    (msg[msg_scan] == '\377'))) {
 					space_scan = msg_scan;
 					do {
 						space_scan--;
@@ -1385,6 +1391,8 @@ void msg_print(int Ind, cptr msg)
 						(msg[space_scan - 1] == '(' || msg[space_scan - 1] == ')') ||
 						(msg[space_scan - 1] == '[' || msg[space_scan - 1] == ']') ||
 						(msg[space_scan - 1] == '{' || msg[space_scan - 1] == '}') ||
+						/* (maybe too much) for pasting items to chat, (+1) or (-2,0) : */
+						(msg[space_scan - 1] == '+' || msg[space_scan - 1] == '-') ||
 						(msg[space_scan - 1] == '\377')) &&
 						space_scan > 0);
 
@@ -2590,7 +2598,7 @@ void toggle_afk(int Ind, char *msg)
 			if (strlen(p_ptr->afk_msg) == 0)
 				snprintf(afk, sizeof(afk), "\374\377%c%s has returned from AFK.", COLOUR_AFK, p_ptr->name);
 			else
-				snprintf(afk, sizeof(afk), "\374\377%c%s has returned from AFK. (%s%c)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg, COLOUR_AFK);
+				snprintf(afk, sizeof(afk), "\374\377%c%s has returned from AFK. (%s\377%c)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg, COLOUR_AFK);
 		}
 		p_ptr->afk = FALSE;
 
@@ -2634,7 +2642,7 @@ void toggle_afk(int Ind, char *msg)
 			if (strlen(p_ptr->afk_msg) == 0)
 				snprintf(afk, sizeof(afk), "\374\377%c%s seems to be AFK now.", COLOUR_AFK, p_ptr->name);
 			else
-				snprintf(afk, sizeof(afk), "\374\377%c%s seems to be AFK now. (%s%c)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg, COLOUR_AFK);
+				snprintf(afk, sizeof(afk), "\374\377%c%s seems to be AFK now. (%s\377%c)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg, COLOUR_AFK);
 		}
 		p_ptr->afk = TRUE;
 

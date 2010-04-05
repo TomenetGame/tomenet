@@ -1389,7 +1389,7 @@ struct wilderness_type
 	/* client-side worldmap-sector-specific weather:
 	   (possible ideas for future: transmit x,y,wid,hgt weather frame
 	   for current level too instead of always using full size gen.) */
-	int weather_type, weather_wind, weather_intensity, weather_speed;
+	int weather_type, weather_wind, weather_wind_vertical, weather_intensity, weather_speed;
 	bool weather_updated; /* notice any change in local weather (like a PR_ flag would do) */
 	int clouds_to_update; /* number of clouds that were changed since last update (for efficiency) */
 	bool cloud_updated[10]; /* 'has cloud been changed?' */
@@ -1859,28 +1859,39 @@ struct skill_player
 };
 
 /* account flags */
-#define ACC_TRIAL 0x0001	/* Account is awaiting validation */
-#define ACC_ADMIN 0x0002	/* Account members are admins */
-#define ACC_MULTI 0x0004	/* Simultaneous play */
-#define ACC_NOSCORE 0x0008	/* No scoring allowed */
-#define ACC_RESTRICTED 0x0010	/* is restricted (ie after cheezing) */
-#define ACC_VRESTRICTED 0x0020	/* is restricted (ie after cheating) */
-#define ACC_PRIVILEGED 0x0040	/* has privileged powers (ie for running quests) */
-#define ACC_VPRIVILEGED 0x0080	/* has privileged powers (ie for running quests) */
-#define ACC_PVP 0x0100		/* may kill other players */
-#define ACC_NOPVP 0x0200	/* is not able to kill other players */
-#define ACC_ANOPVP 0x0400	/* cannot kill other players; gets punished on trying */
-#define ACC_0800 0x800		/* */
-#define ACC_QUIET 0x1000	/* may not chat or emote in public */
-#define ACC_VQUIET 0x2000	/* may not chat or emote, be it public or private */
-#define ACC_BANNED 0x4000	/* account is temporarily suspended */
-#define ACC_DELD  0x8000	/* Delete account/members */
+#define ACC_TRIAL	0x00000001	/* Account is awaiting validation */
+#define ACC_ADMIN	0x00000002	/* Account members are admins */
+#define ACC_MULTI	0x00000004	/* Simultaneous play */
+#define ACC_NOSCORE	0x00000008	/* No scoring allowed */
+#define ACC_RESTRICTED	0x00000010	/* is restricted (ie after cheezing) */
+#define ACC_VRESTRICTED	0x00000020	/* is restricted (ie after cheating) */
+#define ACC_PRIVILEGED	0x00000040	/* has privileged powers (ie for running quests) */
+#define ACC_VPRIVILEGED	0x00000080	/* has privileged powers (ie for running quests) */
+#define ACC_PVP		0x00000100		/* may kill other players */
+#define ACC_NOPVP	0x00000200	/* is not able to kill other players */
+#define ACC_ANOPVP	0x00000400	/* cannot kill other players; gets punished on trying */
+#define ACC_GREETED	0x00000800	/* This player has received a one-time greeting. */
+#define ACC_QUIET	0x00001000	/* may not chat or emote in public */
+#define ACC_VQUIET	0x00002000	/* may not chat or emote, be it public or private */
+#define ACC_BANNED	0x00004000	/* account is temporarily suspended */
+#define ACC_DELD	0x00008000	/* Delete account/members */
 
 /*
  * new account struct - pass in player_type will be removed
  * this will provide a better account management system
  */
 struct account{
+	u32b id;	/* account id */
+	u32b flags;	/* account flags */
+	char name[30];	/* login */
+	char pass[20];	/* some crypts are not 13 */
+	time_t acc_laston;	/* last time this account logged on (for expiry check) */
+	s32b cheeze;	/* value in gold of cheezed goods or money */
+	s32b cheeze_self; /* value in gold of cheezed goods or money to own characters */
+};
+/* Used for updating tomenet.acc structure: */
+#if 1
+struct account_old{
 	u32b id;	/* account id */
 	u16b flags;	/* account flags */
 	char name[30];	/* login */
@@ -1891,13 +1902,15 @@ struct account{
 	s32b cheeze_self; /* value in gold of cheezed goods or money to own characters */
 //#endif
 };
-/* Used for updating tomenet.acc structure: */
+#endif
+#if 0
 struct account_old{
 	u32b id;	/* account id */
 	u16b flags;	/* account flags */
 	char name[30];	/* login */
 	char pass[20];	/* some crypts are not 13 */
 };
+#endif
 
 typedef struct version_type version_type;
 
@@ -1962,6 +1975,9 @@ struct player_type
 	u32b account;		/* account group id */
 	u32b dna;		/* DNA - psuedo unique to each player life */
 	s32b turn;		/* Player's birthday */
+	s32b turns_online;	/* How many turns this char has spent online */
+	s32b turns_afk;		/* How many turns this char has spent online while being /afk */
+	s32b turns_idle;	/* How many turns this char has spent online while being counted as 'idle' */
 	time_t msg;		/* anti spamming protection */
 	byte msgcnt;
 	byte spam;
@@ -2799,6 +2815,7 @@ struct player_type
 	   again and again - although noone probably reads them anyway ;-p - C. Blue */
 	char warning_bpr, warning_bpr2, warning_bpr3;
 	char warning_run, warning_wield, warning_chat, warning_lite;
+	char warning_rest;/* if a char rests from <= 40% to 50% without R, or so..*/
 };
 
 /* For Monk martial arts */

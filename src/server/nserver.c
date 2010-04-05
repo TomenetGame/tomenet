@@ -703,33 +703,39 @@ static bool update_acc_file_version(void) {
         size_t retval;
         int amt = 0;
 
-	return FALSE; /* security, while not actively used */
+//	return FALSE; /* security, while not actively used */
 
-#ifdef NETBSD 
+#ifdef NETBSD
         fd_old = open("tomenet.acc_old", O_RDONLY);
         fd = open("tomenet.acc", O_RDWR|O_EXLOCK|O_NONBLOCK|O_CREAT);
-#else 
-        fd_old = open("tomenet.acc_old", O_RDONLY);
-#ifdef WINDOWS
-        fd = open("tomenet.acc", O_RDWR|O_CREAT);
 #else
+        fd_old = open("tomenet.acc_old", O_RDONLY);
+ #ifdef WINDOWS
+        fd = open("tomenet.acc", O_RDWR|O_CREAT);
+ #else
         fd = open("tomenet.acc", O_RDWR|O_NONBLOCK|O_CREAT);
+ #endif
 #endif
-#endif 
 
 	/* No updating to do?
 	   Exit here, if no 'tomenet.acc_old' file exists: */
 	if(fd_old < 0) return(FALSE);
+	s_printf("Initiating update of tomenet.acc file.. ");
 
-        if(fd < 0) return(FALSE);
+        if(fd < 0) {
+		s_printf("failed (1).\n");
+		return(FALSE);
+	}
 #if (!defined(NETBSD)) && (!defined(WIN32)) 
         if((flock(fd, LOCK_EX)) != 0) {
                 close(fd);
+		s_printf("failed (2).\n");
                 return(FALSE);
         }
 #endif
         fp_old = fdopen(fd_old, "r");
         fp = fdopen(fd, "w");
+	s_printf("done.\n");
 
         if(fp_old != (FILE*)NULL && fp != (FILE*)NULL){
 		s_printf("Updating tomenet.acc structure.. ");
@@ -737,6 +743,19 @@ static bool update_acc_file_version(void) {
                         retval = fread(&c_acc_old, sizeof(struct account_old), 1, fp_old);
                         if (retval == 0) break; /* EOF reached, nothing read into c_acc - mikaelh */
 
+#if 1
+			/* copy unchanged structure parts: */
+			c_acc.id = c_acc_old.id;
+			strcpy(c_acc.name, c_acc_old.name);
+			strcpy(c_acc.pass, c_acc_old.pass);
+			c_acc.acc_laston = 0;//c_acc_old.expiry;
+			c_acc.cheeze = c_acc_old.cheeze;
+			c_acc.cheeze_self = c_acc_old.cheeze_self;
+			/* changes/additions: */
+			c_acc.flags = (u32b)c_acc_old.flags;
+			c_acc.flags |= ACC_GREETED; /* avoid spamming everyone with the noob msg ;-p */
+#endif
+#if 0
 			/* copy unchanged structure parts: */
 			c_acc.id = c_acc_old.id;
 			c_acc.flags = c_acc_old.flags;
@@ -746,7 +765,7 @@ static bool update_acc_file_version(void) {
 			c_acc.expiry = 0;
 			c_acc.cheeze = 0;
 			c_acc.cheeze_self = 0;
-
+#endif
 //                        fseek(fp, 0L, SEEK_END);
 			fwrite(&c_acc, sizeof(struct account), 1, fp);
 			amt++;
@@ -754,6 +773,8 @@ static bool update_acc_file_version(void) {
                 fclose(fp_old);
                 fclose(fp);
 		s_printf("%d records updated.\n", amt);
+        } else {
+		s_printf("Failure: tomenet.acc not updated.\n");
         }
 #if (!defined(NETBSD)) && (!defined(WIN32)) 
         flock(fd, LOCK_UN);
@@ -2409,7 +2430,7 @@ static int Handle_login(int ind)
 		if (MaxSimultaneousPlayers > 15) s_printf("SimultaneousPlayers (above 15): %d\n", MaxSimultaneousPlayers);
 	}
 	connp->id = Id++;
-	
+
 	//Conn_set_state(connp, CONN_READY, CONN_PLAYING);
 	Conn_set_state(connp, CONN_PLAYING, CONN_PLAYING);
 
@@ -2418,7 +2439,7 @@ static int Handle_login(int ind)
 		plog("Cannot send play reply");
 		return -1;
 	}
-	
+
 	/* Send party information */
 	Send_party(NumPlayers);
 
@@ -2489,9 +2510,12 @@ static int Handle_login(int ind)
 	/* Warn the player if some of his/her characters are about to expire */
 	account_checkexpiry(NumPlayers);
 
-	/* Brand-new players get super-short instructions presented here: */
 #ifndef ARCADE_SERVER
-	if (p_ptr->inval) { /* no bloody noob ever seems to read this how2run thingy.. (p_ptr->warning_welcome) */
+	/* Brand-new players get super-short instructions presented here: */
+	i = (acc_get_flags(p_ptr->accountname) & ACC_GREETED) ? 0 : 1;
+	if (p_ptr->inval || i) {
+		if (i) acc_set_flags(p_ptr->accountname, ACC_GREETED, FALSE);
+		/* no bloody noob ever seems to read this how2run thingy.. (p_ptr->warning_welcome) */
 		msg_print(NumPlayers, "\376\377L ");
 		msg_print(NumPlayers, "\376\377L   ***  Welcome to Tomenet! You can chat with \377R:\377L key. Say hello :)  ***");
 		msg_print(NumPlayers, "\376\377L      To run fast, use \377RSHIFT + direction\377L keys (numlock must be OFF)");
@@ -3342,11 +3366,11 @@ static int Receive_login(int ind){
 				u16b ptype = lookup_player_type(id_list[i]);
 				/* do not change protocol here */
 				tmpm = lookup_player_mode(id_list[i]);
-				if (tmpm & MODE_EVERLASTING) strcpy(colour_sequence, "\377g");
+				if (tmpm & MODE_EVERLASTING) strcpy(colour_sequence, "\377B");
 				else if (tmpm & MODE_PVP) strcpy(colour_sequence, format("\377%c", COLOUR_MODE_PVP));
 				else if (tmpm & MODE_NO_GHOST) strcpy(colour_sequence, "\377D");
-				else if (tmpm & MODE_HARD) strcpy(colour_sequence, "\377W");
-				else strcpy(colour_sequence, "\377w");
+				else if (tmpm & MODE_HARD) strcpy(colour_sequence, "\377s");
+				else strcpy(colour_sequence, "\377W");
 				Packet_printf(&connp->c, "%c%s%s%hd%hd%hd", PKT_LOGIN, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype&0xff , ptype>>8);
 			}
 			Packet_printf(&connp->c, "%c%s%s%hd%hd%hd", PKT_LOGIN, "", "", 0, 0, 0);
@@ -4340,9 +4364,17 @@ int Send_inven(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte s
 	}
 	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, amt, tval, sval, pval, name);
+		if (is_newer_than(&p_ptr2->version, 4, 4, 4, 2, 0, 0)) {
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_INVEN, pos, attr, wgt, amt, tval, sval, pval, name);
+		} else {
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, amt, tval, sval, pval, name);
+		}
 	}
-	return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, amt, tval, sval, pval, name);
+	if (is_newer_than(&Players[ind]->version, 4, 4, 4, 2, 0, 0)) {
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_INVEN, pos, attr, wgt, amt, tval, sval, pval, name);
+	} else {
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, amt, tval, sval, pval, name);
+	}
 }
 
 /* XXX 'pval' is sent only when the item is TV_BOOK (same with Send_equip)
@@ -4378,9 +4410,17 @@ int Send_inven_wide(int ind, char pos, byte attr, int wgt, int amt, byte tval, b
 	}
 	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%s", PKT_INVEN_WIDE, pos, attr, wgt, amt, tval, sval, pval, xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9, name);
+		if (is_newer_than(&p_ptr2->version, 4, 4, 4, 2, 0, 0))
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%I", PKT_INVEN_WIDE, pos, attr, wgt, amt, tval, sval, pval, xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9, name);
+		else {
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%s", PKT_INVEN_WIDE, pos, attr, wgt, amt, tval, sval, pval, xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9, name);
+		}
 	}
-	return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%s", PKT_INVEN_WIDE, pos, attr, wgt, amt, tval, sval, pval, xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9, name);
+	if (is_newer_than(&Players[ind]->version, 4, 4, 4, 2, 0, 0)) {
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%I", PKT_INVEN_WIDE, pos, attr, wgt, amt, tval, sval, pval, xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9, name);
+	} else {
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%s", PKT_INVEN_WIDE, pos, attr, wgt, amt, tval, sval, pval, xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9, name);
+	}
 }
 
 //int Send_equip(int ind, char pos, byte attr, int wgt, byte tval, cptr name)
@@ -4398,9 +4438,17 @@ int Send_equip(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte s
 	}
 	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, wgt, amt, tval, sval, pval, name);
+		if (is_newer_than(&p_ptr2->version, 4, 4, 4, 2, 0, 0))
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_EQUIP, pos, attr, wgt, amt, tval, sval, pval, name);
+		else {
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, wgt, amt, tval, sval, pval, name);
+		}
 	}
-	return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, wgt, amt, tval, sval, pval, name);
+	if (is_newer_than(&Players[ind]->version, 4, 4, 4, 2, 0, 0)) {
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_EQUIP, pos, attr, wgt, amt, tval, sval, pval, name);
+	} else {
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, wgt, amt, tval, sval, pval, name);
+	}
 }
 
 int Send_title(int ind, cptr title)
@@ -5947,7 +5995,7 @@ int Send_account_info(int ind)
 {
 	connection_t *connp = Conn[Players[ind]->conn];
 	struct account *l_acc;
-	s16b acc_flags = 0;
+	u32b acc_flags = 0;
 
 	if (!is_newer_than(&connp->version, 4, 4, 2, 2, 0, 0)) return(0);
 
@@ -6118,20 +6166,17 @@ static int Receive_run(int ind)
 	}
 
 	/* If not the dungeon master, who can always run */
-	if (!p_ptr->admin_dm) 
-	{
+	if (!p_ptr->admin_dm) {
 		/* check for status impairments */
 		if (p_ptr->confused || p_ptr->blind) return Receive_walk(ind);
 
 		/* Check for monsters in sight */
-		for (i = 0; i < m_max; i++)
-		{
+		for (i = 0; i < m_max; i++) {
 			/* Check this monster */
 			if (((p_ptr->mon_los[i] && !m_list[i].csleep &&
 			    m_list[i].level && !m_list[i].special) &&
 			    /* Not in Bree (for Santa Claus) - C. Blue (Note: This and below messes should get resolved in future) */
-                            (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz)))
-			{
+                            (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz))) {
 				// Treat this as a walk request
 				// Hack -- send the same connp->r "arguments" to Receive_walk
 				return Receive_walk(ind);
@@ -6163,13 +6208,15 @@ static int Receive_run(int ind)
 	   awake. And any monster that's auto-retaliated (if not a 'pseudo monster' which rensembles an
 	   inanimate object) should definitely be awake.
 	   Better solutions (that also fix the 'double energy' players have after performing no action
-	   for a turn) are welcome though. - C. Blue */
-	if (!p_ptr->admin_dm && p_ptr->auto_retaliating) {
+	   for a turn and NEED for running) might take its place in the future. - C. Blue */
+//if (p_ptr->auto_retaliating) s_printf("auto-retal\n");
+//else s_printf("not a-r\n");
+//	if (!p_ptr->admin_dm && p_ptr->auto_retaliating) {
+	if (p_ptr->auto_retaliating || p_ptr->shooting_till_kill) {
 		return Receive_walk(ind);
 	}
 
-	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0)
-	{
+	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0) {
 		if (n == -1)
 			Destroy_connection(ind, "read error");
 		return n;
@@ -6182,32 +6229,26 @@ static int Receive_run(int ind)
 	//if (dir != p_ptr->find_current) disturb(player, 0, 0);
 
 	/* Hack -- Fix the running in '5' bug */
-	if (dir == 5)
-		return 1;
+	if (dir == 5) return 1;
 
 #if 0
 	/* Only process the run command if we are not already running in
 	 * the direction requested.
 	 */
-	if (player && (!p_ptr->running || (dir != p_ptr->find_current)))
-	{
+	if (player && (!p_ptr->running || (dir != p_ptr->find_current))) {
 #endif
 		// If we don't want to queue the command, return now.
-		if ((n = do_cmd_run(player, dir)) == 2)
-		{
+		if ((n = do_cmd_run(player, dir)) == 2) {
 			return 2;
 		}
 		// If do_cmd_run returns a 0, then there wasn't enough energy
 		// to execute the run command.  Queue the run command if desired.
-		else if (n == 0)
-		{
+		else if (n == 0) {
 			// Only buffer a run request if we have no previous commands
 			// buffered, and it is a new direction or we aren't already
 			// running.
-			if (((!connp->q.len) && (dir != p_ptr->find_current)) || (!p_ptr->running))
-			{
+			if (((!connp->q.len) && (dir != p_ptr->find_current)) || (!p_ptr->running)) {
 				Packet_printf(&connp->q, "%c%c", ch, dir);
-
 				return 0;
 			}
 		}

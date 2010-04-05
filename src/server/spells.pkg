@@ -441,6 +441,7 @@ struct spell_type
 	byte mana_max;			/* Required mana at max lvl */
 	byte fail;			/* Minimum chance of failure */
         s16b level;                     /* Spell level(0 = not learnt) */
+        byte spell_power;		/* affected by spell-power skill? */
 };
 
 struct school_type
@@ -495,6 +496,7 @@ extern s32b lua_get_skill_value(int Ind, int i);
 extern void lua_fix_equip_slots(int Ind);
 extern void lua_fix_skill_chart(int Ind);
 extern void lua_takeoff_costumes(int Ind);
+extern bool lua_is_unique(int r_idx);
 
 /* wild.c */
 extern void wild_flags(int Ind, u32b flags);

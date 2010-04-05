@@ -47,7 +47,7 @@ that holds the dungeon levels.
  a square root.
  
  */
-    
+
 int world_index(int world_x, int world_y)
 {
 	int ring, base, offset, idx;
@@ -71,7 +71,19 @@ int world_index(int world_x, int world_y)
 	idx = -(base + offset);
 
 	return idx;
-} 
+}
+
+static void bleed_warn_feat(int wild_type, cave_type *c_ptr) {
+	switch(wild_type) {
+	case WILD_SWAMP: c_ptr->feat = FEAT_BUSH; break;
+//	case WILD_SHORE1: case WILD_SHORE2: case WILD_COAST:
+	case WILD_LAKE: case WILD_RIVER:
+	case WILD_OCEANBED1: case WILD_OCEANBED2:
+	case WILD_OCEAN: c_ptr->feat = FEAT_SHAL_WATER; break;
+	case WILD_MOUNTAIN: c_ptr->feat = FEAT_MOUNTAIN; break;
+	case WILD_VOLCANO: c_ptr->feat = FEAT_SHAL_LAVA; break;
+	}
+}
 
 #if 0 /* not used? - mikaelh */
 /* returns the neighbor index, valid or invalid. */
@@ -2966,12 +2978,13 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 /* Generates a wilderness level. */
 void wilderness_gen(struct worldpos *wpos)
 {
-	int        i, y, x;
+	int i, y, x;
 	cave_type *c_ptr;
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	wilderness_type *w_ptr2;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	struct dungeon_type *d_ptr = NULL;
+	if(!(zcave = getcave(wpos))) return;
 
 
 	process_hooks(HOOK_WILD_GEN, "d", wpos);
@@ -3020,10 +3033,42 @@ void wilderness_gen(struct worldpos *wpos)
 
 	/* Hack -- Build some wilderness (from memory) */
 	wilderness_gen_hack(wpos);
-	if((w_ptr->flags & WILD_F_UP) && can_go_up(wpos, 0x1))
+	if((w_ptr->flags & WILD_F_UP) && can_go_up(wpos, 0x1)) {
 		zcave[w_ptr->dn_y][w_ptr->dn_x].feat = FEAT_LESS;
-	if((w_ptr->flags & WILD_F_DOWN) && can_go_down(wpos, 0x1))
+		d_ptr = w_ptr->tower;
+		y = w_ptr->dn_y; x = w_ptr->dn_x;
+	}
+	if((w_ptr->flags & WILD_F_DOWN) && can_go_down(wpos, 0x1)) {
 		zcave[w_ptr->up_y][w_ptr->up_x].feat = FEAT_MORE;
+		d_ptr = w_ptr->dungeon;
+		y = w_ptr->up_y; x = w_ptr->up_x;
+	}
+	/* add ambient features to the entrance so it looks less bland ;) - C. Blue */
+	if (!istown(wpos) && d_ptr) {
+		int j, k;
+		dungeon_info_type *di_ptr = &d_info[d_ptr->type];
+
+		bool rand_old = Rand_quick; /* save rng */
+		u32b tmp_seed = Rand_value;
+		Rand_value = seed_town + (wpos->wx+wpos->wy*MAX_WILD_X) * 600; /* seed rng */
+		Rand_quick = TRUE;
+
+		/* pick amount of floor feats to set */
+		j = rand_int(4) + 3;
+		/* pick a random starting direction */
+		i = randint(8);
+		if (i == 5) i++; /* 5 isn't a legal direction */
+		/* hack: avoid a bit silly-looking ones */
+		if (j == 3 && (i % 2) == 1) i++;
+		if (i == 10) i = 6; /* 10 isn't a legal direction */
+		/* cycle forward 'j' more grids and set them accordingly */
+		for (k = 0; k < j; k++)
+			zcave[y + ddy[cycle[chome[i] + k]]][x + ddx[cycle[chome[i] + k]]].feat = di_ptr->fill_type[0];//->inner_wall;
+
+		/* restore rng */
+		Rand_quick = rand_old;
+		Rand_value = tmp_seed;
+	}
 	/* TODO: add 'inscription' to the dungeon/tower entrances */
 
 
@@ -3059,14 +3104,7 @@ void wilderness_gen(struct worldpos *wpos)
 			c_ptr = &zcave[1][x];
 			/* Don't cover stairs - mikaelh */
 			if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_LESS) continue;
-			switch(w_ptr2->type) {
-			case WILD_VOLCANO: c_ptr->feat = FEAT_SHAL_LAVA; break;
-//			case WILD_SHORE1: case WILD_SHORE2: case WILD_COAST:
-			case WILD_LAKE: case WILD_RIVER:
-			case WILD_OCEANBED1: case WILD_OCEANBED2:
-			case WILD_OCEAN: c_ptr->feat = FEAT_SHAL_WATER; break;
-			case WILD_MOUNTAIN: c_ptr->feat = FEAT_MOUNTAIN; break;
-			}
+			bleed_warn_feat(w_ptr2->type, c_ptr);
 		}
 		if ((wpos->wy > 0) && magik(30) &&
 		    wild_info[wpos->wy - 1][wpos->wx].type != w_ptr->type) {
@@ -3074,14 +3112,7 @@ void wilderness_gen(struct worldpos *wpos)
 			c_ptr = &zcave[MAX_HGT-2][x];
 			/* Don't cover stairs - mikaelh */
 			if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_LESS) continue;
-			switch(w_ptr2->type) {
-			case WILD_VOLCANO: c_ptr->feat = FEAT_SHAL_LAVA; break;
-//			case WILD_SHORE1: case WILD_SHORE2: case WILD_COAST:
-			case WILD_LAKE: case WILD_RIVER:
-			case WILD_OCEANBED1: case WILD_OCEANBED2:
-			case WILD_OCEAN: c_ptr->feat = FEAT_SHAL_WATER; break;
-			case WILD_MOUNTAIN: c_ptr->feat = FEAT_MOUNTAIN; break;
-			}
+			bleed_warn_feat(w_ptr2->type, c_ptr);
 		}
 	}
 	for (y = 1; y < MAX_HGT - 1; y++)
@@ -3092,14 +3123,7 @@ void wilderness_gen(struct worldpos *wpos)
 			c_ptr = &zcave[y][MAX_WID-2];
 			/* Don't cover stairs - mikaelh */
 			if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_LESS) continue;
-			switch(w_ptr2->type) {
-			case WILD_VOLCANO: c_ptr->feat = FEAT_SHAL_LAVA; break;
-//			case WILD_SHORE1: case WILD_SHORE2: case WILD_COAST:
-			case WILD_LAKE: case WILD_RIVER:
-			case WILD_OCEANBED1: case WILD_OCEANBED2:
-			case WILD_OCEAN: c_ptr->feat = FEAT_SHAL_WATER; break;
-			case WILD_MOUNTAIN: c_ptr->feat = FEAT_MOUNTAIN; break;
-			}
+			bleed_warn_feat(w_ptr2->type, c_ptr);
 		}
 		if ((wpos->wx > 0) && magik(30) &&
 		    wild_info[wpos->wy][wpos->wx - 1].type != w_ptr->type) {
@@ -3107,14 +3131,7 @@ void wilderness_gen(struct worldpos *wpos)
 			c_ptr = &zcave[y][1];
 			/* Don't cover stairs - mikaelh */
 			if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_LESS) continue;
-			switch(w_ptr2->type) {
-			case WILD_VOLCANO: c_ptr->feat = FEAT_SHAL_LAVA; break;
-//			case WILD_SHORE1: case WILD_SHORE2: case WILD_COAST:
-			case WILD_LAKE: case WILD_RIVER:
-			case WILD_OCEANBED1: case WILD_OCEANBED2:
-			case WILD_OCEAN: c_ptr->feat = FEAT_SHAL_WATER; break;
-			case WILD_MOUNTAIN: c_ptr->feat = FEAT_MOUNTAIN; break;
-			}
+			bleed_warn_feat(w_ptr2->type, c_ptr);
 		}
 	}
 
@@ -3142,124 +3159,124 @@ void wilderness_gen(struct worldpos *wpos)
 
 static void island(int y, int x, unsigned char type, unsigned char fill, int size){
 	int ranval;
-	if(y<0 || x<0 || y>=MAX_WILD_Y || x>=MAX_WILD_Y) return;
-	if(wild_info[y][x].type!=fill) return;
-	ranval=rand_int(15);
+	if(y < 0 || x < 0 || y >= MAX_WILD_Y || x >= MAX_WILD_Y) return;
+	if(wild_info[y][x].type != fill) return;
+	ranval = rand_int(15);
 	if(size){
 		if(ranval&1) island(y,x-1,type,fill,size-1);
 		if(ranval&2) island(y,x+1,type,fill,size-1);
 		if(ranval&4) island(y-1,x,type,fill,size-1);
 		if(ranval&8) island(y+1,x,type,fill,size-1);
 	}
-	if((rand_int(7)==0)){
+	if((rand_int(7) == 0)){
 		switch(type){
 			case WILD_MOUNTAIN:
-				type=WILD_VOLCANO;
+				type = WILD_VOLCANO;
 				break;
 			case WILD_LAKE:
-				type=WILD_SWAMP;
+				type = WILD_SWAMP;
 				break;
 		}
 	}
-	wild_info[y][x].type=type;
+	wild_info[y][x].type = type;
 }
 
 static void makeland(){
-	int p,i;
-	int x,y;
-	int density=MAXISLAND;
-	p=(MAX_WILD_Y*MAX_WILD_X)/SEADENSITY;
-	for(i=0;i<p;i++){
+	int p, i;
+	int x, y;
+	int density = MAXISLAND;
+	p = (MAX_WILD_Y * MAX_WILD_X) / SEADENSITY;
+	for(i = 0; i < p; i++){
 		do{
-			x=rand_int(MAX_WILD_X-1);
-			y=rand_int(MAX_WILD_Y-1);
-		}while(wild_info[y][x].type!=WILD_UNDEFINED);
-		island(y,x,WILD_GRASSLAND, WILD_UNDEFINED, rand_int(1<<density));
+			x = rand_int(MAX_WILD_X - 1);
+			y = rand_int(MAX_WILD_Y - 1);
+		}while(wild_info[y][x].type != WILD_UNDEFINED);
+		island(y, x, WILD_GRASSLAND, WILD_UNDEFINED, rand_int(1<<density));
 	}
 }
 
 static unsigned short makecoast(unsigned char edge, unsigned char new, unsigned char type, unsigned char fill, int y, int x){
-	unsigned short r=0;
-	if(y<0 || x<0 || y>=MAX_WILD_Y || x>=MAX_WILD_X) return(0);
-	if(wild_info[y][x].type!=fill){
-		return((wild_info[y][x].type==type));
+	unsigned short r = 0;
+	if(y < 0 || x < 0 || y >= MAX_WILD_Y || x >= MAX_WILD_X) return(0);
+	if(wild_info[y][x].type != fill){
+		return((wild_info[y][x].type == type));
 	}
-	wild_info[y][x].type=new;
-	if(makecoast(edge,new,type,fill,y,x-1)) r=1;
-	if(makecoast(edge,new,type,fill,y,x+1)) r=1;
-	if(makecoast(edge,new,type,fill,y-1,x)) r=1;
-	if(makecoast(edge,new,type,fill,y+1,x)) r=1;
+	wild_info[y][x].type = new;
+	if(makecoast(edge, new, type, fill, y, x - 1)) r = 1;
+	if(makecoast(edge, new, type, fill, y, x + 1)) r = 1;
+	if(makecoast(edge, new, type, fill, y - 1, x)) r = 1;
+	if(makecoast(edge, new, type, fill, y + 1, x)) r = 1;
 	if(r)
-		wild_info[y][x].type=edge;
+		wild_info[y][x].type = edge;
 	return(0);
 }
 
 static void addhills(){
-	int i,p;
-	int x,y;
-	p=(MAX_WILD_Y*MAX_WILD_X)/ROCKY;
-	for(i=0;i<p;i++){
+	int i, p;
+	int x, y;
+	p=(MAX_WILD_Y * MAX_WILD_X) / ROCKY;
+	for(i = 0; i < p; i++){
 		do{
-			x=rand_int(MAX_WILD_X-1);
-			y=rand_int(MAX_WILD_Y-1);
-		}while(wild_info[y][x].type!=WILD_GRASSLAND);
-		island(y,x, WILD_MOUNTAIN, WILD_GRASSLAND, rand_int((1<<MAXMOUNT)-1)); 
+			x = rand_int(MAX_WILD_X - 1);
+			y = rand_int(MAX_WILD_Y - 1);
+		}while(wild_info[y][x].type != WILD_GRASSLAND);
+		island(y, x, WILD_MOUNTAIN, WILD_GRASSLAND, rand_int((1<<MAXMOUNT) - 1));
 	}
 }
 
 static void addlakes(){
-	int i,p;
-	int x,y;
-	p=(MAX_WILD_Y*MAX_WILD_X)/LAKES;
-	for(i=0;i<p;i++){
+	int i, p;
+	int x, y;
+	p = (MAX_WILD_Y * MAX_WILD_X) / LAKES;
+	for(i = 0; i < p; i++){
 		do{
-			x=rand_int(MAX_WILD_X-1);
-			y=rand_int(MAX_WILD_Y-1);
-		}while(wild_info[y][x].type!=WILD_GRASSLAND);
-		island(y,x, WILD_LAKE, WILD_GRASSLAND, rand_int((1<<MAXLAKE)-1)); 
+			x = rand_int(MAX_WILD_X - 1);
+			y = rand_int(MAX_WILD_Y - 1);
+		}while(wild_info[y][x].type != WILD_GRASSLAND);
+		island(y, x, WILD_LAKE, WILD_GRASSLAND, rand_int((1<<MAXLAKE) - 1));
 	}
 }
 
 static void addwaste(){
-	int i,p;
-	int x,y;
-	p=(MAX_WILD_Y*MAX_WILD_X)/WASTE;
-	for(i=0;i<p;i++){
+	int i, p;
+	int x, y;
+	p = (MAX_WILD_Y * MAX_WILD_X) / WASTE;
+	for(i = 0; i < p; i++){
 		do{
-			x=rand_int(MAX_WILD_X-1);
-			y=rand_int(MAX_WILD_Y-1);
-		}while(wild_info[y][x].type!=WILD_GRASSLAND);
-		island(y,x, WILD_WASTELAND, WILD_GRASSLAND, rand_int((1<<MAXWASTE)-1)); 
+			x = rand_int(MAX_WILD_X - 1);
+			y = rand_int(MAX_WILD_Y - 1);
+		}while(wild_info[y][x].type != WILD_GRASSLAND);
+		island(y, x, WILD_WASTELAND, WILD_GRASSLAND, rand_int((1<<MAXWASTE) - 1));
 	}
 }
 
 static void addislands(){
-	int i,p;
-	int x,y;
-	p=(MAX_WILD_Y*MAX_WILD_X)/512;
-	for(i=0;i<p;i++){
+	int i, p;
+	int x, y;
+	p = (MAX_WILD_Y * MAX_WILD_X) / 512;
+	for(i = 0; i < p; i++){
 		do{
-			x=rand_int(MAX_WILD_X-1);
-			y=rand_int(MAX_WILD_Y-1);
-		}while(wild_info[y][x].type!=WILD_OCEANBED1);
-		island(y,x, WILD_GRASSLAND, WILD_OCEANBED1, rand_int((1<<4)-1));
+			x = rand_int(MAX_WILD_X - 1);
+			y = rand_int(MAX_WILD_Y - 1);
+		}while(wild_info[y][x].type != WILD_OCEANBED1);
+		island(y, x, WILD_GRASSLAND, WILD_OCEANBED1, rand_int((1<<4) - 1));
 	}
 }
 
 static void addforest(){
-	int i,p;
-	int x,y;
+	int i, p;
+	int x, y;
 	int size;
-	p=(MAX_WILD_Y*MAX_WILD_X)/WOODY;
-	for(i=0;i<p;i++){
+	p = (MAX_WILD_Y * MAX_WILD_X) / WOODY;
+	for(i = 0; i < p; i++){
 		do{
-			x=rand_int(MAX_WILD_X-1);
-			y=rand_int(MAX_WILD_Y-1);
-		}while(wild_info[y][x].type!=WILD_GRASSLAND);
-		size=rand_int((1<<MAXWOOD)-1); 
-		island(y,x, WILD_FOREST, WILD_GRASSLAND, size);
-		if(size>3)
-			island(y,x, WILD_DENSEFOREST, WILD_FOREST, size-3);
+			x = rand_int(MAX_WILD_X - 1);
+			y = rand_int(MAX_WILD_Y - 1);
+		}while(wild_info[y][x].type != WILD_GRASSLAND);
+		size = rand_int((1<<MAXWOOD) - 1);
+		island(y, x, WILD_FOREST, WILD_GRASSLAND, size);
+		if(size > 3)
+			island(y, x, WILD_DENSEFOREST, WILD_FOREST, size - 3);
 	}
 }
 
@@ -3615,7 +3632,8 @@ void lively_wild(u32b flags) {
 		/* they return home and are stocking up for winter */
 		if (season == SEASON_WINTER) wild_info[y][x].flags &= ~(WILD_F_HOME_OWNERS | WILD_F_OBJECTS | WILD_F_CASH);
 		/* now they come ^^ */
-		//<---->if (season == SEASON_SUMMER) wild_info[y][x].flags |= WILD_F_INVADERS;
+		//if (season == SEASON_SUMMER) wild_info[y][x].flags |= WILD_F_INVADERS;
 		wild_info[y][x].flags &= ~WILD_F_INVADERS; /* every time? */
 	}
 }
+

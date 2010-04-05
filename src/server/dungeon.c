@@ -347,7 +347,7 @@ static void sense_inventory(int Ind)
 	bool	felt_heavy;
 
 	object_type *o_ptr;
-	char o_name[160];
+	char o_name[ONAME_LEN];
 
 
 	/*** Check for "sensing" ***/
@@ -4335,45 +4335,24 @@ static void process_player_end(int Ind)
 
 	/* slower 'running' movement over certain terrain */
 	int real_speed = cfg.running_speed;
-	cave_type *c_ptr;
-	cave_type **zcave;
-	if(!(zcave=getcave(&p_ptr->wpos))) return;
+	cave_type *c_ptr, **zcave;
+	if(!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+
+	if (Players[Ind]->conn == NOT_CONNECTED) return;
+
+	/* count turns online, afk, and idle */
+	p_ptr->turns_online++;
+	if (p_ptr->afk) p_ptr->turns_afk++;
+	if (p_ptr->idle) p_ptr->turns_idle++;
 
 	/* count how long they stay on a level (for EXTRA_LEVEL_FEELINGS) */
 	p_ptr->turns_on_floor++;
 	/* hack to indicate it to the player */
 	if (p_ptr->turns_on_floor == TURNS_FOR_EXTRA_FEELING) Send_depth(Ind, &p_ptr->wpos);
 
-#if 1 /* NEW_RUNNING_FEAT */
-	if (!is_admin(p_ptr) && !p_ptr->ghost && !p_ptr->tim_wraith) {
-		/* are we in fact running-flying? */
-		//if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) {
-		if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN))) {
-			/* Allow level 50 druids to run at full speed */
-			if (!(p_ptr->pclass == CLASS_DRUID &&  p_ptr->lev >= 50)) {
-				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_1) real_speed /= 2;
-				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_2) real_speed /= 4;
-			}
-		}
-    	    /* or running-swimming? */
-		else if ((c_ptr->feat == 84 || c_ptr->feat == 103 || c_ptr->feat == 174 || c_ptr->feat == 187) && p_ptr->can_swim) {
-			/* Allow Aquatic players run/swim at full speed */
-			if (!r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) {
-				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) real_speed /= 2;
-				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) real_speed /= 4;
-			}
-	        }
-		/* or just normally running? */
-		else {
-			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_1) real_speed /= 2;
-			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_2) real_speed /= 4;
-		}
-	}
-#endif
-
-	if (Players[Ind]->conn == NOT_CONNECTED)
-		return;
+	/* calculate effective running speed */
+	eff_running_speed(&real_speed, p_ptr, c_ptr);
 
 	/* Try to execute any commands on the command queue. */
 	process_pending_commands(p_ptr->conn);
@@ -5459,7 +5438,7 @@ static void process_player_change_wpos(int Ind)
 	//		if (!is_admin(p_ptr) && player_is_king(Ind))
 	{
 		object_type *o_ptr;
-		char		o_name[160];
+		char		o_name[ONAME_LEN];
 
 		for (j = 0; j < INVEN_TOTAL; j++)
 		{
@@ -6675,7 +6654,7 @@ void play_game(bool new_game)
 
 	init_day_and_night();
 
-	cfg.runlevel=6;		/* Server is running */
+	cfg.runlevel = 6;		/* Server is running */
 
 	/* Set up the main loop */
 	install_timer_tick(dungeon, cfg.fps);
@@ -6743,7 +6722,7 @@ void pack_overflow(int Ind)
 		object_type *o_ptr;
 		int amt, i, j = 0;
 		u32b f1, f2, f3, f4, f5, esp;
-		char	o_name[160];
+		char	o_name[ONAME_LEN];
 
 		/* Choose an item to spill */
 		for(i = INVEN_PACK - 1; i >= 0; i--)
@@ -7103,6 +7082,9 @@ static void wild_weather_init() {
 	wilderness_type *w_ptr;
 	int i, x, y;
 
+	/* initialize amount of clouds */
+	season_change(season, FALSE);
+
 	for (x = 0; x < MAX_WILD_X; x++)
 	for (y = 0; y < MAX_WILD_Y; y++) {
 		w_ptr = &wild_info[y][x];
@@ -7148,9 +7130,8 @@ static void process_wild_weather() {
 			cloud_move(i, FALSE);
 		}
 
-		/* create cloud? limit value might depend on season or a new
-		   weather factor (rain_probability) in future */
-		else if (clouds < MAX_CLOUDS) {
+		/* create cloud? limit value depends on season */
+		else if (clouds < max_clouds_seasonal) {
 			/* we have one more cloud now */
 			clouds++;
 			/* create cloud by setting it's life time */
@@ -7158,12 +7139,12 @@ static void process_wild_weather() {
 			/* decide on initial size (largest ie horizontal diameter) */
 			cloud_dsum[i] = MAX_WID + rand_int(MAX_WID * 5);
 #ifdef TEST_SERVER /* hack: fixed location for easier live testing? */
-	//around Bree
-	cloud_x1[i] = 32 * MAX_WID - rand_int(cloud_dsum[i] / 4);
-	cloud_y1[i] = 32 * MAX_HGT;
-	cloud_x2[i] = 32 * MAX_WID + rand_int(cloud_dsum[i] / 4);
-	cloud_y2[i] = 32 * MAX_HGT;
-	cloud_state[i] = 1;
+			//around Bree
+			cloud_x1[i] = 32 * MAX_WID - rand_int(cloud_dsum[i] / 4);
+			cloud_y1[i] = 32 * MAX_HGT;
+			cloud_x2[i] = 32 * MAX_WID + rand_int(cloud_dsum[i] / 4);
+			cloud_y2[i] = 32 * MAX_HGT;
+			cloud_state[i] = 1;
 #else
 			/* decide on starting x, y world _grid_ coords (!) */
 			cloud_x1[i] = rand_int(MAX_WILD_X * MAX_WID - cloud_dsum[i] / 4);
@@ -7417,7 +7398,23 @@ if (NumPlayers && Players[NumPlayers]->wpos.wx == x && Players[NumPlayers]->wpos
 }
 #endif
 #endif
+
+#if 0 /* no winds */
 				w_ptr->weather_wind = 0; /* todo: change =p (implement winds, actually) */
+#else /* winds */
+				/* note- pretty provisional implementation, since winds shouldnt depend
+				   on cloud movement, but actually the other way round ;) This is merely
+				   so we get to see some wind already, and these 'winds' would also conflict
+				   if multiple clouds moving into different directions met.. - C. Blue */
+				if (cloud_xm100[i] > 40) w_ptr->weather_wind = 5 - (2 * ((cloud_xm100[i] - 40) / 21));
+				else if (cloud_xm100[i] < 40) w_ptr->weather_wind = 6 - (2 * ((-cloud_xm100[i] - 40) / 21));
+				else w_ptr->weather_wind = 0;
+				/* also determine vertical pseudo winds, just for server-side running speed calculations */
+				if (cloud_ym100[i] > 40) w_ptr->weather_wind_vertical = 5 - (2 * ((cloud_ym100[i] - 40) / 21));
+				else if (cloud_ym100[i] < 40) w_ptr->weather_wind_vertical = 6 - (2 * ((-cloud_ym100[i] - 40) / 21));
+				else w_ptr->weather_wind_vertical = 0;
+#endif
+
 				w_ptr->weather_intensity = (season == SEASON_WINTER) ? 5 : 8;
 				w_ptr->weather_speed = (season == SEASON_WINTER) ? 3 * WEATHER_GEN_TICKS : 1 * WEATHER_GEN_TICKS;
 				break;
@@ -7463,4 +7460,72 @@ if (NumPlayers && Players[NumPlayers]->wpos.wx == x && Players[NumPlayers]->wpos
  #endif /* !CLIENT_WEATHER_GLOBAL */
 #endif /* CLIENT_SIDE_WEATHER */
 
+/* calculate slow-downs of running speed due to environmental circumstances / grid features - C. Blue
+   Note: a.t.m. Terrain-related slowdowns take precedence over wind-related slowdowns, cancelling them. */
+void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr) {
+#if 1 /* NEW_RUNNING_FEAT */
+	if (!is_admin(p_ptr) && !p_ptr->ghost && !p_ptr->tim_wraith) {
+		/* are we in fact running-flying? */
+		//if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) {
+		if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN))) {
+			/* Allow level 50 druids to run at full speed */
+			if (!(p_ptr->pclass == CLASS_DRUID &&  p_ptr->lev >= 50)) {
+				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_1) *real_speed /= 2;
+				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_2) *real_speed /= 4;
+			}
+		}
+    	    /* or running-swimming? */
+		else if ((c_ptr->feat == 84 || c_ptr->feat == 103 || c_ptr->feat == 174 || c_ptr->feat == 187) && p_ptr->can_swim) {
+			/* Allow Aquatic players run/swim at full speed */
+			if (!r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) {
+				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) *real_speed /= 2;
+				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) *real_speed /= 4;
+			}
+	        }
+		/* or just normally running? */
+		else {
+			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_1) *real_speed /= 2;
+			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_2) *real_speed /= 4;
+		}
+	}
+#endif
+
+#if 0 /* enable? */
+ #if defined CLIENT_SIDE_WEATHER && !defined CLIENT_WEATHER_GLOBAL
+    {	int wind, real_speed_vertical;
+	/* hack: wind without rain doesn't count, since it might confuse the players */
+	if (!wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_type) return;
+
+	real_speed_vertical = *real_speed;
+	/* running against strong wind is slower :) - C. Blue */
+	wind = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_wind;
+	if (!wind || *real_speed != cfg.running_speed) ;
+		/* if no wind, or if we're already slowed down: nothing */
+	else if (wind % 2) {
+		/* west wind */
+		if (p_ptr->find_current == 1 || p_ptr->find_current == 4 || p_ptr->find_current == 7)
+			*real_speed = (*real_speed * (wind + 3)) / 10;
+	} else {
+		/* east wind */
+		if (p_ptr->find_current == 3 || p_ptr->find_current == 6 || p_ptr->find_current == 9)
+			*real_speed = (*real_speed * (wind + 6)) / 10;
+	}
+	/* also check vertical winds (which are only used for exactly this purpose here) */
+	wind = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_wind_vertical;
+	if (!wind || real_speed_vertical != cfg.running_speed) ;
+		/* if no wind, or if we're already slowed down: nothing */
+	else if (wind % 2) {
+		/* west wind */
+		if (p_ptr->find_current == 7 || p_ptr->find_current == 8 || p_ptr->find_current == 9)
+			real_speed_vertical = (real_speed_vertical * (wind + 3)) / 10;
+	} else {
+		/* east wind */
+		if (p_ptr->find_current == 1 || p_ptr->find_current == 2 || p_ptr->find_current == 3)
+			real_speed_vertical = (real_speed_vertical * (wind + 6)) / 10;
+	}
+	if (real_speed_vertical < *real_speed) *real_speed = real_speed_vertical;
+    }
+ #endif
+#endif
+}
 

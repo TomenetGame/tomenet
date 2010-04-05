@@ -185,7 +185,7 @@ bool do_player_drop_items(int Ind, int chance, bool trap)
 		if (tmp_obj.name1 == ART_POWER) continue;
 		if (cfg.anti_arts_hoard && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9))
 		{
-			char	o_name[160];
+			char	o_name[ONAME_LEN];
 			object_desc(Ind, o_name, &tmp_obj, TRUE, 0);
 
 			msg_format(Ind, "%s resists the effect!", o_name);
@@ -245,7 +245,7 @@ bool do_player_scatter_items(int Ind, int chance, int rad)
 			tmp_obj = p_ptr->inventory[i];
 			if (cfg.anti_arts_hoard && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9))
 			{
-				char	o_name[160];
+				char	o_name[ONAME_LEN];
 				object_desc(Ind, o_name, &tmp_obj, TRUE, 0);
 
 				msg_format(Ind, "%s resists the effect!", o_name);
@@ -425,7 +425,7 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x)
 {
 	player_type *p_ptr = Players[Ind];
 	bool ident = FALSE;
-	char o_name[80];
+	char o_name[ONAME_LEN];
 
         s16b  o_idx = 0;
 	object_type *o_ptr;
@@ -2695,7 +2695,7 @@ break;
 		case TRAP_OF_CLEANING:
 		{
 			int ix, iy;
-			char o_name[80];
+			char o_name[ONAME_LEN];
 
 			/* Delete the existing objects */
 			for (k = 1; k < o_max; k++)

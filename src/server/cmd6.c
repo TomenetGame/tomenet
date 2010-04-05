@@ -1786,7 +1786,7 @@ bool curse_armor(int Ind)
 
 	object_type *o_ptr;
 
-	char o_name[160];
+	char o_name[ONAME_LEN];
 
 
 	/* Curse the body armor */
@@ -1858,7 +1858,7 @@ bool curse_weapon(int Ind)
 
 	object_type *o_ptr;
 
-	char o_name[160];
+	char o_name[ONAME_LEN];
 
 
 	/* Curse the weapon */
@@ -1935,7 +1935,7 @@ bool curse_an_item(int Ind, int slot)
 
 	object_type *o_ptr;
 
-	char o_name[160];
+	char o_name[ONAME_LEN];
 
 
 	/* Curse the body armor */

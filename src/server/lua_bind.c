@@ -279,15 +279,16 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus)
         tmp = lvl - ((school_spells[s].skill_level - 1) * (SKILL_STEP / 10));
         lvl = (tmp * (max * (SKILL_STEP / 10)) / (SKILL_MAX / 10)) / (SKILL_STEP / 10);
         if (lvl < min) lvl = min;
-        else if (lvl > 0)
-        {
+        else if (lvl > 0) {
 //                tmp += p_ptr->to_s * (SKILL_STEP / 10);
                 tmp += bonus;
 //                tmp += (get_skill_scale(p_ptr, SKILL_SPELL, 20) * (SKILL_STEP / 10));
 //                tmp /= 100; tmp *= (100 + (get_skill_scale(p_ptr, SKILL_SPELL, 40) * (SKILL_STEP / 10)));
                 lvl = (tmp * (max * (SKILL_STEP / 10)) / (SKILL_MAX / 10)) / (SKILL_STEP / 10);
-		lvl *= (100 + get_skill_scale(p_ptr, SKILL_SPELL, 40));
-		lvl /= 100;
+                if (school_spells[s].spell_power) {
+			lvl *= (100 + get_skill_scale(p_ptr, SKILL_SPELL, 40));
+			lvl /= 100;
+		}
         }
         return lvl;
 }
@@ -629,7 +630,7 @@ void lua_strip_true_arts_from_present_player(int Ind, int mode) {
 		o_ptr = &p_ptr->inventory[i];
 		if (resettable_artifact_p(o_ptr))
 	        {
-	                //char  o_name[160];
+	                //char  o_name[ONAME_LEN];
 	                //object_desc(Ind, o_name, o_ptr, TRUE, 0);
 	                //msg_format(Ind, "%s fades into the air!", o_name);
 
@@ -1020,4 +1021,8 @@ void lua_takeoff_costumes(int Ind) {
 		bypass_inscrption = FALSE;
 		msg_print(Ind, "It's not that time of the year anymore.");
 	}
+}
+
+bool lua_is_unique(int r_idx) {
+	if (r_info[r_idx].flags1 & RF1_UNIQUE) return TRUE; else return FALSE;
 }

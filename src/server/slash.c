@@ -2001,7 +2001,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 
 			/* Check whether target is actually online by now :) */
-			if ((i = name_lookup_loose(Ind, tname, FALSE))) {
+			if ((i = name_lookup_loose_quiet(Ind, tname, FALSE))) {
 				msg_format(i, "\377bNote from %s: %s", p_ptr->name, message2 + j + 1);
 //				return; //so double-msg him just to be safe he sees it
 			}
@@ -2611,6 +2611,12 @@ void do_slash_cmd(int Ind, char *message)
 			return;
 		}
 #endif
+#if 0
+		else if (prefix(message, "/pray")) { /* hidden broadcast to all admins :) */
+			msg_admin("\377b[\377%c%s\377b]\377D%s", p_ptr->name, 'w', message3);
+			return;
+		}
+#endif
 
 
 		/*
@@ -2653,6 +2659,9 @@ void do_slash_cmd(int Ind, char *message)
 					prefix(message, "/quit"))
 			{
 				bool kick = (cfg.runlevel == 1024);
+
+//no effect				if (tk && k == 0) msg_broadcast(0, "\377o** Server is being restarted and will be back immediately! **");
+
 				set_runlevel(tk ? k :
 						((cfg.runlevel < 6 || kick)? 6 : 5));
 				msg_format(Ind, "Runlevel set to %d", cfg.runlevel);
@@ -2927,8 +2936,11 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "\377rMonsters on %s were killed.", wpos_format(Ind, &wp));
 				return;
 			}
-			else if (prefix(message, "/game") && tk>0){
-				if(!strcmp(token[1], "rugby")){
+			else if (prefix(message, "/game")){
+				if (!tk) {
+					msg_print(Ind, "Usage: /game stop   or   /game rugby");
+					return;
+				} else if(!strcmp(token[1], "rugby")){
 					object_type	forge;
 					object_type	*o_ptr = &forge;
 
@@ -2967,7 +2979,6 @@ void do_slash_cmd(int Ind, char *message)
 						Players[k]->team = 0;
 					}
 				}
-				return;
 			}
 			else if (prefix(message, "/unstatic-level") ||
 					prefix(message, "/unst"))
@@ -4089,7 +4100,7 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/findarts")) {
 				msg_print(Ind, "finding arts..");
 				object_type *o_ptr;
-				char o_name[160];
+				char o_name[ONAME_LEN];
 				for(i = 0; i < o_max; i++){
 					o_ptr = &o_list[i];
 					if (o_ptr->k_idx) {
@@ -4136,11 +4147,11 @@ void do_slash_cmd(int Ind, char *message)
 //unused huh					u16b ptype = lookup_player_type(id_list[i]);
 						/* do not change protocol here */
 						tmpm = lookup_player_mode(id_list[i]);
-						if (tmpm & MODE_EVERLASTING) strcpy(colour_sequence, "\377g");
+						if (tmpm & MODE_EVERLASTING) strcpy(colour_sequence, "\377B");
 						else if (tmpm & MODE_PVP) strcpy(colour_sequence, format("\377%c", COLOUR_MODE_PVP));
 						else if (tmpm & MODE_NO_GHOST) strcpy(colour_sequence, "\377D");
-						else if (tmpm & MODE_HARD) strcpy(colour_sequence, "\377W");
-						else strcpy(colour_sequence, "\377w");
+						else if (tmpm & MODE_HARD) strcpy(colour_sequence, "\377s");
+						else strcpy(colour_sequence, "\377W");
 						msg_format(Ind, "Character #%d: %s%s (%d) (ID: %d)", i+1, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), id_list[i]);
 					}
 					if (n) C_KILL(id_list, n, int);
@@ -4809,7 +4820,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/costs")) { /* shows monetary details about an object */
 				object_type *o_ptr;
-				char o_name[160];
+				char o_name[ONAME_LEN];
 				if (tk < 1)
 				{
 					msg_print(Ind, "\377oUsage: /costs <inventory-slot>");

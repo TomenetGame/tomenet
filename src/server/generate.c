@@ -10836,7 +10836,7 @@ void dealloc_dungeon_level(struct worldpos *wpos)
 	wilderness_type *w_ptr=&wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
 	object_type *o_ptr;
-	char    o_name[160];
+	char    o_name[ONAME_LEN];
 	cave_type *c_ptr;
 #if DEBUG_LEVEL > 1
 	s_printf("deallocating %s\n", wpos_format(0, wpos));

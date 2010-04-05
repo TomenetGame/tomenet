@@ -36,50 +36,51 @@ static hash_entry *hash_table[NUM_HASH_ENTRIES];
 bool WriteAccount(struct account *r_acc, bool new){
 	int fd;
 	FILE *fp;
-	short found=0;
+	short found = 0;
 	struct account c_acc;
-	long delpos=-1L;
+	long delpos = -1L;
 	size_t retval;
 
 #ifdef NETBSD
-	fd=open("tomenet.acc", O_RDWR|O_EXLOCK|O_NONBLOCK);
+	fd = open("tomenet.acc", O_RDWR | O_EXLOCK | O_NONBLOCK);
 #else
 #ifdef WINDOWS
 	/* Not really ideal, but works */
-	fd=open("tomenet.acc", O_RDWR);
+	fd = open("tomenet.acc", O_RDWR);
 #else
-	fd=open("tomenet.acc", O_RDWR|O_NONBLOCK);
+	fd = open("tomenet.acc", O_RDWR | O_NONBLOCK);
 #endif
 #endif
-	if(fd<0) return(FALSE);
+	if (fd < 0) return(FALSE);
 #if (!defined(NETBSD)) && (!defined(WIN32))
-	if((flock(fd, LOCK_EX)) != 0) {
+	if ((flock(fd, LOCK_EX)) != 0) {
 		close(fd);
 		return(FALSE);
 	}
 #endif
-	fp=fdopen(fd, "r+");
-	if(fp!=(FILE*)NULL){
-		while(!feof(fp) && !found){
+	fp = fdopen(fd, "r+");
+	if (fp != (FILE*)NULL){
+		while (!feof(fp) && !found) {
 			retval = fread(&c_acc, sizeof(struct account), 1, fp);
 			if (retval == 0) break; /* EOF reached, nothing read into c_acc - mikaelh */
-			if(c_acc.flags & ACC_DELD){
-				if(delpos==-1L) delpos=(ftell(fp)-sizeof(struct account));
-				if(new) break;
+			if (c_acc.flags & ACC_DELD){
+				if (delpos == -1L) delpos = (ftell(fp) - sizeof(struct account));
+				if (new) break;
 				continue;
 			}
-			if(!strcmp(c_acc.name, r_acc->name)) found=1;
+			if (!strcmp(c_acc.name, r_acc->name)) found = 1;
 		}
-		if(found){
+		if (found) {
 			fseek(fp, -sizeof(struct account), SEEK_CUR);
 			fwrite(r_acc, sizeof(struct account), 1, fp);
 		}
-		if(new){
-			if(delpos!=-1L)
+		if (new) {
+			if (delpos != -1L)
 				fseek(fp, delpos, SEEK_SET);
-			else fseek(fp, 0L, SEEK_END);
+			else
+				fseek(fp, 0L, SEEK_END);
 			fwrite(r_acc, sizeof(struct account), 1, fp);
-			found=1;
+			found = 1;
 		}
 		fclose(fp);
 	}
@@ -158,10 +159,46 @@ int makeadmin(char *name){
 	WriteAccount(c_acc, FALSE);
 	memset((char *)c_acc->pass, 0, 20);
 	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->account == c_acc->id) Players[i]->inval = 0;
+		if (Players[i]->account == c_acc->id) {
+			Players[i]->inval = 0;
+			if (!strcmp(name, Players[i]->name))
+				Players[i]->admin_dm = 1;
+			else
+				Players[i]->admin_wiz = 1;
+		}
 	}
 	KILL(c_acc, struct account);
 	return(TRUE);
+}
+
+/* set or clear account flags */
+int acc_set_flags(char *name, u32b flags, bool clear){
+	struct account *c_acc;
+
+	c_acc = GetAccount(name, NULL, 1);
+	if (!c_acc) return(0);
+
+	if (clear) c_acc->flags &= ~(flags);
+	else c_acc->flags |= (flags);
+
+	WriteAccount(c_acc, FALSE);
+	memset((char *)c_acc->pass, 0, 20);
+
+	KILL(c_acc, struct account);
+	return(1);
+}
+
+/* get account flags */
+u32b acc_get_flags(char *name){
+	struct account *c_acc;
+	u32b flags;
+
+	c_acc = GetAccount(name, NULL, 1);
+	if (!c_acc) return(0);
+
+	flags = c_acc->flags;
+	KILL(c_acc, struct account);
+	return flags;
 }
 
 /*
@@ -199,8 +236,7 @@ struct account *GetAccount(cptr name, char *pass, bool leavepass){
 			return(NULL);	/* failed */
 		}
 	}
-	while (!feof(fp)) {
-		fread(c_acc, sizeof(struct account), 1, fp);
+	while (fread(c_acc, sizeof(struct account), 1, fp)) {
 		if (c_acc->flags & ACC_DELD) continue;
 		if (!strcmp(c_acc->name, name)) {
 			int val;
@@ -262,8 +298,7 @@ struct account *Admin_GetAccount(cptr name){
 		KILL(c_acc, struct account);
 		return(NULL); /* cannot access account file */
 	}
-	while (!feof(fp)) {
-		fread(c_acc, sizeof(struct account), 1, fp);
+	while (fread(c_acc, sizeof(struct account), 1, fp)) {
 		if (c_acc->flags & ACC_DELD) continue;
 		if (!strcmp(c_acc->name, name)) {
 			fclose(fp);
@@ -285,8 +320,7 @@ cptr lookup_accountname(int p_id){
 	if(c_acc==(struct account*)NULL) return(NULL);
 	fp=fopen("tomenet.acc", "r");
 	if(fp==(FILE*)NULL) return(NULL); /* cannot access account file */
-	while(!feof(fp)){
-		fread(c_acc, sizeof(struct account), 1, fp);
+	while(fread(c_acc, sizeof(struct account), 1, fp)){
 		if(c_acc->flags & ACC_DELD) continue;
 		if(c_acc->id == acc_id){
 			fclose(fp);
@@ -314,7 +348,7 @@ static char *t_crypt(char *inbuf, cptr salt){
 bool check_account(char *accname, char *c_name){
 	struct account *l_acc;
 	u32b id, a_id;
-	u16b flags;
+	u32b flags;
 	hash_entry *ptr;
 	int i;
 
@@ -354,20 +388,19 @@ bool check_account(char *accname, char *c_name){
 	return(FALSE);
 }
 
-struct account *GetAccountID(u32b id){
+struct account *GetAccountID(u32b id, bool leavepass){
 	FILE *fp;
 	struct account *c_acc;
 
 	/* we may want to store a local index for fast
 	   id/name/filepos lookups in the future */
 	MAKE(c_acc, struct account);
-	if(c_acc==(struct account*)NULL) return(NULL);
-	fp=fopen("tomenet.acc", "r");
-	if(fp==(FILE*)NULL) return(NULL);	/* failed */
-	while(!feof(fp)){
-		fread(c_acc, sizeof(struct account), 1, fp);
-		if(id==c_acc->id && !(c_acc->flags & ACC_DELD)){
-			memset((char *)c_acc->pass, 0, 20);
+	if(c_acc == (struct account*)NULL) return(NULL);
+	fp = fopen("tomenet.acc", "r");
+	if(fp == (FILE*)NULL) return(NULL);	/* failed */
+	while (fread(c_acc, sizeof(struct account), 1, fp)) {
+		if(id == c_acc->id && !(c_acc->flags & ACC_DELD)){
+			if (!leavepass) memset((char *)c_acc->pass, 0, 20);
 			fclose(fp);
 			return(c_acc);
 		}
@@ -377,32 +410,44 @@ struct account *GetAccountID(u32b id){
 	return(NULL);
 }
 
-static u32b new_accid(){
+static u32b new_accid() {
 	u32b id;
 	FILE *fp;
 	char *t_map;
 	struct account t_acc;
-	id=account_id;
-	fp=fopen("tomenet.acc", "r");
-	if(fp==(FILE*)NULL) return(0L);
-	t_map=malloc(MAX_ACCOUNTS/8);
-	memset(t_map, 0, MAX_ACCOUNTS/8); /* wipe the memory - mikaelh */
-	while(!feof(fp)){
-		if(fread(&t_acc, sizeof(struct account), 1, fp))
-			t_map[t_acc.id/8]|=(1<<(t_acc.id%8));
+	id = account_id;
+
+	fp = fopen("tomenet.acc", "r");
+	if (fp == (FILE*)NULL) return(0L);
+
+	C_MAKE(t_map, MAX_ACCOUNTS / 8, char);
+	while (fread(&t_acc, sizeof(struct account), 1, fp)) {
+		if (t_acc.flags & ACC_DELD) continue;
+		t_map[t_acc.id / 8] |= (1 << (t_acc.id % 8));
 	}
+
 	fclose(fp);
-	for(id=account_id; id<MAX_ACCOUNTS; id++){
-		if(!(t_map[id/8]&(1<<(id%8)))) break;
+
+	/* Find the next free account ID */
+	for (id = account_id; id < MAX_ACCOUNTS; id++){
+		if(!(t_map[id / 8] & (1 << (id % 8)))) break;
 	}
-	if(id==MAX_ACCOUNTS){
-		for(id=1; id<account_id; id++){
-			if(!(t_map[id/8]&(1<<(id%8)))) break;
+
+	if (id == MAX_ACCOUNTS) {
+		/* Wrap around */
+		for (id = 1; id < account_id; id++) {
+			if (!(t_map[id / 8] & (1 << (id % 8)))) break;
 		}
-		if(id==account_id) id=0;
+
+		/* Oops, no free account IDs */
+		if (id == account_id) {
+			s_printf("WARNING: No account ID numbers available!\n");
+			id = 0;
+		}
 	}
-	free(t_map);
-	account_id=id+1;
+
+	C_KILL(t_map, MAX_ACCOUNTS / 8, char);
+	account_id = id + 1;
 
 	return(id);	/* temporary */
 }
@@ -601,7 +646,8 @@ void party_check(int Ind){
  */
 void account_check(int Ind){	/* Temporary Ind */
 	hash_entry *ptr;
-	int i,del;
+	int i, del;
+	struct account *c_acc;
 //	player_type *p_ptr=Players[Ind];
 
 	/* Search in each array slot */
@@ -614,20 +660,20 @@ void account_check(int Ind){	/* Temporary Ind */
 		while (ptr)
 		{
 			/* Check this name */
-			if (!GetAccountID(ptr->account)) {
+			if (!(c_acc = GetAccountID(ptr->account, FALSE))) {
 				s_printf("Lost player: %s\n", ptr->name);
 				msg_format(Ind, "Lost player: %s", ptr->name);
 #if 0 /* del might not always be initialized! */
-				del=ptr->id;
-			}
+				del = ptr->id;
+			} else KILL(c_acc, struct account);
 
 			/* Next entry in chain */
 			ptr = ptr->next;
 			delete_player_id(del);
 #else /* isn't it supposed to be this way instead?: */
-				del=ptr->id;
+				del = ptr->id;
 				delete_player_id(del);
-			}
+			} else KILL(c_acc, struct account);
 
 			/* Next entry in chain */
 			ptr = ptr->next;
@@ -1695,25 +1741,27 @@ bool add_hostility(int Ind, cptr name, bool initiator)
 
 	i = name_lookup_loose(Ind, name, TRUE);
 
-	if (!i)
-	{
-		return FALSE;
-	}
+	if (!i) return FALSE;
 
 	/* Check for sillyness */
-	if (i == Ind)
-	{
+	if (i == Ind) {
 		/* Message */
 		msg_print(Ind, "\377yYou cannot be hostile toward yourself.");
 		return FALSE;
 	}
 	
 	/* log any attempts */
-	if (initiator)
-		s_printf("HOSTILITY: %s attempts to declare war.\n", p_ptr->name);
+	if (initiator) {
+		/* paranoia? shouldn't i always be > 0 here? */
+		if (i > 0) s_printf("HOSTILITY: %s attempts to declare war on %s.\n", p_ptr->name, Players[i]->name);
+		else s_printf("HOSTILITY: %s attempts to declare war (%d).\n", p_ptr->name, i);
+	}
 	/* prevent log spam from stormbringer */
-	else if (!istown(&p_ptr->wpos))
-		s_printf("HOSTILITY: %s attempts to declare war in return.\n", p_ptr->name);
+	else if (!istown(&p_ptr->wpos)) {
+		/* paranoia? shouldn't i always be > 0 here? */
+		if (i > 0) s_printf("HOSTILITY: %s attempts to declare war in return on %s.\n", p_ptr->name, Players[i]->name);
+		else s_printf("HOSTILITY: %s attempts to declare war in return (%d).\n", p_ptr->name, i);
+	}
 
 	if (cfg.use_pk_rules == PK_RULES_DECLARE)
 	{
@@ -1737,7 +1785,7 @@ bool add_hostility(int Ind, cptr name, bool initiator)
 
 	if (p_ptr->pvpexception == 2) return FALSE;
 	if (p_ptr->pvpexception == 3) {
-                p_ptr->chp=-3;
+                p_ptr->chp = -3;
                 strcpy(p_ptr->died_from, "adrenaline poisoning");
                 p_ptr->deathblow = 0;
 		p_ptr->energy = -666;
@@ -1746,8 +1794,7 @@ bool add_hostility(int Ind, cptr name, bool initiator)
 		return FALSE;
 	}
 
-	if (i > 0)
-	{
+	if (i > 0) {
 		q_ptr = Players[i];
 
 		/* Make sure players aren't in the same party */
@@ -2678,38 +2725,48 @@ void sf_delete(const char *name){
 	unlink(fname);
 }
 
+/* For marking accounts active */
+static bool *account_active = NULL;
+
 /*
  *  Called once every 24 hours. Deletes unused IDs.
  */
 void scan_players(){
-	int slot;
+	int slot, amt = 0;
+	int i, j;
 	hash_entry *ptr, *pptr=NULL;
 	time_t now;
 	object_type *o_ptr;
 
-	now=time(&now);
-	s_printf("Starting player inactivity check\n");
-	for(slot=0; slot<NUM_HASH_ENTRIES;slot++){
-		pptr=NULL;
-		ptr=hash_table[slot];
+#if 0 /* Low-performance version */
+	struct account *c_acc = NULL;
+#endif
+
+	/* Allocate an array for marking accounts as active */
+	C_MAKE(account_active, MAX_ACCOUNTS, bool);
+
+	now = time(&now);
+
+	s_printf("Starting player inactivity check..\n");
+	for(slot = 0; slot < NUM_HASH_ENTRIES; slot++){
+		pptr = NULL;
+		ptr = hash_table[slot];
 		while(ptr){
-			if(ptr->laston && (now - ptr->laston > 15552000)){/*7776000 = 90 days at 60fps*/
-				int i,j;
+			if(ptr->laston && (now - ptr->laston > 3600 * 24 * 180)){/*15552000; 7776000 = 90 days at 60fps*/
 				hash_entry *dptr;
+				s_printf("  Removing player: %s\n", ptr->name);
 
-				s_printf("Removing player: %s\n", ptr->name);
-
-				for(i=1; i<MAX_PARTIES; i++){ /* was i = 0 but real parties start from i = 1 - mikaelh */
+				for(i = 1; i < MAX_PARTIES; i++){ /* was i = 0 but real parties start from i = 1 - mikaelh */
 					if(streq(parties[i].owner, ptr->name)){
-						s_printf("Disbanding party: %s\n",parties[i].name);
+						s_printf("  Disbanding party: %s\n",parties[i].name);
 						del_party(i);
-	        				/* remove pending notes to his party -C. Blue */
-					        for (j = 0; j < MAX_PARTYNOTES; j++) {
-					                if (!strcmp(party_note_target[j], parties[i].name)) {
-			                		        strcpy(party_note_target[j], "");
-					                        strcpy(party_note[j], "");
-					                }
-					        }
+						/* remove pending notes to his party -C. Blue */
+						for (j = 0; j < MAX_PARTYNOTES; j++) {
+							if (!strcmp(party_note_target[j], parties[i].name)) {
+								strcpy(party_note_target[j], "");
+								strcpy(party_note[j], "");
+							}
+						}
 						break;
 					}
 				}
@@ -2723,56 +2780,149 @@ void scan_players(){
 #endif
 
 				/* Wipe Artifacts (s)he had  -C. Blue */
-				for (i = 0; i < o_max; i++)
-				{
+				for (i = 0; i < o_max; i++) {
 					o_ptr = &o_list[i];
 			                if (true_artifact_p(o_ptr) && (o_ptr->owner == ptr->id))
 						delete_object_idx(i, TRUE);
-    				}
-#if 0 /* if 0'ed since priv notes nowadays are sent to accout names, not char names */
-    				/* remove pending notes to this player -C. Blue */
-			        for (i = 0; i < MAX_NOTES; i++) {
-			                if (!strcmp(priv_note_target[i], ptr->name)) {
-			                        strcpy(priv_note_sender[i], "");
-			                        strcpy(priv_note_target[i], "");
-			                        strcpy(priv_note[i], "");
-			                }
-			        }
-#endif
+				}
 
+				amt++;
 				sf_delete(ptr->name);	/* a sad day ;( */
-				if(!pptr)
-					hash_table[slot]=ptr->next;
-				else
-					pptr->next=ptr->next;
+				if(!pptr) hash_table[slot] = ptr->next;
+				else pptr->next = ptr->next;
 				/* Free the memory in the player name */
 				free((char *)(ptr->name));
 
-				dptr=ptr;	/* safe storage */
-				ptr=ptr->next;	/* advance */
+				dptr = ptr;	/* safe storage */
+				ptr = ptr->next;	/* advance */
 
 				/* Free the memory for this struct */
 				KILL(dptr, hash_entry);
-
 				continue;
+			} else {
+#if 0 /* Low-performance version */
+				/* if a character didn't timeout, timestamp his
+				   account here, to help the account-expiry routines,
+				   keeping the account 'active' - see scan_accounts() - C. Blue */
+				c_acc = GetAccountID(ptr->account, TRUE);
+				/* avoid tagging multi-char accounts again for each char - once is sufficient */
+				if (c_acc && c_acc->acc_laston != now) {
+					c_acc->acc_laston = now;
+					WriteAccount(c_acc, FALSE);
+					KILL(c_acc, struct account);
+				}
+#else
+				/* If a character didn't timeout, mark his
+				   account as active here */
+				account_active[ptr->account] = TRUE;
+#endif
 			}
-			pptr=ptr;
-			ptr=ptr->next;
+
+			/* proceed to next entry of this hash slot */
+			pptr = ptr;
+			ptr = ptr->next;
 		}
 	}
-	s_printf("Finished player inactivity check\n");
+
+	s_printf("  %d players expired.\n");
+	s_printf("Finished player inactivity check.\n");
 }
 /*
  *  Called once every 24 hours. Deletes unused Account IDs.
  *  It's called straight after scan_players, usually.
  *  Unused means that there aren't any characters on it,
- *  and it's not been used to log in with for a certain amount of time.
+ *  and it's not been used to log in with for a certain amount of time. - C. Blue
  */
-void scan_accounts(){
+void scan_accounts() {
+	int total = 0, nondel = 0, active = 0, expired = 0, fixed = 0;
+	bool modified;
+	FILE *fp;
+	struct account *c_acc;
+	time_t now;
 
-	s_printf("Starting account inactivity check\n");
+	now = time(NULL);
 
-	s_printf("Finished account inactivity check\n");
+	if (!account_active) {
+		s_printf("scan_players() must be called before scan_accounts() is called!\n");
+		return;
+	}
+
+	s_printf("Starting account inactivity check..\n");
+	MAKE(c_acc, struct account);
+	if(c_acc == (struct account*)NULL) return;
+
+	fp = fopen("tomenet.acc", "r+");
+	if (fp == (FILE*)NULL) {
+		KILL(c_acc, struct account);
+		return;
+	}
+
+	while (fread(c_acc, sizeof(struct account), 1, fp)) {
+		modified = FALSE;
+
+		/* Count all accounts in the file */
+		total++;
+
+		if (c_acc->flags & ACC_DELD) continue;
+
+		/* Count non-deleted accounts */
+		nondel++;
+
+		if (c_acc->flags & ACC_ADMIN) {
+			/* Admin accounts always count as active */
+			active++;
+			continue;
+		}
+
+//		if (!c_acc->acc_laston) continue; /* not using this 'hack' for staticing here */
+
+		/* fix old accounts that don't have a timestamp yet */
+		if (!c_acc->acc_laston) {
+			c_acc->acc_laston = now; /* set new timestamp */
+			fixed++;
+			modified = TRUE;
+		}
+
+		/* Was the account marked as active? */
+		else if (account_active[c_acc->id]) {
+			c_acc->acc_laston = now;
+
+			/* Count active accounts */
+			active++;
+
+			modified = TRUE;
+		}
+
+#if 1
+		/* test for expiry -> delete */
+		else if (now - c_acc->acc_laston >= 3600 * 24 * 30) {
+			c_acc->flags |= ACC_DELD;
+
+			/* Count expired accounts */
+			expired++;
+
+			s_printf("  Account '%s' expired.\n", c_acc->name);
+			modified = TRUE;
+		}
+#endif
+
+//		if (modified) WriteAccount(c_acc, FALSE);
+		if (modified) {
+			fseek(fp, -sizeof(struct account), SEEK_CUR);
+			fwrite(c_acc, sizeof(struct account), 1, fp);
+		}
+	}
+
+	if (fixed) s_printf("  %d accounts have been fixed.\n", fixed);
+	s_printf("  %d accounts in total, %d non-deleted, %d active.\n", total, nondel, active);
+	s_printf("  %d accounts have expired.\n", expired);
+
+	memset((char *)c_acc->pass, 0, 20);
+	fclose(fp);
+	KILL(c_acc, struct account);
+	s_printf("Finished account inactivity check.\n");
+
+	C_KILL(account_active, MAX_ACCOUNTS, bool);
 }
 
 /* Rename a player's char savegame as well as the name inside */
@@ -3366,3 +3516,19 @@ void account_change_password(int Ind, char *old_pass, char *new_pass) {
 
 	KILL(c_acc, struct account);
 }
+
+#if 0 /* obsolete - scan_players() does this now too - C. Blue */
+/* update acc->acc_laston, done each time a char logs on AND off.
+   Used for determining expiry within scan_accounts() - C. Blue */
+void account_set_laston(int Ind) {
+	struct account *c_acc;
+
+	c_acc = GetAccount(Players[Ind]->accountname, NULL, 1);
+	if (!c_acc) return;
+
+	c_acc->acc_laston = time(NULL);
+
+	WriteAccount(c_acc, FALSE);
+	KILL(c_acc, struct account);
+}
+#endif

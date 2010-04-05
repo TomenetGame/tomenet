@@ -3968,7 +3968,7 @@ bool create_artifact_aux(int Ind, int item)
 	object_type *o_ptr;
 	artifact_type *a_ptr;
 	int tries = 0;
-	char o_name[160];
+	char o_name[ONAME_LEN];
 	s32b old_owner;/* anti-cheeze :) */
 
 	/* Get the item (in the pack) */
@@ -4086,7 +4086,7 @@ bool curse_spell_aux(int Ind, int item)
 {
 	player_type *p_ptr=Players[Ind];
 	object_type *o_ptr=&p_ptr->inventory[item];
-	char		o_name[160];
+	char		o_name[ONAME_LEN];
 
 	p_ptr->current_curse = FALSE;
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
@@ -4175,7 +4175,7 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 
 	object_type		*o_ptr;
 
-	char		o_name[160];
+	char		o_name[ONAME_LEN];
 
 	/* Assume enchant weapon */
 	item_tester_hook = item_tester_hook_weapon;
@@ -4287,7 +4287,7 @@ bool ident_spell_aux(int Ind, int item)
 
 	object_type		*o_ptr;
 
-	char		o_name[160];
+	char		o_name[ONAME_LEN];
 
 
 	/* Get the item (in the pack) */
@@ -4379,7 +4379,7 @@ bool identify_fully_item(int Ind, int item)
 
 	object_type		*o_ptr;
 
-	char		o_name[160];
+	char		o_name[ONAME_LEN];
 
 
 	/* Get the item (in the pack) */
@@ -8391,7 +8391,7 @@ void tome_creation_aux(int Ind, int item) {
 	player_type	*p_ptr = Players[Ind];
 	bool		okay = TRUE;
 	object_type	*o_ptr, *o2_ptr;
-	char		o_name[160];
+	char		o_name[ONAME_LEN];
 	byte		*xtra;
 
 	/* Get the item (in the pack) */

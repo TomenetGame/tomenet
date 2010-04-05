@@ -263,13 +263,13 @@ void do_cmd_check_uniques(int Ind, int line)
 			/* Output color byte */
 			fprintf(fff, "\377w");
 
-			/* Hack -- Show the ID for admin */
-			if (admin) fprintf(fff, "(%4d) ", k);
+			/* Hack -- Show the ID for admin -- and also the level */
+			if (admin) fprintf(fff, "(%4d, L%d) ", k, r_ptr->level);
 
 			/* Format message */
 //			fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
 			/* different colour for uniques higher than Morgoth (the 'boss') */
-			if (r_ptr->level > 100)	fprintf(fff, "\377s%s was slain by", r_name + r_ptr->name);
+			if (r_ptr->level > 100) fprintf(fff, "\377s%s was slain by", r_name + r_ptr->name);
 			else if (r_ptr->level == 100) fprintf(fff, "\377v%s was slain by", r_name + r_ptr->name); /* only Morgoth is level 100 ! */
 			else fprintf(fff, "%s was slain by", r_name + r_ptr->name);
 
@@ -1211,7 +1211,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 				i < (hidden ? INVEN_LEFT : INVEN_TOTAL); i++)
 		{
 			object_type *o_ptr = &q_ptr->inventory[i];
-			char o_name[160];
+			char o_name[ONAME_LEN];
 			if (o_ptr->tval) {
 				object_desc(Ind, o_name, o_ptr, TRUE, 3 + (i < INVEN_WIELD ? 0 : 0x10));
 				if (admin && i < INVEN_WIELD)
@@ -1225,7 +1225,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 #if 0 /* changed position of INVEN_ARM to occur before INVEN_LEFT, so following hack isn't needed anymore */
 			/* for dual-wield, but also in general, INVEN_ARM should be visible too */
 			object_type *o_ptr = &q_ptr->inventory[INVEN_ARM];
-			char o_name[160];
+			char o_name[ONAME_LEN];
 			if (o_ptr->tval) {
 				object_desc(Ind, o_name, o_ptr, TRUE, 3 + 0x10);
 				fprintf(fff, "\377w %s\n", o_name);
@@ -1955,7 +1955,7 @@ void do_cmd_show_known_item_letter(int Ind, char *letter)
 	int		i, j, total = 0;
 	object_kind	*k_ptr;
 	object_type forge;
-	char o_name[80];
+	char o_name[ONAME_LEN];
 	bool all = FALSE;
 	bool admin = is_admin(p_ptr);
 	s16b idx[max_k_idx];

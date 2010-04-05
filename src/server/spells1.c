@@ -2082,7 +2082,7 @@ int inven_damage(int Ind, inven_func typ, int perc)
 
 	object_type	*o_ptr;
 
-	char	o_name[160];
+	char	o_name[ONAME_LEN];
 
 	if (safe_area(Ind)) return(FALSE);
 
@@ -2169,7 +2169,7 @@ int equip_damage(int Ind, int typ)
 {
 	player_type *p_ptr = Players[Ind];
 	object_type		*o_ptr = NULL;
-	char		o_name[160];
+	char		o_name[ONAME_LEN];
 
 	if (safe_area(Ind)) return(FALSE);
 	if (p_ptr->admin_dm) return(FALSE);
@@ -2227,7 +2227,7 @@ int shield_takes_damage(int Ind, int typ)
 {
 	player_type *p_ptr = Players[Ind];
 	object_type		*o_ptr = &p_ptr->inventory[INVEN_ARM];
-	char		o_name[160];
+	char		o_name[ONAME_LEN];
 
 	if (safe_area(Ind)) return(FALSE);
 
@@ -2275,7 +2275,7 @@ int shield_takes_damage(int Ind, int typ)
 int weapon_takes_damage(int Ind, int typ, int slot)
 {
 	player_type *p_ptr = Players[Ind];
-	char		o_name[160];
+	char		o_name[ONAME_LEN];
 		u32b f1, f2, f3, f4, f5, esp;
 #if 0
 	object_type		*o_ptr = NULL, *o2_ptr = NULL;
@@ -2823,7 +2823,7 @@ bool apply_disenchant(int Ind, int mode)
 	object_type		*o_ptr;
 	object_kind 		*k_ptr;
 
-	char		o_name[160];
+	char		o_name[ONAME_LEN];
 
 	u32b f1, f2, f3, f4, f5, esp;
 
@@ -2960,7 +2960,7 @@ bool apply_discharge(int Ind, int dam)
 	int	i, chance = 95;
 	bool	damaged_any = FALSE, damaged;
 	object_type *o_ptr;
-	char	o_name[160];
+	char	o_name[ONAME_LEN];
 
 	if (safe_area(Ind)) return(FALSE);
 
@@ -4033,7 +4033,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		u32b f1, f2, f3, f4, f5, esp;
 
-	char	o_name[160];
+	char	o_name[ONAME_LEN];
 
 	int o_sval = 0;
 	bool is_potion = FALSE;

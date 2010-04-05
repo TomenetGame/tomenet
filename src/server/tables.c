@@ -4686,7 +4686,7 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_BOW,
-                                '+', 1000,
+                                '+', 0,
                                 '+', 250,
                         },
                         {
@@ -4701,7 +4701,7 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_MARTIAL_ARTS,
-                                '+', 0,
+                                '+', 1000, /* make newbies' lives easier */
                                 '+', 650,
                         },
                         {
@@ -4765,7 +4765,7 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_DISARM,
-                                '+', 1000,
+                                '+', 0,/*1000*/
                                 '+', 600,
                         },
                         {

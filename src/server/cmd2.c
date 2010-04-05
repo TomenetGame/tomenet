@@ -2800,7 +2800,7 @@ void do_cmd_bash(int Ind, int dir)
 						o_ptr->tval == TV_FLASK ||
 						o_ptr->tval == TV_BOTTLE)
 				{
-					char            o_name[160];
+					char            o_name[ONAME_LEN];
 					object_desc(Ind, o_name, o_ptr, FALSE, 3);
 
 					/* S(he) is no longer afk */
@@ -3180,40 +3180,15 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 int do_cmd_run(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
-	cave_type *c_ptr;
-	cave_type **zcave;
+	cave_type *c_ptr, **zcave;
 
 	/* slower 'running' movement over certain terrain */
 	int real_speed = cfg.running_speed;
-	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
+	if(!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
+	eff_running_speed(&real_speed, p_ptr, c_ptr);
 #if 1 /* NEW_RUNNING_FEAT */
-	if (!is_admin(p_ptr) && !p_ptr->ghost && !p_ptr->tim_wraith) {
-		/* are we in fact running-flying? */
-		//if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) {
-		if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN))) {
-			/* Allow level 50+ druids to run at full speed */
-			if (!(p_ptr->pclass == CLASS_DRUID &&  p_ptr->lev >= 50)) {
-				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_1) real_speed /= 2;
-				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_2) real_speed /= 4;
-			}
-		}
-    		/* or running-swimming? */
-	        else if ((c_ptr->feat == 84 || c_ptr->feat == 103 || c_ptr->feat == 174 || c_ptr->feat == 187) && p_ptr->can_swim) {
-			/* Allow Aquatic players run/swim at full speed */
-			if (!r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC) {
-				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) real_speed /= 2;
-				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) real_speed /= 4;
-			}
-	        }
-		/* or just normally running? */
-		else {
-			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_1) real_speed /= 2;
-			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_2) real_speed /= 4;
-		}
-	}
-
 	/* running over floor grids, or special grids that we couldn't run over without according ability? Used by see_wall !*/
 	p_ptr->running_on_floor = FALSE;
 #endif
@@ -3586,7 +3561,7 @@ void do_cmd_fire(int Ind, int dir)
 	
 	u32b f1, f1a, fx, esp;
 
-	char            o_name[160];
+	char            o_name[ONAME_LEN];
 	bool returning = FALSE, magic = FALSE, boomerang = FALSE, ethereal = FALSE;
 	cave_type **zcave;
 
@@ -5004,7 +4979,7 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 	int path_num = 0;
 #endif
 
-	char            o_name[160];
+	char            o_name[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, esp;
 
 	char brand_msg[80] = { '\0' };

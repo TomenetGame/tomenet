@@ -2604,7 +2604,7 @@ bool confirm_admin(int Ind)
 	player_type *p_ptr = Players[Ind];
 	bool admin=FALSE;
 
-	c_acc = GetAccountID(p_ptr->account);
+	c_acc = GetAccountID(p_ptr->account, FALSE);
 	if (!c_acc) return(FALSE);
 	if (c_acc->flags & ACC_ADMIN) admin = TRUE;
 	/* sucks, but allows an admin wizard. i'll change - evileye */
