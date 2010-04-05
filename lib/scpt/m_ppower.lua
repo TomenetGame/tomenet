@@ -5,6 +5,8 @@ MBASH = add_spell
 {
 	["name"] =	"Psychic Hammer",
         ["school"] =	{SCHOOL_PPOWER},
+	["am"] =	50,
+	["spell_power"] = 0,
         ["level"] =	1,
         ["mana"] =	1,
         ["mana_max"] =	15,
@@ -25,6 +27,8 @@ MBLINK = add_spell
 {
 	["name"] = 	"Autokinesis I",
         ["school"] = 	{SCHOOL_PPOWER},
+	["am"] =	50,
+	["spell_power"] = 0,
         ["level"] = 	5,
         ["mana"] = 	3,
         ["mana_max"] =  3,
@@ -45,6 +49,8 @@ MTELEPORT = add_spell
 {
 	["name"] = 	"Autokinesis II",
         ["school"] = 	{SCHOOL_PPOWER},
+	["am"] =	50,
+	["spell_power"] = 0,
         ["level"] = 	16,
         ["mana"] = 	8,
         ["mana_max"] = 	14,
@@ -65,6 +71,8 @@ MTELETOWARDS = add_spell
 {
 	["name"] = 	"Autokinesis III",
         ["school"] = 	{SCHOOL_PPOWER},
+	["am"] =	50,
+	["spell_power"] = 0,
         ["blind"] = 	0,
         ["level"] = 	24,
         ["mana"] = 	20,
@@ -85,6 +93,8 @@ MTELEAWAY = add_spell
 {
 	["name"] = 	"Psychic Warp",
         ["school"] = 	{SCHOOL_PPOWER},
+	["am"] =	50,
+	["spell_power"] = 0,
         ["level"] = 	30,
         ["mana"] = 	40,
         ["mana_max"] = 	50,
@@ -105,6 +115,8 @@ MDISARM = add_spell
 {
 	["name"] =	"Psychokinesis",
 	["school"] =	{SCHOOL_PPOWER},
+	["am"] =	50,
+	["spell_power"] = 0,
 	["level"] =	3,
 	["mana"] =	5,
 	["mana_max"] =	5,
@@ -126,6 +138,8 @@ MPSISTORM = add_spell
 {
 	["name"] =	"Psi Storm",
         ["school"] =	{SCHOOL_PPOWER},
+	["am"] =	50,
+	["spell_power"] = 0,
         ["level"] =	18,
         ["mana"] =	15,
         ["mana_max"] =	40,
@@ -149,6 +163,8 @@ MPYROKINESIS = add_spell
 {
 	["name"] =	"Pyrokinesis",
         ["school"] =	{SCHOOL_PPOWER},
+	["am"] =	50,
+	["spell_power"] = 0,
         ["level"] =	20,
         ["mana"] =	5,
         ["mana_max"] =	22,
@@ -169,6 +185,8 @@ MCRYOKINESIS = add_spell
 {
 	["name"] =	"Cryokinesis",
         ["school"] =	{SCHOOL_PPOWER},
+	["am"] =	50,
+	["spell_power"] = 0,
         ["level"] =	24,
         ["mana"] =	6,
         ["mana_max"] =	23,
@@ -192,6 +210,8 @@ MFUSION = add_spell
 --	["name"] =      "Corporeal Fusion",
 --	["school"] =    {SCHOOL_TCONTACT, SCHOOL_PPOWER, SCHOOL_MINTRUSION},
 	["school"] =    {SCHOOL_TCONTACT, SCHOOL_PPOWER},
+	["am"] =	50,
+	["spell_power"] = 0,
 	["level"] =     40,
 	["mana"] =      200,
 	["mana_max"] =  200,

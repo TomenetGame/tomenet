@@ -4,6 +4,7 @@ NATURESCALL = add_spell
 {
 	["name"] = 	"Nature's Call",
 	["school"] = 	{SCHOOL_DRUID_ARCANE},
+	["spell_power"] = 0,
 	["level"] = 	1,
 	["mana"] = 	5,
 	["mana_max"] = 	40,
@@ -26,6 +27,7 @@ WATERPOISON = add_spell
 {
 	["name"] = 	"Toxic Moisture",
 	["school"] = 	{SCHOOL_DRUID_ARCANE},
+	["spell_power"] = 0,
 	["level"] = 	1,
 	["mana"] = 	1,
 	["mana_max"] = 	40,
@@ -58,6 +60,7 @@ BAGIDENTIFY = add_spell
 {
 	["name"] = 	"Ancient Lore",
 	["school"] = 	{SCHOOL_DRUID_ARCANE},
+	["spell_power"] = 0,
 	["level"] = 	20,
 	["mana"] = 	30,
 	["mana_max"] = 	30,
@@ -79,6 +82,7 @@ REPLACEWALL = add_spell
 {
 	["name"] = 	"Garden of the Gods",
 	["school"] = 	{SCHOOL_DRUID_ARCANE},
+	["spell_power"] = 0,
 	["level"] = 	1,
 	["mana"] = 	150,
 	["mana_max"] = 	250,
@@ -104,6 +108,7 @@ BANISHANIMALS = add_spell
 {
 	["name"] = 	"Call of the Forest",
 	["school"] = 	{SCHOOL_DRUID_ARCANE},
+	["spell_power"] = 0,
 	["level"] = 	1,
 	["mana"] = 	250,
 	["mana_max"] = 	300,

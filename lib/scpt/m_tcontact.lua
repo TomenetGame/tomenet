@@ -6,6 +6,8 @@ MTAUNT = add_spell
 {
 	["name"] = 	"Cause Agression",
         ["school"] = 	{SCHOOL_TCONTACT},
+        ["am"] =	50,
+        ["spell_power"] = 0,
 	["blind"] =	0,
         ["level"] = 	5,
         ["mana"] = 	10,
@@ -25,6 +27,8 @@ MDISTRACT = add_spell
 {
 	["name"] = 	"Divert Attention",
         ["school"] = 	{SCHOOL_TCONTACT},
+        ["am"] =	50,
+        ["spell_power"] = 0,
 	["blind"] =	0,
         ["level"] = 	10,
         ["mana"] = 	15,
@@ -47,6 +51,8 @@ MSELFKNOW = add_spell
 {
 	["name"] = 	"Self-Reflection",
         ["school"] = 	{SCHOOL_TCONTACT},
+        ["am"] =	33,
+        ["spell_power"] = 0,
 	["blind"] =	0,
         ["level"] = 	15,
         ["mana"] = 	15,
@@ -67,6 +73,8 @@ MBOOST = add_spell
 {
 	["name"] =      "Willpower",
 	["school"] =    {SCHOOL_TCONTACT},
+        ["am"] =	33,
+        ["spell_power"] = 0,
 	["blind"] =	0,
 	["level"] =     3,
 	["mana"] =      3,
@@ -91,6 +99,8 @@ MHASTE = add_spell
 {
 	["name"] =      "Accelerate Nerves",
 	["school"] =    {SCHOOL_TCONTACT},
+        ["am"] =	50,
+        ["spell_power"] = 0,
 	["blind"] =	0,
 	["level"] =     20,
 	["mana"] =      10,
@@ -122,6 +132,8 @@ MCURE = add_spell
 {
 	["name"] =      "Clear Mind",
 	["school"] =    {SCHOOL_TCONTACT},
+        ["am"] =	50,
+        ["spell_power"] = 0,
 	["blind"] =	0,
 	["confusion"] =	0,
 	["level"] =     3,
@@ -153,6 +165,8 @@ MSANITY = add_spell
 {
 	["name"] =      "Stabilize Thoughts",
 	["school"] =    {SCHOOL_TCONTACT},
+        ["am"] =	50,
+        ["spell_power"] = 0,
 	["blind"] =	0,
 	["confusion"] =	0,
 	["level"] =     25,
@@ -181,6 +195,8 @@ MSENSEMON = add_spell
 {
 	["name"] =      "Telepathy",
 	["school"] =    {SCHOOL_TCONTACT},
+        ["am"] =	50,
+        ["spell_power"] = 0,
 	["blind"] =	0,
 --	["level"] =     1,
 --	["mana"] =      3,
@@ -209,6 +225,8 @@ MTELEKINESIS = add_spell
 {
 	["name"] = 	"Telekinesis",
         ["school"] = 	{SCHOOL_TCONTACT, SCHOOL_PPOWER},
+        ["am"] =	50,
+        ["spell_power"] = 0,
         ["level"] = 	35,
         ["mana"] = 	25,
         ["mana_max"] = 	25,

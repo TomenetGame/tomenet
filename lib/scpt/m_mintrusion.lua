@@ -11,6 +11,8 @@ MSCARE = add_spell
 {
 	["name"] = 	"Scare",
         ["school"] = 	{SCHOOL_MINTRUSION},
+        ["am"] = 	50,
+        ["spell_power"] = 0,
         ["level"] = 	1,
         ["mana"] = 	1,
         ["mana_max"] = 	8,
@@ -40,6 +42,8 @@ MCONFUSE = add_spell
 {
 	["name"] = 	"Confuse",
         ["school"] = 	{SCHOOL_MINTRUSION},
+        ["am"] = 	50,
+        ["spell_power"] = 0,
         ["level"] = 	3,
         ["mana"] = 	3,
         ["mana_max"] = 	20,
@@ -68,6 +72,8 @@ MSLEEP = add_spell
 {
 	["name"] =	"Sleep",
 	["school"] =	{SCHOOL_MINTRUSION},
+        ["am"] = 	50,
+        ["spell_power"] = 0,
 	["level"] =	5,
 	["mana"] =	5,
 	["mana_max"] =	30,
@@ -99,6 +105,8 @@ MSLOWMONSTER = add_spell
 {
         ["name"] =	"Drain Strength",
         ["school"] =	{SCHOOL_MINTRUSION},
+        ["am"] = 	50,
+        ["spell_power"] = 0,
         ["level"] =	7,
         ["mana"] =	10,
         ["mana_max"] =	30,
@@ -133,6 +141,8 @@ MMINDBLAST = add_spell
 {
 	["name"] = 	"Psionic Blast",
         ["school"] = 	{SCHOOL_MINTRUSION},
+        ["am"] = 	50,
+        ["spell_power"] = 0,
         ["level"] = 	1,
         ["mana"] = 	1,
         ["mana_max"] = 	15,
@@ -157,6 +167,8 @@ MSILENCE = add_spell
 {
 	["name"] = 	"Psychic Suppression",
         ["school"] = 	{SCHOOL_MINTRUSION},
+        ["am"] = 	50,
+        ["spell_power"] = 0,
         ["level"] = 	10,
         ["mana"] = 	50,
         ["mana_max"] = 	100,
@@ -180,6 +192,8 @@ MMAP = add_spell
         ["name"] =	"Remote Vision",
         ["school"] =	{SCHOOL_MINTRUSION},
 --	["school"] =	{SCHOOL_MINTRUSION, SCHOOL_TCONTACT}
+        ["am"] = 	50,
+        ["spell_power"] = 0,
         ["level"] =	20,
         ["mana"] =	30,
         ["mana_max"] =	30,
@@ -204,6 +218,8 @@ MCHARM = add_spell
 {
 	["name"] = 	"Charm",
         ["school"] = 	{SCHOOL_MINTRUSION},
+        ["am"] = 	50,
+        ["spell_power"] = 0,
         ["level"] = 	1,
         ["mana"] = 	1,
         ["mana_max"] = 	20,
@@ -235,6 +251,8 @@ MCHARM = add_spell
 {
 	["name"] = 	"Charm",
         ["school"] = 	{SCHOOL_MINTRUSION},
+        ["am"] = 	50,
+        ["spell_power"] = 0,
         ["level"] = 	33,
         ["mana"] = 	10,
         ["mana_max"] = 	10,
@@ -266,6 +284,8 @@ MSTOPCHARM = add_spell
 {
 	["name"] = 	"Stop Charm",
         ["school"] = 	{SCHOOL_MINTRUSION},
+        ["am"] = 	0,
+        ["spell_power"] = 0,
         ["level"] = 	33,
         ["mana"] = 	0,
         ["mana_max"] = 	0,

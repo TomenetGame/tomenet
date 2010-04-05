@@ -154,6 +154,7 @@ function status(name)
     local p, r, k, bspeed, rs, ks
     p = ind(name)
     r = players(p).body_monster
+    local line1, linetab
 
     if r > 0 then
 	k = players(p).r_killed[r + 1]
@@ -177,12 +178,12 @@ function status(name)
     bspeed = players(p).pspeed - bspeed
 
     if players(p).tim_blacklist > 0 then
-	blklst = "   \255oBlacklist: "..players(p).tim_blacklist
+	blklst = "\255oBlacklist: "..players(p).tim_blacklist
     else
 	blklst = ""
     end
     if players(p).tim_watchlist > 0 then
-	wchlst = "   \255yWatchlist: "..players(p).tim_watchlist
+	wchlst = "\255yWatchlist: "..players(p).tim_watchlist
     else
 	wchlst = ""
     end
@@ -218,13 +219,45 @@ function status(name)
 
     msg_print(Ind, "\255UStatus for "..players(p).name.." (Ind "..p..", id "..players(p).id..", party "..players(p).party..", \255"..cmode.."\255U)")
     msg_print(Ind, "HP: "..players(p).chp.."/"..players(p).mhp.."    SP: "..players(p).csp.."/"..players(p).msp.."    San: "..players(p).csane.."/"..players(p).msane.."    St: "..players(p).cst.."/"..players(p).mst..ks)
-    msg_print(Ind, "Base Spd: "..bspeed.."   Spd: "..players(p).pspeed.."   MDLev: "..players(p).max_dlv..blklst)
-    msg_print(Ind, "Lev: "..clvc..players(p).lev.."\255w   Max Lev: "..mlvc..players(p).max_lev.."\255w   Top Lev: \255G"..players(p).max_plv..wchlst)
+
+    line1 = "Base Spd: "..bspeed.."   Spd: "..players(p).pspeed.."  MDLev: "..players(p).max_dlv
+    linetab = ""
+    for i = 1, 47 - strlen(line1) do
+	linetab = linetab.." "
+    end
+    msg_print(Ind, line1..linetab..blklst)
+
+    line1 = "Lev: "..clvc..players(p).lev.."\255w   Max Lev: "..mlvc..players(p).max_lev.."\255w   Top Lev: \255G"..players(p).max_plv
+    linetab = ""
+    for i = 1, 57 - strlen(line1) do
+	linetab = linetab.." "
+    end
+    msg_print(Ind, line1..linetab..wchlst)
+
     msg_print(Ind, "Body: "..rs)
-    msg_print(Ind, "AC : "..players(p).ac.."   +AC: "..players(p).to_a.."   Total AC: "..(players(p).ac+players(p).to_a))
-    msg_print(Ind, "ToH: "..players(p).to_h.."   THM: "..players(p).to_h_melee.."   THR: "..players(p).to_h_ranged.."   *TMH*: "..players(p).dis_to_h+players(p).to_h_melee)
-    msg_print(Ind, "ToD: "..players(p).to_d.."   TDM: "..players(p).to_d_melee.."   TDR: "..players(p).to_d_ranged.."   *TMD*: "..players(p).dis_to_d+players(p).to_d_melee)
+    line1 = "AC : "..players(p).ac.."   +AC: "..players(p).to_a.."   Total AC: "..(players(p).ac+players(p).to_a)
+    linetab = ""
+    for i = 1, 45 - strlen(line1) do
+	linetab = linetab.." "
+    end
+    msg_print(Ind, line1..linetab.."  \255sOnline: "..players(p).turns_online)
+
+    line1 = "ToH: "..players(p).to_h.."   THM: "..players(p).to_h_melee.."   THR: "..players(p).to_h_ranged.."   *TMH*: "..players(p).dis_to_h+players(p).to_h_melee
+    linetab = ""
+    for i = 1, 45 - strlen(line1) do
+	linetab = linetab.." "
+    end
+    msg_print(Ind, line1..linetab.."  \255sAFK:    "..players(p).turns_afk)
+
+    line1 = "ToD: "..players(p).to_d.."   TDM: "..players(p).to_d_melee.."   TDR: "..players(p).to_d_ranged.."   *TMD*: "..players(p).dis_to_d+players(p).to_d_melee
+    linetab = ""
+    for i = 1, 45 - strlen(line1) do
+	linetab = linetab.." "
+    end
+    msg_print(Ind, line1..linetab.."  \255sIdle:   "..players(p).turns_idle)
+
     msg_print(Ind, "BpR: "..players(p).num_blow.."   SpR: "..players(p).num_fire.."   CpR: "..players(p).num_spell.."   Au : "..players(p).au.."   Bank:  "..players(p).balance)
+
     if players(p).lev < 100 then
 	if players(p).exp == players(p).max_exp then
 		estr = "\255w"
@@ -243,7 +276,9 @@ function status(name)
 	end
         msg_print(Ind, "Deaths: \255D"..players(p).deaths.."\255g("..players(p).soft_deaths..")  "..estr.."Exp:\255w "..players(p).exp.."  MEx: "..players(p).max_exp.."  E2A: "..(player_exp[players(p).lev]).."  "..kills)
     end
-    msg_print(Ind, "Lifes: "..players(p).lives.."  -  Houses: "..players(p).houses_owned.."  -  Combat Stance: "..players(p).combat_stance.."  - Dodge level: "..players(p).dodge_level.."/"..apply_dodge_chance(p, players(p).lev))
+--    msg_print(Ind, "Lifes: "..players(p).lives.."  -  Houses: "..players(p).houses_owned.."  -  Combat Stance: "..players(p).combat_stance.."  - Dodge level: "..players(p).dodge_level.."/"..apply_dodge_chance(p, players(p).lev))
+--    msg_print(Ind, "Lifes: "..players(p).lives.."  Houses: "..players(p).houses_owned.."  Stance: "..players(p).combat_stance.."  Dual: "..players(p).dual_mode.."  Dodge: "..players(p).dodge_level.."/"..apply_dodge_chance(p, players(p).lev).."  Parry/Block: "..players(p).weapon_parry.."/"..players(p).shield_deflect)
+    msg_print(Ind, "Liv/Hous: "..players(p).lives.."/"..players(p).houses_owned.."  Stance/DW: "..players(p).combat_stance.."/"..players(p).dual_mode.."  Dodge: "..players(p).dodge_level.."/"..apply_dodge_chance(p, players(p).lev).."  Parry/Blk: "..players(p).weapon_parry.."/"..players(p).shield_deflect)
 end
 
 -- Displays resistance/suspectibilities/immunities of a player
@@ -251,7 +286,7 @@ function resist(name)
     local p
     local susstr, susint, suswis, susdex, suscon, suschr
     p = ind(name)
-    msg_print(Ind, "\255UResistances for "..players(p).name.." (Index "..p..")")
+--    msg_print(Ind, "\255UResistances for "..players(p).name.." (Index "..p..")")
     msg_print(Ind, "  \255bElec: "..players(p).resist_elec.."  \255wFrost: "..players(p).resist_cold.."  \255sAcid: "..players(p).resist_acid.."  \255rFire: "..players(p).resist_fire.."  \255gPoison: "..players(p).resist_pois.."  \255BWater: "..players(p).resist_water)
     msg_print(Ind, "  \255bELEC: "..players(p).immune_elec.."  \255wFROST: "..players(p).immune_cold.."  \255sACID: "..players(p).immune_acid.."  \255rFIRE: "..players(p).immune_fire.."  \255gPOISON: "..players(p).immune_poison.."  \255BWATER: "..players(p).immune_water)
 --.."\255W-  \255gNETHER: "..players(p).immune_neth)
@@ -260,7 +295,7 @@ function resist(name)
 --    msg_print(Ind, "  \255DDark: "..players(p).resist_dark.."  \255WLight: "..players(p).resist_lite.."  \255vMana: "..players(p).resist_mana.."  \255BTime: "..players(p).resist_time.."  \255rRH \255vRM \255rDH \255vDM \255oDX \255w: \255r"..players(p).regenerate.." \255v"..players(p).regen_mana.." \255r"..players(p).drain_life.." \255v"..players(p).drain_mana.." \255o"..players(p).drain_exp)
     msg_print(Ind, "  \255DDark: "..players(p).resist_dark.."  \255WLight: "..players(p).resist_lite.."  \255vMana: "..players(p).resist_mana.."  \255BTime: "..players(p).resist_time.."  \255rRH\255D-\255rDH \255vRM\255D-\255vDM \255oDX \255w: \255r"..players(p).regenerate.."\255D-\255r"..players(p).drain_life.." \255v"..players(p).regen_mana.."\255D-\255v"..players(p).drain_mana.." \255o"..players(p).drain_exp)
 --.."  \255RPlasma: "..players(p).resist_plasma)
-    msg_print(Ind, "  \255DHL:  "..players(p).hold_life.."  \255GFeather Falling: "..players(p).feather_fall.."  \255yFear: "..players(p).resist_fear.."  \255oConfusion: "..players(p).resist_conf.."  \255rBlind: "..players(p).resist_blind.."  \255RFA:  "..players(p).free_act)
+    msg_print(Ind, "  \255DHL: "..players(p).hold_life.."  \255GFeather: "..players(p).feather_fall.."  \255yFear: "..players(p).resist_fear.."  \255oConfusion: "..players(p).resist_conf.."  \255rBlind: "..players(p).resist_blind.."  \255RFA: "..players(p).free_act)
 --    msg_print(Ind, "  \255yReflect: "..players(p).reflect.."  \255uNo-cut: "..players(p).no_cut.."  \255oRes.Tele.: "..players(p).feather_fall.."  \255rFA:  "..players(p).free_act.."  \255gBlind: "..players(p).res_tele)
 -- display sustenances:
     susstr = "---"
@@ -275,7 +310,8 @@ function resist(name)
     if players(p).sustain_dex == TRUE then susdex = "DEX" end
     if players(p).sustain_con == TRUE then suscon = "CON" end
     if players(p).sustain_chr == TRUE then suschr = "CHR" end
-    msg_print(Ind, "\255USustenances:\255u  "..susstr.." "..susint.." "..suswis.." "..susdex.." "..suscon.." "..suschr)
+--    msg_print(Ind, "\255USustenances:\255u  "..susstr.." "..susint.." "..suswis.." "..susdex.." "..suscon.." "..suschr)
+    msg_print(Ind, "\255USustenances:\255u  "..susstr.." "..susint.." "..suswis.." "..susdex.." "..suscon.." "..suschr.."  "..encum(name))
 end
 
 -- Displays attribute values of a player
@@ -426,20 +462,51 @@ function encum(name)
 ]]
 
     if players(p).black_breath == TRUE then
-	bb = " \255DBlack Breath"
+--	bb = " \255DBlack Breath"
+	bb = "  \255DBB"
     else
-	bb = "             "
+--	bb = "             "
+	bb = ""
     end
 
 --    msg_print(Ind, "\255UEncumberments: "..ca..hw..iw..aw..ew..hs..hst..as..cw..combo..aa..cg..bb)
-    msg_print(Ind, "\255UEncumberments: "..ca..hw..iw..combo2..hs..hst..as..cw..mh..rh..aa..cg..bb)
+--    msg_print(Ind, "\255UEncumberments: "..ca..hw..iw..combo2..hs..hst..as..cw..mh..rh..aa..cg..bb)
+    return ("\255UEncumberments: "..ca..hw..iw..combo2..hs..hst..as..cw..mh..rh..aa..cg..bb)
+end
+
+-- Helper function for miscellaneous stats, taken from c-xtra1.c
+function likert(x, y, max)
+    local n
+    if y < 1 then y = 1 end
+    if x < 0 then return "r" end
+    if x >= max and max > 0 then return "U" end
+    n = (x * 10) / y
+    if n == 0 or n == 1 or n == 2 then return "r" end
+    if n == 3 or n == 4 or n == 5 or n == 6 then return "y" end
+    if n >= 7 and n <= 17 then return "G" end
+    if max > 0 then return "g" else return "B" end
 end
 
 -- Show miscellaneous character abilities of a player
 function miscab(name)
     local p = ind(name)
+    bth_plus_adj = 3
 
-    msg_print(Ind, "\255wFig \255B"..players(p).skill_thn.."  \255wB/T \255B"..players(p).skill_thb.."  \255wPer \255B"..players(p).skill_fos.."  \255wSrc \255B"..players(p).skill_srh.."  \255wSav \255B"..players(p).skill_sav.."  \255wStl \255B"..players(p).skill_stl.."  \255wDis \255B"..players(p).skill_dis.."  \255wMDv \255B"..players(p).skill_dev)
+--    n = players(p).skill_thn + ((players(p).dis_to_h + players(p).to_h_melee) * bth_plus_adj)
+    n = players(p).skill_thn
+    cfig = likert(n, 120, 0)
+--    n = players(p).skill_thb + ((players(p).to_h + players(p).to_h_ranged) * bth_plus_adj)
+    n = players(p).skill_thb
+    cthb = likert(n, 120, 0)
+    csav = likert(players(p).skill_sav, 52, 95)
+    csrh = likert(players(p).skill_srh, 60, 100)
+    cfos = likert(players(p).skill_fos, 40, 75)
+    cstl = likert(players(p).skill_stl, 10, 30)
+    cdis = likert(players(p).skill_dis, 80, 100)
+    cdev = likert(players(p).skill_dev, 60, 0)
+
+--    msg_print(Ind, "\255wFig \255B"..players(p).skill_thn.."  \255wB/T \255B"..players(p).skill_thb.."  \255wPer \255B"..players(p).skill_fos.."  \255wSrc \255B"..players(p).skill_srh.."  \255wSav \255B"..players(p).skill_sav.."  \255wStl \255B"..players(p).skill_stl.."  \255wDis \255B"..players(p).skill_dis.."  \255wMDv \255B"..players(p).skill_dev)
+    msg_print(Ind, "\255wFig \255"..cfig..players(p).skill_thn.."  \255wB/T \255"..cthb..players(p).skill_thb.."  \255wSav \255"..csav..players(p).skill_sav.."  \255wStl \255"..cstl..players(p).skill_stl.."  \255wPer \255"..cfos..players(p).skill_fos.."  \255wSrc \255"..csrh..players(p).skill_srh.."  \255wDis \255"..cdis..players(p).skill_dis.."  \255wMDv \255"..cdev..players(p).skill_dev)
 end
 
 -- "Detail" - Displays status(name) and resist(name)
@@ -448,9 +515,9 @@ function det(name)
     status(name)
     resist(name)
     attr(name)
-    encum(name)
+--    encum(name)
     miscab(name)
-    msg_print(Ind, " ".." ")
+--    msg_print(Ind, " ".." ")
 end
 
 -- Show the internal memory index of a player.
@@ -622,11 +689,11 @@ function mf(name, minlev)
     local i, k, n, p
     p = ind(name)
     msg_print(Ind, "scanning "..MAX_R_IDX.." forms.")
-    for i = 1, MAX_R_IDX-1 do
+    for i = 1, MAX_R_IDX - 1 do
 	n = lua_get_mon_lev(i)
 	k = players(p).r_killed[i + 1]
-        if n >= minlev then
-	    if k >= n then
+        if n >= minlev and lua_is_unique(i) == 0 then
+	    if k >= n and k >= 1 then
 		if n >= 80 then
 		    msg_print(Ind, "\255R"..n.."\255W "..lua_get_mon_name(i)..": "..k.."/"..n)
 		elseif n >= 65 then

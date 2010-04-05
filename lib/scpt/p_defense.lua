@@ -4,6 +4,7 @@ HBLESSING = add_spell
 {
 	["name"] = 	"Blessing",
         ["school"] = 	{SCHOOL_HDEFENSE},
+        ["am"] =	75,
         ["level"] = 	1,
         ["mana"] = 	4,
         ["mana_max"] = 	25,
@@ -56,6 +57,7 @@ HRESISTS = add_spell
 {
 	["name"] = 	"Holy Resistance",
         ["school"] = 	{SCHOOL_HDEFENSE},
+        ["am"] =	75,
         ["level"] = 	11,
         ["mana"] = 	4,
         ["mana_max"] = 	45,
@@ -111,6 +113,7 @@ HPROTEVIL = add_spell
 {
 	["name"] = 	"Protection From Evil",
         ["school"] = 	{SCHOOL_HDEFENSE},
+        ["am"] =	75,
         ["level"] = 	12,
         ["mana"] = 	20,
         ["mana_max"] = 	60,
@@ -131,6 +134,7 @@ HRUNEPROT = add_spell
 {
 	["name"] =	"Glyph Of Warding",
 	["school"] = 	{SCHOOL_HDEFENSE},
+        ["am"] =	75,
 	["level"] =	40,
 	["mana"]=	20,
 	["mana_max"] =	20,
@@ -154,6 +158,7 @@ HMARTYR = add_spell
 {
 	["name"] =	"Martyrdom",
 	["school"] = 	{SCHOOL_HDEFENSE},
+        ["am"] =	75,
 	["level"] =	40,
 	["mana"]=	50,
 	["mana_max"] =	50,

@@ -4,6 +4,7 @@ HCURSE = add_spell
 {
         ["name"] =      "Curse",
         ["school"] =    {SCHOOL_HOFFENSE},
+        ["am"] =	75,
         ["level"] =     1,
         ["mana"] =      2,
         ["mana_max"] =  30,
@@ -33,6 +34,7 @@ HGLOBELIGHT = add_spell
 {
 	["name"] = 	"Holy Light",
         ["school"] = 	{SCHOOL_HOFFENSE, SCHOOL_HSUPPORT},
+        ["am"] =	75,
         ["level"] = 	1,
         ["mana"] = 	2,
         ["mana_max"] = 	30,
@@ -67,6 +69,7 @@ HCURSEDD = add_spell
 {
         ["name"] =      "Cause wounds",
         ["school"] =    {SCHOOL_HOFFENSE},
+        ["am"] =	75,
         ["level"] =     5,
         ["mana"] =      1,
         ["mana_max"] =  20,
@@ -88,6 +91,7 @@ HORBDRAIN = add_spell
 {
 	["name"] = 	"Orb Of Draining",
         ["school"] = 	{SCHOOL_HOFFENSE},
+        ["am"] =	75,
         ["level"] = 	20,
         ["mana"] = 	5,
         ["mana_max"] = 	25,
@@ -111,6 +115,7 @@ HEXORCISM = add_spell
 {
 	["name"] = 	"Exorcism",
         ["school"] = 	{SCHOOL_HOFFENSE},
+        ["am"] =	75,
         ["level"] = 	11,
         ["mana"] = 	15,
         ["mana_max"] = 	100,
@@ -141,6 +146,7 @@ HDRAINLIFE = add_spell
 {
 	["name"] = 	"Drain Life",
         ["school"] = 	{SCHOOL_HOFFENSE},
+        ["am"] =	75,
         ["level"] = 	20,
         ["mana"] = 	5,
         ["mana_max"] = 	80,
@@ -164,6 +170,7 @@ HRELSOULS = add_spell
 {
 	["name"] = 	"Release Souls",
 	["school"] =	{SCHOOL_HOFFENSE},
+        ["am"] =	75,
 	["level"] =	10,
 	["mana"] = 	10,
 	["mana_max"] =	150,
@@ -184,6 +191,7 @@ HDRAINCLOUD = add_spell
 {
         ["name"] =      "Doomed Grounds",
         ["school"] =    {SCHOOL_HOFFENSE},
+        ["am"] =	75,
         ["level"] =     40,     -- pointless for crap with low lvl anyway
         ["mana"] =      50,
         ["mana_max"] =  100,
@@ -218,6 +226,7 @@ HHOLYWORD = add_spell
 {
 	["name"] = 	"Holy Word",
 	["school"] =	{SCHOOL_HOFFENSE, SCHOOL_HCURING},
+        ["am"] =	75,
 	["level"] =	45,
 	["mana"] = 	500,
 	["fail"] =	30,

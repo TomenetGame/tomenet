@@ -68,6 +68,11 @@ function finish_spell(must_i)
         spell(i).mana_max = s.mana_max
         spell(i).fail = s.fail
         spell(i).skill_level = s.level
+	if type(s.spell_power) == "number" then
+		spell(i).spell_power = s.spell_power
+	else
+		spell(i).spell_power = 1
+	end
         __spell_spell[i] = s.spell
         __spell_info[i] = s.info
         __spell_desc[i] = s.desc
@@ -667,7 +672,7 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 	local use = FALSE
 
 	-- No magic
-	if check_antimagic(Ind) == TRUE then
+	if check_antimagic(Ind, get_spell_am(s)) == TRUE then
 --Next line is already in the server sources.
 --		msg_print(i, "Your anti-magic field disrupts any magic attempts.")
 		return
@@ -841,4 +846,10 @@ function pre_exec_spell_item(s)
                 ret, __pre_exec_item = get_item_aux(0, __tmp_spells[s].get_item.prompt, __tmp_spells[s].get_item.equip, __tmp_spells[s].get_item.inven, __tmp_spells[s].get_item.floor)
                 return ret
         end
+end
+
+-- Returns the percentage of AM (Antimagic field) efficiency vs this spell
+function get_spell_am(s)
+        if not __tmp_spells[s].am then return 100
+        else return __tmp_spells[s].am end
 end

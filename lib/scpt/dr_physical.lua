@@ -15,6 +15,7 @@ HEALINGCLOUD = add_spell
 {
         ["name"] =      "Forest's Embrace",
         ["school"] =    {SCHOOL_DRUID_PHYSICAL},
+	["spell_power"] = 0,
         ["level"] =     18,
         ["mana"] =      1,
         ["mana_max"] =  40,
@@ -38,6 +39,7 @@ QUICKFEET = add_spell
 {
 	["name"] = 	"Quickfeet",
 	["school"] = 	{SCHOOL_DRUID_PHYSICAL},
+	["spell_power"] = 0,
 	["level"] = 	13,
 	["mana"] = 	10,
 	["mana_max"] = 	50,
@@ -59,6 +61,7 @@ HERBALTEA = add_spell
 {
 	["name"] = 	"Herbal Tea",
 	["school"] = 	{SCHOOL_DRUID_PHYSICAL},
+	["spell_power"] = 0,
 	["level"] = 	3,
 	["mana"] = 	50,
 	["mana_max"] = 	100,
@@ -104,6 +107,7 @@ EXTRASTATS = add_spell
 {
 	["name"] = 	"Extra Growth",
 	["school"] = 	{SCHOOL_DRUID_PHYSICAL},
+	["spell_power"] = 0,
 	["level"] = 	10,
 	["mana"] = 	10,
 	["mana_max"] = 	50,
@@ -130,6 +134,7 @@ FOCUSSHOT = add_spell
 {
 	["name"] = 	"Focus",
 	["school"] = 	{SCHOOL_DRUID_PHYSICAL},
+	["spell_power"] = 0,
 	["level"] = 	1,
 	["mana"] = 	20,
 	["mana_max"] = 	50,

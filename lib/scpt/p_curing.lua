@@ -36,6 +36,7 @@ HHEALING = add_spell
 {
 	["name"] = 	"Heal",
         ["school"] = 	{SCHOOL_HCURING},
+        ["am"] =	75,
 	["level"] =     3,
 	["mana"] =      3,
 	["mana_max"] =  70,
@@ -61,6 +62,7 @@ HDELCURSES = add_spell
 {
         ["name"] =      "Break Curses",
         ["school"] =    SCHOOL_HCURING,
+        ["am"] =	75,
         ["level"] =     10,
         ["mana"] =      20,
         ["mana_max"] =  40,
@@ -85,6 +87,7 @@ HHEALING2 = add_spell
 {
         ["name"] =      "Cleansing Light",
         ["school"] =    {SCHOOL_HCURING},
+        ["am"] =	75,
         ["level"] =     18,
         ["mana"] =      1,
         ["mana_max"] =  100,
@@ -105,6 +108,7 @@ HCURING = add_spell
 {
 	["name"] =      "Curing",
 	["school"] =    {SCHOOL_HCURING},
+        ["am"] =	75,
 	["level"] =     16,
 	["mana"] =      10,
 	["mana_max"] =  25,
@@ -149,6 +153,7 @@ HSANITY = add_spell
 {
 	["name"] =      "Mind Focus",
 	["school"] =    {SCHOOL_HCURING},
+        ["am"] =	75,
 	["level"] =     21,
 	["mana"] =      50,
 	["mana_max"] =  100,
@@ -189,6 +194,7 @@ HSANITY = add_spell
 {
 	["name"] =      "Faithful Focus",
 	["school"] =    {SCHOOL_HCURING},
+        ["am"] =	75,
 	["level"] =     21,
 	["mana"] =      50,
 	["mana_max"] =  150,
@@ -212,6 +218,7 @@ HRESURRECT = add_spell
 {
 	["name"] =      "Resurrection",
 	["school"] =    {SCHOOL_HCURING},
+        ["am"] =	100,
 	["level"] =     30,
 	["mana"] =      200,
 	["mana_max"] =  500,
@@ -233,6 +240,7 @@ HDELBB = add_spell
 {
 	["name"] =      "Soul Curing",
 	["school"] =    {SCHOOL_HCURING},
+        ["am"] =	75,
 	["level"] =     25,	-- 45 the_sandman: too high lvl and this spell doesn't seem to be useful then. Asked around,
 				-- and ppl say their first encounter with RW is about pvp 25-32ish.
 	["mana"] =      150,	-- was 200. Only chat/hope has priests with >200 mana at lvl ~25+ =)

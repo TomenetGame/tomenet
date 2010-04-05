@@ -13,6 +13,7 @@ HDELFEAR = add_spell
 {
         ["name"] =      "Remove Fear",
         ["school"] =    {SCHOOL_HSUPPORT},
+	["am"] =	0,
         ["level"] =     1,
         ["mana"] =      2,
         ["mana_max"] =  10,
@@ -36,6 +37,7 @@ HSANCTUARY = add_spell
 {
 	["name"] = 	"Sanctuary",
         ["school"] = 	{SCHOOL_HSUPPORT},
+	["am"] =	75,
         ["level"] = 	1,
         ["mana"] = 	5,
         ["mana_max"] = 	30,
@@ -65,6 +67,7 @@ HSATISFYHUNGER = add_spell
 {
 	["name"] = 	"Satisfy Hunger",
         ["school"] = 	{SCHOOL_HSUPPORT},
+	["am"] =	75,
         ["level"] = 	10,
         ["mana"] = 	20,
         ["mana_max"] = 	20,
@@ -87,6 +90,7 @@ HSENSE = add_spell
 {
 	["name"] =      "Sense Surroundings",
 	["school"] =    SCHOOL_HSUPPORT,
+	["am"] =	75,
 	["level"] =     10,
 	["mana"] =      20,
 	["mana_max"] =  50,
@@ -117,6 +121,7 @@ HSENSEMON = add_spell
 {
 	["name"] =      "Sense Monsters",
 	["school"] =    SCHOOL_HSUPPORT,
+	["am"] =	75,
 	["level"] =     1,
 	["mana"] =      3,
 	["mana_max"] =  15,
@@ -142,6 +147,7 @@ HZEAL = add_spell
 {
 	["name"] =      "Zeal",
 	["school"] =    SCHOOL_HSUPPORT,
+	["am"] =	50,
 	["level"] =     31,
 	["mana"] =      50,
 	["mana_max"] =  150,
