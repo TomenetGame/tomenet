@@ -207,7 +207,8 @@ compile the game under '(2.1) Installing TomeNET'.
 
 -Nearby the town there's often a 'training tower' which is a good place
  to start because if you die there nothing will happen except a slight
- loss of experience. Ask people where the '<' (tower entrance) is found.
+ loss of experience and gold. Ask people where the dark-green '<' symbol
+ (the tower entrance) is found. Usually to the lower-right of the town centre.
 -If you die outside of the training tower you will usually turn into a ghost.
  This ghost cant wear any items, so it's a good idea to care about being
  revived. To get revived, either visit the temple in town (it's a green '4')
@@ -2771,18 +2772,21 @@ the owner.
 
 (4.3) Dungeon and tower types, Ironman, Jail
 --------------------------------------------
-Look for the staircase ">", step on it and press the '>' key to enter the
-dungeon. There is often a so-called training tower, which is represented by a
-"<", meaning it goes upwards instead of downwards. Enter it by pressing the
-'<' key. The training tower allows you to die without suffering consequences,
-and is easier in general. An experience penalty might be applied for killing
-monsters in the tower (usually 50%). You might ask other players in game
-(use ':' to chat) where/if there is a newbie tower (also called 'Training
-Tower'), or you might search for it yourself.
-Usually when you take a staircase, your character will get a high Armour bonus
-(+100) and a chance to deflect enemy attacks, for a very short duration. This
-sometimes helps to survive nasty surprises. Keep your scrolls of teleportation
-ready anyway!
+To enter a dungeon, you look for the staircase symbol '>', step on it and press
+the '>' key to enter. Same for entering towers, except their staircase goes
+upwards instead of downwards, and hence is a '<' symbol instead of '>'.
+In Bree, there is often a so-called Training Tower, which is represented by a
+dark green '<'. Enter it by pressing the '<' key.
+The training tower allows you to 'die' without suffering major consequences
+(except for a slight loss in experience and gold), and is easier in general.
+An experience penalty might be applied for killing monsters in the tower
+(usually 50%). You might ask other players in game (use ':' to chat) where/if
+there is a newbie tower (also called 'Training Tower'), or you might search for
+it yourself. It's usually in Bree, to the lower right of the town centre.
+In general, when you take a staircase, your character will temporarily get a
+high Armour bonus (+100) and a chance to deflect enemy attacks, for a very
+short duration. This is an extra protection to help surviving nasty surprises.
+Keep your scrolls of teleportation ready anyway!
 
 While inside a town, you get a good overview including the staircases upwards
 and downwards by invoking the map by pressing SHIFT+'M' (capital M !).
@@ -2854,7 +2858,7 @@ There are different types of dungeons. The main five are:
  (red/yellow).
 -NO_DEATH. The Training Tower in Bree has this flag. Players who die inside a
  no-death dungeon won't turn into a ghost if they 'die' but just be teleported
- back to town! They still lose experience though.
+ back to town! They still lose experience (and some gold) though.
  No-death dungeons/towers are marked by a green < or > symbol.
 If a dungeon has several of these flags, the latter ones will override the
 staircase colour. So a hellish ironman dungeon has hellish-looking staircases.
@@ -3596,7 +3600,7 @@ Arena Monster Challenge
     The wizards of Arena Monster Challenge (tm) have prepared a spectacular
     event on the top floor of Bree's training tower, which will allow any Joe
     and Jane to experience top-notch fights against creatures that usually
-    pose leathal threat. In this illusonary arena, players will experience
+    pose lethal threat. In this illusonary arena, players will experience
     a fight that seems absolutely real, but they won't suffer any
     consequences if they lose, ie 'die'. Test your might against any foe you
     always wanted to challenge but never dared in real dungeoneer's life!
