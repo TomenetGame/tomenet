@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 28. Mar 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 17. Apr 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.4c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -9686,6 +9686,7 @@ SOLUTION:   The first message means, that one or more magic spells or prayers
             /lib/scpt directory and replace them with the latest versions
             manually.
             If auto-download fails, download the latest client manually again.
+
 PROBLEM 18: When I try to unpack the latest TomeNET ZIP file, I get strange
             messages telling of 'write-protected', 'read-only' or 'password-
             protected'. Afterwards, the client won't function properly.
@@ -9693,6 +9694,7 @@ SOLUTION:   Make sure that TomeNET is NOT running while you try to install the
             new version. If TomeNET is running, the unpacking will fail to
             overwrite the existing files! Shut down TomeNET, then extract the
             ZIP (overwriting everything), then start TomeNET again.
+
 PROBLEM 19: On GNU/Linux OS, When someone uses the /page command to page me,
             I don't hear the three beeps.
 SOLUTION A: You are probably using OSS. If your soundcard or soundchip doesn't
@@ -9710,6 +9712,14 @@ SOLUTION A: You are probably using OSS. If your soundcard or soundchip doesn't
 SOLUTION B: If you are using X11, this problem may occur depending on your
             terminal configuration. At this time, all you can do is change
             your configuration, sorry.
+
+PROBLEM 20: Are 'ToME' and 'TomeNET' similar?
+SOLUTION:   Despite of similar name, the only thing these two games have in
+            common is that they are both middle-earth themed, and some visuals
+            might also be similar.
+            Other than that, the two games are very different in basically all
+            aspects! In other words: TomeNET is definitely not 'multi-player
+            ToME'.
 
 
 
