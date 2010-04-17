@@ -3261,11 +3261,11 @@ struct r_spell
 {
 	int id;
 	char * title;
-	byte dam; /* Damage multipler */
-	byte pen; /* MP multiplier */
-	byte level; /* Minimum level to cast */
-	byte fail; /* Fail rate multiplier */
-	byte radius; /* Radius at 50 before multipliers: linear scale */
+	s16b dam; /* Damage multipler */
+	s16b pen; /* MP multiplier */
+	s16b level; /* Minimum level to cast */
+	s16b fail; /* Fail rate multiplier */
+	s16b radius; /* Radius at 50 before multipliers: linear scale */
 	u16b gf_type; /* Projection type */
 };
 
@@ -3276,12 +3276,12 @@ struct r_imper
 	int id;
 	char * name;
 	s16b level; //Level +/-
-	byte cost; //Cost multiplier
-	byte fail; //Fail multiplier
-	byte dam; //Damage multipler
-	byte danger; //Danger multiplier
+	s16b cost; //Cost multiplier
+	s16b fail; //Fail multiplier
+	s16b dam; //Damage multipler
+	s16b danger; //Danger multiplier
 	s16b radius; //Radius +/-
-	byte duration; //Duration multiplier
+	s16b duration; //Duration multiplier
 };
 
 typedef struct rspell_sel rspell_sel;

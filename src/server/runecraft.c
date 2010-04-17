@@ -187,12 +187,12 @@ byte meth_to_id(u32b s_meth)
 	
 	Cost should be determined by a few criteria:
 	
-	1. Number of runes in a spell (complexity)
+	1. Number of runes in a spell (complexity) + (spell effect level + type level) / 2 + modifier level
 	2. Level of the spell effect--
 	3. Average skill level of player
 	4. Cost multipliers (effect, method & imperative)
 
-	Currently cost = (#1 + 30)*skill_level/50, * #4
+	Currently cost = (#1 + 30) * skill_level / 50 * #4
 */
 s16b rspell_cost (u32b Ind, u16b s_type, u32b s_flags, u16b s_av, byte imperative)
 {
@@ -203,6 +203,11 @@ s16b rspell_cost (u32b Ind, u16b s_type, u32b s_flags, u16b s_av, byte imperativ
 	byte penalty = 0;
 	s16b cost = 0;
 	
+	int type_level = runespell_types[m].cost;
+	int mod_level = r_imperatives[imperative].level;
+	int effect_level = runespell_list[s_type].level;
+	int total_level = type_level + effect_level + mod_level;
+	
 	runes_in_flag(runes,s_flags);
 	value = rune_value(runes);
 	
@@ -210,45 +215,45 @@ s16b rspell_cost (u32b Ind, u16b s_type, u32b s_flags, u16b s_av, byte imperativ
 	
 	if (!s_av) s_av = 1;
 	
-	cost = rget_level(30+value);
+	cost = rget_level(30 + value + (type_level + effect_level)/2 + mod_level);
 	
 	t_pen = runespell_types[m].pen;
 	s_pen = runespell_list[s_type].pen;
-	d_pen = r_imperatives[imperative].cost ? r_imperatives[imperative].cost : randint(20)+5;
-
+	d_pen = r_imperatives[imperative].cost ? r_imperatives[imperative].cost : randint(15)+5;
+	
 	if (cost > S_COST_MAX)
 		cost = S_COST_MAX;
 	
-	cost = (cost*t_pen)/10;
-	cost = (cost*s_pen)/10;
-	cost = (cost*d_pen)/10;
+	cost = (cost * t_pen) / 10;
+	cost = (cost * s_pen) / 10;
+	cost = (cost * d_pen) / 10;
 	
 	/* Alternative to these just increasing fail rates: */
 	if (no_lite(Ind) || p_ptr->blind)
 	{
-		penalty+=20;
+		penalty += 20;
 	}
 	if (p_ptr->confused)
 	{
-		penalty+=20;
+		penalty += 20;
 	}
 	if (p_ptr->cut)
 	{
-		penalty+=p_ptr->cut/5;
+		penalty += p_ptr->cut / 5;
 	}
 	if (p_ptr->stun > 50)
 	{
-		penalty+= 20;
+		penalty += 20;
 	}
 	else if (p_ptr->stun)
 	{
-		penalty+= 10;
+		penalty += 10;
 	}
 	
 	cost = cost+((cost*penalty)/100); //Costs can increase up to 60% if everything is going wrong.
 	
-	if (cost < S_COST_MIN)
-		cost = S_COST_MIN;
+	if (cost < total_level)
+		cost = total_level;
 	
 	return cost;
 }
@@ -266,24 +271,20 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 	int damage = 1;
 	int base_radius = runespell_list[s_type].radius;
 	
-	u16b d_multiplier = 10;
-	u16b t_multiplier = 10;
-	s16b r_mod = 0;
-	
-	d_multiplier = (runespell_list[s_type].dam + r_imperatives[imperative].dam) / 2;
-	r_mod = r_imperatives[imperative].radius;
-	t_multiplier = r_imperatives[imperative].duration;
+	u16b d_multiplier = runespell_list[s_type].dam;
+	u16b t_multiplier = r_imperatives[imperative].duration;
+	s16b r_mod = r_imperatives[imperative].radius;
 	
 	if (s_av < e_level + 1)
 		s_av = e_level + 1; //Give a minimum of damage
 	
 	if ((s_flags & R_BOLT) == R_BOLT) 
 	{
-		damage = damroll(3 + rget_level(50), 1 + rget_level(20));
+		damage = damroll(3 + rget_level(45), 1 + rget_level(20));
 	}
 	else if ((s_flags & R_BEAM) == R_BEAM)
 	{
-		damage = damroll(3 + rget_level(45), 1 + rget_level(20));
+		damage = damroll(3 + rget_level(40), 1 + rget_level(20));
 	}
 	else if ((s_flags & R_SELF) == R_SELF)
 	{
@@ -292,26 +293,16 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 	}
 	else if ((s_flags & R_BALL) == R_BALL)
 	{
-		damage = randint(20) + rget_level(450);
-		*radius = 1 + rget_level(base_radius);
+		damage = rget_level(400 + randint(50));
+		*radius = rget_level(base_radius);
 	}
 	else if ((s_flags & R_CLOU) == R_CLOU || (s_flags & R_WAVE) == R_WAVE)
 	{
-		*radius = 1 + rget_level(base_radius);
-		*duration = randint(5) + rget_level(5);
-		
-		if (*radius < 1)
-		{
-			*radius = 1;
-			
-			if (*duration < 5)
-			{
-				*duration = 5;
-			}
-		}
+		*radius = rget_level(base_radius);
+		*duration = randint(10) + rget_level(10);
 		
 		/* Damage should be proportional to radius and duration. */
-		damage = randint(4) + rget_level(75 - (*radius + *duration / 2));
+		damage = randint(4) + rget_level(80 - (*radius + *duration) / 2);
 	}
 	else if ((s_flags & R_LOS) == R_LOS)
 	{
@@ -322,10 +313,15 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 		damage = damroll(3 + rget_level(50), 5 + rget_level(20));
 	}
 	
+	if (*radius < 1 || *radius > 10)
+	{
+		*radius = 1;
+	}
+	
 	if ((s_flags & R_WAVE) == R_WAVE) //Waves are cheaper standing clouds, with a slight boost to radius.
 	{
-		*radius += 1;
-		*duration -= 1;
+		*radius = *radius + 1;
+		*duration = *radius + 1;
 	}
 	
 	if (damage > S_DAM_MAX)
@@ -338,24 +334,20 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 		damage = 1;
 	}
 	
-	damage = (damage * (1+d_multiplier))/10;
-	*duration = (*duration * (1+t_multiplier))/10;
+	damage = (damage * r_imperatives[imperative].dam) / 10;
+	damage = (damage * d_multiplier) / 10;
+	*duration = (*duration * t_multiplier) / 10;
 	
 	if (r_mod > 0 || (r_mod < 0 && *radius > (0 - r_mod)))
 	{
-		*radius += r_mod;
+		*radius = *radius + r_mod;
 	}
 	else
 	{
-		*radius = 0;
+		*radius = 1;
 	}
 	
-	if (*radius > 10)
-	{
-		*radius = 0;
-	}
-	
-	if (*duration > 200)
+	if (*duration > 260 || *duration < 5)
 	{
 		*duration = 5;
 	}
@@ -484,7 +476,7 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 		int i,amt;
 		amt = 0;
 		object_type	*o_ptr;
-		char o_name[ONAME_LEN];
+		char o_name[160];
 
 		for (i = 0; i < INVEN_TOTAL; i++)	/* Modified version of inven_damage from spells1.c */
 		{
@@ -570,17 +562,19 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 	{
 		
 		d = randint(100);
-		if (d>93)
+		if (d > 93)
 		{
 			msg_print(Ind, "\377rThe malformed spell poisons you!");
-			set_poisoned(Ind, duration/10, Ind);
+			if(duration/3 < 10)
+				duration = 30;
+			set_poisoned(Ind, duration/3, Ind);
 		}
-		else if (d>83)
+		else if (d > 83)
 		{
 			msg_print(Ind, "\377rYou are blinded by the malformed spell!");
 			set_blind(Ind, damage/3);
 		}
-		else if (d>73)
+		else if (d > 73)
 		{
 			msg_print(Ind, "\377rYou are cut by the magical backlash!");
 			set_cut(Ind, damage/3, Ind);
@@ -798,36 +792,17 @@ s16b rspell_diff(u32b Ind, byte imperative, s16b s_cost, u16b s_av, u32b s_type,
 	player_type *p_ptr = Players[Ind];
 	
 	s16b fail = 0;
+	s16b penalty = *mali;
 	u16b minfail = 0;
 	u16b statbonus = 0;
+	bool chaotic = (r_imperatives[imperative].id == 7 ? 1 : 0);
 	int m = meth_to_id(s_flags);
-	int e_level = runespell_list[s_type].level + runespell_types[m].cost + r_imperatives[imperative].level;
-	int level = s_av - (e_level + 5);
-	u16b t = *mali;
-	
-	/* Runes are tactile as well as visual, so no need to test for darkness/blindness. Confusion and stunning are consequently worse. */
-	if (p_ptr->confused)
-	{
-		*mali+=10;
-	}
-	if (p_ptr->stun > 50)
-	{
-		*mali += 10;
-	}
-	else if (p_ptr->stun)
-	{
-		*mali += 5;
-	}
-	
-	/* Spells are harder to cast while holding on to other spells. */
-	if (p_ptr->rune_num_of_buffs)
-	{
-		*mali += (p_ptr->rune_num_of_buffs * 5) + 3;
-	}
+	int e_level = runespell_list[s_type].level + runespell_types[m].cost + r_imperatives[imperative].level + 10;
+	int adj_level = e_level - s_av;
 	
 	if (p_ptr->confused || p_ptr->stun || p_ptr->cut)
 	{
-		if (t)
+		if (*mali > 0)
 		{
 			msg_print(Ind, "\377yYou struggle to remember the rune-forms.");
 		}
@@ -836,7 +811,7 @@ s16b rspell_diff(u32b Ind, byte imperative, s16b s_cost, u16b s_av, u32b s_type,
 			msg_print(Ind, "\377yYou struggle to recite the rune-forms.");
 		}
 	}
-	else if (t)
+	else if (*mali > 0)
 	{
 		msg_print(Ind, "\377yYou recite the rune-forms from memory.");
 	}
@@ -844,58 +819,33 @@ s16b rspell_diff(u32b Ind, byte imperative, s16b s_cost, u16b s_av, u32b s_type,
 	statbonus += adj_mag_stat[p_ptr->stat_ind[A_INT]]*65/100;
 	statbonus += adj_mag_stat[p_ptr->stat_ind[A_DEX]]*35/100;
 	
-	fail -= statbonus;
-	
-	if (fail <= 0) fail = 1;
-	
-	if (runespell_list[s_type].fail != 0) //Spell effect difficulty
-	{
-		fail = (1+fail * runespell_list[s_type].fail)/10;
-	}
-	
-	if (fail <= 0) fail = 1;
-	
-	if (p_ptr->csp < s_cost)
-	{
-		*mali = *mali + (2*(s_cost - p_ptr->csp));
-		if (p_ptr->csp == 0)
-		{
-			*mali += 5;
-		}
-	}
-	
-	if (level < 0)
-	{
-		*mali = *mali + (0 - level) * 6; //6% fail per level below
-	}
-		
-	fail += *mali;
-	
 	minfail += adj_mag_fail[p_ptr->stat_ind[A_INT]]*65/100;
 	minfail += adj_mag_fail[p_ptr->stat_ind[A_DEX]]*35/100;
 	
-	if (fail < minfail) fail = minfail;
+	penalty += (p_ptr->csp < s_cost ? (2*(s_cost - p_ptr->csp)) : 0);
+	penalty += (p_ptr->rune_num_of_buffs ? p_ptr->rune_num_of_buffs * 5 + 3 : 0);
+	penalty += (p_ptr->csp == 0 ? 5 : 0);
+	penalty += (p_ptr->confused ? 10 : 0);
+	penalty += (p_ptr->stun > 50 ? 5 : 0);
+	penalty += (p_ptr->stun ? 5 : 0);
 	
-	if (r_imperatives[imperative].fail == 0) //Imperative (*)
-	{
-		fail = ((fail+1) * (randint(10)+5))/10;
-	}
-	else
-	{
-		fail = ((fail+1) * r_imperatives[imperative].fail)/10;
-	}
+	fail = (adj_level > 0 ? adj_level * 3 : adj_level);
+	
+	fail -= statbonus;
+	
+	fail += penalty;
+	fail += (chaotic ? randint(20) : r_imperatives[imperative].fail);
+	fail += runespell_list[s_type].fail;
 	
 	if (fail > 95) fail = 95;
 	
 	/* Bonus for >50 players. */
-	if ((p_ptr->lev - 50) > 0)
-	{
-		fail -= (p_ptr->lev - 50) / 2;
-	}
+	fail -= (p_ptr->lev > 50 ? (p_ptr->lev - 50) / 2 : 0);
 	
 	if (fail < minfail) fail = minfail;
 	if (fail > 95) fail = 95;
 	
+	*mali = penalty;
 	return fail;
 }
 
@@ -1009,7 +959,6 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 		
 		damage = (damage * modifier) / 100;
 		duration = (duration * modifier) / 100;
-		radius = (radius * modifier) / 100;
 		
 		cost_m = 100 - modifier;
 		cost += (cost * cost_m) / 100;
@@ -1284,7 +1233,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					}
 					else 
 					{
-						teleport_player(Ind, ((100 + level * 100) / 50), FALSE);
+						teleport_player(Ind, ((100 + level * 100) / 5), FALSE);
 					}
 				}
 				break;
@@ -1423,7 +1372,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 						case 3: project_hack(Ind, GF_TELE_TO, 0, " summons"); break;
 						case 4: teleport_player_level(Ind); break;
 						case 5: teleport_player_to(Ind, p_ptr->target_col, p_ptr->target_row); break;
-						default: teleport_player(Ind, (100 + (level * 100) / 50), FALSE); break;
+						default: teleport_player(Ind, (100 + (level * 100) / 5), FALSE); break;
 					}
 				}
 				break;
