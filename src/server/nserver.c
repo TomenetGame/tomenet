@@ -4264,7 +4264,7 @@ int Send_stamina(int ind, int mst, int cst)
 	    !(p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_ARCHER ||
 	    p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_PALADIN ||
 	    p_ptr->pclass == CLASS_MIMIC || p_ptr->pclass == CLASS_ROGUE ||
-	    p_ptr->pclass == CLASS_ADVENTURER)) {
+	    p_ptr->pclass == CLASS_ADVENTURER || p_ptr->pclass == CLASS_RUNEMASTER)) {
 		mst = -9999;
 		cst = -9999;
 	}

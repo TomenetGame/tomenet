@@ -3279,7 +3279,7 @@ struct r_imper
 	s16b cost; //Cost multiplier
 	s16b fail; //Fail multiplier
 	s16b dam; //Damage multipler
-	s16b danger; //Danger multiplier
+	s16b time; //Time to cast
 	s16b radius; //Radius +/-
 	s16b duration; //Duration multiplier
 };

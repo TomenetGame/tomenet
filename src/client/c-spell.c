@@ -1353,10 +1353,10 @@ static void print_rune_imperatives()
 	prt("", j, col); put_str("a) minimized  (  -1,  60%,   50%,  -10% )", j++, col);
 	prt("", j, col); put_str("b) moderate   (  +0, 100%,  100%,  + 0% )", j++, col);
 	prt("", j, col); put_str("c) maximized  (  +1, 150%,  160%,  +20% )", j++, col);
-	prt("", j, col); put_str("d) compressed (  +0, 120%,  130%,  - 5% )", j++, col);
-	prt("", j, col); put_str("e) expanded   (  +0, 100%,  130%,  + 0% )", j++, col);
-	prt("", j, col); put_str("f) brief      (  +1, 100%,  110%,  - 1% )", j++, col);
-	prt("", j, col); put_str("g) extended   (  +1, 100%,  120%,  + 0% )", j++, col);
+	prt("", j, col); put_str("d) compressed (  +2, 130%,  150%,  -10% )", j++, col);
+	prt("", j, col); put_str("e) expanded   (  +2, 100%,  130%,  + 0% )", j++, col);
+	prt("", j, col); put_str("f) brief      (  +3,  60%,  130%,  +15% )", j++, col);
+	prt("", j, col); put_str("g) extended   (  +3,  60%,  150%,  +10% )", j++, col);
 	prt("", j, col); put_str("h) chaotic    (  +1, ???%,  ???%,  +??% )", j++, col);
 	
 	/* Clear the bottom line */
