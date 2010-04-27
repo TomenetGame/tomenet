@@ -223,11 +223,13 @@ compile the game under '(2.1) Installing TomeNET'.
  suicide by pressing SHIFT+q or CTRL+c and double-confirming the following
  questions with 'y' and '@'.
 -To drop items, privately chat with other players, or advance beyond a certain
- level you will need to ask an admin to 'validate' your account. To do so,
- send an email to the admin mentioning your account name, or ask an admin when
- he is online (Admin's names are displayed in dark blue in the chat).
- The e-mail address is usually mentioned in the server's intro screen or just
- ask fellow players for it.
+ level you will need an admin to 'validate' your account.
+ Usually, all you have to do is to keep playing/stay online for a bit until an
+ admin logs in, notices that you are new, and validates your account.
+ If that doesn't seem to happen, ask an admin directly, when you see one
+ chatting (Admin's names are displayed in dark blue in the chat).
+ If the server's intro screen mentions to send an email to an admin, try that
+ and specify your account name in it.
 -Press '@' key to see a list of players who're currently online. Note that a
  yellow '(I)' before a name stands for 'invalid', and means that this player
  is still awaiting account validation by an admin.
@@ -921,6 +923,7 @@ Party       A group of players who fight together and share experience.
             In a party you will share experience points if you are within 7
             character levels to each other and on the same dungeon/tower level
             respectively the same worldmap/wilderness sector.
+            You can invoke the party menu with shift+p key. See (6.9).
 Phase Door  A short-range teleportation.
 Pit         Pits contain monsters of a certain type, for example 'demon pits'
             or 'orc pits', with the monsters in them being placed in a somewhat
@@ -1301,11 +1304,13 @@ Newly created accounts are marked as 'not yet validated' and have certain
 limitations, which are:
 Cannot drop items or chat privately with other players, or advance beyond a
 certain level.
-You will need to ask an admin to 'validate' your account. To do so, send an
-email to the admin mentioning your account name, or ask an admin when he is
-online (Admin's names are displayed in dark blue in the chat).
-The e-mail address is usually mentioned in the server's intro screen or just
-ask fellow players for it.
+You will need an admin to 'validate' your account.
+Usually, all you have to do is to keep playing/stay online for a bit until an
+admin logs in, notices that you are new, and validates your account.
+If that doesn't seem to happen, ask an admin directly, when you see one
+chatting (Admin's names are displayed in dark blue in the chat).
+If the server's intro screen mentions to send an email to an admin, try that
+and specify your account name in it.
 
 
 
@@ -7319,6 +7324,8 @@ amount of energy in the ring.
 -------------------------
 Note: Some forms can open doors, others may try to bash doors.
       Also, all animal forms are able to travel through woods.
+You can use the /ex command in game to see which forms you can use, and what
+polymorph code they have.
 
 Cave bear               tough; can pass mountain terrain
 
