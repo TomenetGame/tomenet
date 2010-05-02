@@ -319,7 +319,7 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 		damage = damroll(3 + rget_level(50), 5 + rget_level(20));
 	}
 	
-	if (r < 1 || r > 10)
+	if (r < 1 || r > 5)
 	{
 		r = 1;
 	}
@@ -329,6 +329,10 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 		r += 1;
 		r = (r < 2 ? 2 : r);
 		dur += 1;
+	}
+	else if ((s_flags & R_BALL) == R_BALL)
+	{
+		r += 1;
 	}
 	
 	if (damage > S_DAM_MAX)
@@ -354,6 +358,11 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 		r = 1;
 	}
 	
+	if (r > 5)
+	{
+		r = 5;
+	}
+
 	if (dur > 260 || dur < 5)
 	{
 		dur = 5;
@@ -569,19 +578,19 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 		d = randint(100);
 		if (d > 93 && !p_ptr->resist_pois)
 		{
-			msg_print(Ind, "\377rThe malformed spell poisons you!");
+			msg_print(Ind, "\377rThe runespell lashes out at you!");
 			if(duration/3 < 10)
 				duration = 30;
 			set_poisoned(Ind, duration/3, Ind);
 		}
 		else if (d > 83 && !p_ptr->resist_blind && !p_ptr->resist_lite)
 		{
-			msg_print(Ind, "\377rYou are blinded by the malformed spell!");
+			msg_print(Ind, "\377rThe runespell lashes out at you!");
 			set_blind(Ind, damage/3);
 		}
 		else if (d > 73)
 		{
-			msg_print(Ind, "\377rYou are cut by the magical backlash!");
+			msg_print(Ind, "\377rThe runespell lashes out at you!");
 			set_cut(Ind, damage/3, Ind);
 		}
 		else
@@ -896,13 +905,14 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 	e_level += runespell_types[m].cost;
 	e_level += r_imperatives[imper].level;
 	
+	int modifier_value = r_imperatives[imper].dam;
+	modifier_value = (modifier_value == 0 ? randint(11) + 4 : modifier_value);
 	int cast_time = r_imperatives[imper].time;
 	
-	s16b speed_max = r_imperatives[imper].dam; //6 - 15
+	s16b speed_max = modifier_value; //6 - 15
 	s16b speed = 0;
 	
-	s16b shield_max = r_imperatives[imper].dam;//18 - 45
-	shield_max *= 3;
+	s16b shield_max = modifier_value * 3;//18 - 45
 	s16b shield = 0;
 	
 	s16b spell_duration = 0;
@@ -910,7 +920,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 	
 	int level = s_av - e_level;
 	int teleport_level = (level > 5 ? level : 5);
-	cave_type **zcave; //For glyphs
+	cave_type **zcave; //For glyph removal function of "disperse"
 	if (!(zcave = getcave(&p_ptr->wpos))) return 0;
 	
 	margin = fail_chance - difficulty;
@@ -921,7 +931,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 	
 	if (p_ptr->csp < cost)
 	{
-		begin = "\377sDrawing on your reserves, you";
+		begin = "\377rExhausted\377s, you";
 	}
 	else
 	{
@@ -1051,7 +1061,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					shield = shield > shield_max ? shield_max : shield;
 					shield = shield < 5 ? 5 : shield;
 					
-					(void)set_shield(Ind, shield, duration, SHIELD_NONE, 0, 0);
+					(void)set_shield(Ind, duration, shield, SHIELD_NONE, 0, 0);
 				}
 				break;
 			
@@ -1095,7 +1105,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				
 				if (success)
 				{
-					set_tim_trauma(Ind, duration, damage);
+					set_tim_trauma(Ind, duration, speed);
 				}
 				break;
 				
@@ -1276,7 +1286,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					if (p_ptr->target_col == 0 && p_ptr->target_row == 0)
 						teleport_player(Ind, ((100 + teleport_level * 100) / 5), FALSE);
 					else
-						teleport_player_to(Ind, p_ptr->target_col, p_ptr->target_row);
+						teleport_player_to(Ind, p_ptr->target_row, p_ptr->target_col);
 				}
 				break;
 			
@@ -1512,7 +1522,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			case RT_MISSILE:
 				spell_duration = duration / 10;
 				spell_duration = (spell_duration < 5 ? 5 : spell_duration);
-				spell_duration = (spell_duration > 20 && type == RT_MISSILE ? 20 : spell_duration);
+				spell_duration = (spell_duration > 20 && (type == RT_MISSILE || type == RT_BLESSING) ? 20 : spell_duration);
 				spell_duration = (spell_duration > 60 ? 60 : spell_duration);
 				
 				msg_format(Ind, "%s%s cast a %s rune of deflection. (%i turns)", begin, description, r_imperatives[imper].name, spell_duration);
@@ -1761,7 +1771,7 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative)
 	
 	int level = s_av - e_level;
 	
-	/* Time to cast can be varied by the active spell modifier. */
+	/* Time to cast can be varied up to 20% by the active spell modifier. */
 	if (p_ptr->energy < (level_speed(&p_ptr->wpos) * cast_time) / 10)
 	{
 		return 0;
