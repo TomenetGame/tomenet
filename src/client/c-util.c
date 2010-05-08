@@ -3358,13 +3358,13 @@ void interact_macros(void)
 				case 'S': /* employ shooting technique */
 					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '6'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
 					bptr++;	break;
-				case 'p': /* set a trap */
+				case 'P': /* set a trap */
 					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '0'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
 					bptr++;	break;
 				case 'm': /* cast a spell */
 					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '1'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
 					bptr++;	break;
-				case 'n': /* draw a rune */
+				case 'R': /* draw a rune */
 #ifndef ENABLE_RCRAFT
 					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '2'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
 #else
