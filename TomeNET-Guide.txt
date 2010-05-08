@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 17. Apr 2010 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.4c - official websites are:
+| Latest update: 8. May 2010 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.4d - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 +---
@@ -2173,8 +2173,8 @@ to their real functionality. They are:
   F for employing a fighting technique
   S for employing a shooting technique
   m for casting a spell
-  n for drawing a rune
-  p for setting up a trap
+  R for drawing a rune
+  P for setting up a trap
   s for changing a stance
   * for targetting the nearest monster
   @...\ for using call-by-name (spell/item name must be between '@' and '\')
@@ -5592,74 +5592,143 @@ Runes are magical symbols used to summon and manipulate the raw elemental
 forces which sustain the world of life. They are the motivating force behind
 the traditional systems of magic in TomeNET. The Istari's spell-scroll, for
 example, are composed of a series complicated runes which both protect the
-mage from immediate harm, and create the desired effect, from fireballs to
+mage from immediate harm, and create the desired effect: from fireballs to
 magical satiation.
 
 Runemasters are less methodical in their approach to magic. Having learned
-to summon elemental forces according to their desires without the
-precautions, limitations and inefficiencies of the complex Istari spell
-system, Runemasters deal directly with the 'pure' substance of magic,
-and are limited only by their wits, their strength and their skill.
+to summon elemental forces without the aid of the traditional precautions,
+limitations and potential inefficiencies of the complex Istari spell system,
+Runemasters deal directly with the 'pure' substance of magic, and are limited
+only by their wits, their strength and their skill.
 
-Runemastery is much more dangerous than the sensible Istari's approach! A
-Runemaster risks losing control of their spells, which can result in
-broken runes, physical damage, sickness, madness or even death.
+This approach is not necessarily a safe one. Inexperienced Runemasters risk
+losing control of their spells, which can result in broken runes, physical
+damage, sickness, madness or even death.
 
-These risks are compounded when the Runemaster is confused, stunned, low
-on magical stamina or simply inexperienced with reference to the attempted
-spell. While an Istar may be rendered helpless once they have cast all of
-the spells that they can handle, a Runemaster lacks this precautionary
-limitation, and may continue casting with significantly increased risks,
-and a in the case of low mana, a magical penalty may be taken directly
-from his or her health.
+These risks are compounded when the Runemaster is confused, stunned, cut, low
+on magical stamina or simply attempting a particularly dangerous spell. While
+an Istar is always prevented from casting outside of his or her ability,
+Runemasters may continue making spell attempts with increased risks (drawing
+on his or her own health, if necessary), until the penalties are fatal.
 
-Further, runemastery is an inexact science. Spell effects will vary widely
-with each attempt, although these variations will subside a little as the
-runemaster becomes more experienced with the chosen runes. A runemaster will
-always have some idea of how dangerous or successful each spell attempt has
-been. As spells become more successful, they increase in potency and decrease
-in cost. On the flip-side, less successful spells increase in cost and
-decrease in potency.
+Runemasters are able to cast many kinds of spells, but it's important to note
+that some are much more difficult to manage than others. All rune-spells can
+either be projected at the world or a monster, or directed at the Runemaster
+for a different result.
+
+Successful Runemasters will develop an affinity for a small number of runes.
+Eventually, they may come to a point where they can safely recite these runes
+from memory, especially when casting simple spells. However, having the
+physical runes present increases the chance of success, and spell efficiency
+increases with successfulness, so even high level Runemasters will usually
+carry their selected runes.
 
 Runemastery requires dexterious physical and intellectual manipulation of
 the rune-forms, requiring high INT and DEX character stats. For this reason,
-runemasters also make for decent thieves, and tolerable fighters: some of
-a runemaster's spells may even increase their skill in hand-to-hand combat.
+Runemasters also make decent thieves and fighters: some rune-spells may even
+boost the caster's combat abilities.
 
-A successful runemaster will quickly develop an affinity for a small subset
-of the available runes according to his or her nature, and will eventually
-be able to recite the runes from memory, rather than relying on the physical
-objects distributed about the world, but these physical reminders always
-make rune-spells more successful, and are therefore essential for
-inexperienced runemasters.
+To some extent, Runemasters will need to experiment to find out their own
+capabilities.
 
-Runemasters are able to summon many kinds of spell effects and types, but
-should be aware that some are much more difficult than others. All
-rune-spells will have a different effect when projected on the world to the
-effect they have when cast on the Runemaster. Experimentation in a safe
-environment is essential.
+
+Rune-spells:
+------------
+To cast a rune-spell, enter the m-key menu and select 'Draw a rune'.
 
 Rune-spells are made up of three components:
     1. A combination of up to three runes
-    2. A potency
-    3. A spell-type
+    2. A spell-modifier
+    3. A spell-type, or format (bolt, ball, etc.)
 
-These are accessible through the m-key menu. When selecting runes, press
-return once you are finished, or enter the maximum of three runes and continue
-with selection. The rune-menu will prompt for a direction if it is required.
+Each component has different associated costs; some of these can be viewed in
+the menu. When selecting runes, press return once you are finished, or enter
+the maximum of three runes and continue to the modifier selection. The menu
+will prompt for a direction if it is required after you're done.
 
-Runemastery macros look like this:
-(The magic number for runemastery is 18)
+If you choose the 'chaotic' modifier, the resulting damage, cost and duration
+will be increased or decreased by a random amount. This can result in very high
+damage spells at low cost. However, this spell modifier sometimes has negative
+side effects: use it with care.
 
-    \e)m@18\ra\rcc*t
 
-Which is a small fire bolt. (fire--small--bolt)
+Macros:
+-------
+Runemastery macros look like this: (The magic number for runemastery is 18)
+    \e)m@18\ra\rac*t
 
-Or:
-    \e)m@18\rabcab
+Which is fire--minimized--bolt, or a minimized fire bolt.
 
-Which is an elemental resistance self-spell (fire + cold + acid--minimized--
-self).
+Fire ball looks like this (key translation in brackets):
+    \e)m@18\ra\rae*t (fire--minimized--ball)
+
+To increase the radius of the ball, adjust the modifier to something that
+sounds bigger (this will also increase the damage, difficulty and cost):
+
+A moderate fire ball:
+    \e)m@18\ra\rbe*t (fire--moderate--ball)
+
+Or a widened fire ball:
+    \e)m@18\ra\rge*t (fire--widened--ball)
+
+
+Or some self-spells:
+
+Resist fire:
+    \e)m@18\ra\rbb (fire--moderate--self)
+
+(In the same way that you can increase or decrease a fire ball's radius, you
+can increase or decrease the duration of any timed spell by selecting
+'lengthened' or 'brief'. Some other modifiers will adjust the duration to a
+lesser extent.)
+
+Blink:
+    \e)m@18\rh\rab (wind--minimized--self)
+
+Or monster detection:
+    \e)m@18\racgab (fire/cold/poison--minimized--self)
+
+Note that if you choose three runes for a spell, the \r is not required.
+
+Occasionally, something like 'teleport to' (a level 26+ spell), requires
+that you set a target before casting. i.e:
+    \e)*tm@18\rke\rab (force/electricity--minimized--self)
+
+
+Autoretaliation & Melee spells:
+-------------------------------
+If you inscribe @O[a-h] on a rune, you will automatically retaliate with a
+moderate spell of the selected type. If you set the type to @Oa, or just @O,
+the 'melee' spell type will be selected.
+
+A melee spell is a bolt spell with a range of a single tile. It is cheaper than
+a regular bolt, and usually does more damage, but is very difficult to use
+outside of autoretaliation.
+
+
+Hints:
+------
+You can find out other spell combinations by experimenting. Do this in a safe
+location (preferably somewhere that you are unable to be killed), bearing in
+mind that if you frequently fail or *fail* to cast a spell, you are not yet
+skillful enough to cast it: try a minimized version instead, or if that fails,
+wait a few levels and try again.
+
+The casting adjective will give you an idea of the difficulty of a spell
+compared to your skill. Ideally, you should try to choose spells where the
+average is 'efficiently', or better. These are 'safe' spells, and tend to be
+more efficient than spells that you 'barely manage to', or 'clumsily' cast.
+(Note that this is not possible at skill level 1, where everything is
+dangerous.)
+
+Find a couple of combinations that work for a variety of effects, and then
+build your macro set slowly as you gain levels. The last thing you want to do
+is to have a high level spell like 'nuke ball' macroed at level five, and end
+up committing suicide when you accidentally hit the wrong key in the dungeon.
+
+To get started, you'll probably want to macro a couple of attack spells, blink,
+and detect monsters. You may also need to use a melee or ranged weapon to help
+gain the first few levels of a new runemaster.
 
 
 
