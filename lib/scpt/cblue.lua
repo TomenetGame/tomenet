@@ -163,9 +163,9 @@ function status(name)
 	rs = "Normal form"
     end
     if players(p).r_killed[863] > 0 then
-	ks = "   \255vKilled Morgoth"
+	ks = "   \255vK.Morgoth"
     elseif players(p).r_killed[861] > 0 then
-	ks = "   \255BKilled Sauron"
+	ks = "   \255BK.Sauron"
     else
 	ks = ""
     end
@@ -291,11 +291,16 @@ function resist(name)
     msg_print(Ind, "  \255bELEC: "..players(p).immune_elec.."  \255wFROST: "..players(p).immune_cold.."  \255sACID: "..players(p).immune_acid.."  \255rFIRE: "..players(p).immune_fire.."  \255gPOISON: "..players(p).immune_poison.."  \255BWATER: "..players(p).immune_water)
 --.."\255W-  \255gNETHER: "..players(p).immune_neth)
 --    msg_print(Ind, "  \255belec: "..players(p).sensible_elec.."  \255wfrost: "..players(p).sensible_cold.."  \255sacid: "..players(p).sensible_acid.."  \255rfire:  "..players(p).sensible_fire.."  \255gpoison:  "..players(p).sensible_pois)
-    msg_print(Ind, "  \255DNeth: "..players(p).resist_neth.."  \255vChaos: "..players(p).resist_chaos.."  \255oDise: "..players(p).resist_disen.."  \255vNexus: "..players(p).resist_nexus.."  \255ySound: "..players(p).resist_sound.."  \255uShards: "..players(p).resist_shard)
+    msg_print(Ind, "  \255DNeth: "..players(p).resist_neth.."  \255vChaos: "..players(p).resist_chaos.."  \255oDise: "..players(p).resist_disen.."  \255vNexu: "..players(p).resist_nexus.."  \255uShards: "..players(p).resist_shard.."  \255ySound: "..players(p).resist_sound)
 --    msg_print(Ind, "  \255DDark: "..players(p).resist_dark.."  \255WLight: "..players(p).resist_lite.."  \255vMana: "..players(p).resist_mana.."  \255BTime: "..players(p).resist_time.."  \255rRH \255vRM \255rDH \255vDM \255oDX \255w: \255r"..players(p).regenerate.." \255v"..players(p).regen_mana.." \255r"..players(p).drain_life.." \255v"..players(p).drain_mana.." \255o"..players(p).drain_exp)
     msg_print(Ind, "  \255DDark: "..players(p).resist_dark.."  \255WLight: "..players(p).resist_lite.."  \255vMana: "..players(p).resist_mana.."  \255BTime: "..players(p).resist_time.."  \255rRH\255D-\255rDH \255vRM\255D-\255vDM \255oDX \255w: \255r"..players(p).regenerate.."\255D-\255r"..players(p).drain_life.." \255v"..players(p).regen_mana.."\255D-\255v"..players(p).drain_mana.." \255o"..players(p).drain_exp)
 --.."  \255RPlasma: "..players(p).resist_plasma)
-    msg_print(Ind, "  \255DHL: "..players(p).hold_life.."  \255GFeather: "..players(p).feather_fall.."  \255yFear: "..players(p).resist_fear.."  \255oConfusion: "..players(p).resist_conf.."  \255rBlind: "..players(p).resist_blind.."  \255RFA: "..players(p).free_act)
+    if players(p).aggravate == 1 then
+	aggr = "  \255D(AGGR)"
+    else
+	aggr = ""
+    end
+    msg_print(Ind, "  \255DHL: "..players(p).hold_life.."  \255GFeather: "..players(p).feather_fall.."  \255yFear: "..players(p).resist_fear.."  \255oConf: "..players(p).resist_conf.."  \255rBlind: "..players(p).resist_blind.."  \255RFA: "..players(p).free_act..aggr)
 --    msg_print(Ind, "  \255yReflect: "..players(p).reflect.."  \255uNo-cut: "..players(p).no_cut.."  \255oRes.Tele.: "..players(p).feather_fall.."  \255rFA:  "..players(p).free_act.."  \255gBlind: "..players(p).res_tele)
 -- display sustenances:
     susstr = "---"

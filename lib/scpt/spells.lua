@@ -341,16 +341,16 @@ school_book[54] = {
 	NATURESCALL, REPLACEWALL, HERBALTEA, GROWTREE, RECOVERY, REGENERATION, POISONBLOOD
 }
 
----- Create the handbook to the underworld
---school_book[55] = {
---	HELLFIRE, GENOCIDE, BANISHMENT, CONFUSE, FIERYAURA
---}
-
 -- Create the destroyer's handbook
 school_book[55] = {
 --	ICESTORM, HELLFIRE, FIREFLASH, SHAKE, DISEBOLT, THUNDERSTORM, HORBDRAIN, HDRAINCLOUD
 	TIDALWAVE, HELLFIRE, FIREFLASH, STRIKE, DISEBOLT, THUNDERSTORM, HORBDRAIN, HDRAINCLOUD
 }
+
+---- Create the handbook to the underworld
+--school_book[55] = {
+--	HELLFIRE, GENOCIDE, BANISHMENT, CONFUSE, FIERYAURA
+--}
 
 ---- Create the handbook for rogues (of shadows)
 school_book[57] = {
