@@ -527,8 +527,8 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			if (!check_ignore(p, Ind)) Players[p]->paging = 3; /* Play 3 beeps quickly */
-			msg_format(Ind, "\377yPaged %s.", Players[p]->name);
-			msg_format(p, "\377y%s is paging you.", Players[Ind]->name);
+			msg_format(Ind, "\376\377yPaged %s.", Players[p]->name);
+			msg_format(p, "\376\377y%s is paging you.", Players[Ind]->name);
 			return;
 		}
 

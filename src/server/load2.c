@@ -1334,6 +1334,7 @@ static bool rd_extra(int Ind)
 		rd_s32b(&p_ptr->turns_afk);
 		rd_s32b(&p_ptr->turns_idle);
 	}
+	if (!older_than(4, 4, 6)) rd_s32b(&p_ptr->turns_active);
 
 	/* If he was created in the pre-ID days, give him one */
 	if (!p_ptr->id)

@@ -1195,7 +1195,9 @@ void player_day(int Ind) {
 	int x, y;
 
 //	if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
-	if (p_ptr->prace == RACE_VAMPIRE) calc_boni(Ind); /* daylight */
+	if (p_ptr->prace == RACE_VAMPIRE ||
+	    (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'V'))
+		calc_boni(Ind); /* daylight */
 
 	/* Hack -- Scan the level */
 	for (y = 0; y < MAX_HGT; y++)
@@ -1224,7 +1226,9 @@ void player_night(int Ind) {
 	if (!zcave) return; /* paranoia */
 
 //	if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
-	if (p_ptr->prace == RACE_VAMPIRE) calc_boni(Ind); /* no more daylight */
+	if (p_ptr->prace == RACE_VAMPIRE ||
+	    (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'V'))
+		calc_boni(Ind); /* no more daylight */
 
 	/* Hack -- Scan the level */
 	for (y = 0; y < MAX_HGT; y++)
@@ -4345,6 +4349,7 @@ static void process_player_end(int Ind)
 	p_ptr->turns_online++;
 	if (p_ptr->afk) p_ptr->turns_afk++;
 	if (p_ptr->idle) p_ptr->turns_idle++;
+	else if (!p_ptr->afk) p_ptr->turns_active++;
 
 	/* count how long they stay on a level (for EXTRA_LEVEL_FEELINGS) */
 	p_ptr->turns_on_floor++;
@@ -5838,12 +5843,8 @@ static void process_player_change_wpos(int Ind)
 	/* warning messages, mostly for newbies */
 	if (p_ptr->max_plv == 1 &&
 	    p_ptr->num_blow == 1 && p_ptr->warning_bpr2 != 1 &&
-	    (p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_PALADIN
-	    || p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_MIMIC
-//	    || p_ptr->pclass == CLASS_RUNEMASTER
-	    || p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_MINDCRAFTER)
 	    /* and don't spam Martial Arts users ;) */
-	    && p_ptr->inventory[INVEN_WIELD].k_idx) {
+	    p_ptr->inventory[INVEN_WIELD].k_idx) {
 		p_ptr->warning_bpr2 = p_ptr->warning_bpr3 = 1;
 		msg_print(Ind, "\374\377yWARNING! You can currently perform only ONE melee attack per round.");
 		msg_print(Ind, "\374\377y    If you rely on melee combat, it is strongly advised to try and");
@@ -5851,25 +5852,25 @@ static void process_player_change_wpos(int Ind)
 		msg_print(Ind, "\374\377yPossible reasons are: Weapon is too heavy; too little STR or DEX; You");
 		msg_print(Ind, "\374\377y    just equipped too heavy armour or a shield - depending on your class.");
 		msg_print(Ind, "\374\377y    Also, some classes can dual-wield to get an extra blow/round.");
-	} else if (p_ptr->max_plv == 1 && 
+	} else if (p_ptr->max_plv == 1 &&
 	    p_ptr->num_blow == 1 && !p_ptr->inventory[INVEN_WIELD].k_idx &&
 	    p_ptr->warning_wield == 0) {
 		p_ptr->warning_wield = 1;
 		msg_print(Ind, "\374\377yWARNING: You don't wield a weapon at the moment!");
-		msg_print(Ind, "\374\377y    Press 'w' key. It lets you pick a weapon (as well as other items)");
+		msg_print(Ind, "\374\377y    Press '\377Rw\377y' key. It lets you pick a weapon (as well as other items)");
 		msg_print(Ind, "\374\377y    from your inventory to wield!");
 		msg_print(Ind, "\374\377y    (If you plan to train 'Martial Arts' skill, ignore this warning.)");
 	}
 	else if (p_ptr->max_plv <= 2 && p_ptr->warning_run == 0) {
 		p_ptr->warning_run = 1;
 		msg_print(Ind, "\374\377yHINT: To run fast, use \377RSHIFT + direction\377y keys.");
-		msg_print(Ind, "\374\377y      for that, Numlock must be OFF, and no awake monster in sight!");
+		msg_print(Ind, "\374\377y      For that, Numlock key must be OFF and no awake monster in sight!");
 	}
 	else if (p_ptr->max_plv <= 5 && p_ptr->cur_lite == 0 && p_ptr->wpos.wz < 0
 	    && p_ptr->warning_lite == 0) {
 		p_ptr->warning_lite = 1;
 		msg_print(Ind, "\374\377yHINT: You don't wield any light source at the moment!");
-		msg_print(Ind, "\374\377y    Press 'w'. It lets you wield a torch or lantern (and other items).");
+		msg_print(Ind, "\374\377y    Press '\377Rw\377y'. It lets you wield a torch or lantern (and other items).");
 	}
 
 	/* Did we enter a no-tele vault? */
@@ -5940,8 +5941,10 @@ static void process_player_change_wpos(int Ind)
 	if (istown(&p_ptr->wpos)) p_ptr->town_pass_trees = TRUE;
 	else p_ptr->town_pass_trees = FALSE;
 
+#if 0 /* since digging is pretty awesome now, this is too much, and we should be glad that treasure detection items have some use now actually! */
 	/* High digging results in auto-treasure detection */
 	if (get_skill(p_ptr, SKILL_DIG) >= 30) floor_detect_treasure(Ind);
+#endif
 }
 
 
@@ -7407,11 +7410,11 @@ if (NumPlayers && Players[NumPlayers]->wpos.wx == x && Players[NumPlayers]->wpos
 				   so we get to see some wind already, and these 'winds' would also conflict
 				   if multiple clouds moving into different directions met.. - C. Blue */
 				if (cloud_xm100[i] > 40) w_ptr->weather_wind = 5 - (2 * ((cloud_xm100[i] - 40) / 21));
-				else if (cloud_xm100[i] < 40) w_ptr->weather_wind = 6 - (2 * ((-cloud_xm100[i] - 40) / 21));
+				else if (cloud_xm100[i] < -40) w_ptr->weather_wind = 6 - (2 * ((-cloud_xm100[i] - 40) / 21));
 				else w_ptr->weather_wind = 0;
 				/* also determine vertical pseudo winds, just for server-side running speed calculations */
 				if (cloud_ym100[i] > 40) w_ptr->weather_wind_vertical = 5 - (2 * ((cloud_ym100[i] - 40) / 21));
-				else if (cloud_ym100[i] < 40) w_ptr->weather_wind_vertical = 6 - (2 * ((-cloud_ym100[i] - 40) / 21));
+				else if (cloud_ym100[i] < -40) w_ptr->weather_wind_vertical = 6 - (2 * ((-cloud_ym100[i] - 40) / 21));
 				else w_ptr->weather_wind_vertical = 0;
 #endif
 

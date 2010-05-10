@@ -886,7 +886,7 @@ static bool chmod_door(int Ind, struct dna_type *dna, char *args){
 			msg_print(Ind, "You are not owner of a party.");
 			return(FALSE);
 		}
-		if(strcmp(parties[p_ptr->party].owner,lookup_player_name(dna->owner))) {
+		if(strcmp(parties[p_ptr->party].owner, lookup_player_name(dna->owner))) {
 			msg_print(Ind, "You must be owner of your party to allow party access.");
 			return(FALSE);
 		}
@@ -989,19 +989,19 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args){
 }
 
 bool access_door(int Ind, struct dna_type *dna){
-	player_type *p_ptr=Players[Ind];
+	player_type *p_ptr = Players[Ind];
 	if (!dna->owner) return(FALSE); /* house doesn't belong to anybody */
 /*	if (is_admin(p_ptr))
 		return(TRUE); - moved to allow more overview for admins when looking at
 				house door colours on the world surface - C. Blue */
 
 	/* Test for cumulative restrictions */
-	if (p_ptr->dna!=dna->creator) {
-		if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level)
+	if (p_ptr->dna != dna->creator) {
+		if(dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level)
 			return(FALSE); /* defies logic a bit, but for speed */
-		if((dna->a_flags & ACF_CLASS) && (p_ptr->pclass!=(dna->creator&0xff)))
+		if((dna->a_flags & ACF_CLASS) && (p_ptr->pclass != (dna->creator & 0xff)))
 			return(FALSE);
-		if((dna->a_flags & ACF_RACE) && (p_ptr->prace!=((dna->creator>>8)&0xff)))
+		if((dna->a_flags & ACF_RACE) && (p_ptr->prace != ((dna->creator >> 8) & 0xff)))
 			return(FALSE);
 		if((dna->a_flags & ACF_WINNER) && !p_ptr->total_winner)
 			return(FALSE);
@@ -1014,11 +1014,11 @@ bool access_door(int Ind, struct dna_type *dna){
 	switch(dna->owner_type){
 		case OT_PLAYER:
 			/* new doors in new server different */
-			if(p_ptr->id==dna->owner && p_ptr->dna==dna->creator)
+			if(p_ptr->id == dna->owner && p_ptr->dna == dna->creator)
 				return(TRUE);
 			if(dna->a_flags & ACF_PARTY){
 				if(!p_ptr->party) return(FALSE);
-				if(!strcmp(parties[p_ptr->party].owner,lookup_player_name(dna->owner)))
+				if(!strcmp(parties[p_ptr->party].owner, lookup_player_name(dna->owner)))
 					return(TRUE);
 			}
 			break;
@@ -1027,14 +1027,14 @@ bool access_door(int Ind, struct dna_type *dna){
 			if(player_in_party(dna->owner, Ind)) return(TRUE);
 			break;
 		case OT_CLASS:
-			if(p_ptr->pclass==dna->owner) return(TRUE);
+			if(p_ptr->pclass == dna->owner) return(TRUE);
 			break;
 		case OT_RACE:
-			if(p_ptr->prace==dna->owner) return(TRUE);
+			if(p_ptr->prace == dna->owner) return(TRUE);
 			break;
 		case OT_GUILD:
 			if(!p_ptr->guild) return(FALSE);
-			if(p_ptr->guild==dna->owner) return(TRUE);
+			if(p_ptr->guild == dna->owner) return(TRUE);
 			break;
 	}
 	return(FALSE);
@@ -1044,47 +1044,49 @@ bool access_door(int Ind, struct dna_type *dna){
    shouldn't be used but completely different colours only..
    but since we don't have enough colours, it doesn't matter - C. Blue */
 int access_door_colour(int Ind, struct dna_type *dna){
-	player_type *p_ptr=Players[Ind];
+	player_type *p_ptr = Players[Ind];
+
 	if (!dna->owner) return(TERM_UMBER); /* house doesn't belong to anybody */
 	switch(dna->owner_type){
 		case OT_PLAYER:
 			/* new doors in new server different */
-			if(p_ptr->id==dna->owner && p_ptr->dna==dna->creator)
+			if(p_ptr->id == dna->owner && p_ptr->dna == dna->creator)
 				return(TERM_L_GREEN);
 			if(dna->a_flags & ACF_PARTY){
 				if(!p_ptr->party) return(TERM_SLATE);
-				if(!strcmp(parties[p_ptr->party].owner,lookup_player_name(dna->owner))) {
+				/* exploit fix: create party houses, then promote someone else to leader */
+				if(!strcmp(parties[p_ptr->party].owner, lookup_player_name(dna->owner))) {
 					if(dna->a_flags & ACF_CLASS) {
-						if(p_ptr->pclass==(dna->creator&0xff)) {
-							if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(TERM_YELLOW);
+						if(p_ptr->pclass == (dna->creator & 0xff)) {
+							if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 							return(TERM_WHITE);
 						} else return(TERM_ORANGE);
 					}
 					if(dna->a_flags & ACF_RACE) {
-						if(p_ptr->prace==((dna->creator>>8)&0xff)) {
-							if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(TERM_YELLOW);
+						if(p_ptr->prace == ((dna->creator >> 8) & 0xff)) {
+							if(dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 							return(TERM_WHITE);
 						} else return(TERM_ORANGE);
 					}
 					if(dna->a_flags & ACF_WINNER) {
 						if(p_ptr->total_winner) {
-							if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(TERM_YELLOW);
+							if(dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 							return(TERM_L_RED);
 						} else return(TERM_RED);
 					}
 					if(dna->a_flags & ACF_FALLENWINNER) {
 						if(!p_ptr->total_winner && p_ptr->once_winner) {
-							if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(TERM_YELLOW);
+							if(dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 							return(TERM_L_RED);
 						} else return(TERM_RED);
 					}
 					if(dna->a_flags & ACF_NOGHOST) {
 						if(p_ptr->mode & MODE_NO_GHOST) {
-							if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(TERM_YELLOW);
+							if(dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 						}
 						return(TERM_L_DARK);
 					}
-					if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(TERM_YELLOW);
+					if(dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 					return(TERM_L_BLUE);
 				}
 			}
@@ -1092,26 +1094,26 @@ int access_door_colour(int Ind, struct dna_type *dna){
 		case OT_PARTY:
 			if(!p_ptr->party) return(TERM_SLATE);
 			if(player_in_party(dna->owner, Ind)) {
-				if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(TERM_YELLOW);
+				if(dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 				return(TERM_L_BLUE);
 			}
 			break;
 		case OT_CLASS:
-			if(p_ptr->pclass==dna->owner) {
-				if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(TERM_YELLOW);
+			if(p_ptr->pclass == dna->owner) {
+				if(dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 				return(TERM_WHITE);
 			}
 			break;
 		case OT_RACE:
-			if(p_ptr->pclass==dna->owner) {
-				if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(TERM_YELLOW);
+			if(p_ptr->pclass == dna->owner) {
+				if(dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 				return(TERM_WHITE);
 			}
 			break;
 		case OT_GUILD:
 			if(!p_ptr->guild) return(TERM_SLATE);
-			if(p_ptr->guild==dna->owner) {
-				if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(TERM_YELLOW);
+			if(p_ptr->guild == dna->owner) {
+				if(dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 				return(TERM_VIOLET);
 			}
 			break;
@@ -1123,27 +1125,27 @@ int access_door_colour(int Ind, struct dna_type *dna){
 cptr get_house_owner(struct c_special *cs_ptr)
 {
 	static char string[80];
-	struct dna_type *dna=cs_ptr->sc.ptr;
+	struct dna_type *dna = cs_ptr->sc.ptr;
 	strcpy(string,"nobody.");
 	if(dna->owner){
 //		char *name;
 		cptr name;
 		switch(dna->owner_type){
 			case OT_PLAYER:
-				if((name=lookup_player_name(dna->owner)))
-				strcpy(string,name);
+				if((name = lookup_player_name(dna->owner)))
+				strcpy(string, name);
 				break;
 			case OT_PARTY:
 				if(strlen(parties[dna->owner].name))
 				strcpy(string, parties[dna->owner].name);
 				break;
 			case OT_CLASS:
-				strcpy(string,class_info[dna->owner].title);
-				strcat(string,"s");
+				strcpy(string, class_info[dna->owner].title);
+				strcat(string, "s");
 				break;
 			case OT_RACE:
-				strcpy(string,race_info[dna->owner].title);
-				strcat(string,"s");
+				strcpy(string, race_info[dna->owner].title);
+				strcat(string, "s");
 				break;
 			case OT_GUILD:
 				strcpy(string, guilds[dna->owner].name);
@@ -1714,7 +1716,6 @@ bool twall(int Ind, int y, int x)
 }
 
 
-
 /*
  * Tunnels through "walls" (including rubble and closed doors)
  *
@@ -1734,24 +1735,30 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 
 	int y, x, power = p_ptr->skill_dig + (quiet_borer ? 20000 : 0);
 	int mining = get_skill(p_ptr, SKILL_DIG);
-	int dug_feat = FEAT_NONE, special_k_idx = 0, tval = 0, sval;
+	int dug_feat = FEAT_NONE, special_k_idx = 0, tval = 0, sval = 0;
 	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
+	int old_object_level = object_level;
+	int find_level = getlevel(&p_ptr->wpos);
+
 	cave_type *c_ptr;
-
 	bool old_floor = FALSE;
-
 	bool more = FALSE;
 	feature_type *f_ptr;
 	cave_type **zcave;
+
 	if(!(zcave = getcave(wpos))) return;
+
+	object_level = find_level;
+	if (mining > find_level * 2) mining = find_level * 2;
+	find_level += mining / 2;
 
 	/* Ghosts have no need to tunnel ; not in WRAITHFORM */
 	if ((p_ptr->ghost) || (p_ptr->tim_wraith))
 	{
 		/* Message */
 		msg_print(Ind, "You cannot tunnel.");
-		return;
+		if (!is_admin(p_ptr)) return;
 	}
 
 	/* Must be have something to dig with */
@@ -1766,6 +1773,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 
 #endif	// 0
 	}
+
 
 	/* Get a direction to tunnel, or Abort */
 	if (dir)
@@ -1840,7 +1848,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 #if 0
 					sval = ((rand_int(mining) + rand_int(75)) / 21) + 1; /* 1,2,3, 5,6,7 - according to k_info.txt */
 					if (sval == 4) sval++;
-#else
+#endif
+#if 0
 					sval = 2510 / (rand_int(mining) * rand_int(50) + 10);
 					/* 1,2,3, 5,6,7 - according to k_info.txt */
 					if (rand_int(50) > sval) sval = 7;
@@ -1849,11 +1858,23 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					else if (rand_int(150) > sval) sval = 3;
 					else if (rand_int(300) > sval) sval = 2;
 					else sval = 1;
-
-					special_k_idx = lookup_kind(tval, sval);
 #endif
+#if 1 /* maybe todo: use get_obj_num_prep_tval() instead of this hardcoding chances.. */
+					sval = rand_int(mining) * rand_int(50);
+					/* 1,2,3, 5,6,7 - according to k_info.txt */
+					if (sval > 1600) sval = 7;
+					else if (sval > 1100) sval = 6;
+					else if (sval > 700) sval = 5;
+					else if (sval > 300) sval = 3;
+					else if (sval > 100) sval = 2;
+					else sval = 1;
+#endif
+					special_k_idx = lookup_kind(tval, sval);
+
 				} else if (rand_int(1000) < (mining + 2) / 2) {
+				    if (!rand_int(5)) {
 					tval = TV_GOLEM;
+#if 0
 					sval = 2510 / (rand_int(mining) * rand_int(50) + 10);
 					/* 0..7 - according to k_info.txt */
 					if (rand_int(50) > sval) sval = 7;
@@ -1864,10 +1885,35 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					else if (rand_int(300) > sval) sval = 2;
 					else if (rand_int(500) > sval) sval = 1;
 					else sval = 0;
-
+#endif
+#if 1 /* maybe todo: use get_obj_num_prep_tval() instead of this hardcoding chances.. */
+					sval = rand_int(mining) * rand_int(50);
+					/* 0..7 - according to k_info.txt */
+					if (sval > 2000) sval = 7;
+					else if (sval > 1600) sval = 6;
+					else if (sval > 1300) sval = 5;
+					else if (sval > 1000) sval = 4;
+					else if (sval > 900) sval = 3;
+					else if (sval > 600) sval = 2;
+					else if (sval > 300) sval = 1;
+					else sval = 0;
+#endif
 					special_k_idx = lookup_kind(tval, sval);
+				    }
+#ifdef ENABLE_RUNEMASTER
+				    else {
+ #ifndef ENABLE_CRAFT
+					if (!rand_int(4)) tval = TV_RUNE1; else
+ #endif
+					tval = TV_RUNE2;
+					get_obj_num_hook = NULL;
+					get_obj_num_prep_tval(tval, RESF_MID);
+					special_k_idx = get_obj_num(getlevel(&p_ptr->wpos), RESF_MID);
+				    }
+#endif
 				}
 			}
+
 
 #if 0
 			/* Titanium */
@@ -1919,7 +1965,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 				if (power > rand_int(200) && twall(Ind, y, x)) {
 
 					break_cloaking(Ind, 0);
-					break_shadow_running(Ind); 
+					break_shadow_running(Ind);
 					stop_precision(Ind);
 					stop_shooting_till_kill(Ind);
 					/* Message */
@@ -1939,16 +1985,16 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 						} else if (special_k_idx && tval != TV_GOLEM) {
 							object_type forge;
 							invcopy(&forge, special_k_idx);
-							apply_magic(wpos, &forge, -1, TRUE, TRUE, TRUE, FALSE, TRUE);
+							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, TRUE);
 							forge.number = 1;
 //							forge.level = ;
 							forge.marked2 = ITEM_REMOVAL_NORMAL;
 							msg_print(Ind, "You have found something!");
 							drop_near(&forge, -1, wpos, y, x);
 						/* Hack -- place an object - Not in town (Khazad becomes l00t source) */
-						} else if (rand_int(100) < 10 + mining) {
+						} else if (rand_int(120) < 10 + mining) {
 							place_object_restrictor = RESF_NONE;
-							place_object(wpos, y, x, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_LOW,
+							place_object(wpos, y, x, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_MID,
 								default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
 							if (player_can_see_bold(Ind, y, x))
 								msg_print(Ind, "You have found something!");
@@ -1988,10 +2034,20 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					msg_print(Ind, "You hack your way through the vegetation.");
 					if (p_ptr->prace == RACE_ENT)
 						msg_print(Ind, "You have a bad feeling about it.");
-					
+
+					if (special_k_idx && tval == TV_GOLEM && sval == SV_GOLEM_WOOD) {
+						object_type forge;
+						invcopy(&forge, special_k_idx);
+						apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, TRUE);
+						forge.number = 1;
+//						forge.level = ;
+						forge.marked2 = ITEM_REMOVAL_NORMAL;
+						msg_print(Ind, "You have found something!");
+						drop_near(&forge, -1, wpos, y, x);
+					}
+
 					/* Notice */
 					note_spot_depth(wpos, y, x);
-
 					/* Display */
 					everyone_lite_spot(wpos, y, x);
 				}
@@ -2087,9 +2143,9 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 //			else if (c_ptr->feat >= FEAT_MAGMA)
 			/* Quartz / Magma / Sandwall */
 			else if (((c_ptr->feat >= FEAT_MAGMA) &&
-						(c_ptr->feat <= FEAT_QUARTZ_K)) ||
-					((c_ptr->feat >= FEAT_SANDWALL) &&
-					 (c_ptr->feat <= FEAT_SANDWALL_K)))
+				(c_ptr->feat <= FEAT_QUARTZ_K)) ||
+				((c_ptr->feat >= FEAT_SANDWALL) &&
+				 (c_ptr->feat <= FEAT_SANDWALL_K)))
 			{
 				bool okay = FALSE;
 				bool gold = FALSE;
@@ -2134,10 +2190,23 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 
 					/* Found treasure */
 					if (gold) {
-						tval = rand_int(mining / 5);
-						for (sval = 0; sval <= tval; sval++) {
-							/* Place some gold */
-							place_gold(wpos, y, x, 0);
+						if (special_k_idx && tval == TV_GOLEM && sval != SV_GOLEM_WOOD) {
+							object_type forge;
+							invcopy(&forge, special_k_idx);
+							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, TRUE);
+							forge.number = 1;
+//							forge.level = ;
+							forge.marked2 = ITEM_REMOVAL_NORMAL;
+							msg_print(Ind, "You have found something!");
+							drop_near(&forge, -1, wpos, y, x);
+						} else {
+							object_level = find_level;
+							tval = rand_int(mining / 5);
+							for (sval = 0; sval <= tval; sval++) {
+								/* Place some gold */
+								place_gold(wpos, y, x, 0);
+							}
+							object_level = old_object_level;
 						}
 						note_spot_depth(wpos, y, x);
 						everyone_lite_spot(wpos, y, x);
@@ -2157,6 +2226,15 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					    dug_feat != FEAT_WAY_LESS) {
 						if (magik(100))
 							cave_set_feat_live(wpos, y, x, dug_feat);
+					} else if (!rand_int(10) && special_k_idx && (tval == TV_RUNE1 || tval == TV_RUNE2)) {
+							object_type forge;
+							invcopy(&forge, special_k_idx);
+							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, TRUE);
+							forge.number = 1;
+//							forge.level = ;
+							forge.marked2 = ITEM_REMOVAL_NORMAL;
+							msg_print(Ind, "You have found something!");
+							drop_near(&forge, -1, wpos, y, x);
 					}
 				}
 
@@ -2231,6 +2309,15 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 						    dug_feat != FEAT_WAY_LESS) {
 							if (magik(100))
 								cave_set_feat_live(wpos, y, x, dug_feat);
+						} else if (!rand_int(20) && special_k_idx && (tval == TV_RUNE1 || tval == TV_RUNE2)) {
+							object_type forge;
+							invcopy(&forge, special_k_idx);
+							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, TRUE);
+							forge.number = 1;
+//							forge.level = ;
+							forge.marked2 = ITEM_REMOVAL_NORMAL;
+							msg_print(Ind, "You have found something!");
+							drop_near(&forge, -1, wpos, y, x);
 						}
 					}
 				}

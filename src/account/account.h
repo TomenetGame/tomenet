@@ -16,6 +16,7 @@
 #define ACC_VQUIET	0x00002000       /* may not chat or emote, be it public or private */
 #define ACC_BANNED	0x00004000       /* account is temporarily suspended */
 #define ACC_DELD	0x00008000	/* Delete account/members */
+#define ACC_WARN_REST	0x80000000	/* Received a one-time warning about resting */
 
 /*
  * new account struct - pass in player_type will be removed

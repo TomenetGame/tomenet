@@ -1752,6 +1752,10 @@ void calc_hitpoints(int Ind)
 	/* Always have at least one hitpoint per level */
 	if (mhp < p_ptr->lev + 1) mhp = p_ptr->lev + 1;
 
+	/* for C_BLUE_AI */
+	if (!p_ptr->body_monster) p_ptr->form_hp_ratio = 100;
+	else p_ptr->form_hp_ratio = (mhp * 100) / mhp_playerform;
+
 	/* Bonus from +LIFE items (should be weapons only -- not anymore, Bladeturner / Randarts etc.!).
 	   Also, cap it at +3 (boomerang + weapon could result in +6) (Boomerangs can't have +LIFE anymore) */
 	if (!is_admin(p_ptr) && p_ptr->to_l > 3) p_ptr->to_l = 3;
@@ -3976,7 +3980,9 @@ void calc_boni(int Ind)
 	if (p_ptr->luck_cur > 40) p_ptr->luck_cur = 40; /* luck caps at 40 */
 
 	p_ptr->sun_burn = FALSE;
-	if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->ghost) {
+	if ((p_ptr->prace == RACE_VAMPIRE ||
+	    (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'V'))
+	    && !p_ptr->ghost) {
 		/* damage from sun light */
 		if (!p_ptr->wpos.wz && !night_surface && //!(zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY) &&
 		    !p_ptr->resist_lite && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_WRAPPING) &&
@@ -4367,6 +4373,12 @@ void calc_boni(int Ind)
 			msg_print(Ind, "\377oThe weight of your armour strains your flexibility and awareness.");
 			break_cloaking(Ind, 0);
 			break_shadow_running(Ind);
+			if (p_ptr->dual_wield && !p_ptr->warning_dual && p_ptr->pclass != CLASS_ROGUE && p_ptr->max_plv <= 10) {
+				p_ptr->warning_dual = 1;
+				msg_print(Ind, "\374\377yHINT: You won't get any benefits from dual-wielding if your armour is");
+				msg_print(Ind, "\374\377y      too heavy; in that case, consider using one weapon together with");
+				msg_print(Ind, "\374\377y      a shield, or -if your STR is very high- try a two-handed weapon.");
+			}
 		}
 		/* do we still wear armour, and are still rogue or dual-wielding? */
 		else if (armour_weight(p_ptr)) {
@@ -4811,7 +4823,8 @@ void calc_boni(int Ind)
 				break;
 			}
 #endif
-			p_ptr->xtra_might += (get_skill(p_ptr, archery) / 50);
+//			p_ptr->xtra_might += (get_skill(p_ptr, archery) / 50);
+			p_ptr->xtra_might += (get_skill(p_ptr, SKILL_ARCHERY) / 50);
 			/* Boomerang-mastery directly increases damage! - C. Blue */
 			if (archery == SKILL_BOOMERANG)
 				p_ptr->to_d_ranged += get_skill_scale(p_ptr, archery, 20);
@@ -5939,11 +5952,8 @@ void calc_boni(int Ind)
 
 
 	/* warning messages, mostly for newbies */
-	if (p_ptr->num_blow == 1 && old_num_blow > 1 && p_ptr->warning_bpr == 0
-	    && p_ptr->pclass != CLASS_MAGE
-	    && p_ptr->pclass != CLASS_ARCHER
-//	    && p_ptr->pclass != CLASS_RUNEMASTER
-	    && p_ptr->inventory[INVEN_WIELD].k_idx) {
+	if (p_ptr->num_blow == 1 && old_num_blow > 1 && p_ptr->warning_bpr == 0 &&
+	    p_ptr->inventory[INVEN_WIELD].k_idx) {
 		p_ptr->warning_bpr = 1;
 		msg_print(Ind, "\374\377yWARNING! Your number of melee attacks per round has just dropped to ONE.");
 		msg_print(Ind, "\374\377y    If you rely on melee combat, it is strongly advised to try and");
@@ -5954,12 +5964,8 @@ void calc_boni(int Ind)
 	}
 	if (p_ptr->max_plv == 1 &&
 	    p_ptr->num_blow == 1 && old_num_blow == 1 && p_ptr->warning_bpr3 == 2 &&
-	    (p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_PALADIN
-	    || p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_MIMIC
-	//<---->    || p_ptr->pclass == CLASS_RUNEMASTER
-	    || p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_MINDCRAFTER)
 	    /* and don't spam Martial Arts users ;) */
-	    && p_ptr->inventory[INVEN_WIELD].k_idx) {
+	    p_ptr->inventory[INVEN_WIELD].k_idx) {
 		p_ptr->warning_bpr2 = p_ptr->warning_bpr3 = 1;
 		msg_print(Ind, "\374\377yWARNING! You can currently perform only ONE melee attack per round.");
 		msg_print(Ind, "\374\377y    If you rely on melee combat, it is strongly advised to try and");

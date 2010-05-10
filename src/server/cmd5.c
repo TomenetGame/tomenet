@@ -1290,6 +1290,8 @@ void do_mimic_change(int Ind, int r_idx, bool force)
 
 	if (p_ptr->tim_wraith) p_ptr->tim_wraith = 1; /* in xtra2.c it would prevent regular wraithform on istari */
 
+	if (!force) p_ptr->warning_mimic = 1;
+
 	if (r_idx) {
 		msg_format(Ind, "You polymorph into a %s!", r_info[r_idx].name + r_name);
 		msg_format_near(Ind, "%s polymorphs into a %s!", p_ptr->name, r_info[r_idx].name + r_name);
@@ -1400,8 +1402,10 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 			if (spell == 1) { /* check for extremities matching? */
 				if ((p_ptr->inventory[INVEN_HEAD].tval || p_ptr->inventory[INVEN_NECK].tval)
 				    && !r_info[j].body_parts[BODY_HEAD]) continue;
-				if ((p_ptr->inventory[INVEN_ARM].tval || p_ptr->inventory[INVEN_HANDS].tval)
+				if (p_ptr->inventory[INVEN_ARM].tval
 				    && !r_info[j].body_parts[BODY_ARMS]) continue;
+				if (p_ptr->inventory[INVEN_HANDS].tval
+				    && !(r_info[j].body_parts[BODY_ARMS] && r_info[j].body_parts[BODY_FINGER])) continue;
 				if ((p_ptr->inventory[INVEN_WIELD].tval || p_ptr->inventory[INVEN_BOW].tval)
 				    && !r_info[j].body_parts[BODY_WEAPON]) continue;
 				if (p_ptr->inventory[INVEN_RIGHT].tval

@@ -520,8 +520,9 @@ bool item_tester_hook_wear(int Ind, int slot)
 				    r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
 				break;
 			case INVEN_HANDS:
-				if (r_ptr->body_parts[BODY_ARMS]) return (TRUE);
 //				if (r_ptr->body_parts[BODY_FINGER]) return (TRUE); too silyl (and powerful)
+//				if (r_ptr->body_parts[BODY_ARMS]) return (TRUE); was standard, but now:
+				if (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_ARMS]) return (TRUE);
 				break;
 			case INVEN_FEET:
 				if (r_ptr->body_parts[BODY_LEGS]) return (TRUE);
@@ -2021,6 +2022,16 @@ void do_cmd_steal(int Ind, int dir)
                 msg_print(Ind, "You're still not calm enough to steal again..");
                 return;
         }
+	/* no stealing in town since town-pvp is diabled */
+	if (istown(&p_ptr->wpos))
+	{
+
+		/* Message */
+		msg_print(Ind, "\337rYou may not steal in town.");
+
+		return;
+	}
+
 
 	/* May not steal from AFK players, sportsmanship ;) - C. Blue */
 	if (q_ptr->afk)

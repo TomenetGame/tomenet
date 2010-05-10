@@ -1875,7 +1875,7 @@ struct skill_player
 #define ACC_VQUIET	0x00002000	/* may not chat or emote, be it public or private */
 #define ACC_BANNED	0x00004000	/* account is temporarily suspended */
 #define ACC_DELD	0x00008000	/* Delete account/members */
-
+#define ACC_WARN_REST	0x80000000	/* Received a one-time warning about resting */
 /*
  * new account struct - pass in player_type will be removed
  * this will provide a better account management system
@@ -1883,6 +1883,7 @@ struct skill_player
 struct account{
 	u32b id;	/* account id */
 	u32b flags;	/* account flags */
+//todo, instead of ACC_GREETED, ACC_WARN_.. etc, maybe:	a dedicated 'u32b warnings;	/* account flags for received (one-time) hints/warnings */'
 	char name[30];	/* login */
 	char pass[20];	/* some crypts are not 13 */
 	time_t acc_laston;	/* last time this account logged on (for expiry check) */
@@ -1891,6 +1892,17 @@ struct account{
 };
 /* Used for updating tomenet.acc structure: */
 #if 1
+struct account_old{
+	u32b id;	/* account id */
+	u32b flags;	/* account flags */
+	char name[30];	/* login */
+	char pass[20];	/* some crypts are not 13 */
+	time_t acc_laston;	/* last time this account logged on (for expiry check) */
+	s32b cheeze;	/* value in gold of cheezed goods or money */
+	s32b cheeze_self; /* value in gold of cheezed goods or money to own characters */
+};
+#endif
+#if 0
 struct account_old{
 	u32b id;	/* account id */
 	u16b flags;	/* account flags */
@@ -1978,6 +1990,7 @@ struct player_type
 	s32b turns_online;	/* How many turns this char has spent online */
 	s32b turns_afk;		/* How many turns this char has spent online while being /afk */
 	s32b turns_idle;	/* How many turns this char has spent online while being counted as 'idle' */
+	s32b turns_active;	/* How many turns this char has spent online while being neither 'idle' nor 'afk' at once */
 	time_t msg;		/* anti spamming protection */
 	byte msgcnt;
 	byte spam;
@@ -2048,6 +2061,7 @@ struct player_type
 	s16b chp;			/* Cur hit pts */
 	u16b chp_frac;		/* Cur hit frac (times 2^16) */
 	s16b player_hp[PY_MAX_LEVEL];
+	s16b form_hp_ratio;		/* mimic form HP+ percentage */
 
 	s16b msp;			/* Max mana pts */
 	s16b csp;			/* Cur mana pts */
@@ -2816,6 +2830,7 @@ struct player_type
 	char warning_bpr, warning_bpr2, warning_bpr3;
 	char warning_run, warning_wield, warning_chat, warning_lite;
 	char warning_rest;/* if a char rests from <= 40% to 50% without R, or so..*/
+	char warning_mimic, warning_dual, warning_potions, warning_wor;
 };
 
 /* For Monk martial arts */

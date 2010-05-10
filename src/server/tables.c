@@ -4946,7 +4946,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_UDUN,
                                 '+', 0,
-                                '+', 900,
+                                '+', 1000,
                         },
                         {
                                 SKILL_META,
@@ -6630,10 +6630,21 @@ town_extra town_profile[6]=
 };
 
 
+/* for C_BLUE_AI - meaning is: minimum AC of a player to make him appear pretty tough to monsters */
+int p_tough_ac[51] = {
+	5,6,7,8,9,		10,11,12,13,14,
+	15,15,16,16,17,		17,18,18,19,19,
+	20,22,24,26,28,		31,34,37,40,45,
+	50,55,60,65,75,		85,95,105,115,
+	120,123,126,128,130,	132,134,136,138,140,
+	160	/* 51+, ie 'post king' */
+};
+
+
 #ifdef ENABLE_RCRAFT
 
 /* Table of valid runespell elements, their flags, and the sylables for their casting. */
-r_element r_elements[RCRAFT_MAX_ELEMENTS] = 
+r_element r_elements[RCRAFT_MAX_ELEMENTS] =
 {
 	{ 0, "Heat", 		"Aestus", 		1, SKILL_R_FIRECOLD, R_FIRE,},
 	{ 1, "Cold", 		"Gelum",		1, SKILL_R_FIRECOLD, R_COLD,},

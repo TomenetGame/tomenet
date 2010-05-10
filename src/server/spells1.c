@@ -1273,7 +1273,7 @@ bool spell_color_animation(int type)
  * that tells 'what kind of damage'.
  */
 bool bypass_invuln = FALSE;
-	
+
 void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 {
 	player_type *p_ptr = Players[Ind];
@@ -1498,6 +1498,15 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 
 		/* Dead */
 		return;
+	}
+
+	if (p_ptr->warning_rest == 0
+//	    && p_ptr->max_plv < 15
+	    && p_ptr->chp * 10 / p_ptr->mhp <= 5) {
+		msg_print(Ind, "\377oHINT: Press \377Rshift+r\377o to rest, so your hit points will");
+		msg_print(Ind, "\377o      regenerate faster. (Also true for mana and stamina.)");
+		p_ptr->warning_rest = 1;
+		acc_set_flags(p_ptr->accountname, ACC_WARN_REST, FALSE);
 	}
 }
 
@@ -7860,7 +7869,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Test for stair GOI already, to prevent not only damage but according effects too! - C. Blue */
 	/* Mega-Hack -- Apply "invulnerability" */
 	if (p_ptr->invuln && (!bypass_invuln)) {
-	/* 1 in 2 chance to fully deflect the damage */
+		/* 1 in 2 chance to fully deflect the damage */
 		if (magik(40)) {
 			msg_print(Ind, "The attack is fully deflected by the magic shield.");
 			if (who != PROJECTOR_TERRAIN) break_cloaking(Ind, 0);

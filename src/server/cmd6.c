@@ -8057,6 +8057,12 @@ bool unmagic(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	bool ident = FALSE;
+
+	/* Unmagic has no effect when the player is invulnerable. This prevents
+	 * stair-GoI from being canceled prematurely by unmagic mushrooms etc.
+	 */
+	if (p_ptr->invuln) return FALSE;
+
 	if (
 			set_adrenaline(Ind, 0) |
 			set_biofeedback(Ind, 0) |

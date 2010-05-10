@@ -6404,7 +6404,7 @@ int apply_dodge_chance(int Ind, int attack_level) {
 
 	/* Dodging doesn't work with a shield */
 	if (Players[Ind]->inventory[INVEN_ARM].k_idx && Players[Ind]->inventory[INVEN_ARM].tval == TV_SHIELD) return(1);
-	
+
 	/* hack: adding 1000 to attack_level means it's a ranged attack and we are
 	   supposed to halve the chance to dodge it */
 	if (attack_level > 1000) {
@@ -6422,7 +6422,7 @@ int apply_dodge_chance(int Ind, int attack_level) {
 
 	/* lower limit (townies & co), preventing calc bugs */
 	if (attack_level < 1) attack_level = 1;
-	
+
 	/* smooth out player level a little bit if it's above level 50, the cap for skill values,
 	   to provide a smoother base for the following reduction-calculation a line below. */
 	if (plev > 50) plev = 50 + (plev - 50) / 2;

@@ -766,6 +766,7 @@ errr get_obj_num_prep(u32b resf)
 /*
  * Apply a "object restriction function" to the "object allocation table"
  * This function only takes objects of a certain TVAL! - C. Blue
+ * (note that kind_is_legal_special and this function are somewhat redundant)
  */
 errr get_obj_num_prep_tval(int tval, u32b resf)
 {
@@ -9012,9 +9013,7 @@ void place_gold(struct worldpos *wpos, int y, int x, int bonus)
 
 	/* Apply "extra" magic */
 	if (rand_int(GREAT_OBJ) == 0)
-	{
 		i += randint(object_level + 1);
-	}
 
 	/* Hack -- Creeping Coins only generate "themselves" */
 	if (coin_type) i = coin_type + 1;
@@ -9350,8 +9349,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			for (bx = houses[i].x; bx < (houses[i].x + houses[i].coords.rect.width - 1); bx++)
 				for (by = houses[i].y; by < (houses[i].y + houses[i].coords.rect.height - 1); by++)
 					if ((bx == nx) && (by == ny)) inside_house = TRUE;
-	if (undepositable_artifact_p(o_ptr) && cfg.anti_arts_house && inside_house)
-	{
+	if (undepositable_artifact_p(o_ptr) && cfg.anti_arts_house && inside_house) {
 //		char	o_name[ONAME_LEN];
 //		object_desc(Ind, o_name, o_ptr, TRUE, 0);
 //		msg_format(Ind, "%s fades into the air!", o_name);

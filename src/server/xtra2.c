@@ -3811,7 +3811,51 @@ void check_experience(int Ind)
 		/* Remind how to send chat messages */
 		if (old_lev < 3 && p_ptr->lev >= 3 && p_ptr->warning_chat == 1) {
 			p_ptr->warning_chat = 0;
-			msg_print(Ind, "\374\377oHINT: You can press ':' key to chat with other players, eg greet them!");
+			msg_print(Ind, "\374\377oHINT: You can press '\377R:\377o' key to chat with other players, eg greet them!");
+		}
+
+		/* Give warning message to use word-of-recall, aimed at newbies */
+		if (old_lev < 8 && p_ptr->lev >= 8 && p_ptr->warning_wor == 0) {
+			/* scan inventory for any potions */
+			bool found_items = FALSE;
+			int i;
+			for (i = 0; i < INVEN_PACK; i++) {
+				if (!p_ptr->inventory[i].k_idx) continue;
+				if (!object_known_p(Ind, &p_ptr->inventory[i])) continue;
+				if (p_ptr->inventory[i].tval == TV_SCROLL &&
+				    p_ptr->inventory[i].sval == SV_SCROLL_WORD_OF_RECALL)
+					found_items = TRUE;
+			}
+			if (!found_items) {
+				msg_print(Ind, "\374\377yHINT: You can use scrolls of \377Rword-of-recall\377y to teleport out of a dungeon");
+				msg_print(Ind, "\374\377y      or back into it, making the tedious search for stairs obsolete!");
+			}
+			p_ptr->warning_wor = 1;
+		}
+
+		/* Give warning message to stock wound curing potions, aimed at newbies */
+		if (old_lev < 12 && p_ptr->lev >= 12 && p_ptr->warning_potions == 0) {
+#if 1
+			/* scan inventory for any potions */
+			bool found_items = FALSE;
+			int i;
+			for (i = 0; i < INVEN_PACK; i++) {
+				if (!p_ptr->inventory[i].k_idx) continue;
+				if (!object_known_p(Ind, &p_ptr->inventory[i])) continue;
+				if (p_ptr->inventory[i].tval == TV_POTION && (
+//				    p_ptr->inventory[i].sval == SV_POTION_CURE_LIGHT ||
+				    p_ptr->inventory[i].sval == SV_POTION_CURE_SERIOUS ||
+				    p_ptr->inventory[i].sval == SV_POTION_CURE_CRITICAL))
+					found_items = TRUE;
+			}
+			if (!found_items)
+#endif
+			{
+				msg_print(Ind, "\374\377oHINT: Buy potions of cure wounds from the \377Rtemple\377o in Bree. They will");
+				msg_print(Ind, "\374\377o      restore your hit points, ensuring your survival in critical situations.");
+				msg_print(Ind, "\374\377o      Ideally, create a \377Rmacro\377o for using them by a single key press!");
+			}
+			p_ptr->warning_potions = 1;
 		}
 
 		/* Give warning message to get involved with macros, aimed at newbies */
@@ -3826,7 +3870,7 @@ void check_experience(int Ind)
 					found_macroishness = TRUE;
 			/* give a warning if it seems as if this character doesn't use any macros ;) */
 			if (!found_macroishness) {
-				msg_print(Ind, "\374\377oHINT: Start getting the hang of 'macros' in order to ensure survival in");
+				msg_print(Ind, "\374\377oHINT: Start getting the hang of '\377Rmacros\377o' in order to ensure survival in");
 				msg_print(Ind, "\374\377o      critical combat situations. Ask other players and/or read the guide");
 				msg_print(Ind, "\374\377o      (text file 'TomeNET-Guide.txt' in your tomenet folder) for details!");
 			}
@@ -3861,7 +3905,10 @@ void check_experience(int Ind)
 	                break;
                 case RACE_VAMPIRE:
 //    		        if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn how to fly!");
-			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou are now able to turn into a vampire bat (#391)!");
+			if (old_lev < 20 && p_ptr->lev >= 20) {
+				msg_print(Ind, "\374\377GYou are now able to turn into a vampire bat (#391)!");
+				msg_print(Ind, "\374\377G(Press 'm' key, and choose 'use innate power', to do so.)");
+			}
 			break;
 #ifdef ENABLE_DIVINE
 		case RACE_DIVINE:
@@ -4107,7 +4154,7 @@ void check_experience(int Ind)
 		switch (p_ptr->pclass) {
 		case CLASS_ADVENTURER:
 		        if (old_lev < 6 && p_ptr->lev >= 6)
-            			msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'!");
+            			msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press 'm')");
 		        if (old_lev < 15 && p_ptr->lev >= 15)
             			msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'!");
                         /* Also update the client's 'm' menu for fighting techniques */
@@ -4120,7 +4167,7 @@ void check_experience(int Ind)
 				msg_print(Ind, "\374\377GYou learn how to cloak yourself to pass unnoticed (press 'V').");
 #endif
 		        if (old_lev < 3 && p_ptr->lev >= 3)
-            			msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'!");
+            			msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press 'm')");
 			if (old_lev < 6 && p_ptr->lev >= 6)
 		        	msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'");
 			if (old_lev < 9 && p_ptr->lev >= 9)
@@ -4138,7 +4185,10 @@ void check_experience(int Ind)
 			break;
 		case CLASS_DRUID: /* Forms gained by Druids */
 			/* compare mimic_druid in defines.h */
-			if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou learn how to change into a Cave Bear (#160) and Panther (#198)");
+			if (old_lev < 5 && p_ptr->lev >= 5) {
+				msg_print(Ind, "\374\377GYou learn how to change into a Cave Bear (#160) and Panther (#198)");
+				msg_print(Ind, "\374\377G(Press 'm' key, and choose 'use innate power', to do so.)");
+			}
 			if (old_lev < 10 && p_ptr->lev >= 10) {
 				msg_print(Ind, "\374\377GYou learn how to change into a Grizzly Bear (#191) and Yeti (#154)");
 				msg_print(Ind, "\374\377GYou learn how to walk among your brothers through deep forest.");
@@ -4159,7 +4209,7 @@ void check_experience(int Ind)
 			break;
 		case CLASS_RUNEMASTER:
 		        if (old_lev < 4 && p_ptr->lev >= 4)
-            			msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'!");
+            			msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press 'm')");
 			if (old_lev < 9 && p_ptr->lev >= 9)
 		        	msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'");
                         /* Also update the client's 'm' menu for fighting techniques */
@@ -4170,7 +4220,7 @@ void check_experience(int Ind)
 			if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou learn to keep hold of your sanity!");
 			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn to keep strong hold of your sanity!");
 			if (old_lev < 8 && p_ptr->lev >= 8)
-		        	msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'");
+		        	msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt' (press 'm')");
 			if (old_lev < 12 && p_ptr->lev >= 12)
 		        	msg_print(Ind, "\374\377GYou learn the fighting technique 'Distract'");
                         /* Also update the client's 'm' menu for fighting techniques */
@@ -4960,9 +5010,15 @@ if (season_halloween) {
 		{
 			if (!((r_ptr->flags1 & RF1_UNIQUE) || (p_ptr->pclass == CLASS_DRUID) || 
 			    ((p_ptr->pclass == CLASS_SHAMAN) && !mimic_shaman(m_ptr->r_idx)) ||
-			    (p_ptr->prace == RACE_VAMPIRE)))
-				msg_format(Ind, "\377UYou have learned the form of %s! (%d)",
+			    (p_ptr->prace == RACE_VAMPIRE))) {
+				msg_format(Ind, "\374\377UYou have learned the form of %s! (%d)",
 						r_info[m_ptr->r_idx].name+r_name, m_ptr->r_idx);
+				if (!p_ptr->warning_mimic) {
+					p_ptr->warning_mimic = 1;
+					if (p_ptr->max_plv < 10)
+						msg_print(Ind, "\374\377U(Press '\377ym\377U' key, and choose 'use innate power', to do so.)");
+				}
+			}
 		}
 	}
 
@@ -5905,6 +5961,8 @@ void player_death(int Ind)
 	bool hell=TRUE, secure = FALSE, ge_secure = FALSE, pvp = ((p_ptr->mode & MODE_PVP) != 0);
 	cptr titlebuf;
 	int death_type = -1; /* keep track of the way (s)he died, for buffer_account_for_event_deed() */
+	bool world_broadcast = TRUE;
+
 #ifdef RPG_SERVER
 	if (p_ptr->wpos.wz != 0) {
 		for (i = m_top-1; i >= 0; i--) {
@@ -5996,10 +6054,10 @@ void player_death(int Ind)
 
 		if (secure)
 		{
-			p_ptr->new_level_method=(p_ptr->wpos.wz>0?LEVEL_RECALL_DOWN:LEVEL_RECALL_UP);
-			p_ptr->recall_pos.wx=p_ptr->wpos.wx;
-			p_ptr->recall_pos.wy=p_ptr->wpos.wy;
-			p_ptr->recall_pos.wz=0;
+			p_ptr->new_level_method = (p_ptr->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
+			p_ptr->recall_pos.wx = p_ptr->wpos.wx;
+			p_ptr->recall_pos.wy = p_ptr->wpos.wy;
+			p_ptr->recall_pos.wz = 0;
 			if (ge_secure) {
 				k = 0;
 				/* reset the monster :D */
@@ -6425,6 +6483,7 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", p_ptr->mode & MODE_PV
 			/* Drop no more than 32000 gold */
 //			if (p_ptr->au > 32000) p_ptr->au = 32000;
 			/* (actually, this if-clause is not necessary) */
+			s_printf("gold_lost: carried %d, remaining ", p_ptr->au);
 			if (p_ptr->au <= 50000) ;
 			else if (p_ptr->au <= 500000) p_ptr->au = (((p_ptr->au) * 100) / (100 + ((p_ptr->au - 50000) / 4500)));
 			else p_ptr->au /= 2;
@@ -6432,10 +6491,12 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", p_ptr->mode & MODE_PV
 			if(p_ptr->max_plv >= cfg.newbies_cannot_drop){
 				/* Set the amount */
 				p_ptr->inventory[INVEN_PACK].pval = p_ptr->au;
+				s_printf("%d.\n", p_ptr->au);
 			} else {
 				invwipe(&p_ptr->inventory[INVEN_PACK]);
+				s_printf("none.\n");
 			}
-	
+
 			/* No more gold */
 			p_ptr->au = 0;
 		}
@@ -6643,8 +6704,10 @@ s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s\n", race_info[p_ptr->
 	else if (!p_ptr->total_winner) {
 		if (p_ptr->max_plv >= 5)
 			snprintf(buf, sizeof(buf), "\374\377D%s committed suicide.", p_ptr->name);
-		else
+		else {
 			snprintf(buf, sizeof(buf), "\376\377D%s committed suicide.", p_ptr->name);
+			world_broadcast = FALSE;
+		}
 		s_printf("%s (%d) committed suicide.\n", p_ptr->name, p_ptr->lev);
 		death_type = 3;
 s_printf("CHARACTER_TERMINATION: SUICIDE race=%s ; class=%s\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title);
@@ -6666,7 +6729,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 	/* bug??? evileye - shouldnt it be && */
 	if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master)) {
 #ifdef TOMENET_WORLDS
-		if (cfg.worldd_pdeath) world_msg(buf);
+		if (cfg.worldd_pdeath && world_broadcast) world_msg(buf);
 #endif
 /*		if(p_ptr->lev>1)*/
 			msg_broadcast(Ind, buf);
@@ -6709,6 +6772,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 		/* Drop no more than 32000 gold */
 //		if (p_ptr->au > 32000) p_ptr->au = 32000;
 		/* (actually, this if-clause is not necessary) */
+		s_printf("gold_lost: carried %d, remaining ", p_ptr->au);
 		if (p_ptr->au <= 50000) ;
 		else if (p_ptr->au <= 500000) p_ptr->au = (((p_ptr->au) * 100) / (100 + ((p_ptr->au - 50000) / 4500)));
 		else p_ptr->au /= 2;
@@ -6716,8 +6780,10 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 		if(p_ptr->max_plv >= cfg.newbies_cannot_drop){
 			/* Set the amount */
 			p_ptr->inventory[INVEN_PACK].pval = p_ptr->au;
+			s_printf("%d.\n", p_ptr->au);
 		} else {
 			invwipe(&p_ptr->inventory[INVEN_PACK]);
+			s_printf("none.\n");
 		}
 
 		/* No more gold */
@@ -6881,7 +6947,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 
 			/* Put him on the high score list */
 //			if(!is_admin(p_ptr) && !p_ptr->noscore && !(p_ptr->mode & MODE_EVERLASTING))
-			if(!p_ptr->noscore && !(p_ptr->mode & MODE_EVERLASTING))
+			if(!p_ptr->noscore && !(p_ptr->mode & (MODE_PVP | MODE_EVERLASTING)))
 				add_high_score(Ind);
 
 #ifdef TOMENET_WORLDS

@@ -280,7 +280,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		switch (p_ptr->pclass) {
 		case CLASS_WARRIOR:
 			m = 0;
-		        if (old_value < 50 && new_value >= 50) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I).");
+		        if (old_value < 50 && new_value >= 50) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I). ('m' key)");
 		        if (old_value < 150 && new_value >= 150) {
 	    	        	msg_print(Ind, "\374\377GYou learn how to enter defensive stance rank II.");
 	        	        if (p_ptr->combat_stance == 1) p_ptr->combat_stance_power = 1;
@@ -301,7 +301,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			break;
 		case CLASS_MIMIC:
 			m = 11;
-			if (old_value < 100 && new_value >= 100) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I).");
+			if (old_value < 100 && new_value >= 100) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I). ('m' key)");
 			if (old_value < 200 && new_value >= 200) {
 			        msg_print(Ind, "\374\377GYou learn how to enter defensive stance rank II.");
 			        if (p_ptr->combat_stance == 1) p_ptr->combat_stance_power = 1;
@@ -322,7 +322,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			break;
 		case CLASS_PALADIN:
 			m = 7;
-			if (old_value < 50 && new_value >= 50) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I).");
+			if (old_value < 50 && new_value >= 50) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I). ('m' key)");
 			if (old_value < 200 && new_value >= 200) {
     				msg_print(Ind, "\374\377GYou learn how to enter defensive stance rank II.");
 			        if (p_ptr->combat_stance == 1) p_ptr->combat_stance_power = 1;
@@ -343,7 +343,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			break;
 		case CLASS_RANGER:
 			m = 4;
-			if (old_value < 50 && new_value >= 100) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I).");
+			if (old_value < 50 && new_value >= 100) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I). ('m' key)");
 			if (old_value < 150 && new_value >= 200) {
 			        msg_print(Ind, "\374\377GYou learn how to enter defensive stance rank II.");
 			        if (p_ptr->combat_stance == 1) p_ptr->combat_stance_power = 1;
@@ -370,7 +370,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		        if (p_ptr->combat_stance) p_ptr->combat_stance_power = 3;
 		}
 		if (old_value < 40 + m * 10 && new_value >= 40 + m * 10)
-			msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'!");
+			msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press 'm')");
 		if (old_value < 90 + m * 10 && new_value >= 90 + m * 10)
 			msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'");
 		if (old_value < 160 + m * 10 && new_value >= 160 + m * 10)
@@ -380,7 +380,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		break;
 	case SKILL_ARCHERY:
 		if (old_value < 40 && new_value >= 40)
-			msg_print(Ind, "\374\377GYou learn the shooting technique 'Flare'!");
+			msg_print(Ind, "\374\377GYou learn the shooting technique 'Flare'! (press 'm')");
 		if (old_value < 80 && new_value >= 80)
 			msg_print(Ind, "\374\377GYou learn the shooting technique 'Precision shot'!");
 		if (old_value < 100 && new_value >= 100)
@@ -408,7 +408,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		} if (old_value < 310 && new_value >= 310) {
 			msg_print(Ind, "\374\377GYou somewhat recognize the usefulness of unknown ranged weapons and ammo.");
 		} if (old_value < 410 && new_value >= 410) {
-			msg_print(Ind, "\374\377GYou are able to feel curses on magical items.");
+			msg_print(Ind, "\374\377GYou feel able to sense curses on magical items.");
 #endif
 		}
 		break;
@@ -712,7 +712,7 @@ void increase_skill(int Ind, int i)
 	
 	/* also update 'C' character screen live! */
 	p_ptr->update |= (PU_BONUS);
-	p_ptr->redraw |= (PR_SKILLS | PR_PLUSSES | PR_SANITY);
+	p_ptr->redraw |= (PR_SKILLS | PR_PLUSSES | PR_SANITY | PR_HP | PR_MANA);
 
 	/* Take care of gained abilities */
 	msg_gained_abilities(Ind, old_value, i);

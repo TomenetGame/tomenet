@@ -1669,7 +1669,7 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 
 /* -------------------------------------- pval-fixing limits -------------------------------------- */
 
-	/* Never more than +3 LIFE (doesn't occur on randarts anyways, yet) or +3 EA */
+	/* Never more than +3 LIFE or +3 EA */
 	if ((a_ptr->flags1 & (TR1_LIFE | TR1_BLOWS)) && (a_ptr->pval > 3)) a_ptr->pval = 3;
 	if ((a_ptr->tval == TV_GLOVES) && (a_ptr->flags1 & TR1_BLOWS) && (a_ptr->pval > 2)) a_ptr->pval = 2;
 
@@ -1694,13 +1694,13 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
                 else if (a_ptr->pval > 10) a_ptr->pval = 10;
         }
 
-	/* Limit speed on 1-hand weapons and shields to +5 (balances both, dual-wiel and 2-handed weapons) */
+	/* Limit speed on 1-hand weapons and shields (balances both, dual-wiel and 2-handed weapons) */
 	/* Limit +LIFE to +2 under same circumstances */
-	if (k_ptr->tval == TV_SHIELD ||
-	    (is_weapon(k_ptr->tval) &&
-	    (!(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H))) ) {
-	    	if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 5)) a_ptr->pval = 5;
-		if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 2)) a_ptr->pval = 2;
+	if (k_ptr->tval == TV_SHIELD || is_weapon(k_ptr->tval)) {
+		if (!(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H)) {
+			if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 3)) a_ptr->pval = 3;
+			if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 2)) a_ptr->pval = 2;
+		} else if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 6)) a_ptr->pval = 6;
 	}
 
 	/* Note: Neither luck nor disarm can actually newly appear on a randart except if coming from k_info. */
@@ -1940,13 +1940,13 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
                 else if (a_ptr->pval > 10) a_ptr->pval = 10;
         }
 
-	/* Limit speed on 1-hand weapons and shields to +5 (balances both, dual-wiel and 2-handed weapons) */
+	/* Limit speed on 1-hand weapons and shields (balances both, dual-wiel and 2-handed weapons) */
 	/* Limit +LIFE to +2 under same circumstances */
-	if (k_ptr->tval == TV_SHIELD ||
-	    (is_weapon(k_ptr->tval) &&
-	    (!(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H))) ) {
-	    	if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 5)) a_ptr->pval = 5;
-		if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 2)) a_ptr->pval = 2;
+	if (k_ptr->tval == TV_SHIELD || is_weapon(k_ptr->tval)) {
+		if (!(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H)) {
+			if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 3)) a_ptr->pval = 3;
+			if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 2)) a_ptr->pval = 2;
+		} else if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 6)) a_ptr->pval = 6;
 	}
 
 	/* Note: Neither luck nor disarm can actually newly appear on a randart except if coming from k_info. */

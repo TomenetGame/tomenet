@@ -2824,7 +2824,7 @@ void scan_players(){
 		}
 	}
 
-	s_printf("  %d players expired.\n");
+	s_printf("  %d players expired.\n", amt);
 	s_printf("Finished player inactivity check.\n");
 }
 /*

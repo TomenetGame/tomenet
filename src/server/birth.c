@@ -2584,10 +2584,36 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	/* for automatic artifact reset */
 	p_ptr->artifact_reset = artifact_reset;
 
+
 	/* Prepare newbie-aiding warnings that ought to occur only
 	   once (not necessarily implemented like that atm) - C. Blue */
-	p_ptr->warning_run = p_ptr->warning_wield = p_ptr->warning_lite = 0;
+	p_ptr->warning_run = p_ptr->warning_wield = p_ptr->warning_lite =
+	p_ptr->warning_mimic = p_ptr->warning_dual = 0;
 	p_ptr->warning_chat = 1;
+
+	/* Disable various warnings, if the player chose a class that isn't affected primarily: */
+	if (p_ptr->pclass == CLASS_ARCHER ||
+	    p_ptr->pclass == CLASS_ADVENTURER || p_ptr->pclass == CLASS_DRUID ||
+	    p_ptr->pclass == CLASS_MAGE || p_ptr->pclass == CLASS_SHAMAN)
+		p_ptr->warning_wield = 1;
+
+	if (p_ptr->pclass == CLASS_MAGE ||
+//	    p_ptr->pclass == CLASS_RUNEMASTER ||
+	    p_ptr->pclass == CLASS_ARCHER)
+		p_ptr->warning_bpr = 1;
+
+	if (!(p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_PALADIN
+	    || p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_MIMIC
+//	    || p_ptr->pclass == CLASS_RUNEMASTER
+	    || p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_MINDCRAFTER))
+		p_ptr->warning_bpr2 = 1;
+
+	if (!(p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_PALADIN ||
+	    p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_MIMIC ||
+//	    p_ptr->pclass == CLASS_RUNEMASTER ||
+	    p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_MINDCRAFTER))
+		p_ptr->warning_bpr3 = 1;
+
 
 	/* To find out which characters crash the server */
 	s_printf("Logged in with character %s.\n", name);

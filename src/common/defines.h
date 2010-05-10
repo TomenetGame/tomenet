@@ -54,7 +54,7 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		4
 #define VERSION_PATCH		4
-#define VERSION_EXTRA		3
+#define VERSION_EXTRA		4
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -62,7 +62,7 @@
 #define VERSION_MAJOR_OUTDATED	4
 #define VERSION_MINOR_OUTDATED	4
 #define VERSION_PATCH_OUTDATED	4
-#define VERSION_EXTRA_OUTDATED	1
+#define VERSION_EXTRA_OUTDATED	3
 #define VERSION_BRANCH_OUTDATED	0
 #define VERSION_BUILD_OUTDATED	0
 
@@ -93,7 +93,7 @@
 
 /* Client-side only: Client release version tag
    (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG "c"
+#define CLIENT_VERSION_TAG "d"
 
 
 

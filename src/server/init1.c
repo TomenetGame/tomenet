@@ -1356,6 +1356,11 @@ if (!season_newyearseve) {
 #else
 		if (streq(m, "ENABLE_RCRAFT") && negation) invalid = TRUE;
 #endif
+//#ifndef PRECIOUS_STONES
+//		if (streq(m, "PRECIOUS_STONES") && !negation) invalid = TRUE;
+//#else
+//		if (streq(m, "PRECIOUS_STONES") && negation) invalid = TRUE;
+//#endif
 
 		/* List all known flags. If we hit an unknown flag, ignore the line by default! */
 		if (strcmp(m, "MAIN_SERVER") &&
@@ -1370,7 +1375,9 @@ if (!season_newyearseve) {
 		    strcmp(m, "ENABLE_STANCES") &&
 		    strcmp(m, "ENABLE_MCRAFT") &&
 		    strcmp(m, "NEW_TOMES") &&
-		    strcmp(m, "ENABLE_RCRAFT"))
+		    strcmp(m, "ENABLE_RCRAFT") &&
+//		    strcmp(m, "PRECIOUS_STONES") &&
+			TRUE)
 			invalid = TRUE;
 	}
 	

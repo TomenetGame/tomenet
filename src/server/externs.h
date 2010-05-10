@@ -125,6 +125,7 @@ extern int skill_tree_init[MAX_SKILLS][2];
 extern int month_day[9];
 extern cptr month_name[9];
 extern town_extra town_profile[6];
+extern int p_tough_ac[51];
 
 
 /* variable.c */

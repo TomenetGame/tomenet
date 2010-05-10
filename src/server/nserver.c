@@ -2525,6 +2525,9 @@ static int Handle_login(int ind)
 //		msg_print(NumPlayers, "\377RHit '?' key for help. Hit ':' to chat. Hit '@' to see who is online.");
 //		msg_print(NumPlayers, "\377R<< Welcome to TomeNET! >>");
 	}
+
+	/* warning_rest only occurs once per account */
+	if (acc_get_flags(p_ptr->accountname) & ACC_WARN_REST) p_ptr->warning_rest = 1;
 #endif
 
 #if 1
@@ -8495,6 +8498,7 @@ static int Receive_rest(int ind)
 
 			/* Set flag */
 			p_ptr->resting = TRUE;
+			p_ptr->warning_rest = 1;
 
 			/* Make sure we aren't running */
 			p_ptr->running = FALSE;

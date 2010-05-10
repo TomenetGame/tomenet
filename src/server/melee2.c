@@ -7409,22 +7409,35 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 					case CLASS_DRUID:
 					case CLASS_MIMIC:
 
+					case CLASS_MINDCRAFTER: /* rather tough? */
 					case CLASS_ROGUE: /* todo maybe: might be medium target if not crit-hitter/intercepter? */
-					case CLASS_RANGER: /* todo maybe: might be medium target if rather spell/ranged focussed? */
 						strong_targets++;
 						p_idx_strong[strong_targets] = -cd_ptr->m_idx;
 						break;
 
-					case CLASS_ARCHER:
-
-					case CLASS_RUNEMASTER:
-					case CLASS_MINDCRAFTER:
-
 					case CLASS_ADVENTURER: /* todo maybe: depends on mimic form */
-					case CLASS_SHAMAN: /* todo maybe: depends on mimic form */
+						if ((!pd_ptr->body_monster || pd_ptr->form_hp_ratio < 125)
+						    && pd_ptr->ac + pd_ptr->to_a < p_tough_ac[pd_ptr->lev > 50 ? 50 : pd_ptr->lev - 1]) {
+							weak_targets++;
+							p_idx_weak[weak_targets] = -cd_ptr->m_idx;
+							break;
+						}
+
+					case CLASS_RANGER: /* todo maybe: might be medium target if rather spell/ranged focussed? */
+					case CLASS_ARCHER:
 						medium_targets++;
 						p_idx_medium[medium_targets] = -cd_ptr->m_idx;
 						break;
+
+					case CLASS_SHAMAN: /* todo maybe: depends on mimic form */
+						if ((pd_ptr->body_monster && pd_ptr->form_hp_ratio >= 125)
+						    || pd_ptr->ac + pd_ptr->to_a >= p_tough_ac[pd_ptr->lev > 50 ? 50 : pd_ptr->lev - 1]) {
+							medium_targets++;
+							p_idx_medium[medium_targets] = -cd_ptr->m_idx;
+							break;
+						}
+
+					case CLASS_RUNEMASTER: /* medium or light? */
 
 					case CLASS_MAGE:
 					case CLASS_PRIEST: /* todo maybe: actually, priests can be skilled to make medium targets? */

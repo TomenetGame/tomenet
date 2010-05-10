@@ -4408,10 +4408,7 @@ void home_sell(int Ind, int item, int amt)
 		u32b f1, f2, f3, f4, f5, esp;
 		if (item >= INVEN_WIELD)
 		{
-			/* Oops */
 			msg_print(Ind, "Hmmm, it seems to be cursed.");
-
-			/* Stop */
 			return;
 		}
 
@@ -4419,22 +4416,15 @@ void home_sell(int Ind, int item, int amt)
 
 		if (f4 & TR4_CURSE_NO_DROP)
 		{
-			/* Oops */
 			msg_print(Ind, "Hmmm, you seem to be unable to drop it.");
-
-			/* Nope */
 			return;
 		}
 	}
 
 #endif
 
-	if (cfg.anti_arts_house && undepositable_artifact_p(o_ptr))
-	{
-		/* Oops */
+	if (cfg.anti_arts_house && undepositable_artifact_p(o_ptr)) {
 		msg_print(Ind, "You cannot stock this artifact.");
-
-		/* Stop */
 		return;
 	}
 
@@ -4489,9 +4479,9 @@ void home_sell(int Ind, int item, int amt)
 	/* Handle stuff */
 	handle_stuff(Ind);
 
-	/* Artifact won't be sold in a store */
-	if ((cfg.anti_arts_shop || p_ptr->total_winner) && true_artifact_p(&sold_obj))
-	{
+	/* Artifact won't be deposited in your home */
+	if (undepositable_artifact_p(&sold_obj) &&
+	    (cfg.anti_arts_house || (p_ptr->total_winner && !winner_artifact_p(o_ptr)))) {
 		handle_art_d(sold_obj.name1);
 		return;
 	}
