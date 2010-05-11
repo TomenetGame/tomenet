@@ -959,7 +959,7 @@ void get_char_info(void)
 	choose_stat_order();
 
 	/* Choose character mode */
-	choose_mode();
+	if (!s_RPG && !s_RPG_ADMIN) choose_mode();
 	
 	/* Clear */
 	clear_from(15);
