@@ -1969,7 +1969,7 @@ Those macros basically consist of three parts.
    an attack queue if you hammer the trigger button for a ranged attack).
 2. Designating a target.
 3. Attacking the designated target.
-How does the macro look like? (Note: Keys could vary depending on your
+What does the macro look like? (Note: Keys could vary depending on your
 key set definitions. Throwing might be 't' instead of 'v' etc.)
 For..
 a) casting a magical spell
@@ -2012,6 +2012,8 @@ a) casting a magical spell
     'c) cast a spell' which would require you to redefine your macros.
     Fortunately there is a way around this, by using Ability Codes instead of
     letters to pick a skill to use. See 'Ability codes' below.
+    Further, in (3.9b) a way of casting spells (or using items in general)
+    without relying on inscriptions at all will be explained!
 b) throwing an item at a monster (or player)
     Throwing would be done by pressing 'v', followed by the item and either
     one of the 8 directions or '*t' to designate the closest enemy as the
@@ -2157,6 +2159,10 @@ a   ->  cast spell "a)" (Manathrust)
 mb2a*t
 ..assumed that entry 'b)' in the ability menu (invoked by 'm') is
 'b) Cast a spell'. Except for escaping and clearing the keyboard buffer.)
+
+An even better way to cast spells is to not rely on book inscriptions, but to
+cast spells by name instead. That way you won't have to redo spells when your
+books change. See (3.9b) for details.
 
 
 (3.7b) Quick'n'dirty macros
