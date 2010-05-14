@@ -6363,6 +6363,8 @@ void run_step(int Ind, int dir)
 	/* Keep running */
 	else
 	{
+		p_ptr->warning_run = 1;
+
 		prev_dir = p_ptr->find_prevdir;
 
 		/* Update run */

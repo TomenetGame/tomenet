@@ -1108,7 +1108,8 @@ static byte player_init[2][MAX_CLASS][5][3] =
 		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0 },
 		{ TV_RUNE2, SV_RUNE2_FIRE, 0 },
 		{ TV_RUNE2, SV_RUNE2_COLD, 0 },
-		{ TV_POTION2, SV_POTION2_CURE_LIGHT_SANITY, 0 },
+		{ TV_STAFF, SV_STAFF_DETECT_GOLD, 30 },
+//		{ TV_POTION2, SV_POTION2_CURE_LIGHT_SANITY, 0 },
 #endif
 	},
 	{
@@ -1226,17 +1227,18 @@ static byte player_init[2][MAX_CLASS][5][3] =
 	{
 		/* Runemaster */
 #ifndef ENABLE_RCRAFT
+		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
+		{ TV_CLOAK, SV_CLOAK, 0 },
 		{ TV_RUNE1, SV_RUNE1_BOLT, 0 },
 		{ TV_RUNE2, SV_RUNE2_FIRE, 0 },
 		{ TV_RUNE2, SV_RUNE2_COLD, 0 },
+#else
 		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
 		{ TV_CLOAK, SV_CLOAK, 0 },
-#else
-		{ 255, 255, 0 },
-		{ TV_CLOAK, SV_CLOAK, 0 },
-		{TV_RUNE2, SV_RUNE2_WIND, 0 },
-		{ 255, 255, 0 },
-		{ 255, 255, 0 },
+		{ TV_RUNE2, SV_RUNE2_FIRE, 0 },
+		{ TV_RUNE2, SV_RUNE2_COLD, 0 },
+		{ TV_STAFF, SV_STAFF_DETECT_GOLD, 30 },
+//		{ TV_POTION2, SV_POTION2_CURE_LIGHT_SANITY, 0 },
 #endif
 	},
 	{

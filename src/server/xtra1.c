@@ -2898,6 +2898,8 @@ void calc_boni(int Ind)
 	    u32b f1, f2, f3, f4, f5, esp;
 		s16b pval;
 
+	bool old_auto_id = p_ptr->auto_id;
+
 	/* Save the old speed */
 	old_speed = p_ptr->pspeed;
 
@@ -5899,6 +5901,14 @@ void calc_boni(int Ind)
 	/* Display the speed (if needed) */
 	if (p_ptr->pspeed != old_speed) p_ptr->redraw |= (PR_SPEED);
 
+
+	/* swapping in AUTO_ID items will instantly ID inventory and equipment */
+	if (p_ptr->auto_id && !old_auto_id)
+		for (i = 0; i < INVEN_TOTAL; i++) {
+			o_ptr = &p_ptr->inventory[i];
+			object_aware(Ind, o_ptr);
+			object_known(o_ptr);
+		}
 
 
 /* -------------------- Limits -------------------- */

@@ -31,7 +31,7 @@ CHARM = add_spell
 ]]
 CONFUSE = add_spell
 {
-	["name"] = 	"Confuse",
+	["name"] = 	"Confusion",
         ["school"] = 	{SCHOOL_MIND},
         ["level"] = 	5,
         ["mana"] = 	5,

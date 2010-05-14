@@ -54,7 +54,7 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		4
 #define VERSION_PATCH		4
-#define VERSION_EXTRA		4
+#define VERSION_EXTRA		5
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -62,7 +62,7 @@
 #define VERSION_MAJOR_OUTDATED	4
 #define VERSION_MINOR_OUTDATED	4
 #define VERSION_PATCH_OUTDATED	4
-#define VERSION_EXTRA_OUTDATED	3
+#define VERSION_EXTRA_OUTDATED	4
 #define VERSION_BRANCH_OUTDATED	0
 #define VERSION_BUILD_OUTDATED	0
 
@@ -86,14 +86,14 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	4
-#define SF_VERSION_PATCH	5
+#define SF_VERSION_PATCH	6
 #define SF_VERSION_EXTRA	0
 
 
 
 /* Client-side only: Client release version tag
    (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG "d"
+#define CLIENT_VERSION_TAG "e"
 
 
 
@@ -136,6 +136,7 @@
 /* Allow a bunch of latest experimental changes to be compiled into this build? */
 
 #define ENABLE_RUNEMASTER	/* enable runemaster class */
+#define ENABLE_RCRAFT		/* New runecraft class - relsiet (toggles new alternative code for ENABLE_RUNEMASTER) */
 
 #define ENABLE_NEW_MELEE	/* shields may block, weapons may parry */
 #define DUAL_WIELD		/* rogues (and others too now) may dual-wield 1-hand weapons */
@@ -164,7 +165,7 @@
 /* --------------------- Server-type dependant features -------------------- */
 
 #ifdef RPG_SERVER
- #define ENABLE_RCRAFT		/* New runecraft class - relsiet (toggles new alternative code for ENABLE_RUNEMASTER) */
+// #define PRECIOUS_STONES
 
  #define ENABLE_DIVINE		/* enable RACE_DIVINE */
 
@@ -2225,6 +2226,9 @@ that keeps many algorithms happy.
 #define TV_RUNE1        104      /* Base runes */
 #define TV_RUNE2        105      /* Modifier runes */
 
+//gemstones
+#define TV_GEM		106
+
 /* some masks (originally just is_armour for XBM control) - C. Blue */
 #define is_ammo(tval)	(((tval) == TV_SHOT) || ((tval) == TV_ARROW) || ((tval) == TV_BOLT))
 #define is_weapon(tval)	(((tval) == TV_SWORD) || ((tval) == TV_BLUNT) || ((tval) == TV_AXE) || ((tval) == TV_POLEARM))
@@ -2312,7 +2316,7 @@ that keeps many algorithms happy.
  //New runes (k_info.txt)
  #define SV_RUNE2_FIRE   	 0
  #define SV_RUNE2_COLD   	 1
- #define SV_RUNE2_ACID   	 2 
+ #define SV_RUNE2_ACID   	 2
  #define SV_RUNE2_WATER   	 3
 
  #define SV_RUNE2_ELEC   	 4
@@ -3209,6 +3213,52 @@ that keeps many algorithms happy.
 #define SV_CUSTOM_TOME_2	101
 #define SV_CUSTOM_TOME_3	102
 
+
+/* For precious stones (TV_PRECIOUS_STONE) */
+/* order is from least rare to most rare (thanks, http://magmawiki.com/index.php/40d:Gem and some creative writing) */
+#define PRECIOUS_STONE_MAX_TIER1_START	1
+#define PRECIOUS_STONE_MAX_TIER1_END	3
+
+#define PRECIOUS_STONE_MAX_TIER2_START	11
+#define PRECIOUS_STONE_MAX_TIER2_END	18
+
+#define PRECIOUS_STONE_MAX_TIER3_START	21
+#define PRECIOUS_STONE_MAX_TIER3_END	28
+
+#define PRECIOUS_STONE_MAX_TIER4_START	31
+#define PRECIOUS_STONE_MAX_TIER4_END	32
+
+/* "cheap" tier; keep this to a minimum since we dont want lowbies to run around with too many stones */ 
+#define SV_PRECIOUS_STONE_JADE		1
+#define SV_PRECIOUS_STONE_CARNELIAN	2
+#define SV_PRECIOUS_STONE_OPAL		3
+
+/* "medium" tier */
+#define SV_PRECIOUS_STONE_MELANITE	11
+#define SV_PRECIOUS_STONE_TOURMALINE	12
+#define SV_PRECIOUS_STONE_AMETHYST	13
+#define SV_PRECIOUS_STONE_AQUAMARINE	14
+#define SV_PRECIOUS_STONE_MOONSTONE	15
+#define SV_PRECIOUS_STONE_CHRYSOBERYL 	16
+#define SV_PRECIOUS_STONE_TOPAZ		17
+#define SV_PRECIOUS_STONE_CATS_EYE	18
+
+/* "rare" tier */
+#define SV_PRECIOUS_STONE_RUBY	 		21
+#define SV_PRECIOUS_STONE_STAR_SAPPHIRE		22
+#define SV_PRECIOUS_STONE_INDIGO_TOURMALINE	23
+#define SV_PRECIOUS_STONE_FAINT_YELLOW_DIAMOND	24
+#define SV_PRECIOUS_STONE_DIAMOND		25
+#define SV_PRECIOUS_STONE_BLACK_DIAMOND		26
+#define SV_PRECIOUS_STONE_YELLOW_DIAMOND	27
+#define SV_PRECIOUS_STOE_TSAVORITE		28
+
+/* "unobtainium" tier (Thanks, Andur) */
+#define SV_PRECIOUS_STONE_QUASAR	31
+#define SV_PRECIOUS_STONE_ZUONIUM	32
+
+/* sub-section of "unobtainium": specific mobs drop this. take out of the group */
+#define SV_PRECIOUS_STONE_DORS_EYE	41 // Dor's Eye... Guess where it's going to be dropped by? 
 
 /* for invalid items */
 #define SV_SEAL_INVALID		0
