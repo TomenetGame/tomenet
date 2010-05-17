@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 8. May 2010 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.4d - official websites are:
+| Latest update: 18. May 2010 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.4e - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 +---
@@ -6927,26 +6927,27 @@ Runemaster
     For more information about runes, see '(5.20) Runes & Runemastery'.
 
 Mindcrafter
-    Mindcrafters are a fair melee fighters who specialize in use of telepathy
-    to unleash spells formed by their psychic powers. They have a lot of
-    possibilities to positively or negatively influence the minds of others,
-    and will have reduced repertoire if they are up against creatures of
-    little or no intelligence. Their primary stat attribute is intelligence,
-    which determines their spell fail rates as well as the most part of their
-    mana pool. Also somewhat affecting the mana pool are their secondary and
-    tertiary attributes charisma and wisdom, although especially wisdom is
-    hardly of any importance to become an able telepathy user.
-    Despite being focussed on sharpening their mind, they don't lack stealth
-    or close combat potential. Except that wearing very heavy head gear might
-    negatively impact their amount of psychic energy.
-    Mindcrafters will be able to resist sanity-draining effects a little bit
-    at level 10, and somewhat more even at level 20.
+    Mindcrafters are a good melee fighters who additionally train the use of
+    telepathy to unleash spells formed by their psychic powers.
+    They have a lot of possibilities to positively or negatively influence the
+    minds of others, their repertoire being somewhat more limited only if they
+    are up against creatures of little or no intelligence.
+    Their primary stat attribute is intelligence, which determines their spell
+    fail rates as well as the most part of their mana pool. Also somewhat
+    affecting the mana pool are their secondary and tertiary attributes,
+    charisma and wisdom, although especially wisdom is hardly of any importance
+    to become an able telepathy user.
+    They don't lack stealth and are adept at wearing decent armour, except that
+    putting on too heavy head gear might negatively impact their amount of
+    psychic energy.
+    Mindcrafters will learn to resist sanity-draining effects a bit at level
+    10, and somewhat better even at level 20.
     Some of the mindcrafter's spells that interact with friendly targets,
     mostly his team mates, will require those to prepare and open their mind
     to become especially sensitive to telepathic contact. This is done by
     pressing 'p'. Pressing it again will return one's mind to normal.
     The effects of some necromancy skills are somewhat distracting to
-    mindcrafters, so training them may require a slightly more effort.
+    mindcrafters, so training them may require somewhat more effort.
 
 
 If you raise in levels, you will get new titles. These are displayed between
