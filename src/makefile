@@ -218,7 +218,9 @@ X11BASE = /usr/X11R6
 CFLAGS = -g -pipe -Wall -D"USE_X11" -D"USE_GCU" -I${X11BASE}/include -DDEFAULT_PATH="\"./lib\"" -O2 -Wmissing-declarations -Wnested-externs -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937
 #CFLAGS = -g -pipe -Wall -Wuninitialized -D"USE_X11" -D"USE_GCU" -I${X11BASE}/include -DDEFAULT_PATH="\"./lib\"" -O3 -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs
 #-Werror
-LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm -lSDL -lSDL_mixer
+LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
+#for new sound system USE_SOUND_2010 linking SDL and SDL_mixer dev files will be required (currently being worked on) -C. Blue
+#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm -lSDL -lSDL_mixer
 
 
 ##
