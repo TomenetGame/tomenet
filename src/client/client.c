@@ -347,6 +347,15 @@ int main(int argc, char **argv)
 		puts("  -N<name>           character Name");
 		puts("  -p<num>            change game Port number");
 		puts("  -P<path>           set the lib directory Path");
+
+#ifdef USE_SOUND_2010
+#if 0 //we don't have 'modules' for everything, yet :-p only sound_modules for now - C. Blue
+		/* Print the name and help for each available module */
+		for (i = 0; i < (int)N_ELEMENTS(modules); i++)
+			printf("     %s   %s\n", modules[i].name, modules[i].help);
+#endif
+#endif
+
 		quit(NULL);
 	}
 
@@ -463,7 +472,37 @@ int main(int argc, char **argv)
 	/* Attempt to read default name/password from mangrc file */
 
 	done = (modus > 2 || skip) ? TRUE : FALSE;
-	
+
+
+#if 0 //moving this to c-init.c, because ANGBAND_DIR_XTRA isn't initialized here yet- C. Blue
+#ifdef USE_SOUND_2010
+ #if 0
+	/* Hack -- Forget standard args */
+	if (TRUE) {//if (args) {
+		argc = 1;
+		argv[1] = NULL;
+	}
+ #endif
+
+	/* Try the modules in the order specified by sound_modules[] */
+ #if 0//pfft doesnt work, dunno why ('incomplete type' error)
+	for (i = 0; i < (int)N_ELEMENTS(sound_modules) - 1; i++) {
+ #endif
+	for (i = 0; i < 2; i++) {//we should've 2 hard-coded atm: SDL and dummy -_-
+		if (0 == sound_modules[i].init(argc, argv)) {
+ #if 1//just USE_SOUND_2010 debug
+			puts(format("USE_SOUND_2010: successfully loaded module %d.", i));
+ #endif
+			break;
+		}
+	}
+ #if 1//just USE_SOUND_2010 debug
+	puts("USE_SOUND_2010: done loading modules");
+ #endif
+#endif
+#endif
+
+
 #ifdef UNIX_SOCKETS
 	/* Always call with NULL argument */
 	client_init(NULL, done);
@@ -479,6 +518,7 @@ int main(int argc, char **argv)
 		client_init(NULL, done);
 	}
 #endif
+
 
 	return 0;
 }

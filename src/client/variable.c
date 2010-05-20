@@ -156,8 +156,11 @@ cptr ANGBAND_DIR_XTRA;
 
 
 bool use_graphics;
+#ifdef USE_SOUND_2010
+bool use_sound = TRUE; //ought to be set via TOMENET_SOUND environment var in linux, probably (compare TOMENET_GRAPHICS) -C. Blue
+#else
 bool use_sound;
-
+#endif
 
 
 client_opts c_cfg;
@@ -257,3 +260,25 @@ char depth_name[MAX_CHARS];
 
 /* Can macro triggers consist of multiple keys? */
 bool multi_key_macros = FALSE;
+
+
+#ifdef USE_SOUND_2010
+void (*sound_hook)(int sound);
+void (*music_hook)(int music);
+
+/* Standard sound (and message) names */
+const cptr angband_sound_name[SOUND_MAX_2010] = {
+    "",
+    "hit",
+    "miss",
+};
+
+/* Standard music names */
+const cptr angband_music_name[MUSIC_MAX] = {
+    "",
+    "generic",
+    "Bree",
+    "Barrow-Downs",
+    "The_Training_Tower",
+};
+#endif

@@ -459,7 +459,12 @@
 /*
  * OPTION: Allow the use of "sound" in various places.
  */
-/* #define USE_SOUND */
+
+/* --new sound system 'USE_SOUND_2010' in place utilizing SDL, state is experimental- C. Blue
+#define USE_SOUND
+#define USE_SOUND_2010
+#define SOUND_SDL
+*/
 
 /*
  * OPTION: Allow the use of "graphics" in various places

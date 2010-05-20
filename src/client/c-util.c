@@ -1852,6 +1852,20 @@ void c_message_add(cptr str)
         /* Important Hack -- Ignore "long" messages */
         if (n >= MESSAGE_BUF / 4) return;
 
+#ifdef USE_SOUND_2010 //just for quick testing if it works ;) -C. Blue
+	if (strstr(str, "You enter ") || strstr(str, "You float into ") || strstr(str, "You are transported into ")) {
+		if (strstr(str, "Barrow-Downs")) {
+			puts("USE_SOUND_2010: attempting to play");
+			music(3);
+		} else if (strstr(str, "The Training Tower")) {
+			puts("USE_SOUND_2010: attempting to play");
+			music(4);
+		}
+	} else if (strstr(str, "You leave ") || strstr(str, "You float out of ") || strstr(str, "You are transported out of ")) {
+		puts("USE_SOUND_2010: attempting to play");
+		music(2);//avoid sound #0 (dubbed 'generic', probably nothing)
+	}
+#endif
 
         /*** Step 2 -- Attempt to optimize ***/
 
@@ -4266,6 +4280,12 @@ void do_cmd_options(void)
 	char tmp[1024];
 
 
+#ifdef USE_SOUND_2010 //just for quick testing if it works ;) -C. Blue
+	puts("USE_SOUND_2010: attempting to play");
+	sound(rand_int(SOUND_MAX_2010 - 1) + 1);//avoid sound #0 (dubbed 'generic', probably nothing)
+#endif
+
+
 	/* Save the screen */
 	Term_save();
 
@@ -4810,3 +4830,35 @@ bool is_newer_than(version_type *version, int major, int minor, int patch, int e
 	/* Default */
 	return FALSE;
 }
+
+#ifdef USE_SOUND_2010
+void sound(int val) {
+	if (!use_sound) {
+#if 1 //just debug- C. Blue
+		puts("USE_SOUND_2010: use_sound set wrong oO");
+#endif
+		return;
+	}
+
+	/* play a sound */
+	if (sound_hook) sound_hook(val);
+#if 1 //just debug- C. Blue
+	else puts("USE_SOUND_2010: sound_hook missing");
+#endif
+}
+
+void music(int val) {
+	if (!use_sound) {
+#if 1 //just debug- C. Blue
+		puts("USE_SOUND_2010: use_sound set wrong oO");
+#endif
+		return;
+	}
+
+	/* play a sound */
+	if (music_hook) music_hook(val);
+#if 1 //just debug- C. Blue
+	else puts("USE_SOUND_2010: music_hook missing");
+#endif
+}
+#endif

@@ -88,7 +88,7 @@ CLI_SRCS = \
   client/variable.c client/main-ibm.c client/main-cap.c client/main-gcu.c \
   client/main-x11.c client/main-xaw.c client/nclient.c client/c-birth.c \
   client/c-xtra1.c client/c-xtra2.c client/c-spell.c client/client.c \
-  client/skills.c common/files.c common/SFMT.c
+  client/skills.c common/files.c common/SFMT.c client/snd-sdl.c
 
 CLI_OBJS = \
   common/z-util.o common/z-virt.o common/z-form.o common/z-rand.o \
@@ -98,7 +98,7 @@ CLI_OBJS = \
   client/variable.o client/main-ibm.o client/main-cap.o client/main-gcu.o \
   client/main-x11.o client/main-xaw.o client/nclient.o client/c-birth.o \
   client/c-xtra1.o client/c-xtra2.o client/c-spell.o client/client.o \
-  client/skills.o common/files.o common/SFMT.o
+  client/skills.o common/files.o common/SFMT.o client/snd-sdl.o
 
 
 CONS_SRCS = \
@@ -108,7 +108,7 @@ CONS_SRCS = \
   client/main-ibm.c client/main-cap.c client/main-gcu.c \
   client/main-x11.c client/main-xaw.c client/c-tables.c \
   console/variable.c console/c-util.c console/console.c console/c-init.c \
-  common/SFMT.c
+  common/SFMT.c client/snd-sdl.c
 
 CONS_OBJS = \
   common/z-util.o common/z-virt.o common/z-form.o common/net-unix.o \
@@ -117,7 +117,7 @@ CONS_OBJS = \
   client/main-ibm.o client/main-cap.o client/main-gcu.o \
   client/main-x11.o client/main-xaw.o client/c-tables.o \
   console/variable.o console/c-util.o console/console.o console/c-init.o \
-  common/SFMT.o
+  common/SFMT.o client/snd-sdl.o
 
 
 LUASRCS = \
@@ -218,7 +218,7 @@ X11BASE = /usr/X11R6
 CFLAGS = -g -pipe -Wall -D"USE_X11" -D"USE_GCU" -I${X11BASE}/include -DDEFAULT_PATH="\"./lib\"" -O2 -Wmissing-declarations -Wnested-externs -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937
 #CFLAGS = -g -pipe -Wall -Wuninitialized -D"USE_X11" -D"USE_GCU" -I${X11BASE}/include -DDEFAULT_PATH="\"./lib\"" -O3 -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs
 #-Werror
-LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
+LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm -lSDL -lSDL_mixer
 
 
 ##

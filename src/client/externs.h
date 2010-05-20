@@ -729,3 +729,33 @@ extern r_imper r_imperatives[RG_MAX];
 extern r_type runespell_types[8];
 #endif
 
+
+#ifdef USE_SOUND_2010
+#define SOUND_MAX_2010 3 /*for experimenting purpose - C. Blue*/
+#define MUSIC_MAX 5 /*for experimenting purpose - C. Blue*/
+//externs.h:
+extern void (*sound_hook)(int);
+extern void (*music_hook)(int);
+extern void sound(int val);
+extern void music(int val);
+extern const cptr angband_sound_name[SOUND_MAX_2010];
+extern const cptr angband_music_name[MUSIC_MAX];
+
+//defines.h:
+/* Given an array, determine how many elements are in it: */
+//note: appearently doesnt work for the main purpose ie sound_modules -_- -C. Blue
+#define N_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+
+//main.h:
+struct module {
+	cptr name;
+	cptr help;
+	errr (*init)(int argc, char **argv);
+};
+extern const struct module sound_modules[];
+extern errr init_sound_sdl(int argc, char **argv);
+
+//z-files.h:
+extern bool my_fexists(const char *fname);
+#endif
+
