@@ -1,4 +1,3 @@
-/* $Id$ */
 #include "angband.h"
 
 #define MACRO_USE_CMD	0x01

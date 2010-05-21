@@ -1,4 +1,3 @@
-/* $Id$ */
 /* File: externs.h */
 
 /* Purpose: extern declarations (variables and functions) */

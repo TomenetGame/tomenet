@@ -45,7 +45,7 @@ static void fadein_next_music(void);
 #define MAX_SAMPLES	8
 
 /* Arbitary limit on number of music songs per situation */
-#define MAX_SONGS	1
+#define MAX_SONGS	3
 
 /* Struct representing all data about an event sample */
 typedef struct {
@@ -153,10 +153,10 @@ static bool sound_sdl_init(bool no_cache) {
 	/* Initialise the mixer  */
 	if (!open_audio()) return FALSE;
 
+	puts("USE_SOUND_2010: sound_sdl_init() opened audio");//debug
+
 	/* set hook for fading over to next song */
 	Mix_HookMusicFinished(fadein_next_music);
-
-	puts("USE_SOUND_2010: sound_sdl_init() opened audio/mixer");//debug
 
 
 	/* ------------------------------- Init Sounds */
@@ -205,7 +205,7 @@ static bool sound_sdl_init(bool no_cache) {
 
 		/* Make sure this is a valid event name */
 		for (event = SOUND_MAX_2010 - 1; event >= 0; event--) {
-			lua_name = string_exec_lua(0, format("return get_sound_name(%d)", event + 1));//lua tables start at index 1, not 0
+			lua_name = string_exec_lua(0, format("return get_sound_name(%d)", event));
 			if (!strlen(lua_name)) continue;
 			if (strcmp(cfg_name, lua_name) == 0) break;
 		}
@@ -278,8 +278,6 @@ static bool sound_sdl_init(bool no_cache) {
 	/* Close the file */
 	my_fclose(fff);
 
-	puts("USE_SOUND_2010: sound_sdl_init() sound.cfg done.");//debug
-
 
 	/* ------------------------------- Init Music */
 
@@ -325,10 +323,9 @@ static bool sound_sdl_init(bool no_cache) {
 		cfg_name = buffer;
 		search[0] = '\0';
 
-
 		/* Make sure this is a valid event name */
 		for (event = MUSIC_MAX - 1; event >= 0; event--) {
-			lua_name = string_exec_lua(0, format("return get_music_name(%d)", event + 1));//lua tables start at index 1, not 0
+			lua_name = string_exec_lua(0, format("return get_music_name(%d)", event));
 			if (!strlen(lua_name)) continue;
 			if (strcmp(cfg_name, lua_name) == 0) break;
 		}
@@ -340,7 +337,16 @@ static bool sound_sdl_init(bool no_cache) {
 
 		/* Terminate the current token */
 		cur_token = song_list;
-		search = strchr(cur_token, ' ');
+		if (cur_token[0] == '\"') {
+			cur_token++;
+			search = strchr(cur_token, '\"');
+			if (search) {
+				search[0] = '\0';
+				search = strchr(search + 1, ' ');
+			}
+		} else {
+			search = strchr(cur_token, ' ');
+		}
 		if (search) {
 			search[0] = '\0';
 			next_token = search + 1;
@@ -369,8 +375,9 @@ static bool sound_sdl_init(bool no_cache) {
 				/* Load the file now */
 				songs[event].wavs[num] = Mix_LoadMUS(path);
 				if (!songs[event].wavs[num]) {
+//					puts(format("PRBPATH: lua_name %s, ev %d, num %d, path %s", lua_name, event, num, path));
 					plog_fmt("%s: %s", SDL_GetError(), strerror(errno));
-					puts(format("%s: %s", SDL_GetError(), strerror(errno)));//DEBUG USE_SOUND_2010
+//					puts(format("%s: %s", SDL_GetError(), strerror(errno)));//DEBUG USE_SOUND_2010
 					goto next_token_mus;
 				}
 			}
@@ -384,8 +391,16 @@ static bool sound_sdl_init(bool no_cache) {
 			cur_token = next_token;
 			if (next_token) {
 				/* Try to find a space */
-				search = strchr(cur_token, ' ');
-
+				if (cur_token[0] == '\"') {
+					cur_token++;
+					search = strchr(cur_token, '\"');
+					if (search) {
+						search[0] = '\0';
+						search = strchr(search + 1, ' ');
+					}
+				} else {
+					search = strchr(cur_token, ' ');
+				}
 				/* If we can find one, terminate, and set new "next" */
 				if (search) {
 					search[0] = '\0';
@@ -401,7 +416,7 @@ static bool sound_sdl_init(bool no_cache) {
 	/* Close the file */
 	my_fclose(fff);
 
-	puts("USE_SOUND_2010: sound_sdl_init() all done.");//debug
+	puts("USE_SOUND_2010: sound_sdl_init() done.");//debug
 
 	/* Success */
 	return TRUE;

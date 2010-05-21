@@ -1,4 +1,3 @@
-/* $Id$ */
 #include "angband.h"
 
 /* Client global variables */
