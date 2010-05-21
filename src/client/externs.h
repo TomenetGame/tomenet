@@ -741,6 +741,7 @@ extern void (*music_hook)(int);
 extern void sound(int val);
 extern void music(int val);
 extern void sound_weather(int val);
+//extern void sdl_fadeout(void);
 extern int music_next, weather_channel;
 
 //defines.h:

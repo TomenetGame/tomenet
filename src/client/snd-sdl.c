@@ -37,6 +37,10 @@ static bool no_cache_audio = FALSE;
 static const char *ANGBAND_DIR_XTRA_SOUND;
 
 
+/* declare */
+static void fadein_next_music(void);
+
+
 /* Arbitary limit on number of samples per event */
 #define MAX_SAMPLES	8
 
@@ -148,6 +152,9 @@ static bool sound_sdl_init(bool no_cache) {
 
 	/* Initialise the mixer  */
 	if (!open_audio()) return FALSE;
+
+	/* set hook for fading over to next song */
+	Mix_HookMusicFinished(fadein_next_music);
 
 	puts("USE_SOUND_2010: sound_sdl_init() opened audio/mixer");//debug
 
@@ -488,6 +495,18 @@ static void play_sound_weather(int event) {
 /*
  * Play a music of type "event".
  */
+static void play_music(int event) {
+	music_next = event;
+
+	/* check if music is already running, if so, fade it out first! */
+	if (Mix_PlayingMusic()) {
+		if (Mix_FadingMusic() == MIX_NO_FADING) Mix_FadeOutMusic(1500);
+		return;
+	} else {
+		//play immediately
+		fadein_next_music();
+	}
+}
 static void fadein_next_music(void) {
 	Mix_Music *wave = NULL;
 	int s;
@@ -522,17 +541,6 @@ static void fadein_next_music(void) {
 	music_next = -1;
 //	Mix_PlayMusic(wave, -1);//-1 infinite, 0 once, or n times
 	Mix_FadeInMusic(wave, -1, 2000);
-}
-static void play_music(int event) {
-	/* check if music is already running, if so, fade it out first! */
-	if (Mix_PlayingMusic()) {
-		Mix_FadeOutMusic(1500);
-		Mix_HookMusicFinished(fadein_next_music);
-		return;
-	} else {
-		//play immediately
-		fadein_next_music();
-	}
 }
 
 /*
@@ -584,6 +592,8 @@ puts("\n");//plog seems to mess up display? -- just for following debug puts() f
 	return (0);
 }
 
+/* when quitting the game maybe */
+//void sdl_fadeout(void) { Mix_FadeOutChannel(-1, 1000); }
 
 //extra code I moved here for USE_SOUND_2010, for porting
 //this stuff from angband into here. it's part of angband's z-files.c..- C. Blue
