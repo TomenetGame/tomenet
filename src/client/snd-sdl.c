@@ -472,7 +472,7 @@ static void play_sound_weather(int event) {
 		return;
 	}
 	else if (event == -1) {
-		Mix_FadeOutChannel(weather_channel, 3000);
+		Mix_FadeOutChannel(weather_channel, 2000);
 		return;
 	}
 
@@ -515,7 +515,7 @@ static void play_music(int event) {
 
 	/* check if music is already running, if so, fade it out first! */
 	if (Mix_PlayingMusic()) {
-		if (Mix_FadingMusic() == MIX_NO_FADING) Mix_FadeOutMusic(1500);
+		if (Mix_FadingMusic() == MIX_NO_FADING) Mix_FadeOutMusic(500);
 		return;
 	} else {
 		//play immediately
@@ -555,7 +555,7 @@ static void fadein_next_music(void) {
 	/* Actually play the thing */
 	music_next = -1;
 //	Mix_PlayMusic(wave, -1);//-1 infinite, 0 once, or n times
-	Mix_FadeInMusic(wave, -1, 2000);
+	Mix_FadeInMusic(wave, -1, 1500);
 }
 
 /*
@@ -608,7 +608,7 @@ puts("\n");//plog seems to mess up display? -- just for following debug puts() f
 }
 
 /* when quitting the game maybe */
-//void sdl_fadeout(void) { Mix_FadeOutChannel(-1, 1000); }
+//void sdl_fadeout(void) { Mix_FadeOutChannel(-1, 500); }
 
 //extra code I moved here for USE_SOUND_2010, for porting
 //this stuff from angband into here. it's part of angband's z-files.c..- C. Blue
