@@ -207,6 +207,7 @@
 #define PKT_STORE_WIDE		181	/* for browsing custom books in home/stores */
 
 #define PKT_FORCE_STACK		182	/* force stacking of level 0 items with normal-level items in your inventory */
+#define PKT_MUSIC		183	/* background music */
 
 /*
  * Possible error codes returned
