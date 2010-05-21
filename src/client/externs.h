@@ -729,17 +729,19 @@ extern r_imper r_imperatives[RG_MAX];
 extern r_type runespell_types[8];
 #endif
 
+extern const cptr angband_sound_name[SOUND_MAX];
 
 #ifdef USE_SOUND_2010
-#define SOUND_MAX_2010 3 /*for experimenting purpose - C. Blue*/
-#define MUSIC_MAX 5 /*for experimenting purpose - C. Blue*/
+#define SOUND_MAX_2010 200 /*for experimenting purpose - C. Blue*/
+#define MUSIC_MAX 50 /*for experimenting purpose - C. Blue*/
 //externs.h:
 extern void (*sound_hook)(int);
+extern void (*sound_weather_hook)(int);
 extern void (*music_hook)(int);
 extern void sound(int val);
 extern void music(int val);
-extern const cptr angband_sound_name[SOUND_MAX_2010];
-extern const cptr angband_music_name[MUSIC_MAX];
+extern void sound_weather(int val);
+extern int music_next, weather_channel;
 
 //defines.h:
 /* Given an array, determine how many elements are in it: */
@@ -758,4 +760,3 @@ extern errr init_sound_sdl(int argc, char **argv);
 //z-files.h:
 extern bool my_fexists(const char *fname);
 #endif
-

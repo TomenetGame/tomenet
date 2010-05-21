@@ -264,21 +264,19 @@ bool multi_key_macros = FALSE;
 
 #ifdef USE_SOUND_2010
 void (*sound_hook)(int sound);
+void (*sound_weather_hook)(int sound);
 void (*music_hook)(int music);
+int music_next = -1, weather_channel = -1;
+#endif
 
 /* Standard sound (and message) names */
-const cptr angband_sound_name[SOUND_MAX_2010] = {
-    "",
+const cptr angband_sound_name[SOUND_MAX] = {
     "hit",
     "miss",
+    "flee",
+    "drop",
+    "kill",
+    "level",
+    "death",
+    "warn",
 };
-
-/* Standard music names */
-const cptr angband_music_name[MUSIC_MAX] = {
-    "",
-    "generic",
-    "Bree",
-    "Barrow-Downs",
-    "The_Training_Tower",
-};
-#endif

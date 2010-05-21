@@ -141,6 +141,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_INVENTORY_REV]	= Receive_inventory_revision;
 	receive_tbl[PKT_ACCOUNT_INFO]	= Receive_account_info;
 	receive_tbl[PKT_STORE_WIDE]	= Receive_store_wide;
+	receive_tbl[PKT_MUSIC]		= Receive_music;
 }
 
 /* Head of file transfer system receive */
@@ -2766,15 +2767,38 @@ int Receive_target_info(void)
 int Receive_sound(void)
 {
 	int	n;
-	char	ch, sound;
+	char	ch, s;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &sound)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &s)) <= 0)
 	{
 		return n;
 	}
 
 	/* Make a sound (if allowed) */
-	if (use_sound) Term_xtra(TERM_XTRA_SOUND, sound);
+	if (use_sound)
+#ifndef USE_SOUND_2010
+		Term_xtra(TERM_XTRA_SOUND, s);
+#else
+		sound(s);
+#endif
+
+	return 1;
+}
+
+int Receive_music(void)
+{
+	int	n;
+	char	ch, m;
+
+	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &m)) <= 0)
+	{
+		return n;
+	}
+
+#ifdef USE_SOUND_2010
+	/* Play background music (if enabled) */
+	if (use_sound) music(m);
+#endif
 
 	return 1;
 }
@@ -3293,6 +3317,23 @@ int Receive_weather(void)
 	weather_gen_speed = wg;
 	weather_intensity = wi;
 	weather_speed = ws;
+
+#ifdef USE_SOUND_2010
+	/* Play overlay sound (if enabled) */
+	if (use_sound) {
+		if (weather_type == -1) {
+			sound_weather(-2); //stop
+		} else if (weather_type == 0) {
+			sound_weather(-1); //fade out
+		} else if (weather_type == 1) {
+			if (weather_wind > 3) sound_weather(1);
+			else sound_weather(0);
+		} else {
+			if (weather_wind > 3) sound_weather(3);
+			else sound_weather(2);
+		}
+	}
+#endif
 
 	/* hack: insta-erase all weather */
 	if (weather_type == -1) {

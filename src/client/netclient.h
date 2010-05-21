@@ -66,6 +66,7 @@ int Receive_store_action(void);
 int Receive_sell(void);
 int Receive_target_info(void);
 int Receive_sound(void);
+int Receive_music(void);
 int Receive_mini_map(void);
 int Receive_special_line(void);
 int Receive_floor(void);

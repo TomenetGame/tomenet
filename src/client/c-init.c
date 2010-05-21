@@ -392,6 +392,10 @@ void client_init(char *argv1, bool skip)
 	}
  #endif
 
+	/* audio.lua contains sound system information, so we need to init lua here */
+	init_lua();
+	open_lua();
+
 	/* Try the modules in the order specified by sound_modules[] */
  #if 0//pfft doesnt work, dunno why ('incomplete type' error)
 	for (temp = 0; temp < (int)N_ELEMENTS(sound_modules) - 1; temp++) {
