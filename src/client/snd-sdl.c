@@ -515,7 +515,7 @@ static void play_music(int event) {
 
 	/* check if music is already running, if so, fade it out first! */
 	if (Mix_PlayingMusic()) {
-		if (Mix_FadingMusic() == MIX_NO_FADING) Mix_FadeOutMusic(500);
+		if (Mix_FadingMusic() != MIX_FADING_OUT) Mix_FadeOutMusic(500);
 		return;
 	} else {
 		//play immediately
