@@ -48,6 +48,7 @@ audio_sfx = {
 }
 function get_sound_name(idx)
     if audio_sfx[idx] == nil then return "" end
+--    if getn(audio_sfx) < idx then return "" end
     return (audio_sfx[idx])
 end
 
@@ -62,8 +63,13 @@ audio_bgm = {
     "Khazaddum",
     "Valinor",
 
-    "Wilderness_generic_day",
-    "Wilderness_generic_night",
+    "wilderness_generic_day",
+    "wilderness_generic_night",
+
+    "dungeon_generic",
+    "dungeon_generic_nodeath",
+    "dungeon_generic_ironman",
+    "dungeon_generic_forcedownhellish",
 
     "TheTrainingTower",
     "BarrowDowns",
@@ -92,19 +98,20 @@ audio_bgm = {
     "TheSacredLandofMountains",
     "TheMaze",
 
-    "SpecialUnique",
-    "DungeonBoss",
-    "Boss_Nazgul",
-    "Boss_Sauron",
-    "Boss_Morgoth",
-    "Boss_ZuAon",
+    "boss_specialunique",
+    "boss_dungeon",
+    "boss_Nazgul",
+    "boss_Sauron",
+    "boss_Morgoth",
+    "boss_ZuAon",
 
-    "Terrifying",
+    "feeling_Terrifying",
 
-    "Highlander_deathmatch",
-    "AreanaMonsterChallenge",
+    "event_Highlander_deathmatch",
+    "event_AreanaMonsterChallenge",
 }
 function get_music_name(idx)
     if audio_bgm[idx] == nil then return "" end
+--    if getn(audio_bgm) < idx then return "" end
     return (audio_bgm[idx])
 end
