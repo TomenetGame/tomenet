@@ -759,4 +759,6 @@ extern errr init_sound_sdl(int argc, char **argv);
 
 //z-files.h:
 extern bool my_fexists(const char *fname);
+//own
+extern bool my_dexists(const char *dname);
 #endif

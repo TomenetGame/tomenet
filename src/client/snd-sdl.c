@@ -165,6 +165,10 @@ static bool sound_sdl_init(bool no_cache) {
 	/* Build the "sound" path */
 	path_build(path, sizeof(path), ANGBAND_DIR_XTRA, "sound");
 	ANGBAND_DIR_XTRA_SOUND = string_make(path);
+	if (!my_dexists(ANGBAND_DIR_XTRA_SOUND)) {
+		plog_fmt("Folder %s is missing.", ANGBAND_DIR_XTRA_SOUND);
+		return FALSE;
+	}
 
 	/* Find and open the config file */
 	path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
@@ -173,7 +177,6 @@ static bool sound_sdl_init(bool no_cache) {
 	/* Handle errors */
 	if (!fff) {
 		plog_fmt("Failed to open sound config (%s):\n    %s", path, strerror(errno));
-		puts(format("Failed to open sound config (%s):\n    %s", path, strerror(errno)));//DEBUG USE_SOUND_2010
 		return FALSE;
 	}
 
@@ -285,6 +288,10 @@ static bool sound_sdl_init(bool no_cache) {
 	/* Build the "music" path */
 	path_build(path, sizeof(path), ANGBAND_DIR_XTRA, "music");
 	ANGBAND_DIR_XTRA_SOUND = string_make(path);
+	if (!my_dexists(ANGBAND_DIR_XTRA_SOUND)) {
+		plog_fmt("Folder %s is missing.", ANGBAND_DIR_XTRA_SOUND);
+		return FALSE;
+	}
 
 	/* Find and open the config file */
 	path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "music.cfg");
@@ -293,7 +300,6 @@ static bool sound_sdl_init(bool no_cache) {
 	/* Handle errors */
 	if (!fff) {
 		plog_fmt("Failed to open music config (%s):\n    %s", path, strerror(errno));
-		puts(format("Failed to open music config (%s):\n    %s", path, strerror(errno)));//DEBUG USE_SOUND_2010
 		return FALSE;
 	}
 
@@ -580,8 +586,7 @@ puts("\n");//plog seems to mess up display? -- just for following debug puts() f
 
 	/* Load sound preferences if requested */
 	if (!sound_sdl_init(no_cache_audio)) {
-		plog("Failed to load sound config");
-		puts("Failed to load sound config");//DEBUG USE_SOUND_2010
+		plog("Failed to load audio config");
 
 		/* Failure */
 		return (1);
@@ -621,6 +626,16 @@ bool my_fexists(const char *fname) {
 	/* It worked */
 	if (fd != NULL) {
 		fclose(fd);
+		return TRUE;
+	} else return FALSE;
+}
+
+//check if folder exists on UNIX, using dirent.h - C. Blue
+#include <dirent.h>
+bool my_dexists(const char *dname) {
+	DIR *pdir = opendir(dname);
+	if (pdir != NULL) {
+		closedir(pdir);
 		return TRUE;
 	} else return FALSE;
 }
