@@ -45,11 +45,14 @@ audio_sfx = {
     "door_stuck",
     "door_smash",
     "trap_setoff", --click? ^^
+
+    "tunnel_tree",
+    "tunnel_rock",
 }
 function get_sound_name(idx)
-    if audio_sfx[idx] == nil then return "" end
+    if audio_sfx[idx + 1] == nil then return "" end
 --    if getn(audio_sfx) < idx then return "" end
-    return (audio_sfx[idx])
+    return (audio_sfx[idx + 1])
 end
 
 -- Background Music
@@ -111,7 +114,7 @@ audio_bgm = {
     "event_AreanaMonsterChallenge",
 }
 function get_music_name(idx)
-    if audio_bgm[idx] == nil then return "" end
+    if audio_bgm[idx + 1] == nil then return "" end
 --    if getn(audio_bgm) < idx then return "" end
-    return (audio_bgm[idx])
+    return (audio_bgm[idx + 1])
 end
