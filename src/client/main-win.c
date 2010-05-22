@@ -109,6 +109,19 @@
 # undef USE_SOUND
 #endif
 
+#ifdef USE_SOUND_2010
+//main.c:
+/*
+ * List of sound modules in the order they should be tried.
+*/
+const struct module sound_modules[] = {
+ #ifdef SOUND_SDL
+	{ "sdl", "SDL_mixer sound module", init_sound_sdl },
+ #endif /* SOUND_SDL */
+	{ "dummy", "Dummy module", NULL },
+};
+#endif /* USE_SOUND_2010 */
+
 
 /*
  * Menu constants -- see "ANGBAND.RC"
@@ -853,6 +866,7 @@ static void load_prefs_aux(term_data *td, cptr sec_name)
  * Hack -- load a "sound" preference by index and name
  */
 #ifdef USE_SOUND
+#ifndef USE_SOUND_2010
 static void load_prefs_sound(int i)
 {
 	char aux[128];
@@ -877,6 +891,7 @@ static void load_prefs_sound(int i)
 	/* Save the sound filename, if it exists */
 	if (check_file(buf)) sound_file[i] = string_make(buf);
 }
+#endif
 #endif
 
 /*
@@ -919,8 +934,10 @@ static void load_prefs(void)
 
 
 #ifdef USE_SOUND
+#ifndef USE_SOUND_2010
 	/* Prepare the sounds */
 	for (i = 1; i < SOUND_MAX; i++) load_prefs_sound(i);
+#endif
 #endif
 
 	/* Metaserver address */
