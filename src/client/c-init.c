@@ -401,8 +401,8 @@ void client_init(char *argv1, bool skip)
 	for (temp = 0; temp < (int)N_ELEMENTS(sound_modules) - 1; temp++) {
  #endif
 	for (temp = 0; temp < 2; temp++) {//we should've 2 hard-coded atm: SDL and dummy -_-
-//		if (0 == sound_modules[temp].init(argc, argv)) {
-		if (0 == sound_modules[temp].init(0, NULL)) {
+//		if (sound_modules[temp].init && 0 == sound_modules[temp].init(argc, argv)) {
+		if (sound_modules[temp].init && 0 == sound_modules[temp].init(0, NULL)) {
  #if 1//just USE_SOUND_2010 debug
 			puts(format("USE_SOUND_2010: successfully loaded module %d.", temp));
  #endif
