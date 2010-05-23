@@ -11,6 +11,18 @@
 
 static int Socket;
 
+#ifdef USE_SOUND_2010
+/*
+ * List of sound modules in the order they should be tried.
+ */
+const struct module sound_modules[] = {
+ #ifdef SOUND_SDL
+	{ "sdl", "SDL_mixer sound module", init_sound_sdl },
+ #endif /* SOUND_SDL */
+	{ "dummy", "Dummy module", NULL },
+};
+#endif /* USE_SOUND_2010 */
+
 static void init_arrays(void)
 {
 	/* Macro variables */
@@ -400,7 +412,7 @@ void client_init(char *argv1, bool skip)
  #if 0//pfft doesnt work, dunno why ('incomplete type' error)
 	for (temp = 0; temp < (int)N_ELEMENTS(sound_modules) - 1; temp++) {
  #endif
-	for (temp = 0; temp < 2; temp++) {//we should've 2 hard-coded atm: SDL and dummy -_-
+	for (temp = 0; temp < sizeof(sound_modules) / sizeof(*sound_modules); temp++) {
 //		if (sound_modules[temp].init && 0 == sound_modules[temp].init(argc, argv)) {
 		if (sound_modules[temp].init && 0 == sound_modules[temp].init(0, NULL)) {
  #if 1//just USE_SOUND_2010 debug

@@ -23,20 +23,6 @@
 #endif /* __MAKEDEPEND__ */
 
 
-#ifdef USE_SOUND_2010
-//main.c:
-/*
- * List of sound modules in the order they should be tried.
-*/
-const struct module sound_modules[] = {
- #ifdef SOUND_SDL
-	{ "sdl", "SDL_mixer sound module", init_sound_sdl },
- #endif /* SOUND_SDL */
-	{ "dummy", "Dummy module", NULL },
-};
-#endif /* USE_SOUND_2010 */
-
-
 /*
  * OPTION: Allow the use of a "Recall Window", if supported
  */
