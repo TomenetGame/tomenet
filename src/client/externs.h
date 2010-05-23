@@ -451,6 +451,9 @@ extern void do_cmd_options(void);
 extern void c_close_game(cptr reason);
 extern void my_memfrob(void *s, int n);
 extern bool is_newer_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build);
+#ifdef USE_SOUND_2010
+extern void interact_audio(void);
+#endif
 
 /* c-spell.c */
 /*extern void show_browse(int book); */
@@ -742,6 +745,8 @@ extern void music(int val);
 extern void sound_weather(int val);
 //extern void sdl_fadeout(void);
 extern int music_next, weather_channel;
+extern bool cfg_audio_master, cfg_audio_music, cfg_audio_sound, cfg_audio_weather;
+extern int cfg_audio_master_volume, cfg_audio_music_volume, cfg_audio_sound_volume, cfg_audio_weather_volume;
 
 //defines.h:
 /* Given an array, determine how many elements are in it: */
@@ -761,4 +766,6 @@ extern errr init_sound_sdl(int argc, char **argv);
 extern bool my_fexists(const char *fname);
 //own
 extern bool my_dexists(const char *dname);
+
+extern void set_mixing(void);
 #endif

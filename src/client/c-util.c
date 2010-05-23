@@ -3583,6 +3583,10 @@ void auto_inscriptions(void)
 		/* display editing 'cursor' */
 		Term_putstr(1, cur_line + 1, -1, TERM_ORANGE, ">>>");
 
+		/* make cursor invisible */
+		Term_set_cursor(0);
+		inkey_flag = TRUE;
+
 		/* Wait for keypress */
 		switch (inkey()) {
 		case KTRL('T'):
@@ -4829,5 +4833,176 @@ void music(int val) {
 
 	/* play a sound */
 	if (music_hook) music_hook(val);
+}
+
+void interact_audio(void) {
+	int i, j, cur_item = 0, item_x[8] = {2, 12, 22, 32, 42, 52, 62, 72};
+	int y_label = 18, y_toggle = 10, y_slider = 16;
+	bool redraw = TRUE, quit = FALSE;
+
+	/* Save screen */
+	Term_save();
+
+	/* Prevent hybrid macros from triggering in here */
+	inkey_msg = TRUE;
+
+	/* Process requests until done */
+	while (1) {
+		if (redraw) {
+			/* Clear screen */
+			Term_clear();
+
+			/* Describe */
+			Term_putstr(30,  0, -1, TERM_L_UMBER, "*** Audio Mixer ***");
+			Term_putstr(6, 1, -1, TERM_L_UMBER, "Press arrow keys to navigate/modify, RETURN to toggle, ESC to leave.");
+
+			/* draw mixer */
+			Term_putstr(item_x[0], y_label, -1, TERM_WHITE, "Master");
+			Term_putstr(item_x[0], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_master ? "\377GX\377w" : " "));
+
+			Term_putstr(item_x[1], y_label, -1, TERM_WHITE, "Music");
+			Term_putstr(item_x[1], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_music ? "\377GX\377w" : " "));
+
+			Term_putstr(item_x[2], y_label, -1, TERM_WHITE, "Sound");
+			Term_putstr(item_x[2], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_sound ? "\377GX\377w" : " "));
+
+			Term_putstr(item_x[3], y_label, -1, TERM_WHITE, "Weather");
+			Term_putstr(item_x[3], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_weather ? "\377GX\377w" : " "));
+
+			Term_putstr(item_x[4], y_label, -1, TERM_WHITE, "Master");
+			Term_putstr(item_x[5], y_label, -1, TERM_WHITE, "Music");
+			Term_putstr(item_x[6], y_label, -1, TERM_WHITE, "Sound");
+			Term_putstr(item_x[7], y_label, -1, TERM_WHITE, "Weather");
+
+			for (i = 4; i <= 7; i++) {
+				Term_putstr(item_x[i - 4], y_toggle + 1, -1, TERM_SLATE, "on/off");
+				Term_putstr(item_x[i], y_slider - 12, -1, TERM_WHITE, "  ^");
+				Term_putstr(item_x[i], y_slider, -1, TERM_WHITE, "  V");
+				for (j = y_slider - 1; j >= y_slider - 11; j--)
+					Term_putstr(item_x[i], j, -1, TERM_SLATE, "  |");
+			}
+
+			Term_putstr(item_x[4], y_slider - cfg_audio_master_volume / 10 - 1, -1, TERM_L_GREEN, "  =");
+			Term_putstr(item_x[5], y_slider - cfg_audio_music_volume / 10 - 1, -1, TERM_L_GREEN, "  =");
+			Term_putstr(item_x[6], y_slider - cfg_audio_sound_volume / 10 - 1, -1, TERM_L_GREEN, "  =");
+			Term_putstr(item_x[7], y_slider - cfg_audio_weather_volume / 10 - 1, -1, TERM_L_GREEN, "  =");
+		}
+		redraw = TRUE;
+
+		/* display editing 'cursor' */
+		Term_putstr(item_x[cur_item], y_label + 2, -1, TERM_ORANGE, "  ^");
+		Term_putstr(item_x[cur_item], y_label + 3, -1, TERM_ORANGE, "  |");
+
+		/* make cursor invisible */
+		Term_set_cursor(0);
+		inkey_flag = TRUE;
+
+		/* Wait for keypress */
+		switch (inkey()) {
+		case KTRL('T'):
+			/* Take a screenshot */
+			xhtml_screenshot("screenshot????");
+			redraw = FALSE;
+			break;
+		case ESCAPE:
+			quit = TRUE; /* hack to leave loop */
+			break;
+		case 'n':
+		case '6':
+			Term_putstr(item_x[cur_item], y_label + 2, -1, TERM_ORANGE, "   ");
+			Term_putstr(item_x[cur_item], y_label + 3, -1, TERM_ORANGE, "   ");
+			cur_item++;
+			if (cur_item > 7) cur_item = 0;
+			redraw = FALSE;
+			break;
+		case 'p':
+		case '4':
+			Term_putstr(item_x[cur_item], y_label + 2, -1, TERM_ORANGE, "   ");
+			Term_putstr(item_x[cur_item], y_label + 3, -1, TERM_ORANGE, "   ");
+			cur_item--;
+			if (cur_item < 0) cur_item = 7;
+			redraw = FALSE;
+			break;
+		case '8':
+			switch (cur_item) {
+			case 0: cfg_audio_master = ! cfg_audio_master; break;
+			case 1: cfg_audio_music = ! cfg_audio_music; break;
+			case 2: cfg_audio_sound = ! cfg_audio_sound; break;
+			case 3: cfg_audio_weather = ! cfg_audio_weather; break;
+			case 4: if (cfg_audio_master_volume <= 90) cfg_audio_master_volume += 10; else cfg_audio_master_volume = 100; break;
+			case 5: if (cfg_audio_music_volume <= 90) cfg_audio_music_volume += 10; else cfg_audio_music_volume = 100; break;
+			case 6: if (cfg_audio_sound_volume <= 90) cfg_audio_sound_volume += 10; else cfg_audio_sound_volume = 100; break;
+			case 7: if (cfg_audio_weather_volume <= 90) cfg_audio_weather_volume += 10; else cfg_audio_weather_volume = 100; break;
+			}
+			set_mixing();
+			break;
+		case '2':
+			switch (cur_item) {
+			case 0: cfg_audio_master = ! cfg_audio_master; break;
+			case 1: cfg_audio_music = ! cfg_audio_music; break;
+			case 2: cfg_audio_sound = ! cfg_audio_sound; break;
+			case 3: cfg_audio_weather = ! cfg_audio_weather; break;
+			case 4: if (cfg_audio_master_volume >= 10) cfg_audio_master_volume -= 10; else cfg_audio_master_volume = 0; break;
+			case 5: if (cfg_audio_music_volume >= 10) cfg_audio_music_volume -= 10; else cfg_audio_music_volume = 0; break;
+			case 6: if (cfg_audio_sound_volume >= 10) cfg_audio_sound_volume -= 10; else cfg_audio_sound_volume = 0; break;
+			case 7: if (cfg_audio_weather_volume >= 10) cfg_audio_weather_volume -= 10; else cfg_audio_weather_volume = 0; break;
+			}
+			set_mixing();
+			break;
+		case 'l':
+			/* Prompt */
+			clear_from(21);
+			Term_putstr(0, 22, -1, TERM_L_GREEN, "*** Load an .ins file ***");
+
+			/* Get a filename, handle ESCAPE */
+			Term_putstr(0, 23, -1, TERM_WHITE, "File: ");
+
+/*			sprintf(tmp, "%s.ins", cname);
+			if (!askfor_aux(tmp, 70, 0, 0)) continue;
+			load_auto_inscriptions(tmp);*/
+			break;
+		case 's':
+			/* Prompt */
+			clear_from(21);
+			Term_putstr(0, 22, -1, TERM_L_GREEN, "*** Save an .ins file ***");
+
+			/* Get a filename, handle ESCAPE */
+			Term_putstr(0, 23, -1, TERM_WHITE, "File: ");
+
+/*			sprintf(tmp, "%s.ins", cname);
+			if (!askfor_aux(tmp, 70, 0, 0)) continue;
+			save_auto_inscriptions(tmp);*/
+			break;
+		case '\n':
+		case '\r':
+			switch (cur_item) {
+			case 0: cfg_audio_master = ! cfg_audio_master; break;
+			case 1: cfg_audio_music = ! cfg_audio_music; break;
+			case 2: cfg_audio_sound = ! cfg_audio_sound; break;
+			case 3: cfg_audio_weather = ! cfg_audio_weather; break;
+			case 4: if (cfg_audio_master_volume <= 90) cfg_audio_master_volume += 10; else cfg_audio_master_volume = 0; break;
+			case 5: if (cfg_audio_music_volume <= 90) cfg_audio_music_volume += 10; else cfg_audio_music_volume = 0; break;
+			case 6: if (cfg_audio_sound_volume <= 90) cfg_audio_sound_volume += 10; else cfg_audio_sound_volume = 0; break;
+			case 7: if (cfg_audio_weather_volume <= 90) cfg_audio_weather_volume += 10; else cfg_audio_weather_volume = 0; break;
+			}
+			set_mixing();
+			break;
+		default:
+			/* Oops */
+			bell();
+		}
+
+		/* Leave */
+		if (quit) break;
+	}
+
+	/* Reload screen */
+	Term_load();
+
+	/* Flush the queue */
+	Flush_queue();
+
+	/* Re-enable hybrid macros */
+	inkey_msg = FALSE;
 }
 #endif

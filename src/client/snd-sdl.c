@@ -510,6 +510,8 @@ static void play_sound_weather(int event) {
 
 	/* Actually play the thing */
 	weather_channel = Mix_PlayChannel(-1, wave, -1);
+	if (weather_channel != -1) //paranoia?
+		Mix_Volume(weather_channel, (MIX_MAX_VOLUME * (cfg_audio_weather ? cfg_audio_weather_volume : 0)) / 100);
 }
 
 
@@ -638,6 +640,13 @@ bool my_dexists(const char *dname) {
 		closedir(pdir);
 		return TRUE;
 	} else return FALSE;
+}
+
+void set_mixing(void) {
+	puts(format("mixer set to %d, %d, %d.", cfg_audio_music_volume, cfg_audio_sound_volume, cfg_audio_weather_volume));
+	Mix_Volume(-1, (MIX_MAX_VOLUME * (cfg_audio_master ? (cfg_audio_sound ? cfg_audio_sound_volume : 0) : 0) * cfg_audio_master_volume) / 10000);
+	Mix_VolumeMusic((MIX_MAX_VOLUME * (cfg_audio_master ? (cfg_audio_music ? cfg_audio_music_volume : 0) : 0) * cfg_audio_master_volume) / 10000);
+	if (weather_channel != -1) Mix_Volume(weather_channel, (MIX_MAX_VOLUME * (cfg_audio_master ? (cfg_audio_weather ? cfg_audio_weather_volume : 0) : 0) * cfg_audio_master_volume) / 10000);
 }
 
 #endif /* SOUND_SDL */

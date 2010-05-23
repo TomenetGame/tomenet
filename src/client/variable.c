@@ -266,6 +266,8 @@ void (*sound_hook)(int sound);
 void (*sound_weather_hook)(int sound);
 void (*music_hook)(int music);
 int music_next = -1, weather_channel = -1;
+bool cfg_audio_master = TRUE, cfg_audio_music = TRUE, cfg_audio_sound = TRUE, cfg_audio_weather = TRUE;
+int cfg_audio_master_volume = 100, cfg_audio_music_volume = 100, cfg_audio_sound_volume = 100, cfg_audio_weather_volume = 100;
 #endif
 
 /* Standard sound (and message) names */

@@ -534,6 +534,12 @@ void process_command()
 			cmd_lagometer();
 			break;
 
+#ifdef USE_SOUND_2010
+		case KTRL('U'):
+			interact_audio();
+			break;
+#endif
+
 		case '!':
 			cmd_BBS();
 			break;
