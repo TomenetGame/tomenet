@@ -4904,6 +4904,7 @@ void interact_audio(void) {
 			xhtml_screenshot("screenshot????");
 			redraw = FALSE;
 			break;
+		case KTRL('U'):
 		case ESCAPE:
 			quit = TRUE; /* hack to leave loop */
 			break;
