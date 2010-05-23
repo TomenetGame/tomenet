@@ -2132,6 +2132,7 @@ Here is a list of all available ability codes:
 15      Toggle 'Aura of Fear' if you have trained the according skill.
 16      Toggle 'Shivering Aura' if you have trained the according skill.
 17      Toggle 'Aura of Death' if you have trained the according skill.
+18      Draw a rune (for runemastery skill).
 
 After the ability code has been entered you need to press Enter to confirm it.
 In a macro, this is done by '\r' (one of the so-called escape sequences).
@@ -3897,7 +3898,7 @@ Here's a table to tell you the values for str_wgt:
         12          10                      26          18/30-18/39
         13          11                      28          18/40-18/49
         14          12                      30          18/50-18/220+
-        15          13                      
+        15          13
 
 The armour weight limit is 5.0 lb + Martial Arts skill level * 0.4 lb.
 So for MA 50 it is 5.0 + 20.0 = 25.0 lb.
@@ -5304,7 +5305,7 @@ BLIND           blindness.
 CONFUSE         confusion (or chaos).
 TERRIFY         fear.
 PARALYZE        free action.
-EXP_xx          hold life.      
+EXP_xx          hold life.
 LOSE_xxx        sustain stats.
 EAT_xxx         DEX,stealing skill.
                 Device of theft
@@ -5641,6 +5642,7 @@ capabilities.
 Rune-spells:
 ------------
 To cast a rune-spell, enter the m-key menu and select 'Draw a rune'.
+(Note: The ability code for drawing a rune is 18.)
 
 Rune-spells are made up of three components:
     1. A combination of up to three runes
