@@ -4850,7 +4850,8 @@ void music(int val) {
 }
 
 void interact_audio(void) {
-	int i, j, cur_item = 0, item_x[8] = {2, 12, 22, 32, 42, 52, 62, 72};
+	int i, j, item_x[8] = {2, 12, 22, 32, 42, 52, 62, 72};
+	static int cur_item = 0;
 	int y_label = 18, y_toggle = 10, y_slider = 16;
 	bool redraw = TRUE, quit = FALSE;
 
