@@ -22,7 +22,7 @@
 #port		18348
 
 # perform automatic login with nick, pass and also character name
-fullauto
+#fullauto
 
 
 
