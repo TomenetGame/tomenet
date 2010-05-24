@@ -332,6 +332,9 @@ void Receive_login(void)
 	/* Now that we have the server flags, we can finish setting up Lua - mikaelh */
 	open_lua();
 
+	/* read a character name from command-line or config file? - C. Blue */
+	if (strlen(cname)) return;
+
 	Term_clear();
 
 	if (s_ARCADE) c_put_str(TERM_SLATE, "The server is running 'ARCADE_SERVER' settings.", 21, 10);
