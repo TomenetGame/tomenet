@@ -632,7 +632,7 @@ errr init_sound_sdl(int argc, char **argv) {
 		}
 	}
 
-	puts(format("init_sound_sdl() init..(no_cache_audio = %d)", no_cache_audio));//debug
+	puts(format("init_sound_sdl() init%s", no_cache_audio == 0 ? "" : " (cached)"));//debug
 
 	/* Load sound preferences if requested */
 	if (!sound_sdl_init(no_cache_audio)) {
