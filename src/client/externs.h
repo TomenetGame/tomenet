@@ -746,6 +746,7 @@ extern void music(int val);
 extern void sound_weather(int val);
 //extern void sdl_fadeout(void);
 extern int music_next, weather_channel, weather_current;
+extern int cfg_audio_rate;
 extern bool cfg_audio_master, cfg_audio_music, cfg_audio_sound, cfg_audio_weather;
 extern int cfg_audio_master_volume, cfg_audio_music_volume, cfg_audio_sound_volume, cfg_audio_weather_volume;
 

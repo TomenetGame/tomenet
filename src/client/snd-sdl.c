@@ -116,7 +116,8 @@ static bool open_audio(void) {
 	int audio_channels;
 	
 	/* Initialize variables */
-	audio_rate = 44100;
+	audio_rate = cfg_audio_rate;
+//	audio_rate = 44100;//costs a lot on hardware that runs on 48kHz
 //	audio_rate = 22050;//angband default
 	audio_format = AUDIO_S16;
 	audio_channels = 2;
@@ -153,7 +154,7 @@ static bool sound_sdl_init(bool no_cache) {
 	/* Initialise the mixer  */
 	if (!open_audio()) return FALSE;
 
-	puts("USE_SOUND_2010: sound_sdl_init() opened audio");//debug
+	puts(format("sound_sdl_init() opened at %d Hz.", cfg_audio_rate));//debug
 
 	/* set hook for fading over to next song */
 	Mix_HookMusicFinished(fadein_next_music);
@@ -180,7 +181,7 @@ static bool sound_sdl_init(bool no_cache) {
 		return FALSE;
 	}
 
-	puts("USE_SOUND_2010: sound_sdl_init() reading sound.cfg:");//debug
+	puts("sound_sdl_init() reading sound.cfg:");//debug
 
 	/* Parse the file */
 	/* Lines are always of the form "name = sample [sample ...]" */
@@ -254,7 +255,7 @@ static bool sound_sdl_init(bool no_cache) {
 					goto next_token_snd;
 				}
 			}
-//puts(format("loaded sample %s (ev %d, #%d).", samples[event].paths[num], event, num));
+			//puts(format("loaded sample %s (ev %d, #%d).", samples[event].paths[num], event, num));//debug
 			/* Imcrement the sample count */
 			samples[event].num++;
 
@@ -303,7 +304,7 @@ static bool sound_sdl_init(bool no_cache) {
 		return FALSE;
 	}
 
-	puts("USE_SOUND_2010: sound_sdl_init() reading music.cfg:");//debug
+	puts("sound_sdl_init() reading music.cfg:");//debug
 
 	/* Parse the file */
 	/* Lines are always of the form "name = music [music ...]" */
@@ -388,7 +389,7 @@ static bool sound_sdl_init(bool no_cache) {
 				}
 			}
 
-//puts(format("loaded song %s (ev %d, #%d).", songs[event].paths[num], event, num));
+			//puts(format("loaded song %s (ev %d, #%d).", songs[event].paths[num], event, num));//debug
 			/* Imcrement the sample count */
 			songs[event].num++;
 
@@ -423,7 +424,7 @@ static bool sound_sdl_init(bool no_cache) {
 	/* Close the file */
 	my_fclose(fff);
 
-	puts("USE_SOUND_2010: sound_sdl_init() done.");//debug
+	puts("sound_sdl_init() done.");//debug
 
 	/* Success */
 	return TRUE;
@@ -626,14 +627,12 @@ errr init_sound_sdl(int argc, char **argv) {
 		if (prefix(argv[i], "-c")) {
 			no_cache_audio = TRUE;
 			plog("Audio cache disabled.");
-puts("\n");//plog seems to mess up display? -- just for following debug puts() for USE_SOUND_2010 - C. Blue
+//puts("\n");//plog seems to mess up display? -- just for following debug puts() for USE_SOUND_2010 - C. Blue
 			continue;
 		}
 	}
 
-#if 1 //just debugging - C. Blue
-	puts(format("USE_SOUND_2010: init_sound_sdl() initializing..(no_cache_audio = %d)", no_cache_audio));
-#endif
+	puts(format("init_sound_sdl() init..(no_cache_audio = %d)", no_cache_audio));//debug
 
 	/* Load sound preferences if requested */
 	if (!sound_sdl_init(no_cache_audio)) {
@@ -655,9 +654,7 @@ puts("\n");//plog seems to mess up display? -- just for following debug puts() f
 	/* clean-up hook */
 	atexit(close_audio);
 
-#if 1 //just debugging - C. Blue
-	puts("USE_SOUND_2010: init_sound_sdl() completed.");
-#endif
+	puts("init_sound_sdl() completed.");//debug
 
 	/* Success */
 	return (0);

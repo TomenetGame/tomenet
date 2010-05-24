@@ -190,6 +190,13 @@ static bool read_mangrc(cptr filename)
 			}
 #endif
 #ifdef USE_SOUND_2010
+			/* audio sample rate */
+			if (!strncmp(buf, "audioSampleRate", 11)) {
+				char *p;
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+				if (p) cfg_audio_rate = atoi(p);
+			}
 			/* audio mixer settings */
 			if (!strncmp(buf, "audioMaster", 11)) {
 				char *p;
@@ -416,6 +423,7 @@ int main(int argc, char **argv)
 			strcpy(cname, "");
 			strcpy(svname, "");
 #ifdef USE_SOUND_2010
+			cfg_audio_rate = 48000;
 			cfg_audio_master = cfg_audio_music = cfg_audio_sound = cfg_audio_weather = TRUE;
 			cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = 100;
 #endif
