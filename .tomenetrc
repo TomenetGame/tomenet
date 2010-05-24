@@ -44,8 +44,9 @@
 # audio settings
 # - enable audio in general (0 = off, 1 = on)
 sound		1
-# - mixer sample rate, default is 44100. It is highly recommended to
-#   keep this unchanged, to avoid wrongly pitched audio on some systems.
+# - mixer sample rate, default is 44100 (best left disabled)
+#   It is highly recommended to not changed this to
+#   avoid wrongly pitched audio on some systems.
 #audioSampleRate		44100
 # - turn various things on(1) or off(0)
 audioMaster		1
@@ -54,7 +55,7 @@ audioSound		1
 audioWeather		1
 # - mixer values for various things (0..100)
 audioVolumeMaster	100
-audioVolumeMusic	20
+audioVolumeMusic	100
 audioVolumeSound	100
 audioVolumeWeather	100
 
