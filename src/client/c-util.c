@@ -4857,22 +4857,10 @@ void interact_audio(void) {
 			Term_putstr(6, 1, -1, TERM_L_UMBER, "Press arrow keys to navigate/modify, RETURN to toggle, ESC to leave.");
 
 			/* draw mixer */
-			Term_putstr(item_x[0], y_label, -1, TERM_WHITE, "Master");
 			Term_putstr(item_x[0], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_master ? "\377GX\377w" : " "));
-
-			Term_putstr(item_x[1], y_label, -1, TERM_WHITE, "Music");
 			Term_putstr(item_x[1], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_music ? "\377GX\377w" : " "));
-
-			Term_putstr(item_x[2], y_label, -1, TERM_WHITE, "Sound");
 			Term_putstr(item_x[2], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_sound ? "\377GX\377w" : " "));
-
-			Term_putstr(item_x[3], y_label, -1, TERM_WHITE, "Weather");
 			Term_putstr(item_x[3], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_weather ? "\377GX\377w" : " "));
-
-			Term_putstr(item_x[4], y_label, -1, TERM_WHITE, "Master");
-			Term_putstr(item_x[5], y_label, -1, TERM_WHITE, "Music");
-			Term_putstr(item_x[6], y_label, -1, TERM_WHITE, "Sound");
-			Term_putstr(item_x[7], y_label, -1, TERM_WHITE, "Weather");
 
 			for (i = 4; i <= 7; i++) {
 				Term_putstr(item_x[i - 4], y_toggle + 1, -1, TERM_SLATE, "on/off");
@@ -4890,8 +4878,17 @@ void interact_audio(void) {
 		redraw = TRUE;
 
 		/* display editing 'cursor' */
-		Term_putstr(item_x[cur_item], y_label + 2, -1, TERM_ORANGE, "  ^");
-		Term_putstr(item_x[cur_item], y_label + 3, -1, TERM_ORANGE, "  |");
+//		Term_putstr(item_x[cur_item], y_label + 2, -1, TERM_ORANGE, "  ^");
+//		Term_putstr(item_x[cur_item], y_label + 3, -1, TERM_ORANGE, "  |");
+		Term_putstr(item_x[0], y_label, -1, cur_item == 0 ? TERM_ORANGE : TERM_WHITE, "Master");
+		Term_putstr(item_x[1], y_label, -1, cur_item == 1 ? TERM_ORANGE : TERM_WHITE, "Music");
+		Term_putstr(item_x[2], y_label, -1, cur_item == 2 ? TERM_ORANGE : TERM_WHITE, "Sound");
+		Term_putstr(item_x[3], y_label, -1, cur_item == 3 ? TERM_ORANGE : TERM_WHITE, "Weather");
+		Term_putstr(item_x[4], y_label, -1, cur_item == 4 ? TERM_ORANGE : TERM_WHITE, "Master");
+		Term_putstr(item_x[5], y_label, -1, cur_item == 5 ? TERM_ORANGE : TERM_WHITE, "Music");
+		Term_putstr(item_x[6], y_label, -1, cur_item == 6 ? TERM_ORANGE : TERM_WHITE, "Sound");
+		Term_putstr(item_x[7], y_label, -1, cur_item == 7 ? TERM_ORANGE : TERM_WHITE, "Weather");
+
 
 		/* make cursor invisible */
 		Term_set_cursor(0);
@@ -4910,16 +4907,16 @@ void interact_audio(void) {
 			break;
 		case 'n':
 		case '6':
-			Term_putstr(item_x[cur_item], y_label + 2, -1, TERM_ORANGE, "   ");
-			Term_putstr(item_x[cur_item], y_label + 3, -1, TERM_ORANGE, "   ");
+//			Term_putstr(item_x[cur_item], y_label + 2, -1, TERM_ORANGE, "   ");
+//			Term_putstr(item_x[cur_item], y_label + 3, -1, TERM_ORANGE, "   ");
 			cur_item++;
 			if (cur_item > 7) cur_item = 0;
 			redraw = FALSE;
 			break;
 		case 'p':
 		case '4':
-			Term_putstr(item_x[cur_item], y_label + 2, -1, TERM_ORANGE, "   ");
-			Term_putstr(item_x[cur_item], y_label + 3, -1, TERM_ORANGE, "   ");
+//			Term_putstr(item_x[cur_item], y_label + 2, -1, TERM_ORANGE, "   ");
+//			Term_putstr(item_x[cur_item], y_label + 3, -1, TERM_ORANGE, "   ");
 			cur_item--;
 			if (cur_item < 0) cur_item = 7;
 			redraw = FALSE;

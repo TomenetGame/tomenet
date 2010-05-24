@@ -492,10 +492,8 @@ static void play_sound_weather(int event) {
 	/* Paranoia */
 	if (event < 0 || event >= SOUND_MAX_2010) return;
 
-puts(format("requested weather %d", event));
 	/* Check there are samples for this event */
 	if (!samples[event].num) return;
-puts(format("found weather %d", event));
 
 	/* Choose a random event */
 	s = rand_int(samples[event].num);
@@ -506,7 +504,6 @@ puts(format("found weather %d", event));
 		/* Verify it exists */
 		const char *filename = samples[event].paths[s];
 		if (!my_fexists(filename)) return;
-puts(format("exists weather %d", event));
 
 		/* Load */
 		wave = Mix_LoadWAV(filename);
@@ -517,7 +514,6 @@ puts(format("exists weather %d", event));
 		plog("SDL sound load failed.");
 		return;
 	}
-puts(format("loaded weather %d", event));
 
 	/* Actually play the thing */
 //	weather_channel = Mix_PlayChannel(weather_channel, wave, -1);
@@ -655,7 +651,7 @@ bool my_dexists(const char *dname) {
 }
 
 void set_mixing(void) {
-	puts(format("mixer set to %d, %d, %d.", cfg_audio_music_volume, cfg_audio_sound_volume, cfg_audio_weather_volume));
+//	puts(format("mixer set to %d, %d, %d.", cfg_audio_music_volume, cfg_audio_sound_volume, cfg_audio_weather_volume));
 	Mix_Volume(-1, (MIX_MAX_VOLUME * (cfg_audio_master ? (cfg_audio_sound ? cfg_audio_sound_volume : 0) : 0) * cfg_audio_master_volume) / 10000);
 	Mix_VolumeMusic((MIX_MAX_VOLUME * (cfg_audio_master ? (cfg_audio_music ? cfg_audio_music_volume : 0) : 0) * cfg_audio_master_volume) / 10000);
 	if (weather_channel != -1) Mix_Volume(weather_channel, (MIX_MAX_VOLUME * (cfg_audio_master ? (cfg_audio_weather ? cfg_audio_weather_volume : 0) : 0) * cfg_audio_master_volume) / 10000);
