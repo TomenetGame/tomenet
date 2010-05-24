@@ -7,33 +7,63 @@
 
 -- Sound FX
 audio_sfx = {
+    --[weather]
     "Rain_soft",
     "Rain_storm",
     "Snow_soft", --nothing really
     "Snow_storm",
 
+    --[player]
+    --combat
     "hit",
     "hit_weapon",
     "miss",
+    "miss_projectile",
     "miss_weapon",
     "parry",
     "parry_weapon",
     "block_shield",
-
-    "cast_bolt",
-    "cast_ball",
-    "cast_cloud",
-    "cast_wave",
-    "phase_door",
-    "teleport",
+    "block_shield_projectile",
+    "death", --your favourite scream (I like the DOOM space marine)
+    "death_male", --your favourite scream (I like the DOOM space marine)
+    "death_female", --your favourite scream (I like the DOOM space marine)
+    --commands
+    "eat",
     "quaff_potion",
     "read_scroll",
     "aim_wand",
     "zap_rod",
     "use_staff",
-    "eat",
+    "cast_bolt",--spells
+    "cast_ball",--spells
+    "cast_cloud",--spells
+    "cast_wave",--spells
+    "phase_door",--spells
+    "teleport",--spells
+    "activate",
+    "browse",
+    "bash_door_hold",
+    "bash_door_break",
+    "open_door_stuck",
+    "open_door",
+    "open_chest",
+    "open_pick",
+    "close_door",
+    "disarm",
+    "drop_gold",
+    "pickup_gold",
+    "staircase", --steps
+    "tunnel_rock",
+    "tunnel_tree",
+    "wearwield_armor_light",
+    "wearwield_armor_heavy",
+    "wearwield_lightsource",
+    "wearwield_jewelry",
+    "wearwield_tool",
+    "wearwield_tool_digger",
+    "wearwield_weapon",
 
-    "death_player", --your favourite scream (I like the DOOM space marine)
+    --[monsters]
     "death_monster", --smack/smash sound (floating eye, insects, molds, jellies, all other stuff..)
     "death_monster_animal", --hiss
     "death_monster_animal_small", --hiss
@@ -51,17 +81,9 @@ audio_sfx = {
     "death_monster_undead_high", --ghostly dissolve
     "death_monster_nonliving", --breakdown (construct)
     "death_monster_Ev", --swushsh (elementals and vortices dissolve)
-
-    "staircase", --steps
-    "door_open",
-    "door_close",
-    "door_stuck",
-    "door_smash",
-    "trap_setoff", --click? ^^
-    "earthquake",
-    "destruction",
-
     "monster_hits",
+    "monster_hits_claws",
+    "monster_hits_weapon",
     "monster_misses",
     "monster_casts_bolt",
     "monster_casts_ball",
@@ -71,11 +93,16 @@ audio_sfx = {
     "monster_blinks",
     "monster_teleports",
     "monster_heals",
+
+    --[grid]
+    "trap_setoff", --click? ^^
+    "earthquake",
+    "destruction",
 }
 function get_sound_name(idx)
-    if audio_sfx[idx] == nil then return "" end
+    if audio_sfx[idx + 1] == nil then return "" end
 --    if getn(audio_sfx) < idx then return "" end
-    return (audio_sfx[idx])
+    return (audio_sfx[idx + 1])
 end
 
 -- Background Music
@@ -137,7 +164,7 @@ audio_bgm = {
     "event_AreanaMonsterChallenge",
 }
 function get_music_name(idx)
-    if audio_bgm[idx] == nil then return "" end
+    if audio_bgm[idx + 1] == nil then return "" end
 --    if getn(audio_bgm) < idx then return "" end
-    return (audio_bgm[idx])
+    return (audio_bgm[idx + 1])
 end
