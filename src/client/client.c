@@ -136,16 +136,14 @@ static bool read_mangrc(cptr filename)
 				if (p) cfg_client_fps = atoi(p);
 			}
 
-			/* Password line */
+			/* unix username line */
 			if (!strncmp(buf, "realname", 8))
 			{
 				char *p;
 
-				/* Extract password */
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 
-				/* Default password */
 				if (p) strcpy(real_name, p);
 			}
 
@@ -154,7 +152,7 @@ static bool read_mangrc(cptr filename)
 			{
 				char *p;
 
-				/* Extract password */
+				/* Extract path */
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 
@@ -165,6 +163,76 @@ static bool read_mangrc(cptr filename)
 			/* Auto-login */
 			if (!strncmp(buf, "fullauto", 8))
 				skip = TRUE;
+
+#ifdef USE_GRAPHICS
+			/* graphics */
+			if (!strncmp(buf, "graphics", 8)) {
+				char *p;
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+				if (p) use_graphics = (atoi(p) != 0);
+			}
+#endif
+#ifdef USE_SOUND
+			/* sound */
+			if (!strncmp(buf, "sound", 5)) {
+				char *p;
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+				if (p) use_sound = (atoi(p) != 0);
+			}
+#endif
+#ifdef USE_SOUND_2010
+			/* audio mixer settings */
+			if (!strncmp(buf, "audioMaster", 11)) {
+				char *p;
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+				if (p) cfg_audio_master = atoi(p);
+			}
+			if (!strncmp(buf, "audioMusic", 10)) {
+				char *p;
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+				if (p) cfg_audio_music = atoi(p);
+			}
+			if (!strncmp(buf, "audioSound", 10)) {
+				char *p;
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+				if (p) cfg_audio_sound = atoi(p);
+			}
+			if (!strncmp(buf, "audioWeather", 12)) {
+				char *p;
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+				if (p) cfg_audio_weather = atoi(p);
+			}
+			if (!strncmp(buf, "audioMasterVolume", 17)) {
+				char *p;
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+				if (p) cfg_audio_master_volume = atoi(p);
+			}
+			if (!strncmp(buf, "audioMusicVolume", 16)) {
+				char *p;
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+				if (p) cfg_audio_music_volume = atoi(p);
+			}
+			if (!strncmp(buf, "audioSoundVolume", 16)) {
+				char *p;
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+				if (p) cfg_audio_sound_volume = atoi(p);
+			}
+			if (!strncmp(buf, "audioWeatherVolume", 18)) {
+				char *p;
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+				if (p) cfg_audio_weather_volume = atoi(p);
+			}
+#endif
 
 			/*** Everything else is ignored ***/
 		}
@@ -472,7 +540,6 @@ int main(int argc, char **argv)
 	/* Attempt to read default name/password from mangrc file */
 
 	done = (modus > 2 || skip) ? TRUE : FALSE;
-
 
 #if 0 //moving this to c-init.c, because ANGBAND_DIR_XTRA isn't initialized here yet- C. Blue
 #ifdef USE_SOUND_2010
