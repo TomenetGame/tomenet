@@ -4947,7 +4947,9 @@ void interact_audio(void) {
 			case 6: if (cfg_audio_sound_volume <= 90) cfg_audio_sound_volume += 10; else cfg_audio_sound_volume = 100; break;
 			case 7: if (cfg_audio_weather_volume <= 90) cfg_audio_weather_volume += 10; else cfg_audio_weather_volume = 100; break;
 			}
+#ifdef SOUND_SDL
 			set_mixing();
+#endif
 			break;
 		case '2':
 			switch (cur_item) {
@@ -4960,7 +4962,9 @@ void interact_audio(void) {
 			case 6: if (cfg_audio_sound_volume >= 10) cfg_audio_sound_volume -= 10; else cfg_audio_sound_volume = 0; break;
 			case 7: if (cfg_audio_weather_volume >= 10) cfg_audio_weather_volume -= 10; else cfg_audio_weather_volume = 0; break;
 			}
+#ifdef SOUND_SDL
 			set_mixing();
+#endif
 			break;
 		case 'l':
 			/* Prompt */
@@ -4998,7 +5002,9 @@ void interact_audio(void) {
 			case 6: if (cfg_audio_sound_volume <= 90) cfg_audio_sound_volume += 10; else cfg_audio_sound_volume = 0; break;
 			case 7: if (cfg_audio_weather_volume <= 90) cfg_audio_weather_volume += 10; else cfg_audio_weather_volume = 0; break;
 			}
+#ifdef SOUND_SDL
 			set_mixing();
+#endif
 			break;
 		default:
 			/* Oops */

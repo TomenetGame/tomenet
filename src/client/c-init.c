@@ -431,8 +431,10 @@ void client_init(char *argv1, bool skip)
 	puts("USE_SOUND_2010: done loading modules");
  #endif
 
+#ifdef SOUND_SDL
 	/* initialize mixer, putting configuration read from rc file live */
 	set_mixing();
+#endif
 #endif
 #endif
 
