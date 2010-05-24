@@ -3182,9 +3182,14 @@ int Receive_ping(void)
 	}
 
 	if (pong) {
-		if (gettimeofday(&tv, NULL) == -1) {
-			return 0;
-		}
+#ifdef WINDOWS
+		/* Use the multimedia timer function */
+		DWORD systime_ms = timeGetTime();
+		tv.tv_sec = systime_ms / 1000;
+		tv.tv_usec = (systime_ms % 1000) * 1000;
+#else
+		gettimeofday(&tv, NULL);
+#endif
 
 		tim_now = tv.tv_sec;
 		utim_now = tv.tv_usec;
@@ -4325,9 +4330,14 @@ int Send_ping(void)
 	char *buf = "";
 	struct timeval tv;
 
-	if (gettimeofday(&tv, NULL) == -1) {
-		return 0;
-	}
+#ifdef WINDOWS
+	/* Use the multimedia timer function */
+	DWORD systime_ms = timeGetTime();
+	tv.tv_sec = systime_ms / 1000;
+	tv.tv_usec = (systime_ms % 1000) * 1000;
+#else
+	gettimeofday(&tv, NULL);
+#endif
 	
 	/* hack: pseudo-packet loss, see prt_lagometer() */
 	if (ping_times[0] == -1) prt_lagometer(9999);
@@ -4380,27 +4390,6 @@ int Send_change_password(char *old_pass, char *new_pass) {
 	return 1;
 }
 
-#if defined(WINDOWS) && !defined(CYGWIN) && !defined(MINGW)
-/*
- * Emulate gettimeofday on Windows by using ftime which has millisecond resolution
- * which is enough for us.
- *  - mikaelh
- */
-#include <sys/timeb.h>
-int gettimeofday(struct timeval *tv, struct timezone *tz)
-{
-	struct timeb t;
-	struct timeb *tp = &t;
-
-	ftime(tp);
-
-	tv->tv_sec = tp->time;
-	tv->tv_usec = tp->millitm * 1000;
-
-	return 0;
-}
-#endif
-
 /*
  * Update the current time, which is stored in 100 ms "ticks".
  * I hope that Windows systems have gettimeofday on them by default.
@@ -4408,28 +4397,31 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
  * functionality.
  * I hope this doesn't prove to be a bottleneck on some systems.  On my linux system
  * calling gettimeofday seems to be very very fast.
+ *
+ * Some Windows implementations (e.g. MinGW) of gettimeofday have a low resolution.
+ * timeGetTime should provide a 1 ms resolution.
+ *  - mikaelh
  */
 void update_ticks()
 {
 	struct timeval cur_time;
 	int newticks;
 
-#ifdef AMIGA
-	GetSysTime(&cur_time);
+#ifdef WINDOWS
+	/* Use the multimedia timer function */
+	DWORD systime_ms = timeGetTime();
+	cur_time.tv_sec = systime_ms / 1000;
+	cur_time.tv_usec = (systime_ms % 1000) * 1000;
 #else
 	gettimeofday(&cur_time, NULL);
 #endif
 
 	/* Set the new ticks to the old ticks rounded down to the number of seconds. */
 	newticks = ticks - (ticks % 10);
+
 	/* Find the new least significant digit of the ticks */
-#ifdef AMIGA
-	newticks += cur_time.tv_micro / 100000;
-	ticks10 = (cur_time.tv_micro / 10000) % 10;
-#else
 	newticks += cur_time.tv_usec / 100000;
 	ticks10 = (cur_time.tv_usec / 10000) % 10;
-#endif
 
 	/* Assume that it has not been more than one second since this function was last called */
 	if (newticks < ticks) newticks += 10;
@@ -4580,19 +4572,15 @@ int next_frame() {
 	int time_between_frames = (1000000 / cfg_client_fps);
 	int us;
 
-	if (gettimeofday(&tv, NULL) == -1) {
-		/* gettimeofday failed */
-		return time_between_frames;
-	}
+#ifdef WINDOWS
+	DWORD systime_ms = timeGetTime();
+	tv.tv_sec = systime_ms / 1000;
+	tv.tv_usec = (systime_ms % 1000) * 1000;
+#else
+	gettimeofday(&tv, NULL);
+#endif
 
 	us = time_between_frames - tv.tv_usec % time_between_frames;
-
-#if 0
-	/* 1 millisecond is just too short */
-	if (us <= 1000) {
-		us += time_between_frames;
-	}
-#endif
 
 	return us;
 }

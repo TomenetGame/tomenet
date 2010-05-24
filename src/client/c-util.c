@@ -248,7 +248,14 @@ static void sync_sleep(int milliseconds)
 	int time_spent;
 	char ch;
 
+#ifdef WINDOWS
+	/* Use the multimedia timer function */
+	DWORD systime_ms = timeGetTime();
+	begin.tv_sec = systime_ms / 1000;
+	begin.tv_usec = (systime_ms % 1000) * 1000;
+#else
 	gettimeofday(&begin, NULL);
+#endif
 	net_fd = Net_fd();
 
 	/* HACK - Create a new key queue so we can receive fresh key presses */
@@ -282,7 +289,14 @@ static void sync_sleep(int milliseconds)
 			}
 		}
 
+#ifdef WINDOWS
+		/* Use the multimedia timer function */
+		DWORD systime_ms = timeGetTime();
+		now.tv_sec = systime_ms / 1000;
+		now.tv_usec = (systime_ms % 1000) * 1000;		
+#else
 		gettimeofday(&now, NULL);
+#endif
 
 		/* Check if we have waited long enough */
 		time_spent = diff_ms(&begin, &now);
