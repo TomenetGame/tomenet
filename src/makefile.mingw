@@ -202,152 +202,35 @@ CC = gcc
 # including "USE_GETCH" and "USE_CURS_SET".  Note that "config.h" will
 # attempt to "guess" at many of these flags based on your system.
 #
-#CFLAGS = -Wall -g -pipe -D"USE_X11" -D"USE_GCU"
+#CFLAGS = -Wall -g -pipe -DUSE_X11 -DUSE_GCU
 #LIBS = -L/usr/X11R6/lib -lX11 -lcurses
 
 ##
 ## Variation -- MinGW
 ##
-CFLAGS = -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937
+## Without SDL
+#CFLAGS = -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937
+##
+## With SDL
+CFLAGS = -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -DSOUND_SDL
+##
 LDFLAGS = 
-
-# Without SDL
+##
+## Without SDL
 #LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
-
+##
 # With SDL
 LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm -lSDL -lSDL_mixer
 
 # MinGW compiler and linker on my system - mikaelh
-#CC = i386-mingw32msvc-gcc
-#LD = i386-mingw32msvc-ld
 CC = mingw32-gcc
 LD = mingw32-ld
 WINDRES = mingw32-windres
 
-
-##
-## Variation -- FreeBSD 4.3R
-##
-#PREFIX = /usr/local
-#CFLAGS = -g -pipe -D"USE_X11" -D"USE_GCU" -I${X11BASE}/include -DDEFAULT_PATH="\"./lib\""
-#LIBS = -L${X11BASE}/lib -lX11 -lcurses
-
-
-##
-## Variation -- Only support "main-x11.c" (not "main-gcu.c")
-##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_X11"
-#LIBS = -lX11
-
-
-##
-## Variation -- Only support "main-gcu.c" (not "main-x11.c")
-##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_GCU"
-#LIBS = -lcurses -ltermcap
-
-
-## Added by thaler, 6/28/97
-## Variation -- Only support "main-gcu.c" (not "main-x11.c") on localhost
-##
-## NOTE -- Using this variation requires that the server and client run
-## on the same machine!  Also define META_ADDRESS to be an empty string
-## in config.h.  --Keldon
-##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_GCU" -DUNIX_SOCKETS
-#LIBS = -lncurses -ltermcap
-
-
-##
-## Variation -- Use "main-xaw.c" instead of "main-x11.c"
-##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_XAW" -D"USE_GCU"
-#LIBS = -lXaw -lXmu -lXt -lX11 -lcurses -ltermcap
-
-
-##
-## Variation -- Use "main-cap.c" instead of "main-gcu.c"
-##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_X11" -D"USE_CAP"
-#LIBS = -lX11 -ltermcap
-
-
-##
-## Variation -- Only work on simple vt100 terminals
-##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_CAP" -D"USE_HARDCODE"
-
-
-##
-## Variation -- FreeBSD 4.3R
-##
-#PREFIX = /usr/local
-#CFLAGS = -Wall -g -D"USE_X11" -D"USE_GCU" -I${X11BASE}/include -DDEFAULT_PATH="\"${PREFIX}/lib/pmangband\""
-#LIBS = -L${X11BASE}/lib -lX11 -lcurses
-
-
-##
-## Variation -- this might work for Linux 1.1.93 using ncurses-1.8.7.
-##
-#CFLAGS = -I/usr/X11R6/include -I/usr/include/ncurses \
-#         -Wall -O2 -fomit-frame-pointer -m486 \
-#         -D"USE_X11" -D"USE_GCU"
-#LIBS = -L/usr/X11R6/lib -lX11 -lncurses -ltermcap
-
-##
-## Variation -- this might work better than the suggestion above
-##
-#CFLAGS = -I/usr/include/ncurses \
-#         -Wall -O2 -fomit-frame-pointer \
-#         -D"USE_X11" -D"USE_GCU" \
-#         -D"USE_TPOSIX" -D"USE_CURS_SET"
-#LIBS = -lX11 -lncurses
-#LDFLAGS = -s
-
-
-##
-## Variation -- compile for Solaris
-##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_X11" -D"USE_GCU" -D"SOLARIS" -I/usr/openwin/include
-#LIBS = -L/usr/openwin/lib -R/usr/openwin/lib -lX11 -lsocket -lnsl -lcurses
-
-
-##
-## Variation -- compile for SGI Indigo runnig Irix
-##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_X11" -D"USE_GCU" -D"SGI"
-#LIBS = -lX11 -lcurses -ltermcap -lsun
-
-
-
-##
-## Variation -- compile for Dec ALPHA OSF/1 v2.0
-##
-#CC     = cc
-##CFLAGS = -std -O -g3 -Olimit 4000 -D"USE_X11" -D"USE_GCU"
-#CFLAGS = -std -g -D"USE_X11" -D"USE_GCU"
-#LIBS   = -lX11 -lcurses -ltermcap -lrpcsvc
-
-
-##
-## Variation -- compile for Interactive Unix (ISC) systems
-##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_X11" -D"USE_GCU" -D"ISC"
-#LIBS = -lX11 -lcurses -lnsl_s -linet -lcposix
-
-
-##
-## Variation -- Support fat binaries under NEXTSTEP
-##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_GCU" -arch m68k -arch i386
-#LIBS = -lcurses -ltermcap
-
-
-##
-## Variation -- Support for DJGPP with TCPLIB
-##
-#CFLAGS = -Wall -O2 -g -D"USE_IBM" -DMSDOS
-#LIBS = -ltcp
+# Use these on Ubuntu and others
+#CC = i386-mingw32msvc-gcc
+#LD = i386-mingw32msvc-ld
+#WINDRES = i386-mingw32msvc-windres
 
 
 # Lua

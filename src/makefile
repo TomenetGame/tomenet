@@ -202,7 +202,7 @@ CC = gcc
 # including "USE_GETCH" and "USE_CURS_SET".  Note that "config.h" will
 # attempt to "guess" at many of these flags based on your system.
 #
-#CFLAGS = -Wall -g -pipe -D"USE_X11" -D"USE_GCU"
+#CFLAGS = -Wall -g -pipe -DUSE_X11 -DUSE_GCU
 #LIBS = -L/usr/X11R6/lib -lX11 -lcurses
 
 
@@ -212,28 +212,27 @@ X11BASE = /usr/X11R6
 ## Variation -- Linux / FreeBSD
 ##
 #PREFIX = /usr/local
-## -Wuninitialized is included in -Wall
+##
 ## Add -msse2 -DHAVE_SSE2=1 to CFLAGS to enable SSE2 support in SFMT.
-#CFLAGS = -g -pipe -Wall -Wuninitialized -D"USE_X11" -D"USE_GCU" -I${X11BASE}/include -DDEFAULT_PATH="\"./lib\"" -O3
-CFLAGS = -g -pipe -Wall -D"USE_X11" -D"USE_GCU" -I${X11BASE}/include -DDEFAULT_PATH="\"./lib\"" -O2 -Wmissing-declarations -Wnested-externs -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937
-#CFLAGS = -g -pipe -Wall -Wuninitialized -D"USE_X11" -D"USE_GCU" -I${X11BASE}/include -DDEFAULT_PATH="\"./lib\"" -O3 -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs
-#-Werror
-LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
-#for new sound system USE_SOUND_2010 linking SDL and SDL_mixer dev files will be required (currently being worked on) -C. Blue
-#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm -lSDL -lSDL_mixer
+CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -DDEFAULT_PATH="\"./lib\"" -O2 -Wmissing-declarations -Wnested-externs -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -DSOUND_SDL
+##
+#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
+##
+## for new sound system USE_SOUND_2010 linking SDL and SDL_mixer dev files will be required (currently being worked on) -C. Blue
+LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm -lSDL -lSDL_mixer
 
 
 ##
 ## Variation -- Only support "main-x11.c" (not "main-gcu.c")
 ##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_X11"
+#CFLAGS = -Wall -O1 -pipe -g -DUSE_X11
 #LIBS = -lX11
 
 
 ##
 ## Variation -- Only support "main-gcu.c" (not "main-x11.c")
 ##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_GCU"
+#CFLAGS = -Wall -O1 -pipe -g -DUSE_GCU
 #LIBS = -lcurses -ltermcap
 
 
@@ -244,35 +243,35 @@ LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
 ## on the same machine!  Also define META_ADDRESS to be an empty string
 ## in config.h.  --Keldon
 ##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_GCU" -DUNIX_SOCKETS
+#CFLAGS = -Wall -O1 -pipe -g -DUSE_GCU -DUNIX_SOCKETS
 #LIBS = -lncurses -ltermcap
 
 
 ##
 ## Variation -- Use "main-xaw.c" instead of "main-x11.c"
 ##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_XAW" -D"USE_GCU"
+#CFLAGS = -Wall -O1 -pipe -g -DUSE_XAW -DUSE_GCU
 #LIBS = -lXaw -lXmu -lXt -lX11 -lcurses -ltermcap
 
 
 ##
 ## Variation -- Use "main-cap.c" instead of "main-gcu.c"
 ##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_X11" -D"USE_CAP"
+#CFLAGS = -Wall -O1 -pipe -g -DUSE_X11 -DUSE_CAP
 #LIBS = -lX11 -ltermcap
 
 
 ##
 ## Variation -- Only work on simple vt100 terminals
 ##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_CAP" -D"USE_HARDCODE"
+#CFLAGS = -Wall -O1 -pipe -g -DUSE_CAP -DUSE_HARDCODE
 
 
 ##
 ## Variation -- FreeBSD 4.3R
 ##
 #PREFIX = /usr/local
-#CFLAGS = -Wall -g -D"USE_X11" -D"USE_GCU" -I${X11BASE}/include -DDEFAULT_PATH="\"${PREFIX}/lib/pmangband\""
+#CFLAGS = -Wall -g -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -DDEFAULT_PATH="\"${PREFIX}/lib/pmangband\""
 #LIBS = -L${X11BASE}/lib -lX11 -lcurses
 
 
@@ -281,7 +280,7 @@ LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
 ##
 #CFLAGS = -I/usr/X11R6/include -I/usr/include/ncurses \
 #         -Wall -O2 -fomit-frame-pointer -m486 \
-#         -D"USE_X11" -D"USE_GCU"
+#         -DUSE_X11 -DUSE_GCU
 #LIBS = -L/usr/X11R6/lib -lX11 -lncurses -ltermcap
 
 ##
@@ -289,8 +288,8 @@ LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
 ##
 #CFLAGS = -I/usr/include/ncurses \
 #         -Wall -O2 -fomit-frame-pointer \
-#         -D"USE_X11" -D"USE_GCU" \
-#         -D"USE_TPOSIX" -D"USE_CURS_SET"
+#         -DUSE_X11 -DUSE_GCU \
+#         -DUSE_TPOSIX -DUSE_CURS_SET
 #LIBS = -lX11 -lncurses
 #LDFLAGS = -s
 
@@ -298,14 +297,14 @@ LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
 ##
 ## Variation -- compile for Solaris
 ##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_X11" -D"USE_GCU" -D"SOLARIS" -I/usr/openwin/include
+#CFLAGS = -Wall -O1 -pipe -g -DUSE_X11 -DUSE_GCU -DSOLARIS -I/usr/openwin/include
 #LIBS = -L/usr/openwin/lib -R/usr/openwin/lib -lX11 -lsocket -lnsl -lcurses
 
 
 ##
 ## Variation -- compile for SGI Indigo runnig Irix
 ##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_X11" -D"USE_GCU" -D"SGI"
+#CFLAGS = -Wall -O1 -pipe -g -DUSE_X11 -DUSE_GCU -DSGI
 #LIBS = -lX11 -lcurses -ltermcap -lsun
 
 
@@ -314,29 +313,29 @@ LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
 ## Variation -- compile for Dec ALPHA OSF/1 v2.0
 ##
 #CC     = cc
-##CFLAGS = -std -O -g3 -Olimit 4000 -D"USE_X11" -D"USE_GCU"
-#CFLAGS = -std -g -D"USE_X11" -D"USE_GCU"
+##CFLAGS = -std -O -g3 -Olimit 4000 -DUSE_X11 -DUSE_GCU
+#CFLAGS = -std -g -DUSE_X11 -DUSE_GCU
 #LIBS   = -lX11 -lcurses -ltermcap -lrpcsvc
 
 
 ##
 ## Variation -- compile for Interactive Unix (ISC) systems
 ##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_X11" -D"USE_GCU" -D"ISC"
+#CFLAGS = -Wall -O1 -pipe -g -DUSE_X11 -DUSE_GCU -DISC
 #LIBS = -lX11 -lcurses -lnsl_s -linet -lcposix
 
 
 ##
 ## Variation -- Support fat binaries under NEXTSTEP
 ##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_GCU" -arch m68k -arch i386
+#CFLAGS = -Wall -O1 -pipe -g -DUSE_GCU -arch m68k -arch i386
 #LIBS = -lcurses -ltermcap
 
 
 ##
 ## Variation -- Support for DJGPP with TCPLIB
 ##
-#CFLAGS = -Wall -O2 -g -D"USE_IBM" -DMSDOS
+#CFLAGS = -Wall -O2 -g -DUSE_IBM -DMSDOS
 #LIBS = -ltcp
 
 
