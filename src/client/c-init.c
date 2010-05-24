@@ -424,6 +424,9 @@ void client_init(char *argv1, bool skip)
  #if 1//just USE_SOUND_2010 debug
 	puts("USE_SOUND_2010: done loading modules");
  #endif
+
+	/* initialize mixer, putting configuration read from rc file live */
+	set_mixing();
 #endif
 #endif
 

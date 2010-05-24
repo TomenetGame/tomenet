@@ -188,45 +188,45 @@ static bool read_mangrc(cptr filename)
 				char *p;
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
-				if (p) cfg_audio_master = atoi(p);
+				if (p) cfg_audio_master = (atoi(p) != 0);
 			}
 			if (!strncmp(buf, "audioMusic", 10)) {
 				char *p;
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
-				if (p) cfg_audio_music = atoi(p);
+				if (p) cfg_audio_music = (atoi(p) != 0);
 			}
 			if (!strncmp(buf, "audioSound", 10)) {
 				char *p;
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
-				if (p) cfg_audio_sound = atoi(p);
+				if (p) cfg_audio_sound = (atoi(p) != 0);
 			}
 			if (!strncmp(buf, "audioWeather", 12)) {
 				char *p;
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
-				if (p) cfg_audio_weather = atoi(p);
+				if (p) cfg_audio_weather = (atoi(p) != 0);
 			}
-			if (!strncmp(buf, "audioMasterVolume", 17)) {
+			if (!strncmp(buf, "audioVolumeMaster", 17)) {
 				char *p;
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) cfg_audio_master_volume = atoi(p);
 			}
-			if (!strncmp(buf, "audioMusicVolume", 16)) {
+			if (!strncmp(buf, "audioVolumeMusic", 16)) {
 				char *p;
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) cfg_audio_music_volume = atoi(p);
 			}
-			if (!strncmp(buf, "audioSoundVolume", 16)) {
+			if (!strncmp(buf, "audioVolumeSound", 16)) {
 				char *p;
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) cfg_audio_sound_volume = atoi(p);
 			}
-			if (!strncmp(buf, "audioWeatherVolume", 18)) {
+			if (!strncmp(buf, "audioVolumeWeather", 18)) {
 				char *p;
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
@@ -338,7 +338,12 @@ int main(int argc, char **argv)
 		case 'i':
 			modus = 2;
 			skip = FALSE;
+			strcpy(cname, "");
 			strcpy(svname, "");
+#ifdef USE_SOUND_2010
+			cfg_audio_master = cfg_audio_music = cfg_audio_sound = cfg_audio_weather = TRUE;
+			cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = 100;
+#endif
 			i = argc;
 			break;
 			
