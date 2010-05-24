@@ -4966,30 +4966,6 @@ void interact_audio(void) {
 			set_mixing();
 #endif
 			break;
-		case 'l':
-			/* Prompt */
-			clear_from(21);
-			Term_putstr(0, 22, -1, TERM_L_GREEN, "*** Load an .ins file ***");
-
-			/* Get a filename, handle ESCAPE */
-			Term_putstr(0, 23, -1, TERM_WHITE, "File: ");
-
-/*			sprintf(tmp, "%s.ins", cname);
-			if (!askfor_aux(tmp, 70, 0, 0)) continue;
-			load_auto_inscriptions(tmp);*/
-			break;
-		case 's':
-			/* Prompt */
-			clear_from(21);
-			Term_putstr(0, 22, -1, TERM_L_GREEN, "*** Save an .ins file ***");
-
-			/* Get a filename, handle ESCAPE */
-			Term_putstr(0, 23, -1, TERM_WHITE, "File: ");
-
-/*			sprintf(tmp, "%s.ins", cname);
-			if (!askfor_aux(tmp, 70, 0, 0)) continue;
-			save_auto_inscriptions(tmp);*/
-			break;
 		case '\n':
 		case '\r':
 			switch (cur_item) {
