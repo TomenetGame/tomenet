@@ -44,6 +44,8 @@
 # audio settings
 # - enable audio in general (0 = off, 1 = on)
 sound		1
+# - mixer sample rate, should fit your hardware for best results
+audioSampleRate		48000
 # - turn various things on(1) or off(0)
 audioMaster		1
 audioMusic		1
