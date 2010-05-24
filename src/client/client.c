@@ -423,7 +423,7 @@ int main(int argc, char **argv)
 			strcpy(cname, "");
 			strcpy(svname, "");
 #ifdef USE_SOUND_2010
-			cfg_audio_rate = 48000;
+			cfg_audio_rate = 44100;
 			cfg_audio_master = cfg_audio_music = cfg_audio_sound = cfg_audio_weather = TRUE;
 			cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = 100;
 #endif
