@@ -43,15 +43,15 @@
 
 # audio settings
 # - enable audio in general (0 = off, 1 = on)
-#sound		1
+sound		1
 # - turn various things on(1) or off(0)
-#audioMaster		1
-#audioMusic		1
-#audioSound		1
-#audioWeather		1
+audioMaster		1
+audioMusic		1
+audioSound		1
+audioWeather		1
 # - mixer values for various things (0..100)
-#audioVolumeMaster	100
-#audioVolumeMusic	20
-#audioVolumeSound	100
-#audioVolumeWeather	100
+audioVolumeMaster	100
+audioVolumeMusic	20
+audioVolumeSound	100
+audioVolumeWeather	100
 
