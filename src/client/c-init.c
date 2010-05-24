@@ -332,6 +332,7 @@ static void Input_loop(void)
 	}
 }
 
+
 /*
  * A hook for "quit()".
  *
@@ -361,6 +362,8 @@ static void quit_hook(cptr s)
 #ifdef UNIX_SOCKETS
 	SocketCloseAll();
 #endif
+
+	write_mangrc();
 
 	/* Nuke each term */
 	for (j = 8 - 1; j >= 0; j--)

@@ -11,12 +11,17 @@
 #include "angband.h"
 
 
+static char mangrc_filename[100] = "";
+
 static bool read_mangrc(cptr filename)
 {
 	char config_name[100];
 	FILE *config;
 	char buf[1024];
 	bool skip = FALSE;
+
+	/* remember for write_mangrc() */
+	strcpy(mangrc_filename, filename);
 
 	/* Try to find home directory */
 	if (getenv("HOME"))
@@ -41,6 +46,8 @@ static bool read_mangrc(cptr filename)
 #endif
 	strcat(config_name, filename);
 
+	/* remember for write_mangrc() */
+	strcpy(mangrc_filename, config_name);
 
 	/* Attempt to open file */
 	if ((config = fopen(config_name, "r")))
@@ -236,8 +243,76 @@ static bool read_mangrc(cptr filename)
 
 			/*** Everything else is ignored ***/
 		}
+		fclose(config);
 	}
 	return (skip);
+}
+
+/* linux clients: save some prefs to .tomenetrc - C. Blue */
+bool write_mangrc(void) {
+	char config_name2[100];
+	FILE *config, *config2;
+	char buf[1024];
+
+	strcpy(config_name2, mangrc_filename);
+	strcat(config_name2, ".$$$");
+
+	config = fopen(mangrc_filename, "r");
+	config2 = fopen(config_name2, "w");
+
+	/* Attempt to open file */
+	if (config && config2) {
+		/* Read until end */
+		while (!feof(config))
+		{
+			/* Get a line */
+			if (!fgets(buf, 1024, config)) break;
+
+#ifdef USE_SOUND_2010
+			/* modify the line */
+			/* audio mixer settings */
+			if (!strncmp(buf, "audioMaster", 11)) {
+				strcpy(buf, "audioMaster\t\t");
+				strcat(buf, cfg_audio_master ? "1\n" : "0\n");
+			} else if (!strncmp(buf, "audioMusic", 10)) {
+				strcpy(buf, "audioMusic\t\t");
+				strcat(buf, cfg_audio_music ? "1\n" : "0\n");
+			} else if (!strncmp(buf, "audioSound", 10)) {
+				strcpy(buf, "audioSound\t\t");
+				strcat(buf, cfg_audio_sound ? "1\n" : "0\n");
+			} else if (!strncmp(buf, "audioWeather", 12)) {
+				strcpy(buf, "audioWeather\t\t");
+				strcat(buf, cfg_audio_weather ? "1\n" : "0\n");
+			} else if (!strncmp(buf, "audioVolumeMaster", 17)) {
+				strcpy(buf, "audioVolumeMaster\t");
+				strcat(buf, format("%d\n", cfg_audio_master_volume));
+			} else if (!strncmp(buf, "audioVolumeMusic", 16)) {
+				strcpy(buf, "audioVolumeMusic\t");
+				strcat(buf, format("%d\n", cfg_audio_music_volume));
+			} else if (!strncmp(buf, "audioVolumeSound", 16)) {
+				strcpy(buf, "audioVolumeSound\t");
+				strcat(buf, format("%d\n", cfg_audio_sound_volume));
+			} else if (!strncmp(buf, "audioVolumeWeather", 18)) {
+				strcpy(buf, "audioVolumeWeather\t");
+				strcat(buf, format("%d\n", cfg_audio_weather_volume));
+			}
+
+			/* copy the line over */
+			fputs(buf, config2);
+#endif
+
+			/*** Everything else is ignored ***/
+		}
+		fclose(config);
+		fclose(config2);
+
+		/* replace old by new */
+		remove(mangrc_filename);
+		rename(config_name2, mangrc_filename);
+
+		return (TRUE); //success
+	}
+	return (FALSE); //failure
 }
 
 static void default_set(void)

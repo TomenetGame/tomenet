@@ -536,6 +536,7 @@ extern errr dump_messages(cptr name, int lines, int mode);
 extern void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color);
 
 /* client.c */
+extern bool write_mangrc(void);
 
 /* nclient.c (forer netclient.c) */
 extern int ticks, ticks10;
