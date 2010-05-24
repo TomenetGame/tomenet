@@ -474,12 +474,12 @@ static void play_sound_weather(int event) {
 	Mix_Chunk *wave = NULL;
 	int s;
 
-	if (event == -2) {
+	if (event == -2 && weather_channel != -1) {
 		Mix_HaltChannel(weather_channel);
 		weather_channel = -1;
 		return;
 	}
-	else if (event == -1) {
+	else if (event == -1 && weather_channel != -1) {
 		Mix_FadeOutChannel(weather_channel, 2000);
 		weather_channel = -1;
 		return;
@@ -487,7 +487,6 @@ static void play_sound_weather(int event) {
 
 	/* we're already in this weather? */
 	if (weather_channel != -1 && weather_current == event) return;
-	weather_current = event;
 
 	/* Paranoia */
 	if (event < 0 || event >= SOUND_MAX_2010) return;
@@ -518,8 +517,10 @@ static void play_sound_weather(int event) {
 	/* Actually play the thing */
 //	weather_channel = Mix_PlayChannel(weather_channel, wave, -1);
 	weather_channel = Mix_FadeInChannel(weather_channel, wave, -1, 500);
-	if (weather_channel != -1) //paranoia?
+	if (weather_channel != -1) { //paranoia?
+		weather_current = event;
 		Mix_Volume(weather_channel, (MIX_MAX_VOLUME * (cfg_audio_weather ? cfg_audio_weather_volume : 0)) / 100);
+	}
 }
 
 
