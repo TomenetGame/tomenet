@@ -363,7 +363,9 @@ static void quit_hook(cptr s)
 	SocketCloseAll();
 #endif
 
+#ifndef WINDOWS
 	write_mangrc();
+#endif
 
 	/* Nuke each term */
 	for (j = 8 - 1; j >= 0; j--)
@@ -375,6 +377,7 @@ static void quit_hook(cptr s)
 		term_nuke(ang_term[j]);
 	}
 }
+
 
 /*
  * Initialize everything, contact the server, and start the loop.
