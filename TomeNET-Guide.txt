@@ -5535,9 +5535,9 @@ There are some abilities which are not flags although they might look like it.
 In fact, they add up / stack. Those are:
 -Extra shots (concerning ranged weapons)
 -Extra might (concerning ranged weapons)
--Drain mana ('Drains your magic'. Note that 'mana regeneration' does NOT
- stack. So it can cancel out the effect of only ONE item that drains mana, not
- of any more.)
+-Drain mana ('Drains your magic'. Note that 'mana regeneration' (also called
+ mana-charging) does NOT stack. So it can cancel out the effect of only ONE
+ item that drains mana, not of any more.)
 -Drain hit points ('Drains your health'. note that 'regeneration' does NOT
  stack, so it can cancel out the effect of only ONE item that drains hit
  points, not of any more. However, the 'Health' skill is able to further
