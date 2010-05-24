@@ -784,21 +784,21 @@ static void save_prefs(void)
 
  #ifdef USE_SOUND_2010
 	strcpy(buf, cfg_audio_master ? "1" : "0");
-	WritePrivateProfileInt("Angband", "AudioMaster", buf, ini_file);
+	WritePrivateProfileString("Angband", "AudioMaster", buf, ini_file);
 	strcpy(buf, cfg_audio_music ? "1" : "0");
-	WritePrivateProfileInt("Angband", "AudioMusic", buf, ini_file);
+	WritePrivateProfileString("Angband", "AudioMusic", buf, ini_file);
 	strcpy(buf, cfg_audio_sound ? "1" : "0");
-	WritePrivateProfileInt("Angband", "AudioSound", buf, ini_file);
+	WritePrivateProfileString("Angband", "AudioSound", buf, ini_file);
 	strcpy(buf, cfg_audio_weather ? "1" : "0");
-	WritePrivateProfileInt("Angband", "AudioWeather", buf, ini_file);
+	WritePrivateProfileString("Angband", "AudioWeather", buf, ini_file);
 	strcpy(buf, format("%d", cfg_audio_master_volume));
-	WritePrivateProfileInt("Angband", "AudioVolumeMaster", buf, ini_file);
+	WritePrivateProfileString("Angband", "AudioVolumeMaster", buf, ini_file);
 	strcpy(buf, format("%d", cfg_audio_music_volume));
-	WritePrivateProfileInt("Angband", "AudioVolumeMusic", buf, ini_file);
+	WritePrivateProfileString("Angband", "AudioVolumeMusic", buf, ini_file);
 	strcpy(buf, format("%d", cfg_audio_sound_volume));
-	WritePrivateProfileInt("Angband", "AudioVolumeSound", buf, ini_file);
+	WritePrivateProfileString("Angband", "AudioVolumeSound", buf, ini_file);
 	strcpy(buf, format("%d", cfg_audio_weather_volume));
-	WritePrivateProfileInt("Angband", "AudioVolumeWeather", buf, ini_file);
+	WritePrivateProfileString("Angband", "AudioVolumeWeather", buf, ini_file);
  #endif
 #endif
 	save_prefs_aux(&data[0], "Main window");
