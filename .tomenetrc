@@ -44,10 +44,9 @@
 # audio settings
 # - enable audio in general (0 = off, 1 = on)
 sound		1
-# - mixer sample rate, should fit your hardware for best results;
-#   default is 48000. Older soundcards might need 44100.
-#   If your machine is *very* slow, you might want to consider 22050.
-audioSampleRate		48000
+# - mixer sample rate, default is 44100. It is highly recommended to
+#   keep this unchanged, to avoid wrongly pitched audio on some systems.
+#audioSampleRate		44100
 # - turn various things on(1) or off(0)
 audioMaster		1
 audioMusic		1
