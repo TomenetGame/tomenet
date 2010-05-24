@@ -515,18 +515,52 @@ static void play_sound_weather(int event) {
 	}
 
 	/* Actually play the thing */
-//	weather_channel = Mix_PlayChannel(weather_channel, wave, -1);
 	new_wc = Mix_FadeInChannel(weather_channel, wave, -1, 500);
+
+#if 1
+	/* added this <if> after weather seemed to glitch sometimes,
+	   with its channel becoming unmutable */
+	//we didn't play weather so far?
+	if (weather_channel == -1) {
+		//failed to start playing?
+		if (new_wc == -1) return;
+
+		//successfully started playing the first weather
+		weather_channel = new_wc;
+		weather_current = event;
+		Mix_Volume(weather_channel, (MIX_MAX_VOLUME * (cfg_audio_master ? (cfg_audio_weather ? cfg_audio_weather_volume : 0) : 0) * cfg_audio_master_volume) / 10000);
+	} else {
+		//failed to start playing?
+		if (new_wc == -1) {
+			Mix_HaltChannel(weather_channel);
+			return;
+		//successfully started playing a follow-up weather
+		} else {
+			//same channel?
+			if (new_wc == weather_channel) {
+				weather_current = event;
+			//different channel?
+			} else {
+				Mix_HaltChannel(weather_channel);
+				weather_channel = new_wc;
+				weather_current = event;
+				Mix_Volume(weather_channel, (MIX_MAX_VOLUME * (cfg_audio_master ? (cfg_audio_weather ? cfg_audio_weather_volume : 0) : 0) * cfg_audio_master_volume) / 10000);
+			}
+		}
+	}
+#endif
+#if 0
 	/* added this <if> after weather seemed to glitch sometimes,
 	   with its channel becoming unmutable */
 	if (new_wc != weather_channel) {
 		if (weather_channel != -1) Mix_HaltChannel(weather_channel);
 		weather_channel = new_wc;
 	}
-	if (weather_channel != -1) { //paranoia?
+	if (weather_channel != -1) { //paranoia? should always be != -1 at this point
 		weather_current = event;
 		Mix_Volume(weather_channel, (MIX_MAX_VOLUME * (cfg_audio_master ? (cfg_audio_weather ? cfg_audio_weather_volume : 0) : 0) * cfg_audio_master_volume) / 10000);
 	}
+#endif
 }
 
 
