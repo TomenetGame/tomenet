@@ -472,7 +472,7 @@ static void play_sound(int event) {
  */
 static void play_sound_weather(int event) {
 	Mix_Chunk *wave = NULL;
-	int s;
+	int s, new_wc;
 
 	if (event == -2 && weather_channel != -1) {
 		Mix_HaltChannel(weather_channel);
@@ -516,7 +516,13 @@ static void play_sound_weather(int event) {
 
 	/* Actually play the thing */
 //	weather_channel = Mix_PlayChannel(weather_channel, wave, -1);
-	weather_channel = Mix_FadeInChannel(weather_channel, wave, -1, 500);
+	new_wc = Mix_FadeInChannel(weather_channel, wave, -1, 500);
+	/* added this <if> after weather seemed to glitch sometimes,
+	   with its channel becoming unmutable */
+	if (new_wc != weather_channel) {
+		if (weather_channel != -1) Mix_HaltChannel(weather_channel);
+		weather_channel = new_wc;
+	}
 	if (weather_channel != -1) { //paranoia?
 		weather_current = event;
 		Mix_Volume(weather_channel, (MIX_MAX_VOLUME * (cfg_audio_master ? (cfg_audio_weather ? cfg_audio_weather_volume : 0) : 0) * cfg_audio_master_volume) / 10000);
