@@ -3321,17 +3321,21 @@ int Receive_weather(void)
 #ifdef USE_SOUND_2010
 	/* Play overlay sound (if enabled) */
 	if (use_sound) {
+//puts(format("read weather: type %d, wind %d.", weather_type, weather_wind));
 		if (weather_type == -1) {
 			sound_weather(-2); //stop
-		} else if (weather_type == 0) {
+		} else if (weather_type % 10 == 0) {
 			sound_weather(-1); //fade out
-		} else if (weather_type == 1) {
-			if (weather_wind > 3) sound_weather(1);
+		}
+#if 0 /*moved to do_weather() to become consistent with cloud shapes hovering above us..*/
+		else if (weather_type % 10 == 1) { //rain
+			if (weather_wind >= 3) sound_weather(1);
 			else sound_weather(0);
-		} else {
-			if (weather_wind > 3) sound_weather(3);
+		} else if (weather_type % 10 == 2) { //snow
+			if (weather_wind >= 3) sound_weather(3);
 			else sound_weather(2);
 		}
+#endif
 	}
 #endif
 

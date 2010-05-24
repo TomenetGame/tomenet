@@ -212,7 +212,7 @@ int p_speed = 110;
 bool no_tele_grid = FALSE;
 
 /* for weather */
-int weather_type = 0; /* stop(-1)/none/rain/snow */
+int weather_type = 0; /* stop(-1)/none/rain/snow; hacks: +20000, +10000, +n*10 */
 int weather_gen_speed = 0; /* speed at which new weather elements are generated */
 int weather_wind = 0; /* current gust of wind if any (1 west, 2 east, 3 strong west, 4 strong east) */
 int weather_intensity = 1; /* density of raindrops / snowflakes */
@@ -265,7 +265,7 @@ bool multi_key_macros = FALSE;
 void (*sound_hook)(int sound);
 void (*sound_weather_hook)(int sound);
 void (*music_hook)(int music);
-int music_next = -1, weather_channel = -1;
+int music_next = -1, weather_channel = -1, weather_current;
 bool cfg_audio_master = TRUE, cfg_audio_music = TRUE, cfg_audio_sound = TRUE, cfg_audio_weather = TRUE;
 int cfg_audio_master_volume = 100, cfg_audio_music_volume = 100, cfg_audio_sound_volume = 100, cfg_audio_weather_volume = 100;
 #endif

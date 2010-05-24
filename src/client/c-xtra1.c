@@ -2284,6 +2284,7 @@ void do_weather() {
 	int x, y, dx, dy, d; /* distance calculations (cloud centre) */
 	static int cloud_movement_ticks = 0, cloud_movement_lasttick = 0;
 	bool with_clouds, outside_clouds;
+	int seen_a_particle = 0; /* for SDL-sound: player has witnessed a rain drop or snow flake fall down */
 
 
 	/* continue animating current weather (if any) */
@@ -2528,6 +2529,7 @@ void do_weather() {
         		        Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
         		    	    PANEL_Y + weather_element_y[i] - weather_panel_y,
 	        	    	    TERM_BLUE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
+	        	    	seen_a_particle++;
 			}
 		}
 		/* advance snowflakes - falling slowly (assumed weather_speed isn't
@@ -2564,6 +2566,7 @@ void do_weather() {
         		        Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
         		    	    PANEL_Y + weather_element_y[i] - weather_panel_y,
         		    	    TERM_WHITE, '*');
+        		    	seen_a_particle++;
 			}
 		}
 	}
@@ -2571,6 +2574,19 @@ void do_weather() {
 
 	/* Update the screen */
 	if (!screen_icky) Term_fresh();
+
+	/* handle audio output -- avoid easy oscillating */
+	if (weather_channel == -1) {
+		if (seen_a_particle >= 10) {
+			if (weather_type % 10 == 1) { //rain
+				if (weather_wind >= 3) sound_weather(1);
+				else sound_weather(0);
+			} else if (weather_type % 10 == 2) { //snow
+				if (weather_wind >= 3) sound_weather(3);
+				else sound_weather(2);
+			}
+		}
+	} else if (seen_a_particle <= 5) sound_weather(-1); //fade out, insufficient particles to support the noise ;)
 
 
 /* clean up and exit ------------------------------------------------------- */

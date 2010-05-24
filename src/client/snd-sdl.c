@@ -254,7 +254,7 @@ static bool sound_sdl_init(bool no_cache) {
 					goto next_token_snd;
 				}
 			}
-
+//puts(format("loaded sample %s (ev %d, #%d).", samples[event].paths[num], event, num));
 			/* Imcrement the sample count */
 			samples[event].num++;
 
@@ -388,6 +388,7 @@ static bool sound_sdl_init(bool no_cache) {
 				}
 			}
 
+//puts(format("loaded song %s (ev %d, #%d).", songs[event].paths[num], event, num));
 			/* Imcrement the sample count */
 			songs[event].num++;
 
@@ -475,18 +476,26 @@ static void play_sound_weather(int event) {
 
 	if (event == -2) {
 		Mix_HaltChannel(weather_channel);
+		weather_channel = -1;
 		return;
 	}
 	else if (event == -1) {
 		Mix_FadeOutChannel(weather_channel, 2000);
+		weather_channel = -1;
 		return;
 	}
+
+	/* we're already in this weather? */
+	if (weather_channel != -1 && weather_current == event) return;
+	weather_current = event;
 
 	/* Paranoia */
 	if (event < 0 || event >= SOUND_MAX_2010) return;
 
+puts(format("requested weather %d", event));
 	/* Check there are samples for this event */
 	if (!samples[event].num) return;
+puts(format("found weather %d", event));
 
 	/* Choose a random event */
 	s = rand_int(samples[event].num);
@@ -497,6 +506,7 @@ static void play_sound_weather(int event) {
 		/* Verify it exists */
 		const char *filename = samples[event].paths[s];
 		if (!my_fexists(filename)) return;
+puts(format("exists weather %d", event));
 
 		/* Load */
 		wave = Mix_LoadWAV(filename);
@@ -507,9 +517,11 @@ static void play_sound_weather(int event) {
 		plog("SDL sound load failed.");
 		return;
 	}
+puts(format("loaded weather %d", event));
 
 	/* Actually play the thing */
-	weather_channel = Mix_PlayChannel(-1, wave, -1);
+//	weather_channel = Mix_PlayChannel(weather_channel, wave, -1);
+	weather_channel = Mix_FadeInChannel(weather_channel, wave, -1, 500);
 	if (weather_channel != -1) //paranoia?
 		Mix_Volume(weather_channel, (MIX_MAX_VOLUME * (cfg_audio_weather ? cfg_audio_weather_volume : 0)) / 100);
 }
@@ -563,7 +575,7 @@ static void fadein_next_music(void) {
 	/* Actually play the thing */
 	music_next = -1;
 //	Mix_PlayMusic(wave, -1);//-1 infinite, 0 once, or n times
-	Mix_FadeInMusic(wave, -1, 1500);
+	Mix_FadeInMusic(wave, -1, 1000);
 }
 
 /*
