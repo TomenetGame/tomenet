@@ -792,13 +792,13 @@ static void save_prefs(void)
 	strcpy(buf, cfg_audio_weather ? "1" : "0");
 	WritePrivateProfileInt("Angband", "AudioWeather", buf, ini_file);
 	strcpy(buf, format("%d", cfg_audio_master_volume));
-	WritePrivateProfileInt("Angband", "AudioMasterVolume", buf, ini_file);
+	WritePrivateProfileInt("Angband", "AudioVolumeMaster", buf, ini_file);
 	strcpy(buf, format("%d", cfg_audio_music_volume));
-	WritePrivateProfileInt("Angband", "AudioMusicVolume", buf, ini_file);
+	WritePrivateProfileInt("Angband", "AudioVolumeMusic", buf, ini_file);
 	strcpy(buf, format("%d", cfg_audio_sound_volume));
-	WritePrivateProfileInt("Angband", "AudioSoundVolme", buf, ini_file);
+	WritePrivateProfileInt("Angband", "AudioVolumeSound", buf, ini_file);
 	strcpy(buf, format("%d", cfg_audio_weather_volume));
-	WritePrivateProfileInt("Angband", "AudioWeatherVolume", buf, ini_file);
+	WritePrivateProfileInt("Angband", "AudioVolumeWeather", buf, ini_file);
  #endif
 #endif
 	save_prefs_aux(&data[0], "Main window");
@@ -923,10 +923,10 @@ static void load_prefs(void)
 	cfg_audio_music = (GetPrivateProfileInt("Angband", "AudioMusic", 1, ini_file) != 0);
 	cfg_audio_sound = (GetPrivateProfileInt("Angband", "AudioSound", 1, ini_file) != 0);
 	cfg_audio_weather = (GetPrivateProfileInt("Angband", "AudioWeather", 1, ini_file) != 0);
-	cfg_audio_master_volume = GetPrivateProfileInt("Angband", "AudioMasterVolume", 100, ini_file);
-	cfg_audio_music_volume = GetPrivateProfileInt("Angband", "AudioMusicVolume", 100, ini_file);
-	cfg_audio_sound_volume = GetPrivateProfileInt("Angband", "AudioSoundVolume", 100, ini_file);
-	cfg_audio_weather_volume = GetPrivateProfileInt("Angband", "AudioWeatherVolume", 100, ini_file);
+	cfg_audio_master_volume = GetPrivateProfileInt("Angband", "AudioVolumeMaster", 100, ini_file);
+	cfg_audio_music_volume = GetPrivateProfileInt("Angband", "AudioVolumeMusic", 100, ini_file);
+	cfg_audio_sound_volume = GetPrivateProfileInt("Angband", "AudioVolumeSound", 100, ini_file);
+	cfg_audio_weather_volume = GetPrivateProfileInt("Angband", "AudioVolumeWeather", 100, ini_file);
  #endif
 #endif
 
