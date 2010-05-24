@@ -781,6 +781,25 @@ static void save_prefs(void)
 #ifdef USE_SOUND
 	strcpy(buf, use_sound ? "1" : "0");
 	WritePrivateProfileString("Angband", "Sound", buf, ini_file);
+
+ #ifdef USE_SOUND_2010
+	strcpy(buf, cfg_audio_master ? "1" : "0");
+	WritePrivateProfileInt("Angband", "AudioMaster", buf, ini_file);
+	strcpy(buf, cfg_audio_music ? "1" : "0");
+	WritePrivateProfileInt("Angband", "AudioMusic", buf, ini_file);
+	strcpy(buf, cfg_audio_sound ? "1" : "0");
+	WritePrivateProfileInt("Angband", "AudioSound", buf, ini_file);
+	strcpy(buf, cfg_audio_weather ? "1" : "0");
+	WritePrivateProfileInt("Angband", "AudioWeather", buf, ini_file);
+	strcpy(buf, format("%d", cfg_audio_master_volume));
+	WritePrivateProfileInt("Angband", "AudioMasterVolume", buf, ini_file);
+	strcpy(buf, format("%d", cfg_audio_music_volume));
+	WritePrivateProfileInt("Angband", "AudioMusicVolume", buf, ini_file);
+	strcpy(buf, format("%d", cfg_audio_sound_volume));
+	WritePrivateProfileInt("Angband", "AudioSoundVolme", buf, ini_file);
+	strcpy(buf, format("%d", cfg_audio_weather_volume));
+	WritePrivateProfileInt("Angband", "AudioWeatherVolume", buf, ini_file);
+ #endif
 #endif
 	save_prefs_aux(&data[0], "Main window");
 
@@ -898,6 +917,17 @@ static void load_prefs(void)
 #ifdef USE_SOUND
 	/* Extract the "use_sound" flag */
 	use_sound = (GetPrivateProfileInt("Angband", "Sound", 0, ini_file) != 0);
+
+ #ifdef USE_SOUND_2010
+	cfg_audio_master = (GetPrivateProfileInt("Angband", "AudioMaster", 1, ini_file) != 0);
+	cfg_audio_music = (GetPrivateProfileInt("Angband", "AudioMusic", 1, ini_file) != 0);
+	cfg_audio_sound = (GetPrivateProfileInt("Angband", "AudioSound", 1, ini_file) != 0);
+	cfg_audio_weather = (GetPrivateProfileInt("Angband", "AudioWeather", 1, ini_file) != 0);
+	cfg_audio_master_volume = GetPrivateProfileInt("Angband", "AudioMasterVolume", 100, ini_file);
+	cfg_audio_music_volume = GetPrivateProfileInt("Angband", "AudioMusicVolume", 100, ini_file);
+	cfg_audio_sound_volume = GetPrivateProfileInt("Angband", "AudioSoundVolume", 100, ini_file);
+	cfg_audio_weather_volume = GetPrivateProfileInt("Angband", "AudioWeatherVolume", 100, ini_file);
+ #endif
 #endif
 
 	/* Load window prefs */
