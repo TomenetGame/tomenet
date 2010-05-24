@@ -20,6 +20,19 @@ audio_sfx = {
     "parry_weapon",
     "block_shield",
 
+    "cast_bolt",
+    "cast_ball",
+    "cast_cloud",
+    "cast_wave",
+    "phase_door",
+    "teleport",
+    "quaff_potion",
+    "read_scroll",
+    "aim_wand",
+    "zap_rod",
+    "use_staff",
+    "eat",
+
     "death_player", --your favourite scream (I like the DOOM space marine)
     "death_monster", --smack/smash sound (floating eye, insects, molds, jellies, all other stuff..)
     "death_monster_animal", --hiss
@@ -45,14 +58,24 @@ audio_sfx = {
     "door_stuck",
     "door_smash",
     "trap_setoff", --click? ^^
+    "earthquake",
+    "destruction",
 
-    "tunnel_tree",
-    "tunnel_rock",
+    "monster_hits",
+    "monster_misses",
+    "monster_casts_bolt",
+    "monster_casts_ball",
+    "monster_breaths",
+    "monster_summons",
+    "monster_curses",
+    "monster_blinks",
+    "monster_teleports",
+    "monster_heals",
 }
 function get_sound_name(idx)
-    if audio_sfx[idx + 1] == nil then return "" end
+    if audio_sfx[idx] == nil then return "" end
 --    if getn(audio_sfx) < idx then return "" end
-    return (audio_sfx[idx + 1])
+    return (audio_sfx[idx])
 end
 
 -- Background Music
@@ -114,7 +137,7 @@ audio_bgm = {
     "event_AreanaMonsterChallenge",
 }
 function get_music_name(idx)
-    if audio_bgm[idx + 1] == nil then return "" end
+    if audio_bgm[idx] == nil then return "" end
 --    if getn(audio_bgm) < idx then return "" end
-    return (audio_bgm[idx + 1])
+    return (audio_bgm[idx])
 end
