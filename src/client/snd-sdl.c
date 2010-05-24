@@ -519,7 +519,7 @@ static void play_sound_weather(int event) {
 	weather_channel = Mix_FadeInChannel(weather_channel, wave, -1, 500);
 	if (weather_channel != -1) { //paranoia?
 		weather_current = event;
-		Mix_Volume(weather_channel, (MIX_MAX_VOLUME * (cfg_audio_weather ? cfg_audio_weather_volume : 0)) / 100);
+		Mix_Volume(weather_channel, (MIX_MAX_VOLUME * (cfg_audio_master ? (cfg_audio_weather ? cfg_audio_weather_volume : 0) : 0) * cfg_audio_master_volume) / 10000);
 	}
 }
 
