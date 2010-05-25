@@ -34,19 +34,19 @@ audio_sfx = {
     "death_female", --your favourite scream (I like the DOOM space marine)
     "levelup",
     --commands
-    "eat", --21
+    "eat", --22
     "quaff_potion",
     "read_scroll",
     "aim_wand",
     "zap_rod",
     "use_staff",
-    "cast_bolt",--spells (27)
+    "cast_bolt",--spells (28)
     "cast_ball",--spells
     "cast_cloud",--spells
     "cast_wave",--spells
     "phase_door",--spells
     "teleport",--spells
-    "activate", --33
+    "activate", --34
     "browse",
     "browse_book",
     "bash_door_hold",
@@ -54,7 +54,7 @@ audio_sfx = {
     "open_door_stuck",
     "open_door",
     "open_chest",
-    "open_pick", --41
+    "open_pick", --42
     "close_door",
     "disarm",
     "drop_gold",
@@ -62,7 +62,7 @@ audio_sfx = {
     "staircase", --steps
     "tunnel_rock",
     "tunnel_tree",
-    "wearwield_armor_light", --49
+    "wearwield_armor_light", --50
     "wearwield_armor_heavy",
     "wearwield_lightsource",
     "wearwield_jewelry",
@@ -73,10 +73,10 @@ audio_sfx = {
     "wearwield_blunt",
     "wearwield_whip",
     "wearwield_axe",
-    "wearwield_polearm", --60
+    "wearwield_polearm", --61
 
     --[monsters]
-    "death_monster", --smack/smash sound (floating eye, insects, molds, jellies, all other stuff..) (61)
+    "death_monster", --smack/smash sound (floating eye, insects, molds, jellies, all other stuff..) (62)
     "death_monster_animal", --hiss
     "death_monster_animal_small", --hiss
     "death_monster_animal_large", --roar
@@ -85,7 +85,7 @@ audio_sfx = {
     "death_monster_humanoid", --scream/ugh/silence/whatever
     "death_monster_oOTP", --roar/scream
     "death_monster_A", --probably nothing, really
-    "death_monster_dragon_low", --hiss (70)
+    "death_monster_dragon_low", --hiss (71)
     "death_monster_dragon_high", --roar
     "death_monster_demon_low", --squeak
     "death_monster_demon_high", --scream
@@ -93,7 +93,7 @@ audio_sfx = {
     "death_monster_undead_high", --ghostly dissolve
     "death_monster_nonliving", --breakdown (construct)
     "death_monster_Ev", --swushsh (elementals and vortices dissolve)
-    "monster_hits", --78
+    "monster_hits", --79
     "monster_hits_claws",
     "monster_hits_weapon",
     "monster_misses",
@@ -104,10 +104,10 @@ audio_sfx = {
     "monster_curses",
     "monster_blinks",
     "monster_teleports",
-    "monster_heals", --89
+    "monster_heals", --90
 
     --[grid]
-    "trap_setoff", --click? ^^ (90)
+    "trap_setoff", --click? ^^ (91)
     "earthquake",
     "destruction",
 }
