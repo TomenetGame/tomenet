@@ -7,14 +7,14 @@
 
 -- Sound FX
 audio_sfx = {
-    --[weather]
+    --[weather] (0)
     "Rain_soft",
     "Rain_storm",
     "Snow_soft", --nothing really
     "Snow_storm",
 
-    --[player]
-    --combat
+    --[player] (4)
+    --combat (4)
     "hit",
     "hit_weapon",
     "hit_sword",
@@ -22,30 +22,30 @@ audio_sfx = {
     "hit_whip",
     "hit_axe",
     "hit_polearm",
-    "miss",
+    "miss", --11
     "miss_projectile",
     "miss_weapon",
-    "parry",
+    "parry", --14
     "parry_weapon",
-    "block_shield",
+    "block_shield", --16
     "block_shield_projectile",
-    "death", --your favourite scream (I like the DOOM space marine)
+    "death", --your favourite scream (I like the DOOM space marine) (18)
     "death_male", --your favourite scream (I like the DOOM space marine)
     "death_female", --your favourite scream (I like the DOOM space marine)
     --commands
-    "eat",
+    "eat", --21
     "quaff_potion",
     "read_scroll",
     "aim_wand",
     "zap_rod",
     "use_staff",
-    "cast_bolt",--spells
+    "cast_bolt",--spells (27)
     "cast_ball",--spells
     "cast_cloud",--spells
     "cast_wave",--spells
     "phase_door",--spells
     "teleport",--spells
-    "activate",
+    "activate", --33
     "browse",
     "browse_book",
     "bash_door_hold",
@@ -53,7 +53,7 @@ audio_sfx = {
     "open_door_stuck",
     "open_door",
     "open_chest",
-    "open_pick",
+    "open_pick", --41
     "close_door",
     "disarm",
     "drop_gold",
@@ -61,7 +61,7 @@ audio_sfx = {
     "staircase", --steps
     "tunnel_rock",
     "tunnel_tree",
-    "wearwield_armor_light",
+    "wearwield_armor_light", --49
     "wearwield_armor_heavy",
     "wearwield_lightsource",
     "wearwield_jewelry",
@@ -72,10 +72,10 @@ audio_sfx = {
     "wearwield_blunt",
     "wearwield_whip",
     "wearwield_axe",
-    "wearwield_polearm",
+    "wearwield_polearm", --60
 
     --[monsters]
-    "death_monster", --smack/smash sound (floating eye, insects, molds, jellies, all other stuff..)
+    "death_monster", --smack/smash sound (floating eye, insects, molds, jellies, all other stuff..) (61)
     "death_monster_animal", --hiss
     "death_monster_animal_small", --hiss
     "death_monster_animal_large", --roar
@@ -84,7 +84,7 @@ audio_sfx = {
     "death_monster_humanoid", --scream/ugh/silence/whatever
     "death_monster_oOTP", --roar/scream
     "death_monster_A", --probably nothing, really
-    "death_monster_dragon_low", --hiss
+    "death_monster_dragon_low", --hiss (70)
     "death_monster_dragon_high", --roar
     "death_monster_demon_low", --squeak
     "death_monster_demon_high", --scream
@@ -92,7 +92,7 @@ audio_sfx = {
     "death_monster_undead_high", --ghostly dissolve
     "death_monster_nonliving", --breakdown (construct)
     "death_monster_Ev", --swushsh (elementals and vortices dissolve)
-    "monster_hits",
+    "monster_hits", --78
     "monster_hits_claws",
     "monster_hits_weapon",
     "monster_misses",
@@ -103,10 +103,10 @@ audio_sfx = {
     "monster_curses",
     "monster_blinks",
     "monster_teleports",
-    "monster_heals",
+    "monster_heals", --89
 
     --[grid]
-    "trap_setoff", --click? ^^
+    "trap_setoff", --click? ^^ (90)
     "earthquake",
     "destruction",
 }
