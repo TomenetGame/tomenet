@@ -115,6 +115,14 @@ function get_sound_name(idx)
 --    if getn(audio_sfx) < idx then return "" end
     return (audio_sfx[idx + 1])
 end
+function get_sound_index(name)
+    for i = 1, getn(audio_sfx) do
+	if audio_sfx[i] == name then
+	    return(i - 1)
+	end
+    end
+    return (-1)
+end
 
 -- Background Music
 audio_bgm = {
