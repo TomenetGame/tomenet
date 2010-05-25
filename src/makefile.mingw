@@ -228,9 +228,9 @@ LD = mingw32-ld
 WINDRES = mingw32-windres
 
 # Use these on Ubuntu and others
-#CC = i386-mingw32msvc-gcc
-#LD = i386-mingw32msvc-ld
-#WINDRES = i386-mingw32msvc-windres
+#CC = i586-mingw32msvc-gcc
+#LD = i586-mingw32msvc-ld
+#WINDRES = i586-mingw32msvc-windres
 
 
 # Lua
