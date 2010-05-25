@@ -3333,6 +3333,7 @@ int Receive_weather(void)
 		if (weather_type == -1) {
 			sound_weather(-2); //stop
 		} else if (weather_type % 10 == 0) {
+			puts("cmd-1");//debug
 			sound_weather(-1); //fade out
 		}
 #if 0 /*moved to do_weather() to become consistent with cloud shapes hovering above us..*/
@@ -4523,7 +4524,30 @@ void do_ping()
 	}
 
 	/* abusing it for weather for now - C. Blue */
+#ifdef USE_SOUND_2010
+	weather_particles_seen = 0;
+#endif
 	do_weather();
+#ifdef USE_SOUND_2010
+	/* handle audio output -- avoid easy oscillating */
+	if (weather_particles_seen >= 7) {
+		weather_sound_change = 0;
+		if (weather_type % 10 == 1) { //rain
+			if (weather_wind >= 3) sound_weather(1);
+			else sound_weather(0);
+		} else if (weather_type % 10 == 2) { //snow
+			if (weather_wind >= 3) sound_weather(3);
+			else sound_weather(2);
+		}
+	} else if (weather_particles_seen <= 4) {
+		weather_sound_change++;
+		if (weather_sound_change == (cfg_client_fps > 100 ? 100 : cfg_client_fps)) {
+			weather_sound_change = 0;
+			sound_weather(-1); //fade out, insufficient particles to support the noise ;)
+		}
+	} else weather_sound_change = 0;
+	if (weather_fading) weather_handle_fading();
+#endif
 }
 
 int Send_sip(void) {

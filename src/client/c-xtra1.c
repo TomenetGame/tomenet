@@ -2269,8 +2269,9 @@ void window_stuff(void)
 	}
 }
 
-/* Handle weather (rain and snow) client-side - C. Blue */
-/* note: keep following defines in sync with nclient.c, beginning of file */
+/* Handle weather (rain and snow) client-side - C. Blue
+ * Note: keep following defines in sync with nclient.c, beginning of file.
+ * do_weather() is called by do_ping() which is called every frame. */
 #define SKY_ALTITUDE	20 /* assumed 'pseudo-isometric' cloud altitude */
 #define PANEL_X		13 /* physical top-left screen position of view panel */
 #define PANEL_Y		1 /* physical top-left screen position of view panel */
@@ -2284,9 +2285,6 @@ void do_weather() {
 	int x, y, dx, dy, d; /* distance calculations (cloud centre) */
 	static int cloud_movement_ticks = 0, cloud_movement_lasttick = 0;
 	bool with_clouds, outside_clouds;
-#ifdef USE_SOUND_2010
-	int seen_a_particle = 0; /* for SDL-sound: player has witnessed a rain drop or snow flake fall down */
-#endif
 
 
 	/* continue animating current weather (if any) */
@@ -2380,6 +2378,8 @@ void do_weather() {
 	/* attempt to keep track of 'deci-ticks' (10ms resolution) */
 	if (ticks10 == weather_ticks10) return;
 	weather_ticks10 = ticks10;
+	/* note: the second limit is the frame rate, cfg.fps,
+	   so if it's < 100, it will limit the speed instead. */
 
 
 /* generate new weather elements ------------------------------------------- */
@@ -2532,7 +2532,7 @@ void do_weather() {
         		    	    PANEL_Y + weather_element_y[i] - weather_panel_y,
 	        	    	    TERM_BLUE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
 #ifdef USE_SOUND_2010
-	        	    	seen_a_particle++;
+	        	    	weather_particles_seen++;
 #endif
 			}
 		}
@@ -2571,7 +2571,7 @@ void do_weather() {
         		    	    PANEL_Y + weather_element_y[i] - weather_panel_y,
         		    	    TERM_WHITE, '*');
 #ifdef USE_SOUND_2010
-        		    	seen_a_particle++;
+        		    	weather_particles_seen++;
 #endif
 			}
 		}
@@ -2580,21 +2580,6 @@ void do_weather() {
 
 	/* Update the screen */
 	if (!screen_icky) Term_fresh();
-
-#ifdef USE_SOUND_2010
-	/* handle audio output -- avoid easy oscillating */
-	if (weather_channel == -1) {
-		if (seen_a_particle >= 10) {
-			if (weather_type % 10 == 1) { //rain
-				if (weather_wind >= 3) sound_weather(1);
-				else sound_weather(0);
-			} else if (weather_type % 10 == 2) { //snow
-				if (weather_wind >= 3) sound_weather(3);
-				else sound_weather(2);
-			}
-		}
-	} else if (seen_a_particle <= 5) sound_weather(-1); //fade out, insufficient particles to support the noise ;)
-#endif
 
 
 /* clean up and exit ------------------------------------------------------- */
