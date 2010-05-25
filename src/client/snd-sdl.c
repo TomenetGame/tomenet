@@ -251,7 +251,7 @@ static bool sound_sdl_init(bool no_cache) {
 				samples[event].wavs[num] = Mix_LoadWAV(path);
 				if (!samples[event].wavs[num]) {
 					plog_fmt("%s: %s", SDL_GetError(), strerror(errno));
-					puts(format("%s: %s", SDL_GetError(), strerror(errno)));//DEBUG USE_SOUND_2010
+					puts(format("%s: %s (%s)", SDL_GetError(), strerror(errno), path));//DEBUG USE_SOUND_2010
 					goto next_token_snd;
 				}
 			}
