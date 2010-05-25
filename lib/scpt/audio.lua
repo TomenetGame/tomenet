@@ -17,6 +17,11 @@ audio_sfx = {
     --combat
     "hit",
     "hit_weapon",
+    "hit_sword",
+    "hit_hammer",
+    "hit_whip",
+    "hit_axe",
+    "hit_polearm",
     "miss",
     "miss_projectile",
     "miss_weapon",
