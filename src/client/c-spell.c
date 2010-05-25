@@ -774,6 +774,13 @@ void browse_school_spell(int item, int book, int pval)
 	char out_val[160];
 	int sval = book;
 
+#ifdef USE_SOUND_2010
+	if (sval == SV_SPELLBOOK)
+		sound(exec_lua(0, "return get_sound_index(\"browse\")"));
+	else
+		sound(exec_lua(0, "return get_sound_index(\"browse_book\")"));
+#endif
+
         num = exec_lua(0, format("return book_spells_num2(%d, %d)", item, sval));
 
 	/* Build a prompt (accept all spells) */
