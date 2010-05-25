@@ -32,6 +32,7 @@ audio_sfx = {
     "death", --your favourite scream (I like the DOOM space marine) (18)
     "death_male", --your favourite scream (I like the DOOM space marine)
     "death_female", --your favourite scream (I like the DOOM space marine)
+    "levelup",
     --commands
     "eat", --21
     "quaff_potion",
