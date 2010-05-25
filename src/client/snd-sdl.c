@@ -39,7 +39,14 @@ static const char *ANGBAND_DIR_XTRA_SOUND;
 
 /* declare */
 static void fadein_next_music(void);
+static void clear_channel(int c);
 
+
+/* Arbitrary limit of mixer channels */
+#define MAX_CHANNELS	16
+
+/* Mixed sample size (larger = more lagging sound, smaller = skipping on slow machines) */
+#define CHUNK_SIZE	1024
 
 /* Arbitary limit on number of samples per event */
 #define MAX_SAMPLES	8
@@ -52,6 +59,8 @@ typedef struct {
 	int num;                        /* Number of samples for this event */
 	Mix_Chunk *wavs[MAX_SAMPLES];   /* Sample array */
 	const char *paths[MAX_SAMPLES]; /* Relative pathnames for samples */
+	int current_channel;		/* Channel it's currently being played on, -1 if none; to avoid
+					   stacking of the same sound multiple (read: too many) times - C. Blue */
 } sample_list;
 
 /* background music */
@@ -63,6 +72,10 @@ typedef struct {
 
 /* Just need an array of SampInfos */
 static sample_list samples[SOUND_MAX_2010];
+
+/* Array of potential channels, for managing that only one
+   sound of a kind is played simultaneously, for efficiency - C. Blue */
+static int channel_sample[MAX_CHANNELS];
 
 /* Music Array */
 static song_list songs[MUSIC_MAX];
@@ -117,8 +130,6 @@ static bool open_audio(void) {
 	
 	/* Initialize variables */
 	audio_rate = cfg_audio_rate;
-//	audio_rate = 44100;//costs a lot on hardware that runs on 48kHz
-//	audio_rate = 22050;//angband default
 	audio_format = AUDIO_S16;
 	audio_channels = 2;
 
@@ -130,11 +141,17 @@ static bool open_audio(void) {
 	}
 
 	/* Try to open the audio */
-	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, 4096) < 0) {
+	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, CHUNK_SIZE) < 0) {
 		plog_fmt("Couldn't open mixer: %s", SDL_GetError());
 		puts(format("Couldn't open mixer: %s", SDL_GetError()));//DEBUG USE_SOUND_2010
 		return FALSE;
 	}
+
+	Mix_AllocateChannels(MAX_CHANNELS);
+	/* set hook for clearing faded-out weather and for managing sound-fx playback */
+	Mix_ChannelFinished(clear_channel);
+	/* set hook for fading over to next song */
+	Mix_HookMusicFinished(fadein_next_music);
 
 	/* Success */
 	return TRUE;
@@ -150,14 +167,15 @@ static bool sound_sdl_init(bool no_cache) {
 	char path[2048];
 	char buffer[2048];
 	FILE *fff;
+	int i;
 
 	/* Initialise the mixer  */
 	if (!open_audio()) return FALSE;
 
 	puts(format("sound_sdl_init() opened at %d Hz.", cfg_audio_rate));//debug
 
-	/* set hook for fading over to next song */
-	Mix_HookMusicFinished(fadein_next_music);
+	/* Initialize sound-fx channel management */
+	for (i = 0; i < MAX_CHANNELS; i++) channel_sample[i] = -1;
 
 
 	/* ------------------------------- Init Sounds */
@@ -255,7 +273,11 @@ static bool sound_sdl_init(bool no_cache) {
 					goto next_token_snd;
 				}
 			}
+			/* Initialize as 'not being played' */
+			samples[event].current_channel = -1;
+
 			//puts(format("loaded sample %s (ev %d, #%d).", samples[event].paths[num], event, num));//debug
+
 			/* Imcrement the sample count */
 			samples[event].num++;
 
@@ -443,6 +465,9 @@ static void play_sound(int event) {
 	/* Check there are samples for this event */
 	if (!samples[event].num) return;
 
+	/* already playing? prevent multiple sounds of the same kind from being mixed simultaneously, for preventing silliness */
+	if (samples[event].current_channel != -1) return;
+
 	/* Choose a random event */
 	s = rand_int(samples[event].num);
 	wave = samples[event].wavs[s];
@@ -464,12 +489,24 @@ static void play_sound(int event) {
 	}
 
 	/* Actually play the thing */
-	Mix_PlayChannel(-1, wave, 0);
+	/* remember, for efficiency management */
+	s = Mix_PlayChannel(-1, wave, 0);
+	if (s != -1) channel_sample[s] = event;
+	samples[event].current_channel = s;
 }
 
 
 /* Release weather channel after fading out has been completed */
-static void clear_weather(int c) { weather_channel = -1; }
+static void clear_channel(int c) {
+	/* weather has faded out, mark it as gone */
+	if (c == weather_channel) {
+		weather_channel = -1;
+		return;
+	}
+	/* a sample has finished playing, so allow this kind to be played again */
+	samples[channel_sample[c]].current_channel = -1;
+	channel_sample[c] = -1;
+}
 
 /* Overlay a weather noise */
 static void play_sound_weather(int event) {
@@ -523,7 +560,6 @@ static void play_sound_weather(int event) {
 	new_wc = Mix_FadeInChannel(weather_channel, wave, -1, 500);
 	weather_fading = 1;
 	//new_wc = Mix_PlayChannel(weather_channel, wave, -1);
-	Mix_ChannelFinished(clear_weather);
 	puts(format("old: %d, new: %d, ev: %d", weather_channel, new_wc, event));//debug
 
 #if 1
