@@ -557,9 +557,16 @@ static void play_sound_weather(int event) {
 	}
 
 	/* Actually play the thing */
+#if 1 /* volume glitch paranoia (first fade-in seems to move volume to 100% instead of designated cfg_audio_... */
+	new_wc = Mix_PlayChannel(weather_channel, wave, -1);
+	if (new_wc != -1) {
+		Mix_Volume(new_wc, (MIX_MAX_VOLUME * (cfg_audio_master ? (cfg_audio_weather ? cfg_audio_weather_volume : 0) : 0) * cfg_audio_master_volume) / 10000);
+		new_wc = Mix_FadeInChannel(new_wc, wave, -1, 500);
+	}
+#else
 	new_wc = Mix_FadeInChannel(weather_channel, wave, -1, 500);
+#endif
 	weather_fading = 1;
-	//new_wc = Mix_PlayChannel(weather_channel, wave, -1);
 	puts(format("old: %d, new: %d, ev: %d", weather_channel, new_wc, event));//debug
 
 #if 1
