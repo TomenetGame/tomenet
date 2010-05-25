@@ -18,7 +18,7 @@ audio_sfx = {
     "hit",
     "hit_weapon",
     "hit_sword",
-    "hit_hammer",
+    "hit_blunt",
     "hit_whip",
     "hit_axe",
     "hit_polearm",
@@ -47,6 +47,7 @@ audio_sfx = {
     "teleport",--spells
     "activate",
     "browse",
+    "browse_book",
     "bash_door_hold",
     "bash_door_break",
     "open_door_stuck",
@@ -67,6 +68,11 @@ audio_sfx = {
     "wearwield_tool",
     "wearwield_tool_digger",
     "wearwield_weapon",
+    "wearwield_sword",
+    "wearwield_blunt",
+    "wearwield_whip",
+    "wearwield_axe",
+    "wearwield_polearm",
 
     --[monsters]
     "death_monster", --smack/smash sound (floating eye, insects, molds, jellies, all other stuff..)
