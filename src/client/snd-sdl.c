@@ -54,6 +54,23 @@ static void clear_channel(int c);
 /* Arbitary limit on number of music songs per situation */
 #define MAX_SONGS	3
 
+#if 1 /* use linear volume scale -- poly+50 would be best, but already causes mixer outtages if total volume becomes too small (ie < 1).. =_= */
+ #define CALC_MIX_VOLUME(T, V)	((MIX_MAX_VOLUME * (cfg_audio_master ? ((T) ? (V) : 0) : 0) * cfg_audio_master_volume) / 10000)
+#endif
+#if 0 /* use polynomial volume scale -- '+50' seems best, although some low-low combos already won't produce sound at all due to low mixer resolution. maybe just use linear scale, simply? */
+ #define CALC_MIX_VOLUME(T, V)	((MIX_MAX_VOLUME * (cfg_audio_master ? ((T) ? (((V) + 50) * ((V) + 50)) / 100 - 25 : 0) : 0) * (((cfg_audio_master_volume + 50) * (cfg_audio_master_volume + 50)) / 100 - 25)) / 40000)
+// #define CALC_MIX_VOLUME(T, V)	((MIX_MAX_VOLUME * (cfg_audio_master ? ((T) ? (((V) + 30) * ((V) + 30)) / 100 - 9 : 0) : 0) * (((cfg_audio_master_volume + 30) * (cfg_audio_master_volume + 30)) / 100 - 9)) / 25600)
+// #define CALC_MIX_VOLUME(T, V)	((MIX_MAX_VOLUME * (cfg_audio_master ? ((T) ? (((V) + 10) * ((V) + 10)) / 100 - 1 : 0) : 0) * (((cfg_audio_master_volume + 10) * (cfg_audio_master_volume + 10)) / 100 - 1)) / 14400)
+#endif
+#if 0 /* use exponential volume scale (whoa) - but let's use a lookup table for efficiency ^^ EDIT: too extreme */
+ static int vol[11] = { 0, 1, 2, 4, 6, 10, 16, 26, 42, 68, 100 }; /* this is similar to rounded down 1.6^(0..10) */
+ #define CALC_MIX_VOLUME(T, V)	((MIX_MAX_VOLUME * (cfg_audio_master ? ((T) ? vol[(V) / 10] : 0) : 0) * vol[cfg_audio_master_volume / 10]) / 10000)
+#endif
+#if 0 /* also too extreme, even more so */
+ static int vol[11] = { 0, 1, 2, 3, 5, 8, 14, 25, 42, 68, 100 }; /* this is similar to rounded down 1.6^(0..10) */
+ #define CALC_MIX_VOLUME(T, V)	((MIX_MAX_VOLUME * (cfg_audio_master ? ((T) ? vol[(V) / 10] : 0) : 0) * vol[cfg_audio_master_volume / 10]) / 10000)
+#endif
+
 /* Struct representing all data about an event sample */
 typedef struct {
 	int num;                        /* Number of samples for this event */
@@ -560,7 +577,7 @@ static void play_sound_weather(int event) {
 #if 1 /* volume glitch paranoia (first fade-in seems to move volume to 100% instead of designated cfg_audio_... */
 	new_wc = Mix_PlayChannel(weather_channel, wave, -1);
 	if (new_wc != -1) {
-		Mix_Volume(new_wc, (MIX_MAX_VOLUME * (cfg_audio_master ? (cfg_audio_weather ? cfg_audio_weather_volume : 0) : 0) * cfg_audio_master_volume) / 10000);
+		Mix_Volume(new_wc, CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume));
 		new_wc = Mix_FadeInChannel(new_wc, wave, -1, 500);
 	}
 #else
@@ -580,7 +597,7 @@ static void play_sound_weather(int event) {
 		//successfully started playing the first weather
 		weather_channel = new_wc;
 		weather_current = event;
-		Mix_Volume(weather_channel, (MIX_MAX_VOLUME * (cfg_audio_master ? (cfg_audio_weather ? cfg_audio_weather_volume : 0) : 0) * cfg_audio_master_volume) / 10000);
+		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume));
 	} else {
 		//failed to start playing?
 		if (new_wc == -1) {
@@ -596,7 +613,7 @@ static void play_sound_weather(int event) {
 				Mix_HaltChannel(weather_channel);
 				weather_channel = new_wc;
 				weather_current = event;
-				Mix_Volume(weather_channel, (MIX_MAX_VOLUME * (cfg_audio_master ? (cfg_audio_weather ? cfg_audio_weather_volume : 0) : 0) * cfg_audio_master_volume) / 10000);
+				Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume));
 			}
 		}
 	}
@@ -610,7 +627,7 @@ static void play_sound_weather(int event) {
 	}
 	if (weather_channel != -1) { //paranoia? should always be != -1 at this point
 		weather_current = event;
-		Mix_Volume(weather_channel, (MIX_MAX_VOLUME * (cfg_audio_master ? (cfg_audio_weather ? cfg_audio_weather_volume : 0) : 0) * cfg_audio_master_volume) / 10000);
+		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume));
 	}
 #endif
 
@@ -625,7 +642,7 @@ void weather_handle_fading(void) {
 	}
 
 	if (Mix_FadingChannel(weather_channel) == MIX_NO_FADING) {
-		Mix_Volume(weather_channel, (MIX_MAX_VOLUME * (cfg_audio_master ? (cfg_audio_weather ? cfg_audio_weather_volume : 0) : 0) * cfg_audio_master_volume) / 10000);
+		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume));
 		weather_fading = 0;
 		return;
 	}
@@ -757,10 +774,10 @@ bool my_dexists(const char *dname) {
 
 void set_mixing(void) {
 //	puts(format("mixer set to %d, %d, %d.", cfg_audio_music_volume, cfg_audio_sound_volume, cfg_audio_weather_volume));
-	Mix_Volume(-1, (MIX_MAX_VOLUME * (cfg_audio_master ? (cfg_audio_sound ? cfg_audio_sound_volume : 0) : 0) * cfg_audio_master_volume) / 10000);
-	Mix_VolumeMusic((MIX_MAX_VOLUME * (cfg_audio_master ? (cfg_audio_music ? cfg_audio_music_volume : 0) : 0) * cfg_audio_master_volume) / 10000);
+	Mix_Volume(-1, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
+	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume));
 	if (weather_channel != -1 && Mix_FadingChannel(weather_channel) != MIX_FADING_OUT)
-		Mix_Volume(weather_channel, (MIX_MAX_VOLUME * (cfg_audio_master ? (cfg_audio_weather ? cfg_audio_weather_volume : 0) : 0) * cfg_audio_master_volume) / 10000);
+		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume));
 }
 
 #endif /* SOUND_SDL */
