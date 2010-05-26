@@ -6157,7 +6157,7 @@ Note that not every skill is available to every profession (class).
     .Backstabbing               Lets you backstab enemies, afflicting high
                                 damage. Works best if the opponent is
                                 sleeping. Requires sword-type weapons.
-    .Stealing                   Ability to steal (from shops)! Very nasty >:)
+    .Stealing                   Ability to steal items from stores.
                                 If you get caught, you will be on the
                                 'blacklist of merchants' for a minute up
                                 to 2 hours, depending on the item you tried to
@@ -6165,7 +6165,7 @@ Note that not every skill is available to every profession (class).
                                 impossible to steal, and you will get BAD
                                 prices (blackmarket-like) in shops.
                                 Note that your blacklist timer won't decrease
-                                while you are /afk !!
+                                while you are 'AFK'!
                                 You'll also be on the 'watchlist', meaning
                                 that you can shop normally, but are unable to
                                 steal until the shopkeepers stop to watch you
@@ -6182,23 +6182,27 @@ Note that not every skill is available to every profession (class).
                                 and invisibility are also somewhat helpful.
                                 For example it's nearly impossible to steal a
                                 large piece of wood without the store owner
-                                noticing it, although it's not worth much :)
-                                There's always a minimum chance of 5% to fail!
+                                noticing it, although it's not worth much.
+                                There's always a minimum chance of 5% to fail.
                                 You need to be at least level 5 to steal.
                                 You have a chance to successfully steal an
                                 item even if your stealing skill is 0 and your
-                                dexterity low. Everyone could try to steal..
+                                dexterity low, so everyone could give it a try.
                                 If a shop offers an item more expensive than
                                 it actually is (black market) that has no
                                 effect on stealing. The 'normal' item value
                                 is used to calculate the chances.
                                 However, if an item is offered at reduced
                                 price, it'll be easier to steal it!
-                                It's more difficult to steal from special
-                                stores (expensive black market and especially
-                                rare footwear/jewellry/secret black market).
+                                It's more difficult to steal from certain
+                                stores, and impossible to steal from expensive
+                                black market (the one located somewhat hidden
+                                in Minas Anor), secret black market (the one
+                                you can only find in dungeons), rare footwear
+                                shop and rare jewelry shop (both in dungeons).
                                 It's a good idea to wear as many +DEX items
-                                as possible while trying to steal from a shop.
+                                as possible while trying to steal from a shop,
+                                since DEX is the main factor besides the skill.
     +Dodging                    Ability to evade attacks. In order to get any
                                 benefits from doding skill at all, your armour
                                 mustn't be so heavy that you get a flexibility
