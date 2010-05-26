@@ -136,13 +136,13 @@ audio_bgm = {
     "Khazaddum",
     "Valinor",
 
-    "wilderness_generic_day",
+    "wilderness_generic_day",--7
     "wilderness_generic_night",
 
     "dungeon_generic",
     "dungeon_generic_nodeath",
     "dungeon_generic_ironman",
-    "dungeon_generic_forcedownhellish",
+    "dungeon_generic_forcedownhellish",--12
 
     "TheTrainingTower",
     "BarrowDowns",
@@ -150,7 +150,7 @@ audio_bgm = {
     "ThePathsoftheDead",
     "Angband",
 
-    "TheOrcCave",
+    "TheOrcCave",--18
     "MountDoom",
     "NetherRealm",
     "TheHelcaraxe",
@@ -158,7 +158,7 @@ audio_bgm = {
     "TheSandwormLair",
     "TheHallsofMandos",
     "TheOldForest",
-    "TheHeartoftheEarth",
+    "TheHeartoftheEarth",--26
     "TheMinesofMoria",
     "CirithUngol",
     "TheSmallWaterCave",
@@ -167,7 +167,7 @@ audio_bgm = {
     "DolGuldur",
     "SubmergedRuins",
     "Erebor",
-    "TheIllusionaryCastle",
+    "TheIllusoryCastle",--35
     "TheSacredLandofMountains",
     "TheMaze",
 
@@ -176,7 +176,7 @@ audio_bgm = {
     "boss_Nazgul",
     "boss_Sauron",
     "boss_Morgoth",
-    "boss_ZuAon",
+    "boss_ZuAon",--39
 
     "feeling_Terrifying",
 
