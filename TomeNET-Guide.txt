@@ -236,7 +236,8 @@ compile the game under '(2.1) Installing TomeNET'.
  Also, if a grey '(O)' is in front of a player name, it means that player is
  using an outdated client. It's very important to keep your client up to date!
 
-It is recommended that you continue reading at (3.2) now ;)
+It is recommended that you continue reading at (3.2) now,
+or glance at (7.3) first ;)
 
 
 
@@ -1008,6 +1009,12 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
 -Some shops' features have not yet been implemented.
 -Stealing from monsters is not possible.
 -'LEVELS' and 'ULTIMATE' flag on unique items currently don't do anything.
+-When you've spend some time in town or on a dungeon floor, your depth number
+ in the bottom right corner will turn light-blue. This means that you will get
+ a special feeling on the next dungeon floor you enter, displayed in yellow.
+ That feeling will tell you about the threat of that particular floor, so you
+ may consider leaving it again if it sounds too nasty. See (4.8) for details.
+-The official web forum is located at http://www.tomenet.net/.
 
 
 
@@ -8737,6 +8744,18 @@ Very high characters (36 and above)
 (7.3) Surviving critical situations
 -----------------------------------
 
+Not getting into a critical situation:
+--------------------------------------
+Best thing is to not get into a critical situation at all.
+To help you estimate the threat of a particular dungeon floor, there are
+'feelings' your character may get when you enter the floor:
+When you've spend some time in town or on a dungeon floor, your depth number in
+the bottom right corner will turn light-blue. This means that you will get a
+special feeling on the next dungeon floor you enter, displayed in yellow.
+That feeling will tell you about the threat of that particular floor, so you
+may consider leaving it again if it sounds too nasty. See (4.8) for details.
+
+
 Map structures:
 ---------------
 There are certain situations and constellations that will occur often in a
@@ -8982,6 +9001,9 @@ Mistakes / Carelessness:
 -I do not recommend to drop food nor oil in exchange for loot if you're not
  planning to recall instantly after you picked up the loot.
 
+-If you team up, make sure that you stick closely together all the time.
+ Wandering off usually greatly increases both players' risk of death!
+
 -Learn from your mistakes. If you die, think about if you were taking too high
  a risk, and check if you overlooked anything, maybe you were missing
  essential items (cure critical wound potions to get rid of confusion and
@@ -9009,6 +9031,9 @@ Teamplay:
  supporters. Mages usually make a great team with whomever they team up.
  Keep your teammates in mind and don't teleport out if it meant
  certain death to them while you could still take some hits.
+
+-Make sure you stick together with your team mates. If you wander off instead
+ of staying close you will greatly increase your risk of dieing to something.
 
 
 
