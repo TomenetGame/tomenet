@@ -3517,6 +3517,7 @@ static void init_stuff(void)
 
 
 #ifdef USE_SOUND
+#ifndef USE_SOUND_2010
 
 	/* Build the "sound" path */
 	path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
@@ -3527,6 +3528,7 @@ static void init_stuff(void)
 	/* Validate the "sound" directory */
 	validate_dir(ANGBAND_DIR_XTRA_SOUND);
 
+#endif
 #endif
 
 }
