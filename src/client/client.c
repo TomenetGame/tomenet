@@ -303,12 +303,12 @@ bool write_mangrc(void) {
 				strcpy(buf, "audioVolumeWeather\t");
 				strcat(buf, format("%d\n", cfg_audio_weather_volume));
 			}
-
-			/* copy the line over */
-			fputs(buf, config2);
 #endif
 
 			/*** Everything else is ignored ***/
+
+			/* copy the line over */
+			fputs(buf, config2);
 		}
 		fclose(config);
 		fclose(config2);
