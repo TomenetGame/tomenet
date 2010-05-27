@@ -2771,18 +2771,30 @@ int Receive_sound(void)
 {
 	int	n;
 	char	ch, s;
+	int	s1, s2;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &s)) <= 0)
-	{
-		return n;
+	if (is_newer_than(&server_version, 4, 4, 5, 0, 0, 0)) {
+		/* Primary sound and an alternative */
+		if ((n = Packet_scanf(&rbuf, "%c%d%d", &ch, &s1, &s2)) <= 0)
+		{
+			return n;
+		}
+	} else {
+		if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &s)) <= 0)
+		{
+			return n;
+		}
+		s1 = s;
 	}
 
 	/* Make a sound (if allowed) */
 	if (use_sound)
 #ifndef USE_SOUND_2010
-		Term_xtra(TERM_XTRA_SOUND, s);
+		Term_xtra(TERM_XTRA_SOUND, s1);
 #else
-		sound(s);
+		if (!sound(s1)) {
+			sound(s2);
+		}
 #endif
 
 	return 1;
