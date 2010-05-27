@@ -3478,6 +3478,7 @@ that keeps many algorithms happy.
  */
 #define PW_INVEN	0x00000001L	/* Display inven/equip */
 #define PW_EQUIP	0x00000002L	/* Display equip/inven */
+/* xxx */
 #define PW_PLAYER	0x00000008L	/* Display character */
 #define PW_LAGOMETER	0x00000010L	/* Display the lag-o-meter */
 /* xxx */
@@ -3486,12 +3487,13 @@ that keeps many algorithms happy.
 #define PW_MONSTER	0x00000100L	/* Display monster recall */
 #define PW_OBJECT	0x00000200L	/* Display object recall */
 /* xxx */
-#define PW_SNAPSHOT	0x00000800L	/* Display snap-shot */
 /* xxx */
 /* xxx */
-#define PW_BORG_1	0x00004000L	/* Display borg messages */
-#define PW_BORG_2	0x00008000L	/* Display borg status */
-
+/* xxx */
+/* xxx */
+/* xxx */
+/* xxx */
+/* xxx */
 #define PW_CHAT		0x00040000L	/* Display chat messages */
 #define PW_MSGNOCHAT	0x00080000L	/* Display messages except chat */
 
