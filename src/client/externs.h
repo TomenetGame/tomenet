@@ -747,6 +747,7 @@ extern void music(int val);
 extern void sound_weather(int val);
 extern void set_mixing(void);
 extern void weather_handle_fading(void);
+extern void mixer_fadeall(void);
 extern int music_next, weather_channel, weather_current;
 extern int weather_particles_seen, weather_sound_change, weather_fading;
 extern int cfg_audio_rate;
@@ -768,5 +769,5 @@ extern const struct module sound_modules[];
 extern errr init_sound_sdl(int argc, char **argv);
 
 //z-files.h:
-extern bool my_fexists(const char *fname);
+//extern bool my_fexists(const char *fname);
 #endif

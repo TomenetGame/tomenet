@@ -41,6 +41,7 @@ static const char *ANGBAND_DIR_XTRA_MUSIC;
 /* declare */
 static void fadein_next_music(void);
 static void clear_channel(int c);
+static bool my_fexists(const char *fname);
 
 
 /* Arbitrary limit of mixer channels */
@@ -779,14 +780,17 @@ errr init_sound_sdl(int argc, char **argv) {
 	return (0);
 }
 
-/* when quitting the game maybe */
-//void sdl_fadeout(void) { Mix_FadeOutChannel(-1, 500); }
+/* on game termination */
+void mixer_fadeall(void) {
+	Mix_FadeOutMusic(1500);
+	Mix_FadeOutChannel(-1, 1500);
+}
 
 //extra code I moved here for USE_SOUND_2010, for porting
 //this stuff from angband into here. it's part of angband's z-files.c..- C. Blue
 
 //z-files.c:
-bool my_fexists(const char *fname) {
+static bool my_fexists(const char *fname) {
 	FILE *fd;
 	/* Try to open it */
 	fd = fopen(fname, "r");

@@ -342,6 +342,12 @@ static void quit_hook(cptr s)
 {
 	int j;
 
+#ifdef USE_SOUND_2010
+	/* let the sound fade out, also helps the user to realize
+	   he's been disconnected or something - C. Blue */
+	mixer_fadeall();
+#endif
+
 	Net_cleanup();
 	c_quit=1;
 	if(message_num() && get_check("Save chatlog?")){

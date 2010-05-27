@@ -3348,6 +3348,12 @@ static void hook_quit(cptr str)
 {
 	int i;
 
+#ifdef USE_SOUND_2010
+	/* let the sound fade out, also helps the user to realize
+	   he's been disconnected or something - C. Blue */
+	mixer_fadeall();
+#endif
+
 	/* Copied from quit_hook in c-init.c - mikaelh */
 	Net_cleanup();
 	c_quit=1;
