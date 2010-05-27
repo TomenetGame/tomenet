@@ -6210,6 +6210,13 @@ Note that not every skill is available to every profession (class).
                                 It's a good idea to wear as many +DEX items
                                 as possible while trying to steal from a shop,
                                 since DEX is the main factor besides the skill.
+                                Additional notes:
+                                Stealing items which have a base value (with
+                                discount applied, as usual for stealing) not
+                                higher than your stealing_skill * 10 are
+                                especially easy to steal. Also, if you still
+                                get caught on such an item, the blacklist time
+                                will be much shorter too.
     +Dodging                    Ability to evade attacks. In order to get any
                                 benefits from doding skill at all, your armour
                                 mustn't be so heavy that you get a flexibility
