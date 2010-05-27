@@ -108,7 +108,7 @@ CONS_SRCS = \
   client/main-ibm.c client/main-cap.c client/main-gcu.c \
   client/main-x11.c client/main-xaw.c client/c-tables.c \
   console/variable.c console/c-util.c console/console.c console/c-init.c \
-  common/SFMT.c client/snd-sdl.c
+  common/SFMT.c
 
 CONS_OBJS = \
   common/z-util.o common/z-virt.o common/z-form.o common/net-unix.o \
@@ -117,7 +117,7 @@ CONS_OBJS = \
   client/main-ibm.o client/main-cap.o client/main-gcu.o \
   client/main-x11.o client/main-xaw.o client/c-tables.o \
   console/variable.o console/c-util.o console/console.o console/c-init.o \
-  common/SFMT.o client/snd-sdl.o
+  common/SFMT.o
 
 
 LUASRCS = \
