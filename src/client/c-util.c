@@ -4828,11 +4828,12 @@ bool is_newer_than(version_type *version, int major, int minor, int patch, int e
 }
 
 #ifdef USE_SOUND_2010
-void sound(int val) {
-	if (!use_sound) return;
+bool sound(int val) {
+	if (!use_sound) return FALSE;
 
 	/* play a sound */
-	if (sound_hook) sound_hook(val);
+	if (sound_hook) return sound_hook(val);
+	else return FALSE;
 }
 
 void sound_weather(int val) {
@@ -4847,6 +4848,13 @@ void music(int val) {
 
 	/* play a sound */
 	if (music_hook) music_hook(val);
+}
+
+void set_mixing(void) {
+	if (!use_sound) return;
+
+	/* Set the mixer levels */
+	if (mixing_hook) mixing_hook();
 }
 
 void interact_audio(void) {
@@ -4947,9 +4955,7 @@ void interact_audio(void) {
 			case 6: if (cfg_audio_sound_volume <= 90) cfg_audio_sound_volume += 10; else cfg_audio_sound_volume = 100; break;
 			case 7: if (cfg_audio_weather_volume <= 90) cfg_audio_weather_volume += 10; else cfg_audio_weather_volume = 100; break;
 			}
-#ifdef SOUND_SDL
 			set_mixing();
-#endif
 			break;
 		case '2':
 			switch (cur_item) {
@@ -4962,9 +4968,7 @@ void interact_audio(void) {
 			case 6: if (cfg_audio_sound_volume >= 10) cfg_audio_sound_volume -= 10; else cfg_audio_sound_volume = 0; break;
 			case 7: if (cfg_audio_weather_volume >= 10) cfg_audio_weather_volume -= 10; else cfg_audio_weather_volume = 0; break;
 			}
-#ifdef SOUND_SDL
 			set_mixing();
-#endif
 			break;
 		case '\n':
 		case '\r':
@@ -4978,9 +4982,7 @@ void interact_audio(void) {
 			case 6: if (cfg_audio_sound_volume <= 90) cfg_audio_sound_volume += 10; else cfg_audio_sound_volume = 0; break;
 			case 7: if (cfg_audio_weather_volume <= 90) cfg_audio_weather_volume += 10; else cfg_audio_weather_volume = 0; break;
 			}
-#ifdef SOUND_SDL
 			set_mixing();
-#endif
 			break;
 		default:
 			/* Oops */

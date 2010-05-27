@@ -738,14 +738,15 @@ extern const cptr angband_sound_name[SOUND_MAX];
 #define SOUND_MAX_2010 200 /*for experimenting purpose - C. Blue*/
 #define MUSIC_MAX 50 /*for experimenting purpose - C. Blue*/
 //externs.h:
-extern void (*sound_hook)(int);
+extern void (*mixing_hook)(void);
+extern bool (*sound_hook)(int);
 extern void (*sound_weather_hook)(int);
 extern void (*music_hook)(int);
-extern void sound(int val);
+extern bool sound(int val);
 extern void music(int val);
 extern void sound_weather(int val);
+extern void set_mixing(void);
 extern void weather_handle_fading(void);
-//extern void sdl_fadeout(void);
 extern int music_next, weather_channel, weather_current;
 extern int weather_particles_seen, weather_sound_change, weather_fading;
 extern int cfg_audio_rate;
@@ -768,8 +769,4 @@ extern errr init_sound_sdl(int argc, char **argv);
 
 //z-files.h:
 extern bool my_fexists(const char *fname);
-//own
-extern bool my_dexists(const char *dname);
-
-extern void set_mixing(void);
 #endif

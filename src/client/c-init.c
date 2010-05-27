@@ -379,6 +379,37 @@ static void quit_hook(cptr s)
 }
 
 
+static void init_sound() {
+#ifdef USE_SOUND_2010
+	int i;
+
+	/* audio.lua contains sound system information */
+	pern_dofile(0, "audio.lua");
+
+	if (!use_sound) {
+		/* Don't initialize sound modules */
+		return;
+	}
+
+	/* Try the modules in the order specified by sound_modules[] */
+	for (i = 0; i < N_ELEMENTS(sound_modules); i++) {
+		if (sound_modules[i].init && 0 == sound_modules[i].init(0, NULL)) {
+ #ifdef DEBUG_SOUND
+			puts(format("USE_SOUND_2010: successfully loaded module %d.", temp));
+ #endif
+			break;
+		}
+	}
+ #ifdef DEBUG_SOUND
+	puts("USE_SOUND_2010: done loading modules");
+ #endif
+
+	/* initialize mixer, putting configuration read from rc file live */
+	set_mixing();
+#endif
+}
+
+
 /*
  * Initialize everything, contact the server, and start the loop.
  */
@@ -399,48 +430,11 @@ void client_init(char *argv1, bool skip)
 	/* Initialize various arrays */
 	init_arrays();
 
-
-#if 1 //moved here from main() because it requires init_stuff() for ANGBAND_DIR_XTRA initialization! -C. Blue
-#ifdef USE_SOUND_2010
- #if 0
-	/* Hack -- Forget standard args */
-	if (TRUE) {//if (args) {
-		argc = 1;
-		argv[1] = NULL;
-	}
- #endif
-
-	/* audio.lua contains sound system information, so we need to init lua here */
+	/* Sound requires Lua */
 	init_lua();
-	pern_dofile(0, "audio.lua");
 
-	/* Try the modules in the order specified by sound_modules[] */
- #if 0//pfft doesnt work, dunno why ('incomplete type' error)
-	for (temp = 0; temp < (int)N_ELEMENTS(sound_modules) - 1; temp++) {
- #endif
-	for (temp = 0; temp < sizeof(sound_modules) / sizeof(*sound_modules); temp++) {
-//		if (sound_modules[temp].init && 0 == sound_modules[temp].init(argc, argv)) {
-		if (sound_modules[temp].init && 0 == sound_modules[temp].init(0, NULL)) {
- #if 1//just USE_SOUND_2010 debug
-			puts(format("USE_SOUND_2010: successfully loaded module %d.", temp));
- #endif
-			break;
-		}
-	}
- #if 1//just USE_SOUND_2010 debug
-	puts("USE_SOUND_2010: done loading modules");
- #endif
-
-#ifdef SOUND_SDL
-	/* initialize mixer, putting configuration read from rc file live */
-	set_mixing();
-#endif
-#endif
-#endif
-
-
-	/* Initialize lua scripting */
-//	open_lua(); /* done in Receive_login now - mikaelh */
+	/* Initialize sound */
+	init_sound();
 
 	GetLocalHostName(host_name, 80);
 

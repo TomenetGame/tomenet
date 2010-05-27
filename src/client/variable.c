@@ -262,7 +262,8 @@ bool multi_key_macros = FALSE;
 
 
 #ifdef USE_SOUND_2010
-void (*sound_hook)(int sound);
+void (*mixing_hook)(void);
+bool (*sound_hook)(int sound);
 void (*sound_weather_hook)(int sound);
 void (*music_hook)(int music);
 int cfg_audio_rate = 44100;
