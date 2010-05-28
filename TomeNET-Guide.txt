@@ -72,7 +72,7 @@ Contents
     (4.10)  Houses
     (4.11)  Malicious effects players can suffer
     (4.12)  Malicious effects monsters can suffer
-    (4.13)  Quests and Global Events
+    (4.13)  Quests and Events
 (5) Item and monster details
     (5.1)   Melee weapons, brands
     (5.2)   Ranged weapons, brands
@@ -525,10 +525,10 @@ They all start with a slash '/':
  (/feeling)
 /fill       fill an 'Empty Bottle' in your inventory with the water from a
             fountain. You must stand on the fountain to do this.
-/geinfo     Displays information about all ongoing (global) events.
-/geinfo <#> Displays information about the specific event number #.
+/evinfo     Displays information about all ongoing events.
+/evinfo <#> Displays information about the specific event number #.
             Note: If you log out, your sign-up is cancelled automatically.
-/gesign <#> Signs you up for the global event number #.
+/evsign <#> Signs you up for the event number #.
             Depending on the event, you might need to specify additional
             parameters after the number. If that is the case, you'll see
             a message telling you so, and speficying details what's missing.
@@ -3581,8 +3581,8 @@ Stun    Stun can be caused by special martial art attacks among other things.
 
 
 
-(4.13) Quests and Global Events
--------------------------------
+(4.13) Quests and Events
+------------------------
 Your character will have uncounted opportunities to participate in quests and
 events. While some events might be run by server admins or even fellow players
 and depend on their mood and spare time, other events are created by the game
@@ -3604,12 +3604,12 @@ Kill quest
     just get a new one if you want to. There is no penalty.
 
 
-Events (use /geinfo and /gesign commands to get information and to sign up)
+Events (use /evinfo and /evsign commands to get information and to sign up)
 ---------------------------------------------------------------------------
 Highlander Tournament
     This is an event rather than a quest. When you see a message, announcing
-    a Highlander Tournament, type "/geinfo" in the chat to find out more, and
-    use "/gesign" followed by the event number to sign up for participation.
+    a Highlander Tournament, type "/evinfo" in the chat to find out more, and
+    use "/evsign" followed by the event number to sign up for participation.
     It's a deathmatch with 10 minutes of preparation time, and only newly
     created characters with 0 experience may join it.
     The winner will receive a deed that can be 'r'ead, and turned in at Bree's
@@ -4998,7 +4998,7 @@ Golem Creation  Allows you to create a golem which follows you and which you
 Parchments      These contain informations about the game, they won't
                 disappear if you read them.
 Deeds           Some of the parchments are deeds, which are used as rewards
-                for various purpose, such as global events (see (4.13)) and
+                for various purpose, such as events (see (4.13)) and
                 PvP fights of PvP-mode-characters (see(6.13)).
                 Press 'r' to read a deed, which will usually tell you what to
                 do with it. In most cases, you have to turn it in at the
