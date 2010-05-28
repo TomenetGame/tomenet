@@ -515,8 +515,57 @@ static bool play_sound(int event) {
 	/* Actually play the thing */
 	/* remember, for efficiency management */
 	s = Mix_PlayChannel(-1, wave, 0);
-	if (s != -1) channel_sample[s] = event;
+	if (s != -1) {
+		channel_sample[s] = event;
+//		Mix_Volume(s, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
+	}
 	samples[event].current_channel = s;
+	
+	return TRUE;
+}
+/* play the 'page' sound */
+extern bool sound_page(void) {
+	Mix_Chunk *wave = NULL;
+	int s;
+
+	if (page_sound_idx == -1) return FALSE;
+	if (!samples[page_sound_idx].num) return FALSE;
+
+	/* already playing? prevent multiple sounds of the same kind from being mixed simultaneously, for preventing silliness */
+	if (samples[page_sound_idx].current_channel != -1) return TRUE;
+
+	/* Choose a random event */
+	s = rand_int(samples[page_sound_idx].num);
+	wave = samples[page_sound_idx].wavs[s];
+
+	/* Try loading it, if it's not cached */
+	if (!wave) {
+		/* Verify it exists */
+		const char *filename = samples[page_sound_idx].paths[s];
+		if (!my_fexists(filename)) return FALSE;
+
+		/* Load */
+		wave = Mix_LoadWAV(filename);
+	}
+
+	/* Check to see if we have a wave again */
+	if (!wave) {
+		plog("SDL sound load failed.");
+		return FALSE;
+	}
+
+	/* Actually play the thing */
+	/* remember, for efficiency management */
+	s = Mix_PlayChannel(-1, wave, 0);
+	if (s != -1) {
+		channel_sample[s] = page_sound_idx;
+		if (c_cfg.paging_max_volume) {
+			Mix_Volume(s, 100);
+		} else if (c_cfg.paging_master_volume) {
+			Mix_Volume(s, CALC_MIX_VOLUME(1, 100));
+		}
+	}
+	samples[page_sound_idx].current_channel = s;
 	
 	return TRUE;
 }
@@ -529,7 +578,13 @@ static void clear_channel(int c) {
 		weather_channel = -1;
 		return;
 	}
+
 	/* a sample has finished playing, so allow this kind to be played again */
+	/* hack: if the sample was the 'paging' sound, reset the channel's volume to be on the safe side */
+	if (channel_sample[c] == page_sound_idx) {
+		Mix_Volume(c, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
+	}
+
 	samples[channel_sample[c]].current_channel = -1;
 	channel_sample[c] = -1;
 }

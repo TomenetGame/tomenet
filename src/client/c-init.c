@@ -412,6 +412,9 @@ static void init_sound() {
 
 	/* initialize mixer, putting configuration read from rc file live */
 	set_mixing();
+
+	/* remember page sound index for efficiency */
+	page_sound_idx = exec_lua(0, format("return get_sound_index(\"page\")"));
 #endif
 }
 

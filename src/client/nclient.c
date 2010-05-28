@@ -3071,7 +3071,14 @@ int Receive_beep(void)
 {
 	char	ch;
 	int	n;
+
 	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
+
+	if (!c_cfg.allow_paging) return 1;
+
+#ifdef USE_SOUND_2010
+	if (c_cfg.audio_paging && sound_page()) return 1;
+#endif
 
 #ifdef WIN32
 //	Beep(880,200);

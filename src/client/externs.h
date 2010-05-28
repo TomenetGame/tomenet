@@ -453,6 +453,9 @@ extern void my_memfrob(void *s, int n);
 extern bool is_newer_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build);
 #ifdef USE_SOUND_2010
 extern void interact_audio(void);
+extern void toggle_music(void);
+extern bool sound_page(void);
+extern int page_sound_idx;
 #endif
 
 /* c-spell.c */

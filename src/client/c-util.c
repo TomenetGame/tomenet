@@ -3740,7 +3740,8 @@ static void do_cmd_options_aux(int page, cptr info)
 	for (i = 0; option_info[i].o_desc; i++)
 	{
 		/* Notice options on this "page" */
-		if (option_info[i].o_page == page) opt[n++] = i;
+		if (option_info[i].o_page == page &&
+		    option_info[i].o_enabled) opt[n++] = i;
 	}
 
 
@@ -3767,7 +3768,7 @@ static void do_cmd_options_aux(int page, cptr info)
 				a = (a == TERM_L_BLUE) ? TERM_SLATE : TERM_L_DARK;
 
 			/* Display the option text */
-			sprintf(buf, "%-48s: %s  (%s)",
+			sprintf(buf, "%-49s: %s  (%s)",
 			        option_info[opt[i]].o_desc,
 			        (*option_info[opt[i]].o_var ? "yes" : "no "),
 			        option_info[opt[i]].o_text);
@@ -4296,11 +4297,10 @@ void do_cmd_options(void)
 		prt("TomeNET options", 2, 0);
 
 		/* Give some choices */
-		prt("(1) User Interface Options", 4, 5);
-		prt("(2) Disturbance Options", 5, 5);
-		prt("(3) Game-Play Options", 6, 5);
-		prt("(4) Efficiency Options", 7, 5);
-		prt("(5) TomeNET Additional Options", 8, 5);
+		prt("(1) User Interface Options 1", 4, 5);
+		prt("(2) User Interface Options 2", 5, 5);
+		prt("(3) Game-Play Options 1", 6, 5);
+		prt("(4) Game-Play Options 2", 7, 5);
 
 		prt("(8) Check Server Options", 10, 5);
 
@@ -4328,39 +4328,14 @@ void do_cmd_options(void)
 			xhtml_screenshot("screenshot????");
 		}
 
-		/* General Options */
-		if (k == '1')
-		{
-			/* Process the general options */
-			do_cmd_options_aux(1, "User Interface Options");
-		}
-
-		/* Disturbance Options */
-		else if (k == '2')
-		{
-			/* Process the running options */
-			do_cmd_options_aux(2, "Disturbance Options");
-		}
-
-		/* Inventory Options */
-		else if (k == '3')
-		{
-			/* Process the running options */
-			do_cmd_options_aux(3, "Game-Play Options");
-		}
-
-		/* Efficiency Options */
-		else if (k == '4')
-		{
-			/* Process the efficiency options */
-			do_cmd_options_aux(4, "Efficiency Options");
-		}
-
-		/* Efficiency Options */
-		else if (k == '5')
-		{
-			/* Process the efficiency options */
-			do_cmd_options_aux(5, "TomeNET Options");
+		if (k == '1') {
+			do_cmd_options_aux(1, "User Interface Options 1");
+		} else if (k == '2') {
+			do_cmd_options_aux(4, "User Interface Options 2");
+		} else if (k == '3') {
+			do_cmd_options_aux(2, "Game-Play Options 1");
+		} else if (k == '4') {
+			do_cmd_options_aux(3, "Game-Play Options 2");
 		}
 
 		/* Server Options */
@@ -4946,10 +4921,10 @@ void interact_audio(void) {
 			break;
 		case '8':
 			switch (cur_item) {
-			case 0: cfg_audio_master = ! cfg_audio_master; break;
-			case 1: cfg_audio_music = ! cfg_audio_music; break;
-			case 2: cfg_audio_sound = ! cfg_audio_sound; break;
-			case 3: cfg_audio_weather = ! cfg_audio_weather; break;
+			case 0: cfg_audio_master = !cfg_audio_master; break;
+			case 1: cfg_audio_music = !cfg_audio_music; break;
+			case 2: cfg_audio_sound = !cfg_audio_sound; break;
+			case 3: cfg_audio_weather = !cfg_audio_weather; break;
 			case 4: if (cfg_audio_master_volume <= 90) cfg_audio_master_volume += 10; else cfg_audio_master_volume = 100; break;
 			case 5: if (cfg_audio_music_volume <= 90) cfg_audio_music_volume += 10; else cfg_audio_music_volume = 100; break;
 			case 6: if (cfg_audio_sound_volume <= 90) cfg_audio_sound_volume += 10; else cfg_audio_sound_volume = 100; break;
@@ -4959,10 +4934,10 @@ void interact_audio(void) {
 			break;
 		case '2':
 			switch (cur_item) {
-			case 0: cfg_audio_master = ! cfg_audio_master; break;
-			case 1: cfg_audio_music = ! cfg_audio_music; break;
-			case 2: cfg_audio_sound = ! cfg_audio_sound; break;
-			case 3: cfg_audio_weather = ! cfg_audio_weather; break;
+			case 0: cfg_audio_master = !cfg_audio_master; break;
+			case 1: cfg_audio_music = !cfg_audio_music; break;
+			case 2: cfg_audio_sound = !cfg_audio_sound; break;
+			case 3: cfg_audio_weather = !cfg_audio_weather; break;
 			case 4: if (cfg_audio_master_volume >= 10) cfg_audio_master_volume -= 10; else cfg_audio_master_volume = 0; break;
 			case 5: if (cfg_audio_music_volume >= 10) cfg_audio_music_volume -= 10; else cfg_audio_music_volume = 0; break;
 			case 6: if (cfg_audio_sound_volume >= 10) cfg_audio_sound_volume -= 10; else cfg_audio_sound_volume = 0; break;
@@ -4973,10 +4948,10 @@ void interact_audio(void) {
 		case '\n':
 		case '\r':
 			switch (cur_item) {
-			case 0: cfg_audio_master = ! cfg_audio_master; break;
-			case 1: cfg_audio_music = ! cfg_audio_music; break;
-			case 2: cfg_audio_sound = ! cfg_audio_sound; break;
-			case 3: cfg_audio_weather = ! cfg_audio_weather; break;
+			case 0: cfg_audio_master = !cfg_audio_master; break;
+			case 1: cfg_audio_music = !cfg_audio_music; break;
+			case 2: cfg_audio_sound = !cfg_audio_sound; break;
+			case 3: cfg_audio_weather = !cfg_audio_weather; break;
 			case 4: if (cfg_audio_master_volume <= 90) cfg_audio_master_volume += 10; else cfg_audio_master_volume = 0; break;
 			case 5: if (cfg_audio_music_volume <= 90) cfg_audio_music_volume += 10; else cfg_audio_music_volume = 0; break;
 			case 6: if (cfg_audio_sound_volume <= 90) cfg_audio_sound_volume += 10; else cfg_audio_sound_volume = 0; break;
@@ -5001,5 +4976,9 @@ void interact_audio(void) {
 
 	/* Re-enable hybrid macros */
 	inkey_msg = FALSE;
+}
+void toggle_music(void) {
+	cfg_audio_music = !cfg_audio_music;
+	set_mixing();
 }
 #endif
