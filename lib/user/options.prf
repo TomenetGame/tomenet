@@ -86,3 +86,9 @@ X:always_show_lists
 X:target_history
 X:linear_stats
 X:exp_need
+
+X:hide_unusable_skills
+Y:allow_paging
+Y:audio_paging
+Y:paging_master_vol
+Y:paging_max_vol

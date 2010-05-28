@@ -3133,6 +3133,11 @@ struct client_opts
 	bool linear_stats;
 	bool exp_need;
 	bool disable_flush;
+
+	bool allow_paging;
+	bool audio_paging;
+	bool paging_max_volume;
+	bool paging_master_volume;
 };
 
 /*
