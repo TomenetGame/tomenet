@@ -538,12 +538,16 @@ void process_command()
 		case KTRL('U'):
 			interact_audio();
 			break;
+//		case KTRL('M'): //this is same as '\r' and hence doesn't work..
+		case KTRL('C'):
+			toggle_music();
+			break;
 #endif
 
 		case '!':
 			cmd_BBS();
 			break;
-#if 1 /* only for debugging purpose - dump some client-side special config */
+#if 0 /* only for debugging purpose - dump some client-side special config */
 		case KTRL('C'):
 			c_msg_format("Client FPS: %d", cfg_client_fps);
 			break;
