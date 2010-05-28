@@ -7,14 +7,17 @@
 
 -- Sound FX
 audio_sfx = {
-    --[weather] (0)
-    "Rain_soft",
-    "Rain_storm",
-    "Snow_soft", --nothing really
-    "Snow_storm",
+    --[misc] (0)
+    "page",
 
-    --[player] (4)
-    --combat (4)
+    --[weather] (1)
+    "rain_soft",
+    "rain_storm",
+    "snow_soft", --nothing really
+    "snow_storm",
+
+    --[player] (5)
+    --combat (5)
     "hit",
     "hit_weapon",
     "hit_sword",
@@ -22,31 +25,31 @@ audio_sfx = {
     "hit_whip",
     "hit_axe",
     "hit_polearm",
-    "miss", --11
+    "miss", --12
     "miss_projectile",
     "miss_weapon",
-    "parry", --14
+    "parry",
     "parry_weapon",
-    "block_shield", --16
+    "block_shield", --17
     "block_shield_projectile",
     "death", --your favourite scream (I like the DOOM space marine) (18)
     "death_male", --your favourite scream (I like the DOOM space marine)
     "death_female", --your favourite scream (I like the DOOM space marine)
     "levelup",
     --commands
-    "eat", --22
+    "eat", --23
     "quaff_potion",
     "read_scroll",
     "aim_wand",
     "zap_rod",
     "use_staff",
-    "cast_bolt",--spells (28)
+    "cast_bolt",--spells (29)
     "cast_ball",--spells
     "cast_cloud",--spells
     "cast_wave",--spells
     "phase_door",--spells
     "teleport",--spells
-    "activate", --34
+    "activate", --35
     "browse",
     "browse_book",
     "bash_door_hold",
@@ -54,15 +57,16 @@ audio_sfx = {
     "open_door_stuck",
     "open_door",
     "open_chest",
-    "open_pick", --42
+    "open_pick", --43
     "close_door",
     "disarm",
     "drop_gold",
     "pickup_gold",
     "staircase", --steps
     "tunnel_rock",
+    "tunnel_rubble",
     "tunnel_tree",
-    "wearwield_armor_light", --50
+    "wearwield_armor_light", --51
     "wearwield_armor_heavy",
     "wearwield_lightsource",
     "wearwield_jewelry",
@@ -73,10 +77,10 @@ audio_sfx = {
     "wearwield_blunt",
     "wearwield_whip",
     "wearwield_axe",
-    "wearwield_polearm", --61
+    "wearwield_polearm", --62
 
     --[monsters]
-    "death_monster", --smack/smash sound (floating eye, insects, molds, jellies, all other stuff..) (62)
+    "death_monster", --smack/smash sound (floating eye, insects, molds, jellies, all other stuff..)
     "death_monster_animal", --hiss
     "death_monster_animal_small", --hiss
     "death_monster_animal_large", --roar
@@ -85,7 +89,7 @@ audio_sfx = {
     "death_monster_humanoid", --scream/ugh/silence/whatever
     "death_monster_oOTP", --roar/scream
     "death_monster_A", --probably nothing, really
-    "death_monster_dragon_low", --hiss (71)
+    "death_monster_dragon_low", --hiss (72)
     "death_monster_dragon_high", --roar
     "death_monster_demon_low", --squeak
     "death_monster_demon_high", --scream
@@ -93,23 +97,25 @@ audio_sfx = {
     "death_monster_undead_high", --ghostly dissolve
     "death_monster_nonliving", --breakdown (construct)
     "death_monster_Ev", --swushsh (elementals and vortices dissolve)
-    "monster_hits", --79
+    "monster_hits", --80
     "monster_hits_claws",
     "monster_hits_weapon",
     "monster_misses",
     "monster_casts_bolt",
     "monster_casts_ball",
-    "monster_breaths",
+    "monster_breathes",
     "monster_summons",
     "monster_curses",
     "monster_blinks",
     "monster_teleports",
-    "monster_heals", --90
+    "monster_heals", --91
 
     --[grid]
-    "trap_setoff", --click? ^^ (91)
+    "trap_setoff", --click? ^^
     "earthquake",
     "destruction",
+    "detonation",
+    "rocket",
 }
 function get_sound_name(idx)
     if audio_sfx[idx + 1] == nil then return "" end
