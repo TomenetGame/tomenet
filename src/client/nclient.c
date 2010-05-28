@@ -3359,11 +3359,11 @@ int Receive_weather(void)
 		}
 #if 0 /*moved to do_weather() to become consistent with cloud shapes hovering above us..*/
 		else if (weather_type % 10 == 1) { //rain
-			if (weather_wind >= 3) sound_weather(1);
-			else sound_weather(0);
+			if (weather_wind >= 3) sound_weather(rain2_sound_idx);
+			else sound_weather(rain1_sound_idx);
 		} else if (weather_type % 10 == 2) { //snow
-			if (weather_wind >= 3) sound_weather(3);
-			else sound_weather(2);
+			if (weather_wind >= 3) sound_weather(snow2_sound_idx);
+			else sound_weather(snow1_sound_idx);
 		}
 #endif
 	}

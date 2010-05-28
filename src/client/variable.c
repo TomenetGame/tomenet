@@ -271,7 +271,8 @@ int music_next = -1, weather_channel = -1, weather_current;
 int weather_particles_seen, weather_sound_change, weather_fading;
 bool cfg_audio_master = TRUE, cfg_audio_music = TRUE, cfg_audio_sound = TRUE, cfg_audio_weather = TRUE;
 int cfg_audio_master_volume = 100, cfg_audio_music_volume = 100, cfg_audio_sound_volume = 100, cfg_audio_weather_volume = 100;
-int page_sound_idx = -1;
+/* sounds that are hard-coded on client-side, because they won't be transmitted from the server: */
+int page_sound_idx = -1, rain1_sound_idx = -1, rain2_sound_idx = -1, snow1_sound_idx = -1, snow2_sound_idx = -1, browse_sound_idx = -1, browsebook_sound_idx = -1;
 #endif
 
 /* Standard sound (and message) names */
