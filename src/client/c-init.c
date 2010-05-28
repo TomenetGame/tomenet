@@ -413,8 +413,14 @@ static void init_sound() {
 	/* initialize mixer, putting configuration read from rc file live */
 	set_mixing();
 
-	/* remember page sound index for efficiency */
-	page_sound_idx = exec_lua(0, format("return get_sound_index(\"page\")"));
+	/* remember indices of sounds that are hardcoded on client-side anyway, for efficiency */
+	page_sound_idx = exec_lua(0, "return get_sound_index(\"page\")");
+	rain1_sound_idx = exec_lua(0, "return get_sound_index(\"rain_soft\")");
+	rain2_sound_idx = exec_lua(0, "return get_sound_index(\"rain_storm\")");
+	snow1_sound_idx = exec_lua(0, "return get_sound_index(\"snow_soft\")");
+	snow2_sound_idx = exec_lua(0, "return get_sound_index(\"snow_storm\")");
+	browse_sound_idx = exec_lua(0, "return get_sound_index(\"browse\")");
+	browsebook_sound_idx = exec_lua(0, "return get_sound_index(\"browse_book\")");
 #endif
 }
 

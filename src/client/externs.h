@@ -455,7 +455,7 @@ extern bool is_newer_than(version_type *version, int major, int minor, int patch
 extern void interact_audio(void);
 extern void toggle_music(void);
 extern bool sound_page(void);
-extern int page_sound_idx;
+extern int page_sound_idx, rain1_sound_idx, rain2_sound_idx, snow1_sound_idx, snow2_sound_idx, browse_sound_idx, browsebook_sound_idx;
 #endif
 
 /* c-spell.c */
