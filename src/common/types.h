@@ -3357,3 +3357,12 @@ struct astar_list_closed {
 	int closed_parent_idx[ASTAR_MAX_NODES]; /* the idx of the grid in the closed list, which is the parent of this grid */
 };
 #endif
+
+#ifdef USE_SOUND_2010
+//main.h: (from angband)
+struct module {
+	cptr name;
+	cptr help;
+	errr (*init)(int argc, char **argv);
+};
+#endif

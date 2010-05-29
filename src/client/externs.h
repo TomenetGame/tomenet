@@ -738,8 +738,6 @@ extern r_type runespell_types[8];
 extern const cptr angband_sound_name[SOUND_MAX];
 
 #ifdef USE_SOUND_2010
-#define SOUND_MAX_2010 200 /*for experimenting purpose - C. Blue*/
-#define MUSIC_MAX 50 /*for experimenting purpose - C. Blue*/
 //externs.h:
 extern void (*mixing_hook)(void);
 extern bool (*sound_hook)(int);
@@ -757,17 +755,6 @@ extern int cfg_audio_rate;
 extern bool cfg_audio_master, cfg_audio_music, cfg_audio_sound, cfg_audio_weather;
 extern int cfg_audio_master_volume, cfg_audio_music_volume, cfg_audio_sound_volume, cfg_audio_weather_volume;
 
-//defines.h:
-/* Given an array, determine how many elements are in it: */
-//note: appearently doesnt work for the main purpose ie sound_modules -_- -C. Blue
-#define N_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
-
-//main.h:
-struct module {
-	cptr name;
-	cptr help;
-	errr (*init)(int argc, char **argv);
-};
 extern const struct module sound_modules[];
 extern errr init_sound_sdl(int argc, char **argv);
 
