@@ -9868,8 +9868,10 @@ SOLUTION:   Don't use the 'x' button in the title bar of the game window to
             Instead, use CTRL+X key, the key for 'save & quit' (compare 0.2).
 
 PROBLEM 22: When I try to login, I get a 'security violation'.
-SOLUTION:   Either your host name or user name is empty, or your account name
-            starts with an invalid character (must be A..Z).
+SOLUTION:   Either your host name (that's your PC's network name you can set in
+            the Windows network settings) or network user name (usually same
+            you use to login with, UNIX-style) is empty, or your TomeNET account
+            name starts with an invalid character (must be A..Z).
             Another possibility is that you are already logged in, and are now
             trying to log in again from a different IP address. Resuming a
             connection is possible, but must be done from the same IP address.
