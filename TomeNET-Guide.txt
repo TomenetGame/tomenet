@@ -9867,6 +9867,13 @@ SOLUTION:   Don't use the 'x' button in the title bar of the game window to
             which asks you to save chat and which also saves certain settings.
             Instead, use CTRL+X key, the key for 'save & quit' (compare 0.2).
 
+PROBLEM 22: When I try to login, I get a 'security violation'.
+SOLUTION:   Either your host name or user name is empty, or your account name
+            starts with an invalid character (must be A..Z).
+            Another possibility is that you are already logged in, and are now
+            trying to log in again from a different IP address. Resuming a
+            connection is possible, but must be done from the same IP address.
+
 
 
 (9) End of this guide
