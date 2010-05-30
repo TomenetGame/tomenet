@@ -451,6 +451,12 @@ _       drink from a fountain. You must stand on the fountain to do this.
 CTRL+P  view previous messages.
 CTRL+O  view previous chat messages.
 CTRL+X  save your character & quit the game. (You should do this in town!)
+        This also automatically saves some settings, like window positions on
+        MS-Windows, or mixer settings, and you will be asked to save a chat
+        log.
+        Note that if you quit the game just by clicking on the 'x' button in
+        the game window's titlebar, these extra features will be skipped, and
+        any changes in settings or window positions will be discarded.
 Q or CTRL+K
         lets your character commit suicide (permanently deletes it!).
         Characters who suicide won't drop items except for artifacts (if the
