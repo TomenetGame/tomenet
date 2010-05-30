@@ -7,17 +7,17 @@
 
 -- Sound FX
 audio_sfx = {
-    --[misc] (0)
+    --[misc]
     "page",
 
-    --[weather] (1)
+    --[weather]
     "rain_soft",
     "rain_storm",
     "snow_soft", --nothing really
     "snow_storm",
 
-    --[player] (5)
-    --combat (5)
+    --[player]
+    --combat
     "hit",
     "hit_weapon",
     "hit_sword",
@@ -25,31 +25,31 @@ audio_sfx = {
     "hit_whip",
     "hit_axe",
     "hit_polearm",
-    "miss", --12
+    "miss",
     "miss_projectile",
     "miss_weapon",
     "parry",
     "parry_weapon",
-    "block_shield", --17
+    "block_shield",
     "block_shield_projectile",
-    "death", --your favourite scream (I like the DOOM space marine) (18)
-    "death_male", --your favourite scream (I like the DOOM space marine)
-    "death_female", --your favourite scream (I like the DOOM space marine)
+    "death", --everyone's favourite DOOM scream....
+    "death_male",
+    "death_female",
     "levelup",
     --commands
-    "eat", --23
+    "eat",
     "quaff_potion",
     "read_scroll",
     "aim_wand",
     "zap_rod",
     "use_staff",
-    "cast_bolt",--spells (29)
-    "cast_ball",--spells
-    "cast_cloud",--spells
-    "cast_wave",--spells
-    "phase_door",--spells
-    "teleport",--spells
-    "activate", --35
+    "cast_bolt",
+    "cast_ball",
+    "cast_cloud",
+    "cast_wave",
+    "phase_door",
+    "teleport",
+    "activate",
     "browse",
     "browse_book",
     "bash_door_hold",
@@ -57,19 +57,59 @@ audio_sfx = {
     "open_door_stuck",
     "open_door",
     "open_chest",
-    "open_pick", --43
+    "open_pick",
     "close_door",
     "disarm",
     "drop_gold",
     "pickup_gold",
-    "staircase", --steps
+    "staircase",
     "tunnel_rock",
     "tunnel_rubble",
     "tunnel_tree",
-    "wearwield_armor_light", --51
+    "pickup_armor_light",
+    "pickup_armor_heavy",
+    "pickup_lightsource",
+    "pickup_ring",
+    "pickup_amulet",
+    "pickup_tool",
+    "pickup_tool_digger",
+    "pickup_weapon",
+    "pickup_sword",
+    "pickup_blunt",
+    "pickup_whip",
+    "pickup_axe",
+    "pickup_polearm",
+    "drop_armor_light",
+    "drop_armor_heavy",
+    "drop_lightsource",
+    "drop_ring",
+    "drop_amulet",
+    "drop_tool",
+    "drop_tool_digger",
+    "drop_weapon",
+    "drop_sword",
+    "drop_blunt",
+    "drop_whip",
+    "drop_axe",
+    "drop_polearm",
+    "takeoff_armor_light",
+    "takeoff_armor_heavy",
+    "takeoff_lightsource",
+    "takeoff_ring",
+    "takeoff_amulet",
+    "takeoff_tool",
+    "takeoff_tool_digger",
+    "takeoff_weapon",
+    "takeoff_sword",
+    "takeoff_blunt",
+    "takeoff_whip",
+    "takeoff_axe",
+    "takeoff_polearm",
+    "wearwield_armor_light",
     "wearwield_armor_heavy",
     "wearwield_lightsource",
-    "wearwield_jewelry",
+    "wearwield_ring",
+    "wearwield_amulet",
     "wearwield_tool",
     "wearwield_tool_digger",
     "wearwield_weapon",
@@ -77,7 +117,7 @@ audio_sfx = {
     "wearwield_blunt",
     "wearwield_whip",
     "wearwield_axe",
-    "wearwield_polearm", --62
+    "wearwield_polearm",
 
     --[monsters]
     "death_monster", --smack/smash sound (floating eye, insects, molds, jellies, all other stuff..)
@@ -89,7 +129,7 @@ audio_sfx = {
     "death_monster_humanoid", --scream/ugh/silence/whatever
     "death_monster_oOTP", --roar/scream
     "death_monster_A", --probably nothing, really
-    "death_monster_dragon_low", --hiss (72)
+    "death_monster_dragon_low", --hiss
     "death_monster_dragon_high", --roar
     "death_monster_demon_low", --squeak
     "death_monster_demon_high", --scream
@@ -97,7 +137,7 @@ audio_sfx = {
     "death_monster_undead_high", --ghostly dissolve
     "death_monster_nonliving", --breakdown (construct)
     "death_monster_Ev", --swushsh (elementals and vortices dissolve)
-    "monster_hits", --80
+    "monster_hits",
     "monster_hits_claws",
     "monster_hits_weapon",
     "monster_misses",
@@ -108,10 +148,10 @@ audio_sfx = {
     "monster_curses",
     "monster_blinks",
     "monster_teleports",
-    "monster_heals", --91
+    "monster_heals",
 
     --[grid]
-    "trap_setoff", --click? ^^
+    "trap_setoff",
     "earthquake",
     "destruction",
     "detonation",
@@ -142,13 +182,13 @@ audio_bgm = {
     "Khazaddum",
     "Valinor",
 
-    "wilderness_generic_day",--7
+    "wilderness_generic_day",
     "wilderness_generic_night",
 
     "dungeon_generic",
     "dungeon_generic_nodeath",
     "dungeon_generic_ironman",
-    "dungeon_generic_forcedownhellish",--12
+    "dungeon_generic_forcedownhellish",
 
     "TheTrainingTower",
     "BarrowDowns",
@@ -156,7 +196,7 @@ audio_bgm = {
     "ThePathsoftheDead",
     "Angband",
 
-    "TheOrcCave",--18
+    "TheOrcCave",
     "MountDoom",
     "NetherRealm",
     "TheHelcaraxe",
@@ -164,7 +204,7 @@ audio_bgm = {
     "TheSandwormLair",
     "TheHallsofMandos",
     "TheOldForest",
-    "TheHeartoftheEarth",--26
+    "TheHeartoftheEarth",
     "TheMinesofMoria",
     "CirithUngol",
     "TheSmallWaterCave",
@@ -173,7 +213,7 @@ audio_bgm = {
     "DolGuldur",
     "SubmergedRuins",
     "Erebor",
-    "TheIllusoryCastle",--35
+    "TheIllusoryCastle",
     "TheSacredLandofMountains",
     "TheMaze",
 
@@ -182,7 +222,7 @@ audio_bgm = {
     "boss_Nazgul",
     "boss_Sauron",
     "boss_Morgoth",
-    "boss_ZuAon",--39
+    "boss_ZuAon",
 
     "feeling_Terrifying",
 
