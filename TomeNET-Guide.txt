@@ -9704,8 +9704,8 @@ SOLUTION:   Read the error message displayed in a message box on quitting.
                     updated. So make sure to try again after a few minutes.
                     If the server really seems to be down for a longer period
                     of time, us admins are probably not at home and you'll
-		    have to wait for a bit, sorry. Such downtimes basically
-		    never happen though.
+                    have to wait for a bit, sorry. Such downtimes basically
+                    never happen though.
             "Server didn't respond!"
                     The server is up, but something is awry. Wait for a few
                     minutes, there might be admins working on it at the
@@ -9852,6 +9852,13 @@ SOLUTION:   Despite of similar name, the only thing these two games have in
             Other than that, the two games are very different in basically all
             aspects! In other words: TomeNET is definitely not 'multi-player
             ToME'.
+
+PROBLEM 21: My (mixer) settings or window positions (MS Windows only) aren't
+            saved automatically as they should be, when I quit the game.
+SOLUTION:   Don't use the 'x' button in the title bar of the game window to
+            quit the game. It will result in skipping the normal exit routine,
+            which asks you to save chat and which also saves certain settings.
+            Instead, use CTRL+X key, the default key for 'save & exit'.
 
 
 
