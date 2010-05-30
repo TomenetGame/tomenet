@@ -220,7 +220,7 @@ compile the game under '(2.1) Installing TomeNET'.
 -If your character gains a new level it also gains skill points. To distribute
  those, invoke the skill screen with 'G'. (See 3.10, 6.2 and 7.5.)
 -If you don't like your character and want to delete it, you may commit
- suicide by pressing SHIFT+q or CTRL+c and double-confirming the following
+ suicide by pressing SHIFT+q or CTRL+k and double-confirming the following
  questions with 'y' and '@'.
 -To drop items, privately chat with other players, or advance beyond a certain
  level you will need an admin to 'validate' your account.
@@ -451,7 +451,6 @@ _       drink from a fountain. You must stand on the fountain to do this.
 CTRL+P  view previous messages.
 CTRL+O  view previous chat messages.
 CTRL+X  save your character & quit the game. (You should do this in town!)
-(CTRL+C Displays your client-side frame rate.)
 Q or CTRL+K
         lets your character commit suicide (permanently deletes it!).
         Characters who suicide won't drop items except for artifacts (if the
@@ -472,6 +471,8 @@ c  while in a store:
 K       forcibly combines a level 0 item in your inventory with other items of
         the same type that aren't level 0. Be warned, that this will change the
         level of all the items involved to 0.
+CTRL+U  Displays/exists the audio mixer settings.
+CTRL+C  Toggles music. (Shortcut for toggling it in the mixer settings.)
 
 There are also some commands that can be entered with ':' like a chat line.
 They all start with a slash '/':
@@ -9858,7 +9859,7 @@ PROBLEM 21: My (mixer) settings or window positions (MS Windows only) aren't
 SOLUTION:   Don't use the 'x' button in the title bar of the game window to
             quit the game. It will result in skipping the normal exit routine,
             which asks you to save chat and which also saves certain settings.
-            Instead, use CTRL+X key, the default key for 'save & exit'.
+            Instead, use CTRL+X key, the key for 'save & quit' (compare 0.2).
 
 
 
