@@ -9862,10 +9862,10 @@ SOLUTION:   Despite of similar name, the only thing these two games have in
 
 PROBLEM 21: My (mixer) settings or window positions (MS Windows only) aren't
             saved automatically as they should be, when I quit the game.
-SOLUTION:   Don't use the 'x' button in the title bar of the game window to
-            quit the game. It will result in skipping the normal exit routine,
-            which asks you to save chat and which also saves certain settings.
-            Instead, use CTRL+X key, the key for 'save & quit' (compare 0.2).
+SOLUTION:   Don't use ALT+F4 or the 'x' button in the title bar of the game
+            window to quit the game. It will result in skipping the normal exit
+            routine, which asks you to save chat and which also saves certain
+            settings. Instead, use CTRL+X for 'save & quit' (compare 0.2).
 
 PROBLEM 22: When I try to login, I get a 'security violation'.
 SOLUTION:   Either your host name (that's your PC's network name you can set in
