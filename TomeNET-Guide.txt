@@ -755,6 +755,12 @@ Spellbooks:
                 completely!
                 (If 'c' is omittted, the first spell will be chosen.)
 
+Runes:
+    @Oa .. @Og  You will auto-retaliate by using the rune, where the letter
+                a..g determines the spell type ('b' would be self, 'c' would be
+                basic cheap bolt spell.. the letters correspond to the spell
+                selector).
+
 Ammunition:
     !=          will make your character auto-pickup the ammo from the floor.
     !M          makes ammunition stacks of same base type and same ego power
