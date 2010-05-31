@@ -560,7 +560,7 @@ extern bool sound_page(void) {
 	if (s != -1) {
 		channel_sample[s] = page_sound_idx;
 		if (c_cfg.paging_max_volume) {
-			Mix_Volume(s, 100);
+			Mix_Volume(s, MIX_MAX_VOLUME);
 		} else if (c_cfg.paging_master_volume) {
 			Mix_Volume(s, CALC_MIX_VOLUME(1, 100));
 		}
