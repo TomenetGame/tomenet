@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 18. May 2010 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.4e - official websites are:
+| Latest update: 31. May 2010 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.5 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 +---
@@ -477,8 +477,9 @@ c  while in a store:
 K       forcibly combines a level 0 item in your inventory with other items of
         the same type that aren't level 0. Be warned, that this will change the
         level of all the items involved to 0.
-CTRL+U  Displays/exists the audio mixer settings.
+CTRL+U  Displays/exits the audio mixer settings.
 CTRL+C  Toggles music. (Shortcut for toggling it in the mixer settings.)
+CTRL+N  Toggles audio. (Shortcut for master toggle in the mixer settings).
 
 There are also some commands that can be entered with ':' like a chat line.
 They all start with a slash '/':

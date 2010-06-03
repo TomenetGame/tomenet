@@ -4981,4 +4981,8 @@ void toggle_music(void) {
 	cfg_audio_music = !cfg_audio_music;
 	set_mixing();
 }
+void toggle_audio(void) {
+	cfg_audio_master = !cfg_audio_master;
+	set_mixing();
+}
 #endif

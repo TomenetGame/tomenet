@@ -542,6 +542,9 @@ void process_command()
 		case KTRL('C'):
 			toggle_music();
 			break;
+		case KTRL('N'):
+			toggle_audio();
+			break;
 #endif
 
 		case '!':
