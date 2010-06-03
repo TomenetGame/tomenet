@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 31. May 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 4. June 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -40,6 +40,7 @@ Contents
     (1.6)   How to encounter the final boss: Morgoth, Lord of Darkness
 (2) Installation & setup
     (2.1)   Installing TomeNET
+    (2.1a)  Installing sound and music packs
     (2.2)   Starting TomeNET and getting to play on an internet server
     (2.3)   Client options
 (3) Creating a character & starting to play
@@ -1212,6 +1213,7 @@ the mundane world.
 Go to http://www.tomenet.net/ (or one of our personal pages) to download the
 latest client. Extract it to a new directory, preserving the pathnames.
 
+
 Windows:
 --------
 You may edit the file "TomeNET.ini" and do some changes to your likings, like
@@ -1222,6 +1224,13 @@ If it's not already disabled by default, it is recommended to turn off
 graphics ("GRAPHICS=0"). Further you can specify an account name and password
 of your own choice. That will relieve you from entering them every time
 you join a TomeNET internet server.
+
+Last but not least, you may use the following command-line options:
+-p<Port>                for example -p19348
+-l<Account> <Password>  for example -lGandalf geheim
+-N<character name>      for example -NDruidor
+<ip address>            for example 85.118.45.235
+
 
 Linux:
 ------
@@ -1268,15 +1277,39 @@ TOMENET_X11_FONT sets one font globally for all windows. It's overridden by
 the window-specific font variables listed above though.
 
 Last but not least, you may use the following command-line options:
--p<Port>        for example -p19348
--l<Name> <Pass>	for example -lGandalf geheim
-<ip address>    for example 85.118.45.235
+-f<config file>         use a different config file than ~/.tomenetrc
+-i                      ignore the ~/.tomenetrc config file
+-p<Port>                for example -p19348
+-l<Account> <Password>  for example -lGandalf geheim
+-N<character name>      for example -NDruidor
+<ip address>            for example 85.118.45.235
+
 Full command-line example:
-        ./tomenet -p19348 -lGandalf geheim 85.118.45.235
+        ./tomenet -p19348 -lGandalf geheim -NGandalf 85.118.45.235
+
 If your name contains spaces, it is neccessary to put a '\' in front of each.
 Example:
         ./tomenet -p18348 -lIron\ Man geheimer 85.118.45.235
 ..if your account name is 'Iron Man'.
+
+
+
+(2.1a) Installing sound and music packs
+---------------------------------------
+Starting with version 4.4.5, TomeNET features a new SDL-based audio system,
+which provides sound effects and background music.
+
+To make use of it, all you have to do is install a sound pack and/or a music
+pack to your lib/xtra/ folder.
+You can get the official sound pack on http://www.tomenet.net/ in the download
+section, and also look for player-made sound or music packs in the forum!
+After you downloaded a sound pack or a music pack, extract it to your lib/xtra/
+folder, preserving the ZIPs pathname structure. You should end up with a folder
+lib/xtra/sound/ and lib/xtra/music/ respectively, which contain config files
+and further subfolders for either sound effects or background music.
+Now start or restart the game, and you should have sound. You can control mixer
+settings with CTRL+U key (or use CTRL+C to toggle music and CTRL+N to toggle
+the master mixer on/off).
 
 
 
@@ -9856,8 +9889,11 @@ SOLUTION A: You are probably using OSS. If your soundcard or soundchip doesn't
             as parameter. Example:    $> aoss ./tomenet
             Another example (to start the Opera webbrowser):    $> aoss opera
 SOLUTION B: If you are using X11, this problem may occur depending on your
-            terminal configuration. At this time, all you can do is change
-            your configuration, sorry.
+            terminal configuration. You can try to change your configuration,
+            or you can press '=' key to go to Options/User Interface Options 2
+            and enable 'Use audio system for paging sounds'. This will result
+            in paging sounds being played via your sound card, instead of the
+            operating system's beep (requires TomeNET v4.4.5 or higher).
 
 PROBLEM 20: Are 'ToME' and 'TomeNET' similar?
 SOLUTION:   Despite of similar name, the only thing these two games have in
