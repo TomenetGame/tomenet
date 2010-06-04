@@ -481,6 +481,8 @@ K       forcibly combines a level 0 item in your inventory with other items of
 CTRL+U  Displays/exits the audio mixer settings.
 CTRL+C  Toggles music. (Shortcut for toggling it in the mixer settings.)
 CTRL+N  Toggles audio. (Shortcut for master toggle in the mixer settings).
+Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
+(Compare troubleshooting section (8.5), problem 21.)
 
 There are also some commands that can be entered with ':' like a chat line.
 They all start with a slash '/':
@@ -504,7 +506,12 @@ They all start with a slash '/':
             can look at the board by pressing the '!' key.
             (You can verify or compare the date with the /time command.)
 /deal       Deals a card (completely random).
+            The result is random and can be seen by other players who stand
+            nearby.
 /dice       Roll some dice, you must specify a number of dice from 1 to 100.
+            The result is random and can be seen by other players who stand
+            nearby.
+/coin       Flip a coin to get either heads or tails.
             The result is random and can be seen by other players who stand
             nearby.
 /dis        DESTROYS every item in your inventory that has one of these
@@ -1310,6 +1317,9 @@ and further subfolders for either sound effects or background music.
 Now start or restart the game, and you should have sound. You can control mixer
 settings with CTRL+U key (or use CTRL+C to toggle music and CTRL+N to toggle
 the master mixer on/off).
+
+Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
+(Compare troubleshooting section (8.5), problem 21.)
 
 
 
@@ -6797,7 +6807,7 @@ Thunderlord +6  +2  +1  +1  +3  +5       12     350%     0ft
              6   0  10 -16  10  30   15   5
 Dark-Elf     0  +2  +1  +3  +1  -6       10     140%    50ft
              0   3   6   4  10   6   15  15
-Vampire     +2   0  -3  -1   0  -6       11     220%   100ft
+Vampire     +2   0  -3  -1   0  -6       11     220%   150ft
             -4   0  20   2  13  -4   10 -10
 
 
@@ -7813,9 +7823,8 @@ Mind
     Stun            Stuns a monster.
                     Lv25: Turns into a ball.
                     Required skill level for first spell level: 15.
-    Sense Minds     Detects all monsters nearby.                    (project)
-                    Lv30: Gives you temporary ESP.
-                    Required skill level for first spell level: 1.
+    Sense Minds     Gives you temporary ESP.
+                    Required skill level for first spell level: 30.
     Telekinesis     Inscribe your book @P<Playername>, cast it, select an
                     item that you wish to teleport to the player's inventory.
                     The target player needs to concentrate by opening her/his
@@ -8016,10 +8025,10 @@ Druid schools:
 --------------
 Arcane Lore
     Nature's Call   Quickly grows trees around you.
-                    Required skill level for first spell level: 12.
+                    Required skill level for first spell level: 10.
     Toxic Moisture  Creates a cloud of toxic moisture at a designated target.
                     At level 30 it turns into ice shards.
-                    Required skill level for first spell level: 4.
+                    Required skill level for first spell level: 3.
     Ancient Lore    Identifies all items in your inventory.
                     Required skill level for first spell level: 20.
     Garden of the Gods
@@ -8103,7 +8112,7 @@ Thought Contact
                     since everyone can send you any items, so better close it
                     again as soon as the desired telekinesis transaction is
                     done. Example inscription: @PGandalf
-                    Required skill level for first spell level: 30.
+                    Required skill level for first spell level: 35.
 
 Mental Intrusion
     Psionic Blast   Blasts the target's mind with psionic energy.
