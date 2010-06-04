@@ -919,6 +919,7 @@ static void load_prefs(void)
 	use_sound = (GetPrivateProfileInt("Angband", "Sound", 0, ini_file) != 0);
 
  #ifdef USE_SOUND_2010
+	no_cache_audio = !(GetPrivateProfileInt("Angband", "CacheAudio", 1, ini_file) != 0);
 	cfg_audio_master = (GetPrivateProfileInt("Angband", "AudioMaster", 1, ini_file) != 0);
 	cfg_audio_music = (GetPrivateProfileInt("Angband", "AudioMusic", 1, ini_file) != 0);
 	cfg_audio_sound = (GetPrivateProfileInt("Angband", "AudioSound", 1, ini_file) != 0);

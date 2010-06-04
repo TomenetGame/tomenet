@@ -753,7 +753,7 @@ extern void mixer_fadeall(void);
 extern int music_next, weather_channel, weather_current;
 extern int weather_particles_seen, weather_sound_change, weather_fading;
 extern int cfg_audio_rate;
-extern bool cfg_audio_master, cfg_audio_music, cfg_audio_sound, cfg_audio_weather;
+extern bool cfg_audio_master, cfg_audio_music, cfg_audio_sound, cfg_audio_weather, no_cache_audio;
 extern int cfg_audio_master_volume, cfg_audio_music_volume, cfg_audio_sound_volume, cfg_audio_weather_volume;
 
 extern const struct module sound_modules[];

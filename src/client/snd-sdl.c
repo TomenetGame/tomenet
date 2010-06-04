@@ -31,7 +31,7 @@
 
 
 /* Don't cache audio */
-static bool no_cache_audio = FALSE;
+bool no_cache_audio = FALSE;
 
 /* Path to sound files */
 static const char *ANGBAND_DIR_XTRA_SOUND;

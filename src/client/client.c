@@ -190,6 +190,13 @@ static bool read_mangrc(cptr filename)
 			}
 #endif
 #ifdef USE_SOUND_2010
+			/* don't cache audio (41.5 MB of ogg samples deflated in memory!) */
+			if (!strncmp(buf, "CacheAudio", 10)) {
+				char *p;
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+				if (p) no_cache_audio = !(atoi(p) != 0);
+			}
 			/* audio sample rate */
 			if (!strncmp(buf, "audioSampleRate", 11)) {
 				char *p;
