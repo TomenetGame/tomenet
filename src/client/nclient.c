@@ -3077,7 +3077,9 @@ int Receive_beep(void)
 	if (!c_cfg.allow_paging) return 1;
 
 #ifdef USE_SOUND_2010
+#ifdef SOUND_SDL
 	if (c_cfg.audio_paging && sound_page()) return 1;
+#endif
 #endif
 
 #ifdef WIN32
@@ -4567,7 +4569,9 @@ void do_ping()
 			sound_weather(-1); //fade out, insufficient particles to support the noise ;)
 		}
 	} else weather_sound_change = 0;
+#ifdef SOUND_SDL
 	if (weather_fading) weather_handle_fading();
+#endif
 #endif
 }
 
