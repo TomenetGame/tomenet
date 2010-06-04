@@ -8033,7 +8033,7 @@ Arcane Lore
                     Required skill level for first spell level: 20.
     Garden of the Gods
                     Transforms solid walls into green trees!
-                    Required skill level for first spell level: 15.
+                    Required skill level for first spell level: 1.
     Call of the Forest
                     Dispels all animals from your line of sight.
                     Animals have a chance to resist, depending on their level.
