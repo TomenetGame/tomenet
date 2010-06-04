@@ -44,6 +44,8 @@
 # audio settings
 # - enable audio in general (0 = off, 1 = on)
 sound		1
+# pre-cache audio (defaults to on; recommended)
+#cacheAudio	1
 # - mixer sample rate, default is 44100 (best left disabled)
 #   It is highly recommended to not changed this to
 #   avoid wrongly pitched audio on some systems.
