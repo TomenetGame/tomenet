@@ -7382,6 +7382,7 @@ S: spell list
     +30% Mana bonus (of base mana, same way +MANA items work).
     If the creature is able to cast 1_IN_1, the player receives +5 INT and
     +40% Mana bonus (of base mana, same way +MANA items work).
+
     About specific spells:
     BR_xxx      (breathing) will give the according resistance to the player
                 (if that specific attack CAN be resisted at all).
@@ -7390,6 +7391,8 @@ S: spell list
     BR_INERTIA  gives free action.
     MIND_BLAST  Insanity attacks are reduced a little bit.
     BRAIN_SMASH Insanity attacks are reduced somewhat.
+    The mana costs of mimic spells are fixed, the success chance is relatively
+    fixed too although it benefits somewhat from 'Magic' skill.
 
 Especially interesting spells of mimics are 'Blink' (Phase Door) and
 'Teleport'. These usually cost very little mana and can be very helpful,
