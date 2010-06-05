@@ -425,7 +425,9 @@ static cptr ANGBAND_DIR_XTRA_FONT;
 static cptr ANGBAND_DIR_XTRA_GRAF;
 #endif
 #ifdef USE_SOUND
+#ifndef USE_SOUND_2010
 static cptr ANGBAND_DIR_XTRA_SOUND;
+#endif
 #endif
 
 /*
@@ -906,7 +908,9 @@ static void load_prefs_sound(int i)
 static void load_prefs(void)
 {
 #ifdef USE_SOUND
+#ifndef USE_SOUND_2010
 	int i;
+#endif
 #endif
 
 #ifdef USE_GRAPHICS
