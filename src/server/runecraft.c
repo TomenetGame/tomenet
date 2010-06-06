@@ -345,7 +345,7 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 		damage = 1;
 	}
 	
-	damage = (damage * r_imperatives[imperative].dam) / 10;
+	damage = (damage * (r_imperatives[imperative].dam != 0 ? r_imperatives[imperative].dam : randint(15)+5)) / 10;
 	damage = (damage * d_multiplier) / 10;
 	dur = (dur * t_multiplier) / 10;
 	
@@ -362,7 +362,7 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 	{
 		r = 5;
 	}
-
+	
 	if (dur > 260 || dur < 5)
 	{
 		dur = 5;
@@ -951,12 +951,12 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 	else if (margin < -10)
 	{
 		description = " barely manage to";
-		modifier = 70;
+		modifier = 85;
 	}
 	else if (margin < 10)
 	{
 		description = " clumsily";
-		modifier = 90;
+		modifier = 93;
 	}
 	else if (margin < 60)
 	{
@@ -965,12 +965,12 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 	}
 	else if (margin < 80)
 	{
-		modifier = 110;
+		modifier = 107;
 		description = " effectively";
 	}
 	else
 	{
-		modifier = 130;
+		modifier = 115;
 		description = " elegantly";
 	}
 	
@@ -1014,8 +1014,8 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				break;
 			
 			case RT_MAGIC_CIRCLE:
-				msg_format(Ind, "%s%s%s surround yourself with protective sigils.", begin, description);
-			
+				msg_format(Ind, "%s%s surround yourself with protective sigils.", begin, description);
+				
 				if (success) 
 				{
 					for(x = 0; x<3;x++)
@@ -1277,6 +1277,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				}
 				break;
 			
+			case RT_CHAOS:
 			case RT_INERTIA:
 			case RT_TELEPORT_TO:
 				msg_format(Ind, "%s%s teleport forward.", begin, description);
@@ -1290,7 +1291,8 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				}
 				break;
 			
-			case RT_CHAOS:
+			
+			#if 0
 			case RT_TELEPORT_LEVEL:
 				msg_format(Ind, "%s%s teleport out.", begin, description);
 				
@@ -1303,13 +1305,16 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					
 					if (modifier != 130)
 					{
-						msg_format(Ind, "You are hit by debris for \377u%i \377wdamage", (p_ptr->mhp*(0-(modifier-130))/100));
-						take_hit(Ind, (p_ptr->mhp*(0-(modifier-130))/100), "level teleportation", 0); //Hit for up to 60% of health, depending on inverse sucessfullness
+						msg_format(Ind, "You are hit by debris for \377u%i \377wdamage", (p_ptr->mhp*(0-(modifier-115))/100));
+						take_hit(Ind, (p_ptr->mhp*(0-(modifier-115))/100), "level teleportation", 0); //Hit for up to 60% of health, depending on inverse sucessfullness
 					}
 					
 				}
 				break;
+			#endif
+				
 			
+			case RT_TELEPORT_LEVEL:
 			case RT_GRAVITY:
 			case RT_SUMMON:
 				msg_format(Ind, "%s%s summon monsters.", begin, description);
@@ -1408,7 +1413,9 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 						case 1: teleport_player(Ind, (10 + (teleport_level * 10) / 50), FALSE); break;
 						case 2: set_recall_timer(Ind, damroll(1,100)); break;
 						case 3: project_hack(Ind, GF_TELE_TO, 0, " summons"); break;
+						#if 0
 						case 4: teleport_player_level(Ind); break;
+						#endif
 						case 5: teleport_player_to(Ind, p_ptr->target_col, p_ptr->target_row); break;
 						default: teleport_player(Ind, (100 + (teleport_level * 100) / 5), FALSE); break;
 					}
@@ -1759,17 +1766,11 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative)
 	u32b s_type = rspell_type(s_flags);
 	s16b s_cost = 0; u16b s_dam = 0;  s16b s_diff = 0;
 	u16b s_av = 0;
-
+	
 	u16b radius = 0; u16b duration = 0;
 	s16b mali = 0;
 	s_av = rspell_skill(Ind, s_flags);
 	int cast_time = r_imperatives[imperative].time;
-	
-	int m = meth_to_id(s_flags);
-	
-	int e_level = runespell_list[s_type].level + runespell_types[m].cost + r_imperatives[imperative].level;
-	
-	int level = s_av - e_level;
 	
 	/* Time to cast can be varied up to 20% by the active spell modifier. */
 	if (p_ptr->energy < (level_speed(&p_ptr->wpos) * cast_time) / 10)
