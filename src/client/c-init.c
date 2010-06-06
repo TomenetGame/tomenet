@@ -403,7 +403,7 @@ static void init_sound() {
 	for (i = 0; i < N_ELEMENTS(sound_modules); i++) {
 		if (sound_modules[i].init && 0 == sound_modules[i].init(0, NULL)) {
  #ifdef DEBUG_SOUND
-			puts(format("USE_SOUND_2010: successfully loaded module %d.", temp));
+			puts(format("USE_SOUND_2010: successfully loaded module %d.", i));
  #endif
 			break;
 		}
