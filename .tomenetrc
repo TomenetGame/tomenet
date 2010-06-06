@@ -36,25 +36,35 @@
 
 
 # graphics settings
+
 # - enable graphics in general (0 = off)
-#graphics		0
+#graphics	0
 
 
 
 # audio settings
+
 # - enable audio in general (0 = off, 1 = on)
-sound		1
+sound			1
+
 # pre-cache audio (defaults to on; recommended)
-#cacheAudio	1
+#cacheAudio		1
+
 # - mixer sample rate, default is 44100 (best left disabled)
 #   It is highly recommended to not changed this to
 #   avoid wrongly pitched audio on some systems.
-#audioSampleRate		44100
+#audioSampleRate	44100
+
+# - number of mixer channels, ie the number of sound effects
+#   that can be played simultaneously. (4..32)
+#audioChannels		32
+
 # - turn various things on(1) or off(0)
 audioMaster		1
 audioMusic		1
 audioSound		1
 audioWeather		1
+
 # - mixer values for various things (0..100)
 audioVolumeMaster	100
 audioVolumeMusic	100
