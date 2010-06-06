@@ -92,3 +92,10 @@ Y:allow_paging
 Y:audio_paging
 Y:paging_master_vol
 Y:paging_max_vol
+Y:ovl_sfx_attack
+Y:half_sfx_attack
+Y:ovl_sfx_command
+Y:ovl_sfx_misc
+Y:ovl_sfx_mon_attack
+Y:ovl_sfx_mon_spell
+Y:ovl_sfx_mon_misc
