@@ -54,7 +54,7 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		4
 #define VERSION_PATCH		5
-#define VERSION_EXTRA		1
+#define VERSION_EXTRA		2
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -5829,6 +5829,14 @@ extern int PlayerUID;
  /* Given an array, determine how many elements are in it: */
  //note: appearently doesnt work for the main purpose ie sound_modules -_- -C. Blue
  #define N_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+
+ /* for ovl_sfx_.. client options */
+ #define SFX_TYPE_ATTACK	0
+ #define SFX_TYPE_COMMAND	1
+ #define SFX_TYPE_MISC		2
+ #define SFX_TYPE_MON_ATTACK	3
+ #define SFX_TYPE_MON_SPELL	4
+ #define SFX_TYPE_MON_MISC	5
 #endif
 
 /*** Hack ***/

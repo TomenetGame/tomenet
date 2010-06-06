@@ -775,8 +775,8 @@ void browse_school_spell(int item, int book, int pval)
 	int sval = book;
 
 #ifdef USE_SOUND_2010
-	if (sval == SV_SPELLBOOK) sound(browse_sound_idx);
-	else sound(browsebook_sound_idx);
+	if (sval == SV_SPELLBOOK) sound(browse_sound_idx, SFX_TYPE_COMMAND);
+	else sound(browsebook_sound_idx, SFX_TYPE_COMMAND);
 #endif
 
         num = exec_lua(0, format("return book_spells_num2(%d, %d)", item, sval));

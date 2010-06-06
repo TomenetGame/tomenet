@@ -3138,6 +3138,13 @@ struct client_opts
 	bool audio_paging;
 	bool paging_max_volume;
 	bool paging_master_volume;
+	bool ovl_sfx_attack;
+	bool half_sfx_attack;
+	bool ovl_sfx_command;
+	bool ovl_sfx_misc;
+	bool ovl_sfx_mon_attack;
+	bool ovl_sfx_mon_spell;
+	bool ovl_sfx_mon_misc;
 };
 
 /*

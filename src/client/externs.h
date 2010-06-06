@@ -741,10 +741,10 @@ extern const cptr angband_sound_name[SOUND_MAX];
 #ifdef USE_SOUND_2010
 //externs.h:
 extern void (*mixing_hook)(void);
-extern bool (*sound_hook)(int);
+extern bool (*sound_hook)(int, int);
 extern void (*sound_weather_hook)(int);
 extern void (*music_hook)(int);
-extern bool sound(int val);
+extern bool sound(int val, int type);
 extern void music(int val);
 extern void sound_weather(int val);
 extern void set_mixing(void);
@@ -752,9 +752,10 @@ extern void weather_handle_fading(void);
 extern void mixer_fadeall(void);
 extern int music_next, weather_channel, weather_current;
 extern int weather_particles_seen, weather_sound_change, weather_fading;
-extern int cfg_audio_rate;
+extern int cfg_audio_rate, cfg_max_channels;
 extern bool cfg_audio_master, cfg_audio_music, cfg_audio_sound, cfg_audio_weather, no_cache_audio;
 extern int cfg_audio_master_volume, cfg_audio_music_volume, cfg_audio_sound_volume, cfg_audio_weather_volume;
+extern bool count_half_sfx_attack;
 
 extern const struct module sound_modules[];
 extern errr init_sound_sdl(int argc, char **argv);

@@ -198,11 +198,18 @@ static bool read_mangrc(cptr filename)
 				if (p) no_cache_audio = !(atoi(p) != 0);
 			}
 			/* audio sample rate */
-			if (!strncmp(buf, "audioSampleRate", 11)) {
+			if (!strncmp(buf, "audioSampleRate", 15)) {
 				char *p;
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) cfg_audio_rate = atoi(p);
+			}
+			/* maximum number of allocated mixer channels */
+			if (!strncmp(buf, "audioChannels", 13)) {
+				char *p;
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+				if (p) cfg_max_channels = atoi(p);
 			}
 			/* audio mixer settings */
 			if (!strncmp(buf, "audioMaster", 11)) {
@@ -431,6 +438,7 @@ int main(int argc, char **argv)
 			strcpy(svname, "");
 #ifdef USE_SOUND_2010
 			cfg_audio_rate = 44100;
+			cfg_max_channels = 16;
 			cfg_audio_master = cfg_audio_music = cfg_audio_sound = cfg_audio_weather = TRUE;
 			cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = 100;
 #endif

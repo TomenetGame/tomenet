@@ -493,16 +493,22 @@ static bool play_sound(int event, int type) {
 	switch (type) {
 	case SFX_TYPE_ATTACK: if (c_cfg.ovl_sfx_attack) break;
 		if (samples[event].current_channel != -1) return TRUE;
+		break;
 	case SFX_TYPE_COMMAND: if (c_cfg.ovl_sfx_command) break;
 		if (samples[event].current_channel != -1) return TRUE;
+		break;
 	case SFX_TYPE_MISC: if (c_cfg.ovl_sfx_misc) break;
 		if (samples[event].current_channel != -1) return TRUE;
+		break;
 	case SFX_TYPE_MON_ATTACK: if (c_cfg.ovl_sfx_mon_attack) break;
 		if (samples[event].current_channel != -1) return TRUE;
+		break;
 	case SFX_TYPE_MON_SPELL: if (c_cfg.ovl_sfx_mon_spell) break;
 		if (samples[event].current_channel != -1) return TRUE;
+		break;
 	case SFX_TYPE_MON_MISC: if (c_cfg.ovl_sfx_mon_misc) break;
 		if (samples[event].current_channel != -1) return TRUE;
+		break;
 	default:
 		if (samples[event].current_channel != -1) return TRUE;
 	}

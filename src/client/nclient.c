@@ -2771,9 +2771,13 @@ int Receive_sound(void)
 {
 	int	n;
 	char	ch, s;
-	int	s1, s2;
+	int	s1, s2, t = -1;
 
-	if (is_newer_than(&server_version, 4, 4, 5, 0, 0, 0)) {
+	if (is_newer_than(&server_version, 4, 4, 5, 1, 0, 0)) {
+		/* Primary sound and an alternative */
+		if ((n = Packet_scanf(&rbuf, "%c%d%d%d", &ch, &s1, &s2, &t)) <= 0)
+			return n;
+	} else if (is_newer_than(&server_version, 4, 4, 5, 0, 0, 0)) {
 		/* Primary sound and an alternative */
 		if ((n = Packet_scanf(&rbuf, "%c%d%d", &ch, &s1, &s2)) <= 0)
 		{
@@ -2792,8 +2796,14 @@ int Receive_sound(void)
 #ifndef USE_SOUND_2010
 		Term_xtra(TERM_XTRA_SOUND, s1);
 #else
-		if (!sound(s1)) {
-			sound(s2);
+		/* discard every 2nd attack sfx? */
+		if (t == SFX_TYPE_ATTACK && c_cfg.half_sfx_attack) {
+			count_half_sfx_attack = !count_half_sfx_attack;
+			if (count_half_sfx_attack) return 1;
+		}
+
+		if (!sound(s1, t)) {
+			sound(s2, t);
 		}
 #endif
 
