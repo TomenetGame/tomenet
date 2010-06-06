@@ -1130,7 +1130,9 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				
 				if (success)
 				{
-					set_food(Ind, PY_FOOD_MAX - 1);
+					//if (!p_ptr->suscep_life)
+					if (p_ptr->prace != RACE_VAMPIRE)
+						set_food(Ind, PY_FOOD_MAX - 1);
 				}
 				break;
 			
