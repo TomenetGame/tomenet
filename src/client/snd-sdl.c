@@ -42,7 +42,7 @@ static bool my_fexists(const char *fname);
 
 
 /* Arbitrary limit of mixer channels */
-#define MAX_CHANNELS	16
+#define MAX_CHANNELS	32
 
 /* Mixed sample size (larger = more lagging sound, smaller = skipping on slow machines) */
 #define CHUNK_SIZE	1024
@@ -149,7 +149,7 @@ static bool open_audio(void) {
 	
 	/* Initialize variables */
 	audio_rate = cfg_audio_rate;
-	audio_format = AUDIO_S16;
+	audio_format = AUDIO_S16SYS;
 	audio_channels = 2;
 
 	/* Initialize the SDL library */
@@ -170,7 +170,9 @@ static bool open_audio(void) {
 		return FALSE;
 	}
 
-	Mix_AllocateChannels(MAX_CHANNELS);
+	if (cfg_max_channels > MAX_CHANNELS) cfg_max_channels = MAX_CHANNELS;
+	if (cfg_max_channels < 4) cfg_max_channels = 4;
+	Mix_AllocateChannels(cfg_max_channels);
 	/* set hook for clearing faded-out weather and for managing sound-fx playback */
 	Mix_ChannelFinished(clear_channel);
 	/* set hook for fading over to next song */
@@ -200,7 +202,7 @@ static bool sound_sdl_init(bool no_cache) {
 #endif
 
 	/* Initialize sound-fx channel management */
-	for (i = 0; i < MAX_CHANNELS; i++) channel_sample[i] = -1;
+	for (i = 0; i < cfg_max_channels; i++) channel_sample[i] = -1;
 
 
 	/* ------------------------------- Init Sounds */
@@ -476,7 +478,7 @@ static bool sound_sdl_init(bool no_cache) {
 /*
  * Play a sound of type "event". Returns FALSE if sound couldn't be played.
  */
-static bool play_sound(int event) {
+static bool play_sound(int event, int type) {
 	Mix_Chunk *wave = NULL;
 	int s;
 
@@ -486,8 +488,24 @@ static bool play_sound(int event) {
 	/* Check there are samples for this event */
 	if (!samples[event].num) return FALSE;
 
-	/* already playing? prevent multiple sounds of the same kind from being mixed simultaneously, for preventing silliness */
-	if (samples[event].current_channel != -1) return TRUE;
+	/* already playing? allow to prevent multiple sounds of the same kind
+	   from being mixed simultaneously, for preventing silliness */
+	switch (type) {
+	case SFX_TYPE_ATTACK: if (c_cfg.ovl_sfx_attack) break;
+		if (samples[event].current_channel != -1) return TRUE;
+	case SFX_TYPE_COMMAND: if (c_cfg.ovl_sfx_command) break;
+		if (samples[event].current_channel != -1) return TRUE;
+	case SFX_TYPE_MISC: if (c_cfg.ovl_sfx_misc) break;
+		if (samples[event].current_channel != -1) return TRUE;
+	case SFX_TYPE_MON_ATTACK: if (c_cfg.ovl_sfx_mon_attack) break;
+		if (samples[event].current_channel != -1) return TRUE;
+	case SFX_TYPE_MON_SPELL: if (c_cfg.ovl_sfx_mon_spell) break;
+		if (samples[event].current_channel != -1) return TRUE;
+	case SFX_TYPE_MON_MISC: if (c_cfg.ovl_sfx_mon_misc) break;
+		if (samples[event].current_channel != -1) return TRUE;
+	default:
+		if (samples[event].current_channel != -1) return TRUE;
+	}
 
 	/* Choose a random event */
 	s = rand_int(samples[event].num);
