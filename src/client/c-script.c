@@ -356,6 +356,9 @@ void init_lua()
 	pern_dofile(0, "xml.lua");
 	pern_dofile(0, "meta.lua");
 
+	/* Sound system */
+	pern_dofile(0, "audio.lua");
+
         init_lua_done = TRUE;
 }
 

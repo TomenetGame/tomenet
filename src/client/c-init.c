@@ -391,9 +391,6 @@ static void init_sound() {
 #ifdef USE_SOUND_2010
 	int i;
 
-	/* audio.lua contains sound system information */
-	pern_dofile(0, "audio.lua");
-
 	if (!use_sound) {
 		/* Don't initialize sound modules */
 		return;
