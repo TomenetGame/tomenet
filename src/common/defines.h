@@ -5837,6 +5837,7 @@ extern int PlayerUID;
  #define SFX_TYPE_MON_ATTACK	3
  #define SFX_TYPE_MON_SPELL	4
  #define SFX_TYPE_MON_MISC	5
+ #define SFX_TYPE_NO_OVERLAP	6
 #endif
 
 /*** Hack ***/

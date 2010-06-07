@@ -510,6 +510,9 @@ static bool play_sound(int event, int type) {
 	case SFX_TYPE_MON_MISC: if (c_cfg.ovl_sfx_mon_misc) break;
 		if (samples[event].current_channel != -1) return TRUE;
 		break;
+	case SFX_TYPE_NO_OVERLAP: /* never overlap! (eg tunnelling) */
+		if (samples[event].current_channel != -1) return TRUE;
+		break;
 	default:
 		if (samples[event].current_channel != -1) return TRUE;
 	}
