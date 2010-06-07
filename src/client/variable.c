@@ -266,7 +266,7 @@ void (*mixing_hook)(void);
 bool (*sound_hook)(int sound, int type);
 void (*sound_weather_hook)(int sound);
 void (*music_hook)(int music);
-int cfg_audio_rate = 44100, cfg_max_channels = 32;
+int cfg_audio_rate = 44100, cfg_max_channels = 32, cfg_audio_buffer = 512;
 int music_next = -1, weather_channel = -1, weather_current;
 int weather_particles_seen, weather_sound_change, weather_fading;
 bool cfg_audio_master = TRUE, cfg_audio_music = TRUE, cfg_audio_sound = TRUE, cfg_audio_weather = TRUE;

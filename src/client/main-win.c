@@ -778,29 +778,29 @@ static void save_prefs(void)
 
 #ifdef USE_GRAPHICS
 	strcpy(buf, use_graphics ? "1" : "0");
-	WritePrivateProfileString("Angband", "Graphics", buf, ini_file);
+	WritePrivateProfileString("Base", "Graphics", buf, ini_file);
 #endif
 #ifdef USE_SOUND
 	strcpy(buf, use_sound ? "1" : "0");
-	WritePrivateProfileString("Angband", "Sound", buf, ini_file);
+	WritePrivateProfileString("Base", "Sound", buf, ini_file);
 
  #ifdef USE_SOUND_2010
 	strcpy(buf, cfg_audio_master ? "1" : "0");
-	WritePrivateProfileString("Angband", "AudioMaster", buf, ini_file);
+	WritePrivateProfileString("Base", "AudioMaster", buf, ini_file);
 	strcpy(buf, cfg_audio_music ? "1" : "0");
-	WritePrivateProfileString("Angband", "AudioMusic", buf, ini_file);
+	WritePrivateProfileString("Base", "AudioMusic", buf, ini_file);
 	strcpy(buf, cfg_audio_sound ? "1" : "0");
-	WritePrivateProfileString("Angband", "AudioSound", buf, ini_file);
+	WritePrivateProfileString("Base", "AudioSound", buf, ini_file);
 	strcpy(buf, cfg_audio_weather ? "1" : "0");
-	WritePrivateProfileString("Angband", "AudioWeather", buf, ini_file);
+	WritePrivateProfileString("Base", "AudioWeather", buf, ini_file);
 	strcpy(buf, format("%d", cfg_audio_master_volume));
-	WritePrivateProfileString("Angband", "AudioVolumeMaster", buf, ini_file);
+	WritePrivateProfileString("Base", "AudioVolumeMaster", buf, ini_file);
 	strcpy(buf, format("%d", cfg_audio_music_volume));
-	WritePrivateProfileString("Angband", "AudioVolumeMusic", buf, ini_file);
+	WritePrivateProfileString("Base", "AudioVolumeMusic", buf, ini_file);
 	strcpy(buf, format("%d", cfg_audio_sound_volume));
-	WritePrivateProfileString("Angband", "AudioVolumeSound", buf, ini_file);
+	WritePrivateProfileString("Base", "AudioVolumeSound", buf, ini_file);
 	strcpy(buf, format("%d", cfg_audio_weather_volume));
-	WritePrivateProfileString("Angband", "AudioVolumeWeather", buf, ini_file);
+	WritePrivateProfileString("Base", "AudioVolumeWeather", buf, ini_file);
  #endif
 #endif
 	save_prefs_aux(&data[0], "Main window");
@@ -915,25 +915,26 @@ static void load_prefs(void)
 
 #ifdef USE_GRAPHICS
 	/* Extract the "use_graphics" flag */
-	use_graphics = (GetPrivateProfileInt("Angband", "Graphics", 0, ini_file) != 0);
+	use_graphics = (GetPrivateProfileInt("Base", "Graphics", 0, ini_file) != 0);
 #endif
 
 #ifdef USE_SOUND
 	/* Extract the "use_sound" flag */
-	use_sound = (GetPrivateProfileInt("Angband", "Sound", 0, ini_file) != 0);
+	use_sound = (GetPrivateProfileInt("Base", "Sound", 0, ini_file) != 0);
 
  #ifdef USE_SOUND_2010
-	no_cache_audio = !(GetPrivateProfileInt("Angband", "CacheAudio", 1, ini_file) != 0);
-	cfg_audio_rate = GetPrivateProfileInt("Angband", "SampleRate", 44100, ini_file);
-	cfg_max_channels = GetPrivateProfileInt("Angband", "MaxChannels", 32, ini_file);
-	cfg_audio_master = (GetPrivateProfileInt("Angband", "AudioMaster", 1, ini_file) != 0);
-	cfg_audio_music = (GetPrivateProfileInt("Angband", "AudioMusic", 1, ini_file) != 0);
-	cfg_audio_sound = (GetPrivateProfileInt("Angband", "AudioSound", 1, ini_file) != 0);
-	cfg_audio_weather = (GetPrivateProfileInt("Angband", "AudioWeather", 1, ini_file) != 0);
-	cfg_audio_master_volume = GetPrivateProfileInt("Angband", "AudioVolumeMaster", 100, ini_file);
-	cfg_audio_music_volume = GetPrivateProfileInt("Angband", "AudioVolumeMusic", 100, ini_file);
-	cfg_audio_sound_volume = GetPrivateProfileInt("Angband", "AudioVolumeSound", 100, ini_file);
-	cfg_audio_weather_volume = GetPrivateProfileInt("Angband", "AudioVolumeWeather", 100, ini_file);
+	no_cache_audio = !(GetPrivateProfileInt("Base", "CacheAudio", 1, ini_file) != 0);
+	cfg_audio_rate = GetPrivateProfileInt("Base", "SampleRate", 44100, ini_file);
+	cfg_max_channels = GetPrivateProfileInt("Base", "MaxChannels", 32, ini_file);
+	cfg_audio_buffer = GetPrivateProfileInt("Base", "AudioBuffer", 512, ini_file);
+	cfg_audio_master = (GetPrivateProfileInt("Base", "AudioMaster", 1, ini_file) != 0);
+	cfg_audio_music = (GetPrivateProfileInt("Base", "AudioMusic", 1, ini_file) != 0);
+	cfg_audio_sound = (GetPrivateProfileInt("Base", "AudioSound", 1, ini_file) != 0);
+	cfg_audio_weather = (GetPrivateProfileInt("Base", "AudioWeather", 1, ini_file) != 0);
+	cfg_audio_master_volume = GetPrivateProfileInt("Base", "AudioVolumeMaster", 100, ini_file);
+	cfg_audio_music_volume = GetPrivateProfileInt("Base", "AudioVolumeMusic", 100, ini_file);
+	cfg_audio_sound_volume = GetPrivateProfileInt("Base", "AudioVolumeSound", 100, ini_file);
+	cfg_audio_weather_volume = GetPrivateProfileInt("Base", "AudioVolumeWeather", 100, ini_file);
  #endif
 #endif
 
@@ -965,13 +966,13 @@ static void load_prefs(void)
 #endif
 
 	/* Metaserver address */
-	GetPrivateProfileString("MAngband", "meta", "", meta_address, MAX_CHARS - 1, ini_file);
+	GetPrivateProfileString("Online", "meta", "", meta_address, MAX_CHARS - 1, ini_file);
 
 	/* Pull nick/pass */
-	GetPrivateProfileString("MAngband", "nick", "PLAYER", nick, 70, ini_file);
-	GetPrivateProfileString("MAngband", "pass", "passwd", pass, 19, ini_file);
-	cfg_game_port = GetPrivateProfileInt("MAngband", "port", 18348, ini_file);
-	cfg_client_fps = GetPrivateProfileInt("MAngband", "fps", 100, ini_file);
+	GetPrivateProfileString("Online", "nick", "PLAYER", nick, 70, ini_file);
+	GetPrivateProfileString("Online", "pass", "passwd", pass, 19, ini_file);
+	cfg_game_port = GetPrivateProfileInt("Online", "port", 18348, ini_file);
+	cfg_client_fps = GetPrivateProfileInt("Online", "fps", 100, ini_file);
 
 	/* XXX Default real name */
 	strcpy(real_name, "PLAYER");
@@ -3456,7 +3457,7 @@ static void init_stuff(void)
 
 
 	/* XXX XXX XXX */
-	GetPrivateProfileString("Angband", "LibPath", "c:\\angband\\lib",
+	GetPrivateProfileString("Base", "LibPath", "c:\\angband\\lib",
 	                        path, 1000, ini_file);
 
 	/* Analyze the path */

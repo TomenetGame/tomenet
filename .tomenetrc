@@ -59,6 +59,10 @@ sound			1
 #   that can be played simultaneously. (4..32)
 #audioChannels		32
 
+# - Sample buffer size (larger = more lagging sound,
+#   smaller = skipping on slow machines. 128..8192)
+audioBuffer		512
+
 # - turn various things on(1) or off(0)
 audioMaster		1
 audioMusic		1

@@ -211,6 +211,13 @@ static bool read_mangrc(cptr filename)
 				p = strtok(NULL, "\t\n");
 				if (p) cfg_max_channels = atoi(p);
 			}
+			/* Mixed sample size (larger = more lagging sound, smaller = skipping on slow machines) */
+			if (!strncmp(buf, "audioBuffer", 11)) {
+				char *p;
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+				if (p) cfg_audio_buffer = atoi(p);
+			}
 			/* audio mixer settings */
 			if (!strncmp(buf, "audioMaster", 11)) {
 				char *p;
@@ -439,6 +446,7 @@ int main(int argc, char **argv)
 #ifdef USE_SOUND_2010
 			cfg_audio_rate = 44100;
 			cfg_max_channels = 16;
+			cfg_audio_buffer = 1024;
 			cfg_audio_master = cfg_audio_music = cfg_audio_sound = cfg_audio_weather = TRUE;
 			cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = 100;
 #endif

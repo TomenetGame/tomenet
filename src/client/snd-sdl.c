@@ -44,9 +44,6 @@ static bool my_fexists(const char *fname);
 /* Arbitrary limit of mixer channels */
 #define MAX_CHANNELS	32
 
-/* Mixed sample size (larger = more lagging sound, smaller = skipping on slow machines) */
-#define CHUNK_SIZE	1024
-
 /* Arbitary limit on number of samples per event */
 #define MAX_SAMPLES	8
 
@@ -149,6 +146,8 @@ static bool open_audio(void) {
 	int audio_channels;
 	
 	/* Initialize variables */
+	if (cfg_audio_rate < 4000) cfg_audio_rate = 4000;
+	if (cfg_audio_rate > 48000) cfg_audio_rate = 48000;
 	audio_rate = cfg_audio_rate;
 	audio_format = AUDIO_S16SYS;
 	audio_channels = 2;
@@ -163,7 +162,9 @@ static bool open_audio(void) {
 	}
 
 	/* Try to open the audio */
-	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, CHUNK_SIZE) < 0) {
+	if (cfg_audio_buffer < 128) cfg_audio_buffer = 128;
+	if (cfg_audio_buffer > 8192) cfg_audio_buffer = 8192;
+	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, cfg_audio_buffer) < 0) {
 #ifdef DEBUG_SOUND
 		plog_fmt("Couldn't open mixer: %s", SDL_GetError());
 		puts(format("Couldn't open mixer: %s", SDL_GetError()));
