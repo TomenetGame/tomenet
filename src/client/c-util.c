@@ -3332,7 +3332,7 @@ void interact_macros(void)
 		/* Enter a 'quick & dirty' macro */
 		else if (i == 'q')
 		{
-			bool call_by_name = FALSE;
+			bool call_by_name = FALSE, mimic_transform = FALSE;
 
 			/* Prompt */
 			Term_putstr(0, 16, -1, TERM_L_GREEN, "Command: Enter a new 'quick & dirty' macro");
@@ -3364,6 +3364,10 @@ void interact_macros(void)
 				} else switch (*bptr) {
 				case 'M': /* use innate mimic power */
 					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '3'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
+					bptr++;	break;
+				case 'T': /* use innate mimic power: transform into specific */
+					mimic_transform = TRUE;
+					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '3'; *b2ptr++ = '\\'; *b2ptr++ = 'r'; *b2ptr++ = 'c';
 					bptr++;	break;
 				case 'F': /* employ fighting technique */
 					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '5'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
@@ -3397,6 +3401,10 @@ void interact_macros(void)
 				default:
 					*b2ptr++ = *bptr++;
 				}
+			}
+			/* service: mimic-transformation automatically adds the required '\r' at the end */
+			if (mimic_transform) {
+				*b2ptr++ = '\\'; *b2ptr++ = 'r';
 			}
 			/* terminate anyway */
 			*b2ptr = '\0';
