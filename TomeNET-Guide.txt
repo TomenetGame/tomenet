@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 4. June 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 7. June 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1006,6 +1006,8 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
 
 (0.5) Rumours, missing features, technical warnings (READ!)
 -----------------------------------------------------------
+-Starting at version 4.4.5, TomeNET supports audio, that is, sound effects and
+ background music. To find out more, read (2.1a).
 -Usually characters expire (that means they are automatically deleted!)
  after 180 days of inactivity.
 -Items on the ground (especially in towns) often disappear automatically after
@@ -1308,18 +1310,23 @@ which provides sound effects and background music.
 
 To make use of it, all you have to do is install a sound pack and/or a music
 pack to your lib/xtra/ folder.
+
 You can get the official sound pack on http://www.tomenet.net/ in the download
 section, and also look for player-made sound or music packs in the forum!
 After you downloaded a sound pack or a music pack, extract it to your lib/xtra/
 folder, preserving the ZIPs pathname structure. You should end up with a folder
 lib/xtra/sound/ and lib/xtra/music/ respectively, which contain config files
 and further subfolders for either sound effects or background music.
+
 Now start or restart the game, and you should have sound. You can control mixer
 settings with CTRL+U key (or use CTRL+C to toggle music and CTRL+N to toggle
 the master mixer on/off).
 
 Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
 (Compare troubleshooting section (8.5), problem 21.)
+
+Also be sure to press '=' key to have a look at the audio options, which are in
+'User Interface Options 2'.
 
 
 
@@ -2245,6 +2252,9 @@ the usual full macro.
 On entering the macro action, those characters will be automatically expanded
 to their real functionality. They are:
   M for using a mimic's innate power
+  T for using a mimic's 'transform-into-specific' power. For example, enter:
+    T191
+    Which will become  \e)@m3\rc191\r  (transform into a Grizzly Bear).
   F for employing a fighting technique
   S for employing a shooting technique
   m for casting a spell
