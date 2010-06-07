@@ -2792,7 +2792,7 @@ int Receive_sound(void)
 	}
 
 	/* Make a sound (if allowed) */
-	if (use_sound)
+	if (use_sound) {
 #ifndef USE_SOUND_2010
 		Term_xtra(TERM_XTRA_SOUND, s1);
 #else
@@ -2806,6 +2806,7 @@ int Receive_sound(void)
 			sound(s2, t);
 		}
 #endif
+	}
 
 	return 1;
 }
@@ -4546,15 +4547,27 @@ void do_mail(){
 /* Ping the server once a second when enabled - mikaelh */
 void do_ping()
 {
-	static int last_ping = 0;
+	static int last_ping = 0, last_sfx = 0;
 
 	if (lagometer_enabled && (ticks - last_ping >= 10)) {
+		last_ping = ticks;
+
 		/* Update the lag-o-meter just before sending a new ping */
 		update_lagometer();
 
-		last_ping = ticks;
 		Send_ping();
 	}
+
+#ifdef USE_SOUND_2010
+	/* Abuse it for resetting sound skip counter too */
+	if (ticks - last_sfx < 0 || /* ticks-overflow-paranoia */
+	    ticks - last_sfx >= 5) {
+		last_sfx = ticks;
+
+		/* reset */
+		count_half_sfx_attack = TRUE;
+	}
+#endif
 
 	/* abusing it for weather for now - C. Blue */
 #ifdef USE_SOUND_2010

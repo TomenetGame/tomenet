@@ -77,6 +77,7 @@ typedef struct {
 	const char *paths[MAX_SAMPLES]; /* Relative pathnames for samples */
 	int current_channel;		/* Channel it's currently being played on, -1 if none; to avoid
 					   stacking of the same sound multiple (read: too many) times - C. Blue */
+	int started_timer_tick;		/* global timer tick on which this sample was started (for efficiency) */
 } sample_list;
 
 /* background music */
@@ -513,6 +514,11 @@ static bool play_sound(int event, int type) {
 		if (samples[event].current_channel != -1) return TRUE;
 	}
 
+	/* prevent playing duplicate sfx that were initiated very closely
+	   together in time, after one each other? (efficiency) */
+	if (c_cfg.no_ovl_close_sfx && ticks == samples[event].started_timer_tick) return TRUE;
+
+
 	/* Choose a random event */
 	s = rand_int(samples[event].num);
 	wave = samples[event].wavs[s];
@@ -541,7 +547,8 @@ static bool play_sound(int event, int type) {
 //		Mix_Volume(s, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
 	}
 	samples[event].current_channel = s;
-	
+	samples[event].started_timer_tick = ticks;
+
 	return TRUE;
 }
 /* play the 'page' sound */

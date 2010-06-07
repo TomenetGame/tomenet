@@ -764,28 +764,31 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.paging_max_volume,	TRUE,	4,	0, 83, TRUE,
 	"paging_max_vol",		"Play page sound at maximum volume" },
 
-	{ &c_cfg.ovl_sfx_attack,	TRUE,	4,	0, 84, TRUE,
+	{ &c_cfg.no_ovl_close_sfx,	TRUE,	4,	0, 84, TRUE,
+	"no_ovl_close_sfx",		"Prevent re-playing sfx received after <100ms gap" },
+
+	{ &c_cfg.ovl_sfx_attack,	TRUE,	4,	0, 85, TRUE,
 	"ovl_sfx_attack",		"Allow overlapping combat sounds of same type" },
 
-	{ &c_cfg.half_sfx_attack,	FALSE,	4,	0, 85, TRUE,
+	{ &c_cfg.half_sfx_attack,	FALSE,	4,	0, 86, TRUE,
 	"half_sfx_attack",		"Skip every second attack sound" },
 
-	{ &c_cfg.cut_sfx_attack,	FALSE,	4,	0, 86, TRUE,
+	{ &c_cfg.cut_sfx_attack,	TRUE,	4,	0, 87, TRUE,
 	"cut_sfx_attack",		"Skip attack sounds based on speed and bpr." },
 
-	{ &c_cfg.ovl_sfx_command,	TRUE,	4,	0, 87, TRUE,
+	{ &c_cfg.ovl_sfx_command,	TRUE,	4,	0, 88, TRUE,
 	"ovl_sfx_command",		"Allow overlapping command sounds of same type" },
 
-	{ &c_cfg.ovl_sfx_misc,		TRUE,	4,	0, 88, TRUE,
+	{ &c_cfg.ovl_sfx_misc,		TRUE,	4,	0, 89, TRUE,
 	"ovl_sfx_misc",			"Allow overlapping misc sounds of same type" },
 
-	{ &c_cfg.ovl_sfx_mon_attack,	TRUE,	4,	0, 89, TRUE,
+	{ &c_cfg.ovl_sfx_mon_attack,	TRUE,	4,	0, 90, TRUE,
 	"ovl_sfx_mon_attack",		"Allow overlapping monster attack sfx of same type" },
 
-	{ &c_cfg.ovl_sfx_mon_spell,	TRUE,	4,	0, 90, TRUE, /* includes breaths, basically it's all S-flags */
+	{ &c_cfg.ovl_sfx_mon_spell,	TRUE,	4,	0, 91, TRUE, /* includes breaths, basically it's all S-flags */
 	"ovl_sfx_mon_spell",		"Allow ovl. monster spell/breath sfx of same type" },
 
-	{ &c_cfg.ovl_sfx_mon_misc,	TRUE,	4,	0, 91, TRUE,
+	{ &c_cfg.ovl_sfx_mon_misc,	TRUE,	4,	0, 92, TRUE,
 	"ovl_sfx_mon_misc",		"Allow overlapping misc monster sfx of same type." },
 };
 
