@@ -4189,6 +4189,7 @@ static errr options_dump(cptr fname)
 		fclose(fff);
 
 		/* Attempt to rename */
+		strcpy(buf2, buf);
 		strncat(buf2, ".bak", 1023);
 		rename(buf, buf2);
 	}
