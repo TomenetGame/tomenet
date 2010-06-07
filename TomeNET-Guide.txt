@@ -7574,7 +7574,7 @@ Multi-hued Hound        resists fire/cold/lightning/acid/poison and gets a
                         can't be confused or paralyzed;
                         can breathe the five elements mentioned above
 
-5-headed hydra          speedy; can swim;
+5-headed hydra          tough and speedy; can swim;
                         poisonous attacks; immune to poison;
                         can cast fear and poison ball
 
