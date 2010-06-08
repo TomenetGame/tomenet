@@ -9433,6 +9433,8 @@ than general mods.
 
 Type-dependant mods:
 --------------------
+(Note: The probability of each mod varies, depending on the item type)
+
 Bows, crossbows, slings
         Extra shots
         Extra might
@@ -9573,6 +9575,8 @@ Light sources
 
 General mods:
 -------------
+(Note: The probability isn't equal for each mod)
+
         Bonus on any stats (has chance to include sustenance for that stat;
                             wisdom might also include 'Blessed' flag)
         Sustenances on any stats (has chance to include bonus for that stat)
