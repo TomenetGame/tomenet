@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 7. June 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 8. June 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -5475,10 +5475,14 @@ AUTO_CURSE      occurs together with CURSED or HEAVY_CURSE.
 TY_CURSE        Randomly drains stats sometimes, even if the item is uncursed.
                 (TY_CURSE will stay, even if the 'normal' curse is broken!)
                 Lowers the items value by 15000 Au.
+                This curse will be on hold while you're in a town, and will
+                also occur rather rarely while you're on the world surface,
+                ie not within a dungeon or tower.
                 ("It carries an ancient foul curse.")
 DG_CURSE        Rarely summons a random monster on you, even if uncursed.
                 (DG_CURSE will stay, even if the 'normal' curse is broken!)
                 Greatly lowers the items value by 25000 Au.
+                This curse will be on hold while you're in a town.
                 ("It carries an ancient morgothian curse.")
 
 If 'CURSED' or 'HEAVY_CURSE' occurs on a weapon or armour piece, the curses
@@ -5660,14 +5664,19 @@ experience points permanently. Here are some details about that process:
 -Experience drain from multiple items stacks, although it doesnt add in a
  linear way. So, wearing two rings of power won't drain twice as fast as one,
  but about 1,5x as fast.
--Experience drain is permanent. It cannot be restored by potions of 
- restore life levels.
+-Experience drain is not temporary, so it cannot be restored by potions of
+ restore life levels. To make up for it, you'll have to kill monsters..faster.
 -Experience drain won't go further than the experience you need at least to
  maintain your current character level. If you reach that experience border,
  experience drain will stop, even if you still have the items equipped.
  So you will not lose levels from experience drain.
  HOWEVER: If a monster or other effect drains your experience below your
  current level, the experience drain from items will kick in again!
+-Experience drain will happen much slower if you're on the world surface,
+ ie not inside a dungeon or tower.
+-Experience drain will completely hold while you're in a town, so you can just
+ take any time you want for shopping or sitting out blacklists, without losing
+ any experience at all.
 
 
 
