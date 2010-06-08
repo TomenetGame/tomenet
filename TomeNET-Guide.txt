@@ -6248,6 +6248,12 @@ Note that not every skill is available to every profession (class).
     .Backstabbing               Lets you backstab enemies, afflicting high
                                 damage. Works best if the opponent is
                                 sleeping. Requires sword-type weapons.
+                                If you dual-wield, you will also dual-backstab
+                                if the moster is either asleep, or you perform
+                                the attack from cloaking mode or shadow run.
+                                Although you'll deal somewhat less damage with
+                                each stab, since they are executed both at once
+                                they will provide a great damage boost.
     .Stealing                   Ability to steal items from stores.
                                 If you get caught, you will be on the
                                 'blacklist of merchants' for a minute up
