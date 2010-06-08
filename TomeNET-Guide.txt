@@ -1184,6 +1184,10 @@ able to infect other players if you come too close to them. It will drain your
 stats and permanently drain your experience. Slowly, but steadily. There are
 several possibilities to cure Black Breath, for example Sprigs of Athelas.
 
+Each Nazgul will drop a ring of power, which is a random artifact ring bearing
+the Nazgul's name. These rings have a lot of random mods (ie abilities) and
+will always provide invisibility (5.16) and experience drain (5.19).
+
 
 
 (1.6) How to encounter the final boss: Morgoth, Lord of Darkness
