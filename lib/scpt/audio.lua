@@ -207,6 +207,8 @@ audio_sfx = {
     "earthquake",
     "rocket",
     "trap_setoff",
+    "hollow_noise",
+    "stirring",
 }
 function get_sound_name(idx)
     if audio_sfx[idx + 1] == nil then return "" end
