@@ -289,7 +289,8 @@ bool write_mangrc(void) {
 	config2 = fopen(config_name2, "w");
 
 	/* Attempt to open file */
-	if (config && config2) {
+	if (config2) {
+	    if (config) {
 		/* Read until end */
 		while (!feof(config))
 		{
@@ -339,6 +340,57 @@ bool write_mangrc(void) {
 		rename(config_name2, mangrc_filename);
 
 		return (TRUE); //success
+	    } else {
+		/* create .tomenetrc file, because it doesn't exist yet */
+		fputs("# TomeNET config file\n", config2);
+		fputs("# (basic version - generated automatically because it was missing)\n", config2);
+		fputs("\n\n", config2);
+
+		fputs(format("#nick\t\t%s\n", nick), config2);
+		fputs(format("#pass\t\t%s\n", ""), config2);//keep pass secure maybe
+		fputs(format("#name\t\t%s\n", cname), config2);
+		fputs("\n", config2);
+
+		fputs(format("#server\t\t%s\n", svname), config2);
+		fputs(format("#port\t\t%d\n", cfg_game_port), config2);
+		fputs("\n", config2);
+
+		fputs(format("fps\t\t%d\n", cfg_client_fps), config2);//or maybe just write '100'?
+		fputs(format("#realname\t%s\n", real_name), config2);
+		fputs(format("#path\t\t%s\n", path), config2);
+		fputs("\n", config2);
+
+		fputs("#fullauto\n", config2);
+		fputs("\n", config2);
+
+//#ifdef USE_GRAPHICS
+		fputs(format("graphics\t\t%s\n", use_graphics ? "1" : "0"), config2);
+		fputs("\n", config2);
+//#endif
+//#ifdef USE_SOUND
+		fputs(format("sound\t\t\t%s\n", use_sound ? "1" : "0"), config2);
+//#endif
+//#ifdef USE_SOUND_2010
+		fputs(format("cacheAudio\t\t%s\n", no_cache_audio ? "0" : "1"), config2);
+		fputs(format("audioSampleRate\t\t%d\n", cfg_audio_rate), config2);
+		fputs(format("audioChannels\t\t%d\n", cfg_max_channels), config2);
+		fputs(format("audioBuffer\t\t%d\n", cfg_audio_buffer), config2);
+
+		fputs(format("audioMaster\t\t%s\n", cfg_audio_master ? "1" : "0"), config2);
+		fputs(format("audioMusic\t\t%s\n", cfg_audio_music ? "1" : "0"), config2);
+		fputs(format("audioSound\t\t%s\n", cfg_audio_sound ? "1" : "0"), config2);
+		fputs(format("audioWeather\t\t%s\n", cfg_audio_weather ? "1" : "0"), config2);
+		fputs(format("audioVolumeMaster\t%d\n", cfg_audio_master_volume), config2);
+		fputs(format("audioVolumeMusic\t%d\n", cfg_audio_music_volume), config2);
+		fputs(format("audioVolumeSound\t%d\n", cfg_audio_sound_volume), config2);
+		fputs(format("audioVolumeWeather\t%d\n", cfg_audio_weather_volume), config2);
+//#endif
+
+		fclose(config2);
+
+		/* rename temporary file to new ".tomenetrc" */
+		rename(config_name2, mangrc_filename);
+	    }
 	}
 	return (FALSE); //failure
 }
@@ -445,8 +497,8 @@ int main(int argc, char **argv)
 			strcpy(svname, "");
 #ifdef USE_SOUND_2010
 			cfg_audio_rate = 44100;
-			cfg_max_channels = 16;
-			cfg_audio_buffer = 1024;
+			cfg_max_channels = 32;
+			cfg_audio_buffer = 512;
 			cfg_audio_master = cfg_audio_music = cfg_audio_sound = cfg_audio_weather = TRUE;
 			cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = 100;
 #endif
