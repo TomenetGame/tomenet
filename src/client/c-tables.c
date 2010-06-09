@@ -696,7 +696,7 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.auto_destroy,		FALSE,	3,	9, 63, FALSE,
 	"auto_destroy",			"(broken) No query to destroy known junks" },
 
-	{ &c_cfg.auto_inscribe,		FALSE,	3,	9, 64, TRUE,
+	{ &c_cfg.auto_inscribe,		FALSE,	3,	9, 64, FALSE,
 	"auto_inscribe",		"Automatically inscribe books and so on" },
 
 	{ &c_cfg.taciturn_messages,	FALSE,	1,	9, 65, TRUE,
