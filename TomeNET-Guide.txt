@@ -377,7 +377,11 @@ P               party screen. Form/disband/modify a party with other players
                 For winners (queens/kings/empresses/emperors) the range is 11
                 levels instead of 7.
 
-/       in general use an item (combines q,r, etc..).
+< or >  go upstairs/downstairs. Press '>' to use a void gate (violet '+').
+        Void jump gates teleport you to their counterpart and vice versa.
+{       inscribe an item.
+}       remove inscription from an item.
+/       in general, use an item (combines q,r, etc..).
         This can be useful if you run out of macros for a specific action,
         for example if you already use @m0...@m9 and still have more spell
         books/scrolls in your inventory, you can inscribe the remaining ones
@@ -393,33 +397,31 @@ P               party screen. Form/disband/modify a party with other players
         Point (3) here is especially helpful for mimics:
         The number shown in round brackets before each monster name is the
         number they have to enter for their 'Polymorph self into..' ability!
-X       quickly swap between two equippable items. They must be inscribed
-        '@w0'. (It's basically just the macro 'w0' bound to shift+x key.)
-{       inscribe an item.
-}       remove inscription from an item.
-_       drink from a fountain. You must stand on the fountain to do this.
-        Fountains can have good/bad/no effects. There is no fountain of death,
-        neither one of detonations, so you won't get instakilled.
-        If you see a message 'You feel less thirsty' that means the fountain
-        was just plain water. A message 'You have quenched your thirst' means
-        that the fountain had no effect on you, although it wasn't water.
+@       displays a list of players currently on the server.
+        Note that a yellow '(I)' before a name stands for 'invalid', and means
+        that this player is still awaiting account validation by an admin.
+        Also, if a grey '(O)' is in front of a player name, it means that
+        player is using an outdated client. It's very important to keep your
+        client up to date! (Same command as ~a)
 %       edit your macros.
-=       edit your preferences. (Contains many obsolete effectless entries.)
+&       edit your auto-inscriptions.
+=       edit your preferences.
         Most important entries here are..
         User Interface Options:
             "Rogue-like commands" will change your keyboard layout to
                 the original Rogue key definitions.
-        Disturbance Options:
-            Note that most of these aren't available in multi-player and
-            will be set server-side, so players can't change them.
+            "Flicker messages in recall" will allow you to see animated
+                messages in the bottom left window (message history).
+            "Always show lists in item/skill selection" will always show a
+                list of possible choices if you use commands that require you
+                to make a selection from a list of choices.
+            A lot of audio options; note that on systems where the /page
+            command won't produce a native beep sound, you can enable sound
+            system paging instead here! (Of course you can also enable it on
+            all other systems too, which might be nicer than the system beep).
         Game-Play Options:
             "Set 'AFK' mode automatically" will set you afk after some
                 minutes of inactivity.
-            "Flicker messages in recall" will allow you to see animated
-                messages in the bottom left window (message history).
-        Efficiency Options:
-            Mostly moved to server-side, hence obsolete.
-        TomeNET Options:
             "Automatically open doors" makes your character try to open a door
                 just by moving towards it.
             "Automatically disarm traps" makes your character try to disarm a
@@ -429,9 +431,6 @@ _       drink from a fountain. You must stand on the fountain to do this.
             "Scroll the screen more frequently" helps to avoid death by
                 attacks that came from off-screen. However, this option can be
                 a bit irritating.
-            "Always show lists in item/skill selection" will always show a
-                list of possible choices if you use commands that require you
-                to make a selection from a list of choices.
 :       type a chat message. To whisper privately, enter <player>:<text>
         You can also enter a slash command here.
         Press TAB to cycle between different chat modes, such as party-chat.
@@ -439,16 +438,27 @@ _       drink from a fountain. You must stand on the fountain to do this.
         For details about slash commands, see further below in this paragraph.
         There is also a /say command for talking to players nearby, and a
         /shout command for waking up monsters! See further below.
-@       displays a list of players currently on the server.
-        Note that a yellow '(I)' before a name stands for 'invalid', and means
-        that this player is still awaiting account validation by an admin.
-        Also, if a grey '(O)' is in front of a player name, it means that
-        player is using an outdated client. It's very important to keep your
-        client up to date!
 '       lets you peek at the equipment of party members or players within
         sight.
-< or >  go upstairs/downstairs. Press '>' to use a void gate (violet '+').
-        Void jump gates teleport you to their counterpart and vice versa.
+#       displays the high scores (same as ~c).
+|       displays the unique monster list (same as ~1).
+X       quickly swap between two equippable items. They must be inscribed
+        '@w0'. (It's basically just the macro 'w0' bound to shift+x key.)
+_       drink from a fountain. You must stand on the fountain to do this.
+        Fountains can have good/bad/no effects. There is no fountain of death,
+        neither one of detonations, so you won't get instakilled.
+        If you see a message 'You feel less thirsty' that means the fountain
+        was just plain water. A message 'You have quenched your thirst' means
+        that the fountain had no effect on you, although it wasn't water.
+?       invoke an in-game help screen
+!       look at the in-game bulletin board. Players can write lines of text to
+        it by using the /bbs <text> command.
+c  while in a store:
+        Pastes an item to chat, including its currently displayed store price
+        and the symbol of the store.
+K       forcibly combines a level 0 item in your inventory with other items of
+        the same type that aren't level 0. Be warned, that this will change the
+        level of all the items involved to 0.
 CTRL+P  view previous messages.
 CTRL+O  view previous chat messages.
 CTRL+X  save your character & quit the game. (You should do this in town!)
@@ -464,20 +474,11 @@ Q or CTRL+K
         server has ANTI_ARTS_HOARD enabled then no item at all will be
         dropped), nor will they keep the level static as it happens on a
         normal 'final death' (see (3.11) for details about static levels).
-?       invoke an in-game help screen
 CTRL+R  redraw the screen (do this if it's messed up for some reason).
  (/refresh, /ref)
 CTRL+T  take a screen shot. See /screenshot command below.
 TAB or CTRL+I
         displays lag-o-meter.
-!       look at the in-game bulletin board. Players can write lines of text to
-        it by using the /bbs <text> command.
-c  while in a store:
-        Pastes an item to chat, including its currently displayed store price
-        and the symbol of the store.
-K       forcibly combines a level 0 item in your inventory with other items of
-        the same type that aren't level 0. Be warned, that this will change the
-        level of all the items involved to 0.
 CTRL+U  Displays/exits the audio mixer settings.
 CTRL+C  Toggles music. (Shortcut for toggling it in the mixer settings.)
 CTRL+N  Toggles audio. (Shortcut for master toggle in the mixer settings).
