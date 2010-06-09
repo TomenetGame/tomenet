@@ -5749,6 +5749,9 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 
 				/* Message */
 				msg_print(Ind, "\377oThere is a searing blast of light and a terrible shockwave!");
+#ifdef USE_SOUND_2010
+				sound(Ind, "destruction", NULL, SFX_TYPE_MISC);
+#endif
 
 				/* Blind the player */
 				if (!p_ptr->resist_blind && !p_ptr->resist_lite)
@@ -5961,6 +5964,10 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 			/* This can be really annoying and frustrating - mikaelh */
 //			everyone_forget_spot(wpos, y, x);
 			everyone_lite_spot(wpos, y, x);
+
+#ifdef USE_SOUND_2010
+			if (c_ptr->m_idx < 0) sound(-c_ptr->m_idx, "earthquake", NULL, SFX_TYPE_MISC);
+#endif
 
 			/* Skip the epicenter */
 			if (!dx && !dy) continue;
@@ -6753,7 +6760,13 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
 	}
-
+#if 1
+#ifdef USE_SOUND_2010
+	if (typ == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_COMMAND);
+	//might be too annoying for player ball spells, need maybe softer one?:
+	else sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND);
+#endif
+#endif
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
 	snprintf(pattacker, 80, "%s%s", p_ptr->name, attacker);
 	return (project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
@@ -6791,10 +6804,15 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int inter
 	project_interval = interval;
 	project_time = time;
 
-   	if (snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker) < 0) return (FALSE);
-        
+	if (snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker) < 0) return (FALSE);
+
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
-	
+
+#ifdef USE_SOUND_2010
+	if (typ == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_COMMAND);
+//too annoying, need softer sound imho	else sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND);
+#endif
+
 	/* Hack: Make HEALINGCLOUD affect the caster too! */
 	/* Note: 'Ind' < 0 (eg PROJECTOR_EFFECT) disables projection on monsters,
 	   so HEALINGCLOUD wouldn't damage undeads - well, maybe it shouldn't. */

@@ -922,15 +922,23 @@ struct player_type
 	bool shooting_till_kill;
         int shoot_till_kill_book;
 	int shoot_till_kill_spell;
-	
+
 	int kills;
 	int kills_lower;
 	int kills_higher;
 	int kills_equal;
-	
+
 	int mcharming;
 	u32b turns_on_floor;
 	bool dual_mode;
+
+	bool panel_changed;
+	int music_current;
+	int music_monster;
+
+	int admin_stasis;
+	int admin_godly_strike;
+	int admin_set_defeat;
 };
 
 extern bool imprison(int Ind, int time, char *reason);
@@ -939,6 +947,8 @@ bool check_antimagic(int Ind, int percentage);
 extern int NumPlayers;
 extern player_type *Players[0xFFFFF] @ Players_real;
 extern int get_playerind(char *name);
+extern int get_playerind_loose(char *name);
+extern int get_playerslot_loose(int Ind, char *iname);
 extern bool no_lite(int Ind);
 
 extern bool can_use(int Ind, object_type *o_ptr);

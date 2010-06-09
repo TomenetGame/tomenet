@@ -1216,6 +1216,10 @@ void player_day(int Ind) {
 	p_ptr->redraw |= (PR_MAP);
 	/* Window stuff */
 	p_ptr->window |= (PW_OVERHEAD);
+
+#ifdef USE_SOUND_2010
+	handle_music(Ind);
+#endif
 }
 /* update a particular player's view to night, assuming he's on world surface */
 void player_night(int Ind) {
@@ -1252,6 +1256,10 @@ void player_night(int Ind) {
 	p_ptr->redraw |= (PR_MAP);
 	/* Window stuff */
 	p_ptr->window |= (PW_OVERHEAD);
+
+#ifdef USE_SOUND_2010
+	handle_music(Ind);
+#endif
 }
 
 /* turn an allocated wpos to bright day and update view of players on it */
@@ -4966,8 +4974,8 @@ static void scan_objs(){
 					if(++o_ptr->marked >= ((artifact_p(o_ptr) ||
 					    (o_ptr->note && !o_ptr->owner))?
 					    cfg.surface_item_removal * 3 : cfg.surface_item_removal)
-					    + (o_ptr->marked2 == ITEM_REMOVAL_DEATH_WILD ? 1440 : 0)
-					    + (o_ptr->marked2 == ITEM_REMOVAL_LONG_WILD ? 20160 : 0)
+					    + (o_ptr->marked2 == ITEM_REMOVAL_DEATH_WILD ? cfg.death_wild_item_removal : 0)
+					    + (o_ptr->marked2 == ITEM_REMOVAL_LONG_WILD ? cfg.long_wild_item_removal : 0)
 					    ) {
 						delete_object_idx(i, TRUE);
 						dcnt++;
@@ -5945,6 +5953,11 @@ static void process_player_change_wpos(int Ind)
 	/* High digging results in auto-treasure detection */
 	if (get_skill(p_ptr, SKILL_DIG) >= 30) floor_detect_treasure(Ind);
 #endif
+
+#ifdef USE_SOUND_2010
+	p_ptr->music_monster = -1; //clear boss-specific music
+	handle_music(Ind);
+#endif
 }
 
 
@@ -6467,7 +6480,7 @@ void set_runlevel(int val)
 		case 5:
 			/* Shutdown warning mode, automatic timer */
 //			msg_broadcast(0, "\377yWarning. Server shutdown will take place in five minutes.");
-			msg_broadcast(0, "\377yWarning. Server shutdown will take place in ten minutes.");
+			msg_broadcast(0, "\374\377yWarning. Server shutdown will take place in ten minutes.");
 			break;
 		case 1024:
 			Report_to_meta(META_DIE);

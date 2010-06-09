@@ -400,7 +400,9 @@ byte rspell_penalty(u32b Ind, u16b pow)
 	player_type *p_ptr = Players[Ind];
 	u16b x = 0; u16b r = 1; u16b num = 60; u16b i = 0; u16b y = 0;
 	byte pen = 0;
+	s16b tmp;
 	
+#if 0
 	while(1)
 		if (pow>num)
 		{
@@ -409,7 +411,13 @@ byte rspell_penalty(u32b Ind, u16b pow)
 		}
 		else
 			break;
-		
+#else
+	if (pow > num) {
+		tmp = (pow - 41) / (num - 40);
+		r += tmp;
+		num += tmp * 20;
+	}
+#endif
 	
 	for(i=0;i<r;i++)
 	{

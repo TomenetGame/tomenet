@@ -82,7 +82,10 @@ bool lua_spell_success(magic_power *spell, int stat, char *oups_fct)
 	{
 		if (flush_failure) flush();
 		msg_print("You failed to concentrate hard enough!");
+#ifdef USE_SOUND_2010
+#else
 		sound(SOUND_FAIL);
+#endif
 
 		if (oups_fct != NULL)
 			exec_lua(format("%s(%d)", oups_fct, chance));
@@ -593,10 +596,8 @@ void lua_recalc_char(int Ind) {
 	update_stuff(Ind);
 }
 
-void lua_examine_item(int Ind, cptr name, int item) {
-	int i = name_lookup_loose(Ind, name, FALSE);
-	if (!i) return;
-	identify_fully_aux(Ind, &Players[i]->inventory[item]);
+void lua_examine_item(int Ind, int Ind_target, int item) {
+	identify_fully_aux(Ind, &Players[Ind_target]->inventory[item]);
 	return;
 }
 

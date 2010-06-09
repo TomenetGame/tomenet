@@ -2458,7 +2458,7 @@ if (!(mode & 32)) {
 			else if (f5 & (TR5_CRIT))
 			{
 				/* Add " attack" */
-				t = object_desc_str(t, !(mode & 8) ? "% of critical hits" : "crt");
+				t = object_desc_str(t, !(mode & 8) ? " critical hits" : "crt");
 			}
 
 			/* Stealth */
@@ -2480,6 +2480,11 @@ if (!(mode & 32)) {
 			{
 				/* Dump " to infravision" */
 				t = object_desc_str(t, !(mode & 8) ? " to infravision" : "infr");
+			}
+
+			else if (f5 & TR5_LUCK) {
+				/* Dump " to infravision" */
+				t = object_desc_str(t, !(mode & 8) ? " to luck" : "luck");
 			}
 
 			/* Tunneling */

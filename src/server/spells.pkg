@@ -473,7 +473,7 @@ extern void lua_s_print(cptr logstr);
 extern void lua_add_anote(char *anote);
 extern void lua_count_houses(int Ind);
 extern void lua_recalc_char(int Ind);
-extern void lua_examine_item(int Ind, cptr name, int item);
+extern void lua_examine_item(int Ind, int Ind_target, int item);
 extern void lua_determine_level_req(int Ind, int item);
 extern void lua_strip_true_arts_from_absent_players(void);
 extern void lua_strip_true_arts_from_present_player(int Ind, int mode);

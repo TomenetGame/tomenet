@@ -1427,7 +1427,12 @@ void do_cmd_check_server_settings(int Ind)
 
 	/* General information */
 	fprintf(fff, "Server notes: %s\n", cfg.server_notes);
+
+	fprintf(fff, "Inactive characters will be deleted after %d days.\n", CHARACTER_EXPIRY_DAYS);
+	fprintf(fff, "Accounts without characters will be deleted after %d days.\n", ACCOUNT_EXPIRY_DAYS);
 	fprintf(fff, "Game speed(FPS): %d (%+d%%)\n", cfg.fps, (cfg.fps-60)*100/60);
+	fprintf(fff,"\n");
+
 	fprintf(fff, "Players' running speed is boosted (x%d, ie. %+d%%).\n", cfg.running_speed, (cfg.running_speed - 5) * 100 / 5);
 	fprintf(fff, "While 'resting', HP/MP recovers %d times quicker (%+d%%)\n", cfg.resting_rate, (cfg.resting_rate-3)*100/3);
 
@@ -1468,6 +1473,11 @@ void do_cmd_check_server_settings(int Ind)
 	if (cfg.clone_summoning != 999)
 		fprintf(fff, "Monsters may summon up to %d times until the summons start to become clones.\n", cfg.clone_summoning);
 
+	fprintf(fff,"\n");
+	if ((k=cfg.spell_stack_limit))
+		fprintf(fff, "Duration of assistance spells is limited to %d turns.\n", k);
+
+	fprintf(fff,"\n");
 	k=cfg.use_pk_rules;
 	switch (k)
 	{
@@ -1528,10 +1538,20 @@ void do_cmd_check_server_settings(int Ind)
         /* Items */
 	if (cfg.anti_cheeze_pickup)
 		fprintf(fff, "Items cannot be transferred to a character of too low a level.\n");
-	if (cfg.surface_item_removal)
+	if (cfg.anti_cheeze_telekinesis)
+		fprintf(fff, "Items cannot be sent via telekinesis to a character of too low a level.\n");
+	if (cfg.surface_item_removal) {
 		fprintf(fff, "Items on the world surface will be removed after %d minutes.\n", cfg.surface_item_removal);
-	if (cfg.dungeon_item_removal)
+		fprintf(fff, "(This timeout is tripled for artifacts and unlooted unique-monster drops.)\n");
+	}
+	if (cfg.dungeon_item_removal) {
 		fprintf(fff, "Items on a dungeon/tower floor will be removed after %d minutes.\n", cfg.dungeon_item_removal);
+		fprintf(fff, "(This timeout is tripled for artifacts and unlooted unique-monster drops.)\n");
+	}
+	if (cfg.death_wild_item_removal)
+		fprintf(fff, "Dead player's items in town will be removed after %d minutes.\n", cfg.death_wild_item_removal);
+	if (cfg.long_wild_item_removal)
+		fprintf(fff, "Dead player's items in wilderness will be removed after %d minutes.\n", cfg.long_wild_item_removal);
 
 	fprintf(fff,"\n");
 

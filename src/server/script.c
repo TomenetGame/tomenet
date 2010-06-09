@@ -297,6 +297,11 @@ void init_lua()
 	{
 		exec_lua(0, format("finish_spell(%d)", i));
 	}
+
+	/* copy over the audio_sfx[] array for efficiency */
+	for (i = 0; i < SOUND_MAX_2010; i++)
+		strcpy(audio_sfx[i],
+		    string_exec_lua(0, format("return get_sound_name(%d)", i)));
 }
 
 void reinit_lua()

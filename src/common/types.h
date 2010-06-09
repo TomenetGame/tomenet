@@ -2360,7 +2360,7 @@ struct player_type
 	u16b tim_pkill;		/* pkill changeover timer */
 	u16b pkill;			/* pkill flags */
 	u16b tim_store;		/* timed -- how long (s)he can stay in a store */
-	bool wraith_in_wall;
+	bool wraith_in_wall;	/* currently no effect! */
 	s16b tim_meditation;	/* Timed -- Meditation */
 	s16b tim_invisibility;		/* Timed -- Invisibility */
 	s16b tim_invis_power;	/* Timed -- Invisibility Power */
@@ -2823,6 +2823,8 @@ struct player_type
 
 	/* allow admins to put a character into 'administrative stasis' */
 	int admin_stasis;
+	/* more admin fooling around (give a 1-hit-kill attack to the player, or let him die in 1 hit) */
+	int admin_godly_strike, admin_set_defeat;
 
 	/* give players certain warnings, meant to guide newbies along, and remember
 	   if we already gave a specific warning, so we don't spam the player with it
@@ -2831,6 +2833,12 @@ struct player_type
 	char warning_run, warning_wield, warning_chat, warning_lite;
 	char warning_rest;/* if a char rests from <= 40% to 50% without R, or so..*/
 	char warning_mimic, warning_dual, warning_potions, warning_wor;
+
+#ifdef USE_SOUND_2010
+	int music_current, music_monster; //background music currently playing for him/her; an overriding monster music
+#endif
+	bool cut_sfx_attack;
+	int count_cut_sfx_attack;
 };
 
 /* For Monk martial arts */
@@ -3008,8 +3016,11 @@ struct server_opts
 	bool anti_arts_send;
 
 	bool anti_cheeze_pickup;
+	bool anti_cheeze_telekinesis;
 	s16b surface_item_removal; /* minutes before items are erased */
 	s16b dungeon_item_removal; /* minutes before items are erased */
+	u16b death_wild_item_removal; /* minutes before items are erased */
+	u16b long_wild_item_removal; /* minutes before items are erased */
 	s16b dungeon_shop_chance;
 	s16b dungeon_shop_type;
 	s16b dungeon_shop_timeout;

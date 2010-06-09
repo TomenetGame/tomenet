@@ -1289,7 +1289,7 @@ static void wr_extra(int Ind)
 	/* More info */
 	wr_s16b(p_ptr->ghost);
 	wr_s16b(p_ptr->sc);
-	wr_s16b(p_ptr->fruit_bat);	
+	wr_s16b(p_ptr->fruit_bat);
 
 	wr_byte(p_ptr->lives);		/* old "rest" */
 	wr_byte(p_ptr->houses_owned);

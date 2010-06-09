@@ -1432,40 +1432,42 @@ static void player_outfit(int Ind)
 	body = (p_ptr->mode & MODE_FRUIT_BAT) ? 1 : 0;
 
 	/* Hack -- Give the player some food */
-	if (p_ptr->prace == RACE_ENT)
-	{
+	if (p_ptr->prace == RACE_ENT) {
 		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_SATISFY_HUNGER));
 		o_ptr->number = rand_range(3, 7);
 		do_player_outfit();
 	}
 	/* XXX problem is that Lembas sell dear.. */
 	else if (p_ptr->prace == RACE_HALF_ELF ||
-			p_ptr->prace == RACE_ELF || p_ptr->prace == RACE_HIGH_ELF)
-	{
+			p_ptr->prace == RACE_ELF || p_ptr->prace == RACE_HIGH_ELF) {
 		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_WAYBREAD));
 		o_ptr->number = rand_range(2, 3);
 		do_player_outfit();
 	}
-	/* vampires feed off living prey, using their vampiric life leech */
-	else if (p_ptr->prace != RACE_VAMPIRE)
-	{
-		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION));
-		o_ptr->number = rand_range(3, 7);
+	/* Firestones for Dragonriders */
+	else if (p_ptr->prace == RACE_DRIDER) {
+		invcopy(o_ptr, lookup_kind(TV_FIRESTONE, SV_FIRE_SMALL));
+		o_ptr->number = rand_range(3, 5);
 		do_player_outfit();
 	}
+	/* Dwarves like to collect treasures */
+	else if (p_ptr->prace == RACE_DWARF) {
+		invcopy(o_ptr, lookup_kind(TV_STAFF, SV_STAFF_DETECT_ITEM));
+		o_ptr->number = 1;
+		o_ptr->pval = 20;
+		do_player_outfit();
+	}
+
 	/* vampires get mummy wrapping against the burning sun light */
-	else
-	{
+	if (p_ptr->prace == RACE_VAMPIRE) {
 		invcopy(o_ptr, lookup_kind(TV_TOOL, SV_TOOL_WRAPPING));
 		o_ptr->number = 1;
 		do_player_outfit();
 	}
-
-	/* Firestones for Dragonriders */
-	if (p_ptr->prace == RACE_DRIDER)
-	{
-		invcopy(o_ptr, lookup_kind(TV_FIRESTONE, SV_FIRE_SMALL));
-		o_ptr->number = rand_range(3, 5);
+	/* vampires feed off living prey, using their vampiric life leech *exclusively* */
+	else {
+		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION));
+		o_ptr->number = rand_range(3, 7);
 		do_player_outfit();
 	}
 
@@ -1913,10 +1915,10 @@ static void player_setup(int Ind, bool new)
 			alloc_dungeon_level(wpos);
 			generate_cave(wpos, p_ptr);
 			if(!players_on_depth(wpos))
-				new_players_on_depth(wpos,1,FALSE);
+				new_players_on_depth(wpos, 1, FALSE);
 #ifndef NEW_DUNGEON
 			/* paranoia, update the players wilderness map. */
-			p_ptr->wild_map[(-p_ptr->dun_depth)/8] |= (1<<((-p_ptr->dun_depth)%8));
+			p_ptr->wild_map[(-p_ptr->dun_depth) / 8] |= (1 << ((-p_ptr->dun_depth) % 8));
 #endif
 		}
 		zcave = getcave(wpos);
@@ -1938,7 +1940,7 @@ static void player_setup(int Ind, bool new)
 	}
 #endif
 
-	/* hack -- update night/day in wilderness levels */
+	/* hack -- update night/day on world surface */
 	if (!wpos->wz) {
 		/* hack: temporarily allow the player to be called in wild
 		   view update routines (player_day/player_night) */

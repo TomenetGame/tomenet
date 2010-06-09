@@ -1055,8 +1055,6 @@ static void calc_sanity(int Ind)
 		/* If sanity just dropped to 0 or lower, die! */
                 if (p_ptr->csane < 0) {
 			if (!p_ptr->safe_sane) {
-	                        /* Sound */
-	                        sound(Ind, SOUND_DEATH);
 	                        /* Hack -- Note death */
 	                        msg_print(Ind, "\377vYou turn into an unthinking vegetable.");
 				(void)strcpy(p_ptr->died_from, "Insanity");
@@ -2995,6 +2993,7 @@ void calc_boni(int Ind)
 	p_ptr->sh_fire = FALSE;
 	p_ptr->sh_elec = FALSE;
 	p_ptr->sh_cold = FALSE;
+	p_ptr->auto_tunnel = FALSE;
 	p_ptr->fly = FALSE;
 	p_ptr->can_swim = FALSE;
 	p_ptr->climb = FALSE;
@@ -5839,18 +5838,18 @@ void calc_boni(int Ind)
 
 	/* resistance to fire cancel sensibility to fire */
 	if(p_ptr->resist_fire || p_ptr->oppose_fire || p_ptr->immune_fire)
-		p_ptr->suscep_fire=FALSE;
+		p_ptr->suscep_fire = FALSE;
 	/* resistance to cold cancel sensibility to cold */
 	if(p_ptr->resist_cold || p_ptr->oppose_cold || p_ptr->immune_cold)
-		p_ptr->suscep_cold=FALSE;
+		p_ptr->suscep_cold = FALSE;
 	/* resistance to electricity cancel sensibility to fire */
 	if(p_ptr->resist_elec || p_ptr->oppose_elec || p_ptr->immune_elec)
-		p_ptr->suscep_elec=FALSE;
+		p_ptr->suscep_elec = FALSE;
 	/* resistance to acid cancel sensibility to fire */
 	if(p_ptr->resist_acid || p_ptr->oppose_acid || p_ptr->immune_acid)
-		p_ptr->suscep_acid=FALSE;
+		p_ptr->suscep_acid = FALSE;
 	/* resistance to light cancels sensibility to light */
-	if(p_ptr->resist_lite) p_ptr->suscep_lite=FALSE;
+	if(p_ptr->resist_lite) p_ptr->suscep_lite = FALSE;
 
 
 #if 0 /* in the making.. */
@@ -6177,10 +6176,26 @@ void redraw_stuff(int Ind)
 
 	if (p_ptr->redraw & PR_MAP)
 	{
+#ifdef USE_SOUND_2010
+		/* hack: update music, if we're mind-linked to someone */
+		int Ind2;
+		player_type *p_ptr2;
+		u32b f;
+
+		if ((Ind2 = get_esp_link(Ind, LINKF_VIEW, &p_ptr2))) {
+			/* hack: temporarily remove the dedicated mind-link flag, to allow Send_music() */
+			f = Players[Ind2]->esp_link_flags;
+			Players[Ind2]->esp_link_flags &= ~LINKF_VIEW_DEDICATED;
+//s_printf("xtra1-hack_music (%s, %s)\n", Players[Ind2]->name, Players[Ind]->name);
+			Send_music(Ind2, Players[Ind]->music_current);
+			Players[Ind2]->esp_link_flags = f;
+		} else handle_music(Ind); /* restore music after a mind-link has been broken */
+#endif
+
 		p_ptr->redraw &= ~(PR_MAP);
 		prt_map(Ind);
 
-#ifdef CLIENT_SIDE_WEATHER 
+#ifdef CLIENT_SIDE_WEATHER
 		/* hack: update weather if it was just a panel-change
 		   (ie level-sector) and not a level-change.
 		   Note: this could become like PR_WEATHER_PANEL,
@@ -6540,7 +6555,7 @@ int start_global_event(int Ind, int getype, char *parm)
 		strcpy(ge->description[8], "        player before the tournament begins!                           ");
 		ge->end_turn = ge->start_turn + cfg.fps * 60 * 90 ; /* 90 minutes max. duration,
 								most of the time is just for announcing it
-								so players will sign on via /gesign <n> */
+								so players will sign on via /evsign <n> */
 		switch(rand_int(2)) { /* Determine terrain type! */
 		case 0: ge->extra[2] = WILD_WASTELAND; break;
 //		case 1: ge->extra[2] = WILD_SWAMP; break; swamp maybe too annoying
@@ -6560,14 +6575,14 @@ int start_global_event(int Ind, int getype, char *parm)
 
 		strcpy(ge->title, "Arena Monster Challenge");
 		strcpy(ge->description[0], " During the duration of Bree's Arena Monster Challenge, you just type  ");
-		strcpy(ge->description[1], format(" '/gesign %d <Monster Name>' and you'll have a chance to challenge  ", n+1));
+		strcpy(ge->description[1], format(" '/evsign %d <Monster Name>' and you'll have a chance to challenge  ", n+1));
 		strcpy(ge->description[2], " it for an illusion death match in Bree's upper training tower floor.  ");
 		strcpy(ge->description[3], " Neither the monster nor you will really die in person, just illusions ");
 		strcpy(ge->description[4], " of you, created by the wizards of 'Arena Monster Challenge (tm)' will ");
 		strcpy(ge->description[5], " actually do the fighting. For the duration of the spell it will seem  ");
 		strcpy(ge->description[6], " completely real to you though, and you can even use and consume items!");
 //		strcpy(ge->description[7], " (Note: Some creatures might be beyond the wizards' abilities.)");
-		strcpy(ge->description[7], format(" (Example: '/gesign %d black orc vet' gets you a veteran archer!)", n+1));
+		strcpy(ge->description[7], format(" (Example: '/evsign %d black orc vet' gets you a veteran archer!)", n+1));
 		ge->end_turn = ge->start_turn + cfg.fps * 60 * 30 ; /* 30 minutes max. duration, insta-start */
 #if 0
 		switch(rand_int(2)) { /* Determine terrain type! */
@@ -6644,7 +6659,7 @@ void announce_global_event(int ge_id) {
 
 	/* display additional commands on first advertisement */
 	if (ge->first_announcement) {
-		msg_broadcast_format(0, "\377WType '/geinfo %d' and '/gesign %d' to learn more or to sign up.", ge_id+1, ge_id+1);
+		msg_broadcast_format(0, "\377WType '/evinfo %d' and '/evsign %d' to learn more or to sign up.", ge_id+1, ge_id+1);
 		ge->first_announcement = FALSE;
 	}
 }
@@ -6709,7 +6724,7 @@ void global_event_signup(int Ind, int n, cptr parm){
 			return;
 		}
 		if ((parm == NULL) || !strlen(parm)) {
-			msg_format(Ind, "\377yYou have to specify a monster name:  /gesign %d monstername", n+1);
+			msg_format(Ind, "\377yYou have to specify a monster name:  /evsign %d monstername", n+1);
 			return;
 		}
 		strcpy(parm2, parm);
@@ -7326,7 +7341,7 @@ static void process_global_event(int ge_id)
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
 			wipe_o_list_safely(&wpos); /* and objects too */
 			ge->state[0] = 1;
-			msg_broadcast_format(0, "\377WType '/geinfo %d' and '/gesign %d' to learn more or to sign up.", ge_id+1, ge_id+1);
+			msg_broadcast_format(0, "\377WType '/evinfo %d' and '/evsign %d' to learn more or to sign up.", ge_id+1, ge_id+1);
 			break;
 		case 1: /* running - not much to do here actually :) it's all handled by global_event_signup */
 			if (ge->extra[1]) { /* new challenge to process? */

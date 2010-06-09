@@ -762,7 +762,10 @@ bool make_attack_melee(int Ind, int m_idx)
 				{
 					act = "charges you";
 					touched = TRUE;
+#ifdef USE_SOUND_2010
+#else
 //					sound(SOUND_BUY); /* Note! This is "charges", not "charges at". */
+#endif
 					break;
 				}
 
@@ -859,7 +862,10 @@ bool make_attack_melee(int Ind, int m_idx)
 						act = "sings 'We are a happy family.'";
 					else
 						act = "sings 'I love you, you love me.'";
+#ifdef USE_SOUND_2010
+#else
 //					sound(SOUND_SHOW);
+#endif
 					break;
 				}
 
@@ -2273,7 +2279,10 @@ bool make_attack_melee(int Ind, int m_idx)
 #endif
 			if (explode)
 			{
+#ifdef USE_SOUND_2010
+#else
 //				sound(SOUND_EXPLODE);
+#endif
 				if (mon_take_hit(Ind, m_idx, m_ptr->hp + 1, &fear, NULL))
 				{
 					blinked = FALSE;
@@ -2522,8 +2531,12 @@ bool make_attack_melee(int Ind, int m_idx)
 	/* Blink away */
 	if (blinked)
 	{
-		if (teleport_away(m_idx, MAX_SIGHT * 2 + 5))
+		if (teleport_away(m_idx, MAX_SIGHT * 2 + 5)) {
 			msg_print(Ind, "There is a puff of smoke!");
+#ifdef USE_SOUND_2010
+			sound(Ind, "monster_blinks", NULL, SFX_TYPE_MON_SPELL);
+#endif
+		}
 	}
 
 

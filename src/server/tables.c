@@ -6169,7 +6169,7 @@ cptr player_title_special[MAX_CLASS][5][4] =
  * Mimic 'spells' -- they should be integrated to the realm spells
  * (slevel, smana, sfail, sexp)
  */
-magic_type innate_powers[96] = 
+magic_type innate_powers[96] =
 {
 /* 0, mana, fail, 0 */
 // RF4_SHRIEK			0x00000001	/* Shriek for help */

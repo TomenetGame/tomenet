@@ -98,8 +98,7 @@ void do_cmd_go_up(int Ind)
 		}
 #endif
 	}
-	if(wpos->wz == 0)
-	{
+	if(wpos->wz == 0) {
 		if (!(wild_info[wpos->wy][wpos->wx].flags&WILD_F_UP)) {
 			msg_print(Ind, "There is nothing above you.");
 			return;
@@ -197,8 +196,43 @@ void do_cmd_go_up(int Ind)
 	if (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)
 	{
 		process_hooks(HOOK_STAIR, "d", Ind);
-		if (c_ptr->feat == FEAT_WAY_LESS) {
+		if (!wpos->wz) {
+			msg_format(Ind, "\377uYou enter %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
+#ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
+			if (p_ptr->party)
+			for (i = 1; i <= NumPlayers; i++) {
+			        if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (i == Ind) continue;
+				if (Players[i]->party == p_ptr->party)
+					msg_format(i, "\374\377G%s has entered %s..", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
+			}
+#endif
+		}
+		else if (wpos->wz == -1) {
+			msg_format(Ind, "\377uYou leave %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
+#ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
+			if (p_ptr->party)
+			for (i = 1; i <= NumPlayers; i++) {
+			        if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (i == Ind) continue;
+				if (Players[i]->party == p_ptr->party)
+					msg_format(i, "\374\377G%s has left %s..", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
+			}
+#endif
+		}
+		else if (c_ptr->feat == FEAT_WAY_LESS) {
 			msg_print(Ind, "You enter the previous area.");
+#ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
+			if (p_ptr->party)
+			for (i = 1; i <= NumPlayers; i++) {
+			        if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (i == Ind) continue;
+				if (Players[i]->party == p_ptr->party)
+				msg_format(i, "\377G[%s took a staircase upwards to %dft..]", p_ptr->name, (wpos->wz + 1) * 50);
+			}
+#endif
+		} else {
+			msg_print(Ind, "You enter a maze of up staircases.");
 #ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
 			if (p_ptr->party)
 			for (i = 1; i <= NumPlayers; i++) {
@@ -208,45 +242,11 @@ void do_cmd_go_up(int Ind)
 					msg_format(i, "\377G[%s took a staircase upwards to %dft..]", p_ptr->name, (wpos->wz + 1) * 50);
 			}
 #endif
-		} else {
-			if (!wpos->wz) {
-				msg_format(Ind, "\377uYou enter %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
-#ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
-				if (p_ptr->party)
-				for (i = 1; i <= NumPlayers; i++) {
-				        if (Players[i]->conn == NOT_CONNECTED) continue;
-					if (i == Ind) continue;
-					if (Players[i]->party == p_ptr->party)
-						msg_format(i, "\374\377G%s has entered %s..", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
-				}
-#endif
-			}
-			else if (wpos->wz == -1) {
-				msg_format(Ind, "\377uYou leave %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
-#ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
-				if (p_ptr->party)
-				for (i = 1; i <= NumPlayers; i++) {
-				        if (Players[i]->conn == NOT_CONNECTED) continue;
-					if (i == Ind) continue;
-					if (Players[i]->party == p_ptr->party)
-						msg_format(i, "\374\377G%s has left %s..", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
-				}
-#endif
-			}
-			else {
-				msg_print(Ind, "You enter a maze of up staircases.");
-#ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
-				if (p_ptr->party)
-				for (i = 1; i <= NumPlayers; i++) {
-				        if (Players[i]->conn == NOT_CONNECTED) continue;
-					if (i == Ind) continue;
-					if (Players[i]->party == p_ptr->party)
-						msg_format(i, "\377G[%s took a staircase upwards to %dft..]", p_ptr->name, (wpos->wz + 1) * 50);
-				}
-#endif
-			}
 		}
 		p_ptr->new_level_method = LEVEL_UP;
+#ifdef USE_SOUND_2010
+		sound(Ind, "staircase", NULL, SFX_TYPE_COMMAND);
+#endif
 	}
 	else
 	{
@@ -444,8 +444,7 @@ void do_cmd_go_down(int Ind)
 		}
 #endif
 	}
-	if (wpos->wz == 0)
-	{
+	if (wpos->wz == 0) {
 		if (!(wild_info[wpos->wy][wpos->wx].flags&WILD_F_DOWN)) {
 			msg_print(Ind, "There is nothing below you.");
 			return;
@@ -548,7 +547,31 @@ void do_cmd_go_down(int Ind)
 	if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)
 	{
 		process_hooks(HOOK_STAIR, "d", Ind);
-		if (c_ptr->feat == FEAT_WAY_MORE) {
+		if (!wpos->wz) {
+			msg_format(Ind, "\377uYou enter %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
+#ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
+			if (p_ptr->party)
+			for (i = 1; i <= NumPlayers; i++) {
+			        if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (i == Ind) continue;
+				if (Players[i]->party == p_ptr->party)
+					msg_format(i, "\374\377G%s has entered %s..", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
+			}
+#endif
+		}
+		else if (wpos->wz == 1) {
+			msg_format(Ind, "\377uYou leave %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
+#ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
+			if (p_ptr->party)
+			for (i = 1; i <= NumPlayers; i++) {
+			        if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (i == Ind) continue;
+				if (Players[i]->party == p_ptr->party)
+					msg_format(i, "\374\377G%s has left %s..", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
+			}
+#endif
+		}
+		else if (c_ptr->feat == FEAT_WAY_MORE) {
 			msg_print(Ind, "You enter the next area.");
 #ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
 			if (p_ptr->party)
@@ -560,44 +583,21 @@ void do_cmd_go_down(int Ind)
 			}
 #endif
 		} else {
-			if (!wpos->wz) {
-				msg_format(Ind, "\377uYou enter %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
+			msg_print(Ind, "You enter a maze of down staircases.");
 #ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
-				if (p_ptr->party)
-				for (i = 1; i <= NumPlayers; i++) {
-				        if (Players[i]->conn == NOT_CONNECTED) continue;
-					if (i == Ind) continue;
-					if (Players[i]->party == p_ptr->party)
-						msg_format(i, "\374\377G%s has entered %s..", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
-				}
-#endif
+			if (p_ptr->party)
+			for (i = 1; i <= NumPlayers; i++) {
+			        if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (i == Ind) continue;
+				if (Players[i]->party == p_ptr->party)
+					msg_format(i, "\377G[%s took a staircase downwards to %dft..]", p_ptr->name, (wpos->wz - 1) * 50);
 			}
-			else if (wpos->wz == 1) {
-				msg_format(Ind, "\377uYou leave %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
-#ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
-				if (p_ptr->party)
-				for (i = 1; i <= NumPlayers; i++) {
-				        if (Players[i]->conn == NOT_CONNECTED) continue;
-					if (i == Ind) continue;
-					if (Players[i]->party == p_ptr->party)
-						msg_format(i, "\374\377G%s has left %s..", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
-				}
 #endif
-			}
-			else {
-				msg_print(Ind, "You enter a maze of down staircases.");
-#ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
-				if (p_ptr->party)
-				for (i = 1; i <= NumPlayers; i++) {
-				        if (Players[i]->conn == NOT_CONNECTED) continue;
-					if (i == Ind) continue;
-					if (Players[i]->party == p_ptr->party)
-						msg_format(i, "\377G[%s took a staircase downwards to %dft..]", p_ptr->name, (wpos->wz - 1) * 50);
-				}
-#endif
-			}
 		}
 		p_ptr->new_level_method = LEVEL_DOWN;
+#ifdef USE_SOUND_2010
+		sound(Ind, "staircase", NULL, SFX_TYPE_COMMAND);
+#endif
 	}
 	else
 	{
@@ -831,7 +831,11 @@ static void chest_trap(int Ind, int y, int x, s16b o_idx)
 	/* Message */
 //	msg_print(Ind, "You found a trap!");
 	msg_print(Ind, "You triggered a trap!");
-	
+
+#ifdef USE_SOUND_2010
+	sound(Ind, "trap_setoff", NULL, SFX_TYPE_MISC);
+#endif
+
 	/* Set off trap */
 	ident = player_activate_trap_type(Ind, y, x, o_ptr, o_idx);
 
@@ -1263,6 +1267,10 @@ void do_cmd_open(int Ind, int dir)
 					msg_print(Ind, "You have picked the lock.");
 					gain_exp(Ind, 1);
 					flag = TRUE;
+
+#ifdef USE_SOUND_2010
+					sound(Ind, "open_pick", NULL, SFX_TYPE_COMMAND);
+#endif
 				}
 
 				/* Failure -- Keep trying */
@@ -1277,6 +1285,9 @@ void do_cmd_open(int Ind, int dir)
 			/* Allowed to open */
 			if (flag)
 			{
+#ifdef USE_SOUND_2010
+				sound(Ind, "open_chest", NULL, SFX_TYPE_COMMAND);
+#endif
 				/* Apply chest traps, if any */
 				chest_trap(Ind, y, x, c_ptr->o_idx);
 
@@ -1303,6 +1314,10 @@ void do_cmd_open(int Ind, int dir)
 
 			/* Stuck */
 			msg_print(Ind, "The door appears to be stuck.");
+
+#ifdef USE_SOUND_2010
+			sound(Ind, "open_door_stuck", NULL, SFX_TYPE_COMMAND);
+#endif
 		}
 
 		/* Locked door */
@@ -1335,6 +1350,9 @@ void do_cmd_open(int Ind, int dir)
 			{
 				/* Message */
 				msg_print(Ind, "You have picked the lock.");
+#ifdef USE_SOUND_2010
+				sound(Ind, "open_pick", NULL, SFX_TYPE_COMMAND);
+#endif
 				break_cloaking(Ind, 3);
 				break_shadow_running(Ind); 
 				stop_precision(Ind);
@@ -1388,6 +1406,9 @@ void do_cmd_open(int Ind, int dir)
 #if USE_MANG_HOUSE_ONLY || TRUE /* let'em open it, so that thevery can take place :) */
 					/* Open the door */
 					c_ptr->feat=FEAT_HOME_OPEN;
+#ifdef USE_SOUND_2010
+					sound(Ind, "open_door", NULL, SFX_TYPE_COMMAND);
+#endif
 #else	// USE_MANG_HOUSE
 					msg_print(Ind, "Just walk in.");
 #endif	// USE_MANG_HOUSE
@@ -1442,6 +1463,9 @@ void do_cmd_open(int Ind, int dir)
 						everyone_lite_spot(wpos, y, x);
 						p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 						msg_format(Ind, "\377gThe key fits in the lock. %d:%d",key->id, o_ptr->pval);
+#ifdef USE_SOUND_2010
+						sound(Ind, "open_pick", NULL, SFX_TYPE_COMMAND);
+#endif
 						return;
 					} else if (is_admin(p_ptr)) {
 						c_ptr->feat = FEAT_HOME_OPEN;
@@ -1456,10 +1480,16 @@ void do_cmd_open(int Ind, int dir)
 						everyone_lite_spot(wpos, y, x);
 						p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 						msg_format(Ind, "\377gThe door crashes open. %d",key->id);
+#ifdef USE_SOUND_2010
+						sound(Ind, "bash_door_break", NULL, SFX_TYPE_COMMAND);
+#endif
 						return;
 					}
 				}
 				msg_print(Ind,"\377rYou need a key to open this door.");
+#ifdef USE_SOUND_2010
+				sound(Ind, "open_door_stuck", NULL, SFX_TYPE_COMMAND);
+#endif
 			}
 		}
 
@@ -1482,6 +1512,9 @@ void do_cmd_open(int Ind, int dir)
 
 			/* Open the door */
 			c_ptr->feat = FEAT_OPEN;
+#ifdef USE_SOUND_2010
+			sound(Ind, "open_door", NULL, SFX_TYPE_COMMAND);
+#endif
 
 			/* Notice */
 			note_spot_depth(wpos, y, x);
@@ -1592,6 +1625,9 @@ void do_cmd_close(int Ind, int dir)
 
 			/* Close the door */
 			c_ptr->feat = FEAT_HOME;
+#ifdef USE_SOUND_2010
+			sound(Ind, "close_door", NULL, SFX_TYPE_COMMAND);
+#endif
 
 			/* Notice */
 			note_spot_depth(wpos, y, x);
@@ -1612,6 +1648,10 @@ void do_cmd_close(int Ind, int dir)
 			break_shadow_running(Ind); 
 			stop_precision(Ind);
 			stop_shooting_till_kill(Ind);
+
+#ifdef USE_SOUND_2010
+			sound(Ind, "close_door", NULL, SFX_TYPE_COMMAND);
+#endif
 
 			/* Set off trap */
 			if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
@@ -1970,6 +2010,9 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					stop_shooting_till_kill(Ind);
 					/* Message */
 					msg_print(Ind, "You have removed the rubble.");
+#ifdef USE_SOUND_2010
+					sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP);
+#endif
 
 					if (!istown(wpos)) {
 						/* discovered a special feature? */
@@ -1978,10 +2021,13 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 							note_spot_depth(wpos, y, x);
 							everyone_lite_spot(wpos, y, x);
 							msg_print(Ind, "You have laid open a fountain!");
+							s_printf("DIGGING: %s found a fountain.\n", p_ptr->name);
 						} else if (dug_feat != FEAT_NONE) {
 							cave_set_feat_live(wpos, y, x, dug_feat);
-							if (dug_feat == FEAT_WAY_MORE || dug_feat == FEAT_WAY_LESS)
+							if (dug_feat == FEAT_WAY_MORE || dug_feat == FEAT_WAY_LESS) {
 								msg_print(Ind, "You have uncovered a stairway!");
+								s_printf("DIGGING: %s found a staircase.\n", p_ptr->name);
+							}
 						} else if (special_k_idx && tval != TV_GOLEM) {
 							object_type forge;
 							invcopy(&forge, special_k_idx);
@@ -1991,6 +2037,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 							forge.marked2 = ITEM_REMOVAL_NORMAL;
 							msg_print(Ind, "You have found something!");
 							drop_near(&forge, -1, wpos, y, x);
+							s_printf("DIGGING: %s found a specific item.\n", p_ptr->name);
 						/* Hack -- place an object - Not in town (Khazad becomes l00t source) */
 						} else if (rand_int(120) < 10 + mining) {
 							place_object_restrictor = RESF_NONE;
@@ -1998,6 +2045,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 								default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
 							if (player_can_see_bold(Ind, y, x))
 								msg_print(Ind, "You have found something!");
+							s_printf("DIGGING: %s found a random item.\n", p_ptr->name);
 						}
 					}
 
@@ -2017,6 +2065,9 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					stop_shooting_till_kill(Ind);
 					msg_print(Ind, "You dig in the rubble.");
 					more = TRUE;
+#ifdef USE_SOUND_2010
+					sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP);
+#endif
 				}
 			}
 			
@@ -2034,6 +2085,9 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					msg_print(Ind, "You hack your way through the vegetation.");
 					if (p_ptr->prace == RACE_ENT)
 						msg_print(Ind, "You have a bad feeling about it.");
+#ifdef USE_SOUND_2010
+					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP);
+#endif
 
 					if (special_k_idx && tval == TV_GOLEM && sval == SV_GOLEM_WOOD) {
 						object_type forge;
@@ -2044,6 +2098,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 						forge.marked2 = ITEM_REMOVAL_NORMAL;
 						msg_print(Ind, "You have found something!");
 						drop_near(&forge, -1, wpos, y, x);
+						s_printf("DIGGING: %s found a wood piece.\n", p_ptr->name);
 					}
 
 					/* Notice */
@@ -2056,6 +2111,9 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					/* Message, keep digging */
 					msg_print(Ind, "You attempt to clear a path.");
 					more = TRUE;
+#ifdef USE_SOUND_2010
+					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP);
+#endif
 				}
 			}
 			else if (c_ptr->feat == FEAT_BUSH)
@@ -2072,7 +2130,10 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					msg_print(Ind, "You hack your way through the vegetation.");
 					if (p_ptr->prace == RACE_ENT)
 						msg_print(Ind, "You have a bad feeling about it.");
-					
+#ifdef USE_SOUND_2010
+					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP);
+#endif
+
 					/* Notice */
 					note_spot_depth(wpos, y, x);
 
@@ -2084,6 +2145,9 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					/* Message, keep digging */
 					msg_print(Ind, "You attempt to clear a path.");
 					more = TRUE;
+#ifdef USE_SOUND_2010
+					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP);
+#endif
 				}
 			}
 			else if (c_ptr->feat == FEAT_IVY)
@@ -2098,7 +2162,10 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 				{
 					/* Message */
 					msg_print(Ind, "You hack your way through the vegetation.");
-					
+#ifdef USE_SOUND_2010
+					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP);
+#endif
+
 					/* Notice */
 					note_spot_depth(wpos, y, x);
 
@@ -2110,6 +2177,9 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					/* Message, keep digging */
 					msg_print(Ind, "You attempt to clear a path.");
 					more = TRUE;
+#ifdef USE_SOUND_2010
+					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP);
+#endif
 				}
 			}
 			else if (c_ptr->feat == FEAT_DEAD_TREE)
@@ -2124,7 +2194,10 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 				{
 					/* Message */
 					msg_print(Ind, "You hack your way through the vegetation.");
-					
+#ifdef USE_SOUND_2010
+					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP);
+#endif
+
 					/* Notice */
 					note_spot_depth(wpos, y, x);
 
@@ -2136,6 +2209,9 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					/* Message, keep digging */
 					msg_print(Ind, "You attempt to clear a path.");
 					more = TRUE;
+#ifdef USE_SOUND_2010
+					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP);
+#endif
 				}
 			}
 
@@ -2187,6 +2263,9 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 				/* Success */
 				if (okay && twall(Ind, y, x)) {
 					msg_print(Ind, "You have finished the tunnel.");
+#ifdef USE_SOUND_2010
+					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP);
+#endif
 
 					/* Found treasure */
 					if (gold) {
@@ -2197,8 +2276,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 							forge.number = 1;
 //							forge.level = ;
 							forge.marked2 = ITEM_REMOVAL_NORMAL;
-							msg_print(Ind, "You have found something!");
 							drop_near(&forge, -1, wpos, y, x);
+							s_printf("DIGGING: %s found a metal piece.\n", p_ptr->name);
 						} else {
 							object_level = find_level;
 							tval = rand_int(mining / 5);
@@ -2220,12 +2299,15 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 							note_spot_depth(wpos, y, x);
 							everyone_lite_spot(wpos, y, x);
 							msg_print(Ind, "You have laid open a fountain!");
+							s_printf("DIGGING: %s found a fountain.\n", p_ptr->name);
 						}
 					} else if (dug_feat != FEAT_NONE &&
 					    dug_feat != FEAT_WAY_MORE &&
 					    dug_feat != FEAT_WAY_LESS) {
-						if (magik(100))
+						if (magik(100)) {
 							cave_set_feat_live(wpos, y, x, dug_feat);
+							s_printf("DIGGING: %s found a special feature.\n", p_ptr->name);
+						}
 					} else if (!rand_int(10) && special_k_idx && (tval == TV_RUNE1 || tval == TV_RUNE2)) {
 							object_type forge;
 							invcopy(&forge, special_k_idx);
@@ -2235,6 +2317,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 							forge.marked2 = ITEM_REMOVAL_NORMAL;
 							msg_print(Ind, "You have found something!");
 							drop_near(&forge, -1, wpos, y, x);
+							s_printf("DIGGING: %s found a rune.\n", p_ptr->name);
 					}
 				}
 
@@ -2244,6 +2327,9 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					/* Message, continue digging */
 					msg_print(Ind, f_text + f_ptr->tunnel);
 					more = TRUE;
+#ifdef USE_SOUND_2010
+					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP);
+#endif
 				}
 #if 0
 				/* Failure (quartz) */
@@ -2252,6 +2338,9 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					/* Message, continue digging */
 					msg_print(Ind, "You tunnel into the quartz vein.");
 					more = TRUE;
+#ifdef USE_SOUND_2010
+					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP);
+#endif
 				}
 
 				/* Failure (magma) */
@@ -2260,6 +2349,9 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					/* Message, continue digging */
 					msg_print(Ind, "You tunnel into the magma vein.");
 					more = TRUE;
+#ifdef USE_SOUND_2010
+					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP);
+#endif
 				}
 #endif	/* 0 */
 			}
@@ -2275,6 +2367,9 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 				/* Message, keep digging */
 				msg_print(Ind, "You tunnel into the granite wall.");
 				more = TRUE;
+#ifdef USE_SOUND_2010
+				sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP);
+#endif
 
 				/* Set off trap */
 				if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
@@ -2294,6 +2389,9 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 				if ((power > 40 + rand_int(1600)) && twall(Ind, y, x))        /* 1600 */
 				{
 					msg_print(Ind, "You have finished the tunnel.");
+#ifdef USE_SOUND_2010
+					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP);
+#endif
 
 					if (!istown(wpos)) {
 						/* found special feature */
@@ -2303,12 +2401,15 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 								note_spot_depth(wpos, y, x);
 								everyone_lite_spot(wpos, y, x);
 								msg_print(Ind, "You have laid open a fountain!");
+								s_printf("DIGGING: %s found a fountain.\n", p_ptr->name);
 							}
 						} else if (dug_feat != FEAT_NONE &&
 						    dug_feat != FEAT_WAY_MORE &&
 						    dug_feat != FEAT_WAY_LESS) {
-							if (magik(100))
+							if (magik(100)) {
 								cave_set_feat_live(wpos, y, x, dug_feat);
+								s_printf("DIGGING: %s found a special feature.\n", p_ptr->name);
+							}
 						} else if (!rand_int(20) && special_k_idx && (tval == TV_RUNE1 || tval == TV_RUNE2)) {
 							object_type forge;
 							invcopy(&forge, special_k_idx);
@@ -2318,6 +2419,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 							forge.marked2 = ITEM_REMOVAL_NORMAL;
 							msg_print(Ind, "You have found something!");
 							drop_near(&forge, -1, wpos, y, x);
+							s_printf("DIGGING: %s found a rune.\n", p_ptr->name);
 						}
 					}
 				}
@@ -2328,6 +2430,9 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					/* We may continue tunelling */
 					msg_print(Ind, "You tunnel into the granite wall.");
 					more = TRUE;
+#ifdef USE_SOUND_2010
+					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP);
+#endif
 				}
 			}
 
@@ -2343,6 +2448,9 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 				if ((power > 30 + rand_int(1200)) && twall(Ind, y, x))
 				{
 					msg_print(Ind, "You have finished the tunnel.");
+#ifdef USE_SOUND_2010
+					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP);
+#endif
 				}
 
 				/* Keep trying */
@@ -2351,6 +2459,9 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					/* We may continue tunelling */
 					msg_print(Ind, f_text + f_ptr->tunnel);
 					more = TRUE;
+#ifdef USE_SOUND_2010
+					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP);
+#endif
 				}
 			}
 
@@ -2548,6 +2659,9 @@ void do_cmd_disarm(int Ind, int dir)
 				un_afk_idle(Ind);
 
 				msg_print(Ind, "You have disarmed the chest.");
+#ifdef USE_SOUND_2010
+				sound(Ind, "disarm", NULL, SFX_TYPE_COMMAND);
+#endif
 				gain_exp(Ind, t_ptr->difficulty * 3);
 				o_ptr->pval = (0 - o_ptr->pval);
 				do_id_trap(Ind, o_ptr->pval);
@@ -2564,7 +2678,7 @@ void do_cmd_disarm(int Ind, int dir)
 				more = TRUE;
 				done = TRUE;
 				msg_print(Ind, "You failed to disarm the chest.");
-				
+
 				break_shadow_running(Ind);
 				stop_precision(Ind);
 				stop_shooting_till_kill(Ind);
@@ -2603,6 +2717,9 @@ void do_cmd_disarm(int Ind, int dir)
 			stop_shooting_till_kill(Ind);
 
 			msg_print(Ind, "You disarm the monster trap.");
+#ifdef USE_SOUND_2010
+				sound(Ind, "disarm", NULL, SFX_TYPE_COMMAND);
+#endif
 			do_cmd_disarm_mon_trap_aux(wpos, y, x);
 			more = FALSE;
 			done = TRUE;
@@ -2656,7 +2773,9 @@ void do_cmd_disarm(int Ind, int dir)
 			{
 				/* Message */
 				msg_format(Ind, "You have disarmed the %s.", name);
-
+#ifdef USE_SOUND_2010
+				sound(Ind, "disarm", NULL, SFX_TYPE_COMMAND);
+#endif
 
 				/* A chance to drop a trapkit! - the_sandman */
 				int sdis = (int)(p_ptr->s_info[SKILL_DISARM].value / 1000);
@@ -2959,6 +3078,10 @@ void do_cmd_bash(int Ind, int dir)
 				/* Message */
 				msg_print(Ind, "The door crashes open!");
 
+#ifdef USE_SOUND_2010
+				sound(Ind, "bash_door_break", NULL, SFX_TYPE_COMMAND);
+#endif
+
 				/* Set off trap */
 				if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
@@ -2995,6 +3118,10 @@ void do_cmd_bash(int Ind, int dir)
 				/* Message */
 				msg_print(Ind, "The door holds firm.");
 
+#ifdef USE_SOUND_2010
+				sound(Ind, "bash_door_hold", NULL, SFX_TYPE_COMMAND);
+#endif
+
 				/* Allow repeated bashing */
 				more = TRUE;
 			}
@@ -3004,6 +3131,10 @@ void do_cmd_bash(int Ind, int dir)
 			{
 				/* Message */
 				msg_print(Ind, "You are off-balance.");
+
+#ifdef USE_SOUND_2010
+				sound(Ind, "bash_door_hold", NULL, SFX_TYPE_COMMAND);
+#endif
 
 				/* Hack -- Lose balance ala paralysis */
 				(void)set_paralyzed(Ind, p_ptr->paralyzed + 2 + rand_int(2));
@@ -3613,7 +3744,7 @@ void do_cmd_fire(int Ind, int dir)
 
 	int                     i, j, y, x, ny, nx, ty, tx, bx, by;
 	int                     tdam, tdis, thits, tmul;
-	int                     bonus, chance;
+	int                     bonus, chance, tries = 100;
 	int                     cur_dis, visible;
 	int breakage = 0, num_ricochet = 0, ricochet_chance = 0;
 	int item = INVEN_AMMO;
@@ -3645,7 +3776,7 @@ void do_cmd_fire(int Ind, int dir)
 	bool		ranged_double_real = FALSE, ranged_flare_body = FALSE;
 	
 	int		break_chance;
-	
+	int		sfx = 0;
 	u32b f1, f1a, fx, esp;
 
 	char            o_name[ONAME_LEN];
@@ -4047,6 +4178,24 @@ void do_cmd_fire(int Ind, int dir)
 	/* Hack -- Handle stuff */
 	handle_stuff(Ind);
 
+#ifdef USE_SOUND_2010
+	if (p_ptr->cut_sfx_attack) {
+		sfx = extract_energy[p_ptr->pspeed] * p_ptr->num_fire;
+		if (sfx) {
+			p_ptr->count_cut_sfx_attack += 10000 / sfx;
+			if (p_ptr->count_cut_sfx_attack >= 200) { /* 5 attacks per turn */
+				p_ptr->count_cut_sfx_attack -= 200;
+				if (p_ptr->count_cut_sfx_attack >= 200) p_ptr->count_cut_sfx_attack = 0;
+				sfx = 0;
+			}
+		}
+	}
+	if (sfx == 0) switch (o_ptr->tval) {
+	case TV_SHOT: break;
+	case TV_ARROW: sound(Ind, "fire_arrow", NULL, SFX_TYPE_ATTACK); break;
+	case TV_BOLT: sound(Ind, "fire_bolt", NULL, SFX_TYPE_ATTACK); break;
+	}
+#endif
 
 	while (TRUE)
 	{
@@ -4527,6 +4676,11 @@ void do_cmd_fire(int Ind, int dir)
 					else
 						drain_result = 0;
 
+					if (p_ptr->admin_godly_strike) {
+						p_ptr->admin_godly_strike--;
+						if (!(r_ptr->flags1 & RF1_UNIQUE)) tdam = m_ptr->hp + 1;
+					}
+
 					/* Hit the monster, check for death */
 					if (mon_take_hit(Ind, c_ptr->m_idx, tdam, &fear, note_dies))
 					{
@@ -4588,8 +4742,10 @@ void do_cmd_fire(int Ind, int dir)
 						{
 							char m_name[80];
 
-							/* Sound */
+#ifdef USE_SOUND_2010
+#else
 							sound(Ind, SOUND_FLEE);
+#endif
 
 							/* Get the monster name (or "it") */
 							monster_desc(Ind, m_name, c_ptr->m_idx, 0);
@@ -4703,6 +4859,10 @@ void do_cmd_fire(int Ind, int dir)
 			{
 				d = rand_int(10);
 				if(d != 5) break;
+				if (!tries--) {
+					d = 1;
+					break;
+				}
 			}
 			tx = p_ptr->px + 99 * ddx[d];
 			ty = p_ptr->py + 99 * ddy[d];
@@ -5489,6 +5649,11 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 				/* No negative damage */
 				if (tdam < 0) tdam = 0;
 
+				if (p_ptr->admin_godly_strike) {
+					p_ptr->admin_godly_strike--;
+					tdam = m_ptr->hp + 1;
+				}
+
 				/* Hit the monster, check for death */
 				if (mon_take_hit(Ind, c_ptr->m_idx, tdam, &fear, note_dies))
 				{
@@ -5506,8 +5671,10 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 					{
 						char m_name[80];
 
-						/* Sound */
+#ifdef USE_SOUND_2010
+#else
 						sound(Ind, SOUND_FLEE);
+#endif
 
 						/* Get the monster name (or "it") */
 						monster_desc(Ind, m_name, c_ptr->m_idx, 0);
@@ -5748,7 +5915,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 	if(dir > 9) dir = 0;	/* temp hack */
 
 	/* Be sure we have a direction */
-	if (dir)
+	if (dir > 0)
 	{
 		struct c_special *cs_ptr;
 		/* Get requested direction */

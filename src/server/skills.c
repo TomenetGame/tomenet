@@ -652,6 +652,12 @@ void increase_skill(int Ind, int i)
 //	int as, ws, new_value;
 //	int can_regain;
 
+	/* Sanity check - mikaelh */
+	if (i < 0 || i >= MAX_SKILLS)
+	{
+		return;
+	}
+
 	/* No skill points to be allocated */
 	if (p_ptr->skill_points <= 0)
 	{

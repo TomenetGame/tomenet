@@ -1534,6 +1534,10 @@ void carry(int Ind, int pickup, int confirm)
 		msg_format(Ind, "You have found %ld gold pieces worth of %s.",
 			   (long int)o_ptr->pval, o_name);
 
+#ifdef USE_SOUND_2010
+		sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND);
+#endif
+
 /* #if DEBUG_LEVEL > 3 */
 		if (o_ptr->pval >= 10000)
 			s_printf("Gold found (%ld by %s at %d,%d,%d).\n", o_ptr->pval, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
@@ -1609,8 +1613,7 @@ void carry(int Ind, int pickup, int confirm)
 		disturb(Ind, 0, 0);
 
 		/* Describe the object */
-		if (!pickup && !force_pickup)
-		{
+		if (!pickup && !force_pickup) {
 			char pseudoid[13];
 			strcpy(pseudoid, "");
 			/* felt an (non-changing!) object of same kind before via pseudo-id? then remember.
@@ -1637,10 +1640,27 @@ void carry(int Ind, int pickup, int confirm)
 			return;
 		}
 
-		if (p_ptr->inval && o_ptr->owner && p_ptr->id != o_ptr->owner)
-		{
-			msg_print(Ind, "\377oYou cannot take items of other players without a valid account.");
-			return;
+		if (p_ptr->inval && o_ptr->owner && p_ptr->id != o_ptr->owner) {
+			if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
+			    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) ||
+			    (o_ptr->tval == TV_FOOD)) {
+//				o_ptr->number = 1;
+				o_ptr->discount = 100;
+				if (o_ptr->level <= p_ptr->lev) {
+//					o_ptr->owner = p_ptr->id;
+					o_ptr->owner_mode = p_ptr->mode;
+				}
+			// "Why not share ale? -Molt" <- good idea, here too!
+			} else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_PINT_OF_ALE) {
+				o_ptr->owner_mode = p_ptr->mode;
+				o_ptr->discount = 100;
+   			} else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_PINT_OF_WINE) {
+                                o_ptr->owner_mode = p_ptr->mode;
+				o_ptr->discount = 100;
+                        } else {
+				msg_print(Ind, "\377oYou cannot take items of other players without a valid account.");
+				return;
+			}
 		}
 
 		if (compat_pomode(Ind, o_ptr)) {
@@ -1669,8 +1689,10 @@ void carry(int Ind, int pickup, int confirm)
 			// Why not share ale? -Molt
 			} else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_PINT_OF_ALE) {
 				o_ptr->owner_mode = p_ptr->mode;
+				o_ptr->discount = 100;
    			} else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_PINT_OF_WINE) {
                                 o_ptr->owner_mode = p_ptr->mode;
+				o_ptr->discount = 100;
 			} else {
 				msg_format(Ind, "You cannot take items of %s players.", compat_pomode(Ind, o_ptr));
 				return;
@@ -1842,6 +1864,7 @@ void carry(int Ind, int pickup, int confirm)
 		{
 			msg_format(Ind, "You have no room for %s.", o_name);
 			Send_floor(Ind, o_ptr->tval);
+			return;
 		}
 
 		/* Pick up the item (if requested and allowed) */
@@ -1904,7 +1927,7 @@ if (o_ptr->tval == TV_RUNE1) {
 			break;
 		default:
 			break;
-	} 
+	}
 }
 if (o_ptr->tval == TV_RUNE2) {
 	s_printf("HACK-RUNE.\n");
@@ -1917,7 +1940,7 @@ if (o_ptr->tval == TV_RUNE2) {
 			break;
 		default:
 			break;
-	} 
+	}
 }
 #endif
 
@@ -2051,12 +2074,12 @@ if (o_ptr->tval == TV_RUNE2) {
 							/* Roll for usage */
 							if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
 							{
-								if (i_ptr->tval == TV_ROD) 
+								if (i_ptr->tval == TV_ROD)
 									msg_print(Ind, "You failed to use the rod properly.");
-								else 
+								else
 									msg_print(Ind, "You failed to use the staff properly.");
 								break;
-							} 
+							}
 
 							//We managed to pull it off :-)
 							/* we id the newly picked up item */
@@ -2227,6 +2250,10 @@ if (o_ptr->tval == TV_RUNE2) {
 		}
 	}
 
+#ifdef USE_SOUND_2010
+	sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
+#endif
+
 	/* splash! harm equipments */
 	if (c_ptr->feat == FEAT_DEEP_WATER &&
 	    TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
@@ -2357,7 +2384,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 
 	monster_race *pr_ptr = &r_info[p_ptr->body_monster];
 	bool apply_monster_effects = TRUE;
-	int i, monster_effects;
+	int i, monster_effects, sfx = 0;
 	u32b monster_effect[6], monster_effect_chosen;
 	monster_effect[1] = 0;
 	monster_effect[2] = 0;
@@ -2458,8 +2485,21 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 	}
 
 	/* Attack once for each legal blow */
-	while (num++ < p_ptr->num_blow)
-	{
+	while (num++ < p_ptr->num_blow) {
+#ifdef USE_SOUND_2010
+		if (p_ptr->cut_sfx_attack) {
+			sfx = extract_energy[p_ptr->pspeed] * p_ptr->num_blow;
+			if (sfx) {
+				p_ptr->count_cut_sfx_attack += 10000 / sfx;
+				if (p_ptr->count_cut_sfx_attack >= 250) { /* 100 / 25 = 4 blows per turn */
+					p_ptr->count_cut_sfx_attack -= 250;
+					if (p_ptr->count_cut_sfx_attack >= 250) p_ptr->count_cut_sfx_attack = 0;
+					sfx = 0;
+				}
+			}
+		}
+#endif
+
 		/* Access the weapon */
 		o_ptr = &(p_ptr->inventory[INVEN_WIELD]);
 		if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD && magik(50))
@@ -2489,19 +2529,32 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			if ((dodge_chance > 0) && magik(dodge_chance)) {
 				msg_format(Ind, "\377c%s dodges your attack!", COLOUR_DODGE_PLY, p_name);
 				msg_format(0 - c_ptr->m_idx, "\377%cYou dodge %s's attack!", COLOUR_DODGE_GOOD, p_ptr->name); 
-				continue; 
+#ifdef USE_SOUND_2010
+				if (sfx == 0) {
+					if (o_ptr->k_idx && is_weapon(o_ptr->tval)
+						sound(Ind, "miss_weapon", "miss", SFX_TYPE_ATTACK);
+					else
+						sound(Ind, "miss", NULL, SFX_TYPE_ATTACK);
+				}
+#endif
+				continue;
 			}
  #endif
 #else /* :-o */
 			if (magik(apply_dodge_chance(0 - c_ptr->m_idx, p_ptr->lev))) {
 				msg_format(Ind, "\377%c%s dodges your attack!", COLOUR_DODGE_PLY, p_name);
 				msg_format(0 - c_ptr->m_idx, "\377%cYou dodge %s's attack!", COLOUR_DODGE_GOOD, p_ptr->name);
-				continue; 
+#ifdef USE_SOUND_2010
+				if (sfx == 0) {
+					if (o_ptr->k_idx && is_weapon(o_ptr->tval))
+						sound(Ind, "miss_weapon", "miss", SFX_TYPE_ATTACK);
+					else
+						sound(Ind, "miss", NULL, SFX_TYPE_ATTACK);
+				}
+#endif
+				continue;
 			}
 #endif
-
-			/* Sound */
-			sound(Ind, SOUND_HIT);
 
 #ifdef USE_BLOCKING
 			/* Parry/Block - belongs to new-NR-viability changes */
@@ -2512,7 +2565,12 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				if (magik(apply_block_chance(q_ptr, q_ptr->shield_deflect + 15))) { /* boost for PvP! */
 					msg_format(Ind, "\377%c%s blocks your attack!", COLOUR_BLOCK_PLY, p_name);
 					msg_format(0 - c_ptr->m_idx, "\377%cYou block %s's attack!", COLOUR_BLOCK_GOOD, p_ptr->name);
-					continue; 
+#ifdef USE_SOUND_2010
+					if (sfx == 0) {
+						sound(Ind, "block_shield", NULL, SFX_TYPE_ATTACK);
+					}
+#endif
+					continue;
 				}
 			}
 #endif
@@ -2524,11 +2582,32 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				    (k_info[q_ptr->inventory[INVEN_WIELD].k_idx].flags4 & TR4_MUST2H) ? 20 : 10))) {
 					msg_format(Ind, "\377%c%s parries your attack!", COLOUR_PARRY_PLY, p_name);
 					msg_format(0 - c_ptr->m_idx, "\377%cYou parry %s's attack!", COLOUR_PARRY_GOOD, p_ptr->name);
-					continue; 
+#ifdef USE_SOUND_2010
+					if (sfx == 0) {
+						sound(Ind, "parry_weapon", "parry", SFX_TYPE_ATTACK);
+					}
+#endif
+					continue;
 				}
 			}
 #endif
 
+#ifdef USE_SOUND_2010
+			if (o_ptr->k_idx && is_weapon(o_ptr->tval))
+				switch(o_ptr->tval) {
+				case TV_SWORD: sound(Ind, "hit_sword", "hit", SFX_TYPE_ATTACK); break;
+				case TV_BLUNT: if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit", SFX_TYPE_ATTACK);
+						else sound(Ind, "hit_blunt", "hit", SFX_TYPE_ATTACK); break;
+				case TV_AXE: sound(Ind, "hit_axe", "hit", SFX_TYPE_ATTACK); break;
+				case TV_POLEARM: sound(Ind, "hit_polearm", "hit", SFX_TYPE_ATTACK); break;
+				}
+			else
+				if (sfx == 0) {
+					sound(Ind, "hit", NULL, SFX_TYPE_ATTACK);
+				}
+#else
+			sound(Ind, SOUND_HIT);
+#endif
 			sprintf(hit_desc, "You hit %s", p_name);
 
 			/* Hack -- bare hands do one damage */
@@ -2961,9 +3040,16 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 		/* Player misses */
 		else
 		{
-			/* Sound */
+#ifdef USE_SOUND_2010
+			if (sfx == 0) {
+				if (o_ptr->k_idx && is_weapon(o_ptr->tval))
+					sound(Ind, "miss_weapon", "miss", SFX_TYPE_ATTACK);
+				else
+					sound(Ind, "miss", NULL, SFX_TYPE_ATTACK);
+			}
+#else
 			sound(Ind, SOUND_MISS);
-
+#endif
 			/* Messages */
 			msg_format(Ind, "You miss %s.", p_name);
 			msg_format(0 - c_ptr->m_idx, "%s misses you.", p_ptr->name);
@@ -3004,7 +3090,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 {
 	player_type 	*p_ptr = Players[Ind];
 	int             num = 0, bonus, chance, slot, owner_Ind = 0;
-	int		k, k2;
+	int		k, k2, sfx = 0;
         object_type     *o_ptr = NULL;
 	bool            do_quake = FALSE;
 
@@ -3211,6 +3297,20 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	/* Attack once for each legal blow */
 	while (num++ < p_ptr->num_blow)
 	{
+#ifdef USE_SOUND_2010
+		if (p_ptr->cut_sfx_attack) {
+			sfx = extract_energy[p_ptr->pspeed] * p_ptr->num_blow;
+			if (sfx) {
+				p_ptr->count_cut_sfx_attack += 10000 / sfx;
+				if (p_ptr->count_cut_sfx_attack >= 250) { /* 100 / 25 = 4 blows per turn */
+					p_ptr->count_cut_sfx_attack -= 250;
+					if (p_ptr->count_cut_sfx_attack >= 250) p_ptr->count_cut_sfx_attack = 0;
+					sfx = 0;
+				}
+			}
+		}
+#endif
+
 		/* Access the weapon */
 		if (!primary_wield && secondary_wield) slot = INVEN_ARM;
 		else slot = INVEN_WIELD;
@@ -3264,9 +3364,22 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		/* Test for hit */
 		if (test_hit_melee(chance, m_ptr->ac, p_ptr->mon_vis[c_ptr->m_idx]) || instakills(Ind))
 		{
-			/* Sound */
+#ifdef USE_SOUND_2010
+			if (sfx == 0) {
+				if (o_ptr->k_idx && is_weapon(o_ptr->tval))
+					switch(o_ptr->tval) {
+					case TV_SWORD: sound(Ind, "hit_sword", "hit", SFX_TYPE_ATTACK); break;
+					case TV_BLUNT: if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit", SFX_TYPE_ATTACK);
+							else sound(Ind, "hit_blunt", "hit", SFX_TYPE_ATTACK); break;
+					case TV_AXE: sound(Ind, "hit_axe", "hit", SFX_TYPE_ATTACK); break;
+					case TV_POLEARM: sound(Ind, "hit_polearm", "hit", SFX_TYPE_ATTACK); break;
+					}
+				else
+					sound(Ind, "hit", NULL, SFX_TYPE_ATTACK);
+			}
+#else
 			sound(Ind, SOUND_HIT);
-
+#endif
 			sprintf(hit_desc, "You hit %s", m_name);
 			
 			/* Hack -- bare hands do one damage */
@@ -3573,7 +3686,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				}
 
 				/* heheheheheh */
-				do_nazgul(Ind, &k, &num, r_ptr, slot);
+				if (!instakills(Ind)) do_nazgul(Ind, &k, &num, r_ptr, slot);
 
 				/* Apply the player damage boni */
 				/* (should this also cancelled by nazgul?(for now not)) */
@@ -3636,6 +3749,10 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 			/* for admins: kill a target in one hit */
 			if (instakills(Ind)) k = m_ptr->hp + 1;
+			else if (p_ptr->admin_godly_strike) {
+				p_ptr->admin_godly_strike--;
+				if (!(r_ptr->flags1 & RF1_UNIQUE)) k = m_ptr->hp + 1;
+			}
 
 			/* DEG Updated hit message to include damage */
 			if(backstab)
@@ -3977,9 +4094,6 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		/* Player misses */
 		else
 		{
-			/* Sound */
-			sound(Ind, SOUND_MISS);
-
 			backstab = FALSE;
 
 			if (strchr("AhHJkpPty", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
@@ -3993,12 +4107,33 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			}
 
 			/* Message */
-			if (!m_ptr->csleep && magik(block))
+			if (!m_ptr->csleep && magik(block)) {
 				msg_format(Ind, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
-			else if (!m_ptr->csleep && magik(parry))
+#ifdef USE_SOUND_2010
+				if (sfx == 0) {
+					sound(Ind, "block_shield", NULL, SFX_TYPE_ATTACK);
+				}
+#endif
+			} else if (!m_ptr->csleep && magik(parry)) {
 				msg_format(Ind, "\377%c%s parries.", COLOUR_PARRY_MON, m_name);
-			else
+#ifdef USE_SOUND_2010
+				if (sfx == 0) {
+					sound(Ind, "parry_weapon", "parry", SFX_TYPE_ATTACK);
+				}
+#endif
+			} else {
 				msg_format(Ind, "You miss %s.", m_name);
+#ifdef USE_SOUND_2010
+				if (sfx == 0) {
+					if (o_ptr->k_idx && is_weapon(o_ptr->tval))
+						sound(Ind, "miss_weapon", "miss", SFX_TYPE_ATTACK);
+					else
+						sound(Ind, "miss", NULL, SFX_TYPE_ATTACK);
+				}
+#else
+				sound(Ind, SOUND_MISS);
+#endif
+			}
 		}
 
 		/* hack for dual-backstabbing: get a free b.p.r.
@@ -4021,8 +4156,10 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	/* Hack -- delay fear messages */
 	if (fear && p_ptr->mon_vis[c_ptr->m_idx])
 	{
-		/* Sound */
+#ifdef USE_SOUND_2010
+#else
 		sound(Ind, SOUND_FLEE);
+#endif
 
 		/* Message */
 		if (!streq(m_name, "Morgoth, Lord of Darkness"))

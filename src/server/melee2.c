@@ -530,6 +530,10 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int ra
 {
 	player_type *p_ptr = Players[Ind];
 
+#ifdef USE_SOUND_2010
+	sound(Ind, "monster_breath", NULL, SFX_TYPE_MON_SPELL);
+#endif
+
 	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
 	/* Target the player with a ball attack */
@@ -553,7 +557,21 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int rad)
 	/* Target the player with a ball attack */
 	(void)project(m_idx, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam_hp, typ, flg, p_ptr->attacker);
 }
-#endif	// 0
+#endif	/*0*/
+static void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad)
+{
+	player_type *p_ptr = Players[Ind];
+
+#ifdef USE_SOUND_2010
+	if (typ == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_MON_SPELL);
+	sound(Ind, "monster_casts_ball", NULL, SFX_TYPE_MON_SPELL);
+#endif
+
+	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+
+	/* Target the player with a ball attack */
+	(void)project(m_idx, rad, &p_ptr->wpos, y, x, dam_hp, typ, flg, p_ptr->attacker);
+}
 
 #if 0
 /*
@@ -2083,7 +2101,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "You hear a dull, heavy sound.");
 //			else msg_format(Ind, "%^s fires a rocket.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s fires a rocket for", m_name);
-			breath(Ind, m_idx, GF_ROCKET,
+			ball(Ind, m_idx, GF_ROCKET,
 					((m_ptr->hp / 4) > 800 ? 800 : (m_ptr->hp / 4)), y, x, 2);
 			update_smart_learn(m_idx, DRS_SHARD);
 			break;
@@ -2224,8 +2242,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes acid.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes acid for", m_name);
-			breath(Ind, m_idx, GF_ACID,
-					((m_ptr->hp / 3) > 1200 ? 1200 : (m_ptr->hp / 3)), y, x, srad);
+			breath(Ind, m_idx, GF_ACID, ((m_ptr->hp / 3) > 1200 ? 1200 : (m_ptr->hp / 3)), y, x, srad);
 			update_smart_learn(m_idx, DRS_ACID);
 			break;
 		}
@@ -2237,8 +2254,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes lightning.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes lightning for", m_name);
-			breath(Ind, m_idx, GF_ELEC,
-					((m_ptr->hp / 3) > 1200 ? 1200 : (m_ptr->hp / 3)), y, x, srad);
+			breath(Ind, m_idx, GF_ELEC, ((m_ptr->hp / 3) > 1200 ? 1200 : (m_ptr->hp / 3)), y, x, srad);
 			update_smart_learn(m_idx, DRS_ELEC);
 			break;
 		}
@@ -2250,8 +2266,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes fire.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes fire for", m_name);
-			breath(Ind, m_idx, GF_FIRE,
-					((m_ptr->hp / 3) > 1200 ? 1200 : (m_ptr->hp / 3)), y, x, srad);
+			breath(Ind, m_idx, GF_FIRE, ((m_ptr->hp / 3) > 1200 ? 1200 : (m_ptr->hp / 3)), y, x, srad);
 			update_smart_learn(m_idx, DRS_FIRE);
 			break;
 		}
@@ -2263,8 +2278,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes frost.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes frost for", m_name);
-			breath(Ind, m_idx, GF_COLD,
-					((m_ptr->hp / 3) > 1200 ? 1200 : (m_ptr->hp / 3)), y, x, srad);
+			breath(Ind, m_idx, GF_COLD, ((m_ptr->hp / 3) > 1200 ? 1200 : (m_ptr->hp / 3)), y, x, srad);
 			update_smart_learn(m_idx, DRS_COLD);
 			break;
 		}
@@ -2276,8 +2290,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes gas.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes gas for", m_name);
-			breath(Ind, m_idx, GF_POIS,
-					((m_ptr->hp / 3) > 800 ? 800 : (m_ptr->hp / 3)), y, x, srad);
+			breath(Ind, m_idx, GF_POIS, ((m_ptr->hp / 3) > 800 ? 800 : (m_ptr->hp / 3)), y, x, srad);
 			update_smart_learn(m_idx, DRS_POIS);
 			break;
 		}
@@ -2289,8 +2302,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes nether.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes nether for", m_name);
-			breath(Ind, m_idx, GF_NETHER,
-					((m_ptr->hp / 6) > 550 ? 550 : (m_ptr->hp / 6)), y, x, srad);
+			breath(Ind, m_idx, GF_NETHER, ((m_ptr->hp / 6) > 550 ? 550 : (m_ptr->hp / 6)), y, x, srad);
 			update_smart_learn(m_idx, DRS_NETH);
 			break;
 		}
@@ -2302,8 +2314,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes light.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes light for", m_name);
-			breath(Ind, m_idx, GF_LITE,
-					((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), y, x, srad);
+			breath(Ind, m_idx, GF_LITE, ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), y, x, srad);
 			update_smart_learn(m_idx, DRS_LITE);
 			break;
 		}
@@ -2315,8 +2326,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes darkness.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes darkness for", m_name);
-			breath(Ind, m_idx, GF_DARK,
-					((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), y, x, srad);
+			breath(Ind, m_idx, GF_DARK, ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), y, x, srad);
 			update_smart_learn(m_idx, DRS_DARK);
 			break;
 		}
@@ -2328,8 +2338,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes confusion.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes confusion for", m_name);
-			breath(Ind, m_idx, GF_CONFUSION,
-					((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), y, x, srad);
+			breath(Ind, m_idx, GF_CONFUSION, ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), y, x, srad);
 			update_smart_learn(m_idx, DRS_CONF);
 			break;
 		}
@@ -2341,8 +2350,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes sound.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes sound for", m_name);
-			breath(Ind, m_idx, GF_SOUND,
-					((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), y, x, srad);
+			breath(Ind, m_idx, GF_SOUND, ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), y, x, srad);
 			update_smart_learn(m_idx, DRS_SOUND);
 			break;
 		}
@@ -2354,8 +2362,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes chaos.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes chaos for", m_name);
-			breath(Ind, m_idx, GF_CHAOS,
-					((m_ptr->hp / 6) > 600 ? 600 : (m_ptr->hp / 6)), y, x, srad);
+			breath(Ind, m_idx, GF_CHAOS, ((m_ptr->hp / 6) > 600 ? 600 : (m_ptr->hp / 6)), y, x, srad);
 			update_smart_learn(m_idx, DRS_CHAOS);
 			break;
 		}
@@ -2367,8 +2374,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes disenchantment.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes disenchantment for", m_name);
-			breath(Ind, m_idx, GF_DISENCHANT,
-					((m_ptr->hp / 6) > 500 ? 500 : (m_ptr->hp / 6)), y, x, srad);
+			breath(Ind, m_idx, GF_DISENCHANT, ((m_ptr->hp / 6) > 500 ? 500 : (m_ptr->hp / 6)), y, x, srad);
 			update_smart_learn(m_idx, DRS_DISEN);
 			break;
 		}
@@ -2380,8 +2386,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes nexus.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes nexus for", m_name);
-			breath(Ind, m_idx, GF_NEXUS,
-					((m_ptr->hp / 3) > 250 ? 250 : (m_ptr->hp / 3)), y, x, srad);
+			breath(Ind, m_idx, GF_NEXUS, ((m_ptr->hp / 3) > 250 ? 250 : (m_ptr->hp / 3)), y, x, srad);
 			update_smart_learn(m_idx, DRS_NEXUS);
 			break;
 		}
@@ -2393,8 +2398,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes time.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes time for", m_name);
-			breath(Ind, m_idx, GF_TIME,
-					((m_ptr->hp / 3) > 150 ? 150 : (m_ptr->hp / 3)), y, x, srad);
+			breath(Ind, m_idx, GF_TIME, ((m_ptr->hp / 3) > 150 ? 150 : (m_ptr->hp / 3)), y, x, srad);
 			break;
 		}
 
@@ -2405,8 +2409,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes inertia.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes inertia for", m_name);
-			breath(Ind, m_idx, GF_INERTIA,
-					((m_ptr->hp / 6) > 200 ? 200 : (m_ptr->hp / 6)), y, x, srad);
+			breath(Ind, m_idx, GF_INERTIA, ((m_ptr->hp / 6) > 200 ? 200 : (m_ptr->hp / 6)), y, x, srad);
 			break;
 		}
 
@@ -2417,8 +2420,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes gravity.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes gravity for", m_name);
-			breath(Ind, m_idx, GF_GRAVITY,
-					((m_ptr->hp / 3) > 150 ? 150 : (m_ptr->hp / 3)), y, x, srad);
+			breath(Ind, m_idx, GF_GRAVITY, ((m_ptr->hp / 3) > 150 ? 150 : (m_ptr->hp / 3)), y, x, srad);
 			break;
 		}
 
@@ -2429,8 +2431,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes shards.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes shards for", m_name);
-			breath(Ind, m_idx, GF_SHARDS,
-					((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), y, x, srad);
+			breath(Ind, m_idx, GF_SHARDS, ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), y, x, srad);
 			update_smart_learn(m_idx, DRS_SHARD);
 			break;
 		}
@@ -2442,8 +2443,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes plasma.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes plasma for", m_name);
-			breath(Ind, m_idx, GF_PLASMA,
-					((m_ptr->hp / 6) > 150 ? 150 : (m_ptr->hp / 6)), y, x, srad);
+			breath(Ind, m_idx, GF_PLASMA, ((m_ptr->hp / 6) > 150 ? 150 : (m_ptr->hp / 6)), y, x, srad);
 			break;
 		}
 
@@ -2454,8 +2454,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes force.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes force for", m_name);
-			breath(Ind, m_idx, GF_FORCE,
-					((m_ptr->hp / 6) > 200 ? 200 : (m_ptr->hp / 6)), y, x, srad);
+			breath(Ind, m_idx, GF_FORCE, ((m_ptr->hp / 6) > 200 ? 200 : (m_ptr->hp / 6)), y, x, srad);
 			break;
 		}
 
@@ -2466,8 +2465,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes magical energy.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes magical energy", m_name);
-			breath(Ind, m_idx, GF_MANA,
-					((m_ptr->hp / 3) > 250 ? 250 : (m_ptr->hp / 3)), y, x, srad);
+			breath(Ind, m_idx, GF_MANA, ((m_ptr->hp / 3) > 250 ? 250 : (m_ptr->hp / 3)), y, x, srad);
 			break;
 		}
 
@@ -2479,8 +2477,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes disintegration.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes disintegration for", m_name);
-			breath(Ind, m_idx, GF_DISINTEGRATE,
-					((m_ptr->hp / 3) > 300 ? 300 : (m_ptr->hp / 3)), y, x, srad);
+			breath(Ind, m_idx, GF_DISINTEGRATE, ((m_ptr->hp / 3) > 300 ? 300 : (m_ptr->hp / 3)), y, x, srad);
 			break;
 		}
 
@@ -2492,8 +2489,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes toxic waste.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes toxic waste for", m_name);
-			breath(Ind, m_idx, GF_NUKE,
-					((m_ptr->hp / 3) > 800 ? 800 : (m_ptr->hp / 3)), y, x, srad);
+			breath(Ind, m_idx, GF_NUKE, ((m_ptr->hp / 3) > 800 ? 800 : (m_ptr->hp / 3)), y, x, srad);
 			update_smart_learn(m_idx, DRS_POIS);
 			break;
 		}
@@ -2548,8 +2544,7 @@ if (season_halloween) {
 			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts an acid ball.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts an acid ball of", m_name);
-			breath(Ind, m_idx, GF_ACID,
-					randint(rlev * 3) + 15, y, x, srad);
+			ball(Ind, m_idx, GF_ACID, randint(rlev * 3) + 15, y, x, srad);
 			update_smart_learn(m_idx, DRS_ACID);
 			break;
 		}
@@ -2562,8 +2557,7 @@ if (season_halloween) {
 			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a lightning ball.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a lightning ball of", m_name);
-			breath(Ind, m_idx, GF_ELEC,
-					randint(rlev * 3 / 2) + 8, y, x, srad);
+			ball(Ind, m_idx, GF_ELEC, randint(rlev * 3 / 2) + 8, y, x, srad);
 			update_smart_learn(m_idx, DRS_ELEC);
 			break;
 		}
@@ -2576,8 +2570,7 @@ if (season_halloween) {
 			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a fire ball.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a fire ball of", m_name);
-			breath(Ind, m_idx, GF_FIRE,
-					randint(rlev * 7 / 2) + 10, y, x, srad);
+			ball(Ind, m_idx, GF_FIRE, randint(rlev * 7 / 2) + 10, y, x, srad);
 			update_smart_learn(m_idx, DRS_FIRE);
 			break;
 		}
@@ -2590,8 +2583,7 @@ if (season_halloween) {
 			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a frost ball.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a frost ball of", m_name);
-			breath(Ind, m_idx, GF_COLD,
-					randint(rlev * 2) + 10, y, x, srad);
+			ball(Ind, m_idx, GF_COLD, randint(rlev * 2) + 10, y, x, srad);
 			update_smart_learn(m_idx, DRS_COLD);
 			break;
 		}
@@ -2604,7 +2596,7 @@ if (season_halloween) {
 			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a stinking cloud.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a stinking cloud for", m_name);
-			breath(Ind, m_idx, GF_POIS, damroll(12, 2), y, x, srad);
+			ball(Ind, m_idx, GF_POIS, damroll(12, 2), y, x, srad);
 			update_smart_learn(m_idx, DRS_POIS);
 			break;
 		}
@@ -2617,7 +2609,7 @@ if (season_halloween) {
 			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a nether ball.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts an nether ball of", m_name);
-			breath(Ind, m_idx, GF_NETHER, (50 + damroll(10, 10) + rlev * 4), y, x, srad);
+			ball(Ind, m_idx, GF_NETHER, (50 + damroll(10, 10) + rlev * 4), y, x, srad);
 			update_smart_learn(m_idx, DRS_NETH);
 			break;
 		}
@@ -2631,8 +2623,7 @@ if (season_halloween) {
 			msg_format(Ind, "%^s gestures fluidly.", m_name);
 //			msg_print(Ind, "You are engulfed in a whirlpool.");
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "You are engulfed in a whirlpool for");
-			breath(Ind, m_idx, GF_WATER,
-					randint(rlev * 5 / 2) + 50, y, x, srad);
+			ball(Ind, m_idx, GF_WATER, randint(rlev * 5 / 2) + 50, y, x, srad);
 			break;
 		}
 
@@ -2644,8 +2635,7 @@ if (season_halloween) {
 			if (blind) msg_print(Ind, "Something mumbles powerfully.");
 //			else msg_format(Ind, "%^s invokes a mana storm.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s invokes a mana storm for", m_name);
-			breath(Ind, m_idx, GF_MANA,
-					(rlev * 5) + damroll(10, 10), y, x, srad);
+			ball(Ind, m_idx, GF_MANA, (rlev * 5) + damroll(10, 10), y, x, srad);
 			break;
 		}
 
@@ -2657,8 +2647,7 @@ if (season_halloween) {
 			if (blind) msg_print(Ind, "Something mumbles powerfully.");
 //			else msg_format(Ind, "%^s invokes a darkness storm.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s invokes a darkness storm for", m_name);
-			breath(Ind, m_idx, GF_DARK,
-					(rlev * 5) + damroll(10, 10), y, x, srad);
+			ball(Ind, m_idx, GF_DARK, (rlev * 5) + damroll(10, 10), y, x, srad);
 			update_smart_learn(m_idx, DRS_DARK);
 			break;
 		}
@@ -2734,12 +2723,9 @@ if (season_halloween) {
 				msg_format(Ind, "%^s gazes deep into your eyes.", m_name);
 			}
 
-			if (rand_int(100) < p_ptr->skill_sav)
-			{
+			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
-			}
-			else
-			{
+			} else {
 				msg_print(Ind, "\377RYour mind is blasted by psionic energy.");
 				if (!p_ptr->resist_conf)
 				{
@@ -2770,12 +2756,9 @@ if (season_halloween) {
 			{
 				msg_format(Ind, "%^s looks deep into your eyes.", m_name);
 			}
-			if (rand_int(100) < p_ptr->skill_sav)
-			{
+			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
-			}
-			else
-			{
+			} else {
 				msg_print(Ind, "\377RYour mind is blasted by psionic energy.");
 				//				take_hit(Ind, damroll(12, 15), ddesc, 0);
 				take_sanity_hit(Ind, damroll(9,9), ddesc);/* 12,15 was too powerful */
@@ -2808,12 +2791,12 @@ if (season_halloween) {
 			{
 				if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 				else msg_format(Ind, "%^s points at you and curses.", m_name);
-				if (rand_int(100) < p_ptr->skill_sav)
-				{
+#ifdef USE_SOUND_2010
+				sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL);
+#endif
+				if (rand_int(100) < p_ptr->skill_sav) {
 					msg_print(Ind, "You resist the effects!");
-				}
-				else
-				{
+				} else {
 					take_hit(Ind, damroll(3, 8), ddesc, 0);
 				}
 				break;
@@ -2824,12 +2807,12 @@ if (season_halloween) {
 			{
 				if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 				else msg_format(Ind, "%^s points at you and curses horribly.", m_name);
-				if (rand_int(100) < p_ptr->skill_sav)
-				{
+#ifdef USE_SOUND_2010
+				sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL);
+#endif
+				if (rand_int(100) < p_ptr->skill_sav) {
 					msg_print(Ind, "You resist the effects!");
-				}
-				else
-				{
+				} else {
 					take_hit(Ind, damroll(8, 8), ddesc, 0);
 				}
 				break;
@@ -2840,12 +2823,12 @@ if (season_halloween) {
 			{
 				if (blind) msg_format(Ind, "%^s mumbles loudly.", m_name);
 				else msg_format(Ind, "%^s points at you, incanting terribly!", m_name);
-				if (rand_int(100) < p_ptr->skill_sav)
-				{
+#ifdef USE_SOUND_2010
+				sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL);
+#endif
+				if (rand_int(100) < p_ptr->skill_sav) {
 					msg_print(Ind, "You resist the effects!");
-				}
-				else
-				{
+				} else {
 					take_hit(Ind, damroll(10, 15), ddesc, 0);
 				}
 				break;
@@ -2856,12 +2839,12 @@ if (season_halloween) {
 			{
 				if (blind) msg_format(Ind, "%^s screams the word 'DIE!'", m_name);
 				else msg_format(Ind, "%^s points at you, screaming the word DIE!", m_name);
-				if (rand_int(100) < p_ptr->skill_sav)
-				{
+#ifdef USE_SOUND_2010
+				sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL);
+#endif
+				if (rand_int(100) < p_ptr->skill_sav) {
 					msg_print(Ind, "You resist the effects!");
-				}
-				else
-				{
+				} else {
 					//					take_hit(Ind, damroll(15, 15), ddesc, 0);
 					take_hit(Ind, damroll(power / 4, 15), ddesc, 0);
 					(void)set_cut(Ind, p_ptr->cut + damroll(10, 10), 0);
@@ -2877,12 +2860,12 @@ if (season_halloween) {
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s points at you and curses.", m_name);
-			if (rand_int(100) < p_ptr->skill_sav)
-			{
+#ifdef USE_SOUND_2010
+			sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL);
+#endif
+			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
-			}
-			else
-			{
+			} else {
 				take_hit(Ind, damroll(3, 8), ddesc, 0);
 			}
 			break;
@@ -2896,12 +2879,12 @@ if (season_halloween) {
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s points at you and curses horribly.", m_name);
-			if (rand_int(100) < p_ptr->skill_sav)
-			{
+#ifdef USE_SOUND_2010
+			sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL);
+#endif
+			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
-			}
-			else
-			{
+			} else {
 				take_hit(Ind, damroll(8, 8), ddesc, 0);
 			}
 			break;
@@ -2915,12 +2898,12 @@ if (season_halloween) {
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles loudly.", m_name);
 			else msg_format(Ind, "%^s points at you, incanting terribly!", m_name);
-			if (rand_int(100) < p_ptr->skill_sav)
-			{
+#ifdef USE_SOUND_2010
+			sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL);
+#endif
+			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
-			}
-			else
-			{
+			} else {
 				take_hit(Ind, damroll(10, 15), ddesc, 0);
 			}
 			break;
@@ -2934,12 +2917,12 @@ if (season_halloween) {
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s screams the word 'DIE!'", m_name);
 			else msg_format(Ind, "%^s points at you, screaming the word DIE!", m_name);
-			if (rand_int(100) < p_ptr->skill_sav)
-			{
+#ifdef USE_SOUND_2010
+			sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL);
+#endif
+			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
-			}
-			else
-			{
+			} else {
 				take_hit(Ind, damroll(15, 15), ddesc, 0);
 				(void)set_cut(Ind, p_ptr->cut + damroll(10, 10), 0);
 			}
@@ -2961,7 +2944,7 @@ if (season_halloween) {
 			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a ball of radiation.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a ball of radiation of", m_name);
-			breath(Ind, m_idx, GF_NUKE, (rlev * 3 + damroll(10, 6)), y, x, 2);
+			ball(Ind, m_idx, GF_NUKE, (rlev * 3 + damroll(10, 6)), y, x, 2);
 			update_smart_learn(m_idx, DRS_POIS);
 			break;
 		}
@@ -2974,7 +2957,7 @@ if (season_halloween) {
 			if (blind) msg_print(Ind, "Something mumbles frighteningly.");
 //			else msg_format(Ind, "%^s invokes a raw chaos.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s invokes a raw chaos for", m_name);
-			breath(Ind, m_idx, GF_CHAOS, (rlev * 4) + damroll(10, 10), y, x, 4);
+			ball(Ind, m_idx, GF_CHAOS, (rlev * 4) + damroll(10, 10), y, x, 4);
 			update_smart_learn(m_idx, DRS_CHAOS);
 			break;
 		}
@@ -3137,9 +3120,7 @@ if (season_halloween) {
 //already gives res_fear --			|| (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
 			{
 				msg_print(Ind, "You refuse to be frightened.");
-			}
-			else
-			{
+			} else {
 				(void)set_afraid(Ind, p_ptr->afraid + rand_int(4) + 4);
 			}
 			update_smart_learn(m_idx, DRS_FEAR);
@@ -3157,12 +3138,9 @@ if (season_halloween) {
 			{
 				msg_print(Ind, "You are unaffected!");
 			}
-			else if (rand_int(100) < p_ptr->skill_sav)
-			{
+			else if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
-			}
-			else
-			{
+			} else {
 				(void)set_blind(Ind, 12 + rand_int(4));
 			}
 			update_smart_learn(m_idx, DRS_BLIND);
@@ -3184,9 +3162,7 @@ if (season_halloween) {
 			    (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
 			{
 				msg_print(Ind, "You disbelieve the feeble spell.");
-			}
-			else
-			{
+			} else {
 				(void)set_confused(Ind, p_ptr->confused + rand_int(4) + 4);
 			}
 			update_smart_learn(m_idx, DRS_CONF);
@@ -3207,9 +3183,7 @@ if (season_halloween) {
 			    (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
 			{
 				msg_print(Ind, "You resist the effects!");
-			}
-			else
-			{
+			} else {
 				(void)set_slow(Ind, p_ptr->slow + rand_int(4) + 4);
 			}
 			update_smart_learn(m_idx, DRS_FREE);
@@ -3430,6 +3404,9 @@ if (season_halloween) {
 			{
 				//disturb(Ind, 1, 0);
 				msg_format(Ind, "%^s blinks away.", m_name);
+#ifdef USE_SOUND_2010
+				sound(Ind, "monster_blinks", NULL, SFX_TYPE_MON_SPELL);
+#endif
 			}
 			break;
 		}
@@ -3458,6 +3435,9 @@ if (season_halloween) {
 			{
 				//disturb(Ind, 1, 0);
 				msg_format(Ind, "%^s teleports away.", m_name);
+#ifdef USE_SOUND_2010
+				sound(Ind, "monster_teleports", NULL, SFX_TYPE_MON_SPELL);
+#endif
 			}
 			break;
 		}
@@ -9120,6 +9100,38 @@ void process_monsters(void)
 			/* Glaur. Check if monster has LOS to the player */
 			new_los = los(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx);
 
+#ifdef USE_SOUND_2010
+			/* USE_SOUND_2010 -- temporary-boss-monster checks:
+			   These are those (lesser) boss monsters that will only cause a
+			   special music when we're actively engaging them. - C. Blue */
+			if (new_los && p_ptr->music_monster != -2 && p_ptr->mon_vis[i]) { // && !m_ptr->csleep
+				if (r_ptr->flags7 & RF7_NAZGUL) {
+					//Nazgul; doesn't override Sauron
+					if (p_ptr->music_monster != 41) {
+						Send_music(pl, (p_ptr->music_monster = 40));
+					}
+				} else if (r_ptr->flags1 & RF1_UNIQUE) {
+					if (m_ptr->r_idx == 861) {
+						//Sauron; overrides all others
+						Send_music(pl, (p_ptr->music_monster = 41));
+					}
+					//Dungeon boss or special unique? (can't override Sauron or Nazgul)
+					else if (p_ptr->music_monster != 41 && p_ptr->music_monster != 40) {
+						//Dungeon boss?
+						if (m_ptr->r_idx == 971) {
+							//Wight-King
+							Send_music(pl, (p_ptr->music_monster = 39));
+						}
+						//Special Unique (non-respawning)? Can't override dungeon boss..
+						else if (r_ptr->level >= 98 && p_ptr->music_monster != 39) {
+							//Any of em
+							Send_music(pl, (p_ptr->music_monster = 38));
+						}
+					}
+				}
+			}
+#endif
+
 			/*	if (p_ptr->ghost)
 				if (!new_los)
 				j += 100; */
@@ -9135,7 +9147,7 @@ void process_monsters(void)
 
 			/* Glaur. Check that the closest VISIBLE target gets selected,
 			   if no visible one available just take the closest*/
-			if (((blos >= new_los) && (j > dis_to_closest)) || (blos > new_los)) 
+			if (((blos >= new_los) && (j > dis_to_closest)) || (blos > new_los))
 				continue;
 
 			/* Glaur. Skip if same distance and stronger and same visibility*/

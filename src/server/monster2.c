@@ -305,7 +305,7 @@ int monster_check_experience(int m_idx, bool silent)
 				else m_ptr->blow[i].d_dice--;
                         }
 		}
-	} 
+	}
 	return (old_level-m_ptr->level == 0? 0 : 1);
 }
 
@@ -1352,13 +1352,15 @@ s16b get_mon_num(int level, int dun_type)
 
 static cptr r_name_garbled_get()
 {
-	int r_idx;
+	int r_idx, tries = 1000;
 
 	while (TRUE)
 	{
 		r_idx = rand_int(MAX_R_IDX);
 		if (!r_info[r_idx].name) continue;
-        else return (r_name + r_info[r_idx].name);
+		else return (r_name + r_info[r_idx].name);
+
+		if (!tries--) return("unnamed monster");
 	}
 }
 

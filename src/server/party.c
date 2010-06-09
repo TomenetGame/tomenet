@@ -10,6 +10,7 @@
 #include "../world/world.h"
 #endif
 
+
 /*
  * Give some exp-bonus to encourage partying (aka "C.Blue party bonus") [2]
  * formula: (PARTY_XP_BOOST+1)/(PARTY_XP_BOOST + (# of applicable players))
@@ -20,9 +21,11 @@
 // #define ANTI_MAXPLV_EXPLOIT_SOFTLEV	/* be somewhat less strict (average between max_plv and current max_lev) */
  #define ANTI_MAXPLV_EXPLOIT_SOFTEXP	/* be somewhat less strict (use reduced exp instead of preventing any exp) */
 
+
 #ifdef HAVE_CRYPT
 #include <unistd.h>
 #endif	// HAVE_CRYPT
+
 
 static char *t_crypt(char *inbuf, cptr salt);
 static void del_party(int id);
@@ -31,6 +34,7 @@ static u32b new_accid(void);
 
 /* The hash table itself */
 static hash_entry *hash_table[NUM_HASH_ENTRIES];
+
 
 /* admin only - account edit function */
 bool WriteAccount(struct account *r_acc, bool new){
@@ -1933,7 +1937,7 @@ bool add_hostility(int Ind, cptr name, bool initiator)
 		if (!check_blood_bond(Ind, i))
  #endif
 		{
-			msg_format(Ind, "\377yWarning: You are NOT blood bonded with %s.", q_ptr->name);
+			msg_format(Ind, "\374\377yWarning: You are NOT blood bonded with %s.", q_ptr->name);
 		}
 
 		/* Success */
@@ -2752,7 +2756,7 @@ void scan_players(){
 		pptr = NULL;
 		ptr = hash_table[slot];
 		while(ptr){
-			if(ptr->laston && (now - ptr->laston > 3600 * 24 * 180)){/*15552000; 7776000 = 90 days at 60fps*/
+			if(ptr->laston && (now - ptr->laston > 3600 * 24 * CHARACTER_EXPIRY_DAYS)){/*15552000; 7776000 = 90 days at 60fps*/
 				hash_entry *dptr;
 				s_printf("  Removing player: %s\n", ptr->name);
 
@@ -2895,7 +2899,7 @@ void scan_accounts() {
 
 #if 1
 		/* test for expiry -> delete */
-		else if (now - c_acc->acc_laston >= 3600 * 24 * 30) {
+		else if (now - c_acc->acc_laston >= 3600 * 24 * ACCOUNT_EXPIRY_DAYS) {
 			c_acc->flags |= ACC_DELD;
 
 			/* Count expired accounts */
@@ -3071,7 +3075,7 @@ void checkexpiry(int Ind, int days)
 	for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
 		ptr = hash_table[slot];
 		while (ptr) {
-			expire = 180 * 86400 - now + ptr->laston;
+			expire = CHARACTER_EXPIRY_DAYS * 86400 - now + ptr->laston;
 			if (ptr->laston && expire < days * 86400) {
 				if (expire < 86400) {
 					msg_format(Ind, "\377rPlayer %s (accid %d) will expire in less than a day!", ptr->name, ptr->account);
@@ -3105,7 +3109,7 @@ void account_checkexpiry(int Ind)
 		ptr = hash_table[slot];
 		while (ptr) {
 			if (p_ptr->id != ptr->id && p_ptr->account == ptr->account && ptr->laston) {
-				expire = 180 * 86400 - now + ptr->laston;
+				expire = CHARACTER_EXPIRY_DAYS * 86400 - now + ptr->laston;
 
 				if (expire < 86400) {
 					msg_format(Ind, "\377yYour character %s will be removed \377rvery soon\377y!", ptr->name, expire / 86400);

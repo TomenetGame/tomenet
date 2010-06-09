@@ -954,10 +954,12 @@ void do_slash_cmd(int Ind, char *message)
 				prefix(message, "/ex"))
 		{
 			if (admin) msg_format(Ind, "The game turn: %d", turn);
+
 			do_cmd_time(Ind);
 			if (!(p_ptr->mode & (MODE_EVERLASTING | MODE_PVP | MODE_NO_GHOST)))
 				msg_format(Ind, "You have %d %s left.", p_ptr->lives-1-1, p_ptr->lives-1-1 > 1 ? "resurrections" : "resurrection");
 
+#if 0 /* already displayed to the left */
 #ifdef ENABLE_STANCES
 			if (get_skill(p_ptr, SKILL_STANCE)) {
 				switch (p_ptr->combat_stance) {
@@ -977,6 +979,7 @@ void do_slash_cmd(int Ind, char *message)
 				}
 			}
 #endif
+#endif
 			if (get_skill(p_ptr, SKILL_AURA_FEAR)) check_aura(Ind, 0); /* MAX_AURAS */
 			if (get_skill(p_ptr, SKILL_AURA_SHIVER)) check_aura(Ind, 1);
 			if (get_skill(p_ptr, SKILL_AURA_DEATH)) check_aura(Ind, 2);
@@ -984,6 +987,7 @@ void do_slash_cmd(int Ind, char *message)
 //			do_cmd_knowledge_dungeons(Ind);
 			if (p_ptr->depth_in_feet) msg_format(Ind, "The deepest point you've reached: \377G-%d\377wft", p_ptr->max_dlv * 50);
 			else msg_format(Ind, "The deepest point you've reached: Lev \377G-%d", p_ptr->max_dlv);
+			
 
 			msg_format(Ind, "You can move %d.%d times each turn.",
 					extract_energy[p_ptr->pspeed] / 10,
@@ -992,6 +996,7 @@ void do_slash_cmd(int Ind, char *message)
 
 			if (get_skill(p_ptr, SKILL_DODGE)) use_ability_blade(Ind);
 
+#if 0 /* this is already displayed to the left */
 			/* Insanity warning (better message needed!) */
 			if (p_ptr->csane < p_ptr->msane / 8)
 				msg_print(Ind, "\377rYou can hardly resist the temptation to cry out!");
@@ -1001,7 +1006,9 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "\377yYou feel insanity creep into your mind..");
 			else
 				msg_print(Ind, "\377wYou are sane.");
+#endif
 
+#if 0 /* deprecated, new one below.. */
 			if (p_ptr->body_monster)
 			{
 				monster_race *r_ptr = &r_info[p_ptr->body_monster];
@@ -1016,6 +1023,85 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "You can wear rings.");
 				msg_print(Ind, "You don't have a torso, but you can wear cloaks.");
 			}
+#endif
+#if 0 /* another one.. */
+			bool i_ringr = TRUE, i_ringl = TRUE, i_neck = TRUE, i_head = TRUE, i_outer = TRUE;
+			bool i_light = TRUE, i_arms = TRUE, i_tool = TRUE, i_wield = TRUE, i_bow = TRUE;
+			bool i_ammo = TRUE, i_hands = TRUE, i_feet = TRUE, i_body = TRUE;
+
+			if (p_ptr->fruit_bat) {
+				i_wield = i_bow = i_ammo = i_hands i_feet = i_body = FALSE;
+			}
+			if (p_ptr->body_monster) {
+				if (!r_ptr->body_parts[BODY_WEAPON]) i_wield = i_bow = FALSE;
+				if (r_ptr->body_parts[BODY_FINGER] <= 1) i_ringl = FALSE;
+				if (!r_ptr->body_parts[BODY_FINGER]) i_ringr = FALSE;
+				if (!r_ptr->body_parts[BODY_HEAD]) i_neck = i_head = FALSE;
+				if (!r_ptr->body_parts[BODY_WEAPON] &&
+				    !r_ptr->body_parts[BODY_FINGER] &&
+				    !r_ptr->body_parts[BODY_HEAD] &&
+				    !r_ptr->body_parts[BODY_ARMS])
+					i_light = FALSE;
+				if (!r_ptr->body_parts[BODY_TORSO]) i_body = i_outer = i_ammo = FALSE;
+				if (!r_ptr->body_parts[BODY_ARMS]) i_arms = FALSE;
+				if (!r_ptr->body_parts[BODY_WEAPON] &&
+				    !r_ptr->body_parts[BODY_ARMS])
+					i_tool = FALSE;
+				if (!r_ptr->body_parts[BODY_FINGER] &&
+				    !r_ptr->body_parts[BODY_ARMS])
+					i_hands = FALSE;
+				if (!r_ptr->body_parts[BODY_LEGS]) i_feet = FALSE;
+			}
+#endif
+#if 1 /* just use item_tester_hook_wear() to prevent duplicate stuff.. */
+			if (p_ptr->body_monster &&
+			    p_ptr->pclass != CLASS_DRUID && p_ptr->prace != RACE_VAMPIRE &&
+			    (p_ptr->pclass != CLASS_SHAMAN || !strchr("EG", r_info[p_ptr->body_monster].d_char))) {
+				msg_print(Ind, "In your current form...");
+				if (item_tester_hook_wear(Ind, INVEN_WIELD)) msg_print(Ind, "  you are able to wield a weapon.");
+				else msg_print(Ind, "  you cannot wield weapons.");
+				if (item_tester_hook_wear(Ind, INVEN_ARM)) msg_print(Ind, "  you are able to wield a shield.");
+				else msg_print(Ind, "  you cannot wield shields.");
+				if (item_tester_hook_wear(Ind, INVEN_BOW)) msg_print(Ind, "  you are able to wield a ranged weapon.");
+				else msg_print(Ind, "  you cannot wield ranged weapons.");
+				if (item_tester_hook_wear(Ind, INVEN_LEFT)) msg_print(Ind, "  you are able to wear rings.");
+				else if (item_tester_hook_wear(Ind, INVEN_RIGHT)) msg_print(Ind, "  you are able to wear a ring.");
+				else msg_print(Ind, "  you cannot wear rings.");
+				if (item_tester_hook_wear(Ind, INVEN_NECK)) msg_print(Ind, "  you are able to wear an amulet.");
+				else msg_print(Ind, "  you cannot wear amulets.");
+				if (item_tester_hook_wear(Ind, INVEN_LITE)) msg_print(Ind, "  you are able to wield a light source.");
+				else msg_print(Ind, "  you cannot wield light sources.");
+				if (item_tester_hook_wear(Ind, INVEN_BODY)) msg_print(Ind, "  you are able to wear body armour.");
+				else msg_print(Ind, "  you cannot wear body armour.");
+				if (item_tester_hook_wear(Ind, INVEN_OUTER)) msg_print(Ind, "  you are able to wear a cloak.");
+				else msg_print(Ind, "  you cannot wear cloaks.");
+				if (item_tester_hook_wear(Ind, INVEN_HEAD)) msg_print(Ind, "  you are able to wear head gear.");
+				else msg_print(Ind, "  you cannot wear head gear.");
+				if (item_tester_hook_wear(Ind, INVEN_HANDS)) msg_print(Ind, "  you are able to wear gloves.");
+				else msg_print(Ind, "  you cannot wear gloves.");
+				if (item_tester_hook_wear(Ind, INVEN_FEET)) msg_print(Ind, "  you are able to wear boots.");
+				else msg_print(Ind, "  you cannot wear boots.");
+				if (item_tester_hook_wear(Ind, INVEN_AMMO)) msg_print(Ind, "  you are able to carry ammunition.");
+				else msg_print(Ind, "  you cannot carry ammunition.");
+				if (item_tester_hook_wear(Ind, INVEN_TOOL)) msg_print(Ind, "  you are able to use tools.");
+				else msg_print(Ind, "  you cannot use tools.");
+			} else if (p_ptr->fruit_bat) {
+				msg_print(Ind, "As a fruit bat..");
+				if (!item_tester_hook_wear(Ind, INVEN_WIELD)) msg_print(Ind, "  you cannot wield weapons.");
+				if (!item_tester_hook_wear(Ind, INVEN_ARM)) msg_print(Ind, "  you cannot wield shields.");
+				if (!item_tester_hook_wear(Ind, INVEN_BOW)) msg_print(Ind, "  you cannot wield ranged weapons.");
+				if (!item_tester_hook_wear(Ind, INVEN_RIGHT)) msg_print(Ind, "  you cannot wear rings.");
+				if (!item_tester_hook_wear(Ind, INVEN_NECK)) msg_print(Ind, "  you cannot wear amulets.");
+				if (!item_tester_hook_wear(Ind, INVEN_LITE)) msg_print(Ind, "  you cannot wield light sources.");
+				if (!item_tester_hook_wear(Ind, INVEN_BODY)) msg_print(Ind, "  you cannot wear body armour.");
+				if (!item_tester_hook_wear(Ind, INVEN_OUTER)) msg_print(Ind, "  you cannot wear cloaks.");
+				if (!item_tester_hook_wear(Ind, INVEN_HEAD)) msg_print(Ind, "  you cannot wear head gear.");
+				if (!item_tester_hook_wear(Ind, INVEN_HANDS)) msg_print(Ind, "  you cannot wear gloves.");
+				if (!item_tester_hook_wear(Ind, INVEN_FEET)) msg_print(Ind, "  you cannot wear boots.");
+				if (!item_tester_hook_wear(Ind, INVEN_AMMO)) msg_print(Ind, "  you cannot carry ammunition.");
+				if (!item_tester_hook_wear(Ind, INVEN_TOOL)) msg_print(Ind, "  you cannot use tools.");
+			}
+#endif
 
 			if (admin)
 			{
@@ -1558,24 +1644,21 @@ void do_slash_cmd(int Ind, char *message)
 
 			return;
 		}
-		else if (prefix(message, "/sip"))
-		{
+		else if (prefix(message, "/sip")) {
 			/* Paralyzed? */
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 
 			do_cmd_drink_fountain(Ind);
 			return;
 		}
-		else if (prefix(message, "/fill"))
-		{
+		else if (prefix(message, "/fill")) {
 			/* Paralyzed? */
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 
 			do_cmd_fill_bottle(Ind);
 			return;
 		}
-		else if (prefix(message, "/empty") || prefix(message, "/emp"))
-		{
+		else if (prefix(message, "/empty") || prefix(message, "/emp")) {
 			int slot;
 			return;//disabled for anti-cheeze
 			if (!tk)
@@ -1595,8 +1678,7 @@ void do_slash_cmd(int Ind, char *message)
 			do_cmd_empty_potion(Ind, slot - 65);
 			return;
 		}
-		else if (prefix(message, "/dice"))
-		{
+		else if (prefix(message, "/dice")) {
 			int rn;
 			if (tk < 1)
 			{
@@ -1617,6 +1699,14 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			msg_format(Ind, "\374\377UYou throw %d dice and get a %d", k, rn);
 			msg_format_near(Ind, "\374\377U%s throws %d dice and gets a %d", p_ptr->name, k, rn);
+			return;
+		}
+		else if (prefix(message, "/coin")) {
+			bool coin = (rand_int(2) == 0);
+			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+			msg_format(Ind, "\374\377UYou flip a coin and get %s.", coin ? "heads" : "tails");
+			msg_format_near(Ind, "\374\377U%s flips a coin and gets %d", p_ptr->name, coin ? "heads" : "tails");
 			return;
 		}
 #ifdef RPG_SERVER /* too dangerous on the pm server right now - mikaelh */
@@ -2126,7 +2216,7 @@ void do_slash_cmd(int Ind, char *message)
 			return;
 		}
 #endif
-		else if (prefix(message, "/geinfo")) /* get info on a global event */
+		else if (prefix(message, "/evinfo")) /* get info on a global event */
 		{
 			int n = 0;
 			char ppl[75];
@@ -2136,8 +2226,8 @@ void do_slash_cmd(int Ind, char *message)
 				for (i = 0; i<MAX_GLOBAL_EVENTS; i++) if ((global_event[i].getype != GE_NONE) && (global_event[i].hidden==FALSE || admin)) {
 					n++;
 					if (n == 1) {
-						msg_print(Ind, "\377sCurrently ongoing events (use /gesign to participate):");
-						msg_print(Ind, "\377sUse command '/geinfo <number>' to get information on a specific event.");
+						msg_print(Ind, "\377sCurrently ongoing events (use /evsign to participate):");
+						msg_print(Ind, "\377sUse command '/evinfo <number>' to get information on a specific event.");
 					}
 					/* Event still in announcement phase? */
 					if (global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps) > 0)
@@ -2148,7 +2238,7 @@ void do_slash_cmd(int Ind, char *message)
 				if (!n) msg_print(Ind, "\377sNo events are currently running.");
 				msg_print(Ind, "\377d ");
 			} else if ((k < 1) || (k > MAX_GLOBAL_EVENTS)) {
-				msg_format(Ind, "Usage: /geinfo    or    /geinfo 1..%d", MAX_GLOBAL_EVENTS);
+				msg_format(Ind, "Usage: /evinfo    or    /evinfo 1..%d", MAX_GLOBAL_EVENTS);
 			} else if ((global_event[k-1].getype == GE_NONE) && (global_event[k-1].hidden==FALSE || admin)) {
 				msg_print(Ind, "\377yThere is currently no running event of that number.");
 			} else {
@@ -2181,10 +2271,10 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			return;
 		}
-		else if (prefix(message, "/gesign")) /* sign up for a global event */
+		else if (prefix(message, "/evsign")) /* sign up for a global event */
 		{
 			if ((tk < 1) || (k < 1) || (k > MAX_GLOBAL_EVENTS))
-				msg_format(Ind, "Usage: /gesign 1..%d [options..]    -- Also try: /geinfo", MAX_GLOBAL_EVENTS);
+				msg_format(Ind, "Usage: /evsign 1..%d [options..]    -- Also try: /evinfo", MAX_GLOBAL_EVENTS);
 			else if ((global_event[k-1].getype == GE_NONE) && (global_event[k-1].hidden==FALSE || admin))
 				msg_print(Ind, "\377yThere is currently no running event of that number.");
 			else if (global_event[k-1].signup_time == -1)
@@ -5142,6 +5232,27 @@ void do_slash_cmd(int Ind, char *message)
 #endif
 				return;
 			}
+#ifdef USE_SOUND_2010
+			else if (prefix(message, "/hmus")) { /* set own music according to the location of someone else */
+				u32b f;
+				if (tk < 1) {
+					msg_print(Ind, "Usage: /hmus <player>");
+					return;
+				}
+				j = name_lookup_loose(Ind, message3, FALSE);
+				if (!j) {
+					msg_format(Ind, "Couldn't find player %s.", message3);
+					return;
+				}
+
+				msg_format(Ind, "Using music of player %s.", Players[j]->name);
+				f = Players[Ind]->esp_link_flags;
+				Players[Ind]->esp_link_flags &= ~LINKF_VIEW_DEDICATED;
+				Send_music(Ind, Players[j]->music_current);
+				Players[Ind]->esp_link_flags = f;
+				return;
+			}
+#endif
 		}
 	}
 

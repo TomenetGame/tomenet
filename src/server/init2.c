@@ -3060,6 +3060,10 @@ static void set_server_option(char * option, char * value)
 	{
 		cfg.anti_cheeze_pickup = str_to_boolean(value);
 	}
+	else if (!strcmp(option,"ANTI_CHEEZE_TELEKINESIS"))
+	{
+		cfg.anti_cheeze_telekinesis = str_to_boolean(value);
+	}
 	else if (!strcmp(option,"SURFACE_ITEM_REMOVAL"))
 	{
 		cfg.surface_item_removal = atoi(value);
@@ -3067,6 +3071,14 @@ static void set_server_option(char * option, char * value)
 	else if (!strcmp(option,"DUNGEON_ITEM_REMOVAL"))
 	{
 		cfg.dungeon_item_removal = atoi(value);
+	}
+	else if (!strcmp(option,"DEATH_WILD_ITEM_REMOVAL"))
+	{
+		cfg.death_wild_item_removal = atoi(value);
+	}
+	else if (!strcmp(option,"LONG_WILD_ITEM_REMOVAL"))
+	{
+		cfg.long_wild_item_removal = atoi(value);
 	}
 	else if (!strcmp(option,"DUNGEON_SHOP_CHANCE"))
 	{

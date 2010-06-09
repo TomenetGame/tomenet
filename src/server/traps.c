@@ -866,6 +866,10 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	if(!(zcave=getcave(wpos))) return(FALSE);
 	c_ptr=&zcave[y][x];
 
+#ifdef USE_SOUND_2010
+	sound(Ind, "trap_setoff", NULL, SFX_TYPE_MISC);
+#endif
+
 	if (item < 0)
 	{
 		trap = GetCS(c_ptr, CS_TRAPS)->sc.trap.t_idx;
@@ -4476,6 +4480,14 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, int sval)
 	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
 	dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
 
+#ifdef USE_SOUND_2010
+	if (rad && who > 0) { /* TODO: make it audible for ALL players in LOS maybe? probably too much */
+		if (typ == GF_ROCKET) sound(who, "rocket", NULL, SFX_TYPE_MISC);
+		else sound(who, "cast_ball", NULL, SFX_TYPE_MISC);
+	}
+//	else sound(Ind, "", NULL, SFX_TYPE_MISC);
+#endif
+
 	/* Actually hit the monster */
 	(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP, "");
         return (zcave[y][x].m_idx == 0 ? TRUE : FALSE); 
@@ -4632,6 +4644,12 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 				typ = GF_ROCKET;
 				dam = damroll(40, 20);
 				rad = 3;
+#ifdef USE_SOUND_2010
+				/* sound only if we can see the trap detonate */
+				if (who > 0 && los(&m_ptr->wpos, Players[who]->py, Players[who]->px, y, x)) {
+					sound(who, "detonation", NULL, SFX_TYPE_MISC);
+				}
+#endif
 				break;
 			case SV_POTION_DEATH:
 				rad = 3;

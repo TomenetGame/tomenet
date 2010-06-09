@@ -1062,6 +1062,8 @@ static void Trim_name(char *nick_name)
 	}
 }
 
+/* verify that account, user, host name are valid,
+   and that we're resuming from the same IP address if we're resuming  */
 static int Check_names(char *nick_name, char *real_name, char *host_name, char *addr, bool check_for_resume)
 {
 	player_type *p_ptr = NULL;
@@ -2292,6 +2294,7 @@ static void sync_options(int Ind, bool *options)
 	p_ptr->short_item_names = options[77];
 	// bool speak_unique;
 
+	p_ptr->cut_sfx_attack = options[87];
 }
 
 /*
@@ -2640,6 +2643,13 @@ static int Handle_login(int ind)
 
 #ifdef AUCTION_SYSTEM
 	auction_player_joined(NumPlayers);
+#endif
+
+#ifdef USE_SOUND_2010
+	/* Initialize his background music */
+	Players[NumPlayers]->music_current = -1; //hack-init: since 0 is used too..
+	Players[NumPlayers]->music_monster = -1; //hack-init: since 0 is used too.. (boss-specific music)
+	handle_music(NumPlayers);
 #endif
 
 	/* Initialize the client's unique list;
@@ -5503,9 +5513,11 @@ int Send_target_info(int ind, int x, int y, cptr str)
 	return Packet_printf(&connp->c, "%c%c%c%s", PKT_TARGET_INFO, x, y, buf);
 }
 
-int Send_sound(int ind, int sound)
+int Send_sound(int ind, int sound, int alternative, int type)
 {
 	connection_t *connp = Conn[Players[ind]->conn];
+
+	if (!is_newer_than(&connp->version, 4, 4, 4, 5, 0, 0)) return(-1);
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -5515,8 +5527,55 @@ int Send_sound(int ind, int sound)
 		return 0;
 	}
 
-	return Packet_printf(&connp->c, "%c%c", PKT_SOUND, sound);
+#ifdef USE_SOUND_2010
+//	if (is_admin(Players[ind])) s_printf("USE_SOUND_2010: sound %d (alt %d) sent to player %s (%d).\n", sound, alternative, Players[ind]->name, ind);//debug
+#endif
+
+	if (is_newer_than(&connp->version, 4, 4, 5, 1, 0, 0)) {
+		return Packet_printf(&connp->c, "%c%d%d%d", PKT_SOUND, sound, alternative, type);
+	} else if (is_newer_than(&connp->version, 4, 4, 5, 0, 0, 0)) {
+		return Packet_printf(&connp->c, "%c%d%d", PKT_SOUND, sound, alternative);
+	} else {
+		return Packet_printf(&connp->c, "%c%c", PKT_SOUND, sound);
+	}
 }
+
+#ifdef USE_SOUND_2010
+int Send_music(int ind, int music)
+{
+	connection_t *connp = Conn[Players[ind]->conn];
+
+	/* Mind-linked to someone? Send him our music too! */
+	player_type *p_ptr2 = NULL;
+	connection_t *connp2 = NULL;
+	/* If we're the target, we won't see our own weather */
+	if (Players[ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	/* Get target player */
+	if (get_esp_link(ind, LINKF_VIEW, &p_ptr2)) connp2 = Conn[p_ptr2->conn];
+
+	if (connp2) {
+		if (p_ptr2->music_current != music) {
+			p_ptr2->music_current = music;
+			if (is_newer_than(&connp2->version, 4, 4, 4, 5, 0, 0))
+				Packet_printf(&connp2->c, "%c%c", PKT_MUSIC, music);
+		}
+	}
+
+	if (Players[ind]->music_current == music) return(-1);
+	Players[ind]->music_current = music;
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for music (%d.%d.%d)",
+			ind, connp->state, connp->id));
+		return 0;
+	}
+
+	if (!is_newer_than(&connp->version, 4, 4, 4, 5, 0, 0)) return(-1);
+//	s_printf("USE_SOUND_2010: music %d sent to player %s (%d).\n", music, Players[ind]->name, ind);//debug
+	return Packet_printf(&connp->c, "%c%c", PKT_MUSIC, music);
+}
+#endif
 
 int Send_beep(int ind)
 {
@@ -5890,6 +5949,16 @@ int Send_weather(int ind, int weather_type, int weather_wind, int weather_gen_sp
 	const int cloud_limit = 10;
 
 	connection_t *connp = Conn[Players[ind]->conn];
+
+	/* Mind-linked to someone? Send him our weather */
+	player_type *p_ptr2 = NULL;
+	connection_t *connp2 = NULL;
+	/* If we're the target, we won't see our own weather */
+	if (Players[ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	/* Get target player */
+	if (get_esp_link(ind, LINKF_VIEW, &p_ptr2)) connp2 = Conn[p_ptr2->conn];
+
+
 	wilderness_type *w_ptr = &wild_info[Players[ind]->wpos.wy][Players[ind]->wpos.wx];
 
 	if (!is_newer_than(&connp->version, 4, 4, 2, 0, 0, 0)) return(0);
@@ -5916,6 +5985,9 @@ int Send_weather(int ind, int weather_type, int weather_wind, int weather_gen_sp
 //	if (c > cloud_limit) c = cloud_limit;
 
 	n = Packet_printf(&connp->c, "%c%d%d%d%d%d%d%d%d", PKT_WEATHER,
+	    weather_type, weather_wind, weather_gen_speed, weather_intensity, weather_speed,
+	    Players[ind]->panel_col_prt, Players[ind]->panel_row_prt, c);
+	if (connp2) Packet_printf(&connp2->c, "%c%d%d%d%d%d%d%d%d", PKT_WEATHER,
 	    weather_type, weather_wind, weather_gen_speed, weather_intensity, weather_speed,
 	    Players[ind]->panel_col_prt, Players[ind]->panel_row_prt, c);
 
@@ -5966,6 +6038,9 @@ s_printf("sending local cloud %d (%d,%d - %d,%d)\n", i, cx1, cy1, cx2, cy2);
 #endif
 
 				n = Packet_printf(&connp->c, "%d%d%d%d%d%d%d%d",
+				    i, cx1, cy1, cx2, cy2,
+				    w_ptr->cloud_dsum[i], w_ptr->cloud_xm100[i], w_ptr->cloud_ym100[i]);
+				if (connp2) Packet_printf(&connp2->c, "%d%d%d%d%d%d%d%d",
 				    i, cx1, cy1, cx2, cy2,
 				    w_ptr->cloud_dsum[i], w_ptr->cloud_xm100[i], w_ptr->cloud_ym100[i]);
 #endif

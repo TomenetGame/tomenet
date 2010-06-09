@@ -407,6 +407,11 @@ extern int project_interval;
 extern int project_time;
 extern s32b project_time_effect;
 extern effect_type effects[MAX_EFFECTS];
+
+#ifdef USE_SOUND_2010
+extern char audio_sfx[SOUND_MAX_2010][30];
+#endif
+
 /* variable.c ends here */
 
 /*
@@ -940,7 +945,10 @@ extern int Send_store_action(int ind, char pos, u16b bact, u16b action, cptr nam
 extern int Send_store_sell(int Ind, int price);
 extern int Send_store_kick(int Ind);
 extern int Send_target_info(int ind, int x, int y, cptr buf);
-extern int Send_sound(int ind, int sound);
+extern int Send_sound(int ind, int sound, int alternative, int type);
+#ifdef USE_SOUND_2010
+extern int Send_music(int ind, int music);
+#endif
 extern int Send_beep(int ind);
 extern int Send_AFK(int ind, byte afk);
 extern int Send_encumberment(int ind, byte cumber_armor, byte awkward_armor, byte cumber_glove, byte heavy_wield, byte heavy_shield, byte heavy_shoot,
@@ -1427,6 +1435,8 @@ extern errr path_temp(char *buf, int max);
 extern FILE *my_fopen(cptr file, cptr mode);
 extern errr my_fgets(FILE *fff, char *buf, huge n, bool conv);
 extern int get_playerind(char *name);
+extern int get_playerind_loose(char *name);
+extern int get_playerslot_loose(int Ind, char *iname);
 extern errr my_fputs(FILE *fff, cptr buf, huge n);
 extern errr my_fclose(FILE *fff);
 extern errr fd_kill(cptr file);
@@ -1441,7 +1451,13 @@ extern errr fd_read(int fd, char *buf, huge n);
 extern errr fd_write(int fd, cptr buf, huge n);
 extern errr fd_close(int fd);
 extern void bell(void);
+#ifdef USE_SOUND_2010
+extern void sound(int Ind, cptr name, cptr alternative, int type);
+extern void handle_music(int Ind);
+extern void sound_item(int Ind, int tval, int sval, cptr action);
+#else
 extern void sound(int Ind, int num);
+#endif
 extern void text_to_ascii(char *buf, cptr str);
 extern void ascii_to_text(char *buf, cptr str);
 extern void keymap_init(void);
@@ -1757,7 +1773,7 @@ void lua_s_print(cptr logstr);
 void lua_add_anote(char *anote);
 void lua_count_houses(int Ind);
 void lua_recalc_char(int Ind);
-void lua_examine_item(int Ind, cptr name, int item);
+void lua_examine_item(int Ind, int Ind_target, int item);
 void lua_determine_level_req(int Ind, int item);
 void lua_strip_true_arts_from_absent_players(void);
 void lua_strip_true_arts_from_present_player(int Ind, int mode);

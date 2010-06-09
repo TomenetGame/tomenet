@@ -649,7 +649,7 @@ static void place_between(struct worldpos *wpos, int y, int x)
 {
 	cave_type **zcave;
 	cave_type *c_ptr, *c1_ptr;
-	int gx, gy;
+	int gx, gy, tries = 1000;
 	c_special *cs_ptr;
 
 	if(!(zcave=getcave(wpos))) return;
@@ -674,6 +674,8 @@ static void place_between(struct worldpos *wpos, int y, int x)
 
 			if (!c1_ptr->special) break;
 		}
+
+		if (tries-- == 0) return;
 	}
 
 	if (!(cs_ptr=AddCS(c_ptr, CS_BETWEEN))) return;
@@ -1142,7 +1144,7 @@ static bool vault_aux_aquatic(int r_idx)
  */
 static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pierce)
 {
-	int		i, tx, ty;
+	int		i, tx, ty, tries = 1000;
 	int		y, x, dir;
 	cave_type *c_ptr;
 
@@ -1160,6 +1162,8 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 		x = rand_spread(dun->l_ptr->wid / 2, 15);
 
 		if (in_bounds4(dun->l_ptr, y, x)) break;
+
+		if (tries-- == 0) return;
 	}
 
 	/* Choose a random compass direction */
@@ -1174,11 +1178,13 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 			int d = DUN_STR_RNG;
 
 			/* Pick a nearby grid */
+			tries = 1000;
 			while (TRUE)
 			{
 				ty = rand_spread(y, d);
 				tx = rand_spread(x, d);
 				if (in_bounds4(dun->l_ptr, ty, tx)) break;
+				if (tries-- == 0) return;
 			}
 
 			/* Access the grid */
@@ -1247,7 +1253,7 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
  */
 static void build_streamer2(worldpos *wpos, int feat, int killwall)
 {
-	int i, j, mid, tx, ty;
+	int i, j, mid, tx, ty, tries = 1000;
 	int y, x, dir;
 	int poolchance;
 	int poolsize;
@@ -1271,6 +1277,7 @@ static void build_streamer2(worldpos *wpos, int feat, int killwall)
 		x = rand_spread(dun->l_ptr->wid / 2, 15);
 
 		if (in_bounds4(dun->l_ptr, y, x)) break;
+		if (!tries--) return;
 	}
 
 	/* Choose a random compass direction */
@@ -1287,11 +1294,13 @@ static void build_streamer2(worldpos *wpos, int feat, int killwall)
 				int d = DUN_STR_WLW;
 
 				/* Pick a nearby grid */
+				tries = 1000;
 				while (TRUE)
 				{
 					ty = rand_spread(y, d);
 					tx = rand_spread(x, d);
 					if (in_bounds4(dun->l_ptr, ty, tx)) break;
+					if (!tries--) return;
 				}
 
 				/* Access grid */
@@ -1587,7 +1596,7 @@ static void destroy_level(struct worldpos *wpos)
  */
 static void vault_objects(struct worldpos *wpos, int y, int x, int num, player_type *p_ptr)
 {
-	int        i, j, k;
+	int        i, j, k, tries = 1000;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
@@ -1603,6 +1612,7 @@ static void vault_objects(struct worldpos *wpos, int y, int x, int num, player_t
 				j = rand_spread(y, 2);
 				k = rand_spread(x, 3);
 				if (!in_bounds(j, k)) continue;
+				if (!tries--) return;
 				break;
 			}
 
@@ -1633,7 +1643,7 @@ static void vault_objects(struct worldpos *wpos, int y, int x, int num, player_t
  */
 static void vault_trap_aux(struct worldpos *wpos, int y, int x, int yd, int xd)
 {
-	int		count, y1, x1;
+	int		count, y1, x1, tries = 1000;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
@@ -1646,6 +1656,7 @@ static void vault_trap_aux(struct worldpos *wpos, int y, int x, int yd, int xd)
 			y1 = rand_spread(y, yd);
 			x1 = rand_spread(x, xd);
 			if (!in_bounds(y1, x1)) continue;
+			if (!tries--) return;
 			break;
 		}
 
@@ -3416,7 +3427,7 @@ static bool vault_aux_demon(int r_idx)
 static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_ptr)
 {
 	int y, x, y1, x1, y2, x2, xval, yval;
-	int		tmp, i, dun_lev;
+	int		tmp, i, dun_lev, tries = 2000;
 	s16b		what[64];
 	cave_type	*c_ptr;
 	cptr		name;
@@ -3521,8 +3532,10 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_
 			if (r_info[template_race].flags1 & RF1_UNIQUE) continue;
 
 			/* Reject OoD monsters in a loose fashion */
-		    if (((r_info[template_race].level) + randint(5)) >
+			if (((r_info[template_race].level) + randint(5)) >
 			    (dun_lev + randint(5))) continue;
+
+			if (!tries--) return;
 
 			/* Don't like 'break's like this, but this cannot be made better */
 			break;

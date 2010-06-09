@@ -167,6 +167,10 @@ void do_cmd_eat_food(int Ind, int item)
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
+#ifdef USE_SOUND_2010
+	sound(Ind, "eat", NULL, SFX_TYPE_COMMAND);
+#endif
+
 	/* Identity not known yet */
 	ident = FALSE;
 
@@ -848,6 +852,9 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 			case SV_POTION_DETONATIONS:
 				{
+#ifdef USE_SOUND_2010
+					sound(Ind, "detonation", NULL, SFX_TYPE_MISC);
+#endif
 					msg_print(Ind, "Massive explosions rupture your body!");
 					msg_format_near(Ind, "%s blows up!", p_ptr->name);
 					take_hit(Ind, damroll(50, 20), "a Potion of Detonation", 0);
@@ -1423,7 +1430,15 @@ void do_cmd_quaff_potion(int Ind, int item)
 
 
 	/* Potions can feed the player */
+#if 0 /* enable maybe if undead forms also result in vampire-race like feed restrictions */
 	if (!p_ptr->suscep_life)
+#else /* until then.. */
+	if (p_ptr->prace == RACE_VAMPIRE) {
+		/* nothing */
+	} else if (p_ptr->suscep_life) {
+		(void)set_food(Ind, p_ptr->food + (o_ptr->pval * 2) / 3);
+	} else
+#endif
 		(void)set_food(Ind, p_ptr->food + o_ptr->pval);
 
 	if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
@@ -1443,6 +1458,10 @@ void do_cmd_quaff_potion(int Ind, int item)
 		floor_item_describe(0 - item);
 		floor_item_optimize(0 - item);
 	}
+
+#ifdef USE_SOUND_2010
+	sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND);
+#endif
 }
 
 /*
@@ -2319,6 +2338,10 @@ void do_cmd_read_scroll(int Ind, int item)
 
 	/* Assume the scroll will get used up */
 	used_up = TRUE;
+
+#ifdef USE_SOUND_2010
+	sound(Ind, "read_scroll", NULL, SFX_TYPE_COMMAND);
+#endif
 
 	/* Analyze the scroll */
 	if (o_ptr->tval == TV_SCROLL)

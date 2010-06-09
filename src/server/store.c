@@ -2287,6 +2287,9 @@ void store_stole(int Ind, int item)
 	object_type sell_obj, *o_ptr;
 	char o_name[ONAME_LEN];
 
+	byte old_discount;
+	u16b old_note;
+
 	/* Get town or dungeon the store is located within */
 	i=gettown(Ind);
 //	if(i==-1) return;       //DUNGEON STORES
@@ -2395,11 +2398,24 @@ void store_stole(int Ind, int item)
 		sell_obj.pval = divide_charged_item(o_ptr, amt);
 	}
 
+	/*
+	 * Hack -- Mark the item temporarily as stolen so that the
+	 * inven_carry_okay check works properly - mikaelh
+         */
+	old_discount = sell_obj.discount;
+	old_note = sell_obj.note;
+	sell_obj.discount = 100;
+	sell_obj.note = quark_add("stolen");
+
 	/* Hack -- require room in pack */
 	if (!inven_carry_okay(Ind, &sell_obj)) {
 		msg_print(Ind, "You cannot carry that many different items.");
 		return;
 	}
+
+	/* Restore the item */
+	sell_obj.discount = old_discount;
+	sell_obj.note = old_note;
 
 	/* shopkeepers in special shops are often especially careful */
 	if (st_info[st_ptr->st_idx].flags1 & SF1_NO_STEAL) {
@@ -3069,6 +3085,12 @@ void store_sell(int Ind, int item, int amt)
 	object_type		*o_ptr;
 
 	char		o_name[ONAME_LEN];
+
+	/* Sanity check */
+	if (item < 0 || item >= INVEN_TOTAL)
+	{
+		return;
+	}
 
 	/* Check for client-side exploit! */
 	if (p_ptr->inventory[item].number < amt) {

@@ -9462,8 +9462,10 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			/* Draw the spot */
 			everyone_lite_spot(wpos, ny, nx);
 
-			/* Sound */
+#ifdef USE_SOUND_2010
+#else
 			/*sound(SOUND_DROP);*/
+#endif
 
 			/* Mega-Hack -- no message if "dropped" by player */
 			/* Message when an object falls under the player */
@@ -10080,12 +10082,19 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 
 
 	/* Find an empty slot */
-	for (j = 0; j <= INVEN_PACK; j++)
+	for (j = 0; j < INVEN_PACK; j++)
 	{
 		j_ptr = &p_ptr->inventory[j];
 
 		/* Use it if found */
 		if (!j_ptr->k_idx) break;
+	}
+
+	/* Check if if the overflow slot is already occupied */
+	if (j == INVEN_PACK && p_ptr->inventory[INVEN_PACK].k_idx) {
+		/* Force a pack overflow now to clear the overflow slot */
+		s_printf("WARNING: Forcing a pack overflow for player %s.\n", p_ptr->name);
+		pack_overflow(Ind);
 	}
 
 	/* Use that slot */

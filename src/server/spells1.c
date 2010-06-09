@@ -259,6 +259,9 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 			aggravate_monsters_floorpos(wpos, y, x);
 			angry = TRUE;
 			ident = TRUE;
+#ifdef USE_SOUND_2010
+			if (who > 0) sound(who, "detonation", NULL, SFX_TYPE_MISC);
+#endif
 			break;
 		case SV_POTION_DEATH:
 //			dt = GF_DEATH_RAY;	/* !! */	/* not implemented yet. */
@@ -445,6 +448,11 @@ bool teleport_away(int m_idx, int dis)
 {
 	int		oy, ox, d, i, min;
 	int		ny=0, nx=0, tries = 5000;
+#if 0 /* see below */
+#ifdef USE_SOUND_2010
+	int org_dis = dis;
+#endif
+#endif
 
 	bool		look = TRUE;
 
@@ -548,6 +556,13 @@ bool teleport_away(int m_idx, int dis)
 	/* Redraw the new grid */
 	everyone_lite_spot(wpos, ny, nx);
 
+#if 0 /* no player Ind involved here */
+#ifdef USE_SOUND_2010
+	if (org_dis <= 20 && org_dis >= 10) sound(Ind, "phase_door", NULL, SFX_TYPE_COMMAND);
+	else if (org_dis > 20) sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND);
+#endif
+#endif
+
 	/* Succeeded. */
 	return TRUE;
 }
@@ -649,8 +664,11 @@ void teleport_to_player(int Ind, int m_idx)
 		min = min / 2;
 	}
 
-	/* Sound */
+#ifdef USE_SOUND_2010
+	sound(Ind, "monster_blinks", NULL, SFX_TYPE_COMMAND);
+#else
 //	sound(SOUND_TPOTHER);
+#endif
 
 	/* Update the new location */
 	zcave[ny][nx].m_idx = m_idx;
@@ -683,7 +701,9 @@ void teleport_to_player(int Ind, int m_idx)
 bool teleport_player(int Ind, int dis, bool ignore_pvp)
 {
 	player_type *p_ptr = Players[Ind];
-
+#ifdef USE_SOUND_2010
+	int org_dis = dis;
+#endif
 	int d, i, min, ox, oy, x = p_ptr->py, y = p_ptr->px;
 	int xx , yy, m_idx, tries = 3000;
 	worldpos *wpos=&p_ptr->wpos;
@@ -867,7 +887,12 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp)
 
 	/* Handle stuff XXX XXX XXX */
 	if (!p_ptr->death) handle_stuff(Ind);
-	
+
+#ifdef USE_SOUND_2010
+	if (org_dis <= 20 && org_dis >= 10) sound(Ind, "phase_door", NULL, SFX_TYPE_COMMAND);
+	else if (org_dis > 20) sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND);
+#endif
+
 	return TRUE;
 }
 
@@ -896,6 +921,13 @@ void teleport_player_force(int Ind, int dis)
 	p_ptr->anti_tele = anti_tele;
 	/* restore death flag */
 	p_ptr->death = death;
+
+#ifdef USE_SOUND_2010
+	if (!death) {
+		if (dis <= 20 && dis >= 10) sound(Ind, "phase_door", NULL, SFX_TYPE_COMMAND);
+		else if (dis > 20) sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND);
+	}
+#endif
 }
 
 
@@ -996,6 +1028,10 @@ void teleport_player_to(int Ind, int ny, int nx)
 
 	/* Handle stuff XXX XXX XXX */
 	handle_stuff(Ind);
+
+#ifdef USE_SOUND_2010
+	sound(Ind, "monster_blinks", NULL, SFX_TYPE_COMMAND);
+#endif
 }
 
 
@@ -1112,6 +1148,10 @@ void teleport_player_level(int Ind)
 	new_players_on_depth(wpos,1,TRUE);
 
 	p_ptr->new_level_flag = TRUE;
+
+#ifdef USE_SOUND_2010
+	sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND);
+#endif
 }
 
 static byte mh_attr(int max)
@@ -1438,15 +1478,9 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 	p_ptr->window |= (PW_PLAYER);
 
 	/* Dead player */
-	if (p_ptr->chp < 0)
-	{
-		/* Sound */
-		sound(Ind, SOUND_DEATH);
-
-		if (IS_PLAYER(Ind_attacker))
-		{
-			if (check_blood_bond(Ind, Ind_attacker))
-			{
+	if (p_ptr->chp < 0) {
+		if (IS_PLAYER(Ind_attacker)) {
+			if (check_blood_bond(Ind, Ind_attacker)) {
 				player_type *p2_ptr = Players[Ind_attacker];
 				p_ptr->chp = p_ptr->mhp;
 				p2_ptr->chp = p2_ptr->mhp;
@@ -1503,8 +1537,8 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 	if (p_ptr->warning_rest == 0
 //	    && p_ptr->max_plv < 15
 	    && p_ptr->chp * 10 / p_ptr->mhp <= 5) {
-		msg_print(Ind, "\377oHINT: Press \377Rshift+r\377o to rest, so your hit points will");
-		msg_print(Ind, "\377o      regenerate faster. (Also true for mana and stamina.)");
+		msg_print(Ind, "\374\377oHINT: Press \377Rshift+r\377o to rest, so your hit points will");
+		msg_print(Ind, "\374\377o      regenerate faster. (Also true for mana and stamina.)");
 		p_ptr->warning_rest = 1;
 		acc_set_flags(p_ptr->accountname, ACC_WARN_REST, FALSE);
 	}
@@ -1570,9 +1604,6 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 	/* Dead player */
 	if (p_ptr->csane < 0)
 	{
-		/* Sound */
-		sound(Ind, SOUND_DEATH);
-
 		/* Hack -- Note death */
 		msg_print(Ind, "\377vYou turn into an unthinking vegetable.");
 /*		msg_print(Ind, "\377RYou die.");
@@ -1673,11 +1704,7 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal)
 	check_experience(Ind);
 
 	/* Dead player */
-	if (fatal && p_ptr->exp == 0)
-	{
-		/* Sound */
-		sound(Ind, SOUND_DEATH);
-
+	if (fatal && p_ptr->exp == 0) {
 		/* Hack -- Note death */
 /*		msg_print(Ind, "\377RYou die.");
 		msg_print(Ind, NULL); - what's so 'hacky' about this?
@@ -7142,6 +7169,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	{
 		bool fear = FALSE;
 
+		if (p_ptr->admin_godly_strike) {
+			p_ptr->admin_godly_strike--;
+			if (!(r_ptr->flags1 & RF1_UNIQUE)) dam = m_ptr->hp + 1;
+		}
+
 		/* Hurt the monster, check for fear and death */
 		if (!quiet && mon_take_hit(Ind, c_ptr->m_idx, dam, &fear, note_dies))
 		{
@@ -7169,8 +7201,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 				/* Take note */
 				if (fear || do_fear) {
-					/* Sound */
+#ifdef USE_SOUND_2010
+#else
 					sound(Ind, SOUND_FLEE);
+#endif
 					/* Message */
 					if (!streq(m_name, "Morgoth, Lord of Darkness"))
 						msg_format(Ind, "%^s flees in terror!", m_name);
@@ -7182,8 +7216,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			/* Take note */
 			if (!quiet && (fear || do_fear) && (p_ptr->mon_vis[c_ptr->m_idx]))
 			{
-				/* Sound */
+#ifdef USE_SOUND_2010
+#else
 				sound(Ind, SOUND_FLEE);
+#endif
 
 				/* Message */
 				if (!streq(m_name, "Morgoth, Lord of Darkness"))

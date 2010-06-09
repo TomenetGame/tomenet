@@ -1085,11 +1085,308 @@ void bell(void)
 /*
  * Mega-Hack -- Make a (relevant?) sound
  */
-void sound(int Ind, int val)
-{
-	/* Make a sound */
+#ifndef USE_SOUND_2010
+void sound(int Ind, int val) {
 	Send_sound(Ind, val);
 }
+#else
+void sound(int Ind, cptr name, cptr alternative, int type) {
+
+#if 0 /* non-optimized way (causes LUA errors if sound() is called in fire_ball() which is in turn called from LUA - C. Blue */
+	int val, val2;
+
+	val = exec_lua(0, format("return get_sound_index(\"%s\")", name));
+
+	if (alternative) {
+		val2 = exec_lua(0, format("return get_sound_index(\"%s\")", alternative));
+	} else {
+		val2 = -1;
+	}
+
+#else /* optimized way... */
+	int val = -1, val2 = -1, i;
+
+	for (i = 0; i < SOUND_MAX_2010; i++) {
+		if (!audio_sfx[i][0]) break;
+		if (!strcmp(audio_sfx[i], name)) {
+			val = i;
+			break;
+		}
+	}
+
+	if (alternative) {
+		for (i = 0; i < SOUND_MAX_2010; i++) {
+			if (!audio_sfx[i][0]) break;
+			if (!strcmp(audio_sfx[i], alternative)) {
+				val2 = i;
+				break;
+			}
+		}
+	}
+
+#endif
+
+//	if (is_admin(Players[Ind])) s_printf("USE_SOUND_2010: looking up sound %s -> %d.\n", name, val);
+
+	if (val == -1) {
+		if (val2 != -1) {
+			/* Use the alternative instead */
+			val = val2;
+			val2 = -1;
+		} else {
+			return;
+		}
+	}
+
+	Send_sound(Ind, val, val2, type);
+}
+/* find correct music for the player based on his current location - C. Blue */
+void handle_music(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	dun_level *l_ptr = NULL;
+	int i = -1;
+
+	if (p_ptr->wpos.wz != 0) {
+		l_ptr = getfloor(&p_ptr->wpos);
+		if (p_ptr->wpos.wz < 0)
+			i = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon->type;
+		else
+			i = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower->type;
+	}
+
+
+	if (getlevel(&p_ptr->wpos) == 196) {
+		//Zu-Aon
+		//hack: init music as 'higher priority than boss-specific':
+		p_ptr->music_monster = -2;
+		Send_music(Ind, 43);
+		return;
+	} else if ((i != -1) && (l_ptr->flags1 & LF1_NO_GHOST)) {
+		//Morgoth
+		//hack: init music as 'higher priority than boss-specific':
+		p_ptr->music_monster = -2;
+		Send_music(Ind, 42);
+		return;
+	}
+
+	if (getlevel(&p_ptr->wpos) == 200) {
+		//hack: init music as 'higher priority than boss-specific':
+		p_ptr->music_monster = -2;
+		Send_music(Ind, 6); //Valinor
+		return;
+	} else if (p_ptr->wpos.wx == WPOS_PVPARENA_X &&
+	    p_ptr->wpos.wy == WPOS_PVPARENA_Y && p_ptr->wpos.wz == WPOS_PVPARENA_Z) {
+		//hack: init music as 'higher priority than boss-specific':
+		p_ptr->music_monster = -2;
+		Send_music(Ind, 45); //PvP Arena
+		return;
+	} else if (ge_special_sector && p_ptr->wpos.wx == WPOS_ARENA_X &&
+	    p_ptr->wpos.wy == WPOS_ARENA_Y && p_ptr->wpos.wz == WPOS_ARENA_Z) {
+		//hack: init music as 'higher priority than boss-specific':
+		p_ptr->music_monster = -2;
+		Send_music(Ind, 46); //Monster Arena Challenge
+		return;
+	} else if (sector00separation && p_ptr->wpos.wx == WPOS_HIGHLANDER_X &&
+	    p_ptr->wpos.wy == WPOS_HIGHLANDER_Y && p_ptr->wpos.wz == WPOS_HIGHLANDER_Z) {
+		//hack: init music as 'higher priority than boss-specific':
+		p_ptr->music_monster = -2;
+		Send_music(Ind, 45); //Highlander Tournament (death match phase)
+		return;
+	}
+
+	/* rest of the music has lower priority than already running, boss-specific music */
+	if (p_ptr->music_monster != -1) return;
+
+	if (p_ptr->wpos.wz == 0) {
+		if (istown(&p_ptr->wpos)) {
+		    for (i = 0; i < numtowns; i++)
+			if (town[i].x == p_ptr->wpos.wx && town[i].y == p_ptr->wpos.wy) {
+				switch (town[i].type) {
+				default:
+				case 0: Send_music(Ind, 0); return;//default town
+				case 1: Send_music(Ind, 1); return;//Bree
+				case 2: Send_music(Ind, 2); return;
+				case 3: Send_music(Ind, 3); return;
+				case 4: Send_music(Ind, 4); return;
+				case 5: Send_music(Ind, 5); return;
+				}
+			}
+		} else {
+			if (night_surface) Send_music(Ind, 8);
+			else Send_music(Ind, 7);
+			return;
+		}
+	} else {
+		if ((i != 6) && /*not in Nether Realm, really ^^*/
+		    (!(d_info[i].flags2 & DF2_NO_DEATH))) { /* nor in easy dungeons */
+			if (p_ptr->distinct_floor_feeling || is_admin(p_ptr)) {
+				if (l_ptr->flags2 & LF2_OOD_HI) {
+					Send_music(Ind, 44);
+					return;
+				}
+			}
+		}
+
+		//we could just look through audio.lua, by querying get_music_name() I guess..
+		switch (i) {
+		default:
+		case 0:
+			if (d_info[i].flags2 & DF2_NO_DEATH) Send_music(Ind, 10);
+			else if (d_info[i].flags2 & DF2_IRON) Send_music(Ind, 11);
+			else if ((d_info[i].flags2 & DF2_HELL) || (d_info[i].flags1 & DF1_FORCE_DOWN)) Send_music(Ind, 12);
+			else Send_music(Ind, 9);
+			return;
+		case 1: Send_music(Ind, 30); return; //Mirkwood
+		case 2: Send_music(Ind, 15); return; //Mordor
+		case 3: Send_music(Ind, 17); return; //Angband
+		case 4: Send_music(Ind, 14); return; //Barrow-Downs
+		case 5: Send_music(Ind, 19); return; //Mount Doom
+		case 6: Send_music(Ind, 20); return; //Nether Realm
+		case 7: Send_music(Ind, 33); return; //Submerged Ruins
+		case 8: Send_music(Ind, 24); return; //Halls of Mandos
+		case 9: Send_music(Ind, 28); return; //Cirith Ungol
+		case 10: Send_music(Ind, 26); return; //The Heart of the Earth
+		case 16: Send_music(Ind, 16); return; //The Paths of the Dead
+		case 17: Send_music(Ind, 35); return; //The Illusory Castle
+		case 18: Send_music(Ind, 37); return; //The Maze
+		case 19: Send_music(Ind, 18); return; //The Orc Cave
+		case 20: Send_music(Ind, 34); return; //Erebor
+		case 21: Send_music(Ind, 25); return; //The Old Forest
+		case 22: Send_music(Ind, 27); return; //The Mines of Moria
+		case 23: Send_music(Ind, 32); return; //Dol Guldur
+		case 24: Send_music(Ind, 29); return; //The Small Water Cave
+		case 25: Send_music(Ind, 36); return; //The Sacred Land of Mountains
+		case 26: Send_music(Ind, 22); return; //The Land of Rhun
+		case 27: Send_music(Ind, 23); return; //The Sandworm Lair
+		case 28: Send_music(Ind, 31); return; //Death Fate
+		case 29: Send_music(Ind, 21); return; //The Helcaraxe
+		case 30: Send_music(Ind, 13); return; //The Training Tower
+		}
+	}
+}
+
+/* generate an item-type specific sound, depending on the action applied to it
+   action: 0 = pickup, 1 = drop, 2 = wear/wield, 3 = takeoff, 4 = throw, 5 = destroy */
+//#define SN(S)	format("%s%s", action, S)
+void sound_item(int Ind, int tval, int sval, cptr action) {
+	char sound_name[30];
+	cptr item = "";
+
+	/* action hack: re-use sounds! */
+	action = "item_";
+
+	/* choose sound */
+#if 0 /* SN(S)-using variant: */
+	if (is_weapon(tval)) {
+		switch(tval) {
+		case TV_SWORD: sound(Ind, SN("sword"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_BLUNT:
+			if (sval == SV_WHIP) sound(Ind, SN("whip"), NULL, SFX_TYPE_COMMAND);
+			else sound(Ind, SN("blunt"), NULL, SFX_TYPE_COMMAND);
+			break;
+		break;
+		case TV_AXE: sound(Ind, SN("axe"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_POLEARM: sound(Ind, SN("polearm"), NULL, SFX_TYPE_COMMAND); break;
+		}
+	} else if (is_armour(tval)) {
+		if (is_textile_armour(tval, sval))
+			sound(Ind, SN("armor_light"), NULL, SFX_TYPE_COMMAND);
+		else
+			sound(Ind, SN("armor_heavy"), NULL, SFX_TYPE_COMMAND);
+	} else switch(tval) {
+		/* equippable stuff */
+		case TV_LITE: sound(Ind, SN("lightsource"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_RING: sound(Ind, SN("ring"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_AMULET: sound(Ind, SN("amulet"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_TOOL: sound(Ind, SN("tool"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_DIGGING: sound(Ind, SN("tool_digger"), NULL, SFX_TYPE_COMMAND); break;
+//		case TV_MSTAFF: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+//		case TV_BOOMERANG: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+//		case TV_BOW: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+//		case TV_SHOT: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+//		case TV_ARROW: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+//		case TV_BOLT: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+		/* other items */
+		case TV_SCROLL: case TV_PARCHMENT:
+			sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+/*		case TV_BOTTLE: sound(Ind, SN("potion"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_POTION: case TV_POTION2: case TV_FLASK:
+			sound(Ind, SN("potion"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_RUNE1: case TV_RUNE2:
+			sound(Ind, SN("rune"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_SKELETON: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_FIRESTONE: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_SPIKE: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_CHEST: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_JUNK: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_TRAPKIT: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_STAFF: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_WAND: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_ROD: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_ROD_MAIN: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_FOOD: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_KEY: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_GOLEM: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_SEAL: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+*/	}
+#else /* non SN(S)-using variant */
+	if (is_weapon(tval)) switch(tval) {
+		case TV_SWORD: item = "sword"; break;
+		case TV_BLUNT:
+			if (sval == SV_WHIP) item = "whip"; else item = "blunt";
+			break;
+		case TV_AXE: item = "axe"; break;
+		case TV_POLEARM: item = "polearm"; break;
+	} else if (is_armour(tval)) {
+		if (is_textile_armour(tval, sval))
+			item = "armor_light";
+		else
+			item = "armor_heavy";
+	} else switch(tval) {
+		/* equippable stuff */
+		case TV_LITE: item = "lightsource"; break;
+		case TV_RING: item = "ring"; break;
+		case TV_AMULET: item = "amulet"; break;
+		case TV_TOOL: item = "tool"; break;
+		case TV_DIGGING: item = "tool_digger"; break;
+//		case TV_MSTAFF: item = "scroll"; break;
+//		case TV_BOOMERANG: item = "scroll"; break;
+//		case TV_BOW: item = "scroll"; break;
+//		case TV_SHOT: item = "scroll"; break;
+//		case TV_ARROW: item = "scroll"; break;
+//		case TV_BOLT: item = "scroll"; break;
+		/* other items */
+		case TV_SCROLL: case TV_PARCHMENT:
+			item = "scroll"; break;
+/*		case TV_BOTTLE: item = "potion"; break;
+		case TV_POTION: case TV_POTION2: case TV_FLASK:
+			item = "potion"; break;
+		case TV_RUNE1: case TV_RUNE2:
+			item = "rune"; break;
+		case TV_SKELETON: item = "scroll"; break;
+		case TV_FIRESTONE: item = "scroll"; break;
+		case TV_SPIKE: item = "scroll"; break;
+		case TV_CHEST: item = "scroll"; break;
+		case TV_JUNK: item = "scroll"; break;
+		case TV_TRAPKIT: item = "scroll"; break;
+		case TV_STAFF: item = "scroll"; break;
+		case TV_WAND: item = "scroll"; break;
+		case TV_ROD: item = "scroll"; break;
+		case TV_ROD_MAIN: item = "scroll"; break;
+		case TV_FOOD: item = "scroll"; break;
+		case TV_KEY: item = "scroll"; break;
+		case TV_GOLEM: item = "scroll"; break;
+		case TV_SEAL: item = "scroll"; break;
+*/	}
+
+	/* build sound name from action and item */
+	strcpy(sound_name, action);
+	strcat(sound_name, item);
+	/* off we go */
+	sound(Ind, sound_name, NULL, SFX_TYPE_COMMAND);
+#endif
+}
+#endif
 
 /*
  * We use a global array for all inscriptions to reduce the memory
@@ -1189,11 +1486,11 @@ bool check_guard_inscription( s16b quark, char what ) {
 		    case 't': /* no take off */
 		      return TRUE;
 		};
-	    };  
-	};  
-    };  
+	    };
+	};
+    };
     return FALSE;
-}  
+}
 
 
 /*
@@ -2259,7 +2556,7 @@ static void player_talk_aux(int Ind, char *message)
 					break;
 				case 3:
 				case 4:
-					msg_print(Ind, "\377rWarning! this behaviour is unacceptable!");
+					msg_print(Ind, "\374\377rWarning! this behaviour is unacceptable!");
 					break;
 				case 5:
 					p_ptr->chp=-3;
@@ -2656,13 +2953,13 @@ void toggle_afk(int Ind, char *msg)
 		if (p_ptr->food < PY_FOOD_ALERT)
 		{
 			p_ptr->paging = 6; /* add some beeps, too - mikaelh */
-			msg_print(Ind, "\377RWARNING: Going AFK while hungry or weak can result in starvation! Eat first!");
+			msg_print(Ind, "\374\377RWARNING: Going AFK while hungry or weak can result in starvation! Eat first!");
 		}
 
 		/* Since Mark's mimic died in front of Minas XBM due to this.. - C. Blue */
 		if (p_ptr->tim_wraith) {
 			p_ptr->paging = 6;
-			msg_print(Ind, "\377RWARNING: Going AFK in wraithform is very dangerous because wraithform impairs auto-retaliation!");
+			msg_print(Ind, "\374\377RWARNING: Going AFK in wraithform is very dangerous because wraithform impairs auto-retaliation!");
 		}
 	}
 
@@ -3118,16 +3415,43 @@ byte count_bits(u32b array)
  */
 int get_playerind(char *name)
 {
-        int i;
+	int i;
 
-        if (name == (char*)NULL)
-                return(-1);
-        for(i=1; i<=NumPlayers; i++)
-        {
-                if(Players[i]->conn==NOT_CONNECTED) continue;
-                if(!stricmp(Players[i]->name, name)) return(i);
-        }
-        return(-1);
+	if (name == (char*)NULL) return(-1);
+	for(i = 1; i <= NumPlayers; i++) {
+		if(Players[i]->conn == NOT_CONNECTED) continue;
+		if(!stricmp(Players[i]->name, name)) return(i);
+	}
+	return(-1);
+}
+int get_playerind_loose(char *name)
+{
+	int i, len = strlen(name);
+
+	if (len == 0) return(-1);
+	if (name == (char*)NULL) return(-1);
+	for(i = 1; i <= NumPlayers; i++) {
+		if(Players[i]->conn == NOT_CONNECTED) continue;
+		if (!strncasecmp(Players[i]->name, name, len)) return(i);
+	}
+	return(-1);
+}
+
+int get_playerslot_loose(int Ind, char *iname)
+{
+	int i, len;
+	char o_name[160];
+
+	if (iname == (char*)NULL) return(-1);
+	len = strlen(iname);
+	if (len == 0) return(-1);
+	for(i = 0; i < INVEN_TOTAL; i++) {
+		if(!Players[Ind]->inventory[i].k_idx) continue;
+		object_desc(0, o_name, &Players[Ind]->inventory[i], FALSE, 0);
+		if (strstr(o_name, iname)) return(i);
+//		if (!strncasecmp(o_name, iname, len)) return(i);
+	}
+	return(-1);
 }
 
 /*
@@ -3220,7 +3544,7 @@ bool show_floor_feeling(int Ind)
 	if (l_ptr->flags1 & LF1_NO_DESTROY)
 		msg_print(Ind, "\377oThe walls here seem very solid.");
 	if (l_ptr->flags1 & LF1_NO_GHOST)
-		msg_print(Ind, "\377oYou feel that your life hangs in the balance!");
+		msg_print(Ind, "\377oYou feel that your life hangs in the balance!"); //credits to Moltor actually, ha!:)
 #if 0
 	if (l_ptr->flags1 & DF1_NO_RECALL)
 		msg_print(Ind, "\377oThere is strong magic enclosing this dungeon.");

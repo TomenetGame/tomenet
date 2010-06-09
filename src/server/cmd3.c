@@ -95,6 +95,10 @@ void inven_takeoff(int Ind, int item, int amt)
 		act = "You were wearing";
 	}
 
+#ifdef USE_SOUND_2010
+	sound_item(Ind, o_ptr->tval, o_ptr->sval, "takeoff_");
+#endif
+
 #if 0 //DSMs don't poly anymore due to cheeziness. They breathe instead.
 	/* Polymorph back */
 	/* XXX this can cause strange things for players with mimicry skill.. */
@@ -271,6 +275,10 @@ void inven_drop(int Ind, int item, int amt)
 		return;
 	}
 	bypass_inscrption = FALSE;
+
+#ifdef USE_SOUND_2010
+	sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
+#endif
 
 	/* Make a "fake" object */
 	tmp_obj = *o_ptr;
@@ -451,22 +459,117 @@ void inven_drop(int Ind, int item, int amt)
 /*
  * The "wearable" tester
  */
-bool item_tester_hook_wear(int Ind, int slot)
-{
+#if 1 /* new way: 'fruit bat body' is checked first: it's restrictions will be inherited by all other forms */
+bool item_tester_hook_wear(int Ind, int slot) {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = NULL;
 	if (p_ptr->body_monster) r_ptr = &r_info[p_ptr->body_monster];
-	
+
+	if (p_ptr->fruit_bat) {
+		switch(slot) {
+		case INVEN_RIGHT:
+		case INVEN_LEFT:
+		case INVEN_NECK:
+		case INVEN_HEAD:
+		case INVEN_OUTER:
+		case INVEN_LITE:
+		case INVEN_ARM:
+		case INVEN_TOOL:    //allow them to wear, say, picks and shovels - the_sandman
+			break; //fine
+		default:
+			return FALSE; //not fine
+		}
+	}
+
+	if (p_ptr->body_monster &&
+	    (p_ptr->pclass != CLASS_DRUID) &&
+	    ((p_ptr->pclass != CLASS_SHAMAN) || !strchr("EG", r_ptr->d_char)) &&
+	    (p_ptr->prace != RACE_VAMPIRE)
+	    ) {
+		switch(slot) {
+		case INVEN_WIELD:
+		case INVEN_BOW:
+			if (r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
+			break;
+		case INVEN_LEFT:
+			if (r_ptr->body_parts[BODY_FINGER] > 1) return (TRUE);
+			break;
+		case INVEN_RIGHT:
+			if (r_ptr->body_parts[BODY_FINGER]) return (TRUE);
+			break;
+		case INVEN_NECK:
+		case INVEN_HEAD:
+			if (r_ptr->body_parts[BODY_HEAD]) return (TRUE);
+			break;
+		case INVEN_LITE:
+			/* Always allow to carry light source? :/ */
+			/* return (TRUE); break; */
+			if (r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
+			if (r_ptr->body_parts[BODY_FINGER]) return (TRUE);
+			if (r_ptr->body_parts[BODY_HEAD]) return (TRUE);
+			if (r_ptr->body_parts[BODY_ARMS]) return (TRUE);
+			break;
+		case INVEN_BODY:
+		case INVEN_OUTER:
+		case INVEN_AMMO:
+			if (r_ptr->body_parts[BODY_TORSO]) return (TRUE);
+			break;
+		case INVEN_ARM:
+			if (r_ptr->body_parts[BODY_ARMS]) return (TRUE);
+			break;
+		case INVEN_TOOL:
+			/* make a difference :) - C. Blue */
+			if (r_ptr->body_parts[BODY_ARMS] ||
+//			    r_ptr->body_parts[BODY_FINGER] ||
+			    r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
+			break;
+		case INVEN_HANDS:
+//			if (r_ptr->body_parts[BODY_FINGER]) return (TRUE); too silyl (and powerful)
+//			if (r_ptr->body_parts[BODY_ARMS]) return (TRUE); was standard, but now:
+			if (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_ARMS]) return (TRUE);
+			break;
+		case INVEN_FEET:
+			if (r_ptr->body_parts[BODY_LEGS]) return (TRUE);
+			break;
+		}
+	}
+#if 0
+	else if (r_info[p_ptr->body_monster].flags3 & RF3_DRAGON) {
+		switch(slot) {
+		case INVEN_WIELD:
+		case INVEN_RIGHT:
+		case INVEN_LEFT:
+		case INVEN_HEAD:
+		case INVEN_BODY:
+		case INVEN_LITE:
+		case INVEN_FEET: return TRUE;
+		}
+	}
+#endif	// 0
+	/* Check for a usable slot */
+	else if (slot >= INVEN_WIELD) return (TRUE);
+
+	/* Assume not wearable */
+	return (FALSE);
+}
+
+#else // old way, deprecated
+
+bool item_tester_hook_wear(int Ind, int slot) {
+	player_type *p_ptr = Players[Ind];
+	monster_race *r_ptr = NULL;
+	if (p_ptr->body_monster) r_ptr = &r_info[p_ptr->body_monster];
+
 	/*
 	 * Hack -- restrictions by forms
 	 * I'm not quite sure if wielding 6 rings and 3 weps should be allowed..
 	 * Shapechanging Druids do not get penalized...
-	 
+
 	 * Another hack for shamans (very experimental):
 	 * They can use their full equipment in E and G (spirit/elemental/ghost) form.
-	 * 
+	 *
 	 * Druid bats can't wear full eq.
-	 */ 
+	 */
 #if 0
 	if (p_ptr->body_monster &&
 	    ((p_ptr->pclass != CLASS_DRUID) || p_ptr->fruit_bat) &&
@@ -481,52 +584,51 @@ bool item_tester_hook_wear(int Ind, int slot)
 	    )
 #endif
 	{
-		switch(slot)
-		{
-			case INVEN_WIELD:
-			case INVEN_BOW:
-				if (r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
-				break;
-			case INVEN_LEFT:
-				if (r_ptr->body_parts[BODY_FINGER] > 1) return (TRUE);
-				break;
-			case INVEN_RIGHT:
-				if (r_ptr->body_parts[BODY_FINGER]) return (TRUE);
-				break;
-			case INVEN_NECK:
-			case INVEN_HEAD:
-				if (r_ptr->body_parts[BODY_HEAD]) return (TRUE);
-				break;
-			case INVEN_LITE:
-				/* Always allow to carry light source? :/ */
-				/* return (TRUE); break; */
-				if (r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
-				if (r_ptr->body_parts[BODY_FINGER]) return (TRUE);
-				if (r_ptr->body_parts[BODY_HEAD]) return (TRUE);
-				if (r_ptr->body_parts[BODY_ARMS]) return (TRUE);
-				break;
-			case INVEN_BODY:
-			case INVEN_OUTER:
-			case INVEN_AMMO:
-				if (r_ptr->body_parts[BODY_TORSO]) return (TRUE);
-				break;
-			case INVEN_ARM:
-				if (r_ptr->body_parts[BODY_ARMS]) return (TRUE);
-				break;
-			case INVEN_TOOL:
-				/* make a difference :) - C. Blue */
-				if (r_ptr->body_parts[BODY_ARMS] ||
-//				    r_ptr->body_parts[BODY_FINGER] ||
-				    r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
-				break;
-			case INVEN_HANDS:
-//				if (r_ptr->body_parts[BODY_FINGER]) return (TRUE); too silyl (and powerful)
-//				if (r_ptr->body_parts[BODY_ARMS]) return (TRUE); was standard, but now:
-				if (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_ARMS]) return (TRUE);
-				break;
-			case INVEN_FEET:
-				if (r_ptr->body_parts[BODY_LEGS]) return (TRUE);
-				break;
+		switch(slot) {
+		case INVEN_WIELD:
+		case INVEN_BOW:
+			if (r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
+			break;
+		case INVEN_LEFT:
+			if (r_ptr->body_parts[BODY_FINGER] > 1) return (TRUE);
+			break;
+		case INVEN_RIGHT:
+			if (r_ptr->body_parts[BODY_FINGER]) return (TRUE);
+			break;
+		case INVEN_NECK:
+		case INVEN_HEAD:
+			if (r_ptr->body_parts[BODY_HEAD]) return (TRUE);
+			break;
+		case INVEN_LITE:
+			/* Always allow to carry light source? :/ */
+			/* return (TRUE); break; */
+			if (r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
+			if (r_ptr->body_parts[BODY_FINGER]) return (TRUE);
+			if (r_ptr->body_parts[BODY_HEAD]) return (TRUE);
+			if (r_ptr->body_parts[BODY_ARMS]) return (TRUE);
+			break;
+		case INVEN_BODY:
+		case INVEN_OUTER:
+		case INVEN_AMMO:
+			if (r_ptr->body_parts[BODY_TORSO]) return (TRUE);
+			break;
+		case INVEN_ARM:
+			if (r_ptr->body_parts[BODY_ARMS]) return (TRUE);
+			break;
+		case INVEN_TOOL:
+			/* make a difference :) - C. Blue */
+			if (r_ptr->body_parts[BODY_ARMS] ||
+//			    r_ptr->body_parts[BODY_FINGER] ||
+			    r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
+			break;
+		case INVEN_HANDS:
+//			if (r_ptr->body_parts[BODY_FINGER]) return (TRUE); too silyl (and powerful)
+//			if (r_ptr->body_parts[BODY_ARMS]) return (TRUE); was standard, but now:
+			if (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_ARMS]) return (TRUE);
+			break;
+		case INVEN_FEET:
+			if (r_ptr->body_parts[BODY_LEGS]) return (TRUE);
+			break;
 		}
 	}
 	/* Restrict fruit bats */
@@ -541,40 +643,36 @@ bool item_tester_hook_wear(int Ind, int slot)
 	    ))
 #endif
 	{
-		switch(slot)
-		{
-			case INVEN_RIGHT:
-			case INVEN_LEFT:
-			case INVEN_NECK:
-			case INVEN_HEAD:
-			case INVEN_OUTER:
-			case INVEN_LITE:
-			case INVEN_ARM:
-			case INVEN_TOOL:    //allow them to wear, say, picks and shovels - the_sandman
-				return TRUE;
+		switch(slot) {
+		case INVEN_RIGHT:
+		case INVEN_LEFT:
+		case INVEN_NECK:
+		case INVEN_HEAD:
+		case INVEN_OUTER:
+		case INVEN_LITE:
+		case INVEN_ARM:
+		case INVEN_TOOL:    //allow them to wear, say, picks and shovels - the_sandman
+			return TRUE;
 		}
 	}
 #if 0
-	else if (r_info[p_ptr->body_monster].flags3 & RF3_DRAGON)
-	{
-	  switch(slot)
-	    {
-	    case INVEN_WIELD:
-	    case INVEN_RIGHT:
-	    case INVEN_LEFT:
-	    case INVEN_HEAD:
-	    case INVEN_BODY:
-	    case INVEN_LITE:
-	    case INVEN_FEET:
-	      return TRUE;
-	    }
+	else if (r_info[p_ptr->body_monster].flags3 & RF3_DRAGON) {
+		switch(slot) {
+		case INVEN_WIELD:
+		case INVEN_RIGHT:
+		case INVEN_LEFT:
+		case INVEN_HEAD:
+		case INVEN_BODY:
+		case INVEN_LITE:
+		case INVEN_FEET:
+			return TRUE;
+		}
 	}
 #endif	// 0
 	else
 	{
 		/* Check for a usable slot */
-		if (slot >= INVEN_WIELD)
-		{
+		if (slot >= INVEN_WIELD) {
 #if 0
 			/* use of shield is banned in do_cmd_wield if with 2H weapon.
 			 * 3 slots are too severe.. thoughts?	- Jir -
@@ -592,6 +690,7 @@ bool item_tester_hook_wear(int Ind, int slot)
 	/* Assume not wearable */
 	return (FALSE);
 }
+#endif
 
 /* Take off things that are no more wearable */
 void do_takeoff_impossible(int Ind)
@@ -845,6 +944,10 @@ return;
 		if (other_query_flag &&
 		    !get_check(Ind, "Your pack may overflow.  Continue? ")) return;
 	}
+#endif
+
+#ifdef USE_SOUND_2010
+	sound_item(Ind, o_ptr->tval, o_ptr->sval, "wearwield_");
 #endif
 
 	/* Mega-hack -- prevent anyone but total winners from wielding the Massive Iron
@@ -1309,6 +1412,10 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	/* Message */
 //	msg_format(Ind, "You drop %ld pieces of gold.", amt);
 	msg_format(Ind, "You drop %ld pieces of %s.", amt, k_name + k_info[tmp_obj.k_idx].name);
+
+#ifdef USE_SOUND_2010
+	sound(Ind, "drop_gold", NULL, SFX_TYPE_COMMAND);
+#endif
 
 /* #if DEBUG_LEVEL > 3 */
 	if (amt >= 10000)
@@ -1981,7 +2088,7 @@ void do_cmd_steal(int Ind, int dir)
 	if (p_ptr->ghost || p_ptr->tim_wraith) {
 	        msg_print(Ind, "You cannot steal things!");
 	        return;
-	}	                                                        
+	}
 #endif
 
 	/* May not steal from yourself */

@@ -1301,10 +1301,14 @@ bool set_tim_wraith(int Ind, int v)
 			cave_type **zcave;
 			zcave=getcave(&p_ptr->wpos);
 
+#if 0 /* old hack to prevent unwraithing in trees/mountains in towns */
 			if (zcave && in_bounds(p_ptr->py, p_ptr->px) &&
 					((p_ptr->wpos.wz) ||
 					 (cave_floor_bold(zcave, p_ptr->py, p_ptr->px))))
 			{
+#else
+			if (zcave && in_bounds(p_ptr->py, p_ptr->px)) {
+#endif
 				/* if a worn item grants wraith form, don't let it run out */
 				u32b f1, f2, f3, f4, f5, esp;
 				object_type *o_ptr;
@@ -1317,14 +1321,12 @@ bool set_tim_wraith(int Ind, int v)
 					if (!o_ptr->k_idx) continue;
 					/* Extract the item flags */
 					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-					if (f3 & (TR3_WRAITH))
-					{
+					if (f3 & (TR3_WRAITH)) {
 					        //p_ptr->wraith_form = TRUE;
 					        v = 30000;
 					}
 				}
-				if (v != 30000)
-				{
+				if (v != 30000) {
 					msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");
 					msg_print(Ind, "You lose your wraith powers.");
 					notice = TRUE;
@@ -3757,9 +3759,11 @@ void check_experience(int Ind)
 		/* Reskilling is now possible */
 		p_ptr->reskill_possible = TRUE;
 
-		/* Sound */
+#ifdef USE_SOUND_2010
+		/* see further below! */
+#else
 		sound(Ind, SOUND_LEVEL);
-
+#endif
 	}
 
 
@@ -3801,6 +3805,9 @@ void check_experience(int Ind)
 		char str[160];
 		/* Message */
 		msg_format(Ind, "\374\377GWelcome to level %d. You have %d skill points.", p_ptr->lev, p_ptr->skill_points);
+#ifdef USE_SOUND_2010
+		sound(Ind, "levelup", NULL, SFX_TYPE_MISC);
+#endif
 
 		/* Give helpful msg about how to distribute skill points at first level-up */
 		if (old_lev == 1 || (p_ptr->skill_points == (p_ptr->max_plv - 1) * 5)) {
@@ -3870,9 +3877,9 @@ void check_experience(int Ind)
 					found_macroishness = TRUE;
 			/* give a warning if it seems as if this character doesn't use any macros ;) */
 			if (!found_macroishness) {
-				msg_print(Ind, "\374\377oHINT: Start getting the hang of '\377Rmacros\377o' in order to ensure survival in");
-				msg_print(Ind, "\374\377o      critical combat situations. Ask other players and/or read the guide");
-				msg_print(Ind, "\374\377o      (text file 'TomeNET-Guide.txt' in your tomenet folder) for details!");
+				msg_print(Ind, "\374\377oHINT: Start getting the hang of '\377Rmacros\377o' ('%' key) in order to ensure");
+				msg_print(Ind, "\374\377o      survival in critical combat situations. Ask other players and/or read the");
+				msg_print(Ind, "\374\377o      guide (text file 'TomeNET-Guide.txt' in your tomenet folder) for details!");
 			}
 		}
 
@@ -6211,6 +6218,13 @@ void player_death(int Ind)
 	if (p_ptr->max_plv < cfg.newbies_cannot_drop) hell = TRUE;
 #endif
 
+#ifdef USE_SOUND_2010
+	if (p_ptr->male) sound(Ind, "death_male", "death", SFX_TYPE_MISC);
+	else sound(Ind, "death_female", "death", SFX_TYPE_MISC);
+#else
+	sound(Ind, SOUND_DEATH);
+#endif
+
 	/* Get rid of him if he's a ghost */
 /*	if (((p_ptr->ghost || (hell && p_ptr->alive)) && p_ptr->fruit_bat != -1) ||
 	    (streq(p_ptr->died_from, "Insanity")) ||
@@ -7672,8 +7686,10 @@ for(i=1; i < 5; i++) {
 		/* Extract monster name */
 		monster_desc(Ind, m_name, m_idx, 0);
 
-		/* Make a sound */
+#ifdef USE_SOUND_2010
+#else
 		sound(Ind, SOUND_KILL);
+#endif
 
 		/* Death by Missile/Spell attack */
 		/* DEG modified spell damage messages. */
@@ -9486,16 +9502,16 @@ void telekinesis_aux(int Ind, int item)
 #ifndef RPG_SERVER
 	if ((o_ptr->owner) && (o_ptr->owner != p2_ptr->id) && (o_ptr->level > p2_ptr->lev || o_ptr->level == 0))
 	{
-		if (cfg.anti_cheeze_pickup)
+		if (cfg.anti_cheeze_telekinesis)
 		{
 			msg_print(Ind, "The target isn't powerful enough yet to receive that item!");
-			return;
+			if (!is_admin(p_ptr)) return;
 		}
 		if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup)
 //                      if (artifact_p(o_ptr) && cfg.anti_arts_pickup)
 		{
 			msg_print(Ind, "The target isn't powerful enough yet to receive that artifact!");
-			return;
+			if (!is_admin(p_ptr)) return;
 		}
 	}
 #endif
@@ -10692,11 +10708,11 @@ bool master_player(int Ind, char *parms){
 #endif
 			Ind2 = name_lookup_loose(Ind, &parms[1], FALSE);
 			if(Ind2){
-				q_ptr=Players[Ind2];
+				q_ptr = Players[Ind2];
 				msg_print(Ind2, "\377rYou are hit by a bolt from the blue!");
 				strcpy(q_ptr->died_from,"divine wrath");
 				//q_ptr->alive=FALSE;
-				p_ptr->deathblow = 0;
+				q_ptr->deathblow = 0;
 				player_death(Ind2);
 				return(TRUE);
 			}

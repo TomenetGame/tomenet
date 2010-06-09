@@ -62,7 +62,7 @@
 #define VERSION_MAJOR_OUTDATED	4
 #define VERSION_MINOR_OUTDATED	4
 #define VERSION_PATCH_OUTDATED	4
-#define VERSION_EXTRA_OUTDATED	4
+#define VERSION_EXTRA_OUTDATED	5
 #define VERSION_BRANCH_OUTDATED	0
 #define VERSION_BUILD_OUTDATED	0
 
@@ -351,6 +351,14 @@
  */
 /*#define FPS 60 */
 #define FPS (cfg.fps)
+
+
+/* Number of days after which an account without any characters on it will expire. */
+#define ACCOUNT_EXPIRY_DAYS 62
+
+/* Number of days after which an unused character will expire. */
+#define CHARACTER_EXPIRY_DAYS 180
+
 
 /* maximum respawn time for uniques.... from japanese patch */
 #define COME_BACK_TIME_MAX 600
@@ -2229,6 +2237,39 @@ that keeps many algorithms happy.
 //gemstones
 #define TV_GEM		106
 
+
+#define TV_BOOK         111
+#if 0   /* (reserved) we'll use TomeNET books :) */
+#define TV_SYMBIOTIC_BOOK 112
+#define TV_MUSIC_BOOK   113
+#define TV_DRUID_BOOK   114
+#define TV_DAEMON_BOOK  115
+
+#endif  /* 0 */
+
+/* pernM ones (resurrected) */
+#define TV_KEY		51      /* Keys (';') */
+#define TV_GOLEM        52       /* Golem parts */
+
+#define TV_PSI_BOOK 	89
+#define TV_MAGIC_BOOK   90
+#define TV_PRAYER_BOOK  91
+#define TV_SORCERY_BOOK 92
+#define TV_FIGHT_BOOK 	93
+#define TV_SHADOW_BOOK 	94
+#define TV_HUNT_BOOK 	95
+
+/* unused */
+#define is_realm_book(o_ptr) \
+	(89 <= o_ptr->tval && o_ptr->tval <= 95)
+
+/* for invalid items */
+#define TV_SEAL		127
+
+/* Maximum "tval" */
+#define TV_MAX		127
+
+
 /* some masks (originally just is_armour for XBM control) - C. Blue */
 #define is_ammo(tval)	(((tval) == TV_SHOT) || ((tval) == TV_ARROW) || ((tval) == TV_BOLT))
 #define is_weapon(tval)	(((tval) == TV_SWORD) || ((tval) == TV_BLUNT) || ((tval) == TV_AXE) || ((tval) == TV_POLEARM))
@@ -2259,6 +2300,13 @@ that keeps many algorithms happy.
 #define sv_dsm_mid(sv) \
         (sv == SV_DRAGON_BRONZE || sv == SV_DRAGON_SILVER || sv == SV_DRAGON_GOLD || \
 	sv == SV_DRAGON_PSEUDO)
+/* for determining sound effects for wear/wield command: */
+#define is_textile_armour(tval,sval) \
+	(((tval) == TV_BOOTS && (sval) != SV_PAIR_OF_METAL_SHOD_BOOTS && (sval) != SV_PAIR_OF_WITAN_BOOTS) || \
+	((tval) == TV_GLOVES && (sval) != SV_SET_OF_GAUNTLETS && (sval) != SV_SET_OF_CESTI) || \
+	(tval) == TV_SOFT_ARMOR || (tval) == TV_CLOAK || \
+	((tval) == TV_HELM && ((sval) == SV_CLOTH_CAP || (sval) == SV_HARD_LEATHER_CAP || (sval) == SV_GOGGLES_DM)) || \
+	((tval) == TV_SHIELD && ((sval) == SV_SMALL_LEATHER_SHIELD || (sval) == SV_LARGE_LEATHER_SHIELD)))
 /* more possibilities: is_potion, is_rune, is_jewelry, is_rare_armour(tval,sval) */
 
 
@@ -2337,38 +2385,6 @@ that keeps many algorithms happy.
 #endif /* ENABLE_RCRAFT */
 
 
-#define TV_BOOK         111
-#if 0   /* (reserved) we'll use TomeNET books :) */
-#define TV_SYMBIOTIC_BOOK 112
-#define TV_MUSIC_BOOK   113
-#define TV_DRUID_BOOK   114
-#define TV_DAEMON_BOOK  115
-
-#endif  /* 0 */
-
-/* pernM ones (resurrected) */
-#define TV_KEY		 51      /* Keys (';') */
-#define TV_GOLEM        52       /* Golem parts */
-
-#define TV_PSI_BOOK 	89
-#define TV_MAGIC_BOOK   90
-#define TV_PRAYER_BOOK  91
-#define TV_SORCERY_BOOK 92
-#define TV_FIGHT_BOOK 	93
-#define TV_SHADOW_BOOK 	94
-#define TV_HUNT_BOOK 	95
-
-/* unused */
-#define is_realm_book(o_ptr) \
-	(89 <= o_ptr->tval && o_ptr->tval <= 95)
-
-/* for invalid items */
-#define TV_SEAL		127
-
-/* Maximum "tval" */
-#define TV_MAX		127
-
-
 /* Sval for golems */
 #define SV_GOLEM_WOOD           0
 #define SV_GOLEM_COPPER         1
@@ -2396,9 +2412,6 @@ that keeps many algorithms happy.
 #define SV_AMULET_DOOM			0
 #define SV_AMULET_THE_MAGI		8
 */
-#define SV_SET_OF_ELVEN_GLOVES		4
-#define SV_KOLLA                        7
-#define SV_PAIR_OF_WITAN_BOOTS          8
 #define SV_AMULET_TERKEN		30
 #define SV_AMULET_SPEED			31
 #define SV_AMULET_THE_MOON              33
@@ -2410,7 +2423,7 @@ that keeps many algorithms happy.
  * Special "sval" limit -- first "normal" food
  */
 #define SV_FOOD_MIN_FOOD	20
-#define SV_FOOD_MAX_FOOD    49
+#define SV_FOOD_MAX_FOOD	49
 
 /*
  * Special "sval" limit -- first "aimed" rod
@@ -2430,20 +2443,20 @@ that keeps many algorithms happy.
 /*
  * Special "sval" limit -- last gold
  */
-#define SV_GOLD_MAX			18
+#define SV_GOLD_MAX		18
 
 
 /* from ToMe */
 
 /* The "sval" codes for TV_TOOL */
-#define SV_TOOL_CLIMB		0
-#define SV_PORTABLE_HOLE	1
-#define SV_TOOL_PICKLOCK	2
-#define SV_TOOL_MONEY_BELT	3
+#define SV_TOOL_CLIMB			0
+#define SV_PORTABLE_HOLE		1
+#define SV_TOOL_PICKLOCK		2
+#define SV_TOOL_MONEY_BELT		3
 #define SV_TOOL_THEFT_PREVENTION	4
-#define SV_TOOL_TARPAULIN	5
-#define SV_TOOL_FLINT		6
-#define SV_TOOL_WRAPPING	7
+#define SV_TOOL_TARPAULIN		5
+#define SV_TOOL_FLINT			6
+#define SV_TOOL_WRAPPING		7
 
 /* The "sval" codes for TV_MSTAFF */
 #define SV_MSTAFF 1
@@ -2453,9 +2466,9 @@ that keeps many algorithms happy.
 #define SV_FIRE_SMALL 6
 
 /* The "sval" codes for TV_SHOT/TV_ARROW/TV_BOLT */
-#define SV_AMMO_LIGHT                    0	/* pebbles */
-#define SV_AMMO_NORMAL                   1	/* shots, arrows, bolts */
-#define SV_AMMO_HEAVY                    2	/* seeker arrows and bolts, mithril shots */
+#define SV_AMMO_LIGHT		0	/* pebbles */
+#define SV_AMMO_NORMAL		1	/* shots, arrows, bolts */
+#define SV_AMMO_HEAVY		2	/* seeker arrows and bolts, mithril shots */
 /* (pernM ammo) */
 #define SV_AMMO_MAGIC		3	/* magic arrows, bolts, shots */
 #define SV_AMMO_SILVER		4	/* silver arrows and bolts */
@@ -2528,7 +2541,7 @@ that keeps many algorithms happy.
 #define SV_BROAD_AXE                    11	/* 2d6 */
 #define SV_BATTLE_AXE                   22	/* 2d8 */
 #define SV_GREAT_AXE                    25	/* 4d4 */
-#define SV_HEAVY_WAR_AXE                 28	/* 3d8 */
+#define SV_HEAVY_WAR_AXE                28	/* 3d8 */
 #define SV_SLAUGHTER_AXE                30      /* 5d7 */
 #define SV_THUNDER_AXE			33	/* 6d8 */
 
@@ -2609,17 +2622,20 @@ that keeps many algorithms happy.
 #define SV_PAIR_OF_SOFT_LEATHER_BOOTS    2
 #define SV_PAIR_OF_HARD_LEATHER_BOOTS    3
 #define SV_PAIR_OF_METAL_SHOD_BOOTS      6
+#define SV_PAIR_OF_WITAN_BOOTS		 8
 
 /* The "sval" codes for TV_CLOAK */
 #define SV_CLOAK                         1
 #define SV_ELVEN_CLOAK                   2
 #define SV_FUR_CLOAK                     3
 #define SV_SHADOW_CLOAK                  6
+#define SV_KOLLA			 7
 #define SV_SBSILK_CLOAK			 8
 
 /* The "sval" codes for TV_GLOVES */
 #define SV_SET_OF_LEATHER_GLOVES         1
 #define SV_SET_OF_GAUNTLETS              2
+#define SV_SET_OF_ELVEN_GLOVES		 4
 #define SV_SET_OF_CESTI                  5
 
 /* The "sval" codes for TV_SOFT_ARMOR */
@@ -2797,8 +2813,8 @@ that keeps many algorithms happy.
 /* 57 - DURIN (arts) */
 #define SV_RING_CRIT                    58
 /* ToME-NET additions */
-#define SV_RING_POLYMORPH	60
-#define SV_RING_STEALTH		61
+#define SV_RING_POLYMORPH		60
+#define SV_RING_STEALTH			61
 
 
 /* The "sval" codes for TV_STAFF */
@@ -2835,7 +2851,7 @@ that keeps many algorithms happy.
 #define SV_STAFF_NOTHING                30
 #define SV_STAFF_WISHING                31
 #define SV_STAFF_GANDALF                32	/* sorta hack? (tval=6) */
-#define SV_STAFF_STAR_IDENTIFY			33
+#define SV_STAFF_STAR_IDENTIFY		33
 
 /* jk - the first valuable staff */
 #define SV_STAFF_NASTY_STAFF              4
@@ -2983,27 +2999,27 @@ that keeps many algorithms happy.
 #define SV_SCROLL_CHAOS                 50
 #define SV_SCROLL_RUMOR                 51
 /* #define SV_SCROLL_ARTIFACT              52 */
-#define SV_SCROLL_ARTIFACT_CREATION             52
+#define SV_SCROLL_ARTIFACT_CREATION     52
 #define SV_SCROLL_NOTHING               53
 #define SV_SCROLL_SPELL                 54
 /* ToME-NET additions */
 #define SV_SCROLL_GOLEM                         55
 #define SV_SCROLL_LIFE				56	
 #define SV_SCROLL_HOUSE				57
-#define SV_SCROLL_BLOOD_BOND		58
+#define SV_SCROLL_BLOOD_BOND			58
 #define SV_SCROLL_LOTTERY			59
 #define SV_SCROLL_ID_ALL			60
-#define SV_SCROLL_VERMIN_CONTROL	61
-#define SV_SCROLL_CANCELLATION		62
-#define SV_SCROLL_WILDERNESS_MAP	63
+#define SV_SCROLL_VERMIN_CONTROL		61
+#define SV_SCROLL_CANCELLATION			62
+#define SV_SCROLL_WILDERNESS_MAP		63
 /* more stuff - C. Blue */
-#define SV_SCROLL_CONJURE_MONSTER       64
-#define SV_SCROLL_SLEEPING       	65
+#define SV_SCROLL_CONJURE_MONSTER       	64
+#define SV_SCROLL_SLEEPING       		65
 /* DEG Stuff to make game more party friendly */
-#define SV_SCROLL_TELEPORT_TO_PARTY   	66
+#define SV_SCROLL_TELEPORT_TO_PARTY   		66
 #define SV_SCROLL_STAR_TELEPORT_TO_PARTY   	67
-#define SV_SCROLL_PARTY_RECALL   	68
-#define SV_SCROLL_EMERGENCY_RECALL   	69
+#define SV_SCROLL_PARTY_RECALL   		68
+#define SV_SCROLL_EMERGENCY_RECALL   		69
 #define SV_SCROLL_EMERGENCY_PARTY_RECALL	70
 
 
@@ -3041,7 +3057,7 @@ that keeps many algorithms happy.
 #define SV_POTION_RESIST_HEAT           30
 #define SV_POTION_RESIST_COLD           31
 #define SV_POTION_HEROISM               32
-#define SV_POTION_BERSERK_STRENGTH       33
+#define SV_POTION_BERSERK_STRENGTH      33
 #define SV_POTION_CURE_LIGHT            34
 #define SV_POTION_CURE_SERIOUS          35
 #define SV_POTION_CURE_CRITICAL         36
@@ -3335,14 +3351,14 @@ that keeps many algorithms happy.
 
 /* ToME expansions */
 #if 0	/* soon */
-#define PROJECT_VIEWABLE   0x00000100   /* Affect monsters in LOS */
-#define PROJECT_METEOR_SHOWER 0x00000200        /* Affect random grids */
-#define PROJECT_BLAST      0x00000400   /* Like Mega_blast, but will only affect viewable grids */
-#define PROJECT_PANEL      0x00000800   /* Affect everything in the panel. */
-#define PROJECT_ALL        0x00001000   /* Affect every single grid. */
-#define PROJECT_WALL       0x00002000
-#define PROJECT_MANA_PATH  0x00004000   /* Follow a mana path. */
-#define PROJECT_ABSORB_MANA 0x00008000   /* The spell increase in power as it absord grid's mana. */
+#define PROJECT_VIEWABLE	0x00000100   /* Affect monsters in LOS */
+#define PROJECT_METEOR_SHOWER	0x00000200   /* Affect random grids */
+#define PROJECT_BLAST		0x00000400   /* Like Mega_blast, but will only affect viewable grids */
+#define PROJECT_PANEL		0x00000800   /* Affect everything in the panel. */
+#define PROJECT_ALL		0x00001000   /* Affect every single grid. */
+#define PROJECT_WALL		0x00002000
+#define PROJECT_MANA_PATH	0x00004000   /* Follow a mana path. */
+#define PROJECT_ABSORB_MANA	0x00008000   /* The spell increase in power as it absord grid's mana. */
 #endif	/* 0 */
 
 
@@ -3367,12 +3383,12 @@ that keeps many algorithms happy.
 #define SM_RES_DARK		0x00000080
 #define SM_RES_FEAR		0x00000100
 #define SM_RES_CONF		0x00000200
-#define SM_RES_CHAOS	0x00000400
-#define SM_RES_DISEN	0x00000800
-#define SM_RES_BLIND	0x00001000
-#define SM_RES_NEXUS	0x00002000
-#define SM_RES_SOUND	0x00004000
-#define SM_RES_SHARD	0x00008000
+#define SM_RES_CHAOS		0x00000400
+#define SM_RES_DISEN		0x00000800
+#define SM_RES_BLIND		0x00001000
+#define SM_RES_NEXUS		0x00002000
+#define SM_RES_SOUND		0x00004000
+#define SM_RES_SHARD		0x00008000
 #define SM_OPP_ACID		0x00010000
 #define SM_OPP_ELEC		0x00020000
 #define SM_OPP_FIRE		0x00040000
@@ -3505,150 +3521,148 @@ that keeps many algorithms happy.
  * Legal restrictions for "summon_specific()"
  */
 #define SUMMON_ANT			11
-#define SUMMON_SPIDER		12
-#define SUMMON_HOUND		13
-#define SUMMON_HYDRA		14
-#define SUMMON_ANGEL		15
-#define SUMMON_DEMON		16
-#define SUMMON_UNDEAD		17
-#define SUMMON_DRAGON		18
-#define SUMMON_HI_UNDEAD	21
-#define SUMMON_HI_DRAGON	22
-#define SUMMON_WRAITH		31
-#define SUMMON_UNIQUE		32
+#define SUMMON_SPIDER			12
+#define SUMMON_HOUND			13
+#define SUMMON_HYDRA			14
+#define SUMMON_ANGEL			15
+#define SUMMON_DEMON			16
+#define SUMMON_UNDEAD			17
+#define SUMMON_DRAGON			18
+#define SUMMON_HI_UNDEAD		21
+#define SUMMON_HI_DRAGON		22
+#define SUMMON_WRAITH			31
+#define SUMMON_UNIQUE			32
 /* additions from ToME */
-#define SUMMON_BIZARRE1             33
-#define SUMMON_BIZARRE2             34
-#define SUMMON_BIZARRE3             35
-#define SUMMON_BIZARRE4             36
-#define SUMMON_BIZARRE5             37
-#define SUMMON_BIZARRE6             38
-#define SUMMON_HI_DEMON             39
-#define SUMMON_KIN                  40
-#define SUMMON_DAWN                 41
-#define SUMMON_ANIMAL               42
-#define SUMMON_ANIMAL_RANGER        43
-#define SUMMON_HI_UNDEAD_NO_UNIQUES 44
-#define SUMMON_HI_DRAGON_NO_UNIQUES 45
-#define SUMMON_NO_UNIQUES           46
-#define SUMMON_PHANTOM              47
-#define SUMMON_ELEMENTAL            48
-#define SUMMON_DRAGONRIDER          49
-#define SUMMON_BLUE_HORROR          50
-#define SUMMON_BUG                  51
-#define SUMMON_RNG                  52
-#define SUMMON_MINE                 53
-#define SUMMON_HUMAN                54
-#define SUMMON_SHADOWS              55
-#define SUMMON_GHOST                56
-#define SUMMON_QUYLTHULG            57
-#define SUMMON_LUA                  58
+#define SUMMON_BIZARRE1			33
+#define SUMMON_BIZARRE2			34
+#define SUMMON_BIZARRE3			35
+#define SUMMON_BIZARRE4			36
+#define SUMMON_BIZARRE5			37
+#define SUMMON_BIZARRE6			38
+#define SUMMON_HI_DEMON			39
+#define SUMMON_KIN			40
+#define SUMMON_DAWN			41
+#define SUMMON_ANIMAL			42
+#define SUMMON_ANIMAL_RANGER		43
+#define SUMMON_HI_UNDEAD_NO_UNIQUES	44
+#define SUMMON_HI_DRAGON_NO_UNIQUES	45
+#define SUMMON_NO_UNIQUES		46
+#define SUMMON_PHANTOM			47
+#define SUMMON_ELEMENTAL		48
+#define SUMMON_DRAGONRIDER		49
+#define SUMMON_BLUE_HORROR		50
+#define SUMMON_BUG			51
+#define SUMMON_RNG			52
+#define SUMMON_MINE			53
+#define SUMMON_HUMAN			54
+#define SUMMON_SHADOWS			55
+#define SUMMON_GHOST			56
+#define SUMMON_QUYLTHULG		57
+#define SUMMON_LUA			58
 /* Again, TomeNET one(s)	- Jir - */
-#define SUMMON_VERMIN		59
-#define SUMMON_IMMOBILE		60
+#define SUMMON_VERMIN			59
+#define SUMMON_IMMOBILE			60
 /* New stuff (RF0_) - C. Blue */
-#define SUMMON_HI_MONSTER	61
-#define SUMMON_HI_MONSTERS	62
-#define SUMMON_HI_UNIQUE	63
+#define SUMMON_HI_MONSTER		61
+#define SUMMON_HI_MONSTERS		62
+#define SUMMON_HI_UNIQUE		63
 
 
 
 /*
  * Spell types used by project(), and related functions.
  */
-#define GF_ELEC         1
-#define GF_POIS         2
-#define GF_ACID         3
-#define GF_COLD         4
-#define GF_FIRE         5
-#define GF_MISSILE      10
-#define GF_ARROW        11
-#define GF_PLASMA       12
-#define GF_HOLY_ORB     13
-#define GF_WATER        14
-#define GF_LITE         15
-#define GF_DARK         16
-#define GF_LITE_WEAK	17
-#define GF_DARK_WEAK	18
-#define GF_SHARDS       20
-#define GF_SOUND        21
-#define GF_CONFUSION    22
-#define GF_FORCE        23
-#define GF_INERTIA      24
-#define GF_MANA         26
-#define GF_METEOR       27
-#define GF_ICE          28
-#define GF_CHAOS        30
-#define GF_NETHER       31
-#define GF_DISENCHANT   32
-#define GF_NEXUS        33
-#define GF_TIME         34
-#define GF_GRAVITY      35
-#define GF_KILL_WALL	40
-#define GF_KILL_DOOR	41
-#define GF_KILL_TRAP	42
-#define GF_MAKE_WALL	45
-#define GF_MAKE_DOOR	46
-#define GF_MAKE_TRAP	47
-#define GF_OLD_CLONE	51
-#define GF_OLD_POLY	52
-#define GF_OLD_HEAL	53
-#define GF_OLD_SPEED	54
-#define GF_OLD_SLOW	55
-#define GF_OLD_CONF	56
-#define GF_OLD_SLEEP	57
-#define GF_OLD_DRAIN	58
-#define GF_AWAY_UNDEAD	61
-#define GF_AWAY_EVIL	62
-#define GF_AWAY_ALL	63
-#define GF_TURN_UNDEAD	64
-#define GF_TURN_EVIL	65
-#define GF_TURN_ALL	66
-#define GF_DISP_UNDEAD	67
-#define GF_DISP_EVIL	68
-#define GF_DISP_ALL	69
+#define GF_ELEC			1
+#define GF_POIS			2
+#define GF_ACID			3
+#define GF_COLD			4
+#define GF_FIRE			5
+#define GF_MISSILE		10
+#define GF_ARROW		11
+#define GF_PLASMA		12
+#define GF_HOLY_ORB		13
+#define GF_WATER		14
+#define GF_LITE			15
+#define GF_DARK			16
+#define GF_LITE_WEAK		17
+#define GF_DARK_WEAK		18
+#define GF_SHARDS		20
+#define GF_SOUND		21
+#define GF_CONFUSION		22
+#define GF_FORCE		23
+#define GF_INERTIA		24
+#define GF_MANA			26
+#define GF_METEOR		27
+#define GF_ICE			28
+#define GF_CHAOS		30
+#define GF_NETHER		31
+#define GF_DISENCHANT		32
+#define GF_NEXUS		33
+#define GF_TIME			34
+#define GF_GRAVITY		35
+#define GF_KILL_WALL		40
+#define GF_KILL_DOOR		41
+#define GF_KILL_TRAP		42
+#define GF_MAKE_WALL		45
+#define GF_MAKE_DOOR		46
+#define GF_MAKE_TRAP		47
+#define GF_OLD_CLONE		51
+#define GF_OLD_POLY		52
+#define GF_OLD_HEAL		53
+#define GF_OLD_SPEED		54
+#define GF_OLD_SLOW		55
+#define GF_OLD_CONF		56
+#define GF_OLD_SLEEP		57
+#define GF_OLD_DRAIN		58
+#define GF_AWAY_UNDEAD		61
+#define GF_AWAY_EVIL		62
+#define GF_AWAY_ALL		63
+#define GF_TURN_UNDEAD		64
+#define GF_TURN_EVIL		65
+#define GF_TURN_ALL		66
+#define GF_DISP_UNDEAD		67
+#define GF_DISP_EVIL		68
+#define GF_DISP_ALL		69
 
-#define	GF_HEAL_PLAYER	70
-#define	GF_STONE_WALL 	71
-#define	GF_EARTHQUAKE 	72
-#define	GF_WRAITH_PLAYER 73
-#define	GF_SPEED_PLAYER  74
-#define	GF_SHIELD_PLAYER 75
-#define GF_RECALL_PLAYER 76
-#define GF_STUN          77
-#define GF_IDENTIFY      78
-#define GF_PSI           79
+#define	GF_HEAL_PLAYER		70
+#define	GF_STONE_WALL		71
+#define	GF_EARTHQUAKE		72
+#define	GF_WRAITH_PLAYER	73
+#define	GF_SPEED_PLAYER		74
+#define	GF_SHIELD_PLAYER	75
+#define GF_RECALL_PLAYER	76
+#define GF_STUN			77
+#define GF_IDENTIFY		78
+#define GF_PSI			79
+#define GF_HOLY_FIRE		80
+#define GF_DISINTEGRATE		81
+#define GF_HELL_FIRE		82 /* was HOLY_ORB */
 
-#define GF_HOLY_FIRE    80
-#define GF_DISINTEGRATE 81
+#define GF_MAKE_GLYPH		85
 
-#define GF_HELL_FIRE    82 /* was HOLY_ORB */
-
-#define GF_MAKE_GLYPH   85
-
-#define GF_ROCKET       91
+#define GF_ROCKET		91
 
 /* for traps.h :) - C. Blue */
-#define GF_REMFEAR	92
-#define GF_HERO_MONSTER	93
-#define GF_LIFEHEAL	94
-#define GF_DEC_STR	95
-#define GF_DEC_DEX	96
-#define GF_DEC_CON	97
-#define GF_RES_STR	98
-#define GF_RES_DEX	99
-#define GF_RES_CON	100
-#define GF_INC_STR	101
-#define GF_INC_DEX	102
-#define GF_INC_CON	103
-#define GF_AUGMENTATION	104
-#define GF_RUINATION	105
-#define GF_EXP		106
+#define GF_REMFEAR		92
+#define GF_HERO_MONSTER		93
+#define GF_LIFEHEAL		94
+#define GF_DEC_STR		95
+#define GF_DEC_DEX		96
+#define GF_DEC_CON		97
+#define GF_RES_STR		98
+#define GF_RES_DEX		99
+#define GF_RES_CON		100
+#define GF_INC_STR		101
+#define GF_INC_DEX		102
+#define GF_INC_CON		103
+#define GF_AUGMENTATION		104
+#define GF_RUINATION		105
+#define GF_EXP			106
 
-#define GF_NUKE         110
-#define GF_BLIND	111
-#define GF_HOLD		112	/* hold */
-#define GF_DOMINATE	113	/* dominate */
+#define GF_NUKE			110
+#define GF_BLIND		111
+#define GF_HOLD			112	/* hold */
+#define GF_DOMINATE		113	/* dominate */
 #define GF_BLESS_PLAYER  	114
 #define GF_REMFEAR_PLAYER  	115
 #define GF_SATHUNGER_PLAYER  	116
@@ -3659,7 +3673,7 @@ that keeps many algorithms happy.
 #define GF_SEEMAP_PLAYER  	121
 #define GF_CURECUT_PLAYER  	122
 #define GF_CURESTUN_PLAYER  	123
-#define GF_DETECTCREATURE_PLAYER  124
+#define GF_DETECTCREATURE_PLAYER	124
 #define GF_DETECTDOOR_PLAYER  	125
 #define GF_DETECTTRAP_PLAYER  	126
 #define GF_TELEPORTLVL_PLAYER  	127
@@ -3686,42 +3700,42 @@ that keeps many algorithms happy.
 #define GF_MINDBOOST_PLAYER	145
 
 /* Zangband changes */
-#define GF_TELE_TO	150
-#define GF_HAND_DOOM	151
-#define GF_STASIS       152
+#define GF_TELE_TO		150
+#define GF_HAND_DOOM		151
+#define GF_STASIS		152
 
 /* For the new priest spell I'm conjuring - the_sandman */
-#define GF_CURSE	153
+#define GF_CURSE		153
 /* Here comes the druid items - the_sandman */
-#define GF_HEALINGCLOUD 154
-#define GF_WATERPOISON  155
-#define GF_ICEPOISON    156
-#define GF_EXTRA_STATS  157
-#define GF_EXTRA_SPR	158
+#define GF_HEALINGCLOUD		154
+#define GF_WATERPOISON		155
+#define GF_ICEPOISON		156
+#define GF_EXTRA_STATS		157
+#define GF_EXTRA_SPR		158
 
-#define GF_PUSH 	159 /* Moltor */
+#define GF_PUSH 		159 /* Moltor */
 
-#define GF_SILENCE	160 /* for new mindcrafters */
-#define GF_CHARMIGNORE	161
+#define GF_SILENCE		160 /* for new mindcrafters */
+#define GF_CHARMIGNORE		161
 
 /* For snowflakes on WINTER_SEASON. Could use 0 for type, but let's complete it. -C. Blue */
-#define GF_SNOWFLAKE	200
+#define GF_SNOWFLAKE		200
 /* For fireworks on NEW_YEARS_EVE - C. Blue */
-#define GF_FW_FIRE	201
-#define GF_FW_ELEC	202
-#define GF_FW_POIS	203
-#define GF_FW_LITE	204
-#define GF_FW_SHDI	205
-#define GF_FW_SHDM	206
-#define GF_FW_MULT	207
+#define GF_FW_FIRE		201
+#define GF_FW_ELEC		202
+#define GF_FW_POIS		203
+#define GF_FW_LITE		204
+#define GF_FW_SHDI		205
+#define GF_FW_SHDM		206
+#define GF_FW_MULT		207
 /* well, let's try to bring weather and seasons? */
-#define GF_RAINDROP	208
-#define GF_LEAF		209 /* unused, just added here for inspiration - C. Blue */
+#define GF_RAINDROP		208
+#define GF_LEAF			209 /* unused, just added here for inspiration - C. Blue */
 /* full-screen warnings or other important notifications that players oughtn't overlook - C. Blue */
 //ugly though, since they are wpos-bound -..
 // #define GF_TEXT_UPDATE	210 /* 'your game version is outdated..' */
 
-#define GF_CROSSHAIR 	250 /* what's this for? appearently unused; moved it to 250 */
+#define GF_CROSSHAIR 		250 /* what's this for? appearently unused; moved it to 250 */
 
 
 #if 0	/* Let's implement one by one.. */
@@ -3764,7 +3778,7 @@ that keeps many algorithms happy.
 #define GF_ATTACK       109
 /* Increased it (from 152) to 153 - the_sandman*/
 /* Increaing it again by ... 3-- to 156 :-) - the_sandman */
-#define MAX_GF          156	/* appearently unused, if 0'ed */
+#define MAX_GF			156	/* appearently unused, if 0'ed */
 #endif	/* 0 */
 
 /*
@@ -4267,21 +4281,21 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 /*
  * New monster blow effects
  */
-#define RBE_HURT		1
-#define RBE_POISON		2
+#define RBE_HURT	1
+#define RBE_POISON	2
 #define RBE_UN_BONUS	3
 #define RBE_UN_POWER	4
 #define RBE_EAT_GOLD	5
 #define RBE_EAT_ITEM	6
 #define RBE_EAT_FOOD	7
 #define RBE_EAT_LITE	8
-#define RBE_ACID		9
-#define RBE_ELEC		10
-#define RBE_FIRE		11
-#define RBE_COLD		12
-#define RBE_BLIND		13
-#define RBE_CONFUSE		14
-#define RBE_TERRIFY		15
+#define RBE_ACID	9
+#define RBE_ELEC	10
+#define RBE_FIRE	11
+#define RBE_COLD	12
+#define RBE_BLIND	13
+#define RBE_CONFUSE	14
+#define RBE_TERRIFY	15
 #define RBE_PARALYZE	16
 #define RBE_LOSE_STR	17
 #define RBE_LOSE_INT	18
@@ -4290,11 +4304,11 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RBE_LOSE_CON	21
 #define RBE_LOSE_CHR	22
 #define RBE_LOSE_ALL	23
-#define RBE_SHATTER		24
-#define RBE_EXP_10		25
-#define RBE_EXP_20		26
-#define RBE_EXP_40		27
-#define RBE_EXP_80		28
+#define RBE_SHATTER	24
+#define RBE_EXP_10	25
+#define RBE_EXP_20	26
+#define RBE_EXP_40	27
+#define RBE_EXP_80	28
 
 #define RBE_DISEASE     29
 #define RBE_TIME        30
@@ -4302,9 +4316,9 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RBE_HALLU       32
 #define RBE_PARASITE    33
 
-#define RBE_DISARM		34
-#define RBE_FAMINE		35
-#define RBE_SEDUCE		36
+#define RBE_DISARM	34
+#define RBE_FAMINE	35
+#define RBE_SEDUCE	36
 
 /*** Monster flag values (hard-coded) ***/
 
@@ -4727,7 +4741,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 /* different buildings */
 #define		WILD_LOG_CABIN		0
 #define		WILD_ROCK_HOME		1
-#define		WILD_PERM_HOME		2	
+#define		WILD_PERM_HOME		2
 #define		WILD_SHACK		3
 #define		WILD_TOWN_HOME		4
 
@@ -5800,8 +5814,6 @@ extern int PlayerUID;
 
 
 /*** Sound constants ***/
-
-
 /*
  * Mega-Hack -- some primitive sound support (see "main-win.c")
  *
@@ -5815,7 +5827,6 @@ extern int PlayerUID;
 #define SOUND_LEVEL	6
 #define SOUND_DEATH	7
 #define SOUND_WARN	8
-
 /*
  * Mega-Hack -- maximum known sounds
  */
@@ -5839,8 +5850,6 @@ extern int PlayerUID;
  #define SFX_TYPE_MON_MISC	5
  #define SFX_TYPE_NO_OVERLAP	6
 #endif
-
-/*** Hack ***/
 
 
 /*
@@ -6175,48 +6184,48 @@ extern int PlayerUID;
 
 /* Jir */
 #define TRAP_OF_ALE			171
-#define TRAP_OF_GARBAGE		172
-#define TRAP_OF_HOSTILITY	173
-#define TRAP_OF_CUISINE		174
-#define TRAP_OF_UNMAGIC		175
-#define TRAP_OF_VERMIN		176
-#define TRAP_OF_RANDOM_EFFECT	177
-#define TRAP_OF_AMNESIA		178
-#define TRAP_OF_SILLINESS	179
-#define TRAP_OF_GOODBYE_CHARLIE	180
+#define TRAP_OF_GARBAGE			172
+#define TRAP_OF_HOSTILITY		173
+#define TRAP_OF_CUISINE			174
+#define TRAP_OF_UNMAGIC			175
+#define TRAP_OF_VERMIN			176
+#define TRAP_OF_RANDOM_EFFECT		177
+#define TRAP_OF_AMNESIA			178
+#define TRAP_OF_SILLINESS		179
+#define TRAP_OF_GOODBYE_CHARLIE		180
 #define TRAP_OF_PRESENT_EXCHANGE	181
 #define TRAP_OF_GARBAGE_FILLING		182
-#define TRAP_OF_CHASM		183
+#define TRAP_OF_CHASM			183
 #define TRAP_OF_PIT			184
 #define TRAP_OF_SEASONED_TRAVELER	185
-#define TRAP_OF_SCRIBBLE	186
-#define TRAP_OF_SLUMP		187
-#define TRAP_OF_OPHIUCHUS	188
-#define TRAP_OF_LOST_LABOR	189
-#define TRAP_OF_DESPAIR		190
-#define TRAP_OF_RARE_BOOKS	191
-#define TRAP_OF_WRONG_TARGET	192
-#define TRAP_OF_CLEANING	193
-#define TRAP_OF_PREPARE		194
-#define TRAP_OF_MOAT_I		195
-#define TRAP_OF_MOAT_II		196
+#define TRAP_OF_SCRIBBLE		186
+#define TRAP_OF_SLUMP			187
+#define TRAP_OF_OPHIUCHUS		188
+#define TRAP_OF_LOST_LABOR		189
+#define TRAP_OF_DESPAIR			190
+#define TRAP_OF_RARE_BOOKS		191
+#define TRAP_OF_WRONG_TARGET		192
+#define TRAP_OF_CLEANING		193
+#define TRAP_OF_PREPARE			194
+#define TRAP_OF_MOAT_I			195
+#define TRAP_OF_MOAT_II			196
 #define TRAP_OF_DISINTEGRATION_I	197
 #define TRAP_OF_DISINTEGRATION_II	198
-#define TRAP_OF_BATTLE_FIELD	199
-#define TRAP_OF_DEATH_MOLDS	200
-#define TRAP_OF_DEATH_SWORDS	201
-#define TRAP_OF_UNLIGHT		202
-#define TRAP_OF_THIRST		203
-#define TRAP_OF_FINGER_CATCHING	204
-#define TRAP_OF_ANIMATE_COINS	205
-#define TRAP_OF_REMITTANCE	206
-#define TRAP_OF_HIDE_TRAPS	207
-#define TRAP_OF_RESPAWN		208
-#define TRAP_OF_JACK		209
-#define TRAP_OF_SPREAD 		210
-#define TRAP_OF_LASER 		211
-#define TRAP_OF_ROCKETS		212
-#define TRAP_OF_HEALING		213
+#define TRAP_OF_BATTLE_FIELD		199
+#define TRAP_OF_DEATH_MOLDS		200
+#define TRAP_OF_DEATH_SWORDS		201
+#define TRAP_OF_UNLIGHT			202
+#define TRAP_OF_THIRST			203
+#define TRAP_OF_FINGER_CATCHING		204
+#define TRAP_OF_ANIMATE_COINS		205
+#define TRAP_OF_REMITTANCE		206
+#define TRAP_OF_HIDE_TRAPS		207
+#define TRAP_OF_RESPAWN			208
+#define TRAP_OF_JACK			209
+#define TRAP_OF_SPREAD 			210
+#define TRAP_OF_LASER 			211
+#define TRAP_OF_ROCKETS			212
+#define TRAP_OF_HEALING			213
 
 /*
  * Shield effect options
@@ -6521,7 +6530,7 @@ extern int PlayerUID;
 #define SKILL_HCURING           72
 #define SKILL_HSUPPORT          73
 
-#define SKILL_DRUID_ARCANE	74 
+#define SKILL_DRUID_ARCANE	74
 #define SKILL_DRUID_PHYSICAL	75
 
 #define SKILL_RUNEMASTERY	76
@@ -6729,13 +6738,13 @@ extern int PlayerUID;
 #define BACT_REQUEST_ITEM           51
 #define BACT_GET_LOAN               52
 #define BACT_PAY_BACK_LOAN          53
-#define BACT_DEPOSIT				54
-#define BACT_WITHDRAW				55
-#define BACT_EXTEND_HOUSE			56
+#define BACT_DEPOSIT			54
+#define BACT_WITHDRAW			55
+#define BACT_EXTEND_HOUSE		56
 
-#define BACT_CHEEZE_LIST			57
-#define BACT_DEED_ITEM				58
-#define BACT_DEED_BLESSING			59
+#define BACT_CHEEZE_LIST		57
+#define BACT_DEED_ITEM			58
+#define BACT_DEED_BLESSING		59
 /* If one adds new BACT_ do NOT forget to increase max_bact in variables.c */
 /* MAX_BA_INFO for TomeNET	- Jir - */
 
@@ -6933,7 +6942,7 @@ extern int PlayerUID;
  * takes about the same amount of work to pull off...."
  * These are already expensive as heck anyway...
  */ 
- #define RCLOUD_DURATION		50
+ #define RCLOUD_DURATION	50
 
 /* The level for perfect rune base spell casting... */
  #define RSAFE_BOLT	15
@@ -7203,7 +7212,7 @@ extern int PlayerUID;
 #define RT_MAGIC_CIRCLE 65
 
 /* 	Max runespell imperatives */
-#define RG_MAX					  8
+#define RG_MAX		  8
 
 /* Runic Imperatives */
 

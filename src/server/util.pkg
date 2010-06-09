@@ -132,8 +132,11 @@ struct server_opts
 	bool anti_arts_send;
 
 	bool anti_cheeze_pickup;
+	bool anti_cheeze_telekinesis;
 	s16b surface_item_removal; /* minutes before items are erased */
 	s16b dungeon_item_removal; /* minutes before items are erased */
+	s16b death_wild_item_removal; /* minutes before items are erased */
+	s16b long_wild_item_removal; /* minutes before items are erased */
 	s16b dungeon_shop_chance; /* chance in percent * 10 of generation */
 	s16b dungeon_shop_type; /* type of generation (999=random) */
 	s16b dungeon_shop_timeout; /* time until it can be generated again */
@@ -382,20 +385,23 @@ extern int fireworks_delay;
 extern cptr *ANGBAND_DIR;
 
 #define CLASS_WARRIOR		0
-#define CLASS_MAGE              1                                               
-#define CLASS_PRIEST            2                                               
-#define CLASS_ROGUE             3                                               
-#define CLASS_MIMIC             4                                               
-#define CLASS_ARCHER            5                                               
-#define CLASS_PALADIN           6                                               
-#define CLASS_RANGER            7                                               
-#define CLASS_ADVENTURER        8                                               
+#define CLASS_MAGE              1
+#define CLASS_PRIEST            2
+#define CLASS_ROGUE             3
+#define CLASS_MIMIC             4
+#define CLASS_ARCHER            5
+#define CLASS_PALADIN           6
+#define CLASS_RANGER            7
+#define CLASS_ADVENTURER        8
 /* #define CLASS_BARD            9 */
-#define CLASS_DRUID             9                                               
-#define CLASS_SHAMAN            10                                              
-#define CLASS_RUNEMASTER        11                                              
+#define CLASS_DRUID             9
+#define CLASS_SHAMAN            10
+#define CLASS_RUNEMASTER        11
 #define CLASS_MINDCRAFTER	12
 
 /* timers for special events */
 extern int timer_pvparena1;
 extern int timer_pvparena2;
+
+/* for fun with client-side weather */
+extern int Send_weather(int ind, int weather_type, int weather_wind, int weather_gen_speed, int weather_intensity, int weather_speed, bool update_clouds, bool revoke_clouds);

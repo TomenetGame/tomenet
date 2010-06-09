@@ -185,9 +185,11 @@ server_opts cfg =
 
 	// anti_arts_hoard, anti_arts_house, anti_arts_wild, anti_arts_shop, anti_arts_pickup, 
 	FALSE,TRUE,TRUE,FALSE,TRUE,TRUE,
-	FALSE, //anti_arts_send, anti_cheeze_pickup
+	FALSE,TRUE, //anti_arts_send, anti_cheeze_pickup, anti_cheeze_telekinesis
 	10,		// surface_item_removal (minutes for scan_objs)
 	30,		// dungeon_item_removal (minutes for scan_objs)
+	1440,		// death_wild_item_removal
+	21060,		// long_wild_item_removal
 	100, 999, 5,		// dungeon_shop_chance (*10), dungeon_shop_type (999=random), dungeon_shop_timeout
 
 	FALSE,		// mage_hp_bonus
@@ -901,4 +903,11 @@ int shutdown_recall_timer = 0, shutdown_recall_state = 0;
 #ifdef MONSTER_ASTAR
 astar_list_open astar_info_open[ASTAR_MAX_INSTANCES];
 astar_list_closed astar_info_closed[ASTAR_MAX_INSTANCES];
+#endif
+
+#ifdef USE_SOUND_2010
+/* copy the audio_sfx[] array from audio.lua over, otherwise
+   Sound() calls in functions that are called from within LUA
+   (such as fire_ball()) will cause LUA errors. - C. Blue */
+char audio_sfx[SOUND_MAX_2010][30];
 #endif
