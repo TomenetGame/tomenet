@@ -1,75 +1,80 @@
-# TomeNET configuration file:
-# It's read by the game and overwrites tomenet.ini settings,
-# the game won't write to it though, but to tomenet.ini only.
-#
-# Note: Parameters that have a value, must NOT lack it, or the client won't
-# start up. If you want to disable a specific parameter, put a '#' in the
-# beginning of the line to disable it temporarily.
+## TomeNET configuration file for clients running on *NIX platforms:
+## You should copy this file to your home directory. The client will read the
+## settings in this file and update some of them after you quit.
+##
+## Lines that start with '#' will ignored. Please make sure that each line
+## includes the expected number of parameters or your client may crash.
 
+## Automatic login settings
 
-
-# account name
+## - Account name
 #nick		Gandalf
-# account password
+
+## - Account password
 #pass		mithrandir
 
-# character name for fully automatic login
+## - Character name for fully automatic login
 #name		Gandalf
 
-# server and port you wish to connect to;
-# comment out to get a list of servers
+##  - Server and port you wish to connect to;
+## leave commented out to get a list of servers
 #server		tomenet.servegame.com
 #port		18348
 
-# perform automatic login with nick, pass and also character name
+##  - Perform automatic login with nick, pass and also character name
 #fullauto
 
 
 
-# client fps (should be 100, best left disabled)
+## Miscellaneous settings
+
+## - Client fps (defaults to 100, best left disabled)
 #fps		100
-# your unix user name (best left disabled)
+
+## - Your unix user name (best left disabled)
 #realname	xxx
-# your TomeNET path (best left disabled)
+
+## - Your TomeNET path (best left disabled)
 #path		xxx
 
 
 
-# graphics settings
+## Graphics settings
 
-# - enable graphics in general (0 = off)
+##  - Enable graphics in general (0 = off)
+##    Note: Not supported at the moment
 #graphics	0
 
 
 
-# audio settings
+## Audio settings
 
-# - enable audio in general (0 = off, 1 = on)
+## - Enable audio in general (0 = off, 1 = on)
 sound			1
 
-# pre-cache audio (defaults to on; recommended)
+## - Pre-cache audio (defaults to on; recommended)
 #cacheAudio		1
 
-# - mixer sample rate, default is 44100 (best left disabled)
-#   It is highly recommended to not changed this to
-#   avoid wrongly pitched audio on some systems.
+## - Mixer sample rate, default is 44100 (best left disabled)
+##   It is highly recommended to not changed this to
+##   avoid wrongly pitched audio on some systems.
 #audioSampleRate	44100
 
-# - number of mixer channels, ie the number of sound effects
-#   that can be played simultaneously. (4..32)
+## - Number of mixer channels, ie the number of sound effects
+##   that can be played simultaneously. (4..32)
 #audioChannels		32
 
-# - Sample buffer size (larger = more lagging sound,
-#   smaller = skipping on slow machines. 128..8192)
+## - Sample buffer size (larger = more lagging sound,
+##   smaller = skipping on slow machines. 128..8192)
 audioBuffer		512
 
-# - turn various things on(1) or off(0)
+## - Turn various things on(1) or off(0)
 audioMaster		1
 audioMusic		1
 audioSound		1
 audioWeather		1
 
-# - mixer values for various things (0..100)
+## - Mixer values for various things (0..100)
 audioVolumeMaster	100
 audioVolumeMusic	100
 audioVolumeSound	100
