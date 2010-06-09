@@ -388,8 +388,8 @@ M:IM_COLD
 # T'ron the rebel Dragonrider is hiding here, with his suit of 
 # dragonrider armour.
 # Levels 45-70
-N:25:The Sacred Land Of Mountains
-D:LoM:the way to The Sacred Land Of Mountains.
+N:25:The Sacred Land of Mountains
+D:LoM:the way to The Sacred Land of Mountains.
 W:40:45:20:0:14:160
 L:89:1000:89:0:89:0:0:0:0:0
 A:97:1000:56:0:56:0:0:0:0:0:97:97
@@ -408,8 +408,8 @@ M:R_CHAR_A
 # levels 26-40
 # Guarded by Ulfang the Black, Morgoth's first Easterling follower.
 # He has Careth Asdriag (an heirloom of Rhun according to its description.)
-N:26:The Land Of Rhun
-D:LoR:a way to the the Land Of Rhun.
+N:26:The Land of Rhun
+D:LoR:a way to the the Land of Rhun.
 W:26:41:13:0:14:160
 L:89:1000:1:0:1:0:0:0:0:0
 A:89:500:96:250:84:250:0:0:0:0:57:58
@@ -441,7 +441,7 @@ M:MULTIPLY
 #S:MULTIPLY
 
 # Used by the death fate
-N:28:Death fate
+N:28:Death Fate
 D:Dth:a fated death.
 W:1:1:1:0:30:255
 L:1:1000:1:0:1:0:0:0:0:0
@@ -485,7 +485,7 @@ M:ANIMAL
 R:75:0
 
 
-# For the Ring Of Phasing's activation:
+# For the Ring of Phasing's activation:
 #
 # levels 1-2
 N:31:The Shores of Valinor

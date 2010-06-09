@@ -6786,8 +6786,8 @@ G:":d
 I:40:39:0
 W:10:0:3:500
 A:10/6:20/10
-F:HIDE_TYPE | LUCK
-# | EASY_KNOW
+F:LUCK
+# HIDE_TYPE | EASY_KNOW
 
 #The Amulet 'Spirit Shard'
 N:935:& Amulet~
@@ -7150,8 +7150,9 @@ G:":d
 I:40:41:3
 W:127:255:3:1
 A:127/255
-F:HIDE_TYPE | ESP_ALL | LIFE
+F:HIDE_TYPE | ESP_ALL
 # | SPEED | STR | DEX | CON | INT | WIS | CHR
+# | LIFE
 
 # 'Reward Tokens' for Highlander Tournament or other events. - C. Blue
 # Can be traded in town store or so, for items, temporary blessings or whatever.
