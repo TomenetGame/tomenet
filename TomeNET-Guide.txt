@@ -450,6 +450,7 @@ _       drink from a fountain. You must stand on the fountain to do this.
         If you see a message 'You feel less thirsty' that means the fountain
         was just plain water. A message 'You have quenched your thirst' means
         that the fountain had no effect on you, although it wasn't water.
+        (Same as /sip command.)
 ?       invoke an in-game help screen
 !       look at the in-game bulletin board. Players can write lines of text to
         it by using the /bbs <text> command.
@@ -632,7 +633,7 @@ They all start with a slash '/':
             Fountains can have good/bad/no effects. There is no fountain of
             death, neither one of detonations, so you won't get instakilled.
             (It's easier to press '_' instead of using the /sip command.
-            Also see '_' above, for additional information.)
+            Also see '_' key above, for additional information.)
 /tag [a..w] Tags all uninscribed items in your backpack by adding a '!k'
             inscription. Helpful for looting in conjunction with /dis command.
             If a slot (a..w) is specified, it only tags the item in that
