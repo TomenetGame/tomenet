@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 8. June 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 9. June 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -536,9 +536,46 @@ They all start with a slash '/':
             will be emptied and 2 remain at 'c) 2 potions of boldness'.))
 /ex or /examine or /extra
             Gives you detailed information about your character's status, such
-            as turn, speed, deepest dungeon level, sanity, body shape (this is
-            interesting if you are a shapechanger). Druids get additional info
-            about forms they can shapechange into.
+            as how many actions you may perform per turn.
+
+            A turn is a basic server timing unit, which for example is used to
+            display the amount of fuel in your light source, or which will make
+            you suffer poison damage each on each turn that passes if you're
+            poisoned.
+            Turns pass slower on deeper dungeon levels to make up for increased
+            monster and player speed, keeping the game playable in real-time.
+            A turn in Bree, ie on the world surface, will last somewhat between
+            1/2 and 2/3 seconds. You can also observe the passing of turns if
+            you watch your light source losing fuel (hit CTRL+R to refresh the
+            display, when taking measure points!).
+            (Note that the server also has a type of internal turn counter,
+            which counts a different sort of turns, one each frame. Usually,
+            the server will run at 100 fps, so these turns pass much faster.
+            It might be a bit confusing that both these units are just called
+            'turns' although they don't correlate, but you won't really have to
+            worry about internal turns at any point, only the 'character turns'
+            are of any importance and noticable by your character, for example,
+            as mentioned above, when you're poisoned, suffering from a cut,
+            waiting for your blacklist to run out, or any other matters.)
+
+            Additionally, /ex will also display the following information:
+            - how many resurrections you have left, if you are a normal-mode
+              character;
+            - which of your auras are currently active (if you have points in
+              the corresponding aura skills);
+            - the deepest dungeon level you have ever
+              reached (same as checking '~7');
+            - extremities your current monster form possesses (if you're
+              transformed into a monster form at the moment). This can be
+              helpful to figure out what types of items you may equip while in
+              this form.
+            - forms you have learned if you're a druid, and their according
+              polymorph codes so you don't have to look them up in (6.7a) if
+              you forgot them;
+            - runecraft status details, if you're adept in runemastery;
+            - pvp kills;
+            - the in-game time and date, and whether it is day or night.
+              (Note: If you want to know the server real-life time, use /time.)
 /fe         Repeat the level feeling. See (4.8) for more information.
  (/feeling)
 /fill       fill an 'Empty Bottle' in your inventory with the water from a
