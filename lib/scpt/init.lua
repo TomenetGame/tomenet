@@ -41,6 +41,9 @@ pern_dofile(Ind, "powers.lua")
 -- Add the schools of magic
 pern_dofile(Ind, "spells.lua")
 
+-- Initialize audio
+pern_dofile(Ind, "audio.lua")
+
 -- Automaticaly update clients, neat heh ? :;=)
 pern_dofile(Ind, "update.lua")
 
@@ -48,10 +51,10 @@ pern_dofile(Ind, "update.lua")
 -- Put whatever is needed here
 
 pern_dofile(Ind, "cblue.lua")
-pern_dofile(Ind, "dg.lua")
-pern_dofile(Ind, "evil.lua")
+--pern_dofile(Ind, "dg.lua")
+--pern_dofile(Ind, "evil.lua")
 -- pern_dofile(Ind, "zz.lua") -- file isn't there? -the_sandman
-pern_dofile(Ind, "jir.lua")
+--pern_dofile(Ind, "jir.lua")
 pern_dofile(Ind, "it.lua")
 pern_dofile(Ind, "mikaelh.lua")
 

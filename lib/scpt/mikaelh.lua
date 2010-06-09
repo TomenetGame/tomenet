@@ -26,7 +26,7 @@ SKILL_STANCE = 79
 -- Neat list of player skills
 function showskills(name)
 	local p, f
-	p = ind(name)
+	p = ind_loose(name)
 	if (p == -1) then return -1 end
 	f = players(p).skill_points
 	msg_print(Ind, "\255BSkills of player " .. p .." (".. f .." points available)")

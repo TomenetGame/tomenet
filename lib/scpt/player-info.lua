@@ -110,6 +110,7 @@ local j = 0
 end
 
 -- reload lua files.
+--DEPRECATED AND BAD. use /initlua slash.c command instead!
 function init()
 	pern_dofile(Ind, "cblue.lua")
 	pern_dofile(Ind, "dg.lua")

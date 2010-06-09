@@ -35,6 +35,8 @@ __update_table =
 	"scpt/powers.lua",
         "scpt/meta.lua",
 	"scpt/xml.lua",
+
+	"scpt/audio.lua",
 }
 
 function update_client()

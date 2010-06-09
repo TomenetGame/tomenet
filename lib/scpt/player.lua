@@ -2,8 +2,25 @@ function ind(i)
 	local id
 
         id = get_playerind(i)
-        if id == -1 then msg_print(Ind, "Unknown player "..i) return id end
+        if id == -1 then msg_print(Ind, "Unknown player "..i) end
         return id
+end
+
+--note: multiple matches will just result in picking one instead of giving an error message - C. Blue
+function ind_loose(i)
+	local id
+
+        id = get_playerind_loose(i)
+        if id == -1 then msg_print(Ind, "Unknown player "..i) end
+        return id
+end
+
+function slot_loose(pind, iname)
+	local s
+
+        s = get_playerslot_loose(pind, iname)
+        if s == -1 then msg_print(Ind, "Unknown item "..iname) end
+        return s
 end
 
 function players(i)
