@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 9. June 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 11. June 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1434,34 +1434,26 @@ By pressing the '=' key, you can access the options menu where you can tweak
 your client in some ways. Some of these options that aren't self-explaining
 or that are especially important are listed in detail here:
 
-(Note: Some options stem from single-player Angband, and are deprecated or
-pointless for multi-player, and therefore don't have any effect. Those are
-displayed in dark grey instead of white.)
-
-(1) User Interface Options
+(1 & 2) User Interface Options
     Rogue-like commands (rogue_like_commands)
         Toggles between normal key set and traditional rogue-like key set.
+    Suppress server messages as far as possible (taciturn_messages)
+        Will prevent some of the not-so-important server messages to be
+        shown, for example 'You have <item>' when picking up an item.
     Don't display 'flavours' in item names (short_item_names)
         A 'Black Potion of Speed' will just be shown as a 'Potion of Speed'.
     Hide unusable skills (hide_unusable_skills)
         Skills that your character cannot use will not be displayed in the
         skill menu invoked by 'G' key.
 
-(2) Disturbance Options
+    Also, (2) has all of the audio options.
 
-(3) Game-Play Options
+(3 & 4) Game-Play Options
     Set 'AFK mode' automatically (auto_afk)
         Rogues might want to turn this off in order to sit out their blacklist
         timer in town.
-
-(4) Efficiency Options
-
-(5) TomeNET Additional Options
     Automatically open doors (easy_open)
         Your character attempts to open a door just by you moving into it.
-    Suppress server messages as far as possible (taciturn_messages)
-        Will prevent some of the not-so-important server messages to be
-        shown, for example 'You have <item>' when picking up an item.
 !!! Scroll the screen more frequently (wide_scroll_margin)
 !!!     Should always be enabled! Will reduce probability for off-screen kills,
 !!!     since the screen scrolls much earlier when you come close to a border!
@@ -4580,15 +4572,12 @@ according elemental attacks (ie cold ball vs fire hounds).
 
 Magical/monster attacks vs players:
 Players can be susceptible against an element too. For example Ents are
-susceptible to fire by nature. Immunity will completely cancel out the
-susceptibility. If an Ent wears an item of fire immunity it will suffer
-0 damage from fire attacks, same as any other character.
-If a susceptible player without immunity is hit by the according elemental
-damage type, the damage will be doubled!
-If a player is susceptible to an element and at the same time wears an item
-that provides resistance then both factor in: Damage = Damage * 2 / 3.
-(If the player also has temporary resistance then the damage will be
-multiplied by 1/3 once more, as usual.)
+susceptible to fire by nature. Resistance or immunity will completely cancel
+out the susceptibility, so one of the first things to do as an Ent is to visit
+the magic store and buy a ring of fire resistance, or any druid ego monster or
+later on arch-vile will give you a pretty hard time.
+If a susceptible player without resistance or immunity is hit by the according
+elemental damage type, the damage will be doubled!
 
 
 Branded attacks in PvP
@@ -6746,9 +6735,7 @@ Half-Troll
     Half-trolls have their strength sustained. They are very strong, but also
     very stupid and slow. They make great warriors and iffy priests. They are
     bad at searching, disarming, perception, and stealth. They are so ugly
-    that a Half-Orc grimaces in their presence. Half-trolls have their
-    strength sustained and also happen to be fun to play. They need to eat
-    often.
+    that a Half-Orc grimaces in their presence. They need to eat often.
     Half-Trolls get bonus on 'Blunt-Mastery', 'Health' and 'Swimming'. They
     receive larger penalties on 'Magic' and 'Sorcery'.
 
