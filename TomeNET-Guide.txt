@@ -480,7 +480,7 @@ CTRL+R  redraw the screen (do this if it's messed up for some reason).
 CTRL+T  take a screen shot. See /screenshot command below.
 TAB or CTRL+I
         displays lag-o-meter.
-CTRL+U  Displays/exits the audio mixer settings.
+CTRL+U  Displays/exits the audio mixer settings. (Also see (2.1a).)
 CTRL+C  Toggles music. (Shortcut for toggling it in the mixer settings.)
 CTRL+N  Toggles audio. (Shortcut for master toggle in the mixer settings).
 Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
@@ -1371,6 +1371,10 @@ Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
 Also be sure to press '=' key to have a look at the audio options, which are in
 'User Interface Options 2'.
 
+If you want to use your own sound and music, and create audio packs for other
+players, read sound.cfg and music.cfg in your lib/xtra/sound or lib/xtra/music
+folder to see how it's done and which formats are supported.
+
 
 
 (2.2) Starting TomeNET and getting to play on an internet server
@@ -1446,7 +1450,7 @@ or that are especially important are listed in detail here:
         Skills that your character cannot use will not be displayed in the
         skill menu invoked by 'G' key.
 
-    Also, (2) has all of the audio options.
+    Also, (2) has all of the audio options. (See (2.1a) for more information.)
 
 (3 & 4) Game-Play Options
     Set 'AFK mode' automatically (auto_afk)
@@ -10001,6 +10005,7 @@ SOLUTION B: If you are using X11, this problem may occur depending on your
             and enable 'Use audio system for paging sounds'. This will result
             in paging sounds being played via your sound card, instead of the
             operating system's beep (requires TomeNET v4.4.5 or higher).
+            (See (2.1a) for more information about the audio system.)
 
 PROBLEM 20: Are 'ToME' and 'TomeNET' similar?
 SOLUTION:   Despite of similar name, the only thing these two games have in
