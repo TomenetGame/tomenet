@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 11. June 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 12. June 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10030,6 +10030,26 @@ SOLUTION:   Either your host name (that's your PC's network name you can set in
             Another possibility is that you are already logged in, and are now
             trying to log in again from a different IP address. Resuming a
             connection is possible, but must be done from the same IP address.
+
+PROBLEM 23: I just quit the game, and tried to log in again with another
+            character of mine, but I get an error message saying
+            "Multiple logins on the same account aren't allowed".
+SOLUTION:   When you quit the game while you are still inside a dungeon or a
+            tower, your character will stay in the game for around 20..30 more
+            seconds.
+            This prevents cheating by just quitting when a dangerous situation
+            occurs in gameplay.
+            During this time, if you try to login again, you can only use the
+            same character that is now sitting out the timeout, thereby
+            resuming your gameplay.
+            You cannot log in with any other character until the timeout of
+            20..30 seconds is over and your old character has finally been
+            taken offline by the server.
+            In general, you should avoid quitting the game outside of towns,
+            since it can put you in danger. Not only because your character
+            will stay in the game for a little while after you quit, but also
+            because you can't be sure what the situation around you will be
+            the next time you log on again!
 
 
 
