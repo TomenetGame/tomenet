@@ -2302,20 +2302,28 @@ to their real functionality. They are:
   s for changing a stance
   * for targetting the nearest monster
   @...\ for using call-by-name (spell/item name must be between '@' and '\')
+All other keys are taken over unmodified, like 'f' for firing a ranged weapon.
 
 Also, '\e)' is automatically prefixed, and the most fitting macro type
 automatically chosen (depending on the trigger key).
 
-Example 1: Assumed your book is inscribed @m1 as usual, and you want to cast
-spell a). What you can simply enter in the q'n'd field is:
-     m1a*
-and it will automatically be expanded to the real macro '\e)m@11\r1a*t'.
+Example 1: Firing your ranged weapon would just be..
+        f*
+    (which gets expanded to '\e)f*t'.)
 
-Example 2: Assumed you have the spell Manathrust somewhere in your books and
-want to cast it by name, what you enter in the q'n'd field is:
-    m@Manathrust\*
-and it will automatically be expanded to '\e)m@11\r@Manathrust\r*t', voila.
-Another example: 'm@Phase Door\'.
+Example 2: Assumed your book is inscribed @m1 as usual, and you want to cast
+    spell a). What you can simply enter in the q'n'd field is:
+        m1a*
+    and it will automatically be expanded to the real macro '\e)m@11\r1a*t'.
+
+Example 3: Assumed you have the spell Manathrust somewhere in your books and
+    want to cast it by name, what you enter in the q'n'd field is:
+        m@Manathrust\*
+    and it will automatically be expanded to '\e)m@11\r@Manathrust\r*t', voila.
+
+Example 4: Casting phase door would be..
+        m@Phase Door\
+    (expanded to '\e)m@11\r@Phase Door\r'.)
 
 
 
