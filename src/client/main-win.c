@@ -923,6 +923,9 @@ static void load_prefs(void)
 	use_sound = (GetPrivateProfileInt("Base", "Sound", 0, ini_file) != 0);
 
  #ifdef USE_SOUND_2010
+	sound_hint = (GetPrivateProfileInt("Base", "HintSound", 1, ini_file) != 0);
+	if (sound_hint) WritePrivateProfileString("Base", "HintSound", "0", ini_file);
+
 	no_cache_audio = !(GetPrivateProfileInt("Base", "CacheAudio", 1, ini_file) != 0);
 	cfg_audio_rate = GetPrivateProfileInt("Base", "SampleRate", 44100, ini_file);
 	cfg_max_channels = GetPrivateProfileInt("Base", "MaxChannels", 32, ini_file);

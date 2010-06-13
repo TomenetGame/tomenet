@@ -276,7 +276,7 @@ int cfg_audio_master_volume = 100, cfg_audio_music_volume = 100, cfg_audio_sound
 int page_sound_idx = -1, rain1_sound_idx = -1, rain2_sound_idx = -1, snow1_sound_idx = -1, snow2_sound_idx = -1, browse_sound_idx = -1, browsebook_sound_idx = -1;
 
 /* optimization options */
-bool count_half_sfx_attack = TRUE;
+bool count_half_sfx_attack = TRUE, sound_hint = TRUE;
 
 /* Don't cache audio */
 bool no_cache_audio = FALSE;

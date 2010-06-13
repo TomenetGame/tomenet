@@ -190,6 +190,8 @@ static bool read_mangrc(cptr filename)
 			}
 #endif
 #ifdef USE_SOUND_2010
+			/* sound hint */
+			if (!strncmp(buf, "hintSound", 9)) sound_hint = FALSE;
 			/* don't cache audio (41.5 MB of ogg samples deflated in memory!) */
 			if (!strncmp(buf, "cacheAudio", 10)) {
 				char *p;
@@ -331,6 +333,11 @@ bool write_mangrc(void) {
 
 			/* copy the line over */
 			fputs(buf, config2);
+
+#ifdef USE_SOUND_2010
+			/* hack: disable one-time hint */
+			if (!strncmp(buf, "sound", 5) && sound_hint) fputs("hintSound\n", config2);
+#endif
 		}
 		fclose(config);
 		fclose(config2);
@@ -371,6 +378,7 @@ bool write_mangrc(void) {
 		fputs(format("sound\t\t\t%s\n", use_sound ? "1" : "0"), config2);
 //#endif
 //#ifdef USE_SOUND_2010
+		fputs("soundHint\n", config2);
 		fputs(format("cacheAudio\t\t%s\n", no_cache_audio ? "0" : "1"), config2);
 		fputs(format("audioSampleRate\t\t%d\n", cfg_audio_rate), config2);
 		fputs(format("audioChannels\t\t%d\n", cfg_max_channels), config2);

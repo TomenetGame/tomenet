@@ -396,6 +396,9 @@ static void init_sound() {
 		return;
 	}
 
+	/* One-time popup dialogue, to inform and instruct user of audio capabilities */
+	if (sound_hint) plog("*******************************************\nThis client supports music and sound effects.\nTo enable those, you need to install a sound pack,\nsee http://www.tomenet.net/ forum and downloads.\n*******************************************\n");
+
 	/* Try the modules in the order specified by sound_modules[] */
 	for (i = 0; i < N_ELEMENTS(sound_modules); i++) {
 		if (sound_modules[i].init && 0 == sound_modules[i].init(0, NULL)) {
