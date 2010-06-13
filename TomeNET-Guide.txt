@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. June 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 13. June 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1288,9 +1288,17 @@ Linux:
 ------
 How to compile the game binary:
 Go into '/tomenet/src' where the file 'makefile' is located.
+
 Make sure you have the C-devel, X11-devel, ncurses, ncurses-devel and crypt
 libraries installed. The package names are usually:
 xorg-dev, libncurses5, libncurses5-dev, libgcrypt11, libc6-dev.
+
+Since version 4.4.5 which supports music and sound via SDL, you also need
+libsdl-mixer-devel, libsdl, libsmpeg. Usual package names (SDL version 1.2):
+libsdl-mixer1.2, libsdl-mixer1.2-dev, libsdl1.2debian, libsdl1.2-dev,
+(preferably libsdl1.2debian-pulseaudio, eg under Ubuntu), libsmpeg0,
+libsmpeg-dev.
+
 Enter these two lines:
         make clean
         make tomenet
