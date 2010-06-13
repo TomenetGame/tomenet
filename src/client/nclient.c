@@ -3365,9 +3365,6 @@ int Receive_weather(void)
 		if (weather_type == -1) {
 			sound_weather(-2); //stop
 		} else if (weather_type % 10 == 0) {
-#ifdef DEBUG_SOUND
-			puts("cmd-1");
-#endif
 			sound_weather(-1); //fade out
 		}
 #if 0 /*moved to do_weather() to become consistent with cloud shapes hovering above us..*/
