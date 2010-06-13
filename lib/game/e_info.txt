@@ -1743,20 +1743,16 @@ R:100
 F:AUTO_CURSE
 F:NO_SEED
 
-# Scrolls, some spellbooks too
+# Spellbooks (split up the scrolls part, see much below)
 N:149:Fireproof
 X:B:0:1
-T:70:8:47
-T:70:49:49
-T:70:51:51
-T:70:53:255
 T:111:0:0
 T:111:2:8
 T:111:10:18
 T:111:22:50
 T:111:52:54
 T:111:57:255
-W:0:1:10:1000
+W:0:1:7:3000
 C:0:0:0:0
 R:100
 F:IGNORE_FIRE
@@ -2526,24 +2522,19 @@ R:100
 F:RES_MANA | IGNORE_DISEN | REGEN_MANA | REFLECT | FREE_ACT
 #F:RES_DISE
 
-# Scrolls, some spellbooks too
+# Spellbooks (scrolls see below)
 N:216:Waterproof
 X:B:0:1
-T:70:8:48
-T:70:51:51
-T:70:53:255
 T:111:53:53
 T:111:56:99
-W:0:1:10:500
+W:0:1:7:2000
 C:0:0:0:0
 R:100
 F:IGNORE_WATER
 F:NO_SEED
 
-
-
 ## 'of Gondolin' for Vampires
-#N:213:of Corruption
+#N:217:of Corruption
 #T:21:0:255
 #T:22:0:255
 #T:23:3:255
@@ -2557,7 +2548,7 @@ F:NO_SEED
 #F:IGNORE_ACID | IGNORE_FIRE | IGNORE_WATER
 #F:ESP_EVIL | ESP_DEMON
 #
-#N:214:Exhausting
+#N:218:Exhausting
 #T:21:0:255
 #T:22:0:255
 #T:23:3:255
@@ -2568,6 +2559,34 @@ F:NO_SEED
 #R:100
 #F:CURSED | DRAIN_HP | DRAIN_EXP | ABILITY
 #F:IGNORE_ACID | IGNORE_FIRE | IGNORE_WATER
+
+# Scrolls (spellbooks see above)
+N:219:Waterproof
+X:B:0:1
+T:70:8:48
+T:70:51:51
+T:70:53:255
+W:0:1:10:450
+C:0:0:0:0
+R:100
+F:IGNORE_WATER
+F:NO_SEED
+
+# Scrolls (split up the spellbook part, see much above)
+N:220:Fireproof
+X:B:0:1
+T:70:8:47
+T:70:49:49
+T:70:51:51
+T:70:53:255
+W:0:1:10:700
+C:0:0:0:0
+R:100
+F:IGNORE_FIRE
+F:NO_SEED
+
+
+
 
 
 

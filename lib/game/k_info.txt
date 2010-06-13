@@ -3513,7 +3513,7 @@ I:45:49:0
 #A:50/3
 W:40:0:2:7000
 A:40/2
-F:BLOWS
+F:BLOWS | HIDE_TYPE
 
 N:437:Cure Light Wounds
 G:!:d
@@ -6386,7 +6386,7 @@ G:=:d
 I:45:61:0
 W:8:0:2:250
 A:8/10
-F:STEALTH
+F:STEALTH | HIDE_TYPE
 
 N:891:Reflection
 G:":d
