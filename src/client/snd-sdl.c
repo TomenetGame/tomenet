@@ -28,7 +28,9 @@
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_mixer.h>
+#include <SDL/SDL_thread.h>
 
+//#define DEBUG_SOUND
 
 /* Path to sound files */
 static const char *ANGBAND_DIR_XTRA_SOUND;
@@ -39,6 +41,7 @@ static const char *ANGBAND_DIR_XTRA_MUSIC;
 static void fadein_next_music(void);
 static void clear_channel(int c);
 static bool my_fexists(const char *fname);
+static int thread_load_audio(void *dummy);
 
 
 /* Arbitrary limit of mixer channels */
@@ -535,12 +538,14 @@ static bool play_sound(int event, int type) {
 
 		/* Load */
 		wave = Mix_LoadWAV(filename);
-	}
 
-	/* Check to see if we have a wave again */
-	if (!wave) {
-		plog("SDL sound load failed.");
-		return FALSE;
+		/* remember that we don't need to reload this one */
+		if (wave) samples[event].wavs[s] = wave;
+		else {
+			/* we really failed to load it */
+			plog(format("SDL sound load failed (%d, %d).", page_sound_idx, s));
+			return FALSE;
+		}
 	}
 
 	/* Actually play the thing */
@@ -578,12 +583,14 @@ extern bool sound_page(void) {
 
 		/* Load */
 		wave = Mix_LoadWAV(filename);
-	}
 
-	/* Check to see if we have a wave again */
-	if (!wave) {
-		plog("SDL sound load failed.");
-		return FALSE;
+		/* remember that we don't need to reload this one */
+		if (wave) samples[page_sound_idx].wavs[s] = wave;
+		else {
+			/* we really failed to load it */
+			plog(format("SDL sound load failed (%d, %d).", page_sound_idx, s));
+			return FALSE;
+		}
 	}
 
 	/* Actually play the thing */
@@ -665,12 +672,14 @@ static void play_sound_weather(int event) {
 
 		/* Load */
 		wave = Mix_LoadWAV(filename);
-	}
 
-	/* Check to see if we have a wave again */
-	if (!wave) {
-		plog("SDL sound load failed.");
-		return;
+		/* remember that we don't need to reload this one */
+		if (wave) samples[event].wavs[s] = wave;
+		else {
+			/* we really failed to load it */
+			plog(format("SDL sound load failed (%d, %d).", page_sound_idx, s));
+			return;
+		}
 	}
 
 	/* Actually play the thing */
@@ -791,12 +800,14 @@ static void fadein_next_music(void) {
 
 		/* Load */
 		wave = Mix_LoadMUS(filename);
-	}
 
-	/* Check to see if we have a wave again */
-	if (!wave) {
-		plog("SDL music load failed.");
-		return;
+		/* remember that we don't need to reload this one */
+		if (wave) songs[music_next].wavs[s] = wave;
+		else {
+			/* we really failed to load it */
+			plog(format("SDL music load failed (%d, %d).", music_next, s));
+			return;
+		}
 	}
 
 	/* Actually play the thing */
@@ -820,6 +831,7 @@ static void set_mixing_sdl(void) {
  * Init the SDL sound "module".
  */
 errr init_sound_sdl(int argc, char **argv) {
+	SDL_Thread *thread;
 	int i;
 
 	/* Parse args */
@@ -827,7 +839,6 @@ errr init_sound_sdl(int argc, char **argv) {
 		if (prefix(argv[i], "-c")) {
 			no_cache_audio = TRUE;
 			plog("Audio cache disabled.");
-//puts("\n");//plog seems to mess up display? -- just for following debug puts() for USE_SOUND_2010 - C. Blue
 			continue;
 		}
 	}
@@ -837,7 +848,11 @@ errr init_sound_sdl(int argc, char **argv) {
 #endif
 
 	/* Load sound preferences if requested */
+#if 0
 	if (!sound_sdl_init(no_cache_audio)) {
+#else /* never cache audio right at program start, because it creates an annoying delay! */
+	if (!sound_sdl_init(TRUE)) {
+#endif
 		plog("Failed to load audio config");
 
 		/* Failure */
@@ -858,6 +873,26 @@ errr init_sound_sdl(int argc, char **argv) {
 
 	/* clean-up hook */
 	atexit(close_audio);
+
+	/* start caching audio in a separate thread to eliminate startup loading time */
+	if (!no_cache_audio) {
+#ifdef DEBUG_SOUND
+		puts("Audio cache: Creating thread..");
+#endif
+		thread = SDL_CreateThread(thread_load_audio, NULL);
+		if (thread == NULL) {
+#ifdef DEBUG_SOUND
+			puts("Audio cache: Thread creation failed.");
+#endif
+			plog(format("Audio cache: Unable to create thread: %s\n", SDL_GetError()));
+
+			/* load manually instead, with annoying delay ;-p */
+			thread_load_audio(NULL);
+		}
+#ifdef DEBUG_SOUND
+		else puts("Audio cache: Thread creation succeeded.");
+#endif
+	}
 
 #ifdef DEBUG_SOUND
 	puts("init_sound_sdl() completed.");
@@ -886,6 +921,78 @@ static bool my_fexists(const char *fname) {
 		fclose(fd);
 		return TRUE;
 	} else return FALSE;
+}
+
+/* if audioCached is TRUE, load those audio files in a separate
+   thread, to avoid startup delay of client - C. Blue */
+static int thread_load_audio(void *dummy) {
+	int idx, subidx;
+	Mix_Chunk *wave = NULL;
+	Mix_Music *waveMUS = NULL;
+
+	/* process all sound fx */
+	for (idx = 0; idx < SOUND_MAX_2010; idx++) {
+		/* process all files for each sound event */
+		for (subidx = 0; subidx < samples[idx].num; subidx++) {
+			const char *filename = samples[idx].paths[subidx];
+
+			/* paranoia: check if it's already loaded (but how could it..) */
+			if (samples[idx].wavs[subidx]) {
+#ifdef DEBUG_SOUND
+				puts(format("sample already loaded %d, %d: %s.", idx, subidx, filename));
+#endif
+				continue;
+			}
+
+			/* Try loading it, if it's not yet cached */
+
+			/* Verify it exists */
+			if (!my_fexists(filename)) {
+#ifdef DEBUG_SOUND
+				puts(format("file doesn't exist %d, %d: %s.", idx, subidx, filename));
+#endif
+				continue;
+			}
+
+			/* Load */
+			wave = Mix_LoadWAV(filename);
+
+			/* Did we get it now? */
+			if (wave) {
+				samples[idx].wavs[subidx] = wave;
+#ifdef DEBUG_SOUND
+				puts(format("loaded sample %d, %d: %s.", idx, subidx, filename));
+#endif
+			}
+#ifdef DEBUG_SOUND
+			else puts(format("failed to load sample %d, %d: %s.", idx, subidx, filename));
+#endif
+		}
+	}
+
+	/* process all music */
+	for (idx = 0; idx < MUSIC_MAX; idx++) {
+		/* process all files for each sound event */
+		for (subidx = 0; subidx < songs[idx].num; subidx++) {
+			const char *filename = songs[idx].paths[subidx];
+
+			/* paranoia: check if it's already loaded (but how could it..) */
+			if (songs[idx].wavs[subidx]) continue;
+
+			/* Try loading it, if it's not yet cached */
+
+			/* Verify it exists */
+			if (!my_fexists(filename)) continue;
+
+			/* Load */
+			waveMUS = Mix_LoadMUS(filename);
+
+			/* Did we get it now? */
+			if (waveMUS) songs[idx].wavs[subidx] = waveMUS;
+		}
+	}
+
+	return(0);
 }
 
 #endif /* SOUND_SDL */
