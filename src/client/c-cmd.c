@@ -835,7 +835,14 @@ void cmd_equip(void)
 	ch = inkey();
 	if (ch >= 'A' && ch < 'A' + (INVEN_TOTAL - INVEN_WIELD)) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
 		c = ch - 'A';
-		if (inventory[INVEN_WIELD + c].tval) Send_msg(format("\377s%s", inventory_name[INVEN_WIELD + c]));
+		if (inventory[INVEN_WIELD + c].tval) {
+			if (chat_mode == CHAT_MODE_PARTY)
+				Send_msg(format("!:\377s%s", inventory_name[INVEN_WIELD + c]));
+			else if (chat_mode == CHAT_MODE_LEVEL)
+				Send_msg(format("#:\377s%s", inventory_name[INVEN_WIELD + c]));
+			else
+				Send_msg(format("\377s%s", inventory_name[INVEN_WIELD + c]));
+		}
 	}
 
 	Term_load();
