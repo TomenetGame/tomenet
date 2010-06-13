@@ -689,8 +689,8 @@ void do_cmd_toggle_search(int Ind)
 		/* Recalculate bonuses */
 		p_ptr->update |= (PU_BONUS);
 
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
+		/* Redraw stuff */
+		p_ptr->redraw |= (PR_STATE | PR_MAP);
 	}
 
 	/* Start searching */
@@ -706,7 +706,7 @@ void do_cmd_toggle_search(int Ind)
 		p_ptr->update |= (PU_BONUS);
 
 		/* Redraw stuff */
-		p_ptr->redraw |= (PR_STATE | PR_SPEED);
+		p_ptr->redraw |= (PR_STATE | PR_SPEED | PR_MAP);
 	}
 }
 

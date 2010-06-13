@@ -2177,6 +2177,30 @@ static byte player_color(int Ind)
 	return pcolor;
 }
 
+byte get_trap_color(int Ind, int t_idx, int feat)
+{
+	player_type *p_ptr = Players[Ind];
+	byte a;
+
+	/* Get attr */
+	a = t_info[t_idx].color;
+
+	/* Get a new color with a strange formula :) */
+	if (t_info[t_idx].flags & FTRAP_CHANGE)
+	{
+		u32b tmp;
+
+		/* tmp = dlev + dungeon_type + c_ptr->feat; */
+		tmp = p_ptr->wpos.wx + p_ptr->wpos.wy + p_ptr->wpos.wz + feat;
+
+		/* a = tmp % 16; */
+		/* mega-hack: use trap-like colours only */
+		a = tmp % 6 + 1;
+	}
+
+	return a;
+}
+
 /*
  * Manipulate map grid colours, for example outside on world surface,
  * depending on clima or daytime!  - C. Blue
@@ -2576,7 +2600,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			a = p_ptr->f_attr[feat];
 			
 			/* Hack to display detected traps */
-			if((cs_ptr=GetCS(c_ptr, CS_TRAPS)))
+			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)))
 			{
 				int t_idx = cs_ptr->sc.trap.t_idx;
 				if (cs_ptr->sc.trap.found)
@@ -2594,21 +2618,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 						/* if (!(f_ptr->flags1 & FF1_DOOR)) c = '^'; */
 						(*cp) = '^';
 
-						/* Add attr */
-						a = t_info[t_idx].color;
-
-						/* Get a new color with a strange formula :) */
-						if (t_info[t_idx].flags & FTRAP_CHANGE)
-						{
-							u32b tmp;
-
-							/* tmp = dlev + dungeon_type + c_ptr->feat; */
-							tmp = p_ptr->wpos.wx + p_ptr->wpos.wy + p_ptr->wpos.wz + feat;
-
-							/* a = tmp % 16; */
-							/* mega-hack: use trap-like colours only */
-							a = tmp % 6 + 1;
-						}
+						a = get_trap_color(Ind, t_idx, feat);
 
 						/* Hack -- always l.blue if underwater */
 						if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER)
@@ -2734,7 +2744,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			   if ((c_ptr->special.type == CS_TRAPS) && (c_ptr->special.sc.ptr->found))
 			*/
 			/* Hack to display detected traps */
-			if((cs_ptr=GetCS(c_ptr, CS_TRAPS)) && c_ptr->feat != FEAT_ILLUS_WALL)
+			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && c_ptr->feat != FEAT_ILLUS_WALL)
 			{
 				int t_idx = cs_ptr->sc.trap.t_idx;
 				if (cs_ptr->sc.trap.found)
@@ -2747,20 +2757,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 					}
 					else
 					{
-						/* Add attr */
-						a = t_info[t_idx].color;
-						/*	a = t_info[TR_LIST(c_ptr)->t_idx].color; */
-						/* Get a new color with a strange formula :) */
-						if (t_info[t_idx].flags & FTRAP_CHANGE)
-						{
-							u32b tmp;
-
-							tmp = p_ptr->wpos.wx + p_ptr->wpos.wy + p_ptr->wpos.wz + c_ptr->feat;
-							/*tmp = dlev + dungeon_type + c_ptr->feat; */
-
-/*							a = tmp % 16; */
-							a = tmp % 6 + 1;
-						}
+						a = get_trap_color(Ind, t_idx, feat);
 					}
 				}
 			}
@@ -2946,41 +2943,47 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 	/* Objects */
 	if (c_ptr->o_idx)
 	{
-		/* Get the actual item */
-		object_type *o_ptr = &o_list[c_ptr->o_idx];
+		struct c_special *cs_ptr;
 
-		/* Memorized objects */
-		/* Hack -- the dungeon master knows where everything is */
-		if ((p_ptr->obj_vis[c_ptr->o_idx]) || (p_ptr->admin_dm))
+		/* Hack - Traps override objects while searching - mikaelh */
+		if (!p_ptr->searching || !((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && cs_ptr->sc.trap.found))
 		{
-			/* Normal char */
-			(*cp) = object_char(o_ptr);
+			/* Get the actual item */
+			object_type *o_ptr = &o_list[c_ptr->o_idx];
 
-			/* Normal attr */
-			(*ap) = object_attr(o_ptr);
+			/* Memorized objects */
+			/* Hack -- the dungeon master knows where everything is */
+			if ((p_ptr->obj_vis[c_ptr->o_idx]) || (p_ptr->admin_dm))
+			{
+				/* Normal char */
+				(*cp) = object_char(o_ptr);
 
-			/* Hack -- always l.blue if underwater */
-//			if (feat == FEAT_WATER)
-			if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER)
-				(*ap) = TERM_L_BLUE;
+				/* Normal attr */
+				(*ap) = object_attr(o_ptr);
 
-			/* hack: custom books' colour depends on their content! - C. Blue */
-			if (o_ptr->tval == TV_BOOK && o_ptr->sval >= SV_CUSTOM_TOME_1 &&
-			    o_ptr->sval < SV_SPELLBOOK)
-				(*ap) = get_book_name_color(Ind, o_ptr);
+				/* Hack -- always l.blue if underwater */
+//				if (feat == FEAT_WATER)
+				if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER)
+					(*ap) = TERM_L_BLUE;
 
-			/* Abnormal attr */
-/*                        if ((!avoid_other) && (!(((*ap) & 0x80) && ((*cp) & 0x80))) && (k_info[o_ptr->k_idx].flags5 & TR5_ATTR_MULTI)) (*ap) = get_shimmer_color(); */
-			if (k_info[o_ptr->k_idx].flags5 & TR5_ATTR_MULTI)
+				/* hack: custom books' colour depends on their content! - C. Blue */
+				if (o_ptr->tval == TV_BOOK && o_ptr->sval >= SV_CUSTOM_TOME_1 &&
+				    o_ptr->sval < SV_SPELLBOOK)
+					(*ap) = get_book_name_color(Ind, o_ptr);
+
+				/* Abnormal attr */
+/*      	                  if ((!avoid_other) && (!(((*ap) & 0x80) && ((*cp) & 0x80))) && (k_info[o_ptr->k_idx].flags5 & TR5_ATTR_MULTI)) (*ap) = get_shimmer_color(); */
+				if (k_info[o_ptr->k_idx].flags5 & TR5_ATTR_MULTI)
 #ifdef CLIENT_SHIMMER
-				(*ap) = TERM_HALF;
+					(*ap) = TERM_HALF;
 #else
-				(*ap) = get_shimmer_color();
+					(*ap) = get_shimmer_color();
 #endif
-/*				(*ap) = randint(15); */
+/*					(*ap) = randint(15); */
 
-			/* Hack -- hallucination */
-			if (p_ptr->image) image_object(ap, cp);
+				/* Hack -- hallucination */
+				if (p_ptr->image) image_object(ap, cp);
+			}
 		}
 	}
 
@@ -3417,6 +3420,43 @@ void lite_spot(int Ind, int y, int x)
 		}
 	}
 }
+
+/*
+ * Draws something on a spot without modifying the internal buffer, thus
+ * leaving something on the screen until it's redrawn otherwise.
+ */
+void draw_spot(int Ind, int y, int x, byte a, char c)
+{
+	player_type *p_ptr = Players[Ind];
+
+	/* Redraw if on screen */
+	if (panel_contains(y, x))
+	{
+		int dispx, dispy;
+
+		/* Handle "player" */
+		if ((y == p_ptr->py) && (x == p_ptr->px))
+		{
+			/* Never redraw the player */
+			return;
+		}
+
+		/* Hack -- fake monochrome */
+		if (!use_color) a = TERM_WHITE;
+
+		dispx = x - p_ptr->panel_col_prt;
+		dispy = y - p_ptr->panel_row_prt;
+
+		/* Only draw if different than buffered */
+		if (p_ptr->scr_info[dispy][dispx].c != c ||
+		    p_ptr->scr_info[dispy][dispx].a != a)
+		{
+			/* Tell client to redraw this grid */
+			(void)Send_char(Ind, dispx, dispy, a, c);
+		}
+	}
+}
+
 
 
 
@@ -7483,8 +7523,8 @@ void disturb(int Ind, int stop_search, int keep_resting)
 		/* Recalculate bonuses */
 		p_ptr->update |= (PU_BONUS);
 
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
+		/* Redraw stuff */
+		p_ptr->redraw |= (PR_STATE | PR_MAP);
 
 		/* cancel cloaking preparations too */
 		stop_cloaking(Ind);

@@ -6678,7 +6678,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			m_ptr->monfear = 0;
 
 			/* Visual note */
-			msg_print_near_monster(m_idx, "recovers the courage.");
+			msg_print_near_monster(m_idx, "becomes courageous again.");
 #if 0
 			if (p_ptr->mon_vis[m_idx])
 			{

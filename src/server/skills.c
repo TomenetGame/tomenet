@@ -717,8 +717,8 @@ void increase_skill(int Ind, int i)
 	p_ptr->update |= (PU_SKILL_MOD);
 	
 	/* also update 'C' character screen live! */
-	p_ptr->update |= (PU_BONUS);
-	p_ptr->redraw |= (PR_SKILLS | PR_PLUSSES | PR_SANITY | PR_HP | PR_MANA);
+	p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA);
+	p_ptr->redraw |= (PR_SKILLS | PR_PLUSSES | PR_SANITY);
 
 	/* Take care of gained abilities */
 	msg_gained_abilities(Ind, old_value, i);

@@ -2312,20 +2312,24 @@ static void calc_body_bonus(int Ind)
 
 	/* Affect charisma by appearance */
 	d = 0;
-	if(r_ptr->flags3 & RF3_DRAGON) d = 0;
-	if(r_ptr->flags3 & RF3_DRAGONRIDER) d = 0;
-	if(r_ptr->flags3 & RF3_ANIMAL) d = 0;
-
-	if(r_ptr->flags3 & RF3_EVIL) d = -1;
+	if(r_ptr->flags3 & RF3_DRAGONRIDER) d = 1;
+	else if(r_ptr->flags3 & RF3_DRAGON) d = 0;
+	if(r_ptr->flags3 & RF3_ANIMAL) {
+		if (r_ptr->weight <= 450 && strchr("bfqBCR", r_ptr->d_char)) d = 1; /* yes, I included NEWTS */
+		else d = 0;
+	}
+	if(r_ptr->flags7 & RF7_SPIDER) d = -1;
 
 	if(r_ptr->flags3 & RF3_ORC) d = -1;
-	if(r_ptr->flags3 & RF3_DEMON) d = -1;
+
 	if(r_ptr->flags3 & RF3_NONLIVING) d = -1;
+	if(r_ptr->flags3 & RF3_EVIL) d = -1;
 
 	if(r_ptr->flags3 & RF3_TROLL) d = -2;
 	if(r_ptr->flags3 & RF3_GIANT) d = -2;
-	if(r_ptr->flags3 & RF3_UNDEAD) d = -2;
-	if(r_ptr->flags7 & RF7_SPIDER) d = -2;
+
+	if(r_ptr->flags3 & RF3_UNDEAD) d = -3;
+	if(r_ptr->flags3 & RF3_DEMON) d = -3;
 
 	if(r_ptr->flags3 & RF3_GOOD) d += 2;
 

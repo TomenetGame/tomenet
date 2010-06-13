@@ -5517,7 +5517,22 @@ int Send_sound(int ind, int sound, int alternative, int type)
 {
 	connection_t *connp = Conn[Players[ind]->conn];
 
-	if (!is_newer_than(&connp->version, 4, 4, 4, 5, 0, 0)) return(-1);
+	/* Mind-linked to someone? Send him our sound too! */
+	player_type *p_ptr2 = NULL;
+	connection_t *connp2 = NULL;
+	/* If we're the target, we still hear our own sounds! */
+//	if (Players[ind]->esp_link_flags & LINKF_VIEW_DEDICATED) ;//nothing
+	/* Get target player */
+	if (get_esp_link(ind, LINKF_VIEW, &p_ptr2)) connp2 = Conn[p_ptr2->conn];
+	/* Send same info to target player, if available */
+	if (connp2) {
+		if (is_newer_than(&connp2->version, 4, 4, 5, 1, 0, 0))
+			Packet_printf(&connp2->c, "%c%d%d%d", PKT_SOUND, sound, alternative, type);
+		else if (is_newer_than(&connp2->version, 4, 4, 5, 0, 0, 0))
+			Packet_printf(&connp2->c, "%c%d%d", PKT_SOUND, sound, alternative);
+		else
+			Packet_printf(&connp2->c, "%c%c", PKT_SOUND, sound);
+	}
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -5527,17 +5542,14 @@ int Send_sound(int ind, int sound, int alternative, int type)
 		return 0;
 	}
 
-#ifdef USE_SOUND_2010
+	if (!is_newer_than(&connp->version, 4, 4, 4, 5, 0, 0))
+		return Packet_printf(&connp->c, "%c%c", PKT_SOUND, sound);
+
 //	if (is_admin(Players[ind])) s_printf("USE_SOUND_2010: sound %d (alt %d) sent to player %s (%d).\n", sound, alternative, Players[ind]->name, ind);//debug
-#endif
 
 	if (is_newer_than(&connp->version, 4, 4, 5, 1, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%d%d%d", PKT_SOUND, sound, alternative, type);
-	} else if (is_newer_than(&connp->version, 4, 4, 5, 0, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%d%d", PKT_SOUND, sound, alternative);
-	} else {
-		return Packet_printf(&connp->c, "%c%c", PKT_SOUND, sound);
-	}
+	} else return Packet_printf(&connp->c, "%c%d%d", PKT_SOUND, sound, alternative);
 }
 
 #ifdef USE_SOUND_2010
@@ -5548,11 +5560,11 @@ int Send_music(int ind, int music)
 	/* Mind-linked to someone? Send him our music too! */
 	player_type *p_ptr2 = NULL;
 	connection_t *connp2 = NULL;
-	/* If we're the target, we won't see our own weather */
+	/* If we're the target, we won't hear our own music */
 	if (Players[ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	/* Get target player */
 	if (get_esp_link(ind, LINKF_VIEW, &p_ptr2)) connp2 = Conn[p_ptr2->conn];
-
+	/* Send same info to target player, if available */
 	if (connp2) {
 		if (p_ptr2->music_current != music) {
 			p_ptr2->music_current = music;

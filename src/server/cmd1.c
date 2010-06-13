@@ -1372,6 +1372,12 @@ void search(int Ind)
 						/* Pick a trap */
 						pick_trap(wpos, y, x);
 
+						if (!c_ptr->m_idx) {
+							/* Always forcibly draw traps when they're detected - mikaelh */
+							byte a = get_trap_color(Ind, cs_ptr->sc.trap.t_idx, c_ptr->feat);
+							draw_spot(Ind, y, x, a, '^');
+						}
+
 						/* Message */
 						msg_print(Ind, "You have found a trap.");
 
@@ -1451,6 +1457,7 @@ void carry(int Ind, int pickup, int confirm)
 	object_type *o_ptr;
 
 	char    o_name[ONAME_LEN], o_name_real[ONAME_LEN];
+	u16b	old_note;
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type *c_ptr;
@@ -1734,6 +1741,30 @@ void carry(int Ind, int pickup, int confirm)
 			msg_print(Ind, "Only royalties are powerful enough to pick up that item!");
 			if (!is_admin(p_ptr)) return;
 		}
+
+		/* Save old inscription in case pickup fails */
+		old_note = o_ptr->note;
+
+		/* Remove dangerous inscriptions when picking up items owned by other players - mikaelh */
+		if (p_ptr->id != o_ptr->owner && o_ptr->note)
+		{
+			char *inscription, *scan;
+			scan = inscription = strdup(quark_str(o_ptr->note));
+
+			while (*scan != '\0')
+			{
+				if (*scan == '@')
+				{
+					/* Replace @ with space */
+					*scan = ' ';
+				}
+				scan++;
+			}
+
+			o_ptr->note = quark_add(inscription);
+			free(inscription);
+		}
+
 #if 1
 		/* Try to add to the quiver */
 		if (object_similar(Ind, o_ptr, &p_ptr->inventory[INVEN_AMMO], 0x0))
@@ -1864,6 +1895,10 @@ void carry(int Ind, int pickup, int confirm)
 		{
 			msg_format(Ind, "You have no room for %s.", o_name);
 			Send_floor(Ind, o_ptr->tval);
+
+			/* Restore old inscription */
+			o_ptr->note = old_note;
+
 			return;
 		}
 
@@ -1943,26 +1978,6 @@ if (o_ptr->tval == TV_RUNE2) {
 	}
 }
 #endif
-
-				/* Remove dangerous inscriptions when picking up items owned by other players - mikaelh */
-				if (p_ptr->id != o_ptr->owner && o_ptr->note)
-				{
-					char *inscription, *scan;
-					scan = inscription = strdup(quark_str(o_ptr->note));
-
-					while (*scan != '\0')
-					{
-						if (*scan == '@')
-						{
-							/* Replace @ with space */
-							*scan = ' ';
-						}
-						scan++;
-					}
-
-					o_ptr->note = quark_add(inscription);
-					free(inscription);
-				}
 
 				/* Own it */
 				if (!o_ptr->owner)

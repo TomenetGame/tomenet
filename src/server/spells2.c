@@ -2862,7 +2862,6 @@ bool detect_monsters_xxx(int Ind, u32b match_flag)
 	bool flag = FALSE;
 	cptr desc_monsters = "weird monsters";
 
-
 	/* Scan monsters */
 	for (i = 1; i < m_max; i++)
 	{
@@ -2891,13 +2890,22 @@ bool detect_monsters_xxx(int Ind, u32b match_flag)
 		/* Detect evil monsters */
 		if (r_ptr->flags3 & (match_flag))
 		{
-			/* Mega-Hack -- Show the monster */
-			p_ptr->mon_vis[i] = TRUE;
-			lite_spot(Ind, y, x);
-			flag = TRUE;
+			byte a;
+			char c;
 
-			/* Mega-Mega-Hack -- set mon_vis to false but don't update the screen - mikaelh */
+			/* Hack - Temporarily visible */
+			p_ptr->mon_vis[i] = TRUE;
+
+			/* Get the look of the monster */
+			map_info(Ind, y, x, &a, &c);
+
+			/* No longer visible */
 			p_ptr->mon_vis[i] = FALSE;
+
+			/* Draw the monster on the screen */
+			draw_spot(Ind, y, x, a, c);
+
+			flag = TRUE;
 		}
 	}
 
@@ -2977,16 +2985,25 @@ bool detect_invisible(int Ind)
 		/* Detect all invisible monsters */
 		if (panel_contains(fy, fx) && (r_ptr->flags2 & RF2_INVISIBLE))
 		{
+			byte a;
+			char c;
+
 			/* Take note that they are invisible */
 			r_ptr->r_flags2 |= RF2_INVISIBLE;
 
-			/* Mega-Hack -- Show the monster */
+			/* Hack - Temporarily visible */
 			p_ptr->mon_vis[i] = TRUE;
-			lite_spot(Ind, fy, fx);
-			flag = TRUE;
 
-			/* Mega-Mega-Hack -- set mon_vis to false but don't update the screen - mikaelh */
+			/* Get the look of the monster */
+			map_info(Ind, fy, fx, &a, &c);
+
+			/* No longer visible */
 			p_ptr->mon_vis[i] = FALSE;
+
+			/* Draw the monster on the screen */
+			draw_spot(Ind, fy, fx, a, c);
+
+			flag = TRUE;
 		}
 	}
 
@@ -3010,13 +3027,22 @@ bool detect_invisible(int Ind)
 		/* Detect all invisible players but not the dungeon master */
 		if (panel_contains(py, px) && q_ptr->ghost) 
 		{
-			/* Mega-Hack -- Show the player */
-			p_ptr->play_vis[i] = TRUE;
-			lite_spot(Ind, py, px);
-			flag = TRUE;
+			byte a;
+			char c;
 
-			/* Mega-Mega-Hack -- set play_vis to false but don't update the screen - mikaelh */
-			p_ptr->play_vis[i] = FALSE;
+			/* Hack - Temporarily visible */
+			p_ptr->play_vis[i] = TRUE;
+
+			/* Get the look of the player */
+			map_info(Ind, py, px, &a, &c);
+
+			/* No longer visible */
+			p_ptr->mon_vis[i] = FALSE;
+
+			/* Draw the player on the screen */
+			draw_spot(Ind, py, px, a, c);
+
+			flag = TRUE;
 		}
 	}
 
@@ -3081,13 +3107,22 @@ bool detect_evil(int Ind)
 		/* Detect evil monsters */
 		if (panel_contains(fy, fx) && (r_ptr->flags3 & RF3_EVIL))
 		{
-			/* Mega-Hack -- Show the monster */
-			p_ptr->mon_vis[i] = TRUE;
-			lite_spot(Ind, fy, fx);
-			flag = TRUE;
+			byte a;
+			char c;
 
-			/* Mega-Mega-Hack -- set mon_vis to false but don't update the screen - mikaelh */
+			/* Hack - Temporarily visible */
+			p_ptr->mon_vis[i] = TRUE;
+
+			/* Get the look of the monster */
+			map_info(Ind, fy, fx, &a, &c);
+
+			/* No longer visible */
 			p_ptr->mon_vis[i] = FALSE;
+
+			/* Draw the monster on the screen */
+			draw_spot(Ind, fy, fx, a, c);
+
+			flag = TRUE;
 		}
 	}
 
@@ -3134,7 +3169,6 @@ bool detect_creatures(int Ind)
 	int	i;
 	bool	flag = FALSE;
 
-
 	/* Detect non-invisible monsters */
 	for (i = 1; i < m_max; i++)
 	{
@@ -3156,13 +3190,22 @@ bool detect_creatures(int Ind)
 		/* Detect all non-invisible monsters */
 		if (panel_contains(fy, fx) && (!(r_ptr->flags2 & RF2_INVISIBLE)))
 		{
-			/* Mega-Hack -- Show the monster */
-			p_ptr->mon_vis[i] = TRUE;
-			lite_spot(Ind, fy, fx);
-			flag = TRUE;
+			byte a;
+			char c;
 
-			/* Mega-Mega-Hack -- set mon_vis to false but don't update the screen - mikaelh */
+			/* Hack - Temporarily visible */
+			p_ptr->mon_vis[i] = TRUE;
+
+			/* Get the look of the monster */
+			map_info(Ind, fy, fx, &a, &c);
+
+			/* No longer visible */
 			p_ptr->mon_vis[i] = FALSE;
+
+			/* Draw the monster on the screen */
+			draw_spot(Ind, fy, fx, a, c);
+
+			flag = TRUE;
 		}
 	}
 
@@ -3192,13 +3235,22 @@ bool detect_creatures(int Ind)
 		/* Detect all non-invisible players */
 		if (panel_contains(py, px) && !q_ptr->ghost)
 		{
-			/* Mega-Hack -- Show the player */
-			p_ptr->play_vis[i] = TRUE;
-			lite_spot(Ind, py, px);
-			flag = TRUE;
+			byte a;
+			char c;
 
-			/* Mega-Mega-Hack -- set play_vis to false but don't update the screen - mikaelh */
+			/* Hack - Temporarily visible */
+			p_ptr->play_vis[i] = TRUE;
+
+			/* Get the look of the player */
+			map_info(Ind, py, px, &a, &c);
+
+			/* No longer visible */
 			p_ptr->play_vis[i] = FALSE;
+
+			/* Draw the player on the screen */
+			draw_spot(Ind, py, px, a, c);
+
+			flag = TRUE;
 		}
 	}
 
@@ -3244,6 +3296,9 @@ void detect_monsters_forced(int Ind)
 		int fy = m_ptr->fy;
 		int fx = m_ptr->fx;
 
+		byte a;
+		char c;
+
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
 
@@ -3253,12 +3308,17 @@ void detect_monsters_forced(int Ind)
 		/* Skip monsters not on this depth */
 		if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
 
-		/* Mega-Hack -- Show the monster */
+		/* Hack - Temporarily visible */
 		p_ptr->mon_vis[i] = TRUE;
-		lite_spot(Ind, fy, fx);
 
-		/* Mega-Mega-Hack -- set mon_vis to false but don't update the screen - mikaelh */
+		/* Get the look of the monster */
+		map_info(Ind, fy, fx, &a, &c);
+
+		/* No longer visible */
 		p_ptr->mon_vis[i] = FALSE;
+
+		/* Draw the monster on the screen */
+		draw_spot(Ind, fy, fx, a, c);
 	}
 }
 
@@ -3295,9 +3355,10 @@ bool detect_bounty(int Ind, int rad)
 	struct worldpos *wpos=&p_ptr->wpos;
 	dun_level		*l_ptr;
 
-	int		i, j, t_idx;
+	int		i, j, t_idx = 0;
 
 	bool	detect = FALSE;
+	bool	detect_trap = FALSE;
 
 	cave_type  *c_ptr;
 	byte *w_ptr;
@@ -3327,6 +3388,8 @@ bool detect_bounty(int Ind, int rad)
 
 			o_ptr = &o_list[c_ptr->o_idx];
 
+			detect_trap = FALSE;
+
 			/* Detect traps on chests */
 			if ((c_ptr->o_idx) && (o_ptr->tval == TV_CHEST)
 			    && p_ptr->obj_vis[c_ptr->o_idx] && (o_ptr->pval) 
@@ -3355,6 +3418,7 @@ bool detect_bounty(int Ind, int rad)
 
 				/* Obvious */
 				detect = TRUE;
+				detect_trap = TRUE;
 			}
 
 			/* Detect secret doors */
@@ -3396,8 +3460,22 @@ bool detect_bounty(int Ind, int rad)
 
 				/* Obvious */
 				detect = TRUE;
-			} 
+			}
 			if (detect) lite_spot(Ind, i, j);
+			if (detect_trap) {
+				/* Hack - Always show the trap after detecting it - mikaelh */
+
+				/* Don't override players or monsters */
+				if (!c_ptr->m_idx) {
+					byte a = get_trap_color(Ind, t_idx, c_ptr->feat);
+
+					/* Hack -- always l.blue if underwater */
+					if (c_ptr->feat == FEAT_DEEP_WATER || c_ptr->feat == FEAT_SHAL_WATER)
+						a = TERM_L_BLUE;
+
+					draw_spot(Ind, i, j, a, '^');
+				}
+			}
 		}
 	} 
 	return (detect); 
@@ -3516,20 +3594,27 @@ bool detect_trap(int Ind, int rad)
 
 			/* Detect traps on chests */
                         o_ptr = &o_list[c_ptr->o_idx];
-                        if ((c_ptr->o_idx) && (o_ptr->tval == TV_CHEST) && (o_ptr->pval)) {
+                        if ((c_ptr->o_idx) && (o_ptr->tval == TV_CHEST) && (o_ptr->pval) && (!object_known_p(Ind, o_ptr))) {
 				object_known(o_ptr);
+
+				/* New trap detected */
 				detect = TRUE;
 			}
 
 			/* Detect invisible traps */
 			//			if (c_ptr->feat == FEAT_INVIS)
-			if((cs_ptr=GetCS(c_ptr, CS_TRAPS))){
+			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
+				byte a;
+
 				t_idx = cs_ptr->sc.trap.t_idx;
 
 				if (!cs_ptr->sc.trap.found)
 				{
 					/* Pick a trap */
 					pick_trap(wpos, i, j);
+
+					/* New trap detected */
+					detect = TRUE;
 				}
 
 				/* Hack -- memorize it */
@@ -3538,8 +3623,17 @@ bool detect_trap(int Ind, int rad)
 				/* Redraw */
 				lite_spot(Ind, i, j);
 
-				/* Obvious */
-				detect = TRUE;
+				a = get_trap_color(Ind, t_idx, c_ptr->feat);
+
+				/* Hack -- always l.blue if underwater */
+				if (c_ptr->feat == FEAT_DEEP_WATER || c_ptr->feat == FEAT_SHAL_WATER)
+					a = TERM_L_BLUE;
+
+				if (!c_ptr->m_idx) {
+					/* Hack - Always show the trap after detecting it - mikaelh */
+					draw_spot(Ind, i, j, a, '^');
+				}
+
 #if 0
 				/* Already seen traps */
 				else if (c_ptr->feat >= FEAT_TRAP_HEAD && c_ptr->feat <= FEAT_TRAP_TAIL)
@@ -3556,6 +3650,12 @@ bool detect_trap(int Ind, int rad)
 #endif	// 0
 			}
 		}
+	}
+
+	if (detect) {
+		msg_print(Ind, "You have detected new traps.");
+	} else {
+		msg_print(Ind, "You have detected no new traps.");
 	}
 
 	return (detect);
@@ -6764,7 +6864,31 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 #ifdef USE_SOUND_2010
 	if (typ == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_COMMAND);
 	//might be too annoying for player ball spells, need maybe softer one?:
-	else sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND);
+	else {
+		/* The 'casts_ball' sound is only for attack spells */
+		if ((typ != GF_HEAL_PLAYER) && (typ != GF_AWAY_ALL) &&
+		    (typ != GF_WRAITH_PLAYER) && (typ != GF_SPEED_PLAYER) &&
+		    (typ != GF_SHIELD_PLAYER) && (typ != GF_RECALL_PLAYER) &&
+		    (typ != GF_BLESS_PLAYER) && (typ != GF_REMFEAR_PLAYER) &&
+		    (typ != GF_SATHUNGER_PLAYER) && (typ != GF_RESFIRE_PLAYER) &&
+		    (typ != GF_RESCOLD_PLAYER) && (typ != GF_CUREPOISON_PLAYER) &&
+		    (typ != GF_SEEINVIS_PLAYER) && (typ != GF_SEEMAP_PLAYER) &&
+		    (typ != GF_CURECUT_PLAYER) && (typ != GF_CURESTUN_PLAYER) &&
+		    (typ != GF_DETECTCREATURE_PLAYER) && (typ != GF_DETECTDOOR_PLAYER) &&
+		    (typ != GF_DETECTTRAP_PLAYER) && (typ != GF_TELEPORTLVL_PLAYER) &&
+		    (typ != GF_RESPOIS_PLAYER) && (typ != GF_RESELEC_PLAYER) &&
+		    (typ != GF_RESACID_PLAYER) && (typ != GF_HPINCREASE_PLAYER) &&
+		    (typ != GF_HERO_PLAYER) && (typ != GF_SHERO_PLAYER) && (typ != GF_MINDBOOST_PLAYER) &&
+		    (typ != GF_TELEPORT_PLAYER) && (typ != GF_ZEAL_PLAYER) &&
+		    (typ != GF_RESTORESTATS_PLAYER) && (typ != GF_RESTORELIFE_PLAYER) &&
+		    (typ != GF_CURE_PLAYER) && (typ != GF_RESURRECT_PLAYER) &&
+		    (typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
+		    (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
+		    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
+		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
+		    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
+			sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND);
+	}
 #endif
 #endif
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */

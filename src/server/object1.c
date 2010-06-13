@@ -735,7 +735,7 @@ void flavor_init(void)
 		food_col[j] = temp_col;
 	}
 
-	/* Potions */
+	/* Potions (the first 4 potions are fixed) */
 	for (i = 4; i < MAX_COLORS; i++)
 	{
 		j = rand_int(MAX_COLORS - 4) + 4;
@@ -881,7 +881,7 @@ static byte object_d_attr(int i)
 			case TV_ROD:    return (rod_col[indexx]);
 
 			/* hack -- borrow those of potions */
-			case TV_POTION2: return (potion_col[indexx + 4]);
+			case TV_POTION2: return (potion_col[indexx + 4]); /* the first 4 potions are unique */
 		}
 	}
 
@@ -1588,18 +1588,14 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 		case TV_POTION:
 		case TV_POTION2:
-		{
 //			if (artifact_p(o_ptr) && known) break; // <-- might be "&& aware" instead!
 			if (artifact_p(o_ptr) && aware) break;
 			/* Color the object */
-			modstr = potion_adj[indexx]; //should be +3 for TV_POTION2, since first 3 are fixed (applejuice, water, slime mold juice)
+			modstr = potion_adj[indexx + (o_ptr->tval == TV_POTION2 ? 4 : 0)]; /* the first 4 potions are unique */
 			if (aware) append_name = TRUE;
-			if (short_item_names)
-			basenm = aware ? "& Potion~" : "& # Potion~";
-			else
-			basenm = "& # Potion~";
+			if (short_item_names) basenm = aware ? "& Potion~" : "& # Potion~";
+			else basenm = "& # Potion~";
 			break;
-		}
 
 		case TV_FOOD:
 		{
@@ -2409,21 +2405,35 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 if (!(mode & 32)) {
 	/* Dump "pval" flags for wearable items */
-        if (known && (((f1 & (TR1_PVAL_MASK)) || (f5 & (TR5_PVAL_MASK))) || (o_ptr->tval == TV_GOLEM)))
-	{
+        if (known && (((f1 & (TR1_PVAL_MASK)) || (f5 & (TR5_PVAL_MASK))) || (o_ptr->tval == TV_GOLEM))) {
 		/* Hack -- first display any base pval bonuses.  
 		 * The "bpval" flags are never displayed.  */
-		if (o_ptr->bpval && !(o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPECIAL))
-		{
+		if (o_ptr->bpval && !(o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPECIAL)) {
 			if (!(mode & 8)) t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, p1);
 			/* Dump the "pval" itself */
 			t = object_desc_int(t, o_ptr->bpval);
+#if 1
+			/* hack (originally just for plain talismans, since it doesn't say "amulet of luck"
+			   to give a hint to newbies what they do) to display a basic bpval property: */
+			if (!o_ptr->pval && !(f3 & TR3_HIDE_TYPE)) {
+				if (f1 & TR1_SPEED) t = object_desc_str(t, !(mode & 8) ? " to speed" : "spd");
+				else if (f1 & TR1_BLOWS) {
+					t = object_desc_str(t, !(mode & 8) ? " attack" : "at");
+					if (ABS(o_ptr->pval) != 1 && !(mode & 8)) t = object_desc_chr(t, 's');
+				} else if (f5 & (TR5_CRIT)) t = object_desc_str(t, !(mode & 8) ? " critical hits" : "crt");
+				else if (f1 & TR1_STEALTH) t = object_desc_str(t, !(mode & 8) ? " to stealth" : "stl");
+				else if (f1 & TR1_SEARCH) t = object_desc_str(t, !(mode & 8) ? " to searching" : "srch");
+				else if (f1 & TR1_INFRA) t = object_desc_str(t, !(mode & 8) ? " to infravision" : "infr");
+				else if (f5 & TR5_LUCK) t = object_desc_str(t, !(mode & 8) ? " to luck" : "luck");
+				else if (f1 & TR1_TUNNEL) ;
+			}
+#endif
+			/* finish with closing bracket ')' */
 			t = object_desc_chr(t, p2);
 		}
 		/* Next, display any pval bonuses. */
-		if (o_ptr->pval)
-		{
+		if (o_ptr->pval) {
 			/* Start the display */
 			if (!(mode & 8)) t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, p1);

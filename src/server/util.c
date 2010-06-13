@@ -2911,24 +2911,9 @@ void toggle_afk(int Ind, char *msg)
 		   (for example we might've attacked the target dummy before). */
 		health_track(Ind, 0);
 
-#if 1		
 		/* stop every major action */
-//		disturb(Ind, 1, 0);
 		disturb(Ind, 1, 1); /* ,1) = keep resting! */
-#else
-	        /* Stop searching */
-	        if (p_ptr->searching)
-		{
-			/* Clear the searching flag */
-			p_ptr->searching = FALSE;
 
-			/* Recalculate bonuses */
-			p_ptr->update |= (PU_BONUS);
-
-		        /* Redraw the state */
-		        p_ptr->redraw |= (PR_STATE);
-		}
-#endif
 		strcpy(p_ptr->afk_msg, msg);
 		if (strlen(p_ptr->afk_msg) == 0)
 			msg_print(Ind, "AFK mode is turned \377rON\377w.");

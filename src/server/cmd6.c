@@ -1494,6 +1494,9 @@ void do_cmd_drink_fountain(int Ind)
 	else if (c_ptr->feat == FEAT_DEEP_WATER ||
 			c_ptr->feat == FEAT_SHAL_WATER)
 	{
+#ifdef USE_SOUND_2010
+		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND);
+#endif
 		msg_print(Ind, "You quenched your thirst.");
 		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 500);
 		return;
@@ -1518,6 +1521,9 @@ void do_cmd_drink_fountain(int Ind)
 	/* Oops! */
 	if (!(cs_ptr = GetCS(c_ptr, CS_FOUNTAIN)))
 	{
+#ifdef USE_SOUND_2010
+		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND);
+#endif
 		msg_print(Ind, "You quenched your thirst.");
 		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 500);
 		return;
@@ -1545,6 +1551,9 @@ void do_cmd_drink_fountain(int Ind)
 	/* Doh! */
 	if (!k_idx)
 	{
+#ifdef USE_SOUND_2010
+		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND);
+#endif
 		msg_print(Ind, "You quenched your thirst.");
 		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 500);
 		return;
@@ -1568,23 +1577,22 @@ void do_cmd_drink_fountain(int Ind)
 
 	/* S(he) is no longer afk */
 	un_afk_idle(Ind);
+#ifdef USE_SOUND_2010
+	sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND);
+#endif
 
 	ident = quaff_potion(Ind, tval, sval, pval);
 	if (ident) cs_ptr->sc.fountain.known = TRUE;
-	else
-	{
-		msg_print(Ind, "You quenched your thirst.");
-	}
+	else msg_print(Ind, "You quenched your thirst.");
+
 	if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 500);
 
 	cs_ptr->sc.fountain.rest--;
-
-	if (cs_ptr->sc.fountain.rest <= 0)
-	{
+	if (cs_ptr->sc.fountain.rest <= 0) {
 		cave_set_feat(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_EMPTY_FOUNTAIN);
 		cs_erase(c_ptr, cs_ptr);
 	}
-	
+
 #ifdef FOUNTAIN_GUARDS
 	pval = 0;
 //	if (k_info[lookup_kind(tval, sval)].cost > 0) {

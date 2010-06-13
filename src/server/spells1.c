@@ -5758,7 +5758,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (m_ptr->monfear) {
 				m_ptr->monfear = 0;
 				/* Message */
-				note = " recovers the courage.";
+				note = " becomes courageous again.";
 				if (seen) obvious = TRUE;
 			}
 
