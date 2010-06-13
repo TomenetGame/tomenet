@@ -833,7 +833,7 @@ errr init_sound_sdl(int argc, char **argv) {
 	}
 
 #ifdef DEBUG_SOUND
-	puts(format("init_sound_sdl() init%s", no_cache_audio == 0 ? "" : " (cached)"));
+	puts(format("init_sound_sdl() init%s", no_cache_audio == FALSE ? " (cached)" : " (not cached)"));
 #endif
 
 	/* Load sound preferences if requested */
