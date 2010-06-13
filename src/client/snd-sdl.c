@@ -74,6 +74,7 @@ static int thread_load_audio(void *dummy);
 typedef struct {
 	int num;                        /* Number of samples for this event */
 	Mix_Chunk *wavs[MAX_SAMPLES];   /* Sample array */
+	SDL_mutex *mutexes[MAX_SAMPLES]; /* Mutexes for threaded loading */
 	const char *paths[MAX_SAMPLES]; /* Relative pathnames for samples */
 	int current_channel;		/* Channel it's currently being played on, -1 if none; to avoid
 					   stacking of the same sound multiple (read: too many) times - C. Blue */
@@ -84,6 +85,7 @@ typedef struct {
 typedef struct {
 	int num;
 	Mix_Music *wavs[MAX_SONGS];
+	SDL_mutex *mutexes[MAX_SAMPLES]; /* Mutexes for threaded loading */
 	const char *paths[MAX_SONGS];
 } song_list;
 
@@ -97,6 +99,9 @@ static int channel_sample[MAX_CHANNELS];
 /* Music Array */
 static song_list songs[MUSIC_MAX];
 
+/* Sound loading thread */
+static SDL_Thread *loading_thread;
+
 
 /*
  * Shut down the sound system and free resources.
@@ -104,6 +109,11 @@ static song_list songs[MUSIC_MAX];
 static void close_audio(void) {
 	size_t i;
 	int j;
+
+	/* Kill the loading thread if it's still running */
+	if (loading_thread) {
+		SDL_KillThread(loading_thread);
+	}
 
 	Mix_HaltMusic();
 
@@ -114,6 +124,7 @@ static void close_audio(void) {
 		/* Nuke all samples */
 		for (j = 0; j < smp->num; j++) {
 			Mix_FreeChunk(smp->wavs[j]);
+			SDL_DestroyMutex(smp->mutexes[j]);
 			string_free(smp->paths[j]);
 		}
 	}
@@ -125,6 +136,7 @@ static void close_audio(void) {
 		/* Nuke all samples */
 		for (j = 0; j < mus->num; j++) {
 			Mix_FreeMusic(mus->wavs[j]);
+			SDL_DestroyMutex(mus->mutexes[j]);
 			string_free(mus->paths[j]);
 		}
 	}
@@ -289,6 +301,9 @@ static bool sound_sdl_init(bool no_cache) {
 			path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, cur_token);
 			if (!my_fexists(path)) goto next_token_snd;
 
+			/* Create a mutex for this sample */
+			samples[event].mutexes[num] = SDL_CreateMutex();
+
 			/* Don't load now if we're not caching */
 			if (no_cache) {
 				/* Just save the path for later */
@@ -422,6 +437,9 @@ static bool sound_sdl_init(bool no_cache) {
 			path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, cur_token);
 			if (!my_fexists(path)) goto next_token_mus;
 
+			/* Create a mutex for this song */
+			songs[event].mutexes[num] = SDL_CreateMutex();
+
 			/* Don't load now if we're not caching */
 			if (no_cache) {
 				/* Just save the path for later */
@@ -525,16 +543,24 @@ static bool play_sound(int event, int type) {
 	   together in time, after one each other? (efficiency) */
 	if (c_cfg.no_ovl_close_sfx && ticks == samples[event].started_timer_tick) return TRUE;
 
-
 	/* Choose a random event */
 	s = rand_int(samples[event].num);
+
+	/* Lock the mutex for this sample */
+	SDL_mutexP(samples[event].mutexes[s]);
+
 	wave = samples[event].wavs[s];
 
 	/* Try loading it, if it's not cached */
 	if (!wave) {
 		/* Verify it exists */
 		const char *filename = samples[event].paths[s];
-		if (!my_fexists(filename)) return FALSE;
+		if (!my_fexists(filename)) {
+			/* Unlock the mutex */
+			SDL_mutexV(samples[event].mutexes[s]);
+
+			return FALSE;
+		}
 
 		/* Load */
 		wave = Mix_LoadWAV(filename);
@@ -544,9 +570,16 @@ static bool play_sound(int event, int type) {
 		else {
 			/* we really failed to load it */
 			plog(format("SDL sound load failed (%d, %d).", page_sound_idx, s));
+
+			/* Unlock the mutex */
+			SDL_mutexV(samples[event].mutexes[s]);
+
 			return FALSE;
 		}
 	}
+	
+	/* Unlock the mutex */
+	SDL_mutexV(samples[event].mutexes[s]);
 
 	/* Actually play the thing */
 	/* remember, for efficiency management */
@@ -573,13 +606,22 @@ extern bool sound_page(void) {
 
 	/* Choose a random event */
 	s = rand_int(samples[page_sound_idx].num);
+
+	/* Lock the mutex for this sample */
+	SDL_mutexP(samples[page_sound_idx].mutexes[s]);
+
 	wave = samples[page_sound_idx].wavs[s];
 
 	/* Try loading it, if it's not cached */
 	if (!wave) {
 		/* Verify it exists */
 		const char *filename = samples[page_sound_idx].paths[s];
-		if (!my_fexists(filename)) return FALSE;
+		if (!my_fexists(filename)) {
+			/* Unlock the mutex */
+			SDL_mutexV(samples[page_sound_idx].mutexes[s]);
+
+			return FALSE;
+		}
 
 		/* Load */
 		wave = Mix_LoadWAV(filename);
@@ -589,9 +631,16 @@ extern bool sound_page(void) {
 		else {
 			/* we really failed to load it */
 			plog(format("SDL sound load failed (%d, %d).", page_sound_idx, s));
+
+			/* Unlock the mutex */
+			SDL_mutexV(samples[page_sound_idx].mutexes[s]);
+
 			return FALSE;
 		}
 	}
+
+	/* Unlock the mutex */
+	SDL_mutexV(samples[page_sound_idx].mutexes[s]);
 
 	/* Actually play the thing */
 	/* remember, for efficiency management */
@@ -662,13 +711,22 @@ static void play_sound_weather(int event) {
 
 	/* Choose a random event */
 	s = rand_int(samples[event].num);
+
+	/* Lock the mutex for this sample */
+	SDL_mutexP(samples[event].mutexes[s]);
+
 	wave = samples[event].wavs[s];
 
 	/* Try loading it, if it's not cached */
 	if (!wave) {
 		/* Verify it exists */
 		const char *filename = samples[event].paths[s];
-		if (!my_fexists(filename)) return;
+		if (!my_fexists(filename)) {
+			/* Unlock the mutex */
+			SDL_mutexV(samples[event].mutexes[s]);
+
+			return;
+		}
 
 		/* Load */
 		wave = Mix_LoadWAV(filename);
@@ -678,9 +736,16 @@ static void play_sound_weather(int event) {
 		else {
 			/* we really failed to load it */
 			plog(format("SDL sound load failed (%d, %d).", page_sound_idx, s));
+
+			/* Unlock the mutex */
+			SDL_mutexV(samples[event].mutexes[s]);
+
 			return;
 		}
 	}
+
+	/* Unlock the mutex */
+	SDL_mutexV(samples[event].mutexes[s]);
 
 	/* Actually play the thing */
 #if 1 /* volume glitch paranoia (first fade-in seems to move volume to 100% instead of designated cfg_audio_... */
@@ -790,13 +855,22 @@ static void fadein_next_music(void) {
 
 	/* Choose a random event */
 	s = rand_int(songs[music_next].num);
+
+	/* Lock the mutex for this song */
+	SDL_mutexP(songs[music_next].mutexes[s]);
+
 	wave = songs[music_next].wavs[s];
 
 	/* Try loading it, if it's not cached */
 	if (!wave) {
 		/* Verify it exists */
 		const char *filename = songs[music_next].paths[s];
-		if (!my_fexists(filename)) return;
+		if (!my_fexists(filename)) {
+			/* Unlock the mutex */
+			SDL_mutexV(songs[music_next].mutexes[s]);
+
+			return;
+		}
 
 		/* Load */
 		wave = Mix_LoadMUS(filename);
@@ -806,9 +880,16 @@ static void fadein_next_music(void) {
 		else {
 			/* we really failed to load it */
 			plog(format("SDL music load failed (%d, %d).", music_next, s));
+
+			/* Unlock the mutex */
+			SDL_mutexV(songs[music_next].mutexes[s]);
+
 			return;
 		}
 	}
+
+	/* Unlock the mutex */
+	SDL_mutexV(songs[music_next].mutexes[s]);
 
 	/* Actually play the thing */
 	music_next = -1;
@@ -831,7 +912,6 @@ static void set_mixing_sdl(void) {
  * Init the SDL sound "module".
  */
 errr init_sound_sdl(int argc, char **argv) {
-	SDL_Thread *thread;
 	int i;
 
 	/* Parse args */
@@ -879,8 +959,8 @@ errr init_sound_sdl(int argc, char **argv) {
 #ifdef DEBUG_SOUND
 		puts("Audio cache: Creating thread..");
 #endif
-		thread = SDL_CreateThread(thread_load_audio, NULL);
-		if (thread == NULL) {
+		loading_thread = SDL_CreateThread(thread_load_audio, NULL);
+		if (loading_thread == NULL) {
 #ifdef DEBUG_SOUND
 			puts("Audio cache: Thread creation failed.");
 #endif
@@ -936,11 +1016,17 @@ static int thread_load_audio(void *dummy) {
 		for (subidx = 0; subidx < samples[idx].num; subidx++) {
 			const char *filename = samples[idx].paths[subidx];
 
+			/* Lock the mutex */
+			SDL_mutexP(samples[idx].mutexes[subidx]);
+
 			/* paranoia: check if it's already loaded (but how could it..) */
 			if (samples[idx].wavs[subidx]) {
 #ifdef DEBUG_SOUND
 				puts(format("sample already loaded %d, %d: %s.", idx, subidx, filename));
 #endif
+				/* Unlock the mutex */
+				SDL_mutexV(samples[idx].mutexes[subidx]);
+
 				continue;
 			}
 
@@ -951,6 +1037,9 @@ static int thread_load_audio(void *dummy) {
 #ifdef DEBUG_SOUND
 				puts(format("file doesn't exist %d, %d: %s.", idx, subidx, filename));
 #endif
+				/* Unlock the mutex */
+				SDL_mutexV(samples[idx].mutexes[subidx]);
+
 				continue;
 			}
 
@@ -967,6 +1056,9 @@ static int thread_load_audio(void *dummy) {
 #ifdef DEBUG_SOUND
 			else puts(format("failed to load sample %d, %d: %s.", idx, subidx, filename));
 #endif
+
+			/* Unlock the mutex */
+			SDL_mutexV(samples[idx].mutexes[subidx]);
 		}
 	}
 
@@ -976,19 +1068,35 @@ static int thread_load_audio(void *dummy) {
 		for (subidx = 0; subidx < songs[idx].num; subidx++) {
 			const char *filename = songs[idx].paths[subidx];
 
+			/* Lock the mutex */
+			SDL_mutexP(songs[idx].mutexes[subidx]);
+
 			/* paranoia: check if it's already loaded (but how could it..) */
-			if (songs[idx].wavs[subidx]) continue;
+			if (songs[idx].wavs[subidx]) {
+				/* Unlock the mutex */
+				SDL_mutexV(songs[idx].mutexes[subidx]);
+
+				continue;
+			}
 
 			/* Try loading it, if it's not yet cached */
 
 			/* Verify it exists */
-			if (!my_fexists(filename)) continue;
+			if (!my_fexists(filename)) {
+				/* Unlock the mutex */
+				SDL_mutexV(songs[idx].mutexes[subidx]);
+
+				continue;
+			}
 
 			/* Load */
 			waveMUS = Mix_LoadMUS(filename);
 
 			/* Did we get it now? */
 			if (waveMUS) songs[idx].wavs[subidx] = waveMUS;
+			
+			/* Unlock the mutex */
+			SDL_mutexV(songs[idx].mutexes[subidx]);
 		}
 	}
 
