@@ -1164,7 +1164,7 @@ void peruse_file(void)
 			char tmp[80];
 			prt(format("Goto Line(max %d): ", max_line), 23, 0);
 			strcpy(tmp, "0");
-			if (askfor_aux(tmp, 10, 0, 0))
+			if (askfor_aux(tmp, 10, 0))
 			{
 				cur_line = atoi(tmp);
 			}

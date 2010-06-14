@@ -7268,6 +7268,10 @@ extern int PlayerUID;
 #define CHAT_MODE_PARTY		1
 #define CHAT_MODE_LEVEL		2
 
+/* Mode bits for askfor_aux */
+#define ASKFOR_PRIVATE		0x01
+#define ASKFOR_CHATTING		0x02
+
 
 /* Hard-coded coordinates keeping track of special worldmap locations */
 #define WPOS_SECTOR00_X         0       /* location of our protected and used-for-special-cases sector 'sector00' */

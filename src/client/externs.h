@@ -440,7 +440,7 @@ extern void c_message_add_msgnochat(cptr msg);
 extern void c_msg_print(cptr msg);
 extern void c_msg_format(cptr fmt, ...);
 extern s32b c_get_quantity(cptr prompt, int max);
-extern bool askfor_aux(char *buf, int len, char private, char chatting);
+extern bool askfor_aux(char *buf, int len, char mode);
 extern void clear_from(int row);
 extern void prt_num(cptr header, int num, int row, int col, byte color);
 extern void prt_lnum(cptr header, s32b num, int row, int col, byte color);

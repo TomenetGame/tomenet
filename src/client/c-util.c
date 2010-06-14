@@ -1203,7 +1203,7 @@ void prt(cptr str, int row, int col)
  * Jir -- added history.
  * TODO: cursor editing
  */
-bool askfor_aux(char *buf, int len, char private, char chatting)
+bool askfor_aux(char *buf, int len, char mode)
 {
 	int y, x;
 
@@ -1214,10 +1214,10 @@ bool askfor_aux(char *buf, int len, char private, char chatting)
 	bool done = FALSE;
 	
 	/* Hack -- if short, don't use history */
-	bool nohist = private || len < 20;
+	bool nohist = (mode & ASKFOR_PRIVATE) || len < 20;
 	byte cur_hist;
 
-	if (chatting)
+	if (mode & ASKFOR_CHATTING)
 		cur_hist = hist_chat_end;
 	else
 		cur_hist = hist_end;
@@ -1225,23 +1225,6 @@ bool askfor_aux(char *buf, int len, char private, char chatting)
 
 	/* Handle wrapping */
 	if (cur_hist >= MSG_HISTORY_MAX) cur_hist = 0;
-
-	if (chatting && chat_mode)
-	{
-		/* HACK - Change the prompt */
-		switch (chat_mode)
-		{
-			case CHAT_MODE_PARTY:
-				c_prt(TERM_L_GREEN, "Party: ", 0, 0);
-				break;
-			case CHAT_MODE_LEVEL:
-				c_prt(TERM_YELLOW, "Level: ", 0, 0);
-				break;
-			default:
-				prt("Message: ", 0, 0);
-				break;
-		}
-	}
 
 	/* Locate the cursor */
 	Term_locate(&x, &y);
@@ -1264,10 +1247,10 @@ bool askfor_aux(char *buf, int len, char private, char chatting)
 
 	/* Display the default answer */
 	Term_erase(x, y, len);
-	if (private) Term_putstr(x, y, -1, TERM_YELLOW, "(default)");
+	if (mode & ASKFOR_PRIVATE) Term_putstr(x, y, -1, TERM_YELLOW, "(default)");
 	else Term_putstr(x, y, -1, TERM_YELLOW, buf);
 
-	if (chatting) strcpy(message_history_chat[hist_chat_end], buf);
+	if (mode & ASKFOR_CHATTING) strcpy(message_history_chat[hist_chat_end], buf);
 	else if (!nohist) strcpy(message_history[hist_end], buf);
 
 
@@ -1301,7 +1284,7 @@ bool askfor_aux(char *buf, int len, char private, char chatting)
 			break;
 
 			case KTRL('I'): /* TAB */
-			if (chatting)
+			if (mode & ASKFOR_CHATTING)
 			{
 				/* Change chatting mode - mikaelh */
 				chat_mode++;
@@ -1334,10 +1317,10 @@ bool askfor_aux(char *buf, int len, char private, char chatting)
 			if (nohist) break;
 			cur_hist++;
 
-			if (chatting && !hist_chat_looped && hist_chat_end < cur_hist) cur_hist = 0;
+			if ((mode & ASKFOR_CHATTING) && !hist_chat_looped && hist_chat_end < cur_hist) cur_hist = 0;
 			else if (!hist_looped && hist_end < cur_hist) cur_hist = 0;
 
-			if (chatting)
+			if (mode & ASKFOR_CHATTING)
 				strcpy(buf, message_history_chat[cur_hist]);
 			else
 				strcpy(buf, message_history[cur_hist]);
@@ -1347,9 +1330,9 @@ bool askfor_aux(char *buf, int len, char private, char chatting)
 			case KTRL('P'):
 			if (nohist) break;
 			if (cur_hist) cur_hist--;
-			else if (chatting) cur_hist = hist_chat_looped ? MSG_HISTORY_MAX - 1 : hist_chat_end;
+			else if (mode & ASKFOR_CHATTING) cur_hist = hist_chat_looped ? MSG_HISTORY_MAX - 1 : hist_chat_end;
 			else cur_hist = hist_looped ? MSG_HISTORY_MAX - 1 : hist_end;
-			if (chatting)
+			if (mode & ASKFOR_CHATTING)
 				strcpy(buf, message_history_chat[cur_hist]);
 			else
 				strcpy(buf, message_history[cur_hist]);
@@ -1389,7 +1372,7 @@ bool askfor_aux(char *buf, int len, char private, char chatting)
 		buf[k] = '\0';
 
 		/* Update the entry */
-		if (!private)
+		if (!(mode & ASKFOR_PRIVATE))
 		{
 			Term_erase(x, y, len);
 			Term_putstr(x, y, -1, TERM_WHITE, buf);
@@ -1413,7 +1396,7 @@ bool askfor_aux(char *buf, int len, char private, char chatting)
 	if (nohist) return (TRUE);
 
 	/* Add this to the history */
-	if (chatting)
+	if (mode & ASKFOR_CHATTING)
 	{
 		strcpy(message_history_chat[hist_chat_end], buf);
 		hist_chat_end++;
@@ -1436,7 +1419,7 @@ bool askfor_aux(char *buf, int len, char private, char chatting)
 
 	/* Handle the additional chat modes */
 	/* Slash commands and self-chat are exceptions */
-	if (chatting && chat_mode != CHAT_MODE_NORMAL && buf[0] != '/' && !(buf[0] == '%' && buf[1] == ':'))
+	if ((mode & ASKFOR_CHATTING) && chat_mode != CHAT_MODE_NORMAL && buf[0] != '/' && !(buf[0] == '%' && buf[1] == ':'))
 	{
 		for (i = k; i >= 0; i--)
 		{
@@ -1472,7 +1455,7 @@ bool askfor_aux(char *buf, int len, char private, char chatting)
 bool get_string(cptr prompt, char *buf, int len)
 {
 	bool res;
-	bool chatting = FALSE;
+	char askfor_mode = 0x00;
 	
 	/* suppress hybrid macros */
 	bool inkey_msg_old = inkey_msg;
@@ -1481,11 +1464,22 @@ bool get_string(cptr prompt, char *buf, int len)
 	/* Display prompt */
 	prt(prompt, 0, 0);
 
-	if (streq(prompt, "Message: "))
-		chatting = TRUE;
+	if (streq(prompt, "Message: ")) {
+		askfor_mode |= ASKFOR_CHATTING;
+
+		/* HACK - Change the prompt according to current chat mode */
+		switch (chat_mode) {
+			case CHAT_MODE_PARTY:
+				c_prt(TERM_L_GREEN, "Party: ", 0, 0);
+				break;
+			case CHAT_MODE_LEVEL:
+				c_prt(TERM_YELLOW, "Level: ", 0, 0);
+				break;
+		}
+	}
 
 	/* Ask the user for a string */
-	res = askfor_aux(buf, len, 0, chatting);
+	res = askfor_aux(buf, len, askfor_mode);
 
 	/* Clear prompt */
 	prt("", 0, 0);
@@ -3012,7 +3006,7 @@ void interact_macros(void)
 			sprintf(tmp, "%s.prf", cname);
 
 			/* Ask for a file */
-			if (!askfor_aux(tmp, 70, 0, 0)) continue;
+			if (!askfor_aux(tmp, 70, 0)) continue;
 
 			/* Process the given filename */
 			(void)process_pref_file(tmp);
@@ -3036,7 +3030,7 @@ void interact_macros(void)
 			sprintf(tmp, "%s.prf", cname);
 
 			/* Ask for a file */
-			if (!askfor_aux(tmp, 70, 0, 0)) continue;
+			if (!askfor_aux(tmp, 70, 0)) continue;
 
 			/* Dump the macros */
 			(void)macro_dump(tmp);
@@ -3055,7 +3049,7 @@ void interact_macros(void)
 			tmp[80] = '\0';
 
 			/* Get an encoded action */
-			if (!askfor_aux(buf, 80, 0, 0)) continue;
+			if (!askfor_aux(buf, 80, 0)) continue;
 
 			/* Extract an action */
 			text_to_ascii(macro__buf, buf);
@@ -3344,7 +3338,7 @@ void interact_macros(void)
 			tmp[80] = '\0';
 
 			/* Get an encoded action */
-			if (!askfor_aux(buf, 80, 0, 0)) continue;
+			if (!askfor_aux(buf, 80, 0)) continue;
 			
 			/* Fix it up quick and dirty: Ability code short-cutting */
 			buf2[0] = '\\'; //note: should in theory be ')e\',
@@ -3644,7 +3638,7 @@ void auto_inscriptions(void)
 			sprintf(tmp, "%s.ins", cname);
 
 			/* Ask for a file */
-			if (!askfor_aux(tmp, 70, 0, 0)) continue;
+			if (!askfor_aux(tmp, 70, 0)) continue;
 
 			/* Process the given filename */
 			load_auto_inscriptions(tmp);
@@ -3660,7 +3654,7 @@ void auto_inscriptions(void)
 			sprintf(tmp, "%s.ins", cname);
 
 			/* Ask for a file */
-			if (!askfor_aux(tmp, 70, 0, 0)) continue;
+			if (!askfor_aux(tmp, 70, 0)) continue;
 
 			/* Dump the macros */
 			save_auto_inscriptions(tmp);
@@ -3675,7 +3669,7 @@ void auto_inscriptions(void)
 			Term_gotoxy(10, cur_line + 1);
 			strcpy(buf, auto_inscription_match[cur_line]);
 			/* Get a new matching string */
-			if (!askfor_aux(buf, 40, 0, 0)) continue;
+			if (!askfor_aux(buf, 40, 0)) continue;
 			strcpy(auto_inscription_match[cur_line], buf);
 
 			/* Clear previous tag string */
@@ -3684,7 +3678,7 @@ void auto_inscriptions(void)
 			Term_gotoxy(55, cur_line + 1);
 			strcpy(buf, auto_inscription_tag[cur_line]);
 			/* Get a new matching string */
-			if (!askfor_aux(buf, 20, 0, 0)) continue;
+			if (!askfor_aux(buf, 20, 0)) continue;
 			strcpy(auto_inscription_tag[cur_line], buf);
 
 			/* comfort hack - fake advancing ;) */
@@ -3915,7 +3909,7 @@ static void do_cmd_options_acc(void)
 			/* Ask for old password */
 			move_cursor(6, 16);
 			tmp[0] = '\0';
-			if (!askfor_aux(tmp, 15, 1, 0)) {
+			if (!askfor_aux(tmp, 15, ASKFOR_PRIVATE)) {
 				change_pass = FALSE;
 				continue;
 			}
@@ -3927,7 +3921,7 @@ static void do_cmd_options_acc(void)
 				/* Ask for new password */
 				move_cursor(8, 16);
 				tmp[0] = '\0'; 
-				if (!askfor_aux(tmp, 15, 1, 0)) {
+				if (!askfor_aux(tmp, 15, ASKFOR_PRIVATE)) {
 					change_pass = FALSE;
 					break;
 				}
@@ -3937,7 +3931,7 @@ static void do_cmd_options_acc(void)
 
 				/* Ask for the confirmation */
 				move_cursor(10, 16);
-				if (!askfor_aux(tmp, 15, 1, 0)) {
+				if (!askfor_aux(tmp, 15, ASKFOR_PRIVATE)) {
 					change_pass = FALSE;
 					break;
 				}
@@ -4366,7 +4360,7 @@ void do_cmd_options(void)
 			sprintf(tmp, "user.prf");
 
 			/* Ask for a file */
-			if (!askfor_aux(tmp, 70, 0, 0)) continue;
+			if (!askfor_aux(tmp, 70, 0)) continue;
 
 			/* Dump the macros */
 			(void)options_dump(tmp);
@@ -4384,7 +4378,7 @@ void do_cmd_options(void)
 			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
 
 			/* Ask for a file */
-			if (!askfor_aux(tmp, 70, 0, 0)) continue;
+			if (!askfor_aux(tmp, 70, 0)) continue;
 
 			/* Process the given filename */
 			(void)process_pref_file(tmp);
