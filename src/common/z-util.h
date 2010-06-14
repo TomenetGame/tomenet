@@ -64,7 +64,7 @@ extern bool func_false(void);
 
 
 /* Test equality, prefix, suffix, and do "strdup" */
-extern bool streq(cptr s, cptr t);
+#define streq(s, t) (!strcmp((s), (t)))
 extern bool prefix(cptr s, cptr t);
 extern bool suffix(cptr s, cptr t);
 
