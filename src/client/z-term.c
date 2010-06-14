@@ -1798,43 +1798,72 @@ errr Term_putch(int x, int y, byte a, char c)
 
 /*
  * Move to a location and, using an attr, add a string
+ * n characters will be printed on the screen
  */
 errr Term_putstr(int x, int y, int n, byte a, char *s)
 {
 	errr res;
 	char *ptr;
-	char tmp[512];
+	char *next_ptr;
 	int b;
+	int count = 0;
 
 	/* Move first */
 	if ((res = Term_gotoxy(x, y)) != 0) return (res);
 
-	ptr=strchr(s,'\377');
-	if(!ptr){
-		/* Then add the string */
+	/* Look for color codes */
+	ptr = strchr(s, '\377');
+
+	if (!ptr) {
+		/* No color codes, just add the whole string */
 		if ((res = Term_addstr(n, a, s)) != 0) return (res);
-		return(0);
+	} else {
+		if ((res = Term_addstr(ptr - s, a, s)) != 0) return (res);
+
+		/* Count the actual characters that have been printed on the screen */
+		count += ptr - s;
 	}
 
-	while(ptr){
-		strncpy(tmp,s,ptr-s);
-		if(ptr-s){
-			tmp[ptr-s]='\0';
-			if((res=Term_addstr(ptr-s, a, tmp))!=0) return(res);
+	while (ptr) {
+		/* Skip the '\377' */
+		ptr++;
+
+		if (*ptr == '\377') {
+			/* Convert double '\377' into one '{' */
+			Term_addch(a, '{');
+			ptr++;
+		} else {
+			if ((b = color_char_to_attr(*ptr)) != -1) {
+				/* Change the attr */
+				a = b;
+
+				/* Skip the color code letter */
+				ptr++;
+			}
 		}
-		else if(*(s+1)=='\0') break;
-		s=ptr+1;
-		if((b=color_char_to_attr(*s))!=-1){
-			a=b;
+
+		/* Find the next color code */
+		next_ptr = strchr(ptr, '\377');
+
+		if (next_ptr) {
+			/* Check whether next_ptr is past the maximum number of characters */
+			if (n >= 0 && next_ptr - ptr + count >= n) {
+				/* Add the rest of the string */
+				if ((res = Term_addstr(n - count, a, ptr)) != 0) return (res);
+				next_ptr = NULL;
+			} else {
+				if ((res = Term_addstr(next_ptr - ptr, a, ptr)) != 0) return (res);
+
+				/* Count the actual characters that have been printed on the screen */
+				count += next_ptr - ptr;
+			}
+		} else {
+			/* Add the rest of the string */
+			if ((res = Term_addstr(n - count, a, ptr)) != 0) return (res);
 		}
-		else{
-			if(*s=='\377') *s='{';
-			Term_addstr(1, a, s);
-		}
-		s++;
-		ptr=strchr(s,'\377');
+
+		ptr = next_ptr;
 	}
-	if(strlen(s)) Term_addstr(strlen(s),a,s);
 
 	/* Success */
 	return (0);
