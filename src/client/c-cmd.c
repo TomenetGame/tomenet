@@ -1523,39 +1523,37 @@ void cmd_check_misc(void)
 
 void cmd_message(void)
 {
-	char buf[80];
+	char buf[120];
 	int i;
 
 	/* Wipe the whole buffer to stop valgrind from complaining about the color code conversion - mikaelh */
-	C_WIPE(buf, 80, char);
+	C_WIPE(buf, sizeof(buf), char);
 
 	inkey_msg = TRUE;
 
-	if (get_string("Message: ", buf, 69))
+	if (get_string("Message: ", buf, sizeof(buf) - 1))
 	{
 		/* hack - screenshot - mikaelh */
 		if (prefix(buf, "/shot") || prefix(buf, "/screenshot"))
 		{
-			for (i = 0; i < 70; i++)
-			{
-				if (buf[i] == ' ')
-				{
-					xhtml_screenshot(buf + i + 1);
-					return;
-				}
-				else if (buf[i] == '\0') break;
+			char *space = strchr(buf, ' ');
+			if (space && space[1]) {
+				/* Use given parameter as filename */
+				xhtml_screenshot(space + 1);
+			} else {
+				/* Default filename pattern */
+				xhtml_screenshot("screenshot????");
 			}
-			xhtml_screenshot("screenshot????");
 			inkey_msg = FALSE;
 			return;
 		}
 
 		/* Convert {'s into \377's */
-		for (i = 0; i < 70; i++) {
+		for (i = 0; i < sizeof(buf); i++) {
 			if (buf[i] == '{') buf[i] = '\377';
 		}
 
-		/* Handle messages to % in the client - mikaelh */
+		/* Handle messages to '%' (self) in the client - mikaelh */
 		if (prefix(buf, "%:") && !prefix(buf, "%::"))
 		{
 			c_msg_format("\377o<%%> \377w%s", buf + 2);

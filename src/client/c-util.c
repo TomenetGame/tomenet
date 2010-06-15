@@ -1187,6 +1187,21 @@ void prt(cptr str, int row, int col)
 
 
 /*
+ * Print the last n characters of str onto the screen.
+ */
+static void c_ptr_last(int x, int y, int n, byte attr, char *str)
+{
+	int len = strlen(str);
+
+	if (n < len) {
+		Term_putstr(x, y, n, attr, str + (len - n));
+	} else {
+		Term_putstr(x, y, len, attr, str);
+	}
+}
+
+
+/*
  * Get some input at the cursor location.
  * Assume the buffer is initialized to a default string.
  * Note that this string is often "empty" (see below).
@@ -1206,10 +1221,11 @@ void prt(cptr str, int row, int col)
 bool askfor_aux(char *buf, int len, char mode)
 {
 	int y, x;
-
 	int i = 0;
-
 	int k = 0;
+
+	/* Visible length on the screen */
+	int vis_len = len;
 
 	bool done = FALSE;
 	
@@ -1217,11 +1233,11 @@ bool askfor_aux(char *buf, int len, char mode)
 	bool nohist = (mode & ASKFOR_PRIVATE) || len < 20;
 	byte cur_hist;
 
-	if (mode & ASKFOR_CHATTING)
+	if (mode & ASKFOR_CHATTING) {
 		cur_hist = hist_chat_end;
-	else
+	} else {
 		cur_hist = hist_end;
-
+	}
 
 	/* Handle wrapping */
 	if (cur_hist >= MSG_HISTORY_MAX) cur_hist = 0;
@@ -1236,23 +1252,21 @@ bool askfor_aux(char *buf, int len, char mode)
 	if (len < 1) len = 1;
 
 	/* Paranoia -- check column */
-	if ((x < 0) || (x >= 80)) x = 0;
+	if ((x < 0) || (x >= 79)) x = 0;
 
-	/* Restrict the length */
-	if (x + len > 80) len = 80 - x;
-
+	/* Restrict the visible length */
+	if (x + vis_len > 79) vis_len = 79 - x;
 
 	/* Paranoia -- Clip the default entry */
 	buf[len] = '\0';
 
 	/* Display the default answer */
 	Term_erase(x, y, len);
-	if (mode & ASKFOR_PRIVATE) Term_putstr(x, y, -1, TERM_YELLOW, "(default)");
-	else Term_putstr(x, y, -1, TERM_YELLOW, buf);
+	if (mode & ASKFOR_PRIVATE) c_ptr_last(x, y, vis_len, TERM_YELLOW, "(default)");
+	else c_ptr_last(x, y, vis_len, TERM_YELLOW, buf);
 
 	if (mode & ASKFOR_CHATTING) strcpy(message_history_chat[hist_chat_end], buf);
 	else if (!nohist) strcpy(message_history[hist_end], buf);
-
 
 	/* Process input */
 	while (!done)
@@ -1374,13 +1388,13 @@ bool askfor_aux(char *buf, int len, char mode)
 		/* Update the entry */
 		if (!(mode & ASKFOR_PRIVATE))
 		{
-			Term_erase(x, y, len);
-			Term_putstr(x, y, -1, TERM_WHITE, buf);
+			Term_erase(x, y, vis_len);
+			c_ptr_last(x, y, vis_len, TERM_WHITE, buf);
 		}
 		else
 		{
-			Term_erase(x+k, y, len-k);
-			if(k) Term_putch(x+k-1, y, TERM_WHITE, 'x');
+			Term_erase(x + k, y, len - k);
+			if (k) Term_putch(x + k - 1, y, TERM_WHITE, 'x');
 		}
 	}
 
@@ -3045,11 +3059,8 @@ void interact_macros(void)
 			/* Go to the correct location */
 			Term_gotoxy(0, 22);
 
-			/* Hack -- limit the value */
-			tmp[80] = '\0';
-
 			/* Get an encoded action */
-			if (!askfor_aux(buf, 80, 0)) continue;
+			if (!askfor_aux(buf, 159, 0)) continue;
 
 			/* Extract an action */
 			text_to_ascii(macro__buf, buf);
@@ -3334,11 +3345,8 @@ void interact_macros(void)
 			/* Go to the correct location */
 			Term_gotoxy(0, 22);
 
-			/* Hack -- limit the value */
-			tmp[80] = '\0';
-
 			/* Get an encoded action */
-			if (!askfor_aux(buf, 80, 0)) continue;
+			if (!askfor_aux(buf, 159, 0)) continue;
 			
 			/* Fix it up quick and dirty: Ability code short-cutting */
 			buf2[0] = '\\'; //note: should in theory be ')e\',
