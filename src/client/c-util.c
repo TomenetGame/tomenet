@@ -3364,10 +3364,10 @@ void interact_macros(void)
 						*b2ptr++ = *bptr++;
 					}
 				} else switch (*bptr) {
-				case 'M': /* use innate mimic power */
+				case 'P': /* use innate mimic power */
 					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '3'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
 					bptr++;	break;
-				case 'T': /* use innate mimic power: transform into specific */
+				case 'I': /* use innate mimic power: transform into specific */
 					mimic_transform = TRUE;
 					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '3'; *b2ptr++ = '\\'; *b2ptr++ = 'r'; *b2ptr++ = 'c';
 					bptr++;	break;
@@ -3377,10 +3377,10 @@ void interact_macros(void)
 				case 'S': /* employ shooting technique */
 					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '6'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
 					bptr++;	break;
-				case 'P': /* set a trap */
+				case 'T': /* set a trap */
 					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '0'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
 					bptr++;	break;
-				case 'm': /* cast a spell */
+				case 'M': /* cast a spell */
 					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '1'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
 					bptr++;	break;
 				case 'R': /* draw a rune */
