@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 13. June 2010 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.5 - official websites are:
+| Latest update: 16. June 2010 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.5b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 +---
@@ -2298,23 +2298,43 @@ the usual full macro.
 
 On entering the macro action, those characters will be automatically expanded
 to their real functionality. They are:
-  M for using a mimic's innate power
-  T for using a mimic's 'transform-into-specific' power. For example, enter:
-    T191
-    Which will become  \e)@m3\rc191\r  (transform into a Grizzly Bear).
+  P for using a mimic's innate power
+    Example:  Pd
+    Uses innate power 'd)', which is the first real innate spell after the
+    three polymorph powers themselves, which always comprise a) to c).
+  I for using a mimic's 'transform-into-specific' power.
+    Example:  I191
+    This will become  \e)@m3\rc191\r  (transform into a Grizzly Bear).
   F for employing a fighting technique
+    Example:  Fa
+    (Use fighting technique 'a)', which usually is 'taunt'.)
   S for employing a shooting technique
-  m for casting a spell
+    Example:  Sa
+    (Use shooting technique 'a)', which is probably 'flare'.)
+  M for casting a spell
+    Example:  M@Phase Door\
+    Becomes  \e)m@11\r@Phase Door\r  (cast spell 'Phase Door'.)
   R for drawing a rune
-  P for setting up a trap
+    Examples:  Rcbiaa  or  Rcb\raa  or Rc\raa  to draw 3 or 2 or just 1 rune.
+    (The last two 'a' being spell-power and spell-type respectively.)
+  T for setting up a trap
+    Example:  T13
+    Set up the monster trap inscribed '@m1' or '@1' loaded with item inscribed
+    '@m3' or '@3'. (Becomes '\e)m@10\r13'.)
   s for changing a stance
-  * for targetting the nearest monster
+    Example:  sa  (switches to stance 'a)' ie balanced combat stance.)
+  * for targetting the nearest monster. Usually you add this to any spell that
+    requires targetting.
+    Example:  m@Manathrust\*  (cast spell manathrust at nearest monster.)
   @...\ for using call-by-name (spell/item name must be between '@' and '\')
+    (Examples have been given above, in some spell casting explanations.)
+
 All other keys are taken over unmodified, like 'f' for firing a ranged weapon.
 
 Also, '\e)' is automatically prefixed, and the most fitting macro type
 automatically chosen (depending on the trigger key).
 
+Additional examples:
 Example 1: Firing your ranged weapon would just be..
         f*
     (which gets expanded to '\e)f*t'.)
