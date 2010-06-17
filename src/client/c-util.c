@@ -1224,6 +1224,9 @@ bool askfor_aux(char *buf, int len, char mode)
 	int i = 0;
 	int k = 0;
 
+	/* Terminal width */
+	int wid = 80;
+
 	/* Visible length on the screen */
 	int vis_len = len;
 
@@ -1252,10 +1255,10 @@ bool askfor_aux(char *buf, int len, char mode)
 	if (len < 1) len = 1;
 
 	/* Paranoia -- check column */
-	if ((x < 0) || (x >= 79)) x = 0;
+	if ((x < 0) || (x >= wid - 1)) x = 0;
 
 	/* Restrict the visible length */
-	if (x + vis_len > 79) vis_len = 79 - x;
+	if (x + vis_len > wid - 1) vis_len = wid - 1 - x;
 
 	/* Paranoia -- Clip the default entry */
 	buf[len] = '\0';
@@ -1310,12 +1313,21 @@ bool askfor_aux(char *buf, int len, char mode)
 				{
 					case CHAT_MODE_PARTY:
 						c_prt(TERM_L_GREEN, "Party: ", 0, 0);
+
+						/* Recalculate visible length */
+						vis_len = wid - 1 - sizeof("Party: ");
 						break;
 					case CHAT_MODE_LEVEL:
 						c_prt(TERM_YELLOW, "Level: ", 0, 0);
+
+						/* Recalculate visible length */
+						vis_len = wid - 1 - sizeof("Level: ");
 						break;
 					default:
 						prt("Message: ", 0, 0);
+
+						/* Recalculate visible length */
+						vis_len = wid - 1 - sizeof("Message: ");
 						break;
 				}
 
