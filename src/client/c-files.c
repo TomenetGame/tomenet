@@ -1636,7 +1636,13 @@ void xhtml_screenshot(cptr name)
 
 			/* Write data out before the buffer gets full */
 			if (i > 512) {
-				fwrite(buf, 1, i, fp);
+				if (fwrite(buf, 1, i, fp) < i) {
+					fprintf(stderr, "fwrite failed\n");
+					c_msg_print("\377rScreenshot could not be written!");
+					fclose(fp);
+					return;
+				}
+
 				i = 0;
 			}
 		}
@@ -1645,7 +1651,12 @@ void xhtml_screenshot(cptr name)
 
 	/* Write what remains in the buffer */
 	if (i) {
-		fwrite(buf, 1, i, fp);
+		if (fwrite(buf, 1, i, fp) < i) {
+			fprintf(stderr, "fwrite failed\n");
+			c_msg_print("\377rScreenshot could not be written!");
+			fclose(fp);
+			return;
+		}
 	}
 
 	fprintf(fp, "</span>\n"
