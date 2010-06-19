@@ -1316,7 +1316,7 @@ errr file_character(cptr name, bool full)
 	display_player(0);
 
 	/* Dump part of the screen */
-	for (y = 2; y < 22; y++)
+	for (y = 1; y < 22; y++)
 	{
 		/* Dump each row */
 		for (x = 0; x < 79; x++)
@@ -1339,7 +1339,7 @@ errr file_character(cptr name, bool full)
 	display_player(1);
 
 	/* Dump part of the screen */
-	for (y = 15; y < 20; y++)
+	for (y = 14; y < 19; y++)
 	{
 		/* Dump each row */
 		for (x = 0; x < 79; x++)
@@ -1359,7 +1359,7 @@ errr file_character(cptr name, bool full)
 	}
 
 	/* Dump skills */
-	fprintf(fff, "  [Skill Chart]\n"); /* one less \n, dump_skills() adds one */
+	fprintf(fff, "\n  [Skill Chart]\n"); /* one less \n, dump_skills() adds one */
 	dump_skills(fff);
 
 	/* Skip some lines */
@@ -1372,7 +1372,7 @@ errr file_character(cptr name, bool full)
 		fprintf(fff, "%c%s %s\n",
 				index_to_label(i), paren, inventory_name[i]);
 	}
-	fprintf(fff, "\r\n\r\n");
+	fprintf(fff, "\n\n");
 
 	/* Dump the inventory */
 	fprintf(fff, "  [Character Inventory]\n\n");
