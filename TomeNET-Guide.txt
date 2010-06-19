@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 16. June 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 19. June 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1045,6 +1045,13 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
 
 (0.5) Rumours, missing features, technical warnings (READ!)
 -----------------------------------------------------------
+-To report a bug, use /bug command in game. It allows you to type a line of
+ text to explain the bug or problem you encountered. You can use the /bug
+ command multiple times if one line is not sufficient for the amount of text
+ you want to write.
+ Alternatively, you can use the bug report section of the official forum at
+ www.tomenet.net.
+ Please DO NOT write bugs in chat in the game.
 -Starting at version 4.4.5, TomeNET supports audio, that is, sound effects and
  background music. To find out more, read (2.1a).
 -Usually characters expire (that means they are automatically deleted!)
@@ -3952,6 +3959,18 @@ becomes impossible/obstructed for any reason.
 The main use besides making ranged weapon usage more relaxed is that you are
 able to single out enemies you want to kill of big monster packs such as
 escorts.
+
+Fire-till-kill mode also works with spells and runes, same as with ranged
+weapons, except it may stop under additional conditions such as having no more
+mana or other effects that render you 100% unable to cast spells.
+While it will also stop if your spell requires a clear line of sight and would
+(while travelling to the target) hit other monsters on the way, some spells
+which don't travel to their destination but arrive instantly (most notably ball
+spells and mindcrafter spells) will not be affected by monsters crossing your
+line of sight.
+
+Concerning runecraft, fire-till-kill mode will also stop casting when your fail
+chance for the selected spell is over 60%.
 
 
 
