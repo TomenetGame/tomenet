@@ -199,6 +199,12 @@ int Receive_file(void){
 					Sockbuf_rollback(&rbuf, bytes_read);
 					
 					return 0;
+				} else if (x == -2) {
+					/* Write failed */
+					sprintf(outbuf, "\377rWrite failed [%d]", fnum);
+					c_msg_print(outbuf);
+
+					return 0;
 				}
 				break;
 			case PKT_FILE_END:
@@ -210,6 +216,8 @@ int Receive_file(void){
 				else {
 					if (errno == EACCES) {
 						c_msg_print("\377rNo access to lib directory!");
+					} else {
+						c_msg_print("\377rFile could not be written!");
 					}
 				}
 

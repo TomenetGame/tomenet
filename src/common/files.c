@@ -313,39 +313,55 @@ int local_file_write(int ind, unsigned short fnum, unsigned long len){
 		/* Not enough data available */
 		return -1;
 	}
-	fwrite(&c_fd->buffer, len, 1, c_fd->fp);
+	if (fwrite(&c_fd->buffer, 1, len, c_fd->fp) < len) {
+		fprintf(stderr, "fwrite failed\n");
+		fclose(c_fd->fp);	/* close & remove temp file */
+#ifdef __MINGW32__
+		unlink(c_fd->tname);	/* remove it on Windows OS */
+#endif
+		remove_ft(c_fd);
+		return -2;
+	}
 	return(1);
 }
 
 /* Close file and make the changes */
-int local_file_close(int ind, unsigned short fnum){
+int local_file_close(int ind, unsigned short fnum) {
 	int x;
 	struct ft_data *c_fd;
 	char buf[4096];
-	int size=4096;
-	int success=0;
+	int size = 4096;
+	int success = 1;
 	FILE *wp;
-	c_fd=getfile(ind, fnum);
-	if(c_fd==(struct ft_data*)NULL) return(0);
+	c_fd = getfile(ind, fnum);
+	if(c_fd == (struct ft_data *) NULL) return 0;
 
 	path_build(buf, 4096, ANGBAND_DIR, c_fd->fname);
 
-	wp=fopen(buf, "wb");	/* b for windows */
-	if(wp){
+	wp = fopen(buf, "wb");	/* b for windows */
+	if (wp) {
 		fseek(c_fd->fp, 0, SEEK_SET);
-		do{
-			x=fread(buf, 1, size, c_fd->fp);
-			fwrite(buf, x, 1, wp);
-		}while(x>0);
+
+		while ((x = fread(buf, 1, size, c_fd->fp)) > 0) {
+			if (fwrite(buf, 1, x, wp) < x) {
+				fprintf(stderr, "fwrite failed\n");
+				success = 0;
+				break;
+			}
+		}
+
 		fclose(wp);
-		success=1;
+	} else {
+		success = 0;
 	}
+
 	fclose(c_fd->fp);	/* close & remove temp file */
 #ifdef __MINGW32__
 	unlink(c_fd->tname);	/* remove it on Windows OS */
 #endif
 	remove_ft(c_fd);
-	return(success);
+
+	return success;
 }
 
 unsigned long int total;
