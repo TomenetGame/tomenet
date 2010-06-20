@@ -2426,12 +2426,10 @@ void c_message_add_msgnochat(cptr str)
  */
 void c_msg_print(cptr msg)
 {
+#if 0 /* line-length related code is dead code now, because splitting is done server-side */
 	static int p = 0;
-
 	int n, x, y;
-
 	char *t;
-
 	char buf[1024];
 
 	/* Copy it */
@@ -2502,7 +2500,7 @@ void c_msg_print(cptr msg)
 	/* Analyze the buffer */
 //done at the beginning.	t = buf;
 
-#if 0 /* Done on server-side now - mikaelh */
+ #if 0 /* Done on server-side now - mikaelh */
 	/* Split message */
 	while (n > 72)
 	{
@@ -2541,10 +2539,10 @@ void c_msg_print(cptr msg)
 		/* Prepare to recurse on the rest of "buf" */
 		t += split; n -= split;
 	}
-#else
+ #else
 	/* Small length limit */
 	if (n > 80) n = 80;
-#endif
+ #endif
 
 	/* Display the tail of the message */
 	if (!topline_icky) Term_putstr(p, 0, n, TERM_WHITE, t);
@@ -2557,6 +2555,72 @@ void c_msg_print(cptr msg)
 
 	/* Remember the position */
 	p += n + 1;
+
+#else
+
+	int n, x, y;
+	char *t;
+	char buf[1024];
+
+	/* Copy it */
+	if (msg) strcpy(buf, msg);
+	/* mark beginning of text to output */
+	t = buf;
+
+	/* Remember cursor position */
+	Term_locate(&x, &y);
+
+	if (!topline_icky) prt("", 0, 0);
+
+	/* Message length */
+	n = (msg ? strlen(msg) : 0);
+
+	/* No message */
+	if (!msg) return;
+
+	/* Paranoia */
+	if (n > 1000) return;
+
+	/* Memorize the message */
+	if (msg[0] == '\375') {
+		was_chat_buffer = TRUE;
+		was_all_buffer = FALSE;
+	} else if (msg[0] == '\374') {
+		was_all_buffer = TRUE;
+		was_chat_buffer = FALSE;
+	} else {
+		was_chat_buffer = FALSE;
+		was_all_buffer = FALSE;
+	}
+
+	/* strip (from here on) effectless control codes */
+	if (*t == '\374') t++;
+	if (*t == '\375') t++;
+
+	/* add the message to generic, chat-only and no-chat buffers
+	   accordingly, KEEPING '\376' control code (v>4.4.2.4) for main buffer */
+	c_message_add(t);
+
+	/* strip remaining control codes before displaying on screen */
+	if (*t == '\376') t++;
+
+	if (was_chat_buffer || was_all_buffer)
+		c_message_add_chat(t);
+	if (!was_chat_buffer)
+		c_message_add_msgnochat(t);
+
+	/* Small length limit */
+	if (n > 80) n = 80;
+
+	/* Display the tail of the message */
+	if (!topline_icky) Term_putstr(0, 0, n, TERM_WHITE, t);
+
+	/* Restore cursor */
+	Term_gotoxy(x, y);
+
+	/* Remember the message */
+	msg_flag = TRUE;
+#endif
 }
 
 /*
