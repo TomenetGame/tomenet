@@ -76,9 +76,9 @@ extern char server_name[MAX_CHARS];
 extern s32b server_port;
 extern char cname[MAX_CHARS];
 
-extern char message_history[MSG_HISTORY_MAX][160];
-extern char message_history_chat[MSG_HISTORY_MAX][160];
-extern char message_history_msgnochat[MSG_HISTORY_MAX][160];
+extern char message_history[MSG_HISTORY_MAX][121];
+extern char message_history_chat[MSG_HISTORY_MAX][121];
+extern char message_history_msgnochat[MSG_HISTORY_MAX][121];
 /*extern byte hist_start; */
 extern byte hist_end;
 extern bool hist_looped;
