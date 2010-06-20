@@ -4922,7 +4922,7 @@ void set_mixing(void) {
 void interact_audio(void) {
 	int i, j, item_x[8] = {2, 12, 22, 32, 42, 52, 62, 72};
 	static int cur_item = 0;
-	int y_label = 18, y_toggle = 10, y_slider = 16;
+	int y_label = 20, y_toggle = 12, y_slider = 18;
 	bool redraw = TRUE, quit = FALSE;
 
 	/* Save screen */
@@ -4940,6 +4940,8 @@ void interact_audio(void) {
 			/* Describe */
 			Term_putstr(30,  0, -1, TERM_L_UMBER, "*** Audio Mixer ***");
 			Term_putstr(3, 1, -1, TERM_L_UMBER, "Press arrow keys to navigate/modify, RETURN/SPACE to toggle, ESC to leave.");
+			Term_putstr(6, 2, -1, TERM_L_UMBER, "Shortcuts: 'a': master, 'w': weather, 's': sound, 'c' or 'm': music.");
+			Term_putstr(7, 3, -1, TERM_L_UMBER, "Jump to volume slider: SHIFT + according shortcut key given above.");
 
 			/* draw mixer */
 			Term_putstr(item_x[0], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_master ? "\377GX\377w" : " "));
@@ -5007,6 +5009,7 @@ void interact_audio(void) {
 			redraw = FALSE;
 			break;
 		case '8':
+		case '+':
 			switch (cur_item) {
 			case 0: cfg_audio_master = !cfg_audio_master; break;
 			case 1: cfg_audio_music = !cfg_audio_music; break;
@@ -5020,6 +5023,7 @@ void interact_audio(void) {
 			set_mixing();
 			break;
 		case '2':
+		case '-':
 			switch (cur_item) {
 			case 0: cfg_audio_master = !cfg_audio_master; break;
 			case 1: cfg_audio_music = !cfg_audio_music; break;
@@ -5031,6 +5035,36 @@ void interact_audio(void) {
 			case 7: if (cfg_audio_weather_volume >= 10) cfg_audio_weather_volume -= 10; else cfg_audio_weather_volume = 0; break;
 			}
 			set_mixing();
+			break;
+		case 'a':
+			cfg_audio_master = !cfg_audio_master;
+			set_mixing();
+			break;
+		case 'c':
+		case 'm':
+			cfg_audio_music = !cfg_audio_music;
+			set_mixing();
+			break;
+		case 's':
+			cfg_audio_sound = !cfg_audio_sound;
+			set_mixing();
+			break;
+		case 'w':
+			cfg_audio_weather = !cfg_audio_weather;
+			set_mixing();
+			break;
+		case 'A':
+			cur_item = 4;
+			break;
+		case 'C':
+		case 'M':
+			cur_item = 5;
+			break;
+		case 'S':
+			cur_item = 6;
+			break;
+		case 'W':
+			cur_item = 7;
 			break;
 		case '\n':
 		case '\r':
