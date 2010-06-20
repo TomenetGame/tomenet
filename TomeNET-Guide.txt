@@ -7577,6 +7577,8 @@ All undead creatures
             reduced by a little bit.
             Becomes susceptible to 'life', which concerns some healing or
             cleansing effects for example.
+            However, at the same time they become gorged less quickly when
+            for example quaffing lots of healing potions quickly.
 All greater demons (capital 'U')
             Resist poison (in most cases immunity).
 All non-living creatures
