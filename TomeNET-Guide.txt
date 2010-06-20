@@ -1215,8 +1215,8 @@ If your weapon gets destroyed you'll receive a warning message:
 Your weapon itself will not damage the Nazgul if it doesn't have one of the
 mods SLAY_EVIL, SLAY_UNDEAD or KILL_UNDEAD. However, you might still be able
 to damage the Nazgul, if your raw to-dam bonus is high enough. Enchantments
-from rings or other items and the damage bonus from your skills will be the
-only factors which decide the damage you deal, in that case.
+from rings, gloves or other items and the damage bonus from your skills will
+be the only factors which decide the damage you deal, in that case.
 For weapons which damage dice and to-dam bonus will not be counted (ie non-
 SLAY/KILL EVIL/UNDEAD weapons) you'll see the message:
 "The Ringwraith is IMPERVIOUS to the mundane weapon."
