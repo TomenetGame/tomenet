@@ -675,7 +675,7 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 	if check_antimagic(Ind, get_spell_am(s)) == TRUE then
 --Next line is already in the server sources.
 --		msg_print(i, "Your anti-magic field disrupts any magic attempts.")
-		return
+		return 1 --continue ftk
         end
 
 	-- TODO: check the ownership
@@ -686,27 +686,27 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 	 	-- Require lite
 		if (check_affect(s, "blind")) and ((player.blind > 0) or (no_lite(Ind) == TRUE)) then
 			msg_print(i, "You cannot see!")
-			return
+			return 0
 		end
 
 		-- Not when confused
                 if (check_affect(s, "confusion")) and (player.confused > 0) then
 			msg_print(i, "You are too confused!")
-			return
+			return 0
 		end
 
 		-- Level requirements met?
 		if (get_level(i, s, 50, -50) < 1) then
 			msg_print(i, "Your skill is not high enough!")
 			lua_intrusion(i, "bad spell level")
-			return
+			return 0
 		end
 
 		-- Enough mana
 		if (get_mana(i, s) > get_power(i, s)) then
 --                        if (get_check("You do not have enough "..get_power_name(s)..", do you want to try anyway?") == FALSE) then return end
 			msg_print(i, "You do not have enough mana to cast "..spell(s).name..".")
-				return
+				return 0
 	        end
 
 --[[		-- Sanity check for direction
@@ -755,6 +755,8 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 	player.redraw = bor(player.redraw, PR_MANA)
 	player.window = bor(player.window, PW_PLAYER)
 	--player.window = bor(player.window, PW_SPELL)
+
+	return 1
 end
 
 function get_spellbook_name_colour(i)
@@ -852,4 +854,11 @@ end
 function get_spell_am(s)
         if not __tmp_spells[s].am then return 100
         else return __tmp_spells[s].am end
+end
+
+-- Returns if a spell is an attack spell and therefore to be repeated in FTK mode - C. Blue
+-- note: 0 means no FTK, 1 means 'do FTK', 2 means 'do FTK && no need for monster-free LOS'
+function get_spell_ftk(s)
+        if not __tmp_spells[s].ftk then return 0
+        else return __tmp_spells[s].ftk end
 end

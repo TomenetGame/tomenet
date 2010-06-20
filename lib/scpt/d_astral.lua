@@ -24,6 +24,7 @@ POWERBOLT = add_spell
         ["fail"] = 	10,
         ["stat"] =      A_WIS,
         ["direction"] = TRUE,
+        ["ftk"] = 1,
         ["spell"] = 	function(args)
 			if (players(Ind).divinity == 1) then
 		        	fire_bolt(Ind, GF_MANA, args.dir, damroll(get_astral_dam(Ind)), " casts a mana bolt for")
@@ -54,6 +55,7 @@ POWERBEAM = add_spell
         ["fail"] = 	10,
         ["stat"] =      A_WIS,
         ["direction"] = TRUE,
+        ["ftk"] = 1,
         ["spell"] = 	function(args)
 	        	local xx, yy 
 			xx, yy = get_astral_dam(Ind)
@@ -86,6 +88,7 @@ POWERBALL = add_spell
         ["fail"] = 	10,
         ["stat"] =      A_WIS,
         ["direction"] = TRUE,
+        ["ftk"] = 2,
         ["spell"] = 	function(args)
 			if (players(Ind).divinity == 1) then
 	        		fire_ball(Ind, GF_MANA, args.dir, damroll(get_astral_dam(Ind)), 2 + get_level(Ind,POWERBALL,2), " casts a ball of mana for")

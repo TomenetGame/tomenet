@@ -41,6 +41,7 @@ FIREFLASH = add_spell
         ["mana_max"] = 	30,
         ["fail"] = 	30,
         ["direction"] = TRUE,
+        ["ftk"] = 2,
         ["spell"] = 	function(args)
                 local type
         	if (get_level(Ind, FIREFLASH, 50) >= 20) then

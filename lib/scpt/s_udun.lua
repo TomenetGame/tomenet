@@ -147,6 +147,7 @@ DISEBOLT = add_spell
 	["mana_max"] =  140,
         ["fail"] =      -40,
 	["direction"] = TRUE,
+	["ftk"] = 1,
 	["spell"] =     function(args)
 		fire_bolt(Ind, GF_DISENCHANT, args.dir, damroll(get_disebolt_dam()), " casts a disenchantment bolt for")
 	end,
@@ -171,6 +172,7 @@ HELLFIRE = add_spell
         ["mana_max"] =  40,
         ["fail"] =      30,
         ["direction"] = TRUE,
+        ["ftk"] = 2,
 	["spell"] =     function(args)
 			local type
 	                type = GF_HELL_FIRE

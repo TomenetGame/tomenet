@@ -75,6 +75,7 @@ HCURSEDD = add_spell
         ["mana_max"] =  20,
         ["fail"] =      15,
 	["stat"] =	A_WIS,
+	["ftk"] = 1,
         ["spell"] =     function(args)
 			fire_grid_bolt(Ind, GF_MISSILE, args.dir, 10 + get_level(Ind, HCURSEDD, 300), "points and curses for")
         end,
@@ -98,6 +99,7 @@ HORBDRAIN = add_spell
         ["fail"] = 	30,
 	["stat"] =      A_WIS,
         ["direction"] = TRUE,
+        ["ftk"] = 2,
         ["spell"] = 	function(args)
                 local type
         	type = GF_HOLY_ORB

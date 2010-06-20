@@ -170,6 +170,7 @@ MPYROKINESIS = add_spell
         ["mana_max"] =	22,
         ["fail"] =	15,
         ["direction"] = TRUE,
+        ["ftk"] = 2,
         ["spell"] =	function(args)
                         fire_grid_bolt(Ind, GF_FIRE, args.dir, 130 + get_level(Ind, MPYROKINESIS, 350), " causes an inflammation for")
                         end,
@@ -192,6 +193,7 @@ MCRYOKINESIS = add_spell
         ["mana_max"] =	23,
         ["fail"] =	15,
         ["direction"] = TRUE,
+        ["ftk"] = 2,
         ["spell"] =	function(args)
                         fire_grid_bolt(Ind, GF_COLD, args.dir, 115 + get_level(Ind, MCRYOKINESIS, 360), " causes freezing for")
                         end,

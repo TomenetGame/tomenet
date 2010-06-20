@@ -148,6 +148,7 @@ MMINDBLAST = add_spell
         ["mana_max"] = 	15,
         ["fail"] = 	10,
         ["direction"] = TRUE,
+        ["ftk"] = 2,
         ["spell"] = 	function(args)
     			local d, s, p
     			d, s, p = get_psiblast_dam()

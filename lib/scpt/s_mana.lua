@@ -13,6 +13,7 @@ MANATHRUST = add_spell
         ["mana_max"] =  25,
         ["fail"] = 	10,
         ["direction"] = TRUE,
+        ["ftk"] = 1,
         ["spell"] = 	function(args)
 	        	fire_bolt(Ind, GF_MANA, args.dir, damroll(get_manathrust_dam()), " casts a mana bolt for")
 	end,
