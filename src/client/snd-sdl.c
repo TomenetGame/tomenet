@@ -85,7 +85,8 @@ typedef struct {
 	Mix_Chunk *wavs[MAX_SAMPLES];   /* Sample array */
 	const char *paths[MAX_SAMPLES]; /* Relative pathnames for samples */
 	int current_channel;		/* Channel it's currently being played on, -1 if none; to avoid
-					   stacking of the same sound multiple (read: too many) times - C. Blue */
+					   stacking of the same sound multiple (read: too many) times - ...
+					   note that with 4.4.5.4+ this is deprecated - C. Blue */
 	int started_timer_tick;		/* global timer tick on which this sample was started (for efficiency) */
 } sample_list;
 
@@ -102,6 +103,8 @@ static sample_list samples[SOUND_MAX_2010];
 /* Array of potential channels, for managing that only one
    sound of a kind is played simultaneously, for efficiency - C. Blue */
 static int channel_sample[MAX_CHANNELS];
+static int channel_volume[MAX_CHANNELS];
+static s32b channel_player_id[MAX_CHANNELS];
 
 /* Music Array */
 static song_list songs[MUSIC_MAX];
@@ -505,9 +508,10 @@ static bool sound_sdl_init(bool no_cache) {
 /*
  * Play a sound of type "event". Returns FALSE if sound couldn't be played.
  */
-static bool play_sound(int event, int type) {
+static bool play_sound(int event, int type, int vol, s32b player_id) {
 	Mix_Chunk *wave = NULL;
 	int s;
+	bool test = FALSE;
 
 	/* Paranoia */
 	if (event < 0 || event >= SOUND_MAX_2010) return FALSE;
@@ -518,29 +522,30 @@ static bool play_sound(int event, int type) {
 	/* already playing? allow to prevent multiple sounds of the same kind
 	   from being mixed simultaneously, for preventing silliness */
 	switch (type) {
-	case SFX_TYPE_ATTACK: if (c_cfg.ovl_sfx_attack) break;
-		if (samples[event].current_channel != -1) return TRUE;
+	case SFX_TYPE_ATTACK: if (c_cfg.ovl_sfx_attack) break; else test = TRUE;
 		break;
-	case SFX_TYPE_COMMAND: if (c_cfg.ovl_sfx_command) break;
-		if (samples[event].current_channel != -1) return TRUE;
+	case SFX_TYPE_COMMAND: if (c_cfg.ovl_sfx_command) break; else test = TRUE;
 		break;
-	case SFX_TYPE_MISC: if (c_cfg.ovl_sfx_misc) break;
-		if (samples[event].current_channel != -1) return TRUE;
+	case SFX_TYPE_MISC: if (c_cfg.ovl_sfx_misc) break; else test = TRUE;
 		break;
-	case SFX_TYPE_MON_ATTACK: if (c_cfg.ovl_sfx_mon_attack) break;
-		if (samples[event].current_channel != -1) return TRUE;
+	case SFX_TYPE_MON_ATTACK: if (c_cfg.ovl_sfx_mon_attack) break; else test = TRUE;
 		break;
-	case SFX_TYPE_MON_SPELL: if (c_cfg.ovl_sfx_mon_spell) break;
-		if (samples[event].current_channel != -1) return TRUE;
+	case SFX_TYPE_MON_SPELL: if (c_cfg.ovl_sfx_mon_spell) break; else test = TRUE;
 		break;
-	case SFX_TYPE_MON_MISC: if (c_cfg.ovl_sfx_mon_misc) break;
-		if (samples[event].current_channel != -1) return TRUE;
+	case SFX_TYPE_MON_MISC: if (c_cfg.ovl_sfx_mon_misc) break; else test = TRUE;
 		break;
 	case SFX_TYPE_NO_OVERLAP: /* never overlap! (eg tunnelling) */
-		if (samples[event].current_channel != -1) return TRUE;
-		break;
 	default:
+		test = TRUE;
+	}
+	if (test) {
+#if 0 /* old method before sounds could've come from other players nearby us, too */
 		if (samples[event].current_channel != -1) return TRUE;
+#else /* so now we need to allow multiple samples, IF they stem from different sources aka players */
+		for (s = 0; s < cfg_max_channels; s++) {
+			if (channel_sample[s] == event && channel_player_id[s] == player_id) return TRUE;
+		}
+#endif
 	}
 
 	/* prevent playing duplicate sfx that were initiated very closely
@@ -564,7 +569,10 @@ static bool play_sound(int event, int type) {
 	s = Mix_PlayChannel(-1, wave, 0);
 	if (s != -1) {
 		channel_sample[s] = event;
-//		Mix_Volume(s, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
+		channel_volume[s] = vol;
+		channel_player_id[s] = player_id;
+		Mix_Volume(s, CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * vol) / 100));
+//puts(format("playing sample %d at vol %d.\n", event, (cfg_audio_sound_volume * vol) / 100));
 	}
 	samples[event].current_channel = s;
 	samples[event].started_timer_tick = ticks;
@@ -605,7 +613,7 @@ extern bool sound_page(void) {
 		}
 	}
 	samples[page_sound_idx].current_channel = s;
-	
+
 	return TRUE;
 }
 
@@ -800,7 +808,15 @@ static void fadein_next_music(void) {
  */
 static void set_mixing_sdl(void) {
 //	puts(format("mixer set to %d, %d, %d.", cfg_audio_music_volume, cfg_audio_sound_volume, cfg_audio_weather_volume));
+#if 0 /* don't use relative sound-effect specific volumes, transmitted from the server? */
 	Mix_Volume(-1, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
+#else /* use relative volumes (4.4.5b+) */
+	int n;
+	for (n = 0; n < cfg_max_channels; n++) {
+		if (n == weather_channel) continue;
+		Mix_Volume(n, CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * channel_volume[n]) / 100));
+	}
+#endif
 	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume));
 	if (weather_channel != -1 && Mix_FadingChannel(weather_channel) != MIX_FADING_OUT)
 		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume));

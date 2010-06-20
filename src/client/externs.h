@@ -741,10 +741,10 @@ extern const cptr angband_sound_name[SOUND_MAX];
 #ifdef USE_SOUND_2010
 //externs.h:
 extern void (*mixing_hook)(void);
-extern bool (*sound_hook)(int, int);
+extern bool (*sound_hook)(int, int, int, s32b);
 extern void (*sound_weather_hook)(int);
 extern void (*music_hook)(int);
-extern bool sound(int val, int type);
+extern bool sound(int val, int type, int vol, s32b player_id);
 extern void music(int val);
 extern void sound_weather(int val);
 extern void set_mixing(void);

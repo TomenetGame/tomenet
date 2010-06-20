@@ -263,7 +263,7 @@ bool multi_key_macros = FALSE;
 
 #ifdef USE_SOUND_2010
 void (*mixing_hook)(void);
-bool (*sound_hook)(int sound, int type);
+bool (*sound_hook)(int sound, int type, int vol, s32b player_id);
 void (*sound_weather_hook)(int sound);
 void (*music_hook)(int music);
 int cfg_audio_rate = 44100, cfg_max_channels = 32, cfg_audio_buffer = 512;

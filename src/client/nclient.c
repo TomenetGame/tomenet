@@ -2775,27 +2775,23 @@ int Receive_target_info(void)
 	return 1;
 }
 
-int Receive_sound(void)
-{
+int Receive_sound(void) {
 	int	n;
 	char	ch, s;
-	int	s1, s2, t = -1;
+	int	s1, s2, t = -1, v = 100;
+	s32b	id;
 
-	if (is_newer_than(&server_version, 4, 4, 5, 1, 0, 0)) {
-		/* Primary sound and an alternative */
+	if (is_newer_than(&server_version, 4, 4, 5, 3, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d", &ch, &s1, &s2, &t, &v, &id)) <= 0)
+			return n;
+	} else if (is_newer_than(&server_version, 4, 4, 5, 1, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%d%d%d", &ch, &s1, &s2, &t)) <= 0)
 			return n;
 	} else if (is_newer_than(&server_version, 4, 4, 5, 0, 0, 0)) {
 		/* Primary sound and an alternative */
-		if ((n = Packet_scanf(&rbuf, "%c%d%d", &ch, &s1, &s2)) <= 0)
-		{
-			return n;
-		}
+		if ((n = Packet_scanf(&rbuf, "%c%d%d", &ch, &s1, &s2)) <= 0) return n;
 	} else {
-		if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &s)) <= 0)
-		{
-			return n;
-		}
+		if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &s)) <= 0) return n;
 		s1 = s;
 	}
 
@@ -2810,8 +2806,8 @@ int Receive_sound(void)
 			if (count_half_sfx_attack) return 1;
 		}
 
-		if (!sound(s1, t)) {
-			sound(s2, t);
+		if (!sound(s1, t, v, id)) {
+			sound(s2, t, v, id);
 		}
 #endif
 	}
@@ -2819,15 +2815,11 @@ int Receive_sound(void)
 	return 1;
 }
 
-int Receive_music(void)
-{
+int Receive_music(void) {
 	int	n;
 	char	ch, m;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &m)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &m)) <= 0) return n;
 
 #ifdef USE_SOUND_2010
 	/* Play background music (if enabled) */

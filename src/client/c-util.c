@@ -4890,11 +4890,11 @@ bool is_newer_than(version_type *version, int major, int minor, int patch, int e
 }
 
 #ifdef USE_SOUND_2010
-bool sound(int val, int type) {
+bool sound(int val, int type, int vol, s32b player_id) {
 	if (!use_sound) return FALSE;
 
 	/* play a sound */
-	if (sound_hook) return sound_hook(val, type);
+	if (sound_hook) return sound_hook(val, type, vol, player_id);
 	else return FALSE;
 }
 
