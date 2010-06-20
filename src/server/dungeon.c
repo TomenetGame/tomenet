@@ -1726,7 +1726,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 				return TRUE;
 			}
 			break;
-	#ifdef ENABLE_RCRAFT
+#ifdef ENABLE_RCRAFT
 		/*
 			Auto-retaliation format:
 			@Oa through to @Og
@@ -1745,7 +1745,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 				return TRUE;
 			}
 			break;
-	#endif
+#endif
 		/* not likely :) */
 	}
 
@@ -4387,11 +4387,24 @@ static void process_player_end(int Ind)
 		/* assume nothing will happen here */
 		p_ptr->auto_retaliating = FALSE;
 
-		if (p_ptr->shooting_till_kill && !p_ptr->shoot_till_kill_book && !p_ptr->shoot_till_kill_spell) { /* did we shoot till kill last turn, and used bow-type item? */
+		if (p_ptr->shooting_till_kill) {
 			p_ptr->auto_retaliating = TRUE;
-	                do_cmd_fire(Ind, 5);
+			
+			if (p_ptr->shoot_till_kill_spell) {
+				cast_school_spell(Ind, p_ptr->shoot_till_kill_book, p_ptr->shoot_till_kill_spell - 1, 5, -1, 0);
+				if (!p_ptr->shooting_till_kill) p_ptr->shoot_till_kill_spell = 0;
+			}
+#ifdef ENABLE_RCRAFT
+			else if (p_ptr->shoot_till_kill_rune_spell) {
+				execute_rspell(Ind, 5, p_ptr->shoot_till_kill_rune_spell, p_ptr->shoot_till_kill_rune_modifier);
+			}
+#endif
+			else {
+				do_cmd_fire(Ind, 5);
+			}
+			
 			p_ptr->auto_retaliating = !p_ptr->auto_retaliating; /* hack, it's unset in do_cmd_fire IF it WAS successfull, ie reverse */
-//not required really	if (p_ptr->ranged_double && p_ptr->shooting_till_kill) do_cmd_fire(Ind, 5);
+			//not required really	if (p_ptr->ranged_double && p_ptr->shooting_till_kill) do_cmd_fire(Ind, 5);
 			p_ptr->shooty_till_kill = FALSE; /* if we didn't succeed shooting till kill, then we don't intend it anymore */
 		}
 
@@ -4414,8 +4427,7 @@ static void process_player_end(int Ind)
 
 	/* ('Handle running' from above was originally at this place) */
 	/* Handle running -- 5 times the speed of walking */
-	while (p_ptr->running && p_ptr->energy >= (level_speed(&p_ptr->wpos)*(real_speed + 1))/real_speed)
-	{
+	while (p_ptr->running && p_ptr->energy >= (level_speed(&p_ptr->wpos) * (real_speed + 1))/real_speed) {
 		run_step(Ind, 0);
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / real_speed;
 	}
@@ -4436,8 +4448,7 @@ static void process_player_end(int Ind)
 	 * and poison faster with respect to real time < 1750 feet and slower >
 	 * 1750 feet. - C. Blue
 	 */
-	if (!(turn%(level_speed(&p_ptr->wpos)/12)))
-	{
+	if (!(turn % (level_speed(&p_ptr->wpos) / 12))) {
 		if (!process_player_end_aux(Ind)) return;
 	}
 
@@ -4467,28 +4478,27 @@ static bool stale_level(struct worldpos *wpos, int grace)
 	/* Hack -- towns are static for good. */
 //	if (istown(wpos)) return (FALSE);
 
-	now=time(&now);
-	if(wpos->wz)
-	{
+	now = time(&now);
+	if(wpos->wz) {
 		struct dungeon_type *d_ptr;
 		struct dun_level *l_ptr;
-		d_ptr=getdungeon(wpos);
+		d_ptr = getdungeon(wpos);
 		if(!d_ptr) return(FALSE);
-		l_ptr=&d_ptr->level[ABS(wpos->wz)-1];
+		l_ptr = &d_ptr->level[ABS(wpos->wz) - 1];
 #if DEBUG_LEVEL > 1
 		s_printf("%s  now:%d last:%d diff:%d grace:%d players:%d\n", wpos_format(0, wpos), now, l_ptr->lastused, now-l_ptr->lastused,grace, players_on_depth(wpos));
 #endif
-		if(now-l_ptr->lastused > grace){
+		if(now - l_ptr->lastused > grace){
 			return(TRUE);
 		}
 	}
-	else if(now-wild_info[wpos->wy][wpos->wx].lastused > grace){
+	else if(now - wild_info[wpos->wy][wpos->wx].lastused > grace){
 		/* Never allow dealloc where there are houses */
 		/* For now at least */
 #if 0
 		int i;
 
-		for(i=0;i<num_houses;i++){
+		for(i = 0; i < num_houses; i++){
 			if(inarea(wpos, &houses[i].wpos)){
 				if(!(houses[i].flags&HF_DELETED))
 					return(FALSE);
@@ -4522,8 +4532,7 @@ static void do_unstat(struct worldpos *wpos)
 
 
 	// Count the number of players actually in game on this depth
-	for (j = 1; j < NumPlayers + 1; j++)
-	{
+	for (j = 1; j < NumPlayers + 1; j++) {
 		p_ptr = Players[j];
 		if (inarea(&p_ptr->wpos, wpos)) num_on_depth++;
 	}
@@ -4541,16 +4550,14 @@ static void do_unstat(struct worldpos *wpos)
 	if (!num_on_depth && stale_level(wpos))
 	{
 		/* makes levels between 50ft and min_unstatic_level unstatic on player saving/quiting game/leaving level DEG */
-		if (( getlevel(wpos) < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level))
-		{
-			new_players_on_depth(wpos,0,FALSE);
+		if (( getlevel(wpos) < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level)) {
+			new_players_on_depth(wpos, 0, FALSE);
 		}
 		// random chance of the level unstaticing
 		// the chance is one in (base_chance * depth)/250 feet.
-		if (!rand_int(((cfg.level_unstatic_chance * (getlevel(wpos)+5))/5)-1))
-		{
+		if (!rand_int(((cfg.level_unstatic_chance * (getlevel(wpos) + 5)) / 5) - 1)) {
 			// unstatic the level
-			new_players_on_depth(wpos,0,FALSE);
+			new_players_on_depth(wpos, 0, FALSE);
 		}
 	}
 #endif	// 0
@@ -4565,21 +4572,17 @@ static void scan_houses()
 	int i;
 	//int lval;
 	s_printf("Doing house maintenance\n");
-	for(i=0;i<num_houses;i++)
-	{
+	for(i = 0; i < num_houses; i++) {
 		if(!houses[i].dna->owner) continue;
-		switch(houses[i].dna->owner_type)
-		{
+		switch(houses[i].dna->owner_type) {
 			case OT_PLAYER:
-				if(!lookup_player_name(houses[i].dna->owner))
-				{
+				if(!lookup_player_name(houses[i].dna->owner)) {
 					s_printf("Found old player houses. ID: %d\n", houses[i].dna->owner);
 					kill_houses(houses[i].dna->owner, OT_PLAYER);
 				}
 				break;
 			case OT_PARTY:
-				if(!strlen(parties[houses[i].dna->owner].name))
-				{
+				if(!strlen(parties[houses[i].dna->owner].name)) {
 					s_printf("Found old party houses. ID: %d\n", houses[i].dna->owner);
 					kill_houses(houses[i].dna->owner, OT_PARTY);
 				}
@@ -4603,17 +4606,15 @@ static void purge_old()
 //	if (cfg.level_unstatic_chance > 0)
 	{
 		struct worldpos twpos;
-		twpos.wz=0;
-		for(y=0;y<MAX_WILD_Y;y++)
-		{
-			twpos.wy=y;
-			for(x=0;x<MAX_WILD_X;x++)
-			{
+		twpos.wz = 0;
+		for(y = 0; y < MAX_WILD_Y; y++) {
+			twpos.wy = y;
+			for(x = 0; x < MAX_WILD_X; x++) {
 				struct wilderness_type *w_ptr;
 				struct dungeon_type *d_ptr;
 
-				twpos.wx=x;
-				w_ptr=&wild_info[twpos.wy][twpos.wx];
+				twpos.wx = x;
+				w_ptr = &wild_info[twpos.wy][twpos.wx];
 
 				if (cfg.level_unstatic_chance > 0 &&
 					players_on_depth(&twpos))
@@ -4623,12 +4624,10 @@ static void purge_old()
 						getcave(&twpos) && stale_level(&twpos, cfg.anti_scum))
 					dealloc_dungeon_level(&twpos);
 
-				if(w_ptr->flags & WILD_F_UP)
-				{
-					d_ptr=w_ptr->tower;
-					for(i=1;i<=d_ptr->maxdepth;i++)
-					{
-						twpos.wz=i;
+				if(w_ptr->flags & WILD_F_UP) {
+					d_ptr = w_ptr->tower;
+					for(i = 1; i <= d_ptr->maxdepth; i++) {
+						twpos.wz = i;
 						if (cfg.level_unstatic_chance > 0 &&
 							players_on_depth(&twpos))
 						do_unstat(&twpos);
@@ -4638,12 +4637,10 @@ static void purge_old()
 							dealloc_dungeon_level(&twpos);
 					}
 				}
-				if(w_ptr->flags & WILD_F_DOWN)
-				{
-					d_ptr=w_ptr->dungeon;
-					for(i=1;i<=d_ptr->maxdepth;i++)
-					{
-						twpos.wz=-i;
+				if(w_ptr->flags & WILD_F_DOWN) {
+					d_ptr = w_ptr->dungeon;
+					for(i = 1; i <= d_ptr->maxdepth; i++) {
+						twpos.wz = -i;
 						if (cfg.level_unstatic_chance > 0 &&
 							players_on_depth(&twpos))
 							do_unstat(&twpos);
@@ -4653,7 +4650,7 @@ static void purge_old()
 							dealloc_dungeon_level(&twpos);
 					}
 				}
-				twpos.wz=0;
+				twpos.wz = 0;
 			}
 		}
 	}
@@ -4666,7 +4663,7 @@ void cheeze(object_type *o_ptr){
 #if CHEEZELOG_LEVEL > 3
 	int j;
 	/* check for inside a house */
-	for(j = 0;j < num_houses; j++){
+	for(j = 0; j < num_houses; j++){
 		if(inarea(&houses[j].wpos, &o_ptr->wpos)){
 			if(fill_house(&houses[j], FILL_OBJECT, o_ptr)){
 				if(houses[j].dna->owner_type == OT_PLAYER){
@@ -4702,16 +4699,12 @@ void cheeze_trad_house()
 	object_type *o_ptr;
 
 	/* check for inside a house */
-	for(j = 0;j < num_houses; j++)
-	{
+	for(j = 0;j < num_houses; j++) {
 		h_ptr = &houses[j];
-		if(h_ptr->dna->owner_type == OT_PLAYER)
-		{
-			for (i = 0; i < h_ptr->stock_num; i++)
-			{
+		if(h_ptr->dna->owner_type == OT_PLAYER) {
+			for (i = 0; i < h_ptr->stock_num; i++) {
 				o_ptr = &h_ptr->stock[i];
-				if(o_ptr->owner != h_ptr->dna->owner)
-				{
+				if(o_ptr->owner != h_ptr->dna->owner) {
 					if(o_ptr->level > lookup_player_level(h_ptr->dna->owner))
 						s_printf("Suspicious item: (%d,%d) Owned by %s, in %s's trad house(%d). (%d,%d)\n",
 								o_ptr->wpos.wx, o_ptr->wpos.wy,
@@ -4722,16 +4715,12 @@ void cheeze_trad_house()
 				}
 			}
 		}
-		else if(h_ptr->dna->owner_type == OT_PARTY)
-		{
+		else if(h_ptr->dna->owner_type == OT_PARTY) {
 			int owner;
-			if((owner = lookup_player_id(parties[h_ptr->dna->owner].owner)))
-			{
-				for (i = 0; i < h_ptr->stock_num; i++)
-				{
+			if((owner = lookup_player_id(parties[h_ptr->dna->owner].owner))) {
+				for (i = 0; i < h_ptr->stock_num; i++) {
 					o_ptr = &h_ptr->stock[i];
-					if(o_ptr->owner != owner)
-					{
+					if(o_ptr->owner != owner) {
 						if(o_ptr->level > lookup_player_level(owner))
 							s_printf("Suspicious item: (%d,%d) Owned by %s, in %s party trad house(%d). (%d,%d)\n",
 									o_ptr->wpos.wx, o_ptr->wpos.wy,
@@ -5228,24 +5217,20 @@ static void process_various(void)
 				j = k - 1;
 
 				// Alert him
-				if (j <= 60)
-				{
+				if (j <= 60) {
 					msg_format(i, "\377rYou have %d minute%s of tenure left.", j, j > 1 ? "s" : "");
 				}
-				else if (j <= 1440 && !(k % 60))
-				{
+				else if (j <= 1440 && !(k % 60)) {
 					msg_format(i, "\377yYou have %d hours of tenure left.", j / 60);
 				}
-				else if (!(k % 1440))
-				{
+				else if (!(k % 1440)) {
 					msg_format(i, "\377GYou have %d days of tenure left.", j / 1440);
 				}
 
 
 				// If the timer runs out, forcibly retire
 				// this character.
-				if (!j)
-				{
+				if (!j) {
 					do_cmd_suicide(i);
 				}
 			}
@@ -5256,8 +5241,7 @@ static void process_various(void)
 		/* Update the unique respawn timers */
 		/* I moved this out of the loop above so this may need some
                  * tuning now - mikaelh */
-		for (j = 1; j <= NumPlayers; j++)
-		{
+		for (j = 1; j <= NumPlayers; j++) {
 			p_ptr = Players[j];
 			if (!p_ptr->total_winner) continue;
 
@@ -5266,8 +5250,7 @@ static void process_various(void)
 			r_ptr = &r_info[i];
 
 			/* Make sure we are looking at a dead unique */
-			if (!(r_ptr->flags1 & RF1_UNIQUE))
-			{
+			if (!(r_ptr->flags1 & RF1_UNIQUE)) {
 				j--;
 				continue;
 			}
@@ -5293,49 +5276,11 @@ static void process_various(void)
 			/* "Ressurect" the unique */
 			p_ptr->r_killed[i] = 0;
 			Send_unique_monster(j, i);
-			// 				r_ptr->max_num = 1;
-			//				r_ptr->respawn_timer = -1;
 
 			/* Tell the player */
 			/* the_sandman: added colour */
 			msg_format(j,"\377v%s rises from the dead!",(r_name + r_ptr->name));
-			//				msg_broadcast(0,buf); 
 		}
-
-#if 0 /* No more reswpan */
-		/* Update the unique respawn timers */
-		for (i = 1; i < MAX_R_IDX-1; i++)
-		{
-			monster_race *r_ptr = &r_info[i];
-
-			/* Make sure we are looking at a dead unique */
-			if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
-			if (r_ptr->max_num > 0) continue;
-
-			/* Hack -- Initially set a newly killed uniques respawn timer */
-			/* -1 denotes that the respawn timer is unset */
-			if (r_ptr->respawn_timer < 0) 
-			{
-				r_ptr->respawn_timer = cfg_unique_respawn_time * (r_ptr->level + 1);
-				if (r_ptr->respawn_timer > cfg_unique_max_respawn_time)
-					r_ptr->respawn_timer = cfg_unique_max_respawn_time;
-			}
-			// Decrament the counter 
-			else r_ptr->respawn_timer--; 
-			// Once the timer hits 0, ressurect the unique.
-			if (!r_ptr->respawn_timer)
-			{
-				/* "Ressurect" the unique */
-				r_ptr->max_num = 1;
-				r_ptr->respawn_timer = -1;
-
-				/* Tell every player */
-				/* the_sandman: added colour */
-				snprintf(buf, sizeof(buf), "\377v%s rises from the dead!",(r_name + r_ptr->name));
-				msg_broadcast(0,buf); 
-			}
-		}
-#endif
 	}
 
 #if 0

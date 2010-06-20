@@ -260,7 +260,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 			angry = TRUE;
 			ident = TRUE;
 #ifdef USE_SOUND_2010
-			if (who > 0) sound(who, "detonation", NULL, SFX_TYPE_MISC);
+			if (who > 0) sound(who, "detonation", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 			break;
 		case SV_POTION_DEATH:
@@ -558,8 +558,8 @@ bool teleport_away(int m_idx, int dis)
 
 #if 0 /* no player Ind involved here */
 #ifdef USE_SOUND_2010
-	if (org_dis <= 20 && org_dis >= 10) sound(Ind, "phase_door", NULL, SFX_TYPE_COMMAND);
-	else if (org_dis > 20) sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND);
+	if (org_dis <= 20 && org_dis >= 10) sound(Ind, "phase_door", NULL, SFX_TYPE_COMMAND, FALSE);
+	else if (org_dis > 20) sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 #endif
 
@@ -665,7 +665,7 @@ void teleport_to_player(int Ind, int m_idx)
 	}
 
 #ifdef USE_SOUND_2010
-	sound(Ind, "monster_blinks", NULL, SFX_TYPE_COMMAND);
+	sound(Ind, "monster_blinks", NULL, SFX_TYPE_COMMAND, FALSE);
 #else
 //	sound(SOUND_TPOTHER);
 #endif
@@ -889,8 +889,8 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp)
 	if (!p_ptr->death) handle_stuff(Ind);
 
 #ifdef USE_SOUND_2010
-	if (org_dis <= 20 && org_dis >= 10) sound(Ind, "phase_door", NULL, SFX_TYPE_COMMAND);
-	else if (org_dis > 20) sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND);
+	if (org_dis <= 20 && org_dis >= 10) sound(Ind, "phase_door", NULL, SFX_TYPE_COMMAND, FALSE);
+	else if (org_dis > 20) sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
 	return TRUE;
@@ -924,8 +924,8 @@ void teleport_player_force(int Ind, int dis)
 
 #ifdef USE_SOUND_2010
 	if (!death) {
-		if (dis <= 20 && dis >= 10) sound(Ind, "phase_door", NULL, SFX_TYPE_COMMAND);
-		else if (dis > 20) sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND);
+		if (dis <= 20 && dis >= 10) sound(Ind, "phase_door", NULL, SFX_TYPE_COMMAND, FALSE);
+		else if (dis > 20) sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND, FALSE);
 	}
 #endif
 }
@@ -1030,7 +1030,7 @@ void teleport_player_to(int Ind, int ny, int nx)
 	handle_stuff(Ind);
 
 #ifdef USE_SOUND_2010
-	sound(Ind, "monster_blinks", NULL, SFX_TYPE_COMMAND);
+	sound(Ind, "monster_blinks", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 }
 
@@ -1045,9 +1045,7 @@ void teleport_player_to(int Ind, int ny, int nx)
  */
  
  /* in the wilderness, teleport to a neighboring wilderness level. */
- 
-void teleport_player_level(int Ind)
-{
+void teleport_player_level(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	wilderness_type *w_ptr;
 	struct worldpos *wpos=&p_ptr->wpos;
@@ -1081,15 +1079,12 @@ void teleport_player_level(int Ind)
 	}
 	
 	/* If in the wilderness, teleport to a random neighboring level */
-	else if(wpos->wz==0 && new_depth.wz==0)
-	{
+	else if(wpos->wz == 0 && new_depth.wz == 0) {
 		w_ptr = &wild_info[wpos->wy][wpos->wx];
 		/* get a valid neighbor */
 		wpcopy(&new_depth, wpos);
-		do
-		{	
-			switch (rand_int(4))
-			{
+		do {
+			switch (rand_int(4)) {
 				case DIR_NORTH:
 					if(new_depth.wy<MAX_WILD_Y)
 						new_depth.wy++;
@@ -1150,7 +1145,7 @@ void teleport_player_level(int Ind)
 	p_ptr->new_level_flag = TRUE;
 
 #ifdef USE_SOUND_2010
-	sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND);
+	sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 }
 
@@ -3302,34 +3297,27 @@ static void apply_morph(int Ind, int power, char * killer)
 #endif
 		case 2:
 		{
-			if (!p_ptr->fruit_bat)
-			{
-		
-				if (rand_int(10 + power * 4) < p_ptr->skill_sav)
-				{
+			if (!p_ptr->fruit_bat) {
+				if (rand_int(10 + power * 4) < p_ptr->skill_sav) {
 					msg_print(Ind, "You resist the effects!");
-				}
-				else
-				{
+				} else {
 					/* FRUIT BAT!!!!!! */
-				
+					if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
 					msg_print(Ind, "\377yYou have been turned into a fruit bat!");
-					strcpy(p_ptr->died_from,killer);
+					strcpy(p_ptr->died_from, killer);
+					strcpy(p_ptr->really_died_from, killer);
 					p_ptr->fruit_bat = -1;
 					p_ptr->deathblow = 0;
 					player_death(Ind);
-				}	
-			}
-			else if (p_ptr->fruit_bat == 2)
-			{	/* no saving throw for being restored..... */
+				}
+			} else if (p_ptr->fruit_bat == 2) {
+				/* no saving throw for being restored..... */
 				msg_print(Ind, "You have been restored!");
 				p_ptr->fruit_bat = 0;
 				p_ptr->update |= (PU_BONUS | PU_HP);
-			}
-			else
-			{
+			} else {
 				msg_print(Ind, "You feel certain you are a fruit bat!");
-			}					
+			}
 		}
 	}
 }
@@ -3534,7 +3522,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					note_spot(Ind, y, x);
 
 					/* Redraw */
-					everyone_lite_spot(wpos, y, x);
+					everyone_redraw_spot(wpos, y, x);
 				}
 			}
 
@@ -3565,7 +3553,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					note_spot(Ind, y, x);
 
 					/* Redraw */
-					everyone_lite_spot(wpos, y, x);
+					everyone_redraw_spot(wpos, y, x);
 				}
 			}
 
@@ -4911,19 +4899,25 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			{
 				note = " is immune";
 				dam = 0;
+#ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_IM_ACID;
+#endif
 			}
 			else if (r_ptr->flags9 & RF9_RES_ACID)
 			{
 				note = " resists";
 				dam /= 4;
-				if (seen) r_ptr->flags9 |= RF9_RES_ACID;
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags9 |= RF9_RES_ACID;
+#endif
 			}
 			else if (r_ptr->flags9 & RF9_SUSCEP_ACID)
 			{
 				note = " is hit hard";
 				dam *= 2;
-				if (seen) r_ptr->flags9 |= RF9_SUSCEP_ACID;
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags9 |= RF9_SUSCEP_ACID;
+#endif
 			}
 			break;
 		}
@@ -4936,19 +4930,25 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			{
 				note = " is immune";
 				dam = 0;
+#ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_IM_ELEC;
+#endif
 			}
 			else if (r_ptr->flags9 & RF9_RES_ELEC)
 			{
 				note = " resists";
 				dam /= 4;
-				if (seen) r_ptr->flags9 |= RF9_RES_ELEC;
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags9 |= RF9_RES_ELEC;
+#endif
 			}
 			else if (r_ptr->flags9 & RF9_SUSCEP_ELEC)
 			{
 				note = " is hit hard";
 				dam *= 2;
-				if (seen) r_ptr->flags9 |= RF9_SUSCEP_ELEC;
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags9 |= RF9_SUSCEP_ELEC;
+#endif
 			}
 			break;
 		}
@@ -4961,19 +4961,25 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			{
 				note = " is immune";
 				dam = 0;
+#ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
+#endif
 			}
 			else if (r_ptr->flags9 & RF9_RES_FIRE)
 			{
 				note = " resists";
 				dam /= 4;
-				if (seen) r_ptr->flags9 |= RF9_RES_FIRE;
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
+#endif
 			}
 			else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
 			{
 				note = " is hit hard";
 				dam *= 2;
+#ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
+#endif
 			}
 			break;
 		}
@@ -4986,19 +4992,25 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			{
 				note = " is immune";
 				dam = 0;
+#ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_IM_COLD;
+#endif
 			}
 			else if (r_ptr->flags9 & RF9_RES_COLD)
 			{
 				note = " resists";
 				dam /= 4;
-				if (seen) r_ptr->flags9 |= RF9_RES_COLD;
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags9 |= RF9_RES_COLD;
+#endif
 			}
 			else if (r_ptr->flags3 & RF3_SUSCEP_COLD)
 			{
 				note = " is hit hard";
 				dam *= 2;
+#ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_COLD;
+#endif
 			}
 			break;
 		}
@@ -5013,19 +5025,25 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			{
 				note = " is immune";
 				dam = 0;
+#ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_IM_POIS;
+#endif
 			}
 			else if (r_ptr->flags9 & RF9_RES_POIS)
 			{
 				note = " resists";
 				dam /= 4;
-				if (seen) r_ptr->flags9 |= RF9_RES_POIS;
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags9 |= RF9_RES_POIS;
+#endif
 			}
 			else if (r_ptr->flags9 & RF9_SUSCEP_POIS)
 			{
 				note = " is hit hard";
 				dam *= 2;
-				if (seen) r_ptr->flags9 |= RF9_SUSCEP_POIS;
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags9 |= RF9_SUSCEP_POIS;
+#endif
 			}
 			break;
 		}
@@ -5047,20 +5065,26 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			{
 				note = " resists";
 				dam = (dam * 2) / 4;
+#ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_IM_POIS;
+#endif
 			}
 			else if (r_ptr->flags9 & RF9_RES_POIS)
 			{
 				note = " resists slightly";
 				dam = (dam * 3) / 4;
-				if (seen) r_ptr->flags9 |= RF9_RES_POIS;
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags9 |= RF9_RES_POIS;
+#endif
 			}
 #if 0
 			else if (r_ptr->flags9 & RF9_SUSCEP_POIS)
 			{
 				note = " is hit hard";
 				dam *= 2;
-				if (seen) r_ptr->flags9 |= RF9_SUSCEP_POIS;
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags9 |= RF9_SUSCEP_POIS;
+#endif
 			}
 #endif
 			break;
@@ -5075,20 +5099,26 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				{
 					note = " resists";
 					dam *= 2; dam /= 2;//(randint(4)+3);
+#ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
+#endif
 				}
 				else if (r_ptr->flags9 & RF9_RES_FIRE)
 				{
-						note = " is hit";
+					note = " is hit";
 					dam = (dam * 3) / 2;
-					if (seen) r_ptr->flags9 |= RF9_RES_FIRE;
+#ifdef OLD_MONSTER_LORE
+					if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
+#endif
 				}
 #if 0
 				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
 				{
 					note = " is hit hard";
 					dam *= 2;
+#ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
+#endif
 				}
 #endif
 				else
@@ -5097,7 +5127,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 					note = " is hit hard";
 					//note = " is hit.";
 				}
+#ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= (RF3_GOOD);
+#endif
 			}
 			else
 			{
@@ -5105,20 +5137,26 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				{
 					note = " resists a lot";
 					dam *= 2; dam /= 4;//(randint(6)+10);
+#ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
+#endif
 				}
 				else if (r_ptr->flags9 & RF9_RES_FIRE)
 				{
-						note = " resists";
+					note = " resists";
 					dam = (dam * 3) / 4;
-					if (seen) r_ptr->flags9 |= RF9_RES_FIRE;
+#ifdef OLD_MONSTER_LORE
+					if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
+#endif
 				}
 #if 0
 				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
 				{
 					note = " resists slightly";
 					dam /= 2;
+#ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
+#endif
 				}
 #endif
 				else
@@ -5139,13 +5177,17 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			{
 				dam = 0;
 				note = " is immune";
+#ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= (RF3_GOOD);
+#endif
 			}
 			if (r_ptr->flags3 & RF3_EVIL)
 			{
 				note = " is hit hard";
 				dam *= 2;
+#ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_EVIL;
+#endif
 			}
 			break;
 		}
@@ -5158,7 +5200,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			{
 				dam = 0;
 				note = " is immune";
+#ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= (RF3_GOOD);
+#endif
 			}
 			else if (r_ptr->flags3 & (RF3_EVIL))
 			{
@@ -5166,20 +5210,26 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				{
 					note = " resists";
 					dam *= 2; dam = (dam * 2) / 3;//(randint(4)+3);
+#ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
+#endif
 				}
 				else if (r_ptr->flags9 & RF9_RES_FIRE)
 				{
-						note = " is hit";
+					note = " is hit";
 					dam = (dam * 6) / 4;
-					if (seen) r_ptr->flags9 |= RF9_RES_FIRE;
+#ifdef OLD_MONSTER_LORE
+					if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
+#endif
 				}
 #if 0
 				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
 				{
 					note = " is hit hard";
 					dam *= 2;
+#ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
+#endif
 				}
 #endif
 				else
@@ -5188,7 +5238,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 					note = " is hit hard";
 					//note = " is hit.";
 				}
+#ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= (RF3_EVIL);
+#endif
 			}
 			else
 			{
@@ -5196,20 +5248,26 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				{
 					note = " resists a lot";
 					dam *= 2; dam /= 3;//(randint(6)+10);
+#ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
+#endif
 				}
 				else if (r_ptr->flags9 & RF9_RES_FIRE)
 				{
-						note = " resists";
+					note = " resists";
 					dam = (dam * 3) / 4;
-					if (seen) r_ptr->flags9 |= RF9_RES_FIRE;
+#ifdef OLD_MONSTER_LORE
+					if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
+#endif
 				}
 #if 0
 				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
 				{
 					note = " resists slightly";
 					dam /= 2;
+#ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
+#endif
 				}
 #endif
 				else
@@ -5248,7 +5306,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			{
 				note = " resists somewhat";
 				dam *= 3;
-					dam /= 5;
+				dam /= 5;
 			}
 			break;
 		}
@@ -5261,7 +5319,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			{
 				note = " is immune";
 				dam = 0;
+#ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_UNDEAD;
+#endif
 			}
 			else if ((r_ptr->flags4 & RF4_BR_NETH) || (r_ptr->flags3 & RF3_RES_NETH))
 			{
@@ -5272,7 +5332,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			{
 				dam /= 2;
 				note = " resists somewhat";
+#ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_EVIL;
+#endif
 			}
 			break;
 		}
@@ -5306,7 +5368,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags9 & RF9_IM_WATER)
 			{
-					note = " is immune";
+				note = " is immune";
 				dam = 0;
 			}
 			else if (r_ptr->flags7 & RF7_AQUATIC)
@@ -5326,7 +5388,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			break;
 		}
 
-				/* Chaos -- Chaos breathers resist */
+		/* Chaos -- Chaos breathers resist */
 		case GF_CHAOS:
 		{
 			if (seen) obvious = TRUE;
@@ -5502,13 +5564,17 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			{
 				if ((r_ptr->flags1 & (RF1_UNIQUE)) || (r_ptr->flags9 & RF9_IM_TELE))
 				{
+#ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+#endif
 					note = " resists";
 					resist_tele = TRUE;
 				}
 				else if (m_ptr->level > randint(100))
 				{
+#ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+#endif
 					note = " resists";
 					resist_tele = TRUE;
 				}
@@ -5562,19 +5628,25 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			{
 				note = " is immune to cold";
 				dam = 0;
+#ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_IM_COLD;
+#endif
 			}
 			else if (r_ptr->flags9 & RF9_RES_COLD)
 			{
 				note = " resists cold";
 				dam /= 4;
-				if (seen) r_ptr->flags9 |= RF9_RES_COLD;
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags9 |= RF9_RES_COLD;
+#endif
 			}
 			else if (r_ptr->flags3 & RF3_SUSCEP_COLD)
 			{
 				note = " is hit hard by cold";
 				dam *= 2;
+#ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_COLD;
+#endif
 			}
 
 			k = (k * 2) / 5;/* 40% SHARDS damage */
@@ -5620,6 +5692,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				(r_ptr->flags1 & RF1_UNIQUE) ||
 				(strchr("Egv", r_ptr->d_char)))
 			{
+#ifdef OLD_MONSTER_LORE
 				if (r_ptr->flags3 & RF3_UNDEAD)
 				{
 					if (seen) r_ptr->r_flags3 |= RF3_UNDEAD;
@@ -5636,6 +5709,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				{
 					if (seen) r_ptr->r_flags1 |= RF1_UNIQUE;
 				}
+#endif
 
 				note = " is unaffected!";
 				obvious = FALSE;
@@ -5839,7 +5913,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				/* Memorize a flag */
 				if (r_ptr->flags3 & RF3_NO_SLEEP)
 				{
+#ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_NO_SLEEP;
+#endif
 					note = " is unaffected!";
 				}
 
@@ -5882,7 +5958,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				/* Memorize a flag */
 				if (r_ptr->flags3 & RF3_NO_CONF)
 				{
+#ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_NO_CONF;
+#endif
 					note = " is unaffected!";
 				}
 
@@ -5946,7 +6024,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 					/* Memorize a flag */
 					if (r_ptr->flags3 & RF3_NO_CONF)
 					{
+#ifdef OLD_MONSTER_LORE
 						if (seen) r_ptr->r_flags3 |= RF3_NO_CONF;
+#endif
 						note = " is unaffected!";
 					}
 					/* Resist */
@@ -5970,7 +6050,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		case GF_HEALINGCLOUD:
 		{
 			if (r_ptr->flags3 & RF3_UNDEAD) {
+#ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_UNDEAD;
+#endif
 				if (seen) obvious = TRUE;
 				note = " crackles in the light";
 				note_dies = " evaporates into thin air";
@@ -5993,19 +6075,25 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 					{
 						note = " is immune";
 						dam = 0;
+#ifdef OLD_MONSTER_LORE
 						if (seen) r_ptr->r_flags3 |= RF3_IM_POIS;
+#endif
 					}
 					else if (r_ptr->flags9 & RF9_RES_POIS)
 					{
 						note = " resists";
 						dam /= 4;
+#ifdef OLD_MONSTER_LORE
 						if (seen) r_ptr->flags9 |= RF9_RES_POIS;
+#endif
 					}
 					else if (r_ptr->flags9 & RF9_SUSCEP_POIS)
 					{
 						note = " is hit hard";
 						dam *= 2;
+#ifdef OLD_MONSTER_LORE
 						if (seen) r_ptr->flags9 |= RF9_SUSCEP_POIS;
+#endif
 					}
 					break;
 				}
@@ -6076,19 +6164,25 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 					{
 						note = " is immune";
 						dam = 0;
+#ifdef OLD_MONSTER_LORE
 						if (seen) r_ptr->r_flags3 |= RF3_IM_POIS;
+#endif
 					}
 					else if (r_ptr->flags9 & RF9_RES_POIS)
 					{
 						note = " resists";
 						dam /= 4;
-						if (seen) r_ptr->flags9 |= RF9_RES_POIS;
+#ifdef OLD_MONSTER_LORE
+						if (seen) r_ptr->r_flags9 |= RF9_RES_POIS;
+#endif
 					}
 					else if (r_ptr->flags9 & RF9_SUSCEP_POIS)
 					{
 						note = " is hit hard";
 						dam *= 2;
-						if (seen) r_ptr->flags9 |= RF9_SUSCEP_POIS;
+#ifdef OLD_MONSTER_LORE
+						if (seen) r_ptr->r_flags9 |= RF9_SUSCEP_POIS;
+#endif
 					}
 					break;
 				}
@@ -6105,8 +6199,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				/* Obvious effect */
 				if (seen) obvious = TRUE;
 
+#ifdef OLD_MONSTER_LORE
 				/* Memorize the effects */
 				if (seen) r_ptr->r_flags3 |= RF3_HURT_LITE;
+#endif
 
 				/* Special effect */
 				note = " cringes from the light";
@@ -6142,7 +6238,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			}
 			else if (r_ptr->flags3 & RF3_HURT_LITE)
 			{
+#ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_HURT_LITE;
+#endif
 				note = " cringes from the light";
 				note_dies = " shrivels away in the light";
 				dam *= 2;
@@ -6178,8 +6276,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				/* Notice effect */
 				if (seen) obvious = TRUE;
 
+#ifdef OLD_MONSTER_LORE
 				/* Memorize the effects */
 				if (seen) r_ptr->r_flags3 |= RF3_HURT_ROCK;
+#endif
 
 				/* Cute little message */
 				note = " loses some skin";
@@ -6211,13 +6311,17 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				{
 					if ((r_ptr->flags1 & (RF1_UNIQUE)) || (r_ptr->flags9 & RF9_IM_TELE))
 					{
+#ifdef OLD_MONSTER_LORE
 						if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+#endif
 						note = " is unaffected!";
 						resists_tele = TRUE;
 					}
 					else if (m_ptr->level > randint(100))
 					{
+#ifdef OLD_MONSTER_LORE
 						if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+#endif
 						note = " resists!";
 						resists_tele = TRUE;
 					}
@@ -6226,7 +6330,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (!resists_tele)
 				{
 					if (seen) obvious = TRUE;
+#ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= (RF3_UNDEAD);
+#endif
 					do_dist = dam;
 				}
 			}
@@ -6251,13 +6357,17 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				{
 					if ((r_ptr->flags1 & (RF1_UNIQUE)) || (r_ptr->flags9 & RF9_IM_TELE))
 					{
+#ifdef OLD_MONSTER_LORE
 						if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+#endif
 						note = " is unaffected!";
 						resists_tele = TRUE;
 					}
 					else if (m_ptr->level > randint(100))
 					{
+#ifdef OLD_MONSTER_LORE
 						if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+#endif
 						note = " resists!";
 						resists_tele = TRUE;
 					}
@@ -6266,7 +6376,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (!resists_tele)
 				{
 					if (seen) obvious = TRUE;
+#ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= (RF3_EVIL);
+#endif
 					do_dist = dam;
 				}
 			}
@@ -6289,13 +6401,17 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			{
 				if (r_ptr->flags1 & (RF1_UNIQUE))
 				{
+#ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+#endif
 					note = " is unaffected!";
 					resists_tele = TRUE;
 				}
 				else if (m_ptr->level > randint(100))
 				{
+#ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+#endif
 					note = " resists!";
 					resists_tele = TRUE;
 				}
@@ -6322,8 +6438,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			/* Only affect undead */
 			if (r_ptr->flags3 & RF3_UNDEAD)
 			{
+#ifdef OLD_MONSTER_LORE
 				/* Learn about type */
 				if (seen) r_ptr->r_flags3 |= RF3_UNDEAD;
+#endif
 
 				/* Obvious */
 				if (seen) obvious = TRUE;
@@ -6354,8 +6472,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			/* Only affect evil */
 			if (r_ptr->flags3 & RF3_EVIL)
 			{
+#ifdef OLD_MONSTER_LORE
 				/* Learn about type */
 				if (seen) r_ptr->r_flags3 |= RF3_EVIL;
+#endif
 
 				/* Obvious */
 				if (seen) obvious = TRUE;
@@ -6416,8 +6536,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 			if (r_ptr->flags3 & RF3_UNDEAD)
 			{
+#ifdef OLD_MONSTER_LORE
 				/* Learn about type */
 				if (seen) r_ptr->r_flags3 |= RF3_UNDEAD;
+#endif
 
 				/* Obvious */
 				if (seen) obvious = TRUE;
@@ -6445,8 +6567,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			/* Only affect evil */
 			if (r_ptr->flags3 & RF3_EVIL)
 			{
+#ifdef OLD_MONSTER_LORE
 				/* Learn about type */
 				if (seen) r_ptr->r_flags3 |= RF3_EVIL;
+#endif
 
 				/* Obvious */
 				if (seen) obvious = TRUE;
@@ -6472,8 +6596,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			/* Only affect evil */
 			if (r_ptr->flags3 & RF3_DEMON)
 			{
+#ifdef OLD_MONSTER_LORE
 				/* Learn about type */
 				if (seen) r_ptr->r_flags3 |= RF3_DEMON;
+#endif
 
 				/* Obvious */
 				if (seen) obvious = TRUE;
@@ -6518,13 +6644,17 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			{
 				note = " is immune";
 				dam = 0;
+#ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= (RF3_IM_POIS);
+#endif
 			}
 			else if (r_ptr->flags9 & (RF9_RES_POIS))
 			{
 				note = " resists";
 				dam *= 3; dam /= (randint(6)+6);
-				if (seen) r_ptr->flags9 |= (RF9_RES_POIS);
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags9 |= (RF9_RES_POIS);
+#endif
 			}
 			else if (randint(3)==1) do_poly = TRUE;
 			break;
@@ -6537,7 +6667,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags3 & (RF3_HURT_ROCK))
 			{
+#ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= (RF3_HURT_ROCK);
+#endif
 				note = " loses some skin";
 				note_dies = " evaporates";
 				dam *= 2;
@@ -6580,18 +6712,24 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			{
 				if (r_ptr->flags1 & (RF1_UNIQUE))
 				{
+#ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+#endif
 					note = " is unaffected!";
 					resists_tele = TRUE;
 				}
 				else if (m_ptr->level > randint(100))
 				{
+#ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+#endif
 					note = " resists!";
 					resists_tele = TRUE;
 				}
 			} else {
+#ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+#endif
 				note = " is unaffected!";
 				resists_tele = TRUE;
 			}

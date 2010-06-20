@@ -168,7 +168,7 @@ void do_cmd_eat_food(int Ind, int item)
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 #ifdef USE_SOUND_2010
-	sound(Ind, "eat", NULL, SFX_TYPE_COMMAND);
+	sound(Ind, "eat", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
 	/* Identity not known yet */
@@ -853,7 +853,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 			case SV_POTION_DETONATIONS:
 				{
 #ifdef USE_SOUND_2010
-					sound(Ind, "detonation", NULL, SFX_TYPE_MISC);
+					sound(Ind, "detonation", NULL, SFX_TYPE_MISC, TRUE);
 #endif
 					msg_print(Ind, "Massive explosions rupture your body!");
 					msg_format_near(Ind, "%s blows up!", p_ptr->name);
@@ -1292,27 +1292,23 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				break;
 			case SV_POTION2_CHAUVE_SOURIS:
 				//				apply_morph(Ind, 100, "Potion of Chauve-Souris");
-				if (!p_ptr->fruit_bat)
-				{
+				if (!p_ptr->fruit_bat) {
 					/* FRUIT BAT!!!!!! */
-
+					if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
 					msg_print(Ind, "You have been turned into a fruit bat!");
 					strcpy(p_ptr->died_from,"a Potion of Chauve-Souris");
 					strcpy(p_ptr->really_died_from,"a Potion of Chauve-Souris");
-					do_mimic_change(Ind, 0, TRUE);
 					p_ptr->fruit_bat = -1;
 					p_ptr->deathblow = 0;
 					player_death(Ind);
 					ident = TRUE;
-				}
-				else if(p_ptr->fruit_bat==2) {
+				} else if(p_ptr->fruit_bat == 2) {
 					msg_print(Ind, "You have been restored!");
 					p_ptr->fruit_bat = 0;
 					p_ptr->update |= (PU_BONUS | PU_HP);
 					ident = TRUE;
 				}
-				else
-					msg_print(Ind, "You feel certain you are a fruit bat!");
+				else msg_print(Ind, "You feel certain you are a fruit bat!");
 
 				break;
 			case SV_POTION2_LEARNING:
@@ -1460,7 +1456,7 @@ void do_cmd_quaff_potion(int Ind, int item)
 	}
 
 #ifdef USE_SOUND_2010
-	sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND);
+	sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 }
 
@@ -1495,7 +1491,7 @@ void do_cmd_drink_fountain(int Ind)
 			c_ptr->feat == FEAT_SHAL_WATER)
 	{
 #ifdef USE_SOUND_2010
-		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND);
+		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 		msg_print(Ind, "You quenched your thirst.");
 		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 500);
@@ -1522,7 +1518,7 @@ void do_cmd_drink_fountain(int Ind)
 	if (!(cs_ptr = GetCS(c_ptr, CS_FOUNTAIN)))
 	{
 #ifdef USE_SOUND_2010
-		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND);
+		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 		msg_print(Ind, "You quenched your thirst.");
 		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 500);
@@ -1552,7 +1548,7 @@ void do_cmd_drink_fountain(int Ind)
 	if (!k_idx)
 	{
 #ifdef USE_SOUND_2010
-		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND);
+		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 		msg_print(Ind, "You quenched your thirst.");
 		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 500);
@@ -1578,7 +1574,7 @@ void do_cmd_drink_fountain(int Ind)
 	/* S(he) is no longer afk */
 	un_afk_idle(Ind);
 #ifdef USE_SOUND_2010
-	sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND);
+	sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
 	ident = quaff_potion(Ind, tval, sval, pval);
@@ -2046,52 +2042,43 @@ static bool do_cancellation(int Ind, int flags)
 		if (o_ptr->tval==TV_KEY) continue;
 		if (o_ptr->tval==TV_FOOD) continue;
 		if (o_ptr->tval==TV_FLASK) continue;
-		if (o_ptr->name2 && o_ptr->name2 != EGO_SHATTERED && o_ptr->name2 != EGO_BLASTED)
-		{
+		if (o_ptr->name2 && o_ptr->name2 != EGO_SHATTERED && o_ptr->name2 != EGO_BLASTED) {
 			ident = TRUE;
 			o_ptr->name2 = 0;
 		}
-		if (o_ptr->name2b && o_ptr->name2b != EGO_SHATTERED && o_ptr->name2b != EGO_BLASTED)
-		{
+		if (o_ptr->name2b && o_ptr->name2b != EGO_SHATTERED && o_ptr->name2b != EGO_BLASTED) {
 			ident = TRUE;
 			o_ptr->name2b = 0;
 		}
-		if (o_ptr->timeout)
-		{
+		if (o_ptr->timeout) {
 			ident = TRUE;
 			if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH)
 				o_ptr->timeout = 1;
 			else
 				o_ptr->timeout = 0;
 		}
-		if (o_ptr->pval > 0)
-		{
+		if (o_ptr->pval > 0) {
 			ident = TRUE;
 			o_ptr->pval = 0;
 		}
-		if (o_ptr->bpval)
-		{
+		if (o_ptr->bpval) {
 			ident = TRUE;
 			o_ptr->bpval = 0;
 		}
-		if (o_ptr->to_h > 0)
-		{
+		if (o_ptr->to_h > 0) {
 			ident = TRUE;
 			o_ptr->to_h = 0;
 		}
-		if (o_ptr->to_d > 0)
-		{
+		if (o_ptr->to_d > 0) {
 			ident = TRUE;
 			o_ptr->to_d = 0;
 		}
-		if (o_ptr->to_a > 0)
-		{
+		if (o_ptr->to_a > 0) {
 			ident = TRUE;
 			o_ptr->to_a = 0;
 		}
 #if 0	// Not so useful anyway
-		if (flags & 0x02)
-		{
+		if (flags & 0x02) {
 			switch (o_ptr->tval)
 			{
 			}
@@ -2348,7 +2335,7 @@ void do_cmd_read_scroll(int Ind, int item)
 	used_up = TRUE;
 
 #ifdef USE_SOUND_2010
-	sound(Ind, "read_scroll", NULL, SFX_TYPE_COMMAND);
+	sound(Ind, "read_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
 	/* Analyze the scroll */
@@ -6577,6 +6564,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 
 				r_ptr = &r_info[c_ptr->m_idx];
 
+#ifdef OLD_MONSTER_LORE
 				/* Observe "maximal" attacks */
 				for (m = 0; m < 4; m++)
 				{
@@ -6615,6 +6603,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 				r_ptr->r_flags7 = r_ptr->flags7;
 				r_ptr->r_flags8 = r_ptr->flags8;
 				r_ptr->r_flags9 = r_ptr->flags9;
+#endif
 
 				o_ptr->timeout = rand_int(200) + 500;
 				break;
@@ -7297,15 +7286,14 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 				}
 #endif
 
-				if(!(item==INVEN_LEFT || item==INVEN_RIGHT)){
+				if(!(item == INVEN_LEFT || item == INVEN_RIGHT)){
 					msg_print(Ind, "You must be wearing the ring!");
 					return;
 				}
 
 				/* If never used before, then set to the player form,
 				 * otherwise set the player form*/
-				if (!o_ptr->pval)
-				{
+				if (!o_ptr->pval) {
 					if ((p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
 					    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level))
 						msg_print(Ind, "Nothing happens");
@@ -7344,16 +7332,13 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 
 #if 0
 						/* Reduce player's kill count by the monster level */
-						if (p_ptr->r_killed[p_ptr->body_monster] < (r_info[p_ptr->body_monster].level * 4))
-						{
+						if (p_ptr->r_killed[p_ptr->body_monster] < (r_info[p_ptr->body_monster].level * 4)) {
 							p_ptr->r_killed[p_ptr->body_monster] -= r_info[p_ptr->body_monster].level;
 							if (p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level)
 								msg_print(Ind, "Major parts of your knowledge are absorbed by the ring.");
 							else
 								msg_print(Ind, "Some of your knowledge is absorbed by the ring.");
-						}
-						else
-						{
+						} else {
 							msg_print(Ind, "A lot of your knowledge is absorbed by the ring.");
 							p_ptr->r_killed[p_ptr->body_monster] /= 2;
 						}
@@ -7369,12 +7354,10 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 						object_known(o_ptr);
 					}
 				}
-				else
 				/* activate the ring to change into its form! */
-				{
+				else {
 					/* Need skill; no need of killing count */
-					if (r_info[o_ptr->pval].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100))
-					{
+					if (r_info[o_ptr->pval].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100)) {
 						msg_print(Ind, "Your mimicry is not powerful enough yet.");
 						return;
 					}
@@ -8818,6 +8801,8 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		return;
 	}
 
+	disturb(Ind, 1, 0); /* stop resting, searching and running */
+
 	switch (technique) {
 	case 0:	if (!(p_ptr->melee_techniques & 0x0001)) return; /* Sprint */
 		if (p_ptr->cst < 7) { msg_print(Ind, "Not enough stamina!"); return; }
@@ -8855,10 +8840,10 @@ s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
 		break;
 	case 9:	if (!(p_ptr->melee_techniques & 0x0200)) return; /* Spin */
 		if (p_ptr->cst < 8) { msg_print(Ind, "Not enough stamina!"); return; }
-    		if (p_ptr->afraid) {                                                                                           
-			msg_print(Ind, "You are too afraid to attack!");                        
-			return;                                                                             
-		}                                                                                           
+		if (p_ptr->afraid) {
+			msg_print(Ind, "You are too afraid to attack!");
+			return;
+		}
 		if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 		p_ptr->cst -= 8;
 		un_afk_idle(Ind);

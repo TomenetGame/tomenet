@@ -1839,8 +1839,7 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 			if (o_ptr->to_h < 0) return (0L);
 			if (o_ptr->to_d < 0) return (0L);
 #endif
-			if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH))
-			{
+			if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) {
 				value += r_info[o_ptr->pval].level * r_info[o_ptr->pval].mexp;
 			}
 
@@ -2707,8 +2706,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr)
 			if (o_ptr->to_h < 0) return (0L);
 			if (o_ptr->to_d < 0) return (0L);
 #endif
-			if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH))
-			{
+			if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) {
 				value += r_info[o_ptr->pval].level * r_info[o_ptr->pval].mexp;
 			}
 
@@ -5332,7 +5330,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf)
  */
 static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 {
-	int tries = 0;
+	int tries = 0, i;
 	artifact_bias = 0;
 
         /* Very good */
@@ -5355,27 +5353,21 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 
 	/* prolly something should be done..	- Jir - */
 	/* Apply magic (good or bad) according to type */
-	switch (o_ptr->tval)
-	{
-		case TV_RING:
-		{
+	switch (o_ptr->tval) {
+		case TV_RING: {
 			/* Analyze */
-			switch (o_ptr->sval)
-			{
+			switch (o_ptr->sval) {
 				case SV_RING_POLYMORPH:
-				{
 					if (power < 1) power = 1;
 
 					/* Be sure to be a player */
 					o_ptr->pval = 0;
+					o_ptr->timeout = 0;
 
-					if (magik(45))
-					{
-						int i;
+					if (magik(45)) {
 						monster_race *r_ptr;
 
-						while (tries++ != 1000)
-						{
+						while (tries++ != 1000) {
 							i = randint(MAX_R_IDX - 1); /* skip 0, ie player */
 							r_ptr = &r_info[i];
 
@@ -5401,11 +5393,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 							/* Make the ring last only over a certain period of time >:) - C. Blue */
 							o_ptr->timeout = 3000 + rand_int(3001);
 						} else o_ptr->level = 1;
-					}
-					else o_ptr->level=1;
-
+					} else o_ptr->level = 1;
 					break;
-				}
 
 				/* Strength, Constitution, Dexterity, Intelligence */
 				case SV_RING_ATTACKS:
@@ -6563,8 +6552,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	/* --------------------------------------------------------------------------------- */
 
 	/* Roll for artifacts if allowed */
-	for (i = 0; i < rolls; i++)
-	{
+	for (i = 0; i < rolls; i++) {
 		/* Roll for an artifact */
 		if (make_artifact(wpos, o_ptr, resf)) break;
 	}
@@ -6709,23 +6697,19 @@ for (i = 0; i < 25; i++) {
 		case TV_CLOAK:
 		case TV_GLOVES:
 		case TV_BOOTS:
-		{
 			// Power is no longer required since things such as
 			// Kollas need magic applied to finish their normal
 			// generation.
 			//if (power) a_m_aux_2(o_ptr, lev, power, resf);
 			a_m_aux_2(o_ptr, lev, power, resf);
 			break;
-		}
 
 		case TV_RING:
 		case TV_AMULET:
-		{
 			if (!power && (rand_int(100) < CURSED_JEWELRY_CHANCE)) power = -1;
 			a_m_aux_3(o_ptr, lev, power, resf);
 			break;
-		}
-		
+
 		case TV_CHEST:
 	                /* Traps (placed in a_m_aux_4) won't be placed on a level 0 object */
 	                determine_level_req(lev, o_ptr); /* usually lev == dungeonlevel (+ x for vaults) */
@@ -6734,10 +6718,8 @@ for (i = 0; i < 25; i++) {
 			return;
 
 		default:
-		{
 			a_m_aux_4(o_ptr, lev, power, resf);
 			break;
-		}
 	}
 
 #if 1	// tweaked pernA ego.. 
@@ -6755,7 +6737,7 @@ for (i = 0; i < 25; i++) {
 
 		artifact_type *a_ptr;
 
-		a_ptr =	ego_make(o_ptr);
+		a_ptr = ego_make(o_ptr);
 
 		/* Extract the other fields */
 //		o_ptr->pval += a_ptr->pval;
@@ -6792,13 +6774,11 @@ for (i = 0; i < 25; i++) {
 
 #if 0	// mangband ego...
 	/* Hack -- analyze ego-items */
-	if (o_ptr->name2)
-	{
+	if (o_ptr->name2) {
 		ego_item_type *e_ptr = &e_info[o_ptr->name2];
 
 		/* Hack -- extra powers */
-		switch (o_ptr->name2)
-		{
+		switch (o_ptr->name2) {
 			/* Weapon (Holy Avenger) */
 			case EGO_HA:
 			{
@@ -6970,8 +6950,7 @@ for (i = 0; i < 25; i++) {
 #endif
 
 	/* Examine real objects */
-	if (o_ptr->k_idx)
-	{
+	if (o_ptr->k_idx) {
 		object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 		/* Hack -- acquire "broken" flag */

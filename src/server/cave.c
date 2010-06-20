@@ -2198,6 +2198,10 @@ byte get_trap_color(int Ind, int t_idx, int feat)
 		a = tmp % 6 + 1;
 	}
 
+	/* Hack -- always l.blue if underwater */
+	if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER)
+		a = TERM_L_BLUE;
+
 	return a;
 }
 
@@ -2619,10 +2623,6 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 						(*cp) = '^';
 
 						a = get_trap_color(Ind, t_idx, feat);
-
-						/* Hack -- always l.blue if underwater */
-						if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER)
-							a = TERM_L_BLUE;
 					}
 				}
 			}
@@ -3262,6 +3262,26 @@ void everyone_lite_spot(struct worldpos *wpos, int y, int x)
 	}
 }
 
+void everyone_redraw_spot(struct worldpos *wpos, int y, int x)
+{
+	int i;
+
+	/* Check everyone */
+	for (i = 1; i < NumPlayers + 1; i++)
+	{
+		/* If he's not playing, skip him */
+		if (Players[i]->conn == NOT_CONNECTED)
+			continue;
+
+		/* If he's not here, skip him */
+		if (!inarea(wpos, &Players[i]->wpos))
+			continue;
+
+		/* Actually redraw that spot for that player */
+		redraw_spot(i, y, x);
+	}
+}
+
 /*
  * Wipe the "CAVE_MARK" bit in everyone's array
  */
@@ -3454,6 +3474,30 @@ void draw_spot(int Ind, int y, int x, byte a, char c)
 			/* Tell client to redraw this grid */
 			(void)Send_char(Ind, dispx, dispy, a, c);
 		}
+	}
+}
+
+/*
+ * Call this to clean things up after calling draw_spot().
+ */
+void redraw_spot(int Ind, int y, int x)
+{
+	player_type *p_ptr = Players[Ind];
+
+	/* Redraw if on screen */
+	if (panel_contains(y, x))
+	{
+		int dispx, dispy;
+
+		dispx = x - p_ptr->panel_col_prt;
+		dispy = y - p_ptr->panel_row_prt;
+
+		/* Clear the internal buffer */
+		p_ptr->scr_info[dispy][dispx].c = 0;
+		p_ptr->scr_info[dispy][dispx].a = 0;
+
+		/* Now call lite_spot */
+		lite_spot(Ind, y, x);
 	}
 }
 

@@ -66,6 +66,13 @@ void rd_string(char *str, int max);
 static FILE	*fff;
 
 /*
+ * Local savefile buffer
+ */
+static char	*fff_buf;
+static int	fff_buf_pos = 0;
+#define MAX_BUF_SIZE	4096
+
+/*
  * Hack -- old "encryption" byte
  */
 static byte	xor_byte;
@@ -184,8 +191,18 @@ static byte sf_get(void)
 {
 	byte c, v;
 
+#if 0
 	/* Get a character, decode the value */
 	c = getc(fff) & 0xFF;
+#else
+	/* Buffered reading */
+	if (fff_buf_pos >= MAX_BUF_SIZE) {
+		fread(fff_buf, 1, MAX_BUF_SIZE, fff);
+		fff_buf_pos = 0;
+	}
+
+	c = fff_buf[fff_buf_pos++];
+#endif
 	v = c ^ xor_byte;
 	xor_byte = c;
 
@@ -260,10 +277,9 @@ void rd_string(char *str, int max)
 static void strip_bytes(int n)
 {
 	int i;
-	byte tmp8u;
 
 	/* Strip the bytes */
-	for (i = 0; i < n; i++) rd_byte(&tmp8u);
+	for (i = 0; i < n; i++) (void)sf_get();
 }
 
 
@@ -315,10 +331,6 @@ static void rd_item(object_type *o_ptr)
 	s16b old_ac;
 
 	u32b f1, f2, f3, f4, f5, esp;
-
-	byte tmpbyte;
-	u16b tmp16u;
-	s32b tmp32s;
 
 	object_kind *k_ptr;
 
@@ -473,6 +485,7 @@ static void rd_item(object_type *o_ptr)
 
 	if (!older_than(4, 4, 0)) rd_u16b(&o_ptr->ident);
 	else {
+		byte tmpbyte;
 		rd_byte(&tmpbyte);
 		o_ptr->ident = tmpbyte;
 	}
@@ -487,10 +500,8 @@ static void rd_item(object_type *o_ptr)
 	}
 
 	if (older_than(4, 3, 20)) {
-		/* Old flags */
-		strip_bytes(12);
-		/* Unused */
-		rd_u16b(&tmp16u);
+		/* Old flags + Unused */
+		strip_bytes(14);
 	}
 
 	/* Special powers */
@@ -545,9 +556,11 @@ static void rd_item(object_type *o_ptr)
 
 	if (!older_than(4, 3, 20)) {
 		if (!older_than(4, 3, 21)) {
+			s32b tmp32s;
 			rd_s32b(&tmp32s);
 			o_ptr->marked = tmp32s;
 		} else {
+			byte tmpbyte;
 			rd_byte(&tmpbyte);
 			o_ptr->marked = tmpbyte;
 		}
@@ -843,69 +856,64 @@ static void rd_monster(monster_type *m_ptr)
 
 
 /*
- * Read the monster lore
+ * Read the global server-wide monster lore
  */
-static void rd_lore(int r_idx)
+static void rd_global_lore(int r_idx)
 {
-	byte tmp8u;
-
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Count sights/deaths/kills */
-	rd_s16b(&r_ptr->r_sights);
-	rd_s16b(&r_ptr->r_deaths);
-	rd_s16b(&r_ptr->r_pkills);	/* for now, r_pkills is always equal to r_tkills */
-	rd_s16b(&r_ptr->r_tkills);
+	if (older_than(4, 4, 7)) {
+		s16b tmp16b;
+
+		rd_s16b(&tmp16b);
+		r_ptr->r_sights = tmp16b;
+
+		rd_s16b(&tmp16b);
+		r_ptr->r_deaths = tmp16b;
+
+		/* was r_ptr->r_pkills */
+		strip_bytes(2);
+
+		rd_s16b(&tmp16b);
+		r_ptr->r_tkills = tmp16b;
+	} else {
+		rd_s32b(&r_ptr->r_sights);
+		rd_s32b(&r_ptr->r_deaths);
+		rd_s32b(&r_ptr->r_tkills);
+	}
 
 	/* Hack -- if killed, it's been seen */
 	if (r_ptr->r_tkills > r_ptr->r_sights) r_ptr->r_sights = r_ptr->r_tkills;
 
-	/* Count wakes and ignores */
-	rd_byte(&r_ptr->r_wake);
-	rd_byte(&r_ptr->r_ignore);
+	if (older_than(4, 4, 7)) {
+		/* Old monster lore information - mikaelh */
+		strip_bytes(38);
+	}
 
-	/* Load in the amount of time left until the (possobile) unique respawns */
-	rd_s32b(&r_ptr->respawn_timer);
+	/* Read the global monster limit */
+	if (older_than(4, 4, 8)) {
+		byte tmpbyte;
+		rd_byte(&tmpbyte);
+		r_ptr->max_num = tmpbyte;
+	} else {
+		rd_s32b(&r_ptr->max_num);
+	}
 
-	/* Count drops */
-	rd_byte(&r_ptr->r_drop_gold);
-	rd_byte(&r_ptr->r_drop_item);
+	if (!older_than(4, 3, 24)) {
+		if (older_than(4, 4, 8)) {
+			byte tmpbyte;
+			rd_byte(&tmpbyte);
+			r_ptr->cur_num = tmpbyte;
+		} else {
+			rd_s32b(&r_ptr->cur_num);
+		}
+	}
 
-	/* Count spells */
-	rd_byte(&r_ptr->r_cast_inate);
-	rd_byte(&r_ptr->r_cast_spell);
-
-	/* Count blows of each type */
-	rd_byte(&r_ptr->r_blows[0]);
-	rd_byte(&r_ptr->r_blows[1]);
-	rd_byte(&r_ptr->r_blows[2]);
-	rd_byte(&r_ptr->r_blows[3]);
-
-	/* Memorize flags */
-	rd_u32b(&r_ptr->r_flags1);
-	rd_u32b(&r_ptr->r_flags2);
-	rd_u32b(&r_ptr->r_flags3);
-	rd_u32b(&r_ptr->r_flags4);
-	rd_u32b(&r_ptr->r_flags5);
-	rd_u32b(&r_ptr->r_flags6);
-
-
-	/* Read the "Racial" monster limit per level */
-	rd_byte(&r_ptr->max_num);
-	if (!older_than(4, 3, 24)) rd_byte(&r_ptr->cur_num);
-
-	/* Later (?) */
-	rd_byte(&tmp8u);
-	rd_byte(&tmp8u);
-	rd_byte(&tmp8u);
-
-	/* Repair the lore flags */
-	r_ptr->r_flags1 &= r_ptr->flags1;
-	r_ptr->r_flags2 &= r_ptr->flags2;
-	r_ptr->r_flags3 &= r_ptr->flags3;
-	r_ptr->r_flags4 &= r_ptr->flags4;
-	r_ptr->r_flags5 &= r_ptr->flags5;
-	r_ptr->r_flags6 &= r_ptr->flags6;
+	if (older_than(4, 4, 7)) {
+		/* Old reserved bytes - mikaelh */
+		strip_bytes(3);
+	}
 }
 
 
@@ -1161,10 +1169,8 @@ static void rd_house(int n)
 
 static void rd_wild(wilderness_type *w_ptr)
 {
-	u32b tmp32u;
-
 	/* future use */
-	rd_u32b(&tmp32u);
+	strip_bytes(4);
 	/* terrain type */
 	rd_u16b(&w_ptr->type);
 	/* the flags */
@@ -1522,14 +1528,14 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 		if (p_ptr->r_killed[i] && !r_ptr->r_tkills &&
 				(r_ptr->flags1 & RF1_UNIQUE))
 		{
-			r_ptr->r_tkills = r_ptr->r_pkills = r_ptr->r_sights = 1;
+			r_ptr->r_tkills = r_ptr->r_sights = 1;
 			s_printf("TKILL FIX: Player %s killed unique %d\n", p_ptr->name, i);
 		}
 	}
 
 
 	/* Future use */
-	for (i = 0; i < 43; i++) rd_byte(&tmp8u);
+	strip_bytes(43);
 	
 	/* Toggle for possible automatic save-game updates
 	   (done via script login-hook, eg custom.lua) - C. Blue */
@@ -2321,8 +2327,15 @@ errr rd_savefile_new(int Ind)
 	/* Paranoia */
 	if (!fff) return (-1);
 
+	/* Allocate a new buffer */
+	fff_buf = C_NEW(MAX_BUF_SIZE, char);
+	fff_buf_pos = MAX_BUF_SIZE;
+
 	/* Call the sub-function */
 	err = rd_savefile_new_aux(Ind);
+
+	/* Free the buffer */
+	C_FREE(fff_buf, MAX_BUF_SIZE, char);
 
 	/* Check for errors */
 	if (ferror(fff)) err = -1;
@@ -2356,6 +2369,10 @@ errr rd_server_savefile()
 
 	/* Paranoia */
 	if (!fff) return (-1);
+
+	/* Allocate a new buffer */
+	fff_buf = C_NEW(MAX_BUF_SIZE, char);
+	fff_buf_pos = MAX_BUF_SIZE;
 
 	/* Read the version */
 	xor_byte = 0;
@@ -2424,8 +2441,8 @@ errr rd_server_savefile()
 	{
 		monster_race *r_ptr;
 
-		/* Read the lore */
-		rd_lore(i);
+		/* Read the monster race information */
+		rd_global_lore(i);
 
 		/* Access the monster race */
 		r_ptr = &r_info[i];
@@ -2600,6 +2617,8 @@ errr rd_server_savefile()
 	/* Hack -- no ghosts */
 	r_info[MAX_R_IDX-1].max_num = 0;
 
+	/* Free the buffer */
+	C_FREE(fff_buf, MAX_BUF_SIZE, char);
 
 	/* Check for errors */
 	if (ferror(fff)) err = -1;

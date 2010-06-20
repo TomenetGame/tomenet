@@ -459,10 +459,12 @@ extern bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2);
 extern bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2);
 extern void note_spot_depth(struct worldpos *wpos, int y, int x);
 extern void everyone_lite_spot(struct worldpos *wpos, int y, int x);
+extern void everyone_redraw_spot(struct worldpos *wpos, int y, int x);
 extern void everyone_forget_spot(struct worldpos *wpos, int y, int x);
 extern cave_type **getcave(struct worldpos *wpos);
 extern void lite_spot(int Ind, int y, int x);
 extern void draw_spot(int Ind, int y, int x, byte a, char c);
+extern void redraw_spot(int Ind, int y, int x);
 extern void prt_map(int Ind);
 extern void display_map(int Ind, int *cy, int *cx);
 extern void do_cmd_view_map(int Ind, char mode);
@@ -947,7 +949,7 @@ extern int Send_store_action(int ind, char pos, u16b bact, u16b action, cptr nam
 extern int Send_store_sell(int Ind, int price);
 extern int Send_store_kick(int Ind);
 extern int Send_target_info(int ind, int x, int y, cptr buf);
-extern int Send_sound(int ind, int sound, int alternative, int type);
+extern int Send_sound(int ind, int sound, int alternative, int type, int vol, s32b player_id);
 #ifdef USE_SOUND_2010
 extern int Send_music(int ind, int music);
 #endif
@@ -1454,7 +1456,7 @@ extern errr fd_write(int fd, cptr buf, huge n);
 extern errr fd_close(int fd);
 extern void bell(void);
 #ifdef USE_SOUND_2010
-extern void sound(int Ind, cptr name, cptr alternative, int type);
+extern void sound(int Ind, cptr name, cptr alternative, int type, bool nearby);
 extern void handle_music(int Ind);
 extern void sound_item(int Ind, int tval, int sval, cptr action);
 #else

@@ -346,7 +346,7 @@ bool auction_parse_time(cptr s, time_t *amount)
 char *auction_format_time(time_t t)
 {
 	int days, hours, minutes, seconds;
-	char *buf = malloc(160);
+	char *buf = C_NEW(160, char);
 
 	if (t < 60)
 	{
@@ -961,6 +961,7 @@ int auction_set(int Ind, int slot, cptr starting_price_string, cptr buyout_price
 
 	time_string = auction_format_time(auc_ptr->duration);
 	msg_format(Ind, "\377B[@] \377wDuration: %s", time_string);
+	C_FREE(time_string, 160, char);
 	msg_print(Ind, "\377B[@] ");
 	msg_print(Ind, "\377B[@] \377wIf you want to start this auction, type \377G/auction start");
 	msg_print(Ind, "\377B[@] \377wIf not, type \377G/auction cancel");
@@ -1536,7 +1537,7 @@ int auction_show(int Ind, int auction_id)
 
 	time_string = auction_format_time(auc_ptr->duration - (now - auc_ptr->start));
 	msg_format(Ind, "\377B[@] \377wTime left: %s", time_string);
-	free(time_string);
+	C_FREE(time_string, 160, char);
 
 	return 0;
 }

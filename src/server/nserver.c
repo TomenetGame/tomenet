@@ -200,28 +200,26 @@ void add_banlist(int Ind, int time){
 	struct ip_ban *ptr;
 	if(!time) return;
 
-	ptr=malloc(sizeof(struct ip_ban));
-	if(ptr==(struct ip_ban*)NULL) return; /* unimportant failure */
+	ptr = NEW(struct ip_ban);
 
-	ptr->next=banlist;
-	ptr->time=time;
+	ptr->next = banlist;
+	ptr->time = time;
 	strcpy(ptr->ip, Conn[Players[Ind]->conn]->addr);
 	s_printf("Banned connections from %s for %d minutes\n", ptr->ip, time);
-	banlist=ptr;
+	banlist = ptr;
 }
 
 void add_banlist_ip(char *ip_addy, int time){
 	struct ip_ban *ptr;
 	if(!time) return;
 
-	ptr=malloc(sizeof(struct ip_ban));
-	if(ptr==(struct ip_ban*)NULL) return; /* unimportant failure */
+	ptr = NEW(struct ip_ban);
 
-	ptr->next=banlist;
-	ptr->time=time;
+	ptr->next = banlist;
+	ptr->time = time;
 	strcpy(ptr->ip, ip_addy);
 	s_printf("Banned connections from %s for %d minutes\n", ptr->ip, time);
-	banlist=ptr;
+	banlist = ptr;
 }
 
 /*
@@ -5512,9 +5510,10 @@ int Send_target_info(int ind, int x, int y, cptr str)
 	}
 	return Packet_printf(&connp->c, "%c%c%c%s", PKT_TARGET_INFO, x, y, buf);
 }
-
-int Send_sound(int ind, int sound, int alternative, int type)
-{
+/* type is for client-side, regarding efficiency options;
+   vol is the relative volume, if it stems from a source nearby instead of concerning the player directly;
+   player_id is the player it actually concerns; - C. Blue */
+int Send_sound(int ind, int sound, int alternative, int type, int vol, s32b player_id) {
 	connection_t *connp = Conn[Players[ind]->conn];
 
 	/* Mind-linked to someone? Send him our sound too! */
@@ -5526,7 +5525,9 @@ int Send_sound(int ind, int sound, int alternative, int type)
 	if (get_esp_link(ind, LINKF_VIEW, &p_ptr2)) connp2 = Conn[p_ptr2->conn];
 	/* Send same info to target player, if available */
 	if (connp2) {
-		if (is_newer_than(&connp2->version, 4, 4, 5, 1, 0, 0))
+		if (is_newer_than(&connp2->version, 4, 4, 5, 3, 0, 0))
+			Packet_printf(&connp2->c, "%c%d%d%d%d%d", PKT_SOUND, sound, alternative, type, vol, player_id);
+		else if (is_newer_than(&connp2->version, 4, 4, 5, 1, 0, 0))
 			Packet_printf(&connp2->c, "%c%d%d%d", PKT_SOUND, sound, alternative, type);
 		else if (is_newer_than(&connp2->version, 4, 4, 5, 0, 0, 0))
 			Packet_printf(&connp2->c, "%c%d%d", PKT_SOUND, sound, alternative);
@@ -5534,27 +5535,28 @@ int Send_sound(int ind, int sound, int alternative, int type)
 			Packet_printf(&connp2->c, "%c%c", PKT_SOUND, sound);
 	}
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-	{
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for sound (%d.%d.%d)",
 			ind, connp->state, connp->id));
 		return 0;
 	}
 
-	if (!is_newer_than(&connp->version, 4, 4, 4, 5, 0, 0))
-		return Packet_printf(&connp->c, "%c%c", PKT_SOUND, sound);
-
 //	if (is_admin(Players[ind])) s_printf("USE_SOUND_2010: sound %d (alt %d) sent to player %s (%d).\n", sound, alternative, Players[ind]->name, ind);//debug
 
-	if (is_newer_than(&connp->version, 4, 4, 5, 1, 0, 0)) {
+	if (is_newer_than(&connp->version, 4, 4, 5, 3, 0, 0)) {
+		return Packet_printf(&connp->c, "%c%d%d%d%d%d", PKT_SOUND, sound, alternative, type, vol, player_id);
+	} else if (is_newer_than(&connp->version, 4, 4, 5, 1, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%d%d%d", PKT_SOUND, sound, alternative, type);
-	} else return Packet_printf(&connp->c, "%c%d%d", PKT_SOUND, sound, alternative);
+	} else if (is_newer_than(&connp->version, 4, 4, 4, 5, 0, 0)) {
+		return Packet_printf(&connp->c, "%c%d%d", PKT_SOUND, sound, alternative);
+	} else {
+		return Packet_printf(&connp->c, "%c%c", PKT_SOUND, sound);
+	}
 }
 
 #ifdef USE_SOUND_2010
-int Send_music(int ind, int music)
-{
+int Send_music(int ind, int music) {
 	connection_t *connp = Conn[Players[ind]->conn];
 
 	/* Mind-linked to someone? Send him our music too! */
@@ -6778,11 +6780,6 @@ static int Receive_activate_skill(int ind)
 				do_cmd_set_trap(player, book, spell);
 				break;
 			case MKEY_SCHOOL:
-//uncommented since more coding is needed to save the actual spell type,
-//also nearby auto_retaliate check, there needs to be distinguishment
-//between magic and bow fire_till_kill!
-//				if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE; 
-
 				book = replay_inven_changes(player, book);
 				if (book == 0xFF)
 				{
@@ -6799,8 +6796,9 @@ static int Receive_activate_skill(int ind)
 				/* Sanity check #2 */
 				if (dir == -1) dir = 5;
 
+				if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
 				cast_school_spell(player, book, spell, dir, item, aux);
-//				p_ptr->shooty_till_kill = FALSE;
+				p_ptr->shooty_till_kill = FALSE;
 				break;
 
 #ifndef ENABLE_RCRAFT
@@ -6835,7 +6833,9 @@ static int Receive_activate_skill(int ind)
 					return 1;
 				}
 
-				execute_rspell(player, dir, (u32b)((book*10000)+spell), item); 
+				if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
+				execute_rspell(player, dir, (u32b)((book * 10000) + spell), item);
+				p_ptr->shooty_till_kill = FALSE;
 				break;
 #endif
 
@@ -6857,7 +6857,7 @@ static int Receive_activate_skill(int ind)
 				break;
 			case MKEY_SHOOT_TILL_KILL:
 				toggle_shoot_till_kill(player);
-				break; 
+				break;
 #ifdef DUAL_WIELD
 			case MKEY_DUAL_MODE:
 				toggle_dual_mode(player);
@@ -8589,9 +8589,12 @@ static int Receive_rest(int ind)
 
 			/* Make sure we aren't running */
 			p_ptr->running = FALSE;
+			break_shadow_running(player);
+			stop_precision(player);
+			stop_shooting_till_kill(player);
 
 			/* Take a lot of energy to enter "rest mode" */
-			p_ptr->energy -= (level_speed(&p_ptr->wpos)*2)-1;
+			p_ptr->energy -= (level_speed(&p_ptr->wpos) * 2) - 1;
 
 			/* Redraw */
 			p_ptr->redraw |= (PR_STATE);

@@ -1090,8 +1090,9 @@ void sound(int Ind, int val) {
 	Send_sound(Ind, val);
 }
 #else
-void sound(int Ind, cptr name, cptr alternative, int type) {
-
+/* 'type' is used client-side, for efficiency options concerning near-simultaneous sounds
+   'nearby' means if other players nearby would be able to also hear the sound. - C. Blue */
+void sound(int Ind, cptr name, cptr alternative, int type, bool nearby) {
 #if 0 /* non-optimized way (causes LUA errors if sound() is called in fire_ball() which is in turn called from LUA - C. Blue */
 	int val, val2;
 
@@ -1104,7 +1105,7 @@ void sound(int Ind, cptr name, cptr alternative, int type) {
 	}
 
 #else /* optimized way... */
-	int val = -1, val2 = -1, i;
+	int val = -1, val2 = -1, i, d;
 
 	for (i = 0; i < SOUND_MAX_2010; i++) {
 		if (!audio_sfx[i][0]) break;
@@ -1138,7 +1139,23 @@ void sound(int Ind, cptr name, cptr alternative, int type) {
 		}
 	}
 
-	Send_sound(Ind, val, val2, type);
+	/* todo: also send sounds to nearby players, depending on sound or sound type */
+	if (nearby) {
+		for (i = 1; i <= NumPlayers; i++) {
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			if (!inarea(&Players[i]->wpos, &Players[Ind]->wpos)) continue;
+			if (Ind == i) continue;
+
+			d = distance(Players[Ind]->py, Players[Ind]->px, Players[i]->py, Players[i]->px);
+			if (d > 5) continue;
+			if (d == 0) d = 1; //paranoia oO
+
+			Send_sound(i, val, val2, type, 100 / d, Players[Ind]->id);
+//			Send_sound(i, val, val2, type, (6 - d) * 20, Players[Ind]->id);  hm or this?
+		}
+	}
+
+	Send_sound(Ind, val, val2, type, 100, Players[Ind]->id);
 }
 /* find correct music for the player based on his current location - C. Blue */
 void handle_music(int Ind) {
@@ -1279,55 +1296,55 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 #if 0 /* SN(S)-using variant: */
 	if (is_weapon(tval)) {
 		switch(tval) {
-		case TV_SWORD: sound(Ind, SN("sword"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_SWORD: sound(Ind, SN("sword"), NULL, SFX_TYPE_COMMAND, FALSE); break;
 		case TV_BLUNT:
-			if (sval == SV_WHIP) sound(Ind, SN("whip"), NULL, SFX_TYPE_COMMAND);
-			else sound(Ind, SN("blunt"), NULL, SFX_TYPE_COMMAND);
+			if (sval == SV_WHIP) sound(Ind, SN("whip"), NULL, SFX_TYPE_COMMAND, FALSE);
+			else sound(Ind, SN("blunt"), NULL, SFX_TYPE_COMMAND, FALSE);
 			break;
 		break;
-		case TV_AXE: sound(Ind, SN("axe"), NULL, SFX_TYPE_COMMAND); break;
-		case TV_POLEARM: sound(Ind, SN("polearm"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_AXE: sound(Ind, SN("axe"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+		case TV_POLEARM: sound(Ind, SN("polearm"), NULL, SFX_TYPE_COMMAND, FALSE); break;
 		}
 	} else if (is_armour(tval)) {
 		if (is_textile_armour(tval, sval))
-			sound(Ind, SN("armor_light"), NULL, SFX_TYPE_COMMAND);
+			sound(Ind, SN("armor_light"), NULL, SFX_TYPE_COMMAND, FALSE);
 		else
-			sound(Ind, SN("armor_heavy"), NULL, SFX_TYPE_COMMAND);
+			sound(Ind, SN("armor_heavy"), NULL, SFX_TYPE_COMMAND, FALSE);
 	} else switch(tval) {
 		/* equippable stuff */
-		case TV_LITE: sound(Ind, SN("lightsource"), NULL, SFX_TYPE_COMMAND); break;
-		case TV_RING: sound(Ind, SN("ring"), NULL, SFX_TYPE_COMMAND); break;
-		case TV_AMULET: sound(Ind, SN("amulet"), NULL, SFX_TYPE_COMMAND); break;
-		case TV_TOOL: sound(Ind, SN("tool"), NULL, SFX_TYPE_COMMAND); break;
-		case TV_DIGGING: sound(Ind, SN("tool_digger"), NULL, SFX_TYPE_COMMAND); break;
-//		case TV_MSTAFF: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
-//		case TV_BOOMERANG: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
-//		case TV_BOW: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
-//		case TV_SHOT: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
-//		case TV_ARROW: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
-//		case TV_BOLT: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+		case TV_LITE: sound(Ind, SN("lightsource"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+		case TV_RING: sound(Ind, SN("ring"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+		case TV_AMULET: sound(Ind, SN("amulet"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+		case TV_TOOL: sound(Ind, SN("tool"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+		case TV_DIGGING: sound(Ind, SN("tool_digger"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+//		case TV_MSTAFF: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+//		case TV_BOOMERANG: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+//		case TV_BOW: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+//		case TV_SHOT: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+//		case TV_ARROW: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+//		case TV_BOLT: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
 		/* other items */
 		case TV_SCROLL: case TV_PARCHMENT:
-			sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
-/*		case TV_BOTTLE: sound(Ind, SN("potion"), NULL, SFX_TYPE_COMMAND); break;
+			sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+/*		case TV_BOTTLE: sound(Ind, SN("potion"), NULL, SFX_TYPE_COMMAND, FALSE); break;
 		case TV_POTION: case TV_POTION2: case TV_FLASK:
-			sound(Ind, SN("potion"), NULL, SFX_TYPE_COMMAND); break;
+			sound(Ind, SN("potion"), NULL, SFX_TYPE_COMMAND, FALSE); break;
 		case TV_RUNE1: case TV_RUNE2:
-			sound(Ind, SN("rune"), NULL, SFX_TYPE_COMMAND); break;
-		case TV_SKELETON: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
-		case TV_FIRESTONE: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
-		case TV_SPIKE: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
-		case TV_CHEST: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
-		case TV_JUNK: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
-		case TV_TRAPKIT: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
-		case TV_STAFF: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
-		case TV_WAND: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
-		case TV_ROD: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
-		case TV_ROD_MAIN: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
-		case TV_FOOD: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
-		case TV_KEY: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
-		case TV_GOLEM: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
-		case TV_SEAL: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND); break;
+			sound(Ind, SN("rune"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+		case TV_SKELETON: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+		case TV_FIRESTONE: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+		case TV_SPIKE: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+		case TV_CHEST: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+		case TV_JUNK: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+		case TV_TRAPKIT: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+		case TV_STAFF: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+		case TV_WAND: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+		case TV_ROD: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+		case TV_ROD_MAIN: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+		case TV_FOOD: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+		case TV_KEY: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+		case TV_GOLEM: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
+		case TV_SEAL: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
 */	}
 #else /* non SN(S)-using variant */
 	if (is_weapon(tval)) switch(tval) {
@@ -1383,7 +1400,7 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 	strcpy(sound_name, action);
 	strcat(sound_name, item);
 	/* off we go */
-	sound(Ind, sound_name, NULL, SFX_TYPE_COMMAND);
+	sound(Ind, sound_name, NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 }
 #endif
@@ -1519,7 +1536,7 @@ bool suppress_message = FALSE;
 
 void msg_print(int Ind, cptr msg)
 {
-	int line_len = 72 + 1; /* maximum length of a text line to be displayed;
+	int line_len = 80; /* maximum length of a text line to be displayed;
 		     this is client-dependant, compare c_msg_print (c-util.c) */
 	char msg_buf[line_len + 2 + 2 * 80]; /* buffer for 1 line. + 2 bytes for colour code (+2*80 bytes for colour codeeeezz) */
 	char msg_minibuf[3]; /* temp buffer for adding characters */
@@ -1529,9 +1546,13 @@ void msg_print(int Ind, cptr msg)
 //	bool is_chat = ((msg != NULL) && (strlen(msg) > 2) && (msg[2] == '['));
 	bool client_ctrlo = FALSE, client_chat = FALSE, client_all = FALSE;
 
+	/* backward msg window width hack for windows clients (non-x11 clients rather) */
+	if (!is_newer_than(&Players[Ind]->version, 4, 4, 5, 3, 0, 0) && !strcmp(Players[Ind]->realname, "PLAYER")) line_len = 72;
+
 
 	/* Pfft, sorry to bother you.... --JIR-- */
 	if (suppress_message) return;
+
 	/* no message? */
 	if (msg == NULL) return;
 
@@ -1694,8 +1715,8 @@ void msg_print(int Ind, cptr msg)
 						space_scan > 0);
 
 					/* Simply cut words that are very long - mikaelh */
-					if (space_scan < 40) {
-						space_scan = line_len - 1;
+					if (msg_scan - space_scan > 36) {
+						space_scan = msg_scan;
 					}
 
 					if (space_scan) {

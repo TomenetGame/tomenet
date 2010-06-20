@@ -27,7 +27,7 @@ void SGWHit(int read_fd, int arg){
 
 	if ((newsock = SocketAccept(read_fd)) != -1){
 		/* Send some crap here */
-		sdb=malloc(4096);
+		sdb = C_NEW(4096, char);
 		if(sdb!=(char*)NULL){
 			int i;
 			time(&now);
@@ -47,7 +47,7 @@ void SGWHit(int read_fd, int arg){
 			}
 			size+=highscore_send(&sdb[size], 4096-size);
 			DgramWrite(newsock, sdb, size);
-			free(sdb);
+			C_FREE(sdb, 4096, char);
 		}
 		close(newsock);	/* oops */
 	}

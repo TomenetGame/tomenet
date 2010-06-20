@@ -908,8 +908,10 @@ bool make_attack_melee(int Ind, int m_idx)
 				if (prot)
 #endif
 				{
+#ifdef OLD_MONSTER_LORE
 					/* Remember the Evil-ness */
 					if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags3 |= RF3_EVIL;
+#endif
 
 					/* Message */
 					msg_format(Ind, "%^s is repelled.", m_name);
@@ -2305,12 +2307,13 @@ bool make_attack_melee(int Ind, int m_idx)
 							alive = FALSE;
 						}
 					}
+#ifdef OLD_MONSTER_LORE
 					else
 					{
-						//						if (m_ptr->ml)
 						if (p_ptr->mon_vis[m_idx])
 							r_ptr->r_flags3 |= RF3_IM_FIRE;
 					}
+#endif
 				}
 
 				if (p_ptr->sh_elec && alive)
@@ -2326,12 +2329,13 @@ bool make_attack_melee(int Ind, int m_idx)
 							alive = FALSE;
 						}
 					}
+#ifdef OLD_MONSTER_LORE
 					else
 					{
-						//						if (m_ptr->ml)
 						if (p_ptr->mon_vis[m_idx])
 							r_ptr->r_flags3 |= RF3_IM_ELEC;
 					}
+#endif
                                 }
 
 				if (p_ptr->sh_cold && alive)
@@ -2347,12 +2351,13 @@ bool make_attack_melee(int Ind, int m_idx)
 							alive = FALSE;
 						}
 					}
+#ifdef OLD_MONSTER_LORE
 					else
 					{
-						//						if (m_ptr->ml)
 						if (p_ptr->mon_vis[m_idx])
 							r_ptr->r_flags3 |= RF3_IM_COLD;
 					}
+#endif
 				}
 
                                 if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_COUNTER) && alive)
@@ -2509,6 +2514,7 @@ bool make_attack_melee(int Ind, int m_idx)
 		}
 
 
+#ifdef OLD_MONSTER_LORE
 		/* Analyze "visible" monsters only */
 		if (visible)
 		{
@@ -2522,6 +2528,7 @@ bool make_attack_melee(int Ind, int m_idx)
 				}
 			}
 		}
+#endif
 
 		/* Hack -- blinked monster doesn't attack any more */
 		if (gone || !alive) break;
@@ -2534,14 +2541,14 @@ bool make_attack_melee(int Ind, int m_idx)
 		if (teleport_away(m_idx, MAX_SIGHT * 2 + 5)) {
 			msg_print(Ind, "There is a puff of smoke!");
 #ifdef USE_SOUND_2010
-			sound(Ind, "monster_blinks", NULL, SFX_TYPE_MON_SPELL);
+			sound(Ind, "monster_blinks", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 		}
 	}
 
 
 	/* Always notice cause of death */
-	if (p_ptr->death && (r_ptr->r_deaths < MAX_SHORT)) r_ptr->r_deaths++;
+	if (p_ptr->death) r_ptr->r_deaths++;
 
 
 	/* Assume we attacked */

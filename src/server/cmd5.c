@@ -1531,6 +1531,13 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[book];
+	int ftk_maybe;
+	int ftk_type;
+
+	if (p_ptr->shooting_till_kill) { /* we were shooting till kill last turn? */
+		p_ptr->shooting_till_kill = FALSE; /* well, gotta re-test for another success now.. */
+		if (dir == 5) p_ptr->shooty_till_kill = TRUE; /* so for now we are just ATTEMPTING to shoot till kill (assumed we have a monster for target) */
+	}
 
 	if (!can_use_verbose(Ind, o_ptr)) return;
 
@@ -1605,8 +1612,27 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 #endif
 
 	/* Actualy cast the choice */
-	if (spell != -1)
-	{
-		exec_lua(Ind, format("cast_school_spell(%d, %d, spell(%d), nil, {dir = %d, book = %d, item = %d, aux = %d})", Ind, spell, spell, dir, book, item, aux));
+	if (spell != -1) {
+		ftk_maybe = (exec_lua(Ind, format("return cast_school_spell(%d, %d, spell(%d), nil, {dir = %d, book = %d, item = %d, aux = %d})", Ind, spell, spell, dir, book, item, aux)));
+		ftk_type = (exec_lua(Ind, format("return get_spell_ftk(%d)", spell)));
+
+#if 1 /* Fire-Till-Kill */
+		if (p_ptr->shooty_till_kill && ftk_maybe) {
+			/* spell actually doesn't allow ftk? */
+			if (ftk_type == 0) return;
+
+			/* To continue shooting_till_kill, check if spell requires clean LOS to target
+			   with no other monsters in the way, so we won't wake up more monsters accidentally. */
+			if (ftk_type == 1 && !projectable_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return;
+
+			/* We lost our target? (monster dead?) */
+			if (dir != 5 || !target_okay(Ind)) return;
+
+			/* we're now indeed ftk */
+			p_ptr->shooting_till_kill = TRUE;
+			p_ptr->shoot_till_kill_book = book;
+			p_ptr->shoot_till_kill_spell = spell + 1;
+		}
+#endif
 	}
 }

@@ -245,7 +245,7 @@ void do_cmd_go_up(int Ind)
 		}
 		p_ptr->new_level_method = LEVEL_UP;
 #ifdef USE_SOUND_2010
-		sound(Ind, "staircase", NULL, SFX_TYPE_COMMAND);
+		sound(Ind, "staircase", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 	}
 	else
@@ -596,7 +596,7 @@ void do_cmd_go_down(int Ind)
 		}
 		p_ptr->new_level_method = LEVEL_DOWN;
 #ifdef USE_SOUND_2010
-		sound(Ind, "staircase", NULL, SFX_TYPE_COMMAND);
+		sound(Ind, "staircase", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 	}
 	else
@@ -701,6 +701,8 @@ void do_cmd_toggle_search(int Ind)
 
 		/* Set the searching flag */
 		p_ptr->searching = TRUE;
+		break_shadow_running(Ind);
+		stop_precision(Ind);
 
 		/* Update stuff */
 		p_ptr->update |= (PU_BONUS);
@@ -833,7 +835,7 @@ static void chest_trap(int Ind, int y, int x, s16b o_idx)
 	msg_print(Ind, "You triggered a trap!");
 
 #ifdef USE_SOUND_2010
-	sound(Ind, "trap_setoff", NULL, SFX_TYPE_MISC);
+	sound(Ind, "trap_setoff", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 
 	/* Set off trap */
@@ -1269,7 +1271,7 @@ void do_cmd_open(int Ind, int dir)
 					flag = TRUE;
 
 #ifdef USE_SOUND_2010
-					sound(Ind, "open_pick", NULL, SFX_TYPE_COMMAND);
+					sound(Ind, "open_pick", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 				}
 
@@ -1286,7 +1288,7 @@ void do_cmd_open(int Ind, int dir)
 			if (flag)
 			{
 #ifdef USE_SOUND_2010
-				sound(Ind, "open_chest", NULL, SFX_TYPE_COMMAND);
+				sound(Ind, "open_chest", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 				/* Apply chest traps, if any */
 				chest_trap(Ind, y, x, c_ptr->o_idx);
@@ -1316,7 +1318,7 @@ void do_cmd_open(int Ind, int dir)
 			msg_print(Ind, "The door appears to be stuck.");
 
 #ifdef USE_SOUND_2010
-			sound(Ind, "open_door_stuck", NULL, SFX_TYPE_COMMAND);
+			sound(Ind, "open_door_stuck", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 		}
 
@@ -1351,7 +1353,7 @@ void do_cmd_open(int Ind, int dir)
 				/* Message */
 				msg_print(Ind, "You have picked the lock.");
 #ifdef USE_SOUND_2010
-				sound(Ind, "open_pick", NULL, SFX_TYPE_COMMAND);
+				sound(Ind, "open_pick", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 				break_cloaking(Ind, 3);
 				break_shadow_running(Ind); 
@@ -1407,7 +1409,7 @@ void do_cmd_open(int Ind, int dir)
 					/* Open the door */
 					c_ptr->feat=FEAT_HOME_OPEN;
 #ifdef USE_SOUND_2010
-					sound(Ind, "open_door", NULL, SFX_TYPE_COMMAND);
+					sound(Ind, "open_door", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 #else	// USE_MANG_HOUSE
 					msg_print(Ind, "Just walk in.");
@@ -1464,7 +1466,7 @@ void do_cmd_open(int Ind, int dir)
 						p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 						msg_format(Ind, "\377gThe key fits in the lock. %d:%d",key->id, o_ptr->pval);
 #ifdef USE_SOUND_2010
-						sound(Ind, "open_pick", NULL, SFX_TYPE_COMMAND);
+						sound(Ind, "open_pick", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 						return;
 					} else if (is_admin(p_ptr)) {
@@ -1481,14 +1483,14 @@ void do_cmd_open(int Ind, int dir)
 						p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 						msg_format(Ind, "\377gThe door crashes open. %d",key->id);
 #ifdef USE_SOUND_2010
-						sound(Ind, "bash_door_break", NULL, SFX_TYPE_COMMAND);
+						sound(Ind, "bash_door_break", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 						return;
 					}
 				}
 				msg_print(Ind,"\377rYou need a key to open this door.");
 #ifdef USE_SOUND_2010
-				sound(Ind, "open_door_stuck", NULL, SFX_TYPE_COMMAND);
+				sound(Ind, "open_door_stuck", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 			}
 		}
@@ -1513,7 +1515,7 @@ void do_cmd_open(int Ind, int dir)
 			/* Open the door */
 			c_ptr->feat = FEAT_OPEN;
 #ifdef USE_SOUND_2010
-			sound(Ind, "open_door", NULL, SFX_TYPE_COMMAND);
+			sound(Ind, "open_door", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 
 			/* Notice */
@@ -1626,7 +1628,7 @@ void do_cmd_close(int Ind, int dir)
 			/* Close the door */
 			c_ptr->feat = FEAT_HOME;
 #ifdef USE_SOUND_2010
-			sound(Ind, "close_door", NULL, SFX_TYPE_COMMAND);
+			sound(Ind, "close_door", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 
 			/* Notice */
@@ -1650,7 +1652,7 @@ void do_cmd_close(int Ind, int dir)
 			stop_shooting_till_kill(Ind);
 
 #ifdef USE_SOUND_2010
-			sound(Ind, "close_door", NULL, SFX_TYPE_COMMAND);
+			sound(Ind, "close_door", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 
 			/* Set off trap */
@@ -1873,7 +1875,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-			/* not in monster KILL_WALL form; not on world surface: wpos->wz == 0 ! */
+			/* not in monster KILL_WALL form or via magic; not on world surface: wpos->wz == 0 ! */
 			if (l_ptr && !quiet_borer) {
 				/* prepare to discover a special feature */
 				if ((rand_int(5000) <= mining + 5) && can_go_up(wpos, 0x1)) dug_feat = FEAT_WAY_LESS;
@@ -1953,6 +1955,12 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 #endif
 				}
 			}
+			/* if in monster KILL_WALL form or via magic */
+			else if (l_ptr && quiet_borer) {
+				/* prepare to discover a special feature */
+				if (rand_int(500) < ((l_ptr->flags1 & LF1_NO_LAVA) ? 0 : ((l_ptr->flags1 & LF1_LAVA) ? 50 : 3))) dug_feat = FEAT_SHAL_LAVA;
+				else if (rand_int(500) < ((l_ptr->flags1 & LF1_NO_WATER) ? 0 : ((l_ptr->flags1 & LF1_WATER) ? 50 : 8))) dug_feat = FEAT_SHAL_WATER;
+			}
 
 
 #if 0
@@ -2011,7 +2019,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					/* Message */
 					msg_print(Ind, "You have removed the rubble.");
 #ifdef USE_SOUND_2010
-					sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP);
+					sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 
 					if (!istown(wpos)) {
@@ -2066,7 +2074,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					msg_print(Ind, "You dig in the rubble.");
 					more = TRUE;
 #ifdef USE_SOUND_2010
-					sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP);
+					sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				}
 			}
@@ -2086,7 +2094,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					if (p_ptr->prace == RACE_ENT)
 						msg_print(Ind, "You have a bad feeling about it.");
 #ifdef USE_SOUND_2010
-					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP);
+					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 
 					if (special_k_idx && tval == TV_GOLEM && sval == SV_GOLEM_WOOD) {
@@ -2112,7 +2120,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					msg_print(Ind, "You attempt to clear a path.");
 					more = TRUE;
 #ifdef USE_SOUND_2010
-					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP);
+					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				}
 			}
@@ -2131,7 +2139,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					if (p_ptr->prace == RACE_ENT)
 						msg_print(Ind, "You have a bad feeling about it.");
 #ifdef USE_SOUND_2010
-					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP);
+					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 
 					/* Notice */
@@ -2146,7 +2154,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					msg_print(Ind, "You attempt to clear a path.");
 					more = TRUE;
 #ifdef USE_SOUND_2010
-					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP);
+					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				}
 			}
@@ -2163,7 +2171,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					/* Message */
 					msg_print(Ind, "You hack your way through the vegetation.");
 #ifdef USE_SOUND_2010
-					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP);
+					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 
 					/* Notice */
@@ -2178,7 +2186,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					msg_print(Ind, "You attempt to clear a path.");
 					more = TRUE;
 #ifdef USE_SOUND_2010
-					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP);
+					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				}
 			}
@@ -2195,7 +2203,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					/* Message */
 					msg_print(Ind, "You hack your way through the vegetation.");
 #ifdef USE_SOUND_2010
-					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP);
+					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 
 					/* Notice */
@@ -2210,7 +2218,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					msg_print(Ind, "You attempt to clear a path.");
 					more = TRUE;
 #ifdef USE_SOUND_2010
-					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP);
+					sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				}
 			}
@@ -2264,7 +2272,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 				if (okay && twall(Ind, y, x)) {
 					msg_print(Ind, "You have finished the tunnel.");
 #ifdef USE_SOUND_2010
-					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP);
+					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 
 					/* Found treasure */
@@ -2328,7 +2336,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					msg_print(Ind, f_text + f_ptr->tunnel);
 					more = TRUE;
 #ifdef USE_SOUND_2010
-					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP);
+					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				}
 #if 0
@@ -2339,7 +2347,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					msg_print(Ind, "You tunnel into the quartz vein.");
 					more = TRUE;
 #ifdef USE_SOUND_2010
-					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP);
+					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				}
 
@@ -2350,7 +2358,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					msg_print(Ind, "You tunnel into the magma vein.");
 					more = TRUE;
 #ifdef USE_SOUND_2010
-					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP);
+					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				}
 #endif	/* 0 */
@@ -2368,7 +2376,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 				msg_print(Ind, "You tunnel into the granite wall.");
 				more = TRUE;
 #ifdef USE_SOUND_2010
-				sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP);
+				sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 
 				/* Set off trap */
@@ -2390,7 +2398,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 				{
 					msg_print(Ind, "You have finished the tunnel.");
 #ifdef USE_SOUND_2010
-					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP);
+					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 
 					if (!istown(wpos)) {
@@ -2431,7 +2439,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					msg_print(Ind, "You tunnel into the granite wall.");
 					more = TRUE;
 #ifdef USE_SOUND_2010
-					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP);
+					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				}
 			}
@@ -2449,7 +2457,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 				{
 					msg_print(Ind, "You have finished the tunnel.");
 #ifdef USE_SOUND_2010
-					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP);
+					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				}
 
@@ -2460,7 +2468,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					msg_print(Ind, f_text + f_ptr->tunnel);
 					more = TRUE;
 #ifdef USE_SOUND_2010
-					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP);
+					sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				}
 			}
@@ -2660,7 +2668,7 @@ void do_cmd_disarm(int Ind, int dir)
 
 				msg_print(Ind, "You have disarmed the chest.");
 #ifdef USE_SOUND_2010
-				sound(Ind, "disarm", NULL, SFX_TYPE_COMMAND);
+				sound(Ind, "disarm", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 				gain_exp(Ind, t_ptr->difficulty * 3);
 				o_ptr->pval = (0 - o_ptr->pval);
@@ -2718,7 +2726,7 @@ void do_cmd_disarm(int Ind, int dir)
 
 			msg_print(Ind, "You disarm the monster trap.");
 #ifdef USE_SOUND_2010
-				sound(Ind, "disarm", NULL, SFX_TYPE_COMMAND);
+				sound(Ind, "disarm", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 			do_cmd_disarm_mon_trap_aux(wpos, y, x);
 			more = FALSE;
@@ -2774,7 +2782,7 @@ void do_cmd_disarm(int Ind, int dir)
 				/* Message */
 				msg_format(Ind, "You have disarmed the %s.", name);
 #ifdef USE_SOUND_2010
-				sound(Ind, "disarm", NULL, SFX_TYPE_COMMAND);
+				sound(Ind, "disarm", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
 				/* A chance to drop a trapkit! - the_sandman */
@@ -2856,8 +2864,8 @@ void do_cmd_disarm(int Ind, int dir)
 				note_spot_depth(wpos, y, x);
 
 				/* Redisplay the grid */
-				everyone_lite_spot(wpos, y, x);
-#endif	// 0
+				everyone_redraw_spot(wpos, y, x);
+#endif
 
 				/* move the player onto the trap grid */
 				if (dir != 5) move_player(Ind, dir, FALSE);
@@ -3079,7 +3087,7 @@ void do_cmd_bash(int Ind, int dir)
 				msg_print(Ind, "The door crashes open!");
 
 #ifdef USE_SOUND_2010
-				sound(Ind, "bash_door_break", NULL, SFX_TYPE_COMMAND);
+				sound(Ind, "bash_door_break", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 
 				/* Set off trap */
@@ -3119,7 +3127,7 @@ void do_cmd_bash(int Ind, int dir)
 				msg_print(Ind, "The door holds firm.");
 
 #ifdef USE_SOUND_2010
-				sound(Ind, "bash_door_hold", NULL, SFX_TYPE_COMMAND);
+				sound(Ind, "bash_door_hold", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 
 				/* Allow repeated bashing */
@@ -3133,7 +3141,7 @@ void do_cmd_bash(int Ind, int dir)
 				msg_print(Ind, "You are off-balance.");
 
 #ifdef USE_SOUND_2010
-				sound(Ind, "bash_door_hold", NULL, SFX_TYPE_COMMAND);
+				sound(Ind, "bash_door_hold", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 
 				/* Hack -- Lose balance ala paralysis */
@@ -4192,8 +4200,8 @@ void do_cmd_fire(int Ind, int dir)
 	}
 	if (sfx == 0) switch (o_ptr->tval) {
 	case TV_SHOT: break;
-	case TV_ARROW: sound(Ind, "fire_arrow", NULL, SFX_TYPE_ATTACK); break;
-	case TV_BOLT: sound(Ind, "fire_bolt", NULL, SFX_TYPE_ATTACK); break;
+	case TV_ARROW: sound(Ind, "fire_arrow", NULL, SFX_TYPE_ATTACK, FALSE); break;
+	case TV_BOLT: sound(Ind, "fire_bolt", NULL, SFX_TYPE_ATTACK, FALSE); break;
 	}
 #endif
 
@@ -6277,6 +6285,16 @@ void stop_precision(int Ind) {
 /* stop shooting-till-kill */
 void stop_shooting_till_kill(int Ind) {
 	Players[Ind]->shooting_till_kill = FALSE;
+
+	Players[Ind]->shoot_till_kill_book = 0;
+	Players[Ind]->shoot_till_kill_spell = 0;
+
+#ifdef ENABLE_RCRAFT
+//	if (Players[Ind]->shoot_till_kill_rune_spell) {
+		Players[Ind]->shoot_till_kill_rune_spell = 0;
+		Players[Ind]->shoot_till_kill_rune_modifier = 0;
+//	}
+#endif
 }
 
 /*
@@ -6290,8 +6308,8 @@ void shadow_run(int Ind)
 		p_ptr->shadow_running = FALSE;
                 msg_print(Ind, "Your silhouette stabilizes and your movements return to normal.");
                 msg_format_near(Ind, "%s silhouette stabilizes and %s movements return to normal.", p_ptr->name, p_ptr->male ? "his" : "her");
-	        p_ptr->update |= (PU_BONUS | PU_VIEW);                                                                                                                                                          
-	        p_ptr->redraw |= (PR_STATE | PR_SPEED);                                                                                                                                                                   
+	        p_ptr->update |= (PU_BONUS | PU_VIEW);
+	        p_ptr->redraw |= (PR_STATE | PR_SPEED);
 	        /* update so everyone sees the colour animation */
 	        everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 		return;
@@ -6335,21 +6353,22 @@ void shadow_run(int Ind)
 		if (!is_admin(p_ptr)) return;
 	}
 
-        if (p_ptr->cst < 10) { msg_print(Ind, "Not enough stamina!"); return; }
+	if (p_ptr->cst < 10) { msg_print(Ind, "Not enough stamina!"); return; }
 
-        p_ptr->cst -= 10;                                                             
-        un_afk_idle(Ind);
+	p_ptr->cst -= 10;
+	un_afk_idle(Ind);
+	disturb(Ind, 1, 0); /* stop resting, searching and running */
 
-        break_cloaking(Ind, 0);
+	break_cloaking(Ind, 0);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
-        p_ptr->shadow_running = TRUE;
+	p_ptr->shadow_running = TRUE;
 	msg_print(Ind, "Your silhouette turns shadowy and your movements become lightning-fast!");
-        msg_format_near(Ind, "%s's silhouette turns shadowy and %s movements become lightning-fast!", p_ptr->name, p_ptr->male ? "his" : "her");
-        p_ptr->update |= (PU_BONUS | PU_VIEW);                                                                                                                                                          
-        p_ptr->redraw |= (PR_STATE | PR_SPEED);                                                                                                                                                                   
-        /* update so everyone sees the colour animation */
-        everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+	msg_format_near(Ind, "%s's silhouette turns shadowy and %s movements become lightning-fast!", p_ptr->name, p_ptr->male ? "his" : "her");
+	p_ptr->update |= (PU_BONUS | PU_VIEW);
+	p_ptr->redraw |= (PR_STATE | PR_SPEED);
+	/* update so everyone sees the colour animation */
+	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 }
 
 /* break shadow running */
@@ -6358,9 +6377,9 @@ void break_shadow_running(int Ind) {
 	        msg_print(Ind, "Your silhouette stabilizes and your movements return to normal.");
     		msg_format_near(Ind, "%s silhouette stabilizes and %s movements return to normal.", Players[Ind]->name, Players[Ind]->male ? "his" : "her");
 		Players[Ind]->shadow_running = FALSE;
-	        Players[Ind]->update |= (PU_BONUS | PU_VIEW);                                                                                                                                                          
-    		Players[Ind]->redraw |= (PR_STATE | PR_SPEED);                                                                                                                                                                   
-		/* update so everyone sees the colour animation */                                                                                                                                        
+	        Players[Ind]->update |= (PU_BONUS | PU_VIEW);
+    		Players[Ind]->redraw |= (PR_STATE | PR_SPEED);
+		/* update so everyone sees the colour animation */
                 everyone_lite_spot(&Players[Ind]->wpos, Players[Ind]->py, Players[Ind]->px); 
 	}
 }

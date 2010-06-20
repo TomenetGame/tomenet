@@ -846,13 +846,14 @@ void do_slash_cmd(int Ind, char *message)
  #endif
                         return;
 		}
-#else
+#endif
+#if 0
 		/* cast a spell by name, instead of book/position */
 		else if (prefix(message, "/cast"))
 		{
 			for (i = 0; i < 100; i++) {
 				if (!strncmp(p_ptr->spell_name[i], message3, strlen(message3))) {
-//					cast_school_spell(Ind, p_ptr->spell_book[i], p_ptr->spell_pos[i], dir, item, aux);
+					cast_school_spell(Ind, p_ptr->spell_book[i], p_ptr->spell_pos[i], dir, item, aux);
 					break;
 				}
 			}
@@ -3212,7 +3213,7 @@ void do_slash_cmd(int Ind, char *message)
 							r_ptr = &r_info[i];
 						if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
 
-							r_ptr->r_tkills = r_ptr->r_pkills = 0;
+							r_ptr->r_tkills = 0;
 						}
 						msg_print(Ind, "All the uniques are set as '\377onever killed\377'.");
 						done = TRUE;
@@ -3248,7 +3249,7 @@ void do_slash_cmd(int Ind, char *message)
 				if (k)
 				{
 					if (!(r_info[k].flags1 & RF1_UNIQUE)) return;
-					r_info[k].r_tkills = r_info[k].r_pkills = 0;
+					r_info[k].r_tkills = 0;
 					msg_format(Ind, "Monster %d kill count reset to \377G0\377w.", k);
 				}
 				else

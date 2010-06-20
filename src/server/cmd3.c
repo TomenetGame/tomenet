@@ -1414,7 +1414,7 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	msg_format(Ind, "You drop %ld pieces of %s.", amt, k_name + k_info[tmp_obj.k_idx].name);
 
 #ifdef USE_SOUND_2010
-	sound(Ind, "drop_gold", NULL, SFX_TYPE_COMMAND);
+	sound(Ind, "drop_gold", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
 /* #if DEBUG_LEVEL > 3 */
@@ -3319,8 +3319,8 @@ void do_cmd_locate(int Ind, int dir)
 
 
 
-
-
+/* Not fully implemented - mikaelh */
+#if 0
 
 /*
  * The table of "symbol info" -- each entry is a string of the form
@@ -3427,111 +3427,6 @@ static cptr ident_info[] =
 };
 
 
-
-/*
- * Sorting hook -- Comp function -- see below
- *
- * We use "u" to point to array of monster indexes,
- * and "v" to select the type of sorting to perform on "u".
- */
-#if 0
-static bool ang_sort_comp_hook(int Ind, vptr u, vptr v, int a, int b)
-{
-	u16b *who = (u16b*)(u);
-
-	u16b *why = (u16b*)(v);
-
-	int w1 = who[a];
-	int w2 = who[b];
-
-	int z1, z2;
-
-	Ind = Ind;
-
-	/* Sort by player kills */
-	if (*why >= 4)
-	{
-		/* Extract player kills */
-		z1 = r_info[w1].r_pkills;
-		z2 = r_info[w2].r_pkills;
-
-		/* Compare player kills */
-		if (z1 < z2) return (TRUE);
-		if (z1 > z2) return (FALSE);
-	}
-
-
-	/* Sort by total kills */
-	if (*why >= 3)
-	{
-		/* Extract total kills */
-		z1 = r_info[w1].r_tkills;
-		z2 = r_info[w2].r_tkills;
-
-		/* Compare total kills */
-		if (z1 < z2) return (TRUE);
-		if (z1 > z2) return (FALSE);
-	}
-
-
-	/* Sort by monster level */
-	if (*why >= 2)
-	{
-		/* Extract levels */
-		z1 = r_info[w1].level;
-		z2 = r_info[w2].level;
-
-		/* Compare levels */
-		if (z1 < z2) return (TRUE);
-		if (z1 > z2) return (FALSE);
-	}
-
-
-	/* Sort by monster experience */
-	if (*why >= 1)
-	{
-		/* Extract experience */
-		z1 = r_info[w1].mexp;
-		z2 = r_info[w2].mexp;
-
-		/* Compare experience */
-		if (z1 < z2) return (TRUE);
-		if (z1 > z2) return (FALSE);
-	}
-
-
-	/* Compare indexes */
-	return (w1 <= w2);
-}
-#endif
-
-
-/*
- * Sorting hook -- Swap function -- see below
- *
- * We use "u" to point to array of monster indexes,
- * and "v" to select the type of sorting to perform.
- */
-#if 0
-static void ang_sort_swap_hook(int Ind, vptr u, vptr v, int a, int b)
-{
-	u16b *who = (u16b*)(u);
-
-	u16b holder;
-
-	/* XXX XXX */
-	v = v ? v : 0;
-
-	Ind = Ind;
-
-	/* Swap */
-	holder = who[a];
-	who[a] = who[b];
-	who[b] = holder;
-}
-#endif
-
-
 /*
  * Identify a character
  *
@@ -3567,4 +3462,4 @@ void do_cmd_query_symbol(int Ind, char sym)
 	msg_print(Ind, buf);
 }
 
-
+#endif // 0

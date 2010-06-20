@@ -86,7 +86,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	4
-#define SF_VERSION_PATCH	6
+#define SF_VERSION_PATCH	8
 #define SF_VERSION_EXTRA	0
 
 
@@ -4695,7 +4695,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF0_RADIUS_SPELLS (0L)
 
 
-/* currently disabled r_info.txt flags */
+/* currently disabled r_info.txt flags (not implemented or some other reason) */
 #define RF1_DISABLE_MASK	(0x0)
 #define RF2_DISABLE_MASK	(0x0)
 #define RF3_DISABLE_MASK	(0x0)

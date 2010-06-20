@@ -531,7 +531,7 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int ra
 	player_type *p_ptr = Players[Ind];
 
 #ifdef USE_SOUND_2010
-	sound(Ind, "monster_breath", NULL, SFX_TYPE_MON_SPELL);
+	sound(Ind, "monster_breath", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 
 	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
@@ -563,8 +563,8 @@ static void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad)
 	player_type *p_ptr = Players[Ind];
 
 #ifdef USE_SOUND_2010
-	if (typ == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_MON_SPELL);
-	sound(Ind, "monster_casts_ball", NULL, SFX_TYPE_MON_SPELL);
+	if (typ == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_MON_SPELL, TRUE);
+	sound(Ind, "monster_casts_ball", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 
 	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
@@ -2792,7 +2792,7 @@ if (season_halloween) {
 				if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 				else msg_format(Ind, "%^s points at you and curses.", m_name);
 #ifdef USE_SOUND_2010
-				sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL);
+				sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 				if (rand_int(100) < p_ptr->skill_sav) {
 					msg_print(Ind, "You resist the effects!");
@@ -2808,7 +2808,7 @@ if (season_halloween) {
 				if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 				else msg_format(Ind, "%^s points at you and curses horribly.", m_name);
 #ifdef USE_SOUND_2010
-				sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL);
+				sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 				if (rand_int(100) < p_ptr->skill_sav) {
 					msg_print(Ind, "You resist the effects!");
@@ -2824,7 +2824,7 @@ if (season_halloween) {
 				if (blind) msg_format(Ind, "%^s mumbles loudly.", m_name);
 				else msg_format(Ind, "%^s points at you, incanting terribly!", m_name);
 #ifdef USE_SOUND_2010
-				sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL);
+				sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 				if (rand_int(100) < p_ptr->skill_sav) {
 					msg_print(Ind, "You resist the effects!");
@@ -2840,7 +2840,7 @@ if (season_halloween) {
 				if (blind) msg_format(Ind, "%^s screams the word 'DIE!'", m_name);
 				else msg_format(Ind, "%^s points at you, screaming the word DIE!", m_name);
 #ifdef USE_SOUND_2010
-				sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL);
+				sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 				if (rand_int(100) < p_ptr->skill_sav) {
 					msg_print(Ind, "You resist the effects!");
@@ -2861,7 +2861,7 @@ if (season_halloween) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s points at you and curses.", m_name);
 #ifdef USE_SOUND_2010
-			sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL);
+			sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
@@ -2880,7 +2880,7 @@ if (season_halloween) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s points at you and curses horribly.", m_name);
 #ifdef USE_SOUND_2010
-			sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL);
+			sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
@@ -2899,7 +2899,7 @@ if (season_halloween) {
 			if (blind) msg_format(Ind, "%^s mumbles loudly.", m_name);
 			else msg_format(Ind, "%^s points at you, incanting terribly!", m_name);
 #ifdef USE_SOUND_2010
-			sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL);
+			sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
@@ -2918,7 +2918,7 @@ if (season_halloween) {
 			if (blind) msg_format(Ind, "%^s screams the word 'DIE!'", m_name);
 			else msg_format(Ind, "%^s points at you, screaming the word DIE!", m_name);
 #ifdef USE_SOUND_2010
-			sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL);
+			sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
@@ -3405,7 +3405,7 @@ if (season_halloween) {
 				//disturb(Ind, 1, 0);
 				msg_format(Ind, "%^s blinks away.", m_name);
 #ifdef USE_SOUND_2010
-				sound(Ind, "monster_blinks", NULL, SFX_TYPE_MON_SPELL);
+				sound(Ind, "monster_blinks", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 			}
 			break;
@@ -3436,7 +3436,7 @@ if (season_halloween) {
 				//disturb(Ind, 1, 0);
 				msg_format(Ind, "%^s teleports away.", m_name);
 #ifdef USE_SOUND_2010
-				sound(Ind, "monster_teleports", NULL, SFX_TYPE_MON_SPELL);
+				sound(Ind, "monster_teleports", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 			}
 			break;
@@ -3555,16 +3555,11 @@ if (season_halloween) {
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles strangely.", m_name);
 			else msg_format(Ind, "%^s gestures at your feet.", m_name);
-			if (p_ptr->resist_nexus)
-			{
+			if (p_ptr->resist_nexus) {
 				msg_print(Ind, "You are unaffected!");
-			}
-			else if (rand_int(100) < p_ptr->skill_sav)
-			{
+			} else if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
-			}
-			else
-			{
+			} else {
 				teleport_player_level(Ind);
 			}
 			update_smart_learn(m_idx, DRS_NEXUS);
@@ -4005,6 +4000,7 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 	}
 
 
+#ifdef OLD_MONSTER_LORE
 	/* Remember what the monster did to us */
 	if (seen)
 	{
@@ -4029,10 +4025,11 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			if (r_ptr->r_cast_spell < MAX_UCHAR) r_ptr->r_cast_spell++;
 		}
 	}
+#endif
 
 
 	/* Always take note of monsters that kill you */
-	if (p_ptr->death && (r_ptr->r_deaths < MAX_SHORT)) r_ptr->r_deaths++;
+	if (p_ptr->death) r_ptr->r_deaths++;
 
 
 	/* A spell was cast */
@@ -6524,12 +6521,14 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				/* Monster wakes up "a little bit" */
 				m_ptr->csleep -= d;
 
+#ifdef OLD_MONSTER_LORE
 				/* Notice the "not waking up" */
 				if (p_ptr->mon_vis[m_idx])
 				{
 					/* Hack -- Count the ignores */
-					if (r_ptr->r_ignore < MAX_UCHAR) r_ptr->r_ignore++;
+					r_ptr->r_ignore++;
 				}
+#endif
 			}
 
 			/* Just woke up */
@@ -6554,7 +6553,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 					/* Hack -- Count the wakings */
 					/* not used at all, seemingly */
-					if (r_ptr->r_wake < MAX_UCHAR) r_ptr->r_wake++;
+					r_ptr->r_wake++;
 				}
 #endif	// 0
 			}
@@ -6821,9 +6820,11 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 	         (r_ptr->flags1 & RF1_RAND_25) &&
 	         (rand_int(100) < 75)) || inv)
 	{
+#ifdef OLD_MONSTER_LORE
 		/* Memorize flags */
 		if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags1 |= RF1_RAND_50;
 		if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags1 |= RF1_RAND_25;
+#endif
 
 		/* Try four "random" directions */
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
@@ -6834,8 +6835,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 	else if ((r_ptr->flags1 & RF1_RAND_50) &&
 	         (rand_int(100) < 50))
 	{
+#ifdef OLD_MONSTER_LORE
 		/* Memorize flags */
 		if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags1 |= RF1_RAND_50;
+#endif
 
 		/* Try four "random" directions */
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
@@ -6846,8 +6849,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 	else if ((r_ptr->flags1 & RF1_RAND_25) &&
 	         (rand_int(100) < 25))
 	{
+#ifdef OLD_MONSTER_LORE
 		/* Memorize flags */
 		if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags1 |= RF1_RAND_25;
+#endif
 
 		/* Try four "random" directions */
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
@@ -7318,8 +7323,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 		if (do_move && (ny == p_ptr->py) && (nx == p_ptr->px) &&
 		    (r_ptr->flags1 & RF1_NEVER_BLOW))
 		{
+#ifdef OLD_MONSTER_LORE
 			/* Hack -- memorize lack of attacks */
 			/* if (m_ptr->ml) r_ptr->r_flags1 |= RF1_NEVER_BLOW; */
+#endif
 
 			/* Do not move */
 			do_move = FALSE;
@@ -7575,8 +7582,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 		/* Some monsters never move */
 		if (do_move && (r_ptr->flags1 & RF1_NEVER_MOVE))
 		{
+#ifdef OLD_MONSTER_LORE
 			/* Hack -- memorize lack of attacks */
 			/* if (m_ptr->ml) r_ptr->r_flags1 |= RF1_NEVER_MOVE; */
+#endif
 
 			/* Do not move */
 			do_move = FALSE;
@@ -7786,7 +7795,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				monster_desc(Ind, m_name, m_idx, 0x04);
 
 				/* Real name for logging */
-				monster_desc(Ind, m_name_real, m_idx, 0x80);
+				monster_desc(Ind, m_name_real, m_idx, 0x100 | 0x80);
 
 				/* Prevent monsters from 'exploiting' (nothing)s */
 				if (nothing_test(o_ptr, p_ptr, wpos, nx, ny)) {
@@ -7939,6 +7948,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 	}
 
 
+#ifdef OLD_MONSTER_LORE
 	/* Learn things from observable monster */
 	if (p_ptr->mon_vis[m_idx])
 	{
@@ -7966,6 +7976,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 		/* Monster destroyed a wall */
 		if (did_kill_wall) r_ptr->r_flags2 |= RF2_KILL_WALL;
 	}
+#endif
 
 
 	/* Hack -- get "bold" if out of options */

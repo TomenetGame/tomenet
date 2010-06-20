@@ -3293,8 +3293,7 @@ cptr item_activation(object_type *o_ptr)
 				return "teleportation and destruction of the ring";
 			case SV_RING_POLYMORPH:
 				if (o_ptr->pval)
-					return format("polymorph into %s",
-							r_info[o_ptr->pval].name + r_name);
+					return format("polymorph into %s", r_info[o_ptr->pval].name + r_name);
 				else
 				return "memorize the form you are mimicing";
 			default:

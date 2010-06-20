@@ -3806,7 +3806,7 @@ void check_experience(int Ind)
 		/* Message */
 		msg_format(Ind, "\374\377GWelcome to level %d. You have %d skill points.", p_ptr->lev, p_ptr->skill_points);
 #ifdef USE_SOUND_2010
-		sound(Ind, "levelup", NULL, SFX_TYPE_MISC);
+		sound(Ind, "levelup", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 
 		/* Give helpful msg about how to distribute skill points at first level-up */
@@ -5965,10 +5965,51 @@ void player_death(int Ind)
 	int i, inventory_loss = 0, equipment_loss = 0, k, j, tries = 0;
 //	int inven_sort_map[INVEN_TOTAL];
 	//wilderness_type *wild;
-	bool hell=TRUE, secure = FALSE, ge_secure = FALSE, pvp = ((p_ptr->mode & MODE_PVP) != 0);
+	bool hell = TRUE, secure = FALSE, ge_secure = FALSE, pvp = ((p_ptr->mode & MODE_PVP) != 0);
 	cptr titlebuf;
 	int death_type = -1; /* keep track of the way (s)he died, for buffer_account_for_event_deed() */
-	bool world_broadcast = TRUE;
+	bool world_broadcast = TRUE, just_fruitbat_transformation = (p_ptr->fruit_bat == -1);
+
+	/* Amulet of immortality prevents death */
+	o_ptr = &p_ptr->inventory[INVEN_NECK];
+	/* Skip empty items */
+	if (o_ptr->k_idx && o_ptr->tval == TV_AMULET &&
+	    (o_ptr->sval == SV_AMULET_INVINCIBILITY || o_ptr->sval == SV_AMULET_INVULNERABILITY)) {
+		if (just_fruitbat_transformation) p_ptr->fruit_bat = 0;
+		return;
+	}
+
+	/* prepare player's title */
+	if (p_ptr->lev < 60)
+		titlebuf = player_title[p_ptr->pclass][((p_ptr->lev)/5 < 10)?(p_ptr->lev)/5 : 10][1 - p_ptr->male];
+	else
+		titlebuf = player_title_special[p_ptr->pclass][(p_ptr->lev < PY_MAX_PLAYER_LEVEL)? (p_ptr->lev - 60)/10 : 4][1 - p_ptr->male];
+
+	break_cloaking(Ind, 0);
+	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
+
+	if (just_fruitbat_transformation) {
+		p_ptr->death = 0;
+		p_ptr->update |= (PU_BONUS);
+		p_ptr->redraw |= (PR_HP | PR_GOLD | PR_BASIC | PR_DEPTH);
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+		p_ptr->fruit_bat = 2;
+		calc_hitpoints(Ind);
+
+		/* Tell the players */
+		snprintf(buf, sizeof(buf), "\374\377o%s was turned into a fruit bat by %s!", p_ptr->name, p_ptr->died_from);
+		/* handle the secret_dungeon_master option */
+		if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master)) {
+#ifdef TOMENET_WORLDS
+			if (cfg.worldd_pdeath && world_broadcast) world_msg(buf);
+#endif
+			msg_broadcast(Ind, buf);
+		}
+		return;
+	}
 
 #ifdef RPG_SERVER
 	if (p_ptr->wpos.wz != 0) {
@@ -5982,51 +6023,31 @@ void player_death(int Ind)
 		}
 	}
 #endif
-	/* prepare player's title */
-	if (p_ptr->lev < 60)
-	titlebuf = player_title[p_ptr->pclass][((p_ptr->lev)/5 < 10)?(p_ptr->lev)/5 : 10][1 - p_ptr->male];
-        else
-	titlebuf = player_title_special[p_ptr->pclass][(p_ptr->lev < PY_MAX_PLAYER_LEVEL)? (p_ptr->lev - 60)/10 : 4][1 - p_ptr->male];
-
-        /* Amulet of immortality prevents death */
-        o_ptr = &p_ptr->inventory[INVEN_NECK];
-        /* Skip empty items */
-        if (o_ptr->k_idx && o_ptr->tval == TV_AMULET &&
-            (o_ptr->sval == SV_AMULET_INVINCIBILITY || o_ptr->sval == SV_AMULET_INVULNERABILITY)) {
-		return;
-        }
-	
-	break_cloaking(Ind, 0);
-	break_shadow_running(Ind);
-	stop_precision(Ind);
-	stop_shooting_till_kill(Ind);
 
 	/* very very rare case, but this can happen(eg. starvation) */
-	if (p_ptr->store_num > -1)
-	{
+	if (p_ptr->store_num > -1) {
 		p_ptr->store_num = -1;
 		Send_store_kick(Ind);
 	}
 
 	if (d_ptr && (d_ptr->flags2 & DF2_NO_DEATH) && !p_ptr->ghost) secure = TRUE;
-	
+
 	if (ge_special_sector &&
 	    (p_ptr->wpos.wx == WPOS_ARENA_X && p_ptr->wpos.wy == WPOS_ARENA_Y &&
 	    p_ptr->wpos.wz == WPOS_ARENA_Z)) {
 		secure = TRUE;
 		ge_secure = TRUE; /* extra security for global events */
 	}
-	
+
 	if (pvp) {
 		secure = FALSE;
 		msg_layout = 'L';
 	}
 
 	/* Hack -- amulet of life saving */
-	if (p_ptr->alive && p_ptr->fruit_bat != -1 && (secure ||
-			(p_ptr->inventory[INVEN_NECK].k_idx &&
-			p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_LIFE_SAVING)))
-	{
+	if (p_ptr->alive && (secure ||
+	    (p_ptr->inventory[INVEN_NECK].k_idx &&
+	    p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_LIFE_SAVING))) {
 		s_printf("%s (%d) was pseudo-killed by %s for %d damage at %d, %d, %d.\n", p_ptr->name, p_ptr->lev, p_ptr->really_died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
 		if (!secure) {
@@ -6202,8 +6223,8 @@ void player_death(int Ind)
 		p_ptr->update |= (PU_BONUS);
 
 		/* Inform him about his situation */
-		if (!sector00downstairs) msg_print(Ind, "\377oYou died too early and have to sit out the remaining time!");
-		else msg_print(Ind, "\377oYou died too early, find the staircase and re-enter the dungeon!");
+		if (!sector00downstairs) msg_print(Ind, "\377oYou were defeated too early and have to sit out the remaining time!");
+		else msg_print(Ind, "\377oYou were defeated too early, find the staircase and re-enter the dungeon!");
 
 		p_ptr->soft_deaths++;
 		return;
@@ -6219,23 +6240,151 @@ void player_death(int Ind)
 #endif
 
 #ifdef USE_SOUND_2010
-	if (p_ptr->male) sound(Ind, "death_male", "death", SFX_TYPE_MISC);
-	else sound(Ind, "death_female", "death", SFX_TYPE_MISC);
+	if (p_ptr->male) sound(Ind, "death_male", "death", SFX_TYPE_MISC, FALSE);
+	else sound(Ind, "death_female", "death", SFX_TYPE_MISC, FALSE);
 #else
 	sound(Ind, SOUND_DEATH);
 #endif
 
-	/* Get rid of him if he's a ghost */
-/*	if (((p_ptr->ghost || (hell && p_ptr->alive)) && p_ptr->fruit_bat != -1) ||
+	/* Drop gold if player has any -------------------------------------- */
+	if (p_ptr->alive && p_ptr->au) {
+		/* Put the player's gold in the overflow slot */
+		invcopy(&p_ptr->inventory[INVEN_PACK], lookup_kind(TV_GOLD, 9));
+		/* Change the mode of the gold accordingly */
+		p_ptr->inventory[INVEN_PACK].owner_mode = p_ptr->mode;
+		p_ptr->inventory[INVEN_PACK].owner = p_ptr->id; /* hack */
+
+		/* Drop no more than 32000 gold */
+//		if (p_ptr->au > 32000) p_ptr->au = 32000;
+		/* (actually, this if-clause is not necessary) */
+		s_printf("gold_lost: carried %d, remaining ", p_ptr->au);
+		if (p_ptr->au <= 50000) ;
+		else if (p_ptr->au <= 500000) p_ptr->au = (((p_ptr->au) * 100) / (100 + ((p_ptr->au - 50000) / 4500)));
+		else p_ptr->au /= 2;
+
+		if(p_ptr->max_plv >= cfg.newbies_cannot_drop){
+			/* Set the amount */
+			p_ptr->inventory[INVEN_PACK].pval = p_ptr->au;
+			s_printf("%d.\n", p_ptr->au);
+		} else {
+			invwipe(&p_ptr->inventory[INVEN_PACK]);
+			s_printf("none.\n");
+		}
+
+		/* No more gold */
+		p_ptr->au = 0;
+	}
+
+	/* Drop/lose items -------------------------------------------------- */
+	/* Setup the sorter */
+	ang_sort_comp = ang_sort_comp_value;
+	ang_sort_swap = ang_sort_swap_value;
+	/* Remember original position before sorting */
+	for (i = 0; i < INVEN_TOTAL; i++) p_ptr->inventory[i].inven_order = i;
+	/* Sort the player's inventory according to value */
+	ang_sort(Ind, p_ptr->inventory, NULL, INVEN_TOTAL);
+
+	/* Starting with the most valuable, drop things one by one */
+	for (i = 0; i < INVEN_TOTAL; i++) {
+		bool away = FALSE, item_lost = FALSE;
+		int real_pos = p_ptr->inventory[i].inven_order;
+
+		o_ptr = &p_ptr->inventory[i];
+		/* Make sure we have an object */
+		if (o_ptr->k_idx == 0) continue;
+
+		/* If we committed suicide, only drop artifacts */
+//			if (!p_ptr->alive && !artifact_p(o_ptr)) continue;
+		if (!p_ptr->alive) {
+			if (!true_artifact_p(o_ptr)) continue;
+
+			/* hack -- total winners do not drop artifacts when they suicide */
+			//		if (!p_ptr->alive && p_ptr->total_winner && artifact_p(&p_ptr->inventory[i])) 
+
+			/* Artifacts cannot be dropped after all */
+			/* Don't litter Valinor -- Ring of Phasing must be destroyed anyways */
+			if ((cfg.anti_arts_hoard) || (getlevel(&p_ptr->wpos) == 200)) {
+				/* set the artifact as unfound */
+				handle_art_d(o_ptr->name1);
+
+				/* Don't drop the artifact */
+				continue;
+			}
+		}
+
+#ifdef DEATH_PACK_ITEM_LOST
+		if ((real_pos < INVEN_PACK) && magik(DEATH_PACK_ITEM_LOST) && (inventory_loss < 4)) {
+			inventory_loss++;
+			item_lost = TRUE;
+		}
+#endif
+
+#ifdef DEATH_EQ_ITEM_LOST
+		if ((real_pos > INVEN_PACK) && magik(DEATH_EQ_ITEM_LOST) && (equipment_loss < 1)) {
+			item_lost = TRUE;
+			equipment_loss++;
+		}
+#endif
+
+		if (!is_admin(p_ptr) && !p_ptr->inval && (p_ptr->max_plv >= cfg.newbies_cannot_drop) &&
+		    /* Don't drop Morgoth's crown */
+		    !(o_ptr->name1 == ART_MORGOTH) && !(o_ptr->name1 == ART_GROND)) {
+#ifdef DEATH_ITEM_SCATTER
+			/* Apply penalty of death */
+			if (!artifact_p(o_ptr) && magik(DEATH_ITEM_SCATTER) && !item_lost)
+				away = TRUE;
+			else
+#endif	/* DEATH_ITEM_SCATTER */
+			{
+				if (!item_lost) {
+					if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
+					else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
+					else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
+
+					/* Drop this one */
+					away = drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
+						<= 0 ? TRUE : FALSE;
+				} else {
+					object_desc(Ind, o_name, o_ptr, TRUE, 3);
+//					if (object_value_real(0, o_ptr) >= 10000)
+					s_printf("item_lost: %s (slot %d)\n", o_name, real_pos);
+					if (true_artifact_p(o_ptr)) {
+						/* set the artifact as unfound */
+						handle_art_d(o_ptr->name1);
+					}
+				}
+			}
+
+			if (away) {
+				int o_idx = 0, x1, y1, try = 500;
+				cave_type **zcave;
+				if((zcave=getcave(&p_ptr->wpos)))	/* this should never.. */
+					while (o_idx <= 0 && try--) {
+						x1 = rand_int(p_ptr->cur_wid);
+						y1 = rand_int(p_ptr->cur_hgt);
+
+						if (!cave_clean_bold(zcave, y1, x1)) continue;
+						if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
+						else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
+						else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
+						o_idx = drop_near(o_ptr, 0, &p_ptr->wpos, y1, x1);
+					}
+			}
+		}
+		else if (true_artifact_p(o_ptr)) {
+			/* set the artifact as unfound */
+			handle_art_d(o_ptr->name1);
+		}
+
+		/* No more item */
+		invwipe(o_ptr);
+	}
+
+	/* Get rid of him if he's a ghost or suffers a no-ghost death */
+	if ((p_ptr->ghost || (hell && p_ptr->alive)) ||
 	    (streq(p_ptr->died_from, "Insanity")) ||
 	    ((p_ptr->lives == 1+1) && cfg.lifes && p_ptr->alive &&
-	    !(p_ptr->mode & MODE_EVERLASTING)))
-*/	if ((((p_ptr->ghost || (hell && p_ptr->alive)) && p_ptr->fruit_bat!=-1) ||
-	    (streq(p_ptr->died_from, "Insanity")) ||
-	    ((p_ptr->lives == 1+1) && cfg.lifes && p_ptr->alive &&
-	    !(p_ptr->mode & MODE_EVERLASTING))) &&
-	    !streq(p_ptr->died_from, "a potion of Chauve-Souris"))
-	{
+	    !(p_ptr->mode & MODE_EVERLASTING))) {
 		/* Tell players */
 		if (streq(p_ptr->died_from, "Insanity")) {
 			/* Tell him */
@@ -6469,174 +6618,11 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", p_ptr->mode & MODE_PV
 			}
 		}
 
-#if 0
-		/* wipe artifacts (s)he had */
-		for (i = 0; i < INVEN_TOTAL; i++)
-		{
-			/* Make sure we have an object */
-			if (p_ptr->inventory[i].k_idx == 0)
-				continue;
-
-			if (artifact_p(&p_ptr->inventory[i])) 
-			{
-				/* set the artifact as unfound */
-				handle_art_d(p_ptr->inventory[i].name1);
-			}
-		}
-#endif
-		/* DROP STUFF EVEN ON HELLISH MODE OR INSANITY DEATH */
-		/* Drop gold if player has any */
-		if (p_ptr->fruit_bat!=-1 && p_ptr->alive && p_ptr->au)
-		{
-			/* Put the player's gold in the overflow slot */
-			invcopy(&p_ptr->inventory[INVEN_PACK], lookup_kind(TV_GOLD, 9));
-			/* Change the mode of the gold accordingly */
-			p_ptr->inventory[INVEN_PACK].owner_mode = p_ptr->mode;
-			p_ptr->inventory[INVEN_PACK].owner = p_ptr->id; /* hack */
-	
-			/* Drop no more than 32000 gold */
-//			if (p_ptr->au > 32000) p_ptr->au = 32000;
-			/* (actually, this if-clause is not necessary) */
-			s_printf("gold_lost: carried %d, remaining ", p_ptr->au);
-			if (p_ptr->au <= 50000) ;
-			else if (p_ptr->au <= 500000) p_ptr->au = (((p_ptr->au) * 100) / (100 + ((p_ptr->au - 50000) / 4500)));
-			else p_ptr->au /= 2;
-
-			if(p_ptr->max_plv >= cfg.newbies_cannot_drop){
-				/* Set the amount */
-				p_ptr->inventory[INVEN_PACK].pval = p_ptr->au;
-				s_printf("%d.\n", p_ptr->au);
-			} else {
-				invwipe(&p_ptr->inventory[INVEN_PACK]);
-				s_printf("none.\n");
-			}
-
-			/* No more gold */
-			p_ptr->au = 0;
-		}
-	
-//		if(p_ptr->fruit_bat!=-1){
-			/* Setup the sorter */
-			ang_sort_comp = ang_sort_comp_value;
-			ang_sort_swap = ang_sort_swap_value;
-
-			/* Remember original position before sorting */
-	    		for (i = 0; i < INVEN_TOTAL; i++) p_ptr->inventory[i].inven_order = i;
-	
-			/* Sort the player's inventory according to value */
-			ang_sort(Ind, p_ptr->inventory, NULL, INVEN_TOTAL);
-
-			/* Starting with the most valuable, drop things one by one */
-	    		for (i = 0; i < INVEN_TOTAL; i++)
-			{
-				bool away = FALSE, item_lost = FALSE;
-				int real_pos = p_ptr->inventory[i].inven_order;
-
-	    			o_ptr = &p_ptr->inventory[i];
-	
-				/* Make sure we have an object */
-				if (o_ptr->k_idx == 0)
-					continue;
-
-				/* If we committed suicide, only drop artifacts */
-	//			if (!p_ptr->alive && !artifact_p(o_ptr)) continue;
-				if (!p_ptr->alive)
-				{
-					if (!true_artifact_p(o_ptr)) continue;
-
-					/* hack -- total winners do not drop artifacts when they suicide */
-					//		if (!p_ptr->alive && p_ptr->total_winner && artifact_p(&p_ptr->inventory[i])) 
-	
-					/* Artifacts cannot be dropped after all */	
-					/* Don't litter Valinor -- Ring of Phasing must be destroyed anyways */
-					if (cfg.anti_arts_hoard || (getlevel(&p_ptr->wpos) == 200))
-    					{
-						/* set the artifact as unfound */
-						handle_art_d(o_ptr->name1);
-    
-						/* Don't drop the artifact */
-						continue;
-					}
-				}
-
-#ifdef DEATH_PACK_ITEM_LOST
-				if ((real_pos < INVEN_PACK) && magik(DEATH_PACK_ITEM_LOST) && (inventory_loss < 4)) {
-					inventory_loss++;
-					item_lost = TRUE;
-				}
-#endif
-#ifdef DEATH_EQ_ITEM_LOST
-				if ((real_pos > INVEN_PACK) && magik(DEATH_EQ_ITEM_LOST) && (equipment_loss < 1)) {
-					equipment_loss++;
-					item_lost = TRUE;
-				}
-#endif
-
-				if (!is_admin(p_ptr) && !p_ptr->inval && (p_ptr->max_plv >= cfg.newbies_cannot_drop) &&
-				    /* Don't drop Morgoth's crown */
-				    !(o_ptr->name1 == ART_MORGOTH) && !(o_ptr->name1 == ART_GROND))
-
-				{
-#ifdef DEATH_ITEM_SCATTER
-					/* Apply penalty of death */
-					if (!artifact_p(o_ptr) && magik(DEATH_ITEM_SCATTER) && !item_lost)
-						away = TRUE;
-					else
-#endif	/* DEATH_ITEM_SCATTER */
-					{
-						if (!item_lost) {
-							if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
-							else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
-							else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
-
-							/* Drop this one */
-				    			away = drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
-								<= 0 ? TRUE : FALSE;
-						} else {
-							object_desc(Ind, o_name, o_ptr, TRUE, 3);
-//							if (object_value_real(0, o_ptr) >= 10000)
-							s_printf("item_lost: %s (slot %d)\n", o_name, real_pos);
-							if (true_artifact_p(o_ptr)) {
-								/* set the artifact as unfound */
-								handle_art_d(o_ptr->name1);
-							}
-						}
-					}
-
-					if (away)
-					{
-						int o_idx = 0, x1, y1, try = 500;
-						cave_type **zcave;
-						if((zcave=getcave(&p_ptr->wpos)))	/* this should never.. */
-							while (o_idx <= 0 && try--)
-							{
-								x1 = rand_int(p_ptr->cur_wid);
-								y1 = rand_int(p_ptr->cur_hgt);
-	
-								if (!cave_clean_bold(zcave, y1, x1)) continue;
-								if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
-								else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
-								else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
-								o_idx = drop_near(o_ptr, 0, &p_ptr->wpos, y1, x1);
-							}
-					}
-				}
-				else if (true_artifact_p(o_ptr))
-				{
-					/* set the artifact as unfound */
-					handle_art_d(o_ptr->name1);
-				}
-	
-				/* No more item */
-				invwipe(o_ptr);
-			}
-	
-//		}
 
 		kill_houses(p_ptr->id, OT_PLAYER);
 		rem_quest(p_ptr->quest_id);
 		kill_objs(p_ptr->id);
-		p_ptr->death=TRUE;
+		p_ptr->death = TRUE;
 
 #ifdef AUCTION_SYSTEM
 		auction_player_death(p_ptr->id);
@@ -6679,6 +6665,8 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", p_ptr->mode & MODE_PV
 		return;
 	}
 
+	/* --- non-noghost-death: everlasting or more lives left --- */
+
 #if 1 /* Enable, iff newbies-level leading to perma-death is disabled above. */
 	if (p_ptr->max_plv < cfg.newbies_cannot_drop) {
 		msg_format(Ind, "\374\377oYou died below level %d, which means that your items didn't drop.", cfg.newbies_cannot_drop);
@@ -6692,10 +6680,7 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", p_ptr->mode & MODE_PV
 #endif
 
 	/* Tell everyone he died */
-	if (p_ptr->fruit_bat == -1)
-		snprintf(buf, sizeof(buf), "\374\377o%s was turned into a fruit bat by %s!", p_ptr->name, p_ptr->died_from);
-	
- 	else if (p_ptr->alive) {
+	if (p_ptr->alive) {
 		if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100)) || (streq(p_ptr->died_from, "Insanity"))) {
 			/* snprintf(buf, sizeof(buf), "\374\377r%s was killed by %s.", p_ptr->name, p_ptr->died_from); */
 			/* Add the player lvl to the death message. the_sandman */
@@ -6734,13 +6719,11 @@ s_printf("CHARACTER_TERMINATION: SUICIDE race=%s ; class=%s\n", race_info[p_ptr-
 		death_type = 3;
 s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title);
 	}
-	if (is_admin(p_ptr)) {
-		snprintf(buf, sizeof(buf), "\376\377D%s bids farewell to this plane.", p_ptr->name);
-	}
+
+	if (is_admin(p_ptr)) snprintf(buf, sizeof(buf), "\376\377D%s bids farewell to this plane.", p_ptr->name);
 
 	/* Tell the players */
 	/* handle the secret_dungeon_master option */
-	/* bug??? evileye - shouldnt it be && */
 	if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master)) {
 #ifdef TOMENET_WORLDS
 		if (cfg.worldd_pdeath && world_broadcast) world_msg(buf);
@@ -6754,14 +6737,9 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 		}
 */	}
 
-	/* Hmm... Shouldn't this be after the death message so we can get a nice message for retiring winners? - mikaelh */
-	/* Not only that, but it also mustn't be executed in case of fruit_bat == -1 - C. Blue */
-	/* No longer a winner */
-	if (p_ptr->fruit_bat!=-1) p_ptr->total_winner = FALSE;
-
+#if 0
 	/* Unown land */
-	if (p_ptr->total_winner)
-	{
+	if (p_ptr->total_winner) {
 #ifdef NEW_DUNGEON
 /* FIXME */
 /*
@@ -6772,339 +6750,175 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 		msg_broadcast_format(Ind, "%d(%d) and %d(%d) are no more owned.", p_ptr->own1, p_ptr->own2, p_ptr->own1 * 50, p_ptr->own2 * 50);
 		wild_info[p_ptr->own1].own = wild_info[p_ptr->own2].own = 0;
 #endif
-	}	
-	
-	/* Drop gold if player has any */
-	if (p_ptr->fruit_bat!=-1 && p_ptr->alive && p_ptr->au)
-	{
-		/* Put the player's gold in the overflow slot */
-		invcopy(&p_ptr->inventory[INVEN_PACK], lookup_kind(TV_GOLD, 9));
-		/* Change the mode of the gold accordingly */
-		p_ptr->inventory[INVEN_PACK].owner_mode = p_ptr->mode;
-		p_ptr->inventory[INVEN_PACK].owner = p_ptr->id; /* hack */
-
-		/* Drop no more than 32000 gold */
-//		if (p_ptr->au > 32000) p_ptr->au = 32000;
-		/* (actually, this if-clause is not necessary) */
-		s_printf("gold_lost: carried %d, remaining ", p_ptr->au);
-		if (p_ptr->au <= 50000) ;
-		else if (p_ptr->au <= 500000) p_ptr->au = (((p_ptr->au) * 100) / (100 + ((p_ptr->au - 50000) / 4500)));
-		else p_ptr->au /= 2;
-
-		if(p_ptr->max_plv >= cfg.newbies_cannot_drop){
-			/* Set the amount */
-			p_ptr->inventory[INVEN_PACK].pval = p_ptr->au;
-			s_printf("%d.\n", p_ptr->au);
-		} else {
-			invwipe(&p_ptr->inventory[INVEN_PACK]);
-			s_printf("none.\n");
-		}
-
-		/* No more gold */
-		p_ptr->au = 0;
 	}
-
-	/* Polymorph back to player (moved)*/
-	/* if (p_ptr->body_monster) do_mimic_change(Ind, 0); */
-
-	if(p_ptr->fruit_bat!=-1){
-		/* Setup the sorter */
-		ang_sort_comp = ang_sort_comp_value;
-		ang_sort_swap = ang_sort_swap_value;
-
-		/* Remember original position before sorting */
-    		for (i = 0; i < INVEN_TOTAL; i++) p_ptr->inventory[i].inven_order = i;
-	
-		/* Sort the player's inventory according to value */
-		ang_sort(Ind, p_ptr->inventory, NULL, INVEN_TOTAL);
-
-		/* Starting with the most valuable, drop things one by one */
-		for (i = 0; i < INVEN_TOTAL; i++)
-		{
-			bool away = FALSE, item_lost = FALSE;
-			int real_pos = p_ptr->inventory[i].inven_order;
-
-			o_ptr = &p_ptr->inventory[i];
-
-			/* Make sure we have an object */
-			if (o_ptr->k_idx == 0)
-				continue;
-
-			/* If we committed suicide, only drop artifacts */
-//			if (!p_ptr->alive && !artifact_p(o_ptr)) continue;
-			if (!p_ptr->alive)
-			{
-				if (!true_artifact_p(o_ptr)) continue;
-
-				/* hack -- total winners do not drop artifacts when they suicide */
-				//		if (!p_ptr->alive && p_ptr->total_winner && artifact_p(&p_ptr->inventory[i])) 
-
-				/* Artifacts cannot be dropped after all */	
-				/* Don't litter Valinor -- Ring of Phasing must be destroyed anyways */
-				if ((cfg.anti_arts_hoard) || (getlevel(&p_ptr->wpos) == 200))
-				{
-					/* set the artifact as unfound */
-					handle_art_d(o_ptr->name1);
-
-					/* Don't drop the artifact */
-					continue;
-				}
-			}
-
-#ifdef DEATH_PACK_ITEM_LOST
-			if ((real_pos < INVEN_PACK) && magik(DEATH_PACK_ITEM_LOST) && (inventory_loss < 4)) {
-				inventory_loss++;
-				item_lost = TRUE;
-			}
 #endif
 
-#ifdef DEATH_EQ_ITEM_LOST
-			if ((real_pos > INVEN_PACK) && magik(DEATH_EQ_ITEM_LOST) && (equipment_loss < 1)) {
-				item_lost = TRUE;
-				equipment_loss++;
-			}
-#endif
+	/* Hmm... Shouldn't this be after the death message so we can get a nice message for retiring winners? - mikaelh */
+	/* No longer a winner */
+	p_ptr->total_winner = FALSE;
 
-			if (!is_admin(p_ptr) && !p_ptr->inval && (p_ptr->max_plv >= cfg.newbies_cannot_drop) &&
-			    /* Don't drop Morgoth's crown */
-			    !(o_ptr->name1 == ART_MORGOTH) && !(o_ptr->name1 == ART_GROND))
-			{
-#ifdef DEATH_ITEM_SCATTER
-				/* Apply penalty of death */
-				if (!artifact_p(o_ptr) && magik(DEATH_ITEM_SCATTER) && !item_lost)
-					away = TRUE;
-				else
-#endif	/* DEATH_ITEM_SCATTER */
-				{
-					if (!item_lost) {
-						if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
-						else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
-						else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
-
-						/* Drop this one */
-						away = drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
-							<= 0 ? TRUE : FALSE;
-					} else {
-						object_desc(Ind, o_name, o_ptr, TRUE, 3);
-//						if (object_value_real(0, o_ptr) >= 10000)
-						s_printf("item_lost: %s (slot %d)\n", o_name, real_pos);
-						if (true_artifact_p(o_ptr)) {
-							/* set the artifact as unfound */
-							handle_art_d(o_ptr->name1);
-						}
-					}
-				}
-
-				if (away)
-				{
-					int o_idx = 0, x1, y1, try = 500;
-					cave_type **zcave;
-					if((zcave=getcave(&p_ptr->wpos)))	/* this should never.. */
-						while (o_idx <= 0 && try--)
-						{
-							x1 = rand_int(p_ptr->cur_wid);
-							y1 = rand_int(p_ptr->cur_hgt);
-
-							if (!cave_clean_bold(zcave, y1, x1)) continue;
-							if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
-							else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
-							else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
-							o_idx = drop_near(o_ptr, 0, &p_ptr->wpos, y1, x1);
-						}
-				}
-			}
-			else if (true_artifact_p(o_ptr))
-			{
-				/* set the artifact as unfound */
-				handle_art_d(o_ptr->name1);
-			}
-
-			/* No more item */
-			invwipe(o_ptr);
-		}
-
-		/* Handle suicide */
-		if (!p_ptr->alive)
-		{
-			/* Delete his houses */
-			kill_houses(p_ptr->id, OT_PLAYER);
-			rem_quest(p_ptr->quest_id);
-			kill_objs(p_ptr->id);
+	/* Handle suicide */
+	if (!p_ptr->alive) {
+		/* Delete his houses */
+		kill_houses(p_ptr->id, OT_PLAYER);
+		rem_quest(p_ptr->quest_id);
+		kill_objs(p_ptr->id);
 
 #ifdef AUCTION_SYSTEM
-			auction_player_death(p_ptr->id);
+		auction_player_death(p_ptr->id);
 #endif
 
-			/* Remove him from his party */
-			if (p_ptr->party)
-			{
-				/* He leaves */
-				party_leave(Ind);
-			}
-			if(p_ptr->guild){
-				guild_leave(Ind);
-			}
+		/* Remove him from his party */
+		if (p_ptr->party) {
+			/* He leaves */
+			party_leave(Ind);
+		}
+		if(p_ptr->guild) guild_leave(Ind);
 
-			buffer_account_for_event_deed(p_ptr, death_type);
+		buffer_account_for_event_deed(p_ptr, death_type);
 
-			/* Kill him */
-			p_ptr->death = TRUE;
-			p_ptr->deathblow = 0;
+		/* Kill him */
+		p_ptr->death = TRUE;
+		p_ptr->deathblow = 0;
 
-			/* One less player here */
-			new_players_on_depth(&p_ptr->wpos,-1,TRUE);
+		/* One less player here */
+		new_players_on_depth(&p_ptr->wpos,-1,TRUE);
 
-			check_roller(Ind);
+		check_roller(Ind);
 
-			/* Remove him from the player name database */
-			delete_player_name(p_ptr->name);
+		/* Remove him from the player name database */
+		delete_player_name(p_ptr->name);
 
-			/* Put him on the high score list */
-//			if(!is_admin(p_ptr) && !p_ptr->noscore && !(p_ptr->mode & MODE_EVERLASTING))
-			if(!p_ptr->noscore && !(p_ptr->mode & (MODE_PVP | MODE_EVERLASTING)))
-				add_high_score(Ind);
+		/* Put him on the high score list */
+//		if(!is_admin(p_ptr) && !p_ptr->noscore && !(p_ptr->mode & MODE_EVERLASTING))
+		if(!p_ptr->noscore && !(p_ptr->mode & (MODE_PVP | MODE_EVERLASTING)))
+			add_high_score(Ind);
 
 #ifdef TOMENET_WORLDS
-			world_player(p_ptr->id, p_ptr->name, FALSE, TRUE);
+		world_player(p_ptr->id, p_ptr->name, FALSE, TRUE);
 #endif
 
-			/* Get rid of him */
-			Destroy_connection(p_ptr->conn, "Committed suicide");
+		/* Get rid of him */
+		Destroy_connection(p_ptr->conn, "Committed suicide");
 
-			/* Done */
-			return;
-		}
+		/* Done */
+		return;
 	}
 
-	if (p_ptr->fruit_bat == -1) 
-	{
-/*		p_ptr->mhp = (p_ptr->player_hp[p_ptr->lev-1] / 4) + (((adj_con_mhp[p_ptr->stat_ind[A_CON]]) - 128) * p_ptr->lev);
-		p_ptr->chp = p_ptr->mhp;
-		p_ptr->chp_frac = 0; -- simply calc_hitpoints instead.. */
-		p_ptr->fruit_bat = 2;
-		calc_hitpoints(Ind);
+	/* Polymorph back to player */
+	if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
+
+	/* Cure him from various maladies */
+	p_ptr->black_breath = FALSE;
+	if (p_ptr->image) (void)set_image(Ind, 0);
+	if (p_ptr->blind) (void)set_blind(Ind, 0);
+	if (p_ptr->paralyzed) (void)set_paralyzed(Ind, 0);
+	if (p_ptr->confused) (void)set_confused(Ind, 0);
+	if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
+	if (p_ptr->stun) (void)set_stun(Ind, 0);
+	if (p_ptr->cut) (void)set_cut(Ind, 0, 0);
+	/* if (p_ptr->food < PY_FOOD_FULL) */
+	(void)set_food(Ind, PY_FOOD_FULL - 1);
+
+	/* Don't have 'vegetable' ghosts running around after equipment was dropped */
+	p_ptr->safe_sane = TRUE;
+	p_ptr->update |= PU_SANITY;
+	update_stuff(Ind);
+	p_ptr->safe_sane = FALSE;
+
+	/* Tell him */
+	msg_print(Ind, "\374\377RYou die.");
+//	msg_print(Ind, NULL);
+	if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100)) || (streq(p_ptr->died_from, "Insanity"))) {
+		msg_format(Ind, "\374\377RYou have been killed by %s.", p_ptr->died_from);
 	}
-	else
-	{
-		/* Polymorph back to player */
-		if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
-
-		/* Cure him from various maladies */
-		p_ptr->black_breath = FALSE;
-		if (p_ptr->image) (void)set_image(Ind, 0);
-		if (p_ptr->blind) (void)set_blind(Ind, 0);
-		if (p_ptr->paralyzed) (void)set_paralyzed(Ind, 0);
-		if (p_ptr->confused) (void)set_confused(Ind, 0);
-		if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
-		if (p_ptr->stun) (void)set_stun(Ind, 0);
-		if (p_ptr->cut) (void)set_cut(Ind, 0, 0);
-		//	if (p_ptr->fruit_bat != -1) (void)set_food(Ind, PY_FOOD_MAX - 1);
-		/* if (p_ptr->food < PY_FOOD_FULL) */
-		(void)set_food(Ind, PY_FOOD_FULL - 1);
-
-		/* Don't have 'vegetable' ghosts running around after equipment was dropped */
-		p_ptr->safe_sane = TRUE;
-		p_ptr->update |= PU_SANITY;
-		update_stuff(Ind);
-		p_ptr->safe_sane = FALSE;
-
-		/* Tell him */
-		msg_print(Ind, "\374\377RYou die.");
-//		msg_print(Ind, NULL);
-		if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100)) || (streq(p_ptr->died_from, "Insanity"))) {
-			msg_format(Ind, "\374\377RYou have been killed by %s.", p_ptr->died_from);
-		}
-		else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450))) {
-			msg_format(Ind, "\374\377RYou have been annihilated by %s.", p_ptr->died_from);
-		}
-		else {
-			msg_format(Ind, "\374\377RYou have been vaporized by %s.", p_ptr->died_from);
-		}
+	else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450))) {
+		msg_format(Ind, "\374\377RYou have been annihilated by %s.", p_ptr->died_from);
+	}
+	else {
+		msg_format(Ind, "\374\377RYou have been vaporized by %s.", p_ptr->died_from);
+	}
 
 #if CHATTERBOX_LEVEL > 2
-		if (p_ptr->last_words)
-		{
-			char death_message[80];
+	if (p_ptr->last_words) {
+		char death_message[80];
 
-			(void)get_rnd_line("death.txt", 0, death_message, 80);
-			msg_print(Ind, death_message);
-		}
+		(void)get_rnd_line("death.txt", 0, death_message, 80);
+		msg_print(Ind, death_message);
+	}
 #endif	// CHATTERBOX_LEVEL
 
 #if (MAX_PING_RECVS_LOGGED > 0)
-		/* Print last ping reception times */
-		struct timeval now;
-		gettimeofday(&now, NULL);
-		s_printf("PING_RECEIVED:");
-		/* Starting from latest */
-		for (i = 0; i < MAX_PING_RECVS_LOGGED; i++) {
-			j = (p_ptr->pings_received_head - i + MAX_PING_RECVS_LOGGED) % MAX_PING_RECVS_LOGGED;
-			if (p_ptr->pings_received[j].tv_sec) {
-				s_printf(" %s", timediff(&p_ptr->pings_received[j], &now));
-			}
+	/* Print last ping reception times */
+	struct timeval now;
+	gettimeofday(&now, NULL);
+	s_printf("PING_RECEIVED:");
+	/* Starting from latest */
+	for (i = 0; i < MAX_PING_RECVS_LOGGED; i++) {
+		j = (p_ptr->pings_received_head - i + MAX_PING_RECVS_LOGGED) % MAX_PING_RECVS_LOGGED;
+		if (p_ptr->pings_received[j].tv_sec) {
+			s_printf(" %s", timediff(&p_ptr->pings_received[j], &now));
 		}
-		s_printf("\n");
+	}
+	s_printf("\n");
 #endif
 
-		Send_chardump(Ind, "-death");
+	Send_chardump(Ind, "-death");
 
-		/* Turn him into a ghost */
-		p_ptr->ghost = 1;
+	/* Turn him into a ghost */
+	p_ptr->ghost = 1;
 
-		/* Hack -- drop bones :) */
-		for (i = 0; i < 4; i++)
-		{
-			object_type	forge;
-			o_ptr = &forge;
+	/* Hack -- drop bones :) */
+	for (i = 0; i < 4; i++) {
+		object_type	forge;
+		o_ptr = &forge;
 
-			invcopy(o_ptr, lookup_kind(TV_SKELETON,
-						i ? SV_BROKEN_BONE : SV_BROKEN_SKULL));
-			object_known(o_ptr);
-			object_aware(Ind, o_ptr);
-			o_ptr->owner = p_ptr->id;
-			o_ptr->owner_mode = p_ptr->mode;
-			o_ptr->level = 0;
-			o_ptr->note = quark_add(format("# of %s", p_ptr->name));
-			/* o_ptr->note = quark_add(format("#of %s", p_ptr->name));
-			the_sandman: removed the auto-space-padding on {# inscs */
+		invcopy(o_ptr, lookup_kind(TV_SKELETON, i ? SV_BROKEN_BONE : SV_BROKEN_SKULL));
+		object_known(o_ptr);
+		object_aware(Ind, o_ptr);
+		o_ptr->owner = p_ptr->id;
+		o_ptr->owner_mode = p_ptr->mode;
+		o_ptr->level = 0;
+		o_ptr->note = quark_add(format("# of %s", p_ptr->name));
+		/* o_ptr->note = quark_add(format("#of %s", p_ptr->name));
+		the_sandman: removed the auto-space-padding on {# inscs */
 
-			if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
-			else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
-			else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
-			(void)drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-		}
-
-		/* Give him his hit points back */
-		p_ptr->chp = p_ptr->mhp;
-		p_ptr->chp_frac = 0;
-
-		/* Teleport him */
-		/* XXX p_ptr->death allows teleportation even when NO_TELE etc. */
-		teleport_player(Ind, 200, TRUE);
-
-		/* Hack -- Give him/her the newbie death guide */
-//		if (p_ptr->max_plv < 20)	/* Now it's for everyone */
-		{
-			object_type	forge;
-			o_ptr = &forge;
-
-			invcopy(o_ptr, lookup_kind(TV_PARCHMENT, SV_PARCHMENT_DEATH));
-			object_known(o_ptr);
-			object_aware(Ind, o_ptr);
-			o_ptr->owner = p_ptr->id;
-			o_ptr->owner_mode = p_ptr->mode;
-			o_ptr->level = 1;
-			(void)inven_carry(Ind, o_ptr);
-		}
-		/* Cancel any WOR spells */
-		p_ptr->word_recall = 0;
-
-		/* He is carrying nothing */
-		p_ptr->inven_cnt = 0;
-
-		p_ptr->deaths++;
+		if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
+		else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
+		else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
+		(void)drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 	}
-	
+
+	/* Give him his hit points back */
+	p_ptr->chp = p_ptr->mhp;
+	p_ptr->chp_frac = 0;
+
+	/* Teleport him */
+	/* XXX p_ptr->death allows teleportation even when NO_TELE etc. */
+	teleport_player(Ind, 200, TRUE);
+
+	/* Hack -- Give him/her the newbie death guide */
+//	if (p_ptr->max_plv < 20)	/* Now it's for everyone */
+	{
+		object_type	forge;
+		o_ptr = &forge;
+
+		invcopy(o_ptr, lookup_kind(TV_PARCHMENT, SV_PARCHMENT_DEATH));
+		object_known(o_ptr);
+		object_aware(Ind, o_ptr);
+		o_ptr->owner = p_ptr->id;
+		o_ptr->owner_mode = p_ptr->mode;
+		o_ptr->level = 1;
+		(void)inven_carry(Ind, o_ptr);
+	}
+	/* Cancel any WOR spells */
+	p_ptr->word_recall = 0;
+
+	/* He is carrying nothing */
+	p_ptr->inven_cnt = 0;
+
+	p_ptr->deaths++;
+
 	/* Remove the death flag */
 	p_ptr->death = 0;
 
@@ -7903,11 +7717,8 @@ for(i=1; i < 5; i++) {
 		/* Recall even invisible uniques or winners */
 		if (p_ptr->mon_vis[m_idx] || (r_ptr->flags1 & RF1_UNIQUE))
 		{
-			/* Count kills this life */
-			if (r_ptr->r_pkills < MAX_SHORT) r_ptr->r_pkills++;
-
 			/* Count kills in all lives */
-			if (r_ptr->r_tkills < MAX_SHORT) r_ptr->r_tkills++;
+			r_ptr->r_tkills++;
 
 			/* Hack -- Auto-recall */
 			recent_track(m_ptr->r_idx);

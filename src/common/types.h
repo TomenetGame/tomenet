@@ -541,18 +541,16 @@ struct monster_race
 	char x_char;			/* Desired monster character */
 
 
-	byte max_num;			/* Maximum population allowed per level */
+	s32b max_num;			/* Maximum population allowed per level */
 
-	byte cur_num;			/* Monster population on current level */
+	s32b cur_num;			/* Monster population on current level */
 
+	s32b r_sights;			/* Count sightings of this monster */
+	s32b r_deaths;			/* Count deaths from this monster */
+	s32b r_tkills;			/* Count monsters killed by all players */
 
-	s32b killer;			/* ID of the player who killed him */
-
-	s16b r_sights;			/* Count sightings of this monster */
-	s16b r_deaths;			/* Count deaths from this monster */
-
+#ifdef OLD_MONSTER_LORE
 	s16b r_pkills;			/* Count monsters killed in this life */
-	s16b r_tkills;			/* Count monsters killed in all lives */
 
 	byte r_wake;			/* Number of times woken up (?) */
 	byte r_ignore;			/* Number of times ignored (?) */
@@ -560,8 +558,6 @@ struct monster_race
 	/*byte r_xtra1;			changed to time for japanese patch APD Something (unused)
 	  byte r_xtra2;                    Something (unused) */
 	  
-	s32b respawn_timer;			/* The amount of time until the unique respawns */
-
 	byte r_drop_gold;		/* Max number of gold dropped at once */
 	byte r_drop_item;		/* Max number of item dropped at once */
 
@@ -583,6 +579,8 @@ struct monster_race
 
 	u32b r_flags0;			/* Observed racial flags */
 #endif
+#endif
+
 	obj_theme drops;		/* The drops type */
 	
 	int u_idx;			/* Counter for sorted unique positioning */
@@ -2777,11 +2775,19 @@ struct player_type
 	int shoot_till_kill_book, shoot_till_kill_spell;
 	bool shadow_running;
 	bool dual_mode; /* for dual-wield: TRUE = dual-mode, FALSE = main-hand-mode */
+	
+#ifdef ENABLE_RCRAFT
+	/* Last attack spell cast for ftk mode */
+	u32b shoot_till_kill_rune_spell;
+	byte shoot_till_kill_rune_modifier;
+#endif
 
+#if 0 /* deprecated */
 	/* NOT IMPLEMENTED YET: add spell array for quick access via new method of macroing spells
 	   by specifying the spell name instead of a book and position - C. Blue */
 	char spell_name[100][20];
 	int spell_book[100], spell_pos[100];
+#endif
 
 	bool aura[MAX_AURAS]; /* allow toggling auras for possibly more tactical utilization - C. Blue */
 	

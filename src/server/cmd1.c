@@ -1372,10 +1372,14 @@ void search(int Ind)
 						/* Pick a trap */
 						pick_trap(wpos, y, x);
 
-						if (!c_ptr->m_idx) {
-							/* Always forcibly draw traps when they're detected - mikaelh */
+						if (c_ptr->o_idx && !c_ptr->m_idx) {
 							byte a = get_trap_color(Ind, cs_ptr->sc.trap.t_idx, c_ptr->feat);
+
+							/* Hack - Always show traps under items when detecting - mikaelh */
 							draw_spot(Ind, y, x, a, '^');
+						} else {
+							/* Normal redraw */
+							lite_spot(Ind, y, x);
 						}
 
 						/* Message */
@@ -1542,7 +1546,7 @@ void carry(int Ind, int pickup, int confirm)
 			   (long int)o_ptr->pval, o_name);
 
 #ifdef USE_SOUND_2010
-		sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND);
+		sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
 /* #if DEBUG_LEVEL > 3 */
@@ -2547,9 +2551,9 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 #ifdef USE_SOUND_2010
 				if (sfx == 0) {
 					if (o_ptr->k_idx && is_weapon(o_ptr->tval)
-						sound(Ind, "miss_weapon", "miss", SFX_TYPE_ATTACK);
+						sound(Ind, "miss_weapon", "miss", SFX_TYPE_ATTACK, FALSE);
 					else
-						sound(Ind, "miss", NULL, SFX_TYPE_ATTACK);
+						sound(Ind, "miss", NULL, SFX_TYPE_ATTACK, FALSE);
 				}
 #endif
 				continue;
@@ -2562,9 +2566,9 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 #ifdef USE_SOUND_2010
 				if (sfx == 0) {
 					if (o_ptr->k_idx && is_weapon(o_ptr->tval))
-						sound(Ind, "miss_weapon", "miss", SFX_TYPE_ATTACK);
+						sound(Ind, "miss_weapon", "miss", SFX_TYPE_ATTACK, FALSE);
 					else
-						sound(Ind, "miss", NULL, SFX_TYPE_ATTACK);
+						sound(Ind, "miss", NULL, SFX_TYPE_ATTACK, FALSE);
 				}
 #endif
 				continue;
@@ -2582,7 +2586,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 					msg_format(0 - c_ptr->m_idx, "\377%cYou block %s's attack!", COLOUR_BLOCK_GOOD, p_ptr->name);
 #ifdef USE_SOUND_2010
 					if (sfx == 0) {
-						sound(Ind, "block_shield", NULL, SFX_TYPE_ATTACK);
+						sound(Ind, "block_shield", NULL, SFX_TYPE_ATTACK, FALSE);
 					}
 #endif
 					continue;
@@ -2599,7 +2603,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 					msg_format(0 - c_ptr->m_idx, "\377%cYou parry %s's attack!", COLOUR_PARRY_GOOD, p_ptr->name);
 #ifdef USE_SOUND_2010
 					if (sfx == 0) {
-						sound(Ind, "parry_weapon", "parry", SFX_TYPE_ATTACK);
+						sound(Ind, "parry_weapon", "parry", SFX_TYPE_ATTACK, FALSE);
 					}
 #endif
 					continue;
@@ -2610,15 +2614,15 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 #ifdef USE_SOUND_2010
 			if (o_ptr->k_idx && is_weapon(o_ptr->tval))
 				switch(o_ptr->tval) {
-				case TV_SWORD: sound(Ind, "hit_sword", "hit", SFX_TYPE_ATTACK); break;
-				case TV_BLUNT: if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit", SFX_TYPE_ATTACK);
-						else sound(Ind, "hit_blunt", "hit", SFX_TYPE_ATTACK); break;
-				case TV_AXE: sound(Ind, "hit_axe", "hit", SFX_TYPE_ATTACK); break;
-				case TV_POLEARM: sound(Ind, "hit_polearm", "hit", SFX_TYPE_ATTACK); break;
+				case TV_SWORD: sound(Ind, "hit_sword", "hit", SFX_TYPE_ATTACK, FALSE); break;
+				case TV_BLUNT: if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit", SFX_TYPE_ATTACK, FALSE);
+						else sound(Ind, "hit_blunt", "hit", SFX_TYPE_ATTACK, FALSE); break;
+				case TV_AXE: sound(Ind, "hit_axe", "hit", SFX_TYPE_ATTACK, FALSE); break;
+				case TV_POLEARM: sound(Ind, "hit_polearm", "hit", SFX_TYPE_ATTACK, FALSE); break;
 				}
 			else
 				if (sfx == 0) {
-					sound(Ind, "hit", NULL, SFX_TYPE_ATTACK);
+					sound(Ind, "hit", NULL, SFX_TYPE_ATTACK, FALSE);
 				}
 #else
 			sound(Ind, SOUND_HIT);
@@ -3058,9 +3062,9 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 #ifdef USE_SOUND_2010
 			if (sfx == 0) {
 				if (o_ptr->k_idx && is_weapon(o_ptr->tval))
-					sound(Ind, "miss_weapon", "miss", SFX_TYPE_ATTACK);
+					sound(Ind, "miss_weapon", "miss", SFX_TYPE_ATTACK, FALSE);
 				else
-					sound(Ind, "miss", NULL, SFX_TYPE_ATTACK);
+					sound(Ind, "miss", NULL, SFX_TYPE_ATTACK, FALSE);
 			}
 #else
 			sound(Ind, SOUND_MISS);
@@ -3383,14 +3387,14 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			if (sfx == 0) {
 				if (o_ptr->k_idx && is_weapon(o_ptr->tval))
 					switch(o_ptr->tval) {
-					case TV_SWORD: sound(Ind, "hit_sword", "hit", SFX_TYPE_ATTACK); break;
-					case TV_BLUNT: if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit", SFX_TYPE_ATTACK);
-							else sound(Ind, "hit_blunt", "hit", SFX_TYPE_ATTACK); break;
-					case TV_AXE: sound(Ind, "hit_axe", "hit", SFX_TYPE_ATTACK); break;
-					case TV_POLEARM: sound(Ind, "hit_polearm", "hit", SFX_TYPE_ATTACK); break;
+					case TV_SWORD: sound(Ind, "hit_sword", "hit", SFX_TYPE_ATTACK, FALSE); break;
+					case TV_BLUNT: if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit", SFX_TYPE_ATTACK, FALSE);
+							else sound(Ind, "hit_blunt", "hit", SFX_TYPE_ATTACK, FALSE); break;
+					case TV_AXE: sound(Ind, "hit_axe", "hit", SFX_TYPE_ATTACK, FALSE); break;
+					case TV_POLEARM: sound(Ind, "hit_polearm", "hit", SFX_TYPE_ATTACK, FALSE); break;
 					}
 				else
-					sound(Ind, "hit", NULL, SFX_TYPE_ATTACK);
+					sound(Ind, "hit", NULL, SFX_TYPE_ATTACK, FALSE);
 			}
 #else
 			sound(Ind, SOUND_HIT);
@@ -3871,7 +3875,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 							/* Confuse the monster */
 							if (r_ptr->flags3 & RF3_NO_CONF)
 							{
+#ifdef OLD_MONSTER_LORE
 								if (p_ptr->mon_vis[c_ptr->m_idx]) r_ptr->r_flags3 |= RF3_NO_CONF;
+#endif
 								msg_format(Ind, "%^s is unaffected.", m_name);
 							}
 							else if (rand_int(100) < r_ptr->level)
@@ -3900,7 +3906,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 							/* Stun the monster */
 							if (r_ptr->flags3 & RF3_NO_STUN)
 							{
+#ifdef OLD_MONSTER_LORE
 								if (p_ptr->mon_vis[c_ptr->m_idx]) r_ptr->r_flags3 |= RF3_NO_STUN;
+#endif
 								msg_format(Ind, "%^s is unaffected.", m_name);
 							}
 							else if (rand_int(115) < r_ptr->level)
@@ -3983,7 +3991,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				/* Confuse the monster */
 				if (r_ptr->flags3 & RF3_NO_CONF)
 				{
+#ifdef OLD_MONSTER_LORE
 					if (p_ptr->mon_vis[c_ptr->m_idx]) r_ptr->r_flags3 |= RF3_NO_CONF;
+#endif
 					msg_format(Ind, "%^s is unaffected.", m_name);
 				}
 				else if (rand_int(100) < r_ptr->level)
@@ -4063,7 +4073,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				/* Stun the monster */
 				if (r_ptr->flags3 & RF3_NO_STUN)
 				{
+#ifdef OLD_MONSTER_LORE
 					if (p_ptr->mon_vis[c_ptr->m_idx]) r_ptr->r_flags3 |= RF3_NO_STUN;
+#endif
 					msg_format(Ind, "%^s is unaffected.", m_name);
 				}
 				else if (rand_int(115) < r_ptr->level)
@@ -4126,14 +4138,14 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				msg_format(Ind, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
 #ifdef USE_SOUND_2010
 				if (sfx == 0) {
-					sound(Ind, "block_shield", NULL, SFX_TYPE_ATTACK);
+					sound(Ind, "block_shield", NULL, SFX_TYPE_ATTACK, FALSE);
 				}
 #endif
 			} else if (!m_ptr->csleep && magik(parry)) {
 				msg_format(Ind, "\377%c%s parries.", COLOUR_PARRY_MON, m_name);
 #ifdef USE_SOUND_2010
 				if (sfx == 0) {
-					sound(Ind, "parry_weapon", "parry", SFX_TYPE_ATTACK);
+					sound(Ind, "parry_weapon", "parry", SFX_TYPE_ATTACK, FALSE);
 				}
 #endif
 			} else {
@@ -4141,9 +4153,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 #ifdef USE_SOUND_2010
 				if (sfx == 0) {
 					if (o_ptr->k_idx && is_weapon(o_ptr->tval))
-						sound(Ind, "miss_weapon", "miss", SFX_TYPE_ATTACK);
+						sound(Ind, "miss_weapon", "miss", SFX_TYPE_ATTACK, FALSE);
 					else
-						sound(Ind, "miss", NULL, SFX_TYPE_ATTACK);
+						sound(Ind, "miss", NULL, SFX_TYPE_ATTACK, FALSE);
 				}
 #else
 				sound(Ind, SOUND_MISS);
@@ -4322,7 +4334,9 @@ void touch_zap_player(int Ind, int m_idx)
 
 			msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
 			take_hit(Ind, aura_damage, aura_dam, 0);
+#ifdef OLD_MONSTER_LORE
 			r_ptr->r_flags2 |= RF2_AURA_FIRE;
+#endif
 			handle_stuff(Ind);
 		}
 	}
@@ -4345,7 +4359,9 @@ void touch_zap_player(int Ind, int m_idx)
 
 			msg_format(Ind, "You get zapped for \377w%d\377w damage!", aura_damage);
 			take_hit(Ind, aura_damage, aura_dam, 0);
+#ifdef OLD_MONSTER_LORE
 			r_ptr->r_flags2 |= RF2_AURA_ELEC;
+#endif
 			handle_stuff(Ind);
 		}
 	}
@@ -4368,7 +4384,9 @@ void touch_zap_player(int Ind, int m_idx)
 
 			msg_format(Ind, "You are freezing for \377w%d\377w damage!", aura_damage);
 			take_hit(Ind, aura_damage, aura_dam, 0);
+#ifdef OLD_MONSTER_LORE
 			r_ptr->r_flags3 |= RF3_AURA_COLD;
+#endif
 			handle_stuff(Ind);
 		}
 	}

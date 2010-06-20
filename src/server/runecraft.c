@@ -61,19 +61,30 @@ Skill tree:
 #define R_CAP 60 // / 100
 
 byte execute_rspell (u32b Ind, byte dir, u32b spell, byte imperative);
+s16b rspell_time(u32b Ind, byte imperative);
+bool is_attack(u32b s_flags);
 u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration, s16b cost, u32b type, s16b diff, byte imper, u32b type_flags, u16b s_av, s16b mali);
-u32b rspell_type (u32b flags);
+u32b rspell_type(u32b flags);
 s16b rspell_diff(u32b Ind, byte imperative, s16b s_cost, u16b s_av, u32b s_type, u32b s_flags, s16b * mali);
 u16b rspell_skill(u32b Ind, u32b s_flags);
 u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cost, u32b s_type, char * attacker, byte imperative, u32b s_flags);
 byte rspell_penalty(u32b Ind, u16b pow);
-u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_flags, u16b s_av, byte imperative);
-s16b rspell_cost (u32b Ind, u16b s_type, u32b s_flags, u16b s_av, byte imperative);
+u16b rspell_dam(u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_flags, u16b s_av, byte imperative);
+s16b rspell_cost(u32b Ind, u16b s_type, u32b s_flags, u16b s_av, byte imperative);
 byte rspell_check(u32b Ind, s16b * mali, u32b s_flags);
 byte meth_to_id(u32b s_meth);
 byte runes_in_flag(byte runes[], u32b flags);
 byte rune_value(byte runes[]);
 int b_compare (const void * a, const void * b); //Byte comparison for qsort
+
+s16b rspell_time(u32b Ind, byte imperative)
+{
+	player_type * p_ptr = Players[Ind];
+	
+	int cast_time = r_imperatives[imperative].time;
+	
+	return (level_speed(&p_ptr->wpos) * cast_time) / 10;
+}
 
 byte runes_in_flag(byte runes[], u32b flags)
 {
@@ -915,7 +926,6 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 	
 	int modifier_value = r_imperatives[imper].dam;
 	modifier_value = (modifier_value == 0 ? randint(11) + 4 : modifier_value);
-	int cast_time = r_imperatives[imper].time;
 	
 	s16b speed_max = modifier_value; //6 - 15
 	s16b speed = 0;
@@ -928,6 +938,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 	
 	int level = s_av - e_level;
 	int teleport_level = (level > 5 ? level : 5);
+	
 	cave_type **zcave; //For glyph removal function of "disperse"
 	if (!(zcave = getcave(&p_ptr->wpos))) return 0;
 	
@@ -1761,12 +1772,22 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 		rspell_do_penalty(Ind, rspell_penalty(Ind, difficulty), damage, duration, cost, gf_type, "",  imper, type_flags); //Then do the self-harm
 	}
 	
-	/* Time to cast can be varied up to 20% by the active spell modifier. */
-	p_ptr->energy -= (level_speed(&p_ptr->wpos) * cast_time) / 10;
+	p_ptr->energy -= rspell_time(Ind, imper);
+	
+	if (p_ptr->shooty_till_kill)
+	{
+		p_ptr->shooting_till_kill = TRUE;
+		p_ptr->shooty_till_kill = FALSE;
+	}
 	
 	p_ptr->redraw |= PR_MANA;
 	
 	return 0;
+}
+
+bool is_attack(u32b s_flags)
+{
+	return (!(s_flags & R_MELE) && !(s_flags & R_SELF) && !(s_flags & R_WAVE) && !(s_flags & R_LOS));
 }
 
 byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative)
@@ -1780,10 +1801,13 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative)
 	u16b radius = 0; u16b duration = 0;
 	s16b mali = 0;
 	s_av = rspell_skill(Ind, s_flags);
-	int cast_time = r_imperatives[imperative].time;
+	
+	s_cost = rspell_cost(Ind, s_type, s_flags, s_av, imperative);
+	s_dam = rspell_dam(Ind, &radius, &duration, s_type, s_flags, s_av, imperative);
+	s_diff = rspell_diff(Ind, imperative, s_cost, s_av, s_type, s_flags, &mali);
 	
 	/* Time to cast can be varied up to 20% by the active spell modifier. */
-	if (p_ptr->energy < (level_speed(&p_ptr->wpos) * cast_time) / 10)
+	if (p_ptr->energy < rspell_time(Ind, imperative))
 	{
 		return 0;
 	}
@@ -1806,15 +1830,47 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative)
 		return 0;
 	}
 	
-	s_cost = rspell_cost(Ind, s_type, s_flags, s_av, imperative);
-	s_dam = rspell_dam(Ind, &radius, &duration, s_type, s_flags, s_av, imperative);
+	if (p_ptr->shoot_till_kill)
+	{
+		if (is_attack(s_flags))
+		{
+			/* Set future FTK attack type, if we're trying something new */
+			if (p_ptr->shoot_till_kill_rune_spell != s_flags || p_ptr->shoot_till_kill_rune_modifier != imperative)
+			{
+				p_ptr->shoot_till_kill_rune_spell = s_flags;
+				p_ptr->shoot_till_kill_rune_modifier = imperative;
+			}
+			
+			if (p_ptr->shooting_till_kill)
+			{
+				p_ptr->shooting_till_kill = FALSE;
+				
+				/* Cancel if we've lost our target */
+				if (dir != 5 || !target_okay(Ind))
+					return 0;
+				
+				/* Cancel if we're going to automatically wake new monsters */
+				if (!projectable_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE))
+					return 0;
+				
+				/* Cancel if we're going to exhaust ourselves */
+				if (s_cost > p_ptr->csp)
+					return 0;
+				
+				/* Cancel if we're being stupid */
+				if (s_diff > 60)
+					return 0;
+
+				/* Continue casting after a successful cast */
+				p_ptr->shooty_till_kill = TRUE;
+			}
+		}
+	}
 	
 	if (!rspell_check(Ind, &mali, s_flags))
 	{
 		mali += 5; //+15% fail for first missing rune, +10% per additional rune
 	}
-	
-	s_diff = rspell_diff(Ind, imperative, s_cost, s_av, s_type, s_flags, &mali);
 	
 	cast_runespell(Ind, dir, s_dam, radius, duration, s_cost, s_type, s_diff, imperative, s_flags, s_av, mali);
 	

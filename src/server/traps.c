@@ -867,7 +867,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	c_ptr=&zcave[y][x];
 
 #ifdef USE_SOUND_2010
-	sound(Ind, "trap_setoff", NULL, SFX_TYPE_MISC);
+	sound(Ind, "trap_setoff", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 
 	if (item < 0)
@@ -4482,10 +4482,10 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, int sval)
 
 #ifdef USE_SOUND_2010
 	if (rad && who > 0) { /* TODO: make it audible for ALL players in LOS maybe? probably too much */
-		if (typ == GF_ROCKET) sound(who, "rocket", NULL, SFX_TYPE_MISC);
-		else sound(who, "cast_ball", NULL, SFX_TYPE_MISC);
+		if (typ == GF_ROCKET) sound(who, "rocket", NULL, SFX_TYPE_MISC, FALSE);
+		else sound(who, "cast_ball", NULL, SFX_TYPE_MISC, FALSE);
 	}
-//	else sound(Ind, "", NULL, SFX_TYPE_MISC);
+//	else sound(Ind, "", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 
 	/* Actually hit the monster */
@@ -4647,7 +4647,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 #ifdef USE_SOUND_2010
 				/* sound only if we can see the trap detonate */
 				if (who > 0 && los(&m_ptr->wpos, Players[who]->py, Players[who]->px, y, x)) {
-					sound(who, "detonation", NULL, SFX_TYPE_MISC);
+					sound(who, "detonation", NULL, SFX_TYPE_MISC, FALSE);
 				}
 #endif
 				break;

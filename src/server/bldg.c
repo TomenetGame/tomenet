@@ -1648,6 +1648,7 @@ static void sell_quest_monster(void)
 		                 "about the %s, (check your recall)",
 		                 r_name + r_ptr->name);
 
+#ifdef OLD_MONSTER_LORE
 		r_ptr->r_wake = r_ptr->r_ignore = MAX_UCHAR;
 
 		/* Observe "maximal" attacks */
@@ -1688,6 +1689,7 @@ static void sell_quest_monster(void)
 		r_ptr->r_flags4 = r_ptr->flags7;
 		r_ptr->r_flags5 = r_ptr->flags8;
 		r_ptr->r_flags6 = r_ptr->flags9;
+#endif
 
 		msg_print(NULL);
 

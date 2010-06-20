@@ -2988,8 +2988,10 @@ bool detect_invisible(int Ind)
 			byte a;
 			char c;
 
+#ifdef OLD_MONSTER_LORE
 			/* Take note that they are invisible */
 			r_ptr->r_flags2 |= RF2_INVISIBLE;
+#endif
 
 			/* Hack - Temporarily visible */
 			p_ptr->mon_vis[i] = TRUE;
@@ -3463,17 +3465,14 @@ bool detect_bounty(int Ind, int rad)
 			}
 			if (detect) lite_spot(Ind, i, j);
 			if (detect_trap) {
-				/* Hack - Always show the trap after detecting it - mikaelh */
-
-				/* Don't override players or monsters */
-				if (!c_ptr->m_idx) {
+				if (c_ptr->o_idx && !c_ptr->m_idx) {
 					byte a = get_trap_color(Ind, t_idx, c_ptr->feat);
 
-					/* Hack -- always l.blue if underwater */
-					if (c_ptr->feat == FEAT_DEEP_WATER || c_ptr->feat == FEAT_SHAL_WATER)
-						a = TERM_L_BLUE;
-
+					/* Hack - Always show traps under items when detecting - mikaelh */
 					draw_spot(Ind, i, j, a, '^');
+				} else {
+					/* Normal redraw */
+					lite_spot(Ind, i, j);
 				}
 			}
 		}
@@ -3604,8 +3603,6 @@ bool detect_trap(int Ind, int rad)
 			/* Detect invisible traps */
 			//			if (c_ptr->feat == FEAT_INVIS)
 			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
-				byte a;
-
 				t_idx = cs_ptr->sc.trap.t_idx;
 
 				if (!cs_ptr->sc.trap.found)
@@ -3623,15 +3620,14 @@ bool detect_trap(int Ind, int rad)
 				/* Redraw */
 				lite_spot(Ind, i, j);
 
-				a = get_trap_color(Ind, t_idx, c_ptr->feat);
+				if (c_ptr->o_idx && !c_ptr->m_idx) {
+					byte a = get_trap_color(Ind, t_idx, c_ptr->feat);
 
-				/* Hack -- always l.blue if underwater */
-				if (c_ptr->feat == FEAT_DEEP_WATER || c_ptr->feat == FEAT_SHAL_WATER)
-					a = TERM_L_BLUE;
-
-				if (!c_ptr->m_idx) {
-					/* Hack - Always show the trap after detecting it - mikaelh */
+					/* Hack - Always show traps under items when detecting - mikaelh */
 					draw_spot(Ind, i, j, a, '^');
+				} else {
+					/* Normal redraw */
+					lite_spot(Ind, i, j);
 				}
 
 #if 0
@@ -5850,7 +5846,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 				/* Message */
 				msg_print(Ind, "\377oThere is a searing blast of light and a terrible shockwave!");
 #ifdef USE_SOUND_2010
-				sound(Ind, "destruction", NULL, SFX_TYPE_MISC);
+				sound(Ind, "destruction", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 
 				/* Blind the player */
@@ -6066,7 +6062,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 			everyone_lite_spot(wpos, y, x);
 
 #ifdef USE_SOUND_2010
-			if (c_ptr->m_idx < 0) sound(-c_ptr->m_idx, "earthquake", NULL, SFX_TYPE_MISC);
+			if (c_ptr->m_idx < 0) sound(-c_ptr->m_idx, "earthquake", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 
 			/* Skip the epicenter */
@@ -6862,7 +6858,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 	}
 #if 1
 #ifdef USE_SOUND_2010
-	if (typ == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_COMMAND);
+	if (typ == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_COMMAND, FALSE);
 	//might be too annoying for player ball spells, need maybe softer one?:
 	else {
 		/* The 'casts_ball' sound is only for attack spells */
@@ -6887,7 +6883,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 		    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 		    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
-			sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND);
+			sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, TRUE);
 	}
 #endif
 #endif
@@ -6933,8 +6929,8 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int inter
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
 
 #ifdef USE_SOUND_2010
-	if (typ == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_COMMAND);
-//too annoying, need softer sound imho	else sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND);
+	if (typ == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_COMMAND, FALSE);
+//too annoying, need softer sound imho	else sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
 	/* Hack: Make HEALINGCLOUD affect the caster too! */

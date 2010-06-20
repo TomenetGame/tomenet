@@ -1667,7 +1667,7 @@ static void player_outfit(int Ind)
                         o_ptr->level = 10;
 		}
 		/* Make the ring last only a certain period of time >:) - C. Blue */ 
-        	o_ptr->timeout = 3000 + rand_int(3001);                                   
+        	o_ptr->timeout = 3000 + rand_int(3001);
  #endif
 		do_player_outfit();
 	}
@@ -2665,12 +2665,6 @@ void server_birth(void)
 
 		/* Set his maximum creation number */
 		r_info[i].max_num = 1;
-		
-		/* Number of minutes until he respawns */
-		/* -1 is used to denote an undefined respawn time.  This should
-		 * be set when the unique is killed.
-		 */
-		r_info[i].respawn_timer = -1;
 	}
 
 	/* Set party zero's name to "Neutral" */

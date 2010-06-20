@@ -1809,6 +1809,7 @@ void player_desc(int Ind, char *desc, int Ind2, int mode)
  */
 void lore_do_probe(int m_idx)
 {
+#ifdef OLD_MONSTER_LORE
 	monster_type *m_ptr = &m_list[m_idx];
 
         monster_race *r_ptr = race_inf(m_ptr);
@@ -1817,6 +1818,7 @@ void lore_do_probe(int m_idx)
 	r_ptr->r_flags1 = r_ptr->flags1;
 	r_ptr->r_flags2 = r_ptr->flags2;
 	r_ptr->r_flags3 = r_ptr->flags3;
+#endif
 
 	/* Window stuff */
 	/*p_ptr->window |= (PW_MONSTER);*/
@@ -1838,6 +1840,7 @@ void lore_do_probe(int m_idx)
  */
 void lore_treasure(int m_idx, int num_item, int num_gold)
 {
+#ifdef OLD_MONSTER_LORE
 	monster_type *m_ptr = &m_list[m_idx];
 
         monster_race *r_ptr = race_inf(m_ptr);
@@ -1849,6 +1852,7 @@ void lore_treasure(int m_idx, int num_item, int num_gold)
 	/* Hack -- memorize the good/great flags */
 	if (r_ptr->flags1 & RF1_DROP_GOOD) r_ptr->r_flags1 |= RF1_DROP_GOOD;
 	if (r_ptr->flags1 & RF1_DROP_GREAT) r_ptr->r_flags1 |= RF1_DROP_GREAT;
+#endif
 }
 
 /*
@@ -1923,7 +1927,9 @@ static void sanity_blast(int Ind, int m_idx, bool necro)
 		msg_format(Ind, "You behold the %s visage of %s!",
 				horror_desc[(randint(MAX_HORROR))-1], m_name);
 
+#ifdef OLD_MONSTER_LORE
 		r_ptr->r_flags2 |= RF2_ELDRITCH_HORROR;
+#endif
 
 
 		/* Undead characters are 50% likely to be unaffected */
@@ -2301,6 +2307,7 @@ void update_mon(int m_idx, bool dist)
 						hard = flag = TRUE;
 					}
 
+#ifdef OLD_MONSTER_LORE
 					/* Apply telepathy */
 					if (hard)
 					{
@@ -2308,6 +2315,7 @@ void update_mon(int m_idx, bool dist)
 						if (r_ptr->flags2 & RF2_SMART) r_ptr->r_flags2 |= RF2_SMART;
 						if (r_ptr->flags2 & RF2_STUPID) r_ptr->r_flags2 |= RF2_STUPID;
 					}
+#endif
 				}
 			}
 
@@ -2336,7 +2344,7 @@ void update_mon(int m_idx, bool dist)
 				if (p_ptr->health_who == m_idx) p_ptr->redraw |= (PR_HEALTH);
 
 				/* Hack -- Count "fresh" sightings */
-				if (r_ptr->r_sights < MAX_SHORT) r_ptr->r_sights++;
+				r_ptr->r_sights++;
 
 				/* Disturb on appearance */
 				if(!m_list[m_idx].special && r_ptr->d_char != 't' &&
@@ -2346,11 +2354,13 @@ void update_mon(int m_idx, bool dist)
 			}
 
 			/* Memorize various observable flags */
-			if (do_no_esp) r_ptr->flags7 |= RF7_NO_ESP;
+#ifdef OLD_MONSTER_LORE
+			if (do_no_esp) r_ptr->r_flags7 |= RF7_NO_ESP;
 			if (do_empty_mind) r_ptr->r_flags2 |= RF2_EMPTY_MIND;
 			if (do_weird_mind) r_ptr->r_flags2 |= RF2_WEIRD_MIND;
 			if (do_cold_blood) r_ptr->r_flags2 |= RF2_COLD_BLOOD;
 			if (do_invisible) r_ptr->r_flags2 |= RF2_INVISIBLE;
+#endif
 
 			/* Efficiency -- Notice multi-hued monsters */
 //			if (r_ptr->flags1 & RF1_ATTR_MULTI) scan_monsters = TRUE;

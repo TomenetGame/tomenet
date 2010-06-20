@@ -2161,41 +2161,41 @@ bool add_ignore(int Ind, cptr name)
 	}
 
 #ifdef TOMENET_WORLDS
-	if((pname=strchr(name, '@'))){
-		struct remote_ignore *curr, *prev=NULL;
+	if ((pname = strchr(name, '@'))){
+		struct remote_ignore *curr, *prev = NULL;
 		struct rplist *w_player;
-		strncpy(search, name, pname-name);
-		search[pname-name]='\0';
-		snum=atoi(pname+1);
-		w_player=world_find_player(search, snum);
-		if(!w_player){
+		strncpy(search, name, pname - name);
+		search[pname - name] = '\0';
+		snum = atoi(pname + 1);
+		w_player = world_find_player(search, snum);
+		if (!w_player) {
 			msg_format(Ind, "Could not find %s in the world", search);
 			return(FALSE);
 		}
-		curr=p_ptr->w_ignore;
-		while(curr){
-			if(curr->serverid==w_player->server && curr->id==w_player->id) break;
-			prev=curr;
-			curr=curr->next;
+		curr = p_ptr->w_ignore;
+		while (curr) {
+			if (curr->serverid == w_player->server && curr->id == w_player->id) break;
+			prev = curr;
+			curr = curr->next;
 		}
-		if(!curr){
+		if (!curr) {
 			msg_format(Ind, "Ignoring %s across the world", w_player->name);
-			curr=malloc(sizeof(struct remote_ignore));
-			curr->serverid=w_player->server;
-			curr->id=w_player->id;
-			curr->next=NULL;
-			if(prev)
-				prev->next=curr;
+			curr = NEW(struct remote_ignore);
+			curr->serverid = w_player->server;
+			curr->id = w_player->id;
+			curr->next = NULL;
+			if (prev)
+				prev->next = curr;
 			else
-				p_ptr->w_ignore=curr;
+				p_ptr->w_ignore = curr;
 		}
-		else{
+		else {
 			msg_format(Ind, "Hearing %s from across the world", search);
-			if(!prev)
-				p_ptr->w_ignore=curr->next;
+			if (!prev)
+				p_ptr->w_ignore = curr->next;
 			else
-				prev->next=curr->next;
-			free(curr);
+				prev->next = curr->next;
+			FREE(curr, struct remote_ignore);
 		}
 		return(TRUE);
 	}
