@@ -707,8 +707,6 @@ static void save_prefs_aux(term_data *td, cptr sec_name)
 {
 	char buf[32];
 
-	RECT rc;
-
 	/* Visible (Sub-windows) */
 	if (td != &data[0])
 	{
