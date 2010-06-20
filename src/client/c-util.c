@@ -4939,7 +4939,7 @@ void interact_audio(void) {
 
 			/* Describe */
 			Term_putstr(30,  0, -1, TERM_L_UMBER, "*** Audio Mixer ***");
-			Term_putstr(6, 1, -1, TERM_L_UMBER, "Press arrow keys to navigate/modify, RETURN to toggle, ESC to leave.");
+			Term_putstr(3, 1, -1, TERM_L_UMBER, "Press arrow keys to navigate/modify, RETURN/SPACE to toggle, ESC to leave.");
 
 			/* draw mixer */
 			Term_putstr(item_x[0], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_master ? "\377GX\377w" : " "));
@@ -5034,6 +5034,7 @@ void interact_audio(void) {
 			break;
 		case '\n':
 		case '\r':
+		case ' ':
 			switch (cur_item) {
 			case 0: cfg_audio_master = !cfg_audio_master; break;
 			case 1: cfg_audio_music = !cfg_audio_music; break;
