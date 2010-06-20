@@ -6539,6 +6539,8 @@ Note that not every skill is available to every profession (class).
                                 sanity will be displayed as a bar.
                                 At 20 points you'll get the percentage
                                 displayed. At 40 the value will be shown.
+                                Note that Health skill stacks with +LIFE items
+                                (compare '+LIFE' in (5.8)).
     .Digging                    How well you are able to dig. Also affects
                                 your chance to find items, for the items to
                                 be good or even great, and affects the amount
