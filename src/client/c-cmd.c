@@ -1523,7 +1523,7 @@ void cmd_check_misc(void)
 
 void cmd_message(void)
 {
-	char buf[120];
+	char buf[121];
 	int i;
 
 	/* Wipe the whole buffer to stop valgrind from complaining about the color code conversion - mikaelh */
