@@ -709,8 +709,6 @@ static void save_prefs_aux(term_data *td, cptr sec_name)
 
 	RECT rc;
 
-	if (!td->w) return;
-
 	/* Visible (Sub-windows) */
 	if (td != &data[0])
 	{
@@ -748,18 +746,15 @@ static void save_prefs_aux(term_data *td, cptr sec_name)
 	wsprintf(buf, "%d", td->rows);
 	WritePrivateProfileString(sec_name, "Rows", buf, ini_file);
 
-	/* Acquire position */
-	GetWindowRect(td->w, &rc);
-
 	/* Current position (x) */
-	if (rc.left >= 0) {
-		wsprintf(buf, "%d", rc.left);
+	if (td->pos_x != -32000) { /* don't save windows in minimized state */
+		wsprintf(buf, "%d", td->pos_x);
 		WritePrivateProfileString(sec_name, "PositionX", buf, ini_file);
 	}
 
 	/* Current position (y) */
-	if (rc.top >= 0) {
-		wsprintf(buf, "%d", rc.top);
+	if (td->pos_y != -32000) { /* don't save windows in minimized state */
+		wsprintf(buf, "%d", td->pos_y);
 		WritePrivateProfileString(sec_name, "PositionY", buf, ini_file);
 	}
 }
@@ -3357,6 +3352,7 @@ static void hook_plog(cptr str)
  */
 static void hook_quit(cptr str)
 {
+	RECT rc;
 	int i;
 
 #ifdef USE_SOUND_2010
@@ -3388,12 +3384,22 @@ static void hook_quit(cptr str)
 	/* Sub-Windows */
 	for (i = MAX_TERM_DATA - 1; i >= 1; i--)
 	{
+		/* Hack - Save the window positions before destroying them - mikaelh */
+		GetWindowRect(data[i].w, &rc);
+		data[i].pos_x = rc.left;
+		data[i].pos_y = rc.top;
+
 		term_force_font(&data[i], NULL);
 		if (data[i].font_want) string_free(data[i].font_want);
 		if (data[i].graf_want) string_free(data[i].graf_want);
 		if (data[i].w) DestroyWindow(data[i].w);
 		data[i].w = 0;
 	}
+
+	/* Hack - Save the window positions before destroying them - mikaelh */
+	GetWindowRect(data[0].w, &rc);
+	data[0].pos_x = rc.left;
+	data[0].pos_y = rc.top;
 
 #ifdef USE_GRAPHICS
 	term_force_graf(&data[0], NULL);
