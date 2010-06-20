@@ -15481,11 +15481,12 @@ F:EVIL | RES_FIRE | RES_COLD | RES_ELEC | IM_POIS |
 F:NO_CONF | NO_SLEEP | NO_FEAR | RES_TELE | BASEANGBAND | HAS_LITE
 #F:AI_ANNOY
 S:1_IN_2 | 
-S:TPORT | TELE_LEVEL | BLIND | CONF | SCARE | CURSE | 
-S:BRAIN_SMASH | FORGET | BO_ICEE | BO_MANA | BO_PLAS | 
-S:BA_MANA | BA_FIRE | BA_WATE | BA_NETH | BA_DARK | BA_CHAO | 
-S:S_MONSTERS | S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON | S_WRAITH | S_UNIQUE | 
-S:RAISE_DEAD
+#S:CONF | SCARE | BO_ICEE | BO_PLAS | <- silyl spells
+#S:BLIND | CURSE | <- not totally silyl, but curse is easily countered by saving throw :/
+S:TPORT | BA_MANA | BA_FIRE | BA_WATE | BA_NETH | BA_DARK | BA_CHAO | 
+#S:S_MONSTERS | S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON | S_WRAITH | S_UNIQUE | 
+S:S_HI_MONSTERS | S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON | S_WRAITH | S_HI_UNIQUE | 
+S:FORGET | BO_MANA | TELE_LEVEL | BRAIN_SMASH | RAISE_DEAD
 #S:HAND_DOOM | 
 D:Mighty in spells and enchantments,he created the One Ring. 
 D:His eyes glow with power and with his gaze he seeks to destroy 
