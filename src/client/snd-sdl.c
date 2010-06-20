@@ -62,8 +62,28 @@ static Mix_Music* load_song(int idx, int subidx);
 /* Arbitary limit on number of music songs per situation */
 #define MAX_SONGS	3
 
-#if 1 /* use linear volume scale -- poly+50 would be best, but already causes mixer outtages if total volume becomes too small (ie < 1).. =_= */
- #define CALC_MIX_VOLUME(T, V)	((MIX_MAX_VOLUME * (cfg_audio_master ? ((T) ? (V) : 0) : 0) * cfg_audio_master_volume) / 10000)
+/* Exponential volume level table
+ * evlt[i] = round(0.09921 * exp(2.31 * i / 100))
+ */
+
+static s16b evlt[101] = { 12,
+  13,  13,  14,  14,  14,  15,  15,  15,  16,  16,
+  16,  17,  17,  18,  18,  18,  19,  19,  20,  20,
+  21,  21,  22,  22,  23,  23,  24,  24,  25,  25,
+  26,  27,  27,  28,  29,  29,  30,  31,  31,  32,
+  33,  34,  34,  35,  36,  37,  38,  38,  39,  40,
+  41,  42,  43,  44,  45,  46,  47,  48,  50,  51,
+  52,  53,  54,  56,  57,  58,  60,  61,  63,  64,
+  65,  67,  69,  70,  72,  73,  75,  77,  79,  81,
+  82,  84,  86,  88,  90,  93,  95,  97,  99, 102,
+ 104, 106, 109, 111, 114, 117, 119, 122, 125, 128
+};
+
+#if 1 /* Exponential volume scale - mikaelh */
+ #define CALC_MIX_VOLUME(T, V)	(cfg_audio_master * T * evlt[V] * evlt[cfg_audio_master_volume] / MIX_MAX_VOLUME)
+#endif
+#if 0 /* use linear volume scale -- poly+50 would be best, but already causes mixer outtages if total volume becomes too small (ie < 1).. =_= */
+ #define CALC_MIX_VOLUME(T, V)  ((MIX_MAX_VOLUME * (cfg_audio_master ? ((T) ? (V) : 0) : 0) * cfg_audio_master_volume) / 10000)
 #endif
 #if 0 /* use polynomial volume scale -- '+50' seems best, although some low-low combos already won't produce sound at all due to low mixer resolution. maybe just use linear scale, simply? */
  #define CALC_MIX_VOLUME(T, V)	((MIX_MAX_VOLUME * (cfg_audio_master ? ((T) ? (((V) + 50) * ((V) + 50)) / 100 - 25 : 0) : 0) * (((cfg_audio_master_volume + 50) * (cfg_audio_master_volume + 50)) / 100 - 25)) / 40000)
@@ -571,6 +591,7 @@ static bool play_sound(int event, int type, int vol, s32b player_id) {
 		channel_sample[s] = event;
 		channel_volume[s] = vol;
 		channel_player_id[s] = player_id;
+		/* Note: Linear scaling is used here to allow more precise control at the server end */
 		Mix_Volume(s, CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * vol) / 100));
 //puts(format("playing sample %d at vol %d.\n", event, (cfg_audio_sound_volume * vol) / 100));
 	}
@@ -814,6 +835,7 @@ static void set_mixing_sdl(void) {
 	int n;
 	for (n = 0; n < cfg_max_channels; n++) {
 		if (n == weather_channel) continue;
+		/* Note: Linear scaling is used here to allow more precise control at the server end */
 		Mix_Volume(n, CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * channel_volume[n]) / 100));
 	}
 #endif
