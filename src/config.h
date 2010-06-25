@@ -502,7 +502,7 @@
  * if that variable is defined and accessable.  The final slash is
  * optional, but it may eventually be required.
  *
- * Using the value "./lib/" below tells Angband that, by default,
+ * Using the value "lib" below tells Angband that, by default,
  * the user will run "angband" from the same directory that contains
  * the "lib" directory.  This is a reasonable (but imperfect) default.
  *
@@ -511,7 +511,7 @@
  * or "/usr/games/lib/angband/", or "/pkg/angband/lib".
  */
 #ifndef DEFAULT_PATH
-# define DEFAULT_PATH "./lib/"
+# define DEFAULT_PATH "lib"
 #endif
 
 
