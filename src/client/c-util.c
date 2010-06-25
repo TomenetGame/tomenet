@@ -4544,7 +4544,7 @@ static void print_tomb(cptr reason)
 		Term_clear();
 
 		/* Build the filename */
-		path_build(buf, 1024, ANGBAND_DIR_HELP, ct % 2 ? "dead.txt" : "dead2.txt");
+		path_build(buf, 1024, ANGBAND_DIR_TEXT, ct % 2 ? "dead.txt" : "dead2.txt");
 
 		/* Open the News file */
 		fp = my_fopen(buf, "r");

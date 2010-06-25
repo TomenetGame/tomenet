@@ -3493,7 +3493,7 @@ static void init_stuff(void)
 /*	validate_dir(ANGBAND_DIR_APEX); *//*on server */
 /*	validate_dir(ANGBAND_DIR_EDIT); */
 /*	validate_dir(ANGBAND_DIR_FILE); */
-	validate_dir(ANGBAND_DIR_HELP);
+	validate_dir(ANGBAND_DIR_TEXT);
 	validate_dir(ANGBAND_DIR_USER);
 #if !defined(USE_LOGFONT) || defined(USE_GRAPHICS) || defined(USE_SOUND)
 	validate_dir(ANGBAND_DIR_XTRA);	  /*sounds & graphics */

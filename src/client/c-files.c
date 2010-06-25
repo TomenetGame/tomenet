@@ -571,7 +571,7 @@ void init_file_paths(char *path)
         string_free(ANGBAND_DIR_DATA);
         string_free(ANGBAND_DIR_EDIT);
         string_free(ANGBAND_DIR_FILE);
-        string_free(ANGBAND_DIR_HELP);
+        string_free(ANGBAND_DIR_TEXT);
         string_free(ANGBAND_DIR_INFO);
         string_free(ANGBAND_DIR_SAVE);
         string_free(ANGBAND_DIR_USER);
@@ -599,7 +599,7 @@ void init_file_paths(char *path)
         ANGBAND_DIR_DATA = string_make("");
         ANGBAND_DIR_EDIT = string_make("");
         ANGBAND_DIR_FILE = string_make("");
-        ANGBAND_DIR_HELP = string_make("");
+        ANGBAND_DIR_TEXT = string_make("");
         ANGBAND_DIR_INFO = string_make("");
         ANGBAND_DIR_SAVE = string_make("");
         ANGBAND_DIR_USER = string_make("");
@@ -638,7 +638,7 @@ void init_file_paths(char *path)
 
         /* Build a path name */
         strcpy(tail, "text");
-        ANGBAND_DIR_HELP = string_make(path);
+        ANGBAND_DIR_TEXT = string_make(path);
 
         /* Build a path name */
         strcpy(tail, "info");

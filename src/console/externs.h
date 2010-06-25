@@ -38,7 +38,7 @@ extern cptr ANGBAND_DIR_BONE;
 extern cptr ANGBAND_DIR_DATA;
 extern cptr ANGBAND_DIR_EDIT;
 extern cptr ANGBAND_DIR_FILE;
-extern cptr ANGBAND_DIR_HELP;
+extern cptr ANGBAND_DIR_TEXT;
 extern cptr ANGBAND_DIR_INFO;
 extern cptr ANGBAND_DIR_SAVE;
 extern cptr ANGBAND_DIR_USER;
