@@ -206,35 +206,27 @@ CC = gcc
 #LIBS = -L/usr/X11R6/lib -lX11 -lcurses
 
 ##
-## Variation -- MinGW
+## Variation -- MinGW on Linux
 ##
 ## Without SDL
-#CFLAGS = -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937
-##
-## With SDL
-CFLAGS = -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -DSOUND_SDL
-##
-LDFLAGS = 
-##
-## Without SDL
+#CFLAGS = -g -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937
 #LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 ##
-# With SDL
+## With SDL
+CFLAGS = -g -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -DSOUND_SDL
 LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm -lSDL -lSDL_mixer
+
 
 # MinGW compiler and linker on my system - mikaelh
 CC = mingw32-gcc
-LD = mingw32-ld
 WINDRES = mingw32-windres
 
 # Use these on Ubuntu
 #CC = i586-mingw32msvc-gcc
-#LD = i586-mingw32msvc-ld
 #WINDRES = i586-mingw32msvc-windres
 
 # Use these on other Linux systems, possibly
 #CC = i386-mingw32msvc-gcc
-#LD = i386-mingw32msvc-ld
 #WINDRES = i386-mingw32msvc-windres
 
 
@@ -249,7 +241,7 @@ CLI_SRCS += $(TOLUASRCS)
 CLI_OBJS += $(TOLUAOBJS)
 CFLAGS += $(LUAFLAGS) -Iserver -Iserver/lua
 
-TOLUA = server/tolua
+TOLUA = server/tolua.exe
 
 #
 # Hack -- "install" as the base target
@@ -258,9 +250,9 @@ TOLUA = server/tolua
 # below.
 #
 
-install: date tomenet # tomenet.server
+install: date tomenet.exe tomenet.server.exe
 	cp tomenet.exe ..
-#	cp tomenet.server ../tomenet.server.exe
+	cp tomenet.server.exe ..
 
 mini_install: install
 
@@ -268,27 +260,27 @@ date:
 	touch common/common.c
 
 #
-# Build the "MAngband" server
+# Build the TomeNET server
 #
 
-tomenet.server: $(SERV_OBJS) $(TOLUA)
-	$(CC) $(CFLAGS) -o tomenet.server.exe $(SERV_OBJS) $(LDFLAGS) $(LIBS)
-
-
-#
-# Build the "MAngband" client
-#
-
-tomenet: $(CLI_OBJS) $(TOLUA)
-	$(CC) $(CFLAGS) -o tomenet.exe $(CLI_OBJS) $(LDFLAGS) -mwindows $(LIBS)
+tomenet.server.exe: $(SERV_OBJS) $(TOLUA)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o tomenet.server.exe $(SERV_OBJS) $(LIBS)
 
 
 #
-# Build the "MAngband" remote console
+# Build the TomeNET client
 #
 
-tomenet.console: $(CONS_OBJS)
-	$(CC) $(CFLAGS) -o tomenet.console.exe $(CONS_OBJS) $(LDFLAGS) $(LIBS)
+tomenet.exe: $(CLI_OBJS) $(TOLUA)
+	$(CC) $(CFLAGS) $(LDFLAGS) -mwindows -o tomenet.exe $(CLI_OBJS) $(LIBS)
+
+
+#
+# Build the TomeNET remote console
+#
+
+tomenet.console.exe: $(CONS_OBJS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o tomenet.console.exe $(CONS_OBJS) $(LIBS)
 
 
 $(TOLUA): $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c
@@ -306,9 +298,9 @@ $(TOLUA): $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c
 #
 
 clean:
-	cd server; rm -f *.o
-	cd client; rm -f *.o
-	cd common; rm -f *.o
+	cd server; rm -f *.o w_play.c w_util.c w_spells.c
+	cd client; rm -f *.o w_play.c w_util.c w_spells.c
+	cd common; rm -f *.o w_z_pack.c
 	cd console; rm -f *.o
 
 #
@@ -316,26 +308,26 @@ clean:
 #
 
 server/w_util.c: server/util.pkg $(TOLUA)
-	cd server; wine ./tolua -n util -o w_util.c util.pkg; cd ..
+	cd server; wine ./tolua.exe -n util -o w_util.c util.pkg; cd ..
 
 server/w_play.c: server/player.pkg $(TOLUA)
-	cd server; wine ./tolua -n player -o w_play.c player.pkg; cd ..
+	cd server; wine ./tolua.exe -n player -o w_play.c player.pkg; cd ..
 
 server/w_spells.c: server/spells.pkg $(TOLUA)
-	cd server; wine ./tolua -n spells -o w_spells.c spells.pkg; cd ..
+	cd server; wine ./tolua.exe -n spells -o w_spells.c spells.pkg; cd ..
 
 client/w_play.c: client/player.pkg $(TOLUA)
-	cd client; wine ../server/tolua -n player -o w_play.c player.pkg; cd ..
+	cd client; wine ../server/tolua.exe -n player -o w_play.c player.pkg; cd ..
 
 client/w_util.c: client/util.pkg $(TOLUA)
-	cd client; wine ../server/tolua -n util -o w_util.c util.pkg; cd ..
+	cd client; wine ../server/tolua.exe -n util -o w_util.c util.pkg; cd ..
 
 client/w_spells.c: client/spells.pkg $(TOLUA)
-	cd client; wine ../server/tolua -n spells -o w_spells.c spells.pkg; cd ..
+	cd client; wine ../server/tolua.exe -n spells -o w_spells.c spells.pkg; cd ..
 
 
 common/w_z_pack.c: common/z_pack.pkg $(TOLUA)
-	cd common; wine ../server/tolua -n z_pack -o w_z_pack.c z_pack.pkg; cd ..
+	cd common; wine ../server/tolua.exe -n z_pack -o w_z_pack.c z_pack.pkg; cd ..
 
 #
 # Icon

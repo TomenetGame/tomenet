@@ -211,132 +211,18 @@ X11BASE = /usr/X11R6
 ##
 ## Variation -- Linux / FreeBSD
 ##
-#PREFIX = /usr/local
-##
 ## Add -msse2 -DHAVE_SSE2=1 to CFLAGS to enable SSE2 support in SFMT.
-CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -DDEFAULT_PATH="\"./lib\"" -O2 -Wmissing-declarations -Wnested-externs -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -DSOUND_SDL
 ##
+## You can compile the client without X11 support by removing -DUSE_X11 from
+## CFLAGS and -lX11 from LIBS
+## 
+## Without SDL
+#CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -O2 -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
 ##
-## for new sound system USE_SOUND_2010 linking SDL and SDL_mixer dev files will be required (currently being worked on) -C. Blue
+## With SDL
+CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -O2 -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -DSOUND_SDL
 LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm -lSDL -lSDL_mixer
-
-
-##
-## Variation -- Only support "main-x11.c" (not "main-gcu.c")
-##
-#CFLAGS = -Wall -O1 -pipe -g -DUSE_X11
-#LIBS = -lX11
-
-
-##
-## Variation -- Only support "main-gcu.c" (not "main-x11.c")
-##
-#CFLAGS = -Wall -O1 -pipe -g -DUSE_GCU
-#LIBS = -lcurses -ltermcap
-
-
-## Added by thaler, 6/28/97
-## Variation -- Only support "main-gcu.c" (not "main-x11.c") on localhost
-##
-## NOTE -- Using this variation requires that the server and client run
-## on the same machine!  Also define META_ADDRESS to be an empty string
-## in config.h.  --Keldon
-##
-#CFLAGS = -Wall -O1 -pipe -g -DUSE_GCU -DUNIX_SOCKETS
-#LIBS = -lncurses -ltermcap
-
-
-##
-## Variation -- Use "main-xaw.c" instead of "main-x11.c"
-##
-#CFLAGS = -Wall -O1 -pipe -g -DUSE_XAW -DUSE_GCU
-#LIBS = -lXaw -lXmu -lXt -lX11 -lcurses -ltermcap
-
-
-##
-## Variation -- Use "main-cap.c" instead of "main-gcu.c"
-##
-#CFLAGS = -Wall -O1 -pipe -g -DUSE_X11 -DUSE_CAP
-#LIBS = -lX11 -ltermcap
-
-
-##
-## Variation -- Only work on simple vt100 terminals
-##
-#CFLAGS = -Wall -O1 -pipe -g -DUSE_CAP -DUSE_HARDCODE
-
-
-##
-## Variation -- FreeBSD 4.3R
-##
-#PREFIX = /usr/local
-#CFLAGS = -Wall -g -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -DDEFAULT_PATH="\"${PREFIX}/lib/pmangband\""
-#LIBS = -L${X11BASE}/lib -lX11 -lcurses
-
-
-##
-## Variation -- this might work for Linux 1.1.93 using ncurses-1.8.7.
-##
-#CFLAGS = -I/usr/X11R6/include -I/usr/include/ncurses \
-#         -Wall -O2 -fomit-frame-pointer -m486 \
-#         -DUSE_X11 -DUSE_GCU
-#LIBS = -L/usr/X11R6/lib -lX11 -lncurses -ltermcap
-
-##
-## Variation -- this might work better than the suggestion above
-##
-#CFLAGS = -I/usr/include/ncurses \
-#         -Wall -O2 -fomit-frame-pointer \
-#         -DUSE_X11 -DUSE_GCU \
-#         -DUSE_TPOSIX -DUSE_CURS_SET
-#LIBS = -lX11 -lncurses
-#LDFLAGS = -s
-
-
-##
-## Variation -- compile for Solaris
-##
-#CFLAGS = -Wall -O1 -pipe -g -DUSE_X11 -DUSE_GCU -DSOLARIS -I/usr/openwin/include
-#LIBS = -L/usr/openwin/lib -R/usr/openwin/lib -lX11 -lsocket -lnsl -lcurses
-
-
-##
-## Variation -- compile for SGI Indigo runnig Irix
-##
-#CFLAGS = -Wall -O1 -pipe -g -DUSE_X11 -DUSE_GCU -DSGI
-#LIBS = -lX11 -lcurses -ltermcap -lsun
-
-
-
-##
-## Variation -- compile for Dec ALPHA OSF/1 v2.0
-##
-#CC     = cc
-##CFLAGS = -std -O -g3 -Olimit 4000 -DUSE_X11 -DUSE_GCU
-#CFLAGS = -std -g -DUSE_X11 -DUSE_GCU
-#LIBS   = -lX11 -lcurses -ltermcap -lrpcsvc
-
-
-##
-## Variation -- compile for Interactive Unix (ISC) systems
-##
-#CFLAGS = -Wall -O1 -pipe -g -DUSE_X11 -DUSE_GCU -DISC
-#LIBS = -lX11 -lcurses -lnsl_s -linet -lcposix
-
-
-##
-## Variation -- Support fat binaries under NEXTSTEP
-##
-#CFLAGS = -Wall -O1 -pipe -g -DUSE_GCU -arch m68k -arch i386
-#LIBS = -lcurses -ltermcap
-
-
-##
-## Variation -- Support for DJGPP with TCPLIB
-##
-#CFLAGS = -Wall -O2 -g -DUSE_IBM -DMSDOS
-#LIBS = -ltcp
 
 
 # Lua
@@ -371,43 +257,37 @@ mini_install: install
 date:
 	touch common/common.c
 
-update_use:
-	touch client/client.c
-	touch client/main-x11.c
-#	touch client/main-gcu.c
-	touch console/c-init.c
-
 accedit: account/accedit.o
-	$(CC) $(CFLAGS) -o accedit account/accedit.o -lcurses -lcrypt
+	$(CC) $(CFLAGS) $(LDFLAGS) -o accedit account/accedit.o -lcurses -lcrypt
 
 #
-# Build the "MAngband" server
+# Build the TomeNET server
 #
 
 tomenet.server: $(SERV_OBJS) $(TOLUA)
-	$(CC) $(CFLAGS) -o tomenet.server $(SERV_OBJS) $(LDFLAGS) $(LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o tomenet.server $(SERV_OBJS) $(LIBS)
 
 #
-# Evileye meta client
+# Build the evileye meta client
 #
 evilmeta: server/evilmeta.o
-	$(CC) $(CFLAGS) -o evilmeta server/evilmeta.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o evilmeta server/evilmeta.c
 
 
 #
-# Build the "MAngband" client
+# Build the TomeNET client
 #
 
 tomenet: $(CLI_OBJS)
-	$(CC) $(CFLAGS) -o tomenet $(CLI_OBJS) $(LDFLAGS) $(LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o tomenet $(CLI_OBJS) $(LIBS)
 
 
 #
-# Build the "MAngband" remote console
+# Build the TomeNET remote console
 #
 
 tomenet.console: $(CONS_OBJS)
-	$(CC) $(CFLAGS) -o tomenet.console $(CONS_OBJS) $(LDFLAGS) $(LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o tomenet.console $(CONS_OBJS) $(LIBS)
 
 
 $(TOLUA): $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c
@@ -427,7 +307,7 @@ $(TOLUA): $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c
 clean:
 	cd server; rm -f *.o w_play.c w_util.c w_spells.c
 	cd client; rm -f *.o w_play.c w_util.c w_spells.c
-	cd common; rm -f *.o
+	cd common; rm -f *.o w_z_pack.c
 	cd console; rm -f *.o
 
 re: clean all
