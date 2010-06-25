@@ -20,22 +20,16 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <errno.h>
-
-#if defined(NeXT)
-# include <libc.h>
-#else
-# include <stdlib.h>
-#endif
+#include <stdlib.h>
 
 
 #ifdef SET_UID
 
 # include <sys/types.h>
 
-# if defined(Pyramid) || defined(NeXT) || defined(sun) || \
-     defined(NCR3K) || defined(linux) || defined(ibm032) || \
-     defined(__osf__) || defined(ISC) || defined(SGI) || \
-     defined(USE_EMX)
+# if defined(Pyramid) || defined(sun) || defined(NCR3K) || \
+     defined(linux) || defined(ibm032) || defined(__osf__) || \
+     defined(ISC) || defined(SGI) || defined(USE_EMX)
 #  include <sys/time.h>
 # endif
 
@@ -75,7 +69,7 @@
 # endif
 #endif
 
-#if !defined(NeXT) && !defined(__MWERKS__) && !defined(ACORN)
+#if !defined(__MWERKS__) && !defined(ACORN)
 # include <fcntl.h>
 #endif
 

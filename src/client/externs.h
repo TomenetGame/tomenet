@@ -202,14 +202,7 @@ extern player_race *race_info;
 extern player_class *class_info;
 
 extern cptr ANGBAND_DIR;
-extern cptr ANGBAND_DIR_APEX;
-extern cptr ANGBAND_DIR_BONE;
-extern cptr ANGBAND_DIR_DATA;
-extern cptr ANGBAND_DIR_EDIT;
-extern cptr ANGBAND_DIR_FILE;
 extern cptr ANGBAND_DIR_TEXT;
-extern cptr ANGBAND_DIR_INFO;
-extern cptr ANGBAND_DIR_SAVE;
 extern cptr ANGBAND_DIR_USER;
 extern cptr ANGBAND_DIR_XTRA;
 extern cptr ANGBAND_DIR_SCPT;

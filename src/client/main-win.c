@@ -2602,7 +2602,7 @@ static void process_menus(WORD wCmd)
 				ofn.nFilterIndex = 1;
 				ofn.lpstrFile = savefile;
 				ofn.nMaxFile = 1024;
-				ofn.lpstrInitialDir = ANGBAND_DIR_SAVE;
+				ofn.lpstrInitialDir = ANGBAND_DIR_USER;
 				ofn.Flags = OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
 
 				if (GetOpenFileName(&ofn))
@@ -3490,13 +3490,10 @@ static void init_stuff(void)
  
 	/* Hack -- Validate the paths */
 
-/*	validate_dir(ANGBAND_DIR_APEX); *//*on server */
-/*	validate_dir(ANGBAND_DIR_EDIT); */
-/*	validate_dir(ANGBAND_DIR_FILE); */
 	validate_dir(ANGBAND_DIR_TEXT);
 	validate_dir(ANGBAND_DIR_USER);
 #if !defined(USE_LOGFONT) || defined(USE_GRAPHICS) || defined(USE_SOUND)
-	validate_dir(ANGBAND_DIR_XTRA);	  /*sounds & graphics */
+	validate_dir(ANGBAND_DIR_XTRA);	/* Sounds & Graphics */
 #endif
 
 #ifndef USE_LOGFONT
