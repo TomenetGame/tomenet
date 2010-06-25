@@ -9,6 +9,9 @@
 
 #include "angband.h"
 
+/* For dirname */
+#include <libgen.h>
+
 static int Socket;
 
 #ifdef USE_SOUND_2010
@@ -91,6 +94,20 @@ static void init_stuff(void)
 	strcpy(path, "PMAngband:");
 
 #else /* AMIGA / VM */
+
+	if (argv0) {
+		char *app_path = strdup(argv0);
+		char *app_dir;
+
+		app_dir = dirname(app_path);
+
+		/* Change current directory to the location of the binary - mikaelh */
+		if (chdir(app_dir) == -1) {
+			plog_fmt("chdir(\"%s\") failed", app_dir);
+		}
+
+		free(app_path);
+	}
 
 	if (!strlen(path))
 	{
@@ -428,6 +445,73 @@ static void init_sound() {
 
 
 /*
+ * A default hook function for "plog()" that displays a warning on the screen.
+ */
+static void plog_hook(cptr s) {
+	char buf[80];
+	cptr tmp, newline;
+	int i, len, prt_len, row = 0;
+
+	/* Save the screen */
+	Term_save();
+
+	/* Clear the first line */
+	Term_erase(0, row, 255);
+
+	/* Print the "Warning" title */
+	c_put_str(TERM_YELLOW, "======== Warning ========", row++, 0);
+
+	/* Leave the second line empty */
+	Term_erase(0, row++, 255);
+
+	tmp = s;
+
+	/* Simple support for multiple lines separated by '\n' */
+	while ((newline = strchr(tmp, '\n'))) {
+		/* Length of the line in the input string */
+		len = newline - tmp;
+
+		/* Split lines that are over 79 characters long */
+		for (i = 0; i < len; i += prt_len) {
+			prt_len = MIN(len - i, sizeof(buf) - 1);
+			strncpy(buf, tmp + i, prt_len);
+			buf[prt_len] = '\0';
+
+			/* Print the line */
+			c_prt(TERM_WHITE, buf, row++, 0);
+		}
+
+		/* Next line in the input string */
+		tmp = newline + 1;
+	}
+
+	len = strlen(tmp);
+
+	/* Split long lines */
+	for (i = 0; i < len; i += prt_len) {
+		prt_len = MIN(len - i, sizeof(buf) - 1);
+		strncpy(buf, tmp + i, prt_len);
+		buf[prt_len] = '\0';
+
+		/* Print the line */
+		c_prt(TERM_WHITE, buf, row++, 0);
+	}
+
+	/* One empty line */
+	Term_erase(0, row++, 255);
+
+	/* Print the good old "Press any key to continue..." message */
+	c_prt(TERM_L_BLUE, "Press any key to continue...", row++, 0);
+
+	/* Wait for the key */
+	(void) inkey();
+
+	/* Reload the screen */
+	Term_load();
+}
+
+
+/*
  * Initialize everything, contact the server, and start the loop.
  */
 void client_init(char *argv1, bool skip)
@@ -440,6 +524,9 @@ void client_init(char *argv1, bool skip)
 	char host_name[80];
 	u16b version = MY_VERSION;
         s32b temp;
+
+	/* Set the "plog hook" */
+	if (!plog_aux) plog_aux = plog_hook;
 
 	/* Setup the file paths */
 	init_stuff();

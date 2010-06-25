@@ -631,7 +631,7 @@ bool call_lua(int Ind, cptr function, cptr args, cptr ret, ...)
         /* Call the function */
         if (lua_call(L, nb, nbr))
         {
-                c_msg_format("#yERROR in lua_call while calling '%s' from call_lua. Things should start breaking up from now on!", function);
+                plog_fmt("ERROR in lua_call while calling '%s' from call_lua.\nThings should start breaking up from now on!", function);
                 return FALSE;
         }
 
@@ -674,7 +674,7 @@ bool call_lua(int Ind, cptr function, cptr args, cptr ret, ...)
                         }
 
                 default:
-                        c_msg_format("#yERROR in lua_call while calling '%s' from call_lua: Unkown return type '%c'", function, ret[i]);
+                        plog_fmt("ERROR in lua_call while calling '%s' from call_lua:\n  Unkown return type '%c'", function, ret[i]);
                         return FALSE;
                 }
         }
