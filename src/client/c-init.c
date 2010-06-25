@@ -9,6 +9,10 @@
 
 #include "angband.h"
 
+/* For opendir */
+#include <sys/types.h>
+#include <dirent.h>
+
 /* For dirname */
 #include <libgen.h>
 
@@ -68,6 +72,25 @@ void init_spells(s16b new_size)
 	max_spells = new_size;
 }
 
+static bool check_dir(cptr s) {
+	DIR *dp = opendir(s);
+
+	if (dp) {
+		closedir(dp);
+		return TRUE;
+	} else {
+		return FALSE;
+	}
+}
+
+static void validate_dir(cptr s) {
+	/* Verify or fail */
+	if (!check_dir(s))
+	{
+		quit_fmt("Cannot find required directory:\n%s", s);
+	}
+}
+
 /*
  * Initialize and verify the file paths, and the score file.
  *
@@ -123,10 +146,18 @@ static void init_stuff(void)
 	/* Hack -- Add a path separator (only if needed) */
 	if (!suffix(path, PATH_SEP)) strcat(path, PATH_SEP);
 
+	/* Validate the path */
+	validate_dir(path);
+
 #endif /* AMIGA / VM */
 
 	/* Initialize */
 	init_file_paths(path);
+
+	/* Hack -- Validate the paths */
+	validate_dir(ANGBAND_DIR_SCPT);
+	validate_dir(ANGBAND_DIR_TEXT);
+	validate_dir(ANGBAND_DIR_USER);
 }
 
 

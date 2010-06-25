@@ -3489,7 +3489,7 @@ static void init_stuff(void)
 	init_file_paths(path);
  
 	/* Hack -- Validate the paths */
-
+	validate_dir(ANGBAND_DIR_SCPT);
 	validate_dir(ANGBAND_DIR_TEXT);
 	validate_dir(ANGBAND_DIR_USER);
 #if !defined(USE_LOGFONT) || defined(USE_GRAPHICS) || defined(USE_SOUND)
