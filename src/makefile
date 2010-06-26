@@ -228,6 +228,66 @@ LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm -lSDL -lSDL_m
 #LDFLAGS = -Wl,-rpath,\$$ORIGIN
 
 
+##
+## Variation -- Only support "main-x11.c" (not "main-gcu.c")
+##
+#CFLAGS = -Wall -O2 -pipe -g -DUSE_X11
+#LIBS = -lX11
+
+
+##
+## Variation -- Only support "main-gcu.c" (not "main-x11.c")
+##
+#CFLAGS = -Wall -O2 -pipe -g -DUSE_GCU
+#LIBS = -lcurses -ltermcap
+
+
+## Added by thaler, 6/28/97
+## Variation -- Only support "main-gcu.c" (not "main-x11.c") on localhost
+##
+## NOTE -- Using this variation requires that the server and client run
+## on the same machine!  Also define META_ADDRESS to be an empty string
+## in config.h.  --Keldon
+##
+#CFLAGS = -Wall -O2 -pipe -g -DUSE_GCU -DUNIX_SOCKETS
+#LIBS = -lncurses -ltermcap
+
+
+##
+## Variation -- Use "main-xaw.c" instead of "main-x11.c"
+##
+#CFLAGS = -Wall -O2 -pipe -g -DUSE_XAW -DUSE_GCU
+#LIBS = -lXaw -lXmu -lXt -lX11 -lcurses -ltermcap
+
+
+##
+## Variation -- Use "main-cap.c" instead of "main-gcu.c"
+##
+#CFLAGS = -Wall -O2 -pipe -g -DUSE_X11 -DUSE_CAP
+#LIBS = -lX11 -ltermcap
+
+
+##
+## Variation -- Only work on simple vt100 terminals
+##
+#CFLAGS = -Wall -O2 -pipe -g -DUSE_CAP -DUSE_HARDCODE
+
+
+##
+## Variation -- FreeBSD 4.3R
+##
+#PREFIX = /usr/local
+#CFLAGS = -Wall -O2 -g -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -DDEFAULT_PATH="\"${PREFIX}/lib/tomenet\""
+#LIBS = -L${X11BASE}/lib -lX11 -lcurses
+
+
+##
+## Variation -- compile for Solaris
+##
+#CFLAGS = -Wall -O2 -pipe -g -DUSE_X11 -DUSE_GCU -DSOLARIS -I/usr/openwin/include
+#LIBS = -L/usr/openwin/lib -R/usr/openwin/lib -lX11 -lsocket -lnsl -lcurses
+
+
 # Lua
 SRCS += $(LUASRCS)
 SRCS += $(CLI_LUASRCS)
