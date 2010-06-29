@@ -382,6 +382,75 @@ static void Input_loop(void)
 
 
 /*
+ * Display a message on screen.
+ */
+static void display_message(cptr msg, cptr title)
+{
+	char buf[80];
+	cptr tmp, newline;
+	int i, len, prt_len, row = 0;
+
+	/* Save the screen */
+	Term_save();
+
+	/* Clear the first line */
+	Term_erase(0, row, 255);
+
+	/* Print the "Warning" title */
+	snprintf(buf, sizeof(buf), "======== %s ========", title);
+	c_put_str(TERM_YELLOW, buf, row++, 0);
+
+	/* Leave the second line empty */
+	Term_erase(0, row++, 255);
+
+	tmp = msg;
+
+	/* Simple support for multiple lines separated by '\n' */
+	while ((newline = strchr(tmp, '\n'))) {
+		/* Length of the line in the input string */
+		len = newline - tmp;
+
+		/* Split lines that are over 79 characters long */
+		for (i = 0; i < len; i += prt_len) {
+			prt_len = MIN(len - i, sizeof(buf) - 1);
+			strncpy(buf, tmp + i, prt_len);
+			buf[prt_len] = '\0';
+
+			/* Print the line */
+			c_prt(TERM_WHITE, buf, row++, 0);
+		}
+
+		/* Next line in the input string */
+		tmp = newline + 1;
+	}
+
+	len = strlen(tmp);
+
+	/* Split long lines */
+	for (i = 0; i < len; i += prt_len) {
+		prt_len = MIN(len - i, sizeof(buf) - 1);
+		strncpy(buf, tmp + i, prt_len);
+		buf[prt_len] = '\0';
+
+		/* Print the line */
+		c_prt(TERM_WHITE, buf, row++, 0);
+	}
+
+	/* One empty line */
+	Term_erase(0, row++, 255);
+
+	/* Print the good old "Press any key to continue..." message */
+	c_prt(TERM_L_BLUE, "Press any key to continue...", row++, 0);
+
+	/* Wait for the key */
+	(void) inkey();
+
+	/* Reload the screen */
+	Term_load();
+}
+
+
+/*
  * A hook for "quit()".
  *
  * Close down, then fall back into "quit()".
@@ -399,7 +468,12 @@ static void quit_hook(cptr s)
 #endif
 
 	Net_cleanup();
-	c_quit=1;
+
+	c_quit = 1;
+
+	/* Display the quit reason */
+	if (s && *s) display_message(s, "Error");
+
 	if(message_num() && get_check("Save chatlog?")){
 		FILE *fp;
 		char buf[80]="tome_chat.txt";
@@ -479,66 +553,8 @@ static void init_sound() {
  * A default hook function for "plog()" that displays a warning on the screen.
  */
 static void plog_hook(cptr s) {
-	char buf[80];
-	cptr tmp, newline;
-	int i, len, prt_len, row = 0;
-
-	/* Save the screen */
-	Term_save();
-
-	/* Clear the first line */
-	Term_erase(0, row, 255);
-
-	/* Print the "Warning" title */
-	c_put_str(TERM_YELLOW, "======== Warning ========", row++, 0);
-
-	/* Leave the second line empty */
-	Term_erase(0, row++, 255);
-
-	tmp = s;
-
-	/* Simple support for multiple lines separated by '\n' */
-	while ((newline = strchr(tmp, '\n'))) {
-		/* Length of the line in the input string */
-		len = newline - tmp;
-
-		/* Split lines that are over 79 characters long */
-		for (i = 0; i < len; i += prt_len) {
-			prt_len = MIN(len - i, sizeof(buf) - 1);
-			strncpy(buf, tmp + i, prt_len);
-			buf[prt_len] = '\0';
-
-			/* Print the line */
-			c_prt(TERM_WHITE, buf, row++, 0);
-		}
-
-		/* Next line in the input string */
-		tmp = newline + 1;
-	}
-
-	len = strlen(tmp);
-
-	/* Split long lines */
-	for (i = 0; i < len; i += prt_len) {
-		prt_len = MIN(len - i, sizeof(buf) - 1);
-		strncpy(buf, tmp + i, prt_len);
-		buf[prt_len] = '\0';
-
-		/* Print the line */
-		c_prt(TERM_WHITE, buf, row++, 0);
-	}
-
-	/* One empty line */
-	Term_erase(0, row++, 255);
-
-	/* Print the good old "Press any key to continue..." message */
-	c_prt(TERM_L_BLUE, "Press any key to continue...", row++, 0);
-
-	/* Wait for the key */
-	(void) inkey();
-
-	/* Reload the screen */
-	Term_load();
+	/* Display a warning */
+	if (s) display_message(s, "Warning");
 }
 
 
