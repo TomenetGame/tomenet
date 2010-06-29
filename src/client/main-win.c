@@ -3359,9 +3359,15 @@ static void hook_quit(cptr str)
 	mixer_fadeall();
 #endif
 
-	/* Copied from quit_hook in c-init.c - mikaelh */
 	Net_cleanup();
-	c_quit=1;
+
+	c_quit = 1;
+
+	/* Give a warning */
+	if (str && *str) MessageBox(data[0].w, str, "Error", MB_OK | MB_ICONSTOP);
+
+	/* Copied from quit_hook in c-init.c - mikaelh */
+
 	if(message_num() && get_check("Save chatlog?")){
 		FILE *fp;
 		char buf[80]="tome_chat.txt";
@@ -3375,9 +3381,6 @@ static void hook_quit(cptr str)
 			fclose(fp);
 		}
 	}
-
-	/* Give a warning */
-	if (str && strlen(str)) MessageBox(data[0].w, str, "Error", MB_OK | MB_ICONSTOP);
 
 	/* Sub-Windows */
 	for (i = MAX_TERM_DATA - 1; i >= 1; i--)
