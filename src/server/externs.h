@@ -38,7 +38,7 @@ extern void version_build(void);
 int local_file_init(int ind, unsigned short fnum, char *fname);
 int local_file_write(int ind, unsigned short fnum, unsigned long len);
 int local_file_close(int ind, unsigned short fnum);
-int local_file_check(char *fname, unsigned long *sum);
+int local_file_check(char *fname, u32b *sum);
 int local_file_ack(int ind, unsigned short fnum);
 int local_file_err(int ind, unsigned short fnum);
 void do_xfers(void);

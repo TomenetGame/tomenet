@@ -3671,7 +3671,7 @@ static int Receive_file(int ind){
 	int x;	/* return value/ack */
 	unsigned short fnum;	/* unique SENDER side file number */
 	unsigned short len;
-	unsigned long csum;
+	u32b csum;
 	int n;
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
@@ -3712,12 +3712,12 @@ static int Receive_file(int ind){
 				else{
 					msg_print(Ind, "\377yChecking file");
 					x=local_file_check(fname, &csum);
-					Packet_printf(&connp->w, "%c%c%hd%ld", PKT_FILE, PKT_FILE_SUM, fnum, csum);
+					Packet_printf(&connp->w, "%c%c%hd%d", PKT_FILE, PKT_FILE_SUM, fnum, csum);
 					return(1);
 				}
 				break;
 			case PKT_FILE_SUM:
-				Packet_scanf(&connp->r, "%ld", &csum);
+				Packet_scanf(&connp->r, "%d", &csum);
 				if ((check_return(ind, fnum, csum) == 2) && !p_ptr->done_lua_updating) {
 					/* give a message once, telling to restart after updating */
 					msg_print(Ind, "\377yIMPORTANT: After all files have been \377greceived\377y, you must restart TomeNET!");

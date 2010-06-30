@@ -15,11 +15,11 @@
 extern errr path_build(char *buf, int max, cptr path, cptr file);
 
 int remote_update(int ind, char *fname);
-int check_return(int ind, unsigned short fnum, unsigned long int sum);
+int check_return(int ind, unsigned short fnum, u32b sum);
 void kill_xfers(int ind);
 void do_xfers(void);
 int get_xfers_num(void);
-int local_file_check(char *fname, unsigned long int *sum);
+int local_file_check(char *fname, u32b *sum);
 int local_file_ack(int ind, unsigned short fnum);
 int local_file_err(int ind, unsigned short fnum);
 int local_file_send(int ind, char *fname);
@@ -160,10 +160,10 @@ int remote_update(int ind, char *fname){
 
 /* compare checksums of local/remote files - update if
    necessary */
-int check_return(int ind, unsigned short fnum, unsigned long int sum){
+int check_return(int ind, unsigned short fnum, u32b sum){
 	struct ft_data *c_fd;
 	FILE* fp;
-	unsigned long int lsum;
+	u32b lsum;
 	char buf[256];
 
 	c_fd=getfile(ind, fnum);
@@ -364,11 +364,11 @@ int local_file_close(int ind, unsigned short fnum) {
 	return success;
 }
 
-unsigned long int total;
+u32b total;
 
 /* uses adler checksum now - (client/server) compat essential */
 static void do_sum(unsigned char *buffer, int size){
-	unsigned long int s1, s2;
+	u32b s1, s2;
 	int n;
 
 	s1 = total & 0xffff;
@@ -383,7 +383,7 @@ static void do_sum(unsigned char *buffer, int size){
 
 /* Get checksum of file */
 /* don't waste a file transfer data space locally */
-int local_file_check(char *fname, unsigned long int *sum){
+int local_file_check(char *fname, u32b *sum){
 	FILE *fp;
 	unsigned char *buffer;
 	int success=0;
