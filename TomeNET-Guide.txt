@@ -2998,7 +2998,7 @@ There are different types of dungeons. The main five are:
  No-recall dungeons/towers are marked by a light red < or > symbol.
 -NO_RECALL_INTO. You may not recall into this dungeon/tower. You can use
  recall to get out of it though. Probability travel works towards the surface
- but not the towards the dungeon bottom/tower top. To Telekinesis the same
+ but not towards the dungeon bottom/tower top. To Telekinesis the same
  restrictions apply as for NO_RECALL. Ghosts may float freely.
  Staircases are yellow.
 -NO_UP. These dungeons won't allow you to go upwards, similar to ironman,
@@ -3030,7 +3030,7 @@ There are different types of dungeons. The main five are:
  (red/yellow).
 -NO_DEATH. The Training Tower in Bree has this flag. Players who die inside a
  no-death dungeon won't turn into a ghost if they 'die' but just be teleported
- back to town! They still lose experience (and some gold) though.
+ back to town! They still lose about 20% experience (and gold) though.
  No-death dungeons/towers are marked by a green < or > symbol.
 If a dungeon has several of these flags, the latter ones will override the
 staircase colour. So a hellish ironman dungeon has hellish-looking staircases.
@@ -3516,7 +3516,7 @@ This means the feeling will persist, even if its cause is removed or changed.
 For example if the feeling indicates an OOD monster and you kill it,
 you or following players entering that floor will still get that same feeling.
 Or if a powerful monster spawns later on on an initially "boring place" level,
-it'll remain to feel like a boring place, despite of the new monster that might
+it'll remain to feel like a boring place, despite the new monster that might
 actually make it pretty non-boring now..
 
 
@@ -7648,19 +7648,27 @@ Note: Some forms can open doors, others may try to bash doors.
 You can use the /ex command in game to see which forms you can use, and what
 polymorph code they have.
 
+Level 5:
+--------
 Cave bear               tough; can pass mountain terrain
 
 Panther                 speedy
 
+Level 10:
+---------
 Grizzly bear            same as Cave Bear, but tougher
 
 Yeti                    can pass mountain terrain;
                         is immune to cold but susceptible to fire
 
+Level 15:
+---------
 Griffon                 can fly; can pass mountain terrain
 
 Sasquatch               speedy; similar to Yeti, but not susceptible to fire
 
+Level 20:
+---------
 Werebear                same as Grizzly Bear, but tougher
 
 Great eagle             speedy; can fly; passes most terrain types
@@ -7673,6 +7681,8 @@ Aranea                  a speedy greater spider;
                         susceptible to light and to 'good' (creature is evil);
                         has a small array of magic spells to its disposal
 
+Level 25:
+---------
 Wyvern                  speedy; can fly and passes most terrains;
                         25% poisonous attacks;
                         immune to poison; susceptible to 'good'
@@ -7682,6 +7692,8 @@ Multi-hued Hound        resists fire/cold/lightning/acid/poison and gets a
                         can't be confused or paralyzed;
                         can breathe the five elements mentioned above
 
+Level 30:
+---------
 5-headed hydra          tough and speedy; can swim;
                         poisonous attacks; immune to poison;
                         can cast fear and poison ball
@@ -7692,6 +7704,8 @@ Giant squid             tough and speedy aquatic creature;
                         resists cold/acid;
                         can breathe lightning, acid and poison
 
+Level 35:
+---------
 7-headed hydra          tough and speedy; can swim;
                         poisonous (75%) and blinding (25%) attacks;
                         immune to poison;
@@ -7703,6 +7717,8 @@ Plasma hound            speedy;
                         can't be cut/stunned/confused or paralyzed;
                         can breathe plasma
 
+Level 40:
+---------
 Elder aranea            speedy and smart (INT bonus) greater spider;
                         50% poisonous attacks;
                         resists darkness, fire, poison; immune to either fire
@@ -7723,6 +7739,8 @@ Lesser kraken           speedy, smart and very tough aquatic creature;
                         can't be paralyzed or confused;
                         has a medium size array of spells
 
+Level 45:
+---------
 Maulotaur               like Minotaur, but tougher; stupid (INT malus);
                         immune to fire and resisting teleportation attacks;
                         can cast plasma bolt and fire ball
@@ -7733,6 +7751,8 @@ Winged Horror           speedy winged creature; can fly;
                         susceptible to 'good';
                         can breathe nether, darkness and poison
 
+Level 50:
+---------
 Spectral Tyrannosaur    speedy undead animal;
                         has 25% scaring attacks;
                         resists nexus, teleportation attacks, nether,
@@ -7754,6 +7774,8 @@ Jabberwock              fabulous very speedy and tough hybrid creature;
                         resists teleportation attacks and chaos;
                         can curse and breathe chaos
 
+Level 55:
+---------
 Horned Serpent          speedy and tough; can swim and pass mountain terrain;
                         33% poisonous attacks;
                         resists poison, acid, fire, water attacks,
@@ -7761,6 +7783,8 @@ Horned Serpent          speedy and tough; can swim and pass mountain terrain;
                         can't be scared, confused or paralyzed;
                         can cast fear and breathe acid and poison
 
+Level 60:
+---------
 Firebird                speedy and tough; can fly and passes most terrains;
                         fiery attacks and fire aura;
                         immune to fire and susceptible to cold;
@@ -9520,10 +9544,14 @@ Possible mods that randarts may get depend on its base type.
 Further, there are general mods that may appear on all items regardless of its
 type. For each applied mod there is a chance of 50% to be picked from either
 type-dependant mods or general mods.
-Ammunition (shots/pebbles, arrows, bolts) will never get general mods but only
-type-dependant ones.
-Boomerangs, bows, crossbows and slings usually get more type-dependant mods
-than general mods.
+- Ammunition (shots/pebbles, arrows, bolts) will never get general mods but
+  only type-dependant ones.
+- Boomerangs, bows, crossbows and slings will somewhat less often receive
+  type-dependant mods than general mods.
+- Dragon Scale Mails will more often receive type-dependant mods than general
+  mods.
+All types not listed under 'Type-dependant mods' will only gain general mods
+(for example all jewelry, ie rings and amulets).
 
 
 Type-dependant mods:
@@ -10067,9 +10095,9 @@ SOLUTION B: If you are using X11, this problem may occur depending on your
             (See (2.1a) for more information about the audio system.)
 
 PROBLEM 20: Are 'ToME' and 'TomeNET' similar?
-SOLUTION:   Despite of similar name, the only thing these two games have in
-            common is that they are both middle-earth themed, and some visuals
-            might also be similar.
+SOLUTION:   Despite similar name, the only thing these two games have in common
+            is that they are both middle-earth themed, and some visuals might
+            also be similar.
             Other than that, the two games are very different in basically all
             aspects! In other words: TomeNET is definitely not 'multi-player
             ToME'.
