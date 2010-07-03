@@ -1268,8 +1268,14 @@ bool askfor_aux(char *buf, int len, char mode)
 	if (mode & ASKFOR_PRIVATE) c_ptr_last(x, y, vis_len, TERM_YELLOW, "(default)");
 	else c_ptr_last(x, y, vis_len, TERM_YELLOW, buf);
 
-	if (mode & ASKFOR_CHATTING) strcpy(message_history_chat[hist_chat_end], buf);
-	else if (!nohist) strcpy(message_history[hist_end], buf);
+	if (mode & ASKFOR_CHATTING) {
+		strncpy(message_history_chat[hist_chat_end], buf, len);
+		buf[len] = '\0';
+	}
+	else if (!nohist) {
+		strncpy(message_history[hist_end], buf, len);
+		buf[len] = '\0';
+	}
 
 	/* Process input */
 	while (!done)
@@ -1343,25 +1349,47 @@ bool askfor_aux(char *buf, int len, char mode)
 			if (nohist) break;
 			cur_hist++;
 
-			if ((mode & ASKFOR_CHATTING) && !hist_chat_looped && hist_chat_end < cur_hist) cur_hist = 0;
-			else if (!hist_looped && hist_end < cur_hist) cur_hist = 0;
+			if (mode & ASKFOR_CHATTING) {
+				if ((!hist_chat_looped && hist_chat_end < cur_hist) ||
+					(hist_chat_looped && cur_hist >= MSG_HISTORY_MAX)) {
+					cur_hist = 0;
+				}
 
-			if (mode & ASKFOR_CHATTING)
-				strcpy(buf, message_history_chat[cur_hist]);
-			else
-				strcpy(buf, message_history[cur_hist]);
+				strncpy(buf, message_history_chat[cur_hist], len);
+				buf[len] = '\0';
+			} else {
+				if ((!hist_looped && hist_end < cur_hist) ||
+					(hist_looped && cur_hist >= MSG_HISTORY_MAX)) {
+					cur_hist = 0;
+				}
+
+				strncpy(buf, message_history[cur_hist], len);
+				buf[len] = '\0';
+			}
+
 			k = strlen(buf);
 			break;
 
 			case KTRL('P'):
 			if (nohist) break;
-			if (cur_hist) cur_hist--;
-			else if (mode & ASKFOR_CHATTING) cur_hist = hist_chat_looped ? MSG_HISTORY_MAX - 1 : hist_chat_end;
-			else cur_hist = hist_looped ? MSG_HISTORY_MAX - 1 : hist_end;
-			if (mode & ASKFOR_CHATTING)
-				strcpy(buf, message_history_chat[cur_hist]);
-			else
-				strcpy(buf, message_history[cur_hist]);
+			if (mode & ASKFOR_CHATTING) {
+				if (cur_hist) cur_hist--;
+				else {
+					cur_hist = hist_chat_looped ? MSG_HISTORY_MAX - 1 : hist_chat_end;
+				}
+
+				strncpy(buf, message_history_chat[cur_hist], len);
+				buf[len] = '\0';
+			} else {
+				if (cur_hist) cur_hist--;
+				else {
+					cur_hist = hist_looped ? MSG_HISTORY_MAX - 1 : hist_end;
+				}
+
+				strncpy(buf, message_history[cur_hist], len);
+				buf[len] = '\0';
+			}
+
 			k = strlen(buf);
 			break;
 
@@ -1424,7 +1452,8 @@ bool askfor_aux(char *buf, int len, char mode)
 	/* Add this to the history */
 	if (mode & ASKFOR_CHATTING)
 	{
-		strcpy(message_history_chat[hist_chat_end], buf);
+		strncpy(message_history_chat[hist_chat_end], buf, sizeof(*message_history_chat));
+		message_history_chat[hist_chat_end][sizeof(*message_history_chat) - 1] = '\0';
 		hist_chat_end++;
 		if (hist_chat_end >= MSG_HISTORY_MAX)
 		{
@@ -1434,7 +1463,8 @@ bool askfor_aux(char *buf, int len, char mode)
 	}
 	else
 	{
-		strcpy(message_history[hist_end], buf);
+		strncpy(message_history[hist_end], buf, sizeof(*message_history));
+		message_history[hist_end][sizeof(*message_history) - 1] = '\0';
 		hist_end++;
 		if (hist_end >= MSG_HISTORY_MAX)
 		{
