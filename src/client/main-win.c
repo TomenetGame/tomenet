@@ -922,7 +922,7 @@ static void load_prefs(void)
 	no_cache_audio = !(GetPrivateProfileInt("Base", "CacheAudio", 1, ini_file) != 0);
 	cfg_audio_rate = GetPrivateProfileInt("Base", "SampleRate", 44100, ini_file);
 	cfg_max_channels = GetPrivateProfileInt("Base", "MaxChannels", 32, ini_file);
-	cfg_audio_buffer = GetPrivateProfileInt("Base", "AudioBuffer", 512, ini_file);
+	cfg_audio_buffer = GetPrivateProfileInt("Base", "AudioBuffer", 1024, ini_file);
 	cfg_audio_master = (GetPrivateProfileInt("Base", "AudioMaster", 1, ini_file) != 0);
 	cfg_audio_music = (GetPrivateProfileInt("Base", "AudioMusic", 1, ini_file) != 0);
 	cfg_audio_sound = (GetPrivateProfileInt("Base", "AudioSound", 1, ini_file) != 0);
