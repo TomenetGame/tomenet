@@ -3300,7 +3300,7 @@ static void hack_plog(cptr str)
 static void hack_quit(cptr str)
 {
 	/* Give a warning */
-	if (str) MessageBox(NULL, str, "Error", MB_OK | MB_ICONSTOP);
+	if (str) MessageBox(NULL, str, "Quitting", MB_OK | MB_ICONSTOP);
 
 	/* Unregister the classes */
 	UnregisterClass(AppName, hInstance);

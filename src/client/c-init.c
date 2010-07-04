@@ -472,7 +472,7 @@ static void quit_hook(cptr s)
 	c_quit = 1;
 
 	/* Display the quit reason */
-	if (s && *s) display_message(s, "Error");
+	if (s && *s) display_message(s, "Quitting");
 
 	if(message_num() && get_check("Save chatlog?")){
 		FILE *fp;
