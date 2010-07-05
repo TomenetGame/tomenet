@@ -842,6 +842,12 @@ static void fadein_next_music(void) {
 static void reenable_music(void) {
 	Mix_Music *wave = NULL;
 
+	/* music has changed meanwhile, just play the new one the normal way */
+	if (music_next != -1 && music_next != music_cur) {
+		fadein_next_music();
+		return;
+	}
+
 	/* music initialization not yet completed? (at the start of the game) */
 	if (music_cur == -1 || music_cur_song == -1) return;
 
