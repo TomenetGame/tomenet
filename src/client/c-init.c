@@ -506,6 +506,9 @@ static void quit_hook(cptr s)
 		/* Nuke it */
 		term_nuke(ang_term[j]);
 	}
+
+	/* plog_hook must not be called anymore because the terminal is gone */
+	plog_aux = NULL;
 }
 
 
