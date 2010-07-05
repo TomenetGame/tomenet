@@ -221,6 +221,15 @@ byte flick_colour(byte attr);
  */
 
 
+/*
+ * Attempt to draw larger chunks by using simpler checks for boundaries.
+ * This will result in some characters being redrawn even if not necessary,
+ * but fewer calls to text_hook will be made. This should be beneficial on
+ * modern systems since the cost of drawing some extra characters is small.
+ * - mikaelh
+ */
+#define DRAW_LARGER_CHUNKS
+
 
 
 
@@ -365,6 +374,13 @@ static void QueueAttrChars(int x, int y, int n, byte a, cptr s)
 	byte *scr_aa = Term->scr->a[y];
 	char *scr_cc = Term->scr->c[y];
 
+#ifdef DRAW_LARGER_CHUNKS
+	memset(scr_aa + x, a, n);
+	memcpy(scr_cc + x, s, n);
+
+	x1 = x;
+	x2 = x + n;
+#else
 	/* Queue the attr/chars */
 	for ( ; n; x++, s++, n--)
 	{
@@ -382,6 +398,7 @@ static void QueueAttrChars(int x, int y, int n, byte a, cptr s)
 		if (x1 < 0) x1 = x;
 		x2 = x;
 	}
+#endif
 
 	/* Expand the "change area" as needed */
 	if (x1 >= 0)
@@ -603,21 +620,28 @@ byte flick_colour(byte attr){
 
 extern term *ang_term[];
 
-void flicker(){
-	int y, x, i;
-	char ch, attr;
+void flicker() {
+	int y, x, y2, x2, i;
+	char ch;
+	byte attr;
 	term *tterm, *old;
 
-	old=Term;
-	for(i=0; i<8; i++){
-		tterm=ang_term[i];
-		if(!tterm) continue;
+	old = Term;
+
+	for(i = 0; i < 8; i++) {
+		tterm = ang_term[i];
+		if (!tterm) continue;
+		y2 = tterm->hgt;
+		x2 = tterm->wid;
 		Term_activate(tterm);
-		for(y=0; y<tterm->hgt; y++){
-			for(x=0; x<tterm->wid; x++){
-				if(tterm->scr->a[y][x]<TERM_MULTI) continue;
-				ch=tterm->scr->c[y][x];
-				attr=flick_colour(tterm->scr->a[y][x]);
+		for(y = 0; y < y2; y++) {
+			for(x = 0; x < x2; x++) {
+				attr = tterm->scr->a[y][x];
+				if (attr < TERM_MULTI) continue;
+
+				ch = tterm->scr->c[y][x];
+				attr = flick_colour(attr);
+
 				(void)((*tterm->text_hook)(x, y, 1, attr, &ch));
 			}
 		}
@@ -625,8 +649,9 @@ void flicker(){
 		/* Actually flush the output */
 		Term_xtra(TERM_XTRA_FRESH, 0);
 
-		if(!c_cfg.recall_flicker) break;
+		if (!c_cfg.recall_flicker) break;
 	}
+
 	Term_activate(old);
 }
 
@@ -694,31 +719,39 @@ static void Term_fresh_row_text_wipe(int y)
 	byte *scr_aa = Term->scr->a[y];
 	char *scr_cc = Term->scr->c[y];
 
+	int x1 = Term->x1[y];
+	int x2 = Term->x2[y];
+
 	/* No chars "pending" in "text" */
 	int n = 0;
 
 	/* Pending text starts in the first column */
-	int fx = 0;
+	int fx = x1;
 
 	/* Pending text color is "blank" */
 	int fa = Term->attr_blank;
 
-	/* The "old" data */
-	int oa, oc;
-
 	/* The "new" data */
-	int na, nc;
+	int na;
+#ifndef DRAW_LARGER_CHUNKS
+	int nc;
+#endif
 
 	/* Max width is 255 */
 	char text[256];
 
+#ifdef DRAW_LARGER_CHUNKS
+	memcpy(old_aa + x1, scr_aa + x1, x2 - x1);
+	memcpy(old_cc + x1, scr_cc + x1, x2 - x1);
+#endif
 
 	/* Scan the columns marked as "modified" */
-	for (x = Term->x1[y]; x <= Term->x2[y]; x++)
+	for (x = x1; x <= x2; x++)
 	{
+#ifndef DRAW_LARGER_CHUNKS
 		/* See what is currently here */
-		oa = old_aa[x];
-		oc = old_cc[x];
+		int oa = old_aa[x];
+		int oc = old_cc[x];
 
 		/* Save and remember the new contents */
 		na = old_aa[x] = scr_aa[x];
@@ -778,10 +811,11 @@ static void Term_fresh_row_text_wipe(int y)
 				n = 0;
 			}
 			/* Save the new color */
-			if(na>=TERM_MULTI)
-				fa=flick_colour(na);
-			else
+			if (na >= TERM_MULTI) {
+				fa = flick_colour(na);
+			} else {
 				fa = na;
+			}
 		}
 
 		/* Start a new thread, if needed */
@@ -789,11 +823,61 @@ static void Term_fresh_row_text_wipe(int y)
 
 		/* Expand the current thread */
 		text[n++] = nc;
+#else
+		/* Save and remember the new contents */
+		na = scr_aa[x];
+
+		/* Notice new color */
+		if (fa != na)
+		{
+			n = x - fx;
+
+			/* Flush as needed (see above) */
+			if (n)
+			{
+				/* Copy the chars */
+				memcpy(text, scr_cc + fx, n);
+
+				/* Terminate the thread */
+				text[n] = '\0';
+
+				/* Draw the pending chars */
+				if (fa)
+				{
+					(void)((*Term->text_hook)(fx, y, n, fa, text));
+				}
+
+				/* Hack -- Erase "leading" spaces */
+				else
+				{
+					(void)((*Term->wipe_hook)(fx, y, n));
+				}
+			}
+
+			/* Save the new color */
+			if(na >= TERM_MULTI) {
+				fa = flick_colour(na);
+			} else {
+				fa = na;
+			}
+
+			fx = x;
+		}
+#endif
 	}
+
+#ifdef DRAW_LARGER_CHUNKS
+	n = x - fx;
+#endif
 
 	/* Flush the pending thread, if any */
 	if (n)
 	{
+#ifdef DRAW_LARGER_CHUNKS
+		/* Copy the chars */
+		memcpy(text, scr_cc + fx, n);
+#endif
+
 		/* Terminate the thread */
 		text[n] = '\0';
 
@@ -826,31 +910,39 @@ static void Term_fresh_row_text_text(int y)
 	byte *scr_aa = Term->scr->a[y];
 	char *scr_cc = Term->scr->c[y];
 
+	int x1 = Term->x1[y];
+	int x2 = Term->x2[y];
+
 	/* No chars "pending" in "text" */
 	int n = 0;
 
 	/* Pending text starts in the first column */
-	int fx = 0;
+	int fx = x1;
 
 	/* Pending text color is "blank" */
 	int fa = Term->attr_blank;
 
-	/* The "old" data */
-	int oa, oc;
-
 	/* The "new" data */
-	int na, nc;
+	int na;
+#ifndef DRAW_LARGER_CHUNKS
+	int nc;
+#endif
 
 	/* Max width is 255 */
 	char text[256];
 
+#ifdef DRAW_LARGER_CHUNKS
+	memcpy(old_aa + x1, scr_aa + x1, x2 - x1);
+	memcpy(old_cc + x1, scr_cc + x1, x2 - x1);
+#endif
 
 	/* Scan the columns marked as "modified" */
-	for (x = Term->x1[y]; x <= Term->x2[y]; x++)
+	for (x = x1; x <= x2; x++)
 	{
+#ifndef DRAW_LARGER_CHUNKS
 		/* See what is currently here */
-		oa = old_aa[x];
-		oc = old_cc[x];
+		int oa = old_aa[x];
+		int oc = old_cc[x];
 
 		/* Save and remember the new contents */
 		na = old_aa[x] = scr_aa[x];
@@ -901,11 +993,52 @@ static void Term_fresh_row_text_text(int y)
 
 		/* Expand the current thread */
 		text[n++] = nc;
+#else
+		/* Save and remember the new contents */
+		na = scr_aa[x];
+
+		/* Notice new color */
+		if (fa != na)
+		{
+			n = x - fx;
+
+			/* Flush as needed (see above) */
+			if (n)
+			{
+				/* Copy the chars */
+				memcpy(text, scr_cc + fx, n);
+
+				/* Terminate the thread */
+				text[n] = '\0';
+
+				/* Draw the pending chars */
+				(void)((*Term->text_hook)(fx, y, n, fa, text));
+			}
+
+			/* Save the new color */
+			if(na >= TERM_MULTI) {
+				fa = flick_colour(na);
+			} else {
+				fa = na;
+			}
+
+			fx = x;
+		}
+#endif
 	}
+
+#ifdef DRAW_LARGER_CHUNKS
+	n = x - fx;
+#endif
 
 	/* Flush the pending thread, if any */
 	if (n)
 	{
+#ifdef DRAW_LARGER_CHUNKS
+		/* Copy the chars */
+		memcpy(text, scr_cc + fx, n);
+#endif
+
 		/* Terminate the thread */
 		text[n] = '\0';
 
@@ -929,6 +1062,9 @@ static void Term_fresh_row_both_wipe(int y)
 	byte *scr_aa = Term->scr->a[y];
 	char *scr_cc = Term->scr->c[y];
 
+	int x1 = Term->x1[y];
+	int x2 = Term->x2[y];
+
 	/* No chars "pending" in "text" */
 	int n = 0;
 
@@ -938,9 +1074,6 @@ static void Term_fresh_row_both_wipe(int y)
 	/* Pending text color is "blank" */
 	int fa = Term->attr_blank;
 
-	/* The "old" data */
-	int oa, oc;
-
 	/* The "new" data */
 	int na, nc;
 
@@ -949,11 +1082,11 @@ static void Term_fresh_row_both_wipe(int y)
 
 
 	/* Scan the columns marked as "modified" */
-	for (x = Term->x1[y]; x <= Term->x2[y]; x++)
+	for (x = x1; x <= x2; x++)
 	{
 		/* See what is currently here */
-		oa = old_aa[x];
-		oc = old_cc[x];
+		int oa = old_aa[x];
+		int oc = old_cc[x];
 
 		/* Save and remember the new contents */
 		na = old_aa[x] = scr_aa[x];
@@ -1091,6 +1224,9 @@ static void Term_fresh_row_both_text(int y)
 	byte *scr_aa = Term->scr->a[y];
 	char *scr_cc = Term->scr->c[y];
 
+	int x1 = Term->x1[y];
+	int x2 = Term->x2[y];
+
 	/* No chars "pending" in "text" */
 	int n = 0;
 
@@ -1111,7 +1247,7 @@ static void Term_fresh_row_both_text(int y)
 
 
 	/* Scan the columns marked as "modified" */
-	for (x = Term->x1[y]; x <= Term->x2[y]; x++)
+	for (x = x1; x <= x2; x++)
 	{
 		/* See what is currently here */
 		oa = old_aa[x];
@@ -1217,6 +1353,9 @@ static void Term_fresh_row_pict(int y)
 	byte *scr_aa = Term->scr->a[y];
 	char *scr_cc = Term->scr->c[y];
 
+	int x1 = Term->x1[y];
+	int x2 = Term->x2[y];
+
 	/* The "old" data */
 	int oa, oc;
 
@@ -1225,7 +1364,7 @@ static void Term_fresh_row_pict(int y)
 
 
 	/* Scan the columns marked as "modified" */
-	for (x = Term->x1[y]; x <= Term->x2[y]; x++)
+	for (x = x1; x <= x2; x++)
 	{
 		/* See what is currently here */
 		oa = old_aa[x];
@@ -1746,7 +1885,7 @@ errr Term_addch(byte a, char c)
  */
 errr Term_addstr(int n, byte a, cptr s)
 {
-	int k;
+	int k = n, len;
 
 	int w = Term->wid;
 
@@ -1759,7 +1898,8 @@ errr Term_addstr(int n, byte a, cptr s)
 	k = (n < 0) ? (w + 1) : n;
 
 	/* Obtain the usable string length */
-	for (n = 0; (n < k) && s[n]; n++) /* loop */;
+	len = strlen(s);
+	n = MIN(k, len);
 
 	/* React to reaching the edge of the screen */
 	if (Term->scr->cx + n >= w) res = n = w - Term->scr->cx;
@@ -1876,8 +2016,6 @@ errr Term_putstr(int x, int y, int n, byte a, char *s)
  */
 errr Term_erase(int x, int y, int n)
 {
-	int i;
-
 	int w = Term->wid;
 	/* int h = Term->hgt; */
 
@@ -1901,6 +2039,15 @@ errr Term_erase(int x, int y, int n)
 	scr_aa = Term->scr->a[y];
 	scr_cc = Term->scr->c[y];
 
+#ifdef DRAW_LARGER_CHUNKS
+	memset(scr_aa + x, na, n);
+	memset(scr_cc + x, nc, n);
+
+	x1 = x;
+	x2 = x + n;
+#else
+	int i;
+
 	/* Scan every column */
 	for (i = 0; i < n; i++, x++)
 	{
@@ -1920,6 +2067,7 @@ errr Term_erase(int x, int y, int n)
 		/* Track maximum changed column */
 		x2 = x;
 	}
+#endif
 
 	/* Expand the "change area" as needed */
 	if (x1 >= 0)
