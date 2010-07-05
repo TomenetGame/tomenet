@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 20. June 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 5. July 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -5592,9 +5592,11 @@ Mimics who use a vampire form and players of 'Vampire' race will also get a
 vampiric 'brand' on their melee attacks (see (6.7)).
 
 Vampiric life draining heals you with a part of the damage you afflicted on
-your target each hit! The more damage you deal and the more attacks per round
-you have, the more life you will leech back. There's a maximum amount of HP
-which you can leech from a victim per round (usually around 50..100).
+your target, almost each hit! The more damage you deal and the more attacks per
+round you have, the more life you will leech back. There's a maximum amount of
+HP which you can leech from a victim per round (usually around 50..100).
+Said cap of 50..100 HP isn't really reached until your character deals quite a
+lot of damage, remember: Leeching is based on a fraction of your damage dealt.
 
 Vampirism does not work on all types of monsters. From some it is not possible
 to drain life force. Those immune to vampirism are:
@@ -5668,8 +5670,8 @@ If another player is invisible and not of higher level than you..
         -you see him 'flicker' if you lack seeing invisible or if he's wearing
          a shadow cloak (or both). He will fade in and out of your sight.
          The lower his level, the more often you will be able to see him.
-         If you want to look at his equipment then you'll need some timing,
-         might take several tries.
+         If you want to look at his equipment with the  '  key, then you'll
+         need some timing, might take several tries.
 Invisibility (on players) overrides ESP. So it does help in a (blood bond)
 duel even if the opponent has ESP.
 
