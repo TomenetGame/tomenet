@@ -367,6 +367,9 @@ int local_file_close(int ind, unsigned short fnum) {
 u32b total;
 
 /* uses adler checksum now - (client/server) compat essential */
+/* This is a broken version of Adler-32. This version is only half as
+ * effective as a properly implemented Adler-32. - mikaelh
+ */
 static void do_sum(unsigned char *buffer, int size){
 	u32b s1, s2;
 	int n;
@@ -374,11 +377,22 @@ static void do_sum(unsigned char *buffer, int size){
 	s1 = total & 0xffff;
 	s2 = (total >> 16) & 0xffff;
 
+#if 0
 	for(n=0; n<size; n++){
 		s1=(s1+buffer[n]) % 65521;
-		s2=(s1+s1) % 65521;
+		s2=(s1+s1) % 65521; /* This is WRONG - mikaelh */
 	}
-	total=(s2 << 16)+s1;
+#else
+	/* Optimized version of the broken implementation above - mikaelh */
+	for (n = 0; n < size; n++) {
+		s1 += buffer[n];
+	}
+
+	s2 = (s1 + s1) % 65521;
+	s1 %= 65521;
+#endif
+
+	total = (s2 << 16) | s1;
 }
 
 /* Get checksum of file */
