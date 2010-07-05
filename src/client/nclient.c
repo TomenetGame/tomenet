@@ -2767,7 +2767,13 @@ int Receive_target_info(void)
 
 	/* Print the message */
 	if (c_cfg.target_history) c_msg_print(buf);
-	else prt(buf, 0, 0);
+	else {
+		/* Clear the topline */
+		prt("", 0, 0);
+
+		/* Display target info */
+		put_str(buf, 0, 0);
+	}
 
 	/* Move the cursor */
 	Term_gotoxy(x, y);
