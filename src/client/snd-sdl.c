@@ -30,6 +30,11 @@
 #include <SDL/SDL_mixer.h>
 #include <SDL/SDL_thread.h>
 
+/* completely turn off mixing of disabled audio features (music, sound, weather, all)
+   as opposed to just muting their volume? */
+//#define DISABLE_MUTED_AUDIO
+
+/* output various status messages about initializing audio */
 //#define DEBUG_SOUND
 
 /* Path to sound files */
@@ -533,8 +538,9 @@ static bool play_sound(int event, int type, int vol, s32b player_id) {
 	int s;
 	bool test = FALSE;
 
-	/* DISABLE AUDIO */
+#ifdef DISABLE_MUTED_AUDIO
 	if (!cfg_audio_master || !cfg_audio_sound) return TRUE; /* claim that it 'succeeded' */
+#endif
 
 	/* Paranoia */
 	if (event < 0 || event >= SOUND_MAX_2010) return FALSE;
@@ -665,8 +671,9 @@ static void play_sound_weather(int event) {
 	Mix_Chunk *wave = NULL;
 	int s, new_wc;
 
-	/* DISABLE AUDIO */
+#ifdef DISABLE_MUTED_AUDIO
 	if (!cfg_audio_master || !cfg_audio_weather) return;
+#endif
 
 	if (event == -2 && weather_channel != -1) {
 #ifdef DEBUG_SOUND
@@ -809,8 +816,9 @@ static void fadein_next_music(void) {
 	Mix_Music *wave = NULL;
 	int s;
 
-	/* DISABLE AUDIO */
+#ifdef DISABLE_MUTED_AUDIO
 	if (!cfg_audio_master || !cfg_audio_music) return;
+#endif
 
 	/* Paranoia */
 	if (music_next < 0 || music_next >= MUSIC_MAX) return;
@@ -831,13 +839,16 @@ static void fadein_next_music(void) {
 	}
 
 	/* Actually play the thing */
+#ifdef DISABLE_MUTED_AUDIO
 	music_cur = music_next;
 	music_cur_song = s;
+#endif
 	music_next = -1;
 //	Mix_PlayMusic(wave, -1);//-1 infinite, 0 once, or n times
 	Mix_FadeInMusic(wave, -1, 1000);
 }
 
+#ifdef DISABLE_MUTED_AUDIO
 /* start playing current music again if we reenabled it in the mixer UI after having had it disabled */
 static void reenable_music(void) {
 	Mix_Music *wave = NULL;
@@ -859,6 +870,7 @@ static void reenable_music(void) {
 	/* Take up playing again immediately, no fading in */
 	Mix_PlayMusic(wave, -1);
 }
+#endif
 
 /*
  * Set mixing levels in the SDL module.
@@ -874,25 +886,28 @@ static void set_mixing_sdl(void) {
 
 		/* Note: Linear scaling is used here to allow more precise control at the server end */
 		Mix_Volume(n, CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * channel_volume[n]) / 100));
-		/* DISABLE_AUDIO */
+#ifdef DISABLE_MUTED_AUDIO
 		if ((!cfg_audio_master || !cfg_audio_sound) && Mix_Playing(n))
 			Mix_HaltChannel(n);
+#endif
 	}
 #endif
 	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume));
-	/* DISABLE AUDIO */
+#ifdef DISABLE_MUTED_AUDIO
 	if (!cfg_audio_master || !cfg_audio_music) {
 		if (Mix_PlayingMusic()) Mix_HaltMusic();
 	} else if (!Mix_PlayingMusic()) reenable_music();
+#endif
 
 	if (weather_channel != -1 && Mix_FadingChannel(weather_channel) != MIX_FADING_OUT)
 		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume));
-	/* DISABLE AUDIO */
+#ifdef DISABLE_MUTED_AUDIO
 	if (!cfg_audio_master || !cfg_audio_weather) {
 		weather_resume = TRUE;
 		if (weather_channel != -1 && Mix_Playing(weather_channel))
 			Mix_HaltChannel(weather_channel);
 	}
+#endif
 }
 
 /*
