@@ -743,10 +743,10 @@ extern void sound_weather(int val);
 extern void set_mixing(void);
 extern void weather_handle_fading(void);
 extern void mixer_fadeall(void);
-extern int music_next, weather_channel, weather_current;
+extern int music_cur, music_cur_song, music_next, weather_channel, weather_current;
 extern int weather_particles_seen, weather_sound_change, weather_fading;
 extern int cfg_audio_rate, cfg_max_channels, cfg_audio_buffer;
-extern bool cfg_audio_master, cfg_audio_music, cfg_audio_sound, cfg_audio_weather, no_cache_audio;
+extern bool cfg_audio_master, cfg_audio_music, cfg_audio_sound, cfg_audio_weather, no_cache_audio, weather_resume;
 extern int cfg_audio_master_volume, cfg_audio_music_volume, cfg_audio_sound_volume, cfg_audio_weather_volume;
 extern bool count_half_sfx_attack, sound_hint;
 

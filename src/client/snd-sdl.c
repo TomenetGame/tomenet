@@ -533,6 +533,9 @@ static bool play_sound(int event, int type, int vol, s32b player_id) {
 	int s;
 	bool test = FALSE;
 
+	/* DISABLE AUDIO */
+	if (!cfg_audio_master || !cfg_audio_sound) return TRUE; /* claim that it 'succeeded' */
+
 	/* Paranoia */
 	if (event < 0 || event >= SOUND_MAX_2010) return FALSE;
 
@@ -662,6 +665,9 @@ static void play_sound_weather(int event) {
 	Mix_Chunk *wave = NULL;
 	int s, new_wc;
 
+	/* DISABLE AUDIO */
+	if (!cfg_audio_master || !cfg_audio_weather) return;
+
 	if (event == -2 && weather_channel != -1) {
 #ifdef DEBUG_SOUND
 		puts(format("w-2: wco %d, ev %d", weather_channel, event));
@@ -705,12 +711,15 @@ static void play_sound_weather(int event) {
 	new_wc = Mix_PlayChannel(weather_channel, wave, -1);
 	if (new_wc != -1) {
 		Mix_Volume(new_wc, CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume));
-		new_wc = Mix_FadeInChannel(new_wc, wave, -1, 500);
+		if (!weather_resume) new_wc = Mix_FadeInChannel(new_wc, wave, -1, 500);
 	}
 #else
-	new_wc = Mix_FadeInChannel(weather_channel, wave, -1, 500);
+	if (!weather_resume) new_wc = Mix_FadeInChannel(weather_channel, wave, -1, 500);
 #endif
-	weather_fading = 1;
+
+	if (!weather_resume) weather_fading = 1;
+	else weather_resume = FALSE;
+
 #ifdef DEBUG_SOUND
 	puts(format("old: %d, new: %d, ev: %d", weather_channel, new_wc, event));
 #endif
@@ -800,6 +809,9 @@ static void fadein_next_music(void) {
 	Mix_Music *wave = NULL;
 	int s;
 
+	/* DISABLE AUDIO */
+	if (!cfg_audio_master || !cfg_audio_music) return;
+
 	/* Paranoia */
 	if (music_next < 0 || music_next >= MUSIC_MAX) return;
 
@@ -819,9 +831,27 @@ static void fadein_next_music(void) {
 	}
 
 	/* Actually play the thing */
+	music_cur = music_next;
+	music_cur_song = s;
 	music_next = -1;
 //	Mix_PlayMusic(wave, -1);//-1 infinite, 0 once, or n times
 	Mix_FadeInMusic(wave, -1, 1000);
+}
+
+/* start playing current music again if we reenabled it in the mixer UI after having had it disabled */
+static void reenable_music(void) {
+	Mix_Music *wave = NULL;
+
+	/* music initialization not yet completed? (at the start of the game) */
+	if (music_cur == -1 || music_cur_song == -1) return;
+
+	wave = songs[music_cur].wavs[music_cur_song];
+
+	/* If audio is still being loaded/cached, we might just have to exit here for now */
+	if (!wave) return;
+
+	/* Take up playing again immediately, no fading in */
+	Mix_PlayMusic(wave, -1);
 }
 
 /*
@@ -835,13 +865,28 @@ static void set_mixing_sdl(void) {
 	int n;
 	for (n = 0; n < cfg_max_channels; n++) {
 		if (n == weather_channel) continue;
+
 		/* Note: Linear scaling is used here to allow more precise control at the server end */
 		Mix_Volume(n, CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * channel_volume[n]) / 100));
+		/* DISABLE_AUDIO */
+		if ((!cfg_audio_master || !cfg_audio_sound) && Mix_Playing(n))
+			Mix_HaltChannel(n);
 	}
 #endif
 	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume));
+	/* DISABLE AUDIO */
+	if (!cfg_audio_master || !cfg_audio_music) {
+		if (Mix_PlayingMusic()) Mix_HaltMusic();
+	} else if (!Mix_PlayingMusic()) reenable_music();
+
 	if (weather_channel != -1 && Mix_FadingChannel(weather_channel) != MIX_FADING_OUT)
 		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume));
+	/* DISABLE AUDIO */
+	if (!cfg_audio_master || !cfg_audio_weather) {
+		weather_resume = TRUE;
+		if (weather_channel != -1 && Mix_Playing(weather_channel))
+			Mix_HaltChannel(weather_channel);
+	}
 }
 
 /*
