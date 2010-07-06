@@ -879,7 +879,7 @@ errr process_pref_file_aux(char *buf)
         else if (buf[0] == 'A')
         {
 		/* Allocate enough space for the ascii string - mikaelh */
-		C_MAKE(macro__buf, strlen(buf), char);
+		macro__buf = mem_alloc(strlen(buf));
 
                 text_to_ascii(macro__buf, buf+2);
                 return (0);
@@ -893,7 +893,7 @@ errr process_pref_file_aux(char *buf)
                 macro_add(tmp, macro__buf, FALSE, FALSE);
 
 		/* Free the action */
-		C_FREE(macro__buf, strlen(macro__buf) + 1, char);
+		mem_free(macro__buf);
 
                 return (0);
         }
