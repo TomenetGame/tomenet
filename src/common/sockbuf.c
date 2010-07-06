@@ -592,8 +592,7 @@ int Packet_printf(va_alist)
 		if (buf + len > end) {
 			failure = PRINTF_SIZE;
 		} else {
-			memcpy(buf, str, len - 1);
-			buf[len - 1] = '\0';
+			memcpy(buf, str, len);
 			buf += len;
 		}
 #endif
