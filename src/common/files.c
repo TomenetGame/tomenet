@@ -370,7 +370,7 @@ u32b total;
 /* This is a broken version of Adler-32. This version is only half as
  * effective as a properly implemented Adler-32. - mikaelh
  */
-static void do_sum(unsigned char *buffer, int size){
+static void do_sum(unsigned char *buffer, int size) {
 	u32b s1, s2;
 	int n;
 
@@ -388,8 +388,10 @@ static void do_sum(unsigned char *buffer, int size){
 		s1 += buffer[n];
 	}
 
-	s2 = (s1 + s1) % 65521;
-	s1 %= 65521;
+	if (n) {
+		s2 = (s1 + s1) % 65521;
+		s1 %= 65521;
+	}
 #endif
 
 	total = (s2 << 16) | s1;
