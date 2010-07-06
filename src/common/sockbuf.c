@@ -635,7 +635,6 @@ int Packet_scanf(va_alist)
 {
     int			i,
 			j,
-			k,
 			*iptr,
 			count = 0,
 			failure = 0,
@@ -794,7 +793,8 @@ int Packet_scanf(va_alist)
 	    case 's':	/* Small strings */
 		max_str_size = (fmt[i] == 'S') ? MSG_LEN : ((fmt[i] == 'I') ? ONAME_LEN : MAX_CHARS);
 		str = va_arg(ap, char *);
-		k = 0;
+#if 0
+		int k = 0;
 		for (;;) {
 		    if (&sbuf->buf[sbuf->len] < &sbuf->ptr[j + 1]) {
 			if (BIT(sbuf->state, SOCKBUF_DGRAM | SOCKBUF_LOCK) != 0) {
@@ -838,7 +838,58 @@ int Packet_scanf(va_alist)
 			    break;
 		    }
 		}
-		if (failure != 0) {
+#else
+		/* Optimized version - mikaelh */
+
+		/* Try to find a \0 in the socket buffer */
+		cptr = memchr(&sbuf->ptr[j], '\0', sbuf->len + sbuf->buf - sbuf->ptr - j);
+
+		/* Are there enough bytes in the socket buffer anyway? */
+		if (!cptr && &sbuf->ptr[max_str_size] < &sbuf->buf[sbuf->len]) {
+		    cptr = &sbuf->ptr[max_str_size - 1];
+		}
+
+		if (!cptr) {
+		    if (BIT(sbuf->state, SOCKBUF_DGRAM | SOCKBUF_LOCK) != 0) {
+			failure = 3;
+		    }
+		    if (Sockbuf_read(sbuf) == -1) {
+			failure = 2;
+		    }
+
+		    /* Try to find a \0 in the socket buffer */
+		    cptr = memchr(&sbuf->ptr[j], '\0', sbuf->len + sbuf->buf - sbuf->ptr - j);
+		    
+		    /* Are there enough bytes in the socket buffer anyway? */
+		    if (!cptr && &sbuf->ptr[max_str_size] < &sbuf->buf[sbuf->len]) {
+			cptr = &sbuf->ptr[max_str_size - 1];
+		    }
+
+		    if (!cptr) {
+			failure = 3;
+		    }
+		}
+
+		if (!failure) {
+		    long len;
+		    len = cptr - sbuf->ptr - j + 1;
+
+		    /* Limit the length to max_str_size (including the \0) */
+		    if (len > max_str_size) {
+			len = max_str_size;
+		    }
+
+		    /* Copy the string */
+		    memcpy(str, &sbuf->ptr[j], len);
+
+		    /* Terminate */
+		    str[len - 1] = '\0';
+
+		    /* Consume the entire string in the socket buffer */
+		    j += len;
+		}
+#endif
+		if (failure) {
 		    strcpy(str, "ErRoR");
 		}
 		break;
