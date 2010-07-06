@@ -399,43 +399,66 @@ static void do_sum(unsigned char *buffer, int size) {
 
 /* Get checksum of file */
 /* don't waste a file transfer data space locally */
-int local_file_check(char *fname, u32b *sum){
+int local_file_check(char *fname, u32b *sum) {
 	FILE *fp;
 	unsigned char *buffer;
-	int success=0;
-	int size=4096;
-	unsigned long tbytes=0;
-	unsigned long pos;
+	int success = 0;
+	int size = 4096;
 	char buf[256];
 
 	path_build(buf, 256, ANGBAND_DIR, fname);
 
-	fp=fopen(buf, "rb");	/* b for windows.. */
-	if(!fp){
+	fp = fopen(buf, "rb");	/* b for windows.. */
+
+	if (!fp) {
 		return(0);
 	}
-	buffer=(unsigned char*)malloc(size);
-	if(buffer){
-		total=1L;
-		while(size){
-			pos=ftell(fp);
-			if(fread(buffer, size, 1, fp)){
-				tbytes+=size;
+
+	buffer = (unsigned char*) malloc(size);
+
+	if (buffer) {
+		total = 1L;
+#if 0
+		unsigned long tbytes = 0;
+		unsigned long pos;
+
+		while (size) {
+			pos = ftell(fp);
+			if (fread(buffer, size, 1, fp)) {
+				tbytes += size;
 				do_sum(buffer, size);
 			}
-			else{
-				if(feof(fp)){
+			else {
+				if (feof(fp)) {
 					fseek(fp, pos, SEEK_SET);
-					size/=2;
+					size /= 2;
 				}
-				else if(ferror(fp))
+				else if (ferror(fp))
 					break;
 			}
 		}
-		if(!size) success=1;
+
+		if (!size) success = 1;
+#else
+		/*
+		 * The above code makes sure that size is always a power of two
+		 * which really isn't necessary.
+		 *  - mikaelh
+		 */
+		unsigned long n;
+
+		while ((n = fread(buffer, 1, size, fp)) > 0) {
+			do_sum(buffer, n);
+		}
+
+		if (!ferror(fp)) {
+			success = 1;
+		}
+#endif
 		free(buffer);
 	}
+
 	fclose(fp);
-	*sum=total;
-	return(success);
+	*sum = total;
+	return (success);
 }
