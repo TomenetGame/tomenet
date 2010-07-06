@@ -2355,13 +2355,13 @@ static void Term_increase_queue(key_queue *keys)
 	char *new_queue;
 
 	/* Allocate a new queue */
-	C_MAKE(new_queue, keys->size * 2, char);
+	new_queue = C_NEW(keys->size * 2, char);
 
 	/* Copy the queue */
 	Term_copy_queue_buf(new_queue, keys);
 
 	/* Free the old queue */
-	C_KILL(keys->queue, keys->size, char);
+	C_FREE(keys->queue, keys->size, char);
 
 	/* Put the new queue in place */
 	keys->queue = new_queue;
@@ -2379,13 +2379,13 @@ static void Term_decrease_queue(key_queue *keys)
 	char *new_queue;
 
 	/* Allocate a new queue */
-	C_MAKE(new_queue, keys->size / 2, char);
+	new_queue = C_NEW(keys->size / 2, char);
 
 	/* Copy the queue */
 	Term_copy_queue_buf(new_queue, keys);
 
 	/* Free the old queue */
-	C_KILL(keys->queue, keys->size, char);
+	C_FREE(keys->queue, keys->size, char);
 
 	/* Put the new queue in place */
 	keys->queue = new_queue;
@@ -2487,7 +2487,7 @@ errr Term_key_push_buf_aux(key_queue *keys, cptr buf, int n)
 		}
 	} else {
 		/* Allocate a new key queue */
-		C_MAKE(new_queue, new_size, char);
+		new_queue = C_NEW(new_size, char);
 
 		/* Copy the given buf */
 		memcpy(new_queue, buf, n);
@@ -2496,7 +2496,7 @@ errr Term_key_push_buf_aux(key_queue *keys, cptr buf, int n)
 		Term_copy_queue_buf(&new_queue[n], keys);
 
 		/* Free the old queue */
-		C_KILL(keys->queue, keys->size, char);
+		C_FREE(keys->queue, keys->size, char);
 
 		/* Put the new queue in place */
 		keys->queue = new_queue;
@@ -2931,7 +2931,7 @@ errr term_nuke(term *t)
 	C_KILL(t->x2, h, byte);
 
 	/* Free the input queue */
-	C_KILL(t->keys->queue, t->keys->size, char);
+	C_FREE(t->keys->queue, t->keys->size, char);
 	KILL(t->keys, key_queue);
 
 	/* Success */
@@ -2956,7 +2956,7 @@ errr term_init(term *t, int w, int h, int k)
 
 	/* Allocate the input queue */
 	MAKE(t->keys, key_queue);
-	C_MAKE(t->keys->queue, k, char);
+	t->keys->queue = C_NEW(k, char);
 
 	/* Prepare the input queue */
 	t->keys->head = t->keys->tail = t->keys->length = 0;
