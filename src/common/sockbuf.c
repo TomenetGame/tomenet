@@ -74,8 +74,6 @@
 
 char net_version[] = VERSION;
 
-int last_packet_of_frame;
-
 int Sockbuf_init(sockbuf_t *sbuf, int sock, int size, int state)
 {
     if ((sbuf->buf = sbuf->ptr = (char *) malloc(size)) == NULL) {
@@ -457,8 +455,7 @@ int Packet_printf(va_alist)
     unsigned long int	ulval;
     char		*str,
 			*end,
-			*buf,
-			*stop;
+			*buf;
     va_list		ap;
 #if !STDVA
     char		*fmt;
@@ -478,18 +475,12 @@ int Packet_printf(va_alist)
      */
 
     /*
-     * Mark the end of the available buffer space,
-     * but keep a little room for a terminating packet.
-     * This terminating packet will be from Send_end_of_frame()
-     * in netserver.c.  This is a hack, sorry.
-     * But we want to send frames even if they're bigger than
-     * our available buffer space.
+     * Mark the end of the available buffer space.
      */
     end = sbuf->buf + sbuf->size;
-    if (last_packet_of_frame != 1) {
-	end -= SOCKBUF_WRITE_SPARE;
-    }
+
     buf = sbuf->buf + sbuf->len;
+
     for (i = 0; failure == 0 && fmt[i] != '\0'; i++) {
 	if (fmt[i] == '%') {
 	    switch (fmt[++i]) {
@@ -574,6 +565,8 @@ int Packet_printf(va_alist)
 	    case 's':	/* Small strings */
 		max_str_size = (fmt[i] == 'S') ? MSG_LEN : ((fmt[i] == 'I') ? ONAME_LEN : MAX_CHARS);
 		str = va_arg(ap, char *);
+#if 0
+		char *stop;
 		if (buf + max_str_size >= end) {
 		    stop = end;
 		} else {
@@ -588,6 +581,22 @@ int Packet_printf(va_alist)
 		if (buf > stop) {
 		    failure = PRINTF_SIZE;
 		}
+#else
+		/* Optimized version - mikaelh */
+		long len = strlen(str) + 1;
+
+		if (len > max_str_size) {
+			len = max_str_size;
+		}
+
+		if (buf + len > end) {
+			failure = PRINTF_SIZE;
+		} else {
+			memcpy(buf, str, len - 1);
+			buf[len - 1] = '\0';
+			buf += len;
+		}
+#endif
 		break;
 	    default:
 		failure = PRINTF_FMT;
