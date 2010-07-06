@@ -427,94 +427,165 @@ errr my_fgets(FILE *fff, char *buf, huge n)
 }
 
 /*
- * Does the same thing as my_fgets except that we allocate our own memory
- * which means that there's no limit to the length of the line.
+ * Custom replacement function for the dreadfully slow fgetc.
+ * Can be used on only one file at a time. Files must be read to the end.
+ * - mikaelh
+ */
+static char my_fgetc_buf[4096];
+static long my_fgetc_pos = 4096, my_fgetc_len = 0;
+static int my_fgetc(FILE *fff)
+{
+	if (my_fgetc_pos >= 4096) {
+		/* Fill the buffer */
+		my_fgetc_len = fread(my_fgetc_buf, 1, 4096, fff);
+		my_fgetc_pos = 0;
+	}
+
+	if (my_fgetc_pos < my_fgetc_len) {
+		return my_fgetc_buf[my_fgetc_pos++];
+	} else {
+		/* Reset */
+		my_fgetc_pos = 4096;
+		my_fgetc_len = 0;
+
+		/* Return EOF */
+		return EOF;
+	}
+}
+
+/*
+ * Return the next character without incrementing the internal counter.
+ * - mikaelh
+ */
+static int my_fpeekc(FILE *fff)
+{
+	if (my_fgetc_pos >= 4096) {
+		/* Fill the buffer */
+		my_fgetc_len = fread(my_fgetc_buf, 1, 4096, fff);
+		my_fgetc_pos = 0;
+	}
+
+	if (my_fgetc_pos < my_fgetc_len) {
+		return my_fgetc_buf[my_fgetc_pos];
+	} else {
+		/* Return EOF */
+		return EOF;
+	}
+}
+
+/*
+ * A custom function for reading arbitarily long lines. The function allocates
+ * memory as necessary to accommodate the line. *line will be set to point to
+ * the buffer allocated for the line. The caller is responsible for freeing
+ * the allocated memory.
+ * - mikaelh
  */
 errr my_fgets2(FILE *fff, char **line, int *n)
 {
 	int c;
-	int len = 0;
-	int alloc = 4096;
+	int done = FALSE;
+	long len = 0;
+	long alloc = 4096;
 	char *buf;
 
-	C_MAKE(buf, 4096, char);
+	/* Allocate some memory for the line */
+	buf = mem_alloc(alloc);
 
-	while (1)
+	while (TRUE)
 	{
-		/* Get the next character */
-		c = fgetc(fff);
+		c = my_fgetc(fff);
 
-		/* Handle EOF */
-		if (c == EOF)
-		{
-			/* Terminate */
-			buf[len] = '\0';
+		switch (c) {
 
-			if (len == 0)
+			/* Handle EOF */
+			case EOF:
 			{
-				/* Nothing more to read */
-				C_FREE(buf, alloc, char);
+				/* Terminate */
+				buf[len] = '\0';
 
-				*line = NULL;
-				*n = 0;
+				/* Check if nothing has been read */
+				if (len == 0)
+				{
+					/* Free the memory */
+					mem_free(buf);
 
-				return 1;
+					/* Set the pointer to NULL and count to zero */
+					*line = NULL;
+					*n = 0;
+
+					/* Return 1 */
+					return 1;
+				}
+
+				/* Done */
+				done = TRUE;
+				break;
 			}
 
-			/* Done */
-			break;
-		}
-		/* Handle newline */
-		else if (c == '\n' || c == '\r')
-		{
-			int c2;
-
-			/* Peek at the next character to eliminate a possible \n */
-			c2 = fgetc(fff);
-
-			if (c2 != '\n' && c2 != EOF)
-				ungetc(c2, fff);
-
-			/* Terminate */
-			buf[len] = '\0';
-
-			/* Done */
-			break;
-		}
-		/* Handle tabs */
-		else if (c == '\t')
-		{
-			int i;
-
-			/* Make sure that we have enough space */
-			if (len + 8 > alloc)
+			/* Handle newline */
+			case '\n':
+			case '\r':
 			{
-				GROW(buf, alloc, alloc + 4096, char);
-				alloc += 4096;
+				int c2;
+
+				/* Peek at the next character to eliminate a possible \n */
+				c2 = my_fpeekc(fff);
+
+				if (c2 == '\n') {
+					/* Skip the \n */
+					my_fgetc(fff);
+				}
+
+				/* Terminate */
+				buf[len] = '\0';
+
+				/* Done */
+				done = TRUE;
+				break;
 			}
 
-			/* Add 8 spaces */
-			for (i = 0; i < 8; i++)
+			/* Handle tabs */
+			case '\t':
 			{
-				buf[len++] = ' ';
+				int i;
+
+				/* Make sure that we have enough space */
+				if (len + 8 > alloc)
+				{
+					buf = mem_realloc(buf, alloc + 4096);
+					alloc += 4096;
+				}
+
+				/* Add 8 spaces */
+				for (i = 0; i < 8; i++)
+				{
+					buf[len++] = ' ';
+				}
+
+				break;
+			}
+
+			/* Handle printables */
+			default:
+			{
+				if (isprint(c))
+				{
+					buf[len++] = c;
+				}
+
+				break;
 			}
 		}
-		/* Handle printables */
-		else if (isprint(c))
-		{
-			buf[len++] = c;
-		}
 
-		/* Make sure we have enough space for at least one more byte */
+		if (done) break;
+
+		/* Make sure we have enough space for at least one more character */
 		if (len + 1 > alloc)
 		{
-			GROW(buf, alloc, alloc + 4096, char);
+			buf = mem_realloc(buf, alloc + 4096);
 			alloc += 4096;
 		}
 	}
-
-	/* Eliminate excess buffer space */
-	GROW(buf, alloc, len + 1, char);
 
 	/* Final result */
 	*line = buf;
@@ -979,7 +1050,7 @@ errr process_pref_file(cptr name)
                         printf("Error in '%s' parsing '%s'.\n", buf2, name);
                 }
 
-		C_FREE(buf2, n, char);
+		mem_free(buf2);
         }
 
         /* Close the file */
