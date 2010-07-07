@@ -432,9 +432,24 @@ errr my_fgets(FILE *fff, char *buf, huge n)
  * - mikaelh
  */
 static char my_fgetc_buf[4096];
+static FILE *my_fgetc_fp;
 static long my_fgetc_pos = 4096, my_fgetc_len = 0;
 static int my_fgetc(FILE *fff)
 {
+	/* Check if the file has changed */
+	if (my_fgetc_fp != fff) {
+		if (my_fgetc_fp) {
+			/* Rewind the old file a bit */
+			fseek(my_fgetc_fp, my_fgetc_pos - my_fgetc_len, SEEK_CUR);
+		}
+
+		/* Reset */
+		my_fgetc_pos = 4096;
+		my_fgetc_len = 0;
+
+		my_fgetc_fp = fff;
+	}
+
 	if (my_fgetc_pos >= 4096) {
 		/* Fill the buffer */
 		my_fgetc_len = fread(my_fgetc_buf, 1, 4096, fff);
@@ -447,6 +462,7 @@ static int my_fgetc(FILE *fff)
 		/* Reset */
 		my_fgetc_pos = 4096;
 		my_fgetc_len = 0;
+		my_fgetc_fp = NULL;
 
 		/* Return EOF */
 		return EOF;
