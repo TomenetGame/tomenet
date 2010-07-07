@@ -74,6 +74,15 @@ function showskills(name)
 	if get_skill_value(p, SKILL_TCONTACT) > 0 then		msg_print(Ind, "     . Thought Contact            " .. get_skill_formatted(p, SKILL_TCONTACT)) end
 	if get_skill_value(p, SKILL_MINTRUSION) > 0 then	msg_print(Ind, "     . Mental Intrusion           " .. get_skill_formatted(p, SKILL_MINTRUSION)) end
 	if get_skill_value(p, SKILL_RUNEMASTERY ) > 0 then	msg_print(Ind, " . Runemastery                    " .. get_skill_formatted(p, SKILL_RUNEMASTERY)) end
+	if get_skill_value(p, SKILL_SCHOOL_RUNECRAFT) > 0 then	msg_print(Ind, " . Runecraft                      " .. get_skill_formatted(p, SKILL_SCHOOL_RUNECRAFT)) end
+	if get_skill_value(p, SKILL_R_FIRECOLD) > 0 then	msg_print(Ind, "     . Fire/Cold                  " .. get_skill_formatted(p, SKILL_R_FIRECOLD)) end
+	if get_skill_value(p, SKILL_R_WATEACID) > 0 then	msg_print(Ind, "     . Water/Acid                 " .. get_skill_formatted(p, SKILL_R_WATEACID)) end
+	if get_skill_value(p, SKILL_R_ELECEART) > 0 then	msg_print(Ind, "     . Electricity/Earth          " .. get_skill_formatted(p, SKILL_R_ELECEART)) end
+	if get_skill_value(p, SKILL_R_WINDPOIS) > 0 then	msg_print(Ind, "     . Wind/Poison                " .. get_skill_formatted(p, SKILL_R_WINDPOIS)) end
+	if get_skill_value(p, SKILL_R_MANACHAO) > 0 then	msg_print(Ind, "     . Mana/Chaos                 " .. get_skill_formatted(p, SKILL_R_MANACHAO)) end
+	if get_skill_value(p, SKILL_R_FORCGRAV) > 0 then	msg_print(Ind, "     . Force/Gravity              " .. get_skill_formatted(p, SKILL_R_FORCGRAV)) end
+	if get_skill_value(p, SKILL_R_NETHTIME) > 0 then	msg_print(Ind, "     . Nether/Time                " .. get_skill_formatted(p, SKILL_R_NETHTIME)) end
+	if get_skill_value(p, SKILL_R_MINDNEXU) > 0 then	msg_print(Ind, "     . Mind/Nexus                 " .. get_skill_formatted(p, SKILL_R_MINDNEXU)) end
 	if get_skill_value(p, SKILL_SNEAKINESS) > 0 then	msg_print(Ind, " - Sneakiness                     " .. get_skill_formatted(p, SKILL_SNEAKINESS)) end
 	if get_skill_value(p, SKILL_STEALTH) > 0 then		msg_print(Ind, "     . Stealth                    " .. get_skill_formatted(p, SKILL_STEALTH)) end
 	if get_skill_value(p, SKILL_DISARM) > 0 then		msg_print(Ind, "     - Disarming                  " .. get_skill_formatted(p, SKILL_DISARM)) end

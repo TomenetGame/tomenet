@@ -1056,3 +1056,23 @@ function ggs(name)
 	if (p == -1) then return -1 end
 	msg_print(Ind, "Player "..players(p).name.."'s blessings remaining: "..players(p).admin_godly_strike..".")
 end
+
+--list players (like '@', basically)
+function plist()
+    local i
+    for i = 1, NumPlayers do
+	msg_print(Ind, "Player #"..i..": ("..players(i).accountname..") "..players(i).name..", R:"..players(i).prace.." C:"..players(i).pclass..", Lv "..players(i).lev.."/"..players(i).max_lev.." ("..players(i).max_plv..").")
+    end
+end
+
+--like evileye's player_send()
+function wrec(name, x, y)
+    i = ind(name);
+    players(i).recall_pos.wx = x;
+    players(i).recall_pos.wy = y;
+    players(i).recall_pos.wz = 0;
+-- let's try LEVEL_OUTSIDE_RAND (5) instead of LEVEL_OUTSIDE (4) - C. Blue :)
+    players(i).new_level_method = 5;
+    recall_player(i, "");
+end
+

@@ -113,10 +113,10 @@ end
 --DEPRECATED AND BAD. use /initlua slash.c command instead!
 function init()
 	pern_dofile(Ind, "cblue.lua")
-	pern_dofile(Ind, "dg.lua")
-	pern_dofile(Ind, "evil.lua")
+--	pern_dofile(Ind, "dg.lua")
+--	pern_dofile(Ind, "evil.lua")
 --	pern_dofile(Ind, "zz.lua")
-	pern_dofile(Ind, "jir.lua")
+--	pern_dofile(Ind, "jir.lua")
 	pern_dofile(Ind, "it.lua")
 	pern_dofile(Ind, "mikaelh.lua")
 
