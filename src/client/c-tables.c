@@ -696,8 +696,13 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.auto_destroy,		FALSE,	3,	9, 63, FALSE,
 	"auto_destroy",			"(broken) No query to destroy known junks" },
 
+#if 0
 	{ &c_cfg.auto_inscribe,		FALSE,	3,	9, 64, FALSE,
 	"auto_inscribe",		"Automatically inscribe books and so on" },
+#else
+	{ &c_cfg.auto_inscribe,		FALSE,	4,	9, 64, TRUE,
+	"auto_inscribe",		"Use additional predefined auto-inscriptions" },
+#endif
 
 	{ &c_cfg.taciturn_messages,	FALSE,	1,	9, 65, TRUE,
 	"taciturn_messages",		"Suppress server messages as far as possible" },
