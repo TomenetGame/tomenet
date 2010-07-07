@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 5. July 2010 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.5b - official websites are:
+| Latest update: 7. July 2010 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.5c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 +---
@@ -291,7 +291,7 @@ t       T       take off items.
 q       q       quaff a potion.
 r       r       read a scroll.
 E       E       eat. (Thunderlords, also known as Dragonriders, can eat
-                firestones to gain temporary special abilities, see (5.9) .)
+                firestones to gain temporary special abilities, see (5.9).)
 F       F       fuel your light source.
                 Use oil for lanterns, and torches to fuel another torch.
 f       t       fire ammo from your quiver.
@@ -324,7 +324,7 @@ V       V       enter 'cloaking mode'. This can only be used by rogues.
                 Only a few monsters who are able to utilize ESP (telepathy) or
                 have especially powerful detection will still notice you.
                 Those are eyes, angels, Nazgul, nether guards, and unique
-                monster which is both smart and powerful at once.
+                monsters which are both smart and powerful at once.
                 Taking damage (HP/sanity/experience), attacking, casting
                 spells, reading scrolls, tunneling, bashing, picking up/
                 opening/closing/dropping/destroying things, using
@@ -1461,6 +1461,11 @@ or that are especially important are listed in detail here:
         shown, for example 'You have <item>' when picking up an item.
     Don't display 'flavours' in item names (short_item_names)
         A 'Black Potion of Speed' will just be shown as a 'Potion of Speed'.
+
+    Use additional predefined auto-inscriptions (auto_inscribe)
+        Will provide a predefined (on server-side) set of item-inscriptions
+        that will be applied automatically to some selected items, which are
+        word-of-Recall items, various scrolls and a few potions.
     Hide unusable skills (hide_unusable_skills)
         Skills that your character cannot use will not be displayed in the
         skill menu invoked by 'G' key.
@@ -1471,6 +1476,7 @@ or that are especially important are listed in detail here:
     Set 'AFK mode' automatically (auto_afk)
         Rogues might want to turn this off in order to sit out their blacklist
         timer in town.
+
     Automatically open doors (easy_open)
         Your character attempts to open a door just by you moving into it.
 !!! Scroll the screen more frequently (wide_scroll_margin)
@@ -1703,6 +1709,12 @@ If they are the same as your Max HP then you are fully rested and physically
 healed.
 -Next entry is your stamina (ST), if you chose a class that makes use of it.
 Stamina may allow you to employ special techniques accessed with 'm'.
+-Below stamina is a 'flag bar' which displays certain combat-related modi of
+your character, if available to your class:
+ -Combat stance (Bl = balanced, Df = defensive, Of = offensive, see (6.2))
+ -Dual-wield mode (DH = dual-hand aka default, MH = main hand only, see (6.2))
+ -Fire-till-kill toggle (FK = enabled, see (5.2a))
+ -Project spells toggle (Pj = enabled, see (6.8))
 
 Below that, there are further status indicators such as
 -your current world map location (sector 32,32 aka the starter town of 'Bree'
@@ -4966,19 +4978,34 @@ Bluesteel Blade Cannot rust (not damaged by water attacks) and are especially
                 sharp (see 'VORPAL' under (5.8)).
 Shadow Blade    Resists darkness, cannot be damaged by acid or water, provides
                 a fixed stealth bonus of +2..
-Magic Arrows, Magic Bolts, Magic Shots.
+Blade of Chaos  Resists chaos and produces chaotic effects (see (5.8)).
+Hunting Spear   Slays animals.
+Slaughter Axe   Slays animals.
+Scourge of Repentance   Slays undead.
+Demon Hammer    Slays demons.
+Thunder Axe     Slays giants, provides lightning brand and resistance.
+Mace of Disruption      Slays undead.
+Scythe of Slicing       Slays dragons and animals.
+
+Magic ammunition (Magic Arrows, Magic Bolts, Magic Shots).
                 Those will return into your quiver magically, so just having
                 one will already serve, as long as it isn't destroyed by some
                 elemental attack..
                 Artifact ammunition of any type auto-returns too, same as
                 magic ammunition.
+Silver ammunition       *Slays* undead.
+Ethereal ammunition     Magically returns after being fired, has a small chance
+                        to fade away instead though.
+
+Dragonrider Coat        Resists heat & cold.
+Serpent Scale Mail      Resists acid.
+Elven Cloak     Increases your stealth, searching ability and luck.
 Shadow Cloak    Makes you hard to spot for other players, regarding
                 a) them seeing you
                 b) them being able to look at your current equipment.
                 Shadow Cloaks work especially well to further disguise
                 yourself while being invisible vs. someone who is able to see
                 invisible creatures/players. See '(5.16) Invisibility'.
-Dragonrider Coat        Resists heat & cold.
 Elven Gloves    Regenerate hit points and mana points.
 
 
@@ -6128,6 +6155,7 @@ Note that not every skill is available to every profession (class).
                                 reach a certain character level i.e. skill.
                                 Each stance has advantages and disadvantages,
                                 those are:
+                                Balanced stance  - the default, no boni/mali.
                                 Defensive stance - you will block more,
                                                  - intercept less often,
                                                  - deal less damage.
@@ -6370,7 +6398,9 @@ Note that not every skill is available to every profession (class).
                                 large piece of wood without the store owner
                                 noticing it, although it's not worth much.
                                 There's always a minimum chance of 5% to fail.
-                                You need to be at least level 5 to steal.
+                                You need to be at least level 5 to steal
+                                and at least level 10 to steal anything of
+                                somewhat higher value.
                                 You have a chance to successfully steal an
                                 item even if your stealing skill is 0 and your
                                 dexterity low, so everyone could give it a try.
@@ -7015,6 +7045,8 @@ Priest
     of their type.
     Priests are especially adept at sensing curses on any sort of item, an
     ability that grows with their character level.
+    Hint: Note that their spell Holy Light can be used to deal decent damage
+    after it's been brought up a few levels. Orcs are said to fear it a lot.
 
 Rogue
     Rogues can backstab sleeping or fleeing monsters, and they can train
@@ -7072,6 +7104,8 @@ Archer
     around with any bow/xbow/sling, usually most familiar with bows.
     An Archer is very bad at melee, being only better than the Sorcerer.
     Archers can create ammunition from the bones of their opponents.
+    Hint: Enchanting your ranged weapon to-damage is especially effective,
+    because the enchantment will be multiplied by the weapons multiplier.
 
 Paladin
     Paladins are a combination of warrior and priest. Holy knights that
@@ -7115,6 +7149,8 @@ Druid
     which usually cannot use weapons, they will only get 1 blow per round.)
     To recheck which forms you can transform into, use the /ex command.
     To see an overview of the forms and their abilities, see (6.7a).
+    Hint: Druids have a powerful ranged area attack spell they can use very
+    early on, Toxic Moisture. Look for it in the book store right away.
 
 Shaman
     Shamans are able to call upon both spiritual and magical powers,
@@ -7136,20 +7172,22 @@ Runemaster
     Runemasters use arcane symbols or 'runes' to summon pure elemental magic.
     They use their intelligence and dexterity to both manipulate and protect
     themselves from the fickle and dangerous forces of their art.
-    Runemasters are not the most dedicated or systematic of adventurers, and are
+    Runemasters are not the most dedicated or systematic of adventurers, and
     often rely on flashy tricks and sleight-of-hand. Because of this, and their
-    tendncy towards thievery, they are often mistaken for rogues.
-    This roguish nature allows them to train in a specific weapon proficiencies,
+    tendency towards thievery, they are often mistaken for rogues.
+    This roguish nature allows them to train in specific weapon proficiencies,
     although their lack of dedication leaves 'Weaponmastery' as an unattainable
-    goal. Some runemasters may be able to use rune-spells to enhance their combat
-    abilities.
-    Runemasters are able to train some skills that are typical for rogues: they
-    are calm under pressure and are able to intercept and disarm things very well.
+    goal. Some runemasters may be able to use rune-spells to enhance their
+    combat abilities.
+    Runemasters are adept in some skills that are typical for rogues, although
+    they lack their finesse.
     For more information about runes, see '(5.20) Runes & Runemastery'.
 
 Mindcrafter
-    Mindcrafters are a good melee fighters who additionally train the use of
+    Mindcrafters are great melee fighters who additionally train the use of
     telepathy to unleash spells formed by their psychic powers.
+    Their intellect is supreme compared to primitive warriors, making them calm
+    and silent fighters who are hard to read and dangerously sharp.
     They have a lot of possibilities to positively or negatively influence the
     minds of others, their repertoire being somewhat more limited only if they
     are up against creatures of little or no intelligence.
@@ -7169,6 +7207,8 @@ Mindcrafter
     pressing 'p'. Pressing it again will return one's mind to normal.
     The effects of some necromancy skills are somewhat distracting to
     mindcrafters, so training them may require somewhat more effort.
+    Hint: Mindcrafters have a powerful ranged attack spell they can use very
+    early on, Psionic Blast. Look for it in the book store right away.
 
 
 If you raise in levels, you will get new titles. These are displayed between
@@ -9676,6 +9716,11 @@ Body Armour (except for Dragon Scale Mails)
         Hit point bonus (+LIFE)   (*)
         Reduced weight
         Extra +AC bonus
+    Royal Heavy Armour (Mithril/Adamantite armour only usable by winners):
+    (these mods may spawn additionally to body armour specific mods above)
+        Reflection
+        Mana resistance
+        somewhat increased chance to spawn immunities or +LIFE.
 Dragon Scale Mails
         Hold life
         Strength bonus (has a chance to include strength sustenance)
