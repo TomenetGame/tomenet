@@ -6366,7 +6366,7 @@ A:127/255
 P:0:0d0:1:1:1
 F:WIS | STR | INT | DEX | CON | CHR | LIFE | INFRA | SPEED | HIDE_TYPE |
 F:REGEN_MANA | REGEN | FREE_ACT | RES_FEAR
-F:AUTO_ID
+F:AUTO_ID | LITE1
 
 N:889:the Moon
 G:":d
@@ -6548,7 +6548,7 @@ G:?:o
 #I:8:20:0
 I:8:51:0
 W:0:0:5:1
-A:200/127
+A:127/255
 F:ACTIVATE
 F:IGNORE_ACID | IGNORE_COLD | IGNORE_FIRE | IGNORE_ELEC | IGNORE_WATER
 
@@ -6763,7 +6763,7 @@ N:926:& Heavy Ball~
 G:*:u
 I:1:9:0
 W:120:0:2000:0
-A:200/200
+A:127/255
 P:0:1d1:0:0:0
 
 # The Amulet of Grom, the Wyrm Hunter -- see artifact list

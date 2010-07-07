@@ -16,7 +16,7 @@
 # N:<index>:<name>
 # D:<3 letter short name>:<long name>
 # W:<min depth>:<max depth>:<min player level>:<next dungeon>:<min alloc>:<max alloc chance>
-# L:<floor1>:<%1>:<floor2>:<%2>:<floor3>:<%3>:<floor4>:<%2>:<floor5>:<%3>
+# L:<floor1>:<%1>:<floor2>:<%2>:<floor3>:<%3>:<floor4>:<%4>:<floor5>:<%5>
 # L:<%end1>:<%end2>:<%end3>:<%end4>:<%end5>
 # A:<wall1>:<%1>:<wall2>:<%2>:<wall3>:<%3>:<wall4>:<%4>:<wall5>:<%5>:<outer wall>:<inner wall>
 # A:<%end1>:<%end2>:<%end3>:<%end4>:<%end5>
@@ -148,8 +148,9 @@ M:RES_NETH | R_CHAR_G | R_CHAR_W | R_CHAR_U | R_CHAR_x | R_CHAR_N
 N:7:Submerged Ruins
 D:Num:a submerged way to the lost land of Numenor.
 W:35:51:15:0:14:160
-L:84:950:187:50:1:0:0:0:0:0
-A:187:800:84:100:56:10:0:0:0:0:57:187
+#L:84:950:187:50:1:0:0:0:0:0  changed to deep water, for druids
+L:187:1000:84:0:1:0:0:0:0:0
+A:187:900:84:90:56:10:0:0:0:0:57:187
 A:600:0:400:0:0
 O:30:30:10:10
 E:1d1:1:ACID
@@ -165,8 +166,8 @@ N:8:The Halls of Mandos
 D:HMa:*A BUG*
 W:1:98:1:0:14:160
 L:1:1000:1:0:1:0:0:0:0:0
+A:56:1000:56:0:56:0:0:0:0:0:57:58
 O:20:20:20:20
-A:56:100:56:0:56:0:0:0:0:0:57:58
 F:RANDOM_TOWNS | NO_RECALL | NO_SHAFT
 F:FILL_METHOD_0
 R:100:2
@@ -369,7 +370,8 @@ R:10:0
 N:24:The Small Water Cave
 D:SWC:the entrance to a small water cave.
 W:32:35:15:0:14:160
-L:84:1000:84:0:84:0:0:0:0:0
+#L:84:1000:84:0:84:0:0:0:0:0  changed to deep water, for druids
+L:187:1000:84:0:84:0:0:0:0:0
 A:97:1000:56:0:56:0:0:0:0:0:57:58
 O:10:10:30:30
 E:1d1:20:ACID
