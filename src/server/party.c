@@ -76,14 +76,18 @@ bool WriteAccount(struct account *r_acc, bool new){
 		}
 		if (found) {
 			fseek(fp, -sizeof(struct account), SEEK_CUR);
-			fwrite(r_acc, sizeof(struct account), 1, fp);
+			if (fwrite(r_acc, sizeof(struct account), 1, fp) < 1) {
+				s_printf("Writing to account file failed: %s\n", feof(fp) ? "EOF" : strerror(ferror(fp)));
+			}
 		}
 		if (new) {
 			if (delpos != -1L)
 				fseek(fp, delpos, SEEK_SET);
 			else
 				fseek(fp, 0L, SEEK_END);
-			fwrite(r_acc, sizeof(struct account), 1, fp);
+			if (fwrite(r_acc, sizeof(struct account), 1, fp) < 1) {
+				s_printf("Writing to account file failed: %s\n", feof(fp) ? "EOF" : strerror(ferror(fp)));
+			}
 			found = 1;
 		}
 		fclose(fp);
@@ -1793,7 +1797,7 @@ bool add_hostility(int Ind, cptr name, bool initiator)
                 strcpy(p_ptr->died_from, "adrenaline poisoning");
                 p_ptr->deathblow = 0;
 		p_ptr->energy = -666;
-//		p_ptr->death = 1;
+//		p_ptr->death = TRUE;
                 player_death(Ind);
 		return FALSE;
 	}
@@ -2913,7 +2917,9 @@ void scan_accounts() {
 //		if (modified) WriteAccount(c_acc, FALSE);
 		if (modified) {
 			fseek(fp, -sizeof(struct account), SEEK_CUR);
-			fwrite(c_acc, sizeof(struct account), 1, fp);
+			if (fwrite(c_acc, sizeof(struct account), 1, fp) < 1) {
+				s_printf("Writing to account file failed: %s\n", feof(fp) ? "EOF" : strerror(ferror(fp)));
+			}
 		}
 	}
 

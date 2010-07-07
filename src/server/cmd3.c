@@ -762,10 +762,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots)
 	{
 		o_ptr = &(p_ptr->inventory[item]);
 	}
-
-
-	/* Get the item (on the floor) */
-	else
+	else /* Get the item (on the floor) */
 	{
 		if (-item >= o_max)
 			return; /* item doesn't exist */
@@ -2925,8 +2922,7 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
  *
  * XXX XXX XXX Allow "target" inside the "look" command (?)
  */
-void do_cmd_look(int Ind, int dir)
-{
+void do_cmd_look(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	player_type *q_ptr;
 	struct worldpos *wpos=&p_ptr->wpos;
@@ -2945,15 +2941,13 @@ void do_cmd_look(int Ind, int dir)
 	if(!(zcave = getcave(wpos))) return;
 
 	/* Blind */
-	if (p_ptr->blind)
-	{
+	if (p_ptr->blind) {
 		msg_print(Ind, "You can't see a damn thing!");
 		return;
 	}
 
 	/* Hallucinating */
-	if (p_ptr->image)
-	{
+	if (p_ptr->image) {
 		msg_print(Ind, "You can't believe what you are seeing!");
 		return;
 	}
@@ -2961,15 +2955,12 @@ void do_cmd_look(int Ind, int dir)
 
 	/* Reset "temp" array */
 	/* Only if this is the first time, or if we've been asked to reset */
-	if (!dir)
-	{
+	if (!dir) {
 		p_ptr->target_n = 0;
 
 		/* Scan the current panel */
-		for (y = p_ptr->panel_row_min; y <= p_ptr->panel_row_max; y++)
-		{
-			for (x = p_ptr->panel_col_min; x <= p_ptr->panel_col_max; x++)
-			{
+		for (y = p_ptr->panel_row_min; y <= p_ptr->panel_row_max; y++) {
+			for (x = p_ptr->panel_col_min; x <= p_ptr->panel_col_max; x++) {
 				/* Require line of sight, unless "look" is "expanded" */
 				if (!player_has_los_bold(Ind, y, x)) continue;
 	
@@ -2987,8 +2978,7 @@ void do_cmd_look(int Ind, int dir)
 		p_ptr->look_index = 0;
 
 		/* Paranoia */
-		if (!p_ptr->target_n)
-		{
+		if (!p_ptr->target_n) {
 			msg_print(Ind, "You see nothing special.");
 			return;
 		}
@@ -3002,8 +2992,7 @@ void do_cmd_look(int Ind, int dir)
 		ang_sort(Ind, p_ptr->target_x, p_ptr->target_y, p_ptr->target_n);
 
 		/* Collect monster and player indices */
-		for (i = 0; i < p_ptr->target_n; i++)
-		{
+		for (i = 0; i < p_ptr->target_n; i++) {
 			c_ptr = &zcave[p_ptr->target_y[i]][p_ptr->target_x[i]];
 
 			if (c_ptr->m_idx != 0)
@@ -3013,31 +3002,23 @@ void do_cmd_look(int Ind, int dir)
 	}
 
 	/* Motion */
-	else
-	{
+	else {
 		/* Reset the locations */
-		for (i = 0; i < p_ptr->target_n; i++)
-		{
-			if (p_ptr->target_idx[i] > 0)
-			{
+		for (i = 0; i < p_ptr->target_n; i++) {
+			if (p_ptr->target_idx[i] > 0) {
 				m_ptr = &m_list[p_ptr->target_idx[i]];
 
 				p_ptr->target_y[i] = m_ptr->fy;
 				p_ptr->target_x[i] = m_ptr->fx;
-			}
-			else if (p_ptr->target_idx[i] < 0)
-			{
+			} else if (p_ptr->target_idx[i] < 0) {
 				q_ptr = Players[0 - p_ptr->target_idx[i]];
 
 				/* Check for player leaving */
 				if (((0 - p_ptr->target_idx[i]) > NumPlayers) ||
-				     (!inarea(&q_ptr->wpos, &p_ptr->wpos)))
-				{
+				     (!inarea(&q_ptr->wpos, &p_ptr->wpos))) {
 					p_ptr->target_y[i] = 0;
 					p_ptr->target_x[i] = 0;
-				}
-				else
-				{
+				} else {
 					p_ptr->target_y[i] = q_ptr->py;
 					p_ptr->target_x[i] = q_ptr->px;
 				}
@@ -3061,23 +3042,19 @@ void do_cmd_look(int Ind, int dir)
 	c_ptr = &zcave[y][x];
 
 	if (c_ptr->m_idx < 0 && p_ptr->play_vis[0-c_ptr->m_idx] &&
-	    (!Players[0-c_ptr->m_idx]->admin_dm || player_sees_dm(Ind)))
-	{
+	    (!Players[0-c_ptr->m_idx]->admin_dm || player_sees_dm(Ind))) {
 		q_ptr = Players[0 - c_ptr->m_idx];
 
 		/* Track health */
 		health_track(Ind, c_ptr->m_idx);
 
 		/* Format string */
-		if (q_ptr->body_monster)
-		{
+		if (q_ptr->body_monster) {
 			if (q_ptr->lev < 60)
 			snprintf(out_val, sizeof(out_val), "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)? (q_ptr->lev)/5 : 10][1 - q_ptr->male]);
 			else
 			snprintf(out_val, sizeof(out_val), "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_PLAYER_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male]);
-		}
-		else
-		{
+		} else {
 #if 0 /* use normal race_info.title */
 			if (q_ptr->lev < 60)
 			snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)?(q_ptr->lev)/5 : 10][1 - q_ptr->male]);
@@ -3086,26 +3063,38 @@ void do_cmd_look(int Ind, int dir)
 			//, class_info[q_ptr->pclass].title
 #else /* use special_prace_lookup */
 			if (q_ptr->lev < 60)
-			snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, special_prace_lookup[q_ptr->prace], player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)?(q_ptr->lev)/5 : 10][1 - q_ptr->male]);
+				snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, special_prace_lookup[q_ptr->prace], player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)?(q_ptr->lev)/5 : 10][1 - q_ptr->male]);
 			else
-			snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, special_prace_lookup[q_ptr->prace], player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_PLAYER_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male]);
+				snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, special_prace_lookup[q_ptr->prace], player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_PLAYER_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male]);
 #endif
 		}
-	}
-	else if (c_ptr->m_idx > 0 && p_ptr->mon_vis[c_ptr->m_idx])	/* TODO: handle monster mimics */
-	{
+	} else if (c_ptr->m_idx > 0 && p_ptr->mon_vis[c_ptr->m_idx]) {	/* TODO: handle monster mimics */
+		bool done_unique;
+		m_ptr = &m_list[c_ptr->m_idx];
+
+		/* a unique which the looker already killed? */
+		if ((r_info[m_ptr->r_idx].flags1 & RF1_UNIQUE) &&
+		    p_ptr->r_killed[m_ptr->r_idx])
+			done_unique = TRUE;
+		else done_unique = FALSE;
+
 		/* Track health */
 		health_track(Ind, c_ptr->m_idx);
 
 		/* Format string */
+#if 0 /* attach 'slain' for uniques we already killed */
 //                snprintf(out_val, sizeof(out_val), "%s (%s)", r_name_get(&m_list[c_ptr->m_idx]), look_mon_desc(c_ptr->m_idx));
-		m_ptr=&m_list[c_ptr->m_idx];
 		snprintf(out_val, sizeof(out_val), "%s (Lv %d, %s%s)", r_name_get(&m_list[c_ptr->m_idx]),
-				m_ptr->level, look_mon_desc(c_ptr->m_idx),
-				m_ptr->clone ? ", clone" : "");
-	}
-	else if (c_ptr->o_idx)
-	{
+		    m_ptr->level, look_mon_desc(c_ptr->m_idx),
+		    m_ptr->clone ? ", clone" : (done_unique ? ", slain" : ""));
+#else /* use different colour for uniques we already killed */
+		snprintf(out_val, sizeof(out_val), "%s%s (Lv %d, %s%s)",
+		    done_unique ? "\377D" : "",
+		    r_name_get(&m_list[c_ptr->m_idx]),
+		    m_ptr->level, look_mon_desc(c_ptr->m_idx),
+		    m_ptr->clone ? ", clone" : "");
+#endif
+	} else if (c_ptr->o_idx) {
 		o_ptr = &o_list[c_ptr->o_idx];
 
 		/* Obtain an object description */
@@ -3115,11 +3104,9 @@ void do_cmd_look(int Ind, int dir)
 				o_ptr->next_o_idx ? " on a pile" : "");
 
 		/* Check if the object is on a detected trap */
-		if ((cs_ptr=GetCS(c_ptr, CS_TRAPS)))
-		{
+		if ((cs_ptr=GetCS(c_ptr, CS_TRAPS))) {
 			int t_idx = cs_ptr->sc.trap.t_idx;
-			if (cs_ptr->sc.trap.found)
-			{
+			if (cs_ptr->sc.trap.found) {
 				if (p_ptr->trap_ident[t_idx])
 					p1 = t_name + t_info[t_idx].name;
 				else
@@ -3137,19 +3124,15 @@ void do_cmd_look(int Ind, int dir)
 			}
 		}
 
-	}
-	else
-	{
+	} else {
 		int feat = f_info[c_ptr->feat].mimic;
 		cptr name = f_name + f_info[feat].name;
 		if (is_a_vowel(name[0])) p1 = "An ";
 
 		/* Hack -- add trap description */
-		if ((cs_ptr=GetCS(c_ptr, CS_TRAPS)))
-		{
+		if ((cs_ptr=GetCS(c_ptr, CS_TRAPS))) {
 			int t_idx = cs_ptr->sc.trap.t_idx;
-			if (cs_ptr->sc.trap.found)
-			{
+			if (cs_ptr->sc.trap.found) {
 				if (p_ptr->trap_ident[t_idx])
 					p1 = t_name + t_info[t_idx].name;
 				else
@@ -3161,31 +3144,25 @@ void do_cmd_look(int Ind, int dir)
 
 		/* Hack -- special description for store doors */
 //		if ((feat >= FEAT_SHOP_HEAD) && (feat <= FEAT_SHOP_TAIL))
-		if (feat == FEAT_SHOP)
-		{
+		if (feat == FEAT_SHOP) {
 			p1 = "The entrance to ";
 
 			/* TODO: store name! */
-			if ((cs_ptr=GetCS(c_ptr, CS_SHOP)))
-			{
+			if ((cs_ptr=GetCS(c_ptr, CS_SHOP))) {
 				name = st_name + st_info[cs_ptr->sc.omni].name;
 			}
 
 		}
 
 		if ((feat==FEAT_FOUNTAIN) && (cs_ptr=GetCS(c_ptr, CS_FOUNTAIN)) &&
-				cs_ptr->sc.fountain.known)
-		{
+		    cs_ptr->sc.fountain.known) {
 			object_kind *k_ptr;
 			int tval, sval;
 
-			if (cs_ptr->sc.fountain.type <= SV_POTION_LAST)
-			{
+			if (cs_ptr->sc.fountain.type <= SV_POTION_LAST) {
 				tval = TV_POTION;
 				sval = cs_ptr->sc.fountain.type;
-			}
-			else
-			{
+			} else {
 				tval = TV_POTION2;
 				sval = cs_ptr->sc.fountain.type - SV_POTION_LAST;
 			}

@@ -2551,19 +2551,24 @@ void summon_player(int victim, struct worldpos *wpos, char *message){
 void recall_player(int Ind, char *message){
 	struct player_type *p_ptr;
 	cave_type **zcave;
+	struct worldpos old_wpos;
 
-	p_ptr=Players[Ind];
-	
+	p_ptr = Players[Ind];
+
 	if(!p_ptr) return;
-	if(!(zcave=getcave(&p_ptr->wpos))) return;	// eww
+	if(!(zcave = getcave(&p_ptr->wpos))) return;	// eww
 
 	break_cloaking(Ind, 0);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 
+	/* Change the wpos */
+	wpcopy(&old_wpos, &p_ptr->wpos);
+	wpcopy(&p_ptr->wpos, &p_ptr->recall_pos);
+
 	/* One less person here */
-	new_players_on_depth(&p_ptr->wpos,-1,TRUE);
+	new_players_on_depth(&old_wpos, -1, TRUE);
 
 	/* Remove the player */
 	zcave[p_ptr->py][p_ptr->px].m_idx = 0;
@@ -2577,13 +2582,11 @@ void recall_player(int Ind, char *message){
 
 	/* Log it */
 	s_printf("Recalled: %s from %d,%d,%d to %d,%d,%d.\n", p_ptr->name,
-	    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+	    old_wpos.wx, old_wpos.wy, old_wpos.wz,
 	    p_ptr->recall_pos.wx, p_ptr->recall_pos.wy, p_ptr->recall_pos.wz);
 
-	wpcopy(&p_ptr->wpos, &p_ptr->recall_pos);
-
 	/* One more person here */
-	new_players_on_depth(&p_ptr->wpos,1,TRUE);
+	new_players_on_depth(&p_ptr->wpos, 1, TRUE);
 
 	p_ptr->new_level_flag = TRUE;
 

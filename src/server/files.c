@@ -931,15 +931,14 @@ void do_cmd_suicide(int Ind)
 	p_ptr->alive = FALSE;
 
 	/* Hack -- set the cause of death */
-	if (!p_ptr->ghost) 
-	{
+	if (!p_ptr->ghost) {
 		//strcpy(p_ptr->died_from, "");
 		strcpy(p_ptr->died_from_list, "self-inflicted wounds");
 		p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
 	}
 
 	/* Hack -- clear ghost */
-	p_ptr->ghost = FALSE;
+	p_ptr->ghost = 0;
 
 	if (p_ptr->total_winner) kingly(Ind);
 	/* Retirement in Valinor? - C. Blue :) */
@@ -1153,7 +1152,7 @@ int highscore_send(char *buffer, int max) {
 	if (!hsp) return(0);
 
 	while (fread(&score, sizeof(struct high_score), 1, hsp)) {
-		switch (score.mode[0]) {
+		switch (score.mode[0] & MODE_MASK) {
 			case MODE_NORMAL:
 				mode = "Normal";
 				break;

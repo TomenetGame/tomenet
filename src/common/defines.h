@@ -54,7 +54,7 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		4
 #define VERSION_PATCH		5
-#define VERSION_EXTRA		4
+#define VERSION_EXTRA		5
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -65,6 +65,13 @@
 #define VERSION_EXTRA_OUTDATED	5
 #define VERSION_BRANCH_OUTDATED	0
 #define VERSION_BUILD_OUTDATED	0
+/* _one before_ MAJOR/MINOR/PATCH version that counts as 'latest' (should be 0-15). */
+#define VERSION_MAJOR_LATEST	4
+#define VERSION_MINOR_LATEST	4
+#define VERSION_PATCH_LATEST	5
+#define VERSION_EXTRA_LATEST	4
+#define VERSION_BRANCH_LATEST	0
+#define VERSION_BUILD_LATEST	0
 
 /* Server release version tag (such as "a", "b" etc):
    Minimum client version tag required to "play 100%". */
@@ -93,7 +100,7 @@
 
 /* Client-side only: Client release version tag
    (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG "b"
+#define CLIENT_VERSION_TAG "c"
 
 
 
@@ -756,6 +763,9 @@
 #define PVP_THROW_DAM_REDUCTION 3
 /* divide magical damage by this in PvP */
 #define PVP_SPELL_DAM_REDUCTION 5
+
+/* Should other hostile players in line of sight cause a player to abort running? */
+#define HOSTILITY_ABORTS_RUNNING
 
 /*
  * Allow wraith-formed player to pass through permawalls on the surface.
@@ -1665,8 +1675,8 @@ that keeps many algorithms happy.
 /*
  * Number of effects
  */
-#define MAX_EFFECTS             16384	/* 256, 128 */
-#define MAX_EFFECTS_PLAYER      16384	/* 128, 32 */
+#define MAX_EFFECTS             256	/* 256, 128 */
+#define MAX_EFFECTS_PLAYER      256	/* 128, 32 */
 #define EFF_WAVE                0x00000001      /* A circle whose radius increase */
 #define EFF_LAST                0x00000002      /* The wave lasts */
 #define EFF_STORM               0x00000004      /* The area follows the player */
@@ -5903,12 +5913,12 @@ extern int PlayerUID;
 
 #define MODE_HARD		0x02	/* Penalized */
 #define MODE_NO_GHOST		0x04	/* traditional 'hellish' is 3 */
-#define MODE_EVERLASTING   	0x08	/* No death counter */
-#define MODE_PVP   		0x10	/* No death counter */
+#define MODE_EVERLASTING	0x08	/* No death counter */
+#define MODE_PVP		0x10
 
-#define MODE_FRUIT_BAT   	0x20	/* No death counter */
+#define MODE_FRUIT_BAT		0x20
 
-#define MODE_MASK       (MODE_HARD | MODE_NO_GHOST | MODE_EVERLASTING | MODE_PVP)       /* real character modes */ 
+#define MODE_MASK       (MODE_HARD | MODE_NO_GHOST | MODE_EVERLASTING | MODE_PVP)       /* real character modes */
 
 /* Monk martial arts... */
 #define MAX_NONWINNER_MA 17 /* total_winners can use more techniques, see next line.. */

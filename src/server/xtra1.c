@@ -5931,6 +5931,7 @@ void calc_boni(int Ind)
 	/* Limit Skill -- stealth from 0 to 30 */
 	if (p_ptr->skill_stl > 30) p_ptr->skill_stl = 30;
 	if (p_ptr->skill_stl < 0) p_ptr->skill_stl = 0;
+	if (p_ptr->aggravate) p_ptr->skill_stl = 0;
 
 	/* Limit Skill -- digging from 1 up */
 	if (p_ptr->skill_dig < 1) p_ptr->skill_dig = 1;
@@ -6989,10 +6990,10 @@ static void process_global_event(int ge_id)
 				/* add staircase downwards into the dungeon? */
 				if (!ge->extra[5]) {
 					adddungeon(&wpos, 1, 50, DF1_NO_RECALL, DF2_IRON |
-					    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK, NULL, NULL, FALSE, 0);
+					    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK, FALSE, 0);
 				} else {
 					adddungeon(&wpos, 1, 50, DF1_NO_RECALL, DF2_IRON |
-					    DF2_NO_ENTRY_WOR | DF2_NO_ENTRY_PROB | DF2_NO_ENTRY_FLOAT | DF2_NO_EXIT_MASK, NULL, NULL, FALSE, 0);
+					    DF2_NO_ENTRY_WOR | DF2_NO_ENTRY_PROB | DF2_NO_ENTRY_FLOAT | DF2_NO_EXIT_MASK, FALSE, 0);
 
 					/* place staircase on an empty accessible grid */
 					do {

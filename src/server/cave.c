@@ -255,6 +255,69 @@ void wpcopy(struct worldpos *dest, struct worldpos *src)
 	dest->wz=src->wz;
 }
 
+static void update_uniques_killed(struct worldpos *wpos)
+{
+	int i, j;
+	player_type *p_ptr;
+	dun_level *l_ptr;
+
+	/* Update the list of uniques that have been killed by all players on the level */
+	l_ptr = getfloor(wpos);
+
+	if (l_ptr && l_ptr->uniques_killed) {
+		int admins = 0, players = 0;
+
+		for (i = 1; i <= NumPlayers; i++) {
+			p_ptr = Players[i];
+
+			/* Skip disconnected players */
+			if (p_ptr->conn == NOT_CONNECTED)
+				continue;
+
+			/* Player on this depth? */
+			if (!inarea(&p_ptr->wpos, wpos))
+				continue;
+
+			/* Count the admins and non-admins */
+			if (admin_p(i)) admins++;
+			else players++;
+		}
+
+		if (admins || players) {
+			for (j = 1; j < MAX_R_IDX; j++) {
+				monster_race *r_ptr = &r_info[j];
+
+				if (r_ptr->flags1 & RF1_UNIQUE) {
+					/* Assume that the unique has been killed unless a player has killed it */
+					l_ptr->uniques_killed[j] = TRUE;
+
+					for (i = 1; i <= NumPlayers; i++) {
+						p_ptr = Players[i];
+
+						/* Skip disconnected players */
+						if (p_ptr->conn == NOT_CONNECTED)
+							continue;
+
+						/* Player on this depth? */
+						if (!inarea(&p_ptr->wpos, wpos))
+							continue;
+
+						/* Ignore admins if players are on the level */
+						if (players && admin_p(i))
+							continue;
+
+						/* Check that every player has killed the unique */
+						l_ptr->uniques_killed[j] = l_ptr->uniques_killed[j] && p_ptr->r_killed[j];
+					}
+				}
+			}
+		} else {
+			/* No players around, no restrictions */
+			C_WIPE(l_ptr->uniques_killed, MAX_R_IDX, char);
+		}
+	}
+}
+
 void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 {
 	struct wilderness_type *w_ptr;
@@ -271,7 +334,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 	bool flag = FALSE;
 	if ((zcave = getcave(wpos))) flag = TRUE;
 
-	now=time(&now);
+	now = time(&now);
 
 	w_ptr=&wild_info[wpos->wy][wpos->wx];
 #if DEBUG_LEVEL > 2
@@ -280,9 +343,9 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 	if (getlevel(wpos) == 200) {
 		for (i = 1; i <= NumPlayers; i++)
 		{
-			if (Players[i]->conn == NOT_CONNECTED) continue;
-			if (admin_p(i)) continue;
 			p_ptr = Players[i];
+			if (p_ptr->conn == NOT_CONNECTED) continue;
+			if (admin_p(i)) continue;
 			if (inarea(&p_ptr->wpos, wpos)) s_printf("%s VALINOR: Player %s is here.\n", showtime(), p_ptr->name);
 		}
 	}
@@ -338,6 +401,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 		}
 	}
 
+	update_uniques_killed(wpos);
 
 	/* Perform henc_strictness anti-cheeze - mode 4 : monster is on the same dungeon level as a player */
 	/* If a player enters a new level */
@@ -347,13 +411,16 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 	/* Who is the highest player around? */
 	for (i = 1; i <= NumPlayers; i++)
 	{
+		p_ptr = Players[i];
+
 		/* skip disconnected players */
-		if (Players[i]->conn == NOT_CONNECTED)
-	    		continue;
+		if (p_ptr->conn == NOT_CONNECTED)
+			continue;
+
 		/* skip admins */
 		if (admin_p(i)) continue;
+
 		/* player on this depth? */
-		p_ptr = Players[i];
 		if (inarea(&p_ptr->wpos, wpos) && (henc_level < p_ptr->max_lev)) henc_level = p_ptr->max_lev;
 	}
 
@@ -362,6 +429,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 	{
 		/* Access the monster */
 		m_ptr = &m_list[m_fast[i]];
+
 		/* On this level? Test its highest encounter so far */
 		if (inarea(&m_ptr->wpos, wpos) && (m_ptr->highest_encounter < henc_level))
 			m_ptr->highest_encounter = henc_level;
@@ -1807,7 +1875,9 @@ static byte multi_hued_attr(monster_race *r_ptr)
 			case RF4_BR_LITE:
 				return(TERM_LITE);
 			default:
-				printf("fla: %x\n", r_ptr->flags4 & 0x3fffff00);
+				/* This is annoying - mikaelh */
+//				printf("fla: %x\n", r_ptr->flags4 & 0x3fffff00);
+				break;
 			}
 		}
 		allowed_attrs[stored_colors] = second_color;
@@ -3262,7 +3332,7 @@ void everyone_lite_spot(struct worldpos *wpos, int y, int x)
 	}
 }
 
-void everyone_redraw_spot(struct worldpos *wpos, int y, int x)
+void everyone_clear_ovl_spot(struct worldpos *wpos, int y, int x)
 {
 	int i;
 
@@ -3277,8 +3347,8 @@ void everyone_redraw_spot(struct worldpos *wpos, int y, int x)
 		if (!inarea(wpos, &Players[i]->wpos))
 			continue;
 
-		/* Actually redraw that spot for that player */
-		redraw_spot(i, y, x);
+		/* Actually clear the overlay on that spot for that player */
+		clear_ovl_spot(i, y, x);
 	}
 }
 
@@ -3432,20 +3502,30 @@ void lite_spot(int Ind, int y, int x)
 		    p_ptr->scr_info[dispy][dispx].a != a ||
 		    (x == p_ptr->px && y==p_ptr->py && !p_ptr->afk)) /* let's try disabling this when AFK to save bandwidth - mikaelh */
 		{
-			/* Modify internal buffer */
+			/* Modify screen buffer */
 			p_ptr->scr_info[dispy][dispx].c = c;
 			p_ptr->scr_info[dispy][dispx].a = a;
-			/* Tell client to redraw this grid */
-			(void)Send_char(Ind, dispx, dispy, a, c);
+
+			/* Compare against the overlay buffer */
+			if ((p_ptr->ovl_info[dispy][dispx].c != c) ||
+			    (p_ptr->ovl_info[dispy][dispx].a != a))
+			{
+				/* Tell client to redraw this grid */
+				Send_char(Ind, dispx, dispy, a, c);
+			}
+
+			/* Clear the overlay buffer */
+			p_ptr->ovl_info[dispy][dispx].c = 0;
+			p_ptr->ovl_info[dispy][dispx].a = 0;
 		}
 	}
 }
 
+
 /*
- * Draws something on a spot without modifying the internal buffer, thus
- * leaving something on the screen until it's redrawn otherwise.
+ * Draw something on the overlay layer.
  */
-void draw_spot(int Ind, int y, int x, byte a, char c)
+void draw_spot_ovl(int Ind, int y, int x, byte a, char c)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -3468,19 +3548,24 @@ void draw_spot(int Ind, int y, int x, byte a, char c)
 		dispy = y - p_ptr->panel_row_prt;
 
 		/* Only draw if different than buffered */
-		if (p_ptr->scr_info[dispy][dispx].c != c ||
-		    p_ptr->scr_info[dispy][dispx].a != a)
+		if (p_ptr->ovl_info[dispy][dispx].c != c ||
+		    p_ptr->ovl_info[dispy][dispx].a != a)
 		{
+			/* Modify internal buffer */
+			p_ptr->ovl_info[dispy][dispx].c = c;
+			p_ptr->ovl_info[dispy][dispx].a = a;
+
 			/* Tell client to redraw this grid */
-			(void)Send_char(Ind, dispx, dispy, a, c);
+			Send_char(Ind, dispx, dispy, a, c);
 		}
 	}
 }
 
+
 /*
- * Call this to clean things up after calling draw_spot().
+ * Clear a spot on the overlay layer.
  */
-void redraw_spot(int Ind, int y, int x)
+void clear_ovl_spot(int Ind, int y, int x)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -3492,12 +3577,45 @@ void redraw_spot(int Ind, int y, int x)
 		dispx = x - p_ptr->panel_col_prt;
 		dispy = y - p_ptr->panel_row_prt;
 
-		/* Clear the internal buffer */
-		p_ptr->scr_info[dispy][dispx].c = 0;
-		p_ptr->scr_info[dispy][dispx].a = 0;
+		if (p_ptr->ovl_info[dispy][dispx].c) {
+			/* Check if the overlay buffer is different from the screen buffer */
+			if ((p_ptr->ovl_info[dispy][dispx].a != p_ptr->scr_info[dispy][dispx].a) ||
+			    (p_ptr->ovl_info[dispy][dispx].c != p_ptr->scr_info[dispy][dispx].c)) {
+				/* Clear the overlay buffer */
+				p_ptr->ovl_info[dispy][dispx].c = 0;
+				p_ptr->ovl_info[dispy][dispx].a = 0;
 
-		/* Now call lite_spot */
-		lite_spot(Ind, y, x);
+				/* Clear the screen buffer to force redraw */
+				p_ptr->scr_info[dispy][dispx].c = 0;
+				p_ptr->scr_info[dispy][dispx].a = 0;
+
+				/* Redraw */
+				lite_spot(Ind, y, x);
+			} else {
+				/* Clear the overlay buffer */
+				p_ptr->ovl_info[dispy][dispx].c = 0;
+				p_ptr->ovl_info[dispy][dispx].a = 0;
+
+				/* No redraw needed */
+			}
+		}
+	}
+}
+
+
+/*
+ * Clear the entire overlay ler.
+ */
+void clear_ovl(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int y, x;
+
+	for (y = p_ptr->panel_row_min; y <= p_ptr->panel_row_max; y++) {
+		for (x = p_ptr->panel_col_min; x <= p_ptr->panel_col_max; x++) {
+			clear_ovl_spot(Ind, y, x);
+		}
 	}
 }
 
@@ -3525,17 +3643,16 @@ void prt_map(int Ind)
 	/* Make sure he didn't just change depth */
 	if (p_ptr->new_level_flag) return;
 
+	/* First clear the old stuff */
+	memset(p_ptr->scr_info, 0, sizeof(p_ptr->scr_info));
+
+	/* Clear the overlay buffer */
+	memset(p_ptr->ovl_info, 0, sizeof(p_ptr->ovl_info));
+
 	/* Dump the map */
 	for (y = p_ptr->panel_row_min; y <= p_ptr->panel_row_max; y++)
 	{
 		dispy = y - p_ptr->panel_row_prt;
-
-		/* First clear the old stuff */
-		for (x = 0; x < 80; x++)
-		{
-			p_ptr->scr_info[dispy][x].c = 0;
-			p_ptr->scr_info[dispy][x].a = 0;
-		}
 
 		/* Scan the columns of row "y" */
 		for (x = p_ptr->panel_col_min; x <= p_ptr->panel_col_max; x++)
@@ -3548,12 +3665,9 @@ void prt_map(int Ind)
 
 			dispx = x - p_ptr->panel_col_prt;
 
-			/* Efficiency -- Redraw that grid of the map */
-			if (p_ptr->scr_info[dispy][dispx].c != c || p_ptr->scr_info[dispy][dispx].a != a)
-			{
-				p_ptr->scr_info[dispy][dispx].c = c;
-				p_ptr->scr_info[dispy][dispx].a = a;
-			}
+			/* Redraw that grid of the map */
+			p_ptr->scr_info[dispy][dispx].c = c;
+			p_ptr->scr_info[dispy][dispx].a = a;
 		}
 
 		/* Send that line of info */
@@ -3727,6 +3841,9 @@ void display_map(int Ind, int *cy, int *cx)
 
 	byte mp[MAP_HGT + 2][MAP_WID + 2];
 
+	byte sa[80];
+	char sc[80];
+
 	bool old_view_special_lite;
 	bool old_view_granite_lite;
 
@@ -3741,18 +3858,11 @@ void display_map(int Ind, int *cy, int *cx)
 
 
 	/* Clear the chars and attributes */
-	for (y = 0; y < MAP_HGT+2; ++y)
-	{
-		for (x = 0; x < MAP_WID+2; ++x)
-		{
-			/* Nothing here */
-			ma[y][x] = TERM_WHITE;
-			mc[y][x] = ' ';
+	memset(ma, TERM_WHITE, sizeof(ma));
+	memset(mc, ' ', sizeof(mc));
 
-			/* No priority */
-			mp[y][x] = 0;
-		}
-	}
+	/* No priority */
+	memset(mp, 0, sizeof(mp));
 
 	/* Fill in the map */
 	for (i = 0; i < p_ptr->cur_wid; ++i)
@@ -3825,12 +3935,9 @@ void display_map(int Ind, int *cy, int *cx)
 	/* Display each map line in order */
 	for (y = 0; y < MAP_HGT+2; ++y)
 	{
-		/* Clear the old info first */
-		for (x = 0; x < 80; x++)
-		{
-			p_ptr->scr_info[y][x].c = 0;
-			p_ptr->scr_info[y][x].a = 0;
-		}
+		/* Clear the screen buffer */
+		memset(sa, 0, sizeof(sa));
+		memset(sc, 0, sizeof(sc));
 
 		/* Display the line */
 		for (x = 0; x < MAP_WID+2; ++x)
@@ -3841,25 +3948,13 @@ void display_map(int Ind, int *cy, int *cx)
 			/* Hack -- fake monochrome */
 			if (!use_color) ta = TERM_WHITE;
 
-			/* Add the character */
-			/* Efficiency -- Redraw that grid of the map */
-
-			if (p_ptr->scr_info[y][x].c != tc || p_ptr->scr_info[y][x].a != ta)
-			{
-				p_ptr->scr_info[y][x].c = tc;
-				p_ptr->scr_info[y][x].a = ta;
-			} 
+			/* Put the character into the screen buffer */
+			sa[x] = ta;
+			sc[x] = tc;
 		}
 
 		/* Send that line of info */
-		Send_mini_map(Ind, y);
-
-		/* Throw some nonsense into the "screen_info" so it gets cleared */
-		for (x = 0; x < 80; x++)
-		{
-			p_ptr->scr_info[y][x].c = 0;
-			p_ptr->scr_info[y][x].a = 255;
-		}
+		Send_mini_map(Ind, y, sa, sc);
 	}
 
 
@@ -3886,7 +3981,8 @@ static void wild_display_map(int Ind)
 	byte ma[MAP_HGT + 2][MAP_WID + 2];
 	char mc[MAP_HGT + 2][MAP_WID + 2];
 
-	byte mp[MAP_HGT + 2][MAP_WID + 2];
+	byte sa[80];
+	char sc[80];
 
 	bool old_view_special_lite;
 	bool old_view_granite_lite;
@@ -3903,18 +3999,8 @@ static void wild_display_map(int Ind)
 
 
 	/* Clear the chars and attributes */
-	for (y = 0; y < MAP_HGT+2; y++)
-	{
-		for (x = 0; x < MAP_WID+2; x++)
-		{
-			/* Nothing here */
-			ma[y][x] = TERM_WHITE;
-			mc[y][x] = ' ';
-
-			/* No priority */
-			mp[y][x] = 0;
-		}
-	}
+	memset(ma, TERM_WHITE, sizeof(ma));
+	memset(mc, ' ', sizeof(mc));
 
 	/* for each row */
 	for (y = 0; y < MAP_HGT+2; y++)
@@ -3987,12 +4073,9 @@ static void wild_display_map(int Ind)
 	/* Display each map line in order */
 	for (y = 0; y < MAP_HGT+2; ++y)
 	{
-		/* Clear the old info first */
-		for (x = 0; x < 80; x++)
-		{
-			p_ptr->scr_info[y][x].c = 0;
-			p_ptr->scr_info[y][x].a = 0;
-		}
+		/* Clear the screen buffer */
+		memset(sa, 0, sizeof(sa));
+		memset(sc, 0, sizeof(sc));
 
 		/* Display the line */
 		for (x = 0; x < MAP_WID+2; ++x)
@@ -4003,25 +4086,13 @@ static void wild_display_map(int Ind)
 			/* Hack -- fake monochrome */
 			if (!use_color) ta = TERM_WHITE;
 
-			/* Add the character */
-			/* Efficiency -- Redraw that grid of the map */
-
-			if (p_ptr->scr_info[y][x].c != tc || p_ptr->scr_info[y][x].a != ta)
-			{
-				p_ptr->scr_info[y][x].c = tc;
-				p_ptr->scr_info[y][x].a = ta;
-			} 
+			/* Put the character into the screen buffer */
+			sa[x] = ta;
+			sc[x] = tc;
 		}
 
 		/* Send that line of info */
-		Send_mini_map(Ind, y);
-
-		/* Throw some nonsense into the "screen_info" so it gets cleared */
-		for (x = 0; x < 80; x++)
-		{
-			p_ptr->scr_info[y][x].c = 0;
-			p_ptr->scr_info[y][x].a = 255;
-		}
+		Send_mini_map(Ind, y, sa, sc);
 	}
 
 	/* Restore lighting effects */

@@ -54,7 +54,9 @@ static void sf_put(byte v)
 	fff_buf[fff_buf_pos++] = xor_byte;
 
 	if (fff_buf_pos == MAX_BUF_SIZE) {
-		fwrite(fff_buf, 1, MAX_BUF_SIZE, fff);
+		if (fwrite(fff_buf, 1, MAX_BUF_SIZE, fff) < MAX_BUF_SIZE) {
+			s_printf("Writing to savefile failed: %s\n", feof(fff) ? "EOF" : strerror(ferror(fff)));
+		}
 		fff_buf_pos = 0;
 	}
 #endif
@@ -106,7 +108,9 @@ void wr_string(cptr str)
 static void write_buffer()
 {
 	if (fff_buf_pos > 0) {
-		fwrite(fff_buf, 1, fff_buf_pos, fff);
+		if (fwrite(fff_buf, 1, fff_buf_pos, fff) < fff_buf_pos) {
+			s_printf("Writing to savefile failed: %s\n", feof(fff) ? "EOF" : strerror(ferror(fff)));
+		}
 		fff_buf_pos = 0;
 	}
 }
@@ -2006,8 +2010,13 @@ static void new_wr_wild(){
 				wr_u32b(w_ptr->dungeon->flags2);
 				wr_byte(w_ptr->dungeon->maxdepth);
 				for(i=0;i<10;i++){
+#if 0	/* unused - mikaelh */
 					wr_byte(w_ptr->dungeon->r_char[i]);
 					wr_byte(w_ptr->dungeon->nr_char[i]);
+#else
+					wr_byte(0);
+					wr_byte(0);
+#endif
 				}
 			}
 			if(w_ptr->flags & WILD_F_UP){
@@ -2020,8 +2029,13 @@ static void new_wr_wild(){
 				wr_u32b(w_ptr->tower->flags2);
 				wr_byte(w_ptr->tower->maxdepth);
 				for(i=0;i<10;i++){
-					wr_byte(w_ptr->tower->r_char[i]);
-					wr_byte(w_ptr->tower->nr_char[i]);
+#if 0	/* unused - mikaelh */
+					wr_byte(w_ptr->dungeon->r_char[i]);
+					wr_byte(w_ptr->dungeon->nr_char[i]);
+#else
+					wr_byte(0);
+					wr_byte(0);
+#endif
 				}
 			}
 		}

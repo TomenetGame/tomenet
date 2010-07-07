@@ -941,10 +941,14 @@ static void player_wipe(int Ind)
 	p_ptr->equip_cnt = 0;
 
 	/* Clear the inventory */
+#if 0
 	for (i = 0; i < INVEN_TOTAL; i++)
 	{
 		invwipe(&p_ptr->inventory[i]);
 	}
+#else
+	C_WIPE(p_ptr->inventory, INVEN_TOTAL, object_type);
+#endif
 
 	/* Hack -- Fill the copy with 0xFF - mikaelh */
 	memset(p_ptr->inventory_copy, 0xFF, INVEN_TOTAL * sizeof(object_type));
@@ -2242,10 +2246,10 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	MAKE(Players[Ind], player_type);
 
 	/* Allocate memory for his inventory */
-	C_MAKE(Players[Ind]->inventory, INVEN_TOTAL, object_type);
+	Players[Ind]->inventory = C_NEW(INVEN_TOTAL, object_type);
 
 	/* Allocate memory for the copy */
-	C_MAKE(Players[Ind]->inventory_copy, INVEN_TOTAL, object_type);
+	Players[Ind]->inventory_copy = C_NEW(INVEN_TOTAL, object_type);
 
 	/* Set pointer */
 	p_ptr = Players[Ind];

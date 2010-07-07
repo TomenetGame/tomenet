@@ -2862,6 +2862,9 @@ bool detect_monsters_xxx(int Ind, u32b match_flag)
 	bool flag = FALSE;
 	cptr desc_monsters = "weird monsters";
 
+	/* Clear previously detected stuff */
+	clear_ovl(Ind);
+
 	/* Scan monsters */
 	for (i = 1; i < m_max; i++)
 	{
@@ -2903,7 +2906,7 @@ bool detect_monsters_xxx(int Ind, u32b match_flag)
 			p_ptr->mon_vis[i] = FALSE;
 
 			/* Draw the monster on the screen */
-			draw_spot(Ind, y, x, a, c);
+			draw_spot_ovl(Ind, y, x, a, c);
 
 			flag = TRUE;
 		}
@@ -2963,6 +2966,8 @@ bool detect_invisible(int Ind)
 	int		i;
 	bool	flag = FALSE;
 
+	/* Clear previously detected stuff */
+	clear_ovl(Ind);
 
 	/* Detect all invisible monsters */
 	for (i = 1; i < m_max; i++)
@@ -3003,7 +3008,7 @@ bool detect_invisible(int Ind)
 			p_ptr->mon_vis[i] = FALSE;
 
 			/* Draw the monster on the screen */
-			draw_spot(Ind, fy, fx, a, c);
+			draw_spot_ovl(Ind, fy, fx, a, c);
 
 			flag = TRUE;
 		}
@@ -3042,7 +3047,7 @@ bool detect_invisible(int Ind)
 			p_ptr->mon_vis[i] = FALSE;
 
 			/* Draw the player on the screen */
-			draw_spot(Ind, py, px, a, c);
+			draw_spot_ovl(Ind, py, px, a, c);
 
 			flag = TRUE;
 		}
@@ -3087,6 +3092,8 @@ bool detect_evil(int Ind)
 	int		i;
 	bool	flag = FALSE;
 
+	/* Clear previously detected stuff */
+	clear_ovl(Ind);
 
 	/* Display all the evil monsters */
 	for (i = 1; i < m_max; i++)
@@ -3122,7 +3129,7 @@ bool detect_evil(int Ind)
 			p_ptr->mon_vis[i] = FALSE;
 
 			/* Draw the monster on the screen */
-			draw_spot(Ind, fy, fx, a, c);
+			draw_spot_ovl(Ind, fy, fx, a, c);
 
 			flag = TRUE;
 		}
@@ -3171,6 +3178,9 @@ bool detect_creatures(int Ind)
 	int	i;
 	bool	flag = FALSE;
 
+	/* Clear previously detected stuff */
+	clear_ovl(Ind);
+
 	/* Detect non-invisible monsters */
 	for (i = 1; i < m_max; i++)
 	{
@@ -3205,7 +3215,7 @@ bool detect_creatures(int Ind)
 			p_ptr->mon_vis[i] = FALSE;
 
 			/* Draw the monster on the screen */
-			draw_spot(Ind, fy, fx, a, c);
+			draw_spot_ovl(Ind, fy, fx, a, c);
 
 			flag = TRUE;
 		}
@@ -3250,7 +3260,7 @@ bool detect_creatures(int Ind)
 			p_ptr->play_vis[i] = FALSE;
 
 			/* Draw the player on the screen */
-			draw_spot(Ind, py, px, a, c);
+			draw_spot_ovl(Ind, py, px, a, c);
 
 			flag = TRUE;
 		}
@@ -3290,6 +3300,9 @@ void detect_monsters_forced(int Ind)
 	player_type *p_ptr = Players[Ind];
 	int	i;
 
+	/* Clear previously detected stuff */
+	clear_ovl(Ind);
+
 	for (i = 1; i < m_max; i++)
 	{
 		monster_type *m_ptr = &m_list[i];
@@ -3320,7 +3333,7 @@ void detect_monsters_forced(int Ind)
 		p_ptr->mon_vis[i] = FALSE;
 
 		/* Draw the monster on the screen */
-		draw_spot(Ind, fy, fx, a, c);
+		draw_spot_ovl(Ind, fy, fx, a, c);
 	}
 }
 
@@ -3469,7 +3482,7 @@ bool detect_bounty(int Ind, int rad)
 					byte a = get_trap_color(Ind, t_idx, c_ptr->feat);
 
 					/* Hack - Always show traps under items when detecting - mikaelh */
-					draw_spot(Ind, i, j, a, '^');
+					draw_spot_ovl(Ind, i, j, a, '^');
 				} else {
 					/* Normal redraw */
 					lite_spot(Ind, i, j);
@@ -3571,6 +3584,9 @@ bool detect_trap(int Ind, int rad)
 
 	l_ptr = getfloor(wpos);
 
+	/* Clear previously detected stuff */
+	clear_ovl(Ind);
+
 	/* Scan the current panel */
 //	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
 	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++)
@@ -3624,7 +3640,7 @@ bool detect_trap(int Ind, int rad)
 					byte a = get_trap_color(Ind, t_idx, c_ptr->feat);
 
 					/* Hack - Always show traps under items when detecting - mikaelh */
-					draw_spot(Ind, i, j, a, '^');
+					draw_spot_ovl(Ind, i, j, a, '^');
 				} else {
 					/* Normal redraw */
 					lite_spot(Ind, i, j);
@@ -6062,7 +6078,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 			everyone_lite_spot(wpos, y, x);
 
 #ifdef USE_SOUND_2010
-			if (c_ptr->m_idx < 0) sound(-c_ptr->m_idx, "earthquake", NULL, SFX_TYPE_MISC, FALSE);
+			if (c_ptr->m_idx < 0) sound(-c_ptr->m_idx, "earthquake", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
 #endif
 
 			/* Skip the epicenter */

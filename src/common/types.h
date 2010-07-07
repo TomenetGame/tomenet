@@ -127,6 +127,15 @@ struct worldspot
 	s16b y;
 };
 
+/* cavespot consists of coordinates within a cave */
+typedef struct cavespot cavespot;
+
+struct cavespot
+{
+	s16b x;
+	s16b y;
+};
+
 #if 0
 /*
  * Following are rough sketches for versions(maybe v5) to come.	- Jir -
@@ -1113,11 +1122,9 @@ struct alloc_entry
 	s16b index;		/* The actual index */
 
 	s16b level;		/* Base dungeon level */
-	byte prob1;		/* Probability, pass 1 */
-	byte prob2;		/* Probability, pass 2 */
-	byte prob3;		/* Probability, pass 3 */
-
-//	u16b total;		/* Unused for now */
+	s16b prob1;		/* Probability, pass 1 */
+	s16b prob2;		/* Probability, pass 2 */
+	s16b prob3;		/* Probability, pass 3 */
 };
 
 
@@ -1318,6 +1325,7 @@ struct dun_level
 	byte hgt;		/* Vault height */
 	byte wid;		/* Vault width */
 /*	char feeling[80] */	/* feeling description */
+	char *uniques_killed;
 
 	cave_type **cave;	/* Leave this the last entry (for aesthetic reason) */
 };
@@ -1338,7 +1346,6 @@ struct dungeon_type
 	byte maxdepth;		/* max height/depth */
 #if 0
 	rule_type rules[5];	/* Monster generation rules */
-#else	/* 0 */
 	char r_char[10];	/* races allowed */
 	char nr_char[10];	/* races prevented */
 #endif	/* 0 */
@@ -2233,8 +2240,11 @@ struct player_type
 	s16b panel_row_old;
 	s16b panel_col_old;
 
-				/* What he should be seeing */
-	cave_view_type scr_info[SCREEN_HGT + 20][SCREEN_WID + 24];
+	/* What he should be seeing */
+	cave_view_type scr_info[24][80];	/* Hard-coded 80x24 display */
+
+	/* Overlay layer used for detection */
+	cave_view_type ovl_info[24][80];	/* Hard-coded 80x24 display */
 	
 	s32b mimic_seed;	/* seed for random mimic immunities etc. */
 
@@ -2712,8 +2722,6 @@ struct player_type
 	byte updated_savegame;
 	/* for automatic artifact reset (similar to updated_savegame) */
 	byte artifact_reset;
-	/* Give out a message telling to restart after LUA scripts were updated */
-	bool done_lua_updating;
 	/* C. Blue - Fun stuff :) Make player vomit if he turns around ***a lot*** (can't happen in 'normal' gameplay) */
 	s16b corner_turn;
 	int joke_weather;	/* personal rain^^ */
@@ -2865,10 +2873,10 @@ struct martial_arts
 typedef struct rule_type rule_type;
 struct rule_type
 {
-	byte mode;                      /* Mode of combinaison of the monster flags */
-	byte percent;                   /* Percent of monsters affected by the rule */
+	byte mode;			/* Mode of combination of the monster flags */
+	byte percent;			/* Percentage of monsters added by this rule */
 
-	u32b mflags1;                   /* The monster flags that are allowed */
+	u32b mflags1;			/* The monster flags that are allowed */
 	u32b mflags2;
 	u32b mflags3;
 	u32b mflags4;
@@ -2879,7 +2887,7 @@ struct rule_type
 	u32b mflags9;
 	u32b mflags0;
 
-	char r_char[5];                 /* Monster race allowed */
+	char r_char[5];			/* Monster race allowed */
 };
 
 /* A structure for the != dungeon types */

@@ -180,12 +180,12 @@ s32b Rand_div(s32b m)
 	/* Hack -- simple case */
 	if (m <= 1) return (0);
 
-	/* Partition size */
-	n = (0x10000000 / m);
-
 	/* Use a simple RNG */
 	if (Rand_quick)
 	{
+		/* Partition size */
+		n = (0x10000000 / m);
+
 		/* Wait for it */
 		while (1)
 		{
@@ -203,13 +203,26 @@ s32b Rand_div(s32b m)
 	/* Use a complex RNG */
 	else
 	{
+#ifdef USE_SFMT
+		/* Partition size */
+		n = (0xFFFFFFFF / m);
+
 		/* Wait for it */
 		while (1)
 		{
-#ifdef USE_SFMT
 			/* SFMT version */
-			r = (gen_rand32() >> 4) / n;
+			r = gen_rand32() / n;
+			
+			/* Done */
+			if (r < (u32b) m) break;
+		}
 #else
+		/* Partition size */
+		n = (0x10000000 / m);
+
+		/* Wait for it */
+		while (1)
+		{
 			int j;
 
 			/* Acquire the next index */
@@ -224,11 +237,11 @@ s32b Rand_div(s32b m)
 
 			/* Advance the index */
 			Rand_place = j;
-#endif
 
 			/* Done */
 			if (r < (u32b) m) break;
 		}
+#endif
 	}
 
 	/* Use the value */

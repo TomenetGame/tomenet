@@ -1579,7 +1579,7 @@ static void select_quest_monster(void)
 	 * with no corpses
 	 */
 	get_mon_num_hook = mon_hook_bounty;
-	get_mon_num_prep();
+	get_mon_num_prep(0, NULL);
 
 	/* Set up the quest monster. */
 	bounties[0][0] = get_mon_num(p_ptr->lev);
@@ -1603,8 +1603,7 @@ static void select_quest_monster(void)
 	bounties[0][1] = amt;
 
 	/* Undo the filters */
-	get_mon_num_hook = NULL;
-	get_mon_num_prep();
+	get_mon_num_hook = dungeon_aux;
 }
 
 
@@ -1724,7 +1723,7 @@ void select_bounties(void)
 	 * with no corpses
 	 */
 	get_mon_num_hook = mon_hook_bounty;
-	get_mon_num_prep();
+	get_mon_num_prep(0, NULL);
 
 	for (i = 1; i < MAX_BOUNTIES; i++)
 	{
@@ -1762,8 +1761,7 @@ void select_bounties(void)
 	}
 
 	/* Undo the filters. */
-	get_mon_num_hook = NULL;
-	get_mon_num_prep();
+	get_mon_num_hook = dungeon_aux;
 }
 #endif	// 0
 

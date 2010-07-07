@@ -3454,14 +3454,14 @@ bool show_floor_feeling(int Ind)
 
 	/* Hack for Valinor - C. Blue */
 	if (getlevel(wpos) == 200) {
-		msg_print(Ind, "\377gYou have a wonderful feeling of peace...");
+		msg_print(Ind, "\374\377gYou have a wonderful feeling of peace...");
 		return TRUE;
 	}
 
 	/* XXX devise a better formula */
 	if (p_ptr->lev * ((p_ptr->lev >= 40) ? 3 : 2) + 5 < getlevel(wpos))
 	{
-		msg_print(Ind, "\377oYou feel an imminent danger!");
+		msg_print(Ind, "\374\377oYou feel an imminent danger!");
 		felt = TRUE;
 	}
 
@@ -3476,39 +3476,39 @@ bool show_floor_feeling(int Ind)
 //		msg_print(Ind, "\377ypfft");
 	}
 	else if (l_ptr->flags2 & LF2_OOD_HI) {
-		msg_print(Ind, "\377yWhat a terrifying place..");
+		msg_print(Ind, "\374\377yWhat a terrifying place..");
 		felt = TRUE;
 	} else if ((l_ptr->flags2 & LF2_VAULT_HI) &&
 		(l_ptr->flags2 & LF2_OOD)) {
-		msg_print(Ind, "\377yWhat a terrifying place..");
+		msg_print(Ind, "\374\377yWhat a terrifying place..");
 		felt = TRUE;
 	} else if ((l_ptr->flags2 & LF2_VAULT_OPEN) || // <- TODO: implement :/
 		 ((l_ptr->flags2 & LF2_VAULT) && (l_ptr->flags2 & LF2_OOD_FREE))) {
-		msg_print(Ind, "\377yYou sense an air of danger..");
+		msg_print(Ind, "\374\377yYou sense an air of danger..");
 		felt = TRUE;
 	} else if (l_ptr->flags2 & LF2_VAULT) {
-		msg_print(Ind, "\377yFeels somewhat dangerous around here..");
+		msg_print(Ind, "\374\377yFeels somewhat dangerous around here..");
 		felt = TRUE;
 	} else if (l_ptr->flags2 & LF2_PITNEST_HI) {
-		msg_print(Ind, "\377yFeels somewhat dangerous around here..");
+		msg_print(Ind, "\374\377yFeels somewhat dangerous around here..");
 		felt = TRUE;
 	} else if (l_ptr->flags2 & LF2_OOD_FREE) {
-		msg_print(Ind, "\377yThere's a sensation of challenge..");
+		msg_print(Ind, "\374\377yThere's a sensation of challenge..");
 		felt = TRUE;
 	} /*	else if (l_ptr->flags2 & LF2_PITNEST) { //maybe enable, maybe too cheezy
-		msg_print(Ind, "\377yYou feel your luck is turning..");
+		msg_print(Ind, "\374\377yYou feel your luck is turning..");
 		felt = TRUE;
 	} */ else if (l_ptr->flags2 & LF2_UNIQUE) {
-		msg_print(Ind, "\377yThere's a special feeling about this place..");
+		msg_print(Ind, "\374\377yThere's a special feeling about this place..");
 		felt = TRUE;
 	} /* else if (l_ptr->flags2 & LF2_ARTIFACT) { //probably too cheezy, if not then might need combination with threat feelings above
-		msg_print(Ind, "\377y");
+		msg_print(Ind, "\374\377y");
 		felt = TRUE;
 	} *//*	else if (l_ptr->flags2 & LF2_ITEM_OOD) { //probably too cheezy, if not then might need combination with threat feelings above
-		msg_print(Ind, "\377y");
+		msg_print(Ind, "\374\377y");
 		felt = TRUE;
 	} */ else {
-		msg_print(Ind, "\377yWhat a boring place..");
+		msg_print(Ind, "\374\377yWhat a boring place..");
 		felt = TRUE;
 	}
 #endif

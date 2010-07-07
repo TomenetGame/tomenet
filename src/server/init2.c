@@ -848,6 +848,9 @@ static errr init_e_info(void)
 	/* General buffer */
 	char buf[1024];
 
+	int i, j;
+	s16b *e_tval_aux;
+
 
 	/*** Make the "header" ***/
 
@@ -916,6 +919,47 @@ static errr init_e_info(void)
 		/* Quit */
 		quit("Error in 'e_info.txt' file.");
 	}
+
+	/* Build an array for fast access to ego types based on tval */
+	C_MAKE(e_tval_size, TV_MAX, s16b);
+	C_MAKE(e_tval, TV_MAX, s16b *);
+	C_MAKE(e_tval_aux, TV_MAX, s16b);
+
+	for (i = 0; i < MAX_E_IDX; i++) {
+		ego_item_type *e_ptr = &e_info[i];
+
+		if (!e_ptr->name) continue;
+
+		for (j = 0; j < MAX_EGO_BASETYPES; j++) {
+			byte tval = e_ptr->tval[j];
+
+			if (tval < TV_MAX) {
+				e_tval_size[tval]++;
+			}
+		}
+	}
+
+	for (i = 0; i < TV_MAX; i++) {
+		if (e_tval_size[i]) {
+			C_MAKE(e_tval[i], e_tval_size[i], s16b);
+		}
+	}
+
+	for (i = 0; i < MAX_E_IDX; i++) {
+		ego_item_type *e_ptr = &e_info[i];
+
+		if (!e_ptr->name) continue;
+
+		for (j = 0; j < MAX_EGO_BASETYPES; j++) {
+			byte tval = e_ptr->tval[j];
+
+			if (tval < TV_MAX) {
+				e_tval[tval][e_tval_aux[tval]++] = i;
+			}
+		}
+	}
+
+	C_KILL(e_tval_aux, TV_MAX, s16b);
 
 	/* Success */
 	return (0);
@@ -2617,16 +2661,25 @@ static errr init_other(void)
 
 
 static void init_swearing(){
-	int i=0;
+	int i = 0;
 	FILE *fp;
-	fp=fopen("swearing.txt", "r");
-	if(fp==(FILE*)NULL) return;
-	do{
-		fscanf(fp, "%s%d\n", swear[i].word, &swear[i].level);
+
+	fp = fopen("swearing.txt", "r");
+
+	if (!fp) return;
+
+	do {
+		if (fscanf(fp, "%s%d\n", swear[i].word, &swear[i].level) == EOF) {
+			if (!feof(fp)) {
+				s_printf("Failed to read swearing.txt: %s\n", strerror(ferror(fp)));
+			}
+		}
 		//printf("%d %s %d\n", i, swear[i].word, swear[i].level);
 		i++;
-	}while(!feof(fp));
-	swear[i].word[0]='\0';
+	} while (!feof(fp));
+
+	swear[i].word[0] = '\0';
+
 	fclose(fp);
 }
 
@@ -2669,6 +2722,9 @@ static errr init_alloc(void)
 			/* Count the "legal" entries */
 			if (k_ptr->chance[j])
 			{
+				/* Hack - Don't include zero probability entries in the table */
+				if (k_ptr->chance[j] == 255) continue;
+
 				/* Count the entries */
 				alloc_kind_size++;
 
@@ -2710,11 +2766,14 @@ static errr init_alloc(void)
 			{
 				int p, x, y, z;
 
+				/* Hack - 255 means zero probability */
+				if (k_ptr->chance[j] == 255) continue;
+
 				/* Extract the base level */
 				x = k_ptr->locale[j];
 
 				/* Extract the base probability */
-				p = (100 / k_ptr->chance[j]);
+				p = (10000 / k_ptr->chance[j]);
 
 				/* Skip entries preceding our locale */
 				y = (x > 0) ? num[x-1] : 0;
@@ -2733,6 +2792,13 @@ static errr init_alloc(void)
 				aux[x]++;
 			}
 		}
+	}
+
+	C_MAKE(alloc_kind_index_level, 256, s16b);
+
+	/* Store index numbers for the first entry of each level */
+	for (i = 1; i < 256; i++) {
+		alloc_kind_index_level[i] = num[i - 1];
 	}
 
 
@@ -2756,6 +2822,23 @@ static errr init_alloc(void)
 		/* Legal monsters */
 		if (r_ptr->rarity)
 		{
+			int p, x;
+
+			/* Extract the base level */
+			x = r_ptr->level;
+
+			/* Extract the base probability */
+			p = (10000 / r_ptr->rarity);
+
+			/* Hack - 255 means zero probability */
+			if (r_ptr->rarity == 255) p = 0;
+
+			/* Adjust based on server settings - mikaelh */
+			p = p * mon_allowed_chance(r_ptr) / 100;
+
+			/* Hack - Don't include zero probability entries in the table */
+			if (p == 0) continue;
+
 			/* Count the entries */
 			alloc_race_size++;
 
@@ -2777,11 +2860,16 @@ static errr init_alloc(void)
 
 	/*** Initialize monster allocation info ***/
 
-	/* Allocate the alloc_race_table */
-	C_MAKE(alloc_race_table, alloc_race_size, alloc_entry);
+	/* Allocate allocation tables for all dungeon types */
+	C_MAKE(alloc_race_table_dun, MAX_D_IDX, alloc_entry *);
+	for (i = 0; i < MAX_D_IDX; i++)
+	{
+		dungeon_info_type *d_ptr = &d_info[i];
 
-	/* Access the table entry */
-	table = alloc_race_table;
+		if (d_ptr->name) {
+			C_MAKE(alloc_race_table_dun[i], alloc_race_size, alloc_entry);
+		}
+	}
 
 	/* Scan the monsters (not the ghost) */
 	for (i = 1; i < MAX_R_IDX - 1; i++)
@@ -2792,13 +2880,22 @@ static errr init_alloc(void)
 		/* Count valid pairs */
 		if (r_ptr->rarity)
 		{
-			int p, x, y, z;
+			int p, q, x, y, z;
 
 			/* Extract the base level */
 			x = r_ptr->level;
 
 			/* Extract the base probability */
-			p = (100 / r_ptr->rarity);
+			p = (10000 / r_ptr->rarity);
+
+			/* Hack - 255 means zero probability */
+			if (r_ptr->rarity == 255) p = 0;
+
+			/* Adjust based on server settings - mikaelh */
+			p = p * mon_allowed_chance(r_ptr) / 100;
+
+			/* Hack - Don't include zero probability entries in the table */
+			if (p == 0) continue;
 
 			/* Skip entries preceding our locale */
 			y = (x > 0) ? num[x-1] : 0;
@@ -2806,18 +2903,50 @@ static errr init_alloc(void)
 			/* Skip previous entries at this locale */
 			z = y + aux[x];
 
-			/* Load the entry */
-			table[z].index = i;
-			table[z].level = x;
-			table[z].prob1 = p;
-			table[z].prob2 = p;
-			table[z].prob3 = p;
+			/* Generate entries for each dungeon */
+			for (j = 0; j < MAX_D_IDX; j++)
+			{
+				table = alloc_race_table_dun[j];
+
+				if (table)
+				{
+					/* Adjust the base probability */
+					q = p * restrict_monster_to_dungeon(i, j) / 100;
+
+					/* Load the entry */
+					table[z].index = i;
+					table[z].level = x;
+					table[z].prob1 = q;
+					table[z].prob2 = q;
+					table[z].prob3 = q;
+				}
+			}
 
 			/* Another entry complete for this locale */
 			aux[x]++;
 		}
 	}
 
+	C_MAKE(alloc_race_index_level, 256, s16b);
+
+	/* Store index numbers for the first entry of each level */
+	for (i = 1; i < 256; i++) {
+		alloc_race_index_level[i] = num[i - 1];
+	}
+
+
+	/*** Create unique monster mask arrays ***/
+	C_MAKE(allow_uniques, MAX_R_IDX, char);
+	C_MAKE(reject_uniques, MAX_R_IDX, char);
+
+	for (i = 1; i < MAX_R_IDX; i++) {
+		/* Get the i'th race */
+		r_ptr = &r_info[i];
+
+		if (r_ptr->flags1 & RF1_UNIQUE) {
+			reject_uniques[i] = TRUE;
+		}
+	}
 
 	/* Success */
 	return (0);

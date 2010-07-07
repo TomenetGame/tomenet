@@ -197,7 +197,11 @@ static byte sf_get(void)
 #else
 	/* Buffered reading */
 	if (fff_buf_pos >= MAX_BUF_SIZE) {
-		fread(fff_buf, 1, MAX_BUF_SIZE, fff);
+		if (fread(fff_buf, 1, MAX_BUF_SIZE, fff) < MAX_BUF_SIZE) {
+			if (!feof(fff)) {
+				s_printf("Failed to read from savefile: %s\n", strerror(ferror(fff)));
+			}
+		}
 		fff_buf_pos = 0;
 	}
 
@@ -1892,7 +1896,7 @@ static errr rd_dungeon(void)
 
 	/* players on this depth */
 	rd_s16b(&tmp16b);
-	new_players_on_depth(&wpos,tmp16b,FALSE);
+	new_players_on_depth(&wpos, tmp16b, FALSE);
 #if DEBUG_LEVEL > 1
 	s_printf("%d players on %s.\n", players_on_depth(&wpos), wpos_format(0, &wpos));
 #endif
@@ -2632,7 +2636,7 @@ errr rd_server_savefile()
 
 void new_rd_wild()
 {
-	int x,y,i;
+	int x, y, i;
 	wilderness_type *wptr;
 	struct dungeon_type *d_ptr;
 	u32b tmp;
@@ -2652,11 +2656,18 @@ void new_rd_wild()
 				rd_u32b(&d_ptr->flags1);
 				rd_u32b(&d_ptr->flags2);
 				rd_byte(&d_ptr->maxdepth);
+#if 0
 				for(i=0;i<10;i++){
 					rd_byte((byte*)&d_ptr->r_char[i]);
 					rd_byte((byte*)&d_ptr->nr_char[i]);
 				}
+#else
+				strip_bytes(20);
+#endif
 				C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
+				for (i = 0; i < d_ptr->maxdepth; i++) {
+					C_MAKE(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
+				}
 				wptr->dungeon=d_ptr;
 			}
 			if(wptr->flags & WILD_F_UP){
@@ -2669,11 +2680,18 @@ void new_rd_wild()
 				rd_u32b(&d_ptr->flags1);
 				rd_u32b(&d_ptr->flags2);
 				rd_byte(&d_ptr->maxdepth);
+#if 0
 				for(i=0;i<10;i++){
 					rd_byte((byte*)&d_ptr->r_char[i]);
 					rd_byte((byte*)&d_ptr->nr_char[i]);
 				}
+#else
+				strip_bytes(20);
+#endif
 				C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
+				for (i = 0; i < d_ptr->maxdepth; i++) {
+					C_MAKE(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
+				}
 				wptr->tower=d_ptr;
 			}
 		}

@@ -362,6 +362,11 @@ s16b alloc_kind_size;
  */
 alloc_entry *alloc_kind_table;
 
+/*
+ * Index numbers for looking up level-specific entries
+ */
+s16b *alloc_kind_index_level;
+
 
 /*
  * The size of "alloc_race_table" (at most MAX_R_IDX)
@@ -372,6 +377,23 @@ s16b alloc_race_size;
  * The entries in the "race allocator table"
  */
 alloc_entry *alloc_race_table;
+
+/*
+ * Dungeon specific race allocation tables
+ */
+alloc_entry **alloc_race_table_dun;
+
+/*
+ * Index numbers for looking up level-specific entries
+ */
+s16b *alloc_race_index_level;
+
+
+/*
+ * Unique monster mask arrays.
+ */
+char *allow_uniques;
+char *reject_uniques;
 
 
 /*
@@ -436,6 +458,8 @@ header *e_head;
 ego_item_type *e_info;
 char *e_name;
 char *e_text;
+s16b *e_tval_size;
+s16b **e_tval;
 
 /* jk / Jir */
 /* the trap-arrays/variables */
@@ -612,7 +636,7 @@ bool (*get_mon_num2_hook)(int r_idx);
 /*
  * Hack -- function hook to restrict "get_obj_num_prep()" function
  */
-bool (*get_obj_num_hook)(int k_idx, u32b resf);
+int (*get_obj_num_hook)(int k_idx, u32b resf);
 
 /* the dungeon master movement hook, is called whenever he moves
  * (to make building large buildings / summoning hoards of mosnters 

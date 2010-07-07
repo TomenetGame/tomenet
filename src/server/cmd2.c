@@ -24,16 +24,16 @@ void do_cmd_go_up(int Ind)
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	cave_type *c_ptr;
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos, old_wpos;
 	bool tower=TRUE;
 	cave_type **zcave;
 #ifdef RPG_SERVER
 	int i;
 #endif
-	if(!(zcave=getcave(wpos))) return;
+	if(!(zcave = getcave(wpos))) return;
 
         /* Are we entering/inside a dungeon or a tower? */
-        if (wpos->wz<0) tower=FALSE;
+        if (wpos->wz < 0) tower=FALSE;
 
 	/* Make sure he hasn't just changed depth */
 	if (p_ptr->new_level_flag)
@@ -192,6 +192,7 @@ void do_cmd_go_up(int Ind)
 
 	/* Hack -- take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
+
 	/* Success */
 	if (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)
 	{
@@ -274,10 +275,12 @@ void do_cmd_go_up(int Ind)
 		if (p_ptr->ghost) p_ptr->new_level_method = LEVEL_GHOST;
 		else p_ptr->new_level_method = LEVEL_PROB_TRAVEL;
 	}
+
 	/* A player has left this depth */
-	new_players_on_depth(wpos,-1,TRUE);
+	wpcopy(&old_wpos, wpos);
 	wpos->wz++;
-	new_players_on_depth(wpos,1,TRUE);
+	new_players_on_depth(&old_wpos, -1, TRUE);
+	new_players_on_depth(wpos, 1, TRUE);
 
 	p_ptr->new_level_flag = TRUE;
 
@@ -343,7 +346,7 @@ void do_cmd_go_down(int Ind)
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	cave_type *c_ptr;
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos, old_wpos;
 	bool tower = FALSE;
 	cave_type **zcave;
 #ifdef RPG_SERVER
@@ -406,12 +409,12 @@ void do_cmd_go_down(int Ind)
 		return;
 	}
 
-	/* Hack -- take a turn */
-	p_ptr->energy -= level_speed(&p_ptr->wpos);
-
 	if (c_ptr->feat == FEAT_BETWEEN)
 //		|| c_ptr->feat == FEAT_BETWEEN2)
 	{
+		/* Hack -- take a turn */
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
+
 		/* Check interference */
 		if (interfere(Ind, 20)) return; /* between gate interference chance */
 		
@@ -499,6 +502,7 @@ void do_cmd_go_down(int Ind)
 		}
 	}
 #endif
+
 #ifndef ARCADE_SERVER
 	if(wpos->wz == 0){
 		dungeon_type *d_ptr=wild_info[wpos->wy][wpos->wx].dungeon;
@@ -525,6 +529,7 @@ void do_cmd_go_down(int Ind)
 		}
 	}
 #endif
+
 	if(p_ptr->inval && p_ptr->wpos.wz <= -10){
 		msg_print(Ind, "\377You may go no lower without a valid account.");
 		return;
@@ -542,6 +547,9 @@ void do_cmd_go_down(int Ind)
 	/* Forget his lite and viewing area */
 	forget_lite(Ind);
 	forget_view(Ind);
+
+	/* Hack -- take a turn */
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	/* Success */
 	if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)
@@ -626,9 +634,10 @@ void do_cmd_go_down(int Ind)
 		else p_ptr->new_level_method = LEVEL_PROB_TRAVEL;
 	}
 	/* A player has left this depth */
-	new_players_on_depth(wpos,-1,TRUE);
+	wpcopy(&old_wpos, wpos);
 	wpos->wz--;
-	new_players_on_depth(wpos,1,TRUE);
+	new_players_on_depth(&old_wpos, -1, TRUE);
+	new_players_on_depth(wpos, 1, TRUE);
 
 	p_ptr->new_level_flag = TRUE;
 
@@ -2288,6 +2297,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 							s_printf("DIGGING: %s found a metal piece.\n", p_ptr->name);
 						} else {
 							object_level = find_level;
+							/* abuse tval and sval as simple counters */
 							tval = rand_int(mining / 5);
 							for (sval = 0; sval <= tval; sval++) {
 								/* Place some gold */
@@ -2864,7 +2874,7 @@ void do_cmd_disarm(int Ind, int dir)
 				note_spot_depth(wpos, y, x);
 
 				/* Redisplay the grid */
-				everyone_redraw_spot(wpos, y, x);
+				everyone_clear_ovl_spot(wpos, y, x);
 #endif
 
 				/* move the player onto the trap grid */
@@ -3304,7 +3314,6 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 	bool more = FALSE;
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
-
 
 	/* Make sure he hasn't just switched levels */
 	if (p_ptr->new_level_flag) return;

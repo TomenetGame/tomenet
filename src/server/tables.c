@@ -3032,6 +3032,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 700,
                         },
 #endif
+                        {
+                                SKILL_DIG,
+                                '+', 0,
+                                '+', 500,
+                        },
 
                         {
                                 SKILL_SORCERY,

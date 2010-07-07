@@ -218,7 +218,7 @@ void tsave(c_special *cs_ptr)
 	wr_byte(cs_ptr->sc.trap.found);
 }
 void tsee(c_special *cs_ptr, char *c, byte *a, int Ind){
-	printf("tsee %d\n", Ind);
+//	printf("tsee %d\n", Ind);
 }
 
 int thit(c_special *cs_ptr, int y, int x, int Ind){
@@ -289,10 +289,10 @@ void betweensave(c_special *cs_ptr)
 	wr_byte(cs_ptr->sc.between.fx);
 }
 void betweensee(c_special *cs_ptr, char *c, byte *a, int Ind){
-	printf("tsee %d\n", Ind);
+//	printf("tsee %d\n", Ind);
 }
 int betweenhit(c_special *cs_ptr, int y, int x, int Ind){
-	printf("bhit: %d\n", Ind);
+//	printf("bhit: %d\n", Ind);
 	return(TRUE);
 }
 
@@ -312,7 +312,7 @@ void fountsave(c_special *cs_ptr)
 }
 void fountsee(c_special *cs_ptr, char *c, byte *a, int Ind){
 	/* TODO: tell what kind if 'known' */
-	printf("fountsee %d\n", Ind);
+//	printf("fountsee %d\n", Ind);
 }
 
 /*

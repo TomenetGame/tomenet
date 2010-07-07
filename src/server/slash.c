@@ -1505,11 +1505,11 @@ void do_slash_cmd(int Ind, char *message)
 			else lev = 80 + rand_int(20);
 
 			get_mon_num_hook=dungeon_aux;
-			get_mon_num_prep();
+			get_mon_num_prep(0, NULL);
 			i=2+randint(5);
 
 			do{
-				r=get_mon_num(lev, 0);
+				r=get_mon_num(lev);
 				k++;
                                 if(k>1000) {
                                         lev--;
@@ -2353,7 +2353,7 @@ void do_slash_cmd(int Ind, char *message)
 			apos.wx = 0; apos.wy = 0; apos.wz = 0;
 			if (!wild_info[apos.wy][apos.wx].tower) {
 				adddungeon(&apos, 1, 1, DF1_NO_RECALL | DF1_SMALLEST,
-				    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK, NULL, NULL, TRUE, 0);
+				    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK, TRUE, 0);
 				fresh_arena = TRUE;
 			}
 			apos.wz = 1;
@@ -3767,21 +3767,39 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/reart")) /* re-roll a random artifact */
 			{
 				object_type *o_ptr;
-				int min_pval = -999, tries = 1000;
+				int min_pval = -999, min_ap = -999, tries = 1000;
 				if (tk < 1) {
-					msg_print(Ind, "\377oUsage: /reart <inventory-slot> [<min pval>]");
+					msg_print(Ind, "\377oUsage: /reart <inventory-slot> [<+min pval>|<min artifact power>]");
 					return;
 				}
+
 				if (atoi(token[1]) < 1 || atoi(token[1]) >= INVEN_TOTAL) {
 					msg_print(Ind, "\377oInvalid inventory slot.");
 					return;
 				}
+
 				o_ptr = &p_ptr->inventory[atoi(token[1]) - 1];
 				if (o_ptr->name1 != ART_RANDART) {
-					msg_print(Ind, "\377oNot a randart.");
-					return;
+					if (o_ptr->name1) {
+						msg_print(Ind, "\377oIt's a static art. Aborting.");
+						return;
+					} else {
+						msg_print(Ind, "\377oNot a randart - turning it into one.");
+						o_ptr->name1 = ART_RANDART;
+					}
 				}
-				if (tk > 1) min_pval = atoi(token[2]);
+
+				if (tk > 1) {
+					if (token[2][0] == '+') min_pval = atoi(token[2]);
+					else min_ap = atoi(token[2]);
+				}
+
+				if (min_ap > -999 && min_pval > -999)
+					msg_format(Ind, "\377wrerolling for at least +%d pval and %d ap.", min_pval, min_ap);
+				else if (min_pval > -999)
+					msg_format(Ind, "\377wrerolling for at least +%d pval.", min_pval);
+				else if (min_ap > -999)
+					msg_format(Ind, "\377wrerolling for at least %d ap.", min_ap);
 
 				while (tries) {
 			                /* Piece together a 32-bit random seed */
@@ -3798,13 +3816,13 @@ void do_slash_cmd(int Ind, char *message)
 					o_ptr->timeout = 0;
 					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, FALSE);
 
-					if (o_ptr->pval >= min_pval) break;
+					if (o_ptr->pval >= min_pval && artifact_power(randart_make(o_ptr)) >= min_ap) break;
 					tries--;
 				}
-				o_ptr->ident |= ID_MENTAL; /* *id*ed */
 				if (!tries) msg_format(Ind, "Re-rolling failed (out of tries)!");
 				else msg_format(Ind, "Re-rolled randart in inventory slot %d (Tries: %d).", atoi(token[1]), 1000 + 1 - tries);
-				/* Window stuff */
+
+				o_ptr->ident |= ID_MENTAL; /* *id*ed */
 				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 				return;
 			}
@@ -4545,6 +4563,25 @@ void do_slash_cmd(int Ind, char *message)
 #endif  // MONSTER_INVENTORY
 				return;
 			}
+			else if (prefix(message, "/unown")) { /* clear owner of an item - C. Blue */
+				object_type *o_ptr;
+				if (!tk) {
+					msg_print(Ind, "No inventory slot specified.");
+					return; /* no inventory slot specified */
+				}
+				if (k < 1 || k > INVEN_TOTAL) {
+					msg_format(Ind, "Inventory slot must be between 1 and %d", INVEN_TOTAL);
+					return; /* invalid inventory slot index */
+				}
+				k--; /* start at index 1, easier for user */
+				if (!p_ptr->inventory[k].tval) {
+					msg_print(Ind, "Specified inventory slot is empty.");
+					return; /* inventory slot empty */
+				}
+				o_ptr = &p_ptr->inventory[k];
+				o_ptr->owner = 0;
+				o_ptr->owner_mode = 0;
+			}
 			else if (prefix(message, "/erasehashtableid")) { /* erase a player id in case there's a duplicate entry in the hash table - mikaelh */
 				int id;
 				if (tk < 1) {
@@ -5254,6 +5291,23 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 #endif
+			else if (prefix(message, "/towea")) { /* teleport player to a sector with weather going */
+				int x, y;
+				for (x = 0; x < 64; x++)
+					for (y = 0; y < 64; y++)
+						if (wild_info[y][x].weather_type > 0 &&
+						    (wild_info[y][x].weather_type == 1 || //rain
+						    wild_info[y][x].weather_type == 2) && //snow
+						    wild_info[y][x].cloud_idx[0] > 0) {
+							p_ptr->recall_pos.wx = x;
+							p_ptr->recall_pos.wy = y;
+							p_ptr->recall_pos.wz = 0;
+							p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+							recall_player(Ind, "");
+							return;
+						}
+				return;
+			}
 		}
 	}
 

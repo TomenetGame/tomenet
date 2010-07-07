@@ -353,7 +353,7 @@ void wild_spawn_towns()
 			continue;
 		}
 
-		adddungeon(&wpos, 0, 0, 0, 0, NULL, NULL, FALSE, i);
+		adddungeon(&wpos, 0, 0, 0, 0, FALSE, i);
 
 		/* 0 or MAX_{HGT,WID}-1 are bad places for stairs - mikaelh */
 		if (d_info[i].flags1 & DF1_TOWER)
@@ -662,19 +662,8 @@ static bool wild_monst_aux_volcano(int r_idx)
 }
 #endif // 0
 
-
-/* this may not be the most efficient way of doing things... */
-void wild_add_monster(struct worldpos *wpos)
+void set_mon_num_hook_wild(struct worldpos *wpos)
 {
-	int monst_x, monst_y, r_idx;
-	int tries = 0;
-	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
-
-	/* Don't spawn during highlander tournament or global events in general (ancient D vs lvl 10 is silyl) */
-	if (sector00separation && wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y) return;
-
-	/* reset the monster sorting function */	
 	switch(wild_info[wpos->wy][wpos->wx].type)
 	{
 		case WILD_RIVER:
@@ -688,26 +677,50 @@ void wild_add_monster(struct worldpos *wpos)
 		case WILD_TOWN: get_mon_num_hook = wild_monst_aux_town; break;
 		default: get_mon_num_hook = dungeon_aux;	
 	}
-	get_mon_num_prep();
-	
+}
+
+
+/* this may not be the most efficient way of doing things... */
+void wild_add_monster(struct worldpos *wpos)
+{
+	int monst_x, monst_y, r_idx;
+	int tries = 0;
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return;
+
+	/* Don't spawn during highlander tournament or global events in general (ancient D vs lvl 10 is silyl) */
+	if (sector00separation && wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y) return;
+
+	/* reset the monster sorting function */
+	set_mon_num_hook_wild(wpos);
+
 	/* find a legal, unoccupied space */
-	do{
+	do {
 		monst_x = rand_int(MAX_WID);
 		monst_y = rand_int(MAX_HGT);
 		
 		if (cave_naked_bold(zcave, monst_y, monst_x)) break;
 		tries++;
-	}while (tries < 50);
-	
+	} while (tries < 50);
+
+	if (!cave_naked_bold(zcave, monst_y, monst_x)) {
+		/* Give up */
+		return;
+	}
+
+	/* Set the second hook according to the terrain type */
+	set_mon_num2_hook(zcave[monst_y][monst_x].feat);
+
+	get_mon_num_prep(0, NULL);
+
 	/* get the monster */
-	r_idx = get_mon_num(monster_level, 0);
-	
+	r_idx = get_mon_num(monster_level);
+
 	/* place the monster */
 	place_monster_aux(wpos, monst_y, monst_x, r_idx, FALSE, TRUE, FALSE, 0);
-	
+
 	/* hack -- restore the monster selection function */
 	get_mon_num_hook = dungeon_aux;
-	get_mon_num_prep();
 }
 
 
@@ -985,15 +998,16 @@ static bool wild_monst_aux_home_owner(int r_idx)
 	return FALSE;
 }
 
-static bool wild_obj_aux_bones(int k_idx, u32b resf)
+static int wild_obj_aux_bones(int k_idx, u32b resf)
 {
 	object_kind *k_ptr = &k_info[k_idx];
 
 	/* paranoia */
-	if (k_idx < 0) return FALSE;
+	if (k_idx < 0) return 0;
 
-	if (k_ptr->tval == TV_SKELETON) return TRUE;		
-	return FALSE;
+	if (k_ptr->tval == TV_SKELETON) return 100;
+
+	return 0;
 }
 
 /* make a dwelling (building in the wilderness) 'interesting'.
@@ -1178,19 +1192,24 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 	if (!(w_ptr->flags & WILD_F_HOME_OWNERS)) {
 		if (at_home)
 		{
-			/* determine the home owners species*/
+			/* determine the home owners species */
 			get_mon_num_hook = wild_monst_aux_home_owner;
-			get_mon_num_prep();
+
+			/* Set the second hook according to the floor type */
+			set_mon_num2_hook(zcave[y1][x1].feat);
+
+			get_mon_num_prep(0, NULL);
+
 			/* homeowners can be tough */
-			r_idx = get_mon_num(w_ptr->radius, 0);
+			r_idx = get_mon_num(w_ptr->radius);
 
 			/* get the owners location */
-			x = rand_range(x1,x2)+rand_int(40)-20;
-			y = rand_range(y1,y2)+rand_int(16)-8;
+			x = rand_range(x1, x2) + rand_int(40) - 20;
+			y = rand_range(y1, y2) + rand_int(16) - 8;
 
 			/* place the owner */
 			summon_override_checks = SO_HOUSE;
-			place_monster_aux(wpos, y,x, r_idx, FALSE, FALSE, FALSE, 0);
+			place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, FALSE, 0);
 			summon_override_checks = SO_NONE;
 		}
 	}
@@ -1201,8 +1220,12 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 		{
 			/* determine the invaders species*/
 			get_mon_num_hook = wild_monst_aux_invaders;
-			get_mon_num_prep();
-			r_idx = get_mon_num((w_ptr->radius/2)+1, 0);
+
+			/* Set the second hook according to the floor type */
+			set_mon_num2_hook(zcave[y1][x1].feat);
+
+			get_mon_num_prep(0, NULL);
+			r_idx = get_mon_num((w_ptr->radius/2)+1);
 
 			/* add the monsters */
 			summon_override_checks = SO_HOUSE;
@@ -3561,7 +3584,7 @@ void wild_add_new_dungeons() {
 #endif
 		}
 
-		adddungeon(&wpos, 0, 0, 0, 0, NULL, NULL, FALSE, i);
+		adddungeon(&wpos, 0, 0, 0, 0, FALSE, i);
 
 		/* 0 or MAX_{HGT,WID}-1 are bad places for stairs - mikaelh */
 		if (d_info[i].flags1 & DF1_TOWER)

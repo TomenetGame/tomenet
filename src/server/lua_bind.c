@@ -381,7 +381,7 @@ void load_map(char *name, int *y, int *x)
 	set_mon_num_hook();
 
 	/* Prepare allocation table */
-	get_mon_num_prep();
+	get_mon_num_prep(0, NULL);
 
 	init_flags = INIT_CREATE_DUNGEON;
 	process_dungeon_file_full = TRUE;
@@ -481,14 +481,13 @@ int lua_get_new_bounty_monster(int lev)
 	 * with no corpses
 	 */
 	get_mon_num_hook = lua_mon_hook_bounty;
-	get_mon_num_prep();
+	get_mon_num_prep(0, NULL);
 
 	/* Set up the quest monster. */
 	r_idx = get_mon_num(lev);
 
 	/* Undo the filters */
-	get_mon_num_hook = NULL;
-        get_mon_num_prep();
+	get_mon_num_hook = dungeon_aux;
 
         return r_idx;
 }
@@ -615,6 +614,7 @@ void lua_strip_true_arts_from_present_player(int Ind, int mode) {
 	object_type *o_ptr;
 	int i, total_number = 0;
 	bool reimbursed = FALSE;
+	s32b cost;
 
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
@@ -629,28 +629,27 @@ void lua_strip_true_arts_from_present_player(int Ind, int mode) {
 
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
-		if (resettable_artifact_p(o_ptr))
-	        {
-	                //char  o_name[ONAME_LEN];
-	                //object_desc(Ind, o_name, o_ptr, TRUE, 0);
-	                //msg_format(Ind, "%s fades into the air!", o_name);
+		if (resettable_artifact_p(o_ptr)) {
+			//char  o_name[ONAME_LEN];
+			//object_desc(Ind, o_name, o_ptr, TRUE, 0);
+			//msg_format(Ind, "%s fades into the air!", o_name);
 
-		        /* reimburse player monetarily */
-		        if (a_info[o_ptr->name1].cost > 0) {
-				p_ptr->au += a_info[o_ptr->name1].cost;
+			/* reimburse player monetarily */
+			cost = a_info[o_ptr->name1].cost;
+			if (cost > 0) {
+//				if (cost > 500000) cost = 500000; //not required, it's still fair
+				p_ptr->au += cost;
 				p_ptr->redraw |= (PR_GOLD);
 				reimbursed = TRUE;
 			}
 
-			if (mode == 0) {
-				handle_art_d(o_ptr->name1);
-			}
+			if (mode == 0) handle_art_d(o_ptr->name1);
 
-		        /* Decrease the item, optimize. */
-		        inven_item_increase(Ind, i, -o_ptr->number);
-		        inven_item_describe(Ind, i);
-		        inven_item_optimize(Ind, i);
-		        i--;
+			/* Decrease the item, optimize. */
+			inven_item_increase(Ind, i, -o_ptr->number);
+			inven_item_describe(Ind, i);
+			inven_item_optimize(Ind, i);
+			i--;
 		}
 	}
 	if (total_number) s_printf("True-art strip: %s loses %d artifact(s).\n", p_ptr->name, total_number);

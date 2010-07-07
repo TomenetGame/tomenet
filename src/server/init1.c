@@ -3918,6 +3918,18 @@ static errr grab_one_basic_flag(monster_race *r_ptr, cptr what)
 {
 	int i;
 
+	/* Most common flags first - mikaelh */
+
+	/* Scan flags3 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags3[i]))
+		{
+			r_ptr->flags3 |= (1L << i);
+			return (0);
+		}
+	}
+
 	/* Scan flags1 */
 	for (i = 0; i < 32; i++)
 	{
@@ -3938,16 +3950,15 @@ static errr grab_one_basic_flag(monster_race *r_ptr, cptr what)
 		}
 	}
 
-	/* Scan flags3 */
+	/* Scan flags8 */
 	for (i = 0; i < 32; i++)
 	{
-		if (streq(what, r_info_flags3[i]))
+		if (streq(what, r_info_flags8[i]))
 		{
-			r_ptr->flags3 |= (1L << i);
+			r_ptr->flags8 |= (1L << i);
 			return (0);
 		}
 	}
-
 
 	/* Scan flags7 */
 	for (i = 0; i < 32; i++)
@@ -3955,16 +3966,6 @@ static errr grab_one_basic_flag(monster_race *r_ptr, cptr what)
 		if (streq(what, r_info_flags7[i]))
 		{
 			r_ptr->flags7 |= (1L << i);
-			return (0);
-		}
-	}
-
-	/* Scan flags8 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, r_info_flags8[i]))
-		{
-			r_ptr->flags8 |= (1L << i);
 			return (0);
 		}
 	}
@@ -4004,16 +4005,6 @@ static errr grab_one_spell_flag(monster_race *r_ptr, cptr what)
 {
 	int i;
 
-	/* Scan flags4 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, r_info_flags4[i]))
-		{
-			r_ptr->flags4 |= (1L << i);
-			return (0);
-		}
-	}
-
 	/* Scan flags5 */
 	for (i = 0; i < 32; i++)
 	{
@@ -4030,6 +4021,16 @@ static errr grab_one_spell_flag(monster_race *r_ptr, cptr what)
 		if (streq(what, r_info_flags6[i]))
 		{
 			r_ptr->flags6 |= (1L << i);
+			return (0);
+		}
+	}
+
+	/* Scan flags4 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags4[i]))
+		{
+			r_ptr->flags4 |= (1L << i);
 			return (0);
 		}
 	}

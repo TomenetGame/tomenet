@@ -328,22 +328,30 @@ static void do_player_trap_change_depth(int Ind, int dis)
 {
 	player_type *p_ptr = Players[Ind];
 	cave_type **zcave;
+	struct worldpos old_wpos;
 
-	zcave=getcave(&p_ptr->wpos);
+	zcave = getcave(&p_ptr->wpos);
 
 	p_ptr->new_level_flag = TRUE;
 	p_ptr->new_level_method = LEVEL_RAND;
 
+	/* Save the old wpos */
+	wpcopy(&old_wpos, &p_ptr->wpos);
+
+	/* New wpos */
+	p_ptr->wpos.wz += dis;
+
 	/* The player is gone */
-	zcave[p_ptr->py][p_ptr->px].m_idx=0;
+	zcave[p_ptr->py][p_ptr->px].m_idx = 0;
+
 	/* Erase his light */
 	forget_lite(Ind);
 
 	/* Show everyone that he's left */
 	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-	new_players_on_depth(&p_ptr->wpos,-1,TRUE);
-	p_ptr->wpos.wz += dis;
-	new_players_on_depth(&p_ptr->wpos,1,TRUE);
+
+	new_players_on_depth(&old_wpos, -1, TRUE);
+	new_players_on_depth(&p_ptr->wpos, 1, TRUE);
 }
 
 static bool do_player_trap_call_out(int Ind)

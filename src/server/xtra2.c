@@ -3996,7 +3996,7 @@ void check_experience(int Ind)
 					msg_print(Ind, "\377RYou don't deserve to live.");
 					strcpy(p_ptr->died_from,"indecisiveness");
 					p_ptr->deathblow = 0;
-					p_ptr->death = 1;
+					p_ptr->death = TRUE;
 			}
 			break;
 #endif
@@ -5991,7 +5991,7 @@ void player_death(int Ind)
 	stop_shooting_till_kill(Ind);
 
 	if (just_fruitbat_transformation) {
-		p_ptr->death = 0;
+		p_ptr->death = FALSE;
 		p_ptr->update |= (PU_BONUS);
 		p_ptr->redraw |= (PR_HP | PR_GOLD | PR_BASIC | PR_DEPTH);
 		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -6030,7 +6030,7 @@ void player_death(int Ind)
 		Send_store_kick(Ind);
 	}
 
-	if (d_ptr && (d_ptr->flags2 & DF2_NO_DEATH) && !p_ptr->ghost) secure = TRUE;
+	if (d_ptr && (d_ptr->flags2 & DF2_NO_DEATH)) secure = TRUE;
 
 	if (ge_special_sector &&
 	    (p_ptr->wpos.wx == WPOS_ARENA_X && p_ptr->wpos.wy == WPOS_ARENA_Y &&
@@ -6073,8 +6073,8 @@ void player_death(int Ind)
 		teleport_player(Ind, 200, TRUE);
 
 		/* Remove the death flag */
-		p_ptr->death = 0;
-		p_ptr->ghost = 0;
+		p_ptr->death = FALSE;
+//		ptr->ghost = 0;
 
 		/* Give him his hit points back */
 		p_ptr->chp = p_ptr->mhp;
@@ -6211,8 +6211,8 @@ void player_death(int Ind)
 		/* Teleport him */
 		teleport_player(Ind, 200, TRUE);
 		/* Remove the death flag */
-		p_ptr->death = 0;
-		p_ptr->ghost = 0;
+		p_ptr->death = FALSE;
+//		p_ptr->ghost = 0;
 		/* Give him his hit points back */
 		p_ptr->chp = p_ptr->mhp;
 		p_ptr->chp_frac = 0;
@@ -6240,8 +6240,8 @@ void player_death(int Ind)
 #endif
 
 #ifdef USE_SOUND_2010
-	if (p_ptr->male) sound(Ind, "death_male", "death", SFX_TYPE_MISC, FALSE);
-	else sound(Ind, "death_female", "death", SFX_TYPE_MISC, FALSE);
+	if (p_ptr->male) sound(Ind, "death_male", "death", SFX_TYPE_MISC, TRUE);
+	else sound(Ind, "death_female", "death", SFX_TYPE_MISC, TRUE);
 #else
 	sound(Ind, SOUND_DEATH);
 #endif
@@ -6642,7 +6642,19 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", p_ptr->mode & MODE_PV
 
 		if (getlevel(&p_ptr->wpos) < cfg.preserve_death_level)
 		{
-			new_players_on_depth(&p_ptr->wpos,-1,TRUE);
+			struct worldpos old_wpos;
+
+			wpcopy(&old_wpos, &p_ptr->wpos);
+
+			/*
+			 * HACK - Change the wpos temporarily so that new_players_on_depth
+			 * won't think that the player is on the level - mikaelh
+			 */
+			p_ptr->wpos.wz++;
+
+			new_players_on_depth(&old_wpos, -1, TRUE);
+
+			p_ptr->wpos.wz--;
 		}
 
 		buffer_account_for_event_deed(p_ptr, death_type);
@@ -6759,6 +6771,8 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 
 	/* Handle suicide */
 	if (!p_ptr->alive) {
+		struct worldpos old_wpos;
+
 		/* Delete his houses */
 		kill_houses(p_ptr->id, OT_PLAYER);
 		rem_quest(p_ptr->quest_id);
@@ -6781,8 +6795,18 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 		p_ptr->death = TRUE;
 		p_ptr->deathblow = 0;
 
+		wpcopy(&old_wpos, &p_ptr->wpos);
+
+		/*
+		* HACK - Change the wpos temporarily so that new_players_on_depth
+		* won't think that the player is on the level - mikaelh
+		*/
+		p_ptr->wpos.wz++;
+
 		/* One less player here */
-		new_players_on_depth(&p_ptr->wpos,-1,TRUE);
+		new_players_on_depth(&old_wpos, -1, TRUE);
+
+		p_ptr->wpos.wz--;
 
 		check_roller(Ind);
 
@@ -6920,7 +6944,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 	p_ptr->deaths++;
 
 	/* Remove the death flag */
-	p_ptr->death = 0;
+	p_ptr->death = FALSE;
 
 	/* Update bonus */
 	p_ptr->update |= (PU_BONUS);
@@ -6949,9 +6973,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
     
     exploss tells by how much % the GHOST_XP_LOSS is reduced (C. Blue).
  */
- 
-void resurrect_player(int Ind, int loss_reduction)
-{
+void resurrect_player(int Ind, int loss_reduction) {
 	player_type *p_ptr = Players[Ind];
 	int reduce, loss_factor;
 
@@ -7287,11 +7309,11 @@ bool prepare_quest(int Ind, int j, u16b flags, int *level, u16b *type, u16b *num
         else lev = 80 + rand_int(20);
 
         get_mon_num_hook=dungeon_aux;
-        get_mon_num_prep();
+        get_mon_num_prep(0, NULL);
         i=2+randint(5);
 
         do{
-                r=get_mon_num(lev, 0);
+                r=get_mon_num(lev);
                 k++;
                 if(k>100) lev--;
         } while(        ((lev-5) > r_info[r].level) ||
@@ -9542,13 +9564,14 @@ int get_monster(int Ind, object_type *o_ptr)
 				inscription++;
 				
 				r_idx = atoi((cptr)inscription);
-				if (r_idx < 1 && r_idx > alloc_race_size) ok1 = FALSE;
+				if (r_idx < 1 || r_idx > MAX_R_IDX - 1) ok1 = FALSE;
+				else if (!r_info[r_idx].name) ok1 = FALSE;
 				else if (!Players[Ind]->r_killed[r_idx]) ok2 = FALSE;
 			}
 		}
 		inscription++;
 	}
-	
+
         if (!ok1)
 	{
 		msg_print(Ind, "That monster does not exist.");
@@ -9916,7 +9939,7 @@ bool master_level(int Ind, char * parms)
 			}
 			if(parms[3]=='t' && !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags&WILD_F_UP)){
 				printf("tower: flags %x,%x\n",parms[4], parms[5]);
-				adddungeon(&p_ptr->wpos, parms[1], parms[2], parms[4], parms[5], NULL, NULL, TRUE, 0);
+				adddungeon(&p_ptr->wpos, parms[1], parms[2], parms[4], parms[5], TRUE, 0);
 				new_level_down_y(&p_ptr->wpos, p_ptr->py);
 				new_level_down_x(&p_ptr->wpos, p_ptr->px);
 				if((zcave=getcave(&p_ptr->wpos))){
@@ -9925,7 +9948,7 @@ bool master_level(int Ind, char * parms)
 			}
 			if(parms[3]=='d' && !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags&WILD_F_DOWN)){
 				printf("dungeon: flags %x,%x\n",parms[4], parms[5]);
-				adddungeon(&p_ptr->wpos, parms[1], parms[2], parms[4], parms[5], NULL, NULL, FALSE, 0);
+				adddungeon(&p_ptr->wpos, parms[1], parms[2], parms[4], parms[5], FALSE, 0);
 				new_level_up_y(&p_ptr->wpos, p_ptr->py);
 				new_level_up_x(&p_ptr->wpos, p_ptr->px);
 				if((zcave=getcave(&p_ptr->wpos))){
@@ -10164,14 +10187,16 @@ static bool master_summon_specific_aux(int r_idx)
 /* Auxillary function to master_summon, determine the exact type of monster
  * to summon from a more general description.
  */
-static u16b master_summon_aux_monster_type( char monster_type, char * monster_parms)
+static u16b master_summon_aux_monster_type(int Ind, char monster_type, char * monster_parms)
 {
+	player_type *p_ptr = Players[Ind];
 	int tmp;
+
 	/* handle each category of monster types */
 	switch (monster_type)
 	{
 		/* specific monster specified */
-		case 's': 
+		case 's':
 		{
 			/* allows specification by monster No. */
 			tmp = atoi(monster_parms);
@@ -10184,21 +10209,20 @@ static u16b master_summon_aux_monster_type( char monster_type, char * monster_pa
 			{
 				master_specific_race_char = monster_parms[0];
 				get_mon_num_hook = master_summon_specific_aux;
-				get_mon_num_prep();
+				get_mon_num_prep(0, NULL);
 //				tmp = get_mon_num(rand_int(100) + 10);
 				tmp = get_mon_num((monster_parms[0] == 't') ?
-						0 : rand_int(100) + 10, 0);
+						0 : rand_int(100) + 10);
 
 				/* restore monster generator */
 				get_mon_num_hook = dungeon_aux;
-				get_mon_num_prep();
 
 				/* return our monster */
 				return tmp;
 			}
 		}
 		/* orc specified */
-		case 'o':  
+		case 'o':
 		{
 			/* if not random, assume specific orc specified */
 			if (strcmp(monster_parms, "random")) return race_index(monster_parms);
@@ -10215,7 +10239,7 @@ static u16b master_summon_aux_monster_type( char monster_type, char * monster_pa
 			break;
 		}
 		/* low undead specified */
-		case 'u':  
+		case 'u':
 		{
 			/* if not random, assume specific high undead specified */
 			if (strcmp(monster_parms, "random")) return race_index(monster_parms);
@@ -10238,7 +10262,7 @@ static u16b master_summon_aux_monster_type( char monster_type, char * monster_pa
 		}
 		
 		/* high undead specified */
-		case 'U':  
+		case 'U':
 		{
 			/* if not random, assume specific high undead specified */
 			if (strcmp(monster_parms, "random")) return race_index(monster_parms);
@@ -10265,7 +10289,13 @@ static u16b master_summon_aux_monster_type( char monster_type, char * monster_pa
 		/* specific depth specified */
 		case 'd':
 		{
-			return get_mon_num(monster_parms[0], 0);
+			get_mon_num_hook = dungeon_aux;
+
+			/* Wilderness-specific hook */
+			if (!p_ptr->wpos.wz) set_mon_num_hook_wild(&p_ptr->wpos);
+
+			get_mon_num_prep(0, NULL);
+			return get_mon_num(monster_parms[0]);
 		}
 
 		default : break;
@@ -10323,15 +10353,16 @@ bool master_summon(int Ind, char * parms)
 			/* for each monster we are summoning */
 			for (c = 0; c < summon_parms; c++)
 			{
+#if 0
 				/* hack -- monster_type '0' specifies mass genocide */
 				if (monster_type == '0')
 				{
 					mass_genocide(Ind);
 					break;
 				}
-
+#endif
 				/* figure out who to summon */
-				r_idx = master_summon_aux_monster_type(monster_type, monster_parms);
+				r_idx = master_summon_aux_monster_type(Ind, monster_type, monster_parms);
 
 				/* summon the monster, if we have a valid one */
 				if (r_idx)
@@ -10346,7 +10377,8 @@ bool master_summon(int Ind, char * parms)
 			for (c = 0; c < summon_parms; c++)
 			{
 				/* figure out who to summon */
-				r_idx = master_summon_aux_monster_type(monster_type, monster_parms);
+				r_idx = master_summon_aux_monster_type(Ind, monster_type, monster_parms);
+
 				/* summon the monster at a random location */
 				if (r_idx)
 					summon_specific_race_somewhere(&p_ptr->wpos,r_idx, 0, 1);
@@ -10359,8 +10391,10 @@ bool master_summon(int Ind, char * parms)
 		{
 			/* figure out how many to summon */
 			size = rand_int(rand_int(50)) + 2;
+
 			/* figure out who to summon */
-			r_idx = master_summon_aux_monster_type(monster_type, monster_parms);
+			r_idx = master_summon_aux_monster_type(Ind, monster_type, monster_parms);
+
 			/* summon the group here */
 			summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, r_idx, 0, size);
 			break;
@@ -10370,8 +10404,10 @@ bool master_summon(int Ind, char * parms)
 		{
 			/* figure out how many to summon */
 			size = rand_int(rand_int(50)) + 2;
+
 			/* figure out who to summon */
-			r_idx = master_summon_aux_monster_type(monster_type, monster_parms);
+			r_idx = master_summon_aux_monster_type(Ind, monster_type, monster_parms);
+
 			/* someone the group at a random location */
 			summon_specific_race_somewhere(&p_ptr->wpos, r_idx, 0, size);
 			break;
@@ -10401,9 +10437,10 @@ bool master_summon(int Ind, char * parms)
 bool imprison(int Ind, u16b time, char *reason){
 	int id, i;
 	struct dna_type *dna;
-	player_type *p_ptr=Players[Ind];
+	player_type *p_ptr = Players[Ind];
 	char string[160];
 	cave_type **zcave, **nzcave;
+	struct worldpos old_wpos;
 
 	if(!p_ptr || !(id=lookup_player_id("Jailer"))) return(FALSE);
 
@@ -10430,13 +10467,14 @@ bool imprison(int Ind, u16b time, char *reason){
 				generate_cave(&houses[i].wpos, p_ptr);
 				/* nzcave=getcave(&houses[i].wpos); */
 			}
-			new_players_on_depth(&p_ptr->wpos, -1, TRUE);
+			wpcopy(&old_wpos, &p_ptr->wpos);
+			wpcopy(&p_ptr->wpos, &houses[i].wpos);
+			new_players_on_depth(&old_wpos, -1, TRUE);
 			zcave[p_ptr->py][p_ptr->px].m_idx=0;
 			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 			forget_lite(Ind);
 			forget_view(Ind);
 
-			wpcopy(&p_ptr->wpos, &houses[i].wpos);
 			p_ptr->py=houses[i].y;
 			p_ptr->px=houses[i].x;
 

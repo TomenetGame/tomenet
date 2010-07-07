@@ -851,6 +851,7 @@ void do_cmd_check_players(int Ind, int line)
 
 	bool admin = is_admin(p_ptr);
 	bool outdated;
+	bool latest;
 
 	/* Temporary file */
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
@@ -868,6 +869,7 @@ void do_cmd_check_players(int Ind, int line)
 #else /* official current version */
 		outdated = !is_newer_than(&q_ptr->version, VERSION_MAJOR_OUTDATED, VERSION_MINOR_OUTDATED, VERSION_PATCH_OUTDATED, VERSION_EXTRA_OUTDATED, VERSION_BRANCH_OUTDATED, VERSION_BUILD_OUTDATED);
 #endif
+		latest = is_newer_than(&q_ptr->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, 0, 0);
 
 		byte attr = 'w';
 
@@ -916,8 +918,8 @@ void do_cmd_check_players(int Ind, int line)
 #if 0 /* show local system username? */
 		fprintf(fff, " %s %s@%s", q_ptr->inval ? "(I)" : "   ", q_ptr->realname, q_ptr->hostname);
 #else /* show account name instead? */
-		fprintf(fff, " %s %s@%s", q_ptr->inval ? (!outdated ? "\377y(I)\377U" : "\377yI\377U+\377DO\377U") :
-		    (outdated ? "\377D(O)\377U" : "   "), q_ptr->accountname, q_ptr->hostname);
+		fprintf(fff, " %s %s@%s", q_ptr->inval ? (!outdated ? (!latest && is_admin(p_ptr) ? "\377yI\377U+\377sL\377U" : "\377y(I)\377U") : "\377yI\377U+\377DO\377U") :
+		    (outdated ? "\377D(O)\377U" : (!latest && is_admin(p_ptr) ? "\377s(L)\377U" :  "   ")), q_ptr->accountname, q_ptr->hostname);
 #endif
 		/* Print location if both players are PvP-Mode */
 		if (((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) && !admin) {

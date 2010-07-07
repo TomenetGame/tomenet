@@ -8954,7 +8954,7 @@ cave_midx_debug(wpos, oy, ox, c_ptr->m_idx);
  
 void process_monsters(void)
 {
-	int		k, i, e, pl, tmp, j;
+	int		k, i, e, pl, tmp, j, n;
 	int		fx, fy;
 
 	bool		test;
@@ -8968,6 +8968,11 @@ void process_monsters(void)
 	bool		reveal_cloaking, spot_cloaking;
 	int		may_move_Ind, may_move_dis;
 	char		m_name[80];
+
+	/* Local copies for speed - mikaelh */
+	s16b *_m_fast = m_fast;
+	monster_type *_m_list = m_list;
+	player_type **_Players = Players;
 
 	/* maybe better do in dungeon()?	- Jir - */
 #ifdef PROJECTION_FLUSH_LIMIT
@@ -8994,16 +8999,16 @@ void process_monsters(void)
                	bool blos=FALSE, new_los;	*/
 
 		/* Access the index */
-		i = m_fast[k];
+		i = _m_fast[k];
 
 		/* Access the monster */
-                m_ptr = &m_list[i];
+                m_ptr = &_m_list[i];
 
 		/* Excise "dead" monsters */
 		if (!m_ptr->r_idx)
 		{
 			/* Excise the monster */
-			m_fast[k] = m_fast[--m_top];
+			_m_fast[k] = _m_fast[--m_top];
 
 			/* Skip */
 			continue;
@@ -9062,9 +9067,9 @@ void process_monsters(void)
 		may_move_dis = 9999;
 
 		/* Find the closest player */
-		for (pl = 1; pl < NumPlayers + 1; pl++) 
+		for (pl = 1, n = NumPlayers; pl < n + 1; pl++) 
 		{
-			p_ptr = Players[pl];
+			p_ptr = _Players[pl];
 			reveal_cloaking = spot_cloaking = FALSE;
 
 			/* Only check him if he is playing */
@@ -9205,7 +9210,7 @@ void process_monsters(void)
 			if (m_ptr->charmedignore) {
 				/* out of range? */
 				if (j > 20 || j > r_ptr->aaf) {
-					Players[m_ptr->charmedignore]->mcharming--;
+					_Players[m_ptr->charmedignore]->mcharming--;
 					m_ptr->charmedignore = 0;
 				/* monster gets a sort of saving throw */
 				} else if (test_charmedignore(pl, m_ptr->charmedignore, m_ptr->r_idx))
@@ -9253,7 +9258,7 @@ void process_monsters(void)
 // alternatively try this, if needed at all:
 //		if (m_ptr->cdis >= (r_ptr->aaf > 100 ? r_ptr->aaf : 100)) continue;
 
-		p_ptr = Players[closest];
+		p_ptr = _Players[closest];
 
 		/* Hack -- calculate the "player noise" */
 		noise = (1L << (30 - p_ptr->skill_stl));
@@ -9356,9 +9361,9 @@ void process_monsters(void)
 	if (scan_monsters && !(turn % (MULTI_HUED_UPDATE * MONSTER_TURNS)))
 	{
 		/* Shimmer multi-hued monsters */
-		for (i = 1; i < m_max; i++)
+		for (i = 1, n = m_max; i < n; i++)
 		{
-			m_ptr = &m_list[i];
+			m_ptr = &_m_list[i];
 
 			/* Skip dead monsters */
 			if (!m_ptr->r_idx) continue;

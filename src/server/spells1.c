@@ -357,6 +357,9 @@ s16b poly_r_idx(int r_idx)
 	/* Hack -- Uniques never polymorph */
 	if (r_ptr->flags1 & RF1_UNIQUE) return (r_idx);
 
+	get_mon_num_hook = dungeon_aux;
+	get_mon_num_prep(0, reject_uniques);
+
 	/* Allowable range of "levels" for resulting monster */
 	lev1 = r_ptr->level - ((randint(20)/randint(9))+1);
 	lev2 = r_ptr->level + ((randint(20)/randint(9))+1);
@@ -367,7 +370,7 @@ s16b poly_r_idx(int r_idx)
 		/* Pick a new race, using a level calculation */
 		/* Don't base this on "dlev" */
 		/*r = get_mon_num((dlev + r_ptr->level) / 2 + 5);*/
-		r = get_mon_num(r_ptr->level + 5, 0);
+		r = get_mon_num(r_ptr->level + 5);
 
 		/* Handle failure */
 		if (!r) break;
@@ -376,7 +379,7 @@ s16b poly_r_idx(int r_idx)
 		r_ptr = &r_info[r];
 
 		/* Ignore unique monsters */
-		if (r_ptr->flags1 & RF1_UNIQUE) continue;
+//		if (r_ptr->flags1 & RF1_UNIQUE) continue;
 
 		/* Ignore monsters with incompatible levels */
 		if ((r_ptr->level < lev1) || (r_ptr->level > lev2)) continue;
@@ -1048,8 +1051,8 @@ void teleport_player_to(int Ind, int ny, int nx)
 void teleport_player_level(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	wilderness_type *w_ptr;
-	struct worldpos *wpos=&p_ptr->wpos;
-	struct worldpos new_depth;
+	struct worldpos *wpos = &p_ptr->wpos;
+	struct worldpos new_depth, old_wpos;
 //	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	char *msg="\377rCritical bug!";
 	cave_type **zcave;
@@ -1061,7 +1064,9 @@ void teleport_player_level(int Ind) {
 	if (p_ptr->anti_tele) return;
 	if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) return;
 
+	wpcopy(&old_wpos, wpos);
 	wpcopy(&new_depth, wpos);
+
 	/* sometimes go down */
 	if(can_go_down(wpos, 0x1) && ((!can_go_up(wpos, 0x1) || (rand_int(100)<50)) ||
 		(wpos->wz<0 && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON)))
@@ -1086,46 +1091,50 @@ void teleport_player_level(int Ind) {
 		do {
 			switch (rand_int(4)) {
 				case DIR_NORTH:
-					if(new_depth.wy<MAX_WILD_Y)
+					if(new_depth.wy < MAX_WILD_Y)
 						new_depth.wy++;
 					msg = "A gust of wind blows you north.";
 					break;
 				case DIR_EAST:
-					if(new_depth.wx<MAX_WILD_X)
+					if(new_depth.wx < MAX_WILD_X)
 						new_depth.wx++;
 					msg = "A gust of wind blows you east.";
 					break;
 				case DIR_SOUTH:
-					if(new_depth.wy>0)
+					if(new_depth.wy > 0)
 						new_depth.wy--;
 					msg = "A gust of wind blows you south.";
 					break;
 				case DIR_WEST:
-					if(new_depth.wx>0)
+					if(new_depth.wx > 0)
 						new_depth.wx--;
 					msg = "A gust of wind blows you west.";
 					break;		
 			}
 		}
-		while(inarea(wpos, &new_depth));
+		while (inarea(wpos, &new_depth));
 
 		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 		/* update the players new wilderness location */
-		
+
 		/* update the players wilderness map */
 		if(!p_ptr->ghost)
-			p_ptr->wild_map[(new_depth.wx + new_depth.wy*MAX_WILD_X)/8] |= (1<<((new_depth.wx + new_depth.wy*MAX_WILD_X)%8));
+			p_ptr->wild_map[(new_depth.wx + new_depth.wy * MAX_WILD_X) / 8] |=
+				(1 << ((new_depth.wx + new_depth.wy * MAX_WILD_X) % 8));
 	}
 	else{
 		msg_print(Ind, "The scroll seemed to fail");
 		return;
 	}
-	
+
 	/* Tell the player */
 	msg_print(Ind, msg);
 
+	/* Change the wpos */
+	wpcopy(wpos, &new_depth);
+
 	/* One less player here */
-	new_players_on_depth(wpos,-1,TRUE);
+	new_players_on_depth(&old_wpos, -1, TRUE);
 
 	/* Remove the player */
 	zcave[p_ptr->py][p_ptr->px].m_idx = 0;
@@ -1137,10 +1146,8 @@ void teleport_player_level(int Ind) {
 	forget_lite(Ind);
 	forget_view(Ind);
 
-	wpcopy(wpos,&new_depth);
-
 	/* One more player here */
-	new_players_on_depth(wpos,1,TRUE);
+	new_players_on_depth(wpos, 1, TRUE);
 
 	p_ptr->new_level_flag = TRUE;
 
@@ -1612,11 +1619,11 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 
 		(void)strcpy(p_ptr->died_from, "Insanity");
 		(void)strcpy(p_ptr->really_died_from, hit_from);
-		if (!p_ptr->ghost) 
-		{	strcpy(p_ptr->died_from_list, "Insanity");
+		if (!p_ptr->ghost) {
+			strcpy(p_ptr->died_from_list, "Insanity");
 			p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
 			/* Hack to remember total winning */
-						if (p_ptr->total_winner) strcat(p_ptr->died_from_list, "\001");
+			if (p_ptr->total_winner) strcat(p_ptr->died_from_list, "\001");
 		}
 
 		/* No longer a winner */
@@ -1627,7 +1634,7 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 		p_ptr->deathblow = damage;
 
 		/* This way, player dies without becoming a ghost. */
-//		ptr->ghost = TRUE;
+//		ptr->ghost = 1;
 
 		/* Dead */
 		break_cloaking(Ind, 0);
@@ -3522,7 +3529,12 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					note_spot(Ind, y, x);
 
 					/* Redraw */
-					everyone_redraw_spot(wpos, y, x);
+					if (c_ptr->o_idx && !c_ptr->m_idx) {
+						/* Make sure no traps are displayed on the screen anymore - mikaelh */
+						everyone_clear_ovl_spot(wpos, y, x);
+					} else {
+						everyone_lite_spot(wpos, y, x);
+					}
 				}
 			}
 
@@ -3553,7 +3565,12 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					note_spot(Ind, y, x);
 
 					/* Redraw */
-					everyone_redraw_spot(wpos, y, x);
+					if (c_ptr->o_idx && !c_ptr->m_idx) {
+						/* Make sure no traps are displayed on the screen anymore - mikaelh */
+						everyone_clear_ovl_spot(wpos, y, x);
+					} else {
+						everyone_lite_spot(wpos, y, x);
+					}
 				}
 			}
 
@@ -3587,7 +3604,12 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					note_spot(Ind, y, x);
 
 					/* Redraw */
-					everyone_lite_spot(wpos, y, x);
+					if (c_ptr->o_idx && !c_ptr->m_idx) {
+						/* Make sure no traps are displayed on the screen anymore - mikaelh */
+						everyone_clear_ovl_spot(wpos, y, x);
+					} else {
+						everyone_lite_spot(wpos, y, x);
+					}
 				}
 			}
 
@@ -3614,7 +3636,12 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					note_spot(Ind, y, x);
 
 					/* Redraw */
-					everyone_lite_spot(wpos, y, x);
+					if (c_ptr->o_idx && !c_ptr->m_idx) {
+						/* Make sure no traps are displayed on the screen anymore - mikaelh */
+						everyone_clear_ovl_spot(wpos, y, x);
+					} else {
+						everyone_lite_spot(wpos, y, x);
+					}
 				}
 			}
 

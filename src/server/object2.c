@@ -734,26 +734,53 @@ s16b o_pop(void)
  */
 errr get_obj_num_prep(u32b resf)
 {
-	int i;
+	long	i, n, p, adj;
+	long	k_idx;
 
 	/* Get the entry */
 	alloc_entry *table = alloc_kind_table;
 
-	/* Scan the allocation table */
-	for (i = 0; i < alloc_kind_size; i++)
-	{
-		/* Accept objects which pass the restriction, if any */
-		if (!get_obj_num_hook || (*get_obj_num_hook)(table[i].index, resf))
-		{
-			/* Accept this object */
-			table[i].prob2 = table[i].prob1;
-		}
+	/* Copy the hook into a local variable for speed */
+	int (*hook)(int k_idx, u32b resf) = get_obj_num_hook;
 
-		/* Do not use this object */
-		else
+	if (hook) {
+		/* Scan the allocation table */
+		for (i = 0, n = alloc_kind_size; i < n; i++)
 		{
-			/* Decline this object */
-			table[i].prob2 = 0;
+			/* Get the entry */
+			alloc_entry *entry = &table[i];
+
+			/* Obtain the base probability */
+			p = entry->prob1;
+
+			/* Default probability for this pass */
+			entry->prob2 = 0;
+
+			/* Access the index */
+			k_idx = entry->index;
+
+			/* Call the hook and adjust the probability */
+			adj = (*hook)(k_idx, resf);
+			p = adj * p / 100;
+
+			/* Save the probability */
+			entry->prob2 = p;
+		}
+	} else {
+		/* Scan the allocation table */
+		for (i = 0, n = alloc_kind_size; i < n; i++)
+		{
+			/* Get the entry */
+			alloc_entry *entry = &table[i];
+
+			/* Obtain the base probability */
+			p = entry->prob1;
+
+			/* Default probability for this pass */
+			entry->prob2 = 0;
+
+			/* Save the probability */
+			entry->prob2 = p;
 		}
 	}
 
@@ -770,27 +797,68 @@ errr get_obj_num_prep(u32b resf)
  */
 errr get_obj_num_prep_tval(int tval, u32b resf)
 {
-	int i;
+	long i, n, p, adj;
+	long k_idx;
 
 	/* Get the entry */
 	alloc_entry *table = alloc_kind_table;
 
-	/* Scan the allocation table */
-	for (i = 0; i < alloc_kind_size; i++)
-	{
-		/* Accept objects which pass the restriction, if any */
-		if ((!get_obj_num_hook || (*get_obj_num_hook)(table[i].index, resf)) &&
-		    k_info[table[i].index].tval == tval)
-		{
-			/* Accept this object */
-			table[i].prob2 = table[i].prob1;
-		}
+	/* Copy the hook into a local variable for speed */
+	int (*hook)(int k_idx, u32b resf) = get_obj_num_hook;
 
-		/* Do not use this object */
-		else
+	if (hook) {
+		/* Scan the allocation table */
+		for (i = 0, n = alloc_kind_size; i < n; i++)
 		{
-			/* Decline this object */
-			table[i].prob2 = 0;
+			/* Get the entry */
+			alloc_entry *entry = &table[i];
+
+			/* Obtain the base probability */
+			p = entry->prob1;
+
+			/* Default probability for this pass */
+			entry->prob2 = 0;
+
+			/* Access the index */
+			k_idx = entry->index;
+
+			/* Call the hook and adjust the probability */
+			adj = (*hook)(k_idx, resf);
+			p = adj * p / 100;
+
+			/* Only accept a specific tval */
+			if (k_info[table[i].index].tval != tval)
+			{
+				continue;
+			}
+
+			/* Save the probability */
+			entry->prob2 = p;
+		}
+	} else {
+		/* Scan the allocation table */
+		for (i = 0, n = alloc_kind_size; i < n; i++)
+		{
+			/* Get the entry */
+			alloc_entry *entry = &table[i];
+
+			/* Obtain the base probability */
+			p = entry->prob1;
+
+			/* Default probability for this pass */
+			entry->prob2 = 0;
+
+			/* Access the index */
+			k_idx = entry->index;
+
+			/* Only accept a specific tval */
+			if (k_info[table[i].index].tval != tval)
+			{
+				continue;
+			}
+
+			/* Save the probability */
+			entry->prob2 = p;
 		}
 	}
 
@@ -817,15 +885,15 @@ errr get_obj_num_prep_tval(int tval, u32b resf)
  */
 s16b get_obj_num(int max_level, u32b resf)
 {
-	int			i, j, p;
-
-	int			k_idx;
+	long		i, j, n, p;
 
 	long		value, total;
 
-	object_kind		*k_ptr;
+	long		k_idx;
 
-	alloc_entry		*table = alloc_kind_table;
+	object_kind	*k_ptr;
+
+	alloc_entry	*table = alloc_kind_table;
 
 
 	/* Boost level */
@@ -843,29 +911,50 @@ s16b get_obj_num(int max_level, u32b resf)
 	/* Reset total */
 	total = 0L;
 
-	/* Process probabilities */
-	for (i = 0; i < alloc_kind_size; i++)
+	/* Cap maximum level */
+	if (max_level > 254)
 	{
-		/* Objects are sorted by depth */
-		if (table[i].level > max_level) break;
+		max_level = 254;
+	}
 
-		/* Default */
-		table[i].prob3 = 0;
+	/* Calculate loop bounds */
+	n = alloc_kind_index_level[max_level + 1];
 
-		/* Access the index */
-		k_idx = table[i].index;
+	if (opening_chest) {		
+		/* Process probabilities */
+		for (i = 0; i < n; i++)
+		{
+			/* Default */
+			table[i].prob3 = 0;
 
-		/* Access the actual kind */
-		k_ptr = &k_info[k_idx];
+			/* Access the index */
+			k_idx = table[i].index;
 
-		/* Hack -- prevent embedded chests */
-		if (opening_chest && (k_ptr->tval == TV_CHEST)) continue;
+			/* Access the actual kind */
+			k_ptr = &k_info[k_idx];
 
-		/* Accept */
-		table[i].prob3 = table[i].prob2;
+			/* Hack -- prevent embedded chests */
+			if (k_ptr->tval == TV_CHEST) continue;
 
-		/* Total */
-		total += table[i].prob3;
+			/* Accept */
+			table[i].prob3 = table[i].prob2;
+
+			/* Total */
+			total += table[i].prob3;
+		}
+	} else {
+		/* Process probabilities */
+		for (i = 0; i < n; i++)
+		{
+			/* Default */
+			table[i].prob3 = 0;
+
+			/* Accept */
+			table[i].prob3 = table[i].prob2;
+
+			/* Total */
+			total += table[i].prob3;
+		}
 	}
 
 	/* No legal objects */
@@ -876,7 +965,7 @@ s16b get_obj_num(int max_level, u32b resf)
 	value = rand_int(total);
 
 	/* Find the object */
-	for (i = 0; i < alloc_kind_size; i++)
+	for (i = 0; i < n; i++)
 	{
 		/* Found the entry */
 		if (value < table[i].prob3) break;
@@ -899,7 +988,7 @@ s16b get_obj_num(int max_level, u32b resf)
 		value = rand_int(total);
 
 		/* Find the monster */
-		for (i = 0; i < alloc_kind_size; i++)
+		for (i = 0; i < n; i++)
 		{
 			/* Found the entry */
 			if (value < table[i].prob3) break;
@@ -922,7 +1011,7 @@ s16b get_obj_num(int max_level, u32b resf)
 		value = rand_int(total);
 
 		/* Find the object */
-		for (i = 0; i < alloc_kind_size; i++)
+		for (i = 0; i < n; i++)
 		{
 			/* Found the entry */
 			if (value < table[i].prob3) break;
@@ -1073,26 +1162,42 @@ static s64b object_value_base(int Ind, object_type *o_ptr)
 	return (0L);
 }
 
-void eliminate_common_ego_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u32b *f5, u32b *esp)
-{
-	s16b j, e_idx = o_ptr->name2;
-	ego_item_type *e_ptr = &e_info[e_idx];
+void eliminate_common_ego_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u32b *f5, u32b *esp) {
+	s16b j;
+	ego_item_type *e_ptr;
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 	/* Hack -- eliminate Base object powers */
 	(*f1) &= ~k_ptr->flags1;
 	(*f2) &= ~k_ptr->flags2;
 	(*f3) &= ~k_ptr->flags3;
-        (*f4) &= ~k_ptr->flags4;
-        (*f5) &= ~k_ptr->flags5;
-        (*esp) &= ~k_ptr->esp;
+	(*f4) &= ~k_ptr->flags4;
+	(*f5) &= ~k_ptr->flags5;
+	(*esp) &= ~k_ptr->esp;
 
-	/* Hack -- eliminate 'promised' extra powers */
-	for (j = 0; j < 5; j++)
-	{
+	if (o_ptr->name1) return; /* if used on artifacts, we're done here */
+
+	/* Hack -- eliminate 'promised' (ie 100% occurring) ego powers */
+	if (!o_ptr->name2) return;
+	e_ptr = &e_info[o_ptr->name2];
+	for (j = 0; j < 5; j++) {
 		/* Rarity check */
-		if (e_ptr->rar[j] > 99)
-		{
+		if (e_ptr->rar[j] > 99) {
+			*(f1) &= ~e_ptr->flags1[j];
+			*(f2) &= ~e_ptr->flags2[j];
+			*(f3) &= ~e_ptr->flags3[j];
+			*(f4) &= ~e_ptr->flags4[j];
+			*(f5) &= ~e_ptr->flags5[j];
+			*(esp) &= ~e_ptr->esp[j];
+		}
+	}
+
+	/* Hack -- eliminate 'promised' (ie 100% occurring) ego powers */
+	if (!o_ptr->name2b) return;
+	e_ptr = &e_info[o_ptr->name2b];
+	for (j = 0; j < 5; j++) {
+		/* Rarity check */
+		if (e_ptr->rar[j] > 99) {
 			*(f1) &= ~e_ptr->flags1[j];
 			*(f2) &= ~e_ptr->flags2[j];
 			*(f3) &= ~e_ptr->flags3[j];
@@ -2154,6 +2259,10 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	}
 	if (f2 & TR2_RES_DISEN) {
 		total += 10000;
+		res_amass += 2;
+	}
+	if (f5 & TR5_RES_MANA) {
+		total += 15000;
 		res_amass += 2;
 	}
 	if (f3 & TR3_SH_FIRE) total += 2000;
@@ -3801,36 +3910,32 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf)
  */
 static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 {
-	int i = 0, j;
+	int i = 0, j, n;
 #if 0
 	int k;
 #endif
 	int *ok_ego, ok_num = 0;
 	bool ret = FALSE;
+	byte tval = o_ptr->tval;
 
 	if (artifact_p(o_ptr) || o_ptr->name2) return (FALSE);
 
-	C_MAKE(ok_ego, MAX_E_IDX, int);
+	C_MAKE(ok_ego, e_tval_size[tval], int);
 
 	/* Grab the ok ego */
-	for (i = 0; i < MAX_E_IDX; i++)
+	for (i = 0, n = e_tval_size[tval]; i < n; i++)
 	{
-		ego_item_type *e_ptr = &e_info[i];
+		ego_item_type *e_ptr = &e_info[e_tval[tval][i]];
 		bool ok = FALSE;
 #if 0 /* done in e_info */
                 bool cursed = FALSE;
 #endif
-		/* Skip "empty" items */
-		if (!e_ptr->name) continue;
 
 		/* Must have the correct fields */
 		for (j = 0; j < MAX_EGO_BASETYPES; j++)
 		{
 
-			if (e_ptr->tval[j] == o_ptr->tval)
-			{
-				if ((e_ptr->min_sval[j] <= o_ptr->sval) && (e_ptr->max_sval[j] >= o_ptr->sval)) ok = TRUE;
-			}
+			if ((e_ptr->min_sval[j] <= o_ptr->sval) && (e_ptr->max_sval[j] >= o_ptr->sval)) ok = TRUE;
 
 #if 0 /* done in e_info */
                         for (k = 0; k < 5-4; k++) if (e_ptr->flags3[k] & TR3_CURSED) cursed = TRUE;
@@ -3852,13 +3957,13 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 		if ((!good) && e_ptr->cost) continue;
 
 		/* ok */
-		ok_ego[ok_num++] = i;
+		ok_ego[ok_num++] = e_tval[tval][i];
 	}
 	
 	if (!ok_num)
 	{
 		/* Fix memory leak - mikaelh */
-		C_FREE(ok_ego, MAX_E_IDX, int);
+		C_FREE(ok_ego, e_tval_size[tval], int);
 
 		return(FALSE);
 	}
@@ -4006,7 +4111,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 			break;
 		}
 	}
-	C_FREE(ok_ego, MAX_E_IDX, int);
+	C_FREE(ok_ego, e_tval_size[tval], int);
 
 	/* Return */
 	return (ret);
@@ -5889,6 +5994,25 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 
 					break;
 				}
+				case SV_AMULET_REFLECTION:
+				{
+					o_ptr->to_a = 10 + rand_int(6);
+
+					/* Cursed */
+					if (power < 0)
+					{
+						/* Broken */
+						o_ptr->ident |= ID_BROKEN;
+
+						/* Cursed */
+						o_ptr->ident |= ID_CURSED;
+
+						/* Reverse bonuses */
+						o_ptr->to_a = -o_ptr->to_a;
+					}
+
+					break;
+				}
 			}
 
 			break;
@@ -7674,12 +7798,11 @@ static bool theme_changed(obj_theme theme)
 /*
  * Maga-Hack -- match certain types of object only.
  */
-static bool kind_is_theme(int k_idx)
+static int kind_is_theme(int k_idx)
 {
 	object_kind *k_ptr = &k_info[k_idx];
 
-	s32b prob = 0;
-
+	int p = 0;
 
 	/*
 	 * Paranoia -- Prevent accidental "(Nothing)"
@@ -7708,81 +7831,78 @@ static bool kind_is_theme(int k_idx)
 			 * larger than theme components, or we would see
 			 * unexpected, well, junks.
 			 */
-			prob = 100 - (match_theme.treasure + match_theme.combat +
+			p = 100 - (match_theme.treasure + match_theme.combat +
 			              match_theme.magic + match_theme.tools);
 			break;
 		}
-		case TV_CHEST:          prob = match_theme.treasure; break;
-		case TV_CROWN:          prob = match_theme.treasure; break;
-		case TV_DRAG_ARMOR:     prob = match_theme.treasure; break;
-		case TV_AMULET:         prob = match_theme.treasure; break;
-		case TV_RING:           prob = match_theme.treasure; break;
+		case TV_CHEST:          p = match_theme.treasure; break;
+		case TV_CROWN:          p = match_theme.treasure; break;
+		case TV_DRAG_ARMOR:     p = match_theme.treasure; break;
+		case TV_AMULET:         p = match_theme.treasure; break;
+		case TV_RING:           p = match_theme.treasure; break;
 
-		case TV_SHOT:           prob = match_theme.combat; break;
-		case TV_ARROW:          prob = match_theme.combat; break;
-		case TV_BOLT:           prob = match_theme.combat; break;
-		case TV_BOOMERANG:      prob = match_theme.combat; break;
-		case TV_BOW:            prob = match_theme.combat; break;
-		case TV_BLUNT:         prob = match_theme.combat; break;
-		case TV_POLEARM:        prob = match_theme.combat; break;
-		case TV_SWORD:          prob = match_theme.combat; break;
-		case TV_AXE:            prob = match_theme.combat; break;
-		case TV_GLOVES:         prob = match_theme.combat; break;
-		case TV_HELM:           prob = match_theme.combat; break;
-		case TV_SHIELD:         prob = match_theme.combat; break;
-		case TV_SOFT_ARMOR:     prob = match_theme.combat; break;
-		case TV_HARD_ARMOR:     prob = match_theme.combat; break;
+		case TV_SHOT:           p = match_theme.combat; break;
+		case TV_ARROW:          p = match_theme.combat; break;
+		case TV_BOLT:           p = match_theme.combat; break;
+		case TV_BOOMERANG:      p = match_theme.combat; break;
+		case TV_BOW:            p = match_theme.combat; break;
+		case TV_BLUNT:          p = match_theme.combat; break;
+		case TV_POLEARM:        p = match_theme.combat; break;
+		case TV_SWORD:          p = match_theme.combat; break;
+		case TV_AXE:            p = match_theme.combat; break;
+		case TV_GLOVES:         p = match_theme.combat; break;
+		case TV_HELM:           p = match_theme.combat; break;
+		case TV_SHIELD:         p = match_theme.combat; break;
+		case TV_SOFT_ARMOR:     p = match_theme.combat; break;
+		case TV_HARD_ARMOR:     p = match_theme.combat; break;
 
-		case TV_MSTAFF:         prob = match_theme.magic; break;
-		case TV_STAFF:          prob = match_theme.magic; break;
-		case TV_WAND:           prob = match_theme.magic; break;
-		case TV_ROD:            prob = match_theme.magic; break;
-		case TV_ROD_MAIN:       prob = match_theme.magic; break;
-		case TV_SCROLL:         prob = match_theme.magic; break;
-		case TV_PARCHMENT:      prob = match_theme.magic; break;
-		case TV_POTION:         prob = match_theme.magic; break;
-		case TV_POTION2:        prob = match_theme.magic; break;
+		case TV_MSTAFF:         p = match_theme.magic; break;
+		case TV_STAFF:          p = match_theme.magic; break;
+		case TV_WAND:           p = match_theme.magic; break;
+		case TV_ROD:            p = match_theme.magic; break;
+		case TV_ROD_MAIN:       p = match_theme.magic; break;
+		case TV_SCROLL:         p = match_theme.magic; break;
+		case TV_PARCHMENT:      p = match_theme.magic; break;
+		case TV_POTION:         p = match_theme.magic; break;
+		case TV_POTION2:        p = match_theme.magic; break;
 
-		case TV_RUNE1:          prob = match_theme.magic; break;
-		case TV_RUNE2:          prob = match_theme.magic; break;
+		case TV_RUNE1:          p = match_theme.magic; break;
+		case TV_RUNE2:          p = match_theme.magic; break;
 #if 0
-		case TV_BATERIE:        prob = match_theme.magic; break;
-		case TV_RANDART:        prob = match_theme.magic; break;
-		case TV_BOOK:           prob = match_theme.magic; break;
-		case TV_SYMBIOTIC_BOOK: prob = match_theme.magic; break;
-		case TV_MUSIC_BOOK:     prob = match_theme.magic; break;
-		case TV_DRUID_BOOK:     prob = match_theme.magic; break;
-		case TV_DAEMON_BOOK:    prob = match_theme.magic; break;
+		case TV_BATERIE:        p = match_theme.magic; break;
+		case TV_RANDART:        p = match_theme.magic; break;
+		case TV_BOOK:           p = match_theme.magic; break;
+		case TV_SYMBIOTIC_BOOK: p = match_theme.magic; break;
+		case TV_MUSIC_BOOK:     p = match_theme.magic; break;
+		case TV_DRUID_BOOK:     p = match_theme.magic; break;
+		case TV_DAEMON_BOOK:    p = match_theme.magic; break;
 #endif	// 0
-		case TV_BOOK:           prob = match_theme.magic; break;
-		case TV_LITE:           prob = match_theme.tools; break;
-		case TV_CLOAK:          prob = match_theme.tools; break;
-		case TV_BOOTS:          prob = match_theme.tools; break;
-		case TV_SPIKE:          prob = match_theme.tools; break;
-		case TV_DIGGING:        prob = match_theme.tools; break;
-		case TV_FLASK:          prob = match_theme.tools; break;
-		case TV_FOOD:           prob = match_theme.tools; break;
-		case TV_TOOL:           prob = match_theme.tools; break;
-		case TV_INSTRUMENT:     prob = match_theme.tools; break;
-		case TV_TRAPKIT:        prob = match_theme.tools; break;
+		case TV_BOOK:           p = match_theme.magic; break;
+		case TV_LITE:           p = match_theme.tools; break;
+		case TV_CLOAK:          p = match_theme.tools; break;
+		case TV_BOOTS:          p = match_theme.tools; break;
+		case TV_SPIKE:          p = match_theme.tools; break;
+		case TV_DIGGING:        p = match_theme.tools; break;
+		case TV_FLASK:          p = match_theme.tools; break;
+		case TV_FOOD:           p = match_theme.tools; break;
+		case TV_TOOL:           p = match_theme.tools; break;
+		case TV_INSTRUMENT:     p = match_theme.tools; break;
+		case TV_TRAPKIT:        p = match_theme.tools; break;
 	}
 
-	/* Roll to see if it can be made */
-	if (rand_int(100) < prob) return (TRUE);
-
-	/* Not a match */
-	return (FALSE);
+	/* Return the percentage */
+	return p;
 }
 
 /*
  * Determine if an object must not be generated.
  */
 int kind_is_legal_special = -1;
-bool kind_is_legal(int k_idx, u32b resf)
+int kind_is_legal(int k_idx, u32b resf)
 {
 	object_kind *k_ptr = &k_info[k_idx];
 
-	if (!kind_is_theme(k_idx)) return FALSE;
+	int p = kind_is_theme(k_idx);
 
 #if 0
 	if (k_ptr->flags4 & TR4_SPECIAL_GENE)
@@ -7816,13 +7936,13 @@ bool kind_is_legal(int k_idx, u32b resf)
 #endif	// 0
 
 	/* Used only for the Nazgul rings */
-	if ((k_ptr->tval == TV_RING) && (k_ptr->sval == SV_RING_SPECIAL)) return FALSE;
+	if ((k_ptr->tval == TV_RING) && (k_ptr->sval == SV_RING_SPECIAL)) p = 0;
 
 	/* Are we forced to one tval ? */
-	if ((kind_is_legal_special != -1) && (kind_is_legal_special != k_ptr->tval)) return (FALSE);
+	if ((kind_is_legal_special != -1) && (kind_is_legal_special != k_ptr->tval)) p = 0;
 
-	/* Assume legal */
-	return TRUE;
+	/* Return the percentage */
+	return p;
 }
 
 
@@ -7831,7 +7951,7 @@ bool kind_is_legal(int k_idx, u32b resf)
 /*
  * Hack -- determine if a template is "good"
  */
-static bool kind_is_good(int k_idx, u32b resf)
+static int kind_is_good(int k_idx, u32b resf)
 {
 	object_kind *k_ptr = &k_info[k_idx];
 
@@ -7849,8 +7969,8 @@ static bool kind_is_good(int k_idx, u32b resf)
 		case TV_HELM:
 		case TV_CROWN:
 		{
-			if (k_ptr->to_a < 0) return (FALSE);
-			return (TRUE);
+			if (k_ptr->to_a < 0) return 0;
+			return 100;
 		}
 
 		/* Weapons -- Good unless damaged */
@@ -7862,49 +7982,49 @@ static bool kind_is_good(int k_idx, u32b resf)
 		case TV_AXE:
 		case TV_BOOMERANG:
 		{
-			if (k_ptr->to_h < 0) return (FALSE);
-			if (k_ptr->to_d < 0) return (FALSE);
-			return (TRUE);
+			if (k_ptr->to_h < 0) return 0;
+			if (k_ptr->to_d < 0) return 0;
+			return 100;
 		}
 
 		/* Ammo -- Arrows/Bolts are good */
 		case TV_BOLT:
 		case TV_ARROW:
 		case TV_SHOT:	/* are Shots bad? */
-			if (k_ptr->sval == SV_AMMO_CHARRED) return (FALSE);
+			if (k_ptr->sval == SV_AMMO_CHARRED) return 0;
 		case TV_MSTAFF:
 		{
-			return (TRUE);
+			return 100;
 		}
 
 		/* Rings -- Rings of Speed are good */
 		case TV_RING:
 		{
-			if (k_ptr->sval == SV_RING_SPEED) return (TRUE);
-			if (k_ptr->sval == SV_RING_BARAHIR) return (TRUE);
-			if (k_ptr->sval == SV_RING_TULKAS) return (TRUE);
-			if (k_ptr->sval == SV_RING_NARYA) return (TRUE);
-			if (k_ptr->sval == SV_RING_NENYA) return (TRUE);
-			if (k_ptr->sval == SV_RING_VILYA) return (TRUE);
-			if (k_ptr->sval == SV_RING_POWER) return (TRUE);
-			return (FALSE);
+			if (k_ptr->sval == SV_RING_SPEED) return 100;
+			if (k_ptr->sval == SV_RING_BARAHIR) return 100;
+			if (k_ptr->sval == SV_RING_TULKAS) return 100;
+			if (k_ptr->sval == SV_RING_NARYA) return 100;
+			if (k_ptr->sval == SV_RING_NENYA) return 100;
+			if (k_ptr->sval == SV_RING_VILYA) return 100;
+			if (k_ptr->sval == SV_RING_POWER) return 100;
+			return 0;
 		}
 
 		/* Amulets -- Amulets of the Magi are good */
 		case TV_AMULET:
 		{
 #if 0
-			if (k_ptr->sval == SV_AMULET_THE_MAGI) return (TRUE);
-			if (k_ptr->sval == SV_AMULET_THE_MOON) return (TRUE);
-			if (k_ptr->sval == SV_AMULET_SPEED) return (TRUE);
-			if (k_ptr->sval == SV_AMULET_TERKEN) return (TRUE);
+			if (k_ptr->sval == SV_AMULET_THE_MAGI) return 100;
+			if (k_ptr->sval == SV_AMULET_THE_MOON) return 100;
+			if (k_ptr->sval == SV_AMULET_SPEED) return 100;
+			if (k_ptr->sval == SV_AMULET_TERKEN) return 100;
 #endif
-			return (FALSE);
+			return 0;
 		}
 	}
 
 	/* Assume not good */
-	return (FALSE);
+	return 0;
 }
 
 

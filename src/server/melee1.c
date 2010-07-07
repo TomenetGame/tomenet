@@ -2182,8 +2182,9 @@ bool make_attack_melee(int Ind, int m_idx)
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
-					if (!p_ptr->suscep_life) {
-						set_food(Ind, p_ptr->food / 2);
+					if (!p_ptr->prace == RACE_VAMPIRE) {
+						if (p_ptr->suscep_life) set_food(Ind, (p_ptr->food * 3) / 4);
+						else set_food(Ind, p_ptr->food / 2);
 						msg_print(Ind, "You have a sudden attack of hunger!");
 					}
 					obvious = TRUE;

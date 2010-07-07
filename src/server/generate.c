@@ -1598,6 +1598,7 @@ static void vault_objects(struct worldpos *wpos, int y, int x, int num, player_t
 {
 	int        i, j, k, tries = 1000;
 	cave_type **zcave;
+	u32b resf = make_resf(p_ptr);
 	if(!(zcave=getcave(wpos))) return;
 
 	/* Attempt to place 'num' objects */
@@ -1622,7 +1623,7 @@ static void vault_objects(struct worldpos *wpos, int y, int x, int num, player_t
 			/* Place an item */
 			if (rand_int(100) < 75)
 			{
-				place_object(wpos, j, k, FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+				place_object(wpos, j, k, FALSE, FALSE, FALSE, resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 			}
 
 			/* Place gold */
@@ -1692,6 +1693,7 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num)
 	int          k, i, y, x;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
+	int dun_lev = getlevel(wpos);
 
 #ifdef ARCADE_SERVER
 	if(wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0) return;
@@ -1712,9 +1714,9 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num)
 			if (!cave_empty_bold(zcave, y, x)) continue;
 
 			/* Place the monster (allow groups) */
-			monster_level = getlevel(wpos) + 2;
+			monster_level = dun_lev + 2;
 			(void)place_monster(wpos, y, x, TRUE, TRUE);
-			monster_level = getlevel(wpos);
+			monster_level = dun_lev;
 		}
 	}
 }
@@ -2455,6 +2457,7 @@ static void build_type3(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	int			y1a, x1a, y2a, x2a;
 	int			y1b, x1b, y2b, x2b;
 	int yval, xval;
+	u32b resf = make_resf(p_ptr);
 
 	bool		light;
 	cave_type *c_ptr;
@@ -2616,7 +2619,7 @@ static void build_type3(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		}
 
 		/* Place a treasure in the vault */
-		place_object(wpos, yval, xval, FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+		place_object(wpos, yval, xval, FALSE, FALSE, FALSE, resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 
 		/* Let's guard the treasure well */
 		vault_monsters(wpos, yval, xval, rand_int(2) + 3);
@@ -2707,6 +2710,7 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 {
 	int        y, x, y1, x1;
 	int y2, x2, tmp, yval, xval;
+	u32b resf = make_resf(p_ptr);
 
 	bool		light;
 	cave_type *c_ptr;
@@ -2838,7 +2842,7 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		/* Object (80%) */
 		if (rand_int(100) < 80)
 		{
-			place_object(wpos, yval, xval, FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+			place_object(wpos, yval, xval, FALSE, FALSE, FALSE, resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 		}
 
 		/* Stairs (20%) */
@@ -2927,8 +2931,8 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 			vault_monsters(wpos, yval, xval + 2, randint(2));
 
 			/* Objects */
-			if (rand_int(3) == 0) place_object(wpos, yval, xval - 2, FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
-			if (rand_int(3) == 0) place_object(wpos, yval, xval + 2, FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+			if (rand_int(3) == 0) place_object(wpos, yval, xval - 2, FALSE, FALSE, FALSE, resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+			if (rand_int(3) == 0) place_object(wpos, yval, xval + 2, FALSE, FALSE, FALSE, resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 		}
 
 		break;
@@ -3427,7 +3431,7 @@ static bool vault_aux_demon(int r_idx)
 static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_ptr)
 {
 	int y, x, y1, x1, y2, x2, xval, yval;
-	int		tmp, i, dun_lev, tries = 2000;
+	int		tmp, i, dun_lev;
 	s16b		what[64];
 	cave_type	*c_ptr;
 	cptr		name;
@@ -3524,6 +3528,9 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 	if ((tmp < 25) && (rand_int(5) != 0))
 	{
+#if 0
+		int tries = 2000;
+
 		while (TRUE)
 		{
 			template_race = randint(MAX_R_IDX - 2);
@@ -3540,6 +3547,13 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_
 			/* Don't like 'break's like this, but this cannot be made better */
 			break;
 		}
+#else
+		/* Alternate version that uses get_mon_num() - mikaelh */
+		get_mon_num_hook = dungeon_aux;
+		set_mon_num2_hook(floor_type[0]);
+		get_mon_num_prep(dun_type, reject_uniques);
+		template_race = get_mon_num(dun_lev);
+#endif
 
 		if ((dun_lev >= (25 + randint(15))) && (rand_int(2) != 0))
 		{
@@ -3638,15 +3652,18 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	}
 #endif	/* 0 */
 
+	/* Set the second hook according to the first floor type */
+	set_mon_num2_hook(floor_type[0]);
+
 	/* Prepare allocation table */
-	get_mon_num_prep();
+	get_mon_num_prep(dun_type, l_ptr->uniques_killed);
 
 
 	/* Pick some monster types */
 	for (i = 0; i < 64; i++)
 	{
 		/* Get a (hard) monster type */
-		what[i] = get_mon_num(getlevel(wpos) + 10, dun_type);
+		what[i] = get_mon_num(dun_lev + 10);
 
 		/* Notice failure */
 		if (!what[i]) empty = TRUE;
@@ -3656,13 +3673,11 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	/* Remove restriction */
 	chosen_type = get_mon_num_hook; /* preserve for later checks */
 	get_mon_num_hook = dungeon_aux;
-
-	/* Prepare allocation table */
-	get_mon_num_prep();
+	get_mon_num2_hook = NULL;
 
 	/* Oops */
 	if (empty) {
-		s_printf("EMPTY_NEST %d,%d,%d\n", wpos->wx, wpos->wy, wpos->wz);
+		s_printf("EMPTY_NEST (%d, %d, %d)\n", wpos->wx, wpos->wy, wpos->wz);
 		return;
 	}
 
@@ -3746,7 +3761,13 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 {
 	int		tmp, what[BUILD_6_MONSTER_TABLE];
 	int		i, j, y, x, y1, x1, y2, x2, dun_lev, xval, yval;
-	bool		empty = FALSE, aqua = magik(dun->watery? 50 : 10);
+	bool		empty = FALSE;
+#if 0
+	bool		aqua = magik(dun->watery? 50 : 10);
+#else
+	/* Disabled for now because aquatic pits are getting filled with eyes of the deep - mikaelh */
+	bool		aqua = FALSE;
+#endif
 	cave_type	*c_ptr;
 	dungeon_type *dt_ptr = getdungeon(wpos);
 	int dun_type = dt_ptr->type;
@@ -3803,6 +3824,23 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	x1 = x1 + 2;
 	x2 = x2 - 2;
 
+
+#if 0
+	/* This creates pits that are just too evil - mikaelh */
+	if (aqua)
+	{
+		/* Fill aquatic pits with water */
+		for (y = y1 - 1; y <= y2 + 1; y++)
+		{
+			for (x = x1 - 1; x <= x2 + 1; x++)
+			{
+				cave_set_feat(wpos, y, x, FEAT_DEEP_WATER);
+			}
+		}
+	}
+#endif
+
+
 	/* The inner walls */
 	for (y = y1 - 1; y <= y2 + 1; y++)
 	{
@@ -3838,6 +3876,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 	/* Choose a pit type */
 	tmp = randint(dun_lev);
+
 
 	/* Watery pit */
 	if (aqua)
@@ -3907,10 +3946,18 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 			/* Message */
 			name = "ordered clones";
 
+#if 0
 			do { template_race = randint(MAX_R_IDX - 2); }
 			while ((r_info[template_race].flags1 & RF1_UNIQUE)
 			       || (((r_info[template_race].level) + randint(5)) >
 				   (dun_lev + randint(5))));
+#else
+			/* Alternate version that uses get_mon_num() - mikaelh */
+			get_mon_num_hook = dungeon_aux;
+			set_mon_num2_hook(floor_type[0]);
+			get_mon_num_prep(dun_type, reject_uniques);
+			template_race = get_mon_num(dun_lev);
+#endif
 
 			/* Restrict selection */
 			get_mon_num_hook = vault_aux_symbol;
@@ -4039,8 +4086,11 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		get_mon_num_hook = vault_aux_demon;
 	}
 
+	/* Set the second hook according to the first floor type */
+	set_mon_num2_hook(floor_type[0]);
+
 	/* Prepare allocation table */
-	get_mon_num_prep();
+	get_mon_num_prep(dun_type, l_ptr->uniques_killed);
 
 
 	/* Pick some monster types */
@@ -4048,25 +4098,22 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	{
 		for (j = 0; j < 100; j++) {
 			/* Get a (hard) monster type */
-			what[i] = get_mon_num(getlevel(wpos) + 10, dun_type);
+			what[i] = get_mon_num(dun_lev + 10);
 			if (what[i] && !(r_info[what[i]].flags1 & RF1_UNIQUE)) break;
 		}
 		/* Notice failure */
 		if (!what[i]) empty = TRUE;
 	}
 
+	chosen_type = get_mon_num_hook; /* preserve */
 
 	/* Remove restriction */
-	chosen_type = get_mon_num_hook; /* preserve */
 	get_mon_num_hook = dungeon_aux;
-
-	/* Prepare allocation table */
-	get_mon_num_prep();
-
+	get_mon_num2_hook = NULL;
 
 	/* Oops */
 	if (empty) {
-		s_printf("EMPTY PIT %d,%d,%d\n", wpos->wx, wpos->wy, wpos->wz);
+		s_printf("EMPTY_PIT (%d, %d, %d)\n", wpos->wx, wpos->wy, wpos->wz);
 		return;
 	}
 
@@ -4361,14 +4408,14 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 #endif
 
 	/* artificially add random-artifact restrictions: */
-	if (getlevel(wpos) < 55 + rand_int(6) + rand_int(6)) resf |= RESF_NORANDART;
-	if (getlevel(wpos) < 75 + rand_int(6) + rand_int(6)) eff_forbid_rand = 80;
+	if (lev < 55 + rand_int(6) + rand_int(6)) resf |= RESF_NORANDART;
+	if (lev < 75 + rand_int(6) + rand_int(6)) eff_forbid_rand = 80;
 //	if (!(v_ptr->flags1 & VF1_NO_TELE)) eff_forbid_rand = 50; /* maybe too harsh, depends on amount of '8's in deep tele-ok-vaults */
 
 	if (v_ptr->flags1 & VF1_NO_TRUEARTS) resf |= RESF_NOTRUEART;
 	if (v_ptr->flags1 & VF1_NO_RANDARTS) resf |= RESF_NORANDART;
-	if ((v_ptr->flags1 & VF1_NO_EASY_TRUEARTS) && getlevel(wpos) < 75 + rand_int(6) + rand_int(6)) resf |= RESF_NOTRUEART;
-	if ((v_ptr->flags1 & VF1_NO_EASY_RANDARTS) && getlevel(wpos) < 75 + rand_int(6) + rand_int(6)) resf |= RESF_NORANDART;
+	if ((v_ptr->flags1 & VF1_NO_EASY_TRUEARTS) && lev < 75 + rand_int(6) + rand_int(6)) resf |= RESF_NOTRUEART;
+	if ((v_ptr->flags1 & VF1_NO_EASY_RANDARTS) && lev < 75 + rand_int(6) + rand_int(6)) resf |= RESF_NORANDART;
 
 	if (v_ptr->flags1 & VF1_RARE_TRUEARTS) eff_forbid_true = 80;
 	if (v_ptr->flags1 & VF1_RARE_RANDARTS) eff_forbid_rand = 80;
@@ -5706,6 +5753,7 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 	cave_type **zcave;
 	int dun_lev = getlevel(wpos);
 	bool placed;
+	u32b resf = make_resf(p_ptr);
 	if(!(zcave=getcave(wpos))) return;
 
 
@@ -5749,7 +5797,7 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 					monster_level_min = 0;
 					monster_level = dun_lev;
 					object_level = dun_lev + 20;
-					if (placed) place_object(wpos, y, x, TRUE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+					if (placed) place_object(wpos, y, x, TRUE, FALSE, FALSE, resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 					object_level = dun_lev;
 				}
 				else if (value < 5)
@@ -5759,7 +5807,7 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 					placed = place_monster(wpos, y, x, TRUE, TRUE);
 					monster_level = dun_lev;
 					object_level = dun_lev + 10;
-					if (placed) place_object(wpos, y, x, TRUE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+					if (placed) place_object(wpos, y, x, TRUE, FALSE, FALSE, resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 					object_level = dun_lev;
 				}
 				else if (value < 10)
@@ -5785,7 +5833,7 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 					/* Object or trap */
 					if (rand_int(100) < 25)
 					{
-						place_object(wpos, y, x, FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+						place_object(wpos, y, x, FALSE, FALSE, FALSE, resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 					}
 					if (rand_int(100) < 75)
 					{
@@ -5813,7 +5861,7 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 					if (rand_int(100) < 50)
 					{
 						object_level = dun_lev + 7;
-						if (placed) place_object(wpos, y, x, FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+						if (placed) place_object(wpos, y, x, FALSE, FALSE, FALSE, resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 						object_level = dun_lev;
 					}
 				}
@@ -5837,7 +5885,7 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 					}
 					else if (rand_int(100) < 50)
 					{
-						place_object(wpos, y, x, FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+						place_object(wpos, y, x, FALSE, FALSE, FALSE, resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 					}
 				}
 
@@ -6322,7 +6370,7 @@ static void build_maze_vault(worldpos *wpos, int x0, int y0, int xsize, int ysiz
 {
 	int y, x, dy, dx;
 	int y1, x1, y2, x2;
-	int i, m, n, num_vertices, *visited;
+	int m, n, num_vertices, *visited;
 	bool light;
 	cave_type *c_ptr;
 	dun_level *l_ptr = getfloor(wpos);
@@ -6372,12 +6420,6 @@ static void build_maze_vault(worldpos *wpos, int x0, int y0, int xsize, int ysiz
 	/* Allocate an array for visited vertices */
 	C_MAKE(visited, num_vertices, int);
 
-	/* Initialise array of visited vertices */
-	for (i = 0; i < num_vertices; i++)
-	{
-		visited[i] = 0;
-	}
-
 	/* Traverse the graph to create a spaning tree, pick a random root */
 	r_visit(wpos, y1, x1, y2, x2, rand_int(num_vertices), 0, visited);
 
@@ -6403,7 +6445,7 @@ static void build_mini_c_vault(worldpos *wpos, int x0, int y0, int xsize, int ys
 {
 	int dy, dx;
 	int y1, x1, y2, x2, y, x, total;
-	int i, m, n, num_vertices;
+	int m, n, num_vertices;
 	int *visited;
 	dun_level *l_ptr = getfloor(wpos);
 	cave_type **zcave;
@@ -6439,12 +6481,6 @@ static void build_mini_c_vault(worldpos *wpos, int x0, int y0, int xsize, int ys
 
 	/* Allocate an array for visited vertices */
 	C_MAKE(visited, num_vertices, int);
-
-	/* Initialise array of visited vertices */
-	for (i = 0; i < num_vertices; i++)
-	{
-		visited[i] = 0;
-	}
 
 	/* Traverse the graph to create a spannng tree, pick a random root */
 	r_visit(wpos, y1, x1, y2, x2, rand_int(num_vertices), 0, visited);
@@ -7449,7 +7485,7 @@ static void generate_maze(worldpos *wpos, int corridor)
 	}
 
 	/* Free temporary memory */
-	C_FREE(maze, (MAX_HGT / 2) + 2, maze_row);
+	C_KILL(maze, (MAX_HGT / 2) + 2, maze_row);
 }
 
 
@@ -8865,7 +8901,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	    (wpos->wz>0 && wild_info[wpos->wy][wpos->wx].tower->maxdepth==wpos->wz)))
 		dun->l_ptr->flags1 |= LF1_IRON_RECALL;
 	/* IRONMAN allows recalling sometimes, if IRONFIX or IRONRND */
-	if(d_ptr && (getlevel(wpos) >= 20) && /* was 30 */
+	if(d_ptr && (dun_lev >= 20) && /* was 30 */
 	    (((d_ptr->flags2 & DF2_IRONRND1) && magik(20)) ||
 	    ((d_ptr->flags2 & DF2_IRONRND2) && magik(12)) ||
 	    ((d_ptr->flags2 & DF2_IRONRND3) && magik(8)) ||
@@ -10823,7 +10859,7 @@ void alloc_dungeon_level(struct worldpos *wpos)
 	struct dungeon_type *d_ptr;
 	cave_type **zcave;
 	/* Allocate the array of rows */
-	C_MAKE(zcave, MAX_HGT, cave_type*);
+	zcave = C_NEW(MAX_HGT, cave_type*);
 
 	/* Allocate each row */
 	for (i = 0; i < MAX_HGT; i++)
@@ -10895,7 +10931,7 @@ void dealloc_dungeon_level(struct worldpos *wpos)
 		}
 
 		/* Dealloc that row */
-		C_FREE(zcave[i], MAX_WID, cave_type);
+		C_KILL(zcave[i], MAX_WID, cave_type);
 	}
 	/* Deallocate the array of rows */
 	C_FREE(zcave, MAX_HGT, cave_type *);
@@ -10925,6 +10961,7 @@ static void del_dungeon(struct worldpos *wpos, bool tower){
 			twpos.wz=(tower ? i+1 : 0-(i+1));
 			if(d_ptr->level[i].ondepth) return;
 			if(d_ptr->level[i].cave) dealloc_dungeon_level(&twpos);
+			C_KILL(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
 		}
 		C_KILL(d_ptr->level, d_ptr->maxdepth, struct dun_level);
 		if (tower)
@@ -10959,12 +10996,12 @@ void remdungeon(struct worldpos *wpos, bool tower){
 }
 
 /* 'type' refers to t_info[] */
-void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, int flags2, char *race, char *exclude, bool tower, int type)
+void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, int flags2, bool tower, int type)
 {
-	int i;
 #ifdef RPG_SERVER
 	bool found_town = FALSE;
 #endif
+	int i;
 	wilderness_type *wild;
 	struct dungeon_type *d_ptr;
 	wild=&wild_info[wpos->wy][wpos->wx];
@@ -11025,6 +11062,7 @@ void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, in
 	}
 #endif
 
+#if 0	/* unused - mikaelh */
 	for(i = 0; i < 10; i++){
 		d_ptr->r_char[i] = '\0';
 		d_ptr->nr_char[i] = '\0';
@@ -11035,10 +11073,11 @@ void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, in
 	if(exclude != (char*)NULL){
 		strcpy(d_ptr->nr_char, exclude);
 	}
+#endif
+
 	C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
-	for(i = 0; i < d_ptr->maxdepth; i++)
-	{
-		d_ptr->level[i].ondepth = 0;
+	for (i = 0; i < d_ptr->maxdepth; i++) {
+		C_MAKE(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
 	}
 }
 
@@ -11139,13 +11178,12 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 				}
 				type = town[retval].type;
 #if 0
-				adddungeon(wpos, town_profile[type].dun_base, town_profile[type].dun_max, 0, DF2_RANDOM, NULL, NULL, town_profile[type].tower, 0);
+				adddungeon(wpos, town_profile[type].dun_base, town_profile[type].dun_max, 0, DF2_RANDOM, town_profile[type].tower, 0);
 #else	/* 0 */
 				for (i = 0; i < 2; i++)
 				{
 					if (town_profile[type].dungeons[i])
-						adddungeon(wpos, 0, 0, 0, 0, NULL, NULL, FALSE,
-								town_profile[type].dungeons[i]);
+						adddungeon(wpos, 0, 0, 0, 0, FALSE, town_profile[type].dungeons[i]);
 				}
 #endif	/* 0 */
 			}

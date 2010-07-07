@@ -640,7 +640,6 @@ void Start_evilmeta(void)
 			exit(-5);
 		}
 		if (metapid == 0) {
-			char buf[80];
 #ifdef ARCADE_SERVER /* made this one top priority since using RPG_SERVER as an "ARCADE-addon" might be desired :) */
 			char *cmd = "./evilmeta.smash";
 #else
@@ -652,12 +651,12 @@ void Start_evilmeta(void)
 #endif
 			char *args[] = {cmd, NULL};
 
-			getcwd(buf, 80);
-			printf("in %s\n", buf);
 			/* We are the meta client */
 			execve(args[0], args, NULL);
+
 			/* GONE */
 			printf("exec failed! [%d - %s]\n", errno, strerror(errno));
+
 			exit(-20);
 		}
 	}
@@ -765,7 +764,9 @@ static bool update_acc_file_version(void) {
 			c_acc.cheeze_self = 0;
 #endif
 //                        fseek(fp, 0L, SEEK_END);
-			fwrite(&c_acc, sizeof(struct account), 1, fp);
+			if (fwrite(&c_acc, sizeof(struct account), 1, fp) < 1) {
+				s_printf("Failed to write to new account file: %s\n", feof(fp) ? "EOF" : strerror(ferror(fp)));
+			}
 			amt++;
                 }
                 fclose(fp_old);
@@ -1581,19 +1582,13 @@ static void Delete_player(int Ind)
 
 	/* If he was actively playing, tell everyone that he's left */
 	/* handle the cfg_secret_dungeon_master option */
-	if (p_ptr->alive && !p_ptr->death)
-	{
-		if (!p_ptr->admin_dm || !cfg.secret_dungeon_master)
-		{
+	if (p_ptr->alive && !p_ptr->death) {
+		if (!p_ptr->admin_dm || !cfg.secret_dungeon_master) {
 			cptr title = "";
-			if (p_ptr->total_winner)
-    			{
-				if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST))
-				{
+			if (p_ptr->total_winner) {
+				if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) {
 					title = (p_ptr->male)?"Emperor ":"Empress ";
-				}
-				else
-				{
+				} else {
 					title = (p_ptr->male)?"King ":"Queen ";
 				}
 			}
@@ -1682,9 +1677,9 @@ static void Delete_player(int Ind)
 	if (p_ptr)
 	{
 		if (p_ptr->inventory)
-			C_KILL(p_ptr->inventory, INVEN_TOTAL, object_type);
+			C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
 		if (p_ptr->inventory_copy)
-			C_KILL(p_ptr->inventory_copy, INVEN_TOTAL, object_type);
+			C_FREE(p_ptr->inventory_copy, INVEN_TOTAL, object_type);
 
 		KILL(Players[NumPlayers], player_type);
 	}
@@ -2534,7 +2529,9 @@ static int Handle_login(int ind)
 #if 1
 	/* Give a more visible message about outdated client usage - C. Blue */
 	if (!is_newer_than(&Players[NumPlayers]->version, VERSION_MAJOR_OUTDATED, VERSION_MINOR_OUTDATED, VERSION_PATCH_OUTDATED, VERSION_EXTRA_OUTDATED, VERSION_BRANCH_OUTDATED, VERSION_BUILD_OUTDATED)) {
-		msg_print(NumPlayers, "\374\377y --- Your client is outdated. Get newest one from www.tomenet.net ---");
+		msg_print(NumPlayers, "\374\377y --- Your client is outdated! Get newest one from www.tomenet.net ---");
+	} else if (!is_newer_than(&Players[NumPlayers]->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, VERSION_BRANCH_LATEST, VERSION_BUILD_LATEST)) {
+		msg_print(NumPlayers, "\374\377D --- Your client is NOT the latest version, it's not 'outdated' though. ---");
 	}
 #endif
 
@@ -3718,11 +3715,7 @@ static int Receive_file(int ind){
 				break;
 			case PKT_FILE_SUM:
 				Packet_scanf(&connp->r, "%d", &csum);
-				if ((check_return(ind, fnum, csum) == 2) && !p_ptr->done_lua_updating) {
-					/* give a message once, telling to restart after updating */
-					msg_print(Ind, "\377yIMPORTANT: After all files have been \377greceived\377y, you must restart TomeNET!");
-					p_ptr->done_lua_updating = TRUE;
-				}
+				check_return(ind, fnum, csum);
 				return(1);
 				break;
 			case PKT_FILE_ACK:
@@ -5173,14 +5166,15 @@ int Send_line_info(int ind, int y)
 	return 1;
 }
 
-int Send_mini_map(int ind, int y)
+int Send_mini_map(int ind, int y, byte *sa, char *sc)
 {
 	player_type *p_ptr = Players[ind];
 	connection_t *connp = Conn[p_ptr->conn];
 	int x, x1, n;
 	char c;
 	byte a;
-	int Ind2;
+
+	int Ind2 = 0;
 	player_type *p_ptr2 = NULL;
 	connection_t *connp2 = NULL;
 
@@ -5194,8 +5188,11 @@ int Send_mini_map(int ind, int y)
 
 	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return 0;
 
+	/* Sending this packet to a mind-linked person is bad - mikaelh */
+#if 0
 	if ((Ind2 = get_esp_link(ind, LINKF_VIEW, &p_ptr2)))
 		connp2 = Conn[p_ptr2->conn];
+#endif
 	
 	/* Packet header */
 	Packet_printf(&connp->c, "%c%hd", PKT_MINI_MAP, y);
@@ -5205,8 +5202,8 @@ int Send_mini_map(int ind, int y)
 	for (x = 0; x < 80; x++)
 	{
 		/* Obtain the char/attr pair */
-		c = p_ptr->scr_info[y][x].c;
-		a = p_ptr->scr_info[y][x].a;
+		c = sc[x];
+		a = sa[x];
 
 		/* Start looking here */
 		x1 = x + 1;
@@ -5215,8 +5212,7 @@ int Send_mini_map(int ind, int y)
 		n = 1;
 
 		/* Count repetitions of this grid */
-		while (p_ptr->scr_info[y][x1].c == c &&
-			p_ptr->scr_info[y][x1].a == a && x1 < 80)
+		while (sc[x1] == c && sa[x1] == a && x1 < 80)
 		{
 			/* Increment count and column */
 			n++;

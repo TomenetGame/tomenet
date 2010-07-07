@@ -16,7 +16,6 @@
 #include "angband.h"
 
 
-
 /* Anti-(nothing)-hack, following Tony Zeigler's (Ravyn) suggestion */
 bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x, int y)
 {
@@ -1376,7 +1375,7 @@ void search(int Ind)
 							byte a = get_trap_color(Ind, cs_ptr->sc.trap.t_idx, c_ptr->feat);
 
 							/* Hack - Always show traps under items when detecting - mikaelh */
-							draw_spot(Ind, y, x, a, '^');
+							draw_spot_ovl(Ind, y, x, a, '^');
 						} else {
 							/* Normal redraw */
 							lite_spot(Ind, y, x);
@@ -4814,7 +4813,7 @@ bool player_can_enter(int Ind, byte feature)
 void move_player(int Ind, int dir, int do_pickup)
 {
 	player_type *p_ptr = Players[Ind];
-	struct worldpos *wpos = &p_ptr->wpos, nwpos;
+	struct worldpos *wpos = &p_ptr->wpos, nwpos, old_wpos;
 
 	int y, x, oldx, oldy;
 	int i;
@@ -4899,11 +4898,12 @@ void move_player(int Ind, int dir, int do_pickup)
 	{
 		/* Make sure he hasn't just changed depth */
 		if (p_ptr->new_level_flag) return;
-		
+
 		/* save his old location */
+		wpcopy(&old_wpos, wpos);
 		wpcopy(&nwpos, wpos);
 		oldx = p_ptr->px; oldy = p_ptr->py;
-		
+
 		/* we have gone off the map */
 		if (!in_bounds(y, x))
 		{
@@ -4937,7 +4937,7 @@ void move_player(int Ind, int dir, int do_pickup)
 				nwpos.wx++;                       
 				p_ptr->px = 1;
 			}
-		
+
 			/* check to make sure he hasnt hit the edge of the world */
 			if(nwpos.wx < 0 || nwpos.wx >= MAX_WILD_X || nwpos.wy < 0 || nwpos.wy >= MAX_WILD_Y)
 			{
@@ -4952,7 +4952,7 @@ void move_player(int Ind, int dir, int do_pickup)
 				p_ptr->py = oldy;
 				return;
 			}
-			
+
 			/* Remove the player from the old location */
 			zcave[oldy][oldx].m_idx = 0;
 			
@@ -4962,21 +4962,22 @@ void move_player(int Ind, int dir, int do_pickup)
 			/* forget his light and viewing area */
 			forget_lite(Ind);
 			forget_view(Ind);                       
-		
+
 			/* Hack -- take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-			
-			/* A player has left this depth */
-			new_players_on_depth(wpos,-1,TRUE);
 
-			p_ptr->wpos.wx = nwpos.wx;
-			p_ptr->wpos.wy = nwpos.wy;
-		
+			/* Change wpos */
+			wpcopy(wpos, &nwpos);
+
+			/* A player has left this depth */
+			new_players_on_depth(&old_wpos, -1, TRUE);
+
 			/* update the wilderness map */
 			if(!p_ptr->ghost)
-				p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy*MAX_WILD_X)/8] |= (1<<((p_ptr->wpos.wx + p_ptr->wpos.wy*MAX_WILD_X)%8));
-			
-			new_players_on_depth(wpos,1,TRUE);
+				p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) / 8] |=
+					(1 << ((p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) % 8));
+
+			new_players_on_depth(wpos, 1, TRUE);
 			p_ptr->new_level_flag = TRUE;
 			p_ptr->new_level_method = LEVEL_OUTSIDE;
 
@@ -5491,7 +5492,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		else Send_floor(Ind, 0);
 
 		/* Handle "store doors" */
-		if (((!p_ptr->ghost) || is_admin(p_ptr)) &&
+		if (((!p_ptr->ghost) || p_ptr->admin_dm) &&
 		    (c_ptr->feat == FEAT_SHOP))
 #if 0
 		    (c_ptr->feat >= FEAT_SHOP_HEAD) &&
@@ -6098,9 +6099,11 @@ static bool run_test(int Ind)
 
 		}
 
+#ifdef HOSTILITY_ABORTS_RUNNING
 		/* Hostile characters will stop each other from running. 
 		 * This should lessen the melee storming effect in PVP fights */
 		if (c_ptr->m_idx < 0 && check_hostile(Ind, 0 - c_ptr->m_idx)) return (TRUE);
+#endif
 
 		/* Visible objects abort running */
 		if (c_ptr->o_idx)

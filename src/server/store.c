@@ -1333,24 +1333,27 @@ static int store_tval = 0, store_level = 0;
 /*
  * Hack -- determine if a template is "good"
  */
-static bool kind_is_storeok(int k_idx, u32b resf)
+static int kind_is_storeok(int k_idx, u32b resf)
 {
 	object_kind *k_ptr = &k_info[k_idx];
 
+	int p;
+
 #if 0
 	if (k_info[k_idx].flags3 & TR3_NORM_ART)
-		return( FALSE );
+		return 0;
 #endif	// 0
 
 	if (k_info[k_idx].flags3 & TR3_INSTA_ART)
-		return( FALSE );
+		return 0;
 
-	if (!kind_is_legal(k_idx, resf)) return FALSE;
+	p = kind_is_legal(k_idx, resf);
 
-	if (k_ptr->tval != store_tval) return (FALSE);
-	if (k_ptr->level < (store_level / 2)) return (FALSE);
+	if (k_ptr->tval != store_tval) p = 0;
+	if (k_ptr->level < (store_level / 2)) p = 0;
 
-	return (TRUE);
+	/* Return the percentage */
+	return p;
 }
 
 /*
