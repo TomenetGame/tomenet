@@ -591,15 +591,17 @@ static bool play_sound(int event, int type, int vol, s32b player_id) {
 	wave = samples[event].wavs[s];
 
 	/* Try loading it, if it's not cached */
-	if (on_demand_loading || no_cache_audio) {
-		if (!wave && !(wave = load_sample(event, s))) {
-			/* we really failed to load it */
-			plog(format("SDL sound load failed (%d, %d).", event, s));
-			return FALSE;
+	if (!wave) {
+		if (on_demand_loading || no_cache_audio) {
+			if (!(wave = load_sample(event, s))) {
+				/* we really failed to load it */
+				plog(format("SDL sound load failed (%d, %d).", event, s));
+				return FALSE;
+			}
+		} else {
+			/* Fail silently */
+			return TRUE;
 		}
-	} else {
-		/* Fail silently */
-		return TRUE;
 	}
 
 	/* Actually play the thing */
@@ -634,15 +636,17 @@ extern bool sound_page(void) {
 	wave = samples[page_sound_idx].wavs[s];
 
 	/* Try loading it, if it's not cached */
-	if (on_demand_loading || no_cache_audio) {
-		if (!wave && !(wave = load_sample(page_sound_idx, s))) {
-			/* we really failed to load it */
-			plog(format("SDL sound load failed (%d, %d).", page_sound_idx, s));
-			return FALSE;
+	if (!wave) {
+		if (on_demand_loading || no_cache_audio) {
+			if (!(wave = load_sample(page_sound_idx, s))) {
+				/* we really failed to load it */
+				plog(format("SDL sound load failed (%d, %d).", page_sound_idx, s));
+				return FALSE;
+			}
+		} else {
+			/* Fail silently */
+			return TRUE;
 		}
-	} else {
-		/* Fail silently */
-		return TRUE;
 	}
 
 	/* Actually play the thing */
@@ -721,15 +725,17 @@ static void play_sound_weather(int event) {
 	wave = samples[event].wavs[s];
 
 	/* Try loading it, if it's not cached */
-	if (on_demand_loading || no_cache_audio) {
-		if (!wave && !(wave = load_sample(event, s))) {
-			/* we really failed to load it */
-			plog(format("SDL sound load failed (%d, %d).", event, s));
+	if (!wave) {
+		if (on_demand_loading || no_cache_audio) {
+			if (!(wave = load_sample(event, s))) {
+				/* we really failed to load it */
+				plog(format("SDL sound load failed (%d, %d).", event, s));
+				return;
+			}
+		} else {
+			/* Fail silently */
 			return;
 		}
-	} else {
-		/* Fail silently */
-		return;
 	}
 
 	/* Actually play the thing */
