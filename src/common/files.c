@@ -267,7 +267,7 @@ int mkstemp(char *template)
 	strnfmt(f, 256, "%s/xfer_%ud.%s", ANGBAND_DIR, tmp_counter, rand_ext);
 	tmp_counter++;
 
-	fd = open(f, O_RDWR | O_CREAT);
+	fd = open(f, O_RDWR | O_CREAT, 0777);
 	strcpy(template, f);	/* give back our filename */
 	return fd;
 }
