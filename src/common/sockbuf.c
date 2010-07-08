@@ -853,8 +853,8 @@ int Packet_scanf(va_alist)
 		cptr = memchr(&sbuf->ptr[j], '\0', sbuf->len + sbuf->buf - sbuf->ptr - j);
 
 		/* Are there enough bytes in the socket buffer anyway? */
-		if (!cptr && &sbuf->ptr[max_str_size] < &sbuf->buf[sbuf->len]) {
-		    cptr = &sbuf->ptr[max_str_size - 1];
+		if (!cptr && &sbuf->ptr[j + max_str_size] < &sbuf->buf[sbuf->len]) {
+		    cptr = &sbuf->ptr[j + max_str_size - 1];
 		}
 
 		if (!cptr) {
@@ -869,8 +869,8 @@ int Packet_scanf(va_alist)
 		    cptr = memchr(&sbuf->ptr[j], '\0', sbuf->len + sbuf->buf - sbuf->ptr - j);
 		    
 		    /* Are there enough bytes in the socket buffer anyway? */
-		    if (!cptr && &sbuf->ptr[max_str_size] < &sbuf->buf[sbuf->len]) {
-			cptr = &sbuf->ptr[max_str_size - 1];
+		    if (!cptr && &sbuf->ptr[j + max_str_size] < &sbuf->buf[sbuf->len]) {
+			cptr = &sbuf->ptr[j + max_str_size - 1];
 		    }
 
 		    if (!cptr) {
