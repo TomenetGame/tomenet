@@ -327,6 +327,9 @@ static void set_server_features() {
 /* Initialize lua scripting */
 void init_lua()
 {
+	char ind[80];
+	int oldtop;
+
         if (init_lua_done) return;
 
 	/* Start the interpreter with default stack size */
@@ -351,6 +354,12 @@ void init_lua()
 	tolua_util_open(L);
 	tolua_player_open(L);
         tolua_spells_open(L);
+
+	/* Set the Ind and player variables */
+	oldtop = lua_gettop(L);
+        sprintf(ind, "Ind = %d; player = Players_real[2]", 1);
+        lua_dostring(L, ind);
+        lua_settop(L, oldtop);
 
         /* Load the xml module */
 	pern_dofile(0, "xml.lua");
@@ -464,14 +473,9 @@ bool pern_dofile(int Ind, char *file)
 	char buf[MAX_PATH_LENGTH];
 	int error;
         int oldtop = lua_gettop(L);
-        char ind[80];
 
 	/* Build the filename */
         path_build(buf, MAX_PATH_LENGTH, ANGBAND_DIR_SCPT, file);
-
-        sprintf(ind, "Ind = %d; player = Players_real[2]", 1);
-        lua_dostring(L, ind);
-        lua_settop(L, oldtop);
 
         error = lua_dofile(L, buf);
         lua_settop(L, oldtop);
@@ -483,11 +487,6 @@ int exec_lua(int Ind, char *file)
 {
 	int oldtop = lua_gettop(L);
         int res;
-        char ind[80];
-
-        sprintf(ind, "Ind = %d; player = Players_real[2]", 1);
-        lua_dostring(L, ind);
-        lua_settop(L, oldtop);
 
         if (!lua_dostring(L, file))
         {
@@ -508,11 +507,6 @@ cptr string_exec_lua(int Ind, char *file)
 {
 	int oldtop = lua_gettop(L);
 	cptr res;
-        char ind[80];
-
-        sprintf(ind, "Ind = %d; player = Players_real[2]", 1);
-        lua_dostring(L, ind);
-        lua_settop(L, oldtop);
 
 	if (!lua_dostring(L, file))
         {
@@ -589,11 +583,6 @@ bool call_lua(int Ind, cptr function, cptr args, cptr ret, ...)
         int i = 0, nb = 0, nbr = 0;
         int oldtop = lua_gettop(L), size;
 	va_list ap;
-
-        char ind[80];
-        sprintf(ind, "Ind = %d; player = Players_real[2]", 1);
-        lua_dostring(L, ind);
-        lua_settop(L, oldtop);
 
         va_start(ap, ret);
 
