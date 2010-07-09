@@ -2631,11 +2631,8 @@ int Receive_store(void)
 	store.stock[(int)pos].attr = attr;
 	store.stock[(int)pos].pval = pval;
 
-	/* Make sure that we're in a store */
-	if (shopping)
-	{
-		display_inventory();
-	}
+	/* Request a redraw of the store inventory */
+	redraw_store = TRUE;
 
 	return 1;
 }
@@ -2672,11 +2669,8 @@ int Receive_store_wide(void)
 	store.stock[(int)pos].xtra8 = xtra8;
 	store.stock[(int)pos].xtra9 = xtra9;
 
-	/* Make sure that we're in a store */
-	if (shopping)
-	{
-		display_inventory();
-	}
+	/* Request a redraw of the store inventory */
+	redraw_store = TRUE;
 
 	return 1;
 }
@@ -2710,7 +2704,10 @@ int Receive_store_info(void)
 
 	/* Only enter "display_store" if we're not already shopping */
 	if (!shopping) display_store();
-	else display_inventory(); /* Display the inventory */
+	else {
+		/* Request a redraw of the store inventory */
+		redraw_store = TRUE;
+	}
 
 	return 1;
 }

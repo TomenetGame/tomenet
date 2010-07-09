@@ -643,6 +643,15 @@ void c_store_prt_gold(void)
 	}
 }
 
+void do_redraw_store(void)
+{
+	redraw_store = FALSE;
+
+	if (shopping) {
+		display_store();
+	}
+}
+
 void display_store(void)
 {
 	int i;

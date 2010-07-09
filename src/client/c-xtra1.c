@@ -2235,6 +2235,11 @@ void window_stuff(void)
 		do_redraw_skills();
 	}
 
+	/* Redraw the store inventory if requested */
+	if (redraw_store) {
+		do_redraw_store();
+	}
+
 	/* Window stuff */
 	if (!p_ptr->window) return;
 
