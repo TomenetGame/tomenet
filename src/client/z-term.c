@@ -227,8 +227,12 @@ byte flick_colour(byte attr);
  * but fewer calls to text_hook will be made. This should be beneficial on
  * modern systems since the cost of drawing some extra characters is small.
  * - mikaelh
+ *
+ * Having this enabled causes significantly more drawing in stores and the
+ * skill screen, so I'm disabling this.
+ * - mikaelh
  */
-#define DRAW_LARGER_CHUNKS
+// #define DRAW_LARGER_CHUNKS
 
 
 
