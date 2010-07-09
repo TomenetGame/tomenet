@@ -274,9 +274,11 @@ static void sync_sleep(int milliseconds)
 				Term->keys->head = 0;
 				Term->keys->tail = 0;
 
-				/* Destroy the old queue */
-				C_KILL(Term->keys_old->queue, Term->keys_old->size, char);
-				KILL(Term->keys_old, key_queue);
+				if (Term->keys_old) {
+					/* Destroy the old queue */
+					C_KILL(Term->keys_old->queue, Term->keys_old->size, char);
+					KILL(Term->keys_old, key_queue);
+				}
 
 				/* Erase the spinner */
 				Term_erase(Term->wid - 1, 0, 1);
@@ -284,8 +286,10 @@ static void sync_sleep(int milliseconds)
 				/* Abort */
 				return;
 			} else {
-				/* Add it to the old queue */
-				Term_keypress_aux(Term->keys_old, ch);
+				if (Term->keys_old) {
+					/* Add it to the old queue */
+					Term_keypress_aux(Term->keys_old, ch);
+				}
 			}
 		}
 
@@ -301,13 +305,15 @@ static void sync_sleep(int milliseconds)
 		/* Check if we have waited long enough */
 		time_spent = diff_ms(&begin, &now);
 		if (time_spent >= milliseconds) {
-			/* Destroy the temporary key queue */
-			C_KILL(Term->keys->queue, Term->keys->size, char);
-			KILL(Term->keys, key_queue);
+			if (Term->keys_old) {
+				/* Destroy the temporary key queue */
+				C_KILL(Term->keys->queue, Term->keys->size, char);
+				KILL(Term->keys, key_queue);
 
-			/* Restore the old queue */
-			Term->keys = Term->keys_old;
-			Term->keys_old = NULL;
+				/* Restore the old queue */
+				Term->keys = Term->keys_old;
+				Term->keys_old = NULL;
+			}
 
 			/* Erase the spinner */
 			Term_erase(Term->wid - 1, 0, 1);
