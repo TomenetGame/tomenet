@@ -503,13 +503,13 @@ static void store_do_command(int num)
 	Send_store_command(action, item, item2, amt, gold);
 }
 
-static void store_process_command(void)
+static void store_process_command(int cmd)
 {
 	int i;
 	for (i = 0; i < 6; i++)
 	{
 		if (!c_store.actions[i]) continue;
-		if (c_store.letter[i] == command_cmd)
+		if (c_store.letter[i] == cmd)
 		{
 			store_do_command(i);
 			return;
@@ -517,7 +517,7 @@ static void store_process_command(void)
 	}
 
 	/* Parse the command */
-	switch (command_cmd)
+	switch (cmd)
 	{
 		/* Leave */
 		case ESCAPE:
@@ -613,7 +613,7 @@ static void store_process_command(void)
 
 		default:
 		{
-			cmd_raw_key(command_cmd);
+			cmd_raw_key(cmd);
 			break;
 		}
 	}
@@ -645,6 +645,7 @@ void c_store_prt_gold(void)
 
 void display_store(void)
 {
+	int i;
 	char buf[1024];
 
 	/* Save the term */
@@ -746,58 +747,12 @@ void display_store(void)
 			display_store_action();
 		}
 
-		/* Get a command */
-		while (!command_cmd)
-		{
-			/* XXX it's here since it can be changed */
-			if (store_num == 7)
-			{
-				/* Put the house capacity */
-				put_str(format("Capacity: %d", c_store.max_cost), 3, 60);
-			}
+		i = inkey();
 
-			/* Update our timer and send a keepalive packet if
-			 * neccecary */
-			update_ticks();
-			do_keepalive();
-			do_ping();
-
-			if (Net_flush() == -1)
-			{
-				plog("Bad net flush");
-				return;
-			}
-
-			/* Set the timeout */
-//			SetTimeout(0, 1000000 / Setup.frames_per_second);
-			SetTimeout(0, next_frame());
-
-			/* Re-fresh the screen */
-			Term_fresh();
-
-			/* Only take input if we got some */
-			if (SocketReadable(Net_fd()))
-				if (Net_input() == -1)
-					return;
-
-			/* Get a command */
-			request_command(TRUE);
-
-			/* Flush */
-			flush_now();
-
-			/* Redraw windows if necessary */
-			if (p_ptr->window)
-			{
-				window_stuff();
-			}
+		if (i) {
+			/* Process the command */
+			store_process_command(i);
 		}
-
-		/* Process the command */
-		store_process_command();
-
-		/* Clear the old command */
-		command_cmd = 0;
 	}
 
 	/* Tell the server that we're outta here */
