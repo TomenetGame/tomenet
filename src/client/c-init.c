@@ -365,9 +365,6 @@ static void Input_loop(void)
 		 */
 		update_ticks();
 
-		/* Hack -- don't redraw the screen until we have all of it */
-		if (last_line_info < 22) continue;
-
 		/* Flush input (now!) */
 		flush_now();
 
