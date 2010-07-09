@@ -1632,12 +1632,12 @@ void carry(int Ind, int pickup, int confirm)
 			if (!object_aware_p(Ind, o_ptr) && !object_known_p(Ind, o_ptr) && object_felt_p(Ind, o_ptr)) {
 				if (!object_felt_heavy_p(Ind, o_ptr)) {
 					/* only show pseudoid if its current inscription doesn't already tell us! */
-					if (!o_ptr->note || strcmp(quark_str(o_ptr->note), value_check_aux1_magic(o_ptr)))
-						sprintf(pseudoid, " {%s}", value_check_aux1_magic(o_ptr));
-				} else {
-					/* only show pseudoid if its current inscription doesn't already tell us! */
 					if (!o_ptr->note || strcmp(quark_str(o_ptr->note), value_check_aux2_magic(o_ptr)))
 						sprintf(pseudoid, " {%s}", value_check_aux2_magic(o_ptr));
+				} else {
+					/* only show pseudoid if its current inscription doesn't already tell us! */
+					if (!o_ptr->note || strcmp(quark_str(o_ptr->note), value_check_aux1_magic(o_ptr)))
+						sprintf(pseudoid, " {%s}", value_check_aux1_magic(o_ptr));
 				}
 			}
 
@@ -2224,15 +2224,15 @@ if (o_ptr->tval == TV_RUNE2) {
 					if (!object_felt_heavy_p(Ind, o_ptr)) {
 						/* at least give a notice */
 						msg_format(Ind, "You remember %s (%c) in your pack %s %s.",
-						    o_name, index_to_label(slot), ((o_ptr->number != 1) ? "were" : "was"), value_check_aux1_magic(o_ptr));
-						/* otherwise inscribe it textually */
-						if (!o_ptr->note) o_ptr->note = quark_add(value_check_aux1_magic(o_ptr));
-					} else {
-						/* at least give a notice */
-						msg_format(Ind, "You remember %s (%c) in your pack %s %s.",
 						    o_name, index_to_label(slot), ((o_ptr->number != 1) ? "were" : "was"), value_check_aux2_magic(o_ptr));
 						/* otherwise inscribe it textually */
 						if (!o_ptr->note) o_ptr->note = quark_add(value_check_aux2_magic(o_ptr));
+					} else {
+						/* at least give a notice */
+						msg_format(Ind, "You remember %s (%c) in your pack %s %s.",
+						    o_name, index_to_label(slot), ((o_ptr->number != 1) ? "were" : "was"), value_check_aux1_magic(o_ptr));
+						/* otherwise inscribe it textually */
+						if (!o_ptr->note) o_ptr->note = quark_add(value_check_aux1_magic(o_ptr));
 					}
 #if 0					
 					/* Combine / Reorder the pack (later) */

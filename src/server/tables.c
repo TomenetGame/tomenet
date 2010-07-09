@@ -5354,14 +5354,14 @@ player_class class_info[MAX_CLASS] =
 #endif
 						/* Sneakiness tree */
 						{
-								SKILL_SNEAKINESS,
-								'+', 1000,
-								'+', 600,
+							SKILL_SNEAKINESS,
+							'+', 1000,
+							'+', 600,
 						},
 						{
-								SKILL_STEALTH,
-								'+', 1000,
-								'+', 600,
+							SKILL_STEALTH,
+							'+', 1000,
+							'+', 600,
 						},
 						{
 							SKILL_DISARM,

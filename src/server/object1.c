@@ -2646,8 +2646,8 @@ if (!(mode & 32)) {
 	/* if we have felt the object's value before by pseudo-id, remember that now */
 	if (!o_ptr->note && !aware && object_felt_p(Ind, o_ptr) && strcmp(tmp_val, "empty")) {
 		/* note: currently all items that give a static pseudo-id happen to be 'magic'.. */
-		if (object_felt_heavy_p(Ind, o_ptr)) strcpy(tmp_val, value_check_aux2_magic(o_ptr));
-		else strcpy(tmp_val, value_check_aux1_magic(o_ptr));
+		if (object_felt_heavy_p(Ind, o_ptr)) strcpy(tmp_val, value_check_aux1_magic(o_ptr));
+		else strcpy(tmp_val, value_check_aux2_magic(o_ptr));
 	}
 #endif
 

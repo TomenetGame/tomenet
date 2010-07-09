@@ -6946,7 +6946,8 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int inter
 
 #ifdef USE_SOUND_2010
 	if (typ == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_COMMAND, FALSE);
-//too annoying, need softer sound imho	else sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, FALSE);
+//too annoying, need softer sound imho - or maybe not? :)
+	else sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
 	/* Hack: Make HEALINGCLOUD affect the caster too! */

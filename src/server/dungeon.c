@@ -162,7 +162,7 @@ cptr value_check_aux1_magic(object_type *o_ptr)
 			if (artifact_p(o_ptr)) return "special";
 
 			/* Scroll of Nothing, Apple Juice, etc. */
-			if (k_ptr->cost < 3) return "worthless";
+			if (k_ptr->cost < 3) return "worthless"; //"average" or "worthless"
 
 			/*
 			 * Identify, Phase Door, Cure Light Wounds, etc. are
@@ -287,7 +287,7 @@ cptr value_check_aux2_magic(object_type *o_ptr)
 			if (artifact_p(o_ptr)) return "good";
 
 			/* Scroll of Nothing, Apple Juice, etc. */
-			if (k_ptr->cost < 3) return "average";
+			if (k_ptr->cost < 3) return "average";//or "worthless"
 
 			/*
 			 * Identify, Phase Door, Cure Light Wounds, etc. are
@@ -6251,15 +6251,15 @@ void dungeon(void)
 		if(cfg.runlevel == 2043)
 		{
 			if (shutdown_recall_timer <= 60 && shutdown_recall_state < 3) {
-				msg_broadcast(0, "\377I*** \377RServer-shutdown in max 1 minute (auto-recall). \377I***");
+				msg_broadcast(0, "\374\377I*** \377RServer-shutdown in max 1 minute (auto-recall). \377I***");
 				shutdown_recall_state = 3;
 			}
 			else if (shutdown_recall_timer <= 300 && shutdown_recall_state < 2) {
-				msg_broadcast(0, "\377I*** \377RServer-shutdown in max 5 minutes (auto-recall). \377I***");
+				msg_broadcast(0, "\374\377I*** \377RServer-shutdown in max 5 minutes (auto-recall). \377I***");
 				shutdown_recall_state = 2;
 			}
 			else if (shutdown_recall_timer <= 900 && shutdown_recall_state < 1) {
-				msg_broadcast(0, "\377I*** \377RServer-shutdown in max 15 minutes (auto-recall). \377I***");
+				msg_broadcast(0, "\374\377I*** \377RServer-shutdown in max 15 minutes (auto-recall). \377I***");
 				shutdown_recall_state = 1;
 			}
 			if (!shutdown_recall_timer) {

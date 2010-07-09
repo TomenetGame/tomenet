@@ -2551,9 +2551,9 @@ static int Handle_login(int ind)
 
 	if (cfg.runlevel == 2043) {
 		if (shutdown_recall_timer >= 120)
-			msg_format(NumPlayers, "\377I*** \377RServer-shutdown in max %d minutes (auto-recall). \377I***", shutdown_recall_timer / 60);
+			msg_format(NumPlayers, "\374\377I*** \377RServer-shutdown in max %d minutes (auto-recall). \377I***", shutdown_recall_timer / 60);
 		else
-			msg_format(NumPlayers, "\377I*** \377RServer-shutdown in max %d seconds (auto-recall). \377I***", shutdown_recall_timer);
+			msg_format(NumPlayers, "\374\377I*** \377RServer-shutdown in max %d seconds (auto-recall). \377I***", shutdown_recall_timer);
 	}
 
 	if(p_ptr->quest_id){
