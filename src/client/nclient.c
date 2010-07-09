@@ -1782,7 +1782,7 @@ int Receive_skill_points(void)
 	p_ptr->skill_points = pt;
 
 	/* Redraw the skill menu */
-	redraw_skills();
+	redraw_skills = TRUE;
 
 	return 1;
 }
@@ -1819,7 +1819,7 @@ int Receive_skill_info(void)
 	p_ptr->s_info[i].flags1 = flags1;
 
 	/* Redraw the skill menu */
-	redraw_skills();
+	redraw_skills = TRUE;
 
 	return 1;
 }

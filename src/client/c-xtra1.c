@@ -2230,6 +2230,11 @@ void display_player(int hist)
  */
 void window_stuff(void)
 {
+	/* Redraw the skills menu if requested */
+	if (redraw_skills) {
+		do_redraw_skills();
+	}
+
 	/* Window stuff */
 	if (!p_ptr->window) return;
 

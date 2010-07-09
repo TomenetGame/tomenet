@@ -300,7 +300,9 @@ static int table[MAX_SKILLS][2];
 static int sel = 0;
 static int start = 0;
 static int max;
-void redraw_skills() {
+void do_redraw_skills() {
+	redraw_skills = FALSE;
+
 	if (hack_do_cmd_skill) {
 		print_skills(table, max, sel, start);
 	}

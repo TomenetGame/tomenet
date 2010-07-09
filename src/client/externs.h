@@ -283,6 +283,9 @@ extern char depth_name[MAX_CHARS];
 /* Can macro triggers consist of multiple keys? */
 extern bool multi_key_macros;
 
+/* Redraw skills if the menu is open */
+extern bool redraw_skills;
+
 
 /*
  * Not-so-Automatically generated "function declarations"
@@ -640,11 +643,11 @@ extern int Send_change_password(char *old_pass, char *new_pass);
 
 /* skills.c */
 extern s16b get_skill(int skill);
-extern void redraw_skills(void);
 extern void do_activate_skill(int x_idx, int item);
 extern void do_cmd_activate_skill(void);
 extern void dump_skills(FILE *fff);
 extern s16b get_skill_scale(player_type *pfft, int skill, u32b scale);
+extern void do_redraw_skills(void);
 
 /* c-script.c */
 extern void init_lua(void);

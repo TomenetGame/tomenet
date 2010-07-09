@@ -286,3 +286,6 @@ const cptr angband_sound_name[SOUND_MAX] = {
     "death",
     "warn",
 };
+
+/* Redraw skills if the menu is open */
+bool redraw_skills = FALSE;
