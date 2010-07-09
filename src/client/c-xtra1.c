@@ -1920,7 +1920,6 @@ void update_lagometer() {
 
 	/* Update any other windows */
 	p_ptr->window |= PW_LAGOMETER;
-	window_stuff();
 }
 
 void display_player(int hist)
