@@ -128,6 +128,10 @@ void display_inventory(void)
 		/* Indicate the "current page" */
 		put_str(format("(Page %d)", store_top/12 + 1), 5, 20);
 	}
+
+	/* Hack - Get rid of the cursor - mikaelh */
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
 }
 
 /*
@@ -755,6 +759,10 @@ void display_store(void)
 		{
 			display_store_action();
 		}
+
+		/* Hack - Get rid of the cursor - mikaelh */
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
 
 		i = inkey();
 
