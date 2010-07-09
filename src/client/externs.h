@@ -285,6 +285,7 @@ extern bool multi_key_macros;
 
 /* Redraw skills if the menu is open */
 extern bool redraw_skills;
+extern bool redraw_store;
 
 
 /*
@@ -478,6 +479,7 @@ extern void display_inventory(void);
 extern void display_store(void);
 extern void c_store_prt_gold(void);
 extern void display_store_action(void);
+extern void do_redraw_store(void);
 
 /* c-xtra1.c */
 extern void prt_stat(int stat, int max, int cur, int cur_base);
