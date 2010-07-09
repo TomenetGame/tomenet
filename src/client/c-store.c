@@ -648,7 +648,7 @@ void do_redraw_store(void)
 	redraw_store = FALSE;
 
 	if (shopping) {
-		display_store();
+		display_inventory();
 	}
 }
 
