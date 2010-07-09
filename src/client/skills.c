@@ -290,6 +290,10 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 			         p_ptr->s_info[i].mod / 1000, p_ptr->s_info[i].mod % 1000),
 				 j + 4 - start, 60);
 	}
+
+	/* Hack - Get rid of the cursor - mikaelh */
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
 }
 
 /*
