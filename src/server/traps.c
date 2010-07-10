@@ -335,20 +335,20 @@ static void do_player_trap_change_depth(int Ind, int dis)
 	p_ptr->new_level_flag = TRUE;
 	p_ptr->new_level_method = LEVEL_RAND;
 
+	/* The player is gone */
+	zcave[p_ptr->py][p_ptr->px].m_idx = 0;
+
+	/* Show everyone that he's left */
+	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+
+	/* Erase his light */
+	forget_lite(Ind);
+
 	/* Save the old wpos */
 	wpcopy(&old_wpos, &p_ptr->wpos);
 
 	/* New wpos */
 	p_ptr->wpos.wz += dis;
-
-	/* The player is gone */
-	zcave[p_ptr->py][p_ptr->px].m_idx = 0;
-
-	/* Erase his light */
-	forget_lite(Ind);
-
-	/* Show everyone that he's left */
-	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 
 	new_players_on_depth(&old_wpos, -1, TRUE);
 	new_players_on_depth(&p_ptr->wpos, 1, TRUE);

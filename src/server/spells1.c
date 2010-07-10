@@ -1130,12 +1130,6 @@ void teleport_player_level(int Ind) {
 	/* Tell the player */
 	msg_print(Ind, msg);
 
-	/* Change the wpos */
-	wpcopy(wpos, &new_depth);
-
-	/* One less player here */
-	new_players_on_depth(&old_wpos, -1, TRUE);
-
 	/* Remove the player */
 	zcave[p_ptr->py][p_ptr->px].m_idx = 0;
 
@@ -1145,6 +1139,12 @@ void teleport_player_level(int Ind) {
 	/* Forget his lite and viewing area */
 	forget_lite(Ind);
 	forget_view(Ind);
+
+	/* Change the wpos */
+	wpcopy(wpos, &new_depth);
+
+	/* One less player here */
+	new_players_on_depth(&old_wpos, -1, TRUE);
 
 	/* One more player here */
 	new_players_on_depth(wpos, 1, TRUE);

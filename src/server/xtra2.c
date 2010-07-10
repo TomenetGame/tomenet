@@ -10467,13 +10467,13 @@ bool imprison(int Ind, u16b time, char *reason){
 				generate_cave(&houses[i].wpos, p_ptr);
 				/* nzcave=getcave(&houses[i].wpos); */
 			}
-			wpcopy(&old_wpos, &p_ptr->wpos);
-			wpcopy(&p_ptr->wpos, &houses[i].wpos);
-			new_players_on_depth(&old_wpos, -1, TRUE);
 			zcave[p_ptr->py][p_ptr->px].m_idx=0;
 			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 			forget_lite(Ind);
 			forget_view(Ind);
+			wpcopy(&old_wpos, &p_ptr->wpos);
+			wpcopy(&p_ptr->wpos, &houses[i].wpos);
+			new_players_on_depth(&old_wpos, -1, TRUE);
 
 			p_ptr->py=houses[i].y;
 			p_ptr->px=houses[i].x;

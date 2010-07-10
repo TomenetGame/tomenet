@@ -2563,22 +2563,24 @@ void recall_player(int Ind, char *message){
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 
+	/* Remove the player */
+	zcave[p_ptr->py][p_ptr->px].m_idx = 0;
+
+	/* Show everyone that he's left */
+	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+
+	msg_print(Ind, message);
+
+	/* Forget his lite and view */
+	forget_lite(Ind);
+	forget_view(Ind);
+
 	/* Change the wpos */
 	wpcopy(&old_wpos, &p_ptr->wpos);
 	wpcopy(&p_ptr->wpos, &p_ptr->recall_pos);
 
 	/* One less person here */
 	new_players_on_depth(&old_wpos, -1, TRUE);
-
-	/* Remove the player */
-	zcave[p_ptr->py][p_ptr->px].m_idx = 0;
-	/* Show everyone that he's left */
-	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-
-	msg_print(Ind, message);
-	/* Forget his lite and view */
-	forget_lite(Ind);
-	forget_view(Ind);
 
 	/* Log it */
 	s_printf("Recalled: %s from %d,%d,%d to %d,%d,%d.\n", p_ptr->name,

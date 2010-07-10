@@ -4955,13 +4955,13 @@ void move_player(int Ind, int dir, int do_pickup)
 
 			/* Remove the player from the old location */
 			zcave[oldy][oldx].m_idx = 0;
-			
+
 			/* Show everyone that's he left */
 			everyone_lite_spot(&p_ptr->wpos, oldy, oldx);
 
 			/* forget his light and viewing area */
 			forget_lite(Ind);
-			forget_view(Ind);                       
+			forget_view(Ind);
 
 			/* Hack -- take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
