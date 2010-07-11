@@ -1450,7 +1450,7 @@ errr file_character(cptr name, bool full)
  */
 void xhtml_screenshot(cptr name)
 {
-	static cptr color_table[16] =
+	static cptr color_table[17] =
 	{
 		"#000000",      /* BLACK */
 		"#ffffff",      /* WHITE */
@@ -1468,11 +1468,12 @@ void xhtml_screenshot(cptr name)
 		"#00ff00",      /* LIGHTGREEN */
 		"#00ffff",      /* LIGHTBLUE */
 		"#c79d55",      /* LIGHTBROWN */
+		"#f0f0f0",	/* Invalid color */
 	};
 	FILE *fp;
 	byte *scr_aa;
 	char *scr_cc;
-	byte cur_attr;
+	byte cur_attr, prt_attr;
 	int i, x, y, max;
 	char buf[1024];
 	char real_name[256];
@@ -1589,7 +1590,11 @@ void xhtml_screenshot(cptr name)
 	             "<pre style=\"color: #ffffff; background-color: #000000; font-family: monospace\">\n");
 
 	cur_attr = Term->scr->a[0][0];
-	fprintf(fp, "<span style=\"color: %s\">", color_table[flick_colour(cur_attr)]);
+	prt_attr = flick_colour(cur_attr);
+	if (prt_attr > sizeof(color_table) - 1) {
+		prt_attr = sizeof(color_table) - 1;
+	}
+	fprintf(fp, "<span style=\"color: %s\">", color_table[prt_attr]);
 
 	i = 0;
 	for (y = 0; y < Term->hgt; y++)
@@ -1607,7 +1612,11 @@ void xhtml_screenshot(cptr name)
 
 				/* right now just pick a random colour for flickering colours
 				 * maybe add some javascript for real flicker later */
-				strcpy(&buf[i], color_table[flick_colour(cur_attr)]);
+				prt_attr = flick_colour(cur_attr);
+				if (prt_attr > sizeof(color_table) - 1) {
+					prt_attr = sizeof(color_table) - 1;
+				}
+				strcpy(&buf[i], color_table[prt_attr]);
 				i += 7;
 
 				strcpy(&buf[i], "\">");
