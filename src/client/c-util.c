@@ -467,6 +467,11 @@ static char inkey_aux(void)
 				}
 			}
 
+			/* Hack - Leave a store */
+			if (shopping && leave_store) {
+				return ESCAPE;
+			}
+
 			/* Redraw windows if necessary */
 			if (p_ptr->window)
 			{
@@ -1602,7 +1607,7 @@ bool get_com(cptr prompt, char *command)
  * Note that this command is used both in the dungeon and in
  * stores, and must be careful to work in both situations.
  */
-void request_command(bool shopping)
+void request_command()
 {
 	char cmd;
 
@@ -1665,9 +1670,6 @@ void request_command(bool shopping)
 		/* Access the array info */
 		command_cmd = keymap_cmds[cmd & 0x7F];
 		command_dir = keymap_dirs[cmd & 0x7F];
-
-		/* Hack -- always raw key when in a store */
-		if (shopping) command_cmd = cmd;
 	}
 
 	/* Paranoia */

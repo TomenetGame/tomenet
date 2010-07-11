@@ -2722,12 +2722,8 @@ int Receive_store_kick(void)
 		return n;
 	}
 
-	/* Setting shopping to FALSE could cause problems - mikaelh */
-//	shopping = FALSE;
+	/* Leave the store */
 	leave_store = TRUE;
-
-	/* Hack */
-	command_cmd = ESCAPE;
 
 	return 1;
 }

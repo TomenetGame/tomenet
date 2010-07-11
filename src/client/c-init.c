@@ -344,7 +344,7 @@ static void Input_loop(void)
 		flush_count = 0;
 
 		/* See if we have a command waiting */
-		request_command(FALSE);
+		request_command();
 
 		/* Process any commands we got */
 		while (command_cmd)
@@ -356,7 +356,7 @@ static void Input_loop(void)
 			command_cmd = 0;
 
 			/* Ask for another command */
-			request_command(FALSE);
+			request_command();
 		}
 
 		/*
