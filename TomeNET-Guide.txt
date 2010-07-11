@@ -6584,7 +6584,7 @@ Note that not every skill is available to every profession (class).
                                 special things.
                                 Certain tools such as shovels, picks and
                                 mattocks will also increase your digging speed
-                                greatly (independant of the skill).
+                                greatly (independant of the skill), see (5.9).
                                 Also, when hacking through trees and bushes,
                                 axes will help a lot and swords somewhat, in
                                 case you have no good digging tool at hand.
