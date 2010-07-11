@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 7. July 2010 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.5c - official websites are:
+| Latest update: 11. July 2010 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.5g - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 +---
@@ -5303,6 +5303,9 @@ Mattock/Pick/Shovel Diggers, improving your digging capabilities.
                     (+to-hit, +to-dam) on digging tools as well as a high
                     weight help to further increase their effectiveness.
                     Main factor is the (+diggingpower) mod though. (Equip it!)
+                    If you lack any of these valuable digging tools, axes and
+                    swords can help you hacking down trees or bushes (see
+                    'Digging' skill in (6.2)).
 Mummy Wrapping      Reduces your charisma slightly, and prevents other players
                     from seeing your equipment except for your melee and/or
                     ranged weapon. Also makes you look dark like being
@@ -6579,6 +6582,13 @@ Note that not every skill is available to every profession (class).
                                 of cash if you mine treasure.
                                 Depending on the skill, you might also uncover
                                 special things.
+                                Certain tools such as shovels, picks and
+                                mattocks will also increase your digging speed
+                                greatly (independant of the skill).
+                                Also, when hacking through trees and bushes,
+                                axes will help a lot and swords somewhat, in
+                                case you have no good digging tool at hand.
+                                2-handed axes/swords even more than 1-handed.
     .Swimming                   Allows you to swim even while carrying more
                                 weight and protect your items from water.
                                 Skill maxes at 01.000, with the ability to
