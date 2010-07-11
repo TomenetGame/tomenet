@@ -3934,7 +3934,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 		/* Must have the correct fields */
 		for (j = 0; j < MAX_EGO_BASETYPES; j++)
 		{
-
+			if (e_ptr->tval[j] == 255) break;
 			if ((e_ptr->min_sval[j] <= o_ptr->sval) && (e_ptr->max_sval[j] >= o_ptr->sval)) ok = TRUE;
 
 #if 0 /* done in e_info */
