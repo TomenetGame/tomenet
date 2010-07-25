@@ -112,7 +112,7 @@ L:86:900:205:100:1:0:0:0:0:0
 #eek! pits with essentially no walls? - adam
 #A:177:1000:0:0:0:0:85:87
 #changed to sandwall instead
-A:177:1000:0:0:0:0:0:0:0:0:85:99
+A:177:1000:0:0:0:0:0:0:0:0:85:98
 O:10:10:30:30
 E:2d10:10:FIRE
 F:CAVE | LAVA_RIVER | NO_RECALL | NO_STREAMERS

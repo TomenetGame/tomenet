@@ -1092,7 +1092,8 @@ D:slowly approach.
 N:78:'Mormegil'
 I:23:33:2
 W:30:15:250:0
-P:0:6d7:0:0:-20
+#P:0:6d7:0:0:-20  -- 1h now!
+P:0:4d7:0:0:-20
 F:SPEED | IM_FIRE | RES_FIRE | BRAND_FIRE | RES_DISEN | RES_FEAR |
 F:AGGRAVATE | CURSED | HEAVY_CURSE | SHOW_MODS | LEVELS | TY_CURSE | 
 F:BLOWS | SLAY_DRAGON | RES_CHAOS | ANTIMAGIC_50 | 
@@ -1559,6 +1560,7 @@ F:CURSED | HEAVY_CURSE | PERMA_CURSE |
 F:SPECIAL_GENE | SHOW_MODS | INSTA_ART |
 #F:NO_MAGIC
 F:IMPACT
+#F:BLOWS <- for the future? is it required? too much? compare with max-ap randarts?
 #F:ACTIVATE <-disabled, for Darkie^^
 D:The mighty Hammer of the Underworld, blackened by doomspells of shattering, 
 D:whose wielder holds the lives of all Morgoth's servants in his hand.
@@ -2656,7 +2658,8 @@ F:TUNNEL | SUST_INT | SUST_WIS | INT | STR | STEALTH
 N:212:'Schmerzglaube'
 I:23:33:2
 W:50:30:110:120000
-P:0:5d7:10:10:5
+#P:0:5d7:10:10:5  -- 1h now!
+P:0:3d7:10:10:5
 F:BLOWS | CON | HIDE_TYPE |
 F:SLAY_ANIMAL | SLAY_UNDEAD | SLAY_DEMON | 
 #F:ESP_ANIMAL | ESP_UNDEAD | ESP_DEMON | 

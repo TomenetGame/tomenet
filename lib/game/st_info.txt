@@ -37,7 +37,9 @@ I:100:& Wooden Torch~
 I:100:& Wooden Torch~
 I:100:& Brass Lantern~
 I:100:& Brass Lantern~
-I:95:& Flask~ of oil
+#I:95:& Flask~ of oil
+I:100:& Flask~ of oil
+I:100:& Flask~ of oil
 I:100:& Ration~ of Food
 I:100:& Hard Biscuit~
 I:90:& Strip~ of Venison
@@ -378,6 +380,9 @@ A:0:0:1:2:3:4
 O:42:43:44:45:42:43
 G:9:o
 W:48
+# more fireproof spell scrolls and codices:
+#F:GOOD
+F:GREAT
 
 #N:9:Pet Shop
 #I:100:Egg
