@@ -54,7 +54,7 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		4
 #define VERSION_PATCH		5
-#define VERSION_EXTRA		9
+#define VERSION_EXTRA		10
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -62,14 +62,14 @@
 #define VERSION_MAJOR_OUTDATED	4
 #define VERSION_MINOR_OUTDATED	4
 #define VERSION_PATCH_OUTDATED	5
-#define VERSION_EXTRA_OUTDATED	7
+#define VERSION_EXTRA_OUTDATED	9
 #define VERSION_BRANCH_OUTDATED	0
 #define VERSION_BUILD_OUTDATED	0
 /* _one before_ MAJOR/MINOR/PATCH version that counts as 'latest' (should be 0-15). */
 #define VERSION_MAJOR_LATEST	4
 #define VERSION_MINOR_LATEST	4
 #define VERSION_PATCH_LATEST	5
-#define VERSION_EXTRA_LATEST	8
+#define VERSION_EXTRA_LATEST	9
 #define VERSION_BRANCH_LATEST	0
 #define VERSION_BUILD_LATEST	0
 
@@ -100,7 +100,7 @@
 
 /* Client-side only: Client release version tag
    (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG "g"
+#define CLIENT_VERSION_TAG "h"
 
 
 
@@ -172,6 +172,7 @@
 /* --------------------- Server-type dependant features -------------------- */
 
 #ifdef RPG_SERVER
+ #define MUCHO_RUMOURS		/* print a rumour on day changes and unique kills (the_sandman) */
 // #define PRECIOUS_STONES
 
  #define ENABLE_DIVINE		/* enable RACE_DIVINE */
@@ -1546,10 +1547,10 @@ that keeps many algorithms happy.
 /* Seams */
 #define FEAT_MAGMA              0x32
 #define FEAT_QUARTZ             0x33
-#define FEAT_MAGMA_H            0x34
-#define FEAT_QUARTZ_H           0x35
-#define FEAT_MAGMA_K            0x36
-#define FEAT_QUARTZ_K           0x37
+#define FEAT_MAGMA_H            0x34	/* hidden treasure */
+#define FEAT_QUARTZ_H           0x35	/* hidden treasure */
+#define FEAT_MAGMA_K            0x36	/* known treasure */
+#define FEAT_QUARTZ_K           0x37	/* known treasure */
 
 /* Walls */
 #define FEAT_WALL_EXTRA         0x38
@@ -1602,8 +1603,8 @@ that keeps many algorithms happy.
 #define FEAT_TREE               0x60
 #define FEAT_MOUNTAIN           0x61
 #define FEAT_SANDWALL           0x62
-#define FEAT_SANDWALL_H         0x63
-#define FEAT_SANDWALL_K         0x64
+#define FEAT_SANDWALL_H         0x63	/* hidden treasure */
+#define FEAT_SANDWALL_K         0x64	/* known treasure */
 #define FEAT_HIGH_MOUNTAIN	0x65
 #define FEAT_NETHER_MIST	0x66
 #define FEAT_GLIT_WATER         0x67	/* For Valinor */
@@ -3288,6 +3289,7 @@ that keeps many algorithms happy.
 
 /* for invalid items */
 #define SV_SEAL_INVALID		0
+#define SV_CUSTOM_OBJECT	1
 
 
 /*** General flag values ***/
