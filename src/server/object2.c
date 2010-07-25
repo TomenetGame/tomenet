@@ -3934,8 +3934,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 		/* Must have the correct fields */
 		for (j = 0; j < MAX_EGO_BASETYPES; j++)
 		{
-			if (e_ptr->tval[j] == 255) break;
-			if ((e_ptr->min_sval[j] <= o_ptr->sval) && (e_ptr->max_sval[j] >= o_ptr->sval)) ok = TRUE;
+			if ((e_ptr->tval[j] == o_ptr->tval) && (e_ptr->min_sval[j] <= o_ptr->sval) && (e_ptr->max_sval[j] >= o_ptr->sval)) ok = TRUE;
 
 #if 0 /* done in e_info */
                         for (k = 0; k < 5-4; k++) if (e_ptr->flags3[k] & TR3_CURSED) cursed = TRUE;
@@ -6669,8 +6668,13 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	   Won't affect normal items that fail randart check anyway. ----------------------- */
 	/* Allow mods on non-artified randart jewelry! */
 	if (o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET) {
-		if (!power && (rand_int(100) < CURSED_JEWELRY_CHANCE)) power = -1;
-		a_m_aux_3(o_ptr, lev, power, resf);
+		/* hack: if we apply_magic() again on _already created_ jewelry,
+		   we don't want to reset its hit/dam/ac, because we're also called
+		   when we create an artifact out of an item. */
+		if (!o_ptr->name1) {
+			if (!power && (rand_int(100) < CURSED_JEWELRY_CHANCE)) power = -1;
+			a_m_aux_3(o_ptr, lev, power, resf);
+		}
 		o_ptr->name2 = o_ptr->name2b = 0; /* required? */
 	}
 	/* --------------------------------------------------------------------------------- */
@@ -6687,8 +6691,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 
 
 	/* Hack -- analyze artifacts */
-	if (o_ptr->name1)
-	{
+	if (o_ptr->name1) {
 	 	artifact_type *a_ptr;
 	 	
 	 	/* Randart */
@@ -6702,7 +6705,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		}
 
 		/* ?catch impossible randart types? */
-		if(a_ptr == (artifact_type*)NULL) {
+		if (a_ptr == (artifact_type*)NULL) {
 			o_ptr->name1 = 0;
 			s_printf("RANDART_FAIL in apply_magic().\n");
 			return;
@@ -7815,15 +7818,15 @@ static int kind_is_theme(int k_idx)
 
 
 	/* Pick probability to use */
-	switch (k_ptr->tval)
-	{
+	switch (k_ptr->tval) {
 		case TV_SKELETON:
 		case TV_BOTTLE:
 		case TV_JUNK:
 		case TV_FIRESTONE:
 		case TV_CORPSE:
 		case TV_EGG:
-		{
+		/* hm, this was missing here, for a long time - C. Blue */
+		case TV_GOLEM:
 			/*
 			 * Degree of junk is defined in terms of the other
 			 * 4 quantities XXX XXX XXX
@@ -7834,7 +7837,6 @@ static int kind_is_theme(int k_idx)
 			p = 100 - (match_theme.treasure + match_theme.combat +
 			              match_theme.magic + match_theme.tools);
 			break;
-		}
 		case TV_CHEST:          p = match_theme.treasure; break;
 		case TV_CROWN:          p = match_theme.treasure; break;
 		case TV_DRAG_ARMOR:     p = match_theme.treasure; break;
@@ -8289,8 +8291,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 }
 
 /* Like place_object(), but doesn't actually drop the object to the floor -  C. Blue */
-static void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool great, bool verygreat, u32b resf, obj_theme theme, int luck)
-{
+void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool great, bool verygreat, u32b resf, obj_theme theme, int luck) {
 	int prob, base, tmp_luck, i;
 	int tries = 0, k_idx;
 

@@ -1308,7 +1308,7 @@ static int return_level(store_type *st_ptr)
 	int level;
 
 	if (sti_ptr->flags1 & SF1_RANDOM) level = 0;
-	else level = rand_range(1, STORE_OBJ_LEVEL);
+	else level = rand_range(1, STORE_OBJ_LEVEL); //usually 5
 
 //	if (sti_ptr->flags1 & SF1_DEPEND_LEVEL) level += dun_level;
 
@@ -1319,7 +1319,7 @@ static int return_level(store_type *st_ptr)
 
 //	if (sti_ptr->flags1 & SF1_ALL_ITEM) level += p_ptr->lev;
 
-	/* Better books in bookstores outside Bree */
+	/* Better books in bookstores outside of Bree */
 	if (st_ptr->st_idx == STORE_BOOK) {
 		level += town[st_ptr->town].baselevel;
 	}

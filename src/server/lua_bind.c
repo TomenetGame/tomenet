@@ -298,13 +298,22 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus)
 
 /* adj_mag_stat? stat_ind??  pfft */
 //s32b lua_spell_chance(s32b chance, int level, int skill_level, int mana, int cur_mana, int stat)
+/* NOTE: KEEP CONSISTENT WITH CLIENT-SIDE lua_bind.c:lua_spell_chance()! */
 s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, int cur_mana, int stat)
 {
 	player_type *p_ptr = Players[i];
         int             minfail;
+
 //DEBUG:s_printf("chance %d - level %d - skill_level %d", chance, level, skill_level);
-	/* correct LUA overflow bug */
+	/* correct LUA overflow bug ('fail' is type char, ie unsigned byte) */
 	if (chance >= 156) chance -= 256;
+
+#if 0 /* requires client-side modification too, so I'm moving it into s_aux.lua instead - C. Blue */
+	/* hack - -99 means 'never fails'. This is used for 'stop' spells that
+	   turn off durational spells that have been cast, like Wraithform,
+	   and also don't cost any mana to "cast". - C. Blue */
+	if (chance == -99) return(0);
+#endif
 
 	/* Reduce failure rate by "effective" level adjustment */
         chance -= 3 * (level - skill_level);
@@ -314,8 +323,7 @@ s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, 
 
 	 /* Not enough mana to cast */
         if (chance < 0) chance = 0;
-        if (mana > cur_mana)
-	{
+        if (mana > cur_mana) {
                 chance += 15 * (mana - cur_mana);
 	}
 
@@ -326,8 +334,7 @@ s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, 
 	/*
          * Non mage characters never get too good
 	 */
-	if (!(PRACE_FLAG(PR1_ZERO_FAIL)))
-	{
+	if (!(PRACE_FLAG(PR1_ZERO_FAIL))) {
 		if (minfail < 5) minfail = 5;
 	}
 

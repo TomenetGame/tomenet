@@ -625,7 +625,7 @@ if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC && !o_ptr->name1) o_ptr
 
 #if 0 /* commented out again till it's of use once more (hopefully not) */
 /*HACK just to get rid of invalid seals in Bree.. */
-if (o_ptr->tval == TV_SEAL) {
+if (o_ptr->tval == TV_SEAL && o_ptr->sval == SV_SEAL_INVALID) {
 	invwipe(o_ptr);
 	return;
 }

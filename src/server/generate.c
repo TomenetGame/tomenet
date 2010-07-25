@@ -1227,7 +1227,7 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 			/* Hack -- Add some (known) treasure */
 			/* XXX seemingly it was ToME bug */
 			if (chance && rand_int(chance) == 0)
-				c_ptr->feat += (feat == FEAT_SANDWALL ? 0x02 : 0x04);
+				c_ptr->feat += (feat == FEAT_SANDWALL ? 0x02 : 0x04);//FEAT_MAGMA_K, FEAT_QUARTZ_K, FEAT_SANDWALL_K
 		}
 
 #if 0
@@ -2705,6 +2705,9 @@ static void build_type3(struct worldpos *wpos, int by0, int bx0, player_type *p_
  *	3 - An inner room with pillar(s)
  *	4 - Inner room has a maze
  *	5 - A set of four inner rooms (a "Gorth")
+ * I'm adding the following sub-types: - C. Blue
+ *	6 - Inner room has a lot of bones and skulls, possibly low-brain+ferocious guardian
+ *	7 - Treasure chamber (inner room has money lying around), possibly non-human guardian
  */
 static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_ptr)
 {
@@ -2732,10 +2735,8 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 
 	/* Place a full floor under the room */
-	for (y = y1 - 1; y <= y2 + 1; y++)
-	{
-		for (x = x1 - 1; x <= x2 + 1; x++)
-		{
+	for (y = y1 - 1; y <= y2 + 1; y++) {
+		for (x = x1 - 1; x <= x2 + 1; x++) {
 			c_ptr = &zcave[y][x];
 			place_floor(wpos, y, x);
 			c_ptr->info |= CAVE_ROOM;
@@ -2744,15 +2745,13 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	}
 
 	/* Outer Walls */
-	for (y = y1 - 1; y <= y2 + 1; y++)
-	{
+	for (y = y1 - 1; y <= y2 + 1; y++) {
 		c_ptr = &zcave[y][x1-1];
 		c_ptr->feat = feat_wall_outer;
 		c_ptr = &zcave[y][x2+1];
 		c_ptr->feat = feat_wall_outer;
 	}
-	for (x = x1 - 1; x <= x2 + 1; x++)
-	{
+	for (x = x1 - 1; x <= x2 + 1; x++) {
 		c_ptr = &zcave[y1-1][x];
 		c_ptr->feat = feat_wall_outer;
 		c_ptr = &zcave[y2+1][x];
@@ -2767,15 +2766,13 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	x2 = x2 - 2;
 
 	/* The inner walls */
-	for (y = y1 - 1; y <= y2 + 1; y++)
-	{
+	for (y = y1 - 1; y <= y2 + 1; y++) {
 		c_ptr = &zcave[y][x1-1];
 		c_ptr->feat = feat_wall_inner;
 		c_ptr = &zcave[y][x2+1];
 		c_ptr->feat = feat_wall_inner;
 	}
-	for (x = x1 - 1; x <= x2 + 1; x++)
-	{
+	for (x = x1 - 1; x <= x2 + 1; x++) {
 		c_ptr = &zcave[y1-1][x];
 		c_ptr->feat = feat_wall_inner;
 		c_ptr = &zcave[y2+1][x];
@@ -2784,14 +2781,17 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 
 	/* Inner room variations */
-	switch (randint(5))
-	{
-		/* Just an inner room with a monster */
-		case 1:
+#ifndef RPG_SERVER
+	switch (randint(10)) { //+1 to enable bones/treasure chamber
+#else
+	switch (randint(11)) {
+#endif
+
+	/* Just an inner room with a monster */
+	case 1: case 2:
 
 		/* Place a secret door */
-		switch (randint(4))
-		{
+		switch (randint(4)) {
 			case 1: place_secret_door(wpos, y1 - 1, xval); break;
 			case 2: place_secret_door(wpos, y2 + 1, xval); break;
 			case 3: place_secret_door(wpos, yval, x1 - 1); break;
@@ -2804,12 +2804,11 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		break;
 
 
-		/* Treasure Vault (with a door) */
-		case 2:
+	/* Treasure Vault (with a door) */
+	case 3: case 4:
 
 		/* Place a secret door */
-		switch (randint(4))
-		{
+		switch (randint(4)) {
 			case 1: place_secret_door(wpos, y1 - 1, xval); break;
 			case 2: place_secret_door(wpos, y2 + 1, xval); break;
 			case 3: place_secret_door(wpos, yval, x1 - 1); break;
@@ -2817,10 +2816,8 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		}
 
 		/* Place another inner room */
-		for (y = yval - 1; y <= yval + 1; y++)
-		{
-			for (x = xval -  1; x <= xval + 1; x++)
-			{
+		for (y = yval - 1; y <= yval + 1; y++) {
+			for (x = xval -  1; x <= xval + 1; x++) {
 				if ((x == xval) && (y == yval)) continue;
 				c_ptr = &zcave[y][x];
 				c_ptr->feat = feat_wall_inner;
@@ -2828,8 +2825,7 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		}
 
 		/* Place a locked door on the inner room */
-		switch (randint(4))
-		{
+		switch (randint(4)) {
 			case 1: place_locked_door(wpos, yval - 1, xval); break;
 			case 2: place_locked_door(wpos, yval + 1, xval); break;
 			case 3: place_locked_door(wpos, yval, xval - 1); break;
@@ -2841,18 +2837,16 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 		/* Object (80%) */
 		if (rand_int(100) < 80)
-		{
 			place_object(wpos, yval, xval, FALSE, FALSE, FALSE, resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
-		}
 
 		/* Stairs (20%) */
 		else
 		{
 #ifndef ARCADE_SERVER
-                place_random_stairs(wpos, yval, xval);
+			place_random_stairs(wpos, yval, xval);
 #else
-                if(wpos->wz < 0)
-                place_random_stairs(wpos, yval, xval);
+			if(wpos->wz < 0)
+			place_random_stairs(wpos, yval, xval);
 #endif
         
 		}
@@ -2863,12 +2857,11 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		break;
 
 
-		/* Inner pillar(s). */
-		case 3:
+	/* Inner pillar(s). */
+	case 5: case 6:
 
 		/* Place a secret door */
-		switch (randint(4))
-		{
+		switch (randint(4)) {
 			case 1: place_secret_door(wpos, y1 - 1, xval); break;
 			case 2: place_secret_door(wpos, y2 + 1, xval); break;
 			case 3: place_secret_door(wpos, yval, x1 - 1); break;
@@ -2876,28 +2869,22 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		}
 
 		/* Large Inner Pillar */
-		for (y = yval - 1; y <= yval + 1; y++)
-		{
-			for (x = xval - 1; x <= xval + 1; x++)
-			{
+		for (y = yval - 1; y <= yval + 1; y++) {
+			for (x = xval - 1; x <= xval + 1; x++) {
 				c_ptr = &zcave[y][x];
 				c_ptr->feat = feat_wall_inner;
 			}
 		}
 
 		/* Occasionally, two more Large Inner Pillars */
-		if (rand_int(2) == 0)
-		{
+		if (rand_int(2) == 0) {
 			tmp = randint(2);
-			for (y = yval - 1; y <= yval + 1; y++)
-			{
-				for (x = xval - 5 - tmp; x <= xval - 3 - tmp; x++)
-				{
+			for (y = yval - 1; y <= yval + 1; y++) {
+				for (x = xval - 5 - tmp; x <= xval - 3 - tmp; x++) {
 					c_ptr = &zcave[y][x];
 					c_ptr->feat = feat_wall_inner;
 				}
-				for (x = xval + 3 + tmp; x <= xval + 5 + tmp; x++)
-				{
+				for (x = xval + 3 + tmp; x <= xval + 5 + tmp; x++) {
 					c_ptr = &zcave[y][x];
 					c_ptr->feat = feat_wall_inner;
 				}
@@ -2905,11 +2892,9 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		}
 
 		/* Occasionally, some Inner rooms */
-		if (rand_int(3) == 0)
-		{
+		if (rand_int(3) == 0) {
 			/* Long horizontal walls */
-			for (x = xval - 5; x <= xval + 5; x++)
-			{
+			for (x = xval - 5; x <= xval + 5; x++) {
 				c_ptr = &zcave[yval-1][x];
 				c_ptr->feat = feat_wall_inner;
 				c_ptr = &zcave[yval+1][x];
@@ -2938,12 +2923,11 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		break;
 
 
-		/* Maze inside. */
-		case 4:
+	/* Maze inside. */
+	case 7: case 8:
 
 		/* Place a secret door */
-		switch (randint(4))
-		{
+		switch (randint(4)) {
 			case 1: place_secret_door(wpos, y1 - 1, xval); break;
 			case 2: place_secret_door(wpos, y2 + 1, xval); break;
 			case 3: place_secret_door(wpos, yval, x1 - 1); break;
@@ -2951,12 +2935,9 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		}
 
 		/* Maze (really a checkerboard) */
-		for (y = y1; y <= y2; y++)
-		{
-			for (x = x1; x <= x2; x++)
-			{
-				if (0x1 & (x + y))
-				{
+		for (y = y1; y <= y2; y++) {
+			for (x = x1; x <= x2; x++) {
+				if (0x1 & (x + y)) {
 					c_ptr = &zcave[y][x];
 					c_ptr->feat = feat_wall_inner;
 				}
@@ -2977,32 +2958,27 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		break;
 
 
-		/* Four small rooms. */
-		case 5:
+	/* Four small rooms. */
+	case 9: case 10:
 
 		/* Inner "cross" */
-		for (y = y1; y <= y2; y++)
-		{
+		for (y = y1; y <= y2; y++) {
 			c_ptr = &zcave[y][xval];
 			c_ptr->feat = feat_wall_inner;
 		}
-		for (x = x1; x <= x2; x++)
-		{
+		for (x = x1; x <= x2; x++) {
 			c_ptr = &zcave[yval][x];
 			c_ptr->feat = feat_wall_inner;
 		}
 
 		/* Doors into the rooms */
-		if (rand_int(100) < 50)
-		{
+		if (rand_int(100) < 50) {
 			int i = randint(10);
 			place_secret_door(wpos, y1 - 1, xval - i);
 			place_secret_door(wpos, y1 - 1, xval + i);
 			place_secret_door(wpos, y2 + 1, xval - i);
 			place_secret_door(wpos, y2 + 1, xval + i);
-		}
-		else
-		{
+		} else {
 			int i = randint(3);
 			place_secret_door(wpos, yval + i, x1 - 1);
 			place_secret_door(wpos, yval - i, x1 - 1);
@@ -3020,6 +2996,49 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		vault_monsters(wpos, yval - 1, xval + 4, randint(4));
 
 		break;
+
+
+	/* Room with lots of bones, possibly guardian (Butcher-style ;) or
+	   room with lots of treasure, possibly guardian - C. Blue */
+	case 11:
+		/* Place a secret door */
+		switch (randint(4)) {
+			case 1: place_secret_door(wpos, y1 - 1, xval); break;
+			case 2: place_secret_door(wpos, y2 + 1, xval); break;
+			case 3: place_secret_door(wpos, yval, x1 - 1); break;
+			case 4: place_secret_door(wpos, yval, x2 + 1); break;
+		}
+
+		if (rand_int(2)) {
+s_printf("ROOM4_BONES\n");
+			/* Place bones, skulls and skeletons */
+			object_type forge;
+//			for (y = yval; y <= yval; y++)
+//				for (x = xval; x <= xval; x++)
+			for (y = y1; y <= y2; y++)
+				for (x = x1; x <= x2; x++)
+					if (!rand_int(5)) {
+						invcopy(&forge, lookup_kind(TV_SKELETON, randint(8)));
+						drop_near(&forge, 0, wpos, y, x);
+					}
+
+			/* Place a monster in the room */
+//			vault_monsters(wpos, yval, xval, 1);
+		} else {
+s_printf("ROOM4_TREASURE\n");
+			/* Place monetary treasure */
+//			for (y = yval; y <= yval; y++)
+//				for (x = xval; x <= xval; x++)
+			for (y = y1; y <= y2; y++)
+				for (x = x1; x <= x2; x++)
+					if (!rand_int(5)) place_gold(wpos, y, x, 0);
+
+			/* Place a monster in the room */
+//			vault_monsters(wpos, yval, xval, 1);
+		}
+
+		break;
+
 	}
 }
 

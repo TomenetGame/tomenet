@@ -3281,6 +3281,8 @@ bool set_mindboost(int Ind, int p, int v)
 	/* Use the value */
 	p_ptr->mindboost = v;
 
+	if (set_afraid(Ind, 0)) notice = TRUE;
+
 	/* Nothing to notice */
 	if (!notice) return (FALSE);
 
@@ -5046,11 +5048,13 @@ if (season_halloween) {
 			}
 #endif
 		}
+
+#ifdef MUCHO_RUMOURS
 		/*the_sandman prints a rumour */
 		/* print the same message other players get before it - mikaelh */
 		msg_print(Ind, "Suddenly a thought comes to your mind:");
 		fortune(Ind, TRUE);
-
+#endif
 
 		/* give credit to the killer by default */
 if(cfg.unikill_format){
@@ -6080,8 +6084,7 @@ void player_death(int Ind)
 		p_ptr->chp = p_ptr->mhp;
 		p_ptr->chp_frac = 0;
 
-		if (secure)
-		{
+		if (secure) {
 			p_ptr->new_level_method = (p_ptr->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
 			p_ptr->recall_pos.wx = p_ptr->wpos.wx;
 			p_ptr->recall_pos.wy = p_ptr->wpos.wy;
@@ -7559,11 +7562,9 @@ for(i=1; i < 5; i++) {
 			msg_format(Ind, "\377yYou have slain %s.", m_name);
 		}
 
-		/* Check if it's cloned unique */
+		/* Check if it's cloned unique, ie "someone else's spawn" */
 		if ((r_ptr->flags1 & RF1_UNIQUE) && p_ptr->r_killed[m_ptr->r_idx] == 1)
-		{
-			m_ptr->clone = 90;
-		}
+			m_ptr->clone = 90; /* still allow some experience to be gained */
 
 		if (p_ptr->wpos.wz != 0)
 		{

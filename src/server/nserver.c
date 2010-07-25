@@ -4268,7 +4268,8 @@ int Send_stamina(int ind, int mst, int cst)
 	    !(p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_ARCHER ||
 	    p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_PALADIN ||
 	    p_ptr->pclass == CLASS_MIMIC || p_ptr->pclass == CLASS_ROGUE ||
-	    p_ptr->pclass == CLASS_ADVENTURER || p_ptr->pclass == CLASS_RUNEMASTER)) {
+	    p_ptr->pclass == CLASS_ADVENTURER || p_ptr->pclass == CLASS_RUNEMASTER ||
+	    p_ptr->pclass == CLASS_MINDCRAFTER)) {
 		mst = -9999;
 		cst = -9999;
 	}
@@ -9746,4 +9747,9 @@ static int Receive_force_stack(int ind) {
 	}
 
 	return 1;
+}
+
+/* return some connection data for improved log handling - C. Blue */
+char *get_conn_userhost(int ind) {
+	return(format("%s@%s", Conn[ind]->real, Conn[ind]->host));
 }

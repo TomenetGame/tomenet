@@ -60,6 +60,8 @@ extern bool player_is_king(int Ind);
 extern void end_mind(int Ind, bool update);
 extern void add_banlist(int Ind, int time);
 extern void add_banlist_ip(char *ip_addy, int time);
+//extern connection_t **Conn;
+extern char* get_conn_userhost(int ind);
 
 /* randart.c */
 extern artifact_type *ego_make(object_type *o_ptr);
@@ -1043,6 +1045,7 @@ extern void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay,
 extern void determine_level_req(int level, object_type *o_ptr);
 extern void verify_level_req(object_type *o_ptr);
 extern void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, u32b resf, obj_theme theme, int luck, byte removal_marker);
+extern void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool great, bool verygreat, u32b resf, obj_theme theme, int luck);
 extern void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, bool verygreat, u32b resf);
 extern void acquirement_direct(object_type *o_ptr, struct worldpos *wpos, bool great, bool verygreat, u32b resf);
 extern void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool great, bool verygreat, u32b resf, long int treshold);

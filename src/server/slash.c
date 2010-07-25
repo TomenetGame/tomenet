@@ -3768,6 +3768,7 @@ void do_slash_cmd(int Ind, char *message)
 			{
 				object_type *o_ptr;
 				int min_pval = -999, min_ap = -999, tries = 1000;
+				int th ,td ,ta; //for retaining jewelry properties in case they get inverted by cursing
 				if (tk < 1) {
 					msg_print(Ind, "\377oUsage: /reart <inventory-slot> [<+min pval>|<min artifact power>]");
 					return;
@@ -3801,6 +3802,15 @@ void do_slash_cmd(int Ind, char *message)
 				else if (min_ap > -999)
 					msg_format(Ind, "\377wrerolling for at least %d ap.", min_ap);
 
+
+				th = o_ptr->to_h; td = o_ptr->to_d; ta = o_ptr->to_a; //for jewelry
+#if 0/*no good because on cursing, the stats aren't just inverted but also modified!*/
+				//hacking around old curses
+				if (th < 0) th = -th;
+				if (td < 0) td = -td;
+				if (ta < 0) ta = -ta;
+#endif
+
 				while (tries) {
 			                /* Piece together a 32-bit random seed */
 			                o_ptr->name3 = rand_int(0xFFFF) << 16;
@@ -3819,8 +3829,11 @@ void do_slash_cmd(int Ind, char *message)
 					if (o_ptr->pval >= min_pval && artifact_power(randart_make(o_ptr)) >= min_ap) break;
 					tries--;
 				}
-				if (!tries) msg_format(Ind, "Re-rolling failed (out of tries)!");
+				if (!tries) msg_format(Ind, "Re-rolling failed (out of tries (1000))!");
 				else msg_format(Ind, "Re-rolled randart in inventory slot %d (Tries: %d).", atoi(token[1]), 1000 + 1 - tries);
+				if (o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET) {
+					o_ptr->to_a = ta; o_ptr->to_d = td; o_ptr->to_h = th;
+				}
 
 				o_ptr->ident |= ID_MENTAL; /* *id*ed */
 				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
@@ -4581,6 +4594,7 @@ void do_slash_cmd(int Ind, char *message)
 				o_ptr = &p_ptr->inventory[k];
 				o_ptr->owner = 0;
 				o_ptr->owner_mode = 0;
+				return;
 			}
 			else if (prefix(message, "/erasehashtableid")) { /* erase a player id in case there's a duplicate entry in the hash table - mikaelh */
 				int id;

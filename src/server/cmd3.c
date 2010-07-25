@@ -1757,6 +1757,10 @@ void do_cmd_uninscribe(int Ind, int item)
 		msg_print(Ind, "Cannot uninscribe shirts.");
 		return;
 	}
+	if (o_ptr->tval == TV_SEAL && !is_admin(p_ptr)) {
+		msg_print(Ind, "Cannot uninscribe seals.");
+		return;
+	}
 
 	/* Message */
 	msg_print(Ind, "Inscription removed.");
@@ -1802,6 +1806,10 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription)
 	/* small hack, make shirt logos permanent */
 	if (o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT && !is_admin(p_ptr)) {
 		msg_print(Ind, "Cannot inscribe shirts.");
+		return;
+	}
+	if (o_ptr->tval == TV_SEAL && !is_admin(p_ptr)) {
+		msg_print(Ind, "Cannot inscribe seals.");
 		return;
 	}
 

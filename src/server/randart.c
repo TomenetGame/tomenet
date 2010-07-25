@@ -148,7 +148,7 @@ static void do_curse (artifact_type *a_ptr)
  */
 #define AP_JEWELRY_COMBAT /* helps +dam/+hit/+ac rings/amulets a bit, causing those values to not factor in. - C. Blue */
 s32b artifact_power(artifact_type *a_ptr) {
-	object_kind 	*k_ptr = &k_info[lookup_kind(a_ptr->tval, a_ptr->sval)];
+	object_kind *k_ptr = &k_info[lookup_kind(a_ptr->tval, a_ptr->sval)];
 	s32b p = 0;
 	int immunities = 0, i, mult;
 
@@ -231,7 +231,10 @@ s32b artifact_power(artifact_type *a_ptr) {
 		    (a_ptr->tval != TV_DIGGING))
 			p += a_ptr->pval * 3;
 
-		p += (a_ptr->dd * a_ptr->ds + 1) / 2;
+		/* Instead of formerly base dd/ds, only increased dd/ds add to ap now.
+		   This is less penalizing on 2h-weapons, making it fairer - C. Blue */
+//		p += ((a_ptr->dd - k_ptr->dd + 1) * (a_ptr->ds - k_ptr->ds + 1) - 1) * 2;
+		p += (a_ptr->dd * (a_ptr->ds + 1) - k_ptr->dd * (k_ptr->ds + 1)) * 1;
 
 		/* Remember, weight is in 0.1 lb. units. */
 		if (a_ptr->weight != k_ptr->weight)
@@ -575,9 +578,10 @@ static void add_ability (artifact_type *a_ptr) {
 			} else if (r < 18) {
 				a_ptr->flags1 |= TR1_BRAND_COLD;
 				if (rand_int (4) > 0) a_ptr->flags2 |= TR2_RES_COLD;
+			} else if (r < 21) {
+				a_ptr->ds += 1 + rand_int(2) + rand_int(2);
 			} else if (r < 25) {
-				a_ptr->dd += 1 + rand_int (2) + rand_int (2);
-//				if (a_ptr->dd > 9) a_ptr->dd = 9; <- limit checks are done later.
+				a_ptr->dd += 1 + rand_int(2) + rand_int(2);
 			} else if (r < 27) {
 				a_ptr->flags1 |= TR1_KILL_DRAGON;
 				a_ptr->esp |= (ESP_DRAGON);
@@ -1253,10 +1257,11 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 
 /* -------------------------------------- pval-independant limits -------------------------------------- */
 
+#if 0
 	/* Don't exaggerate at weapon dice */ /* current base max 2*avg dam: m2h 6d8 54, s2h 6d5 35, 1h 2d9 20 */
 //	while (((a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds) > ((k_ptr->flags4 & TR4_MUST2H)?(75-15):(40-10)))
 //	while (((1+ a_ptr->dd) * (a_ptr->ds) > ((k_ptr->flags4 & TR4_MUST2H)?(75-15):(40-10)))
-	while (((a_ptr->dd) * (1+a_ptr->ds) >= ((k_ptr->flags4 & TR4_MUST2H)?55:((k_ptr->flags4 & TR4_SHOULD2H)?40:30)))
+	while (((a_ptr->dd) * (1 + a_ptr->ds) >= ((k_ptr->flags4 & TR4_MUST2H) ? 55 : ((k_ptr->flags4 & TR4_SHOULD2H) ? 40 : 30)))
 		&& (a_ptr->dd > 1))
 		a_ptr->dd -= 1; /* No overpowered randart */
 	/* fix lower limit (paranoia) */
@@ -1268,6 +1273,25 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 		if (a_ptr->dd > k_ptr->dd + 2) a_ptr->dd = k_ptr->dd + 2;
 	}
 	if (a_ptr->ds > k_ptr->ds + 2) a_ptr->ds = k_ptr->ds + 2;
+#else
+	/* Don't exaggerate at weapon dice (2h: 5d6, 6d8, 6d8, 11d4; 1.5h: 5d5, 6d3, 1h: 2d8/3d5 */
+	while ((a_ptr->dd * (a_ptr->ds + 1) >= ((k_ptr->flags4 & TR4_MUST2H) ? 55 : ((k_ptr->flags4 & TR4_SHOULD2H) ? 42 : 30)))
+//	    || ((k_ptr->flags4 & (TR4_MUST2H | TR4_SHOULD2H)) && a_ptr->dd * (a_ptr->ds + 1) >= (k_ptr->dd * (k_ptr->ds + 1)) << 1)
+	    ) {
+		if (a_ptr->dd >= a_ptr->ds || a_ptr->ds == k_ptr->ds) a_ptr->dd--;
+		else a_ptr->ds--;
+	}
+	/* fix lower limit (paranoia) */
+	if (a_ptr->dd < 1) a_ptr->dd = 1;
+	if (a_ptr->ds < 1) a_ptr->ds = 1;
+	/* Don't increase it too much, ie less than for 'of slaying' ego weapons */
+	if (k_ptr->dd >= 7) {
+		if (a_ptr->dd > k_ptr->dd + 3) a_ptr->dd = k_ptr->dd + 3;
+	} else {
+		if (a_ptr->dd > k_ptr->dd + 2) a_ptr->dd = k_ptr->dd + 2;
+	}
+	if (a_ptr->ds > k_ptr->ds + 2) a_ptr->ds = k_ptr->ds + 2;
+#endif
 
 	/* Never more than +6 +hit/+dam on gloves, +30 in general */
 	switch (a_ptr->tval) { /* CAP_ITEM_BONI */
@@ -1496,6 +1520,7 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 
 /* -------------------------------------- pval-independant limits -------------------------------------- */
 
+#if 0
 	/* Don't exaggerate at weapon dice */ /* current base max 2*avg dam: m2h 6d8 54, s2h 6d5 35, 1h 2d9 20 */
 //	while (((a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds) > ((k_ptr->flags4 & TR4_MUST2H)?(75-15):(40-10)))
 //	while (((1+ a_ptr->dd) * (a_ptr->ds) > ((k_ptr->flags4 & TR4_MUST2H)?(75-15):(40-10)))
@@ -1511,6 +1536,25 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 		if (a_ptr->dd > k_ptr->dd + 2) a_ptr->dd = k_ptr->dd + 2;
 	}
 	if (a_ptr->ds > k_ptr->ds + 2) a_ptr->ds = k_ptr->ds + 2;
+#else
+	/* Don't exaggerate at weapon dice (2h: 5d6, 6d8, 6d8, 11d4; 1.5h: 5d5, 6d3, 1h: 2d8/3d5 */
+	while ((a_ptr->dd * (a_ptr->ds + 1) >= ((k_ptr->flags4 & TR4_MUST2H) ? 55 : ((k_ptr->flags4 & TR4_SHOULD2H) ? 42 : 30)))
+//	    || ((k_ptr->flags4 & (TR4_MUST2H | TR4_SHOULD2H)) && a_ptr->dd * (a_ptr->ds + 1) >= (k_ptr->dd * (k_ptr->ds + 1)) << 1)
+	    ) {
+		if (a_ptr->dd >= a_ptr->ds || a_ptr->ds == k_ptr->ds) a_ptr->dd--;
+		else a_ptr->ds--;
+	}
+	/* fix lower limit (paranoia) */
+	if (a_ptr->dd < 1) a_ptr->dd = 1;
+	if (a_ptr->ds < 1) a_ptr->ds = 1;
+	/* Don't increase it too much, ie less than for 'of slaying' ego weapons */
+	if (k_ptr->dd >= 7) {
+		if (a_ptr->dd > k_ptr->dd + 3) a_ptr->dd = k_ptr->dd + 3;
+	} else {
+		if (a_ptr->dd > k_ptr->dd + 2) a_ptr->dd = k_ptr->dd + 2;
+	}
+	if (a_ptr->ds > k_ptr->ds + 2) a_ptr->ds = k_ptr->ds + 2;
+#endif
 
 	/* Never more than +6 +hit/+dam on gloves, +30 in general */
 	switch (a_ptr->tval) { /* CAP_ITEM_BONI */
@@ -1796,8 +1840,7 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
  * o_ptr should contain the seed (in name3) plus a tval
  * and sval. It returns NULL on illegal sval and tvals.
  */
-artifact_type *randart_make(object_type *o_ptr)
-{
+artifact_type *randart_make(object_type *o_ptr) {
 	/*u32b activates;*/
 	s32b power;
 	int tries, quality_boost = 0;
@@ -1828,8 +1871,7 @@ artifact_type *randart_make(object_type *o_ptr)
 //	    (k_ptr->tval != TV_DIGGING) &&	 /* better ban it? */
 //	    (k_ptr->tval != TV_TOOL) &&
 //	    (k_ptr->tval != TV_INSTRUMENT) &&
-	    (k_ptr->tval != TV_SEAL)) /* <- forgot this one, else panic save if randart becomes seal, since a_ptr becomes NULL! - C. Blue */
-	{
+	    (k_ptr->tval != TV_SEAL)) { /* <- forgot this one, else panic save if randart becomes seal, since a_ptr becomes NULL! - C. Blue */
 		/* Not an allowed type */
 		return(NULL);
 	}

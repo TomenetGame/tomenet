@@ -3351,12 +3351,10 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 #endif
 		/* Page all dungeon masters to notify them of a possible Morgoth-fight >:) - C. Blue */
 		if (watch_morgoth)
-		for (Ind = 1; Ind <= NumPlayers; Ind++)
-		{
-			if (Players[Ind]->conn == NOT_CONNECTED)
-				continue;
-			if (Players[Ind]->admin_dm && !(Players[Ind]->afk && !streq(Players[Ind]->afk_msg, "watch"))) Players[Ind]->paging = 4;
-		}
+			for (Ind = 1; Ind <= NumPlayers; Ind++) {
+				if (Players[Ind]->conn == NOT_CONNECTED) continue;
+				if (Players[Ind]->admin_dm && !(Players[Ind]->afk && !streq(Players[Ind]->afk_msg, "watch"))) Players[Ind]->paging = 4;
+			}
 		/* if it was a live spawn, adjust his power according to amount of players on his floor */
 		if (!cave_set_quietly) check_Morgoth();
 	}

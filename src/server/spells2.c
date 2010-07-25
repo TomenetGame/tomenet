@@ -1820,22 +1820,6 @@ void self_knowledge(int Ind)
 
 
 		/* Special "slay" flags */
-		if (f1 & TR1_SLAY_ANIMAL)
-		{
-			fprintf(fff, "Your weapon strikes at animals with extra force.\n");
-		}
-		if (f1 & TR1_SLAY_EVIL)
-		{
-			fprintf(fff, "Your weapon strikes at evil with extra force.\n");
-		}
-		if (f1 & TR1_SLAY_UNDEAD)
-		{
-			fprintf(fff, "Your weapon strikes at undead with holy wrath.\n");
-		}
-		if (f1 & TR1_SLAY_DEMON)
-		{
-			fprintf(fff, "Your weapon strikes at demons with holy wrath.\n");
-		}
 		if (f1 & TR1_SLAY_ORC)
 		{
 			fprintf(fff, "Your weapon is especially deadly against orcs.\n");
@@ -1848,23 +1832,37 @@ void self_knowledge(int Ind)
 		{
 			fprintf(fff, "Your weapon is especially deadly against giants.\n");
 		}
-		if (f1 & TR1_SLAY_DRAGON)
+		if (f1 & TR1_SLAY_ANIMAL)
 		{
-			fprintf(fff, "Your weapon is especially deadly against dragons.\n");
+			fprintf(fff, "Your weapon strikes at animals with extra force.\n");
 		}
-
-		/* Special "kill" flags */
-		if (f1 & TR1_KILL_DRAGON)
+		if (f1 & TR1_KILL_UNDEAD)
 		{
-			fprintf(fff, "Your weapon is a great bane of dragons.\n");
+			fprintf(fff, "Your weapon is a great bane of undead.\n");
+		}
+		else if (f1 & TR1_SLAY_UNDEAD)
+		{
+			fprintf(fff, "Your weapon strikes at undead with holy wrath.\n");
 		}
 		if (f1 & TR1_KILL_DEMON)
 		{
 			fprintf(fff, "Your weapon is a great bane of demons.\n");
 		}
-		if (f1 & TR1_KILL_UNDEAD)
+		else if (f1 & TR1_SLAY_DEMON)
 		{
-			fprintf(fff, "Your weapon is a great bane of undead.\n");
+			fprintf(fff, "Your weapon strikes at demons with holy wrath.\n");
+		}
+		if (f1 & TR1_KILL_DRAGON)
+		{
+			fprintf(fff, "Your weapon is a great bane of dragons.\n");
+		}
+		else if (f1 & TR1_SLAY_DRAGON)
+		{
+			fprintf(fff, "Your weapon is especially deadly against dragons.\n");
+		}
+		if (f1 & TR1_SLAY_EVIL)
+		{
+			fprintf(fff, "Your weapon strikes at evil with extra force.\n");
 		}
 	}
 //	info[i]=NULL;
@@ -2468,21 +2466,13 @@ void self_knowledge(int Ind)
 
 
 		/* Special "slay" flags */
-		if (f1 & TR1_SLAY_ANIMAL)
-		{
-			info[i++] = "Your weapon strikes at animals with extra force.";
-		}
 		if (f1 & TR1_SLAY_EVIL)
 		{
 			info[i++] = "Your weapon strikes at evil with extra force.";
 		}
-		if (f1 & TR1_SLAY_UNDEAD)
+		if (f1 & TR1_SLAY_ANIMAL)
 		{
-			info[i++] = "Your weapon strikes at undead with holy wrath.";
-		}
-		if (f1 & TR1_SLAY_DEMON)
-		{
-			info[i++] = "Your weapon strikes at demons with holy wrath.";
+			info[i++] = "Your weapon strikes at animals with extra force.";
 		}
 		if (f1 & TR1_SLAY_ORC)
 		{
@@ -2495,6 +2485,14 @@ void self_knowledge(int Ind)
 		if (f1 & TR1_SLAY_GIANT)
 		{
 			info[i++] = "Your weapon is especially deadly against giants.";
+		}
+		if (f1 & TR1_SLAY_UNDEAD)
+		{
+			info[i++] = "Your weapon strikes at undead with holy wrath.";
+		}
+		if (f1 & TR1_SLAY_DEMON)
+		{
+			info[i++] = "Your weapon strikes at demons with holy wrath.";
 		}
 		if (f1 & TR1_SLAY_DRAGON)
 		{
@@ -4154,7 +4152,8 @@ bool create_artifact_aux(int Ind, int item)
 		if ((make_resf(p_ptr) & RESF_LIFE) || !(a_ptr->flags1 & TR1_LIFE)) break;
 	}
 
-	/* apply magic (which resets owner) and restore ownership again */
+	/* apply magic (which resets owner) and manually restore ownership again afterwards;
+	   apply_magic() is used to set level requirements, and copy the a_ptr to o_ptr. */
 	apply_magic(&p_ptr->wpos, o_ptr, 50, FALSE, FALSE, FALSE, FALSE, FALSE);
 	o_ptr->owner = old_owner;
 

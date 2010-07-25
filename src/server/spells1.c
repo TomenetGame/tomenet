@@ -7014,13 +7014,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 							m_ptr->blow[i].d_side -= 1;
 					}
 				}
-										
+				
 				if ((m_ptr->org_ac - m_ptr->ac < m_ptr->org_ac / 2) && (m_ptr->org_ac - m_ptr->ac < 30)) {
 						if (m_ptr->ac) m_ptr->ac -= 1;
 						if (m_ptr->ac) m_ptr->ac -= 1;
 						if (m_ptr->ac) m_ptr->ac -= 1;
 				}
-													
+				
 				if ((m_ptr->org_maxhp - m_ptr->maxhp < m_ptr->org_maxhp / 2) && (m_ptr->org_maxhp - m_ptr->maxhp < 20)) {
 						if (m_ptr->hp > 50) m_ptr->hp -= 10;
 						if (m_ptr->hp > 30) m_ptr->hp -= 6;
@@ -7028,19 +7028,18 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 						if (m_ptr->hp > 1) m_ptr->hp -= 1;
 						if (m_ptr->maxhp < m_ptr->hp) m_ptr->hp = m_ptr->maxhp;
 				}
-			}														
+			}
 			dam = 0;
 			quiet = TRUE;
 			break;
 
 		/* Give experience! (dam -> +levels) */
 		case GF_EXP:
-			if (m_ptr->level < MONSTER_LEVEL_MAX)
-			{
-					msg_print_near_monster(c_ptr->m_idx, "appears more experienced");
+			if (m_ptr->level < MONSTER_LEVEL_MAX) {
+				msg_print_near_monster(c_ptr->m_idx, "appears more experienced");
 				if (dam < 1) dam = 1;
-					m_ptr->exp = MONSTER_EXP(m_ptr->level + dam);
-					monster_check_experience(c_ptr->m_idx, FALSE);
+				m_ptr->exp = MONSTER_EXP(m_ptr->level + dam);
+				monster_check_experience(c_ptr->m_idx, FALSE);
 			}
 			dam = 0;
 			quiet = TRUE;
@@ -7048,12 +7047,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			
 		/* Default */
 		default:
-		{
 			/* No damage */
 			dam = 0;
 			quiet_dam = TRUE;
 			break;
-		}
 	}
 
 
@@ -7068,8 +7065,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 
 	/* "Unique" monsters can only be "killed" by the player */
-	if (r_ptr->flags1 & RF1_UNIQUE)
-	{
+	if (r_ptr->flags1 & RF1_UNIQUE) {
 		/* Uniques may only be killed by the player */
 		if ((who > 0) && (dam > m_ptr->hp)) dam = m_ptr->hp;
 	}
@@ -7078,15 +7074,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Check for death */
 	if ((dam > m_ptr->hp) &&
 	    /* Some mosnters are immune to death */
-	    !(r_ptr->flags7 & RF7_NO_DEATH))
-	{
+	    !(r_ptr->flags7 & RF7_NO_DEATH)) {
 		/* Extract method of death */
 		note = note_dies;
 	}
 
 	/* Mega-Hack -- Handle "polymorph" -- monsters get a saving throw */
-	if (do_poly && (randint(90) > r_ptr->level))
-	{
+	if (do_poly && (randint(90) > r_ptr->level)) {
 		/* Default -- assume no polymorph */
 		note = " is unaffected!";
 
@@ -7094,8 +7088,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		i = poly_r_idx(m_ptr->r_idx);
 
 		/* Handle polymorh */
-		if (i != m_ptr->r_idx)
-		{
+		if (i != m_ptr->r_idx) {
 			int clone, clone_summoning;
 
 			/* Obvious */
@@ -7119,7 +7112,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			(void)place_monster_aux(wpos, y, x, i, FALSE, FALSE, clone, clone_summoning);
 
 			/* XXX XXX XXX Hack -- Assume success */
-			if(!quiet && c_ptr->m_idx==0){
+			if(!quiet && c_ptr->m_idx == 0) {
 				msg_format(Ind, "%^s disappears!", m_name);
 				return(FALSE);
 			}
@@ -7128,14 +7121,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			m_ptr = &m_list[c_ptr->m_idx];
 
 			/* Hack -- Get new race */
-						r_ptr = race_inf(m_ptr);
+			r_ptr = race_inf(m_ptr);
 		}
 	}
 
 	/* Handle "teleport" */
-	if (do_dist)
-	{
-			/* Obvious */
+	if (do_dist) {
+		/* Obvious */
 		if (seen) obvious = TRUE;
 
 		/* Message */
@@ -7158,20 +7150,16 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	    !(r_ptr->flags4 & RF4_BR_SOUN) &&
 	    !(r_ptr->flags4 & RF4_BR_PLAS) &&
 	    !(r_ptr->flags4 & RF4_BR_WALL) &&
-	    !(r_ptr->flags3 & RF3_NO_STUN))
-	{
+	    !(r_ptr->flags3 & RF3_NO_STUN)) {
 		/* Obvious */
 		if (seen) obvious = TRUE;
 
 #if 0
 		/* Get stunned */
-		if (m_ptr->stunned)
-		{
+		if (m_ptr->stunned) {
 			note = " is more dazed.";
 			i = m_ptr->stunned + (do_stun / 2);
-		}
-		else
-		{
+		} else {
 			note = " is dazed.";
 			i = do_stun;
 		}
@@ -7197,24 +7185,21 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Confusion and Chaos breathers (and sleepers) never confuse */
 	if (do_conf &&
-			 !(r_ptr->flags3 & RF3_NO_CONF) &&
-			 !(r_ptr->flags4 & RF4_BR_CONF) &&
-			 !(r_ptr->flags4 & RF4_BR_CHAO) &&
-		 !(r_ptr->flags9 & RF9_RES_CHAOS))
-	{
+	    !(r_ptr->flags3 & RF3_NO_CONF) &&
+	    !(r_ptr->flags4 & RF4_BR_CONF) &&
+	    !(r_ptr->flags4 & RF4_BR_CHAO) &&
+	    !(r_ptr->flags9 & RF9_RES_CHAOS)) {
 		/* Obvious */
 		if (seen) obvious = TRUE;
 
 		/* Already partially confused */
-		if (m_ptr->confused)
-		{
+		if (m_ptr->confused) {
 			note = " looks more confused.";
 			i = m_ptr->confused + (do_conf / 2);
 		}
 
 		/* Was not confused */
-		else
-		{
+		else {
 			note = " looks confused.";
 			i = do_conf;
 		}
@@ -7271,8 +7256,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	}
 
 	/* Fear */
-	if (do_fear)
-	{
+	if (do_fear) {
 		/* Increase fear */
 		i = m_ptr->monfear + do_fear;
 
@@ -7282,8 +7266,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 
 	/* If another monster did the damage, hurt the monster by hand */
-	if (who > 0 || who <= PROJECTOR_UNUSUAL)
-	{
+	if (who > 0 || who <= PROJECTOR_UNUSUAL) {
 		/* Redraw (later) if needed */
 		update_health(c_ptr->m_idx);
 
@@ -7297,8 +7280,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		m_ptr->hp -= dam;
 
 		/* Dead monster */
-		if (m_ptr->hp < 0)
-		{
+		if (m_ptr->hp < 0) {
+			/* Since a non-player killed it, there will be no reward/loot */
+			if (r_ptr->flags1 & RF1_UNIQUE) m_ptr->clone = 90; /* still allow some experience to be gained */
+			else m_ptr->clone = 75;
+
 			/* Generate treasure, etc */
 			if (!quiet) monster_death(Ind, c_ptr->m_idx);
 
@@ -7308,16 +7294,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			/* Give detailed messages if destroyed */
 			/* DEG Death message with damage. */
 			if ((r_ptr->flags1 & RF1_UNIQUE) && (!quiet && note))
-			{
 				msg_format(Ind, "%^s%s by \377e%d \377wdamage.", m_name, note, dam);
-			}	
-			else	
-			if (!quiet && note) msg_format(Ind, "%^s%s by \377g%d \377wdamage.", m_name, note, dam);
+			else if (!quiet && note)
+				msg_format(Ind, "%^s%s by \377g%d \377wdamage.", m_name, note, dam);
 		}
 
 		/* Damaged monster */
-		else
-		{
+		else {
 			/* Give detailed messages if visible or destroyed */
 			if (!quiet && note && seen) msg_format(Ind, "%^s%s", m_name, note);
 
@@ -7330,8 +7313,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	}
 
 	/* If the player did it, give him experience, check fear */
-	else
-	{
+	else {
 		bool fear = FALSE;
 
 		if (p_ptr->admin_godly_strike) {

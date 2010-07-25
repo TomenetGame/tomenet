@@ -935,3 +935,6 @@ astar_list_closed astar_info_closed[ASTAR_MAX_INSTANCES];
    (such as fire_ball()) will cause LUA errors. - C. Blue */
 char audio_sfx[SOUND_MAX_2010][30];
 #endif
+
+/* nserver.c players' connection array */
+//connection_t **Conn = NULL;

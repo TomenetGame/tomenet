@@ -2327,8 +2327,7 @@ static void process_player_begin(int Ind)
 	case AT_TPORT: teleport_player_force(Ind, 100); p_ptr->auto_transport = 0; break;
 	case AT_VALINOR: /* allocate Valinor; recall player there */
 #if 0
-		if (players_on_depth(wpos) && !getcave(wpos))
-		{
+		if (players_on_depth(wpos) && !getcave(wpos)) {
 		    	/* Allocate space for it */
 			alloc_dungeon_level(wpos);
 			/* Generate a dungeon level there */
@@ -2363,7 +2362,7 @@ static void process_player_begin(int Ind)
 		break;
 #endif
 	case AT_VALINOR2: /* (re-)generate Valinor from scratch; move player into position; lite it up for the show; place 'monsters' */
-	        zcave=getcave(&p_ptr->wpos);
+	        zcave = getcave(&p_ptr->wpos);
                 l_ptr = getfloor(&p_ptr->wpos);
 		/* Get rid of annoying level flags */
 		l_ptr->flags1 &= ~(LF1_NO_MAP | LF1_NO_MAGIC_MAP);
@@ -2539,10 +2538,10 @@ static void apply_effect(int Ind)
 /* admin can summon a player anywhere he/she wants */
 void summon_player(int victim, struct worldpos *wpos, char *message){
 	struct player_type *p_ptr;
-	p_ptr=Players[victim];
-	p_ptr->recall_pos.wx=wpos->wx;
-	p_ptr->recall_pos.wy=wpos->wy;
-	p_ptr->recall_pos.wz=wpos->wz;
+	p_ptr = Players[victim];
+	p_ptr->recall_pos.wx = wpos->wx;
+	p_ptr->recall_pos.wy = wpos->wy;
+	p_ptr->recall_pos.wz = wpos->wz;
 	recall_player(victim, message);
 }
 #endif
@@ -2574,6 +2573,25 @@ void recall_player(int Ind, char *message){
 	/* Forget his lite and view */
 	forget_lite(Ind);
 	forget_view(Ind);
+
+#if 1 //todo: fix again after it broke: actually this code should instead have been done already in process_player_change_wpos() or related functions >.>
+	/* sanity check on recall coordinates */
+	if (p_ptr->recall_pos.wx < 0) p_ptr->recall_pos.wx = 0;
+	if (p_ptr->recall_pos.wx > 63) p_ptr->recall_pos.wx = 63;
+	if (p_ptr->recall_pos.wy < 0) p_ptr->recall_pos.wy = 0;
+	if (p_ptr->recall_pos.wy > 63) p_ptr->recall_pos.wy = 63;
+	if (p_ptr->recall_pos.wz < 0) {
+		if (wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx].dungeon) {
+			if (-p_ptr->recall_pos.wz > wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx].dungeon->maxdepth)
+				p_ptr->recall_pos.wz = -wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx].dungeon->maxdepth;
+		} else p_ptr->recall_pos.wz = 0;
+	} else if (p_ptr->recall_pos.wz > 0) {
+		if (wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx].tower) {
+			if (p_ptr->recall_pos.wz > wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx].tower->maxdepth)
+				p_ptr->recall_pos.wz = wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx].tower->maxdepth;
+		} else p_ptr->recall_pos.wz = 0;
+	}
+#endif
 
 	/* Change the wpos */
 	wpcopy(&old_wpos, &p_ptr->wpos);
@@ -2630,10 +2648,9 @@ static void do_recall(int Ind, bool bypass)
 
 	/* Determine the level */
 	/* recalling to surface */
-	if(p_ptr->wpos.wz && !bypass)
-	{
+	if(p_ptr->wpos.wz && !bypass) {
 		struct dungeon_type *d_ptr;
-		d_ptr=getdungeon(&p_ptr->wpos);
+		d_ptr = getdungeon(&p_ptr->wpos);
 
 		/* Messages */
 		if((((d_ptr->flags2 & DF2_IRON || d_ptr->flags1 & DF1_FORCE_DOWN) && d_ptr->maxdepth>ABS(p_ptr->wpos.wz)) ||
@@ -2647,8 +2664,7 @@ static void do_recall(int Ind, bool bypass)
 		}
 		if (recall_ok) {
 	                msg_format(Ind, "\377uYou are transported out of %s..", d_name + d_info[d_ptr->type].name);
-			if(p_ptr->wpos.wz > 0)
-			{
+			if(p_ptr->wpos.wz > 0) {
 				message="You feel yourself yanked downwards!";
 				msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
 			}
@@ -2689,8 +2705,7 @@ static void do_recall(int Ind, bool bypass)
 #ifdef RECALL_MAX_RANGE
 		dis = distance(p_ptr->recall_pos.wy, p_ptr->recall_pos.wx,
 				p_ptr->wpos.wy, p_ptr->wpos.wx);
-		if (dis > RECALL_MAX_RANGE && !is_admin(p_ptr))
-		{
+		if (dis > RECALL_MAX_RANGE && !is_admin(p_ptr)) {
 			new_pos.wx = p_ptr->wpos.wx + (p_ptr->recall_pos.wx - p_ptr->wpos.wx) * RECALL_MAX_RANGE / dis;
 			new_pos.wy = p_ptr->wpos.wy + (p_ptr->recall_pos.wy - p_ptr->wpos.wy) * RECALL_MAX_RANGE / dis;
 		}
@@ -2718,8 +2733,7 @@ static void do_recall(int Ind, bool bypass)
 		wilderness_type *w_ptr = &wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx];
 //		wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
 		/* Messages */
-		if(p_ptr->recall_pos.wz < 0 && w_ptr->flags & WILD_F_DOWN)
-		{
+		if(p_ptr->recall_pos.wz < 0 && w_ptr->flags & WILD_F_DOWN) {
 			dungeon_type *d_ptr=wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx].dungeon;
 
 			//if(d_ptr->baselevel-p_ptr->max_dlv>2){
@@ -2752,19 +2766,15 @@ static void do_recall(int Ind, bool bypass)
 			if(p_ptr->inval && -p_ptr->recall_pos.wz > 10)
 				p_ptr->recall_pos.wz = -10;
 
-			if (p_ptr->recall_pos.wz >= 0)
-			{
+			if (p_ptr->recall_pos.wz >= 0) {
 				p_ptr->recall_pos.wz = 0;
-			}
-			else
-			{
+			} else {
 				message="You feel yourself yanked downwards!";
 		                msg_format(Ind, "\377uYou are transported into %s..", d_name + d_info[d_ptr->type].name);
 				msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
 			}
 		}
-		else if(p_ptr->recall_pos.wz > 0 && w_ptr->flags & WILD_F_UP)
-		{
+		else if(p_ptr->recall_pos.wz > 0 && w_ptr->flags & WILD_F_UP) {
 			dungeon_type *d_ptr=wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx].tower;
 
 			//if(d_ptr->baselevel-p_ptr->max_dlv>2){
@@ -2797,19 +2807,14 @@ static void do_recall(int Ind, bool bypass)
 			if(p_ptr->inval && -p_ptr->recall_pos.wz > 10)
 				p_ptr->recall_pos.wz = 10;
 
-			if (p_ptr->recall_pos.wz <= 0)
-			{
+			if (p_ptr->recall_pos.wz <= 0) {
 				p_ptr->recall_pos.wz = 0;
-			}
-			else
-			{
-				message="You feel yourself yanked upwards!";
+			} else {
+				message = "You feel yourself yanked upwards!";
 		                msg_format(Ind, "\377uYou are transported into %s..", d_name + d_info[d_ptr->type].name);
 				msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
 			}
-		}
-		else
-		{
+		} else {
 			p_ptr->recall_pos.wz = 0;
 		}
 
@@ -2824,22 +2829,18 @@ static void do_recall(int Ind, bool bypass)
 		new_pos.wx = p_ptr->recall_pos.wx;
 		new_pos.wy = p_ptr->recall_pos.wy;
 		new_pos.wz = p_ptr->recall_pos.wz;
-		if (p_ptr->recall_pos.wz == 0)
-		{
-			message="You feel yourself yanked toward nowhere...";
+		if (p_ptr->recall_pos.wz == 0) {
+			message = "You feel yourself yanked toward nowhere...";
 			p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 		}
 		else p_ptr->new_level_method = LEVEL_RAND;
-	}
-	else
-	{
+	} else {
 		/* new_pos isn't set so recalling shouldn't be allowed - mikaelh */
 		recall_ok = FALSE;
 		p_ptr->redraw |= (PR_DEPTH);
 	}
 
-	if(recall_ok)
-	{
+	if(recall_ok) {
 		/* back into here */
 		wpcopy(&p_ptr->recall_pos, &new_pos);
 		recall_player(Ind, message);
@@ -5361,7 +5362,7 @@ int find_player_name(char *name)
 static void process_player_change_wpos(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	worldpos *wpos=&p_ptr->wpos;
+	worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 	//worldpos twpos;
 	dun_level *l_ptr;
@@ -5461,10 +5462,8 @@ static void process_player_change_wpos(int Ind)
 	l_ptr = getfloor(wpos);
 
 	/* Clear the "marked" and "lit" flags for each cave grid */
-	for (y = 0; y < MAX_HGT; y++)
-	{
-		for (x = 0; x < MAX_WID; x++)
-		{
+	for (y = 0; y < MAX_HGT; y++) {
+		for (x = 0; x < MAX_WID; x++) {
 			p_ptr->cave_flag[y][x] = 0;
 		}
 	}
@@ -5574,8 +5573,7 @@ static void process_player_change_wpos(int Ind)
 	case LEVEL_OUTSIDE_RAND:
 		/* make sure we aren't in an "icky" location */
 		emergency_x = 0; emergency_y = 0; tries = 0;
-		do
-		{
+		do {
 			starty = rand_int((l_ptr ? l_ptr->hgt : MAX_HGT)-3)+1;
 			startx = rand_int((l_ptr ? l_ptr->wid : MAX_WID)-3)+1;
 			if (cave_floor_bold(zcave, starty, startx)) {
@@ -5734,7 +5732,7 @@ static void process_player_change_wpos(int Ind)
 			everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
 		}
 		wpcopy(&m_ptr->wpos,wpos);
-		mcave=getcave(&m_ptr->wpos);
+		mcave = getcave(&m_ptr->wpos);
 		m_ptr->fx = mx;
 		m_ptr->fy = my;
 		if(mcave)
@@ -5747,8 +5745,7 @@ static void process_player_change_wpos(int Ind)
 		update_mon(m_fast[m_idx], TRUE);
 	}
 #if 0
-	while (TRUE)
-	{
+	while (TRUE) {
 		y = rand_range(1, ((Depth) ? (MAX_HGT - 2) : (SCREEN_HGT - 2)));
 		x = rand_range(1, ((Depth) ? (MAX_WID - 2) : (SCREEN_WID - 2)));
 
@@ -5784,10 +5781,8 @@ static void process_player_change_wpos(int Ind)
 	update_monsters(TRUE);
 
 	/* Tell him that he should beware */
-	if (wpos->wz == 0 && !istown(wpos))
-	{
-		if (wild_info[wpos->wy][wpos->wx].own)
-		{
+	if (wpos->wz == 0 && !istown(wpos)) {
+		if (wild_info[wpos->wy][wpos->wx].own) {
 			cptr p = lookup_player_name(wild_info[wpos->wy][wpos->wx].own);
 			if (p == NULL) p = "Someone";
 
@@ -6322,12 +6317,13 @@ void dungeon(void)
 				"\377GToday it is %s of the %s year of the third age.",
 				get_month_name(bst(DAY, turn), FALSE, FALSE), buf);
 
+#ifdef MUCHO_RUMOURS
 	        	/* the_sandman prints a rumour */
-		        if (NumPlayers)
-			{
+		        if (NumPlayers) {
 				msg_print(1, "Suddenly a thought comes to your mind:");
 				fortune(1, TRUE);
 			}
+#endif
 		}
 
 		for (i = 1; i < NumPlayers + 1; i++)

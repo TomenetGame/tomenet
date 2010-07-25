@@ -437,8 +437,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 }
 
 
-void check_Pumpkin(void)
-{
+void check_Pumpkin(void) {
 	int k, i, m_idx;
 	struct worldpos *wpos;
 	char msg[80];
@@ -449,17 +448,15 @@ void check_Pumpkin(void)
 	if (!season_halloween) return;
 
 	/* Process the monsters */
-	for (k = m_top - 1; k >= 0; k--)
-	{
+	for (k = m_top - 1; k >= 0; k--) {
 		/* Access the index */
 		m_idx = m_fast[k];
 		/* Access the monster */
 		m_ptr = &m_list[m_idx];
 		/* Excise "dead" monsters */
-		if (!m_ptr->r_idx)
-		{
+		if (!m_ptr->r_idx) {
 		        /* Excise the monster */
-	    		m_fast[k] = m_fast[--m_top];
+			m_fast[k] = m_fast[--m_top];
 		        /* Skip */
 		        continue;
 		}
@@ -468,8 +465,7 @@ void check_Pumpkin(void)
 		/* search for Great Pumpkins */
 		if (streq(r_name_get(m_ptr), "Great Pumpkin")) {
 			wpos = &m_ptr->wpos;
-			for (i = 1; i <= NumPlayers; i++)
-			{
+			for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
 				if (is_admin(p_ptr)) continue;
 				if (inarea(&p_ptr->wpos, wpos) &&
@@ -495,10 +491,10 @@ void check_Pumpkin(void)
 					s_printf("Great Pumpkin recalled player>40 %s\n", p_ptr->name);
 #endif
 					/* get him out of here */
-					p_ptr->new_level_method=(p_ptr->wpos.wz>0?LEVEL_RECALL_DOWN:LEVEL_RECALL_UP);
-					p_ptr->recall_pos.wx=p_ptr->wpos.wx;
-					p_ptr->recall_pos.wy=p_ptr->wpos.wy;
-					p_ptr->recall_pos.wz=0;
+					p_ptr->new_level_method = (p_ptr->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
+					p_ptr->recall_pos.wx = p_ptr->wpos.wx;
+					p_ptr->recall_pos.wy = p_ptr->wpos.wy;
+					p_ptr->recall_pos.wz = 0;
 //					p_ptr->word_recall=-666;/*HACK: avoid recall_player loops! */
 					recall_player(i, msg);
 				}
@@ -528,8 +524,7 @@ void check_Morgoth(void)
 	for each player who joins the depth */
 	
 	/* Process the monsters */
-	for (k = m_top - 1; k >= 0; k--)
-	{
+	for (k = m_top - 1; k >= 0; k--) {
 		/* Access the index */
 		m_idx = m_fast[k];
 		/* Access the monster */
@@ -568,10 +563,10 @@ if (season_halloween) {
 					s_printf("Great Pumpkin recalled player>40 %s\n", p_ptr->name);
 #endif
 					/* get him out of here */
-					p_ptr->new_level_method=(p_ptr->wpos.wz>0?LEVEL_RECALL_DOWN:LEVEL_RECALL_UP);
-					p_ptr->recall_pos.wx=p_ptr->wpos.wx;
-					p_ptr->recall_pos.wy=p_ptr->wpos.wy;
-					p_ptr->recall_pos.wz=0;
+					p_ptr->new_level_method = (p_ptr->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
+					p_ptr->recall_pos.wx = p_ptr->wpos.wx;
+					p_ptr->recall_pos.wy = p_ptr->wpos.wy;
+					p_ptr->recall_pos.wz = 0;
 //					p_ptr->word_recall=-666;/*HACK: avoid recall_player loops! */
 					recall_player(i, msg);
 				}
@@ -583,7 +578,7 @@ if (season_halloween) {
 		/* search for Morgy */
 		if (!streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness")) continue;
 		wpos = &m_ptr->wpos;
-		
+
 #if 0
 		/* log - done in place_monster_one now -C. Blue */
 		s_printf("Morgoth generated on %d\n", getlevel(wpos));
@@ -591,8 +586,7 @@ if (season_halloween) {
 
 		/* check if players are on his depth */
 		num_on_depth = 0;
-		for (i = 1; i <= NumPlayers; i++)
-		{
+		for (i = 1; i <= NumPlayers; i++) {
 			/* skip disconnected players */
 			if (Players[i]->conn == NOT_CONNECTED)
 		    		continue;
@@ -608,12 +602,10 @@ if (season_halloween) {
 
 		/* Page all dungeon masters to notify them of a possible Morgoth-fight >:) - C. Blue */
 		if (watch_morgoth)
-		for (i = 1; i <= NumPlayers; i++)
-		{
-		        if (Players[i]->conn == NOT_CONNECTED)
-	                        continue;
-	                if (Players[i]->admin_dm && !(Players[i]->afk && !streq(Players[i]->afk_msg, "watch"))) Players[i]->paging = 4;
-	        }
+			for (i = 1; i <= NumPlayers; i++) {
+				if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (Players[i]->admin_dm && !(Players[i]->afk && !streq(Players[i]->afk_msg, "watch"))) Players[i]->paging = 4;
+			}
 
 		/* save coordinates to redraw the spot after deletion later */
 		x = m_ptr->fx;
@@ -661,13 +653,10 @@ if (season_halloween) {
 //						p_ptr->word_recall = -666; /*HACK: avoid recall_player loops! */
 						recall_player(i, msg);
 //					}
-				}
-				else
-				{
+				} else {
 					/* tell a message to the player */
 					sprintf(msg, "\377sMorgoth, Lord of Darkness teleports to a different dungeon floor!");
-					for (i = 1; i <= NumPlayers; i++)
-					{
+					for (i = 1; i <= NumPlayers; i++) {
 						if (Players[i]->conn == NOT_CONNECTED)
 					    		continue;
 						/* Player on Morgy depth? */

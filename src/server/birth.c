@@ -1207,7 +1207,7 @@ static byte player_init[2][MAX_CLASS][5][3] =
 		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
 		{ TV_CLOAK, SV_CLOAK, 0 },
 		{ TV_SCROLL, SV_SCROLL_MAPPING, 0 },
-		{ TV_BOW, SV_SLING, 0 },
+		{ 255, 255, 0 },
 		{ 255, 255, 0 },
 	},
 
@@ -2338,7 +2338,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	/* Copy his name and connection info */
 	strcpy(p_ptr->name, name);
 	p_ptr->conn = conn;
-	
+
 	/* again ;( */
 	c_acc = GetAccount(accname, NULL, FALSE);
 	if (c_acc) {
@@ -2351,7 +2351,9 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		p_ptr->pvpexception = (c_acc->flags & ACC_PVP) ? 1 : (c_acc->flags & ACC_NOPVP) ? 2 : (c_acc->flags & ACC_ANOPVP) ? 3 : 0;
 		p_ptr->mutedchat = (c_acc->flags & ACC_VQUIET) ? 2 : (c_acc->flags & ACC_QUIET) ? 1 : 0;
 		acc_banned = (c_acc->flags & ACC_BANNED) ? TRUE : FALSE;
-		s_printf("(%s) ACC2:Player %s has flags %d\n", showtime(), accname, c_acc->flags);
+//		s_printf("(%s) ACC2:Player %s has flags %d\n", showtime(), accname, c_acc->flags);
+		s_printf("(%s) ACC2:Player %s has flags %d (%s)\n", showtime(), accname, c_acc->flags, get_conn_userhost(conn));
+//		s_printf("(%s) ACC2:Player %s has flags %d (%s@%s)\n", showtime(), accname, c_acc->flags, Conn[conn]->real, Conn[conn]->host);
 		KILL(c_acc, struct account);
 	}
 	/* handle banned player 2/2 */

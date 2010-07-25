@@ -1453,10 +1453,11 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 
 	/* Analyze the object */
-	switch (o_ptr->tval)
-	{
-			/* Some objects are easy to describe */
+	switch (o_ptr->tval) {
+		/* Some objects are easy to describe */
 		case TV_SEAL:
+			if (o_ptr->sval == SV_CUSTOM_OBJECT)
+				basenm = o_ptr->note ? quark_str(o_ptr->note) : "";
 		case TV_SKELETON:
 		case TV_BOTTLE:
 		case TV_JUNK:
@@ -1467,9 +1468,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
                 case TV_FIRESTONE:
                 case TV_INSTRUMENT:
                 case TV_TOOL:
-		{
 			break;
-		}
 
 
 			/* Missiles/ Bows/ Weapons */
@@ -1484,18 +1483,14 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
                 case TV_BOOMERANG:
                 case TV_AXE:
                 case TV_MSTAFF:
-		{
 			show_weapon = TRUE;
 			break;
-		}
 
-		/* Trapping Kits (not implemented yet) */
+		/* Trapping Kits */
 		case TV_TRAPKIT:
-		{
 			modstr = basenm;
 			basenm = "& # Trap Set~";
 			break;
-		}
 
 			/* Armour */
 		case TV_SHIELD:
@@ -1518,20 +1513,15 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 
                 case TV_GOLEM:
-		{
 			break;
-		}
 
 			/* Lites (including a few "Specials") */
 		case TV_LITE:
-		{
 			break;
-		}
 
 
 			/* Amulets (including a few "Specials") */
 		case TV_AMULET:
-		{
 			/* Known artifacts */
 //			if (artifact_p(o_ptr) && aware) break;
 			if (artifact_p(o_ptr) && known) break;
@@ -1547,12 +1537,10 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			else
 			basenm = "& # Amulet~";
 			break;
-		}
 
 
 			/* Rings (including a few "Specials") */
 		case TV_RING:
-		{
 			/* Known artifacts */
 //			if (artifact_p(o_ptr) && aware) break;
 			//if (artifact_p(o_ptr) && known && o_ptr->sval!=SV_RING_SPECIAL) break;
@@ -1572,7 +1560,6 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			if (!aware && (o_ptr->sval == SV_RING_POWER)) modstr = "Plain Gold";
 
 			break;
-		}
 
 
 		case TV_STAFF:
@@ -1733,12 +1720,11 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	t = buf;
 
 	/* The object "expects" a "number" */
-	if (basenm[0] == '&')
-	{
+	if (basenm[0] == '&') {
 		cptr ego = NULL;
 
 		/* Grab any ego-item name */
-		//                if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN))
+//		if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN))
 		if (known && (o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN) &&
 		    !(o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT))
 		{
@@ -1746,14 +1732,10 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			ego_item_type *e2_ptr = &e_info[o_ptr->name2b];
 
 			if (e_ptr->before)
-			{
 				ego = e_ptr->name + e_name;
-			}
 #if 1
 			else if (e2_ptr->before)
-			{
 				ego = e2_ptr->name + e_name;
-			}
 #endif	// 0
 
 		}
@@ -1874,21 +1856,21 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	}
 
 	/* Grab any ego-item name */
-	//                if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN))
+//	if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN))
 	if (known && (o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN) &&
-	    !(o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT))
+	    !(o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT)
+//	    && o_ptr->tval != TV_SEAL
+	    )
 	{
 		ego_item_type *e_ptr = &e_info[o_ptr->name2];
 		ego_item_type *e2_ptr = &e_info[o_ptr->name2b];
 
-		if (e_ptr->before)
-		{
+		if (e_ptr->before) {
 			t = object_desc_str(t, (e_name + e_ptr->name));
 			t = object_desc_chr(t, ' ');
 		}
 #if 1
-		if (e2_ptr->before)
-		{
+		if (e2_ptr->before) {
 			t = object_desc_str(t, (e_name + e2_ptr->name));
 			t = object_desc_chr(t, ' ');
 		}
@@ -1986,12 +1968,13 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 
 	/* Hack -- Append "Artifact" or "Special" names */
-	if (known)
-	{
+	if (known) {
 		/* Grab any ego-item name */
 //                if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN))
 		if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN) &&
-		    !(o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT))
+		    !(o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT)
+//		    && o_ptr->tval != TV_SEAL
+		    )
 		{
 			ego_item_type *e_ptr = &e_info[o_ptr->name2];
 			ego_item_type *e2_ptr = &e_info[o_ptr->name2b];
@@ -2047,8 +2030,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		/* -TM- Hack -- Add false-artifact names */
 		/* Dagger inscribed {@w0#of Smell} will be named
 		 * Dagger of Smell {@w0} */
-		if (o_ptr->note)
-		{
+		if (o_ptr->note && !(o_ptr->tval == TV_SEAL && o_ptr->sval == SV_CUSTOM_OBJECT)) {
 			cptr str = strchr(quark_str(o_ptr->note), '#');
 
 			/* Add the false name */
@@ -2607,7 +2589,7 @@ if (!(mode & 32)) {
 	tmp_val[0] = '\0';
 
 	/* Use the standard inscription if available */
-        if (o_ptr->note) {
+        if (o_ptr->note && !(o_ptr->tval == TV_SEAL && o_ptr->sval == SV_CUSTOM_OBJECT)) {
                 char *u = tmp_val;
 
 		strcpy(tmp_val, quark_str(o_ptr->note));
@@ -4707,14 +4689,6 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		fprintf(fff, "It is very sharp and makes your foes bleed.\n");
 	}
 
-	if (f1 & (TR1_KILL_DRAGON))
-	{
-		fprintf(fff, "It is a great bane of dragons.\n");
-	}
-	else if (f1 & (TR1_SLAY_DRAGON))
-	{
-		fprintf(fff, "It is especially deadly against dragons.\n");
-	}
 	if (f1 & (TR1_SLAY_ORC))
 	{
 		fprintf(fff, "It is especially deadly against orcs.\n");
@@ -4727,13 +4701,9 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	{
 		fprintf(fff, "It is especially deadly against giants.\n");
 	}
-	if (f1 & (TR1_KILL_DEMON))
+	if (f1 & (TR1_SLAY_ANIMAL))
 	{
-		fprintf(fff, "It is a great bane of demons.\n");
-	}
-	else if (f1 & (TR1_SLAY_DEMON))
-	{
-		fprintf(fff, "It strikes at demons with holy wrath.\n");
+		fprintf(fff, "It is especially deadly against natural creatures.\n");
 	}
 	if (f1 & (TR1_KILL_UNDEAD))
 	{
@@ -4743,13 +4713,25 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	{
 		fprintf(fff, "It strikes at undead with holy wrath.\n");
 	}
+	if (f1 & (TR1_KILL_DEMON))
+	{
+		fprintf(fff, "It is a great bane of demons.\n");
+	}
+	else if (f1 & (TR1_SLAY_DEMON))
+	{
+		fprintf(fff, "It strikes at demons with holy wrath.\n");
+	}
+	if (f1 & (TR1_KILL_DRAGON))
+	{
+		fprintf(fff, "It is a great bane of dragons.\n");
+	}
+	else if (f1 & (TR1_SLAY_DRAGON))
+	{
+		fprintf(fff, "It is especially deadly against dragons.\n");
+	}
 	if (f1 & (TR1_SLAY_EVIL))
 	{
 		fprintf(fff, "It fights against evil with holy fury.\n");
-	}
-	if (f1 & (TR1_SLAY_ANIMAL))
-	{
-		fprintf(fff, "It is especially deadly against natural creatures.\n");
 	}
 	if (f1 & (TR1_MANA))
 	{
@@ -5956,12 +5938,11 @@ byte get_book_name_color(int Ind, object_type *o_ptr)
 	}
 }
 
-byte get_tval_from_attr(object_type *o_ptr)
-{
+byte get_tval_from_attr(object_type *o_ptr) {
 	int attr = tval_to_attr[o_ptr->tval];
-        if (o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) {
-                if (!o_ptr->xtra1) o_ptr->xtra1 = attr;
-                attr = o_ptr->xtra1;
-        }
+	if (o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) {
+		if (!o_ptr->xtra1) o_ptr->xtra1 = attr;
+		attr = o_ptr->xtra1;
+	}
 	return(attr);
 }

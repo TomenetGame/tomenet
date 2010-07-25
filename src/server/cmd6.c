@@ -4040,7 +4040,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_print(Ind, "You launch a rocket!");
 			sprintf(p_ptr->attacker, " launches a rocket for");
-			fire_ball(Ind, GF_ROCKET, dir, 700 + (randint(100) + get_skill_scale(p_ptr, SKILL_DEVICE, 700)), 2, p_ptr->attacker);
+			fire_ball(Ind, GF_ROCKET, dir, 600 + (randint(100) + get_skill_scale(p_ptr, SKILL_DEVICE, 600)), 2, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
