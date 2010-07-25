@@ -633,6 +633,10 @@ void cmd_map(char mode)
 	/* Wait until we get the whole thing */
 	while (last_line_info < 23)
 	{
+		/* Hack - Get rid of the cursor - mikaelh */
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
+
 		/* Wait for net input, or a key */
 		ch = inkey();
 
