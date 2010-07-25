@@ -25,9 +25,9 @@ PROJECT_SPELLS = add_spell
 	["name"] = 	"Project Spells",
         ["school"] = 	{SCHOOL_META},
         ["level"] = 	10,
-        ["mana"] = 	10,
-        ["mana_max"] = 	50,
-        ["fail"] = 	10,
+        ["mana"] = 	0,
+        ["mana_max"] = 	0,
+        ["fail"] = 	-99,
         ["stat"] =      A_INT,
         ["spell"] = 	function()
                         if player.spell_project == 0 then

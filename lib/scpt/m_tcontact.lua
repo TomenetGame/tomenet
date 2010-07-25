@@ -105,7 +105,7 @@ MHASTE = add_spell
 	["level"] =     20,
 	["mana"] =      10,
 	["mana_max"] =  30,
-	["fail"] =      20,
+	["fail"] =      15,
 	["spell"] =     function()
 			local spd
 			spd = get_level(Ind, MHASTE, 25)
@@ -230,7 +230,7 @@ MTELEKINESIS = add_spell
         ["level"] = 	35,
         ["mana"] = 	25,
         ["mana_max"] = 	25,
-        ["fail"] =      20,
+        ["fail"] =      10,
         ["get_item"] =  {
                         ["prompt"] = 	"Teleport which object? ",
                         ["inven"] = 	TRUE,

@@ -191,9 +191,9 @@ STOPWRAITH = add_spell
 	["name"] = 	"Stop Wraithform",
 	["school"] = 	{SCHOOL_UDUN},
 	["level"] = 	20,
-	["mana"] = 	5,
-	["mana_max"] = 	10,
-	["fail"] = 	0,
+	["mana"] = 	0,
+	["mana_max"] = 	0,
+	["fail"] = 	-99,
 	["spell"] = 	function()
 			set_tim_wraith(Ind, 0)
 			if player.spell_project > 0 then

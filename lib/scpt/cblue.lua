@@ -1076,3 +1076,14 @@ function wrec(name, x, y)
     recall_player(i, "");
 end
 
+--recalls a player upwards
+function rec(name)
+    i = ind(name);
+    players(i).recall_pos.wx = players(i).wpos.wx;
+    players(i).recall_pos.wy = players(i).wpos.wy;
+    players(i).recall_pos.wz = 0;
+-- 7 = LEVEL_RECALL_UP, 8 = LEVEL_RECALL_DOWN
+    players(i).new_level_method = 7;
+    recall_player(i, "");
+end
+

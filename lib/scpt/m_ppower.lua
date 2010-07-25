@@ -77,7 +77,7 @@ MTELETOWARDS = add_spell
         ["level"] = 	24,
         ["mana"] = 	20,
         ["mana_max"] = 	30,
-        ["fail"] = 	25,
+        ["fail"] = 	10,
         ["spell"] = 	function()
 			do_autokinesis_to(Ind, 20 + get_level(Ind, MTELETOWARDS, 150))
 			end,
@@ -98,7 +98,7 @@ MTELEAWAY = add_spell
         ["level"] = 	30,
         ["mana"] = 	40,
         ["mana_max"] = 	50,
-        ["fail"] = 	30,
+        ["fail"] = 	10,
         ["direction"] = TRUE,
         ["spell"] = 	function(args)
                         fire_grid_bolt(Ind, GF_AWAY_ALL, args.dir, 40 + get_level(Ind, MTELEAWAY, 160), " teleports you away")
