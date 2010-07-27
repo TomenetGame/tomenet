@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 11. July 2010 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.5g - official websites are:
+| Latest update: 27. July 2010 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.5h - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 +---
@@ -7192,6 +7192,9 @@ Runemaster
     Runemasters are adept in some skills that are typical for rogues, although
     they lack their finesse.
     For more information about runes, see '(5.20) Runes & Runemastery'.
+    Note that runemasters don't need actual runes in their inventory to cast
+    rune spells. However, having the physical runes present increases the
+    chance to succeed greatly.
 
 Mindcrafter
     Mindcrafters are great melee fighters who additionally train the use of
