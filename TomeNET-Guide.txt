@@ -7214,6 +7214,9 @@ Mindcrafter
     psychic energy.
     Mindcrafters will learn to resist sanity-draining effects a bit at level
     10, and somewhat better even at level 20.
+    A lot of their spells can actually be cast while blind (or even confused),
+    and their targetted spells often do not require a clean line of fire, since
+    they manifest whereever their mind is focussed on (eg Psionic Blast).
     Some of the mindcrafter's spells that interact with friendly targets,
     mostly his team mates, will require those to prepare and open their mind
     to become especially sensitive to telepathic contact. This is done by
