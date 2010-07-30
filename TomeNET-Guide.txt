@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 27. July 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 30. July 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5h - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1198,6 +1198,10 @@ Morgoth, the god of destruction, has reinforced his surroundings to be
 especially devastating to all living beings:
 If you get killed on a level where Morgoth, Lord of Darkness walks, your
 ghost will be destroyed too, even if you are everlasting! Beware!
+
+If you team up against him, he will grow stronger for every additional player
+who enters his dungeon level. Growing stronger in fact means that he gains a
+hit point and speed bonus. If a player leaves his level, he will weaken again.
 
 A very dangerous thing about Nazgul is that weapons get quickly destroyed if
 they come in contact with these corrupted beings.
