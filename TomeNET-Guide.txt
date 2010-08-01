@@ -3955,7 +3955,7 @@ The dice of ammunition are also effected by brands and slays same as normal
 weapons but the additional damage is reduced to 2/5.
 Example: Ring of Acid will usually add 1x your melee base damage (dice).
 For ranged weapons it will add 1*2/5x of your base damage, so multiply your
-base damage by 1.4 instead of by 3 to get your total damage output.
+base damage by 1.4 instead of by 2 to get your total damage output.
 See (5.3) to get an easy overview.
 
 If you try to wield a ranged weapon that is too heavy for your character,
