@@ -601,11 +601,12 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 		else fprintf(fff,"\377bDungeon Wizard\377U ");
 		break; //Server Admin
 	default: fprintf(fff, "%s",
-		(q_ptr->total_winner)?
-		    ((q_ptr->mode & (MODE_HARD | MODE_NO_GHOST))?
-			((q_ptr->male)?"\377vEmperor\377U ":"\377vEmpress\377U "):
-		        ((q_ptr->male)?"\377vKing\377U ":"\377vQueen\377U ")):
-		((q_ptr->male)?"Male ":"Female ")); 
+		q_ptr->ghost ? "\377rGhost\377U " :
+		(q_ptr->total_winner ?
+		    ((q_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) ?
+			(q_ptr->male ? "\377vEmperor\377U " : "\377vEmpress\377U ") :
+		        (q_ptr->male ? "\377vKing\377U " : "\377vQueen\377U "))
+		: (q_ptr->male ? "Male " : "Female ")));
 		break;
 	}
 	
@@ -811,11 +812,12 @@ static void do_admin_woa(FILE *fff, player_type *q_ptr, bool modify, char attr)
 		else fprintf(fff,"\377bDW\377U ");
 		break; //Server Admin
 	default: fprintf(fff, "%s",
-		(q_ptr->total_winner)?
+		q_ptr->ghost ? "\377rGhost\377U " :
+		(q_ptr->total_winner ?
 		    ((q_ptr->mode & (MODE_HARD | MODE_NO_GHOST))?
-			((q_ptr->male)?"\377vEmperor\377U ":"\377vEmpress\377U "):
-		        ((q_ptr->male)?"\377vKing\377U ":"\377vQueen\377U ")):
-		((q_ptr->male)?"Male ":"Female ")); 
+			(q_ptr->male ? "\377vEmperor\377U " : "\377vEmpress\377U ") :
+		        (q_ptr->male ? "\377vKing\377U " : "\377vQueen\377U "))
+		: (q_ptr->male ? "Male " : "Female ")));
 		break;
 	}
 	

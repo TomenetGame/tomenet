@@ -3324,7 +3324,7 @@ cptr item_activation(object_type *o_ptr)
 				if (o_ptr->pval)
 					return format("polymorph into %s", r_info[o_ptr->pval].name + r_name);
 				else
-				return "memorize the form you are mimicing";
+					return "memorize the form you are mimicing";
 			default:
 				return NULL;
 		}
@@ -4044,10 +4044,9 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 	dam += (o_ptr->to_d + b_ptr->to_d) * 10;
 	dam *= tmul;
 	dam += (p_ptr->to_d_ranged) * 10;
-	dam *= mult;
+	dam *= FACTOR_MULT + ((mult - FACTOR_MULT) * 2) / 5;
 	dam /= FACTOR_MULT;
-	if (dam > 0)
-	{
+	if (dam > 0) {
 		if (dam % 10)
 			fprintf(fff, "    %ld.%ld", dam / 10, dam % 10);
 		else
@@ -4064,10 +4063,9 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 		dam += (o_ptr->to_d + b_ptr->to_d) * 10;
 		dam *= tmul;
 		dam += (p_ptr->to_d_ranged) * 10;
-		dam *= mult2;
+		dam *= FACTOR_MULT + ((mult2 - FACTOR_MULT) * 2) / 5;
 		dam /= FACTOR_MULT;
-		if (dam > 0)
-		{
+		if (dam > 0) {
 			if (dam % 10)
 				fprintf(fff, "    %ld.%ld", dam / 10, dam % 10);
 			else

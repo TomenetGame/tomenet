@@ -168,9 +168,8 @@ s16b critical_shot(int Ind, int weight, int plus, int dam)
 s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_crit, int o_crit)
 {
 	player_type *p_ptr = Players[Ind];
-
 	int i, k, w;
-	
+
 	/* Critical hits for rogues says 'with light swords'
 	in the skill description, which is logical since you
 	cannot maneuver a heavy weapon so that it pierces through
@@ -192,44 +191,28 @@ s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_cri
 	i = (w * 2) + ((p_ptr->to_h + plus) * 5) + get_skill_scale(p_ptr, SKILL_MASTERY, 150);
 #endif
         i += 50 * BOOST_CRIT(p_ptr->xtra_crit + o_crit);
-        if (allow_skill_crit)
-        {
-                i += get_skill_scale(p_ptr, SKILL_CRITS, 40 * 50);
-        }
+        if (allow_skill_crit) i += get_skill_scale(p_ptr, SKILL_CRITS, 40 * 50);
 
 	/* Chance */
-	if (randint(5000) <= i)
-	{
+	if (randint(5000) <= i) {
 		/* _If_ a critical hit is scored then it will deal
 		more damage if the weapon is heavier */
 		k = weight + randint(700) + 500 - (10000 / (BOOST_CRIT(p_ptr->xtra_crit + o_crit) + 20));
-                if (allow_skill_crit)
-                {
-                        k += randint(get_skill_scale(p_ptr, SKILL_CRITS, 900));
-                }
+                if (allow_skill_crit) k += randint(get_skill_scale(p_ptr, SKILL_CRITS, 900));
 
-		if (k < 400)
-		{
+		if (k < 400) {
 			msg_print(Ind, "It was a good hit!");
 			dam = ((4 * dam) / 3) + 5;
-		}
-		else if (k < 700)
-		{
+		} else if (k < 700) {
 			msg_print(Ind, "It was a great hit!");
 			dam = ((5 * dam) / 3) + 10;
-		}
-		else if (k < 900)
-		{
+		} else if (k < 900) {
 			msg_print(Ind, "It was a superb hit!");
 			dam = ((6 * dam) / 3) + 15;
-		}
-		else if (k < 1300)
-		{
+		} else if (k < 1300) {
 			msg_print(Ind, "It was a *GREAT* hit!");
 			dam = ((7 * dam) / 3) + 20;
-		}
-		else
-		{
+		} else {
 			msg_print(Ind, "It was a *SUPERB* hit!");
 			dam = ((8 * dam) / 3) + 25;
 		}

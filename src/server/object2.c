@@ -9994,11 +9994,13 @@ void auto_inscribe(int Ind, object_type *o_ptr, int flags)
 		return;
 
 	if (p_ptr->obj_aware[o_ptr->k_idx]) {
-		if ((o_ptr->tval == TV_SCROLL &&
-		    o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
-		    (o_ptr->tval == TV_ROD &&
-		    o_ptr->sval == SV_ROD_RECALL)) {
+		if (o_ptr->tval == TV_SCROLL &&
+		    o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) {
 			o_ptr->note = quark_add("@r3@R");
+			return;
+		} else if (o_ptr->tval == TV_ROD &&
+		    o_ptr->sval == SV_ROD_RECALL) {
+			o_ptr->note = quark_add("@z3@R");
 			return;
 		}
 		else if (o_ptr->tval == TV_SCROLL) {

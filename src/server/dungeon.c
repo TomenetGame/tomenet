@@ -5796,8 +5796,8 @@ static void process_player_change_wpos(int Ind)
 	/* warning messages, mostly for newbies */
 	if (p_ptr->max_plv == 1 &&
 	    p_ptr->num_blow == 1 && p_ptr->warning_bpr2 != 1 &&
-	    /* and don't spam Martial Arts users ;) */
-	    p_ptr->inventory[INVEN_WIELD].k_idx) {
+	    /* and don't spam Martial Arts users or mage-staff wielders ;) */
+	    p_ptr->inventory[INVEN_WIELD].k_idx && is_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
 		p_ptr->warning_bpr2 = p_ptr->warning_bpr3 = 1;
 		msg_print(Ind, "\374\377yWARNING! You can currently perform only ONE melee attack per round.");
 		msg_print(Ind, "\374\377y    If you rely on melee combat, it is strongly advised to try and");

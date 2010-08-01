@@ -2658,6 +2658,9 @@ int calc_blows_obj(int Ind, object_type *o_ptr)
 
 	int num = 0, wgt = 0, mul = 0, div = 0, num_blow = 0, str_adj, xblow = 0;
 
+	/* cap for Grond. Heaviest normal weapon is MoD at 40.0, which Grond originally was, too. - C. Blue */
+	if (eff_weight > 400) eff_weight = 400;
+
 	/* Weapons which can be wielded 2-handed are easier to swing
 	   than with one hand - experimental - C. Blue */
 	if ((!p_ptr->inventory[INVEN_ARM].k_idx || /* don't forget dual-wield.. weapon might be in the other hand! */
@@ -2667,10 +2670,9 @@ int calc_blows_obj(int Ind, object_type *o_ptr)
 //too easy!	eff_weight = (eff_weight * 1) / 2; /* get 2bpr with 18/30 str even with broad axe starting weapon */
 
 	/* Analyze the class */
-	switch (p_ptr->pclass)
-	{
+	switch (p_ptr->pclass) {
 							/* Adevnturer */
-		case CLASS_ADVENTURER: num = 4; wgt = 35; mul = 5; break;//wgt=35, but MA is too easy in comparison.
+		case CLASS_ADVENTURER: num = 4; wgt = 35; mul = 4; break;//wgt=35, but MA is too easy in comparison.
 //was num = 5; ; mul = 6
 							/* Warrior */
 		case CLASS_WARRIOR: num = 6; wgt = 30; mul = 5; break;
@@ -2688,7 +2690,7 @@ int calc_blows_obj(int Ind, object_type *o_ptr)
 		case CLASS_RUNEMASTER: num = 4; wgt = 30; mul = 4; break;//was wgt = 40
 							/* Mimic */
 //trying 5bpr	case CLASS_MIMIC: num = 4; wgt = 30; mul = 4; break;//mul3
-		case CLASS_MIMIC: num = 5; wgt = 35; mul = 4; break;//mul3
+		case CLASS_MIMIC: num = 5; wgt = 35; mul = 5; break;//mul3; mul4!
 
 							/* Archer */
 //		case CLASS_ARCHER: num = 3; wgt = 30; mul = 3; break;
@@ -2706,7 +2708,8 @@ int calc_blows_obj(int Ind, object_type *o_ptr)
 /* if he is to become a spellcaster, necro working on spell-kills:
 		case CLASS_SHAMAN: num = 2; wgt = 40; mul = 3; break;
     however, then Martial Arts would require massive nerfing too for this class (or being removed even).
-otherwise, let's compromise for now: */	case CLASS_SHAMAN: num = 4; wgt = 35; mul = 4; break;
+otherwise, let's compromise for now: */
+		case CLASS_SHAMAN: num = 4; wgt = 35; mul = 4; break;
 
 		case CLASS_MINDCRAFTER: num = 5; wgt = 35; mul = 4; break;//was 4,30,4
 
@@ -2716,10 +2719,9 @@ otherwise, let's compromise for now: */	case CLASS_SHAMAN: num = 4; wgt = 35; mu
 	/* Enforce a minimum "weight" (tenth pounds) */
 	div = ((eff_weight < wgt) ? wgt : eff_weight);
 
-
 	/* Access the strength vs weight */
 	str_adj = adj_str_blow[p_ptr->stat_ind[A_STR]];
-	if (str_adj == 240) str_adj = 266; /* hack to reach 6 bpr with 400 lb weapons (max) at *** STR - C. Blue */
+	if (str_adj == 240) str_adj = 426; /* hack to reach 6 bpr with 400 lb weapons (max) at *** STR - C. Blue */
 	str_index = ((str_adj * mul) / div);
 
 	/* Maximal value */
@@ -4000,8 +4002,7 @@ void calc_boni(int Ind)
 	}
 
 	/* Calculate stats */
-	for (i = 0; i < 6; i++)
-	{
+	for (i = 0; i < 6; i++) {
 		int top, use, ind;
 
 
@@ -4009,8 +4010,7 @@ void calc_boni(int Ind)
 		top = modify_stat_value(p_ptr->stat_max[i], p_ptr->stat_add[i]);
 
 		/* Notice changes */
-		if (p_ptr->stat_top[i] != top)
-		{
+		if (p_ptr->stat_top[i] != top) {
 			/* Save the new value */
 			p_ptr->stat_top[i] = top;
 
@@ -4026,8 +4026,7 @@ void calc_boni(int Ind)
 		use = modify_stat_value(p_ptr->stat_cur[i], p_ptr->stat_add[i]);
 
 		/* Notice changes */
-		if (p_ptr->stat_use[i] != use)
-		{
+		if (p_ptr->stat_use[i] != use) {
 			/* Save the new value */
 			p_ptr->stat_use[i] = use;
 
@@ -4043,34 +4042,22 @@ void calc_boni(int Ind)
 		if (use <= 18) ind = (use - 3);
 
 		/* Ranges: 18/00-18/09, ..., 18/210-18/219 */
-		else if (use <= 18+219) ind = (15 + (use - 18) / 10);
+		else if (use <= 18 + 219) ind = (15 + (use - 18) / 10);
 
 		/* Range: 18/220+ */
 		else ind = (37);
 
 		/* Notice changes */
-		if (p_ptr->stat_ind[i] != ind)
-		{
+		if (p_ptr->stat_ind[i] != ind) {
 			/* Save the new index */
 			p_ptr->stat_ind[i] = ind;
 
 			/* Change in CON affects Hitpoints */
-			if (i == A_CON)
-			{
-				p_ptr->update |= (PU_HP);
-			}
+			if (i == A_CON) p_ptr->update |= (PU_HP);
 
-			/* Change in INT may affect Mana/Spells */
-			else if (i == A_INT)
-			{
-                                p_ptr->update |= (PU_MANA);
-			}
-
-			/* Change in WIS may affect Mana/Spells */
-			else if (i == A_WIS)
-			{
-                                p_ptr->update |= (PU_MANA);
-			}
+			/* Changes that may affect Mana/Spells (dex for runemaster, chr for mindcrafter) */
+			else if (i == A_INT || i == A_WIS || i == A_DEX || i == A_CHR)
+				p_ptr->update |= (PU_MANA);
 
 			/* Window stuff */
 			p_ptr->window |= (PW_PLAYER);
@@ -4079,8 +4066,7 @@ void calc_boni(int Ind)
 
 
 	/* Apply temporary "stun" */
-	if (p_ptr->stun > 50)
-	{
+	if (p_ptr->stun > 50) {
 #if 0
 		p_ptr->to_h -= 20;
 		p_ptr->dis_to_h -= 20;
@@ -4092,9 +4078,7 @@ void calc_boni(int Ind)
 		p_ptr->to_d /= 2;
 		p_ptr->dis_to_d /= 2;
 #endif
-	}
-	else if (p_ptr->stun)
-	{
+	} else if (p_ptr->stun) {
 #if 0
 		p_ptr->to_h -= 5;
 		p_ptr->dis_to_h -= 5;
@@ -4110,8 +4094,7 @@ void calc_boni(int Ind)
 
 
         /* Adrenaline effects */
-        if (p_ptr->adrenaline)
-	{
+        if (p_ptr->adrenaline) {
 	        int i;
 
 		i = p_ptr->lev / 7;
@@ -4121,8 +4104,7 @@ void calc_boni(int Ind)
 		p_ptr->stat_add[A_DEX] += (i + 1) / 2;
 		p_ptr->to_h += 12;
 		p_ptr->dis_to_h += 12;
-		if (p_ptr->adrenaline & 1)
-		{
+		if (p_ptr->adrenaline & 1) {
 			p_ptr->to_d += 8;
 			p_ptr->dis_to_d += 8;
 		}
@@ -4135,33 +4117,26 @@ void calc_boni(int Ind)
         if (p_ptr->zeal) p_ptr->extra_blows += p_ptr->zeal_power / 10 > 3 ? 3 : (p_ptr->zeal_power / 10 < 1 ? 1 : p_ptr->zeal_power / 10);
         else if (p_ptr->mindboost && p_ptr->mindboost_power >= 65) p_ptr->extra_blows++;
 
+	if (p_ptr->mindboost) p_ptr->skill_sav += p_ptr->mindboost_power / 5;
+
 	/* Invulnerability */
-	if (p_ptr->invuln)
-	{
+	if (p_ptr->invuln) {
 		p_ptr->to_a += 100;
 		p_ptr->dis_to_a += 100;
 	}
 
 	/* Temporary "Levitation" */
-	if (p_ptr->tim_ffall)
-	{
-		p_ptr->feather_fall = TRUE;
-	}
-	if (p_ptr->tim_fly)
-	{
-		p_ptr->fly = TRUE;
-	}
+	if (p_ptr->tim_ffall) p_ptr->feather_fall = TRUE;
+	if (p_ptr->tim_fly) p_ptr->fly = TRUE;
 
 	/* Temp ESP */
-	if (p_ptr->tim_esp)
-	{
+	if (p_ptr->tim_esp) {
 //		p_ptr->telepathy = TRUE;
                 p_ptr->telepathy |= ESP_ALL;
 	}
 
 	/* Temporary blessing */
-	if (p_ptr->blessed)
-	{
+	if (p_ptr->blessed) {
 		p_ptr->to_a += p_ptr->blessed_power;
 		p_ptr->dis_to_a += p_ptr->blessed_power;
 		p_ptr->to_h += p_ptr->blessed_power / 2;
@@ -4170,33 +4145,25 @@ void calc_boni(int Ind)
 
 	/* Temprory invisibility */
 //	if (p_ptr->tim_invisibility)
-	{
 		p_ptr->invis = p_ptr->tim_invis_power;
-	}
 
 	/* Temprory shield */
-	if (p_ptr->shield)
-	{
+	if (p_ptr->shield) {
 		p_ptr->to_a += p_ptr->shield_power;
 		p_ptr->dis_to_a += p_ptr->shield_power;
 	}
 	
 	/* Temporary deflection */
-	if(p_ptr->tim_deflect)
-	{
-		p_ptr->reflect = TRUE;
-	}
+	if(p_ptr->tim_deflect) p_ptr->reflect = TRUE;
 	
 	/* Temporary "Hero" */
-	if (p_ptr->hero || (p_ptr->mindboost && p_ptr->mindboost_power >= 5))
-	{
+	if (p_ptr->hero || (p_ptr->mindboost && p_ptr->mindboost_power >= 5)) {
 		p_ptr->to_h += 12;
 		p_ptr->dis_to_h += 12;
 	}
 
 	/* Temporary "Berserk" */
-	if (p_ptr->shero)
-	{
+	if (p_ptr->shero) {
 		p_ptr->to_h += 5;//24
 		p_ptr->dis_to_h += 5;//24
                 p_ptr->to_d += 10;
@@ -4206,8 +4173,7 @@ void calc_boni(int Ind)
 	}
 
 	/* Temporary "Berserk" */
-	if (p_ptr->berserk)
-	{
+	if (p_ptr->berserk) {
 		p_ptr->to_h -=5;
 		p_ptr->dis_to_h -=5;
                 p_ptr->to_d += 15;
@@ -4218,8 +4184,7 @@ void calc_boni(int Ind)
 	}
 
 	/* Temporary "Fury" */
-	if (p_ptr->fury)
-	{
+	if (p_ptr->fury) {
 		p_ptr->to_h -= 10;
 		p_ptr->dis_to_h -= 10;
                 p_ptr->to_d += 20;
@@ -4235,70 +4200,43 @@ void calc_boni(int Ind)
 	}
 
 	/* Temporary "fast" */
-	if (p_ptr->fast)
-	{
-		p_ptr->pspeed += p_ptr->fast_mod;
-	}
-	
+	if (p_ptr->fast) p_ptr->pspeed += p_ptr->fast_mod;
+
 	/* Extra speed bonus from Zeal prayer */
 //	if (p_ptr->zeal) p_ptr->pspeed += (p_ptr->zeal_power / 6);
 
 	/* Temporary "slow" */
-	if (p_ptr->slow)
-	{
-		p_ptr->pspeed -= 10;
-	}
+	if (p_ptr->slow) p_ptr->pspeed -= 10;
 
 	/* Temporary see invisible */
-	if (p_ptr->tim_invis)
-	{
-		p_ptr->see_inv = TRUE;
-	}
+	if (p_ptr->tim_invis) p_ptr->see_inv = TRUE;
 
 	/* Temporary infravision boost */
-	if (p_ptr->tim_infra)
-	{
+	if (p_ptr->tim_infra) {
 //		p_ptr->see_infra++;
 		p_ptr->see_infra += 5;
 	}
 
 	/* Temporary st-anchor */
-	if (p_ptr->st_anchor)
-	{
-		p_ptr->resist_continuum = TRUE;
-	}
+	if (p_ptr->st_anchor) p_ptr->resist_continuum = TRUE;
 
 	/* Hack -- Res Chaos -> Res Conf */
-	if (p_ptr->resist_chaos)
-	{
-		p_ptr->resist_conf = TRUE;
-	}
+	if (p_ptr->resist_chaos) p_ptr->resist_conf = TRUE;
 
 	/* Heart is boldened */
 	if (p_ptr->res_fear_temp || p_ptr->hero || p_ptr->shero ||
 	    p_ptr->fury || p_ptr->berserk || p_ptr->mindboost)
-	{
 		p_ptr->resist_fear = TRUE;
-	}
 
 
 	/* Hack -- Telepathy Change */
-	if (p_ptr->telepathy != old_telepathy)
-	{
-		p_ptr->update |= (PU_MONSTERS);
-	}
+	if (p_ptr->telepathy != old_telepathy) p_ptr->update |= (PU_MONSTERS);
 
 	/* Hack -- See Invis Change */
-	if (p_ptr->see_inv != old_see_inv)
-	{
-		p_ptr->update |= (PU_MONSTERS);
-	}
+	if (p_ptr->see_inv != old_see_inv) p_ptr->update |= (PU_MONSTERS);
 
 	/* Temporary space-time anchor */
-	if (p_ptr->st_anchor)
-	{
-		p_ptr->anti_tele = TRUE;
-	}
+	if (p_ptr->st_anchor) p_ptr->anti_tele = TRUE;
 
 
 	/* Bloating slows the player down (a little) */
@@ -4342,30 +4280,23 @@ void calc_boni(int Ind)
 		p_ptr->skill_srh = p_ptr->skill_srh + 10;
 	}
 
-	if (p_ptr->shadow_running) {
-		p_ptr->pspeed += 10;
-	}
+	if (p_ptr->shadow_running) p_ptr->pspeed += 10;
 
         /* Assume player not encumbered by armor */
         p_ptr->cumber_armor = FALSE;
         /* Heavy armor penalizes to-hit and sneakiness speed */
-        if (((armour_weight(p_ptr) - (100 + get_skill_scale(p_ptr, SKILL_COMBAT, 300) + adj_str_hold[p_ptr->stat_ind[A_STR]] * 6)) / 10) > 0)
-        {
+        if (((armour_weight(p_ptr) - (100 + get_skill_scale(p_ptr, SKILL_COMBAT, 300)
+	    + adj_str_hold[p_ptr->stat_ind[A_STR]] * 6)) / 10) > 0) {
                 /* Encumbered */
                 p_ptr->cumber_armor = TRUE;
         }
 	/* Take note when "armor state" changes */
-	if (p_ptr->old_cumber_armor != p_ptr->cumber_armor)
-	{
+	if (p_ptr->old_cumber_armor != p_ptr->cumber_armor) {
 		/* Message */
 		if (p_ptr->cumber_armor)
-		{
 			msg_print(Ind, "\377oThe weight of your armour encumbers your movement.");
-		}
 		else
-		{
 			msg_print(Ind, "\377gYou feel able to move more freely.");
-		}
 
 		/* Save it */
 		p_ptr->old_cumber_armor = p_ptr->cumber_armor;
@@ -4463,21 +4394,15 @@ void calc_boni(int Ind)
 	p_ptr->monk_heavyarmor = monk_heavy_armor(p_ptr);
 	if (p_ptr->old_monk_heavyarmor != p_ptr->monk_heavyarmor) {
 		if (p_ptr->monk_heavyarmor)
-		{
 			msg_print(Ind, "\377oThe weight of your armour strains your martial arts performance.");
-		}
 		else
-		{
 			msg_print(Ind, "\377gYour armour is comfortable for using martial arts.");
-		}
 		p_ptr->old_monk_heavyarmor = p_ptr->monk_heavyarmor;
 	}
-	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(p_ptr))
-	{
+	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(p_ptr)) {
 		long int k = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 5), w = 0;
 
-		if (k)
-		{
+		if (k) {
 			/* Extract the current weight (in tenth pounds) */
 			w = p_ptr->total_weight;
 
@@ -4490,8 +4415,7 @@ void calc_boni(int Ind)
 			/* Assume unencumbered */
 			p_ptr->cumber_weight = FALSE;
 
-			if (k > 0)
-			{
+			if (k > 0) {
 				/* Feather Falling if unencumbered at level 10 */
 				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 9)
 					p_ptr->feather_fall = TRUE;
@@ -4543,20 +4467,12 @@ void calc_boni(int Ind)
 				}
 			}
 			else
-			{
 			    p_ptr->cumber_weight = TRUE;
-			}
-			if (p_ptr->old_cumber_weight != p_ptr->cumber_weight)
-			{
+			if (p_ptr->old_cumber_weight != p_ptr->cumber_weight) {
 				if (p_ptr->cumber_weight)
-				{
 					msg_print(Ind, "\377RYou can't move freely due to your backpack weight.");
-
-				}
 				else
-				{
 					msg_print(Ind, "\377gYour backpack is very comfortable to wear.");
-				}
 				p_ptr->old_cumber_weight = p_ptr->cumber_weight;
 			}
 		}
@@ -4565,8 +4481,7 @@ void calc_boni(int Ind)
 		if (!p_ptr->inventory[INVEN_BOW].k_idx &&
 			!p_ptr->inventory[INVEN_WIELD].k_idx &&
 			(!p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) && /* for dual-wielders */
-			!p_ptr->cumber_weight)
-		{
+			!p_ptr->cumber_weight) {
 			int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 60);
 			int martsbonus, martsweight, martscapacity;
 			
@@ -4585,8 +4500,7 @@ void calc_boni(int Ind)
 			martsbonus = ((marts - 13) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
 			martsweight = p_ptr->inventory[INVEN_OUTER].weight;
 			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 40);
-			if (!(p_ptr->inventory[INVEN_OUTER].k_idx) && (marts > 15))
-			{
+			if (!(p_ptr->inventory[INVEN_OUTER].k_idx) && (marts > 15)) {
 				p_ptr->to_a += martsbonus;
 				p_ptr->dis_to_a += martsbonus;
 			} else if ((martsweight <= martscapacity) && (marts > 15)) {
@@ -4597,8 +4511,8 @@ void calc_boni(int Ind)
 			martsbonus = ((marts - 8) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
 			martsweight = p_ptr->inventory[INVEN_ARM].weight;
 			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 30);
-			if ((!p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) && (marts > 10)) /* for dual-wielders */
-			{
+			if ((!p_ptr->inventory[INVEN_ARM].k_idx ||
+			    p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) && (marts > 10)) { /* for dual-wielders */
 				p_ptr->to_a += martsbonus;
 				p_ptr->dis_to_a += martsbonus;
 			} else if ((martsweight <= martscapacity) && (marts > 10)) {
@@ -4609,8 +4523,7 @@ void calc_boni(int Ind)
 			martsbonus = (marts - 2) / 3 * MARTIAL_ARTS_AC_ADJUST / 100;
 			martsweight = p_ptr->inventory[INVEN_HEAD].weight;
 			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 50);
-			if (!(p_ptr->inventory[INVEN_HEAD].k_idx)&& (marts > 4))
-			{
+			if (!(p_ptr->inventory[INVEN_HEAD].k_idx)&& (marts > 4)) {
 				p_ptr->to_a += martsbonus;
 				p_ptr->dis_to_a += martsbonus;
 			} else if ((martsweight <= martscapacity) && (marts > 4)) {
@@ -4621,8 +4534,7 @@ void calc_boni(int Ind)
 			martsbonus = (marts / 2) * MARTIAL_ARTS_AC_ADJUST / 100;
 			martsweight = p_ptr->inventory[INVEN_HANDS].weight;
 			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 20);
-			if (!(p_ptr->inventory[INVEN_HANDS].k_idx))
-			{
+			if (!(p_ptr->inventory[INVEN_HANDS].k_idx)) {
 				p_ptr->to_a += martsbonus;
 				p_ptr->dis_to_a += martsbonus;
 			} else if (martsweight <= martscapacity) {
@@ -4633,8 +4545,7 @@ void calc_boni(int Ind)
 			martsbonus = (marts / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
 			martsweight = p_ptr->inventory[INVEN_FEET].weight;
 			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 45);
-			if (!(p_ptr->inventory[INVEN_FEET].k_idx))
-			{
+			if (!(p_ptr->inventory[INVEN_FEET].k_idx)) {
 				p_ptr->to_a += martsbonus;
 				p_ptr->dis_to_a += martsbonus;
 			} else if (martsweight <= martscapacity) {
@@ -4650,36 +4561,29 @@ void calc_boni(int Ind)
 	/* Monks get extra ac for armour _not worn_ */
 //	if ((p_ptr->pclass == CLASS_MONK) && !(monk_heavy_armor(Ind)))
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !(monk_heavy_armor(p_ptr)) &&
-		!(p_ptr->inventory[INVEN_BOW].k_idx))
-	{
+		!(p_ptr->inventory[INVEN_BOW].k_idx)) {
 		int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 60);
-		if (!(p_ptr->inventory[INVEN_BODY].k_idx))
-		{
+		if (!(p_ptr->inventory[INVEN_BODY].k_idx)) {
 			p_ptr->to_a += (marts * 3) / 2 * MARTIAL_ARTS_AC_ADJUST / 100;
 			p_ptr->dis_to_a += (marts * 3) / 2 * MARTIAL_ARTS_AC_ADJUST / 100;
 		}
-		if (!(p_ptr->inventory[INVEN_OUTER].k_idx) && (marts > 15))
-		{
+		if (!(p_ptr->inventory[INVEN_OUTER].k_idx) && (marts > 15)) {
 			p_ptr->to_a += ((marts - 13) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
 			p_ptr->dis_to_a += ((marts - 13) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
 		}
-		if (!(p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) && (marts > 10)) /* for dual-wielders */
-		{
+		if (!(p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) && (marts > 10)) { /* for dual-wielders */
 			p_ptr->to_a += ((marts - 8) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
 			p_ptr->dis_to_a += ((marts - 8) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
 		}
-		if (!(p_ptr->inventory[INVEN_HEAD].k_idx)&& (marts > 4))
-		{
+		if (!(p_ptr->inventory[INVEN_HEAD].k_idx)&& (marts > 4)) {
 			p_ptr->to_a += (marts - 2) / 3 * MARTIAL_ARTS_AC_ADJUST / 100;
 			p_ptr->dis_to_a += (marts -2) / 3 * MARTIAL_ARTS_AC_ADJUST / 100;
 		}
-		if (!(p_ptr->inventory[INVEN_HANDS].k_idx))
-		{
+		if (!(p_ptr->inventory[INVEN_HANDS].k_idx)) {
 			p_ptr->to_a += (marts / 2) * MARTIAL_ARTS_AC_ADJUST / 100;
 			p_ptr->dis_to_a += (marts / 2) * MARTIAL_ARTS_AC_ADJUST / 100;
 		}
-		if (!(p_ptr->inventory[INVEN_FEET].k_idx))
-		{
+		if (!(p_ptr->inventory[INVEN_FEET].k_idx)) {
 			p_ptr->to_a += (marts / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
 			p_ptr->dis_to_a += (marts / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
 		}
@@ -4729,16 +4633,14 @@ void calc_boni(int Ind)
 		(((p_ptr->dis_ac * 1) + (toac * 1)) / 2);*/
 	}
 
-	if (p_ptr->mode & MODE_HARD)
-	{
+	if (p_ptr->mode & MODE_HARD) {
 		if (p_ptr->dis_to_a > 0) p_ptr->dis_to_a = (p_ptr->dis_to_a * 2) / 3;
 		if (p_ptr->to_a > 0) p_ptr->to_a = (p_ptr->to_a * 2) / 3;
 	}
 
 
 	/* Redraw armor (if needed) */
-	if ((p_ptr->dis_ac != old_dis_ac) || (p_ptr->dis_to_a != old_dis_to_a))
-	{
+	if ((p_ptr->dis_ac != old_dis_ac) || (p_ptr->dis_to_a != old_dis_to_a)) {
 		/* Redraw */
 		p_ptr->redraw |= (PR_ARMOR);
 
@@ -4759,8 +4661,7 @@ void calc_boni(int Ind)
 	p_ptr->heavy_shoot = FALSE;
 
 	/* It is hard to carholdry a heavy bow */
-	if (o_ptr->k_idx && hold < o_ptr->weight / 10)
-	{
+	if (o_ptr->k_idx && hold < o_ptr->weight / 10) {
 		/* Hard to wield a heavy bow */
 		p_ptr->to_h += 2 * (hold - o_ptr->weight / 10);
 		p_ptr->dis_to_h += 2 * (hold - o_ptr->weight / 10);
@@ -4770,38 +4671,27 @@ void calc_boni(int Ind)
 	}
 
 	/* Compute "extra shots" if needed */
-	if (o_ptr->k_idx && !p_ptr->heavy_shoot)
-	{
+	if (o_ptr->k_idx && !p_ptr->heavy_shoot) {
 		int archery = get_archery_skill(p_ptr);
 
 		p_ptr->tval_ammo = 0;
 
 		/* Take note of required "tval" for missiles */
-		switch (o_ptr->sval)
-		{
-			case SV_SLING:
-			{
-				p_ptr->tval_ammo = TV_SHOT;
-				break;
-			}
-
-			case SV_SHORT_BOW:
-			case SV_LONG_BOW:
-			{
-				p_ptr->tval_ammo = TV_ARROW;
-				break;
-			}
-
-			case SV_LIGHT_XBOW:
-			case SV_HEAVY_XBOW:
-			{
-				p_ptr->tval_ammo = TV_BOLT;
-				break;
-			}
+		switch (o_ptr->sval) {
+		case SV_SLING:
+			p_ptr->tval_ammo = TV_SHOT;
+			break;
+		case SV_SHORT_BOW:
+		case SV_LONG_BOW:
+			p_ptr->tval_ammo = TV_ARROW;
+			break;
+		case SV_LIGHT_XBOW:
+		case SV_HEAVY_XBOW:
+			p_ptr->tval_ammo = TV_BOLT;
+			break;
 		}
 
-		if (archery != -1)
-		{
+		if (archery != -1) {
 			p_ptr->to_h_ranged += get_skill_scale(p_ptr, archery, 25);
 			/* the "xtra_might" adds damage for specifics */
 			p_ptr->to_d_ranged += get_skill_scale(p_ptr, SKILL_ARCHERY, 10);
@@ -4834,24 +4724,23 @@ void calc_boni(int Ind)
 			if (archery == SKILL_BOOMERANG)
 				p_ptr->to_d_ranged += get_skill_scale(p_ptr, archery, 20);
 #if 0	// not so meaningful (25,30,50)
-			switch (archery)
-			{
-				case SKILL_SLING:
-					if (p_ptr->tval_ammo == TV_SHOT)
-						p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
-					break;
-				case SKILL_BOW:
-					if (p_ptr->tval_ammo == TV_ARROW)
-						p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
-					break;
-				case SKILL_XBOW:
-					if (p_ptr->tval_ammo == TV_BOLT)
-						p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
-					break;
-				case SKILL_BOOMERANG:
-					if (!p_ptr->tval_ammo)
-						p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
-					break;
+			switch (archery) {
+			case SKILL_SLING:
+				if (p_ptr->tval_ammo == TV_SHOT)
+					p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
+				break;
+			case SKILL_BOW:
+				if (p_ptr->tval_ammo == TV_ARROW)
+					p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
+				break;
+			case SKILL_XBOW:
+				if (p_ptr->tval_ammo == TV_BOLT)
+					p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
+				break;
+			case SKILL_BOOMERANG:
+				if (!p_ptr->tval_ammo)
+					p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
+				break;
 			}
 #endif	// 0
 		}
@@ -4880,8 +4769,7 @@ void calc_boni(int Ind)
 	o_ptr = &p_ptr->inventory[INVEN_TOOL];
 
 	/* Boost digging skill by tool weight */
-	if(o_ptr->k_idx && o_ptr->tval == TV_DIGGING)
-	{
+	if(o_ptr->k_idx && o_ptr->tval == TV_DIGGING) {
 		p_ptr->skill_dig += (o_ptr->weight / 10);
 
 		/* Hack -- to_h/to_d added to digging (otherwise meanless) */
@@ -5004,8 +4892,7 @@ void calc_boni(int Ind)
 	
 	/* It is hard to hold a heavy weapon */
 	o_ptr = &p_ptr->inventory[INVEN_WIELD];
-	if (o_ptr->k_idx && hold < o_ptr->weight / 10)
-	{
+	if (o_ptr->k_idx && hold < o_ptr->weight / 10) {
 		/* Hard to wield a heavy weapon */
 		p_ptr->to_h += 2 * (hold - o_ptr->weight / 10);
 		p_ptr->dis_to_h += 2 * (hold - o_ptr->weight / 10);
@@ -5019,8 +4906,7 @@ void calc_boni(int Ind)
 	/* dual-wield */
 	/* It is hard to hold a heavy weapon */
 	o_ptr = &p_ptr->inventory[INVEN_ARM];
-	if (o_ptr->k_idx && o_ptr->tval != TV_SHIELD && hold < o_ptr->weight / 10)
-	{
+	if (o_ptr->k_idx && o_ptr->tval != TV_SHIELD && hold < o_ptr->weight / 10) {
 		/* Hard to wield a heavy weapon */
 		p_ptr->to_h += 2 * (hold - o_ptr->weight / 10);
 		p_ptr->dis_to_h += 2 * (hold - o_ptr->weight / 10);
@@ -5035,8 +4921,7 @@ void calc_boni(int Ind)
 	/* Normal weapons */
 	o_ptr = &p_ptr->inventory[INVEN_WIELD];
 	o2_ptr = &p_ptr->inventory[INVEN_ARM];
-	if ((o_ptr->k_idx || (o2_ptr->k_idx && o2_ptr->tval != TV_SHIELD)) && !p_ptr->heavy_wield)
-	{
+	if ((o_ptr->k_idx || (o2_ptr->k_idx && o2_ptr->tval != TV_SHIELD)) && !p_ptr->heavy_wield) {
 		int lev1 = -1, lev2 = -1;
 		p_ptr->num_blow = calc_blows_weapons(Ind);
 		p_ptr->num_blow += p_ptr->extra_blows;
@@ -5064,8 +4949,7 @@ void calc_boni(int Ind)
 #if 1 // DGDGDGDG -- no more monks for the time being
 //	if (p_ptr->pclass == CLASS_MONK)
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !o_ptr->k_idx &&
-		!(p_ptr->inventory[INVEN_BOW].k_idx))
-	{
+	    !(p_ptr->inventory[INVEN_BOW].k_idx)) {
 		int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 50);
 		p_ptr->num_blow = 0;
 
@@ -5083,8 +4967,7 @@ void calc_boni(int Ind)
 
 		p_ptr->num_blow += 1 + p_ptr->extra_blows;
 
-		if (!monk_heavy_armor(p_ptr))
-		{
+		if (!monk_heavy_armor(p_ptr)) {
 /*			p_ptr->to_h += (marts / 3) * 2;
 			p_ptr->to_d += (marts / 3);
 
@@ -5125,12 +5008,9 @@ void calc_boni(int Ind)
 	p_ptr->see_infra += p_ptr->rune_IV;
 	p_ptr->redraw |= (PR_SPEED|PR_EXTRA) ;
 
-	if (p_ptr->mode & MODE_HARD && p_ptr->pspeed > 110)
-	{
+	if (p_ptr->mode & MODE_HARD && p_ptr->pspeed > 110) {
 		int speed = p_ptr->pspeed - 110;
-
 		speed /= 2;
-
 		p_ptr->pspeed = speed + 110;
 	}
 
@@ -5145,8 +5025,7 @@ void calc_boni(int Ind)
 	    (p_ptr->num_blow > 1)) p_ptr->num_blow = 1;
 
 	/* Combat bonus to damage */
-	if (get_skill(p_ptr, SKILL_COMBAT))
-	{
+	if (get_skill(p_ptr, SKILL_COMBAT)) {
 		int lev = get_skill_scale(p_ptr, SKILL_COMBAT, 10);
 
 #if 0
@@ -5165,8 +5044,7 @@ void calc_boni(int Ind)
 	}
 
 	/* Weaponmastery bonus to damage - not for MA!- C. Blue */
-	if (get_skill(p_ptr, SKILL_MASTERY) && o_ptr->k_idx)
-	{
+	if (get_skill(p_ptr, SKILL_MASTERY) && o_ptr->k_idx) {
 		int lev = get_skill(p_ptr, SKILL_MASTERY);
 
 /*		p_ptr->to_h += lev / 5;
@@ -5273,13 +5151,11 @@ void calc_boni(int Ind)
 
 	/* 2handed weapon and shield = less damage */
 //	if (inventory[INVEN_WIELD + i].k_idx && inventory[INVEN_ARM + i].k_idx)
-	if (p_ptr->inventory[INVEN_WIELD].k_idx && p_ptr->inventory[INVEN_ARM].k_idx)
-	{
+	if (p_ptr->inventory[INVEN_WIELD].k_idx && p_ptr->inventory[INVEN_ARM].k_idx) {
 		/* Extract the item flags */
 		object_flags(&p_ptr->inventory[INVEN_WIELD], &f1, &f2, &f3, &f4, &f5, &esp);
 
-		if (f4 & TR4_SHOULD2H)
-		{                
+		if (f4 & TR4_SHOULD2H) {
 			/* Reduce the real bonuses */
 			if (p_ptr->to_h > 0) p_ptr->to_h = (2 * p_ptr->to_h) / 3;
 			if (p_ptr->to_d > 0) p_ptr->to_d = (2 * p_ptr->to_d) / 3;
@@ -5297,17 +5173,13 @@ void calc_boni(int Ind)
 	}
 	if (p_ptr->inventory[INVEN_WIELD].k_idx && !p_ptr->inventory[INVEN_ARM].k_idx) {
 		object_flags(&p_ptr->inventory[INVEN_WIELD], &f1, &f2, &f3, &f4, &f5, &esp);
-		if (f4 & TR4_COULD2H) {
-			p_ptr->easy_wield = TRUE;
-		}
+		if (f4 & TR4_COULD2H) p_ptr->easy_wield = TRUE;
 	}
 	/* for dual-wield..*/
 	if (!p_ptr->inventory[INVEN_WIELD].k_idx &&
 	    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) {
 		object_flags(&p_ptr->inventory[INVEN_ARM], &f1, &f2, &f3, &f4, &f5, &esp);
-		if (f4 & TR4_COULD2H) {
-			p_ptr->easy_wield = TRUE;
-		}
+		if (f4 & TR4_COULD2H) p_ptr->easy_wield = TRUE;
 	}
 
 	/* Equipment weight affects shooting */
@@ -5348,8 +5220,7 @@ void calc_boni(int Ind)
 	/* also: shield and ranged weapon = less accuracy for ranged weapon! */
 	/* dual-wield currently does not affect shooting (!) */
 	if (p_ptr->inventory[INVEN_BOW].k_idx && p_ptr->inventory[INVEN_ARM].k_idx
-	    && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)
-	{
+	    && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) {
 		/* can't aim well while carrying a shield on the arm! */
 #if 0 /* the following part only punishes the +hit/+dam from trained skill - C. Blue */
 		p_ptr->to_h_ranged = 0;/* /= 4; need more severeness, it was nothing */
@@ -5376,8 +5247,7 @@ void calc_boni(int Ind)
 	if (p_ptr->inventory[INVEN_WIELD].k_idx &&
 	    (p_ptr->pclass == CLASS_PRIEST) && (!p_ptr->bless_blade) &&
 	    ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM) ||
-	    (o_ptr->tval == TV_AXE)))
-	{
+	    (o_ptr->tval == TV_AXE))) {
 		/* Reduce the real bonuses */
 		/*p_ptr->to_h -= 2;
 		p_ptr->to_d -= 2;*/
@@ -5397,14 +5267,10 @@ void calc_boni(int Ind)
 	}
 
 	if (p_ptr->body_monster) {
-		if (!r_ptr->body_parts[BODY_WEAPON])
-		{
-			wepless = TRUE;
-	    	}
+		if (!r_ptr->body_parts[BODY_WEAPON]) wepless = TRUE;
 
 		d = 0; n = 0;
-		for (i = 0; i < 4; i++)
-		{
+		for (i = 0; i < 4; i++) {
 			j = (r_ptr->blow[i].d_dice * r_ptr->blow[i].d_side);
 			j += r_ptr->blow[i].d_dice;
 			j /= 2;
@@ -5586,8 +5452,7 @@ void calc_boni(int Ind)
 
 
 	/* Redraw plusses to hit/damage if necessary */
-	if ((p_ptr->dis_to_h != old_dis_to_h) || (p_ptr->dis_to_d != old_dis_to_d))
-	{
+	if ((p_ptr->dis_to_h != old_dis_to_h) || (p_ptr->dis_to_d != old_dis_to_d)) {
 		/* Redraw plusses */
 		p_ptr->redraw |= (PR_PLUSSES);
 	}
@@ -5686,21 +5551,14 @@ void calc_boni(int Ind)
 
 
 	/* Take note when "heavy bow" changes */
-	if (p_ptr->old_heavy_shoot != p_ptr->heavy_shoot)
-	{
+	if (p_ptr->old_heavy_shoot != p_ptr->heavy_shoot) {
 		/* Message */
 		if (p_ptr->heavy_shoot)
-		{
 			msg_print(Ind, "\377oYou have trouble wielding such a heavy bow.");
-		}
 		else if (p_ptr->inventory[INVEN_BOW].k_idx)
-		{
 			msg_print(Ind, "\377gYou have no trouble wielding your bow.");
-		}
 		else
-		{
 			msg_print(Ind, "\377gYou feel relieved to put down your heavy bow.");
-		}
 
 		/* Save it */
 		p_ptr->old_heavy_shoot = p_ptr->heavy_shoot;
@@ -5708,105 +5566,73 @@ void calc_boni(int Ind)
 
 
 	/* Take note when "heavy weapon" changes */
-	if (p_ptr->old_heavy_wield != p_ptr->heavy_wield)
-	{
+	if (p_ptr->old_heavy_wield != p_ptr->heavy_wield) {
 		/* Message */
 		if (p_ptr->heavy_wield)
-		{
 			msg_print(Ind, "\377oYou have trouble wielding such a heavy weapon.");
-		}
 		else if (p_ptr->inventory[INVEN_WIELD].k_idx || /* dual-wield */
 		    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD))
-		{
 			msg_print(Ind, "\377gYou have no trouble wielding your weapon.");
-		}
 		else
-		{
 			msg_print(Ind, "\377gYou feel relieved to put down your heavy weapon.");
-		}
 
 		/* Save it */
 		p_ptr->old_heavy_wield = p_ptr->heavy_wield;
 	}
 
 	/* Take note when "heavy shield" changes */
-	if (p_ptr->old_heavy_shield != p_ptr->heavy_shield)
-	{
+	if (p_ptr->old_heavy_shield != p_ptr->heavy_shield) {
 		/* Message */
 		if (p_ptr->heavy_shield)
-		{
 			msg_print(Ind, "\377oYou have trouble wielding such a heavy shield.");
-		}
 		else if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) /* dual-wielders */
-		{
 			msg_print(Ind, "\377gYou have no trouble wielding your shield.");
-		}
 		else
-		{
 			msg_print(Ind, "\377gYou feel relieved to put down your heavy shield.");
-		}
 
 		/* Save it */
 		p_ptr->old_heavy_shield = p_ptr->heavy_shield;
 	}
 
 	/* Take note when "illegal weapon" changes */
-	if (p_ptr->old_icky_wield != p_ptr->icky_wield)
-	{
+	if (p_ptr->old_icky_wield != p_ptr->icky_wield) {
 		/* Message */
 		if (p_ptr->icky_wield)
-		{
 			msg_print(Ind, "\377oYou do not feel comfortable with your weapon.");
-		}
 		else if (p_ptr->inventory[INVEN_WIELD].k_idx || /* dual-wield */
 		    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD))
-		{
 			msg_print(Ind, "\377gYou feel comfortable with your weapon.");
-		}
 		else
-		{
 			msg_print(Ind, "\377gYou feel more comfortable after removing your weapon.");
-		}
 
 		/* Save it */
 		p_ptr->old_icky_wield = p_ptr->icky_wield;
 	}
 
 	/* Take note when "illegal weapon" changes */
-	if (p_ptr->old_awkward_wield != p_ptr->awkward_wield)
-	{
+	if (p_ptr->old_awkward_wield != p_ptr->awkward_wield) {
 		/* Message */
 		if (p_ptr->awkward_wield)
-		{
 			msg_print(Ind, "\377oYou find it hard to fight with your weapon and shield.");
-		}
 		else if (p_ptr->inventory[INVEN_WIELD].k_idx)
-		{
 			msg_print(Ind, "\377gYou feel comfortable with your weapon.");
-		}
 		else if (!p_ptr->inventory[INVEN_ARM].k_idx)
-		{
 			msg_print(Ind, "\377gYou feel more dexterous after removing your shield.");
-		}
 
 		/* Save it */
 		p_ptr->old_awkward_wield = p_ptr->awkward_wield;
 	}
 
-	if (p_ptr->old_easy_wield != p_ptr->easy_wield)
-	{
+	if (p_ptr->old_easy_wield != p_ptr->easy_wield) {
 		/* suppress message if we're heavy-wielding */
 		if (!p_ptr->heavy_wield) {
 			/* Message */
-			if (p_ptr->easy_wield)
-			{
+			if (p_ptr->easy_wield) {
 				if (get_skill(p_ptr, SKILL_DUAL)) /* dual-wield */
 					msg_print(Ind, "\377wWithout shield or secondary weapon, your weapon feels especially easy to swing.");
 				else
 					msg_print(Ind, "\377wWithout shield, your weapon feels especially easy to swing.");
-			}
-			else if (p_ptr->inventory[INVEN_WIELD].k_idx)
-			{
+			} else if (p_ptr->inventory[INVEN_WIELD].k_idx) {
 /*					msg_print(Ind, "\377wWith shield, your weapon feels normally comfortable.");
 				this above line does also show if you don't equip a shield but just switch from a
 				may_2h to a normal weapon, hence confusing. */
@@ -5818,20 +5644,15 @@ void calc_boni(int Ind)
 	}
 
 	/* Take note when "illegal weapon" changes */
-	if (p_ptr->old_awkward_shoot != p_ptr->awkward_shoot)
-	{
+	if (p_ptr->old_awkward_shoot != p_ptr->awkward_shoot) {
 		/* Message */
-		if (p_ptr->awkward_shoot)
-		{
+		if (p_ptr->awkward_shoot) {
 			if (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)
 				msg_print(Ind, "\377oYou find it hard to aim while carrying your shield.");
 			else /* maybe leave awkward_shoot at FALSE if secondary slot isn't a shield! */
 				msg_print(Ind, "\377oYou find it hard to aim while dual-wielding weapons.");
-		}
-		else if (p_ptr->inventory[INVEN_BOW].k_idx)
-		{
+		} else if (p_ptr->inventory[INVEN_BOW].k_idx)
 			msg_print(Ind, "\377gYou find it easy to aim.");
-		}
 
 		/* Save it */
 		p_ptr->old_awkward_shoot = p_ptr->awkward_shoot;
@@ -5967,7 +5788,7 @@ void calc_boni(int Ind)
 
 	/* warning messages, mostly for newbies */
 	if (p_ptr->num_blow == 1 && old_num_blow > 1 && p_ptr->warning_bpr == 0 &&
-	    p_ptr->inventory[INVEN_WIELD].k_idx) {
+	    p_ptr->inventory[INVEN_WIELD].k_idx && is_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
 		p_ptr->warning_bpr = 1;
 		msg_print(Ind, "\374\377yWARNING! Your number of melee attacks per round has just dropped to ONE.");
 		msg_print(Ind, "\374\377y    If you rely on melee combat, it is strongly advised to try and");
@@ -5978,8 +5799,8 @@ void calc_boni(int Ind)
 	}
 	if (p_ptr->max_plv == 1 &&
 	    p_ptr->num_blow == 1 && old_num_blow == 1 && p_ptr->warning_bpr3 == 2 &&
-	    /* and don't spam Martial Arts users ;) */
-	    p_ptr->inventory[INVEN_WIELD].k_idx) {
+	    /* and don't spam Martial Arts users or mage-staff wielders ;) */
+	    p_ptr->inventory[INVEN_WIELD].k_idx && is_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
 		p_ptr->warning_bpr2 = p_ptr->warning_bpr3 = 1;
 		msg_print(Ind, "\374\377yWARNING! You can currently perform only ONE melee attack per round.");
 		msg_print(Ind, "\374\377y    If you rely on melee combat, it is strongly advised to try and");

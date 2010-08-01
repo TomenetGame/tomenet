@@ -1838,8 +1838,13 @@ bool add_hostility(int Ind, cptr name, bool initiator)
 		p_ptr->hostile = h_ptr;
 
 		/* Message */
-		msg_format(Ind, "\377RYou are now hostile toward %s.", q_ptr->name);
-		msg_format(i, "\377R* Player %s declared war on you! *", p_ptr->name);
+		if (check_blood_bond(Ind, i)) {
+			msg_format(Ind, "\377yYou are now hostile toward %s.", q_ptr->name);
+			msg_format(i, "\377y* Player %s declared war on you! *", p_ptr->name);
+		} else {
+			msg_format(Ind, "\374\377RYou are now hostile toward %s.", q_ptr->name);
+			msg_format(i, "\374\377R* Player %s declared war on you! *", p_ptr->name);
+		}
 
 		/* Success */
 		return TRUE;
@@ -1874,7 +1879,7 @@ bool add_hostility(int Ind, cptr name, bool initiator)
 
 		/* Message */
 		msg_format(Ind, "\377RYou are now hostile toward party '%s'.", parties[i].name);
-		msg_broadcast_format(Ind, "\377R* %s declares war on party '%s'. *", p_ptr->name, parties[i].name);
+		msg_broadcast_format(Ind, "\374\377R* %s declares war on party '%s'. *", p_ptr->name, parties[i].name);
 
 		/* Success */
 		return TRUE;
@@ -1931,16 +1936,13 @@ bool add_hostility(int Ind, cptr name, bool initiator)
 		p_ptr->hostile = h_ptr;
 
 		/* Message */
-		msg_format(Ind, "\377RYou are now hostile toward %s.", q_ptr->name);
-		msg_format(i, "\377R* Player %s declared war on you! *", p_ptr->name);
-
-		/* Warn if not blood bonded */
- #if 0
-		if (p_ptr->blood_bond != q_ptr->id)
- #else
-		if (!check_blood_bond(Ind, i))
- #endif
-		{
+		if (check_blood_bond(Ind, i)) {
+			msg_format(Ind, "\377yYou are now hostile toward %s.", q_ptr->name);
+			msg_format(i, "\374\377y* Player %s declared war on you! *", p_ptr->name);
+		} else {
+			msg_format(Ind, "\377RYou are now hostile toward %s.", q_ptr->name);
+			msg_format(i, "\374\377R* Player %s declared war on you! *", p_ptr->name);
+			/* Warn if not blood bonded */
 			msg_format(Ind, "\374\377yWarning: You are NOT blood bonded with %s.", q_ptr->name);
 		}
 
@@ -1976,7 +1978,7 @@ bool add_hostility(int Ind, cptr name, bool initiator)
 
 		/* Message */
 		msg_format(Ind, "\377RYou are now hostile toward party '%s'.", parties[i].name);
-		msg_broadcast_format(Ind, "\377R* %s declares war on party '%s'. *", p_ptr->name, parties[i].name);
+		msg_broadcast_format(Ind, "\374\377R* %s declares war on party '%s'. *", p_ptr->name, parties[i].name);
 
 		/* Success */
 		return TRUE;
@@ -2052,7 +2054,7 @@ bool remove_hostility(int Ind, cptr name)
 
 				/* Message */
 				msg_format(Ind, "\377GNo longer hostile toward %s.", p);
-				msg_format(i, "\377G%s is no longer hostile toward you.", p_ptr->name);
+				msg_format(i, "\374\377G%s is no longer hostile toward you.", p_ptr->name);
 
 				/* Delete node */
 				KILL(h_ptr, hostile_type);
@@ -2084,7 +2086,7 @@ bool remove_hostility(int Ind, cptr name)
 
 				/* Message */
 				msg_format(Ind, "\377GNo longer hostile toward party '%s'.", parties[0 - i].name);
-				msg_broadcast_format(Ind, "\377G%s is no longer hostile toward party '%s'.", p_ptr->name, parties[0 - i].name);
+				msg_broadcast_format(Ind, "\374\377G%s is no longer hostile toward party '%s'.", p_ptr->name, parties[0 - i].name);
 
 				/* Delete node */
 				KILL(h_ptr, hostile_type);

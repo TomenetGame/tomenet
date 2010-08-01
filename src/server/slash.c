@@ -2674,7 +2674,7 @@ void do_slash_cmd(int Ind, char *message)
 					Send_skill_info(Ind, i);
 				}
 
-				p_ptr->update |= (PU_SKILL_MOD | PU_BONUS);
+				p_ptr->update |= (PU_SKILL_MOD | PU_BONUS | PU_MANA | PU_HP);
 				p_ptr->redraw |= (PR_SKILLS | PR_PLUSSES);
 
 				/* No more reskills */
@@ -5320,6 +5320,53 @@ void do_slash_cmd(int Ind, char *message)
 							recall_player(Ind, "");
 							return;
 						}
+				return;
+			}
+			else if (prefix(message, "/madart_")) { /* try to create a very specific randart - C. Blue */
+				/* added this to create a new matching uber bow for Andur, after his old one fell victim to randart code changes. */
+				object_type *o_ptr;
+				artifact_type *a_ptr;
+				int tries = 0; //keep track xD
+
+				o_ptr = &p_ptr->inventory[10 - 1]; //slot 'j'
+				if (o_ptr->name1 != ART_RANDART) {
+					msg_print(Ind, "\377oNot a randart. Aborting.");
+					return;
+				}
+
+				msg_print(Ind, "\377yMadness in progress..searching 4E9 combinations :-p");
+				handle_stuff(Ind);
+				do {
+					tries++;
+			                /* Piece together a 32-bit random seed */
+			                o_ptr->name3 = rand_int(0xFFFF) << 16;
+			                o_ptr->name3 += rand_int(0xFFFF);
+			                /* Check the tval is allowed */
+			                if ((a_ptr = randart_make(o_ptr)) == NULL) {
+			                        /* If not, wipe seed. No randart today */
+			                        o_ptr->name1 = 0;
+				                o_ptr->name3 = 0L;
+						msg_print(Ind, "Randart creation failed.");
+						return;
+					}
+					o_ptr->timeout = 0;
+					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, FALSE);
+				} while	(
+				    o_ptr->to_h < 30 ||
+				    o_ptr->to_d < 29 ||
+				    o_ptr->pval < 2 ||
+				    !(a_ptr->flags1 & TR1_STEALTH) ||
+				    !(a_ptr->flags2 & TR2_FREE_ACT) ||
+				    !(a_ptr->flags2 & TR2_RES_COLD) ||
+				    !(a_ptr->flags2 & TR2_RES_SHARDS) ||
+				    !(a_ptr->flags3 & TR3_XTRA_MIGHT) ||
+				    !(a_ptr->flags3 & TR3_XTRA_SHOTS) ||
+				    (a_ptr->flags3 & TR3_AGGRAVATE)
+				    );
+				msg_format(Ind, "Re-rolled randart %d times.", tries);
+
+				o_ptr->ident |= ID_MENTAL; /* *id*ed */
+				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 				return;
 			}
 		}

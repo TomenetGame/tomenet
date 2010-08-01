@@ -384,7 +384,6 @@ void do_cmd_eat_food(int Ind, int item)
 			}
 
 			case SV_FOOD_ATHELAS:
-			{
 				msg_print(Ind, "A fresh, clean essence rises, driving away wounds and poison.");
 				ident = set_poisoned(Ind, 0, 0) |
 					set_stun(Ind, 0) |
@@ -397,31 +396,24 @@ void do_cmd_eat_food(int Ind, int item)
 				if (p_ptr->suscep_life) take_hit(Ind, 250, "a sprig of athelas", 0);
 				ident = TRUE;
 				break;
-			}
 
 			case SV_FOOD_RATION:
-			{
 				/* 'Rogue' tribute :) */
-				if (magik(10))
-				{
+				if (magik(10)) {
 					msg_print(Ind, "Yuk, that food tasted awful.");
 					if (p_ptr->max_lev < 2) gain_exp(Ind, 1);
 					break;
 				}
 				/* Fall through */
-			}
 			case SV_FOOD_BISCUIT:
 			case SV_FOOD_JERKY:
 			case SV_FOOD_SLIME_MOLD:
-			{
 				if (!p_ptr->suscep_life || o_ptr->sval == SV_FOOD_SLIME_MOLD)
 					msg_print(Ind, "That tastes good.");
 				ident = TRUE;
 				break;
-			}
 
 			case SV_FOOD_WAYBREAD:
-			{
 			    if (!p_ptr->suscep_life) {
 				msg_print(Ind, "That tastes very good.");
 				(void)set_poisoned(Ind, 0, 0);
@@ -433,7 +425,6 @@ void do_cmd_eat_food(int Ind, int item)
 				msg_print(Ind, "Doesn't taste very special.");
 			    }
 				break;
-			}
 
 			case SV_FOOD_PINT_OF_ALE:
 			case SV_FOOD_PINT_OF_WINE:
@@ -666,6 +657,8 @@ void do_cmd_eat_food(int Ind, int item)
 	/* Food can feed the player */
 	if (!p_ptr->suscep_life)
 		(void)set_food(Ind, p_ptr->food + o_ptr->pval);
+	else if (p_ptr->prace != RACE_VAMPIRE)
+		(void)set_food(Ind, p_ptr->food + o_ptr->pval / 3);
 
 
 	/* Hack -- really allow certain foods to be "preserved" */
@@ -7352,6 +7345,12 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 
 						object_aware(Ind, o_ptr);
 						object_known(o_ptr);
+
+						/* log it */
+						s_printf("POLYRING_CREATE: %s -> %s (%d/%d, %d).\n",
+						    p_ptr->name, r_info[o_ptr->pval].name + r_name,
+						    o_ptr->level, r_info[o_ptr->pval].level,
+						    o_ptr->timeout);
 					}
 				}
 				/* activate the ring to change into its form! */
@@ -7405,6 +7404,12 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 					}
 
 					do_mimic_change(Ind, o_ptr->pval, TRUE);
+
+					/* log it */
+					s_printf("POLYRING_ACTIVATE_0: %s -> %s (%d/%d, %d).\n",
+					    p_ptr->name, r_info[o_ptr->pval].name + r_name,
+					    o_ptr->level, r_info[o_ptr->pval].level,
+					    o_ptr->timeout);
 #endif
 
 #if POLY_RING_METHOD == 1
@@ -7412,6 +7417,13 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 					do_mimic_change(Ind, o_ptr->pval, TRUE);
 					p_ptr->tim_mimic = o_ptr->timeout;
 					p_ptr->tim_mimic_what = o_ptr->pval;
+
+					/* log it */
+					s_printf("POLYRING_ACTIVATE_1: %s -> %s (%d/%d, %d).\n",
+					    p_ptr->name, r_info[o_ptr->pval].name + r_name,
+					    o_ptr->level, r_info[o_ptr->pval].level,
+					    o_ptr->timeout);
+
 				        inven_item_increase(Ind, item, -1);
 		    		        inven_item_optimize(Ind, item);
 #endif

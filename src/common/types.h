@@ -2847,6 +2847,7 @@ struct player_type
 	char warning_run, warning_wield, warning_chat, warning_lite;
 	char warning_rest;/* if a char rests from <= 40% to 50% without R, or so..*/
 	char warning_mimic, warning_dual, warning_potions, warning_wor;
+	char warning_ghost;
 
 #ifdef USE_SOUND_2010
 	int music_current, music_monster; //background music currently playing for him/her; an overriding monster music

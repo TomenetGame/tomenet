@@ -6960,6 +6960,13 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 
 	/* Windows */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+	/* Possibly tell him what to do now */
+	if (p_ptr->lev <= 10 && p_ptr->warning_ghost == 0) {
+		p_ptr->warning_ghost = 1;
+		msg_print(Ind, "\375\377RHINT: You died! You can wait for someone to revive you or use \377o<\377R or \377o>");
+		msg_print(Ind, "\375\377R      keys to float back to town and revive yourself in the temple: The \377g4\377R.");
+	}
 }
 
 /*
