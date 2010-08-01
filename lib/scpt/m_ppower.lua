@@ -134,6 +134,7 @@ MDISARM = add_spell
 	}
 }
 
+--[[ --moved to mintrusion, to make room for ff/fly spells here..
 MPSISTORM = add_spell
 {
 	["name"] =	"Psi Storm",
@@ -157,6 +158,32 @@ MPSISTORM = add_spell
         ["desc"] =	{
 			"A psionic storm that damages and disturbs all minds within an area",
         }
+}
+]]
+
+MFEEDBACK = add_spell
+{
+	["name"] =	"Feedback",
+        ["school"] =	{SCHOOL_PPOWER},
+	["am"] =	50,
+	["spell_power"] = 0,
+        ["level"] =	18,
+        ["mana"] =	10,
+        ["mana_max"] =	20,
+        ["fail"] =	15,
+        ["direction"] = FALSE,
+	["spell"] = function()
+		if get_level(Ind, MFEEDBACK, 50) >= 15 then set_tim_fly(Ind, randint(5) + 5 + get_level(Ind, MFEEDBACK, 15))
+			else set_tim_ffall(Ind, randint(5) + 5 + get_level(Ind, MFEEDBACK, 15))
+		end
+	end,
+	["info"] = function()
+		return "dur "..(5 + get_level(Ind, MFEEDBACK, 15)).."+d5"
+	end,
+	["desc"] = {
+		"Uses psycho-kinetic force for propulsion, making you levitate.",
+		"At level 15 it becomes sufficient for controlled flight."
+	}
 }
 
 MPYROKINESIS = add_spell

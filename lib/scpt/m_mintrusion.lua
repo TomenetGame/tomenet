@@ -164,6 +164,31 @@ MMINDBLAST = add_spell
         }
 }
 
+MPSISTORM = add_spell
+{
+	["name"] = "Psi Storm",
+	["school"] = {SCHOOL_MINTRUSION},
+	["am"] = 50,
+	["spell_power"] = 0,
+	["level"] = 18,
+	["mana"] = 15,
+	["mana_max"] = 40,
+	["fail"] = 25,
+	["direction"] = TRUE,
+	["spell"] = function(args)
+--        ["spell"] = function()
+		fire_cloud(Ind, GF_PSI, args.dir, (1 + get_level(Ind, MPSISTORM, 76)), 2 + get_level(Ind, MPSISTORM, 2), 5 + get_level(Ind, MPSISTORM, 5), 14, " releases a psi storm for")
+--		fire_cloud(Ind, GF_PSI, 0, (1 + get_level(Ind, MPSISTORM, 76)), 2 + get_level(Ind, MPSISTORM, 4), 5 + get_level(Ind, MPSISTORM, 5), 14, " releases a psi storm for")
+--                        fire_wave(Ind, GF_PSI, 0, (1 + get_level(Ind, MPSISTORM, 76)), 2 + get_level(Ind, MPSISTORM, 4), 5 + get_level(Ind, MPSISTORM, 5), 14, EFF_STORM, " releases a psi storm for
+        end,
+        ["info"] = function()
+                return "dam "..(1 + get_level(Ind, MPSISTORM, 76)).." rad "..(2 + get_level(Ind, MPSISTORM, 2)).." dur "..(5 + get_level(Ind, MPSISTORM, 5))
+        end,
+        ["desc"] = {
+                "A psionic storm that damages and disturbs all minds within an area",
+        }
+}
+
 MSILENCE = add_spell
 {
 	["name"] = 	"Psychic Suppression",

@@ -164,7 +164,7 @@ HZEAL = add_spell
 			return "dur 9+d5, "..(get_zeal_power() / 10).." EA"
 	end,
 	["desc"] =      {
-		"Increases your melee attacks per round by up to +3 for 14+d5 turns.",
+		"Increases your melee attacks per round by up to +3 for 9+d5 turns.",
 		"***Automatically projecting***",
 	}
 }

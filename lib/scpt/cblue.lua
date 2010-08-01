@@ -1087,3 +1087,20 @@ function rec(name)
     recall_player(i, "");
 end
 
+--fix someone's Grond to new version oO
+function _fg(name)
+    local i, n
+    i = ind(name)
+    for n = 1, INVEN_TOTAL do
+	if players(i).inventory[n].name1 == 111 then
+	    players(i).inventory[n].to_h = 30
+	    players(i).inventory[n].to_d = 30
+	    players(i).inventory[n].to_a = 0
+	    players(i).redraw = bor(player.redraw, 2147483648)
+--	    msg_print(Ind, "Grond has been updated.")
+	end
+    end
+--    else
+--	msg_print(Ind, "No Grond found.")
+--    end
+end
