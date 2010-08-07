@@ -9184,7 +9184,7 @@ void process_monsters(void)
 #if 0 /* no reason to go this far I think, just attacking the player as usual should be enough - C. Blue */
 					reveal_cloaking = TRUE;
 #endif
-				} else /* can't see cloaked player? */
+				} else { /* can't see cloaked player? */
 					/* hack: if monster moves highly randomly, we assume that it
 					   doesn't really care about a player being nearby or not,
 					   and hence keep up the random movement, except using attack
@@ -9197,8 +9197,10 @@ void process_monsters(void)
 							may_move_dis = j;
 						}
 					}
+
 					/* Normally, cloaked players are ignored and monsters don't move/act: */
 					continue;
+				}
 			}
 #if 0 /* maybe doesn't make sense that spotting an action drops camouflage */
 			else if (p_ptr->cloaked == 1 && new_los && !m_ptr->csleep && !strchr(",ijlmrsvwzFIQ", r_ptr->d_char) {
