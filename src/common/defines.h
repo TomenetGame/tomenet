@@ -2499,7 +2499,7 @@ that keeps many algorithms happy.
 #define SV_TRAPKIT_BOW                   2
 #define SV_TRAPKIT_XBOW                  3
 #define SV_TRAPKIT_POTION                4
-#define SV_TRAPKIT_SCROLL                5
+#define SV_TRAPKIT_SCROLL_RUNE		 5
 #define SV_TRAPKIT_DEVICE                6
 
 /* The "sval" codes for TV_BOOMERANG */

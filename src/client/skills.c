@@ -674,6 +674,15 @@ static bool item_tester_hook_potion(object_type *o_ptr)
 	return (FALSE);
 }
 
+static bool item_tester_hook_scroll_rune(object_type *o_ptr)
+{
+	if ((o_ptr->tval == TV_SCROLL) ||
+	    (o_ptr->tval == TV_RUNE2)) return (TRUE);
+
+	/* Assume not */
+	return (FALSE);
+}
+
 /*
  * set a trap .. it's out of place somewhat.	- Jir -
  */
@@ -710,8 +719,8 @@ static void do_trap(int item_kit)
 		case SV_TRAPKIT_POTION:
 			item_tester_hook = item_tester_hook_potion;
 			break;
-		case SV_TRAPKIT_SCROLL:
-			item_tester_tval = TV_SCROLL;
+		case SV_TRAPKIT_SCROLL_RUNE:
+			item_tester_hook = item_tester_hook_scroll_rune;
 			break;
 		case SV_TRAPKIT_DEVICE:
 			item_tester_hook = item_tester_hook_device;

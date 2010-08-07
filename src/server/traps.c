@@ -3531,6 +3531,15 @@ static bool item_tester_hook_potion(object_type *o_ptr)
 	return (FALSE);
 }
 
+static bool item_tester_hook_scroll_rune(object_type *o_ptr)
+{
+        if ((o_ptr->tval == TV_SCROLL) ||
+            (o_ptr->tval == TV_RUNE2)) return (TRUE);
+
+	/* Assume not */
+	return (FALSE);
+}
+
 /*
  * quick hack for ToME floor_carry, used in do_cmd_set_trap		- Jir -
  *
@@ -3667,8 +3676,8 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
                 case SV_TRAPKIT_POTION:
                         item_tester_hook = item_tester_hook_potion;
 			break;
-                case SV_TRAPKIT_SCROLL:
-			item_tester_tval = TV_SCROLL;
+                case SV_TRAPKIT_SCROLL_RUNE:
+			item_tester_hook = item_tester_hook_scroll_rune;
 			break;
                 case SV_TRAPKIT_DEVICE:
                         item_tester_hook = item_tester_hook_device;
@@ -3709,8 +3718,8 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 		case SV_TRAPKIT_POTION:
 			if (!item_tester_hook_potion(j_ptr)) return;
 			break;
-		case SV_TRAPKIT_SCROLL:
-			if (j_ptr->tval != TV_SCROLL) return;
+		case SV_TRAPKIT_SCROLL_RUNE:
+			if (!item_tester_hook_scroll_rune(j_ptr)) return;
 			break;
 		case SV_TRAPKIT_DEVICE:
 			if (!item_tester_hook_device(j_ptr)) return;
@@ -4756,7 +4765,134 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 
         return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
- 
+
+static bool mon_hit_trap_aux_rune(int who, int m_idx, int sval) {
+	monster_type *m_ptr = &m_list[m_idx];
+	worldpos wpos = m_ptr->wpos;
+	int dam = 0, typ = 0, rad = 0, cloud = 0, cloudi = 0;
+        int y = m_ptr->fy;
+        int x = m_ptr->fx;
+	cave_type **zcave;
+	zcave = getcave(&wpos);
+		
+	/* Depend on scroll type */
+	switch (sval) {
+	case SV_RUNE2_FIRE:
+//unclear: what happens if player leaves game before his trap goes off?
+//		if (!rand_int(3) && who < 0 && who > PROJECTOR_UNUSUAL) lite_room(-who, &wpos, y, x);
+		typ = GF_FIRE;
+		dam = damroll(10, 30);
+		rad = 3;
+		break;
+	case SV_RUNE2_COLD:
+		typ = GF_COLD;
+		dam = damroll(10, 30);
+		rad = 3;
+		break;
+	case SV_RUNE2_ACID:
+		typ = GF_ACID;
+		dam = damroll(10, 30);
+		rad = 3;
+		break;
+	case SV_RUNE2_WATER:
+		typ = GF_WATER;
+		dam = damroll(10, 30);
+		rad = 3;
+		break;
+
+	case SV_RUNE2_ELEC:
+		typ = GF_ELEC;
+		dam = damroll(10, 30);
+		rad = 3;
+		break;
+	case SV_RUNE2_EARTH:
+		if (!rand_int(4)) earthquake(&wpos, y, x, 5);
+		else {
+			typ = GF_SHARDS;
+			dam = damroll(10, 30);
+			rad = 3;
+		}
+		break;
+	case SV_RUNE2_POISON:
+		if (!rand_int(3)) {
+			cloud = 3;
+			cloudi = 5;
+			dam = rand_int(50) + 10;
+		} else dam = damroll(10, 30);
+		if (!rand_int(4)) typ = GF_WATERPOISON;
+		else typ = GF_POIS;
+		rad = 3;
+		break;
+	case SV_RUNE2_WIND:
+//		if (!rand_int(2)) {
+			typ = GF_AWAY_ALL;
+			dam = 100;
+/*		} else {
+			typ = GF_FORCE;
+			dam = damroll(10, 30);
+		}
+*/		rad = 3;
+		break;
+
+	case SV_RUNE2_MANA:
+		typ = GF_MANA;
+		dam = damroll(10, 30);
+		rad = 3;
+		break;
+	case SV_RUNE2_CHAOS:
+		typ = GF_CHAOS;
+		dam = damroll(10, 30);
+		rad = 3;
+		break;
+	case SV_RUNE2_FORCE:
+		typ = GF_FORCE;
+		dam = damroll(10, 30);
+		rad = 3;
+		break;
+	case SV_RUNE2_GRAVITY:
+		typ = GF_GRAVITY;
+		dam = damroll(10, 30);
+		rad = 3;
+		break;
+
+	case SV_RUNE2_NETHER:
+		typ = GF_GRAVITY;
+		dam = damroll(10, 30);
+		rad = 3;
+		break;
+	case SV_RUNE2_TIME:
+		if (!rand_int(2)) {
+			typ = GF_TIME;
+			dam = damroll(10, 30);
+		} else {
+			typ = GF_OLD_SLOW;
+			dam = damroll(4, 6);
+		}
+		rad = 3;
+		break;
+	case SV_RUNE2_MIND:
+		typ = GF_PSI;
+		dam = damroll(10, 30);
+		rad = 3;
+		break;
+	case SV_RUNE2_NEXUS:
+		typ = GF_NEXUS;
+		dam = damroll(10, 30);
+		rad = 3;
+		break;
+	default:
+		return (FALSE);
+	}
+
+	/* Trapping skill influences damage - C. Blue */
+	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
+	dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
+
+	/* Actually hit the monster */
+	(void) project(0 - who, rad, &wpos, y, x, dam, typ, PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP, "");
+        return (zcave[y][x].m_idx == 0 ? TRUE : FALSE); 
+}
+
 /*
  * Monster hitting a monster trap -MWK-
  * Returns True if the monster died, false otherwise
@@ -5222,7 +5358,7 @@ bool mon_hit_trap(int m_idx)
 				break;
 			}
 
-			case SV_TRAPKIT_SCROLL:
+			case SV_TRAPKIT_SCROLL_RUNE:
 			{
 				/* Get number of shots */
 				shots = 1;
@@ -5249,8 +5385,11 @@ bool mon_hit_trap(int m_idx)
 #endif	// 0
 					msg_print_near_monster(m_idx, "activates a spell!");
 
-					/* Get the potion effect */
-					dead = mon_hit_trap_aux_scroll(who, m_idx, load_o_ptr->sval);
+					/* Get the scroll or rune effect */
+					if (load_o_ptr->tval == TV_SCROLL)
+						dead = mon_hit_trap_aux_scroll(who, m_idx, load_o_ptr->sval);
+					else
+						dead = mon_hit_trap_aux_rune(who, m_idx, load_o_ptr->sval);
 
 					/* Copy and decrease ammo */
 					object_copy(j_ptr, load_o_ptr);
