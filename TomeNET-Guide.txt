@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 30. July 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 12. Aug 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5h - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -9647,9 +9647,9 @@ Mage staves
         See invisible
         Random ESP
         Extra +mana capacity bonus
-Boomerangs (also see 'Weapons' above) 
+Boomerangs (also see 'Weapons' above)
         Extra shots
-Dark swords
+Dark swords (aso see 'Weapons' above)
         Increased anti-magic (not over 30% in total)
 Ammunition
         All elemental brands (acid/elec/fire/cold/poison)
@@ -9736,7 +9736,7 @@ Body Armour (except for Dragon Scale Mails)
         Hit point bonus (+LIFE)   (*)
         Reduced weight
         Extra +AC bonus
-    Royal Heavy Armour (Mithril/Adamantite armour only usable by winners):
+    Royal Armour (Heavy mithril/adamantite armour only usable by winners):
     (these mods may spawn additionally to body armour specific mods above)
         Reflection
         Mana resistance
