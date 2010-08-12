@@ -9649,7 +9649,7 @@ Mage staves
         Extra +mana capacity bonus
 Boomerangs (also see 'Weapons' above)
         Extra shots
-Dark swords (aso see 'Weapons' above)
+Dark swords (also see 'Weapons' above)
         Increased anti-magic (not over 30% in total)
 Ammunition
         All elemental brands (acid/elec/fire/cold/poison)
