@@ -8340,6 +8340,19 @@ Psycho-Power
                     Required skill level for first spell level: 24.
     Psychic Warp    Attempts to teleport away your opponent.
                     Required skill level for first spell level: 30.
+    Telekinesis     Inscribe your book @P<Playername>, cast it, select an
+                    item that you wish to teleport to the player's inventory.
+                    The target player needs to concentrate by opening her/his
+                    mind, see (0.2). It's dangerous to have the mind opened,
+                    since everyone can send you any items, so better close it
+                    again as soon as the desired telekinesis transaction is
+                    done. Example inscription: @PGandalf
+                    Required skill level for first spell level: 35.
+                    Shared spell (see above): Psycho-Power / Thought Contact.
+    Kinetic Shield  Uses telekinetic force to set up a shield around you that
+                    has a chance to repel physica attacks or projectiles,
+                    draining your mana each time.
+                    Required skill level for first spell level: 40.
 
 Thought Contact
     Clear Mind      Removes fear, confusion and hallucination. (auto-project)
@@ -8357,6 +8370,8 @@ Thought Contact
                     Required skill level for first spell level: 20.
     Telepathy       Senses the minds of creatures.
                     Required skill level for first spell level: 20.
+    Recognition     Identifies an item.
+                    Required skill level for first spell level: 25.
     Stabilize Thoughts
                     Cures some insanity and removes effects.   (auto-project)
                     Required skill level for first spell level: 25.
@@ -8368,6 +8383,7 @@ Thought Contact
                     again as soon as the desired telekinesis transaction is
                     done. Example inscription: @PGandalf
                     Required skill level for first spell level: 35.
+                    Shared spell (see above): Psycho-Power / Thought Contact.
 
 Mental Intrusion
     Psionic Blast   Blasts the target's mind with psionic energy.
