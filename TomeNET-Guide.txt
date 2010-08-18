@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. Aug 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 18. Aug 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5h - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -507,6 +507,14 @@ They all start with a slash '/':
 /bbs <text> Add a line of text to the in-game bulletin board system. Players
             can look at the board by pressing the '!' key.
             (You can verify or compare the date with the /time command.)
+            If <text> is omitted, the current BBS contents will be shown, same
+            as using the '!' key.
+/pbbs <text>    Same usage as /bbs, but only readable/writable for party
+                members. So it's a party-internal BBS.
+                To read its contents, type /pbbs without any <text>.
+/gbbs <text>    Same usage as /bbs, but only readable/writable for guild
+                members. So it's a guild-internal BBS.
+                To read its contents, type /gbbs without any <text>.
 /deal       Deals a card (completely random).
             The result is random and can be seen by other players who stand
             nearby.
@@ -609,18 +617,22 @@ They all start with a slash '/':
             Example: /mon D  ->  shows your greater dragons kill count.
 /motd       Shows the current server notes that are displayed at login.
  (/snotes)
+/news       Shows the login screen, same as ~f, but in monochrome.
 /note <account name>:<text>
             Leave a note to another player. Note: You have to specify his
             ACCOUNT NAME, not a character name. That way, no matter which of
             his characters he chooses to logon, he always gets the note.
-/news       Shows the login screen, same as ~f, but in monochrome.
 /note <account name>
             Delete all pending notes that were addressed to that player.
 /notes      Display all pending notes that you wrote to other players.
 /notep <text>
             Leave a note to the party you own.
+            If <text> is omitted, it will display the current note.
+            If <text> is just an '*' char, it will erase the current note.
 /noteg <text>
             Leave a note to the guild you own.
+            If <text> is omitted, it will display the current note.
+            If <text> is just an '*' char, it will erase the current note.
 /obj        Displays all objects known to you, same as ~4.
  (/object)
 /page <player-name>     Sends beeps to that player to help you getting his
@@ -3692,6 +3704,7 @@ Stun    -Stun           Reduces to-hit and to-dam.
                         Reduces chance for successful spell-casting.
                         Prevents you from intercepting a monster (see (6.2)
                         'Interception' skill).
+                        Reduces chance to block or parry.
         -Heavy stun     Greatly reduces to-hit and to-dam.
                         Reduces your martial arts damage (because you cannot
                         perform MA special styles while stunned).
@@ -8318,9 +8331,8 @@ Psycho-Power
                     Required skill level for first spell level: 16.
     Autokinesis III Teleports you towards a party member with opened mind.
                     Required skill level for first spell level: 24.
-    Psi Storm       Psionic storm that damages and disturbs all minds within an
-                    area for a while, causing the usual random Psi side effects
-                    on all targets similar to Psionic Blast.
+    Feedback        Uses telekinetic effects to keep you hovering, granting
+                    levitation, and at 15 becomes sufficient for flying.
                     Required skill level for first spell level: 18.
     Pyrokinesis     Causes a severe inflammation to burn your opponent.
                     Required skill level for first spell level: 20.
@@ -8361,6 +8373,10 @@ Mental Intrusion
     Psionic Blast   Blasts the target's mind with psionic energy.
                     Possibly causing various additional effects.
                     Required skill level for first spell level: 1.
+    Psi Storm       Psionic storm that damages and disturbs all minds within an
+                    area for a while, causing the usual random Psi side effects
+                    on all targets similar to Psionic Blast.
+                    Required skill level for first spell level: 18.
     Scare           Infuses your target's mind with fear.
                     Lv10: Becomes a ball effect.
                     Lv20: Affects all monsters in LoS.
