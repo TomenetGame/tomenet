@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 18. Aug 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 24. Aug 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5h - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -3230,7 +3230,8 @@ The 1..9 are standard shops, namely..
 8       The Inn         In Bree it's The Prancing Pony. Inside the inn,
                         players are relatively safe from monsters.
 9       Book Store      Sells books for istari, priests and all other (hybrid)
-                        magic users.
+                        magic users. Book stores in higher-level towns on
+                        average also tend to sell higher-level spells.
 +       These are different everywhere. Some examples are..
         Mayor's Office (in Bree)
                         Allows you to turn in deed parchments you won in
@@ -4081,7 +4082,7 @@ of several points..
 
 The backpack weight limit includes the weight of your equipment and is
 depending on your strength and martial arts skill. It is
-(str_wgt * 2.0 lb) + (str_wgt * rounddown(skill * 0.12 lb)).
+10.0 lb + (str_wgt * 2.0 lb) + ((str_wgt + 5) * rounddown(skill * 0.1 lb)).
 
 Here's a table to tell you the values for str_wgt:
 (Warning message is: "You can't move freely due to your backpack weight.")
@@ -5466,7 +5467,7 @@ Armour class helps you twice:
  The more AC the better, it's weighed against the level of the attacking
  monster. If the monster is (heavily) stunned it gets penalties here.
 -It reduces the damage if a monster manages to hit you.
- This effect caps at 150 AC!
+ This effect caps at 250 AC.
 
 Monsters can score critical hits which can (depending on the attack type)
 result in a cutting or stunning effect against the player.
@@ -7748,13 +7749,15 @@ Werebear                same as Grizzly Bear, but tougher
 
 Great eagle             speedy; can fly; passes most terrain types
 
-White shark             speedy aquatic form (requires deep water to breathe)
+Great White shark       speedy and tough aquatic form
+                        (aquatic means that it requires deep water to breathe
+                        and greatly resists water-based attacks)
 
 Aranea                  a speedy greater spider;
                         poisonous hits;
                         resists fire, completely immune to poison;
                         susceptible to light and to 'good' (creature is evil);
-                        has a small array of magic spells to its disposal
+                        has a small array of magic spells at its disposal
 
 Level 25:
 ---------
@@ -7776,7 +7779,8 @@ Level 30:
 Minotaur                tough and very speed; susceptible to 'good'
 
 Giant squid             tough and speedy aquatic creature;
-                        resists cold/acid;
+                        resists water greatly;
+                        resists cold/acid/lightning/poison;
                         can breathe lightning, acid and poison
 
 Level 35:
@@ -7786,14 +7790,6 @@ Level 35:
                         immune to poison;
                         can cast fear, poison ball, and breathe poison
 
-Plasma hound            speedy;
-                        resists plasma, sound; immune to fire;
-                        susceptible to cold;
-                        can't be cut/stunned/confused or paralyzed;
-                        can breathe plasma
-
-Level 40:
----------
 Elder aranea            speedy and smart (INT bonus) greater spider;
                         50% poisonous attacks;
                         resists darkness, fire, poison; immune to either fire
@@ -7803,16 +7799,30 @@ Elder aranea            speedy and smart (INT bonus) greater spider;
                         regenerates HP quickly;
                         has a medium array of spells to its disposal
 
+Plasma hound            speedy;
+                        resists plasma, sound; immune to fire;
+                        susceptible to cold;
+                        can't be cut/stunned/confused or paralyzed;
+                        can breathe plasma
+
+Level 40:
+---------
 11-headed hydra         speedy and toughest hydra; can swim;
                         fiery attacks;
                         immune to fire;
                         has a small array of fire/fear spells
 
-Lesser kraken           speedy, smart and very tough aquatic creature;
-                        immune to either water attacks and poison, resists the
-                        other, as well as lightning, cold and darkness;
+Giant Roc               speedy giant bird; deals high damage;
+                        passes most terrains;
+                        immune to electricity; resists sound;
                         can't be paralyzed or confused;
-                        has a medium size array of spells
+
+Lesser kraken           speedy, smart and very tough aquatic creature;
+                        resists water greatly as well as lightning, cold,
+                        darkness, poison;
+                        completely immune to either water attacks and poison;
+                        can't be paralyzed or confused;
+                        has a medium size array of spells;
 
 Level 45:
 ---------
@@ -7838,9 +7848,9 @@ Spectral Tyrannosaur    speedy undead animal;
                         can breathe nexus, poison and nether
 
 Greater kraken          speedy, smart and extremely tough aquatic creature;
-                        resists water attacks, cold, poison, lightning, acid,
-                        darkness; becomes immune to one of lightning/poison/
-                        water attacks;
+                        resists water attacks greatly, as well as cold, poison,
+                        lightning, acid, darkness;
+                        completely immune to one of lightning/poison/water;
                         susceptible to 'good';
                         can cast from a large array of spells
 
@@ -7881,6 +7891,8 @@ or Tomes, that contain several different spells) in their inventory.
 Spell scrolls and some books can be purchased in store '9' (the 'book store',
 usually also sells 'Beginner Cantrips' and sometimes also Codices) or in
 '7' (the 'black market' - very expensive but you often find tomes here!).
+Book stores in higher-level towns on average also tend to sell higher-level
+spells.
 
 Note that you must spend enough points into a particular magic school (or
 into sorcery) for the spell turning from grey into green in your spell book,
