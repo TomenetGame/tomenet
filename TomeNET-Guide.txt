@@ -1376,6 +1376,12 @@ Example:
 ..if your account name is 'Iron Man'.
 
 
+To automatically position your TomeNET windows in a certain manner on Linux,
+on KDE this can be done natively by right-clicking the windows and modifying
+the "special window settings" or "special application settings", while on Gnome
+you can use a helper tool such as Devilspie to achieve the same.
+
+
 
 (2.1a) Installing sound and music packs
 ---------------------------------------
@@ -3032,10 +3038,10 @@ There are different types of dungeons. The main five are:
 -NO_UP. These dungeons won't allow you to go upwards, similar to ironman,
  just without the penalty of permanent ghost-death. You are allowed to use
  Word-of-Recall as well! Ghosts of dead players can float upwards.
- No-up dungeons/towers are marked by a red < or > symbol.
+ No-up dungeons/towers are marked by an orange < or > symbol.
 -FORCE_DOWN. Same as NO_UP, but you can only recall at the bottom of the
  dungeon, similar to ironman (except for the no-ghost death penalty).
- Force-down dungeons/towers are marked by an orange < or > symbol.
+ Force-down dungeons/towers are marked by a red < or > symbol.
 -Ironman. Ironman dungeons or towers won't allow you to recall or to use
  staircases that lead upwards! If you die in such a dungeon or tower you won't
  turn into a ghost either but get destroyed completely.
