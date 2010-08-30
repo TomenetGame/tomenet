@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 24. Aug 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 30. Aug 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5h - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -3973,10 +3973,10 @@ on an adjacent field, so use 'fire-till-kill' mode in general!
 
 The dice of ammunition are also effected by brands and slays same as normal 
 weapons but the additional damage is reduced to 2/5.
-Example: Ring of Acid will usually add 1x your melee base damage (dice).
-For ranged weapons it will add 1*2/5x of your base damage, so multiply your
-base damage by 1.4 instead of by 2 to get your total damage output.
-See (5.3) to get an easy overview.
+Example: Ring of Acid will usually add 1x your melee base damage (weapon dice).
+For ranged weapons it will add 1*2/5x of your base damage (arrow dice), so
+multiply the average arrow dice result by 1.4 instead of by 2 to get your total
+damage output. See (5.3) to get an easy overview.
 
 If you try to wield a ranged weapon that is too heavy for your character,
 meaning your 'STRength' stat isn't high enough yet, you'll get a warning
@@ -4042,6 +4042,9 @@ Slay Evil   |       2         | It fights against evil with holy fury.
 Kill Undead |       3         | It is a great bane of undead.
 Kill Dragon |       3         | It is a great bane of dragons.
 Kill Demon  |       3         | It is a great bane of demons.
+
+Same as in the 'brands' table, x2 will become x1.4 for ranged weapons and
+x1.33 for martial arts, while x3 will become x1.8 and x1.67 respectively.
 
 Giants, Undead, Trolls, Orcs, Dragons, Demons are all 'Evil'.
 
@@ -4131,7 +4134,7 @@ Martial Arts special combat moves have certain dice, similar to normal
 weapons. These dice are also effected by brands and slays same as normal 
 weapons but the additional damage is reduced to 1/3.
 Example: Ring of Acid will usually add 1x your base damage.
-For MA it will add 1/3x of your base damage, so multiply your base damage
+For MA it will add 1/3 of your base damage, so multiply your base damage
 by 1.33 instead of by 2 to get your total damage output.
 See (5.3) to get an easy overview.
 
@@ -6267,10 +6270,12 @@ Note that not every skill is available to every profession (class).
                                 Artifact ammunition never breaks.
         .Bow-mastery            At 12.5, 25, 37.5, 50 you will get +1 extra
                                 shot per round each.
-                                Same as Sling-mastery regarding ammunition.
+                                Otherwise same as Sling-mastery, except no
+                                ricochetting.
         .Crossbow-mastery       At 25 and 50 you will get +1 extra shot AND
                                 +1 extra-might-bonus each.
-                                Same as Sling-mastery regarding ammunition.
+                                Otherwise same as Sling-mastery, except no
+                                ricochetting.
     .Boomerang-mastery          At 16.6, 33.3 and 50 you get +1 extra throw
                                 each. Boomerang-mastery also increases ranged
                                 to-damage bonus while using a boomerang, and
@@ -7564,10 +7569,10 @@ F: flag list
                 ((monsterlevel / 2) + 10) percent. The range of the anti-magic
                 field is increased by ((monsterlevel / 50) + 2) fields.
     ARROW_1, ARROW_2, ARROW_3
-                The player will receive an additional shot per round since the
-                monster seems to be good at shooting.
+                The player will receive an extra shot per round with slings or
+                bows since the monster seems to be good at shooting.
                 If the monster shoots 1_IN_3 or better, the player will
-                receive an additional extra shot with slings and bows.
+                receive an additional extra shot (with crossbows too).
     HURT_ROCK   Means that this creature has a rock-like skin and body.
                 Takes damage from Stone-To-Mud and takes more damage from
                 'disintegration' attacks, but at the same time resists shards!
