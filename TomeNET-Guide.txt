@@ -2348,7 +2348,7 @@ to their real functionality. They are:
     This will become  \e)@m3\rc191\r  (transform into a Grizzly Bear).
   F for employing a fighting technique
     Example:  Fa
-    (Use fighting technique 'a)', which usually is 'taunt'.)
+    (Use fighting technique 'a)', which usually is 'sprint'.)
   S for employing a shooting technique
     Example:  Sa
     (Use shooting technique 'a)', which is probably 'flare'.)
