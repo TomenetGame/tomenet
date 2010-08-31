@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 30. Aug 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 1. Sep 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5h - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -3754,7 +3754,8 @@ Slowing on monsters is currently a permanent effect. Very effective, although
         many higher monsters are immune to it. Also, it is currently
         cumulative (subject to change) and can be applied several times,
         although monsters might resist.
-Stun    Stun can be caused by special martial art attacks among other things.
+Stun    (Note that "stunned" and "dazed" are the same thing.)
+        Stun can be caused by special martial art attacks among other things.
         Stunned monsters have a harder time to successfully cast spells or hit
         you in melee combat. Also monsters cannot interfere with your actions
         while they are stunned. Many monsters are immune to stun, but also
