@@ -8789,6 +8789,13 @@ PvP-mode characters use the /pvp command to enter/leave the pvp arena. This
 arena also releases monsters from time to time. The entry point of a player is
 random, because he gets teleported on arrival.
 
+Before you go and fight others to the death, look at your inventory. You will
+see a parchment "Gladiator's Entrance". When you turn this in at the mayor's
+office in Bree, you will get a semi-random excellent item for free, to start
+your career with. Semi-random because it partially depends on your skill point
+distribution, so before turning in your parchment for an item at the office,
+make sure you hit SHIFT+G and distribute your skill points to your liking.
+
 PvP-mode characters are called 'Gladiators' and use special rulesets that make
 it easier to rise in levels and less of a hassle when you get actually killed
 by an opponent! The special rules that apply are as follows:
