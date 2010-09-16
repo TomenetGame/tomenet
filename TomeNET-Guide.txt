@@ -7532,9 +7532,7 @@ B: attack method : attack effect : damage
 
     Melee to-damage bonus also depends on the monster form:
     The monster damage dice for each attack are multiplied and the products
-    are all added up, the result is divided by 4. If the monster can't use
-    melee weapons (no equipment slot for melee weapons), the result will
-    be doubled (after it was divided by 4).
+    are all added up, the result is divided by 4.
     The result is now capped against 200, the closer this graph comes towards
     200 the flatter the curve will become.
     This value is now compared against the player's melee to-damage bonus.
