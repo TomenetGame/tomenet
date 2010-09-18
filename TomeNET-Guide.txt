@@ -8764,6 +8764,10 @@ The techniques are as follows:
     Create ammunition   -
         Create ammunition for your currently equipped ranged weapon from
         bones in your inventory or rubble (':') next to your character.
+        If you wield a bow or crossbow, you'll need to have bones in your
+        inventory. If you wield a sling, you'll need to stand next to rubble.
+        The resulting ammunition type will match the ranged weapon you have
+        equipped.
         The quality mainly depends on your archery skill and somewhat on your
         ranged mastery skill, but is still somewhat random.
         A random discount will be applied to the crafted ammo.
