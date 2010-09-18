@@ -198,6 +198,8 @@ compile the game under '(2.1) Installing TomeNET'.
  right side of your keyboard, so the green light is off).
  If SHIFT+<direction> doesn't work on your system, you can press the dot '.'
  followed by a direction key. (If you use rogue-like keys, see section (0.2)!)
+ You can also use the arrow keys to move, but the numpad is better since it
+ allows you to move diagonally too, which is very important.
 -You can wear/wield your armour/weapons by pressing 'w' and choosing them
  from your inventory which is displayed in the bottom right window.
 -You can pick up items if you stand on them and press 'g'.
@@ -1690,6 +1692,11 @@ run by pressing the SHIFT key together with a direction key.
 IMPORTANT: To run (SHIFT+direction) make sure that the Numlock key above your
 number key pad on the right side of your keyboard is turned off. A green lamp
 will usually indicate whether it is on or off.
+Running will not work while awake monsters are in your line of sight, except
+for the starting town of Bree, where running is always possible.
+
+You can also use the arrow keys to move, but the numpad is better since it
+allows you to move diagonally too, which is very important.
 
 You can wear/wield items with 'w' (weapons, armour, light source..)
 You can pickup items with 'g'. Drop items with 'd'. Destroy items with 'k'.
@@ -1761,6 +1768,10 @@ Between AU and the mini lag-o-meter is a line indicating if you are encumbered
 in any way. This line is blank by default, but may start to show little
 coloured icons if your character becomes overburdened in some way.
 
+If you are new to the game, you can skip the rest of this chapter for now,
+as long as your encumberment bar doesn't show any icons in it, and continue
+reading at (3.3) down below.
+
 This line consists of the following icons that may show up:
 (Order: From left to right)
     Brown (        Your armour is too heavy (tohit/sneakiness penalty).
@@ -1827,12 +1838,7 @@ Example:    Hi!             <- goes to everyone
 In chat messages you can type a double colon '::' to force output of a normal
 colon ':' instead of having it interpreted as separator for a private chat
 message. Most smileys are recognized automatically and don't require you to
-enter a double colon ( ':)' will work equally to '::)' ). (If you want to send
-a private message to someone which starts with a smiley, you will have to
-enter a space between the private-separator colon and the smiley colon,
-example: 'D00d: :)' sends a private message to D00d, containing  ' :)'
-while 'D00d::)' will result in a public chat message looking like this
-'D00d:)' .)
+enter a double colon.
 
 You can use colours in messages. To change the message colour, put a {
 followed by a colour code somewhere into your message line.
@@ -1931,7 +1937,7 @@ Before you enter a dungeon by stepping onto a staircase leading into the earth
 (looks like this: '>') and pressing the staircase symbol '>' you will have to
 buy some more items for the following reasons:
 At the very beginning a single enemy who is a little bit stronger could kill
-you easily without you having a fair chance to escape. At the same time,
+you easily without you having a chance to escape. At the same time,
 slaying strong opponents at the very beginning will give very much experience,
 thus making your character rise in experience levels and in power very
 quickly!
@@ -1951,7 +1957,7 @@ So to prepare for hunting in the dungeon, buy:
 -Potion of Cure Light/Serious Wounds
 -Scroll of Phase Door
 The more you can buy of those the better. At least buy one potion of Heroism
-and Cure Light Wounds.
+and Cure Serious Wounds.
 And if you still have spare money (this one costs a lot) a
 -Scroll of Word-of-Recall. (See "(0.3) Important inscriptions" for more info.)
 
@@ -2868,13 +2874,20 @@ of experience you will fade away (your character is erased then).
 =============
 (4.1) Running, picking up items, fighting
 -----------------------------------------
-If no monsters are within your sight, you are able to run. This
-feature was introduced to let you quickly cross empty areas, while it will
+To move around, use the number pad keys 1,2,3; 4,6; 7,8,9.
+You can also use the arrow keys to move, but the numpad is better since it
+allows you to move diagonally too, which is very important.
+
+If no monsters are within your line of sight, are those which are are soundly
+asleep, you are able to "run".
+This feature was introduced to let you quickly cross empty areas, while it will
 cease to work as long as you fight monsters. To run, press SHIFT+<direction>
 or type '.' followed by a direction. Running using SHIFT+<direction> will
 only work if Numlock is turned off. Numlock is the key labeled 'Num' above the
 number key pad on the right side of your keyboard. Usually a green lamp will
 indicate whether Numlock is on or off.
+An exception is the town of Bree, where you are always able to run, even if
+enemies are nearby.
 
 If you want to pick up an item from the floor, step on that field and press
 'g' (or press '5' on the numpad, while NUMLOCK must be on). For more
@@ -10271,6 +10284,12 @@ SOLUTION:   When you quit the game while you are still inside a dungeon or a
             will stay in the game for a little while after you quit, but also
             because you can't be sure what the situation around you will be
             the next time you log on again!
+
+PROBLEM 24: When trying to macro F-keys, they don't seem to work properly.
+            Especially, when hitting F1, a window about MS Windows Help/Support
+            pops up instead.
+SOLUTION:   When playing on a notebook, check the state of the 'Fn' special
+            shift key, and toggle it accordingly.
 
 
 
