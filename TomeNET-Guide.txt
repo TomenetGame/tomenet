@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 1. Sep 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 18. Sep 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5h - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -8751,6 +8751,11 @@ The techniques are as follows:
     Create ammunition   -
         Create ammunition for your currently equipped ranged weapon from
         bones in your inventory or rubble (':') next to your character.
+        The quality mainly depends on your archery skill and somewhat on your
+        ranged mastery skill, but is still somewhat random.
+        A random discount will be applied to the crafted ammo.
+        If you want to create larger stacks of the same type of ammunition,
+        collect a large stack of bones and use the skill on that stack.
     Double-shot         1 stamina/turn while using it actively
         Toggle, making you enter or leave double-shot mode. While active, you
         will fire 2 projectiles at once on each shot, dealing way less damage
