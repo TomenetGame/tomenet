@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 18. Sep 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 20. Sep 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5h - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -8021,7 +8021,7 @@ Fire
                     Required skill level for first spell level: 1.
     Fireflash       Conjures a fire ball.
                     Lv20: Turns into holy fire which is especially deadly to
-                          EVIL opponents.
+                          evil opponents.
                     Required skill level for first spell level: 10.
     Fiery Shield    Creates a shield of flames around you.
                     Required skill level for first spell level: 16.
@@ -8209,6 +8209,7 @@ Holy Offense
     Release Souls   *Dispels undead*.
                     Required skill level for first spell level: 10.
     Orb Of Draining Summons a holy orb, devouring monsters.
+                    This spell deals double damage against evil monsters.
                     Required skill level for first spell level: 20.
     Drain Life      Drains life from a non-undead and non-nonliving creature
                     and returns a part of it to your hit points.
