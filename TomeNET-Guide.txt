@@ -5208,8 +5208,14 @@ Mass Genocide   Removes all monsters that are close to you.
                 immune to teleportation attacks cannot be genocided.
 Acquirement     Gives you a great item. Reading it on deeper dungeon levels
                 produces better results mostly.
+                Note that while some towns also have a high level, reading this
+                scroll in town won't guarantee a 'great' item, which will
+                be guaranteed if you read it in the dungeon.
 *Acquirement*   Gives you two or three great items. Reading it on deeper
                 dungeon levels produces better results mostly.
+                Note that while some towns also have a high level, reading this
+                scroll in town won't guarantee a 'great' item, which will
+                be guaranteed if you read it in the dungeon.
 Fire/Ice/Chaos  Fires a ball of the according type around you. Make sure you
                 resist it or you will take damage too.
 Lottery         This might be your chance today to win the Jackpot!
