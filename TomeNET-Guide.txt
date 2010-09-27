@@ -8254,7 +8254,8 @@ Holy Defense
                     -any hit point decreasing damage,
                     -any sanity decreasing damage,
                     -any malicious effects such as poisoning, fear, blindness,
-                     confusion, paralyzation, slowness, stun or cuts.
+                     confusion, paralyzation, slowness, stun or cuts,
+                    -nexus, polymorph and teleportation effects.
                     The gods won't accept another martyrium until 1000 turns
                     have passed.
                     Note: To check whether you can use the spell again,
