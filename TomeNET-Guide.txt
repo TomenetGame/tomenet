@@ -8248,9 +8248,8 @@ Holy Defense
                     Required skill level for first spell level: 40.
     Martyrdom       Burns you in holy fire, making you invulnerable.
                     When your martyrium ends, you will be left close to death
-                    with up to 30 HP, depending on your maximum HP.
-                    (Remaining HP = MaxHP / 15, but never more than 30. Note
-                    that you cannot be healed in any way during martyr.)
+                    with 1/15 of your maximum HP, yet always at least 30 HP.
+                    Note that you cannot be healed in any way during martyr.
                     Invulnerable here in detail means you won't take..
                     -any hit point decreasing damage,
                     -any sanity decreasing damage,
