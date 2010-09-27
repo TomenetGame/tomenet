@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 20. Sep 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 27. Sep 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5h - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -8249,7 +8249,13 @@ Holy Defense
     Martyrdom       Burns you in holy fire, making you invulnerable.
                     When your martyrium ends, you will be left close to death
                     with up to 30 HP, depending on your maximum HP.
-                    (Remaining HP = MaxHP / 15, but never more than 30.)
+                    (Remaining HP = MaxHP / 15, but never more than 30. Note
+                    that you cannot be healed in any way during martyr.)
+                    Invulnerable here in detail means you won't take..
+                    -any hit point decreasing damage,
+                    -any sanity decreasing damage,
+                    -any malicious effects such as poisoning, fear, blindness,
+                     confusion, paralyzation, slowness, stun or cuts.
                     The gods won't accept another martyrium until 1000 turns
                     have passed.
                     Note: To check whether you can use the spell again,
