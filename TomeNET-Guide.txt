@@ -7469,6 +7469,8 @@ W: depth : rarity : corpse weight : experience for kill
   depth:
     The depth is also the basic level of these monsters. It tells you how
     many of them you need to kill to learn mimicking their form.
+    The level has additional use for calculating the mimic's final hit points
+    regarding very high character levels (see 'hit points' below).
   corpse weight:
     The weight of the form has impact on its stealth. A huge form that weighs
     a lot will give a stealth penalty, while small and light forms may give a
@@ -7491,6 +7493,17 @@ I: speed : hit points : vision : armor class : alertness
     HP.) If the mimic's HP in player form (code 0) are greater than x*y, the
     resulting HP will be ((x*y * 4) + (mimic_HP * 1)) / 5.
     (1/5 monster HP, 4/5 player HP!)
+    A specialty: Players in very high character levels can see their hit points
+    'overtake' the monster form hit points, if the monster form level isn't
+    very high in comparison. Example: While a green dragonrider will provide a
+    great HP boost, if the player himself has reached say level 70 and has lots
+    of HP even in normal form, the green DR hit points won't add much anymore.
+    If however the monster has high hit points and also a very high level, the
+    monster HP will 'stay ahead' of the player hit points ie keep adding a
+    steady bonus that will put him well ahead of his player-form hit points.
+    So players of very high character level who want to retain a large bonus of
+    hit points will want to look for forms of monsters which are also of
+    relatively high level.
   armour class:
     Mimicking a monster is already a very difficult task. By changing
     shape, the usual armour class of the monster will magically influence
