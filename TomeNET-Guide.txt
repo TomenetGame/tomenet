@@ -9863,17 +9863,16 @@ Light sources
         Increased light radius
         Everburning (no fuel needed; applies only if item usually needs fuel)
 
-(*): This mod (+LIFE) is only available if a winner (Queen/King/Empress/
-     Emperor) created the artifact or killed the monster which dropped the
-     artifact. The mod will only have effect on..
-     a) winners (Queens/Kings/Empresses/Emperors)
-     b) players whose current level is at least as high as the item level
-        (even if they are the rightful owner of the randart they mustn't
-        be of lower character level as the item level).
-     c) if the server has the 'Fallen Kings Etiquette' enabled, meaning that
-        players who won once but then died cannot use static artifacts either,
-        then they will be able to find and use +LIFE randarts if they are at
-        least level 50!
+(*): This mod (+LIFE) may only spawn on a randart (no matter how it is created,
+     be it via scroll or via killing of monsters) if either
+     a) the player is a winner (Queen/King/Empress/Emperor) or
+     b) the server has the 'Fallen Kings Etiquette' enabled, meaning that
+        players who won once but then died cannot use static artifacts either
+        (press '~' followed by 'd' to check the server settings), and the
+        player is actually a fallen winner who lost his title due to death,
+        AND his level is at least 50.
+     If a player actually wears/wields a +LIFE randart, the +LIFE mod will only
+     have an effect on winners (Queens/Kings/Empresses/Emperors).
 
 
 General mods:
