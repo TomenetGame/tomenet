@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 27. Sep 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 5. Oct 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5h - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -5498,7 +5498,7 @@ Armour class helps you twice:
  The more AC the better, it's weighed against the level of the attacking
  monster. If the monster is (heavily) stunned it gets penalties here.
 -It reduces the damage if a monster manages to hit you.
- This effect caps at 250 AC.
+ This effect caps at 200 AC.
 
 Monsters can score critical hits which can (depending on the attack type)
 result in a cutting or stunning effect against the player.
@@ -8698,7 +8698,7 @@ More on Blocking
 ----------------
 Many effects that normal armour usually doesn't protect from can actually be
 blocked, for example your character may quickly duck behind his shield just in
-time when an eye tries to gaze in your eyes to paralyze you.
+time when an eye tries to gaze at your eyes to paralyze you.
 The bigger a shield, the more you can block. Depending on server settings,
 the actual block base chance will usually be displayed as a percentage in []
 brackets behind the shield's name, where AC is located for other types of
@@ -9868,8 +9868,9 @@ Light sources
      artifact. The mod will only have effect on..
      a) winners (Queens/Kings/Empresses/Emperors)
      b) players whose current level is at least as high as the item level
-        (even if they are the rightful owner of the randart).
-     c) if the server as the 'Fallen Kings Etiquette' enabled, meaning that
+        (even if they are the rightful owner of the randart they mustn't
+        be of lower character level as the item level).
+     c) if the server has the 'Fallen Kings Etiquette' enabled, meaning that
         players who won once but then died cannot use static artifacts either,
         then they will be able to find and use +LIFE randarts if they are at
         least level 50!
