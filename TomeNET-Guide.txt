@@ -2373,7 +2373,7 @@ to their real functionality. They are:
     Example:  sa  (switches to stance 'a)' ie balanced combat stance.)
   * for targetting the nearest monster. Usually you add this to any spell that
     requires targetting.
-    Example:  m@Manathrust\*  (cast spell manathrust at nearest monster.)
+    Example:  M@Manathrust\*  (cast spell manathrust at nearest monster.)
   @...\ for using call-by-name (spell/item name must be between '@' and '\')
     (Examples have been given above, in some spell casting explanations.)
 
@@ -2394,11 +2394,11 @@ Example 2: Assumed your book is inscribed @m1 as usual, and you want to cast
 
 Example 3: Assumed you have the spell Manathrust somewhere in your books and
     want to cast it by name, what you enter in the q'n'd field is:
-        m@Manathrust\*
+        M@Manathrust\*
     and it will automatically be expanded to '\e)m@11\r@Manathrust\r*t', voila.
 
 Example 4: Casting phase door would be..
-        m@Phase Door\
+        M@Phase Door\
     (expanded to '\e)m@11\r@Phase Door\r'.)
 
 
