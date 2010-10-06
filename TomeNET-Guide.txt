@@ -1,17 +1,24 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 5. Oct 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 6. Oct 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5h - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
+|
+| IF YOU GOT THIS GUIDE WITH THE PROGRAM DOWNLOAD, IE IN A CLIENT-ZIP FILE,
+| THEN FIRST THING YOU SHOULD DO NOW IS GO TO www.tomenet.net AND DOWNLOAD THE
+| LATEST COPY OF THIS GUIDE TO MAKE SURE YOU AREN'T LOOKING AT OUTDATED INFO!
 +---
 | Welcome to this guide!
 | Although I'm trying, I give no guarantee that this guide
 | a) contains really every detail/issue about TomeNET and
 | b) is all the time 100% accurate on every occasion.
 | Don't blame me if something differs or is missing; it shouldn't though.
-| Please send in suggestions, criticism or comments to mail@c-blue.de.
+|
+| If you have any suggestions about the guide or the game, please use the /rfe
+| command in the game or write to the official forum on www.tomenet.net.
+|
 | It's recommended to read this guide using a fixed-width font (Courier on
 | MS Windows machines) to see proper spacing instead of warped tables.
 +---
@@ -10333,6 +10340,7 @@ SOLUTION:   When playing on a notebook, check the state of the 'Fn' special
 ==============================================================================
 If TomeNET experiences changes/improvements you can also expect this guide to
 become updated shortly afterwards. Anyway, no guarantees ;)
-Please don't hesitate to send in bug reports or suggestions to mail@c-blue.de
+Please don't hesitate to send in bug reports or suggestions either via /rfe
+command in the game or write to the official forum on www.tomenet.net.
 or (even better) use the "/rfe" command in the game!
 ==============================================================================
