@@ -701,8 +701,12 @@ They all start with a slash '/':
             Ohterwise it removes inscriptions of all items which are exactly
             inscribed as specified by <inscription>.
             Will not affect equipped items (except for '/untag *').
-/untag *    Will remove all pseudo-id tags from your inventory items.
+            Note that some <inscription> parameters are special and therefore
+            reserved, those are:
+/untag *    will remove all inscriptions from all items in your inventory.
+/untag p    will remove all pseudo-id tags from your inventory items.
             Note: This will work on equipped items too!
+/untag u    will remove all unique-loot tags from your inventory items.
 /at         Apply auto-inscription settings to current inventory.
  (/autotag)
 /version    Displays the server version.
