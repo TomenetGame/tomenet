@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 6. Oct 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 7. Oct 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5h - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -510,6 +510,10 @@ They all start with a slash '/':
             wearing off of temporary stat drain from traps) and eventually
             wear off, _except_ for blacklist timer from being caught by a shop
             owner on attempting to steal.
+            Also, other players cannot switch places with you by moving into
+            you, use teleportation or word-of-recall on you, infect you with
+            black breath by bumping into you, steal from you, form a blood bond
+            with you or attempt to polymorph you while you are afk.
 /afk <msg>  You can specify a reason that will be displayed to the other
             players, so they know why you are currently AFK or when you will
             be back.
