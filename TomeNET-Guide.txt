@@ -7682,18 +7682,20 @@ E: weapons : torso : arms : finger : head : leg
 
 B: attack method : attack effect : damage
   attack effect:
-    If the monster poisons or infects with disease, this will result in
-    a poison brand. Similar it's for fire/cold/lightning/acid attacks.
+    POISON,DISEASE,FIRE,COLD,ELEC,ACID:
+      If the monster poisons or infects with disease, this will result in
+      a poison brand. Similar it's for fire/cold/lightning/acid attacks.
     BLIND won't work on monsters that have NO_SLEEP, otherwise the target
-    will be confused.
+      will be confused.
     HALLUCINATION and CONFUSE won't work on monsters that have NO_CONF,
-    otherwise the target will be confused.
+      otherwise the target will be confused.
     TERRIFY won't work on monsters that have NO_FEAR, otherwise it'll
-    scare the target.
+      scare the target.
     PARALYZE won't work on monsters that have NO_STUN, otherwise it'll
-    stun the target.
+      stun the target.
     EXPxx means the monster drains life on attacking. The player will
-    receive HOLD_LIFE (resist life-draining attacks) from this form.
+      receive HOLD_LIFE (resist life-draining attacks) from this form.
+    SHATTER will result in a bonus to player's STRength attribute.
 
     Monster effects (like poisoning or paralyzing) are applied to
     the player's attacks with a probability that corresponds to their
