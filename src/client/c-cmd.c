@@ -1596,7 +1596,7 @@ void cmd_party(void)
 
 		/* Selections */
 		/* See also: Receive_party() */
-		Term_putstr(5, 4, -1, TERM_WHITE, "(1) Create a party");
+		Term_putstr(5, 4, -1, TERM_WHITE, "(1) Create or rename a party");
 		Term_putstr(5, 5, -1, TERM_WHITE, "(2) Create an 'Iron Team' party");
 		Term_putstr(5, 6, -1, TERM_WHITE, "(3) Add a player to party");
 		Term_putstr(5, 7, -1, TERM_WHITE, "(4) Delete a player from party");
