@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 7. Oct 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 8. Oct 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5h - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -56,6 +56,7 @@ Contents
     (3.2a)  The encumberment bar
     (3.3)   Behaviour, chat messages and chat modes
     (3.4)   Start-up equipment & how to use it
+    (3.4a)  Item basics
     (3.5)   Preparing the first time for fighting enemies
     (3.6)   Creating basic macros & inscribing items (IMPORTANT)
     (3.7)   Creating macros for ranged attacks & abilities (spells)
@@ -1779,7 +1780,6 @@ Also see (0.2) for some details about suiciding.
 
 (3.2a) The encumberment bar
 ---------------------------
-
 Between AU and the mini lag-o-meter is a line indicating if you are encumbered
 in any way. This line is blank by default, but may start to show little
 coloured icons if your character becomes overburdened in some way.
@@ -1923,20 +1923,26 @@ Every new player has some items right from the beginning, stored in the
 inventory (bottom right window). As a warrior you will have a chain mail and
 a weapon, for example a sword.
 Start-up equipment always has level 0 and cannot be used by other players!
+
 You should now equip your start-up items, since they won't help you if
 they stay inside the backpack. Press the key 'w', you will be asked which
 item you would like to wear or wield, choose the letter in front of the item
 inside your inventory, for example e) if the sword is the fifth item in your
-backpack. Equip both, sword and armor this way. You can also equip a
-lightsource like a torch or lantern this way. If it is night in town that will
-help you to see anything. Inside a dungeon you should always make sure that you
-have a lightsource equippped.
+backpack. Equip both, sword and armor this way, or whatever items you start out
+with - some characters start with a cap and a cloak, others with an axe..
+You can also equip a lightsource like a torch or lantern this way. If it is
+night in town that will help you to see anything. Inside a dungeon you should
+always make sure that you have a lightsource equippped.
+
 Startup items that you don't want to use you may simply destroy with 'k'.
-The numbers '1' to '7', '9' and '+' stand for different shops that you can
-enter to sell or buy items. It is recommended that instead of using your
-torches, buy a brass lantern from store '1' (General Store), because a lantern
-provides more light, increasing your radius of sight in the darkness. Also buy
-a flask of oil for your lantern to refill it if it runs out of oil.
+In town, you can see rectangular blocks that rensemble buildings. These are the
+town stores. They each have an entrance, rensembled by a number '1' to '7' as
+well as '9' and '+' symbols. These are the different shops that you can enter
+to sell or buy items. It is recommended that instead of using your torches, buy
+a brass lantern from store '1' (General Store), because a lantern provides more
+light, increasing your radius of sight in the darkness. Also buy a flask of oil
+for your lantern to refill it if it runs out of oil (press SHIFT + f).
+
 Press '?' to see an in-game introduction and overview of the keys and commands
 that you may use. For example 'e' will show your currently equipped items.
 You can chat with other players using the ':' key. This way you can also enter
@@ -1944,6 +1950,132 @@ certain commands like /fill to fill an empty bottle with water of a fountain.
 At the beginning, all players receive a parchment with their start-up
 equipment. It's the "Gazette". Press 'r' to read it. It may contain some notes
 about the server or hints for newbies.
+
+
+(3.4a) Item basics
+------------------
+When you've logged in and look at your inventory (your backpack, basically),
+ie the items your character starts with, you will see various item names that
+give you some sort of idea what the item is good for, along with some cryptic
+numbers and brackets.
+The meaning of these will be explained here:
+
+a Ration of Food {0,+}
+    Pretty straightforward, this is an item that you can consume if you get
+    hungry. To do so, use SHIFT+e to 'eat' this item.
+    The {..} part means the following:
+
+    The number in it is the level required to use this item. 0 means that you
+    started out with this item, ie it was given to your character on birth.
+
+    The '+' symbol means that you OWN the item. If it was someone else's ration
+    then you would see his name written there instead of the '+', for example:
+    a Ration of Food {0,Gandalf}.
+
+    If you own an item or found an item, then the level requirements won't
+    matter. Even if they are much higher than your level, you can still use it.
+
+    The level requirements are only important for TRADING an item:
+    If the character who receives the item is too low to match the level
+    requirement, he won't become the owner of the item and therefore will be
+    unable to use the item until he reaches the level. He can still carry the
+    item in his inventory though, but it will be displayed in dark grey to him,
+    indicating that it isn't usable yet.
+
+a Chain Mail {0,+} [14,+0]
+    The {..} part is already known, it's the same as for the ration described
+    above. What's new is the [..] part, which all types of armour have:
+
+    Rectangular brackets [..] describe 'Armour Class' or short AC. AC is a
+    number that tells you how well the item helps to protect you when a monster
+    (or a player whom you duel) hits you.
+
+    The first number stands for the item's 'base AC'. All 'Chain Mails' have
+    the same base AC of 14. All 'Metal Caps' have a base AC of 3, and so on.
+
+    The second number, here a +0, can vary: It is this item's magical
+    enchantment. It is simply added to the base AC to determine the total AC
+    this item provides.
+
+    For example a Chain Mail [14,+3] is magically enchanted 3 times, and
+    therefore will provide you with 17 AC instead of just 14, ie 14+3.
+    Armour class helps for both: Reducing the chance to get hit, and reducing
+    the actual damage you suffer in case you are hit.
+
+    Likewise, if you fight an acidic monster for example, the acid might damage
+    your Chain Mail, and turn it into for example a Chain Mail [14,-2].
+    This Chain Mail only provides you with 12 AC. You can 'repair' it if you
+    want to, by buying 'Scrolls of enchant armour' from store 5 in town.
+    These will try to enchant a piece of armour, so if you are lucky you can
+    just use two of them on your armour and end up with a Chain Mail [14,+0]
+    again. Note that enchanting has a chance to fail, depending on how high
+    an item has been enchanted already.
+
+a Long Sword {0,+} (2d6) (+0,+0)
+    Again the {..} part is already know. What's new for all types of weapons is
+    the (2d6) and the (+0,+0) part:
+
+    Like in Dungeons & Dragons, on which rules some aspects of the game are
+    loosely based, when your character attacks a monster (or another player),
+    dice are cast to determine the amount of damage your blow deals.
+
+    The (2d6) mean that when you hit someone with this weapon, two dice of six
+    sides each are cast, so you may deal anything from 2 to 12 damage randomly.
+    (The real damage the target suffers can possibly be further reduced by the
+    target's armour class or protective magic.)
+
+    Similar to armour, weapons can be enchanted too. This is the second pair of
+    brackets: (+0,+0).
+
+    The first +0 means that this weapon has no magical enchantment to its hit
+    chance, ie how likely it is to hit a target.
+
+    The second +0 means that this weapon has no magical enchantment to the
+    damage it deals. Example:
+    a Long Sword (2d6) (+5,+6) would add 5 to your hit chance, which isn't very
+    much, but still better than nothing. Probably worth more is the fact that
+    it also adds 6 to your damage dealt!
+    This means on each attack it will deal 2d6 +6 damage, which would be
+    anything from 2+6 to 12+6, ie 8..18. As you can see, this is a considerable
+    improvement over 2..12 of an unenchanted Long Sword.
+
+    Note that training weapon-related skills will also add to your overall
+    +damage bonus. So your character might have +34 to-damage using a mere
+    Long Sword (2d6) (+9,+15), with the remaining +19 damage coming from your
+    'Sword-Mastery' skill that you trained.
+
+    Also note that often it can be better to wield lighter weapons instead of
+    heavier weapons, if you can attack more often during each round with them.
+    Example: A light dagger might allow you to attack 3 times, while a heavy
+    two-handed sword will only allow you one swing each turn. Here you will
+    have to do some math with the weapon dice, your total +damage from weapon
+    and skill, and the number of blows/round you get with each weapon, to find
+    out which setup is best for your character at a given time.
+
+a Long Bow {0,+} (x3) (+0,+0)
+    Ranged weapons all have a 'multiplier' given in the first pair of round
+    brackets, and the (+hit,+dam) enchantments already known from normal melee
+    weapons.
+
+    The multiplier, here x3, means two things:
+    a) how far you can shoot
+    b) by how much the damage dealt by your arrow (or shot or bolt, depending
+       on the weapon type) will be multiplied.
+    This means that enchanting a ranged weapon's damage is especially effective
+    because the +damage bonus will also be multiplied by the weapons's factor!
+    Example: a Long Bow (x3) (+2,+4) will actually add not +4 but 3x+4 = +12
+    damage to each shot! This is why archers should try to visit store 5 as
+    soon as possible to buy some 'Scrolls of enchant weapon to-dam' from it,
+    to enchant their bows or other ranged weapons.
+
+a Wooden Torch {0,+} (with 2500 turns of light)
+    Not much new here, except that this item has a 'timeout' given in turns.
+    After having this item equipped for 2500 turns (about half of that in
+    seconds, very roughly), the torch will be depleted and not produce any
+    more light, so you can drop/destroy/sell it, or press SHIFT+f to add
+    a fresh torch from your inventory to your almost depleted one, thereby
+    refueling it (this makes sense if you are using a torch that provides
+    special magic powers).
 
 
 
