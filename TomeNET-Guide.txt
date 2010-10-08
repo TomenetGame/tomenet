@@ -1971,6 +1971,10 @@ a Ration of Food {0,+}
     The '+' symbol means that you OWN the item. If it was someone else's ration
     then you would see his name written there instead of the '+', for example:
     a Ration of Food {0,Gandalf}.
+    If the owner died and the item hasn't been picked up yet by someone else
+    who meets the level requirements, it will display a '-' instead of a name,
+    meaning it has been owned, but the owner died. Example:
+    a Ration of Food {0,-}.
 
     If you own an item or found an item, then the level requirements won't
     matter. Even if they are much higher than your level, you can still use it.
@@ -1981,6 +1985,9 @@ a Ration of Food {0,+}
     unable to use the item until he reaches the level. He can still carry the
     item in his inventory though, but it will be displayed in dark grey to him,
     indicating that it isn't usable yet.
+
+    Note that you usually can neither trade nor sell items that are level 0.
+    Food is an exception to this rule, since it can be traded (but not sold).
 
 a Chain Mail {0,+} [14,+0]
     The {..} part is already known, it's the same as for the ration described
