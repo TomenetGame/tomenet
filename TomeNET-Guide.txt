@@ -544,7 +544,7 @@ They all start with a slash '/':
             Skips 'flavoured' items that are not known to you yet (example:
             'a blue potion {+,?}' or 'a malachite ring {+,?}').
             Skips items which inscription contains more than a pseudo-ID tag.
-            Also see /tag and /untag.
+            Also see /tag and /untag. Note that artifacts cannot be destroyed.
 /dis a      DESTROYS items like /dis, and additionally destroys all items that
             have no inscription at all.
             Also see /tag and /untag.
