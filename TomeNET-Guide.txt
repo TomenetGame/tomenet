@@ -361,7 +361,7 @@ d       d       drop an item.
 $       $       drop some gold. You can use 'k' and 'm' for thousands or
                 millions, example: 3k -> drops 3000. 2m -> drops 2000000.
 D       D       disarm a trap.
-k       CTRL+D  destroy an item.
+k       CTRL+D  destroy an item. (Note that artifacts are indestructible.)
 G       G       skills screen.
 B       f       bash/force something (ie a stuck door).
 l       x       look at a player/monster/object (use direction keys for
