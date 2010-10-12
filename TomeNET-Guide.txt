@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 8. Oct 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 12. Oct 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5h - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -3274,8 +3274,11 @@ destroyed.
 
 Floor-
 Dots '.' rensemble empty floor. Green dots are grass, brown ones dirt, grey
-ones stone or ash.
+ones stone or ash. Note that the colour also depends on the season - in summer
+or autumn, some grass might appear as yellow, when it's been suffering in the
+heat. ;)
 Red dots are lava, violet dots nether mist. These can be dangerous to cross!
+See a bit below for more details.
 
 Trees and bushes-
 Thick trees are rensembled by (mostly green, depending on the season) '#'.
@@ -3332,13 +3335,21 @@ White '^' are extremely high mountain chains that cannot be climbed.
 
 Lava-
 Red dots '.' are shallow lava, which will do heat damage to your character in
-regular intervals. This might also destroy items in your inventory in case
-you're not immune to fire.
+regular intervals.
 Red/orange/yellow '~' is deep lava, which deals a lot of heat damage.
+The fire damage lava inflicts might also destroy items in your inventory in
+case you're not immune to fire or at least double-resist fire - potions of
+resist heat are a cheap way to attain double resistance for a short time.
 
 Fountains-
 '_' are fountains. To drink from them use /sip command or press the '_' key.
 See (0.2) for more details.
+
+Nether mist-
+Violet dots designate nether mist. However, this usually only occurs in the
+Nether Realm, a place which is exclusively accessible to winners.
+Nether mist deals nether damage periodically, similar to how lava deals fire
+damage.
 
 
 Terrain features on the world map:
@@ -4545,13 +4556,14 @@ There are four so-called 'basic resistances'. These are
 Fire/Heat               These attacks can burn items in your inventory.
                         They can also damage your equipment.
                         Without resistance it can reduce your strength.
-                        Fire immunity allows you to travel over lava without
-                        you or your inventory getting harmed.
                         Fire bolts do (level/3)+(9d8) damage.
                         Fire balls do (level*7/2)+10 damage.
                         Fire breaths do HP / 3 damage, capping at 1200.
                         Immunity or double resistance protects items in your
                         inventory from getting harmed (5.10).
+                        Potions of resist heat are a cheap way to attain
+                        double-resistance for a short time in order to pass
+                        lava streams without your inventory taking damage.
 Frost/Cold              These attacks can shatter potions.
                         Without resistance it can reduce your strength.
                         Frost bolts do (level/3)+(6d8) damage.
