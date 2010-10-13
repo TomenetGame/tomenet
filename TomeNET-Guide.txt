@@ -4618,7 +4618,8 @@ aura attacks like hitting someone who wears a cloak of immolation.
 To prevent side-effects of the attacks on your inventory from occurring you
 will need the according immunity! Resistance is only sufficient to protect
 your equipment, not your inventory.
-Magic rods are always immune to all kinds of attacks.
+While wands and staves can be destroyed by according elemental attacks, rods
+cannot be destroyed but only discharged (see elemental attack list above).
 
 Poison          Poison resistance doesn't belong to the basic resistances but
                 to the high resistances, yet is also very essential already
