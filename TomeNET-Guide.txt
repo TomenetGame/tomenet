@@ -6392,7 +6392,9 @@ Note that not every skill is available to every profession (class).
                                 (A higher ranked stance features more of its
                                 benefits and/or less of its drawbacks.)
     .Dual-Wield                 The ability to wield two weapons at once. This
-                                ability cannot be trained (it's a switch).
+                                ability cannot be trained, it's always at 1.000
+                                if your character's class can dual-wield, else
+                                at zero. (So it's basically a switch.)
                                 Dual-wielding will give you additional parry
                                 chance as well as a blows/round bonus
                                 (see (6.11) for details about parrying).
