@@ -9,6 +9,9 @@
 | IF YOU GOT THIS GUIDE WITH THE PROGRAM DOWNLOAD, IE IN A CLIENT-ZIP FILE,
 | THEN FIRST THING YOU SHOULD DO NOW IS GO TO www.tomenet.net AND DOWNLOAD THE
 | LATEST COPY OF THIS GUIDE TO MAKE SURE YOU AREN'T LOOKING AT OUTDATED INFO!
+|
+| If your text editor cannot display the guide properly (needs fixed-width font
+| like for example Courier), simply open it in any web browser instead.
 +---
 | Welcome to this guide!
 | Although I'm trying, I give no guarantee that this guide
@@ -18,9 +21,6 @@
 |
 | If you have any suggestions about the guide or the game, please use the /rfe
 | command in the game or write to the official forum on www.tomenet.net.
-|
-| It's recommended to read this guide using a fixed-width font (Courier on
-| MS Windows machines) to see proper spacing instead of warped tables.
 +---
 | Latest changes of the guide are viewable easily by going directly to CVS:
 | http://angband.oook.cz/cgi-bin/cvsweb.cgi/tomenet/TomeNET-Guide.txt?cvsroot=tome
