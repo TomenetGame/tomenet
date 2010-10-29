@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. Oct 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 29. Oct 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5h - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -728,8 +728,10 @@ They all start with a slash '/':
 /undoskills Allows you to undo the skill points you assigned in 'G' menu last
             time. Use this to correct points you accidentally put into a wrong
             skill.
-            Note: Logging off or gaining another level will reset undoskills,
+            NOTE: Logging off or gaining another level will reset undoskills,
             making it impossible to undo points spent previously.
+            Also, it can only be used ONCE per level, so make sure you get your
+            skill point distribution right on the second attempt.
 /pvp        Carries you into/out of the PvP arena. Only usable by pvp-mode
             chars. See (6.13) for details about PvP mode.
 
@@ -1138,7 +1140,7 @@ snapshot tarballs and stuff. The repository is at http://angband.oook.cz/.
 The cvs command-line to completely download the latest sources and files for
 TomeNET is:
 
-cvs -d:pserver:anonymous@t-o-m-e.net:/var/cvs/tome co tomenet
+cvs -d:pserver:anonymous@angband.oook.cz:/var/cvs/tome co tomenet
 
 You can browse the CVS with a normal web browser easily!
 Here's a shortcut to save you time of searching angband.oook.cz, since
@@ -6264,7 +6266,7 @@ If you rise in character levels by gaining experience, you also get skill
 points to distribute on various abilities. To invoke the skill system overview
 press 'G' (capital G!).
 If you make a mistake while distributing skill points, look up the /undoskills
-command in (0.2).
+command in (0.2). "/undoskills" can only be used once per level.
 
 Here is a list of the available skills and brief explanations to each one:
 Note that not every skill is available to every profession (class).
@@ -9867,6 +9869,16 @@ For example it's hard to get extra mods on a Multi-hued Dragon Scale Mail, and
 in fact impossible to get any extra mod on a Power Dragon Scale Mail, so don't
 waste a scroll on this one.
 However, IGNORE_ flags on items are an exception and do not count into this.
+Also, when selecting randart mods, the game will not check if that mod already
+existed on the base item (example: 'everburning' mod being added to a feanorian
+lamp, which already has that by default ie needs no fuel), so if unlucky it
+might seem as if an item did not gain any mods, but in fact it just did not
+gain any NEW mods it didn't already possess.
+Note that any mod the base item type already possesses will definitely also be
+in the final randart. Examples: Shadow Blades and Witan Boots will always
+modify stealth, Demon Hammers will always have at least SLAY_DEMON mod (but can
+also end up 'upgraded' in case they randomly receive a KILL_DEMON mod from the
+artifact creation process).
 
 Also note that randarts cannot get more than two immunities in total.
 
@@ -9898,6 +9910,25 @@ type-dependant mods or general mods.
   mods.
 All types not listed under 'Type-dependant mods' will only gain general mods
 (for example all jewelry, ie rings and amulets).
+
+Last but not least certain mods will limit or even cancel certain other mods,
+sometimes following general rules, sometimes item-type specific rules:
+
+For example an item that provides critical strike and strength bonus might at
+first randomly obtain a +8 bonus for its critical strike mod, but then the
+strength mod will cut down the final randart bonus to a +5, because items
+aren't allowed to give more than +5 to any character stat (str, int, etc).
+
+Similarly, stealth is limited to +5 on most items except for cloaks, so you
+cannot get Witan Boots that give more than +5 to speed, since they also always
+modify stealth (because the base item type modifies stealth), and stealth is
+capped at +5.
+
+On boots, +speed mod takes precedence over most other limiting mods, which
+means that speed-limiting mods will be erased from the boots in most cases if
+they threaten to cut down the final pval. Note that mods provided by the base
+item type can never be removed, so the stealth mod will never be removed from
+Witan Boots and therefore always limit their speed to the stealth cap of +5.
 
 
 Type-dependant mods:
