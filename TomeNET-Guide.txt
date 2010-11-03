@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 29. Oct 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 3. Nov 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5h - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10525,6 +10525,19 @@ PROBLEM 24: When trying to macro F-keys, they don't seem to work properly.
             pops up instead.
 SOLUTION:   When playing on a notebook, check the state of the 'Fn' special
             shift key, and toggle it accordingly.
+
+PROBLEM 25: The connection is surprisingly laggy.
+SOLUTION:   -If you're on Wifi (WLAN) plug in an ethernet cable instead!
+            Wireless LAN connections can be pretty unreliable and cause
+            periodic lag from trying to re-scan for available networks.
+            Alternatively you can try to configure your WLAN not to do that,
+            however, WLAN can still be pretty prone to lag sometimes.
+            -Test it on another PC on the same internet connection.
+            -Test it on a friend's internet connection.
+            -Check if it only happens on certain in-game actions you perform.
+            -Check if it only happens at a certain time of the day.
+            -Make sure you don't have downloads or uploads running in the
+            background.
 
 
 
