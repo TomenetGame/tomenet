@@ -6594,7 +6594,11 @@ extern int PlayerUID;
 #define SKF1_AUTO_HIDE		0x00000002	/* Starts hidden */
 #define SKF1_DUMMY		0x00000004	/* Just for visual ordering */
 #define SKF1_MAX_1		0x00000008	/* Skill maxes at 1.000 */
-
+#define SKF1_MAX_10		0x00000010	/* Skill maxes at 10.000 */
+#define SKF1_MAX_20		0x00000020	/* Skill maxes at 20.000 */
+#define SKF1_MAX_25		0x00000040	/* Skill maxes at 25.000 */
+#define SKF1_XXX		0x00000080	/* unused */
+/* --- the first byte ends here! --- */
 #define SKF1_MKEY_SCHOOL	0x04000000	/* mkey is school type */
 #define SKF1_MKEY_HARDCODE	0x08000000	/* mkey uses hard-coded routine */
 #define SKF1_MKEY_SPELL		0x10000000	/* mkey is realm spell type */

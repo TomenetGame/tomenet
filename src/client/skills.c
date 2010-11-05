@@ -245,13 +245,14 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 
 		i = table[j][0];
 
-		if ((p_ptr->s_info[i].value == 0))
-		{
+		if ((p_ptr->s_info[i].value == 0)) {
 			if (p_ptr->s_info[i].mod == 0) color = TERM_L_DARK;
 			else color = TERM_ORANGE;
-		}
-		else if ((p_ptr->s_info[i].value == SKILL_MAX) ||
-			((p_ptr->s_info[i].flags1 & SKF1_MAX_1) && (p_ptr->s_info[i].value == 1000)))
+		} else if ((p_ptr->s_info[i].value == SKILL_MAX) ||
+		    ((p_ptr->s_info[i].flags1 & SKF1_MAX_1) && (p_ptr->s_info[i].value == 1000)) ||
+		    ((p_ptr->s_info[i].flags1 & SKF1_MAX_10) && (p_ptr->s_info[i].value == 10000)) ||
+		    ((p_ptr->s_info[i].flags1 & SKF1_MAX_20) && (p_ptr->s_info[i].value == 20000)) ||
+		    ((p_ptr->s_info[i].flags1 & SKF1_MAX_25) && (p_ptr->s_info[i].value == 25000)))
 			color = TERM_L_BLUE;
 		if (p_ptr->s_info[i].flags1 & SKF1_HIDDEN) color = TERM_L_RED;
 		if (p_ptr->s_info[i].flags1 & SKF1_DUMMY) color = TERM_SLATE;
