@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 3. Nov 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 5. Nov 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.5h - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10225,6 +10225,13 @@ SOLUTION:   This can have several reasons. On disconnection a message box will
                     and the client that just logged in will take over.
             "Killed by..."
                     Your character was finally killed/destroyed.
+            "Starving auto-kick"
+                    Your character was starving due to lack of food, and you
+                    were not moving or performing any action for some time, so
+                    the game assumed you were AFK and kicked your character out
+                    to prevent it from starving to death without you noticing.
+                    What you need to do: Log back in and eat something as soon
+                    as possible.
             "Starving to death"
                     You died to starvation.
             "Timeout 08"
