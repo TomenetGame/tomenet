@@ -1996,29 +1996,18 @@ static void cmd_master_aux_level(void)
 		if (i == ESCAPE) break;
 
 		/* Take a screenshot */
-		else if (i == KTRL('T'))
-		{
-			xhtml_screenshot("screenshot????");
-		}
-
+		else if (i == KTRL('T')) xhtml_screenshot("screenshot????");
 		/* static the current level */
-		else if (i == '1')
-		{
-			Send_master(MASTER_LEVEL, "s");
-		}
-
+		else if (i == '1') Send_master(MASTER_LEVEL, "s");
 		/* unstatic the current level */
-		else if (i == '2')
-		{
-			Send_master(MASTER_LEVEL, "u");
-		}
+		else if (i == '2') Send_master(MASTER_LEVEL, "u");
 		else if (i == '3'){	/* create dungeon stair here */
-			buf[0]='D';
-			buf[4]= DF1_PRINCIPAL;	/* DF1_* */ /* Hack -- avoid '0' */
-			buf[5]=0;	/* DF2_* */
-			buf[1]=c_get_quantity("Base level: ", 127);
-			buf[2]=c_get_quantity("Max depth (1-127): ",127);
-			buf[3]=(get_check("Is it a tower? ") ? 't':'d');
+			buf[0] = 'D';
+			buf[4] = DF1_PRINCIPAL;	/* DF1_* */ /* Hack -- avoid '0' */
+			buf[5] = 0;	/* DF2_* */
+			buf[1] = c_get_quantity("Base level: ", 127);
+			buf[2] = c_get_quantity("Max depth (1-127): ", 127);
+			buf[3] = (get_check("Is it a tower? ") ? 't' : 'd');
 			/*
 			 * FIXME: flags are u32b while buf[] is char!
 			 * This *REALLY* should be rewritten	- Jir -
@@ -2030,17 +2019,47 @@ static void cmd_master_aux_level(void)
 				buf[4] |= DF1_FORGET;
 				buf[5] |= DF2_NO_MAGIC_MAP;
 			}
-			if(get_check("Ironman?")) buf[5] |= DF2_IRON;
+			if(get_check("Ironman?")) {
+				buf[5] |= DF2_IRON;
+				if(get_check("Recallable from, before reaching its end?")) {
+					if(get_check("Random recall depth intervals?")) {
+						i = c_get_quantity("Frequency? (1=often..4=rare): ", 4);
+						switch (i) {
+						case 1: buf[5] |= DF2_IRONRND1; break;
+						case 2: buf[5] |= DF2_IRONRND2; break;
+						case 3: buf[5] |= DF2_IRONRND3; break;
+						default: buf[5] |= DF2_IRONRND4;
+						}
+						i = 1;//hack for town generation code below
+					} else {
+						i = c_get_quantity("Frequency? (1=often..4=rare): ", 4);
+						switch (i) {
+						case 1: buf[5] |= DF2_IRONFIX1; break;
+						case 2: buf[5] |= DF2_IRONFIX2; break;
+						case 3: buf[5] |= DF2_IRONFIX3; break;
+						default: buf[5] |= DF2_IRONFIX4;
+						}
+						i = 1;//hack for town generation code below
+					}
+				}
+				if(get_check("Generate towns inbetween?")) {
+					if (i == 1 && get_check("Generate towns when premature recall is allowed?")) {
+						buf[5] |= DF2_TOWNS_IRONRECALL;
+					} else if (get_check("Generate towns randomly (y) or in fixed intervals (n) ?")) {
+						buf[5] |= DF2_TOWNS_RND;
+					} else buf[5] |= DF2_TOWNS_FIX;
+				}
+			}
 			Send_master(MASTER_LEVEL, buf);
 		}
 		else if (i == '4'){
-			buf[0]='R';
-			buf[1]='\0';
+			buf[0] = 'R';
+			buf[1] = '\0';
 			Send_master(MASTER_LEVEL, buf);
 		}
 		else if (i == '5'){
-			buf[0]='T';
-			buf[1]=c_get_quantity("Base level: ", 127);
+			buf[0] = 'T';
+			buf[1] = c_get_quantity("Base level: ", 127);
 			Send_master(MASTER_LEVEL, buf);
 		}
 
