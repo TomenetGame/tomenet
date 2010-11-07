@@ -1851,7 +1851,7 @@ static void cmd_house_chown(int dir)
 				buf[0]='O';
 				buf[1]=i;
 				buf[2]=0;
-				if(get_string("Enter new name:",&buf[2],79))
+				if(get_string("Enter new name:",&buf[2],78))
 					Send_admin_house(dir,buf);
 				return;
 			case ESCAPE:
