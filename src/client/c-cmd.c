@@ -2042,6 +2042,7 @@ static void cmd_master_aux_level(void)
 					} else buf[5] |= 0x80;//DF2_TOWNS_FIX
 				}
 			}
+			if(get_check("Generate misc lesser stores (RPG rules style)?")) buf[6] |= 0x04;//DF2_MISC_STORES
 			buf[7] = '\0';
 			Send_master(MASTER_LEVEL, buf);
 		}
