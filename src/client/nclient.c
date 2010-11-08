@@ -467,7 +467,7 @@ int Net_setup(void)
 				if (Setup.max_trait == 0) {
 					/* hack: display at least "not available" */
 					C_MAKE(trait_info, 1, player_trait);
-					trait_info[0].title = "<OUTDATED CLIENT>";
+					trait_info[0].title = "N/A";
 					trait_info[0].choice = 0x0;
 				} else C_MAKE(trait_info, Setup.max_trait, player_trait);
 
