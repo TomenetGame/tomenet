@@ -269,6 +269,98 @@ static void choose_race(void)
 
 
 /*
+ * Allows player to select a racial trait (introduced for Draconians) - C. Blue
+ */
+static void choose_trait(void) {
+	player_trait *tp_ptr;
+
+	int i, j, l, m, n;
+	char c = '\0';
+	char out_val[160];
+	bool hazard = FALSE;
+
+	/* Prepare to list */
+	l = 2;
+	m = 20 - (Setup.max_trait - 1) / 5;
+	n = m - 1;
+
+	/* Outdated server? */
+	if (Setup.max_trait == 0) {
+		c_put_str(TERM_L_BLUE, trait_info[0].title, 7, 15);
+		return;
+	}
+
+	/* No traits available for this race? Skip forward then.
+	   Note: trait #0 is "N/A", which only traitless classes are supposed to 'have'. */
+	if (trait_info[0].choice & BITS(race)) {
+		c_put_str(TERM_L_BLUE, trait_info[0].title, 7, 15);
+		return;
+	}
+
+	for (i = 18; i < 24; i++) Term_erase(1, i, 255);
+
+	/* Display the legal choices */
+	i = 0;
+	for (j = 0; j < Setup.max_trait; j++) {
+                tp_ptr = &trait_info[j];
+                if (!(tp_ptr->choice & BITS(race))) continue;
+
+		sprintf(out_val, "%c) %s", I2A(i), tp_ptr->title);
+		c_put_str(TERM_WHITE, out_val, m, l);
+		i++;
+
+		l += 25;
+		if (l > 70) {
+			l = 2;
+			m++;
+		}
+	}
+
+	/* Get a trait */
+	while (1) {
+		c_put_str(TERM_SLATE, "Choose a trait (* for random, Q to Quit):  ", n, 2);
+
+		if (!hazard) c = inkey();
+
+		if (c == 'Q') quit(NULL);
+
+		if (c == '*') hazard = TRUE;
+		if (hazard) j = rand_int(Setup.max_trait);
+		else j = (islower(c) ? A2I(c) : -1);
+
+		/* Paranoia */
+		if (j > Setup.max_trait) continue;
+
+		/* Transform visible index back to real index */
+		for (i = 0; i <= j; i++) {
+			tp_ptr = &trait_info[i];
+			if (!(tp_ptr->choice & BITS(race))) j++;
+		}
+
+		/* Verify if legal */
+		if ((j < Setup.max_trait) && (j >= 0)) {
+			if (!(tp_ptr->choice & BITS(race))) continue;
+
+			trait = j;
+			tp_ptr = &trait_info[j];
+#ifndef CLASS_BEFORE_RACE
+			c_put_str(TERM_L_BLUE, (char*)tp_ptr->title, 6, 15);
+#else
+			c_put_str(TERM_L_BLUE, (char*)tp_ptr->title, 7, 15);
+#endif
+			break;
+		} else if (c == '?') {
+			/*do_cmd_help("help.hlp");*/
+		} else {
+			bell();
+		}
+	}
+
+	clear_from(n);
+}
+
+
+/*
  * Gets a character class				-JWT-
  */
 static bool choose_class(void)
@@ -667,14 +759,6 @@ static void choose_mode(void)
 	char        c='\0';
 	bool hazard = FALSE;
 
-#if 0
-	put_str("n) Normal", 20, 2);
-	put_str("f) Fruit bat", 20, 15 + 2);
-	put_str("g) no Ghost", 20, 30 + 2);
-	put_str("h) Hard", 20, 45 + 2);
-	put_str("H) Hellish", 20, 60 + 2);
-	put_str("e) Everlasting", 21, 2);
-#else
 	put_str("n) Normal", 16, 2);
 	c_put_str(TERM_SLATE, "(3 lifes)", 16, 12);
 	put_str("g) No Ghost", 17, 2);
@@ -687,28 +771,19 @@ static void choose_mode(void)
 	c_put_str(TERM_SLATE, "(Combination of Hard + No Ghost)", 20, 13);
 	put_str("p) PvP", 21, 2);
 	c_put_str(TERM_SLATE, "(Can't beat the game, instead special 'player vs player' rules apply)", 21, 9);
-#endif
 
 	while (1)
 	{
 		c_put_str(TERM_SLATE, "Choose a mode (* for random, Q to Quit): ", 15, 2);
 		if (!hazard) c = inkey();
 		if (c == 'Q') quit(NULL);
-#if 0
-		if (c == 'f')
-		{
-			sex += 512;
-			c_put_str(TERM_L_BLUE, "Fruit Bat", 9, 15);
-			break;
-		}
-#else
+
 		if (c == 'p')
 		{
 			sex += MODE_PVP;
 			c_put_str(TERM_L_BLUE, "PvP", 9, 15);
 			break;
 		}
-#endif
 		else if (c == 'n')
 		{
 			c_put_str(TERM_L_BLUE, "Normal", 9, 15);
@@ -779,15 +854,14 @@ static void choose_mode(void)
 /* Fruit bat is now a "body modification" that can be applied to all "modes" - C. Blue */
 static bool choose_body_modification(void)
 {
-	char        c='\0';
+	char c = '\0';
 	bool hazard = FALSE;
 
 	put_str("n) Normal body", 20, 2);
 	put_str("f) Fruit bat", 21, 2);
 	c_put_str(TERM_SLATE, "(Bats are faster and vampiric, but can't wear certain items)", 21, 15);
 
-	while (1)
-	{
+	while (1) {
 #ifndef CLASS_BEFORE_RACE
 		c_put_str(TERM_SLATE, "Choose a body modification (* for random, Q to Quit): ", 19, 2);
 #else
@@ -802,33 +876,25 @@ static bool choose_body_modification(void)
 		}
 #endif
 
-		if (c == 'f')
-		{
+		if (c == 'f') {
 			sex += MODE_FRUIT_BAT;
 #ifndef CLASS_BEFORE_RACE
-			c_put_str(TERM_L_BLUE, "Fruit bat", 6, 15);
+			c_put_str(TERM_L_BLUE, "Fruit bat", 8, 15);
 #else
-			c_put_str(TERM_L_BLUE, "Fruit bat", 7, 15);
+			c_put_str(TERM_L_BLUE, "Fruit bat", 8, 15);
 #endif
 			break;
-		}
-		else if (c == 'n')
-		{
+		} else if (c == 'n') {
 #ifndef CLASS_BEFORE_RACE
-			c_put_str(TERM_L_BLUE, "Normal body", 6, 15);
+			c_put_str(TERM_L_BLUE, "Normal body", 8, 15);
 #else
-			c_put_str(TERM_L_BLUE, "Normal body", 7, 15);
+			c_put_str(TERM_L_BLUE, "Normal body", 8, 15);
 #endif
 			break;
-		}
-		else if (c == '?')
-		{
+		} else if (c == '?') {
 			/*do_cmd_help("help.hlp");*/
-		}
-		else if (c == '*')
-		{
-			switch (rand_int(2))
-			{
+		} else if (c == '*') {
+			switch (rand_int(2)) {
 				case 0:
 					c = 'n';
 					break;
@@ -837,9 +903,7 @@ static bool choose_body_modification(void)
 					break;
 			}
 			hazard = TRUE;
-		}
-		else
-		{
+		} else {
 			bell();
 		}
 	}
@@ -908,12 +972,14 @@ void get_char_info(void)
 	put_str("Sex         :", 4, 1);
 #ifndef CLASS_BEFORE_RACE
 	put_str("Race        :", 5, 1);
-	put_str("Body        :", 6, 1);
+	put_str("Trait       :", 6, 1);
 	put_str("Class       :", 7, 1);
+	put_str("Body        :", 8, 1);
 #else
 	put_str("Class       :", 5, 1);
 	put_str("Race        :", 6, 1);
-	put_str("Body        :", 7, 1);
+	put_str("Trait       :", 7, 1);
+	put_str("Body        :", 8, 1);
 #endif
 	put_str("Mode        :", 9, 1);
 
@@ -934,6 +1000,8 @@ void get_char_info(void)
 
 		/* Choose a race */
 		choose_race();
+		/* Choose a trait */
+		choose_trait();
 		/* Choose character's body modification */
 		choose_body_modification();
 		/* Choose a class */
@@ -949,8 +1017,10 @@ void get_char_info(void)
 		choose_class();
 		/* Choose a race */
 		choose_race();
+		/* Choose a trait */
+		choose_trait();
 		/* Choose character's body modification */
-	} while (!choose_body_modification());	
+	} while (!choose_body_modification());
 #endif
 
 	class_extra = 0;

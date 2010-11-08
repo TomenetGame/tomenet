@@ -128,6 +128,7 @@ s16b race;
 s16b class;
 s16b sex;
 s16b mode;
+s16b trait = 0;
 
 s16b stat_order[6];			/* Desired order of stats */
 
@@ -139,6 +140,7 @@ bool party_mode;
 
 player_race *race_info;
 player_class *class_info;
+player_trait *trait_info;
 
 cptr ANGBAND_DIR;
 cptr ANGBAND_DIR_SCPT;

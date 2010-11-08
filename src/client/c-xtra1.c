@@ -1928,32 +1928,34 @@ void display_player(int hist)
 	char buf[80];
 	cptr desc;
 
-        /* Clear screen */
+	/* Clear screen */
 	clear_from(0);
 
-        /* Name, Sex, Race, Class */
-        put_str("Name        :", 1, 1);
-        put_str("Sex         :", 2, 1);
-        put_str("Race        :", 3, 1);
-        put_str("Class       :", 4, 1);
-        put_str("Body        :", 5, 1);
+	/* Name, Sex, Race, Class */
+	put_str("Name        :", 1, 1);
+	put_str("Sex         :", 2, 1);
+	put_str("Race        :", 3, 1);
+	put_str("Class       :", 4, 1);
+	put_str("Body        :", 5, 1);
 	put_str("Mode        :", 6, 1);
 
-        c_put_str(TERM_L_BLUE, cname, 1, 15);
-        c_put_str(TERM_L_BLUE, (p_ptr->male ? "Male" : "Female"), 2, 15);
-        c_put_str(TERM_L_BLUE, race_info[race].title, 3, 15);
-        c_put_str(TERM_L_BLUE, class_info[class].title, 4, 15);
-        c_put_str(TERM_L_BLUE, c_p_ptr->body_name, 5, 15);
+	c_put_str(TERM_L_BLUE, cname, 1, 15);
+	c_put_str(TERM_L_BLUE, (p_ptr->male ? "Male" : "Female"), 2, 15);
+	c_put_str(TERM_L_BLUE, race_info[race].title, 3, 15);
+	c_put_str(TERM_L_BLUE, class_info[class].title, 4, 15);
+	c_put_str(TERM_L_BLUE, c_p_ptr->body_name, 5, 15);
+	if (p_ptr->mode & MODE_PVP)
+		c_put_str(TERM_L_BLUE, "PvP (one life)", 6, 15);
 	if (p_ptr->mode & MODE_EVERLASTING)
-	    	c_put_str(TERM_L_BLUE, "Everlasting (infinite lives)", 6, 15);
+		c_put_str(TERM_L_BLUE, "Everlasting (infinite lives)", 6, 15);
 	else if ((p_ptr->mode & MODE_NO_GHOST) && (p_ptr->mode & MODE_HARD))
-	    	c_put_str(TERM_L_BLUE, "Hellish (one life, extra hard)", 6, 15);
+		c_put_str(TERM_L_BLUE, "Hellish (one life, extra hard)", 6, 15);
 	else if (p_ptr->mode & MODE_NO_GHOST)
-	    	c_put_str(TERM_L_BLUE, "Unworldly (one life)", 6, 15);
-        else if (p_ptr->mode & MODE_HARD)
-        	c_put_str(TERM_L_BLUE, "Hard (3 lives, extra hard)", 6, 15);
-        else /*(p_ptr->mode == MODE_NORMAL)*/
-	    	c_put_str(TERM_L_BLUE, "Normal (3 lives)", 6, 15);
+		c_put_str(TERM_L_BLUE, "Unworldly (one life)", 6, 15);
+	else if (p_ptr->mode & MODE_HARD)
+		c_put_str(TERM_L_BLUE, "Hard (3 lives, extra hard)", 6, 15);
+	else /*(p_ptr->mode == MODE_NORMAL)*/
+		c_put_str(TERM_L_BLUE, "Normal (3 lives)", 6, 15);
 
         /* Age, Height, Weight, Social */
         prt_num("Age          ", (int)p_ptr->age, 1, 32, TERM_L_BLUE);
@@ -2113,6 +2115,8 @@ void display_player(int hist)
 		prt_lnum("Exp to Adv.", exp_adv, 11, 28, TERM_L_GREEN);
 	}
 	prt_lnum("Gold       ", p_ptr->au, 12, 28, TERM_L_GREEN);
+	put_str("Trait", 13, 28);
+	c_put_str(TERM_L_BLUE, trait_info[trait].title, 13, 39);
 
 #ifndef NEW_COMPRESSED_DUMP
 	if (p_ptr->mhp == -9999) {

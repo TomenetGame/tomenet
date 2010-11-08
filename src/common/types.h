@@ -1143,6 +1143,7 @@ struct setup_t
 	s16b frames_per_second;
 	byte max_race;
 	byte max_class;
+	byte max_trait;
 	int motd_len;
 	int setup_size;
 	/* char motd[80 * 23]; */
@@ -1613,6 +1614,18 @@ struct player_class
 };
 
 
+/*
+ * Player trait info, originally added for Dracons - C. Blue
+ */
+
+typedef struct player_trait player_trait;
+
+struct player_trait {
+	cptr title; /* Name of trait */
+	s32b choice; /* Races that may spawn this trait */
+};
+
+
 /* The information needed to show a single "grid" */
 typedef struct cave_view_type cave_view_type;
 
@@ -2023,6 +2036,7 @@ struct player_type
 
 	byte prace;			/* Race index */
 	byte pclass;		/* Class index */
+	byte ptrait;		/* Trait index */
 	byte male;			/* Sex of character */
         byte oops;			/* Unused */
 
@@ -2052,6 +2066,7 @@ struct player_type
 
 	player_race *rp_ptr;		/* Pointers to player tables */
 	player_class *cp_ptr;
+	player_trait *tp_ptr;
 
 	s32b au;			/* Current Gold */
 

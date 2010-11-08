@@ -433,21 +433,24 @@ int Net_setup(void)
 
 	ptr = (char *) &Setup;
 
-	while (todo > 0)
-	{
+	while (todo > 0) {
 		if (cbuf.ptr != cbuf.buf)
 			Sockbuf_advance(&cbuf, cbuf.ptr - cbuf.buf);
 
 		len = cbuf.len;
 
-		if (len > 0)
-		{
-			if (done == 0)
-			{
-				n = Packet_scanf(&cbuf, "%d%hd%c%c%d",
-					&Setup.motd_len, &Setup.frames_per_second, &Setup.max_race, &Setup.max_class, &Setup.setup_size);
-				if (n <= 0)
-				{
+		if (len > 0) {
+			if (done == 0) {
+                                if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0))
+					n = Packet_scanf(&cbuf, "%d%hd%c%c%c%d",
+					    &Setup.motd_len, &Setup.frames_per_second, &Setup.max_race, &Setup.max_class, &Setup.max_trait, &Setup.setup_size);
+				else {
+					n = Packet_scanf(&cbuf, "%d%hd%c%c%d",
+					    &Setup.motd_len, &Setup.frames_per_second, &Setup.max_race, &Setup.max_class, &Setup.setup_size);
+					Setup.max_trait = 0;
+				}
+
+				if (n <= 0) {
 					errno = 0;
 					quit("Can't read setup info from reliable data buffer");
 				}
@@ -461,9 +464,14 @@ int Net_setup(void)
 				/* allocate the arrays after loading */
 				C_MAKE(race_info, Setup.max_race, player_race);
 				C_MAKE(class_info, Setup.max_class, player_class);
+				if (Setup.max_trait == 0) {
+					/* hack: display at least "not available" */
+					C_MAKE(trait_info, 1, player_trait);
+					trait_info[0].title = "<OUTDATED CLIENT>";
+					trait_info[0].choice = 0x0;
+				} else C_MAKE(trait_info, Setup.max_trait, player_trait);
 
-				for (i = 0; i < Setup.max_race; i++)
-				{
+				for (i = 0; i < Setup.max_race; i++) {
 					Packet_scanf(&cbuf, "%c%c%c%c%c%c%s%d", &b1, &b2, &b3, &b4, &b5, &b6, &str, &race_info[i].choice);
 					race_info[i].title = string_make(str);
 					race_info[i].r_adj[0] = b1 - 50;
@@ -474,8 +482,7 @@ int Net_setup(void)
                                         race_info[i].r_adj[5] = b6 - 50;
 				}
 
-				for (i = 0; i < Setup.max_class; i++)
-				{
+				for (i = 0; i < Setup.max_class; i++) {
 					Packet_scanf(&cbuf, "%c%c%c%c%c%c%s", &b1, &b2, &b3, &b4, &b5, &b6, &str);
 					class_info[i].title = string_make(str);
 					class_info[i].c_adj[0] = b1 - 50;
@@ -491,12 +498,16 @@ int Net_setup(void)
 						}
 				}
 
+                                if (Setup.max_trait != 0)
+				for (i = 0; i < Setup.max_trait; i++) {
+					Packet_scanf(&cbuf, "%s%d", &str, &trait_info[i].choice);
+					trait_info[i].title = string_make(str);
+				}
+
 				ptr = (char *) &Setup;
 				done = (char *) &Setup.motd[0] - ptr;
 				todo = Setup.motd_len;
-			}
-			else
-			{
+			} else {
 				memcpy(&ptr[done], cbuf.ptr, len);
 				Sockbuf_advance(&cbuf, len + cbuf.ptr - cbuf.buf);
 				done += len;
@@ -504,15 +515,12 @@ int Net_setup(void)
 			}
 		}
 
-		if (todo > 0)
-		{
+		if (todo > 0) {
 			if (rbuf.ptr != rbuf.buf)
 				Sockbuf_advance(&rbuf, rbuf.ptr - rbuf.buf);
 
-			if (rbuf.len > 0)
-			{
-				if (Sockbuf_write(&cbuf, rbuf.ptr, rbuf.len) != rbuf.len)
-				{
+			if (rbuf.len > 0) {
+				if (Sockbuf_write(&cbuf, rbuf.ptr, rbuf.len) != rbuf.len) {
 					plog("Can't copy data to cbuf");
 					Sockbuf_cleanup(&cbuf);
 					return -1;
@@ -527,13 +535,11 @@ int Net_setup(void)
 				continue;
 
 			SetTimeout(5, 0);
-			if (!SocketReadable(rbuf.sock))
-			{
+			if (!SocketReadable(rbuf.sock)) {
 				errno = 0;
 				quit("No setup info received");
 			}
-			while (SocketReadable(rbuf.sock) > 0)
-			{
+			while (SocketReadable(rbuf.sock) > 0) {
 				Sockbuf_clear(&rbuf);
 				if (Sockbuf_read(&rbuf) == -1)
 					quit("Can't read all of setup data");
@@ -793,7 +799,10 @@ int Net_start(int sex, int race, int class)
 
 	Sockbuf_clear(&wbuf);
 	n = Packet_printf(&wbuf, "%c", PKT_PLAY);
-	Packet_printf(&wbuf, "%hd%hd%hd", sex, race, class);
+
+        if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0))
+		Packet_printf(&wbuf, "%hd%hd%hd%hd", sex, race, class, trait);
+	else Packet_printf(&wbuf, "%hd%hd%hd", sex, race, class);
 
 	/* Send the desired stat order */
 	for (i = 0; i < 6; i++)
@@ -1613,17 +1622,20 @@ int Receive_char_info(void)
 	static bool player_pref_files_loaded = FALSE;
 
 	/* Clear any old info */
-	race = class = sex = mode = 0;
+	race = class = trait = sex = mode = 0;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd", &ch, &race, &class, &sex, &mode)) <= 0)
-	{
-		return n;
+	if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd%hd", &ch, &race, &class, &trait, &sex, &mode)) <= 0) return n;
+	} else {
+		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd", &ch, &race, &class, &sex, &mode)) <= 0) return n;
 	}
 
         p_ptr->prace = race;
         p_ptr->rp_ptr = &race_info[race];
         p_ptr->pclass = class;
         p_ptr->cp_ptr = &class_info[class];
+        p_ptr->ptrait = trait;
+        p_ptr->tp_ptr = &trait_info[trait];
 	p_ptr->male = sex;
 	p_ptr->mode = mode;
 

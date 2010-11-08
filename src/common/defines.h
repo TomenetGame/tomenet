@@ -53,8 +53,8 @@
 /* MAJOR/MINOR/PATCH version should be 0-15. */
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		4
-#define VERSION_PATCH		5
-#define VERSION_EXTRA		10
+#define VERSION_PATCH		6
+#define VERSION_EXTRA		0
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -62,14 +62,14 @@
 #define VERSION_MAJOR_OUTDATED	4
 #define VERSION_MINOR_OUTDATED	4
 #define VERSION_PATCH_OUTDATED	5
-#define VERSION_EXTRA_OUTDATED	9
+#define VERSION_EXTRA_OUTDATED	10
 #define VERSION_BRANCH_OUTDATED	0
 #define VERSION_BUILD_OUTDATED	0
 /* _one before_ MAJOR/MINOR/PATCH version that counts as 'latest' (should be 0-15). */
 #define VERSION_MAJOR_LATEST	4
 #define VERSION_MINOR_LATEST	4
 #define VERSION_PATCH_LATEST	5
-#define VERSION_EXTRA_LATEST	9
+#define VERSION_EXTRA_LATEST	10
 #define VERSION_BRANCH_LATEST	0
 #define VERSION_BUILD_LATEST	0
 
@@ -100,7 +100,7 @@
 
 /* Client-side only: Client release version tag
    (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG "h"
+#define CLIENT_VERSION_TAG ""
 
 
 
@@ -440,9 +440,9 @@
  * Maximum number of player "race" types (see "table.c", etc)
  */
 #ifdef ENABLE_DIVINE
- #define MAX_RACES	17
+ #define MAX_RACE	17
 #else
- #define MAX_RACES	16
+ #define MAX_RACE	16
 #endif
 
 
@@ -451,6 +451,11 @@
  */
 #define MAX_CLASS       14	/* 11 if there're Druids. 10 o/w. */
 				// 12 => shaman; 13 => runemaster; 14 mindcrafter
+
+/*
+ * Maximum number of character traits. Originally added for Dracons - C. Blue
+ */
+#define MAX_TRAIT	13	/* 13 dragon flavours */
 
 /*
  * Maximum NPC robots to allow.

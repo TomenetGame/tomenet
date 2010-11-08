@@ -187,6 +187,7 @@ extern s16b race;
 extern s16b class;
 extern s16b sex;
 extern s16b mode;
+extern s16b trait;
 
 /* DEG Stuff for new party client */
 extern s16b client;
@@ -200,6 +201,7 @@ extern bool party_mode;
 
 extern player_race *race_info;
 extern player_class *class_info;
+extern player_trait *trait_info;
 
 extern cptr ANGBAND_DIR;
 extern cptr ANGBAND_DIR_TEXT;
