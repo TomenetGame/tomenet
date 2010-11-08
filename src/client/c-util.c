@@ -3701,8 +3701,8 @@ void auto_inscriptions(void)
 			/* Describe */
 			Term_putstr(20,  0, -1, TERM_L_UMBER, "*** Current Auto-Inscriptions List ***");
 			Term_putstr(14, 21, -1, TERM_L_UMBER, "[Press 'n' for next, 'p' for previous, ESC to exit]");
-			Term_putstr(13, 22, -1, TERM_L_UMBER, "(l/s) Load/save auto-inscriptions from/to an ins file");
-			Term_putstr(8, 23, -1, TERM_L_UMBER, "(e/d/c) Edit current ('?' is wildcard)/delete current/CLEAR ALL");
+			Term_putstr(12, 22, -1, TERM_L_UMBER, "(l/s) Load/save auto-inscriptions from/to an '.ins' file");
+			Term_putstr(4, 23, -1, TERM_L_UMBER, "(e/d/c) Edit current ('?' wildcard, '!' forces)/delete current/CLEAR ALL");
 
 			for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
 				/* build a whole line */
@@ -4983,7 +4983,9 @@ void interact_audio(void) {
 
 			/* draw mixer */
 			Term_putstr(item_x[0], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_master ? "\377GX\377w" : " "));
+			Term_putstr(item_x[0], y_toggle + 3, -1, TERM_SLATE, "CTRL+N");
 			Term_putstr(item_x[1], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_music ? "\377GX\377w" : " "));
+			Term_putstr(item_x[1], y_toggle + 3, -1, TERM_SLATE, "CTRL+C");
 			Term_putstr(item_x[2], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_sound ? "\377GX\377w" : " "));
 			Term_putstr(item_x[3], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_weather ? "\377GX\377w" : " "));
 
@@ -5074,10 +5076,12 @@ void interact_audio(void) {
 			}
 			set_mixing();
 			break;
+		case KTRL('N'):
 		case 'a':
 			cfg_audio_master = !cfg_audio_master;
 			set_mixing();
 			break;
+		case KTRL('C'):
 		case 'c':
 		case 'm':
 			cfg_audio_music = !cfg_audio_music;
