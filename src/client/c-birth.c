@@ -21,6 +21,10 @@
 /* Choose class before race */
 #define CLASS_BEFORE_RACE
 
+/* Don't display 'Trait' if traits aren't available */
+#define HIDE_UNAVAILABLE_TRAIT
+
+
 /*
  * Choose the character's name
  */
@@ -283,6 +287,22 @@ static void choose_trait(void) {
 	l = 2;
 	m = 20 - (Setup.max_trait - 1) / 5;
 	n = m - 1;
+
+#ifdef HIDE_UNAVAILABLE_TRAIT
+	/* If server doesn't support traits, or we only have the
+	   dummy 'N/A' trait available in general, skip trait choice */
+	if (Setup.max_trait <= 1) return;
+
+	/* If we have no traits available for the race chosen, skip trait choice */
+	if (trait_info[0].choice & BITS(race)) return;
+
+	/* If we have traits available for the race chose, prepare to display them */
+ #ifdef CLASS_BEFORE_RACE
+	put_str("Trait       :", 7, 1);
+ #else
+	put_str("Trait       :", 6, 1);
+ #endif
+#endif
 
 	/* Outdated server? */
 	if (Setup.max_trait == 0) {
@@ -972,13 +992,21 @@ void get_char_info(void)
 	put_str("Sex         :", 4, 1);
 #ifndef CLASS_BEFORE_RACE
 	put_str("Race        :", 5, 1);
+ #ifndef HIDE_UNAVAILABLE_TRAIT
+	/* If server doesn't support traits, or we only have the dummy
+	   'N/A' trait available, we don't want to display traits at all */
 	put_str("Trait       :", 6, 1);
+ #endif
 	put_str("Class       :", 7, 1);
 	put_str("Body        :", 8, 1);
 #else
 	put_str("Class       :", 5, 1);
 	put_str("Race        :", 6, 1);
+ #ifndef HIDE_UNAVAILABLE_TRAIT
+	/* If server doesn't support traits, or we only have the dummy
+	   'N/A' trait available, we don't want to display traits at all */
 	put_str("Trait       :", 7, 1);
+ #endif
 	put_str("Body        :", 8, 1);
 #endif
 	put_str("Mode        :", 9, 1);
