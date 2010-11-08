@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 5. Nov 2010 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.5h - official websites are:
+| Latest update: 8. Nov 2010 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.6 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 |
@@ -300,8 +300,8 @@ W       W       wear/wield an item, same as 'w', but tries to use the second
 t       T       take off items.
 q       q       quaff a potion.
 r       r       read a scroll.
-E       E       eat. (Thunderlords, also known as Dragonriders, can eat
-                firestones to gain temporary special abilities, see (5.9).)
+E       E       eat. (Draconians can eat firestones to gain temporary special
+                abilities, see (5.9).)
 F       F       fuel your light source.
                 Use oil for lanterns, and torches to fuel another torch.
 f       t       fire ammo from your quiver.
@@ -352,7 +352,7 @@ V       V       enter 'cloaking mode'. This can only be used by rogues.
                 sake of PvP usage, similar to invisibility.
 A       A       activate an item. Usually an artifact, a dragon scale mail or
                 a ring of polymorphing (shapechanging).
-T or +  CTRL+T  tunnel through an obstacle or a wall.
+T or +  +       tunnel through an obstacle or a wall.
 R       R       rest. Your hit points and mana will regenerate faster while
                 resting.
 o       o       open something.
@@ -379,7 +379,7 @@ p       p       Concentrate on opening your mind for telekinesis.
                 using telekinesis on you is currently not possible.
                 Hit 'p' again to stop concentrating and close your mind.
 h               buy/sell a house or change house parameters. See (4.10).
-P               party screen. Form/disband/modify a party with other players
+P       O       party screen. Form/disband/modify a party with other players
                 here. In a party you will share experience points if you are
                 within 7 character levels to each other and on the same
                 dungeon/tower level respectively the same worldmap/wilderness
@@ -2602,7 +2602,7 @@ F10 zap some rod                                    \e)z1           @z1
     (magic device must be high enough or
     you will keep failing; also see (6.10))
 F11 eat something.                                  \e)E1           @E1
-    (Thunderlords could inscribe some firestones
+    (Draconians could inscribe some firestones
     (see 5.9) instead of normal food, to quickly
     boost their powers if needed.)
 F12 use a wand on the closest target                \e)a1*t         @a1
@@ -2616,7 +2616,7 @@ are players always willing to spend many points on the 'Magic Device' skill.
 If you dislike the use of magic your character would have to rely completely
 on scrolls of teleportation instead. Just make sure you have confusion and
 blindness resistance then! (Those two aren't needed to use a staff.)
-If you play Thunderlord, kill Dragonriders because they tend to drop a large
+If you play Draconian, kill Dragonriders because they tend to drop a large
 amount of firestones. If a difficult combat starts, just eat several of them
 to get a larger amount of extra powers.
 (All macros in example_fighter.prf were defined as hybrid macros.
@@ -2906,7 +2906,7 @@ All characters start the game at level 1. At level 50 they are supposed to
 fight the bad boss of the game, Morgoth, Lord of Darkness.
 Depending on race and class, characters need to kill a different amount of
 monsters in order to reach the next level. Yeeks get experience fastest,
-while Thunderlords are slowest. (See (6.4) and (6.5).)
+while Draconians (and Maiar) are slowest. (See (6.4) and (6.5).)
 
 Each time your character gains a new level, (s)he also gains 5 skill
 points that you can distribute on your character's skills, press 'G' to invoke
@@ -4687,18 +4687,18 @@ Sound           Sound attacks do less damage but can stun your or even knock
                 won't help you then.
                 Resistance will cut damage to 5/7..5/12.
                 Damage is be reduced by further 50% if bio-feedback is active.
-                (Bio-feedback is activated if a Thunderlord -also known as
-                Dragonrider- eats a firestone and gets the 'adrenaline'
-                message. See (5.9) for firestone details.)
+                (Bio-feedback is activated if a Draconian eats a firestone and
+                gets the 'adrenaline' message. See (5.9) for firestone
+                details.)
                 Sound resistance will protect you from stunning effects.
                 Breath damage is monster HP/6. Sound breath caps at 400.
 Shards          Shard attacks can cause nasty cuts that makes you bleed
                 heavily if you don't resist them.
                 Resistance will cut damage to 6/7..6/12.
                 Damage is be reduced by further 50% if bio-feedback is active.
-                (Bio-feedback is activated if a Thunderlord -also known as
-                Dragonrider- eats a firestone and gets the 'adrenaline'
-                message. See (5.9) for firestone details.)
+                (Bio-feedback is activated if a Draconian eats a firestone and
+                gets the 'adrenaline' message. See (5.9) for firestone
+                details.)
                 Shard resistance will protect you from cuts.
                 Breath damage is monster HP/6. Shard breath caps at 400.
 Nexus           Nexus attacks can have extremely nasty side-effects if you
@@ -5494,12 +5494,12 @@ Codex, Spellbook, Grimoire
                     Grimoires have the most space.
                     (Note that you cannot use these books if your game client
                     version is below 4.4.2!)
-(Small) Firestones  These can be eaten by Thunderlords and have various
-                    random effects (small firestones have reduced duration):
-                    - If the player is currently in dragon form he will just
-                      get some mana refilled.
-                    - If he is in non-dragon form, these temporary effects
-                      can apply:
+(Small) Firestones  These can be eaten by Draconians and players in dragon
+                    forms and have various random effects (small firestones
+                    have reduced duration):
+                    - If the player isn't a Draconian but he is currently in
+                      dragon form he will get some mana refilled.
+                    - If he is a Draconian, the following effects can apply:
                         - Adrenaline:   Consume way more food.
                                         Get STR/CON/DEX bonus.
                                         Get to-hit/to-dam bonus.
@@ -5564,7 +5564,7 @@ Mushroom of Restoring
 Mushrooms with bad effects are also often poisonous.
 Lembas (elvish waybread)
                     Satisifies your hunger, cures poison and hallucinations.
-Firestones          Eath them only if you are a Thunderlord (Dragonrider).
+Firestones          Eath them only if you are a Draconian.
                     They will randomly boost your powers for a short time.
                     See (5.9) for firestone details. If you eat too many of
                     them over a short period of time you might get poisoned
@@ -6196,8 +6196,8 @@ An attribute is maxed out at 18/100 +/- racial/class modifiers.
 Examples:
 Human Adventurer has 18/100 + 0 + 0 = 18/100 cap for all stats, see (6.4) for
 race boni and (6.5) for class boni.
-Thunderlord Istari has an intelligence cap of 18/100 + 2 (Thunderlord) + 3
-(Istari) = 18/150.
+Draconian Istar has an intelligence cap of 18/100 + 2 (Draconian) + 3
+(Istar) = 18/150.
 
 Stats can be raised over the character's cap by equipment. The total possible
 maximum of an attribute is always 18/220 (40), which is displayed as 18/***.
@@ -6573,11 +6573,10 @@ Note that not every skill is available to every profession (class).
     .Stealth                    Increases your stealth, which determines
                                 if monsters can hear you from a distance
                                 or if you can sneak past them. Note that even
-                                Thunderlords -also known as Dragonrider-
-                                can become stealthy by using this! (Without
-                                further +stealth items, stealth of a TL
-                                Adventurer will become 'poor' instead of 'bad'
-                                with Stealth at 26.000.)
+                                Draconians can become stealthy by using this!
+                                (Without further +stealth items, stealth of a
+                                Draconian Adventurer will become 'poor' instead
+                                of 'bad' with Stealth at 26.000.)
     .Disarming                  Improves your disarming ability.
                                 Also gives you a chance to salvage a trap kit
                                 from any trap when you disarm it!
@@ -7124,15 +7123,18 @@ Ent
     'Water' and they receive penalties on 'Fire' school, 'Axe-mastery' and a
     slight penalty on 'Sword-mastery'.
 
-Thunderlord (also known as Dragonrider)
-    Thunderlords can eat firestones to temporarily boost their powers.
+Draconian
+    These humanoid half-breeds of dragon and man surpass common humans in all
+    ways, except that they are really bad at moving stealthily. Similar to
+    dragons, they can eat firestones to temporarily boost their powers.
+    (See (5.9) for firestone details.)
     They have an intrinsic telepathic vision of all nearby creatures, the
     radius expands as they gain levels. At level 5 they can spot dragons
     anywhere on the level. They even gain intrinsic basic resistances,
     fire at 10, cold at 15, acid at 20 and electricity at 25. At level 30
-    they learn how to fly. Thunderlords are not very wise, and need a very
-    long time to gain experience. They need to eat often. Thunderlords have
-    feather falling (levitation) from birth. See (5.9) for firestone details.
+    they learn how to fly. Draconians need a very long time to gain further
+    experience and need to eat often. They have feather falling (levitation)
+    instrinsically from birth.
     They receive bonus on 'Polearm-Mastery', 'Aura of Fear' and the magic
     schools 'Conveyance' and 'Fire'.
 
@@ -7178,7 +7180,7 @@ Pe:Perception (sight range), Sr:Searching,  Fi:Fighting,        BT:Bows/Throw)
 Note that Yeeks are limited to 4 melee attacks per round (not including boni
 from skills or items yet).
 
-            STR INT WIS DEX CON CHR     HPdice  Exp%    Infra-Vision
+            STR INT WIS DEX CON CHR     HP die  Exp%    Infra-Vision
             Di  MD  ST  St  Pe  Sr  Fi  BT
 ------------------------------------------------------------------------------
 Human        0   0   0   0   0   0       10     100%     0ft
@@ -7207,7 +7209,7 @@ Goblin       0  -1  -4  +4  +2  -5       10     120%    30ft
              2  -3  -3   0   8   2   12  -5
 Ent         +8  -4  +2  -4  +8  -4       14     320%    50ft
              5   0  20  -6   4   5   15   5
-Thunderlord +6  +2  +1  +1  +3  +5       12     350%     0ft
+Draconian   +4  +2  +2  +1  +3  +2       12     350%     0ft
              6   0  10 -16  10  30   15   5
 Dark-Elf     0  +2  +1  +3  +1  -6       10     140%    50ft
              0   3   6   4   6  10   15  15
@@ -7474,7 +7476,7 @@ See (6.11) for details about parry and block.
 (Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
 Pe:Perception (sight range), Sr:Searching,  Fi:Fighting,        BT:Bows/Throw)
 
-            STR INT WIS DEX CON CHR     HPdice  Exp%    Max. base blows/round
+            STR INT WIS DEX CON CHR     HP die  Exp%    Max. base blows/round
             Di  MD  ST  St  Pe  Sr  Fi  BT              Parrying/Blocking
             Di  MD  ST  St  Pe  Sr  Fi  BT (relative modifiers, see (6.3))
 ------------------------------------------------------------------------------
