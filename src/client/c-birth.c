@@ -1030,7 +1030,8 @@ void get_char_info(void)
 
 	/* Choose character mode */
 	if (!s_RPG && !s_RPG_ADMIN) choose_mode();
-	
+	else c_put_str(TERM_L_BLUE, "No Ghost", 9, 15);
+
 	/* Clear */
 	clear_from(15);
 
