@@ -5,6 +5,10 @@
 static void cmd_clear_buffer(void);
 static void cmd_master(void);
 
+static void cmd_clear_actions(void) {
+	Send_clear_actions();
+}
+
 static void cmd_player_equip(void)
 {
     /* Set the hook */
@@ -187,8 +191,11 @@ void process_command()
 	/* Parse the command */
 	switch (command_cmd)
 	{
-		/* Ignore */
+			/* Ignore mostly, but also stop automatically repeated actions */
 		case ESCAPE:
+			cmd_clear_actions();
+
+			/* Ignore */
 		case ' ':
 			break;
 

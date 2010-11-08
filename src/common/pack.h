@@ -116,7 +116,7 @@
 #define PKT_LOCATE		98
 #define PKT_MAP			99
 
-#define PKT_SEARCH_MODE		100	
+#define PKT_SEARCH_MODE		100
 #define PKT_FIGHT		101
 #define PKT_CLOSE		103
 #define PKT_GAIN		104
@@ -143,9 +143,9 @@
 #define PKT_SUCCESS		122
 #define PKT_CLEAR_BUFFER	123
 #define PKT_SCRIPT		124
+#define PKT_CLEAR_ACTIONS	125
 
 #define PKT_SANITY		130
-
 
 /* Packet types 150- are hacks */
 #define PKT_FLUSH		150

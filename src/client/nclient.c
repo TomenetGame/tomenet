@@ -4215,6 +4215,12 @@ int Send_clear_buffer(void)
 	return 1;
 }
 
+int Send_clear_actions(void) {
+	int n;
+	if ((n = Packet_printf(&wbuf, "%c", PKT_CLEAR_ACTIONS)) <= 0) return n;
+	return 1;
+}
+
 int Send_special_line(int type, int line)
 {
 	int	n;
