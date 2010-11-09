@@ -25,10 +25,16 @@
 
 #ifdef SOUND_SDL
 
-
+/*
 #include <SDL/SDL.h>
 #include <SDL/SDL_mixer.h>
 #include <SDL/SDL_thread.h>
+*/
+
+/* This is the way recommended by the SDL web page */
+#include "SDL.h"
+#include "SDL_mixer.h"
+#include "SDL_thread.h"
 
 /* completely turn off mixing of disabled audio features (music, sound, weather, all)
    as opposed to just muting their volume? */
