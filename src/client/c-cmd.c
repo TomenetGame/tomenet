@@ -312,6 +312,10 @@ void process_command()
 			cmd_take_off();
 			break;
 
+		case 'x':
+			cmd_swap();
+			break;
+
 		case 'k':
 			cmd_destroy();
 			break;
@@ -393,12 +397,6 @@ void process_command()
 		case 'U':
 			cmd_ghost();
 			break;
-
-#if 0 /* done by 'p' key instead */
-		case 'x':
-			cmd_mind();
-			break;
-#endif
 
 		case '*': /*** Looking/Targetting ***/
 			cmd_target();
@@ -941,6 +939,15 @@ void cmd_take_off(void)
 
 	/* Send it */
 	Send_take_off(item);
+}
+
+void cmd_swap(void) {
+	int item;
+
+	if (!c_get_item(&item, "Swap which item? ", (USE_INVEN | USE_EQUIP))) return;
+
+	if (item <= INVEN_PACK) Send_wield(item);
+	else Send_take_off(item);
 }
 
 

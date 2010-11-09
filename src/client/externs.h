@@ -327,6 +327,7 @@ extern void cmd_wield(void);
 extern void cmd_wield2(void);
 extern void cmd_observe(void);
 extern void cmd_take_off(void);
+extern void cmd_swap(void);
 extern void cmd_destroy(void);
 extern void cmd_inscribe(void);
 extern void cmd_uninscribe(void);
