@@ -3563,7 +3563,6 @@ see 'Pit', 'Vault' or 'Room' in (0.4).
 (4.7) Traps & Trap sets
 -----------------------
 
-
 About traps:
 ------------
 At the beginning you will encounter traps that can do little damage, some will
@@ -3603,9 +3602,9 @@ Fumes Trap Set          -       Potions. The effects are very similar to the
                                 effectiveness though, by generating a thick
                                 fume that envelops nearby creatues and
                                 possibly gets inhaled as well.
-Magic Trap Set          -       Scrolls. Even scrolls that are usually only
-                                used on items might have effects on certain
-                                creatures.
+Magic Trap Set          -       Scrolls or runes. Even scrolls that are usually
+                                only used on other items might have effects on
+                                certain creatures.
 Device Trap Set         -       Wands/Staves/Rods.
                                 The charges of wands and staves will be
                                 decreased by 1 each time the trap sets off.
