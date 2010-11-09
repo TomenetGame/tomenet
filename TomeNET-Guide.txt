@@ -299,7 +299,14 @@ w       w       wear/wield an item from your inventory (weapons, armour,
                 ammunition, tools, rings, amulets, etc).
 W       W       wear/wield an item, same as 'w', but tries to use the second
                 available slot in case two inventory slots are both egligible.
-t       T       take off items.
+t       T       take off an item.
+x               swap an item. This is basically like both "wear/wield" and
+                "take off" in one command. This makes only sense if it is used
+                with an item that has been _inscribed_ accordingly, for example
+                "@x4":
+                When the item is currently in the inventory, it will be
+                equipped. If it already is equipped though, then it will be
+                taken off.
 q       q       quaff a potion.
 r       r       read a scroll.
 E       E       eat. (Draconians can eat firestones to gain temporary special
