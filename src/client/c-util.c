@@ -4978,8 +4978,14 @@ void interact_audio(void) {
 			/* Describe */
 			Term_putstr(30,  0, -1, TERM_L_UMBER, "*** Audio Mixer ***");
 			Term_putstr(3, 1, -1, TERM_L_UMBER, "Press arrow keys to navigate/modify, RETURN/SPACE to toggle, ESC to leave.");
-			Term_putstr(6, 2, -1, TERM_L_UMBER, "Shortcuts: 'a': master, 'w': weather, 's': sound, 'c' or 'm': music.");
-			Term_putstr(7, 3, -1, TERM_L_UMBER, "Jump to volume slider: SHIFT + according shortcut key given above.");
+//			Term_putstr(6, 2, -1, TERM_L_UMBER, "Shortcuts: 'a': master, 'w': weather, 's': sound, 'c' or 'm': music.");
+//			Term_putstr(7, 3, -1, TERM_L_UMBER, "Jump to volume slider: SHIFT + according shortcut key given above.");
+			Term_putstr(6, 2, -1, TERM_L_UMBER, "Shortcuts: 'a','w','s','c'/'m'. Shift + shortcut to jump to a slider.");
+
+			if (audio_sfx > 1 && audio_music > 0) Term_putstr(12, 4, -1, TERM_L_GREEN,      "        Sound and music pack have been detected.         ");
+			else if (audio_sfx > 1 && audio_music == 0) Term_putstr(12, 4, -1, TERM_YELLOW, "Sound pack detected. No music pack seems to be installed.");
+			else if (audio_sfx <= 1 && audio_music > 0) Term_putstr(12, 4, -1, TERM_YELLOW, "Music pack detected. No sound pack seems to be installed.");
+			else Term_putstr(12, 4, -1, TERM_L_RED,                                         "   Neither sound nor music pack seems to be installed.   ");
 
 			Term_putstr(3, y_label + 2, -1, TERM_SLATE, "Outside of this mixer you can toggle audio and music by CTRL+N and CTRL+C.");
 
