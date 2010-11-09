@@ -801,7 +801,7 @@ int Net_start(int sex, int race, int class)
 	n = Packet_printf(&wbuf, "%c", PKT_PLAY);
 
         if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0))
-		Packet_printf(&wbuf, "%hd%hd%hd%hd", sex, race, class, trait);
+		Packet_printf(&wbuf, "%hd%hd%hd%hd%hd%hd", sex, race, class, trait, audio_sfx, audio_music);
 	else Packet_printf(&wbuf, "%hd%hd%hd", sex, race, class);
 
 	/* Send the desired stat order */

@@ -255,6 +255,20 @@ char depth_name[MAX_CHARS];
 /* Can macro triggers consist of multiple keys? */
 bool multi_key_macros = FALSE;
 
+/* Standard sound (and message) names */
+const cptr angband_sound_name[SOUND_MAX] = {
+    "hit",
+    "miss",
+    "flee",
+    "drop",
+    "kill",
+    "level",
+    "death",
+    "warn",
+};
+
+/* Availability counter */
+int audio_sfx = 0, audio_music = 0;
 
 #ifdef USE_SOUND_2010
 void (*mixing_hook)(void);
@@ -276,18 +290,6 @@ bool count_half_sfx_attack = TRUE, sound_hint = TRUE;
 /* Don't cache audio */
 bool no_cache_audio = FALSE;
 #endif
-
-/* Standard sound (and message) names */
-const cptr angband_sound_name[SOUND_MAX] = {
-    "hit",
-    "miss",
-    "flee",
-    "drop",
-    "kill",
-    "level",
-    "death",
-    "warn",
-};
 
 /* Redraw skills if the menu is open */
 bool redraw_skills = FALSE;

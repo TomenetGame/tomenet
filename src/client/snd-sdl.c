@@ -248,6 +248,8 @@ static bool sound_sdl_init(bool no_cache) {
 	FILE *fff;
 	int i;
 
+	bool events_loaded_semaphore;
+
 	load_sample_mutex_entrance = SDL_CreateMutex();
 	load_song_mutex_entrance = SDL_CreateMutex();
 	load_sample_mutex = SDL_CreateMutex();
@@ -333,6 +335,7 @@ static bool sound_sdl_init(bool no_cache) {
 		/*
 		 * Now we find all the sample names and add them one by one
 		*/
+		events_loaded_semaphore = FALSE;
 		while (cur_token) {
 			int num = samples[event].num;
 
@@ -363,6 +366,10 @@ static bool sound_sdl_init(bool no_cache) {
 
 			/* Imcrement the sample count */
 			samples[event].num++;
+			if (!events_loaded_semaphore) {
+				events_loaded_semaphore = TRUE;
+				audio_sfx++;
+			}
 
 			next_token_snd:
 
@@ -466,6 +473,7 @@ static bool sound_sdl_init(bool no_cache) {
 		/*
 		 * Now we find all the sample names and add them one by one
 		*/
+		events_loaded_semaphore = FALSE;
 		while (cur_token) {
 			int num = songs[event].num;
 
@@ -494,6 +502,10 @@ static bool sound_sdl_init(bool no_cache) {
 			//puts(format("loaded song %s (ev %d, #%d).", songs[event].paths[num], event, num));//debug
 			/* Imcrement the sample count */
 			songs[event].num++;
+			if (!events_loaded_semaphore) {
+				events_loaded_semaphore = TRUE;
+				audio_music++;
+			}
 
 			next_token_mus:
 

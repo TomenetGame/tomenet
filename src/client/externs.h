@@ -739,6 +739,7 @@ extern r_type runespell_types[8];
 #endif
 
 extern const cptr angband_sound_name[SOUND_MAX];
+extern int audio_sfx, audio_music;
 
 #ifdef USE_SOUND_2010
 //externs.h:
