@@ -866,15 +866,12 @@ void cmd_drop(void)
 {
 	int item, amt;
 
-	if (!c_get_item(&item, "Drop what? ", (USE_EQUIP | USE_INVEN)))
-	{
-		return;
-	}
+	if (!c_get_item(&item, "Drop what? ", (USE_EQUIP | USE_INVEN))) return;
 
 	/* Get an amount */
-	if (inventory[item].number > 1)
-	{
-		amt = c_get_quantity("How many? ", inventory[item].number);
+	if (inventory[item].number > 1) {
+		if (is_ammo(inventory[item].tval) && c_cfg.whole_ammo_stack) amt = inventory[item].number;
+		else amt = c_get_quantity("How many? ", inventory[item].number);
 	}
 	else amt = 1;
 
@@ -952,25 +949,24 @@ void cmd_destroy(void)
 	int item, amt;
 	char out_val[MSG_LEN];
 
-	if (!c_get_item(&item, "Destroy what? ", (USE_EQUIP | USE_INVEN)))
-	{
-		return;
-	}
+	if (!c_get_item(&item, "Destroy what? ", (USE_EQUIP | USE_INVEN))) return;
 
 	/* Get an amount */
-	if (inventory[item].number > 1)
-	{
-		amt = c_get_quantity("How many? ", inventory[item].number);
-	}
-	else amt = 1;
+	if (inventory[item].number > 1) {
+		if (is_ammo(inventory[item].tval) && c_cfg.whole_ammo_stack) amt = inventory[item].number;
+		else amt = c_get_quantity("How many? ", inventory[item].number);
+	} else amt = 1;
 
 	/* Sanity check */
 	if (!amt) return;
-	else if (inventory[item].number == amt)
-		sprintf(out_val, "Really destroy %s? ", inventory_name[item]);
-	else
-		sprintf(out_val, "Really destroy %d of your %s? ", amt, inventory_name[item]);
-	if (!get_check(out_val)) return;
+
+	if (!c_cfg.no_verify_destroy) {
+		if (inventory[item].number == amt)
+			sprintf(out_val, "Really destroy %s? ", inventory_name[item]);
+		else
+			sprintf(out_val, "Really destroy %d of your %s? ", amt, inventory_name[item]);
+		if (!get_check(out_val)) return;
+	}
 
 	/* Send it */
 	Send_destroy(item, amt);

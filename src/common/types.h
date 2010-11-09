@@ -3129,11 +3129,11 @@ struct client_opts
 	bool expand_list;
 	bool view_perma_grids;
 	bool view_torch_grids;
-	bool dungeon_align;
-	bool dungeon_stair;
+	bool no_verify_destroy; //dungeon_align;
+	bool whole_ammo_stack; //dungeon_stair;
 	bool recall_flicker;
 /*	bool flow_by_sound;	*/
-	bool flow_by_smell;
+	bool time_stamp_chat; //flow_by_smell;
 	bool track_follow;
 	bool track_target;
 	bool smart_learn;

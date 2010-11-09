@@ -611,17 +611,18 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.view_torch_grids,	FALSE,	2,	1, 7, TRUE,
 	"view_torch_grids",		"Map remembers all torch-lit grids" },
 
-	{ &c_cfg.dungeon_align,		TRUE,	2,	1, 8, FALSE,
-	"dungeon_align",		"(obsolete) Generate dungeons with aligned rooms" },
+	{ &c_cfg.no_verify_destroy,	FALSE,	4,	0, 8, TRUE,	/* former dungeon_align */
+	"no_verify_destroy",		"Skip safety question when destroying items" },
 
-	{ &c_cfg.dungeon_stair,		TRUE,	2,	1, 9, FALSE,
-	"dungeon_stair",		"(obsolete) Generate dungeons with connected stairs" },
+	{ &c_cfg.whole_ammo_stack,	FALSE,	4,	0, 9, TRUE,	/* former dungeon_stair */
+	"whole_ammo_stack",		"For ammunition always operate on whole stack" },
 
 	{ &c_cfg.recall_flicker,	FALSE,	1,	1, 10, TRUE,
 	"recall_flicker",		"Flicker messages in recall" },
 
-	{ &c_cfg.flow_by_smell,		FALSE,	2,	1, 11, FALSE,
-	"flow_by_smell",		"(obsolete) Monsters chase recent locations (v.slow)" },
+	/* currently problematic: best might be to move line-splitting to client side, from util.c */
+	{ &c_cfg.time_stamp_chat,	FALSE,	2,	0, 11, FALSE,	/* former flow_by_smell */
+	"time_stamp_chat",		"Add time stamps to chat lines" },
 
 	{ &c_cfg.track_follow,		FALSE,	2,	1, 12, FALSE,
 	"track_follow",			"(obsolete) Monsters follow the player (broken)" },
@@ -779,7 +780,7 @@ option_type option_info[OPT_MAX] =
 	"half_sfx_attack",		"Skip every second attack sound" },
 
 	{ &c_cfg.cut_sfx_attack,	TRUE,	4,	0, 87, TRUE,
-	"cut_sfx_attack",		"Skip attack sounds based on speed and bpr." },
+	"cut_sfx_attack",		"Skip attack sounds based on speed and bpr" },
 
 	{ &c_cfg.ovl_sfx_command,	TRUE,	4,	0, 88, TRUE,
 	"ovl_sfx_command",		"Allow overlapping command sounds of same type" },
@@ -794,7 +795,7 @@ option_type option_info[OPT_MAX] =
 	"ovl_sfx_mon_spell",		"Allow ovl. monster spell/breath sfx of same type" },
 
 	{ &c_cfg.ovl_sfx_mon_misc,	TRUE,	4,	0, 92, TRUE,
-	"ovl_sfx_mon_misc",		"Allow overlapping misc monster sfx of same type." },
+	"ovl_sfx_mon_misc",		"Allow overlapping misc monster sfx of same type" },
 };
 
 /* XXX XXX they should be sent from server like other spells! */
