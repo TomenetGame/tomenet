@@ -4217,7 +4217,10 @@ int Send_clear_buffer(void)
 
 int Send_clear_actions(void) {
 	int n;
-	if ((n = Packet_printf(&wbuf, "%c", PKT_CLEAR_ACTIONS)) <= 0) return n;
+
+	if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0)) {
+		if ((n = Packet_printf(&wbuf, "%c", PKT_CLEAR_ACTIONS)) <= 0) return n;
+	}
 	return 1;
 }
 
