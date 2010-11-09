@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 8. Nov 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 9. Nov 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -112,8 +112,10 @@ Contents
     (6.5)   Classes/Professions, titles, melee blows/round
     (6.5a)  Start-up Blows/Round Table
     (6.6)   Sanity
-    (6.7)   Mimic details, polymorph rings
-    (6.7a)  Druid form details
+    (6.7)   Mimicry details, polymorph rings
+    (6.7a)  Polymorph rings
+    (6.7b)  Intrinsic abilities that aren't kept when changing forms
+    (6.7c)  Druid form details
     (6.8)   Magic spells and prayers
     (6.9)   Parties, Iron Teams, Guilds
     (6.10)  Magic Device skill/ability details
@@ -558,6 +560,14 @@ They all start with a slash '/':
             Empty a potion from your inventory, leaving an empty bottle.
             Example: /empty c   (if you have 'c) 3 potions of boldness', one
             will be emptied and 2 remain at 'c) 2 potions of boldness'.))
+/evinfo     Displays information about all ongoing events.
+/evinfo <#> Displays information about the specific event number #.
+            Note: If you log out, your sign-up is cancelled automatically.
+/evsign <#> Signs you up for the event number #.
+            Depending on the event, you might need to specify additional
+            parameters after the number. If that is the case, you'll see
+            a message telling you so, and speficying details what's missing.
+            Note: If you log out, your sign-up is cancelled automatically.
 /ex or /examine or /extra
             Gives you detailed information about your character's status, such
             as how many actions you may perform per turn.
@@ -594,7 +604,7 @@ They all start with a slash '/':
               helpful to figure out what types of items you may equip while in
               this form.
             - forms you have learned if you're a druid, and their according
-              polymorph codes so you don't have to look them up in (6.7a) if
+              polymorph codes so you don't have to look them up in (6.7c) if
               you forgot them;
             - runecraft status details, if you're adept in runemastery;
             - pvp kills;
@@ -604,14 +614,9 @@ They all start with a slash '/':
  (/feeling)
 /fill       fill an 'Empty Bottle' in your inventory with the water from a
             fountain. You must stand on the fountain to do this.
-/evinfo     Displays information about all ongoing events.
-/evinfo <#> Displays information about the specific event number #.
-            Note: If you log out, your sign-up is cancelled automatically.
-/evsign <#> Signs you up for the event number #.
-            Depending on the event, you might need to specify additional
-            parameters after the number. If that is the case, you'll see
-            a message telling you so, and speficying details what's missing.
-            Note: If you log out, your sign-up is cancelled automatically.
+/ftkon or /ftkoff
+            Enables or disables fire-till-kill mode.
+            Alternatively, you can toggle it in 'm' menu.
 /hou        Displays your houses, same as ~6.
  (/house)
 /ig <player name>
@@ -6394,7 +6399,7 @@ Note that not every skill is available to every profession (class).
                                                    for being in 'fury'.
                                 (A higher ranked stance features more of its
                                 benefits and/or less of its drawbacks.)
-    .Dual-Wield                 The ability to wield two weapons at once. This
+        .Dual-Wield             The ability to wield two weapons at once. This
                                 ability cannot be trained, it's always at 1.000
                                 if your character's class can dual-wield, else
                                 at zero. (So it's basically a switch.)
@@ -6424,6 +6429,67 @@ Note that not every skill is available to every profession (class).
                                 than your secondary weapon.
                                 While enabled ('Dual-hand mode') you will
                                 attack with both weapons, picked randomly.
+    .Martial Arts               Ability to fight with bare hands.
+                                Slightly raises your character speed.
+                                Lets you attack with special combat styles.
+                                You get +1 extra attack at 1,10,20,30,40,45,50
+                                each, so up to +7 blows per round in total.
+                                At 10 you receive Feather Falling (Levitation).
+                                At 15 your character gets fear resistance.
+                                At 20 your character gets confusion resistance.
+                                Gives you 'Free Action' (immunity to paralysis)
+                                at skill level 25.
+                                At 30 you're able to swim without problems.
+                                At 40 your movement is perfected enough to
+                                cross even highest mountains.
+                                At 50 a martial artist will learn the
+                                technique of flying!
+                                Under certain conditions MA abilities cannot
+                                be used and lose their effect, see (5.4)!
+                                The dice of martial arts special moves
+                                (which your character will use automatically
+                                depending on your MA skill) are affected by
+                                elemental brands, but slightly less than
+                                normal weapons (2/3 as much).
+                                Martial Arts gives you a chance / adds to your
+                                chance of intercepting an enemy! See
+                                'Interception' skill below.
+                                For more details about MA see section (5.4).
+                                Training Martial Arts skill will also slightly
+                                increase your Dodging skill.
+    .Interception               Ability to interfere with adjacent enemies.
+                                Can prevent them from teleporting, casting,
+                                summoning, running away. The chance to
+                                intercept an enemy is (2 * interception) +
+                                (martial_arts_skill / 2) - (enemy_level / 3).
+                                Example: Chance to intercept summoning of the
+                                Balrog of Moria with maxed interception is
+                                (2*50) + 0 - (50/3) = 84% base. Now since it's
+                                spellcasting it's reduced to 75%: 84%*75%=63%.
+                                For Morgoth it's (2*50)+0-(100/3) = 67% base.
+                                To intercept his spells it's 75% of 67% = 50%!
+                                (A maxed out martial artist would have 69%.)
+                                Note that this formula shows that interception
+                                is actually not that useful if you don't keep
+                                it at the maximum possible value all the time.
+                                Interception chance is recuded to 33% while
+                                you are blind.
+                                Interception chances also depend on what the
+                                enemy is trying to do. Certain actions are
+                                harder to intercept, those reduce the chance
+                                further, to..
+                                100%    for shooting
+                                 85%    for running (fleeing / stepping back)
+                                 75%    for casting a spell / summoning
+                                 50%    for teleporting / phasing (blinking)
+                                Note: While ball/bolt attacks are spells,
+                                      breathing is NOT.
+                                Interception chance caps at 80% (cap is
+                                applied after all other penalties have been
+                                factored in, at the very end of calculation).
+                                Note: You aren't able to intercept a monster's
+                                action while you are stunned. (Compare (4.11))
+                                Note: Monster level means 'rlevel' (see (0.4)).
     +Archery                    Improves ranged to-damage bonus.
                                 Allows you to learn some shooting techniques,
                                 accessible via 'm', see (6.12) for details.
@@ -6477,34 +6543,7 @@ Note that not every skill is available to every profession (class).
                                 reduces the chance of a boomerang to break or
                                 to fall to the ground instead of returning.
                                 Artifact boomerangs never break or fall down.
-    .Martial Arts               Ability to fight with bare hands.
-                                Slightly raises your character speed.
-                                Lets you attack with special combat styles.
-                                You get +1 extra attack at 1,10,20,30,40,45,50
-                                each, so up to +7 blows per round in total.
-                                At 10 you receive Feather Falling (Levitation).
-                                At 15 your character gets fear resistance.
-                                At 20 your character gets confusion resistance.
-                                Gives you 'Free Action' (immunity to paralysis)
-                                at skill level 25.
-                                At 30 you're able to swim without problems.
-                                At 40 your movement is perfected enough to
-                                cross even highest mountains.
-                                At 50 a martial artist will learn the
-                                technique of flying!
-                                Under certain conditions MA abilities cannot
-                                be used and lose their effect, see (5.4)!
-                                The dice of martial arts special moves
-                                (which your character will use automatically
-                                depending on your MA skill) are affected by
-                                elemental brands, but slightly less than
-                                normal weapons (2/3 as much).
-                                Martial Arts gives you a chance / adds to your
-                                chance of intercepting an enemy! See
-                                'Interception' skill below.
-                                For more details about MA see section (5.4).
-                                Training Martial Arts skill will also slightly
-                                increase your Dodging skill.
+<< For more information about learning spells, see (6.8) >>
 +Magic                          Improves your spellcasting abilities and
                                 increases your mana capacity.
                                 Lets you pseudo-id magic items, potions and
@@ -6512,6 +6551,49 @@ Note that not every skill is available to every profession (class).
                                 If 'Magic' is at least at 11 points, you will
                                 get more distinctive feelings from pseudo-id,
                                 before that you only sense 'good' or 'cursed'.
+    +Magic Schools
+        .Sorcery                Learn to use spells of ALL magic schools at
+                                once, instead of training a particular branch!
+        .Mana                   Learn spells of the Mana branch.
+        .Fire                   Learn spells of the Fire branch.
+        .Water                  Learn spells of the Water branch.
+        .Air                    Learn spells of the Air branch.
+        .Earth                  Learn spells of the Earth branch.
+        .Meta                   Learn spells of the Meta branch.
+        .Conveyance             Learn spells of the Conveyance branch.
+        .Divination             Learn spells of the Divination branch.
+        .Temporal               Learn spells of the Temporal branch.
+        .Mind                   Learn spells of the Mind branch.
+        .Nature                 Learn spells of the Nature branch.
+        .Udun                   Learn spells of the Udun branch.
+    +Prayer Schools
+        .Holy Offense           Learn prayers of the Holy Offense branch.
+        .Holy Defense           Learn prayers of the Holy Defense branch.
+        .Holy Curing            Learn prayers of the Holy Curing branch.
+        .Holy Support           Learn prayers of the Holy Support branch.
+    .Spell-power                Increases the power of learned spells by
+                                adding a bonus to the spell level.
+                                At 50, it will raise spell levels by 40%.
+                                (It won't raise the level of spells which you
+                                haven't learned yet.)
+                                Note that Spell-power does not affect magic of
+                                druids, mindcrafters, or runemasters.
+    +Druidic Schools
+        .Arcane Lore            Learn druid magic tought by arcane lore.
+        .Physical Lore          Learn druid magic tought by physical lore.
+    +Mindcraft Schools
+        .Psycho-Power           Learn mindcrafter spells of psycho-power.
+        .Thought Contact        Learn mindcrafter spells of tought contact.
+        .Mental Intrusion       Learn mindcrafter spells of mental intrusion.
+    +Runecraft                  Determines how skillful you are in handling
+        .Fire and Cold          specific magical symbols or Runes.
+        .Acid and Water
+        .Lighning and Earth     For more info about runes, see
+        .Poison and Wind        '(5.20) Runes & Runemastery'.
+        .Mana and Chaos
+        .Force and Gravity
+        .Nether and Time
+        .Mind and Nexus
     .Mimicry                    Ability to shapechange into a monster!
                                 You also inherit the monsters abilities,
                                 weaknesses and resistances!
@@ -6524,46 +6606,57 @@ Note that not every skill is available to every profession (class).
                                 without failing. Also increases their power.
                                 Speeds up recharging of rods you carry.
                                 See (6.10) for more information.
-    .Spell-power                Increases the power of learned spells by
-                                adding a bonus to the spell level.
-                                At 50, it will raise spell levels by 40%.
-                                (It won't raise the level of spells which you
-                                haven't learned yet.)
-                                Note that Spell-power does not affect druid
-                                or mindcrafter spells, nor runemastery.
-    .Sorcery                    Learn to use spells of ALL magic schools at
-                                once, instead of training a particular branch!
-<< For more information about learning spells, see (6.8) >>
-    .Mana                       Learn spells of the Mana branch.
-    .Fire                       Learn spells of the Fire branch.
-    .Water                      Learn spells of the Water branch.
-    .Air                        Learn spells of the Air branch.
-    .Earth                      Learn spells of the Earth branch.
-    .Meta                       Learn spells of the Meta branch.
-    .Conveyance                 Learn spells of the Conveyance branch.
-    .Divination                 Learn spells of the Divination branch.
-    .Temporal                   Learn spells of the Temporal branch.
-    .Mind                       Learn spells of the Mind branch.
-    .Nature                     Learn spells of the Nature branch.
-    .Udun                       Learn spells of the Udun branch.
-    .Holy Offense               Learn prayers of the Holy Offense branch.
-    .Holy Defense               Learn prayers of the Holy Defense branch.
-    .Holy Curing                Learn prayers of the Holy Curing branch.
-    .Holy Support               Learn prayers of the Holy Support branch.
-    .Arcane Lore                Learn druid magic tought by arcane lore.
-    .Physical Lore              Learn druid magic tought by physical lore.
-    .Psycho-Power               Learn mindcrafter spells of psycho-power.
-    .Thought Contact            Learn mindcrafter spells of tought contact.
-    .Mental Intrusion           Learn mindcrafter spells of mental intrusion.
-.Runemastery                    Determines how skillful you are in handling
-    .Fire and Cold              specific magical symbols or Runes.
-    .Acid and Water
-    .Lighning and Earth         For more info about runes, see
-    .Poison and Wind            '(5.20) Runes & Runemastery'.
-    .Mana and Chaos
-    .Force and Gravity
-    .Nether and Time
-    .Mind and Nexus
++Necromancy                     Drains life and mana from killed monsters,
+                                replenishing your HP and SP.
+                                Only works if you are able to see the target,
+                                and if you are not dead yourself.
+                                The amount of points gained depends on the
+                                skill and the target's level. To get maximum
+                                drain, the skill should be at least half as
+                                high as the monster level.
+                                Necromancy has no effect on undead and
+                                nonliving monsters.
+    .Traumaturgy                Drains mana from monsters when you inflict
+                                damage on them, replenishing your SP.
+                                Only works if you are able to see the target.
+                                The amount of points gained is a fraction of
+                                the damage points you inflicted and only
+                                depends on damage and skill.
+                                Traumaturgy has no effect on angels, undead,
+                                and nonliving monsters.
+    .Aura of Fear               Monsters that hit you are stroke by fear.
+    .Shivering Aura             Monsters that hit you are stunned.
+                                At a skill of 30 the aura is so strong that
+                                your melee attacks (weapon as well as martial
+                                arts will be branded by it. (Cold brand.)
+    .Aura of Death              Monsters that hit you are hit by waves
+                                of plasma and ice.
+                                At a skill of 40 the aura is so strong that
+                                your melee attacks (weapon as well as martial
+                                arts) will be branded by it.
+                                (Alternating fire or cold brand.)
+.Antimagic                      Generated from your strong disbelief in magic
+                                an anti-magic field surrounds you, preventing
+                                attempts from other casters to cast spells or
+                                summon monsters. This effect is cumulative
+                                with the anti-magic field of a Dark Sword.
+                                (See 5.9 for more info about dark swords.)
+                                It's capped at 75% chance of interrupting
+                                enemy spells.
+                                Note that as soon as you invest a point into
+                                this skill you won't be able to use any magic
+                                wands,staves or rods anymore!
+                                This skill also slightly affects your fellow
+                                party members (casters).
+                                Each point in Antimagic adds 1% to your
+                                AM chance, so the max gain is +50% from skill.
+                                Note: While ball/bolt attacks are spells,
+                                      breathing is NOT.
+                                Antimagic will also reduce the duration of all
+                                timed magic effects on you, be it good or bad.
+                                Warriors that specialize in Antimagic are
+                                called 'Unbelievers' (The Anti-magic powers
+                                result from their strong disbelief in magic).
 +Sneakiness                     Slightly increases your character speed
                                 (+7 at 50, so approx +1 every 7..8 points).
                                 Slightly increases perception and searching.
@@ -6577,26 +6670,6 @@ Note that not every skill is available to every profession (class).
                                 (Without further +stealth items, stealth of a
                                 Draconian Adventurer will become 'poor' instead
                                 of 'bad' with Stealth at 26.000.)
-    .Disarming                  Improves your disarming ability.
-                                Also gives you a chance to salvage a trap kit
-                                from any trap when you disarm it!
-    .Trapping                   Improves your ability to set traps:
-                                Gives you a higher chance to successfully
-                                place a trap if a monster is close to you and
-                                trying to interfere. Also, monsters will have
-                                a harder time to discover your traps.
-                                Last but not least you learn to optimize your
-                                traps for higher damage output.
-                                See (4.7) for details about monster traps.
-    .Backstabbing               Lets you backstab enemies, afflicting high
-                                damage. Works best if the opponent is
-                                sleeping. Requires sword-type weapons.
-                                If you dual-wield, you will also dual-backstab
-                                if the moster is either asleep, or you perform
-                                the attack from cloaking mode or shadow run.
-                                Although you'll deal somewhat less damage with
-                                each stab, since they are executed both at once
-                                they will provide a great damage boost.
     .Stealing                   Ability to steal items from stores.
                                 If you get caught, you will be on the
                                 'blacklist of merchants' for a minute up
@@ -6652,7 +6725,16 @@ Note that not every skill is available to every profession (class).
                                 especially easy to steal. Also, if you still
                                 get caught on such an item, the blacklist time
                                 will be much shorter too.
-    +Dodging                    Ability to evade attacks. In order to get any
+    .Backstabbing               Lets you backstab enemies, afflicting high
+                                damage. Works best if the opponent is
+                                sleeping. Requires sword-type weapons.
+                                If you dual-wield, you will also dual-backstab
+                                if the moster is either asleep, or you perform
+                                the attack from cloaking mode or shadow run.
+                                Although you'll deal somewhat less damage with
+                                each stab, since they are executed both at once
+                                they will provide a great damage boost.
+    .Dodging                    Ability to evade attacks. In order to get any
                                 benefits from doding skill at all, your armour
                                 mustn't be so heavy that you get a flexibility
                                 warning (compare (5.5)) and also you must not
@@ -6697,94 +6779,24 @@ Note that not every skill is available to every profession (class).
                                 still dodge them quite effectively though.
                                 Dodging also gets slightly increased when you
                                 put points into "Martial Arts" skill.
-        .Calmness               Ability to not get hindered by enemies.
+    .Calmness                   Ability to not get hindered by enemies.
                                 Adjacent foes can interfere if you try to..
                                 -shoot with ranged weapons,
                                 -use a void jumpgate,
                                 -invoke a mimic spell,
                                 -set a monster trap,
                                 -use a staircase.
-        .Interception           Ability to interfere with adjacent enemies.
-                                Can prevent them from teleporting, casting,
-                                summoning, running away. The chance to
-                                intercept an enemy is (2 * interception) +
-                                (martial_arts_skill / 2) - (enemy_level / 3).
-                                Example: Chance to intercept summoning of the
-                                Balrog of Moria with maxed interception is
-                                (2*50) + 0 - (50/3) = 84% base. Now since it's
-                                spellcasting it's reduced to 75%: 84%*75%=63%.
-                                For Morgoth it's (2*50)+0-(100/3) = 67% base.
-                                To intercept his spells it's 75% of 67% = 50%!
-                                (A maxed out martial artist would have 69%.)
-                                Interception chance is recuded to 33% while
-                                you are blind.
-                                Interception chances also depend on what the
-                                enemy is trying to do. Certain actions are
-                                harder to intercept, those reduce the chance
-                                further, to..
-                                100%    for shooting
-                                 85%    for running (fleeing / stepping back)
-                                 75%    for casting a spell / summoning
-                                 50%    for teleporting / phasing (blinking)
-                                Note: While ball/bolt attacks are spells,
-                                      breathing is NOT.
-                                Interception chance caps at 80% (cap is
-                                applied after all other penalties have been
-                                factored in, at the very end of calculation).
-                                Note: You aren't able to intercept a monster's
-                                action while you are stunned. (Compare (4.11))
-                                Note: Monster level means 'rlevel' (see (0.4)).
-+Necromancy                     Drains life and mana from killed monsters,
-                                replenishing your HP and SP.
-                                Only works if you are able to see the target,
-                                and if you are not dead yourself.
-                                The amount of points gained depends on the
-                                skill and the target's level. To get maximum
-                                drain, the skill should be at least half as
-                                high as the monster level.
-                                Necromancy has no effect on undead and
-                                nonliving monsters.
-    .Traumaturgy                Drains mana from monsters when you inflict
-                                damage on them, replenishing your SP.
-                                Only works if you are able to see the target.
-                                The amount of points gained is a fraction of
-                                the damage points you inflicted and only
-                                depends on damage and skill.
-                                Traumaturgy has no effect on angels, undead,
-                                and nonliving monsters.
-    .Aura of Fear               Monsters that hit you are stroke by fear.
-    .Shivering Aura             Monsters that hit you are stunned.
-                                At a skill of 30 the aura is so strong that
-                                your melee attacks (weapon as well as martial
-                                arts will be branded by it. (Cold brand.)
-    .Aura of Death              Monsters that hit you are hit by waves
-                                of plasma and ice.
-                                At a skill of 40 the aura is so strong that
-                                your melee attacks (weapon as well as martial
-                                arts) will be branded by it.
-                                (Alternating fire or cold brand.)
-.Antimagic                      Generated from your strong disbelief in magic
-                                an anti-magic field surrounds you, preventing
-                                attempts from other casters to cast spells or
-                                summon monsters. This effect is cumulative
-                                with the anti-magic field of a Dark Sword.
-                                (See 5.9 for more info about dark swords.)
-                                It's capped at 75% chance of interrupting
-                                enemy spells.
-                                Note that as soon as you invest a point into
-                                this skill you won't be able to use any magic
-                                wands,staves or rods anymore!
-                                This skill also slightly affects your fellow
-                                party members (casters).
-                                Each point in Antimagic adds 1% to your
-                                AM chance, so the max gain is +50% from skill.
-                                Note: While ball/bolt attacks are spells,
-                                      breathing is NOT.
-                                Antimagic will also reduce the duration of all
-                                timed magic effects on you, be it good or bad.
-                                Warriors that specialize in Antimagic are
-                                called 'Unbelievers' (The Anti-magic powers
-                                result from their strong disbelief in magic).
+    +Disarming                  Improves your disarming ability.
+                                Also gives you a chance to salvage a trap kit
+                                from any trap when you disarm it!
+        .Trapping               Improves your ability to set traps:
+                                Gives you a higher chance to successfully
+                                place a trap if a monster is close to you and
+                                trying to interfere. Also, monsters will have
+                                a harder time to discover your traps.
+                                Last but not least you learn to optimize your
+                                traps for higher damage output.
+                                See (4.7) for details about monster traps.
 +Health                         Increases your hit point regeneration rate:
                                 (skill_level * 2)% chance to regenerate 1,5x
                                 the normal amount of HP per turn (stacks with
@@ -6799,6 +6811,11 @@ Note that not every skill is available to every profession (class).
                                 displayed. At 40 the value will be shown.
                                 Note that Health skill stacks with +LIFE items
                                 (compare '+LIFE' in (5.8)).
+    .Swimming                   Allows you to swim even while carrying more
+                                weight and protect your items from water.
+                                Skill maxes at 01.000, with the ability to
+                                swim improving steadily while increasing it.
+    .Climbing                   You need this at 01.000 to learn climbing.
     .Digging                    How well you are able to dig. Also affects
                                 your chance to find items, for the items to
                                 be good or even great, and affects the amount
@@ -6812,11 +6829,6 @@ Note that not every skill is available to every profession (class).
                                 axes will help a lot and swords somewhat, in
                                 case you have no good digging tool at hand.
                                 2-handed axes/swords even more than 1-handed.
-    .Swimming                   Allows you to swim even while carrying more
-                                weight and protect your items from water.
-                                Skill maxes at 01.000, with the ability to
-                                swim improving steadily while increasing it.
-    .Climbing                   You need this at 01.000 to learn climbing.
 
 The abilities Swimming, Digging and Climbing are also granted by items you
 can find. Those are for example items that grants you flying, so you may just
@@ -7207,7 +7219,7 @@ Yeek        -5  -5  -5  -5  -5  -3        7      80%     0ft
              0   0   0   0  10   0    0   0
 Goblin       0  -1  -4  +4  +2  -5       10     120%    30ft
              2  -3  -3   0   8   2   12  -5
-Ent         +8  -4  +2  -4  +8  -4       14     320%    50ft
+Ent         +8  -4  +2  -4  +8  -4       14     320%     0ft
              5   0  20  -6   4   5   15   5
 Draconian   +4  +2  +2  +1  +3  +2       12     350%     0ft
              6   0  10 -16  10  30   15   5
@@ -7385,7 +7397,7 @@ Druid
     (Special note (compare 6.7): If they wield a weapon while using a form
     which usually cannot use weapons, they will only get 1 blow per round.)
     To recheck which forms you can transform into, use the /ex command.
-    To see an overview of the forms and their abilities, see (6.7a).
+    To see an overview of the forms and their abilities, see (6.7c).
     Hint: Druids have a powerful ranged area attack spell they can use very
     early on, Toxic Moisture. Look for it in the book store right away.
 
@@ -7503,21 +7515,21 @@ Paladin     +3  -3  +1  +0  +2  +2       +8      +30%       5
              2   4  10   0   2   0  35  10
 Ranger      +2  +2  -1  +1  +2  +0       +7      +35%       5
             34  32  30   5  30  30  50  60              superb   fair
-            10  10  10   1   5  15  30  35
+            10  10  10   0   5  15  30  35
 Adventurer   0   0   0   0   0   0       +6      +25%       4
-            20  20  20   2  15  15  50  50              fair     fair
+            20  20  20   3  15  15  50  50              fair     fair
             10  10  10   0   5   5  25  25
 Druid       +1   0  +2  -2  -2  +1       +5      +40%       4
-            30  40  30   5  25  25  50  60              fair     fair
-             8   5  10   1   5  10  20  30
-Shaman       0  +1  +2  -2   0   0       +4      +45%       4
-            10  13  30   5  30  20  45  20              poor     poor
+            30  40  30   4  25  25  50  60              fair     fair
+             8   5  10   0   5  10  20  30
+Shaman       0  +1  +2  -2   0   0       +3      +45%       4
+            10  13  30   4  30  20  45  20              poor     poor
              0  11  10   0   5   3  20   5
 Runemaster  +1  +2  -3  +3  -3  -3       +5      +20%       4
-            10  20  20   0  30  20  45  20              fair     fair
+            10  20  20   2  30  20  45  20              fair     fair
              0  11  10   0   5   3  20  10
-Mindcrafter  0  +2   0   0   0  +1       +5      +25%       5
-            30  30  36   2  35  14  45  35              good     fair
+Mindcrafter  0  +2   0   0   0  +1       +6      +25%       5
+            30  30  36   3  35  14  45  35              good     fair
              0   5   5   0   3   3  26  20
 
 
@@ -7617,8 +7629,8 @@ storm your head, leaving you with mad visions for a while..
 
 
 
-(6.7) Mimic details, polymorph rings
-------------------------------------
+(6.7) Mimicry details, polymorph rings
+--------------------------------------
 If a mimic polymorphs into a certain monster form, abilities and stats will be
 averaged between the normal ('@') body and the form. In most cases if the form
 is performing worse than @-form in a certain ability, the @-form will dominate
@@ -7895,8 +7907,8 @@ Example: An ent mimic won't drown in water, but if it polymorphs into an orc,
 it loses the intrinsic ability to pass water since orcs aren't made of wood.
 
 
-Polymorph rings:
-----------------
+(6.7a) Polymorph rings:
+-----------------------
 There are two types of polymorph rings, those which already provide a monster
 form and those which can still be forged by a mimic. Latter ones are named
 'Rings of Polymorphing of Player', while the first ones are named after the
@@ -7939,7 +7951,25 @@ If a player forges a ring, his magic device skill helps to obtain a high
 amount of energy in the ring.
 
 
-(6.7a) Druid form details
+(6.7b) Intrinsic abilities that aren't kept when changing forms
+---------------------------------------------------------------
+Characters keep certain racial abilities even if they change form, while some
+other abilities might not persist through polymorphing. The following abilities
+will NOT remain active when changing shape, ie are not "polymorph-proof":
+
+Hobbit:
+    +DEX bonus from not wearing shoes.
+Dwarf:
+    Climbing.
+Yeek:
+    Pass trees.
+Ent:
+    Speed malus (will be reduced), swimming, pass trees.
+Draconian:
+    Feather falling, flying.
+
+
+(6.7c) Druid form details
 -------------------------
 Note: Some forms can open doors, others may try to bash doors.
       Also, all animal forms are able to travel through woods.
@@ -8170,7 +8200,7 @@ Earth
                     Required skill level for first spell level: 12.
     Stone Prison    Creates a prison of granite walls around you.
                     Required skill level for first spell level: 25.
-    Strike          Creates a micro-ball of force, pushing monsters backwards.
+    Strike          Creates a force bolt that may stun enemies.
                     Lv12: it turns into a small ball.
                     Required skill level for first spell level: 25.
     Shake           Creates a local earthquake.
@@ -8627,6 +8657,17 @@ Thought Contact
                     Shared spell (see above): Psycho-Power / Thought Contact.
 
 Mental Intrusion
+ (Note that psi attacks don't have any effect on angels, nonliving creatures,
+ or empty-minded creatures, and that undead, stupid creatures and common
+ animals as well as weird-minded creatures may resist it. At the same time,
+ smart creatures might be hit especially hard.
+ Targets that might resist psi attacks, but which are already confused when
+ they get hit, get their chance to resist nullified by the confusion.
+ As a side effect, psi attacks themselves have a chance to cause confusion to
+ the target, thereby increasing their effect when the target is hit by another
+ psi attack afterwards.
+ if a monster does not resist a psi attack, it may suffer from additional
+ effects besides confusion, such as fear, stun or sleep.)
     Psionic Blast   Blasts the target's mind with psionic energy.
                     Possibly causing various additional effects.
                     Required skill level for first spell level: 1.
@@ -8651,7 +8692,17 @@ Mental Intrusion
                     Required skill level for first spell level: 7.
     Psychic Suppression
                     Drains the target's psychic energy, impacting its ability
-                    to cast spells temporarily.
+                    to cast spells temporarily, effectively silencing it for a
+                    short period of time.
+                    Chance to be successful depends on school skill vs monster
+                    level. Also, monsters that can't cast any spells as well as
+                    unique monsters of level 98 or above are unaffected.
+                    Monsters that are unique or powerful have an increased
+                    chance to resist.
+                    The target cannot be silenced again for a short while,
+                    until the effect runs out. Note that the target also
+                    becomes immune to the effect for the same short amount of
+                    time if the attempt was actually unsuccessful.
                     Required skill level for first spell level: 10.
     Remote Vision   Tries to forcibly enter all sentient creatures' minds on
                     the level, in order to use their vision to make the
@@ -8666,8 +8717,15 @@ Mental Intrusion
                     Monsters may resist or be immune to the initial cast.
                     While active, the spell drains your mana. The more monsters
                     you try to keep under control, the faster your mana is
-                    depleted. If your distance to the monsters becomes too big,
-                    the spell will break.
+                    depleted. If your distance to the monsters becomes too big
+                    or your mana is depleted then the spell will break.
+                    Sleeping monsters won't be affected or woken up by charm.
+                    Monsters which have already been hurt cannot be charmed.
+                    Psi-immune, unique, undead, empty-minded or non-living
+                    monsters cannot be charmed either.
+                    Monsters may have a chance to resist the attack, the higher
+                    the more of the following abilities they possess:
+                    Being smart, resisting confusion, being powerful.
                     Required skill level for first spell level: 33.
 
 
@@ -8850,8 +8908,8 @@ Note: To achieve an extraordinarily high block chance above 30% you'll
       fairly skilled at blocking. See the note below.
 
 
-NOTES:
-------
+Additional information:
+-----------------------
 Classes do differently well at parrying and blocking. To find out more, see
 the class overview table at the end of section (6.5).
 
@@ -10548,6 +10606,11 @@ SOLUTION:   -If you're on Wifi (WLAN) plug in an ethernet cable instead!
             -Check if it only happens at a certain time of the day.
             -Make sure you don't have downloads or uploads running in the
             background.
+
+PROBLEM 26: I resized some TomeNET windows by dragging them with the mouse,
+            but it seems it doesn't have the desired effect.
+SOLUTION:   After having resized windows via mouse, restart the game once
+            by exiting with CTRL+X key.
 
 
 
