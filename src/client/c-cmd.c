@@ -191,12 +191,13 @@ void process_command()
 	/* Parse the command */
 	switch (command_cmd)
 	{
-			/* Ignore mostly, but also stop automatically repeated actions */
-		case ESCAPE:
-			cmd_clear_actions();
-
 			/* Ignore */
+		case ESCAPE:
+			break;
+
+			/* Ignore mostly, but also stop automatically repeated actions */
 		case ' ':
+			cmd_clear_actions();
 			break;
 
 			/* Ignore return */
