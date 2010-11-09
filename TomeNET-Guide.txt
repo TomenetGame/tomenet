@@ -93,6 +93,7 @@ Contents
     (5.7)   Qualitative classification of items, identifying & selling items
     (5.8)   Special abilities of items
     (5.9)   What does item xxx do exactly?
+    (5.9a)  Activatable items
     (5.10)  Destruction of items by elemental attacks
     (5.11)  Armour Class vs monster attacks, damage caps
     (5.12)  Monster attack types and brands
@@ -1415,7 +1416,6 @@ To automatically position your TomeNET windows in a certain manner on Linux,
 on KDE this can be done natively by right-clicking the windows and modifying
 the "special window settings" or "special application settings", while on Gnome
 you can use a helper tool such as Devilspie to achieve the same.
-
 
 
 (2.1a) Installing sound and music packs
@@ -5596,6 +5596,41 @@ Chests              Chests may contain treasures or items. Usually, chests
                     or again use any sort of disarming magic.
                     The disarmed chest is finally safe to open with 'o' key.
                     Happy looting.
+
+
+(5.9a) Activatable items
+------------------------
+Many items can be activated (press 'A' to try).
+The chance of successful activation may or may not depend on various factors,
+such as..
+-your magic device skill vs the item type base level
+-whether you have trained your Antimagic skill
+-if you have the item equipped
+
+An activated item will usually have a cooldown (timeout) until it can be
+activated again. Items that need to be equipped to be activated usually won't
+recover while they aren't equipped.
+
+Many artifacts can be activated, as well as items of certain ego powers. But
+there are also some base item types that provide an activation effect.
+
+Base and ego types that can be activated and aren't described elsewhere:
+
+Cloaks of immolation: Temporary fire resistance.
+Cloaks of frostweaving: Temporary frost resistance.
+Cloaks of Lordly Resistanc: Temporary base+poison resistance.
+Dragon Scale Mails: According breath attack.
+Weapons of the Thunderlords: Teleportation.
+Weapons of Spinning: Spin attack.
+Fury weapons: Berserk.
+Noldor caps: Treasure detection.
+Spectral weapons: Wraithform.
+
+Serpent amulets: Poison breath.
+Moon amulets: Sleep monsters.
+Rage amulets: Berserk.
+Elemental rings: Breath the ring element and temporary resistance to it.
+Teleportation rings: Explode for teleportation.
 
 
 
