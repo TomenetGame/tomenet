@@ -3045,9 +3045,9 @@ void interact_macros(void)
 
 	char tmp[160], buf[1024], buf2[1024], *bptr, *b2ptr;
 
-	char fff[1024], t_key[10];
+	char fff[1024], t_key[10], choice;
 	bool m_ctrl, m_alt, m_shift, t_hyb, t_com;
-	
+
 	bool were_recording = FALSE;
 
 	/* Save screen */
@@ -3562,8 +3562,8 @@ void interact_macros(void)
 					c_msg_print("Created a new hybrid macro.");
 				}
 			}
-			
 		}
+
 		/* Configure 'quick & dirty' macro functionality */
 		else if (i == 'Q')
 		{
@@ -3663,24 +3663,229 @@ void interact_macros(void)
 
 			/* Describe */
 			Term_putstr(24, 1, -1, TERM_L_UMBER, "*** Macro Creation Wizard ***");
-			Term_putstr(5, 22, -1, TERM_L_UMBER, "[Press any key to continue, BACKSPACE/'p' for previous, ESC to exit]");
+			Term_putstr(25, 22, -1, TERM_L_UMBER, "[Press ESC to exit anytime]");
+			Term_putstr(19, 9, -1, TERM_L_UMBER, "----------------------------------------");
 
 			/* Initialize wizard state: First state */
-			i = 0;
+			i = choice = 0;
 
-			switch (inkey()) {
-			case ESCAPE:
-				i = 0; /* leave */
-				break;
-			case 'p':
-			case '\010': /* backspace */
-				break;
-			case KTRL('T'):
-				/* Take a screenshot */
-				xhtml_screenshot("screenshot????");
-				break;
-			default:
-				break;
+			while (i != -1) {
+				Term_putstr(15, 3, -1, i == 0 ? TERM_L_GREEN : TERM_SLATE, "Step 1:  Choose an action for the macro to perform");
+				Term_putstr(15, 4, -1, i == 1 ? TERM_L_GREEN : TERM_SLATE, "Step 2:  If required, choose an item or spell to use");
+				Term_putstr(15, 5, -1, i == 2 ? TERM_L_GREEN : TERM_SLATE, "Step 3:  Choose the key you want to bind the macro to.");
+				Term_putstr(1, 7, -1, TERM_L_DARK, "Don't forget to save your macros with '2' when you are back in the macro menu!");
+
+				clear_from(10);
+
+				switch (i) {
+				case 0:
+					Term_putstr(10, 11, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
+					Term_putstr(15, 13, -1, TERM_L_GREEN, "a) Drink a potion");
+					Term_putstr(15, 14, -1, TERM_L_GREEN, "b) Read a scroll");
+					Term_putstr(15, 15, -1, TERM_L_GREEN, "c) Fire ranged weapon at closest enemy");
+					Term_putstr(15, 16, -1, TERM_L_GREEN, "d) Cast a spell that doesn't use a target");
+					Term_putstr(15, 17, -1, TERM_L_GREEN, "e) Cast a spell that uses a target (attack spell)");
+					Term_putstr(15, 18, -1, TERM_L_GREEN, "f) Use a fighting technique (most melee classes)");
+					Term_putstr(15, 19, -1, TERM_L_GREEN, "g) Use a ranged technique (archers and rangers)");
+					Term_putstr(15, 20, -1, TERM_L_GREEN, "h) Polymorph into a certain monster (mimicry users)");
+
+					switch (choice = inkey()) {
+					case ESCAPE:
+					case 'p':
+					case '\010': /* backspace */
+						i = -1; /* leave */
+						continue;;
+					case KTRL('T'):
+						/* Take a screenshot */
+						xhtml_screenshot("screenshot????");
+						continue;
+					}
+
+					/* invalid action -> exit wizard */
+					if (choice < 'a' || choice > 'h') {
+						i = -1;
+						continue;
+					}
+
+					/* advance to next step */
+					i++;
+					break;
+				case 1:
+					switch (choice) {
+					case 'a':
+						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter a distinctive part of the potion's name");
+						Term_putstr(10, 12, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
+						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GCritical Wounds");
+						Term_putstr(10, 14, -1, TERM_GREEN, "if you want to quaff a 'Potion of Cure Critical Wounds'.");
+						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter partial potion name:");
+						break;
+					case 'b':
+						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter a distinctive part of the scroll's name");
+						Term_putstr(10, 12, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
+						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GPhase Door");
+						Term_putstr(10, 14, -1, TERM_GREEN, "if you want to read a 'Scroll of Phase Door'.");
+						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter partial scroll name:");
+						break;
+					case 'd':
+					case 'e':
+						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact spell name and pay attention");
+						Term_putstr(10, 12, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
+						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GManathrust");
+						Term_putstr(10, 14, -1, TERM_GREEN, "or another example:     \377GPhase Door");
+						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
+						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter exact spell name:");
+						break;
+					case 'f':
+						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact technique name and pay attention");
+						Term_putstr(10, 12, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
+						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GSprint");
+						Term_putstr(10, 14, -1, TERM_GREEN, "You must have learned a technique before you can use it!");
+						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter exact technique name:");
+						break;
+					case 'g':
+						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact technique name and pay attention");
+						Term_putstr(10, 12, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
+						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GFlare missile");
+						Term_putstr(10, 14, -1, TERM_GREEN, "You must have learned a technique before you can use it!");
+						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter exact technique name:");
+						break;
+					case 'h':
+						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact monster code. You can find codes");
+						Term_putstr(10, 12, -1, TERM_GREEN, "you have already learned by pressing  \377G~ 3  \377gin the game.");
+						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377G37     \377gto polymorph into a 'fruit bat'.");
+						Term_putstr(10, 14, -1, TERM_GREEN, "You must have learned a form before you can use it!");
+						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter exact monster code:");
+						break;
+					}
+
+					/* no need for inputting an item/spell to use with the macro? */
+					if (choice != 'c') {
+						Term_gotoxy(40, 17);
+
+						/* Get an encoded action */
+						strcpy(buf, "");
+						if (!askfor_aux(buf, 159, 0)) {
+							i = -1;
+							continue;
+						}
+					}
+
+					/* generate the full macro action */
+					buf2[0] = '\\'; //note: should in theory be ')e\',
+					buf2[1] = 'e'; //      but doesn't work due to prompt behaviour
+					buf2[2] = ')'; //      (\e will then get ignored)
+
+					strcat(buf, "\r");
+
+					switch (choice) {
+					case 'a':
+						buf2[3] = 'q';
+						buf2[4] = '@';
+						strcpy(buf2 + 5, buf);
+						break;
+					case 'b':
+						buf2[3] = 'r';
+						buf2[4] = '@';
+						strcpy(buf2 + 5, buf);
+						break;
+					case 'c':
+						buf2[3] = 'f';
+						buf2[4] = '*';
+						buf2[5] = 't';
+						buf2[6] = 0;
+						break;
+					case 'd':
+					case 'e':
+						buf2[3] = 'm';
+						buf2[4] = '@';
+						buf2[5] = '1';
+						buf2[6] = '1';
+						buf2[7] = '\r';
+						buf2[8] = '@';
+						strcpy(buf2 + 9, buf);
+						if (choice == 'e') {
+							strcpy(buf, "*t");
+							strcat(buf2, buf);
+						}
+						break;
+					case 'f':
+						buf2[3] = 'm';
+						buf2[4] = '@';
+						buf2[5] = '5';
+						buf2[6] = '\r';
+						buf2[7] = '@';
+						strcpy(buf2 + 8, buf);
+						break;
+					case 'g':
+						buf2[3] = 'm';
+						buf2[4] = '@';
+						buf2[5] = '6';
+						buf2[6] = '\r';
+						buf2[7] = '@';
+						strcpy(buf2 + 8, buf);
+						break;
+					case 'h':
+						buf2[3] = 'm';
+						buf2[4] = '@';
+						buf2[5] = '3';
+						buf2[6] = '\r';
+						buf2[7] = 'c';
+						strcpy(buf2 + 8, buf);
+						break;
+					}
+
+					/* Extract an action */
+					text_to_ascii(macro__buf, buf2);
+
+					/* advance to next step */
+					i++;
+					break;
+				case 2:
+					Term_putstr(10, 11, -1, TERM_GREEN, "In this final step, press the key you would like");
+					Term_putstr(10, 12, -1, TERM_GREEN, "to bind the macro to.");
+					Term_putstr(10, 13, -1, TERM_GREEN, "You should use keys that have no other purpose!");
+					Term_putstr(10, 14, -1, TERM_GREEN, "Good examples are the F-keys, F1 to F12.");
+					Term_putstr(10, 15, -1, TERM_GREEN, "The keys ESC and '%' are NOT allowed to be used.");
+					Term_putstr(5, 17, -1, TERM_L_GREEN, "Press the key to bind the macro to:");
+					Term_gotoxy(45, 17);
+
+					/* Get a macro trigger */
+					get_macro_trigger(buf);
+
+					/* choose proper macro type, and bind it to key */
+					if (!strcmp(buf, format("%c", KTRL('T')))) {
+						/* Take a screenshot */
+						xhtml_screenshot("screenshot????");
+						continue;
+					} else if (!strcmp(buf, "\e") || !strcmp(buf, "%")) {
+						c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
+						i = -1; /* leave */
+						continue;
+					} else {
+						/* Automatically choose usually best fitting macro type,
+						   depending on chosen trigger key! */
+						//[normal macros: F-keys (only keys that aren't used for any text input)]
+						//command macros: / * a..w (all keys that are used in important standard prompts)
+						//hybrid macros: all others, maybe even also normal-macro-keys
+						if (!strcmp(buf, "/") || !strcmp(buf, "*") || (*buf >= 'a' && *buf <= 'w')) {
+							/* make it a command macro */
+							/* Link the macro */
+							macro_add(buf, macro__buf, TRUE, FALSE);
+							/* Message */
+							c_msg_print("Created a new command macro.");
+						} else {
+							/* make it a hybrid macro */
+							/* Link the macro */
+							macro_add(buf, macro__buf, FALSE, TRUE);
+							/* Message */
+							c_msg_print("Created a new hybrid macro.");
+						}
+					}
+
+					/* this was the final step, we're done */
+					i = -1;
+					break;
+				}
 			}
 		}
 
