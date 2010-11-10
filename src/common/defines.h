@@ -455,7 +455,7 @@
 /*
  * Maximum number of character traits. Originally added for Dracons - C. Blue
  */
-#define MAX_TRAIT	13	/* 13 dragon flavours */
+#define MAX_TRAIT	32	/* 0 = N/A; 13 dragon flavours; 2 Maiar flavours; ... */
 
 /*
  * Maximum NPC robots to allow.

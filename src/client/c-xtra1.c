@@ -5,9 +5,18 @@
 
 #include "angband.h"
 
+
 /* make more room for potential new stuff in char dump,
    especially WINNER status line: */
 #define NEW_COMPRESSED_DUMP
+
+/* Compress both AC lines (Base AC, To AC) into one,
+   to free up a line for "Trait"? */
+#define NEW_COMPRESSED_DUMP_AC
+
+/* Don't display 'Trait' if traits aren't available */
+#define HIDE_UNAVAILABLE_TRAIT
+
 
 /*
  * Print character info at given row, column in a 13 char field
@@ -1928,51 +1937,64 @@ void display_player(int hist)
 	char buf[80];
 	cptr desc;
 
+#ifndef NEW_COMPRESSED_DUMP_AC
+	int y_row1 = 1, y_row2 = 8, y_row3 = 15, y_rowmode = y_row1 + 5;
+#else
+	int y_row1 = 1, y_row2 = 9, y_row3 = 15, y_rowmode = y_row1 + 6;
+#endif
+
 	/* Clear screen */
 	clear_from(0);
 
 	/* Name, Sex, Race, Class */
-	put_str("Name        :", 1, 1);
-	put_str("Sex         :", 2, 1);
-	put_str("Race        :", 3, 1);
-	put_str("Class       :", 4, 1);
-	put_str("Body        :", 5, 1);
-	put_str("Mode        :", 6, 1);
+	put_str("Name        :", y_row1, 1);
+	put_str("Sex         :", y_row1 + 1, 1);
+	put_str("Race        :", y_row1 + 2, 1);
+	put_str("Class       :", y_row1 + 3, 1);
+	put_str("Body        :", y_row1 + 4, 1);
+#ifdef NEW_COMPRESSED_DUMP_AC
+ #ifdef HIDE_UNAVAILABLE_TRAIT
+	if (trait != 0)
+ #endif
+	{
+		put_str("Trait       :", y_row1 + 5, 1);
+		c_put_str(TERM_L_BLUE, trait_info[trait].title, y_row1 + 5, 15);
+	}
+#endif
+	put_str("Mode        :", y_rowmode, 1);
 
-	c_put_str(TERM_L_BLUE, cname, 1, 15);
-	c_put_str(TERM_L_BLUE, (p_ptr->male ? "Male" : "Female"), 2, 15);
-	c_put_str(TERM_L_BLUE, race_info[race].title, 3, 15);
-	c_put_str(TERM_L_BLUE, class_info[class].title, 4, 15);
-	c_put_str(TERM_L_BLUE, c_p_ptr->body_name, 5, 15);
+	c_put_str(TERM_L_BLUE, cname, y_row1, 15);
+	c_put_str(TERM_L_BLUE, (p_ptr->male ? "Male" : "Female"), y_row1 + 1, 15);
+	c_put_str(TERM_L_BLUE, race_info[race].title, y_row1 + 2, 15);
+	c_put_str(TERM_L_BLUE, class_info[class].title, y_row1 + 3, 15);
+	c_put_str(TERM_L_BLUE, c_p_ptr->body_name, y_row1 + 4, 15);
 	if (p_ptr->mode & MODE_PVP)
-		c_put_str(TERM_L_BLUE, "PvP (one life)", 6, 15);
+		c_put_str(TERM_L_BLUE, "PvP (one life)", y_rowmode, 15);
 	if (p_ptr->mode & MODE_EVERLASTING)
-		c_put_str(TERM_L_BLUE, "Everlasting (infinite lives)", 6, 15);
+		c_put_str(TERM_L_BLUE, "Everlasting (infinite lives)", y_rowmode, 15);
 	else if ((p_ptr->mode & MODE_NO_GHOST) && (p_ptr->mode & MODE_HARD))
-		c_put_str(TERM_L_BLUE, "Hellish (one life, extra hard)", 6, 15);
+		c_put_str(TERM_L_BLUE, "Hellish (one life, extra hard)", y_rowmode, 15);
 	else if (p_ptr->mode & MODE_NO_GHOST)
-		c_put_str(TERM_L_BLUE, "Unworldly (one life)", 6, 15);
+		c_put_str(TERM_L_BLUE, "Unworldly (one life)", y_rowmode, 15);
 	else if (p_ptr->mode & MODE_HARD)
-		c_put_str(TERM_L_BLUE, "Hard (3 lives, extra hard)", 6, 15);
+		c_put_str(TERM_L_BLUE, "Hard (3 lives, extra hard)", y_rowmode, 15);
 	else /*(p_ptr->mode == MODE_NORMAL)*/
-		c_put_str(TERM_L_BLUE, "Normal (3 lives)", 6, 15);
+		c_put_str(TERM_L_BLUE, "Normal (3 lives)", y_rowmode, 15);
 
         /* Age, Height, Weight, Social */
-        prt_num("Age          ", (int)p_ptr->age, 1, 32, TERM_L_BLUE);
-        prt_num("Height       ", (int)p_ptr->ht, 2, 32, TERM_L_BLUE);
-        prt_num("Weight       ", (int)p_ptr->wt, 3, 32, TERM_L_BLUE);
-        prt_num("Social Class ", (int)p_ptr->sc, 4, 32, TERM_L_BLUE);
+        prt_num("Age          ", (int)p_ptr->age, y_row1, 32, TERM_L_BLUE);
+        prt_num("Height       ", (int)p_ptr->ht, y_row1 + 1, 32, TERM_L_BLUE);
+        prt_num("Weight       ", (int)p_ptr->wt, y_row1 + 2, 32, TERM_L_BLUE);
+        prt_num("Social Class ", (int)p_ptr->sc, y_row1 + 3, 32, TERM_L_BLUE);
 
         /* Display the stats */
-        for (i = 0; i < 6; i++)
-        {
+        for (i = 0; i < 6; i++) {
                 /* Special treatment of "injured" stats */
-                if (p_ptr->stat_use[i] < p_ptr->stat_top[i])
-                {
+                if (p_ptr->stat_use[i] < p_ptr->stat_top[i]){
                         int value;
 
                         /* Use lowercase stat name */
-                        put_str(stat_names_reduced[i], 1 + i, 61);
+                        put_str(stat_names_reduced[i], y_row1 + i, 61);
 
                         /* Get the current stat */
                         value = p_ptr->stat_use[i];
@@ -1981,7 +2003,7 @@ void display_player(int hist)
                         cnv_stat(value, buf);
 
                         /* Display the current stat (modified) */
-                        c_put_str(TERM_YELLOW, buf, 1 + i, 66);
+                        c_put_str(TERM_YELLOW, buf, y_row1 + i, 66);
 
                         /* Acquire the max stat */
                         value = p_ptr->stat_top[i];
@@ -1991,228 +2013,217 @@ void display_player(int hist)
 
                         /* Display the maximum stat (modified) */
 			if(p_ptr->stat_max[i] < (18 + 100))
-			{
-                    		c_put_str(TERM_L_GREEN, buf, 1 + i, 73);
-			}
-			else
-			{
-                    		c_put_str(TERM_L_UMBER, buf, 1 + i, 73);
-			}
+				c_put_str(TERM_L_GREEN, buf, y_row1 + i, 73);
+			else c_put_str(TERM_L_UMBER, buf, y_row1 + i, 73);
                 }
 
                 /* Normal treatment of "normal" stats */
-                else
-                {
+                else {
                         /* Assume uppercase stat name */
-                        put_str(stat_names[i], 1 + i, 61);
+                        put_str(stat_names[i], y_row1 + i, 61);
 
                         /* Obtain the current stat (modified) */
                         cnv_stat(p_ptr->stat_use[i], buf);
 
                         /* Display the current stat (modified) */
 			if(p_ptr->stat_max[i] < (18 + 100))
-			{
-    		                c_put_str(TERM_L_GREEN, buf, 1 + i, 66);
-			}
-			else
-			{
-    		                c_put_str(TERM_L_UMBER, buf, 1 + i, 66);
-			}
+    		                c_put_str(TERM_L_GREEN, buf, y_row1 + i, 66);
+			else c_put_str(TERM_L_UMBER, buf, 1 + i, 66);
                 }
         }
 
 	/* Check for history */
-	if (hist)
-	{
-		put_str("(Character Background)", 14, 25);
-
-		for (i = 0; i < 4; i++)
-		{
-			put_str(p_ptr->history[i], i + 15, 10);
-		}
-	}
-	else
-	{
+	if (hist) {
 #ifndef NEW_COMPRESSED_DUMP
-		put_str("(Miscellaneous Abilities)", 14, 25);
+		put_str("(Character Background)", y_row3 - 1, 25);
+#endif
+		for (i = 0; i < 4; i++)
+			c_put_str(TERM_SLATE, p_ptr->history[i], y_row3 + i, 10);
+	} else {
+#ifndef NEW_COMPRESSED_DUMP
+		put_str("(Miscellaneous Abilities)", y_row3 - 1, 25);
 #endif
 
 		/* Display "skills" */
-		put_str("Fighting    :", 15, 1);
+		put_str("Fighting    :", y_row3, 1);
 		desc = likert(p_ptr->skill_thn, 120, 0);
-		c_put_str(likert_color, desc, 15, 15);
+		c_put_str(likert_color, desc, y_row3, 15);
 
-		put_str("Bows/Throw  :", 16, 1);
+		put_str("Bows/Throw  :", y_row3 + 1, 1);
 		desc = likert(p_ptr->skill_thb, 120, 0);
-		c_put_str(likert_color, desc, 16, 15);
+		c_put_str(likert_color, desc, y_row3 + 1, 15);
 
-		put_str("Saving Throw:", 17, 1);
+		put_str("Saving Throw:", y_row3 + 2, 1);
 		desc = likert(p_ptr->skill_sav, 52, 95);	/*was 6.0 before x10 increase */
-		c_put_str(likert_color, desc, 17, 15);
+		c_put_str(likert_color, desc, y_row3 + 2, 15);
 
-		put_str("Stealth     :", 18, 1);
+		put_str("Stealth     :", y_row3 + 3, 1);
 		desc = likert(p_ptr->skill_stl, 10, 30);
-		c_put_str(likert_color, desc, 18, 15);
+		c_put_str(likert_color, desc, y_row3 + 3, 15);
 
 
-		put_str("Perception  :", 15, 28);
+		put_str("Perception  :", y_row3, 28);
 		desc = likert(p_ptr->skill_fos, 40, 75);
-		c_put_str(likert_color, desc, 15, 42);
+		c_put_str(likert_color, desc, y_row3, 42);
 
-		put_str("Searching   :", 16, 28);
+		put_str("Searching   :", y_row3 + 1, 28);
 		desc = likert(p_ptr->skill_srh, 60, 100);
-		c_put_str(likert_color, desc, 16, 42);
+		c_put_str(likert_color, desc, y_row3 + 1, 42);
 
-		put_str("Disarming   :", 17, 28);
+		put_str("Disarming   :", y_row3 + 2, 28);
 		desc = likert(p_ptr->skill_dis, 80, 100);
-		c_put_str(likert_color, desc, 17, 42);
+		c_put_str(likert_color, desc, y_row3 + 2, 42);
 
-		put_str("Magic Device:", 18, 28);
+		put_str("Magic Device:", y_row3 + 3, 28);
 		desc = likert(p_ptr->skill_dev, 60, 0);
-		c_put_str(likert_color, desc, 18, 42);
+		c_put_str(likert_color, desc, y_row3 + 3, 42);
 
 
-		put_str("Blows/Round:", 15, 55);
-		c_put_str(TERM_L_BLUE, format("%d", p_ptr->num_blow), 15, 69);
+		put_str("Blows/Round:", y_row3, 55);
+		c_put_str(TERM_L_BLUE, format("%d", p_ptr->num_blow), y_row3, 69);
 
-		put_str("Shots/Round:", 16, 55);
-		c_put_str(TERM_L_BLUE, format("%d", p_ptr->num_fire), 16, 69);
+		put_str("Shots/Round:", y_row3 + 1, 55);
+		c_put_str(TERM_L_BLUE, format("%d", p_ptr->num_fire), y_row3 + 1, 69);
 #if 0
-		put_str("Spells/Round:", 17, 55);
-		c_put_str(TERM_L_BLUE, format("%d", p_ptr->num_spell), 17, 69);
+		put_str("Spells/Round:", y_row3 + 2, 55);
+		c_put_str(TERM_L_BLUE, format("%d", p_ptr->num_spell), y_row3 + 2, 69);
 #endif
-		put_str("Infra-Vision:", 18, 55);
-		c_put_str(TERM_L_BLUE, format("%d feet", p_ptr->see_infra * 10), 18, 69);
+		put_str("Infra-Vision:", y_row3 + 3, 55);
+		c_put_str(TERM_L_BLUE, format("%d feet", p_ptr->see_infra * 10), y_row3 + 3, 69);
 	}
 
 	/* Dump the bonuses to hit/dam */
-	prt_num("+To MHit    ", p_ptr->dis_to_h + p_ptr->to_h_melee, 8, 1, TERM_L_BLUE);
-	prt_num("+To MDamage ", p_ptr->dis_to_d + p_ptr->to_d_melee, 9, 1, TERM_L_BLUE);
-	prt_num("+To RHit    ", p_ptr->dis_to_h + p_ptr->to_h_ranged, 10, 1, TERM_L_BLUE);
-	prt_num("+To RDamage ", p_ptr->to_d_ranged, 11, 1, TERM_L_BLUE);
+	prt_num("+To MHit    ", p_ptr->dis_to_h + p_ptr->to_h_melee, y_row2, 1, TERM_L_BLUE);
+	prt_num("+To MDamage ", p_ptr->dis_to_d + p_ptr->to_d_melee, y_row2 + 1, 1, TERM_L_BLUE);
+	prt_num("+To RHit    ", p_ptr->dis_to_h + p_ptr->to_h_ranged, y_row2 + 2, 1, TERM_L_BLUE);
+	prt_num("+To RDamage ", p_ptr->to_d_ranged, y_row2 + 3, 1, TERM_L_BLUE);
+#ifndef NEW_COMPRESSED_DUMP_AC
 	/* Dump the armor class bonus */
-	prt_num("+ To AC     ", p_ptr->dis_to_a, 12, 1, TERM_L_BLUE);
+	prt_num("+ To AC     ", p_ptr->dis_to_a, y_row2 + 4, 1, TERM_L_BLUE);
 	/* Dump the total armor class */
-	prt_num("  Base AC   ", p_ptr->dis_ac, 13, 1, TERM_L_BLUE);
+	prt_num("  Base AC   ", p_ptr->dis_ac, y_row2 + 5, 1, TERM_L_BLUE);
+#else
+	prt_num("Total AC    ", p_ptr->dis_to_a + p_ptr->dis_to_a, y_row2 + 4, 1, TERM_L_BLUE);
+#endif
 
-	prt_num("Level      ", (int)p_ptr->lev, 8, 28, TERM_L_GREEN);
+	prt_num("Level      ", (int)p_ptr->lev, y_row2, 28, TERM_L_GREEN);
 	if (p_ptr->exp >= p_ptr->max_exp)
-	{
-		prt_lnum("Experience ", p_ptr->exp, 9, 28, TERM_L_GREEN);
-	}
+		prt_lnum("Experience ", p_ptr->exp, y_row2 + 1, 28, TERM_L_GREEN);
 	else
-	{
-		prt_lnum("Experience ", p_ptr->exp, 9, 28, TERM_YELLOW);
+		prt_lnum("Experience ", p_ptr->exp, y_row2 + 1, 28, TERM_YELLOW);
+	prt_lnum("Max Exp    ", p_ptr->max_exp, y_row2 + 2, 28, TERM_L_GREEN);
+	if (p_ptr->lev >= PY_MAX_LEVEL || !exp_adv) {
+		put_str("Exp to Adv.", y_row2 + 3, 28);
+		c_put_str(TERM_L_GREEN, "    *****", y_row2 + 3, 28+11);
+	} else {
+		prt_lnum("Exp to Adv.", exp_adv, y_row2 + 3, 28, TERM_L_GREEN);
 	}
-	prt_lnum("Max Exp    ", p_ptr->max_exp, 10, 28, TERM_L_GREEN);
-	if (p_ptr->lev >= PY_MAX_LEVEL || !exp_adv)
+	prt_lnum("Gold       ", p_ptr->au, y_row2 + 4, 28, TERM_L_GREEN);
+#ifndef NEW_COMPRESSED_DUMP_AC
+ #ifdef HIDE_UNAVAILABLE_TRAIT
+	if (trait != 0)
+ #endif
 	{
-		put_str("Exp to Adv.", 11, 28);
-		c_put_str(TERM_L_GREEN, "    *****", 11, 28+11);
+		put_str("Trait", y_row2 + 5, 28);
+		c_put_str(TERM_L_BLUE, trait_info[trait].title, y_row2 + 5, 39);
 	}
-	else
-	{
-		prt_lnum("Exp to Adv.", exp_adv, 11, 28, TERM_L_GREEN);
-	}
-	prt_lnum("Gold       ", p_ptr->au, 12, 28, TERM_L_GREEN);
-	put_str("Trait", 13, 28);
-	c_put_str(TERM_L_BLUE, trait_info[trait].title, 13, 39);
+#endif
 
 #ifndef NEW_COMPRESSED_DUMP
 	if (p_ptr->mhp == -9999) {
-		put_str("Max Hit Points         ", 8, 52);
-		c_put_str(TERM_L_GREEN, "-", 8, 75);
+		put_str("Max Hit Points         ", y_row2, 52);
+		c_put_str(TERM_L_GREEN, "-", y_row2, 75);
 	} else {
-		prt_num("Max Hit Points ", p_ptr->mhp, 8, 52, TERM_L_GREEN);
+		prt_num("Max Hit Points ", p_ptr->mhp, y_row2, 52, TERM_L_GREEN);
 	}
 
 	if (p_ptr->chp == -9999) {
-		put_str("Cur Hit Points         ", 9, 52);
-		c_put_str(TERM_L_GREEN, "-", 9, 75);
+		put_str("Cur Hit Points         ", y_row2 + 1, 52);
+		c_put_str(TERM_L_GREEN, "-", y_row2 + 1, 75);
 	} else if (p_ptr->chp >= p_ptr->mhp)
 	{
-		prt_num("Cur Hit Points ", p_ptr->chp, 9, 52, TERM_L_GREEN);
+		prt_num("Cur Hit Points ", p_ptr->chp, y_row2 + 1, 52, TERM_L_GREEN);
 	}
 	else if (p_ptr->chp > (p_ptr->mhp) / 10)
 	{
-		prt_num("Cur Hit Points ", p_ptr->chp, 9, 52, TERM_YELLOW);
+		prt_num("Cur Hit Points ", p_ptr->chp, y_row2 + 1, 52, TERM_YELLOW);
 	}
 	else
 	{
-		prt_num("Cur Hit Points ", p_ptr->chp, 9, 52, TERM_RED);
+		prt_num("Cur Hit Points ", p_ptr->chp, y_row2 + 1, 52, TERM_RED);
 	}
 
 	if (p_ptr->msp == -9999) {
-		put_str("Max MP (Mana)          ", 10, 52);
-		c_put_str(TERM_L_GREEN, "-", 10, 75);
+		put_str("Max MP (Mana)          ", y_row2 + 2, 52);
+		c_put_str(TERM_L_GREEN, "-", y_row2 + 2, 75);
 	} else {
-		prt_num("Max MP (Mana)  ", p_ptr->msp, 10, 52, TERM_L_GREEN);
+		prt_num("Max MP (Mana)  ", p_ptr->msp, y_row2 + 2, 52, TERM_L_GREEN);
 	}
 
     	if (p_ptr->csp == -9999) {
-		put_str("Cur MP (Mana)          ", 11, 52);
-		c_put_str(TERM_L_GREEN, "-", 11, 75);
+		put_str("Cur MP (Mana)          ", y_row2 + 3, 52);
+		c_put_str(TERM_L_GREEN, "-", y_row2 + 3, 75);
 	} else if (p_ptr->csp >= p_ptr->msp)
 	{
-		prt_num("Cur MP (Mana)  ", p_ptr->csp, 11, 52, TERM_L_GREEN);
+		prt_num("Cur MP (Mana)  ", p_ptr->csp, y_row2 + 3, 52, TERM_L_GREEN);
 	}
 	else if (p_ptr->csp > (p_ptr->msp) / 10)
 	{
-		prt_num("Cur MP (Mana)  ", p_ptr->csp, 11, 52, TERM_YELLOW);
+		prt_num("Cur MP (Mana)  ", p_ptr->csp, y_row2 + 3, 52, TERM_YELLOW);
 	}
 	else
 	{
-		prt_num("Cur MP (Mana)  ", p_ptr->csp, 11, 52, TERM_RED);
+		prt_num("Cur MP (Mana)  ", p_ptr->csp, y_row2 + 3, 52, TERM_RED);
 	}
  #ifdef SHOW_SANITY
-	put_str("Cur Sanity", 12, 52);
+	put_str("Cur Sanity", y_row2 + 4, 52);
 
-	c_put_str(c_p_ptr->sanity_attr, c_p_ptr->sanity, 12, 67);
+	c_put_str(c_p_ptr->sanity_attr, c_p_ptr->sanity, y_row2 + 4, 67);
  #endif	/* SHOW_SANITY */
 
 #else
 
 	if (p_ptr->mhp == -9999) {
-		put_str("Hit Points", 8, 52);
-		c_put_str(TERM_L_GREEN, "-", 8, 71);
+		put_str("Hit Points", y_row2, 52);
+		c_put_str(TERM_L_GREEN, "-", y_row2, 71);
 	} else {
-		prt_num("Hit Points     ", p_ptr->mhp, 8, 52, TERM_L_GREEN);
-		c_put_str(TERM_L_GREEN, "/", 8, 71);
+		prt_num("Hit Points     ", p_ptr->mhp, y_row2, 52, TERM_L_GREEN);
+		c_put_str(TERM_L_GREEN, "/", y_row2, 71);
 		if (p_ptr->chp >= p_ptr->mhp) {
-			prt_num("", p_ptr->chp, 8, 62, TERM_L_GREEN);
+			prt_num("", p_ptr->chp, y_row2, 62, TERM_L_GREEN);
 		} else if (p_ptr->chp > (p_ptr->mhp) / 10) {
-			prt_num("", p_ptr->chp, 8, 62, TERM_YELLOW);
+			prt_num("", p_ptr->chp, y_row2, 62, TERM_YELLOW);
 		} else {
-			prt_num("", p_ptr->chp, 8, 62, TERM_RED);
+			prt_num("", p_ptr->chp, y_row2, 62, TERM_RED);
 		}
 	}
 
 	if (p_ptr->msp == -9999) {
-		put_str("MP (Mana)", 9, 52);
-		c_put_str(TERM_L_GREEN, "-", 9, 71);
+		put_str("MP (Mana)", y_row2 + 1, 52);
+		c_put_str(TERM_L_GREEN, "-", y_row2 + 1, 71);
 	} else {
-		prt_num("MP (Mana)      ", p_ptr->msp, 9, 52, TERM_L_GREEN);
-		c_put_str(TERM_L_GREEN, "/", 9, 71);
+		prt_num("MP (Mana)      ", p_ptr->msp, y_row2 + 1, 52, TERM_L_GREEN);
+		c_put_str(TERM_L_GREEN, "/", y_row2 + 1, 71);
 		if (p_ptr->csp >= p_ptr->msp) {
-			prt_num("", p_ptr->csp, 9, 62, TERM_L_GREEN);
+			prt_num("", p_ptr->csp, y_row2 + 1, 62, TERM_L_GREEN);
 		} else if (p_ptr->csp > (p_ptr->msp) / 10) {
-			prt_num("", p_ptr->csp, 9, 62, TERM_YELLOW);
+			prt_num("", p_ptr->csp, y_row2 + 1, 62, TERM_YELLOW);
 		} else {
-			prt_num("", p_ptr->csp, 9, 62, TERM_RED);
+			prt_num("", p_ptr->csp, y_row2 + 1, 62, TERM_RED);
 		}
 	}
 
  #ifdef SHOW_SANITY
-	put_str("Sanity", 10, 52);
-	c_put_str(c_p_ptr->sanity_attr, c_p_ptr->sanity, 10, 67);
+	put_str("Sanity", y_row2 + 2, 52);
+	c_put_str(c_p_ptr->sanity_attr, c_p_ptr->sanity, y_row2 + 2, 67);
  #endif	/* SHOW_SANITY */
 
 	/* Display 'WINNER' status */
-	put_str("Status", 12, 52);
-	if (p_ptr->chp < 0 || c_p_ptr->sanity_attr == TERM_RED) c_put_str(TERM_L_DARK, "        DEAD", 12, 64);
-	else if (p_ptr->ghost) c_put_str(TERM_RED, "Ghost (dead)", 12, 64);
-	else if (p_ptr->total_winner) c_put_str(TERM_VIOLET, "***WINNER***", 12, 64);
-	else c_put_str(TERM_L_GREEN, "       Alive", 12, 64);
+	put_str("Status", y_row2 + 4, 52);
+	if (p_ptr->chp < 0 || c_p_ptr->sanity_attr == TERM_RED) c_put_str(TERM_L_DARK, "        DEAD", y_row2 + 4, 64);
+	else if (p_ptr->ghost) c_put_str(TERM_RED, "Ghost (dead)", y_row2 + 4, 64);
+	else if (p_ptr->total_winner) c_put_str(TERM_VIOLET, "***WINNER***", y_row2 + 4, 64);
+	else c_put_str(TERM_L_GREEN, "       Alive", y_row2 + 4, 64);
 #endif
 
 	/* Show location (better description needed XXX) */
