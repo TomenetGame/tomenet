@@ -62,6 +62,7 @@ Contents
     (3.7)   Creating macros for ranged attacks & abilities (spells)
     (3.7a)  Ability codes [contained within (3.7)]
     (3.7b)  Quick'n'dirty macros
+    (3.7c)  The macro creation wizard
     (3.8)   Example macro sets
     (3.9)   Macros with special keys
     (3.9a)  Creating a chat macro for your party
@@ -2570,6 +2571,23 @@ Example 3: Assumed you have the spell Manathrust somewhere in your books and
 Example 4: Casting phase door would be..
         M@Phase Door\
     (expanded to '\e)m@11\r@Phase Door\r'.)
+
+
+(3.7c) The macro creation wizard
+--------------------------------
+The easiest (and therefore most limited) way to create a macro is to invoke the
+built-in macro creation wizard. If you are new to the game and too impatient to
+figure out how to create macros manually, you might want to give this a try.
+
+To invoke it, enter the macro menu by pressing '%', then press 'z' to bring up
+the wizard.
+
+The wizard will lead you through three steps with detailed on-screen
+instructions, allowing you to create macros from a couple of pre-defined
+command choices which should cover almost all situations.
+
+(The macro type, ie command/hybrid/normal will be chosen automatically for you,
+same as when using Quick'n'Dirty macro creation.)
 
 
 
