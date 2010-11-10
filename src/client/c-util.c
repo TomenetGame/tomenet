@@ -3751,9 +3751,10 @@ void interact_macros(void)
 						break;
 					case 'h':
 						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact monster code. You can find codes");
-						Term_putstr(10, 12, -1, TERM_GREEN, "you have already learned by pressing  \377G~ 3  \377gin the game.");
-						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377G37     \377gto polymorph into a 'fruit bat'.");
-						Term_putstr(10, 14, -1, TERM_GREEN, "You must have learned a form before you can use it!");
+						Term_putstr(10, 12, -1, TERM_GREEN, "you have already learned by pressing  \377s~ 3  \377gin the game");
+						Term_putstr(10, 13, -1, TERM_GREEN, "or by pressing  \377s:  \377gto chat and then typing the command:  \377s/mon");
+						Term_putstr(10, 14, -1, TERM_GREEN, "For example, enter   \377G37   \377gto polymorph into a 'fruit bat'.");
+						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a form before you can use it!");
 						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter exact monster code:");
 						break;
 					}
