@@ -5563,6 +5563,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				note = " resists";
 				dam *= 3; dam /= (randint(6)+6);
 			}
+#if 0
 			else if (!quiet)
 			  {
 				int sec = m_ptr->hp, t;
@@ -5576,6 +5577,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 				p_ptr->energy += t * level_speed(&p_ptr->wpos) / 100;
 			  }
+#endif
 			break;
 		}
 
