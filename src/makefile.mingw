@@ -205,6 +205,14 @@ CC = gcc
 #CFLAGS = -Wall -g -pipe -DUSE_X11 -DUSE_GCU
 #LIBS = -L/usr/X11R6/lib -lX11 -lcurses
 
+#
+# Path to sdl-config
+#
+# You may need to replace /usr/mingw32 by whatever prefix your
+# cross-compiling tools use.
+#
+SDL_CONFIG = /usr/mingw32/bin/sdl-config
+
 ##
 ## Variation -- MinGW on Linux
 ##
@@ -213,8 +221,8 @@ CC = gcc
 #LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 ##
 ## With SDL
-CFLAGS = -g -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -DSOUND_SDL
-LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm -lSDL -lSDL_mixer
+CFLAGS = -g -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -DSOUND_SDL `$(SDL_CONFIG) --cflags`
+LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm -lSDL -lSDL_mixer `$(SDL_CONFIG) --libs`
 
 
 # MinGW compiler and linker on my system - mikaelh
@@ -228,7 +236,6 @@ WINDRES = mingw32-windres
 # Use these on other Linux systems, possibly
 #CC = i386-mingw32msvc-gcc
 #WINDRES = i386-mingw32msvc-windres
-
 
 # Lua
 SRCS += $(LUASRCS)
