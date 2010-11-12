@@ -42,8 +42,8 @@ X:expand_look
 X:expand_list
 Y:view_perma_grids
 X:view_torch_grids
-Y:no_verify_destroy
-Y:whole_ammo_stack
+X:no_verify_destroy
+X:whole_ammo_stack
 Y:recall_flicker
 #X:flow_by_sound
 X:time_stamp_chat
