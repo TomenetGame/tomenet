@@ -42,11 +42,11 @@ X:expand_look
 X:expand_list
 Y:view_perma_grids
 X:view_torch_grids
-Y:dungeon_align
-Y:dungeon_stair
+Y:no_verify_destroy
+Y:whole_ammo_stack
 Y:recall_flicker
 #X:flow_by_sound
-X:flow_by_smell
+X:time_stamp_chat
 X:track_follow
 X:track_target
 X:smart_learn
