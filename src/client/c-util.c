@@ -2723,6 +2723,12 @@ s32b c_get_quantity(cptr prompt, int max)
 
 
 #if 1
+	/* new method slightly extended: allow leading 'k' or 'm' too */
+	if (buf[0] == 'k' || buf[0] == 'K' || buf[0] == 'm' || buf[0] == 'M') {
+		/* add leading '0' to revert it to the usual format */
+		for (i = 9; i >= 1; i--) buf[i] = buf[i - 1];
+		buf[0] = '0';
+	}
 	/* new method for inputting amounts of gold:  1m35 = 1,350,000  - C. Blue */
 	while(buf[n] >= '0' && buf[n] <= '9') bi1[i++] = buf[n++];
 	bi1[n] = '\0';
