@@ -32,7 +32,7 @@ void do_cmd_messages(void)
 
 	/* Display messages in different colors -Zz */
 
-	cptr nomsg_target = "Target Selected.";
+	cptr nomsg_target = "Target selected.";
 	cptr nomsg_map = "Map sector ";
 
 	/* Total messages */
@@ -40,7 +40,7 @@ void do_cmd_messages(void)
 	nn = 0;  /* number of new messages */
 
 	/* Filter message buffer for "unimportant messages" add to message_recall
-	 * "Target Selected" messages are too much clutter for archers to remove
+	 * "Target selected" messages are too much clutter for archers to remove
 	 * from msg recall
 	 */
 
@@ -573,7 +573,7 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 
 	char buf[160];
 
-	cptr nomsg_target = "Target Selected.";
+	cptr nomsg_target = "Target selected.";
 	cptr nomsg_map = "Map sector ";
 
 	/* Total messages */
@@ -581,7 +581,7 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 	nn = 0;  /* number of new messages */
 
 	/* Filter message buffer for "unimportant messages" add to message_recall
-	 * "Target Selected" messages are too much clutter for archers to remove
+	 * "Target selected" messages are too much clutter for archers to remove
 	 * from msg recall
 	 */
 

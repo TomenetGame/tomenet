@@ -1257,7 +1257,7 @@ int cmd_target(void)
 	/* Print the message */
 	if (!c_cfg.taciturn_messages)
 	{
-		prt("Target Selected.", 0, 0);
+		prt("Target selected.", 0, 0);
 	}
 
 	return TRUE;
