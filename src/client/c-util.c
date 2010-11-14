@@ -751,7 +751,7 @@ char inkey(void)
 	for (ch = 0; !ch; )
 	{
 		/* Flush output - maintain flickering/multi-hued characters */
-		do_flicker();
+		do_flicker(); //unnecessary since it's done in inkey_aux() anyway? */
 
 		/* Nothing ready, not waiting, and not doing "inkey_base" */
 		if (!inkey_base && inkey_scan && (0 != Term_inkey(&ch, FALSE, FALSE))) break;
@@ -778,8 +778,72 @@ char inkey(void)
 		{
 			char xh;
 
+#if 0 /* don't block.. */
 			/* Check for keypress, optional wait */
 			(void)Term_inkey(&xh, !inkey_scan, TRUE);
+#else /* ..but keep processing net input in the background so we don't timeout. - C. Blue */
+			int net_fd = Net_fd();
+			if (inkey_scan) (void)Term_inkey(&xh, FALSE, TRUE); /* don't wait */
+			else if (net_fd == -1) (void)Term_inkey(&xh, TRUE, TRUE); /* wait and block, no network yet anyway */
+			else do { /* do wait, but don't block; keep processing */
+				/* Note that we assume here that we're ONLY called from get_macro_trigger()! */
+
+				/* Flush output - maintain flickering/multi-hued characters */
+				do_flicker();
+
+				/* Look for a keypress */
+				(void)(Term_inkey(&xh, FALSE, TRUE));
+
+				/* If we got a key, break */
+				if (xh) break;
+
+ #if 0 /* probably should be disabled - assumption: we're ONLY called for get_macro_trigger() */
+				/* If we received a 'max_line' value from the net,
+				   break if inkey_max_line flag was set */
+				if (inkey_max_line != inkey_max_line_set) {
+					/* hack: */
+					ch = 1;
+					break;
+				}
+ #endif
+
+				/* Update our timer and if neccecary send a keepalive packet */
+				update_ticks();
+				if (!c_quit) {
+					do_keepalive();
+					do_ping();
+				}
+
+				/* Flush the network output buffer */
+				Net_flush();
+
+				/* Wait according to fps - mikaelh */
+				SetTimeout(0, next_frame());
+
+				/* Update the screen */
+				Term_fresh();
+
+				if (c_quit) {
+					usleep(1000);
+					continue;
+				}
+
+				/* Parse net input if we got any */
+				if (SocketReadable(net_fd)) {
+					if (Net_input() == -1) quit(NULL);
+				}
+
+ #if 0 /* probably not needed - assumption: we're ONLY called for get_macro_trigger() */
+				/* Hack - Leave a store */
+				if (shopping && leave_store) {
+					return ESCAPE;
+				}
+ #endif
+
+				/* Redraw windows if necessary */
+				if (p_ptr->window) window_stuff();
+			} while (1);
+#endif
 
 			/* Key ready */
 			if (xh)
