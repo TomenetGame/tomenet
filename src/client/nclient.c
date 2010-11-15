@@ -1267,9 +1267,9 @@ int Receive_inven(void)
 {
 	int	n;
 	char	ch;
-	char pos, attr, tval, sval, *insc;
+	char pos, attr, tval, sval, uses_dir = 0;
 	s16b wgt, amt, pval;
-	char name[ONAME_LEN];
+	char name[ONAME_LEN], *insc;
 
 #if 0
 	int i;
@@ -1277,7 +1277,10 @@ int Receive_inven(void)
 	bool auto_inscribe = FALSE, found;
 #endif
 
-	if (is_newer_than(&server_version, 4, 4, 4, 2, 0, 0)) {
+	if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%c%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, &uses_dir, name)) <= 0)
+			return n;
+	} else if (is_newer_than(&server_version, 4, 4, 4, 2, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, name)) <= 0)
 			return n;
 	} else {
@@ -1298,6 +1301,7 @@ int Receive_inven(void)
 	inventory[pos - 'a'].attr = attr;
 	inventory[pos - 'a'].weight = wgt;
 	inventory[pos - 'a'].number = amt;
+	inventory[pos - 'a'].uses_dir = uses_dir;
 
 	/* check for special "fake-artifact" inscription using '#' char */
 	if ((insc = strchr(name, '\373'))) {
@@ -3915,9 +3919,16 @@ int Send_zap(int item)
 	int	n;
 
 	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_ZAP, item)) <= 0)
-	{
 		return n;
-	}
+
+	return 1;
+}
+
+int Send_zap_dir(int item, int dir) {
+	int	n;
+
+	if ((n = Packet_printf(&wbuf, "%c%hd%c", PKT_ZAP_DIR, item, dir)) <= 0)
+		return n;
 
 	return 1;
 }

@@ -227,11 +227,11 @@ struct object_type
 	s32b bpval;			/* Base item extra-parameter */
 	s32b pval;			/* Extra enchantment item extra-parameter */
 
-	byte discount;		/* Discount (if any) */
+	byte discount;			/* Discount (if any) */
 
-	byte number;		/* Number of items */
+	byte number;			/* Number of items */
 
-	s16b weight;		/* Item weight */
+	s16b weight;			/* Item weight */
 
 	byte name1;			/* Artifact type, if any */
 	byte name2;			/* Ego-Item type, if any */
@@ -256,15 +256,17 @@ struct object_type
 	s16b ac;			/* Normal AC */
 
 	byte dd;
-        byte ds;		/* Damage dice/sides */
+        byte ds;			/* Damage dice/sides */
 
-	s16b timeout;		/* Timeout Counter */
+	s16b timeout;			/* Timeout Counter */
 
 	byte ident;			/* Special flags  */
 
-	/*byte marked;	*/	/* Object is marked */
+	/*byte marked;	*/		/* Object is marked */
 
 	u16b note;			/* Inscription index */
+
+	char uses_dir;			/* Uses a direction or not? (for rods) */
 };
 
 /*

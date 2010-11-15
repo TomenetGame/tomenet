@@ -864,6 +864,8 @@ struct object_type
 	u16b note;			/* Inscription index */
 	u16b note_priority;		/* Added for making pseudo-id overwrite unique loot tags */
 
+	char uses_dir;			/* Client-side: Uses a direction or not? (for rods) */
+
 #if 0	/* from pernA.. consumes memory, but quick. shall we? */
         u16b art_name;			/* Artifact name (random artifacts) */
 

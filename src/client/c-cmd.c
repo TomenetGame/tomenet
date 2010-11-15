@@ -81,7 +81,14 @@ static void cmd_all_in_one(void)
 
 		case TV_ROD:
 		{
-			Send_zap(item);
+			/* Does rod require aiming? (Always does if not yet identified) */
+			if (inventory[item].uses_dir == 0) {
+				/* (also called if server is outdated, since uses_dir will be 0 then) */
+				Send_zap(item);
+			} else {
+				get_dir(&dir);
+				Send_zap_dir(item, dir);
+			}
 			break;
 		}
 
@@ -1113,19 +1120,25 @@ void cmd_use_staff(void)
 
 void cmd_zap_rod(void)
 {
-	int item;
+	int item, dir;
 
 	item_tester_tval = TV_ROD;
 	get_item_hook_find_obj_what = "Rod name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Use which rod? ", (USE_INVEN | USE_EXTRA)))
+	if (!c_get_item(&item, "Zap which rod? ", (USE_INVEN | USE_EXTRA)))
 	{
 		return;
 	}
 
 	/* Send it */
-	Send_zap(item);
+	if (inventory[item].uses_dir == 0) {
+		/* (also called if server is outdated, since uses_dir will be 0 then) */
+		Send_zap(item);
+	} else {
+		get_dir(&dir);
+		Send_zap_dir(item, dir);
+	}
 }
 
 /* FIXME: filter doesn't work nicely */
