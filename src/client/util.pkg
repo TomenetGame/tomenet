@@ -145,7 +145,7 @@ extern int Send_read(int item);
 extern int Send_aim(int item, int dir);
 extern int Send_use(int item);
 extern int Send_zap(int item);
-extern int Send_zap_dir(int item);
+extern int Send_zap_dir(int item, int dir);
 extern int Send_fill(int item);
 extern int Send_eat(int item);
 extern int Send_activate(int item);
