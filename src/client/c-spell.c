@@ -74,7 +74,7 @@ static void print_mimic_spells()
 		  continue;
 
 		/* Dump the info */
-		sprintf(buf, "%c) %s", I2A(j - 2 + k * 17), monster_spells4[i]);
+		sprintf(buf, "%c) %s", I2A(j - 2 + k * 17), monster_spells4[i].name);
 		prt(buf, j++, col + k * 35);
 
 		/* check for beginning of 2nd column */
@@ -90,7 +90,7 @@ static void print_mimic_spells()
 			continue;
 
  		/* Dump the info */
-		sprintf(buf, "%c) %s", I2A(j - 2 + k * 17), monster_spells5[i]);
+		sprintf(buf, "%c) %s", I2A(j - 2 + k * 17), monster_spells5[i].name);
 		prt(buf, j++, col + k * 35);
 
 		/* check for beginning of 2nd column */
@@ -106,7 +106,7 @@ static void print_mimic_spells()
 			continue;
 
 		/* Dump the info */
-		sprintf(buf, "%c) %s", I2A(j - 2 + k * 17), monster_spells6[i]);
+		sprintf(buf, "%c) %s", I2A(j - 2 + k * 17), monster_spells6[i].name);
 		prt(buf, j++, col + k * 35);
 
 		/* check for beginning of 2nd column */
@@ -472,25 +472,41 @@ static int get_mimic_spell(int *sn)
  */
 void do_mimic()
 {
-  int spell, j;
-  char out_val[6];
+	int spell, j, dir;
+	char out_val[6];
+	bool uses_dir = FALSE;
 
-  /* Ask for the spell */
-  if(!get_mimic_spell(&spell)) return;
+	/* Ask for the spell */
+	if (!get_mimic_spell(&spell)) return;
 
-  /* later on maybe this can moved to server side, then no need for '20000 hack'.
-  Btw, 30000, the more logical one, doesnt work, dont ask me why */
-  if(spell == 2){
-    strcpy(out_val,"");
-    get_string("Which form (0 for player) ? ", out_val, 4);
-    if(strlen(out_val) == 0) return;
-    j = atoi(out_val);
+	/* later on maybe this can moved to server side, then no need for '20000 hack'.
+	   Btw, 30000, the more logical one, doesnt work, dont ask me why */
+	if (spell == 2) {
+		strcpy(out_val,"");
+		get_string("Which form (0 for player) ? ", out_val, 4);
+		if (strlen(out_val) == 0) return;
+		j = atoi(out_val);
+		if ((j < 0) || (j > 2767)) return;
+		spell = 20000 + j;
+	}
 
-    if((j < 0) || (j > 2767)) return;
-    spell = 20000 + j;
-  }
+	/* Spell requires direction? */
+	else if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0)) {
+		j = spell - 3;
+		if (j < 32) uses_dir = monster_spells4[j].uses_dir;
+		else if (j < 32) uses_dir = monster_spells5[j - 32].uses_dir;
+		else uses_dir = monster_spells6[j - 64].uses_dir;
 
-  Send_activate_skill(MKEY_MIMICRY, 0, spell, 0, 0, 0);
+		if (uses_dir) {
+			get_dir(&dir);
+			Send_activate_skill(MKEY_MIMICRY, 0, spell, dir, 0, 0);
+		} else {
+			Send_activate_skill(MKEY_MIMICRY, 0, spell, 0, 0, 0);
+		}
+		return;
+	}
+
+	Send_activate_skill(MKEY_MIMICRY, 0, spell, 0, 0, 0);
 }
 
 /*

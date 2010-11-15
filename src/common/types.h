@@ -3418,3 +3418,9 @@ struct module {
 	errr (*init)(int argc, char **argv);
 };
 #endif
+
+/* for (currently hardcoded client-side) mimic spells, to enable proper targetting */
+typedef struct monster_spell_type {
+	cptr name;
+	bool uses_dir; /* flag */
+} monster_spell_type;

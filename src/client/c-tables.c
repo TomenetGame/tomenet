@@ -799,140 +799,140 @@ option_type option_info[OPT_MAX] =
 };
 
 /* XXX XXX they should be sent from server like other spells! */
-cptr monster_spells4[32] =
+monster_spell_type monster_spells4[32] =
 {
-  "Shriek",
-  "Negate magic",
-  "XXX",
-  "Fire Rocket",
+  {"Shriek", FALSE},
+  {"Negate magic", FALSE},
+  {"XXX", TRUE},
+  {"Fire Rocket", TRUE},
 
-  "Arrow",
-  "Shot",
-  "Bolt",
-  "Missile",
+  {"Arrow", TRUE},
+  {"Shot", TRUE},
+  {"Bolt", TRUE},
+  {"Missile", TRUE},
 
-  "Breathe Acid",
-  "Breathe Lightning",
-  "Breathe Fire",
-  "Breathe Cold",
+  {"Breathe Acid", TRUE},
+  {"Breathe Lightning", TRUE},
+  {"Breathe Fire", TRUE},
+  {"Breathe Cold", TRUE},
 
-  "Breathe Poison",
-  "Breathe Nether",
-  "Breathe Lite",
-  "Breathe Darkness",
+  {"Breathe Poison", TRUE},
+  {"Breathe Nether", TRUE},
+  {"Breathe Lite", TRUE},
+  {"Breathe Darkness", TRUE},
 
-  "Breathe Confusion",
-  "Breathe Sound",
-  "Breathe Chaos",
-  "Breathe Disenchantment",
+  {"Breathe Confusion", TRUE},
+  {"Breathe Sound", TRUE},
+  {"Breathe Chaos", TRUE},
+  {"Breathe Disenchantment", TRUE},
 
-  "Breathe Nexus",
-  "Breathe Time",
-  "Breathe Inertia",
-  "Breathe Gravity",
+  {"Breathe Nexus", TRUE},
+  {"Breathe Time", TRUE},
+  {"Breathe Inertia", TRUE},
+  {"Breathe Gravity", TRUE},
 
-  "Breathe Shards",
-  "Breathe Plasma",
-  "Breathe Force",
-  "Breathe Mana",
+  {"Breathe Shards", TRUE},
+  {"Breathe Plasma", TRUE},
+  {"Breathe Force", TRUE},
+  {"Breathe Mana", TRUE},
 
-  "Breathe Disintegration",
-  "Breathe Toxic Waste",
-  "Ghastly Moan",
-  "Throw Boulder",	/* "XXX", */
+  {"Breathe Disintegration", TRUE},
+  {"Breathe Toxic Waste", TRUE},
+  {"Ghastly Moan", FALSE},
+  {"Throw Boulder", TRUE},	/* "XXX", */
 };
 
 /*
  * New monster race bit flags
  */
-cptr monster_spells5[32] =
+monster_spell_type monster_spells5[32] =
 {
-  "Acid Ball",
-  "Lightning Ball",
-  "Fire Ball",
-  "Cold Ball",
+  {"Acid Ball", TRUE},
+  {"Lightning Ball", TRUE},
+  {"Fire Ball", TRUE},
+  {"Cold Ball", TRUE},
 
-  "Poison Ball",
-  "Nether Ball",
-  "Water Ball",
-  "Mana Storm",
+  {"Poison Ball", TRUE},
+  {"Nether Ball", TRUE},
+  {"Water Ball", TRUE},
+  {"Mana Storm", TRUE},
 
-  "Darkness Storm",
-  "Drain Mana",
-  "Mind Blast",
-  "Brain Smash",
+  {"Darkness Storm", TRUE},
+  {"Drain Mana", TRUE},
+  {"Mind Blast", TRUE},
+  {"Brain Smash", TRUE},
 
-  "Cause Wounds",
-  "XXX",
-  "Ball Toxic Waste",
-  "Raw Chaos",
+  {"Cause Wounds", TRUE},
+  {"XXX", TRUE},
+  {"Ball Toxic Waste", TRUE},
+  {"Raw Chaos", TRUE},
 
-  "Acid Bolt",
-  "Lightning Bolt",
-  "Fire Bolt",
-  "Cold Bolt",
+  {"Acid Bolt", TRUE},
+  {"Lightning Bolt", TRUE},
+  {"Fire Bolt", TRUE},
+  {"Cold Bolt", TRUE},
 
-  "Poison Bolt",
-  "Nether Bolt",
-  "Water Bolt",
-  "Mana Bolt",
+  {"Poison Bolt", TRUE},
+  {"Nether Bolt", TRUE},
+  {"Water Bolt", TRUE},
+  {"Mana Bolt", TRUE},
 
-  "Plasma Bolt",
-  "Ice Bolt",
-  "Magic Missile",
-  "Scare",
+  {"Plasma Bolt", TRUE},
+  {"Ice Bolt", TRUE},
+  {"Magic Missile", TRUE},
+  {"Scare", TRUE},
 
-  "Blind",
-  "Confusion",
-  "Slow",
-  "Paralyze",
+  {"Blind", TRUE},
+  {"Confusion", TRUE},
+  {"Slow", TRUE},
+  {"Paralyze", TRUE},
 };
 
 /*
  * New monster race bit flags
  */
-cptr monster_spells6[32] =
+monster_spell_type monster_spells6[32] =
 {
-  "Haste Self",
-  "Hand of Doom",
-  "Heal",
-  "XXX",
+  {"Haste Self", FALSE},
+  {"Hand of Doom", TRUE},
+  {"Heal", FALSE},
+  {"XXX", TRUE},
 
-  "Blink",
-  "Teleport",
-  "XXX",
-  "XXX",
+  {"Blink", FALSE},
+  {"Teleport", FALSE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
 
-  "Teleport To",
-  "Teleport Away",
-  "Teleport Level",
-  "XXX",
+  {"Teleport To", TRUE},
+  {"Teleport Away", TRUE},
+  {"Teleport Level", FALSE},
+  {"XXX", TRUE},
 
-  "Darkness",
-  "Trap Creation",
-  "Cause Amnesia",
+  {"Darkness", FALSE},
+  {"Trap Creation", FALSE},
+  {"Cause Amnesia", TRUE},
   /* Summons follow, but players can't summon */
-  "XXX",
+  {"XXX", TRUE},
 
-  "XXX",
-  "XXX",
-  "XXX",
-  "XXX",
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
 
-  "XXX",
-  "XXX",
-  "XXX",
-  "XXX",
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
 
-  "XXX",
-  "XXX",
-  "XXX",
-  "XXX",
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
 
-  "XXX",
-  "XXX",
-  "XXX",
-  "XXX",
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
 };
 
 
