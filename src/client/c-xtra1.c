@@ -2103,7 +2103,7 @@ void display_player(int hist)
 	/* Dump the total armor class */
 	prt_num("  Base AC   ", p_ptr->dis_ac, y_row2 + 5, 1, TERM_L_BLUE);
 #else
-	prt_num("Total AC    ", p_ptr->dis_to_a + p_ptr->dis_to_a, y_row2 + 4, 1, TERM_L_BLUE);
+	prt_num("Total AC    ", p_ptr->dis_to_a + p_ptr->dis_ac, y_row2 + 4, 1, TERM_L_BLUE);
 #endif
 
 	prt_num("Level      ", (int)p_ptr->lev, y_row2, 28, TERM_L_GREEN);
