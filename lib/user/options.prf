@@ -95,7 +95,7 @@ Y:paging_max_vol
 Y:no_ovl_close_sfx
 Y:ovl_sfx_attack
 X:half_sfx_attack
-Y:cut_sfx_attack
+X:cut_sfx_attack
 Y:ovl_sfx_command
 Y:ovl_sfx_misc
 Y:ovl_sfx_mon_attack

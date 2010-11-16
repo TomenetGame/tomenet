@@ -779,7 +779,7 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.half_sfx_attack,	FALSE,	4,	0, 86, TRUE,
 	"half_sfx_attack",		"Skip every second attack sound" },
 
-	{ &c_cfg.cut_sfx_attack,	TRUE,	4,	0, 87, TRUE,
+	{ &c_cfg.cut_sfx_attack,	FALSE,	4,	0, 87, TRUE,
 	"cut_sfx_attack",		"Skip attack sounds based on speed and bpr" },
 
 	{ &c_cfg.ovl_sfx_command,	TRUE,	4,	0, 88, TRUE,
