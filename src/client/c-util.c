@@ -4715,6 +4715,8 @@ void do_cmd_options(void)
 	int k;
 	char tmp[1024];
 
+	bool dummy = c_cfg.exp_need;
+
 	/* Save the screen */
 	Term_save();
 
@@ -4841,6 +4843,10 @@ void do_cmd_options(void)
 
 	/* Verify the keymap */
 	keymap_init();
+
+	/* for exp_need option changes: */
+	if (dummy != c_cfg.exp_need)
+		prt_level(p_ptr->lev, p_ptr->max_lev, p_ptr->max_plv, p_ptr->max_exp, p_ptr->exp, exp_adv);
 
 	/* Resend options to server */
 	Send_options();
