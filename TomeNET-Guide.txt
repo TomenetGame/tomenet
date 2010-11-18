@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 9. Nov 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 16. Nov 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -3217,7 +3217,7 @@ dungeon depth I can recommend is between 1/3 (if you are _very_ weak) of your
 own character level and 3/4 of your character level. You can also go deeper,
 in case you want to try diving quickly. On 750 ft you can encounter hounds
 (their symbol is a 'Z'). These don't have much Hit Points but give much
-experience. They are a famous target for diver.
+experience. They are a valued target for divers.
 For a list of the dungeons see '(4.5) Towns'.
 
 Dungeon types
@@ -6618,13 +6618,13 @@ Note that not every skill is available to every profession (class).
         .Water                  Learn spells of the Water branch.
         .Air                    Learn spells of the Air branch.
         .Earth                  Learn spells of the Earth branch.
-        .Meta                   Learn spells of the Meta branch.
+        .Nature                 Learn spells of the Nature branch.
         .Conveyance             Learn spells of the Conveyance branch.
         .Divination             Learn spells of the Divination branch.
         .Temporal               Learn spells of the Temporal branch.
-        .Mind                   Learn spells of the Mind branch.
-        .Nature                 Learn spells of the Nature branch.
         .Udun                   Learn spells of the Udun branch.
+        .Mind                   Learn spells of the Mind branch.
+        .Meta                   Learn spells of the Meta branch.
     +Prayer Schools
         .Holy Offense           Learn prayers of the Holy Offense branch.
         .Holy Defense           Learn prayers of the Holy Defense branch.
@@ -8254,68 +8254,6 @@ to a certain extent. The boni are listed below each school.
 
 Istari schools:
 ---------------
-Earth
-    Dig             Turns walls into mud.
-                    Required skill level for first spell level: 12.
-    Stone Prison    Creates a prison of granite walls around you.
-                    Required skill level for first spell level: 25.
-    Strike          Creates a force bolt that may stun enemies.
-                    Lv12: it turns into a small ball.
-                    Required skill level for first spell level: 25.
-    Shake           Creates a local earthquake.
-                    Required skill level for first spell level: 27.
-  BONI:             Shard resistance at 30,
-                    Great damage reduction against earthquakes at 45.
-Air
-    Noxious Cloud   Fires a poison cloud at a designated target.
-                    Lv30: Unbreath cloud, irresistable.
-                    Required skill level for first spell level: 3.
-    Wings of Wind   Grants levitation (feather falling).
-                    Lv16: Lets you fly.
-                    Required skill level for first spell level: 16.
-                    Shared spell (see above): Air, Conveyance.
-    Invisibility    Turns you invisible.
-                    Required skill level for first spell level: 30.
-    Poison Blood    Gives temporary poison resistance.
-                    Lv10: Brands melee weapons with venom.
-                    Required skill level for first spell level: 22.
-    Thunderstorm    Throws thunder bolts at random monsters nearby.
-                    (33% lightning, 33% sound, 33% light)
-                    Required skill level for first spell level: 25.
-  BONI:             Feather falling at 30,
-                    Poison resistance at 40,
-                    Flying at 50.
-Water
-    Tidal Wave      Summons a monstrous tidal wave.
-                    Required skill level for first spell level: 16.
-    Ice Storm       Engulfs you in a storm of roaring cold.
-                    Lv15: Turns into a storm of shards of ice.
-                    Required skill level for first spell level: 22.
-    Ent's Potion    Fills your stomach.
-                    Lv5: Removes fear.
-                    Lv12: Makes you heroic.
-                    Required skill level for first spell level: 6.
-    Vapor           Fills the air around you with toxic moisture
-                    (which does pure water damage, not poison).
-                    Required skill level for first spell level: 2.
-  BONI:             Water resistance at 30,
-                    Passing water at 40,
-                    Water immunity at 50.
-Fire
-    Globe of Light  Creates a globe of magical light.
-                    Lv10: Damages monsters.
-                    Lv25: Turns into a more powerful kind of light.
-                    Required skill level for first spell level: 1.
-    Fireflash       Conjures a fire ball.
-                    Lv20: Turns into holy fire which is especially deadly to
-                          evil opponents.
-                    Required skill level for first spell level: 10.
-    Fiery Shield    Creates a shield of flames around you.
-                    Required skill level for first spell level: 16.
-    Firewall        Creates a fire wall to incinerate monsters that cross it.
-                    Required skill level for first spell level: 20.
-  BONI:             Fire resistance at 30,
-                    Fire immunity at 50.
 Mana
     Manathrust      Casts a powerful mana bolt.
                     Required skill level for first spell level: 1.
@@ -8335,6 +8273,92 @@ Mana
                     deducted for each damage point.
                     Required skill level for first spell level: 35.
   BONI:             Mana resistance at 40.
+
+Fire
+    Globe of Light  Creates a globe of magical light.
+                    Lv10: Damages monsters.
+                    Lv25: Turns into a more powerful kind of light.
+                    Required skill level for first spell level: 1.
+    Fireflash       Conjures a fire ball.
+                    Lv20: Turns into holy fire which is especially deadly to
+                          evil opponents.
+                    Required skill level for first spell level: 10.
+    Fiery Shield    Creates a shield of flames around you.
+                    Required skill level for first spell level: 16.
+    Firewall        Creates a fire wall to incinerate monsters that cross it.
+                    Required skill level for first spell level: 20.
+  BONI:             Fire resistance at 30,
+                    Fire immunity at 50.
+
+Water
+    Tidal Wave      Summons a monstrous tidal wave.
+                    Required skill level for first spell level: 16.
+    Ice Storm       Engulfs you in a storm of roaring cold.
+                    Lv15: Turns into a storm of shards of ice.
+                    Required skill level for first spell level: 22.
+    Ent's Potion    Fills your stomach.
+                    Lv5: Removes fear.
+                    Lv12: Makes you heroic.
+                    Required skill level for first spell level: 6.
+    Vapor           Fills the air around you with toxic moisture
+                    (which does pure water damage, not poison).
+                    Required skill level for first spell level: 2.
+  BONI:             Water resistance at 30,
+                    Passing water at 40,
+                    Water immunity at 50.
+
+Air
+    Noxious Cloud   Fires a poison cloud at a designated target.
+                    Lv30: Unbreath cloud, irresistable.
+                    Required skill level for first spell level: 3.
+    Wings of Wind   Grants levitation (feather falling).
+                    Lv16: Lets you fly.
+                    Required skill level for first spell level: 16.
+                    Shared spell (see above): Air, Conveyance.
+    Invisibility    Turns you invisible.
+                    Required skill level for first spell level: 30.
+    Poison Blood    Gives temporary poison resistance.
+                    Lv10: Brands melee weapons with venom.
+                    Required skill level for first spell level: 22.
+    Thunderstorm    Throws thunder bolts at random monsters nearby.
+                    (33% lightning, 33% sound, 33% light)
+                    Required skill level for first spell level: 25.
+  BONI:             Feather falling at 30,
+                    Poison resistance at 40,
+                    Flying at 50.
+
+Earth
+    Dig             Turns walls into mud.
+                    Required skill level for first spell level: 12.
+    Stone Prison    Creates a prison of granite walls around you.
+                    Required skill level for first spell level: 25.
+    Strike          Creates a force bolt that may stun enemies.
+                    Lv12: it turns into a small ball.
+                    Required skill level for first spell level: 25.
+    Shake           Creates a local earthquake.
+                    Required skill level for first spell level: 27.
+  BONI:             Shard resistance at 30,
+                    Great damage reduction against earthquakes at 45.
+
+Nature
+    Grow Trees      Grows trees quickly around you.
+                    Required skill level for first spell level: 6.
+    Healing         Heals a percentage of your hit points.          (project)
+                    Required skill level for first spell level: 10.
+    Recovery        Reduces poison duration.
+                    Lv10: Cures poison and cuts.                    (project)
+                    Lv20: Restores drained stats.
+                    Lv25: Restores lost experience.
+                    Required skill level for first spell level: 15.
+    Regeneration    Increases your hit point regeneration rate.
+                    Required skill level for first spell level: 20.
+    Vermin Control  Prevents vermin from breeding any further on
+                    your current level.
+                    Required skill level for first spell level: 15.
+  BONI:             Regeneration ability (Hit Points) at 30,
+                    Pass trees easily at 30,
+                    Pass water easily at 40.
+
 Conveyance
     Phase Door      Teleports you on a small scale range.           (project)
                     Required skill level for first spell level: 1.
@@ -8357,6 +8381,7 @@ Conveyance
                     float upwards/downwards.
                     Required skill level for first spell level: 35.
   BONI:             Resistance to teleportation attacks at 30.
+
 Divination
     Detect Monsters Detects all monsters nearby.                    (project)
                     Required skill level for first spell level: 1.
@@ -8376,24 +8401,43 @@ Divination
     Reveal Ways     Detects doors/stairs/ways within a radius.      (project)
                     Required skill level for first spell level: 9.
   BONI:             Automatic identification at 50.
-Nature
-    Grow Trees      Grows trees quickly around you.
-                    Required skill level for first spell level: 6.
-    Healing         Heals a percentage of your hit points.          (project)
+
+Temporal
+    Magelock        Magically locks a door.
+                    Lv30: Creates a Glyph Of Warding on the ground that stops
+                          monsters from crossing the field or summoning on it.
+                    Required skill level for first spell level: 1.
+    Slow Monster    Slows down a monster.
+                    Lv20: Affects a zone.
                     Required skill level for first spell level: 10.
-    Recovery        Reduces poison duration.
-                    Lv10: Cures poison and cuts.                    (project)
-                    Lv20: Restores drained stats.
-                    Lv25: Restores lost experience.
+    Essence of Speed
+                    Hastes you for a while.                         (project)
                     Required skill level for first spell level: 15.
-    Regeneration    Increases your hit point regeneration rate.
+    Banishment      Teleports away all monsters within sight.
+                    Lv15: Locks monsters in stasis for a while.
+                    Required skill level for first spell level: 30.
+                    Shared spell (see above): Temporal, Conveyance.
+  BONI:             Time resistance at 50.
+
+Udun
+    Genocide        Genocides all monsters of a race on the level.
+                    Lv15: Alternatively genocides all monsters near you ("mass
+                            genocide", choose 'y'. 'n' will do a normal geno).
+                    For details on the effects "genocide" and "mass genocide"
+                    of this spell, please see (5.9) scroll of geno/mass geno.
+                    (This spell uses WISDOM to determine fail-rates!)
+                    Required skill level for first spell level: 25.
+    Wraithform      Turns your form immaterial.                     (project)
+                    Required skill level for first spell level: 35.
+    Disenchantment Bolt
+                    Conjures a powerful and nearly irresistible bolt.
+                    Required skill level for first spell level: 40.
+    Hellfire        Conjures a ball of hellfire which is especially deadly to
+                    GOOD opponents.
                     Required skill level for first spell level: 20.
-    Vermin Control  Prevents vermin from breeding any further on
-                    your current level.
-                    Required skill level for first spell level: 15.
-  BONI:             Regeneration ability (Hit Points) at 30,
-                    Pass trees easily at 30,
-                    Pass water easily at 40.
+  BONI:             Resist teleportation attacks at 30,
+                    Hold life at 40.
+
 Mind
     Confuse         Confuses a monsters.
                     Lv15: Turns into a ball.
@@ -8415,40 +8459,6 @@ Mind
                     Shared spell (see above): Mind, Conveyance.
   BONI:             Reduces confusion and hallucination at 30,
                     Reduce insanity influence at 40 and especially at 50.
-Temporal
-    Magelock        Magically locks a door.
-                    Lv30: Creates a Glyph Of Warding on the ground that stops
-                          monsters from crossing the field or summoning on it.
-                    Required skill level for first spell level: 1.
-    Slow Monster    Slows down a monster.
-                    Lv20: Affects a zone.
-                    Required skill level for first spell level: 10.
-    Essence of Speed
-                    Hastes you for a while.                         (project)
-                    Required skill level for first spell level: 15.
-    Banishment      Teleports away all monsters within sight.
-                    Lv15: Locks monsters in stasis for a while.
-                    Required skill level for first spell level: 30.
-                    Shared spell (see above): Temporal, Conveyance.
-  BONI:             Time resistance at 50.
-Udun
-    Genocide        Genocides all monsters of a race on the level.
-                    Lv15: Alternatively genocides all monsters near you ("mass
-                            genocide", choose 'y'. 'n' will do a normal geno).
-                    For details on the effects "genocide" and "mass genocide"
-                    of this spell, please see (5.9) scroll of geno/mass geno.
-                    (This spell uses WISDOM to determine fail-rates!)
-                    Required skill level for first spell level: 25.
-    Wraithform      Turns your form immaterial.                     (project)
-                    Required skill level for first spell level: 35.
-    Disenchantment Bolt
-                    Conjures a powerful and nearly irresistible bolt.
-                    Required skill level for first spell level: 40.
-    Hellfire        Conjures a ball of hellfire which is especially deadly to
-                    GOOD opponents.
-                    Required skill level for first spell level: 20.
-  BONI:             Resist teleportation attacks at 30,
-                    Hold life at 40.
 
 Meta
     Recharge        Recharges a magic staff or wand.
@@ -8505,6 +8515,7 @@ Holy Offense
                     Required skill level for first spell level: 40.
   BONI:             Adds slay undead at 30, slay demon at 40, slay evil at 50
                     to all melee and ranged attacks.
+
 Holy Defense
     Blessing        Same effect as scroll of Blessing.         (auto-project)
                     Lv15: Same effect as scroll of Holy Chant. (auto-project)
@@ -8542,6 +8553,7 @@ Holy Defense
                     Required skill level for first spell level: 40.
   BONI:             Protects the player from undead at 30, from demons at 40,
                     and from evil in general at 50. Better than the spell.
+
 Holy Curing
     Healing         Heals a percentage of hit points.          (auto-project)
                     Required skill level for first spell level: 3.
@@ -8573,6 +8585,7 @@ Holy Curing
                     30 (blindness, poison) / 40 (stun, cuts) / 50
                     (hallucination),
                     Less frequent suffering from black breath at 50.
+
 Holy Support
     Remove Fear     Keeps your heart boldened for a while      (auto-project)
                     Required skill level for first spell level: 1.
@@ -8624,6 +8637,7 @@ Arcane Lore
                     Dispels all animals from your line of sight.
                     Animals have a chance to resist, depending on their level.
                     Required skill level for first spell level: 1.
+
 Physical Lore
     Forest's Embrace
                     Creates a cloud around you which heals everyone including
@@ -8680,7 +8694,7 @@ Psycho-Power
                     Required skill level for first spell level: 35.
                     Shared spell (see above): Psycho-Power / Thought Contact.
     Kinetic Shield  Uses telekinetic force to set up a shield around you that
-                    has a chance to repel physica attacks or projectiles,
+                    has a chance to repel physical attacks or projectiles,
                     draining your mana each time.
                     Required skill level for first spell level: 40.
 
@@ -10670,6 +10684,12 @@ PROBLEM 26: I resized some TomeNET windows by dragging them with the mouse,
             but it seems it doesn't have the desired effect.
 SOLUTION:   After having resized windows via mouse, restart the game once
             by exiting with CTRL+X key.
+
+PROBLEM 27: While I am creating a new character, I got disconnected with a
+            "Timeout 04" error message.
+SOLUTION:   You have about 20 minutes to complete the character creation
+            process. If you exceed this time, you will timeout and get
+            disconnected.
 
 
 
