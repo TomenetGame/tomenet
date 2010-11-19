@@ -3111,7 +3111,7 @@ static void get_macro_trigger(char *buf)
 
 void interact_macros(void)
 {
-	int i;
+	int i, j;
 
 	char tmp[160], buf[1024], buf2[1024], *bptr, *b2ptr;
 
@@ -3119,6 +3119,9 @@ void interact_macros(void)
 	bool m_ctrl, m_alt, m_shift, t_hyb, t_com;
 
 	bool were_recording = FALSE;
+
+	u32b flags;
+
 
 	/* Save screen */
 	Term_save();
@@ -3758,6 +3761,7 @@ void interact_macros(void)
 					Term_putstr(15, 18, -1, TERM_L_GREEN, "f) Use a fighting technique (most melee classes)");
 					Term_putstr(15, 19, -1, TERM_L_GREEN, "g) Use a ranged technique (archers and rangers)");
 					Term_putstr(15, 20, -1, TERM_L_GREEN, "h) Polymorph into a certain monster (mimicry users)");
+					Term_putstr(15, 21, -1, TERM_L_GREEN, "i) Draw runes to cast a runespell");
 
 					switch (choice = inkey()) {
 					case ESCAPE:
@@ -3772,7 +3776,7 @@ void interact_macros(void)
 					}
 
 					/* invalid action -> exit wizard */
-					if (choice < 'a' || choice > 'h') {
+					if (choice < 'a' || choice > 'i') {
 						i = -1;
 						continue;
 					}
@@ -3827,10 +3831,156 @@ void interact_macros(void)
 						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a form before you can use it!");
 						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter exact monster code:");
 						break;
+					case 'i':
+						strcpy(buf2, "");
+						strcpy(buf, "");
+						flags = 0;
+
+						/* ---------- Draw up to three runes ---------- */
+
+						Term_putstr(10, 11, -1, TERM_GREEN, "Please choose the runes you want to draw, up to a maximum of three.");
+						Term_putstr(10, 12, -1, TERM_GREEN, "If you want to draw less runes, press \377sENTER\377g key when done.");
+
+						i = 0;
+						for (j = 0; j < 3; j++) {
+							if (i == -1 || i == -2) continue; //invalid action -OR- drawing less than 3 runes
+
+							clear_from(14);
+							Term_putstr(10, 14, -1, TERM_GREEN, format("Runes chosen so far: \377s%s", buf2));
+							for (i = 0; i < RCRAFT_MAX_ELEMENTS; i++) {
+								/* Don't draw a rune twice */
+								if (flags & (1 << (i + 4))) continue;
+								Term_putstr(15 + (i / 6) * 15, 16 + i % 6, -1, TERM_L_GREEN,
+								    format("%c) %s", 'a' + i, r_elements[i].title));
+							}
+
+							switch (choice = inkey()) {
+							case '\r':
+								i = -2;
+								break;
+							case ESCAPE:
+							case 'p':
+							case '\010': /* backspace */
+								i = -1; /* leave */
+								continue;;
+							case KTRL('T'):
+								/* Take a screenshot */
+								xhtml_screenshot("screenshot????");
+								j--;
+								continue;
+							default:
+                                                                /* invalid action -> exit wizard */
+								if (choice < 'a' || choice > 'a' + RCRAFT_MAX_ELEMENTS - 1) {
+									i = -1;
+									continue;
+								}
+
+								/* don't add duplicate rune */
+								if (flags & (1 << (choice - 'a' + 4))) {
+									j--;
+									continue;
+								}
+
+								/* add this rune.. */
+								flags |= 1 << (choice - 'a' + 4);
+								strcat(buf2, r_elements[choice - 'a'].title);
+								strcat(buf2, " ");
+							}
+
+							/* build macro part: 'a'..'p' or '\r' */
+							strcat(buf, format("%c", choice));
+						}
+						if (i == -1) continue; //invalid action -> exit
+
+						/* ---------- Select imperative ---------- */
+
+						clear_from(10);
+
+						Term_putstr(10, 11, -1, TERM_GREEN, "Please choose the rune imperative,");
+						Term_putstr(10, 12, -1, TERM_GREEN, "ie how powerful you want to try and make the spell.");
+
+						Term_putstr(15, 14, -1, TERM_L_GREEN, "Name          ( Lvl, Dam%, Cost%, Fail% )");
+						Term_putstr(15, 15, -1, TERM_L_GREEN, "a) minimized  (  -1,  60%,   50%,  -10% )");
+						Term_putstr(15, 16, -1, TERM_L_GREEN, "b) moderate   (  +0, 100%,  100%,  + 0% )");
+						Term_putstr(15, 17, -1, TERM_L_GREEN, "c) maximized  (  +1, 150%,  160%,  +20% )");
+						Term_putstr(15, 18, -1, TERM_L_GREEN, "d) compressed (  +2, 130%,  150%,  -10% )");
+						Term_putstr(15, 19, -1, TERM_L_GREEN, "e) expanded   (  +2, 100%,  130%,  + 0% )");
+						Term_putstr(15, 20, -1, TERM_L_GREEN, "f) brief      (  +3,  60%,  130%,  +15% )");
+						Term_putstr(15, 21, -1, TERM_L_GREEN, "g) lengthened (  +3,  60%,  150%,  +10% )");
+						Term_putstr(15, 22, -1, TERM_L_GREEN, "h) chaotic    (  +1, ???%,  ???%,  +??% )");
+
+						switch (choice = inkey()) {
+						case ESCAPE:
+						case 'p':
+						case '\010': /* backspace */
+							i = -1; /* leave */
+							continue;;
+						case KTRL('T'):
+							/* Take a screenshot */
+							xhtml_screenshot("screenshot????");
+							continue;
+						}
+
+						/* invalid action -> exit wizard */
+						if (choice < 'a' || choice > 'h') {
+							i = -1;
+							continue;
+						}
+
+						/* build macro part: 'a'..'h' */
+						strcat(buf, format("%c", choice));
+
+						/* ---------- Select method ---------- */
+
+						clear_from(10);
+
+						Term_putstr(10, 11, -1, TERM_GREEN, "Please choose the rune method,");
+						Term_putstr(10, 12, -1, TERM_GREEN, "ie the shape you want to manifest the spell in.");
+
+						Term_putstr(15, 14, -1, TERM_L_GREEN, "Name     ( Lvl, Cost% )");
+						Term_putstr(15, 15, -1, TERM_L_GREEN, "a) Melee (  +0,   50% )");
+						Term_putstr(15, 16, -1, TERM_L_GREEN, "b) Self  (  +0,  100% )");
+						Term_putstr(15, 17, -1, TERM_L_GREEN, "c) Bolt  (  +1,  100% )");
+						Term_putstr(15, 18, -1, TERM_L_GREEN, "d) Beam  (  +2,  110% )");
+						Term_putstr(15, 19, -1, TERM_L_GREEN, "e) Ball  (  +3,  130% )");
+						Term_putstr(15, 20, -1, TERM_L_GREEN, "f) Wave  (  +4,  120% )");
+						Term_putstr(15, 21, -1, TERM_L_GREEN, "g) Cloud (  +8,  150% )");
+						Term_putstr(15, 22, -1, TERM_L_GREEN, "h) Sight ( +10,  400% )");
+
+						switch (choice = inkey()) {
+						case ESCAPE:
+						case 'p':
+						case '\010': /* backspace */
+							i = -1; /* leave */
+							continue;;
+						case KTRL('T'):
+							/* Take a screenshot */
+							xhtml_screenshot("screenshot????");
+							continue;
+						}
+
+						/* invalid action -> exit wizard */
+						if (choice < 'a' || choice > 'h') {
+							i = -1;
+							continue;
+						}
+
+						/* build macro part: 'a'..'h' */
+						strcat(buf, format("%c", choice));
+
+						/* ---------- Determine if a direction is needed (hard-coded) ---------- */
+
+						if (choice - 'a' >= 2 && choice - 'a' != 5 && choice - 'a' != 7)
+							strcat(buf, "*t");
+
+						/* hack before we exit: remember menu choice 'runespell' */
+						choice = 'i';
+						i = 1;
+						break;
 					}
 
 					/* no need for inputting an item/spell to use with the macro? */
-					if (choice != 'c') {
+					if (choice != 'c' && choice != 'i') {
 						Term_gotoxy(40, 17);
 
 						/* Get an encoded action */
@@ -3839,6 +3989,8 @@ void interact_macros(void)
 							i = -1;
 							continue;
 						}
+
+						strcat(buf, "\r");
 					}
 
 					/* generate the full macro action */
@@ -3846,7 +3998,6 @@ void interact_macros(void)
 					buf2[1] = 'e'; //      but doesn't work due to prompt behaviour
 					buf2[2] = ')'; //      (\e will then get ignored)
 
-					strcat(buf, "\r");
 
 					switch (choice) {
 					case 'a':
@@ -3901,6 +4052,14 @@ void interact_macros(void)
 						buf2[5] = '3';
 						buf2[6] = '\r';
 						buf2[7] = 'c';
+						strcpy(buf2 + 8, buf);
+						break;
+					case 'i':
+						buf2[3] = 'm';
+						buf2[4] = '@';
+						buf2[5] = '1';
+						buf2[6] = '8';
+						buf2[7] = '\r';
 						strcpy(buf2 + 8, buf);
 						break;
 					}
