@@ -3859,7 +3859,6 @@ void interact_macros(void)
 								i = -2;
 								break;
 							case ESCAPE:
-							case 'p':
 							case '\010': /* backspace */
 								i = -1; /* leave */
 								continue;;
