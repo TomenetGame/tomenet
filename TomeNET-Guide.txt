@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 16. Nov 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 19. Nov 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -135,7 +135,8 @@ Contents
     (8.2)   Character dumps
     (8.3)   Golem creation
     (8.4)   Artifact creation
-    (8.5)   Troubleshooting
+    (8.5)   Alternative ruleset 'RPG Server'
+    (8.6)   Troubleshooting
 (9) End of this guide
 
 
@@ -505,7 +506,7 @@ CTRL+U  Displays/exits the audio mixer settings. (Also see (2.1a).)
 CTRL+C  Toggles music. (Shortcut for toggling it in the mixer settings.)
 CTRL+N  Toggles audio. (Shortcut for master toggle in the mixer settings).
 Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
-(Compare troubleshooting section (8.5), problem 21.)
+(Compare troubleshooting section (8.6), problem 21.)
 
 There are also some commands that can be entered with ':' like a chat line.
 They all start with a slash '/':
@@ -669,7 +670,7 @@ They all start with a slash '/':
                         attention. (Using /ignore on a player will also
                         prevent getting paged by him.)
                         If you're on Linux and not hearing the page sounds,
-                        see problem 19 in the troubleshooting section (8.5).
+                        see problem 19 in the troubleshooting section (8.6).
 /play       Join/leave a mini-game (such as rugby on the field in Bree).
 /que        gives a quest! It needs to be fulfilled before a certain period
  (/quest)   of time passes (continues to expire even while not logged on).
@@ -1439,7 +1440,7 @@ settings with CTRL+U key (or use CTRL+C to toggle music and CTRL+N to toggle
 the master mixer on/off).
 
 Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
-(Compare troubleshooting section (8.5), problem 21.)
+(Compare troubleshooting section (8.6), problem 21.)
 
 Also be sure to press '=' key to have a look at the audio options, which are in
 'User Interface Options 2'.
@@ -1461,7 +1462,7 @@ After the meta-server has been queried, the list of available servers will
 appear in the main window. Choose a server that is near to your location to
 avoid high latency.
 (This step is reported to sometimes cause problems on Windows OS. If you don't
-see that list, or if other problems occur, see (8.5) for possible solutions.)
+see that list, or if other problems occur, see (8.6) for possible solutions.)
 
 Now you will be prompted to enter your account name and password. You can
 choose these freely, the server will save that information and use it to
@@ -1741,7 +1742,7 @@ The top right window will give an overview of your character attributes and
 miscellanous abilities. The bottom right window will show the contents of your
 backpack, also called inventory. All characters except ghosts have a backpack.
 The bottom left window will show combat- chat- and server-messages. If most
-of the windows stay totally empty, see (8.5) for possible solutions.
+of the windows stay totally empty, see (8.6) for possible solutions.
 To the left border in the main window you see a short overview of your most
 important stats:
 -starting with your race
@@ -3245,8 +3246,9 @@ There are different types of dungeons. The main five are:
  dungeon, similar to ironman (except for the no-ghost death penalty).
  Force-down dungeons/towers are marked by a red < or > symbol.
 -Ironman. Ironman dungeons or towers won't allow you to recall or to use
- staircases that lead upwards! If you die in such a dungeon or tower you won't
- turn into a ghost either but get destroyed completely.
+ staircases that lead upwards or probability travel backwards!
+ If you die in such a dungeon or tower you won't turn into a ghost either but
+ get destroyed completely.
  Sending items via telekinesis to a player who is currently in an ironman
  dungeon/tower will only work if both players are on the same dungeon floor.
  To leave an ironman dungeon/tower you'll have to get to it's bottom
@@ -3260,6 +3262,7 @@ There are different types of dungeons. The main five are:
  -2050 ft, etc. Also, ALL dungeons will usually not allow recalling OUT until
  you reach a floor that is equivalent to at least dungeon level 20. Examples:
  At least -1000 ft in Barrow-Downs, at least -550 ft in The Orc Cave.
+ (See (8.5) for more information about RPG settings.)
 -Hellish. Players suffer no-ghost deaths inside hellish dungeons.
  Even if they're everlasting.
  Hellish dungeons/towers are marked by a fire-like flickering < or > symbol
@@ -6147,6 +6150,9 @@ Each component has different associated costs; some of these can be viewed in
 the menu. When selecting runes, press return once you are finished, or enter
 the maximum of three runes and continue to the modifier selection. The menu
 will prompt for a direction if it is required after you're done.
+Note that only true runemasters will be able to draw the full amount of three
+runes, while other classes that train in rune skills can draw up to a maximum
+of two runes.
 
 If you choose the 'chaotic' modifier, the resulting damage, cost and duration
 will be increased or decreased by a random amount. This can result in very high
@@ -7469,7 +7475,8 @@ Shaman
     dragons, taking on the shape of dragonriders. They can also appear as a
     spirit, elemental or ghost after they destroyed enough of them, while
     still using their full equipment! Shamans are always able to move straight
-    even if the creature in whose shape they appear usually doesn't.
+    even if the creature in whose shape they appear usually doesn't. They learn
+    elemental ('E') forms especially quickly.
     Shamans are excellent at magic and may have weaker combat abilities than
     rangers or paladins, but still don't need to hide from a melee. Their
     spiritual abilities allow them to easily train various aspects of
@@ -8840,7 +8847,8 @@ Here you can..
     house.
     If the owner dies, the whole party is disbanded. (Exception: On a server
     running 'RPG' rules the party ownership will be transferred to another
-    player in the party automatically.)
+    player in the party automatically. See (8.5) for more information about RPG
+    settings.)
     Be aware that his houses will be wiped too, so the party might lose quite
     an amount of items that way.
 
@@ -10253,7 +10261,55 @@ power is, the more likely the randart will be 'aggravating nearby creatures'.
 
 
 
-(8.5) Troubleshooting
+(8.5) Alternative ruleset 'RPG Server'
+--------------------------------------
+A server might be configured with a special ruleset called 'RPG Server' rules.
+Such a server will be listed on the meta server under
+  "TomeNET RPG ..."
+instead of just
+  "TomeNET ..."
+and when you connect to it and enter the character overview
+screen, at the bottom there will be a line reading
+  "The server is running 'RPG_SERVER' settings".
+
+In general, RPG rules are stricter than normal server configurations and could
+also be dubbed 'ironman' settings, since ironman dungeons are one of the most
+prevalent features of an RPG server.
+
+The differences between RPG ruleset and normal servers are as follows:
+  -Only one character is allowed per account.
+  -All characters are no-ghost mode, so they have only 1 life (ie 'unworldly').
+  -Usually, accounts expire slower (180 days instead of 60 days).
+  -The Training Tower is empty, no monsters or items spawn in there
+   (except for the Arena Monster Challenge event).
+  -Certain extra stores may spawn in the dungeons
+   ('Seasoned Tradesman', or specialized stores similar to town stores).
+  -All dungeons are ironman (see (4.3)):
+   -Bree's dungeon 'Barrow-Downs' is normal ironman,
+   -other town dungeons allow recalling every 500 ft (10 floors),
+   -non-town dungeons allow random recalling at a 20% chance per floor,
+   -on dungeon levels shallower than level 20 (eg easier than -1000 ft Bree),
+    recalling is impossible, overriding the above rules.
+  -Players may recall INTO dungeons to 50 ft + every 1000 ft, eg to 50 ft,
+   1050 ft, 2050 ft, ... .
+  -Players start with more gold (class-dependant) to buy supplies.
+  -Players additionally start with a few cure wounds potions.
+  -Players get a message in chat when party members take a staircase.
+  -If a party owner dies, someone else from the party is automatically promoted
+   to party owner, so parties won't get disbanded easily, making party-diving
+   more effective.
+  -Mimicry users have a very slim chance of insta-learning a form!
+  -Item level restrictions are disabled and have no effect.
+  -Quests can be acquired as early as at level 3 instead of level 5.
+  -Quests usually require you to find fewer specimen.
+  -Temporary luck bonus from deeds is somewhat longer.
+  -Usually, scheduled artifact resets happen less frequently (if at all).
+  -Halloween event allows players up to 40 instead of 35,
+   and the Great Pumpkin spawns on floors up to level 49 instead of 39.
+
+
+
+(8.6) Troubleshooting
 ---------------------
 Note: Some of these problems are deprecated and don't exist in this form or at
 all anymore. Some messages might also vary slightly.
@@ -10262,7 +10318,8 @@ PROBLEM 00: I am behind a firewall. What ports do I need to open in order to
             play TomeNET?
 SOLUTION:   You only need to allow an outgoing TCP/IP connection to remote
             port 18348, that's the standard port servers run on. (If you'd
-            like to play on the RPG server, it's port 19348 instead of 18348.)
+            like to play on the RPG server, it's port 19348 instead of 18348.
+            See (8.5) for more information about RPG settings.)
             If you don't have access to the firewall, for example in school or
             at work, you can still try to set up an SSH tunnel or a socks
             proxy server (on either the firewall machine or your PC at home or
