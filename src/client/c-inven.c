@@ -119,24 +119,30 @@ static s16b c_label_to_equip(int c)
  */
 static int get_tag(int *cp, char tag, bool inven, bool equip)
 {
-        int i;
+        int i, j;
         cptr s;
 
 
         /* Check every object */
 //        for (i = (inven ? 0 : INVEN_WIELD); i < (equip ? INVEN_TOTAL : INVEN_PACK); ++i)
-        /* New: Backwards, since inventory items are usually more restricted! - C. Blue */
-        for (i = (equip ? INVEN_TOTAL : INVEN_PACK) - 1; i >= (inven ? 0 : INVEN_WIELD); --i)
+        /* Equipment before inventory, since inventory
+           items are usually more restricted. - C. Blue */
+        for (j = (equip ? INVEN_TOTAL : INVEN_PACK) - 1; j >= (inven ? 0 : INVEN_WIELD); --j)
         {
-                char *buf = inventory_name[i];
+		char *buf;
 		char *buf2;
+
+		/* Translate, so equip and inven are each processed in normal order */
+		i = INVEN_PACK + (j >= INVEN_WIELD ? INVEN_TOTAL : 0) - 1 - j;
+
+		buf = inventory_name[i];
 
                 /* Skip empty objects */
                 if (!buf[0]) continue;
 
-				/* Skip wrong tval (for mkey) */
-				if (item_tester_tval && inventory[i].tval != item_tester_tval)
-					continue;
+		/* Skip wrong tval (for mkey) */
+		if (item_tester_tval && inventory[i].tval != item_tester_tval)
+			continue;
 
                 /* Skip empty inscriptions (those which don't contain any @.. tag) */
                 if (!(buf2 = strchr(buf, '@'))) continue;
@@ -145,11 +151,9 @@ static int get_tag(int *cp, char tag, bool inven, bool equip)
                 s = strchr(buf2, '@');
 
                 /* Process all tags */
-                while (s)
-                {
+                while (s) {
                         /* Check the normal tags */
-                        if (s[1] == tag)
-                        {
+                        if (s[1] == tag) {
                                 /* Save the actual inventory ID */
                                 *cp = i;
 
@@ -158,8 +162,7 @@ static int get_tag(int *cp, char tag, bool inven, bool equip)
                         }
 
                         /* Check the special tags */
-                        if ((s[1] == command_cmd) && (s[2] == tag))
-                        {
+                        if ((s[1] == command_cmd) && (s[2] == tag)) {
                                 /* Save the actual inventory ID */
                                 *cp = i;
 
