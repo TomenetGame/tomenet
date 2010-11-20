@@ -1186,7 +1186,12 @@ void cmd_activate(void)
 {
 	int item;
 
-        if (!c_get_item(&item, "Activate what? ", (USE_EQUIP | USE_INVEN)))
+	/* Allow all items */
+	item_tester_hook = NULL;
+	get_item_hook_find_obj_what = "Activatable item name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
+
+        if (!c_get_item(&item, "Activate what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA)))
 	{
 		return;
 	}

@@ -388,10 +388,7 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 		}
 		
 		/* Extra? */
-		if (extra)
-		{
-			strcat(out_val, " @ for extra selection,");
-		}
+		if (extra) strcat(out_val, " @ to name,");
 
 		/* Finish the prompt */
 		strcat(out_val, " ESC");
