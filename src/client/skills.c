@@ -692,10 +692,11 @@ static void do_trap(int item_kit)
 	int item_load;
 	object_type *o_ptr;
 
-	if (item_kit < 0)
-	{
+	if (item_kit < 0) {
 		item_tester_tval = TV_TRAPKIT;
-		if (!c_get_item(&item_kit, "Use which trapping kit? ", (USE_INVEN)))
+		get_item_hook_find_obj_what = "Trap kit name? ";
+		get_item_extra_hook = get_item_hook_find_obj;
+		if (!c_get_item(&item_kit, "Use which trapping kit? ", (USE_INVEN | USE_EXTRA)))
 		{
 			if (item_kit == -2)
 				c_msg_print("You have no trapping kits.");
@@ -706,8 +707,7 @@ static void do_trap(int item_kit)
 	o_ptr = &inventory[item_kit];
 
 	/* Trap kits need a second object */
-	switch (o_ptr->sval)
-	{
+	switch (o_ptr->sval) {
 		case SV_TRAPKIT_BOW:
 			item_tester_tval = TV_ARROW;
 			break;
@@ -731,7 +731,9 @@ static void do_trap(int item_kit)
 			break;
 	}
 
-	if (!c_get_item(&item_load, "Load with what? ", (USE_EQUIP | USE_INVEN)))
+	get_item_hook_find_obj_what = "Item name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
+	if (!c_get_item(&item_load, "Load with what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA)))
 	{
 		if (item_load == -2)
 			c_msg_print("You have nothing to load that trap with.");
