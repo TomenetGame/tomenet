@@ -3111,7 +3111,7 @@ static void get_macro_trigger(char *buf)
 
 void interact_macros(void)
 {
-	int i, j;
+	int i, j = 0;
 
 	char tmp[160], buf[1024], buf2[1024], *bptr, *b2ptr;
 
@@ -3753,15 +3753,17 @@ void interact_macros(void)
 				switch (i) {
 				case 0:
 					Term_putstr(10, 11, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
-					Term_putstr(15, 13, -1, TERM_L_GREEN, "a) Drink a potion");
-					Term_putstr(15, 14, -1, TERM_L_GREEN, "b) Read a scroll");
-					Term_putstr(15, 15, -1, TERM_L_GREEN, "c) Fire ranged weapon at closest enemy");
-					Term_putstr(15, 16, -1, TERM_L_GREEN, "d) Cast a spell that doesn't use a target");
-					Term_putstr(15, 17, -1, TERM_L_GREEN, "e) Cast a spell that uses a target (attack spell)");
-					Term_putstr(15, 18, -1, TERM_L_GREEN, "f) Use a fighting technique (most melee classes)");
-					Term_putstr(15, 19, -1, TERM_L_GREEN, "g) Use a ranged technique (archers and rangers)");
-					Term_putstr(15, 20, -1, TERM_L_GREEN, "h) Polymorph into a certain monster (mimicry users)");
-					Term_putstr(15, 21, -1, TERM_L_GREEN, "i) Draw runes to cast a runespell");
+					Term_putstr(15, 12, -1, TERM_L_GREEN, "a) Drink a potion");
+					Term_putstr(15, 13, -1, TERM_L_GREEN, "b) Read a scroll");
+					Term_putstr(15, 14, -1, TERM_L_GREEN, "c) Fire ranged weapon at closest enemy");
+					Term_putstr(15, 15, -1, TERM_L_GREEN, "d) Cast a spell that doesn't use a target");
+					Term_putstr(15, 16, -1, TERM_L_GREEN, "e) Cast a spell that uses a target (attack spell)");
+					Term_putstr(15, 17, -1, TERM_L_GREEN, "f) Use a fighting technique (most melee classes)");
+					Term_putstr(15, 18, -1, TERM_L_GREEN, "g) Use a ranged technique (archers and rangers)");
+					Term_putstr(15, 19, -1, TERM_L_GREEN, "h) Polymorph into a certain monster (mimicry users)");
+					Term_putstr(15, 20, -1, TERM_L_GREEN, "i) Draw runes to cast a runespell");
+					Term_putstr(15, 21, -1, TERM_L_GREEN, "j) Set up a monster trap");
+					Term_putstr(15, 22, -1, TERM_L_GREEN, "k) Use a magic device");
 
 					switch (choice = inkey()) {
 					case ESCAPE:
@@ -3776,7 +3778,7 @@ void interact_macros(void)
 					}
 
 					/* invalid action -> exit wizard */
-					if (choice < 'a' || choice > 'i') {
+					if (choice < 'a' || choice > 'k') {
 						i = -1;
 						continue;
 					}
@@ -3894,7 +3896,6 @@ void interact_macros(void)
 						/* ---------- Select imperative ---------- */
 
 						clear_from(10);
-
 						Term_putstr(10, 11, -1, TERM_GREEN, "Please choose the rune imperative,");
 						Term_putstr(10, 12, -1, TERM_GREEN, "ie how powerful you want to try and make the spell.");
 
@@ -3932,7 +3933,6 @@ void interact_macros(void)
 						/* ---------- Select method ---------- */
 
 						clear_from(10);
-
 						Term_putstr(10, 11, -1, TERM_GREEN, "Please choose the rune method,");
 						Term_putstr(10, 12, -1, TERM_GREEN, "ie the shape you want to manifest the spell in.");
 
@@ -3976,13 +3976,101 @@ void interact_macros(void)
 						choice = 'i';
 						i = 1;
 						break;
+					case 'j':
+						/* ---------- Enter trap kit name ---------- */
+						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter a distinctive part of the trap kit name");
+						Term_putstr(10, 12, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
+						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GCatapult");
+						Term_putstr(10, 14, -1, TERM_GREEN, "if you want to use a 'Catapult Trap Set'.");
+						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter partial trap kit name:");
+
+						/* Get an item name */
+						Term_gotoxy(40, 17);
+						strcpy(buf, "");
+						if (!askfor_aux(buf, 159, 0)) {
+							i = -1;
+							continue;
+						}
+						strcat(buf, "\r@");
+
+						/* ---------- Enter ammo/load name ---------- */
+						clear_from(10);
+						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter a distinctive part of the item you want to");
+						Term_putstr(10, 12, -1, TERM_GREEN, "load the trap kit with, and pay attention to upper-case");
+						Term_putstr(10, 13, -1, TERM_GREEN, "and lower-case letters!");
+						Term_putstr(10, 14, -1, TERM_GREEN, "For example, enter:     \377GPebbl     \377gif you want");
+						Term_putstr(10, 15, -1, TERM_GREEN, "to load a catapult trap kit with 'Rounded Pebbles'.");
+						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter partial ammo/load name:");
+
+						/* Get an item name */
+						Term_gotoxy(40, 17);
+						strcpy(buf2, "");
+						if (!askfor_aux(buf2, 159, 0)) {
+							i = -1;
+							continue;
+						}
+						strcat(buf2, "\r");
+
+						strcat(buf, buf2);
+						break;
+					case 'k':
+						Term_putstr(10, 11, -1, TERM_GREEN, "Please choose the type of magic device you want to use:");
+						Term_putstr(15, 13, -1, TERM_L_GREEN, "a) a wand");
+						Term_putstr(15, 14, -1, TERM_L_GREEN, "b) a staff");
+						Term_putstr(15, 15, -1, TERM_L_GREEN, "c) a rod that doesn't require a target");
+						Term_putstr(15, 16, -1, TERM_L_GREEN, "d) a rod that requires a target");
+						Term_putstr(15, 17, -1, TERM_L_GREEN, "e) an activatable item that doesn't require a target");
+						Term_putstr(15, 18, -1, TERM_L_GREEN, "f) an activatable item that requires a target");
+
+						switch (choice = inkey()) {
+						case ESCAPE:
+						case 'p':
+						case '\010': /* backspace */
+							i = -1; /* leave */
+							continue;;
+						case KTRL('T'):
+							/* Take a screenshot */
+							xhtml_screenshot("screenshot????");
+							continue;
+						}
+
+						/* invalid action -> exit wizard */
+						if (choice < 'a' || choice > 'f') {
+							i = -1;
+							continue;
+						}
+
+						/* build macro part */
+						j = 0; /* hack: != 1 means 'undirectional' device */
+						switch (choice) {
+						case 'a': strcpy(buf2, "\e)a@"); j = 1; break;
+						case 'b': strcpy(buf2, "\e)u@"); break;
+						case 'c': strcpy(buf2, "\e)z@"); break;
+						case 'd': strcpy(buf2, "\e)z@"); j = 1; break;
+						case 'e': strcpy(buf2, "\e)A@"); break;
+						case 'f': strcpy(buf2, "\e)A@"); j = 1; break;
+						}
+
+						/* ---------- Enter device name ---------- */
+
+						clear_from(10);
+						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter a distinctive part of the magic device's name");
+						Term_putstr(10, 12, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
+						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GTelep");
+						Term_putstr(10, 14, -1, TERM_GREEN, "if you want to use a 'Staff of Teleportation'.");
+						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter partial device name:");
+
+						/* hack before we exit: remember menu choice 'magic device' */
+						choice = 'k';
+
+						break;
 					}
 
 					/* no need for inputting an item/spell to use with the macro? */
-					if (choice != 'c' && choice != 'i') {
+					if (choice != 'c' && choice != 'i' && choice != 'j') {
 						Term_gotoxy(40, 17);
 
-						/* Get an encoded action */
+						/* Get an item name */
 						strcpy(buf, "");
 						if (!askfor_aux(buf, 159, 0)) {
 							i = -1;
@@ -3992,11 +4080,12 @@ void interact_macros(void)
 						strcat(buf, "\r");
 					}
 
-					/* generate the full macro action */
-					buf2[0] = '\\'; //note: should in theory be ')e\',
-					buf2[1] = 'e'; //      but doesn't work due to prompt behaviour
-					buf2[2] = ')'; //      (\e will then get ignored)
-
+					/* generate the full macro action; magic device macros are already pre-made */
+					if (choice != 'k') {
+						buf2[0] = '\\'; //note: should in theory be ')e\',
+						buf2[1] = 'e'; //      but doesn't work due to prompt behaviour
+						buf2[2] = ')'; //      (\e will then get ignored)
+					}
 
 					switch (choice) {
 					case 'a':
@@ -4060,6 +4149,21 @@ void interact_macros(void)
 						buf2[6] = '8';
 						buf2[7] = '\r';
 						strcpy(buf2 + 8, buf);
+						break;
+					case 'j':
+						buf2[3] = 'm';
+						buf2[4] = '@';
+						buf2[5] = '1';
+						buf2[6] = '0';
+						buf2[7] = '\r';
+						buf2[8] = '@';
+						strcpy(buf2 + 9, buf);
+						break;
+					case 'k':
+						/* hack: magiv device uses direction? */
+						if (j == 1) strcat(buf, "*t");
+
+						strcat(buf2, buf);
 						break;
 					}
 
