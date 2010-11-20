@@ -113,15 +113,20 @@ static s16b c_label_to_equip(int c)
  *
  * Also, the tag "@xn" will work as well, where "n" is a tag-char,
  * and "x" is the "current" command_cmd code.
+ *
+ * Addition: flags 'inven' and 'equip' tell it which items to check:
+ * If one of them is false, the according part is ignored. - C. Blue
  */
-static int get_tag(int *cp, char tag)
+static int get_tag(int *cp, char tag, bool inven, bool equip)
 {
         int i;
         cptr s;
 
 
         /* Check every object */
-        for (i = 0; i < INVEN_TOTAL; ++i)
+//        for (i = (inven ? 0 : INVEN_WIELD); i < (equip ? INVEN_TOTAL : INVEN_PACK); ++i)
+        /* New: Backwards, since inventory items are usually more restricted! - C. Blue */
+        for (i = (equip ? INVEN_TOTAL : INVEN_PACK) - 1; i >= (inven ? 0 : INVEN_WIELD); --i)
         {
                 char *buf = inventory_name[i];
 		char *buf2;
@@ -471,7 +476,7 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 			case '7': case '8': case '9':
 			{
 				/* XXX XXX Look up that tag */
-				if (!get_tag(&k, which))
+				if (!get_tag(&k, which, inven, equip))
 				{
 					bell();
 					break;
