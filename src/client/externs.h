@@ -601,6 +601,7 @@ extern int Send_zap_dir(int item, int dir);
 extern int Send_fill(int item);
 extern int Send_eat(int item);
 extern int Send_activate(int item);
+extern int Send_activate_dir(int item, int dir);
 extern int Send_target(int dir);
 extern int Send_target_friendly(int dir);
 extern int Send_look(int dir);

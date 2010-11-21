@@ -46,7 +46,14 @@ static void cmd_all_in_one(void)
 
 	if (INVEN_WIELD <= item)
 	{
-		Send_activate(item);
+		/* Does item require aiming? (Always does if not yet identified) */
+		if (inventory[item].uses_dir == 0) {
+			/* (also called if server is outdated, since uses_dir will be 0 then) */
+			Send_activate(item);
+		} else {
+			get_dir(&dir);
+			Send_activate_dir(item, dir);
+		}
 		return;
 	}
 
@@ -182,10 +189,17 @@ static void cmd_all_in_one(void)
 					/* Now a number of skills shares same mkey */
 				}
 			}
-			if (!done)
+			if (!done) {
 				/* XXX there should be more generic 'use' command */
-				Send_activate(item);
-
+				/* Does item require aiming? (Always does if not yet identified) */
+				if (inventory[item].uses_dir == 0) {
+					/* (also called if server is outdated, since uses_dir will be 0 then) */
+					Send_activate(item);
+				} else {
+					get_dir(&dir);
+					Send_activate_dir(item, dir);
+				}
+			}
 			break;
 		}
 	}
@@ -1184,7 +1198,7 @@ void cmd_eat(void)
 
 void cmd_activate(void)
 {
-	int item;
+	int item, dir;
 
 	/* Allow all items */
 	item_tester_hook = NULL;
@@ -1197,7 +1211,14 @@ void cmd_activate(void)
 	}
 
 	/* Send it */
-	Send_activate(item);
+	/* Does item require aiming? (Always does if not yet identified) */
+	if (inventory[item].uses_dir == 0) {
+		/* (also called if server is outdated, since uses_dir will be 0 then) */
+		Send_activate(item);
+	} else {
+		get_dir(&dir);
+		Send_activate_dir(item, dir);
+	}
 }
 
 

@@ -3969,6 +3969,18 @@ int Send_activate(int item)
 	return 1;
 }
 
+int Send_activate_dir(int item, int dir)
+{
+	int	n;
+
+	if ((n = Packet_printf(&wbuf, "%c%hd%c", PKT_ACTIVATE_DIR, item, dir)) <= 0)
+	{
+		return n;
+	}
+
+	return 1;
+}
+
 int Send_target(int dir)
 {
 	int	n;

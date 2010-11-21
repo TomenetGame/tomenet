@@ -145,6 +145,7 @@
 #define PKT_SCRIPT		124
 #define PKT_CLEAR_ACTIONS	125
 #define PKT_ZAP_DIR		126
+#define PKT_ACTIVATE_DIR	127
 
 #define PKT_SANITY		130
 
