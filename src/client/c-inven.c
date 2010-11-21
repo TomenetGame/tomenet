@@ -117,23 +117,45 @@ static s16b c_label_to_equip(int c)
  * Addition: flags 'inven' and 'equip' tell it which items to check:
  * If one of them is false, the according part is ignored. - C. Blue
  */
-static int get_tag(int *cp, char tag, bool inven, bool equip)
+static int get_tag(int *cp, char tag, bool inven, bool equip, bool inven_first)
 {
         int i, j;
+        int start, stop, step;
         cptr s;
 
+	/* neither inventory nor equipment is allowed to be searched? */
+	if (!inven && !equip) return (FALSE);
+
+	/* search tag in inventory before looking in equipment? (default is other way round) */
+	if (inven_first) {
+		start = inven ? 0 : INVEN_WIELD;
+		stop = equip ? INVEN_TOTAL : INVEN_PACK;
+		step = 1;
+	} else {
+		start = (equip ? INVEN_TOTAL : INVEN_PACK) - 1;
+		stop = (inven ? 0 : INVEN_WIELD) - 1;
+		step = -1;
+	}
 
         /* Check every object */
+#if 0
 //        for (i = (inven ? 0 : INVEN_WIELD); i < (equip ? INVEN_TOTAL : INVEN_PACK); ++i)
         /* Equipment before inventory, since inventory
            items are usually more restricted. - C. Blue */
         for (j = (equip ? INVEN_TOTAL : INVEN_PACK) - 1; j >= (inven ? 0 : INVEN_WIELD); --j)
+#else
+        for (j = start; j != stop; j += step)
+#endif
         {
 		char *buf;
 		char *buf2;
 
-		/* Translate, so equip and inven are each processed in normal order */
-		i = INVEN_PACK + (j >= INVEN_WIELD ? INVEN_TOTAL : 0) - 1 - j;
+		if (!inven_first) {
+			/* Translate, so equip and inven are processed in normal order _each_ */
+			i = INVEN_PACK + (j >= INVEN_WIELD ? INVEN_TOTAL : 0) - 1 - j;
+		} else {
+			i = j;
+		}
 
 		buf = inventory_name[i];
 
@@ -225,6 +247,7 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 	bool	inven = FALSE;
 	bool	floor = FALSE;
 	bool	extra = FALSE;
+	bool	inven_first = FALSE;
 
 	/* The top line is icky */
 	topline_icky = TRUE;
@@ -242,6 +265,7 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 	if (mode & (USE_INVEN)) inven = TRUE;
 	if (mode & (USE_FLOOR)) floor = TRUE;
 	if (mode & (USE_EXTRA)) extra = TRUE;
+	if (mode & (INVEN_FIRST)) inven_first = TRUE;
 
 	/* Paranoia */
 	if (!inven && !equip) return (FALSE);
@@ -479,7 +503,7 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 			case '7': case '8': case '9':
 			{
 				/* XXX XXX Look up that tag */
-				if (!get_tag(&k, which, inven, equip))
+				if (!get_tag(&k, which, inven, equip, inven_first))
 				{
 					bell();
 					break;

@@ -3431,6 +3431,7 @@ that keeps many algorithms happy.
 #define USE_INVEN	0x02	/* Allow inven items */
 #define USE_FLOOR	0x04	/* Allow floor items */
 #define USE_EXTRA	0x08	/* Allow extra items */
+#define INVEN_FIRST	0x10	/* Seach for inscription tag in inventory first */
 
 /*
  * Bit flags for the "p_ptr->notice" variable
