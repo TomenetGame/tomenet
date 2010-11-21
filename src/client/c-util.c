@@ -1751,17 +1751,19 @@ bool get_dir(int *dp)
 
 	cptr	p;
 
-	p = "Direction ('*' to choose a target, non-direction cancels) ? ";
+	p = "Direction ('*' to choose a target, '.' for acquired target) ? ";
 
 	get_com(p, &command);
 
 	/* Handle target request */
-	if (command == '*')
-	{
-		if (cmd_target())
-			dir = 5;
+	if (command == '*') {
+		if (cmd_target()) dir = 5;
 	}
-
+	/* Handle previously acquired target, discard cast if not available */
+	else if (command == '.') {
+		dir = 10;
+	}
+	/* Normal direction, including 5 for 'acquired target or self' */
 	else dir = keymap_dirs[command & 0x7F];
 
 	*dp = dir;
