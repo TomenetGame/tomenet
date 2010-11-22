@@ -3148,8 +3148,7 @@ void interact_macros(void)
 	}
 
 	/* Process requests until done */
-	while (1)
-	{
+	while (1) {
 		/* Clear screen */
 		Term_clear();
 
@@ -3201,8 +3200,7 @@ void interact_macros(void)
 		}
 
 		/* Load a pref file */
-		else if (i == '1')
-		{
+		else if (i == '1') {
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Load a user pref file");
 
@@ -3225,8 +3223,7 @@ void interact_macros(void)
 		}
 
 		/* Save a 'macro' file */
-		else if (i == '2')
-		{
+		else if (i == '2') {
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Save a macro file");
 
@@ -3246,8 +3243,7 @@ void interact_macros(void)
 		}
 
 		/* Enter a new action */
-		else if (i == '3')
-		{
+		else if (i == '3') {
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Enter a new action");
 
@@ -3262,8 +3258,7 @@ void interact_macros(void)
 		}
 
 		/* Create a command macro */
-		else if (i == '6')
-		{
+		else if (i == '6') {
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Create a command macro");
 
@@ -3286,8 +3281,7 @@ void interact_macros(void)
 		}
 
 		/* Create a hybrid macro */
-		else if (i == '5')
-		{
+		else if (i == '5') {
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Create a hybrid macro");
 
@@ -3310,8 +3304,7 @@ void interact_macros(void)
 		}
 
 		/* Create a normal macro */
-		else if (i == '4')
-		{
+		else if (i == '4') {
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Create a normal macro");
 
@@ -3335,8 +3328,7 @@ void interact_macros(void)
 
 #if 0
 		/* Create an identity macro */
-		else if (i == '7')
-		{
+		else if (i == '7') {
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Create an identity macro");
 
@@ -3354,8 +3346,7 @@ void interact_macros(void)
 		}
 #else
 		/* Delete a macro */
-		else if (i == '7')
-		{
+		else if (i == '7') {
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Delete a macro");
 
@@ -3374,8 +3365,7 @@ void interact_macros(void)
 #endif
 
 		/* Create an empty macro */
-		else if (i == '8')
-		{
+		else if (i == '8') {
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Create an empty macro");
 
@@ -3398,8 +3388,7 @@ void interact_macros(void)
 		}
 
 		/* Query a macro */
-		else if (i == '9')
-		{
+		else if (i == '9') {
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Query a macro");
 
@@ -3429,22 +3418,19 @@ void interact_macros(void)
 				}
 			}
 
-			if (i == macro__num)
-			{
+			if (i == macro__num) {
 				/* Message */
 				c_msg_print("No macro was found.");
 			}
 		}
 
 		/* List all macros */
-		else if (i == 'l')
-		{
+		else if (i == 'l') {
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: List all macros");
 
 			/* Re-using 'i' here shouldn't matter anymore */
-			for (i = 0; i < macro__num; i++)
-			{
+			for (i = 0; i < macro__num; i++) {
 				if (i % 20 == 0) {
 					/* Clear screen */
 					Term_clear();
@@ -3522,16 +3508,14 @@ void interact_macros(void)
 				if (i == -2) break;
 			}
 
-			if (i == 0)
-			{
+			if (i == 0) {
 				/* Message */
 				c_msg_print("No macro was found.");
 			}
 		}
 
 		/* Enter a 'quick & dirty' macro */
-		else if (i == 'q')
-		{
+		else if (i == 'q') {
 			bool call_by_name = FALSE, mimic_transform = FALSE;
 
 			/* Prompt */
@@ -3647,8 +3631,7 @@ void interact_macros(void)
 		}
 
 		/* Configure 'quick & dirty' macro functionality */
-		else if (i == 'Q')
-		{
+		else if (i == 'Q') {
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Configure 'quick & dirty' macro functionality");
 			
@@ -3657,8 +3640,7 @@ void interact_macros(void)
 		}
 
 		/* Start recording a macro */
-		else if (i == 'r')
-		{
+		else if (i == 'r') {
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Record a macro");
 
@@ -4005,7 +3987,7 @@ void interact_macros(void)
 							i = -1;
 							continue;
 						}
-						strcat(buf, "\r@");
+						strcat(buf, "\\r@");
 
 						/* ---------- Enter ammo/load name ---------- */
 						clear_from(10);
@@ -4023,7 +4005,7 @@ void interact_macros(void)
 							i = -1;
 							continue;
 						}
-						strcat(buf2, "\r");
+						strcat(buf2, "\\r");
 
 						strcat(buf, buf2);
 						break;
@@ -4057,12 +4039,12 @@ void interact_macros(void)
 						/* build macro part */
 						j = 0; /* hack: != 1 means 'undirectional' device */
 						switch (choice) {
-						case 'a': strcpy(buf2, "\e)a@"); j = 1; break;
-						case 'b': strcpy(buf2, "\e)u@"); break;
-						case 'c': strcpy(buf2, "\e)z@"); break;
-						case 'd': strcpy(buf2, "\e)z@"); j = 1; break;
-						case 'e': strcpy(buf2, "\e)A@"); break;
-						case 'f': strcpy(buf2, "\e)A@"); j = 1; break;
+						case 'a': strcpy(buf2, "\\e)a@"); j = 1; break;
+						case 'b': strcpy(buf2, "\\e)u@"); break;
+						case 'c': strcpy(buf2, "\\e)z@"); break;
+						case 'd': strcpy(buf2, "\\e)z@"); j = 1; break;
+						case 'e': strcpy(buf2, "\\e)A@"); break;
+						case 'f': strcpy(buf2, "\\e)A@"); j = 1; break;
 						}
 
 						/* ---------- Enter device name ---------- */
@@ -4070,7 +4052,14 @@ void interact_macros(void)
 						clear_from(10);
 						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter a distinctive part of the magic device's name");
 						Term_putstr(10, 12, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
-						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GTelep");
+						switch (choice) {
+						case 'a': Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GMagic Mis"); break;
+						case 'b': Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GTelep"); break;
+						case 'c': Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GProb"); break;
+						case 'd': Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GLightn"); break;
+						case 'e': Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GFrostweav"); break;
+						case 'f': Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GSerpen"); break;
+						}
 						Term_putstr(10, 14, -1, TERM_GREEN, "if you want to use a 'Staff of Teleportation'.");
 						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter partial device name:");
 
@@ -4091,7 +4080,7 @@ void interact_macros(void)
 							continue;
 						}
 
-						strcat(buf, "\r");
+						strcat(buf, "\\r");
 					}
 
 					/* generate the full macro action; magic device macros are already pre-made */
@@ -4124,9 +4113,10 @@ void interact_macros(void)
 						buf2[4] = '@';
 						buf2[5] = '1';
 						buf2[6] = '1';
-						buf2[7] = '\r';
-						buf2[8] = '@';
-						strcpy(buf2 + 9, buf);
+						buf2[7] = '\\';
+						buf2[8] = 'r';
+						buf2[9] = '@';
+						strcpy(buf2 + 10, buf);
 						if (choice == 'e') {
 							strcpy(buf, "*t");
 							strcat(buf2, buf);
@@ -4136,42 +4126,47 @@ void interact_macros(void)
 						buf2[3] = 'm';
 						buf2[4] = '@';
 						buf2[5] = '5';
-						buf2[6] = '\r';
-						buf2[7] = '@';
-						strcpy(buf2 + 8, buf);
+						buf2[6] = '\\';
+						buf2[7] = 'r';
+						buf2[8] = '@';
+						strcpy(buf2 + 9, buf);
 						break;
 					case 'g':
 						buf2[3] = 'm';
 						buf2[4] = '@';
 						buf2[5] = '6';
-						buf2[6] = '\r';
-						buf2[7] = '@';
-						strcpy(buf2 + 8, buf);
+						buf2[6] = '\\';
+						buf2[7] = 'r';
+						buf2[8] = '@';
+						strcpy(buf2 + 9, buf);
 						break;
 					case 'h':
 						buf2[3] = 'm';
 						buf2[4] = '@';
 						buf2[5] = '3';
-						buf2[6] = '\r';
-						buf2[7] = 'c';
-						strcpy(buf2 + 8, buf);
+						buf2[6] = '\\';
+						buf2[7] = 'r';
+						buf2[8] = 'c';
+						strcpy(buf2 + 9, buf);
 						break;
 					case 'i':
 						buf2[3] = 'm';
 						buf2[4] = '@';
 						buf2[5] = '1';
 						buf2[6] = '8';
-						buf2[7] = '\r';
-						strcpy(buf2 + 8, buf);
+						buf2[7] = '\\';
+						buf2[8] = 'r';
+						strcpy(buf2 + 9, buf);
 						break;
 					case 'j':
 						buf2[3] = 'm';
 						buf2[4] = '@';
 						buf2[5] = '1';
 						buf2[6] = '0';
-						buf2[7] = '\r';
-						buf2[8] = '@';
-						strcpy(buf2 + 9, buf);
+						buf2[7] = '\\';
+						buf2[8] = 'r';
+						buf2[9] = '@';
+						strcpy(buf2 + 10, buf);
 						break;
 					case 'k':
 						/* hack: magiv device uses direction? */
@@ -4184,7 +4179,7 @@ void interact_macros(void)
 					/* Convert the targetting method from XXX*t to *tXXX. ? */
 #ifdef MACRO_WIZARD_SMART_TARGET
 					if (strstr(buf2, "*t")) {
-						strcpy(buf, "\e)*t");
+						strcpy(buf, "\\e)*t");
 						/* We assume that '*t' is always the last part in the macro
 						   and that '\e)' is always the first part */
 						strncat(buf, buf2 + 3, strlen(buf2) - 5);
