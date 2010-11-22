@@ -1545,6 +1545,20 @@ or that are especially important are listed in detail here:
 !!!     Should always be enabled! Will reduce probability for off-screen kills,
 !!!     since the screen scrolls much earlier when you come close to a border!
 
+    Thin down screen flush signals to avoid freezing (thin_down_flush)
+        Enabled by default, this discards all 9 of every 10 flush signals, so
+        it reduces the animation delays to 10%.
+        See below for an explanation of flush signals.
+
+    Disable delays from flush signals (disable_flush)
+        Completely disables the delay flush signals cause. Flush signals are
+        signals sent by the server to make the client wait for 1 ms, which is
+        used mainly to draw animations when casting spells or shooting,
+        like the arrow flying or the balls of explosions.
+        If you have a slow network or are lagging a lot, you may try to disable
+        this. Certain animations might visually suffer from doing so.
+
+
 (8) Check Server Options
     Displays a list of the server rules and configuration.
 
@@ -10803,6 +10817,12 @@ PROBLEM 27: While I am creating a new character, I got disconnected with a
 SOLUTION:   You have about 20 minutes to complete the character creation
             process. If you exceed this time, you will timeout and get
             disconnected.
+
+PROBLEM 28: If I or other players nearby fire a lot of arrows or cast a lot
+            of spells, my client lags or freezes somewhat.
+SOLUTION:   Try to reduce or even disable flush-waits, by toggling the client
+            options 'thin_down_flush' and if that's not enough also
+            'disable_flush'. For details about these, see (2.3).
 
 
 
