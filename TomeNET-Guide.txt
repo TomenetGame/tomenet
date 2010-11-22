@@ -400,6 +400,8 @@ P       O       party screen. Form/disband/modify a party with other players
                 For winners (queens/kings/empresses/emperors) the range is 11
                 levels instead of 7.
 
+SPACE   Stop executing repeatable actions such as searching, tunnelling or
+        disarming. Also stops fire-till-kill.
 < or >  go upstairs/downstairs. Press '>' to use a void gate (violet '+').
         Void jump gates teleport you to their counterpart and vice versa.
 {       inscribe an item.
@@ -626,7 +628,7 @@ They all start with a slash '/':
 /fill       fill an 'Empty Bottle' in your inventory with the water from a
             fountain. You must stand on the fountain to do this.
 /ftkon or /ftkoff
-            Enables or disables fire-till-kill mode.
+            Enables or disables fire-till-kill mode (see (5.2a)).
             Alternatively, you can toggle it in 'm' menu.
 /hou        Displays your houses, same as ~6.
  (/house)
@@ -4274,6 +4276,10 @@ line of sight.
 
 Concerning runecraft, fire-till-kill mode will also stop casting when your fail
 chance for the selected spell is over 60%.
+
+To manually stop fire-till-kill without moving or performing any other action,
+just press the SPACE key. Note that SPACE also stops all other kinds of
+repeatable actions such as searching or tunnelling.
 
 
 
