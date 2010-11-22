@@ -6,6 +6,11 @@
 
 #define NR_OPTIONS_SHOWN	20
 
+/* Have the Macro Wizard generate target code in
+   the form *tXXX. instead of XXX*t? - C. Blue */
+#define MACRO_WIZARD_SMART_TARGET
+
+
 static int MACRO_WAIT = 96;
 
 static void ascii_to_text(char *buf, cptr str);
@@ -3807,11 +3812,16 @@ void interact_macros(void)
 						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter partial scroll name:");
 						break;
 					case 'd':
+						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact spell name and pay attention");
+						Term_putstr(10, 12, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
+						Term_putstr(10, 13, -1, TERM_GREEN, "or another example:     \377GPhase Door");
+						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
+						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter exact spell name:");
+						break;
 					case 'e':
 						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact spell name and pay attention");
 						Term_putstr(10, 12, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
 						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GManathrust");
-						Term_putstr(10, 14, -1, TERM_GREEN, "or another example:     \377GPhase Door");
 						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
 						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter exact spell name:");
 						break;
@@ -4170,6 +4180,20 @@ void interact_macros(void)
 						strcat(buf2, buf);
 						break;
 					}
+
+					/* Convert the targetting method from XXX*t to *tXXX. ? */
+#ifdef MACRO_WIZARD_SMART_TARGET
+					if (strstr(buf2, "*t")) {
+						strcpy(buf, "\e)*t");
+						/* We assume that '*t' is always the last part in the macro
+						   and that '\e)' is always the first part */
+						strncat(buf, buf2 + 3, strlen(buf2) - 5);
+						/* add new direction feature */
+						strcat(buf, ".");
+						/* replace old macro by this one */
+						strcpy(buf2, buf);
+					}
+#endif
 
 					/* Extract an action */
 					text_to_ascii(macro__buf, buf2);
