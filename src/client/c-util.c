@@ -3583,9 +3583,11 @@ void interact_macros(void)
 				case 's': /* change stance */
 					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '3'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
 					bptr++;	break;
+#if 0 /* disabled, to allow @q */
 				case '*': /* set a target */
 					*b2ptr++ = '*'; *b2ptr++ = 't';
 					bptr++;	break;
+#endif
 				case '@': /* start 'call-by-name' mode, reading the spell/item name next */
 					call_by_name = TRUE;
 					*b2ptr++ = '@';

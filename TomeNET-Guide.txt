@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 19. Nov 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 22. Nov 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -2543,9 +2543,6 @@ to their real functionality. They are:
     '@m3' or '@3'. (Becomes '\e)m@10\r13'.)
   s for changing a stance
     Example:  sa  (switches to stance 'a)' ie balanced combat stance.)
-  * for targetting the nearest monster. Usually you add this to any spell that
-    requires targetting.
-    Example:  M@Manathrust\*  (cast spell manathrust at nearest monster.)
   @...\ for using call-by-name (spell/item name must be between '@' and '\')
     (Examples have been given above, in some spell casting explanations.)
 
@@ -2556,17 +2553,17 @@ automatically chosen (depending on the trigger key).
 
 Additional examples:
 Example 1: Firing your ranged weapon would just be..
-        f*
+        f*t
     (which gets expanded to '\e)f*t'.)
 
 Example 2: Assumed your book is inscribed @m1 as usual, and you want to cast
     spell a). What you can simply enter in the q'n'd field is:
-        M1a*
+        M1a*t
     and it will automatically be expanded to the real macro '\e)m@11\r1a*t'.
 
 Example 3: Assumed you have the spell Manathrust somewhere in your books and
     want to cast it by name, what you enter in the q'n'd field is:
-        M@Manathrust\*
+        M@Manathrust\*t
     and it will automatically be expanded to '\e)m@11\r@Manathrust\r*t', voila.
 
 Example 4: Casting phase door would be..
