@@ -1585,11 +1585,14 @@ int Receive_equip(void)
 {
 	int	n;
 	char 	ch;
-	char pos, attr, tval, sval;
+	char pos, attr, tval, sval, uses_dir;
 	s16b wgt, amt, pval;
 	char name[ONAME_LEN];
 
-	if (is_newer_than(&server_version, 4, 4, 4, 2, 0, 0)) {
+	if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%c%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, &uses_dir, name)) <= 0)
+			return n;
+	} else if (is_newer_than(&server_version, 4, 4, 4, 2, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, name)) <= 0)
 			return n;
 	} else {
@@ -1606,6 +1609,7 @@ int Receive_equip(void)
 	inventory[pos - 'a' + INVEN_WIELD].attr = attr;
 	inventory[pos - 'a' + INVEN_WIELD].weight = wgt;
 	inventory[pos - 'a' + INVEN_WIELD].number = amt;
+	inventory[pos - 'a' + INVEN_WIELD].uses_dir = uses_dir;
 
 	if (!strcmp(name, "(nothing)"))
 		strcpy(inventory_name[pos - 'a' + INVEN_WIELD], equipment_slot_names[pos - 'a']);
