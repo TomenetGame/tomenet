@@ -5398,7 +5398,8 @@ Life            Resurrects another player's ghost if standing on a directly
                 Since it was often asked: Non-everlasting and everlasting
                 players can revive each other without problems.
 Aggravate Monsters
-                Wakes up all monsters in whose radius of awareness you are.
+                Wakes up all monsters within about twice the maximum sight
+                range (a constant defaulting to 20, so aggrav. radius is ~40).
                 Hastes all monsters in your line of sight (same as SHRIEK
                 spell or traps of aggravation or the "/scream" command).
 Word of Recall  Use it to quickly travel from the town to a dungeon or tower,
