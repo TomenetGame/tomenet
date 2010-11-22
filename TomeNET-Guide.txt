@@ -63,6 +63,7 @@ Contents
     (3.7a)  Ability codes [contained within (3.7)]
     (3.7b)  Quick'n'dirty macros
     (3.7c)  The macro creation wizard
+    (3.7d)  Specifying directions and targets
     (3.8)   Example macro sets
     (3.9)   Macros with special keys
     (3.9a)  Creating a chat macro for your party
@@ -2586,6 +2587,58 @@ command choices which should cover almost all situations.
 
 (The macro type, ie command/hybrid/normal will be chosen automatically for you,
 same as when using Quick'n'Dirty macro creation.)
+
+
+(3.7d) Specifying directions and targets
+----------------------------------------
+Whenever you use an attack spell or a wand or rod that cast bolts or balls,
+the game prompts you to enter a direction.
+
+In our macros so far we have answered that question by specifying '*t' instead
+of an actual direction ie one of: 1,2,3,4,6,7,8,9.
+We have learned that '*' means 'acquire target' and 't' means 'choose closest
+hostile target'.
+The '*' key can also be pressed as a command key, ie on its own without any
+direction request from the server. Press '*' and it will ask you to set a
+target, which you can do by pressing 't' again to choose the closest hostile
+entity.
+
+There are, however, more ways to specify a direction or to use the target
+command, especially since client 4.4.6 which added the '.' option.
+Details follow:
+
+The 'Set Target' command (key '*') that sets a target for spells or item uses
+that follow, or which can be invoked as a sub-command from a 'Direction?'
+request, may be answered with..
+-------------------------------
+  -'q' key to drop current target without acquiring a new one.
+  -'t' or '5' key to choose closest hostile target.
+  -'p' to target a grid position manually via movement keys (1..9),
+       confirm with 't' or '5' key.
+
+The 'Direction?' request from commands that require a direction, may be
+answered with..
+---------------
+  -a direction key such as 1,2,3,4,6,7,8,9.
+   Note that direction '5' will only aim at yourself if you have no valid
+   target set. Otherwise, the '5' key will aim at your target instead.
+  -'*' key to invoke built-in target command (see above).
+  -'.' key to use a previously acquired target or cancel the spell/item use
+        if there is no valid target currently set. The '.' option is only
+        available in client version 4.4.6 and higher.
+
+Example macros:
+---------------
+  *tz0.     Will zap rod 0 at the closest hostile entity. If there is none,
+            the rod will not be zapped, conserving the rod's energy.
+  z0*t      Zaps rod 0 at the closest hostile entity. If there is none, the
+            rod will be zapped anyway, with yourself as target. This could
+            be useful if it's for example a Rod of Fire Balls and you are
+            being attacked in close combat by an invisible monster.
+  *qz05     Your current target is cleared and the rod 0 is zapped at your
+            own location, ie '5'. This could be useful if you want to clear
+            out piles of loot with a rod of acid balls, effectively destroying
+            all lesser items that cannot resist acid and melt from it.
 
 
 
