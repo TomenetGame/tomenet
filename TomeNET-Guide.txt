@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 22. Nov 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 23. Nov 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -81,6 +81,7 @@ Contents
     (4.8)   Level & vault feelings
     (4.9)   Navigating on maps
     (4.10)  Houses
+    (4.10a) Player stores
     (4.11)  Malicious effects players can suffer
     (4.12)  Malicious effects monsters can suffer
     (4.13)  Quests and Events
@@ -137,8 +138,7 @@ Contents
     (8.3)   Golem creation
     (8.4)   Artifact creation
     (8.5)   Alternative ruleset 'RPG Server'
-    (8.6)   Troubleshooting
-(9) End of this guide
+    (8.7)   Troubleshooting
 
 
 
@@ -3954,6 +3954,53 @@ that the door is within your lamp's light radius.
 WARNING:
 Items on the floor within a house don't form piles! If you drop too many
 items and space in the house runs out the dropped item may just disappear!
+
+
+(4.10a) Player stores
+---------------------
+Players can turn their houses into stores, which run automagically even while
+they aren't logged on. Other players can enter your store and buy items, but
+not sell any. You will receive cheques that you can turn in for money by simply
+reading them with 'r' key, same as scrolls.
+The prices customers will see listed when they enter your store are at least as
+high as in the Black Market, and you can further add to each item's price if
+you like.
+
+To turn a house into a player-store, simply put an item in it that carries the
+  @S
+inscription. This inscription means that this item will be put up for sale in
+your store.
+As soon as a house contains at least one item inscribed this way, if a player
+who does not have access to the house tries to open the door, he will be
+presented with a store screen where he can buy those inscribed items.
+
+If you want to further increase the price, you can add a number, for example
+  @S20000
+to ask for 20000 gold more than the Black Market price is.
+
+Note that if you want to put up items with inscriptions longer than just the
+store-part, you need to terminate the store inscription with a dot. Example:
+  Hello@S10000.Customer
+This item will appear in your store with an inscription "HelloCustomer". The
+S@... part is always omitted. This way, you can add short notes to the items
+you offer.
+
+If another player buys your item, there will be a 10% fee that is cut from your
+profits.
+The rest of the price the customer paid will be imprinted into a cheque. This
+cheque is then placed into an available spot in that house. To turn a cheque
+into money, simply press 'r' to read it like you would read a scroll.
+
+There are two types of cheques:
+Normally, if an item or a whole pile is bought by someone, the item or pile
+will simply be replaced with a cheque accordingly, for you to withdraw.
+If however the customer buys only part of a pile of items, then another type
+of cheque will be used, called 'mass cheque' which uses one extra slot in your
+house and combines all sales of partial piles of items.
+While normal cheques are inscribed with details of the item that was sold, mass
+cheques only say 'various piled items' or something similar.
+So if you offer piles, make sure that you have at least one free space in your
+house, or you will lose the cheque!
 
 
 
@@ -10826,12 +10873,4 @@ SOLUTION:   Try to reduce or even disable flush-waits, by toggling the client
             'disable_flush'. For details about these, see (2.3).
 
 
-
-(9) End of this guide
-==============================================================================
-If TomeNET experiences changes/improvements you can also expect this guide to
-become updated shortly afterwards. Anyway, no guarantees ;)
-Please don't hesitate to send in bug reports or suggestions either via /rfe
-command in the game or write to the official forum on www.tomenet.net.
-or (even better) use the "/rfe" command in the game!
 ==============================================================================
