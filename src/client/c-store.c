@@ -695,7 +695,12 @@ void display_store(void)
 		put_str(buf, 3, 10);
 
 		/* Show the max price in the store (above prices) */
-		sprintf(buf, "%s (%ld)", c_store.store_name, (long)(c_store.max_cost));
+		if (!c_store.max_cost) {
+			/* improve it a bit visually for player stores who don't buy anything */
+			sprintf(buf, "%s", c_store.store_name);
+		} else {
+			sprintf(buf, "%s (%ld)", c_store.store_name, (long)(c_store.max_cost));
+		}
 		prt(buf, 3, 50);
 
 		/* Label the item descriptions */
