@@ -138,7 +138,7 @@ Contents
     (8.3)   Golem creation
     (8.4)   Artifact creation
     (8.5)   Alternative ruleset 'RPG Server'
-    (8.7)   Troubleshooting
+    (8.6)   Troubleshooting
 
 
 
