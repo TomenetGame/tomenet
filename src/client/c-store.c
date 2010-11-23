@@ -672,24 +672,24 @@ void display_store(void)
 	store_top = 0;
 
 	/* The "Home" is special */
-	if (store_num == 7)
-	{
-		/* Put the owner name */
-		put_str("Your Home", 3, 30);
+	if (store_num == 7) {
+		/* Put the owner name (usually "Your House/Home") */
+		sprintf(buf, "%s", c_store.owner_name);
+		put_str(buf, 3, 10);
+
+		/* Show the store name (usually blank for houses) */
+		sprintf(buf, "%s", c_store.store_name);
+		prt(buf, 3, 50);
 
 		/* Label the item descriptions */
 		put_str("Item Description", 5, 3);
 
 		/* If showing weights, show label */
-		if (c_cfg.show_weights)
-		{
-			put_str("Weight", 5, 70);
-		}
+		if (c_cfg.show_weights) put_str("Weight", 5, 70);
 	}
 
 	/* Normal stores */
-	else
-	{
+	else {
 		/* Put the owner name and race */
 		sprintf(buf, "%s", c_store.owner_name);
 		put_str(buf, 3, 10);
@@ -702,10 +702,7 @@ void display_store(void)
 		put_str("Item Description", 5, 3);
 
 		/* If showing weights, show label */
-		if (c_cfg.show_weights)
-		{
-			put_str("Weight", 5, 60);
-		}
+		if (c_cfg.show_weights) put_str("Weight", 5, 60);
 
 		/* Label the asking price (in stores) */
 		put_str("Price", 5, 72);
@@ -724,8 +721,7 @@ void display_store(void)
 	store_top = 0;
 
 	/* Interact with player */
-	while (!leave_store)
-	{
+	while (!leave_store) {
 		/* Hack -- Clear line 1 */
 		prt("", 1, 0);
 
@@ -739,25 +735,17 @@ void display_store(void)
 		prt(" ESC) Exit.", 22, 0);
 
 		/* Browse if necessary */
-		if (store.stock_num > 12)
-		{
-			prt(" SPACE) Next page", 23, 0);
-		}
+		if (store.stock_num > 12) prt(" SPACE) Next page", 23, 0);
 
 		/* Home commands */
-		if (store_num == 7 && FALSE)
-		{
+		if (store_num == 7 && FALSE) {
 			prt(" g) Get an item.", 22, 30);
 			prt(" d) Drop an item.", 23, 30);
 
 			prt(" x) eXamine an item.", 22, 60);
 		}
-
 		/* Shop commands XXX XXX XXX */
-		else
-		{
-			display_store_action();
-		}
+		else display_store_action();
 
 		/* Hack - Get rid of the cursor - mikaelh */
 		Term->scr->cx = Term->wid;
