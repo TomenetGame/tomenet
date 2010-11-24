@@ -675,6 +675,10 @@ They all start with a slash '/':
                         If you're on Linux and not hearing the page sounds,
                         see problem 19 in the troubleshooting section (8.6).
 /play       Join/leave a mini-game (such as rugby on the field in Bree).
+/pstore     Attempts to enter a player store next to you, even if it's your own
+            house. So this command is good for 'testing' your own store.
+            Usually you simply enter another player's store by trying to enter
+            his house, which will preset you with the store screen.
 /que        gives a quest! It needs to be fulfilled before a certain period
  (/quest)   of time passes (continues to expire even while not logged on).
             The player who completes it gets a great item as reward. It will
@@ -4002,6 +4006,10 @@ While normal cheques are inscribed with details of the item that was sold, mass
 cheques only say 'various piled items' or something similar.
 So if you offer piles, make sure that you have at least one free space in your
 house, or you will lose the cheque!
+
+Usually, player stores may only pop up if a player doesn't have access to that
+house door. If you want to test your own player store though, you can just use
+the /pstore command when standing next to your house door (see (0.2)).
 
 
 
