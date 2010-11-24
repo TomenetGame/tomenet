@@ -3981,8 +3981,9 @@ they aren't logged on. Other players can enter your store and buy items, but
 not sell any. You will receive cheques that you can turn in for money by simply
 reading them with 'r' key, same as scrolls. You can also 'I'nspect them.
 The prices customers will see listed when they enter your store are at least as
-high as in the Black Market, and you can further add to each item's price if
-you like.
+high as in the Black Market, except that prices in player stores do not depend
+on race or charisma. You can further increase item's price by inscribing it, if
+you like:
 
 To turn a house into a player-store, simply put an item in it that carries the
   @S
@@ -3992,16 +3993,22 @@ As soon as a house contains at least one item inscribed this way, if a player
 who does not have access to the house tries to open the door, he will be
 presented with a store screen where he can buy those inscribed items.
 
-If you want to further increase the price, you can add a number, for example
+If you want to set a higher price than the default price, you can inscribe the
+item with the price like this:
   @S20000
-to ask for 20000 gold more than the Black Market price is.
+This will ask for 20000 gold, provided the minimum price isn't actually higher.
+
+Instead of setting a price, you can also add to the base price, by using the
+following inscription syntax:
+  @S+10000
+This will add 10000 gold to the default price that is asked for.
 
 Note that if you want to put up items with inscriptions longer than just the
 store-part, you need to terminate the store inscription with a dot. Examples:
   Hello@S10000.Customer
   @S.Good stuff
 This item will appear in your store with an inscription "HelloCustomer". The
-S@... part is always omitted. This way, you can add short notes to the items
+"S@..." part is always omitted. This way, you can add short notes to the items
 you offer.
 
 If another player buys your item, there will be a 10% fee that is cut from your
