@@ -3979,8 +3979,9 @@ If you want to further increase the price, you can add a number, for example
 to ask for 20000 gold more than the Black Market price is.
 
 Note that if you want to put up items with inscriptions longer than just the
-store-part, you need to terminate the store inscription with a dot. Example:
+store-part, you need to terminate the store inscription with a dot. Examples:
   Hello@S10000.Customer
+  @S.Good stuff
 This item will appear in your store with an inscription "HelloCustomer". The
 S@... part is always omitted. This way, you can add short notes to the items
 you offer.
