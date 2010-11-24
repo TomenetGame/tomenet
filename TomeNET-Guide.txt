@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 23. Nov 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 24. Nov 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -674,11 +674,22 @@ They all start with a slash '/':
                         prevent getting paged by him.)
                         If you're on Linux and not hearing the page sounds,
                         see problem 19 in the troubleshooting section (8.6).
+/paint      Use a potion in your inventory to paint your house entrance in a
+            similar colour. The potion is used up in the process. A potion of
+            water removes the paint again.
+            Painting your house can be useful for example to mark it for others
+            to see that you run a player store. Further, you could choose the
+            colour to indicate the type of items you offer, for example red
+            for magic items similar to the red '6' town store.
+            (See (4.10a) for more information about player stores.)
 /play       Join/leave a mini-game (such as rugby on the field in Bree).
+            Will at some point in the future be absorbed by /evsign and
+            thereby become obsolete.
 /pstore     Attempts to enter a player store next to you, even if it's your own
             house. So this command is good for 'testing' your own store.
             Usually you simply enter another player's store by trying to enter
             his house, which will preset you with the store screen.
+            (See (4.10a) for more information about player stores.)
 /que        gives a quest! It needs to be fulfilled before a certain period
  (/quest)   of time passes (continues to expire even while not logged on).
             The player who completes it gets a great item as reward. It will
@@ -1910,7 +1921,7 @@ and looking for 'Flicker messages in recall' (recall_flicker). Set it to
 If you want to type the character '{' in a chat message, rather than using
 it for a colour code, type it twice '{{'. It will become '{'.
 
-Here is a list of colour codes (try not to annoy your fellow players :)
+Here is a list of colour codes (try not to annoy your fellow players :))
     d  black            b  blue             B  light blue
     D  dark grey        g  green            G  light green
     s  slate (grey)     r  red              R  light red (pink)
@@ -3955,6 +3966,9 @@ Note: The colour of house walls and doors are affected by day/night, so in the
 night the colours will not be accurate but darker, until you come close enough
 that the door is within your lamp's light radius.
 
+Special gimmick: You can use the /paint command to paint your house, see the
+"/paint" command in (0.2) for more information.
+
 WARNING:
 Items on the floor within a house don't form piles! If you drop too many
 items and space in the house runs out the dropped item may just disappear!
@@ -4010,6 +4024,10 @@ house, or you will lose the cheque!
 Usually, player stores may only pop up if a player doesn't have access to that
 house door. If you want to test your own player store though, you can just use
 the /pstore command when standing next to your house door (see (0.2)).
+
+To indicate that your house is a player store, you can use the "/paint" command
+to paint your house entrance for other players to see! Please see (0.2) for
+more information about the /paint command.
 
 
 
