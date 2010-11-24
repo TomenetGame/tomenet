@@ -3979,7 +3979,7 @@ items and space in the house runs out the dropped item may just disappear!
 Players can turn their houses into stores, which run automagically even while
 they aren't logged on. Other players can enter your store and buy items, but
 not sell any. You will receive cheques that you can turn in for money by simply
-reading them with 'r' key, same as scrolls.
+reading them with 'r' key, same as scrolls. You can also 'I'nspect them.
 The prices customers will see listed when they enter your store are at least as
 high as in the Black Market, and you can further add to each item's price if
 you like.
@@ -4009,6 +4009,7 @@ profits.
 The rest of the price the customer paid will be imprinted into a cheque. This
 cheque is then placed into an available spot in that house. To turn a cheque
 into money, simply press 'r' to read it like you would read a scroll.
+You can also 'I'nspect a cheque to find out how much it's worth.
 
 There are two types of cheques:
 Normally, if an item or a whole pile is bought by someone, the item or pile
@@ -5583,6 +5584,10 @@ Deeds           Some of the parchments are deeds, which are used as rewards
                 Press 'r' to read a deed, which will usually tell you what to
                 do with it. In most cases, you have to turn it in at the
                 mayor's office in Bree (one of the '+' doors in town).
+Cheques         These are automatically generated in player stores when someone
+                buys an item. They can be 'I'nspected to check their value or
+                'r'ead to cash in the money.
+                For more information see (4.10a).
 
 
 Wands/Rods/Staves
