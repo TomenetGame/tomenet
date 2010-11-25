@@ -8867,8 +8867,9 @@ Thought Contact
                     Required skill level for first spell level: 3.
     Willpower       Boosts your willpower to unleash hidden potential,
                     improving both your performance and resilience.
-                    Gives heroism and fear resistance, and chance to resist
-                    confusion, paralysis and slowness.
+                    Gives fear resistance, increases your saving throw and
+                    gives especially increased chance to resist paralyzation,
+                    confusion and slowness. Also gives heroism-like +hit bonus.
                     Later on gives +1 extra attack.            (auto-project)
                     Required skill level for first spell level: 3.
     Self-Reflection Find out more about yourself.
