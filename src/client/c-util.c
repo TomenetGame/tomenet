@@ -3182,7 +3182,7 @@ void interact_macros(void)
 //		Term_putstr(5, 13, -1, TERM_WHITE, "(\377yr\377w/\377yR\377w) Record a macro / set preferences");
 		Term_putstr(5, 13, -1, TERM_WHITE, "(\377yr\377w) Record a macro");
 		Term_putstr(5, 14, -1, TERM_WHITE, "(\377yW\377w) Wipe all macros and (\377yw\377w) reload default macro files (use both!)");
-		Term_putstr(5, 15, -1, TERM_WHITE, "(\377yz\377w) Invoke macro creation wizard.");
+		Term_putstr(5, 15, -1, TERM_WHITE, "(\377yz\377w) Invoke macro wizard");
 
 		/* Prompt */
 		Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: ");
@@ -3726,7 +3726,7 @@ void interact_macros(void)
 			Term_clear();
 
 			/* Describe */
-			Term_putstr(24, 1, -1, TERM_L_UMBER, "*** Macro Creation Wizard ***");
+			Term_putstr(29, 1, -1, TERM_L_UMBER, "*** Macro Wizard ***");
 			Term_putstr(25, 22, -1, TERM_L_UMBER, "[Press ESC to exit anytime]");
 			Term_putstr(19, 9, -1, TERM_L_UMBER, "----------------------------------------");
 
