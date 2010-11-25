@@ -62,7 +62,7 @@ Contents
     (3.7)   Creating macros for ranged attacks & abilities (spells)
     (3.7a)  Ability codes [contained within (3.7)]
     (3.7b)  Quick'n'dirty macros
-    (3.7c)  The macro creation wizard
+    (3.7c)  The macro wizard
     (3.7d)  Specifying directions and targets
     (3.8)   Example macro sets
     (3.9)   Macros with special keys
@@ -72,6 +72,7 @@ Contents
     (3.11)  Death, ghosts and looting
 (4) The world
     (4.1)   Running, picking up items, fighting
+    (4.1a)  Auto-retaliation
     (4.2)   Level and owner of items
     (4.3)   Dungeon and tower types, Ironman, Jail
     (4.4)   Terrain
@@ -851,31 +852,11 @@ Word-of-Recall scrolls:
     over there will reject you and you won't remember the place when you
     return and revive in Bree.
 
-
-Weapons:
-    @Ox         Don't auto-retaliate with it. (The letter 'O', not the number)
-                It's recommended for spell-casters who just wear a weapon to
-                profit from its magical abilities to always inscribe it @Ox
-                so it won't accidentally get destroyed when fighting a Nazgul
-                and the auto-retaliator won't take over.
-
-Ranged weapons:
-    @O          Auto-retaliate with it (shooting ammo). ('O' is the letter)
-                (Note: @O can either be on your ammunition or on the bow.)
-
-Spellbooks:
-    @Oc         You will auto-retaliate by casting the spell 'c)' from this
-                book (or any other spell, change the inscription accordingly).
-                IMPORTANT: If you cannot cast spells from the book or you
-                inscribe an unsuitable item, auto-retaliation will be disabled
-                completely!
-                (If 'c' is omittted, the first spell will be chosen.)
-
-Runes:
-    @Oa .. @Og  You will auto-retaliate by using the rune, where the letter
-                a..g determines the spell type ('b' would be self, 'c' would be
-                basic cheap bolt spell.. the letters correspond to the spell
-                selector).
+Weapons, devices and spells:
+    @O and its variants control the 'auto-retaliator' which is a mechanism
+       designed to make your character automatically attack targets that are
+       standing directly adjacent to you.
+       For details about auto-retaliation see (4.1a)!
 
 Ammunition:
     !=          will make your character auto-pickup the ammo from the floor.
@@ -1276,7 +1257,7 @@ they come in contact with these corrupted beings.
 If you are a spell-caster who doesn't use his weapon to fight but just to
 profit from its magical abilities then it's strongly recommended to inscribe
 the weapon @Ox to avoid auto-retaliation, see (0.3) about inscriptions and
-(4.1) about auto-retaliation.
+(4.1a) about auto-retaliation.
 If you rely on melee weapons you must try to get your hands on an artifact
 since these resist Nazgul greatly! The Stormbringer also resists like an
 artifact. (It doesn't matter if the artifact is a random or a static one.)
@@ -2603,8 +2584,8 @@ Example 4: Casting phase door would be..
     (expanded to '\e)m@11\r@Phase Door\r'.)
 
 
-(3.7c) The macro creation wizard
---------------------------------
+(3.7c) The macro wizard
+-----------------------
 The easiest (and therefore most limited) way to create a macro is to invoke the
 built-in macro creation wizard. If you are new to the game and too impatient to
 figure out how to create macros manually, you might want to give this a try.
@@ -3165,26 +3146,68 @@ If you want to pick up an item from the floor, step on that field and press
 information about finding, identifying and selling items, see (5.7).
 However, note that the keys can vary depending on your system configuration.
 
-You attack a monster with your equipped melee weapon by simply moving on
-the monster's field. Alternatively you can just stay still and let the
-monster approach you, if you stand still and an enemy is on an adjacent
-field (directly next to you, no space between you and the enemy) then your
-character will automatically attack it with the equipped melee weapon.
-This feature is called 'the auto-retaliator'. If you want to use ranged
-attacks you have several choices.
+You can attack a monster with your equipped melee weapon by simply moving on
+the monster's field, ie 'bumping' into the monster.
+A much better choice however, is to either just stand still and let the monster
+approach you, or -if the monster is asleep- just move next to the monster
+instead of bumping into it. In both situations, as soon as there is a monster
+directly next to you, you will automatically attack it!
+This is an important feature, called "auto-retaliation", see (4.1a) below!
+
+If you want to use ranged attacks then you have several choices:
 a) casting a magical spell ('m')
 b) throwing an item at a monster (or player) ('v')
 c) firing your equipped ranged weapon (sling, bow, crossbow) ('f')
 d) zapping a magical rod or aiming with a magical wand ('z', 'a')
-For all types of ranged attacks you'll need to designate a target. As soon as
-you finish casting an attack spell or if you press 'f' to fire an arrow/bolt/
-pebble/shot the game will ask you for a target or direction. You can now
-either press one of the 8 direction keys to fire into that direction, or you
-press the asterisk '*' followed by a 't' to designate the closest enemy as
-your target, which usually is what you want.
+For most types of ranged attacks you'll need to designate a target.
+
+As soon as you finish casting an attack spell or if you press 'f' to fire an
+arrow/bolt/pebble/shot the game will ask you for a target or direction.
+You can now either press one of the 8 direction keys to fire into that
+direction, or you press the asterisk '*' followed by a 't' to designate the
+closest enemy as your target, which usually is what you want.
+Since version 4.4.6 the game also supports '.' to fire at a previously set
+target if it still exists, or cancel the action, see (3.7d) for details about
+targetting.
+
 To learn how to create a macro instead of typing all these letters every time
-you want to launch a ranged attack, look at
-'(3.7) Creating macros for ranged attacks'.
+you want to launch a ranged attack, look at '(3.7) Creating macros for ranged
+attacks', or -much simpler- at '(3.7c) The Macro Wizard'.
+
+
+(4.1a) Auto-retaliation
+-----------------------
+If you stand still and an enemy is on an adjacent grid (directly next to you,
+no space between you and the enemy) then your character will automatically
+attack it with the equipped melee weapon.
+
+Instead of melee attacks, you can also configure the auto-retaliator to use
+other items. To do so, you use '@O...' (the letter 'O', not the number zero!)
+item inscriptions:
+
+Weapons:
+    @Ox         Don't auto-retaliate with it.
+                It's recommended for spell-casters who just wear a weapon to
+                profit from its magical abilities to always inscribe it @Ox
+                so it won't accidentally get destroyed when fighting a Nazgul
+                and the auto-retaliator won't take over.
+
+Ranged weapons:
+    @O          Auto-retaliate with it (shooting ammo).
+                (Note: @O can either be on your ammunition or on the bow.)
+
+Spellbooks:
+    @Oc         You will auto-retaliate by casting the spell 'c)' from this
+                book (or any other spell, change the inscription accordingly).
+                IMPORTANT: If you cannot cast spells from the book or you
+                inscribe an unsuitable item, auto-retaliation will be disabled
+                completely!
+                (If 'c' is omittted, the first spell will be chosen.)
+
+Runes:          See (5.20).
+
+If you want an auto-retaliation-enabling inscription to only work while you are
+around a town, add a 't' after the 'O', examples: '@Ot', '@Otb'.
 
 
 
@@ -4197,7 +4220,7 @@ Arena Monster Challenge
 One of TomeNET's features is the "auto-retaliator". This means, if an enemy
 enters a field that is adjacent to you, you will automatically attack the foe
 with your equipped melee weapon. This is helpful against lags as well as for
-preventing RSI (Repetitive Strain Injury ;).
+preventing RSI ;) - for details about auto-retaliation please see (4.1a).
 
 Melee weapons have at least three stats, it's 'damage dice', 'to-hit' and
 'to-damage'. 'To-hit' helps you actually not miss an enemy, 'to-dam' increases
@@ -4331,8 +4354,7 @@ targetting mode and choosing nearest target, t means exiting target mode and
 remember currently selected target.
 To automatically pick up your arrows simply inscribe them:  !=
 Ranged weapons can also auto-retaliate, that means you will fire automatically
-at targets on sight. To make your ranged weapon behave like that, inscribe the
-bow or ammunition:  @O  (the letter 'O').
+at targets on sight. See (4.1a) for details about auto-retaliation.
 However, auto-retaliating with a ranged weapon works only if the enemy stands
 on an adjacent field, so use 'fire-till-kill' mode in general!
 
@@ -4423,7 +4445,7 @@ If several multipliers match the highest one will be used.
 
 (5.4) Martial Arts, brands
 --------------------------
-The "auto-retaliator" (see 5.1) also works if you fight bare-handed.
+The "auto-retaliator" (see 4.1a) also works if you fight bare-handed.
 
 Training Martial Arts will give you..
 -a bonus to-hit and to-dam.
