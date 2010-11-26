@@ -374,7 +374,7 @@ static int get_mimic_spell(int *sn)
 	redraw = FALSE;
 
 	/* Build a prompt (accept all spells) */
-	strnfmt(out_val, 78, "(Powers %c-%c, *=List, ESC=exit) use which power? ",
+	strnfmt(out_val, 78, "(Powers %c-%c, *=List, @=Name, ESC=exit) use which power? ",
 		I2A(0), I2A(num - 1));
 
 	if (c_cfg.always_show_lists)
@@ -424,10 +424,51 @@ static int get_mimic_spell(int *sn)
 			/* Ask again */
 			continue;
 		}
+		else if (choice == '@')
+		{
+			char buf[80];
+			int c;
+			strcpy(buf, ""); 
+			if (!get_string("Power? ", buf, 79)) {
+				if (redraw) {
+					Term_load();
+					Flush_queue();
+				}
+				return FALSE;
+			}
 
-	       	/* extract request */
-		i = (islower(choice) ? A2I(choice) : -1);
-	      	if (i >= num) i = -1;
+			/* Find the power it is related to */
+			for (i = 0; i < num; i++) {
+				c = corresp[i];
+				if (c >= 64 + 3) {
+					if (!strcmp(buf, monster_spells6[c - 64 - 3].name)) {
+						flag = TRUE;
+						break;
+					}
+				} else if (c >= 32 + 3) {
+					if (!strcmp(buf, monster_spells5[c - 32 - 3].name)) {
+						flag = TRUE;
+						break;
+					}
+				} else if (c >= 3) { /* checkin for >=3 is paranoia */
+					if (!strcmp(buf, monster_spells4[c - 3].name)) {
+						flag = TRUE;
+						break;
+					}
+				}
+			}
+			if (flag) break;
+
+			/* illegal input */
+			bell();
+			continue;
+		}
+		else
+		{
+			/* extract request */
+			i = (islower(choice) ? A2I(choice) : -1);
+			if (i >= num) i = -1;
+		}
 
 		/* Totally Illegal */
 		if (i < 0)
