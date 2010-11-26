@@ -1938,8 +1938,30 @@ static void cmd_house_chmod(int dir){
 }
 
 static void cmd_house_kill(int dir){
-	Send_admin_house(dir,"K");
+	Send_admin_house(dir, "K");
 }
+
+static void cmd_house_store(int dir){
+	Send_admin_house(dir, "S");
+}
+
+static void cmd_house_paint(int dir){
+	char buf[80];
+	int item;
+
+	item_tester_hook = item_tester_quaffable;
+	get_item_hook_find_obj_what = "Potion name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
+	if (!c_get_item(&item, "Use which potion for colouring? ", (USE_INVEN | USE_EXTRA))) {
+		c_msg_print("You need a potion to extract the colour from!");
+		return;
+	}
+
+	buf[0] = 'P';
+	sprintf(&buf[1],"%hd", item);
+	Send_admin_house(dir, buf);
+}
+
 void cmd_purchase_house(void)
 {
 	char i=0;
@@ -1953,7 +1975,11 @@ void cmd_purchase_house(void)
 	Term_putstr(5, 4, -1, TERM_WHITE, "(1) Buy/Sell house");
 	Term_putstr(5, 5, -1, TERM_WHITE, "(2) Change house owner");
 	Term_putstr(5, 6, -1, TERM_WHITE, "(3) Change house permissions");
-	Term_putstr(5, 7, -1, TERM_WHITE, "(4) Delete house");
+	/* display in dark colour since only admins can do this really */
+	Term_putstr(5, 7, -1, TERM_SLATE, "(4) Delete house");
+	/* new in 4.4.6: */
+	Term_putstr(5, 8, -1, TERM_WHITE, "(5) Enter player store");
+	Term_putstr(5, 9, -1, TERM_WHITE, "(6) Paint house");
 
 	while(i!=ESCAPE){
 		i=inkey();
@@ -1976,6 +2002,14 @@ void cmd_purchase_house(void)
 				break;
 			case '4':
 				cmd_house_kill(dir);
+				i=ESCAPE;
+				break;
+			case '5':
+				cmd_house_store(dir);
+				i=ESCAPE;
+				break;
+			case '6':
+				cmd_house_paint(dir);
 				i=ESCAPE;
 				break;
 			case ESCAPE:

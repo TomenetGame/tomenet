@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 24. Nov 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 26. Nov 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -675,7 +675,8 @@ They all start with a slash '/':
                         prevent getting paged by him.)
                         If you're on Linux and not hearing the page sounds,
                         see problem 19 in the troubleshooting section (8.6).
-/paint      Use a potion in your inventory to paint your house entrance in a
+/paint      (Also available by pressing 'h' for house menu.)
+            Use a potion in your inventory to paint your house entrance in a
             similar colour. The potion is used up in the process. A potion of
             water removes the paint again.
             Painting your house can be useful for example to mark it for others
@@ -686,7 +687,8 @@ They all start with a slash '/':
 /play       Join/leave a mini-game (such as rugby on the field in Bree).
             Will at some point in the future be absorbed by /evsign and
             thereby become obsolete.
-/pstore     Attempts to enter a player store next to you, even if it's your own
+/pstore     (Also available by pressing 'h' for house menu.)
+            Attempts to enter a player store next to you, even if it's your own
             house. So this command is good for 'testing' your own store.
             Usually you simply enter another player's store by trying to enter
             his house, which will preset you with the store screen.
@@ -3989,8 +3991,8 @@ Note: The colour of house walls and doors are affected by day/night, so in the
 night the colours will not be accurate but darker, until you come close enough
 that the door is within your lamp's light radius.
 
-Special gimmick: You can use the /paint command to paint your house, see the
-"/paint" command in (0.2) for more information.
+Special gimmick: You can press 'h' or use the /paint command to paint your
+house, see the "/paint" command in (0.2) for more information.
 
 WARNING:
 Items on the floor within a house don't form piles! If you drop too many
@@ -4053,12 +4055,13 @@ So if you offer piles, make sure that you have at least one free space in your
 house, or you will lose the cheque!
 
 Usually, player stores may only pop up if a player doesn't have access to that
-house door. If you want to test your own player store though, you can just use
-the /pstore command when standing next to your house door (see (0.2)).
+house door. If you want to test your own player store though, you can just
+press 'h' key or use the /pstore command when standing next to your house door
+(see (0.2)).
 
-To indicate that your house is a player store, you can use the "/paint" command
-to paint your house entrance for other players to see! Please see (0.2) for
-more information about the /paint command.
+To indicate that your house is a player store, you can use 'h' key or the
+"/paint" command to paint your house entrance for other players to see!
+Please see (0.2) for more information about painting.
 
 
 
