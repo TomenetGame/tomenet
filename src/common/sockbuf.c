@@ -565,7 +565,7 @@ int Packet_printf(va_alist)
 	    case 's':	/* Small strings */
 		max_str_size = (fmt[i] == 'S') ? MSG_LEN : ((fmt[i] == 'I') ? ONAME_LEN : MAX_CHARS);
 		str = va_arg(ap, char *);
-#if 0
+#if 1
 		char *stop;
 		if (buf + max_str_size >= end) {
 		    stop = end;
@@ -801,7 +801,7 @@ int Packet_scanf(va_alist)
 	    case 's':	/* Small strings */
 		max_str_size = (fmt[i] == 'S') ? MSG_LEN : ((fmt[i] == 'I') ? ONAME_LEN : MAX_CHARS);
 		str = va_arg(ap, char *);
-#if 0
+#if 1
 		int k = 0;
 		for (;;) {
 		    if (&sbuf->buf[sbuf->len] < &sbuf->ptr[j + 1]) {
