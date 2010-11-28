@@ -1938,7 +1938,8 @@ static void cmd_house_chmod(int dir){
 }
 
 static void cmd_house_kill(int dir){
-	Send_admin_house(dir, "K");
+	if (get_check("Are you sure you really want to destroy the house?"))
+		Send_admin_house(dir, "K");
 }
 
 static void cmd_house_store(int dir){
