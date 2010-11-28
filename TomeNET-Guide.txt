@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 26. Nov 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 28. Nov 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -380,6 +380,13 @@ G       G       skills screen.
 B       f       bash/force something (ie a stuck door).
 l       x       look at a player/monster/object (use direction keys for
                 targetting).
+                (Note that the look command also sets the entity you are
+                currently looking at as your target, even if it wouldn't make
+                much sense because you are for example just looking at another
+                player who isn't even hostile towards you.
+                This means that you will aim at the entity you looked at in
+                case the '*t' command is unable to acquire a new valid 'real'
+                target when you use a ranged attack that requires a target.)
 j               attempt to steal from players (not recommended!).
 U       O       use undead powers (use this if you died and became a ghost).
                 Using these will drain your experience. If you ran out of
