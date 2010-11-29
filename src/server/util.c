@@ -1086,7 +1086,7 @@ void sound(int Ind, cptr name, cptr alternative, int type, bool nearby) {
 #else /* optimized way... */
 	int val = -1, val2 = -1, i, d;
 
-	for (i = 0; i < SOUND_MAX_2010; i++) {
+	if (name) for (i = 0; i < SOUND_MAX_2010; i++) {
 		if (!audio_sfx[i][0]) break;
 		if (!strcmp(audio_sfx[i], name)) {
 			val = i;
@@ -1094,13 +1094,11 @@ void sound(int Ind, cptr name, cptr alternative, int type, bool nearby) {
 		}
 	}
 
-	if (alternative) {
-		for (i = 0; i < SOUND_MAX_2010; i++) {
-			if (!audio_sfx[i][0]) break;
-			if (!strcmp(audio_sfx[i], alternative)) {
-				val2 = i;
-				break;
-			}
+	if (alternative) for (i = 0; i < SOUND_MAX_2010; i++) {
+		if (!audio_sfx[i][0]) break;
+		if (!strcmp(audio_sfx[i], alternative)) {
+			val2 = i;
+			break;
 		}
 	}
 
@@ -1118,7 +1116,7 @@ void sound(int Ind, cptr name, cptr alternative, int type, bool nearby) {
 		}
 	}
 
-	/* todo: also send sounds to nearby players, depending on sound or sound type */
+	/* also send sounds to nearby players, depending on sound or sound type */
 	if (nearby) {
 		for (i = 1; i <= NumPlayers; i++) {
 			if (Players[i]->conn == NOT_CONNECTED) continue;
@@ -1126,16 +1124,188 @@ void sound(int Ind, cptr name, cptr alternative, int type, bool nearby) {
 			if (Ind == i) continue;
 
 			d = distance(Players[Ind]->py, Players[Ind]->px, Players[i]->py, Players[i]->px);
-			if (d > 5) continue;
+#if 0
+			if (d > 10) continue;
 			if (d == 0) d = 1; //paranoia oO
 
 			Send_sound(i, val, val2, type, 100 / d, Players[Ind]->id);
 //			Send_sound(i, val, val2, type, (6 - d) * 20, Players[Ind]->id);  hm or this?
+#else
+			if (d > MAX_SIGHT) continue;
+			d += 3;
+			d /= 2;
+
+			Send_sound(i, val, val2, type, 100 / d, Players[Ind]->id);
+#endif
 		}
 	}
 
 	Send_sound(Ind, val, val2, type, 100, Players[Ind]->id);
 }
+/* send sound to player and everyone nearby at full volume, similar to
+   msg_..._near(), except it also sends to the player himself.
+   This is used for highly important and *loud* sounds such as 'shriek' - C. Blue */
+void sound_near(int Ind, cptr name, cptr alternative, int type) {
+	int i, d;
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (!inarea(&Players[i]->wpos, &Players[Ind]->wpos)) continue;
+
+		/* Can he see this player? */
+//		if (!(Players[i]->cave_flag[Players[Ind]->py][Players[Ind]->px] & CAVE_VIEW)) continue;
+
+		/* within audible range? */
+		d = distance(Players[Ind]->py, Players[Ind]->px, Players[i]->py, Players[i]->px);
+		if (d > MAX_SIGHT) continue;
+
+		sound(i, name, alternative, type, FALSE);
+	}
+}
+/* send sound to all players nearby a certain location, and allow to specify
+   a player to exclude, same as msg_print_near_site() for messages. - C. Blue */
+void sound_near_site(int y, int x, worldpos *wpos, int Ind, cptr name, cptr alternative, int type) {
+	int i, d;
+	player_type *p_ptr;
+	int val = -1, val2 = -1;
+
+	if (name) for (i = 0; i < SOUND_MAX_2010; i++) {
+		if (!audio_sfx[i][0]) break;
+		if (!strcmp(audio_sfx[i], name)) {
+			val = i;
+			break;
+		}
+	}
+
+	if (alternative) for (i = 0; i < SOUND_MAX_2010; i++) {
+		if (!audio_sfx[i][0]) break;
+		if (!strcmp(audio_sfx[i], alternative)) {
+			val2 = i;
+			break;
+		}
+	}
+
+	if (val == -1) {
+		if (val2 != -1) {
+			/* Use the alternative instead */
+			val = val2;
+			val2 = -1;
+		} else {
+			return;
+		}
+	}
+
+	/* Check each player */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Check this player */
+		p_ptr = Players[i];
+
+		/* Make sure this player is in the game */
+		if (p_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Skip specified player, if any */
+		if (i == Ind) continue;
+
+		/* Make sure this player is at this depth */
+		if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+		/* Can (s)he see the site? */
+//		if (!(p_ptr->cave_flag[y][x] & CAVE_VIEW)) continue;
+
+		/* within audible range? */
+		d = distance(y, x, Players[i]->py, Players[i]->px);
+		/* NOTE: should be consistent with msg_print_near_site() */
+		if (d > MAX_SIGHT) continue;
+
+#if 0
+		/* limit for volume calc */
+		if (d > 20) d = 20;
+		d += 3;
+		d /= 3;
+		Send_sound(i, val, val2, type, 100 / d, 0);
+#else
+		/* limit for volume calc */
+		Send_sound(i, val, val2, type, 100 - (d * 50) / 11, 0);
+#endif
+	}
+}
+/* like msg_print_near_monster() just for sounds,
+   basically same as sound_near_site() - C. Blue */
+void sound_near_monster(int m_idx, cptr name, cptr alternative, int type) {
+	int i, d;
+	player_type *p_ptr;
+	cave_type **zcave;
+
+	monster_type *m_ptr = &m_list[m_idx];
+	worldpos *wpos = &m_ptr->wpos;
+	int val = -1, val2 = -1;
+
+	if (!(zcave = getcave(wpos))) return;
+
+	if (name) for (i = 0; i < SOUND_MAX_2010; i++) {
+		if (!audio_sfx[i][0]) break;
+		if (!strcmp(audio_sfx[i], name)) {
+			val = i;
+			break;
+		}
+	}
+
+	if (alternative) for (i = 0; i < SOUND_MAX_2010; i++) {
+		if (!audio_sfx[i][0]) break;
+		if (!strcmp(audio_sfx[i], alternative)) {
+			val2 = i;
+			break;
+		}
+	}
+
+	if (val == -1) {
+		if (val2 != -1) {
+			/* Use the alternative instead */
+			val = val2;
+			val2 = -1;
+		} else {
+			return;
+		}
+	}
+
+	/* Check each player */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Check this player */
+		p_ptr = Players[i];
+
+		/* Make sure this player is in the game */
+		if (p_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Make sure this player is at this depth */
+		if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+		/* Skip if not visible */
+//		if (!p_ptr->mon_vis[m_idx]) continue;
+
+		/* Can he see this player? */
+//		if (!p_ptr->cave_flag[y][x] & CAVE_VIEW) continue;
+
+		/* Can (s)he see the site? */
+//		if (!(p_ptr->cave_flag[y][x] & CAVE_VIEW)) continue;
+
+		/* within audible range? */
+		d = distance(m_ptr->fy, m_ptr->fx, Players[i]->py, Players[i]->px);
+
+		/* NOTE: should be consistent with msg_print_near_site() */
+		if (d > MAX_SIGHT) continue;
+
+#if 0
+		/* limit for volume calc */
+		if (d > 20) d = 20;
+		d += 3;
+		d /= 3;
+		Send_sound(i, val, val2, type, 100 / d, 0);
+#else
+		/* limit for volume calc */
+		Send_sound(i, val, val2, type, 100 - (d * 50) / 11, 0);
+#endif
+	}
+}
+
 /* find correct music for the player based on his current location - C. Blue */
 void handle_music(int Ind) {
 	player_type *p_ptr = Players[Ind];
@@ -1155,69 +1325,142 @@ void handle_music(int Ind) {
 		//Zu-Aon
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, 43);
+		Send_music(Ind, 45);
 		return;
 	} else if ((i != -1) && (l_ptr->flags1 & LF1_NO_GHOST)) {
 		//Morgoth
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, 42);
+		Send_music(Ind, 44);
 		return;
 	}
 
 	if (getlevel(&p_ptr->wpos) == 200) {
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, 6); //Valinor
+		Send_music(Ind, 8); //Valinor
 		return;
 	} else if (p_ptr->wpos.wx == WPOS_PVPARENA_X &&
 	    p_ptr->wpos.wy == WPOS_PVPARENA_Y && p_ptr->wpos.wz == WPOS_PVPARENA_Z) {
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, 45); //PvP Arena
+		Send_music(Ind, 47); //PvP Arena
 		return;
 	} else if (ge_special_sector && p_ptr->wpos.wx == WPOS_ARENA_X &&
 	    p_ptr->wpos.wy == WPOS_ARENA_Y && p_ptr->wpos.wz == WPOS_ARENA_Z) {
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, 46); //Monster Arena Challenge
+		Send_music(Ind, 48); //Monster Arena Challenge
 		return;
 	} else if (sector00separation && p_ptr->wpos.wx == WPOS_HIGHLANDER_X &&
 	    p_ptr->wpos.wy == WPOS_HIGHLANDER_Y && p_ptr->wpos.wz == WPOS_HIGHLANDER_Z) {
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, 45); //Highlander Tournament (death match phase)
+		Send_music(Ind, 47); //Highlander Tournament (death match phase)
 		return;
 	}
 
 	/* rest of the music has lower priority than already running, boss-specific music */
 	if (p_ptr->music_monster != -1) return;
 
+	/* on world surface */
 	if (p_ptr->wpos.wz == 0) {
+#if 0 /* play town music just within towns, not within town area? */
 		if (istown(&p_ptr->wpos)) {
 		    for (i = 0; i < numtowns; i++)
 			if (town[i].x == p_ptr->wpos.wx && town[i].y == p_ptr->wpos.wy) {
 				switch (town[i].type) {
 				default:
-				case 0: Send_music(Ind, 0); return;//default town
-				case 1: Send_music(Ind, 1); return;//Bree
-				case 2: Send_music(Ind, 2); return;
-				case 3: Send_music(Ind, 3); return;
-				case 4: Send_music(Ind, 4); return;
-				case 5: Send_music(Ind, 5); return;
+				case 0: Send_music(Ind, 1); return;//default town
+				case 1: Send_music(Ind, 3); return;//Bree
+				case 2: Send_music(Ind, 4); return;
+				case 3: Send_music(Ind, 5); return;
+				case 4: Send_music(Ind, 6); return;
+				case 5: Send_music(Ind, 7); return;
 				}
 			}
+#elseif 0 /* play town music also in its surrounding area of houses? */
+		if (istownarea(&p_ptr->wpos, 2)) {
+		    worldpos tpos = {0, 0, 0};
+		    int x, y;
+		    for (x = p_ptr->wpos.wx - 2; x <= p_ptr->wpos.wx + 2; x++) {
+			for (y = p_ptr->wpos.wy - 2; y <= p_ptr->wpos.wy + 2; y++) {
+			    if (x < 0 || x > 63 || y < 0 || y > 63) continue;
+			    tpos.wx = x; tpos.wy = y;
+			    if (istown(&tpos)) break;
+			}
+			if (istown(&tpos)) break;
+		    }
+		    for (i = 0; i < numtowns; i++)
+			if (town[i].x == tpos.wx && town[i].y == tpos.wy) {
+				switch (town[i].type) {
+				default:
+				case 0: Send_music(Ind, 1); return;//default town
+				case 1: Send_music(Ind, 3); return;//Bree
+				case 2: Send_music(Ind, 4); return;
+				case 3: Send_music(Ind, 5); return;
+				case 4: Send_music(Ind, 6); return;
+				case 5: Send_music(Ind, 7); return;
+				}
+			}
+#else /* play town music also in its surrounding area of houses, if we're coming from the town? */
+		if (istownarea(&p_ptr->wpos, 2) && p_ptr->music_current != -1) {
+			worldpos tpos = {0, 0, 0};
+			int x, y, tmus = 0;
+
+			for (x = p_ptr->wpos.wx - 2; x <= p_ptr->wpos.wx + 2; x++) {
+				for (y = p_ptr->wpos.wy - 2; y <= p_ptr->wpos.wy + 2; y++) {
+					if (x < 0 || x > 63 || y < 0 || y > 63) continue;
+					tpos.wx = x; tpos.wy = y;
+					if (istown(&tpos)) break;
+				}
+				if (istown(&tpos)) break;
+			}
+
+			for (i = 0; i < numtowns; i++)
+				if (town[i].x == tpos.wx && town[i].y == tpos.wy) {
+					switch (town[i].type) {
+					default:
+					case 0: tmus = 1; break; //default town
+					case 1: tmus = 3; break; //Bree
+					case 2: tmus = 4; break;
+					case 3: tmus = 5; break;
+					case 4: tmus = 6; break;
+					case 5: tmus = 7; break;
+					}
+				}
+
+			/* now the specialty: If we're coming from elsewhere,
+			   we only switch to town music when we enter the town.
+			   If we're coming from the town, however, we keep the
+			   music while being in its surrounding area of houses. */
+			if (istown(&p_ptr->wpos) || p_ptr->music_current == tmus)
+				Send_music(Ind, tmus);
+
+			return;
+#endif
 		} else {
-			if (night_surface) Send_music(Ind, 8);
-			else Send_music(Ind, 7);
+			if (night_surface) Send_music(Ind, 10);
+			else Send_music(Ind, 9);
 			return;
 		}
+	/* in the dungeon */
 	} else {
-		if ((i != 6) && /*not in Nether Realm, really ^^*/
-		    (!(d_info[i].flags2 & DF2_NO_DEATH))) { /* nor in easy dungeons */
+		/* Dungeon towns have their own music to bolster the player's motivation ;) */
+		if (isdungeontown(&p_ptr->wpos)) {
+			Send_music(Ind, 2);
+			return;
+		}
+
+		/* Floor-specific music (monster/boss-independant)? */
+		if ((i != 6) /*not in Nether Realm, really ^^*/
+		    && (!(d_info[i].flags2 & DF2_NO_DEATH)) /* nor in easy dungeons */
+		    && !(p_ptr->wpos.wx == WPOS_PVPARENA_X /* and not in pvp-arena */
+		    && p_ptr->wpos.wy == WPOS_PVPARENA_Y && p_ptr->wpos.wz == WPOS_PVPARENA_Z))
+		{
 			if (p_ptr->distinct_floor_feeling || is_admin(p_ptr)) {
 				if (l_ptr->flags2 & LF2_OOD_HI) {
-					Send_music(Ind, 44);
+					Send_music(Ind, 46);
 					return;
 				}
 			}
@@ -1227,105 +1470,53 @@ void handle_music(int Ind) {
 		switch (i) {
 		default:
 		case 0:
-			if (d_info[i].flags2 & DF2_NO_DEATH) Send_music(Ind, 10);
-			else if (d_info[i].flags2 & DF2_IRON) Send_music(Ind, 11);
-			else if ((d_info[i].flags2 & DF2_HELL) || (d_info[i].flags1 & DF1_FORCE_DOWN)) Send_music(Ind, 12);
-			else Send_music(Ind, 9);
+			if (d_info[i].flags2 & DF2_NO_DEATH) Send_music(Ind, 12);
+			else if (d_info[i].flags2 & DF2_IRON) Send_music(Ind, 13);
+			else if ((d_info[i].flags2 & DF2_HELL) || (d_info[i].flags1 & DF1_FORCE_DOWN)) Send_music(Ind, 14);
+			else Send_music(Ind, 11);
 			return;
-		case 1: Send_music(Ind, 30); return; //Mirkwood
-		case 2: Send_music(Ind, 15); return; //Mordor
-		case 3: Send_music(Ind, 17); return; //Angband
-		case 4: Send_music(Ind, 14); return; //Barrow-Downs
-		case 5: Send_music(Ind, 19); return; //Mount Doom
-		case 6: Send_music(Ind, 20); return; //Nether Realm
-		case 7: Send_music(Ind, 33); return; //Submerged Ruins
-		case 8: Send_music(Ind, 24); return; //Halls of Mandos
-		case 9: Send_music(Ind, 28); return; //Cirith Ungol
-		case 10: Send_music(Ind, 26); return; //The Heart of the Earth
-		case 16: Send_music(Ind, 16); return; //The Paths of the Dead
-		case 17: Send_music(Ind, 35); return; //The Illusory Castle
-		case 18: Send_music(Ind, 37); return; //The Maze
-		case 19: Send_music(Ind, 18); return; //The Orc Cave
-		case 20: Send_music(Ind, 34); return; //Erebor
-		case 21: Send_music(Ind, 25); return; //The Old Forest
-		case 22: Send_music(Ind, 27); return; //The Mines of Moria
-		case 23: Send_music(Ind, 32); return; //Dol Guldur
-		case 24: Send_music(Ind, 29); return; //The Small Water Cave
-		case 25: Send_music(Ind, 36); return; //The Sacred Land of Mountains
-		case 26: Send_music(Ind, 22); return; //The Land of Rhun
-		case 27: Send_music(Ind, 23); return; //The Sandworm Lair
-		case 28: Send_music(Ind, 31); return; //Death Fate
-		case 29: Send_music(Ind, 21); return; //The Helcaraxe
-		case 30: Send_music(Ind, 13); return; //The Training Tower
+		case 1: Send_music(Ind, 32); return; //Mirkwood
+		case 2: Send_music(Ind, 17); return; //Mordor
+		case 3: Send_music(Ind, 19); return; //Angband
+		case 4: Send_music(Ind, 16); return; //Barrow-Downs
+		case 5: Send_music(Ind, 21); return; //Mount Doom
+		case 6: Send_music(Ind, 22); return; //Nether Realm
+		case 7: Send_music(Ind, 35); return; //Submerged Ruins
+		case 8: Send_music(Ind, 26); return; //Halls of Mandos
+		case 9: Send_music(Ind, 30); return; //Cirith Ungol
+		case 10: Send_music(Ind, 28); return; //The Heart of the Earth
+		case 16: Send_music(Ind, 18); return; //The Paths of the Dead
+		case 17: Send_music(Ind, 37); return; //The Illusory Castle
+		case 18: Send_music(Ind, 39); return; //The Maze
+		case 19: Send_music(Ind, 20); return; //The Orc Cave
+		case 20: Send_music(Ind, 36); return; //Erebor
+		case 21: Send_music(Ind, 27); return; //The Old Forest
+		case 22: Send_music(Ind, 29); return; //The Mines of Moria
+		case 23: Send_music(Ind, 34); return; //Dol Guldur
+		case 24: Send_music(Ind, 31); return; //The Small Water Cave
+		case 25: Send_music(Ind, 38); return; //The Sacred Land of Mountains
+		case 26: Send_music(Ind, 24); return; //The Land of Rhun
+		case 27: Send_music(Ind, 25); return; //The Sandworm Lair
+		case 28: Send_music(Ind, 33); return; //Death Fate
+		case 29: Send_music(Ind, 23); return; //The Helcaraxe
+		case 30: Send_music(Ind, 15); return; //The Training Tower
 		}
 	}
+
+	/* Shouldn't happen - send default (dungeon) music */
+	Send_music(Ind, 0);
 }
 
 /* generate an item-type specific sound, depending on the action applied to it
    action: 0 = pickup, 1 = drop, 2 = wear/wield, 3 = takeoff, 4 = throw, 5 = destroy */
-//#define SN(S)	format("%s%s", action, S)
 void sound_item(int Ind, int tval, int sval, cptr action) {
 	char sound_name[30];
-	cptr item = "";
+	cptr item = NULL;
 
 	/* action hack: re-use sounds! */
 	action = "item_";
 
 	/* choose sound */
-#if 0 /* SN(S)-using variant: */
-	if (is_weapon(tval)) {
-		switch(tval) {
-		case TV_SWORD: sound(Ind, SN("sword"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		case TV_BLUNT:
-			if (sval == SV_WHIP) sound(Ind, SN("whip"), NULL, SFX_TYPE_COMMAND, FALSE);
-			else sound(Ind, SN("blunt"), NULL, SFX_TYPE_COMMAND, FALSE);
-			break;
-		break;
-		case TV_AXE: sound(Ind, SN("axe"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		case TV_POLEARM: sound(Ind, SN("polearm"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		}
-	} else if (is_armour(tval)) {
-		if (is_textile_armour(tval, sval))
-			sound(Ind, SN("armor_light"), NULL, SFX_TYPE_COMMAND, FALSE);
-		else
-			sound(Ind, SN("armor_heavy"), NULL, SFX_TYPE_COMMAND, FALSE);
-	} else switch(tval) {
-		/* equippable stuff */
-		case TV_LITE: sound(Ind, SN("lightsource"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		case TV_RING: sound(Ind, SN("ring"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		case TV_AMULET: sound(Ind, SN("amulet"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		case TV_TOOL: sound(Ind, SN("tool"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		case TV_DIGGING: sound(Ind, SN("tool_digger"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-//		case TV_MSTAFF: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-//		case TV_BOOMERANG: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-//		case TV_BOW: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-//		case TV_SHOT: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-//		case TV_ARROW: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-//		case TV_BOLT: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		/* other items */
-		case TV_SCROLL: case TV_PARCHMENT:
-			sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-/*		case TV_BOTTLE: sound(Ind, SN("potion"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		case TV_POTION: case TV_POTION2: case TV_FLASK:
-			sound(Ind, SN("potion"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		case TV_RUNE1: case TV_RUNE2:
-			sound(Ind, SN("rune"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		case TV_SKELETON: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		case TV_FIRESTONE: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		case TV_SPIKE: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		case TV_CHEST: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		case TV_JUNK: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		case TV_TRAPKIT: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		case TV_STAFF: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		case TV_WAND: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		case TV_ROD: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		case TV_ROD_MAIN: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		case TV_FOOD: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		case TV_KEY: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		case TV_GOLEM: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-		case TV_SEAL: sound(Ind, SN("scroll"), NULL, SFX_TYPE_COMMAND, FALSE); break;
-*/	}
-#else /* non SN(S)-using variant */
 	if (is_weapon(tval)) switch(tval) {
 		case TV_SWORD: item = "sword"; break;
 		case TV_BLUNT:
@@ -1345,12 +1536,12 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 		case TV_AMULET: item = "amulet"; break;
 		case TV_TOOL: item = "tool"; break;
 		case TV_DIGGING: item = "tool_digger"; break;
-//		case TV_MSTAFF: item = "scroll"; break;
-//		case TV_BOOMERANG: item = "scroll"; break;
-//		case TV_BOW: item = "scroll"; break;
-//		case TV_SHOT: item = "scroll"; break;
-//		case TV_ARROW: item = "scroll"; break;
-//		case TV_BOLT: item = "scroll"; break;
+//		case TV_MSTAFF: item = ""; break;
+//		case TV_BOOMERANG: item = ""; break;
+//		case TV_BOW: item = ""; break;
+//		case TV_SHOT: item = ""; break;
+//		case TV_ARROW: item = ""; break;
+//		case TV_BOLT: item = ""; break;
 		/* other items */
 		case TV_SCROLL: case TV_PARCHMENT:
 			item = "scroll"; break;
@@ -1359,28 +1550,30 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 			item = "potion"; break;
 		case TV_RUNE1: case TV_RUNE2:
 			item = "rune"; break;
-		case TV_SKELETON: item = "scroll"; break;
-		case TV_FIRESTONE: item = "scroll"; break;
-		case TV_SPIKE: item = "scroll"; break;
-		case TV_CHEST: item = "scroll"; break;
-		case TV_JUNK: item = "scroll"; break;
-		case TV_TRAPKIT: item = "scroll"; break;
-		case TV_STAFF: item = "scroll"; break;
-		case TV_WAND: item = "scroll"; break;
-		case TV_ROD: item = "scroll"; break;
-		case TV_ROD_MAIN: item = "scroll"; break;
-		case TV_FOOD: item = "scroll"; break;
-		case TV_KEY: item = "scroll"; break;
-		case TV_GOLEM: item = "scroll"; break;
-		case TV_SEAL: item = "scroll"; break;
+		case TV_SKELETON: item = ""; break;
+		case TV_FIRESTONE: item = ""; break;
+		case TV_SPIKE: item = ""; break;
+		case TV_CHEST: item = ""; break;
+		case TV_JUNK: item = ""; break;
+		case TV_TRAPKIT: item = ""; break;
+		case TV_STAFF: item = ""; break;
+		case TV_WAND: item = ""; break;
+		case TV_ROD: item = ""; break;
+		case TV_ROD_MAIN: item = ""; break;
+		case TV_FOOD: item = ""; break;
+		case TV_KEY: item = ""; break;
+		case TV_GOLEM: item = ""; break;
+		case TV_SPECIAL: item = ""; break;
 */	}
+
+	/* no sound effect available? */
+	if (item == NULL) return;
 
 	/* build sound name from action and item */
 	strcpy(sound_name, action);
 	strcat(sound_name, item);
 	/* off we go */
 	sound(Ind, sound_name, NULL, SFX_TYPE_COMMAND, FALSE);
-#endif
 }
 #endif
 
@@ -1592,7 +1785,7 @@ void msg_print(int Ind, cptr msg)
 			msg_minibuf[1] = colour_code;
 			msg_minibuf[2] = '\0';
 			strcat(msg_buf, msg_minibuf);
-			colour_code = 0;
+///			colour_code = 0;
 		}
 
 		/* Process the string... */
@@ -1637,6 +1830,9 @@ void msg_print(int Ind, cptr msg)
 							if (bracket) {
 								/* Pad lines according to how long the name is - mikaelh */
 								tab_spacer = bracket - &msg[msg_scan] + 2;
+
+								/* Hack: multiline /me emotes */
+								if (tab_spacer > 70) tab_spacer = 1;
 
 								/* Paranoia */
 								if (tab_spacer < 1) tab_spacer = 1;
@@ -2049,37 +2245,45 @@ void msg_format_verynear(int Ind, cptr fmt, ...)
 	msg_print_verynear(Ind, buf);
 }
 
-/* location-based */
-void msg_print_near_site(int y, int x, worldpos *wpos, cptr msg)
+/* location-based - also, skip player Ind if non-zero */
+void msg_print_near_site(int y, int x, worldpos *wpos, int Ind, bool view, cptr msg)
 {
-	int i;
+	int i, d;
 	player_type *p_ptr;
 
 	/* Check each player */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		/* Check this player */
 		p_ptr = Players[i];
 
 		/* Make sure this player is in the game */
 		if (p_ptr->conn == NOT_CONNECTED) continue;
 
+		/* Skip specified player, if any */
+		if (i == Ind) continue;
+
 		/* Make sure this player is at this depth */
 		if (!inarea(&p_ptr->wpos, wpos)) continue;
 
 		/* Can (s)he see the site? */
-		if (p_ptr->cave_flag[y][x] & CAVE_VIEW)
-		{
-			/* Send the message */
-			msg_print(i, msg);
+		if (view) {
+			if (!(p_ptr->cave_flag[y][x] & CAVE_VIEW)) continue;
+		} else { /* can (s)he hear it? */
+			/* within audible range? */
+			d = distance(y, x, Players[i]->py, Players[i]->px);
+			/* NOTE: should be consistent with sound_near_site() */
+			if (d > MAX_SIGHT) continue;
 		}
+
+		/* Send the message */
+		msg_print(i, msg);
 	}
 }
 
 /*
  * Same as above, except send a formatted message.
  */
-void msg_format_near_site(int y, int x, worldpos *wpos, cptr fmt, ...)
+void msg_format_near_site(int y, int x, worldpos *wpos, int Ind, bool view, cptr fmt, ...)
 {
 	va_list vp;
 
@@ -2095,7 +2299,7 @@ void msg_format_near_site(int y, int x, worldpos *wpos, cptr fmt, ...)
 	va_end(vp);
 
 	/* Display */
-	msg_print_near_site(y, x, wpos, buf);
+	msg_print_near_site(y, x, wpos, Ind, view, buf);
 }
 
 /*
@@ -2145,6 +2349,75 @@ void msg_print_near_monster(int m_idx, cptr msg)
 		msg_format(i, "%^s %s", m_name, msg);
 	}
 }
+
+/* send a message to all online party members */
+void msg_party_format(int Ind, cptr fmt, ...) {
+	int i;
+	char buf[1024];
+	va_list vp;
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, fmt);
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, fmt, vp);
+	/* End the Varargs Stuff */
+	va_end(vp);
+
+	/* Tell every player */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Skip disconnected players */
+		if (Players[i]->conn == NOT_CONNECTED) 
+			continue;
+
+#if 0
+		/* Skip the specified player */
+		if (i == Ind)
+			continue;
+#endif
+
+		/* skip players not in his party */
+		if (Players[i]->party != Players[Ind]->party)
+			continue;
+
+		/* Tell this one */
+		msg_print(i, buf);
+	 }
+}
+
+/* send a message to all online guild members */
+void msg_guild_format(int Ind, cptr fmt, ...) {
+	int i;
+	char buf[1024];
+	va_list vp;
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, fmt);
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, fmt, vp);
+	/* End the Varargs Stuff */
+	va_end(vp);
+
+	/* Tell every player */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Skip disconnected players */
+		if (Players[i]->conn == NOT_CONNECTED) 
+			continue;
+
+#if 0
+		/* Skip the specified player */
+		if (i == Ind)
+			continue;
+#endif
+
+		/* skip players not in his guild */
+		if (Players[i]->guild != Players[Ind]->guild)
+			continue;
+
+		/* Tell this one */
+		msg_print(i, buf);
+	 }
+}
+
 
 static char* dodge_diz(int chance) {
 	if (chance < 5)
@@ -2276,7 +2549,7 @@ void check_parryblock(int Ind)
 		msg_format(Ind, "You have exactly %d%%/%d%% real chance of parrying/blocking.", 
 			apply_parry_chance(p_ptr, p_ptr->weapon_parry), apply_block_chance(p_ptr, p_ptr->shield_deflect));
 	} else {
-		if (!p_ptr->weapon_parry)
+		if (!apply_parry_chance(p_ptr, p_ptr->weapon_parry))
 			msg_print(Ind, "You cannot parry at the moment.");
 		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 5)
 			msg_print(Ind, "You have almost no chance of parrying.");
@@ -2397,9 +2670,9 @@ static void player_talk_aux(int Ind, char *message)
 	player_type *p_ptr = Players[Ind], *q_ptr;
  	char *colon;
 	bool me = FALSE;
-	char c = 'B';
+	char c_n = 'B', c_b = 'B'; /* colours of sender name and of brackets (unused atm) around this name */
 	int mycolor = 0;
-	bool admin=0;
+	bool admin = FALSE;
 	bool broadcast = FALSE;
 
 #ifdef TOMENET_WORLDS
@@ -2407,14 +2680,11 @@ static void player_talk_aux(int Ind, char *message)
 #endif
 
 	/* Get sender's name */
-	if (Ind)
-	{
+	if (Ind) {
 		/* Get player name */
 		strcpy(sender, p_ptr->name);
 		admin = is_admin(p_ptr);
-	}
-	else
-	{
+	} else {
 		/* Default name */
 		strcpy(sender, "Server Admin");
 	}
@@ -2464,8 +2734,10 @@ static void player_talk_aux(int Ind, char *message)
 				if (!strchr("123456789", *(colon + 2))) colon = NULL;
 			break;
 		case '/':
-		/* only accept / at the end of a chat message */
+			/* only accept / at the end of a chat message */
 			if ('\0' == *(colon + 2)) colon = NULL;
+			/* or it might be a http:// style link */
+			else if ('/' == *(colon + 2)) colon = NULL;
 			break;
 		case ':':
 			/* remove the 1st colon found, .. */
@@ -2528,8 +2800,7 @@ static void player_talk_aux(int Ind, char *message)
 		s_printf("[%s] %s\n", sender, message);
 	}
 	/* Special - shutdown command (for compatibility) */
-	if (prefix(message, "@!shutdown") && admin)
-	{
+	if (prefix(message, "@!shutdown") && admin) {
 		/*world_reboot();*/
 		shutdown_server();
 		return;
@@ -2648,9 +2919,8 @@ static void player_talk_aux(int Ind, char *message)
 	}
 
 	/* Form a search string if we found a colon */
-	if (colon)
-	{
-		if (p_ptr->mutedchat == 2) { return;	}
+	if (colon) {
+		if (p_ptr->mutedchat == 2) return;
 #if 1 /* No private chat for invalid accounts ? */
 		if(p_ptr->inval){
 			msg_print(Ind, "Your account is not valid! Ask an admin to validate it.");
@@ -2736,16 +3006,10 @@ static void player_talk_aux(int Ind, char *message)
 			}
 
 			exec_lua(0, "chat_handler()");
-
-			/* Done */
 			return;
-		}
-		else
-		{
+		} else {
 			/* Tell the sender */
 			msg_print(Ind, "(That player has ignored you)");
-
-			/* Done */
 			return;
 		}
 	}
@@ -2772,24 +3036,26 @@ static void player_talk_aux(int Ind, char *message)
 	if (strlen(message) > 1) mycolor = (prefix(message, "}") && (color_char_to_attr(*(message + 1)) != -1))?2:0;
 	
 
-	if (!Ind) c = 'y';
+	if (!Ind) c_n = 'y';
 	/* Disabled this for now to avoid confusion. */
-	else if (mycolor) c = *(message + 1);
-	else
-	{
+	else if (mycolor) c_n = *(message + 1);
+	else {
 		/* Dungeon Master / Dungeon Wizard have their own colour now :) */
-		if (is_admin(p_ptr)) c = 'b';
-		else if (p_ptr->total_winner) c = 'v';
-		else if (p_ptr->ghost) c = 'r';
-		else if (p_ptr->mode & MODE_EVERLASTING) c = 'B';
-		else if (p_ptr->mode & MODE_PVP) c = COLOUR_MODE_PVP;
-		else if (p_ptr->mode & MODE_NO_GHOST) c = 'D';
-		else if (p_ptr->mode & MODE_HARD) c = 's';
-		else c = 'W';
+		if (is_admin(p_ptr)) c_n = 'b';
+		else if (p_ptr->total_winner) c_n = 'v';
+		else if (p_ptr->ghost) c_n = 'r';
+		else if (p_ptr->mode & MODE_EVERLASTING) c_n = 'B';
+		else if (p_ptr->mode & MODE_PVP) c_n = COLOUR_MODE_PVP;
+		else if (p_ptr->mode & MODE_NO_GHOST) c_n = 'D';
+		else if (p_ptr->mode & MODE_HARD) c_n = 's';
+		else c_n = 'W'; /* normal mode */
+		if ((p_ptr->mode & MODE_HARD) && (p_ptr->mode & MODE_NO_GHOST))
+			c_b = 'r'; /* hellish mode */
+		else c_b = c_n;
 	}
 
 	/* Admins have exclusive colour - the_sandman */
-	if (c == 'b' && !is_admin(p_ptr)) return;
+	if (c_n == 'b' && !is_admin(p_ptr)) return;
 
 	switch((i = censor(message))){
 		case 0:
@@ -2800,16 +3066,16 @@ static void player_talk_aux(int Ind, char *message)
 	}
 
 #ifdef TOMENET_WORLDS
-	if(broadcast)
-		snprintf(tmessage, sizeof(tmessage), "\375\377r[\377%c%s\377r] \377B%s", c, sender, message + 11);
+	if (broadcast)
+		snprintf(tmessage, sizeof(tmessage), "\375\377r[\377%c%s\377r] \377B%s", c_n, sender, message + 11);
 	else if (!me)
-		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s] \377B%s", c, sender, message + mycolor);
-	else{
+		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s] \377B%s", c_n, sender, message + mycolor);
+	else {
 		/* Why not... */
 		if (strlen(message) > 4) mycolor = (prefix(&message[4], "}") && (color_char_to_attr(*(message + 5)) != -1)) ? 2 : 0;
 		else return;
-		if(mycolor) c = message[5];
-		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s %s]", c, sender, message + 4 + mycolor);
+		if (mycolor) c_n = message[5];
+		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s %s]", c_n, sender, message + 4 + mycolor);
 	}
  #if 0
 	if (((broadcast && cfg.worldd_broadcast) || (!broadcast && cfg.worldd_pubchat))
@@ -2822,8 +3088,7 @@ static void player_talk_aux(int Ind, char *message)
 	for(i = 1; i <= NumPlayers; i++){
 		q_ptr = Players[i];
 
-		if (!admin)
-		{
+		if (!admin) {
 			if (check_ignore(i, Ind)) continue;
 			if (q_ptr->ignoring_chat) continue;
 			if (!broadcast && (p_ptr->limit_chat || q_ptr->limit_chat) &&
@@ -2833,12 +3098,10 @@ static void player_talk_aux(int Ind, char *message)
 	}
 #else
 	/* Send to everyone */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		q_ptr = Players[i];
 
-		if (!admin)
-		{
+		if (!admin) {
 			if (check_ignore(i, Ind)) continue;
 			if (q_ptr->ignoring_chat) continue;
 			if (!broadcast && (p_ptr->limit_chat || q_ptr->limit_chat) &&
@@ -2847,16 +3110,15 @@ static void player_talk_aux(int Ind, char *message)
 
 		/* Send message */
 		if (broadcast)
-			msg_format(i, "\375\377r[\377%c%s\377r] \377B%s", c, sender, message + 11);
-		else if (!me)
-		{
-			msg_format(i, "\375\377%c[%s] \377B%s", c, sender, message + mycolor);
+			msg_format(i, "\375\377r[\377%c%s\377r] \377B%s", c_n, sender, message + 11);
+		else if (!me) {
+			msg_format(i, "\375\377%c[%s] \377B%s", c_n, sender, message + mycolor);
 			/* msg_format(i, "\375\377%c[%s] %s", Ind ? 'B' : 'y', sender, message); */
 		}
 		else msg_format(i, "%s %s", sender, message + 4);
 	}
 #endif
-	p_ptr->warning_chat = 0;
+	p_ptr->warning_chat = 1;
 
 	exec_lua(0, "chat_handler()");
 
@@ -2880,18 +3142,19 @@ void toggle_afk(int Ind, char *msg)
 	int i;
 
 	/* don't go un-AFK from auto-retaliation */
-	if (p_ptr->auto_retaliaty) return; 
+	if (p_ptr->afk && p_ptr->auto_retaliaty) return;
+
+	/* don't go AFK while shooting-till-kill (target dummy, maybe ironwing ;)) */
+	if (!p_ptr->afk && p_ptr->shooting_till_kill) return;
 
 	strcpy(afk, "");
 
-	if (p_ptr->afk)
-	{
+	if (p_ptr->afk) {
 		if (strlen(p_ptr->afk_msg) == 0)
 			msg_print(Ind, "AFK mode is turned \377GOFF\377w.");
 		else
 			msg_format(Ind, "AFK mode is turned \377GOFF\377w. (%s\377w)", p_ptr->afk_msg);
-		if (!p_ptr->admin_dm)
-		{
+		if (!p_ptr->admin_dm) {
 			if (strlen(p_ptr->afk_msg) == 0)
 				snprintf(afk, sizeof(afk), "\374\377%c%s has returned from AFK.", COLOUR_AFK, p_ptr->name);
 			else
@@ -2901,12 +3164,8 @@ void toggle_afk(int Ind, char *msg)
 
 		/* Clear everyone's afk_noticed */
 		for (i = 1; i <= NumPlayers; i++)
-		{
 			player_list_del(&Players[i]->afk_noticed, p_ptr->id);
-		}
-	}
-	else
-	{
+	} else {
 		/* hack: lose health tracker so we actually get to see the 'AFK'
 		   (for example we might've attacked the target dummy before). */
 		health_track(Ind, 0);
@@ -2914,13 +3173,14 @@ void toggle_afk(int Ind, char *msg)
 		/* stop every major action */
 		disturb(Ind, 1, 1); /* ,1) = keep resting! */
 
-		strcpy(p_ptr->afk_msg, msg);
+		strncpy(p_ptr->afk_msg, msg, 79);
+		p_ptr->afk_msg[79] = '\0';
+
 		if (strlen(p_ptr->afk_msg) == 0)
 			msg_print(Ind, "AFK mode is turned \377rON\377w.");
 		else
 			msg_format(Ind, "AFK mode is turned \377rON\377w. (%s\377w)", p_ptr->afk_msg);
-		if (!p_ptr->admin_dm)
-		{
+		if (!p_ptr->admin_dm) {
 			if (strlen(p_ptr->afk_msg) == 0)
 				snprintf(afk, sizeof(afk), "\374\377%c%s seems to be AFK now.", COLOUR_AFK, p_ptr->name);
 			else
@@ -2930,13 +3190,10 @@ void toggle_afk(int Ind, char *msg)
 
 		/* actually a hint for newbie rogues couldn't hurt */
 		if (p_ptr->tim_blacklist)
-		{
 			msg_print(Ind, "\377yNote: Your blacklist timer won't decrease while AFK.");
-		}
 
 		/* still too many starvations, so give a warning - C. Blue */
-		if (p_ptr->food < PY_FOOD_ALERT)
-		{
+		if (p_ptr->food < PY_FOOD_ALERT) {
 			p_ptr->paging = 6; /* add some beeps, too - mikaelh */
 			msg_print(Ind, "\374\377RWARNING: Going AFK while hungry or weak can result in starvation! Eat first!");
 		}
@@ -2950,8 +3207,7 @@ void toggle_afk(int Ind, char *msg)
 
 	/* Replaced msg_broadcast by this, to allow /ignore and /ic */
 	/* Tell every player */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		/* Skip disconnected players */
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		if (check_ignore(i, Ind)) continue;
@@ -3063,20 +3319,16 @@ int name_lookup_loose(int Ind, cptr name, u16b party)
 	len = strlen(name);
 
 	/* Look for a recipient who matches the search string */
-	if (len)
-	{
-		if (party)
-		{
+	if (len) {
+		if (party) {
 			/* First check parties */
-			for (i = 1; i < MAX_PARTIES; i++)
-			{
+			for (i = 1; i < MAX_PARTIES; i++) {
 				/* Skip if empty */
 				if (!parties[i].members) continue;
 
 				/* Check that the party has players online - mikaelh */
 				party_online = FALSE;
-				for (j = 1; j <= NumPlayers; j++)
-				{
+				for (j = 1; j <= NumPlayers; j++) {
 					/* Check this one */
 					q_ptr = Players[j];
 
@@ -3092,22 +3344,17 @@ int name_lookup_loose(int Ind, cptr name, u16b party)
 				if (!party_online) continue;
 
 				/* Check name */
-				if (!strncasecmp(parties[i].name, name, len))
-				{
+				if (!strncasecmp(parties[i].name, name, len)) {
 					/* Set target if not set already */
-					if (!target)
-					{
+					if (!target) {
 						target = 0 - i;
-					}
-					else
-					{
+					} else {
 						/* Matching too many parties */
 						problem = "parties";
 					}
 
 					/* Check for exact match */
-					if (len == (int)strlen(parties[i].name))
-					{
+					if (len == (int)strlen(parties[i].name)) {
 						/* Never a problem */
 						target = 0 - i;
 						problem = "";
@@ -3120,8 +3367,7 @@ int name_lookup_loose(int Ind, cptr name, u16b party)
 		}
 
 		/* Then check players */
-		for (i = 1; i <= NumPlayers; i++)
-		{
+		for (i = 1; i <= NumPlayers; i++) {
 			/* Check this one */
 			q_ptr = Players[i];
 
@@ -3138,22 +3384,17 @@ int name_lookup_loose(int Ind, cptr name, u16b party)
 			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
 			
 			/* Check name */
-			if (!strncasecmp(q_ptr->name, name, len))
-			{
+			if (!strncasecmp(q_ptr->name, name, len)) {
 				/* Set target if not set already */
-				if (!target)
-				{
+				if (!target) {
 					target = i;
-				}
-				else
-				{
+				} else {
 					/* Matching too many people */
 					problem = "players";
 				}
 
 				/* Check for exact match */
-				if (len == (int)strlen(q_ptr->name))
-				{
+				if (len == (int)strlen(q_ptr->name)) {
 					/* Never a problem */
 					target = i;
 					problem = "";
@@ -3166,8 +3407,7 @@ int name_lookup_loose(int Ind, cptr name, u16b party)
 	}
 
 	/* Check for recipient set but no match found */
-	if ((len && !target) || (target < 0 && !party))
-	{
+	if ((len && !target) || (target < 0 && !party)) {
 		/* Send an error message */
 		msg_format(Ind, "Could not match name '%s'.", name);
 
@@ -3176,8 +3416,7 @@ int name_lookup_loose(int Ind, cptr name, u16b party)
 	}
 
 	/* Check for multiple recipients found */
-	if (strlen(problem))
-	{
+	if (strlen(problem)) {
 		/* Send an error message */
 		msg_format(Ind, "'%s' matches too many %s.", name, problem);
 
@@ -3206,20 +3445,16 @@ int name_lookup_loose_quiet(int Ind, cptr name, u16b party)
 	len = strlen(name);
 
 	/* Look for a recipient who matches the search string */
-	if (len)
-	{
-		if (party)
-		{
+	if (len) {
+		if (party) {
 			/* First check parties */
-			for (i = 1; i < MAX_PARTIES; i++)
-			{
+			for (i = 1; i < MAX_PARTIES; i++) {
 				/* Skip if empty */
 				if (!parties[i].members) continue;
 
 				/* Check that the party has players online - mikaelh */
 				party_online = FALSE;
-				for (j = 1; j <= NumPlayers; j++)
-				{
+				for (j = 1; j <= NumPlayers; j++) {
 					/* Check this one */
 					q_ptr = Players[j];
 
@@ -3235,22 +3470,17 @@ int name_lookup_loose_quiet(int Ind, cptr name, u16b party)
 				if (!party_online) continue;
 
 				/* Check name */
-				if (!strncasecmp(parties[i].name, name, len))
-				{
+				if (!strncasecmp(parties[i].name, name, len)) {
 					/* Set target if not set already */
-					if (!target)
-					{
+					if (!target) {
 						target = 0 - i;
-					}
-					else
-					{
+					} else {
 						/* Matching too many parties */
 						problem = "parties";
 					}
 
 					/* Check for exact match */
-					if (len == (int)strlen(parties[i].name))
-					{
+					if (len == (int)strlen(parties[i].name)) {
 						/* Never a problem */
 						target = 0 - i;
 						problem = "";
@@ -3263,8 +3493,7 @@ int name_lookup_loose_quiet(int Ind, cptr name, u16b party)
 		}
 
 		/* Then check players */
-		for (i = 1; i <= NumPlayers; i++)
-		{
+		for (i = 1; i <= NumPlayers; i++) {
 			/* Check this one */
 			q_ptr = Players[i];
 
@@ -3281,22 +3510,17 @@ int name_lookup_loose_quiet(int Ind, cptr name, u16b party)
 			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
 			
 			/* Check name */
-			if (!strncasecmp(q_ptr->name, name, len))
-			{
+			if (!strncasecmp(q_ptr->name, name, len)) {
 				/* Set target if not set already */
-				if (!target)
-				{
+				if (!target) {
 					target = i;
-				}
-				else
-				{
+				} else {
 					/* Matching too many people */
 					problem = "players";
 				}
 
 				/* Check for exact match */
-				if (len == (int)strlen(q_ptr->name))
-				{
+				if (len == (int)strlen(q_ptr->name)) {
 					/* Never a problem */
 					target = i;
 					problem = "";
@@ -3309,18 +3533,197 @@ int name_lookup_loose_quiet(int Ind, cptr name, u16b party)
 	}
 
 	/* Check for recipient set but no match found */
-	if ((len && !target) || (target < 0 && !party))
-	{
+	if ((len && !target) || (target < 0 && !party)) {
 		/* Give up */
 		return 0;
 	}
 
 	/* Check for multiple recipients found */
-	if (strlen(problem))
-	{
+	if (strlen(problem)) {
 		/* Send an error message */
 		msg_format(Ind, "'%s' matches too many %s.", name, problem);
 
+		/* Give up */
+		return 0;
+	}
+
+	/* Success */
+	return target;
+}
+
+/* copy/pasted from name_lookup_loose(), just without being loose.. */
+int name_lookup(int Ind, cptr name, u16b party)
+{
+	int i, j, len, target = 0;
+	player_type *q_ptr, *p_ptr;
+	bool party_online;
+
+	p_ptr = Players[Ind];
+
+	/* don't waste time */
+	if (p_ptr == (player_type*)NULL) return(0);
+
+	/* Acquire length of search string */
+	len = strlen(name);
+
+	/* Look for a recipient who matches the search string */
+	if (len) {
+		if (party) {
+			/* First check parties */
+			for (i = 1; i < MAX_PARTIES; i++) {
+				/* Skip if empty */
+				if (!parties[i].members) continue;
+
+				/* Check that the party has players online - mikaelh */
+				party_online = FALSE;
+				for (j = 1; j <= NumPlayers; j++) {
+					/* Check this one */
+					q_ptr = Players[j];
+
+					/* Skip if disconnected */
+					if (q_ptr->conn == NOT_CONNECTED) continue;
+
+					/* Check if the player belongs to this party */
+					if (q_ptr->party == i) {
+						party_online = TRUE;
+						break;
+					}
+				}
+				if (!party_online) continue;
+
+				/* Check name */
+				if (!strcasecmp(parties[i].name, name)) {
+					/* Never a problem */
+					target = 0 - i;
+
+					/* Finished looking */
+					break;
+				}
+			}
+		}
+
+		/* Then check players */
+		for (i = 1; i <= NumPlayers; i++) {
+			/* Check this one */
+			q_ptr = Players[i];
+
+			/* Skip if disconnected */
+			if (q_ptr->conn == NOT_CONNECTED) continue;
+
+			/* let admins chat */
+			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr)
+			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
+			    && strcasecmp(p_ptr->accountname, "moltor") 
+			    && strcasecmp(p_ptr->accountname, "the_sandman") 
+			    && strcasecmp(p_ptr->accountname, "faith") 
+			    && strcasecmp(p_ptr->accountname, "mikaelh") 
+			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
+			
+			/* Check name */
+			if (!strcasecmp(q_ptr->name, name)) {
+				/* Never a problem */
+				target = i;
+
+				/* Finished looking */
+				break;
+			}
+		}
+	}
+
+	/* Check for recipient set but no match found */
+	if ((len && !target) || (target < 0 && !party)) {
+		/* Send an error message */
+		msg_format(Ind, "Could not match name '%s'.", name);
+
+		/* Give up */
+		return 0;
+	}
+
+	/* Success */
+	return target;
+}
+
+/* copy/pasted from name_lookup_loose(), just without being loose.. but with quiet */
+int name_lookup_quiet(int Ind, cptr name, u16b party)
+{
+	int i, j, len, target = 0;
+	player_type *q_ptr, *p_ptr;
+	bool party_online;
+
+	p_ptr = Players[Ind];
+
+	/* don't waste time */
+	if (p_ptr == (player_type*)NULL) return(0);
+
+	/* Acquire length of search string */
+	len = strlen(name);
+
+	/* Look for a recipient who matches the search string */
+	if (len) {
+		if (party) {
+			/* First check parties */
+			for (i = 1; i < MAX_PARTIES; i++) {
+				/* Skip if empty */
+				if (!parties[i].members) continue;
+
+				/* Check that the party has players online - mikaelh */
+				party_online = FALSE;
+				for (j = 1; j <= NumPlayers; j++) {
+					/* Check this one */
+					q_ptr = Players[j];
+
+					/* Skip if disconnected */
+					if (q_ptr->conn == NOT_CONNECTED) continue;
+
+					/* Check if the player belongs to this party */
+					if (q_ptr->party == i) {
+						party_online = TRUE;
+						break;
+					}
+				}
+				if (!party_online) continue;
+
+				/* Check name */
+				if (!strcasecmp(parties[i].name, name)) {
+					/* Never a problem */
+					target = 0 - i;
+
+					/* Finished looking */
+					break;
+				}
+			}
+		}
+
+		/* Then check players */
+		for (i = 1; i <= NumPlayers; i++) {
+			/* Check this one */
+			q_ptr = Players[i];
+
+			/* Skip if disconnected */
+			if (q_ptr->conn == NOT_CONNECTED) continue;
+
+			/* let admins chat */
+			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr)
+			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
+			    && strcasecmp(p_ptr->accountname, "moltor") 
+			    && strcasecmp(p_ptr->accountname, "the_sandman") 
+			    && strcasecmp(p_ptr->accountname, "faith") 
+			    && strcasecmp(p_ptr->accountname, "mikaelh") 
+			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
+			
+			/* Check name */
+			if (!strcasecmp(q_ptr->name, name)) {
+				/* Never a problem */
+				target = i;
+
+				/* Finished looking */
+				break;
+			}
+		}
+	}
+
+	/* Check for recipient set but no match found */
+	if ((len && !target) || (target < 0 && !party)) {
 		/* Give up */
 		return 0;
 	}
@@ -3422,20 +3825,25 @@ int get_playerind_loose(char *name)
 	return(-1);
 }
 
-int get_playerslot_loose(int Ind, char *iname)
-{
-	int i, len;
-	char o_name[160];
+int get_playerslot_loose(int Ind, char *iname) {
+	int i, j;
+	char o_name[160], i_name[160];
 
 	if (iname == (char*)NULL) return(-1);
-	len = strlen(iname);
-	if (len == 0) return(-1);
-	for(i = 0; i < INVEN_TOTAL; i++) {
-		if(!Players[Ind]->inventory[i].k_idx) continue;
+	if ((*iname) == 0) return(-1);
+
+	for (j = 0; iname[j]; j++) i_name[j] = tolower(iname[j]);
+	i_name[j] = 0;
+
+	for (i = 0; i < INVEN_TOTAL; i++) {
+		if (!Players[Ind]->inventory[i].k_idx) continue;
+
 		object_desc(0, o_name, &Players[Ind]->inventory[i], FALSE, 0);
-		if (strstr(o_name, iname)) return(i);
-//		if (!strncasecmp(o_name, iname, len)) return(i);
+		for (j = 0; o_name[j]; j++) o_name[j] = tolower(o_name[j]);
+
+		if (strstr(o_name, i_name)) return(i);
 	}
+
 	return(-1);
 }
 
@@ -3471,7 +3879,8 @@ bool show_floor_feeling(int Ind)
 	/* Display extra traditional feeling to warn of dangers. - C. Blue
 	   Note: Only display ONE feeling, thereby setting priorities here.
 	   Note: Don't display feelings in Training Tower (NO_DEATH). */
-	if ((!p_ptr->distinct_floor_feeling && !is_admin(p_ptr)) || (d_ptr->flags2 & DF2_NO_DEATH)) {
+	if ((!p_ptr->distinct_floor_feeling && !is_admin(p_ptr)) || (d_ptr->flags2 & DF2_NO_DEATH) ||
+	    (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z)) {
 //		msg_print(Ind, "\376\377yLooks like any other level..");
 //		msg_print(Ind, "\377ypfft");
 	}
@@ -3710,6 +4119,37 @@ void bbs_erase(void)
                 strcpy(bbs_line[i], "");
 }
 
+void pbbs_add_line(u16b party, cptr textline)
+{
+	int i, j;
+	/* either find an empty bbs entry (store its position in j) */
+	for (i = 0; i < BBS_LINES; i++)
+    		if(!strcmp(pbbs_line[party][i], "")) break;
+	j = i;
+	/* or scroll up by one line, discarding the first line */
+	if (i == BBS_LINES)
+	        for (j = 0; j < BBS_LINES - 1; j++)
+	                strcpy(pbbs_line[party][j], pbbs_line[party][j + 1]);
+	/* write the line to the bbs */
+	strncpy(pbbs_line[party][j], textline, 140 - 3);
+}
+
+void gbbs_add_line(byte guild, cptr textline)
+{
+	int i, j;
+	/* either find an empty bbs entry (store its position in j) */
+	for (i = 0; i < BBS_LINES; i++)
+    		if(!strcmp(gbbs_line[guild][i], "")) break;
+	j = i;
+	/* or scroll up by one line, discarding the first line */
+	if (i == BBS_LINES)
+	        for (j = 0; j < BBS_LINES - 1; j++)
+	                strcpy(gbbs_line[guild][j], gbbs_line[guild][j + 1]);
+	/* write the line to the bbs */
+	strncpy(gbbs_line[guild][j], textline, 140 - 3);
+}
+
+
 /*
  * Add a player id to a linked list.
  * Doesn't check for duplicates
@@ -3879,8 +4319,8 @@ cptr compat_pmode(int Ind1, int Ind2) {
 cptr compat_pomode(int Ind, object_type *o_ptr) {
 	if (!o_ptr->owner || is_admin(Players[Ind])) return NULL; /* always compatible */
 	if (Players[Ind]->mode & MODE_PVP) {
-		if (!(o_ptr->owner_mode & MODE_PVP)) {
-			if (o_ptr->owner_mode & MODE_EVERLASTING) {
+		if (!(o_ptr->mode & MODE_PVP)) {
+			if (o_ptr->mode & MODE_EVERLASTING) {
 				if (!(cfg.charmode_trading_restrictions & 2)) {
 					return "non-pvp";
 				}
@@ -3889,14 +4329,14 @@ cptr compat_pomode(int Ind, object_type *o_ptr) {
 			}
 		}
 	} else if (Players[Ind]->mode & MODE_EVERLASTING) {
-		if (o_ptr->owner_mode & MODE_PVP) {
+		if (o_ptr->mode & MODE_PVP) {
 			return "pvp";
-		} else if (!(o_ptr->owner_mode & MODE_EVERLASTING)) {
+		} else if (!(o_ptr->mode & MODE_EVERLASTING)) {
 			if (!(cfg.charmode_trading_restrictions & 1)) return "non-everlasting";
 		}
-	} else if (o_ptr->owner_mode & MODE_PVP) {
+	} else if (o_ptr->mode & MODE_PVP) {
 		return "pvp";
-	} else if (o_ptr->owner_mode & MODE_EVERLASTING) {
+	} else if (o_ptr->mode & MODE_EVERLASTING) {
 		return "everlasting";
 	}
 	return NULL; /* means "is compatible" */
@@ -3912,17 +4352,17 @@ cptr compat_omode(object_type *o1_ptr, object_type *o2_ptr) {
 	} else if (!o2_ptr->owner) return "owned";
 
 	/* both are owned. so compare actual modes */
-	if (o1_ptr->owner_mode & MODE_PVP) {
-		if (!(o2_ptr->owner_mode & MODE_PVP)) {
+	if (o1_ptr->mode & MODE_PVP) {
+		if (!(o2_ptr->mode & MODE_PVP)) {
 			return "non-pvp";
 		}
-	} else if (o1_ptr->owner_mode & MODE_EVERLASTING) {
-		if (!(o2_ptr->owner_mode & MODE_EVERLASTING)) {
+	} else if (o1_ptr->mode & MODE_EVERLASTING) {
+		if (!(o2_ptr->mode & MODE_EVERLASTING)) {
 			return "non-everlasting";
 		}
-	} else if (o2_ptr->owner_mode & MODE_PVP) {
+	} else if (o2_ptr->mode & MODE_PVP) {
 		return "pvp";
-	} else if (o2_ptr->owner_mode & MODE_EVERLASTING) {
+	} else if (o2_ptr->mode & MODE_EVERLASTING) {
 		return "everlasting";
 	}
 	return NULL; /* means "is compatible" */
@@ -4217,3 +4657,20 @@ void strip_control_codes(char *ss, char *s) {
 	}
 }
 
+/* return a string displaying the flag state - C. Blue */
+cptr flags_str(u32b flags) {
+#if 0 /* disfunctional atm */
+	char *fsp = malloc(40 * sizeof(char));
+	int b;
+
+	for (b = 0; b < 32; b++) {
+		*fsp++ = (flags & (1 << b)) ? '1' : '0';
+		if (b % 4 == 3) *fsp++ = ' ';
+	}
+	*fsp++ = '\0';
+
+	return (fsp - 40);
+#else
+	return (NULL);
+#endif
+}

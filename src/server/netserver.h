@@ -68,6 +68,7 @@ typedef struct {
 	int		inactive_ping;
 	int		race;
 	int		class;
+	int		trait;
 	int		sex;
 	int		class_extra;
 	int		stat_order[6];
@@ -118,12 +119,14 @@ static int Receive_throw(int ind);
 static int Receive_wield(int ind);
 static int Receive_observe(int ind);
 static int Receive_zap(int ind);
+static int Receive_zap_dir(int ind);
 
 static int Receive_target(int ind);
 static int Receive_target_friendly(int ind);
 static int Receive_inscribe(int ind);
 static int Receive_uninscribe(int ind);
 static int Receive_activate(int ind);
+static int Receive_activate_dir(int ind);
 static int Receive_bash(int ind);
 static int Receive_disarm(int ind);
 static int Receive_eat(int ind);
@@ -158,6 +161,7 @@ static int Receive_admin_house(int ind);
 static int Receive_autophase(int ind);
 
 static int Receive_clear_buffer(int ind);
+static int Receive_clear_actions(int ind);
 
 static int Receive_spike(int ind);
 static int Receive_guild(int ind);

@@ -128,7 +128,7 @@ static void wr_item(object_type *o_ptr)
 {
 	wr_s32b(o_ptr->owner);
 	wr_s16b(o_ptr->level);
-	wr_s32b(o_ptr->owner_mode);
+	wr_byte(o_ptr->mode);
 
 	wr_s16b(o_ptr->k_idx);
 
@@ -194,14 +194,13 @@ static void wr_item(object_type *o_ptr)
 	wr_byte(o_ptr->marked2);
 
 	/* Save the inscription (if any) */
-	if (o_ptr->note)
-	{
+	if (o_ptr->note) {
 		wr_string(quark_str(o_ptr->note));
-	}
-	else
-	{
+	} else {
 		wr_string("");
 	}
+	wr_byte(o_ptr->note_utag);
+
 	wr_u16b(o_ptr->next_o_idx);
 	wr_u16b(o_ptr->held_m_idx);
 }
@@ -380,18 +379,31 @@ static void wr_store(store_type *st_ptr)
 	wr_s32b(st_ptr->last_visit);
 
 	/* Save the stock */
-	for (j = 0; j < st_ptr->stock_num; j++)
-	{
+	for (j = 0; j < st_ptr->stock_num; j++) {
 		/* Save each item in stock */
 		wr_item(&st_ptr->stock[j]);
 	}
 }
 
 static void wr_bbs() {
-	int i;
+	int i, j;
+
 	wr_s16b(BBS_LINES);
+
 	for (i = 0; i < BBS_LINES; i++)
 		wr_string(bbs_line[i]);
+
+	/* also write complete party-BBS and guild-BBS (tripling the server file size oO) - C. Blue */
+
+	wr_s16b(MAX_PARTIES);
+	for (j = 0; j < MAX_PARTIES; j++)
+		for (i = 0; i < BBS_LINES; i++)
+			wr_string(pbbs_line[j][i]);
+
+	wr_s16b(MAX_GUILDS);
+	for (j = 0; j < MAX_GUILDS; j++)
+		for (i = 0; i < BBS_LINES; i++)
+			wr_string(gbbs_line[j][i]);
 }
 
 static void wr_notes() {
@@ -490,6 +502,7 @@ static void wr_house(house_type *house)
 	wr_byte(house->dx);
 	wr_byte(house->dy);
 	wr_u32b(house->dna->creator);
+	wr_byte(house->dna->mode);
 	wr_s32b(house->dna->owner);
 	wr_byte(house->dna->owner_type);
 	wr_byte(house->dna->a_flags);
@@ -504,23 +517,23 @@ static void wr_house(house_type *house)
 	if(house->flags & HF_RECT){
 		wr_byte(house->coords.rect.width);
 		wr_byte(house->coords.rect.height);
-	}
-	else{
-		i=-2;
-		do{
-			i+=2;
+	} else {
+		i = -2;
+		do {
+			i += 2;
 			wr_byte(house->coords.poly[i]);
 			wr_byte(house->coords.poly[i+1]);
-		}while(house->coords.poly[i] || house->coords.poly[i+1]);
+		} while (house->coords.poly[i] || house->coords.poly[i+1]);
 	}
+
+	wr_byte(house->colour);
+	wr_byte(house->xtra);
 
 #ifndef USE_MANG_HOUSE_ONLY
 	wr_s16b(house->stock_num);
 	wr_s16b(house->stock_size);
 	for (i = 0; i < house->stock_num; i++)
-	{
 		wr_item(&house->stock[i]);
-	}
 #endif	// USE_MANG_HOUSE
 }
 
@@ -546,12 +559,12 @@ static void wr_extra(int Ind)
 	{
 		wr_string(p_ptr->history[i]);
 	}
-	wr_byte(p_ptr->has_pet); //pet pet 
-	wr_byte(p_ptr->divinity);
+	wr_byte(p_ptr->has_pet); //pet pet
 
 	/* Race/Class/Gender/Party */
 	wr_byte(p_ptr->prace);
 	wr_byte(p_ptr->pclass);
+	wr_byte(p_ptr->ptrait);
 	wr_byte(p_ptr->male);
 	wr_u16b(p_ptr->party); /* changed to u16b to allow more parties - mikaelh */
 	wr_byte(p_ptr->mode);
@@ -833,8 +846,11 @@ static void wr_extra(int Ind)
 	wr_u16b(p_ptr->deaths);
 	wr_u16b(p_ptr->soft_deaths);
 
-	tmp16u = 0x0; /* atm unused, ehe */
-	wr_u16b(tmp16u); /* array of 'warnings' and hints aimed at newbies */
+	/* array of 'warnings' and hints aimed at newbies */
+	tmp16u = 0x00;
+	if (p_ptr->warning_technique_melee == 1) tmp16u |= 0x01;
+	if (p_ptr->warning_technique_ranged == 1) tmp16u |= 0x02;
+	wr_u16b(tmp16u);
 
 	wr_string(p_ptr->info_msg);
 }
@@ -937,8 +953,7 @@ static void wr_dungeon(struct worldpos *wpos)
 
 	{
 		dun_level *l_ptr = getfloor(wpos);
-		if (l_ptr)
-		{
+		if (l_ptr) {
 			wr_u32b(l_ptr->flags1);
 			wr_byte(l_ptr->hgt);
 			wr_byte(l_ptr->wid);
@@ -947,22 +962,19 @@ static void wr_dungeon(struct worldpos *wpos)
 
 	/*** Simple "Run-Length-Encoding" of cave ***/
 	/* for each each row */
-	for (y = 0; y < MAX_HGT; y++)
-	{
+	for (y = 0; y < MAX_HGT; y++) {
 		/* start a new run */
 		runlength = 0;
 
 		/* break the row down into runs */
-		for (x = 0; x < MAX_WID; x++)
-		{
+		for (x = 0; x < MAX_WID; x++) {
 			c_ptr = &zcave[y][x];
 
 			/* if we are starting a new run */
 			if ((!runlength) || (c_ptr->feat != prev_feature) || (c_ptr->info != prev_info)
 					|| (runlength > 254))
 			{
-				if (runlength)
-				{
+				if (runlength) {
 					/* if we just finished a run, write it */
 					wr_byte(runlength);
 					wr_byte(prev_feature);
@@ -985,11 +997,9 @@ static void wr_dungeon(struct worldpos *wpos)
 
 	/*** another scan for c_special ***/
 	/* for each each row */
-	for (y = 0; y < MAX_HGT; y++)
-	{
+	for (y = 0; y < MAX_HGT; y++) {
 		/* break the row down into runs */
-		for (x = 0; x < MAX_WID; x++)
-		{
+		for (x = 0; x < MAX_WID; x++) {
 			n=0;
 			c_ptr = &zcave[y][x];
 			cs_ptr=c_ptr->special;
@@ -1013,7 +1023,7 @@ static void wr_dungeon(struct worldpos *wpos)
 			}
 #if 0
 		/* redesign needed - too much of hurry to sort now */
-			while(cs_ptr){
+			while (cs_ptr) {
 				i = cs_ptr->type;
 
 				/* nothing special */
@@ -1028,11 +1038,11 @@ static void wr_dungeon(struct worldpos *wpos)
 
 					/* csfunc will take care of it :) */
 					csfunc[i].save(sc_is_pointer(i) ?
-						cs_ptr->sc.ptr : &c_ptr->special);
+					    cs_ptr->sc.ptr : &c_ptr->special);
 				}
-				cs_ptr=cs_ptr->next;
+				cs_ptr = cs_ptr->next;
 			}
-#endif
+#endif /* 0 */
 		}
 	}
 
@@ -1791,7 +1801,7 @@ static void wr_auctions()
 	auction_type *auc_ptr;
 	bid_type *bid_ptr;
 
-	wr_s32b(auction_alloc);
+	wr_u32b(auction_alloc);
 
 	for (i = 0; i < auction_alloc; i++)
 	{
@@ -1900,8 +1910,7 @@ static bool wr_server_savefile()
 	/* Hack -- Dump the artifacts */
 	tmp16u = MAX_A_IDX;
 	wr_u16b(tmp16u);
-	for (i = 0; i < tmp16u; i++)
-	{
+	for (i = 0; i < tmp16u; i++) {
 		artifact_type *a_ptr = &a_info[i];
 		wr_byte(a_ptr->cur_num);
 		wr_byte(a_ptr->known);
@@ -1919,7 +1928,6 @@ static bool wr_server_savefile()
 	for (i = 0; i < tmp16u; i++) wr_party(&parties[i]);
 
 
-	
 	wr_towns();		/* write town data */
 	new_wr_wild();		/* must alloc dungeons first on load! ;) */
 	new_wr_dungeons();	/* rename wr_dungeons(void) later */
@@ -1940,10 +1948,9 @@ static bool wr_server_savefile()
 	/* Dump the objects */
 	for (i = 0; i < tmp16u; i++) wr_item(&o_list[i]);
 
-	tmp32u=0L;
-	for(i=0;i<num_houses;i++){
+	tmp32u = 0L;
+	for(i = 0; i < num_houses; i++)
 		if(!(houses[i].flags&HF_DELETED)) tmp32u++;
-	}
 
 	/* Note the number of houses */
 	wr_s32b(tmp32u);
@@ -1988,17 +1995,17 @@ static bool wr_server_savefile()
 /* write the wilderness and dungeon structure */
 static void new_wr_wild(){
 	wilderness_type *w_ptr;
-	int x,y,i;
+	int x, y, i;
 	u32b temp;
 
-	temp=MAX_WILD_Y;
+	temp = MAX_WILD_Y;
 	wr_u32b(temp);
-	temp=MAX_WILD_X;
+	temp = MAX_WILD_X;
 	wr_u32b(temp);
 
-	for(y=0;y<MAX_WILD_Y;y++){
-		for(x=0;x<MAX_WILD_X;x++){
-			w_ptr=&wild_info[y][x];
+	for(y = 0; y < MAX_WILD_Y; y++){
+		for(x = 0; x < MAX_WILD_X; x++){
+			w_ptr = &wild_info[y][x];
 			wr_wild(w_ptr);
 			if(w_ptr->flags & WILD_F_DOWN){
 				wr_byte(w_ptr->up_x);
@@ -2009,7 +2016,7 @@ static void new_wr_wild(){
 				wr_u32b(w_ptr->dungeon->flags1);
 				wr_u32b(w_ptr->dungeon->flags2);
 				wr_byte(w_ptr->dungeon->maxdepth);
-				for(i=0;i<10;i++){
+				for(i = 0; i < 10; i++) {
 #if 0	/* unused - mikaelh */
 					wr_byte(w_ptr->dungeon->r_char[i]);
 					wr_byte(w_ptr->dungeon->nr_char[i]);
@@ -2019,7 +2026,7 @@ static void new_wr_wild(){
 #endif
 				}
 			}
-			if(w_ptr->flags & WILD_F_UP){
+			if(w_ptr->flags & WILD_F_UP) {
 				wr_byte(w_ptr->dn_x);
 				wr_byte(w_ptr->dn_y);
 				wr_u16b(w_ptr->tower->id);
@@ -2028,7 +2035,7 @@ static void new_wr_wild(){
 				wr_u32b(w_ptr->tower->flags1);
 				wr_u32b(w_ptr->tower->flags2);
 				wr_byte(w_ptr->tower->maxdepth);
-				for(i=0;i<10;i++){
+				for(i = 0; i < 10; i++){
 #if 0	/* unused - mikaelh */
 					wr_byte(w_ptr->dungeon->r_char[i]);
 					wr_byte(w_ptr->dungeon->nr_char[i]);
@@ -2046,37 +2053,37 @@ static void new_wr_wild(){
 static void new_wr_dungeons(){
 	struct worldpos cwpos;
 	wilderness_type *w_ptr;
-	int x,y,z;
-	cwpos.wz=0;
-	for(y=0;y<MAX_WILD_Y;y++){
-		cwpos.wy=y;
-		for(x=0;x<MAX_WILD_X;x++){
-			cwpos.wx=x;
-			w_ptr=&wild_info[y][x];
+	int x, y, z;
+	cwpos.wz = 0;
+	for(y = 0; y < MAX_WILD_Y; y++) {
+		cwpos.wy = y;
+		for(x = 0; x < MAX_WILD_X; x++) {
+			cwpos.wx = x;
+			w_ptr = &wild_info[y][x];
 			save_guildhalls(&cwpos);
 			/*
 			 * One problem here; if a wilderness tower/dungeon exists, and
 			 * the surface is not static, stair/recall informations are lost
 			 * and cause crash/infinite-loop next time.		FIXME
 			 */
-			if(getcave(&cwpos) && players_on_depth(&cwpos)) wr_dungeon(&cwpos);
-			if(w_ptr->flags & WILD_F_DOWN){
-				struct dungeon_type *d_ptr=w_ptr->dungeon;
-				for(z=1;z<=d_ptr->maxdepth;z++){
-					cwpos.wz=-z;
-					if(d_ptr->level[z-1].ondepth && d_ptr->level[z-1].cave)
+			if (getcave(&cwpos) && players_on_depth(&cwpos)) wr_dungeon(&cwpos);
+			if (w_ptr->flags & WILD_F_DOWN) {
+				struct dungeon_type *d_ptr = w_ptr->dungeon;
+				for (z = 1; z <= d_ptr->maxdepth; z++) {
+					cwpos.wz = -z;
+					if(d_ptr->level[z - 1].ondepth && d_ptr->level[z - 1].cave)
 						wr_dungeon(&cwpos);
 				}
 			}
-			if(w_ptr->flags & WILD_F_UP){
-				struct dungeon_type *d_ptr=w_ptr->tower;
-				for(z=1;z<=d_ptr->maxdepth;z++){
-					cwpos.wz=z;
-					if(d_ptr->level[z-1].ondepth && d_ptr->level[z-1].cave)
+			if (w_ptr->flags & WILD_F_UP) {
+				struct dungeon_type *d_ptr = w_ptr->tower;
+				for (z = 1; z <= d_ptr->maxdepth; z++) {
+					cwpos.wz = z;
+					if(d_ptr->level[z - 1].ondepth && d_ptr->level[z - 1].cave)
 						wr_dungeon(&cwpos);
 				}
 			}
-			cwpos.wz=0;
+			cwpos.wz = 0;
 		}
 	}
 	wr_s16b(0x7fff);	/* this could fail if we had 32767^3 areas */
@@ -2272,8 +2279,7 @@ bool save_server_info()
 	fd_kill(safe);
 
 	/* Attempt to save the server state */
-	if (save_server_aux(safe))
-	{
+	if (save_server_aux(safe)) {
 		char temp[MAX_PATH_LENGTH];
 		char prev[MAX_PATH_LENGTH];
 
@@ -2303,10 +2309,10 @@ bool save_server_info()
 	return (result);
 }
 
-void wr_towns(){
+void wr_towns() {
 	int i, j;
 	wr_u16b(numtowns);
-	for(i=0;i<numtowns;i++){
+	for (i = 0; i < numtowns; i++){
 		wr_u16b(town[i].x);
 		wr_u16b(town[i].y);
 		wr_u16b(town[i].baselevel);

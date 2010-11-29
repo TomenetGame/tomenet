@@ -42,7 +42,7 @@ static int find_realm_skill(int realm)
                 return SKILL_HUNTING;
         case REALM_FIGHTING:
 //                return SKILL_MASTERY;
-                return SKILL_TECHNIC;
+                return SKILL_TECHNIQUE;
 //        case REALM_PSI:
 //                return SKILL_;
         };
@@ -516,7 +516,7 @@ void do_spin(int Ind)
 	}
 }
 
-static void do_mimic_power(int Ind, int power, int dir)//w0t0w
+static void do_mimic_power(int Ind, int power, int dir)
 {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
@@ -528,23 +528,20 @@ static void do_mimic_power(int Ind, int power, int dir)//w0t0w
 
 
 	/* Not when confused */
-	if (p_ptr->confused)
-	{
+	if (p_ptr->confused) {
 		msg_print(Ind, "You are too confused!");
 		return;
 	}
 
 	j = power / 32;
 
-	if (j < 0 || j > 3)
-	{
+	if (j < 0 || j > 3) {
 		msg_format(Ind, "SERVER ERROR: Tried to use a strange innate power(%d)!", power);
 		return;
 	}
 
 	/* confirm the power */
-	if (!(p_ptr->innate_spells[j] & (1L << (power - j * 32)))) 
-	{
+	if (!(p_ptr->innate_spells[j] & (1L << (power - j * 32)))) {
 		msg_print(Ind, "You cannot use that power.");
 		return;
 	}
@@ -552,8 +549,7 @@ static void do_mimic_power(int Ind, int power, int dir)//w0t0w
 	j = power;
 
 	/* Check mana */
-	if (s_ptr->smana > p_ptr->csp)
-	{
+	if (s_ptr->smana > p_ptr->csp) {
 		msg_print(Ind, "You do not have enough mana.");
 		return;
 	}
@@ -570,15 +566,20 @@ static void do_mimic_power(int Ind, int power, int dir)//w0t0w
 	if (j >= 32 && interfere(Ind, cfg.spell_interfere)) return; /* mimic spells interference chance */
 
 	/* Failed spell */
-	if (rand_int(100) < chance)
-	{
+	if (rand_int(100) < chance) {
 		msg_print(Ind, "You failed to use the power!");
 	}
-	else
-	{
+	/* Clients > 4.4.5.10 can already send a dir != 0 here, for directed spells */
+	else if (dir != 0) {
+		p_ptr->current_spell = j;
+		do_mimic_power_aux(Ind, dir);
+		return;
+	}
+	/* Non-directed spells // old way of handling directed spells */
+	else {
+
 		/* Hack -- preserve current 'realm' */
 		p_ptr->current_realm = REALM_MIMIC;
-
 
   /* 0-31 = RF4, 32-63 = RF5, 64-95 = RF6 */
   switch(j)
@@ -591,6 +592,10 @@ static void do_mimic_power(int Ind, int power, int dir)//w0t0w
     case 0:
       msg_print(Ind, "You emit a high pitched humming noise.");
       msg_format_near(Ind, "%s emits a high pitched humming noise.", p_ptr->name);
+#ifdef USE_SOUND_2010 
+	/* allow us to annoy others ;) */
+	sound_near(Ind, "monster_shriek", NULL, SFX_TYPE_MON_SPELL);
+#endif
       aggravate_monsters(Ind, 1);
       break;
 //#define RF4_UNMAGIC                     0x00000002      /* Cancel player's timed spell */ 
@@ -811,15 +816,12 @@ static void do_mimic_power(int Ind, int power, int dir)//w0t0w
     }
 	}
 
-	if (s_ptr->smana <= p_ptr->csp)
-	{
+	if (s_ptr->smana <= p_ptr->csp) {
 		/* Use some mana */
 		p_ptr->csp -= s_ptr->smana;
 	}
-
 	/* Over-exert the player */
-	else
-	{
+	else {
 		int oops = s_ptr->smana - p_ptr->csp;
 
 		/* No mana left */
@@ -833,8 +835,7 @@ static void do_mimic_power(int Ind, int power, int dir)//w0t0w
 		(void)set_paralyzed(Ind, p_ptr->paralyzed + randint(5 * oops + 1));
 
 		/* Damage CON (possibly permanently) */
-		if (rand_int(100) < 50)
-		{
+		if (rand_int(100) < 50) {
 			bool perm = (rand_int(100) < 25);
 
 			/* Message */
@@ -863,13 +864,14 @@ void do_mimic_power_aux(int Ind, int dir)
 	/* Determine the radius of the blast */
 	rad = (r_ptr->flags2 & RF2_POWERFUL) ? 3 : 2;
 
-	/* Only fire in direction 5 if we have a target */
-	if ((dir == 5) && !target_okay(Ind))
-	{
-		/* Reset current spell */
-		p_ptr->current_spell = -1;
-		/* Done */
-		return;
+	if (!is_newer_than(&p_ptr->version, 4, 4, 5, 10, 0, 0)) {
+		/* Only fire in direction 5 if we have a target */
+		if ((dir == 5) && !target_okay(Ind)) {
+			/* Reset current spell */
+			p_ptr->current_spell = -1;
+			/* Done */
+			return;
+		}
 	}
 
 	/* We assume that the spell can be cast, and so forth */
@@ -1210,15 +1212,13 @@ void do_mimic_power_aux(int Ind, int dir)
 
 //	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-	if (s_ptr->smana <= p_ptr->csp)
-	{
+	if (s_ptr->smana <= p_ptr->csp) {
 		/* Use some mana */
 		p_ptr->csp -= s_ptr->smana;
 	}
 
 	/* Over-exert the player */
-	else
-	{
+	else {
 		int oops = s_ptr->smana - p_ptr->csp;
 
 		/* No mana left */
@@ -1232,8 +1232,7 @@ void do_mimic_power_aux(int Ind, int dir)
 		(void)set_paralyzed(Ind, p_ptr->paralyzed + randint(5 * oops + 1));
 
 		/* Damage CON (possibly permanently) */
-		if (rand_int(100) < 50)
-		{
+		if (rand_int(100) < 50) {
 			bool perm = (rand_int(100) < 25);
 
 			/* Message */
@@ -1339,8 +1338,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 //	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
 //(changed it to no_tele)	if(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) return;
 	
-	if (!get_skill(p_ptr, SKILL_MIMIC))
-	{
+	if (!get_skill(p_ptr, SKILL_MIMIC)) {
 		msg_print(Ind, "You are too solid.");
 		return;
 	}
@@ -1478,7 +1476,6 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 				msg_print(Ind, "You have no experience with that form at all!");
 				return;
 			} else {
-				p_ptr->free_mimic--;
 				using_free_mimic = TRUE;
 			}
 		}
@@ -1487,10 +1484,10 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 				msg_print(Ind, "You have not yet learned that form!");
 				return;
 			} else {
-				p_ptr->free_mimic--;
 				using_free_mimic = TRUE;
 			}
 		}
+
 		if (strlen(r_info[j].name + r_name) <= 1){	/* <- ??? */
 			msg_print(Ind, "You cannot use that form!");
 			return;
@@ -1509,6 +1506,9 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 			return;
 		}
 
+		/* using up PvP-mode free mimic transformation? */
+		if (using_free_mimic) p_ptr->free_mimic--;
+
 		/* Ok we found */
 		do_mimic_change(Ind, j, using_free_mimic);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1517,7 +1517,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 		/* (S)he is no longer afk */
 		un_afk_idle(Ind);
 
-		do_mimic_power(Ind, spell - 3, dir); /* 3 polymorph self abilities *///w0t0w
+		do_mimic_power(Ind, spell - 3, dir);
 	}
 }
 

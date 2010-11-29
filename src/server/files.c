@@ -511,7 +511,7 @@ void display_player(int Ind)
 
 
 	/* Send basic information */
-	Send_char_info(Ind, p_ptr->prace, p_ptr->pclass, p_ptr->male, p_ptr->mode);
+	Send_char_info(Ind, p_ptr->prace, p_ptr->pclass, p_ptr->ptrait, p_ptr->male, p_ptr->mode);
 
 	/* Age, Height, Weight, Social */
 	Send_various(Ind, p_ptr->ht, p_ptr->wt, p_ptr->age, p_ptr->sc);
@@ -2288,7 +2288,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output, int max_len)
 {
 	FILE    *fp;
 	char    buf[1024];
-	int     line, counter, test, numentries;
+	int     line = 0, counter, test, numentries;
 	int     line_num = 0;
 	bool    found = FALSE;
 
@@ -2406,7 +2406,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output, int max_len)
 	my_fclose(fp);
 
 	/* Success */
-	return (0);
+	return (line);
 }
 
 /* Clear objects so that artifacts get saved.

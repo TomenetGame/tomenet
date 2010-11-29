@@ -1516,7 +1516,7 @@ s32b player_exp[PY_MAX_LEVEL + 1] =
  *    class-choices
  *    mana %  (<- obsolete)
  */
-player_race race_info[MAX_RACES] =
+player_race race_info[MAX_RACE] =
 {
         {
                 "Human",
@@ -2145,7 +2145,7 @@ player_race race_info[MAX_RACES] =
                 255, 70,
                 72, 6, 100, 25,
                 66, 4, 100, 20,
-                5,
+                0,
 //                0xD2B,  110100101011 -> 110101001011
 //		0xD4B,
 //		0x72B,
@@ -2207,10 +2207,11 @@ player_race race_info[MAX_RACES] =
                 },
         },
         {
-                "Thunderlord",	// "DragonRider",
+                "Draconian",	// "Dragonrider", "Thunderlord"
 //                {  6,  3,  -10,  0,  5,  5 },
-		  {  6,  2,  1,  1,  3,  5 },
 //		  {  6,  2,  -2,  1,  3,  5 },
+//		  {  6,  2,  1,  1,  3,  5 },
+		  {  4,  2,  2,  1,  3,  2 },
                 6,  0,  10,  -16,  30,  10,  15,  5,
                 12,  350,
                 14,  6,
@@ -2279,7 +2280,7 @@ player_race race_info[MAX_RACES] =
                         {
                                 SKILL_ARCHERY,
                                 '+', 1000,
-                                '+', 70,
+                                '%', 110,
                         },
                         {
                                 SKILL_STEALTH,
@@ -2452,7 +2453,7 @@ player_race race_info[MAX_RACES] =
  *    mana %  (<- obsolete)
  */
         {
-                "Half-Ainu",
+                "Maia",
 /* 
 Ah, the angel and demon race!
 Here is the plan:
@@ -2589,9 +2590,9 @@ Nothing here that truly heals/buffs people (those bonus are to self only). They 
 62.A: Activating /rec XX YY from Bree also ports every party member in Bree to XX YY :)
 62.D: No idea about the amount of work required.
 */
-                {  1,  4, 4,  3,  0,  3 }, //boosted int/wisdom/dex
-                0, 0, 0,  0,  0, 0, 0, 0,
-		13, 400 ,//too low == bad since you need the quest mobs
+                { 2,  3, 3,  1,  1, 2 }, //boosted int/wisdom/dex
+                3, 5, 3, 3,  5, 1, 15, 5,
+		10, 380,//too low == bad since you need the quest mobs
 		255, 250,
                 180, 20, 180, 20,
                 120, 30, 170, 15,
@@ -2724,7 +2725,7 @@ Only 70%-ify the skills that could potentially be updated when the player mutate
 };
 
  /* Lookup for the race name */
-char *special_prace_lookup[MAX_RACES] = {
+char *special_prace_lookup[MAX_RACE] = {
 /* RACE_HUMAN */ 	"Human",
 /* RACE_HALF_ELF */ 	"Half-Elven",
 /* RACE_ELF */ 		"Elven",
@@ -2748,11 +2749,11 @@ char *special_prace_lookup[MAX_RACES] = {
 /* RACE_YEEK */ 	"Yeek",
 /* RACE_GOBLIN */ 	"Goblin",
 /* RACE_ENT */ 		"Ent",
-/* RACE_DRIDER */ 	"Thunderlord",
+/* RACE_DRIDER */ 	"Draconian",
 /* RACE_DARK_ELF */ 	"Dark-Elven",
 /* RACE_VAMPIRE */ 	"Vampire",
 #ifdef ENABLE_DIVINE
-/* RACE_DIVINE */	"Ainu Descendant"
+/* RACE_DIVINE */	"Maia"
 #endif
 };
 
@@ -2804,6 +2805,11 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_MASTERY,
                                 '+', 1000,
                                 '+', 1000,
+                        },
+                        {
+                                SKILL_TECHNIQUE,
+                                '+', 1000,
+                                '+', 0,
                         },
 #ifdef DUAL_WIELD /* warriors may too :) */
                         { /* dual-wield */
@@ -3300,6 +3306,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 700,//650
                         },
+                        {
+                                SKILL_TECHNIQUE,
+                                '+', 1000,
+                                '+', 0,
+                        },
 #ifdef DUAL_WIELD
                         { /* dual-wield */
                                 SKILL_DUAL,
@@ -3515,6 +3526,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 800,//750
                         },
+                        {
+                                SKILL_TECHNIQUE,
+                                '+', 1000,
+                                '+', 0,
+                        },
 #ifdef ENABLE_STANCES
                         {
                                 SKILL_STANCE,
@@ -3720,7 +3736,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_XBOW,
                                 '+', 0,
-                                '+', 750,
+                                '+', 800,
                         },
                         {
                                 SKILL_BOOMERANG,
@@ -3840,6 +3856,11 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_MASTERY,
                                 '+', 1800,
                                 '+', 900,
+                        },
+                        {
+                                SKILL_TECHNIQUE,
+                                '+', 1000,
+                                '+', 0,
                         },
 #ifdef ENABLE_STANCES
                         {
@@ -4006,7 +4027,7 @@ player_class class_info[MAX_CLASS] =
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
 		34, 32, 30, 5, 30, 30, 50, 60,
-		10, 10, 10, 1, 15,  5, 30, 35,
+		10, 10, 10, 0, 15,  5, 30, 35,
 		7, 35,//4, 35,//6, 35
 //		9, 35,
                 {
@@ -4019,6 +4040,11 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_MASTERY,
                                 '+', 1000,
                                 '+', 800,//700
+                        },
+                        {
+                                SKILL_TECHNIQUE,
+                                '+', 1000,
+                                '+', 0,
                         },
 #ifdef DUAL_WIELD /* rangers get an exception for now. hoping it'll balance out with giving them stances as well! */
                         { /* dual-wield */
@@ -4054,27 +4080,27 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 700,
                         },
-#if 0
+#if 1 /* allowed in combination with SKF1_MAX_10 restriction */
                         {
                                 SKILL_ARCHERY,
                                 '+', 1000,
-                                '+', 500,
+                                '+', 700,//500
                         },
 #endif
                         {
                                 SKILL_SLING,
                                 '+', 0,
-                                '+', 350,
+                                '+', 450,//350
                         },
                         {
                                 SKILL_BOW,
                                 '+', 1000,
-                                '+', 350,
+                                '+', 450,//350
                         },
                         {
                                 SKILL_XBOW,
                                 '+', 0,
-                                '+', 350,
+                                '+', 450,//350
                         },
                         {
                                 SKILL_BOOMERANG,
@@ -4154,12 +4180,14 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 800,
                         },
-#if 0
+#if 1
                         {
                                 SKILL_TEMPORAL,
                                 '+', 0,
-                                '+', 600,//800
+                                '+', 700,//600,//800
                         },
+#endif
+#if 0
                         {
                                 SKILL_UDUN,
                                 '+', 0,
@@ -4265,7 +4293,7 @@ player_class class_info[MAX_CLASS] =
                 TERM_VIOLET,
 		{ 0, 0, 0, 0, 0, 0},
 		{20, 0, 0, 10, 0, 0},
-		30, 20, 20, 2,  15, 15, 50, 50,
+		30, 20, 20, 3,  15, 15, 50, 50,
 		10, 10,  10, 0,  5,  5,  25, 25,//..,0,0,25,25
 		6, 25, //3,  0,//5,0,
 //		8, 10,
@@ -4280,6 +4308,11 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_MASTERY,
                                 '+', 1000,
                                 '+', 600,
+                        },
+                        {
+                                SKILL_TECHNIQUE,
+                                '+', 1000,
+                                '+', 0,
                         },
 #if 0
 #ifdef DUAL_WIELD /* not sure */
@@ -4441,7 +4474,7 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 500,//600, //500
                         },
-#if 0
+#if 1
                         {
                                 SKILL_TEMPORAL,
                                 '+', 0,
@@ -4499,48 +4532,48 @@ player_class class_info[MAX_CLASS] =
                                 '+', 500,
                         },
 #ifndef ENABLE_RCRAFT
-			{ 
+			{
 				SKILL_RUNEMASTERY,
 				'+', 0,
 				'+', 400,
 			},
 #else
-			{ 
+			{
 				SKILL_R_FIRECOLD,
 				'+', 0,
 				'+', 430,
-			},			
-			{ 
+			},
+			{
 				SKILL_R_WATEACID,
 				'+', 0,
 				'+', 400,
-			},			
-			{ 
+			},
+			{
 				SKILL_R_ELECEART,
 				'+', 0,
 				'+', 420,
-			},			
-			{ 
+			},
+			{
 				SKILL_R_WINDPOIS,
 				'+', 0,
 				'+', 410,
 			},
-			{ 
+			{
 				SKILL_R_MANACHAO,
 				'+', 0,
 				'+', 410,
 			},
-			{ 
+			{
 				SKILL_R_FORCGRAV,
 				'+', 0,
 				'+', 430,
 			},
-			{ 
+			{
 				SKILL_R_NETHTIME,
 				'+', 0,
 				'+', 400,
 			},
-			{ 
+			{
 				SKILL_R_MINDNEXU,
 				'+', 0,
 				'+', 405,
@@ -4668,14 +4701,19 @@ player_class class_info[MAX_CLASS] =
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		30, 40, 30, 5, 25, 25, 50, 60,
-		8, 5, 10, 1, 10,  5, 20, 30,
+		30, 40, 30, 4, 25, 25, 50, 60,
+		8, 5, 10, 0, 10,  5, 20, 30,
 		5, 40,//5, 50
                 {
                         {
                                 SKILL_COMBAT,
                                 '+', 1000,
                                 '+', 1000,//nerfed from 1300
+                        },
+                        {
+                                SKILL_TECHNIQUE,
+                                '+', 1000,
+                                '+', 0,
                         },
 #if 0
                         {
@@ -4822,7 +4860,7 @@ player_class class_info[MAX_CLASS] =
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		10, 30, 30,  5, 20, 30, 45, 20,
+		10, 30, 30,  4, 20, 30, 45, 20,
 		 0, 11, 10,  0,  3,  5, 20,  5,
 		3, 45, //4, 30
                 {
@@ -4835,7 +4873,7 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_MASTERY,
-                                '+', 1000,
+                                '+', 0,
                                 '+', 400,//600
                         },
                         {
@@ -4948,6 +4986,13 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 1000,
                         },
+#if 1
+                        {
+                                SKILL_TEMPORAL,
+                                '+', 0,
+                                '+', 800,
+                        },
+#endif
                         {
                                 SKILL_UDUN,
                                 '+', 0,
@@ -5282,164 +5327,163 @@ player_class class_info[MAX_CLASS] =
         //Great at searching, bad at stealth. Great @ MD? I say no because we don't want them carrying
         //support rods + runes
         //HP dice... Hm, tough question. What other skills will be made available to them? *Keeping @ 5 for now*
-		10, 20, 20,  0, 20, 30, 45, 20,
+		10, 20, 20,  2, 20, 30, 45, 20,
 		 0, 11, 10,  0,  3,  5, 20, 10,
 		5, 20,//5, 20
                 {
-						{
-							SKILL_COMBAT,
-							'+', 0,
-							'+', 1000,
-						},
-						/* just to make fighting techniques available!: */
-						{
-							SKILL_MASTERY,
-							'+', 1000,
-							'+', 0,
-						},
-						/* "I am able to learn sword, but not weapon mastery in general, nor combat" */
-						/* combat is ok, but i guess they aren't disciplined enough for w-mastery ;) */
-						{
-							SKILL_SWORD,
-							'+', 0,
-							'+', 900,
-						},
-						{
-							SKILL_CRITS,
-							'+', 0,
-							'+', 400,
-						},
-						{
-							SKILL_AXE,
-							'+', 0,
-							'+', 800,
-						},
-						{
-							SKILL_BLUNT,
-							'+', 0,
-							'+', 800,
-						}, 
-						{
-							SKILL_POLEARM,
-							'+', 0,
-							'+', 800,
-						},
-						{
-							SKILL_MARTIAL_ARTS,
-							'+', 0,
-							'+', 200,
-						},
-						{
-							SKILL_BOOMERANG,
-							'+', 0,
-							'+', 900,
-						},
-						{
-							SKILL_SLING,
-							'+', 0,
-							'+', 700,
-						},
+			{
+				SKILL_COMBAT,
+				'+', 0,
+				'+', 1000,
+			},
+                        {
+                                SKILL_TECHNIQUE,
+                                '+', 1000,
+                                '+', 0,
+                        },
+			/* "I am able to learn sword, but not weapon mastery in general, nor combat" */
+			/* combat is ok, but i guess they aren't disciplined enough for w-mastery ;) */
+			{
+				SKILL_SWORD,
+				'+', 0,
+				'+', 900,
+			},
+			{
+				SKILL_CRITS,
+				'+', 0,
+				'+', 400,
+			},
+			{
+				SKILL_AXE,
+				'+', 0,
+				'+', 800,
+			},
+			{
+				SKILL_BLUNT,
+				'+', 0,
+				'+', 800,
+			}, 
+			{
+				SKILL_POLEARM,
+				'+', 0,
+				'+', 800,
+			},
+			{
+				SKILL_MARTIAL_ARTS,
+				'+', 0,
+				'+', 200,
+			},
+			{
+				SKILL_BOOMERANG,
+				'+', 0,
+				'+', 900,
+			},
+			{
+				SKILL_SLING,
+				'+', 0,
+				'+', 700,
+			},
 #ifndef ENABLE_RCRAFT
-						{
-							SKILL_MAGIC,
-							'+', 1000,
-							'+', 200,
-						},
+			{
+				SKILL_MAGIC,
+				'+', 1000,
+				'+', 200,
+			},
 #else
-						{
-							SKILL_MAGIC,
-							'+', 1000,
-							'+', 1000,
-						},
+			{
+				SKILL_MAGIC,
+				'+', 1000,
+				'+', 1000,
+			},
 #endif
-						/* Sneakiness tree */
-						{
-							SKILL_SNEAKINESS,
-							'+', 1000,
-							'+', 600,
-						},
-						{
-							SKILL_STEALTH,
-							'+', 1000,
-							'+', 600,
-						},
-						{
-							SKILL_DISARM,
-							'+', 0,
-							'+', 2000,
-						},
-						{
-							SKILL_STEALING,
-							'+', 0,
-							'+', 700,
-						},
-						{
-							SKILL_BACKSTAB,
-							'+', 0,
-							'+', 700,
-						},
-						{
-							SKILL_DODGE,
-							'+', 0,/*1000*/
-							'+', 700,
-						},
-						{
-							SKILL_CALMNESS,
-							'+', 0,
-							'+', 1000,
-						},
-						{
-							SKILL_INTERCEPT,
-							'+', 0,
-							'+', 1000,
-						},
+			/* Sneakiness tree */
+			{
+				SKILL_SNEAKINESS,
+				'+', 1000,
+				'+', 600,
+			},
+			{
+				SKILL_STEALTH,
+				'+', 1000,
+				'+', 600,
+			},
+			{
+				SKILL_DISARM,
+				'+', 0,
+				'+', 2000,
+			},
+			{
+				SKILL_STEALING,
+				'+', 0,
+				'+', 700,
+			},
+			{
+				SKILL_BACKSTAB,
+				'+', 0,
+				'+', 700,
+			},
+			{
+				SKILL_DODGE,
+				'+', 0,/*1000*/
+				'+', 700,
+			},
+			{
+				SKILL_CALMNESS,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_INTERCEPT,
+				'+', 0,
+				'+', 1000,
+			},
 #ifndef ENABLE_RCRAFT
-						{
-							SKILL_RUNEMASTERY,
-							'+', 1000,
-							'+', 1500,
-						},
+			{
+				SKILL_RUNEMASTERY,
+				'+', 1000,
+				'+', 1500,
+			},
 #else
-						{ 
-							SKILL_R_FIRECOLD,
-							'+', 1260,
-							'+', 630, //78
-						},			
-						{ 
-							SKILL_R_WATEACID,
-							'+', 0,
-							'+', 600, //82
-						},			
-						{ 
-							SKILL_R_ELECEART,
-							'+', 0,
-							'+', 620, //80
-						},
-						{ 
-							SKILL_R_WINDPOIS,
-							'+', 1220,
-							'+', 610, //81
-						},
-						{ 
-							SKILL_R_MANACHAO,
-							'+', 0,
-							'+', 610, //81
-						},
-						{ 
-							SKILL_R_FORCGRAV,
-							'+', 0,
-							'+', 630, //78
-						},
-						{ 
-							SKILL_R_NETHTIME,
-							'+', 0,
-							'+', 590, //84
-						},
-						{ 
-							SKILL_R_MINDNEXU,
-							'+', 0,
-							'+', 605, //81
-						},
+			{ 
+				SKILL_R_FIRECOLD,
+				'+', 1260,
+				'+', 630, //78
+			},
+			{
+				SKILL_R_WATEACID,
+				'+', 0,
+				'+', 600, //82
+			},
+			{
+				SKILL_R_ELECEART,
+				'+', 0,
+				'+', 620, //80
+			},
+			{
+				SKILL_R_WINDPOIS,
+				'+', 1220,
+				'+', 610, //81
+			},
+			{
+				SKILL_R_MANACHAO,
+				'+', 0,
+				'+', 610, //81
+			},
+			{
+				SKILL_R_FORCGRAV,
+				'+', 0,
+				'+', 630, //78
+			},
+			{
+				SKILL_R_NETHTIME,
+				'+', 0,
+				'+', 590, //84
+			},
+			{
+				SKILL_R_MINDNEXU,
+				'+', 0,
+				'+', 605, //81
+			},
 #endif
                         /* Necromancy tree */
                         {
@@ -5500,10 +5544,10 @@ player_class class_info[MAX_CLASS] =
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		30, 30, 36,  2, 35, 14, 55, 35,
+		30, 30, 36,  3, 35, 14, 55, 35,
 		 0,  5,  5,  0,  3,  3, 26, 20,
-//		4, 25,
-		5, 25,
+//		5, 25,
+		6, 25,
                 {
                         /* Combat tree */
                         {
@@ -5516,35 +5560,45 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_MASTERY,
                                 '+', 1000,
 //                                '+', 400,
-                                '+', 600,
+//                                '+', 600,
+                                '+', 800,
+                        },
+                        {
+                                SKILL_TECHNIQUE,
+                                '+', 1000,
+                                '+', 0,
                         },
                         {
                                 SKILL_SWORD,
                                 '+', 0,
-                                '+', 650,
+//                                '+', 650,
+                                '+', 750,
                         },
 #if 1 /* gory and brutal axes distract their mind..well, or maybe not? */
                         {
                                 SKILL_AXE,
                                 '+', 0,
-                                '+', 600,
+//                                '+', 600,
+                                '+', 700,
                         },
 #endif
                         {
                                 SKILL_BLUNT,
                                 '+', 0,
-                                '+', 650,
+//                                '+', 650,
+                                '+', 750,
                         },
 			{
 				SKILL_POLEARM,
 				'+', 0,
-				'+', 650,
+//				'+', 650,
+				'+', 750,
 			},
                         {
-                                /* let's keep it low for now - offbalancing */
                                 SKILL_MARTIAL_ARTS,
                                 '+', 0,
-                                '+', 600,
+//                                '+', 600,
+                                '+', 700,
                         },
 		/*ranged weapon skills shouldnt be better than "Mimic" class. more like "Istar" which has none at all.*/
                         {
@@ -5676,9 +5730,147 @@ player_class class_info[MAX_CLASS] =
                 }
 	}
 #endif
-
-
 };
+
+
+/* Racial traits, introduced for Draconians - C. Blue */
+player_trait trait_info[MAX_TRAIT] = {
+	{ /* Note: This trait #0 must be allowed for EXACTLY the races that DON'T have any trait.
+	     This can be used to 'disable' all traits for a specific race: Just add it here. */
+		"N/A",
+#ifdef TEST_SERVER
+		0xFFFFFF & ~RFR,
+#else
+		0xFFFFFF, /* disable for all */
+#endif
+	},
+	{
+		"Blue lineage",
+		RFR,
+	},
+	{
+		"White lineage",
+		RFR,
+	},
+	{
+		"Red lineage",
+		RFR,
+	},
+	{
+		"Black lineage",
+		RFR,
+	},
+	{
+		"Green lineage",
+		RFR,
+	},
+	{
+		"Multi-hued lineage",
+		RFR,
+	},
+	{
+		"Bronze lineage",
+		RFR,
+	},
+	{
+		"Silver lineage",
+		RFR,
+	},
+	{
+		"Golden lineage",
+		RFR,
+	},
+	{
+		"Law lineage",
+		0,
+	},
+	{
+		"Chaos lineage",
+		0,
+	},
+	{
+		"Balance lineage",
+		0,
+	},
+	{
+		"Power lineage",
+		0,
+	},
+	{
+		"Enlightened",
+		0,
+	},
+	{
+		"Corrupted",
+		0,
+	},
+	{
+		"",
+		0,
+	},
+	{
+		"",
+		0,
+	},
+	{
+		"",
+		0,
+	},
+	{
+		"",
+		0,
+	},
+	{
+		"",
+		0,
+	},
+	{
+		"",
+		0,
+	},
+	{
+		"",
+		0,
+	},
+	{
+		"",
+		0,
+	},
+	{
+		"",
+		0,
+	},
+	{
+		"",
+		0,
+	},
+	{
+		"",
+		0,
+	},
+	{
+		"",
+		0,
+	},
+	{
+		"",
+		0,
+	},
+	{
+		"",
+		0,
+	},
+	{
+		"",
+		0,
+	},
+	{
+		"",
+		0,
+	},
+};
+
+
 /*
  * Player Classes.
  *
@@ -6322,9 +6514,9 @@ magic_type innate_powers[96] =
 // RF6_XXX2			0x00000008	/* Heal a lot (?) */
   {0, 0, 0, 0},
 // RF6_BLINK			0x00000010	/* Teleport Short */
-  {0, 5, 5, 0},
+  {0, 8, 20, 0},
 // RF6_TPORT			0x00000020	/* Teleport Long */
-  {0, 15, 30, 0},
+  {0, 20, 30, 0},
 // RF6_XXX3			0x00000040	/* Move to Player (?) */
   {0, 0, 0, 0},
 // RF6_XXX4			0x00000080	/* Move to Monster (?) */
@@ -6334,7 +6526,7 @@ magic_type innate_powers[96] =
 // RF6_TELE_AWAY		0x00000200	/* Move player far away */
   {0, 20, 40, 0},
 // RF6_TELE_LEVEL		0x00000400	/* Move player vertically */
-  {0, 20, 60, 0},
+  {0, 30, 60, 0},
 // RF6_XXX5			0x00000800	/* Move player (?) */
   {0, 0, 0, 0},
 // RF6_DARKNESS		0x00001000	/* Create Darkness */
@@ -6752,7 +6944,7 @@ r_spell runespell_list[RT_MAX] =
 { RT_HEALING, "stasis", 6, 14, 10, 0, 3, GF_STASIS },
 { RT_MISSILE, "magic missiles", 11, 12, 10, 0, 2, GF_MISSILE },
 { RT_DETECT_STAIR, "blindness", 1, 12, 10, 0, 2, GF_BLIND },
-{ RT_DIG, "digging", 10, 12, 10, 0, 1, GF_KILL_WALL },
+{ RT_DIG, "erosion", 10, 12, 10, 0, 1, GF_KILL_WALL },
 { RT_POLYMORPH, "polymorph", 10, 10, 10, 0, 2, GF_OLD_POLY },
 { RT_FURY, "stasis", 10, 10, 10, 0, 2, GF_STASIS },
 { RT_BRILLIANCE, "brilliance", 11, 12, 12, 0, 1, GF_LITE },
@@ -6768,7 +6960,7 @@ r_spell runespell_list[RT_MAX] =
 { RT_DISPERSE, "disenchantment", 11, 12, 20, 0, 2, GF_DISENCHANT },
 { RT_QUICKEN, "mire", 4, 15, 20, 5, 2, GF_OLD_SLOW },
 { RT_ANCHOR, "stasis", 10, 15, 22, 5, 2, GF_STASIS },
-{ RT_CHAOS, "chaos", 11, 10, 25, 6, 1, GF_DISENCHANT },
+{ RT_CHAOS, "chaos", 11, 10, 25, 6, 1, GF_CHAOS },
 { RT_INERTIA, "inertia", 12, 12, 25, 6, 1, GF_INERTIA },
 { RT_NEXUS, "nexus", 11, 11, 25, 6, 2, GF_NEXUS },
 { RT_PSI_ESP, "psi", 11, 12, 25, 8, 1, GF_PSI },
@@ -6786,14 +6978,14 @@ r_spell runespell_list[RT_MAX] =
 { RT_ICEPOISON, "ice and poison", 13, 13, 30, 5, 3, GF_ICEPOISON },
 { RT_DISINTEGRATE, "disintegration", 15, 15, 30, 10, 1, GF_DISINTEGRATE },
 { RT_MYSTIC_SHIELD, "force", 13, 14, 30, 5, 2, GF_FORCE },
-{ RT_MAGIC_WARD, "holy fire", 13, 14, 30, 5, 1, GF_LITE },
+{ RT_MAGIC_WARD, "light", 13, 14, 30, 5, 1, GF_LITE },
 { RT_RECALL, "nexus", 13, 14, 30, 5, 2, GF_NEXUS },
 { RT_NETHER, "nether", 10, 14, 30, 5, 2, GF_NETHER },
 { RT_TELEPORT_LEVEL, "displacement", 20, 12, 32, 10, 2, GF_AWAY_ALL },
-{ RT_EARTHQUAKE, "meteor", 14, 14, 35, 15, 3, GF_METEOR },
-{ RT_NUKE, "nuke", 13, 16, 40, 10, 3, GF_NUKE },
-{ RT_ROCKET, "rockets", 14, 16, 40, 10, 1, GF_ROCKET },
-{ RT_MAGIC_CIRCLE, "holy fire", 14, 20, 40, 30, 1, GF_LITE },
+{ RT_EARTHQUAKE, "meteorites", 14, 14, 35, 15, 3, GF_METEOR },
+{ RT_NUKE, "toxine", 13, 16, 40, 10, 3, GF_NUKE },
+{ RT_ROCKET, "detonations", 14, 16, 40, 10, 1, GF_ROCKET },
+{ RT_MAGIC_CIRCLE, "light", 14, 20, 40, 30, 1, GF_LITE },
 };
 
 rspell_sel rspell_selector[MAX_RSPELL_SEL] =

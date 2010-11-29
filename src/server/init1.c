@@ -428,9 +428,9 @@ static cptr r_info_flags7[] =
 	"NO_ESP",
 	"ATTR_BASE",
 	"VORTEX",
-	"XXX7X23",
-	"XXX7X24",
-	"XXX7X25",
+		"OOD_20",
+		"OOD_15",
+		"OOD_10",
 	"XXX7X26",
 	"S_LOWEXP", //"XXX7X27",
 	"S_NOEXP", //"XXX7X28",
@@ -1098,9 +1098,9 @@ static cptr s_info_flags1[] =
 	"DUMMY",
 	"MAX_1",
 
-	"XXX1",
-	"XXX1",
-	"XXX1",
+	"MAX_10",
+	"MAX_20",
+	"MAX_25",
 	"XXX1",
 
 	"XXX1",
@@ -1218,7 +1218,7 @@ static cptr st_info_flags1[] =
 	"PRICY_ITEMS4",
 	"HARD_STEAL",
 	"VHARD_STEAL",
-	"NO_STEAL",
+	"XXX",
 	"BUY67",
 	"BUY50",
 	"NO_DISCOUNT3",
@@ -1417,7 +1417,7 @@ static errr grab_one_race_allow_flag(s32b *choice, cptr what)
 
 	/* Scan classes flags */
 //	for (i = 0; i < max_rp_idx && (s = race_info[i].title + rp_name); i++)
-	for (i = 0; i < MAX_RACES && (s = race_info[i].title); i++)
+	for (i = 0; i < MAX_RACE && (s = race_info[i].title); i++)
 	{
 		if (streq(what, s))
 		{
@@ -4533,7 +4533,11 @@ errr init_r_info_txt(FILE *fp, char *buf)
 		if ((r_info[i].flags8 & RF8_WILD_EASY) &&
 				!(r_info[i].flags8 & RF8_WILD_EASY_MASK))
 			r_info[i].flags8 |= RF8_WILD_EASY_MASK;
-		
+
+		/* Implied flags */
+		if (r_info[i].flags1 & RF1_UNIQUE)
+			r_info[i].flags7 |= RF7_OOD_20;
+
 		/* clear flags that we want to be 'disabled' in defines.h for the time being,
 		   for example RF6_RAISE_DEAD isn't implemented fully! - C. Blue */
 		r_info[i].flags1 &= ~RF1_DISABLE_MASK;
@@ -5875,6 +5879,9 @@ errr init_d_info_txt(FILE *fp, char *buf)
 
 			/* Point at the "info" */
 			d_ptr = &d_info[i];
+
+			/* New (for fountains of blood) - remember own index */
+//			d_ptr->idx = error_idx;
 
 			/* Hack -- Verify space */
 			if (d_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
@@ -8333,27 +8340,21 @@ static cptr process_dungeon_file_expr(char **sp, char *fp)
 errr process_dungeon_file(cptr name, worldpos *wpos, int *yval, int *xval, int ymax, int xmax, bool init)
 {
 	FILE *fp;
-
 	char buf[1024];
-
 	int num = -1, i;
-
 	errr err = 0;
-
 	bool bypass = FALSE;
 
 	/* Save the start since it ought to be modified */
 	int xmin = *xval;
 
 	cave_type **zcave;
-	zcave=getcave(wpos);
+	zcave = getcave(wpos);
 	if (!zcave) return (-1);	/* maybe SIGSEGV soon anyway */
 
-	if (init)
-	{
+	if (init) {
 		meta_sleep = TRUE;
-		for (i = 0; i < 255; i++)
-		{
+		for (i = 0; i < 255; i++) {
 			letter[i].defined = FALSE;
 			if (i == ' ') letter[i].ok = TRUE;
 			else letter[i].ok = FALSE;
@@ -8376,15 +8377,13 @@ errr process_dungeon_file(cptr name, worldpos *wpos, int *yval, int *xval, int y
 //	safe_setuid_drop();
 
 	/* No such file */
-	if (!fp)
-	{
+	if (!fp) {
 		s_printf("Cannot find file %s at %s\n", name, buf);
 		return (-1);
 	}
 
 	/* Process the file */
-	while (0 == my_fgets(fp, buf, 1024, FALSE))
-	{
+	while (0 == my_fgets(fp, buf, 1024, FALSE)) {
 		/* Count lines */
 		num++;
 

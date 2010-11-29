@@ -174,14 +174,14 @@ void addtown(int y, int x, int base, u16b flags, int type)
 	town[numtowns].y = y;
 	town[numtowns].baselevel = base;
 	town[numtowns].flags = flags;
-//	town[numtowns].num_stores = MAX_STORES;
+//	town[numtowns].num_stores = MAX_BASE_STORES;
 	town[numtowns].num_stores = max_st_idx;
 	town[numtowns].type = type;
 	wild_info[y][x].type = WILD_TOWN;
 	wild_info[y][x].radius = base;
 	alloc_stores(numtowns);
 	/* Initialize the stores */
-//	for (n = 0; n < MAX_STORES; n++)
+//	for (n = 0; n < MAX_BASE_STORES; n++)
 	for (n = 0; n < max_st_idx; n++)
 	{
 		/* make shop remember the town its in - C. Blue */
@@ -192,7 +192,7 @@ void addtown(int y, int x, int base, u16b flags, int type)
 		store_init(&town[numtowns].townstore[n]);
 
 		/* Ignore home and auction house */
-//		if ((n == MAX_STORES - 2) || (n == MAX_STORES - 1)) continue;
+//		if ((n == MAX_BASE_STORES - 2) || (n == MAX_BASE_STORES - 1)) continue;
 
 		/* Maintain the shop */
 		store_maint(&town[numtowns].townstore[n]);
@@ -353,16 +353,13 @@ void wild_spawn_towns()
 			continue;
 		}
 
-		adddungeon(&wpos, 0, 0, 0, 0, FALSE, i);
+		add_dungeon(&wpos, 0, 0, 0, 0, FALSE, i);
 
 		/* 0 or MAX_{HGT,WID}-1 are bad places for stairs - mikaelh */
-		if (d_info[i].flags1 & DF1_TOWER)
-		{
+		if (d_info[i].flags1 & DF1_TOWER) {
 			new_level_down_y(&wpos, 1+rand_int(MAX_HGT-2));
 			new_level_down_x(&wpos, 1+rand_int(MAX_WID-2));
-		}
-		else
-		{
+		} else {
 			new_level_up_y(&wpos, 1+rand_int(MAX_HGT-2));
 			new_level_up_x(&wpos, 1+rand_int(MAX_WID-2));
 		}
@@ -714,7 +711,7 @@ void wild_add_monster(struct worldpos *wpos)
 	get_mon_num_prep(0, NULL);
 
 	/* get the monster */
-	r_idx = get_mon_num(monster_level);
+	r_idx = get_mon_num(monster_level, monster_level);
 
 	/* place the monster */
 	place_monster_aux(wpos, monst_y, monst_x, r_idx, FALSE, TRUE, FALSE, 0);
@@ -1024,17 +1021,15 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 	
 	trys = cash = num_food = num_objects = num_bones = 0;
 	inhabited = at_home = taken_over = FALSE;
-	
+
 	/* hack -- 75% of buildings are inhabited */
 	if (rand_int(100) < 75) inhabited = TRUE;
-	
-	switch (type)
-	{
+
+	switch (type) {
 		case WILD_LOG_CABIN:
 			/* possibly add a farm */
 			/* hack -- no farms near the town */
-			if (w_ptr->radius > 1)
-			{
+			if (w_ptr->radius > 1) {
 				/* are we a farmer? */
 				if (rand_int(100) < 50) wild_add_garden(wpos, (x1+x2)/2,(y1+y2)/2);
 			}
@@ -1046,9 +1041,8 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 				if (rand_int(100) < 40) wild_add_garden(wpos, (x1+x2)/2,(y1+y2)/2);
 			}
 		
-		case WILD_PERM_HOME:		
-			if (inhabited)			
-			{
+		case WILD_PERM_HOME:
+			if (inhabited) {
 				/* is someone to be found at this house */
 				if (rand_int(100) < 80) at_home = TRUE;
 								
@@ -1060,11 +1054,8 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 				
 				/* are there objects to be found */
 				if (rand_int(100) < 50) num_objects = rand_int(rand_int(10));
-			}
-			else
-			{
-				if (rand_int(100) < 50) 
-				{
+			} else {
+				if (rand_int(100) < 50) {
 					/* taken over! */
 					taken_over = TRUE;
 					if (rand_int(100) < 40) cash = rand_int(20);
@@ -1082,8 +1073,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 	/* Hack -- if we have created this level before, do not add
 	   anything to it.
 	*/
-	if (w_ptr->flags & WILD_F_GENERATED) 
-	{
+	if (w_ptr->flags & WILD_F_GENERATED) {
 		/* hack -- restore the RNG */
 		Rand_value = old_seed;
 		return;
@@ -1092,18 +1082,14 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 
 
 	/* add the cash */
-	
-	if (!(w_ptr->flags & WILD_F_CASH) && cash)
-	{	
+	if (!(w_ptr->flags & WILD_F_CASH) && cash) {
 		/* try to place the cash */
-		while (trys < 50)
-		{
+		while (trys < 50) {
 			x = rand_range(x1,x2);
 			y = rand_range(y1,y2);
 		
-			if (cave_clean_bold(zcave,y,x))
-			{
-				object_level = cash;			
+			if (cave_clean_bold(zcave,y,x)) {
+				object_level = cash;
 				place_gold(wpos,y,x, 0);
 				break;
 			}
@@ -1115,13 +1101,11 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 	if (!(w_ptr->flags & WILD_F_OBJECTS)) {
 		trys = 0;
 		place_object_restrictor = RESF_NOHIDSM;
-		while ((num_objects) && (trys < 300))
-		{
+		while ((num_objects) && (trys < 300)) {
 			x = rand_range(x1,x2);
 			y = rand_range(y1,y2);
 
-			if (cave_clean_bold(zcave,y,x))
-			{
+			if (cave_clean_bold(zcave,y,x)) {
 				object_level = w_ptr->radius/2 +1;
 				place_object(wpos, y, x, FALSE, FALSE, FALSE, RESF_LOW, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 				num_objects--;
@@ -1134,13 +1118,11 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 	/* add the food */
 	if (!(w_ptr->flags & WILD_F_FOOD)) {
 		trys = 0;
-		while ((num_food) && (trys < 100))
-		{
+		while ((num_food) && (trys < 100)) {
 			x = rand_range(x1,x2);
 			y = rand_range(y1,y2);
 
-			if (cave_clean_bold(zcave,y,x))
-			{
+			if (cave_clean_bold(zcave,y,x)) {
 				food_sval = SV_FOOD_MIN_FOOD+rand_int(12);
 				/* hack -- currently no food svals between 25 and 32 */
 				if (food_sval > 25) food_sval += 6;
@@ -1157,20 +1139,18 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 			trys++;	
 		}
 	}
-	
+
 	/* add the bones */
 	if (!(w_ptr->flags & WILD_F_BONES)) {
 		trys = 0;
 		get_obj_num_hook = wild_obj_aux_bones;
 		get_obj_num_prep(RESF_WILD);
-	
-		while ((num_bones) && (trys < 100))
-		{
+
+		while ((num_bones) && (trys < 100)) {
 			x = rand_range(x1,x2);
 			y = rand_range(y1,y2);
 
-			if (cave_clean_bold(zcave,y,x))
-			{
+			if (cave_clean_bold(zcave,y,x)) {
 				/* base of 500 feet for the bones */
 				k_idx = get_obj_num(10, RESF_NONE);
 				invcopy(&forge, k_idx);
@@ -1187,11 +1167,10 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 	/* hack -- restore the old object selection function */
 	get_obj_num_hook = NULL;
 	get_obj_num_prep(RESF_NONE);
-	
+
 	/* add the inhabitants */
 	if (!(w_ptr->flags & WILD_F_HOME_OWNERS)) {
-		if (at_home)
-		{
+		if (at_home) {
 			/* determine the home owners species */
 			get_mon_num_hook = wild_monst_aux_home_owner;
 
@@ -1201,7 +1180,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 			get_mon_num_prep(0, NULL);
 
 			/* homeowners can be tough */
-			r_idx = get_mon_num(w_ptr->radius);
+			r_idx = get_mon_num(w_ptr->radius, w_ptr->radius);
 
 			/* get the owners location */
 			x = rand_range(x1, x2) + rand_int(40) - 20;
@@ -1216,8 +1195,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 
 	/* add the invaders */	
 	if (!(w_ptr->flags & WILD_F_INVADERS)) {
-		if (taken_over)
-		{
+		if (taken_over) {
 			/* determine the invaders species*/
 			get_mon_num_hook = wild_monst_aux_invaders;
 
@@ -1225,7 +1203,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 			set_mon_num2_hook(zcave[y1][x1].feat);
 
 			get_mon_num_prep(0, NULL);
-			r_idx = get_mon_num((w_ptr->radius/2)+1);
+			r_idx = get_mon_num((w_ptr->radius / 2) + 1, w_ptr->radius / 2);
 
 			/* add the monsters */
 			summon_override_checks = SO_HOUSE;
@@ -1251,9 +1229,8 @@ static bool dwelling_check_entrance(worldpos *wpos, int y, int x)
 	cave_type *c_ptr;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
-	
-	for (i = 1; i < tdi[1]; i++)
-	{
+
+	for (i = 1; i < tdi[1]; i++) {
 		c_ptr = &zcave[y + tdy[i]][x + tdx[i]];
 
 		/* Inside a house */
@@ -1299,13 +1276,13 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	/* Initialize drawbridge_x and drawbridge_y to make gcc happy */
 	drawbridge_x[0] = drawbridge_x[1] = drawbridge_x[2] = 0;
 	drawbridge_y[0] = drawbridge_y[1] = drawbridge_y[2] = 0;
-	
+
 	/* Hack -- Use the "simple" RNG */
 	Rand_quick = TRUE;
-	
+
 	/* Hack -- Induce consistant wilderness */
 	/* Rand_value = seed_town + (Depth * 600) + (w_ptr->dwellings * 200);*/
-	
+
 #ifdef DEVEL_TOWN_COMPATIBILITY
 	house_xlen = rand_int(10) + 3;
 	house_ylen = rand_int(5) + 3;
@@ -1314,41 +1291,33 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 #else
 	/* find the dimensions of the house */
 	/* chance of being a "large" house */
-	if (!rand_int(2))
-	{
+	if (!rand_int(2)) {
 		house_xlen = rand_int(10) + rand_int(rand_int(10)) + 9;
 		house_ylen = rand_int(5) + rand_int(rand_int(5)) + 6;
 	}
 	/* chance of being a "small" house */
-	else if (!rand_int(2))
-	{
+	else if (!rand_int(2)) {
 		house_xlen = rand_int(4) + 3;
 		house_ylen = rand_int(2) + 3;
 	}
 	/* a "normal" house */
-	else
-	{
+	else {
 		house_xlen = rand_int(10) + 3;
 		house_ylen = rand_int(5) + 3;
 	}
 	area = (house_xlen-2) * (house_ylen-2);
 
 	/* find the dimensions of the "lawn" the house is built on */
-	if (area < 30)
-	{
-		plot_xlen = house_xlen; 
+	if (area < 30) {
+		plot_xlen = house_xlen;
 		plot_ylen = house_ylen;
-	}
-	else if (area < 60)
-	{
+	} else if (area < 60) {
 		plot_xlen = house_xlen + (area/15)*2;
 		plot_ylen = house_ylen + (area/25)*2;
 		//plot_xlen = house_xlen + (area/10)*2;
 		//plot_ylen = house_ylen + (area/16)*2;
 		trad = FALSE;
-	}
-	else
-	{
+	} else {
 		plot_xlen = house_xlen + (area/8)*2;
 		plot_ylen = house_ylen + (area/14)*2;
 		trad = FALSE;
@@ -1375,18 +1344,16 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	/* initialise x and y, which may not be specified at this point */
 	x = (h_x1 + h_x2) / 2;
 	y = (h_y1 + h_y2) / 2;
-		
+
 	/* determine what kind of building it is */
 	if (rand_int(100) < 60) type = WILD_LOG_CABIN;
 	else if (rand_int(100) < 8) type = WILD_PERM_HOME;
 	else type = WILD_ROCK_HOME;
-	
+
 	/* hack -- add extra "for sale" homes near the town */
-	if (w_ptr->radius == 1) 
-	{
+	if (w_ptr->radius == 1) {
 		/* hack -- not many log cabins near town */
-		if (type == WILD_LOG_CABIN)
-		{
+		if (type == WILD_LOG_CABIN) {
 			if (rand_int(100) < 80) type = WILD_ROCK_HOME;
 		}
 #ifdef DEVEL_TOWN_COMPATIBILITY
@@ -1395,34 +1362,33 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 		if (rand_int(100) < 90) type = WILD_TOWN_HOME;
 #endif
 	}
-	if (w_ptr->radius == 2) 
+	if (w_ptr->radius == 2)
 #ifdef DEVEL_TOWN_COMPATIBILITY
 		if (rand_int(100) < 10) type = WILD_TOWN_HOME;
 #else
 		if (rand_int(100) < 80) type = WILD_TOWN_HOME;
 #endif
 	
-	switch (type)
-	{
+	switch (type) {
 		case WILD_LOG_CABIN:
 			wall_feature = FEAT_LOGS;
-			
+
 			/* doors are locked 1/3 of the time */
 			if (rand_int(100) < 33) door_feature = FEAT_DOOR_HEAD + rand_int(7);
 			else door_feature = FEAT_DOOR_HEAD;
-						
+
 			break;
 		case WILD_PERM_HOME:
 			wall_feature = FEAT_PERM_EXTRA;
 //			wall_feature = FEAT_WALL_HOUSE;
-			
+
 			/* doors are locked 90% of the time */
 			if (rand_int(100) < 90) door_feature = FEAT_DOOR_HEAD + rand_int(7);
 			else door_feature = FEAT_DOOR_HEAD;
 			break;
-		case WILD_ROCK_HOME:		
+		case WILD_ROCK_HOME:
 			wall_feature = FEAT_WALL_EXTRA;
-			
+
 			/* doors are locked 60% of the time */
 			if (rand_int(100) < 60) door_feature = FEAT_DOOR_HEAD + rand_int(7);
 			else door_feature = FEAT_DOOR_HEAD;			
@@ -1432,7 +1398,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 			wall_feature = FEAT_WALL_HOUSE;
 			door_feature = FEAT_HOME;
 
-#ifdef	DEVEL_TOWN_COMPATIBILITY
+#ifdef DEVEL_TOWN_COMPATIBILITY
 			/* Setup some "house info" */
 			price = (h_x2 - h_x1 - 1) * (h_y2 - h_y1 - 1);
 			price *= 15;
@@ -1443,13 +1409,13 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 			else price = 0;
 			//price = area*area*area*area/190;
 			// This is the dominant term for medium houses
-		  	price += area*area*33;
+			price += area*area*33;
 			// This is the dominant term for small houses
 			price += area * (900 + rand_int(200)); 
 #endif
 
 			/* Remember price */
-			
+
 			/* hack -- setup next possibile house addition */
 			MAKE(houses[num_houses].dna, struct dna_type);
 			houses[num_houses].dna->price = price;
@@ -1457,11 +1423,10 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 			houses[num_houses].y = h_y1;
 			houses[num_houses].flags = HF_RECT|HF_STOCK;
 			if (trad) houses[num_houses].flags |= HF_TRAD;
-			if(has_moat)
-				houses[num_houses].flags |= HF_MOAT;
+			if (has_moat) houses[num_houses].flags |= HF_MOAT;
 			houses[num_houses].coords.rect.width = h_x2-h_x1+1;
 			houses[num_houses].coords.rect.height = h_y2-h_y1+1;
-			wpcopy(&houses[num_houses].wpos,wpos);
+			wpcopy(&houses[num_houses].wpos, wpos);
 			break;
 	}
 
@@ -1472,90 +1437,84 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	/* hack -- avoid doors in water */
 	/* avoid lava and wall too */
 	num_door_attempts = 0;
-	do
-	{
+	do {
 		/* Pick a door direction (S,N,E,W) */
-		tmp = rand_int(4);	
-	
+		tmp = rand_int(4);
+
 		/* Extract a "door location" */
-		switch (tmp)
-		{
+		switch (tmp) {
 			/* Bottom side */
 			case DIR_SOUTH:
 				door_y = h_y2;
 				door_x = rand_range(h_x1, h_x2);
-				if (has_moat){
+				if (has_moat) {
 					drawbridge_y[0] = h_y2+1; drawbridge_y[1] = h_y2+2;
 					drawbridge_y[2] = h_y2+3;
 					drawbridge_x[0] = door_x; drawbridge_x[1] = door_x;
 					drawbridge_x[2] = door_x;
-					}
+				}
 				break;
 			/* Top side */
 			case DIR_NORTH:
 				door_y = h_y1;
 				door_x = rand_range(h_x1, h_x2);
-				if (has_moat){
+				if (has_moat) {
 					drawbridge_y[0] = h_y1-1; drawbridge_y[1] = h_y1-2;
 					drawbridge_y[2] = h_y1-3;
 					drawbridge_x[0] = door_x; drawbridge_x[1] = door_x;
 					drawbridge_x[2] = door_x;
-					}
+				}
 				break;
 			/* Right side */
 			case DIR_EAST:
 				door_y = rand_range(h_y1, h_y2);
 				door_x = h_x2;
-				if (has_moat){
+				if (has_moat) {
 					drawbridge_y[0] = door_y; drawbridge_y[1] = door_y;
 					drawbridge_y[2] = door_y; 
 					drawbridge_x[0] = h_x2+1; drawbridge_x[1] = h_x2+2;
 					drawbridge_x[2] = h_x2+3; 
-					}
+				}
 				break;
 
 			/* Left side */
 			default:
 				door_y = rand_range(h_y1, h_y2);
 				door_x = h_x1;
-				if (has_moat){
+				if (has_moat) {
 					drawbridge_y[0] = door_y; drawbridge_y[1] = door_y;
-					drawbridge_y[2] = door_y; 
+					drawbridge_y[2] = door_y;
 					drawbridge_x[0] = h_x1-1; drawbridge_x[1] = h_x1-2;
-					drawbridge_x[2] = h_x1-3; 
-					}
+					drawbridge_x[2] = h_x1-3;
+				}
 			break;
 		}
 		/* Access the grid */
 		c_ptr = &zcave[door_y][door_x];
 		num_door_attempts++;
-	}	
+	}
 	//while ((c_ptr->feat == FEAT_DEEP_WATER) && (num_door_attempts < 30));
 	while ((dwelling_check_entrance(wpos, door_y, door_x)) &&
-			(num_door_attempts < 30));
-				
+	    (num_door_attempts < 30));
+
 	/* Build a rectangular building */
-	for (y = h_y1; y <= h_y2; y++)
-	{
-		for (x = h_x1; x <= h_x2; x++)
-		{
+	for (y = h_y1; y <= h_y2; y++) {
+		for (x = h_x1; x <= h_x2; x++) {
 			/* Get the grid */
 			c_ptr = &zcave[y][x];
 
 			/* Clear previous contents, add "basic" perma-wall */
 			c_ptr->feat = wall_feature;
 		}
-	}		
-		
+	}
+
 	/* TODO: use coloured roof, so that they look cute :) */
 #ifndef USE_MANG_HOUSE_ONLY
 	if (type != WILD_TOWN_HOME || !trad)
 #endif	// USE_MANG_HOUSE_ONLY
 	/* make it hollow */
-	for (y = h_y1 + 1; y < h_y2; y++)
-	{
-		for (x = h_x1 + 1; x < h_x2; x++)
-		{
+	for (y = h_y1 + 1; y < h_y2; y++) {
+		for (x = h_x1 + 1; x < h_x2; x++) {
 			/* Get the grid */
 			c_ptr = &zcave[y][x];
 
@@ -1566,32 +1525,46 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 			c_ptr->info |= CAVE_ICKY;
 		}
 	}
-		
-	
+
 	/* add the door */
 	c_ptr = &zcave[door_y][door_x];
 	c_ptr->feat = door_feature;
 
+#ifdef HOUSE_PAINTING
+	/* Add colour if house is painted */
+	if ((tmp = pick_house(wpos, door_y, door_x)) != -1) {
+		house_type *h_ptr = &houses[tmp];
+		cave_type *hc_ptr;
+		if (h_ptr->colour) {
+			for (x = door_x - 1; x <= door_x + 1; x++)
+			for (y = door_y - 1; y <= door_y + 1; y++) {
+				if (!in_bounds(y, x)) continue;
+				hc_ptr = &zcave[y][x];
+				if (hc_ptr->feat == FEAT_WALL_HOUSE ||
+				    hc_ptr->feat == FEAT_HOME)
+					hc_ptr->colour = h_ptr->colour;
+			}
+		}
+	}
+#endif
+
 	/* Build the moat */
-	if (has_moat)
-	{
+	if (has_moat) {
 		/* North / South */
-		for (x = h_x1-2; x <= h_x2+2; x++)
-		{
+		for (x = h_x1-2; x <= h_x2+2; x++) {
 			zcave[h_y1-2][x].feat = FEAT_DEEP_WATER; zcave[h_y1-2][x].info |= CAVE_ICKY;
 			zcave[h_y1-3][x].feat = FEAT_DEEP_WATER; zcave[h_y1-3][x].info |= CAVE_ICKY;
 			zcave[h_y2+2][x].feat = FEAT_DEEP_WATER; zcave[h_y2+2][x].info |= CAVE_ICKY;
 			zcave[h_y2+3][x].feat = FEAT_DEEP_WATER; zcave[h_y2+3][x].info |= CAVE_ICKY;
-		}		
+		}
 		/* East / West */
-		for (y = h_y1-2; y <= h_y2+2; y++)
-		{
+		for (y = h_y1-2; y <= h_y2+2; y++) {
 			/* Get the grid */
 			zcave[y][h_x1-2].feat = FEAT_DEEP_WATER; zcave[y][h_x1-2].info |= CAVE_ICKY;
 			zcave[y][h_x1-3].feat = FEAT_DEEP_WATER; zcave[y][h_x1-3].info |= CAVE_ICKY;
 			zcave[y][h_x2+2].feat = FEAT_DEEP_WATER; zcave[y][h_x2+2].info |= CAVE_ICKY;
 			zcave[y][h_x2+3].feat = FEAT_DEEP_WATER; zcave[y][h_x2+3].info |= CAVE_ICKY;
-		}		
+		}
 		zcave[drawbridge_y[0]][drawbridge_x[0]].feat = FEAT_DRAWBRIDGE;
 		zcave[drawbridge_y[0]][drawbridge_x[0]].info |= CAVE_ICKY;
 		zcave[drawbridge_y[1]][drawbridge_x[1]].feat = FEAT_DRAWBRIDGE;
@@ -1599,22 +1572,20 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 		zcave[drawbridge_y[2]][drawbridge_x[2]].feat = FEAT_DRAWBRIDGE;
 		zcave[drawbridge_y[2]][drawbridge_x[2]].info |= CAVE_ICKY;
 	}
-	
- 	/* Hack -- finish making a town house */
-	
-	if (type == WILD_TOWN_HOME)
-	{
+
+	/* Hack -- finish making a town house */
+	if (type == WILD_TOWN_HOME) {
 		struct c_special *cs_ptr;
-		/* hack -- only add a house if it is not already in memory */
-		if ((tmp=pick_house(wpos, door_y, door_x)) == -1)
-		{
-			cs_ptr=AddCS(c_ptr, CS_DNADOOR);	/* XXX this can fail? */
+		/* hack -- only add a house if it is not already in memory;
+		   Means: If it hasn't already been created on server startup. */
+		if ((tmp = pick_house(wpos, door_y, door_x)) == -1) {
+			cs_ptr = AddCS(c_ptr, CS_DNADOOR);	/* XXX this can fail? */
 //			cs_ptr->type=CS_DNADOOR;
 			cs_ptr->sc.ptr=houses[num_houses].dna;
 			houses[num_houses].dx = door_x;
 			houses[num_houses].dy = door_y;
-			houses[num_houses].dna->creator=0L;
-			houses[num_houses].dna->owner=0L;
+			houses[num_houses].dna->creator = 0L;
+			houses[num_houses].dna->owner = 0L;
 
 #ifndef USE_MANG_HOUSE_ONLY
 			/* This can be changed later - house capacity doesn't need
@@ -1625,16 +1596,13 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 			/* XXX maybe new owner will be unhappy if area>STORE_INVEN_MAX;
 			 * this will be fixed when STORE_INVEN_MAX will be removed. - Jir
 			 */
-			if (trad)
-			{
+			if (trad) {
 				size = (area >= STORE_INVEN_MAX) ? STORE_INVEN_MAX : area;
 				houses[num_houses].stock_size = size;
 				houses[num_houses].stock_num = 0;
 				/* TODO: pre-allocate some when launching the server */
 				C_MAKE(houses[num_houses].stock, size, object_type);
-			}
-			else
-			{
+			} else {
 				houses[num_houses].stock_size = 0;
 				houses[num_houses].stock_num = 0;
 			}
@@ -1645,25 +1613,24 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 				GROW(houses, house_alloc, house_alloc+512, house_type);
 				house_alloc+=512;
 			}
-		}
-		else{
-			cs_ptr=AddCS(c_ptr, CS_DNADOOR);
+		} else {
+			cs_ptr = AddCS(c_ptr, CS_DNADOOR);
 /* evileye temporary fix */
 #if 1
-			houses[tmp].coords.rect.width=houses[num_houses].coords.rect.width;
-			houses[tmp].coords.rect.height=houses[num_houses].coords.rect.height;
+			houses[tmp].coords.rect.width = houses[num_houses].coords.rect.width;
+			houses[tmp].coords.rect.height = houses[num_houses].coords.rect.height;
 #endif
 /* end evileye fix */
 			/* malloc madness otherwise */
 			KILL(houses[num_houses].dna, struct dna_type);
 //			cs_ptr->type=CS_DNADOOR;
-			cs_ptr->sc.ptr=houses[tmp].dna;
+			cs_ptr->sc.ptr = houses[tmp].dna;
 		}
 	}
-		
+
 	/* make the building interesting */
 	wild_furnish_dwelling(wpos, h_x1+1,h_y1+1,h_x2-1,h_y2-1, type);
-	
+
 	/* Hack -- use the "complex" RNG */
 	Rand_quick = rand_old;
 }
@@ -2849,10 +2816,8 @@ void wild_add_uhouse(house_type *h_ptr)
 	 * usually, already done in poly_build..
 	 * right, Evileye?	- Jir -
 	 */
-	if (!(cs_ptr = AddCS(c_ptr, CS_DNADOOR)))
-	{
-		if (!(cs_ptr = GetCS(c_ptr, CS_DNADOOR)))
-		{
+	if (!(cs_ptr = AddCS(c_ptr, CS_DNADOOR))) {
+		if (!(cs_ptr = GetCS(c_ptr, CS_DNADOOR))) {
 			s_printf("House creation failed!! (wild_add_uhouse)\n");
 			return;
 		}
@@ -2872,6 +2837,7 @@ void wild_add_uhouses(struct worldpos *wpos){
 	load_guildhalls(wpos);
 }
 
+/* Called by wilderness_gen() - build a wilderness sector from memory */
 static void wilderness_gen_hack(struct worldpos *wpos)
 {
 	int y, x, x1, x2, y1, y2;
@@ -2902,10 +2868,8 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 	monster_level = terrain.monst_lev;
 
 	/* Hack -- Start with basic floors */
-	for (y = 1; y < MAX_HGT - 1; y++)
-	{
-		for (x = 1; x < MAX_WID - 1; x++)
-		{
+	for (y = 1; y < MAX_HGT - 1; y++) {
+		for (x = 1; x < MAX_WID - 1; x++) {
 			c_ptr = &zcave[y][x];
 			c_ptr->feat = terrain_spot(&terrain);
 		}
@@ -2913,11 +2877,9 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 
 	/* to make the borders between wilderness levels more seamless, "bleed"
 	   the levels together */
-
 	bleed_with_neighbors(wpos);
 
 	/* hack -- reseed, just to make sure everything stays consistent. */
-
 	Rand_value = seed_town + (wpos->wx+wpos->wy*MAX_WILD_X) * 287 + 490836;
 
 	/* to make the level more interesting, add some "hotspots" */
@@ -2940,23 +2902,21 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 #ifndef DEVEL_TOWN_COMPATIBILITY
 	/* Hack -- 50% of the time on a radius 1 level there will be a "park" which will make
 	 * the rest of the level more densly packed together */
-	if ((w_ptr->radius == 1) && !rand_int(2))
-	{
+	if ((w_ptr->radius == 1) && !rand_int(2)) {
 		reserve_building_plot(wpos, &x1,&y1, &x2,&y2, rand_int(30)+15, rand_int(20)+10, -1, -1);
 	}
 #endif
 
 	/* add wilderness dwellings */
 	/* hack -- the number of dwellings is proportional to their chance of existing */
-	while (terrain.dwelling > 0)
-	{
-		if (rand_int(1000) < terrain.dwelling)
-		{
+	while (terrain.dwelling > 0) {
+		if (rand_int(1000) < terrain.dwelling) {
 			wild_add_dwelling(wpos, -1, -1);
 		}
 		terrain.dwelling -= 50;
 	}
 
+	/* add user-built houses */
 	wild_add_uhouses(wpos);
 
 	/* C. Blue - turn single deep water fields in wildernis to shallow (non-drownable) water: */
@@ -3014,8 +2974,7 @@ void wilderness_gen(struct worldpos *wpos)
 
 
 	/* Perma-walls -- North/South*/
-	for (x = 0; x < MAX_WID; x++)
-	{
+	for (x = 0; x < MAX_WID; x++) {
 		/* North wall */
 		c_ptr = &zcave[0][x];
 
@@ -3033,8 +2992,7 @@ void wilderness_gen(struct worldpos *wpos)
 	}
 
 	/* Perma-walls -- West/East */
-	for (y = 0; y < MAX_HGT; y++)
-	{
+	for (y = 0; y < MAX_HGT; y++) {
 		/* West wall */
 		c_ptr = &zcave[y][0];
 		/* Clear previous contents, add "clear" perma-wall */
@@ -3096,8 +3054,7 @@ void wilderness_gen(struct worldpos *wpos)
 
 
 	/* Day Light */
-	if (IS_DAY)
-	{
+	if (IS_DAY) {
 		/* Make some day-time residents */
 		if (!(w_ptr->flags & WILD_F_INHABITED)) {
 //			for (i = 0; i < w_ptr->type; i++) wild_add_monster(wpos);
@@ -3106,8 +3063,7 @@ void wilderness_gen(struct worldpos *wpos)
 		}
 	}
 	/* Night Time */
-	else
-	{
+	else {
 		/* Make some night-time residents */
 		if (!(w_ptr->flags & WILD_F_INHABITED)) {
 //			for (i = 0; i < w_ptr->type; i++) wild_add_monster(wpos);
@@ -3119,8 +3075,7 @@ void wilderness_gen(struct worldpos *wpos)
 
 	/* Indicate certain adjacent wilderness terrain types, so players
 	   won't suddenly get stuck in lava or mountains - C. Blue */
-	for (x = 1; x < MAX_WID - 1; x++)
-	{
+	for (x = 1; x < MAX_WID - 1; x++) {
 		if ((wpos->wy < MAX_HGT - 1) && magik(30) &&
 		    wild_info[wpos->wy + 1][wpos->wx].type != w_ptr->type) {
 			w_ptr2 = &wild_info[wpos->wy + 1][wpos->wx];
@@ -3138,8 +3093,7 @@ void wilderness_gen(struct worldpos *wpos)
 			bleed_warn_feat(w_ptr2->type, c_ptr);
 		}
 	}
-	for (y = 1; y < MAX_HGT - 1; y++)
-	{
+	for (y = 1; y < MAX_HGT - 1; y++) {
 		if ((wpos->wx < MAX_WID - 1) && magik(30) &&
 		    wild_info[wpos->wy][wpos->wx + 1].type != w_ptr->type) {
 			w_ptr2 = &wild_info[wpos->wy][wpos->wx + 1];
@@ -3584,16 +3538,13 @@ void wild_add_new_dungeons() {
 #endif
 		}
 
-		adddungeon(&wpos, 0, 0, 0, 0, FALSE, i);
+		add_dungeon(&wpos, 0, 0, 0, 0, FALSE, i);
 
 		/* 0 or MAX_{HGT,WID}-1 are bad places for stairs - mikaelh */
-		if (d_info[i].flags1 & DF1_TOWER)
-		{
+		if (d_info[i].flags1 & DF1_TOWER) {
 			new_level_down_y(&wpos, 1+rand_int(MAX_HGT-2));
 			new_level_down_x(&wpos, 1+rand_int(MAX_WID-2));
-		}
-		else
-		{
+		} else {
 			new_level_up_y(&wpos, 1+rand_int(MAX_HGT-2));
 			new_level_up_x(&wpos, 1+rand_int(MAX_WID-2));
 		}
@@ -3660,3 +3611,102 @@ void lively_wild(u32b flags) {
 	}
 }
 
+#ifdef HOUSE_PAINTING
+/* Paints a house at the location with potion in slot 'k' - C. Blue */
+void paint_house(int Ind, int x, int y, int k) {
+	player_type *p_ptr = Players[Ind];
+	cave_type **zcave = getcave(&p_ptr->wpos), *hwc_ptr;
+	struct c_special *cs_ptr;
+	house_type *h_ptr = NULL;
+	object_type *o_ptr;
+	int h_idx, c;
+	int hwx, hwy;
+
+	/* Sanity check */
+	if (k < 0 || k >= INVEN_PACK) return;
+
+	/* see if we have a potion */
+	o_ptr = &p_ptr->inventory[k];
+	if (!o_ptr->k_idx) {
+		msg_print(Ind, "\377oThat inventory slot is empty!");
+		return;
+	}
+	if (o_ptr->tval != TV_POTION && o_ptr->tval != TV_POTION2) { /* please don't waste POTION2 for this oO */
+		msg_print(Ind, "\377oThat inventory slot does not hold potions!");
+		return;
+	}
+
+	/* Check for a house door next to us */
+	h_idx = pick_house(&p_ptr->wpos, y, x);
+	if (h_idx == -1) {
+		msg_print(Ind, "There is no house next to you.");
+		return;
+	}
+	h_ptr = &houses[h_idx];
+
+	/* make sure we own the house */
+	if (!(cs_ptr = GetCS(&zcave[y][x], CS_DNADOOR))) {
+		msg_print(Ind, "You must have access to the house.");
+		return;
+	}
+	if (!(access_door(Ind, cs_ptr->sc.ptr, FALSE) || Players[Ind]->admin_dm)) {
+		msg_print(Ind, "You must have access to the house.");
+		return;
+	}
+	s_printf("HOUSE_PAINTING: %s used potion %d,%d.\n", p_ptr->name, o_ptr->tval, o_ptr->sval);
+
+	/* extract colour from the potion */
+	/* acquire potion colour */
+	c = potion_col[o_ptr->sval + (o_ptr->tval == TV_POTION2 ? 4 : 0)];
+	/* translate flickering colours to static ones */
+	switch (c) {
+	case TERM_ACID: c = TERM_SLATE; break;
+	case TERM_COLD: c = TERM_L_WHITE; break;
+	case TERM_ELEC: c = TERM_BLUE; break;
+	case TERM_FIRE: c = TERM_ORANGE; break;
+	case TERM_POIS: c = TERM_GREEN; break;
+	case TERM_LITE: c = TERM_ORANGE; break;
+	case TERM_HALF: c = TERM_L_WHITE; break; /* they all mix ;-p */
+	case TERM_MULTI: c = TERM_L_WHITE; break; /* ... */
+	case TERM_DARKNESS: c = TERM_L_DARK; break;
+	case TERM_SOUN: c = TERM_L_UMBER; break;
+	case TERM_CONF: c = TERM_UMBER; break;
+	case TERM_SHAR: c = TERM_UMBER; break;
+	case TERM_SHIELDI: c = TERM_L_WHITE; break; /* mixage again.. */
+	case TERM_SHIELDM: c = TERM_VIOLET; break; /* well, either that or red.. */
+	}
+	/* 0 means 'no colour' so we start at 1 for colour 0 */
+	c++;
+	/* Hack: water removes paint :) */
+	if (o_ptr->sval == SV_POTION_WATER) c = 0;
+	/* potion used up */
+	inven_item_increase(Ind, k, -1);
+	inven_item_describe(Ind, k);
+	inven_item_optimize(Ind, k);
+
+	/* paint house, colour adjacent walls accordingly */
+	h_ptr->colour = c;
+
+	for (hwx = x - 1; hwx <= x + 1; hwx++)
+	for (hwy = y - 1; hwy <= y + 1; hwy++) {
+		if (!in_bounds(hwy, hwx)) continue;
+
+		hwc_ptr = &zcave[hwy][hwx];
+		/* Only colour house wall grids */
+		if (hwc_ptr->feat == FEAT_WALL_HOUSE ||
+		    hwc_ptr->feat == FEAT_HOME ||
+		    hwc_ptr->feat == FEAT_HOME_OPEN) {
+			hwc_ptr->colour = c;
+
+			/* refresh player's view on the freshly applied paint */
+			everyone_lite_spot(&p_ptr->wpos, hwy, hwx);
+		}
+	}
+
+	/* voila */
+	if (c)
+		msg_print(Ind, "With some effort, you paint your house door..");
+	else
+		msg_print(Ind, "With some effort, you remove the paint off your house door..");
+}
+#endif

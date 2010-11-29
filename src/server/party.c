@@ -353,7 +353,7 @@ static char *t_crypt(char *inbuf, cptr salt){
 #endif
 }
 
-bool check_account(char *accname, char *c_name){
+int check_account(char *accname, char *c_name){
 	struct account *l_acc;
 	u32b id, a_id;
 	u32b flags;
@@ -375,7 +375,7 @@ bool check_account(char *accname, char *c_name){
  #endif
 //s_printf("return FALSE\n");
 			if (chars) C_KILL(id_list, chars, int);
-			return(FALSE);
+			return(-1);
 		}
 		if (chars) C_KILL(id_list, chars, int);
 #endif
@@ -388,12 +388,12 @@ bool check_account(char *accname, char *c_name){
 		if (!ptr || ptr->account == a_id) {
 			for(i = 1; i <= NumPlayers; i++) {
 				if (Players[i]->account == a_id && !(flags & ACC_MULTI) && strcmp(c_name, Players[i]->name))
-					return(FALSE);
+					return(-2);
 			}
-			return(TRUE);
+			return(1);
 		}
 	}
-	return(FALSE);
+	return(0);
 }
 
 struct account *GetAccountID(u32b id, bool leavepass){
@@ -550,7 +550,7 @@ int guild_create(int Ind, cptr name){
 			o_ptr->pval = index;
 			o_ptr->level = 1;
 			o_ptr->owner = p_ptr->id;
-			o_ptr->owner_mode = p_ptr->mode;
+			o_ptr->mode = p_ptr->mode;
 			object_known(o_ptr);
 			object_aware(Ind, o_ptr);
 			(void)inven_carry(Ind, o_ptr);
@@ -595,7 +595,7 @@ int guild_create(int Ind, cptr name){
 	o_ptr->pval = index;
 	o_ptr->level = 1;
 	o_ptr->owner = p_ptr->id;
-	o_ptr->owner_mode = p_ptr->mode;
+	o_ptr->mode = p_ptr->mode;
 	object_known(o_ptr);
 	object_aware(Ind, o_ptr);
 	(void)inven_carry(Ind, o_ptr);
@@ -606,7 +606,7 @@ int guild_create(int Ind, cptr name){
 	o_ptr->number = 6;
 	o_ptr->level = p_ptr->lev;
 	o_ptr->owner = p_ptr->id;
-	o_ptr->owner_mode = p_ptr->mode;
+	o_ptr->mode = p_ptr->mode;
 	o_ptr->discount = 50;
 	object_known(o_ptr);
 	object_aware(Ind, o_ptr);
@@ -1746,10 +1746,18 @@ bool add_hostility(int Ind, cptr name, bool initiator)
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	hostile_type *h_ptr;
 	int i;
+	bool bb = FALSE;
 
+#if 0 /* too risky? (exploitable) */
 	i = name_lookup_loose(Ind, name, TRUE);
+#else
+	i = name_lookup(Ind, name, TRUE);
+#endif
 
-	if (!i) return FALSE;
+	if (!i) {
+s_printf("ADD_HOSTILITY: not found.\n");
+		return FALSE;
+	}
 
 	/* Check for sillyness */
 	if (i == Ind) {
@@ -1757,7 +1765,7 @@ bool add_hostility(int Ind, cptr name, bool initiator)
 		msg_print(Ind, "\377yYou cannot be hostile toward yourself.");
 		return FALSE;
 	}
-	
+
 	/* log any attempts */
 	if (initiator) {
 		/* paranoia? shouldn't i always be > 0 here? */
@@ -1771,16 +1779,15 @@ bool add_hostility(int Ind, cptr name, bool initiator)
 		else s_printf("HOSTILITY: %s attempts to declare war in return (%d).\n", p_ptr->name, i);
 	}
 
-	if (cfg.use_pk_rules == PK_RULES_DECLARE)
-	{
+
+	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
 		if(!(p_ptr->pkill & PKILL_KILLER) && (p_ptr->pvpexception != 1)){
 			msg_print(Ind, "\377yYou may not be hostile to other players.");
 			return FALSE;
 		}
 	}
 
-	if (cfg.use_pk_rules == PK_RULES_NEVER && (p_ptr->pvpexception != 1))
-	{
+	if (cfg.use_pk_rules == PK_RULES_NEVER && (p_ptr->pvpexception != 1)) {
 		msg_print(Ind, "\377yYou may not be hostile to other players.");
 		return FALSE;
 	}
@@ -1790,6 +1797,13 @@ bool add_hostility(int Ind, cptr name, bool initiator)
 		msg_print(Ind, "Your account needs to be validated in order to fight other players.");
 		return FALSE;
 	}
+
+#if 1
+	if (!(bb = check_blood_bond(Ind, i)) && !istown(&p_ptr->wpos)) {
+		msg_print(Ind, "\377yYou need to be in town to declare war.");
+		return FALSE;
+	}
+#endif
 
 	if (p_ptr->pvpexception == 2) return FALSE;
 	if (p_ptr->pvpexception == 3) {
@@ -1806,23 +1820,16 @@ bool add_hostility(int Ind, cptr name, bool initiator)
 		q_ptr = Players[i];
 
 		/* Make sure players aren't in the same party */
-		if (p_ptr->party && player_in_party(p_ptr->party, i))
-		{
-			/* Message */
+		if (!bb && p_ptr->party && player_in_party(p_ptr->party, i)) {
 			msg_format(Ind, "\377y%^s is in your party!", q_ptr->name);
-
 			return FALSE;
 		}
 
 		/* Ensure we don't add the same player twice */
-		for (h_ptr = p_ptr->hostile; h_ptr; h_ptr = h_ptr->next)
-		{
+		for (h_ptr = p_ptr->hostile; h_ptr; h_ptr = h_ptr->next) {
 			/* Check this ID */
-			if (h_ptr->id == q_ptr->id)
-			{
-				/* Message */
+			if (h_ptr->id == q_ptr->id) {
 				msg_format(Ind, "\377yYou are already hostile toward %s.", q_ptr->name);
-
 				return FALSE;
 			}
 		}
@@ -1838,7 +1845,7 @@ bool add_hostility(int Ind, cptr name, bool initiator)
 		p_ptr->hostile = h_ptr;
 
 		/* Message */
-		if (check_blood_bond(Ind, i)) {
+		if (bb) {
 			msg_format(Ind, "\377yYou are now hostile toward %s.", q_ptr->name);
 			msg_format(i, "\377y* Player %s declared war on you! *", p_ptr->name);
 		} else {
@@ -1848,21 +1855,15 @@ bool add_hostility(int Ind, cptr name, bool initiator)
 
 		/* Success */
 		return TRUE;
-	}
-	else
-	{
+	} else {
 		/* Tweak - inverse i once more */
 		i = 0 - i;
 
 		/* Ensure we don't add the same party twice */
-		for (h_ptr = p_ptr->hostile; h_ptr; h_ptr = h_ptr->next)
-		{
+		for (h_ptr = p_ptr->hostile; h_ptr; h_ptr = h_ptr->next) {
 			/* Check this ID */
-			if (h_ptr->id == 0 - i)
-			{
-				/* Message */
+			if (h_ptr->id == 0 - i) {
 				msg_format(Ind, "\377yYou are already hostile toward party '%s'.", parties[i].name);
-
 				return FALSE;
 			}
 		}
@@ -1887,40 +1888,29 @@ bool add_hostility(int Ind, cptr name, bool initiator)
 
 #if 0
 	/* Check for sillyness */
-	if (streq(name, p_ptr->name))
-	{
-		/* Message */
+	if (streq(name, p_ptr->name)) {
 		msg_print(Ind, "\377yYou cannot be hostile toward yourself.");
-
 		return FALSE;
 	}
 
 	/* Search for player to add */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		q_ptr = Players[i];
 
 		/* Check name */
 		if (!streq(q_ptr->name, name)) continue;
 
 		/* Make sure players aren't in the same party */
-		if (p_ptr->party && player_in_party(p_ptr->party, i))
-		{
-			/* Message */
+		if (p_ptr->party && player_in_party(p_ptr->party, i)) {
 			msg_format(Ind, "\377y%^s is in your party!", q_ptr->name);
-
 			return FALSE;
 		}
 
 		/* Ensure we don't add the same player twice */
-		for (h_ptr = p_ptr->hostile; h_ptr; h_ptr = h_ptr->next)
-		{
+		for (h_ptr = p_ptr->hostile; h_ptr; h_ptr = h_ptr->next) {
 			/* Check this ID */
-			if (h_ptr->id == q_ptr->id)
-			{
-				/* Message */
+			if (h_ptr->id == q_ptr->id) {
 				msg_format(Ind, "\377yYou are already hostile toward %s.", q_ptr->name);
-
 				return FALSE;
 			}
 		}
@@ -1951,17 +1941,12 @@ bool add_hostility(int Ind, cptr name, bool initiator)
 	}
 
 	/* Search for party to add */
-	if ((i = party_lookup(name)) != -1)
-	{
+	if ((i = party_lookup(name)) != -1) {
 		/* Ensure we don't add the same party twice */
-		for (h_ptr = p_ptr->hostile; h_ptr; h_ptr = h_ptr->next)
-		{
+		for (h_ptr = p_ptr->hostile; h_ptr; h_ptr = h_ptr->next) {
 			/* Check this ID */
-			if (h_ptr->id == 0 - i)
-			{
-				/* Message */
+			if (h_ptr->id == 0 - i) {
 				msg_format(Ind, "\377yYou are already hostile toward party '%s'.", parties[i].name);
-
 				return FALSE;
 			}
 		}
@@ -2208,14 +2193,12 @@ bool add_ignore(int Ind, cptr name)
 #endif
 
 	i = name_lookup_loose(Ind, name, TRUE);
-	if (!i)
-	{
+	if (!i) {
 		return FALSE;
 	}
 
 	/* Check for another silliness */
-	if (i == Ind)
-	{
+	if (i == Ind) {
 		/* Message */
 		msg_print(Ind, "You cannot ignore yourself.");
 
@@ -2223,8 +2206,7 @@ bool add_ignore(int Ind, cptr name)
 	}
 
 	/* Forge name */
-	if (i > 0)
-	{
+	if (i > 0) {
 		q = Players[i]->name;
 	}
 
@@ -2235,8 +2217,7 @@ bool add_ignore(int Ind, cptr name)
 	for (h_ptr = p_ptr->ignore; h_ptr; i_ptr = h_ptr, h_ptr = h_ptr->next)
 	{
 		/* Lookup name of this entry */
-		if (h_ptr->id > 0)
-		{
+		if (h_ptr->id > 0) {
 			/* Efficiency */
 			if (i < 0) continue;
 
@@ -2244,16 +2225,12 @@ bool add_ignore(int Ind, cptr name)
 			p = lookup_player_name(h_ptr->id);
 
 			/* Check player name */
-			if (p && streq(p, q))
-			{
+			if (p && streq(p, q)) {
 				/* Delete this entry */
-				if (i_ptr)
-				{
+				if (i_ptr) {
 					/* Skip over */
 					i_ptr->next = h_ptr->next;
-				}
-				else
-				{
+				} else {
 					/* Adjust beginning of list */
 					p_ptr->ignore = h_ptr->next;
 				}
@@ -2267,24 +2244,18 @@ bool add_ignore(int Ind, cptr name)
 				/* Success */
 				return TRUE;
 			}
-		}
-		else
-		{
+		} else {
 			/* Efficiency */
 			if (i > 0) continue;
 
 			/* Assume this is a party */
 //			if (streq(parties[0 - h_ptr->id].name, q))
-			if (i == h_ptr->id)
-			{
+			if (i == h_ptr->id) {
 				/* Delete this entry */
-				if (i_ptr)
-				{
+				if (i_ptr) {
 					/* Skip over */
 					i_ptr->next = h_ptr->next;
-				}
-				else
-				{
+				} else {
 					/* Adjust beginning of list */
 					p_ptr->ignore = h_ptr->next;
 				}
@@ -2301,8 +2272,7 @@ bool add_ignore(int Ind, cptr name)
 		}
 	}
 
-	if (i > 0)
-	{
+	if (i > 0) {
 		q_ptr = Players[i];
 
 		/* Create a new hostility node */
@@ -2320,9 +2290,7 @@ bool add_ignore(int Ind, cptr name)
 
 		/* Success */
 		return TRUE;
-	}
-	else
-	{
+	} else {
 		/* Tweak - inverse i once more */
 		i = 0 - i;
 
@@ -3400,23 +3368,19 @@ bool pilot_set(int Ind, cptr name)
 	cptr p,q;
 
 	/* Check for silliness */
-	if (!name)
-	{
+	if (!name) {
 		msg_print(Ind, "Usage: /pilot foobar");
-
 		return FALSE;
 	}
 
 	i = name_lookup_loose(Ind, name, TRUE);
 
-	if (!i)
-	{
+	if (!i) {
 		return FALSE;
 	}
 
 	/* Check for another silliness */
-	if (i == Ind)
-	{
+	if (i == Ind) {
 		/* Message */
 		msg_print(Ind, "You cannot follow yourself.");
 
@@ -3424,14 +3388,12 @@ bool pilot_set(int Ind, cptr name)
 	}
 
 	/* Forge name */
-	if (i > 0)
-	{
+	if (i > 0) {
 		q = Players[i]->name;
 	}
 
 
-	if (i > 0)
-	{
+	if (i > 0) {
 		q_ptr = Players[i];
 
 		/* Create a new hostility node */
@@ -3449,9 +3411,7 @@ bool pilot_set(int Ind, cptr name)
 
 		/* Success */
 		return TRUE;
-	}
-	else
-	{
+	} else {
 		/* Tweak - inverse i once more */
 		i = 0 - i;
 

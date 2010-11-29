@@ -312,7 +312,7 @@ static bool do_player_trap_garbage(int Ind, int times)
 		if (f3 & TR3_INSTA_ART) continue;
 
 		o_ptr->owner = p_ptr->id;
-                o_ptr->owner_mode = p_ptr->mode;
+                o_ptr->mode = p_ptr->mode;
 
 		ident = TRUE;
 		if (inven_carry(Ind, o_ptr) < 0)
@@ -766,22 +766,29 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 		//      msg_format(Ind, "Suddenly %s hit you!", i_name);
 		msg_format(Ind, "Suddenly %s are shot at you!", i_name);
 
-	for (i=0; i < num; i++)
-	{
-		if (p_ptr->reflect && magik(50))
-		{
+	for (i = 0; i < num; i++) {
+		if (p_ptr->kinetic_shield && p_ptr->csp >= (dd * ds) / 20) {
+			/* drains mana on hit */
+			p_ptr->csp -= (dd * ds) / 20;
+			p_ptr->redraw |= PR_MANA;
+			/* test for deflection */
+			if (magik(50)) {
+				deflect++;
+				msg_print(Ind, "Your kinetic shield deflects the attack!");
+				continue;
+			}
+		}
+		if (p_ptr->reflect && magik(50)) {
 			deflect++;
 			msg_print(Ind, "You deflect the attack!");
 			continue;
 		}
-		if (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect + 15)))
-		{
+		if (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect + 15))) {
 			deflect++;
 			msg_print(Ind, "You deflect the attack!");
 			continue;
 		}
-		if ((dodge > 0) && magik(dodge))
-		{
+		if ((dodge > 0) && magik(dodge)) {
 			msg_format(Ind, "\377%cYou dodge the attack!", COLOUR_DODGE_GOOD);
 			continue;
 		}
@@ -1185,7 +1192,15 @@ break;
 		/* Aggravation Trap */
 		case TRAP_OF_AGGRAVATION:
 		{
+#ifdef USE_SOUND_2010
+			sound_near(Ind, "monster_shriek", NULL, SFX_TYPE_MON_SPELL);
+			msg_print(Ind, "You hear a high-pitched humming noise echoing through the dungeons.");
+			msg_print_near(Ind, "You hear a high-pitched humming noise echoing through the dungeons.");
+#else
+			/* wonder why this one was actually a hollow noise instead of the usual shriek.. */
 			msg_print(Ind, "You hear a hollow noise echoing through the dungeons.");
+			msg_print_near(Ind, "You hear a hollow noise echoing through the dungeons.");
+#endif
 			aggravate_monsters(Ind, 1);
 			break;
 		}
@@ -1458,7 +1473,7 @@ break;
 		{
 			//         ident = player_handle_trap_of_walls();
 			/* let's do a quick job ;) */
-			ident=player_handle_breath_trap(Ind, 1 + glev / 40, GF_STONE_WALL, TRAP_OF_WALLS);
+			ident = player_handle_breath_trap(Ind, 1 + glev / 40, GF_STONE_WALL, TRAP_OF_WALLS);
 			break;
 		}
 		/* Trap of Calling Out */
@@ -2505,7 +2520,7 @@ break;
 					q_ptr->number = 1;
 					q_ptr->discount = o_ptr->discount;
 					q_ptr->owner = o_ptr->owner;
-					q_ptr->owner_mode = o_ptr->owner_mode;
+					q_ptr->mode = o_ptr->mode;
 					q_ptr->level = o_ptr->level;
 					q_ptr->note = o_ptr->note;
 					(void)inven_carry(Ind, q_ptr);
@@ -2647,7 +2662,7 @@ break;
 			o_ptr->number = 1;
 			o_ptr->discount = 100;
 			o_ptr->owner = p_ptr->id;
-			o_ptr->owner_mode = p_ptr->mode;
+			o_ptr->mode = p_ptr->mode;
 			o_ptr->level = 0;
 			(void)inven_carry(Ind, o_ptr);
 
@@ -2655,7 +2670,7 @@ break;
 			o_ptr->number = 1;
 			o_ptr->discount = 100;
 			o_ptr->owner = p_ptr->id;
-			o_ptr->owner_mode = p_ptr->mode;
+			o_ptr->mode = p_ptr->mode;
 			o_ptr->level = 0;
 			(void)inven_carry(Ind, o_ptr);
 
@@ -2675,7 +2690,7 @@ break;
 			o_ptr->number = 1;
 			o_ptr->discount = 100;
 			o_ptr->owner = p_ptr->id;
-			o_ptr->owner_mode = p_ptr->mode;
+			o_ptr->mode = p_ptr->mode;
 			o_ptr->level = 0;
 			o_ptr->note = quark_add("!*");
 			(void)inven_carry(Ind, o_ptr);
@@ -2797,7 +2812,7 @@ break;
 		{
 			msg_print(Ind, "As you touch the trap, the ground starts to shake.");
 			destroy_chest(i_ptr); 
-			destroy_area(wpos, y, x, 10, TRUE, FEAT_DEEP_WATER);
+			destroy_area(wpos, y, x, 10, TRUE, FEAT_DEEP_WATER, 30);
 			if (c_ptr) cave_set_feat(wpos, y, x, FEAT_DEEP_WATER);
 			break;
 		}
@@ -2922,12 +2937,15 @@ break;
 				q_ptr->level = glev / 2 + 1;
 				q_ptr->note = quark_add("Thank you");
 				q_ptr->owner = p_ptr->id;
-				q_ptr->owner_mode = p_ptr->mode;
+				q_ptr->mode = p_ptr->mode;
 				(void)inven_carry(Ind, q_ptr);
 
-				/* This trap is polite */
-				p_ptr->au += bottles * 10;
-				p_ptr->redraw |= (PR_GOLD);
+				/* hack: prevent s32b overflow */
+				if (!(2000000000 - (bottles * 10) < p_ptr->au)) {
+					/* This trap is polite */
+					p_ptr->au += bottles * 10;
+					p_ptr->redraw |= (PR_GOLD);
+				}
 			}
 
 			if (ident)
@@ -3012,11 +3030,12 @@ break;
 				if (amt < 100) continue;
 
 				p_ptr->au -= amt;
-				q_ptr->au += amt;
-
-				msg_print(k, "Your purse feels heavier.");
-				q_ptr->redraw |= PR_GOLD;
-
+				/* hack: prevent s32b overflow */
+				if (!(2000000000 - amt < q_ptr->au)) {
+					q_ptr->au += amt;
+					msg_print(k, "Your purse feels heavier.");
+					q_ptr->redraw |= PR_GOLD;
+				}
 				ident = TRUE;
 			}
 
@@ -4153,7 +4172,7 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, int sval)
 			earthquake(&wpos, y, x, 10);
 			return (FALSE);
 		case SV_STAFF_DESTRUCTION:
-			destroy_area(&wpos, y, x, 15, TRUE, FEAT_FLOOR);
+			destroy_area(&wpos, y, x, 15, TRUE, FEAT_FLOOR, 120);
 			return (FALSE);
 		default:
 			return (FALSE);
@@ -4216,9 +4235,16 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 			dam = 10;
 			rad = 3;
 			break;
-		case SV_SCROLL_AGGRAVATE_MONSTER:	
-		      	if (who > 0) aggravate_monsters(who, m_idx);
-		      	return (FALSE);
+		case SV_SCROLL_AGGRAVATE_MONSTER:
+			if (who > 0) {
+#ifdef USE_SOUND_2010
+				sound_near(who, "monster_shriek", NULL, SFX_TYPE_MON_SPELL);
+#endif
+				msg_print(who, "You hear a high-pitched humming noise echoing through the dungeons.");
+				msg_print_near(who, "You hear a high-pitched humming noise echoing through the dungeons.");
+ 				aggravate_monsters(who, m_idx);
+			}
+			return (FALSE);
 		case SV_SCROLL_SUMMON_MONSTER:
                         for (k = 0; k < randint(3) ; k++) summon_specific(&wpos, y, x, getlevel(&wpos), 0, 0, 1, 0);
 			return (FALSE);	
@@ -4263,7 +4289,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 			dam = damroll(5, 10);
 			break;
 		case SV_SCROLL_STAR_DESTRUCTION:
-			destroy_area(&wpos, y, x, 15, TRUE, FEAT_FLOOR);
+			destroy_area(&wpos, y, x, 15, TRUE, FEAT_FLOOR, 120);
 			return (FALSE);			
 		case SV_SCROLL_DISPEL_UNDEAD:
 			typ = GF_DISP_UNDEAD;
@@ -5095,8 +5121,11 @@ bool mon_hit_trap(int m_idx)
 			/* Print a message */
 			msg_format(who, "%^s disarms a trap!", m_name);
 		}
-#endif	// 0
+#endif
 		msg_print_near_monster(m_idx, "disarms a trap!");
+#ifdef USE_SOUND_2010
+		sound_near_monster(m_idx, "disarm", NULL, SFX_TYPE_MISC);
+#endif
 	}
 
 	/* Is the trap ready to fire? (Important only for rod-traps) - C. Blue */
@@ -5119,8 +5148,11 @@ bool mon_hit_trap(int m_idx)
 		{
 			/* No message if monster isn't visible ? */
 		}
-#endif	// 0
+#endif
 		msg_print_near_monster(m_idx, "sets off a trap!");
+#ifdef USE_SOUND_2010
+		sound_near_monster(m_idx, "trap_setoff", NULL, SFX_TYPE_MISC);
+#endif
 
 		/* Next time be more careful */
 		//                if (randint(100) < 80) m_ptr->smart |= SM_NOTE_TRAP;
@@ -5249,7 +5281,7 @@ bool mon_hit_trap(int m_idx)
 						else if (mon_take_hit(who, m_idx, dam, &fear, note_dies))
 						{
 							/* Dead monster */
-							dead = TRUE;						
+							dead = TRUE;
 						}
 
 						/* No death */
@@ -5261,7 +5293,7 @@ bool mon_hit_trap(int m_idx)
 								/* Message */
 								message_pain(who, m_idx, dam);
 
-								//								if (special) attack_special(m_ptr, special, dam);
+//								if (special) attack_special(m_ptr, special, dam);
 
 								/* Take note */
 								if (fear) 
@@ -5463,7 +5495,7 @@ bool mon_hit_trap(int m_idx)
 			default:
 			s_printf("oops! nonexisting trap(sval: %d)!\n", kit_o_ptr->sval);
 
-		}		
+		}
 
 		/* Non-automatic traps are removed */
 		if (!(f2 & (TRAP2_AUTOMATIC_5 | TRAP2_AUTOMATIC_99)))

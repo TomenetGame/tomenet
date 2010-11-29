@@ -278,7 +278,7 @@ extern void wizard_lock(int Ind, int dir);
 #define SHIELD_NONE             0x0000
 #define SHIELD_COUNTER          0x0001
 #define SHIELD_FIRE             0x0002
-#define SHIELD_GREAT_FIRE       0x0004
+#define SHIELD_ELEC             0x0004
 #define SHIELD_FEAR             0x0008
 
 extern bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2);
@@ -287,6 +287,7 @@ extern bool set_tim_regen(int Ind, int v, int p);
 extern bool set_tim_ffall(int Ind, int v);
 extern bool set_tim_fly(int Ind, int v);
 extern bool set_blessed(int Ind, int v);
+extern bool set_res_fear(int Ind, int v);
 extern bool set_hero(int Ind, int v);
 extern bool set_shero(int Ind, int v);
 extern bool set_protevil(int Ind, int v);
@@ -296,6 +297,7 @@ extern bool set_invuln(int Ind, int v);
 extern bool set_tim_invis(int Ind, int v);
 extern bool set_tim_infra(int Ind, int v);
 extern bool set_mindboost(int Ind, int p, int v);
+extern bool set_kinetic_shield(int Ind, int v);
 extern bool identify_fully(int Ind);
 extern void self_knowledge(int Ind);
 extern bool ident_spell(int Ind);
@@ -361,7 +363,7 @@ extern bool dispel_undead(int Ind, int dam);
 extern bool dispel_demons(int Ind, int dam);
 extern bool dispel_monsters(int Ind, int dam);
 extern bool turn_undead(int Ind);
-extern void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte feat);
+extern void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte feat, int stun);
 extern void earthquake(struct worldpos *wpos, int cy, int cx, int r);
 extern void wipe_spell(struct worldpos *wpos, int cy, int cx, int r);
 extern void lite_room(int Ind, struct worldpos *wpos, int y1, int x1);
@@ -421,6 +423,8 @@ extern bool do_focus_shot(int Ind, int p, int v);
 
 /* ENABLE_DIVINE */
 extern void divine_vengeance(int Ind, int power);
+extern void divine_empowerment(int Ind, int level);
+extern void divine_intensify(int Ind, int level);
 
 extern void set_recall_depth(player_type * p_ptr, object_type * o_ptr);
 extern bool set_recall_timer(int Ind, int v);

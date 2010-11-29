@@ -187,10 +187,10 @@ void show_building(int Ind, store_type *s_ptr)
 #if 0
 			Send_store_action(Ind, j, ba_ptr->action, ba_name + ba_ptr->name,
 					ba_ptr->letter, ba_ptr->costs[STORE_LIKED], ba_ptr->flags);
-#else	// 0
+#else
 			Send_store_action(Ind, i, ba_ptr->action, st_ptr->actions[i], tmp_str, action_color,
 					ba_ptr->letter, cost, ba_ptr->flags);
-#endif	// 0
+#endif
 		}
 		else
 		{
@@ -263,7 +263,11 @@ static void arena_comm(int cmd)
 				prt("For that, receive the prize: 10,000 gold pieces", 8, 0);
 				prt("",10,0);
 				prt("", 11, 0);
-				p_ptr->au += 10000;
+
+				/* hack: prevent s32b overflow */
+				if (!(2000000000 - 10000 < p_ptr->au)) p_ptr->au += 10000;
+				else msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
+
 				msg_print("Press the space bar to continue");
 				msg_print(NULL);
 				p_ptr->arena_number++;
@@ -453,8 +457,7 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 
 	//screen_save();
 
-	if (cmd == BACT_GAMBLE_RULES)
-	{
+	if (cmd == BACT_GAMBLE_RULES) {
 		/* Peruse the gambling help file */
 		//(void)show_file(Ind, "gambling.txt", NULL, 0, 0);
 
@@ -463,9 +466,7 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 
 		path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, "gambling.txt");
 		do_cmd_check_other_prepare(Ind, path);
-	}
-	else
-	{
+	} else {
 		//clear_bldg(5, 23);
 
 		/* Set maximum bet */
@@ -488,22 +489,16 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 
 		wager = gold;
 
-		if (wager > p_ptr->au)
-		{
+		if (wager > p_ptr->au) {
 			msg_print(Ind, "Hey! You don't have the gold - get out of here!");
 			store_kick(Ind, FALSE);
 			//screen_load();
 			return(FALSE);
-		}
-		else if (wager > maxbet)
-		{
+		} else if (wager > maxbet) {
 			msg_format(Ind, "I'll take $%ld of that. Keep the rest.", maxbet);
 			wager = maxbet;
-		}
-		else if (wager < 1)
-		{
-			msg_print(Ind, "Ok, we'll start with $1.");
-
+		} else if (wager < 1) {
+			msg_print(Ind, "Ok, we'll start with 1 Au.");
 			wager = 1;
 		}
 		//msg_print(Ind, NULL);
@@ -519,153 +514,143 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 		prt(tmp_str,21,2);
 #endif	// 0
 
-		do
-		{
-			switch(cmd)
-			{
-				case BACT_IN_BETWEEN: /* Game of In-Between */
-				{
-					//c_put_str(TERM_GREEN, "In Between",5,2);
-					msg_print(Ind, "\377GIn Between");
-					odds = 3;
+		do {
+			switch(cmd) {
+			case BACT_IN_BETWEEN: /* Game of In-Between */
+				//c_put_str(TERM_GREEN, "In Between",5,2);
+				msg_print(Ind, "\377GIn Between");
+				odds = 3;
+				win = FALSE;
+				roll1 = randint(10);
+				roll2 = randint(10);
+				choice = randint(10);
+				msg_format(Ind, "Black die: \377s%d\377w     Black Die: \377s%d",
+				    roll1, roll2);
+				msg_format(Ind, "          Red die: \377r%d", choice);
+				if (((choice > roll1) && (choice < roll2)) ||
+				    ((choice < roll1) && (choice > roll2)))
+					win = TRUE;
+
+				if (win == TRUE) s_printf("CASINO: In Between - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
+				else s_printf("CASINO: In Between - Player '%s' lost %d Au.\n", p_ptr->name, wager);
+				break;
+
+			case BACT_CRAPS:  /* Game of Craps - requires the good new RNG :) */
+				msg_print(Ind, "\377GCraps");
+				win = 3;
+				odds = 1;
+				roll1 = randint(6);
+				roll2 = randint(6);
+				roll3 = roll1 +  roll2;
+				choice = roll3;
+				msg_format(Ind, "First roll:   \377s%d %d\377w   Total: \377y%d", roll1, 
+				    roll2, roll3);
+				if ((roll3 == 7) || (roll3 == 11))
+					win = TRUE;
+				else if ((roll3 == 2) || (roll3 == 3) || (roll3 == 12))
 					win = FALSE;
-					roll1 = randint(10);
-					roll2 = randint(10);
-					choice = randint(10);
-					msg_format(Ind, "Black die: %d       Black Die: %d",
-					        roll1, roll2);
-					msg_format(Ind, "Red die: %d", choice);
-					if (((choice > roll1) && (choice < roll2)) ||
-					    ((choice < roll1) && (choice > roll2)))
-						win = TRUE;
+				else {
+					do {
+						//msg_print(Ind, "Hit any key to roll again");
+						//msg_print(Ind, NULL);
+						msg_print(Ind, "Rerolling..");
+						roll1 = randint(6);
+						roll2 = randint(6);
+						roll3 = roll1 +  roll2;
 
-					break;
-				}
-				case BACT_CRAPS:  /* Game of Craps */
-				{
-/* It seems to be harder to win with the new RNG so I'm enabling Craps again. - mikaelh */
-#if 1
-					msg_print(Ind, "\377GCraps");
-					win = 3;
-					odds = 1;
-					roll1 = randint(6);
-					roll2 = randint(6);
-					roll3 = roll1 +  roll2;
-					choice = roll3;
-					msg_format(Ind, "First roll: %d %d    Total: %d", roll1, 
-					        roll2, roll3);
-					if ((roll3 == 7) || (roll3 == 11))
-						win = TRUE;
-					else if ((roll3 == 2) || (roll3 == 3) || (roll3 == 12))
-						win = FALSE;
-					else
-					{
-						do
-						{
-							//msg_print(Ind, "Hit any key to roll again");
-							//msg_print(Ind, NULL);
-							msg_print(Ind, "Rerolling..");
-							roll1 = randint(6);
-							roll2 = randint(6);
-							roll3 = roll1 +  roll2;
+						msg_format(Ind, "Roll result:  \377s%d %d\377w   Total: \377s%d",
+						    roll1, roll2, roll3);
 
-							msg_format(Ind, "Roll result: %d %d   Total:     %d",
-							        roll1, roll2, roll3);
-							if (roll3 == choice)
-								win = TRUE;
-							else if (roll3 == 7)
-								win = FALSE;
-						} while ((win != TRUE) && (win != FALSE));
-					}
-					if (win == TRUE) s_printf("CASINO: Craps - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
-					else s_printf("CASINO: Craps - Player '%s' lost %d Au.\n", p_ptr->name, odds * wager);
-#else
-					msg_print(Ind, "\377GSorry, we're currently out of mon..err dice!");
-					return (FALSE);
-#endif
-					break;
+						if (roll3 == choice) {
+							win = TRUE;
+						} else if (roll3 == 7) {
+							win = FALSE;
+						} else {
+							/* reroll */
+						}
+					} while ((win != TRUE) && (win != FALSE));
 				}
+
+				if (win == TRUE) s_printf("CASINO: Craps - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
+				else s_printf("CASINO: Craps - Player '%s' lost %d Au.\n", p_ptr->name, wager);
+				break;
 
 #if 0
-				case BACT_SPIN_WHEEL:  /* Spin the Wheel Game */
-				{
-					win = FALSE;
-					odds = 10;
-					c_put_str(TERM_GREEN,"Wheel", 5, 2);
-					prt("0  1  2  3  4  5  6  7  8  9", 7, 5);
-					prt("--------------------------------", 8, 3);
-					strcpy(out_val, "");
-					get_string ("Pick a number (1-9): ", out_val, 32);
-					for (p = out_val; *p == ' '; p++);
-					choice = atol(p);
-					if (choice < 0)
-					{
-						msg_print(Ind, "I'll put you down for 0.");
-						choice = 0;
-					}
-					else if (choice > 9)
-					{
-						msg_print(Ind, "Ok, I'll put you down for 9.");
-						choice = 9;
-					}
-					msg_print(Ind, NULL);
-					roll1 = randint(10) - 1;
-					strnfmt(tmp_str, 80, "The wheel spins to a stop and the winner is %d",
-					        roll1);
-					prt(tmp_str,13,3);
-					prt("", 9, 0);
-					prt("*", 9, (3 * roll1 + 5));
-					if (roll1 == choice)
-						win = TRUE;
+			case BACT_SPIN_WHEEL:  /* Spin the Wheel Game */
+				win = FALSE;
+				odds = 10;
+				c_put_str(TERM_GREEN,"Wheel", 5, 2);
+				prt("0  1  2  3  4  5  6  7  8  9", 7, 5);
+				prt("--------------------------------", 8, 3);
+				strcpy(out_val, "");
+				get_string ("Pick a number (1-9): ", out_val, 32);
+				for (p = out_val; *p == ' '; p++);
+				choice = atol(p);
+				if (choice < 0) {
+					msg_print(Ind, "I'll put you down for 0.");
+					choice = 0;
+				} else if (choice > 9) {
+					msg_print(Ind, "Ok, I'll put you down for 9.");
+					choice = 9;
+				}
+				msg_print(Ind, NULL);
+				roll1 = randint(10) - 1;
+				strnfmt(tmp_str, 80, "The wheel spins to a stop and the winner is %d",
+				    roll1);
+				prt(tmp_str,13,3);
+				prt("", 9, 0);
+				prt("*", 9, (3 * roll1 + 5));
+				if (roll1 == choice)
+					win = TRUE;
 
-					break;
+				if (win == TRUE) s_printf("CASINO: Spin the Wheel - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
+				else s_printf("CASINO: Spin the Wheel - Player '%s' lost %d Au.\n", p_ptr->name, wager);
+				break;
+
+			case BACT_DICE_SLOTS: /* The Dice Slots */
+				c_put_str(TERM_GREEN,"Dice Slots",5,2);
+				win = FALSE;
+				roll1 = randint(6);
+				roll2 = randint(6);
+				choice = randint(6);
+				strnfmt(tmp_str, 80, "%s %s %s",
+					    fruit[roll1-1], fruit[roll2-1],
+					    fruit[choice-1]);
+				prt(tmp_str,15,37);
+				prt("/--------------------------\\",7,2);
+				prt("\\--------------------------/",17,2);
+				display_fruit(8,  3, roll1-1);
+				display_fruit(8, 12, roll2-1);
+				display_fruit(8, 21, choice-1);
+				if ((roll1 == roll2) && (roll2 == choice)) {
+					win = TRUE;
+					if (roll1 == 1)
+						odds = 4;
+					else if (roll1 == 2)
+						odds = 6;
+					else
+						odds = roll1 * roll1;
+				} else if ((roll1 == 6) && (roll2 == 6)) {
+					win = TRUE;
+					odds = choice + 1;
 				}
 
-				case BACT_DICE_SLOTS: /* The Dice Slots */
-				{
-					c_put_str(TERM_GREEN,"Dice Slots",5,2);
-					win = FALSE;
-					roll1 = randint(6); 
-					roll2 = randint(6); 
-					choice = randint(6); 
-					strnfmt(tmp_str, 80, "%s %s %s",
-					        fruit[roll1-1], fruit[roll2-1],
-					        fruit[choice-1]);
-					prt(tmp_str,15,37);
-					prt("/--------------------------\\",7,2);
-					prt("\\--------------------------/",17,2);
-					display_fruit(8,  3, roll1-1);
-					display_fruit(8, 12, roll2-1);
-					display_fruit(8, 21, choice-1);
-					if ((roll1 == roll2) && (roll2 == choice))
-					{
-						win = TRUE;
-						if (roll1 == 1)
-							odds = 4;
-						else if (roll1 == 2)
-							odds = 6;
-						else
-							odds = roll1 * roll1;
-					}
-					else if ((roll1 == 6) && (roll2 == 6))
-					{
-						win = TRUE;
-						odds = choice + 1;
-					}
-
-					break;
-				}
-#endif	// 0
+				if (win == TRUE) s_printf("CASINO: Dice Slots - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
+				else s_printf("CASINO: Dice Slots - Player '%s' lost %d Au.\n", p_ptr->name, wager);
+				break;
+#endif /* 0 */
 			}
 
-			if (win)
-			{
+			if (win) {
 				msg_print(Ind, "YOU WON");
-				p_ptr->au = p_ptr->au + (odds * wager);
-				msg_format(Ind, "Payoff: %d", odds);
-			}
-			else
-			{
+				/* hack: prevent s32b overflow */
+				if (2000000000 - (odds * wager) < p_ptr->au) {
+					msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
+				} else {
+					p_ptr->au = p_ptr->au + (odds * wager);
+					msg_format(Ind, "Payoff: %d", odds);
+				}
+			} else {
 				msg_print(Ind, "You lost");
 				p_ptr->au = p_ptr->au - wager;
 			}
@@ -676,8 +661,7 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 			prt("Again(Y/N)?", 18, 37);
 			move_cursor(18, 49);
 			again = inkey();
-			if (wager > p_ptr->au)
-			{
+			if (wager > p_ptr->au) {
 				msg_print(Ind, "Hey! You don't have the gold - get out of here!");
 				msg_print(Ind, NULL);
 				screen_load();
@@ -685,7 +669,7 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 /*				strnfmt(tmp_str, 80, "Current Wager:    %10ld",wager);
 				prt(tmp_str, 17, 2); */
 			}
-#endif	// 0
+#endif /* 0 */
 //		} while ((again == 'y') || (again == 'Y'));
 		} while (FALSE);
 
@@ -696,11 +680,10 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 		else
 			msg_print(Ind, "You lost gold! Haha, better head home.");
 		msg_print(Ind, NULL);
-#endif	// 0
+#endif /* 0 */
 	}
 
 	//screen_load();
-
 	return(TRUE);
 }
 
@@ -872,11 +855,17 @@ static void share_gold(void)
 {
 	int i;
 
-
 	i = (p_ptr->lev * 2) * 10;
+
+	/* hack: prevent s32b overflow */
+	if (2000000000 - i < p_ptr->au) {
+		msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
+		return;
+	}
+
 	msg_format("You collect %d gold pieces", i);
 	msg_print(NULL);
-	p_ptr->au += i; 
+	p_ptr->au += i;
 }
 
 
@@ -1520,6 +1509,12 @@ static void sell_corpses(void)
 		{
 			value = bounties[i][1] + boost*(r_info[o_ptr->pval2].level);
 
+			/* hack: prevent s32b overflow */
+			if (2000000000 - value < p_ptr->au) {
+				msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
+				return;
+			}
+
 			msg_format("Sold for %ld gold pieces.", value);
 			msg_print(NULL);
 			p_ptr->au += value;
@@ -1582,7 +1577,7 @@ static void select_quest_monster(void)
 	get_mon_num_prep(0, NULL);
 
 	/* Set up the quest monster. */
-	bounties[0][0] = get_mon_num(p_ptr->lev);
+	bounties[0][0] = get_mon_num(p_ptr->lev, p_ptr->lev);
 
 	r_ptr = &r_info[bounties[0][0]];
 
@@ -1739,7 +1734,7 @@ void select_bounties(void)
 		/* We don't want to duplicate entries in the list */
 		while (TRUE)
 		{
-			r_idx = get_mon_num(lev);
+			r_idx = get_mon_num(lev, lev);
 
 			for (j = 0; j < i; j++)
 			{
@@ -2308,7 +2303,12 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			}
 			for (i = price = 0; i < INVEN_TOTAL; i++)
 				price += object_value_real(&inventory[i]);
-			price += p_ptr->au;
+
+			/* hack: prevent s32b overflow */
+			if (2000000000 - p_ptr->au < price) {
+				price = 2000000000;
+			} else
+				price += p_ptr->au;
 
 			if (price > p_ptr->loan - 30000) price = p_ptr->loan - 30000;
 
@@ -2316,6 +2316,16 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 
 			req = get_quantity("How much would you like to get? ", price);
 			if (req > 100000) req = 100000;
+
+			/* hack: prevent s32b overflow */
+			if (2000000000 - req < p_ptr->au) {
+				msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
+				break;;
+			}
+			if (2000000000 - req < p_ptr->loan) {
+				msg_format(Ind, "\377yYou cannot have a greater loan than 2 billion worth of gold!");
+				break;
+			}
 
 			p_ptr->loan += req;
 			p_ptr->au += req;
@@ -2359,6 +2369,12 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			if (gold > p_ptr->au) gold = p_ptr->au;
 			if (gold < 1) break;
 
+			/* hack: prevent s32b overflow */
+			if (2000000000 - gold < p_ptr->balance) {
+				msg_format(Ind, "\377yYou cannot deposit more than 2 billion worth of gold!");
+				break;
+			}
+
 			p_ptr->balance += gold;
 			p_ptr->au -= gold;
 
@@ -2372,6 +2388,12 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 		{
 			if (gold > p_ptr->balance) gold = p_ptr->balance;
 			if (gold < 1) break;
+
+			/* hack: prevent s32b overflow */
+			if (2000000000 - gold < p_ptr->au) {
+				msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
+				break;
+			}
 
 			p_ptr->balance -= gold;
 			p_ptr->au += gold;

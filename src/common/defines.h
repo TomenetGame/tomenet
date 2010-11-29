@@ -93,7 +93,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	4
-#define SF_VERSION_PATCH	8
+#define SF_VERSION_PATCH	14
 #define SF_VERSION_EXTRA	0
 
 
@@ -169,6 +169,9 @@
 #define ANTI_SEVEN_EXPLOIT	/* prevent ball-spell/explosion casters from exploiting monster movement by using a 7-shaped corridor */
 #define STEAL_CHEEZEREDUCTION	/* reduce cheeziness of stealing by giving more expensive items a chance to turn level 0 */
 
+#define PLAYER_STORES		/* Enable player-run shops - C. Blue */
+#define HOUSE_PAINTING		/* Allow players to paint their entrance area or house (for PLAYER_STORES) - C. Blue */
+
 /* --------------------- Server-type dependant features -------------------- */
 
 #ifdef RPG_SERVER
@@ -185,6 +188,7 @@
 
  #define CLIENT_SIDE_WEATHER	/* server uses Send_weather() instead of displaying own weather animation */
 // #define CLIENT_WEATHER_GLOBAL	/* use global weather instead of sector-specific (requires CLIENT_SIDE_WEATHER) */
+
 #endif
 
 #ifdef TEST_SERVER
@@ -201,7 +205,7 @@
  #define CLIENT_SIDE_WEATHER	/* server uses Send_weather() instead of displaying own weather animation */
  #ifdef MAX_CLOUDS
   #undef MAX_CLOUDS
-  #define MAX_CLOUDS 1
+  #define MAX_CLOUDS 10		/* note that this number gets divided depending on season */
  #endif
 // #define CLIENT_WEATHER_GLOBAL	/* use global weather instead of sector-specific (requires CLIENT_SIDE_WEATHER) */
 #endif
@@ -362,7 +366,11 @@
 
 
 /* Number of days after which an account without any characters on it will expire. */
-#define ACCOUNT_EXPIRY_DAYS 62
+#ifdef RPG_SERVER
+ #define ACCOUNT_EXPIRY_DAYS 182
+#else
+ #define ACCOUNT_EXPIRY_DAYS 62
+#endif
 
 /* Number of days after which an unused character will expire. */
 #define CHARACTER_EXPIRY_DAYS 180
@@ -426,15 +434,10 @@
  */
 #define MAX_PLAYERS	1000
 
-/*
- * Total number of stores (see "store.c", etc)
- */
-#define MAX_STORES	9
-
-/*
- * Total number of owners per store (see "store.c", etc)
- */
-#define MAX_STORE_OWNERS 6 /* Max size for st_ptr->owners[] */
+#ifdef PLAYER_STORES
+/* How many of them can at once visit different player stores? */
+ #define MAX_VISITED_PLAYER_STORES	(MAX_PLAYERS / 20)
+#endif
 
 /*
  * Maximum number of player "race" types (see "table.c", etc)
@@ -452,16 +455,17 @@
 #define MAX_CLASS       14	/* 11 if there're Druids. 10 o/w. */
 				// 12 => shaman; 13 => runemaster; 14 mindcrafter
 
+
 /*
- * Maximum number of character traits. Originally added for Dracons - C. Blue
+ * Maximum number of character traits. Originally added for Draconians - C. Blue
  */
 #define MAX_TRAIT	32	/* 0 = N/A; 13 dragon flavours; 2 Maiar flavours; ... */
+
 
 /*
  * Maximum NPC robots to allow.
  */
-#define MAX_NPCS	16	/* Allow more perhaps, or make
-				   it expandable... */
+#define MAX_NPCS	16	/* Allow more perhaps, or make it expandable... */
 
 /*
  * Maximum number of parties to allow.  If, while trying to create a new
@@ -570,8 +574,10 @@
 
 /* Maximum number of notes that the server will store */
 #define MAX_NOTES 200
-#define MAX_PARTYNOTES 30
-#define MAX_GUILDNOTES 10
+//#define MAX_PARTYNOTES 30
+#define MAX_PARTYNOTES MAX_PARTIES
+//#define MAX_GUILDNOTES 10
+#define MAX_GUILDNOTES MAX_GUILDS
 #define MAX_ADMINNOTES 20
 
 /* Number of text lines for the in-game BBS */
@@ -650,8 +656,13 @@
    Note: The chance to get hit still goes down further above this value.
    Also search code for CAP_ITEM_BONI to find +hit/+dam/+ac cappings. */
 #ifdef ENABLE_NEW_MELEE
- #define AC_CAP		250
- #define AC_CAP_DIV	350
+ #if 0
+  #define AC_CAP	250
+  #define AC_CAP_DIV	350
+ #else
+  #define AC_CAP	200
+  #define AC_CAP_DIV	300
+ #endif
 #else
  #define AC_CAP		150
  #define AC_CAP_DIV	250
@@ -701,6 +712,35 @@
 #ifdef MORGOTH_GHOST_DEATH_LEVEL
  #define MORGOTH_NO_LIVE_SPAWN
 #endif
+
+
+/* Auto-retaliation: */
+/* No class restriction; limit to non-escape mechanisms. */
+#define AUTO_RET_NEW
+
+
+/* Does a projection 'explode' ON a wall grid it hits, or BEFORE the wall grid?
+   Exploding before it means that players standing in walls will only take 50%
+   damage from it, while exploding on the wall grid means normal 100% damage.
+   Should be on when PY_PROJ_WALL is on. */
+#define PROJ_ON_WALL
+
+/* Allow players to target monsters in walls, for fairness (monsters can usually
+   target players in walls just fine). Should be on when PROJ_ON_WALL is on and
+   must be on if PROJ_MON_ON_WALL is on. */
+#define PY_PROJ_WALL
+
+/* Allow monsters on wall grids which are _target_ (aka the epicenter x,y grid)
+   of a projection to get hit by it. Otherwise, monsters on wall grids are always
+   protected from balls/breaths by default. Must be on if PY_PROJ_WALL is on. */
+#define PROJ_MON_ON_WALL
+
+/* Allow players to fire ammo at monsters standing on walls. */
+#define PY_FIRE_ON_WALL
+
+/* Allow monsters to cast bolt spells at players standing on a wall/mountain/tree grid?
+   Note: Shooting arrows/bolts/shots/missiles is casting bolt spells too. */
+#define MON_BOLT_ON_WALL
 
 
 /* Reduce the effect of aggravating equipment on the player
@@ -770,8 +810,17 @@
 /* divide magical damage by this in PvP */
 #define PVP_SPELL_DAM_REDUCTION 5
 
-/* Should other hostile players in line of sight cause a player to abort running? */
-#define HOSTILITY_ABORTS_RUNNING
+/* Adam's experimental spell damage reduction for PvP */
+#define EXPERIMENTAL_PVP_SPELL_DAM
+
+/* Should other hostile players in line of sight cause a player to abort running?
+   PvP mode chars cannot run with this on, which might be bad if a ranged char has
+   phase door on auto-retaliation, while the other char is melee. Disabling it for now. */
+//#define HOSTILITY_ABORTS_RUNNING
+
+/* Number of turns you cannot use /pvp to exit the pvp arena, recall, or teleport, after
+   getting hit or after entering the pvp arena. - C. Blue */
+#define PVP_COOLDOWN_TELEPORT 30
 
 /*
  * Allow wraith-formed player to pass through permawalls on the surface.
@@ -943,6 +992,11 @@
 /*
  * Store constants
  */
+/* Total number of base stores (see "store.c", etc). Note: MAX_ST_IDX is total # of stores. */
+#define MAX_BASE_STORES	10	/* default stores that appear in every town */
+/* Total number of owners per store (see "store.c", etc) */
+#define MAX_STORE_OWNERS 6 /* Max size for st_ptr->owners[] */
+
 #define STORE_INVEN_MAX	48		/* Max number of discrete objs in inven [48] */
 #define STORE_CHOICES	56 /*34*/	/* Number of items to choose stock from */
 #define STORE_OBJ_LEVEL	5		/* Magic Level for normal stores */
@@ -965,6 +1019,94 @@
 #define STORE_SHUFFLE	25		/* 1/Chance (per day) of an owner changing */
 #define STORE_TURNS	500		/* Number of turns between turnovers */
 #endif
+
+/* Stores/buildings defines */
+#define STORE_HATED     0
+#define STORE_LIKED     1
+#define STORE_NORMAL    2
+
+#define STORE_MAX_ACTION	6
+
+/* Store flags */
+#define SF1_DEPEND_LEVEL        0x00000001L
+#define SF1_SHALLOW_LEVEL       0x00000002L
+#define SF1_MEDIUM_LEVEL        0x00000004L
+#define SF1_DEEP_LEVEL          0x00000008L
+#define SF1_RARE                0x00000010L
+#define SF1_VERY_RARE           0x00000020L
+#define SF1_COMMON              0x00000040L
+#define SF1_ALL_ITEM            0x00000080L     /* Works as the BM */
+#define SF1_RANDOM              0x00000100L
+#define SF1_FORCE_LEVEL         0x00000200L
+#define SF1_MUSEUM              0x00000400L
+#define SF1_NO_DISCOUNT		0x00000800L	/* no discount at all */
+#define SF1_NO_DISCOUNT2	0x00001000L	/* no 50%/75%/90% off */
+#define SF1_EGO     	      	0x00002000L     /* often has ego items */
+#define SF1_RARE_EGO            0x00004000L	/* reroll on cheap ego items (value<25000) at 67% probability */
+#define SF1_PRICE1     	      	0x00008000L     /* prices * 1.5 */
+#define SF1_PRICE2     	      	0x00010000L     /* double prices */
+#define SF1_PRICE4            	0x00020000L	/* prices * 4 */
+#define SF1_PRICE16            	0x00040000L	/* prices * 16 */
+#define SF1_GOOD     	      	0x00080000L     /* apply_magic good */
+#define SF1_GREAT            	0x00100000L	/* apply_magic great */
+#define SF1_PRICY_ITEMS1     	0x00200000L     /* items are worth 1000+ */
+#define SF1_PRICY_ITEMS2      	0x00400000L     /* items are worth 5000+ */
+#define SF1_PRICY_ITEMS3      	0x00800000L	/* items are worth 10000+ */
+#define SF1_PRICY_ITEMS4      	0x01000000L	/* items are worth 20000+ */
+#define SF1_HARD_STEAL 	      	0x02000000L     /* hard to steal from this shop */
+#define SF1_VHARD_STEAL	      	0x04000000L     /* hard to steal from this shop */
+//flag hole
+#define SF1_BUY67		0x10000000L	/* Shop buys for 67% of value */
+#define SF1_BUY50		0x20000000L	/* Shop buys for 50% of value (stacks with BUY67) */
+#define SF1_NO_DISCOUNT3	0x40000000L	/* no 75%+ off */
+#define SF1_ZEROLEVEL		0x80000000L	/* all items are level 0 and can't be traded */
+
+/* This seems to be bad, but backported once anyway;
+ * consider removing them later */
+#define STORE_GENERAL	0
+#define STORE_ARMOURY	1
+#define STORE_WEAPON	2
+#define STORE_TEMPLE	3
+#define STORE_ALCHEMIST	4
+#define STORE_MAGIC	5
+#define STORE_BLACK	6
+#define STORE_HOME	7
+#define STORE_BOOK	8
+#define STORE_PET	9
+#define STORE_RUNE	STORE_PET /* Using this space for now */
+#define STORE_MAYOR	10
+#define STORE_INN	11
+#define STORE_JEWELX	42
+#define STORE_SHOESX	45
+#define STORE_LIBRARY	46		/* unused */
+#define STORE_FORBIDDENLIBRARY	47	/* unused */
+#define STORE_BLACKX	48
+#define STORE_MINING	59
+#define STORE_BLACKS	60
+#define STORE_BTSUPPLY	61
+#define STORE_HERBALIST 62
+#define STORE_STRADER	63	/* for ironman dungeons / RPG_SERVER settings */
+
+/* The specialist shops - the_sandman */
+#define STORE_SPEC_AXE		38
+#define STORE_SPEC_BLUNT	39
+#define STORE_SPEC_POLE		40
+#define STORE_SPEC_SWORD	41
+#define STORE_SPEC_SCROLL	52
+#define STORE_SPEC_POTION	53
+#define STORE_SPEC_ARCHER	55
+#define STORE_SPEC_CLOSECOMBAT	64
+#define STORE_HIDDENLIBRARY	65
+
+/* special 'stores' (hacks for build_store()) */
+#define STORE_FEAT_MORE	100	/* staircase down */
+#define STORE_FEAT_LESS	101	/* staircase up */
+#define STORE_HOUSE	102	/* trad/list/appartment */
+#define STORE_DOORWAY	103	/* 'destroyed house' */
+#define STORE_FOREST	104
+#define STORE_POND	105
+#define STORE_AUCTION	106	/* deprecated (not 'new' code, would need re-integration first) */
+#define STORE_NINE	107	/* unknown, but supposed to have been a '9' and much bigger */
 
 
 /*
@@ -1074,8 +1216,8 @@
  * Player constants
  */
 #define PY_MAX_EXP	999999999L	/* Maximum exp */
-//#define PY_MAX_EXP	4899999996L	/* Maximum exp (Thunderlord Mimic 3.5*1.4) */
-//#define PY_MAX_EXP	3899999997L	/* Maximum exp (Thunderlord Mimic 3.5+0.4) */
+//#define PY_MAX_EXP	4899999996L	/* Maximum exp */
+//#define PY_MAX_EXP	3899999997L	/* Maximum exp */
 #define PY_MAX_GOLD	999999999L	/* Maximum gold: 999 M */
 #define PY_MAX_PLAYER_LEVEL	99	/* Maximum level attainable by a player (non-admin) */
 #define PY_MAX_LEVEL		100	/* Maximum level allowed technically */
@@ -1179,6 +1321,9 @@
  */
 #define MAX_STACK_SIZE			100
 
+/* Different items stacking may at most pile up to this many items */
+#define MAX_ITEMS_STACKING		7
+
 
 
 /*
@@ -1210,9 +1355,9 @@
 #define RACE_DRIDER   	13	/* TODO: rename it to RACE_TLORD */
 #define RACE_DARK_ELF	14
 #define RACE_VAMPIRE	15
-#ifdef ENABLE_DIVINE
+//#ifdef ENABLE_DIVINE
  #define RACE_DIVINE 	16
-#endif
+//#endif
 /* (or simply replace all those defines with p_info.txt) */
 
 /*
@@ -1253,6 +1398,55 @@
 #define CFU	0x0800	/* Runemaster */
 
 #define CFC	0x1000	/* Mindcrafter */
+
+/*
+ * Traits' class flags, which traits are allowed for which race for choice
+ */
+#define RFH	0x000001	/* Human */
+#define RFL	0x000002	/* Half-Elf */
+#define RFE	0x000004	/* Elf */
+#define RFA	0x000008	/* Hobbit */
+
+#define RFG	0x000010	/* Gnome */
+#define RFD	0x000020	/* Dwarf */
+#define RFO	0x000040	/* Half-Orc */
+#define RFT	0x000080	/* Half-Troll */
+
+#define RFU	0x000100	/* Dunadan */
+#define RFI	0x000200	/* High-Elf */
+#define RFY	0x000400	/* Yeek */
+#define RFB	0x000800	/* Goblin */
+
+#define RFN	0x001000	/* Ent */
+#define RFR	0x002000	/* Draconian */
+#define RFK	0x004000	/* Dark-Elf */
+#define RFV	0x008000	/* Vampire */
+
+#define RFM	0x010000	/* Maia */
+
+
+/*
+ * The traits
+ */
+#define TRAIT_NONE		0	/* N/A */
+
+#define TRAIT_BLUE		1	/* Draconians */
+#define TRAIT_WHITE		2
+#define TRAIT_RED		3
+#define TRAIT_BLACK		4
+#define TRAIT_GREEN		5
+#define TRAIT_MULTI		6
+#define TRAIT_BRONZE		7
+#define TRAIT_SILVER		8
+#define TRAIT_GOLD		9
+#define TRAIT_LAW		10
+#define TRAIT_CHAOS		11
+#define TRAIT_BALANCE		12
+#define TRAIT_POWER		13
+
+#define TRAIT_ENLIGHTENED	14	/* Maiar */
+#define TRAIT_CORRUPTED		15
+
 
 /*
  * Define the realms
@@ -1526,20 +1720,22 @@ that keeps many algorithms happy.
 
 /* Features 0x12 - 0x1F -- unused */
 /* Resurrected ones from Mangband/TomeNET */
-#define FEAT_CROP			0x12
+#define FEAT_CROP		0x12
 #define FEAT_LOOSE_DIRT		0x13
 #define FEAT_HOME_OPEN		0x14
-#define FEAT_SIGN			0x15
+#define FEAT_SIGN		0x15
 #define FEAT_PERM_CLEAR		0x16
-#define FEAT_LOGS			0x17
+#define FEAT_LOGS		0x17
 #define FEAT_DRAWBRIDGE		0x18
-#define FEAT_HOME			0x19
+#define FEAT_HOME		0x19
 #define FEAT_WALL_HOUSE		0x1A
 
 /* Backward compatibility Hack */
 #define FEAT_HOME_HEAD	0x19
 #define FEAT_HOME_TAIL	0x19
 
+/* New features, filling up the gaps in f_info */
+#define FEAT_FOUNTAIN_BLOOD	0x1B	/* for Vampires */
 
 /* Doors */
 #define FEAT_DOOR_HEAD          0x20
@@ -1652,7 +1848,7 @@ that keeps many algorithms happy.
 #define FEAT_FLOWER             0xC7 /* 199 */
 /* Feature 0xC8 -- cobblestone road */
 /* Feature 0xC9 -- cobblestone with outlet */
-#define FEAT_IVY         0xCA /* 202 */
+#define FEAT_IVY		0xCA /* 202 */
 #define FEAT_TOWN               0xCB /* 203 */
 /* Feature 0xCC -- Underground Tunnel */
 #define FEAT_FIRE               0xCD /* 205 */
@@ -2215,7 +2411,7 @@ that keeps many algorithms happy.
 #define TV_BOLT         18      /* Ammo for x-bows */
 #define TV_BOW          19      /* Slings/Bows/Xbows */
 #define TV_DIGGING      20      /* Shovels/Picks */
-#define TV_BLUNT       21      /* Priest Weapons */
+#define TV_BLUNT        21      /* Priest Weapons */
 #define TV_POLEARM      22      /* Pikes/Glaives/Spears/etc. */
 #define TV_SWORD        23      /* Edged Weapons */
 #define TV_AXE          24      /* Axes/Cleavers */
@@ -2279,8 +2475,8 @@ that keeps many algorithms happy.
 #define is_realm_book(o_ptr) \
 	(89 <= o_ptr->tval && o_ptr->tval <= 95)
 
-/* for invalid items */
-#define TV_SEAL		127
+/* special items */
+#define TV_SPECIAL	127
 
 /* Maximum "tval" */
 #define TV_MAX		127
@@ -2324,6 +2520,20 @@ that keeps many algorithms happy.
 	((tval) == TV_HELM && ((sval) == SV_CLOTH_CAP || (sval) == SV_HARD_LEATHER_CAP || (sval) == SV_GOGGLES_DM)) || \
 	((tval) == TV_SHIELD && ((sval) == SV_SMALL_LEATHER_SHIELD || (sval) == SV_LARGE_LEATHER_SHIELD)))
 /* more possibilities: is_potion, is_rune, is_jewelry, is_rare_armour(tval,sval) */
+
+
+/* Ones borrowed from PernAngband.<---->- Jir - */
+/*
+ * Max sizes of the following arrays
+ */
+#define MAX_ROCKS      62       /* Used with rings (min 58) */ 
+#define MAX_AMULETS    43       /* Used with amulets (min 30) */ 
+#define MAX_WOODS      36       /* Used with staffs (min 32) */ 
+#define MAX_METALS     39       /* Used with wands/rods (min 32/30) */ 
+#define MAX_COLORS     68       /* Used with potions (min 62) */ 
+#define MAX_SHROOM     20       /* Used with mushrooms (min 20) */ 
+#define MAX_TITLES     72       /* Used with scrolls (min 55) */ 
+#define MAX_SYLLABLES 164       /* Used with scrolls (see below) */ 
 
 
 /* Runemaster choices (original vs new ENABLE_RCRAFT code) */
@@ -2450,6 +2660,7 @@ that keeps many algorithms happy.
  * Special "sval" limit -- first "large" chest
  */
 #define SV_CHEST_MIN_LARGE	4
+#define SV_CHEST_RUINED		0
 
 /*
  * Special "sval" limit -- first "good" magic/prayer book
@@ -2503,9 +2714,9 @@ that keeps many algorithms happy.
 #define SV_TRAPKIT_SLING                 1
 #define SV_TRAPKIT_BOW                   2
 #define SV_TRAPKIT_XBOW                  3
-#define SV_TRAPKIT_POTION                4
-#define SV_TRAPKIT_SCROLL_RUNE		 5
-#define SV_TRAPKIT_DEVICE                6
+#define SV_TRAPKIT_POTION                4	/* 'Fumes Trap Kit' */
+#define SV_TRAPKIT_SCROLL_RUNE           5	/* 'Magic Trap Kit' */
+#define SV_TRAPKIT_DEVICE                6	/* 'Device Trap Kit' */
 
 /* The "sval" codes for TV_BOOMERANG */
 #define SV_BOOM_S_WOOD                   1      /* 1d4  */
@@ -2639,6 +2850,7 @@ that keeps many algorithms happy.
 #define SV_PAIR_OF_HARD_LEATHER_BOOTS    3
 #define SV_PAIR_OF_METAL_SHOD_BOOTS      6
 #define SV_PAIR_OF_WITAN_BOOTS		 8
+#define SV_SMOKIN_BOOTS_MOLTOR		 9
 
 /* The "sval" codes for TV_CLOAK */
 #define SV_CLOAK                         1
@@ -3037,7 +3249,7 @@ that keeps many algorithms happy.
 #define SV_SCROLL_PARTY_RECALL   		68
 #define SV_SCROLL_EMERGENCY_RECALL   		69
 #define SV_SCROLL_EMERGENCY_PARTY_RECALL	70
-
+#define SV_SCROLL_CHEQUE			71 /* for player houses; read to redeem, easily. */
 
 /* The "sval" codes for TV_POTION */
 #define SV_POTION_WATER                  0
@@ -3103,7 +3315,7 @@ that keeps many algorithms happy.
 #define SV_POTION_RESISTANCE            60
 #define SV_POTION_CURING                61
 #define SV_POTION_INVULNERABILITY       62
-#define SV_POTION_NEW_LIFE              63
+//disabled: #define SV_POTION_NEW_LIFE              63
 #define SV_POTION_RESTORE_MANA          64
 
 #define SV_POTION_LAST                  64
@@ -3292,10 +3504,9 @@ that keeps many algorithms happy.
 /* sub-section of "unobtainium": specific mobs drop this. take out of the group */
 #define SV_PRECIOUS_STONE_DORS_EYE	41 // Dor's Eye... Guess where it's going to be dropped by? 
 
-/* for invalid items */
-#define SV_SEAL_INVALID		0
-#define SV_CUSTOM_OBJECT	1
-
+/* svals for TV_SPECIAL */
+#define SV_SEAL			0	/* for invalid items */
+#define SV_CUSTOM_OBJECT	1	/* fun vanity objects, customizable by admins */
 
 /*** General flag values ***/
 
@@ -3334,7 +3545,7 @@ that keeps many algorithms happy.
 #define CAVE_DETECT     0x8000    /* Traps detected here */
 #define CAVE_PLIT       0x0    /* Player lit grid */
 #define CAVE_MLIT       0x0    /* Monster lit grid */
-#endif
+#endif /* 0 */
 
 /*
  * Bit flags for the "project()" function
@@ -3351,19 +3562,24 @@ that keeps many algorithms happy.
  *   SELF: Affect the projector too
  *   DUMY: Don't affect anything or anybody (just visual fx, used for EFF_FIREWORKS etc.)
  *   GRAV: Affected by gravity ie running along the ground. Example: Fire Wall. (Will hence stop at FEAT_DARK_PIT)
+ *   PLAY: Affect players too, including the projector.
  */
 #define PROJECT_JUMP	0x00000001
 #define PROJECT_BEAM	0x00000002
 #define PROJECT_THRU	0x00000004
 #define PROJECT_STOP	0x00000008
+
 #define PROJECT_GRID	0x00000010
 #define PROJECT_ITEM	0x00000020
 #define PROJECT_KILL	0x00000040
 #define PROJECT_HIDE	0x00000080
+
 #define PROJECT_STAY    0x00000100
 #define PROJECT_SELF	0x00000200
 #define PROJECT_DUMY	0x00000400
 #define PROJECT_GRAV	0x00000800
+
+#define PROJECT_PLAY	0x00001000	/* for GF_HEALINGCLOUD */
 
 
 /* ToME expansions */
@@ -3431,7 +3647,6 @@ that keeps many algorithms happy.
 #define USE_INVEN	0x02	/* Allow inven items */
 #define USE_FLOOR	0x04	/* Allow floor items */
 #define USE_EXTRA	0x08	/* Allow extra items */
-#define INVEN_FIRST	0x10	/* Seach for inscription tag in inventory first */
 
 /*
  * Bit flags for the "p_ptr->notice" variable
@@ -3471,7 +3686,7 @@ that keeps many algorithms happy.
 /*
  * Bit flags for the "p_ptr->redraw" variable
  */
-#define PR_MISC		0x00000001L	/* Display Race/Class */
+#define PR_MISC		0x00000001L	/* Display Race/Class/Trait */
 #define PR_TITLE	0x00000002L	/* Display Title */
 #define PR_LEV		0x00000004L	/* Display Level */
 #define PR_EXP		0x00000008L	/* Display Experience */
@@ -3974,7 +4189,6 @@ that keeps many algorithms happy.
 #define TR2_RES_FIRE		0x00040000L
 #define TR2_RES_COLD		0x00080000L
 #define TR2_RES_POIS			0x00100000L
-/* #define TR2_ANTI_MAGIC		0x00200000L */
 #define TR2_RES_FEAR			0x00200000L
 #define TR2_RES_LITE			0x00400000L
 #define TR2_RES_DARK			0x00800000L
@@ -4012,11 +4226,9 @@ that keeps many algorithms happy.
 #define TR3_SHOW_MODS		0x00000400L	/* Always show Tohit/Todam */
 #define TR3_INSTA_ART		0x00000800L	/* Item must be an artifact */
 #define TR3_FEATHER	 		0x00001000L	/* Feather Falling */
-/* #define TR3_LITE			0x00002000L */	/* Permanent Light */
 #define TR3_LITE1			0x00002000L	/* Permanent Light */
 #define TR3_SEE_INVIS			0x00004000L	/* See Invisible */
-/* #define TR3_TELEPATHY		0x00008000L */	/* Telepathy */
-#define TR3_NO_NORM_ART			0x00008000L	/* */
+#define TR3_NO_NORM_ART			0x00008000L	/* ??? */
 #define TR3_SLOW_DIGEST		0x00010000L	/* Item slows down digestion */
 #define TR3_REGEN		0x00020000L	/* Item induces regeneration */
 #define TR3_XTRA_MIGHT		0x00040000L	/* Bows get extra multiplier */
@@ -4068,7 +4280,9 @@ that keeps many algorithms happy.
 #define TR4_ART_EXP             	0x20000000L     /* Will accumulate xp */
 #define TR4_CURSE_NO_DROP       	0x40000000L     /* The obj wont be dropped */
 #define TR4_NO_RECHARGE         	0x80000000L     /* Object Cannot be recharged */
+
 #define TR4_NULL_MASK           0xFFFFFFFCL
+
 
 #define TR5_TEMPORARY           0x00000001L     /* In timeout turns it is destroyed */
 #define TR5_DRAIN_MANA          0x00000002L     /* Drains mana */
@@ -4112,7 +4326,13 @@ that keeps many algorithms happy.
 #define TR6_SENS_ACID		0x00000002L
 #define TR6_SENS_ELEC		0x00000004L
 Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
+
+// Item not available if no event is running
+#define TR6_EVENT_HALLOWEEN	0x00000001L
+#define TR6_EVENT_XMAS		0x00000002L
 */
+
+
 
 
 /* Item-generation restriction flags */
@@ -4609,6 +4829,9 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF7_NO_ESP			0x00100000	/* monster isn't ESPable */
 #define RF7_ATTR_BASE			0x00200000	/* show base attr too, even if only 1 breath and ATTR_MULTI (DRs) - C. Blue */
 #define RF7_VORTEX			0x00400000	/* experimental: flicker extremely fast - not working atm */
+#define RF7_OOD_20			0x00800000	/* Cannot occur more than 20 levels OoD */
+#define RF7_OOD_15		0x01000000	/* Cannot occur more than 15 levels OoD */
+#define RF7_OOD_10		0x02000000	/* Cannot occur more than 10 levels OoD */
 //FREE FLAGS HOLE
 #define RF7_S_LOWEXP			0x08000000  /* Summons/Clones give little exp */
 #define RF7_S_NOEXP		0x10000000  /* Summons/Clones don't give exp */
@@ -4639,6 +4862,12 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF8_JOKEANGBAND			0x00008000
 #define RF8_ANGBAND		0x00010000
 #define RF8_BLUEBAND		0x00020000	/* C. Blue's bestiary */
+/*
+#define RF8_EVENT_HALLOWEEN	0x00040000
+#define RF8_EVENTN_HALLOWEEN	0x00080000
+#define RF8_EVENT_XMAS			0x00100000
+#define RF8_EVENTN_XMAS			0x00200000
+*/
 //FREE FLAGS HOLE
 #define RF8_CLIMB			0x20000000	/* NOT YET IMPLEMENTED: Can walk over mountain fields */
 #define RF8_WILD_SWAMP			0x40000000	/* ToDo: Implement Swamp */
@@ -4844,34 +5073,40 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define DF1_MAZE                0x00000002L	/* Is a maze-type dungeon */
 #define DF1_SMALLEST            0x00000004L	/* Creates VERY small levels like The Maze */
 #define DF1_SMALL               0x00000008L	/* Creates small levels like Dol Goldor */
+
 #define DF1_BIG                 0x00000010L	/* Creates big levels like Moria, and Angband dungeons */
 #define DF1_NO_DOORS            0x00000020L	/* No doors on rooms, like Barrowdowns, Old Forest etc) */
 #define DF1_WATER_RIVER         0x00000040L	/* Allow a single water streamer on a level */
 #define DF1_LAVA_RIVER          0x00000080L	/* Allow a single lava streamer on a level */
+
 #define DF1_WATER_RIVERS        0x00000100L	/* Allow multiple water streamers on a level */
 #define DF1_LAVA_RIVERS         0x00000200L	/* Allow multiple lava streamers on a level */
 #define DF1_CAVE                0x00000400L	/* Allow rooms */
 #define DF1_CAVERN              0x00000800L	/* Allow cavern rooms */
+
 #define DF1_NO_UP               0x00001000L	/* Disallow up stairs */
 #define DF1_HOT                 0x00002000L	/* Corpses on ground and in pack decay quicker through heat */
 #define DF1_COLD                0x00004000L	/* Corpses on ground and in pack decay quicker through cold */
 #define DF1_FORCE_DOWN          0x00008000L	/* No up stairs generated */
+
 #define DF1_FORGET              0x00010000L	/* Features are forgotten, like the Maze and Illusory Castle */
 #define DF1_NO_DESTROY          0x00020000L	/* No destroyed levels in dungeon */
 #define DF1_SAND_VEIN           0x00040000L	/* Like in the sandworm lair */
 #define DF1_CIRCULAR_ROOMS      0x00080000L	/* Allow circular rooms */
+
 #define DF1_EMPTY               0x00100000L	/* Allow arena levels */
 #define DF1_DAMAGE_FEAT         0x00200000L
 #define DF1_FLAT                0x00400000L	/* Creates paths to next areas at edge of level, like Barrowdowns */
 #define DF1_TOWER               0x00800000L	/* You start at bottom and go up rather than the reverse */
+
 #define DF1_RANDOM_TOWNS        0x01000000L	/* Allow random towns */
 #define DF1_DOUBLE              0x02000000L	/* Creates double-walled dungeon like Helcaraxe and Erebor */
 #define DF1_LIFE_LEVEL          0x04000000L	/* Creates dungeon level on modified 'game of life' algorithm */
 #define DF1_EVOLVE              0x08000000L	/* Evolving, pulsing levels like Heart of the Earth */
+
 #define DF1_ADJUST_LEVEL_1      0x10000000L	/* Minimum monster level will be equal to dungeon level */
 #define DF1_ADJUST_LEVEL_2      0x20000000L	/* Minimum monster level will be double the dungeon level */
-#define DF1_NO_RECALL           0x40000000L	/* No recall allowed \
-					           Note: this also prevents probability travel while inside! */
+#define DF1_NO_RECALL           0x40000000L	/* No recall allowed; note: this also prevents probability travel while inside! */
 #define DF1_NO_STREAMERS        0x80000000L	/* No streamers */
 
 /* dungeon flags for dungeon_type 
@@ -4882,62 +5117,70 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
  */
 
 /* Maybe better DF2_PRELOADED? */
-#define DF2_RANDOM              0x00000001L /* random dungeon - not preloaded */
+#define DF2_RANDOM		0x00000001L /* random dungeon - not preloaded */
 /* DF2_IRON => DF1_NO_RECALL + DF1_FORCE_DOWN */
-#define DF2_IRON                0x00000002L /* one way dungeon - return portal at max level */
-#define DF2_HELL                0x00000004L /* hellish dungeon - forces hellish mode on all */
+#define DF2_IRON		0x00000002L /* one way dungeon - return portal at max level */
+#define DF2_HELL		0x00000004L /* hellish dungeon - forces hellish mode on all */
 /* DF2_NO_MAP => DF1_FORGET */
 /*#define DF2_NO_MAP		0x00000008L *//* player never gains level knowledge */
 #define DF2_NO_RECALL_INTO	0x00000008L /* Player may not recall downwards into this dungeon \
 					       upwards into this tower. Added it especially for Nether Realm - C. Blue \
 					       Note: this also prevents probability travel while inside! */
-#define DF2_NO_MAGIC_MAP        0x00000010L /* non magic-mappable */
-#define DF2_NO_DEATH            0x00000080L /* death penalty is reduced */
+#define DF2_NO_MAGIC_MAP	0x00000010L /* non magic-mappable */
+#define DF2_MISC_STORES		0x00000020L /* spawn low-level dungeon stores such as under "RPG Server" rules */
+#define DF2_TOWNS_IRONRECALL	0x00000040L /* DF2_IRON: if level allows premature recalling then it has a town */
+#define DF2_NO_DEATH		0x00000080L /* death penalty is reduced */
 
-#define DF2_IRONFIX1           	0x00000100L /* like DF2_IRON, but you may recall every 250 ft */
-#define DF2_IRONFIX2            0x00000200L /* like DF2_IRON, but you may recall every 500 ft */
-#define DF2_IRONFIX3           	0x00000400L /* like DF2_IRON, but you may recall every 750 ft */
-#define DF2_IRONFIX4            0x00000800L /* like DF2_IRON, but you may recall every 1000 ft */
-#define DF2_IRONRND1           	0x00001000L /* like DF2_IRON, but each dlvl has 20% chance of allowing recall */
-#define DF2_IRONRND2            0x00002000L /* like DF2_IRON, but each dlvl has 10% chance of allowing recall */
-#define DF2_IRONRND3           	0x00004000L /* like DF2_IRON, but each dlvl has 7% chance of allowing recall */
-#define DF2_IRONRND4            0x00008000L /* like DF2_IRON, but each dlvl has 5% chance of allowing recall */
+#define DF2_IRONFIX1		0x00000100L /* DF2_IRON: but you may recall every 250 ft */
+#define DF2_IRONFIX2		0x00000200L /* DF2_IRON: but you may recall every 500 ft */
+#define DF2_IRONFIX3		0x00000400L /* DF2_IRON: but you may recall every 750 ft */
+#define DF2_IRONFIX4		0x00000800L /* DF2_IRON: but you may recall every 1000 ft */
 
-#define DF2_NO_ENTRY_STAIR      0x00010000L /* Can't be entered by staircases */
-#define DF2_NO_ENTRY_WOR      	0x00020000L /* Can't be entered by word-of-recall */
-#define DF2_NO_ENTRY_PROB      	0x00040000L /* Can't be entered by probability travel */
-#define DF2_NO_ENTRY_FLOAT      0x00080000L /* Can't be entered by floating */
+#define DF2_IRONRND1		0x00001000L /* DF2_IRON: but each dlvl has 20% chance of allowing recall */
+#define DF2_IRONRND2		0x00002000L /* DF2_IRON: but each dlvl has 10% chance of allowing recall */
+#define DF2_IRONRND3		0x00004000L /* DF2_IRON: but each dlvl has 7% chance of allowing recall */
+#define DF2_IRONRND4		0x00008000L /* DF2_IRON: but each dlvl has 5% chance of allowing recall */
 
-#define DF2_NO_EXIT_STAIR      	0x00100000L /* Can't be exited by staircases */
-#define DF2_NO_EXIT_WOR      	0x00200000L /* Can't be exited by word-of-recall */
-#define DF2_NO_EXIT_PROB      	0x00400000L /* Can't be exited by probability travel */
-#define DF2_NO_EXIT_FLOAT      	0x00800000L /* Can't be exited by floating */
+#define DF2_NO_ENTRY_STAIR	0x00010000L /* Can't be entered by staircases */
+#define DF2_NO_ENTRY_WOR	0x00020000L /* Can't be entered by word-of-recall */
+#define DF2_NO_ENTRY_PROB	0x00040000L /* Can't be entered by probability travel */
+#define DF2_NO_ENTRY_FLOAT	0x00080000L /* Can't be entered by floating */
 
-#define DF2_NO_STAIRS_UP      	0x01000000L /* no '<' staircases inside */
-#define DF2_NO_STAIRS_DOWN     	0x02000000L /* no '>' staircases inside */
+#define DF2_NO_EXIT_STAIR	0x00100000L /* Can't be exited by staircases */
+#define DF2_NO_EXIT_WOR		0x00200000L /* Can't be exited by word-of-recall */
+#define DF2_NO_EXIT_PROB	0x00400000L /* Can't be exited by probability travel */
+#define DF2_NO_EXIT_FLOAT	0x00800000L /* Can't be exited by floating */
 
-#define DF2_ADJUST_LEVEL_1_2    0x10000000L /* Minimum monster level will be half the dungeon level */
-#define DF2_NO_SHAFT            0x20000000L /* No shafts */
-#define DF2_ADJUST_LEVEL_PLAYER 0x40000000L /* Uses player level*2 instead of dungeon level for other ADJUST_LEVEL flags */
+#define DF2_NO_STAIRS_UP	0x01000000L /* no '<' staircases inside */
+#define DF2_NO_STAIRS_DOWN	0x02000000L /* no '>' staircases inside */
+#define DF2_TOWNS_FIX		0x04000000L /* generated towns every n levels (for HUGE ironman) */
+#define DF2_TOWNS_RND		0x08000000L /* generated towns with n% chance (for HUGE ironman) */
 
-#define DF2_DELETED             0x80000000L /* Deleted, but not yet removed */
+#define DF2_ADJUST_LEVEL_1_2	0x10000000L /* Minimum monster level will be half the dungeon level */
+#define DF2_NO_SHAFT		0x20000000L /* No shafts */
+#define DF2_ADJUST_LEVEL_PLAYER	0x40000000L /* Uses player level*2 instead of dungeon level for other ADJUST_LEVEL flags */
+#define DF2_DELETED		0x80000000L /* Deleted, but not yet removed */
 
 #define DF2_NO_ENTRY_MASK       (DF2_NO_ENTRY_STAIR | DF2_NO_ENTRY_WOR | DF2_NO_ENTRY_PROB | DF2_NO_ENTRY_FLOAT)
 #define DF2_NO_EXIT_MASK        (DF2_NO_EXIT_STAIR | DF2_NO_EXIT_WOR | DF2_NO_EXIT_PROB | DF2_NO_EXIT_FLOAT)
 
 
 /* level flags for dun_level */
+#define LF1_DUNGEON_TOWN	0x00000001L /* is a dungeon town! (why was there a flag hole at 0x1 here? oO) */
 #define LF1_ASK_LEAVE           0x00000002L /* XXX */
 #define LF1_NO_STAIR            0x00000004L /* XXX ok */
 #define LF1_SPECIAL             0x00000008L /* XXX */
+
 #define LF1_NO_NEW_MONSTER      0x00000010L /* XXX ok */
 #define LF1_DESC                0x00000020L /* XXX */
 #define LF1_NO_GENO             0x00000040L
 #define LF1_NO_MAP		0x00000080L /* player never gains level knowledge */
+
 #define LF1_NO_MAGIC_MAP	0x00000100L /* player never does magic mapping */
 #define LF1_NO_DESTROY          0x00000200L /* Cannot use Destruction spells/Earthquakes */
 #define LF1_NO_MAGIC		0x00000400L /* very nasty */
 #define LF1_NO_GHOST		0x00000800L /* Players who die on this level are erased completely! */
+
 #define LF1_IRON_RECALL		0x00001000L /* Recalling is allowed on this floor of an IRONMAN dungeon/tower */
 
 #define LF1_WATER		0x01000000L	/* for DIGGING: water rivers or base grids are being used */
@@ -5471,6 +5714,13 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define cave_los_wall(ZCAVE,Y,X) \
 	(!(f_info[ZCAVE[Y][X].feat].flags1 & FF1_PERMANENT))
 
+/* Replaces cave_los() for projection-blockade checks, so project() can directly target
+   certain wall-like feats that aren't really walls, such as mountains and trees */
+#define cave_proj(ZCAVE,Y,X) \
+	(cave_los(ZCAVE,Y,X) || \
+	(f_info[ZCAVE[Y][X].feat].flags1 & FF1_CAN_CLIMB) || \
+	(f_info[ZCAVE[Y][X].feat].flags1 & FF1_CAN_FLY))
+
 /*
 #define cave_block_los(ZCAVE,Y,X) \
 	(f_info[ZCAVE[Y][X].feat].flags1 & FF1_BLOCK_LOS)*/
@@ -5524,8 +5774,8 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
  */
 #define cave_clean_bold(ZCAVE,Y,X) \
 	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) && \
-	 (ZCAVE[Y][X].o_idx == 0) && \
-	 !(f_info[ZCAVE[Y][X].feat].flags1 & FF1_PERMANENT))
+	 !(f_info[ZCAVE[Y][X].feat].flags1 & FF1_PERMANENT) && \
+	 (ZCAVE[Y][X].o_idx == 0))
 #if 0
     ((ZCAVE[Y][X].feat >= FEAT_FLOOR) && \
      (ZCAVE[Y][X].feat <= FEAT_MUD) && \
@@ -5722,14 +5972,14 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 ((f_info[(C)->feat].flags1 & FF1_CAN_FLY) && ((R)->flags7 & RF7_CAN_FLY))) || \
 /* Some monsters live in the woods natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
 /* else if <<c_ptr->feat==FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE || */ \
-(((C)->feat==FEAT_DEAD_TREE || (C)->feat==FEAT_TREE || (C)->feat==FEAT_BUSH) && \
+(((C)->feat == FEAT_DEAD_TREE || (C)->feat == FEAT_TREE || (C)->feat == FEAT_BUSH) && \
 (((R)->flags8 & RF8_WILD_WOOD) || ((R)->flags3 & RF3_ANIMAL) || \
 /* KILL_WALL / PASS_WALL  monsters can hack down / pass trees */ \
 ((R)->flags2 & RF2_PASS_WALL) || ((R)->flags2 & RF2_KILL_WALL) || \
 /* POWERFUL monsters can hack down trees */ \
 ((R)->flags2 & RF2_POWERFUL))) || \
 /* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
-(((C)->feat==FEAT_MOUNTAIN) && \
+(((C)->feat == FEAT_MOUNTAIN) && \
 (((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO))))
 
 //((C)->m_idx < 0)) /* Player ghost in wall XXX */
@@ -5748,14 +5998,14 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 ((f_info[(C)->feat].flags1 & FF1_CAN_FLY) && ((R)->flags7 & RF7_CAN_FLY))) || \
 /* Some monsters live in the woods natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
 /* else if <<c_ptr->feat==FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE || */ \
-(((C)->feat==FEAT_DEAD_TREE || (C)->feat==FEAT_TREE || (C)->feat==FEAT_BUSH) && \
+(((C)->feat == FEAT_DEAD_TREE || (C)->feat == FEAT_TREE || (C)->feat == FEAT_BUSH) && \
 (((R)->flags8 & RF8_WILD_WOOD) || ((R)->flags3 & RF3_ANIMAL) || \
 /* KILL_WALL / PASS_WALL  monsters can hack down / pass trees */ \
 ((R)->flags2 & RF2_PASS_WALL) || ((R)->flags2 & RF2_KILL_WALL) || \
 /* POWERFUL monsters can hack down trees */ \
 ((R)->flags2 & RF2_POWERFUL))) || \
 /* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
-(((C)->feat==FEAT_MOUNTAIN) && \
+(((C)->feat == FEAT_MOUNTAIN) && \
 (((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO))) || \
 /* Monster moves through walls (and doors) */ \
 /*  -- added check whether it's actually a WALL, to prevent monsters from crossing terrain they don't like (eg lava) */ \
@@ -6251,7 +6501,7 @@ extern int PlayerUID;
 #define SHIELD_NONE             0x0000
 #define SHIELD_COUNTER          0x0001
 #define SHIELD_FIRE             0x0002
-#define SHIELD_GREAT_FIRE       0x0004
+#define SHIELD_ELEC             0x0004
 #define SHIELD_FEAR             0x0008
 
 /* special 'projector' types, used in project(). */
@@ -6353,8 +6603,16 @@ extern int PlayerUID;
 	((wpos)->wx + (wpos)->wy * MAX_WILD_X)
 
 /* NOTE: not all the towns should be on the surface, should they? */
+#define isdungeontown(wpos) \
+	(((wpos)->wz != 0) && (getfloor(wpos) != NULL) && (getfloor(wpos)->flags1 & LF1_DUNGEON_TOWN))
+#if 1 /* the default. important exceptions for dungeon towns have already been taken care of. */
 #define istown(wpos) \
-	(!(wpos)->wz && wild_info[(wpos)->wy][(wpos)->wx].type == WILD_TOWN)
+	((!(wpos)->wz && wild_info[(wpos)->wy][(wpos)->wx].type == WILD_TOWN))
+#else /* consequences not checked at all, so would be highly experimental - currently not used */
+#define istown(wpos) \
+	((!(wpos)->wz && wild_info[(wpos)->wy][(wpos)->wx].type == WILD_TOWN) \
+	|| isdungeontown(wpos))
+#endif
 #define istownarea(wpos, rad) \
 	(istown(wpos) || ((wpos)->wz == 0 && wild_info[(wpos)->wy][(wpos)->wx].radius <= rad))
 
@@ -6511,7 +6769,7 @@ extern int PlayerUID;
 #define SKILL_AURA_SHIVER       29
 #define SKILL_AURA_DEATH        30
 #define SKILL_HUNTING		31
-#define SKILL_TECHNIC		32
+#define SKILL_TECHNIQUE		32
 #define SKILL_MISC              33
 #define SKILL_AGILITY		34
 #define SKILL_CALMNESS		35
@@ -6621,86 +6879,6 @@ extern int PlayerUID;
 #endif
 
 
-/* Stores/buildings defines */
-#define STORE_HATED     0
-#define STORE_LIKED     1
-#define STORE_NORMAL    2
-
-#define STORE_MAX_ACTION	6
-
-/*
- * Store flags
- */
-#define SF1_DEPEND_LEVEL        0x00000001L
-#define SF1_SHALLOW_LEVEL       0x00000002L
-#define SF1_MEDIUM_LEVEL        0x00000004L
-#define SF1_DEEP_LEVEL          0x00000008L
-#define SF1_RARE                0x00000010L
-#define SF1_VERY_RARE           0x00000020L
-#define SF1_COMMON              0x00000040L
-#define SF1_ALL_ITEM            0x00000080L     /* Works as the BM */
-#define SF1_RANDOM              0x00000100L
-#define SF1_FORCE_LEVEL         0x00000200L
-#define SF1_MUSEUM              0x00000400L
-#define SF1_NO_DISCOUNT		0x00000800L	/* no discount at all */
-#define SF1_NO_DISCOUNT2	0x00001000L	/* no 50%/75%/90% off */
-#define SF1_EGO     	      	0x00002000L     /* often has ego items */
-#define SF1_RARE_EGO            0x00004000L	/* reroll on cheap ego items (value<25000) at 67% probability */
-#define SF1_PRICE1     	      	0x00008000L     /* prices * 1.5 */
-#define SF1_PRICE2     	      	0x00010000L     /* double prices */
-#define SF1_PRICE4            	0x00020000L	/* prices * 4 */
-#define SF1_PRICE16            	0x00040000L	/* prices * 16 */
-#define SF1_GOOD     	      	0x00080000L     /* apply_magic good */
-#define SF1_GREAT            	0x00100000L	/* apply_magic great */
-#define SF1_PRICY_ITEMS1     	0x00200000L     /* items are worth 1000+ */
-#define SF1_PRICY_ITEMS2      	0x00400000L     /* items are worth 5000+ */
-#define SF1_PRICY_ITEMS3      	0x00800000L	/* items are worth 10000+ */
-#define SF1_PRICY_ITEMS4      	0x01000000L	/* items are worth 20000+ */
-#define SF1_HARD_STEAL 	      	0x02000000L     /* hard to steal from this shop */
-#define SF1_VHARD_STEAL	      	0x04000000L     /* hard to steal from this shop */
-#define SF1_NO_STEAL   	      	0x08000000L     /* can't steal from this shop */
-#define SF1_BUY67		0x10000000L	/* Shop buys for 67% of value */
-#define SF1_BUY50		0x20000000L	/* Shop buys for 50% of value (stacks with BUY67) */
-#define SF1_NO_DISCOUNT3	0x40000000L	/* no 75%+ off */
-#define SF1_ZEROLEVEL		0x80000000L	/* all items are level 0 and can't be traded */
-
-/*
- * Total number of stores (see "store.c", etc)
- */
-/* This seems to be bad, but backported once anyway;
- * consider removing them later */
-#define STORE_GENERAL   0
-#define STORE_ARMOURY   1
-#define STORE_WEAPON    2
-#define STORE_TEMPLE    3
-#define STORE_ALCHEMIST 4
-#define STORE_MAGIC     5
-#define STORE_BLACK     6
-#define STORE_HOME      7
-#define STORE_BOOK      8
-#define STORE_PET       9
-#define STORE_RUNE	STORE_PET /* Using this space for now */
-#define STORE_JEWELX	42
-#define STORE_SHOESX	45
-#define STORE_LIBRARY	46		/* unused */
-#define STORE_FORBIDDENLIBRARY	47	/* unused */
-#define STORE_BLACKX	48
-#define STORE_MINING	59
-#define STORE_BLACKS	60
-#define STORE_BTSUPPLY	61
-#define STORE_HERBALIST 62
-#define STORE_STRADER	63	/* for ironman dungeons / RPG_SERVER settings */
-
-/* The specialist shops - the_sandman */
-#define STORE_SPEC_AXE		38
-#define STORE_SPEC_BLUNT	39
-#define STORE_SPEC_POLE		40
-#define STORE_SPEC_SWORD	41
-#define STORE_SPEC_SCROLL	52
-#define STORE_SPEC_POTION	53
-#define STORE_SPEC_ARCHER	55
-#define STORE_SPEC_CLOSECOMBAT	64
-#define STORE_HIDDENLIBRARY	65
 
 
 
@@ -6850,6 +7028,7 @@ extern int PlayerUID;
 #define ITEM_REMOVAL_HOUSE	2	/* Item is inside a house and because of that will never 'timeout' */
 #define ITEM_REMOVAL_DEATH_WILD	3	/* Items are death loot, but not in dungeon (would be ITEM_REMOVAL_NEVER) but in the wilderness */
 #define ITEM_REMOVAL_LONG_WILD	4	/* Item times out even much slower than from ITEM_REMOVAL_DEATH_WILD */
+#define ITEM_REMOVAL_QUICK	5	/* To keep pvp-arena clean: 10 minutes timeout flat. */
 
 
 /* C. Blue - Automatic transport sequences for characters
@@ -6888,7 +7067,7 @@ extern int PlayerUID;
 	((plv >= 5 && (ridx == 160 || ridx == 198)) || \
 	(plv >= 10 && (ridx == 191 || ridx == 154)) || \
 	(plv >= 15 && (ridx == 279 || ridx == 343)) || \
-	(plv >= 20 && (ridx == 414 || ridx == 335 || ridx == 901 || ridx == 963)) || \
+	(plv >= 20 && (ridx == 414 || ridx == 335 || ridx == 898 || ridx == 963)) || \
 	(plv >= 25 && (ridx == 334 || ridx == 513)) || \
 	(plv >= 30 && (ridx == 440 || ridx == 641 || ridx == 482)) || \
 	(plv >= 35 && (ridx == 614 || ridx == 726 || ridx == 964)) || \
@@ -6919,6 +7098,7 @@ extern int PlayerUID;
 #define GE_HIGHLANDER_NEW	2	/* not yet implemented (with highlander town and set-up cash+items etc) */
 #define GE_ARENA_MONSTER	3	/* Areana Monster Challenge */
 #define GE_GAME_RUGBY		4	/* Evileye's good ole game of rugby, now in event-form ;) */
+#define GE_IRONMAN_COMPO	5	/* Ironman deep-dive event (dlev 1-99) */
 
 /* player flags while participating in global events (p_ptr->global_event_temp) */
 #define PEVF_NONE		0x00000000
@@ -7037,10 +7217,6 @@ extern int PlayerUID;
 
 
 //#ifdef ENABLE_DIVINE  <- now always defined for important purpose of making savefiles uniform!
- #define DIVINE_UNDEF 0x00
- #define DIVINE_ANGEL 0x01
- #define DIVINE_DEMON 0x10
-
  #define MONSTER_RIDX_CANDLEBEARER 1104
  #define MONSTER_RIDX_DARKLING 1105
 //#endif
@@ -7317,6 +7493,15 @@ extern int PlayerUID;
 #define WPOS_PVPARENA_X         0       /* location of pvp arena for MODE_PVP players */
 #define WPOS_PVPARENA_Y         0
 #define WPOS_PVPARENA_Z		1
+
+/* Permanent event (to come) "Ironman Deep Dive Challenge": -- SERVER SPECIFIC HARD CODED!! */
+#ifdef RPG_SERVER
+    #define WPOS_IRONDEEPDIVE_X	40
+    #define WPOS_IRONDEEPDIVE_Y	22
+#else
+    #define WPOS_IRONDEEPDIVE_X	40
+    #define WPOS_IRONDEEPDIVE_Y	41
+#endif
 
 
 /* Inventory change types */

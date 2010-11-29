@@ -608,8 +608,8 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			/* Slay Evil */
 			if (((f1 & TR1_SLAY_EVIL) || (get_skill(p_ptr, SKILL_HOFFENSE) >= 50)
 #ifdef ENABLE_DIVINE
-				|| (p_ptr->prace == RACE_DIVINE && (p_ptr->divinity&DIVINE_ANGEL) && p_ptr->lev >= 50)
-#endif 
+				|| (p_ptr->prace == RACE_DIVINE && (p_ptr->ptrait == TRAIT_ENLIGHTENED) && p_ptr->lev >= 50)
+#endif
 				) && (r_ptr->flags3 & RF3_EVIL))
 			{
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_EVIL;*/
@@ -862,6 +862,14 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		}
 	}
 
+#ifdef TEST_SERVER
+	msg_format(Ind, "tdam %d, mult %d, FACTOR_MULT %d, thr: %d, ammo: %d, MA: %d, weap: %d", tdam, mult, FACTOR_MULT,
+	    (tdam * (((mult - FACTOR_MULT) * 10L) / 4 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT),
+	    (tdam * (((mult - FACTOR_MULT) * 20L) / 5 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT),
+	    (tdam * (((mult - FACTOR_MULT) * 10L) / 3 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT),
+	    (tdam * mult) / FACTOR_MULT);
+#endif
+
 	/* If the object was thrown, reduce brand effect by 75%
 	   to avoid insane damage. */
 	if (thrown) return ((tdam * (((mult - FACTOR_MULT) * 10L) / 4 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));
@@ -869,6 +877,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 	/* Ranged weapons get less benefit from brands */
 	if (is_ammo(o_ptr->tval))
 		return ((tdam * (((mult - FACTOR_MULT) * 20L) / 5 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));
+//		return ((tdam * mult) / FACTOR_MULT);
 
 	/* Martial Arts styles get less benefit from brands */
 	if (!o_ptr->k_idx)
@@ -1641,14 +1650,14 @@ void carry(int Ind, int pickup, int confirm)
 				o_ptr->discount = 100;
 				if (o_ptr->level <= p_ptr->lev) {
 //					o_ptr->owner = p_ptr->id;
-					o_ptr->owner_mode = p_ptr->mode;
+					o_ptr->mode = p_ptr->mode;
 				}
 			// "Why not share ale? -Molt" <- good idea, here too!
 			} else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_PINT_OF_ALE) {
-				o_ptr->owner_mode = p_ptr->mode;
+				o_ptr->mode = p_ptr->mode;
 				o_ptr->discount = 100;
    			} else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_PINT_OF_WINE) {
-                                o_ptr->owner_mode = p_ptr->mode;
+                                o_ptr->mode = p_ptr->mode;
 				o_ptr->discount = 100;
                         } else {
 				msg_print(Ind, "\377oYou cannot take items of other players without a valid account.");
@@ -1665,31 +1674,38 @@ void carry(int Ind, int pickup, int confirm)
 				o_ptr->discount = 100;
 				if (o_ptr->level <= p_ptr->lev) {
 //					o_ptr->owner = p_ptr->id;
-					o_ptr->owner_mode = p_ptr->mode;
+					o_ptr->mode = p_ptr->mode;
 				}
 			/* Game pieces are free to be used */
 			} else if ((o_ptr->tval == TV_SKELETON) && (o_ptr->sval >= 9)) {
 				if (o_ptr->level <= p_ptr->lev) {
 //					o_ptr->owner = p_ptr->id;
-					o_ptr->owner_mode = p_ptr->mode;
+					o_ptr->mode = p_ptr->mode;
 				}
 		        /* exception for amulet of the highlands for tournaments */
     			} else if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_HIGHLANDS) {
-				o_ptr->owner_mode = p_ptr->mode;
+				o_ptr->mode = p_ptr->mode;
 			// the one with esp
     			} else if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_HIGHLANDS2) {
-				o_ptr->owner_mode = p_ptr->mode;
+				o_ptr->mode = p_ptr->mode;
 			// Why not share ale? -Molt
 			} else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_PINT_OF_ALE) {
-				o_ptr->owner_mode = p_ptr->mode;
+				o_ptr->mode = p_ptr->mode;
 				o_ptr->discount = 100;
    			} else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_PINT_OF_WINE) {
-                                o_ptr->owner_mode = p_ptr->mode;
+                                o_ptr->mode = p_ptr->mode;
 				o_ptr->discount = 100;
 			} else {
 				msg_format(Ind, "You cannot take items of %s players.", compat_pomode(Ind, o_ptr));
 				return;
 			}
+		}
+
+		/* prevent winners picking up true arts accidentally */
+		if (true_artifact_p(o_ptr) && !winner_artifact_p(o_ptr) &&
+		    p_ptr->total_winner && cfg.kings_etiquette) {
+			msg_print(Ind, "Royalties may not own true artifacts!");
+			if (!is_admin(p_ptr)) return;
 		}
 
 /*#ifdef RPG_SERVER -- let's do this also for normal server */
@@ -1706,10 +1722,9 @@ void carry(int Ind, int pickup, int confirm)
 
 /* the_sandman: item lvl restrictions are disabled in rpg */
 #ifndef RPG_SERVER
-		if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) && (o_ptr->level > p_ptr->lev || o_ptr->level == 0))
-		{
-			if (cfg.anti_cheeze_pickup)
-			{
+		if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) &&
+		    (o_ptr->level > p_ptr->lev || o_ptr->level == 0)) {
+			if (cfg.anti_cheeze_pickup) {
 				msg_print(Ind, "You aren't powerful enough yet to pick up that item!");
 				return;
 			}
@@ -1732,8 +1747,7 @@ void carry(int Ind, int pickup, int confirm)
 		old_note = o_ptr->note;
 
 		/* Remove dangerous inscriptions when picking up items owned by other players - mikaelh */
-		if (p_ptr->id != o_ptr->owner && o_ptr->note)
-		{
+		if (p_ptr->id != o_ptr->owner && o_ptr->note) {
 			char *inscription, *scan;
 			scan = inscription = strdup(quark_str(o_ptr->note));
 
@@ -1753,18 +1767,16 @@ void carry(int Ind, int pickup, int confirm)
 
 #if 1
 		/* Try to add to the quiver */
-		if (object_similar(Ind, o_ptr, &p_ptr->inventory[INVEN_AMMO], 0x0))
-		{
+		if (object_similar(Ind, o_ptr, &p_ptr->inventory[INVEN_AMMO], 0x0)) {
 			int slot = INVEN_AMMO, num = o_ptr->number;
 
 			msg_print(Ind, "You add the ammo to your quiver.");
 
 #if 0
 			/* Own it */
-			if (!o_ptr->owner)
-			{
+			if (!o_ptr->owner) {
 				o_ptr->owner = p_ptr->id;
-				o_ptr->owner_mode = p_ptr->mode;
+				o_ptr->mode = p_ptr->mode;
 			}
 			can_use(Ind, o_ptr);
 #endif	// 0
@@ -1816,15 +1828,13 @@ void carry(int Ind, int pickup, int confirm)
 			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 
 			/* Auto Curse */
-			if (f3 & TR3_AUTO_CURSE)
-			{
+			if (f3 & TR3_AUTO_CURSE) {
 				/* The object recurse itself ! */
 				o_ptr->ident |= ID_CURSED;
 			}
 
 			/* Cursed! */
-			if (cursed_p(o_ptr))
-			{
+			if (cursed_p(o_ptr)) {
 				/* Warn the player */
 				msg_print(Ind, "Oops! It feels deathly cold!");
 
@@ -1877,8 +1887,7 @@ void carry(int Ind, int pickup, int confirm)
 		}
 #endif	// 0
 		/* Note that the pack is too full */
-		else if (!inven_carry_okay(Ind, o_ptr))
-		{
+		else if (!inven_carry_okay(Ind, o_ptr)) {
 			msg_format(Ind, "You have no room for %s.", o_name);
 			Send_floor(Ind, o_ptr->tval);
 
@@ -1889,14 +1898,12 @@ void carry(int Ind, int pickup, int confirm)
 		}
 
 		/* Pick up the item (if requested and allowed) */
-		else
-		{
+		else {
 			int okay = TRUE;
 
 #if 0
 			/* Hack -- query every item */
-			if (p_ptr->carry_query_flag && !confirm)
-			{
+			if (p_ptr->carry_query_flag && !confirm) {
 				char out_val[ONAME_LEN];
 				snprintf(out_val, ONAME_LEN, "Pick up %s? ", o_name);
 				Send_pickup_check(Ind, out_val);
@@ -1905,54 +1912,51 @@ void carry(int Ind, int pickup, int confirm)
 #endif	// 0
 
 			/* Attempt to pick up an object. */
-			if (okay)
-			{
+			if (okay) {
 				int slot;
 
-/* TEMPORARY ANTI-CHEEZE HACKS */  // todo: move to verify_level_req() 
-if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && (o_ptr->level < 30) && (o_ptr->bpval > 0)) {
-	s_printf("HACK-SPEEDREQ: %s(%d) ring (+%d): %d -> ", p_ptr->name, p_ptr->lev, o_ptr->bpval, o_ptr->level);
-	determine_level_req(75, o_ptr);
-	s_printf("%d.\n", o_ptr->level);
-}
-if (o_ptr->tval == TV_RING && o_ptr->sval >= SV_RING_MIGHT && o_ptr->sval <= SV_RING_CUNNINGNESS && o_ptr->level < o_ptr->bpval * 3 + 15) {
-	s_printf("HACK-STATSREQ: %s(%d) ring (+%d): %d -> ", p_ptr->name, p_ptr->lev, o_ptr->bpval, o_ptr->level);
-	determine_level_req(25, o_ptr);
-	s_printf("%d.\n", o_ptr->level);
-}
-if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_POWER && (o_ptr->level < 45)) {
-	s_printf("HACK-PDSM: %s(%d) : %d -> ", p_ptr->name, p_ptr->lev, o_ptr->level);
-	determine_level_req(100, o_ptr);
-	s_printf("%d.\n", o_ptr->level);
-}
-if (o_ptr->tval == TV_POTION && o_ptr->sval >= SV_POTION_INC_STR && o_ptr->sval <= SV_POTION_INC_CHR && o_ptr->level < 28) {
-	s_printf("HACK-STATPOT: %s(%d) potion: %d -> ", p_ptr->name, p_ptr->lev, o_ptr->level);
-	determine_level_req(20, o_ptr);
-	s_printf("%d.\n", o_ptr->level);
-}
-if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_BLADE_OF_CHAOS && o_ptr->name2 == EGO_STORMBRINGER) {
-	s_printf("HACK-STORMBRINGER.\n");
-	o_ptr->level = 0;
-}
-if (is_weapon(o_ptr->tval) && !(k_info[o_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))
-    && (o_ptr->name2 == EGO_LIFE || o_ptr->name2b == EGO_LIFE) && (o_ptr->pval > 2)) {
-        o_ptr->pval = 2;
-}
+
+/* TEMPORARY ANTI-CHEEZE HACKS */  // todo: move to verify_level_req()
+if (o_ptr->level != 0) {
+	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && (o_ptr->level < 30) && (o_ptr->bpval > 0)) {
+		s_printf("HACK-SPEEDREQ: %s(%d) ring (+%d): %d -> ", p_ptr->name, p_ptr->lev, o_ptr->bpval, o_ptr->level);
+		determine_level_req(75, o_ptr);
+		s_printf("%d.\n", o_ptr->level);
+	}
+	if (o_ptr->tval == TV_RING && o_ptr->sval >= SV_RING_MIGHT && o_ptr->sval <= SV_RING_CUNNINGNESS && o_ptr->level < o_ptr->bpval * 3 + 15) {
+		s_printf("HACK-STATSREQ: %s(%d) ring (+%d): %d -> ", p_ptr->name, p_ptr->lev, o_ptr->bpval, o_ptr->level);
+		determine_level_req(25, o_ptr);
+		s_printf("%d.\n", o_ptr->level);
+	}
+	if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_POWER && (o_ptr->level < 45)) {
+		s_printf("HACK-PDSM: %s(%d) : %d -> ", p_ptr->name, p_ptr->lev, o_ptr->level);
+		determine_level_req(100, o_ptr);
+		s_printf("%d.\n", o_ptr->level);
+	}
+	if (o_ptr->tval == TV_POTION && o_ptr->sval >= SV_POTION_INC_STR && o_ptr->sval <= SV_POTION_INC_CHR && o_ptr->level < 28) {
+		s_printf("HACK-STATPOT: %s(%d) potion: %d -> ", p_ptr->name, p_ptr->lev, o_ptr->level);
+		determine_level_req(20, o_ptr);
+		s_printf("%d.\n", o_ptr->level);
+	}
+	if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_BLADE_OF_CHAOS && o_ptr->name2 == EGO_STORMBRINGER) {
+		s_printf("HACK-STORMBRINGER.\n");
+		o_ptr->level = 0;
+	}
 #ifndef ENABLE_RCRAFT
-/* Fix high quality runes levels */
-if (o_ptr->tval == TV_RUNE1) {
-	s_printf("HACK-RUNE.\n");
-	switch (o_ptr->sval) {
+	/* Fix high quality runes levels */
+	if (o_ptr->tval == TV_RUNE1) {
+		s_printf("HACK-RUNE.\n");
+		switch (o_ptr->sval) {
 		case SV_RUNE1_CLOUD:
 			o_ptr->level = 35;
 			break;
 		default:
 			break;
+		}
 	}
-}
-if (o_ptr->tval == TV_RUNE2) {
-	s_printf("HACK-RUNE.\n");
-	switch (o_ptr->sval) {
+	if (o_ptr->tval == TV_RUNE2) {
+		s_printf("HACK-RUNE.\n");
+		switch (o_ptr->sval) {
 		case SV_RUNE2_STONE:
 			o_ptr->level = 35;
 			break;
@@ -1961,15 +1965,20 @@ if (o_ptr->tval == TV_RUNE2) {
 			break;
 		default:
 			break;
+		}
 	}
-}
 #endif
+}
+if (is_weapon(o_ptr->tval) && !(k_info[o_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))
+    && (o_ptr->name2 == EGO_LIFE || o_ptr->name2b == EGO_LIFE) && (o_ptr->pval > 2)) {
+        o_ptr->pval = 2;
+}
+
 
 				/* Own it */
-				if (!o_ptr->owner)
-				{
+				if (!o_ptr->owner) {
 					o_ptr->owner = p_ptr->id;
-					o_ptr->owner_mode = p_ptr->mode;
+					o_ptr->mode = p_ptr->mode;
 
 #if CHEEZELOG_LEVEL > 2
 					if (true_artifact_p(o_ptr)) s_printf("%s Artifact %d found by %s(lv %d) at %d,%d,%d%s%s: %s\n",
@@ -2139,13 +2148,13 @@ if (o_ptr->tval == TV_RUNE2) {
 									msg_print(Ind, "You unstack your staff."); 
 									if (item >= 0) inven_item_charges(Ind, item);
 									else floor_item_charges(0-item);
-								} 
+								}
 							}
 
 							/* consume a turn */
 /* taken out for now since carry() in move_player() doesnt need energy. mass-'g'-presses result in frozen char for a while
 							p_ptr->energy -= level_speed(&p_ptr->wpos);*/
-							break; 
+							break;
 						} else
 						/* ID scroll */
 						if (i_ptr->tval == TV_SCROLL && i_ptr->sval == SV_SCROLL_IDENTIFY && i_ptr->number > 0) { 
@@ -2184,8 +2193,7 @@ if (o_ptr->tval == TV_RUNE2) {
 				o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 
 #if 0
-				if (!o_ptr->level)
-				{
+				if (!o_ptr->level) {
 					if (p_ptr->dun_depth > 0) o_ptr->level = p_ptr->dun_depth;
 					else o_ptr->level = -p_ptr->dun_depth;
 					if (o_ptr->level > 100) o_ptr->level = 100;
@@ -2438,14 +2446,12 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 		}
 	}
 	/* Hack -- divided turn for auto-retaliator */
-	if (!old)
-	{
+	if (!old) {
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_blow;
 	}
 
 	/* Handle attacker fear */
-	if (p_ptr->afraid)
-	{
+	if (p_ptr->afraid) {
 		/* Message */
 		msg_format(Ind, "You are too afraid to attack %s!", p_name);
 
@@ -2453,8 +2459,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 		return;
 	}
 
-	if (q_ptr->store_num == STORE_HOME)
-	{
+	if (q_ptr->store_num == STORE_HOME) {
 		/* Message */
 //		msg_format(Ind, "You are too afraid to attack %s!", p_name);
 
@@ -2475,7 +2480,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			s_printf("%s attacked defenceless %s\n", p_ptr->name, q_ptr->name);
 			if(!imprison(Ind, 500, string)){
 				/* This wrath can be too much */
-				//			take_hit(Ind, randint(p_ptr->lev*30), "wrath of the Gods", 0);
+				//take_hit(Ind, randint(p_ptr->lev*30), "wrath of the Gods", 0);
 				/* It's prison here :) */
 				msg_print(Ind, "{yYou feel yourself bound hand and foot!");
 				set_paralyzed(Ind, p_ptr->paralyzed + rand_int(15) + 15);
@@ -2763,8 +2768,8 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			k = (k + PVP_MELEE_DAM_REDUCTION - 1) / PVP_MELEE_DAM_REDUCTION;
 
 			/* Damage */
-			if(zcave[p_ptr->py][p_ptr->px].info & CAVE_NOPK ||
-			   zcave[q_ptr->py][q_ptr->px].info & CAVE_NOPK){
+			if (zcave[p_ptr->py][p_ptr->px].info & CAVE_NOPK ||
+			   zcave[q_ptr->py][q_ptr->px].info & CAVE_NOPK) {
 				if(k > q_ptr->chp) k -= q_ptr->chp;
 
 				/* Messages */
@@ -2772,22 +2777,20 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				msg_format(0 - c_ptr->m_idx, "%s hits you for \377R%d \377wdamage.", p_ptr->name, k);
 //less spam for now - C. Blue	if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
-				if(q_ptr->chp < 5){
+				if (q_ptr->chp < 5) {
 					msg_format(Ind, "\374You have beaten %s", q_ptr->name);
 					msg_format(0-c_ptr->m_idx, "\374%s has beaten you up!", p_ptr->name);
 					teleport_player(0 - c_ptr->m_idx, 400, TRUE);
 				}
 
 				take_hit(0 - c_ptr->m_idx, k, p_ptr->name, Ind);
-			}
-			else
-			{
+			} else {
 				/* Messages */
 				msg_format(Ind, "%s for \377y%d \377wdamage.", hit_desc, k);
 				msg_format(0 - c_ptr->m_idx, "%s hits you for \377R%d \377wdamage.", p_ptr->name, k);
 //less spam for now - C. Blue   if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
-				if(cfg.use_pk_rules == PK_RULES_NEVER && q_ptr->chp < 5){
+				if (cfg.use_pk_rules == PK_RULES_NEVER && q_ptr->chp < 5){
 					msg_format(Ind, "\374You have beaten %s", q_ptr->name);
 					msg_format(0 - c_ptr->m_idx, "\374%s has beaten you up!", p_ptr->name);
 					teleport_player(0 - c_ptr->m_idx, 400, TRUE);
@@ -2796,17 +2799,15 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				take_hit(0 - c_ptr->m_idx, k, p_ptr->name, Ind);
 			}
 
-			if(!c_ptr->m_idx) break;
+			if (!c_ptr->m_idx) break;
 
 			/* Check for death */
 			if (q_ptr->death) break;
 
 			/* Apply effects from mimic monster forms */
-		        if (p_ptr->body_monster)
-			{
+			if (p_ptr->body_monster) {
 #if 0
-				switch (pr_ptr->r_ptr->d_char)
-				{
+				switch (pr_ptr->r_ptr->d_char) {
 					/* If monster is fighting with a weapon, the player gets the effect(s) even with a weapon */
 					case 'p':	case 'h':	case 't':
 					case 'o':	case 'y':	case 'k':
@@ -2828,10 +2829,8 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 
 				/* Get monster effects. If monster has several, choose one randomly */
 				monster_effects = 0;
-				for (i = 0; i < 4; i++)
-				{
-				        if (pr_ptr->blow[i].d_dice * pr_ptr->blow[i].d_side)
-					{
+				for (i = 0; i < 4; i++) {
+				        if (pr_ptr->blow[i].d_dice * pr_ptr->blow[i].d_side) {
 						monster_effects++;
 						monster_effect[monster_effects] = pr_ptr->blow[i].effect;
 					}
@@ -2841,22 +2840,15 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				
 				
 				/* Modify damage effect */
-				if (apply_monster_effects)
-				{
-					switch (monster_effect_chosen)
-					{
+				if (apply_monster_effects) {
+					switch (monster_effect_chosen) {
 					case RBE_DISEASE:
                                         /* Take "poison" effect */
-					        if (q_ptr->resist_pois || q_ptr->oppose_pois || q_ptr->immune_poison)
-		                                {
+					        if (q_ptr->resist_pois || q_ptr->oppose_pois || q_ptr->immune_poison) {
 		                                        msg_format(Ind, "%^s is unaffected.", p_name);
-	                                        }
-	                                        else if (rand_int(100) < q_ptr->skill_sav)
-	                                        {
+	                                        } else if (rand_int(100) < q_ptr->skill_sav) {
 							msg_format(Ind, "%^s resists the disease.", p_name);
-	                                        }
-						else
-		                                {
+	                                        } else {
 							msg_format(Ind, "%^s suffers from disease.", p_name);
 				                        set_poisoned(0 - c_ptr->m_idx, q_ptr->poisoned + randint(p_ptr->lev) + 5, Ind);
 						}
@@ -3382,7 +3374,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			sound(Ind, SOUND_HIT);
 #endif
 			sprintf(hit_desc, "You hit %s", m_name);
-			
+
 			/* Hack -- bare hands do one damage */
 			k = 1;
 
@@ -3395,8 +3387,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			*/
 				//k = p_ptr->lev * ((p_ptr->lev / 10) + 1);
 
-			if (martial)
-			{
+			if (martial) {
 				int special_effect = 0, stun_effect = 0, times = 0;
 				martial_arts * ma_ptr = &ma_blows[0], * old_ptr = &ma_blows[0];
 				int resist_stun = 0;
@@ -3410,8 +3401,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				for (times = 0; times < (marts<7?1:marts/7); times++)
 				/* Attempt 'times' */
 				{
-					do
-					{
+					do {
 						ma_ptr = &ma_blows[rand_int(p_ptr->total_winner ? MAX_MA : MAX_NONWINNER_MA)];
 					}
 					while ((ma_ptr->min_level > marts)
@@ -3422,38 +3412,34 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 					    !(p_ptr->stun || p_ptr->confused))
 					{
 						old_ptr = ma_ptr;
-					}
-					else
-					{
+					} else {
 						ma_ptr = old_ptr;
 					}
 				}
 
 				k = damroll(ma_ptr->dd, ma_ptr->ds);
 
-				if (ma_ptr->effect == MA_KNEE)
-				{
-					if (r_ptr->flags1 & RF1_MALE)
-					{
+				if (ma_ptr->effect == MA_KNEE) {
+					if (r_ptr->flags1 & RF1_MALE) {
 						msg_format(Ind, "You hit %s in the groin with your knee!", m_name);
 						special_effect = MA_KNEE;
-					}
-					else
+					} else {
 						sprintf(hit_desc, ma_ptr->desc, m_name);
 //						msg_format(Ind, ma_ptr->desc, m_name);
+					}
 				}
 
-				else if (ma_ptr->effect == MA_SLOW)
-				{
+				else if (ma_ptr->effect == MA_SLOW) {
 					if (!((r_ptr->flags1 & RF1_NEVER_MOVE)
 					    || strchr("ANUjmeEv$,DdsbBFIJQSXclnw!=?", r_ptr->d_char)))
 					{
 						msg_format(Ind, "You kick %s in the ankle.", m_name);
 						special_effect = MA_SLOW;
 					}
-					else
+					else {
 						sprintf(hit_desc, ma_ptr->desc, m_name);
 //						msg_format(Ind, ma_ptr->desc, m_name);
+					}
 				}
 				else if (ma_ptr->effect == MA_ROYAL_SLOW)
 				{
@@ -3463,9 +3449,10 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 						msg_format(Ind, "You strike %s's pressure points.", m_name);
 						special_effect = MA_SLOW;
 					}
-					else
+					else {
 						sprintf(hit_desc, ma_ptr->desc, m_name);
 //						msg_format(Ind, ma_ptr->desc, m_name);
+					}
 				}
 				else
 				{
@@ -3514,11 +3501,11 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 						m_ptr->stunned += (stun_effect);
 
 						if (m_ptr->stunned > 100)
-							msg_format(Ind, "\377o%^s is knocked out.", m_name);
+							msg_format(Ind, "\377y%^s is knocked out.", m_name);
 						else if (m_ptr->stunned > 50)
-							msg_format(Ind, "\377o%^s is heavily stunned.", m_name);
+							msg_format(Ind, "\377y%^s is heavily stunned.", m_name);
 						else
-							msg_format(Ind, "\377o%^s is stunned.", m_name);
+							msg_format(Ind, "\377y%^s is stunned.", m_name);
 					}
 				}
 
@@ -3591,11 +3578,11 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 						else if (!magik(90 - (1000 / (r_ptr->level + 50)) + resist_stun)) {
 							m_ptr->stunned += (stun_effect);
 							if (m_ptr->stunned > 100)
-								msg_format(Ind, "\377o%^s is knocked out.", m_name);
+								msg_format(Ind, "\377y%^s is knocked out.", m_name);
 							else if (m_ptr->stunned > 50)
-								msg_format(Ind, "\377o%^s is heavily stunned.", m_name);
+								msg_format(Ind, "\377y%^s is heavily stunned.", m_name);
 							else
-								msg_format(Ind, "\377o%^s is stunned.", m_name);
+								msg_format(Ind, "\377y%^s is stunned.", m_name);
 						}
 					}
 				}
@@ -3900,7 +3887,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 							else
 							{
 								if (!m_ptr->stunned)
-									msg_format(Ind, "\377o%^s appears stuned.", m_name);
+									msg_format(Ind, "\377o%^s appears stunned.", m_name);
 								else
 									msg_format(Ind, "\377o%^s appears more stunned.", m_name);
 								m_ptr->stunned += 20 + rand_int(p_ptr->lev) / 5;
@@ -4067,7 +4054,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				else
 				{
 					if (!m_ptr->stunned)
-						msg_format(Ind, "\377o%^s appears stuned.", m_name);
+						msg_format(Ind, "\377o%^s appears stunned.", m_name);
 					else
 						msg_format(Ind, "\377o%^s appears more stunned.", m_name);
 					m_ptr->stunned += 20 + rand_int(p_ptr->lev) / 5;
@@ -4101,8 +4088,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		}
 
 		/* Player misses */
-		else
-		{
+		else {
 			backstab = FALSE;
 
 			if (strchr("AhHJkpPty", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
@@ -4583,32 +4569,25 @@ void do_prob_travel(int Ind, int dir)
 }
 
 
-static bool wraith_access(int Ind){
-	/* Experimental! lets hope not bugged */
-	/* Wraith walk in own house */
-	player_type *p_ptr=Players[Ind];
+/* Experimental! lets hope not bugged */
+/* Wraith walk in own house */
+bool wraith_access(int Ind) {
+	player_type *p_ptr  =Players[Ind];
 	int i;
-	bool house=FALSE;
+	bool house = FALSE;
 
-	for(i=0;i<num_houses;i++){
-		if(inarea(&houses[i].wpos, &p_ptr->wpos))
-		{
-			if(fill_house(&houses[i], FILL_PLAYER, p_ptr)){
-				house=TRUE;
-				if(access_door(Ind, houses[i].dna) || admin_p(Ind)){
-#if 0	// Jir test
-					if(houses[i].flags & HF_APART){
-						break;
-					}
-					else
-#endif	// 0
-						return(TRUE);
-				}
+	for (i = 0; i < num_houses; i++) {
+		if (inarea(&houses[i].wpos, &p_ptr->wpos)) {
+			if (fill_house(&houses[i], FILL_PLAYER, p_ptr)) {
+				house = TRUE;
+				if (access_door(Ind, houses[i].dna, TRUE)
+				    || admin_p(Ind))
+					return(TRUE);
 				break;
 			}
 		}
 	}
-	return(house ? FALSE : TRUE);
+	return (house ? FALSE : TRUE);
 }
 
 
@@ -4661,58 +4640,48 @@ bool player_can_enter(int Ind, byte feature)
 
 #if 0	// it's interesting.. hope we can have similar feature :)
 	/* Wall mimicry force the player to stay in walls */
-	if (p_ptr->mimic_extra & CLASS_WALL)
-	{
-		only_wall = TRUE;
-	}
-#endif	// 0
+	if (p_ptr->mimic_extra & CLASS_WALL) only_wall = TRUE;
+#endif
 
-	switch (feature)
-	{
+	switch (feature) {
 #if 0
 		/* NOTE: we're not to backport wild_mode (it's cheezy);
 		 * however it's good idea to restrict crossing severer is nice idea
 		 * so p_ptr->wild_mode code can be recycled.	- Jir -
 		 */
 		case FEAT_DEEP_WATER:
-			if (p_ptr->wild_mode)
-			{
+			if (p_ptr->wild_mode) {
 				int wt = (adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100) / 2;
 
 				if ((calc_total_weight() < wt) || (p_ptr->ffall))
 					return (TRUE);
 				else
 					return (FALSE);
-			}
-			else
+			} else
 				return (TRUE);
 
 		case FEAT_SHAL_LAVA:
-			if (p_ptr->wild_mode)
-			{
+			if (p_ptr->wild_mode) {
 				if ((p_ptr->resist_fire) ||
 					(p_ptr->immune_fire) ||
 					(p_ptr->oppose_fire) || (p_ptr->ffall))
 					return (TRUE);
 				else
 					return (FALSE);
-			}
-			else
+			} else
 				return (TRUE);
 
 		case FEAT_DEEP_LAVA:
-			if (p_ptr->wild_mode)
-			{
+			if (p_ptr->wild_mode) {
 				if ((p_ptr->resist_fire) ||
 					(p_ptr->immune_fire) ||
 					(p_ptr->oppose_fire) || (p_ptr->ffall))
 					return (TRUE);
 				else
 					return (FALSE);
-			}
-			else
+			} else
 				return (TRUE);
-#endif	// 0
+#endif
 		case FEAT_DEEP_WATER:
 		case FEAT_SHAL_LAVA:
 		case FEAT_DEEP_LAVA:
@@ -4727,10 +4696,10 @@ bool player_can_enter(int Ind, byte feature)
 			/* 708 = Ent (passes trees), 83/142 novice ranger, 345 ranger, 637 ranger chieftain, 945 high-elven ranger */
 			if ((p_ptr->fly) || (p_ptr->pass_trees) || pass_wall || p_ptr->town_pass_trees)
 #if 0
-					(PRACE_FLAG(PR1_PASS_TREE)) ||
-				(get_skill(SKILL_DRUID) > 15) ||
-				(p_ptr->mimic_form == MIMIC_ENT))
-#endif	// 0
+			    (PRACE_FLAG(PR1_PASS_TREE)) ||
+			    (get_skill(SKILL_DRUID) > 15) ||
+			    (p_ptr->mimic_form == MIMIC_ENT))
+#endif
 				return (TRUE);
 			else
 				return (FALSE);
@@ -4813,15 +4782,14 @@ void move_player(int Ind, int dir, int do_pickup)
 	
 	bool old_grid_sunlit = FALSE, new_grid_sunlit = FALSE; /* for vampires */
 
-	if(!(zcave = getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 
 	/* (S)He's no longer AFK, lol */
 	un_afk_idle(Ind);
 
 	/* Can we move ? */
-	if (r_ptr->flags1 & RF1_NEVER_MOVE)
-	{
+	if (r_ptr->flags1 & RF1_NEVER_MOVE) {
 		msg_print(Ind, "You cannot move by nature.");
 		return;
 	}
@@ -4830,6 +4798,7 @@ void move_player(int Ind, int dir, int do_pickup)
 	stop_shooting_till_kill(Ind);
 
 	/* Find the result of moving */
+
 	/* -C. Blue- I toned down monster RAND_50 and RAND_25 for a mimicking player,
 	assuming that the mimic does not use the monster mind but its own to control
 	the body, on the other hand the body still carries reflexes from the monster ;)
@@ -4842,28 +4811,27 @@ void move_player(int Ind, int dir, int do_pickup)
 	    ((r_ptr->flags1 & RF1_RAND_50) && (!(r_ptr->flags1 & RF1_RAND_25)) && magik(20)) ||
 	    ((!(r_ptr->flags1 & RF1_RAND_50)) && (r_ptr->flags1 & RF1_RAND_25) && magik(10))))
 	{
-		do
-		{
+		do {
 			i = randint(9);
 			y = p_ptr->py + ddy[i];
 			x = p_ptr->px + ddx[i];
 		} while (i == 5);
-	}
-	else
-	{
+	} else {
 		y = p_ptr->py + ddy[dir];
 		x = p_ptr->px + ddx[dir];
 	}
+
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+
+	/* Check sunlight, for vampires */
 	if (!p_ptr->wpos.wz && !night_surface && !(c_ptr->info & CAVE_PROT) &&
 	    !(f_info[c_ptr->feat].flags1 & FF1_PROTECTED))
 		old_grid_sunlit = TRUE;
-	if ((c_ptr->feat == FEAT_ICE) && (!p_ptr->feather_fall && !p_ptr->fly))
-	{
-		if (magik(70 - p_ptr->lev))
-		{
-			do
-			{
+
+	/* Slip on icy floor */
+	if ((c_ptr->feat == FEAT_ICE) && (!p_ptr->feather_fall && !p_ptr->fly)) {
+		if (magik(70 - p_ptr->lev)) {
+			do {
 				i = randint(9);
 				y = p_ptr->py + ddy[i];
 				x = p_ptr->px + ddx[i];
@@ -4873,12 +4841,11 @@ void move_player(int Ind, int dir, int do_pickup)
 #if 0
 		else
 			tmp = dir;
-#endif	// 0
+#endif
 	}
 
 	/* Update wilderness positions */
-	if(wpos->wz == 0)
-	{
+	if (wpos->wz == 0) {
 		/* Make sure he hasn't just changed depth */
 		if (p_ptr->new_level_flag) return;
 
@@ -4888,49 +4855,46 @@ void move_player(int Ind, int dir, int do_pickup)
 		oldx = p_ptr->px; oldy = p_ptr->py;
 
 		/* we have gone off the map */
-		if (!in_bounds(y, x))
-		{
+		if (!in_bounds(y, x)) {
 			/* Hack: Nobody leaves (0, 0) while sector00separation is on - mikaelh */
-			if (sector00separation && wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && !is_admin(p_ptr)) {
+			if (sector00separation && wpos->wx == WPOS_SECTOR00_X &&
+			    wpos->wy == WPOS_SECTOR00_Y && !is_admin(p_ptr)) {
 				return;
 			}
 
 			/* find his new location */
-			if (y <= 0)
-			{
+			if (y <= 0) {
 				/* new player location */
 				nwpos.wy++;
-				p_ptr->py = MAX_HGT-2;
+				p_ptr->py = MAX_HGT - 2;
 			}
-			if (y >= 65)
-			{
-				/* new player location */  
+			else if (y >= MAX_HGT - 1) {
+				/* new player location */
 				nwpos.wy--;
 				p_ptr->py = 1;
 			}
-			if (x <= 0)
-			{
+			else if (x <= 0) {
 				/* new player location */
 				nwpos.wx--;
-				p_ptr->px = MAX_WID-2;
+				p_ptr->px = MAX_WID - 2;
 			}
-			if (x >= 197)
-			{
+			else if (x >= MAX_WID - 1) {
 				/* new player location */
-				nwpos.wx++;                       
+				nwpos.wx++;
 				p_ptr->px = 1;
 			}
 
 			/* check to make sure he hasnt hit the edge of the world */
-			if(nwpos.wx < 0 || nwpos.wx >= MAX_WILD_X || nwpos.wy < 0 || nwpos.wy >= MAX_WILD_Y)
-			{
+			if (nwpos.wx < 0 || nwpos.wx >= MAX_WILD_X ||
+			    nwpos.wy < 0 || nwpos.wy >= MAX_WILD_Y) {
 				p_ptr->px = oldx;
 				p_ptr->py = oldy;
 				return;
 			}
 
 			/* Hack: Nobody enters (0, 0) while sector00separation is on - mikaelh */
-			if (sector00separation && nwpos.wx == WPOS_SECTOR00_X && nwpos.wy == WPOS_SECTOR00_Y && !is_admin(p_ptr)) {
+			if (sector00separation && nwpos.wx == WPOS_SECTOR00_X &&
+			    nwpos.wy == WPOS_SECTOR00_Y && !is_admin(p_ptr)) {
 				p_ptr->px = oldx;
 				p_ptr->py = oldy;
 				return;
@@ -4958,7 +4922,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			/* update the wilderness map */
 			if(!p_ptr->ghost)
 				p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) / 8] |=
-					(1 << ((p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) % 8));
+				    (1 << ((p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) % 8));
 
 			new_players_on_depth(wpos, 1, TRUE);
 			p_ptr->new_level_flag = TRUE;
@@ -4987,7 +4951,8 @@ void move_player(int Ind, int dir, int do_pickup)
 	p_ptr->last_dir = dir;
 
 	/* Bump into other players */
-	if (c_ptr->m_idx < 0) /* mountains for example are FF1_PERMANENT too! */
+	if (c_ptr->m_idx < 0)
+	    /* mountains for example are FF1_PERMANENT too! */
 //	    && (f_info[c_ptr->feat].flags1 & FF1_SWITCH_MASK)) /* never swich places into perma wall */
 	{
 		player_type *q_ptr = Players[0 - c_ptr->m_idx];
@@ -4995,7 +4960,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		bool blocks_important_feat = FALSE; /* does the player block an important feature, like staircases in towns? - C. Blue
 						       always make them 'switch places' instead of bumping. */
 
-		switch(c_ptr->feat) {
+		switch (c_ptr->feat) {
 		case FEAT_SHOP: if (GetCS(c_ptr, CS_SHOP)->sc.omni != 7) break; /* Inn entrance */
 		case FEAT_WAY_MORE:
 		case FEAT_WAY_LESS:
@@ -5030,7 +4995,9 @@ void move_player(int Ind, int dir, int do_pickup)
 			 (ddy[q_ptr->last_dir] == -(ddy[dir])) &&
 			 (ddx[q_ptr->last_dir] == (-ddx[dir])) &&
 			 !p_ptr->afk && !q_ptr->afk) ||
-			q_ptr->admin_dm	|| blocks_important_feat)
+			q_ptr->admin_dm || blocks_important_feat)
+			/* don't switch someone 'out' of a shop, except for the Inn */
+			&& (!(cs_ptr = GetCS(c_ptr, CS_SHOP)) || cs_ptr->sc.omni == 7)
 //moved above		&& !(f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) /* never swich places into perma wall (only case possible: if target player is admin) */
 			&& (f_info[c_ptr->feat].flags1 & FF1_SWITCH_MASK)) /* never swich places into perma wall */
 #endif	// 0
@@ -5059,8 +5026,7 @@ void move_player(int Ind, int dir, int do_pickup)
 
 				/* Tell both of them */
 				/* Don't tell people they bumped into the Dungeon Master */
-				if (!q_ptr->admin_dm)
-				{
+				if (!q_ptr->admin_dm) {
 					/* Hack if invisible */
 					if (p_ptr->play_vis[Ind2])                              
 						msg_format(Ind, "You switch places with %s.", q_ptr->name);
@@ -5115,27 +5081,25 @@ void move_player(int Ind, int dir, int do_pickup)
 		}
 
 		/* Hack -- the Dungeon Master cannot bump people */
-		else if (!p_ptr->admin_dm)
-		{
+		else if (!p_ptr->admin_dm) {
 			/* Don't tell people they bumped into the Dungeon Master */
 			if (!q_ptr->admin_dm) {
 				/* Tell both about it */
 				/* Hack if invisible */
 				int ball = has_ball(q_ptr);
-				if(p_ptr->team && ball != -1 && q_ptr->team != p_ptr->team){
+				if (p_ptr->team && ball != -1 && q_ptr->team != p_ptr->team) {
 					object_type *o_ptr = &q_ptr->inventory[ball];
 					object_type tmp_obj;
 					int tackle;
 					tackle = randint(20);
-					if(tackle > 10){
+					if (tackle > 10) {
 						tmp_obj = *o_ptr;
-						if(tackle < 18){
+						if (tackle < 18) {
 							msg_format_near(Ind2, "\377v%s is tackled by %s", q_ptr->name, p_ptr->name);
 							msg_format(Ind2, "\377r%s tackles you", p_ptr->name);
 							tmp_obj.marked2 = ITEM_REMOVAL_NEVER;
 							drop_near(&tmp_obj, -1, wpos, y, x);
-						}
-						else{
+						} else {
 							msg_format_near(Ind2, "\377v%s gets the ball from %s", p_ptr->name, q_ptr->name);
 							msg_format(Ind2, "\377v%s gets the ball from you", p_ptr->name);
 							inven_carry(Ind, o_ptr);
@@ -5145,13 +5109,11 @@ void move_player(int Ind, int dir, int do_pickup)
 						inven_item_describe(Ind2, ball);
 						inven_item_optimize(Ind2, ball);
 						q_ptr->energy = 0;
-					}
-					else{
+					} else {
 						msg_format(Ind2, "\377r%s tries to tackle you", p_ptr->name);
 						msg_format(Ind, "\377rYou fail to tackle %s", q_ptr->name);
 					}
-				}
-				else{
+				}else {
 					if (p_ptr->play_vis[Ind2])
 						msg_format(Ind, "You bump into %s.", q_ptr->name);
 					else
@@ -5179,15 +5141,14 @@ void move_player(int Ind, int dir, int do_pickup)
 	}
 
 	/* Hack -- attack monsters */
-	if (c_ptr->m_idx > 0)
-	{
+	if (c_ptr->m_idx > 0) {
 		/* Hack -- the dungeon master switches places with his monsters */
 		if (p_ptr->admin_dm &&
 		    /* except if he wields his scythe (uhoh!) */
 		    (!instakills(Ind) ||
 		    /* except except if he's not disabled auto-retaliation */
 		    (p_ptr->running && p_ptr->inventory[INVEN_WIELD].note &&
-		    strstr(quark_str(p_ptr->inventory[INVEN_WIELD].note), "@Ox")))) {
+		    strstr(quark_str(p_ptr->inventory[INVEN_WIELD].note), "@Rx")))) {
 			/* save old player location */
 			oldx = p_ptr->px;
 			oldy = p_ptr->py;
@@ -5220,40 +5181,36 @@ void move_player(int Ind, int dir, int do_pickup)
 	}
 
 	/* Prob travel */
-	if (p_ptr->prob_travel && (!cave_floor_bold(zcave, y, x)))
-	{
+	if (p_ptr->prob_travel && (!cave_floor_bold(zcave, y, x))) {
 		do_prob_travel(Ind, dir);
 		return;
 	}
 
 	/* now this is temp while i redesign!!! - do not change  <- ok and who wrote this and when? =p */
 	cs_ptr = c_ptr->special;
-	while(cs_ptr){
+	while (cs_ptr) {
 		int tcv;
 		tcv = csfunc[cs_ptr->type].activate(cs_ptr, y, x, Ind);
 		cs_ptr = cs_ptr->next;
-		if(!tcv){
+		if (!tcv) {
 			csmove = FALSE;
 			printf("csmove is false\n");
 		}
 	}
 
 	/* Player can not walk through "walls", but ghosts can */
-	if (!player_can_enter(Ind, c_ptr->feat) || !csmove)
-	{
+	if (!player_can_enter(Ind, c_ptr->feat) || !csmove) {
 		/* walk-through entry for house owners ... sry it's DIRTY -Jir- */
 		bool myhome = FALSE;
 		bool passing = (p_ptr->tim_wraith || p_ptr->ghost);
 
 		/* XXX quick fix */
-		if (passing)
-		{
+		if (passing) {
 #if 0
-			if (c_ptr->feat == FEAT_HOME)
-			{
+			if (c_ptr->feat == FEAT_HOME) {
 				struct c_special *cs_ptr;
-				if((!(cs_ptr=GetCS(c_ptr, CS_DNADOOR)) ||
-				    !access_door(Ind, cs_ptr->sc.ptr)) && !admin_p(Ind))
+				if ((!(cs_ptr = GetCS(c_ptr, CS_DNADOOR)) ||
+				    !access_door(Ind, cs_ptr->sc.ptr, TRUE)) && !admin_p(Ind))
 				{
 					msg_print(Ind, "The door blocks your movement.");
 					disturb(Ind, 0, 0);
@@ -5262,15 +5219,12 @@ void move_player(int Ind, int dir, int do_pickup)
 
 				myhome = TRUE;
 				msg_print(Ind, "\377GYou pass through the door.");
-			}
-			else
+			} else
 #endif	// 0
 
 			/* XXX maybe needless anymore */
-			if(c_ptr->feat == FEAT_WALL_HOUSE)
-			{
-				if (!wraith_access_virtual(Ind, y, x))
-				{
+			if (c_ptr->feat == FEAT_WALL_HOUSE) {
+				if (!wraith_access_virtual(Ind, y, x)) {
 					msg_print(Ind, "The wall blocks your movement.");
 					disturb(Ind, 0, 0);
 					return;
@@ -5285,12 +5239,11 @@ void move_player(int Ind, int dir, int do_pickup)
 #if 0
 		/* Hack -- Exception for trees (in a bad way :-/) */
 		if (!myhome && c_ptr->feat == FEAT_TREE &&
-				(p_ptr->fly || p_ptr->pass_trees))
+		    (p_ptr->fly || p_ptr->pass_trees))
 			myhome = TRUE;
 #endif	// 0
 
-		if (!myhome)
-		{
+	    if (!myhome) {
 
 		/* Disturb the player */
 		disturb(Ind, 0, 0);
@@ -5306,8 +5259,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			}
 
 			/* Rubble */
-			if (c_ptr->feat == FEAT_RUBBLE)
-			{
+			if (c_ptr->feat == FEAT_RUBBLE) {
 				msg_print(Ind, "\377GYou feel some rubble blocking your way.");
 				*w_ptr |= CAVE_MARK;
 				everyone_lite_spot(wpos, y, x);
@@ -5323,24 +5275,22 @@ void move_player(int Ind, int dir, int do_pickup)
 			}
 
 			/* Tree */
-			else if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_DEAD_TREE || c_ptr->feat==FEAT_BUSH)
-			{
+			else if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_DEAD_TREE ||
+			    c_ptr->feat == FEAT_BUSH) {
 				msg_print(Ind, "\377GYou feel a tree blocking your way.");
 				*w_ptr |= CAVE_MARK;
 				everyone_lite_spot(wpos, y, x);
 			}
 
 			/* Dark Pit */
-			else if (c_ptr->feat == FEAT_DARK_PIT)
-			{
+			else if (c_ptr->feat == FEAT_DARK_PIT) {
 				msg_print(Ind, "\377GYou don't feel any ground ahead of you.");
 				*w_ptr |= CAVE_MARK;
 				everyone_lite_spot(wpos, y, x);
 			}
 
 			/* Wall (or secret door) */
-			else
-			{
+			else {
 				msg_print(Ind, "\377GYou feel a wall blocking your way.");
 				*w_ptr |= CAVE_MARK;
 				everyone_lite_spot(wpos, y, x);
@@ -5348,13 +5298,13 @@ void move_player(int Ind, int dir, int do_pickup)
 		}
 
 		/* Notice things */
-		else
-		{
+		else {
 			//struct c_special *cs_ptr;
 			/* Closed doors */
 			if ((c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_DOOR_HEAD) ||
-				 (c_ptr->feat == FEAT_HOME)) {
-				msg_print(Ind, "There is a closed door blocking your way.");
+			    (c_ptr->feat == FEAT_HOME)) {
+				if (p_ptr->easy_open) do_cmd_open(Ind, dir);
+				else msg_print(Ind, "There is a closed door blocking your way.");
 			} else if (p_ptr->auto_tunnel) {
 				do_cmd_tunnel(Ind, dir, TRUE);
 			} else if (p_ptr->easy_tunnel) {
@@ -5366,7 +5316,7 @@ void move_player(int Ind, int dir, int do_pickup)
 				}
 				/* Tree */
 				else if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_DEAD_TREE ||
-				    c_ptr->feat==FEAT_BUSH) {
+				    c_ptr->feat == FEAT_BUSH) {
 					msg_print(Ind, "There is a tree blocking your way.");
 				} else if (c_ptr->feat == FEAT_DARK_PIT) {
 					msg_print(Ind, "There is a dark pit in your way.");
@@ -5378,14 +5328,13 @@ void move_player(int Ind, int dir, int do_pickup)
 			}
 		}
 		return;
-		} /* 'if (!myhome)' ends here */
+	    } /* 'if (!myhome)' ends here */
 	}
 
 
 	/* XXX fly? */
 	else if ((c_ptr->feat == FEAT_DARK_PIT) && !p_ptr->feather_fall &&
-			!p_ptr->fly && !p_ptr->admin_dm)
-	{
+	    !p_ptr->fly && !p_ptr->admin_dm) {
 		msg_print(Ind, "You can't cross the chasm.");
 
 		disturb(Ind, 0, 0);
@@ -5416,8 +5365,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			/* Automatically disable permanent wraith form (set_tim_wraith) */
 			p_ptr->update |= PU_BONUS;
 		}
-		if(zcave[oy][ox].info & CAVE_STCK && !(zcave[y][x].info & CAVE_STCK))
-		{
+		if(zcave[oy][ox].info & CAVE_STCK && !(zcave[y][x].info & CAVE_STCK)) {
 			msg_print(Ind, "\377sFresh air greets you as you leave the vault.");
 			p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
 
@@ -5454,14 +5402,12 @@ void move_player(int Ind, int dir, int do_pickup)
 
 		/* Spontaneous Searching */
 		if ((p_ptr->skill_fos >= 75) ||
-		    (0 == rand_int(76 - p_ptr->skill_fos)))
-		{
+		    (0 == rand_int(76 - p_ptr->skill_fos))) {
 			search(Ind);
 		}
 
 		/* Continuous Searching */
-		if (p_ptr->searching)
-		{
+		if (p_ptr->searching) {
 			if (p_ptr->pclass == CLASS_ROGUE && !p_ptr->rogue_heavyarmor) {
 				//Radius of 5 ... 15 squares
 				detect_bounty(Ind, (p_ptr->lev/5) + 5);
@@ -5492,7 +5438,7 @@ void move_player(int Ind, int dir, int do_pickup)
 
 		/* Handle resurrection */
 		else if (p_ptr->ghost && c_ptr->feat == FEAT_SHOP &&
-			(cs_ptr=GetCS(c_ptr, CS_SHOP)) && cs_ptr->sc.omni == 3)
+			(cs_ptr = GetCS(c_ptr, CS_SHOP)) && cs_ptr->sc.omni == 3)
 
 		{
 			if(p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy*MAX_WILD_X)/8] & (1<<((p_ptr->wpos.wx + p_ptr->wpos.wy*MAX_WILD_X)%8))){
@@ -5500,8 +5446,8 @@ void move_player(int Ind, int dir, int do_pickup)
 				resurrect_player(Ind, 0);
 
 				/* Give him some gold to restart */
-				if (p_ptr->lev > 1 && !p_ptr->admin_dm)
-				{
+//				if (p_ptr->lev > 1 && !p_ptr->admin_dm) {
+				if (!p_ptr->admin_dm) {
 					/* int i = (p_ptr->lev > 4)?(p_ptr->lev - 3) * 100:100; */
 //					int i = (p_ptr->lev > 4)?(p_ptr->lev - 3) * 100 + (p_ptr->lev / 10) * (p_ptr->lev / 10) * 800:100;
 //					int i = (p_ptr->lev > 4) ? 100 + (p_ptr->lev * p_ptr->lev * p_ptr->lev) / 5 : 100;
@@ -5514,7 +5460,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		}
 #ifndef USE_MANG_HOUSE_ONLY
 		else if ((c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN)
-				&& (!p_ptr->ghost || is_admin(p_ptr)))
+		    && (!p_ptr->ghost || is_admin(p_ptr)))
 		{
 			disturb(Ind, 0, 0);
 			do_cmd_trad_house(Ind);
@@ -5525,15 +5471,13 @@ void move_player(int Ind, int dir, int do_pickup)
 
 		/* Discover invisible traps */
 //		else if (c_ptr->feat == FEAT_INVIS)
-		if((cs_ptr=GetCS(c_ptr, CS_TRAPS)) && !p_ptr->ghost)
-		{
+		if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && !p_ptr->ghost) {
 			bool hit = TRUE;
 
 			/* Disturb */
 			disturb(Ind, 0, 0);
 
-			if (!cs_ptr->sc.trap.found)
-			{
+			if (!cs_ptr->sc.trap.found) {
 				/* Message */
 //				msg_print(Ind, "You found a trap!");
 				msg_print(Ind, "You triggered a trap!");
@@ -5560,7 +5504,8 @@ void move_player(int Ind, int dir, int do_pickup)
 		 */
 
 #if 0
-		if ((!strcmp(p_ptr->name,cfg_dungeon_master) || player_is_king(Ind)) && p_ptr->master_move_hook)
+		if ((!strcmp(p_ptr->name,cfg_dungeon_master) || player_is_king(Ind))
+		    && p_ptr->master_move_hook)
 #endif
 		/* Check BEFORE setting ;) */
 		if (p_ptr->master_move_hook)
@@ -5574,12 +5519,12 @@ void black_breath_infection(int Ind, int Ind2)
 	player_type *q_ptr = Players[Ind2];
 
 	/* Prevent players who are AFK from getting infected in towns - mikaelh */
-	if (p_ptr->black_breath && magik(25) && !(q_ptr->afk && istown(&q_ptr->wpos)))
+	if (p_ptr->black_breath && magik(25) && !(q_ptr->afk && istown(&q_ptr->wpos)) && q_ptr->lev > cfg.newbies_cannot_drop && q_ptr->lev >= 25)
 	{
 		s_printf("EFFECT: BLACK-BREATH - %s was infected by %s\n", q_ptr->name, p_ptr->name);
 		set_black_breath(Ind2);
 	}
-	if (q_ptr->black_breath && magik(25) && !(p_ptr->afk && istown(&p_ptr->wpos)))
+	if (q_ptr->black_breath && magik(25) && !(p_ptr->afk && istown(&p_ptr->wpos)) && p_ptr->lev > cfg.newbies_cannot_drop && p_ptr->lev >= 25)
 	{
 		s_printf("EFFECT: BLACK-BREATH - %s was infected by %s\n", p_ptr->name, q_ptr->name);
 		set_black_breath(Ind);
@@ -6025,16 +5970,16 @@ static bool run_test(int Ind)
 	int                     row, col;
 	int                     i, max, inv;
 	int                     option, option2;
-	bool	aqua = p_ptr->can_swim || p_ptr->fly || (get_skill_scale(p_ptr, SKILL_SWIM, 500) >= 7) ||
-					((p_ptr->body_monster) && (
-					(r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC) ||
-					(r_info[p_ptr->body_monster].flags3 & RF3_UNDEAD) ));
+	bool aqua = p_ptr->can_swim || p_ptr->fly || (get_skill_scale(p_ptr, SKILL_SWIM, 500) >= 7) ||
+	    ((p_ptr->body_monster) && (
+	    (r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC) ||
+	    (r_info[p_ptr->body_monster].flags3 & RF3_UNDEAD) ));
 
 	cave_type               *c_ptr;
 	byte                    *w_ptr;
 	cave_type **zcave;
 	struct c_special *cs_ptr;
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	if(!(zcave = getcave(wpos))) return(FALSE);
 
 	/* XXX -- Ghosts never stop running */
 	if (p_ptr->ghost || p_ptr->tim_wraith) return (FALSE);
@@ -6082,7 +6027,7 @@ static bool run_test(int Ind)
 
 		}
 
-#ifdef HOSTILITY_ABORTS_RUNNING
+#ifdef HOSTILITY_ABORTS_RUNNING /* pvp mode chars cannot run with this on */
 		/* Hostile characters will stop each other from running. 
 		 * This should lessen the melee storming effect in PVP fights */
 		if (c_ptr->m_idx < 0 && check_hostile(Ind, 0 - c_ptr->m_idx)) return (TRUE);
@@ -6504,8 +6449,7 @@ void run_step(int Ind, int dir)
 	if (p_ptr->new_level_flag) return;
 
 	/* Start running */
-	if (dir)
-	{
+	if (dir) {
 		/* Calculate torch radius */
 		p_ptr->update |= (PU_TORCH);
 
@@ -6517,15 +6461,13 @@ void run_step(int Ind, int dir)
 	}
 
 	/* Keep running */
-	else
-	{
+	else {
 		p_ptr->warning_run = 1;
 
 		prev_dir = p_ptr->find_prevdir;
 
 		/* Update run */
-		if (run_test(Ind))
-		{
+		if (run_test(Ind)) {
 			/* Disturb */
 			disturb(Ind, 0, 0);
 

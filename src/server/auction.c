@@ -548,7 +548,7 @@ bool auction_mode_check(int Ind, int auction_id)
 
 	forge_dummy.owner = auc_ptr->owner; /* assuming auction_type.owner is same kind of 'id' value
 					    as o_ptr->owner here; correct me if wrong please - C. Blue */
-	forge_dummy.owner_mode = auc_ptr->mode;
+	forge_dummy.mode = auc_ptr->mode;
 	return (compat_pomode(Ind, &forge_dummy) == NULL);
 #endif
 }
@@ -1453,7 +1453,7 @@ void auction_retrieve_items(int Ind, int *retrieved, int *unretrieved)
 					if (inven_carry_okay(Ind, o_ptr))
 					{
 						o_ptr->owner = p_ptr->id;
-						o_ptr->owner_mode = p_ptr->mode;
+						o_ptr->mode = p_ptr->mode;
 						inven_carry(Ind, o_ptr);
 						(*retrieved)++;
 						WIPE(o_ptr, object_type);

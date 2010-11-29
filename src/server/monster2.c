@@ -127,8 +127,7 @@ int monster_check_experience(int m_idx, bool silent)
 		}
 #endif
 		/* Gain hp */
-		if (magik(90))
-		{
+		if (magik(90)) {
 #if 0
 			m_ptr->maxhp += r_ptr->hside;
 			m_ptr->hp += r_ptr->hside;
@@ -138,8 +137,7 @@ int monster_check_experience(int m_idx, bool silent)
 		}
 
 		/* Gain speed */
-		if (magik(50))//30
-		{
+		if (magik(50)) { //30
 			int speed = randint(2);
 			/* adjust cur and base speed */
 			m_ptr->speed += speed;
@@ -151,16 +149,14 @@ int monster_check_experience(int m_idx, bool silent)
 		}
 
 		/* Gain ac */
-		if (magik(30))
-		{
+		if (magik(30)) {
 			m_ptr->ac += (r_ptr->ac / 15)?r_ptr->ac / 15:1;
 		}
 
 		/* Gain melee power */
 		/* XXX 20d1 monster can be too horrible (20d5) */
 //		if (magik(50))
-		if (magik(80))
-		{
+		if (magik(80)) {
 #if 0 /* yeah whatever.. */
 			i = rand_int(4);
 			try = 20;
@@ -708,19 +704,20 @@ void wipe_m_list(struct worldpos *wpos)
 	/* Compact the monster list */
 	compact_monsters(0, FALSE);
 }
-void wipe_m_list_chance(struct worldpos *wpos, int chance)
-{
+/* Avoid overcrowding of towns - C. Blue */
+void thin_surface_spawns() {
 	int i;
 
 	/* Delete all the monsters, except for target dummies (1101, 1126) and santa (1102),
-	   because those are usually in town, and this function is called periodically for town! */
-	for (i = m_max - 1; i >= 1; i--)
-	{
+	   because those are usually in town, and this function is called periodically for towns. */
+	for (i = m_max - 1; i >= 1; i--) {
 		monster_type *m_ptr = &m_list[i];
 
-		if (inarea(&m_ptr->wpos,wpos) && magik(chance) &&  /* hardcoded -_- */
+		if ((m_ptr->wpos.wz == 0) && magik(20) && //was 30
+		    /* hardcoded -_- */
 		    (m_ptr->r_idx != 1101) && (m_ptr->r_idx != 1126) &&
-		    (m_ptr->r_idx != 1102) && (m_ptr->r_idx != 1132)) {
+		    (m_ptr->r_idx != 1102) && (m_ptr->r_idx != 1132) &&
+		    (m_ptr->r_idx != 1112) && (m_ptr->r_idx != 1113) && (m_ptr->r_idx != 1114)) {
 			if (season_halloween &&
 			    (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088))
 				 great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
@@ -731,12 +728,33 @@ void wipe_m_list_chance(struct worldpos *wpos, int chance)
 	/* Compact the monster list */
 	compact_monsters(0, FALSE);
 }
-/* only wipes monsters not on CAVE_ICKY (for pvp arena) */
+/* Wipe all monsters in towns. (For seasonal events: Halloween) */
+void geno_towns() {
+	int i;
+
+	/* Delete all the monsters, except for target dummies (1101, 1126) */
+	for (i = m_max - 1; i >= 1; i--) {
+		monster_type *m_ptr = &m_list[i];
+
+		if (istown(&m_ptr->wpos) &&  /* hardcoded -_- */
+		    (m_ptr->r_idx != 1101) && (m_ptr->r_idx != 1126)) {
+			if (season_halloween &&
+			    (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088))
+				 great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
+			delete_monster_idx(i, TRUE);
+		}
+	}
+
+	/* Compact the monster list */
+	compact_monsters(0, FALSE);
+}
+/* only wipes monsters not on CAVE_ICKY, on a certain dungeon/world level.
+   Created for pvp arena, to clear previous spawn on releasing next one. - C. Blue */
 void wipe_m_list_roaming(struct worldpos *wpos)
 {
 	int i;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if(!(zcave = getcave(wpos))) return;
 	for (i = m_max - 1; i >= 1; i--) {
 		monster_type *m_ptr = &m_list[i];
 		if (inarea(&m_ptr->wpos,wpos)) {
@@ -1184,10 +1202,14 @@ bool mon_allowed_view(monster_race *r_ptr)
  * C. Blue: Added check of 'monster_level_min', for
  *          micro cell vaults (cross-shaped) actually:
  *    -1 = auto, 0 = disabled, >0 = use specific value.
+ *          Also added 'dlevel' to allow get_mon_num() to determine
+ *          if 'monster_level' is already specifying an OoD request
+ *          and therefore must not be boosted further by get_mon_num()'s
+ *          own built-in OoD code.
  */
 
 //s16b get_mon_num(int level)
-s16b get_mon_num(int level)
+s16b get_mon_num(int level, int dlevel)
 {
 	long		begin, i, j, n, p; //, d1 = 0, d2 = 0;
 	long		r_idx, monster_level_min_int = 0;
@@ -1197,20 +1219,15 @@ s16b get_mon_num(int level)
 
 #if 0	// removed, but not disabled.. please see place_monster_one
 	/* Warp level around */
-	if (level > 100)
-	{
-		level = level - 100;
-	}
+	if (level > 100) level = level - 100;
 #endif	// 0
 
-	/* Out Of Depth modification: */
-	if (level > 0)
-	{
+	/* Out Of Depth modification: -- but not in town (Bree) */
+	if (level > 0) {
 //commented this one out, it's too much (destroyer on lv 54..)
 #if 0
 		/* Occasional "nasty" monster */
-		if (rand_int(NASTY_MON) == 0)
-		{
+		if (rand_int(NASTY_MON) == 0) {
 			/* Pick a level bonus */
 			d1 = level / 4 + 2;
 
@@ -1219,29 +1236,34 @@ s16b get_mon_num(int level)
 		}
 
 		/* Occasional "nasty" monster */
-		if (rand_int(NASTY_MON) == 0)
-		{
+		if (rand_int(NASTY_MON) == 0) {
 			/* Pick a level bonus */
 			d2 = level / 4 + 2;
 
 			/* Boost the level */
 			level += ((d2 < 5) ? d2 : 5);
 		}
-#else
-		if (rand_int(NASTY_MON) == 0)
-		{
+		/* Boost the level */
+		level += ((d1 < 5) ? d1 : 5);
+		level += ((d2 < 5) ? d2 : 5);
+#elseif 0
+		if (rand_int(NASTY_MON) == 0) {
 			if (level < 15) level += (2 + level / 2 + randint(3));
 			else level += (10 + level / 4 + randint(level / 4)); /* can be quite nasty, but serves well so far >;-) */
 		}
+#else
+		if (rand_int(NASTY_MON) == 0) {
+			if (dlevel < 15) level += (2 + dlevel / 2 + randint(3));
+			else level += (10 + dlevel / 4 + randint(dlevel / 4)); /* can be quite nasty, but serves well so far >;-) */
+		}
 #endif
-	}       
+	}
 
-	/* Boost the level -- but not in town square. 
-	if (level)
-	{
-		level += ((d1 < 5) ? d1 : 5);
-		level += ((d2 < 5) ? d2 : 5);
-	} */
+	/* Cap OoD - C. Blue
+	   (serves to catch double OoD boost:
+	   once by setting a high monster_level before calling get_mon_num(),
+	   second in here by boosting the level even further in the code above.) */
+	if (level > dlevel + 40) level = dlevel + 40;
 
 	/* Reset total */
 	total = 0L;
@@ -1295,17 +1317,21 @@ s16b get_mon_num(int level)
 		/* Depth Monsters never appear out of depth */
 		/* FIXME: This might cause FORCE_DEPTH monsters to appear out of depth */
 		if ((r_ptr->flags1 & RF1_FORCE_DEPTH) && (entry->level > level))
-		{
 			continue;
-		}
 
 		/* Depth Monsters never appear out of their depth */
-		/* level = base_depth + depth, be careful(esp.wilderness) */
-		/* Seemingly it's only for Moldoux */
+		/* level = base_depth + depth, be careful(esp.wilderness)
+		 * Appearently only used for Moldoux atm. */
 		if ((r_ptr->flags9 & (RF9_ONLY_DEPTH)) && (entry->level != level))
-		{
 			continue;
-		}
+
+		/* Prevent certain monsters from being generated too much OoD */
+		if ((r_ptr->flags1 & RF7_OOD_10) && (entry->level > level + 10))
+			continue;
+		if ((r_ptr->flags1 & RF7_OOD_15) && (entry->level > level + 15))
+			continue;
+		if ((r_ptr->flags1 & RF7_OOD_20) && (entry->level > level + 20))
+			continue;
 
 		/* Accept */
 		entry->prob3 = p;
@@ -2201,8 +2227,7 @@ void update_mon(int m_idx, bool dist)
 	bool do_cold_blood = FALSE;
 
 	/* Check for each player */
-	for (Ind = 1, n = NumPlayers; Ind <= n; Ind++)
-	{
+	for (Ind = 1, n = NumPlayers; Ind <= n; Ind++) {
 		p_ptr = _Players[Ind];
 
 		/* Reset the flags */
@@ -2213,8 +2238,7 @@ void update_mon(int m_idx, bool dist)
 			continue;
 
 		/* If he's not on this depth, skip him */
-		if(!inarea(wpos, &p_ptr->wpos))
-		{
+		if (!inarea(wpos, &p_ptr->wpos)) {
 			p_ptr->mon_vis[m_idx] = FALSE;
 			p_ptr->mon_los[m_idx] = FALSE;
 			continue;
@@ -2224,11 +2248,10 @@ void update_mon(int m_idx, bool dist)
 		 * we are "detatched" monsters.
 		 */
 
-		if(!(zcave=getcave(wpos))) continue;
+		if (!(zcave = getcave(wpos))) continue;
 
 		/* Calculate distance */
-		if (dist)
-		{
+		if (dist) {
 			int d, dy, dx;
 
 			/* Distance components */
@@ -2245,30 +2268,26 @@ void update_mon(int m_idx, bool dist)
 
 		/* Process "distant" monsters */
 #if 0
-		if (m_ptr->cdis > MAX_SIGHT)
-		{
+		if (m_ptr->cdis > MAX_SIGHT) {
 			/* Ignore unseen monsters */
 			if (!p_ptr->mon_vis[m_idx]) return;
 		}
 #endif
 
 		/* Process "nearby" monsters on the current "panel" */
-		if (panel_contains(fy, fx))
-		{
+		if (panel_contains(fy, fx)) {
 			cave_type *c_ptr = &zcave[fy][fx];
 			byte *w_ptr = &p_ptr->cave_flag[fy][fx];
 
 			/* Normal line of sight, and player is not blind */
-			if ((*w_ptr & CAVE_VIEW) && (!p_ptr->blind))
-			{
+			if ((*w_ptr & CAVE_VIEW) && (!p_ptr->blind)) {
 				/* The monster is carrying/emitting light? */
 				if ((r_ptr->flags9 & RF9_HAS_LITE) &&
 						!(m_ptr->csleep) &&
 						!(r_ptr->flags2 & RF2_INVISIBLE)) easy = flag = TRUE;
 
 				/* Use "infravision" */
-				if (m_ptr->cdis <= (byte)(p_ptr->see_infra))
-				{
+				if (m_ptr->cdis <= (byte)(p_ptr->see_infra)) {
 					/* Infravision only works on "warm" creatures */
 					/* Below, we will need to know that infravision failed */
 					if (r_ptr->flags2 & RF2_COLD_BLOOD) do_cold_blood = TRUE;
@@ -2278,8 +2297,7 @@ void update_mon(int m_idx, bool dist)
 				}
 
 				/* Use "illumination" */
-				if ((c_ptr->info & CAVE_LITE) || (c_ptr->info & CAVE_GLOW))
-				{
+				if ((c_ptr->info & CAVE_LITE) || (c_ptr->info & CAVE_GLOW)) {
 					/* Take note of invisibility */
 					if (r_ptr->flags2 & RF2_INVISIBLE) do_invisible = TRUE;
 
@@ -2289,8 +2307,7 @@ void update_mon(int m_idx, bool dist)
 			}
 
 			/* Telepathy can see all "nearby" monsters with "minds" */
-			if (p_ptr->telepathy || (p_ptr->prace == RACE_DRIDER))
-			{
+			if (p_ptr->telepathy || (p_ptr->prace == RACE_DRIDER)) {
 				bool see = FALSE, drsee = FALSE;
 
 				/* Different ESP */
@@ -2320,11 +2337,9 @@ void update_mon(int m_idx, bool dist)
 					if (p_ptr->lev>=6 && m_ptr->cdis<=(5+p_ptr->lev/3)) see = TRUE;
 				}
 
-				if (see)
-				{
+				if (see) {
 					/* Empty mind, no telepathy */
-					if (r_ptr->flags2 & RF2_EMPTY_MIND)
-					{
+					if (r_ptr->flags2 & RF2_EMPTY_MIND) {
 						do_empty_mind = TRUE;
 					}
 					/* possesses powers to hide from ESP? */
@@ -2334,8 +2349,7 @@ void update_mon(int m_idx, bool dist)
 					}
 
 					/* Weird mind, occasional telepathy */
-					else if (r_ptr->flags2 & RF2_WEIRD_MIND)
-					{
+					else if (r_ptr->flags2 & RF2_WEIRD_MIND) {
 						do_weird_mind = TRUE;
 #if 0
 						if (rand_int(100) < 10) hard = flag = TRUE;
@@ -2345,15 +2359,13 @@ void update_mon(int m_idx, bool dist)
 					}
 
 					/* Normal mind, allow telepathy */
-					else
-					{
+					else {
 						hard = flag = TRUE;
 					}
 
 #ifdef OLD_MONSTER_LORE
 					/* Apply telepathy */
-					if (hard)
-					{
+					if (hard) {
 						/* Hack -- Memorize mental flags */
 						if (r_ptr->flags2 & RF2_SMART) r_ptr->r_flags2 |= RF2_SMART;
 						if (r_ptr->flags2 & RF2_STUPID) r_ptr->r_flags2 |= RF2_STUPID;
@@ -2372,11 +2384,9 @@ void update_mon(int m_idx, bool dist)
 
 
 		/* The monster is now visible */
-		if (flag)
-		{
+		if (flag) {
 			/* It was previously unseen */
-			if (!p_ptr->mon_vis[m_idx])
-			{
+			if (!p_ptr->mon_vis[m_idx]) {
 				/* Mark as visible */
 				p_ptr->mon_vis[m_idx] = TRUE;
 
@@ -2424,11 +2434,9 @@ void update_mon(int m_idx, bool dist)
 		}
 
 		/* The monster is not visible */
-		else
-		{
+		else {
 			/* It was previously seen */
-			if (p_ptr->mon_vis[m_idx])
-			{
+			if (p_ptr->mon_vis[m_idx]) {
 				/* Mark as not visible */
 				p_ptr->mon_vis[m_idx] = FALSE;
 
@@ -2448,11 +2456,9 @@ void update_mon(int m_idx, bool dist)
 
 
 		/* The monster is now easily visible */
-		if (easy)
-		{
+		if (easy) {
 			/* Change */
-			if (!p_ptr->mon_los[m_idx])
-			{
+			if (!p_ptr->mon_los[m_idx]) {
 				/* Mark as easily visible */
 				p_ptr->mon_los[m_idx] = TRUE;
 
@@ -2463,8 +2469,7 @@ void update_mon(int m_idx, bool dist)
 					if (p_ptr->disturb_near) disturb(Ind, 1, 0);
 
 				/* well, is it the right place to be? */
-				if (r_ptr->flags2 & RF2_ELDRITCH_HORROR)
-				{
+				if (r_ptr->flags2 & RF2_ELDRITCH_HORROR) {
 					sanity_blast(Ind, m_idx, FALSE);
 				}
 
@@ -2472,18 +2477,16 @@ void update_mon(int m_idx, bool dist)
 		}
 
 		/* The monster is not easily visible */
-		else
-		{
+		else {
 			/* Change */
-			if (p_ptr->mon_los[m_idx])
-			{
+			if (p_ptr->mon_los[m_idx]) {
 				/* Mark as not easily visible */
 				p_ptr->mon_los[m_idx] = FALSE;
 
 				/* Disturb on disappearance */
 				if(!m_list[m_idx].special && r_ptr->d_char != 't' &&
 				    /* Not in Bree (for Santa Claus) - C. Blue */
-	                    	    (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz))
+				    (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz))
 					if (p_ptr->disturb_near) disturb(Ind, 1, 0);
 			}
 		}
@@ -3039,6 +3042,9 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 
 		/* "unique" monsters.. */
 		if (r_ptr->flags1 & RF1_UNIQUE) {
+			/* Disallow unique spawns in dungeon towns? */
+			if (l_ptr && (l_ptr->flags1 & LF1_DUNGEON_TOWN)) return(FALSE);
+
 			/* If the monster is unique and all players on this level already killed
 			   the monster, don't spawn it. (For Morgoth, especially) -C. Blue */
 			int on_level = 0, who_killed = 0;
@@ -3090,6 +3096,12 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 			/* Cannot create */
 			return (FALSE);
 		}
+		if ((r_ptr->flags7 & RF7_OOD_10) && (dlev + 10 < r_ptr->level))
+			return (FALSE);
+		if ((r_ptr->flags7 & RF7_OOD_15) && (dlev + 15 < r_ptr->level))
+			return (FALSE);
+		if ((r_ptr->flags7 & RF7_OOD_20) && (dlev + 20 < r_ptr->level))
+			return (FALSE);
 	}
 
 
@@ -3343,11 +3355,11 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	if (r_idx == 862) {
 		s_printf("Morgoth was created on %d\n", dlev);
 #ifdef MORGOTH_GHOST_DEATH_LEVEL
-		l_ptr->flags1 |= LF1_NO_GHOST;
+		if (l_ptr) l_ptr->flags1 |= LF1_NO_GHOST;
 #endif
 #ifdef MORGOTH_DANGEROUS_LEVEL
 		/* make it even harder? */
-		l_ptr->flags1 |= (LF1_NO_GENO | LF1_NO_DESTROY);
+		if (l_ptr) l_ptr->flags1 |= (LF1_NO_GENO | LF1_NO_DESTROY);
 #endif
 		/* Page all dungeon masters to notify them of a possible Morgoth-fight >:) - C. Blue */
 		if (watch_morgoth)
@@ -3356,7 +3368,7 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 				if (Players[Ind]->admin_dm && !(Players[Ind]->afk && !streq(Players[Ind]->afk_msg, "watch"))) Players[Ind]->paging = 4;
 			}
 		/* if it was a live spawn, adjust his power according to amount of players on his floor */
-		if (!cave_set_quietly) check_Morgoth();
+		if (!cave_set_quietly) check_Morgoth(0);
 	}
 	if (r_idx == 1032) s_printf("Tik'Svrzllat was created on %d\n", dlev);
 	if (r_idx == 1067) s_printf("The Hellraiser was created on %d\n", dlev);
@@ -3364,17 +3376,20 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	/* no easy escape from Zu-Aon besides resigning by recalling! */
 	if (r_idx == 1097) {
 		s_printf("Zu-Aon, The Cosmic Border Guard was created on %d\n", dlev);
-		l_ptr->flags1 |= (LF1_NO_GENO | LF1_NO_DESTROY);
+		if (l_ptr) l_ptr->flags1 |= (LF1_NO_GENO | LF1_NO_DESTROY);
 	}
 
-	/* for now ignore live-spawns. maybe change that? */
-	if (cave_set_quietly) {
-		if (r_ptr->flags1 & RF1_UNIQUE) l_ptr->flags2 |= LF2_UNIQUE;
+	/* Handle floor feelings */
+	/* Special events don't necessarily influence floor feelings */
+	if ((!season_halloween || (r_idx != 1088 && r_idx != 1087 && r_idx != 1086)) &&
+	    /* for now ignore live-spawns. maybe change that?: */
+	    (cave_set_quietly)) {
+		if ((r_ptr->flags1 & RF1_UNIQUE) && l_ptr) l_ptr->flags2 |= LF2_UNIQUE;
 		/* note: actually it could be "un-free" ie in vault :/
 		   however, checking for that distinction wouldnt pay off really,
 		   because a feeling message about vaults takes precedence over
 		   one about a single 'freely roaming ood monster' anyway: */
-		if (r_ptr->level >= dlev + 10) {
+		if ((r_ptr->level >= dlev + 10) && l_ptr) {
 			l_ptr->flags2 |= LF2_OOD;
 			if (!(zcave[y][x].info & CAVE_ICKY)) l_ptr->flags2 |= LF2_OOD_FREE;
 			if (r_ptr->level >= dlev + 20) l_ptr->flags2 |= LF2_OOD_HI;
@@ -3603,7 +3618,7 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 			get_mon_num_prep(dun_type, NULL);
 
 			/* Pick a random race */
-			z = get_mon_num(r_ptr->level);
+			z = get_mon_num(r_ptr->level, r_ptr->level - 20); //not too high level escort for lower level boss
 
 
 			/* Remove restriction */
@@ -3640,74 +3655,81 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 {
 	int r_idx, i;
 	player_type *p_ptr;
-	int l = getlevel(wpos); /* HALLOWEEN */
+	int lev = getlevel(wpos); /* HALLOWEEN; and new: anti-double-OOD */
 	bool no_high_level_players = TRUE;
 #ifdef RPG_SERVER
 	struct dungeon_type *d_ptr = getdungeon(wpos);
 #endif
 	struct dun_level *l_ptr = getfloor(wpos);
 
-if (season_halloween) {
-	/* Verify that no high-level player is on this level! */
-        for (i = 1; i <= NumPlayers; i++)
-        {
-                p_ptr = Players[i];
-                if (is_admin(p_ptr)) continue;
-                if (inarea(&p_ptr->wpos, wpos) &&
+
+	if (season_halloween) {
+		/* Verify that no high-level player is on this level! */
+	        for (i = 1; i <= NumPlayers; i++) {
+	                p_ptr = Players[i];
+	        	if (is_admin(p_ptr)) continue;
+        	        if (inarea(&p_ptr->wpos, wpos) &&
 #ifndef RPG_SERVER
-                    (p_ptr->max_lev > 35)) {
-//spam			s_printf("Great Pumpkin spawn prevented by player>35 %s\n", p_ptr->name);
+	                    (p_ptr->max_lev > 35)) {
+//spam				s_printf("Great Pumpkin spawn prevented by player>35 %s\n", p_ptr->name);
 #else
-                    (p_ptr->max_lev > 40)) {
-//spam			s_printf("Great Pumpkin spawn prevented by player>40 %s\n", p_ptr->name);
+            		    (p_ptr->max_lev > 40)) {
+//spam				s_printf("Great Pumpkin spawn prevented by player>40 %s\n", p_ptr->name);
 #endif
-			no_high_level_players = FALSE;
-			break;
+				no_high_level_players = FALSE;
+				break;
+			}
 		}
-	}
 
-	/* Place a Great Pumpkin sometimes -- WARNING: HARDCODED r_idx */
- #ifndef RPG_SERVER
-	if ((great_pumpkin_timer == 0) && (l < 40) && (wpos->wz != 0) && no_high_level_players) {
-  #if 0
-		r_idx = 1086 + rand_int(2);
-  #else
-		r_idx = 1088;//3k HP, smallest version
-		if (magik(25)) r_idx = 1087; /* sometimes tougher */
-		if (l > 10) r_idx = 1087;//6k HP
-		if (magik(25)) r_idx = 1086; /* sometimes tougher */
-		if (l > 20) r_idx = 1086;//10k HP
-  #endif
+		/* Place a Great Pumpkin sometimes -- WARNING: HARDCODED r_idx */
+#ifndef RPG_SERVER
+		if ((great_pumpkin_timer == 0) && (lev < 40) && (wpos->wz != 0) && no_high_level_players) {
+ #if 0
+			r_idx = 1086 + rand_int(2);
  #else
-	if ((great_pumpkin_timer == 0) && (l < 50) && (wpos->wz != 0) &&
-	    !(d_ptr->flags2 & DF2_NO_DEATH)) { /* not in Training Tower */
-  #if 0
-		r_idx = 1086 + rand_int(2);
-  #else
-		r_idx = 1088;//3k HP, smallest version
-		if (magik(15)) r_idx = 1087; /* sometimes tougher */
-		if (l > 15) r_idx = 1087;//6k HP
-		if (magik(15)) r_idx = 1086; /* sometimes tougher */
-		if (l > 30) r_idx = 1086;//10k HP
-  #endif
+			if (lev > 20) r_idx = 1088;//10k HP
+			else {
+				if (lev > 10) r_idx = 1087;//6k HP
+				else r_idx = 1086;//3k HP, smallest version
+
+				if (magik(15)) r_idx = 1087; /* sometimes tougher */
+				else if (magik(15)) r_idx = 1088; /* sometimes tougher */
+			}
  #endif
+#else
+		if ((great_pumpkin_timer == 0) && (lev < 50) && (wpos->wz != 0) &&
+		    !(d_ptr->flags2 & DF2_NO_DEATH)) { /* not in Training Tower */
+ #if 0
+			r_idx = 1086 + rand_int(2);
+ #else
+			if (lev > 30) r_idx = 1088;//6.6k HP
+			else {
+				if (lev > 15) r_idx = 1087;//4k HP
+				else r_idx = 1086;//2k HP, smallest version
 
-		if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, 0, 0)) {
-//			great_pumpkin_timer = 15 + rand_int(45);  <- now done in monster_death() ! So no more duplicate pumpkins.
-			/* log */
-			s_printf("%s Generated Great Pumpkin (%d) on %d,%d,%d (lev %d)\n", showtime(), r_idx, wpos->wx, wpos->wy, wpos->wz, l);
-			great_pumpkin_timer = -1; /* put generation on hold */
+				if (magik(15)) r_idx = 1087; /* sometimes tougher */
+				else if (magik(15)) r_idx = 1088; /* sometimes tougher */
+			}
+ #endif
+#endif
 
-			/* This seems to be crashing the server - mikaelh */
-			// check_Pumpkin(); /* recall high-level players off this floor! */
+			if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, 0, 0)) {
+//				great_pumpkin_timer = 15 + rand_int(45);  <- now done in monster_death() ! So no more duplicate pumpkins.
+				/* log */
+//spam				s_printf("%s HALLOWEEN: Generated Great Pumpkin (%d) on %d,%d,%d (lev %d)\n", showtime(), r_idx, wpos->wx, wpos->wy, wpos->wz, lev);
+				great_pumpkin_timer = -1; /* put generation on hold */
 
-			return(TRUE);
+				/* This seems to be crashing the server - mikaelh */
+				// check_Pumpkin(); /* recall high-level players off this floor! */
+
+				return(TRUE);
+			}
+			/* oupsee */
+//			great_pumpkin_timer = 1; /* <- just paranoia: no mass-emptiness in case above always fails for unknown reasons */
+			return(FALSE);
 		}
-		/* oupsee */
-//		great_pumpkin_timer = 1; /* <- just paranoia: no mass-emptiness in case above always fails for unknown reasons */
-		return(FALSE);
 	}
-}
+
 
 #if 0	/* unused - mikaelh */
 	/* Specific filter - should be made more useful */
@@ -3718,7 +3740,7 @@ if (season_halloween) {
 	if(d_ptr && (d_ptr->r_char[0] || d_ptr->nr_char[0])){
 		int i, j = 0;
 		monster_race *r_ptr;
-		while((r_idx = get_mon_num(monster_level))){
+		while((r_idx = get_mon_num(monster_level, lev))){
 			if(j++ > 250) break;
 			r_ptr = &r_info[r_idx];
 			if(d_ptr->r_char[0]){
@@ -3746,7 +3768,7 @@ if (season_halloween) {
 		int dun_type = 0;
 		if (dt_ptr) dun_type = dt_ptr->type;
 
-		if (in_bounds(y, x) && (zcave=getcave(wpos))) {
+		if (in_bounds(y, x) && (zcave = getcave(wpos))) {
 			/* Set monster restriction */
 			set_mon_num2_hook(zcave[y][x].feat);
 		}
@@ -3755,7 +3777,7 @@ if (season_halloween) {
 		get_mon_num_prep(dun_type, l_ptr ? l_ptr->uniques_killed : NULL);
 
 		/* Pick a monster */
-		r_idx = get_mon_num(monster_level);
+		r_idx = get_mon_num(monster_level, lev);
 
 		/* Reset restriction */
 		get_mon_num2_hook = NULL;
@@ -4250,7 +4272,7 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 	int i, x, y, r_idx;
 	dun_level *l_ptr = getfloor(wpos);
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	if(!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Look for a location */
 	for (i = 0; i < 20; ++i)
@@ -4301,14 +4323,14 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 		/* Hack for RF0_S_HI_ flags */
 		if (type == SUMMON_HI_MONSTER || type == SUMMON_HI_MONSTERS || type == SUMMON_HI_UNIQUE) {
 			/* Ok, now let them summon what they can */
-			r_idx = get_mon_num(100 + 5);
+			r_idx = get_mon_num(100 + 5, 100);
 			if (r_info[r_idx].level < 60) {
 				r_idx = 0; /* failure - see below */
 				continue;
 			}
 		} else {
 			/* Ok, now let them summon what they can */
-			r_idx = get_mon_num((getlevel(wpos) + lev) / 2 + 5);
+			r_idx = get_mon_num((getlevel(wpos) + lev) / 2 + 5, (getlevel(wpos) + lev) / 2);
 		}
 		break;
 	}
@@ -4540,6 +4562,16 @@ void message_pain(int Ind, int m_idx, int dam)
 	/* Target Dummy */
 	if (m_ptr->r_idx == 1101 || m_ptr->r_idx == 1126) {
 		msg_format(Ind, "%^s reels from \377g%d \377wdamage.", m_name, dam);
+////		msg_format_near(Ind, "%^s reels from \377g%d \377wdamage.", m_name, dam);
+//spammy	msg_format_near_site(m_ptr->fy, m_ptr->fx, &m_ptr->wpos, Ind, TRUE, "%^s reels from \377g%d \377wdamage.", m_name, dam);
+
+		/* Hack: Reduce snow on it during winter season :) */
+		m_ptr->extra -= 7;
+		if (m_ptr->extra < 0) m_ptr->extra = 0;
+		if ((m_ptr->r_idx == 1126) && (m_ptr->extra < 30)) {
+			m_ptr->r_idx = 1101;
+			everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+		}
 		return;
 	/* some monsters don't react at all */
 	} else if (r_ptr->flags7 & RF7_NEVER_ACT) {
@@ -5057,12 +5089,11 @@ int pick_ego_monster(int r_idx, int Level)
                 if (rand_int(lvl)) continue;
                 // if (rand_int(lvl * 2 - 1)) continue;	/* less OoD */
 
-				/* Hack -- Depth monsters may NOT be created out of depth */
-				if ((re_ptr->mflags1 & RF1_FORCE_DEPTH) && (lvl > 1))
-				{
-					/* Cannot create */
-					continue;
-				}
+		/* Hack -- Depth monsters may NOT be created out of depth */
+		if ((re_ptr->mflags1 & RF1_FORCE_DEPTH) && (lvl > 1)) {
+			/* Cannot create */
+			continue;
+		}
 
                 /* Each ego types have a rarity */
                 if (rand_int(re_ptr->rarity)) continue;

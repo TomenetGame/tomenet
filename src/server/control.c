@@ -428,14 +428,13 @@ static void console_artifacts()
 {
 	int i, count = 0, z;
 	bool okay[MAX_A_IDX];
-	char base_name[80];
+	char base_name[ONAME_LEN];
 
 	/* Packet header */
 	Packet_printf(&console_buf, "%c", CONSOLE_ARTIFACT_LIST);
 
 	/* Scan the artifacts */
-	for (i = 0; i < MAX_A_IDX; i++)
-	{
+	for (i = 0; i < MAX_A_IDX; i++) {
 		artifact_type *a_ptr = &a_info[i];
 
 		/* Default */
@@ -458,8 +457,7 @@ static void console_artifacts()
 	Packet_printf(&console_buf, "%d", count);
 
 	/* Write each artifact info */
-	for (i = 0; i < MAX_A_IDX; i++)
-	{
+	for (i = 0; i < MAX_A_IDX; i++) {
 		artifact_type *a_ptr = &a_info[i];
 
 		/* List "dead" ones */
@@ -472,8 +470,7 @@ static void console_artifacts()
 		z = lookup_kind(a_ptr->tval, a_ptr->sval);
 
 		/* Real object */
-		if (z)
-		{
+		if (z) {
 			object_type forge;
 
 			/* Create the object */

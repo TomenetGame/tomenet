@@ -35,7 +35,76 @@
  */
 #define RESIST_GENO 250
 
+/*
+ * 'Trap detection' is way too powerful traps and 'searching' ability
+ * are almost meanless; if this flag is defined, the spell can only
+ * detect some of the traps depending on the player level.
+ */
+//#define TRAP_DETECTION_FAILURE /* appearently unused */
+
+/* for PVP mode diminishing healing calc - C. Blue */
+//#define PVP_DIMINISHING_HEALING_CAP(p) (3 * ((p)->mhp + (p)->lev * 6)) /* unfair for non-mimics */
+#define PVP_DIMINISHING_HEALING_CAP(p) (((p)->lev + 5) * ((p)->lev + 5)) /* 10: 225, 20: 625, 30: 1225 */
+
+
+
 #ifdef ENABLE_DIVINE
+/* timed hp bonus for RACE_DIVINE.
+   *fastest* path (SKILL_ASTRAL = lvl+2):
+   +1 at lvl 39
+   +2 at lvl 54
+   +3 at lvl 60
+*/
+bool do_divine_hp(int Ind, int v, int p) {
+        player_type *p_ptr = Players[Ind];
+        bool notice = (FALSE);
+
+        /* Hack -- Force good values */
+        v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+        /* Open */
+        if (v)
+        {
+                if (!p_ptr->divine_hp)
+                {
+                        msg_format_near(Ind, "%s prepares for aggression!", p_ptr->name);
+                        msg_print(Ind, "You feel couragious.");
+			p_ptr->divine_hp_mod = p;
+
+                        notice = (TRUE);
+                }
+        }
+
+        /* Shut */
+        else	//v = 0;
+        {
+                if (p_ptr->divine_hp)
+                {
+			p_ptr->divine_hp_mod = 0;
+                        msg_format_near(Ind, "%s returns to %s normal self.", p_ptr->name, (p_ptr->male? "his" : "her"));
+                        msg_print(Ind, "You no longer feel couragious.");
+                        notice = (TRUE);
+                }
+        }
+
+        p_ptr->divine_hp = v;
+
+        /* Nothing to notice */
+        if (!notice) return (FALSE);
+
+        /* Disturb */
+        if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+        /* Recalculate bonuses */
+        p_ptr->update |= (PU_BONUS|PU_HP);
+
+        /* Handle stuff */
+        handle_stuff(Ind);
+
+        /* Result */
+        return (TRUE);
+}
+
 /*
  * For angelic beings, this spell will gather any party 
  * members on the same level to him/herself. This also 
@@ -44,7 +113,7 @@
  */
 void divine_vengeance(int Ind, int power) { 
 	player_type *p_ptr = Players[Ind];
-	if (p_ptr->divinity==DIVINE_ANGEL) {
+	if (p_ptr->ptrait==TRAIT_ENLIGHTENED) {
 		int i;
 		/* players TELE_TO */
 		for (i = 1; i <= NumPlayers; i++) {
@@ -70,40 +139,166 @@ void divine_vengeance(int Ind, int power) {
 		}
 		/* monsters TELE_TO */
 		project_hack(Ind, GF_TELE_TO, 0, " commands return");
-	} else if (p_ptr->divinity==DIVINE_DEMON) {
+	} else if (p_ptr->ptrait==TRAIT_CORRUPTED) {
 		dispel_monsters(Ind, power);
 	//	project_hack(Ind, GF_DISP_ALL, power, " commands leave");
 	}
 }
+/* A: fury
+ * D: +hp (does not stack with +LIFE)
+ */
+void divine_empowerment(int Ind, int level) { 
+	player_type *p_ptr = Players[Ind];
+	if (p_ptr->ptrait==TRAIT_ENLIGHTENED) {
+		set_fury(Ind, 20+level/10);
+	} else if (p_ptr->ptrait==TRAIT_CORRUPTED) {
+		int bonus = 0;
+		if (level >= 55) {
+			bonus = 3;
+		} else if (level >= 52) {
+			bonus = 2;
+		} else if (level >= 40) {
+			bonus = 1;
+		} 
+		(void)do_divine_hp(Ind, level*1.5, bonus);
+	}
+	return;
+}
+
+/* 
+   timed crit bonus for RACE_DIVINE. 
+   *fastest* path (SKILL_ASTRAL = lvl+2):
+   +2 at lvl 44, +2 per 5 levels thereafter
+*/
+bool do_divine_crit(int Ind, int v, int p) {
+        player_type *p_ptr = Players[Ind];
+        bool notice = (FALSE);
+
+        /* Hack -- Force good values */
+        v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+        /* Open */
+        if (v)
+        {
+                if (!p_ptr->divine_crit)
+                {
+                        msg_format_near(Ind, "%s seems focused.", p_ptr->name);
+                        msg_print(Ind, "You focus your intentions.");
+			p_ptr->divine_crit_mod = p;
+
+                        notice = (TRUE);
+                }
+        }
+
+        /* Shut */
+        else	//v = 0;
+        {
+                if (p_ptr->divine_crit)
+                {
+			p_ptr->divine_crit_mod = 0;
+                        msg_format_near(Ind, "%s seems less focused", p_ptr->name);
+                        msg_print(Ind, "Your focus dissipates.");
+                        notice = (TRUE);
+                }
+        }
+
+        p_ptr->divine_crit = v;
+
+        /* Nothing to notice */
+        if (!notice) return (FALSE);
+
+        /* Disturb */
+        if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+        /* Recalculate bonuses */
+        p_ptr->update |= (PU_BONUS);
+
+        /* Handle stuff */
+        handle_stuff(Ind);
+
+        /* Result */
+        return (TRUE);
+}
+
+/* 
+   timed time and mana res bonus for RACE_DIVINE. 
+*/
+bool do_divine_xtra_res_time_mana(int Ind, int v) {
+        player_type *p_ptr = Players[Ind];
+        bool notice = (FALSE);
+
+        /* Hack -- Force good values */
+        v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+        /* Open */
+        if (v)
+        {
+                if (!p_ptr->divine_xtra_res_time_mana)
+                {
+                        msg_print(Ind, "You no longer fear time and magical energy."); 
+                        notice = (TRUE);
+                }
+        }
+
+        /* Shut */
+        else	//v = 0;
+        {
+                if (p_ptr->divine_xtra_res_time_mana)
+                {
+                        msg_print(Ind, "Your resistance to time and magical energy ends.");
+                        notice = (TRUE);
+                }
+        }
+
+        p_ptr->divine_xtra_res_time_mana = v;
+
+        /* Nothing to notice */
+        if (!notice) return (FALSE);
+
+        /* Disturb */
+        if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+        /* Recalculate bonuses */
+        p_ptr->update |= (PU_BONUS);
+
+        /* Handle stuff */
+        handle_stuff(Ind);
+
+        /* Result */
+        return (TRUE);
+}
+
+
+/* A: aoe slow, time/mana res
+ * D: +crit
+ */
+void divine_intensify(int Ind, int level) {
+	player_type *p_ptr = Players[Ind];
+	if (p_ptr->ptrait==TRAIT_ENLIGHTENED) {
+		//aoe divine_xtra_res_time_mana
+		project_hack(Ind, GF_OLD_SLOW, level*3, "");
+		(void)do_divine_xtra_res_time_mana(Ind, level*1.5);
+		return;
+	} else if (p_ptr->ptrait==TRAIT_CORRUPTED) {
+		int bonus = 2 + ((level-45)/5)*2;
+		(void)do_divine_crit(Ind, level*1.5, bonus);
+	}
+}
+
 #else //lol, shared .pkg
 void divine_vengeance(int Ind, int power) {
-    return;
+	return;
+}
+void divine_empowerment(int Ind, int power) { 
+	return;
+}
+void divine_intensify(int Ind, int power) {
+	return;
 }
 #endif
 
-#if 0 //Divine spell def'ns
-/* A: speeds you up (+lvl/4)
- * D: +hp (does not stack with +LIFE)
- */
-void divine_empowerment(int Ind) { 
-	player_type *p_ptr = Players[Ind];
-	if (p_ptr->divinity==DIVINE_ANGEL) {
-		/* +speed, +1 per 5 levels */
-		set_fast(Ind, 20+p_ptr->lev, p_ptr->lev/5);
-	} else if (p_ptr->divinity==DIVINE_DEMON) {
-	}
-}
 
-/* A: mass slow, +mana/time resistance
- * D: +crit
- */
-void divine_intensify(int Ind) {
-	player_type *p_ptr = Players[Ind];
-	if (p_ptr->divinity==DIVINE_ANGEL) {
-	} else if (p_ptr->divinity==DIVINE_DEMON) {
-		//todo: add a trigger for xtra1.c to increment to_l
-	}
-}
+#if 0 //Divine spell def'ns
 
 /* A: instant wor for every party member on level. INCLUDING town recalls. 
  *    /rec 32 32 -> will attempt to teleport party members to Bree.
@@ -111,8 +306,8 @@ void divine_intensify(int Ind) {
  */
 void divine_gateway(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	if (p_ptr->divinity==DIVINE_ANGEL) {
-	} else if (p_ptr->divinity==DIVINE_DEMON) {
+	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) {
+	} else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
 	}
 }
 
@@ -167,8 +362,11 @@ void grow_trees(int Ind, int rad)
 
 	if (!allow_terraforming(&p_ptr->wpos, FEAT_TREE)) return;
 
-	for (a = 0; a < rad * rad + 11; a++)
-        {
+#ifdef USE_SOUND_2010
+        sound(Ind, "grow_trees", NULL, SFX_TYPE_COMMAND, FALSE); 
+#endif
+
+	for (a = 0; a < rad * rad + 11; a++) {
                 cave_type **zcave = getcave(&p_ptr->wpos);
 
 		i = (rand_int((rad * 2) + 1) - rad + rand_int((rad * 2) + 1) - rad) / 2;
@@ -177,7 +375,8 @@ void grow_trees(int Ind, int rad)
 		if (!in_bounds2(&p_ptr->wpos, p_ptr->py + j, p_ptr->px + i)) continue;
 		if (distance(p_ptr->py, p_ptr->px, p_ptr->py + j, p_ptr->px + i) > rad) continue;
 
-		if (cave_clean_bold(zcave, p_ptr->py + j, p_ptr->px + i) && (zcave[p_ptr->py + j][p_ptr->px + i].feat != FEAT_HOME_OPEN)) /* HACK - not on open house door - mikaelh */
+		if (cave_naked_bold(zcave, p_ptr->py + j, p_ptr->px + i) &&
+		    (zcave[p_ptr->py + j][p_ptr->px + i].feat != FEAT_HOME_OPEN)) /* HACK - not on open house door - mikaelh */
 		{
 			cave_set_feat_live(&p_ptr->wpos, p_ptr->py + j, p_ptr->px + i, magik(50)?FEAT_TREE:FEAT_BUSH);
 		}
@@ -199,7 +398,7 @@ bool create_garden(int Ind, int chance) {
 	struct worldpos *wpos = &(p_ptr->wpos);
 
         cave_type **zcave;
-        if(!(zcave=getcave(wpos))) return (FALSE);
+        if(!(zcave = getcave(wpos))) return (FALSE);
 
 	if (!allow_terraforming(wpos, FEAT_TREE)) return(FALSE);
 
@@ -215,7 +414,7 @@ bool create_garden(int Ind, int chance) {
 			 */
 			if (c_ptr->info & CAVE_ICKY) continue;
 	
-			if((cs_ptr=GetCS(c_ptr, CS_KEYDOOR))) continue;
+			if((cs_ptr = GetCS(c_ptr, CS_KEYDOOR))) continue;
 			
 			if (cave_valid_bold(zcave, y, x) && ( /* <- destroyable, no art on grid, not FF1_PERMANENT */
 //				(c_ptr->feat == FEAT_QUARTZ) ||
@@ -328,55 +527,40 @@ bool do_xtra_stats(int Ind, int v, int p) {
         v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
         /* Open */
-        if (v)
-        {
-                if (!p_ptr->xtrastat)
-                {
+        if (v) {
+                if (!p_ptr->xtrastat || p_ptr->statval < p) {
                         msg_format_near(Ind, "%s seems to be more powerful!", p_ptr->name);
                         msg_print(Ind, "You feel... powerful!");
-			p = (int)(p/5);
-			switch (p_ptr->statval) {
-				case 1:
-					p_ptr->xchr = p;
-					break;
-				case 2:	
-					p_ptr->xchr = p;
-					p_ptr->xdex = p;
-					break;
+
+			p_ptr->xstr = 0;
+			p_ptr->xint = 0;
+			p_ptr->xdex = 0;
+			p_ptr->xcon = 0;
+
+			p_ptr->statval = p;
+			p = (p / 10) + 2;
+			switch (p_ptr->statval / 5) {
+				default: p_ptr->xint = p;
 				case 3:
-					p_ptr->xchr = p;
-					p_ptr->xdex = p;
-					p_ptr->xstr = p;
-					break;
-				case 4:	
-					p_ptr->xchr = p;
-					p_ptr->xdex = p;
-					p_ptr->xstr = p;
-					p_ptr->xcon = p;
-					break;
-				default:
-					p_ptr->xchr = p;
-					p_ptr->xdex = p;
-					p_ptr->xstr = p;
-					p_ptr->xcon = p;
-					p_ptr->xint = p;
-					break;
+				case 2: p_ptr->xcon = p;
+				case 1: p_ptr->xdex = p;
+				case 0: p_ptr->xstr = p;
 			}
 
-                        notice = (TRUE);
+                        notice = TRUE;
                 }
         }
 
         /* Shut */
-        else	//v = 0;
-        {
-                if (p_ptr->xtrastat)
-                {
-			p_ptr->xtrastat=0;
+        else {	//v = 0;
+                if (p_ptr->xtrastat) {
                         msg_format_near(Ind, "%s returns to %s normal self.", p_ptr->name, (p_ptr->male? "his" : "her"));
                         msg_print(Ind, "You somehow feel weak.");
+
+			p_ptr->xtrastat = 0;
 			p_ptr->statval = 0;
-                        notice = (TRUE);
+
+                        notice = TRUE;
                 }
         }
 
@@ -444,23 +628,16 @@ bool do_banish_animals(int Ind, int chance) {
 }
 
 /*
- * 'Trap detection' is way too powerful traps and 'searching' ability
- * are almost meanless; if this flag is defined, the spell can only
- * detect some of the traps depending on the player level.
- */
-//#define TRAP_DETECTION_FAILURE
-
-/*
  * Increase players hit points, notice effects, and tell the player about it.
  */
-bool hp_player(int Ind, int num)
-{
+bool hp_player(int Ind, int num) {
 	player_type *p_ptr = Players[Ind];
 
 	// The "number" that the character is displayed as before healing
 	int old_num, new_num; 
-	int eff_num; /* actual amount of HP gain */
-	long e = 3 * (p_ptr->mhp + p_ptr->lev * 6); /* for PVP mode diminishing healing calc */
+	long eff_num; /* actual amount of HP gain */
+
+	long e = PVP_DIMINISHING_HEALING_CAP(p_ptr);
 
 	// The "number" that the character is displayed as before healing
 	old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
@@ -473,18 +650,17 @@ bool hp_player(int Ind, int num)
 	if ((p_ptr->mode & MODE_HARD) && (num > 3)) num = num * 3 / 4;
 
 	eff_num = (p_ptr->mhp - p_ptr->chp < num) ? (p_ptr->mhp - p_ptr->chp) : num;
-	
+
 	/* PVP mode uses diminishing healing - C. Blue */
 	if (p_ptr->mode & MODE_PVP) {
 		eff_num = eff_num * (p_ptr->heal_effect < e ? 100 :
-				    (e * 100) / ((p_ptr->heal_effect - (e * 2) / 3) * 3));
+				    ((e * 100) / ((p_ptr->heal_effect - (e * 2) / 3) * 3)));
 		eff_num /= 100;
 	}
 
 	if (!eff_num) return(FALSE);
 
-	if (p_ptr->chp < p_ptr->mhp)
-	{
+	if (p_ptr->chp < p_ptr->mhp) {
 		/* data collection for PVP mode: weaken continous healing over time to prevent silliness (who stacks more pots) - C. Blue */
 		p_ptr->heal_effect += eff_num;
 
@@ -492,9 +668,9 @@ bool hp_player(int Ind, int num)
 		p_ptr->heal_turn[0] += eff_num;
 
 		/* refill HP, note that we can't use eff_num here due to chp_frac check */
+		num = eff_num;
 		p_ptr->chp += num;
-		if (p_ptr->chp > p_ptr->mhp)
-		{
+		if (p_ptr->chp > p_ptr->mhp) {
 			p_ptr->chp = p_ptr->mhp;
 			p_ptr->chp_frac = 0;
 		}
@@ -506,7 +682,7 @@ bool hp_player(int Ind, int num)
 		p_ptr->redraw |= (PR_HP);
 
 		/* Figure out of if the player's "number" has changed */
-		new_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
+		new_num = (p_ptr->chp * 95) / (p_ptr->mhp * 10);
 		if (new_num >= 7) new_num = 10;
 
 		/* If so then refresh everyone's view of this player */
@@ -517,25 +693,16 @@ bool hp_player(int Ind, int num)
 		p_ptr->window |= (PW_PLAYER);
 
 		num = num / 5;
-		if (num < 3)
-		{
-			if (num == 0)
-			{
+		if (num < 3) {
+			if (num == 0) {
 				msg_print(Ind, "You feel a little better.");
-			}
-			else
-			{
+			} else {
 				msg_print(Ind, "You feel better.");
 			}
-		}
-		else
-		{
-			if (num < 7)
-			{
+		} else {
+			if (num < 7) {
 				msg_print(Ind, "You feel much better.");
-			}
-			else
-			{
+			} else {
 				msg_print(Ind, "You feel very good.");
 			}
 		}
@@ -553,14 +720,14 @@ bool hp_player(int Ind, int num)
  * set 'autoeffect' to TRUE if you want to do forced healing without any
  * implications.
  */
-bool hp_player_quiet(int Ind, int num, bool autoeffect)
-{
+bool hp_player_quiet(int Ind, int num, bool autoeffect) {
 	player_type *p_ptr = Players[Ind];
 
 	// The "number" that the character is displayed as before healing
 	int old_num, new_num;
-	int eff_num; /* actual amount of HP gain */
-	long e = 3 * (p_ptr->mhp + p_ptr->lev * 6); /* for PVP mode diminishing healing calc */
+	long eff_num; /* actual amount of HP gain */
+
+	long e = PVP_DIMINISHING_HEALING_CAP(p_ptr);
 
 	old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
 	if (old_num >= 7) old_num = 10;
@@ -576,14 +743,13 @@ bool hp_player_quiet(int Ind, int num, bool autoeffect)
 	/* PVP mode uses diminishing healing - C. Blue */
 	if (!autoeffect && (p_ptr->mode & MODE_PVP)) {
 		eff_num = eff_num * (p_ptr->heal_effect < e ? 100 :
-				    (e * 100) / ((p_ptr->heal_effect - (e * 2) / 3) * 3));
+				    ((e * 100) / ((p_ptr->heal_effect - (e * 2) / 3) * 3)));
 		eff_num /= 100;
 	}
 
 	if (!eff_num) return(FALSE);
 
-	if (p_ptr->chp < p_ptr->mhp)
-	{
+	if (p_ptr->chp < p_ptr->mhp) {
 		if (!autoeffect) {
 			/* data collection for PVP mode: weaken continous healing over time to prevent silliness (who stacks more pots) - C. Blue */
 			p_ptr->heal_effect += eff_num;
@@ -592,9 +758,9 @@ bool hp_player_quiet(int Ind, int num, bool autoeffect)
 		p_ptr->heal_turn[0] += eff_num;
 
 		/* refill HP, note that we can't use eff_num here due to chp_frac check */
+		num = eff_num;
 		p_ptr->chp += num;
-		if (p_ptr->chp > p_ptr->mhp)
-		{
+		if (p_ptr->chp > p_ptr->mhp) {
 			p_ptr->chp = p_ptr->mhp;
 			p_ptr->chp_frac = 0;
 		}
@@ -628,6 +794,11 @@ void flash_bomb(int Ind)
 	player_type *p_ptr = Players[Ind];
 	msg_print(Ind, "You throw down a blinding flash bomb!");
 	msg_format_near(Ind, "%s throws a blinding flash bomb!", p_ptr->name);
+
+#ifdef USE_SOUND_2010 
+	sound(Ind, "flash_bomb", NULL, SFX_TYPE_COMMAND, TRUE);
+#endif
+
 //	project_hack(Ind, GF_BLIND, (p_ptr->lev / 10) + 4, "");
 	project_hack(Ind, GF_BLIND, (p_ptr->lev / 10) + 8, "");
 }
@@ -922,11 +1093,9 @@ void identify_pack(int Ind)
 	object_type        *o_ptr;
 
 	/* Simply identify and know every item */
-	for (i = 0; i < INVEN_TOTAL; i++)
-	{
+	for (i = 0; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
-		if (o_ptr->k_idx)
-		{
+		if (o_ptr->k_idx) {
 			object_aware(Ind, o_ptr);
 			object_known(o_ptr);
 		}
@@ -1090,8 +1259,7 @@ bool restore_level(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	/* Restore experience */
-	if (p_ptr->exp < p_ptr->max_exp)
-	{
+	if (p_ptr->exp < p_ptr->max_exp) {
 		/* Message */
 		msg_print(Ind, "You feel your life energies returning.");
 
@@ -1544,7 +1712,8 @@ void self_knowledge(int Ind)
 	}
 	if (p_ptr->anti_tele)
 	{
-		fprintf(fff, "You cannot teleport.\n");
+//		fprintf(fff, "You cannot teleport.\n");
+		fprintf(fff, "You are surrounded by an anti-teleportation field.\n");
 	}
 	if (p_ptr->res_tele)
 	{
@@ -1754,15 +1923,15 @@ void self_knowledge(int Ind)
                 fprintf(fff, "Your ability to score critical hits is affected by your equipment.\n");
 	}
 
-	if (p_ptr->luck_cur == 40)
+	if (p_ptr->luck == 40)
 		fprintf(fff, "You are ultimatively lucky!\n");
-	else if (p_ptr->luck_cur >= 30)
+	else if (p_ptr->luck >= 30)
 		fprintf(fff, "You are lucky very frequently!\n");
-	else if (p_ptr->luck_cur >= 20)
+	else if (p_ptr->luck >= 20)
 		fprintf(fff, "You are lucky often.\n");
-	else if (p_ptr->luck_cur >= 10)
+	else if (p_ptr->luck >= 10)
 		fprintf(fff, "You are lucky here and there.\n");
-	else if (p_ptr->luck_cur > 0)
+	else if (p_ptr->luck > 0)
 		fprintf(fff, "You are lucky sometimes.\n");
 
 	/* Analyze the weapon */
@@ -1874,647 +2043,6 @@ void self_knowledge(int Ind)
 	Send_special_other(Ind);
 }
 
-#if 0
-void self_knowledge(int Ind)
-{
-	player_type *p_ptr = Players[Ind];
-
-	int		i = 0, k;
-
-	u32b	f1 = 0L, f2 = 0L, f3 = 0L, f4 = 0L, f5 = 0L, esp = 0L;
-
-	object_type	*o_ptr;
-
-	cptr	*info = p_ptr->info;
-	bool	life = FALSE;
-
-	/* Let the player scroll through the info */
-	p_ptr->special_file_type = TRUE;
-
-	/* Acquire item flags from equipment */
-	for (k = INVEN_WIELD; k < INVEN_TOTAL; k++)
-	{
-		u32b t1, t2, t3, t4, t5, tesp;
-
-		o_ptr = &p_ptr->inventory[k];
-
-		/* Skip empty items */
-		if (!o_ptr->k_idx) continue;
-
-		/* Extract the flags */
-		object_flags(o_ptr, &t1, &t2, &t3, &t4, &t5, &tesp);
-
-		/* Extract flags */
-		f1 |= t1;
-		f2 |= t2;
-		f3 |= t3;
-		f4 |= t4;
-		f5 |= t5;
-
-		/* Mega Hack^3 -- check the amulet of life saving */
-		if (o_ptr->tval == TV_AMULET &&
-			o_ptr->sval == SV_AMULET_LIFE_SAVING)
-			life = TRUE;
-	}
-
-	/* Mega Hack^3 -- describe the amulet of life saving */
-	if (life)
-	{
-		info[i++] = "Your life will be saved from perilous scene once.";
-	}
-
-#if 0
-	k = 100 - p_ptr->csane * 100 / p_ptr->msane;
-	if (k < 100)
-	{
-		sprintf(info[i++], "%d%% of your mind is under your control.", k);
-	}
-#endif
-	/* Insanity warning (better message needed!) */
-	if (p_ptr->csane < p_ptr->msane / 8)
-	{
-		/* Message */
-		info[i++] = "You are next to mad.";
-	}
-	else if (p_ptr->csane < p_ptr->msane / 4)
-	{
-		/* Message */
-		info[i++] = "Your mind is filled with insane thoughts.";
-	}
-	else if (p_ptr->csane < p_ptr->msane / 2)
-	{
-		/* Message */
-		info[i++] = "You have a seed of insanity in your mind.";
-	}
-
-
-
-	if (p_ptr->blind)
-	{
-		info[i++] = "You cannot see.";
-	}
-	if (p_ptr->confused)
-	{
-		info[i++] = "You are confused.";
-	}
-	if (p_ptr->afraid)
-	{
-		info[i++] = "You are terrified.";
-	}
-	if (p_ptr->cut)
-	{
-		info[i++] = "\377rYou are bleeding.";
-	}
-	if (p_ptr->stun)
-	{
-		info[i++] = "\377oYou are stunned.";
-	}
-	if (p_ptr->poisoned)
-	{
-		info[i++] = "\377GYou are poisoned.";
-	}
-	if (p_ptr->image)
-	{
-		info[i++] = "You are \377rha\377oll\377yuc\377gin\377bat\377ving.";
-	}
-
-	if (p_ptr->aggravate)
-	{
-		info[i++] = "You aggravate monsters.";
-	}
-	if (p_ptr->teleport)
-	{
-		info[i++] = "Your position is very uncertain.";
-	}
-
-	if (p_ptr->blessed)
-	{
-		info[i++] = "You feel rightous.";
-	}
-	if (p_ptr->hero)
-	{
-		info[i++] = "You feel heroic.";
-	}
-	if (p_ptr->shero)
-	{
-		info[i++] = "You are in a battle rage.";
-	}
-	if (p_ptr->fury)
-	{
-		info[i++] = "You are in a wild fury.";
-	}
-	if (p_ptr->berserk)
-	{
-		info[i++] = "You are going berserk.";
-	}
-	if (p_ptr->protevil)
-	{
-		info[i++] = "You are protected from evil.";
-	}
-#if 0
-	if (p_ptr->protgood)
-	{
-		info[i++] = "You are protected from good.";
-	}
-#endif	// 0
-	if (p_ptr->shield)
-	{
-		info[i++] = "You are protected by a mystic shield.";
-	}
-	if (p_ptr->invuln)
-	{
-		info[i++] = "You are temporarily invulnerable.";
-	}
-	if (p_ptr->confusing)
-	{
-		info[i++] = "Your hands are glowing dull red.";
-	}
-	if (p_ptr->stunning)
-	{
-		info[i++] = "Your hands are very heavy.";
-	}
-	if (p_ptr->searching)
-	{
-		info[i++] = "You are looking around very carefully.";
-	}
-	if (p_ptr->new_spells)
-	{
-		info[i++] = "You can learn some more spells.";
-	}
-	if (p_ptr->word_recall)
-	{
-		info[i++] = "You will soon be recalled.";
-	}
-	if (p_ptr->see_infra)
-	{
-		info[i++] = "Your eyes are sensitive to infrared light.";
-	}
-	if (p_ptr->see_inv)
-	{
-		info[i++] = "You can see invisible creatures.";
-	}
-	if (p_ptr->feather_fall)
-	{
-		info[i++] = "You land gently.";
-	}
-#if 1
-	if (p_ptr->climb)
-	{
-		info[i++] = "You can climb high mountains.";
-	}
-	if (p_ptr->fly)
-	{
-		info[i++] = "You can fly.";
-	}
-	if (p_ptr->can_swim)
-	{
-		info[i++] = "You can swim easily.";
-	}
-#endif	// 0
-	if (p_ptr->free_act)
-	{
-		info[i++] = "You have free action.";
-	}
-	if (p_ptr->regenerate)
-	{
-		info[i++] = "You regenerate quickly.";
-	}
-	if (p_ptr->slow_digest)
-	{
-		info[i++] = "Your appetite is small.";
-	}
-	if (p_ptr->telepathy)
-	{
-		//		info[i++] = "You have ESP.";
-		if (p_ptr->telepathy & ESP_ALL) info[i++] = "You have ESP.";
-		else
-		{
-			if (p_ptr->telepathy & ESP_ORC) info[i++] = "You can sense the presence of orcs.";
-			if (p_ptr->telepathy & ESP_TROLL) info[i++] = "You can sense the presence of trolls.";
-			if (p_ptr->telepathy & ESP_DRAGON) info[i++] = "You can sense the presence of dragons.";
-			if (p_ptr->telepathy & ESP_SPIDER) info[i++] = "You can sense the presence of spiders.";
-			if (p_ptr->telepathy & ESP_GIANT) info[i++] = "You can sense the presence of giants.";
-			if (p_ptr->telepathy & ESP_DEMON) info[i++] = "You can sense the presence of demons.";
-			if (p_ptr->telepathy & ESP_UNDEAD) info[i++] = "You can sense presence of undead.";
-			if (p_ptr->telepathy & ESP_EVIL) info[i++] = "You can sense the presence of evil beings.";
-			if (p_ptr->telepathy & ESP_ANIMAL) info[i++] = "You can sense the presence of animals.";
-			if (p_ptr->telepathy & ESP_DRAGONRIDER) info[i++] = "You can sense the presence of dragonriders.";
-			if (p_ptr->telepathy & ESP_GOOD) info[i++] = "You can sense the presence of good beings.";
-			if (p_ptr->telepathy & ESP_NONLIVING) info[i++] = "You can sense the presence of non-living things.";
-			if (p_ptr->telepathy & ESP_UNIQUE) info[i++] = "You can sense the presence of unique beings.";
-		}
-	}
-	if (p_ptr->antimagic)	// older (percent)
-	{
-//		info[i++] = "You are surrounded by an anti-magic field.";
-		if (p_ptr->antimagic >= ANTIMAGIC_CAP) /* AM cap */
-			info[i++] = "You are surrounded by a complete anti-magic field.";
-		else if (p_ptr->antimagic >= ANTIMAGIC_CAP - 5)
-			info[i++] = "You are surrounded by a mighty anti-magic field.";
-		else if (p_ptr->antimagic >= ANTIMAGIC_CAP - 15)
-			info[i++] = "You are surrounded by a strong anti-magic field.";
-		else if (p_ptr->antimagic >= 50)
-			info[i++] = "You are surrounded by an anti-magic field.";
-		else if (p_ptr->antimagic >= 30)
-			info[i++] = "You are surrounded by a weaker anti-magic field.";
-		else info[i++] = "You are surrounded by a feeble anti-magic field.";
-
-	}
-#if 1
-        if (p_ptr->anti_magic)	// newer (saving-throw boost)
-	{
-                info[i++] = "You are surrounded by an anti-magic shell.";
-	}
-#endif	// 0
-	if (p_ptr->hold_life)
-	{
-		info[i++] = "You have a firm hold on your life force.";
-	}
-	if (p_ptr->lite)
-	{
-		info[i++] = "You are carrying a permanent light.";
-	}
-	if (p_ptr->auto_id)
-	{
-//		info[i++] = "You are able to sense magic.";
-		info[i++] = "You can sense magic.";
-	}
-#if 1
-	if (p_ptr->reflect)
-	{
-		info[i++] = "You reflect arrows and bolts.";
-	}
-	if (p_ptr->no_cut)
-	{
-		info[i++] = "You cannot be cut.";
-	}
-	if (p_ptr->reduce_insanity > 0)
-	{
-		fprintf(fff, "Your mind is somewhat resistant against insanity.\n");
-	}
-	if (p_ptr->suscep_fire)
-	{
-		info[i++] = "You are susceptible to fire.";
-	}
-	if (p_ptr->suscep_cold)
-	{
-		info[i++] = "You are susceptible to cold.";
-	}
-	if (p_ptr->suscep_acid)
-	{
-		info[i++] = "You are susceptible to acid.";
-	}
-	if (p_ptr->suscep_elec)
-	{
-		info[i++] = "You are susceptible to electricity.";
-	}
-	if (p_ptr->suscep_pois)
-	{
-		info[i++] = "You are susceptible to poison.";
-	}
-	if (p_ptr->suscep_lite)
-	{
-		info[i++] = "You are susceptible to light.";
-	}
-	if (p_ptr->suscep_good)
-	{
-		info[i++] = "You are susceptible to evil-vanquishing effects.";
-	}
-	if (p_ptr->suscep_life)
-	{
-		info[i++] = "You are susceptible to undead-vanquishing effects.";
-	}
-	if (p_ptr->sh_fire)
-	{
-		info[i++] = "You are surrounded with a fiery aura.";
-	}
-	if (p_ptr->sh_elec)
-	{
-		info[i++] = "You are surrounded with electricity.";
-	}
-	if (p_ptr->sh_cold)
-	{
-		info[i++] = "You are surrounded with a freezing aura.";
-	}
-	if (p_ptr->anti_tele)
-	{
-		info[i++] = "You cannot teleport.";
-	}
-	if (p_ptr->anti_tele)
-	{
-		info[i++] = "You resist incoming teleportation effects.";
-	}
-#endif	// 0
-
-	if (p_ptr->immune_acid)
-	{
-		info[i++] = "You are completely immune to acid.";
-	}
-	else if ((p_ptr->resist_acid) && (p_ptr->oppose_acid))
-	{
-		info[i++] = "You resist acid exceptionally well.";
-	}
-	else if ((p_ptr->resist_acid) || (p_ptr->oppose_acid))
-	{
-		info[i++] = "You are resistant to acid.";
-	}
-
-	if (p_ptr->immune_elec)
-	{
-		info[i++] = "You are completely immune to lightning.";
-	}
-	else if ((p_ptr->resist_elec) && (p_ptr->oppose_elec))
-	{
-		info[i++] = "You resist lightning exceptionally well.";
-	}
-	else if ((p_ptr->resist_elec) || (p_ptr->oppose_elec))
-	{
-		info[i++] = "You are resistant to lightning.";
-	}
-
-	if (p_ptr->immune_fire)
-	{
-		info[i++] = "You are completely immune to fire.";
-	}
-	else if ((p_ptr->resist_fire) && (p_ptr->oppose_fire))
-	{
-		info[i++] = "You resist fire exceptionally well.";
-	}
-	else if ((p_ptr->resist_fire) || (p_ptr->oppose_fire))
-	{
-		info[i++] = "You are resistant to fire.";
-	}
-
-	if (p_ptr->immune_cold)
-	{
-		info[i++] = "You are completely immune to cold.";
-	}
-	else if ((p_ptr->resist_cold) && (p_ptr->oppose_cold))
-	{
-		info[i++] = "You resist cold exceptionally well.";
-	}
-	else if ((p_ptr->resist_cold) || (p_ptr->oppose_cold))
-	{
-		info[i++] = "You are resistant to cold.";
-	}
-
-	if ((p_ptr->resist_pois) && (p_ptr->oppose_pois))
-	{
-		info[i++] = "You resist poison exceptionally well.";
-	}
-	else if ((p_ptr->resist_pois) || (p_ptr->oppose_pois))
-	{
-		info[i++] = "You are resistant to poison.";
-	}
-
-	if (p_ptr->resist_lite)
-	{
-		info[i++] = "You are resistant to bright light.";
-	}
-	if (p_ptr->resist_dark)
-	{
-		info[i++] = "You are resistant to darkness.";
-	}
-	if (p_ptr->resist_conf)
-	{
-		info[i++] = "You are resistant to confusion.";
-	}
-	if (p_ptr->resist_sound)
-	{
-		info[i++] = "You are resistant to sonic attacks.";
-	}
-	if (p_ptr->resist_disen)
-	{
-		info[i++] = "You are resistant to disenchantment.";
-	}
-	if (p_ptr->resist_chaos)
-	{
-		info[i++] = "You are resistant to chaos.";
-	}
-	if (p_ptr->resist_shard)
-	{
-		info[i++] = "You are resistant to blasts of shards.";
-	}
-	if (p_ptr->resist_nexus)
-	{
-		info[i++] = "You are resistant to nexus attacks.";
-	}
-	if (p_ptr->immune_neth)
-	{
-		info[i++] = "You are immune to nether forces.";
-	}
-	else if (p_ptr->resist_neth)
-	{
-		info[i++] = "You are resistant to nether forces.";
-	}
-	if (p_ptr->resist_fear)
-	{
-		info[i++] = "You are completely fearless.";
-	}
-	if (p_ptr->resist_blind)
-	{
-		info[i++] = "Your eyes are resistant to blindness.";
-	}
-
-	if (p_ptr->sustain_str)
-	{
-		info[i++] = "Your strength is sustained.";
-	}
-	if (p_ptr->sustain_int)
-	{
-		info[i++] = "Your intelligence is sustained.";
-	}
-	if (p_ptr->sustain_wis)
-	{
-		info[i++] = "Your wisdom is sustained.";
-	}
-	if (p_ptr->sustain_con)
-	{
-		info[i++] = "Your constitution is sustained.";
-	}
-	if (p_ptr->sustain_dex)
-	{
-		info[i++] = "Your dexterity is sustained.";
-	}
-	if (p_ptr->sustain_chr)
-	{
-		info[i++] = "Your charisma is sustained.";
-	}
-	if (p_ptr->black_breath || p_ptr->black_breath_tmp)
-	{
-		info[i++] = "You suffer from Black Breath.";
-	}
-
-
-	if (f1 & TR1_STR)
-	{
-		info[i++] = "Your strength is affected by your equipment.";
-	}
-	if (f1 & TR1_INT)
-	{
-		info[i++] = "Your intelligence is affected by your equipment.";
-	}
-	if (f1 & TR1_WIS)
-	{
-		info[i++] = "Your wisdom is affected by your equipment.";
-	}
-	if (f1 & TR1_DEX)
-	{
-		info[i++] = "Your dexterity is affected by your equipment.";
-	}
-	if (f1 & TR1_CON)
-	{
-		info[i++] = "Your constitution is affected by your equipment.";
-	}
-	if (f1 & TR1_CHR)
-	{
-		info[i++] = "Your charisma is affected by your equipment.";
-	}
-
-	if (f1 & TR1_STEALTH)
-	{
-		info[i++] = "Your stealth is affected by your equipment.";
-	}
-	if (f1 & TR1_SEARCH)
-	{
-		info[i++] = "Your searching ability is affected by your equipment.";
-	}
-	if (f1 & TR1_INFRA)
-	{
-		info[i++] = "Your infravision is affected by your equipment.";
-	}
-	if (f1 & TR1_TUNNEL)
-	{
-		info[i++] = "Your digging ability is affected by your equipment.";
-	}
-	if (f1 & TR1_SPEED)
-	{
-		info[i++] = "Your speed is affected by your equipment.";
-	}
-	if (f1 & TR1_BLOWS)
-	{
-		info[i++] = "Your attack speed is affected by your equipment.";
-	}
-        if (f5 & (TR5_CRIT))
-	{
-                info[i++] = "Your ability to score critical hits is affected by your equipment.";
-	}
-
-	if (p_ptr->luck_cur == 40)
-		info[i++] = "You are ultimatively lucky!";
-	else if (p_ptr->luck_cur >= 30)
-		info[i++] = "You are lucky very frequently!";
-	else if (p_ptr->luck_cur >= 20)
-		info[i++] = "You are lucky often.";
-	else if (p_ptr->luck_cur >= 10)
-		info[i++] = "You are lucky here and there.";
-	else if (p_ptr->luck_cur > 0)
-		info[i++] = "You are lucky sometimes.";
-
-	/* Analyze the weapon */
-        if (p_ptr->inventory[INVEN_WIELD].k_idx ||
-            (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) /* dual-wield */
-	{
-		/* Indicate Blessing */
-		if (f3 & TR3_BLESSED)
-		{
-			info[i++] = "Your weapon has been blessed by the gods.";
-		}
-
-		if (f5 & (TR5_CHAOTIC))
-		{
-                        info[i++] = "Your weapon is branded with the Sign of Chaos.";
-		}
-
-		/* Hack */
-		if (f5 & TR5_IMPACT)
-		{
-			info[i++] = "The impact of your weapon can cause earthquakes.";
-		}
-
-		if (f5 & (TR5_VORPAL))
-		{
-			info[i++] = "Your weapon is very sharp.";
-		}
-
-		if (f1 & (TR1_VAMPIRIC))
-		{
-			info[i++] = "Your weapon drains life from your foes.";
-		}
-
-		/* Special "Attack Bonuses" */
-		if (f1 & TR1_BRAND_ACID)
-		{
-			info[i++] = "Your weapon melts your foes.";
-		}
-		if (f1 & TR1_BRAND_ELEC)
-		{
-			info[i++] = "Your weapon shocks your foes.";
-		}
-		if (f1 & TR1_BRAND_FIRE)
-		{
-			info[i++] = "Your weapon burns your foes.";
-		}
-		if (f1 & TR1_BRAND_COLD)
-		{
-			info[i++] = "Your weapon freezes your foes.";
-		}
-		if (f1 & (TR1_BRAND_POIS))
-		{
-			info[i++] = "Your weapon poisons your foes.";
-		}
-
-
-		/* Special "slay" flags */
-		if (f1 & TR1_SLAY_EVIL)
-		{
-			info[i++] = "Your weapon strikes at evil with extra force.";
-		}
-		if (f1 & TR1_SLAY_ANIMAL)
-		{
-			info[i++] = "Your weapon strikes at animals with extra force.";
-		}
-		if (f1 & TR1_SLAY_ORC)
-		{
-			info[i++] = "Your weapon is especially deadly against orcs.";
-		}
-		if (f1 & TR1_SLAY_TROLL)
-		{
-			info[i++] = "Your weapon is especially deadly against trolls.";
-		}
-		if (f1 & TR1_SLAY_GIANT)
-		{
-			info[i++] = "Your weapon is especially deadly against giants.";
-		}
-		if (f1 & TR1_SLAY_UNDEAD)
-		{
-			info[i++] = "Your weapon strikes at undead with holy wrath.";
-		}
-		if (f1 & TR1_SLAY_DEMON)
-		{
-			info[i++] = "Your weapon strikes at demons with holy wrath.";
-		}
-		if (f1 & TR1_SLAY_DRAGON)
-		{
-			info[i++] = "Your weapon is especially deadly against dragons.";
-		}
-
-		/* Special "kill" flags */
-		if (f1 & TR1_KILL_DRAGON)
-		{
-			info[i++] = "Your weapon is a great bane of dragons.";
-		}
-	}
-	info[i]=NULL;
-
-	/* Let the client know to expect some info */
-	Send_special_other(Ind);
-}
-#endif	// 0
-
-
-
-
 
 /*
  * Forget everything
@@ -2530,8 +2058,7 @@ bool lose_all_info(int Ind)
 	if (safe_area(Ind)) return(TRUE);
 
 	/* Forget info about objects */
-	for (i = 0; i < INVEN_TOTAL; i++)
-	{
+	for (i = 0; i < INVEN_TOTAL; i++) {
 		object_type *o_ptr = &p_ptr->inventory[i];
 
 		/* Skip non-items */
@@ -2541,8 +2068,7 @@ bool lose_all_info(int Ind)
 		if (o_ptr->ident & ID_MENTAL) continue;
 
 		/* Remove "default inscriptions" */
-		if (o_ptr->note && (o_ptr->ident & ID_SENSE))
-		{
+		if (o_ptr->note && (o_ptr->ident & ID_SENSE)) {
 #if 0
 			/* Access the inscription */
 			cptr q = quark_str(o_ptr->note);
@@ -2555,8 +2081,7 @@ bool lose_all_info(int Ind)
 			    (streq(q, "excellent")) ||
 			    (streq(q, "worthless")) ||
 			    (streq(q, "special")) ||
-			    (streq(q, "terrible")))
-			{
+			    (streq(q, "terrible"))) {
 				/* Forget the inscription */
 				o_ptr->note = 0;
 			}
@@ -4403,15 +3928,10 @@ bool ident_spell_aux(int Ind, int item)
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
-	{
 		o_ptr = &p_ptr->inventory[item];
-	}
-
 	/* Get the item (on the floor) */
 	else
-	{
 		o_ptr = &o_list[0 - item];
-	}
 
 
 	/* Identify it fully */
@@ -4437,22 +3957,21 @@ bool ident_spell_aux(int Ind, int item)
 	if (item >= INVEN_WIELD)
 	{
 		msg_format(Ind, "%^s: %s (%c).",
-		           describe_use(Ind, item), o_name, index_to_label(item));
+		   describe_use(Ind, item), o_name, index_to_label(item));
 	}
 	else if (item >= 0)
 	{
 		msg_format(Ind, "In your pack: %s (%c).",
-		           o_name, index_to_label(item));
+		    o_name, index_to_label(item));
 	}
 	else
 	{
 		msg_format(Ind, "On the ground: %s.",
-		           o_name);
+		    o_name);
 	}
 
 	/* Did we use up an item? */
-	if (p_ptr->using_up_item >= 0)
-	{
+	if (p_ptr->using_up_item >= 0) {
 //		inven_item_describe(Ind, p_ptr->using_up_item); /* maybe not when IDing */
 		inven_item_optimize(Ind, p_ptr->using_up_item);
 		p_ptr->using_up_item = -1;
@@ -4465,8 +3984,7 @@ bool ident_spell_aux(int Ind, int item)
 }
 
 
-bool identify_fully(int Ind)
-{
+bool identify_fully(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	get_item(Ind);
@@ -4495,15 +4013,10 @@ bool identify_fully_item(int Ind, int item)
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
-	{
 		o_ptr = &p_ptr->inventory[item];
-	}
-
 	/* Get the item (on the floor) */
 	else
-	{
 		o_ptr = &o_list[0 - item];
-	}
 
 
 	/* Identify it fully */
@@ -4785,8 +4298,7 @@ bool recharge_aux(int Ind, int item, int num)
 /*
  * Apply a "project()" directly to all viewable monsters
  */
-bool project_hack(int Ind, int typ, int dam, char *attacker)
-{
+bool project_hack(int Ind, int typ, int dam, char *attacker) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos=&p_ptr->wpos;
 	int		i, x, y;
@@ -4798,8 +4310,7 @@ bool project_hack(int Ind, int typ, int dam, char *attacker)
 	else snprintf(pattacker, 80, "Something%s", attacker);
 
 	/* Affect all (nearby) monsters */
-	for (i = 1; i < m_max; i++)
-	{
+	for (i = 1; i < m_max; i++) {
 		monster_type *m_ptr = &m_list[i];
 
 		/* Paranoia -- Skip dead monsters */
@@ -4825,8 +4336,7 @@ bool project_hack(int Ind, int typ, int dam, char *attacker)
 	//should be added as well, however.
 
 	/* Affect all (nearby) non-partied players */
-	for (i = 1; i < NumPlayers + 1; i++)
-	{
+	for (i = 1; i < NumPlayers + 1; i++) {
                 /* If he's not playing, skip him */
                 if (Players[i]->conn == NOT_CONNECTED)
                         continue;
@@ -5785,7 +5295,7 @@ bool probing(int Ind)
  * Later we may use one function for both "destruction" and
  * "earthquake" by using the "full" to select "destruction".
  */
-void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte feat)
+void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte feat, int stun)
 {
 	int y, x, k, t, Ind;
 
@@ -5870,7 +5380,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 					/* Become blind */
 					(void)set_blind(Ind, p_ptr->blind + 20 + randint(10));
 				}
-				(void)set_stun(Ind, 120); /* ~20s in NR, depends tho */
+				(void)set_stun(Ind, stun); /* ~20s in NR, depends tho */
 
 				/* Mega-Hack -- Forget the view and lite */
 				p_ptr->update |= (PU_UN_VIEW | PU_UN_LITE);
@@ -5904,8 +5414,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 
 			/* Destroy "valid" grids */
 //			if ((cave_valid_bold(zcave, y, x)) && !(c_ptr->info&CAVE_ICKY))
-			if (cave_valid_bold(zcave, y, x))
-			{
+			if (cave_valid_bold(zcave, y, x)) {
 				struct c_special *cs_ptr;
 				/* Delete the object (if any) */
 				delete_object(wpos, y, x, TRUE);
@@ -5923,29 +5432,25 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 				}
 
 				/* Granite */
-				if (t < 20)
-				{
+				if (t < 20) {
 					/* Create granite wall */
 					cave_set_feat_live(wpos, y, x, FEAT_WALL_EXTRA);
 				}
 
 				/* Quartz */
-				else if (t < 70)
-				{
+				else if (t < 70) {
 					/* Create quartz vein */
 					cave_set_feat_live(wpos, y, x, FEAT_QUARTZ);
 				}
 
 				/* Magma */
-				else if (t < 100)
-				{
+				else if (t < 100) {
 					/* Create magma vein */
 					cave_set_feat_live(wpos, y, x, FEAT_MAGMA);
 				}
 
 				/* Floor */
-				else
-				{
+				else {
 					/* Create floor or whatever specified */
 					cave_set_feat_live(wpos, y, x, feat);
 				}
@@ -5954,9 +5459,9 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 	}
 	for (k = 1; k <= NumPlayers; k++) {
 		if (inarea(wpos, &Players[k]->wpos) &&
-		    Players[k]->stun < 120) {
+		    Players[k]->stun < stun) {
 			msg_print(k, "\377oYou are hit by a terrible shockwave!");
-			(void)set_stun(k, 120 - (distance(Players[k]->py, Players[k]->px, y1, x1) - r) / 3);
+			(void)set_stun(k, stun - (distance(Players[k]->py, Players[k]->px, y1, x1) - r) / 3);
 		}
 	}
 }
@@ -6013,25 +5518,19 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 	if (r > 12) r = 12;
 
 	/* Clear the "maximal blast" area */
-	for (y = 0; y < 32; y++)
-	{
-		for (x = 0; x < 32; x++)
-		{
+	for (y = 0; y < 32; y++) {
+		for (x = 0; x < 32; x++) {
 			map[y][x] = FALSE;
 		}
 	}
 
 	/* No one has taken any damage from this earthquake yet - mikaelh */
 	for (Ind = 1; Ind <= NumPlayers; Ind++)
-	{
 		Players[Ind]->total_damage = 0;
-	}
 
 	/* Check around the epicenter */
-	for (dy = -r; dy <= r; dy++)
-	{
-		for (dx = -r; dx <= r; dx++)
-		{
+	for (dy = -r; dy <= r; dy++) {
+		for (dx = -r; dx <= r; dx++) {
 			/* Extract the location */
 			yy = cy + dy;
 			xx = cx + dx;
@@ -6046,10 +5545,10 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 			c_ptr = &zcave[yy][xx];
 
 			/* Hack -- ICKY spaces are protected outside of the dungeon */
-			if((!wpos->wz) && (c_ptr->info & CAVE_ICKY)) continue;
+			if ((!wpos->wz) && (c_ptr->info & CAVE_ICKY)) continue;
 
 			/* Special key doors are protected -C. Blue */
-			if((cs_ptr=GetCS(c_ptr, CS_KEYDOOR))) continue;
+			if ((cs_ptr = GetCS(c_ptr, CS_KEYDOOR))) continue;
 
 #if 0 /* noticed this at 10.jan 2009, if'0ed it, and added below else branch,
 	since it allows teleportation within vaults!  - C. Blue */
@@ -6058,7 +5557,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
    for that, also check 'cave_valid_bold' check used to actually destroy grids (further below). */
 
 			/* Lose room and vault and nest */
-			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY | CAVE_NEST_PIT);
+			c_ptr->info &= ~(CAVE_ROOM | CAVE_NEST_PIT | CAVE_ICKY | CAVE_STCK);
 
 #else /* keep preventing teleport from targetting a space inside the (quaked) vault */
 			/* Lose room and nest */
@@ -6087,19 +5586,17 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 			if (rand_int(100) < 85) continue;
 
 			/* Damage this grid */
-			map[16+yy-cy][16+xx-cx] = TRUE;
+			map[16 + yy - cy][16 + xx - cx] = TRUE;
 
 			/* Hack -- Take note of player damage */
-			if (c_ptr->m_idx < 0)
-			{
+			if (c_ptr->m_idx < 0) {
 				Ind = 0 - c_ptr->m_idx;
 				p_ptr = Players[Ind];
 
 				sn = 0;
 
 				/* Check around the player */
-				for (i = 0; i < 8; i++)
-				{
+				for (i = 0; i < 8; i++) {
 					/* Access the location */
 					y = p_ptr->py + ddy[i];
 					x = p_ptr->px + ddx[i];
@@ -6121,51 +5618,39 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 				}
 
 				/* Random message */
-				switch (randint(3))
-				{
-					case 1:
-					{
-						msg_print(Ind, "The cave ceiling collapses!");
-						break;
-					}
-					case 2:
-					{
-						msg_print(Ind, "The cave floor twists in an unnatural way!");
-						break;
-					}
-					default:
-					{
-						msg_print(Ind, "The cave quakes! You are pummeled with debris!");
-						break;
-					}
+				switch (randint(3)) {
+				case 1:
+					msg_print(Ind, "The cave ceiling collapses!");
+					break;
+				case 2:
+					msg_print(Ind, "The cave floor twists in an unnatural way!");
+					break;
+				default:
+					msg_print(Ind, "The cave quakes! You are pummeled with debris!");
+					break;
 				}
 
 				/* Hurt the player a lot */
-				if (!sn)
-				{
+				if (!sn) {
 					/* Message and damage */
 					damage = 300;
 					if (get_skill(p_ptr, SKILL_EARTH) >= 45) damage /= 2;
 					/* Cap the damage - mikaelh */
-					if (damage + p_ptr->total_damage > 300)
-					{
+					if (damage + p_ptr->total_damage > 300) {
 						damage = 300 - p_ptr->total_damage;
 					}
 					if (damage) msg_format(Ind, "You are severely crushed for \377o%d\377w damage!", damage);
 
 					/* Stun only once - mikaelh */
-					if (p_ptr->total_damage == 0)
-					{
+					if (p_ptr->total_damage == 0) {
 						(void)set_stun(Ind, p_ptr->stun + randint(40));
 					}
 				}
 
 				/* Destroy the grid, and push the player to safety */
-				else
-				{
+				else {
 					/* Calculate results */
-					switch (randint(3) - (magik((p_ptr->dodge_level * 3) / 4) ? 1 : 0) - (p_ptr->shadow_running ? 1 : 0))
-					{
+					switch (randint(3) - (magik((p_ptr->dodge_level * 3) / 4) ? 1 : 0) - (p_ptr->shadow_running ? 1 : 0)) {
 						case -1:
 						case 0:
 						case 1:
@@ -6189,8 +5674,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 							}
 
 							/* Stun only once - mikaelh */
-							if (p_ptr->total_damage == 0)
-							{
+							if (p_ptr->total_damage == 0) {
 								(void)set_stun(Ind, p_ptr->stun + randint(33));
 							}
 							break;
@@ -6200,12 +5684,10 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 							damage = damroll(30, 4);
 							if (get_skill(p_ptr, SKILL_EARTH) >= 45) damage /= 2;
 							/* Cap the damage - mikaelh */
-							if (damage + p_ptr->total_damage > 300)
-							{
+							if (damage + p_ptr->total_damage > 300) {
 								damage = 300 - p_ptr->total_damage;
 							}
-							if (damage)
-							{
+							if (damage) {
 								msg_format(Ind, "You are crushed between the floor and ceiling for \377o%d\377w damage!", damage);
 							}
 
@@ -6244,8 +5726,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 				map[16+p_ptr->py-cy][16+p_ptr->px-cx] = FALSE;
 
 				/* Take some damage */
-				if (damage)
-				{
+				if (damage) {
 					take_hit(Ind, damage, "an earthquake", 0);
 
 					/* Add it tot the total damage taken - mikaelh */
@@ -6456,24 +5937,19 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 void wipe_spell(struct worldpos *wpos, int cy, int cx, int r)
 {
 	int		yy, xx, dy, dx;
-
 	cave_type	*c_ptr;
 
-
-
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if(!(zcave = getcave(wpos))) return;
 	/* Don't hurt town or surrounding areas */
-	if(istownarea(wpos, 2))
-		return;
+	if(istownarea(wpos, 2)) return;
 
 	/* Paranoia -- Dnforce maximum range */
 	if (r > 12) r = 12;
 
 	/* Check around the epicenter */
 	for (dy = -r; dy <= r; dy++){
-		for (dx = -r; dx <= r; dx++)
-		{
+		for (dx = -r; dx <= r; dx++) {
 			/* Extract the location */
 			yy = cy + dy;
 			xx = cx + dx;
@@ -6491,14 +5967,13 @@ void wipe_spell(struct worldpos *wpos, int cy, int cx, int r)
 			if (c_ptr->info & CAVE_ICKY) continue;
 
 			/* Lose room and vault */
-			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
+			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY | CAVE_NEST_PIT | CAVE_STCK | CAVE_ICKY_PERMA);
 			
 			/* Turn into basic floor */
 			cave_set_feat(wpos, yy, xx, FEAT_FLOOR);
 			
 			/* Delete monsters */
-			if (c_ptr->m_idx > 0)
-			{
+			if (c_ptr->m_idx > 0) {
 				monster_race *r_ptr = race_inf(&m_list[c_ptr->m_idx]);
 				if (!(r_ptr->flags9 & RF9_IM_TELE)) delete_monster(wpos, yy, xx, TRUE);
 				else continue;
@@ -6786,8 +6261,7 @@ void unlite_room(int Ind, struct worldpos *wpos, int y1, int x1)
  * Hack -- call light around the player
  * Affect all monsters in the projection radius
  */
-bool lite_area(int Ind, int dam, int rad)
-{
+bool lite_area(int Ind, int dam, int rad) {
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_GRID | PROJECT_KILL;
@@ -6797,9 +6271,7 @@ bool lite_area(int Ind, int dam, int rad)
 
 	/* Hack -- Message */
 	if (!p_ptr->blind)
-	{
 		msg_print(Ind, "You are surrounded by a white light.");
-	}
 
 	/* Hook into the "project()" function */
 	(void)project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, GF_LITE_WEAK, flg, "");
@@ -6874,9 +6346,9 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 #if 1
 #ifdef USE_SOUND_2010
 	if (typ == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_COMMAND, FALSE);
-	//might be too annoying for player ball spells, need maybe softer one?:
+	else if (typ == GF_STONE_WALL) sound(Ind, "stone_wall", NULL, SFX_TYPE_COMMAND, FALSE);
 	else {
-		/* The 'casts_ball' sound is only for attack spells */
+		/* The 'cast_ball' sound is only for attack spells */
 		if ((typ != GF_HEAL_PLAYER) && (typ != GF_AWAY_ALL) &&
 		    (typ != GF_WRAITH_PLAYER) && (typ != GF_SPEED_PLAYER) &&
 		    (typ != GF_SHIELD_PLAYER) && (typ != GF_RECALL_PLAYER) &&
@@ -6944,18 +6416,25 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int inter
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
 
 #ifdef USE_SOUND_2010
+	/* paranoia, aka this won't exist as "clouds".. */
 	if (typ == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_COMMAND, FALSE);
-//too annoying, need softer sound imho - or maybe not? :)
-	else sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, FALSE);
+	else if (typ == GF_STONE_WALL) sound(Ind, "stone_wall", NULL, SFX_TYPE_COMMAND, FALSE);
+	/* only this one needed really */
+	else sound(Ind, "cast_cloud", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
 	/* Hack: Make HEALINGCLOUD affect the caster too! */
+#if 0
 	/* Note: 'Ind' < 0 (eg PROJECTOR_EFFECT) disables projection on monsters,
 	   so HEALINGCLOUD wouldn't damage undeads - well, maybe it shouldn't. */
-	if (typ != GF_HEALINGCLOUD)
-		return (project(0 - Ind, (rad > 16) ? 16 : rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
-	else
+	if (typ == GF_HEALINGCLOUD)
 		return (project(PROJECTOR_EFFECT, (rad > 16) ? 16 : rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
+	else
+		return (project(0 - Ind, (rad > 16) ? 16 : rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
+#else /* affect self + players + monsters AND give credit on kill */
+	if (typ == GF_HEALINGCLOUD) flg |= PROJECT_PLAY;
+	return (project(0 - Ind, (rad > 16) ? 16 : rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
+#endif
 }
 
 /*
@@ -7230,6 +6709,11 @@ bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker)
 	char pattacker[80];
 	int flg = PROJECT_STOP | PROJECT_KILL;
 	snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
+
+#ifdef USE_SOUND_2010
+	sound(Ind, "cast_bolt", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
 	return (project_hook(Ind, typ, dir, dam, flg, pattacker));
 }
 
@@ -7243,6 +6727,11 @@ bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker)
         char pattacker[80];
 	int flg = PROJECT_BEAM | PROJECT_KILL;
         snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
+
+#ifdef USE_SOUND_2010
+	sound(Ind, "cast_beam", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
 	return (project_hook(Ind, typ, dir, dam, flg, pattacker));
 }
 
@@ -7274,6 +6763,10 @@ bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char 
 	}
 	project_interval = interval;
 	project_time = time;
+
+#ifdef USE_SOUND_2010
+	sound(Ind, "cast_wall", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 
 	/* Analyze the "dir" and the "target", do NOT explode */
 	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
@@ -7319,6 +6812,10 @@ bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 		ty = p_ptr->target_row;
 	}
 
+#ifdef USE_SOUND_2010
+	sound(Ind, "cast_bolt", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
 	snprintf(pattacker, 80, "%s%s", p_ptr->name, attacker);
 	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
@@ -7348,6 +6845,10 @@ bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker) {
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
 	}
+
+#ifdef USE_SOUND_2010
+	sound(Ind, "cast_beam", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
 	snprintf(pattacker, 80, "%s%s", p_ptr->name, attacker);
@@ -7749,9 +7250,9 @@ void house_creation(int Ind, bool floor, bool jail)
 	/* No building in town */
 	if(wpos->wz || istownarea(wpos, 2))
 		return;
-	if((house_alloc-num_houses)<32){
-		GROW(houses, house_alloc, house_alloc+512, house_type);
-		house_alloc+=512;
+	if (house_alloc - num_houses < 32) {
+		GROW(houses, house_alloc, house_alloc + 512, house_type);
+		house_alloc += 512;
 	}
 	p_ptr->master_move_hook=poly_build;
 

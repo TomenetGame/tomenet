@@ -79,7 +79,7 @@ typedef unsigned int u32b;
 #define SKILL_AURA_SHIVER       29
 #define SKILL_AURA_DEATH        30
 #define SKILL_HUNTING			31
-#define SKILL_TECHNIC			32
+#define SKILL_TECHNIQUE			32
 #define SKILL_MISC              33
 #define SKILL_AGILITY			34
 #define SKILL_CALMNESS			35
@@ -126,9 +126,6 @@ typedef unsigned int u32b;
 /* Divine race */
 /* ENABLE_DIVINE */
 #define SKILL_ASTRAL		77
-#define DIVINE_UNDEF		0x00
-#define DIVINE_ANGEL 		0x01
-#define DIVINE_DEMON 		0x10
 
 #define SKILL_DUAL		78
 #define SKILL_STANCE		79
@@ -233,7 +230,7 @@ typedef unsigned int u32b;
 #define RACE_DARK_ELF	14
 #define RACE_VAMPIRE	15
 /* ENABLE_DIVINE */
-/* #define RACE_DIVINE	16*/
+#define RACE_DIVINE	16
 
 struct worldpos{
 	s16b wx;	/* west to east */
@@ -243,7 +240,7 @@ struct worldpos{
 
 struct object_type
 {
-	s32b owner_mode;                /* Player that found it */
+	byte mode;                /* Player that found it */
         s32b owner;                     /* Player that found it */
         s16b level;                     /* Level req */
 
@@ -379,6 +376,7 @@ struct player_type
 
 	byte prace;		/* Race index */
 	byte pclass;		/* Class index */
+	byte ptrait;		/* Trait index */
 	byte male;		/* Sex of character */
 	byte oops;		/* Unused */
 
@@ -776,7 +774,7 @@ struct player_type
 	bool resist_plasma;     /* Resist Plasma */
 	bool regen_mana;	/* Regenerate mana */
 	bool hold_life;		/* Resist life draining */
-	bool telepathy;		/* Telepathy */
+	u32b telepathy;		/* Telepathy */
 	bool slow_digest;	/* Slower digestion */
 	bool bless_blade;	/* Blessed blade */
 	bool xtra_might;	/* Extra might bow */
@@ -792,6 +790,9 @@ struct player_type
 	s16b invis;		/* Invisibility */
 	bool admin_wiz;         /* Is this char Wizard? */
         bool admin_dm;          /* or Dungeon Master? */
+
+	s16b extra_blows;
+	s16b xtra_crit;
 
 	s16b to_l;		/* Bonus to life */
 	s32b to_hp;		/* Bonus to Hit Points */
@@ -893,7 +894,7 @@ struct player_type
 	int ret_dam;			/* Drained life from a monster */
 	const char *attacker;		/* Attacking player string, contains name and attack */
 
-        int luck_cur;   /* Extra luck of this player */
+        int luck;   /* Extra luck of this player */
 
         /* C. Blue - was the last shutdown a panic save? */
         bool panic;
@@ -920,7 +921,6 @@ struct player_type
         time_t global_event_signup[MAX_GLOBAL_EVENTS];
         time_t global_event_started[MAX_GLOBAL_EVENTS];
 //        u32b global_event_progress[MAX_GLOBAL_EVENTS][4];
-	byte divinity;
 
 	int combat_stance;
 	int combat_stance_power;
@@ -931,16 +931,39 @@ struct player_type
         int shoot_till_kill_book;
 	int shoot_till_kill_spell;
 
+	int kills_own;
 	int kills;
 	int kills_lower;
 	int kills_higher;
 	int kills_equal;
+	int free_mimic;
+	int pvp_prevent_tele;
+	long heal_effect;
 
 	int mcharming;
 	u32b turns_on_floor;
 	bool dual_mode;
 
 	bool panel_changed;
+
+	char warning_bpr;
+	char warning_bpr2;
+	char warning_bpr3;
+	char warning_run;
+	char warning_run_steps;
+	char warning_run_monlos;
+	char warning_wield;
+	char warning_chat;
+	char warning_lite;
+	char warning_rest;
+	char warning_mimic;
+	char warning_dual;
+	char warning_potions;
+	char warning_wor;
+	char warning_ghost;
+	char warning_ma_weapon;
+	char warning_ma_shield;
+
 	int music_current;
 	int music_monster;
 
@@ -966,7 +989,7 @@ extern bool interfere(int Ind, int chance);
 extern void telekinesis_aux(int Ind, int item);
 extern void recall_player(int Ind, char *message);
 extern int apply_dodge_chance(int Ind, int attack_level);
-extern void respec_skill(int Ind, int i, bool update_skill);
+extern void respec_skill(int Ind, int i, bool update_skill, bool polymorph);
 extern void respec_skills(int Ind, bool update_skills);
 extern int invested_skill_points(int Ind, int i);
 

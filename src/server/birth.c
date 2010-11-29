@@ -250,8 +250,8 @@ static hist_type bg[] =
 
 
 	/* XXX lol.. change it */
-	{"You are one of several children of a Thunderlord. ", 85, 89, 91, 50  },
-	{"You are the only child of a Thunderlord. ", 100, 89, 91, 60 },
+	{"You are one of several children of a dragon and a human.", 85, 89, 91, 50  },
+	{"You are the only child of a dragon and a human.", 100, 89, 91, 60 },
 
 	{"You have a Green Eagle.", 30, 91, 0, 40 },
 	{"You have a Blue Eagle.", 55, 91, 0, 60 },
@@ -929,9 +929,7 @@ static void player_wipe(int Ind)
 
 	/* Wipe the history */
 	for (i = 0; i < 4; i++)
-	{
 		strcpy(p_ptr->history[i], "");
-	}
 
 	/* No weight */
 	p_ptr->total_weight = 0;
@@ -943,9 +941,7 @@ static void player_wipe(int Ind)
 	/* Clear the inventory */
 #if 0
 	for (i = 0; i < INVEN_TOTAL; i++)
-	{
 		invwipe(&p_ptr->inventory[i]);
-	}
 #else
 	C_WIPE(p_ptr->inventory, INVEN_TOTAL, object_type);
 #endif
@@ -1286,7 +1282,7 @@ static byte bard_init[BARD_INIT_NUM][2] =
 /*	o_ptr->discount = 100; */ /* was annoying text-wise */ \
 	o_ptr->ident |= ID_MENTAL; \
 /*	o_ptr->owner = p_ptr->id; */ \
-/*	o_ptr->owner_mode = p_ptr->mode; */ \
+/*	o_ptr->mode = p_ptr->mode; */ \
 	o_ptr->level = 1; \
 	(void)inven_carry(Ind, o_ptr);
 
@@ -1393,7 +1389,7 @@ void admin_outfit(int Ind, int realm)
 	object_known(o_ptr); \
 	o_ptr->ident |= ID_MENTAL; \
 	o_ptr->owner = p_ptr->id; \
-	o_ptr->owner_mode = p_ptr->mode; \
+	o_ptr->mode = p_ptr->mode; \
 	o_ptr->level = 1; \
 	(void)inven_carry(Ind, o_ptr);
 #else
@@ -1403,7 +1399,7 @@ void admin_outfit(int Ind, int realm)
 	object_known(o_ptr); \
 	o_ptr->ident |= ID_MENTAL; \
 	o_ptr->owner = p_ptr->id; \
-	o_ptr->owner_mode = p_ptr->mode; \
+	o_ptr->mode = p_ptr->mode; \
 	o_ptr->level = 0; \
 	o_ptr->discount = 100; /* <- replaced this by making level-0-items unsellable in general */ \
 	if (!o_ptr->note) o_ptr->note = quark_add(""); /* hack to hide '100% off' tag */ \
@@ -1414,7 +1410,7 @@ void admin_outfit(int Ind, int realm)
 	object_known(o_ptr); \
 	o_ptr->ident |= ID_MENTAL; \
 	o_ptr->owner = p_ptr->id; \
-	o_ptr->owner_mode = p_ptr->mode; \
+	o_ptr->mode = p_ptr->mode; \
 	o_ptr->level = 0; \
 	(void)inven_carry(Ind, o_ptr);
  #endif
@@ -1491,7 +1487,7 @@ static void player_outfit(int Ind)
 		apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, TRUE);
 		o_ptr->discount = 72;
 		o_ptr->owner = p_ptr->id;
-                o_ptr->owner_mode = p_ptr->mode;
+                o_ptr->mode = p_ptr->mode;
 		o_ptr->level = 1;
 		object_known(o_ptr);
 		object_aware(Ind, o_ptr);
@@ -1503,7 +1499,7 @@ static void player_outfit(int Ind)
 	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_DEATH));
 	o_ptr->discount = 100;
 	o_ptr->owner = p_ptr->id;
-        o_ptr->owner_mode = p_ptr->mode;
+        o_ptr->mode = p_ptr->mode;
 	o_ptr->level = 0;
 	object_known(o_ptr);
 	object_aware(Ind, o_ptr);
@@ -1689,7 +1685,7 @@ static void player_outfit(int Ind)
 	o_ptr->discount = 100;
 	do_player_outfit();
 #else
-	if(p_ptr->pclass == CLASS_ARCHER)
+	if (p_ptr->pclass == CLASS_ARCHER)
 	p_ptr->au+=100;
 	else
 	p_ptr->au+=50;
@@ -1752,13 +1748,6 @@ static void player_setup(int Ind, bool new)
                 wpos->wy = cfg.town_y;
 		wpos->wz = 0;
 	}
-
-#if 0 //todo:implement
-	/* Don't allow players to save in houses they don't own -> teleport them */
-	if (((!wpos->wz) && (cave_info..  [wpos->wy][wpos->wx]. & CAVE_ICKY))) {
-		s_printf("Out-of-House-blinked %s at wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
-	}
-#endif
 
 	/* hack for sector00separation (Highlander Tournament): Players mustn't enter sector 0,0 */
 	/* note that this hack will also prevent players who got disconnected during Highlander Tourney
@@ -1835,14 +1824,13 @@ static void player_setup(int Ind, bool new)
 	/* p_ptr->recall_pos isn't saved so we really need this always, not just for panics - mikaelh */
 	p_ptr->word_recall = 0;
 
-
 	/* anti spammer code */
 	p_ptr->msgcnt = 0;
 	p_ptr->msg = 0;
 	p_ptr->spam = 0;
 
 	/* Default location if just starting */
-//	if(wpos->wz == 0 && wpos->wy == 0 && wpos->wx == 0 && p_ptr->py==0 && p_ptr->px==0){
+//	if (wpos->wz == 0 && wpos->wy == 0 && wpos->wx == 0 && p_ptr->py==0 && p_ptr->px==0){
 	if (new) {
 		p_ptr->wpos.wx = cfg.town_x;
 		p_ptr->wpos.wy = cfg.town_y;
@@ -1856,8 +1844,7 @@ static void player_setup(int Ind, bool new)
 	}
 
 	/* Count players on this depth */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		/* Skip this player */
 		if (i == Ind) continue;
 
@@ -1874,13 +1861,10 @@ static void player_setup(int Ind, bool new)
 	 * been unstaticed and so he should forget his memory of the old level.
 	 */
 	/* FIXME: seemingly this code is helplessly wrong	- Jir - */
-	if (count >= players_on_depth(wpos))
-	{
+	if (count >= players_on_depth(wpos)) {
 		/* Clear the "marked" and "lit" flags for each cave grid */
-		for (y = 0; y < MAX_HGT; y++)
-		{
-			for (x = 0; x < MAX_WID; x++)
-			{
+		for (y = 0; y < MAX_HGT; y++) {
+			for (x = 0; x < MAX_WID; x++) {
 				p_ptr->cave_flag[y][x] = 0;
 			}
 		}
@@ -1894,32 +1878,33 @@ static void player_setup(int Ind, bool new)
 	}
 
 	/* Rebuild the level if necessary */
-	if(!(zcave = getcave(wpos))){
-		if(p_ptr->wpos.wz){
+	if (!(zcave = getcave(wpos))){
+		if (p_ptr->wpos.wz){
 			struct dun_level *l_ptr;
 			alloc_dungeon_level(wpos);
 			generate_cave(wpos, p_ptr);
 
-			l_ptr=getfloor(wpos);
-			if((l_ptr->wid < p_ptr->px) || (l_ptr->hgt < p_ptr->py)){
-				p_ptr->px=l_ptr->wid/2;
-				p_ptr->py=l_ptr->hgt/2;
+			l_ptr = getfloor(wpos);
+			if ((l_ptr->wid < p_ptr->px) || (l_ptr->hgt < p_ptr->py)){
+				p_ptr->px = l_ptr->wid / 2;
+				p_ptr->py = l_ptr->hgt / 2;
 				NumPlayers++; // hack for cave_midx_debug - mikaelh
 				teleport_player_force(Ind, 1);
 				NumPlayers--;
 			}
-
-			if(p_ptr->lev<=5){
+#if 0 /* teleport players who logged into a non-existing floor only if they're <= level 5? */
+			if (p_ptr->lev <= 5) {
+#else /* ..or always? (to prevent them getting entombed in walls) */
+			{
+#endif
 				NumPlayers++; // hack for cave_midx_debug - mikaelh
 				teleport_player_force(Ind, 5);
 				NumPlayers--;
 			}
-		}
-		else{
+		} else {
 			alloc_dungeon_level(wpos);
 			generate_cave(wpos, p_ptr);
-			if(!players_on_depth(wpos))
-				new_players_on_depth(wpos, 1, FALSE);
+			if (!players_on_depth(wpos)) new_players_on_depth(wpos, 1, FALSE);
 #ifndef NEW_DUNGEON
 			/* paranoia, update the players wilderness map. */
 			p_ptr->wild_map[(-p_ptr->dun_depth) / 8] |= (1 << ((-p_ptr->dun_depth) % 8));
@@ -1927,22 +1912,6 @@ static void player_setup(int Ind, bool new)
 		}
 		zcave = getcave(wpos);
 	}
-
-#if 0 //done by world_surface_.. eventually
-	/* Memorize interesting features, if we're in town */
-	if (istown(wpos)) {
-//	if (istownarea(wpos, 2)) {
-		for (y = 0; y < MAX_HGT; y++)
-		for (x = 0; x < MAX_WID; x++) {
-			byte *w_ptr = &p_ptr->cave_flag[y][x];
-			c_ptr = &zcave[y][x];
-			/* If interesting, memorize */
-//			if (IS_DAY || !cave_plain_floor_grid(c_ptr) || c_ptr->info & CAVE_ROOM)
-			if (!cave_plain_floor_grid(c_ptr) || c_ptr->info & CAVE_ROOM)
-				*w_ptr |= CAVE_MARK;
-		}
-	}
-#endif
 
 	/* hack -- update night/day on world surface */
 	if (!wpos->wz) {
@@ -1962,6 +1931,18 @@ static void player_setup(int Ind, bool new)
 
 		p_ptr->view_perma_grids = i;
 //		NumPlayers--;
+
+		/* Don't allow players to save in houses they don't own -> teleport them - C. Blue */
+		/* Assumption: wpos.wz==0 and CAVE_ICKY -> we're inside a house*/
+		if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY) &&
+		    /* slightly paranoid hack, in case we really are in a no-tele wilderness vault oO */
+		    !(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK)) {
+			/* house here which we are allowed to enter? */
+			if (!wraith_access(Ind)) {
+				teleport_player_force(Ind, 1);
+				s_printf("Out-of-House-blinked %s at wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
+			}
+		}
 	}
 
 	if (new) {
@@ -1987,18 +1968,15 @@ static void player_setup(int Ind, bool new)
 	y = p_ptr->py;
 
 	/* Don't stack with another player */
-	if (zcave[y][x].m_idx && zcave[y][x].m_idx != 0 - Ind)
-	{
-		for (i = 0; i < 3000; i++)
-		{
+	if (zcave[y][x].m_idx && zcave[y][x].m_idx != 0 - Ind) {
+		for (i = 0; i < 3000; i++) {
 			d = (i + 9) / 10;
 //			scatter(wpos, &y, &x, p_ptr->py, p_ptr->px, d, 0);
 			/* Don't require LOS anymore - mikaelh */
 			scatter(wpos, &y, &x, p_ptr->py, p_ptr->px, d, 1);
 
 			if (!in_bounds(y, x) || !cave_empty_bold(zcave, y, x)) continue;
-			else
-			{
+			else {
 				p_ptr->px = x;
 				p_ptr->py = y;
 			}
@@ -2016,8 +1994,7 @@ static void player_setup(int Ind, bool new)
 	/* Show him to everybody */
 	everyone_lite_spot(wpos, y, x);
 	/* Hack -- Give him "awareness" of certain objects */
-	for (i = 1; i < max_k_idx; i++)
-	{
+	for (i = 1; i < max_k_idx; i++) {
 		object_kind *k_ptr = &k_info[i];
 
 		/* Skip "empty" objects */
@@ -2028,8 +2005,7 @@ static void player_setup(int Ind, bool new)
 	}
 
 	/* Add him to the player name database, if he is not already there */
-	if (!lookup_player_name(p_ptr->id))
-	{
+	if (!lookup_player_name(p_ptr->id)) {
 		time_t ttime;
 		/* Add */
 		add_player_name(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, time(&ttime));
@@ -2055,6 +2031,10 @@ static void player_setup(int Ind, bool new)
 #ifdef AUCTION_SYSTEM
 	p_ptr->current_auction = 0;
 #endif
+#ifdef PLAYER_STORES
+	p_ptr->ps_house_x = p_ptr->ps_house_y = -1;
+	p_ptr->ps_mcheque_x = p_ptr->ps_mcheque_y = -1;
+#endif
 
 	/* Set up the Runecraft extra p_ptr variables */
 	p_ptr->memory.x = 0;
@@ -2071,17 +2051,14 @@ static void player_setup(int Ind, bool new)
 
 	/* Set the player's "panel" information */
 	l_ptr = getfloor(wpos);
-	if (l_ptr)
-	{
+	if (l_ptr) {
 		/* Hack -- tricky formula, but needed */
 		p_ptr->max_panel_rows = ((l_ptr->hgt + SCREEN_HGT / 2) / SCREEN_HGT) * 2 - 2;
 		p_ptr->max_panel_cols = ((l_ptr->wid + SCREEN_WID / 2) / SCREEN_WID ) * 2 - 2;
 
 		p_ptr->cur_hgt = l_ptr->hgt;
 		p_ptr->cur_wid = l_ptr->wid;
-	}
-	else
-	{
+	} else {
 		p_ptr->max_panel_rows = (MAX_HGT / SCREEN_HGT) * 2 - 2;
 		p_ptr->max_panel_cols = (MAX_WID / SCREEN_WID) * 2 - 2;
 
@@ -2101,8 +2078,7 @@ static void player_setup(int Ind, bool new)
 	panel_bounds(Ind);
 
 	/* Make sure his party still exists */
-	if (p_ptr->party && parties[p_ptr->party].members == 0)
-	{
+	if (p_ptr->party && parties[p_ptr->party].members == 0) {
 		/* Reset to neutral */
 		p_ptr->party = 0;
 	}
@@ -2118,7 +2094,7 @@ static void player_setup(int Ind, bool new)
 	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
 
-	p_ptr->master_move_hook=NULL; /* just in case its not */
+	p_ptr->master_move_hook = NULL; /* just in case its not */
 
 	/* This guy is alive now */
 	p_ptr->alive = TRUE;
@@ -2217,6 +2193,72 @@ static void do_bard_skill(int Ind)
 	}
 }
 #endif /*0*/
+
+/* Disable various warnings, if the player chose a class that isn't affected primarily: */
+static void disable_specific_warnings(player_type *p_ptr) {
+	if (p_ptr->pclass == CLASS_ARCHER ||
+	    p_ptr->pclass == CLASS_ADVENTURER ||
+	    p_ptr->pclass == CLASS_SHAMAN ||
+	    p_ptr->pclass == CLASS_MAGE) {
+		p_ptr->warning_autoret = 99;
+	}
+
+	if (p_ptr->pclass == CLASS_ARCHER ||
+	    p_ptr->pclass == CLASS_ADVENTURER || p_ptr->pclass == CLASS_DRUID ||
+	    p_ptr->pclass == CLASS_MAGE || p_ptr->pclass == CLASS_SHAMAN) {
+		p_ptr->warning_wield = 1;
+	}
+
+	/* classes that may go without using any [ranged] weapons don't need a wield-warning */
+	if (p_ptr->pclass == CLASS_ADVENTURER ||
+	    p_ptr->pclass == CLASS_DRUID ||
+	    p_ptr->pclass == CLASS_SHAMAN ||
+	    p_ptr->pclass == CLASS_MAGE)
+		p_ptr->warning_wield_combat = 1;
+
+	if (p_ptr->pclass == CLASS_MAGE ||
+//	    p_ptr->pclass == CLASS_RUNEMASTER ||
+	    p_ptr->pclass == CLASS_ARCHER) {
+		p_ptr->warning_bpr = 1;
+	}
+
+	if (!(p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_PALADIN
+	    || p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_MIMIC
+//	    || p_ptr->pclass == CLASS_RUNEMASTER
+	    || p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_MINDCRAFTER)) {
+		p_ptr->warning_bpr2 = 1;
+	}
+
+	if (!(p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_PALADIN ||
+	    p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_MIMIC ||
+//	    p_ptr->pclass == CLASS_RUNEMASTER ||
+	    p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_MINDCRAFTER)) {
+		p_ptr->warning_bpr3 = 1;
+	}
+
+	/* fruit bat mode chars can't wield weapons */
+	if (p_ptr->fruit_bat == 1) {
+		p_ptr->warning_wield = 1;
+		p_ptr->warning_bpr = p_ptr->warning_bpr2 = p_ptr->warning_bpr3 = 1;
+		p_ptr->warning_wield_combat = 1;
+	}
+
+	/* cannot use melee techniques? */
+	if (!(p_ptr->pclass == CLASS_WARRIOR ||
+	    p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_PALADIN ||
+	    p_ptr->pclass == CLASS_MIMIC || p_ptr->pclass == CLASS_ROGUE ||
+	    p_ptr->pclass == CLASS_ADVENTURER || p_ptr->pclass == CLASS_RUNEMASTER ||
+	    p_ptr->pclass == CLASS_MINDCRAFTER))
+		p_ptr->warning_technique_melee = 1;
+
+	/* cannot use ranged techniques? */
+	if (!(p_ptr->pclass == CLASS_ARCHER || p_ptr->pclass == CLASS_RANGER))
+		p_ptr->warning_technique_ranged = 1;
+
+	/* Vampires don't use normal light sources */
+	if (p_ptr->prace == RACE_VAMPIRE) p_ptr->warning_lite = 1;
+}
+
 /*
  * Create a character.  Then wait for a moment.
  *
@@ -2227,7 +2269,7 @@ static void do_bard_skill(int Ind)
  * Note that we may be called with "junk" leftover in the various
  * fields, so we must be sure to clear them first.
  */
-bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int class, int sex, int stat_order[6])
+bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int class, int trait, int sex, int stat_order[6])
 {
 	player_type *p_ptr;
 	int i;
@@ -2238,9 +2280,18 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	s_printf("Trying to log in with character %s...\n", name);
 
 	/* Do some consistency checks */
-	if (race < 0 || race >= MAX_RACES) race = 0;
+	if (race < 0 || race >= MAX_RACE) race = 0;
 	if (class < 0 || class >= MAX_CLASS) class = 0;
+	if (trait < 0 || trait >= MAX_TRAIT) trait = 0;
 //	if (sex < 0 || sex > 7) sex = 0;
+	/* Check for legal class */
+	if ((race_info[race].choice & BITS(class)) == 0) {
+		s_printf("%s EXPLOIT_CLASS_CHOICE: %s(%s) chose race %d ; class %d ; trait %d.\n", showtime(), accname, name, race, class, trait);
+	}
+	/* Check for legal trait */
+	if ((trait_info[trait].choice & BITS(race)) == 0) {
+		s_printf("%s EXPLOIT_TRAIT_CHOICE: %s(%s) chose race %d ; class %d ; trait %d.\n", showtime(), accname, name, race, class, trait);
+	}
 
 	/* Allocate memory for him */
 	MAKE(Players[Ind], player_type);
@@ -2292,15 +2343,13 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	confirm_admin(Ind);
 
 	/* Try to load */
-	if (!load_player(Ind))
-	{
+	if (!load_player(Ind)) {
 		/* Loading failed badly */
 		return FALSE;
 	}
 
 	/* Did loading succeed? */
-	if (character_loaded)
-	{
+	if (character_loaded) {
 		/* Log for freeze bug */
 		s_printf("Loaded character %s on %d %d %d\n", name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		/* Loading succeeded */
@@ -2308,12 +2357,12 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		clockin(Ind, 0);	/* Timestamp the player */
 		clockin(Ind, 1);	/* Set player level */
 		clockin(Ind, 2);	/* Set player party */
-		if(p_ptr->quest_id){
+		if (p_ptr->quest_id){
 			int i;
-			for(i=0; i<20; i++){
-				if(quests[i].active && quests[i].id==p_ptr->quest_id) break;
+			for (i = 0; i < 20; i++){
+				if (quests[i].active && quests[i].id == p_ptr->quest_id) break;
 			}
-			if(i==20) p_ptr->quest_id=0;
+			if (i == 20) p_ptr->quest_id = 0;
 		}
 
 		/* hack: if he's in town, get him pseudo tree-passing */
@@ -2326,6 +2375,8 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 			teleport_player(Ind, 1);
 		}
 #endif
+
+		disable_specific_warnings(p_ptr);
 
 		return TRUE;
 	}
@@ -2367,7 +2418,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 
 	/* Reprocess his name */
 	if (!process_player_name(Ind, TRUE)) return FALSE;
-	
+
 	confirm_admin(Ind);
 
 	/* player is not in a game */
@@ -2380,8 +2431,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	p_ptr->mode |= sex & ~MODE_MALE;
 
 #if 1 /* keep for now to stay compatible, doesn't hurt us */
-	if (sex > 511)
-	{
+	if (sex > 511) {
 		sex -= 512;
 		p_ptr->mode |= MODE_FRUIT_BAT;
 	}
@@ -2407,14 +2457,15 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	p_ptr->align_good = 0x7fff;	/* start neutral */
 	p_ptr->align_law = 0x7fff;
 	p_ptr->prace = race;
+	p_ptr->ptrait = trait;
 	p_ptr->pkill=(PKILL_KILLABLE);
 
-	
-	s_printf("CHARACTER_CREATION: race=%s ; class=%s ; mode=%u\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, p_ptr->mode);
+	s_printf("CHARACTER_CREATION: race=%s ; class=%s ; trait=%s ; mode=%u\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->mode);
 
 	/* Set pointers */
 	p_ptr->rp_ptr = &race_info[race];
 	p_ptr->cp_ptr = &class_info[class];
+	p_ptr->tp_ptr = &trait_info[trait];
 
 #ifdef RPG_SERVER /* Make characters always NO_GHOST */
 	p_ptr->mode |= MODE_NO_GHOST;
@@ -2429,7 +2480,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	p_ptr->lev = 1;
 
 	/* Actually Generate */
-	p_ptr->maximize = cfg.maximize?TRUE:FALSE;
+	p_ptr->maximize = cfg.maximize ? TRUE : FALSE;
 
 	/* No autoroller */
 	if (!get_stats(Ind, stat_order)) return FALSE;
@@ -2446,7 +2497,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	/* Roll for gold */
 	get_money(Ind);
 
-	/* set level and skill, execute hacks */
+	/* for PVP-mode chars: set level and skill, execute hacks */
 	if (p_ptr->mode & MODE_PVP) {
 		object_type forge, *o_ptr = &forge;
 
@@ -2458,44 +2509,52 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 #endif
 		p_ptr->skill_points = (p_ptr->lev - 1) * 5;
 		p_ptr->au = 9950 + rand_int(101);
-		
+
 		/* give her/him a free mimic transformation for starting out */
 		if ((p_ptr->pclass == CLASS_ADVENTURER) ||
 		    (p_ptr->pclass == CLASS_MIMIC) ||
 		    (p_ptr->pclass == CLASS_SHAMAN))
 			p_ptr->free_mimic = 1;
-			
+
 		/* a good starter item since we're not going from level 1 */
 #if 0
 		give_reward(Ind, RESF_LOW2, "", 1, 0);
 #else
-                i = lookup_kind(TV_PARCHMENT, SV_DEED_PVP_START);
-                invcopy(o_ptr, i);
-                o_ptr->number = 1;
-                object_aware(Ind, o_ptr);
-                object_known(o_ptr);
-                o_ptr->discount = 0;
-                o_ptr->level = 0;
-                o_ptr->ident |= ID_MENTAL;
-                inven_carry(Ind, o_ptr);
+		i = lookup_kind(TV_PARCHMENT, SV_DEED_PVP_START);
+		invcopy(o_ptr, i);
+		o_ptr->number = 1;
+		object_aware(Ind, o_ptr);
+		object_known(o_ptr);
+		o_ptr->discount = 0;
+		o_ptr->level = 0;
+		o_ptr->ident |= ID_MENTAL;
+		inven_carry(Ind, o_ptr);
 #endif
+
+		/* Give him sufficient CCW potions to save him from the hassle */
+		i = lookup_kind(TV_POTION, SV_POTION_CURE_CRITICAL);
+		invcopy(o_ptr, i);
+		o_ptr->number = 10;
+		object_aware(Ind, o_ptr);
+		object_known(o_ptr);
+		o_ptr->discount = 0;
+		o_ptr->level = 0;
+		o_ptr->ident |= ID_MENTAL;
+		inven_carry(Ind, o_ptr);
 	}
 
 	/* admin hacks */
-	if (p_ptr->admin_wiz)
-	{
+	if (p_ptr->admin_wiz) {
 		/* the admin wizard can basically do what he wants */
 
 		/* use res_uni instead; it messes the unique list */
 //		for (i = 1; i < MAX_R_IDX; i++) p_ptr->r_killed[i] = r_info[i].level;
-	}
-	else if (p_ptr->admin_dm)
-	{
+	} else if (p_ptr->admin_dm) {
 		p_ptr->invuln = -1;
 		p_ptr->ghost = 1;
 //		p_ptr->noscore = 1;
 	}
-	
+
 	/* special outfits for admin (pack overflows!) */
 	if (is_admin(p_ptr)) {
 		admin_outfit(Ind, 0);
@@ -2533,8 +2592,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 //	p_ptr->skill_last_level = 1;	/* max_plv will do maybe..? */
 	for (i = 1; i < MAX_SKILLS; i++)
 		p_ptr->s_info[i].dev = FALSE;
-	for (i = 1; i < MAX_SKILLS; i++)
-	{
+	for (i = 1; i < MAX_SKILLS; i++) {
 		s32b value = 0, mod = 0;
 
 		/* Make sure all are touched */
@@ -2544,29 +2602,25 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		init_skill(p_ptr, value, mod, i);
 
 		/* Develop only revelant branches */
-		if (p_ptr->s_info[i].value || p_ptr->s_info[i].mod)
-		{
+		if (p_ptr->s_info[i].value || p_ptr->s_info[i].mod) {
 			int z = s_info[i].father;
 
-			while (z != -1)
-			{
+			while (z != -1) {
 				p_ptr->s_info[z].dev = TRUE;
 				z = s_info[z].father;
-				if (z == 0)
-					break;
+				if (z == 0) break;
 			}
 		}
 	}
 
 	/* Bards receive really random skills */
 #if 0
-	if (p_ptr->pclass == CLASS_BARD)
-	{
+	if (p_ptr->pclass == CLASS_BARD) {
 		do_bard_skill(Ind);
 	}
 #endif
 	/* Give the player some resurrections */
-	p_ptr->lives = cfg.lifes+1;
+	p_ptr->lives = cfg.lifes + 1;
 
 	/* msp is only calculated in calc_mana which is only in update_stuff though.. */
 	calc_mana(Ind);
@@ -2597,36 +2651,13 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 
 	/* Prepare newbie-aiding warnings that ought to occur only
 	   once (not necessarily implemented like that atm) - C. Blue */
-	p_ptr->warning_run = p_ptr->warning_wield = p_ptr->warning_lite =
-	p_ptr->warning_mimic = p_ptr->warning_dual = 0;
-	p_ptr->warning_chat = 1;
-
-	/* Disable various warnings, if the player chose a class that isn't affected primarily: */
-	if (p_ptr->pclass == CLASS_ARCHER ||
-	    p_ptr->pclass == CLASS_ADVENTURER || p_ptr->pclass == CLASS_DRUID ||
-	    p_ptr->pclass == CLASS_MAGE || p_ptr->pclass == CLASS_SHAMAN)
-		p_ptr->warning_wield = 1;
-
-	if (p_ptr->pclass == CLASS_MAGE ||
-//	    p_ptr->pclass == CLASS_RUNEMASTER ||
-	    p_ptr->pclass == CLASS_ARCHER)
-		p_ptr->warning_bpr = 1;
-
-	if (!(p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_PALADIN
-	    || p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_MIMIC
-//	    || p_ptr->pclass == CLASS_RUNEMASTER
-	    || p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_MINDCRAFTER))
-		p_ptr->warning_bpr2 = 1;
-
-	if (!(p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_PALADIN ||
-	    p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_MIMIC ||
-//	    p_ptr->pclass == CLASS_RUNEMASTER ||
-	    p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_MINDCRAFTER))
-		p_ptr->warning_bpr3 = 1;
-
+	disable_specific_warnings(p_ptr);
 
 	/* To find out which characters crash the server */
 	s_printf("Logged in with character %s.\n", name);
+
+	/* for "warning_pvp" */
+	p_ptr->newly_created = TRUE;
 
 	/* Success */
 	return TRUE;

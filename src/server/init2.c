@@ -2288,239 +2288,6 @@ static errr init_ba_info(void)
 
 /*** Initialize others ***/
 
-
-#if 0
-/*
- * Hack -- Objects sold in the stores -- by tval/sval pair.
- */
-static byte store_table[MAX_STORES-3][STORE_CHOICES][2] =
-{
-	{
-		/* General Store */
-
-		{ TV_FOOD, SV_FOOD_RATION },
-		{ TV_FOOD, SV_FOOD_RATION },
-		{ TV_FOOD, SV_FOOD_RATION },
-		{ TV_FOOD, SV_FOOD_RATION },
-		{ TV_FOOD, SV_FOOD_RATION },
-		{ TV_FOOD, SV_FOOD_BISCUIT },
-		{ TV_FOOD, SV_FOOD_JERKY },
-		{ TV_FOOD, SV_FOOD_JERKY },
-
-		{ TV_FOOD, SV_FOOD_PINT_OF_WINE },
-		{ TV_FOOD, SV_FOOD_PINT_OF_ALE },
-		{ TV_LITE, SV_LITE_TORCH },
-		{ TV_LITE, SV_LITE_TORCH },
-		{ TV_LITE, SV_LITE_TORCH },
-		{ TV_LITE, SV_LITE_TORCH },
-		{ TV_LITE, SV_LITE_LANTERN },
-		{ TV_LITE, SV_LITE_LANTERN },
-
-		{ TV_FLASK, 0 },
-		{ TV_FLASK, 0 },
-		{ TV_FLASK, 0 },
-		{ TV_FLASK, 0 },
-		{ TV_FLASK, 0 },
-		{ TV_FLASK, 0 },
-		{ TV_ARROW, SV_AMMO_NORMAL },
-		{ TV_ARROW, SV_AMMO_NORMAL },
-
-		{ TV_SHOT, SV_AMMO_NORMAL },
-		{ TV_BOLT, SV_AMMO_NORMAL },
-		{ TV_BOLT, SV_AMMO_NORMAL },
-		{ TV_DIGGING, SV_SHOVEL },
-		{ TV_DIGGING, SV_PICK },
-		{ TV_CLOAK, SV_CLOAK },
-		{ TV_CLOAK, SV_CLOAK },
-		{ TV_CLOAK, SV_CLOAK }
-	},
-
-	{
-		/* Armoury */
-
-		{ TV_BOOTS, SV_PAIR_OF_SOFT_LEATHER_BOOTS },
-		{ TV_BOOTS, SV_PAIR_OF_SOFT_LEATHER_BOOTS },
-		{ TV_BOOTS, SV_PAIR_OF_HARD_LEATHER_BOOTS },
-		{ TV_BOOTS, SV_PAIR_OF_HARD_LEATHER_BOOTS },
-		{ TV_HELM, SV_HARD_LEATHER_CAP },
-		{ TV_HELM, SV_HARD_LEATHER_CAP },
-		{ TV_HELM, SV_METAL_CAP },
-		{ TV_HELM, SV_IRON_HELM },
-
-		{ TV_SOFT_ARMOR, SV_ROBE },
-		{ TV_SOFT_ARMOR, SV_ROBE },
-		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR },
-		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR },
-		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR },
-		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR },
-		{ TV_SOFT_ARMOR, SV_HARD_STUDDED_LEATHER },
-		{ TV_SOFT_ARMOR, SV_HARD_STUDDED_LEATHER },
-
-		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL },
-		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL },
-		{ TV_HARD_ARMOR, SV_METAL_SCALE_MAIL },
-		{ TV_HARD_ARMOR, SV_CHAIN_MAIL },
-		{ TV_HARD_ARMOR, SV_CHAIN_MAIL },
-		{ TV_HARD_ARMOR, SV_AUGMENTED_CHAIN_MAIL },
-		{ TV_HARD_ARMOR, SV_BAR_CHAIN_MAIL },
-		{ TV_HARD_ARMOR, SV_DOUBLE_CHAIN_MAIL },
-
-		{ TV_HARD_ARMOR, SV_METAL_BRIGANDINE_ARMOUR },
-		{ TV_GLOVES, SV_SET_OF_LEATHER_GLOVES },
-		{ TV_GLOVES, SV_SET_OF_LEATHER_GLOVES },
-		{ TV_GLOVES, SV_SET_OF_GAUNTLETS },
-		{ TV_SHIELD, SV_SMALL_LEATHER_SHIELD },
-		{ TV_SHIELD, SV_SMALL_LEATHER_SHIELD },
-		{ TV_SHIELD, SV_LARGE_LEATHER_SHIELD },
-		{ TV_SHIELD, SV_SMALL_METAL_SHIELD }
-	},
-
-	{
-		/* Weaponsmith */
-
-		{ TV_SWORD, SV_DAGGER },
-		{ TV_SWORD, SV_MAIN_GAUCHE },
-		{ TV_SWORD, SV_RAPIER },
-		{ TV_SWORD, SV_SMALL_SWORD },
-		{ TV_SWORD, SV_SHORT_SWORD },
-		{ TV_SWORD, SV_SABRE },
-		{ TV_SWORD, SV_CUTLASS },
-		{ TV_SWORD, SV_TULWAR },
-
-		{ TV_SWORD, SV_BROAD_SWORD },
-		{ TV_SWORD, SV_LONG_SWORD },
-		{ TV_SWORD, SV_SCIMITAR },
-		{ TV_SWORD, SV_KATANA },
-		{ TV_SWORD, SV_BASTARD_SWORD },
-		{ TV_POLEARM, SV_SPEAR },
-		{ TV_POLEARM, SV_AWL_PIKE },
-		{ TV_POLEARM, SV_TRIDENT },
-
-		{ TV_POLEARM, SV_PIKE },
-		{ TV_POLEARM, SV_BEAKED_AXE },
-		{ TV_POLEARM, SV_BROAD_AXE },
-		{ TV_POLEARM, SV_LANCE },
-		{ TV_POLEARM, SV_BATTLE_AXE },
-		{ TV_BLUNT, SV_WHIP },
-		{ TV_BOW, SV_SLING },
-		{ TV_BOW, SV_SHORT_BOW },
-
-		{ TV_BOW, SV_LONG_BOW },
-		{ TV_BOW, SV_LIGHT_XBOW },
-		{ TV_SHOT, SV_AMMO_NORMAL },
-		{ TV_SHOT, SV_AMMO_NORMAL },
-		{ TV_ARROW, SV_AMMO_NORMAL },
-		{ TV_ARROW, SV_AMMO_NORMAL },
-		{ TV_BOLT, SV_AMMO_NORMAL },
-		
-	},
-
-	{
-		/* Temple */
-
-		{ TV_BLUNT, SV_WHIP },
-		{ TV_BLUNT, SV_QUARTERSTAFF },
-		{ TV_BLUNT, SV_MACE },
-		{ TV_BLUNT, SV_MACE },
-		{ TV_BLUNT, SV_BALL_AND_CHAIN },
-		{ TV_BLUNT, SV_WAR_MAUL },
-		{ TV_BLUNT, SV_WAR_HAMMER },
-		{ TV_BLUNT, SV_MORNING_STAR },
-
-		{ TV_BLUNT, SV_FLAIL },
-	//	{ TV_BLUNT, SV_FLAIL },    for life.
-		{ TV_BLUNT, SV_LEAD_FILLED_MACE },
-		{ TV_SCROLL, SV_SCROLL_REMOVE_CURSE },
-		{ TV_SCROLL, SV_SCROLL_BLESSING },
-		{ TV_SCROLL, SV_SCROLL_HOLY_CHANT },
-		{ TV_SCROLL, SV_SCROLL_LIFE	},
-		{ TV_SCROLL, SV_SCROLL_LIFE	},
-		{ TV_POTION, SV_POTION_BOLDNESS },
-		{ TV_POTION, SV_POTION_HEROISM },
-
-		{ TV_POTION, SV_POTION_CURE_LIGHT },
-		{ TV_POTION, SV_POTION_CURE_SERIOUS },
-		{ TV_POTION, SV_POTION_CURE_SERIOUS },
-		{ TV_POTION, SV_POTION_CURE_CRITICAL },
-		{ TV_POTION, SV_POTION_CURE_CRITICAL },
-		{ TV_POTION, SV_POTION_RESTORE_EXP },
-		{ TV_POTION, SV_POTION_RESTORE_EXP },
-	//	{ TV_POTION, SV_POTION_RESTORE_EXP },
-	},
-
-	{
-		/* Alchemy shop */
-
-		{ TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_HIT },
-		{ TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_DAM },
-		{ TV_SCROLL, SV_SCROLL_ENCHANT_ARMOR },
-		{ TV_SCROLL, SV_SCROLL_IDENTIFY },
-		{ TV_SCROLL, SV_SCROLL_IDENTIFY },
-		{ TV_SCROLL, SV_SCROLL_IDENTIFY },
-		{ TV_SCROLL, SV_SCROLL_IDENTIFY },
-		{ TV_SCROLL, SV_SCROLL_LIGHT },
-
-		{ TV_SCROLL, SV_SCROLL_PHASE_DOOR },
-		{ TV_SCROLL, SV_SCROLL_PHASE_DOOR },
-		{ TV_SCROLL, SV_SCROLL_PHASE_DOOR },
-		{ TV_SCROLL, SV_SCROLL_MONSTER_CONFUSION },
-		{ TV_SCROLL, SV_SCROLL_MAPPING },
-		{ TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_HIT },
-		{ TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_DAM },
-		{ TV_SCROLL, SV_SCROLL_ENCHANT_ARMOR },
-
-		{ TV_SCROLL, SV_SCROLL_DETECT_DOOR },
-		{ TV_SCROLL, SV_SCROLL_DETECT_INVIS },
-		{ TV_SCROLL, SV_SCROLL_RECHARGING },
-		{ TV_SCROLL, SV_SCROLL_SATISFY_HUNGER },
-		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
-		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
-		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
-		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
-
-		{ TV_POTION, SV_POTION_RESIST_HEAT },
-		{ TV_POTION, SV_POTION_RESIST_COLD },
-		{ TV_POTION, SV_POTION_RES_STR },
-		{ TV_POTION, SV_POTION_RES_INT },
-		{ TV_POTION, SV_POTION_RES_WIS },
-		{ TV_POTION, SV_POTION_RES_DEX },
-		{ TV_POTION, SV_POTION_RES_CON },
-		{ TV_POTION, SV_POTION_RES_CHR }
-	},
-
-	{
-		/* Magic-User store */
-
-/* 		{ TV_RING, SV_RING_SEARCHING }, */
-		{ TV_RING, SV_RING_FEATHER_FALL },
-		{ TV_RING, SV_RING_PROTECTION },
-		{ TV_AMULET, SV_AMULET_CHARISMA },
-		{ TV_AMULET, SV_AMULET_SLOW_DIGEST },
-		{ TV_AMULET, SV_AMULET_RESIST_ACID },
-		{ TV_WAND, SV_WAND_SLOW_MONSTER },
-		{ TV_WAND, SV_WAND_CONFUSE_MONSTER },
-
-		{ TV_WAND, SV_WAND_SLEEP_MONSTER },
-		{ TV_WAND, SV_WAND_MAGIC_MISSILE },
-		{ TV_WAND, SV_WAND_STINKING_CLOUD },
-/*		{ TV_WAND, SV_WAND_WONDER },   */
-		{ TV_STAFF, SV_STAFF_LITE },
-		{ TV_STAFF, SV_STAFF_MAPPING },
-		{ TV_STAFF, SV_STAFF_DETECT_TRAP },
-		{ TV_STAFF, SV_STAFF_DETECT_DOOR },
-
-/*		{ TV_STAFF, SV_STAFF_DETECT_GOLD }, */
-		{ TV_STAFF, SV_STAFF_DETECT_ITEM },
-		{ TV_STAFF, SV_STAFF_DETECT_INVIS },
-		{ TV_STAFF, SV_STAFF_DETECT_EVIL },
-		{ TV_STAFF, SV_STAFF_TELEPORTATION },
-		{ TV_STAFF, SV_STAFF_TELEPORTATION },
-		{ TV_STAFF, SV_STAFF_IDENTIFY },
-		{ TV_STAFF, SV_STAFF_IDENTIFY },
-	}
-};
-#endif
-
 static void prepare_distance()
 {
 	int d, y, x, count = 0;
@@ -2608,7 +2375,23 @@ static errr init_other(void)
 
 	/*** alloc for the houses ***/
 	C_MAKE(houses, 1024, house_type);
-	house_alloc=1024;
+	house_alloc = 1024;
+
+#ifdef PLAYER_STORES
+	{
+		int i;
+		/* allocate fake houses for player stores */
+		C_MAKE(fake_store, MAX_VISITED_PLAYER_STORES, store_type);
+		for (i = 0; i < MAX_VISITED_PLAYER_STORES; i++) {
+			store_type *st_ptr = &fake_store[i];
+			st_ptr->st_idx = 7;//fake home
+			st_ptr->town = 0;//whatever
+			st_ptr->stock_size = STORE_INVEN_MAX;
+			C_MAKE(st_ptr->stock, st_ptr->stock_size, object_type);
+			st_ptr->stock_num = 0;
+		}
+	}
+#endif
 
 	/*** alloc for the auctions ***/
 	C_MAKE(auctions, 16, auction_type);
@@ -3496,9 +3279,23 @@ bool load_server_cfg(void)
  */
 void init_some_arrays(void)
 {
+	int h = 0, m = 0, s = 0, dwd = 0, dd = 0, dm = 0, dy = 0;
+	time_t now;
+	struct tm *tmp;
+
         /* Init lua */
 	s_printf("[Initializing lua... (scripts)]\n");
         init_lua();
+
+	/* By calling this before info files are even initialized we can
+	   control parsing them by lua. - C. Blue */
+	time(&now);
+	tmp = localtime(&now);
+	h = tmp->tm_hour;
+	m = tmp->tm_min;
+	s = tmp->tm_sec;
+	get_date(&dwd, &dd, &dm, &dy);
+	exec_lua(0, format("server_startup(\"%s\", %d, %d, %d, %d, %d, %d, %d)", showtime(), h, m, s, dwd, dd, dm, dy));
 
 	/* Initialize feature info */
 	s_printf("[Initializing arrays... (features)]\n");
@@ -3574,3 +3371,379 @@ void init_some_arrays(void)
 }
 
 
+static errr reinit_r_info(void) {
+	errr err;
+
+	s16b idx[MAX_R_IDX];
+	int i, j, total = 0, tmp;
+
+	FILE *fp;
+
+	/* General buffer */
+	char buf[1024];
+
+
+	/*** Make the header ***/
+	WIPE(r_head, header);
+
+	/* Save the "version" */
+	r_head->v_major = VERSION_MAJOR;
+	r_head->v_minor = VERSION_MINOR;
+	r_head->v_patch = VERSION_PATCH;
+	r_head->v_extra = 0;
+
+	/* Save the "record" information */
+	r_head->info_num = MAX_R_IDX;
+	r_head->info_len = sizeof(monster_race);
+
+	/* Save the size of "r_head" and "r_info" */
+	r_head->head_size = sizeof(header);
+	r_head->info_size = r_head->info_num * r_head->info_len;
+
+
+	/*** Make the fake arrays ***/
+
+	/* Assume the size of "r_name" and "r_text" */
+	fake_name_size = 20 * 1024L;
+	fake_text_size = 60 * 1024L;
+
+	/* Allocate the "r_info" array */
+	C_WIPE(r_info, r_head->info_num, monster_race);
+
+	/* Hack -- make "fake" arrays */
+	C_WIPE(r_name, fake_name_size, char);
+	C_WIPE(r_text, fake_text_size, char);
+
+	/*** Load the ascii template file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_GAME, "r_info.txt");
+
+	/* Open the file */
+	fp = my_fopen(buf, "r");
+
+	/* Parse it */
+	if (!fp) quit("Cannot open 'r_info.txt' file.");
+
+	/* Parse the file */
+	err = init_r_info_txt(fp, buf);
+
+	/* Close it */
+	my_fclose(fp);
+
+	/* Errors */
+	if (err)
+	{
+		cptr oops;
+
+		/* Error string */
+		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
+
+		/* Oops */
+		s_printf("Error %d at line %d of 'r_info.txt'.\n", err, error_line);
+		s_printf("Record %d contains a '%s' error.\n", error_idx, oops);
+		s_printf("Parsing '%s'.\n", buf);
+
+		/* Quit */
+		quit("Error in 'r_info.txt' file.");
+	}
+
+
+	/* Sort uniques for client-side list on chardump - C. Blue */
+	for (i = 0; i < MAX_R_IDX; i++) {
+		if (!(r_info[i].flags1 & RF1_UNIQUE)) continue;
+		idx[total++] = i;
+	}
+	/* bubble me up */
+	for (i = 0; i < total - 1; i++)
+	for (j = i + 1; j < total; j++)
+	if (r_info[idx[j]].level < r_info[idx[i]].level) {
+		tmp = idx[i];
+		idx[i] = idx[j];
+		idx[j] = tmp;
+	}
+	/* write back result */
+	for (i = 0; i < total; i++) {
+		r_info[idx[i]].u_idx = i;
+//s_printf("UNI #%d r_idx %d (lev %d)\n", i, idx[i], r_info[idx[i]].level);
+	}
+
+
+	/* Success */
+	return (0);
+}
+
+static errr reinit_k_info(void) {
+	errr err;
+
+	FILE *fp;
+
+	/* General buffer */
+	char buf[1024];
+
+	WIPE(k_head, header);
+
+	/*** Make the header ***/
+
+	/* Save the "version" */
+	k_head->v_major = VERSION_MAJOR;
+	k_head->v_minor = VERSION_MINOR;
+	k_head->v_patch = VERSION_PATCH;
+	k_head->v_extra = 0;
+
+	/* Save the "record" information */
+	k_head->info_num = MAX_K_IDX;
+	k_head->info_len = sizeof(object_kind);
+
+	/* Save the size of "k_head" and "k_info" */
+	k_head->head_size = sizeof(header);
+	k_head->info_size = k_head->info_num * k_head->info_len;
+
+	/*** Make the farrays ***/
+
+	/* Fake the size of "k_name" and "k_text" */
+	fake_name_size = 20 * 1024L;
+	fake_text_size = 60 * 1024L;
+
+	C_WIPE(k_info, k_head->info_num, object_kind);
+
+	/* Hack -- make "fake" arrays */
+	C_WIPE(k_name, fake_name_size, char);
+	C_WIPE(k_text, fake_text_size, char);
+
+	/*** Load the ascii template file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_GAME, "k_info.txt");
+
+	/* Open the file */
+	fp = my_fopen(buf, "r");
+
+	/* Parse it */
+	if (!fp) quit("Cannot open 'k_info.txt' file.");
+
+	/* Parse the file */
+	err = init_k_info_txt(fp, buf);
+
+	/* Close it */
+	my_fclose(fp);
+
+	/* Errors */
+	if (err)
+	{
+		cptr oops;
+
+		/* Error string */
+		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
+
+		/* Oops */
+		s_printf("Error %d at line %d of 'k_info.txt'.\n", err, error_line);
+		s_printf("Record %d contains a '%s' error.\n", error_idx, oops);
+		s_printf("Parsing '%s'.\n", buf);
+
+		/* Quit */
+		quit("Error in 'k_info.txt' file.");
+	}
+
+	/* Success */
+	return (0);
+}
+
+#if 0 /*not done*/
+static errr reinit_e_info(void) {
+	errr err;
+
+	FILE *fp;
+
+	/* General buffer */
+	char buf[1024];
+
+	int i, j;
+	s16b *e_tval_aux;
+
+
+	/*** Make the "header" ***/
+
+	/* Save the "version" */
+	e_head->v_major = VERSION_MAJOR;
+	e_head->v_minor = VERSION_MINOR;
+	e_head->v_patch = VERSION_PATCH;
+	e_head->v_extra = 0;
+
+	/* Save the "record" information */
+	e_head->info_num = MAX_E_IDX;
+	e_head->info_len = sizeof(ego_item_type);
+
+	/* Save the size of "e_head" and "e_info" */
+	e_head->head_size = sizeof(header);
+	e_head->info_size = e_head->info_num * e_head->info_len;
+
+
+	/*** Make the fake arrays ***/
+
+	/*** Load the ascii template file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_GAME, "e_info.txt");
+
+	/* Open the file */
+	fp = my_fopen(buf, "r");
+
+	/* Parse it */
+	if (!fp) quit("Cannot open 'e_info.txt' file.");
+
+	/* Parse the file */
+	err = init_e_info_txt(fp, buf);
+
+	/* Close it */
+	my_fclose(fp);
+
+	/* Errors */
+	if (err)
+	{
+		cptr oops;
+
+		/* Error string */
+		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
+
+		/* Oops */
+		s_printf("Error %d at line %d of 'e_info.txt'.\n", err, error_line);
+		s_printf("Record %d contains a '%s' error.\n", error_idx, oops);
+		s_printf("Parsing '%s'.\n", buf);
+
+		/* Quit */
+		quit("Error in 'e_info.txt' file.");
+	}
+
+	/* Build an array for fast access to ego types based on tval */
+	C_FREE(e_tval_size, TV_MAX, s16b);
+	C_FREE(e_tval, TV_MAX, s16b *);
+
+	C_MAKE(e_tval_size, TV_MAX, s16b);
+	C_MAKE(e_tval, TV_MAX, s16b *);
+	C_MAKE(e_tval_aux, TV_MAX, s16b);
+
+	for (i = 0; i < MAX_E_IDX; i++) {
+		ego_item_type *e_ptr = &e_info[i];
+
+		if (!e_ptr->name) continue;
+
+		for (j = 0; j < MAX_EGO_BASETYPES; j++) {
+			byte tval = e_ptr->tval[j];
+
+			if (tval < TV_MAX) {
+				e_tval_size[tval]++;
+			}
+		}
+	}
+
+	for (i = 0; i < TV_MAX; i++) {
+		if (e_tval_size[i]) {
+			C_MAKE(e_tval[i], e_tval_size[i], s16b);
+		}
+	}
+
+	for (i = 0; i < MAX_E_IDX; i++) {
+		ego_item_type *e_ptr = &e_info[i];
+
+		if (!e_ptr->name) continue;
+
+		for (j = 0; j < MAX_EGO_BASETYPES; j++) {
+			byte tval = e_ptr->tval[j];
+
+			if (tval < TV_MAX) {
+				e_tval[tval][e_tval_aux[tval]++] = i;
+			}
+		}
+	}
+
+	C_KILL(e_tval_aux, TV_MAX, s16b);
+
+	/* Success */
+	return (0);
+}
+
+static errr reinit_a_info(void) {
+	errr err;
+
+	FILE *fp;
+
+	/* General buffer */
+	char buf[1024];
+
+
+	/*** Make the "header" ***/
+
+	/* Save the "version" */
+	a_head->v_major = VERSION_MAJOR;
+	a_head->v_minor = VERSION_MINOR;
+	a_head->v_patch = VERSION_PATCH;
+	a_head->v_extra = 0;
+
+	/* Save the "record" information */
+	a_head->info_num = MAX_A_IDX;
+	a_head->info_len = sizeof(artifact_type);
+
+	/* Save the size of "a_head" and "a_info" */
+	a_head->head_size = sizeof(header);
+	a_head->info_size = a_head->info_num * a_head->info_len;
+
+	/*** Make the fake arrays ***/
+
+	/*** Load the ascii template file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_GAME, "a_info.txt");
+
+	/* Open the file */
+	fp = my_fopen(buf, "r");
+
+	/* Parse it */
+	if (!fp) quit("Cannot open 'a_info.txt' file.");
+
+	/* Parse the file */
+	err = init_a_info_txt(fp, buf);
+
+	/* Close it */
+	my_fclose(fp);
+
+	/* Errors */
+	if (err)
+	{
+		cptr oops;
+
+		/* Error string */
+		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
+
+		/* Oops */
+		s_printf("Error %d at line %d of 'a_info.txt'.\n", err, error_line);
+		s_printf("Record %d contains a '%s' error.\n", error_idx, oops);
+		s_printf("Parsing '%s'.\n", buf);
+
+		/* Quit */
+		quit("Error in 'a_info.txt' file.");
+	}
+
+	/* Success */
+	return (0);
+}
+#endif
+
+/* re-load various info files live (for HALLOWEEN/XMAS) - C. Blue */
+void reinit_some_arrays(void) {
+	s_printf("[Reinitializing arrays... (objects)]\n");
+	if (reinit_k_info()) quit("Cannot reinitialize objects");
+
+	s_printf("[Reinitializing arrays... (monsters)]\n");
+	if (reinit_r_info()) quit("Cannot reinitialize monsters");
+
+#if 0
+	s_printf("[Reinitializing arrays... (artifacts)]\n");
+	if (reinit_a_info()) quit("Cannot reinitialize artifacts");
+
+	s_printf("[Reinitializing arrays... (ego-items)]\n");
+	if (reinit_e_info()) quit("Cannot reinitialize ego-items");
+#endif
+
+	s_printf("[Reinitializing arrays... done]\n");
+}

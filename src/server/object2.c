@@ -1054,8 +1054,7 @@ s16b get_obj_num(int max_level, u32b resf)
 void object_known(object_type *o_ptr)
 {
 	/* Remove "default inscriptions" */
-	if (o_ptr->note && (o_ptr->ident & ID_SENSE))
-	{
+	if (o_ptr->note && (o_ptr->ident & ID_SENSE)) {
 		/* Access the inscription */
 		cptr q = quark_str(o_ptr->note);
 
@@ -1068,8 +1067,7 @@ void object_known(object_type *o_ptr)
 		    (streq(q, "excellent")) ||
 		    (streq(q, "worthless")) ||
 		    (streq(q, "special")) ||
-		    (streq(q, "terrible")))
-		{
+		    (streq(q, "terrible"))) {
 			/* Forget the inscription */
 			o_ptr->note = 0;
 		}
@@ -1086,10 +1084,7 @@ void object_known(object_type *o_ptr)
 
 	/* Artifact becomes 'found' status - omg it must already become
 	'found' if a player picks it up! That gave headaches! */
-	if (true_artifact_p(o_ptr))
-	{
-		handle_art_ipara(o_ptr->name1);
-	}
+	if (true_artifact_p(o_ptr)) handle_art_ipara(o_ptr->name1);
 
 }
 
@@ -1099,10 +1094,18 @@ void object_known(object_type *o_ptr)
 /*
  * The player is now aware of the effects of the given object.
  */
-void object_aware(int Ind, object_type *o_ptr)
-{
+void object_aware(int Ind, object_type *o_ptr) {
+	int i;
+
+	if (object_aware_p(Ind, o_ptr)) return;
+
 	/* Fully aware of the effects */
 	Players[Ind]->obj_aware[o_ptr->k_idx] = TRUE;
+
+	/* Make it refresh, although the object mem structure didn't change */
+	for (i = 0; i < INVEN_TOTAL; i++)
+		if (Players[Ind]->inventory[i].k_idx == o_ptr->k_idx)
+			Players[Ind]->inventory[i].changed = ~Players[Ind]->inventory[i].changed;
 }
 
 
@@ -1110,10 +1113,18 @@ void object_aware(int Ind, object_type *o_ptr)
 /*
  * Something has been "sampled"
  */
-void object_tried(int Ind, object_type *o_ptr)
-{
+void object_tried(int Ind, object_type *o_ptr) {
+	int i;
+
+	if (object_tried_p(Ind, o_ptr)) return;
+
 	/* Mark it as tried (even if "aware") */
 	Players[Ind]->obj_tried[o_ptr->k_idx] = TRUE;
+
+	/* Make it refresh, although the object mem structure didn't change */
+	for (i = 0; i < INVEN_TOTAL; i++)
+		if (Players[Ind]->inventory[i].k_idx == o_ptr->k_idx)
+			Players[Ind]->inventory[i].changed = ~Players[Ind]->inventory[i].changed;
 }
 
 
@@ -3066,8 +3077,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		/* Require same owner or convertable to same owner */
 //
 /*		if (o_ptr->owner != j_ptr->owner) return (FALSE); */
-	if (Ind)
-	{
+	if (Ind) {
 		p_ptr = Players[Ind];
 		if (((o_ptr->owner != j_ptr->owner)
 			&& ((p_ptr->lev < j_ptr->level)
@@ -3079,9 +3089,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		/* Require objects from the same modus! */
 		/* A non-everlasting player won't have his items stacked w/ everlasting stuff */
 		if (compat_pomode(Ind, j_ptr)) return(FALSE);
-	}
-	else
-	{
+	} else {
 		if (o_ptr->owner != j_ptr->owner) return (FALSE);
 		/* no stacks of unowned everlasting items in shops after a now-dead
 		   everlasting player sold an item to the shop before he died :) */
@@ -3089,8 +3097,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 	}
 
 	/* Analyze the items */
-	switch (o_ptr->tval)
-	{
+	switch (o_ptr->tval) {
 		/* Chests */
 		case TV_KEY:
 		case TV_CHEST:
@@ -3367,14 +3374,14 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 	/* An everlasting player will have _his_ items stack w/ non-everlasting stuff
 	   (especially new items bought in the shops) and convert them all to everlasting */
 	if (Ind && (p_ptr->mode & MODE_EVERLASTING)) {
-		o_ptr->owner_mode = MODE_EVERLASTING;
-		j_ptr->owner_mode = MODE_EVERLASTING;
+		o_ptr->mode = MODE_EVERLASTING;
+		j_ptr->mode = MODE_EVERLASTING;
 	}
 
 	/* A PvP-player will get his items convert to pvp-mode */
 	if (Ind && (p_ptr->mode & MODE_PVP)) {
-		o_ptr->owner_mode = MODE_PVP;
-		j_ptr->owner_mode = MODE_PVP;
+		o_ptr->mode = MODE_PVP;
+		j_ptr->mode = MODE_PVP;
 	}
 
 	/* They match, so they must be similar */
@@ -8064,7 +8071,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 
 #ifdef RPG_SERVER /* no objects are generated in Training Tower */                                        
 	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0 && cave_set_quietly) return;
-#endif 
+#endif
 
 	/* Require clean floor space */
 //	if (!cave_clean_bold(zcave, y, x)) return;
@@ -8235,7 +8242,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	/* Hack -- inscribe items that a unique drops */
 	if (unique_quark) {
 		forge.note = unique_quark;
-//		forge.note_priority = 1; currently correct erasing of this isn't implemented
+		forge.note_utag = strlen(quark_str(unique_quark)); /* mark this note as 'unique monster quark' */
 	}
 
 	forge.marked2 = removal_marker;
@@ -8460,7 +8467,7 @@ void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool 
 	/* Hack -- inscribe items that a unique drops */
 	if (unique_quark) {
 		o_ptr->note = unique_quark;
-//		o_ptr->note_priority = 1; currently correct erasing of this isn't implemented
+		o_ptr->note_utag = strlen(quark_str(unique_quark)); /* mark this note as 'unique monster quark' */
 	}
 //s_printf("object generated %d,%d,%d\n", o_ptr->tval, o_ptr->sval, o_ptr->k_idx);
 }
@@ -9302,7 +9309,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		/* Require floor space (or shallow terrain) -KMW- */
 //		if (!(f_info[c_ptr->feat].flags1 & FF1_FLOOR)) continue;
 		if (!cave_floor_bold(zcave, ny, nx) ||
-				cave_perma_bold(zcave, ny, nx)) continue;
+		    cave_perma_bold(zcave, ny, nx)) continue;
 
 		/* Obtain grid */
 		c_ptr = &zcave[ny][nx];
@@ -9314,8 +9321,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		k = 0;
 
 		/* Scan objects in that grid */
-		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
-		{
+		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx) {
 			object_type *j_ptr;
 
 			/* Acquire object */
@@ -9369,8 +9375,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 	}
 
 	/* Poor little object */
-	if (!flag)
-	{
+	if (!flag) {
 		/* Describe */
 		/*object_desc(o_name, o_ptr, FALSE, 0);*/
 
@@ -9414,13 +9419,12 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		break;
 	}
 
-	if(do_kill) {
+	if (do_kill) {
 #if 0 //needs adjustments
 		/* Effect "observed" */
 		if (!quiet && p_ptr->obj_vis[this_o_idx]) obvious = TRUE;
 		/* Artifacts, and other objects, get to resist */
-		if (is_art || ignore)
-		{
+		if (is_art || ignore) {
 			/* Observe the resist */
 			if (!quiet && p_ptr->obj_vis[this_o_idx]) {
 				msg_format(Ind, "The %s %s unaffected!",
@@ -9442,25 +9446,26 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 
 	/* Artifact always disappears, depending on tomenet.cfg flags */
 	/* this should be in drop_near_severe, would be cleaner sometime in the future.. */
-	//if (true_artifact_p(o_ptr) && !is_admin(p_ptr) && cfg.anti_arts_house && ((pick_house(wpos, ny, nx) != -1))
-	for (i = 0; i < num_houses; i++)
-		/* anyone willing to implement non-rectangular houses? */
-		if ((houses[i].flags & HF_RECT) && inarea(&houses[i].wpos, wpos))
-			for (bx = houses[i].x; bx < (houses[i].x + houses[i].coords.rect.width - 1); bx++)
-				for (by = houses[i].y; by < (houses[i].y + houses[i].coords.rect.height - 1); by++)
-					if ((bx == nx) && (by == ny)) inside_house = TRUE;
-	if (undepositable_artifact_p(o_ptr) && cfg.anti_arts_house && inside_house) {
-//		char	o_name[ONAME_LEN];
-//		object_desc(Ind, o_name, o_ptr, TRUE, 0);
-//		msg_format(Ind, "%s fades into the air!", o_name);
-		handle_art_d(o_ptr->name1);
-		return (-1);
+	if (wpos->wz == 0) { /* Assume houses are always on surface */
+		//if (true_artifact_p(o_ptr) && !is_admin(p_ptr) && cfg.anti_arts_house && ((pick_house(wpos, ny, nx) != -1))
+		for (i = 0; i < num_houses; i++)
+			/* anyone willing to implement non-rectangular houses? */
+			if ((houses[i].flags & HF_RECT) && inarea(&houses[i].wpos, wpos))
+				for (bx = houses[i].x; bx < (houses[i].x + houses[i].coords.rect.width - 1); bx++)
+					for (by = houses[i].y; by < (houses[i].y + houses[i].coords.rect.height - 1); by++)
+						if ((bx == nx) && (by == ny)) inside_house = TRUE;
+
+		if (undepositable_artifact_p(o_ptr) && cfg.anti_arts_house && inside_house) {
+//			char	o_name[ONAME_LEN];
+//			object_desc(Ind, o_name, o_ptr, TRUE, 0);
+//			msg_format(Ind, "%s fades into the air!", o_name);
+			handle_art_d(o_ptr->name1);
+			return (-1);
+		}
 	}
 
 	/* Scan objects in that grid for combination */
-	if (flag == 2)
-	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
-	{
+	if (flag == 2) for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx) {
 		object_type *q_ptr;
 
 		/* Acquire object */
@@ -9470,8 +9475,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		next_o_idx = q_ptr->next_o_idx;
 
 		/* Check for combination */
-		if (object_similar(0, q_ptr, o_ptr, 0x0))
-		{
+		if (object_similar(0, q_ptr, o_ptr, 0x0)) {
 			/* Combine the items */
 			object_absorb(0, q_ptr, o_ptr);
 
@@ -9485,8 +9489,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 
 	/* Successful drop */
 //	if (flag)
-	else
-	{
+	else {
 		/* Assume fails */
 //		flag = FALSE;
 
@@ -9501,8 +9504,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		o_idx = o_pop();
 
 		/* Success */
-		if (o_idx)
-		{
+		if (o_idx) {
 			/* Structure copy */
 			o_list[o_idx] = *o_ptr;
 
@@ -9537,10 +9539,22 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 				}
 			}
 
+			/* items dropped in pvp arena are deleted quickly - C. Blue */
+			if (wpos->wz == WPOS_PVPARENA_Z && wpos->wy == WPOS_PVPARENA_Y && wpos->wx == WPOS_PVPARENA_X)
+				o_ptr->marked2 = ITEM_REMOVAL_QUICK;
+
+
 			/* No monster */
 			o_ptr->held_m_idx = 0;
 
 			/* ToDo maybe: limit max stack size (by something like o_ptr->stack_pos) */
+#if 0 /* under construction; MAX_ITEMS_STACKING */
+			if (o_list[c_ptr->o_idx]->stack_pos >= MAX_ITEMS_STACKING) {
+				if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1); /* just paranoia here */
+				return (-1);
+			}
+			o_ptr->stack_pos = o_list[c_ptr->o_idx]->stack_pos + 1;
+#endif
 
 			/* Build a stack */
 			o_ptr->next_o_idx = c_ptr->o_idx;
@@ -9550,8 +9564,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			c_ptr->o_idx = o_idx;
 
 			/* Clear visibility flags */
-			for (k = 1; k <= NumPlayers; k++)
-			{
+			for (k = 1; k <= NumPlayers; k++) {
 				/* This player cannot see it */
 				Players[k]->obj_vis[o_idx] = FALSE;
 			}
@@ -9563,6 +9576,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			everyone_lite_spot(wpos, ny, nx);
 
 #ifdef USE_SOUND_2010
+			/* done in do_cmd_drop() atm */
 #else
 			/*sound(SOUND_DROP);*/
 #endif
@@ -9574,8 +9588,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 				msg_print("You feel something roll beneath your feet.");
 			}*/
 
-			if (chance && c_ptr->m_idx < 0)
-			{
+			if (chance && c_ptr->m_idx < 0) {
 				msg_print(0 - c_ptr->m_idx, "You feel something roll beneath your feet.");
 			}
 
@@ -9794,8 +9807,7 @@ void inven_item_increase(int Ind, int item, int num)
 	num -= o_ptr->number;
 
 	/* Change the number and weight */
-	if (num)
-	{
+	if (num) {
 		/* Add the number */
 		o_ptr->number += num;
 
@@ -10273,7 +10285,7 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 	if (!o_ptr->owner && !p_ptr->admin_dm)
 	{
 		o_ptr->owner = p_ptr->id;
-		o_ptr->owner_mode = p_ptr->mode;
+		o_ptr->mode = p_ptr->mode;
 	}
 #if 0
         if (!o_ptr->level)
@@ -10676,7 +10688,7 @@ void object_wipe(object_type *o_ptr)
 
 
 /*
- * Prepare an object based on an existing object
+ * Prepare an object based on an existing object: dest, src
  */
 void object_copy(object_type *o_ptr, object_type *j_ptr)
 {

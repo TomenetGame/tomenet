@@ -3,55 +3,19 @@
 /* by Relsiet/Andy Dubbeld (andy@foisdin.com) */
 
 /*
-Proposal for new runemastery class/spell system
+New runemastery class/spell system
 
-Spells are cast via a parsed incantation comprised of any combination of the runes that the player knows.
+Spells are created on the fly with an mkey interface as a combination of up to three rune elements, a modifier and a spell type.
 
-It uses an m-key interface.
+The spell characteristics (damage, radius and duration, fail-rate, cost, etc) of a spell are decided by the average of the caster's skill level in their rune skills, and are further modified by the 'successfulness' of a given cast (or how near/far you were to failing).
 
-All combinations of runes should do something.
+Spells can always be attempted, but penalties are applied for failing cast an attempted spell, and difficulty increases when the caster is impaired (Missing a rune, blind, confused, stunned, not enough mp, etc).
 
-There are three parts to a runic incantation:
-	1. The effect, which is up to five different runes which combine to form an effect type
-	2. The imperative, which is one of eight magic words, which govern the tone of the spell, and influence power, cost, fail-rates and dangerousness of a spell.
-	3. The method is the spell-type (self,bolt,beam,ball,wave,cloud or LOS)
-	
-The spell characteristics (damage, radius and duration, fail-rate, cost, etc) of a spell are decided by the average of the caster's skill level in each rune.
+This makes runemastery quite versatile, but also quite risky.
 
-Penalties are applied for casting spells when unable to look at the runes. (Missing a rune, blind, confused, stunned, etc.)
-
-If a spell fails by a little bit, the spell might still be cast. Either way, in the case of failure the caster might be: (depending on severity)
-	hit by some of the spell-element,
-	blinded, confused, slowed, cut or poisoned,
-	charged extra mp,
-	driven partly insane,
-	drained of stats,
-	given the black breath,
-	killed.
-	
-So the versatility of this runemaster is balanced by its riskiness.
-
-The spells are similar to Istari spells, but focused on flashiness rather than practicality. There's lots of spells, but not all of them are equally useful, and they're all dangerous.
-
-His primary stats are Int and Dex.
-
-He should have a skill for each pair of opposing runes. The skill should grant basic resistance to the elements it governs by lv 50 (but never immunity).
+Primary stats are Int and Dex.
 
 A high level rune-master (lv 50) should only have a few runes skilled > 40.
-
-Skill tree:
-
-- Magic						1.000 [1.000]
-	- Rune Mastery
-		. Heat & Cold			1.000 [0.900]
-		. Water & Acid	 		0.000 [0.900]
-		. Lightning	& Earth		0.000 [0.800]
-		. Wind & Poison			1.000 [0.800]
-		. Mana & Chaos			0.000 [0.700]
-		. Force	& Gravity		0.000 [0.700]
-		. Nether & Time			0.000 [0.600]
-		. Mind & Nexus			0.000 [0.600]
-
 */
 
 #include "angband.h"
@@ -59,6 +23,12 @@ Skill tree:
 #ifdef ENABLE_RCRAFT
 
 #define R_CAP 60 // / 100
+
+/* Limit adventurers so they cannot utilize 3-runes-spells?
+   Reason is that one rune school might give them ~ 15 utility spells,
+   which is about 3x as much as they'd get from any other spell school. */
+#define LIMIT_NON_RUNEMASTERS
+
 
 byte execute_rspell (u32b Ind, byte dir, u32b spell, byte imperative);
 s16b rspell_time(u32b Ind, byte imperative);
@@ -409,77 +379,68 @@ Returns a byte of penalty flags.
 byte rspell_penalty(u32b Ind, u16b pow)
 {
 	player_type *p_ptr = Players[Ind];
-	u16b x = 0; u16b r = 1; u16b num = 60; u16b i = 0; u16b y = 0;
-	byte pen = 0;
-	s16b tmp;
+	u16b roll = 0;
+	u16b penalties = 1;
+	u16b threshold = 60;
+	u16b i = 0;
+	u16b check = 0;
+	byte penalty_flag = 0;
 	
-#if 0
-	while(1)
-		if (pow>num)
-		{
-			r+=1;
-			num+=20;
-		}
-		else
-			break;
-#else
-	if (pow > num) {
-		tmp = (pow - 41) / (num - 40);
-		r += tmp;
-		num += tmp * 20;
-	}
-#endif
-	
-	for(i=0;i<r;i++)
+	if (pow > threshold)
 	{
-		x=randint(pow);
+		penalties += ((pow - threshold) / 20);
+	}
+	
+	for(i=0; i<penalties; i++)
+	{
+		roll = randint(pow);
 		
-		y = randint(50);
-		if (y>(10+p_ptr->luck_cur))
+		check = randint(100);
+		if (check > (10 + p_ptr->luck))
 		{
-			if (x>320)
+			if (roll > 320)
 			{
-				pen |= RPEN_MAJ_DT;
+				penalty_flag |= RPEN_MAJ_DT;
 				break;
 			}
-			else if (x>270)
+			else if (roll > 270)
 			{
-				pen |= RPEN_MAJ_BB;
+				penalty_flag |= RPEN_MAJ_BB;
 				break;
 			}
-			else if (x>220)
+			else if (roll > 220)
 			{
-				pen |= RPEN_MAJ_BK;
+				penalty_flag |= RPEN_MAJ_BK;
 				break;
 			}
-			else if (x>160)
+			else if (roll > 160)
 			{
-				pen |= RPEN_MAJ_SN;
+				penalty_flag |= RPEN_MAJ_SN;
 				break;
 			}
-			else if (x>110)
+			else if (roll > 110)
 			{
-				pen |= RPEN_MIN_ST;
+				penalty_flag |= RPEN_MIN_ST;
 				break;
 			}
-			else if (x>80)
+			else if (roll > 80)
 			{
-				pen |= RPEN_MIN_HP;
+				penalty_flag |= RPEN_MIN_HP;
 				break;
 			}
-			else if (x>50)
+			else if (roll > 50)
 			{
-				pen |= RPEN_MIN_SP;
+				penalty_flag |= RPEN_MIN_SP;
 				break;
 			}
-			else if (x>25)
+			else if (roll > 25)
 			{
-				pen |= RPEN_MIN_RN;
+				penalty_flag |= RPEN_MIN_RN;
 				break;
 			}
 		}
 	}
-	return pen;
+	return penalty_flag;
 }
 
 
@@ -492,7 +453,7 @@ Destroys runes, inflicts damage and other negative effects on player Ind.
 u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cost, u32b s_type, char * attacker, byte imperative, u32b s_flags)
 {
 	player_type *p_ptr = Players[Ind];
-	int mod_luck = p_ptr->luck_cur+10; //Player's current luck as a positive value between 0 and 50
+	int mod_luck = p_ptr->luck+10; //Player's current luck as a positive value between 0 and 50
 	u16b d = 0;
 	
 	byte runes[16];
@@ -520,7 +481,7 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 			o_ptr = &p_ptr->inventory[i];
 
 			/* Give this item slot a shot at death */
-			if (o_ptr)
+			if (o_ptr->k_idx)
 			{
 				
 				if (o_ptr->tval == TV_RUNE2)
@@ -908,12 +869,15 @@ u32b rspell_type (u32b flags)
 u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration, s16b cost, u32b type, s16b difficulty, byte imper, u32b type_flags, u16b s_av, s16b mali)
 /* Now that we have some numbers and figures to work with, cast the spell. MP is deducted here, and negative spell effects/failure stuff happens here. */
 {
-	u16b m, y, x, t;
+	u16b m, y, x;
 	u16b fail_chance = 0;
 	s16b margin = 0;
 	s16b modifier = 100;
 	s16b cost_m = 0;
 	int success = 0;
+//	int t = 0;
+//	int brand_type = 0;
+//	int d = 0;
 	char * description = NULL;
 	char * begin = NULL;
 	fail_chance = randint(100);
@@ -929,9 +893,15 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 	
 	s16b speed_max = modifier_value; //6 - 15
 	s16b speed = 0;
+	speed = damage / 13;
+	speed = (speed > speed_max ? speed_max : speed);
+	speed = (speed < 2 ? 2 : speed);	
 	
 	s16b shield_max = modifier_value * 3;//18 - 45
 	s16b shield = 0;
+	shield = damage / 20;
+	shield = shield > shield_max ? shield_max : shield;
+	shield = shield < 5 ? 5 : shield;
 	
 	s16b spell_duration = 0;
 	s16b spell_damage = 0;
@@ -957,6 +927,8 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 		begin = "\377sYou";
 	}
 	
+	modifier = 100 + margin/6;
+	
 	if (margin < -80)
 	{
 		description = " \377rfail \377sto";
@@ -970,28 +942,24 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 	else if (margin < -10)
 	{
 		description = " barely manage to";
-		modifier = 85;
 	}
 	else if (margin < 10)
 	{
 		description = " clumsily";
-		modifier = 93;
 	}
 	else if (margin < 60)
 	{
 		description = "";
-		modifier = 100;
 	}
 	else if (margin < 80)
 	{
-		modifier = 107;
 		description = " effectively";
 	}
 	else
 	{
-		modifier = 115;
 		description = " elegantly";
 	}
+
 	
 	if ((type_flags & R_SELF) && 
 		(((type == RT_MAGIC_CIRCLE) && !allow_terraforming(&p_ptr->wpos, FEAT_GLYPH)) ||
@@ -1008,6 +976,9 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 		
 		damage = (damage * modifier) / 100;
 		duration = (duration * modifier) / 100;
+		speed = (speed * modifier) / 100;
+		speed_max = (speed_max * modifier) / 100;
+		shield = (shield * modifier) / 100;
 		
 		cost_m = 100 - modifier;
 		cost += (cost * cost_m) / 100;
@@ -1044,7 +1015,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 							cave_set_feat_live(&p_ptr->wpos, (p_ptr->py + y - 1), (p_ptr->px + x - 1), FEAT_GLYPH);
 						}
 					}
-					p_ptr->redraw |= PR_MAP;
+//done in cave_set_feat_live() now:	p_ptr->redraw |= PR_MAP;
 				}
 				else if (!istown(&p_ptr->wpos))
 				{
@@ -1073,13 +1044,8 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			case RT_MYSTIC_SHIELD:
 				msg_format(Ind, "%s%s summon %s mystic protection. (%i turns)", begin, description, r_imperatives[imper].name, duration);
 				
-				//+AC ranges from 5 to 45
 				if (success)
 				{
-					shield = damage / 20;
-					shield = shield > shield_max ? shield_max : shield;
-					shield = shield < 5 ? 5 : shield;
-					
 					(void)set_shield(Ind, duration, shield, SHIELD_NONE, 0, 0);
 				}
 				break;
@@ -1115,10 +1081,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			
 			case RT_TRAUMATURGY:
 				//Ranges from 2 to 22 bonus points
-				speed_max = speed_max * 15 / 10;
-				speed = damage / 13;
-				speed = (speed > speed_max ? speed_max : speed);
-				speed = (speed < 2 ? 2 : speed);
+				speed = speed * 15 / 10;
 				
 				msg_format(Ind, "%s%s summon a %s otherworldly bloodlust. (%i turns)", begin, description, r_imperatives[imper].name, duration);
 				
@@ -1157,7 +1120,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			
 			case RT_RESISTANCE:
 				spell_duration = duration / 10;
-				spell_duration = spell_duration > 25 ? 25 : spell_duration;
+				spell_duration = spell_duration > 35 ? 35 : spell_duration;
 				spell_duration = spell_duration < 5 ? 5 : spell_duration;
 				msg_format(Ind, "%s%s summon %s elemental protection. (%i turns)", begin, description, r_imperatives[imper].name, spell_duration);
 				
@@ -1262,14 +1225,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				
 				if (success)
 				{
-					speed = damage / 13 + 2;
-					
-					speed_max = 9 + (speed_max / 5 - 1) * 2; //Range from 9 - 13, depending on modifier
-					
-					if (speed > speed_max)
-					{
-						speed = speed_max;
-					}
+					speed += 2;
 					
 					set_fast(Ind, duration, speed);
 				}
@@ -1374,7 +1330,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				{
 					if (level>10)
 					{
-						destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR);
+						destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR, 120);
 					}
 					else
 					{
@@ -1504,7 +1460,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				
 			case RT_STEALTH:
 				msg_format(Ind, "%s%s cast a %s rune of stealth.", begin, description, r_imperatives[imper].name);
-				
+				//This should be changed to a timed spell...
 				/* Unset */
 				if (success)
 				{
@@ -1521,17 +1477,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					/* Set */
 					else
 					{
-						speed = randint(damage / 2);
-						speed_max /= 2; //3 - 8
-						
-						if (speed > speed_max)
-						{
-							speed = speed_max;
-						}
-						if (speed < 2)
-						{
-							speed = 2;
-						}
+						speed /= 2; //Stealth ranges from 1-11
 						
 						printf("Set %s's stealth buff to %i\n", p_ptr->name, speed);
 						p_ptr->rune_stealth = speed;
@@ -1622,14 +1568,8 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				
 				if (success)
 				{
-					if (level > 15)
-					{
-						set_shield(Ind, duration, damage, SHIELD_GREAT_FIRE, SHIELD_GREAT_FIRE, 0);
-					}
-					else
-					{
-						set_shield(Ind, duration, damage, SHIELD_FIRE, SHIELD_FIRE, 0);
-					}
+					shield = shield * 6 / 10; //60% of the +AC given by the equivalent Mystic Shield
+					set_shield(Ind, duration, shield, SHIELD_FIRE, SHIELD_FIRE, 0);
 				}
 				break;
 			
@@ -1710,13 +1650,6 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 		}
 		else if (type_flags & R_BOLT || type_flags & R_BEAM)
 		{
-			t = 0;
-			
-			if (type_flags & R_BEAM)
-			{
-				t = 1;
-			}
-				
 			if (type==RT_DIG) //Regular bolt and beam will stop before the wall
 			{
 				int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
@@ -1730,7 +1663,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			}
 			else
 			{
-				if (t==0)
+				if (type_flags & R_BOLT)
 				{
 					sprintf(p_ptr->attacker, " summons a bolt of %s for", runespell_list[type].title);
 					msg_format(Ind, "%s%s summon a %s bolt of %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
@@ -1760,16 +1693,18 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 	}
 	else
 	{
-		/* The damage is implied by the "drawing on  your reserves" message, though not explicitly, so the damage message has been removed. */
+		/* The damage is implied by the "Exhausted, ..." message, so not explicitly stated. */
 		take_hit(Ind, (cost-p_ptr->csp), "magical exhaustion", 0);
 		p_ptr->csp = 0;
 	}
+	
+	p_ptr->redraw |= PR_MANA;
 	
 	if (margin < 0)
 	{
 		difficulty = (difficulty+mali>0 ? difficulty+mali : 0);
 		difficulty = (difficulty-margin>0 ? difficulty-margin : 0);
-		rspell_do_penalty(Ind, rspell_penalty(Ind, difficulty), damage, duration, cost, gf_type, "",  imper, type_flags); //Then do the self-harm
+		rspell_do_penalty(Ind, rspell_penalty(Ind, difficulty), damage, duration, cost, gf_type, "",  imper, type_flags);
 	}
 	
 	p_ptr->energy -= rspell_time(Ind, imper);
@@ -1779,8 +1714,6 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 		p_ptr->shooting_till_kill = TRUE;
 		p_ptr->shooty_till_kill = FALSE;
 	}
-	
-	p_ptr->redraw |= PR_MANA;
 	
 	return 0;
 }
@@ -1806,12 +1739,34 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative)
 	s_dam = rspell_dam(Ind, &radius, &duration, s_type, s_flags, s_av, imperative);
 	s_diff = rspell_diff(Ind, imperative, s_cost, s_av, s_type, s_flags, &mali);
 	
-	/* Time to cast can be varied up to 20% by the active spell modifier. */
+	/* Time to cast can be varied by the active spell modifier. */
 	if (p_ptr->energy < rspell_time(Ind, imperative))
 	{
 		return 0;
 	}
-	
+
+	/* Probably paranoia, since rune-able classes should have none of these (except ftk) */
+	break_cloaking(Ind, 5);
+	break_shadow_running(Ind);
+	stop_precision(Ind);
+//	stop_shooting_till_kill(Ind);
+
+	/* AM checks for runes assume that not the person is emitting the magic, but the runes are! */
+	if (check_antimagic(Ind, 100))
+	{
+		return 0;
+	}
+	if (p_ptr->anti_magic && (s_flags & R_SELF)) {
+		msg_format(Ind, "\377%cYour anti-magic shell absorbs the spell.", COLOUR_AM_OWN);
+		return 0;
+	}
+
+	/* school spell casting interference chance used for this */
+	if (interfere(Ind, cfg.spell_interfere)) return 0;
+
+	/* (S)he is no longer afk */
+	un_afk_idle(Ind);
+
 	if (check_antimagic(Ind, 100))
 	{
 		return 0;
@@ -1829,7 +1784,19 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative)
 		msg_print(Ind, "\377rThis is not a runespell.");
 		return 0;
 	}
-	
+
+#ifdef LIMIT_NON_RUNEMASTERS
+	{
+		int runes = 0, bit;
+		for (bit = 8; bit < 32; bit++)
+			if (s_flags & (1 << bit)) runes++;
+		if (runes > 2 && p_ptr->pclass != CLASS_RUNEMASTER) {
+			msg_print(Ind, "\377rYou are not adept enough to draw more than two runes.");
+			return 0;
+		}
+	}
+#endif
+
 	if (p_ptr->shoot_till_kill)
 	{
 		if (is_attack(s_flags))
@@ -1850,7 +1817,11 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative)
 					return 0;
 				
 				/* Cancel if we're going to automatically wake new monsters */
+#ifndef PY_PROJ_ON_WALL
 				if (!projectable_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE))
+#else
+				if (!projectable_wall_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE))
+#endif
 					return 0;
 				
 				/* Cancel if we're going to exhaust ourselves */

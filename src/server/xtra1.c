@@ -28,6 +28,10 @@
 /* Allow ego monsters in Arena Challenge global event? */
 #define GE_ARENA_ALLOW_EGO
 
+/* Experimental and also silly ;) - reward players for wearing arts of similar name - C. Blue */
+#define EQUIPMENT_SET_BONUS
+
+
 
 /*
  * Converts stat num into a six-char (right justified) string
@@ -891,7 +895,7 @@ static void prt_frame_basic(int Ind)
 	int i;
 
 	/* Race and Class */
-	Send_char_info(Ind, p_ptr->prace, p_ptr->pclass, p_ptr->male, p_ptr->mode);
+	Send_char_info(Ind, p_ptr->prace, p_ptr->pclass, p_ptr->ptrait, p_ptr->male, p_ptr->mode);
 
 	/* Title */
 	prt_title(Ind);
@@ -1664,7 +1668,8 @@ void calc_hitpoints(int Ind)
         mhp += get_skill_scale(p_ptr, SKILL_HEALTH, 100);
 
  #ifdef ENABLE_DIVINE
-	if (p_ptr->prace == RACE_DIVINE && (p_ptr->divinity == DIVINE_DEMON)) {
+	/* Extra bonus hp (2 per level) for the evil path */
+	if (p_ptr->prace == RACE_DIVINE && (p_ptr->ptrait == TRAIT_CORRUPTED)) {
 		mhp += (p_ptr->lev - 20) * 2;
 	}
  #endif
@@ -1691,7 +1696,7 @@ void calc_hitpoints(int Ind)
 	    /* cap final HP against ~2300 */
 //	    finalHP = (100000 / ((100000 / finalHP) + 20));
 #endif
-#if 0 /* fairer for using non-uber forms; still bad for races with high HD (thunderlord) */
+#if 0 /* fairer for using non-uber forms; still bad for races with high HD (Draconian) */
 	    mHPLim = (50000 / ((50000 / rhp) + 20));
 	    if (mHPLim < mhp) {
 		    levD = p_ptr->lev - r_ptr->level;
@@ -1754,6 +1759,14 @@ void calc_hitpoints(int Ind)
 	if (!p_ptr->body_monster) p_ptr->form_hp_ratio = 100;
 	else p_ptr->form_hp_ratio = (mhp * 100) / mhp_playerform;
 
+#ifdef ENABLE_DIVINE
+	/* Bonus from RACE_DIVINE */
+	if (p_ptr->divine_hp > 0) {
+		/* count as if from item? */
+		p_ptr->to_l += p_ptr->divine_hp_mod;
+	}
+#endif
+
 	/* Bonus from +LIFE items (should be weapons only -- not anymore, Bladeturner / Randarts etc.!).
 	   Also, cap it at +3 (boomerang + weapon could result in +6) (Boomerangs can't have +LIFE anymore) */
 	if (!is_admin(p_ptr) && p_ptr->to_l > 3) p_ptr->to_l = 3;
@@ -1770,7 +1783,9 @@ void calc_hitpoints(int Ind)
 #if 1
 	if (p_ptr->body_monster) {
 		/* add flat bonus to maximum HP limit for char levels > 50, if form is powerful, to keep it useful */
-		mhp += p_ptr->lev > 50 ? (((p_ptr->lev - 50) * ((r_info[p_ptr->body_monster].level > 80 ? 80 : r_info[p_ptr->body_monster].level) + 30)) / 100) * 8 : 0;
+		mhp += p_ptr->lev > 50 ?
+		    (((p_ptr->lev - 50) * ((r_info[p_ptr->body_monster].level > 80 ? 80 :
+		    r_info[p_ptr->body_monster].level) + 30)) / 100) * 8 : 0;
 	}
 #endif
 
@@ -1954,29 +1969,32 @@ static void calc_body_bonus(int Ind)
 	Rand_value = p_ptr->mimic_seed;
 	Rand_quick = TRUE;
 
-	if (!r_ptr->body_parts[BODY_WEAPON])
-	{
+	if (!r_ptr->body_parts[BODY_WEAPON]) {
 		wepless = TRUE;
 //		p_ptr->num_blow = 0;
 		p_ptr->num_blow = 1;
 	}
 
 	d = 0; n = 0;
-	for (i = 0; i < 4; i++)
-	{
+	for (i = 0; i < 4; i++) {
 		j = (r_ptr->blow[i].d_dice * r_ptr->blow[i].d_side);
 
 		if (j) n++;
 		
-		switch (r_ptr->blow[i].effect)
-		{
-			case RBE_EXP_10:	case RBE_EXP_20:	case RBE_EXP_40:	case RBE_EXP_80:
-			p_ptr->hold_life = TRUE;
+		switch (r_ptr->blow[i].effect) {
+			case RBE_EXP_10:
+			case RBE_EXP_20:
+			case RBE_EXP_40:
+			case RBE_EXP_80:
+				p_ptr->hold_life = TRUE;
+				break;
+			case RBE_SHATTER:
+				p_ptr->stat_add[A_STR]++;
+				break;
 		}
 
 		/* Hack -- weaponless combat */
-		if (wepless && j)
-		{
+		if (wepless && j) {
 //MA overrides this anyways:
 //			p_ptr->num_blow++;
 //			j *= 2;
@@ -1991,11 +2009,11 @@ static void calc_body_bonus(int Ind)
 	/* 0..147 (greater titan) -> 0..5 -> -1..+4 */
 	i = (((15000 / ((15000 / d) + 50)) / 29) - 1);
 	if (strstr(r_name + r_ptr->name, "bear") && (r_ptr->flags3 & RF3_ANIMAL)) i++; /* Bears get +1 STR */
-	if (r_ptr->flags3 & RF3_TROLL) i+=1;
-	if (r_ptr->flags3 & RF3_GIANT) i+=1;
+	if (r_ptr->flags3 & RF3_TROLL) i += 1;
+	if (r_ptr->flags3 & RF3_GIANT) i += 1;
 	if ((r_ptr->flags3 & RF3_DRAGON) && (strstr(r_name + r_ptr->name, "Mature ") ||
 	    (r_ptr->d_char == 'D')))
-		i+=1; /* only +1 since more bonus is coming from its damage already */
+		i += 1; /* only +1 since more bonus is coming from its damage already */
 	p_ptr->stat_add[A_STR] += i;
 
 #if 0
@@ -2041,13 +2059,10 @@ static void calc_body_bonus(int Ind)
 		    (((p_ptr->dis_ac * 2) + (toac * 1)) / 3) :
 		    (((p_ptr->dis_ac * 1) + (toac * 1)) / 2);*/
 #endif
-	if (r_ptr->speed < 110)
-	{
+	if (r_ptr->speed < 110) {
 		/* let slowdown not be that large that players will never try that form */
 		p_ptr->pspeed = 110 - (((110 - r_ptr->speed) * 20) / 100);
-	}
-	else
-	{
+	} else {
 		/* let speed bonus not be that high that players won't try any slower form */
 		//p_ptr->pspeed = (((r_ptr->speed - 110) * 30) / 100) + 110;//was 50%, 30% for RPG_SERVER originally
 		//Pfft, include the -speed into the calculation, too. Seems lame how -speed is counted for 100% but not + bonus.
@@ -2057,7 +2072,7 @@ static void calc_body_bonus(int Ind)
 	}
 
 #if 0 /* Should forms affect your searching/perception skills? Probably not. */
-#if 0
+ #if 0
 	/* Base skill -- searching ability */
 	p_ptr->skill_srh /= 2;
 	p_ptr->skill_srh += r_ptr->aaf / 10;
@@ -2065,13 +2080,13 @@ static void calc_body_bonus(int Ind)
 	/* Base skill -- searching frequency */
 	p_ptr->skill_fos /= 2;
 	p_ptr->skill_fos += r_ptr->aaf / 10;
-#else
+ #else
 	/* Base skill -- searching ability */
 	p_ptr->skill_srh += r_ptr->aaf / 20 - 5;
 
 	/* Base skill -- searching frequency */
 	p_ptr->skill_fos += r_ptr->aaf / 20 - 5;
-#endif
+ #endif
 #endif
 
 	/* Stealth ability is influenced by weight (-> size) of the monster */
@@ -2094,17 +2109,25 @@ static void calc_body_bonus(int Ind)
 	if ((r_ptr->flags4 & (RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3)) &&	/* 1=BOW,2=XBOW,3=SLING; 4=generic missile */
 	    (p_ptr->inventory[INVEN_BOW].k_idx) && (p_ptr->inventory[INVEN_BOW].tval == TV_BOW))
 	{
-#if 0 /* normal way to handle xbow <-> sling/bow shot frequency */
+#if 0
+ #if 0 /* normal way to handle xbow <-> sling/bow shot frequency */
 		if ((p_ptr->inventory[INVEN_BOW].sval == SV_SLING) ||
 		    (p_ptr->inventory[INVEN_BOW].sval == SV_SHORT_BOW) ||
 		    (p_ptr->inventory[INVEN_BOW].sval == SV_LONG_BOW)) p_ptr->num_fire++;
 		if (r_ptr->freq_inate > 30) p_ptr->num_fire++; /* this time for crossbows too */
-#else /* give xbow an advantage */
-		if (r_ptr->freq_inate > 30) 
+ #else /* give xbow an advantage */
+		if (r_ptr->freq_inate > 30)
 		if ((p_ptr->inventory[INVEN_BOW].sval == SV_SLING) ||
 		    (p_ptr->inventory[INVEN_BOW].sval == SV_SHORT_BOW) ||
 		    (p_ptr->inventory[INVEN_BOW].sval == SV_LONG_BOW)) p_ptr->num_fire++;
 		p_ptr->num_fire++; /* this time for crossbows too */
+ #endif
+#else /* xbows only get +1ES from fast shooters, not already from slower ARROW_ shooters */
+		if ((p_ptr->inventory[INVEN_BOW].sval == SV_SLING) ||
+		    (p_ptr->inventory[INVEN_BOW].sval == SV_SHORT_BOW) ||
+		    (p_ptr->inventory[INVEN_BOW].sval == SV_LONG_BOW)) p_ptr->num_fire++;
+		if (r_ptr->freq_inate > 30)
+			p_ptr->num_fire++; /* this time for crossbows too */
 #endif
 	}
 
@@ -2131,8 +2154,7 @@ static void calc_body_bonus(int Ind)
 
 
 	/* Racial boni depending on the form's race */
-	switch(p_ptr->body_monster)
-	{
+	switch(p_ptr->body_monster) {
 		/* Bats get feather falling */
 		case 37:	case 114:	case 187:	case 235:	case 351:
 		case 377:	case 391:	case 406:	case 484:	case 968:
@@ -2270,17 +2292,15 @@ static void calc_body_bonus(int Ind)
 	/* Trolls/Giants get sustain_str */
 	if((r_ptr->flags3 & RF3_TROLL) || (r_ptr->flags3 & RF3_GIANT)) p_ptr->sustain_str = TRUE;
 
-	/* Thunderlords get feather_fall, ESP_DRAGON */
-	if(r_ptr->flags3 & RF3_DRAGONRIDER)
-	{
+	/* Draconian get feather_fall, ESP_DRAGON */
+	if(r_ptr->flags3 & RF3_DRAGONRIDER) {
 	        p_ptr->feather_fall = TRUE;
 		if (p_ptr->lev >= 5) p_ptr->telepathy |= ESP_DRAGON;
 		if (p_ptr->lev >= 30) p_ptr->fly = TRUE;
 	}
 
 	/* Undead get lots of stuff similar to player ghosts */
-	if(r_ptr->flags3 & RF3_UNDEAD)
-	{
+	if(r_ptr->flags3 & RF3_UNDEAD) {
 		/* p_ptr->see_inv = TRUE;
 		p_ptr->resist_neth = TRUE;
 		p_ptr->hold_life = TRUE;
@@ -2540,15 +2560,27 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	if(!(r_ptr->flags2 & RF2_PASS_WALL) && p_ptr->tim_wraith)
 		p_ptr->tim_wraith = 1;
 
-
 	/* Update the innate spells */
+	calc_body_spells(Ind);
+
+	/* restore RNG */
+	Rand_quick = FALSE;
+}
+
+/* update innate spells */
+void calc_body_spells(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	monster_race *r_ptr;
+
+	/* If in the player body nothing has to be done */
+	if (!p_ptr->body_monster) return;
+
+	r_ptr = &r_info[p_ptr->body_monster];
+
 	p_ptr->innate_spells[0] = r_ptr->flags4 & RF4_PLAYER_SPELLS;
 	p_ptr->innate_spells[1] = r_ptr->flags5 & RF5_PLAYER_SPELLS;
 	p_ptr->innate_spells[2] = r_ptr->flags6 & RF6_PLAYER_SPELLS;
 	Send_spell_info(Ind, 0, 0, 0, "nothing");
-
-	/* restore RNG */
-	Rand_quick = FALSE;
 }
 
 #if 0	// moved to defines.h
@@ -2899,10 +2931,20 @@ void calc_boni(int Ind)
 	bool wepless = FALSE;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 
-	    u32b f1, f2, f3, f4, f5, esp;
-		s16b pval;
+	u32b f1, f2, f3, f4, f5, esp;
+	s16b pval;
 
 	bool old_auto_id = p_ptr->auto_id;
+
+#ifdef EQUIPMENT_SET_BONUS
+	/* for boni of artifact "sets" ie arts of (about) identical name - C. Blue */
+	int equipment_set[INVEN_TOTAL - INVEN_WIELD], equipment_set_amount[INVEN_TOTAL - INVEN_WIELD];
+	char equipment_set_name[INVEN_TOTAL - INVEN_WIELD][80];
+	int equipment_set_bonus = 0;
+	char tmp_name[ONAME_LEN], *tmp_name_ptr;
+
+	for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++) equipment_set[i] = 0;
+#endif
 
 	/* Save the old speed */
 	old_speed = p_ptr->pspeed;
@@ -3004,7 +3046,7 @@ void calc_boni(int Ind)
 	p_ptr->can_swim = FALSE;
 	p_ptr->climb = FALSE;
 	p_ptr->pass_trees = FALSE;
-	p_ptr->luck_cur = 0;
+	p_ptr->luck = 0;
         p_ptr->reduc_fire = 0;
         p_ptr->reduc_cold = 0;
         p_ptr->reduc_elec = 0;
@@ -3110,18 +3152,13 @@ void calc_boni(int Ind)
 
 
 	/* Calc bonus body */
-	if(p_ptr->body_monster)
-	{
-		calc_body_bonus(Ind);
-
-	}
-	else	// if if or switch to switch, that is the problem :)
+	if (p_ptr->body_monster) calc_body_bonus(Ind);
+	else {	// if if or switch to switch, that is the problem :)
 			/* I vote for p_info ;) */
-	{
-        	/* Update the innate spells */
-	        p_ptr->innate_spells[0] = 0x0;
-        	p_ptr->innate_spells[1] = 0x0;
-	        p_ptr->innate_spells[2] = 0x0;
+		/* Update the innate spells */
+		p_ptr->innate_spells[0] = 0x0;
+		p_ptr->innate_spells[1] = 0x0;
+		p_ptr->innate_spells[2] = 0x0;
 		Send_spell_info(Ind, 0, 0, 0, "nothing");
 
 		/* Start with "normal" speed */
@@ -3133,7 +3170,7 @@ void calc_boni(int Ind)
 #endif
 
 		/* Bats get +10 speed ... they need it!*/
-		if (p_ptr->fruit_bat){
+		if (p_ptr->fruit_bat) {
 			if (p_ptr->fruit_bat == 1)
 				p_ptr->pspeed += 10; //disabled due to bat-party-powerlevel-cheezing
 //				p_ptr->pspeed += (3 + (p_ptr->lev > 49 ? 7 : p_ptr->lev / 7)); // +10 eventually.
@@ -3147,6 +3184,7 @@ void calc_boni(int Ind)
 	/* Choosing a race just for its HP or low exp% shouldn't be what we want -C. Blue- */
 	}
 
+
 	/* Half-Elf */
 	if (p_ptr->prace == RACE_HALF_ELF) {
 		p_ptr->resist_lite = TRUE;
@@ -3159,8 +3197,7 @@ void calc_boni(int Ind)
 	}
 
 	/* Hobbit */
-	else if (p_ptr->prace == RACE_HOBBIT)
-	{
+	else if (p_ptr->prace == RACE_HOBBIT) {
 		p_ptr->sustain_dex = TRUE;
 
 		/* DEX bonus for NOT wearing shoes */
@@ -3174,8 +3211,7 @@ void calc_boni(int Ind)
 	else if (p_ptr->prace == RACE_GNOME) p_ptr->free_act = TRUE;
 
 	/* Dwarf */
-	else if (p_ptr->prace == RACE_DWARF)
-	{
+	else if (p_ptr->prace == RACE_DWARF) {
 		p_ptr->resist_blind = TRUE;
 		/* not while in mimicried form */
 		if(!p_ptr->body_monster)
@@ -3192,8 +3228,7 @@ void calc_boni(int Ind)
 	else if (p_ptr->prace == RACE_DUNADAN) p_ptr->sustain_con = TRUE;
 
 	/* High Elf */
-	else if (p_ptr->prace == RACE_HIGH_ELF)
-	{
+	else if (p_ptr->prace == RACE_HIGH_ELF) {
 		p_ptr->resist_lite = TRUE;
 		p_ptr->see_inv = TRUE;
 		p_ptr->resist_time = TRUE;
@@ -3203,23 +3238,18 @@ void calc_boni(int Ind)
 	else if (p_ptr->prace == RACE_YEEK) {
 		p_ptr->feather_fall = TRUE;
 		/* not while in mimicried form */
-		if(!p_ptr->body_monster)
-		{
-			p_ptr->pass_trees = TRUE;
-		}
+		if(!p_ptr->body_monster) p_ptr->pass_trees = TRUE;
 	}
 
 	/* Goblin */
-	else if (p_ptr->prace == RACE_GOBLIN)
-	{
+	else if (p_ptr->prace == RACE_GOBLIN) {
 		p_ptr->resist_dark = TRUE;
 		/* not while in mimicried form */
 		/*if(!p_ptr->body_monster) p_ptr->feather_fall = TRUE;*/
 	}
 
 	/* Ent */
-	else if (p_ptr->prace == RACE_ENT)
-	{
+	else if (p_ptr->prace == RACE_ENT) {
 		/* always a bit slowish */
 		p_ptr->slow_digest = TRUE;
 		/* even while in different form? */
@@ -3245,9 +3275,8 @@ void calc_boni(int Ind)
 		if (p_ptr->lev >= 50) p_ptr->telepathy |= ESP_EVIL;
 	}
 
-	/* Thunderlord (former DragonRider) */
-	else if (p_ptr->prace == RACE_DRIDER)
-	{
+	/* Draconian (former Dragonrider, Thunderlord) */
+	else if (p_ptr->prace == RACE_DRIDER) {
 		/* not while in mimicried form */
 		if(!p_ptr->body_monster) p_ptr->feather_fall = TRUE;
 
@@ -3262,8 +3291,7 @@ void calc_boni(int Ind)
 	}
 
 	/* Dark-Elves */
-        else if (p_ptr->prace == RACE_DARK_ELF)
-        {
+        else if (p_ptr->prace == RACE_DARK_ELF) {
 		p_ptr->suscep_lite = TRUE;
 //		p_ptr->suscep_good = TRUE;//maybe too harsh
                 p_ptr->resist_dark = TRUE;
@@ -3271,8 +3299,7 @@ void calc_boni(int Ind)
         }
 
         /* Vampires */
-        else if (p_ptr->prace == RACE_VAMPIRE)
-        {
+        else if (p_ptr->prace == RACE_VAMPIRE) {
 		p_ptr->suscep_lite = TRUE;
 		p_ptr->suscep_good = TRUE;
 		p_ptr->suscep_life = TRUE;
@@ -3295,7 +3322,7 @@ void calc_boni(int Ind)
 			p_ptr->telepathy |= ESP_DEMON;
 			p_ptr->telepathy |= ESP_GOOD;
 //		}
-		if (p_ptr->divinity==DIVINE_ANGEL) {
+		if (p_ptr->ptrait==TRAIT_ENLIGHTENED) {
 			p_ptr->cur_lite += 1 + (p_ptr->lev-20) / 4; //REAL light!
 			if (p_ptr->lev>=20) {
 				p_ptr->resist_lite = TRUE;
@@ -3308,7 +3335,13 @@ void calc_boni(int Ind)
 				p_ptr->sh_cold = TRUE;
 				p_ptr->fly = TRUE;
 			}
-		} else if (p_ptr->divinity==DIVINE_DEMON) {
+			
+			/* Bonus resistance for the good side */
+			if (p_ptr->divine_xtra_res_time_mana > 0) {
+				p_ptr->resist_time = 0;
+				p_ptr->resist_mana = 0; 
+			}
+		} else if (p_ptr->ptrait==TRAIT_CORRUPTED) {
 			if (p_ptr->lev>=20) {
 				p_ptr->resist_fire = TRUE;
 				p_ptr->resist_dark = TRUE;
@@ -3318,13 +3351,66 @@ void calc_boni(int Ind)
 				p_ptr->resist_pois = TRUE;
 				p_ptr->sh_fire = TRUE;
 			}
+	
+			/* Bonus crit for the bad side */
+			if (p_ptr->divine_crit > 0) {
+				p_ptr->xtra_crit = p_ptr->divine_crit_mod;
+			}
 		} 
 	}
 #endif
 
 
-	if (p_ptr->pclass == CLASS_RANGER)
-		if (p_ptr->lev >= 20) p_ptr->pass_trees = TRUE;
+	/* Apply boni from racial special traits */
+	switch (p_ptr->ptrait) {
+	case TRAIT_NONE: /* N/A */
+	default:
+		break;
+	case TRAIT_BLUE: /* Draconic Blue */
+		p_ptr->resist_elec = TRUE;
+		break;
+	case TRAIT_WHITE: /* Draconic White */
+		p_ptr->resist_cold = TRUE;
+		break;
+	case TRAIT_RED: /* Draconic Red */
+		p_ptr->resist_fire = TRUE;
+		break;
+	case TRAIT_BLACK: /* Draconic Black */
+		p_ptr->resist_acid = TRUE;
+		break;
+	case TRAIT_GREEN: /* Draconic Green */
+		p_ptr->resist_pois = TRUE;
+		break;
+	case TRAIT_MULTI: /* Draconic Multi-hued */
+		p_ptr->regenerate = TRUE;
+		break;
+	case TRAIT_BRONZE: /* Draconic Bronze */
+		p_ptr->resist_conf = TRUE;
+		break;
+	case TRAIT_SILVER: /* Draconic Silver */
+		p_ptr->resist_cold = TRUE;
+		break;
+	case TRAIT_GOLD: /* Draconic Gold */
+		p_ptr->resist_sound = TRUE;
+		break;
+	case TRAIT_LAW: /* Draconic Law */
+		p_ptr->resist_shard = TRUE;
+		break;
+	case TRAIT_CHAOS: /* Draconic Chaos */
+		p_ptr->resist_conf = TRUE;
+		break;
+	case TRAIT_BALANCE: /* Draconic Balance */
+		p_ptr->resist_disen = TRUE;
+		break;
+	case TRAIT_POWER: /* Draconic Power */
+		p_ptr->regenerate = TRUE;
+		break;
+	}
+
+	if (p_ptr->pclass == CLASS_RANGER) {
+		if (p_ptr->lev >= 15) p_ptr->pass_trees = TRUE;
+		if (p_ptr->lev >= 25) p_ptr->can_swim = TRUE;
+	}
 
 	if (p_ptr->pclass == CLASS_SHAMAN)
 		if (p_ptr->lev >= 20) p_ptr->see_inv = TRUE;
@@ -3337,15 +3423,16 @@ void calc_boni(int Ind)
 		else if (p_ptr->lev >= 10) p_ptr->reduce_insanity = 1;
 	}
 
+
 	/* Check ability skills */
 	if (get_skill(p_ptr, SKILL_CLIMB) >= 1) p_ptr->climb = TRUE;
 	if (get_skill(p_ptr, SKILL_FLY) >= 1) p_ptr->fly = TRUE;
 	if (get_skill(p_ptr, SKILL_FREEACT) >= 1) p_ptr->free_act = TRUE;
 	if (get_skill(p_ptr, SKILL_RESCONF) >= 1) p_ptr->resist_conf = TRUE;
 
+
 	/* Compute antimagic */
-	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
-	{
+	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
 //		p_ptr->anti_magic = TRUE;	/* it means 95% saving-throw!! */
 #ifdef NEW_ANTIMAGIC_RATIO
 		p_ptr->antimagic += get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 50);
@@ -3357,8 +3444,7 @@ void calc_boni(int Ind)
 	}
 
 	/* Ghost */
-	if (p_ptr->ghost)
-	{
+	if (p_ptr->ghost) {
 		p_ptr->see_inv = TRUE;
 		/* p_ptr->resist_neth = TRUE;
 		p_ptr->hold_life = TRUE; */
@@ -3380,11 +3466,9 @@ void calc_boni(int Ind)
 
 
 	/* Hack -- apply racial/class stat maxes */
-	if (p_ptr->maximize)
-	{
+	if (p_ptr->maximize) {
 		/* Apply the racial modifiers */
-		for (i = 0; i < 6; i++)
-		{
+		for (i = 0; i < 6; i++) {
 			/* Modify the stats for "race" */
 			/* yeek mimic no longer rocks too much */
 //			if (!p_ptr->body_monster) p_ptr->stat_add[i] += (p_ptr->rp_ptr->r_adj[i]);
@@ -3394,10 +3478,8 @@ void calc_boni(int Ind)
 	}
 
        	/* Apply the racial modifiers */
-	if (p_ptr->mode & MODE_HARD)
-	{
-		for (i = 0; i < 6; i++)
-		{
+	if (p_ptr->mode & MODE_HARD) {
+		for (i = 0; i < 6; i++) {
 			/* Modify the stats for "race" */
 			p_ptr->stat_add[i]--;
 		}
@@ -3405,8 +3487,7 @@ void calc_boni(int Ind)
 	
 
 	/* Hack -- the dungeon master gets +50 speed. */
-	if (p_ptr->admin_dm) 
-	{
+	if (p_ptr->admin_dm) {
 		p_ptr->pspeed += 50;
 		p_ptr->telepathy |= ESP_ALL;
 	}
@@ -3415,8 +3496,7 @@ void calc_boni(int Ind)
 	p_ptr->total_weight = 0;
 	p_ptr->inven_cnt = 0;
 
-	for (i = 0; i < INVEN_PACK; i++)
-	{
+	for (i = 0; i < INVEN_PACK; i++) {
 		o_ptr = &p_ptr->inventory[i];
 
 		/* Skip missing items */
@@ -3434,14 +3514,57 @@ void calc_boni(int Ind)
 	p_ptr->dis_to_h_ranged += p_ptr->focus_val; 
 
 	/* Scan the usable inventory */
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
-	{
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
 		k_ptr = &k_info[o_ptr->k_idx];
 		pval = o_ptr->pval;
 
 		/* Skip missing items */
 		if (!o_ptr->k_idx) continue;
+
+#ifdef EQUIPMENT_SET_BONUS
+		if (o_ptr->name1 == ART_RANDART) {
+			/* paranoia maybe? Make sure name4 field has been set: */
+			randart_name(o_ptr, tmp_name, tmp_name);
+			/* compare */
+			for (j = 0; j < i - INVEN_WIELD; j++)
+				if (equipment_set[j] == o_ptr->name4 + 1) {
+					equipment_set_amount[j]++;
+					break;
+				} else if (!strcmp(equipment_set_name[j], tmp_name)) {
+					equipment_set_amount[j]++;
+					/* for faster randart handling in future loop passes (pft) */
+					equipment_set[j] = o_ptr->name4 + 1;
+					break;
+				}
+			if (j == i - INVEN_WIELD) {
+				equipment_set[j] = o_ptr->name4 + 1;
+				equipment_set_amount[j] = 1;
+				/* and for true arts: */
+				strcpy(equipment_set_name[j], tmp_name);
+			}
+		} else if (o_ptr->name1) {
+			strcpy(tmp_name, a_name + a_info[o_ptr->name1].name);
+			tmp_name_ptr = tmp_name;
+			/* trim leading and terminating ' characters */
+			if (tmp_name[0] == '\'') {
+				tmp_name_ptr++;
+				tmp_name[strlen(tmp_name_ptr)] = 0;
+			/* trim leading "of " */
+			} else if (tmp_name[0] == 'o' && tmp_name[1] == 'f' && tmp_name[2] == ' ')
+				tmp_name_ptr += 3;
+			/* compare */
+			for (j = 0; j < i - INVEN_WIELD; j++)
+				if (!strcmp(equipment_set_name[j], tmp_name_ptr)) {
+					equipment_set_amount[j]++;
+					break;
+				}
+			if (j == i - INVEN_WIELD) {
+				strcpy(equipment_set_name[j], tmp_name_ptr);
+				equipment_set_amount[j] = 1;
+			}
+		}
+#endif
 
 		p_ptr->total_weight += o_ptr->weight * o_ptr->number;
 
@@ -3475,8 +3598,7 @@ void calc_boni(int Ind)
 		 * parameter.
 		 */
 		/* If we have any base bonuses to add, add them */
-		if (k_ptr->flags1 & TR1_PVAL_MASK)
-		{
+		if (k_ptr->flags1 & TR1_PVAL_MASK) {
 			/* Affect stats */
 			if (k_ptr->flags1 & TR1_STR) p_ptr->stat_add[A_STR] += o_ptr->bpval;
 			if (k_ptr->flags1 & TR1_INT) p_ptr->stat_add[A_INT] += o_ptr->bpval;
@@ -3522,22 +3644,29 @@ void calc_boni(int Ind)
 			}
 
     	        	/* Affect life capacity */
-        	        if (f1 & (TR1_LIFE))
-				if ((o_ptr->name1 != ART_RANDART) || p_ptr->total_winner ||
-#if 0 /* changed, didn't seem to make that much sense? - C. Blue */
+        	        if (f1 & (TR1_LIFE)) {
+				if ((o_ptr->name1 != ART_RANDART) ||
+#if 0
+				    p_ptr->total_winner ||
+ #if 0 /* changed, didn't seem to make that much sense? - C. Blue */
 				    (p_ptr->once_winner && cfg.fallenkings_etiquette && p_ptr->lev >= 50) ||
-				    (p_ptr->lev >= o_ptr->level))
-#else /* a bit different, hopefully doing better, also catching badly mutated +life arts after randart.c changes! */
-				    (p_ptr->once_winner && cfg.fallenkings_etiquette))
+				    (p_ptr->lev >= o_ptr->level)) {
+ #else /* a bit different, hopefully doing better, also catching badly mutated +life arts after randart.c changes! */
+				    (p_ptr->once_winner && cfg.fallenkings_etiquette)) {
+ #endif
+#else /* guarantee consistency */
+//				    make_resf(p_ptr) & RESF_LIFE) {
+				    p_ptr->total_winner) {
 #endif
 					p_ptr->to_l += o_ptr->bpval;
+				}
+			}
 
 		}
 
-		if (k_ptr->flags5 & TR5_PVAL_MASK)
-		{
+		if (k_ptr->flags5 & TR5_PVAL_MASK) {
 			if (f5 & TR5_DISARM) p_ptr->skill_dis += (o_ptr->bpval) * 5;
-			if (f5 & TR5_LUCK) p_ptr->luck_cur += o_ptr->bpval;
+			if (f5 & TR5_LUCK) p_ptr->luck += o_ptr->bpval;
 #if 1 /* this is too much for dual-wield, done in calc_blows_obj() now */
 /* There are no known weapons so far that adds to crit intrinsically. */
 			if (f5 & TR5_CRIT) p_ptr->xtra_crit += o_ptr->bpval;
@@ -3577,8 +3706,7 @@ void calc_boni(int Ind)
 		*/
 #if 1
 //		if (o_ptr->name2 && o_ptr->tval!=TV_RING) // pls see apply_magic ;)
-		if (o_ptr->name2)
-		{
+		if (o_ptr->name2) {
 			artifact_type *a_ptr;
 	 	
 			a_ptr =	ego_make(o_ptr);
@@ -3586,13 +3714,11 @@ void calc_boni(int Ind)
 			f5 &= ~(k_ptr->flags5 & TR5_PVAL_MASK & ~a_ptr->flags5);
 
 			/* Hack: Stormbringer! */
-			if (o_ptr->name2 == EGO_STORMBRINGER)
-			{
+			if (o_ptr->name2 == EGO_STORMBRINGER) {
 				p_ptr->stormbringer = TRUE;
 				break_cloaking(Ind, 0);
 				break_shadow_running(Ind);
-				if (cfg.use_pk_rules == PK_RULES_DECLARE)
-				{
+				if (cfg.use_pk_rules == PK_RULES_DECLARE) {
 					p_ptr->pkill|=PKILL_KILLABLE;
 					if (!(p_ptr->pkill & PKILL_KILLER) &&
 							!(p_ptr->pkill & PKILL_SET))
@@ -3601,8 +3727,7 @@ void calc_boni(int Ind)
 			}
 		}
 
-		if (o_ptr->name1 == ART_RANDART)
-		{
+		if (o_ptr->name1 == ART_RANDART) {
 			artifact_type *a_ptr;
 	 	
 			a_ptr =	randart_make(o_ptr);
@@ -3621,7 +3746,7 @@ void calc_boni(int Ind)
 		if (f1 & TR1_CHR) p_ptr->stat_add[A_CHR] += pval;
 
                 /* Affect luck */
-                if (f5 & (TR5_LUCK)) p_ptr->luck_cur += pval;
+                if (f5 & (TR5_LUCK)) p_ptr->luck += pval;
 
                 /* Affect spell power */
 //                if (f1 & (TR1_SPELL)) p_ptr->to_s += pval;
@@ -3822,8 +3947,7 @@ void calc_boni(int Ind)
 		if (f2 & TR2_SUST_CHR) p_ptr->sustain_chr = TRUE;
 
 		/* PernA flags */
-                if (f3 & (TR3_WRAITH))
-		{
+                if (f3 & (TR3_WRAITH)) {
 			//p_ptr->wraith_form = TRUE;
 			if (!(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) &&
 			    !(p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)))
@@ -3980,11 +4104,27 @@ void calc_boni(int Ind)
 	if (p_ptr->mode & MODE_HARD) p_ptr->to_m = (p_ptr->to_m * 2) / 3;
 
 	/* Check for temporary blessings */
-	if (p_ptr->bless_temp_luck) p_ptr->luck_cur += p_ptr->bless_temp_luck_power;
+	if (p_ptr->bless_temp_luck) p_ptr->luck += p_ptr->bless_temp_luck_power;
+
+#ifdef EQUIPMENT_SET_BONUS
+	for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++) {
+		if (!equipment_set[i]) continue;
+		if (equipment_set_amount[i] > equipment_set_bonus)
+			equipment_set_bonus = equipment_set_amount[i];
+	}
+	if (equipment_set_bonus >= 2) {
+//		equipment_set_bonus = (equipment_set_bonus * equipment_set_bonus) / 2;
+		equipment_set_bonus = (equipment_set_bonus * equipment_set_bonus);
+//		equipment_set_bonus = (equipment_set_bonus - 1) * 4;
+		/* just prevent numerical overflows in p_ptr->luck (paranoiaish) */
+		if (equipment_set_bonus > 40) equipment_set_bonus = 40;
+		p_ptr->luck += equipment_set_bonus;
+	}
+#endif
 
 	if (p_ptr->antimagic > ANTIMAGIC_CAP) p_ptr->antimagic = ANTIMAGIC_CAP; /* AM cap */
-	if (p_ptr->luck_cur < -10) p_ptr->luck_cur = -10; /* luck caps at -10 */
-	if (p_ptr->luck_cur > 40) p_ptr->luck_cur = 40; /* luck caps at 40 */
+	if (p_ptr->luck < -10) p_ptr->luck = -10; /* luck caps at -10 */
+	if (p_ptr->luck > 40) p_ptr->luck = 40; /* luck caps at 40 */
 
 	p_ptr->sun_burn = FALSE;
 	if ((p_ptr->prace == RACE_VAMPIRE ||
@@ -4314,6 +4454,7 @@ void calc_boni(int Ind)
 				msg_print(Ind, "\374\377yHINT: You won't get any benefits from dual-wielding if your armour is");
 				msg_print(Ind, "\374\377y      too heavy; in that case, consider using one weapon together with");
 				msg_print(Ind, "\374\377y      a shield, or -if your STR is very high- try a two-handed weapon.");
+				s_printf("warning_dual: %s\n", p_ptr->name);
 			}
 		}
 		/* do we still wear armour, and are still rogue or dual-wielding? */
@@ -4407,10 +4548,10 @@ void calc_boni(int Ind)
 			w = p_ptr->total_weight;
 
 			/* Extract the "weight limit" (in tenth pounds) */
-			i = weight_limit(Ind);
+			i = weight_limit(Ind) + 500;
 
 			/* XXX XXX XXX Apply "encumbrance" from weight */
-			if (w> i/5) k -= ((w - (i/5)) / (i / 10));
+			if (w > i / 5) k -= ((w - (i / 5)) / (i / 10));
 
 			/* Assume unencumbered */
 			p_ptr->cumber_weight = FALSE;
@@ -4466,8 +4607,8 @@ void calc_boni(int Ind)
 					p_ptr->skill_stl += k;
 				}
 			}
-			else
-			    p_ptr->cumber_weight = TRUE;
+			else p_ptr->cumber_weight = TRUE;
+
 			if (p_ptr->old_cumber_weight != p_ptr->cumber_weight) {
 				if (p_ptr->cumber_weight)
 					msg_print(Ind, "\377RYou can't move freely due to your backpack weight.");
@@ -5450,6 +5591,20 @@ void calc_boni(int Ind)
 
 
 
+	/* mali for blocking/parrying */
+	if (p_ptr->paralyzed || p_ptr->stun >= 100) {
+		p_ptr->shield_deflect /= 4;
+		p_ptr->weapon_parry = 0;
+		/* also give a stealth bonus? (Sav's suggestion) */
+	} else if (p_ptr->blind || p_ptr->confused) {
+		p_ptr->shield_deflect /= 3;
+		p_ptr->weapon_parry /= 3;
+	} else if (p_ptr->stun) {
+		p_ptr->shield_deflect /= 2;
+		p_ptr->weapon_parry /= 2;
+	}
+
+
 
 	/* Redraw plusses to hit/damage if necessary */
 	if ((p_ptr->dis_to_h != old_dis_to_h) || (p_ptr->dis_to_d != old_dis_to_d)) {
@@ -5547,7 +5702,6 @@ void calc_boni(int Ind)
 	/* - SKILL_HCURING gives extra high regeneration in regen function, and reduces various effects */
 //	if (get_skill(p_ptr, SKILL_HCURING) >= 50) p_ptr->reduce_insanity = 1;
 	/* - SKILL_HSUPPORT renders DG/TY_CURSE effectless and prevents hunger */
-
 
 
 	/* Take note when "heavy bow" changes */
@@ -5787,7 +5941,9 @@ void calc_boni(int Ind)
 
 
 	/* warning messages, mostly for newbies */
-	if (p_ptr->num_blow == 1 && old_num_blow > 1 && p_ptr->warning_bpr == 0 &&
+	if (p_ptr->max_plv <= 15 && /* limit, so it won't annoy priests anymore who use zeal spell */
+	    p_ptr->num_blow == 1 && old_num_blow > 1 &&
+	    p_ptr->warning_bpr == 0 &&
 	    p_ptr->inventory[INVEN_WIELD].k_idx && is_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
 		p_ptr->warning_bpr = 1;
 		msg_print(Ind, "\374\377yWARNING! Your number of melee attacks per round has just dropped to ONE.");
@@ -5796,6 +5952,7 @@ void calc_boni(int Ind)
 		msg_print(Ind, "\374\377yPossible reasons are: Weapon is too heavy; too little STR or DEX; You");
 		msg_print(Ind, "\374\377y    just equipped too heavy armour or a shield - depending on your class.");
 		msg_print(Ind, "\374\377y    Also, some classes can dual-wield to get an extra blow/round.");
+		s_printf("warning_bpr: %s\n", p_ptr->name);
 	}
 	if (p_ptr->max_plv == 1 &&
 	    p_ptr->num_blow == 1 && old_num_blow == 1 && p_ptr->warning_bpr3 == 2 &&
@@ -5808,6 +5965,7 @@ void calc_boni(int Ind)
 		msg_print(Ind, "\374\377yPossible reasons are: Weapon is too heavy; too little STR or DEX; You");
 		msg_print(Ind, "\374\377y    just equipped too heavy armour or a shield - depending on your class.");
 		msg_print(Ind, "\374\377y    Also, some classes can dual-wield to get an extra blow/round.");
+		s_printf("warning_bpr23: %s\n", p_ptr->name);
 	}
 }
 
@@ -6051,7 +6209,7 @@ void redraw_stuff(int Ind)
 	if (p_ptr->redraw & PR_MISC)
 	{
 		p_ptr->redraw &= ~(PR_MISC);
-		Send_char_info(Ind, p_ptr->prace, p_ptr->pclass, p_ptr->male, p_ptr->mode);
+		Send_char_info(Ind, p_ptr->prace, p_ptr->pclass, p_ptr->ptrait, p_ptr->male, p_ptr->mode);
 	}
 
 	if (p_ptr->redraw & PR_TITLE)
@@ -6311,8 +6469,7 @@ void handle_stuff(int Ind)
  * Start a global_event (highlander tournament etc.) - C. Blue
  * IMPORTANT: Ind may be 0 if this is called from custom.lua !
  */
-int start_global_event(int Ind, int getype, char *parm)
-{
+int start_global_event(int Ind, int getype, char *parm) {
 	int n, i;
 	player_type *p_ptr = NULL;
 	global_event_type *ge;
@@ -6348,19 +6505,19 @@ int start_global_event(int Ind, int getype, char *parm)
 	ge->paused = FALSE;
 	ge->paused_turns = 0; /* counter for real turns the event "missed" while being paused */
 	for (i = 0; i < 64; i++) {/* yeah I could use WIPE.. */
-	        ge->state[i]=0;
-		ge->participant[i]=0;
-		ge->extra[i]=0;
+	        ge->state[i] = 0;
+		ge->participant[i] = 0;
+		ge->extra[i] = 0;
 	}
-	ge->end_turn=0;
-	ge->ending=0;
+	ge->end_turn = 0;
+	ge->ending = 0;
 	strcpy(ge->title, "(UNTITLED EVENT)");
 	for (i = 0; i<6; i++) strcpy(ge->description[i], "");
 	strcpy(ge->description[0], "(NO DESCRIPTION AVAILABLE)");
-	ge->hidden=FALSE;
-	ge->min_participants=0; /* no minimum */
-	ge->limited=0; /* no maximum */
-	ge->cleanup=0; /* no cleaning up needed so far (for when the event ends) */
+	ge->hidden = FALSE;
+	ge->min_participants = 0; /* no minimum */
+	ge->limited = 0; /* no maximum */
+	ge->cleanup = 0; /* no cleaning up needed so far (for when the event ends) */
 
 	/* IMPORTANT: state[0] == 255 is used as indicator that cleaning-up must be done, event has ended. */
 	switch(getype) {
@@ -6459,7 +6616,7 @@ int start_global_event(int Ind, int getype, char *parm)
 /*
  * Stop a global event :(
  */
-void stop_global_event(int Ind, int n){
+void stop_global_event(int Ind, int n) {
 	global_event_type *ge = &global_event[n];
 	msg_format(Ind, "Wiping event #%d of type %d.", n+1, ge->getype);
 	s_printf("%s EVENT_STOP: #%d of type %d\n", showtime(), n+1, ge->getype);
@@ -6493,7 +6650,7 @@ void announce_global_event(int ge_id) {
 /*
  * A player signs on for a global_event - C. Blue
  */
-void global_event_signup(int Ind, int n, cptr parm){
+void global_event_signup(int Ind, int n, cptr parm) {
 	int i, p, max_p, r_found = 0, r_found_len = 99;
 	bool r_impossible = FALSE, fake_signup = FALSE;
 	global_event_type *ge = &global_event[n];
@@ -6683,8 +6840,7 @@ void global_event_signup(int Ind, int n, cptr parm){
 /*
  * Process a global event - C. Blue
  */
-static void process_global_event(int ge_id)
-{
+static void process_global_event(int ge_id) {
 	global_event_type *ge = &global_event[ge_id];
 	player_type *p_ptr;
 	object_type forge, *o_ptr = &forge; /* for creating a reward, for example */
@@ -6740,7 +6896,7 @@ static void process_global_event(int ge_id)
 							Players[j]->global_event_type[ge_id] = GE_NONE;
 					ge->getype = GE_NONE;
 				} else {
-					msg_broadcast_format(0, "\377C[>>%s starts now!<<]", ge->title);
+					msg_broadcast_format(0, "\374\377C[>>%s starts now!<<]", ge->title);
 				}
 			}
 		} else {
@@ -6810,10 +6966,12 @@ static void process_global_event(int ge_id)
 			if (!wild_info[wpos.wy][wpos.wx].dungeon) {
 				/* add staircase downwards into the dungeon? */
 				if (!ge->extra[5]) {
-					adddungeon(&wpos, 1, 50, DF1_NO_RECALL, DF2_IRON |
+					s_printf("EVENT_LAYOUT: Adding dungeon (no entry).\n");
+					add_dungeon(&wpos, 1, 50, DF1_NO_RECALL, DF2_IRON |
 					    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK, FALSE, 0);
 				} else {
-					adddungeon(&wpos, 1, 50, DF1_NO_RECALL, DF2_IRON |
+					s_printf("EVENT_LAYOUT: Adding dungeon (entry ok).\n");
+					add_dungeon(&wpos, 1, 50, DF1_NO_RECALL, DF2_IRON |
 					    DF2_NO_ENTRY_WOR | DF2_NO_ENTRY_PROB | DF2_NO_ENTRY_FLOAT | DF2_NO_EXIT_MASK, FALSE, 0);
 
 					/* place staircase on an empty accessible grid */
@@ -6829,6 +6987,8 @@ static void process_global_event(int ge_id)
 
 					sector00downstairs++;
 				}
+			} else {
+				s_printf("EVENT_LAYOUT: Dungeon already in place.\n");
 			}
 
 			for (i = 1; i <= NumPlayers; i++)
@@ -6857,7 +7017,7 @@ static void process_global_event(int ge_id)
 			        o_ptr->discount = 0;
 			        o_ptr->ident |= ID_MENTAL;
 			        o_ptr->owner = p_ptr->id;
-			        o_ptr->owner_mode = p_ptr->mode;
+			        o_ptr->mode = p_ptr->mode;
 			        object_aware(i, o_ptr);
 		        	object_known(o_ptr);
 				inven_carry(i, o_ptr);
@@ -6874,7 +7034,7 @@ static void process_global_event(int ge_id)
 			n = 0;
 			k = 0;
 			for (i = 1; i <= NumPlayers; i++)
-				if (!is_admin(Players[i]) && !Players[i]->wpos.wx && !Players[i]->wpos.wy) {
+				if (!Players[i]->admin_dm && !Players[i]->wpos.wx && !Players[i]->wpos.wy) {
 					n++;
 					j = i;
 					/* count players who have already been kicked out of the dungeon by pseudo-dieing */
@@ -6899,7 +7059,7 @@ static void process_global_event(int ge_id)
 			n = 0;
 			k = 0;
 			for (i = 1; i <= NumPlayers; i++)
-				if (!is_admin(Players[i]) && !Players[i]->wpos.wx && !Players[i]->wpos.wy) {
+				if (!Players[i]->admin_dm && !Players[i]->wpos.wx && !Players[i]->wpos.wy) {
 					n++;
 					j = i;
 					if (!Players[i]->wpos.wz) k++;
@@ -6929,7 +7089,7 @@ static void process_global_event(int ge_id)
 
 			for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
-				if (is_admin(p_ptr) || p_ptr->wpos.wx || p_ptr->wpos.wy) continue;
+				if (p_ptr->admin_dm || p_ptr->wpos.wx || p_ptr->wpos.wy) continue;
 
 				if (p_ptr->party) {
 					for (j = 1; j <= NumPlayers; j++) {
@@ -6949,7 +7109,7 @@ static void process_global_event(int ge_id)
 					        p_ptr->inventory[j].discount = 0;
 					        p_ptr->inventory[j].ident |= ID_MENTAL;
 					        p_ptr->inventory[j].owner = p_ptr->id;
-					        p_ptr->inventory[j].owner_mode = p_ptr->mode;
+					        p_ptr->inventory[j].mode = p_ptr->mode;
 					        object_aware(i, &p_ptr->inventory[j]);
 				        	object_known(&p_ptr->inventory[j]);
 					}
@@ -6982,7 +7142,7 @@ static void process_global_event(int ge_id)
 					wiz_lite(i); /* no tourneys at night, chars with low IV lose */
 					teleport_player(i, 200, TRUE);
 					/* in case some player waited in a NO_TELE vault..!: */
-					if (p_ptr->wpos.wz && !is_admin(p_ptr)) {
+					if (p_ptr->wpos.wz && !p_ptr->admin_dm) {
 						msg_print(i, "\377rThe whole dungeon suddenly COLLAPSES!");
 						strcpy(p_ptr->died_from,"a mysterious accident");
 						p_ptr->global_event_temp = PEVF_NONE; /* clear no-WoR/perma-death/no-death flags */
@@ -6997,7 +7157,7 @@ static void process_global_event(int ge_id)
 			/* NOTE: the mysterious-accident is deprecated, since we use extra[5] now */
 			n = 0;
 			for (i = 1; i <= NumPlayers; i++) {
-				if (is_admin(Players[i])) continue;
+				if (Players[i]->admin_dm) continue;
 				/* in case some player tries to go > again^^ */
 				if (!Players[i]->wpos.wx && !Players[i]->wpos.wy && Players[i]->wpos.wz
 				    && Players[i]->global_event_type[ge_id] == GE_HIGHLANDER) {
@@ -7112,7 +7272,7 @@ static void process_global_event(int ge_id)
 
 			/* remove temporary Highlander dungeon! */
 			if (wild_info[wpos.wy][wpos.wx].dungeon)
-				remdungeon(&wpos, FALSE);
+				rem_dungeon(&wpos, FALSE);
 
 			wild_info[wpos.wy][wpos.wx].type = ge->extra[1];
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
@@ -7244,8 +7404,7 @@ static void process_global_event(int ge_id)
 /*
  * Process running global_events - C. Blue
  */
-void process_global_events(void)
-{
+void process_global_events(void) {
 	int n;
 	for (n = 0; n < MAX_GLOBAL_EVENTS; n++)
 		if (global_event[n].getype != GE_NONE) {
@@ -7306,6 +7465,7 @@ void calc_techniques(int Ind) {
 	/* Send accessible melee & ranged techniques (hard-coded on client-side, so no defines here :/) */
 	switch (p_ptr->pclass) {
 
+	/* Classes that get some selected/special techniques: */
 	case CLASS_ADVENTURER:
 		if (p_ptr->lev >= 6) p_ptr->melee_techniques |= 0x0001; /* Sprint */
 		if (p_ptr->lev >= 15) p_ptr->melee_techniques |= 0x0002; /* Taunt */
@@ -7330,8 +7490,13 @@ void calc_techniques(int Ind) {
 		if (p_ptr->lev >= 8) p_ptr->melee_techniques |= 0x0002; /* Taunt */
 		if (p_ptr->lev >= 12) p_ptr->melee_techniques |= 0x0008; /* Distract */
 		Send_technique_info(Ind);
-		return;	
+		return;
+	case CLASS_DRUID:
+		if (p_ptr->lev >= 5) p_ptr->melee_techniques |= 0x0001; /* Sprint - Especially in animal forms */
+		Send_technique_info(Ind);
+		return;
 
+	/* Classes that get all standard techniques */
 	case CLASS_WARRIOR:
 //		if (p_ptr->lev >= 24) p_ptr->melee_techniques |= 0x0004; /* Jump */
 		m = 0; break;

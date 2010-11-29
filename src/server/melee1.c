@@ -877,8 +877,23 @@ bool make_attack_melee(int Ind, int m_idx)
 
 			}
 
-			/* Hack -- Apply "protection from evil" */
+			/* Hack -- Apply "protection from evil" as well as "kinetic shield" */
 			if (touched) {
+			    /* kinetic shield: (requires mana to work) */
+			    prot = FALSE;
+			    if (p_ptr->kinetic_shield && p_ptr->csp >= r_ptr->level / 10) {
+				/* drains mana on hit */
+				p_ptr->csp -= r_ptr->level / 10;
+				p_ptr->redraw |= PR_MANA;
+				/* test if it repelled the blow */
+				int chance = (p_ptr->lev * ((r_ptr->flags2 & RF2_POWERFUL) ? 67 : 100)) / r_ptr->level;
+				if (magik(chance > 50 ? 50 : chance)) {
+					msg_format(Ind, "%^s is repelled.", m_name);
+					continue;
+				}
+				/* assume that if kinetic shield failed, pfe will also fail: ... */
+			    } else {
+				/* protection from evil, static and temporary: */
 #if 0
 				if (((p_ptr->protevil > 0) && (r_ptr->flags3 & RF3_EVIL) &&
 					(p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) ||
@@ -905,6 +920,7 @@ bool make_attack_melee(int Ind, int m_idx)
 				     ((p_ptr->lev < rlev) && (p_ptr->lev + 10 >= rlev) && (rand_int(24) > 12 + rlev - p_ptr->lev)))) {
 					prot = TRUE;
 				}
+
 				if (prot)
 #endif
 				{
@@ -919,6 +935,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					/* Hack -- Next attack */
 					continue;
 				}
+			    }
 			}
 
 #ifndef NEW_DODGING
@@ -2212,32 +2229,22 @@ bool make_attack_melee(int Ind, int m_idx)
 
 
 			/* Hack -- only one of cut or stun */
-			if (do_cut && do_stun)
-			{
+			if (do_cut && do_stun) {
 				/* Cancel cut */
-				if (rand_int(100) < 50)
-				{
-					do_cut = 0;
-				}
-
+				if (rand_int(100) < 50) do_cut = 0;
 				/* Cancel stun */
-				else
-				{
-					do_stun = 0;
-				}
+				else do_stun = 0;
 			}
 
 			/* Handle cut */
-			if (do_cut)
-			{
+			if (do_cut) {
 				int k = 0;
 
 				/* Critical hit (zero if non-critical) */
 				tmp = monster_critical(d_dice, d_side, damage);
 
 				/* Roll for damage */
-				switch (tmp)
-				{
+				switch (tmp) {
 					case 0: k = 0; break;
 					case 1: k = randint(5); break;
 					case 2: k = randint(5) + 5; break;
@@ -2256,16 +2263,14 @@ bool make_attack_melee(int Ind, int m_idx)
 		 * let's remove do_stun from RBM_HIT instead		- Jir - */
 
 			/* Handle stun */
-			if (do_stun)
-			{
+			if (do_stun) {
 				int k = 0;
 
 				/* Critical hit (zero if non-critical) */
 				tmp = monster_critical(d_dice, d_side, damage);
 
 				/* Roll for damage */
-				switch (tmp)
-				{
+				switch (tmp) {
 					case 0: k = 0; break;
 					case 1: k = randint(5); break;
 					case 2: k = randint(10) + 10; break;
@@ -2280,164 +2285,159 @@ bool make_attack_melee(int Ind, int m_idx)
 				if (k) (void)set_stun(Ind, p_ptr->stun + k);
 			}
 #endif
-			if (explode)
-			{
+			if (explode) {
 #ifdef USE_SOUND_2010
 #else
 //				sound(SOUND_EXPLODE);
 #endif
-				if (mon_take_hit(Ind, m_idx, m_ptr->hp + 1, &fear, NULL))
-				{
+				if (mon_take_hit(Ind, m_idx, m_ptr->hp + 1, &fear, NULL)) {
 					blinked = FALSE;
 					alive = FALSE;
 				}
 			}
 
-			if (touched)
-			{
-				if (p_ptr->sh_fire && alive)
-				{
-					if (!(r_ptr->flags3 & RF3_IM_FIRE))
-					{
+			if (touched) {
+				/*
+				 * Apply item auras
+				 */
+				/* Immolation / fire aura */
+				if (p_ptr->sh_fire && alive) {
+					if (!(r_ptr->flags3 & RF3_IM_FIRE)) {
 						player_aura_dam = damroll(2,6);
+						if (r_ptr->flags9 & RF9_RES_FIRE) player_aura_dam /= 3;
+						if (r_ptr->flags3 & RF3_SUSCEP_FIRE) player_aura_dam *= 2;
 						msg_format(Ind, "%^s is enveloped in flames for %d damage!", m_name, player_aura_dam);
 						if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
-									" turns into a pile of ash"))
-						{
+						    " turns into a pile of ashes")) {
 							blinked = FALSE;
 							alive = FALSE;
 						}
 					}
 #ifdef OLD_MONSTER_LORE
-					else
-					{
-						if (p_ptr->mon_vis[m_idx])
-							r_ptr->r_flags3 |= RF3_IM_FIRE;
+					else {
+						if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags3 |= RF3_IM_FIRE;
 					}
 #endif
 				}
-
-				if (p_ptr->sh_elec && alive)
-				{
-					if (!(r_ptr->flags3 & RF3_IM_ELEC))
-					{
+				/* Electricity / lightning aura */
+				if (p_ptr->sh_elec && alive) {
+					if (!(r_ptr->flags3 & RF3_IM_ELEC)) {
 						player_aura_dam = damroll(2,6);
+						if (r_ptr->flags9 & RF9_RES_ELEC) player_aura_dam /= 3;
+						if (r_ptr->flags9 & RF9_SUSCEP_ELEC) player_aura_dam *= 2;
 						msg_format(Ind, "%^s gets zapped for %d damage!", m_name, player_aura_dam);
 						if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
-									" turns into a pile of cinder"))
-						{
+						    " turns into a pile of cinder")) {
 							blinked = FALSE;
 							alive = FALSE;
 						}
 					}
 #ifdef OLD_MONSTER_LORE
-					else
-					{
-						if (p_ptr->mon_vis[m_idx])
-							r_ptr->r_flags3 |= RF3_IM_ELEC;
+					else {
+						if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags3 |= RF3_IM_ELEC;
 					}
 #endif
                                 }
-
-				if (p_ptr->sh_cold && alive)
-				{
-					if (!(r_ptr->flags3 & RF3_IM_COLD))
-					{
+				/* Frostweaving / cold aura */
+				if (p_ptr->sh_cold && alive) {
+					if (!(r_ptr->flags3 & RF3_IM_COLD)) {
 						player_aura_dam = damroll(2,6);
+						if (r_ptr->flags9 & RF9_RES_COLD) player_aura_dam /= 3;
+						if (r_ptr->flags3 & RF3_SUSCEP_COLD) player_aura_dam *= 2;
 						msg_format(Ind, "%^s freezes for %d damage!", m_name, player_aura_dam);
 						if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
-									" freezes and shatters"))
-						{
+						    " freezes and shatters")) {
 							blinked = FALSE;
 							alive = FALSE;
 						}
 					}
 #ifdef OLD_MONSTER_LORE
-					else
-					{
-						if (p_ptr->mon_vis[m_idx])
-							r_ptr->r_flags3 |= RF3_IM_COLD;
+					else {
+						if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags3 |= RF3_IM_COLD;
 					}
 #endif
 				}
 
-                                if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_COUNTER) && alive)
-				{
+				/*
+				 *Apply the 'shield auras'
+				 */
+				/* force shield */
+				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_COUNTER) && alive) {
+					int d = damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2);
 					msg_format(Ind, "%^s gets bashed by your mystic shield!", m_name);
-					if (mon_take_hit(Ind, m_idx, damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2), &fear,
-					                 " is bashed by your mystic shield"))
-					{
+					if (mon_take_hit(Ind, m_idx, d, &fear, " is bashed by your mystic shield")) {
 						blinked = FALSE;
 						alive = FALSE;
 					}
 				}
-				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_FIRE) && alive)
-				{
-					if (!(r_ptr->flags3 & RF3_IM_FIRE))
-					{
+				/* fire shield */
+				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_FIRE) && alive) {
+					if (!(r_ptr->flags3 & RF3_IM_FIRE)) {
+						int d = damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2);
+						if (r_ptr->flags9 & RF9_RES_FIRE) d /= 3;
+						if (r_ptr->flags3 & RF3_SUSCEP_FIRE) d *= 2;
 						msg_format(Ind, "%^s gets burned by your fiery shield!", m_name);
-						if (mon_take_hit(Ind, m_idx, damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2), &fear,
-						                 " is burned by your fiery shield"))
-						{
+						if (mon_take_hit(Ind, m_idx, d, &fear, " turns into a pile of ashes")) {
 							blinked = FALSE;
 							alive = FALSE;
 						}
 					}
 				}
-				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_GREAT_FIRE) && alive)
-				{
-					msg_format(Ind, "%^s gets burned by your fiery shield!", m_name);
-					if (mon_take_hit(Ind, m_idx, damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2), &fear,
-					                 " is burned by your fiery shield"))
-					{
-						blinked = FALSE;
-						alive = FALSE;
+				/* lightning shield */
+				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_ELEC) && alive) {
+					if (!(r_ptr->flags3 & RF3_IM_ELEC)) {
+						int d = damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2);
+						if (r_ptr->flags9 & RF9_RES_ELEC) d /= 3;
+						if (r_ptr->flags9 & RF9_SUSCEP_ELEC) d *= 2;
+						msg_format(Ind, "%^s gets zapped by your lightning shield!", m_name);
+						if (mon_take_hit(Ind, m_idx, d, &fear, " turns into a pile of cinder")) {
+							blinked = FALSE;
+							alive = FALSE;
+						}
 					}
 				}
-				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_FEAR) && alive)
-                                {
-                                        int tmp;
-
-                                        if ((!(r_ptr->flags1 & RF1_UNIQUE)) && (damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2) - m_ptr->level > 0))
-                                        {
-                                                msg_format(Ind, "%^s gets scared away!", m_name);
-
-                                                /* Increase fear */
-                                                tmp = m_ptr->monfear + p_ptr->shield_power_opt;
-                                                fear = TRUE;
-
-                                                /* Set fear */
-                                                m_ptr->monfear = (tmp < 200) ? tmp : 200;
-                                        }
+				/* fear shield */
+				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_FEAR) && alive
+				    && (!(r_ptr->flags3 & RF3_NO_FEAR))
+				    && (!(r_ptr->flags2 & RF2_POWERFUL))
+				    && (!(r_ptr->flags1 & RF1_UNIQUE))
+				    ) {
+					int tmp, d = damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2) - m_ptr->level;
+					if (d > 0) {
+						msg_format(Ind, "%^s gets scared away!", m_name);
+						/* Increase fear */
+						tmp = m_ptr->monfear + p_ptr->shield_power_opt;
+						fear = TRUE;
+						/* Set fear */
+						m_ptr->monfear = (tmp < 200) ? tmp : 200;
+					}
 				}
 
 				/*
 				 * Apply the necromantic auras
 				 */
 				/* Aura of fear is NOT affected by the monster level */
-				if (get_skill(p_ptr, SKILL_AURA_FEAR) && (!(r_ptr->flags3 & RF3_UNDEAD)) && (!(r_ptr->flags3 & RF3_NONLIVING)) && (!(r_ptr->flags1 & RF1_UNIQUE)) && p_ptr->aura[0])
-				{
+				if (get_skill(p_ptr, SKILL_AURA_FEAR) && p_ptr->aura[0] &&
+				    (!(r_ptr->flags3 & RF3_UNDEAD)) && (!(r_ptr->flags3 & RF3_NONLIVING))
+				    && (!(r_ptr->flags3 & RF3_NO_FEAR))
+				    && (!(r_ptr->flags2 & RF2_POWERFUL))
+				    && (!(r_ptr->flags1 & RF1_UNIQUE))
+				    ) {
 					int chance = get_skill_scale(p_ptr, SKILL_AURA_FEAR, 30) + 1;
 
-					if (!(r_ptr->flags3 & RF3_NO_FEAR) && magik(chance))
-					{
+					if (!(r_ptr->flags3 & RF3_NO_FEAR) && magik(chance)) {
 						msg_format(Ind, "%^s appears afraid.", m_name);
 						m_ptr->monfear = 3;//get_skill_scale(p_ptr, SKILL_AURA_POWER, 10) + 2;
 					}
 				}
-
 				/* Shivering Aura is affected by the monster level */
-				if (get_skill(p_ptr, SKILL_AURA_SHIVER) && (!(r_ptr->flags1 & RF1_UNIQUE)) && p_ptr->aura[1])
-				{
+				if (get_skill(p_ptr, SKILL_AURA_SHIVER) && p_ptr->aura[1]
+				    && (!(r_ptr->flags3 & RF3_NO_STUN)) && (!(r_ptr->flags3 & RF3_IM_COLD))
+				    && (!(r_ptr->flags1 & RF1_UNIQUE))
+				    ) {
 					int chance = get_skill_scale(p_ptr, SKILL_AURA_SHIVER, 20) + 1;
 
-					if (magik(chance) && (r_ptr->level < get_skill_scale(p_ptr, SKILL_AURA_SHIVER, 99)))
-					{
-#if 0
-						msg_format(Ind, "%^s appears frozen.", m_name);
-						m_ptr->stunned = 3;//get_skill_scale(p_ptr, SKILL_AURA_POWER, 20);
-#endif	// 0
-
+					if (magik(chance) && (r_ptr->level < get_skill_scale(p_ptr, SKILL_AURA_SHIVER, 99))) {
 						m_ptr->stunned += 5;//get_skill_scale(p_ptr, SKILL_AURA_POWER, 30) + 10;
 						if (m_ptr->stunned >= 100)
 							msg_format(Ind, "\377o%^s appears frozen.", m_name);
@@ -2446,26 +2446,20 @@ bool make_attack_melee(int Ind, int m_idx)
 						else msg_format(Ind, "\377o%^s appears shivering.", m_name);
 					}
 				}
-
 				/* Aura of death is NOT affected by monster level*/
-				if (get_skill(p_ptr, SKILL_AURA_DEATH) && p_ptr->aura[2])
-				{
+				if (get_skill(p_ptr, SKILL_AURA_DEATH) && p_ptr->aura[2]) {
 					int chance = get_skill_scale(p_ptr, SKILL_AURA_DEATH, 50);
 
-					if (magik(chance))
-					{
+					if (magik(chance)) {
 //						msg_format(Ind, "%^s disrupts your aura of death..", m_name);
-						if (magik(50))
-						{
+						if (magik(50)) {
 							/* Our client cannot handle message wrapping.. */
 							msg_format(Ind, "%^s gets hit by a wave of plasma.", m_name);
 //							msg_print(Ind, "It explodes into a wave of plasma!");
 							sprintf(p_ptr->attacker, " eradiates a wave of plasma for");
 //							fire_ball(Ind, GF_PLASMA, 0, 5 + get_skill_scale(p_ptr, SKILL_AURA_POWER, 150), 1, p_ptr->attacker);
 							fire_ball(Ind, GF_PLASMA, 0, 5 + chance * 3, 1, p_ptr->attacker);
-						}
-						else
-						{
+						} else {
 //							msg_format(Ind, "%^s disrupts your aura of death which explodes into a wave of ice.", m_name);
 //							msg_print(Ind, "It explodes into a wave of ice!");
 							msg_format(Ind, "%^s gets hit by a wave of ice.", m_name);
@@ -2481,11 +2475,9 @@ bool make_attack_melee(int Ind, int m_idx)
 		}
 
 		/* Monster missed player */
-		else
-		{
+		else {
 			/* Analyze failed attacks */
-			switch (method)
-			{
+			switch (method) {
 				case RBM_HIT:
 				case RBM_TOUCH:
 				case RBM_PUNCH:
@@ -2542,11 +2534,35 @@ bool make_attack_melee(int Ind, int m_idx)
 		if (teleport_away(m_idx, MAX_SIGHT * 2 + 5)) {
 			msg_print(Ind, "There is a puff of smoke!");
 #ifdef USE_SOUND_2010
-			sound(Ind, "monster_blinks", NULL, SFX_TYPE_MON_SPELL, TRUE);
+			sound(Ind, "monster_puff", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 		}
 	}
 
+
+	/* manage warning_autoret for melee-dependant chars, which gives newbies
+	   a hint that they don't need to try and "run into" a monster to attack
+	   it, but should rather stand still to conserve energy. - C. Blue */
+	if (p_ptr->max_plv <= 4 && p_ptr->warning_autoret != 99 && p_ptr->warning_autoret_ok == 0 &&
+	    !p_ptr->paralyzed && p_ptr->stun < 100 &&
+	    !p_ptr->blind && !p_ptr->confused && !p_ptr->afraid) {
+		p_ptr->warning_autoret++;
+		p_ptr->warning_autoret_ok = 1;
+		if (p_ptr->warning_autoret == 3) {
+			p_ptr->warning_autoret = 0;
+			msg_print(Ind, "\374\377oHint: Your character will AUTOMATICALLY attack any monster that comes close!");
+			msg_print(Ind, "\374\377o      Don't try to \"run into\" a monster, because you might end up missing it.");
+			s_printf("warning_autoret: %s\n", p_ptr->name);
+		}
+	}
+
+	if (p_ptr->max_plv <= 2 && p_ptr->warning_wield_combat == 0 &&
+	    p_ptr->inventory[INVEN_WIELD].k_idx == 0 &&
+	    p_ptr->inventory[INVEN_ARM].k_idx == 0 &&
+	    p_ptr->inventory[INVEN_BOW].k_idx == 0) {
+		p_ptr->warning_wield_combat = 1;
+		msg_print(Ind, "\374\377RWARNING: You aren't wielding a weapon! Press \377Rw\377L to equip one!");
+	}
 
 	/* Always notice cause of death */
 	if (p_ptr->death) r_ptr->r_deaths++;
@@ -2703,7 +2719,7 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 					/* Obvious */
 					obvious = TRUE;
 
-					/* Hack -- Player armor reduces total damage */
+					/* Hack -- Monster armor reduces total damage */
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / AC_CAP_DIV);
 					/* Take damage */
 					dead = mon_take_hit_mon(m_idx, tm_idx, damage, &fear, NULL);

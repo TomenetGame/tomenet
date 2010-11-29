@@ -252,7 +252,12 @@ struct quest_type quests[20];	/* server quest data */
 /* The information about houses */
 house_type *houses;
 s32b num_houses = 0;
-s32b house_alloc = 0;
+u32b house_alloc = 0;
+
+#ifdef PLAYER_STORES
+store_type *fake_store;
+int fake_store_visited[MAX_VISITED_PLAYER_STORES]; /* lock an instance while visited by a player */
+#endif
 
 /* An array to access a Player's ID */
 int GetInd[MAX_ID];
@@ -802,6 +807,9 @@ char admin_note[MAX_ADMINNOTES][80];
 
 /* in-game bbs :) - C. Blue */
 char bbs_line[BBS_LINES][140];
+/* party/guild-internal bbs'es: */
+char pbbs_line[MAX_PARTIES][BBS_LINES][140];
+char gbbs_line[MAX_GUILDS][BBS_LINES][140];
 
 int global_luck = 0;
 int regen_boost_stamina = 4;
@@ -909,7 +917,7 @@ char last_chat_owner[20]; /* Who said it */
 // char last_chat_prev[160];  /* What was said before the above*/
 
 auction_type *auctions;
-s32b auction_alloc;
+u32b auction_alloc;
 
 int store_debug_mode = 0, store_debug_quickmotion = 10, store_debug_startturn = 0;
 

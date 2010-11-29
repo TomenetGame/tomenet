@@ -1073,7 +1073,7 @@ return;
 	{
 		act = "You are wielding";
 	}
-	if (slot == INVEN_ARM)
+	else if (slot == INVEN_ARM)
 	{
 		act = "You are wielding";
 	}
@@ -1160,10 +1160,15 @@ return;
 	}
 
 	/* display warnings, possibly */
-	if (ma_warning_weapon)
+	if (ma_warning_weapon && p_ptr->warning_ma_weapon == 0) {
+//		p_ptr->warning_ma_weapon = 1;
 		msg_print(Ind, "\374\377RWarning: Using any sort of weapon renders Martial Arts skill effectless.");
-	else if (ma_warning_shield)
+		s_printf("warning_ma_weapon: %s\n", p_ptr->name);
+	} else if (ma_warning_shield && p_ptr->warning_ma_shield == 0) {
+//		p_ptr->warning_ma_shield = 1;
 		msg_print(Ind, "\374\377RWarning: Using a shield will prevent Martial Arts combat styles.");
+		s_printf("warning_ma_shield: %s\n", p_ptr->name);
+	}
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -1344,6 +1349,13 @@ void do_cmd_drop(int Ind, int item, int quantity)
 	/* Take a partial turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
+#ifdef PLAYER_STORES
+	if (o_ptr->note && strstr(quark_str(o_ptr->note), "@S")) {
+		s_printf("PLAYER_STORES: %s offers %d,%d (%d,%d,%d).\n",
+		    p_ptr->name, o_ptr->tval, o_ptr->sval, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+	}
+#endif
+
 	/* Drop (some of) the item */
 	inven_drop(Ind, item, quantity);
 }
@@ -1395,7 +1407,7 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 
 	/* Non-everlasting can't take money from everlasting
 	   and vice versa, depending on server cfg. */
-	tmp_obj.owner_mode = p_ptr->mode;
+	tmp_obj.mode = p_ptr->mode;
 
 	/* Drop it */
 	drop_near(&tmp_obj, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
@@ -1609,112 +1621,22 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 /*
  * Observe an item which has been *identify*-ed
  */
-void do_cmd_observe(int Ind, int item)
-{
+void do_cmd_observe(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-	object_type		*o_ptr;
-	char		o_name[ONAME_LEN];
-        u32b f1, f2, f3, f4, f5, esp;
-        int hold;
-						      
+	object_type *o_ptr;
+
 	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &(p_ptr->inventory[item]);
-	}
-
+	if (item >= 0) o_ptr = &(p_ptr->inventory[item]);
 	/* Get the item (on the floor) */
-	else
-	{
-		if (-item >= o_max)
-			return; /* item doesn't exist */
-
+	else {
+		if (-item >= o_max) return; /* item doesn't exist */
 		o_ptr = &o_list[0 - item];
 	}
 
-	/* Description */
-	object_desc(Ind, o_name, o_ptr, TRUE, 3);
-
-        /* Extract some flags */
-        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-
 	/* Require full knowledge */
-	if (!(o_ptr->ident & ID_MENTAL) && !is_admin(p_ptr))
-	{
-		/* Describe */
-		msg_format(Ind, "\377s%s:", o_name);
-		if (strlen(o_name) > 77) msg_format(Ind, "\377s%s:", o_name + 77);
-
-		switch(o_ptr->tval){
-		case TV_BLUNT:
-			msg_print(Ind, "\377s  It's a blunt weapon."); break;
-		case TV_POLEARM:
-			msg_print(Ind, "\377s  It's a polearm."); break;
-		case TV_SWORD:
-			msg_print(Ind, "\377s  It's a sword-type weapon."); break;
-		case TV_AXE:
-			msg_print(Ind, "\377s  It's an axe-type weapon."); break;
-		}
-
-		if (f4 & TR4_SHOULD2H) msg_print(Ind, "\377s  It should be wielded two-handed.");
-		else if (f4 & TR4_MUST2H) msg_print(Ind, "\377s  It must be wielded two-handed.");
-		else if (f4 & TR4_COULD2H) {
-			if (o_ptr->weight <= 999)
-				msg_print(Ind, "\377s  It may be wielded two-handed or dual.");
-			else
-				msg_print(Ind, "\377s  It may be wielded two-handed.");
-		}
-		else if (is_weapon(o_ptr->tval) && o_ptr->weight <= 80) msg_print(Ind, "\377s  It may be dual-wielded.");
-
-	        /* Check for weapons, shields and shooters whether they are too heavy to use
-	           and give warning, so player won't buy something he can't use. */
-	        hold = adj_str_hold[p_ptr->stat_ind[A_STR]];
-	        if ((o_ptr->tval == TV_BOW || is_weapon(o_ptr->tval)) &&
-	            (hold < o_ptr->weight / 10)) {
-			msg_print(Ind, "\377s  This weapon currently seems too heavy for you to use effectively!");
-	        }
-	        else if (o_ptr->tval == TV_SHIELD && (hold < (o_ptr->weight/10 - 4) * 7)) {
-	                msg_print(Ind, "\377s  This shield currently seems too heavy for you to use effectively!");
-	        }
-
-		if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
-		{
-#if 0
-			int blows;
-			blows = calc_blows_obj(Ind, o_ptr);
-			msg_format(Ind, "\377s  With it, you can usually attack %d time%s/turn.",
-			    blows, blows > 1 ? "s" : "");
-#else
-			/* copied from object1.c.. */
-			object_type forge, forge2, *old_ptr = &forge, *old_ptr2 = &forge2;
-			long tim_wraith = p_ptr->tim_wraith;
-			object_copy(old_ptr, &p_ptr->inventory[INVEN_WIELD]);
-			object_copy(&p_ptr->inventory[INVEN_WIELD], o_ptr);
-			object_copy(old_ptr2, &p_ptr->inventory[INVEN_ARM]);
-			if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H)
-				p_ptr->inventory[INVEN_ARM].k_idx = 0;
-			else if ((k_info[o_ptr->k_idx].flags4 & TR4_SHOULD2H) &&
-			    (is_weapon(p_ptr->inventory[INVEN_ARM].tval)))
-				p_ptr->inventory[INVEN_ARM].k_idx = 0;
-			suppress_message = TRUE;
-			calc_boni(Ind);
-			msg_format(Ind, "\377s  With it, you can usually attack %d time%s/turn.",
-			    p_ptr->num_blow, p_ptr->num_blow > 1 ? "s" : "");
-			object_copy(&p_ptr->inventory[INVEN_ARM], old_ptr2);
-			object_copy(&p_ptr->inventory[INVEN_WIELD], old_ptr);
-			calc_boni(Ind);
-			suppress_message = FALSE;
-			p_ptr->tim_wraith = tim_wraith;
-#endif
-		}
-
-		if (wield_slot(Ind, o_ptr) != INVEN_WIELD) msg_print(Ind, "\377s  You have no special knowledge about that item.");
-
-		return;
-	}
-
+	if (!(o_ptr->ident & ID_MENTAL) && !is_admin(p_ptr)) observe_aux(Ind, o_ptr);
 	/* Describe it fully */
-	if (!identify_fully_aux(Ind, o_ptr)) msg_print(Ind, "You see nothing special.");
+	else if (!identify_fully_aux(Ind, o_ptr)) msg_print(Ind, "You see nothing special.");
 }
 
 
@@ -1726,19 +1648,13 @@ void do_cmd_observe(int Ind, int item)
 void do_cmd_uninscribe(int Ind, int item)
 {
 	player_type *p_ptr = Players[Ind];
-
 	object_type *o_ptr;
 
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &(p_ptr->inventory[item]);
-	}
-
+	if (item >= 0) o_ptr = &(p_ptr->inventory[item]);
 	/* Get the item (on the floor) */
-	else
-	{
+	else {
 		if (-item >= o_max)
 			return; /* item doesn't exist */
 
@@ -1746,8 +1662,7 @@ void do_cmd_uninscribe(int Ind, int item)
 	}
 
 	/* Nothing to remove */
-	if (!o_ptr->note)
-	{
+	if (!o_ptr->note) {
 		msg_print(Ind, "That item had no inscription to remove.");
 		return;
 	}
@@ -1757,8 +1672,10 @@ void do_cmd_uninscribe(int Ind, int item)
 		msg_print(Ind, "Cannot uninscribe shirts.");
 		return;
 	}
-	if (o_ptr->tval == TV_SEAL && !is_admin(p_ptr)) {
-		msg_print(Ind, "Cannot uninscribe seals.");
+	if ((o_ptr->tval == TV_SPECIAL ||
+	    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE)
+	    ) && !is_admin(p_ptr)) {
+		msg_print(Ind, "Cannot uninscribe this item.");
 		return;
 	}
 
@@ -1767,6 +1684,7 @@ void do_cmd_uninscribe(int Ind, int item)
 
 	/* Remove the incription */
 	o_ptr->note = 0;
+	o_ptr->note_utag = 0;
 
 	/* Combine the pack */
 	p_ptr->notice |= (PN_COMBINE);
@@ -1782,21 +1700,14 @@ void do_cmd_uninscribe(int Ind, int item)
 void do_cmd_inscribe(int Ind, int item, cptr inscription)
 {
 	player_type *p_ptr = Players[Ind];
-
 	object_type		*o_ptr;
-
 	char		o_name[ONAME_LEN];
 
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &(p_ptr->inventory[item]);
-	}
-
+	if (item >= 0) o_ptr = &(p_ptr->inventory[item]);
 	/* Get the item (on the floor) */
-	else
-	{
+	else {
 		if (-item >= o_max)
 			return; /* item doesn't exist */
 
@@ -1808,8 +1719,10 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription)
 		msg_print(Ind, "Cannot inscribe shirts.");
 		return;
 	}
-	if (o_ptr->tval == TV_SEAL && !is_admin(p_ptr)) {
-		msg_print(Ind, "Cannot inscribe seals.");
+	if ((o_ptr->tval == TV_SPECIAL ||
+	    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE)
+	    ) && !is_admin(p_ptr)) {
+		msg_print(Ind, "Cannot inscribe this item.");
 		return;
 	}
 
@@ -1825,6 +1738,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription)
 
 	/* Save the inscription */
 	o_ptr->note = quark_add(inscription);
+	o_ptr->note_utag = 0;
 
 	/* Combine the pack */
 	p_ptr->notice |= (PN_COMBINE);
@@ -1846,28 +1760,19 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 {
 #if 0
 	player_type *p_ptr = Players[Ind], *q_ptr;
-
 	cave_type **zcave;
-
 	int x, y, dir = 0, item = -1, k = -1;
-
 	cave_type *c_ptr;
-
 	monster_type *m_ptr;
-
 	object_type *o_ptr, forge;
-
 	byte num = 0;
-
 	bool done = FALSE;
-
 	int monst_list[23];
 
-	if(!(zcave=getcave(&p_ptr->wpos))) return;
+	if(!(zcave = getcave(&p_ptr->wpos))) return;
 
         /* Ghosts cannot steal ; not in WRAITHFORM */
-        if (p_ptr->ghost || p_ptr->tim_wraith)
-        {
+        if (p_ptr->ghost || p_ptr->tim_wraith) {
                 msg_print(Ind, "You cannot steal things!");
                 return;
         }
@@ -1879,8 +1784,7 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 	x = px + ddx[dir];
 	c_ptr = &cave[y][x];
 
-	if (!(c_ptr->m_idx))
-	{
+	if (!(c_ptr->m_idx)) {
 		msg_print("There is no monster there!");
 		return;
 	}
@@ -1892,8 +1796,7 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 	stop_shooting_till_kill(Ind);
 
 	/* There were no non-gold items */
-	if (!m_ptr->hold_o_idx)
-	{
+	if (!m_ptr->hold_o_idx) {
 		msg_print("That monster has no objects!");
 		return;
 	}
@@ -1906,8 +1809,7 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 	}
 
 	/* The monster is immune */
-	if (r_info[m_ptr->r_idx].flags7 & (RF7_NO_THEFT))
-	{
+	if (r_info[m_ptr->r_idx].flags7 & (RF7_NO_THEFT)) {
 		msg_print("The monster is guarding the treasures.");
 		return;
 	}
@@ -1917,8 +1819,7 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 	num = show_monster_inven(c_ptr->m_idx, monst_list);
 
 	/* Repeat until done */
-	while (!done)
-	{
+	while (!done) {
 		char tmp_val[80];
 		char which = ' ';
 
@@ -1933,44 +1834,35 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 		which = inkey();
 
 		/* Parse it */
-		switch (which)
-		{
-			case ESCAPE:
-			{
-				done = TRUE;
+		switch (which) {
+		case ESCAPE:
+			done = TRUE;
+			break;
 
+		default:
+			int ver;
+
+			/* Extract "query" setting */
+			ver = isupper(which);
+			which = tolower(which);
+
+			k = islower(which) ? A2I(which) : -1;
+			if (k < 0 || k >= num) {
+				bell();
 				break;
 			}
 
-			default:
-			{
-				int ver;
-
-				/* Extract "query" setting */
-				ver = isupper(which);
-				which = tolower(which);
-
-				k = islower(which) ? A2I(which) : -1;
-				if (k < 0 || k >= num)
-				{
-					bell();
-
-					break;
-				}
-
-				/* Verify the item */
-				if (ver && !verify("Try", 0 - monst_list[k]))
-				{
-					done = TRUE;
-					break;
-				}
-
-				/* Accept that choice */
-				item = monst_list[k];
+			/* Verify the item */
+			if (ver && !verify("Try", 0 - monst_list[k])) {
 				done = TRUE;
-
 				break;
 			}
+
+			/* Accept that choice */
+			item = monst_list[k];
+			done = TRUE;
+
+			break;
 		}
 	}
 #endif	// 0
@@ -1978,8 +1870,7 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 	/* S(he) is no longer afk */
 	un_afk_idle(Ind);
 
-	if (item != -1)
-	{
+	if (item != -1) {
 		int chance;
 
 		chance = 40 - p_ptr->stat_ind[A_DEX];
@@ -1990,8 +1881,7 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 		chance += m_ptr->level;
 
 		/* Failure check */
-		if (rand_int(chance) > 1 + get_skill_scale(SKILL_STEALING, 25))
-		{
+		if (rand_int(chance) > 1 + get_skill_scale(SKILL_STEALING, 25)) {
 			/* Take a turn */
 			energy_use = 100;
 
@@ -2009,16 +1899,14 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 
 		/* Reconnect the objects list */
 		if (num == 1) m_ptr->hold_o_idx = 0;
-		else
-		{
+		else {
 			if (k > 0) o_list[monst_list[k - 1]].next_o_idx = monst_list[k + 1];
 			if (k + 1 >= num) o_list[monst_list[k - 1]].next_o_idx = 0;
 			if (k == 0) m_ptr->hold_o_idx = monst_list[k + 1];
 		}
 
 		/* Rogues gain some xp */
-		if (PRACE_FLAGS(PR1_EASE_STEAL))
-		{
+		if (PRACE_FLAGS(PR1_EASE_STEAL)) {
 			s32b max_point;
 
 			/* Max XP gained from stealing */
@@ -2035,21 +1923,18 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 		o_ptr = &forge;
 
 		/* Special handling for gold */
-		if (o_list[item].tval == TV_GOLD)
-		{
+		if (o_list[item].tval == TV_GOLD) {
+			/* hack: prevent s32b overflow */
+			if (2000000000 - o_ptr->pval < p_ptr->au) {
+				msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
+			} else
 			/* Collect the gold */
 			p_ptr->au += o_list[item].pval;
 
-			/* Redraw gold */
 			p_ptr->redraw |= (PR_GOLD);
-
-			/* Window stuff */
 			p_ptr->window |= (PW_PLAYER);
-		}
-		else
-		{
+		} else {
 			object_copy(o_ptr, &o_list[item]);
-
 			inven_carry(o_ptr, FALSE);
 		}
 
@@ -2103,15 +1988,11 @@ void do_cmd_steal(int Ind, int dir)
 	c_ptr = &zcave[p_ptr->py + ddy[dir]][p_ptr->px + ddx[dir]];
 
 	/* May only steal from players */
-	if (c_ptr->m_idx >= 0)
-	{
-		/* Message */
+	if (c_ptr->m_idx >= 0) {
 		msg_print(Ind, "You see nothing there to steal from.");
-
 		return;
 	}
-	else if (c_ptr->m_idx > 0)
-	{
+	else if (c_ptr->m_idx > 0) {
 		do_cmd_steal_from_monster(Ind, dir);
 		return;
 	}
@@ -2129,61 +2010,51 @@ void do_cmd_steal(int Ind, int dir)
 	}
 
         /* Small delay to prevent crazy steal-spam */
-        if (p_ptr->pstealing)
-        {
+        if (p_ptr->pstealing) {
                 msg_print(Ind, "You're still not calm enough to steal again..");
                 return;
         }
+
+#if 0
 	/* no stealing in town since town-pvp is diabled */
-	if (istown(&p_ptr->wpos))
-	{
-
-		/* Message */
+	if (istown(&p_ptr->wpos)) {
 		msg_print(Ind, "\337rYou may not steal in town.");
-
 		return;
 	}
-
+#endif
 
 	/* May not steal from AFK players, sportsmanship ;) - C. Blue */
-	if (q_ptr->afk)
-	{
-		/* Message */
-		msg_print(Ind, "For sportsmanship you may not steal from players who are AFK.");
-
+	if (q_ptr->afk) {
+		msg_print(Ind, "You may not steal from players who are AFK.");
 		return;
 	}
 
 	/* May not steal from hostile players */
 	/* I doubt if it's reasonable..dunno	- Jir - */
 #if 0 /* turned off now */
-	if (check_hostile(0 - c_ptr->m_idx, Ind))
-	{
+	if (check_hostile(0 - c_ptr->m_idx, Ind)) {
 		/* Message */
 		msg_format(Ind, "%^s is on guard against you.", q_ptr->name);
 		return;
 	}
 #endif
-	dal=(p_ptr->lev>q_ptr->lev ? p_ptr->lev-q_ptr->lev : 1);
+	dal = (p_ptr->lev > q_ptr->lev ? p_ptr->lev - q_ptr->lev : 1);
 
 	/* affect alignment on attempt (after hostile check) */
 	/* evil thief! stealing from newbies */
-	if(q_ptr->lev+5 < p_ptr->lev){
-		if((p_ptr->align_good) < (0xffff-dal))
-			p_ptr->align_good+=dal;
-		else p_ptr->align_good=0xffff;	/* very evil */
+	if (q_ptr->lev + 5 < p_ptr->lev){
+		if((p_ptr->align_good) < (0xffff - dal))
+			p_ptr->align_good += dal;
+		else p_ptr->align_good = 0xffff;	/* very evil */
 	}
 	/* non lawful action in town :) */
-	if(istown(&p_ptr->wpos) && (p_ptr->align_law) < (0xffff-dal))
-		p_ptr->align_law+=dal;
-	else p_ptr->align_law=0xffff;
+	if (istown(&p_ptr->wpos) && (p_ptr->align_law) < (0xffff - dal))
+		p_ptr->align_law += dal;
+	else p_ptr->align_law = 0xffff;
 
 	/* Make sure we have enough room */
-	if (p_ptr->inven_cnt >= INVEN_PACK)
-	{
-		/* Message */
+	if (p_ptr->inven_cnt >= INVEN_PACK) {
 		msg_print(Ind, "You have no room to steal anything.");
-
 		return;
 	}
 
@@ -2205,15 +2076,13 @@ void do_cmd_steal(int Ind, int dir)
 //	notice -= q_ptr->skill_fos; /* perception */
 
 	/* Hack -- Rogues get bonuses to chances */
-	if (get_skill(p_ptr, SKILL_STEALING))
-	{
+	if (get_skill(p_ptr, SKILL_STEALING)) {
 		/* Increase chance by level */
 		success += get_skill_scale(p_ptr, SKILL_STEALING, 150);
 		notice -= get_skill_scale(p_ptr, SKILL_STEALING, 150);
 	}
 	/* Similar Hack -- Robber is hard to be robbed */
-	if (get_skill(q_ptr, SKILL_STEALING))
-	{
+	if (get_skill(q_ptr, SKILL_STEALING)) {
 		/* Increase chance by level */
 		success -= get_skill_scale(p_ptr, SKILL_STEALING, 100);
 		notice += get_skill_scale(p_ptr, SKILL_STEALING, 100);
@@ -2229,15 +2098,12 @@ void do_cmd_steal(int Ind, int dir)
 #endif
 
 	/* Check for success */
-	if (rand_int(100) < success)
-	{
+	if (rand_int(100) < success) {
 		/* Steal gold 25% of the time */
-		if (rand_int(100) < 25)
-		{
+		if (rand_int(100) < 25) {
 			int amt = q_ptr->au / 10;
 
-			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_MONEY_BELT && magik (70))
-			{
+			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_MONEY_BELT && magik (70)) {
 				/* Saving throw message */
 				msg_print(Ind, "You couldn't find any money!");
 				amt = 0;
@@ -2245,10 +2111,13 @@ void do_cmd_steal(int Ind, int dir)
 			}
 
 			/* Transfer gold */
-			if (amt)
-			{
+			if (amt) {
 				/* Move from target to thief */
 				q_ptr->au -= amt;
+				/* hack: prevent s32b overflow */
+				if (2000000000 - amt < p_ptr->au) {
+					msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
+				} else
 				p_ptr->au += amt;
 
 				/* Redraw */
@@ -2264,16 +2133,13 @@ void do_cmd_steal(int Ind, int dir)
 			if (notice < 5) notice = 5;
 
 			/* Check for target noticing */
-			if (rand_int(100) < notice)
-			{
+			if (rand_int(100) < notice) {
 				/* Message */
 				msg_format(0 - c_ptr->m_idx, "\377rYou notice %s stealing %ld gold!",
 						p_ptr->name, amt);
 				caught = TRUE;
 			}
-		}
-		else
-		{
+		} else {
 			int item;
 			object_type *o_ptr, forge;
 			char o_name[ONAME_LEN];
@@ -2285,23 +2151,18 @@ void do_cmd_steal(int Ind, int dir)
 			o_ptr = &q_ptr->inventory[item];
 			forge = *o_ptr;
 
-			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_THEFT_PREVENTION && magik (80))
-			{
+			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_THEFT_PREVENTION && magik (80)) {
 				/* Saving throw message */
 				msg_print(Ind, "Your attempt to steal was interfered with by a strange device!");
 				notice += 50;
 				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): theft prevention.\n", p_ptr->name, q_ptr->name, success);
 			}
-
 			/* True artifact is HARD to steal */
 			else if (cfg.anti_arts_hoard && true_artifact_p(o_ptr)
-				&& ((q_ptr->exp > p_ptr->exp) || (rand_int(500) > success )))
-			{
+			    && ((q_ptr->exp > p_ptr->exp) || (rand_int(500) > success))) {
 				msg_print(Ind, "The object itself seems to evade your hand!");
 				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): true artifact.\n", p_ptr->name, q_ptr->name, success);
-			}
-			else
-			{
+			} else {
 				/* Give one item to thief */
 				if (o_ptr->tval == TV_WAND) forge.pval = divide_charged_item(o_ptr, 1);
 				forge.number = 1;
@@ -2325,17 +2186,14 @@ void do_cmd_steal(int Ind, int dir)
 			if (notice < 5) notice = 5;
 
 			/* Check for target noticing */
-			if (rand_int(100) < notice)
-			{
+			if (rand_int(100) < notice) {
 				/* Message */
 				msg_format(0 - c_ptr->m_idx, "\377rYou notice %s stealing %s!",
 				           p_ptr->name, o_name);
 				caught = TRUE;
 			}
 		}
-	}
-	else
-	{
+	} else {
 		/* Message */
 		msg_print(Ind, "You fail to steal anything.");
 		s_printf("StealingPvP: %s fails to steal from %s.\n", p_ptr->name, q_ptr->name);
@@ -2344,8 +2202,7 @@ void do_cmd_steal(int Ind, int dir)
 		if (notice < 5) notice = 5;
 
 		/* Easier to notice a failed attempt */
-		if (rand_int(100) < notice + 50)
-		{
+		if (rand_int(100) < notice + 50) {
 			/* Message */
 			msg_format(0 - c_ptr->m_idx, "\377rYou notice %s try to steal from you!",
 			           p_ptr->name);
@@ -2357,14 +2214,12 @@ void do_cmd_steal(int Ind, int dir)
 
 #if 0 /* now turned off */
 	/* Counter blow! */
-	if (caught)
-	{
+	if (caught) {
 		int i, j;
 		object_type *o_ptr;
 
 		/* Purge this traitor */
-		if (player_in_party(q_ptr->party, Ind))
-		{
+		if (player_in_party(q_ptr->party, Ind)) {
 			int party=p_ptr->party;
 
 			/* Temporary leave for the message */
@@ -2395,10 +2250,8 @@ void do_cmd_steal(int Ind, int dir)
 			p_ptr->pkill|=PKILL_KILLABLE;
 
 		/* Thief drops some items from the shock of blow */
-		if (cfg.newbies_cannot_drop <= p_ptr->lev && !p_ptr->inval)
-		{
-			for(i = rand_int(5); i < 5 ; i++ )
-			{
+		if (cfg.newbies_cannot_drop <= p_ptr->lev && !p_ptr->inval) {
+			for(i = rand_int(5); i < 5 ; i++ ) {
 				j = rand_int(INVEN_TOTAL);
 				o_ptr = &(p_ptr->inventory[j]);
 
@@ -2470,35 +2323,30 @@ static void do_cmd_refill_lamp(int Ind, int item)
 	item_tester_hook = item_tester_refill_lantern;
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
+	if (item >= 0) {
 		o_ptr = &(p_ptr->inventory[item]);
 	}
 
 	/* Get the item (on the floor) */
-	else
-	{
+	else {
 		if (-item >= o_max)
 			return; /* item doesn't exist */
 
 		o_ptr = &o_list[0 - item];
 	}
 
-	if (!item_tester_hook(o_ptr))
-	{
+	if (!item_tester_hook(o_ptr)) {
 		msg_print(Ind, "You cannot refill with that!");
 		return;
 	}
 
 	/* Too kind? :) */
-	if (artifact_p(o_ptr))
-	{
+	if (artifact_p(o_ptr)) {
 		msg_print(Ind, "Your light seems to resist!");
 		return;
 	}
 
-	if (o_ptr->tval != TV_FLASK && o_ptr->timeout == 0)
-	{
+	if (o_ptr->tval != TV_FLASK && o_ptr->timeout == 0) {
 		msg_print(Ind, "That item has no fuel left!");
 		return;
 	}
@@ -2526,8 +2374,7 @@ static void do_cmd_refill_lamp(int Ind, int item)
 	msg_print(Ind, "You fuel your lamp.");
 
 	/* Comment */
-	if (j_ptr->timeout >= FUEL_LAMP)
-	{
+	if (j_ptr->timeout >= FUEL_LAMP) {
 		j_ptr->timeout = FUEL_LAMP;
 		msg_print(Ind, "Your lamp is full.");
 	}
@@ -2535,16 +2382,14 @@ static void do_cmd_refill_lamp(int Ind, int item)
 
 	if (o_ptr->tval == TV_FLASK || item <= 0) { /* just dispose of for now, if it was from the ground */
 		/* Decrease the item (from the pack) */
-		if (item >= 0)
-		{
+		if (item >= 0) {
 			inven_item_increase(Ind, item, -1);
 			inven_item_describe(Ind, item);
 			inven_item_optimize(Ind, item);
 		}
 
 		/* Decrease the item (from the floor) */
-		else
-		{
+		else {
 			floor_item_increase(0 - item, -1);
 			floor_item_describe(0 - item);
 			floor_item_optimize(0 - item);
@@ -2595,29 +2440,25 @@ static void do_cmd_refill_torch(int Ind, int item)
 	if(item>INVEN_TOTAL) return;
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
+	if (item >= 0) {
 		o_ptr = &(p_ptr->inventory[item]);
 	}
 
 	/* Get the item (on the floor) */
-	else
-	{
+	else {
 		if (-item >= o_max)
 			return; /* item doesn't exist */
 
 		o_ptr = &o_list[0 - item];
 	}
 
-	if (!item_tester_hook(o_ptr))
-	{
+	if (!item_tester_hook(o_ptr)) {
 		msg_print(Ind, "You cannot refill with that!");
 		return;
 	}
 
 	/* Too kind? :) */
-	if (artifact_p(o_ptr))
-	{
+	if (artifact_p(o_ptr)) {
 		msg_print(Ind, "Your light seems to resist!");
 		return;
 	}
@@ -2638,29 +2479,25 @@ static void do_cmd_refill_torch(int Ind, int item)
 	msg_print(Ind, "You combine the torches.");
 
 	/* Over-fuel message */
-	if (j_ptr->timeout >= FUEL_TORCH)
-	{
+	if (j_ptr->timeout >= FUEL_TORCH) {
 		j_ptr->timeout = FUEL_TORCH;
 		msg_print(Ind, "Your torch is fully fueled.");
 	}
 
 	/* Refuel message */
-	else
-	{
+	else {
 		msg_print(Ind, "Your torch glows more brightly.");
 	}
 
 	/* Decrease the item (from the pack) */
-	if (item >= 0)
-	{
+	if (item >= 0) {
 		inven_item_increase(Ind, item, -1);
 		inven_item_describe(Ind, item);
 		inven_item_optimize(Ind, item);
 	}
 
 	/* Decrease the item (from the floor) */
-	else
-	{
+	else {
 		floor_item_increase(0 - item, -1);
 		floor_item_describe(0 - item);
 		floor_item_optimize(0 - item);
@@ -2687,41 +2524,36 @@ void do_cmd_refill(int Ind, int item)
 	/* Get the light */
 	o_ptr = &(p_ptr->inventory[INVEN_LITE]);
 
-	if( check_guard_inscription( o_ptr->note, 'F' )) {
+	if (check_guard_inscription( o_ptr->note, 'F' )) {
 		msg_print(Ind, "The item's incription prevents it.");
 		return;
 	}
 
 	/* It is nothing */
-	if (o_ptr->tval != TV_LITE || !o_ptr->k_idx)
-	{
+	if (o_ptr->tval != TV_LITE || !o_ptr->k_idx) {
 		msg_print(Ind, "You are not wielding a light.");
 		return;
 	}
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
-	if (!(f4 & TR4_FUEL_LITE))
-	{
+	if (!(f4 & TR4_FUEL_LITE)) {
 		msg_print(Ind, "Your light cannot be refilled.");
 		return;
 	}
 
 	/* It's a lamp */
-	else if (o_ptr->sval == SV_LITE_LANTERN)
-	{
+	else if (o_ptr->sval == SV_LITE_LANTERN) {
 		do_cmd_refill_lamp(Ind, item);
 	}
 
 	/* It's a torch */
-	else if (o_ptr->sval == SV_LITE_TORCH)
-	{
+	else if (o_ptr->sval == SV_LITE_TORCH) {
 		do_cmd_refill_torch(Ind, item);
 	}
 
 	/* No torch to refill */
-	else
-	{
+	else {
 		msg_print(Ind, "Your light cannot be refilled.");
 	}
 }
@@ -2750,13 +2582,11 @@ bool do_auto_refill(int Ind)
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* It's a lamp */
-	if (o_ptr->sval == SV_LITE_LANTERN)
-	{
+	if (o_ptr->sval == SV_LITE_LANTERN) {
 		/* Restrict the choices */
 		item_tester_hook = item_tester_refill_lantern;
 
-		for(i = 0; i < INVEN_PACK; i++)
-		{
+		for(i = 0; i < INVEN_PACK; i++) {
 			j_ptr = &(p_ptr->inventory[i]);
 			if (!item_tester_hook(j_ptr)) continue;
 			if (artifact_p(j_ptr) || ego_item_p(j_ptr)) continue;
@@ -2767,13 +2597,11 @@ bool do_auto_refill(int Ind)
 	}
 
 	/* It's a torch */
-	else if (o_ptr->sval == SV_LITE_TORCH)
-	{
+	else if (o_ptr->sval == SV_LITE_TORCH) {
 		/* Restrict the choices */
 		item_tester_hook = item_tester_refill_torch;
 
-		for(i = 0; i < INVEN_PACK; i++)
-		{
+		for(i = 0; i < INVEN_PACK; i++) {
 			j_ptr = &(p_ptr->inventory[i]);
 			if (!item_tester_hook(j_ptr)) continue;
 			if (artifact_p(j_ptr) || ego_item_p(j_ptr)) continue;
@@ -2799,12 +2627,9 @@ void do_cmd_target(int Ind, int dir)
 	player_type *p_ptr = Players[Ind];
 
 	/* Set the target */
-	if (target_set(Ind, dir) && !p_ptr->taciturn_messages)
-	{
+	if (target_set(Ind, dir) && !p_ptr->taciturn_messages) {
 //		msg_print(Ind, "Target Selected.");
-	}
-	else
-	{
+	} else {
 		/*msg_print(Ind, "Target Aborted.");*/
 	}
 }
@@ -2814,12 +2639,9 @@ void do_cmd_target_friendly(int Ind, int dir)
 	player_type *p_ptr = Players[Ind];
 
 	/* Set the target */
-	if (target_set_friendly(Ind, dir) && !p_ptr->taciturn_messages)
-	{
+	if (target_set_friendly(Ind, dir) && !p_ptr->taciturn_messages) {
 		msg_print(Ind, "Target Selected.");
-	}
-	else
-	{
+	} else {
 		/*msg_print(Ind, "Target Aborted.");*/
 	}
 }
@@ -2845,8 +2667,7 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 	w_ptr = &p_ptr->cave_flag[y][x];
 
 	/* Player grids */
-	if (c_ptr->m_idx < 0 && p_ptr->play_vis[0-c_ptr->m_idx])
-	{
+	if (c_ptr->m_idx < 0 && p_ptr->play_vis[0-c_ptr->m_idx]) {
 		player_type *q_ptr=Players[0-c_ptr->m_idx];
 		if ((!q_ptr->admin_dm || player_sees_dm(Ind)) && 
 		    (player_has_los_bold(Ind, y, x) || p_ptr->telepathy))
@@ -2854,15 +2675,13 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 	}
 
 	/* Visible monsters */
-	if (c_ptr->m_idx > 0 && p_ptr->mon_vis[c_ptr->m_idx])
-	{
+	if (c_ptr->m_idx > 0 && p_ptr->mon_vis[c_ptr->m_idx]) {
 		/* Visible monsters */
 		if (p_ptr->mon_vis[c_ptr->m_idx]) return (TRUE);
 	}
 
 	/* Objects */
-	if (c_ptr->o_idx)
-	{
+	if (c_ptr->o_idx) {
 		/* Memorized object */
 		if (p_ptr->obj_vis[c_ptr->o_idx] || p_ptr->admin_dm) return (TRUE); /* finally, poor dm - C. Blue */
 	}
@@ -2879,8 +2698,7 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 	}
 
 	/* Interesting memorized features */
-	if (*w_ptr & CAVE_MARK)
-	{
+	if (*w_ptr & CAVE_MARK) {
 #if 0	// wow!
 		/* Notice glyphs */
 		if (c_ptr->feat == FEAT_GLYPH) return (TRUE);
@@ -3082,7 +2900,7 @@ void do_cmd_look(int Ind, int dir) {
 
 		/* a unique which the looker already killed? */
 		if ((r_info[m_ptr->r_idx].flags1 & RF1_UNIQUE) &&
-		    p_ptr->r_killed[m_ptr->r_idx])
+		    p_ptr->r_killed[m_ptr->r_idx] == 1)
 			done_unique = TRUE;
 		else done_unique = FALSE;
 
@@ -3162,7 +2980,8 @@ void do_cmd_look(int Ind, int dir) {
 
 		}
 
-		if ((feat==FEAT_FOUNTAIN) && (cs_ptr=GetCS(c_ptr, CS_FOUNTAIN)) &&
+		if ((feat == FEAT_FOUNTAIN) &&
+		    (cs_ptr=GetCS(c_ptr, CS_FOUNTAIN)) &&
 		    cs_ptr->sc.fountain.known) {
 			object_kind *k_ptr;
 			int tval, sval;

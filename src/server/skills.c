@@ -53,6 +53,10 @@ void init_skill(player_type *p_ptr, u32b value, s16b mod, int i) {
 		p_ptr->s_info[i].dummy = FALSE;
 #else
 	p_ptr->s_info[i].flags1 = (char)(s_info[i].flags1 & 0xFF);
+
+	/* hack: Rangers can train limited Archery skill */
+	if (p_ptr->pclass == CLASS_RANGER && i == SKILL_ARCHERY)
+	    p_ptr->s_info[i].flags1 |= SKF1_MAX_10;
 #endif
 }
 
@@ -185,7 +189,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 
 	/* Tell the player about new abilities that he gained from the skill increase */
 	if (old_value == new_value) return;
-	switch(i) {
+	switch (i) {
 	case SKILL_CLIMB:	if (new_value == 10) msg_print(Ind, "\374\377GYou learn how to climb mountains!");
 				break;
 	case SKILL_FLY: 	if (new_value == 10) msg_print(Ind, "\374\377GYou learn how to fly!");
@@ -582,37 +586,36 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 	case SKILL_AURA_FEAR: if (old_value == 0 && new_value > 0) p_ptr->aura[0] = TRUE; break; /* MAX_AURAS */
 	case SKILL_AURA_SHIVER: if (old_value == 0 && new_value > 0) p_ptr->aura[1] = TRUE; break;
 	case SKILL_AURA_DEATH: if (old_value == 0 && new_value > 0) p_ptr->aura[2] = TRUE; break;
+#if 0 /* obsolete */
 	case SKILL_DIG:
                 if (old_value < 300 && new_value >= 300) {
                         msg_print(Ind, "\374\377GYou've become much better at prospecting.");
                 }
                 break;
+#endif
 	}
 }
 
 /* Hrm this can be nasty for Sorcery/Antimagic */
 // void recalc_skills_theory(s16b *invest, s32b *base_val, u16b *base_mod, s32b *bonus)
-static void increase_related_skills(int Ind, int i)
+static void increase_related_skills(int Ind, int i, bool quiet)
 {
 	player_type *p_ptr = Players[Ind];
 	int j;
 
 	/* Modify related skills */
-	for (j = 1; j < MAX_SKILLS; j++)
-	{
+	for (j = 1; j < MAX_SKILLS; j++) {
 		/* Ignore self */
 		if (j == i) continue;
 
 		/* Exclusive skills */
-		if (s_info[i].action[j] == SKILL_EXCLUSIVE)
-		{
+		if (s_info[i].action[j] == SKILL_EXCLUSIVE) {
 			/* Turn it off */
 			p_ptr->s_info[j].value = 0;
 		}
 
 		/* Non-exclusive skills */
-		else
-		{
+		else {
 			/* Save previous value */
 			int old_value = get_skill_scale(p_ptr, j, 500);
 
@@ -624,17 +627,23 @@ static void increase_related_skills(int Ind, int i)
 			if (val < 0) val = 0;
 
 			/* It cannot exceed SKILL_MAX */
-			if (val > SKILL_MAX) val = SKILL_MAX;
+			if ((p_ptr->s_info[j].flags1 & SKF1_MAX_1) && (val >= 1000)) val = 1000;
+			else if ((p_ptr->s_info[j].flags1 & SKF1_MAX_10) && (val >= 10000)) val = 10000;
+			else if ((p_ptr->s_info[j].flags1 & SKF1_MAX_20) && (val >= 20000)) val = 20000;
+			else if ((p_ptr->s_info[j].flags1 & SKF1_MAX_25) && (val >= 25000)) val = 25000;
+			else if (val > SKILL_MAX) val = SKILL_MAX;
 
 			/* Save the modified value */
 			p_ptr->s_info[j].value = val;
 			
 			/* Update the client */
-			calc_techniques(Ind);
-			Send_skill_info(Ind, j);
-			
+			if (!quiet) {
+				calc_techniques(Ind);
+				Send_skill_info(Ind, j);
+			}
+
 			/* Take care of gained abilities */
-			msg_gained_abilities(Ind, old_value, j);
+			if (!quiet) msg_gained_abilities(Ind, old_value, j);
 		}
 	}
 }
@@ -645,7 +654,7 @@ static void increase_related_skills(int Ind, int i)
  * modify related skills
  * note that we *MUST* send back a skill_info packet
  */
-void increase_skill(int Ind, int i)
+void increase_skill(int Ind, int i, bool quiet)
 {
 	player_type *p_ptr = Players[Ind];
 	int old_value;
@@ -659,25 +668,29 @@ void increase_skill(int Ind, int i)
 	}
 
 	/* No skill points to be allocated */
-	if (p_ptr->skill_points <= 0)
-	{
-		Send_skill_info(Ind, i);
+	if (p_ptr->skill_points <= 0) {
+		if (!quiet) Send_skill_info(Ind, i);
 		return;
 	}
 
 	/* The skill cannot be increased */
-	if (p_ptr->s_info[i].mod <= 0)
-	{
-		Send_skill_info(Ind, i);
+	if (p_ptr->s_info[i].mod <= 0) {
+		if (!quiet) Send_skill_info(Ind, i);
 		return;
 	}
 
 	/* The skill is already maxed */
-	/* Some extra ability skills don't go over 1 ('1' meaning 'learnt') */
 	if ((p_ptr->s_info[i].value >= SKILL_MAX) ||
-	    ((p_ptr->s_info[i].flags1 & SKF1_MAX_1) && (p_ptr->s_info[i].value >= 1000)))
+	    /* Some extra ability skills don't go over 1 ('1' meaning 'learnt') */
+	    ((p_ptr->s_info[i].flags1 & SKF1_MAX_1) && (p_ptr->s_info[i].value >= 1000)) ||
+	    /* Hack: Archery for rangers doesn't go over 10 */
+	    ((p_ptr->s_info[i].flags1 & SKF1_MAX_10) && (p_ptr->s_info[i].value >= 10000)) ||
+	    /* unused: doesn't go over 20 */
+	    ((p_ptr->s_info[i].flags1 & SKF1_MAX_20) && (p_ptr->s_info[i].value >= 20000)) ||
+	    /* unused: doesn't go over 25 */
+	    ((p_ptr->s_info[i].flags1 & SKF1_MAX_25) && (p_ptr->s_info[i].value >= 25000)))
 	{
-		Send_skill_info(Ind, i);
+		if (!quiet) Send_skill_info(Ind, i);
 		return;
 	}
 
@@ -685,7 +698,7 @@ void increase_skill(int Ind, int i)
 	if ((p_ptr->s_info[i].value / SKILL_STEP) >= p_ptr->lev + 2)  /* <- this allows limit breaks at very high step values  -- handled in GET_SKILL now! */
 //	if ((((p_ptr->s_info[i].value + p_ptr->s_info[i].mod) * 10) / SKILL_STEP) > (p_ptr->lev * 10) + 20)  /* <- this often doesn't allow proper increase to +2 at high step values */
 	{
-		Send_skill_info(Ind, i);
+		if (!quiet) Send_skill_info(Ind, i);
 		return;
 	}
 
@@ -700,18 +713,30 @@ void increase_skill(int Ind, int i)
 
 	/* Increase the skill */
 	p_ptr->s_info[i].value += p_ptr->s_info[i].mod;
-	if (p_ptr->s_info[i].value >= SKILL_MAX) p_ptr->s_info[i].value = SKILL_MAX;
 
 	/* extra abilities cap at 1000 */
 	if ((p_ptr->s_info[i].flags1 & SKF1_MAX_1) && (p_ptr->s_info[i].value >= 1000))
 		p_ptr->s_info[i].value = 1000;
+	/* hack: archery for rangers caps at 10000 */
+	else if ((p_ptr->s_info[i].flags1 & SKF1_MAX_10) && (p_ptr->s_info[i].value >= 10000))
+		p_ptr->s_info[i].value = 10000;
+	/* unused: */
+	else if ((p_ptr->s_info[i].flags1 & SKF1_MAX_20) && (p_ptr->s_info[i].value >= 20000))
+		p_ptr->s_info[i].value = 20000;
+	/* unused: */
+	else if ((p_ptr->s_info[i].flags1 & SKF1_MAX_25) && (p_ptr->s_info[i].value >= 25000))
+		p_ptr->s_info[i].value = 25000;
+	/* cap at SKILL_MAX */
+	else if (p_ptr->s_info[i].value >= SKILL_MAX) p_ptr->s_info[i].value = SKILL_MAX;
 
 	/* Increase the skill */
-	increase_related_skills(Ind, i);
+	increase_related_skills(Ind, i, quiet);
 
 	/* Update the client */
-	calc_techniques(Ind);
-	Send_skill_info(Ind, i);
+	if (!quiet) {
+		calc_techniques(Ind);
+		Send_skill_info(Ind, i);
+	}
 
 	/* XXX updating is delayed till player leaves the skill screen */
 	p_ptr->update |= (PU_SKILL_MOD);
@@ -721,7 +746,7 @@ void increase_skill(int Ind, int i)
 	p_ptr->redraw |= (PR_SKILLS | PR_PLUSSES | PR_SANITY);
 
 	/* Take care of gained abilities */
-	msg_gained_abilities(Ind, old_value, i);
+	if (!quiet) msg_gained_abilities(Ind, old_value, i);
 }
 /*
  * Given the name of a skill, returns skill index or -1 if no
@@ -904,7 +929,10 @@ void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 			else color = TERM_ORANGE;
 		}
 		else if ((s_info[i].value == SKILL_MAX) ||
-			((s_info[i].flags1 & SKF1_MAX_1) && (s_info[i].value == 1000)))
+			((s_info[i].flags1 & SKF1_MAX_1) && (s_info[i].value == 1000)) ||
+			((s_info[i].flags1 & SKF1_MAX_10) && (s_info[i].value == 10000)) ||
+			((s_info[i].flags1 & SKF1_MAX_20) && (s_info[i].value == 20000)) ||
+			((s_info[i].flags1 & SKF1_MAX_25) && (s_info[i].value == 25000)))
 			color = TERM_L_BLUE;
 
 		if (s_info[i].hidden) color = TERM_L_RED;
@@ -1133,7 +1161,7 @@ void do_cmd_skill()
 			if (table[sel][0] == SKILL_MISC) continue;
 
 			/* Increase the current skill */
-			if (dir == 6) increase_skill(table[sel][0], skill_invest);
+			if (dir == 6) increase_skill(table[sel][0], skill_invest, FALSE);
 
 			/* Decrease the current skill */
 			if (dir == 4) decrease_skill(table[sel][0], skill_invest);
@@ -1697,8 +1725,7 @@ static s32b modified_by_related(player_type *p_ptr, int i) {
 	int j, points;
 	s32b val = 0, jv, jm;
 	
-	for (j = 1; j < MAX_SKILLS; j++)
-	{
+	for (j = 1; j < MAX_SKILLS; j++) {
 		/* Ignore self */
 		if (j == i) continue;
 
@@ -1752,7 +1779,7 @@ static s32b modified_by_related(player_type *p_ptr, int i) {
    So it wouldn't hurt really, if we allow this to correct any waste
    of skill points the user did. - C. Blue
    update_skills: Change base values and base mods to up-to-date values. */
-void respec_skill(int Ind, int i, bool update_skill) {
+void respec_skill(int Ind, int i, bool update_skill, bool polymorph) {
 	player_type *p_ptr = Players[Ind];
 	int j;
 	s32b v = 0, m = 0; /* base starting skill value, skill modifier */
@@ -1781,14 +1808,12 @@ void respec_skill(int Ind, int i, bool update_skill) {
 		spent_points = 0;
 
 	/* modify related skills */
-	for (j = 1; j < MAX_SKILLS; j++)
-	{
+	for (j = 1; j < MAX_SKILLS; j++) {
 		/* Ignore self */
 		if (j == i) continue;
 
 		/* Exclusive skills */
-		if (s_info[i].action[j] == SKILL_EXCLUSIVE)
-		{
+		if (s_info[i].action[j] == SKILL_EXCLUSIVE) {
 			jv = 0; jm = 0;
 			compute_skills(p_ptr, &jv, &jm, j);
 			/* Turn it on again (!) */
@@ -1802,8 +1827,11 @@ void respec_skill(int Ind, int i, bool update_skill) {
 			/* Skill value cannot be negative */
 			if (val < 0) val = 0;
 			/* It cannot exceed SKILL_MAX */
-			if (val > SKILL_MAX) val = SKILL_MAX;
 			if ((p_ptr->s_info[j].flags1 & SKF1_MAX_1) && (val > 1000)) val = 1000;
+			else if ((p_ptr->s_info[j].flags1 & SKF1_MAX_10) && (val > 10000)) val = 10000;
+			else if ((p_ptr->s_info[j].flags1 & SKF1_MAX_20) && (val > 10000)) val = 20000;
+			else if ((p_ptr->s_info[j].flags1 & SKF1_MAX_25) && (val > 10000)) val = 25000;
+			else if (val > SKILL_MAX) val = SKILL_MAX;
 
 			/* Save the modified value */
 			p_ptr->s_info[j].value = val;
@@ -1825,6 +1853,9 @@ void respec_skill(int Ind, int i, bool update_skill) {
 		p_ptr->s_info[i].base_value = v;
 	}
 
+	/* in case we changed mimicry skill */
+	if (polymorph) do_mimic_change(Ind, 0, TRUE);
+
 	/* Update the client */
 	calc_techniques(Ind);
 	Send_skill_info(Ind, i);
@@ -1833,6 +1864,11 @@ void respec_skill(int Ind, int i, bool update_skill) {
 	/* also update 'C' character screen live! */
 	p_ptr->update |= (PU_BONUS);
 	p_ptr->redraw |= (PR_SKILLS | PR_PLUSSES);
+
+	/* Discard old "save point" for /undoskills command */
+	memcpy(p_ptr->s_info_old, p_ptr->s_info, MAX_SKILLS * sizeof(skill_player));
+	p_ptr->skill_points_old = p_ptr->skill_points;
+	p_ptr->reskill_possible = TRUE;
 }
 
 /* Complete skill-chart reset (full respec) - C. Blue
@@ -1861,6 +1897,9 @@ void respec_skills(int Ind, bool update_skills) {
 	    available to the player depending on his level */
 	p_ptr->skill_points = (p_ptr->max_plv - 1) * 5;
 
+	/* in case we changed mimicry skill */
+	do_mimic_change(Ind, 0, TRUE);
+
 	/* Update the client */
 	calc_techniques(Ind);
 	/* XXX updating is delayed till player leaves the skill screen */
@@ -1868,6 +1907,11 @@ void respec_skills(int Ind, bool update_skills) {
 	/* also update 'C' character screen live! */
 	p_ptr->update |= (PU_BONUS);
 	p_ptr->redraw |= (PR_SKILLS | PR_PLUSSES);
+
+	/* Discard old "save point" for /undoskills command */
+	memcpy(p_ptr->s_info_old, p_ptr->s_info, MAX_SKILLS * sizeof(skill_player));
+	p_ptr->skill_points_old = p_ptr->skill_points;
+	p_ptr->reskill_possible = TRUE;
 }
 
 /* return amount of points that were invested into a skill */

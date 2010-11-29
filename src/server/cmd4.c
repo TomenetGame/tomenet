@@ -42,7 +42,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 
 	char file_name[MAX_PATH_LENGTH];
 
-	char base_name[80];
+	char base_name[ONAME_LEN];
 
 	bool okay[MAX_A_IDX];
 
@@ -110,14 +110,16 @@ void do_cmd_check_artifacts(int Ind, int line)
 //			if (object_known_p(Ind, o_ptr) && !admin) continue;
 			if (object_known_p(Ind, o_ptr)) continue;
 
+			/* Skip "hidden" artifacts */
+			if (admin_artifact_p(o_ptr) && !is_admin(Players[i])) continue;
+
 			/* Note the artifact */
 			okay[o_ptr->name1] = FALSE;
 		}
 	}
 
 	/* Scan the artifacts */
-	for (k = 0; k < MAX_A_IDX; k++)
-	{
+	for (k = 0; k < MAX_A_IDX; k++) {
 		a_ptr = &a_info[k];
 
 		/* List "dead" ones */
@@ -130,8 +132,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 		z = lookup_kind(a_ptr->tval, a_ptr->sval);
 
 		/* Real object */
-		if (z)
-		{
+		if (z) {
 			/* Create the object */
 			invcopy(&forge, z);
 
@@ -160,8 +161,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 		shown = TRUE;
 	}
 
-	if (!shown)
-	{
+	if (!shown) {
 		fprintf(fff, "\377sNo artifacts are witnessed so far.\n");
 	}
 
@@ -439,12 +439,12 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 		break;
 	}
 
-	switch(modify_number){
+	switch (modify_number) {
 	case 3: fprintf(fff, "Highlander "); break; //Judge for Highlander games
 	default: fprintf(fff, "%s ", race_info[q_ptr->prace].title); break;
 	}
 	
-	switch(modify_number){
+	switch (modify_number) {
 	case 1: fprintf(fff, "Cheezer "); break;
 	case 2: fprintf(fff, "Slacker "); break;
 	case 3: if (q_ptr->male) fprintf(fff, "Swordsman ");
@@ -483,11 +483,11 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
   #endif
 	//e.g., God the Human Grand Runemistress =P
   #ifdef ENABLE_DIVINE
-	if (q_ptr->prace == RACE_DIVINE && q_ptr->divinity) {
-		if (q_ptr->divinity==DIVINE_ANGEL)
-			fprintf(fff, "%s %s", "Enlightened", p); //harmonic?
-		else if (q_ptr->divinity==DIVINE_DEMON)
-			fprintf(fff, "%s %s", "Corrupted", p); //rebellious?  
+	if (q_ptr->prace == RACE_DIVINE && q_ptr->ptrait) {
+		if (q_ptr->ptrait==TRAIT_ENLIGHTENED)
+			fprintf(fff, "%s %s", "Enlightened", p);
+		else if (q_ptr->ptrait==TRAIT_CORRUPTED)
+			fprintf(fff, "%s %s", "Corrupted", p);
 	}
 	else
   #endif
@@ -498,8 +498,7 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 	if (q_ptr->mode & MODE_PVP) fprintf(fff, " Gladiator");
 
 	/* PK */
-	if (cfg.use_pk_rules == PK_RULES_DECLARE)
-	{
+	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
 		text_pk = TRUE;
 		if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
 			fprintf(fff, "   (PK");
@@ -510,8 +509,7 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 		else
 			text_pk = FALSE;
 	}
-	if(q_ptr->limit_chat)
-	{
+	if (q_ptr->limit_chat) {
 		text_silent = TRUE;
 		if (text_pk)
 			fprintf(fff, ", Silent");
@@ -519,8 +517,7 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 			fprintf(fff, "   (Silent");
 	}
 	/* AFK */
-	if(q_ptr->afk)
-	{
+	if (q_ptr->afk) {
 		text_afk = TRUE;
 		if (text_pk || text_silent) {
 //			if (strlen(q_ptr->afk_msg) == 0)
@@ -535,8 +532,7 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 		}
 	}
 	/* Ignoring normal chat (sees only private & party messages) */
-	if(q_ptr->ignoring_chat)
-	{
+	if (q_ptr->ignoring_chat) {
 		text_ignoring_chat = TRUE;
 		if (text_pk || text_silent || text_afk) {
 			fprintf(fff, ", Private mode");
@@ -544,8 +540,7 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 			fprintf(fff, "   (Private mode");
 		}
 	}
-	if(q_ptr->admin_dm_chat)
-	{
+	if (q_ptr->admin_dm_chat) {
 		text_allow_dm_chat = TRUE;
 		if (text_pk || text_silent || text_afk || text_ignoring_chat) {
 			fprintf(fff, ", Allow chat");
@@ -592,7 +587,7 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 	fprintf(fff, "\n\377U     ");
  #endif
 
-	switch(modify_number){
+	switch (modify_number) {
 	case 3: fprintf(fff, "\377rJudge\377U "); break; //Judge for Highlander games
 	case 4: if (q_ptr->male) fprintf(fff,"\377bDungeon Master\377U ");
 		else fprintf(fff,"\377bDungeon Mistress\377U ");
@@ -640,7 +635,7 @@ static void do_admin_woa(FILE *fff, player_type *q_ptr, bool modify, char attr)
                 p = player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_PLAYER_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male];
 
 	/* Check for special character */
-	if(modify){
+	if (modify) {
 		/* Uncomment these as you feel it's needed ;) */
 		//if(!strcmp(q_ptr->name,"")) modify_number=1; //wussy Cheezer
 		//if(!strcmp(q_ptr->name,"")) modify_number=2; //silyl Slacker
@@ -678,7 +673,7 @@ static void do_admin_woa(FILE *fff, player_type *q_ptr, bool modify, char attr)
 		break;
 	}
 
-	switch(modify_number){
+	switch (modify_number) {
 	case 3: fprintf(fff, "Highlander "); break; //Judge for Highlander games
 	default: fprintf(fff, "%s ", race_info[q_ptr->prace].title); break;
 	}
@@ -698,10 +693,10 @@ static void do_admin_woa(FILE *fff, player_type *q_ptr, bool modify, char attr)
 	fprintf(fff, "  %s: ", q_ptr->name);
 	//e.g., God the Human Grand Runemistress =P
   #ifdef ENABLE_DIVINE
-	if (q_ptr->prace == RACE_DIVINE && q_ptr->divinity) {
-		if (q_ptr->divinity==DIVINE_ANGEL)
+	if (q_ptr->prace == RACE_DIVINE && q_ptr->ptrait) {
+		if (q_ptr->ptrait==TRAIT_ENLIGHTENED)
 			fprintf(fff, "%s %s", "Enlightened", p); //harmonic?
-		else if (q_ptr->divinity==DIVINE_DEMON)
+		else if (q_ptr->ptrait==TRAIT_CORRUPTED)
 			fprintf(fff, "%s %s", "Corrupted", p); //rebellious?  
 	}
 	else
@@ -713,8 +708,7 @@ static void do_admin_woa(FILE *fff, player_type *q_ptr, bool modify, char attr)
 	if (q_ptr->mode & MODE_PVP) fprintf(fff, " Glad");
 
 	/* PK */
-	if (cfg.use_pk_rules == PK_RULES_DECLARE)
-	{
+	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
 		text_pk = TRUE;
 		if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
 			fprintf(fff, "   (PK");
@@ -725,8 +719,7 @@ static void do_admin_woa(FILE *fff, player_type *q_ptr, bool modify, char attr)
 		else
 			text_pk = FALSE;
 	}
-	if(q_ptr->limit_chat)
-	{
+	if(q_ptr->limit_chat) {
 		text_silent = TRUE;
 		if (text_pk)
 			fprintf(fff, ", Sil");
@@ -734,8 +727,7 @@ static void do_admin_woa(FILE *fff, player_type *q_ptr, bool modify, char attr)
 			fprintf(fff, "   (Sil");
 	}
 	/* AFK */
-	if(q_ptr->afk)
-	{
+	if (q_ptr->afk) {
 		text_afk = TRUE;
 		if (text_pk || text_silent) {
 //			if (strlen(q_ptr->afk_msg) == 0)
@@ -750,8 +742,7 @@ static void do_admin_woa(FILE *fff, player_type *q_ptr, bool modify, char attr)
 		}
 	}
 	/* Ignoring normal chat (sees only private & party messages) */
-	if(q_ptr->ignoring_chat)
-	{
+	if (q_ptr->ignoring_chat) {
 		text_ignoring_chat = TRUE;
 		if (text_pk || text_silent || text_afk) {
 			fprintf(fff, ", Priv");
@@ -759,8 +750,7 @@ static void do_admin_woa(FILE *fff, player_type *q_ptr, bool modify, char attr)
 			fprintf(fff, "   (Priv");
 		}
 	}
-	if(q_ptr->admin_dm_chat)
-	{
+	if (q_ptr->admin_dm_chat) {
 		text_allow_dm_chat = TRUE;
 		if (text_pk || text_silent || text_afk || text_ignoring_chat) {
 			fprintf(fff, ", AChat");
@@ -1601,9 +1591,7 @@ void do_cmd_check_server_settings(int Ind)
 		if (cfg.zang_monsters)
 			fprintf(fff, "  Zelasny Angband additions (%d%%)\n", cfg.zang_monsters);
 		if (cfg.pern_monsters)
-			/* XXX Let's be safe */
-			//fprintf(fff, "  DragonRiders of Pern additions (%d%%)\n", cfg.pern_monsters);
-			fprintf(fff, "  Thunderlord additions (%d%%)\n", cfg.pern_monsters);
+			fprintf(fff, "  Draconian additions (%d%%)\n", cfg.pern_monsters);
 		if (cfg.cth_monsters)
 			fprintf(fff, "  Lovecraft additions (%d%%)\n", cfg.cth_monsters);
 		if (cfg.cblue_monsters)
@@ -1620,8 +1608,7 @@ void do_cmd_check_server_settings(int Ind)
 		if (cfg.zang_monsters > TELL_MONSTER_ABOVE)
 			fprintf(fff, "  Zelasny Angband additions\n");
 		if (cfg.pern_monsters > TELL_MONSTER_ABOVE)
-			//fprintf(fff, "  DragonRiders of Pern additions\n");
-			fprintf(fff, "  Thunderlord additions\n");
+			fprintf(fff, "  Draconian additions\n");
 		if (cfg.cth_monsters > TELL_MONSTER_ABOVE)
 			fprintf(fff, "  Lovecraft additions\n");
 		if (cfg.cblue_monsters > TELL_MONSTER_ABOVE)
@@ -1858,7 +1845,7 @@ void do_cmd_show_houses(int Ind)
 		h_ptr = &houses[i];
 		dna = h_ptr->dna;
 
-		if (!access_door(Ind, h_ptr->dna) && !admin_p(Ind)) continue;
+		if (!access_door(Ind, h_ptr->dna, FALSE) && !admin_p(Ind)) continue;
 
 		shown = TRUE;
 		total++;

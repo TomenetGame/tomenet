@@ -16,6 +16,7 @@
 #include "angband.h"
 
 static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
+static void town_gen_hack(struct worldpos *wpos);
 
 /*
  * Note that Level generation is *not* an important bottleneck,
@@ -159,9 +160,10 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
 #define ALLOC_TYP_TRAP		3	/* Trap */
 #define ALLOC_TYP_GOLD		4	/* Gold */
 #define ALLOC_TYP_OBJECT	5	/* Object */
-#define ALLOC_TYP_ALTAR         6       /* Altar */
-#define ALLOC_TYP_BETWEEN       7       /* Between */
-#define ALLOC_TYP_FOUNTAIN      8       /* Fountain */
+#define ALLOC_TYP_ALTAR		6	/* Altar */
+#define ALLOC_TYP_BETWEEN	7	/* Between */
+#define ALLOC_TYP_FOUNTAIN	8	/* Fountain */
+#define ALLOC_TYP_FOUNTAIN_OF_BLOOD	9	/* Fountain of Blood */
 
 
 
@@ -537,8 +539,7 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 	if (c_ptr->special) return;
 
 	/* Place the fountain */
-	if (randint(100) < 20)	/* 30 */
-	{
+	if (randint(100) < 20) { /* 30 */
 		/* XXX Empty fountain doesn't need 'type', does it? */
 		cave_set_feat(wpos, y, x, FEAT_EMPTY_FOUNTAIN);
 /*		c_ptr->special2 = 0; */
@@ -546,13 +547,11 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 	}
 
 	/* List of usable svals */
-	for (k = 1; k < max_k_idx; k++)
-	{
+	for (k = 1; k < max_k_idx; k++) {
 		object_kind *k_ptr = &k_info[k];
 
 		if (((k_ptr->tval == TV_POTION) || (k_ptr->tval == TV_POTION2)) &&
-		    (k_ptr->level <= dun_lev) && (k_ptr->flags4 & TR4_FOUNTAIN))
-		{
+		    (k_ptr->level <= dun_lev) && (k_ptr->flags4 & TR4_FOUNTAIN)) {
 			/* C. Blue -- reduce amount of stat-draining fountains before sustain rings become available */
 			if (!((k_ptr->tval == TV_POTION) && (
 			    ((dun_lev < 8) && /* no stat-draining fountains above -400ft (finding sustain-rings there) */
@@ -575,49 +574,49 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 	}
 
 	if (maxsval == 0) return;
-	else
-	{
+	else {
 		/* TODO: rarity should be counted in? */
 		cave_set_feat(wpos, y, x, FEAT_FOUNTAIN);
-		if (!(cs_ptr=AddCS(c_ptr, CS_FOUNTAIN))) return;
+		if (!(cs_ptr = AddCS(c_ptr, CS_FOUNTAIN))) return;
 
-		if (!maxsval || magik(20))	/* often water */
+		if (!maxsval || magik(20)) /* often water */
 			cs_ptr->sc.fountain.type = SV_POTION_WATER;
 		else cs_ptr->sc.fountain.type = svals[rand_int(maxsval)];
 
 		cs_ptr->sc.fountain.rest = damroll(1, 5);
+
 		/* Some hacks: */
 		if (cs_ptr->sc.fountain.type < SV_POTION_LAST)
-		switch (cs_ptr->sc.fountain.type) {
-		case SV_POTION_NEW_LIFE:
-			cs_ptr->sc.fountain.rest = 1;
-			break;
-		case SV_POTION_INC_STR:	case SV_POTION_INC_INT:
-		case SV_POTION_INC_WIS:	case SV_POTION_INC_DEX:
-		case SV_POTION_INC_CON:	case SV_POTION_INC_CHR:
-		case SV_POTION_AUGMENTATION:
-		case SV_POTION_STAR_ENLIGHTENMENT:
-		case SV_POTION_EXPERIENCE:
-		case SV_POTION_INVULNERABILITY:
-		case SV_POTION_STAR_RESTORE_MANA:
-		case SV_POTION_STAR_HEALING:
-		case SV_POTION_LIFE:
-		case SV_POTION_SELF_KNOWLEDGE:
-			cs_ptr->sc.fountain.rest = damroll(1, 3);
-			break;
-		case SV_POTION_LEARNING: /* not used, see SV_POTION2_LEARNING instead */
-			cs_ptr->sc.fountain.rest = damroll(1, 2);
-			break;
-		}
+			switch (cs_ptr->sc.fountain.type) {
+/*			case SV_POTION_NEW_LIFE:
+				cs_ptr->sc.fountain.rest = 1;
+				break;
+*/			case SV_POTION_INC_STR:	case SV_POTION_INC_INT:
+			case SV_POTION_INC_WIS:	case SV_POTION_INC_DEX:
+			case SV_POTION_INC_CON:	case SV_POTION_INC_CHR:
+			case SV_POTION_AUGMENTATION:
+			case SV_POTION_STAR_ENLIGHTENMENT:
+			case SV_POTION_EXPERIENCE:
+			case SV_POTION_INVULNERABILITY:
+			case SV_POTION_STAR_RESTORE_MANA:
+			case SV_POTION_STAR_HEALING:
+			case SV_POTION_LIFE:
+			case SV_POTION_SELF_KNOWLEDGE:
+				cs_ptr->sc.fountain.rest = damroll(1, 3);
+				break;
+			case SV_POTION_LEARNING: /* not used, see SV_POTION2_LEARNING instead */
+				cs_ptr->sc.fountain.rest = damroll(1, 2);
+				break;
+			}
 		else
-		switch (cs_ptr->sc.fountain.type - SV_POTION_LAST) {
-		/* make it hard to polymorph back at a bat fountain by sipping again */
-		case SV_POTION2_CHAUVE_SOURIS:
-		case SV_POTION2_CURE_SANITY:
-		case SV_POTION2_LEARNING:
-			cs_ptr->sc.fountain.rest = damroll(1, 2);
-			break;
-		}
+			switch (cs_ptr->sc.fountain.type - SV_POTION_LAST) {
+			/* make it hard to polymorph back at a bat fountain by sipping again */
+			case SV_POTION2_CHAUVE_SOURIS:
+			case SV_POTION2_CURE_SANITY:
+			case SV_POTION2_LEARNING:
+				cs_ptr->sc.fountain.rest = damroll(1, 2);
+				break;
+			}
 
 		cs_ptr->sc.fountain.known = FALSE;
 #if 0
@@ -627,6 +626,26 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 	}
 
 /*	c_ptr->special = svals[rand_int(maxsval)]; */
+}
+
+/* Place a fountain of blood, for Vampires, as suggested by Mark -  C. Blue */
+void place_fountain_of_blood(struct worldpos *wpos, int y, int x) {
+	cave_type **zcave;
+	cave_type *c_ptr;
+	c_special *cs_ptr;
+
+	if(!(zcave = getcave(wpos))) return;
+	c_ptr = &zcave[y][x];
+
+	/* No fountains over traps/house doors etc */
+	if (c_ptr->special) return;
+
+	/* TODO: rarity should be counted in? */
+	cave_set_feat(wpos, y, x, FEAT_FOUNTAIN_BLOOD);
+	if (!(cs_ptr = AddCS(c_ptr, CS_FOUNTAIN))) return;
+	cs_ptr->sc.fountain.type = SV_POTION_BLOOD;
+	cs_ptr->sc.fountain.rest = damroll(1, 5);
+	cs_ptr->sc.fountain.known = TRUE;
 }
 
 #if 0
@@ -1016,22 +1035,19 @@ static void alloc_object(struct worldpos *wpos, int set, int typ, int num, playe
 	int y, x, k;
 	int try = 1000;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if(!(zcave = getcave(wpos))) return;
 
 #ifdef RPG_SERVER /* no objects are generated in Training Tower */
 	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0 && cave_set_quietly) return;
 #endif
 
 	/* Place some objects */
-	for (k = 0; k < num; k++)
-	{
+	for (k = 0; k < num; k++) {
 		/* Pick a "legal" spot */
-		while (TRUE)
-		{
+		while (TRUE) {
 			bool room;
 
-			if (!--try)
-			{
+			if (!--try) {
 #if DEBUG_LEVEL > 1
 				s_printf("alloc_object failed!\n");
 #endif	/* DEBUG_LEVEL */
@@ -1064,55 +1080,47 @@ static void alloc_object(struct worldpos *wpos, int set, int typ, int num, playe
 		}
 
 		/* Place something */
-		switch (typ)
-		{
-			case ALLOC_TYP_RUBBLE:
-			{
-				place_rubble(wpos, y, x);
-				break;
-			}
+		switch (typ) {
+		case ALLOC_TYP_RUBBLE:
+			place_rubble(wpos, y, x);
+			break;
 
-			case ALLOC_TYP_TRAP:
-			{
-				place_trap(wpos, y, x, 0);
-				break;
-			}
+		case ALLOC_TYP_TRAP:
+			place_trap(wpos, y, x, 0);
+			break;
 
-			case ALLOC_TYP_GOLD:
-			{
-				place_gold(wpos, y, x, 0);
-				/* hack -- trap can be hidden under gold */
-				if (rand_int(100) < 3) place_trap(wpos, y, x, 0);
-				break;
-			}
+		case ALLOC_TYP_GOLD:
+			place_gold(wpos, y, x, 0);
+			/* hack -- trap can be hidden under gold */
+			if (rand_int(100) < 3) place_trap(wpos, y, x, 0);
+			break;
 
-			case ALLOC_TYP_OBJECT:
-			{
-				place_object(wpos, y, x, FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
-				/* hack -- trap can be hidden under an item */
-				if (rand_int(100) < 2) place_trap(wpos, y, x, 0);
-				break;
-			}
+		case ALLOC_TYP_OBJECT:
+			place_object(wpos, y, x, FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+			/* hack -- trap can be hidden under an item */
+			if (rand_int(100) < 2) place_trap(wpos, y, x, 0);
+			break;
 
 #if 0
-			case ALLOC_TYP_ALTAR:
-			{
-				place_altar(wpos, y, x);
-				break;
-			}
+		case ALLOC_TYP_ALTAR:
+			place_altar(wpos, y, x);
+			break;
 #endif	/* 0 */
 
-			case ALLOC_TYP_BETWEEN:
-			{
-				place_between(wpos, y, x);
-				break;
-			}
+		case ALLOC_TYP_BETWEEN:
+			place_between(wpos, y, x);
+			break;
 
-			case ALLOC_TYP_FOUNTAIN:
-			{
-				place_fountain(wpos, y, x);
-				break;
-			}
+		case ALLOC_TYP_FOUNTAIN:
+			place_fountain(wpos, y, x);
+			break;
+
+		case ALLOC_TYP_FOUNTAIN_OF_BLOOD:
+			/* this actually means "allocate SOME fountains of blood,
+			   while keeping most of them normal ones" ;) - C. Blue */
+			if (!rand_int(3)) place_fountain_of_blood(wpos, y, x);
+			else place_fountain(wpos, y, x);
+			break;
 		}
 	}
 }
@@ -1191,12 +1199,9 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 			c_ptr = &zcave[ty][tx];
 
 			/* Only convert "granite" walls */
-			if (pierce)
-			{
+			if (pierce) {
 				if (cave_perma_bold(zcave, ty, tx)) continue;
-			}
-			else
-			{
+			} else {
 				/* Only convert "granite" walls */
 				if (!(c_ptr->feat == feat_wall_inner) &&
 				    !(c_ptr->feat == feat_wall_outer) &&
@@ -3571,7 +3576,7 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		get_mon_num_hook = dungeon_aux;
 		set_mon_num2_hook(floor_type[0]);
 		get_mon_num_prep(dun_type, reject_uniques);
-		template_race = get_mon_num(dun_lev);
+		template_race = get_mon_num(dun_lev, dun_lev);
 #endif
 
 		if ((dun_lev >= (25 + randint(15))) && (rand_int(2) != 0))
@@ -3682,7 +3687,7 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	for (i = 0; i < 64; i++)
 	{
 		/* Get a (hard) monster type */
-		what[i] = get_mon_num(dun_lev + 10);
+		what[i] = get_mon_num(dun_lev + 10, dun_lev);
 
 		/* Notice failure */
 		if (!what[i]) empty = TRUE;
@@ -3975,7 +3980,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 			get_mon_num_hook = dungeon_aux;
 			set_mon_num2_hook(floor_type[0]);
 			get_mon_num_prep(dun_type, reject_uniques);
-			template_race = get_mon_num(dun_lev);
+			template_race = get_mon_num(dun_lev, dun_lev);
 #endif
 
 			/* Restrict selection */
@@ -4117,7 +4122,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	{
 		for (j = 0; j < 100; j++) {
 			/* Get a (hard) monster type */
-			what[i] = get_mon_num(dun_lev + 10);
+			what[i] = get_mon_num(dun_lev + 10, dun_lev);
 			if (what[i] && !(r_info[what[i]].flags1 & RF1_UNIQUE)) break;
 		}
 		/* Notice failure */
@@ -4439,10 +4444,8 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 	if (v_ptr->flags1 & VF1_RARE_TRUEARTS) eff_forbid_true = 80;
 	if (v_ptr->flags1 & VF1_RARE_RANDARTS) eff_forbid_rand = 80;
 
-	if (!hives)	/* Hack -- avoid ugly results */
-	{
-		if (!(v_ptr->flags1 & VF1_NO_MIRROR))
-		{
+	if (!hives) { /* Hack -- avoid ugly results */
+		if (!(v_ptr->flags1 & VF1_NO_MIRROR)) {
 			if (magik(30)) mirrorlr = TRUE;
 			if (magik(30)) mirrorud = TRUE;
 		}
@@ -4472,15 +4475,11 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 
 	/* Clean the between gates arrays */
 	for(i = 0; i < 8; i++)
-	{
 		bwy[i] = bwx[i] = 9999;
-	}
 
 	/* Place dungeon features and objects */
-	for (t = data, dy = 0; dy < ymax; dy++)
-	{
-		for (dx = 0; dx < xmax; dx++, t++)
-		{
+	for (t = data, dy = 0; dy < ymax; dy++) {
+		for (dx = 0; dx < xmax; dx++, t++) {
 			eff_resf = resf;
 			if (magik(eff_forbid_true)) eff_resf |= RESF_NOTRUEART;
 			if (magik(eff_forbid_rand)) eff_resf |= RESF_NORANDART;
@@ -4514,8 +4513,7 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 				c_ptr->info |= CAVE_STCK;
 
 			/* Analyze the grid */
-			switch (*t)
-			{
+			switch (*t) {
 				/* Granite wall (outer) */
 				case '%':
 				c_ptr->feat = FEAT_WALL_OUTER;
@@ -4535,13 +4533,9 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 				/* Treasure/trap */
 				case '*':
 				if (rand_int(100) < 75)
-				{
 					place_object(wpos, y, x, FALSE, FALSE, FALSE, eff_resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
-				}
 				if (rand_int(100) < 40)
-				{
 					place_trap(wpos, y, x, 0);
-				}
 				break;
 
 				/* Secret doors */
@@ -4607,14 +4601,12 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 
 				/* Monster and/or object */
 				case ',':
-				if (magik(50))
-				{
+				if (magik(50)) {
 					monster_level = lev + 3;
 					place_monster(wpos, y, x, TRUE, TRUE);
 					monster_level = lev;
 				}
-				if (magik(50))
-				{
+				if (magik(50)) {
 					object_level = lev + 7;
 					place_object(wpos, y, x, FALSE, FALSE, FALSE, eff_resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 					object_level = lev;
@@ -4636,10 +4628,8 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 					/* XXX not sure what will happen if the cave already has
 					 * another between gate */
 					/* Not found before */
-					if(bwy[*t - '0'] == 9999)
-					{
-						if (!(cs_ptr=AddCS(c_ptr, CS_BETWEEN)))
-						{
+					if(bwy[*t - '0'] == 9999) {
+						if (!(cs_ptr=AddCS(c_ptr, CS_BETWEEN))) {
 #if DEBUG_LEVEL > 0
 							s_printf("oops, vault between gates generation failed(1st: %s)!!\n", wpos_format(0, wpos));
 #endif /* DEBUG_LEVEL */
@@ -4650,10 +4640,8 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 						bwx[*t - '0'] = x;
 					}
 					/* The second time */
-					else
-					{
-						if (!(cs_ptr=AddCS(c_ptr, CS_BETWEEN)))
-						{
+					else {
+						if (!(cs_ptr=AddCS(c_ptr, CS_BETWEEN))) {
 #if DEBUG_LEVEL > 0
 							s_printf("oops, vault between gates generation failed(2nd: %s)!!\n", wpos_format(0, wpos));
 #endif /* DEBUG_LEVEL */
@@ -4678,10 +4666,8 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 	}
 
 	/* Another pass for monsters */
-	for (t = data, dy = 0; dy < ymax; dy++)
-	{
-		for (dx = 0; dx < xmax; dx++, t++)
-		{
+	for (t = data, dy = 0; dy < ymax; dy++) {
+		for (dx = 0; dx < xmax; dx++, t++) {
 			eff_resf = resf;
 			if (magik(eff_forbid_true)) eff_resf |= RESF_NOTRUEART;
 			if (magik(eff_forbid_rand)) eff_resf |= RESF_NORANDART;
@@ -4694,8 +4680,7 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 
 			/* FIXME - find a better solution */
 			/* Is this any better? */
-			if(!in_bounds4(l_ptr,y,x))
-				continue;
+			if(!in_bounds4(l_ptr,y,x)) continue;
 
 			/* Hack -- skip "non-grids" */
 			if (*t == ' ') continue;
@@ -4704,8 +4689,7 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 			c_ptr = &zcave[y][x];
 
 			/* Analyze the grid */
-			switch (*t)
-			{
+			switch (*t) {
 				/* Monster */
 				case '&':
 				monster_level = lev + 5;
@@ -4755,14 +4739,12 @@ s_printf("DEBUG_FEELING: VAULT_HI by build_vault(), '8' monster\n");
 				/* Monster and/or object */
 				case ',':
 				placed = TRUE;
-				if (magik(50))
-				{
+				if (magik(50)) {
 					monster_level = lev + 3;
 					placed = place_monster(wpos, y, x, TRUE, TRUE);
 					monster_level = lev;
 				}
-				if (magik(50) && placed)
-				{
+				if (magik(50) && placed) {
 					object_level = lev + 7;
 					place_object(wpos, y, x, FALSE, FALSE, FALSE, eff_resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 					object_level = lev;
@@ -4783,10 +4765,8 @@ s_printf("DEBUG_FEELING: VAULT_HI by build_vault(), '8' monster\n");
 
 	/* Check if vault is perma_walled, and make its fields 'remember' that */
 	if (perma_walled) {
-		for (t = data, dy = 0; dy < ymax; dy++)
-		{
-			for (dx = 0; dx < xmax; dx++, t++)
-			{
+		for (t = data, dy = 0; dy < ymax; dy++) {
+			for (dx = 0; dx < xmax; dx++, t++) {
 				/* Extract the location */
 	/*			x = xval - (xmax / 2) + dx;
 				y = yval - (ymax / 2) + dy;	*/
@@ -4795,18 +4775,17 @@ s_printf("DEBUG_FEELING: VAULT_HI by build_vault(), '8' monster\n");
 
 				/* FIXME - find a better solution */
 				/* Is this any better? */
-				if(!in_bounds4(l_ptr,y,x))
-					continue;
-			
+				if(!in_bounds4(l_ptr,y,x)) continue;
+
 				/* Hack -- skip "non-grids" */
 				if (*t == ' ') continue;
 
 				/* Access the grid */
 				c_ptr = &zcave[y][x];
-			
+
 				/* Remember that this field belongs to a perma-wall vault */
 				c_ptr->info |= CAVE_ICKY_PERMA;
-				
+
 				/* overridden by MORGOTH_NO_TELE_VAULTS:
 				   instead of making just that vault no-tele,
 				   now all vaults on the level are no-tele;
@@ -6162,12 +6141,10 @@ static void build_room_vault(worldpos *wpos, int x0, int y0, int xsize, int ysiz
 	yhsize = ysize / 2;
 
 	/* Fill area so don't get problems with arena levels */
-	for (x1 = 0; x1 <= xsize; x1++)
-	{
+	for (x1 = 0; x1 <= xsize; x1++) {
 		int x = x0 - xhsize + x1;
 
-		for (y1 = 0; y1 <= ysize; y1++)
-		{
+		for (y1 = 0; y1 <= ysize; y1++) {
 			int y = y0 - yhsize + y1;
 
 			if (!in_bounds(y, x)) continue;
@@ -6178,8 +6155,7 @@ static void build_room_vault(worldpos *wpos, int x0, int y0, int xsize, int ysiz
 	}
 
 	/* Add ten random rooms */
-	for (i = 0; i < 10; i++)
-	{
+	for (i = 0; i < 10; i++) {
 		x1 = randint(xhsize) * 2 + x0 - xhsize;
 		x2 = randint(xhsize) * 2 + x0 - xhsize;
 		y1 = randint(yhsize) * 2 + y0 - yhsize;
@@ -6192,8 +6168,7 @@ static void build_room_vault(worldpos *wpos, int x0, int y0, int xsize, int ysiz
 		      x0 - xhsize + xsize);
 
 	/* Add some random doors */
-	for (i = 0; i < 500; i++)
-	{
+	for (i = 0; i < 500; i++) {
 		x1 = randint(xsize - 2) - xhsize + x0 + 1;
 		y1 = randint(ysize - 2) - yhsize + y0 + 1;
 		add_door(wpos, x1, y1);
@@ -6481,10 +6456,8 @@ static void build_mini_c_vault(worldpos *wpos, int x0, int y0, int xsize, int ys
 
 
 	/* Generate the room */
-	for (y = y1 - 1; y <= y2 + 1; y++)
-	{
-		for (x = x1 - 1; x <= x2 + 1; x++)
-		{
+	for (y = y1 - 1; y <= y2 + 1; y++) {
+		for (x = x1 - 1; x <= x2 + 1; x++) {
 			zcave[y][x].info |= (CAVE_ROOM | CAVE_ICKY | CAVE_ICKY_PERMA);
 
 			/* Permanent walls */
@@ -6505,17 +6478,13 @@ static void build_mini_c_vault(worldpos *wpos, int x0, int y0, int xsize, int ys
 	r_visit(wpos, y1, x1, y2, x2, rand_int(num_vertices), 0, visited);
 
 	/* Make it look like a checker board vault */
-	for (x = x1; x <= x2; x++)
-	{
-		for (y = y1; y <= y2; y++)
-		{
+	for (x = x1; x <= x2; x++) {
+		for (y = y1; y <= y2; y++) {
 			total = x - x1 + y - y1;
 
 			/* If total is odd and is a floor, then make a wall */
 			if ((total % 2 == 1) && get_is_floor(wpos, x, y))
-			{
 				cave_set_feat(wpos, y, x, feat_wall_inner);
-			}
 		}
 	}
 
@@ -7056,58 +7025,34 @@ static void build_type11(worldpos *wpos, int by0, int bx0, player_type *p_ptr)
 	/* Select type of vault */
 	vtype = randint(8);
 
-	switch (vtype)
-	{
-		/* Build an appropriate room */
-		case 1:
-		{
-			build_bubble_vault(wpos, x0, y0, xsize, ysize, p_ptr);
-			break;
-		}
+	switch (vtype) {
+	/* Build an appropriate room */
+	case 1:
+		build_bubble_vault(wpos, x0, y0, xsize, ysize, p_ptr);
+		break;
+	case 2:
+		build_room_vault(wpos, x0, y0, xsize, ysize, p_ptr);
+		break;
+	case 3:
+		build_cave_vault(wpos, x0, y0, xsize, ysize, p_ptr);
+		break;
+	case 4:
+		build_maze_vault(wpos, x0, y0, xsize, ysize, p_ptr);
+		break;
+	case 5:
+		build_mini_c_vault(wpos, x0, y0, xsize, ysize, p_ptr);
+		break;
+	case 6:
+		build_castle_vault(wpos, x0, y0, xsize, ysize, p_ptr);
+		break;
+	case 7:
+		build_target_vault(wpos, x0, y0, xsize, ysize, p_ptr);
+		break;
+	/* I know how to add a few more... give me some time. */
 
-		case 2:
-		{
-			build_room_vault(wpos, x0, y0, xsize, ysize, p_ptr);
-			break;
-		}
-
-		case 3:
-		{
-			build_cave_vault(wpos, x0, y0, xsize, ysize, p_ptr);
-			break;
-		}
-
-		case 4:
-		{
-			build_maze_vault(wpos, x0, y0, xsize, ysize, p_ptr);
-			break;
-		}
-
-		case 5:
-		{
-			build_mini_c_vault(wpos, x0, y0, xsize, ysize, p_ptr);
-			break;
-		}
-
-		case 6:
-		{
-			build_castle_vault(wpos, x0, y0, xsize, ysize, p_ptr);
-			break;
-		}
-
-		case 7:
-		{
-			build_target_vault(wpos, x0, y0, xsize, ysize, p_ptr);
-			break;
-		}
-
-		/* I know how to add a few more... give me some time. */
-
-		/* Paranoia */
-		default:
-		{
-			return;
-		}
+	/* Paranoia */
+	default:
+		return;
 	}
 }
 
@@ -8841,6 +8786,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	/* Don't build one of these on 1x1 (super small) levels,
 	   to avoid insta(ghost)kill if a player recalls into that pit - C. Blue */
 	bool tiny_level = FALSE;
+	bool town = FALSE; /* for ironman */
+	bool fountains_of_blood = FALSE; /* for vampires */
 
 
 	dun_lev = getlevel(wpos);
@@ -8850,11 +8797,28 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	dun->l_ptr->flags1 = dun->l_ptr->flags2 = 0;
 
 
+	/* test if we want fountains of blood in this dungeon - C. Blue */
+#if 0//needs dungeon_info_type and all
+	/* Process all dungeon-specific monster generation rules */
+	for (i = 0; i < 5; i++) {
+		rule_type *rule = &d_ptr->rules[i];
+		if (!rule->percent) break;
+		if (rule->percent >= 70 && rule->mode != 4 && (rule->mflags3 & RF3_UNDEAD))
+			fountains_of_blood = TRUE;
+	}
+#else
+	/* yay for hard-coding "The Paths of the Dead".. ;-|
+	   (it's the only affected dungeon anyway) */
+	if (d_ptr->type == 16) fountains_of_blood = TRUE;
+#endif
+
 	if(!(zcave = getcave(wpos))) return;
 	wild = &wild_info[wpos->wy][wpos->wx];
 	flags1 = (wpos->wz > 0 ? wild->tower->flags1 : wild->dungeon->flags1);
 	flags2 = (wpos->wz > 0 ? wild->tower->flags2 : wild->dungeon->flags2);
 
+
+	/* in case of paranoia, note that ALL normal dungeons (in d_info) are DF2_RANDOM ;) */
 	if(!flags2 & DF2_RANDOM) return;
 
 
@@ -8871,8 +8835,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	   from the rand_int in 'Small level', not from 'Very small'! - C. Blue */
 
 	/* Very small (1 x 1 panel) level */
-	if (!(d_ptr->flags1 & DF1_BIG) && (d_ptr->flags1 & DF1_SMALLEST))
-	{
+	if (!(d_ptr->flags1 & DF1_BIG) && (d_ptr->flags1 & DF1_SMALLEST)) {
 		dun->l_ptr->hgt = SCREEN_HGT;
 		dun->l_ptr->wid = SCREEN_WID;
 	}
@@ -8888,8 +8851,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 #endif
 	}
 	/* Normal level */
-	else
-	{
+	else {
 		dun->l_ptr->wid = MAX_WID;
 		dun->l_ptr->hgt = MAX_HGT;
 	}
@@ -8902,34 +8864,72 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	dun->l_ptr->flags1 = 0;
 	if (dun_lev < 100 && magik(NO_MAGIC_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_MAGIC;
 	if (magik(NO_GENO_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_GENO;
-	if (magik(NO_MAP_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_MAP;
+	if (magik(NO_MAP_CHANCE) && dun_lev >= 5) dun->l_ptr->flags1 |= LF1_NO_MAP;
 	if (magik(NO_MAGIC_MAP_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
 	if (magik(NO_DESTROY_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_DESTROY;
 
 	/* TODO: copy dungeon_type flags to dun_level */
-	if (d_ptr && d_ptr->flags1 & DF1_FORGET) dun->l_ptr->flags1 |= LF1_NO_MAP;
-	if (d_ptr && d_ptr->flags2 & DF2_NO_MAGIC_MAP) dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
+	if (d_ptr && (d_ptr->flags1 & DF1_FORGET)) {
+		dun->l_ptr->flags1 |= LF1_NO_MAP;
+		s_printf("FORGET\n");
+	}
+	if (d_ptr && (d_ptr->flags2 & DF2_NO_MAGIC_MAP)) dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
 
 	/* Hack -- NO_MAP often comes with NO_MAGIC_MAP */
 	if ((dun->l_ptr->flags1 & LF1_NO_MAP) && magik(55))
 		dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
 
+	/* PvP arena isn't special except that *destruction* doesn't work */
+	if (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z)
+		dun->l_ptr->flags1 = LF1_NO_DESTROY;
+
 	/* IRONMAN allows recalling at bottom/top */
-        if((d_ptr && (d_ptr->flags2 & DF2_IRON)) &&
-	    ((wpos->wz<0 && wild_info[wpos->wy][wpos->wx].dungeon->maxdepth==-wpos->wz) ||
-	    (wpos->wz>0 && wild_info[wpos->wy][wpos->wx].tower->maxdepth==wpos->wz)))
-		dun->l_ptr->flags1 |= LF1_IRON_RECALL;
-	/* IRONMAN allows recalling sometimes, if IRONFIX or IRONRND */
-	if(d_ptr && (dun_lev >= 20) && /* was 30 */
-	    (((d_ptr->flags2 & DF2_IRONRND1) && magik(20)) ||
-	    ((d_ptr->flags2 & DF2_IRONRND2) && magik(12)) ||
-	    ((d_ptr->flags2 & DF2_IRONRND3) && magik(8)) ||
-	    ((d_ptr->flags2 & DF2_IRONRND4) && magik(5)) ||
-	    ((d_ptr->flags2 & DF2_IRONFIX1) && !(wpos->wz % 5)) ||
-	    ((d_ptr->flags2 & DF2_IRONFIX2) && !(wpos->wz % 10))||
-	    ((d_ptr->flags2 & DF2_IRONFIX3) && !(wpos->wz % 15)) ||
-	    ((d_ptr->flags2 & DF2_IRONFIX4) && !(wpos->wz % 20))))
-		dun->l_ptr->flags1 |= LF1_IRON_RECALL;
+	if (d_ptr && (d_ptr->flags2 & DF2_IRON)) {
+		if ((wpos->wz < 0 && wild_info[wpos->wy][wpos->wx].dungeon->maxdepth == -wpos->wz) ||
+		    (wpos->wz > 0 && wild_info[wpos->wy][wpos->wx].tower->maxdepth == wpos->wz))
+			dun->l_ptr->flags1 |= LF1_IRON_RECALL;
+		/* IRONMAN allows recalling sometimes, if IRONFIX or IRONRND */
+		else if(d_ptr && (dun_lev >= 20) && /* was 30 */
+		    (((d_ptr->flags2 & DF2_IRONRND1) && magik(20)) ||
+		    ((d_ptr->flags2 & DF2_IRONRND2) && magik(12)) ||
+		    ((d_ptr->flags2 & DF2_IRONRND3) && magik(8)) ||
+		    ((d_ptr->flags2 & DF2_IRONRND4) && magik(5)) ||
+		    ((d_ptr->flags2 & DF2_IRONFIX1) && !(wpos->wz % 5)) ||
+		    ((d_ptr->flags2 & DF2_IRONFIX2) && !(wpos->wz % 10))||
+		    ((d_ptr->flags2 & DF2_IRONFIX3) && !(wpos->wz % 15)) ||
+		    ((d_ptr->flags2 & DF2_IRONFIX4) && !(wpos->wz % 20)))) {
+			dun->l_ptr->flags1 |= LF1_IRON_RECALL;
+			/* Generate ironman town too? */
+			if (d_ptr->flags2 & DF2_TOWNS_IRONRECALL) town = TRUE;
+		}
+	}
+	/* Generate town? */
+#ifdef TEST_SERVER
+//	if (magik(30)) town = TRUE;
+#endif
+	if (town ||
+	    ((d_ptr->flags2 & DF2_TOWNS_FIX) && !(dun_lev %
+	    (dun_lev <= 30 ? 10 : (dun_lev <= 60 ? 15 : 20)))) ||
+	    ((d_ptr->flags2 & DF2_TOWNS_RND) && magik(
+	    (dun_lev <= 30 ? 10 : (dun_lev <= 60 ? 7 : 5)))) ) {
+		bool lit = rand_int(3) == 0;
+		/* prepare level: max size and permanent walls */
+		dun->l_ptr->wid = MAX_WID;
+		dun->l_ptr->hgt = MAX_HGT;
+		for (y = 0; y < MAX_HGT; y++) {
+			for (x = 0; x < MAX_WID; x++) {
+				cave_type *c_ptr = &zcave[y][x];
+				c_ptr->feat = FEAT_HIGH_MOUNT_SOLID;
+				if (lit) c_ptr->info |= CAVE_GLOW;
+			}
+		}
+
+		/* add the town */
+		s_printf("DF2_TOWNS_: Adding a town at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+		dun->l_ptr->flags1 |= LF1_DUNGEON_TOWN | LF1_NO_DESTROY;
+		town_gen_hack(wpos);
+		return;
+	}
 
 	/* not too big levels for 'Arena Monster Challenge' event */
 	if (ge_special_sector &&
@@ -8946,14 +8946,12 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	dun->ratio = 100 * dun->l_ptr->wid * dun->l_ptr->hgt / MAX_HGT / MAX_WID;
 
 	/* Possible cavern */
-	if (rand_int(dun_lev) > DUN_CAVERN && magik(DUN_CAVERN2))
-	{
+	if (rand_int(dun_lev) > DUN_CAVERN && magik(DUN_CAVERN2)) {
 		cavern = TRUE;
 
 #if 0
 		/* Make a large fractal cave in the middle of the dungeon */
-		if (cheat_room)
-		{
+		if (cheat_room) {
 			msg_print("Cavern on level.");
 		}
 #endif	/* 0 */
@@ -8978,7 +8976,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	if (maze) permaze = magik(DUN_MAZE_PERMAWALL);
 
 	if (!maze && !cavern &&
-		((d_ptr->flags1 & (DF1_EMPTY)) || !rand_int(EMPTY_LEVEL)))
+	    ((d_ptr->flags1 & (DF1_EMPTY)) || !rand_int(EMPTY_LEVEL)))
 	{
 		empty_level = TRUE;
 		if ((randint(DARK_EMPTY)!=1 || (randint(100) > dun_lev)))
@@ -8996,10 +8994,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 
 	/* Hack -- Start with permawalls
 	 * Hope run-length do a good job :) */
-	for (y = 0; y < MAX_HGT; y++)
-	{
-		for (x = 0; x < MAX_WID; x++)
-		{
+	for (y = 0; y < MAX_HGT; y++) {
+		for (x = 0; x < MAX_WID; x++) {
 			cave_type *c_ptr = &zcave[y][x];
 
 			/* Create granite wall */
@@ -9012,10 +9008,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 
 #if 0
 	/* Hack -- then curve with basic granite */
-	for (y = 1; y < dun->l_ptr->hgt - 1; y++)
-	{
-		for (x = 1; x < dun->l_ptr->wid - 1; x++)
-		{
+	for (y = 1; y < dun->l_ptr->hgt - 1; y++) {
+		for (x = 1; x < dun->l_ptr->wid - 1; x++) {
 			cave_type *c_ptr = &zcave[y][x];
 
 			/* Create granite wall */
@@ -9032,12 +9026,9 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	 * dungeon. Maybe we need another d_info flag/value.
 	 */
 	/* Hack -- then curve with basic granite */
-	if (permaze)
-	{
-		for (y = 1; y < dun->l_ptr->hgt - 1; y++)
-		{
-			for (x = 1; x < dun->l_ptr->wid - 1; x++)
-			{
+	if (permaze) {
+		for (y = 1; y < dun->l_ptr->hgt - 1; y++) {
+			for (x = 1; x < dun->l_ptr->wid - 1; x++) {
 				cave_type *c_ptr = &zcave[y][x];
 
 				/* Create permawall */
@@ -9073,15 +9064,13 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 if (!nether_bottom) {
 	/* Build some rooms */
 	if (!maze || !(d_ptr->flags1 & DF1_MAZE))
-	for (i = 0; i < DUN_ROOMS; i++)
-	{
+	for (i = 0; i < DUN_ROOMS; i++) {
 		/* Pick a block for the room */
 		y = rand_int(dun->row_rooms);
 		x = rand_int(dun->col_rooms);
 
 		/* Align dungeon rooms */
-		if (dungeon_align)
-		{
+		if (dungeon_align) {
 			/* Slide some rooms right */
 			if ((x % 3) == 0) x++;
 
@@ -9090,29 +9079,22 @@ if (!nether_bottom) {
 		}
 
 		/* Destroyed levels are boring */
-		if (destroyed)
-		{
+		if (destroyed) {
 			/* The deeper you are, the more cavelike the rooms are */
 
 			/* no caves when cavern exists: they look bad */
 			k = randint(100);
 
-			if (!cavern && (k < dun_lev) && !tiny_level)
-			{
+			if (!cavern && (k < dun_lev) && !tiny_level) {
 				/* Type 10 -- Fractal cave */
 				if (room_build(wpos, y, x, 10, p_ptr)) continue;
-			}
-			else
-			{
+			} else {
 				/* Attempt a "trivial" room */
 #if 0
 				if ((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) &&
 						room_build(y, x, 9, p_ptr)))
 #endif	/* 0 */
-				if (magik(30) && room_build(wpos, y, x, 9, p_ptr))
-				{
-					continue;
-				}
+				if (magik(30) && room_build(wpos, y, x, 9, p_ptr)) continue;
 				else if (room_build(wpos, y, x, 1, p_ptr)) continue;
 			}
 
@@ -9126,14 +9108,12 @@ if (!nether_bottom) {
 		}
 
 		/* Attempt an "unusual" room */
-		if (rand_int(DUN_UNUSUAL) < dun_lev)
-		{
+		if (rand_int(DUN_UNUSUAL) < dun_lev) {
 			/* Roll for room type */
 			k = rand_int(100);
 
 			/* Attempt a very unusual room */
-			if ((rand_int(DUN_UNUSUAL) < dun_lev) && !tiny_level)
-			{
+			if ((rand_int(DUN_UNUSUAL) < dun_lev) && !tiny_level) {
 				/* Type 8 -- Greater vault (10%) */
 				if ((k < 10) && room_build(wpos, y, x, 8, p_ptr)) continue;
 
@@ -9166,10 +9146,10 @@ if (!nether_bottom) {
 
 			/* Type 9 -- Circular (10%) */
 			/* Hack - build standard rectangular rooms if needed */
-			if (k < 90)
-			{
+			if (k < 90) {
 				if (((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) || magik(70)) &&
-						room_build(wpos, y, x, 1, p_ptr)) continue;
+				    room_build(wpos, y, x, 1, p_ptr))
+					continue;
 				else if (room_build(wpos, y, x, 9, p_ptr)) continue;
 			}
 
@@ -9178,14 +9158,12 @@ if (!nether_bottom) {
 		}
 
 		/* Attempt a trivial room */
-		if ((d_ptr->flags1 & DF1_CAVE) || magik(50))
-		{
+		if ((d_ptr->flags1 & DF1_CAVE) || magik(50)) {
 			if (room_build(wpos, y, x, 10, p_ptr)) continue;
-		}
-		else
-		{
+		} else {
 			if (((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) || magik(30)) &&
-					room_build(wpos, y, x, 9, p_ptr)) continue;
+			    room_build(wpos, y, x, 9, p_ptr))
+				continue;
 			else if (room_build(wpos, y, x, 1, p_ptr)) continue;
 		}
 	}
@@ -9194,8 +9172,7 @@ if (!nether_bottom) {
 	/* XXX the walls here should 'mimic' the surroundings,
 	 * however I omitted it to spare 522 c_special	- Jir */
 	/* Special boundary walls -- Top */
-	for (x = 0; x < dun->l_ptr->wid; x++)
-	{
+	for (x = 0; x < dun->l_ptr->wid; x++) {
 		cave_type *c_ptr = &zcave[0][x];
 
 		/* Clear previous contents, add "solid" perma-wall */
@@ -9203,8 +9180,7 @@ if (!nether_bottom) {
 	}
 
 	/* Special boundary walls -- Bottom */
-	for (x = 0; x < dun->l_ptr->wid; x++)
-	{
+	for (x = 0; x < dun->l_ptr->wid; x++) {
 		cave_type *c_ptr = &zcave[dun->l_ptr->hgt-1][x];
 
 		/* Clear previous contents, add "solid" perma-wall */
@@ -9212,8 +9188,7 @@ if (!nether_bottom) {
 	}
 
 	/* Special boundary walls -- Left */
-	for (y = 0; y < dun->l_ptr->hgt; y++)
-	{
+	for (y = 0; y < dun->l_ptr->hgt; y++) {
 		cave_type *c_ptr = &zcave[y][0];
 
 		/* Clear previous contents, add "solid" perma-wall */
@@ -9221,8 +9196,7 @@ if (!nether_bottom) {
 	}
 
 	/* Special boundary walls -- Right */
-	for (y = 0; y < dun->l_ptr->hgt; y++)
-	{
+	for (y = 0; y < dun->l_ptr->hgt; y++) {
 		cave_type *c_ptr = &zcave[y][dun->l_ptr->wid-1];
 
 		/* Clear previous contents, add "solid" perma-wall */
@@ -9230,16 +9204,12 @@ if (!nether_bottom) {
 	}
 #endif	/* 0 */
 
-	if (maze)
-	{
+	if (maze) {
 		generate_maze(wpos, (d_ptr->flags1 & DF1_MAZE) ? 1 : randint(3));
-	}
-	else
-	{
+	} else {
 if (!nether_bottom) {
 		/* Hack -- Scramble the room order */
-		for (i = 0; i < dun->cent_n; i++)
-		{
+		for (i = 0; i < dun->cent_n; i++) {
 			int pick1 = rand_int(dun->cent_n);
 			int pick2 = rand_int(dun->cent_n);
 			y1 = dun->cent[pick1].y;
@@ -9258,8 +9228,7 @@ if (!nether_bottom) {
 		x = dun->cent[dun->cent_n-1].x;
 
 		/* Connect all the rooms together */
-		for (i = 0; i < dun->cent_n; i++)
-		{
+		for (i = 0; i < dun->cent_n; i++) {
 			/* Connect the room to the previous room */
 			build_tunnel(wpos, dun->cent[i].y, dun->cent[i].x, y, x);
 
@@ -9269,8 +9238,7 @@ if (!nether_bottom) {
 		}
 
 		/* Place intersection doors	 */
-		for (i = 0; i < dun->door_n; i++)
-		{
+		for (i = 0; i < dun->door_n; i++) {
 			/* Extract junction location */
 			y = dun->door[i].y;
 			x = dun->door[i].x;
@@ -9288,63 +9256,43 @@ if (!nether_bottom) {
 
 		/* Hack -- Add some magma streamers */
 		for (i = 0; i < DUN_STR_MAG; i++)
-		{
 			build_streamer(wpos, FEAT_MAGMA, DUN_STR_MC, FALSE);
-		}
 
 		/* Hack -- Add some quartz streamers */
 		for (i = 0; i < DUN_STR_QUA; i++)
-		{
 			build_streamer(wpos, FEAT_QUARTZ, DUN_STR_QC, FALSE);
-		}
 
 		/* Add some sand streamers */
 		if (((d_ptr->flags1 & DF1_SAND_VEIN) && !rand_int(4)) ||
-				magik(DUN_SANDWALL))
-		{
+		    magik(DUN_SANDWALL)) {
 			build_streamer(wpos, FEAT_SANDWALL, DUN_STR_SC, FALSE);
 		}
 
 		/* Hack -- Add some rivers if requested */
 		if ((d_ptr->flags1 & DF1_WATER_RIVER) && !rand_int(4))
-		{
 			add_river(wpos, FEAT_DEEP_WATER, FEAT_SHAL_WATER);
-		}
 		if ((d_ptr->flags1 & DF1_LAVA_RIVER) && !rand_int(4))
-		{
 			add_river(wpos, FEAT_DEEP_LAVA, FEAT_SHAL_LAVA);
-		}
 
-		if ((d_ptr->flags1 & DF1_WATER_RIVERS) || (dun->watery))
-		{
+		if ((d_ptr->flags1 & DF1_WATER_RIVERS) || (dun->watery)) {
 			int max = 3 + rand_int(2);
 
-			for(i = 0; i < max; i++)
-			{
-				if(rand_int(3) == 0)
-				{
-					add_river(wpos, FEAT_DEEP_WATER, FEAT_SHAL_WATER);
-				}
+			for(i = 0; i < max; i++) {
+				if(rand_int(3) == 0) add_river(wpos, FEAT_DEEP_WATER, FEAT_SHAL_WATER);
 			}
 		}
 
-		if (d_ptr->flags1 & DF1_LAVA_RIVERS)
-		{
+		if (d_ptr->flags1 & DF1_LAVA_RIVERS) {
 			int max = 2 + rand_int(2);
 
-			for(i = 0; i < max; i++)
-			{
-				if(rand_int(3) == 0)
-				{
-					add_river(wpos, FEAT_DEEP_LAVA, FEAT_SHAL_LAVA);
-				}
+			for(i = 0; i < max; i++) {
+				if(rand_int(3) == 0) add_river(wpos, FEAT_DEEP_LAVA, FEAT_SHAL_LAVA);
 			}
 		}
 
 #if 0
 		/* Hack -- Add some water streamers */
-		if (dun->watery)
-		{
+		if (dun->watery) {
  #if 0
 			get_mon_num_hook = vault_aux_aquatic;
 
@@ -9353,9 +9301,7 @@ if (!nether_bottom) {
  #endif	/* 0 */
 
 			for (i = 0; i < DUN_STR_WAT; i++)
-			{
 				build_streamer(wpos, FEAT_DEEP_WATER, 0, TRUE);
-			}
 
 			lake_level(wpos);
 
@@ -9375,8 +9321,7 @@ if (!nether_bottom) {
 	}
 
 
-	if (!(dun->l_ptr->flags1 & LF1_NO_STAIR))
-	{
+	if (!(dun->l_ptr->flags1 & LF1_NO_STAIR)) {
 		/* Place 3 or 4 down stairs near some walls */
 		alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, rand_range(3, 4) * dun->ratio / 100 + 1, 3);
 
@@ -9392,8 +9337,7 @@ if (!nether_bottom) {
 #endif	/* 0 */
 
 		/* Hack -- add *more* stairs for lowbie's sake */
-		if (dun_lev <= COMFORT_PASSAGE_DEPTH)
-		{
+		if (dun_lev <= COMFORT_PASSAGE_DEPTH) {
 			/* Place 3 or 4 down stairs near some walls */
 			alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, rand_range(2, 4), 3);
 
@@ -9402,8 +9346,8 @@ if (!nether_bottom) {
 		}
 
 		/* Hack -- add *more* downstairs for Highlander Tournament event */
-		if (sector00separation && wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && wpos->wz < 0 && dun_lev > COMFORT_PASSAGE_DEPTH)
-		{
+		if (sector00separation && wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y &&
+		    wpos->wz < 0 && dun_lev > COMFORT_PASSAGE_DEPTH) {
 			/* Place 3 or 4 down stairs near some walls */
 			alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, rand_range(2, 4), 2);
 		}
@@ -9428,14 +9372,11 @@ if (!nether_bottom) {
 		 *
 		 * Small trees (penetrate walls)
 		 */
-		if ((d_ptr->flags1 & DF1_FLAT) && (randint(20) > 15))
-		{
+		if ((d_ptr->flags1 & DF1_FLAT) && (randint(20) > 15)) {
 			num = randint(DUN_STR_QUA);
 
 			for (i = 0; i < num; i++)
-			{
 				build_streamer2(wpos, FEAT_IVY, 1);
-			}
 		}
 
 		/*
@@ -9444,52 +9385,39 @@ if (!nether_bottom) {
 		 * Shallow water (preserve walls)
 		 * Deep water (penetrate walls)
 		 */
-		if ((dun_lev <= 33) && (randint(20) > 15))
-		{
+		if ((dun_lev <= 33) && (randint(20) > 15)) {
 			num = randint(DUN_STR_QUA - 1);
 
 			for (i = 0; i < num; i++)
-			{
 				build_streamer2(wpos, FEAT_SHAL_WATER, 0);
-			}
 
-			if (randint(20) > 15)
-			{
+			if (randint(20) > 15) {
 				num = randint(DUN_STR_QUA);
 
 				for (i = 0; i < num; i++)
-				{
 					build_streamer2(wpos, FEAT_DEEP_WATER, 1);
-				}
 			}
 		}
 
 		/*
 		 * Levels 34 -- (was: 20 --)
 		 */
-		else if (dun_lev > 33)
-		{
+		else if (dun_lev > 33) {
 			/*
 			 * Shallow lava (preserve walls)
 			 * Deep lava (penetrate walls)
 			 */
-			if (randint(20) > 15)
-			{
+			if (randint(20) > 15) {
 				num = randint(DUN_STR_QUA);
 
 				for (i = 0; i < num; i++)
-				{
 					build_streamer2(wpos, FEAT_SHAL_LAVA, 0);
-				}
 
-				if (randint(20) > 15)
-				{
+				if (randint(20) > 15) {
 					num = randint(DUN_STR_QUA - 1);
 
 					for (i = 0; i < num; i++)
-					{
 						build_streamer2(wpos, FEAT_DEEP_LAVA, 1);
-					}
 				}
 			}
 
@@ -9497,23 +9425,17 @@ if (!nether_bottom) {
 			 * Shallow water (preserve walls)
 			 * Deep water (penetrate walls)
 			 */
-			else if (randint(20) > 15)
-			{
+			else if (randint(20) > 15) {
 				num = randint(DUN_STR_QUA - 1);
 
 				for (i = 0; i < num; i++)
-				{
 					build_streamer2(wpos, FEAT_SHAL_WATER, 0);
-				}
 
-				if (randint(20) > 15)
-				{
+				if (randint(20) > 15) {
 					num = randint(DUN_STR_QUA);
 
 					for (i = 0; i < num; i++)
-					{
 						build_streamer2(wpos, FEAT_DEEP_WATER, 1);
-					}
 				}
 			}
 		}
@@ -9527,8 +9449,7 @@ if (!nether_bottom) {
 	k = k * dun->ratio / 100 + 1;
 	if (k < 2) k = 2;
 
-	if (empty_level || maze)
-	{
+	if (empty_level || maze) {
 		k *= 2;
 		bonus = TRUE;
 	}
@@ -9539,24 +9460,20 @@ if (!nether_bottom) {
 
 	/* Put some monsters in the dungeon */
 	for (i = i + k; i > 0; i--)
-	{
 		(void)alloc_monster(wpos, 0, TRUE);
-	}
 
 #ifdef ENABLE_DIVINE
 	/* Force a pair of darkling and candlebearer when there is at least one divine on level that
 	 * needs it.
 	 */
-	if (dun_lev >= 15 && dun_lev <= 24) {
-		if (inarea(&p_ptr->wpos, wpos) && p_ptr->prace == RACE_DIVINE && !p_ptr->divinity) {
-			if (randint(2) == 1) {
-				place_monster_one(wpos, 5 + randint(dun->row_rooms - 5), randint(dun->col_rooms - 5), 1104, FALSE, FALSE, FALSE, 100, 0);
-//				s_printf("SPAWN DEBUG: 1104 spawned at %d,%d,%d\n", wpos->wx, wpos->wy, wpos->wz);
-			} else {
-				place_monster_one(wpos, 5 + randint(dun->row_rooms - 5), randint(dun->col_rooms - 5), 1105, FALSE, FALSE, FALSE, 100, 0);
-//				s_printf("SPAWN DEBUG: 1105 spawned at %d,%d,%d\n", wpos->wx, wpos->wy, wpos->wz);
-			}
-
+	if (dun_lev >= 12 && dun_lev <= 20 &&
+	    p_ptr && p_ptr->prace == RACE_DIVINE && !p_ptr->ptrait) {
+		if (randint(2) == 1) {
+			place_monster_one(wpos, 5 + randint(dun->row_rooms - 5), randint(dun->col_rooms - 5), 1104, FALSE, FALSE, FALSE, 100, 0);
+//			s_printf("SPAWN DEBUG: 1104 spawned at %d,%d,%d\n", wpos->wx, wpos->wy, wpos->wz);
+		} else {
+			place_monster_one(wpos, 5 + randint(dun->row_rooms - 5), randint(dun->col_rooms - 5), 1105, FALSE, FALSE, FALSE, 100, 0);
+//			s_printf("SPAWN DEBUG: 1105 spawned at %d,%d,%d\n", wpos->wx, wpos->wy, wpos->wz);
 		}
 	}
 #endif
@@ -9565,7 +9482,7 @@ if (!nether_bottom) {
 if (!nether_bottom) {
 	/* Place some traps in the dungeon */
 	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_TRAP,
-			randint(k * (bonus ? 3 : 1)), p_ptr);
+	    randint(k * (bonus ? 3 : 1)), p_ptr);
 
 	/* Put some rubble in corridors */
 	alloc_object(wpos, ALLOC_SET_CORR, ALLOC_TYP_RUBBLE, randint(k), p_ptr);
@@ -9581,14 +9498,14 @@ if (!nether_bottom) {
 	alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_BETWEEN, randnor(DUN_AMT_BETWEEN, 3) * dun->ratio / 100 + 1, p_ptr);
 
 	/* Put some fountains */
-	alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_FOUNTAIN, randnor(DUN_AMT_FOUNTAIN, 3) * dun->ratio / 100 + 1, p_ptr);
+	alloc_object(wpos, ALLOC_SET_ROOM, fountains_of_blood ? ALLOC_TYP_FOUNTAIN_OF_BLOOD : ALLOC_TYP_FOUNTAIN, randnor(DUN_AMT_FOUNTAIN, 3) * dun->ratio / 100 + 1, p_ptr);
 }
 	/* It's done */
 #else
 if (!nether_bottom && wpos->wz < 0) {
 	/* Place some traps in the dungeon */
 	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_TRAP,
-			randint(k * (bonus ? 3 : 1)), p_ptr);
+	    randint(k * (bonus ? 3 : 1)), p_ptr);
 
 	/* Put some rubble in corridors */
 	alloc_object(wpos, ALLOC_SET_CORR, ALLOC_TYP_RUBBLE, randint(k), p_ptr);
@@ -9604,7 +9521,7 @@ if (!nether_bottom && wpos->wz < 0) {
 	alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_BETWEEN, randnor(DUN_AMT_BETWEEN, 3) * dun->ratio / 100 + 1, p_ptr);
 
 	/* Put some fountains */
-	alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_FOUNTAIN, randnor(DUN_AMT_FOUNTAIN, 3) * dun->ratio / 100 + 1, p_ptr);
+	alloc_object(wpos, ALLOC_SET_ROOM, fountains_of_blood ? ALLOC_TYP_FOUNTAIN_OF_BLOOD : ALLOC_TYP_FOUNTAIN, randnor(DUN_AMT_FOUNTAIN, 3) * dun->ratio / 100 + 1, p_ptr);
 }
 	/* It's done */
 #endif
@@ -9696,21 +9613,34 @@ for(mx = 1; mx < 131; mx++) {
 	/* Create secret dungeon shop entrances (never on Morgoth's depth) -C. Blue */
 	/* Nether Realm has an overriding shop creation routing. */
 	if (!nether_level) {
-		/* check for building deep store */
+		bool store_failed = FALSE; /* avoid checking for a different type of store if one already failed, warping probabilities around */
+
+		/* check for building deep store (Rare & expensive stores) */
 		if ((!dungeon_store_timer) && (dun_lev >= 60) && (dun_lev != 100)) build_special_store = 1;
-		/* if failed, check for building low-level store */
+		/* if failed, check for building low-level store (Herbalist) */
 		if ((!build_special_store) &&
 		    (!dungeon_store2_timer) && (dun_lev >= 10) && (dun_lev <= 30)) build_special_store = 2;
-#ifdef TEST_SERVER		    
-		if ((!build_special_store) && (dun_lev >= 13) &&
-		    !rand_int(3)) build_special_store = 3;
+#ifdef TEST_SERVER
+		if (!store_failed && (!build_special_store) && (dun_lev >= 13)) {
+			if (!rand_int(3)) build_special_store = 3;
+			else store_failed = TRUE;
+		}
 #else
  #ifdef RPG_SERVER
-		if ((!build_special_store) && (d_ptr->flags2 & DF2_IRON) && (dun_lev >= 13) &&
-		    !rand_int(3)) build_special_store = 3;
+		/* Build one of several misc stores for basic items of certain type */
+		if (!store_failed && (!build_special_store) && (d_ptr->flags2 & DF2_IRON) && (dun_lev >= 13)) {
 //		    ((dun_lev + rand_int(3) - 1) % 5 == 0)) build_special_store = 3;
+			if (!rand_int(3)) build_special_store = 3;
+			else store_failed = TRUE;
+		}
  #endif
 #endif
+		/* Build one of several misc stores for basic items of certain type, like on RPG server above */
+		if (!store_failed && (!build_special_store) && (d_ptr->flags2 & DF2_MISC_STORES) && (dun_lev >= 13)) {
+		    if (!rand_int(3)) build_special_store = 3;
+		    else store_failed = TRUE;
+		}
+
 		/* if failed, we're done */
 		if (!build_special_store) return;
 		/* reset deep shop timeout */
@@ -9722,11 +9652,10 @@ for(mx = 1; mx < 131; mx++) {
 	/* build only one special shop in the Nether Realm */
 	} else if (((dun_lev - 166) % 5 != 0) || (dun_lev == 166 + 30)) return;
 	/* Try to create a dungeon store */
-	if ((rand_int(1000) < cfg.dungeon_shop_chance) || nether_level || (build_special_store == 3))
-	{
+	if ((rand_int(1000) < cfg.dungeon_shop_chance) ||
+	    nether_level || (build_special_store == 3)) {
 		/* Try hard to place one */
-		for (i = 0; i<300; i++)
-		{
+		for (i = 0; i < 300; i++) {
 			y = rand_int(dun->l_ptr->hgt-4)+2;
 			x = rand_int(dun->l_ptr->wid-4)+2;
 			csbm_ptr = &zcave[y][x];
@@ -9757,18 +9686,16 @@ for(mx = 1; mx < 131; mx++) {
 			{
 				/* must have at least 1 'free' adjacent field */
 				bool found1free = FALSE;
-				for (k = 0; k < 8; k++)
-				{
-					switch(k)
-					{
-					case 0:x1 = x - 1; y1 = y - 1; break;
-					case 1:x1 = x; y1 = y - 1; break;
-					case 2:x1 = x + 1; y1 = y - 1; break;
-					case 3:x1 = x + 1; y1 = y; break;
-					case 4:x1 = x + 1; y1 = y + 1; break;
-					case 5:x1 = x; y1 = y + 1; break;
-					case 6:x1 = x - 1; y1 = y + 1; break;
-					case 7:x1 = x - 1; y1 = y; break;
+				for (k = 0; k < 8; k++) {
+					switch (k) {
+					case 0: x1 = x - 1; y1 = y - 1; break;
+					case 1: x1 = x; y1 = y - 1; break;
+					case 2: x1 = x + 1; y1 = y - 1; break;
+					case 3: x1 = x + 1; y1 = y; break;
+					case 4: x1 = x + 1; y1 = y + 1; break;
+					case 5: x1 = x; y1 = y + 1; break;
+					case 6: x1 = x - 1; y1 = y + 1; break;
+					case 7: x1 = x - 1; y1 = y; break;
 					}
 					cr_ptr = &zcave[y1][x1];
 		    			if ((cr_ptr->feat != FEAT_PERM_SOLID) &&
@@ -9796,17 +9723,14 @@ for(mx = 1; mx < 131; mx++) {
 					found1free = TRUE;
 				}
 
-				if(found1free)
-				{
+				if (found1free) {
 					/* Must have at least 3 solid adjacent fields,
 					that are also adjacent to each other,
 					and the 3-chain mustn't start at a corner! >:) Mwhahaha.. */
 					int r = 0; /* Counts adjacent solid fields */
-					for (k = 0; k < (8-1+3); k++)
-					if(r<3)
-					{
-						switch(k % 8)
-						{
+					for (k = 0; k < (8 - 1 + 3); k++)
+					if (r < 3) {
+						switch (k % 8) {
 						case 0:x1 = x - 1; y1 = y - 1; break;
 						case 1:x1 = x; y1 = y - 1; break;
 						case 2:x1 = x + 1; y1 = y - 1; break;
@@ -9839,17 +9763,14 @@ for(mx = 1; mx < 131; mx++) {
 						    (cr_ptr->feat != FEAT_SANDWALL_H) &&
 						    (cr_ptr->feat != FEAT_SANDWALL_K)))
 						{
-							if (r!=0) r++;
+							if (r != 0) r++;
 							/* chain mustn't start in a diagonal corner..: */
-							if ((r==0) && ((k % 2)==1)) r++;
-						}
-						else
-						{
-							r=0;
+							if ((r == 0) && ((k % 2) == 1)) r++;
+						} else {
+							r = 0;
 						}
 					}
-					if (r >= 3)
-					{
+					if (r >= 3) {
 						/* Ok, create a secret store! */
 						if((cs_ptr=AddCS(csbm_ptr, CS_SHOP))){
 							csbm_ptr->feat = FEAT_SHOP;
@@ -9859,10 +9780,10 @@ for(mx = 1; mx < 131; mx++) {
 							if (!nether_level) {
 								if (build_special_store == 1) {
 									if (cfg.dungeon_shop_type == 999){
-										switch(rand_int(3)){
+										switch (rand_int(3)) {
 										case 1:cs_ptr->sc.omni = STORE_JEWELX;break; /*Rare Jewelry Shop */
 										case 2:cs_ptr->sc.omni = STORE_SHOESX;break; /*Rare Footwear Shop */
-										default:cs_ptr->sc.omni = STORE_BLACKS;break; /*The Secret Black Market */
+										default: cs_ptr->sc.omni = STORE_BLACKS;break; /*The Secret Black Market */
 										}
 									} else {
 										cs_ptr->sc.omni = cfg.dungeon_shop_type;
@@ -9871,18 +9792,17 @@ for(mx = 1; mx < 131; mx++) {
 									cs_ptr->sc.omni = STORE_HERBALIST;
 								} else if (build_special_store == 3) {
 									//Add specialist stores? - the_sandman
-									switch(randint(10)){
+									switch (randint(10)) {
 /*									case 1: cs_ptr->sc.omni = STORE_SPEC_AXE;break;
 									case 2: cs_ptr->sc.omni = STORE_SPEC_BLUNT;break;
 									case 3: cs_ptr->sc.omni = STORE_SPEC_POLE;break;
 									case 4: cs_ptr->sc.omni = STORE_SPEC_SWORD;break;*/
-									case 1: case 2:cs_ptr->sc.omni = STORE_SPEC_CLOSECOMBAT;break;
+									case 1: case 2: cs_ptr->sc.omni = STORE_SPEC_CLOSECOMBAT;break;
 									case 3: cs_ptr->sc.omni = STORE_SPEC_POTION;break;
 									case 4: cs_ptr->sc.omni = STORE_SPEC_SCROLL;break;
 									case 5: cs_ptr->sc.omni = STORE_SPEC_ARCHER;break;
 									case 6: cs_ptr->sc.omni = STORE_HIDDENLIBRARY;break;
 									default: cs_ptr->sc.omni = STORE_STRADER; break;
-
 									}
 								}
 							} else {
@@ -9929,16 +9849,17 @@ s_printf("DUNGEON_STORE: %d (%d,%d,%d)\n", cs_ptr->sc.omni, wpos->wx, wpos->wy, 
 /* NOTE: This function no longer is used for normal town generation;
  * this can be used to build 'extra' towns for some purpose, though.
  */
+//TL;DR: nowadays _only_ used in town_gen_hack(), for dungeon (ironman) towns - C. Blue
 static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 {
-	int                 i, y, x, y0, x0, y1, x1, y2, x2, tmp;
+	int i, y, x, y0, x0, y1, x1, y2, x2, tmp;
 	int size = 0;
-	cave_type		*c_ptr;
+	cave_type *c_ptr;
 	bool flat = FALSE, trad = FALSE;
 	struct c_special *cs_ptr;
 
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return; /*multitowns*/
+	if (!(zcave = getcave(wpos))) return; /*multitowns*/
 
 	y0 = yy * 11 + 5;
 	x0 = xx * 16 + 12;
@@ -9950,8 +9871,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	x2 = x0 + randint(5);
 
 	/* Hack -- make building 9's as large as possible */
-	if (n == 12)
-	{
+	if (n == STORE_NINE) {
 		y1 = y0 - 3;
 		y2 = y0 + 3;
 		x1 = x0 - 5;
@@ -9959,8 +9879,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	}
 
 	/* Hack -- make building 8's larger */
-	if (n == STORE_HOME)
-	{
+	if (n == STORE_HOME) {
 		y1 = y0 - 1 - randint(2);
 		y2 = y0 + 1 + randint(2);
 		x1 = x0 - 3 - randint(2);
@@ -9968,8 +9887,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	}
 
 	/* Hack -- try 'apartment house' */
-	if (n == 13 && magik(60))
-	{
+	if (n == STORE_HOUSE && magik(60)) {
 		y1 = y0 - 1 - randint(2);
 		y2 = y0 + 1 + randint(2);
 		x1 = x0 - 3 - randint(3);
@@ -9980,16 +9898,13 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	}
 
 	/* Hack -- try 'apartment house' */
-	if (n == 13)
-	{
+	if (n == STORE_HOUSE) {
 		if (!magik(MANG_HOUSE_RATE)) trad = TRUE;
 	}
 
 	/* Build an invulnerable rectangular building */
-	for (y = y1; y <= y2; y++)
-	{
-		for (x = x1; x <= x2; x++)
-		{
+	for (y = y1; y <= y2; y++) {
+		for (x = x1; x <= x2; x++) {
 			/* Get the grid */
 			c_ptr = &zcave[y][x];
 
@@ -10002,12 +9917,9 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	}
 
 	/* Hack -- Make store "8" (the old home) empty */
-	if (n == STORE_HOME)
-	{
-		for (y = y1 + 1; y < y2; y++)
-		{
-			for (x = x1 + 1; x < x2; x++)
-			{
+	if (n == STORE_HOME) {
+		for (y = y1 + 1; y < y2; y++) {
+			for (x = x1 + 1; x < x2; x++) {
 				/* Get the grid */
 				c_ptr = &zcave[y][x];
 
@@ -10025,12 +9937,9 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	}
 
 	/* Make doorways, fill with grass and trees */
-	if (n == 9)
-	{
-		for (y = y1 + 1; y < y2; y++)
-		{
-			for (x = x1 + 1; x < x2; x++)
-			{
+	if (n == STORE_DOORWAY) {
+		for (y = y1 + 1; y < y2; y++) {
+			for (x = x1 + 1; x < x2; x++) {
 				/* Get the grid */
 				c_ptr = &zcave[y][x];
 
@@ -10061,12 +9970,9 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	}
 			
 	/* Pond */
-	if (n == 10)
-	{
-		for (y = y1; y <= y2; y++)
-		{
-			for (x = x1; x <= x2; x++)
-			{
+	if (n == STORE_POND) {
+		for (y = y1; y <= y2; y++) {
+			for (x = x1; x <= x2; x++) {
 				/* Get the grid */
 				c_ptr = &zcave[y][x];
 
@@ -10085,12 +9991,9 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	}
 
 	/* Building with stairs */
-	if (n == 11 || n == 15)
-	{
-		for (y = y1; y <= y2; y++)
-		{
-			for (x = x1; x <= x2; x++)
-			{
+	if (n == STORE_FEAT_MORE || n == STORE_FEAT_LESS) {
+		for (y = y1; y <= y2; y++) {
+			for (x = x1; x <= x2; x++) {
 				/* Get the grid */
 				c_ptr = &zcave[y][x];
 
@@ -10111,14 +10014,13 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 		c_ptr = &zcave[y][x];
 
 		/* Clear previous contents, add down stairs */
-		if(n == 11){
+		if (n == STORE_FEAT_MORE) {
 			c_ptr->feat = FEAT_MORE;
 			new_level_up_y(wpos, y);
 			new_level_rand_y(wpos, y);
 			new_level_up_x(wpos, x);
 			new_level_rand_x(wpos, x);
-		}
-		else{
+		} else {
 			c_ptr->feat = FEAT_LESS;
 			new_level_down_y(wpos, y);
 			new_level_down_x(wpos, x);
@@ -10127,8 +10029,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	}
 
 	/* Forest */
-	if (n == 12)
-	{
+	if (n == STORE_FOREST) {
 		int xc, yc, max_dis;
 
 		/* Find the center of the forested area */
@@ -10138,10 +10039,8 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 		/* Find the max distance from center */
 		max_dis = distance(y2, x2, yc, xc);
 
-		for (y = y1; y <= y2; y++)
-		{
-			for (x = x1; x <= x2; x++)
-			{
+		for (y = y1; y <= y2; y++) {
+			for (x = x1; x <= x2; x++) {
 				int chance;
 
 				/* Get the grid */
@@ -10165,17 +10064,13 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	}
 
 	/* House */
-	if (n == 13)
-	{
+	if (n == STORE_HOUSE) {
 		int price;
 
 #ifdef USE_MANG_HOUSE
-		if (!trad)
-		{
-			for (y = y1 + 1; y < y2; y++)
-			{
-				for (x = x1 + 1; x < x2; x++)
-				{
+		if (!trad) {
+			for (y = y1 + 1; y < y2; y++) {
+				for (x = x1 + 1; x < x2; x++) {
 					/* Get the grid */
 					c_ptr = &zcave[y][x];
 
@@ -10189,8 +10084,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 		}
 #endif	/* USE_MANG_HOUSE */
 
-		if (!flat)
-		{
+		if (!flat) {
 			/* Setup some "house info" */
 			size = (x2 - x1 - 1) * (y2 - y1 - 1);
 			/*price *= 20 * price; -APD- price is now proportional to size*/
@@ -10209,15 +10103,13 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 			wpcopy(&houses[num_houses].wpos, wpos);
 		}
 		/* Hack -- apartment house */
-		else
-		{
+		else {
 			int doory = 0, doorx = 0, dy, dx;
 			struct c_special *cs_ptr;
 			if (magik(75)) doorx = rand_int((x2 - x1 - 1) / 2);
 			else doory = rand_int((y2 - y1 - 1) / 2);
 
-			for (x = x1; x <= x2; x++)
-			{
+			for (x = x1; x <= x2; x++) {
 				/* Get the grid */
 				c_ptr = &zcave[(y1 + y2) / 2][x];
 
@@ -10225,8 +10117,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 				c_ptr->feat = FEAT_PERM_EXTRA;
 			}
 
-			for (y = y1; y <= y2; y++)
-			{
+			for (y = y1; y <= y2; y++) {
 				/* Get the grid */
 				c_ptr = &zcave[y][(x1 + x2) / 2];
 
@@ -10242,8 +10133,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 			price *= 80 + randint(40);
 
 
-			for (i = 0; i < 4; i++)
-			{
+			for (i = 0; i < 4; i++) {
 #if 1
 				dx = (i < 2 ? x1 : x2);
 				dy = ((i % 2) ? y2 : y1);
@@ -10273,11 +10163,10 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 				c_ptr = &zcave[dy][dx];
 
 				/* hack -- only create houses that aren't already loaded from disk */
-				if ((tmp = pick_house(wpos, dy, dx)) == -1)
-				{
+				if ((tmp = pick_house(wpos, dy, dx)) == -1) {
 					/* Store door location information */
 					c_ptr->feat = FEAT_HOME;
-					if((cs_ptr=AddCS(c_ptr, CS_DNADOOR))){
+					if ((cs_ptr=AddCS(c_ptr, CS_DNADOOR))) {
 						cs_ptr->sc.ptr = houses[num_houses].dna;
 					}
 					houses[num_houses].dx = dx;
@@ -10290,16 +10179,13 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 					/* XXX maybe new owner will be unhappy if size>STORE_INVEN_MAX;
 					 * this will be fixed when STORE_INVEN_MAX will be removed. - Jir
 					 */
-					if (trad)
-					{
+					if (trad) {
 						size = (size >= STORE_INVEN_MAX) ? STORE_INVEN_MAX : size;
 						houses[num_houses].stock_size = size;
 						houses[num_houses].stock_num = 0;
 						/* TODO: pre-allocate some when launching the server */
 						C_MAKE(houses[num_houses].stock, size, object_type);
-					}
-					else
-					{
+					} else {
 						houses[num_houses].stock_size = 0;
 						houses[num_houses].stock_num = 0;
 					}
@@ -10307,7 +10193,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 
 					/* One more house */
 					num_houses++;
-					if((house_alloc-num_houses) < 32){
+					if ((house_alloc - num_houses) < 32) {
 						GROW(houses, house_alloc, house_alloc + 512, house_type);
 						house_alloc += 512;
 					}
@@ -10339,8 +10225,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	}
 
 	/* Extract a "door location" */
-	switch (tmp)
-	{
+	switch (tmp) {
 		/* Bottom side */
 		case 0:
 		y = y2;
@@ -10370,14 +10255,12 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	c_ptr = &zcave[y][x];
 
 	/* Some buildings get special doors */
-	if (n == 13 && !flat)
-	{
+	if (n == STORE_HOUSE && !flat) {
 		/* hack -- only create houses that aren't already loaded from disk */
-		if ((i=pick_house(wpos, y, x)) == -1)
-		{
+		if ((i = pick_house(wpos, y, x)) == -1) {
 			/* Store door location information */
 			c_ptr->feat = FEAT_HOME;
-			if((cs_ptr = AddCS(c_ptr, CS_DNADOOR))){
+			if ((cs_ptr = AddCS(c_ptr, CS_DNADOOR))){
 				cs_ptr->sc.ptr = houses[num_houses].dna;
 			}
 			houses[num_houses].dx = x;
@@ -10390,16 +10273,13 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 			/* XXX maybe new owner will be unhappy if size>STORE_INVEN_MAX;
 			 * this will be fixed when STORE_INVEN_MAX will be removed. - Jir
 			 */
-			if (trad)
-			{
+			if (trad) {
 				size = (size >= STORE_INVEN_MAX) ? STORE_INVEN_MAX : size;
 				houses[num_houses].stock_size = size;
 				houses[num_houses].stock_num = 0;
 				/* TODO: pre-allocate some when launching the server */
 				C_MAKE(houses[num_houses].stock, size, object_type);
-			}
-			else
-			{
+			} else {
 				houses[num_houses].stock_size = 0;
 				houses[num_houses].stock_num = 0;
 			}
@@ -10407,12 +10287,12 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 
 			/* One more house */
 			num_houses++;
-			if((house_alloc-num_houses) < 32){
+			if ((house_alloc - num_houses) < 32) {
 				GROW(houses, house_alloc, house_alloc + 512, house_type);
 				house_alloc += 512;
 			}
 		}
-		else{
+		else {
 			KILL(houses[num_houses].dna, struct dna_type);
 			c_ptr->feat = FEAT_HOME;
 			if((cs_ptr = AddCS(c_ptr, CS_DNADOOR))){
@@ -10420,25 +10300,21 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 			}
 		}
 	}
-	else if (n == 14) /* auctionhouse */
+	else if (n == STORE_AUCTION) /* auctionhouse */
 	{
 		c_ptr->feat = FEAT_PERM_EXTRA; /* wants to work */
 	
-	}
-	else
-	{
+	} else {
 		/* Clear previous contents, add a store door */
 		c_ptr->feat = FEAT_SHOP;	/* TODO: put CS_SHOP */
 		c_ptr->info |= CAVE_NOPK;
 
-		if((cs_ptr=AddCS(c_ptr, CS_SHOP))){
+		if((cs_ptr = AddCS(c_ptr, CS_SHOP))){
 			cs_ptr->sc.omni = n;
 		}
 
-		for (y1 = y - 1; y1 <= y + 1; y1++)
-		{
-			for (x1 = x - 1; x1 <= x + 1; x1++)
-			{
+		for (y1 = y - 1; y1 <= y + 1; y1++) {
+			for (x1 = x - 1; x1 <= x + 1; x1++) {
 				/* Get the grid */
 				c_ptr = &zcave[y1][x1];
 
@@ -10460,17 +10336,14 @@ static void place_street(struct worldpos *wpos, int vert, int place)
 	if(!(zcave=getcave(wpos))) return;
 
 	/* Vertical streets */
-	if (vert)
-	{
+	if (vert) {
 		x = place * 32 + 20;
 		x1 = x - 2;
 		x2 = x + 2;
 
 		y1 = 5;
 		y2 = MAX_HGT - 5;
-	}
-	else
-	{
+	} else {
 		y = place * 22 + 10;
 		y1 = y - 2;
 		y2 = y + 2;
@@ -10479,30 +10352,23 @@ static void place_street(struct worldpos *wpos, int vert, int place)
 		x2 = MAX_WID - 5;
 	}
 
-	for (y = y1; y <= y2; y++)
-	{
-		for (x = x1; x <= x2; x++)
-		{
+	for (y = y1; y <= y2; y++) {
+		for (x = x1; x <= x2; x++) {
 			if (zcave[y][x].feat != FEAT_FLOOR)
 				zcave[y][x].feat = FEAT_GRASS;
 		}
 	}
 
-	if (vert)
-	{
+	if (vert) {
 		x1++;
 		x2--;
-	}
-	else
-	{
+	} else {
 		y1++;
 		y2--;
 	}
 
-	for (y = y1; y <= y2; y++)
-	{
-		for (x = x1; x <= x2; x++)
-		{
+	for (y = y1; y <= y2; y++) {
+		for (x = x1; x <= x2; x++) {
 			zcave[y][x].feat = FEAT_FLOOR;
 		}
 	}
@@ -10517,43 +10383,47 @@ static void place_street(struct worldpos *wpos, int vert, int place)
  * layout, including the size and shape of the buildings, the
  * locations of the doorways, and the location of the stairs.
  */
+#define NEW_TOWNGENHACK_METHOD /* don't clutter all stores in the center, but spread them out a bit */
 static void town_gen_hack(struct worldpos *wpos)
 {
-	int			y, x, k, n;
+	int y, x, k, n;
+//	int max_rooms = (max_st_idx > 72 ? 72 : max_st_idx), base_stores = MAX_BASE_STORES; <- not working, because the amount of buildings will be too small -> repeated-stores-glitch appears.
+	int max_rooms = 72, base_stores = MAX_BASE_STORES;
+#ifdef NEW_TOWNGENHACK_METHOD
+	int posx[base_stores], posy[base_stores], pos[6 * 4];
+#endif
 
 #ifdef	DEVEL_TOWN_COMPATIBILITY
 	/* -APD- the location of the auction house */
-	int			auction_x, auction_y;
+	int auction_x = -1, auction_y = -1;
 #endif
 
-	int                 rooms[72];
-	/* int                 rooms[MAX_STORES]; */
+	int rooms[max_rooms];
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Hack -- Use the "simple" RNG */
 	Rand_quick = TRUE;
 
 	/* Hack -- Induce consistant town layout */
-	Rand_value = seed_town+(wpos->wx+wpos->wy*MAX_WILD_X);
+#if 0 /* was ok, but now.. */
+	Rand_value = seed_town + (wpos->wx + wpos->wy * MAX_WILD_X);
+#else /* ..we have ironman towns in the dungeon, too - C. Blue */
+	Rand_value = seed_town + (wpos->wx + wpos->wy * MAX_WILD_X + wpos->wz * MAX_WILD_X * MAX_WILD_Y);
+#endif
 
 	/* Hack -- Start with basic floors */
-	for (y = 1; y < MAX_HGT - 1; y++)
-	{
-		for (x = 1; x < MAX_WID - 1; x++)
-		{
+	for (y = 1; y < MAX_HGT - 1; y++) {
+		for (x = 1; x < MAX_WID - 1; x++) {
 			cave_type *c_ptr = &zcave[y][x];
 
 			/* Clear all features, set to "empty floor" */
 			c_ptr->feat = FEAT_DIRT;
 
-			if (rand_int(100) < 75)
-			{
+			if (rand_int(100) < 75) {
 				c_ptr->feat = FEAT_GRASS;
 			}
-
-			else if (rand_int(100) < 15)
-			{
+			else if (rand_int(100) < 15) {
 				c_ptr->feat = FEAT_TREE; /* gotta add FEAT_BUSH without screwing up the rng seed */
 			}
 		}
@@ -10561,90 +10431,167 @@ static void town_gen_hack(struct worldpos *wpos)
 
 	/* Place horizontal "streets" */
 	for (y = 0; y < 3; y++)
-	{
 		place_street(wpos, 0, y);
-	}
 
 	/* Place vertical "streets" */
 	for (x = 0; x < 6; x++)
-	{
 		place_street(wpos, 1, x);
+
+	/* make dungeon towns look more destroyed */
+	if (wpos->wz != 0) {
+		if (rand_int(2)) build_streamer(wpos, FEAT_TREE, 0, TRUE);
+		if (rand_int(2)) build_streamer(wpos, FEAT_IVY, 0, TRUE);
+#if 0 /* these obstruct stores a bit too much maybe */
+		if (rand_int(2)) build_streamer(wpos, FEAT_QUARTZ, 0, TRUE);
+		if (rand_int(2)) build_streamer(wpos, FEAT_MAGMA, 0, TRUE);
+#endif
+		if (rand_int(2)) {
+			if (rand_int(2)) build_streamer(wpos, FEAT_SHAL_WATER, 0, TRUE);
+			if (rand_int(2)) build_streamer(wpos, FEAT_DEEP_WATER, 0, TRUE);
+		} else {
+			if (rand_int(2)) build_streamer(wpos, FEAT_SHAL_LAVA, 0, TRUE);
+			if (rand_int(2)) build_streamer(wpos, FEAT_DEEP_LAVA, 0, TRUE);
+		}
 	}
 
+#if 0 /* disable 'deprecated' auction house for paranoia? */
 #ifdef DEVEL_TOWN_COMPATIBILITY
-
 	/* -APD- place the auction house near the central stores */
-
 	auction_x = rand_int(5) + 3;
 	if ( (auction_x == 3) || (auction_x == 8) ) auction_y = rand_int(1) + 1;
 	else auction_y = (rand_int(1) * 3) + 1; /* 1 or 4 */
 #endif
+#endif
 
 	/* Prepare an Array of "remaining stores", and count them */
-	for (n = 0; n < MAX_STORES-1; n++) rooms[n] = n;
-	for (n = MAX_STORES-1; n < 16; n++) rooms[n] = 10;
-	for (n = 16; n < 68; n++) rooms[n] = 13;
-	for (n = 68; n < 72; n++) rooms[n] = 12;
-	if(wild_info[wpos->wy][wpos->wx].flags & WILD_F_DOWN)
-		rooms[70] = 11;
-	if(wild_info[wpos->wy][wpos->wx].flags & WILD_F_UP)
-		rooms[71] = 15;
+	for (n = 0; n < base_stores; n++) {
+		/* skip '8' since it allows exploiting 100% riskfree combat */
+		if (n == 7) rooms[n] = STORE_POND;
+		/* allocate base store */
+		else rooms[n] = n;
+	}
+	for (n = base_stores; n < base_stores + 10; n++) rooms[n] = STORE_POND;
+	for (n = base_stores + 10; n < base_stores + 20; n++) rooms[n] = STORE_FOREST;
+	for (n = base_stores + 20; n < base_stores + 40; n++) rooms[n] = STORE_DOORWAY;
+	for (n = base_stores + 40; n < max_rooms; n++) rooms[n] = STORE_HOUSE;
+#if 0 /* what is/was STORE_NINE? disabling it for now */
+	for (n = max_rooms - 10; n < max_rooms - 7; n++) rooms[n] = STORE_NINE;
+#endif
 
-	/* Place stores */
-	for (y = 2; y < 4; y++)
-	{
-		for (x = 4; x < 8; x++)
-		{
+	/* staircases */
+	if (wild_info[wpos->wy][wpos->wx].flags & WILD_F_DOWN)
+		rooms[max_rooms - 2] = STORE_FEAT_MORE;
+	if (wild_info[wpos->wy][wpos->wx].flags & WILD_F_UP)
+		rooms[max_rooms - 1] = STORE_FEAT_LESS;
+	/* more staircases if town is in dungeon */
+	if (wpos->wz != 0) {
+		if (wild_info[wpos->wy][wpos->wx].flags & WILD_F_DOWN) {
+			rooms[max_rooms - 4] = STORE_FEAT_MORE;
+			rooms[max_rooms - 6] = STORE_FEAT_MORE;
+		}
+		if (wild_info[wpos->wy][wpos->wx].flags & WILD_F_UP) {
+			rooms[max_rooms - 3] = STORE_FEAT_LESS;
+			rooms[max_rooms - 5] = STORE_FEAT_LESS;
+		}
+	}
+
+#ifdef NEW_TOWNGENHACK_METHOD
+	/* pick random locations for the base stores */
+	n = 6 * 4;
+	for (k = 0; k < n; k++) pos[k] = k;
+	for (x = 0; x < MAX_BASE_STORES; x++) {
+		k = rand_int(n);
+		posx[x] = pos[k] / 4 + 3;
+		posy[x] = pos[k] % 4 + 1;
+		n--;
+		pos[k] = pos[n];
+	}
+#endif
+
+	/* Place base stores */
+#ifndef NEW_TOWNGENHACK_METHOD
+	n = max_rooms;
+	for (y = 2; y < 5; y++) {
+		for (x = 4; x < 8; x++) {
+			/* hack if we place less base stores than spots are available */
+			if (n == max_rooms - base_stores) continue;
+
 			/* Pick a random unplaced store */
-			k = rand_int(n - 64);
+			k = rand_int(n - (max_rooms - base_stores));
 
-			/* Build that store at the proper location */
+ 			/* Build that store at the proper location */
+ #if 0 /* I think I took this out taken out for highlander town, but no need maybe; also required for ironman towns! - C. Blue */
 			/* No Black Market in additional towns - C. Blue */
 			if (rooms[k] != STORE_BLACK) build_store(wpos, rooms[k], y, x);
-/*			else build_store(wpos, STORE_HERBALIST, y, x);
-*/
+			//else build_store(wpos, STORE_HERBALIST, y, x);
+ #else
+			build_store(wpos, rooms[k], y, x);
+ #endif
+
 			/* One less store */
 			n--;
 
 			/* Shift the stores down, remove one store */
-			rooms[k] = rooms[n - 64];
+			rooms[k] = rooms[n - (max_rooms - base_stores)];
 		}
 	}
-
-	/* Place two rows of stores */
-	for (y = 0; y < 6; y++)
-	{
-		/* Place four stores per row */
-		for (x = 0; x < 12; x++)
-		{
-			/* Make sure we haven't already placed this one */
-			if (y >= 2 && y <= 3 && x >= 4 && x <= 7) continue;
-			
-			/* Pick a random unplaced store */
-			k = rand_int(n) + 8;
-
-#ifdef	DEVEL_TOWN_COMPATIBILITY
-			if ( (y != auction_y) || (x != auction_x) ) 
-			{
-				/* Build that store at the proper location */
-				build_store(wpos, rooms[k], y, x);
-			}
-			
-			else /* auction time! */
-			{
-				build_store(wpos, 14, y, x);
-			}
 #else
-			build_store(wpos, rooms[k], y, x);
+	for (k = 0; k < MAX_BASE_STORES; k++) {
+		/* Build that store at the proper location */
+ #if 0 /* I think I took this out taken out for highlander town, but no need maybe; also required for ironman towns! - C. Blue */
+		/* No Black Market in additional towns - C. Blue */
+		if (rooms[k] != STORE_BLACK) build_store(wpos, rooms[k], posy[k], posx[k]);
+		//else build_store(wpos, STORE_HERBALIST, y, x);
+ #else
+		build_store(wpos, rooms[k], posy[k], posx[k]);
+ #endif
+	}
+	n = max_rooms - base_stores;
 #endif
+
+
+#if 1 /* temporarily disable all the "useless" stores? (warning: also includes stairs?) */
+	/* Place two rows of stores */
+	for (y = 0; y < 6; y++) {
+		/* Place four stores per row */
+		for (x = 0; x < 12; x++) {
+			/* Make sure we haven't already placed this one */
+ #ifndef NEW_TOWNGENHACK_METHOD
+			if (y >= 2 && y <= 4 && x >= 4 && x <= 7) continue;
+ #else
+			for (k = 0; k < MAX_BASE_STORES; k++) {
+				if (posx[k] == x && posy[k] == y) {
+					k = MAX_BASE_STORES + 1; //loop hack
+					break;
+				}
+			}
+			if (k == MAX_BASE_STORES + 1) continue;
+ #endif
+
+			/* Pick a random unplaced store */
+			k = rand_int(n) + base_stores;
+
+			if (rooms[k] != STORE_HOUSE || wpos->wz == 0) { /* don't build "homes" in dungeon towns */
+ #ifdef	DEVEL_TOWN_COMPATIBILITY
+				if ( (y != auction_y) || (x != auction_x) ) {
+					/* Build that store at the proper location */
+					build_store(wpos, rooms[k], y, x);
+				} else { /* auction time! */
+					build_store(wpos, STORE_AUCTION, y, x);
+				}
+ #else
+				build_store(wpos, rooms[k], y, x);
+ #endif
+			}
 
 			/* One less building */
 			n--;
 
 			/* Shift the stores down, remove one store */
-			rooms[k] = rooms[n + 8];
+			rooms[k] = rooms[n + base_stores];
 		}
 	}
+#endif
 
 	/* Hack -- use the "complex" RNG */
 	Rand_quick = FALSE;
@@ -10669,43 +10616,39 @@ static void town_gen_hack(struct worldpos *wpos)
  * he is always placed on the stairs, even if he left the dungeon via
  * word of recall or teleport level.
  */
- 
+
  /*
  Hack -- since boundary walls are a 'good thing' for many of the algorithms 
  used, the feature FEAT_PERM_CLEAR was created.  It is used to create an 
  invisible boundary wall for town and wilderness levels, keeping the
  algorithms happy, and the players fooled.
- 
+
  */
- 
+
 static void town_gen(struct worldpos *wpos)
-{ 
+{
 	int y, x, type = -1, i;
 	int xstart = 0, ystart = 0;	/* dummy, for now */
 
 	cave_type	*c_ptr;
 	cave_type	**zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
-	for (i = 0; i < numtowns; i++)
-	{
-		if (town[i].x == wpos->wx && town[i].y == wpos->wy)
-		{
+	for (i = 0; i < numtowns; i++) {
+		if (town[i].x == wpos->wx && town[i].y == wpos->wy) {
 			type = town[i].type;
 			break;
 		}
 	}
 
-	if (type < 0)
-	{
+	if (type < 0) {
 		s_printf("TRIED TO GENERATE NON-ALLOCATED TOWN! %s\n",
-				wpos_format(0, wpos));
+		    wpos_format(0, wpos));
 		return;
 	}
 
 	/* Perma-walls -- North/South*/
-	for (x = 0; x < MAX_WID; x++)
-	{
+	for (x = 0; x < MAX_WID; x++) {
 		/* North wall */
 		c_ptr = &zcave[0][x];
 
@@ -10726,8 +10669,7 @@ static void town_gen(struct worldpos *wpos)
 	}
 
 	/* Perma-walls -- West/East */
-	for (y = 0; y < MAX_HGT; y++)
-	{
+	for (y = 0; y < MAX_HGT; y++) {
 		/* West wall */
 		c_ptr = &zcave[y][0];
 
@@ -10750,8 +10692,7 @@ static void town_gen(struct worldpos *wpos)
 	/* XXX this will be changed very soon	- Jir -
 	 * It's no good hardcoding things like this.. */
 #if 1
-	if (type > 0 || type < 6)
-	{
+	if (type > 0 || type < 6) {
 		/* Hack -- Use the "simple" RNG */
 		Rand_quick = TRUE;
 
@@ -10760,10 +10701,8 @@ static void town_gen(struct worldpos *wpos)
 
 		/* Hack -- fill with trees
 		 * This should be determined by wilderness information */
-		for (x = 2; x < MAX_WID - 2; x++)
-		{
-			for (y = 2; y < MAX_HGT - 2; y++)
-			{
+		for (x = 2; x < MAX_WID - 2; x++) {
+			for (y = 2; y < MAX_HGT - 2; y++) {
 				/* Access the grid */
 				c_ptr = &zcave[y][x];
 
@@ -10781,8 +10720,7 @@ static void town_gen(struct worldpos *wpos)
 		 * stack when entering into a town from wilderness.
 		 * TODO: devise a better way */
 		/* Perma-walls -- North/South*/
-		for (x = 1; x < MAX_WID - 1; x++)
-		{
+		for (x = 1; x < MAX_WID - 1; x++) {
 			/* North wall */
 			c_ptr = &zcave[1][x];
 
@@ -10803,8 +10741,7 @@ static void town_gen(struct worldpos *wpos)
 		}
 
 		/* Perma-walls -- West/East */
-		for (y = 1; y < MAX_HGT - 1; y++)
-		{
+		for (y = 1; y < MAX_HGT - 1; y++) {
 			/* West wall */
 			c_ptr = &zcave[y][1];
 
@@ -10830,8 +10767,7 @@ static void town_gen(struct worldpos *wpos)
 		process_dungeon_file("t_info.txt", wpos, &ystart, &xstart,
 				MAX_HGT, MAX_WID, TRUE);
  #endif	// 0
-		switch(type)
-		{
+		switch(type) {
 			case 1:
 				process_dungeon_file("t_bree.txt", wpos, &ystart, &xstart,
 						MAX_HGT, MAX_WID, TRUE);
@@ -10999,12 +10935,12 @@ static void del_dungeon(struct worldpos *wpos, bool tower){
 	wild->flags &= ~(tower ? WILD_F_LOCKUP : WILD_F_LOCKDOWN);
 }
 
-void remdungeon(struct worldpos *wpos, bool tower){
+void rem_dungeon(struct worldpos *wpos, bool tower){
 	struct dungeon_type *d_ptr;
-	wilderness_type *wild=&wild_info[wpos->wy][wpos->wx];
+	wilderness_type *wild = &wild_info[wpos->wy][wpos->wx];
 
-	d_ptr=(tower ? wild->tower : wild->dungeon);
-	if(!d_ptr) return;
+	d_ptr = (tower ? wild->tower : wild->dungeon);
+	if (!d_ptr) return;
 
 	/* Lock so that dungeon cannot be overwritten while in use */
 	wild->flags |= (tower ? WILD_F_LOCKUP : WILD_F_LOCKDOWN);
@@ -11015,7 +10951,7 @@ void remdungeon(struct worldpos *wpos, bool tower){
 }
 
 /* 'type' refers to t_info[] */
-void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, int flags2, bool tower, int type)
+void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, int flags2, bool tower, int type)
 {
 #ifdef RPG_SERVER
 	bool found_town = FALSE;
@@ -11023,15 +10959,17 @@ void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, in
 	int i;
 	wilderness_type *wild;
 	struct dungeon_type *d_ptr;
-	wild=&wild_info[wpos->wy][wpos->wx];
+	wild = &wild_info[wpos->wy][wpos->wx];
 
 	/* Hack -- override the specification */
-	if (type)
-	{
+	if (type) {
 		tower = (d_info[type].flags1 & DF1_TOWER) ? TRUE : FALSE;
 	}
 
-	if(wild->flags & (tower ? WILD_F_LOCKUP : WILD_F_LOCKDOWN)) return;
+	if(wild->flags & (tower ? WILD_F_LOCKUP : WILD_F_LOCKDOWN)) {
+		s_printf("add_dungeon failed due to wild_f_ lock.\n");
+		return;
+	}
 
 	wild->flags |= (tower ? WILD_F_UP : WILD_F_DOWN); /* no checking */
 	if (tower)
@@ -11040,44 +10978,48 @@ void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, in
 		MAKE(wild->dungeon, struct dungeon_type);
 	d_ptr = (tower ? wild->tower : wild->dungeon);
 
-	d_ptr->type = type; 
+	d_ptr->type = type;
 
-	if (type)
-	{
+	if (type) {
 		/* XXX: flags1, flags2 can be affected if specified so? */
 		d_ptr->baselevel = d_info[type].mindepth;
 		d_ptr->maxdepth = d_info[type].maxdepth - d_ptr->baselevel + 1; 
 		d_ptr->flags1 = d_info[type].flags1 | flags1;
 		d_ptr->flags2 = d_info[type].flags2 | flags2 | DF2_RANDOM;
-	}
-	else
-	{
+	} else {
 		d_ptr->baselevel = baselevel;
 		d_ptr->flags1 = flags1; 
 		d_ptr->flags2 = flags2; 
 		d_ptr->maxdepth = maxdep;
 	}
 
-#ifdef RPG_SERVER /* Make towers/dungeons harder */
-	for(i = 0; i < numtowns; i++)
-		if(town[i].x == wpos->wx && town[i].y == wpos->wy) {
-			found_town = TRUE;
-			if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y) {
-				/* exempt training tower, since it's empty anyway
-				   (ie monster/item spawn is prevented) and we
-				   need it for "arena monster challenge" event - C. Blue */
-				if (tower) continue;
+#ifdef RPG_SERVER /* Make towers/dungeons harder - C. Blue */
+	/* If this dungeon was originally intended to be 'real' ironman,
+	   don't make it EASIER by this! (by applying either IRONFIX or IRONRND flags) */
+	if (!(flags2 & DF2_IRON)) {
+		for (i = 0; i < numtowns; i++)
+			if (town[i].x == wpos->wx && town[i].y == wpos->wy) {
+				found_town = TRUE;
+				/* Bree has special rules: */
+				if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y) {
+					/* exempt training tower, since it's empty anyway
+					   (ie monster/item spawn is prevented) and we
+					   need it for "arena monster challenge" event */
+					if (tower) continue;
 
-				d_ptr->flags2 |= DF2_IRON;
-			} else {
-				d_ptr->flags2 |= DF2_IRON | DF2_IRONFIX2;
+					d_ptr->flags2 |= DF2_IRON;
+				} else {
+					/* any other town.. */
+					d_ptr->flags2 |= DF2_IRON | DF2_IRONFIX2;
+				}
+			}
+		if (!found_town) {
+			/* hack - exempt the Shores of Valinor! */
+			if (d_ptr->baselevel != 200) {
+				d_ptr->flags2 |= DF2_IRON | DF2_IRONRND1;
+//				d_ptr->flags1 |= DF1_NO_UP;
 			}
 		}
-	if (!found_town) {
-		/* hack - exempt the Shores of Valinor! */
-		if (d_ptr->baselevel != 200)
-			d_ptr->flags2 |= DF2_IRON | DF2_IRONRND1;
-//			d_ptr->flags1 |= DF1_NO_UP;
 	}
 #endif
 
@@ -11098,6 +11040,8 @@ void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, in
 	for (i = 0; i < d_ptr->maxdepth; i++) {
 		C_MAKE(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
 	}
+
+	s_printf("add_dungeon completed (type %d, %s).\n", type, tower ? "tower" : "dungeon");
 }
 
 /*
@@ -11107,8 +11051,7 @@ void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, in
  *
  * Hack -- allow auto-scumming via a gameplay option.
  */
- 
- 
+
 void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 {
 	int i, num;
@@ -11126,8 +11069,7 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 	server_dungeon = FALSE;
 
 	/* Generate */
-	for (num = 0; TRUE; num++)
-	{
+	for (num = 0; TRUE; num++) {
 		bool okay = TRUE;
 		cptr why = NULL;
 
@@ -11140,8 +11082,7 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 		m_max = 1;*/
 #if 1 /*cave should have already been wiped from 'alloc_dungon_level' */
 		/* Start with a blank cave */
-		for (i = 0; i < MAX_HGT; i++)
-		{
+		for (i = 0; i < MAX_HGT; i++) {
 			/* CRASHES occured here :( */
 
 			/* Wipe a whole row at a time */
@@ -11166,8 +11107,7 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 		object_level = getlevel(wpos);
 
 		/* Build the town */
-		if (istown(wpos))
-		{
+		if (istown(wpos)) {
 			/* Small town */
 			/*cur_hgt = SCREEN_HGT;
 			cur_wid = SCREEN_WID;*/
@@ -11182,27 +11122,23 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 
 			{
 				int retval = -1, type;
-				for(i = 0; i < numtowns; i++)
-				{
-					if(town[i].x == wpos->wx && town[i].y == wpos->wy)
-					{
+				for(i = 0; i < numtowns; i++) {
+					if(town[i].x == wpos->wx && town[i].y == wpos->wy) {
 						retval = i;
 						break;
 					}
 				}
-				if (retval < 0)
-				{
-					s_printf("adddungeon failed in generate_cave!! %s\n", wpos_format(0, wpos));
+				if (retval < 0) {
+					s_printf("add_dungeon failed in generate_cave!! %s\n", wpos_format(0, wpos));
 					return;	/* This should never.. */
 				}
 				type = town[retval].type;
 #if 0
-				adddungeon(wpos, town_profile[type].dun_base, town_profile[type].dun_max, 0, DF2_RANDOM, town_profile[type].tower, 0);
+				add_dungeon(wpos, town_profile[type].dun_base, town_profile[type].dun_max, 0, DF2_RANDOM, town_profile[type].tower, 0);
 #else	/* 0 */
-				for (i = 0; i < 2; i++)
-				{
+				for (i = 0; i < 2; i++) {
 					if (town_profile[type].dungeons[i])
-						adddungeon(wpos, 0, 0, 0, 0, FALSE, town_profile[type].dungeons[i]);
+						add_dungeon(wpos, 0, 0, 0, 0, FALSE, town_profile[type].dungeons[i]);
 				}
 #endif	/* 0 */
 			}
@@ -11213,14 +11149,12 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 		}
 
 		/* Build wilderness */
-		else if (!wpos->wz)
-		{
+		else if (!wpos->wz) {
 			wilderness_gen(wpos);
 		}
 
 		/* Build a real level */
-		else
-		{
+		else {
 			process_hooks(HOOK_GEN_LEVEL, "d", wpos);
 			/* Big dungeon */
 			/*cur_hgt = MAX_HGT;

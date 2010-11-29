@@ -676,13 +676,13 @@ struct trap_kind{
 
 /* Cave special types */
 /* TODO: move those defines to defines.h */
-#define CS_NONE 0
-#define CS_DNADOOR 1
-#define CS_KEYDOOR 2
-#define CS_TRAPS 3 	/* CS stands for Cave Special */
-#define CS_INSCRIP 4	/* ok ;) i'll follow that from now */
+#define CS_NONE		0
+#define CS_DNADOOR	1
+#define CS_KEYDOOR	2
+#define CS_TRAPS	3 	/* CS stands for Cave Special */
+#define CS_INSCRIP	4	/* ok ;) i'll follow that from now */
 
-#define CS_FOUNTAIN 5
+#define CS_FOUNTAIN	5
 #define CS_BETWEEN	6	/* petit jump type */
 #define CS_BETWEEN2	7	/* world traveller type */
 #define CS_MON_TRAP	8	/* monster traps */
@@ -690,7 +690,7 @@ struct trap_kind{
 #define CS_MIMIC	10	/* mimic-ing feature (eg. secret door) */
 
 /* heheh it's kludge.. */
-#define sc_is_pointer(type)	(type < 3 || type == 4 || 10 < type)
+#define sc_is_pointer(type)	(type < 3 || type == 4 || type > 10)
 
 typedef struct c_special c_special;
 
@@ -752,6 +752,10 @@ struct cave_type
 	/* This should be replaced by 'stackable c_special' code -
 	 * let's wait for evileye to to this :)		- Jir - */
 	int effect;            /* The lasting effects */
+
+#ifdef HOUSE_PAINTING
+	int colour;	/* colour that overrides the usual colour of a feature */
+#endif
 };
 
 /* ToME parts, arranged */
@@ -791,8 +795,8 @@ typedef struct object_type object_type;
 
 struct object_type
 {
-        s32b owner_mode;                /* Player that found it */
         s32b owner;                     /* Player that found it */
+        byte mode;                	/* Mode of player who found it */
         s16b level;                     /* Level req */
 			/* Hack -- ego-items use 'level' in a special way, and
 			 * altering this value will result in change of ego-item
@@ -831,8 +835,8 @@ struct object_type
 	u16b name1;			/* Artifact type, if any */
 	u16b name2;			/* Ego-Item type, if any */
 	u16b name2b;			/* 2e Ego-Item type, if any */
-	s32b name3;			/* Randart seed, if any */
-						/* now it's common with ego-items -Jir-*/
+	s32b name3;			/* Randart seed, if any (now it's common with ego-items -Jir-) */
+	u16b name4;			/* Index of randart name in file 'randarts.txt', solely for fun set bonus - C. Blue */
 	byte attr;			/* colour in inventory (for client) */
 
 	byte xtra1;			/* Extra info type, for various purpose */
@@ -845,6 +849,11 @@ struct object_type
 	byte xtra7;			/* Extra info */
 	byte xtra8;			/* Extra info */
 	byte xtra9;			/* Extra info */
+
+#ifdef PLAYER_STORES
+	byte ps_idx_x;			/* Index or x-coordinate of player store item in the original house */
+	byte ps_idx_y;			/* y-coordinate of player store item in the original house */
+#endif
 
 	s16b to_h;			/* Plusses to hit */
 	s16b to_d;			/* Plusses to damage */
@@ -862,7 +871,7 @@ struct object_type
 	byte marked2;			/* additional parameters */
 
 	u16b note;			/* Inscription index */
-	u16b note_priority;		/* Added for making pseudo-id overwrite unique loot tags */
+	char note_utag;			/* Added for making pseudo-id overwrite unique loot tags */
 
 	char uses_dir;			/* Client-side: Uses a direction or not? (for rods) */
 
@@ -882,8 +891,11 @@ struct object_type
 
 	u16b next_o_idx;		/* Next object in stack (if any) */
 	u16b held_m_idx;		/* Monster holding us (if any) */
+	char stack_pos;			/* Position in stack: Use to limit stack size */
 
 	s16b cheeze_dlv, cheeze_plv, cheeze_plv_carry;	/* anti-cheeze */
+
+	bool changed;		/* dummy flag to refresh item if o_name changed, but memory copy didn't */
 };
 
 /*
@@ -1022,7 +1034,7 @@ struct monster_type
    byte taunted;	/* has this monster been taunted (melee technique)? */
 
    bool no_esp_phase;	/* for WEIRD_MIND esp flickering */
-   int extra;	/* extra flag for debugging/testing purpose */
+   int extra;	/* extra flag for debugging/testing purpose; also used for target dummy's "snowiness" now */
 
 #ifdef MONSTER_ASTAR
     int astar_idx;		/* index in available A* arrays. A* is expensive, so we only provide a couple of instances for a few monsters to use */
@@ -1221,6 +1233,10 @@ struct store_type
 	u16b st_idx;
 
 	u16b owner;                     /* Owner index */
+
+#ifdef PLAYER_STORES
+	u32b player_owner;		/* Temporary value for player's id */
+#endif
 
 	s16b insult_cur;		/* Insult counter */
 
@@ -1549,7 +1565,7 @@ struct player_race
 
 	byte infra;			/* Infra-vision	range */
 
-        s32b choice;            /* Legal class choices */
+        s32b choice;            /* Legal class choices depending on race */
 
         s16b mana;              /* % mana */
 
@@ -1617,14 +1633,14 @@ struct player_class
 
 
 /*
- * Player trait info, originally added for Dracons - C. Blue
+ * Player trait info, originally added for Draconians - C. Blue
  */
-
 typedef struct player_trait player_trait;
 
-struct player_trait {
+struct player_trait
+{
 	cptr title; /* Name of trait */
-	s32b choice; /* Races that may spawn this trait */
+	s32b choice; /* Legal trait choices, depending on race */
 };
 
 
@@ -1705,7 +1721,7 @@ corners of the house.
 
 #define HF_NONE 0x00
 #define HF_MOAT 0x01
-#define HF_RECT 0x02
+#define HF_RECT 0x02		/* Rectangular house; used for non-trad-houses (currently ALL houses are HF_RECT) */
 #define HF_STOCK 0x04		/* house generated by town */
 #define HF_NOFLOOR 0x08		/* courtyard generated without floor */
 #define HF_JAIL 0x10		/* generate with CAVE_STCK */
@@ -1715,21 +1731,25 @@ corners of the house.
 
 #define MAXCOORD 200		/* Maximum vertices on non-rect house */
 
-struct house_type{
+struct house_type {
 	byte x, y;		/* Absolute starting coordinates */
 	byte dx, dy;		/* door coords */
 	struct dna_type *dna;	/* house dna door information */
 	u16b flags;		/* house flags - HF_xxxx */
 	struct worldpos wpos;
-	union{
-		struct{ byte width, height; }rect;
+	union {
+		struct { byte width, height; } rect;
 		char *poly;	/* coordinate array for non rect houses */
-	}coords;
+	} coords;
+
 #ifndef USE_MANG_HOUSE_ONLY
-	s16b stock_num;			/* Stock -- Number of entries */
-	s16b stock_size;		/* Stock -- Total Size of Array */
-	object_type *stock;		/* Stock -- Actual stock items */
+	s16b stock_num;		/* Stock -- Number of entries */
+	s16b stock_size;	/* Stock -- Total Size of Array */
+	object_type *stock;	/* Stock -- Actual stock items */
 #endif	/* USE_MANG_HOUSE_ONLY */
+
+	byte colour;		/* house colour for custom house painting (HOUSE_PAINTING) */
+	byte xtra;		/* unused; maybe for player stores if required */
 };
 
 #define OT_PLAYER 1
@@ -1750,11 +1770,12 @@ struct house_type{
 #define ACF_WINNER 0x10
 #define ACF_FALLENWINNER 0x20
 #define ACF_NOGHOST 0x40
-#define ACF_STORE 0x80		/* player-owned store similar to MAngband - C. Blue */
+#define ACF_STORE 0x80		/* older idea, I implemented it differently now (see PLAYER_STORES) - C. Blue */
 
 
 struct dna_type{
 	u32b creator;		/* Unique ID of creator/house admin */
+	byte mode;		/* Creator's p_ptr->mode (normal, everlasting, pvp..) */
 	s32b owner;		/* Player/Party/Class/Race ID */
 	byte owner_type;	/* OT_xxxx */
 	byte a_flags;		/* Combination of ACF_xxxx */
@@ -2025,6 +2046,7 @@ struct player_type
 	byte pvpexception;	/* account uses different pvp rules than server settings */
 	byte mutedchat;		/* account has chat restrictions */
 	bool inval;		/* Non validated account */
+	bool newly_created;	/* Just newly created char by player_birth()? */
 
 	bool alive;		/* Are we alive */
 	bool death;		/* Have we died */
@@ -2038,7 +2060,7 @@ struct player_type
 
 	byte prace;			/* Race index */
 	byte pclass;		/* Class index */
-	byte ptrait;		/* Trait index */
+	byte ptrait;
 	byte male;			/* Sex of character */
         byte oops;			/* Unused */
 
@@ -2326,6 +2348,11 @@ struct player_type
 	int using_up_item;	/* Item being used up while enchanting, *ID*ing etc. */
 
 	int store_num;		/* What store this guy is in */
+#ifdef PLAYER_STORES
+	int ps_house_x, ps_house_y; /* coordinates of the house linked to current player store */
+	int ps_mcheque_x;		/* Index or x-coordinate of existing mass-cheque in the house */
+	int ps_mcheque_y;		/* y-coordinate of existing mass-cheque in the house */
+#endif
 
 	s16b fast;			/* Timed -- Fast */
 	s16b fast_mod;   		/* Timed -- Fast */
@@ -2406,6 +2433,7 @@ struct player_type
 	s16b biofeedback;
 	s16b mindboost;
 	s16b mindboost_power;
+	s16b kinetic_shield;
 
 	s16b auto_tunnel;
 	s16b body_monster;
@@ -2662,7 +2690,7 @@ struct player_type
 	bool pass_trees;	/* Can pass thick forest */
 	bool town_pass_trees;	/* Can pass forest in towns, as an exception to make movement easier */
 	
-	int luck_cur;	/* Extra luck of this player */
+	int luck;	/* Extra luck of this player */
 
 	/*        byte anti_magic_spell;    *//* Anti-magic(newer one..) */
 	byte antimagic;    		/* Anti-magic(in percent) */
@@ -2774,13 +2802,19 @@ struct player_type
 	int rune_vamp;
 #endif //runemaster
 
+#ifdef ENABLE_DIVINE
+	int divine_crit;
+	int divine_hp;
+	int divine_xtra_res_time_mana;
+
+	int divine_crit_mod;
+	int divine_hp_mod;
+	int divine_xtra_res_time_mana_mod;
+#endif
 	/* Prevent players from taking it multiple times from a single effect - mikaelh */
 	bool got_hit;
 	/* No insane amounts of damage either */
 	s32b total_damage;
-
-	/* Divine classes (angels and demons). Only applicable if prace == RACE_DIVINITY*/
-	byte divinity;
 
 #ifdef AUCTION_SYSTEM
 	/* The current auction - mikaelh */
@@ -2823,8 +2857,8 @@ struct player_type
 	u32b dam_turn_20, dam_turn_10, dam_turn_5;
 	
 	/* for PvP mode: keep track of kills/progress for adding a reward or something - C. Blue */
-	int kills, kills_lower, kills_higher, kills_equal;
-	int free_mimic, pvp_prevent_tele;
+	int kills, kills_lower, kills_higher, kills_equal, kills_own;
+	int free_mimic, pvp_prevent_tele, pvp_prevent_phase;
 	long heal_effect;
 	
 	/* for client-side weather */
@@ -2857,20 +2891,34 @@ struct player_type
 	/* more admin fooling around (give a 1-hit-kill attack to the player, or let him die in 1 hit) */
 	int admin_godly_strike, admin_set_defeat;
 
+#ifdef TEST_SERVER
+	u32b test_count, test_dam;
+#endif
+
 	/* give players certain warnings, meant to guide newbies along, and remember
 	   if we already gave a specific warning, so we don't spam the player with it
 	   again and again - although noone probably reads them anyway ;-p - C. Blue */
 	char warning_bpr, warning_bpr2, warning_bpr3;
-	char warning_run, warning_wield, warning_chat, warning_lite;
+	char warning_run, warning_run_steps, warning_run_monlos;
+	char warning_wield, warning_chat, warning_lite, warning_lite_refill;
+	char warning_wield_combat; /* warn if engaging into combat (attacking/taking damage) without having equipped melee/ranged weapons! (except for druids) */
 	char warning_rest;/* if a char rests from <= 40% to 50% without R, or so..*/
 	char warning_mimic, warning_dual, warning_potions, warning_wor;
-	char warning_ghost;
+	char warning_ghost, warning_autoret, warning_autoret_ok;
+	char warning_ma_weapon, warning_ma_shield;
+	char warning_technique_melee, warning_technique_ranged;
+	char warning_hungry;
+	/* note: a sort of "warning_skills" is already implemented, in a different manner */
 
 #ifdef USE_SOUND_2010
 	int music_current, music_monster; //background music currently playing for him/her; an overriding monster music
 #endif
 	bool cut_sfx_attack;
 	int count_cut_sfx_attack;
+
+	/* various flags/counters to check if a character is 'freshly made' and/or has already interacted in certain ways.
+	   Mostly to test if he/she is eglibile to join events. */
+	bool recv_gold, recv_item, bought_item, killed_mon;
 };
 
 /* For Monk martial arts */
@@ -2913,6 +2961,7 @@ typedef struct dungeon_info_type dungeon_info_type;
 struct dungeon_info_type
 {
 	u32b name;                      /* Name */
+//	int idx;			/* index in d_info.txt */
 	u32b text;                      /* Description */
 	char short_name[3];             /* Short name */
 

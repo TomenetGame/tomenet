@@ -27,13 +27,19 @@ void do_cmd_go_up(int Ind)
 	struct worldpos *wpos = &p_ptr->wpos, old_wpos;
 	bool tower=TRUE;
 	cave_type **zcave;
-#ifdef RPG_SERVER
+	bool one_way = FALSE;
 	int i;
-#endif
 	if(!(zcave = getcave(wpos))) return;
 
         /* Are we entering/inside a dungeon or a tower? */
-        if (wpos->wz < 0) tower=FALSE;
+        if (wpos->wz < 0) tower = FALSE;
+
+	/* Is this a one-way tower? */
+	if (wpos->wz > 0) {
+		if (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON ||
+		    wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP))
+			one_way = TRUE;
+	}
 
 	/* Make sure he hasn't just changed depth */
 	if (p_ptr->new_level_flag)
@@ -204,6 +210,7 @@ void do_cmd_go_up(int Ind)
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
+				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->party == p_ptr->party)
 					msg_format(i, "\374\377G%s has entered %s..", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
 			}
@@ -216,6 +223,7 @@ void do_cmd_go_up(int Ind)
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
+				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->party == p_ptr->party)
 					msg_format(i, "\374\377G%s has left %s..", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
 			}
@@ -228,6 +236,16 @@ void do_cmd_go_up(int Ind)
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
+				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
+				if (Players[i]->party == p_ptr->party)
+				msg_format(i, "\377G[%s took a staircase upwards to %dft..]", p_ptr->name, (wpos->wz + 1) * 50);
+			}
+#else
+			if (one_way && p_ptr->party)
+			for (i = 1; i <= NumPlayers; i++) {
+			        if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (i == Ind) continue;
+				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->party == p_ptr->party)
 				msg_format(i, "\377G[%s took a staircase upwards to %dft..]", p_ptr->name, (wpos->wz + 1) * 50);
 			}
@@ -239,6 +257,16 @@ void do_cmd_go_up(int Ind)
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
+				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
+				if (Players[i]->party == p_ptr->party)
+					msg_format(i, "\377G[%s took a staircase upwards to %dft..]", p_ptr->name, (wpos->wz + 1) * 50);
+			}
+#else
+			if (one_way && p_ptr->party)
+			for (i = 1; i <= NumPlayers; i++) {
+			        if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (i == Ind) continue;
+				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->party == p_ptr->party)
 					msg_format(i, "\377G[%s took a staircase upwards to %dft..]", p_ptr->name, (wpos->wz + 1) * 50);
 			}
@@ -349,13 +377,19 @@ void do_cmd_go_down(int Ind)
 	struct worldpos *wpos = &p_ptr->wpos, old_wpos;
 	bool tower = FALSE;
 	cave_type **zcave;
-#ifdef RPG_SERVER
+	bool one_way = FALSE; //ironman, no_up, force_down
 	int i;
-#endif
 	if(!(zcave = getcave(wpos))) return;
 
 	/* Are we entering/inside a dungeon or a tower? */
-	if (wpos->wz > 0) tower=TRUE;
+	if (wpos->wz > 0) tower = TRUE;
+
+	/* Is this a one-way dungeon? */
+	if (wpos->wz < 0) {
+		if (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON ||
+		    wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP))
+			one_way = TRUE;
+	}
 
 	/* Make sure he hasn't just changed depth */
 	if (p_ptr->new_level_flag)
@@ -562,6 +596,7 @@ void do_cmd_go_down(int Ind)
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
+				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->party == p_ptr->party)
 					msg_format(i, "\374\377G%s has entered %s..", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
 			}
@@ -574,6 +609,7 @@ void do_cmd_go_down(int Ind)
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
+				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->party == p_ptr->party)
 					msg_format(i, "\374\377G%s has left %s..", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
 			}
@@ -586,6 +622,16 @@ void do_cmd_go_down(int Ind)
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
+				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
+				if (Players[i]->party == p_ptr->party)
+					msg_format(i, "\377G[%s took a staircase downwards to %dft..]", p_ptr->name, (wpos->wz - 1) * 50);
+			}
+#else
+			if (one_way && p_ptr->party)
+			for (i = 1; i <= NumPlayers; i++) {
+			        if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (i == Ind) continue;
+				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->party == p_ptr->party)
 					msg_format(i, "\377G[%s took a staircase downwards to %dft..]", p_ptr->name, (wpos->wz - 1) * 50);
 			}
@@ -597,6 +643,16 @@ void do_cmd_go_down(int Ind)
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
+				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
+				if (Players[i]->party == p_ptr->party)
+					msg_format(i, "\377G[%s took a staircase downwards to %dft..]", p_ptr->name, (wpos->wz - 1) * 50);
+			}
+#else
+			if (one_way && p_ptr->party)
+			for (i = 1; i <= NumPlayers; i++) {
+			        if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (i == Ind) continue;
+				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->party == p_ptr->party)
 					msg_format(i, "\377G[%s took a staircase downwards to %dft..]", p_ptr->name, (wpos->wz - 1) * 50);
 			}
@@ -795,7 +851,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 				{
 					place_object_restrictor = RESF_NONE;
 					/* mostly DROP_GOOD */
-					place_object(wpos, y, x, magik(75) ? TRUE : FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
+					place_object(wpos, y, x, magik(75) ? TRUE : FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, p_ptr->luck, ITEM_REMOVAL_NORMAL);
 				}
 
 				/* for anti-cheeze make the dropped items o_ptr->owner = p_ptr->id (loot might be piled btw) */
@@ -971,7 +1027,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args){
 			}
 			break;
 		case '4':
-			for(i=0;i<MAX_RACES;i++){
+			for(i=0;i<MAX_RACE;i++){
 				if(!strcmp(&args[2],race_info[i].title))
 					newowner=i;
 			}
@@ -1003,7 +1059,10 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args){
 	return FALSE;
 }
 
-bool access_door(int Ind, struct dna_type *dna){
+/* Returns > 0 if access is granted,
+   and <= 0 if access is denied.
+   Note == FALSE -> no message will be printed. - C. Blue */
+bool access_door(int Ind, struct dna_type *dna, bool note) {
 	player_type *p_ptr = Players[Ind];
 	if (!dna->owner) return(FALSE); /* house doesn't belong to anybody */
 /*	if (is_admin(p_ptr))
@@ -1012,18 +1071,30 @@ bool access_door(int Ind, struct dna_type *dna){
 
 	/* Test for cumulative restrictions */
 	if (p_ptr->dna != dna->creator) {
-		if(dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level)
+		if(dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level) {
+			if (note) msg_print(Ind, "Your level doesn't match the house restriction yet.");
 			return(FALSE); /* defies logic a bit, but for speed */
-		if((dna->a_flags & ACF_CLASS) && (p_ptr->pclass != (dna->creator & 0xff)))
+		}
+		if((dna->a_flags & ACF_CLASS) && (p_ptr->pclass != (dna->creator & 0xff))) {
+			if (note) msg_print(Ind, "Your class doesn't match the house restriction.");
 			return(FALSE);
-		if((dna->a_flags & ACF_RACE) && (p_ptr->prace != ((dna->creator >> 8) & 0xff)))
+		}
+		if((dna->a_flags & ACF_RACE) && (p_ptr->prace != ((dna->creator >> 8) & 0xff))) {
+			if (note) msg_print(Ind, "Your race doesn't match the house restriction.");
 			return(FALSE);
-		if((dna->a_flags & ACF_WINNER) && !p_ptr->total_winner)
+		}
+		if((dna->a_flags & ACF_WINNER) && !p_ptr->total_winner) {
+			if (note) msg_print(Ind, "You must be royalty to match the house restriction.");
 			return(FALSE);
-		if((dna->a_flags & ACF_FALLENWINNER) && (p_ptr->total_winner || !p_ptr->once_winner))
+		}
+		if((dna->a_flags & ACF_FALLENWINNER) && (p_ptr->total_winner || !p_ptr->once_winner)) {
+			if (note) msg_print(Ind, "You must be fallen royalty to match the house restriction.");
 			return(FALSE);
-		if((dna->a_flags & ACF_WINNER) && !(p_ptr->mode & MODE_NO_GHOST))
+		}
+		if((dna->a_flags & ACF_WINNER) && !(p_ptr->mode & MODE_NO_GHOST)) {
+			if (note) msg_print(Ind, "You must be emperor or empress to match the house restriction.");
 			return(FALSE);
+		}
 	}
 
 	switch(dna->owner_type){
@@ -1036,21 +1107,21 @@ bool access_door(int Ind, struct dna_type *dna){
 				if(!strcmp(parties[p_ptr->party].owner, lookup_player_name(dna->owner)))
 					return(TRUE);
 			}
-			break;
+			return(FALSE);
 		case OT_PARTY:
 			if(!p_ptr->party) return(FALSE);
 			if(player_in_party(dna->owner, Ind)) return(TRUE);
-			break;
+			return(FALSE);
 		case OT_CLASS:
 			if(p_ptr->pclass == dna->owner) return(TRUE);
-			break;
+			return(FALSE);
 		case OT_RACE:
 			if(p_ptr->prace == dna->owner) return(TRUE);
-			break;
+			return(FALSE);
 		case OT_GUILD:
 			if(!p_ptr->guild) return(FALSE);
 			if(p_ptr->guild == dna->owner) return(TRUE);
-			break;
+			return(FALSE);
 	}
 	return(FALSE);
 }
@@ -1061,7 +1132,28 @@ bool access_door(int Ind, struct dna_type *dna){
 int access_door_colour(int Ind, struct dna_type *dna){
 	player_type *p_ptr = Players[Ind];
 
-	if (!dna->owner) return(TERM_UMBER); /* house doesn't belong to anybody */
+	/* house doesn't belong to anybody? */
+	if (!dna->owner) return(TERM_UMBER);
+
+	/* house belongs to someone of incompatible mode!
+	   in that case, no further checking is required,
+	   since won't ever be able to access it.
+	   (Added for PLAYER_STORES especially.) */
+	if (p_ptr->mode & MODE_PVP) {
+		if (!(dna->mode & MODE_PVP)) {
+			return(TERM_L_DARK);
+		}
+	} else if (p_ptr->mode & MODE_EVERLASTING) {
+		if (!(dna->mode & MODE_EVERLASTING)) {
+			return(TERM_L_DARK);
+		}
+	} else if (dna->mode & MODE_PVP) {
+		return(TERM_L_DARK);
+	} else if (dna->mode & MODE_EVERLASTING) {
+		return(TERM_L_DARK);
+	}
+
+	/* test house access permissions */
 	switch(dna->owner_type){
 		case OT_PLAYER:
 			/* new doors in new server different */
@@ -1133,8 +1225,10 @@ int access_door_colour(int Ind, struct dna_type *dna){
 			}
 			break;
 	}
-//	if(dna->a_flags & ACF_STORE) return(TERM_MULTI); /* player store? */
+
+	/* we have no permission to access */
 	return(TERM_SLATE);
+//	if(dna->a_flags & ACF_STORE) return(TERM_MULTI); /* older idea. Instead, see PLAYER_STORE - C. Blue */
 }
 
 cptr get_house_owner(struct c_special *cs_ptr)
@@ -1189,7 +1283,7 @@ void do_cmd_open(int Ind, int dir)
 	object_type             *o_ptr;
 
 	bool more = FALSE;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 
 	/* Ghosts cannot open doors ; not in WRAITHFORM */
@@ -1202,15 +1296,12 @@ void do_cmd_open(int Ind, int dir)
 	}
 
 	/* Get a "repeated" direction */
-	if (dir)
-	{
+	if (dir) {
 		/* Get requested location */
 		y = p_ptr->py + ddy[dir];
 		x = p_ptr->px + ddx[dir];
-
 		/* Get requested grid */
 		c_ptr = &zcave[y][x];
-
 		/* Get the object (if any) */
 		o_ptr = &o_list[c_ptr->o_idx];
 
@@ -1225,77 +1316,62 @@ void do_cmd_open(int Ind, int dir)
 		}
 
 		/* Monster in the way */
-		else if (c_ptr->m_idx > 0)
-		{
+		else if (c_ptr->m_idx > 0) {
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-
 			/* Message */
 			msg_print(Ind, "There is a monster in the way!");
-
 			/* Attack */
 			py_attack(Ind, y, x, TRUE);
 		}
 
 		/* Open a closed chest. */
-		else if (o_ptr->tval == TV_CHEST)
-		{
+		else if (o_ptr->tval == TV_CHEST) {
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
-
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-
 			/* Assume opened successfully */
 			flag = TRUE;
-
 			/* Attempt to unlock it */
-			if (o_ptr->pval > 0)
-			{
+			if (o_ptr->pval > 0) {
 				trap_kind *t_ptr;
 				t_ptr = &t_info[o_ptr->pval];
 
 				/* Assume locked, and thus not open */
 				flag = FALSE;
-
 				/* Get the "disarm" factor */
 				i = p_ptr->skill_dis;
-
 				/* Penalize some conditions */
 				if (p_ptr->blind || no_lite(Ind)) i = i / 10;
 				if (p_ptr->confused || p_ptr->image) i = i / 10;
-
 				/* Extract the difficulty */
 				j = i - t_ptr->difficulty;
 				// j = i - o_ptr->pval;
-
 				/* Always have a small chance of success */
 				if (j < 2) j = 2;
-
 				/* Success -- May still have traps */
-				if (rand_int(100) < j)
-				{
+				if (rand_int(100) < j) {
 					msg_print(Ind, "You have picked the lock.");
 					gain_exp(Ind, 1);
 					flag = TRUE;
-
 #ifdef USE_SOUND_2010
 					sound(Ind, "open_pick", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 				}
 
 				/* Failure -- Keep trying */
-				else
-				{
+				else {
 					/* We may continue repeating */
 					more = TRUE;
 					msg_print(Ind, "You failed to pick the lock.");
 				}
 			}
+			/* can't open a non-closed chest */
+			else if (o_ptr->pval == 0) flag = FALSE;
 
 			/* Allowed to open */
-			if (flag)
-			{
+			if (flag) {
 #ifdef USE_SOUND_2010
 				sound(Ind, "open_chest", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
@@ -1315,50 +1391,37 @@ void do_cmd_open(int Ind, int dir)
 		}
 
 		/* Jammed door */
-		else if (c_ptr->feat >= FEAT_DOOR_HEAD + 0x08)
-		{
+		else if (c_ptr->feat >= FEAT_DOOR_HEAD + 0x08) {
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
-
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-
 			/* Stuck */
 			msg_print(Ind, "The door appears to be stuck.");
-
 #ifdef USE_SOUND_2010
 			sound(Ind, "open_door_stuck", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 		}
 
 		/* Locked door */
-		else if (c_ptr->feat >= FEAT_DOOR_HEAD + 0x01)
-		{
+		else if (c_ptr->feat >= FEAT_DOOR_HEAD + 0x01) {
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
-
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-
 			/* Disarm factor */
 			i = p_ptr->skill_dis;
-
 			/* Penalize some conditions */
 			if (p_ptr->blind || no_lite(Ind)) i = i / 10;
 			if (p_ptr->confused || p_ptr->image) i = i / 10;
-
 			/* Extract the lock power */
 			j = c_ptr->feat - FEAT_DOOR_HEAD;
-
 			/* Extract the difficulty XXX XXX XXX */
 			j = i - (j * 4);
-
 			/* Always have a small chance of success */
 			if (j < 2) j = 2;
-
 			/* Success */
-			if (rand_int(100) < j)
-			{
+			if (rand_int(100) < j) {
 				/* Message */
 				msg_print(Ind, "You have picked the lock.");
 #ifdef USE_SOUND_2010
@@ -1370,35 +1433,29 @@ void do_cmd_open(int Ind, int dir)
 				stop_shooting_till_kill(Ind);
 
 				/* Set off trap */
-				if(GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
+				if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
 				/* Automatic bot detection - mikaelh */
 				p_ptr->silly_door_exp++;
 				if (p_ptr->silly_door_exp >= 100) {
 					msg_print(Ind, "Botting never pays off...");
 					take_xp_hit(Ind, 1, "botting", TRUE, FALSE);
-				}
-				else {
+				} else {
 					/* Experience */
 					gain_exp(Ind, 1);
 				}
-
 				/* Open the door */
 				c_ptr->feat = FEAT_OPEN;
-
 				/* Notice */
 				note_spot_depth(wpos, y, x);
-
 				/* Redraw */
 				everyone_lite_spot(wpos, y, x);
-
 				/* Update some things */
 				p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 			}
 
 			/* Failure */
-			else
-			{
+			else {
 				/* Message */
 				msg_print(Ind, "You failed to pick the lock.");
 
@@ -1408,21 +1465,19 @@ void do_cmd_open(int Ind, int dir)
 		}
 
 		/* Home */
-		else if (c_ptr->feat == FEAT_HOME)
-		{
+		else if (c_ptr->feat == FEAT_HOME) {
 			struct c_special *cs_ptr;
-			if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))){ /* orig house failure */
-				if(access_door(Ind, cs_ptr->sc.ptr) || admin_p(Ind))
-				{
+			if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) { /* orig house failure */
+				if (access_door(Ind, cs_ptr->sc.ptr, TRUE) || Players[Ind]->admin_dm) {
 #if USE_MANG_HOUSE_ONLY || TRUE /* let'em open it, so that thevery can take place :) */
 					/* Open the door */
-					c_ptr->feat=FEAT_HOME_OPEN;
+					c_ptr->feat = FEAT_HOME_OPEN;
 #ifdef USE_SOUND_2010
 					sound(Ind, "open_door", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
-#else	// USE_MANG_HOUSE
+#else	/* USE_MANG_HOUSE */
 					msg_print(Ind, "Just walk in.");
-#endif	// USE_MANG_HOUSE
+#endif	/* USE_MANG_HOUSE */
 					/* S(he) is no longer afk */
 					un_afk_idle(Ind);
 					break_cloaking(Ind, 3);
@@ -1434,34 +1489,33 @@ void do_cmd_open(int Ind, int dir)
 					p_ptr->energy -= level_speed(&p_ptr->wpos)/2;
 					/* Notice */
 					note_spot_depth(wpos, y, x);
-
 					/* Redraw */
 					everyone_lite_spot(wpos, y, x);
-					
 					/* Update some things */
 					p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
-
-				}
-				else
-				{
-					struct dna_type *dna=cs_ptr->sc.ptr;
-					if (!strcmp(get_house_owner(cs_ptr), "nobody.")) 
-					{
+				} else {
+					struct dna_type *dna = cs_ptr->sc.ptr;
+					if (!strcmp(get_house_owner(cs_ptr), "nobody.")) {
 						long factor,price;
 						factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
 						price = dna->price / 100 * factor;
 						msg_format(Ind,"\377oThat house costs %ld gold.",price);
 					} else {
+#ifdef PLAYER_STORES
+						/* We don't have house access, but if it's set up as
+						   a player-run store, we may enter it to buy things - C. Blue */
+						if (!do_cmd_player_store(Ind, x, y))
+#endif
 						msg_format(Ind,"\377sThat house is owned by %s.",get_house_owner(cs_ptr));
 					}
 				}
 				return;
 			}
-			if((cs_ptr=GetCS(c_ptr, CS_KEYDOOR))){
-				struct key_type *key=cs_ptr->sc.ptr;
-				for(j=0; j<INVEN_PACK; j++){
-					object_type *o_ptr=&p_ptr->inventory[j];
-					if(o_ptr->tval == TV_KEY && o_ptr->pval == key->id){
+			if ((cs_ptr = GetCS(c_ptr, CS_KEYDOOR))){
+				struct key_type *key = cs_ptr->sc.ptr;
+				for ( j = 0; j < INVEN_PACK; j++){
+					object_type *o_ptr = &p_ptr->inventory[j];
+					if (o_ptr->tval == TV_KEY && o_ptr->pval == key->id) {
 						c_ptr->feat = FEAT_HOME_OPEN;
 						/* S(he) is no longer afk */
 						un_afk_idle(Ind);
@@ -1505,36 +1559,41 @@ void do_cmd_open(int Ind, int dir)
 		}
 
 		/* Closed door */
-		else
-		{
+		else {
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
 
-			/* Set off trap */
-			if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
-
 			break_cloaking(Ind, 3);
-			break_shadow_running(Ind); 
+			break_shadow_running(Ind);
 			stop_precision(Ind);
 			stop_shooting_till_kill(Ind);
 
 			/* Take half a turn */
-			p_ptr->energy -= level_speed(&p_ptr->wpos)/2;
+			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
-			/* Open the door */
-			c_ptr->feat = FEAT_OPEN;
+			if (!(p_ptr->confused || p_ptr->blind)
+			    || magik(33)) {
+				/* Set off trap */
+				if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
+
+				/* Open the door */
+				c_ptr->feat = FEAT_OPEN;
 #ifdef USE_SOUND_2010
-			sound(Ind, "open_door", NULL, SFX_TYPE_COMMAND, TRUE);
+				sound(Ind, "open_door", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
+				/* Notice */
+				note_spot_depth(wpos, y, x);
+				/* Redraw */
+				everyone_lite_spot(wpos, y, x);
+				/* Update some things */
+				p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
+			} else {
+				/* Message */
+				msg_print(Ind, "You fumble..");
 
-			/* Notice */
-			note_spot_depth(wpos, y, x);
-
-			/* Redraw */
-			everyone_lite_spot(wpos, y, x);
-
-			/* Update some things */
-			p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
+				/* We may keep trying */
+				more = TRUE;
+			}
 		}
 	}
 
@@ -2079,13 +2138,13 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 							place_object_restrictor = RESF_NONE;
 #if 1
 							generate_object(&forge, wpos, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_MID,
-								default_obj_theme, p_ptr->luck_cur);
+								default_obj_theme, p_ptr->luck);
 							object_desc(0, o_name, &forge, TRUE, 3);
 							s_printf("DIGGING: %s found item: %s.\n", p_ptr->name, o_name);
 							drop_near(&forge, -1, wpos, y, x);
 #else
 							place_object(wpos, y, x, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_MID,
-								default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
+								default_obj_theme, p_ptr->luck, ITEM_REMOVAL_NORMAL);
 							s_printf("DIGGING: %s found a random item.\n", p_ptr->name);
 #endif
 							if (player_can_see_bold(Ind, y, x))
@@ -2941,12 +3000,12 @@ void do_cmd_bash(int Ind, int dir)
 
 	bool            more = FALSE;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 
 	/* Ghosts cannot bash ; not in WRAITHFORM */
 	if ( (p_ptr->ghost) || (p_ptr->fruit_bat && !p_ptr->body_monster) || (p_ptr->tim_wraith) ||
-			(p_ptr->body_monster && !(r_ptr->flags2 & RF2_BASH_DOOR)))
+	    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_BASH_DOOR)))
 	{
 		/* Message */
 		msg_print(Ind, "You cannot bash things!");
@@ -2954,8 +3013,7 @@ void do_cmd_bash(int Ind, int dir)
 	}
 
 	/* Get a "repeated" direction */
-	if (dir)
-	{
+	if (dir) {
 		/* Bash location */
 		y = p_ptr->py + ddy[dir];
 		x = p_ptr->px + ddx[dir];
@@ -2964,8 +3022,7 @@ void do_cmd_bash(int Ind, int dir)
 		c_ptr = &zcave[y][x];
 
 		/* Monster in the way */
-		if (c_ptr->m_idx > 0)
-		{
+		if (c_ptr->m_idx > 0) {
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -2978,19 +3035,18 @@ void do_cmd_bash(int Ind, int dir)
 
 		/* Nothing useful */
 		else if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-					(c_ptr->feat <= FEAT_DOOR_TAIL)) &&
-				c_ptr->feat != FEAT_HOME)
+				(c_ptr->feat <= FEAT_DOOR_TAIL)) &&
+			c_ptr->feat != FEAT_HOME)
 		{
 			int item;
 			/* Hack -- 'kick' an item ala NetHack */
-			if ((item = c_ptr->o_idx))
-			{
+			if ((item = c_ptr->o_idx)) {
 				object_type *o_ptr = &o_list[c_ptr->o_idx];
 
 				if (nothing_test(o_ptr, p_ptr, &p_ptr->wpos, x, y)) return;
 
 				if (c_ptr->feat == FEAT_DEEP_WATER ||
-					c_ptr->feat == FEAT_SHAL_WATER)
+				    c_ptr->feat == FEAT_SHAL_WATER)
 				{
 					/* S(he) is no longer afk */
 					un_afk_idle(Ind);
@@ -3023,7 +3079,10 @@ void do_cmd_bash(int Ind, int dir)
 
 					/* Message */
 					/* TODO: handle blindness */
-					msg_format_near_site(y, x, wpos, "The %s shatters!", o_name);
+					msg_format_near_site(y, x, wpos, 0, TRUE, "The %s shatters!", o_name);
+#ifdef USE_SOUND_2010
+					sound_near_site(y, x, wpos, 0, "shatter_potion", NULL, SFX_TYPE_MISC);
+#endif
 
 					//			if (potion_smash_effect(0, wpos, y, x, o_ptr->sval))
 					if (k_info[o_ptr->k_idx].tval == TV_POTION)
@@ -3054,8 +3113,7 @@ void do_cmd_bash(int Ind, int dir)
 		}
 
 		/* Bash a closed door */
-		else
-		{
+		else {
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
 
@@ -3079,8 +3137,7 @@ void do_cmd_bash(int Ind, int dir)
 			if (temp < 1) temp = 1;
 
 			/* Hack -- attempt to bash down the door */
-			if (rand_int(100) < temp && c_ptr->feat != FEAT_HOME)
-			{
+			if (rand_int(100) < temp && c_ptr->feat != FEAT_HOME) {
 				/* Message */
 				msg_print(Ind, "The door crashes open!");
 
@@ -3092,23 +3149,16 @@ void do_cmd_bash(int Ind, int dir)
 				if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
 				/* Break down the door */
-				if (rand_int(100) < 50)
-				{
-					c_ptr->feat = FEAT_BROKEN;
-				}
-
+				if (rand_int(100) < 50) c_ptr->feat = FEAT_BROKEN;
 				/* Open the door */
-				else
-				{
-					c_ptr->feat = FEAT_OPEN;
-				}
+				else c_ptr->feat = FEAT_OPEN;
 
 				/* Notice */
 				note_spot_depth(wpos, y, x);
 
 				/* Redraw */
 				everyone_lite_spot(wpos, y, x);
-				
+
 				/* Hack -- Fall through the door */
 				move_player(Ind, dir, FALSE);
 
@@ -3133,8 +3183,7 @@ void do_cmd_bash(int Ind, int dir)
 			}
 
 			/* High dexterity yields coolness */
-			else
-			{
+			else {
 				/* Message */
 				msg_print(Ind, "You are off-balance.");
 
@@ -3301,17 +3350,15 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 
 	bool more = FALSE;
 	cave_type **zcave;
-	if(!(zcave=getcave(&p_ptr->wpos))) return;
+	if(!(zcave = getcave(&p_ptr->wpos))) return;
 
 	/* Make sure he hasn't just switched levels */
 	if (p_ptr->new_level_flag) return;
 
 	/* Get a "repeated" direction */
-	if (dir)
-	{
+	if (dir) {
 		/* Hack -- handle confusion */
-		if (p_ptr->confused)
-		{
+		if (p_ptr->confused) {
 			dir = 5;
 
 			/* Prevent walking nowhere */
@@ -3320,20 +3367,19 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 		}
 
 		/* Handle the cfg.door_bump_open option */
-		if (cfg.door_bump_open)
-		{
+		if (cfg.door_bump_open) {
 			struct c_special *cs_ptr;
 			/* Get requested grid */
 			c_ptr = &zcave[p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
 
 			/* This should be cfg.trap_bump_disarm? */
 			if (cfg.door_bump_open & BUMP_OPEN_TRAP &&
-					p_ptr->easy_disarm &&
-					(cs_ptr=GetCS(c_ptr, CS_TRAPS)) &&
-				cs_ptr->sc.trap.found &&
-				!c_ptr->o_idx &&
-				!UNAWARENESS(p_ptr) &&
-				!no_lite(Ind) )
+			    p_ptr->easy_disarm &&
+			    (cs_ptr=GetCS(c_ptr, CS_TRAPS)) &&
+			    cs_ptr->sc.trap.found &&
+			    !c_ptr->o_idx &&
+			    !UNAWARENESS(p_ptr) &&
+			    !no_lite(Ind) )
 			{
 				do_cmd_disarm(Ind, dir);
 				return;
@@ -3354,11 +3400,10 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 				(c_ptr->feat == FEAT_HOME_HEAD) &&
 				!p_ptr->ghost && !p_ptr->tim_wraith) /* players in WRAITHFORM can't open doors - mikaelh */
 			{
-				if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))){ /* orig house failure */
-					if((!(cfg.door_bump_open & BUMP_OPEN_HOUSE) ||
-					    !access_door(Ind, cs_ptr->sc.ptr)) &&
-					    !admin_p(Ind))
-					{
+				if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))){ /* orig house failure */
+					if ((!(cfg.door_bump_open & BUMP_OPEN_HOUSE) ||
+					    !access_door(Ind, cs_ptr->sc.ptr, FALSE)) &&
+					    !admin_p(Ind)) {
 						do_cmd_open(Ind, dir);
 						return;
 					}
@@ -3367,6 +3412,7 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 		}
 		/* Actually move the character */
 		move_player(Ind, dir, pickup);
+		p_ptr->warning_autoret_ok = 0;
 
 		/* Take a turn */
 		if (!p_ptr->melee_sprint) {
@@ -3786,47 +3832,52 @@ void do_cmd_fire(int Ind, int dir)
 
 	char            o_name[ONAME_LEN];
 	bool returning = FALSE, magic = FALSE, boomerang = FALSE, ethereal = FALSE;
+	bool target_ok = target_okay(Ind);
 	cave_type **zcave;
+
+	if (!(zcave = getcave(wpos))) return;
+
 
 	if (p_ptr->shooting_till_kill) { /* we were shooting till kill last turn? */
 		p_ptr->shooting_till_kill = FALSE; /* well, gotta re-test for another success now.. */
 		if (dir == 5) p_ptr->shooty_till_kill = TRUE; /* so for now we are just ATTEMPTING to shoot till kill (assumed we have a monster for target) */
 	}
-	
+
 	/* To continue shooting_till_kill, require clean LOS to target
 	   with no other monsters in the way, so we won't wake up more monsters accidentally. */
 	if (p_ptr->shooty_till_kill) {
-		if (!projectable_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) {
-			return;
+		if (target_ok) {
+#ifndef PY_FIRE_ON_WALL
+			if (!projectable_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) {
+#else
+			if (!projectable_wall_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) {
+#endif
+				return;
+			}
+		} else {
+			/* don't fire-till-kill at ourself! */
+			p_ptr->shooty_till_kill = FALSE;
 		}
 	}
 
-
-
-	if(!(zcave=getcave(wpos))) return;
-
 	/* Break goi/manashield */
 #if 0
-	if (p_ptr->invuln)
-	{
+	if (p_ptr->invuln) {
 		set_invuln(Ind, 0);
 	}
-	if (p_ptr->tim_manashield)
-	{
+	if (p_ptr->tim_manashield) {
 		set_tim_manashield(Ind, 0);
 	}
-	if (p_ptr->tim_wraith)
-	{
+	if (p_ptr->tim_wraith) {
 		set_tim_wraith(Ind, 0);
 	}
 #endif	// 0
 
 	/* Get the "bow" (if any) */
 	j_ptr = &(p_ptr->inventory[INVEN_BOW]);
-		
+
 	/* Require a launcher */
-	if (!j_ptr->tval)
-	{
+	if (!j_ptr->tval) {
 		msg_print(Ind, "You have nothing to fire with.");
 		return;
 	}
@@ -3834,8 +3885,7 @@ void do_cmd_fire(int Ind, int dir)
 	/* Extract the item flags */
         object_flags(j_ptr, &f1, &fx, &fx, &fx, &fx, &esp);
 
-	if (j_ptr->tval == TV_BOOMERANG)
-	{
+	if (j_ptr->tval == TV_BOOMERANG) {
 		boomerang = TRUE;
 		item = INVEN_BOW;
 	}
@@ -3844,8 +3894,7 @@ void do_cmd_fire(int Ind, int dir)
 
 	/* if quiver is empty, try auto-reloading with items
 	   inscribed '!L' in inventory - C. Blue */
-	if (!o_ptr->tval || !o_ptr->number)
-	{
+	if (!o_ptr->tval || !o_ptr->number) {
 		for (i = 0; i < INVEN_PACK; i++) {
 			if (is_ammo(p_ptr->inventory[i].tval) &&
 			    check_guard_inscription(p_ptr->inventory[i].note, 'L')) {
@@ -3868,14 +3917,12 @@ void do_cmd_fire(int Ind, int dir)
 
 	if (!can_use_verbose(Ind, o_ptr)) return;
 
-	if (!o_ptr->tval || !o_ptr->number)
-	{
+	if (!o_ptr->tval || !o_ptr->number) {
 		msg_print(Ind, "Your quiver is empty!");
 		return;
 	}
 	
-	if (o_ptr->tval != p_ptr->tval_ammo && !boomerang)
-	{
+	if (o_ptr->tval != p_ptr->tval_ammo && !boomerang) {
 		msg_print(Ind, "You cannot fire that!");
 		return;
 	}
@@ -3886,17 +3933,14 @@ void do_cmd_fire(int Ind, int dir)
 	/* Use a base distance */
 //	tdis = 10;
 
-	if (!boomerang)
-	{
+	if (!boomerang) {
 		/* Actually "fire" the object */
 		bonus = (p_ptr->to_h + p_ptr->to_h_ranged * (p_ptr->ranged_precision ? 2 : 1)
 			+ o_ptr->to_h + j_ptr->to_h);
 		chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
 
     		tmul = get_shooter_mult(j_ptr);
-	}
-	else
-	{
+	} else {
 		/* Actually "fire" the object */
 		bonus = (p_ptr->to_h + p_ptr->to_h_ranged + o_ptr->to_h);
 		chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
@@ -3942,11 +3986,18 @@ void do_cmd_fire(int Ind, int dir)
 	/* Only fire in direction 5 if we have a target */
 	/* Also only fire at all at a desired target, if we're actually within shooting range - C. Blue */
 	if (dir == 5) {
-		if (!target_okay(Ind)) return;
-		/* some minor launchers cannot achieve required range for the specified target - C. Blue */
-		if (!projectable(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, tdis)) return;
+		if (target_ok) {
+			/* some minor launchers cannot achieve required range for the specified target - C. Blue */
+#ifndef PY_FIRE_ON_WALL
+			if (!projectable(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, tdis)) return;
+#else
+			if (!projectable_wall(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, tdis)) return;
+#endif
+		} else {
+			/* for 4.4.6+, allow shooting (exploding) ammo 'at oneself' */
+			if (!is_newer_than(&p_ptr->version, 4, 4, 5, 10, 0, 0)) return;
+		}
 	}
-
 
 	if (p_ptr->ranged_flare) {
 		if (boomerang) {
@@ -4046,8 +4097,7 @@ void do_cmd_fire(int Ind, int dir)
 	if (tdis > ARROW_DIST_LIMIT) tdis = ARROW_DIST_LIMIT;
 #endif	// ARROW_DIST_LIMIT
 
-	if (!boomerang && cursed_p(o_ptr) && magik(50))
-	{
+	if (!boomerang && cursed_p(o_ptr) && magik(50)) {
 		msg_print(Ind, "You somehow failed to fire!");
 		return;
 	}
@@ -4112,8 +4162,7 @@ void do_cmd_fire(int Ind, int dir)
 	ty = p_ptr->py + 99 * ddy[dir];
 
 	/* Check for "target request" */
-	if ((dir == 5) && target_okay(Ind))
-	{
+	if ((dir == 5) && target_ok) {
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
 	}
@@ -4124,8 +4173,7 @@ void do_cmd_fire(int Ind, int dir)
 	break_shadow_running(Ind);
 
 	/* Reduce and describe inventory */
-	if (!boomerang)
-	{
+	if (!boomerang) {
 		/* C. Blue - Artifact ammo never runs out (similar to magic arrows:) */
 		if (artifact_p(o_ptr)) {
 #if 0 /* empty code? erase this */
@@ -4149,8 +4197,7 @@ void do_cmd_fire(int Ind, int dir)
 				}
 			}
 		} else if (!magic || cursed_p(o_ptr)) {
-			if (item >= 0)
-			{
+			if (item >= 0) {
 				inven_item_increase(Ind, item, p_ptr->ranged_barrage ? -6 : -1);
 				inven_item_describe(Ind, item);
 				inven_item_optimize(Ind, item);
@@ -4169,15 +4216,13 @@ void do_cmd_fire(int Ind, int dir)
 			if (!artifact_p(o_ptr))
 				o_ptr->to_h = o_ptr->to_d = o_ptr->name2 = o_ptr->pval = 0;
 #endif
-			if (item >= 0)
-			{
+			if (item >= 0) {
 				inven_item_describe(Ind, item);
 				inven_item_optimize(Ind, item);
 			}
 
 			/* Reduce and describe floor item */
-			else
-			{
+			else {
 				floor_item_optimize(0 - item);
 			}
 		}
@@ -4199,14 +4244,12 @@ void do_cmd_fire(int Ind, int dir)
 		}
 	}
 	if (sfx == 0) switch (o_ptr->tval) {
-	case TV_SHOT: break;
+	case TV_SHOT: sound(Ind, "fire_shot", NULL, SFX_TYPE_ATTACK, FALSE); break;
 	case TV_ARROW: sound(Ind, "fire_arrow", NULL, SFX_TYPE_ATTACK, FALSE); break;
 	case TV_BOLT: sound(Ind, "fire_bolt", NULL, SFX_TYPE_ATTACK, FALSE); break;
 	}
 #endif
-
-	while (TRUE)
-	{
+	while (TRUE) {
 		/* Travel until stopped */
 #if 0 /* I think it travelled once too far, since it's mmove2'ed in the very beginning of every for-pass, */
 /* and it goes from 0 to tdis, that's tdis+1 steps in total. Correct me if wrong~~  C. Blue */
@@ -4215,19 +4258,20 @@ void do_cmd_fire(int Ind, int dir)
 		for (cur_dis = 0; cur_dis < tdis; )
 #endif
 		{
-			/* Hack -- Stop at the target */
-			if ((y == ty) && (x == tx)){
-				break;
-			}
-
-			/* Calculate the new location (see "project()") */
 			ny = y;
 			nx = x;
+
+			/* Hack -- Stop at the target */
+			if ((y == ty) && (x == tx)) break;
+
+			/* Calculate the new location (see "project()") */
 			//			mmove2(&ny, &nx, p_ptr->py, p_ptr->px, ty, tx);
 			mmove2(&ny, &nx, by, bx, ty, tx);
 
+#ifndef PY_FIRE_ON_WALL
 			/* Stopped by walls/doors */
 			if (!cave_los(zcave, ny, nx)) break;
+#endif
 
 			/* Stopped by protected grids (Inn doors, also stopping monsters' ranged attacks!) */
 			if (f_info[zcave[ny][nx].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
@@ -4287,8 +4331,7 @@ void do_cmd_fire(int Ind, int dir)
 #else /* OPTIMIZED_ANIMATIONS */
 
 			/* Save the projectile path */
-			if (path_num < MAX_RANGE)
-			{
+			if (path_num < MAX_RANGE) {
 				path_y[path_num] = y;
 				path_x[path_num] = x;
 				path_num++;
@@ -4296,29 +4339,23 @@ void do_cmd_fire(int Ind, int dir)
 #endif /* OPTIMIZED_ANIMATIONS */
 
 			/* Player here, hit him */
-			if (zcave[y][x].m_idx < 0)
-			{
-				if (cfg.use_pk_rules == PK_RULES_NEVER)
-				{
+			if (zcave[y][x].m_idx < 0) {
+				if (cfg.use_pk_rules == PK_RULES_NEVER) {
 					/* Stop looking */
 					if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BRAND_SHARP)) break;
-				}
-				else
-				{
+				} else {
 
 					cave_type *c_ptr = &zcave[y][x];
-
 					q_ptr = Players[0 - c_ptr->m_idx];
 
 					/* AD hack -- "pass over" players in same party */
 					if ((p_ptr->pkill & PKILL_KILLER ||
-								check_hostile(Ind, 0 - c_ptr->m_idx) ||
-								magik(NEUTRAL_FIRE_CHANCE)) &&
-							(p_ptr->party == 0 ||
-							 !player_in_party(p_ptr->party, 0 - c_ptr->m_idx) ||
-							 magik(FRIEND_FIRE_CHANCE))
-							&& !p_ptr->admin_dm)
-					{ 
+					    check_hostile(Ind, 0 - c_ptr->m_idx) ||
+					    magik(NEUTRAL_FIRE_CHANCE)) &&
+					    (p_ptr->party == 0 ||
+					     !player_in_party(p_ptr->party, 0 - c_ptr->m_idx) ||
+					     magik(FRIEND_FIRE_CHANCE))
+					    && !p_ptr->admin_dm) {
 
 						/* Check the visibility */
 						visible = p_ptr->play_vis[0 - c_ptr->m_idx];
@@ -4326,11 +4363,10 @@ void do_cmd_fire(int Ind, int dir)
 						/* Note the collision */
 						hit_body = TRUE;
 
-						if (cfg.use_pk_rules == PK_RULES_DECLARE)
-						{
+						if (cfg.use_pk_rules == PK_RULES_DECLARE) {
 							if(zcave[p_ptr->py][p_ptr->px].info&CAVE_NOPK || zcave[q_ptr->py][q_ptr->px].info&CAVE_NOPK){
 								if(visible && (!player_in_party(Players[0 - c_ptr->m_idx]->party, Ind))){
-									p_ptr->target_who=0;
+									p_ptr->target_who = 0;
 									do_player_drop_items(Ind, 40, FALSE);
 									imprison(Ind, 100, "attempted murder");
 								}
@@ -4347,13 +4383,11 @@ void do_cmd_fire(int Ind, int dir)
 							strcpy(p_name, q_ptr->name);
 
 #ifndef NEW_DODGING
-							if (get_skill(q_ptr, SKILL_DODGE))
-							{
+							if (get_skill(q_ptr, SKILL_DODGE)) {
 //								int chance = (q_ptr->dodge_level - p_ptr->lev - archery) / 3;
 								int chance = (q_ptr->dodge_level - p_ptr->lev - get_skill(p_ptr, archery)) / 3;
 
-								if ((chance > 0) && magik(chance))
-								{
+								if ((chance > 0) && magik(chance)) {
 									//				msg_print(Ind, "You dodge a magical attack!");
 									msg_format(0 - c_ptr->m_idx, "\377%cYou dodge the projectile!", COLOUR_DODGE_GOOD);
 									if (visible) msg_format(Ind, "\377%c%s dodges %s.", COLOUR_DODGE_NEAR, p_name, o_name);
@@ -4395,10 +4429,8 @@ void do_cmd_fire(int Ind, int dir)
 							}
 #endif
 
-							if (!dodged)	// 'goto' would be cleaner
-							{
-								if (!boomerang)
-								{
+							if (!dodged) {	// 'goto' would be cleaner
+								if (!boomerang) {
 									/* Base damage from thrown object plus launcher bonus */
 									tdam = damroll(o_ptr->dd, o_ptr->ds);
 									if (p_ptr->ranged_flare) tdam += damroll(2, 6); /* compare to dice in k_info for oil flask */
@@ -4406,9 +4438,7 @@ void do_cmd_fire(int Ind, int dir)
 									if (p_ptr->bow_brand) tdam += p_ptr->bow_brand_d;
 									tdam += o_ptr->to_d;
 									tdam += j_ptr->to_d + p_ptr->to_d_ranged;
-								}
-								else
-								{
+								} else {
 									 /* Base damage from thrown object */
 								        tdam = damroll(o_ptr->dd, o_ptr->ds);
 									tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, brand_msg, FALSE);
@@ -4444,16 +4474,13 @@ void do_cmd_fire(int Ind, int dir)
 							        if (p_ptr->tim_wraith && !q_ptr->tim_wraith) tdam = 0;
 
 								/* Handle unseen player */
-								if (!visible)
-								{
+								if (!visible) {
 									/* Invisible player */
 									msg_format(Ind, "The %s finds a mark.", o_name);
 									msg_format(0 - c_ptr->m_idx, "You are hit by a %s!", o_name);
 								}
-
 								/* Handle visible player */
-								else
-								{
+								else {
 									/* Messages */
 									msg_format(Ind, "The %s hits %s for \377y%d \377wdamage.", o_name, p_name, tdam);
 									if ((o_name[0] == 'A') || (o_name[0] == 'E') || (o_name[0] == 'I') || (o_name[0] == 'O') || (o_name[0] == 'U') ||
@@ -4466,11 +4493,9 @@ void do_cmd_fire(int Ind, int dir)
 								}
 
 								/* If this was intentional, make target hostile */
-								if (check_hostile(Ind, 0 - c_ptr->m_idx))
-								{
+								if (check_hostile(Ind, 0 - c_ptr->m_idx)) {
 									/* Make target hostile if not already */
-									if (!check_hostile(0 - c_ptr->m_idx, Ind))
-									{
+									if (!check_hostile(0 - c_ptr->m_idx, Ind)) {
 										if (Players[0 - c_ptr->m_idx]->pvpexception < 2)
 										add_hostility(0 - c_ptr->m_idx, p_ptr->name, FALSE);
 
@@ -4514,8 +4539,7 @@ void do_cmd_fire(int Ind, int dir)
 			}
 
 			/* Monster here, Try to hit it */
-			if (zcave[y][x].m_idx > 0)
-			{
+			if (zcave[y][x].m_idx > 0) {
 				cave_type *c_ptr = &zcave[y][x];
 
 				monster_type *m_ptr = &m_list[c_ptr->m_idx];
@@ -4537,8 +4561,7 @@ void do_cmd_fire(int Ind, int dir)
 					hit_body = TRUE;
 
 				/* Did we hit it (penalize range) */
-				if (test_hit_fire(chance - cur_dis, m_ptr->ac, visible))
-				{
+				if (test_hit_fire(chance - cur_dis, m_ptr->ac, visible)) {
 					bool fear = FALSE;
 					char m_name[80];
 
@@ -4550,10 +4573,9 @@ void do_cmd_fire(int Ind, int dir)
 
 					/* Some monsters get "destroyed" */
 					if ((r_ptr->flags3 & RF3_DEMON) ||
-							(r_ptr->flags3 & RF3_UNDEAD) ||
-							(r_ptr->flags2 & RF2_STUPID) ||
-							(strchr("Evg", r_ptr->d_char)))
-					{
+					    (r_ptr->flags3 & RF3_UNDEAD) ||
+					    (r_ptr->flags2 & RF2_STUPID) ||
+					    (strchr("Evg", r_ptr->d_char))) {
 						/* Special note at death */
 						note_dies = " is destroyed";
 					}
@@ -4576,15 +4598,12 @@ void do_cmd_fire(int Ind, int dir)
 					}
 					
 					/* Handle unseen monster */
-					if (!visible)
-					{
+					if (!visible) {
 						/* Invisible monster */
 						msg_format(Ind, "The %s finds a mark.", o_name);
 					}
-
 					/* Handle visible monster */
-					else
-					{
+					else {
 						/* Message */
 						msg_format(Ind, "The %s hits %s.", o_name, m_name);
 
@@ -4595,18 +4614,17 @@ void do_cmd_fire(int Ind, int dir)
 						if (visible) health_track(Ind, c_ptr->m_idx);
 					}
 
-					if (!boomerang)
-					{
+					if (!boomerang) {
 						/* Base damage from thrown object plus launcher bonus */
 						tdam = damroll(o_ptr->dd, o_ptr->ds);
 						if (p_ptr->ranged_flare) tdam += damroll(2, 6); /* compare to dice in k_info for oil flask */
 						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg, FALSE);
 						if (p_ptr->bow_brand) tdam += p_ptr->bow_brand_d;
 						tdam += o_ptr->to_d;
+//						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg, FALSE);
 						tdam += j_ptr->to_d + p_ptr->to_d_ranged;
-					}
-					else
-					{
+//						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg, FALSE);
+					} else {
 						 /* Base damage from thrown object */
 					        tdam = damroll(o_ptr->dd, o_ptr->ds);
 						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg, FALSE);
@@ -4649,22 +4667,17 @@ void do_cmd_fire(int Ind, int dir)
 						int i;
 
 						/* Already partially confused */
-						if (m_ptr->confused)
-						{
+						if (m_ptr->confused) {
 							i = m_ptr->confused + p_ptr->lev;
 						}
-
 						/* Was not confused */
-						else
-						{
+						else {
 							i = p_ptr->lev;
 						}
-
 						/* Apply confusion */
 						m_ptr->confused = (i < 200) ? i : 200;
 
-						if (visible)
-						{
+						if (visible) {
 							char m_name[80];
 
 							/* Get "the monster" or "it" */
@@ -4700,10 +4713,8 @@ void do_cmd_fire(int Ind, int dir)
 					    		p_ptr->shooting_till_kill = FALSE;
 						}
 					}
-
 					/* No death */
-					else
-					{
+					else {
 						/* Message */
 						message_pain(Ind, c_ptr->m_idx, tdam);
 
@@ -4712,8 +4723,7 @@ void do_cmd_fire(int Ind, int dir)
 						if (drain_result) {
 							drain_result -= m_ptr->hp;  /* Calculate the difference */
 						
-							if (drain_result > 0) /* Did we really hurt it? */
-							{
+							if (drain_result > 0) { /* Did we really hurt it? */
 								drain_heal = randint(2) + damroll(2,(drain_result / 16));/* was 4,../6 -- was /8 for 50 max_drain */
 
 								if (drain_left) {
@@ -4737,8 +4747,8 @@ void do_cmd_fire(int Ind, int dir)
 						
 						if (p_ptr->ranged_barrage) {
 							if (!(r_ptr->flags3 & RF3_NO_STUN)) {
-								if (!m_ptr->stunned) msg_format(Ind, "\377o%^s is stunned.", m_name);
-								else msg_format(Ind, "\377o%^s appears more stunned.", m_name);
+								if (!m_ptr->stunned) msg_format(Ind, "\377y%^s is stunned.", m_name);
+								else msg_format(Ind, "\377y%^s appears more stunned.", m_name);
 								m_ptr->stunned = m_ptr->stunned + 20;
 							} else {
 								msg_format(Ind, "\377o%^s resists the effect.", m_name);
@@ -4746,8 +4756,7 @@ void do_cmd_fire(int Ind, int dir)
 						}
 
 						/* Take note */
-						if (fear && visible)
-						{
+						if (fear && visible) {
 							char m_name[80];
 
 #ifdef USE_SOUND_2010
@@ -4776,12 +4785,19 @@ void do_cmd_fire(int Ind, int dir)
 					if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BRAND_SHARP) || boomerang) break;
 				}
 			}
+
+#ifdef PY_FIRE_ON_WALL
+			/* Stopped by walls/doors */
+			if (!cave_los(zcave, ny, nx)) break;
+#endif
 		}
 
 		/* Extra (exploding) hack: */
-		/* Stopped by walls/doors ?*/
-		if (!cave_los(zcave, ny, nx)) {
-			if (!boomerang && !magic && o_ptr->pval) do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
+		if (!cave_los(zcave, ny, nx)/* Stopped by walls/doors ?*/
+		    || (dir == 5 && !target_ok)) { /* fired 'at oneself'? */
+			if (!boomerang && !magic && o_ptr->pval) {
+				do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
+			}
 		}
 
 		/*todo: even if not hit_body, boomerangs should have chance to drop to the ground.. */
@@ -4797,7 +4813,7 @@ void do_cmd_fire(int Ind, int dir)
 //			j = (j * (100 - get_skill_scale(p_ptr, archery, 80))) / 100; <- for when base ammo break chance was 50% in breakage_chance
 			j = (j * (100 - get_skill_scale(p_ptr, archery, 90))) / 100;
 		}
-	
+
 		/* Break ? */
 		if((((o_ptr->pval != 0) && !boomerang) || (rand_int(10000) < j)) && !magic && !ethereal && !artifact_p(o_ptr))
 		{
@@ -4863,8 +4879,7 @@ void do_cmd_fire(int Ind, int dir)
 			bx = x;
 
 			/* New target location */
-			while (TRUE)
-			{
+			while (TRUE) {
 				d = rand_int(10);
 				if(d != 5) break;
 				if (!tries--) {
@@ -5248,34 +5263,20 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 
 	/* Break goi/manashield */
 #if 0
-	if (p_ptr->invuln)
-	{
-		set_invuln(Ind, 0);
-	}
-	if (p_ptr->tim_manashield)
-	{
-		set_tim_manashield(Ind, 0);
-	}
-	if (p_ptr->tim_wraith)
-	{
-		set_tim_wraith(Ind, 0);
-	}
+	if (p_ptr->invuln) set_invuln(Ind, 0);
+	if (p_ptr->tim_manashield) set_tim_manashield(Ind, 0);
+	if (p_ptr->tim_wraith) set_tim_wraith(Ind, 0);
 #endif	// 0
 
 	/* Access the item (if in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &(p_ptr->inventory[item]);
-	}
-	else
-	{
+	if (item >= 0) o_ptr = &(p_ptr->inventory[item]);
+	else {
 		if (-item >= o_max)
 			return; /* item doesn't exist */
-
 		o_ptr = &o_list[0 - item];
 	}
 
-	if(o_ptr->tval == 0){
+	if (o_ptr->tval == 0) {
 		if (!bashing) msg_print(Ind, "\377rYou cannot throw that.");
 		else msg_print(Ind, "\377rYou cannot bash that.");
 		return;
@@ -5284,7 +5285,8 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 	if (!bashing) {
 		/* Handle the newbies_cannot_drop option */
 #if (STARTEQ_TREATMENT == 1)
-		if ((p_ptr->max_plv < cfg.newbies_cannot_drop || p_ptr->inval) && !is_admin(p_ptr) && !(o_ptr->tval==1 && o_ptr->sval>=9 /* rugby ball, chess pieces */)) // && (object_value(0, o_ptr) > 0))
+		if ((p_ptr->max_plv < cfg.newbies_cannot_drop || p_ptr->inval) && !is_admin(p_ptr)
+		    && !(o_ptr->tval==1 && o_ptr->sval>=9 /* rugby ball, chess pieces */)) // && (object_value(0, o_ptr) > 0))
 		{
 /*			msg_format(Ind, "Please don't litter the %s.",
 			    istown(wpos) ? "town":(wpos->wz ? "dungeon":"Nature"));*/
@@ -5322,7 +5324,7 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 	un_afk_idle(Ind);
 
 	/* Handle rugby ball */
-	if(o_ptr->tval==1 && o_ptr->sval==9 && !bashing){
+	if (o_ptr->tval == 1 && o_ptr->sval == 9 && !bashing){
 		msg_print(Ind, "\377yYou pass the ball");
 		msg_format_near(Ind, "\377y%s passes the ball", p_ptr->name);
 	}
@@ -5332,12 +5334,19 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 
+
 	/* Create a "local missile object" */
 	throw_obj = *o_ptr;
-	/* hack: if we kick (bash) ammo around, move the whole stack.
+	/* hack: if we kick (bash) certain types of items around, move the
+	   whole stack instead of just one.
 	   note: currently number has no effect on throwing range (weight!) */
-	if (bashing && is_ammo(o_ptr->tval)) moved_number = o_ptr->number;
+	if (bashing) {
+		if ((o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH)
+		    || is_ammo(o_ptr->tval))
+			moved_number = o_ptr->number;
+	}
 	throw_obj.number = moved_number;
+
 
 	/*
 	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
@@ -5749,7 +5758,10 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 		if ((hit_body) || (hit_wall) || (randint(100) < j)) {
 			/* Message */
 			/* TODO: handle blindness */
-			msg_format_near_site(y, x, wpos, "The %s shatters!", o_name);
+			msg_format_near_site(y, x, wpos, 0, TRUE, "The %s shatters!", o_name);
+#ifdef USE_SOUND_2010
+			sound_near_site(y, x, wpos, 0, "shatter_potion", NULL, SFX_TYPE_MISC);
+#endif
 
 //			if (potion_smash_effect(0, wpos, y, x, o_ptr->sval))
 			if (k_info[o_ptr->k_idx].tval == TV_POTION) {
@@ -5786,25 +5798,28 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 	drop_near_severe(Ind, o_ptr, j, wpos, y, x);
 }
 
-static void destroy_house(int Ind, struct dna_type *dna)
-{
-	player_type *p_ptr=Players[Ind];
-	int i;
-	if(!is_admin(p_ptr))
-	{
-		msg_print(Ind,"\377rYour attempts to destroy the house fail.");
+static void destroy_house(int Ind, struct dna_type *dna) {
+	player_type *p_ptr = Players[Ind];
+	int i, x, y;
+	if (!is_admin(p_ptr)) {
+		msg_print(Ind, "\377rYour attempts to destroy the house fail.");
 		return;
 	}
-	for(i=0;i<num_houses;i++){
-		if(houses[i].dna==dna){
-			if(houses[i].flags&HF_STOCK){
-				msg_print(Ind,"\377oThat house may not be destroyed");
+	for (i = 0; i < num_houses; i++) {
+		if (houses[i].dna == dna) {
+			if (houses[i].flags & HF_STOCK) {
+				msg_print(Ind, "\377oThat house may not be destroyed");
 //				return;
 			}
 			/* quicker than copying back an array. */
-			msg_print(Ind,"\377DThe house crumbles away.");
+			msg_print(Ind, "\377DThe house crumbles away.");
 			fill_house(&houses[i], FILL_MAKEHOUSE, NULL);
-			houses[i].flags|=HF_DELETED;
+			houses[i].flags |= HF_DELETED;
+
+			/* redraw map so change becomes visible */
+			for (x = 0; x < houses[i].coords.rect.width; x++)
+			for (y = 0; y < houses[i].coords.rect.height; y++)
+				everyone_lite_spot(&houses[i].wpos, houses[i].y + y, houses[i].x + x);
 			break;
 		}
 	}
@@ -5818,7 +5833,7 @@ void house_admin(int Ind, int dir, char *args){
 	cave_type *c_ptr;
 	struct dna_type *dna;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;	//(FALSE);
+	if (!(zcave = getcave(wpos))) return;	//(FALSE);
 
 	if(dir && args){
 		/* Get requested direction */
@@ -5826,13 +5841,12 @@ void house_admin(int Ind, int dir, char *args){
 		x = p_ptr->px + ddx[dir];
 		/* Get requested grid */
 		c_ptr = &zcave[y][x];
-		if(c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN)
-		{
+		if (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) {
 			struct c_special *cs_ptr;
-			if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))){
-				dna=cs_ptr->sc.ptr;
-				if(access_door(Ind, dna) || admin_p(Ind)){
-					switch(args[0]){
+			if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) {
+				dna = cs_ptr->sc.ptr;
+				if (access_door(Ind, dna, FALSE) || admin_p(Ind)) {
+					switch (args[0]) {
 						case 'O':
 							success=chown_door(Ind, dna, args);
 							break;
@@ -5842,8 +5856,15 @@ void house_admin(int Ind, int dir, char *args){
 						case 'K':
 							destroy_house(Ind, dna);
 							return;
+						case 'S':
+							if (!do_cmd_player_store(Ind, x, y))
+								msg_print(Ind, "There is no player store there.");
+							return;
+						case 'P':
+							paint_house(Ind, x, y, atoi(&args[1]));
+							return;
 					}
-					if(success){
+					if (success) {
 						msg_print(Ind,"\377gDoor change successful");
 						/* take note of door colour change */
 						everyone_lite_spot(wpos, y, x);
@@ -5883,15 +5904,14 @@ void do_cmd_purchase_house(int Ind, int dir)
 	if(!(zcave=getcave(wpos))) return;
 
 	/* Ghosts cannot buy houses */
-	if ((p_ptr->ghost) && !is_admin(p_ptr))
-	{
+	if ((p_ptr->ghost) && !is_admin(p_ptr)) {
 		/* Message */
 		msg_print(Ind, "You cannot buy a house.");
 
 		return;
 	}
 
-	if(p_ptr->inval){
+	if (p_ptr->inval) {
 		msg_print(Ind, "You may not buy/sell a house. Ask an admin to validate your account.");
 		return;
 	}
@@ -5900,8 +5920,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 	if(dir > 9) dir = 0;	/* temp hack */
 
 	/* Be sure we have a direction */
-	if (dir > 0)
-	{
+	if (dir > 0) {
 		struct c_special *cs_ptr;
 		/* Get requested direction */
 		y = p_ptr->py + ddy[dir];
@@ -5911,14 +5930,14 @@ void do_cmd_purchase_house(int Ind, int dir)
 		if (in_bounds2(wpos, y, x)) c_ptr = &zcave[y][x];
 
 		/* Check for a house */
-		if (!(c_ptr && (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) && (cs_ptr = GetCS(c_ptr, CS_DNADOOR))))
-		{
+		if (!(c_ptr && (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN)
+		    && (cs_ptr = GetCS(c_ptr, CS_DNADOOR)))) {
 			/* No house, message */
 			msg_print(Ind, "You see nothing to buy/sell there.");
 			return;
 		}
 
-		dna=cs_ptr->sc.ptr;
+		dna = cs_ptr->sc.ptr;
 		/* Take player's CHR into account */
 		factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
 
@@ -5928,28 +5947,34 @@ void do_cmd_purchase_house(int Ind, int dir)
 //		price = dna->price * factor / 100;
 
 		/* Check for already-owned house */
-		if(dna->owner){
-			if(access_door(Ind,dna) || admin_p(Ind)){
-				if(p_ptr->dna==dna->creator){
+		if (dna->owner) {
+			if (access_door(Ind, dna, FALSE) || admin_p(Ind)) {
+				if(p_ptr->dna == dna->creator){
+					/* hack: prevent s32b overflow */
+					if (2000000000 - (price / 2) < p_ptr->au) {
+						msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
+						return;
+					}
 					/* sell house */
-					p_ptr->au+=price/2;
-					p_ptr->redraw|=PR_GOLD;
-					msg_format(Ind, "You sell your house for %ld gold.", price/2);
+					p_ptr->au += price / 2;
+					p_ptr->redraw |= PR_GOLD;
+					msg_format(Ind, "You sell your house for %ld gold.", price / 2);
 					p_ptr->houses_owned--;
-				}
-				else
-				{
-					if(!is_admin(p_ptr))
-					{
+
+					/* make sure we don't get stuck by selling it while inside - C. Blue */
+					if (zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY)
+						teleport_player_force(Ind, 1);
+				} else {
+					if (!is_admin(p_ptr)) {
 						msg_print(Ind,"You cannot sell that house");
 						return;
 					}
 					else
 						msg_print(Ind,"The house is reset");
 				}
-				dna->creator=0L;
-				dna->owner=0L;
-				dna->a_flags=ACF_NONE;
+				dna->creator = 0L;
+				dna->owner = 0L;
+				dna->a_flags = ACF_NONE;
 
 				/* Erase house contents */
 				for (i = 0; i < num_houses; i++)
@@ -5964,7 +5989,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 			msg_print(Ind,"That house does not belong to you!");
 			return;
 		}
-		if(price>p_ptr->au){
+		if (price>p_ptr->au) {
 			msg_print(Ind,"You do not have enough gold!");
 			return;
 		}
@@ -5976,13 +6001,14 @@ void do_cmd_purchase_house(int Ind, int dir)
 			return;
 		}
 		msg_format(Ind, "You buy the house for %ld gold.", price);
-		p_ptr->au-=price;
+		p_ptr->au -= price;
 		p_ptr->houses_owned++;
-		dna->creator=p_ptr->dna;
-		dna->owner=p_ptr->id;
-		dna->owner_type=OT_PLAYER;
-		dna->a_flags=ACF_NONE;
-		dna->min_level=1;
+		dna->creator = p_ptr->dna;
+		dna->mode = p_ptr->mode;
+		dna->owner = p_ptr->id;
+		dna->owner_type = OT_PLAYER;
+		dna->a_flags = ACF_NONE;
+		dna->min_level = 1;
 
 		/* Erase house contents */
 		for (i = 0; i < num_houses; i++)

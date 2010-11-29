@@ -335,10 +335,11 @@ static void rd_item(object_type *o_ptr)
 	s16b old_ac;
 
 	u32b f1, f2, f3, f4, f5, esp;
-
 	object_kind *k_ptr;
-
 	char note[128];
+
+	byte tmpbyte;
+	s32b tmp32s;
 
 
 	/* Hack -- wipe */
@@ -346,8 +347,13 @@ static void rd_item(object_type *o_ptr)
 
 	rd_s32b(&o_ptr->owner);
 	rd_s16b(&o_ptr->level);
-        if (!older_than(4, 1, 7))
-		rd_s32b(&o_ptr->owner_mode);
+        if (!older_than(4, 1, 7)) {
+                if (older_than(4, 4, 14)) {
+        		rd_s32b(&tmp32s);
+        		o_ptr->mode = tmp32s;
+        	}
+		else rd_byte(&o_ptr->mode);
+	}
 
 	/* Kind (discarded though - Jir -) */
 	rd_s16b(&o_ptr->k_idx);
@@ -489,7 +495,6 @@ static void rd_item(object_type *o_ptr)
 
 	if (!older_than(4, 4, 0)) rd_u16b(&o_ptr->ident);
 	else {
-		byte tmpbyte;
 		rd_byte(&tmpbyte);
 		o_ptr->ident = tmpbyte;
 	}
@@ -560,11 +565,9 @@ static void rd_item(object_type *o_ptr)
 
 	if (!older_than(4, 3, 20)) {
 		if (!older_than(4, 3, 21)) {
-			s32b tmp32s;
 			rd_s32b(&tmp32s);
 			o_ptr->marked = tmp32s;
 		} else {
-			byte tmpbyte;
 			rd_byte(&tmpbyte);
 			o_ptr->marked = tmpbyte;
 		}
@@ -573,12 +576,17 @@ static void rd_item(object_type *o_ptr)
 
 	/* Inscription */
 	rd_string(note, 128);
-
 	/* Save the inscription */
 	if (note[0]) o_ptr->note = quark_add(note);
 	/* hack: 'empty' inscription (startup items) cannot
-	   be saved this way, so we try to restore it now.. */
-	else if (o_ptr->discount == 100 && o_ptr->level == 0) o_ptr->note = quark_add("");
+	   be saved this way, so we try to restore it now.. - collides with stolen goods! */
+	else if (o_ptr->discount == 100 && o_ptr->level == 0
+	    && object_value_real(0, o_ptr) <= 10000) /* avoid stolen-goods-level-0-hack collision */
+		o_ptr->note = quark_add("");
+	if (!older_than(4, 4, 10)) {
+		rd_byte(&tmpbyte);
+		o_ptr->note_utag = tmpbyte;
+	} else o_ptr->note_utag = 0;
 
 	rd_u16b(&o_ptr->next_o_idx);
 	rd_u16b(&o_ptr->held_m_idx);
@@ -602,19 +610,20 @@ if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC && !o_ptr->name1) o_ptr
 		o_ptr->tval2 = o_ptr->tval;
 		o_ptr->sval2 = o_ptr->sval;
 		o_ptr->note = quark_add(format("%d-%d", o_ptr->tval2, o_ptr->sval2));
-		o_ptr->tval = TV_SEAL;
-		o_ptr->sval = SV_SEAL_INVALID;
+		o_ptr->tval = TV_SPECIAL;
+		o_ptr->sval = SV_SEAL;
 		o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 		/* In case someone is silly and removes seals while leaving the definition enabled: */
 		if (!o_ptr->k_idx) return;
 //		s_printf("sealed to %d, %d\n", o_ptr->tval, o_ptr->sval);
-	} else if (o_ptr->tval == TV_SEAL && o_ptr->sval == SV_SEAL_INVALID) {
+	} else if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_SEAL) {
 		/* Try to restore the original item from the seal */
 		if (lookup_kind(o_ptr->tval2, o_ptr->sval2)) {
 			o_ptr->tval = o_ptr->tval2;
 			o_ptr->sval = o_ptr->sval2;
 			o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 			o_ptr->note = 0;
+			o_ptr->note_utag = 0;
 			s_printf("UNSEALING: %d, %d\n", o_ptr->tval, o_ptr->sval);
 		}
 	}
@@ -625,7 +634,7 @@ if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC && !o_ptr->name1) o_ptr
 
 #if 0 /* commented out again till it's of use once more (hopefully not) */
 /*HACK just to get rid of invalid seals in Bree.. */
-if (o_ptr->tval == TV_SEAL && o_ptr->sval == SV_SEAL_INVALID) {
+if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_SEAL) {
 	invwipe(o_ptr);
 	return;
 }
@@ -796,7 +805,7 @@ static void rd_monster(monster_type *m_ptr)
 
 	/* Hack -- wipe */
 	WIPE(m_ptr, monster_type);
-	if (older_than(4, 2, 7)) {
+	if (s_older_than(4, 2, 7)) {
 		m_ptr->pet = 0;
 	} else {
 		rd_byte(&m_ptr->pet);
@@ -836,7 +845,7 @@ static void rd_monster(monster_type *m_ptr)
 	rd_byte(&m_ptr->stunned);
 	rd_byte(&m_ptr->confused);
 	rd_byte(&m_ptr->monfear);
-	if (!older_than(4, 3, 15)) {
+	if (!s_older_than(4, 3, 15)) {
 		rd_byte(&m_ptr->paralyzed);
 		rd_byte(&m_ptr->bleeding);
 		rd_byte(&m_ptr->poisoned);
@@ -867,7 +876,7 @@ static void rd_global_lore(int r_idx)
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Count sights/deaths/kills */
-	if (older_than(4, 4, 7)) {
+	if (s_older_than(4, 4, 7)) {
 		s16b tmp16b;
 
 		rd_s16b(&tmp16b);
@@ -890,13 +899,13 @@ static void rd_global_lore(int r_idx)
 	/* Hack -- if killed, it's been seen */
 	if (r_ptr->r_tkills > r_ptr->r_sights) r_ptr->r_sights = r_ptr->r_tkills;
 
-	if (older_than(4, 4, 7)) {
+	if (s_older_than(4, 4, 7)) {
 		/* Old monster lore information - mikaelh */
 		strip_bytes(38);
 	}
 
 	/* Read the global monster limit */
-	if (older_than(4, 4, 8)) {
+	if (s_older_than(4, 4, 8)) {
 		byte tmpbyte;
 		rd_byte(&tmpbyte);
 		r_ptr->max_num = tmpbyte;
@@ -904,8 +913,8 @@ static void rd_global_lore(int r_idx)
 		rd_s32b(&r_ptr->max_num);
 	}
 
-	if (!older_than(4, 3, 24)) {
-		if (older_than(4, 4, 8)) {
+	if (!s_older_than(4, 3, 24)) {
+		if (s_older_than(4, 4, 8)) {
 			byte tmpbyte;
 			rd_byte(&tmpbyte);
 			r_ptr->cur_num = tmpbyte;
@@ -914,7 +923,7 @@ static void rd_global_lore(int r_idx)
 		}
 	}
 
-	if (older_than(4, 4, 7)) {
+	if (s_older_than(4, 4, 7)) {
 		/* Old reserved bytes - mikaelh */
 		strip_bytes(3);
 	}
@@ -971,11 +980,12 @@ static errr rd_store(store_type *st_ptr)
 }
 
 static void rd_bbs() {
-        int i;
-	s16b saved_lines;
+        int i, j;
+	s16b saved_lines, parties, guilds;
 	char dummy[140];
 
         rd_s16b(&saved_lines);
+
 #if 0
         for (i = 0; ((i < BBS_LINES) && (i < saved_lines)); i++)
                 rd_string(bbs_line[i], 140);
@@ -984,6 +994,32 @@ static void rd_bbs() {
 		if (i >= BBS_LINES) rd_string(dummy, 140);
 		else rd_string(bbs_line[i], 140);
 #endif
+
+	/* load pbbs & gbbs - C. Blue */
+	if (!s_older_than(4, 4, 9)) {
+		/* read old parties */
+		rd_s16b(&parties);
+		for (j = 0; j < parties; j++)
+			if (j < MAX_PARTIES) {
+				for (i = 0; i < saved_lines; i++)
+					if (i >= BBS_LINES) rd_string(dummy, 140);
+					else rd_string(pbbs_line[j][i], 140);
+			} else {
+				for (i = 0; i < saved_lines; i++)
+					rd_string(dummy, 140);
+			}
+		/* read old guilds */
+		rd_s16b(&guilds);
+		for (j = 0; j < guilds; j++)
+			if (j < MAX_GUILDS) {
+				for (i = 0; i < saved_lines; i++)
+					if (i >= BBS_LINES) rd_string(dummy, 140);
+					else rd_string(gbbs_line[j][i], 140);
+			} else {
+				for (i = 0; i < saved_lines; i++)
+					rd_string(dummy, 140);
+			}
+	}
 }
 
 static void rd_notes() {
@@ -1107,14 +1143,25 @@ static void rd_house(int n)
 	house_type *house_ptr = &houses[n];
 	cave_type **zcave;
 
-	rd_byte(&house_ptr->x); 
+	rd_byte(&house_ptr->x);
 	rd_byte(&house_ptr->y);
-	rd_byte(&house_ptr->dx); 
+	rd_byte(&house_ptr->dx);
 	rd_byte(&house_ptr->dy);
 	MAKE(house_ptr->dna, struct dna_type);
 	rd_u32b(&house_ptr->dna->creator);
+        if (!s_older_than(4, 4, 14)) rd_byte(&house_ptr->dna->mode);
 	rd_s32b(&house_ptr->dna->owner);
 	rd_byte(&house_ptr->dna->owner_type);
+#if 0 /* player hash is read _AFTER_ houses! So this is done via /fix-house-modes instead- C. Blue */
+	if (s_older_than(4, 4, 14)) {
+		/* if house doesn't have its mode set yet, search
+		   hash for player who owns it and set mode to his. */
+		if (house_ptr->dna->owner &&
+		    (house_ptr->dna->owner_type == OT_PLAYER)) {
+			house_ptr->dna->mode = lookup_player_mode(house_ptr->dna->owner);
+		}
+	}
+#endif
 	rd_byte(&house_ptr->dna->a_flags);
 	rd_u16b(&house_ptr->dna->min_level);
 	rd_u32b(&house_ptr->dna->price);
@@ -1124,11 +1171,9 @@ static void rd_house(int n)
 	rd_s16b(&house_ptr->wpos.wy);
 	rd_s16b(&house_ptr->wpos.wz);
 
-	if((zcave=getcave(&house_ptr->wpos)))
-	{
+	if ((zcave = getcave(&house_ptr->wpos))) {
 		struct c_special *cs_ptr;
-		if (house_ptr->flags&HF_STOCK)
-		{
+		if (house_ptr->flags & HF_STOCK) {
 			/* add dna to static levels even though town-generated */
 			if((cs_ptr=GetCS(&zcave[house_ptr->dy][house_ptr->dx], CS_DNADOOR)))
 				cs_ptr->sc.ptr=house_ptr->dna;
@@ -1145,19 +1190,24 @@ static void rd_house(int n)
 				cs_ptr->sc.ptr=house_ptr->dna;
 		}
 	}
-	if(house_ptr->flags&HF_RECT){
+	if (house_ptr->flags&HF_RECT){
 		rd_byte(&house_ptr->coords.rect.width);
 		rd_byte(&house_ptr->coords.rect.height);
 	}
 	else{
-		i=-2;
+		i =- 2;
 		C_MAKE(house_ptr->coords.poly, MAXCOORD, char);
-		do{
+		do {
 			i+=2;
 			rd_byte((byte*)&house_ptr->coords.poly[i]);
 			rd_byte((byte*)&house_ptr->coords.poly[i+1]);
-		}while(house_ptr->coords.poly[i] || house_ptr->coords.poly[i+1]);
+		} while(house_ptr->coords.poly[i] || house_ptr->coords.poly[i+1]);
 		GROW(house_ptr->coords.poly, MAXCOORD, i+2, byte);
+	}
+
+	if (!s_older_than(4, 4, 13)) {
+		rd_byte(&house_ptr->colour);
+		rd_byte(&house_ptr->xtra);
 	}
 
 #ifndef USE_MANG_HOUSE_ONLY
@@ -1165,9 +1215,7 @@ static void rd_house(int n)
 	rd_s16b(&house_ptr->stock_size);
 	C_MAKE(house_ptr->stock, house_ptr->stock_size, object_type);
 	for (i = 0; i < house_ptr->stock_num; i++)
-	{
 		rd_item(&house_ptr->stock[i]);
-	}
 #endif	/* USE_MANG_HOUSE_ONLY */
 }
 
@@ -1197,9 +1245,9 @@ static bool rd_extra(int Ind)
 	char login_char_name[80];
 
 	byte tmp8u;
-	u16b tmp16b, panic;
+	u16b tmp16u, panic;
 	s16b tmp16s;
-	u32b tmp32b;
+	u32b tmp32u;
 	s32b tmp32s;
 
 	/* 'Savegame filename character conversion' exploit fix - C. Blue */
@@ -1226,16 +1274,24 @@ static bool rd_extra(int Ind)
 		rd_byte(&p_ptr->has_pet);
 	}
 
-	/* Divinity support in savefile now on all servers - mikaelh */
-	if (older_than(4, 3, 2)) {
-		p_ptr->divinity = DIVINE_UNDEF; /* which is simply 0 */
-	} else {
-		rd_byte(&p_ptr->divinity);
+	/* Divinity has been absorbed by traits (ptrait) now */
+	if (older_than(4, 4, 12)) {
+		/* Divinity support in savefile now on all servers - mikaelh */
+		if (older_than(4, 3, 2)) {
+//			p_ptr->divinity = DIVINE_UNDEF; /* which is simply 0 */
+			p_ptr->ptrait = TRAIT_NONE;
+		} else {
+			rd_byte(&tmp8u);
+			/* backwards compatible */
+			if (tmp8u == 0x1) p_ptr->ptrait = TRAIT_ENLIGHTENED;
+			if (tmp8u == 0x10) p_ptr->ptrait = TRAIT_CORRUPTED;
+		}
 	}
 
 	/* Class/Race/Gender/Party */
 	rd_byte(&p_ptr->prace);
         rd_byte(&p_ptr->pclass);
+        if (!older_than(4, 4, 11)) rd_byte(&p_ptr->ptrait);
 	if (older_than(4, 3, 5)) { /* class order changed: warrior now first class, so newbies won't choose adventurer */
 		if (p_ptr->pclass == CLASS_WARRIOR) p_ptr->pclass = CLASS_ADVENTURER;
 		else if (p_ptr->pclass < CLASS_DRUID) p_ptr->pclass--;
@@ -1272,12 +1328,12 @@ static bool rd_extra(int Ind)
 
         /* Read the skills */
 	{
-		rd_u16b(&tmp16b);
-		if (tmp16b > MAX_SKILLS)
+		rd_u16b(&tmp16u);
+		if (tmp16u > MAX_SKILLS)
 		{
 			quit("Too many skills!");
 		}
-		for (i = 0; i < tmp16b; ++i)
+		for (i = 0; i < tmp16u; ++i)
 		{
 			rd_s32b(&p_ptr->s_info[i].value);
 			rd_u16b(&p_ptr->s_info[i].mod);
@@ -1314,7 +1370,7 @@ static bool rd_extra(int Ind)
 
 		/* /undoskills - mikaelh */
 		if (!older_than(4, 4, 4)) {
-			for (i = 0; i < tmp16b; ++i)
+			for (i = 0; i < tmp16u; ++i)
 			{
 				rd_s32b(&p_ptr->s_info_old[i].value);
 				rd_u16b(&p_ptr->s_info_old[i].mod);
@@ -1423,7 +1479,7 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 		rd_byte(&p_ptr->houses_owned);
 	} else {
 		for (i = 0; i < num_houses; i++) {
-			if ((houses[i].dna->owner_type==OT_PLAYER) &&
+			if ((houses[i].dna->owner_type == OT_PLAYER) &&
 			    (houses[i].dna->owner == p_ptr->id))
 				p_ptr->houses_owned++;
 		}
@@ -1514,15 +1570,15 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 	rd_s16b(&p_ptr->tim_mimic_what);
 
 	/* Monster Memory */
-	rd_u16b(&tmp16b);
+	rd_u16b(&tmp16u);
 
 	/* Incompatible save files */
-	if (tmp16b > MAX_R_IDX)
+	if (tmp16u > MAX_R_IDX)
 	{
-		s_printf("Too many (%u) monster races!\n", tmp16b);
+		s_printf("Too many (%u) monster races!\n", tmp16u);
 		return (22);
 	}
-	for (i = 0; i < tmp16b; i++)
+	for (i = 0; i < tmp16u; i++)
 	{
 		rd_s16b(&p_ptr->r_killed[i]);
 
@@ -1530,10 +1586,9 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 		r_ptr = &r_info[i];
 
 		if (p_ptr->r_killed[i] && !r_ptr->r_tkills &&
-				(r_ptr->flags1 & RF1_UNIQUE))
-		{
+		    (r_ptr->flags1 & RF1_UNIQUE)) {
 			r_ptr->r_tkills = r_ptr->r_sights = 1;
-			s_printf("TKILL FIX: Player %s killed unique %d\n", p_ptr->name, i);
+			s_printf("TKILL FIX: Player %s assisted for/killed unique %d\n", p_ptr->name, i);
 		}
 	}
 
@@ -1630,10 +1685,10 @@ if (p_ptr->updated_savegame == 0) {
 				rd_s32b(&tmp32s);
 				p_ptr->global_event_started[i] = tmp32s;
 			} else {
-				rd_u32b(&tmp32b);
-				p_ptr->global_event_signup[i] = tmp32b;
-				rd_u32b(&tmp32b);
-				p_ptr->global_event_started[i] = tmp32b;
+				rd_u32b(&tmp32u);
+				p_ptr->global_event_signup[i] = tmp32u;
+				rd_u32b(&tmp32u);
+				p_ptr->global_event_started[i] = tmp32u;
 			}
 			for (j = 0; j < 4; j++) rd_u32b(&p_ptr->global_event_progress[i][j]);
 		}
@@ -1688,7 +1743,10 @@ if (p_ptr->updated_savegame == 0) {
 		rd_u16b(&p_ptr->deaths);
 		rd_u16b(&p_ptr->soft_deaths);
 
-		rd_u16b(&tmp16b); /* array of 'warnings' and hints aimed at newbies -- atm unused */
+		/* array of 'warnings' and hints aimed at newbies */
+		rd_u16b(&tmp16u);
+		if (tmp16u | 0x01) p_ptr->warning_technique_melee = 1;
+		if (tmp16u | 0x02) p_ptr->warning_technique_ranged = 1;
 	} else {
 		/* auto-enable for now (MAX_AURAS) */
 		if (get_skill(p_ptr, SKILL_AURA_FEAR)) p_ptr->aura[0] = TRUE;
@@ -1697,6 +1755,8 @@ if (p_ptr->updated_savegame == 0) {
 	}
 
 	if (!older_than(4, 4, 2)) rd_string(p_ptr->info_msg, 80);
+	/* feature is currently not enabled: */
+	strcpy(p_ptr->info_msg, "");
 
 	/* Success */
 	return FALSE;
@@ -1891,7 +1951,7 @@ static errr rd_dungeon(void)
 
 	/* Alloc before doing NPOD() */
 	alloc_dungeon_level(&wpos);
-	zcave=getcave(&wpos);
+	zcave = getcave(&wpos);
 	l_ptr = getfloor(&wpos);
 
 	/* players on this depth */
@@ -1914,8 +1974,7 @@ static errr rd_dungeon(void)
 	rd_byte(&tmp);
 	new_level_rand_x(&wpos, tmp);
 
-	if (l_ptr)
-	{
+	if (l_ptr) {
 		time_t now;
 		now=time(&now);
 		l_ptr->lastused=now;
@@ -1930,29 +1989,55 @@ static errr rd_dungeon(void)
 	/* where do all these features go, long time ago... ? */
 
 	/* Load the dungeon data */
-	for (x = y = 0; y < max_y; )
-	{
+	for (x = y = 0; y < max_y; ) {
 		/* Grab RLE info */
 		rd_byte(&runlength);
 		rd_byte(&feature);
 		rd_u16b(&flags);
 
 		/* Apply the RLE info */
-		for (i = 0; i < runlength; i++)
-		{
+		for (i = 0; i < runlength; i++) {
 			/* Access the cave */
 			c_ptr = &zcave[y][x];
 
 			/* set the feature */
 			c_ptr->feat = feature;
 
+#ifdef HOUSE_PAINTING
+			/* if we read a house door, restore house paint */
+			if (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) {
+				int h_idx;
+				house_type *h_ptr;
+
+				h_idx = pick_house(&wpos, y, x);
+				if (h_idx != -1) {
+					h_ptr = &houses[h_idx];
+					/* if house is 'painted', colour adjacent walls accordingly */
+					if (h_ptr->colour) {
+						cave_type *hwc_ptr;
+						int hwx, hwy;
+						for (hwx = x - 1; hwx <= x + 1; hwx++)
+						for (hwy = y - 1; hwy <= y + 1; hwy++) {
+							if (!in_bounds(hwy, hwx)) continue;
+
+							hwc_ptr = &zcave[hwy][hwx];
+							/* Only colour house wall grids */
+							if (hwc_ptr->feat == FEAT_WALL_HOUSE ||
+							    hwc_ptr->feat == FEAT_HOME ||
+							    hwc_ptr->feat == FEAT_HOME_OPEN)
+								hwc_ptr->colour = h_ptr->colour;
+						}
+					}
+				}
+			}
+#endif
+
 			/* set flags */
 			c_ptr->info = flags;
 
 			/* increment our position */
 			x++;
-			if (x >= max_x)
-			{
+			if (x >= max_x) {
 				/* Wrap onto a new row */
 				x = 0;
 				y++;
@@ -2040,13 +2125,17 @@ static errr rd_cave_memory(int Ind)
 static void rd_auctions()
 {
 	int i, j;
-	s32b old_auction_alloc;
+	u32b old_auction_alloc;
 	auction_type *auc_ptr;
 	bid_type *bid_ptr;
 	s32b tmp32s;
 
 	old_auction_alloc = auction_alloc;
-	rd_s32b(&auction_alloc);
+	if (!s_older_than(4, 4, 10)) rd_u32b(&auction_alloc);
+	else {
+		rd_s32b(&tmp32s);
+		auction_alloc = tmp32s;
+	}
 
 	GROW(auctions, old_auction_alloc, auction_alloc, auction_type);
 
@@ -2410,16 +2499,16 @@ errr rd_server_savefile()
 	rd_u16b(&sf_saves);
 
 	/* Was the last shutdown a panic save? - C. Blue */
-	if (!older_than(4, 2, 2)) rd_byte(&panic); /* no further use yet */
+	if (!s_older_than(4, 2, 2)) rd_byte(&panic); /* no further use yet */
 	if (panic) s_printf("Last server shutdown was a panic save.\n");
 
 	/* read server state regarding any updates (for lua) - C. Blue */
-	if (!older_than(4, 3, 19)) {
+	if (!s_older_than(4, 3, 19)) {
 		rd_s16b(&tmp16s);
 		updated_server = tmp16s;
 	}
 	/* read server state regarding artifact updates */
-	if (!older_than(4, 3, 22)) {
+	if (!s_older_than(4, 3, 22)) {
 		rd_s16b(&tmp16s);
 		artifact_reset = tmp16s;
 	}
@@ -2505,32 +2594,24 @@ errr rd_server_savefile()
 
 	/* get the number of monsters to be loaded */
 	rd_u32b(&tmp32u);
-	if (tmp32u > MAX_M_IDX)
-	{
+	if (tmp32u > MAX_M_IDX) {
 		s_printf(format("Too many (%u) monsters!\n", tmp16u));
 		return (29);
 	}
 	/* load the monsters */
-	for (i = 0; i < tmp32u; i++)
-	{
-		rd_monster(&m_list[m_pop()]);
-	}
+	for (i = 0; i < tmp32u; i++) rd_monster(&m_list[m_pop()]);
 
 	/* Read object info if new enough */
 	rd_u16b(&tmp16u);
 
 	/* Incompatible save files */
-	if (tmp16u > MAX_O_IDX)
-	{
+	if (tmp16u > MAX_O_IDX) {
 		s_printf(format("Too many (%u) objects!\n", tmp16u));
 		return (26);
 	}
 
 	/* Read the available records */
-	for (i = 0; i < tmp16u; i++)
-	{		
-		rd_item(&o_list[i]);
-	}
+	for (i = 0; i < tmp16u; i++) rd_item(&o_list[i]);
 
 	/* Set the maximum object number */
 	o_max = tmp16u;
@@ -2538,21 +2619,19 @@ errr rd_server_savefile()
 	/* Read house info if new enough */
 	rd_s32b(&num_houses);
 
-	while(house_alloc < num_houses){
+	while (house_alloc <= num_houses) {
 		GROW(houses, house_alloc, house_alloc + 512, house_type);
 		house_alloc += 512;
 	}
 
 	/* Incompatible save files */
-	if (num_houses > MAX_HOUSES)
-	{
+	if (num_houses > MAX_HOUSES) {
 		s_printf(format("Too many (%u) houses!\n", num_houses));
 		return (27);
 	}
 
 	/* Read the available records */
-	for (i = 0; i < (unsigned int) num_houses; i++)
-	{
+	for (i = 0; i < (unsigned int) num_houses; i++) {
 		rd_house(i);
 		if(!(houses[i].flags&HF_STOCK))
 			wild_add_uhouse(&houses[i]);
@@ -2579,10 +2658,9 @@ errr rd_server_savefile()
 			rd_s32b(&laston);
 			rd_byte(&race);
 			rd_byte(&class);
-		        if (!older_than(4, 2, 2)) rd_byte(&mode); else mode = 0;
+		        if (!s_older_than(4, 2, 2)) rd_byte(&mode); else mode = 0;
 			rd_byte(&level);
-			if (older_than(4, 2, 4))
-			{
+			if (s_older_than(4, 2, 4)) {
 				rd_byte(&old_party);
 				party = old_party; /* convert old byte to u16b - mikaelh */
 			}
@@ -2610,13 +2688,13 @@ errr rd_server_savefile()
 
 	rd_s32b(&turn);
 	
-	if (!older_than(4, 3, 18)) rd_notes();
-	if (!older_than(4, 3, 6)) rd_bbs();
+	if (!s_older_than(4, 3, 18)) rd_notes();
+	if (!s_older_than(4, 3, 6)) rd_bbs();
 	
-	if (!older_than(4, 3, 13)) rd_byte(&season);
-	if (!older_than(4, 3, 14)) rd_byte(&weather_frequency);
+	if (!s_older_than(4, 3, 13)) rd_byte(&season);
+	if (!s_older_than(4, 3, 14)) rd_byte(&weather_frequency);
 
-	if (!older_than(4, 3, 25)) rd_auctions();
+	if (!s_older_than(4, 3, 25)) rd_auctions();
 
 	/* Hack -- no ghosts */
 	r_info[MAX_R_IDX-1].max_num = 0;
@@ -2741,7 +2819,7 @@ void load_guildhalls(struct worldpos *wpos){
 	char fname[30];
 	data.mode=0;
 	for(i=0; i<num_houses; i++){
-		if((houses[i].dna->owner_type==OT_GUILD) && (inarea(wpos, &houses[i].wpos))){
+		if((houses[i].dna->owner_type == OT_GUILD) && (inarea(wpos, &houses[i].wpos))){
 			if(!houses[i].dna->owner) continue;
 #if DEBUG_LEVEL > 2
 			s_printf("load guildhall %d\n", i);

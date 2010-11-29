@@ -491,7 +491,7 @@ int lua_get_new_bounty_monster(int lev)
 	get_mon_num_prep(0, NULL);
 
 	/* Set up the quest monster. */
-	r_idx = get_mon_num(lev);
+	r_idx = get_mon_num(lev, lev);
 
 	/* Undo the filters */
 	get_mon_num_hook = dungeon_aux;
@@ -521,7 +521,12 @@ void lua_add_anote(char *anote) {
 	bracer_ff(anote); /* allow colouring */
 	for (i = 0; i < MAX_ADMINNOTES; i++)
 	        if (!strcmp(admin_note[i], "")) break;
-	if (i < MAX_ADMINNOTES) strcpy(admin_note[i], anote);
+	if (i < MAX_ADMINNOTES) {
+		strcpy(admin_note[i], anote);
+		msg_broadcast_format(0, "\377s->MotD: %s", anote);
+	} else {
+		s_printf("lua_add_anote() failed: out of notes.\n");
+	}
 	return;
 }
 
@@ -645,9 +650,14 @@ void lua_strip_true_arts_from_present_player(int Ind, int mode) {
 			cost = a_info[o_ptr->name1].cost;
 			if (cost > 0) {
 //				if (cost > 500000) cost = 500000; //not required, it's still fair
-				p_ptr->au += cost;
-				p_ptr->redraw |= (PR_GOLD);
-				reimbursed = TRUE;
+				/* hack: prevent s32b overflow */
+				if (2000000000 - cost < p_ptr->au) {
+					msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
+				} else {
+					p_ptr->au += cost;
+					p_ptr->redraw |= (PR_GOLD);
+					reimbursed = TRUE;
+				}
 			}
 
 			if (mode == 0) handle_art_d(o_ptr->name1);
@@ -993,6 +1003,10 @@ void lua_fix_skill_chart(int Ind) {
 	        }
 #else
 		p_ptr->s_info[i].flags1 = (char)(s_info[i].flags1 & 0xFF);
+
+		/* hack: Rangers can train limited Archery skill */
+		if (p_ptr->pclass == CLASS_RANGER && i == SKILL_ARCHERY)
+		    p_ptr->s_info[i].flags1 |= SKF1_MAX_10;
 #endif
                 /* Develop only revelant branches */
                 if (p_ptr->s_info[i].value || p_ptr->s_info[i].mod) {

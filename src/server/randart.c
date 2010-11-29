@@ -356,6 +356,10 @@ s32b artifact_power(artifact_type *a_ptr) {
         if (a_ptr->flags5 & TR5_CRIT) p += i * 8;
 #endif
 
+#if 0 //enable me? :/
+        if (a_ptr->flags5 & TR5_LUCK) p += a_ptr->pval + 5;
+#endif
+
 	if (a_ptr->flags2 & TR2_SUST_STR) p += 5;
 	if (a_ptr->flags2 & TR2_SUST_INT) p += 4;
 	if (a_ptr->flags2 & TR2_SUST_WIS) p += 4;
@@ -1336,11 +1340,13 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 #endif
 	}
 	/* Dark Swords never add to MANA */
-	if (a_ptr->tval == TV_SWORD && a_ptr->sval == SV_DARK_SWORD) a_ptr->flags1 &= ~TR1_MANA;	
+	if (a_ptr->tval == TV_SWORD && a_ptr->sval == SV_DARK_SWORD) a_ptr->flags1 &= ~TR1_MANA;
 
 	/* If an item gives +MANA, remove NO_MAGIC property */
 	if ((a_ptr->flags1 & TR1_MANA) && !(k_ptr->flags3 & TR3_NO_MAGIC)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
-#if 0 /* would also need to prevent egos w/ BLESSED then, which is problematic */
+	/* If an item gives REGEN_MANA, remove NO_MAGIC property */
+	if ((a_ptr->flags5 & TR5_REGEN_MANA) && !(k_ptr->flags3 & TR3_NO_MAGIC)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
+#if 0 /* would also need to disallow egos w/ BLESSED then, which is problematic in some ways */
 	/* Don't allow BLESSED on Dark Swords */
 	if (k_ptr->tval == TV_SWORD && k_ptr->sval == SV_DARK_SWORD) a_ptr->flags3 &= ~TR3_BLESSED;
 #endif
@@ -1467,7 +1473,7 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 		/* Not more than +3 speed on helms/crowns */
 		if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 3)) a_ptr->pval = 3;
 	}
-	
+
 	/* Limits for +MANA */
         if (a_ptr->flags1 & TR1_MANA) {
 		/* Randart mage staves may give up to +10 +1 bonus MANA */
@@ -1597,7 +1603,9 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 
 	/* If an item gives +MANA, remove NO_MAGIC property */
 	if ((a_ptr->flags1 & TR1_MANA) && !(k_ptr->flags3 & TR3_NO_MAGIC)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
-#if 0 /* would also need to prevent egos w/ BLESSED then, which is problematic */
+	/* If an item gives REGEN_MANA, remove NO_MAGIC property */
+	if ((a_ptr->flags5 & TR5_REGEN_MANA) && !(k_ptr->flags3 & TR3_NO_MAGIC)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
+#if 0 /* would also need to disallow egos w/ BLESSED then, which is problematic in some ways */
 	/* Don't allow BLESSED on Dark Swords */
 	if (k_ptr->tval == TV_SWORD && k_ptr->sval == SV_DARK_SWORD) a_ptr->flags3 &= ~TR3_BLESSED;
 #endif
@@ -1871,7 +1879,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 //	    (k_ptr->tval != TV_DIGGING) &&	 /* better ban it? */
 //	    (k_ptr->tval != TV_TOOL) &&
 //	    (k_ptr->tval != TV_INSTRUMENT) &&
-	    (k_ptr->tval != TV_SEAL)) { /* <- forgot this one, else panic save if randart becomes seal, since a_ptr becomes NULL! - C. Blue */
+	    (k_ptr->tval != TV_SPECIAL)) { /* <- forgot this one, else panic save if randart becomes seal, since a_ptr becomes NULL! - C. Blue */
 		/* Not an allowed type */
 		return(NULL);
 	}
@@ -2195,7 +2203,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 /*
  * Make random artifact name.
  */
-void randart_name(object_type *o_ptr, char *buffer)
+void randart_name(object_type *o_ptr, char *buffer, char *raw_buffer)
 {
 	char tmp[80];
 
@@ -2204,7 +2212,7 @@ void randart_name(object_type *o_ptr, char *buffer)
 	Rand_quick = TRUE;
 
 	/* Take a random name */
-	get_rnd_line("randarts.txt", 0, tmp, 80);
+	o_ptr->name4 = get_rnd_line("randarts.txt", 0, tmp, 80);
 
 	/* Capitalise first character */
 	tmp[0] = toupper(tmp[0]);
@@ -2216,6 +2224,9 @@ void randart_name(object_type *o_ptr, char *buffer)
 
 	/* Restore RNG */
 	Rand_quick = FALSE;
+
+	/* for true arts in EQUIPMENT_SET_BONUS */
+	if (raw_buffer != NULL) strcpy(raw_buffer, tmp);
 
 	return;
 }
@@ -2412,9 +2423,7 @@ try_an_other_ego:
 		if (!a_ptr->pval) a_ptr->pval = 1;
 	}
 	/* While +MANA is capped at 10 for randarts, it's 12 for egos(!) */
-        if (a_ptr->flags1 & TR1_MANA) {
-                if (a_ptr->pval > 12) a_ptr->pval = 12;
-        }
+        if ((a_ptr->flags1 & TR1_MANA) && a_ptr->pval > 12) a_ptr->pval = 12;
         /* Stealth cap; stealth/speed cap for 'of Swiftness' */
 	if(a_ptr->flags1 & TR1_STEALTH) {
 		if(a_ptr->flags1 & TR1_SPEED) {
@@ -2423,12 +2432,22 @@ try_an_other_ego:
 			if (a_ptr->pval > 6) a_ptr->pval = 6;
 		}
 	}
+	/* Speed cap for gnomish cloaks of magi/bat */
+	if ((a_ptr->flags1 & TR1_SPEED) && is_armour(a_ptr->tval) && a_ptr->pval > 4) a_ptr->pval = 4;
+	if ((a_ptr->tval == TV_HELM || a_ptr->tval == TV_CROWN)) {
+		/* Not more than +6 IV on helms and crowns */
+		if ((a_ptr->flags1 & TR1_INFRA) && (a_ptr->pval > 6)) a_ptr->pval = 6;
+		/* Not more than +3 speed on helms/crowns */
+		if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 3)) a_ptr->pval = 3;
+	}
+	/* Luck/Disarm caps */
 	if(a_ptr->flags5 & TR5_LUCK) {
 		if (a_ptr->pval > 5) a_ptr->pval = 5;
 	}
 	if(a_ptr->flags5 & TR5_DISARM) {
 		if (a_ptr->pval > 3) a_ptr->pval = 3;
 	}
+	/* +Attribute caps */
 	if (a_ptr->flags1 & (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR)) {
 		if (a_ptr->tval == TV_AMULET) {
 			if (a_ptr->pval > 3) a_ptr->pval /= 2;
@@ -2440,6 +2459,7 @@ try_an_other_ego:
 			if (a_ptr->pval == 0) a_ptr->pval = 1;
 		}
 	}
+	/* +EA caps */
         if (a_ptr->flags1 & TR1_BLOWS) {
 		if (o_ptr->tval == TV_GLOVES) {
 			if (a_ptr->pval > 2) a_ptr->pval /= 3;
@@ -2450,6 +2470,7 @@ try_an_other_ego:
 		}
 		if (a_ptr->pval == 0) a_ptr->pval = 1;
         }
+	if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->flags1 & TR1_BLOWS) && (a_ptr->pval > 1)) a_ptr->pval = 1;
 	/* not too high to-hit/to-dam boni. No need to check gloves. */
 	switch (o_ptr->tval) { /* CAP_ITEM_BONI */
 	case TV_SHIELD:

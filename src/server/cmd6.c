@@ -525,7 +525,7 @@ void do_cmd_eat_food(int Ind, int item)
 	else if (o_ptr->tval == TV_FIRESTONE)
 	{
 		bool dragon = FALSE;
-#if 0	/* exclusive feature of Thunderlords. Mimics shouldn't have access to this, really. */
+#if 0	/* exclusive feature of Draconians. Mimics shouldn't have access to this, really. */
 		if (p_ptr->body_monster)
 		{
 			monster_race *r_ptr = &r_info[p_ptr->body_monster];
@@ -693,55 +693,43 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 	bypass_invuln = TRUE;
 
 	/* Analyze the potion */
-	if (tval == TV_POTION)
-	{
+	if (tval == TV_POTION) {
 
-		switch (sval)
-		{
-			case SV_POTION_WATER:
-			case SV_POTION_APPLE_JUICE:
-			case SV_POTION_SLIME_MOLD:
-				{
-					msg_print(Ind, "\377GYou feel less thirsty.");
+		switch (sval) {
+		case SV_POTION_WATER:
+		case SV_POTION_APPLE_JUICE:
+		case SV_POTION_SLIME_MOLD:
+			msg_print(Ind, "\377GYou feel less thirsty.");
+			ident = TRUE;
+			break;
+
+		case SV_POTION_SLOWNESS:
+			if (set_slow(Ind, p_ptr->slow + randint(25) + 15)) ident = TRUE;
+			break;
+
+		case SV_POTION_SALT_WATER:
+			if (!p_ptr->suscep_life && p_ptr->prace != RACE_ENT) {
+				msg_print(Ind, "The potion makes you vomit!");
+				msg_format_near(Ind, "%s vomits!", p_ptr->name);
+				/* made salt water less deadly -APD */
+				(void)set_food(Ind, (p_ptr->food/2)-400);
+				(void)set_poisoned(Ind, 0, 0);
+				(void)set_paralyzed(Ind, p_ptr->paralyzed + 4);
+			} else {
+				msg_print(Ind, "That potion tastes awful.");
+			}
+			ident = TRUE;
+			break;
+
+		case SV_POTION_POISON:
+			if (!(p_ptr->resist_pois || p_ptr->oppose_pois)) {
+				if (set_poisoned(Ind, p_ptr->poisoned + rand_int(15) + 10, 0)) {
 					ident = TRUE;
-					break;
 				}
+			}
+			break;
 
-			case SV_POTION_SLOWNESS:
-				{
-					if (set_slow(Ind, p_ptr->slow + randint(25) + 15)) ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_SALT_WATER:
-				{
-				    if (!p_ptr->suscep_life && p_ptr->prace != RACE_ENT) {
-					msg_print(Ind, "The potion makes you vomit!");
-					msg_format_near(Ind, "%s vomits!", p_ptr->name);
-					/* made salt water less deadly -APD */
-					(void)set_food(Ind, (p_ptr->food/2)-400);
-					(void)set_poisoned(Ind, 0, 0);
-					(void)set_paralyzed(Ind, p_ptr->paralyzed + 4);
-				    } else {
-					msg_print(Ind, "That potion tastes awful.");
-				    }
-					ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_POISON:
-				{
-					if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
-					{
-						if (set_poisoned(Ind, p_ptr->poisoned + rand_int(15) + 10, 0))
-						{
-							ident = TRUE;
-						}
-					}
-					break;
-				}
-
-			case SV_POTION_BLINDNESS:
+		case SV_POTION_BLINDNESS:
 				{
 					if (!p_ptr->resist_blind)
 					{
@@ -913,9 +901,9 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 			case SV_POTION_BOLDNESS:
 				{
-					if (set_afraid(Ind, 0)) ident = TRUE;
 					/* Stay bold for some turns */
-			                p_ptr->res_fear_temp = 5;
+					if (set_afraid(Ind, 0)) ident = TRUE;
+					set_res_fear(Ind, 5);
 					break;
 				}
 
@@ -968,82 +956,69 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				}
 
 			case SV_POTION_CURE_LIGHT:
-				{
-					if (hp_player(Ind, damroll(2, 8))) ident = TRUE;
-					if (set_blind(Ind, 0)) ident = TRUE;
-					if (set_cut(Ind, p_ptr->cut - 10, p_ptr->cut_attacker)) ident = TRUE;
-					break;
-				}
+				if (hp_player(Ind, damroll(2, 8))) ident = TRUE;
+				if (set_blind(Ind, 0)) ident = TRUE;
+				if (set_cut(Ind, p_ptr->cut - 10, p_ptr->cut_attacker)) ident = TRUE;
+				break;
 
 			case SV_POTION_CURE_SERIOUS:
-				{
-					if (hp_player(Ind, damroll(5, 8))) ident = TRUE;
-					if (set_blind(Ind, 0)) ident = TRUE;
-					if (set_confused(Ind, 0)) ident = TRUE;
-					if (set_cut(Ind, (p_ptr->cut / 2) - 50, p_ptr->cut_attacker)) ident = TRUE;
-					break;
-				}
+				if (hp_player(Ind, damroll(5, 8))) ident = TRUE;
+				if (set_blind(Ind, 0)) ident = TRUE;
+				if (set_confused(Ind, 0)) ident = TRUE;
+				if (set_cut(Ind, (p_ptr->cut / 2) - 50, p_ptr->cut_attacker)) ident = TRUE;
+				break;
 
 			case SV_POTION_CURE_CRITICAL:
-				{
-					if (hp_player(Ind, damroll(14, 8))) ident = TRUE;
-					if (set_blind(Ind, 0)) ident = TRUE;
-					if (set_confused(Ind, 0)) ident = TRUE;
-					//			if (set_poisoned(Ind, 0, 0)) ident = TRUE;	/* use specialized pots */
-					if (set_stun(Ind, 0)) ident = TRUE;
-					if (set_cut(Ind, 0, 0)) ident = TRUE;
-					break;
-				}
+				if (hp_player(Ind, damroll(14, 8))) ident = TRUE;
+				if (set_blind(Ind, 0)) ident = TRUE;
+				if (set_confused(Ind, 0)) ident = TRUE;
+				//			if (set_poisoned(Ind, 0, 0)) ident = TRUE;	/* use specialized pots */
+				if (set_stun(Ind, 0)) ident = TRUE;
+				if (set_cut(Ind, 0, 0)) ident = TRUE;
+				break;
 
 			case SV_POTION_HEALING:
-				{
-					if (hp_player(Ind, 300)) ident = TRUE;
-					if (set_blind(Ind, 0)) ident = TRUE;
-					if (set_confused(Ind, 0)) ident = TRUE;
-					if (set_poisoned(Ind, 0, 0)) ident = TRUE;
-					if (set_stun(Ind, 0)) ident = TRUE;
-					if (set_cut(Ind, 0, 0)) ident = TRUE;
-					break;
-				}
+				if (hp_player(Ind, 300)) ident = TRUE;
+				if (set_blind(Ind, 0)) ident = TRUE;
+				if (set_confused(Ind, 0)) ident = TRUE;
+				if (set_poisoned(Ind, 0, 0)) ident = TRUE;
+				if (set_stun(Ind, 0)) ident = TRUE;
+				if (set_cut(Ind, 0, 0)) ident = TRUE;
+				break;
 
 			case SV_POTION_STAR_HEALING:
-				{
-					if (hp_player(Ind, 700)) ident = TRUE;
-					if (set_blind(Ind, 0)) ident = TRUE;
-					if (set_confused(Ind, 0)) ident = TRUE;
-					if (set_poisoned(Ind, 0, 0)) ident = TRUE;
-					if (set_stun(Ind, 0)) ident = TRUE;
-					if (set_cut(Ind, 0, 0)) ident = TRUE;
-					break;
-				}
+				if (hp_player(Ind, 700)) ident = TRUE;
+				if (set_blind(Ind, 0)) ident = TRUE;
+				if (set_confused(Ind, 0)) ident = TRUE;
+				if (set_poisoned(Ind, 0, 0)) ident = TRUE;
+				if (set_stun(Ind, 0)) ident = TRUE;
+				if (set_cut(Ind, 0, 0)) ident = TRUE;
+				break;
 
 			case SV_POTION_LIFE:
-				{
-					msg_print(Ind, "\377GYou feel life flow through your body!");
-					restore_level(Ind);
-					if (p_ptr->suscep_life) take_hit(Ind, 500, "a Potion of Life", 0);
-					else hp_player(Ind, 700);
-					(void)set_poisoned(Ind, 0, 0);
-					(void)set_blind(Ind, 0);
-					(void)set_confused(Ind, 0);
-					(void)set_image(Ind, 0);
-					(void)set_stun(Ind, 0);
-					(void)set_cut(Ind, 0, 0);
-					(void)do_res_stat(Ind, A_STR);
-					(void)do_res_stat(Ind, A_CON);
-					(void)do_res_stat(Ind, A_DEX);
-					(void)do_res_stat(Ind, A_WIS);
-					(void)do_res_stat(Ind, A_INT);
-					(void)do_res_stat(Ind, A_CHR);
-					(void)restore_level(Ind);
-					if (p_ptr->black_breath)
-					{
-						msg_print(Ind, "The hold of the Black Breath on you is broken!");
-					}
+				msg_print(Ind, "\377GYou feel life flow through your body!");
+				restore_level(Ind);
+				if (p_ptr->suscep_life) take_hit(Ind, 500, "a Potion of Life", 0);
+				else hp_player(Ind, 700);
+				(void)set_poisoned(Ind, 0, 0);
+				(void)set_blind(Ind, 0);
+				(void)set_confused(Ind, 0);
+				(void)set_image(Ind, 0);
+				(void)set_stun(Ind, 0);
+				(void)set_cut(Ind, 0, 0);
+				(void)do_res_stat(Ind, A_STR);
+				(void)do_res_stat(Ind, A_CON);
+				(void)do_res_stat(Ind, A_DEX);
+				(void)do_res_stat(Ind, A_WIS);
+				(void)do_res_stat(Ind, A_INT);
+				(void)do_res_stat(Ind, A_CHR);
+				(void)restore_level(Ind);
+				if (p_ptr->black_breath) {
 					p_ptr->black_breath = FALSE;
-					ident = TRUE;
-					break;
+					msg_print(Ind, "The hold of the Black Breath on you is broken!");
 				}
+				ident = TRUE;
+				break;
 
 			case SV_POTION_RESTORE_MANA:
 				{
@@ -1475,46 +1450,79 @@ void do_cmd_drink_fountain(int Ind)
 		return;
 	}
 
-	if (c_ptr->feat == FEAT_EMPTY_FOUNTAIN)
-	{
+	if (c_ptr->feat == FEAT_EMPTY_FOUNTAIN) {
 		msg_print(Ind, "The fountain is dried out.");
 		return;
-	}
-	else if (c_ptr->feat == FEAT_DEEP_WATER ||
-			c_ptr->feat == FEAT_SHAL_WATER)
-	{
+	} else if (c_ptr->feat == FEAT_DEEP_WATER ||
+	    c_ptr->feat == FEAT_SHAL_WATER) {
 #ifdef USE_SOUND_2010
 		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 		msg_print(Ind, "You quenched your thirst.");
 		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 500);
+
+		/* Take a turn */
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
+		return;
+	} else if (c_ptr->feat == FEAT_FOUNTAIN_BLOOD) {
+#ifdef USE_SOUND_2010
+		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
+		if (!(cs_ptr = GetCS(c_ptr, CS_FOUNTAIN))) {
+			/* paranoia? */
+			return;
+		}
+
+		if (p_ptr->prace == RACE_VAMPIRE) {
+			switch (rand_int(3)) {
+			case 0: msg_print(Ind, "Delicious.");
+			case 1: msg_print(Ind, "It's fresh.");
+			case 2: msg_print(Ind, "You're less thirsty.");
+			}
+			(void)set_food(Ind, p_ptr->food + 500);
+		} else if (p_ptr->suscep_life) {
+			msg_print(Ind, "You quenched your thirst.");
+			(void)set_food(Ind, p_ptr->food + 100);
+		} else {
+			switch (rand_int(3)) {
+			case 0: msg_print(Ind, "Ew."); break;
+			case 1: msg_print(Ind, "Gross."); break;
+			case 2: msg_print(Ind, "Nasty."); break;
+			}
+		}
+
+		cs_ptr->sc.fountain.rest--;
+		if (cs_ptr->sc.fountain.rest <= 0) {
+			cave_set_feat(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_EMPTY_FOUNTAIN);
+			cs_erase(c_ptr, cs_ptr);
+		}
 		return;
 	}
 
-
-	if (c_ptr->feat != FEAT_FOUNTAIN) 
-	{
+	if (c_ptr->feat != FEAT_FOUNTAIN) {
 		msg_print(Ind, "You see no fountain here.");
 		return;
 	}
 
 #if 0
 	/* We quaff or we fill ? */
-	if (!get_check("Do you want to quaff from the fountain? "))
-	{
+	if (!get_check("Do you want to quaff from the fountain? ")) {
 		do_cmd_fill_bottle();
 		return;
 	}
 #endif	// 0
 
 	/* Oops! */
-	if (!(cs_ptr = GetCS(c_ptr, CS_FOUNTAIN)))
-	{
+	if (!(cs_ptr = GetCS(c_ptr, CS_FOUNTAIN))) {
 #ifdef USE_SOUND_2010
 		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 		msg_print(Ind, "You quenched your thirst.");
 		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 500);
+
+		/* Take a turn */
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		return;
 	}
 
@@ -1538,13 +1546,15 @@ void do_cmd_drink_fountain(int Ind)
 	k_idx = lookup_kind(tval, sval);
 
 	/* Doh! */
-	if (!k_idx)
-	{
+	if (!k_idx) {
 #ifdef USE_SOUND_2010
 		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 		msg_print(Ind, "You quenched your thirst.");
 		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 500);
+
+		/* Take a turn */
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		return;
 	}
 
@@ -1630,27 +1640,28 @@ void do_cmd_fill_bottle(int Ind)
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
-	if (c_ptr->feat == FEAT_EMPTY_FOUNTAIN)
-	{
+	if (c_ptr->feat == FEAT_EMPTY_FOUNTAIN) {
 		msg_print(Ind, "The fountain is dried out.");
 		return;
 	}
 
-	if (c_ptr->feat != FEAT_FOUNTAIN) 
-	{
+	if (c_ptr->feat == FEAT_FOUNTAIN_BLOOD) {
+		msg_print(Ind, "Fresh blood don't last well.");
+		return;
+	}
+
+	if (c_ptr->feat != FEAT_FOUNTAIN) {
 		msg_print(Ind, "You see no fountain here.");
 		return;
 	}
 
 	/* Oops! */
-	if (!(cs_ptr=GetCS(c_ptr, CS_FOUNTAIN)))
-	{
+	if (!(cs_ptr=GetCS(c_ptr, CS_FOUNTAIN))) {
 //		msg_print(Ind, "You quenched the thirst.");
 		return;
 	}
 
-	if (cs_ptr->sc.fountain.rest <= 0)
-	{
+	if (cs_ptr->sc.fountain.rest <= 0) {
 		msg_print(Ind, "The fountain is dried out.");
 		return;
 	}
@@ -2247,14 +2258,12 @@ void do_cmd_read_scroll(int Ind, int item)
 
 
 	/* Check some conditions */
-	if (p_ptr->blind)
-	{
+	if (p_ptr->blind) {
 		msg_print(Ind, "You can't see anything.");
 		s_printf("%s EFFECT: Blind prevented scroll for %s.\n", showtime(), p_ptr->name);
 		return;
 	}
-	if (p_ptr->confused)
-	{
+	if (p_ptr->confused) {
 		msg_print(Ind, "You are too confused!");
 		s_printf("%s EFFECT: Confusion prevented scroll for %s.\n", showtime(), p_ptr->name);
 		return;
@@ -2264,14 +2273,11 @@ void do_cmd_read_scroll(int Ind, int item)
 	item_tester_tval = TV_SCROLL;
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
+	if (item >= 0) {
 		o_ptr = &p_ptr->inventory[item];
 	}
-
 	/* Get the item (on the floor) */
-	else
-	{
+	else {
 		if (-item >= o_max)
 			return; /* item doesn't exist */
 
@@ -2298,6 +2304,42 @@ void do_cmd_read_scroll(int Ind, int item)
 	}
 
 	if (!can_use_verbose(Ind, o_ptr)) return;
+
+#ifdef PLAYER_STORES
+	/* Reading a cheque gives the money and costs no time. */
+	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE) {
+		u32b value = ps_get_cheque_value(o_ptr);
+
+		/* hack: prevent s32b overflow */
+		if (2000000000 - value < p_ptr->au) {
+			msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
+			return;
+		}
+
+		break_cloaking(Ind, 4);
+		break_shadow_running(Ind);
+		stop_precision(Ind);
+		stop_shooting_till_kill(Ind);
+
+		p_ptr->au += value;
+		msg_format(Ind, "\375\377sYou acquire \377y%d\377s gold pieces.", value);
+
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+		p_ptr->redraw |= (PR_GOLD);
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+		if (item >= 0) { /* Destroy scroll in the pack */
+			inven_item_increase(Ind, item, -1);
+			inven_item_describe(Ind, item);
+			inven_item_optimize(Ind, item);
+		} else { /* Destroy scroll on the floor */
+			floor_item_increase(0 - item, -1);
+			floor_item_describe(0 - item);
+			floor_item_optimize(0 - item);
+		}
+		return;
+	}
+#endif
 
 #if 0
 	/* unbelievers need some more disadvantage, but this might be too much */
@@ -2408,7 +2450,11 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_AGGRAVATE_MONSTER:
 			{
-				msg_print(Ind, "There is a high pitched humming noise.");
+#ifdef USE_SOUND_2010
+				sound_near(Ind, "monster_shriek", NULL, SFX_TYPE_MON_SPELL);
+#endif
+ 				msg_print(Ind, "There is a high pitched humming noise.");
+ 				msg_print_near(Ind, "There is a high pitched humming noise.");
 				aggravate_monsters(Ind, 1);
 				ident = TRUE;
 				break;
@@ -2771,7 +2817,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_STAR_DESTRUCTION:
 			{
-				destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR);
+				destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR, 120);
 				ident = TRUE;
 				break;
 			}
@@ -3498,7 +3544,7 @@ void do_cmd_use_staff(int Ind, int item)
 		case SV_STAFF_DESTRUCTION:
 		{
 			msg_format_near(Ind, "%s unleashes great power!", p_ptr->name);
-			destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR);
+			destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR, 120);
 			ident = TRUE;
 			break;
 		}
@@ -4137,7 +4183,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
  * Hack -- rods of perception/genocide can be "cancelled"
  * All rods can be cancelled at the "Direction?" prompt
  */
-void do_cmd_zap_rod(int Ind, int item)
+void do_cmd_zap_rod(int Ind, int item, int dir)
 {
         u32b f1, f2, f3, f4, f5, esp;
 	player_type *p_ptr = Players[Ind];
@@ -4151,24 +4197,20 @@ void do_cmd_zap_rod(int Ind, int item)
 
 	/* Break goi/manashield */
 #if 0
-	if (p_ptr->invuln)
-	{
+	if (p_ptr->invuln) {
 		set_invuln(Ind, 0);
 	}
-	if (p_ptr->tim_manashield)
-	{
+	if (p_ptr->tim_manashield) {
 		set_tim_manashield(Ind, 0);
 	}
-	if (p_ptr->tim_wraith)
-	{
+	if (p_ptr->tim_wraith) {
 		set_tim_wraith(Ind, 0);
 	}
 #endif	// 0
 
 
 #if 1
-	if (p_ptr->anti_magic)
-	{
+	if (p_ptr->anti_magic) {
 		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
 		return;
 	}
@@ -4178,8 +4220,7 @@ void do_cmd_zap_rod(int Ind, int item)
 		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
 		return;
 	}
-        if (magik((p_ptr->antimagic * 8) / 5))
-        {
+        if (magik((p_ptr->antimagic * 8) / 5)) {
                 msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
                 return;
         }
@@ -4188,34 +4229,30 @@ void do_cmd_zap_rod(int Ind, int item)
 	item_tester_tval = TV_ROD;
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
+	if (item >= 0) {
 		o_ptr = &p_ptr->inventory[item];
 	}
 
 	/* Get the item (on the floor) */
-	else
-	{
+	else {
 		if (-item >= o_max)
 			return; /* item doesn't exist */
 
 		o_ptr = &o_list[0 - item];
 	}
-	if( check_guard_inscription( o_ptr->note, 'z' )) {
+	if (check_guard_inscription(o_ptr->note, 'z')) {
                 msg_print(Ind, "The item's inscription prevents it");
                 return;
-        }; 
+        };
 
 
-	if (o_ptr->tval != TV_ROD)
-	{
+	if (o_ptr->tval != TV_ROD) {
 //(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to zap non-rod!");
 		return;
 	}
 
 	/* Mega-Hack -- refuse to zap a pile from the ground */
-	if ((item < 0) && (o_ptr->number > 1))
-	{
+	if ((item < 0) && (o_ptr->number > 1)) {
 		msg_print(Ind, "You must first pick up the rods.");
 		return;
 	}
@@ -4224,13 +4261,21 @@ void do_cmd_zap_rod(int Ind, int item)
 
 	/* Get a direction (unless KNOWN not to need it) */
 	/* Pfft, dirty, dirty, diiirrrrtie!! (FIXME) */
+	/* Important: Keep consistent with Send_inven() in nserver.c! */
 //	if ((o_ptr->sval >= SV_ROD_MIN_DIRECTION) || !object_aware_p(Ind, o_ptr))
         if (((o_ptr->sval >= SV_ROD_MIN_DIRECTION) &&
-			!(o_ptr->sval == SV_ROD_DETECT_TRAP) &&
-//			!(o_ptr->sval == SV_ROD_HAVOC) &&
-			!(o_ptr->sval == SV_ROD_HOME)) ||
-		     !object_aware_p(Ind, o_ptr))
+	    !(o_ptr->sval == SV_ROD_DETECT_TRAP) &&
+//	    !(o_ptr->sval == SV_ROD_HAVOC) &&
+	    !(o_ptr->sval == SV_ROD_HOME)) ||
+	    !object_aware_p(Ind, o_ptr))
 	{
+		if (dir != 0) {
+		//redundant: lower versions cant have dir != 0. ---  && is_newer_than(&p_ptr->version, 4, 4, 5, 10, 0, 0)) {
+			p_ptr->current_rod = item;
+			do_cmd_zap_rod_dir(Ind, dir);
+			return;
+		}
+
 		/* Get a direction, then return */
 		p_ptr->current_rod = item;
 		get_aim_dir(Ind);
@@ -4259,32 +4304,26 @@ void do_cmd_zap_rod(int Ind, int item)
 	/* Confusion hurts skill */
 	if (p_ptr->confused) chance = chance / 2;
 
-        /* Is it simple to use ? */
-        if (f4 & TR4_EASY_USE)
-        {
-                chance *= 2;
-        }
+	/* Is it simple to use ? */
+	if (f4 & TR4_EASY_USE) chance *= 2;
 
 	/* High level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
 	if (chance < 0) chance = 0;
 
 	/* Give everyone a (slight) chance */
-	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
-	{
+	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0)) {
 		chance = USE_DEVICE;
 	}
 
 	/* Roll for usage */
-	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
-	{
+	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) {
 		msg_print(Ind, "You failed to use the rod properly.");
 		return;
 	}
 
 	/* Still charging */
-	if (o_ptr->pval)
-	{
+	if (o_ptr->pval) {
 		msg_print(Ind, "The rod is still charging.");
 		return;
 	}
@@ -4292,8 +4331,7 @@ void do_cmd_zap_rod(int Ind, int item)
 	process_hooks(HOOK_ZAP, "d", Ind);
 
 	/* Analyze the rod */
-	switch (o_ptr->sval)
-	{
+	switch (o_ptr->sval) {
 		case SV_ROD_DETECT_TRAP:
 		{
 			if (detect_trap(Ind, rad)) ident = TRUE;
@@ -4432,7 +4470,8 @@ void do_cmd_zap_rod(int Ind, int item)
 			return;
 		}
 	}
-	if(f4 & TR4_CHARGING) o_ptr->pval /= 2;
+
+	if (f4 & TR4_CHARGING) o_ptr->pval /= 2;
 
 	break_cloaking(Ind, 3);
 	break_shadow_running(Ind);
@@ -4487,7 +4526,7 @@ void do_cmd_zap_rod(int Ind, int item)
 
 
 /*
- * Activate (zap) a Rod
+ * Activate (zap) a Rod that requires a direction (passed through to here from do_cmd_zap_rod())
  *
  * Unstack fully charged rods as needed.
  *
@@ -4498,45 +4537,36 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 {
         u32b f1, f2, f3, f4, f5, esp;
 	player_type *p_ptr = Players[Ind];
-
-	int	item, ident, chance, lev, rad = DEFAULT_RADIUS_DEV(p_ptr);
-
-	object_type		*o_ptr;
-
+	int item, ident, chance, lev, rad = DEFAULT_RADIUS_DEV(p_ptr);
+	object_type *o_ptr;
 	/* Hack -- let perception get aborted */
 	bool use_charge = TRUE;
-
 
 	item = p_ptr->current_rod;
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
+	if (item >= 0) {
 		o_ptr = &p_ptr->inventory[item];
 	}
-
 	/* Get the item (on the floor) */
-	else
-	{
+	else {
 		if (-item >= o_max)
 			return; /* item doesn't exist */
 
 		o_ptr = &o_list[0 - item];
 	}
-	if( check_guard_inscription( o_ptr->note, 'z' )) {
+	if (check_guard_inscription( o_ptr->note, 'z')) {
                 msg_print(Ind, "The item's inscription prevents it");
                 return;
-        }; 
+        };
 
-	if (o_ptr->tval != TV_ROD)
-	{
+	if (o_ptr->tval != TV_ROD) {
 //(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to zap non-rod!");
 		return;
 	}
 
 	/* Mega-Hack -- refuse to zap a pile from the ground */
-	if ((item < 0) && (o_ptr->number > 1))
-	{
+	if ((item < 0) && (o_ptr->number > 1)) {
 		msg_print(Ind, "You must first pick up the rods.");
 		return;
 	}
@@ -4576,31 +4606,25 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 	if (p_ptr->confused) chance = chance / 2;
 
         /* Is it simple to use ? */
-        if (f4 & TR4_EASY_USE)
-        {
-                chance *= 2;
-        }
+        if (f4 & TR4_EASY_USE) chance *= 2;
 
 	/* High level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev) - p_ptr->antimagic;
 	if (chance < 0) chance = 0;
 
 	/* Give everyone a (slight) chance */
-	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
-	{
+	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0)) {
 		chance = USE_DEVICE;
 	}
 
 	/* Roll for usage */
-	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
-	{
+	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) {
 		msg_print(Ind, "You failed to use the rod properly.");
 		return;
 	}
 
 	/* Still charging */
-	if (o_ptr->pval)
-	{
+	if (o_ptr->pval) {
 		msg_print(Ind, "The rod is still charging.");
 		return;
 	}
@@ -4608,8 +4632,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 	process_hooks(HOOK_ZAP, "d", Ind);
 
 	/* Analyze the rod */
-	switch (o_ptr->sval)
-	{
+	switch (o_ptr->sval) {
 		case SV_ROD_TELEPORT_AWAY:
 		{
 			if (teleport_monster(Ind, dir)) ident = TRUE;
@@ -4962,8 +4985,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 	object_tried(Ind, o_ptr);
 
 	/* Successfully determined the object function */
-	if (ident && !object_aware_p(Ind, o_ptr))
-	{
+	if (ident && !object_aware_p(Ind, o_ptr)) {
 		object_aware(Ind, o_ptr);
 		gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
@@ -4972,16 +4994,14 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 	/* Hack -- deal with cancelled zap */
-	if (!use_charge)
-	{
+	if (!use_charge) {
 		o_ptr->pval = 0;
 		return;
 	}
 
 
 	/* XXX Hack -- unstack if necessary */
-	if ((item >= 0) && (o_ptr->number > 1))
-	{
+	if ((item >= 0) && (o_ptr->number > 1)) {
 		/* Make a fake item */
 		object_type tmp_obj;
 		tmp_obj = *o_ptr;
@@ -5147,6 +5167,74 @@ static bool brand_bolts(int Ind)
 }
 
 
+/* hard-coded same as the 2 functions below, do_cmd_activate() and do_cmd_activate_dir().
+   Returns TRUE if item is activatable, for sending the client proper targetting info. - C. Blue */
+bool activation_requires_direction(object_type *o_ptr) {
+	/* Art DSMs are handled below */
+	if (o_ptr->tval == TV_DRAG_ARMOR && !o_ptr->name1)
+		return TRUE;
+
+	/* Artifacts activate by name */
+	if (o_ptr->name1) {
+		/* This needs to be changed */
+		switch (o_ptr->name1) {
+		case ART_NARTHANC:
+		case ART_NIMTHANC:
+		case ART_DETHANC:
+		case ART_RILIA:
+		case ART_BELANGIL:
+		case ART_RINGIL:
+		case ART_ANDURIL:
+		case ART_FIRESTAR:
+		case ART_THEODEN:
+		case ART_TURMIL:
+		case ART_ARUNRUTH:
+		case ART_AEGLOS:
+		case ART_OROME:
+		case ART_ULMO:
+		case ART_TOTILA:
+		case ART_CAMMITHRIM:
+		case ART_PAURHACH:
+		case ART_PAURNIMMEN:
+		case ART_PAURAEGEN:
+		case ART_PAURNEN:
+		case ART_FINGOLFIN:
+		case ART_NARYA:
+		case ART_NENYA:
+		case ART_VILYA:
+		case ART_POWER:
+		case ART_MEDIATOR:
+		case ART_AXE_GOTHMOG:
+		case ART_MELKOR:
+		case ART_NIGHT:
+		case ART_NAIN:
+		case ART_EOL:
+		case ART_UMBAR:
+		case ART_HELLFIRE:
+			return TRUE;
+		}
+	}
+
+        /* Hack -- Amulet of the Serpents can be activated as well */
+	else if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_SERPENT)) {
+		return TRUE;
+        }
+
+	else if (o_ptr->tval == TV_RING) {
+		switch (o_ptr->sval) {
+                case SV_RING_ELEC:
+		case SV_RING_ACID:
+		case SV_RING_ICE:
+		case SV_RING_FLAMES:
+			return TRUE;
+		}
+        }
+
+	/* All other items aren't activatable */
+	return FALSE;
+}
+
+
 /*
  * Activate a wielded object.  Wielded objects never stack.
  * And even if they did, activatable objects never stack.
@@ -5157,7 +5245,7 @@ static bool brand_bolts(int Ind)
  * Note that it always takes a turn to activate an artifact, even if
  * the user hits "escape" at the "direction" prompt.
  */
-void do_cmd_activate(int Ind, int item)
+void do_cmd_activate(int Ind, int item, int dir)
 {
         u32b f1, f2, f3, f4, f5, esp;
 	player_type *p_ptr = Players[Ind];
@@ -5346,6 +5434,20 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 		return;
 	}
 #endif
+
+
+        if (activation_requires_direction(o_ptr)
+//appearently not for A'able items >_>	    || !object_aware_p(Ind, o_ptr)
+	    )
+	{
+		if (dir != 0) {
+		//redundant: lower versions cant have dir != 0. ---  && is_newer_than(&p_ptr->version, 4, 4, 5, 10, 0, 0)) {
+			p_ptr->current_activation = item;
+			do_cmd_activate_dir(Ind, dir);
+			return;
+		}
+	}
+
 
 	/* Hack -- Dragon Scale Mail can be activated as well */
 	/* Yikes, hard-coded r_idx.. */
@@ -5570,11 +5672,11 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			case ART_DAL:
 			{
 				msg_print(Ind, "\377GYou feel energy flow through your feet...");
-				(void)set_afraid(Ind, 0);
 				/* Stay bold for some turns */
-		                p_ptr->res_fear_temp = 5;
+				(void)set_afraid(Ind, 0);
+				(void)set_res_fear(Ind, 5);
 				(void)set_poisoned(Ind, 0, 0);
-				o_ptr->timeout = 5;
+				o_ptr->timeout = 20;
 				break;
 			}
 
@@ -5888,8 +5990,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 				msg_print(Ind, "Your armour glows in many colours...");
 				(void)hp_player(Ind, 30);
 				(void)set_afraid(Ind, 0);
-				/* Stay bold for some turns */
-		                p_ptr->res_fear_temp = 20;
+				(void)set_res_fear(Ind, 20);
 				(void)set_shero(Ind, randint(50) + 50); /* removed stacking */
 				(void)set_blessed(Ind, randint(50) + 50); /* removed stacking */
 				(void)set_oppose_acid(Ind, randint(50) + 50); /* removed stacking */
@@ -6060,8 +6161,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			{
 				msg_print(Ind, "\377GYou feel energy flow through your feet...");
 				(void)set_afraid(Ind, 0);
-				/* Stay bold for some turns */
-		                p_ptr->res_fear_temp = 5;
+				(void)set_res_fear(Ind, 5);
 				(void)set_poisoned(Ind, 0, 0);
 				o_ptr->timeout = 5;
 				break;
@@ -6377,8 +6477,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 				msg_print(Ind, "Your armour glows in many colours...");
 				(void)hp_player(Ind, 30);
 				(void)set_afraid(Ind, 0);
-				/* Stay bold for some turns */
-		                p_ptr->res_fear_temp = 20;
+				(void)set_res_fear(Ind, 20);
 				(void)set_shero(Ind, randint(50) + 50); /* removed stacking */
 				(void)set_blessed(Ind, randint(50) + 50); /* removed stacking */
 				(void)set_oppose_acid(Ind, randint(50) + 50); /* removed stacking */
@@ -6510,7 +6609,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 
 			case ART_SKULLCLEAVER:
 			{
-				destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR);
+				destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR, 120);
 				o_ptr->timeout = rand_int(200) + 200;
 				break;
 			}
@@ -7134,6 +7233,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 	}
 	else if (is_ego_p(o_ptr, EGO_FURY))
 	{
+		set_afraid(Ind, 0);
 		set_fury(Ind, rand_int(5) + 15); /* removed stacking */
 		hp_player(Ind, 40);
 		o_ptr->timeout = 100 + randint(50);
@@ -8788,7 +8888,7 @@ s_printf("SWITCH_STANCE: %s - offensive\n", p_ptr->name);
 		break;
 	}
 
-	p_ptr->energy -= level_speed(&p_ptr->wpos);
+	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2; /* takes half a turn to switch */
 	p_ptr->combat_stance = stance;
 	p_ptr->combat_stance_power = power;
 	p_ptr->update |= (PU_BONUS);
@@ -8822,6 +8922,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		un_afk_idle(Ind);
 		set_melee_sprint(Ind, 9 + rand_int(3)); /* number of turns it lasts */
 s_printf("TECHNIQUE_MELEE: %s - sprint\n", p_ptr->name);
+		p_ptr->warning_technique_melee = 1;
 		break;
 	case 1:	if (!(p_ptr->melee_techniques & 0x0002)) return; /* Taunt */
 		if (p_ptr->cst < 2) { msg_print(Ind, "Not enough stamina!"); return; }
@@ -8832,13 +8933,16 @@ s_printf("TECHNIQUE_MELEE: %s - sprint\n", p_ptr->name);
 		un_afk_idle(Ind);
 		taunt_monsters(Ind);
 s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
+		p_ptr->warning_technique_melee = 1;
 		break;
 	case 3:	if (!(p_ptr->melee_techniques & 0x0008)) return; /* Distract */
 		if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
 		p_ptr->cst -= 1;
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2; /* just a quick grimace and mimicking ;) */
 		un_afk_idle(Ind);
 		distract_monsters(Ind);
 s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
+		p_ptr->warning_technique_melee = 1;
 		break;
 	case 7:	if (!(p_ptr->melee_techniques & 0x0080)) return; /* Flash bomb */
 		if (p_ptr->cst < 4) { msg_print(Ind, "Not enough stamina!"); return; }
@@ -8849,6 +8953,7 @@ s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 		un_afk_idle(Ind);
 		flash_bomb(Ind);
 s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
+		p_ptr->warning_technique_melee = 1;
 		break;
 	case 9:	if (!(p_ptr->melee_techniques & 0x0200)) return; /* Spin */
 		if (p_ptr->cst < 8) { msg_print(Ind, "Not enough stamina!"); return; }
@@ -8856,12 +8961,13 @@ s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
 			msg_print(Ind, "You are too afraid to attack!");
 			return;
 		}
-		if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+		if (p_ptr->energy < level_speed(&p_ptr->wpos)) return; // ?
 		p_ptr->cst -= 8;
 		un_afk_idle(Ind);
 		spin_attack(Ind);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 s_printf("TECHNIQUE_MELEE: %s - spin\n", p_ptr->name);
+		p_ptr->warning_technique_melee = 1;
 		break;
 	case 11:if (!(p_ptr->melee_techniques & 0x0800)) return; /* Berserk */
 		if (p_ptr->cst < 10) { msg_print(Ind, "Not enough stamina!"); return; }
@@ -8871,10 +8977,12 @@ s_printf("TECHNIQUE_MELEE: %s - spin\n", p_ptr->name);
 		set_afraid(Ind, 0);
 		set_berserk(Ind, randint(5) + 15);
 s_printf("TECHNIQUE_MELEE: %s - berserk\n", p_ptr->name);
+		p_ptr->warning_technique_melee = 1;
 		break;
 	case 14:if (!(p_ptr->melee_techniques & 0x4000)) return; /* Shadow Run */
 		shadow_run(Ind);
 s_printf("TECHNIQUE_MELEE: %s - shadow run\n", p_ptr->name);
+		p_ptr->warning_technique_melee = 1;
 		break;
 	}
 
@@ -8896,6 +9004,10 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 		if (technique != 2) {
 			if (!p_ptr->inventory[INVEN_AMMO].tval) {
 				msg_print(Ind, "You have no ammunition equipped.");
+				return;
+			}
+			if (p_ptr->inventory[INVEN_AMMO].sval == SV_AMMO_CHARRED) {
+				msg_print(Ind, "Charred ammunition is too brittle to use.");
 				return;
 			}
 		}
@@ -8949,6 +9061,7 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 		p_ptr->energy -= level_speed(&p_ptr->wpos); /* prepare the shit.. */
 		msg_print(Ind, "You prepare an oil-drenched shot..");
 s_printf("TECHNIQUE_RANGED: %s - flare\n", p_ptr->name);
+		p_ptr->warning_technique_ranged = 1;
 		break;
 	case 1:	if (!(p_ptr->ranged_techniques & 0x0002)) return; /* Precision shot */
 		if (p_ptr->ranged_precision) {
@@ -8960,12 +9073,14 @@ s_printf("TECHNIQUE_RANGED: %s - flare\n", p_ptr->name);
 //		p_ptr->cst -= 7;
 		p_ptr->ranged_flare = FALSE; p_ptr->ranged_double = FALSE; p_ptr->ranged_barrage = FALSE;
 		p_ptr->ranged_precision = TRUE;
-		p_ptr->energy -= level_speed(&p_ptr->wpos); /* focus.. >:) */
+		p_ptr->energy -= level_speed(&p_ptr->wpos); /* focus.. >:) (maybe even 2 turns oO) */
 		msg_print(Ind, "You aim carefully for a precise shot..");
 s_printf("TECHNIQUE_RANGED: %s - precision\n", p_ptr->name);
+		p_ptr->warning_technique_ranged = 1;
 		break;
 	case 2:	if (!(p_ptr->ranged_techniques & 0x0004)) return; /* Craft some ammunition */
 s_printf("TECHNIQUE_RANGED: %s - ammo\n", p_ptr->name);
+		p_ptr->warning_technique_ranged = 1;
 		do_cmd_fletchery(Ind); /* was previously MKEY_FLETCHERY (9) */
 		return;
 	case 3:	if (!(p_ptr->ranged_techniques & 0x0008)) return; /* Double-shot */
@@ -8982,6 +9097,7 @@ s_printf("TECHNIQUE_RANGED: %s - ammo\n", p_ptr->name);
 		if (p_ptr->ranged_double) msg_print(Ind, "You switch to shooting double-shots.");
 		else msg_print(Ind, "You stop using double-shots.");
 s_printf("TECHNIQUE_RANGED: %s - double\n", p_ptr->name);
+		p_ptr->warning_technique_ranged = 1;
 		break;
 	case 4:	if (!(p_ptr->ranged_techniques & 0x0010)) return; /* Barrage */
 		if (p_ptr->ranged_barrage) {
@@ -8999,6 +9115,8 @@ s_printf("TECHNIQUE_RANGED: %s - double\n", p_ptr->name);
 		p_ptr->ranged_barrage = TRUE;
 		msg_print(Ind, "You prepare a powerful multi-shot barrage...");
 s_printf("TECHNIQUE_RANGED: %s - barrage\n", p_ptr->name);
+		p_ptr->warning_technique_ranged = 1;
+//in cmd2.c!	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2; /* You _prepare_ it.. */
 		break;
 	}
 }

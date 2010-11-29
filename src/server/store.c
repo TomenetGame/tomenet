@@ -31,10 +31,14 @@ static int gettown(int Ind);
 void home_sell(int Ind, int item, int amt);
 void home_purchase(int Ind, int item, int amt);
 void home_examine(int Ind, int item);
-static void display_house_entry(int Ind, int pos);
-static void display_house_inventory(int Ind);
-static void display_trad_house(int Ind);
+static void display_house_entry(int Ind, int pos, house_type *h_ptr);
+static void display_house_inventory(int Ind, house_type *h_ptr);
+static void display_trad_house(int Ind, house_type *h_ptr);
 void home_extend(int Ind);
+#ifdef PLAYER_STORES
+static u32b player_store_inscribed(object_type *o_ptr, u32b price);
+static void player_store_handle_purchase(int Ind, object_type *o_ptr, object_type *s_ptr, u32b value);
+#endif
 
 
 #define MAX_COMMENT_1	6
@@ -273,16 +277,11 @@ static s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 	if (price <= 0) return (0L);
 
 	/* Compute the racial factor */
-	if (is_state(Ind, st_ptr, STORE_LIKED))
-	{
+	if (is_state(Ind, st_ptr, STORE_LIKED)) {
 		factor = ot_ptr->costs[STORE_LIKED];
-	}
-	else if (is_state(Ind, st_ptr, STORE_HATED))
-	{
+	} else if (is_state(Ind, st_ptr, STORE_HATED)) {
 		factor = ot_ptr->costs[STORE_HATED];
-	}
-	else
-	{
+	} else {
 		factor = ot_ptr->costs[STORE_NORMAL];
 	}
 
@@ -291,8 +290,7 @@ static s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 
 
 	/* Shop is buying */
-	if (flip)
-	{
+	if (flip) {
 		/* Adjust for greed */
 		adjust = 100 + (300 - (greed + factor));//greed+factor: 150..250 (flip=TRUE)
 
@@ -354,6 +352,27 @@ static s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 	return (price);
 }
 
+#ifdef PLAYER_STORES
+static s64b price_item_player_store(int Ind, object_type *o_ptr) {
+	player_type *p_ptr = Players[Ind];
+	store_type *st_ptr;
+	s64b price, final_price;
+
+	st_ptr = &fake_store[-2 - p_ptr->store_num];
+
+	/* Get the value of one of the items */
+	price = object_value_real(0, o_ptr);
+
+	/* Player stores have BM prices as minimum */
+	price *= 4;
+
+	/* Add to this any extra price the player inscribed */
+	final_price = player_store_inscribed(o_ptr, price);
+
+	/* Return the price */
+	return (final_price);
+}
+#endif
 
 /*
  * Special "mass production" computation
@@ -538,7 +557,7 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 	/* Hack -- Never stack recharging items */
 	/* Megahack -- light sources are allowed (hoping it's
 	 * not non-fuel activable one..) */
-	if (o_ptr->timeout != j_ptr->timeout) return (FALSE);
+	if (o_ptr->timeout != j_ptr->timeout) return (0);
 
 	/* Require many identical values */
 	if (o_ptr->ac    !=  j_ptr->ac)   return (0);
@@ -558,6 +577,12 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 
 	/* Require matching discounts */
 	if (o_ptr->discount != j_ptr->discount) return (0);
+
+#ifdef PLAYER_STORES
+	/* Different inscriptions can be used to prevent stacking
+	   and thereby customize pile sizes :) */
+	if (o_ptr->note != j_ptr->note) return (0);
+#endif
 
 	/* They match, so they must be similar */
 	return (TRUE);
@@ -627,6 +652,16 @@ static bool store_check_num(store_type *st_ptr, object_type *o_ptr)
 static bool store_will_buy(int Ind, object_type *o_ptr)
 {
 	player_type *p_ptr = Players[Ind];
+
+#ifdef PLAYER_STORES
+	/* player stores don't buy anything */
+	if (p_ptr->store_num <= -2) return FALSE;
+#endif
+
+	/* Museums won't buy true artifacts, since they'd be
+	   conserved and out of reach for players thereby. */
+	if ((st_info[p_ptr->store_num].flags1 & SF1_MUSEUM) && true_artifact_p(o_ptr))
+		return (FALSE);
 
 	/* Switch on the store */
 	switch (p_ptr->store_num)
@@ -1005,24 +1040,39 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr)
 	value = object_value(0, o_ptr);
 
 	/* Cursed/Worthless items "disappear" when sold */
+#ifdef PLAYER_STORES
+	if (!st_ptr->player_owner) /* allow 100% off items in player stores */
+#endif
 	if (value <= 0) return (-1);
 
 	/* All store items are fully *identified* */
 	/* (I don't know it's too nice.. ) */
+#ifdef PLAYER_STORES
+	if (!(o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE))
+#endif
 	o_ptr->ident |= ID_MENTAL;
 
 	/* Erase the inscription */
-	if (!(st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM)) o_ptr->note = 0;
+#ifdef PLAYER_STORES
+	if (!st_ptr->player_owner) /* don't erase inscriptions in player stores */
+#endif
+	if (!(st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM)) {
+		o_ptr->note = 0;
+		o_ptr->note_utag = 0;
+	}
 
+#ifdef PLAYER_STORES
+	/* don't combine items in player stores!
+	   Otherwise, referring to the original item will fail for mang-houses. */
+	if (!st_ptr->player_owner)
+#endif
 	/* Check each existing item (try to combine) */
-	for (slot = 0; slot < st_ptr->stock_num; slot++)
-	{
+	for (slot = 0; slot < st_ptr->stock_num; slot++) {
 		/* Get the existing item */
 		j_ptr = &st_ptr->stock[slot];
 
 		/* Can the existing items be incremented? */
-		if (store_object_similar(j_ptr, o_ptr))
-		{
+		if (store_object_similar(j_ptr, o_ptr)) {
 			/* Hack: Can't have more than 1 of certain items at a time!
 			   Added for Artifact Creation - C. Blue */
 			if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION)
@@ -1043,8 +1093,7 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr)
     if (!(st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM)) {
 
 	/* Check existing slots to see if we must "slide" */
-	for (slot = 0; slot < st_ptr->stock_num; slot++)
-	{
+	for (slot = 0; slot < st_ptr->stock_num; slot++) {
 		/* Get that item */
 		j_ptr = &st_ptr->stock[slot];
 
@@ -1066,9 +1115,7 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr)
 
 	/* Slide the others up */
 	for (i = st_ptr->stock_num; i > slot; i--)
-	{
 		st_ptr->stock[i] = st_ptr->stock[i-1];
-	}
 
     } else { /* is museum -> don't order items! */
 
@@ -1116,7 +1163,7 @@ static void store_item_increase(store_type *st_ptr, int item, int num)
  */
 static void store_item_optimize(store_type *st_ptr, int item)
 {
-	int         j;
+	int j;
 	object_type *o_ptr;
 
 	/* Get the item */
@@ -1133,9 +1180,7 @@ static void store_item_optimize(store_type *st_ptr, int item)
 
 	/* Slide everyone */
 	for (j = item; j < st_ptr->stock_num; j++)
-	{
 		st_ptr->stock[j] = st_ptr->stock[j + 1];
-	}
 
 	/* Nuke the final slot */
 	invwipe(&st_ptr->stock[j]);
@@ -1920,7 +1965,7 @@ static void display_entry(int Ind, int pos)
 	store_type *st_ptr;
 	owner_type *ot_ptr;
 
-	object_type		*o_ptr;
+	object_type	*o_ptr;
 	s64b		x;
 
 	char		o_name[ONAME_LEN];
@@ -1930,10 +1975,15 @@ static void display_entry(int Ind, int pos)
 
 	int maxwid = 75;
 
-	i=gettown(Ind);
-//	if(i==-1) return;	//DUNGEON STORES
-	if(i==-1) i=0;
-	
+	i = gettown(Ind);
+	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
+	if (i == -1) i = 0;
+
+#ifdef PLAYER_STORES
+	if (p_ptr->store_num <= -2) /* it's a player's private store! */
+		st_ptr = &fake_store[-2 - p_ptr->store_num];
+	else
+#endif
 	st_ptr = &town[i].townstore[p_ptr->store_num];
 //	ot_ptr = &owners[p_ptr->store_num][st_ptr->owner];
 	ot_ptr = &ow_info[st_ptr->owner];
@@ -1951,18 +2001,23 @@ static void display_entry(int Ind, int pos)
 #endif
 
 	/* Describe an item in the home */
-	if (p_ptr->store_num == STORE_HOME)
-	{
+	if (p_ptr->store_num == STORE_HOME) {
 		maxwid = 75;
 
 		/* Leave room for weights, if necessary -DRS- */
 		/*if (show_weights) maxwid -= 10;*/
 
 		/* Describe the object */
+		/* hack for wand charges to not get displayed accumulated (less comfortable) */
+		if (o_ptr->tval == TV_WAND) {
+			i = o_ptr->pval;
+			o_ptr->pval = i / o_ptr->number;
+		}
 		object_desc(Ind, o_name, o_ptr, TRUE, 3);
+		if (o_ptr->tval == TV_WAND) o_ptr->pval = i; /* hack clean-up */
 		o_name[maxwid] = '\0';
 
-		attr = get_tval_from_attr(o_ptr);
+		attr = get_attr_from_tval(o_ptr);
 
 		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(Ind, o_ptr);
 
@@ -1990,8 +2045,7 @@ static void display_entry(int Ind, int pos)
 		}
 	}
 	/* Describe an item (fully) in a store */
-	else
-	{
+	else {
 		/* Must leave room for the "price" */
 		maxwid = 65;
 
@@ -1999,10 +2053,22 @@ static void display_entry(int Ind, int pos)
 		/*if (show_weights) maxwid -= 7;*/
 
 		/* Describe the object (fully) */
+		/* hack for wand charges to not get displayed accumulated (less comfortable) */
+		if (o_ptr->tval == TV_WAND) {
+			i = o_ptr->pval;
+			o_ptr->pval = i / o_ptr->number;
+		}
+#ifdef PLAYER_STORES
+		/* Don't display items as fake *ID*ed in player stores! */
+		if (p_ptr->store_num <= -2)
+			object_desc(Ind, o_name, o_ptr, TRUE, 3);
+		else
+#endif
 		object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
+		if (o_ptr->tval == TV_WAND) o_ptr->pval = i; /* hack clean-up */
 		o_name[maxwid] = '\0';
 
-		attr = get_tval_from_attr(o_ptr);
+		attr = get_attr_from_tval(o_ptr);
 
 		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(Ind, o_ptr);
 
@@ -2018,8 +2084,19 @@ static void display_entry(int Ind, int pos)
 		wgt = o_ptr->weight;
 
 		/* Extract the "minimum" price */
+#ifdef PLAYER_STORES
+		if (p_ptr->store_num <= -2)
+			x = price_item_player_store(Ind, o_ptr);
+		else
+#endif
 		x = price_item(Ind, o_ptr, ot_ptr->min_inflate, FALSE);
 
+#ifdef PLAYER_STORES
+		/* HACK: Cut out the @S pricing information from the inscription.
+		   Note: o_ptr->note can only occur if we're in a player-store here.
+		   Pricing tag format:  @Snnnnnnnnn.  <- with dot for termination. */
+		if (o_ptr->note) player_stores_cut_inscription(o_name);
+#endif
 		/* Send the info */
 		if (is_newer_than(&p_ptr->version, 4, 4, 3, 0, 0, 4)) {
                         if (o_ptr->tval != TV_BOOK || o_ptr->sval < SV_CUSTOM_TOME_1 || o_ptr->sval == SV_SPELLBOOK) {
@@ -2048,15 +2125,19 @@ static void display_inventory(int Ind)
 	int k;
 	int i;
 	
-	i=gettown(Ind);
-//	if(i==-1) return;	//DUNGEON STORES
-	if(i==-1) i=0;
+	i = gettown(Ind);
+	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
+	if (i == -1) i = 0;
 
+#ifdef PLAYER_STORES
+	if (p_ptr->store_num <= -2) /* it's a player's private store! */
+		st_ptr = &fake_store[-2 - p_ptr->store_num];
+	else
+#endif
 	st_ptr = &town[i].townstore[p_ptr->store_num];
 
 	/* Display the next 48 items */
-	for (k = 0; k < STORE_INVEN_MAX; k++)
-	{
+	for (k = 0; k < STORE_INVEN_MAX; k++) {
 		/* Do not display "dead" items */
 		if (k >= st_ptr->stock_num) break;
 
@@ -2089,10 +2170,15 @@ static void display_store(int Ind)
 	cptr store_name;
 	int i, j;
 
-	i=gettown(Ind);
-//	if(i==-1) return;	//DUNGEON STORES
-	if(i==-1) i=0;
+	i = gettown(Ind);
+	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
+	if (i == -1) i = 0;
 
+#ifdef PLAYER_STORES
+	if (p_ptr->store_num <= -2) /* it's a player's private store! */
+		st_ptr = &fake_store[-2 - p_ptr->store_num];
+	else
+#endif
 	st_ptr = &town[i].townstore[p_ptr->store_num];
 	ot_ptr = &ow_info[st_ptr->owner];
 	store_name = (st_name + st_info[st_ptr->st_idx].name);
@@ -2104,53 +2190,72 @@ static void display_store(int Ind)
 	display_inventory(Ind);
 
 	/* The "Home" is special */
-	if (p_ptr->store_num == STORE_HOME)	/* This shouldn't happen */
-	{
+	if (p_ptr->store_num == STORE_HOME) { /* This shouldn't happen */
 		/* Send the store info */
 		Send_store_info(Ind, p_ptr->store_num, "Your House", "", st_ptr->stock_num, st_ptr->stock_size, TERM_L_UMBER, '+');
 	}
-
 	/* Normal stores */
-	else
-	{
+	else {
+#ifdef PLAYER_STORES
+		char owner_name_ps[40];
+#endif
 		byte a = st_info[st_ptr->st_idx].d_attr;
 		char c = st_info[st_ptr->st_idx].d_char;
 
 		cptr owner_name = (ow_name + ot_ptr->name);
 
+#ifdef PLAYER_STORES
+		if (p_ptr->store_num <= -2) {
+			/* Send fake building template, hard-coded index 66 in st_info. */
+			show_building(Ind, &town[0].townstore[66]);
+		} else
+#endif
 		/* Send the store actions info */
 		show_building(Ind, st_ptr);
 
 		/* Hack -- Museum doesn't have owner */
 		if (st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM) owner_name = "";
 
+#ifdef PLAYER_STORES
+		if (p_ptr->store_num <= -2) {
+			/* Hack: Player stores display the owner's name */
+			store_name = "";
+			strcpy(owner_name_ps, lookup_player_name(st_ptr->player_owner));
+			if (owner_name_ps[strlen(owner_name_ps) - 1] == 's')
+				strcat(owner_name_ps, "' Private Store");
+			else
+				strcat(owner_name_ps, "'s Private Store");
+			owner_name = owner_name_ps;
+
+			/* Send modified private store info */
+			Send_store_info(Ind, p_ptr->store_num, store_name, owner_name, st_ptr->stock_num, 0, TERM_SLATE, '+');
+		} else
+#endif
+		/* Send the store info */
+		Send_store_info(Ind, p_ptr->store_num, store_name, owner_name, st_ptr->stock_num, ot_ptr->max_cost, a, c);
+
 		/* Hack - Items in common town shops 1..6, which are specified in st_info.txt,
-		          are added to the player's aware-list when he sees them in such a shop. -C. Blue */
-	if (cfg.item_awareness > 0) {
-		if ((cfg.item_awareness > 1) || ((0<=p_ptr->store_num) && (p_ptr->store_num<=5))) {
-			for (i=0;i<st_ptr->stock_num;i++) {
-				if (cfg.item_awareness == 1) {
-					for (j=0;j<st_info[st_ptr->st_idx].table_num;j++)
-					if (st_info[st_ptr->st_idx].table[j][0] >= 10000) {
-						if (k_info[st_ptr->stock[i].k_idx].tval == st_info[st_ptr->st_idx].table[j][0] - 10000)
-							object_aware(Ind, &st_ptr->stock[i]);
+		   are added to the player's aware-list when he sees them in such a shop. -C. Blue */
+		if (cfg.item_awareness > 0) {
+			if ((cfg.item_awareness > 1) || ((0 <= p_ptr->store_num) && (p_ptr->store_num <= 5))) {
+				for (i = 0; i < st_ptr->stock_num; i++) {
+					if (cfg.item_awareness == 1) {
+						for (j=0;j<st_info[st_ptr->st_idx].table_num;j++)
+							if (st_info[st_ptr->st_idx].table[j][0] >= 10000) {
+								if (k_info[st_ptr->stock[i].k_idx].tval == st_info[st_ptr->st_idx].table[j][0] - 10000)
+									object_aware(Ind, &st_ptr->stock[i]);
+							} else {
+								if (st_ptr->stock[i].k_idx == st_info[st_ptr->st_idx].table[j][0])
+									object_aware(Ind, &st_ptr->stock[i]);
+							}
 					} else {
-						if (st_ptr->stock[i].k_idx == st_info[st_ptr->st_idx].table[j][0])
-							object_aware(Ind, &st_ptr->stock[i]);
+			    			object_aware(Ind, &st_ptr->stock[i]);
 					}
-				} else {
-			    		object_aware(Ind, &st_ptr->stock[i]);
 				}
 			}
 		}
 	}
-
-		/* Send the store info */
-		Send_store_info(Ind, p_ptr->store_num, store_name, owner_name, st_ptr->stock_num, ot_ptr->max_cost, a, c);
-	}
-
 }
-
 
 
 /*
@@ -2172,10 +2277,15 @@ static bool sell_haggle(int Ind, object_type *o_ptr, s64b *price)
 	cptr		pmt = "Offer";
 	int i;
 
-	i=gettown(Ind);
-//	if(i==-1) return(FALSE);       //DUNGEON STORES
-        if(i==-1) i=0;
+	i = gettown(Ind);
+	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
+        if (i == -1) i = 0;
 
+#ifdef PLAYER_STORES
+	if (p_ptr->store_num <= -2) /* it's a player's private store! */
+		st_ptr = &fake_store[-2 - p_ptr->store_num];
+	else
+#endif
 	st_ptr = &town[i].townstore[p_ptr->store_num];
 //	ot_ptr = &owners[p_ptr->store_num][st_ptr->owner];
 	ot_ptr = &ow_info[st_ptr->owner];
@@ -2184,15 +2294,21 @@ static bool sell_haggle(int Ind, object_type *o_ptr, s64b *price)
 
 
 	/* Obtain the starting offer and the final offer */
-	cur_ask = price_item(Ind, o_ptr, ot_ptr->max_inflate, TRUE);
-	final_ask = price_item(Ind, o_ptr, ot_ptr->min_inflate, TRUE);
+#ifdef PLAYER_STORES
+	if (p_ptr->store_num <= -2)
+		cur_ask = final_ask = price_item_player_store(Ind, o_ptr);
+	else
+#endif
+	{
+		cur_ask = price_item(Ind, o_ptr, ot_ptr->max_inflate, TRUE);
+		final_ask = price_item(Ind, o_ptr, ot_ptr->min_inflate, TRUE);
+	}
 
 	/* Get the owner's payout limit */
 	purse = (s64b)(ot_ptr->max_cost);
 
 	/* No reason to haggle */
-	if (final_ask >= purse)
-	{
+	if (final_ask >= purse) {
 		/* Message */
 		msg_print(Ind, "You instantly agree upon the price.");
 
@@ -2201,8 +2317,7 @@ static bool sell_haggle(int Ind, object_type *o_ptr, s64b *price)
 	}
 
 	/* No need to haggle */
-	else
-	{
+	else {
 		/* Message */
 		msg_print(Ind, "You eventually agree upon the price.");
 	}
@@ -2252,10 +2367,16 @@ static bool retire_owner_p(store_type *st_ptr)
 static bool store_attest_command(int store, int bact)
 {
 	int i;
+
+#ifdef PLAYER_STORES
+	/* Hack: Assume that in player stores all actions are legal
+	         that work for a certain 'normal' store too */
+	if (store <= -2) store = 0;
+#endif
+
 	for (i = 0; i < STORE_MAX_ACTION; i++)
 		if (ba_info[st_info[store].actions[i]].action == bact) return (TRUE);
 		//if (st_info[store].actions[i] == action) return (TRUE);
-
 	return (FALSE);
 }
 
@@ -2285,10 +2406,15 @@ void store_stole(int Ind, int item)
 	u16b old_note;
 
 	/* Get town or dungeon the store is located within */
-	i=gettown(Ind);
-//	if(i==-1) return;       //DUNGEON STORES
-        if(i==-1) i=0;
+	i = gettown(Ind);
+	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
+        if (i == -1) i = 0;
 
+#ifdef PLAYER_STORES
+	if (p_ptr->store_num <= -2) /* it's a player's private store! */
+		st_ptr = &fake_store[-2 - p_ptr->store_num];
+	else
+#endif
 	/* Store in which town? Or in the dungeon? */
 	st_ptr = &town[i].townstore[st];
 
@@ -2361,7 +2487,7 @@ void store_stole(int Ind, int item)
 		return;
 	}
 
-	if (p_ptr->store_num==-1){
+	if (p_ptr->store_num == -1) {
 		msg_print(Ind,"You left the shop!");
 		return;
 	}
@@ -2369,8 +2495,7 @@ void store_stole(int Ind, int item)
 //	ot_ptr = &owners[st][st_ptr->owner];
 	ot_ptr = &ow_info[st_ptr->owner];
 
-	if (!store_attest_command(p_ptr->store_num, BACT_STEAL))
-	{
+	if (!store_attest_command(p_ptr->store_num, BACT_STEAL)) {
 		//if (!is_admin(p_ptr)) return;
 		return;
 	}
@@ -2411,17 +2536,16 @@ void store_stole(int Ind, int item)
 	sell_obj.discount = old_discount;
 	sell_obj.note = old_note;
 
-	/* shopkeepers in special shops are often especially careful */
-	if (st_info[st_ptr->st_idx].flags1 & SF1_NO_STEAL) {
-		msg_print(Ind, "The shopkeeper watches the items extremely cautiously!");
-		return;
-	}
-
 	/* Describe the transaction */
 	object_desc(0, o_name, &sell_obj, TRUE, 3);
 
 	/* Determine the "best" price (per item) */
 	/* NOTE: it's used to determine the penalty when stealing failed */
+#ifdef PLAYER_STORES
+	if (p_ptr->store_num <= -2)
+		best = price_item_player_store(Ind, &sell_obj);
+	else
+#endif
 	best = price_item(Ind, &sell_obj, ot_ptr->min_inflate, FALSE);
 
 	/* shopkeeper watches expensive items carefully */
@@ -2532,42 +2656,6 @@ void store_stole(int Ind, int item)
 		/* Store is empty */
 		if (st_ptr->stock_num == 0)
 		{
-#if 0	/* disabled -- some stores with few stocks get silly */
-			/* XXX kick him out once, since client update doesn't
-			 * seem to work right */
-			store_kick(Ind, FALSE);
-			suppress_message = FALSE;
-
-			/* Shuffle */
-			if (rand_int(STORE_SHUFFLE) == 0)
-			{
-				/* Message */
-				msg_print(Ind, "The shopkeeper retires.");
-
-				/* Shuffle the store */
-				store_shuffle(st_ptr);
-			}
-
-			/* Maintain */
-			else
-			{
-				/* Message */
-				msg_print(Ind, "The shopkeeper brings out some new stock.");
-			}
-
-			/* New inventory */
-			for (i = 0; i < 10; i++)
-			{
-				/* Maintain the store */
-				store_maint(st_ptr);
-			}
-
-			/* Redraw everything */
-			//display_inventory(Ind);
-
-			return;
-#endif	// 0
-
 			/* This should do a nice restock */
 			//st_ptr->last_visit = 0;
 			st_ptr->last_visit = -10L * cfg.store_turns;
@@ -2680,23 +2768,20 @@ void store_purchase(int Ind, int item, int amt)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int st = p_ptr->store_num;
-
 	store_type *st_ptr;
 	owner_type *ot_ptr;
 
-	int			i, choice;
-	int			item_new;
+	int		i, choice;
+	int		item_new;
 
 	s64b		price, best;
 
-	object_type		sell_obj;
-	object_type		*o_ptr;
+	object_type	sell_obj;
+	object_type	*o_ptr;
 
 	char		o_name[ONAME_LEN];
 
-	if (amt < 1)
-	{
+	if (amt < 1) {
 		s_printf("$INTRUSION$ Bad amount %d! Bought by %s.\n", amt, p_ptr->name);
 //		msg_print(Ind, "\377RInvalid amount. Your attempt has been logged.");
 		return;
@@ -2709,29 +2794,32 @@ void store_purchase(int Ind, int item, int amt)
 		return;
 	}
 
-	i=gettown(Ind);
-//	if(i==-1) return;       //DUNGEON STORES
-        if(i==-1) i=0;
+	i = gettown(Ind);
+	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
+        if (i == -1) i = 0;
 
-	if (p_ptr->store_num==-1){
+	if (p_ptr->store_num == -1) {
 		msg_print(Ind,"You left the shop!");
 		return;
 	}
 
-	st_ptr = &town[i].townstore[st];
+#ifdef PLAYER_STORES
+	if (p_ptr->store_num <= -2) /* it's a player's private store! */
+		st_ptr = &fake_store[-2 - p_ptr->store_num];
+	else
+#endif
+	st_ptr = &town[i].townstore[p_ptr->store_num];
 //	ot_ptr = &owners[st][st_ptr->owner];
 	ot_ptr = &ow_info[st_ptr->owner];
 
-	if (!store_attest_command(p_ptr->store_num, BACT_BUY))
-	{
+	if (!store_attest_command(p_ptr->store_num, BACT_BUY)) {
 		/* Hack -- admin can 'buy'
 		 * (it's to remove craps from the Museums) */
 		if (!is_admin(p_ptr)) return;
 	}
 
 	/* Empty? */
-	if (st_ptr->stock_num <= 0)
-	{
+	if (st_ptr->stock_num <= 0) {
 		if (p_ptr->store_num == STORE_HOME) msg_print(Ind, "Your home is empty.");
 		else msg_print(Ind, "I am currently out of stock.");
 		return;
@@ -2746,12 +2834,9 @@ void store_purchase(int Ind, int item, int amt)
 	if (i > 12) i = 12;
 
 	/* Prompt */
-	if (p_ptr->store_num == STORE_HOME)
-	{
+	if (p_ptr->store_num == STORE_HOME) {
 		snprintf(out_val, sizeof(out_val), "Which item do you want to take? ");
-	}
-	else
-	{
+	} else {
 		snprintf(out_val, sizeof(out_val), "Which item are you interested in? ");
 	}
 
@@ -2769,6 +2854,69 @@ void store_purchase(int Ind, int item, int amt)
 	/* Check that it's a real item - mikaelh */
 	if (!o_ptr->tval) return;
 
+#ifdef PLAYER_STORES
+	/* Consistency check: Make sure noone inside a mang-house store
+	   has actually picked up or otherwise modified the item we're buying. */
+	if (p_ptr->store_num <= -2) {
+		object_type *ho_ptr = NULL;
+		house_type *h_ptr;
+		int h_idx;
+		cave_type **zcave, *c_ptr;
+
+		if (!(zcave = getcave(&p_ptr->wpos))) {
+			s_printf("PLAYER_STORE_PURCHASE: NO ZCAVE!\n");
+			return; /* can't happen, paranoia */
+		}
+
+		/* Try to locate house linked to this store */
+		h_idx = pick_house(&p_ptr->wpos, p_ptr->ps_house_y, p_ptr->ps_house_x);
+		if (h_idx == -1) {
+			s_printf("PLAYER_STORE_PURCHASE: NO HOUSE!\n");
+			return; /* oops, he sold his house while we were shopping? :) */
+		}
+		h_ptr = &houses[h_idx];
+
+		/* Access original item in the house */
+		if (h_ptr->flags & HF_TRAD) {
+			if (h_ptr->stock_num <= o_ptr->ps_idx_x) {
+				s_printf("PLAYER_STORE_PURCHASE: BAD stock_num!\n");
+				msg_print(Ind, "The shopkeeper just modified the store, please re-enter!");
+				return; /* oops, the owner took out some item(s) */
+			}
+			ho_ptr = &h_ptr->stock[o_ptr->ps_idx_x];
+		} else {
+			/* ALL houses are currently rectangular, so this check seems obsolete.. */
+			if (h_ptr->flags & HF_RECT) {
+				c_ptr = &zcave[o_ptr->ps_idx_y][o_ptr->ps_idx_x];
+				if (!c_ptr->o_idx) {
+					s_printf("PLAYER_STORE_PURCHASE: BAD STOCK x,y!\n");
+					msg_print(Ind, "The shopkeeper just modified the store, please re-enter!");
+					return; /* oops, the owner picked up our item */
+				}
+				ho_ptr = &o_list[c_ptr->o_idx];
+			}
+		}
+
+		/* Some item was still at the position we want to buy from,
+		   so now verify that it's still the SAME item. */
+		if (ho_ptr == NULL) {
+			s_printf("PLAYER_STORE_PURCHASE: BAD ho_ptr!\n");
+			return; /* shouldn't happen (except if we add non-rectangular mang houses.. */
+		}
+		if (ho_ptr->tval != o_ptr->tval || ho_ptr->sval != o_ptr->sval) {
+			s_printf("PLAYER_STORE_PURCHASE: BAD STOCK tval/sval!\n");
+			msg_print(Ind, "The shopkeeper just modified the store, please re-enter!");
+			return; /* oops, the owner swapped our item for something else */
+		}
+		if (ho_ptr->number != o_ptr->number) {
+			s_printf("PLAYER_STORE_PURCHASE: BAD STOCK number! (%d vs %d)\n", ho_ptr->number, o_ptr->number);
+			msg_print(Ind, "The shopkeeper just modified the store, please re-enter!");
+			return; /* oops, the owner took away or added some of that item type.
+			           Actually this could be handled, but we're strict for now. */
+		}
+	}
+#endif
+
 	/* check whether client tries to buy more than the store has */
 	if (o_ptr->number < amt) {
 		s_printf("$INTRUSION$ Too high amount %d of %d! Bought by %s.\n", amt, o_ptr->number, p_ptr->name);
@@ -2781,25 +2929,30 @@ void store_purchase(int Ind, int item, int amt)
 		return;
 	}
 
+	/* prevent winners picking up true arts accidentally */
+	if (true_artifact_p(o_ptr) && !winner_artifact_p(o_ptr) &&
+	    p_ptr->total_winner && cfg.kings_etiquette) {
+		msg_print(Ind, "Royalties may not own true artifacts!");
+		if (!is_admin(p_ptr)) return;
+	}
+
 	/* Check if the player is powerful enough for that item */
-        if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) && (o_ptr->level > p_ptr->lev || o_ptr->level == 0))
-        {
-                if (cfg.anti_cheeze_pickup)
-                {
-                        msg_print(Ind, "You aren't powerful enough yet to pick up that item!");
-                        return;
-                }
-                if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup)
-                {
-                        msg_print(Ind, "You aren't powerful enough yet to pick up that artifact!");
-                        return;
-                }
+	if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) &&
+	    (o_ptr->level > p_ptr->lev || o_ptr->level == 0)) {
+		if (cfg.anti_cheeze_pickup) {
+			msg_print(Ind, "You aren't powerful enough yet to pick up that item!");
+			return;
+		}
+		if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup) {
+			msg_print(Ind, "You aren't powerful enough yet to pick up that artifact!");
+			return;
+		}
 	}
 	
 	if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) && !p_ptr->once_winner
 	    && !p_ptr->total_winner) { /* <- obsolete. Added that one just for testing when admin char sets .total_winner=1 */
-                msg_print(Ind, "Only royalties are powerful enough to pick up that item!");
-                if (!is_admin(p_ptr)) return;
+		msg_print(Ind, "Only royalties are powerful enough to pick up that item!");
+		if (!is_admin(p_ptr)) return;
 	}
 
 	/* Assume the player wants just one of them */
@@ -2815,28 +2968,29 @@ void store_purchase(int Ind, int item, int amt)
 	 * are being dropped, it makes for a neater message to leave the original 
 	 * stack's pval alone. -LM-
 	 */
-	if (o_ptr->tval == TV_WAND)
-	{
-		if (o_ptr->tval == TV_WAND)
-		{
+	if (o_ptr->tval == TV_WAND) {
+		if (o_ptr->tval == TV_WAND) {
 			sell_obj.pval = divide_charged_item(o_ptr, amt);
 		}
 	}
 
 	/* Hack -- require room in pack */
-	if (!inven_carry_okay(Ind, &sell_obj))
-	{
+	if (!inven_carry_okay(Ind, &sell_obj)) {
 		msg_print(Ind, "You cannot carry that many different items.");
 		return;
 	}
 
 	/* Determine the "best" price (per item) */
+#ifdef PLAYER_STORES
+	if (p_ptr->store_num <= -2)
+		best = price_item_player_store(Ind, &sell_obj);
+	else
+#endif
 	best = price_item(Ind, &sell_obj, ot_ptr->min_inflate, FALSE);
 
 #if 0
 	/* Find out how many the player wants */
-	if (o_ptr->number > 1)
-	{
+	if (o_ptr->number > 1) {
 		/* Hack -- note cost of "fixed" items */
 		if ((p_ptr->store_num != 7) && (o_ptr->ident & ID_FIXED))
 		{
@@ -2852,13 +3006,11 @@ void store_purchase(int Ind, int item, int amt)
 #endif
 
 	/* Attempt to buy it */
-	if (p_ptr->store_num != 7)
-	{
+	if (p_ptr->store_num != 7) {
 		/* For now, I'm assuming everything's price is "fixed" */
 		/* Fixed price, quick buy */
 #if 0
-		if (o_ptr->ident & ID_FIXED)
-		{
+		if (o_ptr->ident & ID_FIXED) {
 #endif
 			/* Assume accept */
 			choice = 0;
@@ -2869,8 +3021,7 @@ void store_purchase(int Ind, int item, int amt)
 		}
 
 		/* Haggle for it */
-		else
-		{
+		else {
 			/* Describe the object (fully) */
 			object_desc_store(o_name, &sell_obj, TRUE, 3);
 
@@ -2887,14 +3038,12 @@ void store_purchase(int Ind, int item, int amt)
 
 
 		/* Player wants it */
-		if (choice == 0)
-		{
+		if (choice == 0) {
 			/* Fix the item price (if "correctly" haggled) */
 			if (price == (best * sell_obj.number)) o_ptr->ident |= ID_FIXED;
 
 			/* Player can afford it */
-			if (p_ptr->au >= price)
-			{
+			if (p_ptr->au >= price) {
 				if (p_ptr->taciturn_messages) suppress_message = TRUE;
 
 				/* Say "okay" */
@@ -2907,8 +3056,7 @@ void store_purchase(int Ind, int item, int amt)
 				p_ptr->au -= price;
 
 				/* Buying things lessen the distrust somewhat */
-				if (p_ptr->tim_blacklist && (price > 100))
-				{
+				if (p_ptr->tim_blacklist && (price > 100)) {
 					p_ptr->tim_blacklist -= price / 100;
 					if (p_ptr->tim_blacklist < 1) p_ptr->tim_blacklist = 1;
 				}
@@ -2921,6 +3069,15 @@ void store_purchase(int Ind, int item, int amt)
 
 				/* Hack -- clear the "fixed" flag from the item */
 				sell_obj.ident &= ~ID_FIXED;
+
+#ifdef PLAYER_STORES
+				/* If we buy from a player store, erase the item inscription! */
+				if (p_ptr->store_num <= -2) {
+					sell_obj.note = 0;
+					/* handle the original items and cheque processing */
+					player_store_handle_purchase(Ind, o_ptr, &sell_obj, price);
+				}
+#endif
 
 				/* Describe the transaction */
 				object_desc(Ind, o_name, &sell_obj, TRUE, 3);
@@ -2937,8 +3094,7 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 				object_desc(Ind, o_name, &p_ptr->inventory[item_new], TRUE, 3);
 
 				/* Message */
-				msg_format(Ind, "You have %s (%c).",
-				           o_name, index_to_label(item_new));
+				msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item_new));
 
 				/* Handle stuff */
 				handle_stuff(Ind);
@@ -2954,55 +3110,18 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 				display_store(Ind);
 
 				/* Store is empty */
-				if (st_ptr->stock_num == 0)
-				{
-#if 0	/* disabled -- some stores with few stocks get silly */
-					/* XXX kick him out once, since client update doesn't
-					 * seem to work right */
-					store_kick(Ind, FALSE);
-					suppress_message = FALSE;
-
-					/* Shuffle */
-					if (rand_int(STORE_SHUFFLE) == 0)
-					{
-						/* Message */
-						msg_print(Ind, "The shopkeeper retires.");
-
-						/* Shuffle the store */
-						store_shuffle(st_ptr);
-					}
-
-					/* Maintain */
-					else
-					{
-						/* Message */
-						msg_print(Ind, "The shopkeeper brings out some new stock.");
-					}
-
-					/* New inventory */
-					for (i = 0; i < 10; i++)
-					{
-						/* Maintain the store */
-						store_maint(st_ptr);
-					}
-
-					/* Redraw everything */
-					//display_inventory(Ind);
-
-					return;
-#endif	// 0
+				if (st_ptr->stock_num == 0) {
+					/* nothing (was maybe once: shuffle) */
 				}
 
 				/* The item is gone */
-				else if (st_ptr->stock_num != i)
-				{
+				else if (st_ptr->stock_num != i) {
 					/* Redraw everything */
 					display_inventory(Ind);
 				}
 
 				/* Item is still here */
-				else
-				{
+				else {
 					/* Redraw the item */
 					display_entry(Ind, item);
 				}
@@ -3019,8 +3138,7 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 	}
 
 	/* Home is much easier */
-	else
-	{
+	else {
 		/* Carry the item */
 		item_new = inven_carry(Ind, &sell_obj);
 
@@ -3044,15 +3162,12 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 		display_store(Ind);
 
 		/* Hack -- Item is still here */
-		if (i == st_ptr->stock_num)
-		{
+		if (i == st_ptr->stock_num) {
 			/* Redraw the item */
 			display_entry(Ind, item);
 		}
-
 		/* The item is gone */
-		else
-		{
+		else {
 			/* Redraw everything */
 			display_inventory(Ind);
 		}
@@ -3081,10 +3196,7 @@ void store_sell(int Ind, int item, int amt)
 	char		o_name[ONAME_LEN];
 
 	/* Sanity check */
-	if (item < 0 || item >= INVEN_TOTAL)
-	{
-		return;
-	}
+	if (item < 0 || item >= INVEN_TOTAL) return;
 
 	/* Check for client-side exploit! */
 	if (p_ptr->inventory[item].number < amt) {
@@ -3093,14 +3205,13 @@ void store_sell(int Ind, int item, int amt)
 		return;
 	}
 
-	if (p_ptr->store_num == STORE_HOME)
-	{
+	if (p_ptr->store_num == STORE_HOME) {
 		home_sell(Ind, item, amt);
 		return;
 	}
 
 	/* sanity check - Yakina - */
-	if (p_ptr->store_num==-1){
+	if (p_ptr->store_num == -1) {
 		msg_print(Ind,"You left the shop!");
 		return;
 	}
@@ -3113,8 +3224,7 @@ void store_sell(int Ind, int item, int amt)
 	if (amt <= 0) return;
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
+	if (item >= 0) {
 		/* Sanity check - mikaelh */
 		if (item < 0 || item >= INVEN_TOTAL)
 			return;
@@ -3123,8 +3233,7 @@ void store_sell(int Ind, int item, int amt)
 	}
 
 	/* Get the item (on the floor) */
-	else
-	{
+	else {
 		o_ptr = &o_list[0 - item];
 	}
 
@@ -3132,8 +3241,7 @@ void store_sell(int Ind, int item, int amt)
 	if (!o_ptr->tval) return;
 
 	/* Check for validity of sale */
-	if (!store_will_buy(Ind, o_ptr))
-	{
+	if (!store_will_buy(Ind, o_ptr)) {
 		msg_print(Ind, "I don't want that!");
 		return;
 	}
@@ -3165,34 +3273,33 @@ void store_sell(int Ind, int item, int amt)
 	object_desc(Ind, o_name, &sold_obj, TRUE, 3);
 
 	/* Remove any inscription for stores */
-	if (p_ptr->store_num != 7) sold_obj.note = 0;
+	if (p_ptr->store_num != 7) {
+		sold_obj.note = 0;
+		sold_obj.note_utag = 0;
+	}
 
 	/* Access the store */
 //	i=gettown(Ind);
 //	store_type *st_ptr = &town[townval].townstore[i];
 
 	/* Is there room in the store (or the home?) */
-	if (gettown(Ind)!=-1)	//DUNGEON STORES
-	{
-	if (!store_check_num(&town[gettown(Ind)].townstore[p_ptr->store_num], &sold_obj))
-	{
-		if (p_ptr->store_num == STORE_HOME) msg_print(Ind, "Your home is full.");
-		else msg_print(Ind, "I have not the room in my store to keep it.");
-		return;
-	}
-	}else{
-	if (!store_check_num(&town[0].townstore[p_ptr->store_num], &sold_obj))
-	{
-		if (p_ptr->store_num == STORE_HOME) msg_print(Ind, "Your home is full.");
-		else msg_print(Ind, "I have not the room in my store to keep it.");
-		return;
-	}
+	if (gettown(Ind) != -1) { //DUNGEON STORES
+		if (!store_check_num(&town[gettown(Ind)].townstore[p_ptr->store_num], &sold_obj)) {
+			if (p_ptr->store_num == STORE_HOME) msg_print(Ind, "Your home is full.");
+			else msg_print(Ind, "I have not the room in my store to keep it.");
+			return;
+		}
+	} else {
+		if (!store_check_num(&town[0].townstore[p_ptr->store_num], &sold_obj)) {
+			if (p_ptr->store_num == STORE_HOME) msg_print(Ind, "Your home is full.");
+			else msg_print(Ind, "I have not the room in my store to keep it.");
+			return;
+		}
 	}
 
 	/* Museum */
 //	if (p_ptr->store_num == 57)
-	if (st_info[p_ptr->store_num].flags1 & SF1_MUSEUM)
-	{
+	if (st_info[p_ptr->store_num].flags1 & SF1_MUSEUM) {
 #if 0
 		/* Describe the transaction */
 		msg_format(Ind, "Selling %s (%c).", o_name, index_to_label(item));
@@ -3282,7 +3389,7 @@ void store_confirm(int Ind)
 	if (p_ptr->current_selling == -1)
 		return;
 
-	if (p_ptr->store_num==-1){
+	if (p_ptr->store_num == -1) {
 		msg_print(Ind,"You left the building!");
 		return;
 	}
@@ -3294,17 +3401,45 @@ void store_confirm(int Ind)
 	amt = p_ptr->current_sell_amt;
 	price = p_ptr->current_sell_price;
 
-	/* Get the inventory item */
-	o_ptr = &p_ptr->inventory[item];
+	/* -------------------Repeated checks in case inven changed (rods recharging->restacking) */
+	/* Get the item (in the pack) */
+	if (item >= 0) {
+		/* Sanity check - mikaelh */
+		if (item < 0 || item >= INVEN_TOTAL)
+			return;
 
-        /* Server-side exploit checks - C. Blue */
-        if (amt <= 0) {
-                s_printf("$INTRUSION$ (FORCED) Bad amount %d! Sold by %s.\n", amt, p_ptr->name);
+		o_ptr = &p_ptr->inventory[item];
+	}
+	/* Get the item (on the floor) */
+	else {
+#if 0
+		o_ptr = &o_list[0 - item];
+#else
+		return;
+#endif
+	}
+	/* Check that it's a real item - mikaelh */
+	if (!o_ptr->tval) return;
+	/* Check for validity of sale */
+	if (!store_will_buy(Ind, o_ptr)) {
+		msg_print(Ind, "I don't want that!");
 		return;
 	}
-        if (o_ptr->number < amt) {
-                s_printf("$INTRUSION$ Bad amount %d of %d! Sold by %s.\n", amt, o_ptr->number, p_ptr->name);
-                msg_print(Ind, "You don't have that many!");
+	/* -------------------------------------------------------------------------------------- */
+
+#if 0 /* done above already */
+	/* Get the inventory item */
+	o_ptr = &p_ptr->inventory[item];
+#endif
+
+        /* Server-side exploit checks - C. Blue */
+	if (amt <= 0) {
+		s_printf("$INTRUSION$ (FORCED) Bad amount %d! Sold by %s.\n", amt, p_ptr->name);
+		return;
+	}
+	if (o_ptr->number < amt) {
+		s_printf("$INTRUSION$ Bad amount %d of %d! Sold by %s.\n", amt, o_ptr->number, p_ptr->name);
+		msg_print(Ind, "You don't have that many!");
 		return;
 	}
 	sold_obj = *o_ptr;
@@ -3331,8 +3466,14 @@ void store_confirm(int Ind)
 	
 	/* Add '!s' inscription, w00t - C. Blue */
 	if (check_guard_inscription(o_ptr->note, 's')) {
-    	    msg_print(Ind, "The item's inscription prevents it");
-	    return;
+		msg_print(Ind, "The item's inscription prevents it");
+		return;
+	}
+
+	/* hack: prevent s32b overflow */
+	if (2000000000 - o_ptr->pval < p_ptr->au) {
+		msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
+		return;
 	}
 
 	/* Trash the saved variables */
@@ -3407,7 +3548,7 @@ void store_confirm(int Ind)
 
 	/* The store gets that (known) item */
 //	if(sold_obj.tval!=8)	// What was it for.. ?
-	if(gettown(Ind)!=-1) //DUNGEON STORES
+	if(gettown(Ind) != -1) //DUNGEON STORES
 		item_pos = store_carry(&town[gettown(Ind)].townstore[p_ptr->store_num], &sold_obj);
 #if 0 /* have dungeon shops eat the item to prevent cheezy transfers */
 	else
@@ -3430,10 +3571,7 @@ void store_confirm(int Ind)
 	display_store(Ind);
 
 	/* Re-display if item is now in store */
-	if (item_pos >= 0)
-	{
-		display_inventory(Ind);
-	}
+	if (item_pos >= 0) display_inventory(Ind);
 }
 
 
@@ -3444,8 +3582,6 @@ void store_examine(int Ind, int item)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int st = p_ptr->store_num;
-
 	store_type *st_ptr;
 	owner_type *ot_ptr;
 
@@ -3454,31 +3590,31 @@ void store_examine(int Ind, int item)
 	object_type		sell_obj;
 	object_type		*o_ptr;
 
-	char		o_name[ONAME_LEN];
-
-	if (p_ptr->store_num == STORE_HOME)
-	{
+	if (p_ptr->store_num == STORE_HOME) {
 		home_examine(Ind, item);
 		return;
 	}
 
-	i=gettown(Ind);
-//	if(i==-1) return;       //DUNGEON STORES
-        if(i==-1) i=0;
+	i = gettown(Ind);
+	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
+        if (i == -1) i = 0;
 
-	st_ptr = &town[i].townstore[st];
+#ifdef PLAYER_STORES
+	if (p_ptr->store_num <= -2) /* it's a player's private store! */
+		st_ptr = &fake_store[-2 - p_ptr->store_num];
+	else
+#endif
+	st_ptr = &town[i].townstore[p_ptr->store_num];
 //	ot_ptr = &owners[st][st_ptr->owner];
 	ot_ptr = &ow_info[st_ptr->owner];
 
-	if (!store_attest_command(st, BACT_EXAMINE))
-	{
+	if (!store_attest_command(p_ptr->store_num, BACT_EXAMINE)) {
 		//if (!is_admin(p_ptr)) return;
 		return;
 	}
 
 	/* Empty? */
-	if (st_ptr->stock_num <= 0)
-	{
+	if (st_ptr->stock_num <= 0) {
 		if (p_ptr->store_num == STORE_HOME) msg_print(Ind, "Your home is empty.");
 		else msg_print(Ind, "I am currently out of stock.");
 		return;
@@ -3500,82 +3636,10 @@ void store_examine(int Ind, int item)
 	/* Hack -- get a "sample" object */
 	sell_obj = *o_ptr;
 
-	/* Description */
-	object_desc(Ind, o_name, o_ptr, TRUE, 3);
-
 	/* Require full knowledge */
-	if (!(o_ptr->ident & (ID_MENTAL)) && !is_admin(p_ptr))
-	{
-		/* Describe */
-		msg_format(Ind, "\377s%s:\n", o_name);
-		if (strlen(o_name) > 77) msg_format(Ind, "\377s%s:\n", o_name + 77);
-
-                switch(o_ptr->tval){
-	        case TV_BLUNT:
-    		        msg_print(Ind, "\377s  It's a blunt weapon."); break;
-                case TV_POLEARM:
-	        	msg_print(Ind, "\377s  It's a polearm."); break;
-    	        case TV_SWORD:
-        	        msg_print(Ind, "\377s  It's a sword-type weapon."); break;
-                case TV_AXE:
-	                msg_print(Ind, "\377s  It's an axe-type weapon."); break;
-        	default:
-	                if (wield_slot(Ind, o_ptr) != INVEN_WIELD) msg_print(Ind, "\377s  You have no special knowledge about that item.");
-        	        break;
-	        }
- 		/* This can only happen in the home */
-		if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
-		{
-#if 0
-			int blows = calc_blows_obj(Ind, o_ptr);
-			msg_format(Ind, "\377s  With it, you can usually attack %d time%s/turn.",
-					blows, blows > 1 ? "s" : "");
-#else
-			object_type forge, forge2, *old_ptr = &forge, *old_ptr2 = &forge2;
-			long tim_wraith = p_ptr->tim_wraith;
-			object_copy(old_ptr, &p_ptr->inventory[INVEN_WIELD]);
-			object_copy(&p_ptr->inventory[INVEN_WIELD], o_ptr);
-			object_copy(old_ptr2, &p_ptr->inventory[INVEN_ARM]);
-			if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H)
-				p_ptr->inventory[INVEN_ARM].k_idx = 0;
-			else if ((k_info[o_ptr->k_idx].flags4 & TR4_SHOULD2H) &&
-			    (is_weapon(p_ptr->inventory[INVEN_ARM].tval)))
-				p_ptr->inventory[INVEN_ARM].k_idx = 0;
-			suppress_message = TRUE;
-			calc_boni(Ind);
-			msg_format(Ind, "\377s  With it, you can usually attack %d time%s/turn.",
-			    p_ptr->num_blow, p_ptr->num_blow > 1 ? "s" : "");
-			object_copy(&p_ptr->inventory[INVEN_ARM], old_ptr2);
-			object_copy(&p_ptr->inventory[INVEN_WIELD], old_ptr);
-			calc_boni(Ind);
-			suppress_message = FALSE;
-			p_ptr->tim_wraith = tim_wraith;
-#endif
-		}
-		else msg_print(Ind, "\377s  You have no special knowledge about that item.");
-		return;
-	}
-
-	/* Description */
-	object_desc(Ind, o_name, o_ptr, TRUE, 3);
-
-	/* Describe */
-//	msg_format(Ind, "Examining %s...", o_name);
-
+	if (!(o_ptr->ident & (ID_MENTAL)) && !is_admin(p_ptr)) observe_aux(Ind, o_ptr);
 	/* Describe it fully */
-	if (!identify_fully_aux(Ind, o_ptr)) msg_print(Ind, "You see nothing special.");
-
-#if 0
-	if (o_ptr->tval < TV_BOOK)
-	{
-		if (!identify_fully_aux(Ind, o_ptr)) msg_print(Ind, "You see nothing special.");
-		/* Books are read */
-	}
-	else
-	{
-		do_cmd_browse_aux(o_ptr);
-	}
-#endif	// 0
+	else if (!identify_fully_aux(Ind, o_ptr)) msg_print(Ind, "You see nothing special.");
 
 	return;
 }
@@ -3605,7 +3669,7 @@ void do_cmd_store(int Ind)
 	int i, j;
 	int maintain_num;
 
-	cave_type		*c_ptr;
+	cave_type *c_ptr;
 	struct c_special *cs_ptr;
 
 	/* Access the player grid */
@@ -3614,17 +3678,15 @@ void do_cmd_store(int Ind)
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	i = gettown(Ind);
-//	if(i==-1) return;	//DUNGEON STORES
 	/* hack: non-town stores are borrowed from town #0 - C. Blue */
-	if(i == -1) i = 0;
+	if (i == -1) i = 0;
 
 	/* Verify a store */
 #if 0
 	if (!((c_ptr->feat >= FEAT_SHOP_HEAD) &&
 	      (c_ptr->feat <= FEAT_SHOP_TAIL)))
-#endif	// 0
-	if (c_ptr->feat != FEAT_SHOP)
-	{
+#endif
+	if (c_ptr->feat != FEAT_SHOP) {
 		msg_print(Ind, "You see no store here.");
 		return;
 	}
@@ -3632,12 +3694,9 @@ void do_cmd_store(int Ind)
 	/* Extract the store code */
 //	which = (c_ptr->feat - FEAT_SHOP_HEAD);
 
-	if((cs_ptr = GetCS(c_ptr, CS_SHOP)))
-	{
+	if((cs_ptr = GetCS(c_ptr, CS_SHOP))) {
 		which = cs_ptr->sc.omni;
-	}
-	else
-	{
+	} else {
 		msg_print(Ind, "You see no store here.");
 		return;
 	}
@@ -3652,14 +3711,12 @@ void do_cmd_store(int Ind)
 	}
 
 	/* Hack -- Ignore the home */
-	if (which == STORE_HOME)	/* XXX It'll change */
-	{
+	if (which == STORE_HOME) {	/* XXX It'll change */
 		/* msg_print(Ind, "The doors are locked."); */
 		return;
 	}
-#if 0	// it have changed
-	else if (which > 7)	/* XXX It'll change */
-	{
+#if 0	/* it have changed */
+	else if (which > 7) {	/* XXX It'll change */
 		msg_print(Ind, "A placard reads: Closed for inventory.");
 		return;
 	}
@@ -3674,17 +3731,15 @@ void do_cmd_store(int Ind)
 	/* No automatic command */
 	/*command_new = 0;*/
 
-	if (gettown(Ind) != -1){
+	if (gettown(Ind) != -1) {
 		st_ptr = &town[i].townstore[which];
 
 		/* Make sure if someone is already in */
-		for (i = 1; i <= NumPlayers; i++)
-		{
+		for (i = 1; i <= NumPlayers; i++) {
 			/* Check this player */
 			j = gettown(i);
-			if(j != -1){
-				if(st_ptr == &town[j].townstore[Players[i]->store_num])
-				{
+			if (j != -1) {
+				if(st_ptr == &town[j].townstore[Players[i]->store_num]) {
 					msg_print(Ind, "The store is full.");
 					store_kick(Ind, FALSE);
 					return;
@@ -3697,13 +3752,11 @@ void do_cmd_store(int Ind)
 		st_ptr = &town[i].townstore[which];
 
 		/* Make sure if someone is already in */
-		for (i = 1; i <= NumPlayers; i++)
-		{
+		for (i = 1; i <= NumPlayers; i++) {
 			/* Check this player */
 			j = gettown(i);
-			if(j == -1){
-				if(st_ptr == &town[0].townstore[Players[i]->store_num])
-				{
+			if (j == -1) {
+				if(st_ptr == &town[0].townstore[Players[i]->store_num]) {
 					msg_print(Ind, "The store is full.");
 					store_kick(Ind, FALSE);
 					return;
@@ -3743,11 +3796,9 @@ void do_cmd_store(int Ind)
 	   the bigger the difference in scumming difficulty for rare items. - C. Blue */
 	if (maintain_num > MAX_MAINTENANCES) maintain_num = MAX_MAINTENANCES;
 
-	if (maintain_num)
-	{
+	if (maintain_num) {
 		/* Maintain the store */
-		for (i = 0; i < maintain_num; i++)
-		{
+		for (i = 0; i < maintain_num; i++) {
 			store_maint(st_ptr);
 			if (retire_owner_p(st_ptr)) store_shuffle(st_ptr);
 		}
@@ -3765,8 +3816,7 @@ void do_cmd_store(int Ind)
 
 	/* Display the store before the blacklist or watchlist messages
 	 * (requires 441a) - this was Sav's request - mikaelh */
-	if (is_newer_than(&p_ptr->version, 4, 4, 1, 1, 0, 0))
-	{
+	if (is_newer_than(&p_ptr->version, 4, 4, 1, 1, 0, 0)) {
 		/* Display the store */
 		display_store(Ind);
 	}
@@ -3803,8 +3853,7 @@ void do_cmd_store(int Ind)
 	else if (st_ptr->tim_watch)
 		msg_print(Ind, "The owner seems especially attentive right now.");
 
-	if (!is_newer_than(&p_ptr->version, 4, 4, 1, 1, 0, 0))
-	{
+	if (!is_newer_than(&p_ptr->version, 4, 4, 1, 1, 0, 0)) {
 		/* Display the store */
 		display_store(Ind);
 	}
@@ -4102,6 +4151,12 @@ void store_kick(int Ind, bool say)
 	//				store_leave(Ind);
 	p_ptr->store_num = -1;
 	Send_store_kick(Ind);
+#ifdef PLAYER_STORES
+	if (p_ptr->store_num <= -2) {
+		/* unlock the fake store again which we had occupied */
+		fake_store_visited[-2 - p_ptr->store_num] = 0;
+	} else
+#endif
 	teleport_player_force(Ind, 1);
 }
 
@@ -4112,23 +4167,26 @@ void store_exec_command(int Ind, int action, int item, int item2, int amt, int g
 	int i;
 
 	/* MEGAHACK -- accept house extension command */
-	if (p_ptr->store_num==7)
-	{
+	if (p_ptr->store_num == 7) {
 		if (ba_info[action].action == BACT_EXTEND_HOUSE) home_extend(Ind);
 		return;
 	}
 
-
-	i=gettown(Ind);
-//	if(i==-1) return;       //DUNGEON STORES
-        if(i==-1) i=0;
+	i = gettown(Ind);
+	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
+        if (i == -1) i = 0;
 
 	/* sanity check - Yakina - */
-	if (p_ptr->store_num==-1){
+	if (p_ptr->store_num == -1) {
 		msg_print(Ind,"You left the building!");
 		return;
 	}
 
+#ifdef PLAYER_STORES
+	if (p_ptr->store_num <= -2) /* it's a player's private store! */
+		st_ptr = &fake_store[-2 - p_ptr->store_num];
+	else
+#endif
 	st_ptr = &town[i].townstore[p_ptr->store_num];
 
 	/* Mockup */
@@ -4193,21 +4251,19 @@ void store_exec_command(int Ind, int action, int item, int item2, int amt, int g
 /* It's ToME code */
 static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr)
 {
-	int 				slot;
-	s64b			   value, j_value;
-	int 	i;
+	int slot;
+	s64b value, j_value;
+	int i;
 	object_type *j_ptr;
 
 
 	/* Check each existing item (try to combine) */
-	for (slot = 0; slot < h_ptr->stock_num; slot++)
-	{
+	for (slot = 0; slot < h_ptr->stock_num; slot++) {
 		/* Get the existing item */
 		j_ptr = &h_ptr->stock[slot];
 
 		/* The home acts just like the player */
-		if (object_similar(Ind, j_ptr, o_ptr, 0x0))
-		{
+		if (object_similar(Ind, j_ptr, o_ptr, 0x0)) {
 			/* Save the new number of items */
 			object_absorb(Ind, j_ptr, o_ptr);
 
@@ -4224,8 +4280,7 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr)
 	value = object_value(Ind, o_ptr);
 
 	/* Check existing slots to see if we must "slide" */
-	for (slot = 0; slot < h_ptr->stock_num; slot++)
-	{
+	for (slot = 0; slot < h_ptr->stock_num; slot++) {
 		/* Get that item */
 		j_ptr = &h_ptr->stock[slot];
 
@@ -4259,8 +4314,7 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr)
 		 * increasing recharge time --dsb
 		 */
 #if 0
-		if (o_ptr->tval == TV_ROD_MAIN)
-		{
+		if (o_ptr->tval == TV_ROD_MAIN) {
 			if (o_ptr->timeout < j_ptr->timeout) break;
 			if (o_ptr->timeout > j_ptr->timeout) continue;
 		}
@@ -4274,9 +4328,7 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr)
 
 	/* Slide the others up */
 	for (i = h_ptr->stock_num; i > slot; i--)
-	{
 		h_ptr->stock[i] = h_ptr->stock[i-1];
-	}
 
 	/* More stuff now */
 	h_ptr->stock_num++;
@@ -4508,13 +4560,10 @@ void home_sell(int Ind, int item, int amt)
 //		item_pos = store_carry(p_ptr->store_num, &sold_obj);
 
 	/* Resend the basic store info */
-	display_trad_house(Ind);
+	display_trad_house(Ind, h_ptr);
 
 	/* Re-display if item is now in store */
-	if (item_pos >= 0)
-	{
-		display_house_inventory(Ind);
-	}
+	if (item_pos >= 0) display_house_inventory(Ind, h_ptr);
 }
 
 
@@ -4544,7 +4593,7 @@ void home_purchase(int Ind, int item, int amt)
 		return;
 	}
 
-	if (p_ptr->store_num==-1){
+	if (p_ptr->store_num == -1) {
 		msg_print(Ind,"You left the shop!");
 		return;
 	}
@@ -4586,25 +4635,32 @@ void home_purchase(int Ind, int item, int amt)
 		return;
 	}
 
+#if 0 /* if a true art was really store in a house, this should probably stay allowed.. */
+	/* prevent winners picking up true arts accidentally */
+	if (true_artifact_p(o_ptr) && !winner_artifact_p(o_ptr) &&
+	    p_ptr->total_winner && cfg.kings_etiquette) {
+		msg_print(Ind, "Royalties may not own true artifacts!");
+		if (!is_admin(p_ptr)) return;
+	}
+#endif
+
 	/* Check if the player is powerful enough for that item */
-        if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) && (o_ptr->level > p_ptr->lev || o_ptr->level == 0))
-        {
-                if (cfg.anti_cheeze_pickup)
-                {
-                        msg_print(Ind, "You aren't powerful enough yet to pick up that item!");
-                        return;
-                }
-                if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup)
-                {
-                        msg_print(Ind, "You aren't powerful enough yet to pick up that artifact!");
-                        return;
-                }
+	if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) &&
+	    (o_ptr->level > p_ptr->lev || o_ptr->level == 0)) {
+		if (cfg.anti_cheeze_pickup) {
+			msg_print(Ind, "You aren't powerful enough yet to pick up that item!");
+			return;
+		}
+		if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup) {
+			msg_print(Ind, "You aren't powerful enough yet to pick up that artifact!");
+			return;
+		}
 	}
 
 	if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) && !p_ptr->once_winner
 	    && !p_ptr->total_winner) { /* <- Obsolete. Added that one just for testing when admin char sets .total_winner=1 */
-                msg_print(Ind, "Only royalties are powerful enough to pick up that item!");
-                if (!is_admin(p_ptr)) return;
+		msg_print(Ind, "Only royalties are powerful enough to pick up that item!");
+		if (!is_admin(p_ptr)) return;
 	}
 
 	/* Assume the player wants just one of them */
@@ -4709,20 +4765,17 @@ void home_purchase(int Ind, int item, int amt)
 		home_item_optimize(h_ptr, item);
 
 		/* Resend the basic store info */
-		display_trad_house(Ind);
+		display_trad_house(Ind, h_ptr);
 
 		/* Hack -- Item is still here */
-		if (i == h_ptr->stock_num && i)
-		{
+		if (i == h_ptr->stock_num && i) {
 			/* Redraw the item */
-			display_house_entry(Ind, item);
+			display_house_entry(Ind, item, h_ptr);
 		}
-
 		/* The item is gone */
-		else
-		{
+		else {
 			/* Redraw everything */
-			display_house_inventory(Ind);
+			display_house_inventory(Ind, h_ptr);
 		}
 	}
 
@@ -4784,73 +4837,17 @@ void home_examine(int Ind, int item)
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 	/* Require full knowledge */
-	if (!(o_ptr->ident & (ID_MENTAL)) && !is_admin(p_ptr))
-	{
-		/* Describe */
-		msg_format(Ind, "\377s%s:\n", o_name);
-		if (strlen(o_name) > 77) msg_format(Ind, "\377s%s:\n", o_name + 77);
-
-                switch(o_ptr->tval){
-	        case TV_BLUNT:
-    		        msg_print(Ind, "\377s  It's a blunt weapon."); break;
-                case TV_POLEARM:
-	        	msg_print(Ind, "\377s  It's a polearm."); break;
-    	        case TV_SWORD:
-        	        msg_print(Ind, "\377s  It's a sword-type weapon."); break;
-                case TV_AXE:
-	                msg_print(Ind, "\377s  It's an axe-type weapon."); break;
-        	default:
-	                if (wield_slot(Ind, o_ptr) != INVEN_WIELD) msg_print(Ind, "\377s  You have no special knowledge about that item.");
-        	        break;
-	        }
-		/* This can only happen in the home */
-		if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
-		{
-#if 0
-			int blows = calc_blows_obj(Ind, o_ptr);
-			msg_format(Ind, "\377s  With it, you can usually attack %d time%s/turn.",
-					blows, blows > 1 ? "s" : "");
-#else
-/* copied from object1.c.. */
-			object_type forge, forge2, *old_ptr = &forge, *old_ptr2 = &forge2;
-			long tim_wraith = p_ptr->tim_wraith;
-			object_copy(old_ptr, &p_ptr->inventory[INVEN_WIELD]);
-			object_copy(&p_ptr->inventory[INVEN_WIELD], o_ptr);
-			object_copy(old_ptr2, &p_ptr->inventory[INVEN_ARM]);
-			if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H)
-				p_ptr->inventory[INVEN_ARM].k_idx = 0;
-			else if ((k_info[o_ptr->k_idx].flags4 & TR4_SHOULD2H) &&
-			    (is_weapon(p_ptr->inventory[INVEN_ARM].tval)))
-				p_ptr->inventory[INVEN_ARM].k_idx = 0;
-			suppress_message = TRUE;
-			calc_boni(Ind);
-			msg_format(Ind, "\377s  With it, you can usually attack %d time%s/turn.",
-			    p_ptr->num_blow, p_ptr->num_blow > 1 ? "s" : "");
-			object_copy(&p_ptr->inventory[INVEN_ARM], old_ptr2);
-			object_copy(&p_ptr->inventory[INVEN_WIELD], old_ptr);
-			calc_boni(Ind);
-			suppress_message = FALSE;
-			p_ptr->tim_wraith = tim_wraith;
-#endif
-		}
-		else msg_print(Ind, "\377s  You have no special knowledge about that item.");
-		return;
-	}
-
+	if (!(o_ptr->ident & (ID_MENTAL)) && !is_admin(p_ptr)) observe_aux(Ind, o_ptr);
 	/* Describe it fully */
-	if (!identify_fully_aux(Ind, o_ptr)) msg_print(Ind, "You see nothing special.");
+	else if (!identify_fully_aux(Ind, o_ptr)) msg_print(Ind, "You see nothing special.");
 
 #if 0
-	if (o_ptr->tval < TV_BOOK)
-	{
+	if (o_ptr->tval < TV_BOOK) {
 		if (!identify_fully_aux(Ind, o_ptr)) msg_print(Ind, "You see nothing special.");
-		/* Books are read */
-	}
-	else
-	{
+	} else { /* Books are read */
 		do_cmd_browse_aux(o_ptr);
 	}
-#endif	// 0
+#endif
 
 	return;
 }
@@ -4900,36 +4897,26 @@ void home_extend(int Ind)
 
 	msg_format(Ind, "You extend your house for %dau.", cost);
 
-	display_trad_house(Ind);
+	display_trad_house(Ind, h_ptr);
 
 	/* Display the current gold */
 	store_prt_gold(Ind);
 }
 
 
-static void display_house_entry(int Ind, int pos)
+static void display_house_entry(int Ind, int pos, house_type *h_ptr)
 {
 	player_type *p_ptr = Players[Ind];
-
 	object_type		*o_ptr;
 
 	char		o_name[ONAME_LEN];
 	byte		attr;
 	int		wgt;
-	int		h_idx;
 
 	int maxwid = 75;
 
-	house_type *h_ptr;
-
 	/* This should never happen */
 	if (p_ptr->store_num != 7) return;
-
-	h_idx = pick_house(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-	if (h_idx == -1) return;
-
-	h_ptr = &houses[h_idx];
-
 
 
 	/* Get the item */
@@ -4949,7 +4936,7 @@ static void display_house_entry(int Ind, int pos)
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 	o_name[maxwid] = '\0';
 
-	attr = get_tval_from_attr(o_ptr);
+	attr = get_attr_from_tval(o_ptr);
 	
 	/* Get the proper book colour */
 	if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(Ind, o_ptr);
@@ -4977,65 +4964,60 @@ static void display_house_entry(int Ind, int pos)
  *
  * The inventory is "sent" not "displayed". -KLJ-
  */
-static void display_house_inventory(int Ind)
+static void display_house_inventory(int Ind, house_type *h_ptr)
 {
 	player_type *p_ptr = Players[Ind];
 	int k;
-	int h_idx;
-	
-	house_type *h_ptr;
 
 	/* This should never happen */
 	if (p_ptr->store_num != 7) return;
 
-	h_idx = pick_house(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-	if (h_idx == -1) return;
-
-	h_ptr = &houses[h_idx];
-
-
 	/* Display the next 48 items */
-	for (k = 0; k < STORE_INVEN_MAX; k++)
-	{
+	for (k = 0; k < STORE_INVEN_MAX; k++) {
 		/* Do not display "dead" items */
 		/* But tell the client that it's empty now */
 		if (k && k >= h_ptr->stock_num) break;
 
 		/* Display that line */
-		display_house_entry(Ind, k);
+		display_house_entry(Ind, k, h_ptr);
 	}
 }
 
 /*
  * Displays store (after clearing screen)		-RAK-
  */
-static void display_trad_house(int Ind)
+static void display_trad_house(int Ind, house_type *h_ptr)
 {
 	player_type *p_ptr = Players[Ind];
-	house_type *h_ptr;
-	int h_idx;
 
 	/* This should never happen */
 	if (p_ptr->store_num != 7) return;
 
-	h_idx = pick_house(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-	if (h_idx == -1) return;
+	/* Send the house info */
+	/* our own house */
+	if (!h_ptr->dna->owner || h_ptr->dna->owner == p_ptr->id)
+		Send_store_info(Ind, p_ptr->store_num, "Your House", "", h_ptr->stock_num, h_ptr->stock_size, TERM_L_UMBER, '+');
+	/* someone else's house (can't happen at the moment) */
+	else {
+		char owner[40];
+		/* get name of real owner of this house */
+		strcpy(owner, lookup_player_name(h_ptr->dna->owner));
+		if (owner[strlen(owner) - 1] == 's') strcat(owner, "' House");
+		else strcat(owner, "'s House");
 
-	h_ptr = &houses[h_idx];
+		Send_store_info(Ind, p_ptr->store_num, owner, "", h_ptr->stock_num, h_ptr->stock_size, TERM_L_UMBER, '+');
+	}
 
 	/* Display the current gold */
 	store_prt_gold(Ind);
 
 	/* Draw in the inventory */
-	display_house_inventory(Ind);
+	display_house_inventory(Ind, h_ptr);
 
 	/* Hack -- Send the store actions info */
 	/* XXX it's dirty hack -- the aim is to avoid
 	 * hard-coded stuffs in the client */
 	show_building(Ind, &town[0].townstore[7]);
-
-	/* Send the store info */
-	Send_store_info(Ind, p_ptr->store_num, "Your House", "", h_ptr->stock_num, h_ptr->stock_size, TERM_L_UMBER, '+');
 }
 
 /* Enter a house, and interact with it.	- Jir - */
@@ -5043,36 +5025,22 @@ void do_cmd_trad_house(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	cave_type		*c_ptr;
+	cave_type *c_ptr;
 	struct c_special *cs_ptr;
 	house_type *h_ptr;
 	int h_idx;
 
 	/* Access the player grid */
 	cave_type **zcave;
-	if(!(zcave=getcave(&p_ptr->wpos))) return;
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	/* Verify a store */
-#if 0
-	if (!((c_ptr->feat >= FEAT_SHOP_HEAD) &&
-	      (c_ptr->feat <= FEAT_SHOP_TAIL)))
-#endif	// 0
-#if 0
-	if (c_ptr->feat != FEAT_HOME)
-	{
-		msg_print(Ind, "You see no house here.");
-		return;
-	}
-#endif	// 0
-
-	if (c_ptr->feat == FEAT_HOME)
-	{
+	if (c_ptr->feat == FEAT_HOME) {
 		/* Check access like former move_player */
-		if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))) /* orig house failure */
+		if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) /* orig house failure */
 		{
-			if(!access_door(Ind, cs_ptr->sc.ptr) && !admin_p(Ind))
-			{
+			if (!access_door(Ind, cs_ptr->sc.ptr, TRUE) && !admin_p(Ind)) {
 				msg_print(Ind, "\377oThe door is locked.");
 				return;
 			}
@@ -5080,10 +5048,9 @@ void do_cmd_trad_house(int Ind)
 		else return;
 	}
 	/* Open door == free access */
-	else if (c_ptr->feat == FEAT_HOME_OPEN)
-	{
+	else if (c_ptr->feat == FEAT_HOME_OPEN) {
 		/* Check access like former move_player */
-		if(!(cs_ptr=GetCS(c_ptr, CS_DNADOOR))) return;
+		if (!(cs_ptr = GetCS(c_ptr, CS_DNADOOR))) return;
 	}
 	/* Not a house */
 	else return;
@@ -5096,7 +5063,7 @@ void do_cmd_trad_house(int Ind)
 	h_ptr = &houses[h_idx];
 	if (!(h_ptr->flags & HF_TRAD)) return;
 
-	if(p_ptr->inval){
+	if (p_ptr->inval) {
 		msg_print(Ind, "You may not use a house. Ask an admin to validate your account.");
 		return;
 	}
@@ -5110,7 +5077,7 @@ void do_cmd_trad_house(int Ind)
 	p_ptr->tim_store = 30000;
 
 	/* Display the store */
-	display_trad_house(Ind);
+	display_trad_house(Ind, h_ptr);
 
 	/* Do not leave */
 	leave_store = FALSE;
@@ -5119,14 +5086,15 @@ void do_cmd_trad_house(int Ind)
 
 #endif	// USE_MANG_HOUSE_ONLY
 
+/* Mayor's office: View list of top cheezers */
+void view_cheeze_list(int Ind) {
+	char    path[MAX_PATH_LENGTH];
 
-void view_cheeze_list(int Ind)
-{
-        char    path[MAX_PATH_LENGTH];
-//      cptr name = "cheeze.log";
-//      (void)do_cmd_help_aux(Ind, name, NULL, line, FALSE);
-        path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "cheeze-pub.log");
-        do_cmd_check_other_prepare(Ind, path);
+//	cptr name = "cheeze.log";
+//	(void)do_cmd_help_aux(Ind, name, NULL, line, FALSE);
+
+	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "cheeze-pub.log");
+	do_cmd_check_other_prepare(Ind, path);
 }
 
 void reward_deed_item(int Ind, int item)
@@ -5343,3 +5311,497 @@ void store_debug_stock()
 		}
 	}
 }
+
+#ifdef PLAYER_STORES
+/* Is an item inscribed correctly to be sold in a player-run store? - C. Blue
+   Returns price or 0 if not for sale.
+   Pricing tag format:  @Snnnnnnnnn.  <- with dot for termination. */
+static u32b player_store_inscribed(object_type *o_ptr, u32b price) {
+	char buf[10], *p;
+	u32b final_price;
+	bool increase = FALSE;
+
+	/* no item? */
+	if (!o_ptr->k_idx) return -1;
+
+	/* does it carry an inscription? */
+	if (!o_ptr->note) return -1;
+
+	/* is it a player-store inscription? */
+	if (!(p = strstr(quark_str(o_ptr->note), "@S"))) return -1;
+
+	/* is it an increase of the default price instead of a fixed price? */
+	if (p[2] == '+') {
+		increase = TRUE;
+		p++;
+	}
+
+	/* is it a valid price tag? */
+	strncpy(buf, p + 2, 9);
+	buf[9] = '\0';
+	/* if no number follows, we'll assume no price change */
+	if (buf[0] < '0' || buf[0] > '9') return price;
+
+	/* price limit is 2*10^9 */
+	final_price = atol(buf);
+	if (final_price > 2000000000) final_price = 2000000000;
+	/* cannot be negative (paranoia, '-' cought above) */
+	if (final_price <= 0) return price;
+
+	/* do we want to set or to increase the base price? */
+	if (increase) {
+		/* never overflow (cap at 2*10^9) */
+		if (price <= 2000000000 - final_price) final_price += price;
+		else final_price = 2000000000;
+	} else if (final_price < price)
+		final_price = price;
+
+	/* everything ok: valid price between 1 and 2,000,000,000 */
+	return final_price;
+}
+
+/* Player enters a player-run store - C. Blue */
+bool do_cmd_player_store(int Ind, int x, int y) {
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr;
+
+	cave_type **zcave, *c_ptr;
+
+	house_type *h_ptr;
+	int h_idx, i, j;
+	bool is_store = FALSE; /* found at least one item for sale? */
+	int fsidx = -1; /* index of a free fake store to use */
+
+	/* access house door */
+	if (!(zcave = getcave(&p_ptr->wpos))) return FALSE;
+
+	/* Check that noone else is already using the store! */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Player is in a player store? */
+		if (Players[i]->store_num <= -2) {
+			/* Check whether he occupies this store */
+			if (Players[i]->ps_house_x == x &&
+			    Players[i]->ps_house_y == y) {
+				/* Player is in THIS store! */
+				msg_print(Ind, "The store is full.");
+				return TRUE;
+			}
+		}
+	}
+
+	/* Get house pointer and verify that it's a player store */
+	h_idx = pick_house(&p_ptr->wpos, y, x);
+	if (h_idx == -1) return FALSE;
+	h_ptr = &houses[h_idx];
+
+
+	disturb(Ind, 0, 0);
+
+	break_cloaking(Ind, 0);
+	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
+	handle_stuff(Ind); /* update stealth/search display now */
+
+	command_new = '_';
+
+
+	/* Already grab a free fake store to store items in it which are
+	   for sale while searching for them, in the verify-code below */
+	for (i = 0; i < MAX_VISITED_PLAYER_STORES; i++) {
+		/* loop until we find a free store */
+		if (fake_store_visited[i]) continue;
+
+		/* found a free one, remember its index and initialize it */
+		fake_store[i].stock_num = 0;
+		fake_store[i].player_owner = h_ptr->dna->owner;
+
+		/* would need to set up a fake info template with legal
+		   commands and all.. see hack in show_building().
+		   So currently, setting st_idx is actually obsolete. */
+		fake_store[i].st_idx = 66;
+		fsidx = i;
+		break;
+	}
+
+	/* Reset player's flags for accessing a player store and
+	   for accessing a mass-cheque when buying piled wares */
+	p_ptr->ps_house_x = p_ptr->ps_house_y = -1;
+	p_ptr->ps_mcheque_x = p_ptr->ps_mcheque_y = -1;
+
+	/* Traditional 'solid' house */
+	if (h_ptr->flags & HF_TRAD) {
+		for (i = 0; i < h_ptr->stock_num; i++) {
+			o_ptr = &h_ptr->stock[i];
+
+			/* test item if it's an existing mass-cheque */
+			if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE &&
+			    (!o_ptr->note || !strcmp(quark_str(o_ptr->note), "various piled items"))) {
+				/* make sure inscription is consistent with player_store_handle_purchase() */
+				p_ptr->ps_mcheque_x = i;
+			}
+
+			/* test item for being for sale */
+			if (player_store_inscribed(o_ptr, 0) == -1) continue;
+
+			/* found an item for sale */
+			is_store = TRUE;
+			if (fsidx == -1) break; /* no available fake store? */
+
+			/* also add it to the fake store already */
+			o_ptr->ps_idx_x = i;
+			j = store_carry(&fake_store[fsidx], o_ptr);
+//			if (j == -1) s_printf("PLAYER_STORE_CMD: store_carry -1!\n");
+			if (fake_store[fsidx].stock_num == STORE_INVEN_MAX) break;
+		}
+	}
+	/* Mang-style 'hollow' house */
+	else {
+		/* ALL houses are currently rectangular, so this check seems obsolete.. */
+		if (h_ptr->flags & HF_RECT) {
+			int sy, sx, ey, ex, cx, cy;
+			sy = h_ptr->y + 1;
+			sx = h_ptr->x + 1;
+			ey = h_ptr->y + h_ptr->coords.rect.height - 1;
+			ex = h_ptr->x + h_ptr->coords.rect.width - 1;
+			for (cy = sy; cy < ey; cy++) {
+			for (cx = sx; cx < ex; cx++) {
+				c_ptr = &zcave[cy][cx];
+
+				/* is there an object on the house floor grid?
+				   If not, also remember this spot to create a mass cheque if needed. */
+				if (!c_ptr->o_idx) {
+					if (p_ptr->ps_mcheque_x == -1) {
+						p_ptr->ps_mcheque_x = -2 - cx;
+						p_ptr->ps_mcheque_y = -2 - cy;
+					}
+					continue;
+				}
+				o_ptr = &o_list[c_ptr->o_idx];
+
+				/* test item if it's an existing mass-cheque */
+				if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE &&
+				    (!o_ptr->note || !strcmp(quark_str(o_ptr->note), "various piled items"))) {
+					/* make sure inscription is consistent with player_store_handle_purchase() */
+					p_ptr->ps_mcheque_x = cx;
+					p_ptr->ps_mcheque_y = cy;
+				}
+
+				/* test it for being for sale */
+				if (player_store_inscribed(o_ptr, 0) == -1) continue;
+
+				/* found an item for sale */
+				is_store = TRUE;
+				if (fsidx == -1) break; /* no available fake store? */
+
+				/* also add it to the fake store already */
+				o_ptr->ps_idx_x = cx;
+				o_ptr->ps_idx_y = cy;
+				j = store_carry(&fake_store[fsidx], o_ptr);
+//				if (j == -1) s_printf("PLAYER_STORE_CMD: store_carry -1!\n");
+				/* if store is full (usually 48 items), we can stop */
+				if (fake_store[fsidx].stock_num == STORE_INVEN_MAX) break;
+			}
+			/* Did we 'break;' inside the inner loop? Exit then. */
+			if (is_store && fsidx == -1) break;
+			if (fsidx != -1 && fake_store[fsidx].stock_num == STORE_INVEN_MAX) break;
+			}
+		}
+	}
+
+	/* if this house isn't a player-store, exit quietly */
+	if (!is_store) return FALSE;
+
+	if (p_ptr->inval) {
+		msg_print(Ind, "\377UYou may not use a player store. Ask an admin to validate your account.");
+		return FALSE;
+	}
+
+	/* if we're currently out of fake stores to use for this, display an excuse */
+	if (fsidx == -1) {
+		msg_print(Ind, "\377UThe shop is temporarily closed, please try again in a minute.");
+		return FALSE;
+	}
+
+	/* HACK: Save fake store number.
+	   NOTE: Client currently can handle negative store_num, since it only tests for == 7. */
+	p_ptr->store_num = - 2 - fsidx;
+	p_ptr->ps_house_x = x;
+	p_ptr->ps_house_y = y;
+	/* Reserve store for this player */
+	fake_store_visited[i] = Ind;
+
+	/* Set the timer (30000 used for homes aka "don't" kick out) */
+	p_ptr->tim_store = STORE_TURNOUT;
+
+	/* Display the store */
+	display_store(Ind);
+
+	/* Do not leave (unused?) */
+	leave_store = FALSE;
+
+	return TRUE;
+}
+
+/* Cut away the @S.. part of item inscriptions before
+   displaying/selling them. - C. Blue */
+void player_stores_cut_inscription(char *o_name) {
+	char new_o_name[ONAME_LEN];
+	cptr p, p2;
+
+	/* hack around in new_o_name */
+	strcpy(new_o_name, o_name);
+
+	p = strstr(o_name, "@S");
+	/* only if there's actually a '@S' inscription present */
+	if (p) {
+		new_o_name[p - o_name] = '\0';
+		p2 = strstr(p, ".");
+		if (p2) strcat(new_o_name, ++p2);
+
+		/* write it back */
+		strcpy(o_name, new_o_name);
+
+		/* remove beginning of inscription if it's empty */
+		if (o_name[strlen(o_name) - 1] == '{') {
+			o_name[strlen(o_name) - 1] = '\0';
+			/* remove one SPACE too */
+			if (o_name[strlen(o_name) - 1] == ' ')
+				o_name[strlen(o_name) - 1] = '\0';
+		} else if (o_name[strlen(o_name) - 1] != '}') {
+			/* If the inscription end is missing due to
+			   player not specifying the terminating dot,
+			   add a } bracket to fix that here. */
+			if (strstr(o_name, "{")) strcat(o_name, "}");
+		} else if (o_name[strlen(o_name) - 2] == '{') {
+			/* if the last two chars are just {}, remove both */
+			o_name[strlen(o_name) - 1] = '\0';
+			o_name[strlen(o_name) - 1] = '\0';
+			/* remove one SPACE too */
+			if (o_name[strlen(o_name) - 1] == ' ')
+				o_name[strlen(o_name) - 1] = '\0';
+		}
+	}
+}
+
+/* Get 4-Byte cheque value from 4 Bytes xtra1..xtra4 - C. Blue */
+u32b ps_get_cheque_value(object_type *o_ptr) {
+	u32b value = 0x0;
+	value |= o_ptr->xtra1;
+	value |= o_ptr->xtra2 << 8;
+	value |= o_ptr->xtra3 << 16;
+	value |= o_ptr->xtra4 << 24;
+	return value;
+}
+
+/* Set 4-Byte cheque value from 4 Bytes xtra1..xtra4 - C. Blue */
+static void ps_set_cheque_value(object_type *o_ptr, u32b value) {
+	o_ptr->xtra1 = value & 0xFF;
+	o_ptr->xtra2 = (value & 0xFF00) >> 8;
+	o_ptr->xtra3 = (value & 0xFF0000) >> 16;
+	o_ptr->xtra4 = (value & 0xFF000000) >> 24;
+}
+
+/* When an item is bought from a player store, locate the linked house
+   and play back the changes, by reducing/removing the bought item from
+   the house and inserting/modifying a cheque of the correct value.
+   Note: Since we might run out of space easily if we create cheques for
+         every potion that is sold off a stack, we will create one special
+         cheque, dubbed 'mass cheque' that handles all stacked items. - C. Blue */
+static void player_store_handle_purchase(int Ind, object_type *o_ptr, object_type *s_ptr, u32b value) {
+	player_type *p_ptr = Players[Ind];
+	object_type cheque, *cheque_ptr = &cheque;
+	bool mass_cheque = FALSE;
+	house_type *h_ptr;
+	int h_idx, i, x, y;
+	object_type *ho_ptr;
+	cave_type **zcave, *c_ptr;
+	char o_name[ONAME_LEN];
+	u32b old_value;
+
+	/* paranoia */
+	if (!o_ptr->number || !s_ptr->number) return;
+
+	/* create a blanco cheque ;) */
+	invcopy(&cheque, lookup_kind(TV_SCROLL, SV_SCROLL_CHEQUE));
+	/* init its value */
+	ps_set_cheque_value(&cheque, 0);
+	/* bind it to the correct mode to avoid exploiting;
+	   as a side effect, this tells us who bought our wares ;) */
+	cheque.owner = p_ptr->id; /* set owner to buyer */
+	cheque.mode = p_ptr->mode;
+	cheque.level = 1; /* as long as owner is set to the buyer's id, this must be > 0 */
+
+	/* take a cut from the sale, for the bank's erm cheque fee :-p
+	      oh and for the dude who kept the shop in player's stead. Yeah. */
+	if (value >= 20000000) {
+		value = (value / 10) * 9;
+	} else {
+		value = (value * 9) / 10;
+	}
+
+	/* Try to locate house linked to this store */
+	h_idx = pick_house(&p_ptr->wpos, p_ptr->ps_house_y, p_ptr->ps_house_x);
+	if (h_idx == -1) {
+		s_printf("PLAYER_STORE_HANDLE: NO HOUSE! (value %d)\n", value);
+		return; /* oops? */
+	}
+	h_ptr = &houses[h_idx];
+
+	if (!(zcave = getcave(&p_ptr->wpos))) {
+		s_printf("PLAYER_STORE_HANDLE: NO ZCAVE! (owner, value %d, %d)\n",
+		    h_ptr->dna->owner, value);
+		return; /* oops? */
+	}
+
+	/* If it was completely bought out (ie the whole stack), we create a
+	   normal cheque to replace the item in the house.
+	   Otherwise we look for a mass-cheque or create one if none exists
+	   yet which will be added to the house, so the store owner should
+	   keep 1 slot free for this or his money goes poof! */
+	if (s_ptr->number < o_ptr->number) mass_cheque = TRUE;
+
+
+	/* -----------------------------------------------------------------------------------------------
+	   reduce/remove the house items accordingly to how many were sold */
+
+	/* Access original item in the house */
+	if (h_ptr->flags & HF_TRAD) {
+		ho_ptr = &h_ptr->stock[o_ptr->ps_idx_x];
+	} else {
+		/* ALL houses are currently rectangular, so this check seems obsolete.. */
+		if (h_ptr->flags & HF_RECT) {
+			c_ptr = &zcave[o_ptr->ps_idx_y][o_ptr->ps_idx_x];
+			ho_ptr = &o_list[c_ptr->o_idx];
+		}
+	}
+
+	/* We only need to reduce the items, if we're going to need a mass cheque,
+	   because normal cheques just replace the items completely. */
+	if (mass_cheque) {
+		if (h_ptr->flags & HF_TRAD) {
+			home_item_increase(h_ptr, o_ptr->ps_idx_x, -s_ptr->number);
+			home_item_optimize(h_ptr, o_ptr->ps_idx_x);
+		} else {
+			/* Reduce amount of items in stock by how many were bought */
+			floor_item_increase(c_ptr->o_idx, -s_ptr->number);
+			floor_item_optimize(c_ptr->o_idx);
+		}
+	}
+
+
+	/* -----------------------------------------------------------------------------------------------
+	   Create/modify cheque */
+
+	/* Create/modify a mass cheque? */
+	if (mass_cheque) {
+		/* Do we already have a mass-cheque? */
+		if (p_ptr->ps_mcheque_x >= 0) {
+			/* Access existing mass-cheque in the house */
+			if (h_ptr->flags & HF_TRAD) {
+				cheque_ptr = &h_ptr->stock[p_ptr->ps_mcheque_x];
+s_printf("PLAYER_STORE: Mass Cheque (trad; owner %d, value %d)\n", h_ptr->dna->owner, value);
+			} else {
+				/* ALL houses are currently rectangular, so this check seems obsolete.. */
+				if (h_ptr->flags & HF_RECT) {
+					c_ptr = &zcave[p_ptr->ps_mcheque_y][p_ptr->ps_mcheque_x];
+					cheque_ptr = &o_list[c_ptr->o_idx];
+s_printf("PLAYER_STORE: Mass Cheque (mang; owner %d, value %d)\n", h_ptr->dna->owner, value);
+				}
+			}
+		}
+		/* Create a new mass cheque */
+		else {
+			/* drop it into the house */
+			if (h_ptr->flags & HF_TRAD) {
+				if (h_ptr->stock_num >= h_ptr->stock_size) {
+					/* ouch, no room for dropping a cheque,
+					   money goes poof :( */
+					s_printf("PLAYER_STORE_HANDLE: NO ROOM! (owner %d, value %d)\n",
+					    h_ptr->dna->owner, value);
+					return;
+				}
+				/* add it to the stock and point to it.
+				   Note: Admitted Ind should be the owner and not the
+				         customer, but it shouldn't matter really. */
+				i = home_carry(Ind, h_ptr, cheque_ptr);
+				cheque_ptr = &h_ptr->stock[i];
+s_printf("PLAYER_STORE: New Mass Cheque (trad; owner %d, value %d)\n", h_ptr->dna->owner, value);
+			} else {
+				/* ALL houses are currently rectangular, so this check seems obsolete.. */
+				if (h_ptr->flags & HF_RECT) {
+					if (p_ptr->ps_mcheque_x == -1) {
+						/* ouch, no room for dropping a cheque,
+						   money goes poof :( */
+						s_printf("PLAYER_STORE_HANDLE: NO ROOM! (owner %d, value %d)\n",
+						    h_ptr->dna->owner, value);
+						return;
+					}
+					/* Access free spot and verify its freeness.. */
+					x = -2 - p_ptr->ps_mcheque_x;
+					y = -2 - p_ptr->ps_mcheque_y;
+					c_ptr = &zcave[y][x];
+					if (c_ptr->o_idx) {
+						/* ouch, no room for dropping a cheque,
+						   money goes poof :( */
+						s_printf("PLAYER_STORE_HANDLE: NO ROOM! (owner %d, value %d)\n",
+						    h_ptr->dna->owner, value);
+						return;
+					}
+					/* Drop the cheque there */
+					drop_near(cheque_ptr, -1, &p_ptr->wpos, y, x);
+					/* Access the new item and point to it */
+					cheque_ptr = &o_list[c_ptr->o_idx];
+s_printf("PLAYER_STORE: New Mass Cheque (mang; owner %d, value %d)\n", h_ptr->dna->owner, value);
+				}
+			}
+		}
+		/* make sure the inscription is good (and consistent with do_cmd_player_store()) */
+		cheque_ptr->note = quark_add("various piled items");
+
+		/* Write back additional value to the cheque */
+		old_value = ps_get_cheque_value(cheque_ptr);
+		if (old_value <= 2000000000 - value) {
+			ps_set_cheque_value(cheque_ptr, old_value + value);
+		} else {
+			/* erm, our cheque is already worth 2 bill? oO
+			   Well.. can't save much more to it, we just
+			   let it poof at this time.. */
+		}
+		/* We're done. */
+	}
+	/* Create a normal cheque? */
+	else {
+		/* inscribe the cheque with the full item name and its
+		   sale-inscription, so the seller is well-informed. */
+		object_desc(Ind, o_name, s_ptr, TRUE, 3);
+		cheque_ptr->note = quark_add(o_name);
+
+		/* Imprint value into the cheque. */
+		ps_set_cheque_value(cheque_ptr, value);
+
+		/* normal cheques replace the item they were created for,
+		   easy as that. */
+		if (h_ptr->flags & HF_TRAD) {
+			/* For list house, overwriting is enough */
+			object_copy(ho_ptr, cheque_ptr);
+s_printf("PLAYER_STORE: Cheque (trad; owner %d, value %d)\n", h_ptr->dna->owner, value);
+		} else {
+			if (h_ptr->flags & HF_RECT) {
+				/* Access free spot and verify its freeness.. */
+				x = o_ptr->ps_idx_x;
+				y = o_ptr->ps_idx_y;
+				c_ptr = &zcave[y][x];
+				/* Remove item that was sold */
+				floor_item_increase(c_ptr->o_idx, -s_ptr->number);
+				floor_item_optimize(c_ptr->o_idx);
+				/* Drop the cheque there */
+				drop_near(cheque_ptr, -1, &p_ptr->wpos, y, x);
+s_printf("PLAYER_STORE: Cheque (mang; owner %d, value %d)\n", h_ptr->dna->owner, value);
+			}
+			//TODO: might require some everyone_lite_spot() etc stuff to redraw mang-houses..
+		}
+		/* We're done. */
+	}
+}
+#endif

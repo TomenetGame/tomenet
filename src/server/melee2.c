@@ -11,6 +11,8 @@
  * included in all such copies.
  */
 
+#include "angband.h"
+
 #define SERVER
 #define C_BLUE_AI
 #define C_BLUE_AI_MELEE
@@ -20,8 +22,6 @@
    this is actually exploitable at all anyway, though. So, I recommend turning on VAR2 only^^ - C. Blue */
 //#define ANTI_SEVEN_EXPLOIT_VAR1		/* prevents increasing distance to epicenter (probably can't happen in actual gameplay anyway -_-); stops algorithm if we don't get closer; makes heavy use of distance() */
 #define ANTI_SEVEN_EXPLOIT_VAR2		/* stops algorithm if we get LOS to from where the projecting player actually cast his projection */
-
-#include "angband.h"
 
 /*
  * STUPID_MONSTERS flag is left for compatibility, but not recommended.
@@ -185,7 +185,6 @@
  * this flag bans Qs from casting spells indirectly (just like vanilla ones).
  */
 //#define		STUPID_Q
-
 
 /*
  * DRS_SMART_OPTIONS is not available for now.
@@ -516,6 +515,10 @@ static void bolt(int Ind, int m_idx, int typ, int dam_hp)
 
 	int flg = PROJECT_STOP | PROJECT_KILL;
 
+#ifdef USE_SOUND_2010
+	sound(Ind, "monster_bolt", NULL, SFX_TYPE_MON_SPELL, TRUE);
+#endif
+
 	/* Target the player with a bolt attack */
 	(void)project(m_idx, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam_hp, typ, flg, p_ptr->attacker);
 }
@@ -554,6 +557,10 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int rad)
 	/* Determine the radius of the blast */
 	if (rad < 1) rad = (r_ptr->flags2 & (RF2_POWERFUL)) ? 3 : 2;
 
+#ifdef USE_SOUND_2010
+	sound(Ind, "monster_breath", NULL, SFX_TYPE_MON_SPELL, TRUE);
+#endif
+
 	/* Target the player with a ball attack */
 	(void)project(m_idx, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam_hp, typ, flg, p_ptr->attacker);
 }
@@ -564,7 +571,8 @@ static void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad)
 
 #ifdef USE_SOUND_2010
 	if (typ == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_MON_SPELL, TRUE);
-	sound(Ind, "monster_casts_ball", NULL, SFX_TYPE_MON_SPELL, TRUE);
+	else if (typ == GF_STONE_WALL) sound(Ind, "stone_wall", NULL, SFX_TYPE_MON_SPELL, TRUE);
+	sound(Ind, "monster_cast_ball", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 
 	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
@@ -730,6 +738,38 @@ static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2, int range
 		mmove2(&y, &x, y1, x1, y2, x2);
 	}
 	
+	/* Assume obstruction */
+	return (FALSE);
+}
+/* Relates to clean_shot like projectable_wall to projectable */
+static bool clean_shot_wall(worldpos *wpos, int y1, int x1, int y2, int x2, int range)
+{
+	int dist, y, x;
+	cave_type **zcave;
+
+	if (!(zcave = getcave(wpos))) return(FALSE);
+
+	/* Start at the initial location */
+	y = y1, x = x1;
+
+	/* See "project()" and "projectable()" */
+	for (dist = 0; dist <= range; dist++) {
+		/* Never pass through monsters */
+		if (dist && zcave[y][x].m_idx > 0) {
+			break;
+//			if (is_friend(&m_list[zcave[y][x].m_idx]) < 0) break;
+		}
+
+		/* Check for arrival at "final target" */
+		if ((x == x2) && (y == y2)) return (TRUE);
+
+		/* Never pass through walls */
+		if (dist && !cave_los(zcave, y, x)) break;
+
+		/* Calculate the new location */
+		mmove2(&y, &x, y1, x1, y2, x2);
+	}
+
 	/* Assume obstruction */
 	return (FALSE);
 }
@@ -1399,7 +1439,7 @@ static bool monst_check_antimagic(int Ind, int m_idx)
 	if (!(zcave=getcave(wpos))) return(FALSE);
 
 	/* bad hack: Also abuse this function to check for silence-effect - C. Blue */
-	if (m_ptr->silenced > 0 && magik(60)) {
+	if (m_ptr->silenced > 0 && magik(ANTIMAGIC_CAP)) { //could also use INTERCEPT_CAP instead
 		/* no message, just 'no mana to cast' ;) */
 		return(TRUE);
 	}
@@ -1911,8 +1951,13 @@ bool make_attack_spell(int Ind, int m_idx)
 #ifndef	STUPID_MONSTER_SPELLS
 	/* Check for a clean bolt shot */
 	if (!direct ||
-		((f4 & (RF4_BOLT_MASK) || f5 & (RF5_BOLT_MASK) || f6 & (RF6_BOLT_MASK) || f0 & (RF0_BOLT_MASK)) &&
-		 !stupid && !clean_shot(wpos, m_ptr->fy, m_ptr->fx, y, x, MAX_RANGE)))
+	    ((f4 & (RF4_BOLT_MASK) || f5 & (RF5_BOLT_MASK) || f6 & (RF6_BOLT_MASK) || f0 & (RF0_BOLT_MASK)) &&
+	     !stupid &&
+ #ifndef MON_BOLT_ON_WALL
+	     !clean_shot(wpos, m_ptr->fy, m_ptr->fx, y, x, MAX_RANGE)))
+ #else
+	     !clean_shot_wall(wpos, m_ptr->fy, m_ptr->fx, y, x, MAX_RANGE)))
+ #endif
 	{
 		/* Remove spells that will only hurt friends */
 		f4 &= ~(RF4_BOLT_MASK);
@@ -2043,8 +2088,11 @@ bool make_attack_spell(int Ind, int m_idx)
 			//if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			/* the_sandman: changed it so that other ppl nearby will know too */
-			msg_format(Ind, "%^s makes a high pitched shriek.", m_name); 
-			msg_format_near(Ind, "%^s makes a high pitched shriek.", m_name);
+			msg_format(Ind, "\377R%^s makes a high pitched shriek.", m_name); 
+			msg_format_near(Ind, "\377R%^s makes a high pitched shriek.", m_name);
+#ifdef USE_SOUND_2010
+			sound_near(Ind, "monster_shriek", NULL, SFX_TYPE_MON_SPELL);
+#endif
 			aggravate_monsters(Ind, m_idx);
 			break;
 		}
@@ -3405,7 +3453,7 @@ if (season_halloween) {
 				//disturb(Ind, 1, 0);
 				msg_format(Ind, "%^s blinks away.", m_name);
 #ifdef USE_SOUND_2010
-				sound(Ind, "monster_blinks", NULL, SFX_TYPE_MON_SPELL, TRUE);
+				sound(Ind, "monster_blink", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 			}
 			break;
@@ -3436,7 +3484,7 @@ if (season_halloween) {
 				//disturb(Ind, 1, 0);
 				msg_format(Ind, "%^s teleports away.", m_name);
 #ifdef USE_SOUND_2010
-				sound(Ind, "monster_teleports", NULL, SFX_TYPE_MON_SPELL, TRUE);
+				sound(Ind, "monster_teleport", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 			}
 			break;
@@ -3470,6 +3518,7 @@ if (season_halloween) {
 		case RF6_OFFSET+8:
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
+			if (p_ptr->martyr) break;
 
 			/* No teleporting within no-tele vaults and such */
 			if(!(zcave=getcave(wpos))) break;
@@ -3508,6 +3557,7 @@ if (season_halloween) {
 			if (p_ptr->res_tele) chance = 50;
 
 			if (monst_check_antimagic(Ind, m_idx)) break;
+			if (p_ptr->martyr) break;
 
 			/* No teleporting within no-tele vaults and such */
 			if(!(zcave=getcave(wpos))) break;
@@ -3530,6 +3580,7 @@ if (season_halloween) {
 				break;
 			}
 			msg_format(Ind, "%^s teleports you away.", m_name);
+			msg_format_near(Ind, "%^s teleports %s away.", m_name, p_ptr->name);
 			teleport_player(Ind, 100, TRUE);
 			break;
 		}
@@ -3538,6 +3589,7 @@ if (season_halloween) {
 		case RF6_OFFSET+10:
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
+			if (p_ptr->martyr) break;
 
 			/* No teleporting within no-tele vaults and such */
 			if(!(zcave=getcave(wpos))) break;
@@ -3560,6 +3612,7 @@ if (season_halloween) {
 			} else if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
 			} else {
+				msg_format_near(Ind, "%^s teleports %s away.", m_name, p_ptr->name);
 				teleport_player_level(Ind);
 			}
 			update_smart_learn(m_idx, DRS_NEXUS);
@@ -3630,10 +3683,8 @@ if (season_halloween) {
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
-			else msg_format(Ind, "%^s magically summons a DragonRider!", m_name);
-			//else msg_format(Ind, "%^s magically summons a Thunderlord!", m_name);
-			for (k = 0; k < 1; k++)
-			{
+			else msg_format(Ind, "%^s magically summons a Dragonrider!", m_name);
+			for (k = 0; k < 1; k++) {
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DRAGONRIDER, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
@@ -4167,7 +4218,7 @@ static bool get_moves_aux(int Ind, int m_idx, int *yp, int *xp)
         monster_race *r_ptr = race_inf(m_ptr);
 	player_type *p_ptr = Players[Ind];
 	cave_type **zcave, *c_ptr;
-	if(!(zcave=getcave(&m_ptr->wpos))) return FALSE;
+	if(!(zcave = getcave(&m_ptr->wpos))) return FALSE;
 
 	/* Monster flowing disabled */
 	if (!flow_by_sound && !flow_by_smell) return (FALSE);
@@ -6708,12 +6759,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 #if 0	// too bad hack!
 	/* Hack -- aquatic life outa water */
-	if (zcave[oy][ox].feat != FEAT_WATER)
-	{
+	if (zcave[oy][ox].feat != FEAT_WATER) {
 		if (r_ptr->flags7 & RF7_AQUATIC) m_ptr->monfear = 50;
-	}
-	else
-	{
+	} else {
 		if (!(r_ptr->flags3 & RF3_UNDEAD) &&
 				!(r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY) ))
 			m_ptr->monfear = 50;
@@ -6740,20 +6788,16 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			    (r_ptr->flags3 & RF3_NONLIVING)) /* vermin control has no effect on non-living creatures */
 			{
 				/* Count the adjacent monsters */
-				for (k = 0, y = oy - 1; y <= oy + 1; y++)
-				{
-					for (x = ox - 1; x <= ox + 1; x++)
-					{
+				for (k = 0, y = oy - 1; y <= oy + 1; y++) {
+					for (x = ox - 1; x <= ox + 1; x++) {
 						if (zcave[y][x].m_idx > 0) k++;
 					}
 				}
 
 				/* Hack -- multiply slower in crowded areas */
-				if ((k < 4) && (!k || !rand_int(k * MON_MULT_ADJ)))
-				{
+				if ((k < 4) && (!k || !rand_int(k * MON_MULT_ADJ))) {
 					/* Try to multiply */
-					if (multiply_monster(m_idx))
-					{
+					if (multiply_monster(m_idx)) {
 						/* Take note if visible */
 						if (p_ptr->mon_vis[m_idx]) r_ptr->flags7 |= RF7_MULTIPLY;
 
@@ -6773,11 +6817,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 	/* Non-stupid monsters only */
 #if 0
-	if (!(r_ptr->flags2 & RF2_STUPID))
-	{
+	if (!(r_ptr->flags2 & RF2_STUPID)) {
 		/* Evil player tainted the grid? */
-		if (c_ptr->effect)
-		{
+		if (c_ptr->effect) {
 			if (!monster_is_safe(m_idx, m_ptr, r_ptr, c_ptr))
 				m_ptr->ai_state |= AI_STATE_EFFECT;
 		}
@@ -6795,8 +6837,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 
 	/* Attempt to cast a spell */
-	if (!inv && !force_random_movement && make_attack_spell(Ind, m_idx)) 
-	{
+	if (!inv && !force_random_movement && make_attack_spell(Ind, m_idx)) {
 		m_ptr->energy -= level_speed(&m_ptr->wpos);
 		return;
 	}
@@ -7036,11 +7077,20 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 		}
 
 		/* Tainted grid? */
+#if 0 /* testing new hack below */
 		else if (!(m_ptr->ai_state & AI_STATE_EFFECT) &&
 		    !monster_is_safe(m_idx, m_ptr, r_ptr, c_ptr))
 		{
 			/* Nothing */
 		}
+#else /* attack anyway if player is next to us! */
+		else if (!(m_ptr->ai_state & AI_STATE_EFFECT) &&
+		    !monster_is_safe(m_idx, m_ptr, r_ptr, c_ptr)
+		    && !(c_ptr->m_idx < 0))
+		{
+			/* Nothing */
+		}
+#endif
 
 #if 0
 		/* Floor is open? */
@@ -7065,15 +7115,15 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			((r_ptr->flags8 & RF8_WILD_WOOD) || (r_ptr->flags3 & RF3_ANIMAL) ||
 			/* KILL_WALL / PASS_WALL  monsters can hack down / pass trees */
 			(r_ptr->flags2 & RF2_PASS_WALL) || (r_ptr->flags2 & RF2_KILL_WALL) ||
-			/* POWERFUL monsters can hack down trees */
-			(r_ptr->flags2 & RF2_POWERFUL)))
+			/* POWERFUL monsters can hack down trees if they're non-light aka _physically_ powerful (hacky..) */
+			((r_ptr->flags2 & RF2_POWERFUL) && r_ptr->weight >= 0)))//oops no: some monsters like horned reaper weigh 0 -_-
 		{
 			/* Pass through trees if monster lives in the woods >:) */
 			do_move = TRUE;
 		}
 
 		/* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */
-		else if ((c_ptr->feat==FEAT_MOUNTAIN) &&
+		else if ((c_ptr->feat == FEAT_MOUNTAIN) &&
 			((r_ptr->flags8 & RF8_WILD_MOUNTAIN) ||
 			(r_ptr->flags8 & RF8_WILD_VOLCANO) ||
 			(r_ptr->flags7 & RF7_SPIDER))) /* Spiders can always climb */
@@ -7082,7 +7132,31 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			do_move = TRUE;
 		}
 #else
-		else if (creature_can_enter(r_ptr, c_ptr)) do_move = TRUE;
+		else if (creature_can_enter(r_ptr, c_ptr)) {
+			do_move = TRUE;
+
+			/* if we can pass without wall-killing, yet are wall-killers, then we should kill obstacles if we can! */
+			if ((r_ptr->flags2 & (RF2_KILL_WALL | RF2_POWERFUL)) &&
+			    (c_ptr->feat == FEAT_DEAD_TREE ||
+			    c_ptr->feat == FEAT_TREE ||
+			    c_ptr->feat == FEAT_BUSH)) {
+				did_kill_wall = TRUE;
+
+				cave_set_feat_live(wpos, ny, nx, twall_erosion(wpos, ny, nx));
+
+				/* Forget the "field mark", if any */
+				everyone_forget_spot(wpos, ny, nx);
+
+				/* Notice */
+				note_spot_depth(wpos, ny, nx);
+
+				/* Redraw */
+				everyone_lite_spot(wpos, ny, nx);
+
+				/* Note changes to viewable region */
+				if (player_has_los_bold(Ind, ny, nx)) do_view = TRUE;
+			}
+		}
 #endif
 		/* Player ghost in wall or on FF1_PROTECTED grid: Monster may attack in melee anyway */
 		else if (c_ptr->m_idx < 0)
@@ -7127,14 +7201,14 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			   r_ptr->flags2 & RF2_EMPTY_MIND ||
 			   r_ptr->flags2 & RF2_STUPID) &&
 			(!rand_int(digging_difficulty(c_ptr->feat) * MONSTER_DIG_FACTOR)
-			 && magik(5+r_ptr->level))))
+			 && magik(5 + r_ptr->level))))
 #else
 		else if ((r_ptr->flags2 & RF2_KILL_WALL) ||
 			/* POWERFUL monsters can hack down trees */
 			((r_ptr->flags2 & RF2_POWERFUL) &&
 			//c_ptr->feat==FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE ||
-			(c_ptr->feat==FEAT_DEAD_TREE || c_ptr->feat==FEAT_TREE ||
-			c_ptr->feat==FEAT_BUSH || c_ptr->feat==FEAT_IVY)))
+			(c_ptr->feat == FEAT_DEAD_TREE || c_ptr->feat == FEAT_TREE ||
+			c_ptr->feat == FEAT_BUSH || c_ptr->feat == FEAT_IVY)))
 #endif
 		{
 			/* Eat through walls/doors/rubble */
@@ -7240,11 +7314,17 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 #endif
 
 				/* Attempt to Bash XXX XXX XXX */
-				if (rand_int(m_ptr->hp / 10) > k)
-				{
+				if (rand_int(m_ptr->hp / 10) > k) {
 					/* Message */
 //					msg_print(Ind, "You hear a door burst open!");
-					msg_print_near_site(ny, nx, wpos, "You hear a door burst open!");
+					msg_print_near_site(ny, nx, wpos, 0, FALSE, "You hear a door burst open!");
+#ifdef USE_SOUND_2010
+					if (rand_int(3)) /* some variety, although not entirely correct :) */
+						sound_near_site(ny, nx, wpos, 0, "bash_door_break", NULL, SFX_TYPE_COMMAND);
+					else
+						sound_near_site(ny, nx, wpos, 0, "bash_door_hold", NULL, SFX_TYPE_COMMAND);
+#endif
+
 
 					/* Disturb (sometimes) */
 					if (p_ptr->disturb_minor) disturb(Ind, 0, 0);
@@ -7303,7 +7383,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			{
 				/* Describe observable breakage */
 				/* Prolly FIXME */
-				msg_print_near_site(ny, nx, wpos, "The rune of protection is broken!");
+				msg_print_near_site(ny, nx, wpos, 0, TRUE, "The rune of protection is broken!");
 #if 0
 				if (Players[Ind]->cave_flag[ny][nx] & CAVE_MARK)
 				{
@@ -9033,8 +9113,19 @@ void process_monsters(void)
 
 		tmp = level_speed(&m_ptr->wpos);
 
-		/* Added for Valinor - C. Blue */
+		/* Added for Valinor; also used by target dummy - C. Blue */
 		if (r_ptr->flags7 & RF7_NEVER_ACT) m_ptr->energy = 0;
+
+		/* Target dummy "snowiness" hack, checked once per second */
+		if (((m_ptr->r_idx == 1101) || (m_ptr->r_idx == 1126)) &&
+		    (m_ptr->extra < 60) && (turn % cfg.fps == 0) &&
+		    (wild_info[m_ptr->wpos.wy][m_ptr->wpos.wx].weather_type == 2)) {
+			m_ptr->extra++;
+			if ((m_ptr->r_idx == 1101) && (m_ptr->extra == 30)) {
+				m_ptr->r_idx = 1126;
+				everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+			}
+		}
 
 		/* Not enough energy to move */
 		if (m_ptr->energy < tmp) continue;
@@ -9123,25 +9214,25 @@ void process_monsters(void)
 			if (new_los && p_ptr->music_monster != -2 && p_ptr->mon_vis[i]) { // && !m_ptr->csleep
 				if (r_ptr->flags7 & RF7_NAZGUL) {
 					//Nazgul; doesn't override Sauron
-					if (p_ptr->music_monster != 41) {
-						Send_music(pl, (p_ptr->music_monster = 40));
+					if (p_ptr->music_monster != 43) {
+						Send_music(pl, (p_ptr->music_monster = 42));
 					}
 				} else if (r_ptr->flags1 & RF1_UNIQUE) {
-					if (m_ptr->r_idx == 861) {
+					if (m_ptr->r_idx == 860) {
 						//Sauron; overrides all others
-						Send_music(pl, (p_ptr->music_monster = 41));
+						Send_music(pl, (p_ptr->music_monster = 43));
 					}
 					//Dungeon boss or special unique? (can't override Sauron or Nazgul)
-					else if (p_ptr->music_monster != 41 && p_ptr->music_monster != 40) {
+					else if (p_ptr->music_monster != 43 && p_ptr->music_monster != 42) {
 						//Dungeon boss?
 						if (m_ptr->r_idx == 971) {
 							//Wight-King
-							Send_music(pl, (p_ptr->music_monster = 39));
+							Send_music(pl, (p_ptr->music_monster = 41));
 						}
 						//Special Unique (non-respawning)? Can't override dungeon boss..
-						else if (r_ptr->level >= 98 && p_ptr->music_monster != 39) {
+						else if (r_ptr->level >= 98 && p_ptr->music_monster != 41) {
 							//Any of em
-							Send_music(pl, (p_ptr->music_monster = 38));
+							Send_music(pl, (p_ptr->music_monster = 40));
 						}
 					}
 				}
@@ -9443,13 +9534,10 @@ void curse_equipment(int Ind, int chance, int heavy_chance)
 		o_ptr->ident |= ID_CURSED;
 	}
 
-	if (changed)
-	{
+	if (changed) {
 		msg_print(Ind, "There is a malignant black aura surrounding you...");
-		if (o_ptr->note)
-		{
-			if (streq(quark_str(o_ptr->note), "uncursed"))
-			{
+		if (o_ptr->note) {
+			if (streq(quark_str(o_ptr->note), "uncursed")) {
 				o_ptr->note = 0;
 			}
 		}
