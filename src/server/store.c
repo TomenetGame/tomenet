@@ -1047,7 +1047,9 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr)
 #ifdef PLAYER_STORES
 	if (!st_ptr->player_owner) /* allow 100% off items in player stores */
 #endif
-	if (value <= 0) return (-1);
+	if (value <= 0 &&
+	    !(st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM))
+		return (-1);
 
 	/* All store items are fully *identified* */
 	/* (I don't know it's too nice.. ) */
