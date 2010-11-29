@@ -67,21 +67,25 @@ SLOWMONSTER = add_spell
 ESSENSESPEED = add_spell
 {
 	["name"] = 	"Essence of Speed",
-        ["school"] = 	{SCHOOL_TEMPORAL},
-        ["level"] = 	15,
-        ["mana"] = 	20,
-        ["mana_max"] = 	40,
-        ["fail"] = 	10,
-        ["spell"] = 	function()
+	["school"] = 	{SCHOOL_TEMPORAL},
+	["level"] = 	15,
+	["mana"] = 	20,
+	["mana_max"] = 	40,
+	["fail"] = 	10,
+	["spell"] = 	function()
 			local s
 			s = 5 + get_level(Ind, ESSENSESPEED, 20)
 			if s > 24 then
 				s = 24
 			end
-        		set_fast(Ind, 10 + randint(10) + get_level(Ind, ESSENSESPEED, 50), s)
-                        if player.spell_project > 0 then
-                                fire_ball(Ind, GF_SPEED_PLAYER, 0, s, player.spell_project, "")
-                        end
+--			if player.pclass ~= 1 then s = (s + 1) / 2 end -- 1: CLASS_MAGE
+			if player.pclass ~= 1 then
+				if s > 10 then s = 10 end
+			end
+			set_fast(Ind, 10 + randint(10) + get_level(Ind, ESSENSESPEED, 50), s)
+			if player.spell_project > 0 then
+				fire_ball(Ind, GF_SPEED_PLAYER, 0, s, player.spell_project, "")
+			end
 	end,
 	["info"] = 	function()
 			local s
@@ -89,12 +93,18 @@ ESSENSESPEED = add_spell
 			if s > 24 then
 				s = 24
 			end
-                       	return "dur "..(10 + get_level(Ind, ESSENSESPEED, 50)).."+d10 speed "..s
+--			if player.pclass ~= 1 then s = (s + 1) / 2 end -- 1: CLASS_MAGE
+			if player.pclass ~= 1 then
+				if s > 10 then s = 10 end
+			end
+			return "dur "..(10 + get_level(Ind, ESSENSESPEED, 50)).."+d10 speed "..s
 	end,
-        ["desc"] =	{
-        		"Magicaly increases the passing of time around you",
-                        "***Affected by the Meta spell: Project Spell***",
-        }
+	["desc"] =	{
+			"Magically increases the passing of time around you.",
+--			"Istari will see twice the effect others will see.",
+			"Non-Istari cannot gain more than +10 speed from this spell.",
+			"***Affected by the Meta spell: Project Spell***",
+	}
 }
 
 BANISHMENT = add_spell

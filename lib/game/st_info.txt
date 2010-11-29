@@ -20,6 +20,8 @@
 # N:<index>:<name>
 # I:<proba>:<item name>
 # T:<proba>:<tval>:<sval>
+# A:BACT_ store actions (x6)
+# O:owners (x6)
 # G:char:attr
 # W:max number of items in the store
 
@@ -423,7 +425,8 @@ A:0:0:1:2:3:4
 O:46:47:48:46:47:48
 #G:+:b
 G:+:B
-F:MEDIUM_LEVEL | HARD_STEAL
+F:MEDIUM_LEVEL
+#with new runecraft probably obsolete: | HARD_STEAL
 W:12
 
 N:10:Mayor's Office
@@ -522,7 +525,7 @@ O:24:24:24:24:24:24
 G:+:u
 W:0
 
-N:22:Thunderlords's Hide
+N:22:Draconian's Hide
 T:100:70:9
 F:PRICE4 | PRICE2
 A:0:0:33:2:34:4
@@ -677,13 +680,13 @@ T:100:45:256
 T:100:70:48
 T:100:70:49
 T:100:70:50
-A:0:0:1:2:3:4
+A:0:0:1:2:3:0
 O:34:35:36:37:46:49
 G:6:v
 #F:RANDOM | DEPEND_LEVEL | DEEP_LEVEL | FORCE_LEVEL
 #F:VERY_RARE
 F:RANDOM | DEEP_LEVEL | SHALLOW_LEVEL | FORCE_LEVEL | NO_DISCOUNT2 | 
-F:GOOD | GREAT | PRICE4 | PRICE2 | PRICY_ITEMS3 | NO_STEAL
+F:GOOD | GREAT | PRICE4 | PRICE2 | PRICY_ITEMS3
 #W:13
 W:12
 
@@ -708,14 +711,14 @@ W:12
 
 N:45:Rare Footwear Shop
 T:100:30:256
-A:0:0:1:2:3:4
+A:0:0:1:2:3:0
 O:8:9:10:11:38:20
 G:2:r
 F:RANDOM | DEEP_LEVEL | 
 #MEDIUM_LEVEL | 
 #F:VERY_RARE | FORCE_LEVEL
 F:GOOD | GREAT | EGO | RARE_EGO | NO_DISCOUNT2 | 
-F:PRICE4 | PRICE2 | PRICY_ITEMS2 | NO_STEAL
+F:PRICE4 | PRICE2 | PRICY_ITEMS2
 #W:13
 W:12
 
@@ -786,12 +789,12 @@ N:48:Expensive B. Market
 #T:3:111:256 <-was ok for buggy state (black_market_crap prob)
 #----everything above this line applies to bugged black_market_crap----
 ###T:100:111:102
-A:0:0:1:2:3:4
+A:0:0:1:2:3:0
 #O:39:40:41:39:40:41
 O:39:40:70:40:41:70
 G:7:v
 F:ALL_ITEM | RARE | DEEP_LEVEL | NO_DISCOUNT2 |
-F:PRICE4 | PRICE2 | PRICY_ITEMS2 | NO_STEAL
+F:PRICE4 | PRICE2 | PRICY_ITEMS2
 #W:24
 W:36
 
@@ -922,12 +925,12 @@ G:+:s
 W:24
 
 N:60:Secret Black Market
-A:0:0:1:2:3:4
+A:0:0:1:2:3:0
 #O:39:40:41:39:40:41
 O:39:40:70:40:41:70
 G:7:U
 F:ALL_ITEM | VERY_RARE | DEEP_LEVEL | NO_DISCOUNT | 
-F:PRICE16 | PRICY_ITEMS4 | NO_STEAL
+F:PRICE16 | PRICY_ITEMS4
 #W:13
 #W:24 --increasing it in hope to see ART scrolls more often..
 W:36
@@ -1077,3 +1080,7 @@ A:27:0:1:2:3:0
 O:42:43:44:45:4:58
 G:9:r
 W:24
+
+N:66:Player Store Template
+A:0:0:0:2:3:0
+F:VHARD_STEAL

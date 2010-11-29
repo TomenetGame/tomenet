@@ -22,13 +22,13 @@ HDELFEAR = add_spell
         ["spell"] =     function()
                 fire_ball(Ind, GF_REMFEAR_PLAYER, 0, get_level(Ind, HDELFEAR, 50 * 2), 4, " speaks some faithful words and you lose your fear.")
                 set_afraid(Ind, 0)
-                player.res_fear_temp = get_level(Ind, HDELFEAR, 50)
+                set_res_fear(Ind, get_level(Ind, HDELFEAR, 50))
 	        end,
         ["info"] =      function()
     		return "dur "..get_level(Ind, HDELFEAR, 50)
 	        end,
 	["desc"] =      {
-                "Removes fear from your heart.",
+                "Removes fear from your heart for a while.",
                 "***Automatically projecting***",
                 }
 }

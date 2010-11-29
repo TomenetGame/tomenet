@@ -184,7 +184,7 @@ state_tbot = 0  --tBot's state.
 --[[
 chat handler. called from dungeon.c when anything interesting was said.
 Mind you, "interesting" is defined as whatever a player said in chat in the last turn. X_X ]] 
-function chat_handler() 
+function chat_handler()
 	who = lua_get_last_chat_owner(); 
 	what = lua_get_last_chat_line();
 	set_bot(who);
@@ -276,7 +276,6 @@ function chat_handler()
 		end
 	end 
 end
-
 
 -- teleports --name-- to 0, 0
 function hh(name)

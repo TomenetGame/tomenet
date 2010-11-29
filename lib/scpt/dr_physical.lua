@@ -108,23 +108,22 @@ EXTRASTATS = add_spell
 	["name"] = 	"Extra Growth",
 	["school"] = 	{SCHOOL_DRUID_PHYSICAL},
 	["spell_power"] = 0,
-	["level"] = 	10,
+	["level"] = 	15,
 	["mana"] = 	10,
 	["mana_max"] = 	50,
 	["fail"] = 	40,
         ["stat"] =      A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			do_xtra_stats(Ind, get_level(Ind, EXTRASTATS, 100), get_level(Ind, EXTRASTATS, 50))
+			do_xtra_stats(Ind, 20 + get_level(Ind, EXTRASTATS, 50), get_level(Ind, EXTRASTATS, 50))
 			end,
 	["info"] = 	function()
-			return "+" .. (get_level(Ind, EXTRASTATS,50)/5) .. " dur " .. (20 + get_level(Ind, EXTRASTATS, 50))
+			return "+" .. ((get_level(Ind, EXTRASTATS, 50) / 10) + 2) .. " dur " .. (20 + get_level(Ind, EXTRASTATS, 50))
 			end,
-	["desc"] = 	{ "At level 5 increases your charisma.",
-			  "At level 10 also increases your dexterity.",
-			  "At level 15 also increases your strength.",
-			  "At level 20 also increases your constitution.",
-			  "At level 25 also increases your intelligence.",
+	["desc"] = 	{ "At level 1 increases your strength.",
+			  "At level 5 also increases your dexterity.",
+			  "At level 10 also increases your constitution.",
+			  "At level 20 also increases your intelligence.",
 			  "Not projecttable.",}
 }
 

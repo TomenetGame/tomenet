@@ -635,6 +635,9 @@ function spell_chance(i, s)
 	-- Hack: "-99" means 100% chance to succeed ('fail' is unsigned byte, so it'll be 157) - C. Blue
 	if (s_ptr.fail == 157) then
 		chance = 0
+	-- A new hack: "-98" means halved fail chance (from 0 base fail chance) - C. Blue
+	elseif (s_ptr.fail == 158) then
+		chance = lua_spell_chance(i, 0, get_level(i, s, 50), s_ptr.skill_level, get_mana(i, s), get_power(i, s), get_spell_stat(s)) / 6 + 5
 	else
 		-- Extract the base spell failure rate
 		chance = lua_spell_chance(i, s_ptr.fail, get_level(i, s, 50), s_ptr.skill_level, get_mana(i, s), get_power(i, s), get_spell_stat(s))

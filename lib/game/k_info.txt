@@ -863,7 +863,8 @@ A:10/1:50/1
 P:2:0d0:0:0:0
 F:IGNORE_WATER
 
-N:102:& Filthy Rag~
+#N:102:& Filthy Rag~
+N:102:Filthy Rags
 G:(:D
 I:36:1:0
 W:0:0:10:1
@@ -929,7 +930,7 @@ N:110:Rusty Chain Mail~
 G:[:u
 I:37:1:0
 #W:25:0:200:550  <- o_O
-W:25:0:200:0
+W:25:0:200:80
 A:25/1
 P:14:1d4:-5:0:-8
 
@@ -2623,7 +2624,7 @@ P:0:1d2:0:0:0
 
 $NEW_TOMES!N:330:& Tome~ of Magical Energy
 $NEW_TOMES$N:330:& Tome~ of Magical Energy
-G:?:B
+G:?:v
 I:111:0:0
 W:50:0:30:25000
 A:50/50:100/50
@@ -2632,7 +2633,7 @@ F:FULL_NAME | EASY_KNOW | IGNORE_WATER | IGNORE_MANA
 
 $NEW_TOMES!N:331:& Tome~ of the Eternal Flame
 $NEW_TOMES$N:331:& Tome~ of the Eternal Flame
-G:?:R
+G:?:f
 I:111:1:0
 W:50:0:30:25000
 A:50/50:100/50
@@ -2641,7 +2642,7 @@ F:FULL_NAME | EASY_KNOW | IGNORE_FIRE | IGNORE_WATER
 
 $NEW_TOMES!N:332:& Tome~ of the Blowing Wind
 $NEW_TOMES$N:332:& Tome~ of the Blowing Wind
-G:?:b
+G:?:c
 I:111:2:0
 W:50:0:30:25000
 A:50/50:100/50
@@ -2650,7 +2651,7 @@ F:FULL_NAME | EASY_KNOW | IGNORE_ELEC | IGNORE_WATER
 
 $NEW_TOMES!N:333:& Tome~ of the Impenetrable Earth
 $NEW_TOMES$N:333:& Tome~ of the Impenetrable Earth
-G:?:U
+G:?:u
 I:111:3:0
 W:50:0:30:25000
 A:50/50:100/50
@@ -2659,7 +2660,7 @@ F:FULL_NAME | EASY_KNOW | IGNORE_ACID | IGNORE_WATER
 
 $NEW_TOMES!N:334:& Tome~ of the Everrunning Wave
 $NEW_TOMES$N:334:& Tome~ of the Everrunning Wave
-G:?:B
+G:?:e
 I:111:4:0
 W:50:0:30:25000
 A:50/50:100/50
@@ -4384,7 +4385,7 @@ A:10/1
 P:0:1d1:0:0:0
 
 # An artifact potion! The Blood of Life...
-
+# replaced by kidx 1029, a potion of blood, for allowing blood-fountains
 #N:573:& Blood~ of Life
 #G:!:d
 #I:71:3:200
@@ -5686,7 +5687,7 @@ F:FLY | EASY_KNOW
 
 $NEW_TOMES!N:756:& Tome~ of the Time
 $NEW_TOMES$N:756:& Tome~ of the Time
-G:?:b
+G:?:B
 I:111:8:0
 W:50:0:30:25000
 A:50/50:100/50
@@ -5717,7 +5718,7 @@ F:FULL_NAME | EASY_KNOW | ATTR_MULTI | IGNORE_WATER
 
 $NEW_TOMES!N:759:& Tome~ of the Mind
 $NEW_TOMES$N:759:& Tome~ of the Mind
-G:?:B
+G:?:b
 I:111:10:0
 W:50:0:30:25000
 A:50/50:100/50
@@ -6170,6 +6171,7 @@ W:10:0:2500:500
 #A:10/40:20/10
 A:10/30:20/10
 P:0:1d1:0:0:0
+F:EASY_KNOW
 
 N:851:& Massive Piece~ of Copper
 G:*:U
@@ -6178,6 +6180,7 @@ W:30:0:3000:800
 #A:30/50:40/10
 A:30/40:40/10
 P:0:1d1:0:0:0
+F:EASY_KNOW
 
 N:852:& Massive Piece~ of Iron
 G:*:s
@@ -6186,6 +6189,7 @@ W:50:0:3500:1250
 #A:50/16
 A:50/12
 P:0:1d1:0:0:0
+F:EASY_KNOW
 
 N:853:& Massive Piece~ of Aluminium
 G:*:W
@@ -6194,6 +6198,7 @@ W:70:0:2500:2000
 #A:70/16
 A:70/12
 P:0:1d1:0:0:0
+F:EASY_KNOW
 
 N:854:& Massive Piece~ of Silver
 G:*:w
@@ -6202,6 +6207,7 @@ W:80:0:3000:3000
 #A:80/32
 A:80/24
 P:0:1d1:0:0:0
+F:EASY_KNOW
 
 N:855:& Massive Piece~ of Gold
 G:*:y
@@ -6210,6 +6216,7 @@ W:90:0:3500:5000
 #A:90/32
 A:90/24
 P:0:1d1:0:0:0
+F:EASY_KNOW
 
 N:856:& Massive Piece~ of Mithril
 G:*:G
@@ -6218,6 +6225,7 @@ W:110:0:2500:10000
 #A:110/64
 A:100/48
 P:0:1d1:0:0:0
+F:EASY_KNOW
 
 N:857:& Massive Piece~ of Adamantite
 G:*:v
@@ -6226,6 +6234,7 @@ W:120:0:4500:20000
 #A:120/64
 A:120/48
 P:0:1d1:0:0:0
+F:EASY_KNOW
 
 # added secondary, easier probabilites for deeper levels.
 
@@ -6248,36 +6257,36 @@ A:25/40:50/20
 P:0:1d1:0:0:0
 
 N:860:& Golem Scroll~ of Attack
-G:?:u
+G:?:D
 I:52:200:0
 #W:10:0:10:500
 #A:10/30:20/10
 W:20:0:10:1000
 A:20/30:40/15
 P:0:1d1:0:0:0
-F:ACTIVATE
+F:ACTIVATE | EASY_KNOW
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
 
 N:861:& Golem Scroll~ of Following
-G:?:u
+G:?:D
 I:52:201:0
 #W:10:0:10:500
 #A:20/40:20/20
 W:20:0:10:1000
 A:20/30:40/15
 P:0:1d1:0:0:0
-F:ACTIVATE
+F:ACTIVATE | EASY_KNOW
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
 
 N:862:& Golem Scroll~ of Guard
-G:?:u
+G:?:D
 I:52:202:0
 #W:15:0:10:500
 #A:15/30:25/10
 W:20:0:10:1000
 A:20/30:40/15
 P:0:1d1:0:0:0
-F:ACTIVATE
+F:ACTIVATE | EASY_KNOW
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
 
 N:863:Golem Creation
@@ -6350,7 +6359,7 @@ F:SEE_INVIS | FREE_ACT | SEARCH
 N:886:& Set~ of Elven Gloves
 G:]:g
 I:31:4:0
-W:1:0:20:4000
+W:1:0:10:4000
 A:20/16
 P:1:0d0:0:0:0
 #F:REGEN
@@ -6705,7 +6714,7 @@ F:FOUNTAIN
 
 $NEW_TOMES!N:922:& Tome~ of Holy Offense
 $NEW_TOMES$N:922:& Tome~ of Holy Offense
-G:?:W
+G:?:y
 I:111:12:0
 W:50:0:30:25000
 A:50/50:100/50
@@ -7184,13 +7193,6 @@ W:127:255:5:0
 A:127/255
 F:EASY_KNOW
 
-N:977:Highlander Contender Deed
-G:?:b
-I:8:61:0
-W:127:255:5:0
-A:127/255
-F:EASY_KNOW
-
 #N:978: Silver Dragon Scale Mail, defined above with the other DSMs
 
 ## Only for Highlander tornaments, version 2 with ESP (for surface combat!) ##
@@ -7334,7 +7336,7 @@ F:EASY_KNOW
 $ENABLE_MCRAFT$N:996:& Greater Crystal~ of Psycho-Power
 $ENABLE_MCRAFT$G:*:y
 $ENABLE_MCRAFT$I:111:19:0
-$ENABLE_MCRAFT$W:50:0:30:25000
+$ENABLE_MCRAFT$W:50:0:30:35000
 #$ENABLE_MCRAFT$W:50:0:30:1
 $ENABLE_MCRAFT$A:50/50:100/50
 $ENABLE_MCRAFT$P:0:1d1:0:0:0
@@ -7343,7 +7345,7 @@ $ENABLE_MCRAFT$F:FULL_NAME | EASY_KNOW | IGNORE_WATER | IGNORE_FIRE | IGNORE_ACI
 $ENABLE_MCRAFT$N:997:& Greater Crystal~ of Thought Contact
 $ENABLE_MCRAFT$G:*:y
 $ENABLE_MCRAFT$I:111:20:0
-$ENABLE_MCRAFT$W:50:0:30:25000
+$ENABLE_MCRAFT$W:50:0:30:35000
 #$ENABLE_MCRAFT$W:50:0:30:1
 $ENABLE_MCRAFT$A:50/50:100/50
 $ENABLE_MCRAFT$P:0:1d1:0:0:0
@@ -7352,7 +7354,7 @@ $ENABLE_MCRAFT$F:FULL_NAME | EASY_KNOW | IGNORE_WATER | IGNORE_FIRE | IGNORE_ACI
 $ENABLE_MCRAFT$N:998:& Greater Crystal~ of Mental Intrusion
 $ENABLE_MCRAFT$G:*:y
 $ENABLE_MCRAFT$I:111:21:0
-$ENABLE_MCRAFT$W:50:0:30:25000
+$ENABLE_MCRAFT$W:50:0:30:35000
 #$ENABLE_MCRAFT$W:50:0:30:1
 $ENABLE_MCRAFT$A:50/50:100/50
 $ENABLE_MCRAFT$P:0:1d1:0:0:0
@@ -7402,13 +7404,13 @@ $NEW_TOMES$F:FULL_NAME | EASY_KNOW | IGNORE_WATER | ACTIVATE
 N:1004:& Costume~
 G:(:o
 I:36:24:0
-$XMAS!W:127:255:10:100
-$XMAS!A:127/255
-# Costumes are rare during xmas
-$XMAS$W:20:0:10:100
-$XMAS$A:20/4
-#$HALLOWEEN$W:20:0:10:100
-#$HALLOWEEN$A:20/1
+$HALLOWEEN$W:20:0:10:100
+$HALLOWEEN$A:20/1
+$HALLOWEEN!W:127:255:10:100
+$HALLOWEEN!A:127/255
+# For xmas
+#$XMAS$W:20:0:10:100
+#$XMAS$A:20/4
 P:1:0d0:0:0:0
 F:IGNORE_WATER | FULL_NAME | EASY_KNOW
 
@@ -7605,6 +7607,32 @@ I:127:1:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
+
+#For fountains in Minas Anor, as Mark suggested, so Vampire characters can feed more easily.
+N:1029:Blood
+G:!:r
+I:71:3:0
+W:40:255:4:500
+A:40/255
+P:0:1d1:0:0:0
+F:FOUNTAIN
+
+# The Smokin' Boots of Moltor, the Dwarven Archer
+N:1030:& Smokin' Boots~
+G:):r
+I:30:9:0
+W:44:30:30:50000
+P:3:0d0:0:0:-5
+F:INSTA_ART
+
+# for PLAYER_STORES, to receive payments for items
+N:1031:Cheque
+G:?:U
+I:70:71:0
+W:127:255:1:0
+A:127/255
+P:0:0d0:0:0:0
+F:EASY_KNOW
 
 
 #N:(No.):(name)

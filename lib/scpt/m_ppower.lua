@@ -1,6 +1,13 @@
 -- handle the psycho-power school
 --((static: +saving throw))
 
+function get_pyro_dam()
+	return get_level(Ind, MPYROKINESIS, 700), 200
+end
+function get_cryo_dam()
+	return get_level(Ind, MPYROKINESIS, 750), 150
+end
+
 MBASH = add_spell
 {
 	["name"] =	"Psychic Hammer",
@@ -34,11 +41,11 @@ MBLINK = add_spell
         ["mana_max"] =  3,
         ["fail"] = 	10,
         ["spell"] = 	function()
-                	local dist = 10 + get_level(Ind, MBLINK, 8)
+                	local dist = 6 + get_level(Ind, MBLINK, 6)
 			teleport_player(Ind, dist, TRUE)
 			end,
 	["info"] = 	function()
-                	return "distance "..(10 + get_level(Ind, MBLINK, 8))
+                	return "distance "..(6 + get_level(Ind, MBLINK, 6))
 			end,
         ["desc"] =	{
         		"Teleports you on a small scale range",
@@ -199,10 +206,13 @@ MPYROKINESIS = add_spell
         ["direction"] = TRUE,
         ["ftk"] = 2,
         ["spell"] =	function(args)
-                        fire_grid_bolt(Ind, GF_FIRE, args.dir, 130 + get_level(Ind, MPYROKINESIS, 350), " causes an inflammation for")
+			local n, p
+			n, p = get_pyro_dam()
+                        fire_grid_bolt(Ind, GF_FIRE, args.dir, n + p, " causes an inflammation for")
                         end,
         ["info"] = 	function()
-	                return "dam "..(130 + get_level(Ind, MPYROKINESIS, 350))
+			n, p = get_pyro_dam()
+	                return "dam "..(n + p)
                         end,
         ["desc"] =	{
 			"Causes a severe inflammation to burn your opponent",
@@ -222,14 +232,40 @@ MCRYOKINESIS = add_spell
         ["direction"] = TRUE,
         ["ftk"] = 2,
         ["spell"] =	function(args)
-                        fire_grid_bolt(Ind, GF_COLD, args.dir, 115 + get_level(Ind, MCRYOKINESIS, 360), " causes freezing for")
+			local n, p
+			n, p = get_cryo_dam()
+                        fire_grid_bolt(Ind, GF_COLD, args.dir, n + p, " causes freezing for")
                         end,
         ["info"] = 	function()
-	                return "dam "..(115 + get_level(Ind, MCRYOKINESIS, 360))
+			local n, p
+			n, p = get_cryo_dam()
+	                return "dam "..(n + p)
                         end,
         ["desc"] =	{
 			"Causes a dramatic temperature drop on your opponent",
         }
+}
+
+MSHIELD = add_spell {
+	["name"] = 	"Kinetic Shield",
+	["school"] = 	{SCHOOL_PPOWER},
+	["am"] =	50,
+	["spell_power"] = 0,
+	["level"] = 	40,
+	["mana"] = 	30,
+	["mana_max"] = 	30,
+	["fail"] = 	0,
+	["direction"] = FALSE,
+	["spell"] = 	function()
+			set_kinetic_shield(Ind, randint(25) + 3 * get_level(Ind, HPROTEVIL, 50))
+			end,
+	["info"] = 	function()
+			return "dur "..1 + (get_level(Ind, MSHIELD, 50) * 3)..".."..25 + (3 * get_level(Ind, MSHIELD, 50))
+			end,
+	["desc"] =	{
+			"Uses telekinetic power as a shield that repels up to about",
+			"half of all incoming melee attacks and phsyical projectiles.",
+	}
 }
 
 if (def_hack("TEST_SERVER", nil)) then

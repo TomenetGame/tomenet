@@ -39,3 +39,4 @@ pern_dofile(Ind, "s_aux.lua")
 -- Add the schools of magic
 
 pern_dofile(Ind, "spells.lua")
+

@@ -190,6 +190,12 @@ F:DONT_NOTICE_RUNNING
 
 # XXX XXX XXX
 
+N:27:fountain of blood
+G:_:r
+F:FLOOR | NOTICE | REMEMBER | CAN_RUN
+D:0:This is fresh blood in the fountain.
+
+
 
 # 0x2x --> locked door (power 0)
 
@@ -360,8 +366,7 @@ D:1:You dig in the rubble.
 N:50:magma vein
 G:%:s
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
-F:TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE
 D:1:You tunnel into the magma vein.
 
 # 0x33 --> quartz vein
@@ -369,8 +374,7 @@ D:1:You tunnel into the magma vein.
 N:51:quartz vein
 G:%:w
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
-F:TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE
 D:1:You tunnel into the quartz vein.
 
 # 0x34 --> magma vein + treasure
@@ -379,8 +383,7 @@ N:52:magma vein
 G:%:s
 M:50
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
-F:TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE
 D:1:You tunnel into the magma vein.
 
 # 0x35 --> quartz vein + treasure
@@ -389,8 +392,7 @@ N:53:quartz vein
 G:%:w
 M:51
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
-F:TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE
 D:1:You tunnel into the quartz vein.
 
 # 0x36 --> magma vein + known treasure
@@ -398,8 +400,7 @@ D:1:You tunnel into the quartz vein.
 N:54:magma vein with treasure
 G:*:o
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
-F:TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE
 D:1:You tunnel into the magma vein.
 
 # 0x37 --> quartz vein + known treasure
@@ -407,8 +408,7 @@ D:1:You tunnel into the magma vein.
 N:55:quartz vein with treasure
 G:*:o
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
-F:TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE
 D:1:You tunnel into the quartz vein.
 
 # 0x38 --> granite wall -- basic
@@ -416,8 +416,7 @@ D:1:You tunnel into the quartz vein.
 N:56:granite wall
 G:#:s
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
-F:TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE
 D:1:You tunnel into the granite wall.
 
 # 0x39 --> granite wall -- inner
@@ -426,8 +425,7 @@ N:57:granite wall
 G:#:s
 M:56
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
-F:TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE
 D:1:You tunnel into the granite wall.
 
 # 0x3A --> granite wall -- outer
@@ -436,8 +434,7 @@ N:58:granite wall
 G:#:s
 M:56
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
-F:TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE
 D:1:You tunnel into the granite wall.
 
 # 0x3B --> granite wall -- solid
@@ -446,8 +443,7 @@ N:59:granite wall
 G:#:s
 M:56
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
-F:TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE
 D:1:You tunnel into the granite wall.
 
 # 0x3C --> permanent wall -- basic (perm)
@@ -564,7 +560,7 @@ F:DONT_NOTICE_RUNNING
 N:85:pool of deep lava
 G:~:R
 S:r:R:R:R:y:o:R
-E:8d4:4:FIRE
+E:8d4:2:FIRE
 F:ATTR_MULTI
 F:FLOOR | CAN_LEVITATE | CAN_FLY | REMEMBER | SUPPORT_LIGHT
 D:0:The lava BURNS you.
@@ -572,7 +568,7 @@ D:0:The lava BURNS you.
 N:86:stream of shallow lava
 G:.:r
 S:r:R:R:R:R:R:r
-E:4d4:4:FIRE
+E:4d4:2:FIRE
 F:ATTR_MULTI
 F:FLOOR | CAN_LEVITATE | CAN_FLY | REMEMBER | SUPPORT_LIGHT
 D:0:The lava burns you.
@@ -634,8 +630,7 @@ F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT
 N:95:ice wall
 G:#:W
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
-F:TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE
 D:1:You tunnel into the ice wall... #BOh chilly#w.
 D:2:an ice wall blocking your way
 
@@ -653,8 +648,7 @@ N:97:mountain chain
 G:^:U
 F:CAN_CLIMB | CAN_PASS | SUPPORT_LIGHT
 F:WALL | NO_WALK | NO_VISION
-F:DONT_NOTICE_RUNNING
-F:PERMANENT
+F:DONT_NOTICE_RUNNING | PERMANENT
 D:1:You cannot tunnel into such a hard stone.
 D:2:a hard stone block blocking your way
 
@@ -663,8 +657,7 @@ D:2:a hard stone block blocking your way
 N:98:sandwall
 G:#:y
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE
-F:DONT_NOTICE_RUNNING
-F:TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE
 D:1:You easily dig into the sandwall.
 D:2:a sandwall blocking your way
 
@@ -674,8 +667,7 @@ N:99:sandwall
 G:%:y
 M:98
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE
-F:DONT_NOTICE_RUNNING
-F:TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE
 D:1:You easily dig into the sandwall.
 D:2:a sandwall blocking your way
 
@@ -683,8 +675,7 @@ D:2:a sandwall blocking your way
 N:100:sandwall with treasure
 G:*:o
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE
-F:DONT_NOTICE_RUNNING
-F:TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE
 D:1:You easily tunnel into the sandwall.
 D:2:a sandwall blocking your way
 
@@ -938,7 +929,7 @@ D:0:Oh, an underground tunnel!
 N:205:a blazing fire
 G:%:y
 S:y:y:y:R:r:y:R
-E:2d5:4:FIRE
+E:2d5:2:FIRE
 D:0:The blazing fire burns you!
 F:ATTR_MULTI
 F:FLOOR | CAN_FLY | REMEMBER | SUPPORT_LIGHT

@@ -4,7 +4,8 @@
 
 function get_psiblast_dam()
 --	return 4 + get_level(Ind, MMINDBLAST, 4), 3 + get_level(Ind, MMINDBLAST, 45) <- just 50% of targetted value
-	return 2 + get_level(Ind, MMINDBLAST, 6), 3 + get_level(Ind, MMINDBLAST, 45), get_level(Ind, MMINDBLAST, 200)
+--	return 2 + get_level(Ind, MMINDBLAST, 6), 3 + get_level(Ind, MMINDBLAST, 45), get_level(Ind, MMINDBLAST, 200)
+	return 2 + get_level(Ind, MMINDBLAST, 7), 3 + get_level(Ind, MMINDBLAST, 45), get_level(Ind, MMINDBLAST, 250)
 end
 
 MSCARE = add_spell
@@ -70,9 +71,9 @@ MCONFUSE = add_spell
 
 MSLEEP = add_spell
 {
-	["name"] =	"Sleep",
+	["name"] =	"Hypnosis",
 	["school"] =	{SCHOOL_MINTRUSION},
-        ["am"] = 	50,
+        ["am"] = 	33,
         ["spell_power"] = 0,
 	["level"] =	5,
 	["mana"] =	5,

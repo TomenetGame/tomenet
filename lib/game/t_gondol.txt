@@ -121,7 +121,7 @@ F:l:74:3:0:0:0:0:0:36
 # The Fountain
 F:m:74:3:0:0:0:0:0:37
 
-# Thunderlord's Hide
+# Draconian's Hide
 F:n:74:3:0:0:0:0:0:22
 
 # Merchant guild

@@ -82,31 +82,30 @@ STONEPRISON = add_spell
 STRIKE = add_spell
 {
 	["name"] = 	"Strike",
-        ["school"] = 	{SCHOOL_EARTH},
-        ["level"] = 	25,
-        ["mana"] = 	30,
-        ["mana_max"] = 	50,
-        ["fail"] = 	30,
-        ["direction"] = TRUE,
-        ["spell"] = 	function(args)
-                        if get_level(Ind, STRIKE, 50) >= 12 then
-		        	fire_ball(Ind, GF_FORCE, args.dir, 50 + get_level(Ind, STRIKE, 50), 1, " casts a force ball of")
-                        else
-		        	fire_ball(Ind, GF_FORCE, args.dir, 50 + get_level(Ind, STRIKE, 50), 0, " casts a force bolt of")
-                        end
+	["school"] = 	{SCHOOL_EARTH},
+	["level"] = 	25,
+	["mana"] = 	30,
+	["mana_max"] = 	50,
+	["fail"] = 	30,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+			if get_level(Ind, STRIKE, 50) >= 12 then
+				fire_ball(Ind, GF_FORCE, args.dir, 50 + get_level(Ind, STRIKE, 50), 1, " casts a force ball of")
+			else
+				fire_ball(Ind, GF_FORCE, args.dir, 50 + get_level(Ind, STRIKE, 50), 0, " casts a force bolt of")
+			end
 	end,
 	["info"] = 	function()
-                        if get_level(Ind, STRIKE, 50) >= 12 then
-	       			return "dam "..(50 + get_level(Ind, STRIKE, 50)).." rad 1"
-                        else
+			if get_level(Ind, STRIKE, 50) >= 12 then
+				return "dam "..(50 + get_level(Ind, STRIKE, 50)).." rad 1"
+			else
 				return "dam "..(50 + get_level(Ind, STRIKE, 50))
-                        end
+			end
 	end,
-        ["desc"] =	{
-        		"Creates a micro-ball of force that will push monsters backwards",
-                        "If the monster is caught near a wall, it'll be crushed against it",
-                        "At level 12 it turns into a ball of radius 1"
-        }
+	["desc"] =	{
+			"Creates a force bolt that may stun enemies.",
+			"At level 12 it turns into a ball of radius 1"
+	}
 }
 
 SHAKE = add_spell

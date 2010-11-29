@@ -51,11 +51,16 @@ audio_sfx = {
     "bash_door_break",
     "browse",
     "browse_book",
+    "breath",
     "cast",
     "cast_ball",
     "cast_bolt",
+    "cast_beam",
     "cast_cloud",
+    "cast_wall",
     "cast_wave",
+    "grow_trees",
+    "stone_wall",
     "phase_door",
     "teleport",
     "cloak",
@@ -193,13 +198,14 @@ audio_sfx = {
     "monster_breath",
     "monster_cast_bolt",
     "monster_cast_ball",
+    "monster_cast_cloud",
     "monster_curse",
     "monster_heal",
     "monster_shriek",
     "monster_summon",
     "monster_blink",
-    "monster_puff",
     "monster_teleport",
+    "monster_puff",
 
     --[grid]
     "destruction",
@@ -209,6 +215,7 @@ audio_sfx = {
     "trap_setoff",
     "hollow_noise",
     "stirring",
+    "shatter_potion",
 }
 function get_sound_name(idx)
     if audio_sfx[idx + 1] == nil then return "" end
@@ -227,6 +234,9 @@ end
 -- Background Music
 audio_bgm = {
     "generic",
+
+    "town_generic",
+    "town_dungeon",
 
     "Bree",
     "Gondolin",

@@ -5,76 +5,76 @@
 MTAUNT = add_spell
 {
 	["name"] = 	"Cause Agression",
-        ["school"] = 	{SCHOOL_TCONTACT},
-        ["am"] =	50,
-        ["spell_power"] = 0,
+	["school"] = 	{SCHOOL_TCONTACT},
+	["am"] =	50,
+	["spell_power"] = 0,
 	["blind"] =	0,
-        ["level"] = 	5,
-        ["mana"] = 	10,
-        ["mana_max"] = 	20,
-        ["fail"] =      20,
-        ["spell"] = 	function()
+	["level"] = 	5,
+	["mana"] = 	10,
+	["mana_max"] = 	20,
+	["fail"] =      20,
+	["spell"] = 	function()
 			end,
 	["info"] = 	function()
 			return ""
 			end,
-        ["desc"] =	{
-        		"Causes a monster to charge and attack you in melee",
-        }
+	["desc"] =	{
+			"Causes a monster to charge and attack you in melee",
+	}
 }
 
 MDISTRACT = add_spell
 {
 	["name"] = 	"Divert Attention",
-        ["school"] = 	{SCHOOL_TCONTACT},
-        ["am"] =	50,
-        ["spell_power"] = 0,
+	["school"] = 	{SCHOOL_TCONTACT},
+	["am"] =	50,
+	["spell_power"] = 0,
 	["blind"] =	0,
-        ["level"] = 	10,
-        ["mana"] = 	15,
-        ["mana_max"] = 	15,
-        ["fail"] =      20,
-        ["spell"] = 	function()
+	["level"] = 	10,
+	["mana"] = 	15,
+	["mana_max"] = 	15,
+	["fail"] =      20,
+	["spell"] = 	function()
 			end,
 	["info"] = 	function()
 			return ""
 			end,
-        ["desc"] =	{
-        		"Diverts attention of a monster next to you",
-        		"so it attacks another player who is standing",
-        		"right next to it (if any) instead of you.",
-        }
+	["desc"] =	{
+			"Diverts attention of a monster next to you",
+			"so it attacks another player who is standing",
+			"right next to it (if any) instead of you.",
+	}
 }
 ]]
 
 MSELFKNOW = add_spell
 {
 	["name"] = 	"Self-Reflection",
-        ["school"] = 	{SCHOOL_TCONTACT},
-        ["am"] =	33,
-        ["spell_power"] = 0,
+	["school"] = 	{SCHOOL_TCONTACT},
+	["am"] =	33,
+	["spell_power"] = 0,
 	["blind"] =	0,
-        ["level"] = 	15,
-        ["mana"] = 	15,
-        ["mana_max"] = 	20,
-        ["fail"] =      20,
-        ["spell"] = 	function()
+	["level"] = 	15,
+	["mana"] = 	15,
+	["mana_max"] = 	20,
+	["fail"] =      20,
+	["spell"] = 	function()
 		        self_knowledge(Ind)
 			end,
 	["info"] = 	function()
 			return ""
 			end,
-        ["desc"] =	{
-        		"Find out more about yourself",
-        }
+	["desc"] =	{
+			"Find out more about yourself",
+	}
 }
 
 MBOOST = add_spell
 {
 	["name"] =      "Willpower",
 	["school"] =    {SCHOOL_TCONTACT},
-        ["am"] =	33,
-        ["spell_power"] = 0,
+	["am"] =	33,
+	["spell_power"] = 0,
 	["blind"] =	0,
 	["level"] =     3,
 	["mana"] =      3,
@@ -82,10 +82,10 @@ MBOOST = add_spell
 	["fail"] =      5,
 	["spell"] =     function()
 			fire_ball(Ind, GF_MINDBOOST_PLAYER, 0, 40 + get_level(Ind, MBOOST, 180), 2, " focusses on your mind, unlocking something!")
-                        set_mindboost(Ind, 20 + get_level(Ind, MBOOST, 90), 15 + randint(6))
+			set_mindboost(Ind, 20 + get_level(Ind, MBOOST, 90), 15 + randint(6))
 			end,
 	["info"] =      function()
-			return ""
+			return "dur 15+d6"
 			end,
 	["desc"] =      {
 			"Boosts your willpower to unleash hidden potential,",
@@ -101,8 +101,8 @@ MHASTE = add_spell
 {
 	["name"] =      "Accelerate Nerves",
 	["school"] =    {SCHOOL_TCONTACT},
-        ["am"] =	50,
-        ["spell_power"] = 0,
+	["am"] =	50,
+	["spell_power"] = 0,
 	["blind"] =	0,
 	["level"] =     20,
 	["mana"] =      10,
@@ -134,8 +134,8 @@ MCURE = add_spell
 {
 	["name"] =      "Clear Mind",
 	["school"] =    {SCHOOL_TCONTACT},
-        ["am"] =	50,
-        ["spell_power"] = 0,
+	["am"] =	50,
+	["spell_power"] = 0,
 	["blind"] =	0,
 	["confusion"] =	0,
 	["level"] =     3,
@@ -144,14 +144,14 @@ MCURE = add_spell
 	["fail"] =      5,
 	["spell"] =     function()
 			fire_ball(Ind, GF_REMFEAR_PLAYER, 0, get_level(Ind, MCURE, 50 * 2), 4, " waves over your eyes.")
-                        set_afraid(Ind, 0)
-                        player.res_fear_temp = get_level(Ind, MSANITY, 50)
-	                if get_level(Ind, MCURE, 50) >= 5 then
-	                        set_confused(Ind, 0)
-	                end
-	                if get_level(Ind, MCURE, 50) >= 10 then
-	                        set_image(Ind, 0)
-	                end
+			set_afraid(Ind, 0)
+			set_res_fear(Ind, get_level(Ind, MSANITY, 50))
+			if get_level(Ind, MCURE, 50) >= 5 then
+				set_confused(Ind, 0)
+			end
+			if get_level(Ind, MCURE, 50) >= 10 then
+				set_image(Ind, 0)
+			end
 			end,
 	["info"] =      function()
 			return ""
@@ -167,8 +167,8 @@ MSANITY = add_spell
 {
 	["name"] =      "Stabilize Thoughts",
 	["school"] =    {SCHOOL_TCONTACT},
-        ["am"] =	50,
-        ["spell_power"] = 0,
+	["am"] =	50,
+	["spell_power"] = 0,
 	["blind"] =	0,
 	["confusion"] =	0,
 	["level"] =     25,
@@ -177,11 +177,16 @@ MSANITY = add_spell
 	["fail"] =      40,
 	["spell"] =     function()
 			fire_ball(Ind, GF_REMFEAR_PLAYER, 0, get_level(Ind, MSANITY, 50 * 2), 4, " waves over your eyes.")
-                        set_afraid(Ind, 0)
-                        player.res_fear_temp = get_level(Ind, MSANITY, 50)
-                        set_image(Ind, 0)
-                        set_confused(Ind, 0)
+			set_afraid(Ind, 0)
+			set_res_fear(Ind, get_level(Ind, MSANITY, 50))
+
+			set_image(Ind, 0)
+			set_confused(Ind, 0)
+
 			heal_insanity(Ind, 15 + get_level(Ind, MSANITY, 55))
+			if player.csane == player.msane then
+				msg_print(Ind, "You are in full command of your mental faculties.")
+			end
 			fire_ball(Ind, GF_SANITY_PLAYER, 0, 30 + get_level(Ind, MSANITY, 110), 1, " focusses on your mind.")
 			end,
 	["info"] =      function()
@@ -197,8 +202,8 @@ MSENSEMON = add_spell
 {
 	["name"] =      "Telepathy",
 	["school"] =    {SCHOOL_TCONTACT},
-        ["am"] =	50,
-        ["spell_power"] = 0,
+	["am"] =	50,
+	["spell_power"] = 0,
 	["blind"] =	0,
 --	["level"] =     1,
 --	["mana"] =      3,
@@ -223,41 +228,66 @@ MSENSEMON = add_spell
 	}
 }
 
+MIDENTIFY = add_spell
+{
+	["name"] =      "Recognition",
+	["school"] =    {SCHOOL_TCONTACT},
+	["am"] =	33,
+	["spell_power"] = 0,
+	["blind"] =	0,
+	["level"] =     25,
+	["mana"] =      10,
+	["mana_max"] =  10,
+	["fail"] =      20,
+	["spell"] =     function()
+			ident_spell(Ind)
+			end,
+	["info"] =      function()
+			return ""
+			end,
+	["desc"] =      {
+			"Recognizes magic, allowing you to identify an item.",
+	}
+}
+
 MTELEKINESIS = add_spell
 {
-	["name"] = 	"Telekinesis",
-        ["school"] = 	{SCHOOL_TCONTACT, SCHOOL_PPOWER},
-        ["am"] =	50,
-        ["spell_power"] = 0,
-        ["level"] = 	35,
-        ["mana"] = 	25,
-        ["mana_max"] = 	25,
-        ["fail"] =      10,
-        ["get_item"] =  {
-                        ["prompt"] = 	"Teleport which object? ",
-                        ["inven"] = 	TRUE,
-                        ["get"] = 	function (obj)
-	                                if obj.weight <= 4 + get_level(Ind, MTELEKINESIS, 250, 0) then
-        	                        	return TRUE
-                	                end
-                        	        return FALSE
-                        end,
-        },
-        ["spell"] = 	function(args)
-                        if args.item == -1 then return end
-			if player.inventory[1 + args.item].weight <= 4 + get_level(Ind, MTELEKINESIS, 250, 0) then
-                        	player.current_telekinesis = player.inventory[1 + args.book]
-                                telekinesis_aux(Ind, args.item)
-                        else
-                                msg_print(Ind, "Pfft trying to hack your client ? pretty lame ...")
-                        end
+	["name"] = 	"Telekinesis II",
+	["school"] = 	{SCHOOL_TCONTACT, SCHOOL_PPOWER},
+	["am"] =	50,
+	["spell_power"] = 0,
+	["level"] = 	35,
+	["mana"] = 	25,
+	["mana_max"] = 	25,
+	["fail"] =      10,
+	["get_item"] =  {
+			["prompt"] = 	"Teleport which object? ",
+			["inven"] = 	TRUE,
+			["get"] = 	function (obj)
+					if obj.weight * obj.number <= 6 + get_level(Ind, MTELEKINESIS, 250, 0) then
+						return TRUE
+					end
+					return FALSE
+			end,
+	},
+	["spell"] = 	function(args)
+			if args.item == -1 then
+			    msg_print(Ind, "Telekinesis has been cancelled.")
+			    return
+			end
+			if player.inventory[1 + args.item].weight * player.inventory[1 + args.item].number <= 4 + get_level(Ind, MTELEKINESIS, 350, 0) then
+				player.current_telekinesis = player.inventory[1 + args.book]
+				telekinesis_aux(Ind, args.item)
+			else
+				msg_print(Ind, "Pfft trying to hack your client ? pretty lame ...")
+			end
 			end,
 	["info"] = 	function()
-			return "max wgt "..((4 + get_level(Ind, MTELEKINESIS, 250, 0)) / 10).."."..(imod(4 + get_level(Ind, MTELEKINESIS, 250, 0), 10))
+			return "max wgt "..((4 + get_level(Ind, MTELEKINESIS, 350, 0)) / 10).."."..(imod(4 + get_level(Ind, MTELEKINESIS, 350, 0), 10))
 			end,
-        ["desc"] =	{
-        		"Inscribe your book with @Pplayername, cast it, select an item",
-                        "and the item will be teleported to that player whereever he/she might",
-                        "be in the Universe",
-        }
+	["desc"] =	{
+			"Inscribe your book with @Pplayername, cast it, select an item",
+			"and the item will be teleported to that player whereever he/she might",
+			"be in the Universe",
+	}
 }

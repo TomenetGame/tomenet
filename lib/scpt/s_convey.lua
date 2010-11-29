@@ -9,14 +9,14 @@ BLINK = add_spell
         ["mana_max"] =  3,
         ["fail"] = 	10,
         ["spell"] = 	function()
-                	local dist = 10 + get_level(Ind, BLINK, 8)
+                	local dist = 6 + get_level(Ind, BLINK, 6)
 			teleport_player(Ind, dist, TRUE);
 --                        if player.spell_project > 0 then
 --                                fire_ball(Ind, GF_AWAY_ALL, 0, dist, player.spell_project, "")
 --                        end
 	end,
 	["info"] = 	function()
-                	return "distance "..(10 + get_level(Ind, BLINK, 8))
+                	return "distance "..(6 + get_level(Ind, BLINK, 6))
 	end,
         ["desc"] =	{
         		"Teleports you on a small scale range",

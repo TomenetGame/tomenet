@@ -60,7 +60,7 @@ function allrec()
     local p = 0
     for p = 1, NumPlayers do
 	if players(p).wpos.wz ~= 0 then
-	    recall(p)
+	    recall_player(p, "")
 	end
     end
 end
@@ -154,14 +154,14 @@ function unicpy(name)
     if (p == -1) then return -1 end
     for i = 1, MAX_R_IDX do
         c = players(p).r_killed[i]
-	players(Ind).r_killed[i] = c
+	player.r_killed[i] = c
     end
 end
 
 -- Displays status information about a player, for example to
 -- calculate the possible difficulty level of admin quests :).
 function status(name)
-    local p, r, k, bspeed, rs, ks
+    local p, r, k, bspeed, rs, rstim, ks
     p = ind_loose(name)
     if (p == -1) then return -1 end
     r = players(p).body_monster
@@ -169,7 +169,11 @@ function status(name)
 
     if r > 0 then
 	k = players(p).r_killed[r + 1]
-	rs = r.." ("..lua_get_mon_name(r)..", level "..lua_get_mon_lev(r)..", killed: "..k..")"
+	rstim = ""
+	if players(p).tim_mimic_what == r then
+	    rstim = " (\255y"..players(p).tim_mimic.."\255w)"
+	end
+	rs = r.." - "..lua_get_mon_name(r)..rstim..", lev "..lua_get_mon_lev(r)..", killed: "..k
     else
 	rs = "Normal form"
     end
@@ -229,7 +233,8 @@ function status(name)
     end
 
     msg_print(Ind, "\255UStatus for "..players(p).name.." (Ind "..p..", id "..players(p).id..", party "..players(p).party..", \255"..cmode.."\255U)")
-    msg_print(Ind, "HP: "..players(p).chp.."/"..players(p).mhp.."    SP: "..players(p).csp.."/"..players(p).msp.."    San: "..players(p).csane.."/"..players(p).msane.."    St: "..players(p).cst.."/"..players(p).mst..ks)
+    msg_print(Ind, "Race: "..players(p).prace.."  Class: "..players(p).pclass.."  Trait: "..players(p).ptrait)
+    msg_print(Ind, "HP: "..players(p).chp.."/"..players(p).mhp.."  MP: "..players(p).csp.."/"..players(p).msp.."  SN: "..players(p).csane.."/"..players(p).msane.."  St: "..players(p).cst.."/"..players(p).mst.."  Crt: "..players(p).xtra_crit.."  Lu: "..players(p).luck..ks)
 
     line1 = "Base Spd: "..bspeed.."   Spd: "..players(p).pspeed.."  MDLev: "..players(p).max_dlv
     linetab = ""
@@ -350,7 +355,8 @@ function resist(name)
     if players(p).sustain_con == TRUE then suscon = "CON" end
     if players(p).sustain_chr == TRUE then suschr = "CHR" end
 --    msg_print(Ind, "\255USustenances:\255u  "..susstr.." "..susint.." "..suswis.." "..susdex.." "..suscon.." "..suschr)
-    msg_print(Ind, "\255USustenances:\255u  "..susstr.." "..susint.." "..suswis.." "..susdex.." "..suscon.." "..suschr.."  "..encum(name))
+--    msg_print(Ind, "\255USustenances:\255u  "..susstr.." "..susint.." "..suswis.." "..susdex.." "..suscon.." "..suschr.."  "..encum(name))
+    msg_print(Ind, "\255USust:\255u  "..susstr.." "..susint.." "..suswis.." "..susdex.." "..suscon.." "..suschr.."  "..encum(name).." "..esplist(name))
 end
 
 -- Displays attribute values of a player
@@ -359,32 +365,56 @@ function attr(name)
     p = ind_loose(name)
     if (p == -1) then return -1 end
     if players(p).stat_use[1] == players(p).stat_top[1] then
-	astr = "\255U"
+	if players(p).stat_cur[1] == 18 + 100 then
+	    astr = "\255U"
+	else
+	    astr = "\255G"
+	end
     else
 	astr = "\255y"
     end
     if players(p).stat_use[2] == players(p).stat_top[2] then
-	aint = "\255U"
+	if players(p).stat_cur[2] == 18 + 100 then
+	    aint = "\255U"
+	else
+	    aint = "\255G"
+	end
     else
 	aint = "\255y"
     end
     if players(p).stat_use[3] == players(p).stat_top[3] then
-	awis = "\255U"
+	if players(p).stat_cur[3] == 18 + 100 then
+	    awis = "\255U"
+	else
+	    awis = "\255G"
+	end
     else
 	awis = "\255y"
     end
     if players(p).stat_use[4] == players(p).stat_top[4] then
-	adex = "\255U"
+	if players(p).stat_cur[4] == 18 + 100 then
+	    adex = "\255U"
+	else
+	    adex = "\255G"
+	end
     else
 	adex = "\255y"
     end
     if players(p).stat_use[5] == players(p).stat_top[5] then
-	acon = "\255U"
+	if players(p).stat_cur[5] == 18 + 100 then
+	    acon = "\255U"
+	else
+	    acon = "\255G"
+	end
     else
 	acon = "\255y"
     end
     if players(p).stat_use[6] == players(p).stat_top[6] then
-	achr = "\255U"
+	if players(p).stat_cur[6] == 18 + 100 then
+	    achr = "\255U"
+	else
+	    achr = "\255G"
+	end
     else
 	achr = "\255y"
     end
@@ -512,7 +542,73 @@ function encum(name)
 
 --    msg_print(Ind, "\255UEncumberments: "..ca..hw..iw..aw..ew..hs..hst..as..cw..combo..aa..cg..bb)
 --    msg_print(Ind, "\255UEncumberments: "..ca..hw..iw..combo2..hs..hst..as..cw..mh..rh..aa..cg..bb)
-    return ("\255UEncumberments: "..ca..hw..iw..combo2..hs..hst..as..cw..mh..rh..aa..cg..bb)
+    return ("\255UEncumb: "..ca..hw..iw..combo2..hs..hst..as..cw..mh..rh..aa..cg..bb)
+end
+
+-- ESPs
+function esplist(name)
+    local p = ind_loose(name)
+    espall = " "
+    espuni = " "
+    espevil = " "
+    espgood = " "
+    espZ = " "
+    espN = " "
+    espD = " "
+    espDR = " "
+    espU = " "
+    espG = " "
+    espP = " "
+    espO = " "
+    espT = " "
+    espS = " "
+
+    if (p == -1) then return -1 end
+
+    if band(players(p).telepathy, 1) ~= 0 then
+	espO = "O"
+    end
+    if band(players(p).telepathy, 2) ~= 0 then
+	espT = "T"
+    end
+    if band(players(p).telepathy, 4) ~= 0 then
+	espD = "D"
+    end
+    if band(players(p).telepathy, 8) ~= 0 then
+	espP = "P"
+    end
+    if band(players(p).telepathy, 16) ~= 0 then
+	espU = "U"
+    end
+    if band(players(p).telepathy, 32) ~= 0 then
+	espG = "G"
+    end
+    if band(players(p).telepathy, 64) ~= 0 then
+	espevil = "e"
+    end
+    if band(players(p).telepathy, 128) ~= 0 then
+	espZ = "a"
+    end
+    if band(players(p).telepathy, 256) ~= 0 then
+	espDR = "d"
+    end
+    if band(players(p).telepathy, 512) ~= 0 then
+	espgood = "g"
+    end
+    if band(players(p).telepathy, 1024) ~= 0 then
+	espN = "n"
+    end
+    if band(players(p).telepathy, 2048) ~= 0 then
+	espuni = "u"
+    end
+    if band(players(p).telepathy, 4096) ~= 0 then
+	espS = "S"
+    end
+    if band(players(p).telepathy, -2147483648) ~= 0 then
+	espall = "*"
+    end
+
+    return ("\255UESP: "..espS..espO..espT..espP..espN..espG..espDR..espD..espU..espZ..espuni..espgood..espevil..espall)
 end
 
 -- Helper function for miscellaneous stats, taken from c-xtra1.c
@@ -573,11 +669,11 @@ end
 
 -- Toggle ghost flag of a player quickly.
 function tg()
-    if players(Ind).ghost == 1 then
-	players(Ind).ghost = 0
+    if player.ghost == 1 then
+	player.ghost = 0
 	msg_print(Ind, "Player "..Ind.." is no ghost anymore")
     else
-	players(Ind).ghost = 1
+	player.ghost = 1
 	msg_print(Ind, "Player "..Ind.." is now a ghost")
     end
 end
@@ -658,12 +754,12 @@ function vnc(name)
     players(p).esp_link_type = 1
     players(p).esp_link_end = 0
     players(p).esp_link_flags = bor(players(p).esp_link_flags, 1 + 128)
-    players(Ind).esp_link_flags = bor(players(Ind).esp_link_flags, 256)
+    player.esp_link_flags = bor(player.esp_link_flags, 256)
     players(p).redraw = bor(players(p).redraw, 67108864) -- 67108864 = PR_MAP
 
     --redraw target's (client-side) weather to refresh own weather too
     players(p).panel_changed = 1
-    msg_print(Ind, "Mind link established.")
+    msg_print(Ind, "Mind link established with '"..players(p).name.."'.")
 end
 
 -- Break VNC mind link
@@ -678,8 +774,8 @@ function vncoff(name)
     players(p).esp_link_flags = band(players(p).esp_link_flags, bnot(1 + 128))
 
     player.esp_link_flags = band(player.esp_link_flags, bnot(256))
-    player.redraw = bor(players(Ind).redraw, 67108864)
-    msg_print(Ind, "Mind link broken.")
+    player.redraw = bor(player.redraw, 67108864)
+    msg_print(Ind, "Mind link broken with '"..players(p).name.."'.")
 end
 
 -- Reset own mind link state (use for clean up if someone steals it from you)
@@ -716,7 +812,7 @@ end
 
 --quickly polymorph self into..
 function poly(r_idx)
-    players(Ind).body_monster = r_idx
+    player.body_monster = r_idx
 end
 
 --quickly do msg_print to oneself
@@ -726,11 +822,11 @@ end
 
 --quickly get own item
 function sginv(i, tolua_S)
-    exec_lua(Ind, "msg_print(Ind, players(Ind).inventory["..i.."]."..tolua_S.."..\"#\")")
+    exec_lua(Ind, "msg_print(Ind, player.inventory["..i.."]."..tolua_S.."..\"#\")")
 end
 --quickly manipulate own item
 function sinv(i, tolua_S)
-    exec_lua(Ind, "players(Ind).inventory["..i.."]."..tolua_S)
+    exec_lua(Ind, "player.inventory["..i.."]."..tolua_S)
 end
 --quickly get item
 function ginv(name, i, tolua_S)
@@ -746,7 +842,7 @@ function inv(name, i, tolua_S)
 end
 --quickly display own property
 function sgprop(tolua_S)
-    exec_lua(Ind, "msg_print(Ind, players(Ind)."..tolua_S.."..\"#\")")
+    exec_lua(Ind, "msg_print(Ind, player."..tolua_S.."..\"#\")")
 end
 --quickly display property
 function gprop(name, tolua_S)
@@ -757,7 +853,7 @@ end
 
 --refills own spell points
 function fsp()
-    players(Ind).csp = players(Ind).msp
+    player.csp = player.msp
 end
 
 --display number of kills of a certain monster
@@ -769,35 +865,67 @@ function nk(name, r)
 end
 
 --display all learnt forms for mimics
-function mf(name, minlev)
+function mf(name, minlev, maxlev)
     local i, k, n, p
+    if maxlev == nil then maxlev = 127 end
     p = ind_loose(name)
     if (p == -1) then return -1 end
     msg_print(Ind, "scanning "..MAX_R_IDX.." forms.")
     for i = 1, MAX_R_IDX - 1 do
 	n = lua_get_mon_lev(i)
 	k = players(p).r_killed[i + 1]
-        if n >= minlev and lua_is_unique(i) == 0 then
+        if n >= minlev and n <= maxlev and lua_is_unique(i) == 0 then
 	    if k >= n and k >= 1 then
 		if n >= 80 then
-		    msg_print(Ind, "\255R"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
+		    msg_print(Ind, "\255v"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
 		elseif n >= 65 then
 		    msg_print(Ind, "\255r"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
 		elseif n >= 50 then
 		    msg_print(Ind, "\255o"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
 		elseif n >= 30 then
 		    msg_print(Ind, "\255y"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
+		elseif n > 0 then
+		    msg_print(Ind, "\255w"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
 		else
-		    msg_print(Ind, "\255s"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
+		    msg_print(Ind, "\255D"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
 		end
 	    end
+	end
+    end
+end
+--displays forms affected by specified form-learning progress */
+function mfp(name, minlev, progress)
+    local i, k, n, p
+--    if maxlev == nil then maxlev = 127 end
+    p = ind_loose(name)
+    if (p == -1) then return -1 end
+    msg_print(Ind, "scanning "..MAX_R_IDX.." forms.")
+    for i = 1, MAX_R_IDX - 1 do
+	n = lua_get_mon_lev(i)
+	k = players(p).r_killed[i + 1]
+--        if n >= minlev and n <= maxlev and lua_is_unique(i) == 0 then
+        if n >= minlev and k >= progress and k < n and lua_is_unique(i) == 0 then
+--        if k >= progress and k < n and lua_is_unique(i) == 0 then
+		if n >= 80 then
+		    msg_print(Ind, "\255v"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
+		elseif n >= 65 then
+		    msg_print(Ind, "\255r"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
+		elseif n >= 50 then
+		    msg_print(Ind, "\255o"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
+		elseif n >= 30 then
+		    msg_print(Ind, "\255y"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
+		elseif n > 0 then
+		    msg_print(Ind, "\255w"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
+		else
+		    msg_print(Ind, "\255D"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
+		end
 	end
     end
 end
 
 --set skill points to 9999
 function s9()
-    players(Ind).skill_points = 9999
+    player.skill_points = 9999
 end
 
 --[[
@@ -862,19 +990,19 @@ function gsk(name, skill)
 end
 
 --reset one skill, making the invested points available again
-function rsk(name, skill)
+function rsk(name, skill, poly)
     local p
     p = ind(name)
     if (p == -1) then return -1 end
-    respec_skill(p, skill, 0)
+    respec_skill(p, skill, 0, poly)
 end
 
 --reset one skill, making the invested points available again, and update it to latest version
-function fsk(name, skill)
+function fsk(name, skill, poly)
     local p
     p = ind(name)
     if (p == -1) then return -1 end
-    respec_skill(p, skill, 1)
+    respec_skill(p, skill, 1, poly)
 end
 
 --reset whole skill chart, making all invested skill points available again
@@ -1040,8 +1168,8 @@ end
 function pvp(name)
 	p = ind_loose(name)
 	if (p == -1) then return -1 end
-	msg_print(Ind, "  Kills: "..players(p).kills.."  Kills(lo): "..players(p).kills_lower.."  Kills(hi): "..players(p).kills_higher.."  Kills(=): "..players(p).kills_equal)
---	msg_print(Ind, "  Free mimicry: "..players(p).free_mimic).."  P-Tele: "..players(p).pvp_prevent_tele).."  Heal: "..players(p).heal_effect)
+	msg_print(Ind, "  Kills (own): \255r"..players(p).kills.." ("..players(p).kills_own..")\255w   Kills(lo): "..players(p).kills_lower.."  Kills(hi): "..players(p).kills_higher.."  Kills(=): "..players(p).kills_equal)
+	msg_print(Ind, "  Free mimicry: \255B"..players(p).free_mimic.."\255w   P-Tele: \255y"..players(p).pvp_prevent_tele.."\255w   Heal: \255g"..players(p).heal_effect)
 end
 
 --give a player a godly strike (instakill)

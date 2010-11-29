@@ -84,7 +84,7 @@ STUN = add_spell
 
 TELEKINESIS = add_spell
 {
-	["name"] = 	"Telekinesis",
+	["name"] = 	"Telekinesis I",
         ["school"] = 	{SCHOOL_MIND, SCHOOL_CONVEYANCE},
         ["level"] = 	30,
         ["mana"] = 	25,
@@ -94,7 +94,7 @@ TELEKINESIS = add_spell
                         ["prompt"] = 	"Teleport which object? ",
                         ["inven"] = 	TRUE,
                         ["get"] = 	function (obj)
-	                                if obj.weight <= 4 + get_level(Ind, TELEKINESIS, 250, 0) then
+	                                if obj.weight * obj.number <= 4 + get_level(Ind, TELEKINESIS, 250, 0) then
         	                        	return TRUE
                 	                end
                         	        return FALSE
@@ -102,7 +102,7 @@ TELEKINESIS = add_spell
         },
         ["spell"] = 	function(args)
                         if args.item == -1 then return end
-			if player.inventory[1 + args.item].weight <= 4 + get_level(Ind, TELEKINESIS, 250, 0) then
+			if player.inventory[1 + args.item].weight * player.inventory[1 + args.item].number <= 4 + get_level(Ind, TELEKINESIS, 250, 0) then
                         	player.current_telekinesis = player.inventory[1 + args.book]
                                 telekinesis_aux(Ind, args.item)
                         else

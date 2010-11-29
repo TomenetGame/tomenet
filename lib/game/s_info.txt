@@ -35,16 +35,16 @@ V:4.0.0
 
 N:1:Combat
 D:General ability to fight and to pseudo-id unknown items.
-D:Also allows wearing heavier armour without receiving penalties.
+D:Allows wearing heavier armour without penalties (Martial Arts excepted).
 A:14:Check parry/block chance
 I:1000:0
 
 N:2:Weaponmastery
 D:Improves your abilities with melee weapons.
 D:Increases your chance to parry attacks.
-A:5:Fighting techniques
+#A:5:Fighting techniques
 I:1000:0
-F:MKEY_HARDCODE
+#F:MKEY_HARDCODE
 
 N:3:Sword-mastery
 D:Allows more skillful use of sword-type weapons.
@@ -223,9 +223,11 @@ I:1000:0
 #F:MKEY_SPELL | MKEY_TVAL
 
 #now in Weaponmastery - C. Blue
-#N:32:Fighting Technique
-#D:Ability to perform special fighting techniquess
-#A:5:Use a fighting technique
+N:32:Fighting Technique
+D:Ability to perform special fighting techniques
+A:5:Fighting techniques
+I:1000:0
+F:MKEY_HARDCODE | HIDDEN
 #I:1000:93
 #F:MKEY_SPELL | MKEY_TVAL
 
@@ -446,6 +448,7 @@ $DUAL_WIELD$N:78:Dual-Wield
 $DUAL_WIELD$D:Ability to wield two one-handed weapons at once.
 $DUAL_WIELD$D:This won't work well if your armour is too heavy.
 $DUAL_WIELD$I:1000:0
+$DUAL_WIELD$F:MAX_1
 $DUAL_WIELD$A:1:Switch between main-hand and dual-hand
 
 $ENABLE_STANCES$N:79:Combat Stances
@@ -743,13 +746,13 @@ T:Main:Combat
 T:Combat:Weaponmastery
 T:Combat:Martial Arts
 T:Combat:Interception
-$DUAL_WIELD$T:Combat:Dual-Wield
 T:Weaponmastery:Sword-mastery
 T:Sword-mastery:Critical-strike
 T:Weaponmastery:Axe-mastery
 T:Weaponmastery:Blunt-mastery
 T:Weaponmastery:Polearm-mastery
 $ENABLE_STANCES$T:Weaponmastery:Combat Stances
+$DUAL_WIELD$T:Weaponmastery:Dual-Wield
 T:Combat:Archery
 T:Archery:Sling-mastery
 T:Archery:Bow-mastery
@@ -761,13 +764,13 @@ T:Main:Magic
 
 T:Magic:Magic Schools
 T:Magic:Prayer Schools
-$ENABLE_DIVINE$T:Magic:Astral Knowledge
 #T:Magic:Spell-learning
 T:Magic:Spell-power
 T:Magic:Druidic Schools
 $ENABLE_MCRAFT$T:Magic:Mindcraft Schools
 $ENABLE_RCRAFT$T:Magic:Runecraft
 $ENABLE_RCRAFT!T:Magic:Runemastery
+$ENABLE_DIVINE$T:Magic:Astral Knowledge
 T:Magic:Mimicry
 T:Magic:Magic-device
 
@@ -777,13 +780,13 @@ T:Magic Schools:Fire
 T:Magic Schools:Water
 T:Magic Schools:Air
 T:Magic Schools:Earth
-T:Magic Schools:Meta
+T:Magic Schools:Nature
 T:Magic Schools:Conveyance
 T:Magic Schools:Divination
 T:Magic Schools:Temporal
-T:Magic Schools:Mind
-T:Magic Schools:Nature
 T:Magic Schools:Udun
+T:Magic Schools:Mind
+T:Magic Schools:Meta
 
 #T:Magic:Demonology
 #T:Magic:Necromancy

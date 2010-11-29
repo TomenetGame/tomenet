@@ -51,7 +51,7 @@ F:j:74:3:0:0:0:0:0:20
 # Ranger guild
 F:k:74:3:0:0:0:0:0:21
 
-# Thunderlord's Hide
+# Draconian's Hide
 F:l:74:3:0:0:0:0:0:22
 
 # Castle: Plot Minas Anor

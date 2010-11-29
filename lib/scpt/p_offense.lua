@@ -24,7 +24,7 @@ HCURSE = add_spell
                         return "power "..(10 + get_level(Ind, HCURSE, 150))
         end,
         ["desc"] =      {
-                        "Curse an enemy.",
+                        "Randomly causes confusion damage, slowness or blindness.",
                         "At level 15 it passes through monsters, affecting those behind as well",
                         "At level 25 it affects all monsters in sight",
         }

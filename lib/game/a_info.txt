@@ -629,10 +629,10 @@ N:42:of Gondor
 I:33:11:3
 W:40:40:30:150000
 P:0:1d1:0:0:15
-F:STR | WIS | CON | HIDE_TYPE | SPEED | RES_CONF | RES_SOUND | 
-F:RES_COLD | RES_FIRE | RES_LITE | RES_BLIND | RES_ELEC | RES_CHAOS |
-F:LITE1 | SEE_INVIS | REGEN | ACTIVATE
-F:REGEN_MANA
+F:STR | WIS | CON | HIDE_TYPE | SPEED |
+F:RES_COLD | RES_FIRE | RES_ELEC |
+F:RES_CHAOS | RES_SOUND | RES_LITE | RES_BLIND |
+F:LITE1 | SEE_INVIS | REGEN | REGEN_MANA | ACTIVATE
 D:The shining winged circlet brought by Elendil from dying Numenor, emblem of 
 D:Gondor though an age of the world.
 
@@ -884,22 +884,15 @@ D:Dwarven King-in-exile who wore them.  Of dwarven make, the wearer of
 D:these boots will be completely at home in the mountains.
 
 
-# The Seeker Arrow of Bard
-# This is, of course, from my 'Artifact Ammo' thread and doesn't need much
-# explanation.  It's rather nasty and deals 1000 or more damage on a
-# normal hit to a dragon. :)  Doesn't put a dent in Sky Drakes and Power
-# Dragons, tho it's still good for helping to take down Smaug, Tiamat and
-# the other dragon uniques.
-# P+ changed name, rarity to 30
+# The 'Black Arrow' as it was called by Bard
 
 N:63:of Bard
-I:17:2:0
+I:17:1:0
 W:60:30:3:90000
-P:0:3d5:15:5:0
+P:0:3d4:15:5:0
 F:KILL_DRAGON | 
 F:BRAND_ACID | BRAND_ELEC | BRAND_FIRE | BRAND_COLD | BRAND_POIS
-D:Dealiest of arrows, imbued with elemental strength, this shaft is 
-D:feared especially by the wyrmkin.
+D:A dark black arrow with which Bard took down Smaug, the Golden.
 
 
 # The Main Gauche of Maedhros
@@ -1853,8 +1846,6 @@ I:17:2:0
 W:40:30:3:70000
 P:0:3d5:30:0:0
 F:SLAY_EVIL | KILL_DEMON | SLAY_DRAGON
-#F:SLAY_UNDEAD | SLAY_ORC | SLAY_TROLL | SLAY_GIANT | SLAY_DRAGON | KILL_DEMON | 
-#F:BRAND_ACID | BRAND_ELEC | BRAND_FIRE | BRAND_COLD | BRAND_POIS
 D:A powerful arrow that is feared by even the mightiest demons.  
 
 
@@ -2020,7 +2011,7 @@ W:50:80:20:50000
 P:2:0d0:0:0:5
 F:LUCK | SEE_INVIS | FREE_ACT
 F:SUST_STR | SUST_INT | SUST_WIS | SUST_DEX | SUST_CON | SUST_CHR |
-D:Once created by a powerful wizard this robe to grant him incredible luck...
+D:Once created by a powerful wizard this tunic to grant him incredible luck...
 D:It seems he forgot to wear it.
 
 
@@ -2072,7 +2063,7 @@ F:SUST_STR | SUST_INT | SUST_WIS | SUST_DEX | SUST_CON | SUST_CHR |
 F:RES_CHAOS | RES_DISEN | RES_CONF | RES_BLIND | INFRA | ESP_ORC | ESP_TROLL | ESP_EVIL |
 F:PRECOGNITION | NO_MAGIC | ULTIMATE | HIDE_TYPE
 F:SPECIAL_GENE
-D:Designed to be used with the Seeker Bolt of the Elves, this Crossbow 
+D:Designed to be used with the Seeker Bolt of the Elves, this crossbow 
 D:is perfect against the terrible powers of Morgoth.
 
 
@@ -2107,7 +2098,7 @@ I:24:2:4
 W:15:3:100:22000
 P:0:2d5:22:15:0
 F:DEX | VORPAL | HIDE_TYPE | SHOW_MODS | WOUNDING | FEATHER
-D:The Petty-dwarves of Bathak forged this blade, and it shares their thirst 
+D:The Petty-dwarves of Bathak forged this axe, and it shares their thirst 
 D:for blood.
 
 
@@ -2233,7 +2224,7 @@ W:20:15:40:55555
 P:20:0d0:0:0:40
 F:ACTIVATE
 F:FREE_ACT
-D:With the Helm 'Lebohaum' your head is safe!
+D:With the helm 'Lebohaum' your head is safe!
 
 
 # The Balance Dragon Scale Mail 'Mediator'
@@ -2286,7 +2277,8 @@ F:ACTIVATE |
 F:LITE1 | WIS | CHR | SEARCH | LUCK
 F:RES_ELEC | RES_ACID | RES_DISEN | RES_DARK | HIDE_TYPE | 
 F:SUST_WIS | SUST_DEX | SUST_CHR
-
+D:The legendary shield of Ereinion Gil-galad, who fought his way to the
+D:gates of the Dark Tower, and with whom came light even to Gorgoroth.
 
 # The Metal Cap of Celebrimbor
 
@@ -2313,8 +2305,8 @@ D:One Ring for the first time.
 
 N:171:of Umbar
 I:19:24:2
-W:60:20:200:65000
-P:0:4d1:18:18:0
+W:45:20:200:35000
+P:0:4d1:18:28:0
 F:STR | CON | XTRA_MIGHT | AGGRAVATE | 
 F:RES_LITE | RES_DARK | RES_BLIND | IM_ELEC | 
 F:HIDE_TYPE | ACTIVATE | SHOW_MODS
@@ -2506,11 +2498,11 @@ F:IM_NETHER | HOLD_LIFE | SPECIAL_GENE |
 F:INSTA_ART | ACTIVATE
 #F:WRAITH | DRAIN_EXP 
 Z:teleport
-D:Imbued with the screams of the victims of undead everywhere, this 
-D:ring is more a hole in reality than anything else. Strange forces ripple over 
-D:its surface, giving you visions of a reality considerably less solid than this 
-D:one. You feel your senses reel, and must make a conscious effort not to throw 
-D:this ring as far from you as possible.
+D:Imbued with the screams of the victims of undead everywhere, this
+D:ring is more a hole in reality than anything else. Strange forces
+D:ripple over its surface, giving you visions of a reality considerably
+D:less solid than this one. You feel your senses reel, and must make a
+D:conscious effort not to throw this ring as far from you as possible.
 
 
 # The Blue Stone 'Toris Mejistos'
@@ -2745,7 +2737,7 @@ F:IM_FIRE | IM_COLD | IM_ACID | IM_ELEC | IM_POISON | IM_WATER |
 F:RES_NETHER | RES_NEXUS | RES_CHAOS | RES_LITE | RES_DARK | RES_TIME |
 F:RES_SHARDS | RES_SOUND | RES_DISEN | RES_BLIND | RES_CONF | RES_MANA |
 F:FREE_ACT | HOLD_LIFE | FEATHER | FLY | PASS_WATER | CLIMB |
-F:REGEN_MANA | REGEN | ESP_ALL | SPECIAL_GENE
+F:REGEN_MANA | REGEN | ESP_ALL | SPECIAL_GENE | TUNNEL
 #F:INVIS | LUCK | LIFE | WRAITH
 D:Gives mobility and power for sophisticated dungeon mastering.
 D:(Not to be acquired by players!)
@@ -2809,14 +2801,10 @@ P:0:15d4:50:0:0
 F:DRAIN_MANA | DRAIN_EXP | DRAIN_HP | CURSED | HEAVY_CURSE | AGGRAVATE |
 F:SHOW_MODS | HIDE_TYPE | KILL_UNDEAD | SLAY_EVIL | VAMPIRIC | CHR | VORPAL |
 F:IM_COLD | RES_DARK | RES_NETHER | RES_CHAOS | RES_DISEN | RES_TIME
-D:Not supposed to be used by mortals as a weapon but as a tool for the
-D:Grim Reaper himself to cut souls from the dying bodies this terrible
-D:scythe is black as the night, sucking in all light nearby and lingering
-D:for living souls. It is uncertain if a warrior brave enough exists to
-D:resist the corruption of this tool, brought by its power to give death
-D:and annihilation to any existance. Standing close to the scyhte,
-D:the cold of its blade grips your very heart and soul and makes
-D:you scream out in terror.
+D:Created by tainted arts this scythe, black as the night, cuts souls apart
+D:from their bodies, lingering for more. Which warrior dares to wield it and
+D:resist its corruption. Merely looking at this scythe causes terror to grip
+D:your very heart and soul.
 
 
 # The Fauchard of the Guardian
@@ -2840,13 +2828,14 @@ F:CHR | HIDE_TYPE | RES_FEAR | SLAY_ANIMAL | SLAY_DRAGON | KILL_DEMON |
 F:SLAY_EVIL | SLAY_TROLL | SLAY_ORC | SEE_INVIS | SHOW_MODS |
 F:RES_DARK | RES_NETHER | RES_CHAOS | DRAIN_MANA | CURSED | HEAVY_CURSE |
 F:CHAOTIC | IM_COLD
-D:Belonging to one of the riders of doom, surprising is the separation
-D:from its wielder. Maybe the lance itself is hunting for a new rider
-D:to enslave him.
+D:Belonging to one of the riders of doom, why it is no longer in his
+D:possession is a mystery. Maybe the weapon itself is looking for a new
+D:rider to enslave him.
 
 
 # The Filthy Rags that were forgotten
 
+#N:226:that was forgotten
 N:226:that were forgotten
 I:36:1:4
 W:27:25:20:40000
@@ -2867,7 +2856,7 @@ P:60:2d5:-8:0:0
 F:RES_MANA | NO_MAGIC |
 F:RES_ACID | IM_ELEC | RES_DISEN
 D:Made of this rare black ore this mighty armour has an extraordinarily hard surface.
-D:It seems to absorb any form of energy.
+D:It also seems to absorb any form of energy.
 
 
 # The Silver Bolt of Thunder
@@ -2875,7 +2864,7 @@ D:It seems to absorb any form of energy.
 N:228:of Thunder
 I:18:4:21
 W:60:40:3:60000
-P:0:3d6:0:0:0
+P:0:3d5:0:0:0
 F:KILL_UNDEAD | SLAY_EVIL | BRAND_ELEC
 D:A bolt that electrocutes its targets and leaves them stunned.
 
@@ -2908,10 +2897,9 @@ D:A black crossbow that shimmers white here and then.
 
 N:231:of Domination
 I:19:13:0
-#W:90:65:60:270000//removed nether resistance, way too much for a launcher item
-W:90:75:60:150000
+W:90:75:60:200000
 P:0:0d0:30:30:0
-F:HIDE_TYPE | ESP_EVIL | KILL_DRAGON | KILL_DEMON | SLAY_EVIL | KILL_UNDEAD | 
+F:HIDE_TYPE | KILL_DRAGON | KILL_DEMON | SLAY_EVIL | KILL_UNDEAD |
 F:FREE_ACT | XTRA_MIGHT | SHOW_MODS | XTRA_SHOTS | RES_DISEN | RES_FEAR
 D:This mighty bow is surrounded by wild flashes of ethereal blue and red
 D:fire, showing the mad will within it to dominate all beasts that hell
@@ -2957,7 +2945,8 @@ I:23:31:10
 W:60:50:50:200000
 P:0:3d5:14:8:0
 F:CRIT | SHOW_MODS | VORPAL | RES_ELEC | SEE_INVIS
-D:A blade which can even cut the skin of stone giants.
+D:A blade which can even cut the skin of stone giants,
+D:and without fail strikes the vital points of any creature.
 
 
 # The Mage Staff of Hellfire
@@ -3137,7 +3126,7 @@ W:80:60:50:70000
 P:0:5d3:111:15:0
 F:SHOW_MODS | VORPAL | INFRA | REGEN | SLAY_ANIMAL |
 F:BRAND_ACID | RES_ACID | DRAIN_MANA | SPECIAL_GENE
-D:A small sickle gleaming with unmatched sharpness.
+D:A sickle gleaming with unmatched sharpness.
 
 
 # The Hard Leather Cap 'Tarnkappe'
@@ -3186,8 +3175,8 @@ I:36:20:4
 W:25:35:20:30000
 P:2:0d0:0:0:15
 F:HIDE_TYPE | WIS | INT | REGEN_MANA | RES_FIRE | RES_COLD
-D:A traditional monk's gown, made for improving meditation and also worn
-D:while serving repentance.
+D:A traditional monk's clothing, made for improving meditation and also
+D:worn while serving repentance.
 
 
 # The Tunic of the Winds
@@ -3198,8 +3187,8 @@ W:40:50:20:60000
 P:2:0d0:0:0:19
 F:HIDE_TYPE | DEX | SUST_DEX | FLY | ESP_ANIMAL | SPEED
 F:IM_COLD | RES_SOUND | RES_FEAR | FREE_ACT | RES_CONF
-D:A traditional monk's gown, made for improving meditation and also worn
-D:while serving repentance.
+D:A tunic that lifts its wearer's body and soul up to ride on the winds,
+D:rendering him immune to any adverse effects of wind and weather.
 
 
 # The Gown of Fiona
@@ -3210,7 +3199,8 @@ W:15:30:20:20000
 P:1:0d0:0:0:20
 F:HIDE_TYPE | CHR | SUST_CHR |
 F:RES_FIRE | RES_ACID | RES_COLD | RES_ELEC
-D:A very beatiful dress, probably matching her leather boots in a fashionable way.
+D:A very beatiful dress, probably matching her leather
+D:boots in a fashionable way.
 
 
 # The Leather Frock of Scarlet Order
@@ -3221,7 +3211,7 @@ W:40:50:30:50000
 P:4:0d0:0:0:20
 F:HIDE_TYPE | DEX | STR | RES_FIRE | RES_COLD | RES_ELEC |
 F:RES_CONF | FREE_ACT | HOLD_LIFE | REGEN
-D:Manufactured by the armourers of the Scarlet Order, this Leather Gown
+D:Manufactured by the armourers of the Scarlet Order, this leather frock
 D:aids every zealot in his struggle against the unholy forces.
 
 
@@ -3307,6 +3297,51 @@ P:0:0d0:0:0:0
 F:SHOW_MODS
 D:It kills.
 D:(Not to be acquired by players!)
+
+
+# The Smokin' Boots of Moltor, the Dwarven Archer
+
+N:266:of Moltor
+I:30:9:5
+W:44:30:30:50000
+P:3:0d0:0:0:-5
+F:INSTA_ART | HIDE_TYPE | SPEED | AGGRAVATE
+D:The remains of a dwarven archer who fearlessly rushed into peril.
+
+
+# The [Silver] Arrow 'Dailir'
+
+N:267:'Dailir'
+I:17:4:0
+W:50:30:3:80000
+P:0:2d5:10:3:0
+F:KILL_UNDEAD | KILL_DRAGON | BRAND_FIRE | BRAND_COLD | BRAND_ELEC
+D:An unerring, ever-returning arrow that belonged to Beleg Cuthalion. With his
+D:bow Belthronding he used it many a time.
+D:It only broken when Beleg fell upon it while carrying the unconscious Turin,
+D:after which Beleg later was accidentally killed by Turin in confusion.
+
+
+# The Seeker Bolt 'Piercer'
+
+N:268:'Piercer'
+I:18:2:0
+W:50:40:3:40000
+P:0:3d6:0:30:0
+F:SLAY_ANIMAL | BRAND_ACID
+D:A bolt that eats through any armour and bites sharply into the flesh.
+
+
+# The Heavy Crossbow of Uruk-Hai
+
+N:269:of Uruk-Hai
+I:19:24:3
+W:50:10:200:65000
+P:0:4d1:20:24:0
+F:STR | XTRA_MIGHT | XTRA_SHOTS | ESP_GOOD | REGEN
+F:HIDE_TYPE | ACTIVATE | SHOW_MODS
+D:A tool to cut down elves, humans and dwarves and all enemies
+D:of Mordor with relentless force.
 
 
 #weapon base items that don't have arts yet:

@@ -173,10 +173,10 @@ C:120:100:80
 #L:Ranger
 H:Vampire
 
-N:25:Palano(Thunderlord)
+N:25:Palano(Draconian)
 I:0:210:115:6:6
 C:120:100:80
-L:Thunderlord
+L:Draconian
 H:Vampire
 
 N:26:Ludwig the Humble(Dwarf)
@@ -461,7 +461,7 @@ L:Dunadan | Hobbit | Human |
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 #added a truly neutral one.. - C. Blue
-N:70:Garaic the Neutral (Thunderlord)
+N:70:Garaic the Neutral (Draconian)
 I:25000:200:150:10:5
 #I:20000:140:110:7:19 --adjusted to fit 39 and 40 better (they team up for BMs)
 C:120:100:80
