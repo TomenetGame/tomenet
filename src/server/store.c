@@ -658,10 +658,14 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 	if (p_ptr->store_num <= -2) return FALSE;
 #endif
 
-	/* Museums won't buy true artifacts, since they'd be
-	   conserved and out of reach for players thereby. */
-	if ((st_info[p_ptr->store_num].flags1 & SF1_MUSEUM) && true_artifact_p(o_ptr))
-		return (FALSE);
+	/* Hack: The Mathom House */
+	if (st_info[p_ptr->store_num].flags1 & SF1_MUSEUM) {
+		/* Museums won't buy true artifacts, since they'd be
+		   conserved and out of reach for players thereby. */
+		if (true_artifact_p(o_ptr)) return FALSE;
+		/* Museum does accept even worthless donations.. */
+		return TRUE;
+	}
 
 	/* Switch on the store */
 	switch (p_ptr->store_num)
