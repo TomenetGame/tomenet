@@ -440,6 +440,11 @@
 #endif
 
 /*
+ * Total number of stores (used in the client)
+ */
+#define MAX_STORES	9
+
+/*
  * Maximum number of player "race" types (see "table.c", etc)
  */
 #ifdef ENABLE_DIVINE
@@ -3647,6 +3652,7 @@ that keeps many algorithms happy.
 #define USE_INVEN	0x02	/* Allow inven items */
 #define USE_FLOOR	0x04	/* Allow floor items */
 #define USE_EXTRA	0x08	/* Allow extra items */
+#define INVEN_FIRST	0x10	/* Seach for inscription tag in inventory first */
 
 /*
  * Bit flags for the "p_ptr->notice" variable

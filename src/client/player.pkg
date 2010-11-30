@@ -51,7 +51,7 @@ typedef unsigned int u32b;
 #define SKILL_AURA_SHIVER       29
 #define SKILL_AURA_DEATH        30
 #define SKILL_HUNTING			31
-#define SKILL_TECHNIC			32
+#define SKILL_TECHNIQUE			32
 #define SKILL_MISC              33
 #define SKILL_AGILITY			34
 #define SKILL_CALMNESS			35
@@ -97,9 +97,6 @@ typedef unsigned int u32b;
 /* Divine race */
 /* ENABLE_DIVINE */
 #define SKILL_ASTRAL		77
-#define DIVINE_UNDEF		0x00
-#define DIVINE_ANGEL		0x01
-#define DIVINE_DEMON		0x10
 
 #define SKILL_DUAL		78
 #define SKILL_STANCE		79
