@@ -51,7 +51,7 @@ extern byte adj_mag_fail[];
 extern s16b ddx[10];
 extern s16b ddy[10];
 extern char hexsym[16];
-extern owner_type owners[MAX_STORES][MAX_STORE_OWNERS];
+//extern owner_type owners[MAX_STORES][MAX_STORE_OWNERS];
 extern option_type option_info[];
 extern cptr stat_names[6];
 extern cptr stat_names_reduced[6];
