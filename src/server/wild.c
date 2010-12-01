@@ -2610,6 +2610,13 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 #endif
 					}
 				}
+#ifdef HOUSE_PAINTING
+				else if (func == FILL_UNPAINT) {
+					c_ptr->colour = 0;
+					/* refresh player's view on the freshly applied paint */
+					everyone_lite_spot(&h_ptr->wpos, h_ptr->y + y, h_ptr->x + x);
+				}
+#endif
 				else s_printf("rect fill house (func: %d\n", func);
 			}
 		}
@@ -2750,6 +2757,14 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 						}
 						break;
 					}
+#ifdef HOUSE_PAINTING
+					else if (func == FILL_UNPAINT) {
+						zcave[miny + (y - 1)][minx + (x - 1)].colour = 0;
+						/* refresh player's view on the freshly applied paint */
+						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
+						break;
+					}
+#endif
 					s_printf("poly fill house (func: %d)\n", func);
 					break;
 				case 1:	/* Actual walls */
@@ -2765,6 +2780,14 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 					else if(func==FILL_BUILD)
 //						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_PERM_EXTRA;
 						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_WALL_HOUSE;
+#ifdef HOUSE_PAINTING
+					else if (func == FILL_UNPAINT) {
+						zcave[miny + (y - 1)][minx + (x - 1)].colour = 0;
+						/* refresh player's view on the freshly applied paint */
+						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
+						break;
+					}
+#endif
 					break;
 			}
 		}

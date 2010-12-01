@@ -5638,9 +5638,10 @@ if(cfg.unikill_format){
  * 'party-owning'.
  */
 void kill_house_contents(house_type *h_ptr){
-	struct worldpos *wpos=&h_ptr->wpos;
+	struct worldpos *wpos = &h_ptr->wpos;
 	object_type *o_ptr;
 	int i;
+
 #ifdef USE_MANG_HOUSE
 	if(h_ptr->flags&HF_RECT){
 		int sy,sx,ey,ex,x,y;
@@ -5676,6 +5677,12 @@ void kill_house_contents(house_type *h_ptr){
 	}
 	h_ptr->stock_num = 0;
 #endif	// USE_MANG_HOUSE_ONLY
+
+#ifdef HOUSE_PAINTING
+	/* Remove house paint */
+	h_ptr->colour = 0;
+	fill_house(h_ptr, FILL_UNPAINT, NULL);
+#endif
 }
 
 void kill_houses(int id, byte type){
