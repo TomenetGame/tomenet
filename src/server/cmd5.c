@@ -1623,7 +1623,11 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 
 			/* To continue shooting_till_kill, check if spell requires clean LOS to target
 			   with no other monsters in the way, so we won't wake up more monsters accidentally. */
+#ifndef PY_PROJ_WALL
 			if (ftk_type == 1 && !projectable_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return;
+#else
+			if (ftk_type == 1 && !projectable_wall_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return;
+#endif
 
 			/* We lost our target? (monster dead?) */
 			if (dir != 5 || !target_okay(Ind)) return;
