@@ -440,11 +440,6 @@
 #endif
 
 /*
- * Total number of stores (used in the client)
- */
-#define MAX_STORES	9
-
-/*
  * Maximum number of player "race" types (see "table.c", etc)
  */
 #ifdef ENABLE_DIVINE
@@ -494,6 +489,10 @@
 #define FILL_PLAYER	3
 #define FILL_OBJECT	4
 #define FILL_GUILD	5
+#ifdef HOUSE_PAINTING
+ #define FILL_UNPAINT	6
+#endif
+
 
 /*
  * Number of entries in the player name hash table.
