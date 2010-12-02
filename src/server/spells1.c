@@ -5615,6 +5615,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (t > dam) t = dam;
 				if (t > tp) t = tp;
 				p_ptr->energy += (t * level_speed(&p_ptr->wpos)) / 500;
+				/* Prevent too much energy, preventing overflow too.
+				   Keep consistent with dungeon.c */
+				if (p_ptr->energy > (level_speed(&p_ptr->wpos) * 2) - 1)
+					p_ptr->energy = (level_speed(&p_ptr->wpos) * 2) - 1;
 			}
 #endif
 			break;
