@@ -572,6 +572,7 @@ They all start with a slash '/':
             have no inscription at all.
             Also see /tag and /untag.
 /dis b      DESTROYS items like '/dis a' does, but skips identified ego items.
+            It also skips exploding ammo, although it isn't really an ego item.
 /dr         Wields all items in your inventory that are: not cursed,
  (/dress)   not {worthless}, not {terrible}, known to you.
 /bed        Opposite of /dress.
