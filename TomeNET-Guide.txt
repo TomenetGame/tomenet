@@ -1,4 +1,4 @@
-.=========================+==--.
+.=============+============+==--.
 |      TomeNET Guide      |
 +=========================+-
 | Latest update: 8. Dec 2010 - written by C. Blue, http://www.c-blue.de/
@@ -2030,9 +2030,13 @@ a Ration of Food {0,+}
     Note that you usually can neither trade nor sell items that are level 0.
     Food is an exception to this rule, since it can be traded (but not sold).
 
-a Chain Mail {0,+} [14,+0]
+a Chain Mail {0,+} (-2) [14,+0]
     The {..} part is already known, it's the same as for the ration described
     above. What's new is the [..] part, which all types of armour have:
+
+    The (-2) part is a to-hit malus. This armour reduces your to-hit value by
+    2, because of its bulkiness. Lighter armour has -1 or no to-hit malus,
+    heavier armour may have even more than -2.
 
     Rectangular brackets [..] describe 'Armour Class' or short AC. AC is a
     number that tells you how well the item helps to protect you when a monster
