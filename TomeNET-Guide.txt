@@ -5841,9 +5841,9 @@ Flint               Prevents your light from going out.
 Empty bottles       You can /fill these at fountains to turn them into
                     potions. (See 0.2 for more details.)
 Skeletons/Bones/Skulls  You can create ammunition from these if your Archery
-                        skill is sufficient.
+                        skill is sufficient (see (6.12)).
 Rubble ':' on the floor You can create sling ammo from this. You cannot pick
-                        up rubble, just stand next to it.
+                        up rubble, just stand next to it (see (6.12)).
 Guild key               See (6.9).
 Chests              Chests may contain treasures or items. Usually, chests
                     you find will have hidden traps on them. So what you do is
@@ -6796,12 +6796,7 @@ Note that not every skill is available to every profession (class).
                                 accessible via 'm', see (6.12) for details.
                                 Increases your chance to score critical hits.
                                 At 10 you may create ammunition from bones,
-                                skeletons and rubble on the floor (press 'm').
-                                (You can't pick up rubble; if you want to make
-                                ammunition from it, just stand next to it!)
-                                In order to create ammo, you need to wield the
-                                appropriate ranged weapon before you try:
-                                Bow/crossbow for bones, slings for rubble.
+                                skeletons and rubble on the floor (see (6.12)).
                                 Lets you pseudo-id ranged weapons and
                                 ammunition more often the higher the skill.
                                 If increased to at least 11, pseudo-id will
@@ -7652,7 +7647,7 @@ Archer
     Archers are to bows what warriors are to melee. They are the best class
     around with any bow/xbow/sling, usually most familiar with bows.
     An Archer is very bad at melee, being only better than the Sorcerer.
-    Archers can create ammunition from the bones of their opponents.
+    Archers can create ammunition from the bones of their opponents (6.12).
     Hint: Enchanting your ranged weapon to-damage is especially effective,
     because the enchantment will be multiplied by the weapons multiplier.
 
@@ -9344,16 +9339,20 @@ The techniques are as follows:
         Aiming will be interrupted by most actions, including walking.
     Create ammunition   -
         Create ammunition for your currently equipped ranged weapon from
-        bones in your inventory or rubble (':') next to your character.
-        If you wield a bow or crossbow, you'll need to have bones in your
-        inventory. If you wield a sling, you'll need to stand next to rubble.
-        The resulting ammunition type will match the ranged weapon you have
-        equipped.
+        bones, skeletons or broken sticks in your inventory or from a pile of
+        rubble (':') next to your character.
+        If you wield a bow or crossbow, you'll need to have bones, skeletons or
+        broken sticks and it'll create arrows if you wield a bow or bolts if
+        you wield a crossbow.
+        If you wield a sling, you'll need to stand next to rubble and it'll
+        create sling ammunition from it.
         The quality mainly depends on your archery skill and somewhat on your
         ranged mastery skill, but is still somewhat random.
         A random discount will be applied to the crafted ammo.
         If you want to create larger stacks of the same type of ammunition,
-        collect a large stack of bones and use the skill on that stack.
+        collect a large stack of materials and use the skill on that stack
+        (the total weight of that inventory slot determines the stack size).
+        The level of the raw materials has no effect on the outcome.
     Double-shot         1 stamina/turn while using it actively
         Toggle, making you enter or leave double-shot mode. While active, you
         will fire 2 projectiles at once on each shot, dealing way less damage
