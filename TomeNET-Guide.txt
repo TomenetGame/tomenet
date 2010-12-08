@@ -3210,7 +3210,7 @@ arrow/bolt/pebble/shot the game will ask you for a target or direction.
 You can now either press one of the 8 direction keys to fire into that
 direction, or you press the asterisk '*' followed by a 't' to designate the
 closest enemy as your target, which usually is what you want.
-Since version 4.4.6 the game also supports '+' to fire at a previously set
+Since version 4.4.6 the game also supports '-' to fire at a previously set
 target if it still exists, or cancel the action, see (3.7d) for details about
 targetting.
 
