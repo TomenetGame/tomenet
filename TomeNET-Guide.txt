@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 28. Nov 2010 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.6 - official websites are:
+| Latest update: 8. Dec 2010 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.6a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 |
@@ -371,6 +371,9 @@ R       R       rest. Your hit points and mana will regenerate faster while
                 resting.
 o       o       open something.
 c       c       close something.
+c   while in a store:
+                Paste an item name, its price and the store symbol into chat,
+                in case you want to tell other players about it.
 d       d       drop an item.
 $       $       drop some gold. You can use 'k' and 'm' for thousands or
                 millions, example: 3k -> drops 3000. 2m -> drops 2000000.
@@ -418,7 +421,7 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
         This can be useful if you run out of macros for a specific action,
         for example if you already use @m0...@m9 and still have more spell
         books/scrolls in your inventory, you can inscribe the remaining ones
-        @/0...@/9. Or you could create a macro /0*t and bind it to a certain
+        @/0...@/9. Or you could create a macro *t/0- and bind it to a certain
         key, and then inscribe a useful wand or staff @/0 without having to pay
         attention to whether you're currently using a wand or staff there (or
         rod, of course), as a sort of 'special power button', for example a
@@ -487,9 +490,6 @@ _       drink from a fountain. You must stand on the fountain to do this.
 ?       invoke an in-game help screen
 !       look at the in-game bulletin board. Players can write lines of text to
         it by using the /bbs <text> command.
-c  while in a store:
-        Pastes an item to chat, including its currently displayed store price
-        and the symbol of the store.
 K       forcibly combines a level 0 item in your inventory with other items of
         the same type that aren't level 0. Be warned, that this will change the
         level of all the items involved to 0.
@@ -2229,6 +2229,8 @@ invoking the macro menu again ('%'), choosing "(1) Load macros" and
 entering the filename. If you saved the macros to the same name as your
 character, they will be automatically loaded, saving you that hassle.
 
+An even simpler way to create macros is the 'Macro Wizard' described in (3.7c).
+
 
 The macro recorder:
 -------------------
@@ -2326,7 +2328,7 @@ the key 'r' which is used to read a scroll, you can reset the key by
 -------------------------------------------------------------
 Note: This section is becoming pretty advanced. If you want to try an easier
 method but miss a nice fundamental explanation on the way macros work, you
-may just jump to (3.7b) now!
+may just jump to (3.7c) now, where the comfortable Macro Wizard is explained!
 
 Those macros basically consist of three parts.
 1. Clearing the keyboard buffer (to avoid your character locking up in
@@ -2352,13 +2354,16 @@ a) casting a magical spell
     Now we can create the macro.
     -Press '%' to invoke the macro menu,
     -press '3' to enter a new action,
-    -enter:    \e)mb2a*t
+    -enter:    \e)*tmb2a-
      This means:    \e)     clear the keyboard buffer
+                    *t      designate the closest enemy as the target for the
+                            spell (if there is an enemy)!
                     m       invoke the ability menu
                     b       choose 'b) cast a spell'
                     2       use the magical book which is inscribed @m2
                     a       use spell 'a)' from this book
-                    *t      designate the closest enemy as the target for the
+                    -       use previously designated target as direction, if
+                            that target is actually valid. Otherwise cancel the
                             spell!
     -press ENTER key to accept that macro,
     -now hit '5 - create a hybrid macro'
@@ -2417,11 +2422,13 @@ c) firing your equipped ranged weapon (sling, bow, crossbow)
      in your equipment, we do not need any inscriptions on the weapon or
      ammunition - the game knows which item we want to use since there's only
      one possible choice.
-     enter:    \e)f*t
+     enter:    \e)*tf-
      This means:    \e)     clear the keyboard buffer
+                    *t      designate the closest enemy as the target!
                     f       fire an item (boomerang, if equipped) or
                             fire ammunition (if launcher & ammo is equipped)
-                    *t      designate the closest enemy as the target!
+                    -       use previously designated target as direction, if
+                            it's still valid, otherwise cancel firing!
     -press ENTER key to accept that macro,
     -now hit '5 - Create a hybrid macro'
     -hit the key you want to bind this macro to, for example the 'F2' key.
@@ -2443,14 +2450,16 @@ d) zapping a magical rod or aiming with a magical wand
      in your inventory you could still throw them. If you use 'c' you'd just
      throw the item at position 'c)' even if the wand currently is at 'd)'.
      Examples:
-     enter:    \e)ac*t      or      \e)a0*t
+     enter:    \e)*tac-      or      \e)*ta0-
      This means:    \e)     clear the keyboard buffer
+                    *t      designate the closest enemy as the target!
                     a       aim a wand (or 'z' to use a rod here)
                     c   OR  0
                             choose 'c) a wand of magic missiles' OR
                             choose the item which is currently
                             inscribed @a0   (or @z0 for a rod)
-                    *t      designate the closest enemy as the target!
+                    -       use previously designated target as direction, if
+                            it's still valid, otherwise cancel firing!
     -press ENTER key to accept that macro,
     -now hit '5 - Create a hybrid macro'
     -hit the key you want to bind this macro to, for example the 'F2' key.
@@ -2461,13 +2470,13 @@ d) zapping a magical rod or aiming with a magical wand
 What happens if you leave out the '\e)' part?
 Well, that means the commands that aren't processed yet will stay in the
 buffer and wait for execution. Example:
-You hit the macro  f*t  30 times rapidly. Now your character will shoot 30
+You hit the macro  *tf-  30 times rapidly. Now your character will shoot 30
 times with his bow. However, since he's quite slow, this might take him 30
 seconds! You now sit in front of your keyboard and watch your character
 process all the remaining 30 shots. If suddenly an enemy appears that needs
-you to teleport away since it's too dangerous, you couldn't press any key
+you to teleport away because it's too dangerous, you couldn't press any key
 until the 30 shots are finished. The character is 'locked'.
-The ')' in the macro '\e)f*t' clears all previous keypresses and hence
+The ')' in the macro '\e)*tf-' clears all previous keypresses and hence
 allows you to hammer the macro without fearing a lock.
 
 
@@ -2503,7 +2512,7 @@ In a macro, this is done by '\r' (one of the so-called escape sequences).
 Example for a macro that directly specifies the ability code to cast the magic
 spell "a) Manathrust" from book "a) Beginner Cantrips" on the closest monster:
 
-\e)m@11\r2a*t
+\e)*tm@11\r2a-
 
 What does that mean?
 \e  ->  escape any pending input request, if there is any
@@ -2512,22 +2521,25 @@ What does that mean?
 )   ->  clear the keyboard buffer (removes all pending keypresses that haven't
         been processed yet due to slow character speed, so we become instantly
         ready to perform our mana thrust spell _now_)
+*t  ->  choose the closest monster as target
 m   ->  invoke an ability
 @   ->  specify an ability code directly
 11  ->  the code for 'cast a magic spell/recite a holy prayer'
 \r  ->  press Enter to confirm
 2   ->  cast from book 2 (inscription on the book must be @m2)
 a   ->  cast spell "a)" (Manathrust)
-*t  ->  choose the closest monster as target
+-   ->  use previously designated target as direction, if it's still valid,
+        otherwise cancel the spell!
 
 (That macro basically does the same as:
-mb2a*t
+*tmb2a-
 ..assumed that entry 'b)' in the ability menu (invoked by 'm') is
 'b) Cast a spell'. Except for escaping and clearing the keyboard buffer.)
 
 An even better way to cast spells is to not rely on book inscriptions, but to
 cast spells by name instead. That way you won't have to redo spells when your
-books change. See (3.9b) for details.
+books change. See (3.9b) for details, or (3.7c) for the 'Macro Wizard', which
+uses cast-by-name by default for all macros you create in it.
 
 
 (3.7b) Quick'n'dirty macros
@@ -2575,18 +2587,18 @@ automatically chosen (depending on the trigger key).
 
 Additional examples:
 Example 1: Firing your ranged weapon would just be..
-        f*t
-    (which gets expanded to '\e)f*t'.)
+        *tf-
+    (which gets expanded to '\e)*tf-'.)
 
 Example 2: Assumed your book is inscribed @m1 as usual, and you want to cast
     spell a). What you can simply enter in the q'n'd field is:
-        M1a*t
-    and it will automatically be expanded to the real macro '\e)m@11\r1a*t'.
+        *tM1a-
+    and it will automatically be expanded to the real macro '\e)*tm@11\r1a-'.
 
 Example 3: Assumed you have the spell Manathrust somewhere in your books and
     want to cast it by name, what you enter in the q'n'd field is:
-        M@Manathrust\*t
-    and it will automatically be expanded to '\e)m@11\r@Manathrust\r*t', voila.
+        *tM@Manathrust\-
+    and it will automatically be expanded to '\e)*tm@11\r@Manathrust\r-', voila.
 
 Example 4: Casting phase door would be..
         M@Phase Door\
@@ -2625,7 +2637,7 @@ target, which you can do by pressing 't' again to choose the closest hostile
 entity.
 
 There are, however, more ways to specify a direction or to use the target
-command, especially since client 4.4.6 which added the '.' option.
+command, especially since client 4.4.6 which added the '-' option.
 Details follow:
 
 The 'Set Target' command (key '*') that sets a target for spells or item uses
@@ -2644,13 +2656,19 @@ answered with..
    Note that direction '5' will only aim at yourself if you have no valid
    target set. Otherwise, the '5' key will aim at your target instead.
   -'*' key to invoke built-in target command (see above).
-  -'.' key to use a previously acquired target or cancel the spell/item use
-        if there is no valid target currently set. The '.' option is only
-        available in client version 4.4.6 and higher.
+  -'-' key to use a previously acquired target or cancel the spell/item use/
+       shot if there is no valid target currently set. The '-' option is only
+       available in client version 4.4.6 and higher.
+
+       Note that the key '-' is not a command key, but just gets ignored when
+       pressed elsewhere than in direction-requests. This means that you can
+       create 'hacky' macros, for example such as *t/1- that will work with
+       both, magic devices that take a direction and those that don't, since
+       the '-' will just be ignored for those that don't.
 
 Example macros:
 ---------------
-  *tz0.     Will zap rod 0 at the closest hostile entity. If there is none,
+  *tz0-     Will zap rod 0 at the closest hostile entity. If there is none,
             the rod will not be zapped, conserving the rod's energy.
   z0*t      Zaps rod 0 at the closest hostile entity. If there is none, the
             rod will be zapped anyway, with yourself as target. This could
@@ -2676,30 +2694,39 @@ This macro set is already in your /lib/user folder! If it's not there,
 download the latest client from www.tomenet.net or our personal pages.
 You can load this macro file by hitting % to invoke the macro menu,
 then enter '1' to load a macro file, and specifying its filename,
-which is: example_fighter.prf
+which is depending on your operating system:
+
+linux_fighter.prf    or    windows_fighter.prf
+
 If you plan on using it for a longer time, immediately save it again
 with the filename being identical to your character name, example: Killer.prf
 if your character is named 'Killer'.
 (You can save macros by choosing '(2) Save macros' in the macro menu.
-Note: The file example_fighter.prf is write-protected to avoid overwriting.)
+Note: The example macro sets are write-protected to avoid overwriting.)
+
+Of course you can just use any other potion/scroll instead of those mentioned,
+as long as you put the according inscription on that item.
 
 Key         Purpose of the Macro                    The macro   Inscription
                                                     itself      on the item(s)
 ------------------------------------------------------------------------------
-F1  fire with ranged weapon at closest target       \e)f*t          -none-
+F1  fire with ranged weapon at closest target       \e)*tf-        -none-
     (you can inscribe your ammunition:  !=
     to pick it up automatically)
 F2  quaff cure critical wound or healing potion     \e)q1           @q1
 F3  quaff speed potion                              \e)q2           @q2
-F4  quaff restore life levels potion                \e)q3           @q3
+F4  quaff potion of resistance,                     \e)q3           @q3
+    an important thing later in the game.
+    Since these are too expensive in the beginning, you could just buy potions
+    of resist heat instead which are offered for little money in store 5,
+    and inscribe them @q3 accordingly. They can already be very helpful.
 F5  read scroll of phase door                       \e)r1           @r1
 F6  read scroll of teleportation                    \e)r2           @r2
 F7  read scroll of identify                         \e)r3           @r3
 F8  use a staff of teleportation                    \e)u1           @u1
     (magic device must be high enough or
     you will keep failing; also see (6.10))
-F9  quaff a potion of resistance                    \e)q4           @q4
-    (an important thing later in the game)
+F9  quaff a restore life levels potion              \e)q4           @q4
 F10 zap some rod                                    \e)z1           @z1
     (magic device must be high enough or
     you will keep failing; also see (6.10))
@@ -2707,9 +2734,10 @@ F11 eat something.                                  \e)E1           @E1
     (Draconians could inscribe some firestones
     (see 5.9) instead of normal food, to quickly
     boost their powers if needed.)
-F12 use a wand on the closest target                \e)a1*t         @a1
-    (magic device must be high enough or
-    you will keep failing; also see (6.10))
+F12 use a magic device on the closest target        \e)*t/1-        @/1
+    (Magic devices are wands, staves or rods.
+    Your magic device skill must be high enough
+    or you will keep failing; also see (6.10))
 
 As you can see this fighter is supposed to be able to use quite some magic
 for support in addition to fighting. Especially helpful are Rods of Perception
@@ -2721,7 +2749,7 @@ blindness resistance then! (Those two aren't needed to use a staff.)
 If you play Draconian, kill Dragonriders because they tend to drop a large
 amount of firestones. If a difficult combat starts, just eat several of them
 to get a larger amount of extra powers.
-(All macros in example_fighter.prf were defined as hybrid macros.
+(All macros in the example set were defined as hybrid macros.)
 
 
 The above macro set slightly changed to fit
@@ -2731,51 +2759,57 @@ This macro set is already in your /lib/user folder! If it's not there,
 download the latest client from www.tomenet.net or our personal pages.
 You can load this macro file by hitting % to invoke the macro menu,
 then enter '1' to load a macro file, and specifying its filename,
-which is: example_caster.prf
+which is depending on your operating system:
+
+linux_caster.prf    or    windows_caster.prf
+
 If you plan on using it for a longer time, immediately save it again
 with the filename being identical to your character name, example: Killer.prf
 if your character is named 'Killer'.
 (You can save macros by choosing '(2) Save macros' in the macro menu.)
-Note: The file example_caster.prf is write-protected to avoid overwriting.)
+Note: The example macro sets are write-protected to avoid overwriting.)
+
+Of course you can just use any other potion/scroll instead of those mentioned,
+as long as you put the according inscription on that item.
 
 Key         Purpose of the Macro                    The macro   Inscription
                                                     itself      on the item(s)
 ------------------------------------------------------------------------------
-F1  fire with ranged weapon at closest target       \e)f*t          -none-
+F1  fire with ranged weapon at closest target       \e)*tf-        -none-
     (you can inscribe your ammunition:  !=
     to pick it up automatically)
 F2  quaff cure critical wound or healing potion     \e)q1           @q1
 F3  quaff speed potion                              \e)q2           @q2
-F4  quaff restore life levels potion                \e)q3           @q3
+F4  quaff restore mana potion                       \e)q3           @q3
 F5  read scroll of phase door                       \e)r1           @r1
 F6  read scroll of teleportation                    \e)r2           @r2
 F7  read scroll of identify                         \e)r3           @r3
 F8  use a staff of teleportation                    \e)u1           @u1
-F9  A combo macro: Cast spells 'Detect Monsters'    \e)m@11\r1em@11\r1f
-    and 'Sense Hidden' from book Beginner Cantrips.                 @m1
+F9             \e)m@11\r@Detect Monsters\rm@11\r@Sense Hidden\r    -none-
+    A combo macro: Cast spells 'Detect Monsters'
+    and 'Sense Hidden' from book Beginner Cantrips.
     Since this macro casts two spells, it uses up
     two of your character's turns to complete.
-    (Inscribe book of beginner cantrips  @m1)
+    (Note that this macro uses 'cast-by-name', ie specifies the spell names
+    instead of relying on book inscriptions, making it very flexible!)
 F10 zap some rod                                    \e)z1           @z1
-F11 Cast Globe Of Light spell (Beginner Cantrips)   \e)m@11\r1b     @m1
-    (Inscribe book of beginner cantrips  @m1)
-F12 use a wand on the closest target                \e)a1*t         @a1
-+   Cast noxious cloud spell on closest target      \e)m@11\r2a*t   @m2
-    (Book of noxious cloud must be inscribed: @m2
-    You might also use any other book that provides
-    a ranged attack spell, like fire flash.)
--   Cast phase door from 'Beginner Cantrips'        \e)m@11\r1d     @m1
-    (Inscribe book of beginner cantrips  @m1)
-0   Cast manathrust on closest target               \e)m@11\r1a*t   @m1
-    (Inscribe book of beginner cantrips  @m1)
+F11                                  \e)m@11\r@Globe of Light\r    -none-
+    Cast Globe Of Light spell.
+F12 use a magic device on the closest target        \e)*t/1-        @/1
+    (Magic devices are wands, staves or rods.
+    Your magic device skill must be high enough
+    or you will keep failing; also see (6.10))
++                                  \e)*tm@11\r@Noxious Cloud\r-    -none-
+    Cast noxious cloud spell on nearest target
+-   Cast phase door.                     \e)m@11\r@Phase Door\r    -none-
+0   Cast manathrust at nearest target \e)*tm@11\r@Manathrust\r-    -none-
 
 This low level istari might be armed with a sling to support his yet weak
 magic, so the F1 macro makes sense. Assuming that he uses the numpad keys for
 movement, the keys +, - and 0 were used to allow quick access to his basic
 spells. - and 0 use his startup book 'Beginner Cantrips' while the macro on
-the + key requires that he bought a spellbook of noxious cloud (or any other
-attack spell, like fire flash) and inscribed it accordingly.
-(All macros in example_caster.prf were defined as hybrid macros.)
+the + key requires that he bought a spellbook of noxious cloud.
+(All macros in the example set were defined as hybrid macros.)
 
 
 
@@ -2798,7 +2832,7 @@ key to emulate some special keys in your macros:
 
 Example:
 :Hi all!\r      This macro writes 'Hi all!' to everyone.
-\e)f*t          This macro will press escape to leave any potential
+\e)*tf-         This macro will press escape to leave any potential
                 running input routine, clear the buffer, fire a shot at
                 the closest enemy. You can hammer this macro madly while
                 playing without fear of your client processing the key
@@ -2892,10 +2926,10 @@ So, instead of inscribing your potions of Healing '@q1' and having a macro
 '\e)q1' you could also just have a macro '\e)q@Healing\r'.
 
 Or, instead of inscribing a Beginner Cantrips book '@m1' and macroing the spell
-manathrust with '\e)m@11\r9a*t' you could also just make a macro
-'\e)m@11\r@Manathrust\r*t' without the need to inscribe your book.
+manathrust with '\e)*tm@11\r9a-' you could also just make a macro
+'\e)*tm@11\r@Manathrust\r-' without the need to inscribe your book.
 
-In fact you could make a macro '\e)m@Cast a spell\r@Manathrust\r*t'.
+In fact you could make a macro '\e)*tm@Cast a spell\r@Manathrust\r-'.
 
 Another example: '\e)m@11\r@Phase Door\r'.
 
@@ -3175,7 +3209,7 @@ arrow/bolt/pebble/shot the game will ask you for a target or direction.
 You can now either press one of the 8 direction keys to fire into that
 direction, or you press the asterisk '*' followed by a 't' to designate the
 closest enemy as your target, which usually is what you want.
-Since version 4.4.6 the game also supports '.' to fire at a previously set
+Since version 4.4.6 the game also supports '+' to fire at a previously set
 target if it still exists, or cancel the action, see (3.7d) for details about
 targetting.
 
@@ -4369,10 +4403,11 @@ Ranged weapons will be placed in equipment slot 'c)'. After you equipped one,
 you need to also equip ammunition that will be used. For example if you use a
 long bow, you need to fill your quiver with some arrows. (w)ield the arrows,
 and they will be placed into equipment slot 'm)', the ammo slot.
-A macro that shoots at the target closest to you, looks like this:  f*t
-Explanation in case you really want to know: f means fire, * means entering
-targetting mode and choosing nearest target, t means exiting target mode and
-remember currently selected target.
+A macro that shoots at the target closest to you, looks like this:  *tf-
+Explanation in case you really want to know: * means entering targetting mode
+and choosing nearest target, t means exiting target mode and remember currently
+selected target, f means fire, - means to aim at previously acquired target if
+it's valid and otherwise to cancel the action.
 To automatically pick up your arrows simply inscribe them:  !=
 Ranged weapons can also auto-retaliate, that means you will fire automatically
 at targets on sight. See (4.1a) for details about auto-retaliation.
@@ -6363,21 +6398,21 @@ side effects: use it with care.
 Macros:
 -------
 Runemastery macros look like this: (The magic number for runemastery is 18)
-    \e)m@18\ra\rac*t
+    \e)*tm@18\ra\rac-
 
 Which is fire--minimized--bolt, or a minimized fire bolt.
 
 Fire ball looks like this (key translation in brackets):
-    \e)m@18\ra\rae*t (fire--minimized--ball)
+    \e)*tm@18\ra\rae- (fire--minimized--ball)
 
 To increase the radius of the ball, adjust the modifier to something that
 sounds bigger (this will also increase the damage, difficulty and cost):
 
 A moderate fire ball:
-    \e)m@18\ra\rbe*t (fire--moderate--ball)
+    \e)*tm@18\ra\rbe- (fire--moderate--ball)
 
 Or a widened fire ball:
-    \e)m@18\ra\rge*t (fire--widened--ball)
+    \e)*tm@18\ra\rge- (fire--widened--ball)
 
 
 Or some self-spells:
