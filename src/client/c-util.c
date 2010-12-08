@@ -7,7 +7,7 @@
 #define NR_OPTIONS_SHOWN	20
 
 /* Have the Macro Wizard generate target code in
-   the form *tXXX. instead of XXX*t? - C. Blue */
+   the form *tXXX- instead of XXX*t? - C. Blue */
 #define MACRO_WIZARD_SMART_TARGET
 
 
@@ -1756,7 +1756,7 @@ bool get_dir(int *dp)
 
 	cptr	p;
 
-	p = "Direction ('*' to choose a target, '.' for acquired target) ? ";
+	p = "Direction ('*' to choose a target, '-' for acquired target) ? ";
 
 	get_com(p, &command);
 
@@ -1765,7 +1765,7 @@ bool get_dir(int *dp)
 		if (cmd_target()) dir = 5;
 	}
 	/* Handle previously acquired target, discard cast if not available */
-	else if (command == '.') {
+	else if (command == '-') {
 		dir = 10;
 	}
 	/* Normal direction, including 5 for 'acquired target or self' */
@@ -4176,7 +4176,7 @@ void interact_macros(void)
 						break;
 					}
 
-					/* Convert the targetting method from XXX*t to *tXXX. ? */
+					/* Convert the targetting method from XXX*t to *tXXX- ? */
 #ifdef MACRO_WIZARD_SMART_TARGET
 					if (strstr(buf2, "*t")) {
 						strcpy(buf, "\\e)*t");
@@ -4184,7 +4184,7 @@ void interact_macros(void)
 						   and that '\e)' is always the first part */
 						strncat(buf, buf2 + 3, strlen(buf2) - 5);
 						/* add new direction feature */
-						strcat(buf, ".");
+						strcat(buf, "-");
 						/* replace old macro by this one */
 						strcpy(buf2, buf);
 					}

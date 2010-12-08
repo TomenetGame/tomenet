@@ -214,6 +214,10 @@ void process_command()
 	{
 			/* Ignore */
 		case ESCAPE:
+		case '-': /* used for targetting since 4.4.6, so we ignore it to allow
+			     macros that hackily use it for both directional and non-
+			     directional things, so the 'key not in use' message is
+			     suppressed for non-directional actions, just to look better. */
 			break;
 
 			/* Ignore mostly, but also stop automatically repeated actions */
