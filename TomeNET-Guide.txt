@@ -1,7 +1,7 @@
 .=============+============+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 8. Dec 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 12. Dec 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -7112,9 +7112,13 @@ Note that not every skill is available to every profession (class).
                                 Note that Health skill stacks with +LIFE items
                                 (compare '+LIFE' in (5.8)).
     .Swimming                   Allows you to swim even while carrying more
-                                weight and protect your items from water.
+                                weight and to better protect your items from
+                                water.
                                 Skill maxes at 01.000, with the ability to
                                 swim improving steadily while increasing it.
+                                At 0.0700 you become able to swim very swiftly
+                                if no monsters are within sight, enabling you
+                                to 'run' through water.
     .Climbing                   You need this at 01.000 to learn climbing.
     .Digging                    How well you are able to dig. Also affects
                                 your chance to find items, for the items to
