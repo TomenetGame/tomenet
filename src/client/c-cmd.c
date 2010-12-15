@@ -39,7 +39,10 @@ static void cmd_all_in_one(void)
 {
 	int item, dir;
 
-	if (!c_get_item(&item, "Use which item? ", (USE_EQUIP | USE_INVEN)))
+	get_item_hook_find_obj_what = "Item name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
+
+	if (!c_get_item(&item, "Use which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA)))
 	{
 		return;
 	}
