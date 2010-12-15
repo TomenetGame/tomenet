@@ -276,7 +276,8 @@ Walk into a direction:
         1   2   3               b   j   n               B   J   N
 
 You can also use the arrow keys instead of the Numpad keys for movement.
-(Pressing '5' will make your character try and pick up an item).
+(Pressing '5' will make your character try and pick up an item, same as
+pressing 'g').
 
 SHIFT+<direction key>
         runs into that direction. Numlock must probably be turned off,
@@ -480,13 +481,16 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
 |       displays the unique monster list (same as ~1).
 X       quickly swap between two equippable items. They must be inscribed
         '@w0'. (It's basically just the macro 'w0' bound to shift+x key.)
-_       drink from a fountain. You must stand on the fountain to do this.
+_       Two uses, regarding a) fountains or b) item piles:
+        Main: Drink from a fountain. You must stand on the fountain to do this.
         Fountains can have good/bad/no effects. There is no fountain of death,
         neither one of detonations, so you won't get instakilled.
         If you see a message 'You feel less thirsty' that means the fountain
         was just plain water. A message 'You have quenched your thirst' means
         that the fountain had no effect on you, although it wasn't water.
         (Same as /sip command.)
+        Secondary: If you press _ while standing on an item or a pile of items,
+        you will get a message what item is currently below your feet.
 ?       invoke an in-game help screen
 !       look at the in-game bulletin board. Players can write lines of text to
         it by using the /bbs <text> command.
