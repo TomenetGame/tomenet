@@ -5807,6 +5807,9 @@ Codex, Spellbook, Grimoire
                         - Speed-up:     Speed bonus.
                         - Heroism:      10 more HP, to-hit bonus, resist fear.
                         - Temp res:     Temporary base and poison resistance.
+                    If you eat too many of them over a short period of time you
+                    might get poisoned by adrenaline overdose, with lethal
+                    outcome.
 Dwarven lanterns    Make you resist fear. Don't need to be fueled.
 Feanorian lamps     Make you resist fear and see the invisible. Don't need to
                     be fueled.
@@ -5855,11 +5858,6 @@ Mushroom of Restoring
 Mushrooms with bad effects are also often poisonous.
 Lembas (elvish waybread)
                     Satisifies your hunger, cures poison and hallucinations.
-Firestones          Eath them only if you are a Draconian.
-                    They will randomly boost your powers for a short time.
-                    See (5.9) for firestone details. If you eat too many of
-                    them over a short period of time you might get poisoned
-                    by adrenaline overdose, with lethal results.
 Flint               Prevents your light from going out.
 Empty bottles       You can /fill these at fountains to turn them into
                     potions. (See 0.2 for more details.)
