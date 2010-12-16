@@ -897,7 +897,9 @@ void cmd_drop(void)
 
 	/* Get an amount */
 	if (inventory[item].number > 1) {
-		if (is_ammo(inventory[item].tval) && c_cfg.whole_ammo_stack) amt = inventory[item].number;
+		if (is_ammo(inventory[item].tval) && c_cfg.whole_ammo_stack
+		    && item < INVEN_WIELD) /* <- new: ignore whole_ammo_stack for equipped ammo, so it can easily be shared */
+			amt = inventory[item].number;
 		else amt = c_get_quantity("How many? ", inventory[item].number);
 	}
 	else amt = 1;
