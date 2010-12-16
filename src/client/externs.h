@@ -406,8 +406,8 @@ extern s32b char_creation_flags;
 extern s16b index_to_label(int i);
 extern bool item_tester_okay(object_type *o_ptr);
 extern cptr get_item_hook_find_obj_what;
-extern bool get_item_hook_find_obj(int *item);
-extern bool (*get_item_extra_hook)(int *cp);
+extern bool get_item_hook_find_obj(int *item, bool inven_first);
+extern bool (*get_item_extra_hook)(int *cp, bool inven_first);
 extern bool c_get_item(int *cp, cptr pmt, int mode);
 
 /* c-util.c */
@@ -474,7 +474,7 @@ extern void do_mimic(void);
 extern void do_stance(void);
 extern void do_melee_technique(void);
 extern void do_ranged_technique(void);
-extern bool get_item_hook_find_spell(int *item);
+extern bool get_item_hook_find_spell(int *item, bool inven_first);
 
 /* c-store.c */
 extern bool leave_store;

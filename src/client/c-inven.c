@@ -207,23 +207,29 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, bool inven_first)
  * This is modified code from ToME. - mikaelh
  */
 cptr get_item_hook_find_obj_what;
-bool get_item_hook_find_obj(int *item)
+bool get_item_hook_find_obj(int *item, bool inven_first)
 {
-	int i;
+	int i, j;
 	char buf[80];
 
 	strcpy(buf, "");
 	if (!get_string(get_item_hook_find_obj_what, buf, 79))
 		return FALSE;
 
-	for (i = 0; i < INVEN_TOTAL; i++)
-	{
+	for (j = inven_first ? 0 : INVEN_TOTAL - 1;
+	    inven_first ? (j < INVEN_TOTAL) : (j >= 0);
+	    inven_first ? j++ : j--) {
+		/* translate back so order within each - inven & equip - is alphabetically again */
+		if (!inven_first) {
+			if (j < INVEN_WIELD) i = INVEN_PACK - j;
+			else i = INVEN_WIELD + INVEN_TOTAL - j;
+		} else i = j;
+
 		object_type *o_ptr = &inventory[i];
 
 		if (!item_tester_okay(o_ptr)) continue;
 
-		if (strstr(inventory_name[i], buf))
-		{
+		if (strstr(inventory_name[i], buf)) {
 			*item = i;
 			return TRUE;
 		}
@@ -231,7 +237,7 @@ bool get_item_hook_find_obj(int *item)
 	return FALSE;
 }
 
-bool (*get_item_extra_hook)(int *cp);
+bool (*get_item_extra_hook)(int *cp, bool inven_first);
 bool c_get_item(int *cp, cptr pmt, int mode)
 {
 	char	n1, n2, which = ' ';
@@ -580,7 +586,7 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 			{
 				int i;
 
-				if (extra && get_item_extra_hook(&i))
+				if (extra && get_item_extra_hook(&i, inven_first))
 				{
 					(*cp) = i;
 					item = TRUE;

@@ -574,9 +574,12 @@ void do_ghost(void)
  * Find a spell in any books/objects
  *
  * This is modified code from ToME. - mikaelh
+ *
+ * Note: Added bool inven_first because it's used for
+ * get_item_extra_hook; it's unused here though - C. Blue
  */
 static int hack_force_spell = -1;
-bool get_item_hook_find_spell(int *item)
+bool get_item_hook_find_spell(int *item, bool inven_first)
 {
 	int i, spell;
 	char buf[80];
