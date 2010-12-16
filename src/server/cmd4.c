@@ -59,7 +59,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 
 	/* Open a new file */
-	fff = my_fopen(file_name, "w");
+	fff = my_fopen(file_name, "wb");
 
 	/* Scan the artifacts */
 	for (k = 0; k < MAX_A_IDX; k++)
@@ -213,7 +213,7 @@ void do_cmd_check_uniques(int Ind, int line)
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 
 	/* Open a new file */
-	fff = my_fopen(file_name, "w");
+	fff = my_fopen(file_name, "wb");
 
 	fprintf(fff, "\377U============== Unique Monster List ==============\n");
 
@@ -849,7 +849,7 @@ void do_cmd_check_players(int Ind, int line)
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 
 	/* Open a new file */
-	fff = my_fopen(file_name, "w");
+	fff = my_fopen(file_name, "wb");
 	if(fff==(FILE*)NULL) return;
 
 	/* Scan the player races */
@@ -983,7 +983,7 @@ void do_admin_cmd_check_players(int Ind, int line)
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 
 	/* Open a new file */
-	fff = my_fopen(file_name, "w");
+	fff = my_fopen(file_name, "wb");
 	if(fff==(FILE*)NULL) return;
 
 	/* Scan the player races */
@@ -1117,7 +1117,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 
 	/* Open a new file */
-	fff = my_fopen(file_name, "w");
+	fff = my_fopen(file_name, "wb");
 
 	/* Scan the player races */
 	for (k = 1; k < NumPlayers + 1; k++)
@@ -1264,7 +1264,7 @@ void do_cmd_knowledge_dungeons(int Ind)
 	// if (!letter) return;
 
 	/* Open a new file */
-	fff = my_fopen(p_ptr->infofile, "w");
+	fff = my_fopen(p_ptr->infofile, "wb");
 
 	/* Current file viewing */
 	strcpy(p_ptr->cur_file, p_ptr->infofile);
@@ -1401,7 +1401,7 @@ void do_cmd_check_server_settings(int Ind)
 #endif
 
 	/* Open a new file */
-	fff = my_fopen(p_ptr->infofile, "w");
+	fff = my_fopen(p_ptr->infofile, "wb");
 
 	/* Current file viewing */
 	strcpy(p_ptr->cur_file, p_ptr->infofile);
@@ -1704,7 +1704,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 	// if (!letter) return;
 
 	/* Open a new file */
-	fff = my_fopen(p_ptr->infofile, "w");
+	fff = my_fopen(p_ptr->infofile, "wb");
 
 	/* Current file viewing */
 	strcpy(p_ptr->cur_file, p_ptr->infofile);
@@ -1824,7 +1824,7 @@ void do_cmd_show_houses(int Ind)
 	// if (!letter) return;
 
 	/* Open a new file */
-	fff = my_fopen(p_ptr->infofile, "w");
+	fff = my_fopen(p_ptr->infofile, "wb");
 
 	/* Current file viewing */
 	strcpy(p_ptr->cur_file, p_ptr->infofile);
@@ -1977,7 +1977,7 @@ void do_cmd_show_known_item_letter(int Ind, char *letter)
 	// if (!letter) return;
 
 	/* Open a new file */
-	fff = my_fopen(p_ptr->infofile, "w");
+	fff = my_fopen(p_ptr->infofile, "wb");
 
 	/* Current file viewing */
 	strcpy(p_ptr->cur_file, p_ptr->infofile);
@@ -2187,7 +2187,7 @@ void do_cmd_knowledge_traps(int Ind)
 	bool admin = is_admin(p_ptr);
 
 	/* Open a new file */
-	fff = my_fopen(p_ptr->infofile, "w");
+	fff = my_fopen(p_ptr->infofile, "wb");
 
 	/* Current file viewing */
 	strcpy(p_ptr->cur_file, p_ptr->infofile);
@@ -2287,7 +2287,7 @@ void do_cmd_time(int Ind)
 	}
 
 	/* Open this file */
-	fff = my_fopen(buf, "rt");
+	fff = my_fopen(buf, "r");
 
 	/* Oops */
 	if (!fff) return;
@@ -2413,7 +2413,7 @@ void do_cmd_check_other(int Ind, int line)
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 
 	/* Open a new file */
-	fff = my_fopen(file_name, "w");
+	fff = my_fopen(file_name, "wb");
 
 	/* Scan "info" */
 	while (n < 128 && p_ptr->info[n] && strlen(p_ptr->info[n]))

@@ -65,7 +65,7 @@ void callmeta() {
 	sigprocmask(SIG_BLOCK, &sigset, NULL);	
 	while ((ser = connsocket(PORT, host)) == -2);
 	if (ser != -1) {
-		fp = fopen("metadata", "r");
+		fp = fopen("metadata", "rb");
 		if (fp != (FILE*)NULL) {
 			while(fgets(metadata, 16384, fp))
 				write(ser, metadata, strlen(metadata));

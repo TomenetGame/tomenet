@@ -1316,7 +1316,7 @@ void self_knowledge(int Ind)
 #endif	// 0
 
 	/* Open a new file */
-	fff = my_fopen(p_ptr->infofile, "w");
+	fff = my_fopen(p_ptr->infofile, "wb");
 
 	/* Current file viewing */
 	strcpy(p_ptr->cur_file, p_ptr->infofile);

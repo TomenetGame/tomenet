@@ -4301,7 +4301,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 #endif	// 0
 
 	/* Open a new file */
-	fff = my_fopen(p_ptr->infofile, "w");
+	fff = my_fopen(p_ptr->infofile, "wb");
 
 	/* Current file viewing */
 	strcpy(p_ptr->cur_file, p_ptr->infofile);
@@ -4330,7 +4330,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
 		/* Hack -- anything written? (rewrite me) */
 		/* Open a new file */
-		fff = my_fopen(p_ptr->infofile, "r");
+		fff = my_fopen(p_ptr->infofile, "rb");
 		if (my_fgets(fff, buf, 1024, FALSE)) {
 			/* Close the file */
 			my_fclose(fff);
@@ -5452,7 +5452,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	/* Hack -- anything written? (rewrite me) */
 
 	/* Open a new file */
-	fff = my_fopen(p_ptr->infofile, "r");
+	fff = my_fopen(p_ptr->infofile, "rb");
 
 	if (my_fgets(fff, buf, 1024, FALSE))
 	{

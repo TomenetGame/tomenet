@@ -1568,7 +1568,7 @@ bool load_player(int Ind)
 		strcat(temp, ".lok");
 
 		/* Check for lock */
-		fkk = my_fopen(temp, "r");
+		fkk = my_fopen(temp, "rb");
 
 		/* Oops, lock exists */
 		if (fkk)
@@ -1585,7 +1585,7 @@ bool load_player(int Ind)
 		}
 
 		/* Create a lock file */
-		fkk = my_fopen(temp, "w");
+		fkk = my_fopen(temp, "wb");
 
 		/* Dump a line of info */
 		fprintf(fkk, "Lock file for savefile '%s'\n", p_ptr->savefile);

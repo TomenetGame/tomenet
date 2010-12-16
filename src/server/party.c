@@ -62,7 +62,7 @@ bool WriteAccount(struct account *r_acc, bool new){
 		return(FALSE);
 	}
 #endif
-	fp = fdopen(fd, "r+");
+	fp = fdopen(fd, "rb+");
 	if (fp != (FILE*)NULL){
 		while (!feof(fp) && !found) {
 			retval = fread(&c_acc, sizeof(struct account), 1, fp);
@@ -229,10 +229,10 @@ struct account *GetAccount(cptr name, char *pass, bool leavepass){
 
 	MAKE(c_acc, struct account);
 	if(c_acc == (struct account*)NULL) return(NULL);
-	fp = fopen("tomenet.acc", "r");
+	fp = fopen("tomenet.acc", "rb");
 	if (fp == (FILE*)NULL) {
 		if (errno == ENOENT) {	/* ONLY if non-existent */
-			fp = fopen("tomenet.acc", "w+");
+			fp = fopen("tomenet.acc", "wb+");
 			if (fp == (FILE*)NULL) {
 				KILL(c_acc, struct account);
 				return(NULL);
@@ -301,7 +301,7 @@ struct account *Admin_GetAccount(cptr name){
 
 	MAKE(c_acc, struct account);
 	if(c_acc == (struct account*)NULL) return(NULL);
-	fp = fopen("tomenet.acc", "r");
+	fp = fopen("tomenet.acc", "rb");
 	if(fp == (FILE*)NULL) {
 		KILL(c_acc, struct account);
 		return(NULL); /* cannot access account file */
@@ -326,7 +326,7 @@ cptr lookup_accountname(int p_id){
 
 	MAKE(c_acc, struct account);
 	if(c_acc==(struct account*)NULL) return(NULL);
-	fp=fopen("tomenet.acc", "r");
+	fp=fopen("tomenet.acc", "rb");
 	if(fp==(FILE*)NULL) return(NULL); /* cannot access account file */
 	while(fread(c_acc, sizeof(struct account), 1, fp)){
 		if(c_acc->flags & ACC_DELD) continue;
@@ -404,7 +404,7 @@ struct account *GetAccountID(u32b id, bool leavepass){
 	   id/name/filepos lookups in the future */
 	MAKE(c_acc, struct account);
 	if(c_acc == (struct account*)NULL) return(NULL);
-	fp = fopen("tomenet.acc", "r");
+	fp = fopen("tomenet.acc", "rb");
 	if(fp == (FILE*)NULL) return(NULL);	/* failed */
 	while (fread(c_acc, sizeof(struct account), 1, fp)) {
 		if(id == c_acc->id && !(c_acc->flags & ACC_DELD)){
@@ -425,7 +425,7 @@ static u32b new_accid() {
 	struct account t_acc;
 	id = account_id;
 
-	fp = fopen("tomenet.acc", "r");
+	fp = fopen("tomenet.acc", "rb");
 	if (fp == (FILE*)NULL) return(0L);
 
 	C_MAKE(t_map, MAX_ACCOUNTS / 8, char);
@@ -2829,7 +2829,7 @@ void scan_accounts() {
 	MAKE(c_acc, struct account);
 	if(c_acc == (struct account*)NULL) return;
 
-	fp = fopen("tomenet.acc", "r+");
+	fp = fopen("tomenet.acc", "rb+");
 	if (fp == (FILE*)NULL) {
 		KILL(c_acc, struct account);
 		return;

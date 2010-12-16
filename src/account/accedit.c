@@ -44,7 +44,7 @@ char *crypass;
 int tfpos;
 
 int main(){
-	fp=fopen(fname, "r");
+	fp=fopen(fname, "rb");
 	if(fp==(FILE*)NULL){
 		fprintf(stderr, "Cannot open %s\n", fname);
 		exit(20);

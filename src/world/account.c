@@ -44,10 +44,10 @@ static struct account *GetAccount(unsigned char *name, char *pass){
 
 	c_acc=malloc(sizeof(struct account));
 	if(c_acc==(struct account*)NULL) return(NULL);
-	fp=fopen("tomenet.acc", "r+");
+	fp=fopen("tomenet.acc", "rb+");
 	if(fp==(FILE*)NULL){
 		if(errno==ENOENT){	/* ONLY if non-existent */
-			fp=fopen("tomenet.acc", "w+");
+			fp=fopen("tomenet.acc", "wb+");
 			if(fp==(FILE*)NULL){
 				free(c_acc);
 				return(NULL);
@@ -121,7 +121,7 @@ struct account *GetAccountID(u_int32_t id){
 	   id/name/filepos lookups in the future */
 	c_acc=malloc(sizeof(struct account));
 	if(c_acc==(struct account*)NULL) return(NULL);
-	fp=fopen("tomenet.acc", "r+");
+	fp=fopen("tomenet.acc", "rb+");
 	if(fp!=(FILE*)NULL){
 		while(!feof(fp)){
 			fread(c_acc, sizeof(struct account), 1, fp);
@@ -143,7 +143,7 @@ static u_int32_t new_accid(){
 	char *t_map;
 	struct account t_acc;
 	id=account_id;
-	fp=fopen("tomenet.acc", "r");
+	fp=fopen("tomenet.acc", "rb");
 	if(fp==(FILE*)NULL) return(0L);
 	t_map=malloc(MAX_ACCOUNTS/8);
 	while(!feof(fp)){

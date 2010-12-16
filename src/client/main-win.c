@@ -3373,8 +3373,6 @@ static void hook_quit(cptr str)
 		char buf[80]="tome_chat.txt";
 		i=message_num();
 		get_string("Filename:", buf, 80);
-		/* maybe one day we'll get a Mac client */
-		FILE_TYPE(FILE_TYPE_TEXT);
 		fp=my_fopen(buf, "w");
 		if(fp!=(FILE*)NULL){
 			dump_messages_aux(fp, i, 1, FALSE);

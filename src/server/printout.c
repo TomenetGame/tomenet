@@ -33,7 +33,7 @@ extern int s_setup(char *str)
 
 	if(init == FALSE)
 	{
-		if( (fp = fopen(str,"w+")) == NULL )
+		if( (fp = fopen(str, "w+")) == NULL )
 		{
 			quit("Cannot Open Log file\n");
 		}
@@ -56,7 +56,7 @@ extern int s_printf(const char *str, ...)
 
 	if(init == FALSE)   /* in case we don't start her up properly */
 	{
-		fp = fopen("tomenet.log","w+");
+		fp = fopen("tomenet.log", "w+");
 		init = TRUE;
 	}
 
@@ -88,7 +88,7 @@ extern bool s_setupr(char *str)
 
 	if(initr == FALSE)
 	{
-		if( (fpr = fopen(str,"a+")) == NULL )
+		if( (fpr = fopen(str, "a+")) == NULL )
 		{
 //			quit("Cannot Open Log file\n");
 			s_printf("Cannot Open RFE file\n");
@@ -104,7 +104,7 @@ extern bool rfe_printf(char *str, ...)
 
 	if(initr == FALSE)   /* in case we don't start her up properly */
 	{
-		fpr = fopen("tomenet.rfe","a+");
+		fpr = fopen("tomenet.rfe", "a+");
 		initr = TRUE;
 	}
 
@@ -157,7 +157,7 @@ extern int c_printf(char *str, ...)
 
 	if(initc == FALSE)   /* in case we don't start her up properly */
 	{
-		fpc = fopen(path,"a+");
+		fpc = fopen(path, "a+");
 		initc = TRUE;
 	}
 
@@ -181,7 +181,7 @@ extern int p_printf(char *str, ...)
 
 	if(initp == FALSE)   /* in case we don't start her up properly */
 	{
-		fpp = fopen(path,"a+");
+		fpp = fopen(path, "a+");
 		initp = TRUE;
 	}
 

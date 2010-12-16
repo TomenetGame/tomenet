@@ -106,7 +106,7 @@ static void init_stuff(void)
 static void writepid(char *str)
 {
 	FILE *fp;
-	fp = fopen(str, "w");
+	fp = fopen(str, "wb");
 	if (fp) {
 		fprintf(fp, "%d\n", (int) getpid());
 		fclose(fp);

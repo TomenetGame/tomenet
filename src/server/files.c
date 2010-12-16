@@ -600,7 +600,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 		strcpy(path, name);
 
 		/* Open */
-		fff = my_fopen(path, "r");
+		fff = my_fopen(path, "rb");
 	}
 
 	/* Look in "help" */
@@ -613,7 +613,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 		path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, name);
 
 		/* Open the file */
-		fff = my_fopen(path, "r");
+		fff = my_fopen(path, "rb");
 	}
 
 	/* Oops */
@@ -678,7 +678,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 		my_fclose(fff);
 
 		/* Hack -- Re-Open the file */
-		fff = my_fopen(path, "r");
+		fff = my_fopen(path, "rb");
 
 		/* Oops */
 		if (!fff) return (FALSE);
@@ -1148,7 +1148,7 @@ int highscore_send(char *buffer, int max) {
 
 	path_build(buf, 1024, ANGBAND_DIR_DATA, "scores.raw");
 
-	hsp = fopen(buf, "r");
+	hsp = fopen(buf, "rb");
 	if (!hsp) return(0);
 
 	while (fread(&score, sizeof(struct high_score), 1, hsp)) {
@@ -1674,7 +1674,7 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 
 	/* Open the temp file */
-	fff = my_fopen(file_name, "w");
+	fff = my_fopen(file_name, "wb");
 	if(fff==(FILE*)NULL) return;
 
 	/* Assume we will show the first 20 */

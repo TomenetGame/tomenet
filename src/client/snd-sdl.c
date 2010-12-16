@@ -1040,7 +1040,7 @@ void mixer_fadeall(void) {
 static bool my_fexists(const char *fname) {
 	FILE *fd;
 	/* Try to open it */
-	fd = fopen(fname, "r");
+	fd = fopen(fname, "rb");
 	/* It worked */
 	if (fd != NULL) {
 		fclose(fd);

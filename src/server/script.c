@@ -443,7 +443,7 @@ void cat_script(int Ind, char *name)
 
         /* Build the filename */
         path_build(buf, 1024, ANGBAND_DIR_SCPT, name);
-        fff = my_fopen(buf, "r");
+        fff = my_fopen(buf, "rb");
         if (fff == NULL) return;
 
         /* Process the file */

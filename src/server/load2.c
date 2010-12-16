@@ -2827,7 +2827,7 @@ void load_guildhalls(struct worldpos *wpos){
 			sprintf(fname, "guild%.4d.data", i);
 //			path_build(buf, 1024, ANGBAND_DIR_DATA, fname);
 			path_build(buf, 1024, ANGBAND_DIR_SAVE, fname);/* moved this 'file spam' over to save... C. Blue */
-			gfp=fopen(buf, "r");
+			gfp=fopen(buf, "rb");
 			if(gfp==(FILE*)NULL) continue;
 			data.fp=gfp;
 			fill_house(&houses[i], FILL_GUILD, (void*)&data);
@@ -2852,9 +2852,9 @@ void save_guildhalls(struct worldpos *wpos){
 			sprintf(fname, "guild%.4d.data", i);
 //			path_build(buf, 1024, ANGBAND_DIR_DATA, fname);
 			path_build(buf, 1024, ANGBAND_DIR_SAVE, fname); /* moved this 'file spam' over to save... C. Blue */
-			gfp=fopen(buf, "r+");
+			gfp=fopen(buf, "rb+");
 			if(gfp==(FILE*)NULL){
-				gfp=fopen(buf, "w");
+				gfp=fopen(buf, "wb");
 				if(gfp==(FILE*)NULL)
 					continue;
 			}

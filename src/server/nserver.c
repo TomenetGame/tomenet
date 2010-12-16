@@ -767,8 +767,8 @@ static bool update_acc_file_version(void) {
                 return(FALSE);
         }
 #endif
-        fp_old = fdopen(fd_old, "r");
-        fp = fdopen(fd, "w");
+        fp_old = fdopen(fd_old, "rb");
+        fp = fdopen(fd, "wb");
 	s_printf("done.\n");
 
         if(fp_old != (FILE*)NULL && fp != (FILE*)NULL){
@@ -1007,7 +1007,7 @@ static bool player_allowed(char *name){
 	/* Hack -- allow 'guest' account */
 	/* if (!strcmp("Guest", name)) return TRUE; */
 
-	sfp=fopen("allowlist","r");
+	sfp=fopen("allowlist", "r");
 	if(sfp==(FILE*)NULL)
 		return TRUE;
 	else{
@@ -1044,7 +1044,7 @@ static bool forbidden_name(char *name){
 	if (!strcmp("tBot", name)) return TRUE; /* Sandman's internal chat bot */
 	if (!strcmp("8ball", name)) return TRUE; /* Sandman's internal chat bot */
 
-	sfp=fopen("forbidlist","r");
+	sfp=fopen("forbidlist", "r");
 	if(sfp==(FILE*)NULL)
 		return FALSE;
 	else{

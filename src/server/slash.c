@@ -4643,7 +4643,7 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/partydebug"))
 			{
 				FILE *fp;
-				fp = fopen("tomenet_parties", "w");
+				fp = fopen("tomenet_parties", "wb");
 				if (!fp) {
 					msg_print(Ind, "\377rError! Couldn't open tomenet_parties");
 					return;

@@ -7423,7 +7423,7 @@ void update_check_file(void)
 	FILE *fp;
 	char buf[1024];
 	path_build(buf, 1024, ANGBAND_DIR_DATA, "tomenet.check");
-	fp = fopen(buf, "w");
+	fp = fopen(buf, "wb");
 	if (fp) {
 		/* print the current timestamp into the file */
 		fprintf(fp, "%d\n", (int)time(NULL));

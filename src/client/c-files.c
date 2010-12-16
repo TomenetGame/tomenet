@@ -355,7 +355,7 @@ errr my_fclose(FILE *fff)
 bool my_freadable(cptr file)
 {
 	FILE *fff;
-	fff = my_fopen(file, "r");
+	fff = my_fopen(file, "rb");
 
 	if (fff) return (FALSE);
 
@@ -1556,7 +1556,7 @@ void xhtml_screenshot(cptr name)
 		real_name[249] = '\0';
 		strcat(real_name, ".xhtml");
 		path_build(buf, 1024, ANGBAND_DIR_USER, real_name);
-		fp = fopen(buf, "r");
+		fp = fopen(buf, "rb");
 		if (fp)
 		{
 			char buf2[1028];
@@ -1568,7 +1568,7 @@ void xhtml_screenshot(cptr name)
 		}
 	}
 
-	fp = fopen(buf, "w");
+	fp = fopen(buf, "wb");
 	if (!fp)
 	{
 		/* Couldn't write */
