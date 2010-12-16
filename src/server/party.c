@@ -2890,6 +2890,9 @@ void scan_accounts() {
 			if (fwrite(c_acc, sizeof(struct account), 1, fp) < 1) {
 				s_printf("Writing to account file failed: %s\n", feof(fp) ? "EOF" : strerror(ferror(fp)));
 			}
+
+			/* HACK - Prevent reading past the end of the file on Windows - mikaelh */
+			fseek(fp, 0, SEEK_CUR);
 		}
 	}
 
