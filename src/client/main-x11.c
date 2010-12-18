@@ -41,10 +41,8 @@
 /* More options: Enable windows 5..8 (term-4..term-7) - C. Blue */
 #define GRAPHIC_TERM_4
 #define GRAPHIC_TERM_5
-/*
 #define GRAPHIC_TERM_6
 #define GRAPHIC_TERM_7
-*/
 
 
 /*
