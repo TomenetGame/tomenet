@@ -546,6 +546,7 @@ typedef struct {
 	bool visible;
 	int x, y;
 	int columns, lines;
+	char font[10]; /* Paranoia: actually, 6 should be sufficient */
 } generic_term_info;
 extern generic_term_info term_prefs[10];
 

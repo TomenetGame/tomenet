@@ -2393,19 +2393,14 @@ static XImage *ResizeImage(Display *disp, XImage *Im,
 /*
  * Initialization function for an "X11" module to Angband
  */
-errr init_x11(void)
-{
+errr init_x11(void) {
 	int i;
-
-	cptr fnt_name;
-
+	cptr fnt_name = NULL;
 	cptr dpy_name = "";
 
 #ifdef USE_GRAPHICS
-
 	char filename[1024];
 	char path[1024];
-
 #endif
 
 #ifdef USE_GRAPHICS
@@ -2427,8 +2422,8 @@ errr init_x11(void)
 			use_graphics = TRUE;
 		}
 	}
-
 #endif /* USE_GRAPHICS */
+
 
 	/* Init the Metadpy if possible */
 	if (Metadpy_init_name(dpy_name)) return (-1);
@@ -2450,14 +2445,12 @@ errr init_x11(void)
 	}
 
 
-
 { /* Main window is always visible */
+	fnt_name = term_prefs[0].font;
 	/* Check environment for "screen" font */
-	fnt_name = getenv("TOMENET_X11_FONT_SCREEN");
-
+	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT_SCREEN");
 	/* Check environment for "base" font */
 	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-
 	/* No environment variables, use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_SCREEN;
 
@@ -2481,16 +2474,13 @@ errr init_x11(void)
 #endif /* USE_GRAPHICS */
 
 
-
 #ifdef GRAPHIC_MIRROR
 if (term_prefs[1].visible) {
-
+	fnt_name = term_prefs[1].font;
 	/* Check environment for "mirror" font */
-	fnt_name = getenv("TOMENET_X11_FONT_MIRROR");
-
+	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT_MIRROR");
 	/* Check environment for "base" font */
 	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-
 	/* No environment variables, use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_MIRROR;
 
@@ -2504,13 +2494,11 @@ if (term_prefs[1].visible) {
 
 #ifdef GRAPHIC_RECALL
 if (term_prefs[2].visible) {
-
+	fnt_name = term_prefs[2].font;
 	/* Check environment for "recall" font */
-	fnt_name = getenv("TOMENET_X11_FONT_RECALL");
-
+	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT_RECALL");
 	/* Check environment for "base" font */
 	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-
 	/* No environment variables, use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_RECALL;
 
@@ -2524,13 +2512,11 @@ if (term_prefs[2].visible) {
 
 #ifdef GRAPHIC_CHOICE
 if (term_prefs[3].visible) {
-
+	fnt_name = term_prefs[3].font;
 	/* Check environment for "choice" font */
-	fnt_name = getenv("TOMENET_X11_FONT_CHOICE");
-
+	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT_CHOICE");
 	/* Check environment for "base" font */
 	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-
 	/* No environment variables, use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_CHOICE;
 
@@ -2538,19 +2524,16 @@ if (term_prefs[3].visible) {
 	term_data_init(3, &choice, FALSE, ang_term_name[3], fnt_name);
 	term_choice = Term;
 	ang_term[3]=Term;
-
 }
 #endif
 
 #ifdef GRAPHIC_TERM_4
 if (term_prefs[4].visible) {
-
+	fnt_name = term_prefs[4].font;
 	/* Check environment for "choice" font */
-	fnt_name = getenv("TOMENET_X11_FONT_TERM_4");
-
+	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT_TERM_4");
 	/* Check environment for "base" font */
 	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-
 	/* No environment variables, use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_4;
 
@@ -2564,13 +2547,11 @@ if (term_prefs[4].visible) {
 
 #ifdef GRAPHIC_TERM_5
 if (term_prefs[5].visible) {
-
+	fnt_name = term_prefs[5].font;
 	/* Check environment for "choice" font */
-	fnt_name = getenv("TOMENET_X11_FONT_TERM_5");
-
+	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT_TERM_5");
 	/* Check environment for "base" font */
 	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-
 	/* No environment variables, use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_5;
 
@@ -2584,13 +2565,11 @@ if (term_prefs[5].visible) {
 
 #ifdef GRAPHIC_TERM_6
 if (term_prefs[6].visible) {
-
+	fnt_name = term_prefs[6].font;
 	/* Check environment for "choice" font */
-	fnt_name = getenv("TOMENET_X11_FONT_TERM_6");
-
+	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT_TERM_6");
 	/* Check environment for "base" font */
 	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-
 	/* No environment variables, use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_6;
 
@@ -2604,13 +2583,11 @@ if (term_prefs[6].visible) {
 
 #ifdef GRAPHIC_TERM_7
 if (term_prefs[7].visible) {
-
+	fnt_name = term_prefs[7].font;
 	/* Check environment for "choice" font */
-	fnt_name = getenv("TOMENET_X11_FONT_TERM_7");
-
+	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT_TERM_7");
 	/* Check environment for "base" font */
 	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-
 	/* No environment variables, use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_7;
 

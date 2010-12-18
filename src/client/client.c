@@ -15,7 +15,7 @@ static char mangrc_filename[100] = "";
 
 /* linux clients: load subwindow prefs from .tomenetrc - C. Blue */
 static void read_mangrc_aux(generic_term_info *term_pref, cptr sec_name) {
-	cptr val;
+	char *val, *val2;
 
 	if ((val = strstr(sec_name, "_Visible")))
 		term_pref->visible = (atoi(val + 8) != 0);
@@ -29,6 +29,14 @@ static void read_mangrc_aux(generic_term_info *term_pref, cptr sec_name) {
 		term_pref->columns = atoi(val + 8);
 	if ((val = strstr(sec_name, "_Lines")))
 		term_pref->lines = atoi(val + 6);
+
+	if ((val = strstr(sec_name, "_Font"))) {
+		while (val[0] && (val[0] < '0' || val[0] > '9')) val++;
+		val2 = val;
+		while (val2[0] && ((val2[0] >= '0' && val2[0] <= '9') || val2[0] == 'x')) val2++;
+		val2[0] = 0;
+		strcpy(term_pref->font, val);
+	}
 }
 static bool read_mangrc(cptr filename)
 {
@@ -326,6 +334,7 @@ static void write_mangrc_aux(generic_term_info *term_pref, cptr sec_name, FILE *
 		fputs(format("%s_Y\t\t%d\n", sec_name, term_pref->y), cfg_file);
 	fputs(format("%s_Columns\t%d\n", sec_name, term_pref->columns), cfg_file);
 	fputs(format("%s_Lines\t%d\n", sec_name, term_pref->lines), cfg_file);
+	fputs(format("%s_Font\t%s\n", sec_name, term_pref->font), cfg_file);
 	fputs("\n", cfg_file);
 }
 /* linux clients: save some prefs to .tomenetrc - C. Blue */
