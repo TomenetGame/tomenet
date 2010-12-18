@@ -66,7 +66,7 @@ sound			1
 
 ## - Sample buffer size (larger = more lagging sound,
 ##   smaller = skipping on slow machines. 128..8192)
-audioBuffer		512
+audioBuffer		1024
 
 ## - Turn various things on(1) or off(0)
 audioMaster		1
@@ -80,3 +80,59 @@ audioVolumeMusic	100
 audioVolumeSound	100
 audioVolumeWeather	100
 
+
+
+## Window settings
+
+## 'TomeNET' main window
+Mainwindow_X<--><------>0
+Mainwindow_Y<--><------>0
+
+## 'Msg/Chat' mirrow window
+Mirrorwindow_Visible<-->1
+Mirrorwindow_X<><------>0
+Mirrorwindow_Y<><------>0
+Mirrorwindow_Columns<-->80
+Mirrorwindow_Lines<---->24
+
+## 'Inventory' recall window
+Recallwindow_Visible<-->1
+Recallwindow_X<><------>0
+Recallwindow_Y<><------>0
+Recallwindow_Columns<-->80
+Recallwindow_Lines<---->17
+
+## 'Character' choice window
+Choicewindow_Visible<-->1
+Choicewindow_X<><------>0
+Choicewindow_Y<><------>0
+Choicewindow_Columns<-->80
+Term-4window_Lines<---->22
+
+## 'Chat' term-4
+Term-4window_Visible<-->1
+Term-4window_X<><------>0
+Term-4window_Y<><------>0
+Term-4window_Columns<-->80
+Term-4window_Lines<---->24
+
+## 'Equipment' term-5
+Term-5window_Visible<-->1
+Term-5window_X<><------>0
+Term-5window_Y<><------>0
+Term-5window_Columns<-->80
+Term-5window_Lines<---->14
+
+## unnamed, term-6
+Term-6window_Visible<-->0
+Term-6window_X<><------>0
+Term-6window_Y<><------>0
+Term-6window_Columns<-->80
+Term-6window_Lines<---->24
+
+## unnamed, term-7
+Term-7window_Visible<-->0
+Term-7window_X<><------>0
+Term-7window_Y<><------>0
+Term-7window_Columns<-->80
+Term-7window_Lines<---->24

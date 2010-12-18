@@ -1987,15 +1987,21 @@ static errr Term_pict_x11(int x, int y, byte a, byte c)
 /*
  * Initialize a term_data
  */
-static errr term_data_init(term_data *td, bool fixed, cptr name, cptr font)
+static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr font)
 {
 	term *t = &td->t;
 
 	int wid, hgt, num;
-	
-	int win_cols = 80, win_lines = 24;
+	int win_cols, win_lines; /* 80, 24 default */
 	cptr n;
-	int topx = 0, topy = 0;
+	int topx, topy; /* 0, 0 default */
+
+	/* Use values from .tomenetrc;
+	   Environment variables (see further below) may override those. */
+	win_cols = term_prefs[index].columns;
+	win_lines = term_prefs[index].lines;
+	topx = term_prefs[index].x;
+	topy = term_prefs[index].y;
 
 	/* Prepare the standard font */
 	MAKE(td->fnt, infofnt);
@@ -2005,14 +2011,17 @@ static errr term_data_init(term_data *td, bool fixed, cptr name, cptr font)
 	/* Hack -- extract key buffer size */
 	num = (fixed ? 1024 : 16);
 
-#if 0 /* must remain 80x24! */
 	if (!strcmp(name, "Screen")) {
+#if 0 /* must remain 80x24! (also, it's always visible) */
 		n = getenv("TOMENET_X11_WID_SCREEN");
 		if (n) win_cols = atoi(n);
 		n = getenv("TOMENET_X11_HGT_SCREEN");
 		if (n) win_lines = atoi(n);
-	}
+#else
+		win_cols = 80;
+		win_lines = 24;
 #endif
+	}
 	if (!strcmp(name, ang_term_name[1])) {
 		n = getenv("TOMENET_X11_WID_MIRROR");
 		if (n) win_cols = atoi(n);
@@ -2101,8 +2110,7 @@ static errr term_data_init(term_data *td, bool fixed, cptr name, cptr font)
 #ifdef USE_GRAPHICS
 
 	/* Use graphics */
-	if (use_graphics)
-	{
+	if (use_graphics) {
 		printf("Setup hook\n");
 		/* Graphics hook */
 		t->pict_hook = Term_pict_x11;
@@ -2403,8 +2411,7 @@ errr init_x11(void)
 #ifdef USE_GRAPHICS
 	init_file_paths(path);
 	/* Try graphics */
-	if (getenv("TOMENET_GRAPHICS"))
-	{
+	if (getenv("TOMENET_GRAPHICS")) {
 		int gfd;
 		/* Build the name of the "graf" file */
 		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8x8.bmp");
@@ -2433,8 +2440,7 @@ errr init_x11(void)
 	Infoclr_init_ccn ("fg", "bg", "xor", 0);
 
 	/* Prepare the colors (including "black") */
-	for (i = 0; i < 16; ++i)
-	{
+	for (i = 0; i < 16; ++i) {
 		cptr cname = color_name[0];
 		MAKE(clr[i], infoclr);
 		Infoclr_set (clr[i]);
@@ -2443,6 +2449,9 @@ errr init_x11(void)
 		Infoclr_init_ccn (cname, "bg", "cpy", 0);
 	}
 
+
+
+{ /* Main window is always visible */
 	/* Check environment for "screen" font */
 	fnt_name = getenv("TOMENET_X11_FONT_SCREEN");
 
@@ -2453,15 +2462,13 @@ errr init_x11(void)
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_SCREEN;
 
 	/* Initialize the screen */
-	term_data_init(&screen, TRUE, "TomeNET", fnt_name);
+	term_data_init(0, &screen, TRUE, "TomeNET", fnt_name);
 	term_screen = Term;
 	ang_term[0]=Term;
-
+}
 #ifdef USE_GRAPHICS
-
 	/* Load graphics */
-	if (use_graphics)
-	{
+	if (use_graphics) {
 		XImage *tiles_raw;
 
 		/* Load the graphics XXX XXX XXX */
@@ -2471,12 +2478,12 @@ errr init_x11(void)
 		screen.tiles = ResizeImage(Metadpy->dpy, tiles_raw, 16, 16,
 		                        screen.fnt->wid, screen.fnt->hgt);
 	}
-
 #endif /* USE_GRAPHICS */
 
 
 
 #ifdef GRAPHIC_MIRROR
+if (term_prefs[1].visible) {
 
 	/* Check environment for "mirror" font */
 	fnt_name = getenv("TOMENET_X11_FONT_MIRROR");
@@ -2488,13 +2495,15 @@ errr init_x11(void)
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_MIRROR;
 
 	/* Initialize the recall window */
-	term_data_init(&mirror, FALSE, ang_term_name[1], fnt_name);
+	term_data_init(1, &mirror, FALSE, ang_term_name[1], fnt_name);
 	term_mirror = Term;
 	ang_term[1]=Term;
 
+}
 #endif
 
 #ifdef GRAPHIC_RECALL
+if (term_prefs[2].visible) {
 
 	/* Check environment for "recall" font */
 	fnt_name = getenv("TOMENET_X11_FONT_RECALL");
@@ -2506,13 +2515,15 @@ errr init_x11(void)
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_RECALL;
 
 	/* Initialize the recall window */
-	term_data_init(&recall, FALSE, ang_term_name[2], fnt_name);
+	term_data_init(2, &recall, FALSE, ang_term_name[2], fnt_name);
 	term_recall = Term;
 	ang_term[2]=Term;
 
+}
 #endif
 
 #ifdef GRAPHIC_CHOICE
+if (term_prefs[3].visible) {
 
 	/* Check environment for "choice" font */
 	fnt_name = getenv("TOMENET_X11_FONT_CHOICE");
@@ -2524,13 +2535,15 @@ errr init_x11(void)
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_CHOICE;
 
 	/* Initialize the choice window */
-	term_data_init(&choice, FALSE, ang_term_name[3], fnt_name);
+	term_data_init(3, &choice, FALSE, ang_term_name[3], fnt_name);
 	term_choice = Term;
 	ang_term[3]=Term;
 
+}
 #endif
 
 #ifdef GRAPHIC_TERM_4
+if (term_prefs[4].visible) {
 
 	/* Check environment for "choice" font */
 	fnt_name = getenv("TOMENET_X11_FONT_TERM_4");
@@ -2542,13 +2555,15 @@ errr init_x11(void)
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_4;
 
 	/* Initialize the choice window */
-	term_data_init(&term_4, FALSE, ang_term_name[4], fnt_name);
+	term_data_init(4, &term_4, FALSE, ang_term_name[4], fnt_name);
 	term_term_4 = Term;
 	ang_term[4]=Term;
 
+}
 #endif
 
 #ifdef GRAPHIC_TERM_5
+if (term_prefs[5].visible) {
 
 	/* Check environment for "choice" font */
 	fnt_name = getenv("TOMENET_X11_FONT_TERM_5");
@@ -2560,13 +2575,15 @@ errr init_x11(void)
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_5;
 
 	/* Initialize the choice window */
-	term_data_init(&term_5, FALSE, ang_term_name[5], fnt_name);
+	term_data_init(5, &term_5, FALSE, ang_term_name[5], fnt_name);
 	term_term_5 = Term;
 	ang_term[5]=Term;
 
+}
 #endif
 
 #ifdef GRAPHIC_TERM_6
+if (term_prefs[6].visible) {
 
 	/* Check environment for "choice" font */
 	fnt_name = getenv("TOMENET_X11_FONT_TERM_6");
@@ -2578,13 +2595,15 @@ errr init_x11(void)
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_6;
 
 	/* Initialize the choice window */
-	term_data_init(&term_6, FALSE, ang_term_name[6], fnt_name);
+	term_data_init(6, &term_6, FALSE, ang_term_name[6], fnt_name);
 	term_term_6 = Term;
 	ang_term[6]=Term;
 
+}
 #endif
 
 #ifdef GRAPHIC_TERM_7
+if (term_prefs[7].visible) {
 
 	/* Check environment for "choice" font */
 	fnt_name = getenv("TOMENET_X11_FONT_TERM_7");
@@ -2596,10 +2615,11 @@ errr init_x11(void)
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_7;
 
 	/* Initialize the choice window */
-	term_data_init(&term_7, FALSE, ang_term_name[7], fnt_name);
+	term_data_init(7, &term_7, FALSE, ang_term_name[7], fnt_name);
 	term_term_7 = Term;
 	ang_term[7]=Term;
 
+}
 #endif
 
 

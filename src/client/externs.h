@@ -542,6 +542,12 @@ extern void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 
 /* client.c */
 extern bool write_mangrc(void);
+typedef struct {
+	bool visible;
+	int x, y;
+	int columns, lines;
+} generic_term_info;
+extern generic_term_info term_prefs[10];
 
 /* nclient.c (forer netclient.c) */
 extern int ticks, ticks10;

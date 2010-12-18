@@ -294,3 +294,17 @@ bool no_cache_audio = FALSE;
 /* Redraw skills if the menu is open */
 bool redraw_skills = FALSE;
 bool redraw_store = FALSE;
+
+/* Linux window prefs - C. Blue */
+generic_term_info term_prefs[10] = {
+	{ 1, 0, 0, 80, 24 },//TomeNET
+	{ 1, 20, 20, 80, 24 },//Mirror
+	{ 1, 40, 40, 80, 24 },//Recall
+	{ 1, 60, 60, 80, 22 },//Choice
+	{ 1, 80, 80, 80, 17 },//Term-4
+	{ 1, 100, 100, 80, 14 },//Term-5
+	{ 0, 0, 0, 80, 24 },
+	{ 0, 0, 0, 80, 24 },
+	{ 0, 0, 0, 80, 24 },
+	{ 0, 0, 0, 80, 24 }
+};
