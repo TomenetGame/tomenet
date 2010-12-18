@@ -16,12 +16,12 @@
 ## - Character name for fully automatic login
 #name		Gandalf
 
-##  - Server and port you wish to connect to;
-## leave commented out to get a list of servers
+## - Server and port you wish to connect to;
+##   leave commented out to get a list of servers
 #server		tomenet.servegame.com
 #port		18348
 
-##  - Perform automatic login with nick, pass and also character name
+## - Perform automatic login with nick, pass and also character name
 #fullauto
 
 
@@ -41,8 +41,8 @@
 
 ## Graphics settings
 
-##  - Enable graphics in general (0 = off)
-##    Note: Not supported at the moment
+## - Enable graphics in general (0 = off)
+##   Note: Not supported at the moment
 #graphics	0
 
 
@@ -83,6 +83,9 @@ audioVolumeWeather	100
 
 
 ## Window settings
+## - Set visibility, position (if supported), size and font of all windows.
+##   Possible fonts (depending on your system) might be for example:
+##   4x6, 5x7, 5x8, 6x9, 6x10, 6x12, 7x13, 7x14, 8x13, 9x15, 10x20, 12x24.
 
 ## 'TomeNET' main window
 Mainwindow_X		0
