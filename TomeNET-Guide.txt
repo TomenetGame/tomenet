@@ -7271,8 +7271,8 @@ Blows/Round
     on your strength, dexterity, your class, your weapon.
     Spending points in specific weapon masteries will give you an additional
     blow at 25 and at 50 (like sword or blunt mastery).
-    Tables of blows/round limits are at (5.4) (for martial arts) and at (6.5)
-    (for melee weapons).
+    Tables of blows/round limits are at (5.4) for martial arts, and at (6.5)
+    and (6.5a) for melee weapons.
 Shots/Round
     How often per round you are able to use your ranged weapon.
     Spending points into specific archery skills will give you additional shots
@@ -7282,8 +7282,8 @@ Shots/Round
 Infra-Vision
     How far you can see warm-blooded monsters in the dark.
     10 ft equal a distance of 1 field.
-    Having this above zero can be very helpful for fighting monsters while you
-    are blinded, since IV still works then.
+    IV can be very helpful for spotting monsters outside of your light radius
+    that don't carry a light source themselves.
 
 These miscellaneous abilities can also change when your character progresses,
 depending on your +hit and +dam (concerning Fighting and Bows/Throws) or your
@@ -7306,8 +7306,7 @@ Disarming       Intelligence, dexterity, _'Disarming'_
 Magic Device    Intelligence, _'Magic-Device'_
 
 
-Note that your age, height, weight, social class and gender don't have
-influence on the gameplay at this time.
+For age, height, weight, social class and gender see (6.14).
 
 
 Apart from those generic abilities, there are several class- or race-specific
@@ -9476,6 +9475,7 @@ by an opponent! The special rules that apply are as follows:
 -----------------------------------------
 Characters also have the following miscellaneous properties:
 
+-Sex
 -Age
 -Height
 -Weight
