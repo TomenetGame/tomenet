@@ -1,7 +1,7 @@
 .=============+============+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 18. Dec 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 19. Dec 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -127,6 +127,7 @@ Contents
     (6.11)  Parrying and blocking
     (6.12)  Fighting/shooting techniques
     (6.13)  PvP mode
+    (6.14)  Miscellaneous character properties
 (7) Tactics & strategy
     (7.1)   Preparing the inventory for diving into the dungeon
     (7.2)   Preparing the equipment for diving into the dungeon
@@ -6503,8 +6504,10 @@ gain the first few levels of a new runemaster.
 =====================
 (6.1) Attributes
 ----------------
-Depending on your race and class you will have different character attributes.
-The attributes are also called 'stats'.
+Characters have six 'attributes', also called 'stats', which are strength,
+intelligence, wisdom, dexterity, constitution and charisma.
+These depend on your race and class and the stat assignments you did during
+character creation process.
 
 Stats are displayed as values from 3 (minimum) to 18.
 (Note: This can be changed in TomeNET options, press key =5 and toggle
@@ -9403,7 +9406,6 @@ stat and 'Health' skill will further improve regeneration speed.
 
 (6.13) PvP mode
 ---------------
-
 PvP stands for "Player vs player". This describes the act of player characters
 fighting each other, usually to death. In that regard, it is quite different
 to the 'blood bond' duel, which always ends without anyone getting hurt.
@@ -9467,6 +9469,21 @@ by an opponent! The special rules that apply are as follows:
 -teleportation will be suppressed during combat, phase door is allowed though.
 -while in a fight with another pvp-char, you cannot teleport away easily
  (takes about 30 seconds to wear off, or just enter a town to reset).
+
+
+
+(6.14) Miscellaneous character properties
+-----------------------------------------
+Characters also have the following miscellaneous properties:
+
+-Age
+-Height
+-Weight
+-Social Class
+
+These currently have no effect in the game, and modifiying them has no effect
+either: Traps of aging, shrinking or growing may change these values but will
+not affect the gameplay in any way.
 
 
 
