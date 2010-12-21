@@ -142,6 +142,11 @@ static void Receive_init(void)
 	receive_tbl[PKT_ACCOUNT_INFO]	= Receive_account_info;
 	receive_tbl[PKT_STORE_WIDE]	= Receive_store_wide;
 	receive_tbl[PKT_MUSIC]		= Receive_music;
+
+	receive_tbl[PKT_REQUEST_KEY]	= Receive_request_key;
+	receive_tbl[PKT_REQUEST_NUM]	= Receive_request_num;
+	receive_tbl[PKT_REQUEST_STR]	= Receive_request_str;
+	receive_tbl[PKT_REQUEST_CFR]	= Receive_request_cfr;
 }
 
 /* Head of file transfer system receive */
@@ -3594,6 +3599,45 @@ int Receive_account_info(void)
 	return 1;
 }
 
+/* Request keypress (1 char) */
+int Receive_request_key(void) {
+	int	n, id;
+	char	ch, prompt[80], buf;
+	if ((n = Packet_scanf(&rbuf, "%c%d%s", &ch, &id, prompt)) <= 0) return n;
+
+	if (get_com(prompt, &buf)) Send_request_key(id, buf);
+	else Send_request_key(id, 0);
+	return 1;
+}
+/* Request number */
+int Receive_request_num(void) {
+	int	n, id, std;
+	char	ch, prompt[80];
+	if ((n = Packet_scanf(&rbuf, "%c%d%s%d", &ch, &id, prompt, &std)) <= 0) return n;
+
+	Send_request_num(id, c_get_quantity(prompt, std));
+	return 1;
+}
+/* Request string (1 line) */
+int Receive_request_str(void) {
+	int	n, id;
+	char	ch, prompt[80], buf[160];
+	if ((n = Packet_scanf(&rbuf, "%c%d%s", &ch, &id, prompt)) <= 0) return n;
+
+	if (get_string(prompt, buf, 159)) Send_request_str(id, buf);
+	else Send_request_str(id, "\e");
+	return 1;
+}
+/* Request confirmation (y/n) */
+int Receive_request_cfr(void) {
+	int	n, id;
+	char	ch, prompt[80];
+	if ((n = Packet_scanf(&rbuf, "%c%d%s", &ch, &id, prompt)) <= 0) return n;
+
+	Send_request_cfr(id, get_check(prompt));
+	return 1;
+}
+
 int Send_search(void)
 {
 	int	n;
@@ -4682,6 +4726,27 @@ int Send_force_stack(int item) {
 	int n;
 
 	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_FORCE_STACK, item)) <= 0) return n;
+	return 1;
+}
+
+int Send_request_key(int id, char key) {
+	int n;
+	if ((n = Packet_printf(&wbuf, "%c%d%c", PKT_REQUEST_KEY, id, key)) <= 0) return n;
+	return 1;
+}
+int Send_request_num(int id, int num) {
+	int n;
+	if ((n = Packet_printf(&wbuf, "%c%d%d", PKT_REQUEST_NUM, id, num)) <= 0) return n;
+	return 1;
+}
+int Send_request_str(int id, char *str) {
+	int n;
+	if ((n = Packet_printf(&wbuf, "%c%d%s", PKT_REQUEST_STR, id, str)) <= 0) return n;
+	return 1;
+}
+int Send_request_cfr(int id, int cfr) {
+	int n;
+	if ((n = Packet_printf(&wbuf, "%c%d%d", PKT_REQUEST_CFR, id, cfr)) <= 0) return n;
 	return 1;
 }
 

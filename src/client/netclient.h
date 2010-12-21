@@ -88,3 +88,7 @@ int Receive_unique_monster(void);
 int Receive_weather(void);
 int Receive_inventory_revision(void);
 int Receive_account_info(void);
+int Receive_request_key(void);
+int Receive_request_num(void);
+int Receive_request_str(void);
+int Receive_request_cfr(void);

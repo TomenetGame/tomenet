@@ -654,6 +654,10 @@ extern int Send_cloak(void);
 extern int Send_inventory_revision(int revision);
 extern int Send_account_info(void);
 extern int Send_change_password(char *old_pass, char *new_pass);
+extern int Send_request_key(int id, char key);
+extern int Send_request_num(int id, int num);
+extern int Send_request_str(int id, char *str);
+extern int Send_request_cfr(int id, int cfr);
 
 
 /* skills.c */

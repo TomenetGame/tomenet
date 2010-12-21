@@ -211,6 +211,12 @@
 #define PKT_FORCE_STACK		182	/* force stacking of level 0 items with normal-level items in your inventory */
 #define PKT_MUSIC		183	/* background music */
 
+#define PKT_REQUEST_KEY		184	/* (special) gets a keypress from the player */
+#define PKT_REQUEST_NUM		185	/* (special) gets a number from the player */
+#define PKT_REQUEST_STR		186	/* (special) gets a 1-line string from the player */
+#define PKT_REQUEST_CFR		187	/* (special) requests confirmation ('y/n') from player */
+
+
 /*
  * Possible error codes returned
  */
