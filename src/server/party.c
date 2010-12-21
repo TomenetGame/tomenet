@@ -2861,6 +2861,20 @@ void scan_accounts() {
 			modified = TRUE;
 		}
 
+		/* Check for bad account id */
+		else if (c_acc->id < 0 || c_acc->id >= MAX_ACCOUNTS) {
+			/* Log it */
+			s_printf("  Bad account ID: %d\n", c_acc->id);
+
+			/* Fix the id */
+			c_acc->id = MAX_ACCOUNTS - 1;
+
+			/* Mark as deleted */
+			c_acc->flags |= ACC_DELD;
+
+			modified = TRUE;
+		}
+
 		/* Was the account marked as active? */
 		else if (account_active[c_acc->id]) {
 			c_acc->acc_laston = now;
