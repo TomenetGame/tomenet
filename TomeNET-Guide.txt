@@ -8725,7 +8725,7 @@ Mind
                     Required skill level for first spell level: 15.
     Sense Minds     Gives you temporary ESP.
                     Required skill level for first spell level: 30.
-    Telekinesis     Inscribe your book @P<Playername>, cast it, select an
+    Telekinesis I   Inscribe your book @P<Playername>, cast it, select an
                     item that you wish to teleport to the player's inventory.
                     The target player needs to concentrate by opening her/his
                     mind, see (0.2). It's dangerous to have the mind opened,
@@ -8961,7 +8961,7 @@ Psycho-Power
                     Required skill level for first spell level: 24.
     Psychic Warp    Attempts to teleport away your opponent.
                     Required skill level for first spell level: 30.
-    Telekinesis     Inscribe your book @P<Playername>, cast it, select an
+    Telekinesis II  Inscribe your book @P<Playername>, cast it, select an
                     item that you wish to teleport to the player's inventory.
                     The target player needs to concentrate by opening her/his
                     mind, see (0.2). It's dangerous to have the mind opened,
@@ -8997,7 +8997,7 @@ Thought Contact
     Stabilize Thoughts
                     Cures some insanity and removes effects.   (auto-project)
                     Required skill level for first spell level: 25.
-    Telekinesis     Inscribe your book @P<Playername>, cast it, select an
+    Telekinesis II  Inscribe your book @P<Playername>, cast it, select an
                     item that you wish to teleport to the player's inventory.
                     The target player needs to concentrate by opening her/his
                     mind, see (0.2). It's dangerous to have the mind opened,
