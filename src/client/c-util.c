@@ -3740,9 +3740,9 @@ void interact_macros(void)
 			i = choice = 0;
 
 			while (i != -1) {
-				Term_putstr(15, 3, -1, i == 0 ? TERM_L_GREEN : TERM_SLATE, "Step 1:  Choose an action for the macro to perform");
-				Term_putstr(15, 4, -1, i == 1 ? TERM_L_GREEN : TERM_SLATE, "Step 2:  If required, choose an item or spell to use");
-				Term_putstr(15, 5, -1, i == 2 ? TERM_L_GREEN : TERM_SLATE, "Step 3:  Choose the key you want to bind the macro to.");
+				Term_putstr(12, 3, -1, i == 0 ? TERM_L_GREEN : TERM_SLATE, "Step 1:  Choose an action for the macro to perform.");
+				Term_putstr(12, 4, -1, i == 1 ? TERM_L_GREEN : TERM_SLATE, "Step 2:  If required, choose item, spell, and target method.");
+				Term_putstr(12, 5, -1, i == 2 ? TERM_L_GREEN : TERM_SLATE, "Step 3:  Choose the key you want to bind the macro to.");
 				Term_putstr(1, 7, -1, TERM_L_DARK, "Don't forget to save your macros with '2' when you are back in the macro menu!");
 
 				clear_from(10);
@@ -4184,15 +4184,34 @@ void interact_macros(void)
 
 					/* Convert the targetting method from XXX*t to *tXXX- ? */
 #ifdef MACRO_WIZARD_SMART_TARGET
+					/* ask about replacing '*t' vs '-' (4.4.6) vs '+' (4.4.6b) */
 					if (strstr(buf2, "*t")) {
-						strcpy(buf, "\\e)*t");
-						/* We assume that '*t' is always the last part in the macro
-						   and that '\e)' is always the first part */
-						strncat(buf, buf2 + 3, strlen(buf2) - 5);
-						/* add new direction feature */
-						strcat(buf, "-");
-						/* replace old macro by this one */
-						strcpy(buf2, buf);
+						clear_from(10);
+						Term_putstr(10, 11, -1, TERM_GREEN, "Please choose the targetting method:");
+						Term_putstr(10, 14, -1, TERM_L_GREEN, "a) Target closest monster if such exists,");
+						Term_putstr(10, 15, -1, TERM_L_GREEN, "   otherwise cancel the action. (Recommended)");
+						Term_putstr(10, 17, -1, TERM_L_GREEN, "b) Target closest monster if such exists,");
+						Term_putstr(10, 18, -1, TERM_L_GREEN, "   otherwise prompt for direction.");
+						Term_putstr(10, 20, -1, TERM_L_GREEN, "c) Target closest monster if such exists,");
+						Term_putstr(10, 21, -1, TERM_L_GREEN, "   otherwise target own grid.");
+						switch (choice = inkey()) {
+						case 'a': case 'b': case 'c': break;
+						default:
+							i = -1; /* leave */
+							continue;
+						}
+
+						if (choice != 'c') {
+							strcpy(buf, "\\e)*t");
+							/* We assume that '*t' is always the last part in the macro
+							   and that '\e)' is always the first part */
+							strncat(buf, buf2 + 3, strlen(buf2) - 5);
+							/* add new direction feature */
+							if (choice == 'b') strcat(buf, "+");
+							else strcat(buf, "-");
+							/* replace old macro by this one */
+							strcpy(buf2, buf);
+						}
 					}
 #endif
 
