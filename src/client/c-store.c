@@ -779,3 +779,83 @@ void display_store(void)
 	/* reload the term */
 	Term_load();
 }
+
+/* For the new SPECIAL flag for non-inven stores - C. Blue */
+void display_store_special(void) {
+	int i;
+	char buf[1024];
+
+	/* Save the term */
+	Term_save();
+
+	/* We are "shopping" */
+	shopping = TRUE;
+
+	/* Clear screen */
+	Term_clear();
+
+	/* Put the owner name and race */
+	sprintf(buf, "%s", c_store.owner_name);
+	put_str(buf, 3, 10);
+
+	sprintf(buf, "%s", c_store.store_name);
+	prt(buf, 3, 50);
+
+	/* Display the players remaining gold */
+	c_store_prt_gold();
+
+	/* Don't leave */
+	leave_store = FALSE;
+
+	/* Start at the top */
+	store_top = 0;
+
+	/* Interact with player */
+	while (!leave_store) {
+		/* Hack -- Clear line 1 */
+		prt("", 1, 0);
+
+		/* Clear */
+		clear_from(21);
+
+		/* Prompt */
+		prt("You may: ", 21, 0);
+
+		/* Basic commands */
+		prt(" ESC) Exit.", 22, 0);
+
+#if 0
+		/* Browse if necessary */
+		if (store.stock_num > 12) prt(" SPACE) Next page", 23, 0);
+#endif
+
+		/* Shop commands XXX XXX XXX */
+		display_store_action();
+
+		/* Hack - Get rid of the cursor - mikaelh */
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
+
+		i = inkey();
+
+		if (i) {
+			/* Process the command */
+			store_process_command(i);
+		}
+	}
+
+	/* Tell the server that we're outta here */
+	Send_store_leave();
+
+	/* Clear the screen */
+	Term_clear();
+
+	/* We are no longer "shopping" */
+	shopping = FALSE;
+
+	/* Flush any events that happened */
+	Flush_queue();
+
+	/* reload the term */
+	Term_load();
+}

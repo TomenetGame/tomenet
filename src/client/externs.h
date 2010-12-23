@@ -480,6 +480,7 @@ extern bool get_item_hook_find_spell(int *item, bool inven_first);
 extern bool leave_store;
 extern void display_inventory(void);
 extern void display_store(void);
+extern void display_store_special(void);
 extern void c_store_prt_gold(void);
 extern void display_store_action(void);
 extern void do_redraw_store(void);

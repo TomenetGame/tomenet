@@ -147,6 +147,8 @@ static void Receive_init(void)
 	receive_tbl[PKT_REQUEST_NUM]	= Receive_request_num;
 	receive_tbl[PKT_REQUEST_STR]	= Receive_request_str;
 	receive_tbl[PKT_REQUEST_CFR]	= Receive_request_cfr;
+	receive_tbl[PKT_STORE_SPECIAL_STR]	= Receive_store_special_str;
+	receive_tbl[PKT_STORE_SPECIAL_CHAR]	= Receive_store_special_char;
 }
 
 /* Head of file transfer system receive */
@@ -2700,6 +2702,36 @@ int Receive_store_wide(void)
 	return 1;
 }
 
+/* For new SPECIAL store flag, stores that don't have inventory - C. Blue */
+int Receive_store_special_str(void) {
+	int n;
+	char ch, line, col, attr;
+	char str[80];
+
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%s", &ch, &line, &col, &attr, str)) <= 0)
+		return n;
+	if (!shopping) return 1;
+
+	c_put_str(attr, str, line, col);
+	return 1;
+}
+
+/* For new SPECIAL store flag, stores that don't have inventory - C. Blue */
+int Receive_store_special_char(void) {
+	int n;
+	char ch, line, col, attr;
+	char c, str[2];
+
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &line, &col, &attr, &c)) <= 0)
+		return n;
+	if (!shopping) return 1;
+
+	str[0] = c;
+	str[1] = 0;
+	c_put_str(attr, str, line, col);
+	return 1;
+}
+
 int Receive_store_info(void)
 {
 	int	n, max_cost;
@@ -2720,7 +2752,7 @@ int Receive_store_info(void)
 		}
 	}
 
-	store.stock_num = num_items;
+	store.stock_num = num_items >= 0 ? num_items : 0; /* Hack: Use num_items to encode SPECIAL store flag */
 	c_store.max_cost = max_cost;
 	strncpy(c_store.owner_name, owner_name, 40);
 	strncpy(c_store.store_name, store_name, 40);
@@ -2728,8 +2760,10 @@ int Receive_store_info(void)
 	c_store.store_char = store_char;
 
 	/* Only enter "display_store" if we're not already shopping */
-	if (!shopping) display_store();
-	else {
+	if (!shopping) {
+		if (num_items >= 0) display_store(); /* Normal NPC or player store */
+		else display_store_special(); /* Special NPC store */
+	} else {
 		/* Request a redraw of the store inventory */
 		redraw_store = TRUE;
 	}
