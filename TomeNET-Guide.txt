@@ -1,7 +1,7 @@
 .=============+============+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 21. Dec 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 23. Dec 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -7855,7 +7855,7 @@ Runemaster  +1  +2  -3  +3  -3  -3       +5      +20%       4
             10  20  20   2  30  20  45  20              fair     fair
              0  11  10   0   5   3  20  10
 Mindcrafter  0  +2   0   0   0  +1       +6      +25%       5
-            30  30  36   3  35  14  45  35              good     fair
+            30  30  36   3  35  14  55  35              good     fair
              0   5   5   0   3   3  26  20
 
 
