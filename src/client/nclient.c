@@ -4661,7 +4661,7 @@ void do_ping()
 			if (weather_wind >= 1 && weather_wind <= 2) sound_weather(rain2_sound_idx);
 			else sound_weather(rain1_sound_idx);
 		} else if (weather_type % 10 == 2) { //snow
-			if (weather_wind >= 1 weather_wind <= 2) sound_weather(snow2_sound_idx);
+			if (weather_wind >= 1 && weather_wind <= 2) sound_weather(snow2_sound_idx);
 			else sound_weather(snow1_sound_idx);
 		}
 	} else if (weather_particles_seen <= 4) {
