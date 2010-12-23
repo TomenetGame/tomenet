@@ -1340,6 +1340,11 @@ the mundane world.
 Go to http://www.tomenet.net/ (or one of our personal pages) to download the
 latest client. Extract it to a new directory, preserving the pathnames.
 
+(Note: If you decide to download the 'test client' instead of the client of the
+latest stable version number, be aware that it might stop working correctly
+unexpectedly because it's undergoing development, possibly forcing you to
+redownload it.)
+
 
 Windows:
 --------
