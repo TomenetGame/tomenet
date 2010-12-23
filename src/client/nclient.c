@@ -3391,15 +3391,6 @@ int Receive_weather(void)
 		} else if (weather_type % 10 == 0) {
 			sound_weather(-1); //fade out
 		}
-#if 0 /*moved to do_weather() to become consistent with cloud shapes hovering above us..*/
-		else if (weather_type % 10 == 1) { //rain
-			if (weather_wind >= 3) sound_weather(rain2_sound_idx);
-			else sound_weather(rain1_sound_idx);
-		} else if (weather_type % 10 == 2) { //snow
-			if (weather_wind >= 3) sound_weather(snow2_sound_idx);
-			else sound_weather(snow1_sound_idx);
-		}
-#endif
 	}
 #endif
 
@@ -4667,10 +4658,10 @@ void do_ping()
 	if (weather_particles_seen >= 7) {
 		weather_sound_change = 0;
 		if (weather_type % 10 == 1) { //rain
-			if (weather_wind >= 3) sound_weather(rain2_sound_idx);
+			if (weather_wind && weather_wind < 3) sound_weather(rain2_sound_idx);
 			else sound_weather(rain1_sound_idx);
 		} else if (weather_type % 10 == 2) { //snow
-			if (weather_wind >= 3) sound_weather(snow2_sound_idx);
+			if (weather_wind && weather_wind < 3) sound_weather(snow2_sound_idx);
 			else sound_weather(snow1_sound_idx);
 		}
 	} else if (weather_particles_seen <= 4) {
