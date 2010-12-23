@@ -1751,30 +1751,36 @@ void request_command()
 bool get_dir(int *dp)
 {
 	int	dir = 0;
-
 	char	command;
-
 	cptr	p;
 
-	p = "Direction ('*' to choose a target, '-' for acquired target) ? ";
-
+	p = "Direction ('*' choose target, '-' acquired target, '+' acquired/manual)?";
 	get_com(p, &command);
+
+#if 0 /* maaaybe in future: client-side monster check \
+	 for best performance (might be exploitable though). \
+	 Meanwhile see below. */
+	if (command == '+') {
+		if (!target_okay()) {
+			p = "Direction ('*' to choose a target)?";
+			get_com(p, &command);
+		} else command = '-';
+	}
+#endif
 
 	/* Handle target request */
 	if (command == '*') {
 		if (cmd_target()) dir = 5;
 	}
 	/* Handle previously acquired target, discard cast if not available */
-	else if (command == '-') {
-		dir = 10;
-	}
+	else if (command == '-') dir = 10;
+	else if (command == '+') dir = 11;
 	/* Normal direction, including 5 for 'acquired target or self' */
 	else dir = keymap_dirs[command & 0x7F];
 
 	*dp = dir;
 
 	if (!dir) return (FALSE);
-
 	return (TRUE);
 }
 

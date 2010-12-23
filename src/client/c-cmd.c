@@ -54,7 +54,7 @@ static void cmd_all_in_one(void)
 			/* (also called if server is outdated, since uses_dir will be 0 then) */
 			Send_activate(item);
 		} else {
-			get_dir(&dir);
+			if (!get_dir(&dir)) return;
 			Send_activate_dir(item, dir);
 		}
 		return;
@@ -78,7 +78,7 @@ static void cmd_all_in_one(void)
 
 		case TV_WAND:
 		{
-			get_dir(&dir);
+			if (!get_dir(&dir)) return;
 			Send_aim(item, dir);
 			break;
 		}
@@ -96,7 +96,7 @@ static void cmd_all_in_one(void)
 				/* (also called if server is outdated, since uses_dir will be 0 then) */
 				Send_zap(item);
 			} else {
-				get_dir(&dir);
+				if (!get_dir(&dir)) return;
 				Send_zap_dir(item, dir);
 			}
 			break;
@@ -139,9 +139,7 @@ static void cmd_all_in_one(void)
 		/* NOTE: 'item' isn't actually sent */
 		case TV_SPIKE:
 		{
-			if (!get_dir(&dir))
-				return;
-
+			if (!get_dir(&dir)) return;
 			Send_spike(dir);
 			break;
 		}
@@ -199,7 +197,7 @@ static void cmd_all_in_one(void)
 					/* (also called if server is outdated, since uses_dir will be 0 then) */
 					Send_activate(item);
 				} else {
-					get_dir(&dir);
+					if (!get_dir(&dir)) return;
 					Send_activate_dir(item, dir);
 				}
 			}
@@ -611,9 +609,8 @@ void cmd_tunnel(void)
 {
 	int dir = command_dir;
 
-	if (!dir)
-	{
-		get_dir(&dir);
+	if (!dir) {
+		if (!get_dir(&dir)) return;
 	}
 
 	Send_tunnel(dir);
@@ -623,9 +620,8 @@ void cmd_walk(void)
 {
 	int dir = command_dir;
 
-	if (!dir)
-	{
-		get_dir(&dir);
+	if (!dir) {
+		if (!get_dir(&dir)) return;
 	}
 
 	Send_walk(dir);
@@ -637,7 +633,7 @@ void cmd_run(void)
 
 	if (!dir)
 	{
-		get_dir(&dir);
+		if (!get_dir(&dir)) return;
 	}
 
 	Send_run(dir);
@@ -773,7 +769,7 @@ void cmd_open(void)
 
 	if (!dir)
 	{
-		get_dir(&dir);
+		if (!get_dir(&dir)) return;
 	}
 
 	Send_open(dir);
@@ -785,7 +781,7 @@ void cmd_close(void)
 
 	if (!dir)
 	{
-		get_dir(&dir);
+		if (!get_dir(&dir)) return;
 	}
 
 	Send_close(dir);
@@ -797,7 +793,7 @@ void cmd_bash(void)
 
 	if (!dir)
 	{
-		get_dir(&dir);
+		if (!get_dir(&dir)) return;
 	}
 
 	Send_bash(dir);
@@ -809,7 +805,7 @@ void cmd_disarm(void)
 
 	if (!dir)
 	{
-		get_dir(&dir);
+		if (!get_dir(&dir)) return;
 	}
 
 	Send_disarm(dir);
@@ -1045,7 +1041,7 @@ void cmd_steal(void)
 {
 	int dir;
 
-	get_dir(&dir);
+	if (!get_dir(&dir)) return;
 
 	/* Send it */
 	Send_steal(dir);
@@ -1118,7 +1114,7 @@ void cmd_aim_wand(void)
 		return;
 	}
 
-	get_dir(&dir);
+	if (!get_dir(&dir)) return;
 
 	/* Send it */
 	Send_aim(item, dir);
@@ -1159,7 +1155,7 @@ void cmd_zap_rod(void)
 		/* (also called if server is outdated, since uses_dir will be 0 then) */
 		Send_zap(item);
 	} else {
-		get_dir(&dir);
+		if (!get_dir(&dir)) return;
 		Send_zap_dir(item, dir);
 	}
 }
@@ -1225,7 +1221,7 @@ void cmd_activate(void)
 		/* (also called if server is outdated, since uses_dir will be 0 then) */
 		Send_activate(item);
 	} else {
-		get_dir(&dir);
+		if (!get_dir(&dir)) return;
 		Send_activate_dir(item, dir);
 	}
 }
@@ -3086,7 +3082,7 @@ void cmd_spike()
 
 	if (!dir)
 	{
-		get_dir(&dir);
+		if (!get_dir(&dir)) return;
 	}
 
 	Send_spike(dir);

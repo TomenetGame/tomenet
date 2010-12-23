@@ -539,7 +539,7 @@ void do_mimic()
 		else uses_dir = monster_spells6[j - 64].uses_dir;
 
 		if (uses_dir) {
-			get_dir(&dir);
+			if (!get_dir(&dir)) return;
 			Send_activate_skill(MKEY_MIMICRY, 0, spell, dir, 0, 0);
 		} else {
 			Send_activate_skill(MKEY_MIMICRY, 0, spell, 0, 0, 0);
