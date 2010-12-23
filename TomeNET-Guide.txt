@@ -2664,7 +2664,8 @@ target, which you can do by pressing 't' again to choose the closest hostile
 entity.
 
 There are, however, more ways to specify a direction or to use the target
-command, especially since client 4.4.6 which added the '-' option.
+command, especially since client 4.4.6 which added the '-' option, and 4.4.6b
+which added the '+' option.
 Details follow:
 
 The 'Set Target' command (key '*') that sets a target for spells or item uses
@@ -2686,6 +2687,10 @@ answered with..
   -'-' key to use a previously acquired target or cancel the spell/item use/
        shot if there is no valid target currently set. The '-' option is only
        available in client version 4.4.6 and higher.
+  -'+' key, same as '-' except that it won't cancel the action if no valid
+       target was found, but prompt you for manual input instead (hit ESC to
+       cancel, 5 to target your own grid, or any direction key to fire into
+       that direction).
 
        Note that the key '-' is not a command key, but just gets ignored when
        pressed elsewhere than in direction-requests. This means that you can
@@ -3237,8 +3242,8 @@ You can now either press one of the 8 direction keys to fire into that
 direction, or you press the asterisk '*' followed by a 't' to designate the
 closest enemy as your target, which usually is what you want.
 Since version 4.4.6 the game also supports '-' to fire at a previously set
-target if it still exists, or cancel the action, see (3.7d) for details about
-targetting.
+target if it still exists, or cancel the action; 4.4.6b further added the '+'
+key; see (3.7d) for details about targetting.
 
 To learn how to create a macro instead of typing all these letters every time
 you want to launch a ranged attack, look at '(3.7) Creating macros for ranged
