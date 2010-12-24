@@ -217,6 +217,7 @@
 #define PKT_REQUEST_CFR		187	/* (special) requests confirmation ('y/n') from player */
 #define PKT_STORE_SPECIAL_STR	188	/* for SPECIAL flag stores (those don't have an inventory) */ 
 #define PKT_STORE_SPECIAL_CHAR	189	/* for SPECIAL flag stores (those don't have an inventory) */ 
+#define PKT_STORE_SPECIAL_CLRF	190	/* for SPECIAL flag stores (those don't have an inventory) */ 
 
 
 /*

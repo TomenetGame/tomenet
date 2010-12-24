@@ -149,6 +149,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_REQUEST_CFR]	= Receive_request_cfr;
 	receive_tbl[PKT_STORE_SPECIAL_STR]	= Receive_store_special_str;
 	receive_tbl[PKT_STORE_SPECIAL_CHAR]	= Receive_store_special_char;
+	receive_tbl[PKT_STORE_SPECIAL_CLRF]	= Receive_store_special_clrf;
 }
 
 /* Head of file transfer system receive */
@@ -2713,6 +2714,8 @@ int Receive_store_special_str(void) {
 	if (!shopping) return 1;
 
 	c_put_str(attr, str, line, col);
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
 	return 1;
 }
 
@@ -2729,6 +2732,24 @@ int Receive_store_special_char(void) {
 	str[0] = c;
 	str[1] = 0;
 	c_put_str(attr, str, line, col);
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
+	return 1;
+}
+
+/* For new SPECIAL store flag, stores that don't have inventory - C. Blue */
+int Receive_store_special_clrf(void) {
+	int n;
+	char ch, line;
+
+	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &line)) <= 0)
+		return n;
+	if (!shopping) return 1;
+
+	for (n = line; n < 20; n++)
+		c_put_str(TERM_WHITE, "                                                                                ", n, 0);
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
 	return 1;
 }
 
