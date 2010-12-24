@@ -2746,7 +2746,7 @@ int Receive_store_special_clrf(void) {
 		return n;
 	if (!shopping) return 1;
 
-	for (n = line; n < 20; n++)
+	for (n = line; n < 19; n++)
 		c_put_str(TERM_WHITE, "                                                                                ", n, 0);
 	Term->scr->cx = Term->wid;
 	Term->scr->cu = 1;
