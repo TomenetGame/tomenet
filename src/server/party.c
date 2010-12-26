@@ -82,6 +82,7 @@ bool WriteAccount(struct account *r_acc, bool new){
 			found = 1;
 		}
 	}
+	memset((char *)c_acc.pass, 0, 20);
 	fclose(fp);
 	return(found);
 }
@@ -100,7 +101,7 @@ int validate(char *name){
 	int i;
 	bool effect = FALSE;
 
-	c_acc = GetAccount(name, NULL, 1);
+	c_acc = GetAccount(name, NULL, TRUE);
 	if (!c_acc) return(0);
 
 	if (c_acc->flags & (ACC_TRIAL | ACC_NOSCORE)) effect = TRUE;
@@ -125,7 +126,7 @@ int invalidate(char *name){
 	int i;
 	bool effect = FALSE;
 
-	c_acc = GetAccount(name, NULL, 1);
+	c_acc = GetAccount(name, NULL, TRUE);
 	if (!c_acc) return(0);
 
 	if (!(c_acc->flags & (ACC_TRIAL | ACC_NOSCORE))) effect = TRUE;
@@ -147,7 +148,7 @@ int invalidate(char *name){
 int makeadmin(char *name){
 	struct account *c_acc;
 	int i;
-	c_acc = GetAccount(name, NULL, 1);
+	c_acc = GetAccount(name, NULL, TRUE);
 	if (!c_acc) return(FALSE);
 	c_acc->flags &= ~(ACC_TRIAL);
 	c_acc->flags |= (ACC_ADMIN | ACC_NOSCORE);
@@ -170,7 +171,7 @@ int makeadmin(char *name){
 int acc_set_flags(char *name, u32b flags, bool clear){
 	struct account *c_acc;
 
-	c_acc = GetAccount(name, NULL, 1);
+	c_acc = GetAccount(name, NULL, TRUE);
 	if (!c_acc) return(0);
 
 	if (clear) c_acc->flags &= ~(flags);
@@ -188,7 +189,7 @@ u32b acc_get_flags(char *name){
 	struct account *c_acc;
 	u32b flags;
 
-	c_acc = GetAccount(name, NULL, 1);
+	c_acc = GetAccount(name, NULL, FALSE);
 	if (!c_acc) return(0);
 
 	flags = c_acc->flags;
@@ -308,20 +309,20 @@ struct account *Admin_GetAccount(cptr name){
 /* Return account name of a specified PLAYER id */
 cptr lookup_accountname(int p_id){
 	FILE *fp;
-	struct account *c_acc;
+	static struct account c_acc;
 	u32b acc_id = lookup_player_account(p_id);
 
-	MAKE(c_acc, struct account);
-	if(c_acc==(struct account*)NULL) return(NULL);
-	fp=fopen("tomenet.acc", "rb");
-	if(fp==(FILE*)NULL) return(NULL); /* cannot access account file */
-	while(fread(c_acc, sizeof(struct account), 1, fp)){
-		if(c_acc->flags & ACC_DELD) continue;
-		if(c_acc->id == acc_id){
+	fp = fopen("tomenet.acc", "rb");
+	if (!fp) return(NULL); /* cannot access account file */
+	while (fread(&c_acc, sizeof(struct account), 1, fp)) {
+		if (c_acc.flags & ACC_DELD) continue;
+		if (c_acc.id == acc_id) {
 			fclose(fp);
-			return(c_acc->name);
+			memset((char *)c_acc.pass, 0, 20);
+			return(c_acc.name);
 		}
 	}
+	memset((char *)c_acc.pass, 0, 20);
 	fclose(fp);
 	return(NULL);
 }
@@ -2708,7 +2709,7 @@ void scan_players(){
 #endif
 
 	/* Allocate an array for marking accounts as active */
-	C_MAKE(account_active, MAX_ACCOUNTS, bool);
+	C_MAKE(account_active, MAX_ACCOUNTS / 8, bool);
 
 	now = time(&now);
 
@@ -2779,7 +2780,7 @@ void scan_players(){
 #else
 				/* If a character didn't timeout, mark his
 				   account as active here */
-				account_active[ptr->account] = TRUE;
+				account_active[ptr->account / 8] |= 1 << (ptr->account % 8);
 #endif
 			}
 
@@ -2802,7 +2803,7 @@ void scan_accounts() {
 	int total = 0, nondel = 0, active = 0, expired = 0, fixed = 0;
 	bool modified;
 	FILE *fp;
-	struct account *c_acc;
+	struct account c_acc;
 	time_t now;
 
 	now = time(NULL);
@@ -2813,58 +2814,55 @@ void scan_accounts() {
 	}
 
 	s_printf("Starting account inactivity check..\n");
-	MAKE(c_acc, struct account);
-	if(c_acc == (struct account*)NULL) return;
 
 	fp = fopen("tomenet.acc", "rb+");
 	if (fp == (FILE*)NULL) {
-		KILL(c_acc, struct account);
 		return;
 	}
 
-	while (fread(c_acc, sizeof(struct account), 1, fp)) {
+	while (fread(&c_acc, sizeof(struct account), 1, fp)) {
 		modified = FALSE;
 
 		/* Count all accounts in the file */
 		total++;
 
-		if (c_acc->flags & ACC_DELD) continue;
+		if (c_acc.flags & ACC_DELD) continue;
 
 		/* Count non-deleted accounts */
 		nondel++;
 
-		if (c_acc->flags & ACC_ADMIN) {
+		if (c_acc.flags & ACC_ADMIN) {
 			/* Admin accounts always count as active */
 			active++;
 			continue;
 		}
 
-//		if (!c_acc->acc_laston) continue; /* not using this 'hack' for staticing here */
+//		if (!c_acc.acc_laston) continue; /* not using this 'hack' for staticing here */
 
 		/* fix old accounts that don't have a timestamp yet */
-		if (!c_acc->acc_laston) {
-			c_acc->acc_laston = now; /* set new timestamp */
+		if (!c_acc.acc_laston) {
+			c_acc.acc_laston = now; /* set new timestamp */
 			fixed++;
 			modified = TRUE;
 		}
 
 		/* Check for bad account id */
-		else if (c_acc->id < 0 || c_acc->id >= MAX_ACCOUNTS) {
+		else if (c_acc.id < 0 || c_acc.id >= MAX_ACCOUNTS) {
 			/* Log it */
-			s_printf("  Bad account ID: %d\n", c_acc->id);
+			s_printf("  Bad account ID: %d\n", c_acc.id);
 
 			/* Fix the id */
-			c_acc->id = MAX_ACCOUNTS - 1;
+			c_acc.id = MAX_ACCOUNTS - 1;
 
 			/* Mark as deleted */
-			c_acc->flags |= ACC_DELD;
+			c_acc.flags |= ACC_DELD;
 
 			modified = TRUE;
 		}
 
 		/* Was the account marked as active? */
-		else if (account_active[c_acc->id]) {
-			c_acc->acc_laston = now;
+		else if (account_active[c_acc.id / 8] & (1 << (c_acc.id % 8))) {
+			c_acc.acc_laston = now;
 
 			/* Count active accounts */
 			active++;
@@ -2874,21 +2872,21 @@ void scan_accounts() {
 
 #if 1
 		/* test for expiry -> delete */
-		else if (now - c_acc->acc_laston >= 3600 * 24 * ACCOUNT_EXPIRY_DAYS) {
-			c_acc->flags |= ACC_DELD;
+		else if (now - c_acc.acc_laston >= 3600 * 24 * ACCOUNT_EXPIRY_DAYS) {
+			c_acc.flags |= ACC_DELD;
 
 			/* Count expired accounts */
 			expired++;
 
-			s_printf("  Account '%s' expired.\n", c_acc->name);
+			s_printf("  Account '%s' expired.\n", c_acc.name);
 			modified = TRUE;
 		}
 #endif
 
-//		if (modified) WriteAccount(c_acc, FALSE);
+//		if (modified) WriteAccount(&c_acc, FALSE);
 		if (modified) {
 			fseek(fp, -sizeof(struct account), SEEK_CUR);
-			if (fwrite(c_acc, sizeof(struct account), 1, fp) < 1) {
+			if (fwrite(&c_acc, sizeof(struct account), 1, fp) < 1) {
 				s_printf("Writing to account file failed: %s\n", feof(fp) ? "EOF" : strerror(ferror(fp)));
 			}
 
@@ -2901,12 +2899,11 @@ void scan_accounts() {
 	s_printf("  %d accounts in total, %d non-deleted, %d active.\n", total, nondel, active);
 	s_printf("  %d accounts have expired.\n", expired);
 
-	memset((char *)c_acc->pass, 0, 20);
+	memset((char *)c_acc.pass, 0, 20);
 	fclose(fp);
-	KILL(c_acc, struct account);
 	s_printf("Finished account inactivity check.\n");
 
-	C_KILL(account_active, MAX_ACCOUNTS, bool);
+	C_KILL(account_active, MAX_ACCOUNTS / 8, bool);
 }
 
 /* Rename a player's char savegame as well as the name inside */
@@ -3499,7 +3496,7 @@ void account_change_password(int Ind, char *old_pass, char *new_pass) {
 void account_set_laston(int Ind) {
 	struct account *c_acc;
 
-	c_acc = GetAccount(Players[Ind]->accountname, NULL, 1);
+	c_acc = GetAccount(Players[Ind]->accountname, NULL, TRUE);
 	if (!c_acc) return;
 
 	c_acc->acc_laston = time(NULL);
