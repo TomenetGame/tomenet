@@ -289,6 +289,10 @@ extern bool multi_key_macros;
 extern bool redraw_skills;
 extern bool redraw_store;
 
+/* Special input requests (PKT_REQUEST_...) - C. Blue */
+extern bool request_pending;
+extern bool request_abort;
+
 
 /*
  * Not-so-Automatically generated "function declarations"

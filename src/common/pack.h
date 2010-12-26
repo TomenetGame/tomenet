@@ -215,9 +215,10 @@
 #define PKT_REQUEST_NUM		185	/* (special) gets a number from the player */
 #define PKT_REQUEST_STR		186	/* (special) gets a 1-line string from the player */
 #define PKT_REQUEST_CFR		187	/* (special) requests confirmation ('y/n') from player */
-#define PKT_STORE_SPECIAL_STR	188	/* for SPECIAL flag stores (those don't have an inventory) */ 
-#define PKT_STORE_SPECIAL_CHAR	189	/* for SPECIAL flag stores (those don't have an inventory) */ 
-#define PKT_STORE_SPECIAL_CLRF	190	/* for SPECIAL flag stores (those don't have an inventory) */ 
+#define PKT_REQUEST_ABORT	188	/* (special) abort pending requests (eg if player left store) */
+#define PKT_STORE_SPECIAL_STR	189	/* for SPECIAL flag stores (those don't have an inventory) */
+#define PKT_STORE_SPECIAL_CHAR	190	/* for SPECIAL flag stores (those don't have an inventory) */
+#define PKT_STORE_SPECIAL_CLR	191	/* for SPECIAL flag stores (those don't have an inventory) */
 
 
 /*

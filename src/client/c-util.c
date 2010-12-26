@@ -409,16 +409,12 @@ static char inkey_aux(void)
 	net_fd = Net_fd();
 
 	/* If no network yet, just wait for a keypress */
-	if (net_fd == -1)
-	{
+	if (net_fd == -1) {
 		/* Wait for a keypress */
                 (void)(Term_inkey(&ch, TRUE, TRUE));
-	}
-	else
-	{
+	} else {
 		/* Wait for keypress, while also checking for net input */
-		do
-		{
+		do {
 			int result;
 
 			/* Flush output - maintain flickering/multi-hued characters */
@@ -464,24 +460,22 @@ static char inkey_aux(void)
 			}
 
 			/* Parse net input if we got any */
-			if (SocketReadable(net_fd))
-			{
-				if ((result = Net_input()) == -1)
-				{
-					quit(NULL);
-				}
+			if (SocketReadable(net_fd)) {
+				if ((result = Net_input()) == -1) quit(NULL);
 			}
 
 			/* Hack - Leave a store */
-			if (shopping && leave_store) {
+			if (shopping && leave_store) return ESCAPE;
+
+			/* Are we supposed to abort a 'special input request'?
+			   (Ie outside game situation has changed, eg left store.) */
+			if (request_pending && request_abort) {
+				request_abort = FALSE;
 				return ESCAPE;
 			}
 
 			/* Redraw windows if necessary */
-			if (p_ptr->window)
-			{
-				window_stuff();
-			}
+			if (p_ptr->window) window_stuff();
 		} while (!ch);
 	}
 
@@ -705,21 +699,15 @@ static char inkey_aux(void)
 char inkey(void)
 {
 	int v;
-
 	char kk, ch;
-
 	bool done = FALSE;
-
 	term *old = Term;
-
 	int w = 0;
-
 	int skipping = FALSE;
 
 
         /* Hack -- handle delayed "flush()" */
-        if (flush_later)
-        {
+        if (flush_later) {
                 /* Done */
                 flush_later = FALSE;
 
@@ -741,8 +729,7 @@ char inkey(void)
 	(void)Term_get_cursor(&v);
 
 	/* Show the cursor if waiting, except sometimes in "command" mode */
-	if (!inkey_scan && (!inkey_flag))
-	{
+	if (!inkey_scan && (!inkey_flag)) {
 		/* Show the cursor */
 		(void)Term_set_cursor(1);
 	}
@@ -753,18 +740,15 @@ char inkey(void)
 
 
 	/* Get a (non-zero) keypress */
-	for (ch = 0; !ch; )
-	{
+	for (ch = 0; !ch; ) {
 		/* Flush output - maintain flickering/multi-hued characters */
 		do_flicker(); //unnecessary since it's done in inkey_aux() anyway? */
 
 		/* Nothing ready, not waiting, and not doing "inkey_base" */
 		if (!inkey_base && inkey_scan && (0 != Term_inkey(&ch, FALSE, FALSE))) break;
 
-
 		/* Hack -- flush the output once no key is ready */
-		if (!done && (0 != Term_inkey(&ch, FALSE, FALSE)))
-		{
+		if (!done && (0 != Term_inkey(&ch, FALSE, FALSE))) {
 			/* Hack -- activate proper term */
 			Term_activate(old);
 
@@ -779,8 +763,7 @@ char inkey(void)
 		}
 
 		/* Hack */
-		if (inkey_base)
-		{
+		if (inkey_base) {
 			char xh;
 
 #if 0 /* don't block.. */
@@ -851,31 +834,26 @@ char inkey(void)
 #endif
 
 			/* Key ready */
-			if (xh)
-			{
+			if (xh) {
 				/* Reset delay */
 				w = 0;
 
 				/* Mega-Hack */
-				if (xh == 28)
-				{
+				if (xh == 28) {
 					/* Toggle "skipping" */
 					skipping = !skipping;
 				}
 
 				/* Use normal keys */
-				else if (!skipping)
-				{
+				else if (!skipping) {
 					/* Use it */
 					ch = xh;
 				}
 			}
 
 			/* No key ready */
-			else
-			{
-				if (multi_key_macros)
-				{
+			else {
+				if (multi_key_macros) {
 					/* Increase "wait" */
 					w += 10;
 
@@ -884,9 +862,7 @@ char inkey(void)
 
 					/* Delay */
 					Term_xtra(TERM_XTRA_DELAY, w);
-				}
-				else
-				{
+				} else {
 					/* No waiting */
 					break;
 				}
@@ -902,8 +878,7 @@ char inkey(void)
 
 
 		/* Finished a "control-underscore" sequence */
-		if (parse_under && (ch <= 32))
-		{
+		if (parse_under && (ch <= 32)) {
 			/* Found the edge */
 			parse_under = FALSE;
 
@@ -916,8 +891,7 @@ char inkey(void)
 
 
 		/* Finished a "control-backslash" sequence */
-		if (parse_slash && (ch == 28))
-		{
+		if (parse_slash && (ch == 28)) {
 			/* Found the edge */
 			parse_slash = FALSE;
 
@@ -930,8 +904,7 @@ char inkey(void)
 
 
 		/* Handle some special keys */
-		switch (ch)
-		{
+		switch (ch) {
 			/* Hack -- convert back-quote into escape */
 			case '`':
 
@@ -1003,14 +976,11 @@ char inkey(void)
 	/* Hack -- restore the term */
 	Term_activate(old);
 
-
 	/* Restore the cursor */
 	Term_set_cursor(v);
 
-
 	/* Cancel the various "global parameters" */
 	inkey_base = inkey_scan = inkey_flag = inkey_max_line = FALSE;
-
 
 	/* Return the keypress */
 	return (ch);

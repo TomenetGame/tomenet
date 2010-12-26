@@ -308,3 +308,7 @@ generic_term_info term_prefs[10] = {
 	{ 0, 0, 0, 80, 24, "5x8" },
 	{ 0, 0, 0, 80, 24, "5x8" }
 };
+
+/* Special input requests (PKT_REQUEST_...) - C. Blue */
+bool request_pending = FALSE;
+bool request_abort = FALSE;

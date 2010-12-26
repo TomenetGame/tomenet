@@ -147,9 +147,10 @@ static void Receive_init(void)
 	receive_tbl[PKT_REQUEST_NUM]	= Receive_request_num;
 	receive_tbl[PKT_REQUEST_STR]	= Receive_request_str;
 	receive_tbl[PKT_REQUEST_CFR]	= Receive_request_cfr;
+	receive_tbl[PKT_REQUEST_ABORT]	= Receive_request_abort;
 	receive_tbl[PKT_STORE_SPECIAL_STR]	= Receive_store_special_str;
 	receive_tbl[PKT_STORE_SPECIAL_CHAR]	= Receive_store_special_char;
-	receive_tbl[PKT_STORE_SPECIAL_CLRF]	= Receive_store_special_clrf;
+	receive_tbl[PKT_STORE_SPECIAL_CLR]	= Receive_store_special_clr;
 }
 
 /* Head of file transfer system receive */
@@ -2714,8 +2715,11 @@ int Receive_store_special_str(void) {
 	if (!shopping) return 1;
 
 	c_put_str(attr, str, line, col);
+
+	/* hack: hide cursor */
 	Term->scr->cx = Term->wid;
 	Term->scr->cu = 1;
+
 	return 1;
 }
 
@@ -2732,24 +2736,30 @@ int Receive_store_special_char(void) {
 	str[0] = c;
 	str[1] = 0;
 	c_put_str(attr, str, line, col);
+
+	/* hack: hide cursor */
 	Term->scr->cx = Term->wid;
 	Term->scr->cu = 1;
+
 	return 1;
 }
 
 /* For new SPECIAL store flag, stores that don't have inventory - C. Blue */
-int Receive_store_special_clrf(void) {
+int Receive_store_special_clr(void) {
 	int n;
-	char ch, line;
+	char ch, line_start, line_end;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &line)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%c%c", &ch, &line_start, &line_end)) <= 0)
 		return n;
 	if (!shopping) return 1;
 
-	for (n = line; n < 19; n++)
+	for (n = line_start; n <= line_end; n++)
 		c_put_str(TERM_WHITE, "                                                                                ", n, 0);
+
+	/* hack: hide cursor */
 	Term->scr->cx = Term->wid;
 	Term->scr->cu = 1;
+
 	return 1;
 }
 
@@ -3647,40 +3657,56 @@ int Receive_account_info(void)
 
 /* Request keypress (1 char) */
 int Receive_request_key(void) {
-	int	n, id;
-	char	ch, prompt[80], buf;
+	int n, id;
+	char ch, prompt[80], buf;
 	if ((n = Packet_scanf(&rbuf, "%c%d%s", &ch, &id, prompt)) <= 0) return n;
 
+	request_pending = TRUE;
 	if (get_com(prompt, &buf)) Send_request_key(id, buf);
 	else Send_request_key(id, 0);
+	request_pending = FALSE;
 	return 1;
 }
 /* Request number */
 int Receive_request_num(void) {
-	int	n, id, std;
-	char	ch, prompt[80];
+	int n, id, std;
+	char ch, prompt[80];
 	if ((n = Packet_scanf(&rbuf, "%c%d%s%d", &ch, &id, prompt, &std)) <= 0) return n;
 
+	request_pending = TRUE;
 	Send_request_num(id, c_get_quantity(prompt, std));
+	request_pending = FALSE;
 	return 1;
 }
 /* Request string (1 line) */
 int Receive_request_str(void) {
-	int	n, id;
-	char	ch, prompt[80], buf[160];
+	int n, id;
+	char ch, prompt[80], buf[160];
 	if ((n = Packet_scanf(&rbuf, "%c%d%s%s", &ch, &id, prompt, buf)) <= 0) return n;
 
+	request_pending = TRUE;
 	if (get_string(prompt, buf, 159)) Send_request_str(id, buf);
 	else Send_request_str(id, "\e");
+	request_pending = FALSE;
 	return 1;
 }
 /* Request confirmation (y/n) */
 int Receive_request_cfr(void) {
-	int	n, id;
-	char	ch, prompt[80];
+	int n, id;
+	char ch, prompt[80];
 	if ((n = Packet_scanf(&rbuf, "%c%d%s", &ch, &id, prompt)) <= 0) return n;
 
+	request_pending = TRUE;
 	Send_request_cfr(id, get_check(prompt));
+	request_pending = FALSE;
+	return 1;
+}
+/* Cancel pending input request */
+int Receive_request_abort(void) {
+	int n;
+	char ch;
+	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
+	if (request_pending) request_abort = TRUE;
 	return 1;
 }
 
