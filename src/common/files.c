@@ -245,19 +245,17 @@ int get_xfers_num() {
 	return num;
 }
 
-/*
- * Silly windows
- * DarkGod slaps windows
- */
-#ifndef CYGWIN
 #ifdef WIN32
-int mkstemp(char *template)
+/*
+ * Create a temporary file on Windows. Code borrowed from ToME.
+ */
+FILE *ftmpopen(char *template)
 {
 	static u32b tmp_counter;
 	static char valid_characters[] =
 			"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	char f[256];
-	int fd;
+	FILE *fp;
 	char rand_ext[4];
 
 	rand_ext[0] = valid_characters[rand_int(sizeof (valid_characters))];
@@ -267,17 +265,18 @@ int mkstemp(char *template)
 	strnfmt(f, 256, "%s/xfer_%ud.%s", ANGBAND_DIR, tmp_counter, rand_ext);
 	tmp_counter++;
 
-	fd = open(f, O_RDWR | O_CREAT, 0777);
+	fp = fopen(f, "wb");
 	strcpy(template, f);	/* give back our filename */
-	return fd;
+	return fp;
 }
-#endif
 #endif
 
 /* Open file for receive/writing */
 int local_file_init(int ind, unsigned short fnum, char *fname){
 	struct ft_data *c_fd;
+#ifndef WIN32
 	int fd;
+#endif
 	char tname[256] = "tomexfer.XXXXXX";
 	c_fd=getfile(ind, 0);		/* get empty space */
 	if(c_fd==(struct ft_data*)NULL) return(0);
@@ -285,8 +284,12 @@ int local_file_init(int ind, unsigned short fnum, char *fname){
 	if(fname[0]=='/') return(0);	/* lame security */
 	if(strstr(fname, "..")) return(0);
 
+#ifndef WIN32
 	fd=mkstemp(tname);
 	c_fd->fp=fdopen(fd, "wb+");
+#else
+	c_fd->fp=ftmpopen(tname);
+#endif
 	c_fd->state=FS_READY;
 	if(c_fd->fp){
 #ifndef __MINGW32__

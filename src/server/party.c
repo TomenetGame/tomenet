@@ -38,36 +38,26 @@ static hash_entry *hash_table[NUM_HASH_ENTRIES];
 
 /* admin only - account edit function */
 bool WriteAccount(struct account *r_acc, bool new){
-	int fd;
 	FILE *fp;
 	short found = 0;
 	struct account c_acc;
 	long delpos = -1L;
 	size_t retval;
 
-#ifdef NETBSD
-	fd = open("tomenet.acc", O_RDWR | O_EXLOCK | O_NONBLOCK);
-#else
-#ifdef WINDOWS
-	/* Not really ideal, but works */
-	fd = open("tomenet.acc", O_RDWR);
-#else
-	fd = open("tomenet.acc", O_RDWR | O_NONBLOCK);
-#endif
-#endif
-	if (fd < 0) return(FALSE);
-#if (!defined(NETBSD)) && (!defined(WIN32))
-	if ((flock(fd, LOCK_EX)) != 0) {
-		close(fd);
-		return(FALSE);
+	fp = fopen("tomenet.acc", "rb+");
+
+	if (!fp) {
+		/* Attempt to create a new file */
+		fp = fopen("tomenet.acc", "wb+");
 	}
-#endif
-	fp = fdopen(fd, "rb+");
-	if (fp != (FILE*)NULL){
+
+	if (!fp) {
+		s_printf("Could not open tomenet.acc file! (errno = %d)\n", errno);
+	} else {
 		while (!feof(fp) && !found) {
 			retval = fread(&c_acc, sizeof(struct account), 1, fp);
 			if (retval == 0) break; /* EOF reached, nothing read into c_acc - mikaelh */
-			if (c_acc.flags & ACC_DELD){
+			if (c_acc.flags & ACC_DELD) {
 				if (delpos == -1L) delpos = (ftell(fp) - sizeof(struct account));
 				if (new) break;
 				continue;
@@ -81,21 +71,18 @@ bool WriteAccount(struct account *r_acc, bool new){
 			}
 		}
 		if (new) {
-			if (delpos != -1L)
+			if (delpos != -1L) {
 				fseek(fp, delpos, SEEK_SET);
-			else
+			} else {
 				fseek(fp, 0L, SEEK_END);
+			}
 			if (fwrite(r_acc, sizeof(struct account), 1, fp) < 1) {
 				s_printf("Writing to account file failed: %s\n", feof(fp) ? "EOF" : strerror(ferror(fp)));
 			}
 			found = 1;
 		}
-		fclose(fp);
 	}
-#if (!defined(NETBSD)) && (!defined(WIN32))
-	flock(fd, LOCK_UN);
-#endif
-	close(fd);
+	fclose(fp);
 	return(found);
 }
 

@@ -730,7 +730,6 @@ void Check_evilmeta(void)
 /* update tomenet.acc record structure to a new version - C. Blue
    Done by opening 'tomenet.acc_old' and (over)writing 'tomenet.acc'. */
 static bool update_acc_file_version(void) {
-        int fd_old, fd;
         FILE *fp_old, *fp;
 	struct account_old c_acc_old;
 	struct account c_acc;
@@ -739,39 +738,22 @@ static bool update_acc_file_version(void) {
 
 //	return FALSE; /* security, while not actively used */
 
-#ifdef NETBSD
-        fd_old = open("tomenet.acc_old", O_RDONLY);
-        fd = open("tomenet.acc", O_RDWR|O_EXLOCK|O_NONBLOCK|O_CREAT, 0777);
-#else
-        fd_old = open("tomenet.acc_old", O_RDONLY);
- #ifdef WINDOWS
-        fd = open("tomenet.acc", O_RDWR|O_CREAT, 0777);
- #else
-        fd = open("tomenet.acc", O_RDWR|O_NONBLOCK|O_CREAT, 0777);
- #endif
-#endif
+	fp_old = fopen("tomenet.acc_old", "rb");
 
 	/* No updating to do?
 	   Exit here, if no 'tomenet.acc_old' file exists: */
-	if(fd_old < 0) return(FALSE);
+	if (!fp_old) return(FALSE);
 	s_printf("Initiating update of tomenet.acc file.. ");
 
-        if(fd < 0) {
-		s_printf("failed (1).\n");
+	fp = fopen("tomenet.acc", "wb");
+	if (!fp) {
+		s_printf("failed.\n");
+		fclose(fp_old);
 		return(FALSE);
 	}
-#if (!defined(NETBSD)) && (!defined(WIN32)) 
-        if((flock(fd, LOCK_EX)) != 0) {
-                close(fd);
-		s_printf("failed (2).\n");
-                return(FALSE);
-        }
-#endif
-        fp_old = fdopen(fd_old, "rb");
-        fp = fdopen(fd, "wb");
 	s_printf("done.\n");
 
-        if(fp_old != (FILE*)NULL && fp != (FILE*)NULL){
+	if (fp_old && fp) {
 		s_printf("Updating tomenet.acc structure.. ");
                 while(!feof(fp_old)){
                         retval = fread(&c_acc_old, sizeof(struct account_old), 1, fp_old);
@@ -806,18 +788,13 @@ static bool update_acc_file_version(void) {
 			}
 			amt++;
                 }
-                fclose(fp_old);
-                fclose(fp);
 		s_printf("%d records updated.\n", amt);
         } else {
 		s_printf("Failure: tomenet.acc not updated.\n");
         }
-#if (!defined(NETBSD)) && (!defined(WIN32)) 
-        flock(fd, LOCK_UN);
-#endif 
-        close(fd_old);
-        close(fd);
-        remove("tomenet.acc_old");
+	fclose(fp);
+	fclose(fp_old);
+	remove("tomenet.acc_old");
 
         return(TRUE);
 }
