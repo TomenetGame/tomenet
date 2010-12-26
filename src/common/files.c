@@ -265,7 +265,7 @@ FILE *ftmpopen(char *template)
 	strnfmt(f, 256, "%s/xfer_%ud.%s", ANGBAND_DIR, tmp_counter, rand_ext);
 	tmp_counter++;
 
-	fp = fopen(f, "wb");
+	fp = fopen(f, "wb+");
 	strcpy(template, f);	/* give back our filename */
 	return fp;
 }
