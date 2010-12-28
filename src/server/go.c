@@ -11,13 +11,12 @@
  * open source, and placed #2 in 9x9 tournament at Kanazawa 2010 Computer Go
  * Olympiad (the #1 program wasn't free). Might switch to GnuGo though.
  *
- * Other options are for example GnuGo or Aya. Although somewhat weaker (might
- * change, all under development), they allow scaling via a --level parameter.
- * GnuGo is open source, while Aya is free but not open source (runs on linux
- * via WINE).
+ * Another option might be GnuGo. Although somewhat weaker (might change, there
+ * is also a Monte-Carlo version out now) it allows scaling via a '--level'
+ * parameter.
  *
  * Other very strong bots that aren't open source are Zen, MoGo, Erica,
- * Valkyrie and CrazyStone. Unfortunately bot tournament results say pretty
+ * Valkyrie, CrazyStone and Aya. Unfortunately bot tournament results say quite
  * little about a bot's strength, because the hardware that must be use is not
  * standardized! So one bot might win while running on a large cluster, while
  * another bot comes in 2nd on a simple Quadcore..
@@ -31,6 +30,12 @@
 #define SERVER
 #include "angband.h"
 #ifdef ENABLE_GO_GAME
+
+/* Pick one of the engines to use: */
+/* Use 'gnugno' engine? (recommended) */
+#define ENGINE_GNUGO
+/* Use 'fuego' engine? */
+//#define ENGINE_FUEGO
 
 /* # of buffer lines for GTP responses: 9 lines,2 coordinate lines, +1, +1 for msg hack.
    Could probably be reduced now that we have board_line..[] helper vars. */
@@ -80,7 +85,9 @@ static void writeToPipe(char *data);
 static void readFromPipe(char *buf, int *cont);
 static int test_for_response(void); /* non-blocking read */
 static int wait_for_response(void); /* blocking read */
+#ifdef ENGINE_FUEGO
 static int handle_loading(void);
+#endif
 static void go_engine_move_CPU(void);
 static void go_engine_move_result(int move_result);
 static void go_challenge_cleanup(bool server_shutdown);
@@ -88,7 +95,7 @@ static void go_engine_board(void);
 static bool go_err(int engine_status, int game_status, char *name);
 
 /* Handle game initialization and colour assignment */
-static bool CPU_has_white, game_over = TRUE;
+static bool CPU_has_white, game_over = TRUE, scoring = FALSE;
 /* Manage player's time limit */
 static int player_timelimit_sec, player_timeleft_sec;
 
@@ -159,7 +166,15 @@ int go_engine_init(void) {
 	"  -size        initial (and fixed) board size\n"
 	"  -srand       set random seed (-1:none, 0:time(0))\n";*/
 
+#ifdef ENGINE_FUEGO
 		execlp("./go/fuego", "fuego", NULL);
+#endif
+#ifdef ENGINE_GNUGO
+		execlp("./go/gnugo", "gnugo", "--mode", "gtp", \
+		    "--quiet", "--boardsize", "9x9", "--chinese-rules", \
+		    "--monte-carlo", "--komi", "0", NULL);
+		// --cache-size <megs>
+#endif
 		s_printf("GO_ERROR: exec().\n");
 		return 4;
 	}
@@ -188,17 +203,19 @@ int go_engine_init(void) {
 
 	/* Power up engine */
 	s_printf("GO_INIT: ---STARTING UP---\n");
+#ifdef ENGINE_FUEGO
 	handle_loading();
-
+#endif
 
 	/* Prepare general game configuration */
 	s_printf("GO_INIT: ---INIT AI---\n");
 
+#ifdef ENGINE_FUEGO
 	writeToPipe("boardsize 9");
 	wait_for_response();
-	writeToPipe("clear_board");
+/*	writeToPipe("clear_board");
 	wait_for_response();
-	writeToPipe("komi 0");
+*/	writeToPipe("komi 0");
 	wait_for_response();
 	writeToPipe("time_settings 0 1 0");//infinite: b>0, s=0
 	wait_for_response();
@@ -246,7 +263,12 @@ int go_engine_init(void) {
 	//go_param auto_save (filename)
 	//go_sentinel_file (filename)  (for resuming games that were interrupted by disconnection)
 	//final_status_list dead|seki|alive   returns list of stones; use to capture everything, to make a clear end?
+#endif
 
+#ifdef ENGINE_GNUGO
+	writeToPipe("time_settings 0 0 0");//infinite: main = 0, byo = 0, stones = x
+	wait_for_response();
+#endif
 
 	/* Init this 'flow control', to begin asynchronous pipe operation */
 	go_engine_processing = 0;
@@ -304,8 +326,6 @@ void go_challenge(int Ind) {
 
 	/* Owner talk about how you suck..or not!
 	   And making a new proposal accordingly. */
-	p_ptr->request_id = RID_GO;
-	p_ptr->request_type = RTYPE_CFR;
 	switch (p_ptr->go_level) {
 	case 0:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "So you think you're any good at this huh?");
@@ -314,51 +334,115 @@ void go_challenge(int Ind) {
 		Send_store_special_str(Ind, 10, 3, TERM_ORANGE, "you've become a bit stronger and can win it back.. as if, haha!");
 		Send_store_special_str(Ind, 12, 3, TERM_ORANGE, "..oh and I'll let you take black even, what d'you say eh?");
 		Send_request_cfr(Ind, RID_GO, "Bet 500 Au? ");
-		break;
+		return;
 	case 1:
-		Send_request_cfr(Ind, RID_GO, "Bet 1000 Au? ");
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Got a grip on the basic ideas by now?");
+		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "Alright let's see if you can win the money now!");
 		break;
 	case 2:
-		Send_request_cfr(Ind, RID_GO, "Bet 2000 Au? ");
-		break;
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "You begin to understand how this stuff works");
+		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "eh? At least that's what you think..");
+		Send_store_special_str(Ind, 8, 3, TERM_ORANGE, "You ready to bet a lil more dough this time?");
+		Send_request_cfr(Ind, RID_GO, "Bet 1000 Au? ");
+		return;
 	case 3:
-		Send_request_cfr(Ind, RID_GO, "Bet 5000 Au? ");
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Have you become at least somewhat adept by now?");
+		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "That small change of yours is just annoying to keep.");
 		break;
 	case 4:
-		Send_request_cfr(Ind, RID_GO, "Bet 10000 Au? ");
-		break;
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "You again, and you look like you want to make more");
+		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "bucks off of me, hah. Well, I'll take you up on that!");
+		Send_request_cfr(Ind, RID_GO, "Bet 2000 Au? ");
+		return;
 	case 5:
-		Send_request_cfr(Ind, RID_GO, "Bet 20000 Au? ");
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "You trained harder? I guess we aren't done yet..");
 		break;
 	case 6:
-		Send_request_cfr(Ind, RID_GO, "Bet 50000 Au? ");
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Ah it's you. I've got someone who's not a beginner");
+		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "anymore in the house today. You up for it?");
+		Send_request_cfr(Ind, RID_GO, "Bet 5000 Au? ");
+		return;
+	case 7:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "You've come back for your money, eh?");
+		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "Hope your skill is somewhat polished.");
 		break;
-	case TOP_RANK:
+	case 8:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "I know your skill isn't too shabby.");
+		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "I've got someone rather skilled for you,");
+		Send_store_special_str(Ind, 8, 3, TERM_ORANGE, "but it'll take a higher wager this time!");
+		Send_request_cfr(Ind, RID_GO, "Bet 10000 Au? ");
+		return;
+	case 9:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Yeah, can't always win right away.");
+		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "Well, go ahead if you think you're up to it now!");
+		break;
+	case 10:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Aha, it's the person skilled in this game..");
+		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "dare to try someone of quite serious skills?");
+		Send_store_special_str(Ind, 8, 3, TERM_ORANGE, "Then let's see some serious money, friend!");
+		Send_request_cfr(Ind, RID_GO, "Bet 20000 Au? ");
+		return;
+	case 11:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "I didn't really expect you to win that one.");
+		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "This guy is pretty scary huh..");
+		Send_store_special_str(Ind, 8, 3, TERM_ORANGE, "Well good luck, I'll be surprised if you make it.");
+		break;
+	case 12:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Alright alright, you're sort of becoming");
+		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "renowned for ya skills. So I did my best");
+		Send_store_special_str(Ind, 8, 3, TERM_ORANGE, "and invited a real master to play today!");
+		Send_store_special_str(Ind, 9, 3, TERM_ORANGE, "He's got his price though, you got enough?");
+		Send_request_cfr(Ind, RID_GO, "Bet 50000 Au? ");
+		return;
+	case 13:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "There's just no way you could beat that guy.");
+		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "Well go ahead, he's lacking opponents so he");
+		Send_store_special_str(Ind, 8, 3, TERM_ORANGE, "should be free if you want to try again.");
+		Send_store_special_str(Ind, 9, 3, TERM_ORANGE, "After all you're a paying customer, hah.");
+		break;
+	case TOP_RANK * 2:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "I can't believe you beat that guy!");
+		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "I haven't heard of anyone stronger around,");
+		Send_store_special_str(Ind, 8, 3, TERM_ORANGE, "but, can you beat him if you..play white!");
 		Send_request_cfr(Ind, RID_GO, "Bet 100000 Au? ");
+		return;
+	case TOP_RANK * 2 + 1:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "There's a limit to everything, you had to");
+		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "hit it sooner or later. Don't mind me though");
+		Send_store_special_str(Ind, 8, 3, TERM_ORANGE, "if you want to try and win back your cash.");
+		break;
+	case TOP_RANK * 2 + 2:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "I'll see if the master is around for a game.");
+		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "And you can even take white now..");
+		Send_store_special_str(Ind, 8, 3, TERM_ORANGE, "quite impressive, game is on the house!");
 		break;
 	}
+
+	Send_request_key(Ind, RID_GO, "- press any key to continue -");
 }
 
-void go_challenge_accept(int Ind) {
+void go_challenge_accept(int Ind, bool new_wager) {
 	player_type *p_ptr = Players[Ind];
-	int wager = 500;
+	int wager = 0;
 
 	Send_store_special_clr(Ind, 4, 18);
 
-	/* Prepare to deduct wager */
-	switch (p_ptr->go_level) {
-	case 0: wager = 500; break;
-	case 1: wager = 1000; break;
-	case 2: wager = 2000; break;
-	case 3: wager = 5000; break;
-	case 4: wager = 10000; break;
-	case 5: wager = 20000; break;
-	case 6: wager = 50000; break;
-	case TOP_RANK: wager = 100000; break;
-	}
-	if (p_ptr->au < wager) {
-		Send_store_special_str(Ind, 8, 5, TERM_RED, "You don't have the money!");
-		return;
+	if (new_wager) {
+		/* Prepare to deduct wager */
+		switch (p_ptr->go_level) {
+		case 0: wager = 500; break;
+		case 2: wager = 1000; break;
+		case 4: wager = 2000; break;
+		case 6: wager = 5000; break;
+		case 8: wager = 10000; break;
+		case 10: wager = 20000; break;
+		case 12: wager = 50000; break;
+		case TOP_RANK * 2: wager = 100000; break;
+		}
+		if (p_ptr->au < wager) {
+			Send_store_special_str(Ind, 8, 5, TERM_RED, "You don't have the money!");
+			return;
+		}
 	}
 
 	/* Go engine busy? */
@@ -372,38 +456,114 @@ void go_challenge_accept(int Ind) {
 	go_game_up = TRUE;
 	go_engine_player_id = p_ptr->id;
 
-	/* Deduct wager */
-	p_ptr->au -= wager;
-	Send_gold(Ind, p_ptr->au, p_ptr->balance);
+	if (new_wager) {
+		/* Deduct wager */
+		p_ptr->au -= wager;
+		Send_gold(Ind, p_ptr->au, p_ptr->balance);
+	}
 
 	/* Introduce opponent */
 	switch (p_ptr->go_level) {
 	case 0:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Alright then, I've got just the man for you, wait here..");
 		Send_store_special_str(Ind, 8, 10, TERM_ORANGE, "<you hear some shouting>");
-		Send_store_special_str(Ind, 10, 3, TERM_ORANGE, "This is \377yDougan The Quick\377o,");
+		Send_store_special_str(Ind, 10, 3, TERM_ORANGE, "This is \377yDougan, The Quick\377o,");
 		Send_store_special_str(Ind, 11, 3, TERM_ORANGE, "let's see if you're any good at all..I doubt it. You ready?");
 		break;
 	case 1:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Alright, wait here for a moment, I saw \377yDougan, The Quick\377o just now..");
+		Send_store_special_str(Ind, 8, 10, TERM_ORANGE, "<you hear some shouting>");
+		Send_store_special_str(Ind, 11, 3, TERM_ORANGE, "let's see if you got the slightest clue now.. You ready?");
 		break;
 	case 2:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Alright then, I've got just the man for you, wait here..");
+		Send_store_special_str(Ind, 8, 10, TERM_ORANGE, "<you hear some shouting>");
+		Send_store_special_str(Ind, 10, 3, TERM_ORANGE, "This is \377yRabbik, The Bold\377o,");
+		Send_store_special_str(Ind, 11, 3, TERM_ORANGE, "let's see what you can do.. You ready?");
 		break;
 	case 3:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Alright, wait here for a moment, I saw \377yRabbik, The Bold\377o just now..");
+		Send_store_special_str(Ind, 8, 10, TERM_ORANGE, "<you hear some shouting>");
+		Send_store_special_str(Ind, 11, 3, TERM_ORANGE, "let's see what you can do.. You ready?");
 		break;
 	case 4:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Alright then, I know the right opponent for you, wait here..");
+		Send_store_special_str(Ind, 8, 10, TERM_ORANGE, "<you hear some shouting>");
+		Send_store_special_str(Ind, 10, 3, TERM_ORANGE, "This is \377yLima, The Witty\377o,");
+		Send_store_special_str(Ind, 11, 3, TERM_ORANGE, "let's see what you can do.. You ready?");
 		break;
 	case 5:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Alright, wait here for a moment, I saw \377yLima, The Witty\377o just now..");
+		Send_store_special_str(Ind, 8, 10, TERM_ORANGE, "<you hear some shouting>");
+		Send_store_special_str(Ind, 11, 3, TERM_ORANGE, "let's see what you can do.. You ready?");
 		break;
 	case 6:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Alright then, wait here for a moment..");
+		Send_store_special_str(Ind, 8, 10, TERM_ORANGE, "<you hear some shouting>");
+		Send_store_special_str(Ind, 10, 3, TERM_ORANGE, "This is \377yZar'am, The Stoic\377o,");
+		Send_store_special_str(Ind, 11, 3, TERM_ORANGE, "let's see what you can do.. You ready?");
 		break;
-	case TOP_RANK:
+	case 7:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Alright, wait here for a moment, I saw \377yZar'am, The Stoic\377o just now..");
+		Send_store_special_str(Ind, 8, 10, TERM_ORANGE, "<you hear some shouting>");
+		Send_store_special_str(Ind, 11, 3, TERM_ORANGE, "let's see what you can do.. You ready?");
+		break;
+	case 8:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Alright then, wait here for a moment..");
+		Send_store_special_str(Ind, 8, 10, TERM_ORANGE, "<you hear some shouting>");
+		Send_store_special_str(Ind, 10, 3, TERM_ORANGE, "This is \377yTalithe, The Sharp\377o,");
+		Send_store_special_str(Ind, 11, 3, TERM_ORANGE, "let's see what you can do.. You ready?");
+		break;
+	case 9:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Alright, wait here for a moment, I saw \377yTalithe, The Sharp\377o just now..");
+		Send_store_special_str(Ind, 8, 10, TERM_ORANGE, "<you hear some shouting>");
+		Send_store_special_str(Ind, 11, 3, TERM_ORANGE, "let's see what you can do.. You ready?");
+		break;
+	case 10:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Alright then, wait here for a moment..");
+		Send_store_special_str(Ind, 8, 10, TERM_ORANGE, "<you hear some shouting>");
+		Send_store_special_str(Ind, 10, 3, TERM_ORANGE, "This is \377yGlynn, The Silent\377o,");
+		Send_store_special_str(Ind, 11, 3, TERM_ORANGE, "let's see what you can do.. You ready?");
+		break;
+	case 11:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Alright, wait here for a moment, I saw \377yGlynn, The Silent\377o just now..");
+		Send_store_special_str(Ind, 8, 10, TERM_ORANGE, "<you hear some shouting>");
+		Send_store_special_str(Ind, 11, 3, TERM_ORANGE, "let's see what you can do.. You ready?");
+		break;
+	case 12:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Alright then, wait here for a moment..");
+		Send_store_special_str(Ind, 8, 10, TERM_ORANGE, "<you hear some shouting>");
+		Send_store_special_str(Ind, 10, 3, TERM_ORANGE, "This is \377yArro, The Wise\377o,");
+		Send_store_special_str(Ind, 11, 3, TERM_ORANGE, "let's see what you can do.. You ready?");
+		break;
+	case 13:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Alright, wait here for a moment, I saw \377yArro, The Wise\377o just now..");
+		Send_store_special_str(Ind, 8, 10, TERM_ORANGE, "<you hear some shouting>");
+		Send_store_special_str(Ind, 11, 3, TERM_ORANGE, "let's see what you can do.. You ready?");
+		break;
+	case TOP_RANK * 2:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Alright, wait here for a moment, I saw \377yArro, The Wise\377o just now..");
+		Send_store_special_str(Ind, 8, 10, TERM_ORANGE, "<you hear some shouting>");
+		Send_store_special_str(Ind, 11, 3, TERM_ORANGE, "let's see what you can do.. You ready?");
+		break;
+	case TOP_RANK * 2 + 1:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Alright, wait here for a moment, I saw \377yArro, The Wise\377o just now..");
+		Send_store_special_str(Ind, 8, 10, TERM_ORANGE, "<you hear some shouting>");
+		Send_store_special_str(Ind, 11, 3, TERM_ORANGE, "let's see what you can do.. You ready?");
+		break;
+	case TOP_RANK * 2 + 2:
+		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Alright, wait here for a moment, I saw \377yArro, The Wise\377o just now..");
+		Send_store_special_str(Ind, 8, 10, TERM_ORANGE, "<you hear some shouting>");
+		Send_store_special_str(Ind, 11, 3, TERM_ORANGE, "let's see what you can do.. You ready?");
 		break;
 	}
 
+	/* Increase go level by 1, indicating that we paid the
+	   wager for this level and can play free from now on. */
+	if (new_wager) p_ptr->go_level++;
+
 	/* Wait for player keypress to start */
-	p_ptr->request_id = RID_GO_START;
-	p_ptr->request_type = RTYPE_KEY;
-	Send_request_key(Ind, RID_GO_START, "- Press any key to start the game of Go! -");
+	Send_request_key(Ind, RID_GO_START, "- press any key to start the game -");
 }
 
 /* Initialize game and initiate first move */
@@ -418,62 +578,116 @@ void go_challenge_start(int Ind) {
 	   Place opponent and configure game parameters accordingly. */
 	/* we have 512 MB.. *//* time per CPU move default is 10s */
 	switch (p_ptr->go_level) {
-	case 0:
+	case 1:
 		Send_store_special_str(Ind, 4, GO_BOARD_X - 2, TERM_YELLOW, "Dougan, The Quick");
+#ifdef ENGINE_FUEGO
 		writeToPipe("uct_max_memory 10000000");
 		writeToPipe("go_param timelimit 3");
-		player_timelimit_sec = GO_TIME_PY;
-		break;
-	case 1:
-		Send_store_special_str(Ind, 4, GO_BOARD_X - 4, TERM_YELLOW, "Rabbik, The Bold");
-		writeToPipe("uct_max_memory 100000000");
-		writeToPipe("go_param timelimit 5");
-		player_timelimit_sec = GO_TIME_PY;
-		break;
-	case 2:
-		Send_store_special_str(Ind, 4, GO_BOARD_X - 4, TERM_YELLOW, "Lima, The Witty");
-		writeToPipe("uct_max_memory 100000000");
-		writeToPipe("go_param timelimit 10");
+#endif
+#ifdef ENGINE_GNOGU
+		writeToPipe("level 1");
+		writeToPipe("time_settings 0 3 1");
+#endif
 		player_timelimit_sec = GO_TIME_PY;
 		break;
 	case 3:
-		Send_store_special_str(Ind, 4, GO_BOARD_X - 4, TERM_YELLOW, "Zar'am, The Stoic");
-		writeToPipe("uct_max_memory 200000000");
-		writeToPipe("go_param timelimit 10");
-		player_timelimit_sec = GO_TIME_PY;
-		break;
-	case 4:
-		Send_store_special_str(Ind, 4, GO_BOARD_X - 4, TERM_YELLOW, "Talithe, The Sharp");
-		writeToPipe("uct_max_memory 200000000");
-		writeToPipe("go_param timelimit 15");
+		Send_store_special_str(Ind, 4, GO_BOARD_X - 4, TERM_YELLOW, "Rabbik, The Bold");
+#ifdef ENGINE_FUEGO
+		writeToPipe("uct_max_memory 100000000");
+		writeToPipe("go_param timelimit 5");
+#endif
+#ifdef ENGINE_GNOGU
+		writeToPipe("level 2");
+		writeToPipe("time_settings 0 5 1");
+#endif
 		player_timelimit_sec = GO_TIME_PY;
 		break;
 	case 5:
+		Send_store_special_str(Ind, 4, GO_BOARD_X - 4, TERM_YELLOW, "Lima, The Witty");
+#ifdef ENGINE_FUEGO
+		writeToPipe("uct_max_memory 100000000");
+		writeToPipe("go_param timelimit 10");
+		writeToPipe("time_settings 0 10 1");
+#endif
+#ifdef ENGINE_GNOGU
+		writeToPipe("level 3");
+#endif
+		player_timelimit_sec = GO_TIME_PY;
+		break;
+	case 7:
+		Send_store_special_str(Ind, 4, GO_BOARD_X - 4, TERM_YELLOW, "Zar'am, The Stoic");
+#ifdef ENGINE_FUEGO
+		writeToPipe("uct_max_memory 200000000");
+		writeToPipe("go_param timelimit 10");
+#endif
+#ifdef ENGINE_GNOGU
+		writeToPipe("level 4");
+		writeToPipe("time_settings 0 10 1");
+#endif
+		player_timelimit_sec = GO_TIME_PY;
+		break;
+	case 9:
+		Send_store_special_str(Ind, 4, GO_BOARD_X - 4, TERM_YELLOW, "Talithe, The Sharp");
+#ifdef ENGINE_FUEGO
+		writeToPipe("uct_max_memory 200000000");
+		writeToPipe("go_param timelimit 15");
+#endif
+#ifdef ENGINE_GNOGU
+		writeToPipe("level 6");
+		writeToPipe("time_settings 0 15 1");
+#endif
+		player_timelimit_sec = GO_TIME_PY;
+		break;
+	case 11:
 		Send_store_special_str(Ind, 4, GO_BOARD_X - 4, TERM_YELLOW, "Glynn, The Silent");
+#ifdef ENGINE_FUEGO
 		writeToPipe("uct_max_memory 300000000");
 		writeToPipe("go_param timelimit 20");
+#endif
+#ifdef ENGINE_GNOGU
+		writeToPipe("level 8");
+		writeToPipe("time_settings 0 20 1");
+#endif
 		player_timelimit_sec = GO_TIME_PY;
 		break;
-	case 6:
+	case 13:
 		Send_store_special_str(Ind, 4, GO_BOARD_X - 4, TERM_YELLOW, "Aro, The Wise");
+#ifdef ENGINE_FUEGO
 		writeToPipe("uct_max_memory 300000000");
 		writeToPipe("go_param timelimit 20");
+#endif
+#ifdef ENGINE_GNOGU
+		writeToPipe("level 10");
+		writeToPipe("time_settings 0 20 1");
+#endif
 		player_timelimit_sec = GO_TIME_PY;
 		break;
-	case TOP_RANK:
-		Send_store_special_str(Ind, 4, GO_BOARD_X - 4, TERM_YELLOW, "Aro, The Wise");
+	case TOP_RANK * 2 + 1: case TOP_RANK * 2 + 2:
+		Send_store_special_str(Ind, 4, GO_BOARD_X - 4, TERM_YELLOW, "Arro, The Wise");
+#ifdef ENGINE_FUEGO
 		writeToPipe("uct_max_memory 300000000");
 		writeToPipe("go_param timelimit 20");
+#endif
+#ifdef ENGINE_GNOGU
+		writeToPipe("level 10");
+		writeToPipe("time_settings 0 20 1");
+#endif
 		player_timelimit_sec = GO_TIME_PY;
 		break;
+	default: /* paranoia */
+		s_printf("GO_GAME: BAD LEVEL! %s:%d\n", p_ptr->name, p_ptr->go_level);
+		go_challenge_cleanup(FALSE);
+		return;
 	}
 
+#ifdef ENGINE_FUEGO
 	/* think while opponent is thinking? */
 	if (p_ptr->go_level <= 0) writeToPipe("uct_param_player ponder 0");
 	else writeToPipe("uct_param_player ponder 1");
+#endif
 
 	/* Set colour and notice game start. */
-	CPU_has_white = (p_ptr->go_level != TOP_RANK);
+	CPU_has_white = (p_ptr->go_level < TOP_RANK * 2);
 	CPU_now_to_move = !CPU_has_white;
 	player_timeleft_sec = player_timelimit_sec;
 
@@ -490,19 +704,19 @@ void go_challenge_start(int Ind) {
 	Send_store_special_str(Ind, GO_BOARD_Y + 9, GO_BOARD_X, TERM_UMBER, "1.........1");
 	Send_store_special_str(Ind, GO_BOARD_Y + 10, GO_BOARD_X, TERM_UMBER, " ABCDEFGHJ ");
 
-	/* Initialize moves/passes tracker */
-	pass_count = 0;
-	last_move_was_pass = FALSE;
-
 	/* Initialize game board tracker */
 	for (n = 0; n < 9; n++) {
 		strcpy(board_line_old[n], ".........");
 		strcpy(board_line[n], ".........");
 	}
 
+	/* Initialize moves/passes tracker */
+	pass_count = 0;
+	last_move_was_pass = FALSE;
+	game_over = scoring = FALSE;
+
 	/* Init misc control elements */
 	received_board_visuals = FALSE;
-	game_over = FALSE;
 
 	/* 'Start the clock' aka the game */
 	s_printf("GO_INIT: ---GAME START---\n");
@@ -512,14 +726,14 @@ void go_challenge_start(int Ind) {
 	/* Initiate human player input loop */
 	Send_store_special_str(Ind, 1, 0, TERM_WHITE, "(Enter coordinates to place a stone, eg 'd5'; 'p' to pass; ESC/'r' to resign.)");
 	if (CPU_has_white) {
-		p_ptr->request_id = RID_GO_MOVE;
-		p_ptr->request_type = RTYPE_STR;
 		Send_request_str(Ind, RID_GO_MOVE, "Enter your move: ", "");
 	}
 	else go_engine_move_CPU();
 }
 
-/* Get a response, non-blocking; using go_engine_processing */
+/* Get a response, non-blocking; using go_engine_processing.
+   This should be called in the main loop, every second or more frequently,
+   eg  if (go_engine_processing) go_engine_process(); . */
 void go_engine_process(void) {
 //	if (go_err(DOWN, DOWN, "go_engine_process")) {
 	if (go_err(DOWN, NONE, "go_engine_process")) {
@@ -542,7 +756,6 @@ void go_engine_process(void) {
    6 - jigo. */
 int go_engine_move_human(int Ind, char *py_move) {
 	char tmp[80];
-	player_type *p_ptr = Players[Ind];
 
 	if (go_err(DOWN, DOWN, "go_engine_move_human")) return -1;
 
@@ -573,8 +786,6 @@ int go_engine_move_human(int Ind, char *py_move) {
 		return 3; //resign
 	}
 
-	p_ptr->request_id = RID_GO_MOVE;
-	p_ptr->request_type = RTYPE_STR;
 	Send_request_str(Ind, RID_GO_MOVE, "Invalid move. Try again: ", "");
 	return 1; //invalid move
 }
@@ -585,8 +796,10 @@ void go_engine_clocks(void) {
 	char clock[6];
 
 	if (go_err(DOWN, DOWN, "go_engine_clocks")) return;
-	/* Hold clocks during preparation phase (ie before game really commences) */
-	if (game_over) return;
+
+	/* Hold clocks during preparation phase (ie before game really commences)
+	   or while counting the score at the end: */
+	if (game_over || scoring) return;
 
 	/* Player still with us? */
 	if (!(Ind = lookup_player_ind(go_engine_player_id))) {
@@ -602,6 +815,8 @@ void go_engine_clocks(void) {
 	if (!player_timeleft_sec) {
 		/* loss on time */
 		Send_request_abort(Ind);
+		Players[Ind]->request_id = RID_NONE;
+
 		if (CPU_now_to_move) go_engine_move_result(4); /* not possible except for mad lag */
 		else go_engine_move_result(2);
 	}
@@ -611,6 +826,24 @@ void go_engine_clocks(void) {
 		Send_store_special_str(Ind, GO_BOARD_Y, GO_BOARD_X - 8, TERM_L_RED, clock);
 	else
 		Send_store_special_str(Ind, GO_BOARD_Y + 9, GO_BOARD_X - 8, TERM_L_RED, clock);
+}
+
+void go_challenge_cancel(void) {
+#if 0 /* done by handle_store_leave() */
+void go_challenge_cancel(int Ind) {
+	int Ind_go;
+
+	/* Go player still online? */
+	if (!(Ind_go = lookup_player_ind(go_engine_player_id))) {
+		go_challenge_cleanup(FALSE);
+		return;
+	}
+
+	/* Go player isn't the player who left the store? (paranoia) */
+	if (Ind_go != Ind) return;
+#endif
+
+	go_challenge_cleanup(FALSE);
 }
 
 
@@ -650,16 +883,16 @@ static int verify_move_human(void) {
 	}
 	p_ptr = Players[Ind];
 
+#ifdef ENGINE_FUEGO
 	/* Catch timeout! Oops. */
 	if (!strcmp(pipe_buf[MAX_GTP_LINES - 1], "SgTimeRecord: outOfTime")) {
 		s_printf("GO_GAME: timeout %s\n", p_ptr->name);
 		return 2; //time over (py)
 	}
+#endif
 	/* Catch illegal moves */
 //	if (strstr("? point outside board"))
 	if (pipe_buf[MAX_GTP_LINES - 1][0] == '?') {
-		p_ptr->request_id = RID_GO_MOVE;
-		p_ptr->request_type = RTYPE_STR;
 		Send_request_str(Ind, RID_GO_MOVE, "Invalid move. Try again: ", "");
 		return 1; //invalid move
 	}
@@ -667,28 +900,9 @@ static int verify_move_human(void) {
 	if (pass_count == 2) {
 		printf("Both players passed consecutively, so the game ends.\n");
 		/* determine score */
+		scoring = TRUE;
 		writeToPipe("final_score");
-		if (pipe_buf[MAX_GTP_LINES - 1][2] == 'W') {
-			/* paranoia: '= W+0' */
-			if (pipe_buf[MAX_GTP_LINES - 1][4] != '0') {
-				printf("White wins!\n");
-				return 2000 + atoi(&pipe_buf[MAX_GTP_LINES - 1][4]);
-			} else {
-				printf("The game is a draw!\n");
-				return 6;
-			}
-		} else if (pipe_buf[MAX_GTP_LINES - 1][2] == 'B') {
-			/* paranoia: '= B+0' */
-			if (pipe_buf[MAX_GTP_LINES - 1][4] != '0') {
-				printf("Black wins!\n");
-				return 1000 + atoi(&pipe_buf[MAX_GTP_LINES - 1][4]);
-			} else {
-				printf("The game is a draw!\n");
-				return 6;
-			}
-		}
-		printf("The game is a draw!\n");
-		return 6; //jigo!
+		return 0;
 	} else if (!last_move_was_pass) pass_count = 0;
 	last_move_was_pass = FALSE;
 
@@ -719,11 +933,13 @@ static int verify_move_CPU(void) {
 
 	if (go_err(DOWN, DOWN, "verify_move_CPU")) return -2;
 
+#ifdef ENGINE_FUEGO
 	/* Catch timeout! Oops. */
 	if (!strcmp(pipe_buf[MAX_GTP_LINES - 1], "SgTimeRecord: outOfTime")) {
 		printf("Your opponent's time has run out, therefore you have won the match!\n");
 		return 4;
 	}
+#endif
 	/* CPU resigns */
 	else if (!strcmp(pipe_buf[MAX_GTP_LINES - 1], "= resign")) {
 		printf("Your opponent has resigned, you have won the match!\n");
@@ -752,29 +968,9 @@ static int verify_move_CPU(void) {
 	if (pass_count == 2) {
 		printf("Both players passed consecutively, so the game ends.\n");
 		/* determine score */
+		scoring = TRUE;
 		writeToPipe("final_score");
-		wait_for_response();
-		if (pipe_buf[MAX_GTP_LINES - 1][2] == 'W') {
-			/* paranoia: '= W+0' */
-			if (pipe_buf[MAX_GTP_LINES - 1][4] != '0') {
-				printf("White wins!\n");
-				return 2000 + atoi(&pipe_buf[MAX_GTP_LINES - 1][4]);
-			} else {
-				printf("The game is a draw!\n");
-				return 6;
-			}
-		} else if (pipe_buf[MAX_GTP_LINES - 1][2] == 'B') {
-			/* paranoia: '= B+0' */
-			if (pipe_buf[MAX_GTP_LINES - 1][4] != '0') {
-				printf("Black wins!\n");
-				return 1000 + atoi(&pipe_buf[MAX_GTP_LINES - 1][4]);
-			} else {
-				printf("The game is a draw!\n");
-				return 6;
-			}
-		}
-		printf("The game is a draw!\n"); /* includes '? cannot score' */
-		return 6;//jigo!
+		return 0;
 	}
 
 	/* display board after CPU's move */
@@ -794,7 +990,7 @@ s_printf("SHOWBOARD_CPU\n");
 static void go_engine_move_result(int move_result) {
 	bool invalid_move = FALSE, lost = FALSE, won = FALSE;
 	char result[80];
-	int Ind;
+	int Ind, wager = 0;
 	player_type *p_ptr;
 
 	if (go_err(DOWN, DOWN, "go_engine_move_result")) return;
@@ -810,35 +1006,49 @@ static void go_engine_move_result(int move_result) {
 	case 0: break;
 	case 1: invalid_move = TRUE; break;
 	case 2:
+#ifdef ENGINE_FUEGO
 		if (CPU_has_white) writeToPipe("go_set_info result W+Time");
 		else writeToPipe("go_set_info result B+Time");
+#endif
 		strcpy(result, "\377r*** You lost on time! ***");
 		lost = TRUE;
 		break;
 	case 3:
+#ifdef ENGINE_FUEGO
 		if (CPU_has_white) writeToPipe("go_set_info result W+Resign");
 		else writeToPipe("go_set_info result B+Resign");
+#endif
 		strcpy(result, "\377r*** You resigned! ***");
 		lost = TRUE;
 		break;
 	case 4:
+#ifdef ENGINE_FUEGO
 		if (CPU_has_white) writeToPipe("go_set_info result B+Time");
 		else writeToPipe("go_set_info result W+Time");
+#endif
 		strcpy(result, "\377G*** Your opponent lost on time! ***");
 		won = TRUE;
 		break;
 	case 5:
+#ifdef ENGINE_FUEGO
 		if (CPU_has_white) writeToPipe("go_set_info result B+Resign");
 		else writeToPipe("go_set_info result W+Resign");
+#endif
 		strcpy(result, "\377G*** Your opponent resigned! ***");
 		won = TRUE;
 		break;
 	case 6:
+#ifdef ENGINE_FUEGO
 		writeToPipe("go_set_info result Jigo");
+#endif
 		strcpy(result, "\377o** The game is a draw! **");
 		break;
 	default:
 		if (move_result >= 2000) { /* White wins */
+#ifdef ENGINE_FUEGO
+			sprintf(result, "go_set_info result W+%d", move_result - 2000);
+			writeToPipe(result);
+#endif
 			if (CPU_has_white) {
 				sprintf(result, "\377r*** Your opponent won by %d point%s! ***", move_result - 2000, move_result - 2000 == 1 ? "" : "s");
 				lost = TRUE;
@@ -847,6 +1057,10 @@ static void go_engine_move_result(int move_result) {
 				won = TRUE;
 			}
 		} else { /* Black wins */
+#ifdef ENGINE_FUEGO
+			sprintf(result, "go_set_info result B+%d", move_result - 1000);
+			writeToPipe(result);
+#endif
 			if (CPU_has_white) {
 				sprintf(result, "\377G*** You won by %d point%s! ***", move_result - 1000, move_result - 1000 == 1 ? "" : "s");
 				won = TRUE;
@@ -862,7 +1076,7 @@ static void go_engine_move_result(int move_result) {
 		Send_store_special_str(Ind, 6, GO_BOARD_X + 6 - strlen(result) / 2, TERM_WHITE, result);
 
 		switch (p_ptr->go_level) {
-		case 0:
+		case 1:
 			if (lost) {
 				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Heh, bloody beginner are ya?");
 				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "Ah well, figure it out and");
@@ -872,27 +1086,159 @@ static void go_engine_move_result(int move_result) {
 				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "short work of Dougan, saw");
 				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "right through ya! I'll make");
 				Send_store_special_str(Ind, 12, GO_BOARD_X + 13, TERM_ORANGE, "y'a better offer next time!");
-//				p_ptr->go_level++;
+				p_ptr->go_level++;
+				wager = 500;
 			} else {
 				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "You two are on the same..");
 				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "level eh? Hahaha! That's");
 				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "just great!");
 			}
 			break;
-		case 1:
-			break;
-		case 2:
-			break;
 		case 3:
-			break;
-		case 4:
+			if (lost) {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Hm, so Rabbik is already");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "to much for you, eh?");
+			} else if (won) {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Yeah yeah, Rabbik isn't strong");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "really, I was sure you'd win.");
+				p_ptr->go_level++;
+				wager = 1000;
+			} else {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Oh, a draw. Happens rarely.");
+			}
 			break;
 		case 5:
+			if (lost) {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Lima too tough for you?");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "She's by far not among the");
+				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "most skillful players really,");
+				Send_store_special_str(Ind, 12, GO_BOARD_X + 13, TERM_ORANGE, "you just gotta train more.");
+			} else if (won) {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Ho, so Lima wasn't witty");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "enough for you. Go on!");
+				p_ptr->go_level++;
+				wager = 2000;
+			} else {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "A draw.. small chance for");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "that to happen.");
+			}
 			break;
-		case 6:
+		case 7:
+			if (lost) {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Zar'am ain't no weakling.");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "To be honest, I thought you'd");
+				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "beat him though!");
+			} else if (won) {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "You beat Zar'am, not bad.");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "I'll see to giving you a");
+				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "stronger opponent next time!");
+				p_ptr->go_level++;
+				wager = 5000;
+			} else {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Hah, that's not result, it's");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "an excuse!");
+			}
 			break;
-		case TOP_RANK:
+		case 9:
+			if (lost) {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Yeah yeah, she's too strong.");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "Was obvious ya can't do much");
+				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "against her. So.. train more!");
+			} else if (won) {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Heh, you managed to defend");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "Talithe? She's quite strong.");
+				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "Well looks like things start");
+				Send_store_special_str(Ind, 12, GO_BOARD_X + 13, TERM_ORANGE, "getting interesting.");
+				p_ptr->go_level++;
+				wager = 10000;
+			} else {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "You kidding me, I don't want");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "a draw. I want a winner!");
+			}
 			break;
+		case 11:
+			if (lost) {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "There's just no way for");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "you to beat someone scary");
+				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "like Glynn in the next");
+				Send_store_special_str(Ind, 12, GO_BOARD_X + 13, TERM_ORANGE, "hundred years, haha.");
+			} else if (won) {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "What the.. you won against");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "Glynn? I didn't expect that.");
+				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "Seems it takes a master to");
+				Send_store_special_str(Ind, 12, GO_BOARD_X + 13, TERM_ORANGE, "stop you.");
+				p_ptr->go_level++;
+				wager = 20000;
+			} else {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Whoa, that's one high-level");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "draw if I ever saw one.");
+			}
+			break;
+		case 13:
+			if (lost) {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Don't be angry, this guy's");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "a true master of the game,");
+				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "friend. Even someone skilled");
+				Send_store_special_str(Ind, 12, GO_BOARD_X + 13, TERM_ORANGE, "as you will have to admit");
+				Send_store_special_str(Ind, 13, GO_BOARD_X + 13, TERM_ORANGE, "defeat in his case!");
+			} else if (won) {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "What the heck! Impossible!");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "You defeated master Arro?");
+				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "Well that leaves me kinda");
+				Send_store_special_str(Ind, 12, GO_BOARD_X + 13, TERM_ORANGE, "dumb-founded. I can just say");
+				Send_store_special_str(Ind, 13, GO_BOARD_X + 13, TERM_ORANGE, "why don't you switch colours!");
+				p_ptr->go_level++;
+				wager = 50000;
+			} else {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Impressive, never believed");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "you could achieve so much as");
+				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "a draw versus master Arro!");
+			}
+			break;
+		case TOP_RANK * 2 + 1:
+			if (lost) {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Well you've surprised us all");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "when you beat him with black.");
+				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "Taking white is a different");
+				Send_store_special_str(Ind, 12, GO_BOARD_X + 13, TERM_ORANGE, "matter though, hear me!");
+			} else if (won) {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Unbelievable what you managed");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "to pull off there!");
+				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "Beating a master like Arro");
+				Send_store_special_str(Ind, 12, GO_BOARD_X + 13, TERM_ORANGE, "with white..here's your money!");
+				Send_store_special_str(Ind, 13, GO_BOARD_X + 13, TERM_ORANGE, "If you want to play again,");
+				Send_store_special_str(Ind, 14, GO_BOARD_X + 13, TERM_ORANGE, "it'll be on the house, my word!");
+				p_ptr->go_level++;
+				wager = 100000;
+			} else {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Oho a draw between masters..");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "can't ask for much more!");
+			}
+			break;
+		case TOP_RANK * 2 + 2:
+			if (lost) {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Hah, I can't judge what went");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "wrong there, your games go way");
+				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "over my head..");
+			} else if (won) {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Impressive as always, love to");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "watch this stuff!");
+			} else {
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Awesome when it turns out a");
+				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "draw! You'd think it's so");
+				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "totally unlikely..");
+			}
+			break;
+		}
+
+		/* earn winnings */
+		if (wager) {
+			if (2000000000 - wager < p_ptr->au)
+				msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
+			else {
+				p_ptr->au += wager;
+				Send_gold(Ind, p_ptr->au, p_ptr->balance);
+			}
 		}
 
 		game_over = TRUE;
@@ -907,18 +1253,18 @@ static void go_engine_move_result(int move_result) {
 	}
 
 	if (invalid_move) {
-		p_ptr->request_id = RID_GO_MOVE;
-		p_ptr->request_type = RTYPE_STR;
 		Send_request_str(Ind, RID_GO_MOVE, "Invalid move. Try again: ", "");
 		return;
 	}
+
+	/* If we're in the scoring phase due to 2 consecutive passes,
+	   don't prompt for next move anymore. */
+	if (scoring) return;
 
 	/* Prompt for next move */
 	if (CPU_to_move) {
 		go_engine_move_CPU();
 	} else {
-		p_ptr->request_id = RID_GO_MOVE;
-		p_ptr->request_type = RTYPE_STR;
 		Send_request_str(Ind, RID_GO_MOVE, "Enter your move: ", "");
 	}
 }
@@ -988,6 +1334,7 @@ static int test_for_response() {
 
 	/* Received a board layout line? (from 'showboard') */
 	if (strlen(pipe_buf[pipe_buf_current_line]) > 2 &&
+#ifdef ENGINE_FUEGO
 	    pipe_buf[pipe_buf_current_line][1] == ' ' &&
 	    pipe_buf[pipe_buf_current_line][0] >= '1' && pipe_buf[pipe_buf_current_line][0] <= '9') {
 		i = pipe_buf[pipe_buf_current_line][0] - '1';
@@ -1002,9 +1349,26 @@ static int test_for_response() {
 		board_line[i][6] = pipe_buf[pipe_buf_current_line][14];
 		board_line[i][7] = pipe_buf[pipe_buf_current_line][16];
 		board_line[i][8] = pipe_buf[pipe_buf_current_line][18];
+#endif
+#ifdef ENGINE_GNUGO
+	    pipe_buf[pipe_buf_current_line][0] == ' ' &&
+	    pipe_buf[pipe_buf_current_line][1] >= '1' && pipe_buf[pipe_buf_current_line][1] <= '9') {
+		i = pipe_buf[pipe_buf_current_line][1] - '1';
+		/* despace */
+		board_line[i][0] = pipe_buf[pipe_buf_current_line][3];
+		board_line[i][1] = pipe_buf[pipe_buf_current_line][5];
+		board_line[i][2] = pipe_buf[pipe_buf_current_line][7];
+		board_line[i][3] = pipe_buf[pipe_buf_current_line][9];
+		board_line[i][4] = pipe_buf[pipe_buf_current_line][11];
+		board_line[i][5] = pipe_buf[pipe_buf_current_line][13];
+		board_line[i][6] = pipe_buf[pipe_buf_current_line][15];
+		board_line[i][7] = pipe_buf[pipe_buf_current_line][17];
+		board_line[i][8] = pipe_buf[pipe_buf_current_line][19];
+#endif
 		board_line[i][9] = 0;
 		received_board_visuals = TRUE;
 	}
+
 
 	/* If response is too long, just overwrite the final line repeatedly -
 	   it should be all that we need at this point anymore. */
@@ -1028,6 +1392,40 @@ static int test_for_response() {
 	   and check if we have to react ie initiate a new command */
 //	printf("---RESPONSE COMPLETE---\n");
 	pipe_response_complete = 0;
+
+	/* Read 'final_score' reply */
+	if (strlen(pipe_buf[MAX_GTP_LINES - 1]) >= 4) {
+		if (pipe_buf[MAX_GTP_LINES - 1][2] == 'W' &&
+		    pipe_buf[MAX_GTP_LINES - 1][3] == '+') {
+			scoring = FALSE;
+			/* paranoia: '= W+0' */
+			if (pipe_buf[MAX_GTP_LINES - 1][4] != '0') {
+				printf("White wins!\n");
+				go_engine_move_result(2000 + atoi(&pipe_buf[MAX_GTP_LINES - 1][4]));
+			} else {
+				printf("The game is a draw!\n");
+				go_engine_move_result(6);
+			}
+		} else if (pipe_buf[MAX_GTP_LINES - 1][2] == 'B' &&
+		    pipe_buf[MAX_GTP_LINES - 1][3] == '+') {
+			scoring = FALSE;
+			/* paranoia: '= B+0' */
+			if (pipe_buf[MAX_GTP_LINES - 1][4] != '0') {
+				printf("Black wins!\n");
+				go_engine_move_result(1000 + atoi(&pipe_buf[MAX_GTP_LINES - 1][4]));
+			} else {
+				printf("The game is a draw!\n");
+				go_engine_move_result(6);
+			}
+		}
+	} else if (strlen(pipe_buf[MAX_GTP_LINES - 1]) == 3 &&
+	    pipe_buf[MAX_GTP_LINES - 1][0] == '=' &&
+	    pipe_buf[MAX_GTP_LINES - 1][1] == ' ' &&
+	    pipe_buf[MAX_GTP_LINES - 1][2] == '0') {
+		scoring = FALSE;
+		printf("The game is a draw!\n");
+		go_engine_move_result(6); //jigo!
+	}
 
 	/* If we lost on time, go_game_up might be FALSE */
 	if (go_game_up && received_board_visuals) go_engine_board();
@@ -1213,6 +1611,7 @@ static void readFromPipe(char *buf, int *cont) {
 	}
 }
 
+#ifdef ENGINE_FUEGO
 /* Handle engine startup process.
    Blocking reading is ok, because server is just starting up. */
 static int handle_loading() {
@@ -1243,6 +1642,7 @@ static int handle_loading() {
 	} while (cont != 3);
 	return 0;
 }
+#endif
 
 /* Cleanup: Save game, reset board.
    Possibly ignore responses since they aren't needed, and just flush
@@ -1250,29 +1650,42 @@ static int handle_loading() {
    'server_shutdown' must be TRUE exactly if server is shut down,
    it'll just use blocking reading, for reading the replies. */
 static void go_challenge_cleanup(bool server_shutdown) {
+	int Ind;
+#ifdef ENGINE_FUEGO
 	char tmp[80];
+#endif
 
 	if (go_err(DOWN, DOWN, "go_challenge_cleanup")) return;
 
 	/* If we have to stop prematurely, interprete it as loss for the player.
 	   Note: The 'result' info is cleared by 'clear_board' below. */
 	if (!game_over) {
+#ifdef ENGINE_FUEGO
 		if (CPU_has_white) writeToPipe("go_set_info result W+Forfeit");
 		else writeToPipe("go_set_info result B+Forfeit");
 		if (server_shutdown) wait_for_response();
+#endif
 		game_over = TRUE;
+	}
+
+	/* Cancel prompt for move */
+	if ((Ind = lookup_player_ind(go_engine_player_id))) {
+		Send_request_abort(Ind);
+		Players[Ind]->request_id = RID_NONE;
 	}
 
 	/* for saving game record to disk */
 	tend = time(NULL);
 	tmend = localtime(&tend);
 
+#ifdef ENGINE_FUEGO
 	/* Save it as sgf */
 	sprintf(tmp, "savesgf go/go-%d%d%d-%d%d.sgf",
 	    1900 + tmstart->tm_year, tmstart->tm_mon + 1, tmstart->tm_mday,
 	    tmstart->tm_hour, tmstart->tm_min);
 	writeToPipe(tmp); //(saves current game (and tree if some global flag was set) to sgf)
 	if (server_shutdown) wait_for_response();
+#endif
 
 	/* Prepare for next game in advance - skip on server shutdown */
 	if (!server_shutdown) writeToPipe("clear_board");
