@@ -1319,12 +1319,12 @@ bool askfor_aux(char *buf, int len, char mode)
 	else c_ptr_last(x, y, vis_len, TERM_YELLOW, buf);
 
 	if (mode & ASKFOR_CHATTING) {
-		strncpy(message_history_chat[hist_chat_end], buf, len);
-		buf[len] = '\0';
+		strncpy(message_history_chat[hist_chat_end], buf, sizeof(*message_history_chat) - 1);
+		buf[sizeof(*message_history_chat) - 1] = '\0';
 	}
 	else if (!nohist) {
-		strncpy(message_history[hist_end], buf, len);
-		buf[len] = '\0';
+		strncpy(message_history[hist_end], buf, sizeof(*message_history) - 1);
+		buf[sizeof(*message_history) - 1] = '\0';
 	}
 
 	/* Process input */
@@ -1502,7 +1502,7 @@ bool askfor_aux(char *buf, int len, char mode)
 	/* Add this to the history */
 	if (mode & ASKFOR_CHATTING)
 	{
-		strncpy(message_history_chat[hist_chat_end], buf, sizeof(*message_history_chat));
+		strncpy(message_history_chat[hist_chat_end], buf, sizeof(*message_history_chat) - 1);
 		message_history_chat[hist_chat_end][sizeof(*message_history_chat) - 1] = '\0';
 		hist_chat_end++;
 		if (hist_chat_end >= MSG_HISTORY_MAX)
@@ -1513,7 +1513,7 @@ bool askfor_aux(char *buf, int len, char mode)
 	}
 	else
 	{
-		strncpy(message_history[hist_end], buf, sizeof(*message_history));
+		strncpy(message_history[hist_end], buf, sizeof(*message_history) - 1);
 		message_history[hist_end][sizeof(*message_history) - 1] = '\0';
 		hist_end++;
 		if (hist_end >= MSG_HISTORY_MAX)
