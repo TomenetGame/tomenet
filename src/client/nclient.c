@@ -2923,13 +2923,11 @@ int Receive_special_line(void)
 	int	n;
 	char	ch, attr;
 	s16b	max, line;
-	char	buf[MAX_CHARS];
+	char	buf[ONAME_LEN]; /* Allow colour codes! (was: MAX_CHARS, which is just 80) */
 	int	x, y;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c%s", &ch, &max, &line, &attr, buf)) <= 0)
-	{
+	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c%I", &ch, &max, &line, &attr, buf)) <= 0)
 		return n;
-	}
 
 	/* Maximum */
 	max_line = max;
