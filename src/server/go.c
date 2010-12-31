@@ -26,7 +26,6 @@
 
 /* ------------------------------------------------------------------------- */
 
-
 #define SERVER
 #include "angband.h"
 #ifdef ENABLE_GO_GAME
@@ -53,8 +52,8 @@
 /* Maximum rank: At this rank you'll have to play a game as white too! */
 #define TOP_RANK	7
 
-/* Time limits for the player (and CPU) in seconds */
-#define GO_TIME_PY		25
+/* Time limits for the player (and CPU) in seconds  [25] */
+#define GO_TIME_PY		30
 
 
 /* Error handling constants */
@@ -68,6 +67,8 @@ static const int NONE = 0, DOWN = 1, UP = 2;
 
 /* Display text output for debugging? */
 #define GO_DEBUGPRINT
+/* Display log entries for debugging? */
+#define GO_DEBUGLOG
 
 
 /* Global control variables */
@@ -120,7 +121,10 @@ static int pass_count;
 static bool last_move_was_pass = FALSE, CPU_to_move, CPU_now_to_move;
 
 /* Helper vars to update the board visuals between turns */
-static char board_line_old[10][10], board_line[10][10];
+static char board_line_old[10][10], board_line[10][10];//set by receiving 'showboard' response
+//static char board_direct[10][10];//new (for random moves): set directly by move coordinates
+static int random_move_prob;
+static bool random_move = FALSE;
 
 
 /* ------------------------------------------------------------------------- */
@@ -291,7 +295,11 @@ void go_engine_terminate(void) {
 
 	/* terminate cleanly */
 	writeToPipe("quit");
+
+#if 0	/* disable, in case we're terminating the engine because it \
+	 stopped working! (would freeze server here, in that case) */
 	wait_for_response();
+#endif
 
 	/* discard any possible answers we were still waiting for */
 	go_engine_processing = 0;
@@ -299,11 +307,14 @@ void go_engine_terminate(void) {
 	/* close pipes to it */
 	fclose(fr);
 	fclose(fw);
+	close(pipeto[1]);
+	close(pipefrom[0]);
 	go_engine_up = FALSE;
 
 #ifdef DISCARD_RESPONSES_WHEN_TERMINATING
 	terminating = FALSE;
 #endif
+	s_printf("GO_ENGINE: TERMINATED\n");
 }
 
 void go_challenge(int Ind) {
@@ -459,6 +470,7 @@ void go_challenge_accept(int Ind, bool new_wager) {
 	if (new_wager) {
 		/* Deduct wager */
 		p_ptr->au -= wager;
+		p_ptr->redraw |= PR_GOLD;
 		Send_gold(Ind, p_ptr->au, p_ptr->balance);
 	}
 
@@ -570,6 +582,7 @@ void go_challenge_accept(int Ind, bool new_wager) {
 void go_challenge_start(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int n;
+	char name[80];
 
 	Send_store_special_clr(Ind, 4, 18);
 	if (go_err(DOWN, DOWN, "go_challenge_start")) return;
@@ -579,97 +592,109 @@ void go_challenge_start(int Ind) {
 	/* we have 512 MB.. *//* time per CPU move default is 10s */
 	switch (p_ptr->go_level) {
 	case 1:
-		Send_store_special_str(Ind, 4, GO_BOARD_X - 2, TERM_YELLOW, "Dougan, The Quick");
+		strcpy(name, "Dougan, The Quick");
 #ifdef ENGINE_FUEGO
 		writeToPipe("uct_max_memory 10000000");
 		writeToPipe("go_param timelimit 3");
 #endif
-#ifdef ENGINE_GNOGU
+#ifdef ENGINE_GNUGO
 		writeToPipe("level 1");
-		writeToPipe("time_settings 0 3 1");
+		random_move_prob = 50;
+		writeToPipe("time_settings 0 4 1");//increased from 3, in case 3s lag tolerance exists and messes things up maybe
+		/* some site claimed 'm' or 's' can be added, with 'm' for minutes being default.
+		   appearently that is nonsense though.
+		   someone else claimed there was a 3s lag tolerance, doesn't make much sense
+		   regarding its behaviour (exceeding even the specified time frame) though. */
 #endif
 		player_timelimit_sec = GO_TIME_PY;
 		break;
 	case 3:
-		Send_store_special_str(Ind, 4, GO_BOARD_X - 4, TERM_YELLOW, "Rabbik, The Bold");
+		strcpy(name, "Rabbik, The Bold");
 #ifdef ENGINE_FUEGO
 		writeToPipe("uct_max_memory 100000000");
 		writeToPipe("go_param timelimit 5");
 #endif
-#ifdef ENGINE_GNOGU
-		writeToPipe("level 2");
-		writeToPipe("time_settings 0 5 1");
+#ifdef ENGINE_GNUGO
+		writeToPipe("level 1");
+		random_move_prob = 25;
+		writeToPipe("time_settings 0 6 1");
 #endif
 		player_timelimit_sec = GO_TIME_PY;
 		break;
 	case 5:
-		Send_store_special_str(Ind, 4, GO_BOARD_X - 4, TERM_YELLOW, "Lima, The Witty");
+		strcpy(name, "Lima, The Witty");
 #ifdef ENGINE_FUEGO
 		writeToPipe("uct_max_memory 100000000");
 		writeToPipe("go_param timelimit 10");
-		writeToPipe("time_settings 0 10 1");
 #endif
-#ifdef ENGINE_GNOGU
-		writeToPipe("level 3");
+#ifdef ENGINE_GNUGO
+		writeToPipe("level 1");
+		random_move_prob = 10;
+		writeToPipe("time_settings 0 10 1");
 #endif
 		player_timelimit_sec = GO_TIME_PY;
 		break;
 	case 7:
-		Send_store_special_str(Ind, 4, GO_BOARD_X - 4, TERM_YELLOW, "Zar'am, The Stoic");
+		strcpy(name, "Zar'am, The Stoic");
 #ifdef ENGINE_FUEGO
 		writeToPipe("uct_max_memory 200000000");
 		writeToPipe("go_param timelimit 10");
 #endif
-#ifdef ENGINE_GNOGU
-		writeToPipe("level 4");
+#ifdef ENGINE_GNUGO
+		writeToPipe("level 1");
+		random_move_prob = 5;
 		writeToPipe("time_settings 0 10 1");
 #endif
 		player_timelimit_sec = GO_TIME_PY;
 		break;
 	case 9:
-		Send_store_special_str(Ind, 4, GO_BOARD_X - 4, TERM_YELLOW, "Talithe, The Sharp");
+		strcpy(name, "Talithe, The Sharp");
 #ifdef ENGINE_FUEGO
 		writeToPipe("uct_max_memory 200000000");
 		writeToPipe("go_param timelimit 15");
 #endif
-#ifdef ENGINE_GNOGU
-		writeToPipe("level 6");
+#ifdef ENGINE_GNUGO
+		writeToPipe("level 2");
+		random_move_prob = 0;
 		writeToPipe("time_settings 0 15 1");
 #endif
 		player_timelimit_sec = GO_TIME_PY;
 		break;
 	case 11:
-		Send_store_special_str(Ind, 4, GO_BOARD_X - 4, TERM_YELLOW, "Glynn, The Silent");
+		strcpy(name, "Glynn, The Silent");
 #ifdef ENGINE_FUEGO
 		writeToPipe("uct_max_memory 300000000");
 		writeToPipe("go_param timelimit 20");
 #endif
-#ifdef ENGINE_GNOGU
-		writeToPipe("level 8");
+#ifdef ENGINE_GNUGO
+		writeToPipe("level 6");
+		random_move_prob = 0;
 		writeToPipe("time_settings 0 20 1");
 #endif
 		player_timelimit_sec = GO_TIME_PY;
 		break;
 	case 13:
-		Send_store_special_str(Ind, 4, GO_BOARD_X - 4, TERM_YELLOW, "Aro, The Wise");
+		strcpy(name, "Arro, The Wise");
 #ifdef ENGINE_FUEGO
 		writeToPipe("uct_max_memory 300000000");
 		writeToPipe("go_param timelimit 20");
 #endif
-#ifdef ENGINE_GNOGU
+#ifdef ENGINE_GNUGO
 		writeToPipe("level 10");
+		random_move_prob = 0;
 		writeToPipe("time_settings 0 20 1");
 #endif
 		player_timelimit_sec = GO_TIME_PY;
 		break;
 	case TOP_RANK * 2 + 1: case TOP_RANK * 2 + 2:
-		Send_store_special_str(Ind, 4, GO_BOARD_X - 4, TERM_YELLOW, "Arro, The Wise");
+		strcpy(name, "Arro, The Wise");
 #ifdef ENGINE_FUEGO
 		writeToPipe("uct_max_memory 300000000");
 		writeToPipe("go_param timelimit 20");
 #endif
-#ifdef ENGINE_GNOGU
+#ifdef ENGINE_GNUGO
 		writeToPipe("level 10");
+		random_move_prob = 0;
 		writeToPipe("time_settings 0 20 1");
 #endif
 		player_timelimit_sec = GO_TIME_PY;
@@ -679,6 +704,7 @@ void go_challenge_start(int Ind) {
 		go_challenge_cleanup(FALSE);
 		return;
 	}
+	Send_store_special_str(Ind, 4, GO_BOARD_X + 6 - (strlen(name) + 1) / 2, TERM_YELLOW, name);
 
 #ifdef ENGINE_FUEGO
 	/* think while opponent is thinking? */
@@ -719,7 +745,7 @@ void go_challenge_start(int Ind) {
 	received_board_visuals = FALSE;
 
 	/* 'Start the clock' aka the game */
-	s_printf("GO_INIT: ---GAME START---\n");
+	s_printf("GO_INIT: GAME START '%s' (%d)\n", p_ptr->name, p_ptr->go_level);
 	tstart = time(NULL);
 	tmstart = localtime(&tstart);
 
@@ -852,6 +878,8 @@ void go_challenge_cancel(int Ind) {
 
 static void go_engine_move_CPU() {
 	int Ind;
+	int tries = 1000, x = -1, y = -1, liberties;
+	char cpu_rnd_move[14], coord[2], cpu_move[7] = {32, 32, 0, 0, 32, 32, 0};
 
 	if (go_err(DOWN, DOWN, "go_engine_move_CPU")) return;
 
@@ -862,9 +890,73 @@ static void go_engine_move_CPU() {
 	}
 
 	/* Get CPU move */
-	if (CPU_has_white) writeToPipe("genmove white");
-	else writeToPipe("genmove black");
+
+	/* replace CPU moves by random moves to simulate lower strength.
+	   NOTE: Free grid doesn't necessarily mean LEGAL grid! */
+	if ((random_move = magik(random_move_prob))) {
+		/* Try to find a free grid randomly */
+		while (--tries) {
+			/* Don't play on the first line! That's TOO bad.. */
+			x = rand_int(9 - 2) + 1;
+			y = rand_int(9 - 2) + 1;
+			if (board_line[x][y] != '.') continue;
+
+			/* Let's go lazy:
+			   Test if it has at least 1 more liberty, to avoid us
+			   having to test for capturing and nasty stuff.. */
+			liberties = 0;
+			if (x > 0 && board_line[x - 1][y] == '.') liberties++;
+			if (x < 9 - 1 && board_line[x + 1][y] == '.') liberties++;
+			if (y > 0 && board_line[x][y - 1] == '.') liberties++;
+			if (y < 9 - 1 && board_line[x][y + 1] == '.') liberties++;
+			if (liberties == 0) continue;
+
+			break;
+		}
+		if (!tries) random_move = FALSE;
+	}
+
+	if (CPU_has_white) {
+		if (!random_move) writeToPipe("genmove white");
+		else {
+			strcpy(cpu_rnd_move, "play white ");
+			sprintf(coord, "%c", 'A' + x);
+			strcat(cpu_rnd_move, coord);
+			sprintf(coord, "%c", '1' + y);
+			strcat(cpu_rnd_move, coord);
+			writeToPipe(cpu_rnd_move);
+			pass_count = 0;
+
+			cpu_move[2] = 'A' + x;
+			cpu_move[3] = '1' + y;
+			Send_store_special_str(Ind, 6, GO_BOARD_X + 3, TERM_YELLOW, cpu_move);
+#ifdef GO_DEBUGLOG
+			s_printf("GO_RND: %s\n", cpu_rnd_move + 11);
+#endif
+		}
+	} else {
+		if (!random_move) writeToPipe("genmove black");
+		else {
+			strcpy(cpu_rnd_move, "play black ");
+			sprintf(coord, "%c", 'A' + x);
+			strcat(cpu_rnd_move, coord);
+			sprintf(coord, "%c", '1' + y);
+			strcat(cpu_rnd_move, coord);
+			writeToPipe(cpu_rnd_move);
+			pass_count = 0;
+
+			cpu_move[2] = 'A' + x;
+			cpu_move[3] = '1' + y;
+			Send_store_special_str(Ind, 6, GO_BOARD_X + 3, TERM_YELLOW, cpu_move);
+#ifdef GO_DEBUGLOG
+			s_printf("GO_RND: %s\n", cpu_rnd_move + 11);
+#endif
+		}
+	}
+
 	go_engine_next_action = NACT_MOVE_PLAYER;
+
+/* (TODO) gnugo3.9.1: <genmove black> -> <= = F6> ??? */
 }
 
 /* Reads current pipe_buf[][] and assumes it contains the response
@@ -886,7 +978,9 @@ static int verify_move_human(void) {
 #ifdef ENGINE_FUEGO
 	/* Catch timeout! Oops. */
 	if (!strcmp(pipe_buf[MAX_GTP_LINES - 1], "SgTimeRecord: outOfTime")) {
+ #ifdef GO_DEBUGLOG
 		s_printf("GO_GAME: timeout %s\n", p_ptr->name);
+ #endif
 		return 2; //time over (py)
 	}
 #endif
@@ -898,7 +992,9 @@ static int verify_move_human(void) {
 	}
 	/* Test for game over by double-passe */
 	if (pass_count == 2) {
+#ifdef GO_DEBUGPRINT
 		printf("Both players passed consecutively, so the game ends.\n");
+#endif
 		/* determine score */
 		scoring = TRUE;
 		writeToPipe("final_score");
@@ -907,7 +1003,6 @@ static int verify_move_human(void) {
 	last_move_was_pass = FALSE;
 
 	/* display board after player's move */
-s_printf("SHOWBOARD_HUMAN\n");
 	writeToPipe("showboard");
 
 	player_timeleft_sec = player_timelimit_sec;
@@ -936,18 +1031,24 @@ static int verify_move_CPU(void) {
 #ifdef ENGINE_FUEGO
 	/* Catch timeout! Oops. */
 	if (!strcmp(pipe_buf[MAX_GTP_LINES - 1], "SgTimeRecord: outOfTime")) {
+ #ifdef GO_DEBUGPRINT
 		printf("Your opponent's time has run out, therefore you have won the match!\n");
+ #endif
 		return 4;
 	}
 #endif
 	/* CPU resigns */
 	else if (!strcmp(pipe_buf[MAX_GTP_LINES - 1], "= resign")) {
+#ifdef GO_DEBUGPRINT
 		printf("Your opponent has resigned, you have won the match!\n");
+#endif
 		return 5;
 	}
 	/* CPU passes */
 	else if (!strcmp(pipe_buf[MAX_GTP_LINES - 1], "= PASS")) {
+#ifdef GO_DEBUGPRINT
 		printf("CPU passed.\n");
+#endif
 		Send_store_special_str(Ind, 6, GO_BOARD_X + 3, TERM_YELLOW, "'pass'");
 		pass_count++;
 	}
@@ -955,18 +1056,27 @@ static int verify_move_CPU(void) {
 	else if (strlen(pipe_buf[MAX_GTP_LINES - 1]) == 4 &&
 	    pipe_buf[MAX_GTP_LINES - 1][0] == '=' &&
 	    pipe_buf[MAX_GTP_LINES - 1][1] == ' ') {
+#if 0
 		strncpy(cpu_move, pipe_buf[MAX_GTP_LINES - 1], 4);
 		cpu_move[0] = cpu_move[2];
 		cpu_move[1] = cpu_move[3];
 		cpu_move[2] = 0;
-		printf("CPU move -%s-.\n", cpu_move);
-		pass_count = 0;
 		Send_store_special_str(Ind, 6, GO_BOARD_X + 5, TERM_YELLOW, cpu_move);
+#else
+		strcpy(cpu_move, pipe_buf[MAX_GTP_LINES - 1]);
+		cpu_move[0] = cpu_move[1] = ' ';
+		cpu_move[4] = cpu_move[5] = ' ';
+		cpu_move[6] = 0;
+		Send_store_special_str(Ind, 6, GO_BOARD_X + 3, TERM_YELLOW, cpu_move);
+#endif
+		pass_count = 0;
 	}
 
 	/* Test for game over by double-passe */
 	if (pass_count == 2) {
+#ifdef GO_DEBUGPRINT
 		printf("Both players passed consecutively, so the game ends.\n");
+#endif
 		/* determine score */
 		scoring = TRUE;
 		writeToPipe("final_score");
@@ -974,7 +1084,6 @@ static int verify_move_CPU(void) {
 	}
 
 	/* display board after CPU's move */
-s_printf("SHOWBOARD_CPU\n");
 	writeToPipe("showboard");
 
 	player_timeleft_sec = player_timelimit_sec;
@@ -1074,6 +1183,12 @@ static void go_engine_move_result(int move_result) {
 	if (move_result >= 2) {
 		Send_store_special_str(Ind, 1, 0, TERM_WHITE, "                                                                              ");
 		Send_store_special_str(Ind, 6, GO_BOARD_X + 6 - strlen(result) / 2, TERM_WHITE, result);
+#ifdef GO_DEBUGPRINT
+		printf("Result: %s\n", result);
+#endif
+#ifdef GO_DEBUGLOG
+		s_printf("GO_RESULT: %s\n", result);
+#endif
 
 		switch (p_ptr->go_level) {
 		case 1:
@@ -1233,10 +1348,13 @@ static void go_engine_move_result(int move_result) {
 
 		/* earn winnings */
 		if (wager) {
+			/* double return */
+			wager *= 2;
 			if (2000000000 - wager < p_ptr->au)
 				msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
 			else {
 				p_ptr->au += wager;
+				p_ptr->redraw |= PR_GOLD;
 				Send_gold(Ind, p_ptr->au, p_ptr->balance);
 			}
 		}
@@ -1302,7 +1420,7 @@ static int test_for_response() {
 
 	/* Process data: Build lines from it. Build whole response from several lines. */
 	if (strlen(pipe_buf[pipe_buf_current_line]) + strlen(pipe_line_buf) >= 240) {
-		printf("GO_ERROR: LINE TOO LONG\n");
+		s_printf("GO_ERROR: LINE TOO LONG\n");
 		return 1;
 	} else strcat(pipe_buf[pipe_buf_current_line], pipe_line_buf);
 
@@ -1393,6 +1511,11 @@ static int test_for_response() {
 //	printf("---RESPONSE COMPLETE---\n");
 	pipe_response_complete = 0;
 
+#ifdef GO_DEBUGLOG
+	if (pipe_buf[MAX_GTP_LINES - 1][0])
+		s_printf("GO_REPLY: <%s>\n", pipe_buf[MAX_GTP_LINES - 1]);
+#endif
+
 	/* Read 'final_score' reply */
 	if (strlen(pipe_buf[MAX_GTP_LINES - 1]) >= 4) {
 		if (pipe_buf[MAX_GTP_LINES - 1][2] == 'W' &&
@@ -1400,10 +1523,14 @@ static int test_for_response() {
 			scoring = FALSE;
 			/* paranoia: '= W+0' */
 			if (pipe_buf[MAX_GTP_LINES - 1][4] != '0') {
+#ifdef GO_DEBUGPRINT
 				printf("White wins!\n");
+#endif
 				go_engine_move_result(2000 + atoi(&pipe_buf[MAX_GTP_LINES - 1][4]));
 			} else {
+#ifdef GO_DEBUGPRINT
 				printf("The game is a draw!\n");
+#endif
 				go_engine_move_result(6);
 			}
 		} else if (pipe_buf[MAX_GTP_LINES - 1][2] == 'B' &&
@@ -1411,10 +1538,14 @@ static int test_for_response() {
 			scoring = FALSE;
 			/* paranoia: '= B+0' */
 			if (pipe_buf[MAX_GTP_LINES - 1][4] != '0') {
+#ifdef GO_DEBUGPRINT
 				printf("Black wins!\n");
+#endif
 				go_engine_move_result(1000 + atoi(&pipe_buf[MAX_GTP_LINES - 1][4]));
 			} else {
+#ifdef GO_DEBUGPRINT
 				printf("The game is a draw!\n");
+#endif
 				go_engine_move_result(6);
 			}
 		}
@@ -1423,7 +1554,9 @@ static int test_for_response() {
 	    pipe_buf[MAX_GTP_LINES - 1][1] == ' ' &&
 	    pipe_buf[MAX_GTP_LINES - 1][2] == '0') {
 		scoring = FALSE;
+#ifdef GO_DEBUGPRINT
 		printf("The game is a draw!\n");
+#endif
 		go_engine_move_result(6); //jigo!
 	}
 
@@ -1475,6 +1608,7 @@ static int test_for_response() {
 static int wait_for_response() {
 	int cont, r = 0, i;
 	char lbuf[80], tmp[80];//, *tptr = tmp + 79;
+	strcpy(tmp, "");
 
 #ifdef DISCARD_RESPONSES_WHEN_TERMINATING
 	/* we might not even want any responses (and them causing slowdown) here,
@@ -1500,7 +1634,7 @@ static int wait_for_response() {
 			readFromPipe(lbuf, &cont);
 			if (lbuf[0]) {
 				if (strlen(pipe_buf[r]) + strlen(lbuf) >= 240) {
-					printf("GO_ERROR: LINE TOO LONG\n");
+					s_printf("GO_ERROR: LINE TOO LONG\n");
 					break;
 				} else strcat(pipe_buf[r], lbuf);
 				if (pipe_buf[r][strlen(pipe_buf[r]) - 1] == '\n') pipe_buf[r][strlen(pipe_buf[r]) - 1] = 0;
@@ -1549,18 +1683,26 @@ static int wait_for_response() {
 //	printf("---RESPONSE COMPLETE---\n");
 
 	/* Hack: Deliver certain important responses back outside */
+	if (tmp[0]) {
 #if 0
-	/* also convert to upper-case */
-	while (tptr > tmp) *tptr-- = toupper(*tptr);
+		/* also convert to upper-case */
+		char *tptr = tmp + strlen(tmp) - 1;
+		while (tptr > tmp) *tptr-- = toupper(*tptr);
 #endif
+#ifdef GO_DEBUGLOG
+		s_printf("GO_REPLY: <%s>\n", tmp);
+#endif
+	}
 	strcpy(pipe_buf[MAX_GTP_LINES - 1], tmp);
+
 	return 0;
 }
 
 /* Write a line of data into the pipe */
 static void writeToPipe(char *data) {
-#ifdef GO_DEBUGPRINT
-	printf("GO_COMMAND: <%s> ### NACT: %d\n", data, go_engine_next_action);
+#ifdef GO_DEBUGLOG
+	if (strcmp(data, "showboard")) /* this command is a bit spammy maybe */
+		s_printf("GO_COMMAND: <%s>\n", data);//go_engine_next_action
 //	printf("writeToPipe: %s\n", fw == NULL ? "NULL" : "ok");
 //fw==NULL -> Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Arrr.. sorry, I can't find a fitting player around right now");
 #endif
@@ -1626,7 +1768,7 @@ static int handle_loading() {
 		if (lbuf[0]) {
 //			printf("<%s>\n", lbuf);
 			if (strlen(reply) + strlen(lbuf) >= 240) {
-				printf("GO_ERROR: LINE TOO LONG\n");
+				s_printf("GO_ERROR: LINE TOO LONG\n");
 				return 1;
 			}
 			strcat(reply, lbuf);
