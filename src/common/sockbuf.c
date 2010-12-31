@@ -796,9 +796,9 @@ int Packet_scanf(va_alist)
 		    break;
 		}
 		break;
-	    case 'S':	/* Big strings */
-	    case 'I':	/* Semi-big strings: Item name (including inscription) */
-	    case 's':	/* Small strings */
+	    case 'S':	/* Big strings (MSG_LEN) */
+	    case 'I':	/* Semi-big strings: Item name (including inscription) (ONAME_LEN) */
+	    case 's':	/* Small strings (MAX_CHAR) */
 		max_str_size = (fmt[i] == 'S') ? MSG_LEN : ((fmt[i] == 'I') ? ONAME_LEN : MAX_CHARS);
 		str = va_arg(ap, char *);
 #if 1
