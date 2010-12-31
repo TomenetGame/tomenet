@@ -1,7 +1,7 @@
 .=============+============+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 23. Dec 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 31. Dec 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -4595,8 +4595,8 @@ Here's a table to tell you the values for str_wgt:
         14          12                      30          18/50-18/220+
         15          13
 
-The armour weight limit is 5.0 lb + Martial Arts skill level * 0.4 lb.
-So for MA 50 it is 5.0 + 20.0 = 25.0 lb.
+The armour weight limit is 5.0 lb + Martial Arts skill level * 0.42 lb.
+So for MA 50 it is 5.0 + 21.0 = 26.0 lb.
 If your armour becomes too heavy, you will see this warning message:
 "Your armour weight strains your martial arts performance."
 
@@ -4768,7 +4768,9 @@ You will receieve a warning message, telling you:
 To move freely, you may wear 10.0 lbs of armoury plus a strength-factor plus
 6 * your combat skill. Strength factor is 0.6 * str_hold (see table above to
 find your str_hold). So the top weight limit is
+
 10.0 + 0.6 * 50 (combat) + 0.6 * 100 (str_hold) = 100.0 lbs.
+
 
 Some special abilities depend on armour weight too. Those are..
 -dodge chance from 'Dodging' skill.
@@ -4777,9 +4779,12 @@ Some special abilities depend on armour weight too. Those are..
 -extra blow/round bonus from dual-wielding two weapons.
 -area searching for the 'Rogue' class (exclusive ability).
 -cloaking mode for the 'Rogue' class (exclusive ability).
+
 If the armour becomes too heavy to perform those, a message will appear:
 "The weight of your armour strains your flexibility and awareness."
-The weight limit is 20.0 + (Combat skill / 10) lbs.
+
+This 'rogueish weight limit' (the skills are mostly used by rogues) is:
+20.0 + (Combat skill * 6 / 50) lbs, ie max 26.0 lbs.
 
 
 Glove encumberment (concerning magic)
