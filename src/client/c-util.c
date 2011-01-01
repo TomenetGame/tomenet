@@ -5062,7 +5062,7 @@ void do_cmd_options(void)
 		else if (k == '9')
 		{
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_WHITE, "Command: Save an option file");
+			Term_putstr(0, 18, -1, TERM_WHITE, "Command: Save an option file");
 
 			/* Get a filename, handle ESCAPE */
 			Term_putstr(0, 19, -1, TERM_WHITE, "File: ");
@@ -5080,7 +5080,7 @@ void do_cmd_options(void)
 		else if (k == '0')
 		{
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_WHITE, "Command: Load a user pref file");
+			Term_putstr(0, 18, -1, TERM_WHITE, "Command: Load a user pref file");
 
 			/* Get a filename, handle ESCAPE */
 			Term_putstr(0, 19, -1, TERM_WHITE, "File: ");
