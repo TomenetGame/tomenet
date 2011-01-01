@@ -3185,8 +3185,8 @@ struct client_opts
 	bool recall_flicker;
 /*	bool flow_by_sound;	*/
 	bool time_stamp_chat; //flow_by_smell;
-	bool track_follow;
-	bool track_target;
+	bool page_on_privmsg;
+	bool page_on_afk_privmsg;
 	bool smart_learn;
 	bool smart_cheat;
 

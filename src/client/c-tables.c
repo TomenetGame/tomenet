@@ -624,11 +624,11 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.time_stamp_chat,	FALSE,	2,	0, 11, FALSE,	/* former flow_by_smell */
 	"time_stamp_chat",		"Add time stamps to chat lines" },
 
-	{ &c_cfg.track_follow,		FALSE,	2,	1, 12, FALSE,
-	"track_follow",			"(obsolete) Monsters follow the player (broken)" },
+	{ &c_cfg.page_on_privmsg,	FALSE,	4,	1, 12, TRUE,
+	"page_on_privmsg",		"Beep when receiving a private message" },
 
-	{ &c_cfg.track_target,		FALSE,	2,	1, 13, FALSE,
-	"track_target",			"(obsolete) Monsters target the player (broken)" },
+	{ &c_cfg.page_on_afk_privmsg,	TRUE,	4,	1, 13, TRUE,
+	"page_on_afk_privmsg",		"Beep when receiving a private message while AFK" },
 
 	{ &c_cfg.smart_learn,		FALSE,	2,	1, 14, FALSE,
 	"smart_learn",			"(obsolete) Monsters learn from their mistakes" },

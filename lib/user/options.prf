@@ -47,8 +47,8 @@ X:whole_ammo_stack
 Y:recall_flicker
 #X:flow_by_sound
 X:time_stamp_chat
-X:track_follow
-X:track_target
+X:page_on_privmsg
+Y:page_on_afk_privmsg
 X:smart_learn
 X:smart_cheat
 
