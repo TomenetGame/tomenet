@@ -4761,8 +4761,8 @@ void do_ping()
 		time_t ct = time(NULL);
 		struct tm* ctl = localtime(&ct);
 		if (ctl->tm_hour != time_stamp_hour) {
+			if (time_stamp_hour != -1) c_msg_format("\374\376\377y[%02d:00h]", ctl->tm_hour);
 			time_stamp_hour = ctl->tm_hour;
-			c_msg_format("\374\376\377y[%02d:00h]", time_stamp_hour);
 		}
 	}
 }
