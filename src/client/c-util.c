@@ -4014,13 +4014,24 @@ void interact_macros(void)
 
 						/* build macro part */
 						j = 0; /* hack: != 1 means 'undirectional' device */
-						switch (choice) {
-						case 'a': strcpy(buf2, "\\e)a@"); j = 1; break;
-						case 'b': strcpy(buf2, "\\e)u@"); break;
-						case 'c': strcpy(buf2, "\\e)z@"); break;
-						case 'd': strcpy(buf2, "\\e)z@"); j = 1; break;
-						case 'e': strcpy(buf2, "\\e)A@"); break;
-						case 'f': strcpy(buf2, "\\e)A@"); j = 1; break;
+						if (c_cfg.rogue_like_commands) {
+							switch (choice) {
+							case 'a': strcpy(buf2, "\\e)z@"); j = 1; break;
+							case 'b': strcpy(buf2, "\\e)Z@"); break;
+							case 'c': strcpy(buf2, "\\e)a@"); break;
+							case 'd': strcpy(buf2, "\\e)a@"); j = 1; break;
+							case 'e': strcpy(buf2, "\\e)A@"); break;
+							case 'f': strcpy(buf2, "\\e)A@"); j = 1; break;
+							}
+						} else {
+							switch (choice) {
+							case 'a': strcpy(buf2, "\\e)a@"); j = 1; break;
+							case 'b': strcpy(buf2, "\\e)u@"); break;
+							case 'c': strcpy(buf2, "\\e)z@"); break;
+							case 'd': strcpy(buf2, "\\e)z@"); j = 1; break;
+							case 'e': strcpy(buf2, "\\e)A@"); break;
+							case 'f': strcpy(buf2, "\\e)A@"); j = 1; break;
+							}
 						}
 
 						/* ---------- Enter device name ---------- */
@@ -4078,7 +4089,8 @@ void interact_macros(void)
 						strcpy(buf2 + 5, buf);
 						break;
 					case 'c':
-						buf2[3] = 'f';
+						if (c_cfg.rogue_like_commands) buf2[3] = 't';
+						else buf2[3] = 'f';
 						buf2[4] = '*';
 						buf2[5] = 't';
 						buf2[6] = 0;
