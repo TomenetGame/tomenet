@@ -2333,27 +2333,27 @@ void do_weather() {
 	}
 
 	if (redraw) {
-	        if (screen_icky) Term_switch(0);
+		if (screen_icky) Term_switch(0);
 		for (i = 0; i < weather_elements; i++) {
 			/* only for elements within visible panel screen area */
 			if (weather_element_x[i] >= weather_panel_x &&
-    	        	    weather_element_x[i] < weather_panel_x + SCREEN_WID &&
-        	    	    weather_element_y[i] >= weather_panel_y &&
-        	    	    weather_element_y[i] < weather_panel_y + SCREEN_HGT) {
-        	    		if (weather_element_type[i] == 1) {
-	    	        	    	/* display raindrop */
-    				        Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
-	        		    	    PANEL_Y + weather_element_y[i] - weather_panel_y,
-		        	    	    TERM_BLUE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
+			    weather_element_x[i] < weather_panel_x + SCREEN_WID &&
+			    weather_element_y[i] >= weather_panel_y &&
+			    weather_element_y[i] < weather_panel_y + SCREEN_HGT) {
+				if (weather_element_type[i] == 1) {
+					/* display raindrop */
+					Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
+					    PANEL_Y + weather_element_y[i] - weather_panel_y,
+					    TERM_BLUE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
 				} else if (weather_element_type[i] == 2) {
-    	    			    	/* display snowflake */
-        			        Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
-        		    		    PANEL_Y + weather_element_y[i] - weather_panel_y,
-	        		    	    TERM_WHITE, '*');
+					/* display snowflake */
+					Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
+					    PANEL_Y + weather_element_y[i] - weather_panel_y,
+					    TERM_WHITE, '*');
 				}
 			}
 		}
-	        if (screen_icky) Term_switch(0);
+		if (screen_icky) Term_switch(0);
 		/* Update the screen */
 		if (!screen_icky) Term_fresh();
 		/* started to draw on a freshly updated panel? */
@@ -2421,7 +2421,7 @@ void do_weather() {
 		if (weather_gen_ticks == weather_gen_speed)
 			weather_gen_ticks = 0; 
 		else
-		    intensity--;
+			intensity--;
 
 		/* factor in received intensity */
 		intensity *= weather_intensity;
@@ -2504,23 +2504,23 @@ void do_weather() {
 /* move weather elements --------------------------------------------------- */
 
 	/* display and advance currently existing weather elements */
-        if (screen_icky) Term_switch(0);
+	if (screen_icky) Term_switch(0);
 	for (i = 0; i < weather_elements; i++) {
 		/* restore old tile before moving the weather element */
 		/* if panel view was freshly updated from server then no need */
 		if (!weather_panel_changed) {
 			/* only for elements within visible panel screen area */
-    	        	if (weather_element_x[i] >= weather_panel_x &&
-    	        	    weather_element_x[i] < weather_panel_x + SCREEN_WID &&
-        	    	    weather_element_y[i] >= weather_panel_y &&
-        	    	    weather_element_y[i] < weather_panel_y + SCREEN_HGT) {
-	            		/* restore original grid content */
-	    		        Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
-	    		    	    PANEL_Y + weather_element_y[i] - weather_panel_y,
-    	        	    	    panel_map_a[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
-    	        	    	    panel_map_c[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
-	            	}
-	        }
+			if (weather_element_x[i] >= weather_panel_x &&
+			    weather_element_x[i] < weather_panel_x + SCREEN_WID &&
+			    weather_element_y[i] >= weather_panel_y &&
+			    weather_element_y[i] < weather_panel_y + SCREEN_HGT) {
+				/* restore original grid content */
+				Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
+				    PANEL_Y + weather_element_y[i] - weather_panel_y,
+				    panel_map_a[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
+				    panel_map_c[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+			}
+		}
 
 		/* advance raindrops */
 		if (weather_element_type[i] == 1) {
@@ -2548,15 +2548,15 @@ void do_weather() {
 			}
 			/* only for elements within visible panel screen area */
 			else if (weather_element_x[i] >= weather_panel_x &&
-    	        	    weather_element_x[i] < weather_panel_x + SCREEN_WID &&
-        	    	    weather_element_y[i] >= weather_panel_y &&
-        	    	    weather_element_y[i] < weather_panel_y + SCREEN_HGT) {
-    	        	    	/* display raindrop */
-        		        Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
-        		    	    PANEL_Y + weather_element_y[i] - weather_panel_y,
-	        	    	    TERM_BLUE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
+			    weather_element_x[i] < weather_panel_x + SCREEN_WID &&
+			    weather_element_y[i] >= weather_panel_y &&
+			    weather_element_y[i] < weather_panel_y + SCREEN_HGT) {
+				/* display raindrop */
+				Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
+				    PANEL_Y + weather_element_y[i] - weather_panel_y,
+				    TERM_BLUE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
 #ifdef USE_SOUND_2010
-	        	    	weather_particles_seen++;
+				weather_particles_seen++;
 #endif
 			}
 		}
@@ -2568,13 +2568,13 @@ void do_weather() {
 			if (wind_west_effective) weather_element_x[i]++;
 			else if (wind_east_effective) weather_element_x[i]--;
 
-			/* pac-man effect for leaving screen to the left/right */			
+			/* pac-man effect for leaving screen to the left/right */
 			if (weather_element_x[i] < 1) weather_element_x[i] = MAX_WID - 2;
 			else if (weather_element_x[i] > MAX_WID - 2) weather_element_x[i] = 1;
 
 			/* left screen or reached destination? terminate it */
-			if (weather_element_y[i] >= MAX_HGT - 2 ||
-			    weather_element_y[i] >= weather_element_ydest[i]) {
+			if (weather_element_y[i] > MAX_HGT - 2 ||
+			    weather_element_y[i] > weather_element_ydest[i]) {
 				/* excise this effect */
 				for (j = i + 1; j < weather_elements; j++) {
 					weather_element_x[j - 1] = weather_element_x[j];
@@ -2587,20 +2587,20 @@ void do_weather() {
 			}
 			/* only for elements within visible panel screen area */
 			else if (weather_element_x[i] >= weather_panel_x &&
-    	        	    weather_element_x[i] < weather_panel_x + SCREEN_WID &&
-        	    	    weather_element_y[i] >= weather_panel_y &&
-        	    	    weather_element_y[i] < weather_panel_y + SCREEN_HGT) {
-    	        	    	/* display snowflake */
-        		        Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
-        		    	    PANEL_Y + weather_element_y[i] - weather_panel_y,
-        		    	    TERM_WHITE, '*');
+			    weather_element_x[i] < weather_panel_x + SCREEN_WID &&
+			    weather_element_y[i] >= weather_panel_y &&
+			    weather_element_y[i] < weather_panel_y + SCREEN_HGT) {
+				/* display snowflake */
+				Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
+				    PANEL_Y + weather_element_y[i] - weather_panel_y,
+				    TERM_WHITE, '*');
 #ifdef USE_SOUND_2010
-        		    	weather_particles_seen++;
+				weather_particles_seen++;
 #endif
 			}
 		}
 	}
-        if (screen_icky) Term_switch(0);
+	if (screen_icky) Term_switch(0);
 
 	/* Update the screen */
 	if (!screen_icky) Term_fresh();
