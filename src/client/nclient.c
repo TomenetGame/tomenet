@@ -4653,7 +4653,7 @@ void do_flicker(){
 
 void do_mail(){
 #ifdef CHECK_MAIL
-#ifdef SET_UID
+ #ifdef SET_UID
 	static int mailticks=0;
 	static struct timespec lm;
 	char mpath[160],buffer[160];
@@ -4661,11 +4661,11 @@ void do_mail(){
 	int uid;
 	struct passwd *pw;
 
-#ifdef NETBSD
+  #ifdef NETBSD
 	strcpy(mpath,"/var/mail/");
-#else
+  #else
 	strcpy(mpath,"/var/spool/mail/");
-#endif
+  #endif
 
 	uid=getuid();
 	pw=getpwuid(uid);
@@ -4676,7 +4676,7 @@ void do_mail(){
 	if(ticks-mailticks >= 300){	/* testing - too fast */
 		struct stat inf;
 		if(!stat(mpath,&inf)){
-#ifndef _POSIX_C_SOURCE
+  #ifndef _POSIX_C_SOURCE
 			if(inf.st_size!=0){
 				if(inf.st_mtimespec.tv_sec>lm.tv_sec || (inf.st_mtimespec.tv_sec==lm.tv_sec && inf.st_mtimespec.tv_nsec>lm.tv_nsec)){
 					lm.tv_sec=inf.st_mtimespec.tv_sec;
@@ -4685,7 +4685,7 @@ void do_mail(){
 					c_msg_print(buffer);
 				}
 			}
-#else
+  #else
 			if(inf.st_size!=0){
 				if(inf.st_mtime>lm.tv_sec || (inf.st_mtime==lm.tv_sec && inf.st_mtimensec>lm.tv_nsec)){
 					lm.tv_sec=inf.st_mtime;
@@ -4694,11 +4694,11 @@ void do_mail(){
 					c_msg_print(buffer);
 				}
 			}
-#endif
+  #endif
 		}
 		mailticks=ticks;
 	}
-#endif
+ #endif
 #endif /* CHECK_MAIL */
 }
 
@@ -4706,6 +4706,7 @@ void do_mail(){
 void do_ping()
 {
 	static int last_ping = 0, last_sfx = 0;
+	static int time_stamp_hour = -1;
 
 	if (lagometer_enabled && (ticks - last_ping >= 10)) {
 		last_ping = ticks;
@@ -4750,10 +4751,20 @@ void do_ping()
 			sound_weather(-1); //fade out, insufficient particles to support the noise ;)
 		}
 	} else weather_sound_change = 0;
-#ifdef SOUND_SDL
+ #ifdef SOUND_SDL
 	if (weather_fading) weather_handle_fading();
+ #endif
 #endif
-#endif
+
+	/* Handle chat time-stamping too - C. Blue */
+	if (c_cfg.time_stamp_chat) {
+		time_t ct = time(NULL);
+		struct tm* ctl = localtime(&ct);
+		if (ctl->tm_hour != time_stamp_hour) {
+			time_stamp_hour = ctl->tm_hour;
+			c_msg_format("\374\376\377y[%02d:00h]", time_stamp_hour);
+		}
+	}
 }
 
 int Send_sip(void) {

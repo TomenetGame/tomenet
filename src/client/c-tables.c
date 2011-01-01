@@ -620,9 +620,10 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.recall_flicker,	FALSE,	1,	1, 10, TRUE,
 	"recall_flicker",		"Flicker messages in recall" },
 
-	/* currently problematic: best might be to move line-splitting to client side, from util.c */
-	{ &c_cfg.time_stamp_chat,	FALSE,	2,	0, 11, FALSE,	/* former flow_by_smell */
-	"time_stamp_chat",		"Add time stamps to chat lines" },
+	/* currently problematic: best might be to move line-splitting to client side, from util.c
+	   For now, let's just insert hourly chat marker lines instead. - C. Blue */
+	{ &c_cfg.time_stamp_chat,	FALSE,	4,	0, 11, TRUE,
+	"time_stamp_chat",		"Add hourly time stamps to chat window" },
 
 	{ &c_cfg.page_on_privmsg,	FALSE,	4,	1, 12, TRUE,
 	"page_on_privmsg",		"Beep when receiving a private message" },
