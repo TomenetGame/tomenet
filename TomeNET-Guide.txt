@@ -1,7 +1,7 @@
 .=============+============+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 31. Dec 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 2. Jan 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -481,7 +481,7 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
 #       displays the high scores (same as ~c).
 |       displays the unique monster list (same as ~1).
 X       quickly swap between two equippable items. They must be inscribed
-        '@w0'. (It's basically just the macro 'w0' bound to shift+x key.)
+        '@x0'. (It's basically just the macro 'x0' bound to shift+x key.)
 _       Two uses, regarding a) fountains or b) item piles:
         Main: Drink from a fountain. You must stand on the fountain to do this.
         Fountains can have good/bad/no effects. There is no fountain of death,
