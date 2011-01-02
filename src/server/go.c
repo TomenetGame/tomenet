@@ -339,15 +339,17 @@ void go_engine_terminate(void) {
 	terminating = FALSE;
 #endif
 
+	/* close pipes to it */
+	if (go_engine_up) {
+		fclose(fr);
+		fclose(fw);
+		close(pipeto[1]);
+		close(pipefrom[0]);
+		go_engine_up = FALSE;
+	}
+
 	/* No zombie child */
 	waitpid(nPid, &status_dummy, WNOHANG);
-
-	/* close pipes to it */
-	fclose(fr);
-	fclose(fw);
-	close(pipeto[1]);
-	close(pipefrom[0]);
-	go_engine_up = FALSE;
 
 	s_printf("GO_ENGINE: TERMINATED\n");
 }
@@ -1961,6 +1963,7 @@ static void readFromPipe(char *buf, int *cont) {
 		ch = fgetc(fr);
 		if (!ch) break;
 		if (ch == EOF) {
+//printf("feof: %d, ferror: %d\n", feof(fr), ferror(fr));
 			(*cont) = 0;
 			break;
 		}
