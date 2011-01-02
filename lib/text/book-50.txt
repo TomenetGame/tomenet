@@ -1,10 +1,10 @@
                   /----------------------------------------\
                  <    Adventurer's guide to Middle Earth    >
                   \----------------------------------------/
-                                   
+
 
 ==============================================================================
-	            	    Welcome to TomeNET
+                            Welcome to TomeNET
 
 If you are new to TomeNET, read the 'TomeNET-Guide.txt' in your TomeNET
 directory. Latest version is available online at www.c-blue.de/rogue.html.

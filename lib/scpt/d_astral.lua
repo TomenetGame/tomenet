@@ -63,7 +63,7 @@ POWERBOLT = add_spell
 }
 POWERBEAM = add_spell
 {
-	["name"] = 	"Power Blast",
+	["name"] = 	"Power Ray",
         ["school"] = 	SCHOOL_ASTRAL,
         ["spell_power"] = 0,
         ["level"] = 	10,
@@ -97,7 +97,7 @@ POWERBEAM = add_spell
 }
 POWERBALL = add_spell
 {
-	["name"] = 	"Power Ball",
+	["name"] = 	"Power Blast",
         ["school"] = 	SCHOOL_ASTRAL,
         ["spell_power"] = 0,
         ["level"] = 	15,
@@ -204,7 +204,7 @@ INTENSIFY = add_spell
 }
 POWERCLOUD = add_spell
 {
-	["name"] = 	"Power Cloud",
+	["name"] = 	"Sphere of Destruction",
         ["school"] = 	SCHOOL_ASTRAL,
         ["spell_power"] = 0,
         ["level"] = 	50,

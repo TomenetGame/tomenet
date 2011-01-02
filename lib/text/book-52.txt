@@ -1,10 +1,10 @@
             /---------------------------------------------+
-           /     ToME-NET Gazette                         |
-           |                          issued 11/Nov/2008  /
+           /     TomeNET Gazette                          |
+           |                          issued 24/Dec/2010  /
            +---------------------------------------------/
 
 For a full manual on the game, read the file 'TomeNET-Guide.txt'
-in your TomeNET folder, or read online at www.c-blue.de/rogue
+in your TomeNET folder, or read online at www.tomenet.net.
 
 Press : to chat with other players.
 Press SHIFT+direction to run swiftly (numlock must be off).
@@ -14,6 +14,7 @@ Press SHIFT+P to form a party with a friend.
 
     Administrators are Moltor, God/Sandman, Mikael and C. Blue.
     If you find a bug, report it via /bug command.
+    Submit suggestions via /rfe command or write to the forum.
     If you have any questions, check TomNET-Guide.txt first, and
     don't hesitate to ask your fellow players if you need any help.
 

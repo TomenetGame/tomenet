@@ -85,7 +85,8 @@ A:10/1
 N:5:Cure Poison
 G:,:d
 I:80:12:500
-W:10:0:1:50
+#W:10:0:1:50
+W:10:0:1:30
 A:10/1
 
 N:6:Cure Blindness
@@ -98,7 +99,8 @@ A:10/1
 N:7:Cure Paranoia
 G:,:d
 I:80:14:500
-W:10:0:1:50
+#W:10:0:1:50
+W:10:0:1:40
 A:10/1
 
 N:8:Cure Confusion
@@ -2151,7 +2153,8 @@ F:FOUNTAIN
 N:264:Slow Poison
 G:!:d
 I:71:26:0
-W:1:0:4:25
+#W:1:0:4:25
+W:1:0:4:15
 A:1/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
@@ -2159,7 +2162,8 @@ F:FOUNTAIN
 N:265:Neutralize Poison
 G:!:d
 I:71:27:0
-W:5:0:4:75
+#W:5:0:4:75
+W:5:0:4:40
 A:5/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
@@ -4288,7 +4292,7 @@ I:37:2:0
 W:16:0:160:500
 #A:20/1
 A:16/1
-P:12:1d4:-2:0:0
+P:12:1d4:-1:0:0
 
 N:557:Cord Armour~
 G:(:y
@@ -4325,9 +4329,10 @@ N:561:Stone and Hide Armour~
 G:(:U
 I:36:15:0
 #W:30:0:200:500
-W:20:0:200:900
+#W:20:0:200:900
+W:20:0:170:900
 #A:30/7
-A:20/4
+A:20/5
 P:15:1d1:-1:0:0
 
 ### Trapping Kits 
@@ -6252,7 +6257,7 @@ P:0:1d1:0:0:0
 F:EASY_KNOW
 
 N:856:& Massive Piece~ of Mithril
-G:*:G
+G:*:B
 I:52:6:0
 W:110:0:2500:10000
 #A:110/64
@@ -6834,7 +6839,7 @@ I:36:17:0
 #W:40:0:180:1500
 #A:40/10
 W:20:0:180:1500
-A:20/8
+A:20/9
 P:17:1d1:-1:0:0
 
 N:934:& Talisman~
@@ -7197,7 +7202,7 @@ I:36:13:0
 #A:30/2
 W:25:0:100:250
 A:25/3
-P:8:1d2:-1:0:0
+P:8:1d2:0:0:0
 F:IGNORE_WATER
 
 #974 is Astral Grimoire
@@ -7441,13 +7446,15 @@ $NEW_TOMES$F:FULL_NAME | EASY_KNOW | IGNORE_WATER | ACTIVATE
 N:1004:& Costume~
 G:(:o
 I:36:24:0
-$HALLOWEEN$W:20:0:10:100
-$HALLOWEEN$A:20/1
-$HALLOWEEN!W:127:255:10:100
-$HALLOWEEN!A:127/255
+#$HALLOWEEN$W:20:0:10:100
+#$HALLOWEEN$A:20/1
+#$HALLOWEEN!W:127:255:10:100
+#$HALLOWEEN!A:127/255
 # For xmas
-#$XMAS$W:20:0:10:100
-#$XMAS$A:20/4
+$XMAS$W:20:0:10:100
+$XMAS$A:20/4
+$XMAS!W:127:255:10:100
+$XMAS!A:127/255
 P:1:0d0:0:0:0
 F:IGNORE_WATER | FULL_NAME | EASY_KNOW
 
@@ -7670,6 +7677,14 @@ W:127:255:1:0
 A:127/255
 P:0:0d0:0:0:0
 F:EASY_KNOW
+
+# The Battered Pick of Moltor, the High-Elven Ranger
+N:1032:& Battered Pick~
+G:\:D
+I:20:8:1
+W:10:10:10:2500
+P:0:1d4:9:12:0
+F:INSTA_ART | TUNNEL
 
 
 #N:(No.):(name)

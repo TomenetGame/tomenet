@@ -21,76 +21,76 @@ V:4.0.0
 N:0:Bilbo the Friendly(Hobbit)
 I:20000:170:108:5:15
 C:120:100:80
-L:Elf | Half-Elf | High-Elf | Dunadan | Hobbit | Dwarf
+L:Maia | Elf | Half-Elf | High-Elf | Dunadan | Hobbit | Dwarf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:1:Uldrik(Human)
 I:20000:170:108:1:1
 C:120:100:80
-L:Dunadan | Hobbit | Human |
+L:Maia | Dunadan | Hobbit | Human |
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 
 N:2:Otick(Human)
 I:100:170:108:4:10
 C:120:100:80
-L:Dunadan | Hobbit | Human |
+L:Maia | Dunadan | Hobbit | Human |
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 
 N:3:Merana(Human)
 I:0:170:108:1:1
 C:200:100:95
-L:Human
+L:Maia | Human
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 
 N:4:Mirimbar(High-Elf)
 I:0:170:108:1:1
 C:120:100:80
-L:High-Elf | Half-Elf | Elf
+L:Maia | High-Elf | Half-Elf | Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:5:Raistlin the Chicken(Human)
 I:20000:175:108:4:12
 C:120:100:80
-L:Human
+L:Maia | Human
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:6:Sultan the Midget(Gnome)
 I:30000:170:107:5:15
 C:120:100:80
-L:Gnome | Dwarf
+L:Maia | Gnome | Dwarf
 H:Half-Orc | Half-Troll | Dark-Elf | Vampire
 
 N:7:Lyar-el the Comely(Elf)
 I:30000:165:107:6:18
 C:120:100:80
-L:Elf | Half-Elf | High-Elf
+L:Maia | Elf | Half-Elf | High-Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:8:Kon-Dar the Ugly(Half-Orc)
 I:5000:210:115:5:7
 C:120:100:80
-L:Half-Orc | Half-Troll | Goblin
+L:Maia | Half-Orc | Half-Troll | Goblin
 H:Gnome | Dwarf | Human | Elf | Half-Elf | High-Elf | Vampire | Dunadan
 
 N:9:Darg-Low the Grim(Human)
 I:10000:190:111:4:9
 C:120:100:80
-L:Human
+L:Maia | Human
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:10:Decado the Handsome(Dunadan)
 I:25000:200:112:4:10
 C:120:100:80
-L:Human | Dunadan
+L:Maia | Human | Dunadan
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:11:Wieland the Smith(Dwarf)
 I:30000:200:112:4:5
 C:120:100:80
-L:Gnome | Dwarf
+L:Maia | Gnome | Dwarf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:12:Arnold the Beastly(Barbarian)
@@ -101,25 +101,25 @@ H:Vampire
 N:13:Arndal Beast-Slayer(Elf)
 I:10000:185:110:5:9
 C:120:100:80
-L:Elf | Half-Elf | High-Elf
+L:Maia | Elf | Half-Elf | High-Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:14:Eddie Beast-Master(Half-Orc)
 I:25000:190:115:5:7
 C:120:100:80
-L:Half-Orc | Half-Troll | Goblin
+L:Maia | Half-Orc | Half-Troll | Goblin
 H:Gnome | Dwarf | Human | Elf | Half-Elf | High-Elf | Vampire | Dunadan
 
 N:15:Oglign Dragon-Slayer(Dwarf)
 I:30000:195:112:4:8
 C:120:100:80
-L:Gnome | Dwarf
+L:Maia | Gnome | Dwarf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:16:Aragorn(Dunadan)
 I:20000:200:112:4:10
 C:120:100:80
-L:Human | Dunadan
+L:Maia | Human | Dunadan
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:17:Sondar(Human)
@@ -130,14 +130,14 @@ H:Vampire
 N:18:Celebor(Half-Elf)
 I:100:170:108:4:10
 C:120:100:80
-L:Dunadan | Hobbit | Human |
+L:Maia | Dunadan | Hobbit | Human |
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 
 N:19:Sharra(Human)
 I:25000:200:112:4:10
 C:120:100:80
-L:Human | Dunadan
+L:Maia | Human | Dunadan
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:20:Hjolgar(Barbarian)
@@ -176,84 +176,84 @@ H:Vampire
 N:25:Palano(Draconian)
 I:0:210:115:6:6
 C:120:100:80
-L:Draconian
+L:Maia | Draconian
 H:Vampire
 
 N:26:Ludwig the Humble(Dwarf)
 I:5000:175:109:6:15
 C:120:100:80
-L:Gnome | Dwarf
+L:Maia | Gnome | Dwarf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:27:Gunnar the Paladin(Half-Troll)
 I:10000:185:110:5:23
 C:120:100:80
-L:Half-Orc | Half-Troll | Goblin
+L:Maia | Half-Orc | Half-Troll | Goblin
 H:Gnome | Dwarf | Human | Elf | Half-Elf | High-Elf
 
 N:28:Torin the Chosen(High-Elf)
 I:25000:180:107:6:20
 C:120:100:80
-L:High-Elf | Half-Elf | Elf
+L:Maia | High-Elf | Half-Elf | Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:29:Sarastro the Wise(Human)
 I:30000:185:109:5:15
 C:120:100:80
-L:Dunadan | Hobbit | Human |
+L:Maia | Dunadan | Hobbit | Human |
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 
 N:30:Mauser the Chemist(Half-Elf)
 I:10000:190:111:5:8
 C:120:100:80
-L:Dunadan | Hobbit | Human |
+L:Maia | Dunadan | Hobbit | Human |
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 
 N:31:Wizzle the Chaotic(Hobbit)
 I:10000:190:110:6:8
 C:120:100:80
-L:Elf | Half-Elf | High-Elf | Dunadan | Hobbit | Dwarf
+L:Maia | Elf | Half-Elf | High-Elf | Dunadan | Hobbit | Dwarf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 
 N:32:Midas the Greedy(Gnome)
 I:15000:200:116:6:9
 C:120:100:80
-L:Gnome | Dwarf
+L:Maia | Gnome | Dwarf
 H:Half-Orc | Half-Troll | Dark-Elf | Vampire
 
 N:33:Ja-Far the Alchemist(Elf)
 I:15000:220:111:4:9
 C:120:100:80
-L:Elf | Half-Elf | High-Elf
+L:Maia | Elf | Half-Elf | High-Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:34:Ariel the Sorceress(Half-Elf)
 I:20000:200:110:7:8
 C:120:100:80
-L:Dunadan | Hobbit | Human |
+L:Maia | Dunadan | Hobbit | Human |
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 
 N:35:Buggerby the Great(Gnome)
 I:20000:215:113:6:10
 C:120:100:80
-L:Gnome | Dwarf
+L:Maia | Gnome | Dwarf
 H:Half-Orc | Half-Troll | Dark-Elf | Vampire
 
 N:36:Inglorian the Mage(Human)
 I:30000:200:110:7:10
 C:120:100:80
-L:Dunadan | Hobbit | Human |
+L:Maia | Dunadan | Hobbit | Human |
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 
 N:37:Luthien Starshine(High-Elf)
 I:30000:175:110:5:11
 C:120:100:80
-L:High-Elf | Half-Elf | Elf
+L:Maia | High-Elf | Half-Elf | Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:38:Gary Gygaz(Half-Troll)
@@ -261,7 +261,7 @@ N:38:Gary Gygaz(Half-Troll)
 I:30000:200:120:10:5
 C:120:100:80
 #L:Rogue
-L:Half-Orc | Half-Troll | Goblin
+L:Maia | Half-Orc | Half-Troll | Goblin
 H:Gnome | Dwarf | Human | Elf | Half-Elf | High-Elf
 
 N:39:Histor the Goblin(Goblin)
@@ -287,69 +287,69 @@ H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 N:42:Dolaf the Greedy(Human)
 I:10000:175:108:4:12
 C:120:100:80
-L:Dunadan | Hobbit | Human |
+L:Maia | Dunadan | Hobbit | Human |
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 
 N:43:Odnar the Sage(High-Elf)
 I:15000:120:105:6:16
 C:120:100:80
-L:High-Elf | Half-Elf | Elf
+L:Maia | High-Elf | Half-Elf | Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:44:Gandar the Neutral(Dark-Elf)
 I:25000:120:110:7:19
 C:120:100:80
-L:Dark-Elf
+L:Maia | Dark-Elf
 H:High-Elf | Half-Elf | Elf
 #H:Half-Orc | Half-Troll
 
 N:45:Ro-sha the Patient(Elf)
 I:30000:140:105:6:12
 C:120:100:80
-L:Elf | Half-Elf | High-Elf
+L:Maia | Elf | Half-Elf | High-Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:46:N'rak the Summoner(Human)
 I:10000:175:108:4:12
 C:120:100:80
-L:Human | Dunadan
+L:Maia | Human | Dunadan
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:47:Esperion the Beastlover(High-Elf)
 I:15000:120:105:6:16
 C:120:100:80
-L:High-Elf | Half-Elf | Elf
+L:Maia | High-Elf | Half-Elf | Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:48:Flarim the Shopkeeper(Dunadan)
 I:25000:120:110:7:19
 C:120:100:80
-L:Human | Dunadan
+L:Maia | Human | Dunadan
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:49:Tril-akheb the Supreme(Elf)
 I:30000:140:105:6:12
 C:120:100:80
-L:Elf | Half-Elf | High-Elf
+L:Maia | Elf | Half-Elf | High-Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:50:Dorchel(Elf)
 I:30000:140:105:6:12
 C:120:100:80
-L:Elf | Half-Elf | High-Elf
+L:Maia | Elf | Half-Elf | High-Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:51:Galadriel(High-Elf)
 I:15000:120:105:6:16
 C:120:100:80
-L:High-Elf | Half-Elf | Elf
+L:Maia | High-Elf | Half-Elf | Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:52:Celeborn(High-Elf)
 I:15000:120:105:6:16
 C:120:100:80
-L:High-Elf | Half-Elf | Elf
+L:Maia | High-Elf | Half-Elf | Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:53:Aulendil(Elf)
@@ -379,71 +379,71 @@ H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 N:57:Turgon(High-Elf)
 I:30000:120:105:6:16
 C:120:100:80
-L:High-Elf | Half-Elf | Elf
+L:Maia | High-Elf | Half-Elf | Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:58:Pengolodh(High-Elf)
 I:0:120:105:6:16
 C:120:100:80
-L:High-Elf | Half-Elf | Elf
+L:Maia | High-Elf | Half-Elf | Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:59:Aerandir(High-Elf)
 I:0:120:105:6:16
 C:120:100:80
-L:High-Elf | Half-Elf | Elf
+L:Maia | High-Elf | Half-Elf | Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:60:Celebrimbor(High-Elf)
 I:0:120:105:6:16
 C:120:100:80
-L:High-Elf | Half-Elf | Elf
+L:Maia | High-Elf | Half-Elf | Elf
 #L:Warrior | 
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:61:Lomelosse(High-Elf)
 I:0:120:105:6:16
 C:120:100:80
-L:High-Elf | Half-Elf | Elf | 
+L:Maia | High-Elf | Half-Elf | Elf | 
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:62:Arlindel(High-Elf)
 I:0:120:105:6:16
 C:120:100:80
-L:High-Elf | Half-Elf | Elf
+L:Maia | High-Elf | Half-Elf | Elf
 #L:Harper | Ranger
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:63:Sulraen(High-Elf)
 I:0:120:105:6:16
 C:120:100:80
-L:High-Elf | Half-Elf | Elf
+L:Maia | High-Elf | Half-Elf | Elf
 #L:Mage | Sorceror
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:64:Firiel(High-Elf)
 I:0:120:105:6:16
 C:120:100:80
-L:High-Elf | Half-Elf | Elf | 
+L:Maia | High-Elf | Half-Elf | Elf | 
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:65:Earendur(High-Elf)
 I:0:120:105:6:16
 C:120:100:80
-L:High-Elf | Half-Elf | Elf
+L:Maia | High-Elf | Half-Elf | Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:66:Glorfindel(High-Elf)
 I:0:120:105:6:16
 C:120:100:80
-L:High-Elf | Half-Elf
+L:Maia | High-Elf | Half-Elf
 #L:Ranger
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:67:Ecthelion(High-Elf)
 I:0:120:105:6:16
 C:120:100:80
-L:High-Elf | Half-Elf
+L:Maia | High-Elf | Half-Elf
 #L:Paladin
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
@@ -457,7 +457,7 @@ H:Vampire
 N:69:Barliman Butterbur(Human)
 I:100:170:108:4:10
 C:120:100:80
-L:Dunadan | Hobbit | Human |
+L:Maia | Dunadan | Hobbit | Human |
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 #added a truly neutral one.. - C. Blue

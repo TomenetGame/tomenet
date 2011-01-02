@@ -51,5 +51,78 @@ eg.
 [5, 6](11) {you lose with the first roll}
 
 
+==============================================================================
+3. 'Go challenge'
+
+You will play the ~3000 year old asian strategy game of Go, also often
+dubbed 'the divine game', on a 9x9 board against an opponent that gets
+picked for you based on your past results, for cold hard money!
+
+Progress: Two players take turns placing black and white stones on the board
+respectively. Those stones cannot be moved once placed, they can however be
+captured (explained below). There is no limit to the stone supply.
+Black moves first (which is an advantage).
+
+Goal (chinese rules):
+Surround as much 'territory' as possible with your stones (territory just
+means an area of the board). Each grid you surround counts 1 point, and
+every stone you place also counts 1 point. The player who ends up with more
+territory wins.
+
+Capturing: A stone has up to four 'liberties', which means free board grids
+adjacent to it: North, south, east and west. If the opponent places a stone
+on the last liberty of your stone, it is removed from the board.
+Friendly stones that are adjacent to each other horizontally or vertically
+(just not diagonally) count as 'connected' and share their liberties,
+forming chains of stones that can grow quite large and end up with a lot of
+liberties. A chain of stones is also captured accordingly if ALL of its
+shared liberties are occupied by opponent stones.
+Note that stones on the edges of the board have less than 4 liberties.
+
+Ko rule ('Eternity'): Repetition of a board position is forbidden. If you
+want to 'capture back' (common application of the Ko rule), you will have
+to play elsewhere first to change the board layout.
+
+Pass: If a player wishes to skip his right of making a move, he may pass.
+
+End of the game: A player may resign the game.
+Also, if both players pass consecutively, the game ends and the territory
+of each player on the board is counted to determine who wins.
+
+Examples on a 5x5 board (o = stone, . = free grid):
+
+\{Dooo\{wo\{u.
+\{Do\{u.\{Do\{wo\{u.  \{WThe black group has only 1 liberty left (the '.' inside),
+\{Dooo\{wo\{u.  \{Wif w plays on that '.' the whole black group is therefore captured.
+\{woooo\{u.  \{WThe white group has 8 liberties on its outside so it's quite safe yet.
+\{u.....
+
+\{u.\{Do\{u..\{Do  \{WDue to having at least 'two eyes' (two _separated_ enclosed liberties)
+\{u..\{Dooo  \{Wneiter group can be captured since it would require two moves at once.
+\{Dooo\{woo  \{WA group that has at least two eyes is therefore said to be 'alive'.
+\{woooo\{u.  \{WSince there is nothing left to do, both players will pass and the game
+\{wo\{u.\{wo\{u..  \{Wends. The score is: black 13 - white 12. Black wins by 1 point.
+
+Strategy:
+-Stones have a balance between securing territory (if they stand lower, ie on
+ 3rd line) and radiating influence (if they stand higher, 4th line or more
+ towards board centre)
+-Moves on the first line should be avoided in the beginning of the game,
+ because they neither secure territory below them, nor do they have influence
+ because they are much too far away from the centre.
+-Typical opening moves on 9x9 are within the imaginary square C3,C7,G7,G3.
+ Other moves, ie moves on the 1st or 2nd board lines, are too close to the edge
+ to be good openers.
+-Separate & Connect is an important principle:
+ Cut stones of your opponent apart from each other if possible.
+ Keep your own stones somewhat in connection, so they can support each other.
+-Note that the Ko rule (see above) prevents you from immediately recapturing a
+ single stone of your opponent, which just captured your own stone, since the
+ previous board position would be repeated by that. So, play elsewhere first,
+ then you may recapture.
+
+Nice read ;)
+http://users.eniinternet.com/bradleym/America.html
+
 
 Enjoy!

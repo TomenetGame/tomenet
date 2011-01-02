@@ -329,6 +329,7 @@ T:100:71:29
 #potion of Healing
 T:100:71:38
 T:100:71:38
+T:100:71:38
 #scroll of Teleportation
 T:90:70:9
 #potion of Restore Mana
@@ -481,7 +482,8 @@ G:+:o
 W:0
 
 N:15:Casino
-A:13:0:9:10:11:12
+F:SPECIAL
+A:13:66:9:10:11:12
 O:17:17:17:17:17:17
 G:+:s
 W:0

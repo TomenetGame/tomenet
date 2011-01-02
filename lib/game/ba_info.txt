@@ -312,3 +312,7 @@ I:58:0:i:2
 N:65:Redeem deed for a blessing
 C:0:0:0
 I:59:0:b:2
+
+N:66:Go challenge
+C:0:0:0
+I:60:0:g:0

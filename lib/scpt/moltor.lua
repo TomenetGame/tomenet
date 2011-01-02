@@ -470,7 +470,7 @@ list = {
 "Who painted 'Reclining Nude from the Back' in 1917 __________", "Modigliani",
 "Which international movement originated in Zurich Feb. 5, 1916, in the Cabaret Voltaire ____", "Dada",
 "Which Italian art movement was initiated by the poet Filippo Tommaso Marinetti in 1909 ________", "Futurism",
-"German 'Die Brücke' and 'Der Blaue Reiter' where part of which art movement ______ _____________", "German Expressionism",
+"German 'Die Bruecke' and 'Der Blaue Reiter' where part of which art movement ______ _____________", "German Expressionism",
 "Which 1942 painting, portraying a group of people in a night bar, is arguably Edward Hopper's best-known __________", "Nighthawks",
 "Which major 20th century American realist was born in 1882 ______ ______", "Edward Hopper",
 "The Solomon Guggenheim Museum is in which city ___ ____", "New York",

@@ -867,3 +867,9 @@ function get_spell_ftk(s)
         if not __tmp_spells[s].ftk then return 0
         else return __tmp_spells[s].ftk end
 end
+
+-- Returns if a spell is used on players instead of monsters (friendly spell)
+function get_spell_friendly(s)
+        if not __tmp_spells[s].friendly then return 0
+        else return __tmp_spells[s].friendly end
+end
