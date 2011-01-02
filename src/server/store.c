@@ -363,8 +363,8 @@ static s64b price_item_player_store(int Ind, object_type *o_ptr) {
 	/* Get the value of one of the items */
 	price = object_value_real(0, o_ptr);
 
-	/* Player stores have BM prices as minimum */
-	price *= 4;
+	/* Player stores have an increased minimum price */
+	price *= 2;
 
 	/* Add to this any extra price the player inscribed */
 	final_price = player_store_inscribed(o_ptr, price);
