@@ -1320,11 +1320,11 @@ bool askfor_aux(char *buf, int len, char mode)
 
 	if (mode & ASKFOR_CHATTING) {
 		strncpy(message_history_chat[hist_chat_end], buf, sizeof(*message_history_chat) - 1);
-		buf[sizeof(*message_history_chat) - 1] = '\0';
+		message_history_chat[hist_chat_end][sizeof(*message_history_chat) - 1] = '\0';
 	}
 	else if (!nohist) {
 		strncpy(message_history[hist_end], buf, sizeof(*message_history) - 1);
-		buf[sizeof(*message_history) - 1] = '\0';
+		message_history[hist_end][sizeof(*message_history) - 1] = '\0';
 	}
 
 	/* Process input */
