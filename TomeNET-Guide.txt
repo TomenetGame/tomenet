@@ -2650,6 +2650,9 @@ The wizard will lead you through three steps with detailed on-screen
 instructions, allowing you to create macros from a couple of pre-defined
 command choices which should cover almost all situations.
 
+If the option 'Rogue-like commands' is set to 'yes' when creating a macro in
+the macro wizard, rogue-like command keys will be used in the macro action.
+
 (The macro type, ie command/hybrid/normal will be chosen automatically for you,
 same as when using Quick'n'Dirty macro creation.)
 
