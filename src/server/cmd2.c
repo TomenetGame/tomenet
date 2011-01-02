@@ -16,6 +16,16 @@
 #include "angband.h"
 
 
+/* Amount of experience a player gets for disarming a trap. - C. Blue
+   (It's personal, not distributed over the party)
+   diff,lvl go from 2,2 to 12,38 atm (some traps disabled).
+   dlev was added to the formula, because some traps (arrow/bolt traps)
+   depend on dungeon depth for determining the effect, too. */
+#define TRAP_EXP(t_idx, dlev) \
+    (((t_info[t_idx].difficulty * t_info[t_idx].minlevel) + ((dlev) > 5 ? (dlev) - 5 : 0)) * \
+    (200 - t_info[t_idx].probability) / 100)
+
+
 /*
  * Go up one level                                      -RAK-
  */
@@ -225,7 +235,7 @@ void do_cmd_go_up(int Ind)
 				if (i == Ind) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->party == p_ptr->party)
-					msg_format(i, "\374\377G%s has left %s..", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
+					msg_format(i, "\374\377G%s has left %s..", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
 			}
 #endif
 		}
@@ -237,8 +247,9 @@ void do_cmd_go_up(int Ind)
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
+				if (Players[i]->wpos.wz <= 0) continue; /* must be in same dungeon/tower */
 				if (Players[i]->party == p_ptr->party)
-				msg_format(i, "\377G[%s took a staircase upwards to %dft..]", p_ptr->name, (wpos->wz + 1) * 50);
+				msg_format(i, "\374\377G[%s took a staircase upwards to %dft..]", p_ptr->name, (wpos->wz + 1) * 50);
 			}
 #else
 			if (one_way && p_ptr->party)
@@ -246,8 +257,9 @@ void do_cmd_go_up(int Ind)
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
+				if (Players[i]->wpos.wz <= 0) continue; /* must be in same dungeon/tower */
 				if (Players[i]->party == p_ptr->party)
-				msg_format(i, "\377G[%s took a staircase upwards to %dft..]", p_ptr->name, (wpos->wz + 1) * 50);
+				msg_format(i, "\374\377G[%s took a staircase upwards to %dft..]", p_ptr->name, (wpos->wz + 1) * 50);
 			}
 #endif
 		} else {
@@ -258,8 +270,9 @@ void do_cmd_go_up(int Ind)
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
+				if (Players[i]->wpos.wz <= 0) continue; /* must be in same dungeon/tower */
 				if (Players[i]->party == p_ptr->party)
-					msg_format(i, "\377G[%s took a staircase upwards to %dft..]", p_ptr->name, (wpos->wz + 1) * 50);
+					msg_format(i, "\374\377G[%s took a staircase upwards to %dft..]", p_ptr->name, (wpos->wz + 1) * 50);
 			}
 #else
 			if (one_way && p_ptr->party)
@@ -267,8 +280,9 @@ void do_cmd_go_up(int Ind)
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
+				if (Players[i]->wpos.wz <= 0) continue; /* must be in same dungeon/tower */
 				if (Players[i]->party == p_ptr->party)
-					msg_format(i, "\377G[%s took a staircase upwards to %dft..]", p_ptr->name, (wpos->wz + 1) * 50);
+					msg_format(i, "\374\377G[%s took a staircase upwards to %dft..]", p_ptr->name, (wpos->wz + 1) * 50);
 			}
 #endif
 		}
@@ -333,7 +347,7 @@ static bool between_effect(int Ind, cave_type *c_ptr)
 	struct c_special *cs_ptr;
 	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
-	if (!(cs_ptr=GetCS(c_ptr, CS_BETWEEN))) return (FALSE);
+	if (!(cs_ptr = GetCS(c_ptr, CS_BETWEEN))) return (FALSE);
 
 	by = cs_ptr->sc.between.fy;
 	bx = cs_ptr->sc.between.fx;
@@ -348,8 +362,7 @@ static bool between_effect(int Ind, cave_type *c_ptr)
 	msg_print(Ind, "Brrrr! It's deadly cold.");
 
 //	if (PRACE_FLAG(PR1_TP))
-	if (p_ptr->prace == RACE_DRIDER)
-	{
+	if (p_ptr->prace == RACE_DRIDER) {
 		int reduc = ((p_ptr->ac + p_ptr->to_a) / 50) + 1;
 
 		if (reduc < 1) reduc = 1; /* Really, really low AC, like some TL eating firestones - mikaelh */
@@ -435,7 +448,7 @@ void do_cmd_go_down(int Ind)
 #endif	// 0
 	{
 		/* Disturb */
-		disturb(Ind, 0, 0);
+		disturb(Ind, 1, 0);
 
 		/* Hack -- Enter store */
 		command_new = '_';
@@ -611,7 +624,7 @@ void do_cmd_go_down(int Ind)
 				if (i == Ind) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->party == p_ptr->party)
-					msg_format(i, "\374\377G%s has left %s..", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
+					msg_format(i, "\374\377G%s has left %s..", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
 			}
 #endif
 		}
@@ -623,8 +636,9 @@ void do_cmd_go_down(int Ind)
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
+				if (Players[i]->wpos.wz >= 0) continue; /* must be in same dungeon/tower */
 				if (Players[i]->party == p_ptr->party)
-					msg_format(i, "\377G[%s took a staircase downwards to %dft..]", p_ptr->name, (wpos->wz - 1) * 50);
+					msg_format(i, "\374\377G[%s took a staircase downwards to %dft..]", p_ptr->name, (wpos->wz - 1) * 50);
 			}
 #else
 			if (one_way && p_ptr->party)
@@ -632,8 +646,9 @@ void do_cmd_go_down(int Ind)
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
+				if (Players[i]->wpos.wz >= 0) continue; /* must be in same dungeon/tower */
 				if (Players[i]->party == p_ptr->party)
-					msg_format(i, "\377G[%s took a staircase downwards to %dft..]", p_ptr->name, (wpos->wz - 1) * 50);
+					msg_format(i, "\374\377G[%s took a staircase downwards to %dft..]", p_ptr->name, (wpos->wz - 1) * 50);
 			}
 #endif
 		} else {
@@ -644,8 +659,9 @@ void do_cmd_go_down(int Ind)
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
+				if (Players[i]->wpos.wz >= 0) continue; /* must be in same dungeon/tower */
 				if (Players[i]->party == p_ptr->party)
-					msg_format(i, "\377G[%s took a staircase downwards to %dft..]", p_ptr->name, (wpos->wz - 1) * 50);
+					msg_format(i, "\374\377G[%s took a staircase downwards to %dft..]", p_ptr->name, (wpos->wz - 1) * 50);
 			}
 #else
 			if (one_way && p_ptr->party)
@@ -653,8 +669,9 @@ void do_cmd_go_down(int Ind)
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
+				if (Players[i]->wpos.wz >= 0) continue; /* must be in same dungeon/tower */
 				if (Players[i]->party == p_ptr->party)
-					msg_format(i, "\377G[%s took a staircase downwards to %dft..]", p_ptr->name, (wpos->wz - 1) * 50);
+					msg_format(i, "\374\377G[%s took a staircase downwards to %dft..]", p_ptr->name, (wpos->wz - 1) * 50);
 			}
 #endif
 		}
@@ -1353,11 +1370,12 @@ void do_cmd_open(int Ind, int dir)
 				/* Success -- May still have traps */
 				if (rand_int(100) < j) {
 					msg_print(Ind, "You have picked the lock.");
-					gain_exp(Ind, 1);
 					flag = TRUE;
 #ifdef USE_SOUND_2010
 					sound(Ind, "open_pick", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
+					/* opening it uses only 1x trdifficulty instead of 3x */
+					gain_exp(Ind, TRAP_EXP(o_ptr->pval, getlevel(&p_ptr->wpos)) / 3);
 				}
 
 				/* Failure -- Keep trying */
@@ -1436,14 +1454,17 @@ void do_cmd_open(int Ind, int dir)
 				if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
 				/* Automatic bot detection - mikaelh */
-				p_ptr->silly_door_exp++;
-				if (p_ptr->silly_door_exp >= 100) {
-					msg_print(Ind, "Botting never pays off...");
-					take_xp_hit(Ind, 1, "botting", TRUE, FALSE);
-				} else {
-					/* Experience */
-					gain_exp(Ind, 1);
+				if (!(c_ptr->info & CAVE_MAGELOCK)) {
+					p_ptr->silly_door_exp++;
+					if (p_ptr->silly_door_exp >= 100) {
+						msg_print(Ind, "Botting never pays off...");
+						take_xp_hit(Ind, 1, "botting", TRUE, FALSE);
+					} else {
+						/* Experience */
+						gain_exp(Ind, 1);
+					}
 				}
+
 				/* Open the door */
 				c_ptr->feat = FEAT_OPEN;
 				/* Notice */
@@ -1504,6 +1525,7 @@ void do_cmd_open(int Ind, int dir)
 #ifdef PLAYER_STORES
 						/* We don't have house access, but if it's set up as
 						   a player-run store, we may enter it to buy things - C. Blue */
+						disturb(Ind, 1, 0);
 						if (!do_cmd_player_store(Ind, x, y))
 #endif
 						msg_format(Ind,"\377sThat house is owned by %s.",get_house_owner(cs_ptr));
@@ -1760,8 +1782,7 @@ byte twall_erosion(worldpos *wpos, int y, int x)
 	cave_type *c_ptr;
 	if(!(zcave = getcave(wpos))) return(FALSE);
 
-	for (d = 1; d <= 9; d++)
-	{
+	for (d = 1; d <= 9; d++) {
 		if (d == 5) continue;
 
 		tx = x + ddx[d];
@@ -1770,10 +1791,13 @@ byte twall_erosion(worldpos *wpos, int y, int x)
 		if (!in_bounds(ty, tx)) continue;
 
 		c_ptr = &zcave[ty][tx];
-		if (c_ptr->feat == FEAT_DEEP_WATER)
-		{
+		if (c_ptr->feat == FEAT_DEEP_WATER) {
 //			feat = FEAT_DEEP_WATER; /* <- this is only if FEAT_DEEP_WATER is also terraformable in turn (see cave_set_feat_live) */
 			feat = FEAT_SHAL_WATER; /* <- this should be used otherwise */
+			break;
+		} else if (c_ptr->feat == FEAT_DEEP_LAVA) {
+//			feat = FEAT_DEEP_LAVA; /* <- this is only if FEAT_DEEP_LAVA is also terraformable in turn (see cave_set_feat_live) */
+			feat = FEAT_SHAL_LAVA; /* <- this should be used otherwise */
 			break;
 		}
 	}
@@ -1812,6 +1836,7 @@ bool twall(int Ind, int y, int x)
 	/* Forget the "field mark" */
 	*w_ptr &= ~CAVE_MARK;
 
+#if 0 /* Should all be included in cave_set_feat_live() ? */
 	/* Notice */
 	note_spot_depth(wpos, y, x);
 
@@ -1820,6 +1845,7 @@ bool twall(int Ind, int y, int x)
 
 	/* Update some things */
 	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
+#endif
 
 	/* Result */
 	return (TRUE);
@@ -2118,7 +2144,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 								msg_print(Ind, "You have uncovered a stairway!");
 								s_printf("DIGGING: %s found a staircase.\n", p_ptr->name);
 							} else {
-								s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
+//								s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
 							}
 						} else if (special_k_idx && tval != TV_GOLEM) {
 							invcopy(&forge, special_k_idx);
@@ -2385,7 +2411,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					    dug_feat != FEAT_WAY_LESS) {
 						if (magik(100)) {
 							cave_set_feat_live(wpos, y, x, dug_feat);
-							s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
+//							s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
 						}
 					} else if (!rand_int(10) && special_k_idx && (tval == TV_RUNE1 || tval == TV_RUNE2)) {
 							invcopy(&forge, special_k_idx);
@@ -2480,7 +2506,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 						    dug_feat != FEAT_WAY_LESS) {
 							if (magik(100)) {
 								cave_set_feat_live(wpos, y, x, dug_feat);
-								s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
+//								s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
 							}
 						} else if (!rand_int(20) && special_k_idx && (tval == TV_RUNE1 || tval == TV_RUNE2)) {
 							invcopy(&forge, special_k_idx);
@@ -2587,11 +2613,13 @@ static void do_id_trap(int Ind, int t_idx)
 
 	/* Good job */
 	p_ptr->trap_ident[t_idx] = TRUE;
-	msg_format(Ind, "You identified that trap as %s.",
-			t_name + tr_ptr->name);
+	/* Some traps seem unnamed atm - looks ugly */
+	if (strlen(t_name + tr_ptr->name))
+		msg_format(Ind, "You identified that trap as %s.", t_name + tr_ptr->name);
 
-	/* Fair reward - C. Blue */
-	gain_exp(Ind, (tr_ptr->difficulty * tr_ptr->minlevel * (200 - tr_ptr->probability)) / 100);
+	/* Fair reward; so it's double exp when disarming AND
+	   for the first time also IDing - C. Blue */
+	gain_exp(Ind, TRAP_EXP(t_idx, getlevel(&p_ptr->wpos)));
 }
 
 /*
@@ -2631,8 +2659,7 @@ void do_cmd_disarm(int Ind, int dir)
 	break_shadow_running(Ind);
 
 	/* Get a direction (or abort) */
-	if (dir)
-	{
+	if (dir) {
 		struct c_special *cs_ptr;
 		/* Get location */
 		y = p_ptr->py + ddy[dir];
@@ -2668,8 +2695,7 @@ void do_cmd_disarm(int Ind, int dir)
 		}
 
 		/* Monster in the way */
-		else if (c_ptr->m_idx > 0)
-		{
+		else if (c_ptr->m_idx > 0) {
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -2683,8 +2709,7 @@ void do_cmd_disarm(int Ind, int dir)
 		}
 
 		/* Normal disarm */
-		else if (o_ptr->tval == TV_CHEST)
-		{
+		else if (o_ptr->tval == TV_CHEST) {
 			t_ptr = &t_info[o_ptr->pval];
 
 			/* Disarm the chest */
@@ -2708,19 +2733,14 @@ void do_cmd_disarm(int Ind, int dir)
 
 			/* Must find the trap first. */
 			if (!object_known_p(Ind, o_ptr))
-			{
 				msg_print(Ind, "I don't see any traps.");
-			}
 
 			/* Already disarmed/unlocked */
 			else if (o_ptr->pval <= 0)
-			{
 				msg_print(Ind, "The chest is not trapped.");
-			}
 
 			/* Success (get a lot of experience) */
-			else if (rand_int(100) < j)
-			{
+			else if (rand_int(100) < j) {
 				/* S(he) is no longer afk */
 				un_afk_idle(Ind);
 
@@ -2728,15 +2748,14 @@ void do_cmd_disarm(int Ind, int dir)
 #ifdef USE_SOUND_2010
 				sound(Ind, "disarm", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
-				gain_exp(Ind, t_ptr->difficulty * 3);
+				gain_exp(Ind, TRAP_EXP(o_ptr->pval, getlevel(&p_ptr->wpos)));
 				o_ptr->pval = (0 - o_ptr->pval);
 				do_id_trap(Ind, o_ptr->pval);
 				done = TRUE;
 			}
 
 			/* Failure -- Keep trying */
-			else if ((i > 5) && (randint(i) > 5))
-			{
+			else if ((i > 5) && (randint(i) > 5)) {
 				/* S(he) is no longer afk */
 				un_afk_idle(Ind);
 
@@ -2751,8 +2770,7 @@ void do_cmd_disarm(int Ind, int dir)
 			}
 
 			/* Failure -- Set off the trap */
-			else
-			{
+			else {
 				/* S(he) is no longer afk */
 				un_afk_idle(Ind);
 
@@ -2793,8 +2811,7 @@ void do_cmd_disarm(int Ind, int dir)
 		}
 
 		/* Disarm a trap */
-		if(!done && (t_idx && cs_ptr->sc.trap.found))
-		{
+		if(!done && (t_idx && cs_ptr->sc.trap.found)) {
 			cptr name;
 
 			break_shadow_running(Ind);
@@ -2835,8 +2852,7 @@ void do_cmd_disarm(int Ind, int dir)
 			if (j < 2) j = 2;
 
 			/* Success */
-			if (rand_int(100) < j)
-			{
+			if (rand_int(100) < j) {
 				/* Message */
 				msg_format(Ind, "You have disarmed the %s.", name);
 #ifdef USE_SOUND_2010
@@ -2902,10 +2918,9 @@ void do_cmd_disarm(int Ind, int dir)
 					drop_near(yay, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 					msg_print(Ind, "You have discovered a trapkit!");
 				}
-				
-				
+
 				/* Reward */
-				gain_exp(Ind, power);
+				gain_exp(Ind, TRAP_EXP(t_idx, getlevel(&p_ptr->wpos)));
 
 				/* Try to identify it */
 				do_id_trap(Ind, t_idx);
@@ -3004,8 +3019,11 @@ void do_cmd_bash(int Ind, int dir)
 
 
 	/* Ghosts cannot bash ; not in WRAITHFORM */
-	if ( (p_ptr->ghost) || (p_ptr->fruit_bat && !p_ptr->body_monster) || (p_ptr->tim_wraith) ||
-	    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_BASH_DOOR)))
+	if ( (p_ptr->ghost)
+//	    || (p_ptr->fruit_bat && !p_ptr->body_monster)
+	    || (p_ptr->tim_wraith)
+//	    || (p_ptr->body_monster && !(r_ptr->flags2 & RF2_BASH_DOOR))
+	    )
 	{
 		/* Message */
 		msg_print(Ind, "You cannot bash things!");
@@ -3027,7 +3045,7 @@ void do_cmd_bash(int Ind, int dir)
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			/* Message */
-			msg_print(Ind, "There is a monster in the way!");
+//			msg_print(Ind, "There is a monster in the way!");
 
 			/* Attack */
 			py_attack(Ind, y, x, TRUE);
@@ -3035,8 +3053,8 @@ void do_cmd_bash(int Ind, int dir)
 
 		/* Nothing useful */
 		else if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-				(c_ptr->feat <= FEAT_DOOR_TAIL)) &&
-			c_ptr->feat != FEAT_HOME)
+		    (c_ptr->feat <= FEAT_DOOR_TAIL)) &&
+		    c_ptr->feat != FEAT_HOME)
 		{
 			int item;
 			/* Hack -- 'kick' an item ala NetHack */
@@ -3081,7 +3099,7 @@ void do_cmd_bash(int Ind, int dir)
 					/* TODO: handle blindness */
 					msg_format_near_site(y, x, wpos, 0, TRUE, "The %s shatters!", o_name);
 #ifdef USE_SOUND_2010
-					sound_near_site(y, x, wpos, 0, "shatter_potion", NULL, SFX_TYPE_MISC);
+					sound_near_site(y, x, wpos, 0, "shatter_potion", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 
 					//			if (potion_smash_effect(0, wpos, y, x, o_ptr->sval))
@@ -3114,6 +3132,13 @@ void do_cmd_bash(int Ind, int dir)
 
 		/* Bash a closed door */
 		else {
+			if ((p_ptr->fruit_bat && !p_ptr->body_monster) ||
+			    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_BASH_DOOR)))
+			{
+				msg_print(Ind, "You cannot bash doors!");
+				if (!is_admin(p_ptr)) return;
+			}
+
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
 
@@ -3463,11 +3488,9 @@ int do_cmd_run(int Ind, int dir)
 #endif
 
 	/* Get a "repeated" direction */
-	if (dir)
-	{
+	if (dir) {
 		/* Make sure we have an empty space to run into */
-		if (see_wall(Ind, dir, p_ptr->py, p_ptr->px))
-		{
+		if (see_wall(Ind, dir, p_ptr->py, p_ptr->px)) {
 			/* Handle the cfg_door_bump option */
 			if (cfg.door_bump_open && p_ptr->easy_open && !p_ptr->ghost && !p_ptr->tim_wraith) /* players in WRAITHFORM can't open doors - mikaelh */
 			{
@@ -3479,8 +3502,7 @@ int do_cmd_run(int Ind, int dir)
 				    ((c_ptr->feat == FEAT_HOME)))
 				{
 					/* Check if we have enough energy to open the door */
-					if (p_ptr->energy >= level_speed(&p_ptr->wpos))
-					{
+					if (p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 						/* If so, open it. */
 						do_cmd_open(Ind, dir);
 					}
@@ -3498,7 +3520,7 @@ int do_cmd_run(int Ind, int dir)
 		}
 
 		/* Make sure we have enough energy to start running */
-		if (p_ptr->energy >= (level_speed(&p_ptr->wpos)*(real_speed + 1))/real_speed)
+		if (p_ptr->energy >= (level_speed(&p_ptr->wpos) * (real_speed + 1)) / real_speed)
 //		if (p_ptr->energy >= level_speed(&p_ptr->wpos)) /* otherwise auto-retaliation will never allow running */
 		{
 			/* Hack -- Set the run counter */
@@ -3834,9 +3856,14 @@ void do_cmd_fire(int Ind, int dir)
 	bool returning = FALSE, magic = FALSE, boomerang = FALSE, ethereal = FALSE;
 	bool target_ok = target_okay(Ind);
 	cave_type **zcave;
-
 	if (!(zcave = getcave(wpos))) return;
 
+	/* New '+' feat in 4.4.6.2 */
+	if (dir == 11) {
+		get_aim_dir(Ind);
+		p_ptr->current_fire = 1;
+		return;
+	}
 
 	if (p_ptr->shooting_till_kill) { /* we were shooting till kill last turn? */
 		p_ptr->shooting_till_kill = FALSE; /* well, gotta re-test for another success now.. */
@@ -5258,6 +5285,13 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
+	/* New '+' feat in 4.4.6.2 */
+	if (dir == 11) {
+		get_aim_dir(Ind);
+		p_ptr->current_throw = item;
+		return;
+	}
+
 	/* throwing works even while in WRAITHFORM (due to slow speed of
 	   object, allowing it to lose the wraithform ;) */
 
@@ -5396,6 +5430,11 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 
 	/* Max distance of 10 */
 	if (tdis > 10) tdis = 10;
+
+	/* Fruit bat bashing? Actually limit throwing too! */
+	if ((p_ptr->fruit_bat && !p_ptr->body_monster) ||
+	    (p_ptr->body_monster && !(r_info[p_ptr->body_monster].flags2 & RF2_BASH_DOOR)))
+		tdis = 1; /* at least allow minimal item movement, especially for bashing piles */
 
 	/* Chance of hitting */
 	chance = (p_ptr->skill_tht + (p_ptr->to_h * BTH_PLUS_ADJ));
@@ -5760,7 +5799,7 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 			/* TODO: handle blindness */
 			msg_format_near_site(y, x, wpos, 0, TRUE, "The %s shatters!", o_name);
 #ifdef USE_SOUND_2010
-			sound_near_site(y, x, wpos, 0, "shatter_potion", NULL, SFX_TYPE_MISC);
+			sound_near_site(y, x, wpos, 0, "shatter_potion", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 
 //			if (potion_smash_effect(0, wpos, y, x, o_ptr->sval))
@@ -5857,6 +5896,7 @@ void house_admin(int Ind, int dir, char *args){
 							destroy_house(Ind, dna);
 							return;
 						case 'S':
+							disturb(Ind, 1, 0);
 							if (!do_cmd_player_store(Ind, x, y))
 								msg_print(Ind, "There is no player store there.");
 							return;

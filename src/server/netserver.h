@@ -185,6 +185,12 @@ static int Receive_force_stack(int ind);
 
 static void Handle_item(int Ind, int item);
 
+static int Receive_request_key(int ind);
+static int Receive_request_num(int ind);
+static int Receive_request_str(int ind);
+static int Receive_request_cfr(int ind);
+
+
 int Setup_net_server(void);
 bool Destroy_connection(int ind, char *reason);
 int Check_connection(char *real, char *nick, char *addr);

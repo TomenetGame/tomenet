@@ -1745,43 +1745,17 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative)
 		return 0;
 	}
 
-	/* Probably paranoia, since rune-able classes should have none of these (except ftk) */
-	break_cloaking(Ind, 5);
-	break_shadow_running(Ind);
-	stop_precision(Ind);
-//	stop_shooting_till_kill(Ind);
-
-	/* AM checks for runes assume that not the person is emitting the magic, but the runes are! */
-	if (check_antimagic(Ind, 100))
-	{
-		return 0;
-	}
-	if (p_ptr->anti_magic && (s_flags & R_SELF)) {
-		msg_format(Ind, "\377%cYour anti-magic shell absorbs the spell.", COLOUR_AM_OWN);
-		return 0;
-	}
-
-	/* school spell casting interference chance used for this */
-	if (interfere(Ind, cfg.spell_interfere)) return 0;
-
-	/* (S)he is no longer afk */
-	un_afk_idle(Ind);
-
-	if (check_antimagic(Ind, 100))
-	{
-		return 0;
-	}
-	
 	if (s_av<=0)
 	{
 		msg_print(Ind, "\377rYou don't know these runes.");
-		
+		p_ptr->energy -= rspell_time(Ind, imperative);
 		return 0;
 	}
 	
 	if (s_type == RT_NONE)
 	{
 		msg_print(Ind, "\377rThis is not a runespell.");
+		p_ptr->energy -= rspell_time(Ind, imperative);
 		return 0;
 	}
 
@@ -1792,10 +1766,38 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative)
 			if (s_flags & (1 << bit)) runes++;
 		if (runes > 2 && p_ptr->pclass != CLASS_RUNEMASTER) {
 			msg_print(Ind, "\377rYou are not adept enough to draw more than two runes.");
+			p_ptr->energy -= rspell_time(Ind, imperative);
 			return 0;
 		}
 	}
 #endif
+
+	/* Probably paranoia, since rune-able classes should have none of these (except ftk) */
+	break_cloaking(Ind, 5);
+	break_shadow_running(Ind);
+	stop_precision(Ind);
+//	stop_shooting_till_kill(Ind);
+
+	/* (S)he is no longer afk */
+	un_afk_idle(Ind);
+
+	/* AM checks for runes assume that not the person is emitting the magic, but the runes are! */
+	if (check_antimagic(Ind, 100))
+	{
+		p_ptr->energy -= rspell_time(Ind, imperative);
+		return 0;
+	}
+	if (p_ptr->anti_magic && (s_flags & R_SELF)) {
+		msg_format(Ind, "\377%cYour anti-magic shell absorbs the spell.", COLOUR_AM_OWN);
+		p_ptr->energy -= rspell_time(Ind, imperative);
+		return 0;
+	}
+
+	/* school spell casting interference chance used for this */
+	if (interfere(Ind, cfg.spell_interfere)) {
+		p_ptr->energy -= rspell_time(Ind, imperative);
+		return 0;
+	}
 
 	if (p_ptr->shoot_till_kill)
 	{

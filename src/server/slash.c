@@ -576,7 +576,9 @@ void do_slash_cmd(int Ind, char *message)
 
 				/* destroy base items (non-egos)? */
 				if (baseonly && object_known_p(Ind, o_ptr) &&
-				    (o_ptr->name1 || o_ptr->name2 || o_ptr->name2b))
+				    (o_ptr->name1 || o_ptr->name2 || o_ptr->name2b ||
+				    /* let exploding ammo count as ego.. pft */
+				    (is_ammo(o_ptr->tval) && o_ptr->pval)))
 					continue;
 
 				/* destroy non-inscribed items too? */
@@ -677,24 +679,29 @@ void do_slash_cmd(int Ind, char *message)
 					continue;
 				}
 
-				if (remove_unique) {
-					if (o_ptr->note_utag) {
-						j = strlen(quark_str(o_ptr->note)) - o_ptr->note_utag;
+				if (remove_unique && o_ptr->note_utag) {
+					j = strlen(quark_str(o_ptr->note)) - o_ptr->note_utag;
+					if (j > 0) { /* bugfix hack */
+//s_printf("j: %d, strlen: %d, note_utag: %d, i: %d.\n", j, strlen(quark_str(o_ptr->note)), o_ptr->note_utag, i);
 						strncpy(note2, quark_str(o_ptr->note), j);
 						if (note2[j - 1] == '-') j--; /* absorb '-' orphaned spacers */
 						note2[j] = 0; /* terminate string */
+						o_ptr->note_utag = 0;
 						if (note2[0]) o_ptr->note = quark_add(note2);
 						else o_ptr->note = 0;
-						o_ptr->note_utag = 0;
-					}
+					} else o_ptr->note_utag = 0; //paranoia?
 					continue;
 				}
 
 				/* just remove pseudo-id tags? */
 				if (remove_pseudo) {
 					note_crop_pseudoid(note2, noteid, quark_str(o_ptr->note));
-					if (!note2[0]) o_ptr->note = 0;
-					else o_ptr->note = quark_add(note2);
+					if (!note2[0]) {
+						o_ptr->note = 0;
+						o_ptr->note_utag = 0; //paranoia
+					} else {
+						o_ptr->note = quark_add(note2);
+					}
 					continue;
 				}
 
@@ -707,9 +714,11 @@ void do_slash_cmd(int Ind, char *message)
 				if (!noteid[0]) {
 					/* tag removed, no more inscription */
 					o_ptr->note = 0;
+					o_ptr->note_utag = 0; //in case tag == unique name
 				} else {
 					/* tag removed, keeping pseudo-id inscription */
 					o_ptr->note = quark_add(noteid);
+					o_ptr->note_utag = 0; //in case tag == unique name
 				}
 			}
 
@@ -1917,6 +1926,7 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				strcpy(party_note_target[i], parties[p_ptr->party].name);
+				message2[j + 79] = '\0'; /* Limit to 80 chars */
 				strcpy(party_note[i], &message2[j]);
 				msg_print(Ind, "\377yNote has been stored.");
 				return;
@@ -1990,6 +2000,7 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				if (i < MAX_GUILDNOTES) {
 					/* change existing guild note to new text */
+					message2[j + 79] = '\0'; /* Limit to 80 chars */
 					strcpy(guild_note[i], &message2[j]);
 					msg_print(Ind, "\377yNote has been stored.");
 					return;
@@ -2042,19 +2053,56 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			return;
 		}
-		else if (prefix(message, "/note"))
+		else if (prefix(message, "/notec") || prefix(message, "/note"))
 		{
-			int notes = 0, found_note=MAX_NOTES;
+			int notes = 0, found_note = MAX_NOTES;
 			j = 0;
 			bool colon = FALSE;
-			char tname[80]; /* target's account name */
+			char tname[80], *tpname; /* target's account name */
 			struct account *c_acc;
-			if (tk < 1)	/* Explain command usage */
-			{
-				msg_print(Ind, "\377oUsage: /note <player-account>[:<text>]");
+
+			if (prefix(message, "/notec")) {
+				if (tk < 1) { /* Explain command usage */
+					msg_print(Ind, "\377oUsage: /notec <character name>[:<text>]");
+					msg_print(Ind, "\377oExample: /notec Pally:Hiho!");
+					msg_print(Ind, "\377oNot specifiying any text will remove pending notes to the player's account.");
+					msg_print(Ind, "\377oTo clear all pending notes of yours, type:  /note *  or  /notec *");
+					return;
+				}
+
+				/* translate character name to account name */
+				if (!(tpname = strchr(message2, ':'))) {
+					/* no text given */
+					if (!lookup_player_id(message2 + 7)) {
+						msg_print(Ind, "\377oPlayer not found.");
+						return;
+					}
+					strcpy(tname, "/note ");
+					strcat(tname, lookup_accountname(lookup_player_id(message2 + 7)));
+					strcpy(message2, tname);
+					strcpy(tname, "");
+				} else {
+					/* note text given */
+					if (!lookup_player_id(message2 + 7)) {
+						msg_print(Ind, "\377oPlayer not found.");
+						return;
+					}
+					strcpy(tname, "/note ");
+					tpname[0] = '\0';
+					strcat(tname, lookup_accountname(lookup_player_id(message2 + 7)));
+					strcat(tname, ":");
+					strcat(tname, tpname + 1);
+					strcpy(message2, tname);
+					strcpy(tname, "");
+				}
+			}
+
+			if (tk < 1) { /* Explain command usage */
+				msg_print(Ind, "\377oUsage: /note <player account>[:<text>]");
 				msg_print(Ind, "\377oExample: /note Mithrandir:Hiho!");
 				msg_print(Ind, "\377oNot specifiying any text will remove pending notes to that account.");
-				msg_print(Ind, "\377oTo clear all pending notes of yours, type: /note *");
+				msg_print(Ind, "\377oTo clear all pending notes of yours, type:  /note *");
+				msg_print(Ind, "\377oHint: Use /notec to specify a character name instead of account.");
 				return;
 			}
 			/* Does a colon appear? */
@@ -2065,7 +2113,7 @@ void do_slash_cmd(int Ind, char *message)
 				if (message2[i] == ' ') {
 					for (j = i; j < (int)strlen(message2); j++)
 						/* find where target name starts, save pos in j */
-						if (message2[j] != ' ')	{
+						if (message2[j] != ' ') {
 							for (i = j; i < (int)strlen(message2); i++) {
 								/* find ':' which terminates target name, save pos in i */
 								if (message2[i] == ':') {
@@ -2085,19 +2133,35 @@ void do_slash_cmd(int Ind, char *message)
 						}
 					break;
 				}
+
+			/* was it just a '/note *' ? */
+			if (!colon && !strcmp(tname, "*")) { /* Delete all pending notes to all players */
+				for (i = 0; i < MAX_NOTES; i++) {
+					/* search for pending notes of this player */
+					if (!strcmp(priv_note_sender[i], p_ptr->name)) {
+						notes++;
+						strcpy(priv_note_sender[i], "");
+						strcpy(priv_note_target[i], "");
+						strcpy(priv_note[i], "");
+					}
+				}
+				msg_format(Ind, "\377oDeleted %d notes.", notes);
+				return;
+			}
+
 			/* does target account exist? */
 			c_acc = GetAccount(tname, NULL, FALSE);
 			if (!c_acc) {
 				msg_print(Ind, "\377oThat account does not exist.");
 				return;
 			}
+
 			/* No colon found -> only a name parm give */
-			if (!colon)	/* Delete all pending notes to a specified player */
-			{
+			if (!colon) { /* Delete all pending notes to a specified player */
 				for (i = 0; i < MAX_NOTES; i++) {
 					/* search for pending notes of this player to the specified player */
 					if (!strcmp(priv_note_sender[i], p_ptr->name) &&
-					    (!strcmp(priv_note_target[i], tname) || !strcmp(tname, "*"))) {
+					    !strcmp(priv_note_target[i], tname)) {
 						/* found a matching note */
 						notes++;
 						strcpy(priv_note_sender[i], "");
@@ -2142,13 +2206,14 @@ void do_slash_cmd(int Ind, char *message)
 
 			strcpy(priv_note_sender[found_note], p_ptr->name);
 			strcpy(priv_note_target[found_note], tname);
+			message2[j + 1 + 79] = '\0'; /* Limit to 80 chars */
 			strcpy(priv_note[found_note], message2 + j + 1);
 			msg_format(Ind, "\377yNote for account '%s' has been stored.", priv_note_target[found_note]);
 			return;
 		}
-		else if (prefix(message, "/play")) /* for joining games - mikaelh */
+		else if (prefix(message, "/play") /* for joining games - mikaelh */
+		    && !prefix(message, "/playgo"))
 		{
-	
 			if (p_ptr->team != 0 && gametype == EEGAME_RUGBY)
 			{
 				teams[p_ptr->team - 1]--;
@@ -2842,6 +2907,7 @@ void do_slash_cmd(int Ind, char *message)
 				if (zcave[y][x].feat != FEAT_HOME &&
 				    zcave[y][x].feat != FEAT_HOME_OPEN)
 					continue;
+				disturb(Ind, 1, 0);
 				if (do_cmd_player_store(Ind, x, y)) return;
 			}
 			msg_print(Ind, "There is no player store next to you.");
@@ -2887,6 +2953,103 @@ void do_slash_cmd(int Ind, char *message)
 			return;
 		}
 #endif
+		else if (prefix(message, "/slap")) { /* Slap someone around, as threat :-o */
+			cave_type **zcave = getcave(&p_ptr->wpos);
+			if (!tk) {
+				msg_print(Ind, "Usage: /slap <player name>");
+				return;
+			}
+			j = name_lookup_loose(Ind, token[1], FALSE);
+			if (!j || !p_ptr->play_vis[j]) return;
+			for (i = 1; i <= 9; i++) {
+				if (i == 5) continue;
+				if (zcave[p_ptr->py + ddy[i]][p_ptr->px + ddx[i]].m_idx == -j) break;
+			}
+			if (i == 10) {
+				msg_print(Ind, "Player is not standing next to you.");
+				return;
+			}
+
+#ifdef USE_SOUND_2010
+			sound_near_site(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "hit_whip", "hit", SFX_TYPE_COMMAND, TRUE);
+#endif
+			msg_format(j, "\377o%s slaps you!", p_ptr->name);
+			msg_format_near(j, "\377y%s slaps %s!", p_ptr->name, Players[j]->name);
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+			return;
+		}
+		else if (prefix(message, "/pat")) { /* Counterpart to /slap :-p */
+			cave_type **zcave = getcave(&p_ptr->wpos);
+			if (!tk) {
+				msg_print(Ind, "Usage: /pat <player name>");
+				return;
+			}
+
+			j = name_lookup_loose(Ind, token[1], FALSE);
+			if (!j || !p_ptr->play_vis[j]) return;
+
+			for (i = 1; i <= 9; i++) {
+				if (i == 5) continue;
+				if (zcave[p_ptr->py + ddy[i]][p_ptr->px + ddx[i]].m_idx == -j) break;
+			}
+			if (i == 10) {
+				msg_print(Ind, "Player is not standing next to you.");
+				return;
+			}
+
+			msg_format(j, "\377o%s pats you.", p_ptr->name);
+			msg_format_near(j, "\377y%s pats %s.", p_ptr->name, Players[j]->name);
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+			return;
+		}
+		else if (prefix(message, "/hug")) { /* Counterpart to /slap :-p */
+			cave_type **zcave = getcave(&p_ptr->wpos);
+			if (!tk) {
+				msg_print(Ind, "Usage: /hug <player name>");
+				return;
+			}
+
+			j = name_lookup_loose(Ind, token[1], FALSE);
+			if (!j || !p_ptr->play_vis[j]) return;
+
+			for (i = 1; i <= 9; i++) {
+				if (i == 5) continue;
+				if (zcave[p_ptr->py + ddy[i]][p_ptr->px + ddx[i]].m_idx == -j) break;
+			}
+			if (i == 10) {
+				msg_print(Ind, "Player is not standing next to you.");
+				return;
+			}
+
+			msg_format(j, "\377o%s hugs you.", p_ptr->name);
+			msg_format_near(j, "\377y%s hugs %s.", p_ptr->name, Players[j]->name);
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+			return;
+		}
+		else if (prefix(message, "/poke")) {
+			cave_type **zcave = getcave(&p_ptr->wpos);
+			if (!tk) {
+				msg_print(Ind, "Usage: /poke <player name>");
+				return;
+			}
+
+			j = name_lookup_loose(Ind, token[1], FALSE);
+			if (!j || !p_ptr->play_vis[j]) return;
+
+			for (i = 1; i <= 9; i++) {
+				if (i == 5) continue;
+				if (zcave[p_ptr->py + ddy[i]][p_ptr->px + ddx[i]].m_idx == -j) break;
+			}
+			if (i == 10) {
+				msg_print(Ind, "Player is not standing next to you.");
+				return;
+			}
+
+			msg_format(j, "\377o%s pokes you.", p_ptr->name);
+			msg_format_near(j, "\377y%s pokes %s.", p_ptr->name, Players[j]->name);
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+			return;
+		}
 
 		/*
 		 * Admin commands
@@ -2895,28 +3058,26 @@ void do_slash_cmd(int Ind, char *message)
 		 */
 
 
-		else if (admin)
-		{
+		else if (admin) {
 			/* presume worldpos */
-			switch (tk)
-			{
-				case 1:
-					/* depth in feet */
-					wp.wz = (p_ptr->depth_in_feet ? k / 50 : k);
-					break;
-				case 3:
-					/* depth in feet */
-					wp.wx = k % MAX_WILD_X;
-					wp.wy = atoi(token[2]) % MAX_WILD_Y;
-					wp.wz = atoi(token[3]) / (p_ptr->depth_in_feet ? 50 : 1);
-					break;
-				case 2:
-					wp.wx = k % MAX_WILD_X;
-					wp.wy = atoi(token[2]) % MAX_WILD_Y;
-					wp.wz = 0;
-					break;
-				default:
-					break;
+			switch (tk) {
+			case 1:
+				/* depth in feet */
+				wp.wz = (p_ptr->depth_in_feet ? k / 50 : k);
+				break;
+			case 3:
+				/* depth in feet */
+				wp.wx = k % MAX_WILD_X;
+				wp.wy = atoi(token[2]) % MAX_WILD_Y;
+				wp.wz = atoi(token[3]) / (p_ptr->depth_in_feet ? 50 : 1);
+				break;
+			case 2:
+				wp.wx = k % MAX_WILD_X;
+				wp.wy = atoi(token[2]) % MAX_WILD_Y;
+				wp.wz = 0;
+				break;
+			default:
+				break;
 			}
 
 #ifdef TOMENET_WORLDS
@@ -3992,14 +4153,14 @@ void do_slash_cmd(int Ind, char *message)
 #endif
 
 				while (tries) {
-			                /* Piece together a 32-bit random seed */
-			                o_ptr->name3 = rand_int(0xFFFF) << 16;
-			                o_ptr->name3 += rand_int(0xFFFF);
-			                /* Check the tval is allowed */
-			                if (randart_make(o_ptr) == NULL) {
-			                        /* If not, wipe seed. No randart today */
-			                        o_ptr->name1 = 0;
-				                o_ptr->name3 = 0L;
+					/* Piece together a 32-bit random seed */
+					o_ptr->name3 = rand_int(0xFFFF) << 16;
+					o_ptr->name3 += rand_int(0xFFFF);
+					/* Check the tval is allowed */
+					if (randart_make(o_ptr) == NULL) {
+						/* If not, wipe seed. No randart today */
+						o_ptr->name1 = 0;
+						o_ptr->name3 = 0L;
 						msg_print(Ind, "Randart creation failed..");
 						return;
 					}
@@ -4022,8 +4183,7 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/reego")) /* re-roll an ego item */
 			{
 				object_type *o_ptr;
-				if (tk < 1)
-				{
+				if (tk < 1) {
 					msg_print(Ind, "\377oUsage: /reego <inventory-slot>");
 					return;
 				}
@@ -4037,9 +4197,9 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 
-			        o_ptr->timeout=0;
+				o_ptr->timeout=0;
 				return;/* see create_reward for proper loop */
-		    	        apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, TRUE, TRUE, TRUE, FALSE, FALSE);
+				apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, TRUE, TRUE, TRUE, FALSE, FALSE);
 
 				msg_format(Ind, "Re-rolled ego in inventory slot %d!", atoi(token[1]));
 				/* Window stuff */
@@ -4054,59 +4214,67 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				if (!j) return;
-			        msg_format_near(j, "\377y%s is hit by a bolt from the blue!", Players[j]->name);
-			        msg_print(j, "\377rYou are hit by a bolt from the blue!");
+				msg_format(Ind, "\377yThreatening %s.", Players[j]->name);
+				msg_format_near(j, "\377y%s is hit by a bolt from the blue!", Players[j]->name);
+				msg_print(j, "\377rYou are hit by a bolt from the blue!");
 				bypass_invuln = TRUE;
-			        take_hit(j, Players[j]->chp - 1, "", 0);
+				take_hit(j, Players[j]->chp - 1, "", 0);
 				bypass_invuln = FALSE;
-			        msg_print(j, "\377rThat was close huh?!");
+				msg_print(j, "\377rThat was close huh?!");
 				return;
 			}
-			else if (prefix(message, "/slap")) { /* Slap someone around, as threat :-o */
+			else if (prefix(message, "/aslap")) { /* Slap someone around, as threat :-o */
 				if (!tk) {
 					msg_print(Ind, "Usage: /slap <player name>");
 					return;
 				}
 				j = name_lookup_loose(Ind, token[1], FALSE);
 				if (!j) return;
-			        msg_print(j, "\377rYou are slapped by something invisible!");
-			        msg_format_near(j, "\377y%s is slapped by something invisible!", Players[j]->name);
+#ifdef USE_SOUND_2010
+				sound_near_site(Players[j]->py, Players[j]->px, &p_ptr->wpos, 0, "hit_whip", "hit", SFX_TYPE_COMMAND, TRUE);
+#endif
+				msg_format(Ind, "\377ySlapping %s.", Players[j]->name);
+				msg_print(j, "\377rYou are slapped by something invisible!");
+				msg_format_near(j, "\377y%s is slapped by something invisible!", Players[j]->name);
 				bypass_invuln = TRUE;
-			        take_hit(j, Players[j]->chp / 2, "", 0);
+				take_hit(j, Players[j]->chp / 2, "", 0);
 				bypass_invuln = FALSE;
 				return;
 			}
-			else if (prefix(message, "/pat")) { /* Counterpart to /slap :-p */
+			else if (prefix(message, "/apat")) { /* Counterpart to /slap :-p */
 				if (!tk) {
 					msg_print(Ind, "Usage: /pat <player name>");
 					return;
 				}
 				j = name_lookup_loose(Ind, token[1], FALSE);
 				if (!j) return;
-			        msg_print(j, "\377yYou are patted by something invisible.");
-			        msg_format_near(j, "\377y%s is patted by something invisible.", Players[j]->name);
+				msg_format(Ind, "\377yPatting %s.", Players[j]->name);
+				msg_print(j, "\377yYou are patted by something invisible.");
+				msg_format_near(j, "\377y%s is patted by something invisible.", Players[j]->name);
 				return;
 			}
-			else if (prefix(message, "/hug")) { /* Counterpart to /slap :-p */
+			else if (prefix(message, "/ahug")) { /* Counterpart to /slap :-p */
 				if (!tk) {
 					msg_print(Ind, "Usage: /hug <player name>");
 					return;
 				}
 				j = name_lookup_loose(Ind, token[1], FALSE);
 				if (!j) return;
-			        msg_print(j, "\377yYou are hugged by something invisible.");
-			        msg_format_near(j, "\377y%s is hugged by something invisible.", Players[j]->name);
+				msg_format(Ind, "\377yHugging %s.", Players[j]->name);
+				msg_print(j, "\377yYou are hugged by something invisible.");
+				msg_format_near(j, "\377y%s is hugged by something invisible.", Players[j]->name);
 				return;
 			}
-			else if (prefix(message, "/poke")) {
+			else if (prefix(message, "/apoke")) {
 				if (!tk) {
 					msg_print(Ind, "Usage: /poke <player name>");
 					return;
 				}
 				j = name_lookup_loose(Ind, token[1], FALSE);
 				if (!j) return;
-			        msg_print(j, "\377yYou are poked by something invisible.");
-			        msg_format_near(j, "\377y%s is being poked by something invisible.", Players[j]->name);
+				msg_format(Ind, "\377yPoking %s.", Players[j]->name);
+				msg_print(j, "\377yYou are poked by something invisible.");
+				msg_format_near(j, "\377y%s is being poked by something invisible.", Players[j]->name);
 				return;
 			}
 			else if (prefix(message, "/strangle")) {/* oO */
@@ -4116,11 +4284,12 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				j = name_lookup_loose(Ind, token[1], FALSE);
 				if (!j) return;
-			        msg_print(j, "\377yYou are being strangled by something invisible.");
-			        msg_format_near(j, "\377y%s is being strangled by something invisible.", Players[j]->name);
+				msg_format(Ind, "\377yPoking %s.", Players[j]->name);
+				msg_print(j, "\377yYou are being strangled by something invisible!");
+				msg_format_near(j, "\377y%s is being strangled by something invisible!", Players[j]->name);
 				bypass_invuln = TRUE;
-			        take_hit(j, Players[j]->chp / 4, "", 0);
-			        set_stun(j, Players[j]->stun + 5);
+				take_hit(j, Players[j]->chp / 4, "", 0);
+				set_stun(j, Players[j]->stun + 5);
 				bypass_invuln = FALSE;
 				return;
 			}
@@ -4131,8 +4300,8 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				j = name_lookup_loose(Ind, token[1], FALSE);
 				if (!j) return;
-			        msg_print(j, "\377ySomething invisible is cheering for you!");
-			        msg_format_near(j, "\377yYou hear something invisible cheering for %s!", Players[j]->name);
+				msg_print(j, "\377ySomething invisible is cheering for you!");
+				msg_format_near(j, "\377yYou hear something invisible cheering for %s!", Players[j]->name);
 				Players[j]->blessed_power = 10;
 				set_blessed(j, randint(5) + 15);
 				return;
@@ -4144,8 +4313,9 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				j = name_lookup_loose(Ind, token[1], FALSE);
 				if (!j) return;
-			        msg_print(j, "\377ySomeone invisible is applauding for you!");
-			        msg_format_near(j, "\377yYou hear someone invisible applauding for %s!", Players[j]->name);
+				msg_format(Ind, "\377yApplauding %s.", Players[j]->name);
+				msg_print(j, "\377ySomeone invisible is applauding for you!");
+				msg_format_near(j, "\377yYou hear someone invisible applauding for %s!", Players[j]->name);
 				set_hero(j, randint(5) + 15);
 				return;
 			}
@@ -4156,8 +4326,8 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				j = name_lookup_loose(Ind, token[1], FALSE);
 				if (!j) return;
-			        msg_print(j, "\377yYou feel an invisible presence watching you!");
-			        msg_format_near(j, "\377yYou feel an invisible presence near %s!", Players[j]->name);
+				msg_print(j, "\377yYou feel an invisible presence watching you!");
+				msg_format_near(j, "\377yYou feel an invisible presence near %s!", Players[j]->name);
 				return;
 			}
 			else if (prefix(message, "/snicker")) {
@@ -4167,9 +4337,10 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				j = name_lookup_loose(Ind, token[1], FALSE);
 				if (!j) return;
-			        msg_print(j, "\377yYou hear someone invisible snickering evilly!");
-			        msg_format_near(j, "\377yYou hear someone invisible snickering evilly near %s!", Players[j]->name);
-			        set_afraid(j, Players[j]->afraid + 6);
+				msg_format(Ind, "\377ySnickering at %s.", Players[j]->name);
+				msg_print(j, "\377yYou hear someone invisible snickering evilly!");
+				msg_format_near(j, "\377yYou hear someone invisible snickering evilly near %s!", Players[j]->name);
+				set_afraid(j, Players[j]->afraid + 6);
 				return;
 			}
 			else if (prefix(message, "/deltown")){
@@ -5426,6 +5597,8 @@ void do_slash_cmd(int Ind, char *message)
 			/* unidentifies an item */
 			else if (prefix(message, "/unid")) {
 				object_type *o_ptr;
+				char note2[80], noteid[10];
+
 				if (!tk) {
 					msg_print(Ind, "No inventory slot specified.");
 					return; /* no inventory slot specified */
@@ -5447,6 +5620,13 @@ void do_slash_cmd(int Ind, char *message)
 				/* Hack -- Clear the "felt" flag */
 				o_ptr->ident &= ~(ID_SENSE | ID_SENSED_ONCE | ID_MENTAL);
 				p_ptr->window |= PW_INVEN;
+
+				/* remove pseudo-id tags too */
+				if (o_ptr->note) {
+					note_crop_pseudoid(note2, noteid, quark_str(o_ptr->note));
+					if (!note2[0]) o_ptr->note = 0;
+					else o_ptr->note = quark_add(note2);
+				}
 				return;
 			}
 			else if (prefix(message, "/ai")) { /* returns/resets all AI flags and states of monster currently looked at (NOT the one targetted) - C. Blue */
@@ -5659,6 +5839,20 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "Houses that had their ownership changed: %d.", k);
 				return;
 			}
+#ifdef TEST_SERVER
+			else if (prefix(message, "/testreqs")) {
+				msg_print(Ind, "Sending request(s)...");
+				switch (k) {
+				case 0: Send_request_key(Ind, 0, "Key: "); break;
+				case 1: Send_request_num(Ind, 0, "Num: ", 9); break;
+				case 2: Send_request_str(Ind, 0, "Str: ", "mh"); break;
+				case 3: Send_request_cfr(Ind, 0, "Y/N: "); break;
+				}
+//				Send_request_abort(Ind);
+				msg_print(Ind, "...done.");
+				return;
+			}
+#endif
 		}
 	}
 
@@ -5668,20 +5862,21 @@ void do_slash_cmd(int Ind, char *message)
 #endif
 
 static void do_slash_brief_help(int Ind){
+#if 0 /* pretty outdated */
 	player_type *p_ptr = Players[Ind];
 
 	msg_print(Ind, "Commands: afk at bed broadcast bug cast dis dress ex feel fill help ignore me");	// pet ?
 	msg_print(Ind, "          pk quest rec ref rfe shout sip tag target untag;");
 
-	if (is_admin(p_ptr))
-	{
+	if (is_admin(p_ptr)) {
 		msg_print(Ind, "  art cfg cheeze clv cp en eq geno id kick lua purge respawn shutdown");
 		msg_print(Ind, "  sta store trap unc unst wish");
-	}
-	else
-	{
+	} else {
 		msg_print(Ind, "  /dis \377rdestroys \377wall the uninscribed items in your inventory!");
 	}
+#else
+#endif
+	msg_print(Ind, "Common commands: afk page ex feel rec tag untag dis me fill ignore bug rfe");
 	msg_print(Ind, "  please type '/help' for detailed help.");
 }
 

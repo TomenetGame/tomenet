@@ -2,7 +2,7 @@
  *
  * XPilot, a multiplayer gravity war game.  Copyright (C) 1991-95 by
  *
- *      Bjørn Stabell        (bjoerns@staff.cs.uit.no)
+ *      BjÃ¸rn Stabell        (bjoerns@staff.cs.uit.no)
  *      Ken Ronny Schouten   (kenrsc@stud.cs.uit.no)
  *      Bert G sbers         (bert@mc.bio.uva.nl)
  *
@@ -798,7 +798,7 @@ int Packet_scanf(va_alist)
 		break;
 	    case 'S':	/* Big strings (MSG_LEN) */
 	    case 'I':	/* Semi-big strings: Item name (including inscription) (ONAME_LEN) */
-	    case 's':	/* Small strings (MAX_CHAR) */
+	    case 's':	/* Small strings (MAX_CHARS) */
 		max_str_size = (fmt[i] == 'S') ? MSG_LEN : ((fmt[i] == 'I') ? ONAME_LEN : MAX_CHARS);
 		str = va_arg(ap, char *);
 #if 1

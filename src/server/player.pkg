@@ -970,6 +970,10 @@ struct player_type
 	int admin_stasis;
 	int admin_godly_strike;
 	int admin_set_defeat;
+
+	/* for ENABLE_GO_GAME */
+	int go_level;
+	int go_sublevel;
 };
 
 extern bool imprison(int Ind, int time, char *reason);
@@ -995,3 +999,25 @@ extern int invested_skill_points(int Ind, int i);
 
 extern int get_inven_sval(int Ind, int inven_slot);
 extern int get_inven_xtra(int Ind, int inven_slot, int n);
+
+//typedef struct player_race player_race;
+struct player_race
+{
+	cptr title;
+	s32b choice;
+};
+extern player_race race_info[MAX_RACE];
+
+struct player_class
+{
+	cptr title;
+	byte color;
+};
+extern player_class class_info[MAX_CLASS];
+
+struct player_trait
+{
+	cptr title;
+	s32b choice;
+};
+extern player_trait trait_info[MAX_TRAIT];

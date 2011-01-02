@@ -1105,7 +1105,7 @@ void object_aware(int Ind, object_type *o_ptr) {
 	/* Make it refresh, although the object mem structure didn't change */
 	for (i = 0; i < INVEN_TOTAL; i++)
 		if (Players[Ind]->inventory[i].k_idx == o_ptr->k_idx)
-			Players[Ind]->inventory[i].changed = ~Players[Ind]->inventory[i].changed;
+			Players[Ind]->inventory[i].changed = !Players[Ind]->inventory[i].changed;
 }
 
 
@@ -1124,7 +1124,7 @@ void object_tried(int Ind, object_type *o_ptr) {
 	/* Make it refresh, although the object mem structure didn't change */
 	for (i = 0; i < INVEN_TOTAL; i++)
 		if (Players[Ind]->inventory[i].k_idx == o_ptr->k_idx)
-			Players[Ind]->inventory[i].changed = ~Players[Ind]->inventory[i].changed;
+			Players[Ind]->inventory[i].changed = !Players[Ind]->inventory[i].changed;
 }
 
 
@@ -3241,7 +3241,8 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 			    j_ptr->xtra1) /* not 'empty' anymore, ie already written into? */
 				return(FALSE);
 #else /* custom tomes which appear identical, spell-wise too, may stack */
-			if (o_ptr->sval >= SV_CUSTOM_TOME_1 &&
+			if (o_ptr->tval == TV_BOOK &&
+			    o_ptr->sval >= SV_CUSTOM_TOME_1 &&
 			    o_ptr->sval < SV_SPELLBOOK &&
 			    ((o_ptr->xtra1 != j_ptr->xtra1) ||
 			    (o_ptr->xtra2 != j_ptr->xtra2) ||
@@ -3254,11 +3255,14 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 			    (o_ptr->xtra9 != j_ptr->xtra9)))
 				return(FALSE);
 #endif
+
+//			if (o_ptr->tval == TV_BOOK) { /* this was probably only meant for books..? */
 			/* Require full knowledge of both items */
 			if (!Ind || !object_known_p(Ind, o_ptr) ||
 //			    !object_known_p(Ind, j_ptr) || (o_ptr->name3)) return (FALSE);
 			    !object_known_p(Ind, j_ptr))
 				return (FALSE);
+//			}
 
 			/* different bpval? */
 			if (o_ptr->bpval != j_ptr->bpval) return(FALSE);
@@ -4308,9 +4312,14 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power, u32b resf)
 		}
 
 		/* Cursed (if "bad") */
+#ifdef PREVENT_CURSED_TOOLS
 		/* little hack - no cursed diggers/tools */
 		if ((o_ptr->tval != TV_DIGGING && o_ptr->tval != TV_TOOL) &&
-		    (o_ptr->to_h + o_ptr->to_d < 0)) o_ptr->ident |= ID_CURSED;
+		    (o_ptr->to_h + o_ptr->to_d < 0))
+#else
+		if (o_ptr->to_h + o_ptr->to_d < 0)
+#endif
+			o_ptr->ident |= ID_CURSED;
 	}
 
 
@@ -9162,11 +9171,11 @@ void place_gold(struct worldpos *wpos, int y, int x, int bonus)
 /* XXX XXX XXX DIRTY! DIRTY! DIRTY!		- Jir - */
 s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x)
 {
-	int		k, d, ny, nx, i, s;	// , y1, x1
+	int k, d, ny, nx, i, s;	// , y1, x1
 	int bs, bn;
 	int by, bx;
 	//int ty, tx;
-	int o_idx=-1;
+	int o_idx = -1;
 	int flag = 0;	// 1 = normal, 2 = combine, 3 = crash
 
 	bool inside_house = FALSE;
@@ -9184,11 +9193,10 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 
 	cave_type **zcave;
 
-	if(!(zcave=getcave(wpos))) return(-1);
+	if (!(zcave = getcave(wpos))) return(-1);
 
 	/* Handle normal "breakage" */
-	if (!arts && magik(chance))
-	{
+	if (!arts && magik(chance)) {
 #if 0
 		/* Message */
 		msg_format("The %s disappear%s.",
@@ -9233,8 +9241,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		ny = y1 = y;  nx = x1 = x;
 
 		/* Try really hard to drop it */
-		for (k = 0; !flag && (k < (artifact_p(o_ptr) ? 1000 : 20)); k++)
-		{
+		for (k = 0; !flag && (k < (artifact_p(o_ptr) ? 1000 : 20)); k++) {
 			d = 1;
 
 			/* Pick a location */
@@ -9255,12 +9262,11 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			if (!(c_ptr->o_idx)) flag = TRUE;
 
 			/* After trying 99 places, crush any (normal) object */
-			else if ((k>99) && cave_valid_bold(zcave, ny, nx)) flag = TRUE;
+			else if ((k > 99) && cave_valid_bold(zcave, ny, nx)) flag = TRUE;
 		}
 
 		/* Hack -- Artifacts will destroy ANYTHING to stay alive */
-		if (!flag)
-		{
+		if (!flag) {
 			/* Location */
 			ny = y;
 			nx = x;
@@ -9290,8 +9296,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 	d = 0;
 
 	/* Scan local grids */
-	for (i = 0; i < tdi[3]; i++)
-	{
+	for (i = 0; i < tdi[3]; i++) {
 		bool comb = FALSE;
 
 		if (i >= tdi[d]) d++;
@@ -9313,6 +9318,16 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 
 		/* Obtain grid */
 		c_ptr = &zcave[ny][nx];
+
+		/* Hack: Don't drop items below immovable unkillable monsters aka the
+		   Target Dummy, so players can get their items (ammo) back - C. Blue */
+		if (c_ptr->m_idx > 0) {
+			k = m_list[c_ptr->m_idx].r_idx;
+			if (((r_info[k].flags1 & RF1_NEVER_MOVE) ||
+			    (r_info[k].flags7 & RF7_NEVER_ACT)) &&
+			    (r_info[k].flags7 & RF7_NO_DEATH))
+			continue;
+		}
 
 		/* No traps */
 //		if (c_ptr->t_idx) continue;
@@ -10160,8 +10175,7 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 #endif	// 0
 
 	/* Check for combining */
-	for (j = 0; j < INVEN_PACK; j++)
-	{
+	for (j = 0; j < INVEN_PACK; j++) {
 		j_ptr = &p_ptr->inventory[j];
 
 		/* Skip empty items */
@@ -10171,8 +10185,7 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 		n = j;
 
 		/* Check if the two items can be combined */
-		if (object_similar(Ind, j_ptr, o_ptr, 0x0))
-		{
+		if (object_similar(Ind, j_ptr, o_ptr, 0x0)) {
 			/* Combine the items */
 			object_absorb(Ind, j_ptr, o_ptr);
 
@@ -10196,8 +10209,7 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 
 
 	/* Find an empty slot */
-	for (j = 0; j < INVEN_PACK; j++)
-	{
+	for (j = 0; j < INVEN_PACK; j++) {
 		j_ptr = &p_ptr->inventory[j];
 
 		/* Use it if found */
@@ -10216,16 +10228,14 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 
 
 	/* Hack -- pre-reorder the pack */
-	if (i < INVEN_PACK)
-	{
+	if (i < INVEN_PACK) {
 		s64b		o_value, j_value;
 
 		/* Get the "value" of the item */
 		o_value = object_value(Ind, o_ptr);
 
 		/* Scan every occupied slot */
-		for (j = 0; j < INVEN_PACK; j++)
-		{
+		for (j = 0; j < INVEN_PACK; j++) {
 			j_ptr = &p_ptr->inventory[j];
 
 			/* Use empty slots */
@@ -10269,8 +10279,7 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 		i = j;
 
 		/* Structure slide (make room) */
-		for (k = n; k >= i; k--)
-		{
+		for (k = n; k >= i; k--) {
 			/* Hack -- Slide the item */
 			p_ptr->inventory[k+1] = p_ptr->inventory[k];
 		}
@@ -10282,8 +10291,7 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 		invwipe(&p_ptr->inventory[i]);
 	}
 
-	if (!o_ptr->owner && !p_ptr->admin_dm)
-	{
+	if (!o_ptr->owner && !p_ptr->admin_dm) {
 		o_ptr->owner = p_ptr->id;
 		o_ptr->mode = p_ptr->mode;
 	}
@@ -10298,10 +10306,7 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 
 	/* Auto-inscriber */
 #ifdef	AUTO_INSCRIBER
-	if (p_ptr->auto_inscribe)
-	{
-		auto_inscribe(Ind, o_ptr, 0);
-	}
+	if (p_ptr->auto_inscribe) auto_inscribe(Ind, o_ptr, 0);
 #endif	// AUTO_INSCRIBER
 			
 
@@ -10309,8 +10314,7 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Auto Curse */
-	if (f3 & TR3_AUTO_CURSE)
-	{
+	if (f3 & TR3_AUTO_CURSE) {
 		/* The object recurse itself ! */
 		if (!(o_ptr->ident & ID_CURSED)) {
 			o_ptr->ident |= ID_CURSED;
@@ -10612,11 +10616,9 @@ void process_objects(void)
 
 #if 0
 	/* Optimize */
-	if (!avoid_other && scan_objects)
-	{
+	if (!avoid_other && scan_objects) {
 		/* Process the objects */
-		for (i = 1; i < o_max; i++)
-		{
+		for (i = 1; i < o_max; i++) {
 			o_ptr = &o_list[i];
 
 			/* Skip dead objects */

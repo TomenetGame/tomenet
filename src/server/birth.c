@@ -1860,31 +1860,47 @@ static void player_setup(int Ind, bool new)
 	/* Make sure he's supposed to be here -- if not, then the level has
 	 * been unstaticed and so he should forget his memory of the old level.
 	 */
-	/* FIXME: seemingly this code is helplessly wrong	- Jir - */
+	/* Problem: Player could have logged out, level unstaticed, someone else
+	   entered it, logged out, still static, first player logs in and game
+	   thinks it's HIS view and allows him to see the new level.. Solution
+	   would probably be to add a sort of unique 'floor id' like item seeds - C. Blue */
 	if (count >= players_on_depth(wpos)) {
+#if 0 /* done below now - C. Blue */
 		/* Clear the "marked" and "lit" flags for each cave grid */
 		for (y = 0; y < MAX_HGT; y++) {
 			for (x = 0; x < MAX_WID; x++) {
 				p_ptr->cave_flag[y][x] = 0;
 			}
 		}
+#endif
+
 		/* He is now on the level, so add him to the player_on_depth list */
 		new_players_on_depth(wpos, 1, TRUE);
 
 		/* Set the unstaticed variable to true so we know to do a non-LOS requiring
 		 * scatter when we place the player.  See below.
 		 */
-		unstaticed = 1;
+		unstaticed = TRUE; /* seems unused atm! */
 	}
 
 	/* Rebuild the level if necessary */
-	if (!(zcave = getcave(wpos))){
-		if (p_ptr->wpos.wz){
+	if (!(zcave = getcave(wpos))) {
+		if (p_ptr->wpos.wz) {
 			struct dun_level *l_ptr;
+			/* Clear the "marked" and "lit" flags for each cave grid */
+			for (y = 0; y < MAX_HGT; y++) {
+				for (x = 0; x < MAX_WID; x++) {
+					p_ptr->cave_flag[y][x] = 0;
+				}
+			}
+
 			alloc_dungeon_level(wpos);
 			generate_cave(wpos, p_ptr);
-
 			l_ptr = getfloor(wpos);
+
+			/* Player now starts mapping this dungeon (as far as its flags allow) */
+			p_ptr->dlev_id = l_ptr->id;
+
 			if ((l_ptr->wid < p_ptr->px) || (l_ptr->hgt < p_ptr->py)){
 				p_ptr->px = l_ptr->wid / 2;
 				p_ptr->py = l_ptr->hgt / 2;
@@ -1892,16 +1908,16 @@ static void player_setup(int Ind, bool new)
 				teleport_player_force(Ind, 1);
 				NumPlayers--;
 			}
-#if 0 /* teleport players who logged into a non-existing floor only if they're <= level 5? */
-			if (p_ptr->lev <= 5) {
-#else /* ..or always? (to prevent them getting entombed in walls) */
-			{
-#endif
-				NumPlayers++; // hack for cave_midx_debug - mikaelh
-				teleport_player_force(Ind, 5);
-				NumPlayers--;
-			}
 		} else {
+#if 0 /* if we assume that surface levels are mostly the same, we can keep view info - C. Blue */
+			/* Clear the "marked" and "lit" flags for each cave grid */
+			for (y = 0; y < MAX_HGT; y++) {
+				for (x = 0; x < MAX_WID; x++) {
+					p_ptr->cave_flag[y][x] = 0;
+				}
+			}
+#endif
+
 			alloc_dungeon_level(wpos);
 			generate_cave(wpos, p_ptr);
 			if (!players_on_depth(wpos)) new_players_on_depth(wpos, 1, FALSE);
@@ -1909,9 +1925,53 @@ static void player_setup(int Ind, bool new)
 			/* paranoia, update the players wilderness map. */
 			p_ptr->wild_map[(-p_ptr->dun_depth) / 8] |= (1 << ((-p_ptr->dun_depth) % 8));
 #endif
+			p_ptr->dlev_id = 0;
 		}
+
 		zcave = getcave(wpos);
+
+		/* teleport players who logged into a non-existing/changed
+		   floor, so they don't get stuck in walls - C. Blue */
+		if (!player_can_enter(Ind, zcave[p_ptr->py][p_ptr->px].feat)
+		    /* max level limit to make players learn? or more comfort instead? */
+//		    && p_ptr->lev < 10
+		    ) {
+			NumPlayers++; // hack for cave_midx_debug - mikaelh
+			/* not a '_force'd teleport, so won't get out of NO_TELE vaults! */
+			teleport_player(Ind, 5, TRUE);
+			NumPlayers--;
+		}
+	} else if (p_ptr->wpos.wz) {
+		struct dun_level *l_ptr;
+		l_ptr = getfloor(wpos);
+
+		/* If player doesn't know this level.. */
+		if (l_ptr->id != p_ptr->dlev_id) {
+			/* Clear the "marked" and "lit" flags for each cave grid */
+			for (y = 0; y < MAX_HGT; y++) {
+				for (x = 0; x < MAX_WID; x++) {
+					p_ptr->cave_flag[y][x] = 0;
+				}
+			}
+			/* Player now starts mapping this dungeon (as far as its flags allow) */
+			p_ptr->dlev_id = l_ptr->id;
+		}
+
+		/* teleport players who logged into a non-existing/changed
+		   floor, so they don't get stuck in walls - C. Blue */
+		if (!player_can_enter(Ind, zcave[p_ptr->py][p_ptr->px].feat)
+		    /* max level limit? Otherwise it could be exploited
+		       by taking off flying ring/climbing set to phase around */
+		    && p_ptr->lev < 10
+		    ) {
+			NumPlayers++; // hack for cave_midx_debug - mikaelh
+			/* not a '_force'd teleport, so won't get out of NO_TELE vaults! */
+			teleport_player(Ind, 5, TRUE);
+			NumPlayers--;
+		}
 	}
+	/* could add an 'else' branch to teleport players on surface,
+	   see 'if player_can_enter()' stuff above. - C. Blue */
 
 	/* hack -- update night/day on world surface */
 	if (!wpos->wz) {
@@ -2168,7 +2228,7 @@ static void do_bard_skill(int Ind)
 		else
 		{
 			p_ptr->s_info[i].value *= 2;
-			p_ptr->s_info[i].mod *= 1.5;	/* oops floatpoint */
+			p_ptr->s_info[i].mod = (p_ptr->s_info[i].mod * 3) / 2;
 		}
 	}
 

@@ -3729,7 +3729,8 @@ static errr reinit_a_info(void) {
 }
 #endif
 
-/* re-load various info files live (for HALLOWEEN/XMAS) - C. Blue */
+/* re-load various info files live (for HALLOWEEN/XMAS) - C. Blue
+   (hazardous/incomplete) */
 void reinit_some_arrays(void) {
 	s_printf("[Reinitializing arrays... (objects)]\n");
 	if (reinit_k_info()) quit("Cannot reinitialize objects");

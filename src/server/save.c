@@ -853,6 +853,10 @@ static void wr_extra(int Ind)
 	wr_u16b(tmp16u);
 
 	wr_string(p_ptr->info_msg);
+
+	/* for ENABLE_GO_GAME */
+	wr_byte(p_ptr->go_level);
+	wr_byte(p_ptr->go_sublevel);
 }
 
 /*
@@ -1060,17 +1064,18 @@ static void wr_cave_memory(int Ind)
 	char prev_flag=-1;	/* just for definedness. */
 	unsigned char runlength = 0;
 
+	/* Remember unique ID of the old floor */
+	wr_u32b(p_ptr->dlev_id);
+
 	/* write the number of flags */
 	wr_u16b(MAX_HGT);
 	wr_u16b(MAX_WID);
-	for (x = y = 0; y < MAX_HGT;)
-	{
+
+	for (x = y = 0; y < MAX_HGT;) {
 		/* if we are starting a new run */
-		if (!runlength || (p_ptr->cave_flag[y][x] != prev_flag) || (runlength > 254) )
-		{
+		if (!runlength || (p_ptr->cave_flag[y][x] != prev_flag) || (runlength > 254) ) {
 			/* if we just finished a run, write it */
-			if (runlength)
-			{
+			if (runlength) {
 				wr_byte(runlength);
 				wr_byte(prev_flag);
 			}
@@ -1083,11 +1088,9 @@ static void wr_cave_memory(int Ind)
 
 		/* update our current position */
 		x++;
-		if (x >= MAX_WID)
-		{
+		if (x >= MAX_WID) {
 			x = 0; y++;
-			if (y >= MAX_HGT) 
-			{
+			if (y >= MAX_HGT) {
 				/* hack -- write the final run */
 				wr_byte(runlength);
 				wr_byte(prev_flag);

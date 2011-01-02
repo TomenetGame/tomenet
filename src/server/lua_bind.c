@@ -323,9 +323,11 @@ s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, 
 
 	 /* Not enough mana to cast */
         if (chance < 0) chance = 0;
+#if 0 /* you cannot cast the spell anyway, so this just confuses */
         if (mana > cur_mana) {
                 chance += 15 * (mana - cur_mana);
 	}
+#endif
 
 	/* Extract the minimum failure rate */
         minfail = adj_mag_fail[p_ptr->stat_ind[stat]];

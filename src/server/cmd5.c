@@ -568,22 +568,21 @@ static void do_mimic_power(int Ind, int power, int dir)
 	/* Failed spell */
 	if (rand_int(100) < chance) {
 		msg_print(Ind, "You failed to use the power!");
-	}
 	/* Clients > 4.4.5.10 can already send a dir != 0 here, for directed spells */
-	else if (dir != 0) {
+	/* Clients >= 4.4.6.2 can also use '+' (dir==11) fallback to manual mode here: */
+	} else if (dir != 0 && dir != 11) {
 		p_ptr->current_spell = j;
 		do_mimic_power_aux(Ind, dir);
 		return;
 	}
-	/* Non-directed spells // old way of handling directed spells */
+	/* Non-directed spells // old way of handling directed spells.
+	   OR: New way of '+' fallback to manual mode! (dir==11) */
 	else {
-
 		/* Hack -- preserve current 'realm' */
 		p_ptr->current_realm = REALM_MIMIC;
 
   /* 0-31 = RF4, 32-63 = RF5, 64-95 = RF6 */
-  switch(j)
-    {
+  switch(j) {
 
 
 /* RF_4 ------------------------------------------------------------------------------------------------- */
@@ -1432,7 +1431,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 		do_mimic_change(Ind, j, FALSE);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 	}
-	else if (spell > (20000 - 1)){ /* should be spell == 1, then ask via get_string/get_quantity for target form, one day */
+	else if (spell > (20000 - 1)){ /* hack: 20000 masks poly into.. */
 		k = p_ptr->body_monster;
 		//j = get_quantity("Which form (0 for player form)?", 0);
 		j = spell - 20000;
@@ -1541,27 +1540,21 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 
 	if (!can_use_verbose(Ind, o_ptr)) return;
 
-	if (o_ptr->tval != TV_BOOK)
-	{
+	if (o_ptr->tval != TV_BOOK) {
 		/* log for debugging */
 		s_printf("CAST_SCHOOL_SPELL_ERROR: TV_BOOK != %d\n", o_ptr->tval);
 
 		msg_print(Ind, "Ahah dont try to hack your client please :) :: tval");
 		return;
-	}
-	else if (o_ptr->sval == SV_SPELLBOOK)
-	{
-		if (o_ptr->pval != spell)
-		{
+	} else if (o_ptr->sval == SV_SPELLBOOK) {
+		if (o_ptr->pval != spell) {
 			/* log for debugging */
 			s_printf("CAST_SCHOOL_SPELL_ERROR: SV_SPELLBOOK - %d != %d\n", o_ptr->pval, spell);
 
 			msg_print(Ind, "Ahah dont try to hack your client please :) :: sval 255");
 			return;
 		}
-	}
-	else
-	{
+	} else {
 		if (MY_VERSION < (4 << 12 | 4 << 8 | 1 << 4 | 8)) {
 			if (exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell)) == FALSE) {
 				/* log for debugging */
@@ -1581,19 +1574,28 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 		}
 	}
 
+	/* New '+' feat in 4.4.6.2 */
+	if (dir == 11) {
+		get_aim_dir(Ind);
+		p_ptr->current_realm = REALM_SCHOOL;
+		p_ptr->current_item = item;
+		p_ptr->current_book = book;
+		p_ptr->current_spell = spell;
+		p_ptr->current_aux = aux;
+		return;
+	}
+
 	break_cloaking(Ind, 5);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 
 	/* No magic */
-	if (p_ptr->anti_magic)
-	{
+	if (p_ptr->anti_magic) {
 		msg_format(Ind, "\377%cYour anti-magic shell disrupts any magic attempts.", COLOUR_AM_OWN);
 		return;
 	}
-	if (p_ptr->antimagic)
-	{
+	if (p_ptr->antimagic) {
 		msg_format(Ind, "\377%cYour anti-magic field disrupts any magic attempts.", COLOUR_AM_OWN);
 		return;
 	}

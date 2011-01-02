@@ -545,6 +545,7 @@ extern int apply_block_chance(player_type *p_ptr, int n);
 extern int apply_parry_chance(player_type *p_ptr, int n);
 extern void do_cmd_force_stack(int Ind, int item);
 extern bool wraith_access(int Ind);
+extern void whats_under_your_feet(int Ind);
 
 /* cmd2.c */
 extern cptr get_house_owner(struct c_special *cs_ptr);
@@ -970,6 +971,9 @@ extern int Send_mini_map(int Ind, int y, byte *sa, char *sc);
 extern int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval);
 extern int Send_store_wide(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval,
     byte xtra1, byte xtra2, byte xtra3, byte xtra4, byte xtra5, byte xtra6, byte xtra7, byte xtra8, byte xtra9);
+extern int Send_store_special_str(int ind, char line, char col, char attr, char *str);
+extern int Send_store_special_char(int ind, char line, char col, char attr, char c);
+extern int Send_store_special_clr(int ind, char line_start, char line_end);
 extern int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int purse, byte attr, char c);
 extern int Send_store_action(int ind, char pos, u16b bact, u16b action, cptr name, char attr, char letter, s16b cost, byte flag);
 extern int Send_store_sell(int Ind, int price);
@@ -996,6 +1000,12 @@ extern int Send_unique_monster(int ind, int r_idx);
 extern int Send_weather(int ind, int weather_type, int weather_wind, int weather_gen_speed, int weather_intensity, int weather_speed, bool update_clouds, bool revoke_clouds);
 extern int Send_inventory_revision(int ind);
 extern int Send_account_info(int ind);
+
+extern int Send_request_key(int Ind, int id, char *prompt);
+extern int Send_request_num(int Ind, int id, char *prompt, int std);
+extern int Send_request_str(int Ind, int id, char *prompt, char *std);
+extern int Send_request_cfr(int Ind, int id, char *prompt);
+extern int Send_request_abort(int Ind);
 
 extern void Handle_direction(int Ind, int dir);
 extern void Handle_clear_buffer(int Ind);
@@ -1197,6 +1207,8 @@ extern void strip_true_arts_from_hashed_players(void);
 extern void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u16b quest, time_t laston);
 extern void account_change_password(int Ind, char *old_pass, char *new_pass);
 
+extern int lookup_player_ind(u32b id);
+
 /* printout.c */
 extern int s_print_only_to_file(int which);
 extern int s_setup(char *str);
@@ -1316,6 +1328,7 @@ extern bool ident_spell(int Ind);
 extern bool ident_spell_aux(int Ind, int item);
 extern bool identify_fully(int Ind);
 extern bool identify_fully_item(int Ind, int item);
+extern bool identify_fully_item_quiet(int Ind, int item);
 extern bool recharge(int Ind, int num);
 extern bool recharge_aux(int Ind, int item, int num);
 extern bool speed_monsters(int Ind);
@@ -1463,6 +1476,8 @@ extern int auction_show(int Ind, int auction_id);
 extern int auction_examine(int Ind, int auction_id);
 #endif
 
+extern void handle_store_leave(int Ind);
+
 /* util.c */
 extern bool suppress_message;
 /* The next buffers are for catching the chat */
@@ -1503,7 +1518,7 @@ extern void bell(void);
 #ifdef USE_SOUND_2010
 extern void sound(int Ind, cptr name, cptr alternative, int type, bool nearby);
 extern void sound_near(int Ind, cptr name, cptr alternative, int type);
-extern void sound_near_site(int y, int x, worldpos *wpos, int Ind, cptr name, cptr alternative, int type);
+extern void sound_near_site(int y, int x, worldpos *wpos, int Ind, cptr name, cptr alternative, int type, bool viewable);
 extern void sound_near_monster(int m_idx, cptr name, cptr alternative, int type);
 extern void handle_music(int Ind);
 extern void sound_item(int Ind, int tval, int sval, cptr action);
@@ -1607,6 +1622,10 @@ extern void calc_techniques(int Ind);
 extern int get_esp_link(int Ind, u32b flags, player_type **p2_ptr);
 extern void use_esp_link(int *Ind, u32b flags);
 
+extern void handle_request_return_str(int Ind, int id, char *str);
+extern void handle_request_return_key(int Ind, int id, char c);
+extern void handle_request_return_num(int Ind, int id, int num);
+extern void handle_request_return_cfr(int Ind, int id, bool cfr);
 
 /* xtra2.c */
 
@@ -1866,6 +1885,23 @@ extern bool lua_is_unique(int r_idx);
 extern void do_slash_cmd(int Ind, char *message);
 extern int global_luck; /* Global +LUCK modifier for the whole server (change the 'weather' - C. Blue) */
 extern void lua_intrusion(int Ind, char *problem_diz);
+
+#ifdef ENABLE_GO_GAME
+/* go.c - C. Blue */
+extern bool go_engine_up, go_game_up;
+extern int go_engine_processing;
+extern u32b go_engine_player_id;
+
+extern int go_engine_init(void);
+extern void go_engine_terminate(void);
+extern void go_engine_process(void);
+extern void go_challenge(int Ind);
+extern void go_challenge_accept(int Ind, bool new_wager);
+extern void go_challenge_start(int Ind);
+extern void go_challenge_cancel(void);
+extern int go_engine_move_human(int Ind, char *py_move);
+extern void go_engine_clocks(void);
+#endif
 
 /* Watch if someone enters Nether Realm or challenges Morgoth - C. Blue
    Dungeon masters will be paged if they're not AFK or if they have

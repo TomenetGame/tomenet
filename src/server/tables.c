@@ -1946,7 +1946,7 @@ player_race race_info[MAX_RACE] =
         {
                 "Dunadan",
                 {  1,  2,  2,  2,  3,  2 },
-                4,  5,  5,  2, 3, 13, 15, 10,
+                4,  5,  5,  0, 3, 13, 15, 10,
                 10,  170,
                 50, 20,
                 82, 5, 190, 20,
@@ -2212,7 +2212,7 @@ player_race race_info[MAX_RACE] =
 //		  {  6,  2,  -2,  1,  3,  5 },
 //		  {  6,  2,  1,  1,  3,  5 },
 		  {  4,  2,  2,  1,  3,  2 },
-                6,  0,  10,  -16,  30,  10,  15,  5,
+                6,  0,  10,  -10,  30,  10,  15,  5,
                 12,  350,
                 14,  6,
                 180,  6, 255, 25,
@@ -2591,7 +2591,7 @@ Nothing here that truly heals/buffs people (those bonus are to self only). They 
 62.D: No idea about the amount of work required.
 */
                 { 2,  3, 3,  1,  1, 2 }, //boosted int/wisdom/dex
-                3, 5, 3, 3,  5, 1, 15, 5,
+                3, 5, 3, 0,  5, 1, 15, 5,
 		10, 380,//too low == bad since you need the quest mobs
 		255, 250,
                 180, 20, 180, 20,
@@ -3046,16 +3046,11 @@ player_class class_info[MAX_CLASS] =
 
                         {
                                 SKILL_SORCERY,
-
                                 '+', 0,
-#if 0
-/*#ifndef RPG_SERVER*/
-                                '+', 500,//was 700
-#else
+/*				'+', 500,//was 700 */
 /*				'+', 170,  1..9schools->schools,10..12->sorc */
 /*				'+', 185,  49*5.5 skill points -> sorcery ~maxed. */
 				'+', 205,  /* 49*5 -> maxed at 50 */
-#endif
                         },
                         {
                                 SKILL_SPELL,
@@ -4122,7 +4117,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SORCERY,
                                 '+', 0,
-                                '+', 300,	/* 250 was 'safer' */
+                                '+', 150,	/* 300; 250 was 'safer' */
                         },
 #endif
                         {
@@ -4401,18 +4396,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 1100,
                         },
-#if 0
-//#ifndef RPG_SERVER /* Sorcery only for sorcerors.. (same as goes for Rangers) */
+#if 0 /* Sorcery only for sorcerors.. (same as goes for Rangers) */
                         {
                                 SKILL_SORCERY,
                                 '+', 0,
-                                '+', 300,	/* 250 was 'safer' */
-                        },
-#else
-                        {
-                                SKILL_SORCERY,
-                                '+', 0,
-                                '+', 150,
+                                '+', 150,	/* 300; 250 was 'safer' */
                         },
 #endif
                         {
@@ -5446,7 +5434,7 @@ player_class class_info[MAX_CLASS] =
 #else
 			{ 
 				SKILL_R_FIRECOLD,
-				'+', 1260,
+				'+', 1000, //1260,
 				'+', 630, //78
 			},
 			{
@@ -5461,7 +5449,7 @@ player_class class_info[MAX_CLASS] =
 			},
 			{
 				SKILL_R_WINDPOIS,
-				'+', 1220,
+				'+', 0, //1220,
 				'+', 610, //81
 			},
 			{
@@ -6092,8 +6080,9 @@ cptr player_title[MAX_CLASS][11][4] =
 
         /* Paladin */
 	{
+		{"Page", "Page", "Page", "Page", },
 		{"Squire", "Squiress", "Squire", "Squiress", },
-		{"Acolyte", "Acolyte", "Acolyte", "Acolyte", },
+//		{"Acolyte", "Acolyte", "Acolyte", "Acolyte", },
 		{"Faithful", "Faithful", "Faithful", "Faithful", },
 		{"Zealot", "Zealot", "Zealot", "Zealot", },
 		{"Defender", "Defender", "Defender", "Defender", },

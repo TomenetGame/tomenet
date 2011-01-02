@@ -148,10 +148,10 @@ void init_wild_info_aux(int x, int y){
 }
 
 void initwild(){
-	int i,j;
-	for(i=0;i<MAX_WILD_X;i++){
-		for(j=0;j<MAX_WILD_Y;j++){
-			wild_info[j][i].type=WILD_UNDEFINED;
+	int i, j;
+	for(i = 0; i < MAX_WILD_X; i++){
+		for(j = 0; j < MAX_WILD_Y; j++){
+			wild_info[j][i].type = WILD_UNDEFINED;
 		}
 	}
 }
@@ -228,7 +228,8 @@ void deltown(int Ind)
 	if(numtowns <= 5) return;
 
 //	wild_info[wpos->wy][wpos->wx].type = WILD_GRASSLAND;
-	wild_info[wpos->wy][wpos->wx].type = WILD_OCEAN;
+//	wild_info[wpos->wy][wpos->wx].type = WILD_OCEAN;
+	wild_info[wpos->wy][wpos->wx].type = WILD_UNDEFINED; /* re-generate */
 	wild_info[wpos->wy][wpos->wx].radius = towndist(wpos->wy, wpos->wx);
 	wilderness_gen(wpos);
 
@@ -247,7 +248,7 @@ void wild_bulldoze()
 		for(x=0;x<MAX_WILD_X;x++){
 			struct wilderness_type *w_ptr=&wild_info[y][x];
 			if(w_ptr->radius<=2 && (w_ptr->type==WILD_WASTELAND || w_ptr->type==WILD_DENSEFOREST || w_ptr->type==WILD_OCEAN || w_ptr->type==WILD_RIVER || w_ptr->type==WILD_VOLCANO || w_ptr->type==WILD_MOUNTAIN)){
-				wild_info[y][x].type=WILD_GRASSLAND;
+				wild_info[y][x].type = WILD_GRASSLAND;
 			}
 		}
 	}
@@ -1755,7 +1756,7 @@ int determine_wilderness_type(struct worldpos *wpos)
 	else if (rand_int(100) < 40) w_ptr->type = WILD_FOREST;
 	else if (rand_int(100) < 10) w_ptr->type = WILD_SWAMP;
 	else if (rand_int(100) < 15) w_ptr->type = WILD_LAKE;
-	else w_ptr->type = WILD_GRASSLAND; 								
+	else w_ptr->type = WILD_GRASSLAND;
 	
 
 #ifdef	DEVEL_TOWN_COMPATIBILITY
@@ -1815,7 +1816,7 @@ int determine_wilderness_type(struct worldpos *wpos)
 	/* Hack -- don't touch number generation. */
 	Rand_value = old_seed;
 
-	return w_ptr->type;	
+	return w_ptr->type;
 }
 
 
@@ -3290,7 +3291,7 @@ static void river(int y, int x){
 	dir=rand_int(7);
 	while(wild_info[y][x].type!=WILD_OCEAN){
 		cdir=dir;
-		if(y<0 || x<0 || y>=MAX_WILD_Y || x>=MAX_WILD_X) break;	
+		if(y<0 || x<0 || y>=MAX_WILD_Y || x>=MAX_WILD_X) break;
 		wild_info[y][x].type=WILD_RIVER;
 		t=rand_int(31);
 		switch(t){

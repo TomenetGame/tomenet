@@ -111,7 +111,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 			if (object_known_p(Ind, o_ptr)) continue;
 
 			/* Skip "hidden" artifacts */
-			if (admin_artifact_p(o_ptr) && !is_admin(Players[i])) continue;
+			if (admin_artifact_p(o_ptr) && !admin) continue;
 
 			/* Note the artifact */
 			okay[o_ptr->name1] = FALSE;
@@ -572,12 +572,10 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 			fprintf(fff, "\n\377%c  *%s\377U ", COLOUR_MODE_PVP, info_chars);
 			break;
 		case (MODE_HARD | MODE_NO_GHOST):
-			//fprintf(fff, "\n\377s  *%s\377U ", info_chars);
 			fprintf(fff, "\n\377r  *%s\377U ", info_chars);
 			break;
 		case MODE_HARD:
-			//fprintf(fff, "\n\377s  *%s\377U ", info_chars);
-			fprintf(fff, "\n\377r  *%s\377U ", info_chars);
+			fprintf(fff, "\n\377s  *%s\377U ", info_chars);
 			break;
 		case MODE_NO_GHOST:
 			fprintf(fff, "\n\377D  *%s\377U ", info_chars);
@@ -778,12 +776,10 @@ static void do_admin_woa(FILE *fff, player_type *q_ptr, bool modify, char attr)
 			fprintf(fff, "\n\377%c  *%s\377U ", COLOUR_MODE_PVP, info_chars);
 			break;
 		case (MODE_HARD | MODE_NO_GHOST):
-			//fprintf(fff, "\n\377s  *%s\377U ", info_chars);
 			fprintf(fff, "\n\377r  *%s\377U ", info_chars);
 			break;
 		case MODE_HARD:
-			//fprintf(fff, "\n\377s  *%s\377U ", info_chars);
-			fprintf(fff, "\n\377r  *%s\377U ", info_chars);
+			fprintf(fff, "\n\377s  *%s\377U ", info_chars);
 			break;
 		case MODE_NO_GHOST:
 			fprintf(fff, "\n\377D  *%s\377U ", info_chars);
@@ -1133,8 +1129,8 @@ void do_cmd_check_player_equip(int Ind, int line)
 		/* don't display the dungeon master if the secret_dungeon_master
 		 * option is set
 		 */
-		if (q_ptr->admin_dm && !p_ptr->admin_dm && 
-				(cfg.secret_dungeon_master)) continue;
+		if (q_ptr->admin_dm && !p_ptr->admin_dm &&
+		    (cfg.secret_dungeon_master)) continue;
 
 		/*** Determine color ***/
 

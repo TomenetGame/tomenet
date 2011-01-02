@@ -883,8 +883,7 @@ static void get_questinfo(int questnum)
 	prt(quest[questnum].name, 7, 0);
 
 	i = 0;
-	while ((i < 10) && (quest[questnum].desc[i][0] != '\0'))
-	{
+	while ((i < 10) && (quest[questnum].desc[i][0] != '\0')) {
 		c_put_str(TERM_YELLOW, quest[questnum].desc[i++], i + 8, 0);
 	}
 }
@@ -906,8 +905,7 @@ static bool castle_quest(int y, int x)
 	plot = cave[y][x].special;
 
 	/* Is there a quest available at the building? */
-	if ((!plot) || (plots[plot] == QUEST_NULL))
-	{
+	if ((!plot) || (plots[plot] == QUEST_NULL)) {
 		put_str("I don't have a quest for you at the moment.",8,0);
 		return FALSE;
 	}
@@ -915,8 +913,7 @@ static bool castle_quest(int y, int x)
 	q_ptr = &quest[plots[plot]];
 
 	/* Quest is completed */
-	if (q_ptr->status == QUEST_STATUS_COMPLETED)
-	{
+	if (q_ptr->status == QUEST_STATUS_COMPLETED) {
 		/* Rewarded quest */
 		q_ptr->status = QUEST_STATUS_FINISHED;
 
@@ -935,8 +932,7 @@ static bool castle_quest(int y, int x)
 		return (FALSE);
 	}
 	/* Failed quest */
-	else if (q_ptr->status == QUEST_STATUS_FAILED)
-	{
+	else if (q_ptr->status == QUEST_STATUS_FAILED) {
 		/* Mark quest as done (but failed) */
 		q_ptr->status = QUEST_STATUS_FAILED_DONE;
 
@@ -945,8 +941,7 @@ static bool castle_quest(int y, int x)
 		return (FALSE);
 	}
 	/* No quest yet */
-	else if (q_ptr->status == QUEST_STATUS_UNTAKEN)
-	{
+	else if (q_ptr->status == QUEST_STATUS_UNTAKEN) {
 		if (process_hooks(HOOK_INIT_QUEST, "(d)", plots[plot])) return (FALSE);
 
 		q_ptr->status = QUEST_STATUS_TAKEN;
@@ -1005,83 +1000,67 @@ static void compare_weapon_aux1(object_type *o_ptr, int col, int r)
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 
-	if (f1 & (TR1_SLAY_ANIMAL))
-	{
+	if (f1 & (TR1_SLAY_ANIMAL)) {
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_HURT, "Animals:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
-	if (f1 & (TR1_SLAY_ORC))
-	{
+	if (f1 & (TR1_SLAY_ORC)) {
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, "Orcs:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
-	if (f1 & (TR1_SLAY_TROLL))
-	{
+	if (f1 & (TR1_SLAY_TROLL)) {
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, "Trolls:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
-	if (f1 & (TR1_SLAY_GIANT))
-	{
+	if (f1 & (TR1_SLAY_GIANT)) {
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, "Giants:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
-	if (f1 & (TR1_SLAY_EVIL))
-	{
+	if (f1 & (TR1_SLAY_EVIL)) {
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_HURT, "Evil:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
-	if (f1 & (TR1_KILL_UNDEAD))
-	{
+	if (f1 & (TR1_KILL_UNDEAD)) {
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_KILL, "Undead:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
-	else if (f1 & (TR1_SLAY_UNDEAD))
-	{
+	else if (f1 & (TR1_SLAY_UNDEAD)) {
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, "Undead:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
-	if (f1 & (TR1_KILL_DEMON))
-	{
+	if (f1 & (TR1_KILL_DEMON)) {
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_KILL, "Demons:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
-	else if (f1 & (TR1_SLAY_DEMON))
-	{
+	else if (f1 & (TR1_SLAY_DEMON)) {
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, "Demons:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
-	if (f1 & (TR1_KILL_DRAGON))
-	{
+	if (f1 & (TR1_KILL_DRAGON)) {
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_KILL, "Dragons:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
-	else if (f1 & (TR1_SLAY_DRAGON))
-	{
+	else if (f1 & (TR1_SLAY_DRAGON)) {
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, "Dragons:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
-	if (f1 & (TR1_BRAND_ACID))
-	{
+	if (f1 & (TR1_BRAND_ACID)) {
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, "Acid:",
 		                    f1, f2, f3, TERM_RED);
 	}
-	if (f1 & (TR1_BRAND_ELEC))
-	{
+	if (f1 & (TR1_BRAND_ELEC)) {
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, "Elec:",
 		                    f1, f2, f3, TERM_RED);
 	}
-	if (f1 & (TR1_BRAND_FIRE))
-	{
+	if (f1 & (TR1_BRAND_FIRE)) {
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, "Fire:",
 		                    f1, f2, f3, TERM_RED);
 	}
-	if (f1 & (TR1_BRAND_COLD))
-	{
+	if (f1 & (TR1_BRAND_COLD)) {
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, "Cold:",
 		                    f1, f2, f3, TERM_RED);
 	}
-	if (f1 & (TR1_BRAND_POIS))
-	{
+	if (f1 & (TR1_BRAND_POIS)) {
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, "Poison:",
 		                    f1, f2, f3, TERM_RED);
 	}
@@ -1240,16 +1219,12 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 	int maxenchant = (p_ptr->lev / 5), maxenchant_eff;
 
 	object_type *o_ptr;
-
 	char tmp_str[160]; // , out_val[80];
-
 	bool repaired = FALSE;
-
 	u32b f1, f2, f3, f4, f5, esp;
 
 #if 0
-	if (set_reward && p_ptr->rewards[ireward])
-	{
+	if (set_reward && p_ptr->rewards[ireward]) {
 		msg_print("You already have been rewarded today.");
 		msg_print(NULL);
 
@@ -1264,8 +1239,7 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 #endif	// 0
 	msg_format(Ind, "  Based on your skill, we can improve up to +%d", maxenchant);
 
-	for (i = istart; i <= iend; i++)
-	{
+	for (i = istart; i <= iend; i++) {
 		o_ptr = &p_ptr->inventory[i];
 		maxenchant_eff = maxenchant;
 		if (is_ammo(o_ptr->tval) && (maxenchant_eff > 15)) maxenchant_eff = 15; /* CAP_ITEM_BONI */
@@ -1283,14 +1257,12 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 	        if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) continue;                               
 
 
-		if (ispecific > 0)
-		{
+		if (ispecific > 0) {
 			if (o_ptr->tval != ispecific)
 				continue;
 		}
 
-		if (o_ptr->tval)
-		{
+		if (o_ptr->tval) {
 			object_desc(Ind, tmp_str, o_ptr, FALSE, 1);/* with long inscription, this will
 				crash if tmp_str is only [80], resulting in wrong items getting enchanted - C. Blue */
 
@@ -1337,13 +1309,10 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 		}
 	}
 
-	if (!repaired)
-	{
+	if (!repaired) {
 		msg_print(Ind, "You don't have anything appropriate.");
 //		msg_print(NULL);
-	}
-	else
-	{
+	} else {
 #if 0
                 if (set_reward)
 			p_ptr->rewards[ireward] = TRUE;
@@ -1396,26 +1365,18 @@ static void show_quest_monster(void)
 static void show_bounties(void)
 {
 	int i, j = 6;
-
 	monster_race* r_ptr;
-
 	char buff[80];
 
-
 	clear_bldg(7,18);
-
 	c_prt(TERM_YELLOW, "Currently active bounties:", 4, 2);
 
-	for (i = 1; i < MAX_BOUNTIES; i++, j++)
-	{
+	for (i = 1; i < MAX_BOUNTIES; i++, j++) {
 		r_ptr = &r_info[bounties[i][0]];
-
 		strnfmt(buff, 80, "%-30s (%d gp)", r_name + r_ptr->name, bounties[i][1]);
-
 		prt(buff, j, 2);
 
-		if (j >= 17)
-		{
+		if (j >= 17) {
 			msg_print("Press space for more.");
 			msg_print(NULL);
 
@@ -1434,10 +1395,8 @@ static bool item_tester_hook_bounty(object_type* o_ptr)
 	int i;
 
 
-	if (o_ptr->tval == TV_CORPSE)
-	{
-		for (i = 1; i < MAX_BOUNTIES; i++)
-		{
+	if (o_ptr->tval == TV_CORPSE) {
+		for (i = 1; i < MAX_BOUNTIES; i++) {
 			if (bounties[i][0] == o_ptr->pval2) return (TRUE);
 		}
 	}
@@ -1460,19 +1419,13 @@ static bool item_tester_hook_quest_monster(object_type* o_ptr)
  */
 static int corpse_value_boost(int sval)
 {
-	switch (sval)
-	{
+	switch (sval) {
 		case SV_CORPSE_HEAD:
 		case SV_CORPSE_SKULL:
-		{
 			return (1);
-		}
-
 		/* Default to no boost. */
 		default:
-		{
 			return (0);
-		}
 	}
 }
 
@@ -1482,13 +1435,9 @@ static int corpse_value_boost(int sval)
 static void sell_corpses(void)
 {
 	object_type* o_ptr;
-
 	int i, boost = 0;
-
 	s16b value;
-
 	int item;
-
 
 	/* Set the hook. */
 	item_tester_hook = item_tester_hook_bounty;
@@ -1503,10 +1452,8 @@ static void sell_corpses(void)
 	boost = corpse_value_boost(o_ptr->sval);
 
 	/* Try to find a match. */
-	for (i = 1; i < MAX_BOUNTIES; i++)
-	{
-		if (o_ptr->pval2 == bounties[i][0])
-		{
+	for (i = 1; i < MAX_BOUNTIES; i++) {
+		if (o_ptr->pval2 == bounties[i][0]) {
 			value = bounties[i][1] + boost*(r_info[o_ptr->pval2].level);
 
 			/* hack: prevent s32b overflow */
@@ -1565,9 +1512,7 @@ static bool mon_hook_bounty(int r_idx)
 static void select_quest_monster(void)
 {
 	monster_race* r_ptr;
-
 	int amt;
-
 
 	/*
 	 * Set up the hooks -- no bounties on uniques or monsters
@@ -1609,9 +1554,7 @@ static void select_quest_monster(void)
 static void sell_quest_monster(void)
 {
 	object_type* o_ptr;
-
 	int item;
-
 
 	/* Set the hook. */
 	item_tester_hook = item_tester_hook_quest_monster;
@@ -1621,12 +1564,10 @@ static void sell_quest_monster(void)
 	              "You have no corpses you can sell.", USE_INVEN)) return;
 
 	o_ptr = &inventory[item];
-
 	bounties[0][1] -= o_ptr->number;
 
 	/* Completed the quest. */
-	if (bounties[0][1] <= 0)
-	{
+	if (bounties[0][1] <= 0) {
 		int m;
 		monster_race *r_ptr;
 
@@ -1646,11 +1587,9 @@ static void sell_quest_monster(void)
 		r_ptr->r_wake = r_ptr->r_ignore = MAX_UCHAR;
 
 		/* Observe "maximal" attacks */
-		for (m = 0; m < 4; m++)
-		{
+		for (m = 0; m < 4; m++) {
 			/* Examine "actual" blows */
-			if (r_ptr->blow[m].effect || r_ptr->blow[m].method)
-			{
+			if (r_ptr->blow[m].effect || r_ptr->blow[m].method) {
 				/* Hack -- maximal observations */
 				r_ptr->r_blows[m] = MAX_UCHAR;
 			}
@@ -1686,12 +1625,9 @@ static void sell_quest_monster(void)
 #endif
 
 		msg_print(NULL);
-
 		select_quest_monster();
 
-	}
-	else
-	{
+	} else {
 		msg_format("Well done, only %d more to go.", bounties[0][1]);
 		msg_print(NULL);
 	}
@@ -1720,38 +1656,27 @@ void select_bounties(void)
 	get_mon_num_hook = mon_hook_bounty;
 	get_mon_num_prep(0, NULL);
 
-	for (i = 1; i < MAX_BOUNTIES; i++)
-	{
-		int lev = i*5 + randnor(0, 2);
+	for (i = 1; i < MAX_BOUNTIES; i++) {
+		int lev = i * 5 + randnor(0, 2);
 		monster_race* r_ptr;
 		s16b r_idx;
 		s16b val;
 
 		if (lev < 1) lev = 1;
-
 		if (lev >= MAX_DEPTH) lev = MAX_DEPTH-1;
 
 		/* We don't want to duplicate entries in the list */
-		while (TRUE)
-		{
+		while (TRUE) {
 			r_idx = get_mon_num(lev, lev);
-
 			for (j = 0; j < i; j++)
-			{
 				if (bounties[j][0] == r_idx) continue;
-			}
-
 			break;
 		}
 
 		bounties[i][0] = r_idx;
-
 		r_ptr = &r_info[r_idx];
-
 		val = r_ptr->mexp + r_ptr->level*20 + randnor(0, r_ptr->level*2);
-
 		if (val < 1) val = 1;
-
 		bounties[i][1] = val;
 	}
 
@@ -1779,17 +1704,10 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 //	int amt;
 
 	if (is_state(Ind, s_ptr, STORE_LIKED))
-	{
 		bcost = ba_ptr->costs[STORE_LIKED];
-	}
 	else if (is_state(Ind, s_ptr, STORE_HATED))
-	{
 		bcost = ba_ptr->costs[STORE_HATED];
-	}
-	else
-	{
-		bcost = ba_ptr->costs[STORE_NORMAL];
-	}
+	else bcost = ba_ptr->costs[STORE_NORMAL];
 
 	/* action restrictions */
 	if (((ba_ptr->action_restr == 1) && (!is_state(Ind, s_ptr, STORE_LIKED) ||
@@ -1803,8 +1721,7 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 
 	/* If player has loan and the time is out, few things work in stores */
 #if 0
-	if (p_ptr->loan && !p_ptr->loan_time)
-	{
+	if (p_ptr->loan && !p_ptr->loan_time) {
 		if ((bact != BACT_SELL) && (bact != BACT_VIEW_BOUNTIES) &&
 		    (bact != BACT_SELL_CORPSES) &&
 		    (bact != BACT_VIEW_QUEST_MON) &&
@@ -1819,8 +1736,7 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 	}
 #endif	// 0
 	/* Similar penalty for those on black-list */
-	if (p_ptr->tim_blacklist)
-	{
+	if (p_ptr->tim_blacklist) {
 		if ((bact != BACT_SELL) && (bact != BACT_VIEW_BOUNTIES) &&
 		    (bact != BACT_SELL_CORPSES) &&
 		    (bact != BACT_VIEW_QUEST_MON) &&
@@ -1834,8 +1750,7 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 	}
 
 	/* check gold */
-	if (bcost > p_ptr->au)
-	{
+	if (bcost > p_ptr->au) {
 		msg_print(Ind, "You do not have the gold!");
 //		msg_print(NULL);
 		return FALSE;
@@ -1843,35 +1758,23 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 
 	if (!bcost) set_reward = TRUE;
 
-	switch (bact)
-	{
+	switch (bact) {
 		case BACT_RESEARCH_ITEM:
-		{
 //			paid = research_item(Ind, item);
 			paid = identify_fully_item(Ind, item);
 			break;
-		}
-
 #if 0
 		case BACT_TOWN_HISTORY:
-		{
 			town_history();
 			break;
-		}
 		case BACT_RACE_LEGENDS:
-		{
 			race_legends();
 			break;
-		}
 #endif
 #if 1
 		case BACT_GREET_KING:
-		{
 //			castle_greet();
 			break;
-		}
-
-
 		case BACT_QUEST1:
 		case BACT_QUEST2:
 		case BACT_QUEST3:
@@ -1881,14 +1784,11 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			int y = 1, x = 1;
 			bool ok = FALSE;
 
-			while ((x < cur_wid - 1) && !ok)
-			{
+			while ((x < cur_wid - 1) && !ok) {
 				y = 1;
-				while ((y < cur_hgt - 1) && !ok)
-				{
+				while ((y < cur_hgt - 1) && !ok) {
 					/* Found the location of the quest info ? */
-					if (bact - BACT_QUEST1 + FEAT_QUEST1 == cave[y][x].feat)
-					{
+					if (bact - BACT_QUEST1 + FEAT_QUEST1 == cave[y][x].feat) {
 						/* Stop the loop */
 						ok = TRUE;
 					}
@@ -1897,14 +1797,8 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 				x++;
 			}
 
-			if (ok)
-			{
-				recreate = castle_quest(y - 1, x - 1);;
-			}
-			else
-			{
-				msg_format(Ind, "ERROR: no quest info feature found: %d", bact - BACT_QUEST1 + FEAT_QUEST1);
-			}
+			if (ok) recreate = castle_quest(y - 1, x - 1);;
+			else msg_format(Ind, "ERROR: no quest info feature found: %d", bact - BACT_QUEST1 + FEAT_QUEST1);
 #else
 			u16b flags = QUEST_MONSTER | QUEST_RANDOM | QUEST_RACE;
 			int lev = p_ptr->lev;
@@ -1919,76 +1813,49 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 		case BACT_KING_LEGENDS:
 		case BACT_ARENA_LEGENDS:
 		case BACT_LEGENDS:
-		{
 			show_highclass(building_loc);
 			break;
-		}
-
 		case BACT_POSTER:
 		case BACT_ARENA_RULES:
 		case BACT_ARENA:
-		{
 			arena_comm(bact);
 			break;
-		}
-
 #endif	// 0
+
 		case BACT_IN_BETWEEN:
 		case BACT_CRAPS:
 		//case BACT_SPIN_WHEEL:
 		//case BACT_DICE_SLOTS:
 		case BACT_GAMBLE_RULES:
-		{
 			gamble_comm(Ind, bact, gold);
 			break;
-		}
-
 		case BACT_REST:
 		case BACT_RUMORS:
 		case BACT_FOOD:
-		{
 			paid = inn_comm(Ind, bact);
 			break;
-		}
-
 #if 0
 		case BACT_RESEARCH_MONSTER:
-		{
 			paid = research_mon();
 			break;
-		}
-
 		case BACT_COMPARE_WEAPONS:
-		{
 			paid = compare_weapons();
 			break;
-		}
-
 #if 0
-
 		case BACT_GREET:
-		{
 			greet_char();
 			break;
-		}
-
 #endif
 #endif	// 0
 
 		case BACT_ENCHANT_WEAPON:
-		{
 			paid = fix_item(Ind, INVEN_WIELD, INVEN_WIELD, 0, FALSE,
 					BACT_ENCHANT_WEAPON, set_reward);
 			break;
-		}
-
 		case BACT_ENCHANT_ARMOR:
-		{
 			paid = fix_item(Ind, INVEN_BODY, INVEN_FEET, 0, TRUE,
 					BACT_ENCHANT_ARMOR, set_reward);
 			break;
-		}
-
 		/* needs work */
 		case BACT_RECHARGE:
 		{
@@ -2000,59 +1867,45 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			/* Get the item (in the pack) */
 			o_ptr = &p_ptr->inventory[item];
 
-			if (!item_tester_hook(o_ptr))
-			{
+			if (!item_tester_hook(o_ptr)) {
 				msg_print(Ind, "You cannot recharge that item.");
 				//get_item(Ind);
-			}
-			else
-			{
+			} else {
 				//if (recharge(80)) paid = TRUE;
 				recharge_aux(Ind, item, 80);
 				paid = TRUE;
 			}
 			break;
 		}
-
 		/* needs work */
 		case BACT_IDENTS:
-		{
 			identify_pack(Ind);
 			msg_print(Ind, "Your posessions have been identified.");
 			//msg_print(Ind, NULL);
 			paid = TRUE;
 			break;
-		}
-
 #if 0
 		case BACT_LEARN:
-		{
 			do_cmd_study();
 			break;
-		}
 #endif	// 0
 
 		/* needs work */
 		case BACT_STAR_HEAL:
-		{
 			hp_player(Ind, 200);
 			set_poisoned(Ind, 0, 0);
 			set_blind(Ind, 0);
 			set_confused(Ind, 0);
 			set_cut(Ind, 0, 0);
 			set_stun(Ind, 0);
-			if (p_ptr->black_breath)
-			{
+			if (p_ptr->black_breath) {
 				msg_print(Ind, "The hold of the Black Breath on you is broken!");
 				p_ptr->black_breath = FALSE;
 			}
 			paid = TRUE;
 			break;
-		}
-
 		/* needs work */
 		case BACT_HEALING:
-		{
 			hp_player(Ind, 200);
 			set_poisoned(Ind, 0, 0);
 			set_blind(Ind, 0);
@@ -2061,11 +1914,8 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			set_stun(Ind, 0);
 			paid = TRUE;
 			break;
-		}
-
 		/* needs work */
 		case BACT_RESTORE:
-		{
 			if (do_res_stat(Ind, A_STR)) paid = TRUE;
 			if (do_res_stat(Ind, A_INT)) paid = TRUE;
 			if (do_res_stat(Ind, A_WIS)) paid = TRUE;
@@ -2073,69 +1923,45 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			if (do_res_stat(Ind, A_CON)) paid = TRUE;
 			if (do_res_stat(Ind, A_CHR)) paid = TRUE;
 			break;
-		}
-
 		/* set timed reward flag */
 		case BACT_GOLD:
-		{
 #if 0
-			if (!p_ptr->rewards[BACT_GOLD])
-			{
+			if (!p_ptr->rewards[BACT_GOLD]) {
 				share_gold();
 				p_ptr->rewards[BACT_GOLD] = TRUE;
-			}
-			else
-			{
+			} else {
 				msg_print(Ind, "You just had your daily allowance!");
 				msg_print(Ind, NULL);
 			}
 #endif
 			break;
-		}
-
 		case BACT_ENCHANT_ARROWS:
-		{
 			paid = fix_item(Ind, INVEN_AMMO, INVEN_AMMO, TV_ARROW, FALSE,
 					BACT_ENCHANT_ARROWS, set_reward);
 			break;
-		}
-
 		case BACT_ENCHANT_BOW:
-		{
 			paid = fix_item(Ind, INVEN_BOW, INVEN_BOW, TV_BOW, FALSE,
 					BACT_ENCHANT_BOW, set_reward);
 			break;
-		}
-
 #if 0
 		case BACT_RECALL:
-		{
 			p_ptr->word_recall = 1;
 			msg_print(Ind, "\377oThe air about you becomes charged...");
 			paid = TRUE;
 			break;
-		}
-
 		case BACT_TELEPORT_LEVEL:
-		{
-			if (reset_recall(FALSE))
-			{
+			if (reset_recall(FALSE)) {
 				p_ptr->word_recall = 1;
 				msg_print(Ind, "The air about you becomes charged...");
 				paid = TRUE;
 			}
 			break;
-		}
-
 		case BACT_BUYFIRESTONE:
-		{
 			amt = get_quantity("How many firestones (10 gold each)? ", 1000);
-			if (amt > 0)
-			{
-				bcost=amt*10;
-				if(p_ptr->au>=bcost)
-				{
-					paid=TRUE;
+			if (amt > 0) {
+				bcost = amt * 10;
+				if(p_ptr->au >= bcost) {
+					paid = TRUE;
 					msg_print(Ind, "You have bought some firestones !");
 
 					/* Hack -- Give the player Firestone! */
@@ -2149,40 +1975,31 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 				else msg_print(Ind, "You do not have the gold!");
 			}
 			break;
-		}
-
 		case BACT_COMEBACKTIME:
-		{
-			if (PRACE_FLAG(PR1_TP))
-			{
+			if (PRACE_FLAG(PR1_TP)) {
 				if (do_res_stat(A_STR, TRUE)) paid = TRUE;
 				if (do_res_stat(A_INT, TRUE)) paid = TRUE;
 				if (do_res_stat(A_WIS, TRUE)) paid = TRUE;
 				if (do_res_stat(A_DEX, TRUE)) paid = TRUE;
 				if (do_res_stat(A_CON, TRUE)) paid = TRUE;
 				if (do_res_stat(A_CHR, TRUE)) paid = TRUE;
-				p_ptr->chp-=1000;
-				if(p_ptr->chp<=0)p_ptr->chp=1;
-			}
-			else
-			{
+				p_ptr->chp -= 1000;
+				if (p_ptr->chp <= 0) p_ptr->chp = 1;
+			} else {
 				msg_print(Ind, "Hum .. you are NOT a DragonRider, "
 						"you need a dragon to go between !");
 			}
 			break;
-		}
 #endif	// 0
 
 		case BACT_MIMIC_NORMAL:
-		{
 			if (set_mimic(Ind, 0, 0)) paid = TRUE;	/* Undo temporary mimicry (It's Shadow mimicry)*/
 			if (p_ptr->fruit_bat == 2) { /* Undo fruit bat form from chauve-souris potion */
 				p_ptr->fruit_bat = 0;
 				p_ptr->update |= (PU_BONUS | PU_HP);
 				paid = TRUE;
 			}
-			if (p_ptr->body_monster) /* Undo normal mimicry */
-			{
+			if (p_ptr->body_monster) /* Undo normal mimicry */ {
 				p_ptr->body_monster = 0;
 				p_ptr->body_changed = TRUE;
 				paid = TRUE;
@@ -2201,42 +2018,26 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			}
 			if (paid) msg_print(Ind, "You are polymorphed back to normal form!");
 			break;
-		}
-
 #if 1
 		case BACT_VIEW_BOUNTIES:
-		{
 //			show_bounties();
 			break;
-		}
-
 		case BACT_VIEW_QUEST_MON:
-		{
 //			show_quest_monster();
 			break;
-		}
-
 		case BACT_SELL_QUEST_MON:
-		{
 //			sell_quest_monster();
 			break;
-		}
-
 		case BACT_SELL_CORPSES:
-		{
 //			sell_corpses();
 			break;
-		}
-
 		/* XXX no fates, for now */
 		case BACT_DIVINATION:
-		{
 #if 0
 			int i, count = 0;
 			bool something = FALSE;
 
-			while(count < 1000)
-			{
+			while(count < 1000) {
 				count++;
 				i = rand_int(MAX_FATES);
 				if(!fates[i].fate) continue;
@@ -2254,50 +2055,31 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 #endif
 			paid = TRUE;
 			break;
-
-		}
 #endif	// 1
 
 		case BACT_BUY:
-		{
 			store_purchase(Ind, item, amt);
 			break;
-		}
-
 		case BACT_SELL:
-		{
 			store_sell(Ind, item, amt);
 			break;
-		}
-
 		case BACT_EXAMINE:
-		{
 			store_examine(Ind, item);
 			break;
-		}
-
 		case BACT_STEAL:
-		{
 			store_stole(Ind, item);
 			break;
-		}
-
 #if 0
 		/* XXX we'd simply better not to backport it */
 		case BACT_REQUEST_ITEM:
-		{
 			store_request_item();
 			paid = TRUE;
 			break;
-		}
-
 		/* XXX This will be quite abusable.. */
 		case BACT_GET_LOAN:
-		{
 			s64b i, price, req;
 
-			if(p_ptr->loan)
-			{
+			if(p_ptr->loan) {
 				msg_print(Ind, "You already have a loan!");
 				break;
 			}
@@ -2336,10 +2118,7 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 
 			paid = TRUE;
 			break;
-		}
-
 		case BACT_PAY_BACK_LOAN:
-		{
 			s32b req;
 
 			msg_format(Ind, "You have a loan of %i.", p_ptr->loan);
@@ -2361,11 +2140,9 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 
 			paid = TRUE;
 			break;
-		}
 #endif	// 0
 
 		case BACT_DEPOSIT:
-		{
 			if (gold > p_ptr->au) gold = p_ptr->au;
 			if (gold < 1) break;
 
@@ -2382,10 +2159,7 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 
 			paid = TRUE;
 			break;
-		}
-
 		case BACT_WITHDRAW:
-		{
 			if (gold > p_ptr->balance) gold = p_ptr->balance;
 			if (gold < 1) break;
 
@@ -2402,43 +2176,34 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 
 			paid = TRUE;
 			break;
-		}
-
 		case BACT_EXTEND_HOUSE:
-		{
 			//paid = home_extend(Ind);
 			home_extend(Ind);
 			break;
-		}
-
 		case BACT_CHEEZE_LIST:
-		{
 			view_cheeze_list(Ind);
 			break;
-		}
-
 		case BACT_DEED_ITEM:
-		{
 			reward_deed_item(Ind, item);
 			break;
-		}
-
 		case BACT_DEED_BLESSING:
-		{
 			reward_deed_blessing(Ind, item);
 			break;
-		}
-
+		case BACT_GO:
+#ifdef ENABLE_GO_GAME
+			if (is_newer_than(&p_ptr->version, 4, 4, 6, 1, 0, 0))
+				go_challenge(Ind);
+			else
+				msg_print(Ind, "\377oThis feature requires at least client 4.4.6b");
+#endif
+			break;
 		default:
-		{
 #if 0
-			if (process_hooks_ret(HOOK_BUILDING_ACTION, "d", "(d)", bact))
-			{
+			if (process_hooks_ret(HOOK_BUILDING_ACTION, "d", "(d)", bact)) {
 				paid = process_hooks_return[0].num;
 			}
 #endif	// 0
 			break;
-		}
 	}
 
 	if (paid)

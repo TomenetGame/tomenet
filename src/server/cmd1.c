@@ -1405,8 +1405,7 @@ void search(int Ind)
 
 
 /* Hack -- tell player of the next object on the pile */
-static void whats_under_your_feet(int Ind)
-{
+void whats_under_your_feet(int Ind) {
 	object_type *o_ptr;
 
 	char    o_name[ONAME_LEN];
@@ -1425,8 +1424,7 @@ static void whats_under_your_feet(int Ind)
 	if (!o_ptr->k_idx) return;
 
 	/* Auto id ? */
-	if (p_ptr->auto_id)
-	{
+	if (p_ptr->auto_id) {
 		object_aware(Ind, o_ptr);
 		object_known(o_ptr);
 	}
@@ -3787,6 +3785,17 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			}
 //less spam for now - C. Blue   if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
+			/* target dummy */
+			if (m_ptr->r_idx == 1101 || m_ptr->r_idx == 1126) {
+				/* Hack: Reduce snow on it during winter season :) */
+				m_ptr->extra -= 5;
+				if (m_ptr->extra < 0) m_ptr->extra = 0;
+					if ((m_ptr->r_idx == 1126) && (m_ptr->extra < 30)) {
+					m_ptr->r_idx = 1101;
+					everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+				}
+			}
+
 			/* Damage, check for fear and death */
 			if (mon_take_hit(Ind, c_ptr->m_idx, k, &fear, NULL)) {
 	            		/* Vampires feed off the life force! (if any) */
@@ -3799,7 +3808,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 					if (r_ptr->d_char == 'A') feed /= 3;
 					set_food(Ind, p_ptr->food + feed);
 					if (p_ptr->food >= PY_FOOD_MAX) set_food(Ind, PY_FOOD_MAX - 1);
-	            		}
+				}
 				break; /* monster is dead */
 			}
 
@@ -3807,11 +3816,10 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			touch_zap_player(Ind, c_ptr->m_idx);
 
 			/* Apply effects from mimic monster forms */
-		        if (p_ptr->body_monster)
-			{
+			if (p_ptr->body_monster) {
 				/* If monster is fighting with a weapon, the player gets the effect(s) even with a weapon */
-		        	/* If monster is fighting without weapons, the player gets the effect(s) only if
-		    		he fights with bare hands/martial arts */
+				/* If monster is fighting without weapons, the player gets the effect(s) only if
+				he fights with bare hands/martial arts */
 				if (!pr_ptr->body_parts[BODY_WEAPON])
 					if (o_ptr->k_idx) apply_monster_effects = FALSE;
 
@@ -3822,7 +3830,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				        if (pr_ptr->blow[i].d_dice * pr_ptr->blow[i].d_side)
 					{
 						monster_effects++;
-	    					monster_effect[monster_effects] = pr_ptr->blow[i].effect;
+						monster_effect[monster_effects] = pr_ptr->blow[i].effect;
 					}
 				}
 				/* Choose random brand from the ones available */
@@ -3851,8 +3859,8 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 							}
 							else if (rand_int(100) < r_ptr->level)
 							{
-			    					msg_format(Ind, "%^s resists the effect.", m_name);
-    		    					}
+								msg_format(Ind, "%^s resists the effect.", m_name);
+							}
 							else
 							{
 								msg_format(Ind, "%^s appears confused.", m_name);
@@ -4376,27 +4384,26 @@ void touch_zap_player(int Ind, int m_idx)
 void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
 {
 	object_type *o_ptr = &Players[Ind]->inventory[slot];
+	char o_name[ONAME_LEN];
 
-	if (r_ptr->flags7 & RF7_NAZGUL)
-	{
+	if (r_ptr->flags7 & RF7_NAZGUL) {
 //		int weap = 0;	// Hack!  <- ???
 		u32b f1, f2, f3, f4, f5, esp;
 
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
-		if ((!o_ptr->name2) && (!artifact_p(o_ptr)))
-		{
-			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD))
-			{
+		if ((!o_ptr->name2) && (!artifact_p(o_ptr))) {
+			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD)) {
 				msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
 				*k = 0;
 			}
 
 			/* Dark Swords resist somewhat */
-			if ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) ? magik(15) : magik(100))
-			{
+			if ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) ? magik(15) : magik(100)) {
+				object_desc(0, o_name, o_ptr, TRUE, 3);
+				s_printf("NAZGUL_DISI_NORM: %s : %s.\n", Players[Ind]->name, o_name);
+
 				msg_print(Ind, "\376\377rYour weapon *DISINTEGRATES*!");
-				s_printf("Nazgul destroyed weapon of player %s.\n", Players[Ind]->name);
 //				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
 //				inven_item_optimize(Ind, INVEN_WIELD + weap);
 				inven_item_increase(Ind, slot, -1); /* this way using slot we can handle dual-wield */
@@ -4404,11 +4411,8 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
 				/* To stop attacking */
 	//			*num = num_blow;
 			}
-		}
-		else if (like_artifact_p(o_ptr))
-		{
-			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD))
-			{
+		} else if (like_artifact_p(o_ptr)) {
+			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD)) {
 				msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
 				*k = 0;
 			}
@@ -4418,11 +4422,12 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
 
 			/* 1/1000 chance of getting destroyed.
 			   Exploit-fix here for permacursed items. (Grond only) */
-			if (!rand_int(1000) && !(f3 & TR3_PERMA_CURSE))
-			{
+			if (!rand_int(1000) && !(f3 & TR3_PERMA_CURSE)) {
+				object_desc(0, o_name, o_ptr, TRUE, 3);
+				s_printf("NAZGUL_DISI_ARTLIKE: %s : %s.\n", Players[Ind]->name, o_name);
+
 				if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
 				msg_print(Ind, "\376\377rYour weapon is destroyed !");
-				s_printf("Nazgul destroyed artifact-like weapon of player %s.\n", Players[Ind]->name);
 //				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
 //				inven_item_optimize(Ind, INVEN_WIELD + weap);
 				inven_item_increase(Ind, slot, -1);
@@ -4431,11 +4436,8 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
 				/* To stop attacking */
 //				*num = num_blow;
 			}
-		}
-		else if (o_ptr->name2)
-		{
-			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD))
-			{
+		} else if (o_ptr->name2) {
+			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD)) {
 				msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
 				*k = 0;
 			}
@@ -4446,8 +4448,10 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
 			    || o_ptr->name2 == EGO_KILL_UNDEAD || o_ptr->name2b == EGO_KILL_UNDEAD
 			    ) ? magik(3) : magik(20))
 			{
+				object_desc(0, o_name, o_ptr, TRUE, 3);
+				s_printf("NAZGUL_DISI_EGO: %s : %s.\n", Players[Ind]->name, o_name);
+
 				msg_print(Ind, "\376\377rYour weapon is destroyed !");
-				s_printf("Nazgul destroyed ego-weapon of player %s.\n", Players[Ind]->name);
 //				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
 //				inven_item_optimize(Ind, INVEN_WIELD + weap);
 				inven_item_increase(Ind, slot, -1);
@@ -5052,9 +5056,7 @@ void move_player(int Ind, int dir, int do_pickup)
 				everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
 				everyone_lite_spot(wpos, q_ptr->py, q_ptr->px);
 
-				p_ptr->update |= PU_LITE;
 				p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
-				q_ptr->update |= PU_LITE;
 				q_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
 #if 0
 				/* Check for new panel (redraw map) */
@@ -5429,7 +5431,7 @@ void move_player(int Ind, int dir, int do_pickup)
 #endif	// 0
 		{
 			/* Disturb */
-			disturb(Ind, 0, 0);
+			disturb(Ind, 1, 0);
 
 			/* Hack -- Enter store */
 			command_new = '_';
@@ -5462,7 +5464,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		else if ((c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN)
 		    && (!p_ptr->ghost || is_admin(p_ptr)))
 		{
-			disturb(Ind, 0, 0);
+			disturb(Ind, 1, 0);
 			do_cmd_trad_house(Ind);
 //			return;	/* allow builders to build */
 		}
@@ -5963,7 +5965,7 @@ static void run_init(int Ind, int dir)
 static bool run_test(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 
 	int                     prev_dir, new_dir, check_dir = 0;
 
@@ -5997,8 +5999,7 @@ static bool run_test(int Ind)
 
 
 	/* Look at every newly adjacent square. */
-	for (i = -max; i <= max; i++)
-	{
+	for (i = -max; i <= max; i++) {
 		new_dir = cycle[chome[prev_dir] + i];
 
 		row = p_ptr->py + ddy[new_dir];
@@ -6012,6 +6013,15 @@ static bool run_test(int Ind)
 		c_ptr = &zcave[row][col];
 		w_ptr = &p_ptr->cave_flag[row][col];
 
+		/* unlit grids abort running */
+		if (!(c_ptr->info & (CAVE_LITE | CAVE_GLOW))) {
+			if (!p_ptr->warning_run_lite && p_ptr->lev <= 10) {
+				msg_print(Ind, "\374\377yHINT: You cannot run in the dark. Press 'w' to equip a light source!");
+				p_ptr->warning_run_lite = TRUE;
+				s_printf("warning_run_lite: %s\n", p_ptr->name);
+			}
+			return TRUE;
+		}
 
 		/* Visible monsters abort running */
 		if (c_ptr->m_idx > 0 &&
@@ -6028,7 +6038,7 @@ static bool run_test(int Ind)
 		}
 
 #ifdef HOSTILITY_ABORTS_RUNNING /* pvp mode chars cannot run with this on */
-		/* Hostile characters will stop each other from running. 
+		/* Hostile characters will stop each other from running.
 		 * This should lessen the melee storming effect in PVP fights */
 		if (c_ptr->m_idx < 0 && check_hostile(Ind, 0 - c_ptr->m_idx)) return (TRUE);
 #endif
@@ -6462,8 +6472,6 @@ void run_step(int Ind, int dir)
 
 	/* Keep running */
 	else {
-		p_ptr->warning_run = 1;
-
 		prev_dir = p_ptr->find_prevdir;
 
 		/* Update run */
@@ -6477,6 +6485,8 @@ void run_step(int Ind, int dir)
 			/* Done */
 			return;
 		}
+
+		p_ptr->warning_run = 1;
 
 		/* C. Blue fun stuff =p */
 		if (prev_dir != p_ptr->find_current) p_ptr->corner_turn++;

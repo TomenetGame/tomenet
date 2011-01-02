@@ -37,19 +37,19 @@
 #define COLOUR_IC_NEAR         'w'
 #endif
 
-/* Dodging messages */	
+/* Dodging messages */
 #define COLOUR_DODGE_MON       'y'     /* <- currently unused (!) */
 #define COLOUR_DODGE_PLY       'y'
 #define COLOUR_DODGE_GOOD      'W'
 #define COLOUR_DODGE_NEAR      'w'
 
-/* Shield-block messages */    
+/* Shield-block messages */
 #define COLOUR_BLOCK_PLY       'y'
 #define COLOUR_BLOCK_MON       'y'
 #define COLOUR_BLOCK_GOOD      'W'
 #define COLOUR_BLOCK_NEAR      'w'
 
-/* Parry messags */	
+/* Parry messags */
 #define COLOUR_PARRY_PLY       'y'
 #define COLOUR_PARRY_MON       'y'
 #define COLOUR_PARRY_GOOD      'W'

@@ -1163,7 +1163,7 @@ void sound_near(int Ind, cptr name, cptr alternative, int type) {
 }
 /* send sound to all players nearby a certain location, and allow to specify
    a player to exclude, same as msg_print_near_site() for messages. - C. Blue */
-void sound_near_site(int y, int x, worldpos *wpos, int Ind, cptr name, cptr alternative, int type) {
+void sound_near_site(int y, int x, worldpos *wpos, int Ind, cptr name, cptr alternative, int type, bool viewable) {
 	int i, d;
 	player_type *p_ptr;
 	int val = -1, val2 = -1;
@@ -1209,7 +1209,7 @@ void sound_near_site(int y, int x, worldpos *wpos, int Ind, cptr name, cptr alte
 		if (!inarea(&p_ptr->wpos, wpos)) continue;
 
 		/* Can (s)he see the site? */
-//		if (!(p_ptr->cave_flag[y][x] & CAVE_VIEW)) continue;
+		if (viewable && !(p_ptr->cave_flag[y][x] & CAVE_VIEW)) continue;
 
 		/* within audible range? */
 		d = distance(y, x, Players[i]->py, Players[i]->px);
@@ -1403,7 +1403,7 @@ void handle_music(int Ind) {
 				case 5: Send_music(Ind, 7); return;
 				}
 			}
-#else /* play town music also in its surrounding area of houses, if we're coming from the town? */
+#elseif 0 /* play town music also in its surrounding area of houses, if we're coming from the town? */
 		if (istownarea(&p_ptr->wpos, 2) && p_ptr->music_current != -1) {
 			worldpos tpos = {0, 0, 0};
 			int x, y, tmus = 0;
@@ -1437,6 +1437,42 @@ void handle_music(int Ind) {
 			if (istown(&p_ptr->wpos) || p_ptr->music_current == tmus)
 				Send_music(Ind, tmus);
 
+			return;
+#else /* play town music also in its surrounding area of houses, if we're coming from the town? */
+		if (istownarea(&p_ptr->wpos, 2)) {
+			worldpos tpos = {0, 0, 0};
+			int x, y, tmus = 0;
+
+			for (x = p_ptr->wpos.wx - 2; x <= p_ptr->wpos.wx + 2; x++) {
+				for (y = p_ptr->wpos.wy - 2; y <= p_ptr->wpos.wy + 2; y++) {
+					if (x < 0 || x > 63 || y < 0 || y > 63) continue;
+					tpos.wx = x; tpos.wy = y;
+					if (istown(&tpos)) break;
+				}
+				if (istown(&tpos)) break;
+			}
+
+			for (i = 0; i < numtowns; i++)
+				if (town[i].x == tpos.wx && town[i].y == tpos.wy) {
+					switch (town[i].type) {
+					default:
+					case 0: tmus = 1; break; //default town
+					case 1: tmus = 3; break; //Bree
+					case 2: tmus = 4; break;
+					case 3: tmus = 5; break;
+					case 4: tmus = 6; break;
+					case 5: tmus = 7; break;
+					}
+				}
+
+			/* now the specialty: If we're coming from elsewhere,
+			   we only switch to town music when we enter the town.
+			   If we're coming from the town, however, we keep the
+			   music while being in its surrounding area of houses. */
+			if (istown(&p_ptr->wpos) || p_ptr->music_current == tmus)
+				Send_music(Ind, tmus);
+			else if (night_surface) Send_music(Ind, 10);
+			else Send_music(Ind, 9);
 			return;
 #endif
 		} else {
@@ -1547,12 +1583,12 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 			item = "scroll"; break;
 /*		case TV_BOTTLE: item = "potion"; break;
 		case TV_POTION: case TV_POTION2: case TV_FLASK:
-			item = "potion"; break;
+			item = "potion"; break;*/
 		case TV_RUNE1: case TV_RUNE2:
 			item = "rune"; break;
-		case TV_SKELETON: item = ""; break;
-		case TV_FIRESTONE: item = ""; break;
-		case TV_SPIKE: item = ""; break;
+//		case TV_SKELETON: item = ""; break;
+		case TV_FIRESTONE: item = "firestone"; break;
+/*		case TV_SPIKE: item = ""; break;
 		case TV_CHEST: item = ""; break;
 		case TV_JUNK: item = ""; break;
 		case TV_TRAPKIT: item = ""; break;
@@ -2608,7 +2644,7 @@ void toggle_dual_mode(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	if (p_ptr->dual_mode)
-		msg_print(Ind, "\377wDual-wield mode: Main-hand.");
+		msg_print(Ind, "\377wDual-wield mode: Main-hand. (This disables all dual-wield boni.)");
 	else
 		msg_print(Ind, "\377wDual-wield mode: Dual-hand.");
 	p_ptr->dual_mode = !p_ptr->dual_mode;
@@ -2984,15 +3020,17 @@ static void player_talk_aux(int Ind, char *message)
 	}
 
 	/* Send to appropriate player */
-	if (len && target > 0)
-	{
-		if (!check_ignore(target, Ind))
-		{
+	if (len && target > 0) {
+		if (!check_ignore(target, Ind)) {
 			/* Set target player */
 			q_ptr = Players[target];
 
 			/* Send message to target */
 			msg_format(target, "\375\377g[%s:%s] %s", q_ptr->name, sender, colon);
+			if ((q_ptr->page_on_privmsg ||
+			    (q_ptr->page_on_afk_privmsg && q_ptr->afk)) &&
+			    q_ptr->paging == 0)
+				q_ptr->paging = 1;
 
 			/* Also send back to sender */
 			if (target != Ind)
@@ -4373,8 +4411,10 @@ cptr compat_omode(object_type *o1_ptr, object_type *o2_ptr) {
    save highest found pseudo-id string in psid. - C. Blue */
 void note_crop_pseudoid(char *s2, char *psid, cptr s) {
 	char *p, s0[80];
-	strcpy(s2, s);
 	int id = 0; /* assume no pseudo-id inscription */
+
+	if (s == NULL) return;
+	strcpy(s2, s);
 
 	while (TRUE) {
 		strcpy(s0, s2);

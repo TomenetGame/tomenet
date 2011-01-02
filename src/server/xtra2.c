@@ -3111,7 +3111,8 @@ bool set_food(int Ind, int v)
 	bool notice = FALSE;
 
 	/* True Ghosts don't starve */
-	if ((p_ptr->ghost) || (get_skill(p_ptr, SKILL_HSUPPORT) >= 40))
+	if ((p_ptr->ghost) || (get_skill(p_ptr, SKILL_HSUPPORT) >= 40) ||
+	    (p_ptr->prace == RACE_DIVINE && p_ptr->ptrait))
 	{
 	    p_ptr->food = PY_FOOD_FULL - 1;
 	    return (FALSE);
@@ -3650,8 +3651,8 @@ void check_experience(int Ind)
 			/* give a warning if it seems as if this character doesn't use any macros ;) */
 			if (!found_macroishness) {
 				msg_print(Ind, "\374\377oHINT: Start getting the hang of '\377Rmacros\377o' ('%' key) in order to ensure");
-				msg_print(Ind, "\374\377o      survival in critical combat situations. Ask other players and/or read the");
-				msg_print(Ind, "\374\377o      guide (text file 'TomeNET-Guide.txt' in your tomenet folder) for details!");
+				msg_print(Ind, "\374\377o      survival in critical combat situations. \377RPress '%' and 'z'\377o to start the");
+				msg_print(Ind, "\374\377o      macro wizard and/or read the guide (text file 'TomeNET-Guide.txt').");
 				s_printf("warning_macros: %s\n", p_ptr->name);
 			}
 		}
@@ -3747,7 +3748,7 @@ void check_experience(int Ind)
 					if (old_lev == 19) {
 //						msg_print(Ind, "\377RYou don't deserve to live.");
 						msg_print(Ind, "\377RYour indecision proves you aren't ready yet to stay in this realm!");
-						strcpy(p_ptr->died_from, "indecisiveness");
+						strcpy(p_ptr->died_from, "Indecisiveness");
 						p_ptr->deathblow = 0;
 						p_ptr->death = TRUE;
 					}
@@ -3759,21 +3760,15 @@ void check_experience(int Ind)
 				if (p_ptr->r_killed[MONSTER_RIDX_CANDLEBEARER] != 0 &&
 				    p_ptr->r_killed[MONSTER_RIDX_DARKLING] != 0) {
 					msg_print(Ind, "\377RYour indecision proves you aren't ready yet to stay in this realm!");
-					strcpy(p_ptr->died_from, "indecisiveness");
+					strcpy(p_ptr->died_from, "Indecisiveness");
 					p_ptr->deathblow = 0;
 					p_ptr->death = TRUE;
 					/* End of story, next.. */
 					break;
 				}
 
-				/* Let's not. it will make them completely out of scale with everyone.
-				 * It's their problem if they want to "save up" their skill points. */
- #if 0
-				/* New: reset skill tree and teleport them (hopefully to a safe location...) */
-				/* Do this before since respec_skills reinit from tables.c */
-				respec_skills(Ind, FALSE);
-				teleport_player(Ind, 200, TRUE);
- #endif
+				/* Don't initiate earlier than at threshold level, it's a ceremony ^^ */
+				if (p_ptr->lev <= 19) break;
 
 				/* Modify skill tree */
 				if (p_ptr->r_killed[MONSTER_RIDX_CANDLEBEARER] != 0) {
@@ -3790,7 +3785,6 @@ void check_experience(int Ind)
 					/* Yay */
 					do_Maia_skill(Ind, SKILL_AXE, 13);
 					do_Maia_skill(Ind, SKILL_MARTIAL_ARTS, 13);
-					do_Maia_skill(Ind, SKILL_SORCERY, 21);
 					do_Maia_skill(Ind, SKILL_FIRE, 17);
 					do_Maia_skill(Ind, SKILL_AIR, 17);
 					do_Maia_skill(Ind, SKILL_CONVEYANCE, 17);
@@ -4505,26 +4499,19 @@ if (season_halloween) {
 	 * Mega^3-hack: killing a 'Warrior of the Dawn' is likely to
 	 * spawn another in the fallen one's place!
 	 */
-	if (strstr((r_name + r_ptr->name),"the Dawn"))
-	{
-		if (!(randint(20)==13))
-		{
+	if (strstr((r_name + r_ptr->name),"the Dawn")) {
+		if (!(randint(20) == 13)) {
 			int wy = p_ptr->py, wx = p_ptr->px;
 			int attempts = 100;
 
-			do
-			{
+			do {
 				scatter(wpos, &wy, &wx,p_ptr->py,p_ptr->px, 20, 0);
-			}
-			while (!(in_bounds(wy,wx) && cave_floor_bold(zcave, wy,wx)) && --attempts);
+			} while (!(in_bounds(wy,wx) && cave_floor_bold(zcave, wy,wx)) && --attempts);
 
-			if (attempts > 0)
-			{
+			if (attempts > 0) {
 #if 0
-                                if (is_friend(m_ptr) > 0)
-				{
-					if (summon_specific_friendly(wy, wx, 100, SUMMON_DAWN, FALSE))
-					{
+                                if (is_friend(m_ptr) > 0) {
+					if (summon_specific_friendly(wy, wx, 100, SUMMON_DAWN, FALSE)) {
 						if (player_can_see_bold(wy, wx))
 							msg_print ("A new warrior steps forth!");
 					}
@@ -4532,8 +4519,7 @@ if (season_halloween) {
 				else
 #endif
 				{
-					if (summon_specific(wpos, wy, wx, 100, m_ptr->clone + 20, SUMMON_DAWN, 1, 0))
-					{
+					if (summon_specific(wpos, wy, wx, 100, m_ptr->clone + 20, SUMMON_DAWN, 1, 0)) {
 						if (player_can_see_bold(Ind, wy, wx))
 							msg_print (Ind, "A new warrior steps forth!");
 					}
@@ -4543,42 +4529,33 @@ if (season_halloween) {
 	}
 
 	/* One more ultra-hack: An Unmaker goes out with a big bang! */
-	else if (strstr((r_name + r_ptr->name),"Unmaker"))
-	{
+	else if (strstr((r_name + r_ptr->name),"Unmaker")) {
 		int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 		(void)project(m_idx, 6, wpos, y, x, 150, GF_CHAOS, flg, "The Unmaker explodes for");
 	}
 
 	/* Pink horrors are replaced with 2 Blue horrors */
-	else if (strstr((r_name + r_ptr->name),"Pink horror"))
-	{
-		for (i = 0; i < 2; i++)
-		{
+	else if (strstr((r_name + r_ptr->name),"Pink horror")) {
+		for (i = 0; i < 2; i++) {
 			int wy = p_ptr->py, wx = p_ptr->px;
 			int attempts = 100;
 
-			do
-			{
+			do {
 				scatter(wpos, &wy, &wx, p_ptr->py, p_ptr->px, 3, 0);
-			}
-			while (!(in_bounds(wy,wx) && cave_floor_bold(zcave, wy,wx)) && --attempts);
+			} while (!(in_bounds(wy,wx) && cave_floor_bold(zcave, wy,wx)) && --attempts);
 
-			if (attempts > 0)
-			{
-				if (summon_specific(wpos, wy, wx, 100, 0, SUMMON_BLUE_HORROR, 1, 0)) /* that's _not_ 2, lol */
-				{
+			if (attempts > 0) {
+				if (summon_specific(wpos, wy, wx, 100, 0, SUMMON_BLUE_HORROR, 1, 0)) { /* that's _not_ 2, lol */
 					if (player_can_see_bold(Ind, wy, wx))
 						msg_print (Ind, "A blue horror appears!");
 				}
-			}                
+			}
 		}
 	}
 
 	/* Let monsters explode! */
-	for (i = 0; i < 4; i++)
-	{
-		if (m_ptr->blow[i].method == RBM_EXPLODE)
-		{
+	for (i = 0; i < 4; i++) {
+		if (m_ptr->blow[i].method == RBM_EXPLODE) {
 			int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 			int typ = GF_MISSILE;
 			int d_dice = m_ptr->blow[i].d_dice;
@@ -4586,42 +4563,41 @@ if (season_halloween) {
 			int damage = damroll(d_dice, d_side);
 			int base_damage = r_ptr->blow[i].d_dice * r_ptr->blow[i].d_side; /* if monster didn't gain levels */
 
-			switch (m_ptr->blow[i].effect)
-			{
-				case RBE_HURT:      typ = GF_MISSILE; break;
-				case RBE_POISON:    typ = GF_POIS; break;
-				case RBE_UN_BONUS:  typ = GF_DISENCHANT; break;
-				case RBE_UN_POWER:  typ = GF_MISSILE; break; /* ToDo: Apply the correct effects */
-				case RBE_EAT_GOLD:  typ = GF_MISSILE; break;
-				case RBE_EAT_ITEM:  typ = GF_MISSILE; break;
-				case RBE_EAT_FOOD:  typ = GF_MISSILE; break;
-				case RBE_EAT_LITE:  typ = GF_MISSILE; break;
-				case RBE_ACID:      typ = GF_ACID; break;
-				case RBE_ELEC:      typ = GF_ELEC; break;
-				case RBE_FIRE:      typ = GF_FIRE; break;
-				case RBE_COLD:      typ = GF_COLD; break;
-				case RBE_BLIND:     typ = GF_BLIND; break;
-//				case RBE_HALLU:     typ = GF_CONFUSION; break;
-				case RBE_HALLU:     typ = GF_CHAOS; break;	/* CAUTION! */
-				case RBE_CONFUSE:   typ = GF_CONFUSION; break;
-				case RBE_TERRIFY:   typ = GF_MISSILE; break;
-				case RBE_PARALYZE:  typ = GF_MISSILE; break;
-				case RBE_LOSE_STR:  typ = GF_MISSILE; break;
-				case RBE_LOSE_DEX:  typ = GF_MISSILE; break;
-				case RBE_LOSE_CON:  typ = GF_MISSILE; break;
-				case RBE_LOSE_INT:  typ = GF_MISSILE; break;
-				case RBE_LOSE_WIS:  typ = GF_MISSILE; break;
-				case RBE_LOSE_CHR:  typ = GF_MISSILE; break;
-				case RBE_LOSE_ALL:  typ = GF_MISSILE; break;
-				case RBE_PARASITE:  typ = GF_MISSILE; break;
-				case RBE_SHATTER:   typ = GF_ROCKET; break;
-				case RBE_EXP_10:    typ = GF_MISSILE; break;
-				case RBE_EXP_20:    typ = GF_MISSILE; break;
-				case RBE_EXP_40:    typ = GF_MISSILE; break;
-				case RBE_EXP_80:    typ = GF_MISSILE; break;
-				case RBE_DISEASE:   typ = GF_POIS; break;
-				case RBE_TIME:      typ = GF_TIME; break;
-				case RBE_SANITY:    typ = GF_MISSILE; break;
+			switch (m_ptr->blow[i].effect) {
+			case RBE_HURT:      typ = GF_MISSILE; break;
+			case RBE_POISON:    typ = GF_POIS; break;
+			case RBE_UN_BONUS:  typ = GF_DISENCHANT; break;
+			case RBE_UN_POWER:  typ = GF_MISSILE; break; /* ToDo: Apply the correct effects */
+			case RBE_EAT_GOLD:  typ = GF_MISSILE; break;
+			case RBE_EAT_ITEM:  typ = GF_MISSILE; break;
+			case RBE_EAT_FOOD:  typ = GF_MISSILE; break;
+			case RBE_EAT_LITE:  typ = GF_MISSILE; break;
+			case RBE_ACID:      typ = GF_ACID; break;
+			case RBE_ELEC:      typ = GF_ELEC; break;
+			case RBE_FIRE:      typ = GF_FIRE; break;
+			case RBE_COLD:      typ = GF_COLD; break;
+			case RBE_BLIND:     typ = GF_BLIND; break;
+//			case RBE_HALLU:     typ = GF_CONFUSION; break;
+			case RBE_HALLU:     typ = GF_CHAOS; break;	/* CAUTION! */
+			case RBE_CONFUSE:   typ = GF_CONFUSION; break;
+			case RBE_TERRIFY:   typ = GF_MISSILE; break;
+			case RBE_PARALYZE:  typ = GF_MISSILE; break;
+			case RBE_LOSE_STR:  typ = GF_MISSILE; break;
+			case RBE_LOSE_DEX:  typ = GF_MISSILE; break;
+			case RBE_LOSE_CON:  typ = GF_MISSILE; break;
+			case RBE_LOSE_INT:  typ = GF_MISSILE; break;
+			case RBE_LOSE_WIS:  typ = GF_MISSILE; break;
+			case RBE_LOSE_CHR:  typ = GF_MISSILE; break;
+			case RBE_LOSE_ALL:  typ = GF_MISSILE; break;
+			case RBE_PARASITE:  typ = GF_MISSILE; break;
+			case RBE_SHATTER:   typ = GF_ROCKET; break;
+			case RBE_EXP_10:    typ = GF_MISSILE; break;
+			case RBE_EXP_20:    typ = GF_MISSILE; break;
+			case RBE_EXP_40:    typ = GF_MISSILE; break;
+			case RBE_EXP_80:    typ = GF_MISSILE; break;
+			case RBE_DISEASE:   typ = GF_POIS; break;
+			case RBE_TIME:      typ = GF_TIME; break;
+			case RBE_SANITY:    typ = GF_MISSILE; break;
 			}
 
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s inflicts", m_name);
@@ -5228,7 +5204,7 @@ if(cfg.unikill_format){
 			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE, FALSE, FALSE);
 			qq_ptr->number = 1;
 			qq_ptr->level = 35;
-			qq_ptr->note = local_quark; 
+			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 
 			//And some armageddon
@@ -5865,7 +5841,7 @@ void player_death(int Ind)
 			fake_store_visited[-2 - p_ptr->store_num] = 0;
 		}
 #endif
-		p_ptr->store_num = -1;
+		handle_store_leave(Ind);
 		Send_store_kick(Ind);
 	}
 
@@ -6231,6 +6207,7 @@ void player_death(int Ind)
 	/* Get rid of him if he's a ghost or suffers a no-ghost death */
 	if ((p_ptr->ghost || (hell && p_ptr->alive)) ||
 	    (streq(p_ptr->died_from, "Insanity")) ||
+	    (streq(p_ptr->died_from, "Indecisiveness")) ||
 	    ((p_ptr->lives == 1+1) && cfg.lifes && p_ptr->alive &&
 	    !(p_ptr->mode & MODE_EVERLASTING))) {
 		/* Tell players */
@@ -6269,8 +6246,7 @@ s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s\n", race_info[p_ptr
 
 			Send_chardump(Ind, "-death");
 			Net_output1(Ind);
-		}
-		else if (p_ptr->ghost) {
+		} else if (p_ptr->ghost) {
 			/* Tell him */
 			msg_format(Ind, "\374\377a**\377rYour ghost was destroyed by %s.\377a**", p_ptr->died_from);
 
@@ -6295,8 +6271,7 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s\n", race_info[p_pt
 #endif	// CHATTERBOX_LEVEL
 
 			death_type = 2;
-		}
-		else {
+		} else {
 			/* Tell him */
 			msg_print(Ind, "\374\377RYou die.");
 	//		msg_print(Ind, NULL);
@@ -6318,31 +6293,41 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s\n", race_info[p_pt
 				}
 			} else {
 #endif
-			if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100)) || (streq(p_ptr->died_from, "Insanity"))) {
-    				msg_format(Ind, "\374\377%c**\377rYou have been killed by %s.\377%c**", msg_layout, p_ptr->died_from, msg_layout);
-			}
-			else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450))) {
-				msg_format(Ind, "\374\377%c**\377rYou have been annihilated by %s.\377%c**", msg_layout, p_ptr->died_from, msg_layout);
-			}
-			else {
-				msg_format(Ind, "\374\377%c**\377rYou have been vaporized by %s.\377%c**", msg_layout, p_ptr->died_from, msg_layout);
-			}
+				if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
+#ifdef ENABLE_DIVINE
+				    || (streq(p_ptr->died_from, "Indecisiveness"))
+#endif
+				    || (streq(p_ptr->died_from, "Insanity"))) {
+					msg_format(Ind, "\374\377%c**\377rYou have been killed by %s.\377%c**", msg_layout, p_ptr->died_from, msg_layout);
+				} else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450))) {
+					msg_format(Ind, "\374\377%c**\377rYou have been annihilated by %s.\377%c**", msg_layout, p_ptr->died_from, msg_layout);
+				} else {
+					msg_format(Ind, "\374\377%c**\377rYou have been vaporized by %s.\377%c**", msg_layout, p_ptr->died_from, msg_layout);
+				}
 
-			if (cfg.unikill_format) {
-				if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100)) || (streq(p_ptr->died_from, "Insanity")))
-					snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was killed by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
-				else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450)))
-					snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was annihilated by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
-				else
-					snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was vaporized by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
-			} else {
-				if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100)) || (streq(p_ptr->died_from, "Insanity")))
-					snprintf(buf, sizeof(buf), "\374\377%c**\377r%s (%d) was killed and destroyed by %s.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
-				else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450)))
-					snprintf(buf, sizeof(buf), "\374\377%c**\377r%s (%d) was annihilated and destroyed by %s.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
-				else
-					snprintf(buf, sizeof(buf), "\374\377%c**\377r%s (%d) was vaporized and destroyed by %s.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
-			}
+				if (cfg.unikill_format) {
+					if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
+#ifdef ENABLE_DIVINE
+					    || (streq(p_ptr->died_from, "Indecisiveness"))
+#endif
+					    || (streq(p_ptr->died_from, "Insanity")))
+						snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was killed by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
+					else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450)))
+						snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was annihilated by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
+					else
+						snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was vaporized by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
+				} else {
+					if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
+#ifdef ENABLE_DIVINE
+					    || (streq(p_ptr->died_from, "Indecisiveness"))
+#endif
+					    || (streq(p_ptr->died_from, "Insanity")))
+						snprintf(buf, sizeof(buf), "\374\377%c**\377r%s (%d) was killed and destroyed by %s.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
+					else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450)))
+						snprintf(buf, sizeof(buf), "\374\377%c**\377r%s (%d) was annihilated and destroyed by %s.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
+					else
+						snprintf(buf, sizeof(buf), "\374\377%c**\377r%s (%d) was vaporized and destroyed by %s.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
+				}
 #ifdef MORGOTH_FUNKY_KILL_MSGS
 			}
 #endif
@@ -6353,17 +6338,13 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s\n", race_info[p_pt
 s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", pvp ? "PVP" : "NOGHOST", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title);
 
 #if CHATTERBOX_LEVEL > 2
-			if (p_ptr->last_words)
-			{
+			if (p_ptr->last_words) {
 				char death_message[80];
-    
-        			(void)get_rnd_line("death.txt", 0, death_message, 80);
+				(void)get_rnd_line("death.txt", 0, death_message, 80);
 				msg_print(Ind, death_message);
 			}
 #endif	// CHATTERBOX_LEVEL
-
 			death_type = 0;
-
 			Send_chardump(Ind, "-death");
 			Net_output1(Ind);
 		}
@@ -6556,7 +6537,11 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", pvp ? "PVP" : "NOGHOS
 
 	/* Tell everyone he died */
 	if (p_ptr->alive) {
-		if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100)) || (streq(p_ptr->died_from, "Insanity"))) {
+		if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
+#ifdef ENABLE_DIVINE
+		    || (streq(p_ptr->died_from, "Indecisiveness"))
+#endif
+		    || (streq(p_ptr->died_from, "Insanity"))) {
 			/* snprintf(buf, sizeof(buf), "\374\377r%s was killed by %s.", p_ptr->name, p_ptr->died_from); */
 			/* Add the player lvl to the death message. the_sandman */
 			snprintf(buf, sizeof(buf), "\374\377r%s (%d) was killed by %s", p_ptr->name, p_ptr->lev, p_ptr->died_from);
@@ -6583,6 +6568,7 @@ s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s\n", race_info[p_ptr->
 			world_broadcast = FALSE;
 		}
 		s_printf("%s (%d) committed suicide.\n", p_ptr->name, p_ptr->lev);
+		world_broadcast = FALSE;
 		death_type = 3;
 s_printf("CHARACTER_TERMINATION: SUICIDE race=%s ; class=%s\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title);
 	} else {
@@ -6716,7 +6702,11 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 	/* Tell him */
 	msg_print(Ind, "\374\377RYou die.");
 //	msg_print(Ind, NULL);
-	if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100)) || (streq(p_ptr->died_from, "Insanity"))) {
+	if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
+#ifdef ENABLE_DIVINE
+	    || (streq(p_ptr->died_from, "Indecisiveness"))
+#endif
+	    || (streq(p_ptr->died_from, "Insanity"))) {
 		msg_format(Ind, "\374\377RYou have been killed by %s.", p_ptr->died_from);
 	}
 	else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450))) {
@@ -8930,7 +8920,7 @@ bool target_set_friendly(int Ind, int dir, ...)
  */
 bool get_aim_dir(int Ind)
 {
-	int		dir;
+	int dir;
 	player_type *p_ptr = Players[Ind];
 
 	if (p_ptr->auto_target) {

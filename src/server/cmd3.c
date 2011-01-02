@@ -1267,17 +1267,10 @@ void do_cmd_drop(int Ind, int item, int quantity)
 	u32b f1, f2, f3, f4, f5, esp;
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &(p_ptr->inventory[item]);
-	}
-
+	if (item >= 0) o_ptr = &(p_ptr->inventory[item]);
 	/* Get the item (on the floor) */
-	else
-	{
-		if (-item >= o_max)
-			return; /* item doesn't exist */
-
+	else {
+		if (-item >= o_max) return; /* item doesn't exist */
 		o_ptr = &o_list[0 - item];
 	}
 
@@ -1300,28 +1293,22 @@ void do_cmd_drop(int Ind, int item, int quantity)
 
 
 	/* Cannot remove cursed items */
-	if (cursed_p(o_ptr) && !is_admin(p_ptr))	/* Hack -- DM can */
-	{
-		if ((item >= INVEN_WIELD) )
-		{
+	if (cursed_p(o_ptr) && !is_admin(p_ptr)) { /* Hack -- DM can */
+		if ((item >= INVEN_WIELD) ) {
 			/* Oops */
 			msg_print(Ind, "Hmmm, it seems to be cursed.");
-
 			/* Nope */
 			return;
 		}
-
-		else if (f4 & TR4_CURSE_NO_DROP)
-		{
+		else if (f4 & TR4_CURSE_NO_DROP) {
 			/* Oops */
 			msg_print(Ind, "Hmmm, you seem to be unable to drop it.");
-
 			/* Nope */
 			return;
 		}
 	}
 
-	if(p_ptr->inval){
+	if (p_ptr->inval) {
 		msg_print(Ind, "You may not drop items. Ask an admin to validate your account.");
 		return;
 	}
@@ -1329,8 +1316,7 @@ void do_cmd_drop(int Ind, int item, int quantity)
 
 #if 0
 	/* Mega-Hack -- verify "dangerous" drops */
-	if (cave[p_ptr->dun_depth][p_ptr->py][p_ptr->px].o_idx)
-	{
+	if (cave[p_ptr->dun_depth][p_ptr->py][p_ptr->px].o_idx) {
 		/* XXX XXX Verify with the player */
 		if (other_query_flag &&
 		    !get_check(Ind, "The item may disappear.  Continue? ")) return;
@@ -1351,8 +1337,11 @@ void do_cmd_drop(int Ind, int item, int quantity)
 
 #ifdef PLAYER_STORES
 	if (o_ptr->note && strstr(quark_str(o_ptr->note), "@S")) {
-		s_printf("PLAYER_STORES: %s offers %d,%d (%d,%d,%d).\n",
-		    p_ptr->name, o_ptr->tval, o_ptr->sval, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+		char o_name[ONAME_LEN];
+		object_desc(0, o_name, o_ptr, TRUE, 3);
+		s_printf("PLAYER_STORES: %s offers %s (%d,%d,%d; %d,%d).\n",
+		    p_ptr->name, o_name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+		    p_ptr->px, p_ptr->py);
 	}
 #endif
 
@@ -1702,6 +1691,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription)
 	player_type *p_ptr = Players[Ind];
 	object_type		*o_ptr;
 	char		o_name[ONAME_LEN];
+	char *c;
 
 
 	/* Get the item (in the pack) */
@@ -1732,6 +1722,11 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription)
 	/* Message */
 	msg_format(Ind, "Inscribing %s.", o_name);
 	msg_print(Ind, NULL);
+
+	/* small hack to prevent using colour codes in inscriptions:
+	   convert \{ to just {, compare nserver.c:Send_special_line()! */
+	while ((c = strstr(inscription, "\\{")))
+		c[0] = '{';
 
 	/* hack to fix auto-inscriptions: convert empty inscription to a #-type inscription */
 	if (inscription[0] == '\0') inscription = "#";
@@ -2261,7 +2256,7 @@ void do_cmd_steal(int Ind, int dir)
 				if (j == INVEN_BODY) continue;
 
 				/* An artifact 'resists' */
-				if (artifact_p(o_ptr) && !o_ptr->name3 && rand_int(100) > 2)
+				if (true_artifact_p(o_ptr) && rand_int(100) > 2)
 					continue;
 				inven_drop(Ind, j, randint(o_ptr->number * 2));
 			}
@@ -2291,13 +2286,13 @@ void do_cmd_steal(int Ind, int dir)
  */
 static bool item_tester_refill_lantern(object_type *o_ptr)
 {
-  /* Randarts are not refillable */
-  if (o_ptr->name3) return (FALSE);
+	/* (Rand)arts are not usable for refilling */
+	if (o_ptr->name1) return (FALSE);
 
 	/* Flasks of oil are okay */
 	if (o_ptr->tval == TV_FLASK) return (TRUE);
 
-	/* Torches are okay */
+	/* Other lanterns are okay */
 	if ((o_ptr->tval == TV_LITE) &&
 	    (o_ptr->sval == SV_LITE_LANTERN)) return (TRUE);
 
@@ -2323,15 +2318,10 @@ static void do_cmd_refill_lamp(int Ind, int item)
 	item_tester_hook = item_tester_refill_lantern;
 
 	/* Get the item (in the pack) */
-	if (item >= 0) {
-		o_ptr = &(p_ptr->inventory[item]);
-	}
-
+	if (item >= 0) o_ptr = &(p_ptr->inventory[item]);
 	/* Get the item (on the floor) */
 	else {
-		if (-item >= o_max)
-			return; /* item doesn't exist */
-
+		if (-item >= o_max) return; /* item doesn't exist */
 		o_ptr = &o_list[0 - item];
 	}
 
@@ -2394,17 +2384,41 @@ static void do_cmd_refill_lamp(int Ind, int item)
 			floor_item_describe(0 - item);
 			floor_item_optimize(0 - item);
 		}
-	} else {
-		/* big numbers (*1000) to fix rounding errors: */
-		o_ptr->timeout -= ((used_fuel * 100000) / (100000 - ((100000 * spilled_fuel) / o_ptr->timeout)));
-		/* quick hack to hopefully fix rounding errors: */
-		if (o_ptr->timeout == 1) o_ptr->timeout = 0;
-//		inven_item_describe(Ind, item);
+	} else { /* TV_LITE && SV_LITE_LANTERN */
+		/* unstack lanterns if we used one of them for refilling */
+		if ((item >= 0) && (o_ptr->number > 1)) {
+			/* Make a fake item */
+			object_type tmp_obj;
+			tmp_obj = *o_ptr;
+			tmp_obj.number = 1;
+
+			/* drain its fuel */
+			/* big numbers (*1000) to fix rounding errors: */
+			tmp_obj.timeout -= ((used_fuel * 100000) / (100000 - ((100000 * spilled_fuel) / tmp_obj.timeout)));
+			/* quick hack to hopefully fix rounding errors: */
+			if (tmp_obj.timeout == 1) tmp_obj.timeout = 0;
+
+			/* Unstack the used item */
+			o_ptr->number--;
+			p_ptr->total_weight -= tmp_obj.weight;
+			item = inven_carry(Ind, &tmp_obj);
+
+			/* Message */
+			msg_print(Ind, "You unstack your lanterns.");
+		} else {
+			/* big numbers (*1000) to fix rounding errors: */
+			o_ptr->timeout -= ((used_fuel * 100000) / (100000 - ((100000 * spilled_fuel) / o_ptr->timeout)));
+			/* quick hack to hopefully fix rounding errors: */
+			if (o_ptr->timeout == 1) o_ptr->timeout = 0;
+//			inven_item_describe(Ind, item);
+		}
 	}
 
 	/* Recalculate torch */
-	p_ptr->update |= (PU_TORCH);
+	p_ptr->update |= (PU_TORCH | PU_LITE);
 	p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	/* If multiple lanterns are now 0 turns, they can be combined */
+	p_ptr->notice |= (PN_COMBINE);
 }
 
 
@@ -2437,7 +2451,7 @@ static void do_cmd_refill_torch(int Ind, int item)
 	/* Restrict the choices */
 	item_tester_hook = item_tester_refill_torch;
 
-	if(item>INVEN_TOTAL) return;
+	if (item > INVEN_TOTAL) return;
 
 	/* Get the item (in the pack) */
 	if (item >= 0) {

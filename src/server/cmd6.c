@@ -120,21 +120,14 @@ void do_cmd_eat_food(int Ind, int item)
 	item_tester_tval = TV_FOOD;
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &p_ptr->inventory[item];
-	}
-
+	if (item >= 0) o_ptr = &p_ptr->inventory[item];
 	/* Get the item (on the floor) */
-	else
-	{
-		if (-item >= o_max)
-			return; /* item doesn't exist */
-
+	else {
+		if (-item >= o_max) return; /* item doesn't exist */
 		o_ptr = &o_list[0 - item];
 	}
 
-	if( check_guard_inscription( o_ptr->note, 'E' )) {
+	if (check_guard_inscription( o_ptr->note, 'E' )) {
 		msg_print(Ind, "The item's inscription prevents it");
 		return;
 	}
@@ -148,8 +141,7 @@ void do_cmd_eat_food(int Ind, int item)
 		return;
 	}
 
-	if (p_ptr->prace == RACE_ENT && !p_ptr->body_monster)
-	{
+	if (p_ptr->prace == RACE_ENT && !p_ptr->body_monster) {
 		/* Let them drink :) */
 		if (o_ptr->tval != TV_FOOD ||
 				(o_ptr->sval != SV_FOOD_PINT_OF_ALE &&
@@ -1143,6 +1135,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 			case SV_POTION_ENLIGHTENMENT:
 				{
+					identify_pack(Ind);
 					msg_print(Ind, "An image of your surroundings forms in your mind...");
 					wiz_lite(Ind);
 					ident = TRUE;
@@ -1151,6 +1144,12 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 			case SV_POTION_STAR_ENLIGHTENMENT:
 				{
+#if 0 /* would need to increase price from 25k back to 80k ;) */
+					for (i = 0; i < INVEN_TOTAL; i++)
+						identify_fully_item_quiet(Ind, i);
+#else
+					identify_pack(Ind);
+#endif
 					msg_print(Ind, "You begin to feel more enlightened...");
 					msg_print(Ind, NULL);
 					wiz_lite(Ind);
@@ -1259,7 +1258,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				(void)set_image(Ind, 0);
 				break;
 			case SV_POTION2_CHAUVE_SOURIS:
-				//				apply_morph(Ind, 100, "Potion of Chauve-Souris");
+//				apply_morph(Ind, 100, "Potion of Chauve-Souris");
 				if (!p_ptr->fruit_bat) {
 					/* FRUIT BAT!!!!!! */
 					if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
@@ -1443,6 +1442,16 @@ void do_cmd_drink_fountain(int Ind)
 
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+
+
+	/* HACK (sorta bad): if there's an item on the grid,
+	   tell us which it is, instead of trying to drink from
+	   a fountain! - C. Blue */
+	if (c_ptr->o_idx) {
+		whats_under_your_feet(Ind);
+		return;
+	}
+
 
 	/* decided to allow players in WRAITHFORM to drink ;) */
 	if (p_ptr->ghost) {
@@ -2284,7 +2293,7 @@ void do_cmd_read_scroll(int Ind, int item)
 		o_ptr = &o_list[0 - item];
 	}
 
-	if (no_lite(Ind) && !(p_ptr->ghost && (o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_PARCHMENT_DEATH)))
+	if (no_lite(Ind) && !(p_ptr->ghost && (o_ptr->tval == TV_PARCHMENT) && (o_ptr->sval == SV_PARCHMENT_DEATH)))
 	{
 		msg_print(Ind, "You have no light to read by.");
 		s_printf("%s EFFECT: No-light prevented scroll for %s.\n", showtime(), p_ptr->name);
@@ -2323,6 +2332,8 @@ void do_cmd_read_scroll(int Ind, int item)
 
 		p_ptr->au += value;
 		msg_format(Ind, "\375\377sYou acquire \377y%d\377s gold pieces.", value);
+s_printf("PLAYER_STORE_CASH: Player %s redeems cheque of value %d (%s).\n", p_ptr->name, value, o_ptr->note ? quark_str(o_ptr->note) : "");
+
 
 		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 		p_ptr->redraw |= (PR_GOLD);
@@ -2697,13 +2708,13 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_DETECT_GOLD:
 			{
-				if (detect_treasure(Ind, DEFAULT_RADIUS)) ident = TRUE;
+				if (detect_treasure(Ind, DEFAULT_RADIUS * 2)) ident = TRUE;
 				break;
 			}
 
 			case SV_SCROLL_DETECT_ITEM:
 			{
-				if (detect_object(Ind, DEFAULT_RADIUS)) ident = TRUE;
+				if (detect_object(Ind, DEFAULT_RADIUS * 2)) ident = TRUE;
 				break;
 			}
 
@@ -3272,8 +3283,9 @@ void do_cmd_use_staff(int Ind, int item)
 	{
 		msg_print(Ind, "The staff has no charges left.");
 		o_ptr->ident |= ID_EMPTY;
-		
+
 		/* Redraw */
+		o_ptr->changed = !o_ptr->changed;
 		p_ptr->window |= (PW_INVEN);
 
 		return;
@@ -3378,13 +3390,13 @@ void do_cmd_use_staff(int Ind, int item)
 
 		case SV_STAFF_DETECT_GOLD:
 		{
-			if (detect_treasure(Ind, rad)) ident = TRUE;
+			if (detect_treasure(Ind, rad * 2)) ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_DETECT_ITEM:
 		{
-			if (detect_object(Ind, rad)) ident = TRUE;
+			if (detect_object(Ind, rad * 2)) ident = TRUE;
 			break;
 		}
 
@@ -3645,42 +3657,27 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 {
         u32b f1, f2, f3, f4, f5, esp;
 	player_type *p_ptr = Players[Ind];
-
-	int			lev, ident, chance, sval;
-
-	object_type		*o_ptr;
+	int lev, ident, chance, sval;
+	object_type *o_ptr;
 
 	/* Break goi/manashield */
 #if 0
-	if (p_ptr->invuln)
-	{
-		set_invuln(Ind, 0);
-	}
-	if (p_ptr->tim_manashield)
-	{
-		set_tim_manashield(Ind, 0);
-	}
-	if (p_ptr->tim_wraith)
-	{
-		set_tim_wraith(Ind, 0);
-	}
+	if (p_ptr->invuln) set_invuln(Ind, 0);
+	if (p_ptr->tim_manashield) set_tim_manashield(Ind, 0);
+	if (p_ptr->tim_wraith) set_tim_wraith(Ind, 0);
 #endif	// 0
 
-
 #if 1	// anti_magic is not antimagic :)
-	if (p_ptr->anti_magic)
-	{
+	if (p_ptr->anti_magic) {
 		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);	
 		return;
 	}
 #endif	// 0
-	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
-	{
+	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
 		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);	
 		return;
 	}
-        if (magik((p_ptr->antimagic * 8) / 5))
-        {
+        if (magik((p_ptr->antimagic * 8) / 5)) {
                 msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
                 return;
         }
@@ -3689,17 +3686,10 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	item_tester_tval = TV_WAND;
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &p_ptr->inventory[item];
-	}
-
+	if (item >= 0) o_ptr = &p_ptr->inventory[item];
 	/* Get the item (on the floor) */
-	else
-	{
-		if (-item >= o_max)
-			return; /* item doesn't exist */
-
+	else {
+		if (-item >= o_max) return; /* item doesn't exist */
 		o_ptr = &o_list[0 - item];
 	}
 	if( check_guard_inscription( o_ptr->note, 'a' )) {
@@ -3707,8 +3697,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
                 return;
         }; 
 
-	if (o_ptr->tval != TV_WAND)
-	{
+	if (o_ptr->tval != TV_WAND) {
 //(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to use non-wand!");
 		return;
 	}
@@ -3716,8 +3705,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
         if (!can_use_verbose(Ind, o_ptr)) return;
 
 	/* Mega-Hack -- refuse to aim a pile from the ground */
-	if ((item < 0) && (o_ptr->number > 1))
-	{
+	if ((item < 0) && (o_ptr->number > 1)) {
 		msg_print(Ind, "You must first pick up the wands.");
 		return;
 	}
@@ -3732,8 +3720,12 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	}*/
 
 
-	/* Allow direction to be cancelled for free */
-	/*if (!get_aim_dir(&dir)) return;*/
+	/* New '+' feat in 4.4.6.2 */
+	if (dir == 11) {
+		get_aim_dir(Ind);
+		p_ptr->current_wand = item;
+		return;
+	}
 
 
 	/* S(he) is no longer afk */
@@ -3755,10 +3747,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	if (p_ptr->confused) chance = chance / 2;
 
         /* Is it simple to use ? */
-        if (f4 & TR4_EASY_USE)
-        {
-                chance *= 2;
-        }
+        if (f4 & TR4_EASY_USE) chance *= 2;
 
 	/* High level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
@@ -3768,24 +3757,21 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 
 	/* Give everyone a (slight) chance */
 	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
-	{
 		chance = USE_DEVICE;
-	}
 
 	/* Roll for usage */
-	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
-	{
+	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) {
 		msg_print(Ind, "You failed to use the wand properly.");
 		return;
 	}
 
 	/* The wand is already empty! */
-	if (o_ptr->pval <= 0)
-	{
+	if (o_ptr->pval <= 0) {
 		msg_print(Ind, "The wand has no charges left.");
 		o_ptr->ident |= ID_EMPTY;
 
 		/* Redraw */
+		o_ptr->changed = !o_ptr->changed;
 		p_ptr->window |= (PW_INVEN);
 
 		return;
@@ -4269,7 +4255,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir)
 	    !(o_ptr->sval == SV_ROD_HOME)) ||
 	    !object_aware_p(Ind, o_ptr))
 	{
-		if (dir != 0) {
+		if (dir != 0 && dir != 11) {
 		//redundant: lower versions cant have dir != 0. ---  && is_newer_than(&p_ptr->version, 4, 4, 5, 10, 0, 0)) {
 			p_ptr->current_rod = item;
 			do_cmd_zap_rod_dir(Ind, dir);
@@ -5440,7 +5426,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 //appearently not for A'able items >_>	    || !object_aware_p(Ind, o_ptr)
 	    )
 	{
-		if (dir != 0) {
+		if (dir != 0 && dir != 11) {
 		//redundant: lower versions cant have dir != 0. ---  && is_newer_than(&p_ptr->version, 4, 4, 5, 10, 0, 0)) {
 			p_ptr->current_activation = item;
 			do_cmd_activate_dir(Ind, dir);
@@ -5451,8 +5437,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 
 	/* Hack -- Dragon Scale Mail can be activated as well */
 	/* Yikes, hard-coded r_idx.. */
-	if (o_ptr->tval == TV_DRAG_ARMOR && item == INVEN_BODY)
-	{
+	if (o_ptr->tval == TV_DRAG_ARMOR && item == INVEN_BODY) {
 		/* Breath activation */
                 p_ptr->current_activation = item;
                 get_aim_dir(Ind);
@@ -6112,11 +6097,9 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 #endif	// 0
 
 	/* Artifacts */
-	if (o_ptr->name1 && (o_ptr->name1 != ART_RANDART))
-	{
+	if (o_ptr->name1 && (o_ptr->name1 != ART_RANDART)) {
 		/* Choose effect */
-		switch (o_ptr->name1)
-		{
+		switch (o_ptr->name1) {
 			case ART_NARTHANC:
 			{
 				msg_print(Ind, "Your dagger is covered in fire...");
@@ -7246,7 +7229,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 	}
 	else if (is_ego_p(o_ptr, EGO_NOLDOR))
 	{
-		detect_treasure(Ind, DEFAULT_RADIUS);
+		detect_treasure(Ind, DEFAULT_RADIUS * 2);
 		o_ptr->timeout = 10 + randint(20);
 
 		/* Window stuff */
@@ -7602,58 +7585,46 @@ void do_cmd_activate_dir(int Ind, int dir)
 
 	item = p_ptr->current_activation;
 
-	if (p_ptr->anti_magic)
-	{
+	if (p_ptr->anti_magic) {
 		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
 		return;
 	}
-	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
-	{
+	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
 		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
 		return;
 	}
-        if (magik((p_ptr->antimagic * 8) / 5))
-        {
+        if (magik((p_ptr->antimagic * 8) / 5)) {
                 msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
                 return;
         }
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &p_ptr->inventory[item];
-	}
-
+	if (item >= 0) o_ptr = &p_ptr->inventory[item];
 	/* Get the item (on the floor) */
-	else
-	{
-		if (-item >= o_max)
-			return; /* item doesn't exist */
-
+	else {
+		if (-item >= o_max) return; /* item doesn't exist */
 		o_ptr = &o_list[0 - item];
 	}
 
 	/* If the item can be equipped, it MUST be equipped to be activated */
-	if ((item < INVEN_WIELD) && wearable_p(o_ptr))
-	{
+	if ((item < INVEN_WIELD) && wearable_p(o_ptr)) {
 		msg_print(Ind, "You must be using this item to activate it.");
 		return;
 	}
 
-	if( check_guard_inscription( o_ptr->note, 'A' )) {
+	if (check_guard_inscription(o_ptr->note, 'A')) {
                 msg_print(Ind, "The item's inscription prevents it");
                 return;
-        }; 
+        };
 
         if (!can_use_verbose(Ind, o_ptr)) return;
-	
+
 	break_cloaking(Ind, 0);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 
-	if (o_ptr->tval == TV_DRAG_ARMOR && item==INVEN_BODY && !o_ptr->name1)
-	{
-		switch(o_ptr->sval){
+	if (o_ptr->tval == TV_DRAG_ARMOR && item==INVEN_BODY && !o_ptr->name1) {
+		switch (o_ptr->sval) {
 		case SV_DRAGON_BLACK:
 			msg_print(Ind, "You breathe acid.");
 			sprintf(p_ptr->attacker, " breathes acid for");

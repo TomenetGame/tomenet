@@ -618,15 +618,13 @@ int guild_create(int Ind, cptr name){
  */
 void party_check(int Ind){
 	int i, id;
-	for (i = 1; i < MAX_PARTIES; i++)
-	{
+	for (i = 1; i < MAX_PARTIES; i++) {
 		if (parties[i].members != 0){
-			if(!(id=lookup_player_id(parties[i].owner))){
+			if (!(id = lookup_player_id(parties[i].owner))) {
 				msg_format(Ind, "Lost party %s (%s)", parties[i].name, parties[i].owner);
 				del_party(i);
-			}
-			else{
-				if((lookup_player_party(id)!=i)){
+			} else {
+				if ((lookup_player_party(id) != i)) {
 					msg_format(Ind, "Disowned party %s (%s)", parties[i].name, parties[i].owner);
 					del_party(i);
 				}
@@ -979,10 +977,10 @@ int party_add(int adder, cptr name)
 		return FALSE;
 	}
 
-	/* Only newly created characters can create an iron team */
+	/* Only newly created characters can join an iron team */
         if ((parties[party_id].mode & PA_IRONTEAM) && (p_ptr->max_exp > 0 || p_ptr->max_plv > 1))
         {
-	        msg_print(Ind, "\377yOnly newly created characters without experience can join an iron team.");
+	        msg_print(adder, "\377yOnly newly created characters without experience can join an iron team.");
 		return FALSE;
 	}
 
@@ -1178,9 +1176,7 @@ int party_remove(int remover, cptr name)
 #endif
 
 	/* Make sure this is the owner */
-	if (!streq(parties[party_id].owner, q_ptr->name) && !is_admin(q_ptr))
-	{
-		/* Message */
+	if (!streq(parties[party_id].owner, q_ptr->name) && !is_admin(q_ptr)) {
 		msg_print(remover, "\377yYou must be the owner to delete someone.");
 
 		/* Abort */
@@ -1188,23 +1184,14 @@ int party_remove(int remover, cptr name)
 	}
 
 	Ind = name_lookup_loose(remover, name, FALSE);
-
-	if (Ind <= 0)
-	{
-		return FALSE;
-	}
-
+	if (Ind <= 0) return FALSE;
 	p_ptr = Players[Ind];
 
 	if((!party_id || !streq(parties[party_id].owner, q_ptr->name)) && is_admin(q_ptr))
-	{
 		party_id = p_ptr->party;
-	}
 
 	/* Make sure they were in the party to begin with */
-	if (!player_in_party(party_id, Ind))
-	{
-		/* Message */
+	if (!player_in_party(party_id, Ind)) {
 		msg_print(remover, "\377yYou can only delete party members.");
 
 		/* Abort */
@@ -1213,16 +1200,12 @@ int party_remove(int remover, cptr name)
 
 #ifndef RPG_SERVER
 	/* See if this is the owner we're deleting */
-	if (remover == Ind)
-	{
-		del_party(party_id);
-	}
+	if (remover == Ind) del_party(party_id);
 
 	/* Keep the party, just lose a member */
 	else
 #else
-	if (remover == Ind)
-	{
+	if (remover == Ind) {
 		for (i = 1; i <= NumPlayers; i++) {
 			if (is_admin(Players[i])) continue;
 			if (Players[i]->party == q_ptr->party && i != Ind) {
@@ -3505,3 +3488,10 @@ void account_set_laston(int Ind) {
 	KILL(c_acc, struct account);
 }
 #endif
+
+int lookup_player_ind(u32b id) {
+	int n;
+	for (n = 1; n <= NumPlayers; n++)
+		if (Players[n]->id == id) return n;
+	return 0;
+}

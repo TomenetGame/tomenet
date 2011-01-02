@@ -61,7 +61,8 @@ SERV_SRCS = \
   server/init1.c server/init2.c server/nserver.c server/printout.c \
   server/main.c server/traps.c server/csfunc.c server/skills.c \
   common/files.c common/w_z_pack.c server/world.c server/bldg.c \
-  server/runes.c server/runecraft.c server/auction.c common/SFMT.c
+  server/runes.c server/runecraft.c server/auction.c common/SFMT.c \
+  server/go.c
 
 SERV_OBJS = \
   common/z-util.o common/z-virt.o common/z-form.o common/z-rand.o \
@@ -77,7 +78,8 @@ SERV_OBJS = \
   server/init1.o server/init2.o server/nserver.o server/printout.o \
   server/main.o server/traps.o server/csfunc.o server/skills.o \
   common/files.c common/w_z_pack.o server/world.o server/bldg.o \
-  server/runes.o server/runecraft.o server/auction.o common/SFMT.o
+  server/runes.o server/runecraft.o server/auction.o common/SFMT.o \
+  server/go.o
 
 
 CLI_SRCS = \

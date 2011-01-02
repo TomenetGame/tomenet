@@ -299,6 +299,11 @@ int main(int argc, char *argv[])
 	/* Initialize the arrays */
 	init_some_arrays();
 
+#ifdef ENABLE_GO_GAME
+	/* Initialize & power up the Go AI */
+	go_engine_init();
+#endif
+
 	/* Play the game */
 	play_game(new_game);
 

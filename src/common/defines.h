@@ -61,15 +61,15 @@
 /* maximum MAJOR/MINOR/PATCH version that counts as 'outdated' (should be 0-15). */
 #define VERSION_MAJOR_OUTDATED	4
 #define VERSION_MINOR_OUTDATED	4
-#define VERSION_PATCH_OUTDATED	5
-#define VERSION_EXTRA_OUTDATED	10
+#define VERSION_PATCH_OUTDATED	6
+#define VERSION_EXTRA_OUTDATED	0
 #define VERSION_BRANCH_OUTDATED	0
 #define VERSION_BUILD_OUTDATED	0
 /* _one before_ MAJOR/MINOR/PATCH version that counts as 'latest' (should be 0-15). */
 #define VERSION_MAJOR_LATEST	4
 #define VERSION_MINOR_LATEST	4
-#define VERSION_PATCH_LATEST	5
-#define VERSION_EXTRA_LATEST	10
+#define VERSION_PATCH_LATEST	6
+#define VERSION_EXTRA_LATEST	0
 #define VERSION_BRANCH_LATEST	0
 #define VERSION_BUILD_LATEST	0
 
@@ -93,7 +93,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	4
-#define SF_VERSION_PATCH	14
+#define SF_VERSION_PATCH	17
 #define SF_VERSION_EXTRA	0
 
 
@@ -159,7 +159,6 @@
 #define NEW_TOMES		/* customizable spellbooks */
 
 #define CLIENT_SIDE_WEATHER	/* server uses Send_weather() instead of displaying own weather animation */
-//#define CLIENT_WEATHER_GLOBAL	/* use global weather instead of sector-specific (requires CLIENT_SIDE_WEATHER) */
 #define MAX_CLOUDS 2000
 
 #define EXTRA_LEVEL_FEELINGS	/* enable extra level feelings, remotely angband-style, warning about dangers */
@@ -171,6 +170,8 @@
 
 #define PLAYER_STORES		/* Enable player-run shops - C. Blue */
 #define HOUSE_PAINTING		/* Allow players to paint their entrance area or house (for PLAYER_STORES) - C. Blue */
+
+#define ENABLE_GO_GAME		/* Allows players to play vs CPU games of Go/Weiqi/Baduk. - C. Blue */
 
 /* --------------------- Server-type dependant features -------------------- */
 
@@ -186,14 +187,10 @@
 
  #define OPTIMIZED_ANIMATIONS	/* testing */
 
- #define CLIENT_SIDE_WEATHER	/* server uses Send_weather() instead of displaying own weather animation */
-// #define CLIENT_WEATHER_GLOBAL	/* use global weather instead of sector-specific (requires CLIENT_SIDE_WEATHER) */
-
+ #define ENABLE_GO_GAME		/* Allows players to play vs CPU games of Go/Weiqi/Baduk. - C. Blue */
 #endif
 
 #ifdef TEST_SERVER
- #define ENABLE_RCRAFT		/* New runecraft class - relsiet (toggles new alternative code for ENABLE_RUNEMASTER) */
-
  #define ENABLE_DIVINE		/* enable RACE_DIVINE */
 
  #define AUCTION_BETA		/* less restrictions while beta testing */
@@ -208,6 +205,8 @@
   #define MAX_CLOUDS 10		/* note that this number gets divided depending on season */
  #endif
 // #define CLIENT_WEATHER_GLOBAL	/* use global weather instead of sector-specific (requires CLIENT_SIDE_WEATHER) */
+
+ #define ENABLE_GO_GAME		/* Allows players to play vs CPU games of Go/Weiqi/Baduk. - C. Blue */
 #endif
 
 /* ------------------------ Client-side only features -----------------------*/
@@ -367,13 +366,13 @@
 
 /* Number of days after which an account without any characters on it will expire. */
 #ifdef RPG_SERVER
- #define ACCOUNT_EXPIRY_DAYS 182
+ #define ACCOUNT_EXPIRY_DAYS 184
 #else
  #define ACCOUNT_EXPIRY_DAYS 62
 #endif
 
 /* Number of days after which an unused character will expire. */
-#define CHARACTER_EXPIRY_DAYS 180
+#define CHARACTER_EXPIRY_DAYS 184
 
 
 /* maximum respawn time for uniques.... from japanese patch */
@@ -897,7 +896,7 @@
 #define	MASTER_SCRIPTE  8
 #define	MASTER_SCRIPTS  9
 
-#define	MASTER_SUMMON_SPEFIC	0	
+#define	MASTER_SUMMON_SPEFIC	0
 #define	MASTER_SUMMON_
 
 #define	MASTER_SCRIPTB_W	'w'
@@ -1017,8 +1016,8 @@
 #define STORE_TURNS	(cfg.store_turns)	/* Number of turns between turnovers */
 
 #define STORE_PURSE_BOOST	10	/* Multiplier for max_cost (15) */
-#if 0
 
+#if 0
 #define STORE_TURNS	200		/* Number of turns between turnovers */
 #define STORE_SHUFFLE	25		/* 1/Chance (per day) of an owner changing */
 #define STORE_TURNS	500		/* Number of turns between turnovers */
@@ -1058,8 +1057,8 @@
 #define SF1_PRICY_ITEMS3      	0x00800000L	/* items are worth 10000+ */
 #define SF1_PRICY_ITEMS4      	0x01000000L	/* items are worth 20000+ */
 #define SF1_HARD_STEAL 	      	0x02000000L     /* hard to steal from this shop */
-#define SF1_VHARD_STEAL	      	0x04000000L     /* hard to steal from this shop */
-//flag hole
+#define SF1_VHARD_STEAL	      	0x04000000L     /* very hard to steal from this shop */
+#define SF1_SPECIAL		0x08000000L	/* Store doesn't have an inventory but prints arbitrary text to screen instead */
 #define SF1_BUY67		0x10000000L	/* Shop buys for 67% of value */
 #define SF1_BUY50		0x20000000L	/* Shop buys for 50% of value (stacks with BUY67) */
 #define SF1_NO_DISCOUNT3	0x40000000L	/* no 75%+ off */
@@ -1080,6 +1079,7 @@
 #define STORE_RUNE	STORE_PET /* Using this space for now */
 #define STORE_MAYOR	10
 #define STORE_INN	11
+#define STORE_CASINO	15
 #define STORE_JEWELX	42
 #define STORE_SHOESX	45
 #define STORE_LIBRARY	46		/* unused */
@@ -1128,6 +1128,11 @@
 #define MON_SUMMON_ADJ	2		/* Adjust level of summoned creatures */
 #define MON_DRAIN_LIFE	2		/* Percent of player exp drained per hit */
 #define USE_DEVICE	3		/* x> Harder devices x< Easier devices */
+/* Enable to prevent cursed diggers/tools to be created. - C. Blue
+   Note: For tools that do not have (+hit) or (+dam) values, this might
+   slightly increase amount of tools generated in stores since they will
+   be generated fine even if they'd otherwise have come out as 'cursed'. */
+//#define PREVENT_CURSED_TOOLS
 
 /*
  * There is a 1/20 (5%) chance of inflating the requested object_level
@@ -1466,7 +1471,8 @@
 #define MAX_REALM               8
 
 /* hack needed in Handle_direction */
-#define REALM_MIMIC				200
+#define REALM_MIMIC		200
+#define REALM_SCHOOL		201
 
 /*** Screen Locations ***/
 
@@ -2167,6 +2173,10 @@ that keeps many algorithms happy.
 #define ART_SOULCALLER		263
 #define ART_VERIDIS_QUO		264
 #define ART_SCYTHE_DM		265
+#define ART_BOOTS_MOLTOR	266
+#define ART_DAILIR		267
+#define ART_PIERCER		268
+#define ART_URUKHAI		269
 /* #define ART_ANGTIRCALAD		*/
 
 
@@ -2743,6 +2753,7 @@ that keeps many algorithms happy.
 #define SV_ORCISH_PICK                   5
 #define SV_DWARVEN_PICK                  6
 #define SV_MATTOCK                       7
+#define SV_PICK_MOLTOR			 8
 
 /* The "sval" values for TV_BLUNT */
 #define SV_CLUB                          1	/* 1d4  */
@@ -3522,6 +3533,7 @@ that keeps many algorithms happy.
 #define CAVE_GLOW	0x0002 	/* self-illuminating */
 #define CAVE_ICKY	0x0004 	/* part of a vault */
 #define CAVE_ROOM	0x0008 	/* part of a room */
+
 #define CAVE_LITE	0x0010 	/* lite flag  */
 #define CAVE_VIEW	0x0020 	/* view flag */
 #define CAVE_TEMP	0x0040 	/* temp flag */
@@ -3529,15 +3541,13 @@ that keeps many algorithms happy.
 
 #define CAVE_NOPK	0x0100	/* no pkill (arena?, tavern) */
 #define CAVE_STCK	0x0200	/* sticky (no-tele vault), not icky (prison?) */
-
-/* world surface at night */
-#define CAVE_DARKEN	0x0400	/* change colours to darker variants */
-
-/* Field 'remembers' if it belongs to a perma-wall vault or normal vault */
+#define CAVE_DARKEN	0x0400	/* world surface at night - change colours to darker variants */
 #define CAVE_ICKY_PERMA	0x0800 	/* part of a perma-walled vault */
-#define CAVE_PROT	0x1000 	/* protected from monster-spawn + cannot be monster teleport destination */
 
+#define CAVE_PROT	0x1000 	/* protected from monster-spawn + cannot be monster teleport destination */
 #define CAVE_NEST_PIT	0x2000	/* grid is part of a monster nest and target for monster placement */
+#define CAVE_MAGELOCK	0x4000	/* Anti-exploit: Remember magelocked doors so they don't give exp repeatedly */
+
 
 #if 0	/* for future expansion.. */
 /* To what extent shall we enlarge it?
@@ -4962,6 +4972,229 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 
 #define RF0_DISABLE_MASK	(0x0)
 
+/*
+ * Hack -- choose "intelligent" spells when desperate
+ */
+/* I suspect the usefulness of this mask.. */
+
+#define RF4_INT_MASK \
+   (RF4_S_ANIMAL | RF4_UNMAGIC)
+
+#define RF5_INT_MASK \
+  (RF5_HOLD | RF5_SLOW | RF5_CONF | RF5_BLIND | RF5_SCARE)
+
+#define RF6_INT_MASK \
+   (RF6_BLINK |  RF6_TPORT | RF6_TELE_LEVEL | RF6_TELE_AWAY | \
+    RF6_HEAL | RF6_HASTE | RF6_TRAPS | \
+    RF6_S_KIN | RF6_S_HI_DEMON | RF6_S_MONSTER | RF6_S_MONSTERS | \
+    RF6_S_ANT | RF6_S_SPIDER | RF6_S_HOUND | RF6_S_HYDRA | \
+    RF6_S_ANGEL | RF6_S_DRAGON | RF6_S_UNDEAD | RF6_S_DEMON | \
+    RF6_S_HI_DRAGON | RF6_S_HI_UNDEAD | RF6_S_WRAITH | RF6_S_UNIQUE | \
+    RF6_S_DRAGONRIDER | RF6_S_BUG | RF6_S_RNG | RF6_S_ANIMALS)
+
+#define RF0_INT_MASK \
+    (RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE)
+
+/*
+ * Spells castable even when farther than MAX_RANGE
+ */
+#define RF4_INDIRECT_MASK \
+	(RF4_MOAN)
+/*	(0L)	-	Ranged MOAN needed for Halloween event -C. Blue */
+
+#define RF5_INDIRECT_MASK \
+	(0L)
+
+#define RF6_INDIRECT_MASK \
+	(RF6_HASTE | RF6_BLINK | RF6_TPORT | RF6_HEAL)
+
+#define RF0_INDIRECT_MASK \
+	(0L)
+
+
+/*
+ * Spells castable only when within the sight
+ */
+#define RF4_DIRECT_MASK \
+	(RF4_SHRIEK | RF4_UNMAGIC)
+
+#define RF5_DIRECT_MASK \
+	(RF5_DRAIN_MANA | RF5_MIND_BLAST | RF5_BRAIN_SMASH | RF5_CURSE | \
+	 RF5_SCARE | RF5_BLIND | RF5_CONF | RF5_SLOW | RF5_HOLD)
+
+
+#define RF6_DIRECT_MASK \
+	(RF6_TELE_TO | RF6_TELE_AWAY | RF6_TELE_LEVEL | RF6_DARKNESS | \
+	 RF6_TRAPS | RF6_FORGET)
+
+#define RF0_DIRECT_MASK \
+	(0L)
+
+ 
+/*
+ * Hack -- "bolt" spells that may hurt fellow monsters
+ */
+#define RF4_BOLT_MASK \
+  (RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_BOULDER)
+/*  (RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4) */
+
+#define RF5_BOLT_MASK \
+   (RF5_BO_ACID | RF5_BO_ELEC | RF5_BO_FIRE | RF5_BO_COLD | \
+    RF5_BO_POIS | RF5_BO_NETH | RF5_BO_WATE | RF5_BO_MANA | \
+    RF5_BO_PLAS | RF5_BO_ICEE | RF5_MISSILE)
+
+#define RF6_BOLT_MASK \
+    (0L)
+
+#define RF0_BOLT_MASK \
+    (0L)
+
+
+/* Hack -- summon spells */
+
+#define RF4_SUMMON_MASK \
+    (0L)
+
+#define RF5_SUMMON_MASK \
+    (0L)
+
+#define RF6_SUMMON_MASK \
+    (RF6_S_KIN | RF6_S_HI_DEMON | RF6_S_MONSTER | RF6_S_MONSTERS | RF6_S_ANT | \
+     RF6_S_SPIDER | RF6_S_HOUND | RF6_S_HYDRA | RF6_S_ANGEL | RF6_S_DEMON | \
+     RF6_S_UNDEAD | RF6_S_DRAGON | RF6_S_HI_UNDEAD | RF6_S_HI_DRAGON | \
+     RF6_S_WRAITH | RF6_S_UNIQUE | RF6_S_DRAGONRIDER | RF6_S_BUG | RF6_S_RNG)
+
+#define RF0_SUMMON_MASK \
+    (RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE)
+
+
+/*
+ * Spells that allow the caster to escape
+ */
+#define RF4_ESCAPE_MASK \
+	(0L)
+
+#define RF5_ESCAPE_MASK \
+	(0L)
+
+#define RF6_ESCAPE_MASK \
+	(RF6_BLINK | RF6_TPORT | RF6_TELE_AWAY | RF6_TELE_LEVEL)
+
+#define RF0_ESCAPE_MASK \
+	(0L)
+
+/*
+ * Spells that hurt the player directly
+ */
+#define RF4_ATTACK_MASK \
+	(RF4_ROCKET | RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4 | \
+	 RF4_BR_ACID | RF4_BR_ELEC | RF4_BR_FIRE | RF4_BR_COLD | RF4_BR_POIS | \
+	 RF4_BR_NETH | RF4_BR_LITE | RF4_BR_DARK | RF4_BR_CONF | RF4_BR_SOUN | \
+	 RF4_BR_CHAO | RF4_BR_DISE | RF4_BR_NEXU | RF4_BR_TIME | RF4_BR_INER | \
+	 RF4_BR_GRAV | RF4_BR_SHAR | RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA | \
+	 RF4_BR_NUKE | RF4_BR_DISI | RF4_BOULDER)
+/*	 RF4_BA_NUKE | RF4_BR_NUKE | RF4_BA_CHAO | RF4_BR_DISI) */
+
+#define RF5_ATTACK_MASK \
+	(RF5_BA_ACID | RF5_BA_ELEC | RF5_BA_FIRE | RF5_BA_COLD | RF5_BA_POIS | \
+	 RF5_BA_NETH | RF5_BA_WATE | RF5_BA_MANA | RF5_BA_DARK | \
+	 RF5_BA_NUKE | RF5_BA_CHAO | \
+	 RF5_MIND_BLAST | RF5_BRAIN_SMASH | RF5_CURSE | \
+	 RF5_BO_ACID | RF5_BO_ELEC | RF5_BO_FIRE | \
+	 RF5_BO_COLD | RF5_BO_POIS | RF5_BO_NETH | RF5_BO_WATE | RF5_BO_MANA | \
+	 RF5_BO_PLAS | RF5_BO_ICEE | RF5_MISSILE)
+
+#define RF6_ATTACK_MASK \
+	(RF6_HAND_DOOM)
+
+#define RF0_ATTACK_MASK \
+	(0L)
+
+
+/*
+ * Spells that improve the caster's tactical position
+ */
+#define RF4_TACTIC_MASK \
+	(0L)
+
+#define RF5_TACTIC_MASK \
+	(0L)
+
+#define RF6_TACTIC_MASK \
+	(RF6_BLINK)
+
+#define RF0_TACTIC_MASK \
+	(0L)
+
+/*
+ * Annoying spells
+ */
+#define RF4_ANNOY_MASK \
+	(RF4_SHRIEK | RF4_UNMAGIC | RF4_MOAN)
+/*	(RF4_SHRIEK | RF4_UNMAGIC)  ranged MOAN added for Halloween event. -C. Blue */
+
+#define RF5_ANNOY_MASK \
+	(RF5_DRAIN_MANA | RF5_MIND_BLAST | RF5_BRAIN_SMASH | \
+	 RF5_SCARE | RF5_BLIND | RF5_CONF | RF5_SLOW | RF5_HOLD)
+
+#define RF6_ANNOY_MASK \
+	(RF6_TELE_TO | RF6_DARKNESS | RF6_TRAPS | RF6_FORGET)
+
+#define RF0_ANNOY_MASK \
+	(0L)
+
+/*
+ * Spells that increase the caster's relative speed
+ */
+#define RF4_HASTE_MASK \
+	(0L)
+
+#define RF5_HASTE_MASK \
+	(RF5_SLOW | RF5_HOLD)
+
+#define RF6_HASTE_MASK \
+	(RF6_HASTE)
+
+#define RF0_HASTE_MASK \
+	(0L)
+
+/*
+ * Healing spells
+ */
+#define RF4_HEAL_MASK \
+	(0L)
+
+#define RF5_HEAL_MASK \
+	(0L)
+
+#define RF6_HEAL_MASK \
+	(RF6_HEAL)
+
+#define RF0_HEAL_MASK \
+	(0L)
+
+/* Masks to find out if a monster is really a spellcaster,
+   which uses magic spells, or if the 'spells' are merely
+   actions as firing arrows or hurling boulders.. - C. Blue */
+#define	RF4_SPELLCASTER_MASK \
+	(RF4_S_ANIMAL)
+#define	RF5_SPELLCASTER_MASK \
+	(RF5_BA_ACID | RF5_BA_ELEC | RF5_BA_FIRE | RF5_BA_COLD | RF5_BA_POIS | \
+	RF5_BA_NETH | RF5_BA_WATE | RF5_BA_MANA | RF5_BA_DARK | \
+	RF5_DRAIN_MANA | RF5_CURSE | RF5_BA_NUKE | RF5_BA_CHAO | \
+	RF5_BO_ACID | RF5_BO_ELEC | RF5_BO_FIRE | RF5_BO_COLD | RF5_BO_POIS |\
+	RF5_BO_NETH | RF5_BO_WATE | RF5_BO_MANA | RF5_BO_PLAS | \
+	RF5_BO_ICEE | RF5_SCARE | RF5_BLIND | RF5_CONF | RF5_SLOW | RF5_HOLD)
+	/* RF6_TRAPS and RF6_FORGET don't count as spells (trapping / telepathy) */
+#define RF6_SPELLCASTER_MASK \
+	(RF6_HASTE | RF6_HAND_DOOM | RF6_HEAL | RF6_S_ANIMALS | RF6_BLINK | RF6_TPORT | \
+	RF6_RAISE_DEAD | RF6_S_BUG | RF6_TELE_TO | RF6_TELE_AWAY | RF6_TELE_LEVEL | RF6_S_RNG | RF6_DARKNESS | \
+	RF6_S_DRAGONRIDER | RF6_S_KIN | RF6_S_HI_DEMON | RF6_S_MONSTER | RF6_S_MONSTERS | RF6_S_ANT | \
+	RF6_S_SPIDER | RF6_S_HOUND | RF6_S_HYDRA | RF6_S_ANGEL | RF6_S_DEMON | RF6_S_UNDEAD | RF6_S_DRAGON | \
+	RF6_S_HI_UNDEAD | RF6_S_HI_DRAGON | RF6_S_WRAITH | RF6_S_UNIQUE)
+#define RF0_SPELLCASTER_MASK \
+	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE)
+
 
 /* 
 	Different types of terrain, used for the wilderness.
@@ -5248,228 +5481,6 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define VF1_NO_ROTATE		0x80000000L /* not suitable for rotation */
 
 
-/*
- * Hack -- choose "intelligent" spells when desperate
- */
-/* I suspect the usefulness of this mask.. */
-
-#define RF4_INT_MASK \
-   (RF4_S_ANIMAL | RF4_UNMAGIC)
-
-#define RF5_INT_MASK \
-  (RF5_HOLD | RF5_SLOW | RF5_CONF | RF5_BLIND | RF5_SCARE)
-
-#define RF6_INT_MASK \
-   (RF6_BLINK |  RF6_TPORT | RF6_TELE_LEVEL | RF6_TELE_AWAY | \
-    RF6_HEAL | RF6_HASTE | RF6_TRAPS | \
-    RF6_S_KIN | RF6_S_HI_DEMON | RF6_S_MONSTER | RF6_S_MONSTERS | \
-    RF6_S_ANT | RF6_S_SPIDER | RF6_S_HOUND | RF6_S_HYDRA | \
-    RF6_S_ANGEL | RF6_S_DRAGON | RF6_S_UNDEAD | RF6_S_DEMON | \
-    RF6_S_HI_DRAGON | RF6_S_HI_UNDEAD | RF6_S_WRAITH | RF6_S_UNIQUE | \
-    RF6_S_DRAGONRIDER | RF6_S_BUG | RF6_S_RNG | RF6_S_ANIMALS)
-
-#define RF0_INT_MASK \
-    (RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE)
-
-/*
- * Spells castable even when farther than MAX_RANGE
- */
-#define RF4_INDIRECT_MASK \
-	(RF4_MOAN)
-/*	(0L)	-	Ranged MOAN needed for Halloween event -C. Blue */
-
-#define RF5_INDIRECT_MASK \
-	(0L)
-
-#define RF6_INDIRECT_MASK \
-	(RF6_HASTE | RF6_BLINK | RF6_TPORT | RF6_HEAL)
-
-#define RF0_INDIRECT_MASK \
-	(0L)
-
-
-/*
- * Spells castable only when within the sight
- */
-#define RF4_DIRECT_MASK \
-	(RF4_SHRIEK | RF4_UNMAGIC)
-
-#define RF5_DIRECT_MASK \
-	(RF5_DRAIN_MANA | RF5_MIND_BLAST | RF5_BRAIN_SMASH | RF5_CURSE | \
-	 RF5_SCARE | RF5_BLIND | RF5_CONF | RF5_SLOW | RF5_HOLD)
-
-
-#define RF6_DIRECT_MASK \
-	(RF6_TELE_TO | RF6_TELE_AWAY | RF6_TELE_LEVEL | RF6_DARKNESS | \
-	 RF6_TRAPS | RF6_FORGET)
-
-#define RF0_DIRECT_MASK \
-	(0L)
-
- 
-/*
- * Hack -- "bolt" spells that may hurt fellow monsters
- */
-#define RF4_BOLT_MASK \
-  (RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_BOULDER)
-/*  (RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4) */
-
-#define RF5_BOLT_MASK \
-   (RF5_BO_ACID | RF5_BO_ELEC | RF5_BO_FIRE | RF5_BO_COLD | \
-    RF5_BO_POIS | RF5_BO_NETH | RF5_BO_WATE | RF5_BO_MANA | \
-    RF5_BO_PLAS | RF5_BO_ICEE | RF5_MISSILE)
-
-#define RF6_BOLT_MASK \
-    (0L)
-
-#define RF0_BOLT_MASK \
-    (0L)
-
-
-/* Hack -- summon spells */
-
-#define RF4_SUMMON_MASK \
-    (0L)
-
-#define RF5_SUMMON_MASK \
-    (0L)
-
-#define RF6_SUMMON_MASK \
-    (RF6_S_KIN | RF6_S_HI_DEMON | RF6_S_MONSTER | RF6_S_MONSTERS | RF6_S_ANT | \
-     RF6_S_SPIDER | RF6_S_HOUND | RF6_S_HYDRA | RF6_S_ANGEL | RF6_S_DEMON | \
-     RF6_S_UNDEAD | RF6_S_DRAGON | RF6_S_HI_UNDEAD | RF6_S_HI_DRAGON | \
-     RF6_S_WRAITH | RF6_S_UNIQUE | RF6_S_DRAGONRIDER | RF6_S_BUG | RF6_S_RNG)
-
-#define RF0_SUMMON_MASK \
-    (RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE)
-
-
-/*
- * Spells that allow the caster to escape
- */
-#define RF4_ESCAPE_MASK \
-	(0L)
-
-#define RF5_ESCAPE_MASK \
-	(0L)
-
-#define RF6_ESCAPE_MASK \
-	(RF6_BLINK | RF6_TPORT | RF6_TELE_AWAY | RF6_TELE_LEVEL)
-
-#define RF0_ESCAPE_MASK \
-	(0L)
-
-/*
- * Spells that hurt the player directly
- */
-#define RF4_ATTACK_MASK \
-	(RF4_ROCKET | RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4 | \
-	 RF4_BR_ACID | RF4_BR_ELEC | RF4_BR_FIRE | RF4_BR_COLD | RF4_BR_POIS | \
-	 RF4_BR_NETH | RF4_BR_LITE | RF4_BR_DARK | RF4_BR_CONF | RF4_BR_SOUN | \
-	 RF4_BR_CHAO | RF4_BR_DISE | RF4_BR_NEXU | RF4_BR_TIME | RF4_BR_INER | \
-	 RF4_BR_GRAV | RF4_BR_SHAR | RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA | \
-	 RF4_BR_NUKE | RF4_BR_DISI | RF4_BOULDER)
-/*	 RF4_BA_NUKE | RF4_BR_NUKE | RF4_BA_CHAO | RF4_BR_DISI) */
-
-#define RF5_ATTACK_MASK \
-	(RF5_BA_ACID | RF5_BA_ELEC | RF5_BA_FIRE | RF5_BA_COLD | RF5_BA_POIS | \
-	 RF5_BA_NETH | RF5_BA_WATE | RF5_BA_MANA | RF5_BA_DARK | \
-	 RF5_BA_NUKE | RF5_BA_CHAO | \
-	 RF5_MIND_BLAST | RF5_BRAIN_SMASH | RF5_CURSE | \
-	 RF5_BO_ACID | RF5_BO_ELEC | RF5_BO_FIRE | \
-	 RF5_BO_COLD | RF5_BO_POIS | RF5_BO_NETH | RF5_BO_WATE | RF5_BO_MANA | \
-	 RF5_BO_PLAS | RF5_BO_ICEE | RF5_MISSILE)
-
-#define RF6_ATTACK_MASK \
-	(RF6_HAND_DOOM)
-
-#define RF0_ATTACK_MASK \
-	(0L)
-
-
-/*
- * Spells that improve the caster's tactical position
- */
-#define RF4_TACTIC_MASK \
-	(0L)
-
-#define RF5_TACTIC_MASK \
-	(0L)
-
-#define RF6_TACTIC_MASK \
-	(RF6_BLINK)
-
-#define RF0_TACTIC_MASK \
-	(0L)
-
-/*
- * Annoying spells
- */
-#define RF4_ANNOY_MASK \
-	(RF4_SHRIEK | RF4_UNMAGIC | RF4_MOAN)
-/*	(RF4_SHRIEK | RF4_UNMAGIC)  ranged MOAN added for Halloween event. -C. Blue */
-
-#define RF5_ANNOY_MASK \
-	(RF5_DRAIN_MANA | RF5_MIND_BLAST | RF5_BRAIN_SMASH | \
-	 RF5_SCARE | RF5_BLIND | RF5_CONF | RF5_SLOW | RF5_HOLD)
-
-#define RF6_ANNOY_MASK \
-	(RF6_TELE_TO | RF6_DARKNESS | RF6_TRAPS | RF6_FORGET)
-
-#define RF0_ANNOY_MASK \
-	(0L)
-
-/*
- * Spells that increase the caster's relative speed
- */
-#define RF4_HASTE_MASK \
-	(0L)
-
-#define RF5_HASTE_MASK \
-	(RF5_SLOW | RF5_HOLD)
-
-#define RF6_HASTE_MASK \
-	(RF6_HASTE)
-
-#define RF0_HASTE_MASK \
-	(0L)
-
-/*
- * Healing spells
- */
-#define RF4_HEAL_MASK \
-	(0L)
-
-#define RF5_HEAL_MASK \
-	(0L)
-
-#define RF6_HEAL_MASK \
-	(RF6_HEAL)
-
-#define RF0_HEAL_MASK \
-	(0L)
-
-/* Masks to find out if a monster is really a spellcaster,
-   which uses magic spells, or if the 'spells' are merely
-   actions as firing arrows or hurling boulders.. - C. Blue */
-#define	RF4_SPELLCASTER_MASK \
-	(RF4_S_ANIMAL)
-#define	RF5_SPELLCASTER_MASK \
-	(RF5_BA_ACID | RF5_BA_ELEC | RF5_BA_FIRE | RF5_BA_COLD | RF5_BA_POIS | \
-	RF5_BA_NETH | RF5_BA_WATE | RF5_BA_MANA | RF5_BA_DARK | \
-	RF5_DRAIN_MANA | RF5_CURSE | RF5_BA_NUKE | RF5_BA_CHAO | \
-	RF5_BO_ACID | RF5_BO_ELEC | RF5_BO_FIRE | RF5_BO_COLD | RF5_BO_POIS |\
-	RF5_BO_NETH | RF5_BO_WATE | RF5_BO_MANA | RF5_BO_PLAS | \
-	RF5_BO_ICEE | RF5_SCARE | RF5_BLIND | RF5_CONF | RF5_SLOW | RF5_HOLD)
-	/* RF6_TRAPS and RF6_FORGET don't count as spells (trapping / telepathy) */
-#define RF6_SPELLCASTER_MASK \
-	(RF6_HASTE | RF6_HAND_DOOM | RF6_HEAL | RF6_S_ANIMALS | RF6_BLINK | RF6_TPORT | \
-	RF6_RAISE_DEAD | RF6_S_BUG | RF6_TELE_TO | RF6_TELE_AWAY | RF6_TELE_LEVEL | RF6_S_RNG | RF6_DARKNESS | \
-	RF6_S_DRAGONRIDER | RF6_S_KIN | RF6_S_HI_DEMON | RF6_S_MONSTER | RF6_S_MONSTERS | RF6_S_ANT | \
-	RF6_S_SPIDER | RF6_S_HOUND | RF6_S_HYDRA | RF6_S_ANGEL | RF6_S_DEMON | RF6_S_UNDEAD | RF6_S_DRAGON | \
-	RF6_S_HI_UNDEAD | RF6_S_HI_DRAGON | RF6_S_WRAITH | RF6_S_UNIQUE)
-#define RF0_SPELLCASTER_MASK \
-	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE)
 
 /*** Macro Definitions ***/
 
@@ -5730,6 +5741,10 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define cave_block_los(ZCAVE,Y,X) \
 	(f_info[ZCAVE[Y][X].feat].flags1 & FF1_BLOCK_LOS)*/
 
+/* Is a grid any sort of removable wall? */
+#define cave_dig_wall(ZCAVE,Y,X) \
+	(!(f_info[ZCAVE[Y][X].feat].flags1 & (FF1_FLOOR | FF1_PERMANENT)))
+
 /*
  * Determine if a "legal" grid is a "floor" grid or a passable grid
  * due to special abilities of a player, making it same to floor grid. (for run_test())
@@ -5875,6 +5890,10 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
  */
 #define cave_floor_grid(C) \
     (f_info[(C)->feat].flags1 & FF1_FLOOR)
+
+/* Grid based version of "cave_dig_wall()" */
+#define cave_dig_wall_grid(C) \
+	(!(f_info[(C)->feat].flags1 & (FF1_FLOOR | FF1_PERMANENT)))
 
 /*
  * Grid based version of "cave_floor_bold()"
@@ -6572,9 +6591,11 @@ extern int PlayerUID;
 #define monk_heavy_armor(p_ptr) \
 	(get_skill(p_ptr, SKILL_MARTIAL_ARTS) && \
 	 armour_weight(p_ptr) > \
-	 50 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 200))
+	 50 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 210))
 
-/* encumberment check for rogueish skill, abilities and techniques */
+/* encumberment check for rogueish skill, abilities and techniques.
+   Was 200+..50, but increased it to +60, for wearing Morgoth's crown + DSM
+   without having to omit any other equipment slot. */
 #define rogue_heavy_armor(p_ptr) \
 	((p_ptr->pclass == CLASS_ROGUE || \
 	  (get_skill(p_ptr, SKILL_DUAL) && \
@@ -6583,7 +6604,7 @@ extern int PlayerUID;
 	   (get_skill(p_ptr, SKILL_DODGE)) || \
 	   (get_skill(p_ptr, SKILL_CRITS))) && \
 	 (armour_weight(p_ptr) > \
-	 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 50)))
+	 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 60)))
 
 
 /* replacement of helper functions in cave.c */
@@ -6950,6 +6971,7 @@ extern int PlayerUID;
 #define BACT_CHEEZE_LIST		57
 #define BACT_DEED_ITEM			58
 #define BACT_DEED_BLESSING		59
+#define BACT_GO				60
 /* If one adds new BACT_ do NOT forget to increase max_bact in variables.c */
 /* MAX_BA_INFO for TomeNET	- Jir - */
 
@@ -7477,35 +7499,35 @@ extern int PlayerUID;
 
 
 /* Hard-coded coordinates keeping track of special worldmap locations */
-#define WPOS_SECTOR00_X         0       /* location of our protected and used-for-special-cases sector 'sector00' */
-#define WPOS_SECTOR00_Y         0
-#define WPOS_SECTOR00_Z         0
-#define WPOS_SECTOR00_ADJAC_X   1       /* if we want to get out of sector00, what coord can be used for x? */
-#define WPOS_SECTOR00_ADJAC_Y   1       /* if we want to get out of sector00, what coord can be used for y? */
+#define WPOS_SECTOR00_X		0       /* location of our protected and used-for-special-cases sector 'sector00' */
+#define WPOS_SECTOR00_Y		0
+#define WPOS_SECTOR00_Z		0
+#define WPOS_SECTOR00_ADJAC_X	1	/* if we want to get out of sector00, what coord can be used for x? */
+#define WPOS_SECTOR00_ADJAC_Y	1	/* if we want to get out of sector00, what coord can be used for y? */
 
-#define WPOS_HIGHLANDER_X       0       /* deathmatch location of global event 'Highlander Tournament' */
-#define WPOS_HIGHLANDER_Y       0
-#define WPOS_HIGHLANDER_Z       0
-#define WPOS_HIGHLANDER_DUN_X   0       /* dungeon location of global event 'Highlander Tournament' */
-#define WPOS_HIGHLANDER_DUN_Y   0
-#define WPOS_HIGHLANDER_DUN_Z   -1
+#define WPOS_HIGHLANDER_X	0	/* deathmatch location of global event 'Highlander Tournament' */
+#define WPOS_HIGHLANDER_Y	0
+#define WPOS_HIGHLANDER_Z	0
+#define WPOS_HIGHLANDER_DUN_X	0	/* dungeon location of global event 'Highlander Tournament' */
+#define WPOS_HIGHLANDER_DUN_Y	0
+#define WPOS_HIGHLANDER_DUN_Z	-1
 
 /* important: note connection of WPOS_ARENA_ and 'ge_special_sector' */
-#define WPOS_ARENA_X            cfg.town_x      /* location of global event 'Arena Monster Challenge' */
-#define WPOS_ARENA_Y            cfg.town_y
-#define WPOS_ARENA_Z            2
+#define WPOS_ARENA_X		cfg.town_x	/* location of global event 'Arena Monster Challenge' */
+#define WPOS_ARENA_Y		cfg.town_y
+#define WPOS_ARENA_Z		2
 
-#define WPOS_PVPARENA_X         0       /* location of pvp arena for MODE_PVP players */
-#define WPOS_PVPARENA_Y         0
+#define WPOS_PVPARENA_X		0	/* location of pvp arena for MODE_PVP players */
+#define WPOS_PVPARENA_Y		0
 #define WPOS_PVPARENA_Z		1
 
 /* Permanent event (to come) "Ironman Deep Dive Challenge": -- SERVER SPECIFIC HARD CODED!! */
 #ifdef RPG_SERVER
-    #define WPOS_IRONDEEPDIVE_X	40
-    #define WPOS_IRONDEEPDIVE_Y	22
+ #define WPOS_IRONDEEPDIVE_X	40
+ #define WPOS_IRONDEEPDIVE_Y	22
 #else
-    #define WPOS_IRONDEEPDIVE_X	40
-    #define WPOS_IRONDEEPDIVE_Y	41
+ #define WPOS_IRONDEEPDIVE_X	40
+ #define WPOS_IRONDEEPDIVE_Y	41
 #endif
 
 
@@ -7520,3 +7542,18 @@ extern int PlayerUID;
 
 /* Maximum amount of ping reception times logged for each player */
 #define MAX_PING_RECVS_LOGGED	10
+
+
+/* Request types for p_ptr->request_type - C. Blue */
+#define RTYPE_STR	0
+#define RTYPE_NUM	1
+#define RTYPE_KEY	2
+#define RTYPE_CFR	3
+
+/* ..and request IDs for p_ptr->request_id */
+#define RID_NONE	0	/* fixed */
+#ifdef ENABLE_GO_GAME		/* go.c Go minigame */
+#define RID_GO		1
+#define RID_GO_START	2
+#define RID_GO_MOVE	3
+#endif

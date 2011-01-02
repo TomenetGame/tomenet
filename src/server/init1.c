@@ -1218,7 +1218,7 @@ static cptr st_info_flags1[] =
 	"PRICY_ITEMS4",
 	"HARD_STEAL",
 	"VHARD_STEAL",
-	"XXX",
+	"SPECIAL",
 	"BUY67",
 	"BUY50",
 	"NO_DISCOUNT3",
@@ -1415,12 +1415,15 @@ static errr grab_one_race_allow_flag(s32b *choice, cptr what)
 	int i;
 	cptr s;
 
+#ifndef ENABLE_DIVINE
+	/* Hack, so ow_info.txt works */
+	if (streq(what, "Maia")) return 0;
+#endif
+
 	/* Scan classes flags */
 //	for (i = 0; i < max_rp_idx && (s = race_info[i].title + rp_name); i++)
-	for (i = 0; i < MAX_RACE && (s = race_info[i].title); i++)
-	{
-		if (streq(what, s))
-		{
+	for (i = 0; i < MAX_RACE && (s = race_info[i].title); i++) {
+		if (streq(what, s)) {
 			(choice[i / 32]) |= (1L << i);
 			return (0);
 		}

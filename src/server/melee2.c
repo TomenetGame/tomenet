@@ -146,10 +146,10 @@
 
 /*
  * Adjust the chance of intelligent monster digging through the wall,
- * by percent. [100]
+ * 0 = always, 1 = max normal chances, >1 = reduced chances.
  * To disable, comment it out.
  */
-#define		MONSTER_DIG_FACTOR	100
+//#define		MONSTER_DIG_FACTOR	100
 
 /* Chance of a monster crossing 'impossible' grid (so that an aquatic
  * can go back to the water), in percent. [20] */
@@ -1712,28 +1712,18 @@ static int near_hit(int m_idx, int *yp, int *xp, int rad)
  * them, or has spells but they will have no "useful" effect.  Note that
  * this function has been an efficiency bottleneck in the past.
  */
-bool make_attack_spell(int Ind, int m_idx)
-{
+bool make_attack_spell(int Ind, int m_idx) {
 	player_type *p_ptr = Players[Ind];
-
 	struct worldpos *wpos=&p_ptr->wpos;
-
 //	dun_level		*l_ptr = getfloor(wpos);
-
-	int			k, chance, thrown_spell, rlev;	// , failrate;
-
+	int			k, chance, thrown_spell, rlev; // , failrate;
 //	byte		spell[96], num = 0;
-
 	u32b		f4, f5, f6, f7, f0;
-
 	monster_type	*m_ptr = &m_list[m_idx];
         monster_race    *r_ptr = race_inf(m_ptr);
-
 	//object_type *o_ptr = &p_ptr->inventory[INVEN_WIELD];
-
 	char		m_name[80];
 	char		m_poss[80];
-
 	char		ddesc[80];
 
 	/* Target location */
@@ -1747,11 +1737,8 @@ bool make_attack_spell(int Ind, int m_idx)
 	int count = 0;
 
 	/* scatter summoning target location if player is shadow running, ie hard to pin down */
-	if (p_ptr->shadow_running) {
-		scatter(wpos, &ys, &xs, y, x, 5, 0); 
-	}
+	if (p_ptr->shadow_running) scatter(wpos, &ys, &xs, y, x, 5, 0); 
 
-	/* Extract the blind-ness */
 	bool blind = (p_ptr->blind ? TRUE : FALSE);
 
 	/* Extract the "within-the-vision-ness" */
@@ -1766,7 +1753,7 @@ bool make_attack_spell(int Ind, int m_idx)
 	/* Assume "projectable" */
 	bool direct = TRUE;
 
-	bool stupid, summon=FALSE;
+	bool stupid, summon = FALSE;
 	int rad = 0, srad;
 
 	//u32b f7 = race_inf(&m_list[m_idx])->flags7;
@@ -2044,20 +2031,15 @@ bool make_attack_spell(int Ind, int m_idx)
 	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
 
 #ifndef STUPID_MONSTER_SPELLS
-	if (!stupid && thrown_spell >= 128)
-	{
+	if (!stupid && thrown_spell >= 128) {
 		int factor = 0;
 
 		/* Extract the 'stun' factor */
 		if (m_ptr->stunned > 50) factor += 25;
 		if (m_ptr->stunned) factor += 15;
 
-		if (magik(25 - (rlev + 3) / 4) || magik(factor))
-		{
-			/* Message */
-			if (direct)
-				msg_format(Ind, "%^s tries to cast a spell, but fails.", m_name);
-
+		if (magik(25 - (rlev + 3) / 4) || magik(factor)) {
+			if (direct) msg_format(Ind, "%^s tries to cast a spell, but fails.", m_name);
 			return (TRUE);
 		}
 
@@ -2093,6 +2075,7 @@ bool make_attack_spell(int Ind, int m_idx)
 #ifdef USE_SOUND_2010
 			sound_near(Ind, "monster_shriek", NULL, SFX_TYPE_MON_SPELL);
 #endif
+			s_printf("SHRIEK: %s -> %s.\n", m_name, p_ptr->name);
 			aggravate_monsters(Ind, m_idx);
 			break;
 		}
@@ -3326,88 +3309,92 @@ if (season_halloween) {
 
 		/* RF6_HEAL */
 		case RF6_OFFSET+2:
-		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
-
-			/* Message */
-			if (visible){
+			if (visible) {
 //				disturb(Ind, 1, 0);
-				if (blind)
-				{
-					msg_format(Ind, "%^s mumbles.", m_name);
-				}
-				else
-				{
-					msg_format(Ind, "%^s concentrates on %s wounds.",
-							m_name, m_poss);
-				}
+				if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+				else msg_format(Ind, "%^s concentrates on %s wounds.", m_name, m_poss);
 			}
 
-			/* Heal some */
-			m_ptr->hp += (rlev * 6);
-			if (m_ptr->stunned)
-			{
+			/* Some heal data for 'rlev * 6' ('1' means 100%, assuming max hp dice):
+			   Novice priest solo/group ~1/2, ~1
+			   Wormtongue ~1/5, Robin Hood ~1/3, Orfax ~1/2
+			   Moon Beast ~3/4, Priest ~3/4
+			   Boldor ~1/4, Khim/Ibun ~1/6, It ~1/5
+			   Archangel ~1/3
+			   Shelob ~1/10
+			   Cherub ~1/4, Greater Mummy ~2/3
+			   Castamir ~1/4,
+			   Lesser Titan ~1/8,
+			   Jack of Shadows ~1/9,
+			   Utgard-Loke ~1/15,
+			   Demilich, Keeper of Secrets ~1/10,
+			   Saruman ~1/19,
+			   Ungoliant ~1/30,
+			   Nodens ~1/15,
+			   Star-Spawn ~1/15,
+			   Nether Guard (assumed 45kHP, lv121) ~1/60,
+			   Zu-Aon (assumed 117kHP, lv147) ~1/130.
+
+			   For most monsters in low/mid levels, 1/4 was a decent effective
+			   average for HEAL. Low-HP monsters would naturally profit especially
+			   much, such as priests, working out nicely.
+			   The problem starts with high-HP monsters, especially since HP and
+			   damage in TomeNET are higher on average than in vanilla.
+			   As Mikael pointed out, monsters that are SMART will prefer heal
+			   spells when wounded, and possibly also teleport. And monsters that
+			   teleport in general, also can heal while the player has to reapproach.
+			   This is especially nasty if the monster casts 1_IN_1 or similar.
+			   So to the normal HEAL that is still feasible for those cases. - C. Blue
+			*/
+
+			/* Note, no need to check for RF2_STUPID, since there is no
+			   stupid monster that can heal so far. */
+			if ((r_ptr->flags4 & RF4_ESCAPE_MASK) ||
+			    (r_ptr->flags5 & RF5_ESCAPE_MASK) ||
+			    (r_ptr->flags6 & RF6_ESCAPE_MASK) ||
+			    (r_ptr->flags0 & RF0_ESCAPE_MASK)) {
+				/* Heal some */
+				m_ptr->hp += (rlev * 6);
+			} else {
+				/* New: Make it useful for high-level monsters. Abuse k and count. */
+				k = rlev * 6;
+				count = m_ptr->maxhp / 5; /* Good values would probably be 1/6..1/4 */
+				m_ptr->hp += (k < count) ? count : k;
+			}
+
+			if (m_ptr->stunned) {
 				m_ptr->stunned -= rlev * 2;
-				if (m_ptr->stunned <= 0)
-				{
+				if (m_ptr->stunned <= 0) {
 					m_ptr->stunned = 0;
-					if (seen)
-					{
-						msg_format(Ind, "%^s no longer looks stunned!", m_name);
-					}
-					else
-					{
-						msg_format(Ind, "%^s no longer sounds stunned!", m_name);
-					}
+					if (seen) msg_format(Ind, "%^s no longer looks stunned!", m_name);
+					else msg_format(Ind, "%^s no longer sounds stunned!", m_name);
 				}
 			}
 
-			/* Fully healed */
-			if (m_ptr->hp >= m_ptr->maxhp)
-			{
-				/* Fully healed */
+			/* Fully healed? */
+			if (m_ptr->hp >= m_ptr->maxhp) {
 				m_ptr->hp = m_ptr->maxhp;
-
-				/* Message */
-				if (seen)
-				{
-					msg_format(Ind, "%^s looks REALLY healthy!", m_name);
-				}
-				else
-				{
-					msg_format(Ind, "%^s sounds REALLY healthy!", m_name);
-				}
+				if (seen) msg_format(Ind, "%^s looks REALLY healthy!", m_name);
+				else msg_format(Ind, "%^s sounds REALLY healthy!", m_name);
 			}
-
 			/* Partially healed */
-			else
-			{
-				/* Message */
-				if (seen)
-				{
-					msg_format(Ind, "%^s looks healthier.", m_name);
-				}
-				else
-				{
-					msg_format(Ind, "%^s sounds healthier.", m_name);
-				}
+			else {
+				if (seen) msg_format(Ind, "%^s looks healthier.", m_name);
+				else msg_format(Ind, "%^s sounds healthier.", m_name);
 			}
 
 			/* Redraw (later) if needed */
 			update_health(m_idx);
 
 			/* Cancel fear */
-			if (m_ptr->monfear)
-			{
+			if (m_ptr->monfear) {
 				/* Cancel fear */
 				m_ptr->monfear = 0;
-
-				/* Message */
 				msg_format(Ind, "%^s recovers %s courage.", m_name, m_poss);
 			}
 
 			break;
-		}
 
 		/* RF6_XXX2X6 */
 		/* RF6_S_ANIMALS */
@@ -5003,6 +4990,7 @@ static bool monster_can_pickup(monster_race *r_ptr, object_type *o_ptr)
 	return (TRUE);
 }
 
+#ifdef MONSTER_DIG_FACTOR
 static int digging_difficulty(byte feat)
 {
 #if 0
@@ -5026,6 +5014,7 @@ static int digging_difficulty(byte feat)
 	/* huh? ...it's not our role */
 	return (3000);
 }
+#endif
 
 /*
  * Choose "logical" directions for monster movement
@@ -7136,11 +7125,16 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			do_move = TRUE;
 
 			/* if we can pass without wall-killing, yet are wall-killers, then we should kill obstacles if we can! */
-			if ((r_ptr->flags2 & (RF2_KILL_WALL | RF2_POWERFUL)) &&
+			if (((r_ptr->flags2 & RF2_KILL_WALL) ||
+			    ((r_ptr->flags2 & RF2_POWERFUL) &&
 			    (c_ptr->feat == FEAT_DEAD_TREE ||
 			    c_ptr->feat == FEAT_TREE ||
-			    c_ptr->feat == FEAT_BUSH)) {
+			    c_ptr->feat == FEAT_BUSH)))
+			    /* only if the feat is legal to remove (ie wallish) */
+			    && cave_dig_wall_grid(c_ptr)) {
+#if 0 /* if ever used, gotta fix: only if RF2_KILL_WALL !*/
 				did_kill_wall = TRUE;
+#endif
 
 				cave_set_feat_live(wpos, ny, nx, twall_erosion(wpos, ny, nx));
 
@@ -7215,7 +7209,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			do_move = TRUE;
 
 			/* Monster destroyed a wall */
+#if 0 /* if ever used, gotta fix: only if RF2_KILL_WALL !*/
 			did_kill_wall = TRUE;
+#endif
 
 			/* Create floor */
 //			c_ptr->feat = FEAT_FLOOR;
@@ -7320,9 +7316,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 					msg_print_near_site(ny, nx, wpos, 0, FALSE, "You hear a door burst open!");
 #ifdef USE_SOUND_2010
 					if (rand_int(3)) /* some variety, although not entirely correct :) */
-						sound_near_site(ny, nx, wpos, 0, "bash_door_break", NULL, SFX_TYPE_COMMAND);
+						sound_near_site(ny, nx, wpos, 0, "bash_door_break", NULL, SFX_TYPE_COMMAND, FALSE);
 					else
-						sound_near_site(ny, nx, wpos, 0, "bash_door_hold", NULL, SFX_TYPE_COMMAND);
+						sound_near_site(ny, nx, wpos, 0, "bash_door_hold", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
 

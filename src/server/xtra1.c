@@ -370,14 +370,8 @@ static void prt_blind(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	if (p_ptr->blind)
-	{
-		Send_blind(Ind, TRUE);
-	}
-	else
-	{
-		Send_blind(Ind, FALSE);
-	}
+	if (p_ptr->blind) Send_blind(Ind, TRUE);
+	else Send_blind(Ind, FALSE);
 }
 
 
@@ -388,14 +382,8 @@ static void prt_confused(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	if (p_ptr->confused)
-	{
-		Send_confused(Ind, TRUE);
-	}
-	else
-	{
-		Send_confused(Ind, FALSE);
-	}
+	if (p_ptr->confused) Send_confused(Ind, TRUE);
+	else Send_confused(Ind, FALSE);
 }
 
 
@@ -406,14 +394,8 @@ static void prt_afraid(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	if (p_ptr->afraid)
-	{
-		Send_fear(Ind, TRUE);
-	}
-	else
-	{
-		Send_fear(Ind, FALSE);
-	}
+	if (p_ptr->afraid) Send_fear(Ind, TRUE);
+	else Send_fear(Ind, FALSE);
 }
 
 
@@ -424,14 +406,8 @@ static void prt_poisoned(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	if (p_ptr->poisoned)
-	{
-		Send_poison(Ind, TRUE);
-	}
-	else
-	{
-		Send_poison(Ind, FALSE);
-	}
+	if (p_ptr->poisoned) Send_poison(Ind, TRUE);
+	else Send_poison(Ind, FALSE);
 }
 
 
@@ -2404,6 +2380,7 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	if(r_ptr->flags3 & RF3_DEMON || r_ptr->flags3 & RF3_UNDEAD) p_ptr->suscep_good = TRUE;
 #endif
 	if(r_ptr->flags3 & RF3_UNDEAD) p_ptr->suscep_life = TRUE;
+	if(r_ptr->flags3 & RF3_GOOD) p_ptr->suscep_evil = TRUE;
 
 	/* Grant a mimic a maximum of 2 immunities for now. All further immunities
 	are turned into resistances. Which ones is random. */
@@ -2935,6 +2912,7 @@ void calc_boni(int Ind)
 	s16b pval;
 
 	bool old_auto_id = p_ptr->auto_id;
+	bool old_dual_wield = p_ptr->dual_wield;
 
 #ifdef EQUIPMENT_SET_BONUS
 	/* for boni of artifact "sets" ie arts of (about) identical name - C. Blue */
@@ -3066,8 +3044,14 @@ void calc_boni(int Ind)
 
 	p_ptr->dual_wield = FALSE;
 	if (p_ptr->inventory[INVEN_WIELD].k_idx &&
-	    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)
+	    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) {
 		p_ptr->dual_wield = TRUE;
+		if (!old_dual_wield && !p_ptr->dual_mode && p_ptr->lev <= 20 && p_ptr->warning_dual_mode == 0) {
+			msg_print(Ind, "\374\377yHINT: Dual-wield mode isn't enabled! Press 'm' to toggle it!");
+			s_printf("warning_dual_mode: %s\n", p_ptr->name);
+			p_ptr->warning_dual_mode = 1;
+		}
+	}
 
 	p_ptr->stormbringer = FALSE;
 
@@ -3090,6 +3074,7 @@ void calc_boni(int Ind)
 	p_ptr->suscep_pois = FALSE;
 	p_ptr->suscep_lite = FALSE;
 	p_ptr->suscep_good = FALSE;
+	p_ptr->suscep_evil = FALSE;
 	p_ptr->suscep_life = FALSE;
 	p_ptr->resist_continuum = FALSE;
 	p_ptr->vampiric_melee = 0;
@@ -3317,46 +3302,44 @@ void calc_boni(int Ind)
         }
 #ifdef ENABLE_DIVINE
 	else if (p_ptr->prace == RACE_DIVINE) {
-//		if (p_ptr->lev<20) {
-			//Help em out a little..
-			p_ptr->telepathy |= ESP_DEMON;
-			p_ptr->telepathy |= ESP_GOOD;
-//		}
-		if (p_ptr->ptrait==TRAIT_ENLIGHTENED) {
-			p_ptr->cur_lite += 1 + (p_ptr->lev-20) / 4; //REAL light!
-			if (p_ptr->lev>=20) {
-				p_ptr->resist_lite = TRUE;
-				p_ptr->to_a += (p_ptr->lev-20);
-				p_ptr->dis_to_a += (p_ptr->lev-20);
-			}
-			if (p_ptr->lev>=50) {
+		//Help em out a little..
+		p_ptr->telepathy |= ESP_DEMON;
+		p_ptr->telepathy |= ESP_GOOD;
+
+		if (p_ptr->ptrait == TRAIT_ENLIGHTENED) {
+			p_ptr->cur_lite += 1 + (p_ptr->lev - 20) / 6; //REAL light!
+			p_ptr->resist_lite = TRUE;
+			p_ptr->to_a += (p_ptr->lev - 20);
+			p_ptr->dis_to_a += (p_ptr->lev - 20);
+			if (p_ptr->lev >= 50) {
 				p_ptr->resist_pois = TRUE;
 				p_ptr->sh_elec = TRUE;
 				p_ptr->sh_cold = TRUE;
 				p_ptr->fly = TRUE;
 			}
-			
+
+			p_ptr->suscep_evil = TRUE;
+
 			/* Bonus resistance for the good side */
 			if (p_ptr->divine_xtra_res_time_mana > 0) {
 				p_ptr->resist_time = 0;
-				p_ptr->resist_mana = 0; 
+				p_ptr->resist_mana = 0;
 			}
-		} else if (p_ptr->ptrait==TRAIT_CORRUPTED) {
-			if (p_ptr->lev>=20) {
-				p_ptr->resist_fire = TRUE;
-				p_ptr->resist_dark = TRUE;
-			}
-			if (p_ptr->lev>=50) {
-				p_ptr->immune_fire = TRUE; 
+		} else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
+			p_ptr->resist_fire = TRUE;
+			p_ptr->resist_dark = TRUE;
+			if (p_ptr->lev >= 50) {
+				p_ptr->immune_fire = TRUE;
 				p_ptr->resist_pois = TRUE;
 				p_ptr->sh_fire = TRUE;
 			}
-	
+
+			p_ptr->suscep_good = TRUE;
+
 			/* Bonus crit for the bad side */
-			if (p_ptr->divine_crit > 0) {
+			if (p_ptr->divine_crit > 0)
 				p_ptr->xtra_crit = p_ptr->divine_crit_mod;
-			}
-		} 
+		} else p_ptr->slow_digest = TRUE;
 	}
 #endif
 
@@ -3578,11 +3561,13 @@ void calc_boni(int Ind)
 		if (o_ptr->name1 == ART_ANCHOR) {
 			p_ptr->resist_continuum = TRUE;
 		}
+#if 0
 		/* another bad hack, for when Morgoth's crown gets its pval
 		   reduced experimentally, to keep massive +IV (for Q-quests^^): */
 		if (o_ptr->name1 == ART_MORGOTH) {
 			p_ptr->see_infra += 50;
 		}
+#endif
 
 		/* Hack -- first add any "base bonuses" of the item.  A new
 		 * feature in MAngband 0.7.0 is that the magnitude of the
@@ -6636,13 +6621,13 @@ void announce_global_event(int ge_id) {
 	int time_left = ge->announcement_time - ((turn - ge->start_turn) / cfg.fps);
 
 	/* display minutes, if at least 120s left */
-	if (time_left >= 120) msg_broadcast_format(0, "\377W[%s (%d) starts in %d minutes]", ge->title, ge_id+1, time_left / 60);
+	if (time_left >= 120) msg_broadcast_format(0, "\377W[%s (%d) starts in %d minutes]", ge->title, ge_id + 1, time_left / 60);
 	/* otherwise just seconds */
-	else msg_broadcast_format(0, "\377W[%s (%d) starts in %d seconds!]", ge->title, ge_id+1, time_left);
+	else msg_broadcast_format(0, "\377W[%s (%d) starts in %d seconds!]", ge->title, ge_id + 1, time_left);
 
 	/* display additional commands on first advertisement */
 	if (ge->first_announcement) {
-		msg_broadcast_format(0, "\377WType '/evinfo %d' and '/evsign %d' to learn more or to sign up.", ge_id+1, ge_id+1);
+		msg_broadcast_format(0, "\377WType '/evinfo %d' and '/evsign %d' to learn more or to sign up.", ge_id + 1, ge_id + 1);
 		ge->first_announcement = FALSE;
 	}
 }
@@ -6896,7 +6881,7 @@ static void process_global_event(int ge_id) {
 							Players[j]->global_event_type[ge_id] = GE_NONE;
 					ge->getype = GE_NONE;
 				} else {
-					msg_broadcast_format(0, "\374\377C[>>%s starts now!<<]", ge->title);
+					msg_broadcast_format(0, "\374\377C[>>%s (%d) starts now!<<]", ge->title, ge_id + 1);
 				}
 			}
 		} else {
@@ -6917,7 +6902,7 @@ static void process_global_event(int ge_id) {
 	if ((ge->end_turn && ge->end_turn - ge->start_turn - ge->paused_turns > 600 * cfg.fps && turn - ge->paused_turns == ge->end_turn - 300 * cfg.fps) ||
 	    /* However, paused turns will be ignored if the event end is given as absolute time! */
 	    (!ge->end_turn && ge->ending && ge->ending - ge->started > 600 && now == ge->ending - 360)) {
-		msg_broadcast_format(0, "\377y[%s comes to an end in 6 more minutes!]", ge->title);
+		msg_broadcast_format(0, "\377y[%s (%d) comes to an end in 6 more minutes!]", ge->title, ge_id + 1);
 	}
 
 	/* Event is running! Process its stages... */
@@ -7557,5 +7542,92 @@ void use_esp_link(int *Ind, u32b flags) {
 //			p_ptr = Players[Ind2];
 			(*Ind) = Ind2;
 		}
+	}
+}
+
+/* Handle string input request replies */
+void handle_request_return_str(int Ind, int id, char *str) {
+	player_type *p_ptr = Players[Ind];
+
+	/* verify that the ID is actually valid */
+	if (id != p_ptr->request_id) return;
+	p_ptr->request_id = RID_NONE;
+	/* verify that a string had been requested */
+	if (RTYPE_STR != p_ptr->request_type) return;
+
+	switch (id) {
+#ifdef ENABLE_GO_GAME
+	case RID_GO_MOVE:
+		if (p_ptr->store_num == -1) return; /* Discard if we left the building */
+		go_engine_move_human(Ind, str);
+		return;
+#endif
+	default:;
+	}
+}
+
+/* Handle number input request replies */
+void handle_request_return_num(int Ind, int id, int num) {
+	player_type *p_ptr = Players[Ind];
+
+	/* verify that the ID is actually valid */
+	if (id != p_ptr->request_id) return;
+	p_ptr->request_id = RID_NONE;
+	/* verify that a number had been requested */
+	if (RTYPE_NUM != p_ptr->request_type) return;
+
+	switch (id) {
+	default:;
+	}
+}
+
+/* Handle key input request replies */
+void handle_request_return_key(int Ind, int id, char c) {
+	player_type *p_ptr = Players[Ind];
+
+	/* verify that the ID is actually valid */
+	if (id != p_ptr->request_id) return;
+	p_ptr->request_id = RID_NONE;
+	/* verify that a key had been requested */
+	if (RTYPE_KEY != p_ptr->request_type) return;
+
+	switch (id) {
+#ifdef ENABLE_GO_GAME
+	case RID_GO:
+		if (p_ptr->store_num == -1) return; /* Discard if we left the building */
+		go_challenge_accept(Ind, FALSE);
+		return;
+	case RID_GO_START:
+		if (p_ptr->store_num == -1) return; /* Discard if we left the building */
+		go_challenge_start(Ind);
+		return;
+#endif
+	default:;
+	}
+}
+
+/* Handle confirmation request replies */
+void handle_request_return_cfr(int Ind, int id, bool cfr) {
+	player_type *p_ptr = Players[Ind];
+
+	/* verify that the ID is actually valid */
+	if (id != p_ptr->request_id) return;
+	p_ptr->request_id = RID_NONE;
+	/* verify that a y/n confirmation had been requested */
+	if (RTYPE_CFR != p_ptr->request_type) return;
+
+	switch (id) {
+#ifdef ENABLE_GO_GAME
+	case RID_GO:
+		if (p_ptr->store_num == -1) return; /* Discard if we left the building */
+		if (!cfr) {
+			Send_store_special_clr(Ind, 5, 18);
+			Send_store_special_str(Ind, 8, 8, TERM_ORANGE, "Now you're chickening out huh!");
+			return;
+		}
+		go_challenge_accept(Ind, TRUE);
+		return;
+#endif
+	default: ;
 	}
 }

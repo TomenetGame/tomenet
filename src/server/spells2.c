@@ -160,7 +160,7 @@ void divine_empowerment(int Ind, int level) {
 		} else if (level >= 40) {
 			bonus = 1;
 		} 
-		(void)do_divine_hp(Ind, level*1.5, bonus);
+		(void)do_divine_hp(Ind, (level * 3) / 2, bonus);
 	}
 	return;
 }
@@ -276,12 +276,12 @@ void divine_intensify(int Ind, int level) {
 	player_type *p_ptr = Players[Ind];
 	if (p_ptr->ptrait==TRAIT_ENLIGHTENED) {
 		//aoe divine_xtra_res_time_mana
-		project_hack(Ind, GF_OLD_SLOW, level*3, "");
-		(void)do_divine_xtra_res_time_mana(Ind, level*1.5);
+		project_hack(Ind, GF_OLD_SLOW, level * 3, "");
+		(void)do_divine_xtra_res_time_mana(Ind, (level * 3) / 2);
 		return;
 	} else if (p_ptr->ptrait==TRAIT_CORRUPTED) {
-		int bonus = 2 + ((level-45)/5)*2;
-		(void)do_divine_crit(Ind, level*1.5, bonus);
+		int bonus = 2 + ((level - 45) / 5) * 2;
+		(void)do_divine_crit(Ind, (level * 3) / 2, bonus);
 	}
 }
 
@@ -1139,10 +1139,10 @@ void wizard_lock(int Ind, int dir){
 	cave_type **zcave, *c_ptr;
 	int dy, dx;
 
-	p_ptr=Players[Ind];
-	if(!p_ptr) return;
-	zcave=getcave(&p_ptr->wpos);
-	if(!zcave) return;
+	p_ptr = Players[Ind];
+	if (!p_ptr) return;
+	zcave = getcave(&p_ptr->wpos);
+	if (!zcave) return;
 
 	/* anti-cheeze: exp'ing with doors */
 	if (!p_ptr->wpos.wz) return;
@@ -1151,14 +1151,13 @@ void wizard_lock(int Ind, int dir){
 	dy = p_ptr->py + ddy[dir];
 
 	c_ptr = &zcave[dy][dx];
-	if(c_ptr->feat>=FEAT_DOOR_HEAD && c_ptr->feat<(FEAT_DOOR_HEAD+7)){
-		if(c_ptr->feat==FEAT_DOOR_HEAD)
+	if (c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat < (FEAT_DOOR_HEAD + 7)) {
+		if (c_ptr->feat == FEAT_DOOR_HEAD) {
 			msg_print(Ind, "The door locks!");
-		else
-			msg_print(Ind, "The door appears stronger!");
+			c_ptr->info |= CAVE_MAGELOCK;
+		} else msg_print(Ind, "The door appears stronger!");
 		c_ptr->feat++;
-	}
-	else if(c_ptr->feat!=(FEAT_DOOR_HEAD+7))
+	} else if (c_ptr->feat != (FEAT_DOOR_HEAD + 7))
 		msg_print(Ind, "You see no lockable door there");
 	else
 		msg_print(Ind, "The door is locked fast already!");
@@ -1215,6 +1214,7 @@ static int remove_curse_aux(int Ind, int all)
 
 		/* Take note */
 		o_ptr->note = quark_add("uncursed");
+		o_ptr->note_utag = 0;
 
 		/* Recalculate the bonuses */
 		p_ptr->update |= (PU_BONUS);
@@ -1224,7 +1224,7 @@ static int remove_curse_aux(int Ind, int all)
 
 		/* Count the uncursings */
 		cnt++;
-		
+
 		/* Not everything at once. */
 		if (!(all & 0x01) && magik(50)) break;
 	}
@@ -1291,53 +1291,38 @@ bool restore_level(int Ind)
  *
  * XXX XXX XXX Use the "show_file()" method, perhaps.
  */
-void self_knowledge(int Ind)
-{
+void self_knowledge(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
 	int		k;
-
 	u32b	f1 = 0L, f2 = 0L, f3 = 0L, f4 = 0L, f5 = 0L;	//, esp = 0L;
-
 	object_type	*o_ptr;
-
 //	cptr	*info = p_ptr->info;
 	bool	life = FALSE;
-
 	FILE *fff;
-
 #if 0
 	char file_name[MAX_PATH_LENGTH];
 
 	/* Temporary file */
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
-
 	strcpy(p_ptr->infofile, file_name);
 #endif	// 0
-
 	/* Open a new file */
 	fff = my_fopen(p_ptr->infofile, "wb");
-
 	/* Current file viewing */
 	strcpy(p_ptr->cur_file, p_ptr->infofile);
 
 	/* Output color byte */
 //	fprintf(fff, "%c", 'w');
 
-
 	/* Let the player scroll through the info */
 	p_ptr->special_file_type = TRUE;
 
 	/* Acquire item flags from equipment */
-	for (k = INVEN_WIELD; k < INVEN_TOTAL; k++)
-	{
+	for (k = INVEN_WIELD; k < INVEN_TOTAL; k++) {
 		u32b t1, t2, t3, t4, t5, tesp;
-
 		o_ptr = &p_ptr->inventory[k];
-
 		/* Skip empty items */
 		if (!o_ptr->k_idx) continue;
-
 		/* Extract the flags */
 		object_flags(o_ptr, &t1, &t2, &t3, &t4, &t5, &tesp);
 
@@ -1355,215 +1340,81 @@ void self_knowledge(int Ind)
 	}
 
 	/* Mega Hack^3 -- describe the amulet of life saving */
-	if (life)
-	{
-		fprintf(fff, "Your life will be saved from perilous scene once.\n");
-	}
+	if (life) fprintf(fff, "Your life will be saved from perilous scene once.\n");
 
 #if 0
 	k = 100 - p_ptr->csane * 100 / p_ptr->msane;
-	if (k < 100)
-	{
+	if (k < 100) {
 //		sprintf(info[i++], "%d%% of your mind is under your control.", k);
 		fprintf(fff, "%d%% of your mind is under your control.\n", k);
 	}
 #else
 	/* Insanity warning (better message needed!) */
-	if (p_ptr->csane < p_ptr->msane / 8)
-	{
-		/* Message */
+	if (p_ptr->csane < p_ptr->msane / 8) {
 		fprintf(fff, "You are next to mad.\n");
-	}
-	else if (p_ptr->csane < p_ptr->msane / 4)
-	{
-		/* Message */
+	} else if (p_ptr->csane < p_ptr->msane / 4) {
 		fprintf(fff, "Your mind is filled with insane thoughts.\n");
-	}
-	else if (p_ptr->csane < p_ptr->msane / 2)
-	{
-		/* Message */
+	} else if (p_ptr->csane < p_ptr->msane / 2) {
 		fprintf(fff, "You have a seed of insanity in your mind.\n");
 	}
 #endif
 
 
 
-	if (p_ptr->blind)
-	{
-		fprintf(fff, "You cannot see.\n");
-	}
-	if (p_ptr->confused)
-	{
-		fprintf(fff, "You are confused.\n");
-	}
-	if (p_ptr->afraid)
-	{
-		fprintf(fff, "You are terrified.\n");
-	}
-	if (p_ptr->cut)
-	{
-		fprintf(fff, "\377rYou are bleeding.\n");
-	}
-	if (p_ptr->stun)
-	{
-		fprintf(fff, "\377oYou are stunned.\n");
-	}
-	if (p_ptr->poisoned)
-	{
-		fprintf(fff, "\377GYou are poisoned.\n");
-	}
-	if (p_ptr->image)
-	{
-		fprintf(fff, "You are hallucinating.\n");
-	}
+	if (p_ptr->blind) fprintf(fff, "You cannot see.\n");
+	if (p_ptr->confused) fprintf(fff, "You are confused.\n");
+	if (p_ptr->afraid) fprintf(fff, "You are terrified.\n");
+	if (p_ptr->cut) fprintf(fff, "\377rYou are bleeding.\n");
+	if (p_ptr->stun) fprintf(fff, "\377oYou are stunned.\n");
+	if (p_ptr->poisoned) fprintf(fff, "\377GYou are poisoned.\n");
+	if (p_ptr->image) fprintf(fff, "You are hallucinating.\n");
 
-	if (p_ptr->aggravate)
-	{
-		fprintf(fff, "You aggravate monsters.\n");
-	}
-	if (p_ptr->teleport)
-	{
-		fprintf(fff, "Your position is very uncertain.\n");
-	}
+	if (p_ptr->aggravate) fprintf(fff, "You aggravate monsters.\n");
+	if (p_ptr->teleport) fprintf(fff, "Your position is very uncertain.\n");
 
-	if (p_ptr->blessed)
-	{
-		fprintf(fff, "You feel rightous.\n");
-	}
-	if (p_ptr->hero)
-	{
-		fprintf(fff, "You feel heroic.\n");
-	}
-	if (p_ptr->shero)
-	{
-		fprintf(fff, "You are in a battle rage.\n");
-	}
-	if (p_ptr->fury)
-	{
-		fprintf(fff, "You are in a wild fury.\n");
-	}
-	if (p_ptr->berserk)
-	{
-		fprintf(fff, "You are going berserk.\n");
-	}
-	if (p_ptr->protevil)
-	{
-		fprintf(fff, "You are protected from evil.\n");
-	}
+	if (p_ptr->blessed) fprintf(fff, "You feel rightous.\n");
+	if (p_ptr->hero) fprintf(fff, "You feel heroic.\n");
+	if (p_ptr->shero) fprintf(fff, "You are in a battle rage.\n");
+	if (p_ptr->fury) fprintf(fff, "You are in a wild fury.\n");
+	if (p_ptr->berserk) fprintf(fff, "You are going berserk.\n");
+	if (p_ptr->protevil) fprintf(fff, "You are protected from evil.\n");
 #if 0
-	if (p_ptr->protgood)
-	{
-		fprintf(fff, "You are protected from good.\n");
-	}
+	if (p_ptr->protgood) fprintf(fff, "You are protected from good.\n");
 #endif	// 0
-	if (p_ptr->shield)
-	{
-		fprintf(fff, "You are protected by a mystic shield.\n");
-	}
-	if (p_ptr->invuln)
-	{
-		fprintf(fff, "You are temporarily invulnerable.\n");
-	}
-	if (p_ptr->confusing)
-	{
-		fprintf(fff, "Your hands are glowing dull red.\n");
-	}
-	if (p_ptr->stunning)
-	{
-		fprintf(fff, "Your hands are very heavy.\n");
-	}
-	if (p_ptr->searching)
-	{
-		fprintf(fff, "You are looking around very carefully.\n");
-	}
+	if (p_ptr->shield) fprintf(fff, "You are protected by a mystic shield.\n");
+	if (p_ptr->invuln) fprintf(fff, "You are temporarily invulnerable.\n");
+	if (p_ptr->confusing) fprintf(fff, "Your hands are glowing dull red.\n");
+	if (p_ptr->stunning) fprintf(fff, "Your hands are very heavy.\n");
+	if (p_ptr->searching) fprintf(fff, "You are looking around very carefully.\n");
 #if 0
-	if (p_ptr->new_spells)
-	{
-		fprintf(fff, "You can learn some more spells.\n");
-	}
+	if (p_ptr->new_spells) fprintf(fff, "You can learn some more spells.\n");
 #endif
-	if (p_ptr->word_recall)
-	{
-		fprintf(fff, "You will soon be recalled.\n");
-	}
-	if (p_ptr->see_infra)
-	{
-		fprintf(fff, "Your eyes are sensitive to infrared light.\n");
-	}
-	if (p_ptr->invis)
-	{
-		fprintf(fff, "You are invisible.\n");
-	}
+	if (p_ptr->word_recall) fprintf(fff, "You will soon be recalled.\n");
+	if (p_ptr->see_infra) fprintf(fff, "Your eyes are sensitive to infrared light.\n");
+	if (p_ptr->invis) fprintf(fff, "You are invisible.\n");
 #if 0 /* really not required to tell the player this stuff, it'd be just spam */
-	if (p_ptr->cloaked)
-	{
-		fprintf(fff, "You are cloaked.\n");
-	}
-	if (p_ptr->shadow_running)
-	{
-		fprintf(fff, "You are shadow_running.\n");
-	}
+	if (p_ptr->cloaked) fprintf(fff, "You are cloaked.\n");
+	if (p_ptr->shadow_running) fprintf(fff, "You are shadow_running.\n");
 #endif
-	if (p_ptr->see_inv)
-	{
-		fprintf(fff, "You can see invisible creatures.\n");
-	}
-	if (p_ptr->feather_fall)
-	{
-		fprintf(fff, "You land gently.\n");
-	}
+	if (p_ptr->see_inv) fprintf(fff, "You can see invisible creatures.\n");
+	if (p_ptr->feather_fall) fprintf(fff, "You land gently.\n");
 #if 1
-	if (p_ptr->climb)
-	{
-		fprintf(fff, "You can climb high mountains.\n");
-	}
-	if (p_ptr->fly)
-	{
-		fprintf(fff, "You can fly.\n");
-	}
-	if (p_ptr->can_swim)
-	{
-		fprintf(fff, "You can swim easily.\n");
-	}
+	if (p_ptr->climb) fprintf(fff, "You can climb high mountains.\n");
+	if (p_ptr->fly) fprintf(fff, "You can fly.\n");
+	if (p_ptr->can_swim) fprintf(fff, "You can swim easily.\n");
 #endif	// 0
-	if (p_ptr->free_act)
-	{
-		fprintf(fff, "You have free action.\n");
-	}
-	if (p_ptr->regenerate)
-	{
-		fprintf(fff, "You regenerate quickly.\n");
-	}
-	if (p_ptr->resist_time)
-	{
-		fprintf(fff, "You are resistant to time.\n");
-	}
-	if (p_ptr->resist_mana)
-	{
-		fprintf(fff, "You are resistant to magical energy.\n");
-	}
-	if (p_ptr->immune_water)
-	{
-		fprintf(fff, "You are completely protected from unleashed water.\n");
-	}
-	else if (p_ptr->resist_water)
-	{
-		fprintf(fff, "You are resistant to unleashed water.\n");
-	}
-	if (p_ptr->regen_mana)
-	{
-		fprintf(fff, "You accumulate mana quickly.\n");
-	}
-	if (p_ptr->slow_digest)
-	{
-		fprintf(fff, "Your appetite is small.\n");
-	}
-	if (p_ptr->telepathy)
-	{
-		//		fprintf(fff, "You have ESP.\n");
+	if (p_ptr->free_act) fprintf(fff, "You have free action.\n");
+	if (p_ptr->regenerate) fprintf(fff, "You regenerate quickly.\n");
+	if (p_ptr->resist_time) fprintf(fff, "You are resistant to time.\n");
+	if (p_ptr->resist_mana) fprintf(fff, "You are resistant to magical energy.\n");
+	if (p_ptr->immune_water) fprintf(fff, "You are completely protected from unleashed water.\n");
+	else if (p_ptr->resist_water) fprintf(fff, "You are resistant to unleashed water.\n");
+	if (p_ptr->regen_mana) fprintf(fff, "You accumulate mana quickly.\n");
+	if (p_ptr->slow_digest) fprintf(fff, "Your appetite is small.\n");
+	if (p_ptr->telepathy) {
+//		fprintf(fff, "You have ESP.\n");
 		if (p_ptr->telepathy & ESP_ALL) fprintf(fff, "You have ESP.\n");
-		else
-		{
+		else {
 			if (p_ptr->telepathy & ESP_ORC) fprintf(fff, "You can sense the presence of orcs.\n");
 			if (p_ptr->telepathy & ESP_TROLL) fprintf(fff, "You can sense the presence of trolls.\n");
 			if (p_ptr->telepathy & ESP_DRAGON) fprintf(fff, "You can sense the presence of dragons.\n");
@@ -1597,8 +1448,7 @@ void self_knowledge(int Ind)
 	}
 #if 0 /* done in util.c */
 #ifdef USE_BLOCKING
-	if (apply_block_chance(p_ptr, p_ptr->shield_deflect))
-	{
+	if (apply_block_chance(p_ptr, p_ptr->shield_deflect)) {
 		if (apply_block_chance(p_ptr, p_ptr->shield_deflect) >= 50)
 			fprintf(fff, "You are extremely good at blocking with your shield.\n");
 		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) >= 30)
@@ -1612,8 +1462,7 @@ void self_knowledge(int Ind)
 	}
 #endif
 #ifdef USE_PARRING
-	if (p_ptr->weapon_parry)
-	{
+	if (p_ptr->weapon_parry) {
 		if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) >= 30)
 			fprintf(fff, "You are extremely good at parrying with your weapon.\n");
 		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) >= 25)
@@ -1629,299 +1478,104 @@ void self_knowledge(int Ind)
 #endif
 #if 1
         if (p_ptr->anti_magic)	// newer (saving-throw boost)
-	{
                 fprintf(fff, "You are surrounded by an anti-magic shell.\n");
-	}
 #endif	// 0
-	if (p_ptr->hold_life)
-	{
-		fprintf(fff, "You have a firm hold on your life force.\n");
-	}
+	if (p_ptr->hold_life) fprintf(fff, "You have a firm hold on your life force.\n");
 #if 1	// somewhat hacky
-	if (p_ptr->lite)
-	{
-		fprintf(fff, "You are carrying a permanent light.\n");
-	}
+	if (p_ptr->lite) fprintf(fff, "You are carrying a permanent light.\n");
 #endif	// 0
-	if (p_ptr->auto_id)
-	{
-//		fprintf(fff, "You are able to sense magic.\n");
-		fprintf(fff, "You can sense magic.\n");
-	}
+	if (p_ptr->auto_id) fprintf(fff, "You can sense magic.\n");
 #if 1
-	if (p_ptr->reflect)
-	{
-		fprintf(fff, "You reflect arrows and bolts.\n");
-	}
-	if (p_ptr->no_cut)
-	{
-		fprintf(fff, "You cannot be cut.\n");
-	}
-	if (p_ptr->reduce_insanity > 0)
-	{
+	if (p_ptr->reflect) fprintf(fff, "You reflect arrows and bolts.\n");
+	if (p_ptr->no_cut) fprintf(fff, "You cannot be cut.\n");
+	if (p_ptr->reduce_insanity > 0) {
 		fprintf(fff, "Your mind is somewhat resistant against insanity.\n");
 	}
-	if (p_ptr->suscep_fire)
-	{
-		fprintf(fff, "You are susceptible to fire.\n");
-	}
-	if (p_ptr->suscep_cold)
-	{
-		fprintf(fff, "You are susceptible to cold.\n");
-	}
-	if (p_ptr->suscep_acid)
-	{
-		fprintf(fff, "You are susceptible to acid.\n");
-	}
-	if (p_ptr->suscep_elec)
-	{
-		fprintf(fff, "You are susceptible to electricity.\n");
-	}
-	if (p_ptr->suscep_pois)
-	{
-		fprintf(fff, "You are susceptible to poison.\n");
-	}
-	if (p_ptr->suscep_lite)
-	{
-		fprintf(fff, "You are susceptible to light.\n");
-	}
-	if (p_ptr->suscep_good)
-	{
-		fprintf(fff, "You are susceptible to evil-vanquishing effects.\n");
-	}
-	if (p_ptr->suscep_life)
-	{
-		fprintf(fff, "You are susceptible to undead-vanquishing effects.\n");
-	}
-	if (p_ptr->sh_fire)
-	{
-		fprintf(fff, "You are surrounded with a fiery aura.\n");
-	}
-	if (p_ptr->sh_elec)
-	{
-		fprintf(fff, "You are surrounded with electricity.\n");
-	}
-	if (p_ptr->sh_cold)
-	{
-		fprintf(fff, "You are surrounded with a freezing aura.\n");
-	}
+	if (p_ptr->suscep_fire) fprintf(fff, "You are susceptible to fire.\n");
+	if (p_ptr->suscep_cold) fprintf(fff, "You are susceptible to cold.\n");
+	if (p_ptr->suscep_acid) fprintf(fff, "You are susceptible to acid.\n");
+	if (p_ptr->suscep_elec) fprintf(fff, "You are susceptible to electricity.\n");
+	if (p_ptr->suscep_pois) fprintf(fff, "You are susceptible to poison.\n");
+	if (p_ptr->suscep_lite) fprintf(fff, "You are susceptible to light.\n");
+	if (p_ptr->suscep_good) fprintf(fff, "You are susceptible to evil-vanquishing effects.\n");
+	if (p_ptr->suscep_evil) fprintf(fff, "You are susceptible to good-vanquishing effects.\n");
+	if (p_ptr->suscep_life) fprintf(fff, "You are susceptible to undead-vanquishing effects.\n");
+	if (p_ptr->sh_fire) fprintf(fff, "You are surrounded with a fiery aura.\n");
+	if (p_ptr->sh_elec) fprintf(fff, "You are surrounded with electricity.\n");
+	if (p_ptr->sh_cold) fprintf(fff, "You are surrounded with a freezing aura.\n");
 
-	if (p_ptr->resist_continuum)
-	{
-		fprintf(fff, "The space-time continuum cannot be disrupted near you.\n");
-	}
-	if (p_ptr->anti_tele)
-	{
-//		fprintf(fff, "You cannot teleport.\n");
-		fprintf(fff, "You are surrounded by an anti-teleportation field.\n");
-	}
-	if (p_ptr->res_tele)
-	{
-		fprintf(fff, "You resist incoming teleportation effects.\n");
-	}
+	if (p_ptr->resist_continuum) fprintf(fff, "The space-time continuum cannot be disrupted near you.\n");
+	if (p_ptr->anti_tele) fprintf(fff, "You are surrounded by an anti-teleportation field.\n");
+	if (p_ptr->res_tele) fprintf(fff, "You resist incoming teleportation effects.\n");
 #endif	// 0
 
-	if (p_ptr->immune_acid)
-	{
-		fprintf(fff, "You are completely immune to acid.\n");
-	}
+	if (p_ptr->immune_acid) fprintf(fff, "You are completely immune to acid.\n");
 	else if ((p_ptr->resist_acid) && (p_ptr->oppose_acid))
-	{
 		fprintf(fff, "You resist acid exceptionally well.\n");
-	}
 	else if ((p_ptr->resist_acid) || (p_ptr->oppose_acid))
-	{
 		fprintf(fff, "You are resistant to acid.\n");
-	}
 
-	if (p_ptr->immune_elec)
-	{
-		fprintf(fff, "You are completely immune to lightning.\n");
-	}
+	if (p_ptr->immune_elec) fprintf(fff, "You are completely immune to lightning.\n");
 	else if ((p_ptr->resist_elec) && (p_ptr->oppose_elec))
-	{
 		fprintf(fff, "You resist lightning exceptionally well.\n");
-	}
 	else if ((p_ptr->resist_elec) || (p_ptr->oppose_elec))
-	{
 		fprintf(fff, "You are resistant to lightning.\n");
-	}
 
-	if (p_ptr->immune_fire)
-	{
-		fprintf(fff, "You are completely immune to fire.\n");
-	}
+	if (p_ptr->immune_fire) fprintf(fff, "You are completely immune to fire.\n");
 	else if ((p_ptr->resist_fire) && (p_ptr->oppose_fire))
-	{
 		fprintf(fff, "You resist fire exceptionally well.\n");
-	}
 	else if ((p_ptr->resist_fire) || (p_ptr->oppose_fire))
-	{
 		fprintf(fff, "You are resistant to fire.\n");
-	}
 
-	if (p_ptr->immune_cold)
-	{
-		fprintf(fff, "You are completely immune to cold.\n");
-	}
+	if (p_ptr->immune_cold) fprintf(fff, "You are completely immune to cold.\n");
 	else if ((p_ptr->resist_cold) && (p_ptr->oppose_cold))
-	{
 		fprintf(fff, "You resist cold exceptionally well.\n");
-	}
 	else if ((p_ptr->resist_cold) || (p_ptr->oppose_cold))
-	{
 		fprintf(fff, "You are resistant to cold.\n");
-	}
 
-	if (p_ptr->immune_poison)
-	{
-		fprintf(fff, "You are completely immune to poison.\n");
-	}
+	if (p_ptr->immune_poison) fprintf(fff, "You are completely immune to poison.\n");
 	else if ((p_ptr->resist_pois) && (p_ptr->oppose_pois))
-	{
 		fprintf(fff, "You resist poison exceptionally well.\n");
-	}
 	else if ((p_ptr->resist_pois) || (p_ptr->oppose_pois))
-	{
 		fprintf(fff, "You are resistant to poison.\n");
-	}
 
-	if (p_ptr->resist_lite)
-	{
-		fprintf(fff, "You are resistant to bright light.\n");
-	}
-	if (p_ptr->resist_dark)
-	{
-		fprintf(fff, "You are resistant to darkness.\n");
-	}
-	if (p_ptr->resist_conf)
-	{
-		fprintf(fff, "You are resistant to confusion.\n");
-	}
-	if (p_ptr->resist_sound)
-	{
-		fprintf(fff, "You are resistant to sonic attacks.\n");
-	}
-	if (p_ptr->resist_disen)
-	{
-		fprintf(fff, "You are resistant to disenchantment.\n");
-	}
-	if (p_ptr->resist_chaos)
-	{
-		fprintf(fff, "You are resistant to chaos.\n");
-	}
-	if (p_ptr->resist_shard)
-	{
-		fprintf(fff, "You are resistant to blasts of shards.\n");
-	}
-	if (p_ptr->resist_nexus)
-	{
-		fprintf(fff, "You are resistant to nexus attacks.\n");
-	}
-	if (p_ptr->immune_neth)
-	{
-		fprintf(fff, "You are immune to nether forces.\n");
-	}
-	else if (p_ptr->resist_neth)
-	{
-		fprintf(fff, "You are resistant to nether forces.\n");
-	}
-	if (p_ptr->resist_fear)
-	{
-		fprintf(fff, "You are completely fearless.\n");
-	}
-	if (p_ptr->resist_blind)
-	{
-		fprintf(fff, "Your eyes are resistant to blindness.\n");
-	}
+	if (p_ptr->resist_lite) fprintf(fff, "You are resistant to bright light.\n");
+	if (p_ptr->resist_dark) fprintf(fff, "You are resistant to darkness.\n");
+	if (p_ptr->resist_conf) fprintf(fff, "You are resistant to confusion.\n");
+	if (p_ptr->resist_sound) fprintf(fff, "You are resistant to sonic attacks.\n");
+	if (p_ptr->resist_disen) fprintf(fff, "You are resistant to disenchantment.\n");
+	if (p_ptr->resist_chaos) fprintf(fff, "You are resistant to chaos.\n");
+	if (p_ptr->resist_shard) fprintf(fff, "You are resistant to blasts of shards.\n");
+	if (p_ptr->resist_nexus) fprintf(fff, "You are resistant to nexus attacks.\n");
+	if (p_ptr->immune_neth) fprintf(fff, "You are immune to nether forces.\n");
+	else if (p_ptr->resist_neth) fprintf(fff, "You are resistant to nether forces.\n");
+	if (p_ptr->resist_fear) fprintf(fff, "You are completely fearless.\n");
+	if (p_ptr->resist_blind) fprintf(fff, "Your eyes are resistant to blindness.\n");
 
-	if (p_ptr->sustain_str)
-	{
-		fprintf(fff, "Your strength is sustained.\n");
-	}
-	if (p_ptr->sustain_int)
-	{
-		fprintf(fff, "Your intelligence is sustained.\n");
-	}
-	if (p_ptr->sustain_wis)
-	{
-		fprintf(fff, "Your wisdom is sustained.\n");
-	}
-	if (p_ptr->sustain_con)
-	{
-		fprintf(fff, "Your constitution is sustained.\n");
-	}
-	if (p_ptr->sustain_dex)
-	{
-		fprintf(fff, "Your dexterity is sustained.\n");
-	}
-	if (p_ptr->sustain_chr)
-	{
-		fprintf(fff, "Your charisma is sustained.\n");
-	}
+	if (p_ptr->sustain_str) fprintf(fff, "Your strength is sustained.\n");
+	if (p_ptr->sustain_int) fprintf(fff, "Your intelligence is sustained.\n");
+	if (p_ptr->sustain_wis) fprintf(fff, "Your wisdom is sustained.\n");
+	if (p_ptr->sustain_con) fprintf(fff, "Your constitution is sustained.\n");
+	if (p_ptr->sustain_dex) fprintf(fff, "Your dexterity is sustained.\n");
+	if (p_ptr->sustain_chr) fprintf(fff, "Your charisma is sustained.\n");
 	if (p_ptr->black_breath || p_ptr->black_breath_tmp)
-	{
 		fprintf(fff, "You suffer from Black Breath.\n");
-	}
 
+	if (f1 & TR1_STR) fprintf(fff, "Your strength is affected by your equipment.\n");
+	if (f1 & TR1_INT) fprintf(fff, "Your intelligence is affected by your equipment.\n");
+	if (f1 & TR1_WIS) fprintf(fff, "Your wisdom is affected by your equipment.\n");
+	if (f1 & TR1_DEX) fprintf(fff, "Your dexterity is affected by your equipment.\n");
+	if (f1 & TR1_CON) fprintf(fff, "Your constitution is affected by your equipment.\n");
+	if (f1 & TR1_CHR) fprintf(fff, "Your charisma is affected by your equipment.\n");
 
-	if (f1 & TR1_STR)
-	{
-		fprintf(fff, "Your strength is affected by your equipment.\n");
-	}
-	if (f1 & TR1_INT)
-	{
-		fprintf(fff, "Your intelligence is affected by your equipment.\n");
-	}
-	if (f1 & TR1_WIS)
-	{
-		fprintf(fff, "Your wisdom is affected by your equipment.\n");
-	}
-	if (f1 & TR1_DEX)
-	{
-		fprintf(fff, "Your dexterity is affected by your equipment.\n");
-	}
-	if (f1 & TR1_CON)
-	{
-		fprintf(fff, "Your constitution is affected by your equipment.\n");
-	}
-	if (f1 & TR1_CHR)
-	{
-		fprintf(fff, "Your charisma is affected by your equipment.\n");
-	}
-
-	if (f1 & TR1_STEALTH)
-	{
-		fprintf(fff, "Your stealth is affected by your equipment.\n");
-	}
-	if (f1 & TR1_SEARCH)
-	{
-		fprintf(fff, "Your searching ability is affected by your equipment.\n");
-	}
-	if (f5 & TR5_DISARM)
-	{
-		fprintf(fff, "Your disarming ability is affected by your equipment.\n");
-	}
-	if (f1 & TR1_INFRA)
-	{
-		fprintf(fff, "Your infravision is affected by your equipment.\n");
-	}
-	if (f1 & TR1_TUNNEL)
-	{
-		fprintf(fff, "Your digging ability is affected by your equipment.\n");
-	}
-	if (f1 & TR1_SPEED)
-	{
-		fprintf(fff, "Your speed is affected by your equipment.\n");
-	}
-	if (f1 & TR1_BLOWS)
-	{
-		fprintf(fff, "Your attack speed is affected by your equipment.\n");
-	}
-        if (f5 & (TR5_CRIT))
-	{
-                fprintf(fff, "Your ability to score critical hits is affected by your equipment.\n");
-	}
+	if (f1 & TR1_STEALTH) fprintf(fff, "Your stealth is affected by your equipment.\n");
+	if (f1 & TR1_SEARCH) fprintf(fff, "Your searching ability is affected by your equipment.\n");
+	if (f5 & TR5_DISARM) fprintf(fff, "Your disarming ability is affected by your equipment.\n");
+	if (f1 & TR1_INFRA) fprintf(fff, "Your infravision is affected by your equipment.\n");
+	if (f1 & TR1_TUNNEL) fprintf(fff, "Your digging ability is affected by your equipment.\n");
+	if (f1 & TR1_SPEED) fprintf(fff, "Your speed is affected by your equipment.\n");
+	if (f1 & TR1_BLOWS) fprintf(fff, "Your attack speed is affected by your equipment.\n");
+	if (f5 & TR5_CRIT) fprintf(fff, "Your ability to score critical hits is affected by your equipment.\n");
 
 	if (p_ptr->luck == 40)
 		fprintf(fff, "You are ultimatively lucky!\n");
@@ -1939,100 +1593,32 @@ void self_knowledge(int Ind)
 	    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) /* dual-wield */
 	{
 		/* Indicate Blessing */
-		if (f3 & TR3_BLESSED)
-		{
-			fprintf(fff, "Your weapon has been blessed by the gods.\n");
-		}
-
-		if (f5 & (TR5_CHAOTIC))
-		{
-                        fprintf(fff, "Your weapon is branded with the Sign of Chaos.\n");
-		}
-
+		if (f3 & TR3_BLESSED) fprintf(fff, "Your weapon has been blessed by the gods.\n");
+		if (f5 & TR5_CHAOTIC) fprintf(fff, "Your weapon is branded with the Sign of Chaos.\n");
 		/* Hack */
-		if (f5 & TR5_IMPACT)
-		{
-			fprintf(fff, "The impact of your weapon can cause earthquakes.\n");
-		}
-
-		if (f5 & (TR5_VORPAL))
-		{
-			fprintf(fff, "Your weapon is very sharp.\n");
-		}
-
-		if (f1 & (TR1_VAMPIRIC))
-		{
-			fprintf(fff, "Your weapon drains life from your foes.\n");
-		}
+		if (f5 & TR5_IMPACT) fprintf(fff, "The impact of your weapon can cause earthquakes.\n");
+		if (f5 & TR5_VORPAL) fprintf(fff, "Your weapon is very sharp.\n");
+		if (f1 & TR1_VAMPIRIC) fprintf(fff, "Your weapon drains life from your foes.\n");
 
 		/* Special "Attack Bonuses" */
-		if (f1 & TR1_BRAND_ACID)
-		{
-			fprintf(fff, "Your weapon melts your foes.\n");
-		}
-		if (f1 & TR1_BRAND_ELEC)
-		{
-			fprintf(fff, "Your weapon shocks your foes.\n");
-		}
-		if (f1 & TR1_BRAND_FIRE)
-		{
-			fprintf(fff, "Your weapon burns your foes.\n");
-		}
-		if (f1 & TR1_BRAND_COLD)
-		{
-			fprintf(fff, "Your weapon freezes your foes.\n");
-		}
-		if (f1 & (TR1_BRAND_POIS))
-		{
-			fprintf(fff, "Your weapon poisons your foes.\n");
-		}
-
+		if (f1 & TR1_BRAND_ACID) fprintf(fff, "Your weapon melts your foes.\n");
+		if (f1 & TR1_BRAND_ELEC) fprintf(fff, "Your weapon shocks your foes.\n");
+		if (f1 & TR1_BRAND_FIRE) fprintf(fff, "Your weapon burns your foes.\n");
+		if (f1 & TR1_BRAND_COLD) fprintf(fff, "Your weapon freezes your foes.\n");
+		if (f1 & TR1_BRAND_POIS) fprintf(fff, "Your weapon poisons your foes.\n");
 
 		/* Special "slay" flags */
-		if (f1 & TR1_SLAY_ORC)
-		{
-			fprintf(fff, "Your weapon is especially deadly against orcs.\n");
-		}
-		if (f1 & TR1_SLAY_TROLL)
-		{
-			fprintf(fff, "Your weapon is especially deadly against trolls.\n");
-		}
-		if (f1 & TR1_SLAY_GIANT)
-		{
-			fprintf(fff, "Your weapon is especially deadly against giants.\n");
-		}
-		if (f1 & TR1_SLAY_ANIMAL)
-		{
-			fprintf(fff, "Your weapon strikes at animals with extra force.\n");
-		}
-		if (f1 & TR1_KILL_UNDEAD)
-		{
-			fprintf(fff, "Your weapon is a great bane of undead.\n");
-		}
-		else if (f1 & TR1_SLAY_UNDEAD)
-		{
-			fprintf(fff, "Your weapon strikes at undead with holy wrath.\n");
-		}
-		if (f1 & TR1_KILL_DEMON)
-		{
-			fprintf(fff, "Your weapon is a great bane of demons.\n");
-		}
-		else if (f1 & TR1_SLAY_DEMON)
-		{
-			fprintf(fff, "Your weapon strikes at demons with holy wrath.\n");
-		}
-		if (f1 & TR1_KILL_DRAGON)
-		{
-			fprintf(fff, "Your weapon is a great bane of dragons.\n");
-		}
-		else if (f1 & TR1_SLAY_DRAGON)
-		{
-			fprintf(fff, "Your weapon is especially deadly against dragons.\n");
-		}
-		if (f1 & TR1_SLAY_EVIL)
-		{
-			fprintf(fff, "Your weapon strikes at evil with extra force.\n");
-		}
+		if (f1 & TR1_SLAY_ORC) fprintf(fff, "Your weapon is especially deadly against orcs.\n");
+		if (f1 & TR1_SLAY_TROLL) fprintf(fff, "Your weapon is especially deadly against trolls.\n");
+		if (f1 & TR1_SLAY_GIANT) fprintf(fff, "Your weapon is especially deadly against giants.\n");
+		if (f1 & TR1_SLAY_ANIMAL) fprintf(fff, "Your weapon strikes at animals with extra force.\n");
+		if (f1 & TR1_KILL_UNDEAD) fprintf(fff, "Your weapon is a great bane of undead.\n");
+		else if (f1 & TR1_SLAY_UNDEAD) fprintf(fff, "Your weapon strikes at undead with holy wrath.\n");
+		if (f1 & TR1_KILL_DEMON) fprintf(fff, "Your weapon is a great bane of demons.\n");
+		else if (f1 & TR1_SLAY_DEMON) fprintf(fff, "Your weapon strikes at demons with holy wrath.\n");
+		if (f1 & TR1_KILL_DRAGON) fprintf(fff, "Your weapon is a great bane of dragons.\n");
+		else if (f1 & TR1_SLAY_DRAGON) fprintf(fff, "Your weapon is especially deadly against dragons.\n");
+		if (f1 & TR1_SLAY_EVIL) fprintf(fff, "Your weapon strikes at evil with extra force.\n");
 	}
 //	info[i]=NULL;
 
@@ -2087,7 +1673,7 @@ bool lose_all_info(int Ind)
 			}
 #else
 			note_crop_pseudoid(note2, noteid, quark_str(o_ptr->note));
-			if (!note2[0]) o_ptr->note = 0;
+			if (!note2[0]) o_ptr->note = o_ptr->note_utag = 0;//utag is paranoia
 			else o_ptr->note = quark_add(note2);
 #endif
 		}
@@ -3927,11 +3513,9 @@ bool ident_spell_aux(int Ind, int item)
 
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-		o_ptr = &p_ptr->inventory[item];
+	if (item >= 0) o_ptr = &p_ptr->inventory[item];
 	/* Get the item (on the floor) */
-	else
-		o_ptr = &o_list[0 - item];
+	else o_ptr = &o_list[0 - item];
 
 
 	/* Identify it fully */
@@ -4070,6 +3654,49 @@ bool identify_fully_item(int Ind, int item)
 
 		p_ptr->window |= PW_INVEN;
 	}
+
+	/* We no longer have a *identify* in progress */
+	p_ptr->current_star_identify = 0;
+
+	/* Success */
+	return (TRUE);
+}
+
+/* silent version of identify_fully_item() that doesn't display anything - C. Blue */
+bool identify_fully_item_quiet(int Ind, int item)
+{
+	player_type *p_ptr = Players[Ind];
+	object_type		*o_ptr;
+
+	/* Get the item (in the pack) */
+	if (item >= 0) o_ptr = &p_ptr->inventory[item];
+	/* Get the item (on the floor) */
+	else o_ptr = &o_list[0 - item];
+
+	/* Identify it fully */
+	object_aware(Ind, o_ptr);
+	object_known(o_ptr);
+
+	/* Mark the item as fully known */
+	o_ptr->ident |= (ID_MENTAL);
+	/* Recalculate bonuses */
+	p_ptr->update |= (PU_BONUS);
+	/* Combine / Reorder the pack (later) */
+	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+	/* Did we use up an item? */
+	if (p_ptr->using_up_item >= 0) {
+//		inven_item_describe(Ind, p_ptr->using_up_item); /* maybe not for *ID* */
+		inven_item_optimize(Ind, p_ptr->using_up_item);
+		p_ptr->using_up_item = -1;
+
+		p_ptr->window |= PW_INVEN;
+	}
+
+	/* Handle stuff */
+	handle_stuff(Ind);
 
 	/* We no longer have a *identify* in progress */
 	p_ptr->current_star_identify = 0;
@@ -6337,8 +5964,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 	ty = p_ptr->py + 99 * ddy[dir];
 
 	/* Hack -- Use an actual "target" */
-	if ((dir == 5) && target_okay(Ind))
-	{
+	if ((dir == 5) && target_okay(Ind)) {
 		flg &= ~PROJECT_STOP;
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
@@ -6556,27 +6182,27 @@ void swap_position(int Ind, int lty, int ltx){
 	cave_type *c_ptr;
 	cave_type **zcave;
 
-	p_ptr=Players[Ind];
-	if(!p_ptr) return;
+	p_ptr = Players[Ind];
+	if (!p_ptr) return;
 
-	wpos=&p_ptr->wpos;
-	if(!(zcave=getcave(wpos))) return;
+	wpos = &p_ptr->wpos;
+	if (!(zcave = getcave(wpos))) return;
 
-	c_ptr=&zcave[lty][ltx];
+	c_ptr = &zcave[lty][ltx];
 
 	/* Keep track of the old location */
-	tx=p_ptr->px;
-	ty=p_ptr->py;
+	tx = p_ptr->px;
+	ty = p_ptr->py;
 
 	/* Move the player */
-	p_ptr->px=ltx;
-	p_ptr->py=lty;
+	p_ptr->px = ltx;
+	p_ptr->py = lty;
 
-	if(!c_ptr->m_idx){
+	if (!c_ptr->m_idx) {
 		/* Free space */
 		/* Update the old location */
-		zcave[ty][tx].m_idx=0;
-		c_ptr->m_idx=0-Ind;
+		zcave[ty][tx].m_idx = 0;
+		c_ptr->m_idx = 0 - Ind;
 		cave_midx_debug(wpos, lty, ltx, -Ind);
 
 		/* Redraw/remember old location */
@@ -6585,18 +6211,17 @@ void swap_position(int Ind, int lty, int ltx){
 
 		/* Redraw new grid */
 		everyone_lite_spot(wpos, lty, ltx);
-	}
-	else if(c_ptr->m_idx > 0){
+	} else if (c_ptr->m_idx > 0) {
 		/* Monster */
-		monster_type *m_ptr=&m_list[c_ptr->m_idx];
-		zcave[ty][tx].m_idx=c_ptr->m_idx;
+		monster_type *m_ptr = &m_list[c_ptr->m_idx];
+		zcave[ty][tx].m_idx = c_ptr->m_idx;
 
 		/* Move the monster */
-		m_ptr->fy=ty;
-		m_ptr->fx=tx;
-		
+		m_ptr->fy = ty;
+		m_ptr->fx = tx;
+
 		/* Update the new location */
-		c_ptr->m_idx=0-Ind;
+		c_ptr->m_idx = 0 - Ind;
 		cave_midx_debug(wpos, lty, ltx, -Ind);
 
 		/* Update monster (new location) */
@@ -6608,30 +6233,30 @@ void swap_position(int Ind, int lty, int ltx){
 
 		/* Redraw new grid */
 		everyone_lite_spot(wpos, lty, ltx);
-	}
-	else{
+	} else {//if (c_ptr->m_idx < 0) {
 		/* Other player */
 		int Ind2 = 0 - c_ptr->m_idx;
-		player_type *q_ptr=Players[Ind2];
+		player_type *q_ptr = NULL;
+		if (Ind2) q_ptr = Players[Ind2];
 
 		/* Shift them if they are real */
-		if(q_ptr){
-			q_ptr->py=ty;
-			q_ptr->px=tx;
+		if (q_ptr) {
+			q_ptr->py = ty;
+			q_ptr->px = tx;
 			#ifdef ARCADE_SERVER
-			if(p_ptr->game == 3) {
+			if (p_ptr->game == 3) {
 			p_ptr->arc_c = q_ptr->arc_c = 1;
 			p_ptr->arc_d = Ind2; }
 			#endif
 		}
-		
-		p_ptr->px=ltx;
-		p_ptr->py=lty;
+
+		p_ptr->px = ltx;
+		p_ptr->py = lty;
 
 		/* Update old player location */
-		c_ptr->m_idx = 0-Ind;
+		c_ptr->m_idx = 0 - Ind;
 		cave_midx_debug(wpos, lty, ltx, -Ind);
-		zcave[ty][tx].m_idx = 0-Ind2;
+		zcave[ty][tx].m_idx = 0 - Ind2;
 		cave_midx_debug(wpos, ty, tx, -Ind2);
 
 		/* Redraw/remember old location */
@@ -6641,16 +6266,16 @@ void swap_position(int Ind, int lty, int ltx){
 		/* Redraw new grid */
 		everyone_lite_spot(wpos, lty, ltx);
 
-		verify_panel(Ind2);
-		if(q_ptr){
+		if (Ind2) verify_panel(Ind2);
+		if (q_ptr) {
 			/* Update stuff */
-			p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_DISTANCE);
+			q_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_DISTANCE);
 
 			/* Update Window */
-			p_ptr->window |= (PW_OVERHEAD);
+			q_ptr->window |= (PW_OVERHEAD);
 
 			/* Handle stuff */
-			if(!p_ptr->death) handle_stuff(Ind);
+			if (!q_ptr->death) handle_stuff(Ind);
 		}
 	}
 
@@ -6664,7 +6289,7 @@ void swap_position(int Ind, int lty, int ltx){
 	p_ptr->window |= (PW_OVERHEAD);
 
 	/* Handle stuff */
-	if(!p_ptr->death) handle_stuff(Ind);
+	if (!p_ptr->death) handle_stuff(Ind);
 }
 
 
@@ -6688,8 +6313,7 @@ bool project_hook(int Ind, int typ, int dir, int dam, int flg, char *attacker)
 	ty = p_ptr->py + ddy[dir];
 
 	/* Hack -- Use an actual "target" */
-	if ((dir == 5) && target_okay(Ind))
-	{
+	if ((dir == 5) && target_okay(Ind)) {
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
 	}
@@ -6756,8 +6380,7 @@ bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char 
 	ty = p_ptr->py + ddy[dir];
 
 	/* Hack -- Use an actual "target" */
-	if ((dir == 5) && target_okay(Ind))
-	{
+	if ((dir == 5) && target_okay(Ind)) {
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
 	}
@@ -6778,13 +6401,9 @@ bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char 
 bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam, char *attacker)
 {
 	if (rand_int(100) < prob)
-	{
 		return (fire_beam(Ind, typ, dir, dam, attacker));
-	}
 	else
-	{
 		return (fire_bolt(Ind, typ, dir, dam, attacker));
-	}
 }
 
 /* Target bolt-like, but able to pass 'over' untargetted enemies to hit target grid.
@@ -6795,7 +6414,7 @@ bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 	char pattacker[80];
 	int tx, ty;
 
-	int flg = PROJECT_HIDE | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+	int flg = PROJECT_HIDE | PROJECT_STOP | PROJECT_KILL;//PROJECT_ITEM | PROJECT_GRID
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) dam /= 2;
@@ -6829,7 +6448,7 @@ bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker) {
 	char pattacker[80];
 	int tx, ty;
 
-	int flg = PROJECT_HIDE | PROJECT_BEAM | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+	int flg = PROJECT_HIDE | PROJECT_BEAM | PROJECT_STOP | PROJECT_KILL;//PROJECT_ITEM | PROJECT_GRID
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) dam /= 2;
@@ -7959,7 +7578,7 @@ void call_chaos(int Ind, int dir, int extra_damage)
 	}
 	else
 	{
-//		if (!get_aim_dir(&dir)) return;
+//		if (!get_aim_dir(Ind) return;
 		if (line_chaos) {
 //			fire_beam(Ind, Chaos_type, dir, 1500 + extra_damage, p_ptr->attacker);
 			fire_beam(Ind, Chaos_type, dir, 675 + extra_damage, p_ptr->attacker);

@@ -209,7 +209,7 @@ server_opts cfg =
 	1,		/* bonus_calc_type - how HP are calculated (0 = old, 1 = new way) */
 	6,		/* charmode_trading_restrictions FLAGS: how restricted is trading? 0 = no exchange, +1 = ever can take (nonever&&nonpvp) items (bad idea), +2 = pvp can take ever, +4 = pvp can take nonever (double-edged) */
 	0,		/* item_awareness - how easily the player becomes aware of sofar un-identified items
-					    0 = normal, 1 = seeing in standard town shop (1 to 6), 2 = seeing in any shop */
+					    0 = normal, 1 = seeing in standard town shop (1 to 6), 2 = seeing in any shop while carrying it, 3 = seeing in any shop */
 	TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,	/* types of messages which will be transmitted through the world server (if available). */
 };
 

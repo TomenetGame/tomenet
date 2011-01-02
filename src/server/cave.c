@@ -1445,14 +1445,14 @@ bool player_can_see_bold(int Ind, int y, int x)
 	byte *w_ptr;
 	cave_type **zcave;
 	struct worldpos *wpos;
-	wpos=&p_ptr->wpos;
+	wpos = &p_ptr->wpos;
 
 	/* Blind players see nothing */
 	if (p_ptr->blind) return (FALSE);
 
 	/* temp bug fix - evileye */
-	if (!(zcave=getcave(wpos))) return FALSE;
-	c_ptr=&zcave[y][x];
+	if (!(zcave = getcave(wpos))) return FALSE;
+	c_ptr = &zcave[y][x];
 	w_ptr = &p_ptr->cave_flag[y][x];
 
 	/* Note that "torch-lite" yields "illumination" */
@@ -1473,8 +1473,7 @@ bool player_can_see_bold(int Ind, int y, int x)
 	xx = (x < p_ptr->px) ? (x + 1) : (x > p_ptr->px) ? (x - 1) : x;
 
 	/* Check for "local" illumination */
-	if (zcave[yy][xx].info & CAVE_GLOW)
-	{
+	if (zcave[yy][xx].info & CAVE_GLOW) {
 		/* Assume the wall is really illuminated */
 		return (TRUE);
 	}
@@ -1875,7 +1874,7 @@ static byte multi_hued_attr(monster_race *r_ptr)
 	return (allowed_attrs[rand_int(stored_colors)]);
 }
 
-
+/* Despite of its name, this gets both, attr and char, for a monster race.. */
 static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr, cave_type *c_ptr, byte *ap, char *cp)
 {
 	player_type *p_ptr = Players[Ind];
@@ -3079,12 +3078,21 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			/* part 'A' now here (experimental, see below) */
 			a = player_color(Ind2);
 
+#if 0 /* player_color() should already handle all of this - C. Blue */
 			if ((p2_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p2_ptr->inventory[INVEN_BODY].sval == SV_COSTUME)) {
 				get_monster_color(Ind, NULL, &r_info[p2_ptr->inventory[INVEN_BODY].bpval], c_ptr, &a, &c);
 			}
 			else if (p2_ptr->body_monster) get_monster_color(Ind, NULL, &r_info[p2_ptr->body_monster], c_ptr, &a, &c);
 			else if (p2_ptr->fruit_bat) c = 'b';
 			else c = '@';
+#else
+			if ((p2_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p2_ptr->inventory[INVEN_BODY].sval == SV_COSTUME)) {
+				c = r_info[p_ptr->inventory[INVEN_BODY].bpval].d_char;
+			}
+			else if (p2_ptr->body_monster) c = r_info[p2_ptr->body_monster].d_char;
+			else if (p2_ptr->fruit_bat) c = 'b';
+			else c = '@';
+#endif
 			/* part 'A' end */
 
 			/* TERM_BNW if blood bonded - mikaelh */
@@ -3208,14 +3216,11 @@ void note_spot(int Ind, int y, int x)
 	c_ptr = &zcave[y][x];
 
 	/* Hack -- memorize objects */
-	if (c_ptr->o_idx)
-	{
+	if (c_ptr->o_idx) {
 		/* Only memorize once */
-		if (!(p_ptr->obj_vis[c_ptr->o_idx]))
-		{
+		if (!(p_ptr->obj_vis[c_ptr->o_idx])) {
 			/* Memorize visible objects */
-			if (player_can_see_bold(Ind, y, x))
-			{
+			if (player_can_see_bold(Ind, y, x)) {
 				/* Memorize */
 				p_ptr->obj_vis[c_ptr->o_idx] = TRUE;
 
@@ -3225,28 +3230,23 @@ void note_spot(int Ind, int y, int x)
 
 
 	/* Hack -- memorize grids */
-	if (!(*w_ptr & CAVE_MARK))
-	{
+	if (!(*w_ptr & CAVE_MARK)) {
 		/* Memorize visible grids */
-		if (player_can_see_bold(Ind, y, x))
-		{
+		if (player_can_see_bold(Ind, y, x)) {
 			/* Memorize normal features */
-			if (!cave_plain_floor_grid(c_ptr))
-			{
+			if (!cave_plain_floor_grid(c_ptr)) {
 				/* Memorize */
 				*w_ptr |= CAVE_MARK;
 			}
 
 			/* Option -- memorize all perma-lit floors */
-			else if (p_ptr->view_perma_grids && (c_ptr->info & CAVE_GLOW))
-			{
+			else if (p_ptr->view_perma_grids && (c_ptr->info & CAVE_GLOW)) {
 				/* Memorize */
 				*w_ptr |= CAVE_MARK;
 			}
 
 			/* Option -- memorize all torch-lit floors */
-			else if (p_ptr->view_torch_grids && (c_ptr->info & CAVE_LITE))
-			{
+			else if (p_ptr->view_torch_grids && (c_ptr->info & CAVE_LITE)) {
 				/* Memorize */
 				*w_ptr |= CAVE_MARK;
 			}
@@ -4489,8 +4489,7 @@ void update_lite(int Ind)
 	cave_lite_hack(p_ptr->py, p_ptr->px);
 
 	/* Radius 1 -- torch radius */
-	if (p_ptr->cur_lite >= 1 || p_ptr->cur_vlite >= 1)
-	{
+	if (p_ptr->cur_lite >= 1 || p_ptr->cur_vlite >= 1) {
 		/* Adjacent grid */
 		cave_lite_hack(p_ptr->py+1, p_ptr->px);
 		cave_lite_hack(p_ptr->py-1, p_ptr->px);
@@ -4505,8 +4504,7 @@ void update_lite(int Ind)
 	}
 
 	/* Radius 2 -- lantern radius */
-	if (p_ptr->cur_lite >= 2 || p_ptr->cur_vlite >= 2)
-	{
+	if (p_ptr->cur_lite >= 2 || p_ptr->cur_vlite >= 2) {
 		/* South of the player */
 //		if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px))
 		/* cave_los includes dark pits */
@@ -4519,8 +4517,7 @@ void update_lite(int Ind)
 
 		/* North of the player */
 //		if (cave_floor_bold(zcave, p_ptr->py-1, p_ptr->px))
-		if (cave_los(zcave, p_ptr->py-1, p_ptr->px))
-		{
+		if (cave_los(zcave, p_ptr->py-1, p_ptr->px)) {
 			cave_lite_hack(p_ptr->py-2, p_ptr->px);
 			cave_lite_hack(p_ptr->py-2, p_ptr->px+1);
 			cave_lite_hack(p_ptr->py-2, p_ptr->px-1);
@@ -4528,8 +4525,7 @@ void update_lite(int Ind)
 
 		/* East of the player */
 //		if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px+1))
-		if (cave_los(zcave, p_ptr->py, p_ptr->px+1))
-		{
+		if (cave_los(zcave, p_ptr->py, p_ptr->px+1)) {
 			cave_lite_hack(p_ptr->py, p_ptr->px+2);
 			cave_lite_hack(p_ptr->py+1, p_ptr->px+2);
 			cave_lite_hack(p_ptr->py-1, p_ptr->px+2);
@@ -4537,8 +4533,7 @@ void update_lite(int Ind)
 
 		/* West of the player */
 //		if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px-1))
-		if (cave_los(zcave, p_ptr->py, p_ptr->px-1))
-		{
+		if (cave_los(zcave, p_ptr->py, p_ptr->px-1)) {
 			cave_lite_hack(p_ptr->py, p_ptr->px-2);
 			cave_lite_hack(p_ptr->py+1, p_ptr->px-2);
 			cave_lite_hack(p_ptr->py-1, p_ptr->px-2);
@@ -4546,8 +4541,7 @@ void update_lite(int Ind)
 	}
 
 	/* Radius 3+ -- artifact radius */
-	if (p_ptr->cur_lite >= 3 || p_ptr->cur_vlite >= 3)
-	{
+	if (p_ptr->cur_lite >= 3 || p_ptr->cur_vlite >= 3) {
 		int d, p;
 
 		/* Maximal radius */
@@ -4559,29 +4553,25 @@ void update_lite(int Ind)
 
 		/* South-East of the player */
 //		if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px+1))
-		if (cave_los(zcave, p_ptr->py+1, p_ptr->px+1))
-		{
+		if (cave_los(zcave, p_ptr->py+1, p_ptr->px+1)) {
 			cave_lite_hack(p_ptr->py+2, p_ptr->px+2);
 		}
 
 		/* South-West of the player */
 //		if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px-1))
-		if (cave_los(zcave, p_ptr->py+1, p_ptr->px-1))
-		{
+		if (cave_los(zcave, p_ptr->py+1, p_ptr->px-1)) {
 			cave_lite_hack(p_ptr->py+2, p_ptr->px-2);
 		}
 
 		/* North-East of the player */
 //		if (cave_floor_bold(zcave, p_ptr->py-1, p_ptr->px+1))
-		if (cave_los(zcave, p_ptr->py-1, p_ptr->px+1))
-		{
+		if (cave_los(zcave, p_ptr->py-1, p_ptr->px+1)) {
 			cave_lite_hack(p_ptr->py-2, p_ptr->px+2);
 		}
 
 		/* North-West of the player */
 //		if (cave_floor_bold(zcave, p_ptr->py-1, p_ptr->px-1))
-		if (cave_los(zcave, p_ptr->py-1, p_ptr->px-1))
-		{
+		if (cave_los(zcave, p_ptr->py-1, p_ptr->px-1)) {
 			cave_lite_hack(p_ptr->py-2, p_ptr->px-2);
 		}
 
@@ -4602,10 +4592,8 @@ void update_lite(int Ind)
 		if (max_x > p_ptr->cur_wid-1) max_x = p_ptr->cur_wid-1;
 
 		/* Scan the maximal box */
-		for (y = min_y; y <= max_y; y++)
-		{
-			for (x = min_x; x <= max_x; x++)
-			{
+		for (y = min_y; y <= max_y; y++) {
+			for (x = min_x; x <= max_x; x++) {
 				int dy = (p_ptr->py > y) ? (p_ptr->py - y) : (y - p_ptr->py);
 				int dx = (p_ptr->px > x) ? (p_ptr->px - x) : (x - p_ptr->px);
 
@@ -4619,8 +4607,7 @@ void update_lite(int Ind)
 				if (d > p) continue;
 
 				/* Viewable, nearby, grids get "torch lit" */
-				if (player_has_los_bold(Ind, y, x))
-				{
+				if (player_has_los_bold(Ind, y, x)) {
 					/* This grid is "torch lit" */
 					cave_lite_hack(y, x);
 				}
@@ -4632,8 +4619,7 @@ void update_lite(int Ind)
 	/*** Complete the algorithm ***/
 
 	/* Draw the new grids */
-	for (i = 0; i < p_ptr->lite_n; i++)
-	{
+	for (i = 0; i < p_ptr->lite_n; i++) {
 		y = p_ptr->lite_y[i];
 		x = p_ptr->lite_x[i];
 
@@ -4648,8 +4634,7 @@ void update_lite(int Ind)
 	}
 
 	/* Clear them all */
-	for (i = 0; i < p_ptr->temp_n; i++)
-	{
+	for (i = 0; i < p_ptr->temp_n; i++) {
 		y = p_ptr->temp_y[i];
 		x = p_ptr->temp_x[i];
 
@@ -6861,8 +6846,7 @@ void wiz_dark(int Ind)
 
 	/* Check for every other player */
 
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 		
 		/* Only works for players on the level */
@@ -6871,10 +6855,8 @@ void wiz_dark(int Ind)
 		o_ptr = &p_ptr->inventory[INVEN_LITE];
 		
 		/* Bye bye light */
-		if (o_ptr->k_idx)
-		{
-			if (((o_ptr->sval == SV_LITE_TORCH) || (o_ptr->sval == SV_LITE_LANTERN)) && (!o_ptr->name3))
-			{
+		if (o_ptr->k_idx) {
+			if (((o_ptr->sval == SV_LITE_TORCH) || (o_ptr->sval == SV_LITE_LANTERN)) && (!o_ptr->name1)) {
 				msg_print(i, "Your light suddenly empties.");
 				
 				/* No more light, it's Rogues day today :) */
@@ -7145,7 +7127,7 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
-		
+
 		/* Only works for players on the level */
 		if (!inarea(wpos, &p_ptr->wpos)) continue;
 
@@ -7157,6 +7139,8 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 
 		/* Update some things */
 		p_ptr->update |= (PU_VIEW | PU_DISTANCE);
+//		p_ptr->update |= PU_FLOW;
+
 //		p_ptr->redraw |= PR_MAP;
 //		p_ptr->window |= PW_OVERHEAD;
 	}
@@ -7482,8 +7466,8 @@ void scatter(struct worldpos *wpos, int *yp, int *xp, int y, int x, int d, int m
 		   that's still better than infinite loop though. */
 		tries--;
 		if (!tries) {
-s_printf("!!! INFINITE LOOP IN scatter() !!! -- Please reboot server and do '/unsta %d %d -%d'\n",
-            wpos->wx, wpos->wy,wpos->wz);
+s_printf("!!! INFINITE LOOP IN scatter() !!! -- Please reboot server and do '/unsta %d,%d,%d (%d,%d; %d,%d; %d %d)'\n",
+    wpos->wx, wpos->wy,wpos->wz, yp, xp, y, x, d, m);
 			ny = y;
 			nx = x;
 			break;
@@ -7587,8 +7571,7 @@ void disturb(int Ind, int stop_search, int keep_resting)
 	/* command_new = 0; */
 
 	/* Cancel repeated commands */
-	if (p_ptr->command_rep)
-	{
+	if (p_ptr->command_rep) {
 		/* Cancel */
 		p_ptr->command_rep = 0;
 
@@ -7600,8 +7583,7 @@ void disturb(int Ind, int stop_search, int keep_resting)
 	}
 
 	/* Cancel Resting */
-	if (!keep_resting && p_ptr->resting)
-	{
+	if (!keep_resting && p_ptr->resting) {
 		/* Cancel */
 		p_ptr->resting = 0;
 
@@ -7610,8 +7592,7 @@ void disturb(int Ind, int stop_search, int keep_resting)
 	}
 
 	/* Cancel running */
-	if (p_ptr->running)
-	{
+	if (p_ptr->running) {
 		/* Cancel */
 		p_ptr->running = 0;
 
@@ -7620,8 +7601,7 @@ void disturb(int Ind, int stop_search, int keep_resting)
 	}
 
 	/* Cancel searching if requested */
-	if (stop_search && p_ptr->searching)
-	{
+	if (stop_search && p_ptr->searching) {
 		/* Cancel */
 		p_ptr->searching = FALSE;
 
@@ -7862,7 +7842,7 @@ void season_change(int s, bool force) {
 
 	if ((season == s) && !force) return;
 	season = s;
-	
+
 	/* make wilderness more lively again */
 	lively_wild(0);
 
@@ -7879,19 +7859,19 @@ void season_change(int s, bool force) {
 
 	s_printf("(%s) SEASON_CHANGE: %d", showtime(), s);
 	if (s == SEASON_SPRING) {
-		s_printf(" (spring)");
+		s_printf(" spring");
 		world_surface_msg("\374\377GSpring has arrived.");
 	}
 	if (s == SEASON_SUMMER) {
-		s_printf(" (summer)");
+		s_printf(" summer");
 		world_surface_msg("\374\377GSummer has come.");
 	}
 	if (s == SEASON_AUTUMN) {
-		s_printf(" (autumn)");
+		s_printf(" autumn");
 		world_surface_msg("\374\377GAutumn paints the scenery.");
 	}
 	if (s == SEASON_WINTER) {
-		s_printf(" (winter)");
+		s_printf(" winter");
 		world_surface_msg("\374\377GWinter embraces the lands.");
 	}
 	s_printf("\n");
@@ -7944,10 +7924,19 @@ void player_weather(int Ind, bool entered_level, bool weather_changed, bool pane
 
 #else /* send his worldmap sector's specific weather situation */
 	w = ((entered_level) ? ((wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_type) ? 200 : -1) : 0);
+#if 0 /* buggy? */
 	Send_weather(Ind,
 	    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_type + w
+#else
+	Send_weather(Ind,
+	    ((w == -1) ? -1 : (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_type + w))
+#endif
 	    + ((weather_changed && (w != -1)) ? 10000 : 0)
+#if 0 /* glitchy? paranoia maybe */
 	    + (weather && panel_redraw ? 20000 : 0),
+#else
+	    + ((weather && panel_redraw && (w != -1)) ? 20000 : 0),
+#endif
 	    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_wind,
 	    WEATHER_GEN_TICKS,
 	    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_intensity,

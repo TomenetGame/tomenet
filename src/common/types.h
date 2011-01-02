@@ -1335,6 +1335,8 @@ struct dun_level
 {
 	int ondepth;
 	time_t lastused;
+	u32b id;		/* Unique ID to check if players logged out on the same
+				   floor or not, when they log in again- C. Blue */
 	byte up_x,up_y;
 	byte dn_x,dn_y;
 	byte rn_x,rn_y;
@@ -2187,6 +2189,8 @@ struct player_type
 	char cur_file[MAX_PATH_LENGTH];		/* Filename this player's viewing */
 	byte special_file_type;	/* Is he using *ID* or Self Knowledge? */
 
+	u32b dlev_id;		/* ID of the dungeon floor the player logged out on
+				   or 0 for surface, to decide about cave_flag reset. - C. Blue */
 	byte cave_flag[MAX_HGT][MAX_WID]; /* Can the player see this grid? */
 
 	bool mon_vis[MAX_M_IDX];  /* Can this player see these monsters? */
@@ -2266,6 +2270,9 @@ struct player_type
 	bool dummy_option_7;
 	bool dummy_option_8;
 
+	bool page_on_privmsg;
+	bool page_on_afk_privmsg;
+
 	s16b max_panel_rows;
 	s16b max_panel_cols;
 	s16b panel_row;
@@ -2340,6 +2347,12 @@ struct player_type
 	s16b current_curse;
 	s16b current_tome_creation; /* adding a spell scroll to a custom tome - C. Blue */
 	s16b current_force_stack; /* which level 0 item we're planning to stack */
+	s16b current_wand;
+	s16b current_item;
+	s16b current_aux;
+	s16b current_fire;
+	s16b current_throw;
+	s16b current_book;
 
 	s16b current_selling;
 	s16b current_sell_amt;
@@ -2673,6 +2686,7 @@ struct player_type
 	bool suscep_pois;     /* Poison does more damage on the player */
 	bool suscep_lite;	/* Light does more damage on the player */
 	bool suscep_good;	/* Anti-evil effects do more damage on the player */
+	bool suscep_evil;	/* Anti-good effects do more damage on the player */
 	bool suscep_life;	/* Anti-undead effects do more damage on the player */
 
 	bool reflect;       /* Reflect 'bolt' attacks */
@@ -2860,7 +2874,7 @@ struct player_type
 	int kills, kills_lower, kills_higher, kills_equal, kills_own;
 	int free_mimic, pvp_prevent_tele, pvp_prevent_phase;
 	long heal_effect;
-	
+
 	/* for client-side weather */
 	bool panel_changed;
 	int custom_weather; /* used /cw command */
@@ -2899,11 +2913,11 @@ struct player_type
 	   if we already gave a specific warning, so we don't spam the player with it
 	   again and again - although noone probably reads them anyway ;-p - C. Blue */
 	char warning_bpr, warning_bpr2, warning_bpr3;
-	char warning_run, warning_run_steps, warning_run_monlos;
+	char warning_run, warning_run_steps, warning_run_monlos, warning_run_lite;
 	char warning_wield, warning_chat, warning_lite, warning_lite_refill;
 	char warning_wield_combat; /* warn if engaging into combat (attacking/taking damage) without having equipped melee/ranged weapons! (except for druids) */
 	char warning_rest;/* if a char rests from <= 40% to 50% without R, or so..*/
-	char warning_mimic, warning_dual, warning_potions, warning_wor;
+	char warning_mimic, warning_dual, warning_dual_mode, warning_potions, warning_wor;
 	char warning_ghost, warning_autoret, warning_autoret_ok;
 	char warning_ma_weapon, warning_ma_shield;
 	char warning_technique_melee, warning_technique_ranged;
@@ -2919,6 +2933,11 @@ struct player_type
 	/* various flags/counters to check if a character is 'freshly made' and/or has already interacted in certain ways.
 	   Mostly to test if he/she is eglibile to join events. */
 	bool recv_gold, recv_item, bought_item, killed_mon;
+
+	/* Stuff for new SPECIAL stores and PKT_REQUEST_...;
+	   could also be used for quests and neutral monsters. - C. Blue */
+	int request_id, request_type; /* to keep track of PKT_REQUEST_... requests */
+	char go_level, go_sublevel; /* For playing Go */
 };
 
 /* For Monk martial arts */

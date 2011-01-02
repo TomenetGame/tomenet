@@ -1161,11 +1161,20 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 
 	struct c_special *cs_ptr;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
+
+#if 1
+	/* hard-coded hack: Training Tower has no streamers, only built granite walls */
+	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0)
+		return;
+#else
+	/* hard-coded hack: Training Tower streamers have no treasure */
+	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0)
+		chance = 0;
+#endif
 
 	/* Hack -- Choose starting point */
-	while (TRUE)
-	{
+	while (TRUE) {
 		y = rand_spread(dun->l_ptr->hgt / 2, 10);
 		x = rand_spread(dun->l_ptr->wid / 2, 15);
 
@@ -8796,6 +8805,10 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	dun->l_ptr = getfloor(wpos);
 	dun->l_ptr->flags1 = dun->l_ptr->flags2 = 0;
 
+	/* Random seed for checking if a player logs back in on the same
+	   [static] floor that he logged out, or if it has changed. - C. Blue */
+	dun->l_ptr->id = rand_int(0xFFFF) << 16;
+	dun->l_ptr->id += rand_int(0xFFFF);
 
 	/* test if we want fountains of blood in this dungeon - C. Blue */
 #if 0//needs dungeon_info_type and all
@@ -8889,7 +8902,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 		    (wpos->wz > 0 && wild_info[wpos->wy][wpos->wx].tower->maxdepth == wpos->wz))
 			dun->l_ptr->flags1 |= LF1_IRON_RECALL;
 		/* IRONMAN allows recalling sometimes, if IRONFIX or IRONRND */
-		else if(d_ptr && (dun_lev >= 20) && /* was 30 */
+		else if (d_ptr && (dun_lev >= 20) && /* was 30 */
 		    (((d_ptr->flags2 & DF2_IRONRND1) && magik(20)) ||
 		    ((d_ptr->flags2 & DF2_IRONRND2) && magik(12)) ||
 		    ((d_ptr->flags2 & DF2_IRONRND3) && magik(8)) ||
@@ -8904,14 +8917,11 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 		}
 	}
 	/* Generate town? */
-#ifdef TEST_SERVER
-//	if (magik(30)) town = TRUE;
-#endif
-	if (town ||
+	if (dun_lev > 2 && (town ||
 	    ((d_ptr->flags2 & DF2_TOWNS_FIX) && !(dun_lev %
 	    (dun_lev <= 30 ? 10 : (dun_lev <= 60 ? 15 : 20)))) ||
 	    ((d_ptr->flags2 & DF2_TOWNS_RND) && magik(
-	    (dun_lev <= 30 ? 10 : (dun_lev <= 60 ? 7 : 5)))) ) {
+	    (dun_lev <= 30 ? 10 : (dun_lev <= 60 ? 7 : 5)))) )) {
 		bool lit = rand_int(3) == 0;
 		/* prepare level: max size and permanent walls */
 		dun->l_ptr->wid = MAX_WID;
@@ -9463,17 +9473,33 @@ if (!nether_bottom) {
 		(void)alloc_monster(wpos, 0, TRUE);
 
 #ifdef ENABLE_DIVINE
-	/* Force a pair of darkling and candlebearer when there is at least one divine on level that
-	 * needs it.
+	/* Force a pair of darkling and candlebearer when there is at least
+	 * one divine on level that needs it.
 	 */
 	if (dun_lev >= 12 && dun_lev <= 20 &&
 	    p_ptr && p_ptr->prace == RACE_DIVINE && !p_ptr->ptrait) {
-		if (randint(2) == 1) {
-			place_monster_one(wpos, 5 + randint(dun->row_rooms - 5), randint(dun->col_rooms - 5), 1104, FALSE, FALSE, FALSE, 100, 0);
-//			s_printf("SPAWN DEBUG: 1104 spawned at %d,%d,%d\n", wpos->wx, wpos->wy, wpos->wz);
+		//5 + randint(dun->row_rooms - 5), x1 = randint(dun->col_rooms - 5);
+		int x, y, x1, y1, tries = 2000;
+		do {
+			x1 = rand_int(dun->l_ptr->wid - 6) + 3;
+			y1 = rand_int(dun->l_ptr->hgt - 6) + 3;
+		} while (!(cave_empty_bold(zcave, y1, x1) &&
+		    (zcave[y1][x1].info & CAVE_ROOM)) &&
+		    --tries);
+		if (!tries) {
+			s_printf("SPAWN DEBUG: Scattered.\n");
+			scatter(wpos, &y, &x, y1, x1, 20, FALSE);
 		} else {
-			place_monster_one(wpos, 5 + randint(dun->row_rooms - 5), randint(dun->col_rooms - 5), 1105, FALSE, FALSE, FALSE, 100, 0);
-//			s_printf("SPAWN DEBUG: 1105 spawned at %d,%d,%d\n", wpos->wx, wpos->wy, wpos->wz);
+			x = x1;
+			y = y1;
+		}
+
+		if (randint(2) == 1) {
+			s_printf("SPAWN DEBUG: 1104 requested at %d,%d,%d\n", wpos->wx, wpos->wy, wpos->wz);
+			place_monster_one(wpos, y, x, 1104, FALSE, FALSE, FALSE, 0, 0);
+		} else {
+			s_printf("SPAWN DEBUG: 1105 requested at %d,%d,%d\n", wpos->wx, wpos->wy, wpos->wz);
+			place_monster_one(wpos, y, x, 1105, FALSE, FALSE, FALSE, 0, 0);
 		}
 	}
 #endif
@@ -9713,8 +9739,8 @@ for(mx = 1; mx < 131; mx++) {
 					    (cr_ptr->feat != FEAT_MAGMA_K) &&
 					    (cr_ptr->feat != FEAT_QUARTZ_K) &&
 					    (cr_ptr->feat != FEAT_ICE_WALL) &&
-					    (cr_ptr->feat != FEAT_TREE) &&      
-					    (cr_ptr->feat != FEAT_BUSH) &&      
+					    (cr_ptr->feat != FEAT_TREE) &&
+					    (cr_ptr->feat != FEAT_BUSH) &&
 					    (cr_ptr->feat != FEAT_DEAD_TREE) &&
 					    (cr_ptr->feat != FEAT_MOUNTAIN) &&
 					    (cr_ptr->feat != FEAT_SANDWALL) &&
@@ -9756,7 +9782,7 @@ for(mx = 1; mx < 131; mx++) {
 						    (cr_ptr->feat != FEAT_MAGMA_K) &&
 						    (cr_ptr->feat != FEAT_QUARTZ_K) &&
 						    (cr_ptr->feat != FEAT_ICE_WALL) &&
-						    (cr_ptr->feat != FEAT_TREE) &&      
+						    (cr_ptr->feat != FEAT_TREE) &&
 						    (cr_ptr->feat != FEAT_DEAD_TREE) &&
 						    (cr_ptr->feat != FEAT_MOUNTAIN) &&
 						    (cr_ptr->feat != FEAT_SANDWALL) &&
@@ -10017,14 +10043,18 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 		if (n == STORE_FEAT_MORE) {
 			c_ptr->feat = FEAT_MORE;
 			new_level_up_y(wpos, y);
-			new_level_rand_y(wpos, y);
 			new_level_up_x(wpos, x);
+#if 0 /* moved down, see below. Should be ok/better? */
+			new_level_rand_y(wpos, y);
 			new_level_rand_x(wpos, x);
+#endif
 		} else {
 			c_ptr->feat = FEAT_LESS;
 			new_level_down_y(wpos, y);
 			new_level_down_x(wpos, x);
 		}
+		new_level_rand_y(wpos, y);
+		new_level_rand_x(wpos, x);
 		return;
 	}
 
@@ -10382,25 +10412,36 @@ static void place_street(struct worldpos *wpos, int vert, int place)
  * Hack -- play with the R.N.G. to always yield the same town
  * layout, including the size and shape of the buildings, the
  * locations of the doorways, and the location of the stairs.
+ *
+ * C. Blue: Modified/extended for creation of dungeon towns,
+ *          especially for ironman dungeons/towers.
  */
-#define NEW_TOWNGENHACK_METHOD /* don't clutter all stores in the center, but spread them out a bit */
+
+/* (For dungeon towns.) Don't clutter all stores in the
+   center, but spread them out a bit - C. Blue: */
+#define NEW_TOWNGENHACK_METHOD
+
 static void town_gen_hack(struct worldpos *wpos)
 {
+	bool dungeon_town = (wpos->wz != 0);
+	wilderness_type *wild = &wild_info[wpos->wy][wpos->wx];
+	struct dungeon_type *d_ptr = wpos->wz != 0 ? (wpos->wz > 0 ? wild->tower : wild->dungeon) : NULL;
+
 	int y, x, k, n;
 //	int max_rooms = (max_st_idx > 72 ? 72 : max_st_idx), base_stores = MAX_BASE_STORES; <- not working, because the amount of buildings will be too small -> repeated-stores-glitch appears.
 	int max_rooms = 72, base_stores = MAX_BASE_STORES;
 #ifdef NEW_TOWNGENHACK_METHOD
 	int posx[base_stores], posy[base_stores], pos[6 * 4];
 #endif
-
 #ifdef	DEVEL_TOWN_COMPATIBILITY
 	/* -APD- the location of the auction house */
 	int auction_x = -1, auction_y = -1;
 #endif
-
 	int rooms[max_rooms];
+
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
+
 
 	/* Hack -- Use the "simple" RNG */
 	Rand_quick = TRUE;
@@ -10409,8 +10450,11 @@ static void town_gen_hack(struct worldpos *wpos)
 #if 0 /* was ok, but now.. */
 	Rand_value = seed_town + (wpos->wx + wpos->wy * MAX_WILD_X);
 #else /* ..we have ironman towns in the dungeon, too - C. Blue */
+	/* Well, actually we could just use completely random seed for wpos != 0
+	   and just x,y dependant seed for wpos == 0. Might even be preferrable. */
 	Rand_value = seed_town + (wpos->wx + wpos->wy * MAX_WILD_X + wpos->wz * MAX_WILD_X * MAX_WILD_Y);
 #endif
+
 
 	/* Hack -- Start with basic floors */
 	for (y = 1; y < MAX_HGT - 1; y++) {
@@ -10437,8 +10481,39 @@ static void town_gen_hack(struct worldpos *wpos)
 	for (x = 0; x < 6; x++)
 		place_street(wpos, 1, x);
 
-	/* make dungeon towns look more destroyed */
-	if (wpos->wz != 0) {
+#if 0 /* disable 'deprecated' auction house for paranoia? */
+#ifdef DEVEL_TOWN_COMPATIBILITY
+	/* -APD- place the auction house near the central stores */
+	auction_x = rand_int(5) + 3;
+	if ( (auction_x == 3) || (auction_x == 8) ) auction_y = rand_int(1) + 1;
+	else auction_y = (rand_int(1) * 3) + 1; /* 1 or 4 */
+#endif
+#endif
+
+	/* Prepare an Array of "remaining stores", and count them */
+	for (n = 0; n < base_stores; n++) {
+		/* For dungeon towns, skip '8' since it allows exploiting 100% riskfree combat */
+		if (n == 7 && dungeon_town) rooms[n] = STORE_POND;
+		/* allocate base store */
+		else rooms[n] = n;
+	}
+	for (n = base_stores; n < base_stores + 10; n++) rooms[n] = STORE_POND;
+	for (n = base_stores + 10; n < base_stores + 20; n++) rooms[n] = STORE_FOREST;
+	for (n = base_stores + 20; n < base_stores + 40; n++) rooms[n] = STORE_DOORWAY;
+	for (n = base_stores + 40; n < max_rooms; n++) rooms[n] = STORE_HOUSE;
+#if 0 /* what is/was STORE_NINE? disabling it for now */
+	for (n = max_rooms - 10; n < max_rooms - 7; n++) rooms[n] = STORE_NINE;
+#endif
+
+	/* staircases */
+	if (wild->flags & WILD_F_DOWN)
+		rooms[max_rooms - 2] = STORE_FEAT_MORE;
+	if (wild->flags & WILD_F_UP)
+		rooms[max_rooms - 1] = STORE_FEAT_LESS;
+
+	/* Dungeon towns get some extra treatment: */
+	if (dungeon_town) {
+		/* make dungeon towns look more destroyed */
 		if (rand_int(2)) build_streamer(wpos, FEAT_TREE, 0, TRUE);
 		if (rand_int(2)) build_streamer(wpos, FEAT_IVY, 0, TRUE);
 #if 0 /* these obstruct stores a bit too much maybe */
@@ -10452,47 +10527,41 @@ static void town_gen_hack(struct worldpos *wpos)
 			if (rand_int(2)) build_streamer(wpos, FEAT_SHAL_LAVA, 0, TRUE);
 			if (rand_int(2)) build_streamer(wpos, FEAT_DEEP_LAVA, 0, TRUE);
 		}
-	}
 
-#if 0 /* disable 'deprecated' auction house for paranoia? */
-#ifdef DEVEL_TOWN_COMPATIBILITY
-	/* -APD- place the auction house near the central stores */
-	auction_x = rand_int(5) + 3;
-	if ( (auction_x == 3) || (auction_x == 8) ) auction_y = rand_int(1) + 1;
-	else auction_y = (rand_int(1) * 3) + 1; /* 1 or 4 */
-#endif
-#endif
+		/* For ironman dungeons: Set x,y coords when entering the level,
+		   since we don't place a 'staircase room' in the opposite
+		   direction that would set the coords for us. */
+		if ((d_ptr->flags1 & (DF1_NO_UP | DF1_FORCE_DOWN)) || (d_ptr->flags2 & DF2_IRON)) {
+			n = 1000;
+			while (n--) {
+				x = rand_int(MAX_WID - 2) + 1;
+				y = rand_int(MAX_HGT - 2) + 1;
+				if (cave_floor_bold(zcave, y, x)) break;
+			}
+			if (!n) {
+				x = 2;
+				y = 2;
+			}
+			if (wpos->wz < 0) {
+				new_level_down_x(wpos, x);
+				new_level_down_y(wpos, y);
+			} else {
+				new_level_up_x(wpos, x);
+				new_level_up_y(wpos, y);
+			}
+		}
 
-	/* Prepare an Array of "remaining stores", and count them */
-	for (n = 0; n < base_stores; n++) {
-		/* skip '8' since it allows exploiting 100% riskfree combat */
-		if (n == 7) rooms[n] = STORE_POND;
-		/* allocate base store */
-		else rooms[n] = n;
-	}
-	for (n = base_stores; n < base_stores + 10; n++) rooms[n] = STORE_POND;
-	for (n = base_stores + 10; n < base_stores + 20; n++) rooms[n] = STORE_FOREST;
-	for (n = base_stores + 20; n < base_stores + 40; n++) rooms[n] = STORE_DOORWAY;
-	for (n = base_stores + 40; n < max_rooms; n++) rooms[n] = STORE_HOUSE;
-#if 0 /* what is/was STORE_NINE? disabling it for now */
-	for (n = max_rooms - 10; n < max_rooms - 7; n++) rooms[n] = STORE_NINE;
-#endif
-
-	/* staircases */
-	if (wild_info[wpos->wy][wpos->wx].flags & WILD_F_DOWN)
-		rooms[max_rooms - 2] = STORE_FEAT_MORE;
-	if (wild_info[wpos->wy][wpos->wx].flags & WILD_F_UP)
-		rooms[max_rooms - 1] = STORE_FEAT_LESS;
-	/* more staircases if town is in dungeon */
-	if (wpos->wz != 0) {
-		if (wild_info[wpos->wy][wpos->wx].flags & WILD_F_DOWN) {
+#if 0 /* why, actually? :) */
+		/* Add additional staircases */
+		if (wild->flags & WILD_F_DOWN) {
 			rooms[max_rooms - 4] = STORE_FEAT_MORE;
 			rooms[max_rooms - 6] = STORE_FEAT_MORE;
 		}
-		if (wild_info[wpos->wy][wpos->wx].flags & WILD_F_UP) {
+		if (wild->flags & WILD_F_UP) {
 			rooms[max_rooms - 3] = STORE_FEAT_LESS;
 			rooms[max_rooms - 5] = STORE_FEAT_LESS;
 		}
+#endif
 	}
 
 #ifdef NEW_TOWNGENHACK_METHOD
@@ -10520,7 +10589,7 @@ static void town_gen_hack(struct worldpos *wpos)
 			k = rand_int(n - (max_rooms - base_stores));
 
  			/* Build that store at the proper location */
- #if 0 /* I think I took this out taken out for highlander town, but no need maybe; also required for ironman towns! - C. Blue */
+ #if 0 /* I think I took this out for highlander town, but no need maybe; also required for ironman towns! - C. Blue */
 			/* No Black Market in additional towns - C. Blue */
 			if (rooms[k] != STORE_BLACK) build_store(wpos, rooms[k], y, x);
 			//else build_store(wpos, STORE_HERBALIST, y, x);
@@ -10538,7 +10607,7 @@ static void town_gen_hack(struct worldpos *wpos)
 #else
 	for (k = 0; k < MAX_BASE_STORES; k++) {
 		/* Build that store at the proper location */
- #if 0 /* I think I took this out taken out for highlander town, but no need maybe; also required for ironman towns! - C. Blue */
+ #if 0 /* I think I took this out for highlander town, but no need maybe; also required for ironman towns! - C. Blue */
 		/* No Black Market in additional towns - C. Blue */
 		if (rooms[k] != STORE_BLACK) build_store(wpos, rooms[k], posy[k], posx[k]);
 		//else build_store(wpos, STORE_HERBALIST, y, x);
@@ -10550,7 +10619,9 @@ static void town_gen_hack(struct worldpos *wpos)
 #endif
 
 
-#if 1 /* temporarily disable all the "useless" stores? (warning: also includes stairs?) */
+/* temporarily disable all the "useless" stores (eg houses)?
+   (warning: also includes 'stair stores'?) */
+#if 1
 	/* Place two rows of stores */
 	for (y = 0; y < 6; y++) {
 		/* Place four stores per row */
@@ -10571,7 +10642,8 @@ static void town_gen_hack(struct worldpos *wpos)
 			/* Pick a random unplaced store */
 			k = rand_int(n) + base_stores;
 
-			if (rooms[k] != STORE_HOUSE || wpos->wz == 0) { /* don't build "homes" in dungeon towns */
+			/* don't build "homes" in dungeon towns */
+			if (!(rooms[k] == STORE_HOUSE && dungeon_town)) {
  #ifdef	DEVEL_TOWN_COMPATIBILITY
 				if ( (y != auction_y) || (x != auction_x) ) {
 					/* Build that store at the proper location */

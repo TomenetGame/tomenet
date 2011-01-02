@@ -148,6 +148,8 @@ cptr value_check_aux1_magic(object_type *o_ptr)
 	{
 		/* Scrolls, Potions, Wands, Staves and Rods */
 		case TV_SCROLL:
+			/* hack for cheques */
+			if (k_ptr->sval == SV_SCROLL_CHEQUE) return "good";
 		case TV_POTION:
 		case TV_POTION2:
 		case TV_WAND:
@@ -274,6 +276,8 @@ cptr value_check_aux2_magic(object_type *o_ptr)
 	{
 		/* Scrolls, Potions, Wands, Staves and Rods */
 		case TV_SCROLL:
+			/* hack for cheques */
+			if (k_ptr->sval == SV_SCROLL_CHEQUE) return "good";
 		case TV_POTION:
 		case TV_POTION2:
 		case TV_WAND:
@@ -424,19 +428,15 @@ static void sense_inventory(int Ind)
 	/*** Sense everything ***/
 
 	/* Check everything */
-	for (i = 0; i < INVEN_TOTAL; i++)
-	{
+	for (i = 0; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
 
 		/* Skip empty slots */
 		if (!o_ptr->k_idx) continue;
-
 		/* We know about it already, do not tell us again */
 		if (o_ptr->ident & ID_SENSE) continue;
-
 		/* It is fully known, no information needed */
 		if (object_known_p(Ind, o_ptr)) continue;
-
 		/* Occasional failure on inventory items */
 		if ((i < INVEN_WIELD) &&
 		    (magik(80) || UNAWARENESS(p_ptr))) continue;
@@ -447,67 +447,57 @@ static void sense_inventory(int Ind)
 		if (ok_curse && cursed_p(o_ptr)) feel = value_check_aux1(o_ptr);
 
 		/* Valid "tval" codes */
-		switch (o_ptr->tval)
-		{
-			case TV_DIGGING:
-			case TV_BLUNT:
-			case TV_POLEARM:
-			case TV_SWORD:
-			case TV_BOOTS:
-			case TV_GLOVES:
-			case TV_HELM:
-			case TV_CROWN:
-			case TV_SHIELD:
-			case TV_CLOAK:
-			case TV_SOFT_ARMOR:
-			case TV_HARD_ARMOR:
-			case TV_DRAG_ARMOR:
-			case TV_AXE:
-			case TV_TRAPKIT:
-			{
-				if (ok_combat)
-					feel = (heavy ? value_check_aux1(o_ptr) :
-							value_check_aux2(o_ptr));
-				if (heavy) felt_heavy = TRUE;
-				break;
-			}
-
-			case TV_MSTAFF:
-			{
-				if (ok_magic)
-					feel = (heavy_magic ? value_check_aux1(o_ptr) :
-							value_check_aux2(o_ptr));
-				if (heavy_magic) felt_heavy = TRUE;
-				break;
-			}
-
-			case TV_POTION:
-			case TV_POTION2:
-			case TV_SCROLL:
-			case TV_WAND:
-			case TV_STAFF:
-			case TV_ROD:
-			case TV_FOOD:
-			{
-				if (ok_magic && !object_aware_p(Ind, o_ptr))
-					feel = (heavy_magic ? value_check_aux1_magic(o_ptr) :
-							value_check_aux2_magic(o_ptr));
-				if (heavy_magic) felt_heavy = TRUE;
-				break;
-			}
-
-			case TV_SHOT:
-			case TV_ARROW:
-			case TV_BOLT:
-			case TV_BOW:
-			case TV_BOOMERANG:
-			{
-				if (ok_archery || (ok_combat && magik(25)))
-					feel = (heavy_archery ? value_check_aux1(o_ptr) :
-							value_check_aux2(o_ptr));
-				if (heavy_archery) felt_heavy = TRUE;
-				break;
-			}
+		switch (o_ptr->tval) {
+		case TV_DIGGING:
+		case TV_BLUNT:
+		case TV_POLEARM:
+		case TV_SWORD:
+		case TV_BOOTS:
+		case TV_GLOVES:
+		case TV_HELM:
+		case TV_CROWN:
+		case TV_SHIELD:
+		case TV_CLOAK:
+		case TV_SOFT_ARMOR:
+		case TV_HARD_ARMOR:
+		case TV_DRAG_ARMOR:
+		case TV_AXE:
+		case TV_TRAPKIT:
+			if (ok_combat)
+				feel = (heavy ? value_check_aux1(o_ptr) :
+						value_check_aux2(o_ptr));
+			if (heavy) felt_heavy = TRUE;
+			break;
+		case TV_MSTAFF:
+			if (ok_magic)
+				feel = (heavy_magic ? value_check_aux1(o_ptr) :
+						value_check_aux2(o_ptr));
+			if (heavy_magic) felt_heavy = TRUE;
+			break;
+		case TV_SCROLL:
+			/* hack for cheques: Don't try to pseudo-id them at all. */
+			if (o_ptr->sval == SV_SCROLL_CHEQUE) continue;
+		case TV_POTION:
+		case TV_POTION2:
+		case TV_WAND:
+		case TV_STAFF:
+		case TV_ROD:
+		case TV_FOOD:
+			if (ok_magic && !object_aware_p(Ind, o_ptr))
+				feel = (heavy_magic ? value_check_aux1_magic(o_ptr) :
+				    value_check_aux2_magic(o_ptr));
+			if (heavy_magic) felt_heavy = TRUE;
+			break;
+		case TV_SHOT:
+		case TV_ARROW:
+		case TV_BOLT:
+		case TV_BOW:
+		case TV_BOOMERANG:
+			if (ok_archery || (ok_combat && magik(25)))
+				feel = (heavy_archery ? value_check_aux1(o_ptr) :
+				    value_check_aux2(o_ptr));
+			if (heavy_archery) felt_heavy = TRUE;
+			break;
 		}
 
 		/* Skip non-feelings */
@@ -523,19 +513,16 @@ static void sense_inventory(int Ind)
 		if (p_ptr->taciturn_messages) suppress_message = TRUE;
 
 		/* Message (equipment) */
-		if (i >= INVEN_WIELD)
-		{
+		if (i >= INVEN_WIELD) {
 			msg_format(Ind, "You feel the %s (%c) you are %s %s %s...",
-			           o_name, index_to_label(i), describe_use(Ind, i),
-			           ((o_ptr->number == 1) ? "is" : "are"), feel);
+			    o_name, index_to_label(i), describe_use(Ind, i),
+			    ((o_ptr->number == 1) ? "is" : "are"), feel);
 		}
-
 		/* Message (inventory) */
-		else
-		{
+		else {
 			msg_format(Ind, "You feel the %s (%c) in your pack %s %s...",
-			           o_name, index_to_label(i),
-			           ((o_ptr->number == 1) ? "is" : "are"), feel);
+			    o_name, index_to_label(i),
+			    ((o_ptr->number == 1) ? "is" : "are"), feel);
 		}
 
 		suppress_message = FALSE;
@@ -1597,7 +1584,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 
 	/* Is it variant @Ot for town-only auto-retaliation? - C. Blue */
 	if (*inscription == 't') {
-		if (!istownarea(&p_ptr->wpos, 2)) return TRUE;
+		if (!istownarea(&p_ptr->wpos, 2)) return FALSE;
 		inscription++;
 	}
 
@@ -2414,8 +2401,9 @@ static void process_player_begin(int Ind)
 	/* Storing up extra energy lets us perform actions while we are running */
 	//if (p_ptr->energy > (level_speed(p_ptr->dun_depth)*6)/5)
 	//	p_ptr->energy = (level_speed(p_ptr->dun_depth)*6)/5;
-	if (p_ptr->energy > (level_speed(&p_ptr->wpos)*2) - 1)
-		p_ptr->energy = (level_speed(&p_ptr->wpos)*2) - 1;
+	/* Keep consistent with spells1.c */
+	if (p_ptr->energy > (level_speed(&p_ptr->wpos) * 2) - 1)
+		p_ptr->energy = (level_speed(&p_ptr->wpos) * 2) - 1;
 
 	/* Check "resting" status */
 	if (p_ptr->resting)
@@ -3571,9 +3559,9 @@ static bool process_player_end_aux(int Ind)
 	/* Poison */
 	if (p_ptr->poisoned) {
 		int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
+		/* Apply some healing */
 		if (get_skill(p_ptr, SKILL_HCURING) >= 30) adjust *= 2;
 
-		/* Apply some healing */
 		//(void)set_poisoned(Ind, p_ptr->poisoned - adjust - minus_health * 2, p_ptr->poisoned_attacker);
 		(void)set_poisoned(Ind, p_ptr->poisoned - (adjust + minus_health) * (minus_health + 1), p_ptr->poisoned_attacker);
 	}
@@ -3681,10 +3669,11 @@ static bool process_player_end_aux(int Ind)
 	/* Burn some fuel in the current lite */
 	if (o_ptr->tval == TV_LITE) {
 		u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
+
 		/* Hack -- Use some fuel (sometimes) */
 #if 0
 		if (!artifact_p(o_ptr) && !(o_ptr->sval == SV_LITE_DWARVEN)
-				&& !(o_ptr->sval == SV_LITE_FEANOR) && (o_ptr->pval > 0) && (!o_ptr->name3))
+		    && !(o_ptr->sval == SV_LITE_FEANOR) && (o_ptr->pval > 0) && (!o_ptr->name1))
 #endif	// 0
 
 			/* Extract the item flags */
@@ -3965,7 +3954,7 @@ static bool process_player_end_aux(int Ind)
 	}
 
 	/* Feel the inventory */
-	sense_inventory(Ind);
+	if (!p_ptr->admin_dm) sense_inventory(Ind);
 
 	/*** Involuntary Movement ***/
 
@@ -4003,6 +3992,9 @@ static bool process_player_end_aux(int Ind)
 	/* Don't do AFK in a store */
 	if (p_ptr->tim_store) {
 		if (p_ptr->store_num == -1) p_ptr->tim_store = 0;
+#ifdef ENABLE_GO_GAME
+		else if (go_game_up && go_engine_player_id == p_ptr->id) p_ptr->tim_store = 0;
+#endif
 		else {
 			/* Count down towards turnout */
 			p_ptr->tim_store--;
@@ -4370,8 +4362,8 @@ static void do_unstat(struct worldpos *wpos)
 //			&& stale_level(wpos))
 	{
 		/* makes levels between 50ft and min_unstatic_level unstatic on player saving/quiting game/leaving level DEG */
-		if ((( getlevel(wpos) < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level)) || 
-				stale_level(wpos, cfg.level_unstatic_chance * getlevel(wpos) * 60))
+		if ((( getlevel(wpos) < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level)) ||
+		    stale_level(wpos, cfg.level_unstatic_chance * getlevel(wpos) * 60))
 			new_players_on_depth(wpos,0,FALSE);
 	}
 #if 0
@@ -4446,36 +4438,36 @@ static void purge_old()
 				w_ptr = &wild_info[twpos.wy][twpos.wx];
 
 				if (cfg.level_unstatic_chance > 0 &&
-					players_on_depth(&twpos))
+				    players_on_depth(&twpos))
 					do_unstat(&twpos);
 
-				if(!players_on_depth(&twpos) && !istown(&twpos) &&
-						getcave(&twpos) && stale_level(&twpos, cfg.anti_scum))
+				if (!players_on_depth(&twpos) && !istown(&twpos) &&
+				    getcave(&twpos) && stale_level(&twpos, cfg.anti_scum))
 					dealloc_dungeon_level(&twpos);
 
-				if(w_ptr->flags & WILD_F_UP) {
+				if (w_ptr->flags & WILD_F_UP) {
 					d_ptr = w_ptr->tower;
-					for(i = 1; i <= d_ptr->maxdepth; i++) {
+					for (i = 1; i <= d_ptr->maxdepth; i++) {
 						twpos.wz = i;
 						if (cfg.level_unstatic_chance > 0 &&
-							players_on_depth(&twpos))
-						do_unstat(&twpos);
+						    players_on_depth(&twpos))
+							do_unstat(&twpos);
 						
-						if(!players_on_depth(&twpos) && getcave(&twpos) &&
-								stale_level(&twpos, cfg.anti_scum))
+						if (!players_on_depth(&twpos) && getcave(&twpos) &&
+						    stale_level(&twpos, cfg.anti_scum))
 							dealloc_dungeon_level(&twpos);
 					}
 				}
-				if(w_ptr->flags & WILD_F_DOWN) {
+				if (w_ptr->flags & WILD_F_DOWN) {
 					d_ptr = w_ptr->dungeon;
-					for(i = 1; i <= d_ptr->maxdepth; i++) {
+					for (i = 1; i <= d_ptr->maxdepth; i++) {
 						twpos.wz = -i;
 						if (cfg.level_unstatic_chance > 0 &&
-							players_on_depth(&twpos))
+						    players_on_depth(&twpos))
 							do_unstat(&twpos);
 
-						if(!players_on_depth(&twpos) && getcave(&twpos) &&
-								stale_level(&twpos, cfg.anti_scum))
+						if (!players_on_depth(&twpos) && getcave(&twpos) &&
+						    stale_level(&twpos, cfg.anti_scum))
 							dealloc_dungeon_level(&twpos);
 					}
 				}
@@ -4650,110 +4642,111 @@ void tradhouse_contents_chmod()
  * - this function should handle items in 'traditional' houses too
  * - maybe rename this function (scan_objects and scan_objs...)
  */
-static void scan_objs(){
+static void scan_objs() {
 	int i, cnt = 0, dcnt = 0;
 	bool sj;
 	object_type *o_ptr;
+	cave_type **zcave;
 
 	/* objects time-outing disabled? */
 	if (!cfg.surface_item_removal && !cfg.dungeon_item_removal) return;
 
 	for(i = 0; i < o_max; i++){
 		o_ptr = &o_list[i];
-		if(o_ptr->k_idx){
-			sj = FALSE;
-			/* not dropped on player death or generated on the floor? (or special stuff) */
-			if (o_ptr->marked2 == ITEM_REMOVAL_NEVER ||
-			    o_ptr->marked2 == ITEM_REMOVAL_HOUSE)
-				continue;
+		if (!o_ptr->k_idx) continue;
 
-			/* check items on the world's surface */
-			if(!o_ptr->wpos.wz && cfg.surface_item_removal) {
-				/* hack for monster trap items */
-				/* XXX noisy warning, eh? */ /* This is unsatisfactory. */
-				if (!in_bounds_array(o_ptr->iy, o_ptr->ix) &&
-				    /* There was an old woman who swallowed a fly... */
-				    in_bounds_array(255 - o_ptr->iy, o_ptr->ix)) {
-					sj = TRUE;
-					o_ptr->iy = 255 - o_ptr->iy;
-				}
+		sj = FALSE;
+		/* not dropped on player death or generated on the floor? (or special stuff) */
+		if (o_ptr->marked2 == ITEM_REMOVAL_NEVER ||
+		    o_ptr->marked2 == ITEM_REMOVAL_HOUSE)
+			continue;
 
-				if (in_bounds_array(o_ptr->iy, o_ptr->ix)) { // monster trap?
-					/* Artifacts and objects that were inscribed and dropped by
-					the dungeon master or by unique monsters on their death
-					stay n times as long as cfg.surface_item_removal specifies */
-					if (o_ptr->marked2 == ITEM_REMOVAL_QUICK) {
-						if (++o_ptr->marked >= 10) {
-							delete_object_idx(i, TRUE);
-							dcnt++;
-						}
-					} else if (++o_ptr->marked >= ((artifact_p(o_ptr) ||
-					    (o_ptr->note && !o_ptr->owner))?
-					    cfg.surface_item_removal * 3 : cfg.surface_item_removal)
-					    + (o_ptr->marked2 == ITEM_REMOVAL_DEATH_WILD ? cfg.death_wild_item_removal : 0)
-					    + (o_ptr->marked2 == ITEM_REMOVAL_LONG_WILD ? cfg.long_wild_item_removal : 0)
-					    ) {
-						delete_object_idx(i, TRUE);
-						dcnt++;
-					}
-				}
-
-				/* Also perform a 'cheeze check' */
- #if CHEEZELOG_LEVEL > 1
-				else
-  #if CHEEZELOG_LEVEL < 4
-				/* ..only once an hour. (logs would fill the hd otherwise ;( */
-				if (!(turn % (cfg.fps * 3600)))
-  #endif	/* CHEEZELOG_LEVEL (4) */
-				cheeze(o_ptr);
- #endif	/* CHEEZELOG_LEVEL (1) */
-
-				/* count amount of items that were checked */
-				cnt++;
-			}
-
-			/* check items on dungeon/tower floors */
-			else if(o_ptr->wpos.wz && cfg.dungeon_item_removal) {
-				/* hack for monster trap items */
-				if (!in_bounds_array(o_ptr->iy, o_ptr->ix) &&
-					in_bounds_array(255 - o_ptr->iy, o_ptr->ix)){
-					sj = TRUE;
-					o_ptr->iy = 255 - o_ptr->iy;
-				}
-
-				if (in_bounds_array(o_ptr->iy, o_ptr->ix)) { // monster trap?
-					/* Artifacts and objects that were inscribed and dropped by
-					the dungeon master or by unique monsters on their death
-					stay n times as long as cfg.surface_item_removal specifies */
-					if(++o_ptr->marked >= ((artifact_p(o_ptr) ||
-					    (o_ptr->note && !o_ptr->owner))?
-					    cfg.dungeon_item_removal * 3 : cfg.dungeon_item_removal)) {
-						delete_object_idx(i, TRUE);
-						dcnt++;
-					}
-				}
-
-				/* Also perform a 'cheeze check' */
- #if CHEEZELOG_LEVEL > 1
-				else
-  #if CHEEZELOG_LEVEL < 4
-				/* ..only once an hour. (logs would fill the hd otherwise ;( */
-				if (!(turn % (cfg.fps * 3600)))
-  #endif	/* CHEEZELOG_LEVEL (4) */
-				cheeze(o_ptr);
- #endif	/* CHEEZELOG_LEVEL (1) */
-
-				/* count amount of items that were checked */
-				cnt++;
-			}
-
-			/* restore monster trap hack */
-			if(sj) o_ptr->iy = 255 - o_ptr->iy; /* mega-hack: never inbounds */
+		/* hack for monster trap items */
+		/* XXX noisy warning, eh? */ /* This is unsatisfactory. */
+		if (!in_bounds_array(o_ptr->iy, o_ptr->ix) &&
+		    /* There was an old woman who swallowed a fly... */
+		    in_bounds_array(255 - o_ptr->iy, o_ptr->ix)) {
+			sj = TRUE;
+			o_ptr->iy = 255 - o_ptr->iy;
 		}
+
+		/* Make town Inns a safe place to store (read: cheeze) items,
+		   at least as long as the town level is allocated. - C. Blue */
+		if ((zcave = getcave(&o_ptr->wpos))
+		    && in_bounds_array(o_ptr->iy, o_ptr->ix) //paranoia or monster trap? or tradhouse?
+		    && (f_info[zcave[o_ptr->iy][o_ptr->ix].feat].flags1 & FF1_PROTECTED))
+			continue;
+
+		/* check items on the world's surface */
+		if (!o_ptr->wpos.wz && cfg.surface_item_removal) {
+			if (in_bounds_array(o_ptr->iy, o_ptr->ix)) { //paranoia or monster trap? or tradhouse?
+				/* Artifacts and objects that were inscribed and dropped by
+				the dungeon master or by unique monsters on their death
+				stay n times as long as cfg.surface_item_removal specifies */
+				if (o_ptr->marked2 == ITEM_REMOVAL_QUICK) {
+					if (++o_ptr->marked >= 10) {
+						delete_object_idx(i, TRUE);
+						dcnt++;
+					}
+				} else if (++o_ptr->marked >= ((artifact_p(o_ptr) ||
+				    (o_ptr->note && !o_ptr->owner))?
+				    cfg.surface_item_removal * 3 : cfg.surface_item_removal)
+				    + (o_ptr->marked2 == ITEM_REMOVAL_DEATH_WILD ? cfg.death_wild_item_removal : 0)
+				    + (o_ptr->marked2 == ITEM_REMOVAL_LONG_WILD ? cfg.long_wild_item_removal : 0)
+				    ) {
+					delete_object_idx(i, TRUE);
+					dcnt++;
+				}
+			}
+
+			/* Also perform a 'cheeze check' */
+ #if CHEEZELOG_LEVEL > 1
+			else
+  #if CHEEZELOG_LEVEL < 4
+			/* ..only once an hour. (logs would fill the hd otherwise ;( */
+			if (!(turn % (cfg.fps * 3600)))
+  #endif	/* CHEEZELOG_LEVEL (4) */
+				cheeze(o_ptr);
+ #endif	/* CHEEZELOG_LEVEL (1) */
+
+			/* count amount of items that were checked */
+			cnt++;
+		}
+
+		/* check items on dungeon/tower floors */
+		else if (o_ptr->wpos.wz && cfg.dungeon_item_removal) {
+			if (in_bounds_array(o_ptr->iy, o_ptr->ix)) { //paranoia or monster trap? or tradhouse?
+				/* Artifacts and objects that were inscribed and dropped by
+				the dungeon master or by unique monsters on their death
+				stay n times as long as cfg.surface_item_removal specifies */
+				if (++o_ptr->marked >= ((artifact_p(o_ptr) ||
+				    (o_ptr->note && !o_ptr->owner))?
+				    cfg.dungeon_item_removal * 3 : cfg.dungeon_item_removal)) {
+					delete_object_idx(i, TRUE);
+					dcnt++;
+				}
+			}
+
+			/* Also perform a 'cheeze check' */
+ #if CHEEZELOG_LEVEL > 1
+			else
+  #if CHEEZELOG_LEVEL < 4
+			/* ..only once an hour. (logs would fill the hd otherwise ;( */
+			if (!(turn % (cfg.fps * 3600)))
+  #endif	/* CHEEZELOG_LEVEL (4) */
+				cheeze(o_ptr);
+ #endif	/* CHEEZELOG_LEVEL (1) */
+
+			/* count amount of items that were checked */
+			cnt++;
+		}
+
+		/* restore monster trap hack */
+		if (sj) o_ptr->iy = 255 - o_ptr->iy; /* mega-hack: never inbounds */
 	}
 
 	/* log result */
-	if(dcnt) s_printf("Scanned %d objects. Removed %d.\n", cnt, dcnt);
+	if (dcnt) s_printf("Scanned %d objects. Removed %d.\n", cnt, dcnt);
 
 #ifndef USE_MANG_HOUSE_ONLY
 	/* Additional cheeze check for all those items inside of mangband-style houses */
@@ -5096,7 +5089,7 @@ static void process_player_change_wpos(int Ind)
 			fake_store_visited[-2 - p_ptr->store_num] = 0;
 		}
 #endif
-		p_ptr->store_num = -1;
+		handle_store_leave(Ind);
 		Send_store_kick(Ind);
 	}
 
@@ -5168,10 +5161,12 @@ static void process_player_change_wpos(int Ind)
 			p_ptr->cave_flag[y][x] = 0;
 		}
 	}
+	/* Player now starts mapping this dungeon (as far as its flags allow) */
+	if (l_ptr) p_ptr->dlev_id = l_ptr->id;
+	else p_ptr->dlev_id = 0;
 
 	/* Memorize the town and all wilderness levels close to town */
-	if (istownarea(wpos, 2))
-	{
+	if (istownarea(wpos, 2)) {
 		p_ptr->max_panel_rows = (MAX_HGT / SCREEN_HGT) * 2 - 2;
 		p_ptr->max_panel_cols = (MAX_WID / SCREEN_WID) * 2 - 2;
 
@@ -5380,7 +5375,7 @@ static void process_player_change_wpos(int Ind)
 	for (m_idx = m_top - 1; m_idx >= 0; m_idx--) {
 		monster_type *m_ptr = &m_list[m_fast[m_idx]];
 		cave_type **mcave;
-		mcave=getcave(&m_ptr->wpos);
+		mcave = getcave(&m_ptr->wpos);
 
 		if (!m_fast[m_idx]) continue;
 
@@ -5397,7 +5392,7 @@ static void process_player_change_wpos(int Ind)
 		starty = y;
 		startx = x;
 
-		if (!m_ptr->wpos.wz && !(m_ptr->mind&GOLEM_FOLLOW)) continue;
+		if (!m_ptr->wpos.wz && !(m_ptr->mind & GOLEM_FOLLOW)) continue;
 		/*
 		   if (m_ptr->mind & GOLEM_GUARD && !(m_ptr->mind&GOLEM_FOLLOW)) continue;
 		   */
@@ -5466,8 +5461,18 @@ static void process_player_change_wpos(int Ind)
 	panel_bounds(Ind);
 	forget_view(Ind);
 	forget_lite(Ind);
+	/* original order: update_view first, then update_lite.  - C. Blue
+	   Problem: can't see some grids when entering destroyed levels.
+	   Fix: update lite before view.
+	   New problem: Had panic save, thought maybe since lite depends on correctly
+	    initialized view, but otoh view also seems to depend on lite oO.
+	    Turned out that wasn't the panic save (fixed now).
+	   Still new problem: Now after changing wpos, lite would be a square
+	    instead of circle, until moving.
+	   Fix: Add another update_view in the beginning -_-. */
 	update_view(Ind);
 	update_lite(Ind);
+	update_view(Ind);
 	update_monsters(TRUE);
 
 	/* Tell him that he should beware */
@@ -5620,14 +5625,8 @@ void dungeon(void)
 	/* Return if no one is playing */
 	/* if (!NumPlayers) return; */
 
-#ifdef ARCADE_SERVER
-        if (turn % (cfg.fps / 3) == 1) exec_lua(1, "firin()");
-        if (turn % tron_speed == 1) exec_lua(1, "tron()");
-#endif
-
 	/* Check for death.  Go backwards (very important!) */
-	for (i = NumPlayers; i > 0; i--)
-	{
+	for (i = NumPlayers; i > 0; i--) {
 		/* Check connection first */
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
@@ -5638,8 +5637,7 @@ void dungeon(void)
 	}
 
 	/* Check player's depth info */
-	for (i = 1; i < NumPlayers + 1; i++)
-	{
+	for (i = 1; i < NumPlayers + 1; i++) {
 		player_type *p_ptr = Players[i]; 
 		if (p_ptr->conn == NOT_CONNECTED || !p_ptr->new_level_flag)
 			continue;
@@ -5664,8 +5662,7 @@ void dungeon(void)
 	/* Note -- this is the END of the last turn */
 
 	/* Do final end of turn processing for each player */
-	for (i = 1; i < NumPlayers + 1; i++)
-	{
+	for (i = 1; i < NumPlayers + 1; i++) {
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
 
@@ -5675,8 +5672,7 @@ void dungeon(void)
 
 	/* paranoia - It's done twice */
 	/* Check for death.  Go backwards (very important!) */
-	for (i = NumPlayers; i > 0; i--)
-	{
+	for (i = NumPlayers; i > 0; i--) {
 		/* Check connection first */
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
@@ -5720,8 +5716,7 @@ void dungeon(void)
 	   be handled _after_ a player got set to 'dead',
 	   or gameplay might in very rare occasions get
 	   screwed up (someone dieing when he shouldn't) - C. Blue */
-	if (!(turn % cfg.fps))
-	{
+	if (!(turn % cfg.fps)) {
 		/* Process global_events */
 		process_global_events();
 
@@ -5763,8 +5758,7 @@ void dungeon(void)
 
 
 	/* Do some beginning of turn processing for each player */
-	for (i = 1; i < NumPlayers + 1; i++)
-	{
+	for (i = 1; i < NumPlayers + 1; i++) {
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
 
@@ -5809,65 +5803,69 @@ void dungeon(void)
 
 	/* Process the world */
 	if (!(turn % 50)) {
-		if(cfg.runlevel<6 && time(NULL)-cfg.closetime>120)
-			set_runlevel(cfg.runlevel-1);
+		if (cfg.runlevel < 6 && time(NULL) - cfg.closetime > 120)
+			set_runlevel(cfg.runlevel - 1);
 
-		if(cfg.runlevel<5) {
-			for(i=NumPlayers; i>0 ;i--) {
-				if(Players[i]->conn==NOT_CONNECTED) continue;
-				if(Players[i]->wpos.wz!=0) break;
+		if (cfg.runlevel < 5) {
+			for (i = NumPlayers; i > 0 ;i--) {
+				if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (Players[i]->wpos.wz != 0) break;
 			}
-			if(!i) set_runlevel(0);
+			if (!i) set_runlevel(0);
 		}
 
-		if(cfg.runlevel == 2049) {
+		if (cfg.runlevel == 2049) {
 			shutdown_server();
 		}
-		if(cfg.runlevel == 2048) {
-			for(i = NumPlayers; i > 0 ;i--) {
-				if(Players[i]->conn==NOT_CONNECTED) continue;
+#ifdef ENABLE_GO_GAME
+		if (cfg.runlevel == 2048 && !go_game_up) {
+#else
+		if (cfg.runlevel == 2048) {
+#endif
+			for (i = NumPlayers; i > 0 ;i--) {
+				if (Players[i]->conn == NOT_CONNECTED) continue;
 				/* Ignore admins that are loged in */
-				if(admin_p(i)) continue;
+				if (admin_p(i)) continue;
 				/* Ignore characters that are afk and not in a dungeon/tower */
 //				if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
 				/* Ignore characters that are not in a dungeon/tower */
-				if(Players[i]->wpos.wz == 0) {
+				if (Players[i]->wpos.wz == 0) {
 					/* Don't interrupt events though */
 					if (Players[i]->wpos.wx != WPOS_SECTOR00_X || Players[i]->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
 				}
 				break;
 			}
-			if(!i) {
+			if (!i) {
 				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
 				cfg.runlevel = 2049;
 			}
 		}
-		if(cfg.runlevel == 2047) {
+		if (cfg.runlevel == 2047) {
 			int n = 0;
-			for(i = NumPlayers; i > 0 ;i--) {
-				if(Players[i]->conn==NOT_CONNECTED) continue;
+			for (i = NumPlayers; i > 0 ;i--) {
+				if (Players[i]->conn == NOT_CONNECTED) continue;
 				/* Ignore admins that are loged in */
-				if(admin_p(i)) continue;
+				if (admin_p(i)) continue;
 				/* count players */
 				n++;
 				/* Ignore characters that are afk and not in a dungeon/tower */
 //				if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
 				/* Ignore characters that are not in a dungeon/tower */
-				if(Players[i]->wpos.wz == 0) {
+				if (Players[i]->wpos.wz == 0) {
 					/* Don't interrupt events though */
 					if (Players[i]->wpos.wx != WPOS_SECTOR00_X || Players[i]->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
 				}
 				break;
 			}
-			if(!i && (n <= 7)) {
+			if (!i && (n <= 7)) {
 				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
 				cfg.runlevel = 2049;
 			}
 		}
-		if(cfg.runlevel == 2046) {
+		if (cfg.runlevel == 2046) {
 			int n = 0;
-			for(i = NumPlayers; i > 0 ;i--) {
-				if(Players[i]->conn==NOT_CONNECTED) continue;
+			for (i = NumPlayers; i > 0 ;i--) {
+				if(Players[i]->conn == NOT_CONNECTED) continue;
 				/* Ignore admins that are loged in */
 				if(admin_p(i)) continue;
 				/* count players */
@@ -5876,37 +5874,37 @@ void dungeon(void)
 				/* Ignore characters that are afk and not in a dungeon/tower */
 //				if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
 				/* Ignore characters that are not in a dungeon/tower */
-				if(Players[i]->wpos.wz == 0) {
+				if (Players[i]->wpos.wz == 0) {
 					/* Don't interrupt events though */
 					if (Players[i]->wpos.wx != WPOS_SECTOR00_X || Players[i]->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
 				}
 				break;
 			}
-			if(!i && (n <= 4)) {
+			if (!i && (n <= 4)) {
 				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
 				cfg.runlevel = 2049;
 			}
 		}
-		if(cfg.runlevel == 2045) {
+		if (cfg.runlevel == 2045) {
 			int n = 0;
-			for(i = NumPlayers; i > 0 ;i--) {
-				if(Players[i]->conn==NOT_CONNECTED) continue;
+			for (i = NumPlayers; i > 0 ;i--) {
+				if(Players[i]->conn == NOT_CONNECTED) continue;
 				/* Ignore admins that are loged in */
 				if(admin_p(i)) continue;
 				/* count players */
 				n++;
 			}
-			if(!n) {
+			if (!n) {
 				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
 				cfg.runlevel = 2049;
 			}
 		}
-		if(cfg.runlevel == 2044) {
+		if (cfg.runlevel == 2044) {
 			int n = 0;
-			for(i = NumPlayers; i > 0 ;i--) {
-				if(Players[i]->conn==NOT_CONNECTED) continue;
+			for (i = NumPlayers; i > 0 ;i--) {
+				if (Players[i]->conn == NOT_CONNECTED) continue;
 				/* Ignore admins that are loged in */
-				if(admin_p(i)) continue;
+				if (admin_p(i)) continue;
 				/* Ignore perma-afk players! */
 				//if (Players[i]->afk && 
 				if (is_inactive(i) >= 30 * 20) /* 20 minutes idle? */
@@ -5917,19 +5915,19 @@ void dungeon(void)
 				/* Ignore characters that are afk and not in a dungeon/tower */
 //				if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
 				/* Ignore characters that are not in a dungeon/tower */
-				if(Players[i]->wpos.wz == 0) {
+				if (Players[i]->wpos.wz == 0) {
 					/* Don't interrupt events though */
 					if (Players[i]->wpos.wx != WPOS_SECTOR00_X || Players[i]->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
 				}
 				break;
 			}
-			if(!i && (n <= 4)) {
+			if (!i && (n <= 4)) {
 				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
 				cfg.runlevel = 2049;
 			}
 		}
 
-		if(cfg.runlevel == 2043) {
+		if (cfg.runlevel == 2043) {
 			if (shutdown_recall_timer <= 60 && shutdown_recall_state < 3) {
 				msg_broadcast(0, "\374\377I*** \377RServer-shutdown in max 1 minute (auto-recall). \377I***");
 				shutdown_recall_state = 3;
@@ -5943,12 +5941,12 @@ void dungeon(void)
 				shutdown_recall_state = 1;
 			}
 			if (!shutdown_recall_timer) {
-				for(i = NumPlayers; i > 0 ;i--) {
-					if(Players[i]->conn==NOT_CONNECTED) continue;
+				for (i = NumPlayers; i > 0 ;i--) {
+					if (Players[i]->conn == NOT_CONNECTED) continue;
 
-					if(admin_p(i)) continue;
+					if (admin_p(i)) continue;
 
-					if(Players[i]->wpos.wz) {
+					if (Players[i]->wpos.wz) {
 						Players[i]->recall_pos.wx = Players[i]->wpos.wx;
 						Players[i]->recall_pos.wy = Players[i]->wpos.wy;
 						Players[i]->recall_pos.wz = 0;
@@ -5959,10 +5957,10 @@ void dungeon(void)
 				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
 				cfg.runlevel = 2049;
 			} else {
-				for(i = NumPlayers; i > 0 ;i--) {
-					if(Players[i]->conn==NOT_CONNECTED) continue;
+				for (i = NumPlayers; i > 0 ;i--) {
+					if (Players[i]->conn == NOT_CONNECTED) continue;
 					/* Ignore admins that are loged in */
-					if(admin_p(i)) continue;
+					if (admin_p(i)) continue;
 					/* Ignore characters that are afk and not in a dungeon/tower */
 //						if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
 					/* Ignore characters that are not in a dungeon/tower */
@@ -5972,7 +5970,7 @@ void dungeon(void)
 					}
 					break;
 				}
-				if(!i) {
+				if (!i) {
 					msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
 					cfg.runlevel = 2049;
 				}
@@ -6054,7 +6052,7 @@ void dungeon(void)
 		/* Window stuff */
 		if (p_ptr->window) window_stuff(i);
 	}
-	
+
 	/* Animate player's @ in his own view here on server side */
 	/* This animation is only for mana shield / GOI indication */
 	if (!(turn % 5))
@@ -6063,11 +6061,22 @@ void dungeon(void)
 		lite_spot(i, Players[i]->py, Players[i]->px);
 	}
 
-	/* process debugging/helper functions - C. Blue */
+	/* Process debugging/helper functions - C. Blue */
 	if (store_debug_mode &&
 	    /* '/ 10 ' stands for quick motion, ie time * 10 */
 	    (!(turn % ((store_debug_mode * (10L * cfg.store_turns)) / store_debug_quickmotion))))
 		store_debug_stock();
+
+#ifdef ARCADE_SERVER
+	/* Process special Arcade Server things */
+        if (turn % (cfg.fps / 3) == 1) exec_lua(1, "firin()");
+        if (turn % tron_speed == 1) exec_lua(1, "tron()");
+#endif
+
+#ifdef ENABLE_GO_GAME
+	/* Process Go AI engine communication (its replies) */
+	if (go_engine_processing) go_engine_process();
+#endif
 
 	/* Send any information over the network */
 	Net_output();
@@ -6338,6 +6347,11 @@ void shutdown_server(void) {
 	/* Tell the metaserver that we're gone */
 	Report_to_meta(META_DIE);
 
+#ifdef ENABLE_GO_GAME
+	/* Shut down Go AI engine and its pipes */
+	if (go_engine_up) go_engine_terminate();
+#endif
+
 	quit("Server state saved");
 }
 
@@ -6394,16 +6408,24 @@ void pack_overflow(int Ind) {
 
 /* Handle special timed events that don't fit in /
    aren't related to 'Global Events' routines - C. Blue
-   (To be called every second.) */
+   (To be called every second.)
+   Now also used for Go minigame. */
 void process_timers() {
 	struct worldpos wpos;
 	cave_type **zcave;
 	int y, x, i;
 
+#ifdef ENABLE_GO_GAME
+	/* Process Go AI engine communication (its replies) */
+	if (go_game_up) go_engine_clocks();
+#endif
+
 	/* PvP Arena in 0,0 - Release monsters: */
 	if (timer_pvparena1) {
 		/* check for existance of arena */
-		wpos.wx = 0; wpos.wy = 0; wpos.wz = 1;
+		wpos.wx = WPOS_PVPARENA_X;
+		wpos.wy = WPOS_PVPARENA_Y;
+		wpos.wz = WPOS_PVPARENA_Z;
 		if (!(zcave = getcave(&wpos))) return;
 
 		timer_pvparena1--;
@@ -6413,7 +6435,7 @@ void process_timers() {
 
 			if ((timer_pvparena3 % 2) == 0) { /* cycle preparation? */
 				/* clear old monsters and items */
-				wipe_m_list(&wpos);                             
+				wipe_m_list(&wpos);
 			        wipe_o_list_safely(&wpos);
 				/* close all doors */
 				for (i = 1; i <= 6; i++) {
@@ -7158,7 +7180,7 @@ void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr) {
    Added this for use within LUA files, for automatic seasonal event updating. - C. Blue */
 void timed_shutdown(int k) {
 //	msg_admins(0, format("\377w* Shutting down in %d minutes *", k));
-	msg_broadcast_format(0, "\374\377I*** \377RAutomatic town-recall and server shutdown in max %d minute%s. \377I***", k, (k == 1) ? "" : "s");
+	msg_broadcast_format(0, "\374\377I*** \377RAutomatic town-recall and server restart in max %d minute%s. \377I***", k, (k == 1) ? "" : "s");
 
 	cfg.runlevel = 2043;
 	shutdown_recall_timer = k * 60;

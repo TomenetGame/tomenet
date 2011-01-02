@@ -2484,10 +2484,7 @@ if (!(mode & 32)) {
 	}
 
 #if 0	/* Now the stores does *ID* */
-	if (o_ptr->ident & ID_MENTAL)
-	{
-		t = object_desc_chr(t, '*');
-	}
+	if (o_ptr->ident & ID_MENTAL) t = object_desc_chr(t, '*');
 #endif	// 0
 
 
@@ -3905,7 +3902,7 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 	fprintf(fff, "\n");
 //	/* give weight warning, so player won't buy something he can't use. (todo: for shields and bows too) */
 //	if (p_ptr->heavy_wield) fprintf(fff, "\377rThis weapon is currently too heavy for you to use effectively:\377w\n");
-	fprintf(fff, "\377sUsing it you would have \377W%d\377s blow%s and do an average damage per turn of:\n", p_ptr->num_blow, (p_ptr->num_blow > 1) ? "s" : "");
+	fprintf(fff, "\377sUsing it you would have \377W%d\377s blow%s and do an average damage per round of:\n", p_ptr->num_blow, (p_ptr->num_blow > 1) ? "s" : "");
 
 	if (f1 & TR1_SLAY_ANIMAL) output_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, "animals", NULL);
 	if (f1 & TR1_SLAY_EVIL) output_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, "evil creatures", NULL);
@@ -4067,11 +4064,10 @@ static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff)
 
 /* display how much AC an armour would add for us (for MA users!) and
    especially if it would encumber us, so we won't have to guess in shops - C. Blue */
-static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff)
+static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff, bool star_identify)
 {
 	player_type *p_ptr = Players[Ind], p_backup;
 	object_type forge, *old_ptr = &forge;
-	u32b f1, f2, f3, f4, f5, esp;
 	int slot = wield_slot(Ind, o_ptr); /* slot the item goes into */
 
 	bool old_cumber_armor = p_ptr->cumber_armor;
@@ -4080,19 +4076,32 @@ static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff)
 	bool old_cumber_helm = p_ptr->cumber_helm;
 	bool old_monk_heavyarmor = p_ptr->monk_heavyarmor;
 	bool old_rogue_heavyarmor = p_ptr->rogue_heavyarmor;
+	bool old_heavy_shield = p_ptr->heavy_shield;
+	bool old_awkward_shoot = p_ptr->awkward_shoot;
 
-	/* save timed effects that might be changed on weapon switching - C. Blue */
+	/* save timed effects that might be changed on weapon switching */
 	long tim_wraith = p_ptr->tim_wraith;
-
-	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* since his mana or HP might get changed or even nulled, backup player too! */
 	COPY(&p_backup, p_ptr, player_type);
 
 	/* Ok now the hackish stuff, we replace the current armour with this one */
 	object_copy(old_ptr, &p_ptr->inventory[slot]);
+	/* If we don't really know the item, rely on k_info flags only! */
+#if 0
+	if (!star_identify) {
+		invcopy(&p_ptr->inventory[slot], lookup_kind(o_ptr->tval, o_ptr->sval));
+		apply_magic_depth(0, &p_ptr->inventory[slot], -1, TRUE, TRUE, FALSE, FALSE, TRUE);
+		p_ptr->inventory[slot].name1 = p_ptr->inventory[slot].name2 = p_ptr->inventory[slot].name2b = 0;
+		p_ptr->inventory[slot].pval = 0;
+	} else object_copy(&p_ptr->inventory[slot], o_ptr);
+#else
 	object_copy(&p_ptr->inventory[slot], o_ptr);
+	if (!star_identify) {
+		p_ptr->inventory[slot].name1 = p_ptr->inventory[slot].name2 = p_ptr->inventory[slot].name2b = 0;
+		p_ptr->inventory[slot].pval = 0;
+	}
+#endif
 
 	/* Hack -- hush the messages up */
 	suppress_message = TRUE;
@@ -4105,16 +4114,19 @@ static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff)
 	    (p_ptr->awkward_armor && !old_awkward_armor) ||
 	    (p_ptr->cumber_glove && !old_cumber_glove) ||
 	    (p_ptr->cumber_helm && !old_cumber_helm) ||
+	    (p_ptr->heavy_shield && !old_heavy_shield) ||
+	    (p_ptr->awkward_shoot && !old_awkward_shoot) ||
 	    (p_ptr->monk_heavyarmor && !old_monk_heavyarmor) ||
 	    (p_ptr->rogue_heavyarmor && !old_rogue_heavyarmor)) {
 
 		if (!old_cumber_armor && !old_awkward_armor && !old_cumber_glove &&
-		    !old_cumber_helm && !old_monk_heavyarmor && !old_rogue_heavyarmor) {
+		    !old_cumber_helm && !old_monk_heavyarmor && !old_rogue_heavyarmor &&
+		    !old_heavy_shield && !old_awkward_shoot) {
 			if (fff) fprintf(fff, "\377rWearing this armour would encumber you in the following way(s):\n");
 			else msg_print(Ind, "\377s  This piece of armour seems so heavy that it would encumber you!");
 		} else {
 			if (fff) fprintf(fff, "\377rWearing this armour would additionally encumber you in the following way(s):\n");
-			else msg_print(Ind, "\377s  This piece of armour seems so heavy that it would increase your encumberment!");
+			else msg_print(Ind, "\377s  This piece of armour seems so heavy that it would additionally encumber you!");
 		}
 
 		if (fff) {
@@ -4122,8 +4134,13 @@ static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff)
 			if (p_ptr->awkward_armor && !old_awkward_armor) fprintf(fff, "\377r    Your spellcasting abilities.\n");
 			if (p_ptr->cumber_glove && !old_cumber_glove) fprintf(fff, "\377r    Your spellcasting abilities.\n");
 			if (p_ptr->cumber_helm && !old_cumber_helm) fprintf(fff, "\377r    Your spellcasting abilities.\n");
+			if (p_ptr->heavy_shield && !old_heavy_shield) {
+				if (o_ptr->tval == TV_SHIELD) fprintf(fff, "\377r    Your strength will be too low for wielding this shield.\n");
+				else fprintf(fff, "\377r    Your strength will be too low for wielding your shield.\n");
+			}
 			if (p_ptr->monk_heavyarmor && !old_monk_heavyarmor) fprintf(fff, "\377r    Your martial arts performance.\n");
 			if (p_ptr->rogue_heavyarmor && !old_rogue_heavyarmor) fprintf(fff, "\377r    Your flexibility and awareness.\n");
+			if (p_ptr->awkward_shoot && !old_awkward_shoot) fprintf(fff, "\377r    Your shooting ability (all shields do that).\n");
 //			fprintf(fff, "\n");
 		}
 	}
@@ -4133,24 +4150,32 @@ static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff)
 	    (!p_ptr->awkward_armor && old_awkward_armor) ||
 	    (!p_ptr->cumber_glove && old_cumber_glove) ||
 	    (!p_ptr->cumber_helm && old_cumber_helm) ||
+	    (!p_ptr->heavy_shield && old_heavy_shield) ||
+	    (!p_ptr->awkward_shoot && old_awkward_shoot) ||
 	    (!p_ptr->monk_heavyarmor && old_monk_heavyarmor) ||
 	    (!p_ptr->rogue_heavyarmor && old_rogue_heavyarmor)) {
 
 		if (!p_ptr->cumber_armor && !p_ptr->awkward_armor && !p_ptr->cumber_glove &&
-		    !p_ptr->cumber_helm && !p_ptr->monk_heavyarmor && !p_ptr->rogue_heavyarmor) {
+		    !p_ptr->cumber_helm && !p_ptr->monk_heavyarmor && !p_ptr->rogue_heavyarmor &&
+		    !p_ptr->heavy_shield && !p_ptr->awkward_shoot) {
 			if (fff) fprintf(fff, "\377gWearing this armour would remove your encumberment.\n");
 			else msg_print(Ind, "\377s  This piece of armour seems light enough to not encumber you.");
 		} else {
 			if (fff) fprintf(fff, "\377gWearing this armour would remove encumberment of the following:\n");
-			else msg_print(Ind, "\377s  This piece of armour seems light enough to reduce your encumberment.");
+			else msg_print(Ind, "\377s  This piece of armour seems light enough to reduce some encumberment.");
 
 			if (fff) {
 				if (!p_ptr->cumber_armor && old_cumber_armor) fprintf(fff, "\377g    Your movement.\n");
 				if (!p_ptr->awkward_armor && old_awkward_armor) fprintf(fff, "\377g    Your spellcasting abilities.\n");
 				if (!p_ptr->cumber_glove && old_cumber_glove) fprintf(fff, "\377g    Your spellcasting abilities.\n");
 				if (!p_ptr->cumber_helm && old_cumber_helm) fprintf(fff, "\377g    Your spellcasting abilities.\n");
+				if (!p_ptr->heavy_shield && old_heavy_shield) {
+					if (o_ptr->tval == TV_SHIELD) fprintf(fff, "\377r    Your strength will be sufficient for wielding this shield.\n");
+					else fprintf(fff, "\377r    Your strength will be sufficient for wielding your shield.\n");
+				}
 				if (!p_ptr->monk_heavyarmor && old_monk_heavyarmor) fprintf(fff, "\377g    Your martial arts performance.\n");
 				if (!p_ptr->rogue_heavyarmor && old_rogue_heavyarmor) fprintf(fff, "\377g    Your flexibility and awareness.\n");
+				if (!p_ptr->awkward_shoot && old_awkward_shoot) fprintf(fff, "\377g    Your shooting ability (all shields encumber this).\n");
 			}
 		}
 //		if (fff) fprintf(fff, "\n");
@@ -4170,7 +4195,174 @@ static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff)
 	/* and get our mana (in most cases the problem) back, yay */
 	COPY(p_ptr, &p_backup, player_type);
 
-	/* restore timed effects that might have been changed from the weapon switching - C. Blue */
+	/* restore timed effects that might have been changed from the weapon switching */
+	p_ptr->tim_wraith = tim_wraith;
+}
+
+/* display weapon encumberment changes, so we won't have to guess in shops - C. Blue */
+static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff, bool star_identify)
+{
+	player_type *p_ptr = Players[Ind], p_backup;
+	object_type forge, *old_ptr = &forge, forge2, *old_ptr2 = &forge2;
+
+	bool old_heavy_wield = p_ptr->heavy_wield;
+	bool old_icky_wield = p_ptr->icky_wield;
+	bool old_awkward_wield = p_ptr->awkward_wield;
+//	bool old_easy_wield = p_ptr->easy_wield;
+
+	/* save timed effects that might be changed on weapon switching */
+	long tim_wraith = p_ptr->tim_wraith;
+
+	/* since his mana or HP might get changed or even nulled, backup player too! */
+	COPY(&p_backup, p_ptr, player_type);
+
+	/* Ok now the hackish stuff, we replace the current weapon/shield with this one */
+	object_copy(old_ptr, &p_ptr->inventory[INVEN_WIELD]);
+	object_copy(old_ptr2, &p_ptr->inventory[INVEN_ARM]);
+	object_copy(&p_ptr->inventory[INVEN_WIELD], o_ptr);
+	if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H) p_ptr->inventory[INVEN_ARM].k_idx = 0;
+	/* If we don't really know the item, rely on k_info flags only! */
+	if (!star_identify) {
+		p_ptr->inventory[INVEN_WIELD].name1 = p_ptr->inventory[INVEN_WIELD].name2 = p_ptr->inventory[INVEN_WIELD].name2b = 0;
+		p_ptr->inventory[INVEN_WIELD].pval = 0;
+	}
+
+	/* Hack -- hush the messages up */
+	suppress_message = TRUE;
+	calc_boni(Ind);
+	calc_mana(Ind);
+	suppress_message = FALSE;
+
+	/* Gained encumberment? */
+	if ((p_ptr->awkward_wield && !old_awkward_wield) ||
+	    (p_ptr->heavy_wield && !old_heavy_wield) ||
+	    (p_ptr->icky_wield && !old_icky_wield)) {
+
+		if (!old_awkward_wield && !old_heavy_wield && !old_icky_wield) {
+			if (fff) fprintf(fff, "\377rWielding this weapon would give you one or more mali:\n");
+//			else msg_print(Ind, "\377s  This weapon seems too heavy or in another way unfit for you!");
+//see below instead
+		} else {
+			if (fff) fprintf(fff, "\377rWielding this weapon would give you one or more additional mali:\n");
+//			else msg_print(Ind, "\377s  This weapon would seem to give you additional trouble!");
+//see below instead
+		}
+
+		if (fff) {
+			if (p_ptr->awkward_wield && !old_awkward_wield) fprintf(fff, "\377r    One-handed use reduces its efficiency.\n");
+			if (k_info[o_ptr->k_idx].flags2 & TR4_COULD2H) fprintf(fff, "\377r    Wielding it two-handedly might make it even more effective.\n");
+			if (p_ptr->heavy_wield && !old_heavy_wield) fprintf(fff, "\377r    Your strength is insufficient to hold it properly.\n");
+			if (p_ptr->icky_wield && !old_icky_wield) fprintf(fff, "\377r    It is edged and not blessed.\n");
+//			fprintf(fff, "\n");
+		}
+//we get this info although we didn't *id*!
+		else {
+			if (p_ptr->awkward_wield && !old_awkward_wield) msg_print(Ind, "\377s  One-handed use reduces its efficiency.\n");
+			if (k_info[o_ptr->k_idx].flags2 & TR4_COULD2H) msg_print(Ind, "\377s  Wielding it two-handedly might make it even more effective.\n");
+			if (p_ptr->heavy_wield && !old_heavy_wield) msg_print(Ind, "\377s  It seems to be too heavy for you to hold it properly.\n");
+			if (p_ptr->pclass == CLASS_PRIEST && o_ptr->tval != TV_BLUNT) msg_print(Ind, "\377s  It is an edged weapon and might not be blessed.\n");
+		}
+	}
+
+	/* Lost encumberment? */
+	if ((!p_ptr->awkward_wield && old_awkward_wield) ||
+	    (!p_ptr->heavy_wield && old_heavy_wield) ||
+	    (!p_ptr->icky_wield && old_icky_wield)) {
+
+		if (!p_ptr->awkward_wield && !p_ptr->heavy_wield && !p_ptr->icky_wield) {
+			if (fff) fprintf(fff, "\377gWielding this weapon would remove all mali:\n");
+			else msg_print(Ind, "\377s  It looks like you could use it just fine.");
+		} else {
+			if (fff) fprintf(fff, "\377gWielding this weapon would remove one or more mali:\n");
+			else msg_print(Ind, "\377s  This weapon seems to fit better in some ways that your current one.");
+
+			if (fff) {
+				if (!p_ptr->awkward_wield && old_awkward_wield) fprintf(fff, "\377g    One-handed use will not reduce its efficiency.\n");
+				if (!p_ptr->heavy_wield && old_heavy_wield) fprintf(fff, "\377g    Your strength is sufficient to hold it properly.\n");
+				if (!p_ptr->icky_wield && old_icky_wield) fprintf(fff, "\377g    It is not edged, or at least blessed.\n");
+			}
+		}
+//		if (fff) fprintf(fff, "\n");
+	}
+
+	/* get our weapon back */
+	object_copy(&p_ptr->inventory[INVEN_WIELD], old_ptr);
+	object_copy(&p_ptr->inventory[INVEN_ARM], old_ptr2);
+
+	suppress_message = TRUE;
+	calc_boni(Ind);
+	calc_mana(Ind);
+	suppress_message = FALSE;
+
+	/* and get our mana (in most cases the problem) back, yay */
+	COPY(p_ptr, &p_backup, player_type);
+
+	/* restore timed effects that might have been changed from the weapon switching */
+	p_ptr->tim_wraith = tim_wraith;
+}
+
+/* display ranged weapon encumberment changes, so we won't have to guess in shops - C. Blue */
+static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff, bool star_identify)
+{
+	player_type *p_ptr = Players[Ind], p_backup;
+	object_type forge, *old_ptr = &forge;
+
+	bool old_heavy_shoot = p_ptr->heavy_shoot;
+//	bool old_awkward_shoot = p_ptr->awkward_shoot;
+
+	/* save timed effects that might be changed on weapon switching */
+	long tim_wraith = p_ptr->tim_wraith;
+
+	/* since his mana or HP might get changed or even nulled, backup player too! */
+	COPY(&p_backup, p_ptr, player_type);
+
+	/* Ok now the hackish stuff, we replace the current weapon/shield with this one */
+	object_copy(old_ptr, &p_ptr->inventory[INVEN_BOW]);
+	object_copy(&p_ptr->inventory[INVEN_BOW], o_ptr);
+	/* If we don't really know the item, rely on k_info flags only! */
+	if (!star_identify) {
+		p_ptr->inventory[INVEN_BOW].name1 = p_ptr->inventory[INVEN_BOW].name2 = p_ptr->inventory[INVEN_BOW].name2b = 0;
+		p_ptr->inventory[INVEN_BOW].pval = 0;
+	}
+
+	/* Hack -- hush the messages up */
+	suppress_message = TRUE;
+	calc_boni(Ind);
+	calc_mana(Ind);
+	suppress_message = FALSE;
+
+	/* Gained encumberment? */
+	if (p_ptr->heavy_shoot && !old_heavy_shoot) {
+
+		if (!old_heavy_shoot) {
+			if (fff) fprintf(fff, "\377rThis weapon currently seems too heavy for you to use!\n");
+			else msg_print(Ind, "\377s  This weapon currently seems too heavy for you!");
+		}
+//			fprintf(fff, "\n");
+	}
+
+	/* Lost encumberment? */
+	if (!p_ptr->heavy_shoot && old_heavy_shoot) {
+
+		if (!p_ptr->heavy_shoot) {
+			if (fff) fprintf(fff, "\377gThis weapon seems light enough for you to use properly.\n");
+			else msg_print(Ind, "\377s  This weapon seems light enough for you to use properly.");
+		}
+//		if (fff) fprintf(fff, "\n");
+	}
+
+	/* get our weapon back */
+	object_copy(&p_ptr->inventory[INVEN_BOW], old_ptr);
+
+	suppress_message = TRUE;
+	calc_boni(Ind);
+	calc_mana(Ind);
+	suppress_message = FALSE;
+
+	/* and get our mana (in most cases the problem) back, yay */
+	COPY(p_ptr, &p_backup, player_type);
+
+	/* restore timed effects that might have been changed from the weapon switching */
 	p_ptr->tim_wraith = tim_wraith;
 }
 
@@ -4180,7 +4372,7 @@ void observe_aux(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 	char o_name[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, esp;
-	int hold;
+//	int hold;
 
 	/* Description */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
@@ -4221,8 +4413,10 @@ void observe_aux(int Ind, object_type *o_ptr) {
 	}
 	else if (is_weapon(o_ptr->tval) && o_ptr->weight <= 80) msg_print(Ind, "\377s  It may be dual-wielded.");
 
+#if 0
 	/* Check for weapons, shields and shooters whether they are too heavy to use 
-	   and give warning, so player won't buy something he can't use. */
+	   and give warning, so player won't buy something he can't use.
+	   NOTE: Currently doesn't take into account STR change if STR bonus of currently equipped weapon/shield will be gone! */
 	hold = adj_str_hold[p_ptr->stat_ind[A_STR]];
 	if ((o_ptr->tval == TV_BOW || is_weapon(o_ptr->tval)) &&
 	    (hold < o_ptr->weight / 10)) {
@@ -4230,6 +4424,11 @@ void observe_aux(int Ind, object_type *o_ptr) {
 	} else if (o_ptr->tval == TV_SHIELD && (hold < (o_ptr->weight/10 - 4) * 7)) {
 		msg_print(Ind, "\377s  This shield currently seems too heavy for you to use effectively!");
 	}
+#else
+	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, o_ptr, NULL, FALSE);
+	else if (is_weapon(o_ptr->tval)) display_weapon_handling(Ind, o_ptr, NULL, FALSE);
+	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, o_ptr, NULL, FALSE);
+#endif
 
 	if (wield_slot(Ind, o_ptr) == INVEN_WIELD) {
 #if 0
@@ -4259,8 +4458,6 @@ void observe_aux(int Ind, object_type *o_ptr) {
 		suppress_message = FALSE;
 		p_ptr->tim_wraith = tim_wraith;
 #endif
-	} else if (is_armour(o_ptr->tval)) {
-		display_armour_handling(Ind, o_ptr, NULL);
 	}
 
 	if (wield_slot(Ind, o_ptr) != INVEN_WIELD
@@ -4278,7 +4475,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	player_type *p_ptr = Players[Ind];
 //	cptr		*info = p_ptr->info;
 
-	int j, am, hold;
+	int j, am;//, hold;
 
 	u32b f1, f2, f3, f4, f5, esp;
 
@@ -4321,6 +4518,11 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	if (!(o_ptr->ident & ID_MENTAL)) object_desc(0, o_name, o_ptr, TRUE, 3);
 	/* normal players: */
 	else object_desc(Ind, o_name, o_ptr, TRUE, 3);
+
+#ifdef USE_SOUND_2010
+	sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
+#endif
+
 
 #ifdef PLAYER_STORES
 	if (p_ptr->store_num <= -2 && o_ptr->note) player_stores_cut_inscription(o_name);
@@ -4570,8 +4772,10 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		fprintf(fff, "\377vIt may only be worn by kings and queens!\377w\n");
 	}
 
+#if 0
 	/* Check for weapons, shields and shooters whether they are too heavy to use
-	   and give warning, so player won't buy something he can't use. */
+	   and give warning, so player won't buy something he can't use.
+	   NOTE: Doesn't take into account STR changes by STR boni from current/new weapon/shield! */
 	hold = adj_str_hold[p_ptr->stat_ind[A_STR]];
 	if ((o_ptr->tval == TV_BOW || is_weapon(o_ptr->tval)) &&
 	    (hold < o_ptr->weight / 10)) {
@@ -4583,7 +4787,12 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	/* Display if armour would encumber us -
 	   includes shield, which may be overridden by above branch */
 	else if (is_armour(o_ptr->tval))
-		display_armour_handling(Ind, o_ptr, fff);
+		display_armour_handling(Ind, o_ptr, fff, TRUE);
+#else
+	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, o_ptr, fff, TRUE);
+	else if (is_weapon(o_ptr->tval)) display_weapon_handling(Ind, o_ptr, fff, TRUE);
+	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, o_ptr, fff, TRUE);
+#endif
 
 	/* Mega Hack^3 -- describe the amulet of life saving */
 	if (o_ptr->tval == TV_AMULET &&
@@ -5972,6 +6181,11 @@ void display_equip(int Ind)
 	}
 }
 
+/* Attempts to convert owner of item to player, if allowed.
+   Returns TRUE if the player can actually use the item
+   ie if ownership taking was successful, else FALSE.
+   NOTE: DID NOT OWN UNOWNED ITEMS and hence fails for those (in compat_pomode())!
+         That was changed now. */
 bool can_use(int Ind, object_type *o_ptr)
 {
 	player_type *p_ptr = Players[Ind];
@@ -5988,11 +6202,19 @@ bool can_use(int Ind, object_type *o_ptr)
 
 	if (o_ptr->level < 1 && o_ptr->owner) return (FALSE);
 
+	/* Own unowned items (for stores).
+	   Note that CTRL+R -> display_inven() -> if (can_use()) checks will
+	   automatically own unowned items this way, that's why the admin_dm
+	   is exempt, for when he /wished for items. - C. Blue */
+	if (!o_ptr->owner && !p_ptr->admin_dm) {
+		o_ptr->owner = p_ptr->id;
+		o_ptr->mode = p_ptr->mode;
+	}
+
 	if (compat_pomode(Ind, o_ptr)) return FALSE;
 
 	/* Hack -- convert if available */
-	if (p_ptr->lev >= o_ptr->level && !p_ptr->admin_dm)
-	{
+	if (p_ptr->lev >= o_ptr->level && !p_ptr->admin_dm) {
 		o_ptr->owner = p_ptr->id;
 		return (TRUE);
 	}

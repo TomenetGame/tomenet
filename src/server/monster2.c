@@ -474,20 +474,17 @@ void delete_monster(struct worldpos *wpos, int y, int x, bool unfound_arts)
 void compact_monsters(int size, bool purge)
 {
 	int             i, num, cnt, Ind;
-
 	int             cur_lev, cur_dis, chance;
-			cave_type **zcave;
-			struct worldpos *wpos;
+	cave_type **zcave;
+	struct worldpos *wpos;
 
 	u16b this_o_idx, next_o_idx = 0;
 
 	/* Message (only if compacting) */
 	if (size) s_printf("Compacting monsters...\n");
 
-
 	/* Compact at least 'size' objects */
-	for (num = 0, cnt = 1; num < size; cnt++)
-	{
+	for (num = 0, cnt = 1; num < size; cnt++) {
 		/* Get more vicious each iteration */
 		cur_lev = 5 * cnt;
 
@@ -495,14 +492,17 @@ void compact_monsters(int size, bool purge)
 		cur_dis = 5 * (20 - cnt);
 
 		/* Check all the monsters */
-		for (i = 1; i < m_max; i++)
-		{
+		for (i = 1; i < m_max; i++) {
 			monster_type *m_ptr = &m_list[i];
-
                         monster_race *r_ptr = race_inf(m_ptr);
 
 			/* Paranoia -- skip "dead" monsters */
 			if (!m_ptr->r_idx) continue;
+
+			/* Skip special hard-coded monsters (target dummy, invis dummy, santa) */
+			if (m_ptr->r_idx == 1101 || m_ptr->r_idx == 1126 ||
+			    m_ptr->r_idx == 1102 || m_ptr->r_idx == 1132)
+				continue;
 
 			/* Hack -- High level monsters start out "immune" */
 			if (r_ptr->level > cur_lev) continue;
@@ -520,8 +520,7 @@ void compact_monsters(int size, bool purge)
 			if (r_ptr->flags1 & RF1_UNIQUE) chance = 99;
 
 			/* Monsters in town don't have much of a chance */
-			if (istown(&m_ptr->wpos))
-				chance = 70;
+			if (istown(&m_ptr->wpos)) chance = 70;
 
 //			if (!getcave(&m_ptr->wpos)) chance = 0;
 
@@ -538,8 +537,7 @@ void compact_monsters(int size, bool purge)
 
 
 	/* Excise dead monsters (backwards!) */
-	for (i = m_max - 1; i >= 1; i--)
-	{
+	for (i = m_max - 1; i >= 1; i--) {
 		/* Get the i'th monster */
 		monster_type *m_ptr = &m_list[i];
 
@@ -549,8 +547,7 @@ void compact_monsters(int size, bool purge)
 		if (m_ptr->r_idx &&
 			((!m_ptr->wpos.wz && !purge) || getcave(&m_ptr->wpos))) continue;
 #else
-		if (m_ptr->r_idx)
-		{
+		if (m_ptr->r_idx) {
 			if ((!m_ptr->wpos.wz && !purge) || getcave(&m_ptr->wpos)) continue;
 
 			/* Delete the monster */
@@ -562,8 +559,7 @@ void compact_monsters(int size, bool purge)
 		m_max--;
 
 		/* Reorder */
-		if (i != m_max)
-		{
+		if (i != m_max) {
 			int ny = m_list[m_max].fy;
 			int nx = m_list[m_max].fx;
 			wpos = &m_list[m_max].wpos;
@@ -571,8 +567,7 @@ void compact_monsters(int size, bool purge)
 			/* Update the cave */
 			/* Hack -- make sure the level is allocated, as in the wilderness
 			   it sometimes will not be */
-			if((zcave=getcave(wpos)))
-				zcave[ny][nx].m_idx = i;
+			if((zcave = getcave(wpos))) zcave[ny][nx].m_idx = i;
 
 #ifdef MONSTER_INVENTORY
 			/* Repair objects being carried by monster */
@@ -601,8 +596,7 @@ void compact_monsters(int size, bool purge)
 			m_list[i] = m_list[m_max];
 
 			/* Copy the visibility and los flags for the players */
-			for (Ind = 1; Ind < NumPlayers + 1; Ind++)
-			{
+			for (Ind = 1; Ind < NumPlayers + 1; Ind++) {
 				if (Players[Ind]->conn == NOT_CONNECTED) continue;
 
 				Players[Ind]->mon_vis[i] = Players[Ind]->mon_vis[m_max];
@@ -628,8 +622,7 @@ void compact_monsters(int size, bool purge)
 	m_top = 0;
 
 	/* Collect "live" monsters */
-	for (i = 0; i < m_max; i++)
-	{
+	for (i = 0; i < m_max; i++) {
 		/* Collect indexes */
 		m_fast[m_top++] = i;
 	}
@@ -644,16 +637,13 @@ void compact_monsters(int size, bool purge)
  *
  * Note that this only deletes monsters that on the specified depth
  */
-void wipe_m_list(struct worldpos *wpos)
-{
+void wipe_m_list(struct worldpos *wpos) {
 	int i;
 
 #if 0
 	/* Delete all the monsters */
-	for (i = m_max - 1; i >= 1; i--)
-	{
+	for (i = m_max - 1; i >= 1; i--) {
 		monster_type *m_ptr = &m_list[i];
-
                 monster_race *r_ptr = race_inf(m_ptr);
 
 		/* Skip dead monsters */
@@ -689,8 +679,7 @@ void wipe_m_list(struct worldpos *wpos)
 #endif
 
 	/* Delete all the monsters */
-	for (i = m_max - 1; i >= 1; i--)
-	{
+	for (i = m_max - 1; i >= 1; i--) {
 		monster_type *m_ptr = &m_list[i];
 
 		if (inarea(&m_ptr->wpos,wpos)) {
@@ -707,22 +696,38 @@ void wipe_m_list(struct worldpos *wpos)
 /* Avoid overcrowding of towns - C. Blue */
 void thin_surface_spawns() {
 	int i;
+	player_type *p_ptr;
 
 	/* Delete all the monsters, except for target dummies (1101, 1126) and santa (1102),
 	   because those are usually in town, and this function is called periodically for towns. */
 	for (i = m_max - 1; i >= 1; i--) {
 		monster_type *m_ptr = &m_list[i];
 
-		if ((m_ptr->wpos.wz == 0) && magik(20) && //was 30
-		    /* hardcoded -_- */
-		    (m_ptr->r_idx != 1101) && (m_ptr->r_idx != 1126) &&
-		    (m_ptr->r_idx != 1102) && (m_ptr->r_idx != 1132) &&
-		    (m_ptr->r_idx != 1112) && (m_ptr->r_idx != 1113) && (m_ptr->r_idx != 1114)) {
-			if (season_halloween &&
-			    (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088))
-				 great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
-			delete_monster_idx(i, TRUE);
+		/* Only affect surface monsters, and only 20% of them (randomly) */
+		if ((m_ptr->wpos.wz != 0) || !magik(20)) continue;  //was 30
+
+		/* hardcoded which ones aren't to be touched -_- */
+		if (m_ptr->r_idx == 1101 || m_ptr->r_idx == 1126 ||
+		    m_ptr->r_idx == 1102 || m_ptr->r_idx == 1132 ||
+		    m_ptr->r_idx == 1112 || m_ptr->r_idx == 1113 || m_ptr->r_idx == 1114)
+			continue;
+
+		/* new: Don't affect monsters in LOS of a player, doesn't look good */
+		if (m_ptr->closest_player && m_ptr->closest_player <= NumPlayers) {
+			p_ptr = Players[m_ptr->closest_player];
+			if (p_ptr->admin_dm ||
+			    (inarea(&p_ptr->wpos, &m_ptr->wpos) &&
+			    los(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)))
+				continue;
 		}
+
+		/* if we erase the Great Pumpkin then reset its timer */
+		if (season_halloween &&
+		    (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088))
+			 great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
+
+		/* erase the monster, poof */
+		delete_monster_idx(i, TRUE);
 	}
 
 	/* Compact the monster list */
@@ -732,12 +737,14 @@ void thin_surface_spawns() {
 void geno_towns() {
 	int i;
 
-	/* Delete all the monsters, except for target dummies (1101, 1126) */
+	/* Delete all the monsters, except for target dummies
+	   (1101, 1126) and grid-occupying dummy (1132) */
 	for (i = m_max - 1; i >= 1; i--) {
 		monster_type *m_ptr = &m_list[i];
 
 		if (istown(&m_ptr->wpos) &&  /* hardcoded -_- */
-		    (m_ptr->r_idx != 1101) && (m_ptr->r_idx != 1126)) {
+		    (m_ptr->r_idx != 1101) && (m_ptr->r_idx != 1126) &&
+		    (m_ptr->r_idx != 1102) && (m_ptr->r_idx != 1132)) {
 			if (season_halloween &&
 			    (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088))
 				 great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */

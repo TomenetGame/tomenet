@@ -176,14 +176,13 @@ bool do_player_drop_items(int Ind, int chance, bool trap)
 
 	if(p_ptr->inval) return (FALSE);
 
-	for (i=0;i<INVEN_PACK;i++)
-	{
+	for (i = 0; i < INVEN_PACK; i++) {
 		object_type tmp_obj = p_ptr->inventory[i];
 		o_ptr = &p_ptr->inventory[i];
 		if (!tmp_obj.k_idx) continue;
-		if (randint(100)>chance) continue;
+		if (randint(100) > chance) continue;
 		if (tmp_obj.name1 == ART_POWER) continue;
-		if (cfg.anti_arts_hoard && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9))
+		if (cfg.anti_arts_hoard && true_artifact_p(&tmp_obj) && (rand_int(100) > 9))
 		{
 			char	o_name[ONAME_LEN];
 			object_desc(Ind, o_name, &tmp_obj, TRUE, 0);
@@ -204,17 +203,13 @@ bool do_player_drop_items(int Ind, int chance, bool trap)
 		inven_item_increase(Ind, i,-999);
 		inven_item_optimize(Ind, i);
 		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-		if (trap && !message)
-		{
+		if (trap && !message) {
 			msg_print(Ind, "You are startled by a sudden sound.");
 			message = TRUE;
 		}
 		ident = TRUE;
 	}
-	if (trap && !ident)
-	{
-		msg_print(Ind, "You hear a sudden, strange sound.");
-	}
+	if (trap && !ident) msg_print(Ind, "You hear a sudden, strange sound.");
 
 	return (ident);
 }
@@ -243,7 +238,7 @@ bool do_player_scatter_items(int Ind, int chance, int rad)
 			if (!cave_floor_bold(zcave, cy,cx)) continue;
 			o_ptr = &p_ptr->inventory[i];
 			tmp_obj = p_ptr->inventory[i];
-			if (cfg.anti_arts_hoard && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9))
+			if (cfg.anti_arts_hoard && true_artifact_p(&tmp_obj) && (rand_int(100) > 9))
 			{
 				char	o_name[ONAME_LEN];
 				object_desc(Ind, o_name, &tmp_obj, TRUE, 0);
@@ -457,7 +452,7 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x)
 
 	/* God save the arts :) */
 	if (i_ptr->name1 == ART_POWER) return (FALSE);
-	if (cfg.anti_arts_hoard && (artifact_p(i_ptr)) && (!i_ptr->name3) && (rand_int(100)>9)) return(FALSE);
+	if (cfg.anti_arts_hoard && true_artifact_p(i_ptr) && (rand_int(100) > 9)) return(FALSE);
 
 	while (o_idx == 0)
 	{
@@ -728,7 +723,7 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr, forge;
-	s16b        i, deflect = 0, k_idx = lookup_kind(tval, sval);
+	s16b        i, dam, k_idx = lookup_kind(tval, sval);
 	char        i_name[80];
 #ifndef NEW_DODGING
 	int	dodge = p_ptr->dodge_level - (dd * ds) / 2;
@@ -773,18 +768,15 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 			p_ptr->redraw |= PR_MANA;
 			/* test for deflection */
 			if (magik(50)) {
-				deflect++;
 				msg_print(Ind, "Your kinetic shield deflects the attack!");
 				continue;
 			}
 		}
 		if (p_ptr->reflect && magik(50)) {
-			deflect++;
 			msg_print(Ind, "You deflect the attack!");
 			continue;
 		}
 		if (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect + 15))) {
-			deflect++;
 			msg_print(Ind, "You deflect the attack!");
 			continue;
 		}
@@ -793,23 +785,15 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 			continue;
 		}
 
-		msg_print(Ind, "You are hit!");
-		take_hit(Ind, damroll(dd, ds), format("a %s", name), 0);
+		dam = damroll(dd, ds);
+		msg_format(Ind, "You are hit for \377o%d\377w damage!", dam);
+		take_hit(Ind, dam, format("a %s", name), 0);
 		redraw_stuff(Ind);
-		if (pdam > 0)
-		{
+		if (pdam > 0) {
 			if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison))
-			{
 				(void)set_poisoned(Ind, p_ptr->poisoned + pdam, 0);
-			}
 		}
 	}
-
-#if 0
-	if (deflect && !p_ptr->death)
-		msg_format(Ind, "You %s deflect the attack%s!", (deflect == num) ?
-				"completely" : "partially", (num > 1) ? "s" : "");
-#endif	// 0
 
 	drop_near(o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 
@@ -2160,20 +2144,17 @@ break;
 
 			price *= price;
 			if (price < 5) price = 5;
-			if (price > 5000) price = 5000; /* better cap this thing somewhere - mikaelh */
+			if (price > 1000) price = 1000; /* better cap this thing somewhere - mikaelh; reduced it from 5k to 1k even - C. Blue */
 			amt = (p_ptr->au / price);
 
-			if (amt < 1)
-			{
+			if (amt < 1) {
 				msg_print(Ind, "You feel as if it's the day before the payday.");
-			}
-			else
-			{
+			} else {
 				object_type *o_ptr, forge;
 				o_ptr = &forge;
 				invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_PINT_OF_ALE));
 
-				if (amt > 10) amt = 10;
+				if (amt > 8) amt = 8;//was 10
 				amt = randint(amt);
 
 				p_ptr->au -= amt * price;
@@ -3206,12 +3187,19 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 	/* Paranoia -- verify location */
 	cave_type **zcave;
 
-	if(!(zcave=getcave(wpos))) return;
-	if (!in_bounds(y, x)) return;
-	c_ptr = &zcave[y][x];
 #ifdef ARCADE_SERVER
 	return;
 #endif
+
+	/* Not in Arena Monster Challenge, nor PvP Arena */
+	if ((wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y && wpos->wz == WPOS_ARENA_Z) ||
+	    (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z))
+		return;
+
+	if (!(zcave = getcave(wpos))) return;
+	if (!in_bounds(y, x)) return;
+	c_ptr = &zcave[y][x];
+
 	/* No traps in Bree - C. Blue */
 	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) return;
 	/* Nor in Valinor */
@@ -3224,10 +3212,16 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 	/* Require empty, clean, floor grid */
 	/* Hack - '+1' for secret doors */
 	if (cave_floor_grid(c_ptr) || c_ptr->feat == FEAT_DEEP_WATER) flags = FTRAP_FLOOR;
-	else if ((c_ptr->feat >= FEAT_DOOR_HEAD) && 
-			(c_ptr->feat <= FEAT_DOOR_TAIL + 1))
+	else if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
+		    (c_ptr->feat <= FEAT_DOOR_TAIL + 1))
 		flags = FTRAP_DOOR;
 	else return;
+
+	/* no traps on treasure veins */
+	if (c_ptr->feat == FEAT_QUARTZ_H || c_ptr->feat == FEAT_QUARTZ_K ||
+	    c_ptr->feat == FEAT_MAGMA_H || c_ptr->feat == FEAT_MAGMA_K ||
+	    c_ptr->feat == FEAT_SANDWALL_H || c_ptr->feat == FEAT_SANDWALL_K)
+		return;
 
 //	if (!cave_naked_bold(zcave, y, x)) return;
 //	if (!cave_floor_bold(zcave, y, x)) return;
@@ -3253,8 +3247,7 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 	lv = getlevel(wpos);
 
 	/* try 100 times */
-	while ((more) && (cnt++)<100)
-	{
+	while ((more) && (cnt++) < 100) {
 		trap = rand_int(MAX_T_IDX);
 		t_ptr = &t_info[trap];
 
@@ -3264,29 +3257,28 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 		/* is this a correct trap now?   */
 		if (!(t_ptr->flags & flags)) continue;
 
-                /* No special_gene traps */
-                if (t_ptr->flags & FTRAP_SPECIAL_GENE) continue;
+		/* No special_gene traps */
+		if (t_ptr->flags & FTRAP_SPECIAL_GENE) continue;
 
 		/* hack, no trap door at the bottom of dungeon or in flat(non dungeon) places */
-		//      if (((d_ptr->maxdepth == dlev) || (d_ptr->flags1 & DF1_FLAT)) && (trap == TRAP_OF_SINKING)) continue;
+//		if (((d_ptr->maxdepth == dlev) || (d_ptr->flags1 & DF1_FLAT)) && (trap == TRAP_OF_SINKING)) continue;
 
 		/* how probable is this trap   */
-		if (rand_int(100)<t_ptr->probability)
-		{
-			//	 c_ptr->t_idx = trap;
+		if (rand_int(100) < t_ptr->probability) {
+//			c_ptr->t_idx = trap;
 			more = FALSE;
-			if (!(cs_ptr=AddCS(c_ptr, CS_TRAPS))) return;
+			if (!(cs_ptr = AddCS(c_ptr, CS_TRAPS))) return;
 //			cs_ptr->type = CS_TRAPS;
 			cs_ptr->sc.trap.t_idx = trap;
 			cs_ptr->sc.trap.found = FALSE;
-
-			//				c_ptr=&zcave[y][x];
+//			c_ptr=&zcave[y][x];
 		}
 	}
 
 	return;
 }
 
+/* Unused appearently */
 void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found)
 {
 	s16b           trap, lv;
@@ -3321,6 +3313,12 @@ void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found
 			(c_ptr->feat <= FEAT_DOOR_TAIL + 1))
 		flags = FTRAP_DOOR;
 	else return;
+
+	/* no traps on treasure veins */
+	if (c_ptr->feat == FEAT_QUARTZ_H || c_ptr->feat == FEAT_QUARTZ_K ||
+	    c_ptr->feat == FEAT_MAGMA_H || c_ptr->feat == FEAT_MAGMA_K ||
+	    c_ptr->feat == FEAT_SANDWALL_H || c_ptr->feat == FEAT_SANDWALL_K)
+		return;
 
 //	if (!cave_naked_bold(zcave, y, x)) return;
 //	if (!cave_floor_bold(zcave, y, x)) return;
@@ -3430,6 +3428,14 @@ void wiz_place_trap(int Ind, int trap)
 			 (c_ptr->feat > FEAT_DOOR_TAIL)) &&
 			c_ptr->feat != FEAT_OPEN)
 	{
+		msg_print(Ind, "Inappropriate grid feature type!");
+		return;
+	}
+
+	/* no traps on treasure veins */
+	if (c_ptr->feat == FEAT_QUARTZ_H || c_ptr->feat == FEAT_QUARTZ_K ||
+	    c_ptr->feat == FEAT_MAGMA_H || c_ptr->feat == FEAT_MAGMA_K ||
+	    c_ptr->feat == FEAT_SANDWALL_H || c_ptr->feat == FEAT_SANDWALL_K) {
 		msg_print(Ind, "Inappropriate grid feature type!");
 		return;
 	}

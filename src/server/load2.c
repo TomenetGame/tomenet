@@ -347,11 +347,11 @@ static void rd_item(object_type *o_ptr)
 
 	rd_s32b(&o_ptr->owner);
 	rd_s16b(&o_ptr->level);
-        if (!older_than(4, 1, 7)) {
-                if (older_than(4, 4, 14)) {
-        		rd_s32b(&tmp32s);
-        		o_ptr->mode = tmp32s;
-        	}
+	if (!older_than(4, 1, 7)) {
+		if (older_than(4, 4, 14)) {
+			rd_s32b(&tmp32s);
+			o_ptr->mode = tmp32s;
+		}
 		else rd_byte(&o_ptr->mode);
 	}
 
@@ -1225,6 +1225,7 @@ static void rd_wild(wilderness_type *w_ptr)
 	strip_bytes(4);
 	/* terrain type */
 	rd_u16b(&w_ptr->type);
+
 	/* the flags */
 	rd_u32b(&w_ptr->flags);
 
@@ -1758,6 +1759,14 @@ if (p_ptr->updated_savegame == 0) {
 	/* feature is currently not enabled: */
 	strcpy(p_ptr->info_msg, "");
 
+	/* for ENABLE_GO_GAME */
+	if (!older_than(4, 4, 17)) {
+		rd_byte(&tmp8u);
+		p_ptr->go_level = tmp8u;
+		rd_byte(&tmp8u);
+		p_ptr->go_sublevel = tmp8u;
+	}
+
 	/* Success */
 	return FALSE;
 }
@@ -2083,29 +2092,29 @@ static errr rd_cave_memory(int Ind)
 
 	unsigned char runlength, cur_flag;
 
+	/* Remember unique ID of the old floor */
+	if (!older_than(4, 4, 16)) rd_u32b(&p_ptr->dlev_id);
+	else p_ptr->dlev_id = 0;
+
 	/* Memory dimensions */
 	rd_u16b(&max_y);
 	rd_u16b(&max_x);
 
-
 	/*** Run length decoding ***/
 
 	/* Load the memory data */
-	for (x = y = 0; y < max_y; )
-	{
+	for (x = y = 0; y < max_y; ) {
 		/* Grab RLE info */
 		rd_byte(&runlength);
 		rd_byte(&cur_flag);
 
 		/* Apply the RLE info */
-		for (i = 0; i < runlength; i++)
-		{
+		for (i = 0; i < runlength; i++) {
 			p_ptr->cave_flag[y][x] = cur_flag;
 
 			/* incrament our position */
 			x++;
-			if (x >= max_x)
-			{
+			if (x >= max_x) {
 				/* Wrap onto a new row */
 				x = 0;
 				y++;
