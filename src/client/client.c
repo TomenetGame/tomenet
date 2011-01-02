@@ -40,42 +40,42 @@ static void read_mangrc_aux(generic_term_info *term_pref, cptr sec_name) {
 }
 static bool read_mangrc(cptr filename)
 {
-	char config_name[100];
 	FILE *config;
 	char buf[1024];
 	bool skip = FALSE;
 
-	/* remember for write_mangrc() */
-	strcpy(mangrc_filename, filename);
-
-	/* Try to find home directory */
-	if (getenv("HOME"))
-	{
-		/* Use home directory as base */
-		strcpy(config_name, getenv("HOME"));
-	}
-
-	/* Otherwise use current directory */
-	else
-	{
-		/* Current directory */
-		strcpy(config_name, ".");
-	}
-
-	/* Append filename */
-	/* TODO: accept any names as rc-file */
+	/* empty filename means use default */
+	if (!strlen(filename)) {
 #ifdef USE_EMX
-	strcat(config_name, "\\");
+		filename = "tomenet.rc";
 #else
-	strcat(config_name, "/");
+		filename = ".tomenetrc";
 #endif
-	strcat(config_name, filename);
 
-	/* remember for write_mangrc() */
-	strcpy(mangrc_filename, config_name);
+		/* Try to find home directory */
+		if (getenv("HOME")) {
+			/* Use home directory as base */
+			strcpy(mangrc_filename, getenv("HOME"));
+		}
+		/* Otherwise use current directory */
+		else {
+			/* Current directory */
+			strcpy(mangrc_filename, ".");
+		}
+
+		/* Append filename */
+#ifdef USE_EMX
+		strcat(mangrc_filename, "\\");
+#else
+		strcat(mangrc_filename, "/");
+#endif
+		strcat(mangrc_filename, filename);
+	} else {
+		strcpy(mangrc_filename, filename);
+	}
 
 	/* Attempt to open file */
-	if ((config = fopen(config_name, "r")))
+	if ((config = fopen(mangrc_filename, "r")))
 	{
 		/* Read until end */
 		while (!feof(config))
@@ -537,11 +537,8 @@ int main(int argc, char **argv)
 	/* Acquire the version strings */
 	version_build();
 
-#ifdef USE_EMX
-	skip = read_mangrc("tomenet.rc");
-#else
-	skip = read_mangrc(".tomenetrc");
-#endif
+	/* read default rc file */
+	skip = read_mangrc("");
 
 	/* Process the command line arguments */
 	for (i = 1; argv && (i < argc); i++)
@@ -571,7 +568,6 @@ int main(int argc, char **argv)
 		{
 		/* ignore rc files */
 		case 'i':
-			modus = 2;
 			skip = FALSE;
 			strcpy(cname, "");
 			strcpy(svname, "");
@@ -582,7 +578,11 @@ int main(int argc, char **argv)
 			cfg_audio_master = cfg_audio_music = cfg_audio_sound = cfg_audio_weather = TRUE;
 			cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = 100;
 #endif
+
+#if 0 /* This skips command-line arguments, not rc file */
+			modus = 2;
 			i = argc;
+#endif
 			break;
 			
 		/* Source other files */
