@@ -28,6 +28,7 @@
 
 #define SERVER
 #include "angband.h"
+#include <sys/wait.h> /* for waitpid() */
 #ifdef ENABLE_GO_GAME
 
 /* Pick one of the engines to use: */
@@ -157,7 +158,7 @@ int go_engine_init(void) {
 		/* dup pipe read/write to stdin/stdout */
 		dup2(pipeto[0], STDIN_FILENO);
 		dup2(pipefrom[1], STDOUT_FILENO);
-		dup2(pipefrom[1], STDERR_FILENO);
+//		dup2(pipefrom[1], STDERR_FILENO); leave this, to print error message further below.
 		/* close unnecessary pipe descriptors for a clean environment */
 		close(pipeto[1]);
 		close(pipefrom[0]);
@@ -183,8 +184,17 @@ int go_engine_init(void) {
 		    "--monte-carlo", "--komi", "0", NULL);
 		// --cache-size <megs>
 #endif
-		s_printf("GO_ERROR: exec().\n");
-		return 4;
+
+		/* We were unable to execute the engine? Game over! */
+		fprintf(stderr,"GO_ERROR: exec().\n");
+//		return 4;
+
+		/* Cause SIGPIPE to parent so they know what's up */
+		close(pipeto[0]);
+		close(pipefrom[1]);
+
+		/* Terminate child process */
+		exit(4);
 	}
 
     { /* We're parent */
@@ -211,12 +221,20 @@ int go_engine_init(void) {
 
 	/* Power up engine */
 	s_printf("GO_INIT: ---STARTING UP---\n");
+	/* We're up and running -
+	   at least if the next initializing writeToPipe() won't shut us down
+	   again due to broken pipe, in case the child couldn't init the engine. */
+	go_engine_up = TRUE;
+
 #ifdef ENGINE_FUEGO
 	handle_loading();
 #endif
 
 	/* Prepare general game configuration */
 	s_printf("GO_INIT: ---INIT AI---\n");
+
+	/* Hack: Allow child to close pipes in case it cannot start the engine */
+	sleep(5);
 
 #ifdef ENGINE_FUEGO
 	writeToPipe("boardsize 9");
@@ -281,8 +299,7 @@ int go_engine_init(void) {
 	/* Init this 'flow control', to begin asynchronous pipe operation */
 	go_engine_processing = 0;
 
-	/* We're up and running, ready for games */
-	go_engine_up = TRUE;
+	/* ready for games */
     } /* Parent thread */
 
 	return 0;
@@ -290,6 +307,16 @@ int go_engine_init(void) {
 
 /* Terminate engine & kill pipes, on server shutdown usually */
 void go_engine_terminate(void) {
+	int status_dummy;
+
+	if (!go_engine_up) {
+		/* No zombie child */
+		waitpid(nPid, &status_dummy, WNOHANG);
+
+		/* Termination complete. */
+		return;
+	}
+
 #ifdef DISCARD_RESPONSES_WHEN_TERMINATING
 	terminating = TRUE;
 #endif
@@ -308,6 +335,13 @@ void go_engine_terminate(void) {
 	/* discard any possible answers we were still waiting for */
 	go_engine_processing = 0;
 
+#ifdef DISCARD_RESPONSES_WHEN_TERMINATING
+	terminating = FALSE;
+#endif
+
+	/* No zombie child */
+	waitpid(nPid, &status_dummy, WNOHANG);
+
 	/* close pipes to it */
 	fclose(fr);
 	fclose(fw);
@@ -315,9 +349,6 @@ void go_engine_terminate(void) {
 	close(pipefrom[0]);
 	go_engine_up = FALSE;
 
-#ifdef DISCARD_RESPONSES_WHEN_TERMINATING
-	terminating = FALSE;
-#endif
 	s_printf("GO_ENGINE: TERMINATED\n");
 }
 
@@ -1779,6 +1810,8 @@ static int wait_for_response() {
 	char lbuf[80], tmp[80];//, *tptr = tmp + 79;
 	strcpy(tmp, "");
 
+	if (!go_engine_up) return 2;
+
 #ifdef DISCARD_RESPONSES_WHEN_TERMINATING
 	/* we might not even want any responses (and them causing slowdown) here,
 	   in case we're doing a warm restart while TomeNET server keeps running! */
@@ -1885,16 +1918,35 @@ static void writeToPipe(char *data) {
 		s_printf("GO_ENGINE: ERROR - over 1000 pending replies.\n");
 		return;
 	}
-	/* increase pending replies by one, ie the one to this command we now send */
-	go_engine_processing++;
 
 	/* more paranoia: invalid file/pipe? */
 	if (!fw) {
 		s_printf("GO_ENGINE: ERROR - fw is NULL.\n");
 		return;
 	}
-	fprintf(fw, "%s\n", data);
-	fflush(fw);
+
+	if (fprintf(fw, "%s\n", data) < 0) {
+		s_printf("GO_ENGINE: ERROR in fprintf().\n");
+		fclose(fw);
+		fclose(fr);
+		close(pipeto[1]);
+		close(pipefrom[0]);
+		go_engine_up = FALSE;
+		return;
+	}
+
+	if (fflush(fw) != 0) {
+		s_printf("GO_ENGINE: ERROR in fflush().\n");
+		fclose(fw);
+		fclose(fr);
+		close(pipeto[1]);
+		close(pipefrom[0]);
+		go_engine_up = FALSE;
+		return;
+	}
+
+	/* increase pending replies by one, ie the one to this command we now send */
+	go_engine_processing++;
 }
 
 /* Read a line of data from the pipe if there is any, else skip */

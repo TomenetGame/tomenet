@@ -6349,7 +6349,7 @@ void shutdown_server(void) {
 
 #ifdef ENABLE_GO_GAME
 	/* Shut down Go AI engine and its pipes */
-	if (go_engine_up) go_engine_terminate();
+	go_engine_terminate();
 #endif
 
 	quit("Server state saved");
