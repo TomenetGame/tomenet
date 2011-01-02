@@ -165,6 +165,9 @@ int go_engine_init(void) {
 		close(pipeto[1]);
 		close(pipefrom[0]);
 
+		/* Start a new session to prevent Ctrl-C in the terminal from killing the child */
+		setsid();
+
 /*	"Options:\n"
 	"  -config file execute GTP commands from file before\n"
 	"               starting main command loop\n"
