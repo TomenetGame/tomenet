@@ -2071,7 +2071,7 @@ void do_slash_cmd(int Ind, char *message)
 				}
 
 				/* translate character name to account name */
-				if (!(tpname = strchr(message2, ':'))) {
+				if (!(tpname = strchr(message2 + 7, ':'))) {
 					/* no text given */
 					if (!lookup_player_id(message2 + 7)) {
 						msg_print(Ind, "\377oPlayer not found.");
@@ -2083,12 +2083,12 @@ void do_slash_cmd(int Ind, char *message)
 					strcpy(tname, "");
 				} else {
 					/* note text given */
+					tpname[0] = 0;
 					if (!lookup_player_id(message2 + 7)) {
 						msg_print(Ind, "\377oPlayer not found.");
 						return;
 					}
 					strcpy(tname, "/note ");
-					tpname[0] = '\0';
 					strcat(tname, lookup_accountname(lookup_player_id(message2 + 7)));
 					strcat(tname, ":");
 					strcat(tname, tpname + 1);
