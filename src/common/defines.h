@@ -100,7 +100,7 @@
 
 /* Client-side only: Client release version tag
    (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG "a"
+#define CLIENT_VERSION_TAG "b"
 
 
 
