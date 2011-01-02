@@ -109,6 +109,7 @@ Contents
     (5.18)  Monster auras
     (5.19)  Experience-draining items
     (5.20)  Runes & Runemastery
+    (5.21)  Digging
 (6) Character details
     (6.1)   Attributes
     (6.2)   Skills, opposed skills
@@ -6515,6 +6516,47 @@ up committing suicide when you accidentally hit the wrong key in the dungeon.
 To get started, you'll probably want to macro a couple of attack spells, blink,
 and detect monsters. You may also need to use a melee or ranged weapon to help
 gain the first few levels of a new runemaster.
+
+
+
+(5.21) Digging
+--------------
+Your chance to successfully tunnel through an obstacle depends on the obstacle
+and your 'digging power'.
+
+Your digging power is calculated as follows:
+An equipped item that provides (+X) to digging will add 20*X.
+If you have a digging tool equipped, its weight is added.
+If the digging tool is enchanted to hit or to damage, those values are added.
+The power value so far is now multiplied by a value between 1 and 2, depending
+on your 'Digging' skill (see (6.2)). If the skill is 0, the multiplier is 1, if
+it's 50, the multiplier is 2. Otherwise the value is linearly inbetween.
+After that, a bonus is added depending on your strength:
+Ranging from +0 at 3 over +10 at 18/10, +50 at 18/110 up to +100 at 18/***.
+
+If you don't have a digging tool equipped, your total digging power is halved.
+
+To dig through certain features, you have to win a random number roll of 1..x
+by having a digging power that is greater than the roll:
+Rubble      200
+Trees       400
+Bushes      300
+Ivy         200
+Dead trees  300
+Sandwalls   250 +  5
+Magma       400 + 10
+Quartz      800 + 20
+Granite    1600 + 40
+The +x is a fixed value that gets added to what you have to overcome.
+For example you cannot successfully tunnel through quartz if you don't
+have at least 21 digging power, since you have to overcome the +20.
+
+Tunnelling into walls that are actually secret doors will be treated as if
+you were 'searching' instead of tunnelling.
+Tunnelling into known doors will just try to open them instead.
+
+Tunnelling might reveal special floor features, items or gold, see
+'Digging' skill in (6.2) for details.
 
 
 
