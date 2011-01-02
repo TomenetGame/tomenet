@@ -27,8 +27,10 @@
 /* ------------------------------------------------------------------------- */
 
 #define SERVER
+
 #include "angband.h"
 #include <sys/wait.h> /* for waitpid() */
+
 #ifdef ENABLE_GO_GAME
 
 /* Pick one of the engines to use: */
@@ -218,6 +220,8 @@ int go_engine_init(void) {
 		return 6;
 	}
 
+	/* Set stream for reading to non-blocking */
+	fcntl(pipefrom[0], F_SETFL, O_NONBLOCK);
 
 	/* Power up engine */
 	s_printf("GO_INIT: ---STARTING UP---\n");
