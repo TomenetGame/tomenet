@@ -348,7 +348,7 @@ static void store_chat(void)
 	}
 
 	/* Get the item number to be pasted */
-	if (!get_stock(&item, out_val, 0, i-1)) return;
+	if (!get_stock(&item, out_val, 0, i - 1)) return;
 
 	/* Get the actual index */
 	item = item + store_top;
@@ -356,26 +356,34 @@ static void store_chat(void)
 	/* Get the actual item */
 	o_ptr = &store.stock[item];
 
-	/* Convert the price to more readable format */
-	if (store_prices[item] >= 10000000)
-		snprintf(price, 16, "%dM", store_prices[item] / 1000000);
-	else if (store_prices[item] >= 10000)
-		snprintf(price, 16, "%dk", store_prices[item] / 1000);
-	else
-		snprintf(price, 16, "%d", store_prices[item]);
-
 	/* Hack -- Get the shop symbol */
 	store_color = color_attr_to_char(c_store.store_attr);
 	store_char = c_store.store_char;
 	snprintf(where, 16, "(%d,%d) \377%c%c\377s", p_ptr->wpos.wx, p_ptr->wpos.wy, store_color, store_char);
 
+	/* Get shop price if any */
+	if (store_num == 7) {
+		/* Home doesn't price items */
+		sprintf(out_val, " %s", store_names[item]);
+	} else {
+		/* Convert the price to more readable format */
+		if (store_prices[item] >= 10000000)
+			snprintf(price, 16, "%dM", store_prices[item] / 1000000);
+		else if (store_prices[item] >= 10000)
+			snprintf(price, 16, "%dk", store_prices[item] / 1000);
+		else
+			snprintf(price, 16, "%d", store_prices[item]);
+
+		sprintf(out_val, " %s (%s Au)", store_names[item], price);
+	}
+
 	/* Tell the server */
 	if (chat_mode == CHAT_MODE_PARTY)
-		Send_msg(format("!:\377s%s: %s (%s Au)", where, store_names[item], price));
+		Send_msg(format("!:\377s%s:%s", where, out_val));
 	else if (chat_mode == CHAT_MODE_LEVEL)
-		Send_msg(format("#:\377s%s: %s (%s Au)", where, store_names[item], price));
+		Send_msg(format("#:\377s%s:%s", where, out_val));
 	else
-		Send_msg(format("\377s%s:: %s (%s Au)", where, store_names[item], price));
+		Send_msg(format("\377s%s::%s", where, out_val));
 }
 
 static void store_sell(void)
