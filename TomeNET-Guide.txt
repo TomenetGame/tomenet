@@ -1,7 +1,7 @@
 .=============+============+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 2. Jan 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 4. Jan 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1353,10 +1353,8 @@ You may edit the file "TomeNET.ini" and do some changes to your likings, like
 setting up window positions (note that the game will remember window positions
 changed via dragging the windows around, which is an easier way), or choosing
 font size (look into lib/xtra/font directory to see available fonts).
-If it's not already disabled by default, it is recommended to turn off
-graphics ("GRAPHICS=0"). Further you can specify an account name and password
-of your own choice. That will relieve you from entering them every time
-you join a TomeNET internet server.
+Further you can specify an account name and password to be filled in
+automatically, and various other things.
 
 Last but not least, you may use the following command-line options:
 -p<Port>                for example -p19348
@@ -1365,8 +1363,9 @@ Last but not least, you may use the following command-line options:
 <ip address>            for example 85.118.45.235
 
 
-Linux:
-------
+Linux (compiling from source):
+------------------------------
+(For using the pre-compiled client instead, see further below.)
 How to compile the game binary:
 Go into '/tomenet/src' where the file 'makefile' is located.
 
@@ -1392,6 +1391,16 @@ Go up one level into your '/tomenet' folder. There type:
 to start the game.
 
 
+Linux (using pre-compiled binary):
+----------------------------------
+Make sure that ncurses and crypt libraries are installed, package names are
+usually libncurses5 and libgcrypt11. Type:
+        ./tomenet
+to start the game.
+
+
+Configure TomeNET on Linux:
+---------------------------
 To configure which windows are visible and what font they use, edit the file
 .tomenetrc which you also must move from tomenet folder into your home folder
 for it to become active! (Or specify alternative location via -f command-line
