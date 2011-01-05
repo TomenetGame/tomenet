@@ -7630,9 +7630,15 @@ Depending on your class, your start-up equipment and your skill tree will
 vary. For example a warrior cannot learn magic spells.
 
 Adventurer
-    Adventurers can train nearly all skills, but are not very good in a
-    specific one. Their magical power is basing on their intelligence as well
-    as wisdom.
+    Adventurers are hardy and versatile, they have no preferred way of fighting
+    or magic, and can adapt to any situation at hand.
+    They have no big big strengths nor weaknesses.
+    Adventurers can train nearly all skills, but do not excel at any specific
+    one. The size of their mana pool depends on both their intelligence and
+    their wisdom in equal parts.
+    Adventurers are often hybrids that combine various features of different
+    and more distinct classes in one character, creating unusual mixtures of
+    abilities.
 
 Warrior
     A Warrior is a hack-and-slash character, who solves most of his problems
@@ -7640,20 +7646,27 @@ Warrior
     a magical device. Their prime stats are Strength and Constitution, and a
     good Dexterity can really help at times. A Warrior will be good at melee
     and bows, but bad at most other skills. A Warrior learns no magic but can
-    train to use magic devices. A warrior has more attacks per round than any
-    other class.
-    Warriors can decide to become 'Unbelievers' by spending points into
-    the 'Anti-magic' skill. As soon as they spend the first point here
+    train to use magic devices; also he may dual-wield two one-handed weapons
+    at once, although he will need to use light armour for this strategy to be
+    effective. Provided his strength is high enough, a two-handed weapon will
+    usually be preferable over dual-wielding if a warrior seeks to forego
+    defense to maximize damage, since it will still allow heavy armour at the
+    same time, which dual-wielding doesn't.
+    Warriors have more attacks per round than any other class.
+    They may decide to become 'Unbelievers' by spending points irreversibly
+    into the 'Anti-magic' skill. As soon as they spend the first point here
     they will immediately become unable to use any magic wand/staff/rod!
-    The full opposite of Sorcerers, Unbelievers so strongly despise magic that
+    The full opposite of sorcerers, unbelievers so strongly despise magic that
     not only do they refuse to use magic spells, they refuse all training in
     the use of magic items, which leaves them almost totally incompetent when
     trying to use a magic item, although they can still quaff potions and read
-    scrolls. Because they are so unattuned to magic, Unbelievers can prevent
-    magical gates from opening around them, eventually extending to a complete
-    suppression of teleportation abilities and all magic in the area around
-    them.
-    Warriors can also become monk-like fighters, by training the Martial Arts.
+    scrolls. Because they are so unattuned to magic, trained unbelievers will
+    suppress any sort of magic from occurring around them at high probability,
+    which is dubbed 'anti-magic field'. They can further strengthen it by
+    wielding a Dark Sword (see (5.9)).
+    Warriors can also choose to become monk-like fighters, by training the
+    'Martial Arts' skill. This will require them to wear no armour or only very
+    light armour later on.
     The warrior class is recommended for beginners.
 
 Istar (elvish word for Mage)
@@ -7691,17 +7704,15 @@ Priest
     after it's been brought up a few levels. Orcs are said to fear it a lot.
 
 Rogue
-    Rogues can backstab sleeping or fleeing monsters, and they can train
-    stealing items from shops and other players. Thanks to their high dexterity
-    they can often hit several times per round with light weapons.
-    Also, rogues are especially fond of dual-wielding two light one-handed
-    weapons at once.
     A Rogue is a character that prefers to live by cunning, but is capable of
     fighting their way out of a tight spot. The master of traps and locks, no
-    device is impossible for him to overcome. A rogue will learn to set many
-    kinds of traps as they become more experienced. Rogues have very high
-    stealth allowing them to sneak around many creatures without having to
-    fight, or to sneak up and get the first blow, backstabbing his opponent.
+    device is impossible for him to overcome.
+    Rogues have very high stealth allowing them to sneak around many creatures
+    without having to fight, or to sneak up and get the first blow,
+    backstabbing his opponent.
+    Also, rogues are especially fond of dual-wielding two light one-handed
+    weapons at once. They prefer light armour, since many of their special
+    abilities won't work well with heavy armour or two-handed weapons.
     A rogue's perception is higher than any other class, and usually they
     notice traps or secret doors without needing a search. Rarely will a
     rogue be unable to avoid or disarm a trap. Rogues also have the unique
@@ -7718,7 +7729,7 @@ Rogue
     untrackable to almost any monster, for exceptions see (0.2).
     Attacking, taking damage, and a couple of other actions immediately
     breaks cloaking, again see (0.2) for details.
-    Auto-retaliation is disabled while cloaked, except for the Stormbringer.
+    Auto-retaliation is disabled while cloaked.
     A rogue's primary stats are Intelligence and Dexterity.
 
 Mimic
@@ -7761,14 +7772,18 @@ Paladin
     intelligence can slightly help too.
 
 Ranger
-    Rangers are a combination of warrior, mage and archer. They are also
-    skilled trappers and devoted to nature. They cannot become Unbelievers.
-    They are good fighters, and quite effective with ranged weapons. They may
-    train Archery skill up to 10.000, which apart from increasing their damage
-    dealt also enables them to learn some of the techniques used by archers.
+    Rangers are able to fight well in close combat, they are adept at various
+    types of magic, and are skilled trappers too, devoted to nature.
+    They also display great performance with ranged weapons, able to train
+    Archery skill up to 10.000, which apart from increasing their damage dealt
+    also enables them to employ special techniques used by archers.
     Rangers have good stealth, perception, searching, saving throws, and are
     good with magical devices. Rangers can find several different ways out of
     any situation. They use intelligence for spellcasting, same as mages.
+    They are able to dual-wield two one-handed weapons, which requires light
+    armour to be efficient. This goes well with magic or archery, which also
+    would suffer from heavy armour.
+    Apart from adventurers, rangers are the most versatile of all classes.
     At level 20 rangers learn to find paths passing thick woods.
 
 Druid
@@ -10457,7 +10472,7 @@ Mage staves
 Boomerangs (also see 'Weapons' above)
         Extra shots
 Dark swords (also see 'Weapons' above)
-        Increased anti-magic (not over 30% in total)
+        Increased anti-magic (not over 30% in total, see (5.9)).
 Ammunition
         All elemental brands (acid/elec/fire/cold/poison)
         All SLAY mods
