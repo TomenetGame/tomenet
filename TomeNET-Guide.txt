@@ -5496,19 +5496,17 @@ Dark Sword      Dark Swords have a so-called 'antimagic field', which
                 The radius of the antimagic field is several fields (chance
                 to interrupt spells, divided by 9), getting smaller if the
                 chance is smaller than 30%.
-                (Radius and field strength are cumulative with Antimagic
-                skill and will hence add to each other.)
                 Dark Swords never give more than 30% AM, even if tohit and
                 todam boni added together result in a negative number.
                 They also never give 'negative antimagic', 0% AM is the
                 minimum, even if tohit+todam are greater than its AM.
                 AC boni on Dark Swords won't affect the antimagic field.
-                The antimagic chance of a dark sword stacks with the
-                Antimagic skill (see 6.2).
+                The antimagic chance and field radius of a dark sword stacks
+                with the 'Antimagic' skill (see 6.2).
 Bluesteel Blade Cannot rust (not damaged by water attacks) and are especially
                 sharp (see 'VORPAL' under (5.8)).
 Shadow Blade    Resists darkness, cannot be damaged by acid or water, provides
-                a fixed stealth bonus of +2..
+                a fixed stealth bonus of +2.
 Blade of Chaos  Resists chaos and produces chaotic effects (see (5.8)).
 Hunting Spear   Slays animals.
 Slaughter Axe   Slays animals.
