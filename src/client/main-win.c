@@ -3739,7 +3739,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 				case 'F':
 					i += cmd_get_number(&lpCmdLine[i + 1], (int*)&cfg_client_fps);
 					break;
-#if 0
+#if 1
 				case 'h':
 					/* Attempt to print out some usage information */
 					puts(longVersion);
@@ -3751,6 +3751,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					puts("  -N<name>           character Name");
 					puts("  -p<num>            change game Port number");
 					puts("  -P<path>           set the lib directory Path");
+					puts("  -q                 disable audio capabilities ('quiet mode')");
 					quit(NULL);
 					break;
 #endif // 0
@@ -3768,6 +3769,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 				case 'P': /* lib directory path */
 					i += cmd_get_string(&lpCmdLine[i + 1], path, 1024);
 					break;
+				case 'q':
+					quiet_mode = TRUE;
+					break;
 			}
 		}
 		else if (lpCmdLine[i] == ' ')
@@ -3780,6 +3784,8 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 			i += cmd_get_string(&lpCmdLine[i], svname, MAX_CHARS);
 		}
 	}
+
+	if (quiet_mode) use_sound = FALSE;
 
 	/* Basic seed */
 	seed = (time(NULL));

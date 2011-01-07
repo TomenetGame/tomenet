@@ -513,13 +513,13 @@ static void init_sound() {
 #ifdef USE_SOUND_2010
 	int i;
 
+	/* One-time popup dialogue, to inform and instruct user of audio capabilities */
+	if (sound_hint) plog("*******************************************\nTomeNET supports music and sound effects!\nTo enable those, you need to install a sound pack,\nsee http://www.tomenet.net/ forum and downloads.\n*******************************************\n");
+
 	if (!use_sound) {
 		/* Don't initialize sound modules */
 		return;
 	}
-
-	/* One-time popup dialogue, to inform and instruct user of audio capabilities */
-	if (sound_hint) plog("*******************************************\nTomeNET supports music and sound effects!\nTo enable those, you need to install a sound pack,\nsee http://www.tomenet.net/ forum and downloads.\n*******************************************\n");
 
 	/* Try the modules in the order specified by sound_modules[] */
 	for (i = 0; i < N_ELEMENTS(sound_modules); i++) {

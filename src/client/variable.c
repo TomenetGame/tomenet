@@ -148,13 +148,13 @@ cptr ANGBAND_DIR_TEXT;
 cptr ANGBAND_DIR_USER;
 cptr ANGBAND_DIR_XTRA;
 
-
 bool use_graphics;
 #ifdef USE_SOUND_2010
 bool use_sound = TRUE; //ought to be set via TOMENET_SOUND environment var in linux, probably (compare TOMENET_GRAPHICS) -C. Blue
 #else
 bool use_sound;
 #endif
+bool quiet_mode = FALSE;
 
 
 client_opts c_cfg;

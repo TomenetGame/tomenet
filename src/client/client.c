@@ -626,13 +626,15 @@ int main(int argc, char **argv)
 			/* Fall through */
 
 		case 'c':
-		{
 			force_cui = TRUE;
 			break;
-		}
 
 		case 'C':
 			server_protocol = 1;
+			break;
+
+		case 'q':
+			quiet_mode = TRUE;
 			break;
 
 		default:
@@ -641,6 +643,8 @@ int main(int argc, char **argv)
 			break;
 		}
 	}
+
+	if (quiet_mode) use_sound = FALSE;
 
 	if (modus == 1 || modus < 0)
 	{
@@ -658,6 +662,7 @@ int main(int argc, char **argv)
 		puts("  -N<name>           character Name");
 		puts("  -p<num>            change game Port number");
 		puts("  -P<path>           set the lib directory Path");
+		puts("  -q                 disable audio capabilities ('quiet mode')");
 
 #ifdef USE_SOUND_2010
 #if 0 //we don't have 'modules' for everything, yet :-p only sound_modules for now - C. Blue

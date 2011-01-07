@@ -211,6 +211,7 @@ extern cptr ANGBAND_DIR_SCPT;
 
 extern bool use_graphics;
 extern bool use_sound;
+extern bool quiet_mode;
 
 
 extern client_opts c_cfg;
