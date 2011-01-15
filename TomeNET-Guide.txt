@@ -1,7 +1,7 @@
 .=============+============+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 4. Jan 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 15. Jan 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -5034,7 +5034,8 @@ Chaos           Chaos attacks can also have nasty side-effects if you don't
                 -Confuse you.
                 -Let you hallucinate.
                 -Drain some experience. Resisting 'Nether' will also prevent
-                 this.
+                 this. Having 'Hold Life' will also provide some protection
+                 against life draining.
                 Resisting chaos will also make you resist confusion attacks.
                 Resisting chaos will prevent hallucination from certain mind
                 blast attacks.
@@ -5050,12 +5051,15 @@ Darkness        Darkness effects can blind you if you don't resist it.
                 Resistance will cut damage to 4/7..4/12.
                 Breath damage is monster HP/6. Darkness breath caps at 400.
                 Darkness Storms (balls) do (level*5)+(10d10) damage.
-Nether          Having 'Hold Life' can protect from experience loss.
-                Resistance will cut damage to 6/7..6/12 and prevent life
-                draining (experience loss).
+Nether          Nether is kind of 'the element of undead' - most higher level
+                undead creatures will have a nether attack of some sort.
+                Resistance will cut damage to 6/7..6/12 and prevent all life
+                draining (experience loss) from nether attacks.
                 Breath damage is monster HP/6. Nether breath caps at 550.
                 Nether bolts do 30+(5d5)+(level*3/2) damage.
                 Nether balls do 50+(level*4)+(10d10) damage.
+                If you lack nether resistance, having 'Hold Life' ability can
+                at least offers some protection from experience loss.
 Disenchantment  This attack does massive damage and can also disenchant your
                 equipped items, lowering their to-hit/to-dam/to-ac bonus!
                 It can also destroy ethereal ammunition.
