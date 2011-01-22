@@ -1,7 +1,7 @@
 .=============+============+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 15. Jan 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 22. Jan 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10666,6 +10666,8 @@ The differences between RPG ruleset and normal servers are as follows:
    to party owner, so parties won't get disbanded easily, making party-diving
    more effective.
   -Mimicry users have a very slim chance of insta-learning a form!
+   (Note that this also works 'in advance', ie while you have not yet the
+   required mimicry skill to actually see the learn-message show up.)
   -Item level restrictions are disabled and have no effect.
   -Quests can be acquired as early as at level 3 instead of level 5.
   -Quests usually require you to find fewer specimen.
