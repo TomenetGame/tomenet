@@ -88,6 +88,7 @@ Contents
     (4.13)  Quests and Events
 (5) Item and monster details
     (5.1)   Melee weapons, brands
+    (5.1a)  Melee weapon types
     (5.2)   Ranged weapons, brands
     (5.2a)  Fire-till-kill mode
     (5.3)   Slaying vs brands
@@ -4427,6 +4428,35 @@ In general, the bigger a weapon the more you may parry, while the bigger a
 shield the more you will block!
 Last but not least, training "Weaponmastery" skill will also increase your
 parry chance a good deal.
+
+
+(5.1a) Melee weapon types
+-------------------------
+As mentioned previously, there are four weapon classes:
+Swords, axes, blunt weapons, polearms.
+
+You may wonder which one to choose and why. In general, if your character is
+especially skilled at one of the four masteries you might want to pick that one
+to save skill points.
+
+Also, priests cannot use edged weapons that aren't 'blessed' (a special magical
+property, ie ego-power), so they'll usually use blunt weapons only.
+
+However, if you have a choice or don't care about a few skill points more, you
+may want to consider the following table to help you make a decision:
+
+
+Type        1h/2h abundance       2h top damage/weight
+------------------------------------------------------
+Swords      very high / medium    medium / medium
+Axes        medium / medium       high / heavy
+Blunt       medium / high         high / very heavy
+Polearms    low / high            high / medium
+
+
+For example if you stick with dual-wielding two weapons, you might want to go
+with swords and definitely not with polearms, since there are a lot of 1h
+swords, and very few 1h polearms.
 
 
 
@@ -9361,7 +9391,7 @@ More on Blocking
 ----------------
 Many effects that normal armour usually doesn't protect from can actually be
 blocked, for example your character may quickly duck behind his shield just in
-time when an eye tries to gaze at your eyes to paralyze you.
+time when an eye tries to gaze at you to paralyze you.
 The bigger a shield, the more you can block. Depending on server settings,
 the actual block base chance will usually be displayed as a percentage in []
 brackets behind the shield's name, where AC is located for other types of
