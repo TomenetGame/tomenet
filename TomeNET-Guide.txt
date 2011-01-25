@@ -4446,7 +4446,7 @@ However, if you have a choice or don't care about a few skill points more, you
 may want to consider the following table to help you make a decision:
 
 
-Type        1h/2h abundance       2h top damage/weight
+Type        1h/1.5+2h abundance   2h top damage/weight
 ------------------------------------------------------
 Swords      very high / medium    medium / medium
 Axes        medium / medium       high / heavy
