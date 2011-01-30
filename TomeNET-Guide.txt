@@ -1,7 +1,7 @@
 .=============+============+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 25. Jan 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 31. Jan 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -8455,7 +8455,7 @@ Aranea                  a speedy greater spider;
 
 Level 25:
 ---------
-Wyvern                  speedy; can fly and passes most terrains;
+Wyvern                  speedy; can fly; passes most terrains;
                         25% poisonous attacks;
                         immune to poison; susceptible to 'good'
 
@@ -8491,7 +8491,7 @@ Elder aranea            speedy and smart (INT bonus) greater spider;
                         susceptible to 'good' and to light;
                         can't be confused or paralyzed;
                         regenerates HP quickly;
-                        has a medium array of spells to its disposal
+                        has a medium array of spells at its disposal
 
 Plasma hound            speedy;
                         resists plasma, sound; immune to fire;
@@ -8507,14 +8507,14 @@ Level 40:
                         has a small array of fire/fear spells
 
 Giant Roc               speedy giant bird; deals high damage;
-                        passes most terrains;
+                        can fly; passes most terrains;
                         immune to electricity; resists sound;
                         can't be paralyzed or confused;
 
 Lesser kraken           speedy, smart and very tough aquatic creature;
                         resists water greatly as well as lightning, cold,
                         darkness, poison;
-                        completely immune to either water attacks and poison;
+                        completely immune to either water attacks or poison;
                         can't be paralyzed or confused;
                         has a medium size array of spells;
 
@@ -8548,7 +8548,8 @@ Greater kraken          speedy, smart and extremely tough aquatic creature;
                         susceptible to 'good';
                         can cast from a large array of spells
 
-Jabberwock              fabulous very speedy and tough hybrid creature;
+Jabberwock              fabulous very speedy and tough hybrid creature that
+                        deals high damage;
                         can fly;
                         resists teleportation attacks and chaos;
                         can curse and breathe chaos
