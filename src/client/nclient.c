@@ -4729,6 +4729,7 @@ void do_ping()
 #endif
 
 	/* abusing it for weather for now - C. Blue */
+    if (!noweather_mode) {
 #ifdef USE_SOUND_2010
 	weather_particles_seen = 0;
 #endif
@@ -4755,6 +4756,7 @@ void do_ping()
 	if (weather_fading) weather_handle_fading();
  #endif
 #endif
+    }
 
 	/* Handle chat time-stamping too - C. Blue */
 	if (c_cfg.time_stamp_chat) {

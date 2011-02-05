@@ -637,6 +637,10 @@ int main(int argc, char **argv)
 			quiet_mode = TRUE;
 			break;
 
+		case 'w':
+			noweather_mode = TRUE;
+			break;
+
 		default:
 			modus = -1;
 			i = argc;
@@ -663,6 +667,7 @@ int main(int argc, char **argv)
 		puts("  -p<num>            change game Port number");
 		puts("  -P<path>           set the lib directory Path");
 		puts("  -q                 disable audio capabilities ('quiet mode')");
+		puts("  -w                 disable client-side weather effects");
 
 #ifdef USE_SOUND_2010
 #if 0 //we don't have 'modules' for everything, yet :-p only sound_modules for now - C. Blue

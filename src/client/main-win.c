@@ -3752,6 +3752,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					puts("  -p<num>            change game Port number");
 					puts("  -P<path>           set the lib directory Path");
 					puts("  -q                 disable audio capabilities ('quiet mode')");
+					puts("  -w                 disable client-side weather effects");
 					quit(NULL);
 					break;
 #endif // 0
@@ -3771,6 +3772,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					break;
 				case 'q':
 					quiet_mode = TRUE;
+					break;
+				case 'w':
+					noweather_mode = TRUE;
 					break;
 			}
 		}
