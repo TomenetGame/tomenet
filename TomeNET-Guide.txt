@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 3. Feb 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 6. Feb 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -3942,19 +3942,20 @@ floor to receive an extra feeling on entering the next floor.
 These extra level feelings (displayed in yellow) are:
 
   "What a terrifying place.."
-      means a) there's a highly ood monster or
-      b) a great vault and some ood monster on the level.
+      means a) there's a highly ood monster (20+ levels) or
+      b) a great vault and some ood monster (10..19 levels) on the level.
 
   "You sense an air of danger.."
-      means there's a freely roaming (*) ood monster on the level,
-      and also the level has a vault on it somewhere.
+      means there's a freely roaming (*) ood monster (10..19 levels)
+      on the level, and also the level has a vault on it somewhere.
 
   "Feels somewhat dangerous around here.."
       means there's a vault or a rather dangerous monster pit or nest
       on the level.
 
   "There's a sensation of challenge.."
-      means there's a freely roaming (*) slightly ood monster on the level.
+      means there's a freely roaming (*) slightly ood monster (10..19 levels)
+      on the level.
 
   "There's a special feeling about this place.."
       means there's a unique monster on the level.
