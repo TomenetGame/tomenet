@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 6. Feb 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 7. Feb 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -8344,6 +8344,7 @@ All vampires and vampire bats
             the other half is biting). For details see '(5.15) Vampirism'.
 All angels  Resist light, blindness and poison (usually immunity),
             resist confusion, see invisible.
+Note: Fallen angels only get blindness and poison resistance/immunity.
 
 Keep in mind that by changing forms you can potentially lose abilities that
 you had in player form, because they were bound to your normal form.
