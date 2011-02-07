@@ -8305,20 +8305,20 @@ so you might want to create macros for them.
 
 Further, certain races and classes get abilities (even if they are not
 mentioned in r_info.txt for monster forms):
-Bats        Feather falling (levitation)
-Elves       Resist light
-Dark-Elves  Resist darkness
-Hobbits     Dexterity bonus of +2 for not wearing shoes.
-Gnomes      Free action
+Bats        Feather falling (levitation).
+Elves       Resist light.
+Dark-Elves  Resist darkness.
+Hobbits     Dexterity bonus of +2 for not wearing shoes. (Or 'Halflings'.)
+Gnomes      Free action.
 (Dwarves    Blindness resistance, climbing at level 30.)
-High-Elves  Resist light, see invisible
-Yeeks       Feather falling (levitation)
+(High-Elves  Resist light, see invisible.)
+Yeeks       Feather falling (levitation).
 (Ents       Slow digestion, speed - 2, sensitive to fire, see invisible at
-            level 4, can swim, pass trees)
-All ghosts  See invisible, Infra-vision +3
-All orcs    Resist darkness
+            level 4, can swim, pass trees.)
+All ghosts  See invisible, Infra-vision +3.
+All orcs    Resist darkness.
 All trolls and giants
-            Sustain strength
+            Sustain strength.
 All dragonriders
             ESP_DRAGON at level 5, feather falling (levitation),
             flying at level 30.
@@ -8342,7 +8342,8 @@ All vampires and vampire bats
             Vampire bat form has 100% chance to do a vampiric attack,
             real vampire forms have 50% chance (half their attacks are hits,
             the other half is biting). For details see '(5.15) Vampirism'.
-All angels  Resist light, blindness and poison (usually immunity).
+All angels  Resist light, blindness and poison (usually immunity),
+            resist confusion, see invisible.
 
 Keep in mind that by changing forms you can potentially lose abilities that
 you had in player form, because they were bound to your normal form.
