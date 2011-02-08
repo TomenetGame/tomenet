@@ -1547,9 +1547,11 @@ or that are especially important are listed in detail here:
 (1 & 2) User Interface Options
     Rogue-like commands (rogue_like_commands)
         Toggles between normal key set and traditional rogue-like key set.
+
     Suppress server messages as far as possible (taciturn_messages)
         Will prevent some of the not-so-important server messages to be
         shown, for example 'You have <item>' when picking up an item.
+
     Don't display 'flavours' in item names (short_item_names)
         A 'Black Potion of Speed' will just be shown as a 'Potion of Speed'.
 
@@ -1557,6 +1559,7 @@ or that are especially important are listed in detail here:
         Will provide a predefined (on server-side) set of item-inscriptions
         that will be applied automatically to some selected items, which are
         word-of-Recall items, various scrolls and a few potions.
+
     Hide unusable skills (hide_unusable_skills)
         Skills that your character cannot use will not be displayed in the
         skill menu invoked by 'G' key.
@@ -1570,9 +1573,23 @@ or that are especially important are listed in detail here:
 
     Automatically open doors (easy_open)
         Your character attempts to open a door just by you moving into it.
-!!! Scroll the screen more frequently (wide_scroll_margin)
-!!!     Should always be enabled! Will reduce probability for off-screen kills,
-!!!     since the screen scrolls much earlier when you come close to a border!
+
+    Scroll the screen more frequently (wide_scroll_margin)
+        Should always be enabled! Will reduce probability for off-screen kills,
+        since the screen scrolls much earlier when you come close to a border!
+
+    Clear @-inscriptions on taking item ownership (clear_inscr)
+        When you pick up items that belonged to another player, any '@...'
+        inscriptions will be rendered effectless by replacing the @ by a space.
+        This is a security feature that is intended to prevent the inscriptions
+        from interfering with the inscriptions on your own items.
+        For example, your potions of healing might be inscribed @q1. If you now
+        pick up a potion of heroism that someone else also inscribed @q1, it
+        will be used the next time you press your 'q1' macro, because heroism
+        potions are sorted in in the inventory before healing potions, which
+        might cost your life if unlucky.
+        Alternatively if you have this option turned off, you can just use the
+        '}' key to uninscribe the items you get from someone else.
 
     Thin down screen flush signals to avoid freezing (thin_down_flush)
         Enabled by default, this discards all 9 of every 10 flush signals, so
