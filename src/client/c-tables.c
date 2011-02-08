@@ -695,8 +695,13 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.easy_tunnel,		FALSE,	3,	9, 62, TRUE,
 	"easy_tunnel",			"Automatically tunnel walls" },
 
+#if 0
 	{ &c_cfg.auto_destroy,		FALSE,	3,	9, 63, FALSE,
 	"auto_destroy",			"(broken) No query to destroy known junks" },
+#else
+	{ &c_cfg.clear_inscr,		FALSE,	3,	9, 63, TRUE,
+	"clear_inscr",			"Clear @-inscriptions on taking item ownership" },
+#endif
 
 #if 0
 	{ &c_cfg.auto_inscribe,		FALSE,	3,	9, 64, FALSE,

@@ -2253,7 +2253,8 @@ struct player_type
 	bool easy_open;
 	bool easy_disarm;
 	bool easy_tunnel;
-	bool auto_destroy;
+//	bool auto_destroy;
+	bool clear_inscr;
 	bool auto_inscribe;
 	bool taciturn_messages;
 	bool last_words;
@@ -3229,7 +3230,8 @@ struct client_opts
 	bool easy_open;
 	bool easy_disarm;
 	bool easy_tunnel;
-	bool auto_destroy;
+//	bool auto_destroy;
+	bool clear_inscr;
 	bool auto_inscribe;
 	bool taciturn_messages;
 	bool last_words;

@@ -72,7 +72,7 @@ Y:view_special_lite
 Y:easy_open
 X:easy_disarm
 X:easy_tunnel
-X:auto_destroy
+X:clear_inscr
 X:auto_inscribe
 X:taciturn_messages
 Y:last_words
