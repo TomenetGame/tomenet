@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 7. Feb 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 9. Feb 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -368,6 +368,7 @@ V       V       enter 'cloaking mode'. This can only be used by rogues.
                 Note: Although ESP is supposed to detect cloaked targets, for
                 now it's still set to overrides ESP of other players for the
                 sake of PvP usage, similar to invisibility.
+                (Also see (5.16) for details on 'normal' invisibility.)
 A       A       activate an item. Usually an artifact, a dragon scale mail or
                 a ring of polymorphing (shapechanging).
 T or +  +       tunnel through an obstacle or a wall.
@@ -6329,6 +6330,16 @@ If another player is invisible and not of higher level than you..
          need some timing, might take several tries.
 Invisibility (on players) overrides ESP. So it does help in a (blood bond)
 duel even if the opponent has ESP.
+
+
+Cloaking:
+---------
+The ability to cloak themselves is exclusive to rogues and automatically
+acquired at level 15. This will effectively render them invisible, but it is in
+fact NOT the "Invisibility" that has been described above.
+Cloaking overrides any detection mechanism, a cloaked player can only be seen
+by party members, or while the cloaking is weakened because the cloaked player
+performed certain (noisy) actions. (Also see (0.2) for more information.)
 
 
 
