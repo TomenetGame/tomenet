@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 9. Feb 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 10. Feb 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -802,12 +802,11 @@ All items:
     You can inscribe an item by pressing '{' and uninscribe it with '}'.
 
 The !* inscription:
-    '*' is a 'wild card' which means it stands for multiple choices at once.
-    Inscribing an item '!*' will prevent any of these action on it:
+    '*' is a 'wild card' which stands for multiple inscriptions at once,
+    inscribing an item '!*' will prevent any of these actions:
 !d  prevent dropping an item
 !k  prevent killing (destroy) an item
 !v  prevent throwing an item
-!t  prevent taking an item off
 (!h prevent selling a house key. Keys usually aren't used anymore though.)
 !s  prevent selling an item to shop (!s).
     For example, if you wear an artifact and you want to avoid (d)ropping it,
