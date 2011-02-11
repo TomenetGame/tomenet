@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 10. Feb 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 11. Feb 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -803,15 +803,16 @@ All items:
 
 The !* inscription:
     '*' is a 'wild card' which stands for multiple inscriptions at once,
-    inscribing an item '!*' will prevent any of these actions:
-!d  prevent dropping an item
-!k  prevent killing (destroy) an item
-!v  prevent throwing an item
-(!h prevent selling a house key. Keys usually aren't used anymore though.)
-!s  prevent selling an item to shop (!s).
-    For example, if you wear an artifact and you want to avoid (d)ropping it,
-    (t)aking it off or (v) throwing it away accidentally you could either
-    inscribe it  !dtv  or just  !*  . ('!*'  also implies  '!='.)
+    inscribing an item '!*' will do all of these checks:
+!d  Prevent dropping an item.
+!k  Prevent killing (destroying) an item.
+!s  Prevent selling an item to shop (!s).
+    For example, if you found an artifact and you want to avoid (d)ropping it,
+    (s)elling it, or (v) throwing it away accidentally you could either
+    inscribe it  !dsv  or just  !*  .
+!v  Prevent throwing an item away.
+!=  Automatically pick the item up from the floor.
+(!h Prevent selling a house key. Keys usually aren't used anymore though.)
 
 A very useful inscription for (heavily) cursed items:
 !w  prevent wielding/wearing an item. This is very useful if you carry a
@@ -1159,13 +1160,15 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
 
 (1.1) What is TomeNET? (Where can I get the latest sources?)
 ------------------------------------------------------------
-It's an extremely advanced online multiplayer rogue-like role-playing game,
-derived from MAngband (Multiplayer-Angband). TomeNET bases on the stories of
-J.R.R. Tolkien mainly "The Lord Of The Rings", hence the name "the Troubles of
-Middle Earth" or alternatively "the Tales of Middle Earth". The final goal in
-TomeNET is to destroy the fallen god Melkor who is known by the name of
-Morgoth, Lord of Darkness. The official websites are mentioned in the first
-couple of lines of this guide.
+TomeNET is an extremely advanced online multiplayer rogue-like role-playing
+game, derived from MAngband (Multiplayer-Angband). It's based on the stories of
+J.R.R. Tolkien mainly, hence the name "the Troubles of Middle Earth" or
+alternatively "the Tales of Middle Earth".
+The final goal in TomeNET is to destroy the fallen god Melkor who is known by
+the name of Morgoth, Lord of Darkness. The official websites are mentioned in
+the first couple of lines of this guide.
+Note that ToME and TomeNET although both coming from similar roots are actually
+quite different games that are maintained by different persons/teams.
 
 If you want to download the source code, you can get it via CVS, avoid any
 snapshot tarballs and stuff. The repository is at http://angband.oook.cz/.
@@ -1367,6 +1370,11 @@ Last but not least, you may use the following command-line options:
 Linux (compiling from source):
 ------------------------------
 (For using the pre-compiled client instead, see further below.)
+
+You can get the source from www.tomenet.net or directly from CVS via
+  cvs -d:pserver:anonymous@angband.oook.cz:/var/cvs/tome co tomenet
+also see (1.1).
+
 How to compile the game binary:
 Go into '/tomenet/src' where the file 'makefile' is located.
 
@@ -1379,6 +1387,9 @@ libsdl-mixer-devel, libsdl, libsmpeg. Usual package names (SDL version 1.2):
 libsdl-mixer1.2, libsdl-mixer1.2-dev, libsdl1.2debian, libsdl1.2-dev,
 (preferably libsdl1.2debian-pulseaudio, eg under Ubuntu), libsmpeg0,
 libsmpeg-dev.
+If you don't want to use audio, edit the makefile and compare the two
+paragraphs titled 'Without SDL' and 'With SDL' and edit the makefile
+accordingly, to compile it without SDL audio support.
 
 Enter these two lines:
         make clean
@@ -1991,6 +2002,8 @@ to get similar behaviour as in one of the chat modes just for one line:
 #:      Sends the following text to everyone on your dungeon level.
         Note: While in town this will instead become a /say.
 %:      Sends the following text to yourself (has some use in macros).
++:      Sends the following text to the last person who whispered us a private
+        message, so it's sort of a 'reply' function.
 
 
 Note that you can use CTRL+p and CTRL+n while in chat mode (':' key),
@@ -11108,9 +11121,10 @@ PROBLEM 20: Are 'ToME' and 'TomeNET' similar?
 SOLUTION:   Despite similar name, the only thing these two games have in common
             is that they are both middle-earth themed, and some visuals might
             also be similar.
-            Other than that, the two games are very different in basically all
-            aspects! In other words: TomeNET is definitely not 'multi-player
-            ToME'.
+            Other than that, the two games are quite different in most aspects!
+            In other words: TomeNET is definitely not 'multi-player ToME'.
+            Also, the two games are maintained/developed by completely different
+            persons and teams.
 
 PROBLEM 21: My (mixer) settings or window positions (MS Windows only) aren't
             saved automatically as they should be, when I quit the game.
