@@ -3648,27 +3648,33 @@ Oceans-         blue '%' fields.
 --------------------------------
 If you create a new character, it will start in 'Bree', a town located at
 position 32,32 on the world map (same position on all servers!).
+
 The world map however, ranging from 0,0 (bottom left corner) to 63,63
 (top right corner), bears several other towns that you can find and
 explore. These towns often contain different shops (some are said to offer
 *Identify* service or even a cure to Black Breath) and harder dungeons.
+
 However, they might also be a very dangerous place to stay, compared to Bree.
 In general you can say the harder the local dungeon entrance of a town the
 more dangerous monsters can spawn within the town! Bree is the only town that
 contains just more or less harmless townsfolk.
 The worst are Khazad-dum and Lothlorien, if you go here be _very_ cautious.
 Monsters that appear here might look like harmless novice paladins or snagas
-but are in fact of a higher level and more powerful.
+but are in fact of a higher level and more powerful. Also, dangerous monsters
+can spawn in those towns: While Gondolin and Minas Anor can already have nasty
+Mindcrafters, Khazad-Dum and Lothlorien may also spawn the infamous Grand
+Swordsmasters which have killed many characters that went AFK outside the inns.
 However, it has been observed that people who figured out how to climb high
 mountains travelled to Khazad-dum despite their low level for a strange
-reason >:-) .
+reason >:-).
 Even if you decide to stay in Gondolin, which is relatively harmless,
 don't go afk for a longer time or even a snaga archer might kill you with his
 ranged attacks. Always a nasty surprise..
 
 Despite the hazards of higher level towns, towns in general act as a safe zone,
 preventing PK attacks and stop your character's food consumption, meaning that
-you cannot die by starvation while in town.
+you cannot die by starvation while in town. Towns also put experience drain on
+hold, which is important for players wearing Nazgul Rings Of Power for example.
 
 
 Shops:
@@ -3734,6 +3740,8 @@ who is wealthy and in urgent need of your items.
 See (5.7) for more information about ID, *ID* and shops!
 
 
+Towns
+-----
 Here is a list of towns and their corresponding local dungeons:
 
 Town        |Depth/Level|   Local dungeons    | Depth/Level      |Required
@@ -3757,7 +3765,11 @@ your character enters those depths, it should already have boosted speed so
 the slowdown won't bother you but come in handy. For example if you enter
 Mordor you will notice a slowdown to to approx. 1/2 standard time.
 
+
+Dungeons
+--------
 Also, there are several dungeons that aren't bound to a town. Here's a list:
+
 Dungeon                         |   Depth/Level         | Min. required player
                                 |                       |   level to enter
 --------------------------------+-----------------------+---------------------
@@ -3785,15 +3797,15 @@ Nether Realm                    | 8300..9800/166..196   |       40 (*)
 The official main server usually has one or several 'ironman' dungeons
 (see (4.8)), their entrances (stairs) waiting to be discovered by some bold
 explorers.
-Such custom dungeons appear as 'wilderness' in the "Recall depths and Towns"
-list, the minimum required character level to enter is usually 0.
+Such custom dungeons appear as 'Wilderness' in the "Recall depths and Towns"
+list, and usually have no minimum required character level to enter.
 
-(*) To enter the Nether Realm a player must carry the 'King'/'Queen' title,
+((*) To enter the Nether Realm a player must carry the 'King'/'Queen' title,
 acquired by beating Morgoth, Lord of Darkness.
 Each floor in the Nether Realm gives a +2% bonus to experience from monster
 kills.
 The amount of experience is already very high even without the depth-bonus,
-since creatures in the Nether Realm are of a very high level.
+since creatures in the Nether Realm are of a very high level.)
 
 
 
@@ -4346,6 +4358,30 @@ Arena Monster Challenge
     to the floor right the moment the event finally ends, you will lose it
     because everyone gets teleported to town automatically and the arena is
     removed (and your weapon with it).
+
+
+Miscellaneous challenges
+------------------------
+There are certain other challenges that neither really count as quests nor as
+events:
+
+Ironman Deep Dive Challenge
+    There is exactly one designated huge ironman dungeon (or tower) on each
+    server, normal one and rpg server, which is 99 levels in size and does not
+    allow recalling in between.
+    This means, it's extremely likely that you will die before making it
+    through all 99 floors and become able to recall back out.
+    This dungeon serves as a challenge of how far you can make it before death!
+    The level reached will be recorded in the mayor's office in Bree ('n' key
+    inside the office, to view the records).
+    To provide some support, this dungeon will have 'town levels' occur at
+    random, meaning that the whole level is actually not a normal dungeon level
+    but a wild town. Monsters may still spawn on it though!
+    Since you cannot recall out before reaching the 99th floor, in case you
+    need to leave you'll just have to log out inside of the dungeon. For this,
+    keep in mind that your character will, as usually when logging out outside
+    of towns, stay in the game for about 30 more seconds during which it could
+    be killed if you log out in an unsafe place.
 
 
 
