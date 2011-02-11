@@ -5617,6 +5617,13 @@ Thunder Axe     Slays giants, provides lightning brand and resistance.
 Mace of Disruption      Slays undead.
 Scythe of Slicing       Slays dragons and animals.
 
+Weapons of Morgul       These are terribly cursed weapons that aren't good for
+                        anything, just try to get rid of them. Since they have
+                        a heavy curse on them, you need to either use a scroll
+                        of *remove curse* or use enchant scrolls to break it.
+                        For details about the enchant-scrolls trick, which is
+                        usually much cheaper, see paragraph '(5.14) Curses'.
+
 Magic ammunition (Magic Arrows, Magic Bolts, Magic Shots).
                 Those will return into your quiver magically, so just having
                 one will already serve, as long as it isn't destroyed by some
@@ -6243,6 +6250,9 @@ CURSED          can be broken by a regular 'remove curse'.
 HEAVY_CURSE     requires a strong '*remove curse*' to be broken.
                 Item cannot be taken off until the curse is broken.
                 On weapons, there is a high chance of resisting disarming.
+                See the hint regarding the use of enchant scrolls to break a
+                heavy curse instead of using a *rc* scroll, written at the
+                bottom of this paragraph!
 PERMA_CURSE     This curse can never be broken.
                 Item can never be taken off again! Mimics polymorphing into a
                 form that cannot wear the specific item won't succeed either.
@@ -6277,6 +6287,10 @@ can alternatively be broken by enchanting the item's stats above +0.
 Each enchantment of any of their stats (to-hit, to-dam, to-ac) above +0 has
 a certain chance to break the curse. This can often be cheaper than buying a
 *Remove Curse* scroll for HEAVY_CURSE items.
+This is an especially commonly used trick for getting rid of Morgul weapons.
+Just pick the stat that is already higher. Example:
+A Dagger of Morgul (-33,-15) -> You'd enchant its damage to +0 or higher,
+since it requires you to buy less scrolls (15) than going for to-hit (33).
 
 
 
