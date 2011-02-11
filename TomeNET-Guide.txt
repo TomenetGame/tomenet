@@ -6144,34 +6144,25 @@ TERRIFY         fear.
 PARALYZE        free action.
 EXP_xx          hold life.
 LOSE_xxx        sustain stats.
-EAT_xxx         DEX,stealing skill.
-                Device of theft
-                prevention.
-                Won't help against
-                EAT_FOOD/EAT_LITE.
+EAT_xxx         DEX, stealing skill.
+                Device of theft prevention.
+                Won't help against EAT_FOOD/EAT_LITE.
 UN_BONUS        disenchantment.
 UN_POWER        none.(drains charges/energy from your items)
                 Magic Device skill helps to prevent draining though.
                 See (6.10) for more information about the Magic Device skill.
 TIME            time.
-DISEASE         poison. This attack
-                can also decrease
-                your constitution.
-SANITY          none. (mimics using a
-                WEIRD_MIND/EMPTY_MIND
-                form resist slightly)
+DISEASE         poison. This attack can also decrease your constitution.
+SANITY          none. (mimics using WEIRD_MIND/EMPTY_MIND form resist slightly)
 HALLU           chaos.
 PARASITE        <no effect>
-DISARM          fighting skill, weapons
-                worn 2-handed are
-                harder to disarm.
+DISARM          fighting skill.
+                Weapons worn 2-handed are harder to disarm (stacking).
+                Artifacts are also harder to disarm (stacking).
+                Heavily cursed items are quite hard to disarm (stacking).
 FAMINE          none. Makes you hungry.
-SEDUCE          none. Makes you take off
-                equipped items.
-SHATTER         hits & causes an
-                earthquake.
-                Very dangerous.
-                See (5.13).
+SEDUCE          none. Makes you take off equipped items.
+SHATTER         hits & causes an earthquake - very dangerous, see (5.13).
 
 Getting hit by higher undead creatures may also infect you with the
 Black Breath! (See 1.5 for more information about Black Breath.)
@@ -6215,6 +6206,7 @@ CURSED          can be broken by a regular 'remove curse'.
                 Item cannot be taken off until the curse is broken.
 HEAVY_CURSE     requires a strong '*remove curse*' to be broken.
                 Item cannot be taken off until the curse is broken.
+                On weapons, there is a high chance of resisting disarming.
 PERMA_CURSE     This curse can never be broken.
                 Item can never be taken off again! Mimics polymorphing into a
                 form that cannot wear the specific item won't succeed either.
