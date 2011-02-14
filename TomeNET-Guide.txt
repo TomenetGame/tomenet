@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 11. Feb 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 14. Feb 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10798,6 +10798,7 @@ The differences between RPG ruleset and normal servers are as follows:
 ---------------------
 Note: Some of these problems are deprecated and don't exist in this form or at
 all anymore. Some messages might also vary slightly.
+For trouble with lagging out or freezing up, see see PROBLEM 25 and 28.
 
 PROBLEM 00: I am behind a firewall. What ports do I need to open in order to
             play TomeNET?
@@ -10876,7 +10877,8 @@ SOLUTION:   Your LUA script files are outdated. Those files are responsible
             -If for some reason auto-update doesn't work for you,
              download the latest client again.
 
-PROBLEM 06: TomeNET seems to freeze up while playing.
+PROBLEM 06: TomeNET seems to freeze up while playing. (Also see PROBLEM 25 and
+            28, which offer different solutions for similar issues!)
 SOLUTION:   This can happen if your latency is relatively high and many
             messages are transported between the server and your client.
             In fact it's just your display that freezes up. In that state
@@ -10887,7 +10889,8 @@ SOLUTION:   This can happen if your latency is relatively high and many
             override the old connection, making your client quit with
             "resume connection" message.
 
-PROBLEM 07: I am disconnected during gameplay.
+PROBLEM 07: I am disconnected during gameplay. (Note: If it seems to be a
+            lag-out or freeze problem, also see PROBLEM 25 and 28!)
 SOLUTION:   This can have several reasons. On disconnection a message box will
             appear, telling you about the problem. The following messages
             might occur:
@@ -11092,7 +11095,7 @@ PROBLEM 13: I seem to be able to login, create a new character or select a
             packet reply error.
 SOLUTION:   This might be caused by a misconfigured router (some D-Link models
             for example). Try to establish an SSH-tunnel from your PC behind
-            the router to a machine outside of your LAN for port 18348.
+            the router to a machine outside of your LAN for port 18348 (TCP).
             (This might even reduce lag under certain circumstances.)
 
 PROBLEM 14: I get kicked out with an error message after entering an account
@@ -11210,7 +11213,7 @@ PROBLEM 24: When trying to macro F-keys, they don't seem to work properly.
 SOLUTION:   When playing on a notebook, check the state of the 'Fn' special
             shift key, and toggle it accordingly.
 
-PROBLEM 25: The connection is surprisingly laggy.
+PROBLEM 25: The connection is surprisingly laggy. (Also see PROBLEM 28!)
 SOLUTION:   -If you're on Wifi (WLAN) plug in an ethernet cable instead!
             Wireless LAN connections can be pretty unreliable and cause
             periodic lag from trying to re-scan for available networks.
@@ -11236,6 +11239,8 @@ SOLUTION:   You have about 20 minutes to complete the character creation
 
 PROBLEM 28: If I or other players nearby fire a lot of arrows or cast a lot
             of spells, my client lags or freezes somewhat.
+            Could also happen when taking staircases or when there are a lot of
+            monsters on the screen.
 SOLUTION:   Try to reduce or even disable flush-waits, by toggling the client
             options 'thin_down_flush' and if that's not enough also
             'disable_flush'. For details about these, see (2.3).
