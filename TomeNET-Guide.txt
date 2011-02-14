@@ -5814,7 +5814,11 @@ Acquirement     Gives you a great item. Reading it on deeper dungeon levels
 Fire/Ice/Chaos  Fires a ball of the according type around you. Make sure you
                 resist it or you will take damage too.
 Lottery         This might be your chance today to win the Jackpot!
-Vermin Control  Stops breeders on the map from multiplying.
+                Just read it, if you win any money, it will appear under/around
+                your character on the floor. You will always get a message that
+                tells you if you won or not.
+Vermin Control  Stops breeders on the map from multiplying. Doesn't have effect
+                on certain non-natural breeders such as Unmakers.
 Wilderness Mapping  Maps the wilderness area around the worldmap sector you
                     are currently within. These scrolls also sometimes carry
                     an inscription telling the location of a hidden dungeon.
