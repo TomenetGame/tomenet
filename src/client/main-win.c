@@ -3356,7 +3356,9 @@ static void hook_quit(cptr str)
 #ifdef USE_SOUND_2010
 	/* let the sound fade out, also helps the user to realize
 	   he's been disconnected or something - C. Blue */
+#ifdef SOUND_SDL
 	mixer_fadeall();
+#endif
 #endif
 
 	Net_cleanup();
