@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 14. Feb 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 19. Feb 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1271,6 +1271,7 @@ ghost will be destroyed too, even if you are everlasting! Beware!
 If you team up against him, he will grow stronger for every additional player
 who enters his dungeon level. Growing stronger in fact means that he gains a
 hit point and speed bonus. If a player leaves his level, he will weaken again.
+See the following paragraph (1.6) for more information.
 
 A very dangerous thing about Nazgul is that weapons get quickly destroyed if
 they come in contact with these corrupted beings.
@@ -1324,6 +1325,9 @@ will always provide invisibility (5.16) and experience drain (5.19).
  be teleported to town instead and Morgoth will remain on the level.
 -If more than one player is on his floor, he will be a bit thougher than he
  appears to a solo player, depending on the number of players facing him.
+ In details, for each additional player besides the first player joining his
+ level, Morgoth gains +20000 hit points and +6 speed. So if a team of three
+ challenges him, he will have 30000+2*20000 = 70000 HP and 30+2*6 = 42 speed.
 -There are no obstacles that can hold Morgoth back for long.
 
 See (1.5) for more information about Morgoth.
