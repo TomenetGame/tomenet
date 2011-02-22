@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 19. Feb 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 22. Feb 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -5810,11 +5810,7 @@ Acquirement     Gives you a great item. Reading it on deeper dungeon levels
                 Note that while some towns also have a high level, reading this
                 scroll in town won't guarantee a 'great' item, which will
                 be guaranteed if you read it in the dungeon.
-*Acquirement*   Gives you two or three great items. Reading it on deeper
-                dungeon levels produces better results mostly.
-                Note that while some towns also have a high level, reading this
-                scroll in town won't guarantee a 'great' item, which will
-                be guaranteed if you read it in the dungeon.
+*Acquirement*   Same as Acquirement, but gives you two or three great items.
 Fire/Ice/Chaos  Fires a ball of the according type around you. Make sure you
                 resist it or you will take damage too.
 Lottery         This might be your chance today to win the Jackpot!
@@ -10806,14 +10802,21 @@ The differences between RPG ruleset and normal servers are as follows:
 ---------------------
 Note: Some of these problems are deprecated and don't exist in this form or at
 all anymore. Some messages might also vary slightly.
-For trouble with lagging out or freezing up, see see PROBLEM 25 and 28.
+For trouble with lagging out or freezing up, see PROBLEM 25 and 28.
 
 PROBLEM 00: I am behind a firewall. What ports do I need to open in order to
             play TomeNET?
-SOLUTION:   You only need to allow an outgoing TCP/IP connection to remote
-            port 18348, that's the standard port servers run on. (If you'd
-            like to play on the RPG server, it's port 19348 instead of 18348.
-            See (8.5) for more information about RPG settings.)
+SOLUTION:   If you want to connect directly to a specific server by specifying
+            its address via command-line or config file, you only need to allow
+            an outgoing TCP/IP connection to remote port 18348, that's the
+            standard port servers run on. (If you'd like to play on the RPG
+            server, it's port 19348 instead of 18348. See (8.5) for more
+            information about RPG settings. For the Smash Arcade server it's
+            port 20348.)
+            If you want to make use of the server list that appears when you
+            don't specify a particular server, you additionally have to allow
+            the game to connect to the meta server which provides the server
+            list. For this, remote port 8801 TCP must also be opened.
             If you don't have access to the firewall, for example in school or
             at work, you can still try to set up an SSH tunnel or a socks
             proxy server (on either the firewall machine or your PC at home or
