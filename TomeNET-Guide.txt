@@ -3992,7 +3992,7 @@ These extra level feelings (displayed in yellow) are:
       b) a great vault and some ood monster (10..19 levels) on the level.
 
   "You sense an air of danger.."
-      means there's a freely roaming (*) ood monster (10..19 levels)
+      means there's a freely roaming ood monster (10..19 levels)
       on the level, and also the level has a vault on it somewhere.
 
   "Feels somewhat dangerous around here.."
@@ -4000,7 +4000,7 @@ These extra level feelings (displayed in yellow) are:
       on the level.
 
   "There's a sensation of challenge.."
-      means there's a freely roaming (*) slightly ood monster (10..19 levels)
+      means there's a freely roaming slightly ood monster (10..19 levels)
       on the level.
 
   "There's a special feeling about this place.."
@@ -4009,7 +4009,10 @@ These extra level feelings (displayed in yellow) are:
   "What a boring place.."
       means nothing of the above apply to this level.
 
-(*) "freely roaming" means that the monster isn't generated inside a vault.
+Explanations:
+"Freely roaming" means that the monster isn't generated inside a vault.
+"Ood" means out of depth, ie a monster which is of higher level than the actual
+dungeon level it spawned on.
 
 Note that you will only get one, ie the strongest of these feelings applying
 to your dungeon level, meaning feelings higher up the list will take precedence
