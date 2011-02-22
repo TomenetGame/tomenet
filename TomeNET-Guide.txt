@@ -8361,6 +8361,10 @@ F: flag list
                 in general more trouble with 'good' effects than DEMON.
                 UNDEAD will also become susceptible to some 'life' effects,
                 regarding healing or cleansing mostly.
+                Also see further below, following the 'spell list' paragraph,
+                a list of intrinsical boni that all all demons or undead
+                creatures get even if the r_info does not list the according
+                flags.
     HURT_LITE   This form will take 2x damage from light attacks.
 
 S: spell list
@@ -8394,6 +8398,7 @@ so you might want to create macros for them.
 
 Further, certain races and classes get abilities (even if they are not
 mentioned in r_info.txt for monster forms):
+-------------------------------------------
 Bats        Feather falling (levitation).
 Elves       Resist light.
 Dark-Elves  Resist darkness.
@@ -8414,7 +8419,8 @@ All dragonriders
 All evil creatures
             Becomes susceptible to certain 'good' or 'holy' effects.
 All undead creatures
-            Resist darkness, blindness, poison (usually immunity);
+            Resist darkness, blindness, poison (usually immunity, depends on
+            r_info flags);
             can't bleed (no_cut), infra-vision +1, insanity attacks are
             reduced by a little bit.
             Becomes susceptible to 'life', which concerns some healing or
@@ -8422,17 +8428,17 @@ All undead creatures
             However, at the same time they become gorged less quickly when
             for example quaffing lots of healing potions quickly.
 All greater demons (capital 'U')
-            Resist poison (in most cases immunity).
+            Resist poison (in most cases immunity, depends on r_info flags).
 All non-living creatures
-            Resist poison (usually even immune) and fear; insanity attacks
-            are reduced somewhat.
+            Resist poison (usually even immune, depends on r_info flags) and
+            fear; insanity attacks are reduced somewhat.
 All vampires and vampire bats
             Chance to drain life on attacking in melee.
             Vampire bat form has 100% chance to do a vampiric attack,
             real vampire forms have 50% chance (half their attacks are hits,
             the other half is biting). For details see '(5.15) Vampirism'.
-All angels  Resist light, blindness and poison (usually immunity),
-            resist confusion, see invisible.
+All angels  Resist light, blindness and poison (usually immunity, see r_info
+            flags), resist confusion, see invisible.
 Note: Fallen angels only get blindness and poison resistance/immunity.
 
 Keep in mind that by changing forms you can potentially lose abilities that
