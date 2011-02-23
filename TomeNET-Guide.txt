@@ -84,6 +84,7 @@ Contents
     (4.10)  Houses
     (4.10a) Player stores
     (4.11)  Malicious effects players can suffer
+    (4.11a) Drain effects
     (4.12)  Malicious effects monsters can suffer
     (4.13)  Quests and Events
 (5) Item and monster details
@@ -4274,6 +4275,51 @@ Poison  -Poisoned       The player will continuously lose Hit Points.
                         poisoned (compare (5.6)).
 
 
+(4.11a) Drain effects
+---------------------
+Apart from the effects listed above which are indicated in the status bar at
+the bottom of the main window, there are three 'drain' effects that can occur.
+These can be caused by items, monsters or terrain, and are:
+
+Experience drain ('Drains your life force')
+    Having 'Hold Life' does not protect against this.
+    If you equip multiple items that drain experience, the total drain will
+    diminish with each further item though instead of adding up, so for example
+    using two rings of power will be less severe than than one might expect.
+    If experience drain hits the threshold for your current character level, it
+    will not drain any further, so you cannot lose a level from it. Beware
+    however, that you are not hit by another life draining effect that lowers
+    your experience further below the level threshold, or the experience drain
+    will kick in again.
+    Experience drain is on hold while you are in town areas.
+    All the rings of power that are dropped by Nazgul drain experience (and
+    turn you invisible).
+
+Mana drain ('Drains your magic')
+    Drains your mana pool.
+
+Hit point drain ('Drains your hit points')
+    Drains your hit points down to zero, then stops. This means that this
+    effect won't kill you, but can make it extremely risky to go AFK in an
+    unsafe place. Well, going AFK in an unsafe place can kill you anyway.
+    HP drain stacks and is given by:
+     -Items that just drain your HP
+     -Items that have strong good powers and you use them as a Vampire
+     -The sun, when it's day and you're a Vampire and out in the open without
+      a protective mummy wrapping
+     -Monster forms that provide wall-passing (wraith form)
+     -Being entombed in walls, ie stuck without the ability to pass through them
+    HP drain can be countered by HP regeneration, which can be gained from:
+     -'Regeneration' ability (flag), gained from items or as racial/form bonus
+     -Health skill
+     -Holy Curing school bonus
+     -Nature school spell
+     -Biofeedback from fire stones
+    which all stack too.
+
+Also see (5.17) for how these drain effects stack or may be cancelled out.
+
+
 
 (4.12)  Malicious effects monsters can suffer
 ---------------------------------------------
@@ -6440,10 +6486,14 @@ In fact, they add up / stack. Those are:
 -Drain mana ('Drains your magic'. Note that 'mana regeneration' (also called
  mana-charging) does NOT stack. So it can cancel out the effect of only ONE
  item that drains mana, not of any more.)
+ See (4.11a) for more information.
 -Drain hit points ('Drains your health'. note that 'regeneration' does NOT
  stack, so it can cancel out the effect of only ONE item that drains hit
  points, not of any more. However, the 'Health' skill is able to further
  increase your regeneration rate.)
+ See (4.11a) for more information.
+-Drain experience ('Drains your life force'.
+ See (4.11a) for more information.
 -Extra light radius
 
 
