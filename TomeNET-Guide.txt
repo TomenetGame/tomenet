@@ -6745,6 +6745,13 @@ Tunnelling might reveal special floor features, items or gold, see
 'Digging' skill in (6.2) for details.
 Also see (3.4a) for more information on digging tool mods.
 
+If you haven't got a digging tool equipped, or if it's just a basic shovel (+1)
+then wielding a sword or especially an axe can work as pseudo-digger when you
+want to hack down organic material such as trees, bushes, ivy or spider webs.
+(Dual-wielding does not help, so two swords/axes can't dig better than just
+one. Wielding a 1.5-handed weapon in only 1 hand will decrease your digging
+chance though, so take off your shield for best results.)
+
 
 
 (6) Character details
