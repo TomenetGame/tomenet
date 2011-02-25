@@ -6712,7 +6712,7 @@ and your 'digging power'.
 
 Your digging power is calculated as follows:
 An equipped item that provides (+X) to digging will add 20*X.
-If you have a digging tool equipped, its weight is added.
+If you have a digging tool equipped, its weight is added (eg 25.0 lbs -> +25).
 If the digging tool is enchanted to hit or to damage, those values are added.
 The power value so far is now multiplied by a value between 1 and 2, depending
 on your 'Digging' skill (see (6.2)). If the skill is 0, the multiplier is 1, if
