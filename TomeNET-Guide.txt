@@ -3207,6 +3207,7 @@ Ghosts
 ------
 You can continue playing as a ghost, getting a slight experience penalty,
 but that's not recommended. Instead, you should go for resurrection!
+Ghosts also do not share experience with party members on the same floor.
 
 Ghosts can float up and down freely (just hit '<' or '>' key as if you take
 a staircase), so they can quickly float out of the dungeon without having to
@@ -4412,6 +4413,8 @@ Arena Monster Challenge
     to the floor right the moment the event finally ends, you will lose it
     because everyone gets teleported to town automatically and the arena is
     removed (and your weapon with it).
+    Apart from that, inventory and equipment cannot be damaged/destroyed or
+    disenchanted in this event.
 
 
 Miscellaneous challenges
