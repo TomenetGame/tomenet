@@ -969,7 +969,7 @@ cptr melee_techniques[16] =
 #else
 
   "Bash",
-  "Knock-Back",
+  "Knock back",
   "Charge",
   "Flash bomb",
 
