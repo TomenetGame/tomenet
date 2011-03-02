@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 25. Feb 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 2. Mar 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -11330,6 +11330,14 @@ PROBLEM 28: If I or other players nearby fire a lot of arrows or cast a lot
 SOLUTION:   Try to reduce or even disable flush-waits, by toggling the client
             options 'thin_down_flush' and if that's not enough also
             'disable_flush'. For details about these, see (2.3).
+
+PROBLEM 29: I accidenally closed one of the sub-windows and now it's gone.
+            How do I get it back?
+SOLUTION:   Closing a sub-window sets it to 'invisible'. To change that, close
+            TomeNET first, then edit the file 'TomeNET.ini' in any text editor,
+            locate the particular window, and you'll see a line saying
+            "Visibility=0". Change the 0 to 1 and start TomeNET again.
+
 
 
 ==============================================================================
