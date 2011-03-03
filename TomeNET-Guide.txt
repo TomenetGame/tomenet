@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 2. Mar 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 3. Mar 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -6437,11 +6437,11 @@ If another player is invisible and not of higher level than you..
          a shadow cloak;
         -you see him 'flicker' if you lack seeing invisible or if he's wearing
          a shadow cloak (or both). He will fade in and out of your sight.
-         The lower his level, the more often you will be able to see him.
          If you want to look at his equipment with the  '  key, then you'll
          need some timing, might take several tries.
 Invisibility (on players) overrides ESP. So it does help in a (blood bond)
 duel even if the opponent has ESP.
+The effect of invisibility is greatly reduced in PvP but still gives an edge.
 
 
 Cloaking:
