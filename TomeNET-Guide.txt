@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 3. Mar 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 8. Mar 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -7780,13 +7780,13 @@ from skills or items yet).
 Human        0   0   0   0   0   0       10     100%     0ft
              0   0   0   0  10   0    0   0
 Half-Elf    -1  +1  +0  +1  -1  +1        9     110%    20ft
-             2   3   3   1  11   6   -1   5
+             2   5   3   1  11   6   -1   5
 Elf         -1  +2  +1  +1  -2  +2        8     120%    30ft
-             5   6   6   1  12   8   -5  15
+             5   6   6   2  12   8   -5  15
 Hobbit      -2  +2  +1  +3  +0  +1        7     115%    30ft
-            15  18  18   4  15  12  -10  20
+            15  12  18   4  15  12  -10  20
 Gnome       -1  +2  +0  +2  +1  -2        8     125%    40ft
-            10  12  12   3  13   6   -8  12
+            10  18  12   3  13   6   -8  12
 Dwarf       +2  -2  +2  -2  +2  -3       11     130%    50ft
              2   9   9  -1  10   7   15   0
 Half-Orc    +2  -1  +0  +0  +1  -4       11     115%    30ft
@@ -7794,7 +7794,7 @@ Half-Orc    +2  -1  +0  +0  +1  -4       11     115%    30ft
 Half-Troll  +4  -4  -2  -4  +3  -6       12     135%    30ft
             -5  -8  -8  -2   5  -1   20 -10
 Dunadan     +1  +2  +2  +2  +3  +2       10     170%     0ft
-             4   5   5   0  13   3   15  10
+             4   3   5   0  13   3   15  10
 High-Elf    +1  +3  -1  +3  +1  +3       10     250%    40ft
              4  20  20   3  14   3   10  25
 Yeek        -5  -5  -5  -5  -5  -3        7      80%     0ft
@@ -7808,7 +7808,7 @@ Draconian   +4  +2  +2  +1  +3  +2       12     350%    50ft
 Dark-Elf     0  +2  +1  +3  +1  -6       10     150%    80ft
              7   3   6   4   6  10   15  15
 Vampire     +2   0  -3  -1   0  -6       11     220%   150ft
-            -2   0  20   2  13  -4   10 -10
+            -2   3  20   2  13  -4   10 -10
 
 
 
