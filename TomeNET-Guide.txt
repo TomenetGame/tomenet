@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 8. Mar 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 9. Mar 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -3188,19 +3188,30 @@ Note: If a player enters a static-by-death floor, the floor timer will be
       staticness. This timer-reset happens the moment a player enters that
       floor. How long he stays or when he leaves again has no effect.
 
-Be aware that some or even all equipment and inventory might be lost forever
-if you die in places which don't provide enough surrounding free room to drop
-all of your items, for example a dense forest (green tree fields) or mountain
-regions (brown ^ fields)!
-
-Last but not least, non-validated players and characters below level 5 don't
-drop their items on death, their loot will vanish forever.
-
 Hint: The same timing that applies for static-by-death floors is also valid
       for static-by-save&exit floors, ie floors where a player logged out
       instead of doing that in town.
       So if you logged out because your character was stuck, make sure you
       don't log on too early or you will reset the timer as mentioned above.
+
+
+What happens to your loot
+-------------------------
+If you die, all of your items are dropped to the floor at the place of your
+death. Some items from your inventory or even an item from your equipment might
+get lost, but most of it should be waiting for you to pick it up again after
+someone came and revived you.
+Note however that if you float up or down with your ghost while noone stays on
+the level to keep it, the level will usually immediately change and be lost and
+all your items with it!
+(Only a ghost's death or death of a character which has only 1 life will turn a
+floor static as described further above.)
+If you stood in a place where there is no room for your items to drop, for
+example inside a dense forest (green tree fields) or mountain regions (brown ^
+fields) then your items will be scattered randomly over the whole level.
+
+Last but not least, non-validated players and characters below level 5 don't
+drop their items on death, their loot will vanish forever.
 
 
 Ghosts
