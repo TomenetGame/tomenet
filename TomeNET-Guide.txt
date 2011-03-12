@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 9. Mar 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 12. Mar 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -100,6 +100,7 @@ Contents
     (5.8)   Special abilities of items
     (5.9)   What does item xxx do exactly?
     (5.9a)  Activatable items
+    (5.9b)  Artifacts
     (5.10)  Destruction of items by elemental attacks
     (5.11)  Armour Class vs monster attacks, damage caps
     (5.12)  Monster attack types and brands
@@ -961,6 +962,7 @@ Art         Artifact. Those can be 'Static arfifacts' from the a_info.txt
             be able to use static artifacts, but rely on randarts instead.
             Depending on the server settings, fallen winners might also not be
             able to use static arts.
+            See (5.9b) for more information about artifacts.
 Auto-ID     A special ability of some items. If you equip an item that grants
             you 'Auto-ID' all items you touch will automatically be
             identified! Items who grant their wielder Auto-Identification are
@@ -1071,6 +1073,7 @@ PvP         Player vs player. Describes the act of player characters fighting
 Randart     Randomly generated artifact. As opposed to 'Truearts' which are
             also called 'Static arts' from the file a_info.txt. See 'Art'
             at the top of this section for more information.
+            See (5.9b) for more information about artifacts.
 Res         Resistance.
 Room        The dungeon contains many rooms connected by passages. Some of the
             rooms are of special shape. Especially rooms containing a further,
@@ -1285,7 +1288,8 @@ since these resist Nazgul greatly! The Stormbringer also resists like an
 artifact. (It doesn't matter if the artifact is a random or a static one.)
 If your weapon gets destroyed you'll receive a warning message:
 "Your weapon *DISINTEGRATES*!" or "Your weapon is destroyed !"
-(The permanently cursed weapon 'Mighty Hammer of Grond' cannot be destroyed.)
+(The permanently cursed weapon 'Mighty Hammer of Grond' cannot be destroyed.
+See (5.9b) for more information about artifacts.)
 
 Your weapon itself will not damage the Nazgul if it doesn't have one of the
 mods SLAY_EVIL, SLAY_UNDEAD or KILL_UNDEAD. However, you might still be able
@@ -5376,6 +5380,7 @@ Items are classified by
 -sometimes you may find an artifact which can have quite a bunch of
  different powers combined! Artifacts can be recognized by them carrying
  a name. Example: The War Maul 'Turmil' or The Whip of Gothmog.
+ (See (5.9b) for more information about artifacts.)
 
 If you find an item, it's 'unidentified'. That means you see only the
 basic item type.
@@ -5474,18 +5479,7 @@ Shop prices in general may slightly vary depending on the shop owner's race
 and your character's race.
 
 Sometimes an item turns out to be an artifact!
-Artifacts are unique. If an artifact is owned by a player, noone else
-can find it anymore until it's lost (for example if the player dies)
-or sold to a shop. Depending on a server's configuration artifacts
-usually stay a while in the shop and can be bought by other players
-before they finally disappear from the stock.
-
-There are static artifacts and random artifacts ('randarts').
-Static artifacts are predefined and have fixed abilities. Their number
-therefore is limited.
-In case all static artifacts are found, players can still find randomly
-generated artifacts so a server won't run out of artifacts.
-Artifacts of any type cannot be enchanted by any means.
+See (5.9b) for more information about artifacts.
 
 If a player holds an unidentified item long enough he/she might get
 a 'feeling' about it. The more points in 'Combat' skill the player has
@@ -6115,6 +6109,84 @@ Moon amulets: Sleep monsters.
 Rage amulets: Berserk.
 Elemental rings: Breath the ring element and temporary resistance to it.
 Teleportation rings: Explode for teleportation.
+
+
+(5.9b) Artifacts
+----------------
+Some items are 'named', those possess especially great magic powers and are
+also called 'Artifacts'.
+Different from other items artifacts will pseudo-ID as 'special' (given
+sufficient combat/magic/archery skill) or as 'terrible' if they are cursed.
+
+Artifacts are unique. If an artifact is owned by a player, noone else can find
+it anymore until it's lost (for example if the player dies) or sold to a shop.
+Depending on a server's configuration artifacts usually stay a while in the
+shop and can be bought by other players before they finally disappear from the
+stock.
+
+The artifact name can either be given as a real name, for example:
+    The Dagger 'Nimthanc'
+or it can be in the form of a description like for example:
+    The Whip of Gothmog
+The 'The' indicates that this item is one of a kind, aka an artifact.
+
+To find out all about the magic powers of an artifact it needs to be
+*identified*, for example by a 'Scroll of *Identify*' or in one of the *ID*
+shops that occur in every town, which will usually cost around 2000..3000 gold.
+
+There are two types of artifacts, 'true artifacts' (also called 'static
+artifacts') and 'random artifacts' or short 'randarts'.
+
+True artifacts are predefined in the a_info.txt file and will always sell for
+their defined value even if they have not been *identified*.
+Usually true artifacts may not be dropped into a house (will just disappear!)
+and may not be carried by winners, ie characters that have beaten Morgoth.
+Since static artifacts are predefined and have fixed abilities, their number
+therefore is limited. Thanks to the existance of random artifacts, this won't
+be able to cause any shortage of artifacts that can be found though:
+
+Random artifacts are composed randomly and even if they happen to bear the same
+name might have totally different powers. Randarts need to be *identified* to
+sell for what they are really worth.
+Randarts can be dropped in houses and used by anyone just fine, with the
+exception that randarts that give a hit point bonus can only be found/created
+by winners (characters that have beaten Morgoth), and that the hit point bonus
+will not apply if a non-winner character happens to use them.
+
+As was just mentioned, randarts can actually be created by players, using a
+'Scroll of Artifact Creation' which are somewhat often sold in the 'Expensive
+Black Market' in Minas Anor, but also may very rarely spawn in normal black
+markets.
+The advantage of creating an artifact is that the player can determine the base
+item type he wants to use. For more information about artifact creation see
+(8.4).
+
+Artifacts greatly resist Nazguls, which cause most other weapons to break more
+or less instantly. So even if an artifact weapon you find seems not very
+appealing in particular you might want to keep it just for slaying Nazgul.
+(See (1.5) for more information about Nazgul.)
+
+Note: 'The Stormbringer' is not a real artifact but it will show the same
+resilience as true artifacts and random artifacts vs Nazgul.
+
+Some artifacts can be 'A'ctivated for a special effect. This will be shown
+in the list of its powers that you get when *identifying* it.
+
+If you wear/wield multiple artifacts of similar name, you will receive a luck
+bonus (see (5.8), 'LUCK', for details about luck). For example if you equip
+    The Whip of Gothmog    (which happens to be a true artifact)
+and also
+    The Hard Leather Armor 'Gothmog'    (which is actually a random artifact)
+You'd get a small luck bonus. The more artifacts of similar name you equip the
+greater the luck bonus will be.
+
+Artifacts of any type cannot be enchanted by any means, nor harmed by elemental
+attacks of any type. Also they have a high chance to resist disenchantment
+effects. (If the player actually resists disenchantment already then they are
+completely safe.)
+
+Artifact ammunition never breaks or (in case of boomerangs) falls down to the
+floor instead of returning. Artifact weapons are harder to get disarmed.
 
 
 
@@ -10532,6 +10604,7 @@ Last but not least, the golem is..
 
 (8.4) Artifact creation
 -----------------------
+(Also see (5.9b) for details about artifacts in general.)
 "Scrolls of Artifact Creation" count to the most wanted items in the game
 because of their power to turn a normal piece of equipment into a powerful
 random artifact. Often kings and queens look out for these since they are
