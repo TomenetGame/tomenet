@@ -908,6 +908,8 @@ static void load_prefs(void)
 	int i;
 #endif
 #endif
+	/* Extract the "disable_numlock" flag */
+	disable_numlock = (GetPrivateProfileInt("Base", "DisableNumlock", 1, ini_file) != 0); 
 
 #ifdef USE_GRAPHICS
 	/* Extract the "use_graphics" flag */
@@ -3641,6 +3643,10 @@ static int cmd_get_string(char *str, char *dest, int n)
 
 /* Turn off the num-lock key by toggling it if it's currently on. */
 static void turn_off_numlock(void) {
+
+	/* nothing to do if user doesn't want to auto-kill numlock */
+	if (!disable_numlock) return;
+
 	KEYBDINPUT k;
 	INPUT inp;
 	int r;

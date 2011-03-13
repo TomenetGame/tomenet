@@ -216,6 +216,7 @@ extern cptr ANGBAND_DIR_USER;
 extern cptr ANGBAND_DIR_XTRA;
 extern cptr ANGBAND_DIR_SCPT;
 
+extern bool disable_numlock;
 extern bool use_graphics;
 extern bool use_sound, use_sound_org;
 extern bool quiet_mode;
