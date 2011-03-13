@@ -303,14 +303,13 @@ CFLAGS += $(LUAFLAGS) -Iserver -Iserver/lua
 
 TOLUA = server/tolua
 
-all: tomenet tomenet.console tomenet.server accedit evilmeta
+all: tomenet tomenet.server accedit evilmeta
 	@echo Now you need to copy the binaries out of the src directory or run \"make install\".
 
 # sorry. install on every make is a real pain ;)
 
 install: all
 	install -b tomenet ..
-	install -b tomenet.console ..
 	install -b tomenet.server ..
 	install -b accedit ..
 	install -b evilmeta ..
