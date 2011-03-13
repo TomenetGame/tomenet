@@ -132,6 +132,14 @@ static cptr desc_moan_halloween[] =
 	"says: Have you seen The Great Pumpkin?"
 };
 
+/* for the santa on christ^H^H^H^H^H^Hxmas */
+static cptr desc_moan_xmas[] = {
+	"wishes you a Merry Christmas!",
+	"hopes that you will be less naughty next year!",
+	"cheers \"Ho Ho ho!\"",
+	"has a present for you!",
+	"checks you against his cheeze list"
+};
 
 /*
  * Hack -- possible "seducing" messages
@@ -841,10 +849,12 @@ bool make_attack_melee(int Ind, int m_idx)
 
 				case RBM_MOAN:
 				{
-					if (!season_halloween)
-						act = desc_moan[rand_int(4)];
-					else
+					if (season_halloween)
 						act = desc_moan_halloween[rand_int(4)];
+					else if (season_xmas)
+						act = desc_moan_xmas[rand_int(5)];
+					else
+						act = desc_moan[rand_int(4)];
 					break;
 				}
 

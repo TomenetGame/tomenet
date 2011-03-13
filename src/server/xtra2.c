@@ -4749,14 +4749,19 @@ void monster_death(int Ind, int m_idx)
 	
 	process_hooks(HOOK_MONSTER_DEATH, "d", Ind);
 
-if (season_halloween) {
-	/* let everyone know, so they are prepared.. >:) */
-	if (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088) {
-		msg_broadcast_format(0, "\374\377L**\377o%s has defeated a tasty halloween spirit!\377L**", p_ptr->name);
-		s_printf("HALLOWEEN: %s has defeated %s.\n", p_ptr->name, m_name);
-		great_pumpkin_timer = 15 + rand_int(45);
+	if (season_halloween) {
+		/* let everyone know, so they are prepared.. >:) */
+		if (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088) {
+			msg_broadcast_format(0, "\374\377L**\377o%s has defeated a tasty halloween spirit!\377L**", p_ptr->name);
+			s_printf("HALLOWEEN: %s has defeated %s.\n", p_ptr->name, m_name);
+			great_pumpkin_timer = 15 + rand_int(45);
+		}
+	} else if (season_xmas) {
+		if (m_ptr->r_idx == 733 || m_ptr->r_idx == 1102) {
+			msg_broadcast_format(0, "\374\377L**\377oSanta dropped the presents near %s!\377L**", p_ptr->name);
+			s_printf("XMAS: %s has defeated %s.\n", p_ptr->name, m_name);
+		}
 	}
-}
 
 
 
