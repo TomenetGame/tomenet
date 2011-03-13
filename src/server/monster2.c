@@ -128,10 +128,6 @@ int monster_check_experience(int m_idx, bool silent)
 #endif
 		/* Gain hp */
 		if (magik(90)) {
-#if 0
-			m_ptr->maxhp += r_ptr->hside;
-			m_ptr->hp += r_ptr->hside;
-#endif // no thx :)
 			m_ptr->maxhp += (r_ptr->hside * r_ptr->hdice) / 20;//10
 			m_ptr->hp += (r_ptr->hside * r_ptr->hdice) / 20;//10
 		}
@@ -156,18 +152,7 @@ int monster_check_experience(int m_idx, bool silent)
 		/* Gain melee power */
 		/* XXX 20d1 monster can be too horrible (20d5) */
 //		if (magik(50))
-		if (magik(80)) {
-#if 0 /* yeah whatever.. */
-			i = rand_int(4);
-			try = 20;
-
-			while ((try--) && !m_ptr->blow[i].d_dice) i = rand_int(4);
-
-			m_ptr->blow[i].d_dice++;
-#else
-			levels_gained++;
-#endif
-		}
+		if (magik(80)) levels_gained++;
 	}
 
 	/* flatten the curve for very high monster levels (+27 nether realm) */
@@ -543,17 +528,12 @@ void compact_monsters(int size, bool purge)
 
 		/* Skip real monsters */
 		/* real monsters in unreal location are not skipped. */
-#if 0
-		if (m_ptr->r_idx &&
-			((!m_ptr->wpos.wz && !purge) || getcave(&m_ptr->wpos))) continue;
-#else
 		if (m_ptr->r_idx) {
 			if ((!m_ptr->wpos.wz && !purge) || getcave(&m_ptr->wpos)) continue;
 
 			/* Delete the monster */
 			delete_monster_idx(i, TRUE);
 		}
-#endif	// 0
 
 		/* One less monster */
 		m_max--;
@@ -640,44 +620,6 @@ void compact_monsters(int size, bool purge)
 void wipe_m_list(struct worldpos *wpos) {
 	int i;
 
-#if 0
-	/* Delete all the monsters */
-	for (i = m_max - 1; i >= 1; i--) {
-		monster_type *m_ptr = &m_list[i];
-                monster_race *r_ptr = race_inf(m_ptr);
-
-		/* Skip dead monsters */
-		if (!m_ptr->r_idx) continue;
-
-		/* Mega-Hack -- preserve Unique's XXX XXX XXX */
-
-		/* Hack -- Reduce the racial counter */
-		if (r_ptr->cur_num != 0) /* don't overflow - mikaelh */
-			r_ptr->cur_num--;
-
-		/* Monster is gone */
-		cave[m_ptr->fy][m_ptr->fx].m_idx = 0;
-
-		/* Wipe the Monster */
-		WIPE(m_ptr, monster_type);
-	}
-
-	/* Reset the monster array */
-	m_nxt = m_max = 1;
-
-	/* No live monsters */
-	m_top = 0;
-
-	/* Hack -- reset "reproducer" count */
-	num_repro = 0;
-
-	/* Hack -- no more target */
-	target_who = 0;
-
-	/* Hack -- no more tracking */
-	health_track(0);
-#endif
-
 	/* Delete all the monsters */
 	for (i = m_max - 1; i >= 1; i--) {
 		monster_type *m_ptr = &m_list[i];
@@ -704,7 +646,8 @@ void thin_surface_spawns() {
 		monster_type *m_ptr = &m_list[i];
 
 		/* Only affect surface monsters, and only 20% of them (randomly) */
-		if ((m_ptr->wpos.wz != 0) || !magik(20)) continue;  //was 30
+//		if ((m_ptr->wpos.wz != 0) || !magik(20)) continue; //high towns end up pretty empty, even if a player idles for hours
+		if ((m_ptr->wpos.wz != 0) || !magik(10)) continue; //<testing>
 
 		/* hardcoded which ones aren't to be touched -_- */
 		if (m_ptr->r_idx == 1101 || m_ptr->r_idx == 1126 ||
@@ -1231,39 +1174,10 @@ s16b get_mon_num(int level, int dlevel)
 
 	/* Out Of Depth modification: -- but not in town (Bree) */
 	if (level > 0) {
-//commented this one out, it's too much (destroyer on lv 54..)
-#if 0
-		/* Occasional "nasty" monster */
-		if (rand_int(NASTY_MON) == 0) {
-			/* Pick a level bonus */
-			d1 = level / 4 + 2;
-
-			/* Boost the level */
-			level += ((d1 < 5) ? d1 : 5);
-		}
-
-		/* Occasional "nasty" monster */
-		if (rand_int(NASTY_MON) == 0) {
-			/* Pick a level bonus */
-			d2 = level / 4 + 2;
-
-			/* Boost the level */
-			level += ((d2 < 5) ? d2 : 5);
-		}
-		/* Boost the level */
-		level += ((d1 < 5) ? d1 : 5);
-		level += ((d2 < 5) ? d2 : 5);
-#elseif 0
-		if (rand_int(NASTY_MON) == 0) {
-			if (level < 15) level += (2 + level / 2 + randint(3));
-			else level += (10 + level / 4 + randint(level / 4)); /* can be quite nasty, but serves well so far >;-) */
-		}
-#else
 		if (rand_int(NASTY_MON) == 0) {
 			if (dlevel < 15) level += (2 + dlevel / 2 + randint(3));
 			else level += (10 + dlevel / 4 + randint(dlevel / 4)); /* can be quite nasty, but serves well so far >;-) */
 		}
-#endif
 	}
 
 	/* Cap OoD - C. Blue
@@ -1628,26 +1542,19 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode)
 void monster_race_desc(int Ind, char *desc, int r_idx, int mode)
 {
 	player_type *p_ptr;
-
 	cptr            res;
-
-        monster_race    *r_ptr = &r_info[r_idx];
-
+	monster_race    *r_ptr = &r_info[r_idx];
 	cptr            name = r_name + r_ptr->name;
-
 	bool            seen = FALSE, pron = FALSE;
 
 	/* Check for bad player number */
-	if (Ind > 0)
-	{
+	if (Ind > 0) {
 		p_ptr = Players[Ind];
-	
+
 		if (!(mode & 0x0100) && p_ptr->image)
 			name = r_name_garbled_get();
 			seen = TRUE;
-	}
-	else
-	{
+	} else {
 		seen = ((mode & 0x80) || (!(mode & 0x40)));
 	}
 
@@ -1656,8 +1563,7 @@ void monster_race_desc(int Ind, char *desc, int r_idx, int mode)
 
 
 	/* First, try using pronouns, or describing hidden monsters */
-	if (!seen || pron)
-	{
+	if (!seen || pron) {
 		/* an encoding of the monster "sex" */
 		int kind = 0x00;
 
@@ -1673,37 +1579,36 @@ void monster_race_desc(int Ind, char *desc, int r_idx, int mode)
 		res = "it";
 
 		/* Brute force: split on the possibilities */
-		switch (kind + (mode & 0x07))
-		{
-			/* Neuter, or unknown */
-			case 0x00: res = "it"; break;
-			case 0x01: res = "it"; break;
-			case 0x02: res = "its"; break;
-			case 0x03: res = "itself"; break;
-			case 0x04: res = "something"; break;
-			case 0x05: res = "something"; break;
-			case 0x06: res = "something's"; break;
-			case 0x07: res = "itself"; break;
+		switch (kind + (mode & 0x07)) {
+		/* Neuter, or unknown */
+		case 0x00: res = "it"; break;
+		case 0x01: res = "it"; break;
+		case 0x02: res = "its"; break;
+		case 0x03: res = "itself"; break;
+		case 0x04: res = "something"; break;
+		case 0x05: res = "something"; break;
+		case 0x06: res = "something's"; break;
+		case 0x07: res = "itself"; break;
 
-			/* Male (assume human if vague) */
-			case 0x10: res = "he"; break;
-			case 0x11: res = "him"; break;
-			case 0x12: res = "his"; break;
-			case 0x13: res = "himself"; break;
-			case 0x14: res = "someone"; break;
-			case 0x15: res = "someone"; break;
-			case 0x16: res = "someone's"; break;
-			case 0x17: res = "himself"; break;
+		/* Male (assume human if vague) */
+		case 0x10: res = "he"; break;
+		case 0x11: res = "him"; break;
+		case 0x12: res = "his"; break;
+		case 0x13: res = "himself"; break;
+		case 0x14: res = "someone"; break;
+		case 0x15: res = "someone"; break;
+		case 0x16: res = "someone's"; break;
+		case 0x17: res = "himself"; break;
 
-			/* Female (assume human if vague) */
-			case 0x20: res = "she"; break;
-			case 0x21: res = "her"; break;
-			case 0x22: res = "her"; break;
-			case 0x23: res = "herself"; break;
-			case 0x24: res = "someone"; break;
-			case 0x25: res = "someone"; break;
-			case 0x26: res = "someone's"; break;
-			case 0x27: res = "herself"; break;
+		/* Female (assume human if vague) */
+		case 0x20: res = "she"; break;
+		case 0x21: res = "her"; break;
+		case 0x22: res = "her"; break;
+		case 0x23: res = "herself"; break;
+		case 0x24: res = "someone"; break;
+		case 0x25: res = "someone"; break;
+		case 0x26: res = "someone's"; break;
+		case 0x27: res = "herself"; break;
 		}
 
 		/* Copy the result */
@@ -1712,46 +1617,36 @@ void monster_race_desc(int Ind, char *desc, int r_idx, int mode)
 
 
 	/* Handle visible monsters, "reflexive" request */
-	else if ((mode & 0x02) && (mode & 0x01))
-	{
+	else if ((mode & 0x02) && (mode & 0x01)) {
 		/* The monster is visible, so use its gender */
 		if (r_ptr->flags1 & RF1_FEMALE) strcpy(desc, "herself");
 		else if (r_ptr->flags1 & RF1_MALE) strcpy(desc, "himself");
 		else strcpy(desc, "itself");
 	}
-
-
 	/* Handle all other visible monster requests */
-	else
-	{
+	else {
 		/* It could be a Unique */
-		if (r_ptr->flags1 & RF1_UNIQUE)
-		{
+		if (r_ptr->flags1 & RF1_UNIQUE) {
 			/* Start with the name (thus nominative and objective) */
 			(void)strcpy(desc, name);
 		}
-
 		/* It could be an indefinite monster */
-		else if (mode & 0x08)
-		{
+		else if (mode & 0x08) {
 			/* XXX Check plurality for "some" */
 
 			/* Indefinite monsters need an indefinite article */
 			(void)strcpy(desc, is_a_vowel(name[0]) ? "an " : "a ");
 			(void)strcat(desc, name);
 		}
-
 		/* It could be a normal, definite, monster */
-		else
-		{
+		else {
 			/* Definite monsters need a definite article */
 			(void)strcpy(desc, "the ");
 			(void)strcat(desc, name);
 		}
 
 		/* Handle the Possessive as a special afterthought */
-		if (mode & 0x02)
-		{
+		if (mode & 0x02) {
 			/* XXX Check for trailing "s" */
 
 			/* Simply append "apostrophe" and "s" */
@@ -1764,26 +1659,20 @@ void monster_race_desc(int Ind, char *desc, int r_idx, int mode)
 void player_desc(int Ind, char *desc, int Ind2, int mode)
 {
 	player_type *p_ptr, *q_ptr = Players[Ind2];
-
 	cptr            res;
-
 	cptr            name = q_ptr->name;
-
 	bool            seen, pron;
 
 	/* Check for bad player number */
-	if (Ind > 0)
-	{
+	if (Ind > 0) {
 		p_ptr = Players[Ind];
-	
+
 		/* Can we "see" it (exists + forced, or visible + not unforced) */
 		seen = (q_ptr && ((mode & 0x80) || (!(mode & 0x40) && p_ptr->play_vis[Ind2])));
 
 		if (!(mode & 0x0100) && p_ptr->image)
 			name = r_name_garbled_get();
-	}
-	else
-	{
+	} else {
 		seen = (q_ptr && ((mode & 0x80) || (!(mode & 0x40))));
 	}
 
@@ -1792,8 +1681,7 @@ void player_desc(int Ind, char *desc, int Ind2, int mode)
 
 
 	/* First, try using pronouns, or describing hidden monsters */
-	if (!seen || pron)
-	{
+	if (!seen || pron) {
 		/* an encoding of the monster "sex" */
 		int kind = 0x00;
 
@@ -1809,37 +1697,36 @@ void player_desc(int Ind, char *desc, int Ind2, int mode)
 		res = "it";
 
 		/* Brute force: split on the possibilities */
-		switch (kind + (mode & 0x07))
-		{
-			/* Neuter, or unknown */
-			case 0x00: res = "it"; break;
-			case 0x01: res = "it"; break;
-			case 0x02: res = "its"; break;
-			case 0x03: res = "itself"; break;
-			case 0x04: res = "something"; break;
-			case 0x05: res = "something"; break;
-			case 0x06: res = "something's"; break;
-			case 0x07: res = "itself"; break;
+		switch (kind + (mode & 0x07)) {
+		/* Neuter, or unknown */
+		case 0x00: res = "it"; break;
+		case 0x01: res = "it"; break;
+		case 0x02: res = "its"; break;
+		case 0x03: res = "itself"; break;
+		case 0x04: res = "something"; break;
+		case 0x05: res = "something"; break;
+		case 0x06: res = "something's"; break;
+		case 0x07: res = "itself"; break;
 
-			/* Male (assume human if vague) */
-			case 0x10: res = "he"; break;
-			case 0x11: res = "him"; break;
-			case 0x12: res = "his"; break;
-			case 0x13: res = "himself"; break;
-			case 0x14: res = "someone"; break;
-			case 0x15: res = "someone"; break;
-			case 0x16: res = "someone's"; break;
-			case 0x17: res = "himself"; break;
+		/* Male (assume human if vague) */
+		case 0x10: res = "he"; break;
+		case 0x11: res = "him"; break;
+		case 0x12: res = "his"; break;
+		case 0x13: res = "himself"; break;
+		case 0x14: res = "someone"; break;
+		case 0x15: res = "someone"; break;
+		case 0x16: res = "someone's"; break;
+		case 0x17: res = "himself"; break;
 
-			/* Female (assume human if vague) */
-			case 0x20: res = "she"; break;
-			case 0x21: res = "her"; break;
-			case 0x22: res = "her"; break;
-			case 0x23: res = "herself"; break;
-			case 0x24: res = "someone"; break;
-			case 0x25: res = "someone"; break;
-			case 0x26: res = "someone's"; break;
-			case 0x27: res = "herself"; break;
+		/* Female (assume human if vague) */
+		case 0x20: res = "she"; break;
+		case 0x21: res = "her"; break;
+		case 0x22: res = "her"; break;
+		case 0x23: res = "herself"; break;
+		case 0x24: res = "someone"; break;
+		case 0x25: res = "someone"; break;
+		case 0x26: res = "someone's"; break;
+		case 0x27: res = "herself"; break;
 		}
 
 		/* Copy the result */
@@ -1848,24 +1735,20 @@ void player_desc(int Ind, char *desc, int Ind2, int mode)
 
 
 	/* Handle visible monsters, "reflexive" request */
-	else if ((mode & 0x02) && (mode & 0x01))
-	{
+	else if ((mode & 0x02) && (mode & 0x01)) {
 		/* The monster is visible, so use its gender */
 		if (!q_ptr->male) strcpy(desc, "herself");
 		else strcpy(desc, "himself");
 //		else strcpy(desc, "itself");
 	}
 
-
 	/* Handle all other visible monster requests */
-	else
-	{
+	else {
 		/* Start with the name (thus nominative and objective) */
 		(void)strcpy(desc, name);
 
 		/* Handle the Possessive as a special afterthought */
-		if (mode & 0x02)
-		{
+		if (mode & 0x02) {
 			/* XXX Check for trailing "s" */
 
 			/* Simply append "apostrophe" and "s" */
@@ -2358,11 +2241,7 @@ void update_mon(int m_idx, bool dist)
 					/* Weird mind, occasional telepathy */
 					else if (r_ptr->flags2 & RF2_WEIRD_MIND) {
 						do_weird_mind = TRUE;
-#if 0
-						if (rand_int(100) < 10) hard = flag = TRUE;
-#else /* update_mon_flicker() */
 						if (!m_ptr->no_esp_phase) hard = flag = TRUE;
-#endif
 					}
 
 					/* Normal mind, allow telepathy */
@@ -2530,8 +2409,7 @@ void update_monsters(bool dist)
 	scan_monsters = FALSE;
 
 	/* Update each (live) monster */
-	for (i = 1; i < m_max; i++)
-	{
+	for (i = 1; i < m_max; i++) {
 		monster_type *m_ptr = &m_list[i];
 
 		/* Skip dead monsters */
@@ -2570,9 +2448,12 @@ void update_player(int Ind)
 	/* Seen by telepathy */
 	bool hard = FALSE;
 
+	/* Toned down invisibility for PvP */
+	bool hostile, c_hostile;
+
+
 	/* Check for every other player */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 		zcave = getcave(&p_ptr->wpos);
 
@@ -2591,9 +2472,14 @@ void update_player(int Ind)
 		/* Compute distance */
 		dis = distance(py, px, p_ptr->py, p_ptr->px);
 
+		c_hostile = check_hostile(i, Ind);
+		hostile = ((p_ptr->wpos.wx == WPOS_PVPARENA_X &&
+		    p_ptr->wpos.wy == WPOS_PVPARENA_Y && p_ptr->wpos.wz == WPOS_PVPARENA_Z) ||
+		    ((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) ||
+		    c_hostile);
+
 		/* Process players on current panel */
-		if (panel_contains(py, px) && zcave)
-		{
+		if (panel_contains(py, px) && zcave) {
 			cave_type *c_ptr = &zcave[py][px];
 			byte *w_ptr = &p_ptr->cave_flag[py][px];
 
@@ -2609,15 +2495,13 @@ void update_player(int Ind)
 			
 			if (*w_ptr & CAVE_VIEW) {
 				/* Check infravision */
-				if (dis <= (byte)(p_ptr->see_infra))
-				{
+				if (dis <= (byte)(p_ptr->see_infra)) {
 					/* Visible */
 					easy = flag = TRUE;
 				}
 
 				/* Check illumination */
-				if ((c_ptr->info & CAVE_LITE) || (c_ptr->info & CAVE_GLOW))
-				{
+				if ((c_ptr->info & CAVE_LITE) || (c_ptr->info & CAVE_GLOW)) {
 					/* Check for invisibility */
 					if (!q_ptr->ghost || p_ptr->see_inv)
 					{
@@ -2630,13 +2514,14 @@ void update_player(int Ind)
 			}
 
 			/* Telepathy can see all players */
-			if (p_ptr->telepathy & ESP_ALL || (p_ptr->prace == RACE_DRIDER))
-			{
+			if (p_ptr->telepathy & ESP_ALL || (p_ptr->prace == RACE_DRIDER)) {
 			  bool see = FALSE;
 
 			  if (!(p_ptr->mode & MODE_HARD)) see = TRUE;
 			  if ((p_ptr->mode & MODE_HARD) && (dis < MAX_SIGHT)) see = TRUE;
-			  if (!(p_ptr->telepathy&ESP_ALL) && (p_ptr->prace == RACE_DRIDER) && (p_ptr->lev<6 || (dis > (5+p_ptr->lev / 2)))) see = FALSE;
+			  if (!(p_ptr->telepathy & ESP_ALL) && (p_ptr->prace == RACE_DRIDER) &&
+			    (p_ptr->lev < 6 || (dis > (5 + p_ptr->lev / 2))))
+				see = FALSE;
 
 			  if (see)
 			    {
@@ -2645,7 +2530,6 @@ void update_player(int Ind)
 			    }
 			}
 
-#if 0
 			/* Can we see invisible players ? */
 			if ((!p_ptr->see_inv ||
 			    ((q_ptr->inventory[INVEN_OUTER].k_idx) &&
@@ -2653,23 +2537,15 @@ void update_player(int Ind)
 			    (q_ptr->inventory[INVEN_OUTER].sval == SV_SHADOW_CLOAK))) &&
 			    q_ptr->invis && !player_in_party(p_ptr->party, Ind))
 			{
-				if ((q_ptr->lev > p_ptr->lev) || (randint(p_ptr->lev) > (q_ptr->lev / 2)))
+				/* in PvP, invis shouldn't help too greatly probably */
+				if ((q_ptr->lev > p_ptr->lev) || q_ptr->invis_phase >= (hostile ? 85 : 25))
 					flag = FALSE;
 			}
-#else /* for update_player_flicker() */
-			/* Can we see invisible players ? */
-			if ((!p_ptr->see_inv ||
-			    ((q_ptr->inventory[INVEN_OUTER].k_idx) &&
-			    (q_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK) &&
-			    (q_ptr->inventory[INVEN_OUTER].sval == SV_SHADOW_CLOAK))) &&
-			    q_ptr->invis && !player_in_party(p_ptr->party, Ind))
-			{
-				if ((q_ptr->lev > p_ptr->lev) || q_ptr->invis_phase)
-					flag = FALSE;
-			}
-#endif
 
-			if (q_ptr->cloaked && !player_in_party(p_ptr->party, Ind)) flag = FALSE;
+			/* Hack: Currently cloaking is set to be effectless for PvP-mode chars here */
+			if (q_ptr->cloaked == 1 && !q_ptr->cloak_neutralized &&
+			    !player_in_party(p_ptr->party, Ind)
+			    && !(q_ptr->mode & MODE_PVP)) flag = FALSE;
 
 			/* Dungeon masters can see invisible players */
 			if (p_ptr->admin_dm || player_sees_dm(i)) flag = TRUE;
@@ -2678,22 +2554,22 @@ void update_player(int Ind)
 			if (ge_special_sector && p_ptr->wpos.wx == WPOS_ARENA_X && p_ptr->wpos.wy == WPOS_ARENA_Y && p_ptr->wpos.wz == WPOS_ARENA_Z)
 				flag = TRUE;
 
+#if 0 /* uses p_ptr->invis_phase too now, see 'hostile' above */
 			/* PvP-Arena provides wizard-esp too */
 			if (p_ptr->wpos.wx == WPOS_PVPARENA_X && p_ptr->wpos.wy == WPOS_PVPARENA_Y && p_ptr->wpos.wz == WPOS_PVPARENA_Z) flag = TRUE;
 
 			/* hack: PvP-mode players can ESP each other */
 			if ((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) flag = TRUE;
+#endif
 
 			/* hack -- dungeon masters are invisible */
 			if (q_ptr->admin_dm && !player_sees_dm(i)) flag = FALSE;
 		}
 
 		/* Player is now visible */
-		if (flag)
-		{
+		if (flag) {
 			/* It was previously unseen */
-			if (!p_ptr->play_vis[Ind])
-			{
+			if (!p_ptr->play_vis[Ind]) {
 				/* Mark as visible */
 				p_ptr->play_vis[Ind] = TRUE;
 
@@ -2701,8 +2577,7 @@ void update_player(int Ind)
 				lite_spot(i, py, px);
 
 				/* Disturb on appearance */
-				if (p_ptr->disturb_move && check_hostile(i, Ind))
-				{
+				if (p_ptr->disturb_move && c_hostile) {
 					/* Disturb */
 					disturb(i, 1, 0);
 				}
@@ -2710,11 +2585,9 @@ void update_player(int Ind)
 		}
 
 		/* The player is not visible */
-		else
-		{
+		else {
 			/* It was previously seen */
-			if (p_ptr->play_vis[Ind])
-			{
+			if (p_ptr->play_vis[Ind]) {
 				/* Mark as not visible */
 				p_ptr->play_vis[Ind] = FALSE;
 
@@ -2722,8 +2595,7 @@ void update_player(int Ind)
 				lite_spot(i, py, px);
 
 				/* Disturb on disappearance */
-				if (p_ptr->disturb_move && check_hostile(i, Ind))
-				{
+				if (p_ptr->disturb_move && check_hostile(i, Ind)) {
 					/* Disturb */
 					disturb(i, 1, 0);
 				}
@@ -2731,17 +2603,14 @@ void update_player(int Ind)
 		}
 
 		/* The player is now easily visible */
-		if (easy)
-		{
+		if (easy) {
 			/* Change */
-			if (!p_ptr->play_los[Ind])
-			{
+			if (!p_ptr->play_los[Ind]) {
 				/* Mark as easily visible */
 				p_ptr->play_los[Ind] = TRUE;
 
 				/* Disturb on appearance */
-				if (p_ptr->disturb_near && check_hostile(i, Ind))
-				{
+				if (p_ptr->disturb_near && check_hostile(i, Ind)) {
 					/* Disturb */
 					disturb(i, 1, 0);
 				}
@@ -2749,17 +2618,14 @@ void update_player(int Ind)
 		}
 
 		/* The player is not easily visible */
-		else
-		{
+		else {
 			/* Change */
-			if (p_ptr->play_los[Ind])
-			{
+			if (p_ptr->play_los[Ind]) {
 				/* Mark as not easily visible */
 				p_ptr->play_los[Ind] = FALSE;
 
 				/* Disturb on disappearance */
-				if (p_ptr->disturb_near && check_hostile(i, Ind))
-				{
+				if (p_ptr->disturb_near && check_hostile(i, Ind)) {
 					/* Disturb */
 					disturb(i, 1, 0);
 				}
@@ -2774,11 +2640,21 @@ void update_player(int Ind)
 void update_player_flicker(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
+
 	/* Can we see invisible players ? */
-	p_ptr->invis_phase = FALSE;
-//	if (randint(p_ptr->lev) > (q_ptr->lev / 2))
+
+#if 0
+	/* make it level-difference dependant? */
+	if (randint(p_ptr->lev) > (q_ptr->lev / 2))
+	/* just make it a fixed 25% chance for visibility? (outdated code- it's no longer bool!) */
 	if (rand_int(4))
 		p_ptr->invis_phase = TRUE;
+	else p_ptr->invis_phase = FALSE;
+#endif
+
+	/* Make it more distinct, to differ between PvP and normal situations.
+	   In normal situations it wouldn't really matter, but looks cooler! */
+	p_ptr->invis_phase = rand_int(100);
 }
 
 /*
@@ -2789,8 +2665,7 @@ void update_players(void)
 	int i;
 
 	/* Update each player */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		player_type *p_ptr = Players[i];
 
 		/* Skip disconnected players */
@@ -2807,13 +2682,11 @@ static bool allow_unique_level(int r_idx, struct worldpos *wpos)
 {
 	int i;
 	
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		player_type *p_ptr = Players[i];
 
 		/* Is the player on the level and did he killed the unique already ? */
-		if (p_ptr->r_killed[r_idx] != 1 && (inarea(wpos, &p_ptr->wpos)))
-		{
+		if (p_ptr->r_killed[r_idx] != 1 && (inarea(wpos, &p_ptr->wpos))) {
 			/* One is enough */
 			return (TRUE);
 		}
@@ -2853,7 +2726,7 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	char buf[80];
 
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return (FALSE);
+	if (!(zcave = getcave(wpos))) return (FALSE);
 	/* Verify location */
 	if (!in_bounds(y, x)) return (FALSE);
 	/* Require empty space */
@@ -2864,7 +2737,6 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	if (!r_ptr->name) return (FALSE);
 
 	dlev = getlevel(wpos);
-
 
 
 	if (!(summon_override_checks & SO_PROTECTED)) {
@@ -3033,16 +2905,6 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 			}
 #endif
 		}
-		/* Morgoth shouldn't spawn on NO_DESTROY levels,
-		   since his earthquakes are an important weapon! */
-#if 0 /* His quakes now override LF1_NO_DESTROY ! */
-		if ((r_idx == 862) && (getfloor(wpos)->flags1 & LF1_NO_DESTROY)) {
- #if DEBUG_LEVEL > 2
-			s_printf("Morgoth spawn prevented on NO_DESTROY level\n");
- #endif
-			return (FALSE);
-		}
-#endif
 
 		/* Update r_ptr due to possible r_idx changes */
 		r_ptr = &r_info[r_idx];
@@ -3175,13 +3037,9 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 
 	/* Assign maximal hitpoints */
 	if (r_ptr->flags1 & RF1_FORCE_MAXHP)
-	{
 		m_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
-	}
 	else
-	{
 		m_ptr->maxhp = damroll(r_ptr->hdice, r_ptr->hside);
-	}
 
 	/* And start out fully healthy */
 	m_ptr->hp = m_ptr->maxhp;
@@ -3195,8 +3053,7 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	/* Extract base ac and  other things */
 	m_ptr->ac = r_ptr->ac;
 
-	for (j = 0; j < 4; j++)
-	{
+	for (j = 0; j < 4; j++) {
 		m_ptr->blow[j].effect = r_ptr->blow[j].effect;
 		m_ptr->blow[j].method = r_ptr->blow[j].method;
 		m_ptr->blow[j].d_dice = r_ptr->blow[j].d_dice;
@@ -3207,12 +3064,10 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	m_ptr->owner = 0;
 
 	/* Hack -- small racial variety */
-	if (!(r_ptr->flags1 & RF1_UNIQUE))
-	{
+	if (!(r_ptr->flags1 & RF1_UNIQUE)) {
 		/* Allow some small variation per monster */
 		i = extract_energy[m_ptr->speed] / 10;
-		if (i)
-		{
+		if (i) {
 			j = rand_spread(0, i);
 			m_ptr->mspeed += j;
 
@@ -3232,8 +3087,7 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 #endif
 
 	/* Hack -- Reduce risk of "instant death by breath weapons" */
-	if (r_ptr->flags1 & RF1_FORCE_SLEEP)
-	{
+	if (r_ptr->flags1 & RF1_FORCE_SLEEP) {
 		/* Start out with minimal energy */
 		m_ptr->energy = rand_int(10);
 	}
@@ -3264,36 +3118,13 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 		/* hack for global event "Arena Monster Challenge" - C. Blue */
 		if (clone_summoning != 1000) m_ptr->clone = 0;
 
-	for (Ind = 1; Ind < NumPlayers + 1; Ind++)
-	{
+	for (Ind = 1; Ind < NumPlayers + 1; Ind++) {
 		if (Players[Ind]->conn == NOT_CONNECTED)
 			continue;
 
 		Players[Ind]->mon_los[c_ptr->m_idx] = FALSE;
 		Players[Ind]->mon_vis[c_ptr->m_idx] = FALSE;
 	}
-
-#if 0	// may I change it somewhat?	- Jir -
-	/* Should we gain levels ? */
-	if (dlev >100)
-	{
-		int l = m_ptr->level + 100;
-
-		m_ptr->exp = MONSTER_EXP(l);
-		monster_check_experience(c_ptr->m_idx, TRUE);
-	}
-#endif //no thx
-#if 0	// 0
-	/* Should we gain levels ? */
-	/* Starting from 2600ft, 'too weak' monsters gain levels. */
-	while (dlev > MONSTER_TOO_WEAK + m_ptr->level)
-	{
-		int l = m_ptr->level + MONSTER_TOO_WEAK;
-
-		m_ptr->exp = MONSTER_EXP(l);
-		monster_check_experience(c_ptr->m_idx, TRUE);
-	}
-#endif	// 0
 
 	if (dlev > (m_ptr->level + 7)) {
 	    int l = m_ptr->level + ((dlev - (m_ptr->level + 7)) / 3);
@@ -3311,8 +3142,7 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	m_ptr->csleep = 0;
 
 	/* Enforce sleeping if needed */
-	if (slp && r_ptr->sleep)
-	{
+	if (slp && r_ptr->sleep) {
 		int val = r_ptr->sleep;
 		m_ptr->csleep = ((val * 2) + randint(val * 10));
 	}
@@ -3512,7 +3342,6 @@ static int place_monster_idx = 0;
 static bool place_monster_okay_escort(int r_idx)
 {
 	monster_race *r_ptr = &r_info[place_monster_idx];
-
 	monster_race *z_ptr = &r_info[r_idx];
 
 	/* Require similar "race" */
@@ -3555,10 +3384,8 @@ static bool place_monster_okay_escort(int r_idx)
  */
 bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool grp, int clo, int clone_summoning)
 {
-	int                     i;
-
-	monster_race    *r_ptr = &r_info[r_idx];
-
+	int i;
+	monster_race *r_ptr = &r_info[r_idx];
 	cave_type **zcave;
 	int level = getlevel(wpos);
 	if(!(zcave = getcave(wpos))) return(FALSE);
@@ -3584,30 +3411,26 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 	if (!grp) return (TRUE);
 
 	/* Friend for certain monsters */
-	if (r_ptr->flags1 & RF1_FRIEND)
-	{
+	if (r_ptr->flags1 & RF1_FRIEND) {
 		/* Attempt to place a group */
 		(void)place_monster_group(wpos, y, x, r_idx, slp, TRUE, clo, clone_summoning);
 	}
 
 	/* Friends for certain monsters */
-	if (r_ptr->flags1 & RF1_FRIENDS)
-	{
+	if (r_ptr->flags1 & RF1_FRIENDS) {
 		/* Attempt to place a group */
 		(void)place_monster_group(wpos, y, x, r_idx, slp, FALSE, clo, clone_summoning);
 	}
 
 
 	/* Escorts for certain monsters */
-	if (r_ptr->flags1 & RF1_ESCORT)
-	{
+	if (r_ptr->flags1 & RF1_ESCORT) {
 		dungeon_type *dt_ptr = getdungeon(wpos);
 		int dun_type = 0;
 		if (dt_ptr) dun_type = dt_ptr->type;
 
 		/* Try to place several "escorts" */
-		for (i = 0; i < 50; i++)
-		{
+		for (i = 0; i < 50; i++) {
 			int nx, ny, z, d = 3;
 
 			/* Pick a location */
@@ -3637,13 +3460,22 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 			/* Place a single escort */
 			(void)place_monster_one(wpos, ny, nx, z, pick_ego_monster(z, level), 0, slp, clo, clone_summoning);
 
+#ifdef TEST_SERVER
+			if (r_ptr->flags1 & RF1_ESCORTS)
+				(void)place_monster_group(wpos, ny, nx, z, slp, TRUE, clo, clone_summoning);
+#else
 			/* Place a "group" of escorts if needed */
 			if ((r_info[z].flags1 & RF1_FRIENDS) ||
 			    (r_ptr->flags1 & RF1_ESCORTS))
 			{
 				/* Place a group of monsters */
+#if 0
 				(void)place_monster_group(wpos, ny, nx, z, slp, FALSE, clo, clone_summoning);
+#else
+				(void)place_monster_group(wpos, ny, nx, z, slp, (r_info[z].flags1 & RF1_FRIENDS) ? TRUE : FALSE, clo, clone_summoning);
+#endif
 			}
+#endif
 		}
 	}
 
@@ -3691,9 +3523,6 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 		/* Place a Great Pumpkin sometimes -- WARNING: HARDCODED r_idx */
 #ifndef RPG_SERVER
 		if ((great_pumpkin_timer == 0) && (lev < 40) && (wpos->wz != 0) && no_high_level_players) {
- #if 0
-			r_idx = 1086 + rand_int(2);
- #else
 			if (lev > 20) r_idx = 1088;//10k HP
 			else {
 				if (lev > 10) r_idx = 1087;//6k HP
@@ -3702,13 +3531,9 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 				if (magik(15)) r_idx = 1087; /* sometimes tougher */
 				else if (magik(15)) r_idx = 1088; /* sometimes tougher */
 			}
- #endif
 #else
 		if ((great_pumpkin_timer == 0) && (lev < 50) && (wpos->wz != 0) &&
 		    !(d_ptr->flags2 & DF2_NO_DEATH)) { /* not in Training Tower */
- #if 0
-			r_idx = 1086 + rand_int(2);
- #else
 			if (lev > 30) r_idx = 1088;//6.6k HP
 			else {
 				if (lev > 15) r_idx = 1087;//4k HP
@@ -3717,7 +3542,6 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 				if (magik(15)) r_idx = 1087; /* sometimes tougher */
 				else if (magik(15)) r_idx = 1088; /* sometimes tougher */
 			}
- #endif
 #endif
 
 			if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, 0, 0)) {
@@ -3930,7 +3754,6 @@ static int summon_specific_type = 0;
 static bool summon_specific_okay(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
-
 	bool okay = FALSE;
 
 
@@ -3939,130 +3762,80 @@ static bool summon_specific_okay(int r_idx)
 
 
 	/* Check our requirements */
-	switch (summon_specific_type)
-	{
+	switch (summon_specific_type) {
 		case SUMMON_ANT:
-		{
 			okay = ((r_ptr->d_char == 'a') &&
 				!(r_ptr->flags1 & RF1_UNIQUE));
 			break;
-		}
-
 		case SUMMON_SPIDER:
-		{
 			okay = ((r_ptr->d_char == 'S') &&
 				!(r_ptr->flags1 & RF1_UNIQUE));
 			break;
-		}
-
 		case SUMMON_HOUND:
-		{
 			okay = (((r_ptr->d_char == 'C') || (r_ptr->d_char == 'Z')) &&
 				!(r_ptr->flags1 & RF1_UNIQUE));
 			break;
-		}
-
 		case SUMMON_HYDRA:
-		{
 			okay = ((r_ptr->d_char == 'M') &&
 				!(r_ptr->flags1 & RF1_UNIQUE));
 			break;
-		}
-
 		case SUMMON_ANGEL:
-		{
 			okay = ((r_ptr->d_char == 'A') &&
 				!(r_ptr->flags1 & RF1_UNIQUE));
 			break;
-		}
-
 		case SUMMON_DEMON:
-		{
 			okay = ((r_ptr->flags3 & RF3_DEMON) &&
 				!(r_ptr->flags1 & RF1_UNIQUE));
 			break;
-		}
-
 		case SUMMON_UNDEAD:
-		{
 			okay = ((r_ptr->flags3 & RF3_UNDEAD) &&
 				!(r_ptr->flags1 & RF1_UNIQUE));
 			break;
-		}
-
 		case SUMMON_DRAGON:
-		{
 			okay = ((r_ptr->flags3 & RF3_DRAGON) &&
 				!(r_ptr->flags1 & RF1_UNIQUE));
 			break;
-		}
-
 		case SUMMON_HI_UNDEAD:
-		{
 			okay = (((r_ptr->d_char == 'L') ||
 				(r_ptr->d_char == 'V') ||
 				(r_ptr->d_char == 'W')) &&
 				(r_ptr->level >= 45));
 			break;
-		}
-
 		case SUMMON_HI_DRAGON:
-		{
 			okay = (r_ptr->d_char == 'D');
 			break;
-		}
-
 		case SUMMON_WRAITH:
-		{
 			okay = ((r_ptr->d_char == 'W') &&
 				(r_ptr->flags1 & RF1_UNIQUE));
 			break;
-		}
-
 		case SUMMON_UNIQUE:
-		{
 			okay = (r_ptr->flags1 & RF1_UNIQUE);
 			break;
-		}
 
 		/* PernA-addition
 		 * many of them are unused for now.	- Jir -
 		 * */
 		case SUMMON_BIZARRE1:
-		{
 			okay = ((r_ptr->d_char == 'm') &&
 			       !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
-		}
 		case SUMMON_BIZARRE2:
-		{
 			okay = ((r_ptr->d_char == 'b') &&
 			       !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
-		}
 		case SUMMON_BIZARRE3:
-		{
 			okay = ((r_ptr->d_char == 'Q') &&
 			       !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
-		}
-
 		case SUMMON_BIZARRE4:
-		{
 			okay = ((r_ptr->d_char == 'v') &&
 			       !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
-		}
-
 		case SUMMON_BIZARRE5:
-		{
 			okay = ((r_ptr->d_char == '$') &&
 			       !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
-		}
-
 		case SUMMON_BIZARRE6:
-		{
 			okay = (((r_ptr->d_char == '!') ||
 			         (r_ptr->d_char == '?') ||
 			         (r_ptr->d_char == '=') ||
@@ -4071,42 +3844,27 @@ static bool summon_specific_okay(int r_idx)
 					 (r_ptr->flags9 & (RF9_MIMIC)) ) &&
 			        !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
-		}
-
                 case SUMMON_HI_DEMON:
-		{
 			okay = ((r_ptr->flags3 & (RF3_DEMON)) &&
                                 (r_ptr->d_char == 'U') &&
 				(r_ptr->level >= 49) &&
 			       !(r_ptr->flags1 & RF1_UNIQUE));
 			break;
-		}
-
 #if 1	// welcome, Julian Lighton Hack ;)
 		case SUMMON_KIN:
-		{
 			okay = ((r_ptr->d_char == summon_kin_type) &&
 			       !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
-		}
 #endif	// 0
-
 		case SUMMON_DAWN:
-		{
 			okay = ((strstr((r_name + r_ptr->name),"the Dawn")) &&
 			       !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
-		}
-
 		case SUMMON_ANIMAL:
-		{
 			okay = ((r_ptr->flags3 & (RF3_ANIMAL)) &&
 			       !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
-		}
-
 		case SUMMON_ANIMAL_RANGER:
-		{
 			okay = ((r_ptr->flags3 & (RF3_ANIMAL)) &&
 			       (strchr("abcflqrwBCIJKMRS", r_ptr->d_char)) &&
 			       !(r_ptr->flags3 & (RF3_DRAGON))&&
@@ -4116,133 +3874,79 @@ static bool summon_specific_okay(int r_idx)
 			       !(r_ptr->flags4 || r_ptr->flags5 || r_ptr->flags6) &&
 			       !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
-		}
-
 		case SUMMON_HI_UNDEAD_NO_UNIQUES:
-		{
 			okay = (((r_ptr->d_char == 'L') ||
 			         (r_ptr->d_char == 'V') ||
 			         (r_ptr->d_char == 'W')) &&
 				 (r_ptr->level >= 45) &&
 			        !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
-		}
-
 		case SUMMON_HI_DRAGON_NO_UNIQUES:
-		{
 			okay = ((r_ptr->d_char == 'D') &&
 			       !(r_ptr->flags1 &(RF1_UNIQUE)));
 			break;
-		}
-
 		case SUMMON_NO_UNIQUES:
-		{
 			okay = (!(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
-		}
-
 		case SUMMON_PHANTOM:
-		{
 			okay = ((strstr((r_name + r_ptr->name),"Phantom")) &&
 			       !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
-		}
-
 		case SUMMON_ELEMENTAL:
-		{
 			okay = ((strstr((r_name + r_ptr->name),"lemental")) &&
 			       !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
-		}
                 case SUMMON_DRAGONRIDER:
-		{
                         okay = (r_ptr->flags3 & RF3_DRAGONRIDER)?TRUE:FALSE;
 			break;
-		}
-
 		case SUMMON_BLUE_HORROR:
-		{
 			okay = ((strstr((r_name + r_ptr->name),"lue horror")) &&
 			       !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
-		}
-
                 case SUMMON_BUG:
-		{
                         okay = ((strstr((r_name + r_ptr->name),"Software bug")) &&
 			       !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
-		}
-
                 case SUMMON_RNG:
-		{
                         okay = ((strstr((r_name + r_ptr->name),"Random Number Generator")) &&
 			       !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
-		}
                 case SUMMON_MINE:
-		{
                         okay = (r_ptr->flags1 & RF1_NEVER_MOVE)?TRUE:FALSE;
 			break;
-		}
-
                 case SUMMON_HUMAN:
-		{
                         okay = ((r_ptr->d_char == 'p') &&
 			        !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
-		}
-
 		case SUMMON_SHADOWS:
-		{
 			okay = ((r_ptr->d_char == 'G') &&
 			        !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
-		}
-
 		case SUMMON_QUYLTHULG:
-		{
 			okay = ((r_ptr->d_char == 'Q') &&
 				!(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
-		}
-
 		case SUMMON_VERMIN:
-		{
 			okay = (r_ptr->flags7 & RF7_MULTIPLY)?TRUE:FALSE;
 			break;
-		}
-
 		case SUMMON_IMMOBILE:
-		{
 			okay = (r_ptr->flags1 & RF1_NEVER_MOVE) &&
 				!(r_ptr->flags4 && r_ptr->flags5 && r_ptr->flags6);
 			break;
-		}
-
 #ifdef USE_LUA
 #if 0	// let's leave it to DG :)
 		case SUMMON_LUA:
-		{
 			okay = summon_lua_okay(r_idx);
 			break;
-		}
 #endif
 #endif
-
 		case SUMMON_HI_MONSTER:
 		case SUMMON_HI_MONSTERS:
-		{
 			okay = (r_ptr->level >= 60);
 			break;
-		}
-
 		case SUMMON_HI_UNIQUE:
-		{
 			okay = ((r_ptr->flags1 & RF1_UNIQUE) && (r_ptr->level >= 60));
 			break;
-		}
-
 	}
 
 	/* Result */
@@ -4293,13 +3997,6 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 		/* Require "empty" floor grid */
 		/* Changed for summoning on mountains */
 		if (!cave_empty_bold(zcave, y, x)) continue;
-#if 0
-	        if (!(cave_empty_bold(zcave, y, x) ||
-	            (cave_empty_mountain(zcave, y, x) &&
-	            ((r_ptr->flags2 && RF2_PASS_WALL) ||
-	             (r_ptr->flags8 && RF8_WILD_MOUNTAIN) ||
-	              (r_ptr->flags8 && RF8_WILD_VOLCANO))))) continue;
-#endif
 		/* Hack -- no summon on glyph of warding */
 		if (zcave[y][x].feat == FEAT_GLYPH) continue;
 
@@ -4364,19 +4061,15 @@ bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, int 
 {
 	int c, i, x, y;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Handle failure */
 	if (!r_idx) return (FALSE);
 
 	/* for each monster we are summoning */
-
-	for (c = 0; c < size; c++)
-	{       
-
+	for (c = 0; c < size; c++) {
 		/* Look for a location */
-		for (i = 0; i < 200; ++i)
-		{
+		for (i = 0; i < 200; ++i) {
 			/* Pick a distance */
 			int d = (i / 15) + 1;
 
@@ -4397,7 +4090,8 @@ bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, int 
 		if (i == 20) return (FALSE);
 
 		/* Attempt to place the monster (awake, don't allow groups) */
-		if (!place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, s_clone == 101 ? 100 : s_clone, s_clone == 101 ? 1000 : 0))
+		if (!place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE,
+		    s_clone == 101 ? 100 : s_clone, s_clone == 101 ? 1000 : 0))
 			return (FALSE);
 
 	}
@@ -4500,15 +4194,15 @@ int summon_detailed_one_somewhere(struct worldpos *wpos, int r_idx, int ego, boo
 bool multiply_monster(int m_idx)
 {
 	monster_type	*m_ptr = &m_list[m_idx];
-        monster_race    *r_ptr = race_inf(m_ptr);
-
-	int                     i, y, x;
+        monster_race	*r_ptr = race_inf(m_ptr);
+	int		i, y, x;
 
 	bool result = FALSE;
-	struct worldpos *wpos=&m_ptr->wpos;
+	struct worldpos *wpos = &m_ptr->wpos;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return(FALSE);
-	if(m_ptr->clone>90) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
+
+	if (m_ptr->clone > 90) return(FALSE);
 
 	/* NO UNIQUES */
 	if (r_ptr->flags1 & RF1_UNIQUE) return FALSE;
@@ -4516,24 +4210,17 @@ bool multiply_monster(int m_idx)
 	if (istown(wpos)) return FALSE;
 
 	/* Try up to 18 times */
-	for (i = 0; i < 18; i++)
-	{
+	for (i = 0; i < 18; i++) {
 		int d = 1;
 
 		/* Pick a location */
 		scatter(&m_ptr->wpos, &y, &x, m_ptr->fy, m_ptr->fx, d, 0);
 		/* Require an "empty" floor grid */
 		if (!cave_empty_bold(zcave, y, x)) continue;
-#if 0
-		/* Create a new monster (awake, no groups) */
-		result = place_monster_aux(&m_ptr->wpos, y, x, m_ptr->r_idx, FALSE, FALSE, m_ptr->clone + 10, m_ptr->clone_summoning + 1);
-#else
 		result = place_monster_one(&m_ptr->wpos, y, x, m_ptr->r_idx,
-				(m_ptr->ego && magik(CLONE_EGO_CHANCE)) ? m_ptr->ego :
-				pick_ego_monster(m_ptr->r_idx, getlevel(&m_ptr->wpos)),
-				0, FALSE, m_ptr->clone + 10, m_ptr->clone_summoning + 1);
-#endif	// 0
-
+		    (m_ptr->ego && magik(CLONE_EGO_CHANCE)) ? m_ptr->ego :
+		    pick_ego_monster(m_ptr->r_idx, getlevel(&m_ptr->wpos)),
+		    0, FALSE, m_ptr->clone + 10, m_ptr->clone_summoning + 1);
 		/* Done */
 		break;
 	}
@@ -5012,8 +4699,8 @@ bool mego_ok(int r_idx, int ego)
         bool ok = FALSE;
         int i;
 
-		/* missing number */
-		if (!re_ptr->name) return FALSE;
+	/* missing number */
+	if (!re_ptr->name) return FALSE;
 
         /* needed flags */
         if (re_ptr->flags1 && ((re_ptr->flags1 & r_ptr->flags1) != re_ptr->flags1)) return FALSE;
@@ -5182,8 +4869,7 @@ static monster_race* race_info_idx(int r_idx, int ego, int randuni)
         COPY(nr_ptr, r_ptr, monster_race);
 
         /* Adjust the values */
-        for (i = 0; i < 4; i++)
-        {
+        for (i = 0; i < 4; i++) {
                 s32b j, k;
 
                 j = modify_aux(nr_ptr->blow[i].d_dice, re_ptr->blow[i].d_dice, re_ptr->blowm[i][0]);
@@ -5323,8 +5009,7 @@ void monster_carry(monster_type *m_ptr, int m_idx, object_type *q_ptr)
 	/* Get new object */
 	int o_idx = o_pop();
 
-	if (o_idx)
-	{
+	if (o_idx) {
 		/* Get the item */
 		o_ptr = &o_list[o_idx];
 
@@ -5341,11 +5026,9 @@ void monster_carry(monster_type *m_ptr, int m_idx, object_type *q_ptr)
 		m_ptr->hold_o_idx = o_idx;
 	}
 
-	else
-	{
+	else {
 		/* Hack -- Preserve artifacts */
-		if (q_ptr->name1)
-		{
+		if (q_ptr->name1) {
 			handle_art_d(q_ptr->name1);
 		}
 	}

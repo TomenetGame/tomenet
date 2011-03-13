@@ -270,7 +270,7 @@ void inven_drop(int Ind, int item, int amt)
 
 	/* check for !d  or !* in inscriptions */
 
-	if(!bypass_inscrption && check_guard_inscription( o_ptr->note, 'd' )) {
+	if (!bypass_inscrption && check_guard_inscription(o_ptr->note, 'd')) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	}
@@ -294,47 +294,31 @@ void inven_drop(int Ind, int item, int amt)
 
 	/* What are we "doing" with the object */
 	if (amt < o_ptr->number)
-	{
 		act = "Dropped";
-	}
 	else if (item == INVEN_WIELD)
-	{
 		act = "Was wielding";
-	}
 	else if (item == INVEN_ARM)
-	{
 		act = "Was wielding";
-	}
 	else if (item == INVEN_BOW)
-	{
 		act = "Was shooting with";
-	}
 	else if (item == INVEN_LITE)
-	{
 		act = "Light source was";
-	}
 	else if (item >= INVEN_WIELD)
-	{
 		act = "Was wearing";
-	}
 	else
-	{
 		act = "Dropped";
-	}
 
 	/* Message */
 	object_desc(Ind, o_name, &tmp_obj, TRUE, 3);
 
 #if 0 //DSMs don't poly anymore due to cheeziness. They breathe instead.
 	/* Polymorph back */
-	if ((item == INVEN_BODY) && (o_ptr->tval == TV_DRAG_ARMOR))
-	{
+	if ((item == INVEN_BODY) && (o_ptr->tval == TV_DRAG_ARMOR)) {
 		/* Well, so we gotta check if the player, in case he is a
 		mimic, is using a form that can _only_ come from the armor */
 		//if (p_ptr->pclass == CLASS_MIMIC) //Adventurers can also have mimic skill
 		//{
-			switch (o_ptr->sval)
-			{
+			switch (o_ptr->sval) 
 			case SV_DRAGON_BLACK:
 			j = race_index("Ancient black dragon"); break;
 			case SV_DRAGON_BLUE:
@@ -366,7 +350,7 @@ void inven_drop(int Ind, int item, int amt)
 			j = race_index("Great Wyrm of Power"); break;
 			}
 			if((p_ptr->body_monster == j) &&
-			    ((p_ptr->r_killed[j] < r_info[j].level) || 
+			    ((p_ptr->r_killed[j] < r_info[j].level) ||
 			    (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100))))
 				do_mimic_change(Ind, 0, TRUE);
 		/*}
@@ -380,8 +364,8 @@ void inven_drop(int Ind, int item, int amt)
 #if POLY_RING_METHOD == 0
 	/* Polymorph back */
 	/* XXX this can cause strange things for players with mimicry skill.. */
-	if ((item == INVEN_LEFT || item == INVEN_RIGHT) && (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH))
-	{
+	if ((item == INVEN_LEFT || item == INVEN_RIGHT) &&
+	    (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) {
 		if ((p_ptr->body_monster == o_ptr->pval) && 
 		    ((p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
 		    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level)))
@@ -397,7 +381,7 @@ void inven_drop(int Ind, int item, int amt)
 #endif
 
 	/* Check if item gave WRAITH form */
-	if((k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) && p_ptr->tim_wraith) {
+	if ((k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) && p_ptr->tim_wraith) {
 		s_printf("DROP_EXPLOIT (wraith): %s dropped %s\n", p_ptr->name, o_name);
 #if 1
 		p_ptr->tim_wraith = 1;
@@ -405,14 +389,13 @@ void inven_drop(int Ind, int item, int amt)
 	}
 
 	/* Artifacts */
-	if (o_ptr->name1)
-	{
+	if (o_ptr->name1) {
 		artifact_type *a_ptr;
 		/* Obtain the artifact info */
 		if (o_ptr->name1 == ART_RANDART)
-    			a_ptr = randart_make(o_ptr);
+			a_ptr = randart_make(o_ptr);
 		else
-		        a_ptr = &a_info[o_ptr->name1];
+			a_ptr = &a_info[o_ptr->name1];
 
 		if ((a_ptr->flags3 & TR3_WRAITH) && p_ptr->tim_wraith) {
 #if 1
@@ -423,20 +406,20 @@ void inven_drop(int Ind, int item, int amt)
 	}
 
 #ifdef ENABLE_STANCES
-        /* take care of combat stances */
+	/* take care of combat stances */
  #ifndef ALLOW_SHIELDLESS_DEFENSIVE_STANCE
-        if ((item == INVEN_ARM && p_ptr->combat_stance == 1) ||
-            (item == INVEN_WIELD && p_ptr->combat_stance == 2)) {
+	if ((item == INVEN_ARM && p_ptr->combat_stance == 1) ||
+	    (item == INVEN_WIELD && p_ptr->combat_stance == 2)) {
  #else
 	if (p_ptr->combat_stance &&
 	    ((item == INVEN_ARM && !p_ptr->inventory[INVEN_WIELD].k_idx) ||
 	    (item == INVEN_WIELD && (
 	    !p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->combat_stance == 2)))) {
  #endif
-                msg_print(Ind, "\377sYou return to balanced combat stance.");
-                p_ptr->combat_stance = 0;
+		msg_print(Ind, "\377sYou return to balanced combat stance.");
+		p_ptr->combat_stance = 0;
 		p_ptr->redraw |= PR_STATE;
-        }
+	}
 #endif
 
 	/* Message */
@@ -449,7 +432,7 @@ void inven_drop(int Ind, int item, int amt)
 	inven_item_increase(Ind, item, -amt);
 	inven_item_describe(Ind, item);
 	inven_item_optimize(Ind, item);
-	
+
 	break_cloaking(Ind, 5);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
@@ -677,10 +660,10 @@ bool item_tester_hook_wear(int Ind, int slot) {
 			/* use of shield is banned in do_cmd_wield if with 2H weapon.
 			 * 3 slots are too severe.. thoughts?	- Jir -
 			 */
-			if(slot == INVEN_BOW && p_ptr->inventory[INVEN_WIELD].k_idx){
+			if (slot == INVEN_BOW && p_ptr->inventory[INVEN_WIELD].k_idx) {
 				u32b f1, f2, f3, f4, f5, esp;
 				object_flags(&p_ptr->inventory[INVEN_WIELD], &f1, &f2, &f3, &f4, &f5, &esp);
-				if(f4 & TR4_MUST2H) return(FALSE);
+				if (f4 & TR4_MUST2H) return(FALSE);
 			}
 #endif	// 0
 			return (TRUE);
@@ -750,7 +733,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots)
 	cptr act;
 
 	char o_name[ONAME_LEN];
-        u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
+	u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
 
 
 	/* Restrict the choices */
@@ -758,19 +741,16 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots)
 
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
+	if (item >= 0) {
 		o_ptr = &(p_ptr->inventory[item]);
-	}
-	else /* Get the item (on the floor) */
-	{
+	} else { /* Get the item (on the floor) */
 		if (-item >= o_max)
 			return; /* item doesn't exist */
 
 		o_ptr = &o_list[0 - item];
 	}
 
-	if( check_guard_inscription( o_ptr->note, 'w' )) {
+	if (check_guard_inscription(o_ptr->note, 'w')) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	}
@@ -778,8 +758,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots)
 	/* Check the slot */
 	slot = wield_slot(Ind, o_ptr);
 
-	if (!item_tester_hook_wear(Ind, slot))
-	{
+	if (!item_tester_hook_wear(Ind, slot)) {
 		msg_print(Ind, "You may not wield that item.");
 		return;
 	}
@@ -851,8 +830,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots)
 		case INVEN_WIELD: if (get_skill(p_ptr, SKILL_DUAL) && item_fits_dual && equip_fits_dual) { slot = INVEN_ARM; all_cursed = TRUE; break; }
 		}
 	}
-	if (cursed_p(&(p_ptr->inventory[slot])))
-	{
+	if (cursed_p(&(p_ptr->inventory[slot]))) {
 		/* Describe it */
 		object_desc(Ind, o_name, &(p_ptr->inventory[slot]), FALSE, 0);
 
@@ -950,13 +928,11 @@ return;
 	/* Mega-hack -- prevent anyone but total winners from wielding the Massive Iron
 	 * Crown of Morgoth or the Mighty Hammer 'Grond'.
 	 */
-	if (!(p_ptr->total_winner || is_admin(p_ptr)))
-	{
+	if (!(p_ptr->total_winner || is_admin(p_ptr))) {
 		/* Attempting to wear the crown if you are not a winner is a very, very bad thing
 		 * to do.
 		 */
-		if (o_ptr->name1 == ART_MORGOTH)
-		{
+		if (o_ptr->name1 == ART_MORGOTH) {
 			msg_print(Ind, "You are blasted by the Crown's power!");
 			/* This should pierce invulnerability */
 			bypass_invuln = TRUE;
@@ -965,8 +941,7 @@ return;
 			return;
 		}
 		/* Attempting to wield Grond isn't so bad. */
-		if (o_ptr->name1 == ART_GROND)
-		{
+		if (o_ptr->name1 == ART_GROND) {
 			msg_print(Ind, "You are far too weak to wield the mighty Grond.");
 			return;
 		}
@@ -999,15 +974,12 @@ return;
 	tmp_obj.number = num;
 
 	/* Decrease the item (from the pack) */
-	if (item >= 0)
-	{
+	if (item >= 0) {
 		inven_item_increase(Ind, item, -num);
 		inven_item_optimize(Ind, item);
 	}
-
 	/* Decrease the item (from the floor) */
-	else
-	{
+	else {
 		floor_item_increase(0 - item, -num);
 		floor_item_optimize(0 - item);
 	}
@@ -1030,28 +1002,20 @@ return;
 	if (p_ptr->inventory[slot].k_idx) inven_takeoff(Ind, slot, 255);
 #else	// 0
 	/* Take off existing item */
-	if(slot != INVEN_AMMO)
-	{
-		if (o_ptr->k_idx)
-		{
+	if (slot != INVEN_AMMO) {
+		if (o_ptr->k_idx) {
 			/* Take off existing item */
 			(void)inven_takeoff(Ind, slot, 255);
 		}
-	}
-	else
-	{
-		if (o_ptr->k_idx)
-		{
+	} else {
+		if (o_ptr->k_idx) {
 			/* !M inscription tolerates different +hit / +dam enchantments,
 			   which will be merged and averaged in object_absorb.
 			   However, this doesn't work for cursed items or artefacts. - C. Blue */
-			if (!object_similar(Ind, o_ptr, &tmp_obj, 0x1))
-			{
+			if (!object_similar(Ind, o_ptr, &tmp_obj, 0x1)) {
 				/* Take off existing item */
 				(void)inven_takeoff(Ind, slot, 255);
-			}
-			else
-			{
+			} else {
 				// tmp_obj.number += o_ptr->number;
 				object_absorb(Ind, &tmp_obj, o_ptr);
 			}
@@ -1069,32 +1033,19 @@ return;
 	p_ptr->equip_cnt++;
 
 	/* Where is the item now */
-	if (slot == INVEN_WIELD)
-	{
+	if (slot == INVEN_WIELD) {
 		act = "You are wielding";
-	}
-	else if (slot == INVEN_ARM)
-	{
+	} else if (slot == INVEN_ARM) {
 		act = "You are wielding";
-	}
-	else if (slot == INVEN_BOW)
-	{
+	} else if (slot == INVEN_BOW) {
 		act = "You are shooting with";
-	}
-	else if (slot == INVEN_LITE)
-	{
+	} else if (slot == INVEN_LITE) {
 		act = "Your light source is";
-	}
-	else if (slot == INVEN_AMMO)
-	{
+	} else if (slot == INVEN_AMMO) {
 		act = "In your quiver you have";
-	}
-	else if (slot == INVEN_TOOL)
-	{
+	} else if (slot == INVEN_TOOL) {
 		act = "You are using";
-	}
-	else
-	{
+	} else {
 		act = "You are wearing";
 	}
 
@@ -1107,15 +1058,13 @@ return;
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Auto Curse */
-	if (f3 & TR3_AUTO_CURSE)
-	{
+	if (f3 & TR3_AUTO_CURSE) {
 		/* The object recurse itself ! */
 		o_ptr->ident |= ID_CURSED;
 	}
 
 	/* Cursed! */
-	if (cursed_p(o_ptr))
-	{
+	if (cursed_p(o_ptr)) {
 		/* Warn the player */
 		msg_print(Ind, "Oops! It feels deathly cold!");
 
@@ -1124,7 +1073,7 @@ return;
 	}
 
     }
-	
+
 #ifdef ENABLE_STANCES
 	/* take care of combat stances */
 	if (slot == INVEN_ARM && p_ptr->combat_stance == 2) {
@@ -1279,18 +1228,16 @@ void do_cmd_drop(int Ind, int item, int quantity)
 	/* Handle the newbies_cannot_drop option */	
 #if (STARTEQ_TREATMENT == 1)
 	if (p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
-	    !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
-	{
+	    !((o_ptr->tval == 1) && (o_ptr->sval >= 9))) {
 		msg_print(Ind, "You are not experienced enough to drop items. (Sell/destroy it instead.)");
 		return;
 	}
 #endif
 
-	if( check_guard_inscription( o_ptr->note, 'd' )) {
+	if (check_guard_inscription(o_ptr->note, 'd')) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	};
-
 
 	/* Cannot remove cursed items */
 	if (cursed_p(o_ptr) && !is_admin(p_ptr)) { /* Hack -- DM can */
@@ -1299,8 +1246,7 @@ void do_cmd_drop(int Ind, int item, int quantity)
 			msg_print(Ind, "Hmmm, it seems to be cursed.");
 			/* Nope */
 			return;
-		}
-		else if (f4 & TR4_CURSE_NO_DROP) {
+		} else if (f4 & TR4_CURSE_NO_DROP) {
 			/* Oops */
 			msg_print(Ind, "Hmmm, you seem to be unable to drop it.");
 			/* Nope */
@@ -1312,7 +1258,6 @@ void do_cmd_drop(int Ind, int item, int quantity)
 		msg_print(Ind, "You may not drop items. Ask an admin to validate your account.");
 		return;
 	}
-
 
 #if 0
 	/* Mega-Hack -- verify "dangerous" drops */
@@ -1360,21 +1305,18 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	object_type tmp_obj;
 
 	/* Handle the newbies_cannot_drop option */
-	if ((p_ptr->max_plv < cfg.newbies_cannot_drop) && !is_admin(p_ptr))
-	{
+	if ((p_ptr->max_plv < cfg.newbies_cannot_drop) && !is_admin(p_ptr)) {
 		msg_print(Ind, "You are not experienced enough to drop gold.");
 		return;
 	}
 
-	if(p_ptr->inval){
+	if (p_ptr->inval) {
 		msg_print(Ind, "You may not drop gold. Ask an admin to validate your account.");
 		return;
 	}
-	
 
 	/* Error checks */
-	if (amt > p_ptr->au)
-	{
+	if (amt > p_ptr->au) {
 		amt = p_ptr->au;
 /*		msg_print(Ind, "You do not have that much gold.");
 		return;

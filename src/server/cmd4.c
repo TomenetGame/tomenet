@@ -34,17 +34,23 @@
  * Why does Ben save the list to a file and then display it?  Seems like a
  * strange way of doing things to me.  --KLJ--
  */
+/* Sort the artifact list by tval/sval before displaying it?
+   todo: alternate between 2 bufs instead of copying back the buf into the main
+   array each time, sorta defeats the speed advantage.. or actually pre-sort in
+   init*.c already instead of repeating it everytime here ^^- C. Blue */
+#define ARTS_PRE_SORT
 void do_cmd_check_artifacts(int Ind, int line)
 {
 	int i, j, k, z;
-
 	FILE *fff;
-
 	char file_name[MAX_PATH_LENGTH];
-
 	char base_name[ONAME_LEN];
-
 	bool okay[MAX_A_IDX];
+#ifdef ARTS_PRE_SORT
+	int n;
+	int radix_idx[MAX_A_IDX], radix_key[MAX_A_IDX];
+	int radix_buf[MAX_A_IDX][10], radix_buf_cnt[10], radix_buf_idx[MAX_A_IDX][10];
+#endif
 
 	player_type *q_ptr = Players[Ind];
 	bool admin = is_admin(q_ptr);
@@ -62,14 +68,13 @@ void do_cmd_check_artifacts(int Ind, int line)
 	fff = my_fopen(file_name, "wb");
 
 	/* Scan the artifacts */
-	for (k = 0; k < MAX_A_IDX; k++)
-	{
+	for (k = 0; k < MAX_A_IDX; k++) {
 		a_ptr = &a_info[k];
 
 		/* little hack: create the artifact temporarily */
-		forge.name1 = k;
 		z = lookup_kind(a_ptr->tval, a_ptr->sval);
 		if (z) invcopy(&forge, z);
+		forge.name1 = k;
 
 		/* Default */
 		okay[k] = FALSE;
@@ -91,13 +96,11 @@ void do_cmd_check_artifacts(int Ind, int line)
 	}
 
 	/* Check the inventories */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
-		
+
 		/* Check this guy's */
-		for (j = 0; j < INVEN_PACK; j++)
-		{
+		for (j = 0; j < INVEN_PACK; j++) {
 			o_ptr = &p_ptr->inventory[j];
 
 			/* Ignore non-objects */
@@ -118,33 +121,78 @@ void do_cmd_check_artifacts(int Ind, int line)
 		}
 	}
 
+#ifdef ARTS_PRE_SORT
+	/* init */
+	memset(radix_buf_cnt, 0, sizeof(int) * 10);
+	/* Build radix key, forged from 2 digits of tval and 2 digits of sval */
+	z = 0;
+	for (i = 0; i < MAX_A_IDX; i++) {
+		if (!okay[i]) continue;
+
+		a_ptr = &a_info[i];
+		radix_idx[z] = i;
+		radix_key[z] = a_ptr->tval * 100 + a_ptr->sval;
+		z++;
+	}
+	/* Sort starting at least significant digit, for all 4 digits */
+	for (n = 1; n <= 1000; n *= 10) { /* 10^digit 0..3 */
+		for (i = 0; i < z; i++) { /* # of valid arts */
+			k = (radix_key[i] / n) % 10;
+			j = radix_buf_cnt[k];
+			radix_buf[j][k] = radix_key[i];
+			radix_buf_idx[j][k] = radix_idx[i];
+			radix_buf_cnt[k]++;
+		}
+		/* re-merge it to prepare sorting the next digit */
+		k = 0;
+		for (i = 0; i < 10; i++) {
+			for (j = 0; j < radix_buf_cnt[i]; j++) {
+				radix_key[k] = radix_buf[j][i];
+				radix_idx[k] = radix_buf_idx[j][i];
+				k++;
+			}
+			/* empty bucket */
+			radix_buf_cnt[i] = 0;
+		}
+	}
+#endif
+
 	/* Scan the artifacts */
-	for (k = 0; k < MAX_A_IDX; k++) {
-		a_ptr = &a_info[k];
+#ifndef ARTS_PRE_SORT
+	for (i = 0; i < MAX_A_IDX; i++) {
+		a_ptr = &a_info[i];
 
 		/* List "dead" ones */
-		if (!okay[k]) continue;
+		if (!okay[i]) continue;
+#else
+	for (i = 0; i < z; i++) {
+		a_ptr = &a_info[radix_idx[i]];
+#endif
 
 		/* Paranoia */
 		strcpy(base_name, "Unknown Artifact");
 
 		/* Obtain the base object type */
-		z = lookup_kind(a_ptr->tval, a_ptr->sval);
+		k = lookup_kind(a_ptr->tval, a_ptr->sval);
 
 		/* Real object */
-		if (z) {
+		if (k) {
 			/* Create the object */
-			invcopy(&forge, z);
+			invcopy(&forge, k);
 
 			/* Create the artifact */
-			forge.name1 = k;
+#ifndef ARTS_PRE_SORT
+			forge.name1 = i;
+#else
+			forge.name1 = radix_idx[i];
+#endif
 
 			/* Describe the artifact */
 			object_desc_store(Ind, base_name, &forge, FALSE, 0);
 
 			/* Hack -- remove {0} */
 			j = strlen(base_name);
-			base_name[j-4] = '\0';
+			base_name[j - 4] = '\0';
 
 			/* Hack -- Build the artifact name */
 			if (admin) {
@@ -153,7 +201,11 @@ void do_cmd_check_artifacts(int Ind, int line)
 				else if (winner_artifact_p(&forge)) fprintf(fff, "\377v");
 				else if (a_ptr->flags4 & TR4_SPECIAL_GENE) fprintf(fff, "\377B");
 				else if (a_ptr->cur_num != 1) fprintf(fff, "\377o");
-				fprintf(fff, "(%3d) (%3d)", k, a_ptr->cur_num);
+#ifndef ARTS_PRE_SORT
+				fprintf(fff, "(%3d) (%3d)", i, a_ptr->cur_num);
+#else
+				fprintf(fff, "(%3d) (%3d)", radix_idx[i], a_ptr->cur_num);
+#endif
 			}
 			fprintf(fff, "     The %s%s\n", base_name, admin && !a_ptr->known ? " (unknown)" : "");
 		}
@@ -161,9 +213,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 		shown = TRUE;
 	}
 
-	if (!shown) {
-		fprintf(fff, "\377sNo artifacts are witnessed so far.\n");
-	}
+	if (!shown) fprintf(fff, "\377sNo artifacts are witnessed so far.\n");
 
 	/* Close the file */
 	my_fclose(fff);
@@ -1177,7 +1227,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 				 ((q_ptr->inventory[INVEN_OUTER].k_idx) && (q_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK) && (q_ptr->inventory[INVEN_OUTER].sval == SV_SHADOW_CLOAK))) &&
 				((q_ptr->lev > p_ptr->lev) || (randint(p_ptr->lev) > (q_ptr->lev / 2))))
 			continue;
-		if (q_ptr->cloaked && !admin && attr != 'B') continue;
+		if (q_ptr->cloaked == 1 && !q_ptr->cloak_neutralized && !admin && attr != 'B') continue;
 
 		/* Output color byte */
 		fprintf(fff, "\377%c", attr);
@@ -1347,14 +1397,13 @@ void do_cmd_knowledge_dungeons(int Ind)
 	fprintf(fff, "\n\n\377B======== Town(s) ========\n\n");
 
 	/* Scan all towns */
-	for (i = 0; i < numtowns; i++)
-	{
+	for (i = 0; i < numtowns; i++) {
 		y = town[i].y;
 		x = town[i].x;
 
 		/* The dungeon has a valid recall depth set */
 		if ((p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] &
-					(1 << ((x + y * MAX_WILD_X) % 8))) || admin)
+		    (1 << ((x + y * MAX_WILD_X) % 8))) || admin)
 		{
 			/* Describe the town locations */
 			fprintf(fff, " (%3d, %3d) : %-15s", x, y,
@@ -1773,17 +1822,14 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 			if ((j > 0) && !druid_form && !vampire_form)
 				fprintf(fff, "\377w%-30s : %d (%d more to go)\n",
 						r_name + r_ptr->name, num, j);
-			else
-			{
+			else {
 				if (p_ptr->body_monster == i)
 					fprintf(fff, "\377B%-30s : %d  ** Your current form **\n",
 							r_name + r_ptr->name, num);
 				else fprintf(fff, "\377G%-30s : %d (learnt)\n",
 						r_name + r_ptr->name, num);
 			}
-		}
-		else
-		{
+		} else {
 			fprintf(fff, "\377w%-30s : %d\n", r_name + r_ptr->name, num);
 		}
 		total += num;

@@ -1005,7 +1005,7 @@ static byte player_init[2][MAX_CLASS][5][3] =
 
 	{
 		/* Mage */
-		{ TV_SWORD, SV_DAGGER, 0 },
+		{ TV_MSTAFF, SV_MSTAFF, 0 },
 		{ TV_SOFT_ARMOR, SV_ROBE, 0 },
 		{ TV_BOOK, 50, 0 },
 		{ TV_WAND, SV_WAND_MAGIC_MISSILE , 10 },
@@ -1117,7 +1117,7 @@ static byte player_init[2][MAX_CLASS][5][3] =
 //		{ TV_BOOK, 50, 0 },
 		{ TV_BOOK, SV_SPELLBOOK, -1 },/* __lua_MSCARE */
 //		{ TV_SWORD, SV_SHORT_SWORD, 0 },
-		{ TV_SWORD, SV_SABRE, 0 },
+		{ TV_SWORD, SV_RAPIER, 0 },//TV_SABRE didn't give 2 bpr w/ min recomm stats, and they are so similar, so what gives
 		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR, 0 },
 		{ TV_SCROLL, SV_SCROLL_TELEPORT, 0 },
 		{ 255, 255, 0 },
@@ -1540,7 +1540,7 @@ static void player_outfit(int Ind)
 				case RACE_DWARF:
 					tv = TV_AXE; sv = SV_BROAD_AXE; break;
 				case RACE_DRIDER:
-					tv = TV_POLEARM; sv = SV_TRIDENT; break;
+					tv = TV_POLEARM; sv = SV_TRIFURCATE_SPEAR; break;
 				} break;
 			case SV_TULWAR:/* mimic */
 				switch (p_ptr->prace) {
@@ -1580,6 +1580,11 @@ static void player_outfit(int Ind)
 					tv = TV_BLUNT; sv = SV_QUARTERSTAFF; break;
 				case RACE_DRIDER:
 					tv = TV_POLEARM; sv = SV_BROAD_SPEAR; break;
+				} break;
+			case SV_RAPIER:/* mindcrafter */
+				switch (p_ptr->prace) {
+				case RACE_DRIDER:
+					tv = TV_POLEARM; sv = SV_TRIDENT; break;
 				} break;
 			}
 		}
@@ -2285,14 +2290,16 @@ static void disable_specific_warnings(player_type *p_ptr) {
 	if (!(p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_PALADIN
 	    || p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_MIMIC
 //	    || p_ptr->pclass == CLASS_RUNEMASTER
-	    || p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_MINDCRAFTER)) {
+//	    || p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_MINDCRAFTER
+	    )) {
 		p_ptr->warning_bpr2 = 1;
 	}
 
 	if (!(p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_PALADIN ||
-	    p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_MIMIC ||
-//	    p_ptr->pclass == CLASS_RUNEMASTER ||
-	    p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_MINDCRAFTER)) {
+	    p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_MIMIC
+//	    || p_ptr->pclass == CLASS_RUNEMASTER
+//	    || p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_MINDCRAFTER
+	    )) {
 		p_ptr->warning_bpr3 = 1;
 	}
 
@@ -2314,6 +2321,9 @@ static void disable_specific_warnings(player_type *p_ptr) {
 	/* cannot use ranged techniques? */
 	if (!(p_ptr->pclass == CLASS_ARCHER || p_ptr->pclass == CLASS_RANGER))
 		p_ptr->warning_technique_ranged = 1;
+
+	/* Classes other than archer might want to perform melee auto-retaliation */
+	if (p_ptr->pclass != CLASS_ARCHER) p_ptr->warning_ranged_autoret = 1;
 
 	/* Vampires don't use normal light sources */
 	if (p_ptr->prace == RACE_VAMPIRE) p_ptr->warning_lite = 1;

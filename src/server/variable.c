@@ -99,6 +99,8 @@ s32b turn_overflow = 2000000000;/* Limit when to reset 'turn' to 1 to prevent ov
   which means rpg/pm will also need it here, otherwise the util.pkg won't be compatible if it's "missing" here*/
 //#ifdef ARCADE_SERVER
 char tron_speed = 9;
+char tron_dark = 0;
+char tron_forget = 0;
 //#endif
 
 s32b player_id;                 /* Current player ID */
@@ -300,13 +302,6 @@ s16b o_fast[MAX_O_IDX];
  */
 s16b m_fast[MAX_M_IDX];
 
-#if 0	// DELETEME
-/*
- * The array of indexes of "live" traps
- */
-s16b t_fast[MAX_TR_IDX];
-#endif	// 0
-
 
 /*
  * The array of "cave grids" [MAX_WID][MAX_HGT].
@@ -472,12 +467,6 @@ header *t_head;
 trap_kind *t_info;
 char *t_name;
 char *t_text;
-#if 0	// DELETEME
-trap_type *t_list;
-s32b t_nxt = 1;
-s32b t_max = 1;
-s32b t_top = 0;
-#endif	// 0
 
 
 /*

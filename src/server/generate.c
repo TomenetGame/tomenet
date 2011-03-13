@@ -8872,14 +8872,19 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 #ifdef ARCADE_SERVER
 	dun->l_ptr->hgt = SCREEN_HGT*2;
 	dun->l_ptr->wid = SCREEN_WID*2;
-#endif
+if(tron_dark && wpos->wz == 11)
+dun->l_ptr->flags1 |= DF1_FORGET;
+if(tron_forget && wpos->wz == 11)
+dun->l_ptr->flags1 |= LF1_NO_MAP;
+#else
 
 	dun->l_ptr->flags1 = 0;
 	if (dun_lev < 100 && magik(NO_MAGIC_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_MAGIC;
 	if (magik(NO_GENO_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_GENO;
-	if (magik(NO_MAP_CHANCE) && dun_lev >= 5) dun->l_ptr->flags1 |= LF1_NO_MAP;
+ 	if (magik(NO_MAP_CHANCE) && dun_lev >= 5) dun->l_ptr->flags1 |= LF1_NO_MAP;
 	if (magik(NO_MAGIC_MAP_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
 	if (magik(NO_DESTROY_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_DESTROY;
+#endif
 
 	/* TODO: copy dungeon_type flags to dun_level */
 	if (d_ptr && (d_ptr->flags1 & DF1_FORGET)) {
@@ -10433,7 +10438,7 @@ static void town_gen_hack(struct worldpos *wpos)
 #ifdef NEW_TOWNGENHACK_METHOD
 	int posx[base_stores], posy[base_stores], pos[6 * 4];
 #endif
-#ifdef	DEVEL_TOWN_COMPATIBILITY
+#ifdef DEVEL_TOWN_COMPATIBILITY
 	/* -APD- the location of the auction house */
 	int auction_x = -1, auction_y = -1;
 #endif
@@ -10494,8 +10499,9 @@ static void town_gen_hack(struct worldpos *wpos)
 	for (n = 0; n < base_stores; n++) {
 		/* For dungeon towns, skip '8' since it allows exploiting 100% riskfree combat */
 		if (n == 7 && dungeon_town) rooms[n] = STORE_POND;
-		/* allocate base store */
-		else rooms[n] = n;
+		/* allocate base store
+		   (dungeon towns use offset of +70 to avoid collision with normal town stores) */
+		else rooms[n] = n + (dungeon_town ? 70 : 0);
 	}
 	for (n = base_stores; n < base_stores + 10; n++) rooms[n] = STORE_POND;
 	for (n = base_stores + 10; n < base_stores + 20; n++) rooms[n] = STORE_FOREST;
@@ -10591,7 +10597,8 @@ static void town_gen_hack(struct worldpos *wpos)
  			/* Build that store at the proper location */
  #if 0 /* I think I took this out for highlander town, but no need maybe; also required for ironman towns! - C. Blue */
 			/* No Black Market in additional towns - C. Blue */
-			if (rooms[k] != STORE_BLACK) build_store(wpos, rooms[k], y, x);
+			if (rooms[k] != STORE_BLACK + (dungeon_town ? 70 : 0))
+				build_store(wpos, rooms[k], y, x);
 			//else build_store(wpos, STORE_HERBALIST, y, x);
  #else
 			build_store(wpos, rooms[k], y, x);
@@ -10609,7 +10616,8 @@ static void town_gen_hack(struct worldpos *wpos)
 		/* Build that store at the proper location */
  #if 0 /* I think I took this out for highlander town, but no need maybe; also required for ironman towns! - C. Blue */
 		/* No Black Market in additional towns - C. Blue */
-		if (rooms[k] != STORE_BLACK) build_store(wpos, rooms[k], posy[k], posx[k]);
+		if (rooms[k] != STORE_BLACK + (dungeon_town ? 70 : 0))
+			build_store(wpos, rooms[k], posy[k], posx[k]);
 		//else build_store(wpos, STORE_HERBALIST, y, x);
  #else
 		build_store(wpos, rooms[k], posy[k], posx[k]);
@@ -10644,7 +10652,7 @@ static void town_gen_hack(struct worldpos *wpos)
 
 			/* don't build "homes" in dungeon towns */
 			if (!(rooms[k] == STORE_HOUSE && dungeon_town)) {
- #ifdef	DEVEL_TOWN_COMPATIBILITY
+ #ifdef DEVEL_TOWN_COMPATIBILITY
 				if ( (y != auction_y) || (x != auction_x) ) {
 					/* Build that store at the proper location */
 					build_store(wpos, rooms[k], y, x);
@@ -10909,50 +10917,53 @@ void alloc_dungeon_level(struct worldpos *wpos)
 void dealloc_dungeon_level(struct worldpos *wpos)
 {
 	int i, j;
-	wilderness_type *w_ptr=&wild_info[wpos->wy][wpos->wx];
+	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
 	object_type *o_ptr;
-	char    o_name[ONAME_LEN];
+	char o_name[ONAME_LEN];
 	cave_type *c_ptr;
+	dun_level *l_ptr = getfloor(wpos);
 #if DEBUG_LEVEL > 1
 	s_printf("deallocating %s\n", wpos_format(0, wpos));
 #endif
 
+	/* Untie links between dungeon stores and real towns */
+	if (l_ptr && l_ptr->fake_town_num) {
+		town[l_ptr->fake_town_num - 1].dlev_id = 0;
+		l_ptr->fake_town_num = 0;
+	}
+
 	/* Delete any monsters on that level */
 	/* Hack -- don't wipe wilderness monsters */
-	if (wpos->wz)
-	{
+	if (wpos->wz) {
 		wipe_m_list(wpos);
 
 		/* Delete any objects on that level */
 		/* Hack -- don't wipe wilderness objects */
 		wipe_o_list(wpos);
-	}
-	else{
+	} else {
 		save_guildhalls(wpos);	/* has to be done here */
 
-                /* remove 'deposited' true artefacts from wilderness */
+		/* remove 'deposited' true artefacts from wilderness */
 		if (cfg.anti_arts_wild) {
 			for(i = 0; i < o_max; i++){
 				o_ptr = &o_list[i];
-	                        if (o_ptr->k_idx && inarea(&o_ptr->wpos, wpos) &&
+				if (o_ptr->k_idx && inarea(&o_ptr->wpos, wpos) &&
 				    undepositable_artifact_p(o_ptr)) {
-				        object_desc(0, o_name, o_ptr, FALSE, 0);
+					object_desc(0, o_name, o_ptr, FALSE, 0);
 					s_printf("WILD_ART_DEALLOC: %s of %s erased at (%d, %d, %d)\n",
 					    o_name, lookup_player_name(o_ptr->owner), o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz);
-	                        	handle_art_d(o_ptr->name1);
+					handle_art_d(o_ptr->name1);
 					WIPE(o_ptr, object_type);
-    	    			}
+				}
 			}
-	        }
+		}
 	}
 
-	zcave=getcave(wpos);
-	for (i = 0; i < MAX_HGT; i++)
-	{
+	zcave = getcave(wpos);
+	for (i = 0; i < MAX_HGT; i++) {
 		/* Erase all special feature stuff - mikaelh */
-		for (j = 0; j < MAX_WID; j++)
-		{
+		for (j = 0; j < MAX_WID; j++) {
 			c_ptr = &zcave[i][j];
 			FreeCS(c_ptr);
 		}
@@ -10962,14 +10973,14 @@ void dealloc_dungeon_level(struct worldpos *wpos)
 	}
 	/* Deallocate the array of rows */
 	C_FREE(zcave, MAX_HGT, cave_type *);
-	if(wpos->wz){
+	if (wpos->wz) {
 		struct dun_level *dlp;
 		struct dungeon_type *d_ptr;
-		d_ptr=(wpos->wz>0?w_ptr->tower:w_ptr->dungeon);
-		dlp=&d_ptr->level[ABS(wpos->wz)-1];
-		dlp->cave=NULL;
+		d_ptr = (wpos->wz > 0 ? w_ptr->tower : w_ptr->dungeon);
+		dlp = &d_ptr->level[ABS(wpos->wz) - 1];
+		dlp->cave = NULL;
 	}
-	else w_ptr->cave=NULL;
+	else w_ptr->cave = NULL;
 }
 
 static void del_dungeon(struct worldpos *wpos, bool tower){
@@ -10991,12 +11002,12 @@ static void del_dungeon(struct worldpos *wpos, bool tower){
 			C_KILL(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
 		}
 		C_KILL(d_ptr->level, d_ptr->maxdepth, struct dun_level);
-		if (tower)
+		if (tower) {
 			KILL(wild->tower, struct dungeon_type);
-		else
+		} else {
 			KILL(wild->dungeon, struct dungeon_type);
-	}
-	else{
+		}
+	} else {
 		s_printf("%s at (%d,%d) restored\n", (tower ? "Tower" : "Dungeon"), wpos->wx, wpos->wy);
 		/* This really should not happen, but just in case */
 		/* Re allow access to the non deleted dungeon */
@@ -11130,12 +11141,7 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 	cave_type **zcave;
 	struct worldpos twpos;
 
-	/* and for the four seasons: */
-	int y, x;
-	cave_type *c_ptr;
-
-
-        wpcopy(&twpos, wpos);
+	wpcopy(&twpos, wpos);
 	zcave = getcave(wpos);
 
 	server_dungeon = FALSE;
@@ -11146,7 +11152,7 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 		cptr why = NULL;
 
 		/* Added 'restore from backup' here, maybe it helps vs crash */
-	        wpcopy(wpos, &twpos);
+		wpcopy(wpos, &twpos);
 		zcave = getcave(wpos);
 
 		/* Hack -- Reset heaps */
@@ -11249,8 +11255,7 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 		}
 
 		/* Prevent object over-flow */
-		if (o_max >= MAX_O_IDX)
-		{
+		if (o_max >= MAX_O_IDX) {
 			/* Message */
 			why = "too many objects";
 
@@ -11259,8 +11264,7 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 		}
 
 		/* Prevent monster over-flow */
-		if (m_max >= MAX_M_IDX)
-		{
+		if (m_max >= MAX_M_IDX) {
 			/* Message */
 			why = "too many monsters";
 
@@ -11290,25 +11294,9 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 			compact_monsters(32, FALSE);
 	}
 
-	/* apply season-specific FEAT-manipulation */
-	if (season == SEASON_WINTER) {
-		/* Turn some water into ice */
-		if (!wpos->wz)
-		for (y = 1; y < MAX_HGT - 1; y++)
-		for (x = 1; x < MAX_WID - 1; x++) {
-			c_ptr = &zcave[y][x];
-			if (c_ptr->feat == FEAT_SHAL_WATER ||
-			    c_ptr->feat == FEAT_TAINTED_WATER) {
-				c_ptr->feat = FEAT_ICE;
-			}
-		}
-	}
-
-	/* apply nightly darkening or daylight */
-	if (!wpos->wz) {
-		if (IS_DAY) world_surface_day(wpos);
-		else world_surface_night(wpos);
-	}
+	/* Change features depending on season,
+	   and change lighting depending on daytime */
+	wpos_apply_season_daytime(wpos, zcave);
 
 	/* Dungeon level ready */
 	server_dungeon = TRUE;

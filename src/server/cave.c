@@ -401,8 +401,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) return; /* not in Bree, because of Halloween :) */
 
 	/* Who is the highest player around? */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 
 		/* skip disconnected players */
@@ -417,8 +416,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 	}
 
 	/* Process the monsters, check against the highest player around */
-	for (i = m_top - 1; i >= 0; i--)
-	{
+	for (i = m_top - 1; i >= 0; i--) {
 		/* Access the monster */
 		m_ptr = &m_list[m_fast[i]];
 
@@ -721,7 +719,7 @@ if (season_halloween) {
 #else
 		tmphp = (m_ptr->org_maxhp * (2 * (num_on_depth - 1) + 3)) / 3; /* 2/3 HP boost for each additional player */
 		/* More players here than Morgy has power for? */
-    		if (m_ptr->maxhp < tmphp) {
+		if (m_ptr->maxhp < tmphp) {
 			m_ptr->maxhp = tmphp;
 			m_ptr->mspeed += 6;
 			m_ptr->speed += 6; /* also adjust base speed, only important for aggr-haste */
@@ -1898,14 +1896,12 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 	/*                        else c = m_ptr->r_ptr->d_char; */
 
 	/* Hack -- mimics */
-	if (r_ptr->flags9 & RF9_MIMIC)
-	{
+	if (r_ptr->flags9 & RF9_MIMIC) {
 		mimic_object(&a, &c, c_ptr->m_idx);
 	}
 
 	/* Ignore weird codes */
-	if (avoid_other)
-	{
+	if (avoid_other) {
 		/* Use char */
 		(*cp) = c;
 
@@ -1914,8 +1910,7 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 	}
 
 	/* Special attr/char codes */
-	else if ((a & 0x80) && (c & 0x80))
-	{
+	else if ((a & 0x80) && (c & 0x80)) {
 		/* Use char */
 		(*cp) = c;
 
@@ -1977,18 +1972,13 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 	}
 #endif
 	/* Multi-hued monster */
-	else if (r_ptr->flags1 & RF1_ATTR_MULTI)
-	{
+	else if (r_ptr->flags1 & RF1_ATTR_MULTI) {
 		/* Is it a shapechanger? */
-		if (r_ptr->flags2 & RF2_SHAPECHANGER)
-		{
-			{
-				(*cp) = (randint((r_ptr->flags7 & RF7_VORTEX) ? 1 : 25) == 1?
-					 image_object_hack[randint(strlen(image_object_hack))]:
-					 image_monster_hack[randint(strlen(image_monster_hack))]);
-			}
-		}
-		else
+		if (r_ptr->flags2 & RF2_SHAPECHANGER) {
+			(*cp) = (randint((r_ptr->flags7 & RF7_VORTEX) ? 1 : 25) == 1?
+				 image_object_hack[randint(strlen(image_object_hack))]:
+				 image_monster_hack[randint(strlen(image_monster_hack))]);
+		} else
 			(*cp) = c;
 
 		/* Multi-hued attr */
@@ -2012,8 +2002,7 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 #endif	/* 0 */
 	}
 	/* Normal monster (not "clear" in any way) */
-	else if (!(r_ptr->flags1 & (RF1_ATTR_CLEAR | RF1_CHAR_CLEAR)))
-	{
+	else if (!(r_ptr->flags1 & (RF1_ATTR_CLEAR | RF1_CHAR_CLEAR))) {
 		/* Use char */
 		(*cp) = c;
 
@@ -2029,8 +2018,7 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 	}
 
 	/* Hack -- Bizarre grid under monster */
-	else if ((*ap & 0x80) || (*cp & 0x80))
-	{
+	else if ((*ap & 0x80) || (*cp & 0x80)) {
 		/* Use char */
 		(*cp) = c;
 
@@ -2039,11 +2027,9 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 	}
 
 	/* Normal */
-	else
-	{
+	else {
 		/* Normal (non-clear char) monster */
-		if (!(r_ptr->flags1 & RF1_CHAR_CLEAR))
-		{
+		if (!(r_ptr->flags1 & RF1_CHAR_CLEAR)) {
 			/* Normal char */
 			(*cp) = c;
 
@@ -2057,16 +2043,14 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 		}
 
 		/* Normal (non-clear attr) monster */
-		else if (!(r_ptr->flags1 & RF1_ATTR_CLEAR))
-		{
+		else if (!(r_ptr->flags1 & RF1_ATTR_CLEAR)) {
 			/* Normal attr */
 			(*ap) = a;
 		}
 	}
 
 	/* Hack -- hallucination */
-	if (p_ptr->image)
-	{
+	if (p_ptr->image) {
 		/* Hallucinatory monster */
 		image_monster(ap, cp);
 	}
@@ -2094,8 +2078,7 @@ static byte player_color(int Ind)
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	/* Ghosts are black */
-	if (p_ptr->ghost)
-	{
+	if (p_ptr->ghost) {
 		if (p_ptr->admin_wiz) return TERM_L_DARK + TERM_BNW;
 		return TERM_L_DARK;
 	}
@@ -3040,26 +3023,22 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 	}
 
 	/* -APD-
-	   Taking D. Gandy's advice and making it display the char as a number if 
+	   Taking D. Gandy's advice and making it display the char as a number if
 	   they are severly wounded (60% health or less)
 	   I multiply by 95 instead of 100 because it always rounds down.....
 	   and I want to give PCs a little more breathing room.
-	   
 	 */
-	   
-	else if (c_ptr->m_idx < 0)
-	{
+
+	else if (c_ptr->m_idx < 0) {
 		int Ind2 = 0 - c_ptr->m_idx;
 		player_type *p2_ptr = Players[Ind2];
 
-		if (!p2_ptr)
-		{
+		if (!p2_ptr) {
 			/* Clear invalid players, I'm tired of crashes - mikaelh */
 			c_ptr->m_idx = 0;
 
 			/* Log it */
 			s_printf("MIDX_FIX: Cleared invalid player m_idx (ind = %d) (wpos = %d, %d, %d) (x = %d, y = %d)\n", Ind2, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, x, y);
-
 		}
 
 		/* Check for doppelgangers - mikaelh */
@@ -3073,10 +3052,17 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		}
 
 		/* Is that player visible? */
-		else if (p_ptr->play_vis[Ind2])
-		{
+		else if (p_ptr->play_vis[Ind2]) {
 			/* part 'A' now here (experimental, see below) */
+
+			/* Hack: For monster-forms, player_color() calls get_monster_color() which will
+			   result in color flickering if player is hallucinating, although this call
+			   should instead determine the colour an _outside_ player gets to see. So we
+			   have to temporarily suppress his hallucinations to get the correct value. */
+			int tmp_image = p2_ptr->image;
+			p2_ptr->image = 0;
 			a = player_color(Ind2);
+			p2_ptr->image = tmp_image;
 
 #if 0 /* player_color() should already handle all of this - C. Blue */
 			if ((p2_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p2_ptr->inventory[INVEN_BODY].sval == SV_COSTUME)) {
@@ -3102,43 +3088,36 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			    (check_hostile(Ind, Ind2) || p2_ptr->stormbringer))
 				a |= TERM_PVP;
 
-			if ((( p2_ptr->chp * 95) / (p2_ptr->mhp*10)) > TURN_CHAR_INTO_NUMBER)
-			{
+			if (((p2_ptr->chp * 95) / (p2_ptr->mhp * 10)) > TURN_CHAR_INTO_NUMBER) {
 				/* part 'A' used to be here */
-			}
-			else
-			{
-				if (p2_ptr->chp < 0) c='-';
-				else{
+			} else {
+				if (p2_ptr->chp < 0) c = '-';
+				else {
 					int num;
-					num=(p2_ptr->chp*95) / (p2_ptr->mhp*10);
-
-					c = '0'+num;
+					num = (p2_ptr->chp * 95) / (p2_ptr->mhp * 10);
+					c = '0' + num;
 				}
 			}
-			
+
 			/* admins sees intensity of mana shields */
-			if (p_ptr->admin_dm && p2_ptr->tim_manashield && p2_ptr->msp > 0)
-			{
-				if ((( p2_ptr->csp * 100) / (p2_ptr->msp*10)) < 10)
-				{
+			if (p_ptr->admin_dm && p2_ptr->tim_manashield && p2_ptr->msp > 0) {
+				if (((p2_ptr->csp * 100) / (p2_ptr->msp * 10)) < 10) {
 					int num;
-					num=(p2_ptr->csp*100) / (p2_ptr->msp*10);
-					c = '0'+num;
+					num = (p2_ptr->csp * 100) / (p2_ptr->msp * 10);
+					c = '0' + num;
 				}
 			}
 
 			(*cp) = c;
 			(*ap) = a;
 
-			if (p_ptr->image)
-			{
+			if (p_ptr->image) {
 				/* Change the other player into a hallucination */
 				image_monster(ap, cp);
 			}
 		}
 	}
-	
+
 	/* display blue raindrops */
 	if (c_ptr->effect && (effects[c_ptr->effect].flags & EFF_RAINING)) {
 		(*ap) = TERM_BLUE;
@@ -3296,8 +3275,7 @@ void everyone_clear_ovl_spot(struct worldpos *wpos, int y, int x)
 	int i;
 
 	/* Check everyone */
-	for (i = 1; i < NumPlayers + 1; i++)
-	{
+	for (i = 1; i < NumPlayers + 1; i++) {
 		/* If he's not playing, skip him */
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
@@ -3342,18 +3320,16 @@ void lite_spot(int Ind, int y, int x)
 	player_type *p_ptr = Players[Ind];
 
 	/* Redraw if on screen */
-	if (panel_contains(y, x))
-	{
+	if (panel_contains(y, x)) {
 		int dispx, dispy;
 
 		byte a;
 		char c;
 
 		/* Handle "player" */
-		if ((y == p_ptr->py) && (x == p_ptr->px))
-		{
+		if ((y == p_ptr->py) && (x == p_ptr->px)) {
 			monster_race *r_ptr = &r_info[p_ptr->body_monster];
-			
+
 			if ((p_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p_ptr->inventory[INVEN_BODY].sval == SV_COSTUME)) {
 				r_ptr = &r_info[p_ptr->inventory[INVEN_BODY].bpval];
 			}
@@ -3367,21 +3343,21 @@ void lite_spot(int Ind, int y, int x)
 /*			if (p_ptr->invis && !p_ptr->body_monster) {  - hmm why not always TERM_VIOLET */
 			if (p_ptr->invis) {
 				/* special invis colour */
-				a=TERM_VIOLET;
+				a = TERM_VIOLET;
 			}
 			if (p_ptr->cloaked == 1) {
-				if (p_ptr->cloak_neutralized) a=TERM_SLATE;
-				else a=TERM_L_DARK;
+				if (p_ptr->cloak_neutralized) a = TERM_SLATE;
+				else a = TERM_L_DARK;
 			}
 			/* Mana Shield and GOI also flicker */
-			if ((p_ptr->tim_manashield > 10) && (randint(2)==1)) {
+			if ((p_ptr->tim_manashield > 10) && (randint(2) == 1)) {
 				/* prevent too much violet colour in our mix.. */
-				if (a!=TERM_VIOLET)
-					a=(randint(2) < 2) ? TERM_VIOLET : TERM_ORANGE;
+				if (a != TERM_VIOLET)
+					a = (randint(2) < 2) ? TERM_VIOLET : TERM_ORANGE;
 				else
-					a=(randint(2) < 2) ? TERM_L_RED : TERM_ORANGE;
+					a = (randint(2) < 2) ? TERM_L_RED : TERM_ORANGE;
 			}
-			if ((p_ptr->invuln > 5) && (randint(4)!=1)) {
+			if ((p_ptr->invuln > 5) && (randint(4) != 1)) {
 				switch(randint(5)) {
 				case 1: a=TERM_L_RED;break;
 				case 2: a=TERM_L_GREEN;break;
@@ -3402,9 +3378,9 @@ void lite_spot(int Ind, int y, int x)
 			/* see oneself burning in the sun */
 			if (p_ptr->sun_burn && magik(33)) a = TERM_FIRE;
 
-		        /* Holy Martyr */
-		        /* Admin wizards sometimes flicker black & white (TERM_BNW) */
-		        if (p_ptr->shadow_running || p_ptr->martyr || p_ptr->admin_wiz) a += TERM_BNW;
+			/* Holy Martyr */
+			/* Admin wizards sometimes flicker black & white (TERM_BNW) */
+			if (p_ptr->shadow_running || p_ptr->martyr || p_ptr->admin_wiz) a += TERM_BNW;
 
 			if (p_ptr->team) {
 				if (magik(25)) { /* chance for showing him/her which team (s)he's in - mikaelh */
@@ -3427,17 +3403,15 @@ void lite_spot(int Ind, int y, int x)
 				!((p_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p_ptr->inventory[INVEN_BODY].sval == SV_COSTUME))) c = 'b';
 			if (p_ptr->chp < 0) c = '-';
 			else if (!p_ptr->tim_manashield) {
-				if (((p_ptr->chp * 95) / (p_ptr->mhp*10)) <= TURN_CHAR_INTO_NUMBER) 
-				{
+				if (((p_ptr->chp * 95) / (p_ptr->mhp*10)) <= TURN_CHAR_INTO_NUMBER) {
 					int num;
-					num=(p_ptr->chp * 95) / (p_ptr->mhp * 10);
+					num = (p_ptr->chp * 95) / (p_ptr->mhp * 10);
 					c = '0'+num;
 				}
 			} else if (p_ptr->msp > 0) {
-				if (((p_ptr->csp * 95) / (p_ptr->msp * 10)) <= TURN_CHAR_INTO_NUMBER) 
-				{
+				if (((p_ptr->csp * 95) / (p_ptr->msp * 10)) <= TURN_CHAR_INTO_NUMBER) {
 					int num;
-					num=(p_ptr->csp * 95) / (p_ptr->msp * 10);
+					num = (p_ptr->csp * 95) / (p_ptr->msp * 10);
 					c = '0' + num;
 				}
 			}
@@ -3529,8 +3503,7 @@ void clear_ovl_spot(int Ind, int y, int x)
 	player_type *p_ptr = Players[Ind];
 
 	/* Redraw if on screen */
-	if (panel_contains(y, x))
-	{
+	if (panel_contains(y, x)) {
 		int dispx, dispy;
 
 		dispx = x - p_ptr->panel_col_prt;
@@ -3663,18 +3636,24 @@ static byte priority_table[][2] =
 
 	/* Dirt */
 	{ FEAT_DIRT, 3 },
+	{ FEAT_SAND, 3},
+	{ FEAT_MUD, 3},
 
 	/* Grass */
 	{ FEAT_GRASS, 4 },
+	{ FEAT_ASH, 4},
+	{ FEAT_ICE, 4},
 
 	/* Tree */
-	{ FEAT_TREE, 5 },
+	{ FEAT_BUSH, 5 },
+	{ FEAT_DEAD_TREE, 6 },
+	{ FEAT_TREE, 6 },
 
 	/* Water */
-	{ FEAT_DEEP_WATER, 6 },
+	{ FEAT_DEEP_WATER, 7 },
 
 	/* Floors */
-	{ FEAT_FLOOR, 7 },
+	{ FEAT_FLOOR, 8 },
 
 	/* Walls */
 	{ FEAT_SECRET, 10 },
@@ -3704,17 +3683,8 @@ static byte priority_table[][2] =
 	{ FEAT_SHAL_WATER, 20 },
 	{ FEAT_DEEP_LAVA, 20 },
 	{ FEAT_SHAL_LAVA, 20 },
-	{ FEAT_DIRT, 20 },
-	{ FEAT_GRASS, 20 },
 	{ FEAT_DARK_PIT, 20 },
-	{ FEAT_TREE, 20 },
-	{ FEAT_BUSH, 20 },
 	{ FEAT_MOUNTAIN, 20 },
-	{ FEAT_ICE, 20},
-	{ FEAT_SAND, 20},
-	{ FEAT_DEAD_TREE, 20},
-	{ FEAT_ASH, 20},
-	{ FEAT_MUD, 20},
 
 	/* Fountain */
 	{ FEAT_FOUNTAIN, 22 },
@@ -3740,15 +3710,13 @@ static byte priority_table[][2] =
 /*
  * Hack -- a priority function (see below)
  */
-static byte priority(byte a, char c)
-{
+static byte priority(byte a, char c) {
 	int i, p0, p1;
 
 	feature_type *f_ptr;
 
 	/* Scan the table */
-	for (i = 0; TRUE; i++)
-	{
+	for (i = 0; TRUE; i++) {
 		/* Priority level */
 		p1 = priority_table[i][1];
 
@@ -3761,8 +3729,14 @@ static byte priority(byte a, char c)
 		/* Access the feature */
 		f_ptr = &f_info[p0];
 
-		/* Check character and attribute, accept matches */
+		/* Check character and attribute, accept matches.
+		   PROBLEM: Colour can be modified for various reasons:
+		   Seasons, effects, and especially _staircase type-colouring_!! - C. Blue */
+#if 0 /* for this reason, let's skip the colour check for now >_> */
 		if ((f_ptr->z_char == c) && (f_ptr->z_attr == a)) return (p1);
+#else
+		if (f_ptr->z_char == c) return (p1);
+#endif
 	}
 
 	/* Default */
@@ -3825,10 +3799,8 @@ void display_map(int Ind, int *cy, int *cx)
 	memset(mp, 0, sizeof(mp));
 
 	/* Fill in the map */
-	for (i = 0; i < p_ptr->cur_wid; ++i)
-	{
-		for (j = 0; j < p_ptr->cur_hgt; ++j)
-		{
+	for (i = 0; i < p_ptr->cur_wid; ++i) {
+		for (j = 0; j < p_ptr->cur_hgt; ++j) {
 			/* Location */
 			x = i / RATIO + 1;
 			y = j / RATIO + 1;
@@ -3840,8 +3812,7 @@ void display_map(int Ind, int *cy, int *cx)
 			tp = priority(ta, tc);
 /* duplicate code, maybe create function  player_char(Ind) .. */
 			/* Hack - Player(@) should always be displayed */
-			if (i == p_ptr->px && j == p_ptr->py)
-			{
+			if (i == p_ptr->px && j == p_ptr->py) {
 				tp = 99;
 				ta = player_color(Ind);
 
@@ -3851,8 +3822,7 @@ void display_map(int Ind, int *cy, int *cx)
 				else if (p_ptr->body_monster) tc = r_info[p_ptr->body_monster].d_char;
 				else if (p_ptr->fruit_bat) tc = 'b';
 				else if ((( p_ptr->chp * 95)/ (p_ptr->mhp * 10)) > TURN_CHAR_INTO_NUMBER) tc = '@';
-				else 
-				{
+				else {
 					if (p_ptr->chp < 0) tc = '-';
 					else {
 						int num;
@@ -3863,8 +3833,7 @@ void display_map(int Ind, int *cy, int *cx)
 			}
 /* duplicate code end */
 			/* Save "best" */
-			if (mp[y][x] < tp)
-			{
+			if (mp[y][x] < tp) {
 				/* Save the char */
 				mc[y][x] = tc;
 
@@ -3893,15 +3862,13 @@ void display_map(int Ind, int *cy, int *cx)
 
 
 	/* Display each map line in order */
-	for (y = 0; y < MAP_HGT+2; ++y)
-	{
+	for (y = 0; y < MAP_HGT+2; ++y) {
 		/* Clear the screen buffer */
 		memset(sa, 0, sizeof(sa));
 		memset(sc, 0, sizeof(sc));
 
 		/* Display the line */
-		for (x = 0; x < MAP_WID+2; ++x)
-		{
+		for (x = 0; x < MAP_WID+2; ++x) {
 			ta = ma[y][x];
 			tc = mc[y][x];
 
@@ -4069,8 +4036,7 @@ static void wild_display_map(int Ind)
     "wilderness map" mode now that will represent each level with one character.
  */
  
-void do_cmd_view_map(int Ind, char mode)
-{
+void do_cmd_view_map(int Ind, char mode) {
 	int cy, cx;
 
 	/* Display the map */
@@ -4078,8 +4044,8 @@ void do_cmd_view_map(int Ind, char mode)
 	/* if not in town or the dungeon, do normal map */
 	/* is player in a town or dungeon? */
 	/* only off floor ATM */
-	if ((Players[Ind]->wpos.wz!=0 || (istown(&Players[Ind]->wpos))) &&
-			!mode)
+	if ((Players[Ind]->wpos.wz != 0 || (istown(&Players[Ind]->wpos)))
+	    && !mode)
 		display_map(Ind, &cy, &cx);
 	/* do wilderness map */
 	/* pfft, fix me pls, Evileye ;) */
@@ -7713,16 +7679,17 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	bool town = istown(wpos);
 	bool townarea = istownarea(wpos, 2);
 //unused atm	bool dungeon_town = isdungeontown(wpos);
-	bool sector00 = (wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && wpos->wz == WPOS_SECTOR00_Z && sector00separation);
+	bool sector00 = (sector00separation && wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && wpos->wz == WPOS_SECTOR00_Z);
 	bool valinor = (getlevel(wpos) == 200);
 	bool netherrealm_bottom = (getlevel(wpos) == 166 + 30);
 	bool arena_pvp = (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z);
+	bool arena_monster = (ge_special_sector && wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y && wpos->wz == WPOS_ARENA_Z);
 
 	/* usually allow all changes (normal dungeons and town-unrelated world map) */
-	if (!arena_pvp && !bree && !town && !townarea && !sector00 && !valinor && !netherrealm_bottom) return(TRUE);
+	if (!arena_monster && !arena_pvp && !bree && !town && !townarea && !sector00 && !valinor && !netherrealm_bottom) return(TRUE);
 
-	/* preserve arena, and disallow trees for balancing */	
-	if (arena_pvp) return(FALSE);
+	/* preserve arenas; disallow trees for balancing (pvp-arena) */
+	if (arena_pvp || arena_monster) return(FALSE);
 
 	switch (feat) {
 	/* water is annoying in all towns - mikaelh */

@@ -379,6 +379,9 @@ void go_challenge(int Ind) {
 		return;
 	}
 
+	/* We're now busy playing Go */
+	p_ptr->store_action = BACT_GO;
+
 	/* Owner talk about how you suck..or not!
 	   And making a new proposal accordingly. */
 	switch (p_ptr->go_level) {
@@ -496,6 +499,9 @@ void go_challenge_accept(int Ind, bool new_wager) {
 		}
 		if (p_ptr->au < wager) {
 			Send_store_special_str(Ind, 8, 5, TERM_RED, "You don't have the money!");
+
+			/* We're no longer busy */
+			p_ptr->store_action = 0;
 			return;
 		}
 	}
@@ -505,6 +511,9 @@ void go_challenge_accept(int Ind, bool new_wager) {
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Arrr.. sorry, I can't find a fitting player around right now");
 		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "..wasn't that guy here just a minute ago?!");
 		Send_store_special_str(Ind, 8, 3, TERM_ORANGE, "Well sorry, why don't you come back again a bit later!");
+
+		/* We're no longer busy */
+		p_ptr->store_action = 0;
 		return;
 	}
 	/* We're in! */
@@ -818,9 +827,7 @@ void go_challenge_start(int Ind) {
 
 	/* Initiate human player input loop */
 	Send_store_special_str(Ind, 1, 0, TERM_YELLOW, "Type coordinates to place a stone, eg 'd5'; ENTER to pass; ESC to resign");
-	if (CPU_has_white) {
-		Send_request_str(Ind, RID_GO_MOVE, "Enter your move: ", "");
-	}
+	if (CPU_has_white) Send_request_str(Ind, RID_GO_MOVE, "Enter your move: ", "");
 	else go_engine_move_CPU();
 }
 
@@ -2028,6 +2035,15 @@ static void go_challenge_cleanup(bool server_shutdown) {
 	char tmp[80];
 #endif
 
+	/* Cancel prompt for move */
+	if ((Ind = lookup_player_ind(go_engine_player_id))) {
+		Send_request_abort(Ind);
+		Players[Ind]->request_id = RID_NONE;
+
+		/* We're no longer busy */
+		Players[Ind]->store_action = 0;
+	}
+
 	if (go_err(DOWN, DOWN, "go_challenge_cleanup")) return;
 
 	/* If we have to stop prematurely, interprete it as loss for the player.
@@ -2045,12 +2061,6 @@ static void go_challenge_cleanup(bool server_shutdown) {
 		}
 #endif
 		game_over = TRUE;
-	}
-
-	/* Cancel prompt for move */
-	if ((Ind = lookup_player_ind(go_engine_player_id))) {
-		Send_request_abort(Ind);
-		Players[Ind]->request_id = RID_NONE;
 	}
 
 	/* for saving game record to disk */
@@ -2080,7 +2090,6 @@ static void go_challenge_cleanup(bool server_shutdown) {
 	go_game_up = FALSE;
 	go_engine_next_action = NACT_NONE;
 //	go_engine_processing = 0;
-
 }
 
 /* Screen operations only: Update the board visuals for the player */

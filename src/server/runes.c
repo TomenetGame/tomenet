@@ -210,7 +210,7 @@ void cast_rune_spell (int Ind, int dir) {
 		case SV_RUNE2_ARMAGEDDON:
 #if 0
 			if (magik(70)) elem = GF_FIRE;
-			else 
+			else
 #endif
 			elem = GF_METEOR;
 			elem_n = "meteor";

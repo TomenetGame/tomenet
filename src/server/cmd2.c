@@ -829,27 +829,12 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 	number = (o_ptr->sval % SV_CHEST_MIN_LARGE) * 2;
 	
 	/* Generate some treasure */
-	if (o_ptr->pval && (number > 0))
-	{
+	if (o_ptr->pval && (number > 0)) {
 		/* let's not be scrooges =) - C. Blue */
 		cash = (((o_ptr->level + 10) * (o_ptr->level + 10)) * 3) / number;
 
 		/* Drop some objects (non-chests) */
-		for (; number > 0; --number)
-		{
-#if 0
-			/* Try 20 times per item */
-			for (i = 0; i < 20; ++i)
-			{
-				/* Pick a distance */
-				d = ((i + 15) / 15);
-
-				/* Pick a location */
-				scatter(wpos, &ny, &nx, y, x, d, 0);
-				/* Must be a clean floor grid */
-				if (!cave_clean_bold(zcave, ny, nx)) continue;
-#endif	// 0
-
+		for (; number > 0; --number) {
 				/* Opening a chest */
 				opening_chest = TRUE;
 
@@ -859,13 +844,10 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 
 				/* Small chests often drop gold */
 				if (little && magik(75))
-				{
 					place_gold(wpos, y, x, cash);
-				}
 
 				/* Otherwise drop an item */
-				else
-				{
+				else {
 					place_object_restrictor = RESF_NONE;
 					/* mostly DROP_GOOD */
 					place_object(wpos, y, x, magik(75) ? TRUE : FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, p_ptr->luck, ITEM_REMOVAL_NORMAL);
@@ -1306,8 +1288,7 @@ void do_cmd_open(int Ind, int dir)
 	/* Ghosts cannot open doors ; not in WRAITHFORM */
 	if (((p_ptr->ghost || p_ptr->tim_wraith) && !is_admin(p_ptr)) ||
 	    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_OPEN_DOOR)
-	    && !strchr("thpkng", r_info[p_ptr->body_monster].d_char)))
-	{
+	    && !strchr("thpkng", r_info[p_ptr->body_monster].d_char))) {
 		msg_print(Ind, "You cannot open things!");
 		return;
 	}
@@ -1652,8 +1633,7 @@ void do_cmd_close(int Ind, int dir)
 	}
 
 	/* Get a "repeated" direction */
-	if (dir)
-	{
+	if (dir) {
 		/* Get requested location */
 		y = p_ptr->py + ddy[dir];
 		x = p_ptr->px + ddx[dir];
@@ -1662,22 +1642,19 @@ void do_cmd_close(int Ind, int dir)
 		c_ptr = &zcave[y][x];
 
 		/* Broken door */
-		if (c_ptr->feat == FEAT_BROKEN)
-		{
+		if (c_ptr->feat == FEAT_BROKEN) {
 			/* Message */
 			msg_print(Ind, "The door appears to be broken.");
 		}
 
 		/* Require open door */
-		else if (c_ptr->feat != FEAT_OPEN && c_ptr->feat != FEAT_HOME_OPEN)
-		{
+		else if (c_ptr->feat != FEAT_OPEN && c_ptr->feat != FEAT_HOME_OPEN) {
 			/* Message */
 			msg_print(Ind, "You see nothing there to close.");
 		}
 
 		/* Monster in the way */
-		else if (c_ptr->m_idx > 0)
-		{
+		else if (c_ptr->m_idx > 0) {
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -1689,8 +1666,7 @@ void do_cmd_close(int Ind, int dir)
 		}
 
 		/* Object in the way */
-		else if (c_ptr->o_idx > 0)
-		{
+		else if (c_ptr->o_idx > 0) {
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -1699,8 +1675,7 @@ void do_cmd_close(int Ind, int dir)
 		}
 
 		/* House door, close it */
-		else if (c_ptr->feat == FEAT_HOME_OPEN)
-		{
+		else if (c_ptr->feat == FEAT_HOME_OPEN) {
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
 
@@ -1732,8 +1707,7 @@ void do_cmd_close(int Ind, int dir)
 		}
 
 		/* Close the door */
-		else
-		{
+		else {
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
 			break_cloaking(Ind, 2);
@@ -1836,17 +1810,6 @@ bool twall(int Ind, int y, int x)
 	/* Forget the "field mark" */
 	*w_ptr &= ~CAVE_MARK;
 
-#if 0 /* Should all be included in cave_set_feat_live() ? */
-	/* Notice */
-	note_spot_depth(wpos, y, x);
-
-	/* Redisplay the grid */
-	everyone_lite_spot(wpos, y, x);
-
-	/* Update some things */
-	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
-#endif
-
 	/* Result */
 	return (TRUE);
 }
@@ -1912,25 +1875,17 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 	find_level += mining / 2;
 
 	/* Ghosts have no need to tunnel ; not in WRAITHFORM */
-	if ((p_ptr->ghost) || (p_ptr->tim_wraith))
-	{
+	if (((p_ptr->ghost) || (p_ptr->tim_wraith))
+	    && !p_ptr->admin_dm) {
 		/* Message */
 		msg_print(Ind, "You cannot tunnel.");
-		if (!is_admin(p_ptr)) return;
+		return;
 	}
 
 	/* Must be have something to dig with */
 	if (!p_ptr->inventory[INVEN_TOOL].k_idx ||
-		(p_ptr->inventory[INVEN_TOOL].tval != TV_DIGGING))
-	{
-#if 0
-		msg_print(Ind, "You need to have a shovel or pick in your tool slot.");
-		return (FALSE);
-#else	// 0
+	    (p_ptr->inventory[INVEN_TOOL].tval != TV_DIGGING))
 		power >>= 1;
-
-#endif	// 0
-	}
 
 
 	/* Get a direction to tunnel, or Abort */
@@ -1979,6 +1934,10 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 		else {
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
+			break_cloaking(Ind, 0);
+			break_shadow_running(Ind); 
+			stop_precision(Ind);
+			stop_shooting_till_kill(Ind);
 
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1995,20 +1954,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 				/* prepare to find a special object */
 				else if (rand_int(2000) <= mining) {
 					tval = TV_CHEST;
-#if 0
-					sval = ((rand_int(mining) + rand_int(75)) / 21) + 1; /* 1,2,3, 5,6,7 - according to k_info.txt */
-					if (sval == 4) sval++;
-#endif
-#if 0
-					sval = 2510 / (rand_int(mining) * rand_int(50) + 10);
-					/* 1,2,3, 5,6,7 - according to k_info.txt */
-					if (rand_int(50) > sval) sval = 7;
-					else if (rand_int(70) > sval) sval = 6;
-					else if (rand_int(90) > sval) sval = 5;
-					else if (rand_int(150) > sval) sval = 3;
-					else if (rand_int(300) > sval) sval = 2;
-					else sval = 1;
-#endif
 #if 1 /* maybe todo: use get_obj_num_prep_tval() instead of this hardcoding chances.. */
 					sval = rand_int(mining) * rand_int(50);
 					/* 1,2,3, 5,6,7 - according to k_info.txt */
@@ -2024,18 +1969,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 				} else if (rand_int(1000) < (mining + 2) / 2) {
 				    if (!rand_int(5)) {
 					tval = TV_GOLEM;
-#if 0
-					sval = 2510 / (rand_int(mining) * rand_int(50) + 10);
-					/* 0..7 - according to k_info.txt */
-					if (rand_int(50) > sval) sval = 7;
-					else if (rand_int(60) > sval) sval = 6;
-					else if (rand_int(80) > sval) sval = 5;
-					else if (rand_int(120) > sval) sval = 4;
-					else if (rand_int(200) > sval) sval = 3;
-					else if (rand_int(300) > sval) sval = 2;
-					else if (rand_int(500) > sval) sval = 1;
-					else sval = 0;
-#endif
 #if 1 /* maybe todo: use get_obj_num_prep_tval() instead of this hardcoding chances.. */
 					sval = rand_int(mining) * rand_int(50);
 					/* 0..7 - according to k_info.txt */
@@ -2073,19 +2006,13 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 #if 0
 			/* Titanium */
 			if (c_ptr->feat >= FEAT_PERM_EXTRA)
-			{
 				msg_print(Ind, "This seems to be permanent rock.");
-			}
 #else	// 0
 			//do_cmd_tunnel_test(int y, int x, FALSE)
 			/* Must be tunnelable */
 			if (!(f_info[c_ptr->feat].flags1 & FF1_TUNNELABLE) ||
 				(f_info[c_ptr->feat].flags1 & FF1_PERMANENT))
 			{
-				break_cloaking(Ind, 0);
-				break_shadow_running(Ind); 
-				stop_precision(Ind);
-				stop_shooting_till_kill(Ind);
 				/* Message */
 				msg_print(Ind, f_text + f_info[c_ptr->feat].tunnel);
 
@@ -2095,34 +2022,15 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 #endif	// 0
 
 			/* No destroying of town layouts */
-#if 0
-			else if (istown(wpos) && (
-			    (c_ptr->feat == FEAT_TREE) ||
-			    (c_ptr->feat == FEAT_BUSH) ||
-			    (c_ptr->feat == FEAT_IVY) ||
-			    (c_ptr->feat == FEAT_DEAD_TREE) ||
-			    (c_ptr->feat == FEAT_WALL_EXTRA) ||
-			    ((c_ptr->feat >= FEAT_MAGMA) &&
-			    (c_ptr->feat <= FEAT_QUARTZ_K)) ||
-			    ((c_ptr->feat >= FEAT_SANDWALL) &&
-			    (c_ptr->feat <= FEAT_SANDWALL_K)) )) {
-#else
 			else if (!allow_terraforming(wpos, FEAT_TREE)) {
-#endif
-				msg_print(Ind, "You cannot tunnel in town.");
+				msg_print(Ind, "You may not tunnel in this area.");
 				return;
 			}
 
 			/* Rubble */
-			else if (c_ptr->feat == FEAT_RUBBLE)
-			{
+			else if (c_ptr->feat == FEAT_RUBBLE) {
 				/* Remove the rubble */
 				if (power > rand_int(200) && twall(Ind, y, x)) {
-
-					break_cloaking(Ind, 0);
-					break_shadow_running(Ind);
-					stop_precision(Ind);
-					stop_shooting_till_kill(Ind);
 					/* Message */
 					msg_print(Ind, "You have removed the rubble.");
 #ifdef USE_SOUND_2010
@@ -2185,10 +2093,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					everyone_lite_spot(wpos, y, x);
 				} else {
 					/* Message, keep digging */
-					break_cloaking(Ind, 0);
-					break_shadow_running(Ind); 
-					stop_precision(Ind);
-					stop_shooting_till_kill(Ind);
 					msg_print(Ind, "You dig in the rubble.");
 					more = TRUE;
 #ifdef USE_SOUND_2010
@@ -2198,11 +2102,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 			}
 			
 			else if (c_ptr->feat == FEAT_TREE) {
-				break_cloaking(Ind, 0);
-				break_shadow_running(Ind);
-				stop_precision(Ind);
-				stop_shooting_till_kill(Ind);
-
 				/* mow down the vegetation */
 				if (((power > wood_power ? power : wood_power) > rand_int(400)) && twall(Ind, y, x)) { /* 400 */
 					/* Message */
@@ -2237,11 +2136,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 #endif
 				}
 			} else if (c_ptr->feat == FEAT_BUSH) {
-				break_cloaking(Ind, 0);
-				break_shadow_running(Ind);
-				stop_precision(Ind);
-				stop_shooting_till_kill(Ind);
-
 				/* mow down the vegetation */
 				if (((power > wood_power ? power : wood_power) > rand_int(300)) && twall(Ind, y, x)) { /* 400 */
 					/* Message */
@@ -2266,11 +2160,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 #endif
 				}
 			} else if (c_ptr->feat == FEAT_IVY) {
-				break_cloaking(Ind, 0);
-				break_shadow_running(Ind);
-				stop_precision(Ind);
-				stop_shooting_till_kill(Ind);
-
 				/* mow down the vegetation */
 				if (((power > wood_power ? power : wood_power) > rand_int(200)) && twall(Ind, y, x)) { /* 400 */
 					/* Message */
@@ -2293,11 +2182,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 #endif
 				}
 			} else if (c_ptr->feat == FEAT_DEAD_TREE) {
-				break_cloaking(Ind, 0);
-				break_shadow_running(Ind);
-				stop_precision(Ind);
-				stop_shooting_till_kill(Ind);
-
 				/* mow down the vegetation */
 				if (((power > wood_power ? power : wood_power) > rand_int(300)) && twall(Ind, y, x)) { /* 600 */
 					/* Message */
@@ -2359,11 +2243,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 				}
 
 				if (istown(wpos)) gold = FALSE;
-
-				break_cloaking(Ind, 0);
-				break_shadow_running(Ind);
-				stop_precision(Ind);
-				stop_shooting_till_kill(Ind);
 
 				/* Success */
 				if (okay && twall(Ind, y, x)) {
@@ -2459,11 +2338,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 
 			/* Default to secret doors */
 			else if (c_ptr->feat == FEAT_SECRET) {
-				break_cloaking(Ind, 0);
-				break_shadow_running(Ind);
-				stop_precision(Ind);
-				stop_shooting_till_kill(Ind);
-
 				/* Message, keep digging */
 				msg_print(Ind, "You tunnel into the granite wall.");
 				more = TRUE;
@@ -2479,11 +2353,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 			}
 			/* Granite */
 			else if (c_ptr->feat >= FEAT_WALL_EXTRA) {
-				break_cloaking(Ind, 0);
-				break_shadow_running(Ind);
-				stop_precision(Ind);
-				stop_shooting_till_kill(Ind);
-
 				/* Tunnel */
 				if ((power > 40 + rand_int(1600)) && twall(Ind, y, x)) { /* 1600 */
 					msg_print(Ind, "You have finished the tunnel.");
@@ -2532,18 +2401,34 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 				}
 			}
 
-			/* Doors */
-			else {
-				break_cloaking(Ind, 0);
-				break_shadow_running(Ind);
-				stop_precision(Ind);
-				stop_shooting_till_kill(Ind);
+			/* Spider Webs */
+			else if (c_ptr->feat >= FEAT_WEB) {
+				/* Tunnel - hack: swords/axes help similarly as for trees/bushes/ivy */
+				if ((((power > wood_power) ? power : wood_power) > rand_int(100)) && twall(Ind, y, x)) {
+					msg_print(Ind, "You have cleared the web.");
+#ifdef USE_SOUND_2010
+					if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
+				}
+				/* Keep trying */
+				else {
+					/* We may continue tunelling */
+					msg_print(Ind, "You try to clear the spider web.");
+					more = TRUE;
+#ifdef USE_SOUND_2010
+					if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
+				}
+			}
 
+			/* Other stuff - Note: There is none left, actually.
+			   Ice walls are treated as 'Granite Wall' above already! */
+			else {
 				/* Tunnel */
 				if ((power > 30 + rand_int(1200)) && twall(Ind, y, x)) {
 					msg_print(Ind, "You have finished the tunnel.");
 #ifdef USE_SOUND_2010
-					if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+					if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				}
 
@@ -2553,7 +2438,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					msg_print(Ind, f_text + f_ptr->tunnel);
 					more = TRUE;
 #ifdef USE_SOUND_2010
-					if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+					if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				}
 			}
@@ -2645,14 +2530,11 @@ void do_cmd_disarm(int Ind, int dir)
 
 	bool more = FALSE, done = FALSE;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Ghosts cannot disarm ; not in WRAITHFORM */
-	if ((p_ptr->ghost) || (p_ptr->tim_wraith))
-	{
-		/* Message */
+	if ((p_ptr->ghost) || (p_ptr->tim_wraith)) {
 		msg_print(Ind, "You cannot disarm things!");
-
 		return;
 	}
 
@@ -2673,7 +2555,7 @@ void do_cmd_disarm(int Ind, int dir)
 		o_ptr = &o_list[c_ptr->o_idx];
 
 		/* Access the trap */
-		if((cs_ptr=GetCS(c_ptr, CS_TRAPS)))
+		if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)))
 			t_idx = cs_ptr->sc.trap.t_idx;
 
 		/* Nothing useful */
@@ -2685,10 +2567,9 @@ void do_cmd_disarm(int Ind, int dir)
 //			!(c_ptr->special.sc.ptr->found)) &&
 #endif	// 0
 
-		if((!t_idx || !cs_ptr->sc.trap.found) &&
-			(o_ptr->tval!=TV_CHEST) &&
-			!(cs_ptr=GetCS(c_ptr, CS_MON_TRAP)))
-		{
+		if ((!t_idx || !cs_ptr->sc.trap.found) &&
+		    (o_ptr->tval != TV_CHEST) &&
+		    !(cs_ptr = GetCS(c_ptr, CS_MON_TRAP))) {
 			/* Message */
 			msg_print(Ind, "You see nothing there to disarm.");
 			done = TRUE;
@@ -2791,8 +2672,7 @@ void do_cmd_disarm(int Ind, int dir)
 
 		/* Disarm the trap */
 /*		else if (c_ptr->feat == FEAT_MON_TRAP) */
-		if (!done && cs_ptr->type == CS_MON_TRAP) /* same thing.. */
-		{
+		if (!done && cs_ptr->type == CS_MON_TRAP) { /* same thing.. */
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
 
@@ -2811,7 +2691,7 @@ void do_cmd_disarm(int Ind, int dir)
 		}
 
 		/* Disarm a trap */
-		if(!done && (t_idx && cs_ptr->sc.trap.found)) {
+		if (!done && (t_idx && cs_ptr->sc.trap.found)) {
 			cptr name;
 
 			break_shadow_running(Ind);
@@ -2873,7 +2753,7 @@ void do_cmd_disarm(int Ind, int dir)
 						int egokind = randint(12);
 						yay->name2 = 150 + egokind;	// NOTE NOTE 151-162 _must_ be ego-trap-flags in e_info
 						switch (egokind) {
-							case 1: 
+							case 1:
 							case 2: 	// ES or EM
 								yay->to_h = randint(20);
 								yay->to_d = randint(20);
@@ -2940,13 +2820,20 @@ void do_cmd_disarm(int Ind, int dir)
 				everyone_clear_ovl_spot(wpos, y, x);
 #endif
 
-				/* move the player onto the trap grid */
-				if (dir != 5) move_player(Ind, dir, FALSE);
+				/* move the player onto the trap grid
+				   except if it was a trap on a closed door,
+				   since we might not want to open it yet,
+				   especially while being cloaked */
+				if (dir != 5 &&
+				    !(c_ptr->feat >= FEAT_DOOR_HEAD &&
+				    c_ptr->feat <= FEAT_DOOR_TAIL))
+					move_player(Ind, dir, FALSE);
+				else
+					everyone_lite_spot(wpos, y, x);
 			}
 
 			/* Failure -- Keep trying */
-			else if ((i > 5) && (randint(i) > 5))
-			{
+			else if ((i > 5) && (randint(i) > 5)) {
 				break_shadow_running(Ind);
 				stop_precision(Ind);
 				stop_shooting_till_kill(Ind);
@@ -2959,8 +2846,7 @@ void do_cmd_disarm(int Ind, int dir)
 			}
 
 			/* Failure -- Set off the trap */
-			else
-			{
+			else {
 				/* Message */
 				msg_format(Ind, "You set off the %s!", name);
 
@@ -3284,11 +3170,10 @@ void do_cmd_spike(int Ind, int dir)
 
 	cave_type               *c_ptr;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Ghosts cannot spike ; not in WRAITHFORM */
-	if ((p_ptr->ghost) || (p_ptr->tim_wraith))
-	{
+	if ((p_ptr->ghost) || (p_ptr->tim_wraith)) {
 		/* Message */
 		msg_print(Ind, "You cannot spike doors!");
 
@@ -3296,8 +3181,7 @@ void do_cmd_spike(int Ind, int dir)
 	}
 
 	/* Get a "repeated" direction */
-	if (dir)
-	{
+	if (dir) {
 		/* Get location */
 		y = p_ptr->py + ddy[dir];
 		x = p_ptr->px + ddx[dir];
@@ -3307,23 +3191,20 @@ void do_cmd_spike(int Ind, int dir)
 
 		/* Require closed door */
 		if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-		      (c_ptr->feat <= FEAT_DOOR_TAIL)))
-		{
+		      (c_ptr->feat <= FEAT_DOOR_TAIL))) {
 			/* Message */
 			msg_print(Ind, "You see nothing there to spike.");
 		}
 
 		/* Get a spike */
 //		else if (!get_spike(Ind, &item))
-		else if (!get_something_tval(Ind, TV_SPIKE, &item))
-		{
+		else if (!get_something_tval(Ind, TV_SPIKE, &item)) {
 			/* Message */
 			msg_print(Ind, "You have no spikes!");
 		}
 
 		/* Is a monster in the way? */
-		else if (c_ptr->m_idx > 0)
-		{
+		else if (c_ptr->m_idx > 0) {
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
 
@@ -3338,8 +3219,7 @@ void do_cmd_spike(int Ind, int dir)
 		}
 
 		/* Go for it */
-		else
-		{
+		else {
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -4203,14 +4083,7 @@ void do_cmd_fire(int Ind, int dir)
 	if (!boomerang) {
 		/* C. Blue - Artifact ammo never runs out (similar to magic arrows:) */
 		if (artifact_p(o_ptr)) {
-#if 0 /* empty code? erase this */
-			if (item >= 0) {
-				inven_item_describe(Ind, item);
-				inven_item_optimize(Ind, item);
-			} else {
-				floor_item_optimize(0 - item);
-			}
-#endif
+			/* doesn't run out/drop */
 		} else if (ethereal) { /* being nice in regards to ranged_barrage break_chance */
 			if (cursed_p(o_ptr) ? TRUE : magik(break_chance * (p_ptr->ranged_barrage ? 3 : 1))) {
 				if (item >= 0) {
@@ -4229,32 +4102,23 @@ void do_cmd_fire(int Ind, int dir)
 				inven_item_describe(Ind, item);
 				inven_item_optimize(Ind, item);
 			}
-
 			/* Reduce and describe floor item */
-			else
-			{
+			else {
 				floor_item_increase(0 - item, p_ptr->ranged_barrage ? -6 : -1);
 				floor_item_optimize(0 - item);
 			}
 		} else {
-#if 0 /* this stuff isn't needed anymore, since magic ammo always is +0,+0 now */
-			/* Magic Ammo are NOT allowed to be enchanted */
-			/* C. Blue - Except magic artifact ammo: */
-			if (!artifact_p(o_ptr))
-				o_ptr->to_h = o_ptr->to_d = o_ptr->name2 = o_ptr->pval = 0;
-#endif
 			if (item >= 0) {
 				inven_item_describe(Ind, item);
 				inven_item_optimize(Ind, item);
 			}
-
 			/* Reduce and describe floor item */
 			else {
 				floor_item_optimize(0 - item);
 			}
 		}
 	}
-	
+
 	/* Hack -- Handle stuff */
 	handle_stuff(Ind);
 
@@ -4276,6 +4140,15 @@ void do_cmd_fire(int Ind, int dir)
 	case TV_BOLT: sound(Ind, "fire_bolt", NULL, SFX_TYPE_ATTACK, FALSE); break;
 	}
 #endif
+
+	if (!returning && !ethereal
+	    && !strstr(o_name, "!=")
+	    && p_ptr->warning_autopickup == 0) {
+		p_ptr->warning_autopickup = 1;
+		msg_print(Ind, "\374\377yHINT: Inscribe your ammunition '\377R!=\377y' to pick it up automatically!");
+		s_printf("warning_autopickup: %s\n", p_ptr->name);
+	}
+
 	while (TRUE) {
 		/* Travel until stopped */
 #if 0 /* I think it travelled once too far, since it's mmove2'ed in the very beginning of every for-pass, */
@@ -4401,8 +4274,14 @@ void do_cmd_fire(int Ind, int dir)
 						}
 
 						/* Did we hit it (penalize range) */
-						if (test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible))
-						{
+#ifndef PVP_AC_REDUCTION
+						if (test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible)) {
+#else
+//						if (test_hit_fire(chance - cur_dis, ((q_ptr->ac + q_ptr->to_a) * 2) / 3, visible)) {
+						if (test_hit_fire(chance - cur_dis,
+						    (q_ptr->ac + q_ptr->to_a > AC_CAP) ? AC_CAP : q_ptr->ac + q_ptr->to_a,
+						    visible)) {
+#endif
 							char p_name[80];
 							bool dodged = FALSE;
 
@@ -4584,7 +4463,7 @@ void do_cmd_fire(int Ind, int dir)
 
 				/* Note the collision */
 				/* Note the collision */
-				if(!(o_ptr->tval==1 && o_ptr->sval==9))
+				if(!(o_ptr->tval == 1 && o_ptr->sval == 9))
 					hit_body = TRUE;
 
 				/* Did we hit it (penalize range) */
@@ -4842,8 +4721,8 @@ void do_cmd_fire(int Ind, int dir)
 		}
 
 		/* Break ? */
-		if((((o_ptr->pval != 0) && !boomerang) || (rand_int(10000) < j)) && !magic && !ethereal && !artifact_p(o_ptr))
-		{
+		if((((o_ptr->pval != 0) && !boomerang) || (rand_int(10000) < j))
+		    && !magic && !ethereal && !artifact_p(o_ptr)) {
 			breakage = 100;
 			if (boomerang) /* change a large part of the break chance to actually
 					  result in not returning instead of real breaking - C. Blue */
@@ -5058,17 +4937,6 @@ void do_cmd_fire(int Ind, int dir)
 		breakage = 101;
 	}
 
-#if 0 /* covered by STARTEQ_TREATMENT */
-#ifndef RPG_SERVER	/* Let's not... here at least... This is annoying. */
-	/* Hack -- yet another anti-cheeze(yaac) */
-	if ((!magic && !ethereal && o_ptr->owner == p_ptr->id && 
-		(p_ptr->max_plv < cfg.newbies_cannot_drop || true_artifact_p(o_ptr))) || p_ptr->inval)
-	{
-		o_ptr->level = 0;
-	}
-#endif
-#endif
-
 	if (p_ptr->ranged_flare && !boomerang) {
 		if (!hit_body && !ranged_flare_body) {
 			object_type forge;
@@ -5119,7 +4987,8 @@ bool interfere(int Ind, int chance)
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
 
-	/* monster doesn't know the player is actually next to it? */
+	/* monster doesn't know the player is actually next to it?
+	   (ignore cloak_neutralized for the time being) */
 	if (p_ptr->cloaked) return(FALSE);
 
 	chance = chance * (100 - calmness) / 100;
@@ -5575,8 +5444,14 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 				hit_body = TRUE;
 
 				/* Did we hit him (penalize range) */
-				if (test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible))
-				{
+#ifndef PVP_AC_REDUCTION
+				if (test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible)) {
+#else
+//				if (test_hit_fire(chance - cur_dis, ((q_ptr->ac + q_ptr->to_a) * 2) / 3, visible)) {
+				if (test_hit_fire(chance - cur_dis,
+				    (q_ptr->ac + q_ptr->to_a > AC_CAP) ? AC_CAP : q_ptr->ac + q_ptr->to_a,
+				    visible)) {
+#endif
 					char p_name[80];
 
 					/* Get his name */
@@ -5883,6 +5758,14 @@ void house_admin(int Ind, int dir, char *args){
 		if (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) {
 			struct c_special *cs_ptr;
 			if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) {
+				/* Test if we just want to enter a player store: Doesn't require access. */
+				if (args[0] == 'S') {
+					disturb(Ind, 1, 0);
+					if (!do_cmd_player_store(Ind, x, y))
+						msg_print(Ind, "There is no player store there.");
+					return;
+				}
+
 				dna = cs_ptr->sc.ptr;
 				if (access_door(Ind, dna, FALSE) || admin_p(Ind)) {
 					switch (args[0]) {
@@ -5895,27 +5778,18 @@ void house_admin(int Ind, int dir, char *args){
 						case 'K':
 							destroy_house(Ind, dna);
 							return;
-						case 'S':
-							disturb(Ind, 1, 0);
-							if (!do_cmd_player_store(Ind, x, y))
-								msg_print(Ind, "There is no player store there.");
-							return;
 						case 'P':
 							paint_house(Ind, x, y, atoi(&args[1]));
 							return;
 					}
 					if (success) {
-						msg_print(Ind,"\377gDoor change successful");
+						msg_print(Ind,"\377gChange successful.");
 						/* take note of door colour change */
 						everyone_lite_spot(wpos, y, x);
-					}
-					else msg_print(Ind,"\377yDoor change failed");
-				}
-				else msg_print(Ind,"\377oDoor change not permitted.");
-			}
-			else msg_print(Ind,"\377rYou cant modify that door");
-		}
-		else msg_print(Ind,"\377sThere is no door there");
+					} else msg_print(Ind,"\377oChange failed.");
+				} else msg_print(Ind,"\377oAccess not permitted.");
+			} else msg_print(Ind,"\377yNot a door of a private house.");
+		} else msg_print(Ind,"\377sThere is no door there.");
 	}
 	return;
 }
@@ -6278,7 +6152,7 @@ return;
 		/* stop other actions like running.. */
 		disturb(Ind, 1, 0);
 		/* prepare to cloak.. */
-		msg_print(Ind, "\377WYou begin to cloak your appearance...");
+		msg_print(Ind, "\377sYou begin to cloak your appearance...");
 		msg_format_near(Ind, "\377w%s begins to cloak %s appearance...", p_ptr->name, p_ptr->male ? "his" : "her");
 		p_ptr->cloaked = 10; /* take this number of seconds-1 to complete */
 	}

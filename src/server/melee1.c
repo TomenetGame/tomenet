@@ -2116,7 +2116,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					msg_format(Ind, "\377o%^s tries to disarm you.", m_name);
 					
 					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-					
+
 					/* object itself prevents getting separated? */
 					/* can never take off permanently cursed stuff */
 					if (f3 & TR3_PERMA_CURSE) break;
@@ -2125,8 +2125,10 @@ bool make_attack_melee(int Ind, int m_idx)
 
 					/* do we hold one weapon with two hands? very safe */
 					if (!p_ptr->heavy_wield && !shield && !p_ptr->dual_wield && (
-					    ((f4 & TR4_MUST2H) && magik(90)) ||	((f4 & TR4_SHOULD2H) && magik(85)) || ((f4 & TR4_COULD2H) && magik(75)) ||
-					    (!(f4 & (TR4_MUST2H & TR4_SHOULD2H & TR4_COULD2H)) && magik(15)) /* we catch it with our spare hand ;) */
+					    ((f4 & TR4_MUST2H) && magik(90)) ||
+					    ((f4 & TR4_SHOULD2H) && magik(85)) ||
+					    ((f4 & TR4_COULD2H) && magik(75)) ||
+					    (!(f4 & (TR4_MUST2H | TR4_SHOULD2H | TR4_COULD2H)) && magik(15)) /* we catch it with our spare hand ;) */
 					    ))
 						break;
 					
@@ -2199,7 +2201,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
-					if (!p_ptr->prace == RACE_VAMPIRE) {
+					if (p_ptr->prace != RACE_VAMPIRE) {
 						if (p_ptr->suscep_life) set_food(Ind, (p_ptr->food * 3) / 4);
 						else set_food(Ind, p_ptr->food / 2);
 						msg_print(Ind, "You have a sudden attack of hunger!");

@@ -151,8 +151,11 @@ void world_comm(int fd, int arg){
 				/* private message from afar -authed */
 				for(i=1; i<=NumPlayers; i++){
 					if(!strcmp(Players[i]->name, wpk->d.pmsg.victim)){
-						if(!world_check_ignore(i, wpk->d.pmsg.id, wpk->serverid))
+						if(!world_check_ignore(i, wpk->d.pmsg.id, wpk->serverid)) {
 							msg_format(i, "\375\377s[%s:%s] %s", wpk->d.pmsg.player, Players[i]->name, wpk->d.pmsg.ctxt);
+							/* Remember sender for quick replying */
+							strcpy(Players[i]->reply_name, wpk->d.pmsg.player);
+						}
 					}
 				}
 				break;

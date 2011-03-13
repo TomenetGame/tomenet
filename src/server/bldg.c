@@ -39,44 +39,42 @@ static bool is_state_aux(int Ind, store_type *s_ptr, int state)
 
 	/* Check race */
 	if (ot_ptr->races[state][p_ptr->prace / 32] & (1 << p_ptr->prace))
-	{
 		return (TRUE);
-	}
 
 	/* Check class */
 	if (ot_ptr->classes[state][p_ptr->prace / 32] & (1 << p_ptr->pclass))
-	{
 		return (TRUE);
-	}
 
 #if 0
 	/* Check realms */
 	if ((ot_ptr->realms[state][p_ptr->prace / 32] & (1 << p_ptr->realm1)) ||
 	    (ot_ptr->realms[state][p_ptr->prace / 32] & (1 << p_ptr->realm2)))
-	{
-		return (TRUE); 
-	}
+		return (TRUE);
 #endif	// 0
 
 	/* All failed */
 	return (FALSE);
 }
 
+/* Display a list of 'achievements' in chronological order - C. Blue */
+static void race_legends(int Ind) {
+	char path[MAX_PATH_LENGTH];
+//	cptr name = "legends.log";
+//	(void)do_cmd_help_aux(Ind, name, NULL, line, FALSE);
+	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends.log");
+	do_cmd_check_other_prepare(Ind, path);
+}
 
 /*
  * Test if the state accords with the player
  */
 bool is_state(int Ind, store_type *s_ptr, int state)
 {
-	if (state == STORE_NORMAL)
-	{
+	if (state == STORE_NORMAL) {
 		if (is_state_aux(Ind, s_ptr, STORE_LIKED)) return (FALSE);
 		if (is_state_aux(Ind, s_ptr, STORE_HATED)) return (FALSE);
 		return (TRUE);
-	}
-
-	else
-	{
+	} else {
 		return (is_state_aux(Ind, s_ptr, state));
 	}
 }
@@ -90,93 +88,63 @@ bool is_state(int Ind, store_type *s_ptr, int state)
 void show_building(int Ind, store_type *s_ptr)
 {
 	char buff[20];
-
 	int i, cost = 0;
-
 	byte action_color;
-
 	char tmp_str[80];
-
 	store_info_type *st_ptr = &st_info[s_ptr->st_idx];
-
 	store_action_type *ba_ptr;
 
-
-	for (i = 0; i < 6; i++)
-	{
+	for (i = 0; i < 6; i++) {
 		ba_ptr = &ba_info[st_ptr->actions[i]];
 
-		if (ba_ptr->letter != '.')
-		{
-			if (ba_ptr->action_restr == 0)
-			{
+		if (ba_ptr->letter != '.') {
+			if (ba_ptr->action_restr == 0) {
 				if ((is_state(Ind, s_ptr, STORE_LIKED) && (ba_ptr->costs[STORE_LIKED] == 0)) ||
 				    (is_state(Ind, s_ptr, STORE_HATED) && (ba_ptr->costs[STORE_HATED] == 0)) ||
 				    (is_state(Ind, s_ptr, STORE_NORMAL) && (ba_ptr->costs[STORE_NORMAL] == 0)))
 				{
 					action_color = TERM_WHITE;
 					buff[0] = '\0';
-				}
-				else if (is_state(Ind, s_ptr, STORE_LIKED))
-				{
+				} else if (is_state(Ind, s_ptr, STORE_LIKED)) {
 					action_color = TERM_L_GREEN;
 					cost = ba_ptr->costs[STORE_LIKED];
 					strnfmt(buff, 20, "(%dgp)", cost);
-				}
-				else if (is_state(Ind, s_ptr, STORE_HATED))
-				{
+				} else if (is_state(Ind, s_ptr, STORE_HATED)) {
 					action_color = TERM_RED;
 					cost = ba_ptr->costs[STORE_HATED];
 					strnfmt(buff, 20, "(%dgp)", cost);
-				}
-				else
-				{
+				} else {
 					action_color = TERM_YELLOW;
 					cost = ba_ptr->costs[STORE_NORMAL];
 					strnfmt(buff, 20, "(%dgp)", cost);
 				}
-			}
-			else if (ba_ptr->action_restr == 1)
-			{
+			} else if (ba_ptr->action_restr == 1) {
 				if ((is_state(Ind, s_ptr, STORE_LIKED) && (ba_ptr->costs[STORE_LIKED] == 0)) ||
 				    (is_state(Ind, s_ptr, STORE_NORMAL) && (ba_ptr->costs[STORE_NORMAL] == 0)))
 				{
 					action_color = TERM_WHITE;
 					buff[0] = '\0';
-				}
-				else if (is_state(Ind, s_ptr, STORE_LIKED))
-				{
+				} else if (is_state(Ind, s_ptr, STORE_LIKED)) {
 					action_color = TERM_L_GREEN;
 					cost = ba_ptr->costs[STORE_LIKED];
 					strnfmt(buff, 20, "(%dgp)", cost);
-				}
-				else if (is_state(Ind, s_ptr, STORE_HATED))
-				{
+				} else if (is_state(Ind, s_ptr, STORE_HATED)) {
 					action_color = TERM_L_DARK;
 					strnfmt(buff, 20, "(closed)");
-				}
-				else
-				{
+				} else {
 					action_color = TERM_YELLOW;
 					cost = ba_ptr->costs[STORE_NORMAL];
 					strnfmt(buff, 20, "(%dgp)", cost);
 				}
-			}
-			else
-			{
-				if (is_state(Ind, s_ptr, STORE_LIKED) && (ba_ptr->costs[STORE_LIKED] == 0))
-				{
+			} else {
+				if (is_state(Ind, s_ptr, STORE_LIKED) && (ba_ptr->costs[STORE_LIKED] == 0)) {
 					action_color = TERM_WHITE;
 					buff[0] = '\0';
-				}
-				else if (is_state(Ind, s_ptr, STORE_LIKED))
-				{
+				} else if (is_state(Ind, s_ptr, STORE_LIKED)) {
 					action_color = TERM_L_GREEN;
 					cost = ba_ptr->costs[STORE_LIKED];
 					strnfmt(buff, 20, "(%dgp)", cost);
-				}
-				else
-				{
+				} else {
 					action_color = TERM_L_DARK;
 					strnfmt(buff, 20, "(closed)");
 				}
@@ -191,9 +159,7 @@ void show_building(int Ind, store_type *s_ptr)
 			Send_store_action(Ind, i, ba_ptr->action, st_ptr->actions[i], tmp_str, action_color,
 					ba_ptr->letter, cost, ba_ptr->flags);
 #endif
-		}
-		else
-		{
+		} else {
 			Send_store_action(Ind, i, 0, 0, "", TERM_DARK, '.', 0, 0);
 		}
 	}
@@ -245,18 +211,13 @@ static void reset_tim_flags()
 static void arena_comm(int cmd)
 {
 	char tmp_str[80];
-
 	monster_race *r_ptr;
-
 	cptr name;
 
-
-	switch(cmd)
-	{
+	switch(cmd) {
 		case BACT_ARENA:
 		{
-			if (p_ptr->arena_number == MAX_ARENA_MONS)
-			{
+			if (p_ptr->arena_number == MAX_ARENA_MONS) {
 				clear_bldg(5,19);
 				prt("               Arena Victor!", 5, 0);
 				prt("Congratulations!  You have defeated all before you.", 7, 0); 
@@ -271,14 +232,10 @@ static void arena_comm(int cmd)
 				msg_print("Press the space bar to continue");
 				msg_print(NULL);
 				p_ptr->arena_number++;
-			}
-			else if (p_ptr->arena_number > MAX_ARENA_MONS)
-			{
+			} else if (p_ptr->arena_number > MAX_ARENA_MONS) {
 				msg_print("You enter the arena briefly and bask in your glory.");
 				msg_print(NULL);
-			}
-			else
-			{
+			} else {
 				p_ptr->inside_arena = TRUE;
 				p_ptr->exit_bldg = FALSE;
 				reset_tim_flags();
@@ -297,8 +254,7 @@ static void arena_comm(int cmd)
 				msg_print("You are victorious. Enter the arena for the ceremony.");
 			else if (p_ptr->arena_number > MAX_ARENA_MONS)
 				msg_print("You have won against all foes.");
-			else
-			{
+			else {
 				r_ptr = &r_info[arena_monsters[p_ptr->arena_number]];
 				name = (r_name + r_ptr->name);
 				strnfmt(tmp_str, 80, "Do I hear any challenges against: %s", name);
@@ -441,19 +397,17 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 	int choice, odds, win;
 
 	s32b wager;
-
 	s32b maxbet;
-
 	s32b oldgold;
 
 #if 0
 	static const char *fruit[6]={"Lemon", "Orange", "Sword", "Shield", "Plum", "Cherry"};
-
 	char out_val[160], tmp_str[80], again;
-
 	cptr p;
 #endif	// 0
 
+	/* Avoid mad casino spam */
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	//screen_save();
 
@@ -1703,6 +1657,11 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 	bool recreate = FALSE;
 //	int amt;
 
+	if (p_ptr->store_action) {
+		msg_print(Ind, "You are currently busy.");
+		return FALSE;
+	}
+
 	if (is_state(Ind, s_ptr, STORE_LIKED))
 		bcost = ba_ptr->costs[STORE_LIKED];
 	else if (is_state(Ind, s_ptr, STORE_HATED))
@@ -1767,10 +1726,10 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 		case BACT_TOWN_HISTORY:
 			town_history();
 			break;
-		case BACT_RACE_LEGENDS:
-			race_legends();
-			break;
 #endif
+		case BACT_RACE_LEGENDS:
+			race_legends(Ind);
+			break;
 #if 1
 		case BACT_GREET_KING:
 //			castle_greet();

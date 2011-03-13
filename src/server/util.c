@@ -1311,6 +1311,20 @@ void handle_music(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	dun_level *l_ptr = NULL;
 	int i = -1;
+	cave_type **zcave = getcave(&p_ptr->wpos);
+
+#ifdef ARCADE_SERVER
+	/* Special music for Arcade Server stuff */
+	if (p_ptr->wpos.wx == WPOS_ARCADE_X && p_ptr->wpos.wy == WPOS_ARCADE_Y
+//	    && p_ptr->wpos.wz == WPOS_ARCADE_Z
+	    ) {
+		p_ptr->music_monster = -2;
+		//47 and 48 are actually pieces used in other arena events
+		if (rand_int(2)) Send_music(Ind, 47);
+		else Send_music(Ind, 48);
+		return;
+	}
+#endif
 
 	if (p_ptr->wpos.wz != 0) {
 		l_ptr = getfloor(&p_ptr->wpos);
@@ -1360,85 +1374,22 @@ void handle_music(int Ind) {
 		return;
 	}
 
+	/* No-tele grid: Re-use 'terrifying' bgm for this */
+	if (zcave && (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK)) {
+#if 0 /* hack: init music as 'higher priority than boss-specific': */
+		p_ptr->music_monster = -2;
+#endif
+		Send_music(Ind, 46); //No-Tele vault
+		return;
+	}
+
 	/* rest of the music has lower priority than already running, boss-specific music */
 	if (p_ptr->music_monster != -1) return;
 
+
 	/* on world surface */
 	if (p_ptr->wpos.wz == 0) {
-#if 0 /* play town music just within towns, not within town area? */
-		if (istown(&p_ptr->wpos)) {
-		    for (i = 0; i < numtowns; i++)
-			if (town[i].x == p_ptr->wpos.wx && town[i].y == p_ptr->wpos.wy) {
-				switch (town[i].type) {
-				default:
-				case 0: Send_music(Ind, 1); return;//default town
-				case 1: Send_music(Ind, 3); return;//Bree
-				case 2: Send_music(Ind, 4); return;
-				case 3: Send_music(Ind, 5); return;
-				case 4: Send_music(Ind, 6); return;
-				case 5: Send_music(Ind, 7); return;
-				}
-			}
-#elseif 0 /* play town music also in its surrounding area of houses? */
-		if (istownarea(&p_ptr->wpos, 2)) {
-		    worldpos tpos = {0, 0, 0};
-		    int x, y;
-		    for (x = p_ptr->wpos.wx - 2; x <= p_ptr->wpos.wx + 2; x++) {
-			for (y = p_ptr->wpos.wy - 2; y <= p_ptr->wpos.wy + 2; y++) {
-			    if (x < 0 || x > 63 || y < 0 || y > 63) continue;
-			    tpos.wx = x; tpos.wy = y;
-			    if (istown(&tpos)) break;
-			}
-			if (istown(&tpos)) break;
-		    }
-		    for (i = 0; i < numtowns; i++)
-			if (town[i].x == tpos.wx && town[i].y == tpos.wy) {
-				switch (town[i].type) {
-				default:
-				case 0: Send_music(Ind, 1); return;//default town
-				case 1: Send_music(Ind, 3); return;//Bree
-				case 2: Send_music(Ind, 4); return;
-				case 3: Send_music(Ind, 5); return;
-				case 4: Send_music(Ind, 6); return;
-				case 5: Send_music(Ind, 7); return;
-				}
-			}
-#elseif 0 /* play town music also in its surrounding area of houses, if we're coming from the town? */
-		if (istownarea(&p_ptr->wpos, 2) && p_ptr->music_current != -1) {
-			worldpos tpos = {0, 0, 0};
-			int x, y, tmus = 0;
-
-			for (x = p_ptr->wpos.wx - 2; x <= p_ptr->wpos.wx + 2; x++) {
-				for (y = p_ptr->wpos.wy - 2; y <= p_ptr->wpos.wy + 2; y++) {
-					if (x < 0 || x > 63 || y < 0 || y > 63) continue;
-					tpos.wx = x; tpos.wy = y;
-					if (istown(&tpos)) break;
-				}
-				if (istown(&tpos)) break;
-			}
-
-			for (i = 0; i < numtowns; i++)
-				if (town[i].x == tpos.wx && town[i].y == tpos.wy) {
-					switch (town[i].type) {
-					default:
-					case 0: tmus = 1; break; //default town
-					case 1: tmus = 3; break; //Bree
-					case 2: tmus = 4; break;
-					case 3: tmus = 5; break;
-					case 4: tmus = 6; break;
-					case 5: tmus = 7; break;
-					}
-				}
-
-			/* now the specialty: If we're coming from elsewhere,
-			   we only switch to town music when we enter the town.
-			   If we're coming from the town, however, we keep the
-			   music while being in its surrounding area of houses. */
-			if (istown(&p_ptr->wpos) || p_ptr->music_current == tmus)
-				Send_music(Ind, tmus);
-
-			return;
-#else /* play town music also in its surrounding area of houses, if we're coming from the town? */
+		/* play town music also in its surrounding area of houses, if we're coming from the town? */
 		if (istownarea(&p_ptr->wpos, 2)) {
 			worldpos tpos = {0, 0, 0};
 			int x, y, tmus = 0;
@@ -1474,7 +1425,6 @@ void handle_music(int Ind) {
 			else if (night_surface) Send_music(Ind, 10);
 			else Send_music(Ind, 9);
 			return;
-#endif
 		} else {
 			if (night_surface) Send_music(Ind, 10);
 			else Send_music(Ind, 9);
@@ -1681,40 +1631,41 @@ cptr quark_str(s16b i)
  */
 
 bool check_guard_inscription( s16b quark, char what ) {
-    const char *ax;
-    ax=quark_str(quark);
-    if( ax == NULL ) { return FALSE; };
-    while( (ax=strchr(ax,'!')) != NULL ) {
-	while( ax++ != NULL ) {
-	    if (*ax==0)  {
-		 return FALSE; /* end of quark, stop */
-	    } 
-	    if (*ax==' ' || *ax=='@' || *ax=='#') {
-		 break; /* end of segment, stop */
-	    }
-	    if (*ax==what) {
-		return TRUE; /* exact match, stop */
-	    }
-	    if(*ax =='*') {
-		/* why so much hassle? * = all, that's it */
-/*		return TRUE; -- well, !'B'ash if it's on the ground sucks ;) */
+	const char *ax;
+	ax = quark_str(quark);
+	if (ax == NULL) { return FALSE; };
+	while ((ax=strchr(ax, '!')) != NULL) {
+		while (ax++ != NULL) {
+			if (*ax == 0)  {
+				return FALSE; /* end of quark, stop */
+			}
+			if (*ax == ' ' || *ax == '@' || *ax == '#') {
+				break; /* end of segment, stop */
+			}
+			if (*ax == what) {
+				return TRUE; /* exact match, stop */
+			}
+			if (*ax == '*') {
+				/* why so much hassle? * = all, that's it */
+/*				return TRUE; -- well, !'B'ash if it's on the ground sucks ;) */
 
-		switch( what ) { /* check for paranoid tags */
-		    case 'd': /* no drop */
-		    case 'h': /* no house ( sell a a key ) */
-		    case 'k': /* no destroy */
-		    case 's': /* no sell */
-		    case 'v': /* no thowing */
-		    case '=': /* force pickup */
-		    /* you forgot important ones */
-		    case 'w': /* no wear/wield */
-		    case 't': /* no take off */
-		      return TRUE;
+				switch (what) { /* check for paranoid tags */
+				case 'd': /* no drop */
+				case 'h': /* no house ( sell a a key ) */
+				case 'k': /* no destroy */
+				case 's': /* no sell */
+				case 'v': /* no thowing */
+				case '=': /* force pickup */
+#if 0
+				case 'w': /* no wear/wield */
+				case 't': /* no take off */
+#endif
+					return TRUE;
+				};
+			};
 		};
-	    };
 	};
-    };
-    return FALSE;
+	return FALSE;
 }
 
 
@@ -1895,17 +1846,29 @@ void msg_print(int Ind, cptr msg)
 				if ((text_len == line_len) && (msg[msg_scan] != '\0') &&
 				    ((msg[msg_scan - 1] >= 'A' && msg[msg_scan - 1] <= 'Z') ||
 				    (msg[msg_scan - 1] >= '0' && msg[msg_scan - 1] <= '9') ||
+#if 0
 				    (msg[msg_scan - 1] == '(' || msg[msg_scan - 1] == ')') ||
 				    (msg[msg_scan - 1] == '[' || msg[msg_scan - 1] == ']') ||
 				    (msg[msg_scan - 1] == '{' || msg[msg_scan - 1] == '}') ||
+#else
+				    (msg[msg_scan - 1] == '(') ||
+				    (msg[msg_scan - 1] == '[') ||
+				    (msg[msg_scan - 1] == '{') ||
+#endif
 				    (msg[msg_scan - 1] >= 'a' && msg[msg_scan - 1] <= 'z') ||
 				    /* (maybe too much) for pasting items to chat, (+1) or (-2,0) : */
 				    (msg[msg_scan - 1] == '+' || msg[msg_scan - 1] == '-') ||
 				    (msg[msg_scan - 1] == '\377')) &&
 				    ((msg[msg_scan] >= 'A' && msg[msg_scan] <= 'Z') ||
+#if 0
 				    (msg[msg_scan] == '(' || msg[msg_scan] == ')') ||
 				    (msg[msg_scan] == '[' || msg[msg_scan] == ']') ||
 				    (msg[msg_scan] == '{' || msg[msg_scan] == '}') ||
+#else
+				    (msg[msg_scan] == ')') ||
+				    (msg[msg_scan] == ']') ||
+				    (msg[msg_scan] == '}') ||
+#endif
 				    (msg[msg_scan] >= '0' && msg[msg_scan] <= '9') ||
 				    (msg[msg_scan] >= 'a' && msg[msg_scan] <= 'z') ||
 				    /* (maybe too much) for pasting items to chat, (+1) or (-2,0) : */
@@ -1917,9 +1880,15 @@ void msg_print(int Ind, cptr msg)
 					} while (((msg[space_scan - 1] >= 'A' && msg[space_scan - 1] <= 'Z') ||
 						(msg[space_scan - 1] >= '0' && msg[space_scan - 1] <= '9') ||
 						(msg[space_scan - 1] >= 'a' && msg[space_scan - 1] <= 'z') ||
+#if 0
 						(msg[space_scan - 1] == '(' || msg[space_scan - 1] == ')') ||
 						(msg[space_scan - 1] == '[' || msg[space_scan - 1] == ']') ||
 						(msg[space_scan - 1] == '{' || msg[space_scan - 1] == '}') ||
+#else
+						(msg[space_scan - 1] == '(') ||
+						(msg[space_scan - 1] == '[') ||
+						(msg[space_scan - 1] == '{') ||
+#endif
 						/* (maybe too much) for pasting items to chat, (+1) or (-2,0) : */
 						(msg[space_scan - 1] == '+' || msg[space_scan - 1] == '-') ||
 						(msg[space_scan - 1] == '\377')) &&
@@ -1937,14 +1906,6 @@ void msg_print(int Ind, cptr msg)
 				}
 			}
 		}
-#ifdef TEST_SERVER
- #if 0
-//s_printf("#%s#\n", msg_buf);
-		if (client_ctrlo) s_printf("msg '%s' coded 376.\n", msg_buf);
-		if (client_chat) s_printf("msg '%s' coded 375.\n", msg_buf);
-		if (client_all) s_printf("msg '%s' coded 374.\n", msg_buf);
- #endif
-#endif
 		Send_message(Ind, format("%s%s%s",
 		    client_chat ? "\375" : (client_all ? "\374" : ""),
 		    client_ctrlo ? "\376" : "",
@@ -2483,92 +2444,33 @@ void use_ability_blade(int Ind)
 	if (chance < 0) chance = 0;
 	if (chance > DODGE_MAX_CHANCE) chance = DODGE_MAX_CHANCE;	// see DODGE_MAX_CHANCE in melee1.c
 	if (is_admin(p_ptr))
-	{
 		msg_format(Ind, "You have exactly %d%% chances of dodging a level %d monster.", chance, dun_level);
-	}
 
 	if (chance < 5)
-	{
 		msg_format(Ind, "You have almost no chance of dodging a level %d monster.", dun_level);
-	}
 	else if (chance < 10)
-	{
 		msg_format(Ind, "You have a slight chance of dodging a level %d monster.", dun_level);
-	}
 	else if (chance < 20)
-	{
 		msg_format(Ind, "You have a significant chance of dodging a level %d monster.", dun_level);
-	}
 	else if (chance < 40)
-	{
 		msg_format(Ind, "You have a large chance of dodging a level %d monster.", dun_level);
-	}
 	else if (chance < 70)
-	{
 		msg_format(Ind, "You have a high chance of dodging a level %d monster.", dun_level);
-	}
 	else
-	{
 		msg_format(Ind, "You will usually dodge a level %d monster.", dun_level);
-	}
 #else
 	int lev;
- #if 0
-	int chance;
-	lev = p_ptr->lev;
-	chance = apply_dodge_chance(Ind, lev);
-	if (is_admin(p_ptr))
-		msg_format(Ind, "You have exactly %d%% chances of dodging a level %d monster.", chance, lev);
-
-	if (chance < 5)
-		msg_format(Ind, "You have almost no chance of dodging a level %d monster.", lev);
-	else if (chance < 14)
-		msg_format(Ind, "You have a slight chance of dodging a level %d monster.", lev);
-	else if (chance < 23)
-		msg_format(Ind, "You have a significant chance of dodging a level %d monster.", lev);
-	else if (chance < 30)
-		msg_format(Ind, "You have a good chance of dodging a level %d monster.", lev);
-	else if (chance < 40)
-		msg_format(Ind, "You have a very good chance of dodging a level %d monster.", lev);
-	else
-		msg_format(Ind, "You have a high chance of doding a level %d monster.", lev);
-
-  #if 0
-	lev = p_ptr->lev * 2 < 127 ? p_ptr->lev * 2 : 127;
-	chance = apply_dodge_chance(Ind, lev);
-	if (is_admin(p_ptr))
-		msg_format(Ind, "You have exactly %d%% chances of dodging a level %d monster.", chance, lev);
-
-	if (chance < 5)
-		msg_format(Ind, "You have almost no chance of dodging a level %d monster.", lev);
-	else if (chance < 14)
-		msg_format(Ind, "You have a slight chance of dodging a level %d monster.", lev);
-	else if (chance < 23)
-		msg_format(Ind, "You have a significant chance of dodging a level %d monster.", lev);
-	else if (chance < 30)
-		msg_format(Ind, "You have a good chance of dodging a level %d monster.", lev);
-	else if (chance < 40)
-		msg_format(Ind, "You have a very good chance of dodging a level %d monster.", lev);
-	else
-		msg_format(Ind, "You have a high chance of doding a level %d monster.", lev);
-  #endif
- #else
 	lev = p_ptr->lev * 2 < 127 ? p_ptr->lev * 2 : 127;
 	if (is_admin(p_ptr))
-		msg_format(Ind, "You have exactly %d%%/%d%% chance of dodging a level %d/%d monster.", 
-			apply_dodge_chance(Ind, p_ptr->lev), apply_dodge_chance(Ind, lev), p_ptr->lev, lev);
+		msg_format(Ind, "You have exactly %d%%/%d%% chance of dodging a level %d/%d monster.",
+		    apply_dodge_chance(Ind, p_ptr->lev), apply_dodge_chance(Ind, lev), p_ptr->lev, lev);
 
-/*	msg_format(Ind, "You have %s/%s chance of dodging a level %d/%d monster.", 
-		dodge_diz(apply_dodge_chance(Ind, p_ptr->lev)), dodge_diz(apply_dodge_chance(Ind, lev)), 
+/*	msg_format(Ind, "You have %s/%s chance of dodging a level %d/%d monster.",
+		dodge_diz(apply_dodge_chance(Ind, p_ptr->lev)), dodge_diz(apply_dodge_chance(Ind, lev)),
 		p_ptr->lev, lev);
 */
-	msg_format(Ind, "You have %s chance of dodging a level %d monster.", 
-		dodge_diz(apply_dodge_chance(Ind, p_ptr->lev)), p_ptr->lev);
-  #if 0
-	msg_format(Ind, "You have %s chance of dodging a level %d monster.", 
-		dodge_diz(apply_dodge_chance(Ind, lev)), lev);
-  #endif
- #endif
+	msg_format(Ind, "You have %s chance of dodging a level %d monster.",
+	    dodge_diz(apply_dodge_chance(Ind, p_ptr->lev)), p_ptr->lev);
 #endif
 	return;
 }
@@ -2649,7 +2551,7 @@ void toggle_dual_mode(int Ind)
 		msg_print(Ind, "\377wDual-wield mode: Dual-hand.");
 	p_ptr->dual_mode = !p_ptr->dual_mode;
 s_printf("DUAL_MODE: Player %s toggles %s.\n", p_ptr->name, p_ptr->dual_mode ? "true" : "false");
-	p_ptr->redraw |= PR_STATE;
+	p_ptr->redraw |= PR_STATE | PR_PLUSSES;
 	calc_boni(Ind);
 	return;
 }
@@ -2703,6 +2605,7 @@ static void player_talk_aux(int Ind, char *message)
 {
  	int i, len, target = 0;
 	char search[160], sender[80];
+	char message2[MSG_LEN];
 	player_type *p_ptr = Players[Ind], *q_ptr;
  	char *colon;
 	bool me = FALSE;
@@ -2842,7 +2745,7 @@ static void player_talk_aux(int Ind, char *message)
 		return;
 	}
 
-	if(message[0]=='/'){
+	if (message[0] == '/' ){
 		if (!strncmp(message, "/me ", 4)) me = TRUE;
 		else if (!strncmp(message, "/broadcast ", 11)) broadcast = TRUE;
 		else {
@@ -2852,12 +2755,12 @@ static void player_talk_aux(int Ind, char *message)
 	}
 #ifndef ARCADE_SERVER
 	if (!colon) p_ptr->msgcnt++; /* !colon -> only prevent spam if not in party/private chat */
-	if(p_ptr->msgcnt>12){
-		time_t last=p_ptr->msg;
+	if (p_ptr->msgcnt > 12) {
+		time_t last = p_ptr->msg;
 		time(&p_ptr->msg);
-		if(p_ptr->msg-last < 6){
+		if (p_ptr->msg-last < 6) {
 			p_ptr->spam++;
-			switch(p_ptr->spam){
+			switch (p_ptr->spam) {
 				case 1:
 					msg_print(Ind, "\377yPlease don't spam the server");
 					break;
@@ -2866,38 +2769,37 @@ static void player_talk_aux(int Ind, char *message)
 					msg_print(Ind, "\374\377rWarning! this behaviour is unacceptable!");
 					break;
 				case 5:
-					p_ptr->chp=-3;
+					p_ptr->chp = -3;
 					strcpy(p_ptr->died_from, "hypoxia");
-					p_ptr->spam=1;
+					p_ptr->spam = 1;
 					p_ptr->deathblow = 0;
 					player_death(Ind);
 					return;
 			}
 		}
-		if(p_ptr->msg-last > 240 && p_ptr->spam) p_ptr->spam--;
-		p_ptr->msgcnt=0;
+		if (p_ptr->msg-last > 240 && p_ptr->spam) p_ptr->spam--;
+		p_ptr->msgcnt = 0;
 	}
-	if(p_ptr->spam > 1 || p_ptr->muted) return;
+	if (p_ptr->spam > 1 || p_ptr->muted) return;
 #endif
 	process_hooks(HOOK_CHAT, "d", Ind);
 
-	if(++p_ptr->talk>10){
+	if (++p_ptr->talk > 10) {
 		imprison(Ind, 30, "talking too much.");
 		return;
 	}
 
-	for(i=1; i<=NumPlayers; i++){
-		if(Players[i]->conn==NOT_CONNECTED) continue;
-		Players[i]->talk=0;
+	for(i = 1; i <= NumPlayers; i++){
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		Players[i]->talk = 0;
 	}
 
 	/* Special function '!:' at beginning of message sends to own party - sorry for hack, C. Blue */
 //	if ((strlen(message) >= 1) && (message[0] == ':') && (!colon) && (p_ptr->party))
-	if ((strlen(message) >= 2) && (message[0] == '!') && (message[1] == ':') && (colon) && (p_ptr->party))
-	{
+	if ((strlen(message) >= 2) && (message[0] == '!') && (message[1] == ':') && (colon) && (p_ptr->party)) {
 		target = p_ptr->party;
 #if 1 /* No private chat for invalid accounts ? */
-		if(p_ptr->inval){
+		if (p_ptr->inval) {
 			msg_print(Ind, "Your account is not valid! Ask an admin to validate it.");
 			return;
 		}
@@ -2912,10 +2814,9 @@ static void player_talk_aux(int Ind, char *message)
 	}
 
 	/* '#:' at beginning of message sends to dungeon level - C. Blue */
-	if ((strlen(message) >= 2) && (message[0] == '#') && (message[1] == ':') && (colon))
-	{
+	if ((strlen(message) >= 2) && (message[0] == '#') && (message[1] == ':') && (colon)) {
 #if 1 /* No private chat for invalid accounts ? */
-		if(p_ptr->inval){
+		if (p_ptr->inval) {
 			msg_print(Ind, "Your account is not valid! Ask an admin to validate it.");
 			return;
 		}
@@ -2927,10 +2828,10 @@ static void player_talk_aux(int Ind, char *message)
 #else /* Darkie's idea: */
 			if (*(message + 2)) {
 				msg_format_near(Ind, "\377B%^s says: %s", p_ptr->name, message + 2);
-    	        		msg_format(Ind, "\377BYou say: %s", message + 2);
+				msg_format(Ind, "\377BYou say: %s", message + 2);
 			} else {
 				msg_format_near(Ind, "\377B%s clears %s throat.", p_ptr->name, p_ptr->male ? "his" : "her");
-        			msg_print(Ind, "\377BYou clear your throat.");
+				msg_print(Ind, "\377BYou clear your throat.");
 			}
 #endif
 			return;
@@ -2945,8 +2846,7 @@ static void player_talk_aux(int Ind, char *message)
 	}
 
 	/* '%:' at the beginning sends to self - mikaelh */
-	if ((strlen(message) >= 2) && (message[0] == '%') && (message[1] == ':') && (colon))
-	{
+	if ((strlen(message) >= 2) && (message[0] == '%') && (message[1] == ':') && (colon)) {
 		/* Send message to self */
 		msg_format(Ind, "\377o<%%> \377w%s", message + 2);
 
@@ -2954,11 +2854,37 @@ static void player_talk_aux(int Ind, char *message)
 		return;
 	}
 
+	/* '+:' at beginning of message sends reply to last player who sent us a private msg  - C. Blue */
+	if ((strlen(message) >= 2) && (message[0] == '+') && (message[1] == ':') && colon) {
+#if 1 /* No private chat for invalid accounts ? */
+		if (p_ptr->inval) {
+			msg_print(Ind, "Your account is not valid! Ask an admin to validate it.");
+			return;
+		}
+#endif
+		/* Haven't received an initial private msg yet? */
+		if (!p_ptr->reply_name || !strlen(p_ptr->reply_name)) {
+			msg_print(Ind, "You haven't received any private message to reply to yet.");
+			return;
+		}
+
+		if (p_ptr->mutedchat == 2) return;
+
+		/* Forge private message */
+		strcpy(message2, p_ptr->reply_name);
+		strcat(message2, message + 1);
+		strcpy(message, message2);
+		colon = message + strlen(p_ptr->reply_name);
+
+		/* Continue with forged private message */
+	}
+
+
 	/* Form a search string if we found a colon */
 	if (colon) {
 		if (p_ptr->mutedchat == 2) return;
 #if 1 /* No private chat for invalid accounts ? */
-		if(p_ptr->inval){
+		if (p_ptr->inval) {
 			msg_print(Ind, "Your account is not valid! Ask an admin to validate it.");
 			return;
 		}
@@ -2974,13 +2900,10 @@ static void player_talk_aux(int Ind, char *message)
 	len = strlen(search);
 
 	/* Look for a recipient who matches the search string */
-	if (len)
-	{
+	if (len) {
 		struct rplist *w_player;
-		if(!stricmp(search, "Guild")){
-			if(!p_ptr->guild){
-				msg_print(Ind, "You are not in a guild");
-			}
+		if (!stricmp(search, "Guild")) {
+			if (!p_ptr->guild) msg_print(Ind, "You are not in a guild");
 			else guild_msg_format(p_ptr->guild, "\377v[\377w%s\377v]\377y %s", p_ptr->name, colon + 1);
 			return;
 		}
@@ -2988,11 +2911,18 @@ static void player_talk_aux(int Ind, char *message)
 		/* NAME_LOOKUP_LOOSE DESPERATELY NEEDS WORK */
 		target = name_lookup_loose_quiet(Ind, search, TRUE);
 #ifdef TOMENET_WORLDS
-		if(!target && cfg.worldd_privchat) {
+		if (!target && cfg.worldd_privchat) {
 			w_player = world_find_player(search, 0);
 			if (w_player) {
 				world_pmsg_send(p_ptr->id, p_ptr->name, w_player->name, colon + 1);
 				msg_format(Ind, "\375\377s[%s:%s] %s", p_ptr->name, w_player->name, colon + 1);
+
+				/* hack: assume that the target player will become the
+				   one we want to 'reply' to, afterwards, if we don't
+				   have a reply-to target yet. */
+				if (!p_ptr->reply_name || !strlen(p_ptr->reply_name))
+					strcpy(p_ptr->reply_name, w_player->name);
+
 				return;
 			}
 		}
@@ -3005,12 +2935,12 @@ static void player_talk_aux(int Ind, char *message)
 		if (colon) colon++;
 
 		/* lookup failed */
-		if (!target)
-		{
+		if (!target) {
 			/* Bounce message to player who sent it */
 //			msg_format(Ind, "(no receipient for: %s)", colon);
-			msg_print(Ind, "(Cannot match desired receipient)");
-
+#ifndef ARCADE_SERVER
+			msg_print(Ind, "(Cannot match desired recipient)");
+#endif
 			/* Allow fake private msgs to be intercepted - Molt */
 			exec_lua(0, "chat_handler()");
 
@@ -3024,9 +2954,11 @@ static void player_talk_aux(int Ind, char *message)
 		if (!check_ignore(target, Ind)) {
 			/* Set target player */
 			q_ptr = Players[target];
+			/* Remember sender, to be able to reply to him quickly */
+			strcpy(q_ptr->reply_name, sender);
 
 			/* Send message to target */
-			msg_format(target, "\375\377g[%s:%s] %s", q_ptr->name, sender, colon);
+			msg_format(target, "\375\377g[%s:%s] %s", sender, q_ptr->name, colon);
 			if ((q_ptr->page_on_privmsg ||
 			    (q_ptr->page_on_afk_privmsg && q_ptr->afk)) &&
 			    q_ptr->paging == 0)
@@ -3034,14 +2966,19 @@ static void player_talk_aux(int Ind, char *message)
 
 			/* Also send back to sender */
 			if (target != Ind)
-				msg_format(Ind, "\375\377g[%s:%s] %s", q_ptr->name, sender, colon);
+				msg_format(Ind, "\375\377g[%s:%s] %s", sender, q_ptr->name, colon);
 
 			/* Only display this message once now - mikaelh */
-			if (q_ptr->afk && !player_list_find(p_ptr->afk_noticed, q_ptr->id))
-			{
+			if (q_ptr->afk && !player_list_find(p_ptr->afk_noticed, q_ptr->id)) {
 				msg_format(Ind, "\377o%s seems to be Away From Keyboard.", q_ptr->name);
 				player_list_add(&p_ptr->afk_noticed, q_ptr->id);
 			}
+
+			/* hack: assume that the target player will become the
+			   one we want to 'reply' to, afterwards, if we don't
+			   have a reply-to target yet. */
+			if (!p_ptr->reply_name || !strlen(p_ptr->reply_name))
+				strcpy(p_ptr->reply_name, q_ptr->name);
 
 			exec_lua(0, "chat_handler()");
 			return;
@@ -3053,14 +2990,13 @@ static void player_talk_aux(int Ind, char *message)
 	}
 
 	/* Send to appropriate party */
-	if (len && target < 0)
-	{
+	if (len && target < 0) {
 		/* Send message to target party */
 		party_msg_format_ignoring(Ind, 0 - target, "\375\377G[%s:%s] %s",
 				 parties[0 - target].name, sender, colon);
 
 		/* Also send back to sender if not in that party */
-		if(!player_in_party(0-target, Ind)){
+		if (!player_in_party(0-target, Ind)) {
 			msg_format(Ind, "\375\377G[%s:%s] %s",
 			   parties[0 - target].name, sender, colon);
 		}
@@ -3072,7 +3008,6 @@ static void player_talk_aux(int Ind, char *message)
 	}
 
 	if (strlen(message) > 1) mycolor = (prefix(message, "}") && (color_char_to_attr(*(message + 1)) != -1))?2:0;
-	
 
 	if (!Ind) c_n = 'y';
 	/* Disabled this for now to avoid confusion. */
@@ -3095,7 +3030,7 @@ static void player_talk_aux(int Ind, char *message)
 	/* Admins have exclusive colour - the_sandman */
 	if (c_n == 'b' && !is_admin(p_ptr)) return;
 
-	switch((i = censor(message))){
+	switch ((i = censor(message))) {
 		case 0:
 			break;
 		default:
@@ -3130,7 +3065,7 @@ static void player_talk_aux(int Ind, char *message)
 			if (check_ignore(i, Ind)) continue;
 			if (q_ptr->ignoring_chat) continue;
 			if (!broadcast && (p_ptr->limit_chat || q_ptr->limit_chat) &&
-					!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
+			    !inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 		}
 		msg_print(i, tmessage);
 	}
@@ -3143,7 +3078,7 @@ static void player_talk_aux(int Ind, char *message)
 			if (check_ignore(i, Ind)) continue;
 			if (q_ptr->ignoring_chat) continue;
 			if (!broadcast && (p_ptr->limit_chat || q_ptr->limit_chat) &&
-					!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
+			    !inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 		}
 
 		/* Send message */
@@ -3743,10 +3678,10 @@ int name_lookup_quiet(int Ind, cptr name, u16b party)
 			/* let admins chat */
 			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr)
 			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
-			    && strcasecmp(p_ptr->accountname, "moltor") 
-			    && strcasecmp(p_ptr->accountname, "the_sandman") 
-			    && strcasecmp(p_ptr->accountname, "faith") 
-			    && strcasecmp(p_ptr->accountname, "mikaelh") 
+			    && strcasecmp(p_ptr->accountname, "moltor")
+			    && strcasecmp(p_ptr->accountname, "the_sandman")
+			    && strcasecmp(p_ptr->accountname, "faith")
+			    && strcasecmp(p_ptr->accountname, "mikaelh")
 			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
 			
 			/* Check name */
@@ -4440,18 +4375,6 @@ void note_crop_pseudoid(char *s2, char *psid, cptr s) {
 			s2[p - s0] = '\0';
 			strcat(s2, p + 6);
 			if (id < 2) id = 2;
-#if 0 /* disabled for practical reasons, probably more comfortable */
-		} else if ((p = strstr(s0, "bad-"))) {
-			strncpy(s2, s0, p - s0);
-			s2[p - s0] = '\0';
-			strcat(s2, p + 4);
-			if (id < 3) id = 3;
-		} else if ((p = strstr(s0, "bad"))) {
-			strncpy(s2, s0, p - s0);
-			s2[p - s0] = '\0';
-			strcat(s2, p + 3);
-			if (id < 3) id = 3;
-#endif
 		} else if ((p = strstr(s0, "worthless-"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';

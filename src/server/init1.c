@@ -1561,7 +1561,7 @@ errr init_v_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'N')
 		{
 			/* Find the colon before the name */
-			s = strchr(buf+2, ':');
+			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
 			if (!s) return (1);
@@ -1573,7 +1573,7 @@ errr init_v_info_txt(FILE *fp, char *buf)
 			if (!*s) return (1);
 
 			/* Get the index */
-			i = atoi(buf+2);
+			i = atoi(buf + 2);
 
 			/* Verify information */
 			if (i <= error_idx) return (4);
@@ -1611,7 +1611,7 @@ errr init_v_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'D')
 		{
 			/* Acquire the text */
-			s = buf+2;
+			s = buf + 2;
 
 			/* Hack -- Verify space */
 			if (v_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
@@ -1636,7 +1636,7 @@ errr init_v_info_txt(FILE *fp, char *buf)
 			int typ, rat, hgt, wid;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf+2, "%d:%d:%d:%d",
+			if (4 != sscanf(buf + 2, "%d:%d:%d:%d",
 			                &typ, &rat, &hgt, &wid)) return (1);
 
 			/* Save the values */
@@ -1745,7 +1745,7 @@ errr init_f_info_txt(FILE *fp, char *buf)
 			int v1, v2, v3;
 
 			/* Scan for the values */
-			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
+			if ((3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) ||
 			    (v1 != f_head->v_major) ||
 			    (v2 != f_head->v_minor) ||
 			    (v3 != f_head->v_patch))
@@ -1770,7 +1770,7 @@ errr init_f_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'N')
 		{
 			/* Find the colon before the name */
-			s = strchr(buf+2, ':');
+			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
 			if (!s) return (1);
@@ -1782,7 +1782,7 @@ errr init_f_info_txt(FILE *fp, char *buf)
 			if (!*s) return (1);
 
 			/* Get the index */
-			i = atoi(buf+2);
+			i = atoi(buf + 2);
 
 			/* Verify information */
 			if (i <= error_idx) return (4);
@@ -1825,7 +1825,7 @@ errr init_f_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'D')
 		{
 			/* Acquire the text */
-			s = buf+2;
+			s = buf + 2;
 
 			/* Hack -- Verify space */
 			if (f_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
@@ -1852,7 +1852,7 @@ errr init_f_info_txt(FILE *fp, char *buf)
 			int mimic;
 
 			/* Scan for the values */
-			if (1 != sscanf(buf+2, "%d",
+			if (1 != sscanf(buf + 2, "%d",
 			                &mimic)) return (1);
 
 			/* Save the values */
@@ -1993,7 +1993,7 @@ errr init_f_info_txt(FILE *fp, char *buf)
 			int v1, v2, v3;
 
 			/* Scan for the values */
-			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
+			if ((3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) ||
 					(v1 != f_head->v_major) ||
 					(v2 != f_head->v_minor) ||
 					(v3 != f_head->v_patch))
@@ -2018,7 +2018,7 @@ errr init_f_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'N')
 		{
 			/* Find the colon before the name */
-			s = strchr(buf+2, ':');
+			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
 			if (!s) return (1);
@@ -2030,7 +2030,7 @@ errr init_f_info_txt(FILE *fp, char *buf)
 			if (!*s) return (1);
 
 			/* Get the index */
-			i = atoi(buf+2);
+			i = atoi(buf + 2);
 
 			/* Verify information */
 			if (i <= error_idx) return (4);
@@ -2116,7 +2116,7 @@ errr init_f_info_txt(FILE *fp, char *buf)
 			int mimic;
 
 			/* Scan for the values */
-			if (1 != sscanf(buf+2, "%d",
+			if (1 != sscanf(buf + 2, "%d",
 						&mimic)) return (1);
 
 						/* Save the values */
@@ -2132,7 +2132,7 @@ errr init_f_info_txt(FILE *fp, char *buf)
 			char s0, s1, s2, s3, s4, s5, s6;
 
 			/* Scan for the values */
-			if (7 != sscanf(buf+2, "%c:%c:%c:%c:%c:%c:%c",
+			if (7 != sscanf(buf + 2, "%c:%c:%c:%c:%c:%c:%c",
 						&s0, &s1, &s2, &s3, &s4, &s5, &s6)) return (1);
 
 						/* Save the values */
@@ -2192,15 +2192,15 @@ errr init_f_info_txt(FILE *fp, char *buf)
 			if (i == 4) return (1);
 
 			/* Scan for the values */
-			if (4 != sscanf(buf+2, "%dd%d:%d:%d",
+			if (4 != sscanf(buf + 2, "%dd%d:%d:%d",
 						&dice, &side, &freq, &type))
 			{
 				int j;
 
-				if (3 != sscanf(buf+2, "%dd%d:%d",
+				if (3 != sscanf(buf + 2, "%dd%d:%d",
 							&dice, &side, &freq)) return (1);
 
-							tmp = buf+2;
+							tmp = buf + 2;
 							for (j = 0; j < 2; j++)
 							{
 								tmp = strchr(tmp, ':');
@@ -2420,7 +2420,7 @@ errr init_k_info_txt(FILE *fp, char *buf)
 			int v1, v2, v3;
 
 			/* Scan for the values */
-			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
+			if ((3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) ||
 			    (v1 != k_head->v_major) ||
 			    (v2 != k_head->v_minor) ||
 			    (v3 != k_head->v_patch))
@@ -2445,7 +2445,7 @@ errr init_k_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'N')
 		{
 			/* Find the colon before the name */
-			s = strchr(buf+2, ':');
+			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
 			if (!s) return (1);
@@ -2457,7 +2457,7 @@ errr init_k_info_txt(FILE *fp, char *buf)
 			if (!*s) return (1);
 
 			/* Get the index */
-//			i = atoi(buf+2);
+//			i = atoi(buf + 2);
 
 			/* Count it up */
 			i = ++idx;
@@ -2500,7 +2500,7 @@ errr init_k_info_txt(FILE *fp, char *buf)
 		{
 #if 0	// not used anyway
 			/* Acquire the text */
-			s = buf+2;
+			s = buf + 2;
 
 			/* Hack -- Verify space */
 			if (k_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
@@ -2555,7 +2555,7 @@ errr init_k_info_txt(FILE *fp, char *buf)
 			int tval, sval, pval;
 
 			/* Scan for the values */
-			if (3 != sscanf(buf+2, "%d:%d:%d",
+			if (3 != sscanf(buf + 2, "%d:%d:%d",
 			                &tval, &sval, &pval)) return (1);
 
 			/* Save the values */
@@ -2574,7 +2574,7 @@ errr init_k_info_txt(FILE *fp, char *buf)
 			long cost;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf+2, "%d:%d:%d:%ld",
+			if (4 != sscanf(buf + 2, "%d:%d:%d:%ld",
 			                &level, &extra, &wgt, &cost)) return (1);
 
 			/* Save the values */
@@ -2625,7 +2625,7 @@ errr init_k_info_txt(FILE *fp, char *buf)
 			int ac, hd1, hd2, th, td, ta;
 
 			/* Scan for the values */
-			if (6 != sscanf(buf+2, "%d:%dd%d:%d:%d:%d",
+			if (6 != sscanf(buf + 2, "%d:%dd%d:%d:%d:%d",
 			                &ac, &hd1, &hd2, &th, &td, &ta)) return (1);
 
 			k_ptr->ac = ac;
@@ -2826,7 +2826,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 			int v1, v2, v3;
 
 			/* Scan for the values */
-			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
+			if ((3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) ||
 			    (v1 != a_head->v_major) ||
 			    (v2 != a_head->v_minor) ||
 			    (v3 != a_head->v_patch))
@@ -2851,7 +2851,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'N')
 		{
 			/* Find the colon before the name */
-			s = strchr(buf+2, ':');
+			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
 			if (!s) return (1);
@@ -2863,7 +2863,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 			if (!*s) return (1);
 
 			/* Get the index */
-			i = atoi(buf+2);
+			i = atoi(buf + 2);
 
 			/* Verify information */
 			if (i < error_idx) return (4);
@@ -2908,9 +2908,10 @@ errr init_a_info_txt(FILE *fp, char *buf)
 		/* Process 'D' for "Description" */
 		if (buf[0] == 'D')
 		{
-#if 0	// Hope they'll be handled in client-side someday
+#ifdef ART_DIZ
+#if 1	// Hope they'll be handled in client-side someday
 			/* Acquire the text */
-			s = buf+2;
+			s = buf + 2;
 
 			/* Hack -- Verify space */
 			if (a_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
@@ -2923,7 +2924,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 
 			/* Advance the index */
 			a_head->text_size += strlen(s);
-
+#endif
 #endif
 			/* Next... */
 			continue;
@@ -2936,7 +2937,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 			int tval, sval, pval;
 
 			/* Scan for the values */
-			if (3 != sscanf(buf+2, "%d:%d:%d",
+			if (3 != sscanf(buf + 2, "%d:%d:%d",
 			                &tval, &sval, &pval)) return (1);
 
 			/* Save the values */
@@ -2955,7 +2956,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 			long cost;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf+2, "%d:%d:%d:%ld",
+			if (4 != sscanf(buf + 2, "%d:%d:%d:%ld",
 			                &level, &rarity, &wgt, &cost)) return (1);
 
 			/* Save the values */
@@ -2974,7 +2975,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 			int ac, hd1, hd2, th, td, ta;
 
 			/* Scan for the values */
-			if (6 != sscanf(buf+2, "%d:%dd%d:%d:%d:%d",
+			if (6 != sscanf(buf + 2, "%d:%dd%d:%d:%d:%d",
 			                &ac, &hd1, &hd2, &th, &td, &ta)) return (1);
 
 			a_ptr->ac = ac;
@@ -2995,7 +2996,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
                         int i;
 
 			/* Acquire the text */
-			s = buf+2;
+			s = buf + 2;
 
                         /* Find it in the list */
                         for (i = 0; i < power_max; i++)
@@ -3130,7 +3131,7 @@ errr init_s_info_txt(FILE *fp, char *buf)
 #ifdef VERIFY_VERSION_STAMP
 
 			/* Scan for the values */
-			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
+			if ((3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) ||
 			    (v1 != s_head->v_major) ||
 			    (v2 != s_head->v_minor) ||
 			    (v3 != s_head->v_patch))
@@ -3141,7 +3142,7 @@ errr init_s_info_txt(FILE *fp, char *buf)
 #else /* VERIFY_VERSION_STAMP */
 
 			/* Scan for the values */
-			if (3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) return (2);
+			if (3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) return (2);
 
 #endif /* VERIFY_VERSION_STAMP */
 
@@ -3163,7 +3164,7 @@ errr init_s_info_txt(FILE *fp, char *buf)
 			s16b s1, s2;
 
 			/* Scan for the values */
-			if (NULL == (sec = strchr(buf+2, ':')))
+			if (NULL == (sec = strchr(buf + 2, ':')))
 			{
 				return (1);
 			}
@@ -3171,7 +3172,7 @@ errr init_s_info_txt(FILE *fp, char *buf)
 			sec++;
 			if (!*sec) return (1);
 
-			s1 = find_skill(buf+2);
+			s1 = find_skill(buf + 2);
 			s2 = find_skill(sec);
 			if (s2 == -1) return (1);
 
@@ -3189,7 +3190,7 @@ errr init_s_info_txt(FILE *fp, char *buf)
 			s16b s1, s2;
 
 			/* Scan for the values */
-			if (NULL == (sec = strchr(buf+2, ':')))
+			if (NULL == (sec = strchr(buf + 2, ':')))
 			{
 				return (1);
 			}
@@ -3197,7 +3198,7 @@ errr init_s_info_txt(FILE *fp, char *buf)
 			sec++;
 			if (!*sec) return (1);
 
-			s1 = find_skill(buf+2);
+			s1 = find_skill(buf + 2);
 			s2 = find_skill(sec);
 			if ((s1 == -1) || (s2 == -1)) return (1);
 
@@ -3216,7 +3217,7 @@ errr init_s_info_txt(FILE *fp, char *buf)
 			s16b s1, s2;
 
 			/* Scan for the values */
-			if (NULL == (sec = strchr(buf+2, ':')))
+			if (NULL == (sec = strchr(buf + 2, ':')))
 			{
 				return (1);
 			}
@@ -3231,7 +3232,7 @@ errr init_s_info_txt(FILE *fp, char *buf)
 			cval++;
 			if (!*cval) return (1);
 
-			s1 = find_skill(buf+2);
+			s1 = find_skill(buf + 2);
 			s2 = find_skill(sec);
 			if ((s1 == -1) || (s2 == -1)) return (1);
 
@@ -3248,7 +3249,7 @@ errr init_s_info_txt(FILE *fp, char *buf)
 			s16b s1, s2;
 
 			/* Scan for the values */
-			if (NULL == (sec = strchr(buf+2, ':')))
+			if (NULL == (sec = strchr(buf + 2, ':')))
 			{
 				return (1);
 			}
@@ -3263,7 +3264,7 @@ errr init_s_info_txt(FILE *fp, char *buf)
 			cval++;
 			if (!*cval) return (1);
 
-			s1 = find_skill(buf+2);
+			s1 = find_skill(buf + 2);
 			s2 = find_skill(sec);
 			if ((s1 == -1) || (s2 == -1)) return (1);
 
@@ -3277,7 +3278,7 @@ errr init_s_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'N')
 		{
 			/* Find the colon before the name */
-			s = strchr(buf+2, ':');
+			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
 			if (!s) return (1);
@@ -3289,7 +3290,7 @@ errr init_s_info_txt(FILE *fp, char *buf)
 			if (!*s) return (1);
 
 			/* Get the index */
-			i = atoi(buf+2);
+			i = atoi(buf + 2);
 
 			/* Verify information */
 			if (i >= (int) s_head->info_num) return (2);
@@ -3332,7 +3333,7 @@ errr init_s_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'D')
 		{
 			/* Acquire the text */
-			s = buf+2;
+			s = buf + 2;
 
 			/* Hack -- Verify space */
 			if (s_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
@@ -3367,7 +3368,7 @@ errr init_s_info_txt(FILE *fp, char *buf)
 			char *txt;
 
 			/* Acquire the text */
-			s = buf+2;
+			s = buf + 2;
 
 			if (NULL == (txt = strchr(s, ':'))) return (1);
 			*txt = '\0';
@@ -3396,7 +3397,7 @@ errr init_s_info_txt(FILE *fp, char *buf)
 			int rate, tval;
 
 			/* Scan for the values */
-			if (2 != sscanf(buf+2, "%d:%d", &rate, &tval))
+			if (2 != sscanf(buf + 2, "%d:%d", &rate, &tval))
 			{
 				return (1);
 			}
@@ -3601,7 +3602,7 @@ errr init_e_info_txt(FILE *fp, char *buf)
 			int v1, v2, v3;
 
 			/* Scan for the values */
-			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
+			if ((3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) ||
 			    (v1 != e_head->v_major) ||
 			    (v2 != e_head->v_minor) ||
 			    (v3 != e_head->v_patch))
@@ -3626,7 +3627,7 @@ errr init_e_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'N')
 		{
 			/* Find the colon before the name */
-			s = strchr(buf+2, ':');
+			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
 			if (!s) return (1);
@@ -3642,7 +3643,7 @@ errr init_e_info_txt(FILE *fp, char *buf)
 #endif
 
 			/* Get the index */
-			i = atoi(buf+2);
+			i = atoi(buf + 2);
 
 			/* Verify information */
 			if (i < error_idx) return (4);
@@ -3702,7 +3703,7 @@ errr init_e_info_txt(FILE *fp, char *buf)
 		{
 #if 0
 			/* Acquire the text */
-			s = buf+2;
+			s = buf + 2;
 
 			/* Hack -- Verify space */
 			if (e_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
@@ -3733,7 +3734,7 @@ errr init_e_info_txt(FILE *fp, char *buf)
                         }
 
 			/* Scan for the values */
-                        if (3 != sscanf(buf+2, "%d:%d:%d",
+                        if (3 != sscanf(buf + 2, "%d:%d:%d",
                                 &tv, &minsv, &maxsv)) return (1);
 
 			/* Save the values */
@@ -3753,7 +3754,7 @@ errr init_e_info_txt(FILE *fp, char *buf)
                         int rar;
 
 			/* Scan for the values */
-                        if (1 != sscanf(buf+2, "%d",
+                        if (1 != sscanf(buf + 2, "%d",
                                 &rar)) return (1);
 
                         cur_r++;
@@ -3773,7 +3774,7 @@ errr init_e_info_txt(FILE *fp, char *buf)
                         char pos;	// actually it's boolean
 
 			/* Scan for the values */
-			if (2 != sscanf(buf+2, "%d:%d",
+			if (2 != sscanf(buf + 2, "%d:%d",
 			                &slot, &rating)) return (1);
 
 			/* Save the values */
@@ -3792,7 +3793,7 @@ errr init_e_info_txt(FILE *fp, char *buf)
                         char pos;
 
 			/* Scan for the values */
-                        if (3 != sscanf(buf+2, "%c:%d:%d",
+                        if (3 != sscanf(buf + 2, "%c:%d:%d",
                                 &pos, &slot, &rating)) return (1);
 
 			/* Save the values */
@@ -3811,7 +3812,7 @@ errr init_e_info_txt(FILE *fp, char *buf)
 			long cost;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf+2, "%d:%d:%d:%ld",
+			if (4 != sscanf(buf + 2, "%d:%d:%d:%ld",
 			                &level, &rarity, &pad2, &cost)) return (1);
 
 			/* Save the values */
@@ -3831,7 +3832,7 @@ errr init_e_info_txt(FILE *fp, char *buf)
 			int th, td, ta, pv;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf+2, "%d:%d:%d:%d",
+			if (4 != sscanf(buf + 2, "%d:%d:%d:%d",
 			                &th, &td, &ta, &pv)) return (1);
 
 			e_ptr->max_to_h = th;
@@ -3849,7 +3850,7 @@ errr init_e_info_txt(FILE *fp, char *buf)
                         int i;
 
 			/* Acquire the text */
-			s = buf+2;
+			s = buf + 2;
 
                         /* Find it in the list */
                         for (i = 0; i < power_max; i++)
@@ -4076,13 +4077,10 @@ if (season_halloween) {
  */
 errr init_r_info_txt(FILE *fp, char *buf)
 {
-	int i;
-
+	int i, j;
 	char *s, *t;
-
 	/* Not ready yet */
 	bool okay = FALSE;
-
 	/* Current entry */
 	monster_race *r_ptr = NULL;
 
@@ -4099,8 +4097,7 @@ errr init_r_info_txt(FILE *fp, char *buf)
 	r_head->text_size = 0;
 
 	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024, FALSE))
-	{
+	while (0 == my_fgets(fp, buf, 1024, FALSE)) {
 		/* Advance the line number */
 		error_line++;
 
@@ -4115,16 +4112,14 @@ errr init_r_info_txt(FILE *fp, char *buf)
 
 
 		/* Hack -- Process 'V' for "Version" */
-		if (buf[0] == 'V')
-		{
+		if (buf[0] == 'V') {
 			int v1, v2, v3;
 
 			/* Scan for the values */
-			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
+			if ((3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) ||
 			    (v1 != r_head->v_major) ||
 			    (v2 != r_head->v_minor) ||
-			    (v3 != r_head->v_patch))
-			{
+			    (v3 != r_head->v_patch)) {
 				/* It only annoying -- DG */
 //				return (2);
 //				s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
@@ -4142,10 +4137,9 @@ errr init_r_info_txt(FILE *fp, char *buf)
 
 
 		/* Process 'N' for "New/Number/Name" */
-		if (buf[0] == 'N')
-		{
+		if (buf[0] == 'N') {
 			/* Find the colon before the name */
-			s = strchr(buf+2, ':');
+			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
 			if (!s) return (1);
@@ -4157,7 +4151,7 @@ errr init_r_info_txt(FILE *fp, char *buf)
 			if (!*s) return (1);
 
 			/* Get the index */
-			i = atoi(buf+2);
+			i = atoi(buf + 2);
 
 			/* Verify information */
 			if (i < error_idx) return (4);
@@ -4183,6 +4177,14 @@ errr init_r_info_txt(FILE *fp, char *buf)
 			/* Advance the index */
 			r_head->name_size += strlen(s);
 
+			/* Check for duplicate version of this monster that just
+			   differs by FRIENDS flag, to make mimicry more consistent. - C. Blue */
+			for (j = 1; j < i; j++) {
+				if (strcmp(r_info[j].name + r_name, s)) continue;
+				r_ptr->dup_idx = j;
+				break;
+			}
+
 #if 1	// pernA hack -- someday.
 			/* HACK -- Those ones HAVE to have a set default value */
 			r_ptr->drops.treasure = OBJ_GENE_TREASURE;
@@ -4201,11 +4203,10 @@ errr init_r_info_txt(FILE *fp, char *buf)
 
 
 		/* Process 'D' for "Description" */
-		if (buf[0] == 'D')
-		{
+		if (buf[0] == 'D') {
 #if 0	// I've never seen this used :)		- Jir -
 			/* Acquire the text */
-			s = buf+2;
+			s = buf + 2;
 
 			/* Hack -- Verify space */
 			if (r_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
@@ -4225,8 +4226,7 @@ errr init_r_info_txt(FILE *fp, char *buf)
 		}
 
 		/* Process 'G' for "Graphics" (one line only) */
-		if (buf[0] == 'G')
-		{
+		if (buf[0] == 'G') {
 			char sym;
 			int tmp;
 
@@ -4253,12 +4253,11 @@ errr init_r_info_txt(FILE *fp, char *buf)
 		}
 
 		/* Process 'I' for "Info" (one line only) */
-		if (buf[0] == 'I')
-		{
+		if (buf[0] == 'I') {
 			int spd, hp1, hp2, aaf, ac, slp;
 
 			/* Scan for the other values */
-			if (6 != sscanf(buf+2, "%d:%dd%d:%d:%d:%d",
+			if (6 != sscanf(buf + 2, "%d:%dd%d:%d:%d:%d",
 			                &spd, &hp1, &hp2, &aaf, &ac, &slp)) return (1);
 
 			/* Save the values */
@@ -4273,14 +4272,13 @@ errr init_r_info_txt(FILE *fp, char *buf)
 			continue;
 		}
 
-                /* Process 'E' for "Body Parts" (one line only) */
-                if (buf[0] == 'E')
-		{
+		/* Process 'E' for "Body Parts" (one line only) */
+		if (buf[0] == 'E') {
 #if 1
                         int weap, tors, fing, head, arms, legs;
 
 			/* Scan for the other values */
-                        if (BODY_MAX != sscanf(buf+2, "%d:%d:%d:%d:%d:%d",
+                        if (BODY_MAX != sscanf(buf + 2, "%d:%d:%d:%d:%d:%d",
                                 &weap, &tors, &arms, &fing, &head, &legs)) return (1);
 
 			/* Save the values */
@@ -4299,14 +4297,13 @@ errr init_r_info_txt(FILE *fp, char *buf)
 			continue;
 		}
 
-                /* Process 'O' for "Object type" (one line only) */
-                if (buf[0] == 'O')
-		{
+		/* Process 'O' for "Object type" (one line only) */
+		if (buf[0] == 'O') {
 #if 1
                         int treasure, combat, magic, tools;
 
 			/* Scan for the values */
-                        if (4 != sscanf(buf+2, "%d:%d:%d:%d",
+                        if (4 != sscanf(buf + 2, "%d:%d:%d:%d",
                                 &treasure, &combat, &magic, &tools)) return (1);
 
 			/* Save the values */
@@ -4321,13 +4318,12 @@ errr init_r_info_txt(FILE *fp, char *buf)
 		}
 
 		/* Process 'W' for "More Info" (one line only) */
-		if (buf[0] == 'W')
-		{
+		if (buf[0] == 'W') {
 			int lev, rar, pad;
 			long exp;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf+2, "%d:%d:%d:%ld",
+			if (4 != sscanf(buf + 2, "%d:%d:%d:%ld",
 			                &lev, &rar, &pad, &exp)) return (1);
 
 			/* Save the values */
@@ -4347,8 +4343,7 @@ errr init_r_info_txt(FILE *fp, char *buf)
 		}
 
 		/* Process 'B' for "Blows" (up to four lines) */
-		if (buf[0] == 'B')
-		{
+		if (buf[0] == 'B') {
 			int n1, n2;
 
 			/* Find the next empty blow slot (if any) */
@@ -4358,16 +4353,14 @@ errr init_r_info_txt(FILE *fp, char *buf)
 			if (i == 4) return (1);
 
 			/* Analyze the first field */
-			for (s = t = buf+2; *t && (*t != ':'); t++) /* loop */;
+			for (s = t = buf + 2; *t && (*t != ':'); t++) /* loop */;
 
 			/* Terminate the field (if necessary) */
 			if (*t == ':') *t++ = '\0';
 
 			/* Analyze the method */
 			for (n1 = 0; r_info_blow_method[n1]; n1++)
-			{
 				if (streq(s, r_info_blow_method[n1])) break;
-			}
 
 			/* Invalid method */
 			if (!r_info_blow_method[n1]) return (1);
@@ -4380,9 +4373,7 @@ errr init_r_info_txt(FILE *fp, char *buf)
 
 			/* Analyze effect */
 			for (n2 = 0; r_info_blow_effect[n2]; n2++)
-			{
 				if (streq(s, r_info_blow_effect[n2])) break;
-			}
 
 			/* Invalid effect */
 			if (!r_info_blow_effect[n2]) return (1);
@@ -4408,17 +4399,14 @@ errr init_r_info_txt(FILE *fp, char *buf)
 		}
 
 		/* Process 'F' for "Basic Flags" (multiple lines) */
-		if (buf[0] == 'F')
-		{
+		if (buf[0] == 'F') {
 			/* Parse every entry */
-			for (s = buf + 2; *s; )
-			{
+			for (s = buf + 2; *s; ) {
 				/* Find the end of this entry */
 				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
 
 				/* Nuke and skip any dividers */
-				if (*t)
-				{
+				if (*t) {
 					*t++ = '\0';
 					while (*t == ' ' || *t == '|') t++;
 				}
@@ -4435,24 +4423,20 @@ errr init_r_info_txt(FILE *fp, char *buf)
 		}
 
 		/* Process 'S' for "Spell Flags" (multiple lines) */
-		if (buf[0] == 'S')
-		{
+		if (buf[0] == 'S') {
 			/* Parse every entry */
-			for (s = buf + 2; *s; )
-			{
+			for (s = buf + 2; *s; ) {
 				/* Find the end of this entry */
 				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
 
 				/* Nuke and skip any dividers */
-				if (*t)
-				{
+				if (*t) {
 					*t++ = '\0';
 					while ((*t == ' ') || (*t == '|')) t++;
 				}
 
 				/* XXX XXX XXX Hack -- Read spell frequency */
-				if (1 == sscanf(s, "1_IN_%d", &i))
-				{
+				if (1 == sscanf(s, "1_IN_%d", &i)) {
 					/* Extract a "frequency" */
 					r_ptr->freq_spell = r_ptr->freq_inate = 100 / i;
 
@@ -4517,8 +4501,7 @@ errr init_r_info_txt(FILE *fp, char *buf)
 	/* Hack -- Try to prevent a few "potential" bugs */
 	r_ptr->mexp = 1L;
 
-	for (i = 1; i < MAX_R_IDX; i++)
-	{
+	for (i = 1; i < MAX_R_IDX; i++) {
 		/* Invert flag WILD_ONLY <-> RF8_DUNGEON */
 		r_info[i].flags8 ^= 1L;
 
@@ -4869,7 +4852,7 @@ errr init_re_info_txt(FILE *fp, char *buf)
 			int v1, v2, v3;
 
 			/* Scan for the values */
-			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
+			if ((3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) ||
                             (v1 != re_head->v_major) ||
                             (v2 != re_head->v_minor) ||
                             (v3 != re_head->v_patch))
@@ -4893,7 +4876,7 @@ errr init_re_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'N')
 		{
 			/* Find the colon before the name */
-			s = strchr(buf+2, ':');
+			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
 			if (!s) return (1);
@@ -4905,7 +4888,7 @@ errr init_re_info_txt(FILE *fp, char *buf)
 			if (!*s) return (1);
 
 			/* Get the index */
-			i = atoi(buf+2);
+			i = atoi(buf + 2);
 
 			/* Verify information */
 			if (i < error_idx) return (4);
@@ -4991,7 +4974,7 @@ errr init_re_info_txt(FILE *fp, char *buf)
                         char mspd, mhp1, mhp2, maaf, mac, mslp;
 
 			/* Scan for the other values */
-                        if (12 != sscanf(buf+2, "%c%d:%c%dd%c%d:%c%d:%c%d:%c%d",
+                        if (12 != sscanf(buf + 2, "%c%d:%c%dd%c%d:%c%d:%c%d:%c%d",
                                 &mspd, &spd, &mhp1, &hp1, &mhp2, &hp2, &maaf, &aaf, &mac, &ac, &mslp, &slp)) return (1);
 
 			/* Save the values */
@@ -5014,7 +4997,7 @@ errr init_re_info_txt(FILE *fp, char *buf)
 			long exp;
 
 			/* Scan for the values */
-                        if (8 != sscanf(buf+2, "%c%d:%d:%c%d:%c%ld:%c",
+                        if (8 != sscanf(buf + 2, "%c%d:%d:%c%d:%c%ld:%c",
                                 &mlev, &lev, &rar, &mwt, &wt, &mexp, &exp, &pos)) return (1);
 
 			/* Save the values */
@@ -5042,7 +5025,7 @@ errr init_re_info_txt(FILE *fp, char *buf)
 						}
 
 			/* Analyze the first field */
-			for (s = t = buf+2; *t && (*t != ':'); t++) /* loop */;
+			for (s = t = buf + 2; *t && (*t != ':'); t++) /* loop */;
 
 			/* Terminate the field (if necessary) */
 			if (*t == ':') *t++ = '\0';
@@ -5434,7 +5417,7 @@ errr init_t_info_txt(FILE *fp, char *buf)
 			int v1, v2, v3;
 
 			/* Scan for the values */
-			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
+			if ((3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) ||
 			    (v1 != t_head->v_major) ||
 			    (v2 != t_head->v_minor) ||
 			    (v3 != t_head->v_patch))
@@ -5458,7 +5441,7 @@ errr init_t_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'N')
 		{
 			/* Find the colon before the name */
-			s = strchr(buf+2, ':');
+			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
 			if (!s) return (1);
@@ -5470,7 +5453,7 @@ errr init_t_info_txt(FILE *fp, char *buf)
 			if (!*s) return (1);
 
 			/* Get the index */
-			i = atoi(buf+2);
+			i = atoi(buf + 2);
 
 			/* Verify information */
 			if (i <= error_idx) return (4);
@@ -5513,7 +5496,7 @@ errr init_t_info_txt(FILE *fp, char *buf)
 			char color;
 
 			/* Scan for the values */
-			if (9 != sscanf(buf+2, "%d:%d:%d:%d:%d:%dd%d:%c:%d",
+			if (9 != sscanf(buf + 2, "%d:%d:%d:%d:%d:%dd%d:%c:%d",
 					&difficulty, &probability, &another,
 					&p1valinc, &minlevel, &dd, &ds,
 					&color, &vanish)) return (1);
@@ -5541,7 +5524,7 @@ errr init_t_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'D')
 		{
 			/* Acquire the text */
-			s = buf+2;
+			s = buf + 2;
 
 			/* Hack -- Verify space */
 			if (t_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
@@ -5827,7 +5810,7 @@ errr init_d_info_txt(FILE *fp, char *buf)
 #ifdef VERIFY_VERSION_STAMP
 
 			/* Scan for the values */
-			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
+			if ((3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) ||
 			    (v1 != d_head->v_major) ||
 			    (v2 != d_head->v_minor) ||
 			    (v3 != d_head->v_patch))
@@ -5838,7 +5821,7 @@ errr init_d_info_txt(FILE *fp, char *buf)
 #else /* VERIFY_VERSION_STAMP */
 
 			/* Scan for the values */
-			if (3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) return (2);
+			if (3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) return (2);
 
 #endif /* VERIFY_VERSION_STAMP */
 
@@ -5857,7 +5840,7 @@ errr init_d_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'N')
 		{
 			/* Find the colon before the name */
-			s = strchr(buf+2, ':');
+			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
 			if (!s) return (1);
@@ -5869,7 +5852,7 @@ errr init_d_info_txt(FILE *fp, char *buf)
 			if (!*s) return (1);
 
 			/* Get the index */
-			i = atoi(buf+2);
+			i = atoi(buf + 2);
 
 			/* Verify information */
 			if (i < error_idx) return (4);
@@ -5964,7 +5947,7 @@ errr init_d_info_txt(FILE *fp, char *buf)
 			int min_alloc, max_chance;
 
 			/* Scan for the values */
-			if (6 != sscanf(buf+2, "%d:%d:%d:%d:%d:%d",
+			if (6 != sscanf(buf + 2, "%d:%d:%d:%d:%d:%d",
 				&min_lev, &max_lev, &min_plev, &next, &min_alloc, &max_chance)) return (1);
 
 			/* Save the values */
@@ -5986,10 +5969,10 @@ errr init_d_info_txt(FILE *fp, char *buf)
 			int i, j;
 
 			/* Scan for the values */
-			if (10 != sscanf(buf+2, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+			if (10 != sscanf(buf + 2, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
 				&f[0], &p[0], &f[1], &p[1], &f[2], &p[2], &f[3], &p[3], &f[4], &p[4])) {
 				/* Scan for the values - part ii*/
-				if (5 != sscanf(buf+2, "%d:%d:%d:%d:%d", &p[0], &p[1],
+				if (5 != sscanf(buf + 2, "%d:%d:%d:%d:%d", &p[0], &p[1],
 						&p[2], &p[3], &p[4])) return (1);
 
 				/* Save the values */
@@ -6014,7 +5997,7 @@ errr init_d_info_txt(FILE *fp, char *buf)
 			int treasure, combat, magic, tools;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf+2, "%d:%d:%d:%d",
+			if (4 != sscanf(buf + 2, "%d:%d:%d:%d",
 				&treasure, &combat, &magic, &tools)) return (1);
 
 			/* Save the values */
@@ -6035,11 +6018,11 @@ errr init_d_info_txt(FILE *fp, char *buf)
 			int i, j;
 
 			/* Scan for the values */
-			if (12 != sscanf(buf+2, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+			if (12 != sscanf(buf + 2, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
 				&w[0], &p[0], &w[1], &p[1], &w[2], &p[2], &w[3], &p[3], &w[4], &p[4], &outer, &inner))
 			{
 				/* Scan for the values - part ii*/
-				if (5 != sscanf(buf+2, "%d:%d:%d:%d:%d", &p[0], &p[1],
+				if (5 != sscanf(buf + 2, "%d:%d:%d:%d:%d", &p[0], &p[1],
 				    &p[2], &p[3], &p[4])) return (1);
 
 				/* Save the values */
@@ -6075,15 +6058,15 @@ errr init_d_info_txt(FILE *fp, char *buf)
 			if (i == 4) return (1);
 
 			/* Scan for the values */
-			  if (4 != sscanf(buf+2, "%dd%d:%d:%d",
+			  if (4 != sscanf(buf + 2, "%dd%d:%d:%d",
 				  &dice, &side, &freq, &type))
 			{
 				int j;
 
-				if (3 != sscanf(buf+2, "%dd%d:%d",
+				if (3 != sscanf(buf + 2, "%dd%d:%d",
 						&dice, &side, &freq)) return (1);
 
-				tmp = buf+2;
+				tmp = buf + 2;
 				for (j = 0; j < 2; j++)
 				{
 					tmp = strchr(tmp, ':');
@@ -6220,7 +6203,7 @@ errr init_d_info_txt(FILE *fp, char *buf)
 			int z, y, lims[5];
 
 			/* Scan for the values */
-			if (2 != sscanf(buf+2, "%d:%d",
+			if (2 != sscanf(buf + 2, "%d:%d",
 				&percent, &mode)) return (1);
 
 			/* Save the values */
@@ -6459,7 +6442,7 @@ errr init_st_info_txt(FILE *fp, char *buf)
 #ifdef VERIFY_VERSION_STAMP
 
 			/* Scan for the values */
-			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
+			if ((3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) ||
 			    (v1 != st_head->v_major) ||
 			    (v2 != st_head->v_minor) ||
 			    (v3 != st_head->v_patch))
@@ -6470,7 +6453,7 @@ errr init_st_info_txt(FILE *fp, char *buf)
 #else /* VERIFY_VERSION_STAMP */
 
 			/* Scan for the values */
-			if (3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) return (2);
+			if (3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) return (2);
 
 #endif /* VERIFY_VERSION_STAMP */
 
@@ -6489,7 +6472,7 @@ errr init_st_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'N')
 		{
 			/* Find the colon before the name */
-			s = strchr(buf+2, ':');
+			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
 			if (!s) return (1);
@@ -6501,7 +6484,7 @@ errr init_st_info_txt(FILE *fp, char *buf)
 			if (!*s) return (1);
 
 			/* Get the index */
-			i = atoi(buf+2);
+			i = atoi(buf + 2);
 
 //			++cnt;
 
@@ -6543,7 +6526,7 @@ errr init_st_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'I')
 		{
 			/* Find the colon before the name */
-			s = strchr(buf+2, ':');
+			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
 			if (!s) return (1);
@@ -6555,7 +6538,7 @@ errr init_st_info_txt(FILE *fp, char *buf)
 			if (!*s) return (1);
 
 			/* Get the index */
-			st_ptr->table[item_idx][1] = atoi(buf+2);
+			st_ptr->table[item_idx][1] = atoi(buf + 2);
 
 			/* Append chars to the name */
 			st_ptr->table[item_idx++][0] = test_item_name(s);
@@ -6572,7 +6555,7 @@ errr init_st_info_txt(FILE *fp, char *buf)
 			int tv1, sv1, rar1;
 
 			/* Scan for the values */
-			if (3 != sscanf(buf+2, "%d:%d:%d",
+			if (3 != sscanf(buf + 2, "%d:%d:%d",
 				&rar1, &tv1, &sv1)) return (1);
 
 			/* Get the index */
@@ -6593,7 +6576,7 @@ errr init_st_info_txt(FILE *fp, char *buf)
 			int attr;
 
 			/* Scan for the values */
-			if (2 != sscanf(buf+2, "%c:%c",
+			if (2 != sscanf(buf + 2, "%c:%c",
 				&c, &a)) return (1);
 
 			/* Extract the color */
@@ -6616,7 +6599,7 @@ errr init_st_info_txt(FILE *fp, char *buf)
 			int a1, a2, a3, a4, a5, a6;
 
 			/* Scan for the values */
-			if (6 != sscanf(buf+2, "%d:%d:%d:%d:%d:%d",
+			if (6 != sscanf(buf + 2, "%d:%d:%d:%d:%d:%d",
 				&a1, &a2, &a3, &a4, &a5, &a6)) return (1);
 
 			/* Save the values */
@@ -6664,7 +6647,7 @@ errr init_st_info_txt(FILE *fp, char *buf)
 			int a1, a2, a3, a4, a5, a6;
 
 			/* Scan for the values */
-			if (MAX_STORE_OWNERS != sscanf(buf+2, "%d:%d:%d:%d:%d:%d",
+			if (MAX_STORE_OWNERS != sscanf(buf + 2, "%d:%d:%d:%d:%d:%d",
 				&a1, &a2, &a3, &a4, &a5, &a6)) return (1);
 
 			/* Save the values */
@@ -6685,7 +6668,7 @@ errr init_st_info_txt(FILE *fp, char *buf)
 			int max_obj;
 
 			/* Scan for the values */
-			if (1 != sscanf(buf+2, "%d",
+			if (1 != sscanf(buf + 2, "%d",
 				&max_obj)) return (1);
 
 			/* Save the values */
@@ -6768,7 +6751,7 @@ errr init_ba_info_txt(FILE *fp, char *buf)
 #ifdef VERIFY_VERSION_STAMP
 
 			/* Scan for the values */
-			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
+			if ((3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) ||
 			    (v1 != ba_head->v_major) ||
 			    (v2 != ba_head->v_minor) ||
 			    (v3 != ba_head->v_patch))
@@ -6779,7 +6762,7 @@ errr init_ba_info_txt(FILE *fp, char *buf)
 #else /* VERIFY_VERSION_STAMP */
 
 			/* Scan for the values */
-			if (3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) return (2);
+			if (3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) return (2);
 
 #endif /* VERIFY_VERSION_STAMP */
 
@@ -6798,7 +6781,7 @@ errr init_ba_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'N')
 		{
 			/* Find the colon before the name */
-			s = strchr(buf+2, ':');
+			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
 			if (!s) return (1);
@@ -6810,7 +6793,7 @@ errr init_ba_info_txt(FILE *fp, char *buf)
 			if (!*s) return (1);
 
 			/* Get the index */
-			i = atoi(buf+2);
+			i = atoi(buf + 2);
 
 			/* Verify information */
 			if (i < error_idx) return (4);
@@ -6849,7 +6832,7 @@ errr init_ba_info_txt(FILE *fp, char *buf)
 			int ch, cn, cl;
 
 			/* Scan for the values */
-			if (3 != sscanf(buf+2, "%d:%d:%d",
+			if (3 != sscanf(buf + 2, "%d:%d:%d",
 				&ch, &cn, &cl)) return (1);
 
 			/* Save the values */
@@ -6869,7 +6852,7 @@ errr init_ba_info_txt(FILE *fp, char *buf)
 			unsigned int flags;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf+2, "%d:%d:%c:%u",
+			if (4 != sscanf(buf + 2, "%d:%d:%c:%u",
 				&act, &act_res, &letter, &flags)) return (1);
 
 			/* Save the values */
@@ -6946,7 +6929,7 @@ errr init_ow_info_txt(FILE *fp, char *buf)
 #ifdef VERIFY_VERSION_STAMP
 
 			/* Scan for the values */
-			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
+			if ((3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) ||
 			    (v1 != ow_head->v_major) ||
 			    (v2 != ow_head->v_minor) ||
 			    (v3 != ow_head->v_patch))
@@ -6957,7 +6940,7 @@ errr init_ow_info_txt(FILE *fp, char *buf)
 #else /* VERIFY_VERSION_STAMP */
 
 			/* Scan for the values */
-			if (3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) return (2);
+			if (3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) return (2);
 
 #endif /* VERIFY_VERSION_STAMP */
 
@@ -6976,7 +6959,7 @@ errr init_ow_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'N')
 		{
 			/* Find the colon before the name */
-			s = strchr(buf+2, ':');
+			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
 			if (!s) return (1);
@@ -6988,7 +6971,7 @@ errr init_ow_info_txt(FILE *fp, char *buf)
 			if (!*s) return (1);
 
 			/* Get the index */
-			i = atoi(buf+2);
+			i = atoi(buf + 2);
 
 			/* Verify information */
 			if (i < error_idx) return (4);
@@ -7028,7 +7011,7 @@ errr init_ow_info_txt(FILE *fp, char *buf)
 			int ch, cn, cl;
 
 			/* Scan for the values */
-			if (3 != sscanf(buf+2, "%d:%d:%d",
+			if (3 != sscanf(buf + 2, "%d:%d:%d",
 				&ch, &cn, &cl)) return (1);
 
 			/* Save the values */
@@ -7046,7 +7029,7 @@ errr init_ow_info_txt(FILE *fp, char *buf)
 			int cost, max_inf, min_inf, haggle, insult;
 
 			/* Scan for the values */
-			if (5 != sscanf(buf+2, "%d:%d:%d:%d:%d",
+			if (5 != sscanf(buf + 2, "%d:%d:%d:%d:%d",
 				&cost, &max_inf, &min_inf, &haggle, &insult)) return (1);
 
 			/* Save the values */
@@ -7235,7 +7218,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 	{
 		int num;
 
-		if ((num = tokenize(buf+2, 10, zz, ':', '/')) > 1)
+		if ((num = tokenize(buf + 2, 10, zz, ':', '/')) > 1)
 		{
 			int index = zz[0][0];
 
@@ -7433,7 +7416,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 //		object_type object_type_body;
 
 		/* Acquire the text */
-		char *s = buf+2;
+		char *s = buf + 2;
 
 		/* Length of the text */
 		int len = strlen(s);
@@ -7817,7 +7800,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 #if 0	// It'll be needed very soon maybe
 		if (init_flags & INIT_CREATE_DUNGEON)
 		{
-			if (tokenize(buf+2, 2, zz, ':', '/') == 2)
+			if (tokenize(buf + 2, 2, zz, ':', '/') == 2)
 			{
 				/* Place player in a quest level */
 				if (p_ptr->inside_quest || (init_flags & INIT_POSITION))
@@ -7834,7 +7817,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			}
 		}
 #else	// 0.. quick Hack
-		if (tokenize(buf+2, 2, zz, ':', '/') == 2)
+		if (tokenize(buf + 2, 2, zz, ':', '/') == 2)
 		{
 			int yy = atoi(zz[0]);
 			int xx = atoi(zz[1]);
@@ -7859,7 +7842,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 		return (0);
 
 #if	0	// It's very nice code - this should be transmitted to the client, tho
-		if (tokenize(buf+2, 3, zz, ':', '/') >= 2)
+		if (tokenize(buf + 2, 3, zz, ':', '/') >= 2)
 		{
 			/* Maximum towns */
 			if (zz[0][0] == 'T')

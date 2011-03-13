@@ -2,9 +2,9 @@
  *
  * XPilot, a multiplayer gravity war game.  Copyright (C) 1991-95 by
  *
- *      Bjørn Stabell        (bjoerns@staff.cs.uit.no)
+ *      BjÃ¸rn Stabell        (bjoerns@staff.cs.uit.no)
  *      Ken Ronny Schouten   (kenrsc@stud.cs.uit.no)
- *      Bert Gÿsbers         (bert@mc.bio.uva.nl)
+ *      Bert GÃ¿sbers         (bert@mc.bio.uva.nl)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -416,7 +416,7 @@ void sched(void)
 
     readmask = input_mask;
 #ifdef VMS
-    extern int NumPlayers, NumRobots, NumPseudoPlayers, NumQueuedPlayers;
+    extern int NumPlayers, NumRobots, NumPseudoPlayers, NumQueuedPlayers, NumNonAdminPlayers;
     extern int login_in_progress;
 #endif
 

@@ -8,13 +8,18 @@
 #include <stdarg.h>
 #include "angband.h"
 
-static FILE *fp = NULL;
-static int init = FALSE;
 static int print_to_file = FALSE;
-static FILE *fpc = NULL;
+static FILE *fp = NULL;		/* the 'tomenet.log' file */
+static int init = FALSE;
+
+static FILE *fpc = NULL;	/* the 'cheeze.log' file */
 static int initc = FALSE;
-static FILE *fpp = NULL;
+
+static FILE *fpp = NULL;	/* the 'traffic.log' file */
 static int initp = FALSE;
+
+static FILE *fpl = NULL;	/* the 'legends.log' file */
+static int initl = FALSE;
 
 /* s_print_only_to_file 
  * Controls if we should only print to file
@@ -147,50 +152,56 @@ extern bool do_cmd_view_rfe(int Ind, char *str, int line)
 }
 #endif	// 0
 
-/* Log all -CHEEZY- transactions into a separate file besides tomenet.log */
-extern int c_printf(char *str, ...)
-{
-        char    path[MAX_PATH_LENGTH];
-        path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "cheeze.log");
-
+/* Log "legends" (achievements of various sort, viewable in the town hall) - C. Blue */
+extern int l_printf(char *str, ...) {
+	char path[MAX_PATH_LENGTH];
+	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends.log");
 	va_list va;
 
-	if(initc == FALSE)   /* in case we don't start her up properly */
-	{
+	if (initl == FALSE) { /* in case we don't start her up properly */
+		fpl = fopen(path, "a+");
+		initl = TRUE;
+	}
+
+	va_start(va, str);
+	vfprintf(fpl, str, va);
+	va_end(va);
+	fflush(fpl);
+	return(TRUE);
+}
+
+/* Log all -CHEEZY- transactions into a separate file besides tomenet.log */
+extern int c_printf(char *str, ...) {
+	char path[MAX_PATH_LENGTH];
+	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "cheeze.log");
+	va_list va;
+
+	if (initc == FALSE) { /* in case we don't start her up properly */
 		fpc = fopen(path, "a+");
 		initc = TRUE;
 	}
 
 	va_start(va, str);
-	vfprintf(fpc,str,va);
+	vfprintf(fpc, str, va);
 	va_end(va);
-
-	/* KLJ -- Flush the log so that people can look at it while the server is running */
 	fflush(fpc);
-
 	return(TRUE);
 }
 
 /* Log amount of players logged on, to generate a "traffic chart" :) - C. Blue */
-extern int p_printf(char *str, ...)
-{
-        char    path[MAX_PATH_LENGTH];
-        path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "traffic.log");
-
+extern int p_printf(char *str, ...) {
+	char path[MAX_PATH_LENGTH];
+	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "traffic.log");
 	va_list va;
 
-	if(initp == FALSE)   /* in case we don't start her up properly */
-	{
+	if (initp == FALSE) { /* in case we don't start her up properly */
 		fpp = fopen(path, "a+");
 		initp = TRUE;
 	}
 
 	va_start(va, str);
-	vfprintf(fpp,str,va);
+	vfprintf(fpp, str, va);
 	va_end(va);
-
-	/* KLJ -- Flush the log so that people can look at it while the server is running */
 	fflush(fpp);
-
 	return(TRUE);
 }

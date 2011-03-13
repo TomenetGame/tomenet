@@ -517,65 +517,11 @@ void do_cmd_eat_food(int Ind, int item)
 	else if (o_ptr->tval == TV_FIRESTONE)
 	{
 		bool dragon = FALSE;
-#if 0	/* exclusive feature of Draconians. Mimics shouldn't have access to this, really. */
-		if (p_ptr->body_monster)
-		{
-			monster_race *r_ptr = &r_info[p_ptr->body_monster];
-			if (strchr("dD", r_ptr->d_char))
-			{
-				/* Analyse the firestone */
-				switch (o_ptr->sval)
-				{
-					case SV_FIRE_SMALL:
-					{
-						if (p_ptr->csp < p_ptr->msp)
-						{
-							msg_print(Ind, "Grrrmfff ...");
-
-							p_ptr->csp += 50;
-							if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
-							p_ptr->csp_frac = 0;
-
-							/* Recalculate mana */
-							p_ptr->window |= (PW_PLAYER);
-							p_ptr->redraw |= (PR_MANA);
-
-							ident = TRUE;
-						}
-						else dragon = TRUE;
-						break;
-					}
-
-					case SV_FIRESTONE:
-					{
-						if (p_ptr->csp < p_ptr->msp)
-						{
-							msg_print(Ind, "Grrrrmmmmmmfffffff ...");
-
-							p_ptr->csp += 300;
-							if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
-							p_ptr->csp_frac = 0;
-
-							/* Recalculate mana */
-							p_ptr->window |= (PW_PLAYER);
-							p_ptr->redraw |= (PR_MANA);
-
-							ident = TRUE;
-						}
-						else dragon = TRUE;
-
-						break;
-					}
-				}
-			}
-		}
-#else
 		if (p_ptr->body_monster)
 		{
 			monster_race *r_ptr = &r_info[p_ptr->body_monster];
 			if (strchr("dD", r_ptr->d_char)) dragon = TRUE;
 		}
-#endif
 		/* Analyse the firestone */
 		if (!ident)
 		{
@@ -872,10 +818,6 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 /* too low to allow a pot of invis given as startup eq to have any effect:
 					set_invis(Ind, 30 + randint(40), p_ptr->lev * 4 / 5); */
 					set_invis(Ind, 15 + randint(10), p_ptr->lev < 30 ? 24 : p_ptr->lev * 4 / 5);
-#if 0
-					p_ptr->tim_invisibility = 30+randint(40);
-					p_ptr->tim_invis_power = p_ptr->lev * 4 / 5;
-#endif	// 0
 					ident = TRUE;
 				}
 
@@ -1029,13 +971,8 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				{
 					if (p_ptr->csp < p_ptr->msp)
 					{
-#if 0
-						p_ptr->csp = p_ptr->msp;
-						p_ptr->csp_frac = 0;
-#else
 						p_ptr->csp += 1000;
 						if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
-#endif
 						msg_print(Ind, "You feel your head clearing!");
 						p_ptr->redraw |= (PR_MANA);
 						p_ptr->window |= (PW_PLAYER);
@@ -1514,14 +1451,6 @@ void do_cmd_drink_fountain(int Ind)
 		return;
 	}
 
-#if 0
-	/* We quaff or we fill ? */
-	if (!get_check("Do you want to quaff from the fountain? ")) {
-		do_cmd_fill_bottle();
-		return;
-	}
-#endif	// 0
-
 	/* Oops! */
 	if (!(cs_ptr = GetCS(c_ptr, CS_FOUNTAIN))) {
 #ifdef USE_SOUND_2010
@@ -1569,20 +1498,6 @@ void do_cmd_drink_fountain(int Ind)
 
 	pval = k_info[k_idx].pval;
 
-#if 0
-	for (i = 0; i < max_k_idx; i++)
-	{
-		object_kind *k_ptr = &k_info[i];
-
-		if (k_ptr->tval != tval) continue;
-		if (k_ptr->sval != sval) continue;
-
-		pval = k_ptr->pval;
-
-		break;
-	}
-#endif	// 0
-
 	/* S(he) is no longer afk */
 	un_afk_idle(Ind);
 #ifdef USE_SOUND_2010
@@ -1615,10 +1530,17 @@ void do_cmd_drink_fountain(int Ind)
 		} else if (getlevel(&p_ptr->wpos) >= 5) { pval = 207;
 		} else { pval = 900;
 		}
-		s_printf("FOUNTAIN_GUARDS: %d.\n", pval);
+		s_printf("FOUNTAIN_GUARDS: %d ", pval);
 	}
 //	}
-	if (pval) summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, pval, 0, 1);
+	if (pval) {
+		msg_print(Ind, "A monster appears in the fountain!");
+		summon_override_checks = SO_GRID_TERRAIN;
+		if (summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, pval, 0, 1))
+			s_printf("ok.\n");
+		else s_printf("failed.\n");
+		summon_override_checks = SO_NONE;
+	}
 #endif
 
 	/* Take a turn */
@@ -1699,17 +1621,6 @@ void do_cmd_fill_bottle(int Ind)
 //		msg_print(Ind, "You quenched the thirst.");
 		return;
 	}
-
-
-#if 0
-	/* Restrict choices to bottles */
-	item_tester_hook = item_tester_hook_fillable;
-
-	/* Get an item */
-	q = "Fill which bottle? ";
-	s = "You have no bottles to fill.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
-#endif	// 0
 
 	if (!get_something_tval(Ind, TV_BOTTLE, &item))
 	{
@@ -2152,21 +2063,12 @@ static void do_lottery(int Ind, object_type *o_ptr)
 
 		s_printf("Lottery results: %s won the %d%s prize of %d Au.\n", p_ptr->name, k, p, i);
 
-#if 0
-		if (k < 4 && (p_ptr->au < i / 3))
-		{
-			msg_broadcast_format(0, "\374\377y$$$ \377B%s seems to hit the big time! \377y$$$", p_ptr->name);
-			set_confused(Ind, p_ptr->confused + rand_int(10) + 10);
-			set_image(Ind, p_ptr->image + rand_int(10) + 10);
-		}
-#else
 		if (k < 4) {
 			if (k == 1) msg_broadcast_format(0, "\374\377y$$$ \377B%s seems to hit the big time! \377y$$$", p_ptr->name);
 			else msg_broadcast_format(0, "\374\377B%s seems to hit the big time!", p_ptr->name);
 			set_confused(Ind, p_ptr->confused + rand_int(10) + 10);
 			set_image(Ind, p_ptr->image + rand_int(10) + 10);
 		}
-#endif
 		msg_format(Ind, "\374\377BYou won the %d%s prize!", k, p);
 
 		gold = i;
@@ -2185,8 +2087,8 @@ static void do_lottery(int Ind, object_type *o_ptr)
 
 #if 0 /*Too many piles*/
 			drop = (i > 1000) ?
-					randint(i / 10 / (LOTTERY_MAX_PRIZE * LOTTERY_MAX_PRIZE
-							+ 1 - k * k)) * 10 : i;
+			    randint(i / 10 / (LOTTERY_MAX_PRIZE * LOTTERY_MAX_PRIZE
+			    + 1 - k * k)) * 10 : i;
 #else
 			drop = i_drop;
 #endif
@@ -2749,9 +2651,7 @@ s_printf("PLAYER_STORE_CASH: Player %s redeems cheque of value %d (%s).\n", p_pt
 				if (p_ptr->suscep_good || p_ptr->suscep_life) {
 				//if (p_ptr->prace == RACE_VAMPIRE) {
 					take_hit(Ind, damroll(5, 3), "a Scroll of Blessing", 0);
-				}	
-				else if (p_ptr->blessed_power == 0)
-				{
+				} else if (p_ptr->blessed_power == 0) {
 				        p_ptr->blessed_power = 8;
 					if (set_blessed(Ind, randint(12) + 6)) ident = TRUE; /* removed stacking */
 				}
@@ -2763,9 +2663,7 @@ s_printf("PLAYER_STORE_CASH: Player %s redeems cheque of value %d (%s).\n", p_pt
 				if (p_ptr->suscep_good || p_ptr->suscep_life) {
 				//if (p_ptr->prace == RACE_VAMPIRE) {
 					take_hit(Ind, damroll(10, 3), "a Scroll of Holy Chant", 0);
-				}
-				else if (p_ptr->blessed_power == 0)
-				{
+				} else if (p_ptr->blessed_power == 0) {
 					p_ptr->blessed_power = 14;
 					if (set_blessed(Ind, randint(24) + 12)) ident = TRUE; /* removed stacking */
 				}
@@ -2777,9 +2675,7 @@ s_printf("PLAYER_STORE_CASH: Player %s redeems cheque of value %d (%s).\n", p_pt
 				if (p_ptr->suscep_good || p_ptr->suscep_life) {
 				//if (p_ptr->prace == RACE_VAMPIRE) {
 					take_hit(Ind, damroll(30, 3), "a Scroll of Holy Prayer", 0);
-				}
-				else if (p_ptr->blessed_power == 0)
-				{
+				} else if (p_ptr->blessed_power == 0) {
 					p_ptr->blessed_power = 20;
 					if (set_blessed(Ind, randint(48) + 24)) ident = TRUE; /* removed stacking */
 				}
@@ -2788,8 +2684,7 @@ s_printf("PLAYER_STORE_CASH: Player %s redeems cheque of value %d (%s).\n", p_pt
 
 			case SV_SCROLL_MONSTER_CONFUSION:
 			{
-				if (p_ptr->confusing == 0)
-				{
+				if (p_ptr->confusing == 0) {
 					msg_print(Ind, "Your hands begin to glow.");
 					p_ptr->confusing = TRUE;
 					ident = TRUE;
@@ -2803,12 +2698,7 @@ s_printf("PLAYER_STORE_CASH: Player %s redeems cheque of value %d (%s).\n", p_pt
 				//if (p_ptr->prace == RACE_VAMPIRE) {
 					take_hit(Ind, damroll(10, 3), "a Scroll of Protection from Evil", 0);
 				} else {
-#if 0 /* o_O */
-					k = 3 * p_ptr->lev;
-					if (set_protevil(Ind, randint(25) + k)) ident = TRUE; /* removed stacking */
-#else
 					if (set_protevil(Ind, randint(15) + 30)) ident = TRUE; /* removed stacking */
-#endif
 				}
 				break;
 			}
@@ -3156,17 +3046,11 @@ void do_cmd_use_staff(int Ind, int item)
 	/* Break goi/manashield */
 #if 0
 	if (p_ptr->invuln)
-	{
 		set_invuln(Ind, 0);
-	}
 	if (p_ptr->tim_manashield)
-	{
 		set_tim_manashield(Ind, 0);
-	}
 	if (p_ptr->tim_wraith)
-	{
 		set_tim_wraith(Ind, 0);
-	}
 #endif	// 0
 
 
@@ -4121,28 +4005,6 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 
 	/* Use a single charge */
 	o_ptr->pval--;
-
-#if 0
-	/* Hack -- unstack if necessary */
-	if ((item >= 0) && (o_ptr->number > 1))
-	{
-		/* Make a fake item */
-		object_type tmp_obj;
-		tmp_obj = *o_ptr;
-		tmp_obj.number = 1;
-
-		/* Restore the charges */
-		o_ptr->pval++;
-
-		/* Unstack the used item */
-		o_ptr->number--;
-		p_ptr->total_weight -= tmp_obj.weight;
-		item = inven_carry(Ind, &tmp_obj);
-
-		/* Message */
-		msg_print(Ind, "You unstack your wand.");
-	}
-#endif	// 0
 
 	/* Describe the charges in the pack */
 	if (item >= 0)
@@ -5233,40 +5095,29 @@ bool activation_requires_direction(object_type *o_ptr) {
  */
 void do_cmd_activate(int Ind, int item, int dir)
 {
-        u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, esp;
 	player_type *p_ptr = Players[Ind];
-
 	int         i, k, lev, chance;
 //	int md = get_skill_scale(p_ptr, SKILL_DEVICE, 100);
-
 	object_type *o_ptr;
 
 	/* Break goi/manashield */
 #if 0
 	if (p_ptr->invuln)
-	{
 		set_invuln(Ind, 0);
-	}
 	if (p_ptr->tim_manashield)
-	{
 		set_tim_manashield(Ind, 0);
-	}
 	if (p_ptr->tim_wraith)
-	{
 		set_tim_wraith(Ind, 0);
-	}
 #endif	// 0
 
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
+	if (item >= 0) {
 		o_ptr = &p_ptr->inventory[item];
 	}
-
 	/* Get the item (on the floor) */
-	else
-	{
+	else {
 		if (-item >= o_max)
 			return; /* item doesn't exist */
 
@@ -5274,44 +5125,37 @@ void do_cmd_activate(int Ind, int item, int dir)
 	}
 
 if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
-	if (p_ptr->anti_magic)
-	{
+	if (p_ptr->anti_magic) {
 		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);	
 		return;
 	}
-	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
-	{
+	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
 		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);	
 		return;
 	}
-        if (magik((p_ptr->antimagic * 8) / 5))
-        {
-                msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
-                return;
-        }
+	if (magik((p_ptr->antimagic * 8) / 5)) {
+		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
+		return;
+	}
 }
 
 	/* If the item can be equipped, it MUST be equipped to be activated */
-	if ((item < INVEN_WIELD) && wearable_p(o_ptr))
-	{
+	if ((item < INVEN_WIELD) && wearable_p(o_ptr)) {
 		msg_print(Ind, "You must be using this item to activate it.");
 		return;
 	}
 
-	if( check_guard_inscription( o_ptr->note, 'A' ))
-	{
+	if( check_guard_inscription( o_ptr->note, 'A' )) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
-	} 
+	}
 
 	if (!can_use_verbose(Ind, o_ptr)) return;
 
 	/* Test the item */
-	if (!item_tester_hook_activate(Ind, o_ptr))
-	{
+	if (!item_tester_hook_activate(Ind, o_ptr)) {
 		/* Hack -- activating bottles */
-		if (o_ptr->tval == TV_BOTTLE)
-		{
+		if (o_ptr->tval == TV_BOTTLE) {
 			do_cmd_fill_bottle(Ind);
 			return;
 		}
@@ -5319,15 +5163,6 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 		msg_print(Ind, "You cannot activate that item.");
 		return;
 	}
-
-#if 0
-	/* Test the item */
-	if (item < INVEN_WIELD)
-	{
-		msg_print(Ind, "You should equip it to activate.");
-		return;
-	}
-#endif	// 0
 
 	/* S(he) is no longer afk */
 	un_afk_idle(Ind);
@@ -5347,24 +5182,22 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 	/* Confusion hurts skill */
 	if (p_ptr->confused) chance = chance / 2;
 
-        /* Is it simple to use ? */
-        if (f4 & TR4_EASY_USE)
-        {
-                chance *= 2;
-        }
+	/* Is it simple to use ? */
+	if (f4 & TR4_EASY_USE)
+		chance *= 2;
 
 	/* Hight level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev);
 
-        /* Extract object flags */
-        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	/* Extract object flags */
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
-        /* Certain items are easy to use too */
-        if ((o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) ||
+	/* Certain items are easy to use too */
+	if ((o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) ||
 	    (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH))
-        {
+	{
 		if (chance < USE_DEVICE * 2) chance = USE_DEVICE * 2;
-        }
+	}
 	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH && !p_ptr->total_winner) {
 		msg_print(Ind, "Only royalties may activate this Ring!");
 		if (!is_admin(p_ptr)) return;
@@ -5372,9 +5205,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 
 	/* Give everyone a (slight) chance */
 	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
-	{
 		chance = USE_DEVICE;
-	}
 
 	/* Roll for usage */
 	if (((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) &&
@@ -5385,8 +5216,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 	}
 
 	/* Check the recharge */
-	if ((o_ptr->timeout) && !((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)))
-	{
+	if ((o_ptr->timeout) && !((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH))) {
 		msg_print(Ind, "It whines, glows and fades...");
 		return;
 	}
@@ -5403,23 +5233,6 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 	break_cloaking(Ind, 0);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
-
-#if 0
-	/* Hack -- Book of the Dead is activatable for Ghosts */
-	if (p_ptr->ghost &&
-			o_ptr->tval == TV_PARCHMENT && o_ptr->sval == SV_PARCHMENT_DEATH)
-	{
-//		msg_print(Ind, "The parchment explodes into a space distorsion.");
-		p_ptr->recall_pos.wx = p_ptr->town_x;
-		p_ptr->recall_pos.wy = p_ptr->town_y;
-		p_ptr->recall_pos.wz = 0;
-		(void)set_recall_timer(Ind, 5 + randint(3));
-
-		inven_item_increase(Ind, item, -255);
-		inven_item_optimize(Ind, item);
-		return;
-	}
-#endif
 
 
         if (activation_requires_direction(o_ptr)
@@ -5439,110 +5252,17 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 	/* Yikes, hard-coded r_idx.. */
 	if (o_ptr->tval == TV_DRAG_ARMOR && item == INVEN_BODY) {
 		/* Breath activation */
-                p_ptr->current_activation = item;
-                get_aim_dir(Ind);
-#if 0
-		switch (o_ptr->sval)
-		{
-			case SV_DRAGON_BLACK:
-			{
-				//			do_mimic_change(Ind, 429);
-				do_mimic_change(Ind, race_index("Ancient black dragon"), TRUE);
-				break;
-			}
-			case SV_DRAGON_BLUE:
-			{
-				//		      do_mimic_change(Ind, 411);
-				do_mimic_change(Ind, race_index("Ancient blue dragon"), TRUE);
-				break;
-			}
-			case SV_DRAGON_WHITE:
-			{
-				//			do_mimic_change(Ind, 424);
-				do_mimic_change(Ind, race_index("Ancient white dragon"), TRUE);
-				break;
-			}
-			case SV_DRAGON_RED:
-			{
-				//			do_mimic_change(Ind, 444);
-				do_mimic_change(Ind, race_index("Ancient red dragon"), TRUE);
-				break;
-			}
-			case SV_DRAGON_GREEN:
-			{
-				//			do_mimic_change(Ind, 425);
-				do_mimic_change(Ind, race_index("Ancient green dragon"), TRUE);
-				break;
-			}
-			case SV_DRAGON_MULTIHUED:
-			{
-				//			do_mimic_change(Ind, 462);
-				do_mimic_change(Ind, race_index("Ancient multi-hued dragon"), TRUE);
-				break;
-			}
-			case SV_DRAGON_PSEUDO:
-			{
-				//			do_mimic_change(Ind, 462);
-				//do_mimic_change(Ind, race_index("Pseudo dragon"), TRUE);
-				do_mimic_change(Ind, race_index("Ethereal drake"), TRUE);
-				break;
-			}
-			case SV_DRAGON_SHINING:
-			{
-				//			do_mimic_change(Ind, 463);
-				do_mimic_change(Ind, race_index("Ethereal dragon"), TRUE);
-				break;
-			}
-			case SV_DRAGON_LAW:
-			{
-				//			do_mimic_change(Ind, 520);
-				do_mimic_change(Ind, race_index("Great Wyrm of Law"), TRUE);
-				break;
-			}
-			case SV_DRAGON_BRONZE:
-			{
-				//			do_mimic_change(Ind, 412);
-				do_mimic_change(Ind, race_index("Ancient bronze dragon"), TRUE);
-				break;
-			}
-			case SV_DRAGON_GOLD:
-			{
-				//			do_mimic_change(Ind, 445);
-				do_mimic_change(Ind, race_index("Ancient gold dragon"), TRUE);
-				break;
-			}
-			case SV_DRAGON_CHAOS:
-			{
-				//			do_mimic_change(Ind, 519);
-				do_mimic_change(Ind, race_index("Great Wyrm of Chaos"), TRUE);
-				break;
-			}
-			case SV_DRAGON_BALANCE:
-			{
-				//			do_mimic_change(Ind, 521);
-				do_mimic_change(Ind, race_index("Great Wyrm of Balance"), TRUE);
-				break;
-			}
-			case SV_DRAGON_POWER:
-			{
-				//			do_mimic_change(Ind, 549);
-				do_mimic_change(Ind, race_index("Great Wyrm of Power"), TRUE);
-				break;
-			}
-		}
-		o_ptr->timeout = 200 + rand_int(100);
-#endif
+		p_ptr->current_activation = item;
+		get_aim_dir(Ind);
 		return;
 	}
 
-	if (o_ptr->tval == TV_GOLEM)
-	{
+	if (o_ptr->tval == TV_GOLEM) {
 		int m_idx = 0, k;
 		monster_type *m_ptr;
 
 		/* Process the monsters */
-		for (k = m_top - 1; k >= 0; k--)
-		{
+		for (k = m_top - 1; k >= 0; k--) {
 			/* Access the index */
 			i = m_fast[k];
 
@@ -5564,16 +5284,13 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 				continue;
 			}
 
-			switch (o_ptr->sval)
-			{
+			switch (o_ptr->sval) {
 				case SV_GOLEM_ATTACK:
 					if (m_ptr->mind & (1 << (o_ptr->sval - 200)))
 					{
 						msg_print(Ind, "I wont attack your target anymore, master.");
 						m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
-					}
-					else
-					{
+					} else {
 						msg_print(Ind, "I will attack your target, master.");
 						m_ptr->mind |= (1 << (o_ptr->sval - 200));
 					}
@@ -5583,9 +5300,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 					{
 						msg_print(Ind, "I wont follow you, master.");
 						m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
-					}
-					else
-					{
+					} else {
 						msg_print(Ind, "I will follow you, master.");
 						m_ptr->mind |= (1 << (o_ptr->sval - 200));
 					}
@@ -5595,9 +5310,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 					{
 						msg_print(Ind, "I wont guard my position anymore, master.");
 						m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
-					}
-					else
-					{
+					} else {
 						msg_print(Ind, "I will guard my position, master.");
 						m_ptr->mind |= (1 << (o_ptr->sval - 200));
 					}
@@ -5606,495 +5319,6 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 		}
 		return;
 	}
-
-#if 0
-	/* Artifacts activate by name */
-	if (o_ptr->name1)
-	{
-		/* This needs to be changed */
-		switch (o_ptr->name1)
-		{
-			case ART_NARTHANC:
-			{
-				msg_print(Ind, "Your dagger is covered in fire...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_NIMTHANC:
-			{
-				msg_print(Ind, "Your dagger is covered in frost...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_DETHANC:
-			{
-				msg_print(Ind, "Your dagger is covered in sparks...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_RILIA:
-			{
-				msg_print(Ind, "Your dagger throbs deep green...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_BELANGIL:
-			{
-				msg_print(Ind, "Your dagger is covered in frost...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_DAL:
-			{
-				msg_print(Ind, "\377GYou feel energy flow through your feet...");
-				/* Stay bold for some turns */
-				(void)set_afraid(Ind, 0);
-				(void)set_res_fear(Ind, 5);
-				(void)set_poisoned(Ind, 0, 0);
-				o_ptr->timeout = 20;
-				break;
-			}
-
-			case ART_RINGIL:
-			{
-				msg_print(Ind, "Your sword glows an intense blue...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_ANDURIL:
-			{
-				msg_print(Ind, "Your sword glows an intense red...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_FIRESTAR:
-			{
-				msg_print(Ind, "Your morningstar rages in fire...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_FEANOR:
-			{
-				if (!p_ptr->fast)
-				{
-					(void)set_fast(Ind, randint(20) + 20, 20);
-				}
-				else
-				{
-					(void)set_fast(Ind, p_ptr->fast + 5, 20);
-					 /* not removed stacking due to interesting effect */
-				}
-				o_ptr->timeout = 200;
-				break;
-			}
-
-			case ART_THEODEN:
-			{
-				msg_print(Ind, "The blade of your axe glows black...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_TURMIL:
-			{
-				msg_print(Ind, "The head of your hammer glows white...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_CASPANION:
-			{
-				msg_print(Ind, "Your armour glows bright red...");
-				destroy_doors_touch(Ind, 1);
-				o_ptr->timeout = 10;
-				break;
-			}
-
-			case ART_AVAVIR:
-			{
-				set_recall(Ind, rand_int(20) + 15, o_ptr);
-				o_ptr->timeout = 200;
-				break;
-			}
-
-			case ART_TARATOL:
-			{
-				if (!p_ptr->fast)
-				{
-					(void)set_fast(Ind, randint(20) + 20, 10);
-				}
-				else
-				{
-					(void)set_fast(Ind, p_ptr->fast + 5, 10);
-					 /* not removed stacking due to interesting effect */
-				}
-				o_ptr->timeout = rand_int(100) + 100;
-				break;
-			}
-
-			case ART_ERIRIL:
-			{
-				/* Identify and combine pack */
-				(void)ident_spell(Ind);
-				/* XXX Note that the artifact is always de-charged */
-				o_ptr->timeout = 10;
-				break;
-			}
-
-			case ART_OLORIN:
-			{
-				probing(Ind);
-				o_ptr->timeout = 20;
-				break;
-			}
-
-			case ART_EONWE:
-			{
-				msg_print(Ind, "Your axe lets out a long, shrill note...");
-				(void)mass_genocide(Ind);
-				o_ptr->timeout = 1000;
-				break;
-			}
-
-			case ART_LOTHARANG:
-			{
-				msg_print(Ind, "Your battle axe radiates deep purple...");
-				hp_player(Ind, damroll(4, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)));
-				(void)set_cut(Ind, (p_ptr->cut / 2) - 50, p_ptr->cut_attacker);
-				o_ptr->timeout = rand_int(3) + 3;
-				break;
-			}
-
-			case ART_CUBRAGOL:
-			{
-				(void)brand_bolts(Ind);
-				o_ptr->timeout = 999;
-				break;
-			}
-
-			case ART_ARUNRUTH:
-			{
-				msg_print(Ind, "Your sword glows a pale blue...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_AEGLOS:
-			{
-				msg_print(Ind, "Your spear glows a bright white...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_OROME:
-			{
-				msg_print(Ind, "Your spear pulsates...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_SOULKEEPER:
-			{
-				msg_print(Ind, "Your armour glows a bright white...");
-				msg_print(Ind, "\377GYou feel much better...");
-				(void)hp_player(Ind, 1000);
-				(void)set_cut(Ind, 0, 0);
-				o_ptr->timeout = 888;
-				break;
-			}
-
-			case ART_BELEGENNON:
-			{
-				teleport_player(Ind, 10, TRUE);
-				o_ptr->timeout = 2;
-				break;
-			}
-
-			case ART_CELEBORN:
-			{
-				(void)genocide(Ind);
-				o_ptr->timeout = 500;
-				break;
-			}
-
-			case ART_LUTHIEN:
-			{
-				restore_level(Ind);
-				o_ptr->timeout = 450;
-				break;
-			}
-
-			case ART_ULMO:
-			{
-				msg_print(Ind, "Your trident glows deep red...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_COLLUIN:
-			{
-				msg_print(Ind, "Your cloak glows many colours...");
-				(void)set_oppose_acid(Ind, randint(20) + 20); /* removed stacking */
-				(void)set_oppose_elec(Ind, randint(20) + 20);
-				(void)set_oppose_fire(Ind, randint(20) + 20);
-				(void)set_oppose_cold(Ind, randint(20) + 20);
-				(void)set_oppose_pois(Ind, randint(20) + 20);
-				o_ptr->timeout = 111;
-				break;
-			}
-
-			case ART_HOLCOLLETH:
-			{
-				msg_print(Ind, "Your cloak glows deep blue...");
-				sleep_monsters_touch(Ind);
-				o_ptr->timeout = 55;
-				break;
-			}
-
-			case ART_THINGOL:
-			{
-				msg_print(Ind, "You hear a low humming noise...");
-				recharge(Ind, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 40));
-				o_ptr->timeout = 70;
-				break;
-			}
-
-			case ART_COLANNON:
-			{
-				teleport_player(Ind, 100, FALSE);
-				o_ptr->timeout = 45;
-				break;
-			}
-
-			case ART_TOTILA:
-			{
-				msg_print(Ind, "Your flail glows in scintillating colours...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_CAMMITHRIM:
-			{
-				msg_print(Ind, "Your gloves glow extremely brightly...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_PAURHACH:
-			{
-				msg_print(Ind, "Your gauntlets are covered in fire...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_PAURNIMMEN:
-			{
-				msg_print(Ind, "Your gauntlets are covered in frost...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_PAURAEGEN:
-			{
-				msg_print(Ind, "Your gauntlets are covered in sparks...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_PAURNEN:
-			{
-				msg_print(Ind, "Your gauntlets look very acidic...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_FINGOLFIN:
-			{
-				msg_print(Ind, "Magical spikes appear on your cesti...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_HOLHENNETH:
-			{
-				msg_print(Ind, "An image forms in your mind...");
-				detection(Ind, DEFAULT_RADIUS * 2);
-				o_ptr->timeout = rand_int(55) + 55;
-				break;
-			}
-
-			case ART_GONDOR:
-			{
-				msg_print(Ind, "\377GYou feel a warm tingling inside...");
-				(void)hp_player(Ind, 500);
-				(void)set_cut(Ind, 0, 0);
-				o_ptr->timeout = 500;
-				break;
-			}
-
-			case ART_RAZORBACK:
-			{
-				msg_print(Ind, "You are surrounded by lightning!");
-				sprintf(p_ptr->attacker, " casts a lightning ball for");
-				for (i = 0; i < 8; i++) fire_ball(Ind, GF_ELEC, ddd[i], 150 + get_skill_scale(p_ptr, SKILL_DEVICE, 450), 3, p_ptr->attacker);
-				o_ptr->timeout = 1000;
-				break;
-			}
-
-			case ART_BLADETURNER:
-			{
-				msg_print(Ind, "Your armour glows in many colours...");
-				(void)hp_player(Ind, 30);
-				(void)set_afraid(Ind, 0);
-				(void)set_res_fear(Ind, 20);
-				(void)set_shero(Ind, randint(50) + 50); /* removed stacking */
-				(void)set_blessed(Ind, randint(50) + 50); /* removed stacking */
-				(void)set_oppose_acid(Ind, randint(50) + 50); /* removed stacking */
-				(void)set_oppose_elec(Ind, randint(50) + 50);
-				(void)set_oppose_fire(Ind, randint(50) + 50);
-				(void)set_oppose_cold(Ind, randint(50) + 50);
-				(void)set_oppose_pois(Ind, randint(50) + 50);
-				o_ptr->timeout = 400;
-				break;
-			}
-
-
-			case ART_GALADRIEL:
-			{
-				msg_print(Ind, "The phial wells with clear light...");
-				lite_area(Ind, damroll(2, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 3);
-				if (p_ptr->suscep_lite) take_hit(Ind, damroll(50, 5), "the phial of galadriel", 0);
-                        	if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
-				o_ptr->timeout = rand_int(10) + 10;
-				break;
-			}
-
-			case ART_ELENDIL:
-			{
-				msg_print(Ind, "The star shines brightly...");
-				map_area(Ind);
-				o_ptr->timeout = rand_int(50) + 50;
-				break;
-			}
-
-			case ART_THRAIN:
-			{
-				msg_print(Ind, "The stone glows a deep green...");
-				wiz_lite(Ind);
-				(void)detect_sdoor(Ind, DEFAULT_RADIUS * 2);
-				(void)detect_trap(Ind, DEFAULT_RADIUS * 2);
-				o_ptr->timeout = rand_int(100) + 100;
-				break;
-			}
-
-
-			case ART_INGWE:
-			{
-				msg_print(Ind, "An aura of good floods the area...");
-				dispel_evil(Ind, p_ptr->lev * 10 + get_skill_scale(p_ptr, SKILL_DEVICE, 500));
-				o_ptr->timeout = rand_int(300) + 300;
-				break;
-			}
-
-			case ART_CARLAMMAS:
-			{
-				msg_print(Ind, "The amulet lets out a shrill wail...");
- #if 0 /* o_O */
-				k = 3 * p_ptr->lev;
-				(void)set_protevil(Ind, randint(25) + k); /* removed stacking */
- #else
-				(void)set_protevil(Ind, randint(15) + 35); /* removed stacking */
- #endif
-				o_ptr->timeout = rand_int(225) + 225;
-				break;
-			}
-
-
-			case ART_TULKAS:
-			{
-				msg_print(Ind, "The ring glows brightly...");
-				if (!p_ptr->fast)
-				{
-					(void)set_fast(Ind, randint(75) + 75, 15);
-				}
-				else
-				{
-					(void)set_fast(Ind, p_ptr->fast + 5, 15);
-					 /* not removed stacking due to interesting effect */
-				}
-				o_ptr->timeout = rand_int(150) + 150;
-				break;
-			}
-
-			case ART_NARYA:
-			{
-				msg_print(Ind, "The ring glows deep red...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_NENYA:
-			{
-				msg_print(Ind, "The ring glows bright white...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_VILYA:
-			{
-				msg_print(Ind, "The ring glows deep blue...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-
-			case ART_POWER:
-			{
-				msg_print(Ind, "The ring glows intensely black...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			}
-		}
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
-		/* Done */
-		return;
-	}
-#endif	// 0
 
 	/* Artifacts */
 	if (o_ptr->name1 && (o_ptr->name1 != ART_RANDART)) {
@@ -6179,9 +5403,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 				if (!p_ptr->fast)
 				{
 					(void)set_fast(Ind, randint(20) + 20, 15); /* was +20! */
-				}
-				else
-				{
+				} else {
 					(void)set_fast(Ind, p_ptr->fast + 5, 15);
 					 /* not removed stacking due to interesting effect */
 				}
@@ -6222,12 +5444,9 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 
 			case ART_TARATOL:
 			{
-				if (!p_ptr->fast)
-				{
+				if (!p_ptr->fast) {
 					(void)set_fast(Ind, randint(20) + 20, 15);
-				}
-				else
-				{
+				} else {
 					(void)set_fast(Ind, p_ptr->fast + 5, 15);
 					 /* not removed stacking due to interesting effect */
 				}
@@ -6527,12 +5746,10 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			case ART_TULKAS:
 			{
 				msg_print(Ind, "The ring glows brightly...");
-				if (!p_ptr->fast)
-				{
+				if (!p_ptr->fast) {
 					(void)set_fast(Ind, randint(75) + 75, 15);
 				}
-				else
-				{
+				else {
 					(void)set_fast(Ind, p_ptr->fast + 5, 15);
 					 /* not removed stacking due to interesting effect */
 				}
@@ -6573,8 +5790,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			}
 			case ART_GILGALAD:
 			{
-				for (k = 1; k < 10; k++)
-				{
+				for (k = 1; k < 10; k++) {
 					if (k - 5) fire_beam(Ind, GF_LITE, k, 75 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), " emits a beam of light for");
 				}
 
@@ -6641,11 +5857,9 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 
 #ifdef OLD_MONSTER_LORE
 				/* Observe "maximal" attacks */
-				for (m = 0; m < 4; m++)
-				{
+				for (m = 0; m < 4; m++) {
 					/* Examine "actual" blows */
-					if (r_ptr->blow[m].effect || r_ptr->blow[m].method)
-					{
+					if (r_ptr->blow[m].effect || r_ptr->blow[m].method) {
 						/* Hack -- maximal observations */
 						r_ptr->r_blows[m] = MAX_UCHAR;
 					}
@@ -6762,18 +5976,15 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 				if (!ident_spell(Ind)) return;
 
 				//                                if (!p_ptr->realm1)
-				if (1)
-				{
+				if (1) {
 					/* Sufficient mana */
-					if (20 <= p_ptr->csp)
-					{
+					if (20 <= p_ptr->csp) {
 						/* Use some mana */
 						p_ptr->csp -= 20;
 					}
 
 					/* Over-exert the player */
-					else
-					{
+					else {
 						int oops = 20 - p_ptr->csp;
 
 						/* No mana left */
@@ -6808,15 +6019,12 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 				break;
 			}
 
-
-
 			case ART_MEDIATOR:
 			{
 				p_ptr->current_activation = item;
 				get_aim_dir(Ind);
 				return;
 			}
-
 
 			case ART_DOR:
 			case ART_GORLIM:
@@ -6826,11 +6034,9 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 				break;
 			}
 
-
 			case ART_ANGUIREL:
 			{
-				switch(randint(13))
-				{
+				switch(randint(13)) {
 					case 1: case 2: case 3: case 4: case 5:
 						teleport_player(Ind, 10, TRUE);
 						break;
@@ -6841,22 +6047,6 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 					default:
 						(void)stair_creation(Ind);
 						break;
-#if 0
-					default:
-						if(get_check("Leave this level? "))
-						{
-							if (autosave_l)
-							{
-								is_autosave = TRUE;
-								msg_print(Ind, "Autosaving the game...");
-								do_cmd_save_game();
-								is_autosave = FALSE;
-							}
-
-							/* Leaving */
-							p_ptr->leaving = TRUE;
-						}
-#endif	// 0
 				}
 				o_ptr->timeout = 35;
 				break;
@@ -6891,15 +6081,13 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 #if 0
 			case ART_AVAVIR:
 			{
-				if (dlev && (max_dlv[dungeon_type] > dlev))
-				{
+				if (dlev && (max_dlv[dungeon_type] > dlev)) {
 					if (get_check("Reset recall depth? "))
 						max_dlv[dungeon_type] = dlev;
 				}
 
 				msg_print(Ind, "Your scythe glows soft white...");
-				if (!p_ptr->word_recall)
-				{
+				if (!p_ptr->word_recall) {
 					p_ptr->word_recall = randint(20) + 15;
 					msg_print(Ind, "The air about you becomes charged...");
 				}
@@ -6932,9 +6120,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			case ART_ELESSAR:
 			{
 				if (p_ptr->black_breath)
-				{
 					msg_print(Ind, "The hold of the Black Breath on you is broken!");
-				}
 				p_ptr->black_breath = FALSE;
 				hp_player(Ind, 100);
 				o_ptr->timeout = 200;
@@ -6945,8 +6131,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			case ART_GANDALF:
 			{
 				msg_print(Ind, "Your mage staff glows deep blue...");
-				if (p_ptr->csp < p_ptr->msp)
-				{
+				if (p_ptr->csp < p_ptr->msp) {
 					p_ptr->csp = p_ptr->msp;
 					p_ptr->csp_frac = 0;
 					msg_print(Ind, "You feel your head clearing.");
@@ -7136,18 +6321,18 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 				break;
 			}
 			case ART_SOULCURE:
-	                {
+			{
 				if (p_ptr->blessed_power == 0)
 				{
 					msg_print(Ind, "Your gloves glow golden...");
 					p_ptr->blessed_power = 20;
-	        			set_blessed(Ind, randint(48) + 24); /* removed stacking */
+					set_blessed(Ind, randint(48) + 24); /* removed stacking */
 					o_ptr->timeout = 150 + randint(200);
 				} else {
 					msg_print(Ind, "Your gloves shimmer..");
-		    		}
+				}
 				break;
-	                }
+			}
 			case ART_AMUGROM:
 			{
 				msg_print(Ind, "The amulet sparkles in scintillating colours...");
@@ -7176,12 +6361,11 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
-                if (o_ptr->timeout) return;
+		if (o_ptr->timeout) return;
 	}
 
 	/* ego activation etc */
-	else if (is_ego_p(o_ptr, EGO_DRAGON))
-	{
+	else if (is_ego_p(o_ptr, EGO_DRAGON)) {
 		teleport_player(Ind, 100, FALSE);
 		o_ptr->timeout = 50 + randint(50);
 
@@ -7191,8 +6375,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 		/* Done */
 		return;
 	}
-	else if (is_ego_p(o_ptr, EGO_JUMP))
-	{
+	else if (is_ego_p(o_ptr, EGO_JUMP)) {
 		teleport_player(Ind, 10, TRUE);
 		o_ptr->timeout = 10 + randint(10);
 
@@ -7202,8 +6385,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 		/* Done */
 		return;
 	}
-	else if (is_ego_p(o_ptr, EGO_SPINNING))
-	{
+	else if (is_ego_p(o_ptr, EGO_SPINNING)) {
 //		do_spin(Ind);
 		spin_attack(Ind); /* this one is nicer than do_spin */
 		o_ptr->timeout = 50 + randint(25);
@@ -7214,8 +6396,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 		/* Done */
 		return;
 	}
-	else if (is_ego_p(o_ptr, EGO_FURY))
-	{
+	else if (is_ego_p(o_ptr, EGO_FURY)) {
 		set_afraid(Ind, 0);
 		set_fury(Ind, rand_int(5) + 15); /* removed stacking */
 		hp_player(Ind, 40);
@@ -7227,8 +6408,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 		/* Done */
 		return;
 	}
-	else if (is_ego_p(o_ptr, EGO_NOLDOR))
-	{
+	else if (is_ego_p(o_ptr, EGO_NOLDOR)) {
 		detect_treasure(Ind, DEFAULT_RADIUS * 2);
 		o_ptr->timeout = 10 + randint(20);
 
@@ -7238,8 +6418,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 		/* Done */
 		return;
 	}
-	else if (is_ego_p(o_ptr, EGO_SPECTRAL))
-	{
+	else if (is_ego_p(o_ptr, EGO_SPECTRAL)) {
 		//                if (!p_ptr->wraith_form)
 		if (!p_ptr->tim_wraith)
 			//                        set_shadow(Ind, 20 + randint(20));
@@ -7256,8 +6435,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 		/* Done */
 		return;
 	}
-	else if (is_ego_p(o_ptr, EGO_CLOAK_LORDLY_RES))
-	{
+	else if (is_ego_p(o_ptr, EGO_CLOAK_LORDLY_RES)) {
 		msg_print(Ind, "Your cloak flashes many colors...");
 		(void)set_oppose_acid(Ind, randint(20) + 50); /* removed stacking */
 		(void)set_oppose_elec(Ind, randint(20) + 50);
@@ -7267,22 +6445,19 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 		o_ptr->timeout = rand_int(40) + 170 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 		return;
 	}
-	else if (is_ego_p(o_ptr, EGO_AURA_FIRE))
-	{
+	else if (is_ego_p(o_ptr, EGO_AURA_FIRE) || is_ego_p(o_ptr, EGO_AURA_FIRE2)) {
 		msg_print(Ind, "Your cloak flashes in flames...");
 		(void)set_oppose_fire(Ind, randint(40) + 40);
 		o_ptr->timeout = rand_int(50) + 150;
 		return;
 	}
-	else if (is_ego_p(o_ptr, EGO_AURA_ELEC))
-	{
+	else if (is_ego_p(o_ptr, EGO_AURA_ELEC) || is_ego_p(o_ptr, EGO_AURA_ELEC2)) {
 		msg_print(Ind, "Your cloak sparkles with lightning...");
 		(void)set_oppose_elec(Ind, randint(40) + 40);
 		o_ptr->timeout = rand_int(50) + 150;
 		return;
 	}
-	else if (is_ego_p(o_ptr, EGO_AURA_COLD))
-	{
+	else if (is_ego_p(o_ptr, EGO_AURA_COLD) || is_ego_p(o_ptr, EGO_AURA_COLD2)) {
 		msg_print(Ind, "Your cloak shines with frost...");
 		(void)set_oppose_cold(Ind, randint(40) + 40);
 		o_ptr->timeout = rand_int(50) + 150;
@@ -7314,10 +6489,8 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 		}
 	}
 
-	if (o_ptr->tval == TV_RING)
-	{
-		switch (o_ptr->sval)
-		{
+	if (o_ptr->tval == TV_RING) {
+		switch (o_ptr->sval) {
 			case SV_RING_ELEC:
 			case SV_RING_ACID:
 			case SV_RING_ICE:
@@ -7346,21 +6519,13 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			}
 			case SV_RING_POLYMORPH:
 			{
-#if 0				/* Mimics only */
-//				if (!get_skill(p_ptr, SKILL_MIMIC)) return;
-				if (p_ptr->pclass != CLASS_MIMIC) {
-					msg_print(Ind, "The ring starts to glow brightly, then fades again");
-					return;
-				}
-#else
 				if (!get_skill(p_ptr, SKILL_MIMIC) ||
-                		    (p_ptr->pclass == CLASS_DRUID) ||
-		                    (p_ptr->prace == RACE_VAMPIRE) ||
-		                    (p_ptr->pclass == CLASS_SHAMAN && !mimic_shaman(o_ptr->pval))) {
+				    (p_ptr->pclass == CLASS_DRUID) ||
+				    (p_ptr->prace == RACE_VAMPIRE) ||
+				    (p_ptr->pclass == CLASS_SHAMAN && !mimic_shaman(o_ptr->pval))) {
 					msg_print(Ind, "The ring starts to glow brightly, then fades again");
 					return;
 				}
-#endif
 
 				if(!(item == INVEN_LEFT || item == INVEN_RIGHT)){
 					msg_print(Ind, "You must be wearing the ring!");
@@ -7380,20 +6545,6 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 						o_ptr->pval = p_ptr->body_monster;
 
 						/* Set appropriate level requirements */
-#if 0 /* usual level req: 1->15..30->28..60->38..100->44 */
-						if (r_info[p_ptr->body_monster].level > 0) {
-							o_ptr->level = 15 + (1000 / ((2000 / (r_info[p_ptr->body_monster].level + 1)) + 10));
-						} else {
-							o_ptr->level = 15;
-						}
-#endif
-#if 0 /* 0->5..1->6..30->25..60->40..80->48..100->55 */
-						if (r_info[p_ptr->body_monster].level > 0) {
-							o_ptr->level = 5 + (1500 / ((2000 / (r_info[p_ptr->body_monster].level + 1)) + 10));
-						} else {
-							o_ptr->level = 5;
-						}
-#endif
 #if 1 /* 0->5..1->6..30->26..60->42..80->51..85->53..100->58 */
 						if (r_info[p_ptr->body_monster].level > 0) {
 							o_ptr->level = 5 + (1600 / ((2000 / (r_info[p_ptr->body_monster].level + 1)) + 10));
@@ -7406,22 +6557,9 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 						o_ptr->timeout = 3000 + get_skill_scale(p_ptr, SKILL_DEVICE, 2000) +
 								rand_int(3001 - get_skill_scale(p_ptr, SKILL_DEVICE, 2000));
 
-#if 0
-						/* Reduce player's kill count by the monster level */
-						if (p_ptr->r_killed[p_ptr->body_monster] < (r_info[p_ptr->body_monster].level * 4)) {
-							p_ptr->r_killed[p_ptr->body_monster] -= r_info[p_ptr->body_monster].level;
-							if (p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level)
-								msg_print(Ind, "Major parts of your knowledge are absorbed by the ring.");
-							else
-								msg_print(Ind, "Some of your knowledge is absorbed by the ring.");
-						} else {
-							msg_print(Ind, "A lot of your knowledge is absorbed by the ring.");
-							p_ptr->r_killed[p_ptr->body_monster] /= 2;
-						}
-#else
 						msg_print(Ind, "Your knowledge is absorbed by the ring!");
 						p_ptr->r_killed[p_ptr->body_monster] = 0;
-#endif
+
 						/* If player hasn't got high enough kill count anymore now, poly back to player form! */
 						if (p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level)
 							do_mimic_change(Ind, 0, TRUE);
@@ -7448,43 +6586,9 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 					/* Poly first, break then :) */
 					/* reversed again since you need need to keep wearing the ring
 					   or you will polymorph back */
- #if 0
-					/* If-clause for poly-first-break-then */
-//a)					if (rand_int(100) < (11 + (1000 / ((1010 / (r_info[p_ptr->body_monster].level + 1)) + 10 +
-//					    (get_skill(p_ptr, SKILL_MIMIC) * get_skill(p_ptr, SKILL_MIMIC) / 30)))))
-					
-					/* If-clause for non-timeouted ring & break-first-poly-then */
-//b)					if (rand_int(100) < 40 + (r_info[p_ptr->body_monster].level / 3) - get_skill_scale(p_ptr, SKILL_MIMIC, 10))
-
-					/* If-clause for timeouted ring & break-first-poly-then (low%, ~20..25 (15..20+ ..) */
-//c)					if (rand_int(100) < 20 + (r_info[p_ptr->body_monster].level / 4) - get_skill_scale(p_ptr, SKILL_MIMIC, 20))
- #else
 					/* Take toll ('overhead energy') for activating */
 					if (o_ptr->timeout >= 1000) o_ptr->timeout -= 500; /* 500 are approx. 5 minutes */
 					else if (o_ptr->timeout > 1) o_ptr->timeout /= 2;
-
-					if (FALSE)
- #endif
-					{
-						msg_print(Ind, "There is a bright flash of light.");
-
-						/* Dangerous Hack -- Destroy the item */
-						/* Reduce and describe inventory */
-						if (item >= 0)
-						{
-						        inven_item_increase(Ind, item, -999);
-						        inven_item_describe(Ind, item);
-				    		        inven_item_optimize(Ind, item);
-			    			}
-						/* Reduce and describe floor item */
-						else
-			    			{
-			    			        floor_item_increase(0 - item, -999);
-						        floor_item_describe(0 - item);
-						        floor_item_optimize(0 - item);
-						}
-						return;
-					}
 
 					do_mimic_change(Ind, o_ptr->pval, TRUE);
 
@@ -7511,24 +6615,6 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 		    		        inven_item_optimize(Ind, item);
 #endif
 
-#if 0 /* ancient method, long outdated */
-					monster_race *r_ptr = &r_info[o_ptr->pval];
-					if ((r_ptr->level > p_ptr->lev * 2) || (p_ptr->r_killed[o_ptr->pval] < r_ptr->level))
-					{
-						msg_print(Ind, "You dont match the ring yet.");
-						return;
-					}
-
-					msg_print(Ind, "You polymorph !");
-					p_ptr->body_monster = o_ptr->pval;
-					p_ptr->body_changed = TRUE;
-
-					p_ptr->update |= (PU_BONUS);
-					/* Recalculate mana */
-					p_ptr->update |= (PU_MANA | PU_HP);
-					/* Window stuff */
-					p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-#endif
 				}
 			}
 		}
@@ -7560,16 +6646,15 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			default: if (o_ptr->xtra9) i = 0; break;
 			}
 		}
-                if (!i) {
-                	msg_print(Ind, "That book has no blank pages left!");
-                        return;
-                }
+		if (!i) {
+			msg_print(Ind, "That book has no blank pages left!");
+			return;
+		}
 
 		tome_creation(Ind);
 		p_ptr->using_up_item = item; /* hack - gets swapped later */
 		return;
 	}
-
 
 	/* Mistake */
 	msg_print(Ind, "That object cannot be activated.");
@@ -8262,15 +7347,6 @@ char random_colour()
 /*
  * Hook to determine if an object is convertible in an arrow/bolt
  */
-#if 0
-static bool item_tester_hook_convertible(object_type *o_ptr)
-{
-	if ((o_ptr->tval == TV_JUNK) || (o_ptr->tval == TV_SKELETON)) return TRUE;
-
-	/* Assume not */
-	return (FALSE);
-}
-#endif	// 0
 
 static int fletchery_items(int Ind)
 {
@@ -8346,45 +7422,6 @@ void do_cmd_fletchery(int Ind)
 		msg_print(Ind, "You don't know how to create ammo well.");
 		return;
 	}
-
-#if 0
-	if (p_ptr->lev >= 20)
-	{
-		strnfmt(com, 80, "Create [S]hots, Create [A]rrow or Create [B]olt? ");
-	}
-	else if (p_ptr->lev >= 10)
-	{
-		strnfmt(com, 80, "Create [S]hots or Create [A]rrow? ");
-	}
-	else
-	{
-		strnfmt(com, 80, "Create [S]hots? ");
-	}
-
-	while (TRUE)
-	{
-		if (!get_com(com, &ch))
-		{
-			ext = 0;
-			break;
-		}
-		if ((ch == 'S') || (ch == 's'))
-		{
-			ext = 1;
-			break;
-		}
-		if (((ch == 'A') || (ch == 'a')) && (p_ptr->lev >= 10))
-		{
-			ext = 2;
-			break;
-		}
-		if (((ch == 'B') || (ch == 'b')) && (p_ptr->lev >= 20))
-		{
-			ext = 3;
-			break;
-		}
-	}
-#endif	// 0
 
 	ext = get_archery_skill(p_ptr);
 	if (ext < 1)
@@ -8685,6 +7722,11 @@ s_printf("SWITCH_STANCE: %s - balance\n", p_ptr->name);
 			msg_print(Ind, "\377yYou cannot enter defensive stance without wielding a shield.");
 			return;
 		}
+#else
+		if (!p_ptr->inventory[INVEN_WIELD].k_idx && !p_ptr->inventory[INVEN_ARM].k_idx) {
+			msg_print(Ind, "\377yYou cannot enter defensive stance without wielding either weapon or shield.");
+			return;
+		}
 #endif
 		
 		switch(p_ptr->pclass) {
@@ -8940,6 +7982,26 @@ s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
 s_printf("TECHNIQUE_MELEE: %s - spin\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
+#ifdef ENABLE_ASSASSINATE
+	case 10:if (!(p_ptr->melee_techniques & 0x0400)) return; /* Assassinate */
+		if (p_ptr->piercing_charged) {
+			msg_print(Ind, "You drop your preparations for assassination.");
+			p_ptr->piercing_charged = FALSE;
+			p_ptr->piercing = 0;
+			return;
+		}
+		if (p_ptr->cst < 9) { msg_print(Ind, "Not enough stamina!"); return; }
+		if (!p_ptr->dual_wield || !p_ptr->dual_mode) {
+			msg_print(Ind, "This attack requires two dual-wielded weapons!");
+			return;
+		}
+		msg_print(Ind, "You prepare an armour-piercing attack combination..");
+		p_ptr->piercing = 1000; /* [1000] : one round of piercing blows */
+		p_ptr->piercing_charged = TRUE; /* Prepared and ready - ST won't regenerate until we use it! */
+s_printf("TECHNIQUE_MELEE: %s - assassinate\n", p_ptr->name);
+		p_ptr->warning_technique_melee = 1;
+		break;
+#endif
 	case 11:if (!(p_ptr->melee_techniques & 0x0800)) return; /* Berserk */
 		if (p_ptr->cst < 10) { msg_print(Ind, "Not enough stamina!"); return; }
 		p_ptr->cst -= 10;
@@ -8955,6 +8017,10 @@ s_printf("TECHNIQUE_MELEE: %s - berserk\n", p_ptr->name);
 s_printf("TECHNIQUE_MELEE: %s - shadow run\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
+	default:
+		msg_print(Ind, "Invalid technique.");
+		s_printf("TECHNIQUE_MELEE: %s used invalid code %d.\n", p_ptr->name, technique);
+		return;
 	}
 
 	p_ptr->redraw |= (PR_STAMINA);

@@ -194,6 +194,8 @@ typedef unsigned int u32b;
 	extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
 	extern void cave_set_feat_live(worldpos *wpos, int y, int x, int feat);
    Instead, for Glyphs we use the following one cleanly: */
+// Argh, I need cave_set_feat for arcade stuff. -Moltor
+extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
 extern void warding_glyph(int Ind);
 extern int check_feat(worldpos *wpos, int y, int x);
 
@@ -501,6 +503,7 @@ extern void lua_fix_equip_slots(int Ind);
 extern void lua_fix_skill_chart(int Ind);
 extern void lua_takeoff_costumes(int Ind);
 extern bool lua_is_unique(int r_idx);
+extern bool lua_mimic_egligible(int Ind, int r_idx);
 
 /* wild.c */
 extern void wild_flags(int Ind, u32b flags);

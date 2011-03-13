@@ -1032,19 +1032,17 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 	(*f1) = k_ptr->flags1;
 	(*f2) = k_ptr->flags2;
 	(*f3) = k_ptr->flags3;
-        (*f4) = k_ptr->flags4;
-        (*f5) = k_ptr->flags5;
-        (*esp) = k_ptr->esp;
+	(*f4) = k_ptr->flags4;
+	(*f5) = k_ptr->flags5;
+	(*esp) = k_ptr->esp;
 
 
 	/* Artifact */
-	if (o_ptr->name1)
-	{
+	if (o_ptr->name1) {
 		artifact_type *a_ptr;
-	
+
 		/* Hack -- Randarts! */
-		if (o_ptr->name1 == ART_RANDART)
-		{
+		if (o_ptr->name1 == ART_RANDART) {
 			if (!(a_ptr = randart_make(o_ptr))) return;
 			(*f1) = a_ptr->flags1;
 			(*f2) = a_ptr->flags2;
@@ -1052,104 +1050,34 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			(*f4) = a_ptr->flags4;
 			(*f5) = a_ptr->flags5;
 			(*esp) = a_ptr->esp;
-		}
-		else
-		{
+		} else {
 			if (!(a_ptr = &a_info[o_ptr->name1])) return;
-				(*f1) |= a_ptr->flags1;
-				(*f2) |= a_ptr->flags2;
-				(*f3) |= a_ptr->flags3;
-				(*f4) |= a_ptr->flags4;
-				(*f5) |= a_ptr->flags5;
-				(*esp) |= a_ptr->esp;
+			(*f1) |= a_ptr->flags1;
+			(*f2) |= a_ptr->flags2;
+			(*f3) |= a_ptr->flags3;
+			(*f4) |= a_ptr->flags4;
+			(*f5) |= a_ptr->flags5;
+			(*esp) |= a_ptr->esp;
 		}
-//		if (a_ptr == NULL) return;
-
 #if 0
-		(*f1) = a_ptr->flags1;
-		(*f2) = a_ptr->flags2;
-		(*f3) = a_ptr->flags3;
-                (*f4) = a_ptr->flags4;
-                (*f5) = a_ptr->flags5;
-                (*esp) = a_ptr->esp;
-                if ((!object_flags_no_set) && (a_ptr->set != -1))
-                        apply_flags_set(o_ptr->name1, a_ptr->set, f1, f2, f3, f4, f5, esp);
+		if ((!object_flags_no_set) && (a_ptr->set != -1))
+			apply_flags_set(o_ptr->name1, a_ptr->set, f1, f2, f3, f4, f5, esp);
 #endif	// 0
 	}
 
 	/* Ego-item */
-	if (o_ptr->name2)
-	{
+	if (o_ptr->name2) {
 //		ego_item_type *e_ptr = &e_info[o_ptr->name2];
-	 	artifact_type *a_ptr;
-	 	
-			a_ptr =	ego_make(o_ptr);
+		artifact_type *a_ptr;
+		a_ptr = ego_make(o_ptr);
 
 		(*f1) |= a_ptr->flags1;
 		(*f2) |= a_ptr->flags2;
 		(*f3) |= a_ptr->flags3;
-                (*f4) |= a_ptr->flags4;
-                (*f5) |= a_ptr->flags5;
-                (*esp) |= a_ptr->esp;
+		(*f4) |= a_ptr->flags4;
+		(*f5) |= a_ptr->flags5;
+		(*esp) |= a_ptr->esp;
 	}
-#if 0
-	/* Extra powers */
-	switch (o_ptr->xtra1)
-	{
-		case EGO_XTRA_SUSTAIN:
-		{
-			/* Choose a sustain */
-			switch (o_ptr->xtra2 % 6)
-			{
-				case 0: (*f2) |= TR2_SUST_STR; break;
-				case 1: (*f2) |= TR2_SUST_INT; break;
-				case 2: (*f2) |= TR2_SUST_WIS; break;
-				case 3: (*f2) |= TR2_SUST_DEX; break;
-				case 4: (*f2) |= TR2_SUST_CON; break;
-				case 5: (*f2) |= TR2_SUST_CHR; break;
-			}
-
-			break;
-		}
-
-		case EGO_XTRA_POWER:
-		{
-			/* Choose a power */
-			switch (o_ptr->xtra2 % 9)
-			{
-				case 0: (*f2) |= TR2_RES_BLIND; break;
-				case 1: (*f2) |= TR2_RES_CONF; break;
-				case 2: (*f2) |= TR2_RES_SOUND; break;
-				case 3: (*f2) |= TR2_RES_SHARDS; break;
-				case 4: (*f2) |= TR2_RES_NETHER; break;
-				case 5: (*f2) |= TR2_RES_NEXUS; break;
-				case 6: (*f2) |= TR2_RES_CHAOS; break;
-				case 7: (*f2) |= TR2_RES_DISEN; break;
-				case 8: (*f2) |= TR2_RES_POIS; break;
-			}
-
-			break;
-		}
-
-		case EGO_XTRA_ABILITY:
-		{
-			/* Choose an ability */
-			switch (o_ptr->xtra2 % 8)
-			{
-				case 0: (*f3) |= TR3_FEATHER; break;
-				case 1: (*f3) |= TR3_LITE; break;
-				case 2: (*f3) |= TR3_SEE_INVIS; break;
-				case 3: (*f3) |= TR3_TELEPATHY; break;
-				case 4: (*f3) |= TR3_SLOW_DIGEST; break;
-				case 5: (*f3) |= TR3_REGEN; break;
-				case 6: (*f2) |= TR2_FREE_ACT; break;
-				case 7: (*f2) |= TR2_HOLD_LIFE; break;
-			}
-
-			break;
-		}
-	}
-#endif	// 0
 }
 
 
@@ -1940,21 +1868,20 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			t = object_desc_chr(t, ' ');
 
 			if(o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPECIAL){
-				monster_race *r_ptr=&r_info[o_ptr->bpval];
+				monster_race *r_ptr = &r_info[o_ptr->bpval];
 				t = object_desc_str(t, "of ");
 				if (!(r_ptr->flags7 & RF7_NAZGUL)) {
 					t = object_desc_str(t, "bug");
 				} else {
 					t = object_desc_str(t, r_name + r_ptr->name);
 				}
-				
 			} else {
 				/* Create the name */
 				randart_name(o_ptr, tmp_val, NULL);
 				t = object_desc_str(t, tmp_val);
 			}
 		}
-			
+
 		/* Grab any artifact name */
 		else if (o_ptr->name1) {
 			artifact_type *a_ptr = &a_info[o_ptr->name1];
@@ -2046,15 +1973,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			t = object_desc_str(t, " (empty)");
 		/* May be "disarmed" */
 		else if (o_ptr->pval < 0)
-		{
 			t = object_desc_str(t, " (disarmed)");
-#if 0
-			if (chest_traps[o_ptr->pval])
-				t = object_desc_str(t, " (disarmed)");
-			else
-				t = object_desc_str(t, " (unlocked)");
-#endif
-		}
 
 		/* Describe the traps, if any */
 		else if (o_ptr->pval) {
@@ -2069,52 +1988,6 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 					t = object_desc_str(t, t_name + t_info[o_ptr->pval].name);
 			}
 			t = object_desc_str(t, ")");
-#if 0
-			/* Describe the traps */
-			switch (chest_traps[o_ptr->pval])
-			{
-				case 0:
-				{
-					t = object_desc_str(t, " (Locked)");
-					break;
-				}
-				case CHEST_LOSE_STR:
-				{
-					t = object_desc_str(t, " (Poison Needle)");
-					break;
-				}
-				case CHEST_LOSE_CON:
-				{
-					t = object_desc_str(t, " (Poison Needle)");
-					break;
-				}
-				case CHEST_POISON:
-				{
-					t = object_desc_str(t, " (Gas Trap)");
-					break;
-				}
-				case CHEST_PARALYZE:
-				{
-					t = object_desc_str(t, " (Gas Trap)");
-					break;
-				}
-				case CHEST_EXPLODE:
-				{
-					t = object_desc_str(t, " (Explosion Device)");
-					break;
-				}
-				case CHEST_SUMMON:
-				{
-					t = object_desc_str(t, " (Summoning Runes)");
-					break;
-				}
-				default:
-				{
-					t = object_desc_str(t, " (Multiple Traps)");
-					break;
-				}
-			}
-#endif	// 0
 		}
 	}
 
@@ -2312,32 +2185,6 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		/* Hack -- Dump " (charging)" if relevant */
 		if (o_ptr->pval) t = object_desc_str(t, !(mode & 8) ? " (charging)" : "(#)");
 	}
-#if 0
-        /*
-         * Hack -- Rods have a "charging" indicator.
-	 */
-        else if (known && (o_ptr->tval == TV_ROD_MAIN))
-	{
-                /* Display prettily. */
-                t = object_desc_str(t, " (");
-                t = object_desc_num(t, o_ptr->timeout);
-                t = object_desc_chr(t, '/');
-                t = object_desc_num(t, o_ptr->pval2);
-                t = object_desc_chr(t, ')');
-	}
-
-        /*
-         * Hack -- Rods have a "charging" indicator.
-	 */
-        else if (known && (o_ptr->tval == TV_ROD))
-	{
-                /* Display prettily. */
-                t = object_desc_str(t, " (");
-                t = object_desc_num(t, o_ptr->pval);
-                t = object_desc_str(t, " Mana to cast");
-                t = object_desc_chr(t, ')');
-	}
-#endif	// 0
 
 	/* Hack -- Process Lanterns/Torches */
 //	else if ((o_ptr->tval == TV_LITE) && (o_ptr->sval < SV_LITE_DWARVEN) && (!o_ptr->name3))
@@ -2483,10 +2330,6 @@ if (!(mode & 32)) {
 		t = object_desc_str(t, !(mode & 8) ? " (charging)" : "(#)");
 	}
 
-#if 0	/* Now the stores does *ID* */
-	if (o_ptr->ident & ID_MENTAL) t = object_desc_chr(t, '*');
-#endif	// 0
-
 
 	/* No more details wanted */
 	if ((mode & 7) < 3) {
@@ -2538,42 +2381,16 @@ if (!(mode & 32)) {
 		strcat(tmp_val, "% off");
 	}
 
-#if 0 /* moved to carry() in cmd1.c. */
-	/* if we have felt the object's value before by pseudo-id, remember that now */
-	if (!o_ptr->note && !aware && object_felt_p(Ind, o_ptr) && strcmp(tmp_val, "empty")) {
-		/* note: currently all items that give a static pseudo-id happen to be 'magic'.. */
-		if (object_felt_heavy_p(Ind, o_ptr)) strcpy(tmp_val, value_check_aux1_magic(o_ptr));
-		else strcpy(tmp_val, value_check_aux2_magic(o_ptr));
-	}
-#endif
-
 	/* Append the inscription, if any */
-	if (tmp_val[0])
-	{
+	if (tmp_val[0]) {
 		int n;
 
 		/* Hack -- How much so far */
 		n = (t - buf);
 
-#if 0 //this is too short! - C. Blue
-		/* Paranoia -- do not be stupid */
-		if (n > 75) n = 75;
-
-		/* Hack -- shrink the inscription */
-		tmp_val[75 - n] = '\0';
-#endif
-#if 0
-		/* Paranoia -- do not be stupid */
-		if (n > 90) n = 90;
-
-		/* Hack -- shrink the inscription */
-		tmp_val[90 - n] = '\0';
-#endif
-#if 1
 		/* Hack -- shrink too long inscriptions; 3 additional chars used for ' ', '{', '}' -> -1-3 */
 		if (n >= ONAME_LEN - 4) n = ONAME_LEN - 4;
 		tmp_val[(ONAME_LEN - 4) - n] = '\0';
-#endif
 
 		/* Append the inscription */
 		if (!(mode & 8)) t = object_desc_chr(t, ' ');
@@ -3261,555 +3078,6 @@ cptr item_activation(object_type *o_ptr)
 
 	/* Oops */
 	return NULL;
-#if 0	// memo
-	/* Some artifacts can be activated */
-	switch (o_ptr->name1)
-	{
-		case ART_NARTHANC:
-		{
-			return "fire bolt (9d8) every 8+d8 turns";
-		}
-		case ART_NIMTHANC:
-		{
-			return "frost bolt (6d8) every 7+d7 turns";
-		}
-		case ART_DETHANC:
-		{
-			return "lightning bolt (4d8) every 6+d6 turns";
-		}
-		case ART_RILIA:
-		{
-			return "stinking cloud (16) every 4+d4 turns";
-		}
-		case ART_BELANGIL:
-		{
-			return "frost ball (48) every 5+d5 turns";
-		}
-		case ART_DAL:
-		{
-			return "remove fear and cure poison every 5 turns";
-		}
-		case ART_RINGIL:
-		{
-			return "frost ball (100) every 300 turns";
-		}
-		case ART_ANDURIL:
-		{
-			return "fire ball (72) every 400 turns";
-		}
-		case ART_FIRESTAR:
-		{
-			return "large fire ball (72) every 100 turns";
-		}
-		case ART_FEANOR:
-		{
-			return "haste self (20+d20 turns) every 200 turns";
-		}
-		case ART_THEODEN:
-		{
-			return "drain life (120) every 400 turns";
-		}
-		case ART_TURMIL:
-		{
-			return "drain life (90) every 70 turns";
-		}
-		case ART_CASPANION:
-		{
-			return "door and trap destruction every 10 turns";
-		}
-		case ART_AVAVIR:
-		{
-			return "word of recall every 200 turns";
-		}
-		case ART_TARATOL:
-		{
-			return "haste self (20+d20 turns) every 100+d100 turns";
-		}
-		case ART_ERIRIL:
-		{
-			return "identify every 10 turns";
-		}
-		case ART_OLORIN:
-		{
-			return "probing every 20 turns";
-		}
-		case ART_EONWE:
-		{
-			return "mass genocide every 1000 turns";
-		}
-		case ART_LOTHARANG:
-		{
-			return "cure wounds (4d7) every 3+d3 turns";
-		}
-		case ART_CUBRAGOL:
-		{
-			return "fire branding of bolts every 999 turns";
-		}
-		case ART_ARUNRUTH:
-		{
-			return "frost bolt (12d8) every 500 turns";
-		}
-		case ART_AEGLOS:
-		{
-			return "frost ball (100) every 500 turns";
-		}
-		case ART_OROME:
-		{
-			return "stone to mud every 5 turns";
-		}
-		case ART_SOULKEEPER:
-		{
-			return "heal (1000) every 888 turns";
-		}
-		case ART_BELEGENNON:
-		{
-			return "phase door every 2 turns";
-		}
-		case ART_CELEBORN:
-		{
-			return "genocide every 500 turns";
-		}
-		case ART_LUTHIEN:
-		{
-			return "restore life levels every 450 turns";
-		}
-		case ART_ULMO:
-		{
-			return "teleport away every 150 turns";
-		}
-		case ART_COLLUIN:
-		{
-			return "resistance (20+d20 turns) every 111 turns";
-		}
-		case ART_HOLCOLLETH:
-		{
-			return "Sleep II every 55 turns";
-		}
-		case ART_THINGOL:
-		{
-			return "recharge item I every 70 turns";
-		}
-		case ART_COLANNON:
-		{
-			return "teleport every 45 turns";
-		}
-		case ART_TOTILA:
-		{
-			return "confuse monster every 15 turns";
-		}
-		case ART_CAMMITHRIM:
-		{
-			return "magic missile (2d6) every 2 turns";
-		}
-		case ART_PAURHACH:
-		{
-			return "fire bolt (9d8) every 8+d8 turns";
-		}
-		case ART_PAURNIMMEN:
-		{
-			return "frost bolt (6d8) every 7+d7 turns";
-		}
-		case ART_PAURAEGEN:
-		{
-			return "lightning bolt (4d8) every 6+d6 turns";
-		}
-		case ART_PAURNEN:
-		{
-			return "acid bolt (5d8) every 5+d5 turns";
-		}
-		case ART_FINGOLFIN:
-		{
-			return "a magical arrow (150) every 90+d90 turns";
-		}
-		case ART_HOLHENNETH:
-		{
-			return "detection every 55+d55 turns";
-		}
-		case ART_GONDOR:
-		{
-			return "heal (500) every 500 turns";
-		}
-		case ART_RAZORBACK:
-		{
-			return "star ball (150) every 1000 turns";
-		}
-		case ART_BLADETURNER:
-		{
-			return "berserk rage, bless, and resistance every 400 turns";
-		}
-		case ART_GALADRIEL:
-		{
-			return "illumination every 10+d10 turns";
-		}
-		case ART_ELENDIL:
-		{
-			return "magic mapping every 50+d50 turns";
-		}
-		case ART_THRAIN:
-		{
-			return "clairvoyance every 100+d100 turns";
-		}
-		case ART_INGWE:
-		{
-			return "dispel evil (x5) every 300+d300 turns";
-		}
-		case ART_CARLAMMAS:
-		{
-			return "protection from evil every 225+d225 turns";
-		}
-		case ART_TULKAS:
-		{
-			return "haste self (75+d75 turns) every 150+d150 turns";
-		}
-		case ART_NARYA:
-		{
-			return "large fire ball (120) every 225+d225 turns";
-		}
-		case ART_NENYA:
-		{
-			return "large frost ball (200) every 325+d325 turns";
-		}
-		case ART_VILYA:
-		{
-			return "large lightning ball (250) every 425+d425 turns";
-		}
-		case ART_POWER:
-		{
-			return "bizarre things every 450+d450 turns";
-		}
-	}
-
-
-	/* From PernA.. some of them won't work as is described :p */
-        if (is_ego_p(o_ptr, EGO_MSTAFF_SPELL))
-        {
-                int gf, mod, mana;
-
-                if (!num)
-                {
-                        gf = o_ptr->pval & 0xFFFF;
-                        mod = o_ptr->pval3 & 0xFFFF;
-                        mana = o_ptr->pval2 & 0xFF;
-                }
-                else
-                {
-                        gf = o_ptr->pval >> 16;
-                        mod = o_ptr->pval3 >> 16;
-                        mana = o_ptr->pval2 >> 8;
-                }
-                sprintf(rspell[num], "runespell(%s, %s, %d) every %d turns",
-                        k_info[lookup_kind(TV_RUNE1, gf)].name + k_name,
-                        k_info[lookup_kind(TV_RUNE2, mod)].name + k_name,
-                        mana, mana * 10);
-                return rspell[num];
-        }
-
-        if ((!(o_ptr->name1) &&
-	    !(o_ptr->name2) &&
-	    !(o_ptr->xtra1) &&
-             (o_ptr->xtra2)))
-	{
-		switch (o_ptr->xtra2)
-		{
-			case ACT_SUNLIGHT:
-			{
-				return "beam of sunlight every 10 turns";
-			}
-			case ACT_BO_MISS_1:
-			{
-				return "magic missile (2d6) every 2 turns";
-			}
-			case ACT_BA_POIS_1:
-			{
-				return "stinking cloud (16), rad. 3, every 4+d4 turns";
-			}
-			case ACT_BO_ELEC_1:
-			{
-				return "lightning bolt (4d8) every 6+d6 turns";
-			}
-			case ACT_BO_ACID_1:
-			{
-				return "acid bolt (5d8) every 5+d5 turns";
-			}
-			case ACT_BO_COLD_1:
-			{
-				return "frost bolt (6d8) every 7+d7 turns";
-			}
-			case ACT_BO_FIRE_1:
-			{
-				return "fire bolt (9d8) every 8+d8 turns";
-			}
-			case ACT_BA_COLD_1:
-			{
-				return "ball of cold (48) every 400 turns";
-			}
-			case ACT_BA_FIRE_1:
-			{
-				return "ball of fire (72) every 400 turns";
-			}
-			case ACT_DRAIN_1:
-			{
-				return "drain life (100) every 100+d100 turns";
-			}
-			case ACT_BA_COLD_2:
-			{
-				return "ball of cold (100) every 300 turns";
-			}
-			case ACT_BA_ELEC_2:
-			{
-				return "ball of lightning (100) every 500 turns";
-			}
-			case ACT_DRAIN_2:
-			{
-				return "drain life (120) every 400 turns";
-			}
-			case ACT_VAMPIRE_1:
-			{
-				return "drain life (3*50) every 400 turns";
-			}
-			case ACT_BO_MISS_2:
-			{
-				return "arrows (150) every 90+d90 turns";
-			}
-			case ACT_BA_FIRE_2:
-			{
-				return "fire ball (120) every 225+d225 turns";
-			}
-			case ACT_BA_COLD_3:
-			{
-				return "ball of cold (200) every 325+d325 turns";
-			}
-			case ACT_WHIRLWIND:
-			{
-				return "whirlwind attack every 250 turns";
-			}
-			case ACT_VAMPIRE_2:
-			{
-				return "drain life (3*100) every 400 turns";
-			}
-			case ACT_CALL_CHAOS:
-			{
-				return "call chaos every 350 turns";
-			}
-			case ACT_ROCKET:
-			{
-				return "launch rocket (120+level) every 400 turns";
-			}
-			case ACT_DISP_EVIL:
-			{
-				return "dispel evil (level*5) every 300+d300 turns";
-			}
-			case ACT_DISP_GOOD:
-			{
-				return "dispel good (level*5) every 300+d300 turns";
-			}
-			case ACT_BA_MISS_3:
-			{
-				return "elemental breath (300) every 500 turns";
-			}
-			case ACT_CONFUSE:
-			{
-				return "confuse monster every 15 turns";
-			}
-			case ACT_SLEEP:
-			{
-				return "sleep nearby monsters every 55 turns";
-			}
-			case ACT_QUAKE:
-			{
-				return "earthquake (rad 10) every 50 turns";
-			}
-			case ACT_TERROR:
-			{
-				return "terror every 3 * (level+10) turns";
-			}
-			case ACT_TELE_AWAY:
-			{
-				return "teleport away every 200 turns";
-			}
-			case ACT_BANISH_EVIL:
-			{
-				return "banish evil every 250+d250 turns";
-			}
-			case ACT_GENOCIDE:
-			{
-				return "genocide every 500 turns";
-			}
-			case ACT_MASS_GENO:
-			{
-				return "mass genocide every 1000 turns";
-			}
-			case ACT_CHARM_ANIMAL:
-			{
-				return "charm animal every 300 turns";
-			}
-			case ACT_CHARM_UNDEAD:
-			{
-				return "enslave undead every 333 turns";
-			}
-			case ACT_CHARM_OTHER:
-			{
-				return "charm monster every 400 turns";
-			}
-			case ACT_CHARM_ANIMALS:
-			{
-				return "animal friendship every 500 turns";
-			}
-			case ACT_CHARM_OTHERS:
-			{
-				return "mass charm every 750 turns";
-			}
-			case ACT_SUMMON_ANIMAL:
-			{
-				return "summon animal every 200+d300 turns";
-			}
-			case ACT_SUMMON_PHANTOM:
-			{
-				return "summon phantasmal servant every 200+d200 turns";
-			}
-			case ACT_SUMMON_ELEMENTAL:
-			{
-				return "summon elemental every 750 turns";
-			}
-			case ACT_SUMMON_DEMON:
-			{
-				return "summon demon every 666+d333 turns";
-			}
-			case ACT_SUMMON_UNDEAD:
-			{
-				return "summon undead every 666+d333 turns";
-			}
-			case ACT_CURE_LW:
-			{
-				return "remove fear & heal 30 hp every 10 turns";
-			}
-			case ACT_CURE_MW:
-			{
-				return "heal 4d8 & wounds every 3+d3 turns";
-			}
-			case ACT_CURE_POISON:
-			{
-				return "remove fear and cure poison every 5 turns";
-			}
-			case ACT_REST_LIFE:
-			{
-				return "restore life levels every 450 turns";
-			}
-			case ACT_REST_ALL:
-			{
-				return "restore stats and life levels every 750 turns";
-			}
-			case ACT_CURE_700:
-			{
-				return "heal 700 hit points every 250 turns";
-			}
-			case ACT_CURE_1000:
-			{
-				return "heal 1000 hit points every 888 turns";
-			}
-			case ACT_ESP:
-			{
-				return "temporary ESP (dur 25+d30) every 200 turns";
-			}
-			case ACT_BERSERK:
-			{
-				return "heroism and berserk (dur 50+d50) every 100+d100 turns";
-			}
-			case ACT_PROT_EVIL:
-			{
-				return "protect evil (dur level*3 + d25) every 225+d225 turns";
-			}
-			case ACT_RESIST_ALL:
-			{
-				return "resist elements (dur 40+d40) every 200 turns";
-			}
-			case ACT_SPEED:
-			{
-				return "speed (dur 20+d20) every 250 turns";
-			}
-			case ACT_XTRA_SPEED:
-			{
-				return "speed (dur 75+d75) every 200+d200 turns";
-			}
-			case ACT_WRAITH:
-			{
-				return "wraith form (level/2 + d(level/2)) every 1000 turns";
-			}
-			case ACT_INVULN:
-			{
-				return "invulnerability (dur 8+d8) every 1000 turns";
-			}
-			case ACT_LIGHT:
-			{
-				return "light area (dam 2d15) every 10+d10 turns";
-			}
-			case ACT_MAP_LIGHT:
-			{
-				return "light (dam 2d15) & map area every 50+d50 turns";
-			}
-			case ACT_DETECT_ALL:
-			{
-				return "detection every 55+d55 turns";
-			}
-			case ACT_DETECT_XTRA:
-			{
-				return "detection, probing and identify true every 1000 turns";
-			}
-			case ACT_ID_FULL:
-			{
-				return "identify true every 750 turns";
-			}
-			case ACT_ID_PLAIN:
-			{
-				return "identify spell every 10 turns";
-			}
-			case ACT_RUNE_EXPLO:
-			{
-				return "explosive rune every 200 turns";
-			}
-			case ACT_RUNE_PROT:
-			{
-				return "rune of protection every 400 turns";
-			}
-			case ACT_SATIATE:
-			{
-				return "satisfy hunger every 200 turns";
-			}
-			case ACT_DEST_DOOR:
-			{
-				return "destroy doors every 10 turns";
-			}
-			case ACT_STONE_MUD:
-			{
-				return "stone to mud every 5 turns";
-			}
-			case ACT_RECHARGE:
-			{
-				return "recharging every 70 turns";
-			}
-			case ACT_ALCHEMY:
-			{
-				return "alchemy every 500 turns";
-			}
-			case ACT_DIM_DOOR:
-			{
-				return "dimension door every 100 turns";
-			}
-			case ACT_TELEPORT:
-			{
-				return "teleport (range 100) every 45 turns";
-			}
-			case ACT_RECALL:
-			{
-				return "word of recall every 200 turns";
-			}
-			default:
-			{
-				return "something undefined";
-			}
-		}
-	}
-#endif	// 0
 }
 
 /*
@@ -4037,8 +3305,7 @@ static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff)
 	fprintf(fff, "\n");
 
 #if 0
-	if (o_ptr->pval2)
-	{
+	if (o_ptr->pval2) {
 		roff("The explosion will be ");
 		i = 0;
 		while (gf_names[i].gf != -1)
@@ -4087,21 +3354,11 @@ static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff, bool
 
 	/* Ok now the hackish stuff, we replace the current armour with this one */
 	object_copy(old_ptr, &p_ptr->inventory[slot]);
-	/* If we don't really know the item, rely on k_info flags only! */
-#if 0
-	if (!star_identify) {
-		invcopy(&p_ptr->inventory[slot], lookup_kind(o_ptr->tval, o_ptr->sval));
-		apply_magic_depth(0, &p_ptr->inventory[slot], -1, TRUE, TRUE, FALSE, FALSE, TRUE);
-		p_ptr->inventory[slot].name1 = p_ptr->inventory[slot].name2 = p_ptr->inventory[slot].name2b = 0;
-		p_ptr->inventory[slot].pval = 0;
-	} else object_copy(&p_ptr->inventory[slot], o_ptr);
-#else
 	object_copy(&p_ptr->inventory[slot], o_ptr);
 	if (!star_identify) {
 		p_ptr->inventory[slot].name1 = p_ptr->inventory[slot].name2 = p_ptr->inventory[slot].name2b = 0;
 		p_ptr->inventory[slot].pval = 0;
 	}
-#endif
 
 	/* Hack -- hush the messages up */
 	suppress_message = TRUE;
@@ -4257,10 +3514,10 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff, bool
 		}
 //we get this info although we didn't *id*!
 		else {
-			if (p_ptr->awkward_wield && !old_awkward_wield) msg_print(Ind, "\377s  One-handed use reduces its efficiency.\n");
-			if (k_info[o_ptr->k_idx].flags2 & TR4_COULD2H) msg_print(Ind, "\377s  Wielding it two-handedly might make it even more effective.\n");
-			if (p_ptr->heavy_wield && !old_heavy_wield) msg_print(Ind, "\377s  It seems to be too heavy for you to hold it properly.\n");
-			if (p_ptr->pclass == CLASS_PRIEST && o_ptr->tval != TV_BLUNT) msg_print(Ind, "\377s  It is an edged weapon and might not be blessed.\n");
+			if (p_ptr->awkward_wield && !old_awkward_wield) msg_print(Ind, "\377s  One-handed use reduces its efficiency.");
+			if (k_info[o_ptr->k_idx].flags2 & TR4_COULD2H) msg_print(Ind, "\377s  Wielding it two-handedly might make it even more effective.");
+			if (p_ptr->heavy_wield && !old_heavy_wield) msg_print(Ind, "\377s  It seems to be too heavy for you to hold it properly.");
+			if (p_ptr->pclass == CLASS_PRIEST && o_ptr->tval != TV_BLUNT) msg_print(Ind, "\377s  It is an edged weapon and might not be blessed.");
 		}
 	}
 
@@ -4270,7 +3527,7 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff, bool
 	    (!p_ptr->icky_wield && old_icky_wield)) {
 
 		if (!p_ptr->awkward_wield && !p_ptr->heavy_wield && !p_ptr->icky_wield) {
-			if (fff) fprintf(fff, "\377gWielding this weapon would remove all mali:\n");
+			if (fff) fprintf(fff, "\377gWielding this weapon would remove all mali.\n");
 			else msg_print(Ind, "\377s  It looks like you could use it just fine.");
 		} else {
 			if (fff) fprintf(fff, "\377gWielding this weapon would remove one or more mali:\n");
@@ -4413,30 +3670,11 @@ void observe_aux(int Ind, object_type *o_ptr) {
 	}
 	else if (is_weapon(o_ptr->tval) && o_ptr->weight <= 80) msg_print(Ind, "\377s  It may be dual-wielded.");
 
-#if 0
-	/* Check for weapons, shields and shooters whether they are too heavy to use 
-	   and give warning, so player won't buy something he can't use.
-	   NOTE: Currently doesn't take into account STR change if STR bonus of currently equipped weapon/shield will be gone! */
-	hold = adj_str_hold[p_ptr->stat_ind[A_STR]];
-	if ((o_ptr->tval == TV_BOW || is_weapon(o_ptr->tval)) &&
-	    (hold < o_ptr->weight / 10)) {
-		msg_print(Ind, "\377s  This weapon currently seems too heavy for you to use effectively!");
-	} else if (o_ptr->tval == TV_SHIELD && (hold < (o_ptr->weight/10 - 4) * 7)) {
-		msg_print(Ind, "\377s  This shield currently seems too heavy for you to use effectively!");
-	}
-#else
 	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, o_ptr, NULL, FALSE);
 	else if (is_weapon(o_ptr->tval)) display_weapon_handling(Ind, o_ptr, NULL, FALSE);
 	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, o_ptr, NULL, FALSE);
-#endif
 
 	if (wield_slot(Ind, o_ptr) == INVEN_WIELD) {
-#if 0
-		int blows;
-		blows = calc_blows_obj(Ind, o_ptr);
-		msg_format(Ind, "\377s  With it, you can usually attack %d time%s/turn.",
-		    blows, blows > 1 ? "s" : "");
-#else
 		/* copied from object1.c.. */
 		object_type forge, forge2, *old_ptr = &forge, *old_ptr2 = &forge2;
 		long tim_wraith = p_ptr->tim_wraith;
@@ -4457,7 +3695,6 @@ void observe_aux(int Ind, object_type *o_ptr) {
 		calc_boni(Ind);
 		suppress_message = FALSE;
 		p_ptr->tim_wraith = tim_wraith;
-#endif
 	}
 
 	if (wield_slot(Ind, o_ptr) != INVEN_WIELD
@@ -4567,25 +3804,25 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		}
 	}
 
-        switch(o_ptr->tval){
-        case TV_BLUNT:
-                fprintf(fff, "It's a%s blunt weapon.\n", ca_ptr); break;
-        case TV_POLEARM:
-                fprintf(fff, "It's a%s polearm.\n", ca_ptr); break;
-        case TV_SWORD:
-                fprintf(fff, "It's a%s sword-type weapon.\n", ca_ptr); break;
-        case TV_AXE:
-                fprintf(fff, "It's a%s axe-type weapon.\n", ca_ptr); break;
-        default:
+	switch(o_ptr->tval){
+	case TV_BLUNT:
+		fprintf(fff, "It's a%s blunt weapon.\n", ca_ptr); break;
+	case TV_POLEARM:
+		fprintf(fff, "It's a%s polearm.\n", ca_ptr); break;
+	case TV_SWORD:
+		fprintf(fff, "It's a%s sword-type weapon.\n", ca_ptr); break;
+	case TV_AXE:
+		fprintf(fff, "It's a%s axe-type weapon.\n", ca_ptr); break;
+	default:
 		if (artifact_p(o_ptr))
 			fprintf(fff, "It's a%s.\n", ca_ptr);
-                break;
-        }
+		break;
+	}
 
 	/* todo: Display artifact description text
 	   (currently, reading it is disabled in init1.c) */
 	if (true_artifact_p(o_ptr)) {
-		
+		//see #if 0 stuff below
 	}
 
 #if 0
@@ -4772,45 +4009,21 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		fprintf(fff, "\377vIt may only be worn by kings and queens!\377w\n");
 	}
 
-#if 0
-	/* Check for weapons, shields and shooters whether they are too heavy to use
-	   and give warning, so player won't buy something he can't use.
-	   NOTE: Doesn't take into account STR changes by STR boni from current/new weapon/shield! */
-	hold = adj_str_hold[p_ptr->stat_ind[A_STR]];
-	if ((o_ptr->tval == TV_BOW || is_weapon(o_ptr->tval)) &&
-	    (hold < o_ptr->weight / 10)) {
-		fprintf(fff, "\377rThis weapon is currently too heavy for you to use effectively!\377w\n");
-	}
-	else if (o_ptr->tval == TV_SHIELD && (hold < (o_ptr->weight/10 - 4) * 7)) {
-		fprintf(fff, "\377rThis shield is currently too heavy for you to use effectively!\377w\n");
-	}
-	/* Display if armour would encumber us -
-	   includes shield, which may be overridden by above branch */
-	else if (is_armour(o_ptr->tval))
-		display_armour_handling(Ind, o_ptr, fff, TRUE);
-#else
 	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, o_ptr, fff, TRUE);
 	else if (is_weapon(o_ptr->tval)) display_weapon_handling(Ind, o_ptr, fff, TRUE);
 	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, o_ptr, fff, TRUE);
-#endif
 
 	/* Mega Hack^3 -- describe the amulet of life saving */
-	if (o_ptr->tval == TV_AMULET &&
-			o_ptr->sval == SV_AMULET_LIFE_SAVING)
-	{
+	if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_LIFE_SAVING)
 		fprintf(fff, "It will save your life from perilous scene once.\n");
-	}
 
 	/* Mega-Hack -- describe activation */
 	if (f3 & TR3_ACTIVATE) {
 		cptr activation;
-		if (!(activation = item_activation(o_ptr)))
-		{
+		if (!(activation = item_activation(o_ptr))) {
 			/* Mysterious message for items missing description (eg. golem command scrolls) - mikaelh */
 			fprintf(fff, "It can be activated.\n");
-		}
-		else
-		{
+		} else {
 			fprintf(fff, "It can be activated for...\n");
 			fprintf(fff, "%s\n", item_activation(o_ptr));
 			fprintf(fff, "...if it is being worn.\n");
@@ -4819,8 +4032,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
 #if 0
 	/* Mega-Hack -- describe activation */
-	if (f3 & (TR3_ACTIVATE))
-	{
+	if (f3 & (TR3_ACTIVATE)) {
 		info[i++] = "It can be activated for...";
 		if (is_ego_p(o_ptr, EGO_MSTAFF_SPELL))
 		{
@@ -4830,14 +4042,13 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		info[i++] = item_activation(o_ptr, 0);
 
 		/* Mega-hack -- get rid of useless line for randarts */
-		if (o_ptr->tval != TV_RANDART){
+		if (o_ptr->tval != TV_RANDART) {
 			info[i++] = "...if it is being worn.";
 		}
 	}
 
 	/* Granted power */
-	if (object_power(o_ptr) != -1)
-	{
+	if (object_power(o_ptr) != -1) {
 		info[i++] = "It grants you the power of...";
 		info[i++] = powers_type[object_power(o_ptr)].name;
 		info[i++] = "...if it is being worn.";
@@ -4846,8 +4057,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
 
 	/* Hack -- describe lite's */
-	if (o_ptr->tval == TV_LITE)
-	{
+	if (o_ptr->tval == TV_LITE) {
 		int radius = 0;
 
 		if (f3 & TR3_LITE1) radius++;
@@ -4857,30 +4067,16 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		if (radius > LITE_CAP) radius = LITE_CAP; /* LITE_MAX ? */
 
 		if (f4 & TR4_FUEL_LITE)
-		{
 			fprintf(fff, "It provides light (radius %d) when fueled.\n", radius);
-		}
 		else if (radius)
-		{
 			fprintf(fff, "It provides light (radius %d) forever.\n", radius);
-		}
 		else
-		{
 			fprintf(fff, "It never provides light.\n");
-		}
 	}
 
 	/* Mega Hack^3 -- describe the Anchor of Space-time */
 	if (o_ptr->name1 == ART_ANCHOR)
-	{
 		fprintf(fff, "It prevents the space-time continuum from being disrupted.\n");
-	}
-#if 0
-	if ((f4 & (TR4_ANTIMAGIC_50)) || (f4 & (TR4_ANTIMAGIC_30)) || (f4 & (TR4_ANTIMAGIC_20)) || (f4 & (TR4_ANTIMAGIC_10)))
-	{
-		info[i++] = "It generates an antimagic field.";
-	}
-#endif	// 0
 
 	am = ((f4 & (TR4_ANTIMAGIC_50)) ? 50 : 0)
 		+ ((f4 & (TR4_ANTIMAGIC_30)) ? 30 : 0)
@@ -4913,270 +4109,137 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	/* And then describe it fully */
 
 	if (f1 & (TR1_LIFE))
-	{
 		fprintf(fff, "It affects your hit points.\n");
-	}
 	if (f1 & (TR1_STR))
-	{
 		fprintf(fff, "It affects your strength.\n");
-	}
 	if (f1 & (TR1_INT))
-	{
 		fprintf(fff, "It affects your intelligence.\n");
-	}
 	if (f1 & (TR1_WIS))
-	{
 		fprintf(fff, "It affects your wisdom.\n");
-	}
 	if (f1 & (TR1_DEX))
-	{
 		fprintf(fff, "It affects your dexterity.\n");
-	}
 	if (f1 & (TR1_CON))
-	{
 		fprintf(fff, "It affects your constitution.\n");
-	}
 	if (f1 & (TR1_CHR))
-	{
 		fprintf(fff, "It affects your charisma.\n");
-	}
 
-	if (f1 & (TR1_STEALTH))
-	{
-#if 0
-		fprintf(fff, "It affects your stealth.\n");
-#else	// 0
+	if (f1 & (TR1_STEALTH)) {
 		if (o_ptr->tval != TV_TRAPKIT)
 			fprintf(fff, "It affects your stealth.\n");
 		else
 			fprintf(fff, "It is well-hidden.\n");
-#endif	// 0
 	}
 	if (f1 & (TR1_SEARCH))
-	{
 		fprintf(fff, "It affects your searching.\n");
-	}
 	if (f5 & (TR5_DISARM))
-	{
 		fprintf(fff, "It affects your disarming.\n");
-	}
 	if (f1 & (TR1_INFRA))
-	{
 		fprintf(fff, "It affects your infravision.\n");
-	}
 	if (f1 & (TR1_TUNNEL))
-	{
 		fprintf(fff, "It affects your ability to tunnel.\n");
-	}
 	if (f1 & (TR1_SPEED))
-	{
 		fprintf(fff, "It affects your speed.\n");
-	}
 	if (f1 & (TR1_BLOWS))
-	{
 		fprintf(fff, "It affects your attack speed.\n");
-	}
 	if (f5 & (TR5_CRIT))
-	{
 		fprintf(fff, "It affects your ability to score critical hits.\n");
-	}
 	if (f5 & (TR5_LUCK))
-	{
 		fprintf(fff, "It affects your luck.\n");
-	}
 
 	if (f1 & (TR1_BRAND_ACID))
-	{
 		fprintf(fff, "It does extra damage from acid.\n");
-	}
 	if (f1 & (TR1_BRAND_ELEC))
-	{
 		fprintf(fff, "It does extra damage from electricity.\n");
-	}
 	if (f1 & (TR1_BRAND_FIRE))
-	{
 		fprintf(fff, "It does extra damage from fire.\n");
-	}
 	if (f1 & (TR1_BRAND_COLD))
-	{
 		fprintf(fff, "It does extra damage from frost.\n");
-	}
-
 	if (f1 & (TR1_BRAND_POIS))
-	{
 		fprintf(fff, "It poisons your foes.\n");
-	}
-
 	if (f5 & (TR5_CHAOTIC))
-	{
 		fprintf(fff, "It produces chaotic effects.\n");
-	}
-
 	if (f1 & (TR1_VAMPIRIC))
-	{
 		fprintf(fff, "It drains life from your foes.\n");
-	}
-
 	if (f5 & (TR5_IMPACT))
-	{
 		fprintf(fff, "It can cause earthquakes.\n");
-	}
-
 	if (f5 & (TR5_VORPAL))
-	{
 		fprintf(fff, "It is very sharp and can cut your foes.\n");
-	}
-
 	if (f5 & (TR5_WOUNDING))
-	{
 		fprintf(fff, "It is very sharp and makes your foes bleed.\n");
-	}
-
 	if (f1 & (TR1_SLAY_ORC))
-	{
 		fprintf(fff, "It is especially deadly against orcs.\n");
-	}
 	if (f1 & (TR1_SLAY_TROLL))
-	{
 		fprintf(fff, "It is especially deadly against trolls.\n");
-	}
 	if (f1 & (TR1_SLAY_GIANT))
-	{
 		fprintf(fff, "It is especially deadly against giants.\n");
-	}
 	if (f1 & (TR1_SLAY_ANIMAL))
-	{
 		fprintf(fff, "It is especially deadly against natural creatures.\n");
-	}
 	if (f1 & (TR1_KILL_UNDEAD))
-	{
 		fprintf(fff, "It is a great bane of undead.\n");
-	}
 	else if (f1 & (TR1_SLAY_UNDEAD))
-	{
 		fprintf(fff, "It strikes at undead with holy wrath.\n");
-	}
 	if (f1 & (TR1_KILL_DEMON))
-	{
 		fprintf(fff, "It is a great bane of demons.\n");
-	}
 	else if (f1 & (TR1_SLAY_DEMON))
-	{
 		fprintf(fff, "It strikes at demons with holy wrath.\n");
-	}
 	if (f1 & (TR1_KILL_DRAGON))
-	{
 		fprintf(fff, "It is a great bane of dragons.\n");
-	}
 	else if (f1 & (TR1_SLAY_DRAGON))
-	{
 		fprintf(fff, "It is especially deadly against dragons.\n");
-	}
 	if (f1 & (TR1_SLAY_EVIL))
-	{
 		fprintf(fff, "It fights against evil with holy fury.\n");
-	}
 	if (f1 & (TR1_MANA))
-	{
 		fprintf(fff, "It affects your mana capacity.\n");
-	}
 	if (f1 & (TR1_SPELL))
-	{
 		fprintf(fff, "It affects your spell power.\n");
-	}
-
 	if (f5 & (TR5_INVIS))
-	{
 		fprintf(fff, "It makes you invisible.\n");
-	}
-	if (o_ptr->tval != TV_TRAPKIT)
-	{
+	if (o_ptr->tval != TV_TRAPKIT) {
 		if (f2 & (TR2_SUST_STR))
-		{
 			fprintf(fff, "It sustains your strength.\n");
-		}
 		if (f2 & (TR2_SUST_INT))
-		{
 			fprintf(fff, "It sustains your intelligence.\n");
-		}
 		if (f2 & (TR2_SUST_WIS))
-		{
 			fprintf(fff, "It sustains your wisdom.\n");
-		}
 		if (f2 & (TR2_SUST_DEX))
-		{
 			fprintf(fff, "It sustains your dexterity.\n");
-		}
 		if (f2 & (TR2_SUST_CON))
-		{
 			fprintf(fff, "It sustains your constitution.\n");
-		}
 		if (f2 & (TR2_SUST_CHR))
-		{
 			fprintf(fff, "It sustains your charisma.\n");
-		}
 		if (f2 & (TR2_IM_FIRE))
-		{
 			fprintf(fff, "It provides immunity to fire.\n");
-		}
 		if (f2 & (TR2_IM_COLD))
-		{
 			fprintf(fff, "It provides immunity to cold.\n");
-		}
 		if (f2 & (TR2_IM_ELEC))
-		{
 			fprintf(fff, "It provides immunity to electricity.\n");
-		}
 		if (f2 & (TR2_IM_ACID))
-		{
 			fprintf(fff, "It provides immunity to acid.\n");
-		}
 	}
 #if 1
-	else
-	{
+	else {
 		if (f2 & (TRAP2_AUTOMATIC_5))
-		{
 			fprintf(fff, "It can rearm itself.\n");
-		}
 		if (f2 & (TRAP2_AUTOMATIC_99))
-		{
 			fprintf(fff, "It rearms itself.\n");
-		}               
 		if (f2 & (TRAP2_KILL_GHOST))
-		{
 			fprintf(fff, "It is effective against Ghosts.\n");
-		}
 		if (f2 & (TRAP2_TELEPORT_TO))
-		{
 			fprintf(fff, "It can teleport monsters to you.\n");
-		}
 		if (f2 & (TRAP2_ONLY_DRAGON))
-		{
 			fprintf(fff, "It can only be set off by dragons.\n");
-		}
 		if (f2 & (TRAP2_ONLY_DEMON))
-		{
 			fprintf(fff, "It can only be set off by demons.\n");
-		}
 		if (f2 & (TRAP2_ONLY_UNDEAD))
-		{
 			fprintf(fff, "It can only be set off by undead.\n");
-		}
 		if (f2 & (TRAP2_ONLY_ANIMAL))
-		{
 			fprintf(fff, "It can only be set off by animals.\n");
-		}
 		if (f2 & (TRAP2_ONLY_EVIL))
-		{
 			fprintf(fff, "It can only be set off by evil creatures.\n");
-		}
 	}
 #endif
 	if (f5 & (TR5_IM_POISON))
-	{
 		fprintf(fff, "It provides immunity to poison.\n");
-	}
 
         if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED) {
 		if (!(f2 & (TR2_IM_FIRE))) {
@@ -5200,138 +4263,76 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 			else fprintf(fff, "It provides resistance to poison.\n");
 		}
         } else {
-	if (f2 & (TR2_RES_FIRE))
-	{
-		fprintf(fff, "It provides resistance to fire.\n");
-	}
-	if (f2 & (TR2_RES_COLD))
-	{
-		fprintf(fff, "It provides resistance to cold.\n");
-	}
-	if (f2 & (TR2_RES_ELEC))
-	{
-		fprintf(fff, "It provides resistance to electricity.\n");
-	}
-	if (f2 & (TR2_RES_ACID))
-	{
-		fprintf(fff, "It provides resistance to acid.\n");
-	}
-	if (f2 & (TR2_RES_POIS))
-	{
-		fprintf(fff, "It provides resistance to poison.\n");
-	}
+		if (f2 & (TR2_RES_FIRE))
+			fprintf(fff, "It provides resistance to fire.\n");
+		if (f2 & (TR2_RES_COLD))
+			fprintf(fff, "It provides resistance to cold.\n");
+		if (f2 & (TR2_RES_ELEC))
+			fprintf(fff, "It provides resistance to electricity.\n");
+		if (f2 & (TR2_RES_ACID))
+			fprintf(fff, "It provides resistance to acid.\n");
+		if (f2 & (TR2_RES_POIS))
+			fprintf(fff, "It provides resistance to poison.\n");
 	}
 
 	if (f2 & (TR2_RES_LITE))
-	{
 		fprintf(fff, "It provides resistance to light.\n");
-	}
 	if (f2 & (TR2_RES_DARK))
-	{
 		fprintf(fff, "It provides resistance to dark.\n");
-	}
 
 	if (f2 & (TR2_RES_BLIND))
-	{
 		fprintf(fff, "It provides resistance to blindness.\n");
-	}
 	if (f2 & (TR2_RES_CONF))
-	{
 		fprintf(fff, "It provides resistance to confusion.\n");
-	}
 	if (f2 & (TR2_RES_SOUND))
-	{
 		fprintf(fff, "It provides resistance to sound.\n");
-	}
 	if (f2 & (TR2_RES_SHARDS))
-	{
 		fprintf(fff, "It provides resistance to shards.\n");
-	}
 
 	if (f4 & (TR4_IM_NETHER))
-	{
 		fprintf(fff, "It provides immunity to nether.\n");
-	}
 	if (f2 & (TR2_RES_NETHER))
-	{
 		fprintf(fff, "It provides resistance to nether.\n");
-	}
 	if (f2 & (TR2_RES_NEXUS))
-	{
 		fprintf(fff, "It provides resistance to nexus.\n");
-	}
 	if (f2 & (TR2_RES_CHAOS))
-	{
 		fprintf(fff, "It provides resistance to chaos.\n");
-	}
 	if (f2 & (TR2_RES_DISEN))
-	{
 		fprintf(fff, "It provides resistance to disenchantment.\n");
-	}
 	if (f5 & (TR5_IM_WATER))
-	{
 		fprintf(fff, "It provides complete protection from unleashed water.\n");
-	}
 	if (f5 & (TR5_RES_WATER))
-	{
 		fprintf(fff, "It provides resistance to unleashed water.\n");
-	}
 	if (f5 & (TR5_RES_TIME))
-	{
 		fprintf(fff, "It provides resistance to time.\n");
-	}
 	if (f5 & (TR5_RES_MANA))
-	{
 		fprintf(fff, "It provides resistance to magical energy.\n");
-	}
 	if (f5 & TR5_RES_TELE) fprintf(fff, "It provides resistance to teleportation attacks.\n");
 
 	if (f2 & (TR2_FREE_ACT))
-	{
 		fprintf(fff, "It provides immunity to paralysis.\n");
-	}
 	if (f2 & (TR2_HOLD_LIFE))
-	{
-		fprintf(fff, "It provides resistance to life draining.\n");
-	}
+		fprintf(fff, "It provides resistance to life draining attacks.\n");
 	if (f2 & (TR2_RES_FEAR))
-	{
 		fprintf(fff, "It makes you completely fearless.\n");
-	}
 	if (f3 & (TR3_SEE_INVIS))
-	{
 		fprintf(fff, "It allows you to see invisible monsters.\n");
-	}
 
 	if (f3 & (TR3_FEATHER))
-	{
 		fprintf(fff, "It allows you to levitate.\n");
-	}
 	if (f4 & (TR4_FLY))
-	{
 		fprintf(fff, "It allows you to fly.\n");
-	}
 	if (f5 & (TR5_PASS_WATER))
-	{
 		fprintf(fff, "It allows you to swim easily.\n");
-	}
 	if (f4 & (TR4_CLIMB))
-	{
 		fprintf(fff, "It allows you to climb high mountains.\n");
-	}
 	if (f3 & (TR3_WRAITH))
-	{
 		fprintf(fff, "It renders you incorporeal.\n");
-	}
 	if ((o_ptr->tval != TV_LITE) && ((f3 & (TR3_LITE1)) || (f4 & (TR4_LITE2)) || (f4 & (TR4_LITE3))))
-	{
 		fprintf(fff, "It provides light.\n");
-	}
-	if (esp)
-	{
+	if (esp) {
 		if (esp & ESP_ALL) fprintf(fff, "It gives telepathic powers.\n");
-		else
-		{
+		else {
 			if (esp & ESP_ORC) fprintf(fff, "It allows you to sense the presence of orcs.\n");
 			if (esp & ESP_TROLL) fprintf(fff, "It allows you to sense the presence of trolls.\n");
 			if (esp & ESP_DRAGON) fprintf(fff, "It allows you to sense the presence of dragons.\n");
@@ -5348,173 +4349,97 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		}
 	}
 	if (f3 & (TR3_SLOW_DIGEST))
-	{
 		fprintf(fff, "It slows your metabolism.\n");
-	}
 	if (f3 & (TR3_REGEN))
-	{
 		fprintf(fff, "It speeds your regenerative powers.\n");
-	}
 	if (f5 & (TR5_REGEN_MANA))
-	{
 		fprintf(fff, "It speeds your mana recharging.\n");
-	}
 	if (f5 & (TR5_REFLECT))
-	{
 		fprintf(fff, "It reflects bolts and arrows.\n");
-	}
 	if (f3 & (TR3_SH_FIRE))
-	{
 		fprintf(fff, "It produces a fiery sheath.\n");
-	}
 	if (f5 & (TR5_SH_COLD))
-	{
 		fprintf(fff, "It produces an icy sheath.\n");
-	}
 	if (f3 & (TR3_SH_ELEC))
-	{
 		fprintf(fff, "It produces an electric sheath.\n");
-	}
 	if (f3 & (TR3_NO_MAGIC))
-	{
 		fprintf(fff, "It produces an anti-magic shell.\n");
-	}
 	/* Mega Hack^3 -- describe the Anchor of Space-time */
 	if (o_ptr->name1 == ART_ANCHOR)
-	{
 		fprintf(fff, "It prevents the space-time continuum from being disrupted.\n");
-	}
 
 	if (f3 & (TR3_BLESSED))
-	{
 		fprintf(fff, "It has been blessed by the gods.\n");
-	}
 
 	if (f4 & (TR4_AUTO_ID))
-	{
 		fprintf(fff, "It identifies all items for you.\n");
-	}
 
 	if (f3 & (TR3_XTRA_MIGHT))
-	{
 		fprintf(fff, "It fires missiles with extra might.\n");
-	}
 	if (f3 & (TR3_XTRA_SHOTS))
-	{
 		fprintf(fff, "It fires missiles excessively fast.\n");
-	}
 
 	if (f4 & (TR4_CAPACITY))
-	{
 		fprintf(fff, "It can hold more mana.\n");
-	}
 	if (f4 & (TR4_CHEAPNESS))
-	{
 		fprintf(fff, "It can cast spells for a lesser mana cost.\n");
-	}
 	if (f4 & (TR4_FAST_CAST))
-	{
 		fprintf(fff, "It can cast spells faster.\n");
-	}
 	if (f4 & (TR4_CHARGING))
-	{
 		fprintf(fff, "It regenerates its mana faster.\n");
-	}
 
 	if (f3 & (TR3_TELEPORT))
-	{
 		fprintf(fff, "It induces random teleportation.\n");
-	}
 	if (f3 & (TR3_NO_TELE))
-	{
 		fprintf(fff, "\377DIt prevents teleportation.\n");
-	}
 	if (f5 & (TR5_DRAIN_MANA))
-	{
 		fprintf(fff, "\377DIt drains your magic.\n");
-	}
 
 	if (f5 & (TR5_DRAIN_HP))
-	{
 		fprintf(fff, "\377DIt drains your health.\n");
-	}
 
 	if (f3 & (TR3_DRAIN_EXP))
-	{
 		fprintf(fff, "\377DIt drains your life force.\n");
-	}
 	if (f3 & (TR3_AGGRAVATE))
-	{
 		fprintf(fff, "\377DIt aggravates nearby creatures.\n");
-	}
 
 
 	if (f4 & (TR4_NEVER_BLOW))
-	{
 		fprintf(fff, "\377DIt can't attack.\n");
-	}
 
 	if (f4 & (TR4_BLACK_BREATH))
-	{
 		fprintf(fff, "\377DIt fills you with the Black Breath.\n");
-	}
 	if (f4 & (TR4_CLONE))
-	{
 		fprintf(fff, "\377DIt can clone monsters.\n");
-	}
 
-	if (cursed_p(o_ptr))
-	{
+	if (cursed_p(o_ptr)) {
 		if (f3 & (TR3_PERMA_CURSE))
-		{
 			fprintf(fff, "\377DIt is permanently cursed.\n");
-		}
 		else if (f3 & (TR3_HEAVY_CURSE))
-		{
 			fprintf(fff, "\377DIt is heavily cursed.\n");
-		}
 		else
-		{
 			fprintf(fff, "\377DIt is cursed.\n");
-		}
 	}
 
 	if (f3 & (TR3_TY_CURSE))
-	{
 		fprintf(fff, "\377DIt carries an ancient foul curse.\n");
-	}
 
 	if (f4 & (TR4_DG_CURSE))
-	{
 		fprintf(fff, "\377DIt carries an ancient morgothian curse.\n");
-	}
 	if (f4 & (TR4_CURSE_NO_DROP))
-	{
 		fprintf(fff, "\377DIt cannot be dropped while cursed.\n");
-	}
 	if (f3 & (TR3_AUTO_CURSE))
-	{
 		fprintf(fff, "\377DIt can re-curse itself.\n");
-	}
 
 	/* Stormbringer hardcoded note to give a warning!- C. Blue */
 	if (o_ptr->name2 == EGO_STORMBRINGER)
-	{
 		fprintf(fff, "\377DIt's possessed by mad wrath!\n");
-	}
 
 
 	if ((o_ptr->tval == TV_SWORD) && (o_ptr->sval == SV_DARK_SWORD))
-	{
 		fprintf(fff, "\377WIt cannot be enchanted nor disenchanted by any means.\n");
-	}
-
-#if 1
 	else if (f5 & (TR5_NO_ENCHANT))
-	{
 		fprintf(fff, "\377WIt cannot be enchanted by any means.\n");
-	}
-#endif	// 0
 
 #if 1
 //	strcpy(buf_tmp, "\377WIt cannot be harmed by ");
@@ -5616,21 +4541,16 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
 	/* special artifacts hardcoded - C. Blue */
 	if (o_ptr->tval == TV_POTION2 && o_ptr->sval == SV_POTION2_AMBER)
-	{
 		fprintf(fff, "It turns your skin into amber, increasing your powers.\n");
-	}
 	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SLEEPING)
-	{
 		fprintf(fff, "It drops a veil of sleep over all your surroundings.\n");
-	}
 
 	/* Damage display for weapons */
 	if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
 		display_weapon_damage(Ind, o_ptr, fff);
 
 	/* Breakage/Damage display for ammo */
-	if (wield_slot(Ind, o_ptr) == INVEN_AMMO)
-	{
+	if (wield_slot(Ind, o_ptr) == INVEN_AMMO) {
 		fprintf(fff, "\377WIt has %d%% chances to break upon hit.\n"
 				, breakage_chance(o_ptr));
 		display_ammo_damage(Ind, o_ptr, fff);
@@ -6031,19 +4951,13 @@ bool item_tester_okay(object_type *o_ptr)
  */
 void display_inven(int Ind)
 {
-	player_type *p_ptr = Players[Ind];
-
+	player_type	*p_ptr = Players[Ind];
 	register	int i, n, z = 0;
-
-	object_type *o_ptr;
-
-	byte	attr = TERM_WHITE;
-
-	char	tmp_val[80];
-
-	char	o_name[ONAME_LEN];
-
-	int wgt;
+	object_type	*o_ptr;
+	byte		attr = TERM_WHITE;
+	char		tmp_val[80];
+	char		o_name[ONAME_LEN];
+	int		wgt;
 
 
 	/* Have the final slot be the FINAL slot */
@@ -6081,10 +4995,8 @@ void display_inven(int Ind)
 		/* Get a color */
 		if (p_ptr->admin_dm) {
 			/* hack- show correct mode-fail colour to admins */
-			p_ptr->admin_dm = 0;
-			if (can_use(Ind, o_ptr)) attr = get_attr_from_tval(o_ptr);
+			if (can_use_admin(Ind, o_ptr)) attr = get_attr_from_tval(o_ptr);
 			else attr = TERM_L_DARK;
-			p_ptr->admin_dm = 1;
 		} else {
 			if (can_use(Ind, o_ptr)) attr = get_attr_from_tval(o_ptr);
 			else attr = TERM_L_DARK;
@@ -6126,21 +5038,16 @@ void display_inven(int Ind)
  */
 void display_equip(int Ind)
 {
-	player_type *p_ptr = Players[Ind];
-
+	player_type	*p_ptr = Players[Ind];
 	register	int i, n;
-	object_type *o_ptr;
-	byte	attr = TERM_WHITE;
-
-	char	tmp_val[80];
-
-	char	o_name[ONAME_LEN];
-
-	int wgt;
+	object_type	*o_ptr;
+	byte		attr = TERM_WHITE;
+	char		tmp_val[80];
+	char		o_name[ONAME_LEN];
+	int		wgt;
 
 	/* Display the equipment */
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
-	{
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 		/* Examine the item */
 		o_ptr = &p_ptr->inventory[i];
 
@@ -6221,6 +5128,27 @@ bool can_use(int Ind, object_type *o_ptr)
 	else return (FALSE);
 }
 
+/* Same as can_use(), but avoids auto-owning items (to be used for admin characters) */
+bool can_use_admin(int Ind, object_type *o_ptr)
+{
+	player_type *p_ptr = Players[Ind];
+
+	/* exception for Highlander Tournament amulets */
+	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_HIGHLANDS))
+		return TRUE;
+
+	/* Owner always can use */
+	if (p_ptr->id == o_ptr->owner) return (TRUE);
+
+	if (o_ptr->level < 1 && o_ptr->owner) return (FALSE);
+
+	if (compat_pomode(Ind, o_ptr)) return FALSE;
+
+	/* Hack -- convert if available */
+	if (p_ptr->lev >= o_ptr->level) return (TRUE);
+	else return (FALSE);
+}
+
 bool can_use_verbose(int Ind, object_type *o_ptr)
 {
 	player_type *p_ptr = Players[Ind];
@@ -6236,33 +5164,27 @@ bool can_use_verbose(int Ind, object_type *o_ptr)
 	/* Owner always can use */
 	if (p_ptr->id == o_ptr->owner || p_ptr->admin_dm) return (TRUE);
 
-	if (o_ptr->level < 1 && o_ptr->owner)
-	{
+	if (o_ptr->level < 1 && o_ptr->owner) {
 		msg_print(Ind, "You must be the owner in order to use it.");
 		return (FALSE);
 	}
 
-	if (compat_pomode(Ind, o_ptr))
-	{
+	if (compat_pomode(Ind, o_ptr)) {
 		msg_format(Ind, "You cannot use things that belong to %s players.", compat_pomode(Ind, o_ptr));
-                return FALSE;
+		return FALSE;
 	}
 
 	/* Hack -- convert if available */
-	if (p_ptr->lev >= o_ptr->level && !p_ptr->admin_dm)
-	{
+	if (p_ptr->lev >= o_ptr->level && !p_ptr->admin_dm) {
 		o_ptr->owner = p_ptr->id;
 		return (TRUE);
-	}
-	else
-	{
+	} else {
 		msg_print(Ind, "Your level is not high enough yet to use this.");
 		return (FALSE);
 	}
 #else
 	/* Let's still have this restriction - mikaelh */
-	if (o_ptr->level < 1 && o_ptr->owner && p_ptr->id != o_ptr->owner && !p_ptr->admin_dm)
-	{
+	if (o_ptr->level < 1 && o_ptr->owner && p_ptr->id != o_ptr->owner && !p_ptr->admin_dm) {
 		msg_print(Ind, "You must be the owner in order to use it.");
 		return(FALSE);
 	}
@@ -6286,7 +5208,9 @@ byte get_book_name_color(int Ind, object_type *o_ptr)
 			return TERM_WHITE; /* unused custom book */
 	} else {
 		/* priests */
-		if (o_ptr->sval >= 12 && o_ptr->sval <= 15) return TERM_GREEN;
+		if ((o_ptr->sval >= 12 && o_ptr->sval <= 15) ||
+		    o_ptr->sval == 53)
+			return TERM_GREEN;
 		/* druids */
 		else if (o_ptr->sval >= 16 && o_ptr->sval <= 17) return TERM_L_GREEN;
 		/* astral tome */

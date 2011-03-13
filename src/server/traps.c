@@ -27,120 +27,6 @@
 
 static void destroy_chest(object_type *o_ptr);
 
-/*
- * This function can be *much* shorter if we use functions in
- * party.c; it's written in this way so that all this will be
- * done w/o anyone noticing it.		- Jir -
- */
-#if 0 /* not used - mikaelh */
-static bool player_handle_trap_of_hostility(int Ind)
-{
-	player_type *p_ptr = Players[Ind], *q_ptr;
-	int i, id = p_ptr->party;
-	hostile_type *h_ptr;
-	bool ident = FALSE;
-
-	if (cfg.use_pk_rules == PK_RULES_NEVER) return FALSE;
-
-	if (id != 0)
-	{
-		ident = TRUE;
-		/* If (s)he's party owner, everyone leaves it */
-		if (streq(parties[id].owner, p_ptr->name))
-		{
-			//	del_party(party_id);	// check it!!
-			/* Remove the party altogether */
-			/* (probably it's too severe?) */
-//			kill_houses(id, OT_PARTY);
-
-			/* Set the number of people in this party to zero */
-			parties[id].members = 0;
-
-			/* Remove everyone else */
-			for (i = 1; i <= NumPlayers; i++)
-			{
-				/* Check if they are in here */
-				if (player_in_party(id, i) && i != Ind)
-				{
-					/* Lose a member */
-					parties[id].members--;
-
-					Players[i]->party = 0;
-					//					msg_print(i, "Your party has been disbanded.");
-					Send_party(i);
-				}
-			}
-
-			/* Set the creation time to "disbanded time" */
-//			parties[id].created = turn;
-
-			/* Empty the name */
-//			strcpy(parties[id].name, "");
-		}
-		/* otherwise, leave it */
-		else
-		{
-			/* Lose a member */
-			parties[id].members--;
-
-			/* Set his party number back to "neutral" */
-			p_ptr->party = 0;
-
-			/* Resend info */
-			Send_party(Ind);
-		}
-	}
-
-	/* this player is hoe of everyone now */
-	for (i = 1; i <= NumPlayers; i++)
-	{
-		if (Players[i]->conn == NOT_CONNECTED)
-			continue;
-
-		if (i == Ind) continue;
-
-		q_ptr = Players[i];
-
-		if (!check_hostile(Ind, i))
-		{
-			ident = TRUE;
-
-			/* Create a new hostility node */
-			MAKE(h_ptr, hostile_type);
-
-			/* Set ID in node */
-			h_ptr->id = q_ptr->id;
-
-			/* Put this node at the beginning of the list */
-			h_ptr->next = p_ptr->hostile;
-			p_ptr->hostile = h_ptr;
-		}
-
-		if (!check_hostile(i, Ind) &&
-			(cfg.use_pk_rules != PK_RULES_DECLARE || (q_ptr->pkill & PKILL_SET)))
-		{
-			ident = TRUE;
-
-			/* Create a new hostility node */
-			MAKE(h_ptr, hostile_type);
-
-			/* Set ID in node */
-			h_ptr->id = p_ptr->id;
-
-			/* Put this node at the beginning of the list */
-			h_ptr->next = q_ptr->hostile;
-			q_ptr->hostile = h_ptr;
-		}
-	}
-	if (cfg.use_pk_rules == PK_RULES_DECLARE)
-	{
-		p_ptr->pkill=(PKILL_SET|PKILL_KILLER|PKILL_KILLABLE);
-		p_ptr->tim_pkill=0;
-	}
-
-	return (ident);
-}
-#endif
 
 #if 0
 static bool do_trap_of_silliness(int Ind, int power)
@@ -497,216 +383,6 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x)
 	}
 	return (ident);
 }
-
-/*
- * this handles a trap that places walls around the player
- */
-#if 0	// after f_info reform! :)
-static bool player_handle_trap_of_walls(void)
-{
-   bool ident;
-
-   {
-      s16b dx,dy,cx,cy;
-      s16b sx=0,sy=0,sn,i;
-      cave_type *cv_ptr;
-      bool map[5][5] = { {FALSE,FALSE,FALSE,FALSE,FALSE},
-                         {FALSE,FALSE,FALSE,FALSE,FALSE},
-                         {FALSE,FALSE,FALSE,FALSE,FALSE},
-                         {FALSE,FALSE,FALSE,FALSE,FALSE},
-                         {FALSE,FALSE,FALSE,FALSE,FALSE} };
-      for (dy = -2; dy <= 2; dy++)
-      {
-         for (dx = -2; dx <= 2; dx++)
-         {
-            cx = px+dx;
-            cy = py+dy;
-            if (!in_bounds(cy, cx)) continue;
-            cv_ptr = &cave[cy][cx];
-
-// DGDGDGDG
-            if (cv_ptr->m_idx) continue;
-
-            /* Lose room and vault */
-            cv_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
-            /* Lose light and knowledge */
-            cv_ptr->info &= ~(CAVE_GLOW | CAVE_MARK);
-            /* Skip the center */
-            if (!dx && !dy) continue;
-            /* test for dungeon level */
-            if (randint(100) > 10+max_dlv[dungeon_type]) continue;
-            /* Damage this grid */
-            map[2+dx][2+dy] = TRUE;
-         }
-      }
-      for (dy = -2; dy <= 2; dy++)
-      {
-         for (dx = -2; dx <= 2; dx++)
-         {
-            cx = px+dx;
-            cy = py+dy;
-            if (!map[2+dx][2+dy]) continue;
-            cv_ptr = &cave[cy][cx];
-
-            if (cv_ptr->m_idx)
-            {
-               monster_type *m_ptr = &m_list[cv_ptr->m_idx];
-               monster_race *r_ptr = race_inf(m_ptr);
-               /* Most monsters cannot co-exist with rock */
-               if (!(r_ptr->flags2 & RF2_KILL_WALL) &&
-                   !(r_ptr->flags2 & RF2_PASS_WALL))
-               {
-                  char m_name[80];
-
-                  /* Assume not safe */
-                  sn = 0;
-                  /* Monster can move to escape the wall */
-                  if (!(r_ptr->flags1 & RF1_NEVER_MOVE))
-                  {
-                     /* Look for safety */
-                     for (i = 0; i < 8; i++)
-                     {
-                        /* Access the grid */
-                        cy = py + ddy[i];
-                        cx = px + ddx[i];
-
-                        /* Skip non-empty grids */
-                        if (!cave_clean_bold(cy, cx)) continue;
-
-                        /* Hack -- no safety on glyph of warding */
-			if (cave[cy][cx].feat == FEAT_GLYPH) continue;
-
-                        /* Important -- Skip "quake" grids */
-                        if (map[2+(cx-px)][2+(cy-py)]) continue;
-                        /* Count "safe" grids */
-                        sn++;
-                        /* Randomize choice */
-                        if (rand_int(sn) > 0) continue;
-                        /* Save the safe grid */
-                        sx = cx; sy = cy;
-                        ident=TRUE;
-                        break; /* discontinue for loop - safe grid found */
-                     }
-                  }
-                  /* Describe the monster */
-                  monster_desc(m_name, cv_ptr->m_idx, 0);
-                  /* Scream in pain */
-                  msg_format("%^s wails out in pain!", m_name);
-                  /* Monster is certainly awake */
-                  m_ptr->csleep = 0;
-                  /* Apply damage directly */
-                  m_ptr->hp -= (sn ? damroll(4, 8) : 200);
-                  /* Delete (not kill) "dead" monsters */
-                  if (m_ptr->hp < 0)
-                  {
-                     /* Message */
-                     msg_format("%^s is entombed in the rock!", m_name);
-                     /* Delete the monster */
-                     delete_monster_idx(cave[cy][cx].m_idx, TRUE);
-                     /* No longer safe */
-                     sn = 0;
-                  }
-                  /* Hack -- Escape from the rock */
-                  if (sn)
-                  {
-                     s16b m_idx = cave[cy][cx].m_idx;
-
-                     /* Update the new location */
-                     cave[sy][sx].m_idx = m_idx;
-
-                     /* Update the old location */
-                     cave[cy][cx].m_idx = 0;
-
-                     /* Move the monster */
-                     m_ptr->fy = sy;
-                     m_ptr->fx = sx;
-
-                     /* do not change fz */
-                     /* don't make rock on that square! */
-                     if ( (sx>=(px-2)) &&
-                        (sx<=(px+2)) &&
-                        (sy>=(py-2)) &&
-                        (sy<=(py+2)) )
-                     {
-                        map[2+(sx-px)][2+(sy-py)]=FALSE;
-                     }
-                     /* Update the monster (new location) */
-                     update_mon(m_idx, TRUE);
-
-                     /* Redraw the old grid */
-                     lite_spot(cy, cx);
-
-                     /* Redraw the new grid */
-                     lite_spot(sy, sx);
-                  } /* if sn */
-               } /* if monster can co-exist with rock */
-            } /* if monster on square */
-         } /* for dx */
-      } /* for dy */
-
-      /* Examine the quaked region */
-      for (dy = -2; dy <= 2; dy++)
-      {
-         for (dx = -2; dx <= 2; dx++)
-         {
-            /* Extract the location */
-            cx = px + dx;
-            cy = py + dy;
-
-            /* Skip unaffected grids */
-            if (!map[2+dx][2+dy]) continue;
-
-            /* Access the cave grid */
-            cv_ptr = &cave[cy][cx];
-
-            /* Paranoia -- never affect player */
-            if (!dy && !dx) continue;
-
-            /* Destroy location (if valid) */
-            if ((cx < cur_wid) && (cy < cur_hgt) && cave_valid_bold(cy, cx))
-            {
-               bool floor = (f_info[cave[cy][cx].feat].flags1 & FF1_FLOOR);
-
-               /* Delete any object that is still there */
-               delete_object(cy, cx);
-
-               if (floor)
-               {
-		  cave[cy][cx].feat = FEAT_WALL_OUTER;
-               }
-               else
-               {
-                  /* Clear previous contents, add floor */
-		  cave[cy][cx].feat = FEAT_FLOOR;
-               }
-            } /* valid */
-         } /* dx */
-      } /* dy */
-      /* Mega-Hack -- Forget the view and lite */
-      p_ptr->update |= PU_UN_VIEW;
-
-      /* Update stuff */
-      p_ptr->update |= (PU_VIEW | PU_FLOW);
-
-      /* Update the monsters */
-      p_ptr->update |= (PU_DISTANCE);
-
-      /* Update the health bar */
-      p_ptr->redraw |= (PR_HEALTH);
-
-      /* Redraw map */
-      p_ptr->redraw |= (PR_MAP);
-
-      /* Window stuff */
-      p_ptr->window |= (PW_OVERHEAD);
-      handle_stuff();
-      msg_print("Suddenly the cave shifts around you. The air is getting stale!");
-      ident=TRUE;
-   }
-   return (ident);
-}
-#endif
-
 
 /*
  * this function handles arrow & dagger traps, in various types.
@@ -4159,7 +3835,7 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, int sval)
 		        rad = 5;
 		        break;
 #if 0
-		case SV_STAFF_GENOCIDE:	
+		case SV_STAFF_GENOCIDE:
 		{
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
                         genocide_aux(FALSE, r_ptr->d_char);
@@ -5202,8 +4878,7 @@ bool mon_hit_trap(int m_idx)
 					dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 1;
 
 					/* Check if we hit the monster */
-					if (test_hit_fire(chance, m_ptr->ac, TRUE))
-					{
+					if (test_hit_fire(chance, m_ptr->ac, TRUE)) {
 						/* Assume a default death */
 						cptr note_dies = " dies.";
 
@@ -5463,9 +5138,9 @@ bool mon_hit_trap(int m_idx)
 				}				
 				while (shots-- && !dead)
 				{
-#if 0					                                        	
+#if 0
 					/* Message if visible */
-					//                                       	if (m_ptr->ml)
+					// if (m_ptr->ml)
 					if (who > 0 && p_ptr->mon_vis[m_idx]) 
 					{
 						/* describe the monster (again, just in case :-) */

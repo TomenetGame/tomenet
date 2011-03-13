@@ -202,8 +202,7 @@ void sc_wish(int Ind, void *argp){
 		else
 		{
 			/* It's ego or randarts */
-			if (nom)
-			{
+			if (nom) {
 				o_ptr->name2 = 0 - nom;
 				if (tk > 4) o_ptr->name2b = 0 - atoi(token[5]);
 			}
@@ -321,7 +320,11 @@ void do_slash_cmd(int Ind, char *message)
 	char message4[MAX_SLASH_LINE_LEN];
 
 	worldpos wp;
+#ifndef TEST_SERVER
 	bool admin = is_admin(p_ptr);
+#else
+	bool admin = TRUE;
+#endif
 
 	strcpy(message2, message);
 	wpcopy(&wp, &p_ptr->wpos);
@@ -663,7 +666,7 @@ void do_slash_cmd(int Ind, char *message)
 			bool remove_pseudo = !strcmp(ax, "p");
 			bool remove_unique = !strcmp(ax, "u");
 
-			for (i = 0; i < (remove_pseudo ? INVEN_TOTAL : INVEN_PACK); i++) {
+			for (i = 0; i < (remove_pseudo || remove_unique ? INVEN_TOTAL : INVEN_PACK); i++) {
 				o_ptr = &(p_ptr->inventory[i]);
 
 				/* Skip empty slots */
@@ -681,10 +684,10 @@ void do_slash_cmd(int Ind, char *message)
 
 				if (remove_unique && o_ptr->note_utag) {
 					j = strlen(quark_str(o_ptr->note)) - o_ptr->note_utag;
-					if (j > 0) { /* bugfix hack */
+					if (j >= 0) { /* bugfix hack */
 //s_printf("j: %d, strlen: %d, note_utag: %d, i: %d.\n", j, strlen(quark_str(o_ptr->note)), o_ptr->note_utag, i);
 						strncpy(note2, quark_str(o_ptr->note), j);
-						if (note2[j - 1] == '-') j--; /* absorb '-' orphaned spacers */
+						if (j > 0 && note2[j - 1] == '-') j--; /* absorb '-' orphaned spacers */
 						note2[j] = 0; /* terminate string */
 						o_ptr->note_utag = 0;
 						if (note2[0]) o_ptr->note = quark_add(note2);
@@ -1534,12 +1537,16 @@ void do_slash_cmd(int Ind, char *message)
 
 			do {
 				r = get_mon_num(lev, lev);
+
+				/* Hack: If (non-)FRIENDS variant exists, use the first one (usually the non-FRIENDS one) */
+				if (r_info[r].dup_idx) r = r_info[r].dup_idx;
+
 				k++;
-                                if(k > 1000) {
-                                        lev--;
-                                        k = lev * 5;
-//                                      k = lev * 9;
-//                                      k = 900;
+				if (k > 1000) {
+					lev--;
+					k = lev * 5;
+//					k = lev * 9;
+//					k = 900;
                                 }
 			} while (((lev-5) > r_info[r].level) || 
 				    (r_info[r].flags1 & RF1_UNIQUE) || 
@@ -1594,8 +1601,7 @@ void do_slash_cmd(int Ind, char *message)
 
 			/* Directly specify a name (tho no1 would use it..) */
 			r_idx = race_index(token[1]);
-			if (!r_idx)
-			{
+			if (!r_idx) {
 				msg_print(Ind, "No such monster.");
 				return;
 			}
@@ -1614,16 +1620,14 @@ void do_slash_cmd(int Ind, char *message)
 			{
 				i = r_ptr->level - num;
 
-	                        if ((i > 0)
+				if ((i > 0)
 				    && !((p_ptr->pclass == CLASS_DRUID) && mimic_druid(r_idx, p_ptr->lev))
 				    && !((p_ptr->prace == RACE_VAMPIRE) && mimic_vampire(r_idx, p_ptr->lev)))
 					msg_format(Ind, "%s : %d slain (%d more to go)",
 							r_name + r_ptr->name, num, i);
 				else
 					msg_format(Ind, "%s : %d slain (learnt)", r_name + r_ptr->name, num);
-			}
-			else
-			{
+			} else {
 				msg_format(Ind, "%s : %d slain.", r_name + r_ptr->name, num);
 			}
 
@@ -1871,7 +1875,8 @@ void do_slash_cmd(int Ind, char *message)
 						break;
 					}
 				}
-				msg_print(Ind, "\377oParty note has been erased.");
+//				msg_print(Ind, "\377oParty note has been erased.");
+				msg_party_format(Ind, "\377b%s erased the party note.", p_ptr->name);
 				return;
 			}
 			if (tk == 0) {
@@ -1910,7 +1915,8 @@ void do_slash_cmd(int Ind, char *message)
 				if (i < MAX_PARTYNOTES) {
 					/* change existing party note to new text */
 					strcpy(party_note[i], &message2[j]);
-					msg_print(Ind, "\377yNote has been stored.");
+//					msg_print(Ind, "\377yNote has been stored.");
+					msg_party_format(Ind, "\377b%s changed party note to: %s", p_ptr->name, party_note[i]);
 					return;
 				}
 				
@@ -1922,13 +1928,14 @@ void do_slash_cmd(int Ind, char *message)
 					}
 				}
 				if (i == MAX_PARTYNOTES) {
-					msg_format(Ind, "\377oSorry, the server reached the maximum of %d pending party notes.", MAX_PARTYNOTES);
+					msg_format(Ind, "\377oSorry, the server reached the maximum of %d party notes.", MAX_PARTYNOTES);
 					return;
 				}
 				strcpy(party_note_target[i], parties[p_ptr->party].name);
 				message2[j + 79] = '\0'; /* Limit to 80 chars */
 				strcpy(party_note[i], &message2[j]);
-				msg_print(Ind, "\377yNote has been stored.");
+//				msg_print(Ind, "\377yNote has been stored.");
+				msg_party_format(Ind, "\377b%s set party note to: %s", p_ptr->name, party_note[i]);
 				return;
 			}
 		}
@@ -1963,7 +1970,8 @@ void do_slash_cmd(int Ind, char *message)
 						break;
 					}
 				}
-				msg_print(Ind, "\377oGuild note has been erased.");
+//				msg_print(Ind, "\377oGuild note has been erased.");
+				msg_guild_format(Ind, "\377b%s erased the guild note.", p_ptr->name);
 				return;
 			}
 			if (tk == 0) {
@@ -2002,7 +2010,8 @@ void do_slash_cmd(int Ind, char *message)
 					/* change existing guild note to new text */
 					message2[j + 79] = '\0'; /* Limit to 80 chars */
 					strcpy(guild_note[i], &message2[j]);
-					msg_print(Ind, "\377yNote has been stored.");
+//					msg_print(Ind, "\377yNote has been stored.");
+					msg_guild_format(Ind, "\377b%s changed the guild note to: %s", p_ptr->name, guild_note[i]);
 					return;
 				}
 				
@@ -2014,12 +2023,13 @@ void do_slash_cmd(int Ind, char *message)
 					}
 				}
 				if (!i == MAX_GUILDNOTES) {
-					msg_format(Ind, "\377oSorry, the server reached the maximum of %d pending guild notes.", MAX_GUILDNOTES);
+					msg_format(Ind, "\377oSorry, the server reached the maximum of %d guild notes.", MAX_GUILDNOTES);
 					return;
 				}
 				strcpy(guild_note_target[i], guilds[p_ptr->guild].name);
 				strcpy(guild_note[i], &message2[j]);
-				msg_print(Ind, "\377yNote has been stored.");
+//				msg_print(Ind, "\377yNote has been stored.");
+				msg_guild_format(Ind, "\377b%s set the guild note to: %s", p_ptr->name, guild_note[i]);
 				return;
 			}
 		}
@@ -2149,13 +2159,6 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 
-			/* does target account exist? */
-			c_acc = GetAccount(tname, NULL, FALSE);
-			if (!c_acc) {
-				msg_print(Ind, "\377oThat account does not exist.");
-				return;
-			}
-
 			/* No colon found -> only a name parm give */
 			if (!colon) { /* Delete all pending notes to a specified player */
 				for (i = 0; i < MAX_NOTES; i++) {
@@ -2175,6 +2178,13 @@ void do_slash_cmd(int Ind, char *message)
 
 			/* Colon found, store a note to someone */
 			/* Store a new note from this player to the specified player */
+
+			/* does target account exist? */
+			c_acc = GetAccount(tname, NULL, FALSE);
+			if (!c_acc) {
+				msg_print(Ind, "\377oThat account does not exist.");
+				return;
+			}
 
 			/* Check whether player has his notes quota exceeded */
 			for (i = 0; i < MAX_NOTES; i++) {
@@ -2283,8 +2293,7 @@ void do_slash_cmd(int Ind, char *message)
 				else
 				{
 					/* It's ego or randarts */
-					if (nom)
-					{
+					if (nom) {
 						o_ptr->name2 = 0 - nom;
 						if (tk > 4) o_ptr->name2b = 0 - atoi(token[5]);
 						/* the next check might not be needed (bpval is used, not pval?) */
@@ -2454,10 +2463,10 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "\377oThere is no easy way out of this fight!");
 					if (!is_admin(p_ptr)) return;
 				}
-	                	p_ptr->recall_pos.wx = cfg.town_x;
-		                p_ptr->recall_pos.wy = cfg.town_y;
+				p_ptr->recall_pos.wx = cfg.town_x;
+				p_ptr->recall_pos.wy = cfg.town_y;
 				p_ptr->recall_pos.wz = 0;
-                		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+				p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 				recall_player(Ind, "");
 				msg_print(Ind, "\377uYou leave the arena again.");
 				return;
@@ -3364,7 +3373,7 @@ void do_slash_cmd(int Ind, char *message)
 				if (!tk) {
 					msg_print(Ind, "Usage: /game stop   or   /game rugby");
 					return;
-				} else if(!strcmp(token[1], "rugby")){
+				} else if (!strcmp(token[1], "rugby")) {
 					object_type	forge;
 					object_type	*o_ptr = &forge;
 
@@ -3386,9 +3395,7 @@ void do_slash_cmd(int Ind, char *message)
 					for(k=1; k<=NumPlayers; k++){
 						Players[k]->team=0;
 					}
-				}
-				else if (!strcmp(token[1], "stop")) /* stop all games - mikaelh */
-				{
+				} else if (!strcmp(token[1], "stop")) { /* stop all games - mikaelh */
 					char sstr[80];
 					msg_broadcast(0, "\377pThe game has been stopped!");
 					snprintf(sstr, 80, "Score: \377RReds: %d  \377BBlues: %d", teamscore[0], teamscore[1]);
@@ -3399,20 +3406,17 @@ void do_slash_cmd(int Ind, char *message)
 					teams[1] = 0;
 					gametype = 0;
 					for (k = 1; k <= NumPlayers; k++)
-					{
 						Players[k]->team = 0;
-					}
 				}
 			}
 			else if (prefix(message, "/unstatic-level") ||
-					prefix(message, "/unst"))
-			{
+			    prefix(message, "/unst")) {
 				/* no sanity check, so be warned! */
 				master_level_specific(Ind, &wp, "u");
 				//				msg_format(Ind, "\377rItems and monsters on %dft is cleared.", k * 50);
 				return;
 			}
-			else if (prefix(message, "/treset")){
+			else if (prefix(message, "/treset")) {
 				struct worldpos wpos;
 				wpcopy(&wpos, &p_ptr->wpos);
 				master_level_specific(Ind, &wp, "u");
@@ -3420,8 +3424,7 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/static-level") ||
-					prefix(message, "/stat"))
-			{
+			    prefix(message, "/stat")) {
 				/* no sanity check, so be warned! */
 				master_level_specific(Ind, &wp, "s");
 				//				msg_format(Ind, "\377rItems and monsters on %dft is cleared.", k * 50);
@@ -3429,8 +3432,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			/* TODO: make this player command (using spells, scrolls etc) */
 			else if (prefix(message, "/identify") ||
-					prefix(message, "/id"))
-			{
+			    prefix(message, "/id")) {
 				identify_pack(Ind);
 
 				/* Combine the pack */
@@ -3442,52 +3444,39 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/artifact") ||
-					prefix(message, "/art"))
-			{
-				if (k)
-				{
-					if (a_info[k].cur_num)
-					{
+			    prefix(message, "/art")) {
+				if (k) {
+					if (a_info[k].cur_num) {
 						a_info[k].cur_num = 0;
 						a_info[k].known = FALSE;
 						msg_format(Ind, "Artifact %d is now \377Gfindable\377w.", k);
-					}
-					else
-					{
+					} else {
 						a_info[k].cur_num = 1;
 						a_info[k].known = TRUE;
 						msg_format(Ind, "Artifact %d is now \377runfindable\377w.", k);
 					}
 				}
-				else if (tk > 0 && prefix(token[1], "show"))
-				{
+				else if (tk > 0 && prefix(token[1], "show")) {
 					int count = 0;
-					for (i = 0; i < MAX_A_IDX ; i++)
-					{
+					for (i = 0; i < MAX_A_IDX ; i++) {
 						if (!a_info[i].cur_num || a_info[i].known) continue;
 
 						a_info[i].known = TRUE;
 						count++;
 					}
 					msg_format(Ind, "%d 'found but unknown' artifacts are set as '\377Gknown\377w'.", count);
-				}
-				else if (tk > 0 && prefix(token[1], "fix"))
-				{
+				} else if (tk > 0 && prefix(token[1], "fix")) {
 					int count = 0;
-					for (i = 0; i < MAX_A_IDX ; i++)
-					{
+					for (i = 0; i < MAX_A_IDX ; i++) {
 						if (!a_info[i].cur_num || a_info[i].known) continue;
 
 						a_info[i].cur_num = 0;
 						count++;
 					}
 					msg_format(Ind, "%d 'found but unknown' artifacts are set as '\377rfindable\377w'.", count);
-				}
-				else if (tk > 0 && prefix(token[1], "hack"))
-				{
+				} else if (tk > 0 && prefix(token[1], "hack")) {
 					int count = 0;
-					for (i = 0; i < MAX_A_IDX ; i++)
-					{
+					for (i = 0; i < MAX_A_IDX ; i++) {
 						if (!a_info[i].cur_num || !a_info[i].known) continue;
 
 						a_info[i].known = TRUE;
@@ -3496,26 +3485,19 @@ void do_slash_cmd(int Ind, char *message)
 					msg_format(Ind, "%d 'found but unknown' artifacts are set as '\377yknown\377w'.", count);
 				}
 //				else if (tk > 0 && strchr(token[1],'*'))
-				else if (tk > 0 && prefix(token[1], "reset!"))
-				{
-					for (i = 0; i < MAX_A_IDX ; i++)
-					{
+				else if (tk > 0 && prefix(token[1], "reset!")) {
+					for (i = 0; i < MAX_A_IDX ; i++) {
 						a_info[i].cur_num = 0;
 						a_info[i].known = FALSE;
 					}
 					msg_print(Ind, "All the artifacts are \377rfindable\377w!");
-				}
-				else if (tk > 0 && prefix(token[1], "ban!"))
-				{
-					for (i = 0; i < MAX_A_IDX ; i++)
-					{
+				} else if (tk > 0 && prefix(token[1], "ban!")) {
+					for (i = 0; i < MAX_A_IDX ; i++) {
 						a_info[i].cur_num = 1;
 						a_info[i].known = TRUE;
 					}
 					msg_print(Ind, "All the artifacts are \377runfindable\377w!");
-				}
-				else
-				{
+				} else {
 					msg_print(Ind, "Usage: /artifact (No. | (show | fix | reset! | ban!)");
 				}
 				return;
@@ -3524,12 +3506,9 @@ void do_slash_cmd(int Ind, char *message)
 			{
 				bool done = FALSE;
 				monster_race *r_ptr;
-				for (k = 1; k <= tk; k++)
-				{
-					if (prefix(token[k], "unseen"))
-					{
-						for (i = 0; i < MAX_R_IDX - 1 ; i++)
-						{
+				for (k = 1; k <= tk; k++) {
+					if (prefix(token[k], "unseen")) {
+						for (i = 0; i < MAX_R_IDX - 1 ; i++) {
 							r_ptr = &r_info[i];
 							if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
 
@@ -3537,14 +3516,11 @@ void do_slash_cmd(int Ind, char *message)
 						}
 						msg_print(Ind, "All the uniques are set as '\377onot seen\377'.");
 						done = TRUE;
-					}
-					else if (prefix(token[k], "nonkill"))
-					{
+					} else if (prefix(token[k], "nonkill")) {
 						monster_race *r_ptr;
-						for (i = 0; i < MAX_R_IDX - 1 ; i++)
-						{
+						for (i = 0; i < MAX_R_IDX - 1 ; i++) {
 							r_ptr = &r_info[i];
-						if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
+							if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
 
 							r_ptr->r_tkills = 0;
 						}
@@ -3555,47 +3531,34 @@ void do_slash_cmd(int Ind, char *message)
 				if (!done) msg_print(Ind, "Usage: /unique (unseen | nonkill)");
 				return;
 			}
-			else if (prefix(message, "/uninum"))
-			{
-				if (k)
-				{
+			else if (prefix(message, "/uninum")) {
+				if (k) {
 					if (!(r_info[k].flags1 & RF1_UNIQUE)) return;
-					if (r_info[k].max_num)
-					{
+					if (r_info[k].max_num) {
 						r_info[k].max_num = 0;
 						msg_format(Ind, "Monster %d is now \377Gunfindable\377w.", k);
-					}
-					else
-					{
+					} else {
 						r_info[k].max_num = 1;
 						msg_format(Ind, "Monster %d is now \377rfindable\377w.", k);
 					}
-				}
-				else
-				{
+				} else {
 					msg_print(Ind, "Usage: /uninum <monster_index>");
 				}
 				return;
 			}
-			else if (prefix(message, "/unizero"))
-			{
-				if (k)
-				{
+			else if (prefix(message, "/unizero")) {
+				if (k) {
 					if (!(r_info[k].flags1 & RF1_UNIQUE)) return;
 					r_info[k].r_tkills = 0;
 					msg_format(Ind, "Monster %d kill count reset to \377G0\377w.", k);
-				}
-				else
-				{
+				} else {
 					msg_print(Ind, "Usage: /unizero <monster_index>");
 				}
 				return;
 			}
 			else if (prefix(message, "/reload-config") ||
-					prefix(message, "/cfg"))
-			{
-				if (tk)
-				{
+			    prefix(message, "/cfg")) {
+				if (tk) {
 					if (MANGBAND_CFG != NULL) string_free(MANGBAND_CFG);
 					MANGBAND_CFG = string_make(token[1]);
 				}
@@ -3721,8 +3684,7 @@ void do_slash_cmd(int Ind, char *message)
 			{
 				if (tk) admin_outfit(Ind, k);
 //				else admin_outfit(Ind, -1);
-				else
-				{
+				else {
 					msg_print(Ind, "usage: /eq (realm no.)");
 					msg_print(Ind, "    Mage(0) Pray(1) sorc(2) fight(3) shad(4) hunt(5) psi(6) None(else)");
 				}
@@ -3731,14 +3693,12 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/uncurse") ||
-					prefix(message, "/unc"))
-			{
+			    prefix(message, "/unc")) {
 				remove_all_curse(Ind);
 				return;
 			}
 			/* do a wilderness cleanup */
-			else if (prefix(message, "/purgewild")) 
-			{
+			else if (prefix(message, "/purgewild")) {
 				msg_format(Ind, "previous server status: m_max(%d) o_max(%d)",
 						m_max, o_max);
 				compact_monsters(0, TRUE);
@@ -3754,13 +3714,10 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/store"))
 			{
 				store_turnover();
-				if (tk && prefix(token[1], "owner"))
-				{
-					for(i=0;i<numtowns;i++)
-					{
+				if (tk && prefix(token[1], "owner")) {
+					for (i = 0; i < numtowns; i++) {
 //						for (k = 0; k < MAX_BASE_STORES - 2; k++)
-						for (k = 0; k < max_st_idx; k++)
-						{
+						for (k = 0; k < max_st_idx; k++) {
 							/* Shuffle a random shop (except home and auction house) */
 							store_shuffle(&town[i].townstore[k]);
 						}
@@ -3800,13 +3757,11 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			/* take 'cheezelog'
 			 * result is output to the logfile */
-			else if (prefix(message, "/cheeze")) 
-			{
-				char    path[MAX_PATH_LENGTH];
+			else if (prefix(message, "/cheeze")) {
+				char path[MAX_PATH_LENGTH];
 				object_type *o_ptr;
-				for(i=0;i<o_max;i++)
-				{
-					o_ptr=&o_list[i];
+				for (i = 0; i < o_max; i++) {
+					o_ptr = &o_list[i];
 					cheeze(o_ptr);
 				}
 
@@ -3818,8 +3773,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			/* Respawn monsters on the floor
 			 * TODO: specify worldpos to respawn */
-			else if (prefix(message, "/respawn")) 
-			{
+			else if (prefix(message, "/respawn")) {
 				/* Set the monster generation depth */
 				monster_level = getlevel(&p_ptr->wpos);
 				if (p_ptr->wpos.wz)
@@ -3881,7 +3835,8 @@ void do_slash_cmd(int Ind, char *message)
 				else msg_print(Ind, "artifact generation is currently allowed");
 				return;
 			}
-			else if (prefix(message, "/debug-town")){
+#if 0 /* until it's needed again */
+			else if (prefix(message, "/swap-towns")){
 				/* C. Blue's mad debug code to swap Minas Anor
 				   and Khazad-Dum on the worldmap :) */
 				struct town_type tmptown;
@@ -3891,7 +3846,15 @@ void do_slash_cmd(int Ind, char *message)
 				town[2].y = town[4].y;
 				town[4].x = tmptown.x;
 				town[4].y = tmptown.y;
-				
+				return;
+			}
+#endif
+			else if (prefix(message, "/debug-towns")){
+				msg_format(Ind, "numtowns = %d", numtowns);
+				for (i = 0; i < numtowns; i++) {
+					msg_format(Ind, "%d: type = %d, x = %d, y = %d",
+					    i, town[i].type, town[i].x, town[i].y);
+				}
 				return;
 			}
 			else if (prefix(message, "/debug-stair")){
@@ -4648,9 +4611,9 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				msg_print(Ind, "Trying to load map..");
-//                                process_dungeon_file(format("t_%s.txt", message3), &p_ptr->wpos, &ystart, &xstart, 20+1, 32+34, TRUE);
-                                process_dungeon_file(format("t_%s.txt", message3), &p_ptr->wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
-
+//				process_dungeon_file(format("t_%s.txt", message3), &p_ptr->wpos, &ystart, &xstart, 20+1, 32+34, TRUE);
+				process_dungeon_file(format("t_%s.txt", message3), &p_ptr->wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
+				wpos_apply_season_daytime(&p_ptr->wpos, getcave(&p_ptr->wpos));
 				msg_print(Ind, "done.");
 				return;
 			}
@@ -4950,6 +4913,7 @@ void do_slash_cmd(int Ind, char *message)
 				o_ptr = &p_ptr->inventory[k];
 				o_ptr->owner = 0;
 				o_ptr->mode = 0;
+				p_ptr->window |= PW_INVEN;
 				return;
 			}
 			else if (prefix(message, "/erasehashtableid")) { /* erase a player id in case there's a duplicate entry in the hash table - mikaelh */
@@ -5743,14 +5707,16 @@ void do_slash_cmd(int Ind, char *message)
 #ifdef TEST_SERVER
 			else if (prefix(message, "/testdam")) {
 				if (tk) {
-					p_ptr->test_count = p_ptr->test_dam = 0;
-					msg_print(Ind, "test count and dam have been reset.");
+					p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = 0;
+					msg_print(Ind, "test count/dam/heal have been reset.");
 				} else {
 					if (p_ptr->test_count == 0)
-						msg_print(Ind, "test count 0 with total dam 0. no average.");
+						msg_print(Ind, "test count 0. no result.");
 					else
-						msg_format(Ind, "test count %d with total dam %d. average: %d.",
-						    p_ptr->test_count, p_ptr->test_dam, p_ptr->test_dam / p_ptr->test_count);
+						msg_format(Ind, "test count %d - tot dam %d, avg %d - tot heal %d, avg %d",
+						    p_ptr->test_count,
+						    p_ptr->test_dam, p_ptr->test_dam / p_ptr->test_count,
+						    p_ptr->test_heal, p_ptr->test_heal / p_ptr->test_count);
 				}
 				return;
 			}

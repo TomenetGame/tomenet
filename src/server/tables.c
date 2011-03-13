@@ -616,46 +616,6 @@ byte adj_str_td[] =
  */
 byte adj_dex_th[] =
 {
-#if 0 /* addition */
-	128 + -3	/* 3 */,
-	128 + -2	/* 4 */,
-	128 + -2	/* 5 */,
-	128 + -1	/* 6 */,
-	128 + -1	/* 7 */,
-	128 + 0	/* 8 */,
-	128 + 0	/* 9 */,
-	128 + 0	/* 10 */,
-	128 + 0	/* 11 */,
-	128 + 0	/* 12 */,
-	128 + 0	/* 13 */,
-	128 + 0	/* 14 */,
-	128 + 0	/* 15 */,
-	128 + 1	/* 16 */,
-	128 + 2	/* 17 */,
-	128 + 3	/* 18/00-18/09 */,
-	128 + 3	/* 18/10-18/19 */,
-	128 + 3	/* 18/20-18/29 */,
-	128 + 3	/* 18/30-18/39 */,
-	128 + 3	/* 18/40-18/49 */,
-	128 + 4	/* 18/50-18/59 */,
-	128 + 4	/* 18/60-18/69 */,
-	128 + 4	/* 18/70-18/79 */,
-	128 + 4	/* 18/80-18/89 */,
-	128 + 5	/* 18/90-18/99 */,
-	128 + 6	/* 18/100-18/109 */,
-	128 + 7	/* 18/110-18/119 */,
-	128 + 8	/* 18/120-18/129 */,
-	128 + 9	/* 18/130-18/139 */,
-	128 + 9	/* 18/140-18/149 */,
-	128 + 10	/* 18/150-18/159 */,
-	128 + 11	/* 18/160-18/169 */,
-	128 + 12	/* 18/170-18/179 */,
-	128 + 13	/* 18/180-18/189 */,
-	128 + 14	/* 18/190-18/199 */,
-	128 + 15	/* 18/200-18/209 */,
-	128 + 16	/* 18/210-18/219 */,
-	128 + 17	/* 18/220+ */
-#else /* multiplication (percent) */
 	20	/* 3 */,
 	30	/* 4 */,
 	40	/* 5 */,
@@ -694,7 +654,6 @@ byte adj_dex_th[] =
 	129	/* 18/200-18/209 */,
 	129	/* 18/210-18/219 */,
 	130	/* 18/220+ */
-#endif
 };
 
 
@@ -932,49 +891,6 @@ byte adj_str_blow[] =
 /*
  * Stat Table (STR) -- orientation for create_reward, concerning armor weight
  */
-#if 0
-byte adj_str_armor[] =
-{
-	2	/* 3 */,
-	2	/* 4 */,
-	2	/* 5 */,
-	2	/* 6 */,
-	3	/* 7 */,
-	3	/* 8 */,
-	4	/* 9 */,
-	4	/* 10 */,
-	5	/* 11 */,
-	5	/* 12 */,
-	7	/* 13 */,
-	9	/* 14 */,
-	11	/* 15 */,
-	12	/* 16 */,
-	14	/* 17 */,
-	15 /* 18/00-18/09 */,
-	16 /* 18/10-18/19 */,
-	18 /* 18/20-18/29 - 200 is max. weight for TV_SOFT_ARMOR */,
-	20 /* 18/30-18/39 - 200 is min. weight for TV_HARD_ARMOR */,
-	21 /* 18/40-18/49 */,
-	22 /* 18/50-18/59 */,
-	23 /* 18/60-18/69 */,
-	24 /* 18/70-18/79 */,
-	25 /* 18/80-18/89 */,
-	26 /* 18/90-18/99 */,
-	27 /* 18/100-18/109 */,
-	28 /* 18/110-18/119 */,
-	29 /* 18/120-18/129 */,
-	30 /* 18/130-18/139 */,
-	31 /* 18/140-18/149 */,
-	32 /* 18/150-18/159 */,
-	33 /* 18/160-18/169 */,
-	34 /* 18/170-18/179 */,
-	35 /* 18/180-18/189 */,
-	36 /* 18/190-18/199 */,
-	37 /* 18/200-18/209 */,
-	38 /* 18/210-18/219 */,
-	50 /* 18/220+ - 500 is just a limit value in create_reward() */
-};
-#else
 byte adj_str_armor[] =
 {
 	2	/* 3 */,
@@ -1016,7 +932,6 @@ byte adj_str_armor[] =
 	50 /* 18/210-18/219 */,
 	50 /* 18/220+ - 500 is just a limit value in create_reward() */
 };
-#endif
 
 
 /*
@@ -1559,7 +1474,7 @@ player_race race_info[MAX_RACE] =
         {
                 "Half-Elf",
                 { -1,  1,  0,  1, -1,  1 },
-                2,  3,  3,  1, 6,  11, -1,  5,
+                2,  5,  3,  1, 6,  11, -1,  5,
                 9,  110,
                 24, 16,
                 66,  6, 130, 15,
@@ -1601,7 +1516,7 @@ player_race race_info[MAX_RACE] =
         {
                 "Elf",
                 { -1,  2,  1,  1, -2,  2 },
-                5,  6,  6,  1, 8,  12, -5, 15,
+                5,  6,  6,  2, 8,  12, -5, 15,
                 8,  120,
                 75, 75,
                 60,  4, 100,  6,
@@ -1669,7 +1584,7 @@ player_race race_info[MAX_RACE] =
         {
                 "Hobbit",
                 { -2,  2,  1,  3,  0,  1 },
-                15, 18, 18, 4, 12,  15, -10, 20,
+                15, 12, 18, 4, 12,  15, -10, 20,
 //                7,  110,
                 7,  115,
                 21, 12,
@@ -1724,7 +1639,7 @@ player_race race_info[MAX_RACE] =
         {
                 "Gnome",
                 { -1,  2,  0,  2,  1, -2 },
-                10, 12, 12,  3, 6,  13, -8, 12,
+                10, 18, 12,  3, 6,  13, -8, 12,
                 8,  125,
                 50, 40,
                 42,  3, 90,  6,
@@ -1840,15 +1755,9 @@ player_race race_info[MAX_RACE] =
                                 '+', 50,
                         },
                         {
-#if 0
-                                SKILL_COMBAT,
-                                '+', 0,
-                                '%', 120,
-#else
                                 SKILL_MASTERY,
                                 '+', 0,
                                 '%', 115,
-#endif
                         },
                         {
                                 SKILL_NECROMANCY,
@@ -1946,7 +1855,7 @@ player_race race_info[MAX_RACE] =
         {
                 "Dunadan",
                 {  1,  2,  2,  2,  3,  2 },
-                4,  5,  5,  0, 3, 13, 15, 10,
+                4,  3,  5,  0, 3, 13, 15, 10,
                 10,  170,
                 50, 20,
                 82, 5, 190, 20,
@@ -2035,13 +1944,6 @@ player_race race_info[MAX_RACE] =
                                 '+', 2000,
                                 '+', 150,
                         },
-#if 0 /* these guys don't sneak */
-                        {
-                                SKILL_SNEAKINESS,
-                                '+', 2000,
-                                '+', 100,
-                        },
-#endif
                         {
                                 SKILL_CLIMB,
                                 '+', 0,
@@ -2140,7 +2042,7 @@ player_race race_info[MAX_RACE] =
         {
                 "Ent",
                 { 8, -4, +2, -4,  8, -4 },
-                5, 0, 20, -6, 5, 4, 15, 5,
+                -4, 0, 20, -6, 5, 4, 15, 5,
                 14, 320,
                 255, 70,
                 72, 6, 100, 25,
@@ -2212,12 +2114,12 @@ player_race race_info[MAX_RACE] =
 //		  {  6,  2,  -2,  1,  3,  5 },
 //		  {  6,  2,  1,  1,  3,  5 },
 		  {  4,  2,  2,  1,  3,  2 },
-                6,  0,  10,  -10,  30,  10,  15,  5,
+                0,  0,  10,  -10,  30,  10,  15,  5,
                 12,  350,
                 14,  6,
                 180,  6, 255, 25,
                 150,  4, 230, 20,
-                0,
+                5,
 //                0xF6F,  111101101111 -> 111101101111
 //		0xF6F,
 		CFW+CFI+CFP+CFM+CFA+CFN+CFX+CFD+CFS+CFU+CFC,
@@ -2265,12 +2167,12 @@ player_race race_info[MAX_RACE] =
         {
                 "Dark-Elf",
                 {  0,  2, 1,  3,  1,  -6 },
-                0,  3, 6,  4, 10, 6, 15, 15,
-                10,  140,
+                7,  3, 6,  4, 10, 6, 15, 15,
+                10,  150,
                 100, 30,
                 90, 10, 180, 20,
                 82, 10, 180, 15,
-                5,
+                8,
 //                0xF77, 111101110111 -> 111011101111
 //		0xEEF,
 //		0xF7F,
@@ -2323,7 +2225,7 @@ player_race race_info[MAX_RACE] =
         {
                 "Vampire",
                 {  2,  0, -3,  -1,  0,  -6 },
-                -4,  0, 20,  2,  -4, 13, 10, -10,
+                -2,  3, 20,  2,  -4, 13, 10, -10,
 //                11,  240,
                 11,  220,
                 100, 30,
@@ -2376,19 +2278,11 @@ player_race race_info[MAX_RACE] =
                                 '+', 0,
                                 '%', 0,
                         },
-#if 0
-                        {
-                                SKILL_MIMIC,
-                                '+', 0,
-                                '%', 0,
-                        },
-#else
                         {
                                 SKILL_MIMIC, /* polymorph to vampire bat and maybe vampiric mist */
                                 '+', 1000,
                                 '%', 0,
                         },
-#endif
                         {
                                 SKILL_ANTIMAGIC, /* keep mimicry usable for bat form. vampires believe! for now at least... */
                                 '%', 0,
@@ -2591,7 +2485,7 @@ Nothing here that truly heals/buffs people (those bonus are to self only). They 
 62.D: No idea about the amount of work required.
 */
                 { 2,  3, 3,  1,  1, 2 }, //boosted int/wisdom/dex
-                3, 5, 3, 0,  5, 1, 15, 5,
+                3, 20, 3, 0,  5, 1, 15, 5,
 		10, 380,//too low == bad since you need the quest mobs
 		255, 250,
                 180, 20, 180, 20,
@@ -2611,28 +2505,6 @@ Only 70%-ify the skills that could potentially be updated when the player mutate
 				'+', 1000,
 				'+', 1000,
 			},
-#if 0
-                        {
-                                SKILL_SLING,
-                                '+', 0,
-                                '%', 70,
-                        },
-                        {
-                                SKILL_BOW,
-                                '+', 0,
-                                '%', 70,
-                        },
-                        {
-                                SKILL_XBOW,
-                                '+', 0,
-                                '%', 70,
-                        },
-                        {
-                                SKILL_BOOMERANG,
-                                '+', 0,
-                                '%', 70,
-                        },
-#endif
                         {
                                 SKILL_HOFFENSE,
                                 '+', 0,
@@ -2845,13 +2717,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 800,
                         },
-#if 0
-                        {
-                                SKILL_ARCHERY,
-                                '+', 1000,
-                                '+', 500,
-                        },
-#endif
                         {
                                 SKILL_BOW,
                                 '+', 0,
@@ -2948,25 +2813,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '%', 120,
                         },
-#if 0
-                        {
-                                SKILL_TRAINING,
-                                '+', 3000,
-                                '+', 1000,
-                        },
-#endif
                         {
                                 SKILL_DIG,
                                 '+', 1000,
                                 '+', 1200,
                         },
-#if 0
-                        {
-                                SKILL_CALMNESS,
-                                '+', 0,
-                                '+', 600,
-                        },
-#endif
                         {
                                 SKILL_INTERCEPT,
                                 '+', 1000,
@@ -3031,13 +2882,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 800,
                         },
-#if 0
-                        {
-                                SKILL_TRAINING,
-                                '+', 3000,
-                                '+', 700,
-                        },
-#endif
                         {
                                 SKILL_DIG,
                                 '+', 0,
@@ -3203,13 +3047,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 900,
                         },,*/
-#if 0 /* not needed any more - only for Istari ! */
-                        {
-                                SKILL_META,
-                                '+', 3000,
-                                '+', 1000,
-                        },
-#endif
                         {
                                 SKILL_HOFFENSE,
                                 '+', 0,
@@ -3256,13 +3093,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 1000,
                         },
-#if 0
-                        {
-                                SKILL_TRAINING,
-                                '+', 3000,
-                                '+', 1000,
-                        },
-#endif
                         {
                                 SKILL_DIG,
                                 '+', 0,
@@ -3323,13 +3153,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 900,
                         },
-#if 0
-                        {
-                                SKILL_ARCHERY,
-                                '+', 0,
-                                '+', 800,
-                        },
-#endif
                         {
                                 SKILL_BOW,
                                 '+', 0,
@@ -3350,13 +3173,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 450,
                         },
-#if 0
-                        {
-                                SKILL_HUNTING,
-                                '+', 0,
-                                '+', 400,
-                        },
-#endif
                         {
                                 SKILL_MARTIAL_ARTS,
                                 '+', 0,
@@ -3378,13 +3194,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 750,
                         },
-#if 0
-                        {
-                                SKILL_TEMPORAL,
-                                '+', 0,
-                                '+', 750,
-                        },
-#endif
                         {
                                 SKILL_AIR,
                                 '+', 0,
@@ -3480,13 +3289,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '%', 120,
                         },
-#if 0
-                        {
-                                SKILL_TRAINING,
-                                '+', 3000,
-                                '+', 1000,
-                        },
-#endif
                         {
                                 SKILL_DIG,
                                 '+', 0,
@@ -3553,13 +3355,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 630,
                         },
-#if 0
-                        {
-                                SKILL_ARCHERY,
-                                '+', 1000,
-                                '+', 600,
-                        },
-#endif
                         {
                                 SKILL_BOW,
                                 '+', 0,
@@ -3738,13 +3533,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 700,
                         },
-#if 0
-                        {
-                                SKILL_HUNTING,
-                                '+', 1000,
-                                '+', 800,
-                        },
-#endif
                         {
                                 SKILL_DEVICE,
                                 '+', 1000,
@@ -3809,13 +3597,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 1000,
                         },
-#if 0
-                        {
-                                SKILL_TRAINING,
-                                '+', 3000,
-                                '+', 1000,
-                        },
-#endif
                         {
                                 SKILL_DIG,
                                 '+', 0,
@@ -3884,13 +3665,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 750,
                         },
-#if 0
-                        {
-                                SKILL_ARCHERY,
-                                '+', 1000,
-                                '+', 600,
-                        },
-#endif
                         {
                                 SKILL_BOW,
                                 '+', 0,
@@ -3928,13 +3702,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 700,
                         },*/
-#if 0 /* not needed any more - only for Istari ! */
-                        {
-                                SKILL_META,
-                                '+', 2000,
-                                '+', 900,
-                        },
-#endif
                         {
                                 SKILL_HOFFENSE,
                                 '+', 0,
@@ -3988,13 +3755,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 2000,
                                 '+', 1000,
                         },
-#if 0
-                        {
-                                SKILL_TRAINING,
-                                '+', 2000,
-                                '+', 900,
-                        },
-#endif
                         {
                                 SKILL_DIG,
                                 '+', 1000,
@@ -4113,13 +3873,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 700,
                         },
-#if 0 /* Let's keep sorcery for sorcerors */
-                        {
-                                SKILL_SORCERY,
-                                '+', 0,
-                                '+', 150,	/* 300; 250 was 'safer' */
-                        },
-#endif
                         {
                                 SKILL_SPELL,
                                 '+', 0,
@@ -4182,40 +3935,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 700,//600,//800
                         },
 #endif
-#if 0
-                        {
-                                SKILL_UDUN,
-                                '+', 0,
-                                '+', 600,//800,600
-                        },
-#endif
-                        /* Necromancy tree */	/* the_sandman: was all 0.5 before. increased to 1.0 - except AM */
-                        {
-                                SKILL_NECROMANCY,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_TRAUMATURGY,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_FEAR,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_SHIVER,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_DEATH,
-                                '+', 0,
-                                '+', 1000,
-                        },
-
                         {
                                 SKILL_DEVICE,
                                 '+', 1000,
@@ -4258,13 +3977,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '%', 120,
                         },
-#if 0
-                        {
-                                SKILL_TRAINING,
-                                '+', 3000,
-                                '+', 1000,
-                        },
-#endif
                         {
                                 SKILL_DIG,
                                 '+', 1000,
@@ -4301,7 +4013,7 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_MASTERY,
-                                '+', 1000,
+                                '+', 0,//1000,
                                 '+', 600,
                         },
                         {
@@ -4309,27 +4021,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 0,
                         },
-#if 0
-#ifdef DUAL_WIELD /* not sure */
-                        { /* dual-wield */
-                                SKILL_DUAL,
-                                '+', 1000,
-                                '+', 0,
-                        },
-#endif
-#endif
                         {
                                 SKILL_SWORD,
                                 '+', 0,
                                 '+', 550,
                         },
-#if 0 /* rogues-only */
-                        {
-                                SKILL_CRITS,
-                                '+', 0,
-                                '+', 450,
-                        },
-#endif
                         {
                                 SKILL_AXE,
                                 '+', 0,
@@ -4345,13 +4041,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 500,
                         },
-#if 0
-                        {
-                                SKILL_ARCHERY,
-                                '+', 0,
-                                '+', 400,//650
-                        },
-#endif
                         {
                                 SKILL_SLING,
                                 '+', 1000,
@@ -4383,12 +4072,12 @@ player_class class_info[MAX_CLASS] =
                         /* Magic tree */
                         {
                                 SKILL_MAGIC,
-                                '+', 2000,
+                                '+', 0,//2000,
                                 '+', 600,
                         },
                         {
                                 SKILL_CONVEYANCE,
-                                '+', 1000,
+                                '+', 0,//1000,
                                 '+', 650,
                         },
                         {
@@ -4396,13 +4085,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 1100,
                         },
-#if 0 /* Sorcery only for sorcerors.. (same as goes for Rangers) */
-                        {
-                                SKILL_SORCERY,
-                                '+', 0,
-                                '+', 150,	/* 300; 250 was 'safer' */
-                        },
-#endif
                         {
                                 SKILL_SPELL,
                                 '+', 0,
@@ -4412,7 +4094,7 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_MANA,
-                                '+', 1000,
+                                '+', 0, //1000,
                                 '+', 500,//600, //500
                         },
                         {
@@ -4437,7 +4119,7 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_NATURE,
-                                '+', 1000,
+                                '+', 0, //1000,
                                 '+', 700,
                         },
                         {
@@ -4445,13 +4127,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 500,//600, //500
                         },
-#if 0
-                        {
-                                SKILL_UDUN,
-                                '+', 0,
-                                '+', 300,//500, //450
-                        },
-#endif
                         {
                                 SKILL_META,
                                 '+', 0,
@@ -4586,16 +4261,9 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_TRAPPING,
-                                '+', 0,
+                                '+', 1000,//0,
                                 '+', 900,//600,
                         },
-#if 0 /* it's a rogue-only skill actually, exception for runemasters - C. Blue */
-                        {
-                                SKILL_BACKSTAB,
-                                '+', 0,
-                                '+', 500,
-                        },
-#endif
                         {
                                 SKILL_STEALTH,
                                 '+', 1000,
@@ -4654,13 +4322,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '%', 140,
                         },
-#if 0
-                        {
-                                SKILL_TRAINING,
-                                '+', 3000,
-                                '+', 1000,
-                        },
-#endif
                         {
                                 SKILL_DIG,
                                 '+', 1000,
@@ -4703,13 +4364,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 0,
                         },
-#if 0
-                        {
-                                SKILL_ARCHERY,
-                                '+', 1000,
-                                '+', 700,
-                        },
-#endif
                         {
                                 SKILL_SLING,
                                 '+', 0,
@@ -4760,16 +4414,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 1100, //900,
                         },
-#if 0
-                        {
-                            SKILL_DRUID_ARCANE,
-                            '+', 1000, '+', 2500,
-                        },
-                        {
-                            SKILL_DRUID_PHYSICAL,
-                            '+', 1000, '+', 2500,
-                        },
-#else
                         {
                             SKILL_DRUID_ARCANE,
                             '+', 1000, '+', 1200, //1500,
@@ -4778,7 +4422,6 @@ player_class class_info[MAX_CLASS] =
                             SKILL_DRUID_PHYSICAL,
                             '+', 1000, '+', 1200, //1500,
                         },
-#endif
                         {
                                 SKILL_MIMIC,
                                 '+', 1000,
@@ -4825,13 +4468,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '%', 120,
                         },
-#if 0
-                        {
-                                SKILL_TRAINING,
-                                '+', 3000,
-                                '+', 1000,
-                        },
-#endif
                         {
                                 SKILL_DIG,
                                 '+', 1000,
@@ -4852,77 +4488,16 @@ player_class class_info[MAX_CLASS] =
 		 0, 11, 10,  0,  3,  5, 20,  5,
 		3, 45, //4, 30
                 {
-#if 0 /* fighting shamans, rivalling priests/paladins/rangers */
-                        /* Combat tree */
+#if 0 /* mimicmage/mimicpriest/mimicmagepriest pure caster shaman as actually intended */
                         {
                                 SKILL_COMBAT,
                                 '+', 0,
-                                '+', 900,//900: not nerfed, although priests=750,istari=300, bc shamans are also fighters(?)
+                                '+', 300,//priests=750,istari=300
                         },
-                        {
-                                SKILL_MASTERY,
-                                '+', 0,
-                                '+', 400,//600
-                        },
-                        {
-                                SKILL_AXE,
-                                '+', 0,
-                                '+', 400,
-                        },
-                        {
-                                SKILL_BLUNT,
-                                '+', 0,
-                                '+', 400,
-                        },
-/* #ifdef RPG_SERVER */
-			{
-				SKILL_POLEARM,
-				'+', 0,
-				'+', 400,
-			},
-/* #endif */
-#if 0
-                        {
-                                SKILL_ARCHERY,
-                                '+', 1000,
-                                '+', 600,
-                        },
-#endif
-		/*ranged weapon skills shouldnt be better than "Mimic" class. more like "Istar" which has none at all.*/
-                        {
-                                SKILL_SLING,
-                                '+', 1000,
-                                '+', 250,//400
-                        },
-#if 0
-                        {
-                                SKILL_BOW,
-                                '+', 0,
-                                '+', 300,
-                        },
-                        {
-                                SKILL_XBOW,
-                                '+', 0,
-                                '+', 300,
-                        },
-#endif
-                        {
-                                SKILL_BOOMERANG,
-                                '+', 1000,
-                                '+', 250,//400,
-                        },
-                        {
-                                /* let's keep it low for now - offbalancing */
-                                SKILL_MARTIAL_ARTS,
-                                '+', 0,
-                                '+', 400,
-                        },
-
-                        /* Magic tree */
                         {
                                 SKILL_MAGIC,
                                 '+', 2000,
-                                '+', 500,
+                                '+', 1000,
                         },
                         {
                                 SKILL_CONVEYANCE,
@@ -4974,17 +4549,10 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 1000,
                         },
-#if 1
-                        {
-                                SKILL_TEMPORAL,
-                                '+', 0,
-                                '+', 800,
-                        },
-#endif
                         {
                                 SKILL_UDUN,
                                 '+', 0,
-                                '+', 1000,
+                                '+', 900,
                         },
                         {
                                 SKILL_META,
@@ -4999,27 +4567,22 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_HOFFENSE,
                                 '+', 1000,
-//				'+', 900,
-				'+', 1000,
+				'+', 900,
 			},
 			{
                                 SKILL_HDEFENSE,
                                 '+', 0,
-//                                '+', 900,
-                                '+', 1000,
+				'+', 900,
                         },
                         {
                                 SKILL_HCURING,
                                 '+', 0,
-//                                '+', 1000,
-//                                '+', 1100,
-                                '+', 1000,
+				'+', 900,
                         },
                         {
                                 SKILL_HSUPPORT,
                                 '+', 0,
-//                                '+', 900,
-                                '+', 1000,
+				'+', 900,
                         },
                         {
                                 SKILL_MIMIC,
@@ -5027,11 +4590,10 @@ player_class class_info[MAX_CLASS] =
                                 '+', 800,
 				/* only: giant, dragon, animal, ghost, elemental, DR */
                         },
-
                         /* Sneakiness tree */
                         {
                                 SKILL_SNEAKINESS,
-                                '+', 1000,
+                                '+', 0,
                                 '+', 400,
                         },
                         {
@@ -5072,31 +4634,19 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 1000,
                         },
-#if 0
-                        {
-                                SKILL_TRAINING,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-#endif
                         {
                                 SKILL_DIG,
                                 '+', 1000,
                                 '+', 1000,
                         },
-						/* Misc tree */
+			/* Misc tree - let's keep it actually! */
                         {
                                 SKILL_CALMNESS,
                                 '+', 0,
                                 '+', 900,
                         },
-                        {
-                                SKILL_INTERCEPT,
-                                '+', 0,
-                                '+', 500,
-                        },
-#else /* mimicmage/mimicpriest/mimicmagepriest pure caster shaman */
-			/* melee fighting skills */
+#else /* fighting shamans, rivalling priests/paladins/rangers - currently enabled \
+	 since offensive spells are lacking, until spell system gets reworked */
                         {
                                 SKILL_AXE,
                                 '+', 0,
@@ -5113,7 +4663,6 @@ player_class class_info[MAX_CLASS] =
 				'+', 400,
 			},
                         {
-                                /* let's keep it low for now - offbalancing */
                                 SKILL_MARTIAL_ARTS,
                                 '+', 0,
                                 '+', 400,
@@ -5276,13 +4825,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 1000,
                         },
-#if 0
-                        {
-                                SKILL_TRAINING,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-#endif
                         {
                                 SKILL_DIG,
                                 '+', 1000,
@@ -5594,18 +5136,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 250,
                         },
-#if 0
-                        {
-                                SKILL_BOW,
-                                '+', 0,
-                                '+', 300,
-                        },
                         {
                                 SKILL_XBOW,
                                 '+', 0,
                                 '+', 300,
                         },
-#endif
                         {
                                 SKILL_BOOMERANG,
                                 '+', 1000,
@@ -5703,13 +5238,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 1000,
                         },
-#if 0
-                        {
-                                SKILL_TRAINING,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-#endif
                         {
                                 SKILL_DIG,
                                 '+', 1000,
@@ -5959,47 +5487,17 @@ cptr player_title[MAX_CLASS][11][4] =
 {
 	/* Warrior */
 	{
-#if 0
-                {"Rookie", "Rookie", },
-		{"Mercenary", "Mercenary", },
-		{"Soldier", "Soldier", },
-		{"Captain", "Captain", },
-		{"Veteran", "Veteran", },
-		{"Champion", "Champion", },
-		{"General", "General", },
-		{"Hero", "Hero", },
-		{"Baron", "Baroness", },
-		{"Duke", "Duchess", },
-		{"Lord", "Lady", },                                                                                                               
-
-		{"Private","Private",},
-		{"Cadet","Cadet",},
-		{"Veteran","Veteran",},
-		{"Lieutenant","Lieutenant",},
-		{"Captain","Captain",},
-		{"Major","Major",},
-		{"Colonel","Colonel",},
-		{"Brigadier","Brigadier",},
-		{"Major General","Major General",},
-		{"Field Marshal","Field Marshal",},
-		{"General","General",},
-#else 
-	/* tried to get best of both worlds: consistant military ranking combined with actually cool rank names... 
-	'Champion' and 'Hero' might get recycled elsewhere */
                 {"Rookie", "Rookie", "Rookie", "Rookie", },
 		{"Mercenary", "Mercenary", "Mercenary", "Mercenary", },
 		{"Soldier", "Soldier", "Soldier", "Soldier", },
 		{"Veteran", "Veteran", "Veteran", "Veteran", },
 		{"Captain", "Captain", "Captain", "Captain", },
-/*		{"Major","Major",},
-		{"Colonel","Colonel",}, these two we took out again since they are from modern age, not fitting this theme */
 		{"Champion", "Champion", "Champion", "Champion", },
                 {"Hero", "Heroine", "Hero", "Heroine", },//heh they are back :)
 		{"General", "General", "General", "General", },
 		{"Baron", "Baroness", "Baron", "Baroness", },
 		{"Duke", "Duchess", "Duke", "Duchess", },
 		{"Lord", "Lady", "Lord", "Lady", },
-#endif
 	},
 
 	/* Istar */
@@ -6588,108 +6086,6 @@ cptr month_name[9] =
 
 	"Mettare",
 };
-
-#if 0	/* I'm too lazy to rewrite it; pls do if u care :) */
-/*
- * Description of GF_FOO
- */
-gf_name_type gf_names[] =
-{
-	{ GF_ELEC, "electricity" },
-	{ GF_POIS, "poison" },
-	{ GF_ACID, "acid" },
-	{ GF_COLD, "cold" },
-	{ GF_FIRE, "fire" },
-	{ GF_UNBREATH, "asphyxiating gas" },
-	{ GF_CORPSE_EXPL, "corpse explosion" },
-	{ GF_MISSILE, "missile" },
-	{ GF_ARROW, "arrow" },
-	{ GF_PLASMA, "plasma" },
-	{ GF_WAVE, "a tidal wave" },
-	{ GF_WATER, "water" },
-	{ GF_LITE, "light" },
-	{ GF_DARK, "darkness" },
-	{ GF_LITE_WEAK, "weak light" },
-	{ GF_DARK_WEAK, "weak darkness" },
-	{ GF_SHARDS, "shards" },
-	{ GF_SOUND, "sound" },
-	{ GF_CONFUSION, "confusion" },
-	{ GF_FORCE, "force" },
-	{ GF_INERTIA, "inertia" },
-	{ GF_MANA, "pure mana" },
-	{ GF_METEOR, "meteor" },
-	{ GF_ICE, "ice" },
-	{ GF_CHAOS, "chaos" },
-	{ GF_NETHER, "nether" },
-	{ GF_DISENCHANT, "disenchantment" },
-	{ GF_NEXUS, "nexus" },
-	{ GF_TIME, "time" },
-	{ GF_GRAVITY, "gravity" },
-	{ GF_KILL_WALL, "wall destruction" },
-	{ GF_KILL_DOOR, "door destruction" },
-	{ GF_KILL_TRAP, "trap destruction" },
-	{ GF_WALLS, "wall creation" },
-	{ GF_MAKE_DOOR, "door creation" },
-	{ GF_MAKE_TRAP, "trap creation" },
-	{ GF_OLD_CLONE, "clone" },
-	{ GF_OLD_POLY, "polymorph" },
-	{ GF_OLD_HEAL, "healing" },
-	{ GF_OLD_SPEED, "speed" },
-	{ GF_OLD_SLOW, "slowness" },
-	{ GF_OLD_CONF, "confusion" },
-	{ GF_OLD_SLEEP, "sleep" },
-	{ GF_OLD_DRAIN, "drain life" },
-	{ GF_AWAY_UNDEAD, "teleport away undead" },
-	{ GF_AWAY_EVIL, "teleport away evil" },
-	{ GF_AWAY_ALL, "teleport away" },
-	{ GF_TURN_UNDEAD, "scare undead" },
-	{ GF_TURN_EVIL, "scare evil" },
-	{ GF_TURN_ALL, "scare" },
-	{ GF_DISP_UNDEAD, "dispel undead" },
-	{ GF_DISP_EVIL, "dispel evil" },
-	{ GF_DISP_ALL, "dispel" },
-	{ GF_DISP_DEMON, "dispel demons" },
-	{ GF_DISP_LIVING, "dispel living creatures" },
-	{ GF_ROCKET, "rocket" },
-	{ GF_NUKE, "nuke" },
-	{ GF_MAKE_GLYPH, "glyph creation" },
-	{ GF_STASIS, "stasis" },
-	{ GF_STONE_WALL, "stone wall creation" },
-	{ GF_DEATH_RAY, "death ray" },
-	{ GF_STUN, "stunning" },
-	{ GF_HOLY_FIRE, "holy fire" },
-	{ GF_HELL_FIRE, "hellfire" },
-	{ GF_DISINTEGRATE, "disintegration" },
-	{ GF_CHARM, "charming" },
-	{ GF_CONTROL_UNDEAD, "undead control" },
-	{ GF_CONTROL_ANIMAL, "animal control" },
-	{ GF_PSI, "psionic energy" },
-	{ GF_PSI_DRAIN, "psionic drain" },
-	{ GF_TELEKINESIS, "telekinesis" },
-	{ GF_JAM_DOOR, "door jamming" },
-	{ GF_DOMINATION, "domination" },
-	{ GF_DISP_GOOD, "dispel good" },
-	{ GF_IDENTIFY, "identification" },
-	{ GF_RAISE, "raise dead" },
-	{ GF_STAR_IDENTIFY, "*identification*" },
-	{ GF_DESTRUCTION, "destruction" },
-	{ GF_STUN_CONF, "stunning and confusion" },
-	{ GF_STUN_DAM, "stunning and damage" },
-	{ GF_CONF_DAM, "confusion and damage" },
-	{ GF_STAR_CHARM, "*charming*" },
-	{ GF_IMPLOSION, "implosion" },
-	{ GF_LAVA_FLOW, "lava" },
-	{ GF_FEAR, "fear" },
-	{ GF_BETWEEN_GATE, "jumpgate creation" },
-	{ GF_WINDS_MANA, "" },
-	{ GF_DEATH, "death" },
-	{ GF_CONTROL_DEMON, "control demon" },
-	{ GF_RAISE_DEMON, "raise demon" },
-	{ GF_TRAP_DEMONSOUL, "*control demon*" },
-	{ GF_ATTACK, "projected melee attacks" },
-        { -1, NULL },
-};
-#endif	// 0
 
 
 /*

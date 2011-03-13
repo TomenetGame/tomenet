@@ -1339,8 +1339,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 
 	if (!(zcave=getcave(wpos))) return(FALSE);
 
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		player_type *q_ptr = Players[i];
 
 		/* Skip disconnected players */
@@ -1732,7 +1731,6 @@ bool make_attack_spell(int Ind, int m_idx) {
 	/* for shadow running */
 	int xs = x;
 	int ys = y;
-
 	/* Summon count */
 	int count = 0;
 
@@ -1740,27 +1738,19 @@ bool make_attack_spell(int Ind, int m_idx) {
 	if (p_ptr->shadow_running) scatter(wpos, &ys, &xs, y, x, 5, 0); 
 
 	bool blind = (p_ptr->blind ? TRUE : FALSE);
-
 	/* Extract the "within-the-vision-ness" */
 	bool visible = p_ptr->mon_vis[m_idx];
-
 	/* Extract the "see-able-ness" */
 	bool seen = !blind && visible;
-
 	/* Assume "normal" target */
 	bool normal = TRUE;
-
 	/* Assume "projectable" */
 	bool direct = TRUE;
-
 	bool stupid, summon = FALSE;
 	int rad = 0, srad;
-
 	//u32b f7 = race_inf(&m_list[m_idx])->flags7;
 	int s_clone = 0, clone_summoning = m_ptr->clone_summoning;
-
 //	int eff_m_hp;
-
 	/* To avoid TELE_TO from CAVE_ICKY pos on player outside */
 	cave_type **zcave;
 	/* Save the old location */
@@ -1768,7 +1758,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	int ox = m_ptr->fx;
 	/* Space/Time Anchor */
 //	bool st_anchor = check_st_anchor(&m_ptr->wpos, oy, ox);
-	wpos=&m_ptr->wpos;
+	wpos = &m_ptr->wpos;
 
 
 //	int antichance = 0, antidis = 0;
@@ -1820,8 +1810,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	 * -- arrow range has been limited by now. leaving this as it is though. --
 	 */
 #ifndef	STUPID_MONSTER_SPELLS /* see MAX_SIGHT in process_monsters */
-	if (m_ptr->cdis > MAX_RANGE)
-	{
+	if (m_ptr->cdis > MAX_RANGE) {
 		if (!los(wpos, y, x, m_ptr->fy, m_ptr->fx)) return (FALSE);
 
 		f4 &= (RF4_INDIRECT_MASK | (m_ptr->cdis <= MAX_RANGE + 12 ? RF4_SUMMON_MASK : 0));
@@ -1846,8 +1835,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 #endif	/* STUPID_MONSTER_SPELLS */
 
 	/* Hack -- require projectable player */
-	if (normal)
-	{
+	if (normal) {
 		/* Check range */
 //		if (m_ptr->cdis > MAX_RANGE) return (FALSE);
 
@@ -1857,8 +1845,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 #else
 		summon = (f4 & (RF4_SUMMON_MASK)) || (f5 & (RF5_SUMMON_MASK)) || (f6 & (RF6_SUMMON_MASK)) || (f0 & (RF0_SUMMON_MASK));
 
-		if (!projectable_wall(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px, MAX_RANGE))
-		{
+		if (!projectable_wall(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px, MAX_RANGE)) {
 #ifdef STUPID_Q
 			if (r_ptr->d_char == 'Q') return (FALSE);
 #endif	// STUPID_Q
@@ -1882,15 +1869,13 @@ bool make_attack_spell(int Ind, int m_idx) {
 			else rad = 99;
 
 //			if (rad > 3 || (rad == 3 && !(r_ptr->flags2 & (RF2_POWERFUL)))) 
-			if (rad > srad) 
-			{
+			if (rad > srad) {
 				/* Remove inappropriate spells */
 				f4 &= ~(RF4_RADIUS_SPELLS);
 				f5 &= ~(RF5_RADIUS_SPELLS);
 				f6 &= ~(RF6_RADIUS_SPELLS); /* (HACK) added - unsure if cool */
 				f0 &= ~(RF0_RADIUS_SPELLS); /* (HACK) added - unsure if cool */
 //				f6 &= RF6_INT_MASK;
-
 			}
 
 			/* remove 'direct' spells */
@@ -2075,7 +2060,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 #ifdef USE_SOUND_2010
 			sound_near(Ind, "monster_shriek", NULL, SFX_TYPE_MON_SPELL);
 #endif
-			s_printf("SHRIEK: %s -> %s.\n", m_name, p_ptr->name);
+//can be spammy!	s_printf("SHRIEK: %s -> %s.\n", m_name, p_ptr->name);
 			aggravate_monsters(Ind, m_idx);
 			break;
 		}
@@ -4344,10 +4329,10 @@ static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr,
 	cptr name;
 	int dam;
 
-#if 1	// moved for efficiency
+#if 1	/* moved for efficiency */
 	if (!c_ptr->effect) return (TRUE);
 	if (r_ptr->flags2 & RF2_STUPID) return (TRUE);
-#endif	// 0
+#endif
 
 	e_ptr = &effects[c_ptr->effect];
 
@@ -4357,9 +4342,10 @@ static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr,
 	dam = e_ptr->dam;
 	name = r_name_get(m_ptr);
 
-	/* XXX Make sure to add whatever might be needed! */
-	switch (e_ptr->type)
-	{
+#if 0
+	/* XXX Make sure to add whatever might be needed!
+	   Maybe use approx_damage() for this - C. Blue */
+	switch (e_ptr->type) {
 		case GF_ACID:
 			if (r_ptr->flags3 & RF3_IM_ACID) dam = 0;
 			else if (r_ptr->flags9 & RF9_RES_ACID) dam /= 4;
@@ -4455,8 +4441,16 @@ static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr,
 		default: /* no need to avoid healing cloud or similar effects - C. Blue */
 			dam = 0;
 	}
+#else
+	/* Use new function 'approx_damage()' for this - C. Blue */
+	dam = approx_damage(m_idx, dam, e_ptr->type);
+#endif
 
+#if 0 /* original */
 	return (m_ptr->hp >= dam * 30);
+#else /* less exploitable, ie avoid pushing monsters around without them able to retaliate */
+	return (m_ptr->hp >= dam * 20);
+#endif
 }
 
 #if 0	/* Replaced by monster_can_cross_terrain */
@@ -4501,13 +4495,11 @@ static bool find_noeffect(int m_idx, int *yp, int *xp)
 
 	cave_type **zcave;
 	/* paranoia */
-	if(!(zcave=getcave(&m_ptr->wpos))) return(FALSE);
+	if(!(zcave = getcave(&m_ptr->wpos))) return(FALSE);
 
 	/* Start with adjacent locations, spread further */
-	for (i = 1; i <= tdi[SAFETY_RADIUS]; i++)
-	{
-		if (i == tdi[d])
-		{
+	for (i = 1; i <= tdi[SAFETY_RADIUS]; i++) {
+		if (i == tdi[d]) {
 			d++;
 			if (gdis) break;
 		}
@@ -4533,8 +4525,7 @@ static bool find_noeffect(int m_idx, int *yp, int *xp)
 
 #ifdef MONSTER_FLOW
 		/* Check for "availability" (if monsters can flow) */
-		if (flow_by_sound)
-		{
+		if (flow_by_sound) {
 			/* Ignore grids very far from the player */
 			if (zcave[y][x].when < zcave[py][px].when) continue;
 
@@ -4543,8 +4534,7 @@ static bool find_noeffect(int m_idx, int *yp, int *xp)
 		}
 #endif
 		/* Remember if further than previous */
-		if (d > gdis)
-		{
+		if (d > gdis) {
 			gy = y;
 			gx = x;
 			gdis = d;
@@ -4552,8 +4542,7 @@ static bool find_noeffect(int m_idx, int *yp, int *xp)
 	}
 
 	/* Check for success */
-	if (gdis > 0)
-	{
+	if (gdis > 0) {
 		/* Good location */
 		(*yp) = fy - gy;
 		(*xp) = fx - gx;
@@ -5036,12 +5025,17 @@ static void get_moves(int Ind, int m_idx, int *mm)
 	int y2 = p_ptr->py;
 	int x2 = p_ptr->px;
 	bool done = FALSE, c_blue_ai_done = FALSE;	// not used fully (FIXME)
+	bool close_combat = FALSE;
+
+	/* If player is next to us, we might attack instead of avoiding terrain problems */
+	if (ABS(m_ptr->fx - x2) <= 1 && ABS(m_ptr->fy - y2) <= 1 &&
+	    (!(r_ptr->flags7 & RF7_AI_ANNOY) || m_ptr->taunted))
+		close_combat = TRUE;
 
 
 #ifdef MONSTER_FLOW
 	/* Flow towards the player */
-	if (flow_by_sound)
-	{
+	if (flow_by_sound) {
 		/* Flow towards the player */
 		(void)get_moves_aux(Ind, m_idx, &y2, &x2);
 	}
@@ -5071,36 +5065,32 @@ static void get_moves(int Ind, int m_idx, int *mm)
 	}
 
 #if SAFETY_RADIUS > 0
-	else if (m_ptr->ai_state & AI_STATE_EFFECT)
-	{
+	else if ((m_ptr->ai_state & AI_STATE_EFFECT)
+	    && !close_combat) {
 		/* Try to find safe place */
-		if (find_noeffect(m_idx, &y, &x))
-		{
+		if (find_noeffect(m_idx, &y, &x)) {
 			done = TRUE;
 			m_ptr->last_target = 0;
 		}
 	}
-#endif	// SAFETY_RADIUS
-	if (!done && (m_ptr->ai_state & AI_STATE_TERRAIN))
-	{
+#endif
+	if (!done && (m_ptr->ai_state & AI_STATE_TERRAIN)
+	    && !close_combat) {
 		/* Try to find safe place */
-		if (find_terrain(m_idx, &y, &x))
-		{
+		if (find_terrain(m_idx, &y, &x)) {
 			done = TRUE;
 			m_ptr->last_target = 0;
 		}
 	}
 	/* Apply fear if possible and necessary */
-	else if (mon_will_run(Ind, m_idx))
-	{
+	else if (mon_will_run(Ind, m_idx)) {
 #if SAFETY_RADIUS == 0
 		/* XXX XXX Not very "smart" */
 		y = (-y), x = (-x);
 
 #else
 		/* Try to find safe place */
-		if (!find_safety(Ind, m_idx, &y, &x))
-		{
+		if (!find_safety(Ind, m_idx, &y, &x)) {
 			/* This is not a very "smart" method XXX XXX */
 			y = (-y);
 			x = (-x);
@@ -5116,10 +5106,8 @@ static void get_moves(int Ind, int m_idx, int *mm)
 
 
 	/* Tease the player */
-	else if ((r_ptr->flags7 & RF7_AI_ANNOY) && !m_ptr->taunted)
-	{
-		if (distance(m_ptr->fy, m_ptr->fx, y2, x2) < ANNOY_DISTANCE)
-		{
+	else if ((r_ptr->flags7 & RF7_AI_ANNOY) && !m_ptr->taunted) {
+		if (distance(m_ptr->fy, m_ptr->fx, y2, x2) < ANNOY_DISTANCE) {
 			y = -y;
 			x = -x;
 			/* so that they never get reversed again */
@@ -5221,19 +5209,14 @@ static void get_moves(int Ind, int m_idx, int *mm)
 
 #if 0
 	/* Death orbs .. */
-	if (r_ptr->flags2 & RF2_DEATH_ORB)
-	{
-		if (!los(m_ptr->fy, m_ptr->fx, y2, x2))
-		{
-			return (FALSE);
-		}
+	if (r_ptr->flags2 & RF2_DEATH_ORB) {
+		if (!los(m_ptr->fy, m_ptr->fx, y2, x2)) return (FALSE);
 	}
 #endif	// 0
 
 //        if (!stupid_monsters && (is_friend(m_ptr) < 0))
 #ifndef STUPID_MONSTERS
-	if (!done)
-	{
+	if (!done) {
 		int tx = x2, ty = y2;
 		cave_type **zcave;
 		/* paranoia */
@@ -5252,19 +5235,16 @@ static void get_moves(int Ind, int m_idx, int *mm)
 			int i, room = 0;
 
 			/* Count room grids next to player */
-			for (i = 0; i < 8; i++)
-			{
+			for (i = 0; i < 8; i++) {
 				/* Check grid */
-				if (zcave[ty + ddy_ddd[i]][tx + ddx_ddd[i]].info & (CAVE_ROOM))
-				{
+				if (zcave[ty + ddy_ddd[i]][tx + ddx_ddd[i]].info & (CAVE_ROOM)) {
 					/* One more room grid */
 					room++;
 				}
 			}
 
 			/* Not in a room and strong player */
-			if ((room < 8) && (p_ptr->chp > ((p_ptr->mhp * 3) / 4)))
-			{
+			if ((room < 8) && (p_ptr->chp > ((p_ptr->mhp * 3) / 4))) {
 				/* Find hiding place */
 				if (find_hiding(Ind, m_idx, &y, &x)) done = TRUE;
 			}
@@ -5287,13 +5267,11 @@ static void get_moves(int Ind, int m_idx, int *mm)
 				return;
 			}
 		}
-		if (!done && (r_ptr->flags2 & RF2_TAKE_ITEM) && magik(MONSTERS_GREEDY))
-		{
+		if (!done && (r_ptr->flags2 & RF2_TAKE_ITEM) && magik(MONSTERS_GREEDY)) {
 			int i;
 
 			/* Find an empty square near the target to fill */
-			for (i = 0; i < 8; i++)
-			{
+			for (i = 0; i < 8; i++) {
 				/* Pick squares near itself (semi-randomly) */
 				y2 = m_ptr->fy + ddy_ddd[(m_idx + i) & 7];
 				x2 = m_ptr->fx + ddx_ddd[(m_idx + i) & 7];
@@ -5302,8 +5280,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 				if (!cave_empty_bold(zcave, y2, x2)) continue;
 
 				/* look for booty */
-				if (zcave[y2][x2].o_idx)
-				{
+				if (zcave[y2][x2].o_idx) {
 					object_type *o_ptr = &o_list[zcave[y2][x2].o_idx];
 					if (o_ptr->k_idx &&
 #ifndef MONSTER_PICKUP_GOLD
@@ -5327,24 +5304,20 @@ static void get_moves(int Ind, int m_idx, int *mm)
 #endif	// MONSTERS_GREEDY
 #ifdef	MONSTERS_HEMM_IN
 		/* Monster groups try to surround the player */
-		if (!done && (r_ptr->flags1 & RF1_FRIENDS))
-		{
+		if (!done && (r_ptr->flags1 & RF1_FRIENDS)) {
 			int i;
 
 			/* Find an empty square near the target to fill */
-			for (i = 0; i < 8; i++)
-			{
+			for (i = 0; i < 8; i++) {
 				/* Pick squares near target (semi-randomly) */
 				y2 = ty + ddy_ddd[(m_idx + i) & 7];
 				x2 = tx + ddx_ddd[(m_idx + i) & 7];
 
 				/* Already there? */
-				if ((m_ptr->fy == y2) && (m_ptr->fx == x2))
-				{
+				if ((m_ptr->fy == y2) && (m_ptr->fx == x2)) {
 					/* Attack the target */
 					y2 = ty;
 					x2 = tx;
-
 					break;
 				}
 
@@ -5414,19 +5387,18 @@ static void get_moves(int Ind, int m_idx, int *mm)
 	ax = ABS(x);
 	ay = ABS(y);
 
-	if (!done)
-	{
+	if (!done) {
 		/* Hack -- chase player avoiding arrows
 		 * In the real-time, it does work :)
 		 */
 		if (ax < 2 && ay > 5 &&
-			projectable(&m_ptr->wpos, m_ptr->fy, m_ptr->fx, y2, x2, MAX_RANGE))
+		    projectable(&m_ptr->wpos, m_ptr->fy, m_ptr->fx, y2, x2, MAX_RANGE))
 		{
 			x = (x > 0 || (!x && magik(50))) ? -ay / 2: ay / 2;
 			ax = ay / 2;
 		}
 		if (ay < 2 && ax > 5 &&
-			projectable(&m_ptr->wpos, m_ptr->fy, m_ptr->fx, y2, x2, MAX_RANGE))
+		    projectable(&m_ptr->wpos, m_ptr->fy, m_ptr->fx, y2, x2, MAX_RANGE))
 		{
 			y = (y > 0 || (!y && magik(50))) ? -ax / 2: ax / 2;
 			ay = ax / 2;
@@ -5438,153 +5410,125 @@ static void get_moves(int Ind, int m_idx, int *mm)
 	if (x > 0) move_val += 4;
 
 	/* Prevent the diamond maneuvre */
-	if (ay > (ax << 1))
-	{
+	if (ay > (ax << 1)) {
 		move_val++;
 		move_val++;
-	}
-	else if (ax > (ay << 1))
-	{
+	} else if (ax > (ay << 1)) {
 		move_val++;
 	}
 
 	/* Extract some directions */
-	switch (move_val)
-	{
-		case 0:
+	switch (move_val) {
+	case 0:
 		mm[0] = 9;
-		if (ay > ax)
-		{
+		if (ay > ax) {
 			mm[1] = 8;
 			mm[2] = 6;
 			mm[3] = 7;
 			mm[4] = 3;
-		}
-		else
-		{
+		} else {
 			mm[1] = 6;
 			mm[2] = 8;
 			mm[3] = 3;
 			mm[4] = 7;
 		}
 		break;
-		case 1:
-		case 9:
+	case 1:
+	case 9:
 		mm[0] = 6;
-		if (y < 0)
-		{
+		if (y < 0) {
 			mm[1] = 3;
 			mm[2] = 9;
 			mm[3] = 2;
 			mm[4] = 8;
-		}
-		else
-		{
+		} else {
 			mm[1] = 9;
 			mm[2] = 3;
 			mm[3] = 8;
 			mm[4] = 2;
 		}
 		break;
-		case 2:
-		case 6:
+	case 2:
+	case 6:
 		mm[0] = 8;
-		if (x < 0)
-		{
+		if (x < 0) {
 			mm[1] = 9;
 			mm[2] = 7;
 			mm[3] = 6;
 			mm[4] = 4;
-		}
-		else
-		{
+		} else {
 			mm[1] = 7;
 			mm[2] = 9;
 			mm[3] = 4;
 			mm[4] = 6;
 		}
 		break;
-		case 4:
+	case 4:
 		mm[0] = 7;
-		if (ay > ax)
-		{
+		if (ay > ax) {
 			mm[1] = 8;
 			mm[2] = 4;
 			mm[3] = 9;
 			mm[4] = 1;
-		}
-		else
-		{
+		} else {
 			mm[1] = 4;
 			mm[2] = 8;
 			mm[3] = 1;
 			mm[4] = 9;
 		}
 		break;
-		case 5:
-		case 13:
+	case 5:
+	case 13:
 		mm[0] = 4;
-		if (y < 0)
-		{
+		if (y < 0) {
 			mm[1] = 1;
 			mm[2] = 7;
 			mm[3] = 2;
 			mm[4] = 8;
-		}
-		else
-		{
+		} else {
 			mm[1] = 7;
 			mm[2] = 1;
 			mm[3] = 8;
 			mm[4] = 2;
 		}
 		break;
-		case 8:
+	case 8:
 		mm[0] = 3;
-		if (ay > ax)
-		{
+		if (ay > ax) {
 			mm[1] = 2;
 			mm[2] = 6;
 			mm[3] = 1;
 			mm[4] = 9;
-		}
-		else
-		{
+		} else {
 			mm[1] = 6;
 			mm[2] = 2;
 			mm[3] = 9;
 			mm[4] = 1;
 		}
 		break;
-		case 10:
-		case 14:
+	case 10:
+	case 14:
 		mm[0] = 2;
-		if (x < 0)
-		{
+		if (x < 0) {
 			mm[1] = 3;
 			mm[2] = 1;
 			mm[3] = 6;
 			mm[4] = 4;
-		}
-		else
-		{
+		} else {
 			mm[1] = 1;
 			mm[2] = 3;
 			mm[3] = 4;
 			mm[4] = 6;
 		}
 		break;
-		case 12:
+	case 12:
 		mm[0] = 1;
-		if (ay > ax)
-		{
+		if (ay > ax) {
 			mm[1] = 2;
 			mm[2] = 4;
 			mm[3] = 3;
 			mm[4] = 7;
-		}
-		else
-		{
+		} else {
 			mm[1] = 4;
 			mm[2] = 2;
 			mm[3] = 7;
@@ -6456,11 +6400,12 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 	cave_type	**zcave;
 
 	monster_type	*m_ptr = &m_list[m_idx];
-        monster_race    *r_ptr = race_inf(m_ptr);// = &r_info[r_idx];
+	monster_race	*r_ptr = race_inf(m_ptr);
+	monster_race	*base_r_ptr = &r_info[m_ptr->r_idx];
 
 	int		i, d, oy, ox, ny, nx;
 #ifdef ARCADE_SERVER
-        int n;
+	int n;
 #endif
 
 	int		mm[8];
@@ -6492,15 +6437,14 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 /* Hack -- don't process monsters on wilderness levels that have not
 	   been regenerated yet.
 	*/
-	if(!(zcave = getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* If the monster can't see the player */ 
 	inv = player_invis(Ind, m_ptr, m_ptr->cdis);
 
 
 	/* Handle "sleep" */
-	if (m_ptr->csleep)
-	{
+	if (m_ptr->csleep) {
 		u32b notice = 0;
 		bool aggravated = FALSE;
 
@@ -6510,8 +6454,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 #else
 		/* check everyone on the floor */
 		notice = rand_int(1024);
-		for (i = 1; i <= NumPlayers; i++)
-		{
+		for (i = 1; i <= NumPlayers; i++) {
 			player_type *q_ptr = Players[i];
 
 			/* Skip disconnected players */
@@ -6540,8 +6483,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 #endif	// 0
 
 		/* Hack -- See if monster "notices" player */
-		if ((notice * notice * notice) <= noise || aggravated)
-		{
+		if ((notice * notice * notice) <= noise || aggravated) {
 			/* Hack -- amount of "waking" */
 			int d = 1;
 
@@ -6556,24 +6498,20 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			if (aggravated) d = m_ptr->csleep;
 
 			/* Still asleep */
-			if (m_ptr->csleep > d)
-			{
+			if (m_ptr->csleep > d) {
 				/* Monster wakes up "a little bit" */
 				m_ptr->csleep -= d;
 
 #ifdef OLD_MONSTER_LORE
 				/* Notice the "not waking up" */
-				if (p_ptr->mon_vis[m_idx])
-				{
+				if (p_ptr->mon_vis[m_idx]) {
 					/* Hack -- Count the ignores */
 					r_ptr->r_ignore++;
 				}
 #endif
 			}
-
 			/* Just woke up */
-			else
-			{
+			else {
 				/* Reset sleep counter */
 				m_ptr->csleep = 0;
 
@@ -6581,14 +6519,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				msg_print_near_monster(m_idx, "wakes up.");
 
 #if 0
-				if (p_ptr->mon_vis[m_idx])
-				{
+				if (p_ptr->mon_vis[m_idx]) {
 					char m_name[80];
-
-					/* Acquire the monster name */
 					monster_desc(Ind, m_name, m_idx, 0);
-
-					/* Dump a message */
 					msg_format(Ind, "%^s wakes up.", m_name);
 
 					/* Hack -- Count the wakings */
@@ -6600,8 +6533,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 		}
 
 		/* Still sleeping */
-		if (m_ptr->csleep) 
-		{
+		if (m_ptr->csleep) {
 			m_ptr->energy -= level_speed(&m_ptr->wpos);
 			return;
 		}
@@ -6609,51 +6541,40 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 
 	/* Handle "stun" */
-	if (m_ptr->stunned)
-	{
+	if (m_ptr->stunned) {
 		int d = 1;
 
 		/* Make a "saving throw" against stun */
 		/* if (rand_int(5000) <= r_ptr->level * r_ptr->level) */
 		/* the_sandman: Blegh; lvl 71+ monsters will recover immediately.*/
-		if (rand_int(200) <= r_ptr->level) /* needs testing! */
-		{
+		if (rand_int(200) <= r_ptr->level) { /* needs testing! */
 			/* Recover fully */
 			d = m_ptr->stunned;
 		}
 
 		/* Hack -- Recover from stun */
-		if (m_ptr->stunned > d)
-		{
+		if (m_ptr->stunned > d) {
 			/* Recover somewhat */
 			m_ptr->stunned -= d;
 		}
-
 		/* Fully recover */
-		else
-		{
+		else {
 			/* Recover fully */
 			m_ptr->stunned = 0;
 
 			/* Message if visible */
 			msg_print_near_monster(m_idx, "is no longer stunned.");
 #if 0
-			if (p_ptr->mon_vis[m_idx])
-			{
+			if (p_ptr->mon_vis[m_idx]) {
 				char m_name[80];
-
-				/* Acquire the monster name */
 				monster_desc(Ind, m_name, m_idx, 0);
-
-				/* Dump a message */
 				msg_format(Ind, "\377o%^s is no longer stunned.", m_name);
 			}
 #endif	// 0
 		}
 
 		/* Still stunned */
-		if (m_ptr->stunned > 100)
-		{
+		if (m_ptr->stunned > 100) {
 			m_ptr->energy -= level_speed(&m_ptr->wpos);
 			return;
 		}
@@ -6661,35 +6582,26 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 
 	/* Handle confusion */
-	if (m_ptr->confused)
-	{
+	if (m_ptr->confused) {
 		/* Amount of "boldness" */
 		int d = randint(r_ptr->level / 10 + 1);
 
 		/* Still confused */
-		if (m_ptr->confused > d)
-		{
+		if (m_ptr->confused > d) {
 			/* Reduce the confusion */
 			m_ptr->confused -= d;
 		}
-
 		/* Recovered */
-		else
-		{
+		else {
 			/* No longer confused */
 			m_ptr->confused = 0;
 
 			/* Message if visible */
 			msg_print_near_monster(m_idx, "is no longer confused.");
 #if 0
-			if (p_ptr->mon_vis[m_idx])
-			{
+			if (p_ptr->mon_vis[m_idx]) {
 				char m_name[80];
-
-				/* Acquire the monster name */
 				monster_desc(Ind, m_name, m_idx, 0);
-
-				/* Dump a message */
 				msg_format(Ind, "%^s is no longer confused.", m_name);
 			}
 #endif	// 0
@@ -6698,29 +6610,24 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 
 	/* Handle "fear" */
-	if (m_ptr->monfear)
-	{
+	if (m_ptr->monfear) {
 		/* Amount of "boldness" */
 		int d = randint(r_ptr->level / 10 + 1);
 
 		/* Still afraid */
-		if (m_ptr->monfear > d)
-		{
+		if (m_ptr->monfear > d) {
 			/* Reduce the fear */
 			m_ptr->monfear -= d;
 		}
-
 		/* Recover from fear, take note if seen */
-		else
-		{
+		else {
 			/* No longer afraid */
 			m_ptr->monfear = 0;
 
 			/* Visual note */
 			msg_print_near_monster(m_idx, "becomes courageous again.");
 #if 0
-			if (p_ptr->mon_vis[m_idx])
-			{
+			if (p_ptr->mon_vis[m_idx]) {
 				char m_name[80];
 				char m_poss[80];
 
@@ -6763,9 +6670,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 	//if((r_ptr->flags7 & RF7_MULTIPLY) &&
 	//Let's not allow mobs that can fire missiles to multiply..
 	if((r_ptr->flags7 & RF7_MULTIPLY) && (!(r_ptr->flags5 & RF5_MISSILE)) &&
-		(!istown(wpos) && (m_ptr->wpos.wz != 0 ||
-		 wild_info[m_ptr->wpos.wy][m_ptr->wpos.wx].radius > 2) ) &&
-		(num_repro < MAX_REPRO))
+	    (!istown(wpos) && (m_ptr->wpos.wz != 0 ||
+	     wild_info[m_ptr->wpos.wy][m_ptr->wpos.wx].radius > 2) ) &&
+	    (num_repro < MAX_REPRO))
 #if REPRO_RATE
 		if (magik(REPRO_RATE))
 #endif	// REPRO_RATE
@@ -6798,7 +6705,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				}
 			}
 		}
-						
+
 
 	/* Set AI state */
 	m_ptr->ai_state = 0;
@@ -6813,10 +6720,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				m_ptr->ai_state |= AI_STATE_EFFECT;
 		}
 	}
-#else	// 0
+#else
 	if (!monster_is_safe(m_idx, m_ptr, r_ptr, c_ptr))
 		m_ptr->ai_state |= AI_STATE_EFFECT;
-#endif	// 0
+#endif
 
 	/* All the monsters */
 	/* You cannot breathe? */
@@ -6838,8 +6745,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 
 	/* Confused -- 100% random */
-	if (m_ptr->confused || force_random_movement || (r_ptr->flags5 & RF5_RAND_100))
-	{
+	if (m_ptr->confused || force_random_movement || (r_ptr->flags5 & RF5_RAND_100)) {
 		/* Try four "random" directions */
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
 		random_move = TRUE;
@@ -6847,9 +6753,8 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 	/* 75% random movement */
 	else if (((r_ptr->flags1 & RF1_RAND_50) &&
-	         (r_ptr->flags1 & RF1_RAND_25) &&
-	         (rand_int(100) < 75)) || inv)
-	{
+	    (r_ptr->flags1 & RF1_RAND_25) &&
+	    (rand_int(100) < 75)) || inv) {
 #ifdef OLD_MONSTER_LORE
 		/* Memorize flags */
 		if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags1 |= RF1_RAND_50;
@@ -6863,8 +6768,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 	/* 50% random movement */
 	else if ((r_ptr->flags1 & RF1_RAND_50) &&
-	         (rand_int(100) < 50))
-	{
+	    (rand_int(100) < 50)) {
 #ifdef OLD_MONSTER_LORE
 		/* Memorize flags */
 		if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags1 |= RF1_RAND_50;
@@ -6877,8 +6781,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 	/* 25% random movement */
 	else if ((r_ptr->flags1 & RF1_RAND_25) &&
-	         (rand_int(100) < 25))
-	{
+	    (rand_int(100) < 25)) {
 #ifdef OLD_MONSTER_LORE
 		/* Memorize flags */
 		if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags1 |= RF1_RAND_25;
@@ -6890,26 +6793,20 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 	}
 
 	/* Normal movement */
-	else
-	{
+	else {
 		/* Logical moves */
 #ifndef ARCADE_SERVER
 		get_moves(Ind, m_idx, mm);
 #else
-                if ((m_ptr->r_idx > 1114) && (m_ptr->r_idx < 1125))
-                {
-                        for(n = 1; n <= NumPlayers; n++)
-                        {
-                                player_type *p_ptr = Players[n];
-                                if(p_ptr->game == 4 && p_ptr->team == 5)
-                                {
-                                get_moves_arc(p_ptr->arc_b, p_ptr->arc_a, m_idx, mm);
-                                n = NumPlayers + 1;
-                                }
-                        }
-                }
-                else
-		get_moves(Ind, m_idx, mm);
+		if ((m_ptr->r_idx > 1114) && (m_ptr->r_idx < 1125)) {
+			for(n = 1; n <= NumPlayers; n++) {
+				player_type *p_ptr = Players[n];
+				if(p_ptr->game == 4 && p_ptr->team == 5) {
+					get_moves_arc(p_ptr->arc_b, p_ptr->arc_a, m_idx, mm);
+					n = NumPlayers + 1;
+				}
+			}
+		} else get_moves(Ind, m_idx, mm);
 #endif
 	}
 
@@ -7024,8 +6921,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 
 	/* Take a zero-terminated array of "directions" */
-	for (i = 0; mm[i]; i++)
-	{
+	for (i = 0; mm[i]; i++) {
 		/* Get the direction */
 		d = mm[i];
 
@@ -7034,7 +6930,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 		/* Get the destination */
 		ny = oy + ddy[d];
-		nx = ox + ddx[d];			
+		nx = ox + ddx[d];
 
 		/* panic saves during halloween, adding this for now */
 //let's not suppress symptoms for now, so we find the root		if (!in_bounds(ny, nx)) continue;
@@ -7052,8 +6948,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 //		if (c_ptr->feat == FEAT_SHOP_TAIL - 1)
 		/* Shops only protect on world surface, dungeon shops are dangerous!
 		   (optional alternative: make player unable to attack while in shop in turn) */
-		if (c_ptr->feat == FEAT_SHOP && wpos->wz == 0)
-		{
+		if (c_ptr->feat == FEAT_SHOP && wpos->wz == 0) {
 			/* Nothing */
 		}
 
@@ -7065,47 +6960,48 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			/* nothing */
 		}
 
+
+/* Isn't this whole 'Tainted grid' stuff OBSOLETE?
+   Because: If monster_is_safe is false, it will always have set AI_STATE_EFFECT. */
 		/* Tainted grid? */
 #if 0 /* testing new hack below */
 		else if (!(m_ptr->ai_state & AI_STATE_EFFECT) &&
-		    !monster_is_safe(m_idx, m_ptr, r_ptr, c_ptr))
-		{
+		    !monster_is_safe(m_idx, m_ptr, r_ptr, c_ptr)) {
 			/* Nothing */
 		}
 #else /* attack anyway if player is next to us! */
 		else if (!(m_ptr->ai_state & AI_STATE_EFFECT) &&
 		    !monster_is_safe(m_idx, m_ptr, r_ptr, c_ptr)
-		    && !(c_ptr->m_idx < 0))
-		{
+		    && !(c_ptr->m_idx < 0)) {
 			/* Nothing */
 		}
 #endif
+/* OBSOLETE? */
+
 
 #if 0
 		/* Floor is open? */
-		else if (cave_floor_bold(zcave, ny, nx))
-		{
+		else if (cave_floor_bold(zcave, ny, nx)) {
 			/* Go ahead and move */
 			do_move = TRUE;
 		}
 
 		/* Some monsters can fly */
 		else if (((f_info[c_ptr->feat].flags1 & FF1_CAN_LEVITATE) && (r_ptr->flags7 & (RF7_CAN_FLY))) ||
-			((f_info[c_ptr->feat].flags1 & FF1_CAN_FLY) && (r_ptr->flags7 & (RF7_CAN_FLY))))
-		{
+		    ((f_info[c_ptr->feat].flags1 & FF1_CAN_FLY) && (r_ptr->flags7 & (RF7_CAN_FLY)))) {
 			/* Pass through walls/doors/rubble/_trees_ */
 			do_move = TRUE;
 		}
 
 		/* Some monsters live in the woods natively - Should be moved to monster_can_cross_terrain (C. Blue) */
 		//else if ((c_ptr->feat==FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE ||
-		else if ((c_ptr->feat==FEAT_DEAD_TREE || c_ptr->feat==FEAT_TREE ||
-			c_ptr->feat==FEAT_BUSH || c_ptr->feat==FEAT_IVY) &&
+		else if ((c_ptr->feat == FEAT_DEAD_TREE || c_ptr->feat == FEAT_TREE ||
+			c_ptr->feat == FEAT_BUSH || c_ptr->feat == FEAT_IVY) &&
 			((r_ptr->flags8 & RF8_WILD_WOOD) || (r_ptr->flags3 & RF3_ANIMAL) ||
 			/* KILL_WALL / PASS_WALL  monsters can hack down / pass trees */
 			(r_ptr->flags2 & RF2_PASS_WALL) || (r_ptr->flags2 & RF2_KILL_WALL) ||
 			/* POWERFUL monsters can hack down trees if they're non-light aka _physically_ powerful (hacky..) */
-			((r_ptr->flags2 & RF2_POWERFUL) && r_ptr->weight >= 0)))//oops no: some monsters like horned reaper weigh 0 -_-
+			((base_r_ptr->flags2 & RF2_POWERFUL) && r_ptr->weight >= 0)))//oops no: some monsters like horned reaper weigh 0 -_-
 		{
 			/* Pass through trees if monster lives in the woods >:) */
 			do_move = TRUE;
@@ -7126,7 +7022,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 			/* if we can pass without wall-killing, yet are wall-killers, then we should kill obstacles if we can! */
 			if (((r_ptr->flags2 & RF2_KILL_WALL) ||
-			    ((r_ptr->flags2 & RF2_POWERFUL) &&
+			    ((base_r_ptr->flags2 & RF2_POWERFUL) &&
 			    (c_ptr->feat == FEAT_DEAD_TREE ||
 			    c_ptr->feat == FEAT_TREE ||
 			    c_ptr->feat == FEAT_BUSH)))
@@ -7140,10 +7036,8 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 				/* Forget the "field mark", if any */
 				everyone_forget_spot(wpos, ny, nx);
-
 				/* Notice */
 				note_spot_depth(wpos, ny, nx);
-
 				/* Redraw */
 				everyone_lite_spot(wpos, ny, nx);
 
@@ -7153,17 +7047,15 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 		}
 #endif
 		/* Player ghost in wall or on FF1_PROTECTED grid: Monster may attack in melee anyway */
-		else if (c_ptr->m_idx < 0)
-		{
+		else if (c_ptr->m_idx < 0) {
 			/* Move into player */
 			do_move = TRUE;
 		}
 
 		/* Let monsters pass permanent but passable walls if they have PASS_WALL! */
-		else if (	(f_info[c_ptr->feat].flags1 & FF1_PERMANENT) &&
-				(f_info[c_ptr->feat].flags1 & FF1_CAN_PASS) &&
-				(r_ptr->flags2 & RF2_PASS_WALL)		)
-		{
+		else if ((f_info[c_ptr->feat].flags1 & FF1_PERMANENT) &&
+		    (f_info[c_ptr->feat].flags1 & FF1_CAN_PASS) &&
+		    (r_ptr->flags2 & RF2_PASS_WALL)) {
 			/* Pass through walls/doors/rubble */
 			do_move = TRUE;
 
@@ -7199,7 +7091,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 #else
 		else if ((r_ptr->flags2 & RF2_KILL_WALL) ||
 			/* POWERFUL monsters can hack down trees */
-			((r_ptr->flags2 & RF2_POWERFUL) &&
+			((base_r_ptr->flags2 & RF2_POWERFUL) &&
 			//c_ptr->feat==FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE ||
 			(c_ptr->feat == FEAT_DEAD_TREE || c_ptr->feat == FEAT_TREE ||
 			c_ptr->feat == FEAT_BUSH || c_ptr->feat == FEAT_IVY)))
@@ -7839,10 +7731,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			      p_ptr->disturb_near)) &&
 				r_ptr->level != 0 &&
 			    /* Not in Bree (for Santa Claus) - C. Blue */
-                    	    (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz))
+			    (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz))
 			{
 				/* Disturb */
-                                if (p_ptr->id != m_ptr->owner) disturb(Ind, 0, 0);
+				if (p_ptr->id != m_ptr->owner) disturb(Ind, 0, 0);
 			}
 
 
@@ -9025,9 +8917,9 @@ cave_midx_debug(wpos, oy, ox, c_ptr->m_idx);
  * Note that "new" monsters are always added by "m_pop()" and they are
  * always added at the end of the "m_fast" array.
  */
- 
+
 /* FIXME */
- 
+
 void process_monsters(void)
 {
 	int		k, i, e, pl, tmp, j, n;
@@ -9055,8 +8947,7 @@ void process_monsters(void)
 	count_project_times++;
 
 	/* Reset projection counts */
-	if (count_project_times >= PROJECTION_FLUSH_LIMIT_TURNS)
-	{
+	if (count_project_times >= PROJECTION_FLUSH_LIMIT_TURNS) {
 #if DEBUG_LEVEL > 2
 		if (count_project > PROJECTION_FLUSH_LIMIT)
 			s_printf("project() flush suppressed(%d)\n", count_project);
@@ -9069,20 +8960,18 @@ void process_monsters(void)
 
 
 	/* Process the monsters */
-	for (k = m_top - 1; k >= 0; k--)
-	{
+	for (k = m_top - 1; k >= 0; k--) {
 /*		int closest = -1, dis_to_closest = 9999, lowhp = 9999;
-               	bool blos=FALSE, new_los;	*/
+		bool blos=FALSE, new_los;	*/
 
 		/* Access the index */
 		i = _m_fast[k];
 
 		/* Access the monster */
-                m_ptr = &_m_list[i];
+		m_ptr = &_m_list[i];
 
 		/* Excise "dead" monsters */
-		if (!m_ptr->r_idx)
-		{
+		if (!m_ptr->r_idx) {
 			/* Excise the monster */
 			_m_fast[k] = _m_fast[--m_top];
 
@@ -9090,7 +8979,7 @@ void process_monsters(void)
 			continue;
 		}
 
-                r_ptr = race_inf(m_ptr);
+		r_ptr = race_inf(m_ptr);
 
 		/* Efficiency */
 //		if (!(getcave(m_ptr->wpos))) return(FALSE);
@@ -9099,7 +8988,7 @@ void process_monsters(void)
 		/* Obtain the energy boost */
 		e = extract_energy[m_ptr->mspeed];
 
-#if 0 /* bugged here, moved downwards a couple of lines */		
+#if 0 /* bugged here, moved downwards a couple of lines */
 		/* Added for Valinor - C. Blue */
 		if (r_ptr->flags7 & RF7_NEVER_ACT) m_ptr->energy = 0;
 #endif
@@ -9154,8 +9043,7 @@ void process_monsters(void)
 		may_move_dis = 9999;
 
 		/* Find the closest player */
-		for (pl = 1, n = NumPlayers; pl < n + 1; pl++) 
-		{
+		for (pl = 1, n = NumPlayers; pl < n + 1; pl++)  {
 			p_ptr = _Players[pl];
 			reveal_cloaking = spot_cloaking = FALSE;
 
@@ -9187,12 +9075,11 @@ void process_monsters(void)
 			/* Compute distance */
 			j = distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx);
 
-		        /* Change monster's highest player encounter - mode 3: monster is awake and player is within its area of awareness */
+			/* Change monster's highest player encounter - mode 3: monster is awake and player is within its area of awareness */
 			if (cfg.henc_strictness == 3 && !m_ptr->csleep) {
-				if (j <= r_ptr->aaf)
-				{
+				if (j <= r_ptr->aaf) {
 					if (m_ptr->wpos.wx != cfg.town_x || m_ptr->wpos.wy != cfg.town_y || m_ptr->wpos.wz != 0) { /* not in Bree, because of Halloween :) */
-		    				if (m_ptr->highest_encounter < p_ptr->max_lev) m_ptr->highest_encounter = p_ptr->max_lev;
+						if (m_ptr->highest_encounter < p_ptr->max_lev) m_ptr->highest_encounter = p_ptr->max_lev;
 					}
 				}
 			}
@@ -9256,7 +9143,7 @@ void process_monsters(void)
 			/* Glaur. Skip if same distance and stronger and same visibility*/
 			if ((j == dis_to_closest) && (p_ptr->chp > lowhp) && (blos == new_los))
 				continue;
-			
+
 			/* Skip if player wears amulet of invincibility - C. Blue */
 			if ((p_ptr->inventory[INVEN_NECK].tval == TV_AMULET) &&
 			    (p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_INVINCIBILITY)
@@ -9302,13 +9189,13 @@ void process_monsters(void)
 					_Players[m_ptr->charmedignore]->mcharming--;
 					m_ptr->charmedignore = 0;
 				/* monster gets a sort of saving throw */
-				} else if (test_charmedignore(pl, m_ptr->charmedignore, m_ptr->r_idx))
+				} else if (test_charmedignore(pl, m_ptr->charmedignore, r_ptr))
 					continue;
 			}
 
 			if (reveal_cloaking) {
 				monster_desc(pl, m_name, i, 0);
-			    	msg_format(pl, "\377r%^s reveals your presence!", m_name);
+				msg_format(pl, "\377r%^s reveals your presence!", m_name);
 				break_cloaking(pl, 0);
 			}
 			else if (spot_cloaking) {
@@ -9323,7 +9210,7 @@ void process_monsters(void)
 			closest = pl;
 			lowhp = p_ptr->chp;
 		}
-		
+
 		/* Paranoia -- Make sure we found a closest player */
 		if (closest == -1) {
 			/* hack: still move around randomly? */
@@ -9365,8 +9252,7 @@ void process_monsters(void)
 		test = FALSE;
 
 		/* Handle "sensing radius" */
-		if (m_ptr->cdis <= r_ptr->aaf || (blos && !m_ptr->csleep))
-		{
+		if (m_ptr->cdis <= r_ptr->aaf || (blos && !m_ptr->csleep)) {
 			/* We can "sense" the player */
 			test = TRUE;
 		}
@@ -9374,15 +9260,15 @@ void process_monsters(void)
 		/* Handle "sight" and "aggravation" */
 #if 0
 		else if ((m_ptr->cdis <= MAX_SIGHT) &&
-		         (player_has_los_bold(closest, fy, fx) ||
-		          p_ptr->aggravate))
+		    (player_has_los_bold(closest, fy, fx) ||
+		    p_ptr->aggravate))
 #else
 		else if (
-//		         (player_has_los_bold(closest, fy, fx)) ||
+//		    (player_has_los_bold(closest, fy, fx)) ||
 #ifndef REDUCED_AGGRAVATION
-		          (p_ptr->aggravate && m_ptr->cdis <= MAX_SIGHT))
+		    (p_ptr->aggravate && m_ptr->cdis <= MAX_SIGHT))
 #else
-		          (p_ptr->aggravate && m_ptr->cdis <= 50))
+		    (p_ptr->aggravate && m_ptr->cdis <= 50))
 #endif
 
 #endif	// 0
@@ -9395,9 +9281,9 @@ void process_monsters(void)
 		/* Hack -- Monsters can "smell" the player from far away */
 		/* Note that most monsters have "aaf" of "20" or so */
 		else if (flow_by_sound &&
-		         (cave[py][px].when == cave[fy][fx].when) &&
-		         (cave[fy][fx].cost < MONSTER_FLOW_DEPTH) &&
-		         (cave[fy][fx].cost < r_ptr->aaf))
+		    (cave[py][px].when == cave[fy][fx].when) &&
+		    (cave[fy][fx].cost < MONSTER_FLOW_DEPTH) &&
+		    (cave[fy][fx].cost < r_ptr->aaf))
 		{
 			/* We can "smell" the player */
 			test = TRUE;
@@ -9409,7 +9295,7 @@ void process_monsters(void)
 
 	        /* Change monster's highest player encounter (mode 1+ : monster actively targets a player) */
 		if (!m_ptr->csleep && (m_ptr->wpos.wx != cfg.town_x || m_ptr->wpos.wy != cfg.town_y || m_ptr->wpos.wz != 0)) { /* not in Bree, because of Halloween & Christmas (Santa Claus) :) */
-	    		if (m_ptr->highest_encounter < p_ptr->max_lev) m_ptr->highest_encounter = p_ptr->max_lev;
+			if (m_ptr->highest_encounter < p_ptr->max_lev) m_ptr->highest_encounter = p_ptr->max_lev;
 		}
 
 		/* Process the monster */
@@ -9424,10 +9310,10 @@ void process_monsters(void)
 
 			process_monster(closest, i, (may_move_Ind != 0));
 
-		        /* for C_BLUE_AI (to remember if the player stood beside us and
-	    		   then runs away from us to make us follow him): */
-	        	if ((ABS(m_ptr->fy - p_ptr->py) <= 1) && (ABS(m_ptr->fx - p_ptr->px) <= 1))
-                		m_ptr->last_target = p_ptr->id;
+			/* for C_BLUE_AI (to remember if the player stood beside us and
+			   then runs away from us to make us follow him): */
+			if ((ABS(m_ptr->fy - p_ptr->py) <= 1) && (ABS(m_ptr->fx - p_ptr->px) <= 1))
+				m_ptr->last_target = p_ptr->id;
 
 			suppress_message = FALSE;
 		}
@@ -9447,18 +9333,16 @@ void process_monsters(void)
 	/* Only when needed, every five game turns */
 	/* TODO: move this to the client side!!! */
 //	if (scan_monsters && (!(turn%5)))
-	if (scan_monsters && !(turn % (MULTI_HUED_UPDATE * MONSTER_TURNS)))
-	{
+	if (scan_monsters && !(turn % (MULTI_HUED_UPDATE * MONSTER_TURNS))) {
 		/* Shimmer multi-hued monsters */
-		for (i = 1, n = m_max; i < n; i++)
-		{
+		for (i = 1, n = m_max; i < n; i++) {
 			m_ptr = &_m_list[i];
 
 			/* Skip dead monsters */
 			if (!m_ptr->r_idx) continue;
 
 			/* Access the monster race */
-                        r_ptr = race_inf(m_ptr);
+			r_ptr = race_inf(m_ptr);
 
 			/* Skip non-multi-hued monsters */
 //			if (!(r_ptr->flags1 & RF1_ATTR_MULTI)) continue;

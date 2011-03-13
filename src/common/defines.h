@@ -178,7 +178,6 @@
 #ifdef RPG_SERVER
  #define MUCHO_RUMOURS		/* print a rumour on day changes and unique kills (the_sandman) */
 // #define PRECIOUS_STONES
-
  #define ENABLE_DIVINE		/* enable RACE_DIVINE */
 
  #define AUCTION_BETA		/* less restrictions while beta testing */
@@ -186,11 +185,10 @@
  #define AUCTION_DEBUG
 
  #define OPTIMIZED_ANIMATIONS	/* testing */
-
- #define ENABLE_GO_GAME		/* Allows players to play vs CPU games of Go/Weiqi/Baduk. - C. Blue */
 #endif
 
 #ifdef TEST_SERVER
+ #define ENABLE_ASSASSINATE	/* experimental fighting technique for rogues - devalues Backstabbing too much probably */
  #define ENABLE_DIVINE		/* enable RACE_DIVINE */
 
  #define AUCTION_BETA		/* less restrictions while beta testing */
@@ -206,7 +204,7 @@
  #endif
 // #define CLIENT_WEATHER_GLOBAL	/* use global weather instead of sector-specific (requires CLIENT_SIDE_WEATHER) */
 
- #define ENABLE_GO_GAME		/* Allows players to play vs CPU games of Go/Weiqi/Baduk. - C. Blue */
+ #define ART_DIZ		/* Load 'D:' tags from a_info.txt file and display them on examining - C. Blue */
 #endif
 
 /* ------------------------ Client-side only features -----------------------*/
@@ -791,7 +789,7 @@
 /* Various melee/ranged combat settings for cmd1.c and cmd2.c mostly */
 
 #define MAX_VAMPIRIC_DRAIN 50   /* was 25 - note: this counts per turn, not per blow */
-#define NON_WEAPON_VAMPIRIC_CHANCE 67 /* chance to drain if VAMPIRIC is given be a non-weapon item */
+#define NON_WEAPON_VAMPIRIC_CHANCE 50 /* was 67 - chance to drain if VAMPIRIC is given be a non-weapon item */
 
 #define MAX_VAMPIRIC_DRAIN_RANGED 10    /* was 25 - note: this counts per shot, not per turn */
 #define NON_WEAPON_VAMPIRIC_CHANCE_RANGED 33 /* chance to drain if VAMPIRIC is given be a non-weapon/non-ammo item */
@@ -813,8 +811,15 @@
 /* divide magical damage by this in PvP */
 #define PVP_SPELL_DAM_REDUCTION 5
 
-/* Adam's experimental spell damage reduction for PvP */
-#define EXPERIMENTAL_PVP_SPELL_DAM
+/* Adam's experimental spell damage reduction for PvP (disables PVP_SPELL_DAM_REDUCTION if enabled) */
+//#define EXPERIMENTAL_PVP_SPELL_DAM
+
+/* Reduce AC used for testing the hit chance in PvP?
+   Intended to counter heavy royal armour, which would otherwise be near impossible to beat. */
+#define PVP_AC_REDUCTION
+
+/* Reduction of vampirism in PvP (melee and ranged) */
+//unused atm #define PVP_VAMPIRISM_REDUCTION 3
 
 /* Should other hostile players in line of sight cause a player to abort running?
    PvP mode chars cannot run with this on, which might be bad if a ranged char has
@@ -996,9 +1001,9 @@
  * Store constants
  */
 /* Total number of base stores (see "store.c", etc). Note: MAX_ST_IDX is total # of stores. */
-#define MAX_BASE_STORES	10	/* default stores that appear in every town */
+#define MAX_BASE_STORES	10		/* default stores that appear in every town */
 /* Total number of owners per store (see "store.c", etc) */
-#define MAX_STORE_OWNERS 6 /* Max size for st_ptr->owners[] */
+#define MAX_STORE_OWNERS	6	/* Max size for st_ptr->owners[] */
 
 #define STORE_INVEN_MAX	48		/* Max number of discrete objs in inven [48] */
 #define STORE_CHOICES	56 /*34*/	/* Number of items to choose stock from */
@@ -1611,7 +1616,7 @@
 #define COL_LAG                 0       /* mini lag-o-meter */
 
 /*** Terrain Feature Indexes (see "lib/edit/f_info.txt") ***/
-#if 0
+#if 0 //-------------------------------------------------------------------------------------------
 /* Reform scheduled!! */
 
 /* Nothing */
@@ -1695,7 +1700,7 @@ that keeps many algorithms happy.
 #define is_door(feat)	(feat == FEAT_OPEN || feat == FEAT_BROKEN || \
 		(FEAT_DOOR_HEAD <= feat && feat <= FEAT_SECRET))
 
-#else	/* 0 */
+#else	/* 0 */ //-------------------------------------------------------------------------------------------
 /*** Terrain Feature Indexes (see "lib/edit/f_info.txt") ***/
 
 /* Nothing */
@@ -1720,12 +1725,8 @@ that keeps many algorithms happy.
 #define FEAT_SHAFT_DOWN         0x0D
 #define FEAT_SHAFT_UP           0x0E
 
-/* Basic feature */
 #define FEAT_EMPTY_FOUNTAIN     0x0F
-
-/* Feature 0x10 -- web */
-
-/* Traps */
+#define FEAT_WEB		0x10
 #define FEAT_TRAP               0x11
 
 /* Features 0x12 - 0x1F -- unused */
@@ -1881,7 +1882,7 @@ that keeps many algorithms happy.
 /* former Dirty Hack (XXX this can overlook spiked door!) */
 #define is_door(feat) (f_info[feat].flags1 & FF1_DOOR)
 
-#endif	/* 0 */
+#endif	/* 0 */ //-------------------------------------------------------------------------------------------
 
 
 /*
@@ -2246,21 +2247,21 @@ that keeps many algorithms happy.
 #define EGO_NOISE		62
 #define EGO_SLOWNESS		63
 #define EGO_ANNOYANCE		64
-#define EGO_HA                  65
-#define EGO_DF                  66
-#define EGO_BLESS_BLADE         67
-#define EGO_LIFE                68
+#define EGO_HA			65
+#define EGO_DF			66
+#define EGO_BLESS_BLADE		67
+#define EGO_LIFE		68
 #define EGO_WEST		69
 #define EGO_ATTACKS		70
-#define EGO_SLAYING_WEAPON      71
-#define EGO_SPINNING            72
-#define EGO_BRAND_ACID          73
-#define EGO_BRAND_ELEC          74
-#define EGO_BRAND_FIRE          75
-#define EGO_BRAND_COLD          76
-#define EGO_BRAND_POIS          77
-#define EGO_CHAOTIC             78
-#define EGO_EARTHQUAKES         80
+#define EGO_SLAYING_WEAPON	71
+#define EGO_SPINNING		72
+#define EGO_BRAND_ACID		73
+#define EGO_BRAND_ELEC		74
+#define EGO_BRAND_FIRE		75
+#define EGO_BRAND_COLD		76
+#define EGO_BRAND_POIS		77
+#define EGO_CHAOTIC		78
+#define EGO_EARTHQUAKES		80
 #define EGO_SLAY_ANIMAL		81
 #define EGO_SLAY_EVIL		82
 #define EGO_SLAY_UNDEAD		83
@@ -2277,9 +2278,9 @@ that keeps many algorithms happy.
 #define EGO_KILL_TROLL		94
 #define EGO_KILL_GIANT		95
 #define EGO_KILL_DRAGON		96
-#define EGO_VAMPIRIC            97
-#define EGO_STAR_DF         	98
-#define EGO_DRAGON              99
+#define EGO_VAMPIRIC		97
+#define EGO_STAR_DF		98
+#define EGO_DRAGON		99
 #define EGO_GONDOLIN		100
 #define EGO_DIGGING		101
 #define EGO_SPECTRAL            102
@@ -2359,7 +2360,7 @@ that keeps many algorithms happy.
 
 #define EGO_RSIMPLICITY		179
 /* megahack */
-#define EGO_CLOAK_LORDLY_RES	180 
+#define EGO_CLOAK_LORDLY_RES	180
 #define EGO_CLOAK_TELERI	181
 #define EGO_MIRKWOOD		182
 #define EGO_NUMENOR             183
@@ -2384,7 +2385,10 @@ that keeps many algorithms happy.
 #define EGO_IMBUED		202
 #define EGO_TRANSFORMATION	203
 #define EGO_ETHEREAL		204
-#define EGO_AURA_COLD           213
+#define EGO_AURA_COLD		213
+#define EGO_AURA_ELEC2		221
+#define EGO_AURA_FIRE2		222
+#define EGO_AURA_COLD2		223
 
 
 
@@ -2778,6 +2782,7 @@ that keeps many algorithms happy.
 /* The "sval" values for TV_AXE */
 #define SV_HATCHET                       1	/* 1d5 */
 #define SV_CLEAVER                       2      /* 2d4 */
+#define SV_TOMAHAWK			 3	/* 2d4 */
 #define SV_LIGHT_WAR_AXE                 8      /* 2d5 */
 #define SV_BEAKED_AXE                   10	/* 2d6 */
 #define SV_BROAD_AXE                    11	/* 2d6 */
@@ -6899,9 +6904,9 @@ extern int PlayerUID;
 
 /* Skill points per level (xtra2.c) */
 #ifdef ARCADE_SERVER
-#define SKILL_NB_BASE		0
+ #define SKILL_NB_BASE		0
 #else
-#define SKILL_NB_BASE           5
+ #define SKILL_NB_BASE           5
 #endif
 
 
@@ -7520,6 +7525,12 @@ extern int PlayerUID;
 #define WPOS_PVPARENA_X		0	/* location of pvp arena for MODE_PVP players */
 #define WPOS_PVPARENA_Y		0
 #define WPOS_PVPARENA_Z		1
+
+#ifdef ARCADE_SERVER
+ #define WPOS_ARCADE_X		32
+ #define WPOS_ARCADE_Y		32
+ #define WPOS_ARCADE_Z		11
+#endif
 
 /* Permanent event (to come) "Ironman Deep Dive Challenge": -- SERVER SPECIFIC HARD CODED!! */
 #ifdef RPG_SERVER

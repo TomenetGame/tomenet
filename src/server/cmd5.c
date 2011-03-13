@@ -123,8 +123,7 @@ bool check_antimagic(int Ind, int percentage) {
 
 	if (!percentage || !(zcave = getcave(wpos))) return(FALSE);
 
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		player_type *q_ptr = Players[i];
 
 		/* Skip disconnected players */
@@ -146,11 +145,6 @@ bool check_antimagic(int Ind, int percentage) {
 		/* Reduction for party */
 		if ((i != Ind) && player_in_party(p_ptr->party, i))
 			antichance >>= 2;	/* was >>= 1 */
-#if 0
-		dis = distance(y2, x2, q_ptr->py, q_ptr->px);
-		antidis = q_ptr->antimagic_dis;
-		if (dis > antidis) antichance = 0;
-#endif	// 0
 
 		/* Got disrupted ? */
 		if (magik((antichance * percentage) / 100)) {
@@ -162,8 +156,7 @@ bool check_antimagic(int Ind, int percentage) {
 
 	/* Scan the maximal area of radius "MONSTER_ANTIDIS" */
 	dis = 1;
-	for (i = 1; i <= tdi[MONSTER_ANTIDIS]; i++)
-	{
+	for (i = 1; i <= tdi[MONSTER_ANTIDIS]; i++) {
 		if (i == tdi[dis]) dis++;
 
 		y = y2 + tdy[i];
@@ -177,7 +170,7 @@ bool check_antimagic(int Ind, int percentage) {
 		m_ptr = &m_list[m_idx];	// pfft, bad design
 
 		/* dont use removed monsters */
-		if(!m_ptr->r_idx) continue;
+		if (!m_ptr->r_idx) continue;
 
 		r_ptr = race_inf(m_ptr);
 
@@ -201,53 +194,7 @@ bool check_antimagic(int Ind, int percentage) {
 			return TRUE;
 		}
 	}
-#if 0
-	/* Scan the maximal area of radius "MONSTER_ANTIDIS" */
-	for (y = y2 - MONSTER_ANTIDIS; y <= y2 + MONSTER_ANTIDIS; y++)
-	{
-		for (x = x2 - MONSTER_ANTIDIS; x <= x2 + MONSTER_ANTIDIS; x++)
-		{
-			/* Ignore "illegal" locations */
-			if (!in_bounds2(wpos, y, x)) continue;
 
-			if ((m_idx = zcave[y][x].m_idx)<=0) continue;
-
-			/* Enforce a "circular" explosion */
-			if ((dis = distance(y2, x2, y, x)) > MONSTER_ANTIDIS) continue;
-
-			m_ptr = &m_list[m_idx];	// pfft, bad design
-
-			/* dont use removed monsters */
-			if(!m_ptr->r_idx) continue;
-
-			r_ptr = race_inf(m_ptr);
-
-			if (!(r_ptr->flags7 & RF7_DISBELIEVE)) continue;
-
-			antichance = r_ptr->level / 2 + 20;
-			antidis = r_ptr->level / 15 + 3;
-
-			if (dis > antidis) continue;
-			if (antichance > ANTIMAGIC_CAP) antichance = ANTIMAGIC_CAP; /* AM cap */
-
-			/* Got disrupted ? */
-			if (magik(antichance))
-			{
-				if (p_ptr->mon_vis[m_idx])
-				{
-					char m_name[80];
-					monster_desc(Ind, m_name, m_idx, 0);
-					msg_format(Ind, "\377%c%^s's anti-magic field disrupts your attempts.", COLOUR_AM_MON, m_name);
-				}
-				else
-				{
-					msg_format(Ind, "\377%cAn anti-magic field disrupts your attempts.", COLOUR_AM_MON);
-				}
-				return TRUE;
-			}
-		}
-	}
-#endif	// 0
 	/* Assume no antimagic */
 	return FALSE;
 }
@@ -396,24 +343,7 @@ void do_cmd_ghost_power(int Ind, int ability)
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	take_xp_hit(Ind, s_ptr->slevel * s_ptr->smana,
-			"the strain of ghostly powers", TRUE, TRUE);
-#if 0
-	/* Take some experience */
-	p_ptr->max_exp -= s_ptr->slevel * s_ptr->smana;
-	p_ptr->exp -= s_ptr->slevel * s_ptr->smana;
-
-	/* Too much can kill you */
-	if (p_ptr->exp < 0) take_hit(Ind, 5000, "the strain of ghostly powers", 0);
-
-	/* Check experience levels */
-	check_experience(Ind);
-
-	/* Redraw experience */
-	p_ptr->redraw |= (PR_EXP);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_PLAYER);
-#endif	// 0
+	    "the strain of ghostly powers", TRUE, TRUE);
 }
 
 
@@ -476,36 +406,16 @@ void do_cmd_ghost_power_aux(int Ind, int dir)
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	take_xp_hit(Ind, s_ptr->slevel * s_ptr->smana,
-			"the strain of ghostly powers", TRUE, TRUE);
-#if 0
-	/* Take some experience */
-	p_ptr->max_exp -= s_ptr->slevel * s_ptr->smana;
-	p_ptr->exp -= s_ptr->slevel * s_ptr->smana;
-
-	/* Too much can kill you */
-	if (p_ptr->exp < 0) take_hit(Ind, 5000, "the strain of ghostly powers", 0);
-
-	/* Check experience levels */
-	check_experience(Ind);
-
-	/* Redraw experience */
-	p_ptr->redraw |= (PR_EXP);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_PLAYER);
-#endif	// 0
+	    "the strain of ghostly powers", TRUE, TRUE);
 }
 
 /* old spinning, now unused. Added spin_attack() to replace it - C. Blue */
 void do_spin(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int d;
+	int d, x, y;
 
-	for (d = 1; d <= 9; d++)
-	{
-		int x, y;
-
+	for (d = 1; d <= 9; d++) {
 		if (d == 5) continue;
 
 		x = p_ptr->px + ddx[d];

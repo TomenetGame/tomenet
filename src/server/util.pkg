@@ -179,6 +179,9 @@ struct server_opts
 
 extern s32b turn;
 extern char tron_speed;
+extern char tron_dark;
+extern char tron_forget;
+
 extern server_opts cfg;
 extern s32b player_exp[101];
 
@@ -440,3 +443,6 @@ extern u32b go_engine_player_id;
 extern int go_engine_init(void);	/* Starts up the engine */
 extern void go_engine_terminate(void);	/* Terminates the engine */
 extern void go_challenge_cancel(void);	/* Aborts currently running game, if any */
+
+
+extern u16b numtowns;

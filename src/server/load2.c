@@ -527,42 +527,6 @@ static void rd_item(object_type *o_ptr)
 		rd_byte(&o_ptr->xtra9);
 	}
 
-#if 0 /*buggy?*/
-	/* Give old Multi-Hued Dragon Scale Mails random immunities */
-	if (o_ptr->sval == SV_DRAGON_MULTIHUED && (o_ptr->xtra2 == 0 || /* no immunities or only one immunity? */
-		o_ptr->xtra2 == 0x01 || o_ptr->xtra2 == 0x02 || o_ptr->xtra2 == 0x04 ||
-		o_ptr->xtra2 == 0x08 || o_ptr->xtra2 == 0x10))
-	{
-		o_ptr->xtra2 = 0;
-		int i = 2, tries = 100; /* give 2 random immunities */
-		while (i && tries) {
-			switch(rand_int(5)){
-			case 0:if (!(o_ptr->xtra2 & 0x01)){ /* fire */
-					o_ptr->xtra2 |= 0x01;
-					i--;}
-					break;
-			case 1:if (!(o_ptr->xtra2 & 0x02)){ /* cold */
-					o_ptr->xtra2 |= 0x02;
-					i--;}
-					break;
-			case 2:if (!(o_ptr->xtra2 & 0x04)){
-					o_ptr->xtra2 |= 0x04; /* elec */
-					i--;}
-					break;
-			case 3:if (!(o_ptr->xtra2 & 0x08)){ /* acid */
-					o_ptr->xtra2 |= 0x08;
-					i--;}
-					break;
-			case 4:if (!(o_ptr->xtra2 & 0x10)){ /* pois */
-					o_ptr->xtra2 |= 0x10;
-					i--;}
-					break;
-			}
-			tries--;
-		}
-	}
-#endif
-
 	if (!older_than(4, 3, 20)) {
 		if (!older_than(4, 3, 21)) {
 			rd_s32b(&tmp32s);
@@ -2532,15 +2496,13 @@ errr rd_server_savefile()
 	rd_u16b(&tmp16u);
 
 	/* Incompatible save files */
-	if (tmp16u > MAX_R_IDX)
-	{
+	if (tmp16u > MAX_R_IDX) {
 		s_printf(format("Too many (%u) monster races!\n", tmp16u));
 		return (21);
 	}
 
 	/* Read the available records */
-	for (i = 0; i < tmp16u; i++)
-	{
+	for (i = 0; i < tmp16u; i++) {
 		monster_race *r_ptr;
 
 		/* Read the monster race information */
@@ -2554,14 +2516,12 @@ errr rd_server_savefile()
 	rd_u16b(&tmp16u);
 
 	/* Incompatible save files */
-	if (tmp16u > MAX_A_IDX)
-	{
+	if (tmp16u > MAX_A_IDX) {
 		s_printf(format("Too many (%u) artifacts!\n", tmp16u));
 		return (24);
 	}
 	/* Read the artifact flags */
-	for (i = 0; i < tmp16u; i++)
-	{
+	for (i = 0; i < tmp16u; i++) {
 		rd_byte(&tmp8u);
 		a_info[i].cur_num = tmp8u;
 		rd_byte(&tmp8u);
@@ -2573,21 +2533,17 @@ errr rd_server_savefile()
 	rd_u16b(&tmp16u);
 
 	/* Incompatible save files */
-	if (tmp16u > MAX_PARTIES)
-	{
+	if (tmp16u > MAX_PARTIES) {
 		s_printf(format("Too many (%u) parties!\n", tmp16u));
 		return (25);
 	}
 
 	/* Read the available records */
-	for (i = 0; i < tmp16u; i++)
-	{
+	for (i = 0; i < tmp16u; i++) {
 		rd_party(i);
 	}
-	if (s_older_than(4, 2, 4))
-	{
-		for (i = tmp16u; i < MAX_PARTIES; i++)
-		{
+	if (s_older_than(4, 2, 4)) {
+		for (i = tmp16u; i < MAX_PARTIES; i++) {
 			/* HACK Initialize new parties just to make sure they'll work - mikaelh */
 			parties[i].members = 0;
 			parties[i].created = 0;

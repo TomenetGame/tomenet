@@ -189,6 +189,8 @@ extern void new_level_rand_x(struct worldpos *wpos, int x);
 extern void new_level_rand_y(struct worldpos *wpos, int y);
 extern s32b turn, session_turn, turn_overflow;
 extern char tron_speed;
+extern char tron_dark;
+extern char tron_forget;
 extern s32b player_id;
 extern u32b account_id;
 extern u16b panic_save;
@@ -531,6 +533,7 @@ extern void carry(int Ind, int pickup, int confirm);
 extern void py_attack(int Ind, int y, int x, bool old);
 extern void spin_attack(int Ind);
 extern void touch_zap_player(int Ind, int m_idx);
+extern void py_touch_zap_player(int Ind, int Ind2);
 extern void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot);
 extern void set_black_breath(int Ind);
 extern void do_prob_travel(int Ind, int dir);
@@ -799,6 +802,7 @@ extern void init_wild_info_aux(int x, int y);
 extern void wild_flags(int Ind, u32b flags);
 extern void lively_wild(u32b flags);
 extern void paint_house(int Ind, int x, int y, int k);
+extern void wpos_apply_season_daytime(worldpos *wpos, cave_type **zcave);
 
 /* init-txt.c */
 extern errr init_v_info_txt(FILE *fp, char *buf);
@@ -1030,6 +1034,7 @@ extern s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct wor
 extern void object_wipe(object_type *o_ptr);
 extern bool can_use(int Ind, object_type *o_ptr);
 extern bool can_use_verbose(int Ind, object_type *o_ptr);
+extern bool can_use_admin(int Ind, object_type *o_ptr);
 extern void flavor_init(void);
 extern void reset_visuals(void);
 extern void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u32b *f5, u32b *esp);
@@ -1139,7 +1144,8 @@ extern bool WriteAccount(struct account *r_acc, bool new);
 extern int validate(char *name);
 extern int invalidate(char *name);
 extern int makeadmin(char *name);
-extern int acc_set_flags(char *name, u32b flags, bool clear);
+extern int acc_set_flags(char *name, u32b flags, bool set);
+extern int acc_set_flags_id(u32b id, u32b flags, bool set);
 extern u32b acc_get_flags(char *name);
 extern void sf_delete(const char *name);
 extern struct account *GetAccount(cptr name, char *pass, bool leavepass);
@@ -1219,6 +1225,7 @@ extern bool rfe_printf(char *str, ...);
 extern bool do_cmd_view_rfe(int Ind,char *str, int line);
 extern int c_printf(char *str, ...);
 extern int p_printf(char *str, ...);
+extern int l_printf(char *str, ...);
 
 /* save.c */
 extern bool save_player(int Ind);
@@ -1280,6 +1287,7 @@ extern bool hates_fire(object_type *o_ptr);
 extern bool hates_water(object_type *o_ptr);
 
 extern int safe_area(int Ind);
+extern int approx_damage(int m_idx, int dam, int typ);
 
 /* spells2.c */
 extern void summon_pet(int Ind, int max);
@@ -1880,11 +1888,11 @@ extern int get_inven_xtra(int Ind, int inven_slot, int n);
 extern void lua_fix_skill_chart(int Ind);
 extern void lua_takeoff_costumes(int Ind);
 extern bool lua_is_unique(int r_idx);
-
 /* only called once, in util.c, referring to new file slash.c */
 extern void do_slash_cmd(int Ind, char *message);
 extern int global_luck; /* Global +LUCK modifier for the whole server (change the 'weather' - C. Blue) */
 extern void lua_intrusion(int Ind, char *problem_diz);
+extern bool lua_mimic_egligible(int Ind, int r_idx);
 
 #ifdef ENABLE_GO_GAME
 /* go.c - C. Blue */

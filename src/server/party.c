@@ -82,7 +82,7 @@ bool WriteAccount(struct account *r_acc, bool new){
 			found = 1;
 		}
 	}
-	memset((char *)c_acc.pass, 0, 20);
+	memset(c_acc.pass, 0, sizeof(c_acc.pass));
 	fclose(fp);
 	return(found);
 }
@@ -107,7 +107,7 @@ int validate(char *name){
 	if (c_acc->flags & (ACC_TRIAL | ACC_NOSCORE)) effect = TRUE;
 	c_acc->flags &= ~(ACC_TRIAL | ACC_NOSCORE);
 	WriteAccount(c_acc, FALSE);
-	memset((char *)c_acc->pass, 0, 20);
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->account == c_acc->id) {
 			if (Players[i]->inval) effect = TRUE;
@@ -132,7 +132,7 @@ int invalidate(char *name){
 	if (!(c_acc->flags & (ACC_TRIAL | ACC_NOSCORE))) effect = TRUE;
 	c_acc->flags |= (ACC_TRIAL | ACC_NOSCORE);
 	WriteAccount(c_acc, FALSE);
-	memset((char *)c_acc->pass, 0, 20);
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->account == c_acc->id) {
 			if (!Players[i]->inval) effect = TRUE;
@@ -153,7 +153,7 @@ int makeadmin(char *name){
 	c_acc->flags &= ~(ACC_TRIAL);
 	c_acc->flags |= (ACC_ADMIN | ACC_NOSCORE);
 	WriteAccount(c_acc, FALSE);
-	memset((char *)c_acc->pass, 0, 20);
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->account == c_acc->id) {
 			Players[i]->inval = 0;
@@ -168,17 +168,17 @@ int makeadmin(char *name){
 }
 
 /* set or clear account flags */
-int acc_set_flags(char *name, u32b flags, bool clear){
+int acc_set_flags(char *name, u32b flags, bool set) {
 	struct account *c_acc;
 
 	c_acc = GetAccount(name, NULL, TRUE);
 	if (!c_acc) return(0);
 
-	if (clear) c_acc->flags &= ~(flags);
-	else c_acc->flags |= (flags);
+	if (set) c_acc->flags |= (flags);
+	else c_acc->flags &= ~(flags);
 
 	WriteAccount(c_acc, FALSE);
-	memset((char *)c_acc->pass, 0, 20);
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 
 	KILL(c_acc, struct account);
 	return(1);
@@ -195,6 +195,28 @@ u32b acc_get_flags(char *name){
 	flags = c_acc->flags;
 	KILL(c_acc, struct account);
 	return flags;
+}
+
+/* set or clear account flags */
+int acc_set_flags_id(u32b id, u32b flags, bool set) {
+	struct account *c_acc;
+	char acc_name[MAX_CHARS];
+
+	acc_name[0] = 0;
+	strcpy(acc_name, lookup_accountname(id));
+
+	if (acc_name[0] == 0) return(0);
+	c_acc = GetAccount(acc_name, NULL, TRUE);
+	if (!c_acc) return(0);
+
+	if (set) c_acc->flags |= (flags);
+	else c_acc->flags &= ~(flags);
+
+	WriteAccount(c_acc, FALSE);
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
+
+	KILL(c_acc, struct account);
+	return(1);
 }
 
 /*
@@ -216,12 +238,12 @@ struct account *GetAccount(cptr name, char *pass, bool leavepass){
 	struct account *c_acc;
 
 	MAKE(c_acc, struct account);
-	if(c_acc == (struct account*)NULL) return(NULL);
-	fp = fopen("tomenet.acc", "rb");
-	if (fp == (FILE*)NULL) {
+	if (!c_acc) return(NULL);
+	fp = fopen("tomenet.acc", "rb+");
+	if (!fp) {
 		if (errno == ENOENT) {	/* ONLY if non-existent */
 			fp = fopen("tomenet.acc", "wb+");
-			if (fp == (FILE*)NULL) {
+			if (!fp) {
 				KILL(c_acc, struct account);
 				return(NULL);
 			}
@@ -236,28 +258,42 @@ struct account *GetAccount(cptr name, char *pass, bool leavepass){
 		if (c_acc->flags & ACC_DELD) continue;
 		if (!strcmp(c_acc->name, name)) {
 			int val;
-			if (pass == NULL)	/* direct name lookup */
+			if (pass == NULL) {	/* direct name lookup */
 				val = 0;
-			else
+			} else {
 				val = strcmp(c_acc->pass, t_crypt(pass, name));
-			if (!leavepass || pass != NULL) memset((char *)c_acc->pass, 0, 20);
-			if (val) {
+
+				/* Update the timestamp if the password is successfully verified - mikaelh */
+				if (val == 0) {
+					c_acc->acc_laston = time(NULL);
+					fseek(fp, -sizeof(struct account), SEEK_CUR);
+					if (fwrite(c_acc, sizeof(struct account), 1, fp) < 1) {
+						s_printf("Writing to account file failed: %s\n", feof(fp) ? "EOF" : strerror(ferror(fp)));
+					}
+				}
+			}
+			if (!leavepass || pass != NULL) {
+				memset(c_acc->pass, 0, sizeof(c_acc->pass));
+			}
+			if (val != 0) {
 				fclose(fp);
 				KILL(c_acc, struct account);
 				return(NULL);
+			} else {
+				fclose(fp);
+				return(c_acc);
 			}
-			fclose(fp);
-			return(c_acc);
 		}
 	}
 	/* New accounts always have pass */
-	if (pass == (char*)NULL){
+	if (!pass) {
 		KILL(c_acc, struct account);
 		fclose(fp);
 		return(NULL);
 	}
 
 	/* No account found. Create trial account */ 
+	WIPE(c_acc, struct account);
 	c_acc->id = new_accid();
 	if (c_acc->id != 0L) {
 		if (c_acc->id == 1)
@@ -273,7 +309,7 @@ struct account *GetAccount(cptr name, char *pass, bool leavepass){
 			return(NULL);
 		}
 	}
-	memset((char *)c_acc->pass, 0, 20);
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	fclose(fp);
 	if(c_acc->id) {
 		return(c_acc);
@@ -288,9 +324,9 @@ struct account *Admin_GetAccount(cptr name){
 	struct account *c_acc;
 
 	MAKE(c_acc, struct account);
-	if(c_acc == (struct account*)NULL) return(NULL);
+	if (!c_acc) return(NULL);
 	fp = fopen("tomenet.acc", "rb");
-	if(fp == (FILE*)NULL) {
+	if (!fp) {
 		KILL(c_acc, struct account);
 		return(NULL); /* cannot access account file */
 	}
@@ -318,11 +354,11 @@ cptr lookup_accountname(int p_id){
 		if (c_acc.flags & ACC_DELD) continue;
 		if (c_acc.id == acc_id) {
 			fclose(fp);
-			memset((char *)c_acc.pass, 0, 20);
+			memset(c_acc.pass, 0, sizeof(c_acc.pass));
 			return(c_acc.name);
 		}
 	}
-	memset((char *)c_acc.pass, 0, 20);
+	memset(c_acc.pass, 0, sizeof(c_acc.pass));
 	fclose(fp);
 	return(NULL);
 }
@@ -391,12 +427,12 @@ struct account *GetAccountID(u32b id, bool leavepass){
 	/* we may want to store a local index for fast
 	   id/name/filepos lookups in the future */
 	MAKE(c_acc, struct account);
-	if(c_acc == (struct account*)NULL) return(NULL);
+	if (!c_acc) return(NULL);
 	fp = fopen("tomenet.acc", "rb");
-	if(fp == (FILE*)NULL) return(NULL);	/* failed */
+	if (!fp) return(NULL);	/* failed */
 	while (fread(c_acc, sizeof(struct account), 1, fp)) {
 		if(id == c_acc->id && !(c_acc->flags & ACC_DELD)){
-			if (!leavepass) memset((char *)c_acc->pass, 0, 20);
+			if (!leavepass) memset(c_acc->pass, 0, sizeof(c_acc->pass));
 			fclose(fp);
 			return(c_acc);
 		}
@@ -414,7 +450,7 @@ static u32b new_accid() {
 	id = account_id;
 
 	fp = fopen("tomenet.acc", "rb");
-	if (fp == (FILE*)NULL) return(0L);
+	if (!fp) return(0L);
 
 	C_MAKE(t_map, MAX_ACCOUNTS / 8, char);
 	while (fread(&t_acc, sizeof(struct account), 1, fp)) {
@@ -445,7 +481,7 @@ static u32b new_accid() {
 	C_KILL(t_map, MAX_ACCOUNTS / 8, char);
 	account_id = id + 1;
 
-	return(id);	/* temporary */
+	return(id); /* temporary */
 }
 
 /*
@@ -456,8 +492,7 @@ int guild_lookup(cptr name)
 	int i;
 
 	/* Check each guild */
-	for (i = 0; i < MAX_GUILDS; i++)
-	{
+	for (i = 0; i < MAX_GUILDS; i++) { /* start from 0 or from 1? */
 		/* Check name */
 		if (streq(guilds[i].name, name)){
 			return i;
@@ -476,8 +511,7 @@ int party_lookup(cptr name)
 	int i;
 
 	/* Check each party */
-	for (i = 1; i < MAX_PARTIES; i++) /* was i = 0 but real parties start from i = 1 - mikaelh */
-	{
+	for (i = 1; i < MAX_PARTIES; i++) { /* was i = 0 but real parties start from i = 1 - mikaelh */
 		/* Check name */
 		if (streq(parties[i].name, name))
 			return i;
@@ -506,32 +540,30 @@ bool player_in_party(int party_id, int Ind)
  * Create a new guild.
  */
 int guild_create(int Ind, cptr name){
-	player_type *p_ptr=Players[Ind];
+	player_type *p_ptr = Players[Ind];
 	int index = 0, i;
-	object_type forge, *o_ptr=&forge;
+	object_type forge, *o_ptr = &forge;
 	char temp[160];
 
-	if(p_ptr->lev<30){
+	if (p_ptr->lev < 30) {
 		msg_print(Ind, "\377yYou are not high enough level to start a guild.");
 		return FALSE;
 	}
 	/* This could probably be improved. */
-	if(p_ptr->au<2000000){
+	if (p_ptr->au < 2000000) {
 		msg_print(Ind, "\377yYou need 2,000,000 gold pieces to start a guild.");
 		return FALSE;
 	}
 
 	/* Prevent abuse */
-	if (streq(name, "Neutral"))
-	{
+	if (streq(name, "Neutral")) {
 		msg_print(Ind, "\377yThat's not a legal guild name.");
 		return FALSE;
 	}
 
 	/* Check for already existing guild by that name */
-	if ((index=guild_lookup(name) != -1))
-	{
-		if(p_ptr->admin_dm){
+	if ((index = guild_lookup(name) != -1)) {
+		if (p_ptr->admin_dm) {
 			/* make the guild key */
 			invcopy(o_ptr, lookup_kind(TV_KEY, 2));
 			o_ptr->number = 1;
@@ -549,23 +581,19 @@ int guild_create(int Ind, cptr name){
 		return FALSE;
 	}
 	/* Make sure this guy isn't in some other guild already */
-	if (p_ptr->guild != 0)
-	{
+	if (p_ptr->guild != 0) {
 		msg_print(Ind, "\377yYou already belong to a guild!");
 		return FALSE;
 	}
 	/* Find the "best" party index */
-	for (i = 1; i < MAX_GUILDS; i++)
-	{
-		if (guilds[i].members == 0)
-		{
+	for (i = 1; i < MAX_GUILDS; i++) {
+		if (guilds[i].members == 0) {
 			index = i;
 			break;
 		}
 	}
 	/* Make sure we found an empty slot */
-	if (index == 0)
-	{
+	if (index == 0) {
 		/* Error */
 		msg_print(Ind, "\377yThere aren't enough guild slots!");
 		return FALSE;
@@ -574,7 +602,7 @@ int guild_create(int Ind, cptr name){
 	snprintf(temp, 160, "\377GA new guild '%s' has been created.", name);
 	msg_broadcast(0, temp);
 
-	p_ptr->au-=2000000;
+	p_ptr->au -= 2000000;
 	p_ptr->redraw|=PR_GOLD;
 
 	/* make the guild key */
@@ -616,7 +644,7 @@ int guild_create(int Ind, cptr name){
  * New party check function - to be timed 
  *
  */
-void party_check(int Ind){
+void party_check(int Ind) {
 	int i, id;
 	for (i = 1; i < MAX_PARTIES; i++) {
 		if (parties[i].members != 0){
@@ -638,21 +666,19 @@ void party_check(int Ind){
  * if they are not linked to an existing account,
  * delete them.
  */
-void account_check(int Ind){	/* Temporary Ind */
+void account_check(int Ind) { /* Temporary Ind */
 	hash_entry *ptr;
 	int i, del;
 	struct account *c_acc;
 //	player_type *p_ptr=Players[Ind];
 
 	/* Search in each array slot */
-	for (i = 0; i < NUM_HASH_ENTRIES; i++)
-	{
+	for (i = 0; i < NUM_HASH_ENTRIES; i++) {
 		/* Acquire pointer to this chain */
 		ptr = hash_table[i];
 
 		/* Check all entries in this chain */
-		while (ptr)
-		{
+		while (ptr) {
 			/* Check this name */
 			if (!(c_acc = GetAccountID(ptr->account, FALSE))) {
 				s_printf("Lost player: %s\n", ptr->name);
@@ -686,24 +712,20 @@ int party_create(int Ind, cptr name)
 	int index = 0, i, oldest = turn;
 
 	/* Prevent abuse */
-	if (streq(name, "Neutral") || streq(name, "!") || streq(name, "#"))
-	{
+	if (streq(name, "Neutral") || streq(name, "!") || streq(name, "#")) {
 		msg_print(Ind, "\377yThat's not a legal party name.");
 		return FALSE;
 	}
 
 	/* Check for already existing party by that name */
-	if (party_lookup(name) != -1)
-	{
+	if (party_lookup(name) != -1) {
 		msg_print(Ind, "\377yA party by that name already exists.");
 		return FALSE;
 	}
 
         /* If he's party owner, it's name change */
-	if (streq(parties[p_ptr->party].owner, p_ptr->name))
-	{
-		if (parties[p_ptr->party].mode != PA_NORMAL)
-		{
+	if (streq(parties[p_ptr->party].owner, p_ptr->name)) {
+		if (parties[p_ptr->party].mode != PA_NORMAL) {
 			msg_print(Ind, "\377yYour party is an Iron Team. Choose '2) Create an Iron Team' instead.");
 			return FALSE;
 		}
@@ -718,18 +740,15 @@ int party_create(int Ind, cptr name)
 	}
 
 	/* Make sure this guy isn't in some other party already */
-	if (p_ptr->party != 0)
-	{
+	if (p_ptr->party != 0) {
 		msg_print(Ind, "\377yYou already belong to a party!");
 		return FALSE;
 	}
 
 	/* Find the "best" party index */
-	for (i = 1; i < MAX_PARTIES; i++)
-	{
+	for (i = 1; i < MAX_PARTIES; i++) {
 		/* Check deletion time of disbanded parties */
-		if (parties[i].members == 0 && parties[i].created < oldest)
-		{
+		if (parties[i].members == 0 && parties[i].created < oldest) {
 			/* Track oldest */
 			oldest = parties[i].created;
 			index = i;
@@ -737,8 +756,7 @@ int party_create(int Ind, cptr name)
 	}
 
 	/* Make sure we found an empty slot */
-	if (index == 0 || oldest == turn)
-	{
+	if (index == 0 || oldest == turn) {
 		/* Error */
 		msg_print(Ind, "\377yThere aren't enough party slots!");
 		return FALSE;
@@ -774,31 +792,26 @@ int party_create_ironteam(int Ind, cptr name)
 	int index = 0, i, oldest = turn;
 
 	/* Only newly created characters can create an iron team */
-	if (p_ptr->max_exp > 0 || p_ptr->max_plv > 1)
-	{
+	if (p_ptr->max_exp > 0 || p_ptr->max_plv > 1) {
 		msg_print(Ind, "\377yOnly newly created characters without experience can create an iron team.");
 		return FALSE;
 	}
 
 	/* Prevent abuse */
-	if (streq(name, "Neutral") || streq(name, "!") || streq(name, "#"))
-	{
+	if (streq(name, "Neutral") || streq(name, "!") || streq(name, "#")) {
 		msg_print(Ind, "\377yThat's not a legal party name.");
 		return FALSE;
 	}
 
 	/* Check for already existing party by that name */
-	if (party_lookup(name) != -1)
-	{
+	if (party_lookup(name) != -1) {
 		msg_print(Ind, "\377yA party by that name already exists.");
 		return FALSE;
 	}
 
         /* If he's party owner, it's name change */
-	if (streq(parties[p_ptr->party].owner, p_ptr->name))
-	{
-		if (parties[p_ptr->party].mode != PA_IRONTEAM)
-		{
+	if (streq(parties[p_ptr->party].owner, p_ptr->name)) {
+		if (parties[p_ptr->party].mode != PA_IRONTEAM) {
 			msg_print(Ind, "\377yYour party isn't an Iron Team. Choose '1) Create a party' instead.");
 			return FALSE;
 		}
@@ -813,18 +826,15 @@ int party_create_ironteam(int Ind, cptr name)
 	}
 
 	/* Make sure this guy isn't in some other party already */
-	if (p_ptr->party != 0)
-	{
+	if (p_ptr->party != 0) {
 		msg_print(Ind, "\377yYou already belong to a party!");
 		return FALSE;
 	}
 
 	/* Find the "best" party index */
-	for (i = 1; i < MAX_PARTIES; i++)
-	{
+	for (i = 1; i < MAX_PARTIES; i++) {
 		/* Check deletion time of disbanded parties */
-		if (parties[i].members == 0 && parties[i].created < oldest)
-		{
+		if (parties[i].members == 0 && parties[i].created < oldest) {
 			/* Track oldest */
 			oldest = parties[i].created;
 			index = i;
@@ -832,8 +842,7 @@ int party_create_ironteam(int Ind, cptr name)
 	}
 
 	/* Make sure we found an empty slot */
-	if (index == 0 || oldest == turn)
-	{
+	if (index == 0 || oldest == turn) {
 		/* Error */
 		msg_print(Ind, "\377yThere aren't enough party slots!");
 		return FALSE;
@@ -874,24 +883,20 @@ int guild_add(int adder, cptr name){
 	player_type *q_ptr = Players[adder];
 	int guild_id = q_ptr->guild, Ind = 0;
 
-	if(!guild_id){
+	if (!guild_id) {
 		msg_print(adder, "\377yYou are not in a guild");
 		return(FALSE);
 	}
 
 	Ind = name_lookup_loose(adder, name, FALSE);
 
-	if (Ind <= 0)
-	{
-		return FALSE;
-	}
+	if (Ind <= 0) return FALSE;
 
 	/* Set pointer */
 	p_ptr = Players[Ind];
 
 	/* Make sure this isn't an impostor */
-	if (guilds[guild_id].master!=q_ptr->id && !is_admin(q_ptr))
-	{
+	if (guilds[guild_id].master!=q_ptr->id && !is_admin(q_ptr)) {
 		/* Message */
 		msg_print(adder, "\377yOnly the guildmaster or a dungeon wizard may add new members.");
 
@@ -900,8 +905,7 @@ int guild_add(int adder, cptr name){
 	}
 
 	/* Make sure this added person is neutral */
-	if (p_ptr->guild != 0)
-	{
+	if (p_ptr->guild != 0) {
 		/* Message */
 		msg_print(adder, "\377yThat player is already in a guild.");
 
@@ -942,17 +946,13 @@ int party_add(int adder, cptr name)
 	
 	Ind = name_lookup_loose(adder, name, FALSE);
 
-	if (Ind <= 0)
-	{
-		return FALSE;
-	}
+	if (Ind <= 0) return FALSE;
 
 	/* Set pointer */
 	p_ptr = Players[Ind];
 #if 0 // It's really a prob that the owner can't add his own chars..so if0
 	/* Make sure this isn't an impostor */
-	if (!streq(parties[party_id].owner, q_ptr->name))
-	{
+	if (!streq(parties[party_id].owner, q_ptr->name)) {
 		/* Message */
 		msg_print(adder, "\377yYou must be the owner to add someone.");
 
@@ -961,8 +961,7 @@ int party_add(int adder, cptr name)
 	}
 #endif
 	/* Make sure this added person is neutral */
-	if (p_ptr->party != 0)
-	{
+	if (p_ptr->party != 0) {
 		/* Message */
 		msg_print(adder, "\377yThat player is already in a party.");
 
@@ -971,16 +970,14 @@ int party_add(int adder, cptr name)
 	}
 
 	/* Everlasting and other chars cannot be in the same party */
-	if (compat_pmode(adder, Ind))
-	{
+	if (compat_pmode(adder, Ind)) {
 		msg_format(adder, "\377yYou cannot form a party with %s characters.", compat_pmode(adder, Ind));
 		return FALSE;
 	}
 
 	/* Only newly created characters can join an iron team */
-        if ((parties[party_id].mode & PA_IRONTEAM) && (p_ptr->max_exp > 0 || p_ptr->max_plv > 1))
-        {
-	        msg_print(adder, "\377yOnly newly created characters without experience can join an iron team.");
+	if ((parties[party_id].mode & PA_IRONTEAM) && (p_ptr->max_exp > 0 || p_ptr->max_plv > 1)) {
+		msg_print(adder, "\377yOnly newly created characters without experience can join an iron team.");
 		return FALSE;
 	}
 
@@ -1506,7 +1503,7 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 {
 	player_type *p_ptr;
 	int i, eff_henc;
-	struct worldpos *wpos=&Players[Ind]->wpos;
+	struct worldpos *wpos = &Players[Ind]->wpos;
 	s64b new_exp, new_exp_frac, average_lev = 0, num_members = 0, new_amount;
 	s64b modified_level, req_lvl;
 	int dlev;
@@ -1521,10 +1518,8 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 	int iron_team_members_here = 0;
 
 	/* Iron Teams only get exp if the whole team is on the same floor! - C. Blue */
-	if (parties[party_id].mode == PA_IRONTEAM)
-	{
-		for (i = 1; i <= NumPlayers; i++)
-		{
+	if (parties[party_id].mode == PA_IRONTEAM) {
+		for (i = 1; i <= NumPlayers; i++) {
 			p_ptr = Players[i];
 			if (p_ptr->conn == NOT_CONNECTED) continue;
 
@@ -1544,16 +1539,14 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 #endif
 
 	/* Calculate the average level */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 
 		if (p_ptr->conn == NOT_CONNECTED)
 			continue;
 
 		/* Check for his existance in the party */
-                if (player_in_party(party_id, i) && (inarea(&p_ptr->wpos, wpos)) && players_in_level(Ind, i))
-		{
+                if (player_in_party(party_id, i) && (inarea(&p_ptr->wpos, wpos)) && players_in_level(Ind, i)) {
 			/* Increase the "divisor" */
 			average_lev += p_ptr->lev;
 			num_members++;
@@ -1562,8 +1555,7 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 	average_lev /= num_members;
 
 	/* Now, distribute the experience */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 		dlev = getlevel(&p_ptr->wpos);
 
@@ -1580,31 +1572,22 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 			continue;
 
 		/* Check for existance in the party */
-                if (player_in_party(party_id, i) && (inarea(&p_ptr->wpos, wpos)) && players_in_level(Ind, i))
-		{
+                if (player_in_party(party_id, i) && (inarea(&p_ptr->wpos, wpos)) && players_in_level(Ind, i)) {
 			/* Calculate this guy's experience */
 			
-			if (p_ptr->lev < average_lev) // below average
-			{
+			if (p_ptr->lev < average_lev) { // below average
 				if ((average_lev - p_ptr->lev) > 2)
-				{
 					modified_level = p_ptr->lev + 2;
-				}				
-				else modified_level = average_lev;
-			}
-			else
-			{
+				else	modified_level = average_lev;
+			} else {
 				if ((p_ptr->lev - average_lev) > 2)
-				{
 					modified_level = p_ptr->lev - 2;
-				}				
-				else modified_level = average_lev;
-						
+				else	modified_level = average_lev;
 			}
-			
+
 			new_amount = amount;
 
-			/*			
+			/*
 			new_exp = (amount * modified_level) / (average_lev * num_members * p_ptr->lev);
 			new_exp_frac = ((((amount * modified_level) % (average_lev * num_members * p_ptr->lev) )
 			                * 0x10000L ) / (average_lev * num_members * p_ptr->lev)) + p_ptr->exp_frac;
@@ -1613,37 +1596,6 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 			/* Higher characters who farm monsters on low levels compared to
 			    their clvl will gain less exp.
 			    (note: this formula also occurs in mon_take_hit) */
-#if 0 /* prevent exp cheeze */
-			if (p_ptr->lev >= 20) {
-				if (p_ptr->lev < 30) req_lvl = 375 / (45 - p_ptr->lev);
-				else if (p_ptr->lev < 50) req_lvl = 650 / (56 - p_ptr->lev);
-				else req_lvl = (p_ptr->lev * 2);
-				if (dlev < req_lvl) new_amount = new_amount * 2 / (2 + req_lvl - dlev);
-			}
-
-			/* Don't allow cheap support from super-high level characters */
-			if (cfg.henc_strictness && !p_ptr->total_winner) {
-				if (henc - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
-				if (p_ptr->supported_by - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
-			}
-#endif
-#if 0
-			if (henc > p_ptr->lev) eff_henc = henc;
-			else eff_henc = p_ptr->lev; /* was player outside of monster's aware-radius when it was killed by teammate? preventing that exploit here. */
-			if (eff_henc >= 20) {
-				if (eff_henc < 30) req_lvl = 375 / (45 - eff_henc);
-				else if (eff_henc < 50) req_lvl = 650 / (56 - eff_henc);
-				else req_lvl = (eff_henc * 2);
-				if (dlev < req_lvl) new_amount = new_amount * 2 / (2 + req_lvl - dlev);
-			}
-
-			/* Don't allow cheap support from super-high level characters */
-			if (cfg.henc_strictness && !p_ptr->total_winner) {
-				if (henc - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
-				if (p_ptr->supported_by - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
-			}
-#endif
-#if 1 /* more exploitage.. */
 			if (henc > p_ptr->max_lev) eff_henc = henc;
 			else eff_henc = p_ptr->max_lev; /* was player outside of monster's aware-radius when it was killed by teammate? preventing that exploit here. */
  #ifdef ANTI_MAXPLV_EXPLOIT
@@ -1671,35 +1623,32 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 				if (eff_henc - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
 				if (p_ptr->supported_by - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
 			}
-#endif
+
 
 			/* Never get too much exp off a monster
-            		   due to high level difference,
+			   due to high level difference,
 			   make exception for low exp boosts like "holy jackal" */
 #if 1 /* isn't this buggy? see below 'else' clause for assumingly correct version.. */
 /* no it's not buggy, new_amount gets divided by p_ptr->lev later - mikaelh */
-                        if ((new_amount > base_amount * 4 * p_ptr->lev) && (new_amount > 200 * p_ptr->lev))
+			if ((new_amount > base_amount * 4 * p_ptr->lev) && (new_amount > 200 * p_ptr->lev))
 				new_amount = base_amount * 4 * p_ptr->lev;
 #else
-                        if ((new_amount > base_amount * 4) && (new_amount > 200))
+			if ((new_amount > base_amount * 4) && (new_amount > 200))
 				new_amount = base_amount * 4;
 #endif
 
 			/* Some bonus is applied to encourage partying	- Jir - */
 			new_exp = (new_amount * modified_level * (PARTY_XP_BOOST + 1)) /
-				(average_lev * p_ptr->lev * (num_members + PARTY_XP_BOOST));
+			    (average_lev * p_ptr->lev * (num_members + PARTY_XP_BOOST));
 			new_exp_frac = (  (((new_amount * modified_level * (PARTY_XP_BOOST + 1)) %
-				(average_lev * p_ptr->lev * (num_members + PARTY_XP_BOOST))) * 0x10000L) /
-			        (average_lev * p_ptr->lev * (num_members + PARTY_XP_BOOST))) + p_ptr->exp_frac;
+			    (average_lev * p_ptr->lev * (num_members + PARTY_XP_BOOST))) * 0x10000L) /
+			    (average_lev * p_ptr->lev * (num_members + PARTY_XP_BOOST))) + p_ptr->exp_frac;
 
 			/* Keep track of experience */
-			if (new_exp_frac >= 0x10000L)
-			{
+			if (new_exp_frac >= 0x10000L) {
 				new_exp++;
 				p_ptr->exp_frac = new_exp_frac - 0x10000L;
-			}
-			else
-			{
+			} else {
 				p_ptr->exp_frac = new_exp_frac;
 			}
 
@@ -1856,95 +1805,6 @@ s_printf("ADD_HOSTILITY: not found.\n");
 		/* Success */
 		return TRUE;
 	}
-
-#if 0
-	/* Check for sillyness */
-	if (streq(name, p_ptr->name)) {
-		msg_print(Ind, "\377yYou cannot be hostile toward yourself.");
-		return FALSE;
-	}
-
-	/* Search for player to add */
-	for (i = 1; i <= NumPlayers; i++) {
-		q_ptr = Players[i];
-
-		/* Check name */
-		if (!streq(q_ptr->name, name)) continue;
-
-		/* Make sure players aren't in the same party */
-		if (p_ptr->party && player_in_party(p_ptr->party, i)) {
-			msg_format(Ind, "\377y%^s is in your party!", q_ptr->name);
-			return FALSE;
-		}
-
-		/* Ensure we don't add the same player twice */
-		for (h_ptr = p_ptr->hostile; h_ptr; h_ptr = h_ptr->next) {
-			/* Check this ID */
-			if (h_ptr->id == q_ptr->id) {
-				msg_format(Ind, "\377yYou are already hostile toward %s.", q_ptr->name);
-				return FALSE;
-			}
-		}
-
-		/* Create a new hostility node */
-		MAKE(h_ptr, hostile_type);
-
-		/* Set ID in node */
-		h_ptr->id = q_ptr->id;
-
-		/* Put this node at the beginning of the list */
-		h_ptr->next = p_ptr->hostile;
-		p_ptr->hostile = h_ptr;
-
-		/* Message */
-		if (check_blood_bond(Ind, i)) {
-			msg_format(Ind, "\377yYou are now hostile toward %s.", q_ptr->name);
-			msg_format(i, "\374\377y* Player %s declared war on you! *", p_ptr->name);
-		} else {
-			msg_format(Ind, "\377RYou are now hostile toward %s.", q_ptr->name);
-			msg_format(i, "\374\377R* Player %s declared war on you! *", p_ptr->name);
-			/* Warn if not blood bonded */
-			msg_format(Ind, "\374\377yWarning: You are NOT blood bonded with %s.", q_ptr->name);
-		}
-
-		/* Success */
-		return TRUE;
-	}
-
-	/* Search for party to add */
-	if ((i = party_lookup(name)) != -1) {
-		/* Ensure we don't add the same party twice */
-		for (h_ptr = p_ptr->hostile; h_ptr; h_ptr = h_ptr->next) {
-			/* Check this ID */
-			if (h_ptr->id == 0 - i) {
-				msg_format(Ind, "\377yYou are already hostile toward party '%s'.", parties[i].name);
-				return FALSE;
-			}
-		}
-
-		/* Create a new hostility node */
-		MAKE(h_ptr, hostile_type);
-
-		/* Set ID in node */
-		h_ptr->id = 0 - i;
-
-		/* Put this node at the beginning of the list */
-		h_ptr->next = p_ptr->hostile;
-		p_ptr->hostile = h_ptr;
-
-		/* Message */
-		msg_format(Ind, "\377RYou are now hostile toward party '%s'.", parties[i].name);
-		msg_broadcast_format(Ind, "\374\377R* %s declares war on party '%s'. *", p_ptr->name, parties[i].name);
-
-		/* Success */
-		return TRUE;
-	}
-
-	/* Couldn't find player */
-	msg_format(Ind, "\377y%^s is currently not in the game.", name);
-
-	return FALSE;
-#endif
 }
 
 /*
@@ -2799,7 +2659,7 @@ void scan_accounts() {
 	s_printf("Starting account inactivity check..\n");
 
 	fp = fopen("tomenet.acc", "rb+");
-	if (fp == (FILE*)NULL) {
+	if (!fp) {
 		return;
 	}
 
@@ -2882,7 +2742,7 @@ void scan_accounts() {
 	s_printf("  %d accounts in total, %d non-deleted, %d active.\n", total, nondel, active);
 	s_printf("  %d accounts have expired.\n", expired);
 
-	memset((char *)c_acc.pass, 0, 20);
+	memset(c_acc.pass, 0, sizeof(c_acc.pass));
 	fclose(fp);
 	s_printf("Finished account inactivity check.\n");
 
@@ -2983,41 +2843,30 @@ void erase_player_name(char *pname){
 #endif
 
 				/* Wipe Artifacts (s)he had  -C. Blue */
-				for (i = 0; i < o_max; i++)
-				{
+				for (i = 0; i < o_max; i++) {
 					o_ptr = &o_list[i];
-			                if (true_artifact_p(o_ptr) && (o_ptr->owner == ptr->id))
+					if (true_artifact_p(o_ptr) && (o_ptr->owner == ptr->id))
 						delete_object_idx(i, TRUE);
-    				}
-#if 0 /* if 0'ed since priv notes nowadays go to account names, not char names */
-    				/* remove pending notes to this player */
-			        for (i = 0; i < MAX_NOTES; i++) {
-			                if (!strcmp(priv_note_target[i], ptr->name)) {
-			                        strcpy(priv_note_sender[i], "");
-			                        strcpy(priv_note_target[i], "");
-			                        strcpy(priv_note[i], "");
-			                }
-			        }
-#endif
+				}
 
 				sf_delete(ptr->name);	/* a sad day ;( */
-				if(!pptr)
+				if (!pptr)
 					hash_table[slot]=ptr->next;
 				else
 					pptr->next=ptr->next;
 				/* Free the memory in the player name */
 				free((char *)(ptr->name));
 
-				dptr=ptr;	/* safe storage */
-				ptr=ptr->next;	/* advance */
+				dptr = ptr;	/* safe storage */
+				ptr = ptr->next;	/* advance */
 
 				/* Free the memory for this struct */
 				KILL(dptr, hash_entry);
 
 				continue;
 			}
-			pptr=ptr;
-			ptr=ptr->next;
+			pptr = ptr;
+			ptr = ptr->next;
 		}
 	}
 }
@@ -3126,19 +2975,6 @@ void verify_player(cptr name, int id, u32b account, byte race, byte class, byte 
 {
 	hash_entry *ptr = lookup_player(id);
 
-	/* Check for consistency */
-#if 0 /* old stuff < 4.2.2 */
-	ptr->name = strdup(name);
-	ptr->laston = laston;
-	ptr->id = id;
-	ptr->account = account;
-	ptr->level = level;
-	ptr->party = party;
-	ptr->guild = guild;
-	ptr->quest = quest;
-	ptr->race = race;
-	ptr->class = class;
-#endif
 	/* For savegame conversion 4.2.0 -> 4.2.2: */
 	if (ptr->mode != mode) {
 		s_printf("hash_entry: fixing mode of %s.\n", ptr->name);
@@ -3285,13 +3121,6 @@ int player_id_list(int **list, u32b account)
 		}
 	}
 
-	/* Return length */
-#if 0 /*not needed*/
-//ifdef RPG_SERVER /* Display only 1 character per account */
-s_printf("len = %d\n", len);
-	return (len > 1 ? 2 : len);
-//endif
-#endif
 	/* Limit number of characters per account - C. Blue */
 	/* This screwed up saving players in save.c, check that account is not 0 - mikaelh */
 	if (len > MAX_CHARS_PER_ACCOUNT && account) len = MAX_CHARS_PER_ACCOUNT;
@@ -3472,22 +3301,6 @@ void account_change_password(int Ind, char *old_pass, char *new_pass) {
 
 	KILL(c_acc, struct account);
 }
-
-#if 0 /* obsolete - scan_players() does this now too - C. Blue */
-/* update acc->acc_laston, done each time a char logs on AND off.
-   Used for determining expiry within scan_accounts() - C. Blue */
-void account_set_laston(int Ind) {
-	struct account *c_acc;
-
-	c_acc = GetAccount(Players[Ind]->accountname, NULL, TRUE);
-	if (!c_acc) return;
-
-	c_acc->acc_laston = time(NULL);
-
-	WriteAccount(c_acc, FALSE);
-	KILL(c_acc, struct account);
-}
-#endif
 
 int lookup_player_ind(u32b id) {
 	int n;

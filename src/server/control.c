@@ -497,18 +497,15 @@ static void console_uniques()
 	Packet_printf(&console_buf, "%c", CONSOLE_UNIQUE_LIST);
 
 	/* Scan the monster races */
-	for (k = 1; k < MAX_R_IDX - 1; k++)
-	{
+	for (k = 1; k < MAX_R_IDX - 1; k++) {
 		monster_race *r_ptr = &r_info[k];
 
 		/* Only process uniques */
-		if (r_ptr->flags1 & RF1_UNIQUE)
-		{
+		if (r_ptr->flags1 & RF1_UNIQUE) {
 			bool dead = (r_ptr->max_num == 0);
 
 			/* Only count known uniques */
-			if (dead || r_ptr->r_sights)
-			{
+			if (dead || r_ptr->r_sights) {
 				/* One more */
 				count++;
 			}
@@ -519,28 +516,23 @@ static void console_uniques()
 	Packet_printf(&console_buf, "%d", count);
 
 	/* Scan the monster races */
-	for (k = 1; k < MAX_R_IDX - 1; k++)
-	{
+	for (k = 1; k < MAX_R_IDX - 1; k++) {
 		monster_race *r_ptr = &r_info[k];
 
 		/* Only process uniques */
-		if (r_ptr->flags1 & RF1_UNIQUE)
-		{
+		if (r_ptr->flags1 & RF1_UNIQUE) {
 			/* Only display known uniques */
-			if (r_ptr->r_sights)
-			{
+			if (r_ptr->r_sights) {
 				int i;
 				byte ok = FALSE;
 			
 				/* Format message */
 				sprintf(buf, "%s has been killed by:\n", r_name + r_ptr->name);
 				
-				for (i = 1; i <= NumPlayers; i++)
-				{
+				for (i = 1; i <= NumPlayers; i++) {
 					player_type *q_ptr = Players[i];
-				
-					if (q_ptr->r_killed[k] == 1)
-					{
+
+					if (q_ptr->r_killed[k] == 1) {
 						sprintf(buf, "        %s\n", q_ptr->name);
 						ok = TRUE;
 					}
@@ -560,8 +552,7 @@ static void console_change_artifact(int artifact, int status)
 	artifact_type *a_ptr;
 
 	/* Check bounds */
-	if (artifact <= 0 || artifact > MAX_A_IDX)
-	{
+	if (artifact <= 0 || artifact > MAX_A_IDX) {
 		/* Failed */
 		Packet_printf(&console_buf, "%c%c", CONSOLE_CHANGE_ARTIFACT, 0);
 
@@ -572,13 +563,10 @@ static void console_change_artifact(int artifact, int status)
 	a_ptr = &a_info[artifact];
 
 	/* Set the artifact's status */
-	if (status)
-	{
+	if (status) {
 		/* Make found */
 		handle_art_inum(artifact);
-	}
-	else
-	{
+	} else {
 		/* Make unfound */
 		handle_art_dnum(artifact);
 	}
@@ -594,8 +582,7 @@ static void console_change_unique(int unique, cptr killer)
 	char buf[80];
 
 	/* Check bounds */
-	if (unique <= 0 || unique > MAX_R_IDX - 1)
-	{
+	if (unique <= 0 || unique > MAX_R_IDX - 1) {
 		/* Failed */
 		Packet_printf(&console_buf, "%c%c", CONSOLE_CHANGE_UNIQUE, 0);
 
@@ -603,13 +590,10 @@ static void console_change_unique(int unique, cptr killer)
 	}
 
 	/* Get killer index */
-	if (killer)
-	{
+	if (killer) {
 		/* Lookup player by name */
 		kill_idx = lookup_player_id(killer);
-	}
-	else
-	{
+	} else {
 		/* No killer */
 		kill_idx = 0;
 	}
@@ -618,22 +602,18 @@ static void console_change_unique(int unique, cptr killer)
 	r_ptr = &r_info[unique];
 
 	/* Check for uniqueness */
-	if (!r_ptr->flags1 & RF1_UNIQUE)
-	{
+	if (!r_ptr->flags1 & RF1_UNIQUE) {
 		/* Failed */
 		Packet_printf(&console_buf, "%c%c", CONSOLE_CHANGE_UNIQUE, 0);
-		
+
 		return;
 	}
 
 	/* Set death flag */
-	if (kill_idx)
-	{
+	if (kill_idx) {
 		/* Dead */
 		r_ptr->max_num = 0;
-	}
-	else
-	{
+	} else {
 		/* Alive */
 
 		/* Tell people if the monster is respawning */
@@ -642,7 +622,7 @@ static void console_change_unique(int unique, cptr killer)
 			snprintf(buf, 80, "\377v%s rises from the dead!",(r_name + r_ptr->name));
     			
 			/* Tell every player */
-			msg_broadcast(0,buf);    				    				
+			msg_broadcast(0,buf);
 		}
 		r_ptr->max_num = 1;
 	}
@@ -665,11 +645,9 @@ static void console_kick_player(char *name)
 	int i;
 
 	/* Check the players in the game */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		/* Check name */
-		if (!strcmp(name, Players[i]->name))
-		{
+		if (!strcmp(name, Players[i]->name)) {
 			/* Kick him */
 			Destroy_connection(Players[i]->conn, "kicked out");
 

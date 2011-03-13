@@ -27,6 +27,7 @@
 #define MAX_MAINTENANCES	10
 
 static int gettown(int Ind);
+static int gettown_dun(int Ind);
 
 void home_sell(int Ind, int item, int amt);
 void home_purchase(int Ind, int item, int amt);
@@ -265,7 +266,7 @@ static s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 
 	i = gettown(Ind);
 	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
-	if (i == -1) i = 0;
+	if (i == -1) i = gettown_dun(Ind);
 
 	st_ptr = &town[i].townstore[p_ptr->store_num];
 	ot_ptr = &ow_info[st_ptr->owner];
@@ -323,8 +324,7 @@ static s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 	}
 
 	/* Shop is selling */
-	else
-	{
+	else {
 		/* Adjust for greed */
 		adjust = 100 + ((greed + factor) - 300);
 
@@ -668,14 +668,11 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 	}
 
 	/* Switch on the store */
-	switch (p_ptr->store_num)
-	{
+	switch (p_ptr->store_num) {
 		/* General Store */
 		case STORE_GENERAL:
-		{
 			/* Analyze the type */
-			switch (o_ptr->tval)
-			{
+			switch (o_ptr->tval) {
 				case TV_FOOD:
 				case TV_LITE:
 				case TV_FLASK:
@@ -694,14 +691,11 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				return (FALSE);
 			}
 			break;
-		}
 
 		/* Armoury */
 		case STORE_ARMOURY:
-		{
 			/* Analyze the type */
-			switch (o_ptr->tval)
-			{
+			switch (o_ptr->tval) {
 				case TV_BOOTS:
 				case TV_GLOVES:
 				case TV_CROWN:
@@ -716,14 +710,11 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				return (FALSE);
 			}
 			break;
-		}
 
 		/* Weapon Shop */
 		case STORE_WEAPON:
-		{
 			/* Analyze the type */
-			switch (o_ptr->tval)
-			{
+			switch (o_ptr->tval) {
 				case TV_SHOT:
 				case TV_BOLT:
 				case TV_ARROW:
@@ -740,15 +731,15 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				return (FALSE);
 			}
 			break;
-		}
 
 		/* Temple */
 		case STORE_TEMPLE:
-		{
 			/* Analyze the type */
-			switch (o_ptr->tval)
-			{
-				case TV_BOOK: if (get_book_name_color(Ind, o_ptr) != TERM_GREEN) return FALSE;
+			switch (o_ptr->tval) {
+				case TV_BOOK:
+					if (get_book_name_color(Ind, o_ptr) != TERM_GREEN &&
+					    get_book_name_color(Ind, o_ptr) != TERM_WHITE) /* unused custom books */
+						 return FALSE;
 				case TV_SCROLL:
 				case TV_POTION:
 				case TV_POTION2:
@@ -758,14 +749,11 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				return (FALSE);
 			}
 			break;
-		}
 
 		/* Alchemist */
 		case STORE_ALCHEMIST:
-		{
 			/* Analyze the type */
-			switch (o_ptr->tval)
-			{
+			switch (o_ptr->tval) {
 				case TV_SCROLL:
 				case TV_POTION:
 				case TV_POTION2:
@@ -774,14 +762,11 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				return (FALSE);
 			}
 			break;
-		}
 
 		/* Magic Shop */
 		case STORE_MAGIC:
-		{
 			/* Analyze the type */
-			switch (o_ptr->tval)
-			{
+			switch (o_ptr->tval) {
 				case TV_BOOK:
 					if (get_book_name_color(Ind, o_ptr) != TERM_L_BLUE &&
 					    get_book_name_color(Ind, o_ptr) != TERM_WHITE) /* unused custom books */
@@ -800,13 +785,11 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				return (FALSE);
 			}
 			break;
-		}
+
 		/* Bookstore Shop */
 		case STORE_BOOK:
-		{
 			/* Analyze the type */
-			switch (o_ptr->tval)
-			{
+			switch (o_ptr->tval) {
 				case TV_BOOK:
 #if 0
 				case TV_SYMBIOTIC_BOOK:
@@ -819,13 +802,11 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 					return (FALSE);
 			}
 			break;
-		}
+
 		/* Pet Shop */
 		case STORE_PET:
-		{
 			/* Analyze the type */
-			switch (o_ptr->tval)
-			{
+			switch (o_ptr->tval) {
 #ifndef ENABLE_RUNEMASTER /* Are we using this space...? */
 				case TV_EGG:
 #else
@@ -835,25 +816,24 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 					break;
 				default:
 					return (FALSE);
-			} 
+			}
 			break;
-		}
+
 		/* Rare Footwear Shop */
 		case STORE_SHOESX:
 			/* Analyze the type */
-			switch (o_ptr->tval)
-			{
+			switch (o_ptr->tval) {
 				case TV_BOOTS:
 				break;
 				default:
 				return (FALSE);
 			}
 			break;
+
 		/* Rare Jewellry Shop */
 		case STORE_JEWELX:
 			/* Analyze the type */
-			switch (o_ptr->tval)
-			{
+			switch (o_ptr->tval) {
 				case TV_AMULET:
 				case TV_RING:
 				break;
@@ -861,10 +841,10 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				return (FALSE);
 			}
 			break;
+
 		/* Mining Supply Store */
 		case STORE_MINING:
-			switch (o_ptr->tval)
-			{
+			switch (o_ptr->tval) {
 				case TV_DIGGING:
 				case TV_LITE:
 				case TV_FLASK: break;
@@ -876,10 +856,8 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 			break;
 		/* Bordertravel supplies */
 		case STORE_BTSUPPLY:
-		{
 			/* Analyze the type */
-			switch (o_ptr->tval)
-			{
+			switch (o_ptr->tval) {
 				case TV_POTION:
 				case TV_POTION2:
 				case TV_SCROLL:
@@ -897,11 +875,9 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				return (FALSE);
 			}
 			break;
-		}
+
 		case STORE_HERBALIST:
-		{
-			switch (o_ptr->tval)
-			{
+			switch (o_ptr->tval) {
 				case TV_BOOK: if (get_book_name_color(Ind, o_ptr) != TERM_L_GREEN) return FALSE;
 				case TV_FOOD:
 					if ((o_ptr->sval <= 19) || (o_ptr->sval == 50) || (o_ptr->sval == 40) ||
@@ -915,11 +891,10 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				return (FALSE);
 			}
 			break;
-		}
-                case STORE_SPEC_POTION:
+
+		case STORE_SPEC_POTION:
 			/* Analyze the type */
-			switch (o_ptr->tval)
-			{
+			switch (o_ptr->tval) {
 				case TV_POTION:
 				case TV_POTION2:
 				break;
@@ -929,8 +904,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 			break;
 		case STORE_SPEC_SCROLL:
 			/* Analyze the type */
-			switch (o_ptr->tval)
-			{
+			switch (o_ptr->tval) {
 				case TV_SCROLL:
 				break;
 				default:
@@ -939,8 +913,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 			break;
 		case STORE_SPEC_CLOSECOMBAT:
 			/* Analyze the type */
-			switch (o_ptr->tval)
-			{
+			switch (o_ptr->tval) {
 				case TV_BOOTS:
 				case TV_GLOVES:
 				case TV_CROWN:
@@ -966,10 +939,10 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				return (FALSE);
 			}
 			break;
-                case STORE_SPEC_ARCHER:
+
+		case STORE_SPEC_ARCHER:
 			/* Analyze the type */
-			switch (o_ptr->tval)
-			{
+			switch (o_ptr->tval) {
 				case TV_SHOT:
 				case TV_BOLT:
 				case TV_ARROW:
@@ -979,22 +952,21 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				return (FALSE);
 			}
 			break;
+
 		case STORE_HIDDENLIBRARY:
 			/* Analyze the type */
-			switch (o_ptr->tval)
-			{
+			switch (o_ptr->tval) {
 				case TV_BOOK:
 				break;
 				default:
 				return (FALSE);
 			}
 			break;
+
 		case STORE_STRADER: /* For ironman dungeons */
-		{
 			/* doesn't like very cheap items */
 			if (object_value(Ind, o_ptr) < 10) return (FALSE);
 			break;
-		}
 	}
 
 	/* XXX XXX XXX Ignore "worthless" items */
@@ -1236,24 +1208,28 @@ static bool black_market_crap(object_type *o_ptr)
 	if (o_ptr->to_h > 0) return (FALSE);
 	if (o_ptr->to_d > 0) return (FALSE);
 
+	/* Don't allow items in black markets that are listed in other BMs' templates already */
 	/* check individual store would be better. *later* */
-	for(i=0; i<max_st_idx; i++){
-		if (st_info[i].flags1 & SF1_ALL_ITEM){
-			for(j=0; j<st_info[i].table_num; j++){
+	for (i = 0; i < max_st_idx; i++) {
+		if (st_info[i].flags1 & SF1_ALL_ITEM) {
+			for (j = 0; j < st_info[i].table_num; j++) {
 				if (st_info[i].table[j][0] >= 10000) {
-					if(o_ptr->tval == st_info[i].table[j][0] - 10000)
+					if (o_ptr->tval == st_info[i].table[j][0] - 10000)
 						return(FALSE);
 				} else {
-					if(o_ptr->k_idx == st_info[i].table[j][0])
+					if (o_ptr->k_idx == st_info[i].table[j][0])
 						return(FALSE);
 				}
 			}
 		}
 	}
 
+	/* Don't allow items that are currently offered in any non-BM.
+	   NOTE: Should maybe be changed to just check vs items in that store's template!
+	         Otherwise selling an item could block same item type being generated in a BM.. */
 #if 1 /* note: ego items are never bm crap (see above), so checking all base stores at all does make sense */
-	for(k = 0; k < numtowns; k++){
-		st_ptr=town[k].townstore;
+	for (k = 0; k < numtowns; k++) {
+		st_ptr = town[k].townstore;
  #if 0 /* according to Mikael's find, this causes bad bugs, ie items that seemingly for no reason wont show up in BMs anymore */
 		/* Check the other "normal" stores */
 		for (i = 0; i < max_st_idx; i++)
@@ -1266,8 +1242,7 @@ static bool black_market_crap(object_type *o_ptr)
 			if (st_info[i].flags1 & SF1_ALL_ITEM) continue;
 
 			/* Check every item in the store */
-			for (j = 0; j < st_ptr[i].stock_num; j++)
-			{
+			for (j = 0; j < st_ptr[i].stock_num; j++) {
 				object_type *j_ptr = &st_ptr[i].stock[j];
 
 				/* Duplicate item "type", assume crappy */
@@ -1421,10 +1396,10 @@ static int kind_is_storeok(int k_idx, u32b resf)
  */
 static void store_create(store_type *st_ptr)
 {
-	int i=0, tries, level, chance, item;
+	int i = 0, tries, level, chance, item;
 
-	object_type		tmp_obj;
-	object_type		*o_ptr = &tmp_obj;
+	object_type tmp_obj;
+	object_type *o_ptr = &tmp_obj;
 	int force_num = 0;
         object_kind *k_ptr;
 	ego_item_type *e_ptr, *e2_ptr;
@@ -1640,9 +1615,9 @@ static void store_create(store_type *st_ptr)
 		/* Let's not allow 'Cure * Insanity', 'Augmentation', 'Learning', 'Experience',
 		 * and 'Invulnerability' potions - the_sandman */
 		if (st_ptr->st_idx == STORE_SPEC_POTION) {
-			switch (o_ptr->tval){
+			switch (o_ptr->tval) {
 				case TV_POTION:
-					switch(o_ptr->sval){
+					switch (o_ptr->sval) {
 						case SV_POTION_AUGMENTATION:
 						case SV_POTION_EXPERIENCE:
 						case SV_POTION_INVULNERABILITY:
@@ -1652,7 +1627,7 @@ static void store_create(store_type *st_ptr)
 							break;
 					} break;
 				case TV_POTION2:
-					switch(o_ptr->sval){
+					switch (o_ptr->sval) {
 						case SV_POTION2_CURE_LIGHT_SANITY:
 						case SV_POTION2_CURE_SERIOUS_SANITY:
 						case SV_POTION2_CURE_CRITICAL_SANITY:
@@ -1749,9 +1724,9 @@ static void store_create(store_type *st_ptr)
 					that normal bms don't have, so cheap/low items won't appear. :D
 			   (note: it should (for mages) probably be kept ensured that soft leather boots can appear in boot store too.) */
 			if (magik(95)) {
-        			if ((k_ptr->chance[0] && k_ptr->chance[0] < 3) ||
+				if ((k_ptr->chance[0] && k_ptr->chance[0] < 3) ||
 				    (k_ptr->chance[1] && k_ptr->chance[1] < 3) ||
-    				    (k_ptr->chance[2] && k_ptr->chance[2] < 3) ||
+				    (k_ptr->chance[2] && k_ptr->chance[2] < 3) ||
 				    (k_ptr->chance[3] && k_ptr->chance[3] < 3))
 					continue;
 
@@ -1807,7 +1782,7 @@ static void store_create(store_type *st_ptr)
 		if ((st_info[st_ptr->st_idx].flags1 & SF1_DEEP_LEVEL) &&
 		    ((k_ptr->locale[0] < 50) && (k_ptr->locale[1] < 50) &&
 		    (k_ptr->locale[2] < 50) && (k_ptr->locale[3] < 50)))
-			continue;	
+			continue;
 		else if ((st_info[st_ptr->st_idx].flags1 & SF1_MEDIUM_LEVEL) &&
 		    ((k_ptr->locale[0] < 25) && (k_ptr->locale[1] < 25) &&
 		    (k_ptr->locale[2] < 25) && (k_ptr->locale[3] < 25)))
@@ -1914,13 +1889,10 @@ static void updatebargain(s64b price, s64b minprice)
 	if (minprice < 10L) return;
 
 	/* Count the successful haggles */
-	if (price == minprice)
-	{
+	if (price == minprice) {
 		/* Just count the good haggles */
 		if (st_ptr->good_buy < MAX_SHORT)
-		{
 			st_ptr->good_buy++;
-		}
 	}
 
 	/* Count the failed haggles */
@@ -1940,17 +1912,66 @@ static void updatebargain(s64b price, s64b minprice)
  *
  * For multiple stores.
  */
-static int gettown(int Ind){
+static int gettown(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int i, retval=-1;
-	if(p_ptr->wpos.wz) return(-1);
-	for(i=0;i<numtowns;i++){
-		if(town[i].x==p_ptr->wpos.wx && town[i].y==p_ptr->wpos.wy){
-			retval=i;
+	int i, retval =- 1;
+	if (p_ptr->wpos.wz) return(-1);
+	for (i = 0; i < numtowns; i++){
+		if (town[i].x == p_ptr->wpos.wx && town[i].y == p_ptr->wpos.wy) {
+			retval = i;
 			break;
 		}
 	}
 	return(retval);
+}
+/* For abusing towns to provide dungeon stores - C. Blue
+   (Use dlev_id and fake_town_num to bind a town's dungeon stores to a dungeon floor.) */
+static int gettown_dun(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	int i;
+	dun_level *l_ptr;
+
+	/* formerly 0 was the default town for all non-regular-town stores (ie wild/dungeon stores) */
+	//return 0;
+
+	/* Use first normal town (Bree) for rogue stores in the wilderness
+	   (don't exist though, maybe in the future) */
+	if (p_ptr->wpos.wz == 0) return 0;
+
+	/* For dungeon/tower floor stores, cycle through towns to allow
+	   multiple stores of same type to occur which aren't linked */
+	l_ptr = getfloor(&p_ptr->wpos);
+
+	/* Fake town has already been set for this floor? */
+	if (l_ptr->fake_town_num) return(l_ptr->fake_town_num - 1);
+
+	/* Set a fake town to be used for this floor */
+	for (i = 0; i < numtowns; i++) {
+		if (town[i].dlev_id == 0) {
+			/* link town and floor to each other for easy reference */
+			town[i].dlev_id = l_ptr->id;
+			l_ptr->fake_town_num = i + 1;
+
+			return(i);
+		}
+	}
+
+	/* All towns in use, then just re-use a random town,
+	   but make it fixed for this dungeon floor! */
+
+	/* Fix the RNG */
+	bool rand_old = Rand_quick;
+	u32b old_seed = Rand_value;
+	Rand_quick = TRUE;
+	Rand_value = l_ptr->id;
+
+	i = rand_int(numtowns);
+
+	/* Restore the RNG */
+	Rand_quick = rand_old;
+	Rand_value = old_seed;
+
+	return(i);
 }
 
 /* Display a non-shop store (newly added SPECIAL flag) - C. Blue
@@ -1965,7 +1986,8 @@ static void display_special_store(Ind) {
 	/* Get store and owner information */
 	i = gettown(Ind);
 	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
-	if (i == -1) i = 0;
+	if (i == -1) i = gettown_dun(Ind);
+
 	st_ptr = &town[i].townstore[p_ptr->store_num];
 	ot_ptr = &ow_info[st_ptr->owner];
 	store_name = (st_name + st_info[st_ptr->st_idx].name);
@@ -2002,7 +2024,7 @@ static void display_entry(int Ind, int pos)
 
 	i = gettown(Ind);
 	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
-	if (i == -1) i = 0;
+	if (i == -1) i = gettown_dun(Ind);
 
 #ifdef PLAYER_STORES
 	if (p_ptr->store_num <= -2) /* it's a player's private store! */
@@ -2124,13 +2146,13 @@ static void display_entry(int Ind, int pos)
 #endif
 		/* Send the info */
 		if (is_newer_than(&p_ptr->version, 4, 4, 3, 0, 0, 4)) {
-                        if (o_ptr->tval != TV_BOOK || o_ptr->sval < SV_CUSTOM_TOME_1 || o_ptr->sval == SV_SPELLBOOK) {
-                                Send_store(Ind, pos, attr, wgt, o_ptr->number, x, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
+			if (o_ptr->tval != TV_BOOK || o_ptr->sval < SV_CUSTOM_TOME_1 || o_ptr->sval == SV_SPELLBOOK) {
+				Send_store(Ind, pos, attr, wgt, o_ptr->number, x, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
 			} else {
-                                Send_store_wide(Ind, pos, attr, wgt, o_ptr->number, x, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval,
-                                    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9);
-                        }
-                } else {
+				Send_store_wide(Ind, pos, attr, wgt, o_ptr->number, x, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval,
+				    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9);
+			}
+		} else {
 			Send_store(Ind, pos, attr, wgt, o_ptr->number, x, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
 		}
 	}
@@ -2152,7 +2174,7 @@ static void display_inventory(int Ind)
 	
 	i = gettown(Ind);
 	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
-	if (i == -1) i = 0;
+	if (i == -1) i = gettown_dun(Ind);
 
 #ifdef PLAYER_STORES
 	if (p_ptr->store_num <= -2) /* it's a player's private store! */
@@ -2197,7 +2219,7 @@ static void display_store(int Ind)
 
 	i = gettown(Ind);
 	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
-	if (i == -1) i = 0;
+	if (i == -1) i = gettown_dun(Ind);
 
 #ifdef PLAYER_STORES
 	if (p_ptr->store_num <= -2) /* it's a player's private store! */
@@ -2339,19 +2361,15 @@ static bool sell_haggle(int Ind, object_type *o_ptr, s64b *price)
 {
 	player_type *p_ptr = Players[Ind];
 	store_type *st_ptr;
-
 	owner_type *ot_ptr;
-
-	s64b               purse, cur_ask, final_ask;
-
-	int			final = FALSE;
-
-	cptr		pmt = "Offer";
+	s64b purse, cur_ask, final_ask;
+	int final = FALSE;
+	cptr pmt = "Offer";
 	int i;
 
 	i = gettown(Ind);
 	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
-        if (i == -1) i = 0;
+	if (i == -1) i = gettown_dun(Ind);
 
 #ifdef PLAYER_STORES
 	if (p_ptr->store_num <= -2) /* it's a player's private store! */
@@ -2480,7 +2498,7 @@ void store_stole(int Ind, int item)
 	/* Get town or dungeon the store is located within */
 	i = gettown(Ind);
 	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
-        if (i == -1) i = 0;
+	if (i == -1) i = gettown_dun(Ind);
 
 #ifdef PLAYER_STORES
 	if (p_ptr->store_num <= -2) /* it's a player's private store! */
@@ -2500,8 +2518,7 @@ void store_stole(int Ind, int item)
 	/* Check that it's a real item - mikaelh */
 	if (!o_ptr->tval) return;
 
-	if (p_ptr->store_num == STORE_HOME)
-	{
+	if (p_ptr->store_num == STORE_HOME) {
 		msg_print(Ind, "You don't steal from your home!");
 		return;
 	}
@@ -2511,19 +2528,16 @@ void store_stole(int Ind, int item)
 		return;
 	}
 
-        if (p_ptr->pstealing) {
-                msg_print(Ind, "You're still not calm enough to steal again..");
-                return;
+	if (p_ptr->pstealing) {
+		msg_print(Ind, "You're still not calm enough to steal again..");
+		return;
 	}
 
 	/* Level restriction (mainly anticheeze) */
-	if (p_ptr->lev < 5)
-	{
+	if (p_ptr->lev < 5) {
 		msg_print(Ind, "You dare not to! Your level needs to be 5 at least.");
 		return;
-	}
-	else if ((p_ptr->lev < 10) && (object_value(Ind, o_ptr) >= 200))
-	{
+	} else if ((p_ptr->lev < 10) && (object_value(Ind, o_ptr) >= 200)) {
 		msg_print(Ind, "You dare not to steal this expensive item! Hit level 10 first.");
 		return;
 	}
@@ -2537,21 +2551,21 @@ void store_stole(int Ind, int item)
 
 	/* I'm not saying this is the way to go, but they
 	   can cheeze by attempting repeatedly */
-	if(p_ptr->tim_blacklist || p_ptr->tim_watchlist || st_ptr->tim_watch){
+	if (p_ptr->tim_blacklist || p_ptr->tim_watchlist || st_ptr->tim_watch) {
 		msg_print(Ind, "\"Bastard Thief! Get out of my shop!!!\"");
 		msg_print_near(Ind, "You hear loud shouting..");
 		msg_format_near(Ind, "an angry shopkeeper kicks %s out of the shop!", p_ptr->name);
 #if 0
 		/* increase/set player's blacklist timer */
-		if(p_ptr->tim_blacklist < 10000000)	/* 10 million turns is LONG ENOUGH */
+		if (p_ptr->tim_blacklist < 10000000)	/* 10 million turns is LONG ENOUGH */
 			p_ptr->tim_blacklist += 1000;	/* add a little */
 //			p_ptr->tim_watchlist += 1;	/* add a little (a day/night period) */
 			p_ptr->tim_watchlist += 1000;
 
  #if 0
-			/* increase owner's extra attentiveness timer */
-			st_ptr->tim_watch += 100;
-			if (st_ptr->tim_watch > 300) st_ptr->tim_watch = 300;
+		/* increase owner's extra attentiveness timer */
+		st_ptr->tim_watch += 100;
+		if (st_ptr->tim_watch > 300) st_ptr->tim_watch = 300;
  #endif
 #endif
 		/* player gets kicked out */
@@ -2675,8 +2689,7 @@ void store_stole(int Ind, int item)
 
 	/* always 1% chance to fail, so that ppl won't macro it */
 	/* 1% pfft. 5% and rising... */
-	if (rand_int(chance) <= 10 && !magik(5))
-	{
+	if (rand_int(chance) <= 10 && !magik(5)) {
 		/* Hack -- buying an item makes you aware of it */
 		object_aware(Ind, &sell_obj);
 
@@ -2708,7 +2721,7 @@ void store_stole(int Ind, int item)
 
 //		s_printf("Stealing: %s (%d) succ. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance<10?10:chance), chance);
 		/* let's instead display the chance without regards to 5% chance to fail, since very small % numbers become more accurate! */
-//		if (chance > 10)
+		if (chance > 10)
 		s_printf("Stealing: %s (%d) succ. %s (chance %d%%0 (%d) %d,%d,%d).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance < 10 ? 10 : chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 		        s_printf("ARTSCROLL stolen by %s.\n", p_ptr->name);
@@ -2730,8 +2743,7 @@ void store_stole(int Ind, int item)
 		display_store(Ind);
 
 		/* Store is empty */
-		if (st_ptr->stock_num == 0)
-		{
+		if (st_ptr->stock_num == 0) {
 			/* This should do a nice restock */
 			//st_ptr->last_visit = 0;
 			st_ptr->last_visit = -10L * cfg.store_turns;
@@ -2739,15 +2751,13 @@ void store_stole(int Ind, int item)
 
 		/* The item is gone */
 		//else
-		if (st_ptr->stock_num != i)
-		{
+		if (st_ptr->stock_num != i) {
 			/* Redraw everything */
 			display_inventory(Ind);
 		}
 
 		/* Item is still here */
-		else
-		{
+		else {
 			/* Redraw the item */
 			display_entry(Ind, item);
 		}
@@ -2755,8 +2765,7 @@ void store_stole(int Ind, int item)
 
 	}
 
-	else
-	{
+	else {
 //s_printf("Stealing: %s (%d) fail. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance<10?10:chance), chance);
 s_printf("Stealing: %s (%d) fail. %s (chance %d%%0 (%d) %d,%d,%d).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance<10?10:chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		/* Complain */
@@ -2829,8 +2838,8 @@ s_printf("Stealing: %s (%d) fail. %s (chance %d%%0 (%d) %d,%d,%d).\n", p_ptr->na
 		store_kick(Ind, FALSE);
 	}
 
-        /* set timeout before attempting to shoplift again */
-        p_ptr->pstealing = 0; /* 10 turns aka 6 seconds */
+	/* set timeout before attempting to shoplift again */
+	p_ptr->pstealing = 0; /* 10 turns aka 6 seconds */
 
 	/* Not kicked out */
 	return;
@@ -2872,7 +2881,7 @@ void store_purchase(int Ind, int item, int amt)
 
 	i = gettown(Ind);
 	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
-        if (i == -1) i = 0;
+        if (i == -1) i = gettown_dun(Ind);
 
 	if (p_ptr->store_num == -1) {
 		msg_print(Ind,"You left the shop!");
@@ -3374,7 +3383,7 @@ void store_sell(int Ind, int item, int amt)
 			return;
 		}
 	} else {
-		if (!store_check_num(&town[0].townstore[p_ptr->store_num], &sold_obj)) {
+		if (!store_check_num(&town[gettown_dun(Ind)].townstore[p_ptr->store_num], &sold_obj)) {
 			if (p_ptr->store_num == STORE_HOME) msg_print(Ind, "Your home is full.");
 			else msg_print(Ind, "I have not the room in my store to keep it.");
 			return;
@@ -3516,7 +3525,7 @@ void store_confirm(int Ind)
 	o_ptr = &p_ptr->inventory[item];
 #endif
 
-        /* Server-side exploit checks - C. Blue */
+	/* Server-side exploit checks - C. Blue */
 	if (amt <= 0) {
 		s_printf("$INTRUSION$ (FORCED) Bad amount %d! Sold by %s.\n", amt, p_ptr->name);
 		return;
@@ -3536,10 +3545,10 @@ void store_confirm(int Ind)
 
 	(void) sell_haggle(Ind, &sold_obj, &price_redundance);
 	if (price != price_redundance) {
-                s_printf("$INTRUSION$ Tried to sell %ld for %ld! Sold by %s.\n", (long int)price_redundance, (long int)price, p_ptr->name);
+		s_printf("$INTRUSION$ Tried to sell %ld for %ld! Sold by %s.\n", (long int)price_redundance, (long int)price, p_ptr->name);
 #if 0
-                msg_print(Ind, "Wrong item!");
-                return;
+		msg_print(Ind, "Wrong item!");
+		return;
 #else
 		price = price_redundance;
 		if (!price) return;
@@ -3628,21 +3637,20 @@ void store_confirm(int Ind)
 	handle_stuff(Ind);
 
 	/* Artifact won't be sold in a store */
-	if ((cfg.anti_arts_shop || p_ptr->total_winner) && true_artifact_p(&sold_obj) && !museum)
-	{
+	if ((cfg.anti_arts_shop || p_ptr->total_winner) && true_artifact_p(&sold_obj) && !museum) {
 		handle_art_d(sold_obj.name1);
 		return;
 	}
 
 	/* The store gets that (known) item */
 //	if(sold_obj.tval!=8)	// What was it for.. ?
-	if(gettown(Ind) != -1) //DUNGEON STORES
+	if (gettown(Ind) != -1) //DUNGEON STORES
 		item_pos = store_carry(&town[gettown(Ind)].townstore[p_ptr->store_num], &sold_obj);
 #if 0 /* have dungeon shops eat the item to prevent cheezy transfers */
 	else
 		/* mostly for RPG_SERVER */
 		if (p_ptr->store_num != STORE_STRADER)
-			item_pos = store_carry(&town[0].townstore[p_ptr->store_num], &sold_obj);
+			item_pos = store_carry(&town[gettown_dun(Ind)].townstore[p_ptr->store_num], &sold_obj);
 		else
 			if (true_artifact_p(&sold_obj)) {
 				handle_art_d(sold_obj.name1);
@@ -3684,7 +3692,7 @@ void store_examine(int Ind, int item)
 
 	i = gettown(Ind);
 	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
-        if (i == -1) i = 0;
+        if (i == -1) i = gettown_dun(Ind);
 
 #ifdef PLAYER_STORES
 	if (p_ptr->store_num <= -2) /* it's a player's private store! */
@@ -3759,7 +3767,7 @@ void do_cmd_store(int Ind)
 
 	i = gettown(Ind);
 	/* hack: non-town stores are borrowed from town #0 - C. Blue */
-	if (i == -1) i = 0;
+	if (i == -1) i = gettown_dun(Ind);
 
 	/* Verify a store */
 #if 0
@@ -3774,17 +3782,16 @@ void do_cmd_store(int Ind)
 	/* Extract the store code */
 //	which = (c_ptr->feat - FEAT_SHOP_HEAD);
 
-	if((cs_ptr = GetCS(c_ptr, CS_SHOP))) {
+	if ((cs_ptr = GetCS(c_ptr, CS_SHOP))) {
 		which = cs_ptr->sc.omni;
 	} else {
 		msg_print(Ind, "You see no store here.");
 		return;
 	}
 
-	if (i != -1){
+	if (gettown(Ind) != -1) {
 		/* Hack -- Check the "locked doors" */
-		if (town[i].townstore[which].store_open >= turn)
-		{
+		if (town[i].townstore[which].store_open >= turn) {
 			msg_print(Ind, "The doors are locked.");
 			return;
 		}
@@ -3811,6 +3818,7 @@ void do_cmd_store(int Ind)
 	/* No automatic command */
 	/*command_new = 0;*/
 
+#if 0 /* This assumes that the same store index does not occur in both town and dungeon at once! */
 	if (gettown(Ind) != -1) {
 		st_ptr = &town[i].townstore[which];
 
@@ -3819,7 +3827,7 @@ void do_cmd_store(int Ind)
 			/* Check this player */
 			j = gettown(i);
 			if (j != -1) {
-				if(st_ptr == &town[j].townstore[Players[i]->store_num]) {
+				if (st_ptr == &town[j].townstore[Players[i]->store_num]) {
 					msg_print(Ind, "The store is full.");
 					store_kick(Ind, FALSE);
 					return;
@@ -3836,7 +3844,7 @@ void do_cmd_store(int Ind)
 			/* Check this player */
 			j = gettown(i);
 			if (j == -1) {
-				if(st_ptr == &town[0].townstore[Players[i]->store_num]) {
+				if (st_ptr == &town[gettown_dun(i)].townstore[Players[i]->store_num]) {
 					msg_print(Ind, "The store is full.");
 					store_kick(Ind, FALSE);
 					return;
@@ -3844,6 +3852,30 @@ void do_cmd_store(int Ind)
 			}
 		}
 	}
+#else /* This assumes that the same store index could occur in both town and dungeon at once! */
+	st_ptr = &town[i].townstore[which];
+
+	/* Make sure if someone is already in */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Check this player */
+		j = gettown(i);
+		//DUNGEON STORES
+		if (j == -1) j = gettown_dun(i);
+
+		if (st_ptr == &town[j].townstore[Players[i]->store_num]) {
+			if (Players[i]->admin_dm && !p_ptr->admin_dm) {
+				store_kick(i, FALSE);
+				msg_print(i, "Someone has entered the store.");
+				/* hack: repair grid's player index again */
+				c_ptr->m_idx = -Ind;
+			} else {
+				msg_print(Ind, "The store is full.");
+				store_kick(Ind, FALSE);
+				return;
+			}
+		}
+	}
+#endif
 
 	break_cloaking(Ind, 0);
 	break_shadow_running(Ind);
@@ -3959,23 +3991,21 @@ void store_shuffle(store_type *st_ptr)
 #endif
 
 	/* Make sure no one is in the store */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		/* Check this player */
-		j=gettown(i);
-		if(j!=-1){
-			if(st_ptr==&town[j].townstore[Players[i]->store_num])
+		j = gettown(i);
+		if (j != -1) {
+			if (st_ptr == &town[j].townstore[Players[i]->store_num])
 				return;
 		}
-		if(j==-1){	//DUNGEON STORES
-			if(st_ptr==&town[0].townstore[Players[i]->store_num])
+		if (j == -1) {	//DUNGEON STORES
+			if (st_ptr == &town[gettown_dun(i)].townstore[Players[i]->store_num])
 				return;
 		}
 	}
 
 	/* Pick a new owner */
-	for (j = st_ptr->owner; j == st_ptr->owner; )
-	{	  
+	for (j = st_ptr->owner; j == st_ptr->owner; ) {
 //		st_ptr->owner = rand_int(MAX_STORE_OWNERS);
 		st_ptr->owner = st_info[st_ptr->st_idx].owners[rand_int(MAX_STORE_OWNERS)];
 		if ((!(--tries))) break;
@@ -4064,22 +4094,20 @@ void store_maint(store_type *st_ptr)
 
 	/* Make sure no one is in the store */
 #if 0 /* not used (cf.st_ptr->last_visit) */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		/* Check this player */
-		j=gettown(i);
-		if(j!=-1){
-			if(st_ptr==&town[j].townstore[Players[i]->store_num])
-			{
+		j = gettown(i);
+		if (j != -1) {
+			if (st_ptr == &town[j].townstore[Players[i]->store_num]) {
 				/* Somewhat hackie -- don't turn her/him out at once */
 				if (magik(40) && Players[i]->tim_store < STORE_TURNOUT / 2)
 					store_kick(i, TRUE);
 				else return;
 			}
 		}
-		if(j==-1){	//DUNGEON STORES
-			if(st_ptr==&town[0].townstore[Players[i]->store_num])
-			{
+		if (j == -1) {	//DUNGEON STORES
+			j = gettown_dun(i);
+			if (st_ptr == &town[j].townstore[Players[i]->store_num]) {
 				if (magik(40) && Players[i]->tim_store < STORE_TURNOUT / 2)
 					store_kick(i, TRUE);
 				else return;
@@ -4091,23 +4119,18 @@ void store_maint(store_type *st_ptr)
 //	ot_ptr = &owners[st_ptr->st_idx][st_ptr->owner];
 	ot_ptr = &ow_info[st_ptr->owner];
 
-
 	/* Store keeper forgives the player */
 	st_ptr->insult_cur = 0;
 
-
 	/* Mega-Hack -- prune the black market */
 //	if (st_ptr->st_idx == 6)
-	if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM)
-	{
+	if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) {
 		/* Destroy crappy black market items */
-		for (j = st_ptr->stock_num - 1; j >= 0; j--)
-		{
+		for (j = st_ptr->stock_num - 1; j >= 0; j--) {
 			object_type *o_ptr = &st_ptr->stock[j];
 
 			/* Destroy crappy items */
-			if (black_market_crap(o_ptr))
-			{
+			if (black_market_crap(o_ptr)) {
 				/* Destroy the item */
 				store_item_increase(st_ptr, j, 0 - o_ptr->number);
 				store_item_optimize(st_ptr, j);
@@ -4173,12 +4196,11 @@ void store_maint(store_type *st_ptr)
 
 	/* Acquire some new items */
 	/* We want speed & healing & mana pots in the BM */
-	while (st_ptr->stock_num < j)
-	  {
-	    store_create(st_ptr);
-       	    tries--;
-	      if (!tries) break;
-	  }
+	while (st_ptr->stock_num < j) {
+		store_create(st_ptr);
+		tries--;
+		if (!tries) break;
+	}
 }
 
 
@@ -4218,9 +4240,7 @@ void store_init(store_type *st_ptr)
 
 	/* Clear any old items */
 	for (k = 0; k < st_ptr->stock_size; k++)
-	{
 		invwipe(&st_ptr->stock[k]);
-	}
 }
 
 		
@@ -4254,7 +4274,7 @@ void store_exec_command(int Ind, int action, int item, int item2, int amt, int g
 
 	i = gettown(Ind);
 	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
-        if (i == -1) i = 0;
+	if (i == -1) i = gettown_dun(Ind);
 
 	/* sanity check - Yakina - */
 	if (p_ptr->store_num == -1) {
@@ -4786,9 +4806,7 @@ static void home_item_optimize(house_type *h_ptr, int item)
 
 	/* Slide everyone */
 	for (j = item; j < h_ptr->stock_num; j++)
-	{
 		h_ptr->stock[j] = h_ptr->stock[j + 1];
-	}
 
 	/* Nuke the final slot */
 	invwipe(&h_ptr->stock[j]);
@@ -4811,8 +4829,7 @@ static bool home_check_num(int Ind, house_type *h_ptr, object_type *o_ptr)
 	/* The "home" acts like the player */
 	{
 		/* Check all the items */
-		for (i = 0; i < h_ptr->stock_num; i++)
-		{
+		for (i = 0; i < h_ptr->stock_num; i++) {
 			/* Get the existing item */
 			j_ptr = &h_ptr->stock[i];
 
@@ -4829,15 +4846,11 @@ static bool home_check_num(int Ind, house_type *h_ptr, object_type *o_ptr)
 void home_sell(int Ind, int item, int amt)
 {
 	player_type *p_ptr = Players[Ind];
-
 	int			h_idx, item_pos;
-
 	object_type		sold_obj;
 	object_type		*o_ptr;
-
-	char		o_name[ONAME_LEN];
-
-	house_type *h_ptr;
+	char			o_name[ONAME_LEN];
+	house_type		*h_ptr;
 
 	/* This should never happen */
 	if (p_ptr->store_num != 7) {
@@ -4970,7 +4983,6 @@ void home_purchase(int Ind, int item, int amt)
 {
 	player_type *p_ptr = Players[Ind];
 
-
 	int			i;
 	int			item_new;
 	int h_idx;
@@ -5007,9 +5019,9 @@ void home_purchase(int Ind, int item, int amt)
 		return;
 	}
 
-        /* Sanity check - mikaelh */
-        if (item < 0 || item >= h_ptr->stock_size)
-                return;
+	/* Sanity check - mikaelh */
+	if (item < 0 || item >= h_ptr->stock_size)
+		return;
 
 	/* Get the actual item */
 	o_ptr = &h_ptr->stock[item];
@@ -5185,15 +5197,10 @@ void home_purchase(int Ind, int item, int amt)
 void home_examine(int Ind, int item)
 {
 	player_type *p_ptr = Players[Ind];
-
 //	int st = p_ptr->store_num;
-
 	int	h_idx;
-
 	object_type		*o_ptr;
-
 	char		o_name[ONAME_LEN];
-	
 	house_type *h_ptr;
 
 	/* This should never happen */
@@ -5205,8 +5212,7 @@ void home_examine(int Ind, int item)
 	h_ptr = &houses[h_idx];
 
 	/* Empty? */
-	if (h_ptr->stock_num <= 0)
-	{
+	if (h_ptr->stock_num <= 0) {
 		msg_print(Ind, "Your home is empty.");
 		return;
 	}
@@ -5248,11 +5254,8 @@ void home_examine(int Ind, int item)
 void home_extend(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-
 //	int st = p_ptr->store_num;
-
 	int	h_idx, cost = 0;
-
 	house_type *h_ptr;
 
 	/* This should never happen */
@@ -5264,16 +5267,14 @@ void home_extend(int Ind)
 	h_ptr = &houses[h_idx];
 
 	/* Already too large? */
-	if (h_ptr->stock_size >= STORE_INVEN_MAX)
-	{
+	if (h_ptr->stock_size >= STORE_INVEN_MAX) {
 		msg_print(Ind, "Your house cannot be extended any more.");
 		return;
 	}
 
 	cost = h_ptr->dna->price * 2 / (h_ptr->stock_size + 1);
 
-	if (p_ptr->au < cost)
-	{
+	if (p_ptr->au < cost) {
 		msg_print(Ind, "You couldn't afford it..");
 		return;
 	}
@@ -5325,7 +5326,7 @@ static void display_house_entry(int Ind, int pos, house_type *h_ptr)
 	o_name[maxwid] = '\0';
 
 	attr = get_attr_from_tval(o_ptr);
-	
+
 	/* Get the proper book colour */
 	if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(Ind, o_ptr);
 
@@ -5334,13 +5335,13 @@ static void display_house_entry(int Ind, int pos, house_type *h_ptr)
 
 	/* Send the info */
 	if (is_newer_than(&p_ptr->version, 4, 4, 3, 0, 0, 4)) {
-                if (o_ptr->tval != TV_BOOK || o_ptr->sval < SV_CUSTOM_TOME_1 || o_ptr->sval == SV_SPELLBOOK) {
-                        Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
+		if (o_ptr->tval != TV_BOOK || o_ptr->sval < SV_CUSTOM_TOME_1 || o_ptr->sval == SV_SPELLBOOK) {
+			Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
 		} else {
-                        Send_store_wide(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval,
-                            o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9);
-                }
-        } else {
+			Send_store_wide(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval,
+			    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9);
+		}
+	} else {
 		Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
 	}
 }
@@ -5503,7 +5504,7 @@ void reward_deed_item(int Ind, int item)
 		msg_print(Ind, "\377oYou can only redeem your own deeds for items.");
 		return;
 	}
-	
+
 	switch (o2_ptr->sval) {
 	case SV_DEED_HIGHLANDER: /* winner's deed */
 		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_LOW2, 3000); /* 95 is default depth for highlander tournament */
@@ -5548,17 +5549,17 @@ void reward_deed_item(int Ind, int item)
 		return;
 	}
 
-        /* Take the item from the player, describe the result */
-        inven_item_increase(Ind, item, -1);
-        inven_item_describe(Ind, item);
-        inven_item_optimize(Ind, item);
+	/* Take the item from the player, describe the result */
+	inven_item_increase(Ind, item, -1);
+	inven_item_describe(Ind, item);
+	inven_item_optimize(Ind, item);
 
 	/* finalize reward */
-        object_aware(Ind, o_ptr);
-        object_known(o_ptr);
-        o_ptr->discount = dis;
-        o_ptr->level = lev;
-        o_ptr->ident |= ID_MENTAL;
+	object_aware(Ind, o_ptr);
+	object_known(o_ptr);
+	o_ptr->discount = dis;
+	o_ptr->level = lev;
+	o_ptr->ident |= ID_MENTAL;
 	/* give him the reward item after taking the deed(!) */
 	if (o_ptr->k_idx) inven_carry(Ind, o_ptr);
 
@@ -5614,12 +5615,12 @@ void reward_deed_blessing(int Ind, int item)
 		return;
 	}
 
-        /* Take the item from the player, describe the result */
-        inven_item_increase(Ind, item, -1);
-        inven_item_describe(Ind, item);
-        inven_item_optimize(Ind, item);
+	/* Take the item from the player, describe the result */
+	inven_item_increase(Ind, item, -1);
+	inven_item_describe(Ind, item);
+	inven_item_optimize(Ind, item);
 
-        /* Handle stuff */
+	/* Handle stuff */
 	handle_stuff(Ind);
 }
 
@@ -5635,8 +5636,8 @@ void store_debug_stock()
 
 	/* process all stores in all towns */
 
-        for (i = 0; i < numtowns; i++)
-    	for (n = 0; n < max_st_idx; n++) {
+	for (i = 0; i < numtowns; i++)
+	for (n = 0; n < max_st_idx; n++) {
 
 		/* process each store */
 		st_ptr = &town[i].townstore[n];
@@ -5771,8 +5772,18 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 			if (Players[i]->ps_house_x == x &&
 			    Players[i]->ps_house_y == y) {
 				/* Player is in THIS store! */
-				msg_print(Ind, "The store is full.");
-				return TRUE;
+				if (Players[i]->admin_dm && !p_ptr->admin_dm) {
+					/* Actually superfluous atm, because you do not 'enter'
+					   a player store as you do a normal store, but instead
+					   remain standing besides it, physically. */
+					store_kick(i, FALSE);
+					msg_print(i, "Someone has entered the store.");
+					/* hack: repair grid's player index again */
+					zcave[p_ptr->py][p_ptr->px].m_idx = -Ind;
+				} else {
+					msg_print(Ind, "The store is full.");
+					return TRUE;
+				}
 			}
 		}
 	}
@@ -6006,6 +6017,7 @@ static void player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 	cave_type **zcave, *c_ptr;
 	char o_name[ONAME_LEN], o0_name[ONAME_LEN];
 	u32b old_value;
+	char owner_name[MAX_CHARS];
 
 	/* paranoia */
 	if (!o_ptr->number || !s_ptr->number) return;
@@ -6035,10 +6047,12 @@ static void player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 		return; /* oops? */
 	}
 	h_ptr = &houses[h_idx];
+	/* Get house owner's name for misc purpose and notification */
+	strcpy(owner_name, lookup_player_name(h_ptr->dna->owner));
 
 	if (!(zcave = getcave(&p_ptr->wpos))) {
 		s_printf("PLAYER_STORE_HANDLE: NO ZCAVE! (owner %s (%d), value %d, buyer %s)\n",
-		    lookup_player_name(h_ptr->dna->owner), h_ptr->dna->owner, value, p_ptr->name);
+		    owner_name, h_ptr->dna->owner, value, p_ptr->name);
 		return; /* oops? */
 	}
 
@@ -6090,14 +6104,14 @@ static void player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 			if (h_ptr->flags & HF_TRAD) {
 				cheque_ptr = &h_ptr->stock[p_ptr->ps_mcheque_x];
 s_printf("PLAYER_STORE: Mass Cheque (trad; owner %s (%d), %s, value %d, buyer %s)\n",
-    lookup_player_name(h_ptr->dna->owner), h_ptr->dna->owner, o0_name, value, p_ptr->name);
+    owner_name, h_ptr->dna->owner, o0_name, value, p_ptr->name);
 			} else {
 				/* ALL houses are currently rectangular, so this check seems obsolete.. */
 				if (h_ptr->flags & HF_RECT) {
 					c_ptr = &zcave[p_ptr->ps_mcheque_y][p_ptr->ps_mcheque_x];
 					cheque_ptr = &o_list[c_ptr->o_idx];
 s_printf("PLAYER_STORE: Mass Cheque (mang; owner %s (%d), %s, value %d, buyer %s)\n",
-    lookup_player_name(h_ptr->dna->owner), h_ptr->dna->owner, o0_name, value, p_ptr->name);
+    owner_name, h_ptr->dna->owner, o0_name, value, p_ptr->name);
 				}
 			}
 		}
@@ -6109,7 +6123,7 @@ s_printf("PLAYER_STORE: Mass Cheque (mang; owner %s (%d), %s, value %d, buyer %s
 					/* ouch, no room for dropping a cheque,
 					   money goes poof :( */
 					s_printf("PLAYER_STORE_HANDLE: NO ROOM! (owner %s (%d), value %d, buyer %s)\n",
-					    lookup_player_name(h_ptr->dna->owner), h_ptr->dna->owner, value, p_ptr->name);
+					    owner_name, h_ptr->dna->owner, value, p_ptr->name);
 					return;
 				}
 				/* add it to the stock and point to it.
@@ -6118,7 +6132,7 @@ s_printf("PLAYER_STORE: Mass Cheque (mang; owner %s (%d), %s, value %d, buyer %s
 				i = home_carry(Ind, h_ptr, cheque_ptr);
 				cheque_ptr = &h_ptr->stock[i];
 s_printf("PLAYER_STORE: New Mass Cheque (trad; owner %s (%d), %s, value %d, buyer %s)\n",
-    lookup_player_name(h_ptr->dna->owner), h_ptr->dna->owner, o0_name, value, p_ptr->name);
+    owner_name, h_ptr->dna->owner, o0_name, value, p_ptr->name);
 			} else {
 				/* ALL houses are currently rectangular, so this check seems obsolete.. */
 				if (h_ptr->flags & HF_RECT) {
@@ -6126,7 +6140,7 @@ s_printf("PLAYER_STORE: New Mass Cheque (trad; owner %s (%d), %s, value %d, buye
 						/* ouch, no room for dropping a cheque,
 						   money goes poof :( */
 						s_printf("PLAYER_STORE_HANDLE: NO ROOM! (owner %s (%d), value %d, buyer %s)\n",
-						    lookup_player_name(h_ptr->dna->owner), h_ptr->dna->owner, value, p_ptr->name);
+						    owner_name, h_ptr->dna->owner, value, p_ptr->name);
 						return;
 					}
 					/* Access free spot and verify its freeness.. */
@@ -6137,7 +6151,7 @@ s_printf("PLAYER_STORE: New Mass Cheque (trad; owner %s (%d), %s, value %d, buye
 						/* ouch, no room for dropping a cheque,
 						   money goes poof :( */
 						s_printf("PLAYER_STORE_HANDLE: NO ROOM! (owner %s (%d), value %d, buyer %s)\n",
-						    lookup_player_name(h_ptr->dna->owner), h_ptr->dna->owner, value, p_ptr->name);
+						    owner_name, h_ptr->dna->owner, value, p_ptr->name);
 						return;
 					}
 					/* Drop the cheque there */
@@ -6145,7 +6159,7 @@ s_printf("PLAYER_STORE: New Mass Cheque (trad; owner %s (%d), %s, value %d, buye
 					/* Access the new item and point to it */
 					cheque_ptr = &o_list[c_ptr->o_idx];
 s_printf("PLAYER_STORE: New Mass Cheque (mang; owner %s (%d), %s, value %d, buyer %s)\n",
-    lookup_player_name(h_ptr->dna->owner), h_ptr->dna->owner, o0_name, value, p_ptr->name);
+    owner_name, h_ptr->dna->owner, o0_name, value, p_ptr->name);
 				}
 			}
 		}
@@ -6179,7 +6193,7 @@ s_printf("PLAYER_STORE: New Mass Cheque (mang; owner %s (%d), %s, value %d, buye
 			/* For list house, overwriting is enough */
 			object_copy(ho_ptr, cheque_ptr);
 s_printf("PLAYER_STORE: Cheque (trad; owner %s (%d), %s, value %d, buyer %s)\n",
-    lookup_player_name(h_ptr->dna->owner), h_ptr->dna->owner, o0_name, value, p_ptr->name);
+    owner_name, h_ptr->dna->owner, o0_name, value, p_ptr->name);
 		} else {
 			if (h_ptr->flags & HF_RECT) {
 				/* Access free spot and verify its freeness.. */
@@ -6192,12 +6206,24 @@ s_printf("PLAYER_STORE: Cheque (trad; owner %s (%d), %s, value %d, buyer %s)\n",
 				/* Drop the cheque there */
 				drop_near(cheque_ptr, -1, &p_ptr->wpos, y, x);
 s_printf("PLAYER_STORE: Cheque (mang; owner %s (%d), %s, value %d, buyer %s)\n",
-    lookup_player_name(h_ptr->dna->owner), h_ptr->dna->owner, o0_name, value, p_ptr->name);
+    owner_name, h_ptr->dna->owner, o0_name, value, p_ptr->name);
 			}
 			//TODO: might require some everyone_lite_spot() etc stuff to redraw mang-houses..
 		}
 		/* We're done. */
 	}
+
+	/* Notify the store owner about the sale now or next time he logs in */
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (strcmp(owner_name, Players[i]->name)) continue;
+
+		/* Notify the owner now that he's online */
+		msg_format(i, "\374\377yYour store at (%d,%d) just sold something!", p_ptr->wpos.wx, p_ptr->wpos.wy);
+		break;
+	}
+	/* If he's not online, store account notification for later */
+	if (i > NumPlayers) acc_set_flags_id(h_ptr->dna->owner, ACC_WARN_SALE, TRUE);
 }
 #endif
 
@@ -6210,11 +6236,14 @@ void handle_store_leave(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	/* hack: non-town stores (ie dungeon, but could also be wild) */
-	if (i == -1) i = 0;
+	if (i == -1) i = gettown_dun(Ind);
 	st_ptr = &town[i].townstore[p_ptr->store_num];
 
 	/* Leave */
 	p_ptr->store_num = -1;
+
+	/* We're no longer busy with anything */
+	p_ptr->store_action = 0;
 
 	/* Not a special store? Nothing to do then */
 	if (!(st_info[st_ptr->st_idx].flags1 & SF1_SPECIAL)) return;

@@ -518,7 +518,8 @@ struct player_type
 	bool easy_open;
 	bool easy_disarm;
 	bool easy_tunnel;
-	bool auto_destroy;
+//	bool auto_destroy;
+	bool clear_inscr;
 	bool auto_inscribe;
 	bool taciturn_messages;
 	bool last_words;
@@ -974,6 +975,9 @@ struct player_type
 	/* for ENABLE_GO_GAME */
 	int go_level;
 	int go_sublevel;
+
+	int vampiric_melee;
+	int vampiric_ranged;
 };
 
 extern bool imprison(int Ind, int time, char *reason);

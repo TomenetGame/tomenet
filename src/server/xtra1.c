@@ -706,30 +706,27 @@ static void health_redraw(int Ind)
 #ifdef DRS_SHOW_HEALTH_BAR
 
 	/* Not tracking */
-	if (p_ptr->health_who == 0)
-	{
+	if (p_ptr->health_who == 0) {
 		/* Erase the health bar */
 		Send_monster_health(Ind, 0, 0);
 	}
 
 	/* Tracking a hallucinatory monster */
-	else if (p_ptr->image)
-	{
+	else if (p_ptr->image) {
 		/* Indicate that the monster health is "unknown" */
 		Send_monster_health(Ind, 0, TERM_WHITE);
 	}
 
 	/* Tracking a player */
-	else if (p_ptr->health_who < 0)
-	{
+	else if (p_ptr->health_who < 0) {
 		player_type *q_ptr = Players[0 - p_ptr->health_who];
 
-		if(Players[Ind]->conn == NOT_CONNECTED ) {
+		if (Players[Ind]->conn == NOT_CONNECTED) {
 			/* Send_monster_health(Ind, 0, 0); */
 			return;
-		};
+		}
 
-		if(0-p_ptr->health_who < NumPlayers) {
+		if (0 - p_ptr->health_who < NumPlayers) {
 			if(Players[0-p_ptr->health_who]->conn == NOT_CONNECTED ) {
 				Send_monster_health(Ind, 0, 0); 
 				return;
@@ -741,22 +738,19 @@ static void health_redraw(int Ind)
 			
 
 		/* Tracking a bad player (?) */
-		if (!q_ptr)
-		{
+		if (!q_ptr) {
 			/* Erase the health bar */
 			Send_monster_health(Ind, 0, 0);
 		}
 
 		/* Tracking an unseen player */
-		else if (!p_ptr->play_vis[0 - p_ptr->health_who])
-		{
+		else if (!p_ptr->play_vis[0 - p_ptr->health_who]) {
 			/* Indicate that the player health is "unknown" */
 			Send_monster_health(Ind, 0, TERM_WHITE);
 		}
 
 		/* Tracking a visible player */
-		else
-		{
+		else {
 			int pct, len;
 
 			/* Default to almost dead */
@@ -792,29 +786,25 @@ static void health_redraw(int Ind)
 	}
 
 	/* Tracking a bad monster (?) */
-	else if (!m_list[p_ptr->health_who].r_idx)
-	{
+	else if (!m_list[p_ptr->health_who].r_idx) {
 		/* Erase the health bar */
 		Send_monster_health(Ind, 0, 0);
 	}
 
 	/* Tracking an unseen monster */
-	else if (!p_ptr->mon_vis[p_ptr->health_who])
-	{
+	else if (!p_ptr->mon_vis[p_ptr->health_who]) {
 		/* Indicate that the monster health is "unknown" */
 		Send_monster_health(Ind, 0, TERM_WHITE);
 	}
 
 	/* Tracking a dead monster (???) */
-	else if (!m_list[p_ptr->health_who].hp < 0)
-	{
+	else if (!m_list[p_ptr->health_who].hp < 0) {
 		/* Indicate that the monster health is "unknown" */
 		Send_monster_health(Ind, 0, TERM_WHITE);
 	}
 
 	/* Tracking a visible monster */
-	else
-	{
+	else {
 		int pct, len;
 
 		monster_type *m_ptr = &m_list[p_ptr->health_who];
@@ -2134,13 +2124,11 @@ static void calc_body_bonus(int Ind)
 		/* Bats get feather falling */
 		case 37:	case 114:	case 187:	case 235:	case 351:
 		case 377:	case 391:	case 406:	case 484:	case 968:
-		{
 			p_ptr->feather_fall = TRUE;
 			/* Vampire bats are vampiric */
 			if (p_ptr->body_monster == 391) p_ptr->vampiric_melee = 100;
 			break;
-		}
-		
+
 		case 365: /* Vampiric mist is vampiric */
 			p_ptr->vampiric_melee = 100;
 			break;
@@ -2151,57 +2139,42 @@ static void calc_body_bonus(int Ind)
 		/* Elves get resist_lite, Dark-Elves get resist_dark */
 		case 122:	case 400:	case 178:	case 182:	case 226:
 		case 234:	case 348:	case 375:	case 564:	case 657:
-		{
 			p_ptr->resist_dark = TRUE;
 			break;
-		}
 		case 864:
-		{
 			p_ptr->resist_lite = TRUE;
 			break;
-		}
 
 		/* Hobbits/Halflings get the no-shoes-bonus */
 		case 74:	case 539:
-		{
 			if (!p_ptr->inventory[INVEN_FEET].k_idx)
 				p_ptr->stat_add[A_DEX] += 2;
 			break;
-		}
-		
+
 		/* Gnomes get free_act */
 		case 258:	case 281:
-		{
 			p_ptr->free_act = TRUE;
 			break;
-		}
 
 		/* Dwarves get res_blind & climbing ability */
 		case 111:	case 865:
-		{
 			p_ptr->resist_blind = TRUE;
 			if (p_ptr->lev >= 30) p_ptr->climb = TRUE;
 			break;
-		}
-		
+
 		/* High-elves resist_lite & see_inv */
 		case 945:
-		{
 			p_ptr->resist_lite = TRUE;
 			p_ptr->see_inv = TRUE;
 			break;
-		}
 
 		/* Yeeks get feather_fall */
 		case 52:	case 141:	case 179:	case 224:
-		{
 			p_ptr->feather_fall = TRUE;
 			break;
-		}
 
 		/* Ents */
 		case 708:
-		{
 			p_ptr->slow_digest = TRUE;
 			//if (p_ptr->prace != RACE_ENT) 
 			p_ptr->pspeed -= 2;
@@ -2211,8 +2184,7 @@ static void calc_body_bonus(int Ind)
 			p_ptr->can_swim = TRUE; /* wood? */
 			p_ptr->pass_trees = TRUE;
 			break;
-		}
-		
+
 		/* Ghosts get additional boni - undead see below */
 		case 65:	case 100:	case 133:	case 152:	case 231:
 		case 385:	case 394:	case 477:	case 507:	case 508:
@@ -2220,31 +2192,31 @@ static void calc_body_bonus(int Ind)
 		case 667:	case 690:	case 774:	case 895:
 		case 929:	case 930:	case 931:	case 932:	case 933:
 		case 967:	case 973:	case 974:
-		{
 			/* I'd prefer ghosts having a radius of awareness, like a 'pseudo-light source',
 			since atm ghosts are completely blind in the dark :( -C. Blue */
 			p_ptr->see_inv = TRUE;
 			p_ptr->see_infra += 3;
 	//		p_ptr->invis += 5; */ /* No. */
 			break;
-		}
-		
+
 		/* Vampires have VAMPIRIC attacks */
 		case 432:	case 520:	case 521:	case 623:	case 989:
 			if (p_ptr->vampiric_melee < 50) p_ptr->vampiric_melee = 50;
 			break;
-		
+
 		/* Angels resist light, blindness and poison (usually immunity) */
 		case 417:	case 456:	case 511:	case 605:	
 		case 661:	case 1071:	case 1072:	case 1073:
 			p_ptr->resist_lite = TRUE;
+			p_ptr->resist_conf = TRUE;
+			p_ptr->see_inv = TRUE;
 		/* Fallen Angel */
 		case 652:
 			p_ptr->resist_blind = TRUE;
 			p_ptr->resist_pois = TRUE;
 			break;
 	}
-	
+
 	/* If monster has a lite source, but doesn't prove a torso (needed
 	   to use a lite source, yellow light) or can breathe light (light
 	   hound), add to the player's light radius! */
@@ -2266,23 +2238,23 @@ static void calc_body_bonus(int Ind)
 	if(r_ptr->flags3 & RF3_ORC) p_ptr->resist_dark = TRUE;
 
 	/* Trolls/Giants get sustain_str */
-	if((r_ptr->flags3 & RF3_TROLL) || (r_ptr->flags3 & RF3_GIANT)) p_ptr->sustain_str = TRUE;
+	if ((r_ptr->flags3 & RF3_TROLL) || (r_ptr->flags3 & RF3_GIANT)) p_ptr->sustain_str = TRUE;
 
 	/* Draconian get feather_fall, ESP_DRAGON */
-	if(r_ptr->flags3 & RF3_DRAGONRIDER) {
-	        p_ptr->feather_fall = TRUE;
+	if (r_ptr->flags3 & RF3_DRAGONRIDER) {
+		p_ptr->feather_fall = TRUE;
 		if (p_ptr->lev >= 5) p_ptr->telepathy |= ESP_DRAGON;
 		if (p_ptr->lev >= 30) p_ptr->fly = TRUE;
 	}
 
 	/* Undead get lots of stuff similar to player ghosts */
-	if(r_ptr->flags3 & RF3_UNDEAD) {
+	if (r_ptr->flags3 & RF3_UNDEAD) {
 		/* p_ptr->see_inv = TRUE;
 		p_ptr->resist_neth = TRUE;
 		p_ptr->hold_life = TRUE;
 		p_ptr->free_act = TRUE;
 		p_ptr->see_infra += 3;
-    		p_ptr->resist_fear = TRUE;*/
+		p_ptr->resist_fear = TRUE;*/
 		/*p_ptr->resist_conf = TRUE;*/
 		/* p_ptr->resist_pois = TRUE; */ /* instead of immune */
 		/* p_ptr->resist_cold = TRUE; */
@@ -2296,188 +2268,176 @@ static void calc_body_bonus(int Ind)
 	}
 
 	/* Non-living got a nice ability set too ;) */
-	if(r_ptr->flags3 & RF3_NONLIVING)
-	{
+	if (r_ptr->flags3 & RF3_NONLIVING) {
 		p_ptr->resist_pois = TRUE;
 		p_ptr->resist_fear = TRUE;
 		p_ptr->reduce_insanity = 2;
 	}
 
 	/* Greater demons resist poison (monsters are immune) */
-	if((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)) p_ptr->resist_pois = TRUE;
+	if ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)) p_ptr->resist_pois = TRUE;
 
 	/* Affect charisma by appearance */
 	d = 0;
-	if(r_ptr->flags3 & RF3_DRAGONRIDER) d = 1;
-	else if(r_ptr->flags3 & RF3_DRAGON) d = 0;
-	if(r_ptr->flags3 & RF3_ANIMAL) {
+	if (r_ptr->flags3 & RF3_DRAGONRIDER) d = 1;
+	else if (r_ptr->flags3 & RF3_DRAGON) d = 0;
+	if (r_ptr->flags3 & RF3_ANIMAL) {
 		if (r_ptr->weight <= 450 && strchr("bfqBCR", r_ptr->d_char)) d = 1; /* yes, I included NEWTS */
 		else d = 0;
 	}
-	if(r_ptr->flags7 & RF7_SPIDER) d = -1;
+	if (r_ptr->flags7 & RF7_SPIDER) d = -1;
 
-	if(r_ptr->flags3 & RF3_ORC) d = -1;
+	if (r_ptr->flags3 & RF3_ORC) d = -1;
 
-	if(r_ptr->flags3 & RF3_NONLIVING) d = -1;
-	if(r_ptr->flags3 & RF3_EVIL) d = -1;
+	if (r_ptr->flags3 & RF3_NONLIVING) d = -1;
+	if (r_ptr->flags3 & RF3_EVIL) d = -1;
 
-	if(r_ptr->flags3 & RF3_TROLL) d = -2;
-	if(r_ptr->flags3 & RF3_GIANT) d = -2;
+	if (r_ptr->flags3 & RF3_TROLL) d = -2;
+	if (r_ptr->flags3 & RF3_GIANT) d = -2;
 
-	if(r_ptr->flags3 & RF3_UNDEAD) d = -3;
-	if(r_ptr->flags3 & RF3_DEMON) d = -3;
+	if (r_ptr->flags3 & RF3_UNDEAD) d = -3;
+	if (r_ptr->flags3 & RF3_DEMON) d = -3;
 
-	if(r_ptr->flags3 & RF3_GOOD) d += 2;
+	if (r_ptr->flags3 & RF3_GOOD) d += 2;
 
 	p_ptr->stat_add[A_CHR] += d;
 
 
 	//        if(r_ptr->flags1 & RF1_NEVER_MOVE) p_ptr->immovable = TRUE;
-	if(r_ptr->flags2 & RF2_STUPID) p_ptr->stat_add[A_INT] -= 2;
-	if(r_ptr->flags2 & RF2_SMART) p_ptr->stat_add[A_INT] += 2;
-	if(r_ptr->flags2 & RF2_INVISIBLE){
+	if (r_ptr->flags2 & RF2_STUPID) p_ptr->stat_add[A_INT] -= 2;
+	if (r_ptr->flags2 & RF2_SMART) p_ptr->stat_add[A_INT] += 2;
+	if (r_ptr->flags2 & RF2_INVISIBLE){
 		//		p_ptr->tim_invisibility = 100;
 		p_ptr->tim_invis_power = p_ptr->lev * 4 / 5;
 	}
-	if(r_ptr->flags2 & RF2_REGENERATE) p_ptr->regenerate = TRUE;
+	if (r_ptr->flags2 & RF2_REGENERATE) p_ptr->regenerate = TRUE;
 	/* Immaterial forms (WRAITH / PASS_WALL) drain the mimic's HP! */
-	if(r_ptr->flags2 & RF2_PASS_WALL) {
+	if (r_ptr->flags2 & RF2_PASS_WALL) {
 		if (!(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) &&
-                    !(p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)))
-                {
+		    !(p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)))
+		{
 //BAD!(recursion)			set_tim_wraith(Ind, 30000);
 			p_ptr->tim_wraith = 30000;
 		}
 		p_ptr->drain_life++;
 	}
-	if(r_ptr->flags2 & RF2_KILL_WALL) p_ptr->auto_tunnel = TRUE;
-	if(r_ptr->flags2 & RF2_AURA_FIRE) p_ptr->sh_fire = TRUE;
-	if(r_ptr->flags2 & RF2_AURA_ELEC) p_ptr->sh_elec = TRUE;
-	if(r_ptr->flags2 & RF3_AURA_COLD) p_ptr->sh_cold = TRUE;
+	if (r_ptr->flags2 & RF2_KILL_WALL) p_ptr->auto_tunnel = TRUE;
+	if (r_ptr->flags2 & RF2_AURA_FIRE) p_ptr->sh_fire = TRUE;
+	if (r_ptr->flags2 & RF2_AURA_ELEC) p_ptr->sh_elec = TRUE;
+	if (r_ptr->flags2 & RF3_AURA_COLD) p_ptr->sh_cold = TRUE;
 
-	if(r_ptr->flags5 & RF5_MIND_BLAST) p_ptr->reduce_insanity = 1;
-	if(r_ptr->flags5 & RF5_BRAIN_SMASH) p_ptr->reduce_insanity = 2;
+	if (r_ptr->flags5 & RF5_MIND_BLAST) p_ptr->reduce_insanity = 1;
+	if (r_ptr->flags5 & RF5_BRAIN_SMASH) p_ptr->reduce_insanity = 2;
 
-	if(r_ptr->flags3 & RF3_SUSCEP_FIRE) p_ptr->suscep_fire = TRUE;
-	if(r_ptr->flags3 & RF3_SUSCEP_COLD) p_ptr->suscep_cold = TRUE;
+	if (r_ptr->flags3 & RF3_SUSCEP_FIRE) p_ptr->suscep_fire = TRUE;
+	if (r_ptr->flags3 & RF3_SUSCEP_COLD) p_ptr->suscep_cold = TRUE;
 /* Imho, there should be only suspec fire and cold since these two are opposites.
 Something which is fire-related will usually be suspectible to cold and vice versa.
 Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C. Blue) */
-	if(r_ptr->flags9 & RF9_SUSCEP_ELEC) p_ptr->suscep_elec = TRUE;
-	if(r_ptr->flags9 & RF9_SUSCEP_ACID) p_ptr->suscep_acid = TRUE;
-	if(r_ptr->flags9 & RF9_SUSCEP_POIS) p_ptr->suscep_pois = TRUE;
+	if (r_ptr->flags9 & RF9_SUSCEP_ELEC) p_ptr->suscep_elec = TRUE;
+	if (r_ptr->flags9 & RF9_SUSCEP_ACID) p_ptr->suscep_acid = TRUE;
+	if (r_ptr->flags9 & RF9_SUSCEP_POIS) p_ptr->suscep_pois = TRUE;
 
-	if(r_ptr->flags9 & RF9_RES_ACID) p_ptr->resist_acid = TRUE;
-	if(r_ptr->flags9 & RF9_RES_ELEC) p_ptr->resist_elec = TRUE;
-	if(r_ptr->flags9 & RF9_RES_FIRE) p_ptr->resist_fire = TRUE;
-	if(r_ptr->flags9 & RF9_RES_COLD) p_ptr->resist_cold = TRUE;
-	if(r_ptr->flags9 & RF9_RES_POIS) p_ptr->resist_pois = TRUE;
-	
-	if(r_ptr->flags3 & RF3_HURT_LITE) p_ptr->suscep_lite = TRUE;
+	if (r_ptr->flags9 & RF9_RES_ACID) p_ptr->resist_acid = TRUE;
+	if (r_ptr->flags9 & RF9_RES_ELEC) p_ptr->resist_elec = TRUE;
+	if (r_ptr->flags9 & RF9_RES_FIRE) p_ptr->resist_fire = TRUE;
+	if (r_ptr->flags9 & RF9_RES_COLD) p_ptr->resist_cold = TRUE;
+	if (r_ptr->flags9 & RF9_RES_POIS) p_ptr->resist_pois = TRUE;
+
+	if (r_ptr->flags3 & RF3_HURT_LITE) p_ptr->suscep_lite = TRUE;
 #if 0 /* for now let's say EVIL is a state of mind, so the mimic isn't necessarily evil */
-	if(r_ptr->flags3 & RF3_EVIL) p_ptr->suscep_good = TRUE;
+	if (r_ptr->flags3 & RF3_EVIL) p_ptr->suscep_good = TRUE;
 #else /* the appearance is important for damage though - let's keep it restricted to demon/undead for now */
-	if(r_ptr->flags3 & RF3_DEMON || r_ptr->flags3 & RF3_UNDEAD) p_ptr->suscep_good = TRUE;
+	if (r_ptr->flags3 & RF3_DEMON || r_ptr->flags3 & RF3_UNDEAD) p_ptr->suscep_good = TRUE;
 #endif
-	if(r_ptr->flags3 & RF3_UNDEAD) p_ptr->suscep_life = TRUE;
-	if(r_ptr->flags3 & RF3_GOOD) p_ptr->suscep_evil = TRUE;
+	if (r_ptr->flags3 & RF3_UNDEAD) p_ptr->suscep_life = TRUE;
+	if (r_ptr->flags3 & RF3_GOOD) p_ptr->suscep_evil = TRUE;
 
 	/* Grant a mimic a maximum of 2 immunities for now. All further immunities
 	are turned into resistances. Which ones is random. */
-	if(r_ptr->flags3 & RF3_IM_ACID)
-	{
-	    immunities += 1;
-	    immunity[immunities] = 1;
-	    p_ptr->resist_acid = TRUE;
+	if (r_ptr->flags3 & RF3_IM_ACID) {
+		immunities += 1;
+		immunity[immunities] = 1;
+		p_ptr->resist_acid = TRUE;
 	}
-	if(r_ptr->flags3 & RF3_IM_ELEC)
-	{
-	    immunities += 1;
-	    immunity[immunities] = 2;
-	    p_ptr->resist_elec = TRUE;
+	if (r_ptr->flags3 & RF3_IM_ELEC) {
+		immunities += 1;
+		immunity[immunities] = 2;
+		p_ptr->resist_elec = TRUE;
 	}
-	if(r_ptr->flags3 & RF3_IM_FIRE)
-	{
-	    immunities += 1;
-	    immunity[immunities] = 3;
-	    p_ptr->resist_fire = TRUE;
+	if (r_ptr->flags3 & RF3_IM_FIRE) {
+		immunities += 1;
+		immunity[immunities] = 3;
+		p_ptr->resist_fire = TRUE;
 	}
-	if(r_ptr->flags3 & RF3_IM_COLD)
-	{
-	    immunities += 1;
-	    immunity[immunities] = 4;
-	    p_ptr->resist_cold = TRUE;
+	if (r_ptr->flags3 & RF3_IM_COLD) {
+		immunities += 1;
+		immunity[immunities] = 4;
+		p_ptr->resist_cold = TRUE;
 	}
-	if(r_ptr->flags3 & RF3_IM_POIS)
-	{
-	    immunities += 1;
-	    immunity[immunities] = 5;
-	    p_ptr->resist_pois = TRUE;
+	if (r_ptr->flags3 & RF3_IM_POIS) {
+		immunities += 1;
+		immunity[immunities] = 5;
+		p_ptr->resist_pois = TRUE;
 	}
-	if(r_ptr->flags9 & RF9_IM_WATER)
-	{
-	    immunities += 1;
-	    immunity[immunities] = 6;
-	    p_ptr->resist_water = TRUE;
+	if (r_ptr->flags9 & RF9_IM_WATER) {
+		immunities += 1;
+		immunity[immunities] = 6;
+		p_ptr->resist_water = TRUE;
 	}
 
 	/* gain not more than 1 immunities at the same time from a form */
-	if(immunities < 2)
-	{
-		if(r_ptr->flags3 & RF3_IM_ACID) p_ptr->immune_acid = TRUE;
-		if(r_ptr->flags3 & RF3_IM_ELEC) p_ptr->immune_elec = TRUE;
-		if(r_ptr->flags3 & RF3_IM_FIRE) p_ptr->immune_fire = TRUE;
-		if(r_ptr->flags3 & RF3_IM_COLD) p_ptr->immune_cold = TRUE;
-		if(r_ptr->flags3 & RF3_IM_POIS) p_ptr->immune_poison = TRUE;
-		if(r_ptr->flags9 & RF9_IM_WATER) p_ptr->immune_water = TRUE;
-	}
-	else
-	{
+	if (immunities < 2) {
+		if (r_ptr->flags3 & RF3_IM_ACID) p_ptr->immune_acid = TRUE;
+		if (r_ptr->flags3 & RF3_IM_ELEC) p_ptr->immune_elec = TRUE;
+		if (r_ptr->flags3 & RF3_IM_FIRE) p_ptr->immune_fire = TRUE;
+		if (r_ptr->flags3 & RF3_IM_COLD) p_ptr->immune_cold = TRUE;
+		if (r_ptr->flags3 & RF3_IM_POIS) p_ptr->immune_poison = TRUE;
+		if (r_ptr->flags9 & RF9_IM_WATER) p_ptr->immune_water = TRUE;
+	} else {
 		immrand[1] = 1 + rand_int(immunities);
 		immrand[2] = immrand[1]; /* now only get 1 immunity from form */
 /*		immrand[2] = 1 + rand_int(immunities - 1);
-		if(!(immrand[2] < immrand[1])) immrand[2]++;
+		if (!(immrand[2] < immrand[1])) immrand[2]++;
 */
-		if((immunity[immrand[1]] == 1) || (immunity[immrand[2]] == 1)) p_ptr->immune_acid = TRUE;
-		if((immunity[immrand[1]] == 2) || (immunity[immrand[2]] == 2)) p_ptr->immune_elec = TRUE;
-		if((immunity[immrand[1]] == 3) || (immunity[immrand[2]] == 3)) p_ptr->immune_fire = TRUE;
-		if((immunity[immrand[1]] == 4) || (immunity[immrand[2]] == 4)) p_ptr->immune_cold = TRUE;
-		if((immunity[immrand[1]] == 5) || (immunity[immrand[2]] == 5)) p_ptr->immune_poison = TRUE;
-		if((immunity[immrand[1]] == 6) || (immunity[immrand[2]] == 6)) p_ptr->immune_water = TRUE;
+		if ((immunity[immrand[1]] == 1) || (immunity[immrand[2]] == 1)) p_ptr->immune_acid = TRUE;
+		if ((immunity[immrand[1]] == 2) || (immunity[immrand[2]] == 2)) p_ptr->immune_elec = TRUE;
+		if ((immunity[immrand[1]] == 3) || (immunity[immrand[2]] == 3)) p_ptr->immune_fire = TRUE;
+		if ((immunity[immrand[1]] == 4) || (immunity[immrand[2]] == 4)) p_ptr->immune_cold = TRUE;
+		if ((immunity[immrand[1]] == 5) || (immunity[immrand[2]] == 5)) p_ptr->immune_poison = TRUE;
+		if ((immunity[immrand[1]] == 6) || (immunity[immrand[2]] == 6)) p_ptr->immune_water = TRUE;
 	}
-	
-	if(r_ptr->flags9 & RF9_RES_LITE) p_ptr->resist_lite = TRUE;
-	if(r_ptr->flags9 & RF9_RES_DARK) p_ptr->resist_dark = TRUE;
-	if(r_ptr->flags9 & RF9_RES_BLIND) p_ptr->resist_blind = TRUE;
-	if(r_ptr->flags9 & RF9_RES_SOUND) p_ptr->resist_sound = TRUE;
-	if(r_ptr->flags3 & RF3_RES_PLAS) p_ptr->resist_plasma = TRUE;
-	if(r_ptr->flags9 & RF9_RES_CHAOS) p_ptr->resist_chaos = TRUE;
-	if(r_ptr->flags9 & RF9_RES_TIME) p_ptr->resist_time = TRUE;
-	if(r_ptr->flags9 & RF9_RES_MANA) p_ptr->resist_mana = TRUE;
-	if((r_ptr->flags9 & RF9_RES_SHARDS) || (r_ptr->flags3 & RF3_HURT_ROCK))
+
+	if (r_ptr->flags9 & RF9_RES_LITE) p_ptr->resist_lite = TRUE;
+	if (r_ptr->flags9 & RF9_RES_DARK) p_ptr->resist_dark = TRUE;
+	if (r_ptr->flags9 & RF9_RES_BLIND) p_ptr->resist_blind = TRUE;
+	if (r_ptr->flags9 & RF9_RES_SOUND) p_ptr->resist_sound = TRUE;
+	if (r_ptr->flags3 & RF3_RES_PLAS) p_ptr->resist_plasma = TRUE;
+	if (r_ptr->flags9 & RF9_RES_CHAOS) p_ptr->resist_chaos = TRUE;
+	if (r_ptr->flags9 & RF9_RES_TIME) p_ptr->resist_time = TRUE;
+	if (r_ptr->flags9 & RF9_RES_MANA) p_ptr->resist_mana = TRUE;
+	if ((r_ptr->flags9 & RF9_RES_SHARDS) || (r_ptr->flags3 & RF3_HURT_ROCK))
 		p_ptr->resist_shard = TRUE;
 
-	if(r_ptr->flags3 & RF3_RES_TELE) p_ptr->res_tele = TRUE;
-	if(r_ptr->flags9 & RF9_IM_TELE) p_ptr->res_tele = TRUE;
-	if(r_ptr->flags3 & RF3_RES_PLAS)
-	{
+	if (r_ptr->flags3 & RF3_RES_TELE) p_ptr->res_tele = TRUE;
+	if (r_ptr->flags9 & RF9_IM_TELE) p_ptr->res_tele = TRUE;
+	if (r_ptr->flags3 & RF3_RES_PLAS) {
 	    p_ptr->resist_fire = TRUE;
 	    /* p_ptr->oppose_fire = TRUE; */
 	}
-	if(r_ptr->flags3 & RF3_RES_WATE) p_ptr->resist_water = TRUE;
-	if(r_ptr->flags3 & RF3_RES_NETH) p_ptr->resist_neth = TRUE;
-	if(r_ptr->flags3 & RF3_RES_NEXU) p_ptr->resist_nexus = TRUE;
-	if(r_ptr->flags3 & RF3_RES_DISE) p_ptr->resist_disen = TRUE;
-	if(r_ptr->flags3 & RF3_NO_FEAR) p_ptr->resist_fear = TRUE;
-	if(r_ptr->flags3 & RF3_NO_SLEEP) p_ptr->free_act = TRUE;
-	if(r_ptr->flags3 & RF3_NO_CONF) p_ptr->resist_conf = TRUE;
-	if(r_ptr->flags3 & RF3_NO_STUN) p_ptr->resist_sound = TRUE;
-	if(r_ptr->flags8 & RF8_NO_CUT) p_ptr->no_cut = TRUE;
-	if(r_ptr->flags7 & RF7_CAN_FLY) p_ptr->fly = TRUE;
-	if(r_ptr->flags7 & RF7_CAN_SWIM) p_ptr->can_swim = TRUE;
-	if(r_ptr->flags2 & RF2_REFLECTING) p_ptr->reflect = TRUE;
-	if(r_ptr->flags7 & RF7_DISBELIEVE)
-	{
+	if (r_ptr->flags3 & RF3_RES_WATE) p_ptr->resist_water = TRUE;
+	if (r_ptr->flags3 & RF3_RES_NETH) p_ptr->resist_neth = TRUE;
+	if (r_ptr->flags3 & RF3_RES_NEXU) p_ptr->resist_nexus = TRUE;
+	if (r_ptr->flags3 & RF3_RES_DISE) p_ptr->resist_disen = TRUE;
+	if (r_ptr->flags3 & RF3_NO_FEAR) p_ptr->resist_fear = TRUE;
+	if (r_ptr->flags3 & RF3_NO_SLEEP) p_ptr->free_act = TRUE;
+	if (r_ptr->flags3 & RF3_NO_CONF) p_ptr->resist_conf = TRUE;
+	if (r_ptr->flags3 & RF3_NO_STUN) p_ptr->resist_sound = TRUE;
+	if (r_ptr->flags8 & RF8_NO_CUT) p_ptr->no_cut = TRUE;
+	if (r_ptr->flags7 & RF7_CAN_FLY) p_ptr->fly = TRUE;
+	if (r_ptr->flags7 & RF7_CAN_SWIM) p_ptr->can_swim = TRUE;
+	if (r_ptr->flags2 & RF2_REFLECTING) p_ptr->reflect = TRUE;
+	if (r_ptr->flags7 & RF7_DISBELIEVE) {
 #if 0
 		p_ptr->antimagic += r_ptr->level / 2 + 20;
 		p_ptr->antimagic_dis += r_ptr->level / 15 + 3;
@@ -2487,41 +2447,39 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 #endif
 	}
 
-	if((r_ptr->flags2 & RF2_WEIRD_MIND) ||
+	if ((r_ptr->flags2 & RF2_WEIRD_MIND) ||
 	    (r_ptr->flags9 & RF9_RES_PSI))
 		p_ptr->reduce_insanity = 1;
-	if((r_ptr->flags2 & RF2_EMPTY_MIND) ||
+	if ((r_ptr->flags2 & RF2_EMPTY_MIND) ||
 	    (r_ptr->flags9 & RF9_IM_PSI))
 		p_ptr->reduce_insanity = 2;
 
 	/* as long as not all resistances are implemented in r_info, use workaround via breaths */
-	if(r_ptr->flags4 & RF4_BR_LITE) p_ptr->resist_lite = TRUE;
-	if(r_ptr->flags4 & RF4_BR_DARK) p_ptr->resist_dark = TRUE;
-	/* if(r_ptr->flags & RF__) p_ptr->resist_blind = TRUE; */
-	if(r_ptr->flags4 & RF4_BR_SOUN) p_ptr->resist_sound = TRUE;
-	if(r_ptr->flags4 & RF4_BR_SHAR) p_ptr->resist_shard = TRUE;
-	if(r_ptr->flags4 & RF4_BR_CHAO) p_ptr->resist_chaos = TRUE;
-	if(r_ptr->flags4 & RF4_BR_TIME) p_ptr->resist_time = TRUE;
-	if(r_ptr->flags4 & RF4_BR_MANA) p_ptr->resist_mana = TRUE;
-	if(r_ptr->flags4 & RF4_BR_PLAS)
-	{
+	if (r_ptr->flags4 & RF4_BR_LITE) p_ptr->resist_lite = TRUE;
+	if (r_ptr->flags4 & RF4_BR_DARK) p_ptr->resist_dark = TRUE;
+	/* if (r_ptr->flags & RF__) p_ptr->resist_blind = TRUE; */
+	if (r_ptr->flags4 & RF4_BR_SOUN) p_ptr->resist_sound = TRUE;
+	if (r_ptr->flags4 & RF4_BR_SHAR) p_ptr->resist_shard = TRUE;
+	if (r_ptr->flags4 & RF4_BR_CHAO) p_ptr->resist_chaos = TRUE;
+	if (r_ptr->flags4 & RF4_BR_TIME) p_ptr->resist_time = TRUE;
+	if (r_ptr->flags4 & RF4_BR_MANA) p_ptr->resist_mana = TRUE;
+	if (r_ptr->flags4 & RF4_BR_PLAS) {
 	    p_ptr->resist_fire = TRUE;
 	    /* p_ptr->oppose_fire = TRUE; */
 	}
-	/* if((r_ptr->flags4 & RF4_BR_WATE) || <- does not exist */
+	/* if ((r_ptr->flags4 & RF4_BR_WATE) || <- does not exist */
 	if (r_ptr->flags7 & RF7_AQUATIC) p_ptr->resist_water = TRUE;
 	if (r_ptr->flags4 & RF4_BR_NETH) p_ptr->resist_neth = TRUE;
 	/* res_neth_somewhat: (r_ptr->flags3 & RF3_EVIL) */
-	if(r_ptr->flags4 & RF4_BR_NEXU) p_ptr->resist_nexus = TRUE;
-	if(r_ptr->flags4 & RF4_BR_DISE) p_ptr->resist_disen = TRUE;
+	if (r_ptr->flags4 & RF4_BR_NEXU) p_ptr->resist_nexus = TRUE;
+	if (r_ptr->flags4 & RF4_BR_DISE) p_ptr->resist_disen = TRUE;
 
 	/* The following BR-to-RES will be needed even with all of above RES implemented: */
-	if(r_ptr->flags4 & RF4_BR_GRAV) p_ptr->feather_fall = TRUE;
-	if(r_ptr->flags4 & RF4_BR_INER) p_ptr->free_act = TRUE;
+	if (r_ptr->flags4 & RF4_BR_GRAV) p_ptr->feather_fall = TRUE;
+	if (r_ptr->flags4 & RF4_BR_INER) p_ptr->free_act = TRUE;
 
 	/* If not changed, spells didnt changed too, no need to send them */
-	if (!p_ptr->body_changed)
-	{
+	if (!p_ptr->body_changed) {
 		/* restore RNG */
 		Rand_quick = FALSE;
 		return;
@@ -2534,7 +2492,7 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 #endif
 
 	/* Hack -- cancel wraithform upon form change  */
-	if(!(r_ptr->flags2 & RF2_PASS_WALL) && p_ptr->tim_wraith)
+	if (!(r_ptr->flags2 & RF2_PASS_WALL) && p_ptr->tim_wraith)
 		p_ptr->tim_wraith = 1;
 
 	/* Update the innate spells */
@@ -2595,29 +2553,26 @@ int get_weaponmastery_skill(player_type *p_ptr, object_type *o_ptr)
 
 	i = 0;
 
-        if (!o_ptr->k_idx || o_ptr->tval == TV_SHIELD)
-        {
-                return -1;
-        }
-        switch (o_ptr->tval)
-        {
-        case TV_SWORD:
-                if ((!skill) || (skill == SKILL_SWORD)) skill = SKILL_SWORD;
-                else skill = -1;
-                break;
+	if (!o_ptr->k_idx || o_ptr->tval == TV_SHIELD) return -1;
+
+	switch (o_ptr->tval) {
+	case TV_SWORD:
+		if ((!skill) || (skill == SKILL_SWORD)) skill = SKILL_SWORD;
+		else skill = -1;
+		break;
 	case TV_AXE:
 		if ((!skill) || (skill == SKILL_AXE)) skill = SKILL_AXE;
 		else skill = -1;
 		break;
-        case TV_BLUNT:
-                if ((!skill) || (skill == SKILL_BLUNT)) skill = SKILL_BLUNT;
-                else skill = -1;
-                break;
-//        case SKILL_POLEARM:
-        case TV_POLEARM:
-                if ((!skill) || (skill == SKILL_POLEARM)) skill = SKILL_POLEARM;
-                else skill = -1;
-                break;
+	case TV_BLUNT:
+		if ((!skill) || (skill == SKILL_BLUNT)) skill = SKILL_BLUNT;
+		else skill = -1;
+		break;
+//	case SKILL_POLEARM:
+	case TV_POLEARM:
+		if ((!skill) || (skill == SKILL_POLEARM)) skill = SKILL_POLEARM;
+		else skill = -1;
+		break;
 	}
 
 	/* Everything is ok */
@@ -2637,8 +2592,7 @@ int get_archery_skill(player_type *p_ptr)
 	/* Hack -- Boomerang skill */
 	if (o_ptr->tval == TV_BOOMERANG) return SKILL_BOOMERANG;
 
-	switch (o_ptr->sval / 10)
-	{
+	switch (o_ptr->sval / 10) {
 		case 0:
 			if ((!skill) || (skill == SKILL_SLING)) skill = SKILL_SLING;
 			else skill = -1;
@@ -2801,8 +2755,14 @@ int calc_blows_weapons(int Ind)
 	/* mediate for dual-wield */
 #if 0 /* round down? (see bpr bonus below too) (encourages bpr gloves/crit weapons - makes more sense?) */
 	if (p_ptr->dual_wield && p_ptr->dual_mode) num_blow = (blows1 + blows2) / 2;
-#else /* round up? (see bpr bonus below too) (encounrages crit gloves/bpr weapons) */
+#elseif 0 /* round up? (see bpr bonus below too) (encounrages crit gloves/bpr weapons) */
 	if (p_ptr->dual_wield && p_ptr->dual_mode) num_blow = (blows1 + blows2 + 1) / 2;
+#else /* round up, but only if we aren't anti-dual-wield-encumbered! */
+	if (p_ptr->dual_wield && p_ptr->dual_mode) {
+		if (!p_ptr->rogue_heavyarmor) num_blow = (blows1 + blows2 + 1) / 2;
+		/* if encumbered, we cannot gain any dual-wield advantage! */
+		else num_blow = (blows1 + blows2) / 2;
+	}
 #endif
 	else num_blow = blows1;
 
@@ -2879,8 +2839,8 @@ void calc_boni(int Ind)
 
 	player_type *p_ptr = Players[Ind];
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
-        cave_type **zcave;
-        if(!(zcave=getcave(&p_ptr->wpos))) return;
+	cave_type **zcave;
+	if (!(zcave=getcave(&p_ptr->wpos))) return;
 
 	int			j, hold, minus, am_bonus = 0, am_temp, to_life = 0;
 	long			w, i;
@@ -2954,8 +2914,8 @@ void calc_boni(int Ind)
 		p_ptr->stat_add[A_CON] = p_ptr->xcon;
 		p_ptr->stat_add[A_CHR] = p_ptr->xchr;
 	}
-	
-    /* Clear the Displayed/Real armor class */
+
+	/* Clear the Displayed/Real armor class */
 	p_ptr->dis_ac = p_ptr->ac = 0;
 
 	/* Clear the Displayed/Real Bonuses */
@@ -2968,8 +2928,8 @@ void calc_boni(int Ind)
 	p_ptr->aggravate = FALSE;
 	p_ptr->teleport = FALSE;
 	p_ptr->drain_exp = 0;
-        p_ptr->drain_mana = 0;
-        p_ptr->drain_life = 0;
+	p_ptr->drain_mana = 0;
+	p_ptr->drain_life = 0;
 	p_ptr->bless_blade = FALSE;
 	p_ptr->xtra_might = 0;
 	p_ptr->impact = FALSE;
@@ -3025,10 +2985,10 @@ void calc_boni(int Ind)
 	p_ptr->climb = FALSE;
 	p_ptr->pass_trees = FALSE;
 	p_ptr->luck = 0;
-        p_ptr->reduc_fire = 0;
-        p_ptr->reduc_cold = 0;
-        p_ptr->reduc_elec = 0;
-        p_ptr->reduc_acid = 0;
+	p_ptr->reduc_fire = 0;
+	p_ptr->reduc_cold = 0;
+	p_ptr->reduc_elec = 0;
+	p_ptr->reduc_acid = 0;
 	p_ptr->anti_magic = FALSE;
 	p_ptr->auto_id = FALSE;
 	p_ptr->reflect = FALSE;
@@ -3088,47 +3048,35 @@ void calc_boni(int Ind)
 	old_num_blow = p_ptr->num_blow;
 	p_ptr->num_blow = 1;
 	p_ptr->extra_blows = 0;
-
 	/* Start with a single shot per turn */
 	p_ptr->num_fire = 1;
-
 	/* Start with a single spell per turn */
 	p_ptr->num_spell = 1;
 
 	/* Reset the "xtra" tval */
 	p_ptr->tval_xtra = 0;
-
 	/* Reset the "ammo" tval */
 	p_ptr->tval_ammo = 0;
 
 	/* Base infravision (purely racial) */
 	p_ptr->see_infra = p_ptr->rp_ptr->infra;
 
-
 	/* Base skill -- disarming */
 	p_ptr->skill_dis = p_ptr->rp_ptr->r_dis + p_ptr->cp_ptr->c_dis;
-
 	/* Base skill -- magic devices */
 	p_ptr->skill_dev = p_ptr->rp_ptr->r_dev + p_ptr->cp_ptr->c_dev;
-
 	/* Base skill -- saving throw */
 	p_ptr->skill_sav = p_ptr->rp_ptr->r_sav + p_ptr->cp_ptr->c_sav;
-
 	/* Base skill -- stealth */
 	p_ptr->skill_stl = p_ptr->rp_ptr->r_stl + p_ptr->cp_ptr->c_stl;
-
 	/* Base skill -- searching ability */
 	p_ptr->skill_srh = p_ptr->rp_ptr->r_srh + p_ptr->cp_ptr->c_srh;
-
 	/* Base skill -- searching frequency */
 	p_ptr->skill_fos = p_ptr->rp_ptr->r_fos + p_ptr->cp_ptr->c_fos;
-
 	/* Base skill -- combat (normal) */
 	p_ptr->skill_thn = p_ptr->rp_ptr->r_thn + p_ptr->cp_ptr->c_thn;
-
 	/* Base skill -- combat (shooting) */
 	p_ptr->skill_thb = p_ptr->rp_ptr->r_thb + p_ptr->cp_ptr->c_thb;
-
 	/* Base skill -- combat (throwing) */
 	p_ptr->skill_tht = p_ptr->rp_ptr->r_thb + p_ptr->cp_ptr->c_thb;
 
@@ -3151,7 +3099,7 @@ void calc_boni(int Ind)
 
 #ifdef ARCADE_SERVER
 		p_ptr->pspeed = 130;
-		if(p_ptr->stun > 0) p_ptr->pspeed -= 3;
+		if (p_ptr->stun > 0) p_ptr->pspeed -= 3;
 #endif
 
 		/* Bats get +10 speed ... they need it!*/
@@ -3187,9 +3135,8 @@ void calc_boni(int Ind)
 
 		/* DEX bonus for NOT wearing shoes */
 		/* not while in mimicried form */
-		if(!p_ptr->body_monster)
-			if (!p_ptr->inventory[INVEN_FEET].k_idx)
-				p_ptr->stat_add[A_DEX] += 2;
+		if (!p_ptr->body_monster && !p_ptr->inventory[INVEN_FEET].k_idx)
+			p_ptr->stat_add[A_DEX] += 2;
 	}
 
 	/* Gnome */
@@ -3199,8 +3146,7 @@ void calc_boni(int Ind)
 	else if (p_ptr->prace == RACE_DWARF) {
 		p_ptr->resist_blind = TRUE;
 		/* not while in mimicried form */
-		if(!p_ptr->body_monster)
-		    if (p_ptr->lev >= 30) p_ptr->climb = TRUE;
+		if (!p_ptr->body_monster && p_ptr->lev >= 30) p_ptr->climb = TRUE;
 	}
 
 	/* Half-Orc */
@@ -3223,14 +3169,14 @@ void calc_boni(int Ind)
 	else if (p_ptr->prace == RACE_YEEK) {
 		p_ptr->feather_fall = TRUE;
 		/* not while in mimicried form */
-		if(!p_ptr->body_monster) p_ptr->pass_trees = TRUE;
+		if (!p_ptr->body_monster) p_ptr->pass_trees = TRUE;
 	}
 
 	/* Goblin */
 	else if (p_ptr->prace == RACE_GOBLIN) {
 		p_ptr->resist_dark = TRUE;
 		/* not while in mimicried form */
-		/*if(!p_ptr->body_monster) p_ptr->feather_fall = TRUE;*/
+		/*if (!p_ptr->body_monster) p_ptr->feather_fall = TRUE;*/
 	}
 
 	/* Ent */
@@ -3242,8 +3188,7 @@ void calc_boni(int Ind)
 		p_ptr->resist_water = TRUE;
 
 		/* not while in mimicried form */
-		if(!p_ptr->body_monster)
-		{
+		if (!p_ptr->body_monster) {
 			p_ptr->pspeed -= 2;
 			p_ptr->can_swim = TRUE; /* wood? */
 			p_ptr->pass_trees = TRUE;
@@ -3263,7 +3208,7 @@ void calc_boni(int Ind)
 	/* Draconian (former Dragonrider, Thunderlord) */
 	else if (p_ptr->prace == RACE_DRIDER) {
 		/* not while in mimicried form */
-		if(!p_ptr->body_monster) p_ptr->feather_fall = TRUE;
+		if (!p_ptr->body_monster) p_ptr->feather_fall = TRUE;
 
 		if (p_ptr->lev >= 5) p_ptr->telepathy |= ESP_DRAGON;
 		if (p_ptr->lev >= 10) p_ptr->resist_fire = TRUE;
@@ -3276,30 +3221,30 @@ void calc_boni(int Ind)
 	}
 
 	/* Dark-Elves */
-        else if (p_ptr->prace == RACE_DARK_ELF) {
+	else if (p_ptr->prace == RACE_DARK_ELF) {
 		p_ptr->suscep_lite = TRUE;
 //		p_ptr->suscep_good = TRUE;//maybe too harsh
-                p_ptr->resist_dark = TRUE;
-                if (p_ptr->lev >= 20) p_ptr->see_inv = TRUE;
-        }
+		p_ptr->resist_dark = TRUE;
+		if (p_ptr->lev >= 20) p_ptr->see_inv = TRUE;
+	}
 
-        /* Vampires */
-        else if (p_ptr->prace == RACE_VAMPIRE) {
+	/* Vampires */
+	else if (p_ptr->prace == RACE_VAMPIRE) {
 		p_ptr->suscep_lite = TRUE;
 		p_ptr->suscep_good = TRUE;
 		p_ptr->suscep_life = TRUE;
 
 		p_ptr->resist_time = TRUE;
-                p_ptr->resist_dark = TRUE;
-                p_ptr->resist_neth = TRUE;
-                p_ptr->resist_pois = TRUE;
-                p_ptr->hold_life = TRUE;
+		p_ptr->resist_dark = TRUE;
+		p_ptr->resist_neth = TRUE;
+		p_ptr->resist_pois = TRUE;
+		p_ptr->hold_life = TRUE;
 
-                if (p_ptr->vampiric_melee < 50) p_ptr->vampiric_melee = 50; /* mimic forms give 50 (50% bite attacks) - 33 was actually pretty ok, for lower levels at least */
+		if (p_ptr->vampiric_melee < 50) p_ptr->vampiric_melee = 50; /* mimic forms give 50 (50% bite attacks) - 33 was actually pretty ok, for lower levels at least */
 		/* sense surroundings without light source! (virtual lite / dark light) */
 		p_ptr->cur_vlite = 1 + p_ptr->lev / 10;
 //		if (p_ptr->lev >= 30) p_ptr->fly = TRUE; can poly into bat instead
-        }
+	}
 #ifdef ENABLE_DIVINE
 	else if (p_ptr->prace == RACE_DIVINE) {
 		//Help em out a little..
@@ -3460,7 +3405,7 @@ void calc_boni(int Ind)
 		}
 	}
 
-       	/* Apply the racial modifiers */
+	/* Apply the racial modifiers */
 	if (p_ptr->mode & MODE_HARD) {
 		for (i = 0; i < 6; i++) {
 			/* Modify the stats for "race" */
@@ -3594,13 +3539,10 @@ void calc_boni(int Ind)
 
 			/* Affect stealth */
 			if (k_ptr->flags1 & TR1_STEALTH) p_ptr->skill_stl += o_ptr->bpval;
-
 			/* Affect searching ability (factor of five) */
 			if (k_ptr->flags1 & TR1_SEARCH) p_ptr->skill_srh += (o_ptr->bpval * 5);
-
 			/* Affect searching frequency (factor of five) */
 			if (k_ptr->flags1 & TR1_SEARCH) p_ptr->skill_fos += (o_ptr->bpval * 3);
-
 			/* Affect infravision */
 			if (k_ptr->flags1 & TR1_INFRA) p_ptr->see_infra += o_ptr->bpval;
 
@@ -3619,8 +3561,8 @@ void calc_boni(int Ind)
 			if (k_ptr->flags1 & TR1_SPELL) extra_spells += o_ptr->bpval;
 //			if (k_ptr->flags1 & TR1_SPELL_SPEED) extra_spells += o_ptr->bpval;
 
-	                /* Affect mana capacity */
-    	        	if (f1 & (TR1_MANA)) {
+			/* Affect mana capacity */
+			if (f1 & (TR1_MANA)) {
 				if ((f4 & TR4_SHOULD2H) &&
 				    (p_ptr->inventory[INVEN_WIELD].k_idx && p_ptr->inventory[INVEN_ARM].k_idx))
 					p_ptr->to_m += (o_ptr->bpval * 20) / 3;
@@ -3628,8 +3570,8 @@ void calc_boni(int Ind)
 					p_ptr->to_m += o_ptr->bpval * 10;
 			}
 
-    	        	/* Affect life capacity */
-        	        if (f1 & (TR1_LIFE)) {
+			/* Affect life capacity */
+			if (f1 & (TR1_LIFE)) {
 				if ((o_ptr->name1 != ART_RANDART) ||
 #if 0
 				    p_ptr->total_winner ||
@@ -3693,7 +3635,7 @@ void calc_boni(int Ind)
 //		if (o_ptr->name2 && o_ptr->tval!=TV_RING) // pls see apply_magic ;)
 		if (o_ptr->name2) {
 			artifact_type *a_ptr;
-	 	
+
 			a_ptr =	ego_make(o_ptr);
 			f1 &= ~(k_ptr->flags1 & TR1_PVAL_MASK & ~a_ptr->flags1);
 			f5 &= ~(k_ptr->flags5 & TR5_PVAL_MASK & ~a_ptr->flags5);
@@ -3714,7 +3656,7 @@ void calc_boni(int Ind)
 
 		if (o_ptr->name1 == ART_RANDART) {
 			artifact_type *a_ptr;
-	 	
+
 			a_ptr =	randart_make(o_ptr);
 			f1 &= ~(k_ptr->flags1 & TR1_PVAL_MASK & ~a_ptr->flags1);
 			f5 &= ~(k_ptr->flags5 & TR5_PVAL_MASK & ~a_ptr->flags5);
@@ -3730,23 +3672,23 @@ void calc_boni(int Ind)
 		if (f1 & TR1_CON) p_ptr->stat_add[A_CON] += pval;
 		if (f1 & TR1_CHR) p_ptr->stat_add[A_CHR] += pval;
 
-                /* Affect luck */
-                if (f5 & (TR5_LUCK)) p_ptr->luck += pval;
+		/* Affect luck */
+		if (f5 & (TR5_LUCK)) p_ptr->luck += pval;
 
-                /* Affect spell power */
-//                if (f1 & (TR1_SPELL)) p_ptr->to_s += pval;
+		/* Affect spell power */
+//		if (f1 & (TR1_SPELL)) p_ptr->to_s += pval;
 
-                /* Affect mana capacity */
-                if (f1 & (TR1_MANA)) {
+		/* Affect mana capacity */
+		if (f1 & (TR1_MANA)) {
 			if ((f4 & TR4_SHOULD2H) &&
 			    (p_ptr->inventory[INVEN_WIELD].k_idx && p_ptr->inventory[INVEN_ARM].k_idx))
 				p_ptr->to_m += (pval * 20) / 3;
 			else
-            			p_ptr->to_m += pval * 10;
+				p_ptr->to_m += pval * 10;
 		}
 
-                /* Affect life capacity */
-                if (f1 & (TR1_LIFE))
+		/* Affect life capacity */
+		if (f1 & (TR1_LIFE))
 			if ((o_ptr->name1 != ART_RANDART) || p_ptr->total_winner ||
 #if 0 /* changed, didn't seem to make that much sense? - C. Blue */
 			    (p_ptr->once_winner && cfg.fallenkings_etiquette && p_ptr->lev >= 50) ||
@@ -3758,13 +3700,10 @@ void calc_boni(int Ind)
 
 		/* Affect stealth */
 		if (f1 & TR1_STEALTH) p_ptr->skill_stl += pval;
-
 		/* Affect searching ability (factor of five) */
 		if (f1 & TR1_SEARCH) p_ptr->skill_srh += (pval * 5);
-
 		/* Affect searching frequency (factor of five) */
 		if (f1 & TR1_SEARCH) p_ptr->skill_fos += (pval * 3);
-
 		/* Affect infravision */
 		if (f1 & TR1_INFRA) p_ptr->see_infra += pval;
 
@@ -3777,7 +3716,7 @@ void calc_boni(int Ind)
 		/* Affect blows */
 #if 0 /* for dual-wield this is too much, it's done in calc_blows_obj() now */
 		if (f1 & TR1_BLOWS) p_ptr->extra_blows += pval;
-                if (f5 & TR5_CRIT) p_ptr->xtra_crit += pval;
+		if (f5 & TR5_CRIT) p_ptr->xtra_crit += pval;
 #endif
 
 		/* Affect spellss */
@@ -3812,22 +3751,18 @@ void calc_boni(int Ind)
 			break_cloaking(Ind, 0);
 		}
 //		if (f3 & TR3_TELEPORT) p_ptr->teleport = TRUE;
-		if (f3 & TR3_TELEPORT){
+		if (f3 & TR3_TELEPORT) {
 			p_ptr->teleport = TRUE;
 			//inscription = (unsigned char *) quark_str(o_ptr->note);
 			inscription = quark_str(p_ptr->inventory[i].note);
 			/* check for a valid inscription */
-			if ((inscription != NULL) && (!(o_ptr->ident & ID_CURSED)))
-			{
+			if ((inscription != NULL) && (!(o_ptr->ident & ID_CURSED))) {
 				/* scan the inscription for .. */
-				while (*inscription != '\0')
-				{
-					if (*inscription == '.')
-					{
+				while (*inscription != '\0') {
+					if (*inscription == '.') {
 						inscription++;
 						/* a valid .. has been located */
-						if (*inscription == '.')
-						{
+						if (*inscription == '.') {
 							inscription++;
 							p_ptr->teleport = FALSE;
 							break;
@@ -3838,9 +3773,9 @@ void calc_boni(int Ind)
 			}
 		}
 		if (f3 & TR3_DRAIN_EXP) p_ptr->drain_exp++;
-                if (f5 & (TR5_DRAIN_MANA)) p_ptr->drain_mana++;
-                if (f5 & (TR5_DRAIN_HP)) p_ptr->drain_life++;
-		if (f5 & (TR5_INVIS)){
+		if (f5 & (TR5_DRAIN_MANA)) p_ptr->drain_mana++;
+		if (f5 & (TR5_DRAIN_HP)) p_ptr->drain_life++;
+		if (f5 & (TR5_INVIS)) {
 //			p_ptr->tim_invisibility = 100;
 			p_ptr->tim_invis_power = p_ptr->lev * 4 / 5;
 //			p_ptr->invis = p_ptr->tim_invis_power;
@@ -3856,7 +3791,7 @@ void calc_boni(int Ind)
 		if (f5 & TR5_RES_WATER) p_ptr->resist_water = TRUE;
 		if (f5 & TR5_PASS_WATER) p_ptr->can_swim = TRUE;
 		if (f5 & TR5_REGEN_MANA) p_ptr->regen_mana = TRUE;
-                if (esp) p_ptr->telepathy |= esp;
+		if (esp) p_ptr->telepathy |= esp;
 //		if (f3 & TR3_TELEPATHY) p_ptr->telepathy = TRUE;
 //		if (f3 & TR3_LITE1) p_ptr->lite += 1;
 		if (f3 & TR3_SEE_INVIS) p_ptr->see_inv = TRUE;
@@ -3898,10 +3833,10 @@ void calc_boni(int Ind)
 		if (f2 & TR2_IM_COLD) p_ptr->immune_cold = TRUE;
 		if (f2 & TR2_IM_ELEC) p_ptr->immune_elec = TRUE;
 
-                if (f2 & TR2_REDUC_FIRE) p_ptr->reduc_fire += 5 * o_ptr->to_a;
-                if (f2 & TR2_REDUC_COLD) p_ptr->reduc_cold += 5 * o_ptr->to_a;
-                if (f2 & TR2_REDUC_ELEC) p_ptr->reduc_elec += 5 * o_ptr->to_a;
-                if (f2 & TR2_REDUC_ACID) p_ptr->reduc_acid += 5 * o_ptr->to_a;
+		if (f2 & TR2_REDUC_FIRE) p_ptr->reduc_fire += 5 * o_ptr->to_a;
+		if (f2 & TR2_REDUC_COLD) p_ptr->reduc_cold += 5 * o_ptr->to_a;
+		if (f2 & TR2_REDUC_ELEC) p_ptr->reduc_elec += 5 * o_ptr->to_a;
+		if (f2 & TR2_REDUC_ACID) p_ptr->reduc_acid += 5 * o_ptr->to_a;
 
 		/* Resistance flags */
 		if (f2 & TR2_RES_ACID) p_ptr->resist_acid = TRUE;
@@ -3932,17 +3867,16 @@ void calc_boni(int Ind)
 		if (f2 & TR2_SUST_CHR) p_ptr->sustain_chr = TRUE;
 
 		/* PernA flags */
-                if (f3 & (TR3_WRAITH)) {
+		if (f3 & (TR3_WRAITH)) {
 			//p_ptr->wraith_form = TRUE;
 			if (!(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) &&
-			    !(p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)))
-			{
+			    !(p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC))) {
 //BAD!(recursion)				set_tim_wraith(Ind, 30000);
 				p_ptr->tim_wraith = 30000;
 			}
 		}
-                if (f4 & (TR4_FLY)) p_ptr->fly = TRUE;
-                if (f4 & (TR4_CLIMB)) {
+		if (f4 & (TR4_FLY)) p_ptr->fly = TRUE;
+		if (f4 & (TR4_CLIMB)) {
 			/* hack: climbing kit is made for humanoids, so it won't work for other forms! */
 			if (o_ptr->tval != TV_TOOL || o_ptr->sval != SV_TOOL_CLIMB || !p_ptr->body_monster)
 				p_ptr->climb = TRUE; /* item isn't a climbing kit or player is in normal @ form */
@@ -3954,10 +3888,11 @@ void calc_boni(int Ind)
 				p_ptr->climb = TRUE; /* everyone with arms and fingers may use it. ok? */
 #endif
 		}
-                if (f4 & (TR4_IM_NETHER)) p_ptr->immune_neth = TRUE;
-		if (f5 & (TR5_REFLECT))
-			if (o_ptr->tval != TV_SHIELD || !p_ptr->heavy_shield)
-				p_ptr->reflect = TRUE;
+		/* The Ring of Phasing, exclusively */
+		if (f4 & (TR4_IM_NETHER)) p_ptr->immune_neth = TRUE;
+		if ((f5 & (TR5_REFLECT)) &&
+		    (o_ptr->tval != TV_SHIELD || !p_ptr->heavy_shield))
+			p_ptr->reflect = TRUE;
 		if (f3 & (TR3_SH_FIRE)) p_ptr->sh_fire = TRUE;
 		if (f5 & (TR5_SH_COLD)) p_ptr->sh_cold = TRUE;
 		if (f3 & (TR3_SH_ELEC)) p_ptr->sh_elec = TRUE;
@@ -4031,7 +3966,6 @@ void calc_boni(int Ind)
 		}
 
 
-
 		/* Hack -- do not apply "weapon", "bow", "ammo", or "tool"  boni */
 		if (i == INVEN_WIELD) continue;
 		if (i == INVEN_ARM && o_ptr->tval != TV_SHIELD) continue; /*..and for dual-wield */
@@ -4042,9 +3976,8 @@ void calc_boni(int Ind)
 		if (i == INVEN_TOOL) continue;
 
 
-
 		if (f1 & TR1_BLOWS) p_ptr->extra_blows += pval;
-                if (f5 & TR5_CRIT) p_ptr->xtra_crit += pval;
+		if (f5 & TR5_CRIT) p_ptr->xtra_crit += pval;
 
 		/* Hack -- cause earthquakes */
 		if (f5 & TR5_IMPACT) p_ptr->impact = TRUE;
@@ -4080,7 +4013,7 @@ void calc_boni(int Ind)
 #else
 	p_ptr->antimagic_dis += (am_bonus / 15);
 #endif
-	
+
 	/* calculate higher to-life bonus from items / skills (non-stacking!) */
 	if (p_ptr->to_l < 0) p_ptr->to_l += to_life;
 	else if (p_ptr->to_l < to_life) p_ptr->to_l = to_life;
@@ -4130,7 +4063,6 @@ void calc_boni(int Ind)
 	for (i = 0; i < 6; i++) {
 		int top, use, ind;
 
-
 		/* Extract the new "stat_use" value for the stat */
 		top = modify_stat_value(p_ptr->stat_max[i], p_ptr->stat_add[i]);
 
@@ -4141,7 +4073,6 @@ void calc_boni(int Ind)
 
 			/* Redisplay the stats later */
 			p_ptr->redraw |= (PR_STATS);
-
 			/* Window stuff */
 			p_ptr->window |= (PW_PLAYER);
 		}
@@ -4157,7 +4088,6 @@ void calc_boni(int Ind)
 
 			/* Redisplay the stats later */
 			p_ptr->redraw |= (PR_STATS);
-
 			/* Window stuff */
 			p_ptr->window |= (PW_PLAYER);
 		}
@@ -4165,10 +4095,8 @@ void calc_boni(int Ind)
 
 		/* Values: 3, 4, ..., 17 */
 		if (use <= 18) ind = (use - 3);
-
 		/* Ranges: 18/00-18/09, ..., 18/210-18/219 */
 		else if (use <= 18 + 219) ind = (15 + (use - 18) / 10);
-
 		/* Range: 18/220+ */
 		else ind = (37);
 
@@ -4218,9 +4146,9 @@ void calc_boni(int Ind)
 	}
 
 
-        /* Adrenaline effects */
-        if (p_ptr->adrenaline) {
-	        int i;
+	/* Adrenaline effects */
+	if (p_ptr->adrenaline) {
+		int i;
 
 		i = p_ptr->lev / 7;
 		if (i > 5) i = 5;
@@ -4238,9 +4166,9 @@ void calc_boni(int Ind)
 		p_ptr->dis_to_a -= 20;
 	}
 
-        /* At least +1, max. +3 */
-        if (p_ptr->zeal) p_ptr->extra_blows += p_ptr->zeal_power / 10 > 3 ? 3 : (p_ptr->zeal_power / 10 < 1 ? 1 : p_ptr->zeal_power / 10);
-        else if (p_ptr->mindboost && p_ptr->mindboost_power >= 65) p_ptr->extra_blows++;
+	/* At least +1, max. +3 */
+	if (p_ptr->zeal) p_ptr->extra_blows += p_ptr->zeal_power / 10 > 3 ? 3 : (p_ptr->zeal_power / 10 < 1 ? 1 : p_ptr->zeal_power / 10);
+	else if (p_ptr->mindboost && p_ptr->mindboost_power >= 65) p_ptr->extra_blows++;
 
 	if (p_ptr->mindboost) p_ptr->skill_sav += p_ptr->mindboost_power / 5;
 
@@ -4257,7 +4185,7 @@ void calc_boni(int Ind)
 	/* Temp ESP */
 	if (p_ptr->tim_esp) {
 //		p_ptr->telepathy = TRUE;
-                p_ptr->telepathy |= ESP_ALL;
+		p_ptr->telepathy |= ESP_ALL;
 	}
 
 	/* Temporary blessing */
@@ -4279,8 +4207,8 @@ void calc_boni(int Ind)
 	}
 	
 	/* Temporary deflection */
-	if(p_ptr->tim_deflect) p_ptr->reflect = TRUE;
-	
+	if (p_ptr->tim_deflect) p_ptr->reflect = TRUE;
+
 	/* Temporary "Hero" */
 	if (p_ptr->hero || (p_ptr->mindboost && p_ptr->mindboost_power >= 5)) {
 		p_ptr->to_h += 12;
@@ -4291,8 +4219,8 @@ void calc_boni(int Ind)
 	if (p_ptr->shero) {
 		p_ptr->to_h += 5;//24
 		p_ptr->dis_to_h += 5;//24
-                p_ptr->to_d += 10;
-                p_ptr->dis_to_d += 10;
+		p_ptr->to_d += 10;
+		p_ptr->dis_to_d += 10;
 		p_ptr->to_a -= 10;//10
 		p_ptr->dis_to_a -= 10;//10
 	}
@@ -4301,8 +4229,8 @@ void calc_boni(int Ind)
 	if (p_ptr->berserk) {
 		p_ptr->to_h -=5;
 		p_ptr->dis_to_h -=5;
-                p_ptr->to_d += 15;
-                p_ptr->dis_to_d += 15;
+		p_ptr->to_d += 15;
+		p_ptr->dis_to_d += 15;
 		p_ptr->to_a -= 10;
 		p_ptr->dis_to_a -= 10;
 		p_ptr->extra_blows++;
@@ -4312,11 +4240,11 @@ void calc_boni(int Ind)
 	if (p_ptr->fury) {
 		p_ptr->to_h -= 10;
 		p_ptr->dis_to_h -= 10;
-                p_ptr->to_d += 20;
-                p_ptr->dis_to_d += 20;
+		p_ptr->to_d += 20;
+		p_ptr->dis_to_d += 20;
 		p_ptr->pspeed += 5;
-                p_ptr->to_a -= 30;
-                p_ptr->dis_to_a -= 30;
+		p_ptr->to_a -= 30;
+		p_ptr->dis_to_a -= 30;
 	}
 
 	if (p_ptr->combat_stance == 2) {
@@ -4389,7 +4317,7 @@ void calc_boni(int Ind)
 //			p_ptr->skill_fos = p_ptr->skill_fos * sneakiness / 10;
 		}
 	}
-	
+
 	if (p_ptr->cloaked) {
 #if 0 /* for now, light is simply dimmed in cloaking mode, instead of breaking it. */
 	/*  might need to give rogues a special ability to see in the dark like vampires. or not, pft. - C. Blue */
@@ -4407,14 +4335,14 @@ void calc_boni(int Ind)
 
 	if (p_ptr->shadow_running) p_ptr->pspeed += 10;
 
-        /* Assume player not encumbered by armor */
-        p_ptr->cumber_armor = FALSE;
-        /* Heavy armor penalizes to-hit and sneakiness speed */
-        if (((armour_weight(p_ptr) - (100 + get_skill_scale(p_ptr, SKILL_COMBAT, 300)
+	/* Assume player not encumbered by armor */
+	p_ptr->cumber_armor = FALSE;
+	/* Heavy armor penalizes to-hit and sneakiness speed */
+	if (((armour_weight(p_ptr) - (100 + get_skill_scale(p_ptr, SKILL_COMBAT, 300)
 	    + adj_str_hold[p_ptr->stat_ind[A_STR]] * 6)) / 10) > 0) {
-                /* Encumbered */
-                p_ptr->cumber_armor = TRUE;
-        }
+		/* Encumbered */
+		p_ptr->cumber_armor = TRUE;
+	}
 	/* Take note when "armor state" changes */
 	if (p_ptr->old_cumber_armor != p_ptr->cumber_armor) {
 		/* Message */
@@ -4511,7 +4439,7 @@ void calc_boni(int Ind)
 
 			/* -APD- Hack -- rogues +1 speed at 5,20,35,50.
 			 * this may be out of place, but.... */
-	
+
 		case CLASS_ROGUE:
 			p_ptr->pspeed += p_ptr->lev / 6;
 			break;
@@ -4769,7 +4697,6 @@ void calc_boni(int Ind)
 	if ((p_ptr->dis_ac != old_dis_ac) || (p_ptr->dis_to_a != old_dis_to_a)) {
 		/* Redraw */
 		p_ptr->redraw |= (PR_ARMOR);
-
 		/* Window stuff */
 		p_ptr->window |= (PW_PLAYER);
 	}
@@ -4778,10 +4705,8 @@ void calc_boni(int Ind)
 	/* Obtain the "hold" value */
 	hold = adj_str_hold[p_ptr->stat_ind[A_STR]];
 
-
 	/* Examine the "current bow" */
 	o_ptr = &p_ptr->inventory[INVEN_BOW];
-
 
 	/* Assume not heavy */
 	p_ptr->heavy_shoot = FALSE;
@@ -4873,7 +4798,7 @@ void calc_boni(int Ind)
 
 		/* Add in the "bonus shots" */
 		p_ptr->num_fire += extra_shots;
-	
+
 		/* Require at least one shot */
 		if (p_ptr->num_fire < 1) p_ptr->num_fire = 1;
 
@@ -4895,7 +4820,7 @@ void calc_boni(int Ind)
 	o_ptr = &p_ptr->inventory[INVEN_TOOL];
 
 	/* Boost digging skill by tool weight */
-	if(o_ptr->k_idx && o_ptr->tval == TV_DIGGING) {
+	if (o_ptr->k_idx && o_ptr->tval == TV_DIGGING) {
 		p_ptr->skill_dig += (o_ptr->weight / 10);
 
 		/* Hack -- to_h/to_d added to digging (otherwise meanless) */
@@ -5015,7 +4940,7 @@ void calc_boni(int Ind)
 	}
 #endif
 
-	
+
 	/* It is hard to hold a heavy weapon */
 	o_ptr = &p_ptr->inventory[INVEN_WIELD];
 	if (o_ptr->k_idx && hold < o_ptr->weight / 10) {
@@ -5117,9 +5042,7 @@ void calc_boni(int Ind)
 		/* At least +1, max. +3 */
 		if (p_ptr->zeal) p_ptr->num_blow += p_ptr->zeal_power / 10 > 3 ? 3 : (p_ptr->zeal_power / 10 < 1 ? 1 : p_ptr->zeal_power / 10);
 #endif
-	}
-	else /* make cumber_armor have effect on to-hit for non-martial artists too - C. Blue */
-	{
+	} else { /* make cumber_armor have effect on to-hit for non-martial artists too - C. Blue */
 		if (p_ptr->cumber_armor && (p_ptr->to_h_melee > 0)) p_ptr->to_h_melee = (p_ptr->to_h_melee * 2) / 3;
 	}
 #endif
@@ -5155,11 +5078,11 @@ void calc_boni(int Ind)
 		int lev = get_skill_scale(p_ptr, SKILL_COMBAT, 10);
 
 #if 0
-                p_ptr->dis_to_h += lev;
+		p_ptr->dis_to_h += lev;
 		p_ptr->to_h += lev;
 #else /* reason for this is that DEX has influence on combat +hit bonus! (only affects h_melee and h_ranged, not to_h */
-                p_ptr->to_h_melee += lev;
-                p_ptr->to_h_ranged += lev;
+		p_ptr->to_h_melee += lev;
+		p_ptr->to_h_ranged += lev;
 #endif
 
 /*		if (o_ptr->k_idx) {
@@ -5353,7 +5276,7 @@ void calc_boni(int Ind)
 		p_ptr->to_d_ranged = 0;/* bam */
 #else
 		/* the following part punishes all +hit/+dam for ranged weapons;
-        	   trained fighters suffer more than untrained ones! - C. Blue */
+		   trained fighters suffer more than untrained ones! - C. Blue */
 		if (p_ptr->to_h_ranged >= 25) p_ptr->to_h_ranged = 0;
 		else if (p_ptr->to_h_ranged >= 0) p_ptr->to_h_ranged -= 10 + (p_ptr->to_h_ranged * 3) / 5;
 		else p_ptr->to_h_ranged -= 10;
@@ -5381,7 +5304,7 @@ void calc_boni(int Ind)
 		p_ptr->to_d = p_ptr->to_d * 3 / 5;
 		p_ptr->to_h_melee = p_ptr->to_h_melee * 3 / 5;
 		p_ptr->to_d_melee = p_ptr->to_d_melee * 3 / 5;
-		
+
 		/* Reduce the mental bonuses */
 		/*p_ptr->dis_to_h -= 2;
 		p_ptr->dis_to_d -= 2;*/
@@ -5457,9 +5380,10 @@ void calc_boni(int Ind)
 		(((p_ptr->dis_to_d * 1) + (d * 1)) / 2);	*/
 	}
 
+#if 0 /* disabled atm (it's already not easy to find two weapons that both deal great damage) */
 	/* dual-wielding gets a slight to-hit malus */
 	if (p_ptr->dual_wield && p_ptr->dual_mode) p_ptr->to_h_melee = (p_ptr->to_h_melee * 17) / 20; /* 85% */
-
+#endif
 
 
 	/* Actual Modifier Bonuses (Un-inflate stat bonuses) */
@@ -5801,19 +5725,19 @@ void calc_boni(int Ind)
 
 
 	/* resistance to fire cancel sensibility to fire */
-	if(p_ptr->resist_fire || p_ptr->oppose_fire || p_ptr->immune_fire)
+	if (p_ptr->resist_fire || p_ptr->oppose_fire || p_ptr->immune_fire)
 		p_ptr->suscep_fire = FALSE;
 	/* resistance to cold cancel sensibility to cold */
-	if(p_ptr->resist_cold || p_ptr->oppose_cold || p_ptr->immune_cold)
+	if (p_ptr->resist_cold || p_ptr->oppose_cold || p_ptr->immune_cold)
 		p_ptr->suscep_cold = FALSE;
 	/* resistance to electricity cancel sensibility to fire */
-	if(p_ptr->resist_elec || p_ptr->oppose_elec || p_ptr->immune_elec)
+	if (p_ptr->resist_elec || p_ptr->oppose_elec || p_ptr->immune_elec)
 		p_ptr->suscep_elec = FALSE;
 	/* resistance to acid cancel sensibility to fire */
-	if(p_ptr->resist_acid || p_ptr->oppose_acid || p_ptr->immune_acid)
+	if (p_ptr->resist_acid || p_ptr->oppose_acid || p_ptr->immune_acid)
 		p_ptr->suscep_acid = FALSE;
 	/* resistance to light cancels sensibility to light */
-	if(p_ptr->resist_lite) p_ptr->suscep_lite = FALSE;
+	if (p_ptr->resist_lite) p_ptr->suscep_lite = FALSE;
 
 
 #if 0 /* in the making.. */
@@ -5902,12 +5826,12 @@ void calc_boni(int Ind)
 	if (p_ptr->skill_sav > 95) p_ptr->skill_sav = 95;
 
 	/* Limit critical hits bonus */
-        if ((p_ptr->xtra_crit > 50) && !is_admin(p_ptr)) p_ptr->xtra_crit = 50;
+	if ((p_ptr->xtra_crit > 50) && !is_admin(p_ptr)) p_ptr->xtra_crit = 50;
 
 	/* Limit speed penalty from total_weight */
 	if ((p_ptr->pspeed < 10) && !is_admin(p_ptr)) p_ptr->pspeed = 10;
 	if (p_ptr->pspeed < 100 && is_admin(p_ptr)) p_ptr->pspeed = 100;
-	
+
 	/* Limit speed */
 	if ((p_ptr->pspeed > 210) && !is_admin(p_ptr)) p_ptr->pspeed = 210;
 
@@ -5968,15 +5892,13 @@ void notice_stuff(int Ind)
 
 
 	/* Combine the pack */
-	if (p_ptr->notice & PN_COMBINE)
-	{
+	if (p_ptr->notice & PN_COMBINE) {
 		p_ptr->notice &= ~(PN_COMBINE);
 		combine_pack(Ind);
 	}
 
 	/* Reorder the pack */
-	if (p_ptr->notice & PN_REORDER)
-	{
+	if (p_ptr->notice & PN_REORDER) {
 		p_ptr->notice &= ~(PN_REORDER);
 		reorder_pack(Ind);
 	}
@@ -5995,66 +5917,55 @@ void update_stuff(int Ind)
 
 	/* This should only be sent once. This data
 	   does not change in runtime */
-	if (p_ptr->update & PU_SKILL_INFO)
-        {
-                int i;
+	if (p_ptr->update & PU_SKILL_INFO) {
+		int i;
 
 		calc_techniques(Ind);
 
 		p_ptr->update &= ~(PU_SKILL_INFO);
-                for (i = 1; i < MAX_SKILLS; i++)
-                {
-                        if (s_info[i].name)
-                        {
+		for (i = 1; i < MAX_SKILLS; i++) {
+			if (s_info[i].name) {
 				Send_skill_init(Ind, i);
-                        }
-                }
+			}
+		}
 	}
 
-	if (p_ptr->update & PU_SKILL_MOD)
-        {
-                int i;
+	if (p_ptr->update & PU_SKILL_MOD) {
+		int i;
 
 		p_ptr->update &= ~(PU_SKILL_MOD);
-                for (i = 1; i < MAX_SKILLS; i++)
-                {
-                        if (s_info[i].name && p_ptr->s_info[i].touched)
-                        {
-                                Send_skill_info(Ind, i);
+		for (i = 1; i < MAX_SKILLS; i++) {
+			if (s_info[i].name && p_ptr->s_info[i].touched) {
+				Send_skill_info(Ind, i);
 				p_ptr->s_info[i].touched = FALSE;
-                        }
-                }
+			}
+		}
 		Send_skill_points(Ind);
 	}
 
-	if (p_ptr->update & PU_BONUS)
-	{
+	if (p_ptr->update & PU_BONUS) {
 		p_ptr->update &= ~(PU_BONUS);
 		/* Take off what is no more usable, BEFORE calculating boni */
 		do_takeoff_impossible(Ind);
 		calc_boni(Ind);
 	}
 
-	if (p_ptr->update & PU_TORCH)
-	{
+	if (p_ptr->update & PU_TORCH) {
 		p_ptr->update &= ~(PU_TORCH);
 		calc_torch(Ind);
 	}
 
-	if (p_ptr->update & PU_HP)
-	{
+	if (p_ptr->update & PU_HP) {
 		p_ptr->update &= ~(PU_HP);
 		calc_hitpoints(Ind);
 	}
 
-	if (p_ptr->update & (PU_SANITY))
-	{
+	if (p_ptr->update & (PU_SANITY)) {
 		p_ptr->update &= ~(PU_SANITY);
 		calc_sanity(Ind);
 	}
 
-	if (p_ptr->update & PU_MANA)
-	{
+	if (p_ptr->update & PU_MANA) {
 		p_ptr->update &= ~(PU_MANA);
 		calc_mana(Ind);
 	}
@@ -6065,55 +5976,48 @@ void update_stuff(int Ind)
 	/* Character has changed depth very recently, no screen updates */
 	if (p_ptr->new_level_flag) return;
 
-	if (p_ptr->update & PU_UN_LITE)
-	{
+	if (p_ptr->update & PU_UN_LITE) {
 		p_ptr->update &= ~(PU_UN_LITE);
 		forget_lite(Ind);
 	}
 
-	if (p_ptr->update & PU_UN_VIEW)
-	{
+	if (p_ptr->update & PU_UN_VIEW) {
 		p_ptr->update &= ~(PU_UN_VIEW);
 		forget_view(Ind);
 	}
 
 
-	if (p_ptr->update & PU_VIEW)
-	{
+	if (p_ptr->update & PU_VIEW) {
 		p_ptr->update &= ~(PU_VIEW);
 		update_view(Ind);
 	}
 
-	if (p_ptr->update & PU_LITE)
-	{
+	if (p_ptr->update & PU_LITE) {
 		p_ptr->update &= ~(PU_LITE);
 		update_lite(Ind);
 	}
 
 
-	if (p_ptr->update & PU_FLOW)
-	{
+	if (p_ptr->update & PU_FLOW) {
 		p_ptr->update &= ~(PU_FLOW);
 		update_flow();
 	}
 
 
-	if (p_ptr->update & PU_DISTANCE)
-	{
+	if (p_ptr->update & PU_DISTANCE) {
 		p_ptr->update &= ~(PU_DISTANCE);
 		p_ptr->update &= ~(PU_MONSTERS);
 		update_monsters(TRUE);
 		update_players();
 	}
 
-	if (p_ptr->update & PU_MONSTERS)
-	{
+	if (p_ptr->update & PU_MONSTERS) {
 		p_ptr->update &= ~(PU_MONSTERS);
 		update_monsters(FALSE);
 		update_players();
 	}
 
-	if(p_ptr->update & PU_LUA){
+	if (p_ptr->update & PU_LUA) {
 		/* update the client files */
 		p_ptr->update &= ~(PU_LUA);
                 exec_lua(Ind, "update_client()");
@@ -6136,15 +6040,13 @@ void redraw_stuff(int Ind)
 	/*if (!character_generated) return;*/
 
 	/* Hack -- clear the screen */
-	if (p_ptr->redraw & PR_WIPE)
-	{
+	if (p_ptr->redraw & PR_WIPE) {
 		p_ptr->redraw &= ~PR_WIPE;
 		msg_print(Ind, NULL);
 	}
 
 
-	if (p_ptr->redraw & PR_MAP)
-	{
+	if (p_ptr->redraw & PR_MAP) {
 #ifdef USE_SOUND_2010
 		/* hack: update music, if we're mind-linked to someone */
 		int Ind2;
@@ -6175,8 +6077,7 @@ void redraw_stuff(int Ind)
 	}
 
 
-	if (p_ptr->redraw & PR_BASIC)
-	{
+	if (p_ptr->redraw & PR_BASIC) {
 		p_ptr->redraw &= ~(PR_BASIC);
 		p_ptr->redraw &= ~(PR_MISC | PR_TITLE | PR_STATS);
 		p_ptr->redraw &= ~(PR_LEV | PR_EXP | PR_GOLD);
@@ -6185,38 +6086,32 @@ void redraw_stuff(int Ind)
 		prt_frame_basic(Ind);
 	}
 
-	if (p_ptr->redraw & PR_ENCUMBERMENT)
-	{
+	if (p_ptr->redraw & PR_ENCUMBERMENT) {
 		p_ptr->redraw &= ~(PR_ENCUMBERMENT);
 		prt_encumberment(Ind);
 	}
 
-	if (p_ptr->redraw & PR_MISC)
-	{
+	if (p_ptr->redraw & PR_MISC) {
 		p_ptr->redraw &= ~(PR_MISC);
 		Send_char_info(Ind, p_ptr->prace, p_ptr->pclass, p_ptr->ptrait, p_ptr->male, p_ptr->mode);
 	}
 
-	if (p_ptr->redraw & PR_TITLE)
-	{
+	if (p_ptr->redraw & PR_TITLE) {
 		p_ptr->redraw &= ~(PR_TITLE);
 		prt_title(Ind);
 	}
 
-	if (p_ptr->redraw & PR_LEV)
-	{
+	if (p_ptr->redraw & PR_LEV) {
 		p_ptr->redraw &= ~(PR_LEV);
 		prt_level(Ind);
 	}
 
-	if (p_ptr->redraw & PR_EXP)
-	{
+	if (p_ptr->redraw & PR_EXP) {
 		p_ptr->redraw &= ~(PR_EXP);
 		prt_exp(Ind);
 	}
 
-	if (p_ptr->redraw & PR_STATS)
-	{
+	if (p_ptr->redraw & PR_STATS) {
 		p_ptr->redraw &= ~(PR_STATS);
 		prt_stat(Ind, A_STR);
 		prt_stat(Ind, A_INT);
@@ -6226,82 +6121,69 @@ void redraw_stuff(int Ind)
 		prt_stat(Ind, A_CHR);
 	}
 
-	if (p_ptr->redraw & PR_ARMOR)
-	{
+	if (p_ptr->redraw & PR_ARMOR) {
 		p_ptr->redraw &= ~(PR_ARMOR);
 		prt_ac(Ind);
 	}
 
-	if (p_ptr->redraw & PR_HP)
-	{
+	if (p_ptr->redraw & PR_HP) {
 		p_ptr->redraw &= ~(PR_HP);
 		prt_hp(Ind);
 	}
 
-	if (p_ptr->redraw & PR_STAMINA)
-	{
+	if (p_ptr->redraw & PR_STAMINA) {
 		p_ptr->redraw &= ~(PR_STAMINA);
 		prt_stamina(Ind);
 	}
 
-	if(p_ptr->redraw & PR_SANITY)
-	{
+	if (p_ptr->redraw & PR_SANITY) {
 		p_ptr->redraw &= ~(PR_SANITY);
 #ifdef SHOW_SANITY
 		prt_sanity(Ind);
 #endif
 	}
 
-	if (p_ptr->redraw & PR_MANA)
-	{
+	if (p_ptr->redraw & PR_MANA) {
 		p_ptr->redraw &= ~(PR_MANA);
 		prt_sp(Ind);
 	}
 
-	if (p_ptr->redraw & PR_GOLD)
-	{
+	if (p_ptr->redraw & PR_GOLD) {
 		p_ptr->redraw &= ~(PR_GOLD);
 		prt_gold(Ind);
 	}
 
-	if (p_ptr->redraw & PR_DEPTH)
-	{
+	if (p_ptr->redraw & PR_DEPTH) {
 		p_ptr->redraw &= ~(PR_DEPTH);
 		prt_depth(Ind);
 	}
 
-	if (p_ptr->redraw & PR_HEALTH)
-	{
+	if (p_ptr->redraw & PR_HEALTH) {
 		p_ptr->redraw &= ~(PR_HEALTH);
 		health_redraw(Ind);
 	}
 
-	if (p_ptr->redraw & PR_HISTORY)
-	{
+	if (p_ptr->redraw & PR_HISTORY) {
 		p_ptr->redraw &= ~(PR_HISTORY);
 		prt_history(Ind);
 	}
 
-	if (p_ptr->redraw & PR_VARIOUS)
-	{
+	if (p_ptr->redraw & PR_VARIOUS) {
 		p_ptr->redraw &= ~(PR_VARIOUS);
 		prt_various(Ind);
 	}
 
-	if (p_ptr->redraw & PR_PLUSSES)
-	{
+	if (p_ptr->redraw & PR_PLUSSES) {
 		p_ptr->redraw &= ~(PR_PLUSSES);
 		prt_plusses(Ind);
 	}
 
-	if (p_ptr->redraw & PR_SKILLS)
-	{
+	if (p_ptr->redraw & PR_SKILLS) {
 		p_ptr->redraw &= ~(PR_SKILLS);
 		prt_skills(Ind);
 	}
 
-	if (p_ptr->redraw & PR_EXTRA)
-	{
+	if (p_ptr->redraw & PR_EXTRA) {
 		p_ptr->redraw &= ~(PR_EXTRA);
 		p_ptr->redraw &= ~(PR_CUT | PR_STUN);
 		p_ptr->redraw &= ~(PR_HUNGER);
@@ -6312,63 +6194,53 @@ void redraw_stuff(int Ind)
 		prt_extra_status(Ind);
 	}
 
-	if (p_ptr->redraw & PR_CUT)
-	{
+	if (p_ptr->redraw & PR_CUT) {
 		p_ptr->redraw &= ~(PR_CUT);
 		prt_cut(Ind);
 	}
 
-	if (p_ptr->redraw & PR_STUN)
-	{
+	if (p_ptr->redraw & PR_STUN) {
 		p_ptr->redraw &= ~(PR_STUN);
 		prt_stun(Ind);
 	}
 
-	if (p_ptr->redraw & PR_HUNGER)
-	{
+	if (p_ptr->redraw & PR_HUNGER) {
 		p_ptr->redraw &= ~(PR_HUNGER);
 		prt_hunger(Ind);
 	}
 
-	if (p_ptr->redraw & PR_BLIND)
-	{
+	if (p_ptr->redraw & PR_BLIND) {
 		p_ptr->redraw &= ~(PR_BLIND);
 		prt_blind(Ind);
 	}
 
-	if (p_ptr->redraw & PR_CONFUSED)
-	{
+	if (p_ptr->redraw & PR_CONFUSED) {
 		p_ptr->redraw &= ~(PR_CONFUSED);
 		prt_confused(Ind);
 	}
 
-	if (p_ptr->redraw & PR_AFRAID)
-	{
+	if (p_ptr->redraw & PR_AFRAID) {
 		p_ptr->redraw &= ~(PR_AFRAID);
 		prt_afraid(Ind);
 	}
 
-	if (p_ptr->redraw & PR_POISONED)
-	{
+	if (p_ptr->redraw & PR_POISONED) {
 		p_ptr->redraw &= ~(PR_POISONED);
 		prt_poisoned(Ind);
 	}
 
-	if (p_ptr->redraw & PR_STATE)
-	{
+	if (p_ptr->redraw & PR_STATE) {
 		p_ptr->redraw &= ~(PR_STATE);
 		prt_state(Ind);
 		prt_extra_status(Ind);
 	}
 
-	if (p_ptr->redraw & PR_SPEED)
-	{
+	if (p_ptr->redraw & PR_SPEED) {
 		p_ptr->redraw &= ~(PR_SPEED);
 		prt_speed(Ind);
 	}
 
-	if (p_ptr->redraw & PR_STUDY)
-	{
+	if (p_ptr->redraw & PR_STUDY) {
 		p_ptr->redraw &= ~(PR_STUDY);
 		prt_study(Ind);
 	}
@@ -6386,43 +6258,37 @@ void window_stuff(int Ind)
 	if (!p_ptr->window) return;
 
 	/* Display inventory */
-	if (p_ptr->window & PW_INVEN)
-	{
+	if (p_ptr->window & PW_INVEN) {
 		p_ptr->window &= ~(PW_INVEN);
 		fix_inven(Ind);
 	}
 
 	/* Display equipment */
-	if (p_ptr->window & PW_EQUIP)
-	{
+	if (p_ptr->window & PW_EQUIP) {
 		p_ptr->window &= ~(PW_EQUIP);
 		fix_equip(Ind);
 	}
 
 	/* Display player */
-	if (p_ptr->window & PW_PLAYER)
-	{
+	if (p_ptr->window & PW_PLAYER) {
 		p_ptr->window &= ~(PW_PLAYER);
 		fix_player(Ind);
 	}
 
 	/* Display overhead view */
-	if (p_ptr->window & PW_MESSAGE)
-	{
+	if (p_ptr->window & PW_MESSAGE) {
 		p_ptr->window &= ~(PW_MESSAGE);
 		fix_message(Ind);
 	}
 
 	/* Display overhead view */
-	if (p_ptr->window & PW_OVERHEAD)
-	{
+	if (p_ptr->window & PW_OVERHEAD) {
 		p_ptr->window &= ~(PW_OVERHEAD);
 		fix_overhead(Ind);
 	}
 
 	/* Display monster recall */
-	if (p_ptr->window & PW_MONSTER)
-	{
+	if (p_ptr->window & PW_MONSTER) {
 		p_ptr->window &= ~(PW_MONSTER);
 		fix_monster(Ind);
 	}
@@ -6686,9 +6552,14 @@ void global_event_signup(int Ind, int n, cptr parm) {
 			msg_print(Ind, "\377yYou have to wait until it starts to sign up for this event!");
 			return;
 		}
+#if 0 /* need to be in Bree or in the arena? */
 		if ((p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz != 0) &&
 		    (p_ptr->wpos.wx != WPOS_ARENA_X || p_ptr->wpos.wy != WPOS_ARENA_Y || p_ptr->wpos.wz != WPOS_ARENA_Z)) {
 			msg_print(Ind, "\377yYou have to be in Bree or in the arena to sign up for this event!");
+#else /* need to be in Bree or in the training tower? */
+		if (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz < 0) {
+			msg_print(Ind, "\377yYou have to be in Bree or in the training tower to sign up for this event!");
+#endif
 			return;
 		}
 		if ((parm == NULL) || !strlen(parm)) {
@@ -6843,7 +6714,7 @@ static void process_global_event(int ge_id) {
 	time_t now;
 
 	time(&now);
-        /* real timer will sometimes fail when using in a function which isn't sync'ed against it but instead relies
+	/* real timer will sometimes fail when using in a function which isn't sync'ed against it but instead relies
 	    on the game's FPS for timining ..strange tho :s */
 	elapsed_turns = turn - ge->start_turn - ge->paused_turns;
 	elapsed = elapsed_turns / cfg.fps;
@@ -6861,16 +6732,33 @@ static void process_global_event(int ge_id) {
 			} else {
 				/* count participants */
 				for (i = 0; i < MAX_GE_PARTICIPANTS; i++) {
-					if (ge->participant[i]) {
-						/* Check that the player really is here - mikaelh */
-						for (j = 1; j <= NumPlayers; j++) {
-							if (Players[j]->id == ge->participant[i]) {
-								participants++;
-								break;
-							}
+					if (!ge->participant[i]) continue;
+
+					/* Check that the player really is here - mikaelh */
+					for (j = 1; j <= NumPlayers; j++)
+						if (Players[j]->id == ge->participant[i]) break;
+					if (j > NumPlayers) {
+						s_printf("EVENT_CHECK_PARTICIPANTS: ID %d no longer available.\n", ge->participant[i]);
+						continue;
+					}
+					p_ptr = Players[j];
+
+					/* Check that he still fulfils requirements, if any */
+					switch (ge->getype) {
+					case GE_HIGHLANDER:
+						if ((p_ptr->max_exp || p_ptr->max_plv > 1) && !is_admin(p_ptr)) {
+							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' no longer egligible.\n", p_ptr->name);
+							msg_print(j, "\377oCharacters need to have 0 experience to be eligible.");
+							p_ptr->global_event_type[ge_id] = GE_NONE;
+							ge->participant[i] = 0;
+							continue;
 						}
 					}
+
+					/* Player is valid for entering */
+					participants++;
 				}
+
 				/* enough participants? Don't hand out reward for free to someone. */
 				if (ge->min_participants && (participants < ge->min_participants)) {
 					msg_broadcast_format(0, "\377y%s needs at least %d participants.", ge->title, ge->min_participants);
@@ -6881,6 +6769,7 @@ static void process_global_event(int ge_id) {
 							Players[j]->global_event_type[ge_id] = GE_NONE;
 					ge->getype = GE_NONE;
 				} else {
+					s_printf("%s EVENT_STARTS: %d (%s) has %d participants.\n", showtime(), ge_id+1, ge->title, participants);
 					msg_broadcast_format(0, "\374\377C[>>%s (%d) starts now!<<]", ge->title, ge_id + 1);
 				}
 			}
@@ -6906,10 +6795,10 @@ static void process_global_event(int ge_id) {
 	}
 
 	/* Event is running! Process its stages... */
-	switch(ge->getype){
+	switch (ge->getype) {
 	/* Highlander Tournament */
 	case GE_HIGHLANDER:
-		switch(ge->state[0]){
+		switch (ge->state[0]) {
 		case 0: /* prepare level, gather everyone, start exp'ing */
 			ge->cleanup = 1;
 			sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
@@ -6944,7 +6833,7 @@ static void process_global_event(int ge_id) {
 			if (ge->extra[4]) {
 				/* Generate the level from fixed arena layout */
 				s_printf("EVENT_LAYOUT: Generating arena %d at %d,%d,%d\n", ge->extra[4], wpos.wx, wpos.wy, wpos.wz);
-		                process_dungeon_file(format("t_arena%d.txt", ge->extra[4]), &wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
+				process_dungeon_file(format("t_arena%d.txt", ge->extra[4]), &wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
 			}
 			
 			/* actually create temporary Highlander dungeon! */
@@ -6976,41 +6865,47 @@ static void process_global_event(int ge_id) {
 				s_printf("EVENT_LAYOUT: Dungeon already in place.\n");
 			}
 
-			for (i = 1; i <= NumPlayers; i++)
-			for (j = 0; j < MAX_GE_PARTICIPANTS; j++)
-			if (ge->participant[j] == Players[i]->id) {
-				p_ptr = Players[i];
-				if ((p_ptr->max_exp || p_ptr->max_plv > 1) && !is_admin(p_ptr)) {
-					msg_print(i, "\377oCharacters need to have 0 experience to be eligible.");
-					ge->participant[j] = 0;
-					p_ptr->global_event_type[ge_id] = GE_NONE;
-					continue;
+			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
+				if (!ge->participant[j]) continue;
+
+				for (i = 1; i <= NumPlayers; i++) {
+					if (Players[i]->id != ge->participant[j]) continue;
+
+					p_ptr = Players[i];
+#if 0 /* moved upwards */
+					if ((p_ptr->max_exp || p_ptr->max_plv > 1) && !is_admin(p_ptr)) {
+						msg_print(i, "\377oCharacters need to have 0 experience to be eligible.");
+						ge->participant[j] = 0;
+						p_ptr->global_event_type[ge_id] = GE_NONE;
+						continue;
+					}
+#endif
+					if (p_ptr->wpos.wx || p_ptr->wpos.wy) {
+						p_ptr->recall_pos.wx = 0;
+						p_ptr->recall_pos.wy = 0;
+						p_ptr->recall_pos.wz = -1;
+						p_ptr->global_event_temp = PEVF_PASS_00 | PEVF_NOGHOST_00 |
+						    PEVF_SAFEDUN_00 | PEVF_SEPDUN_00;
+						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+						recall_player(i, "");
+					}
+					/* Give him the amulet of the highlands */
+					invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_HIGHLANDS));
+					o_ptr->number = 1;
+					o_ptr->level = 0;
+					o_ptr->discount = 0;
+					o_ptr->ident |= ID_MENTAL;
+					o_ptr->owner = p_ptr->id;
+					o_ptr->mode = p_ptr->mode;
+					object_aware(i, o_ptr);
+					object_known(o_ptr);
+					inven_carry(i, o_ptr);
+					/* give some safe time for exp'ing */
+					if (cfg.use_pk_rules == PK_RULES_DECLARE) {
+						p_ptr->pkill &= ~PKILL_KILLABLE;
+					}
+					p_ptr->global_event_progress[ge_id][0] = 1; /* now in 0,0,0-dungeon! */
 				}
-				if (p_ptr->wpos.wx || p_ptr->wpos.wy) {
-					p_ptr->recall_pos.wx = 0;
-					p_ptr->recall_pos.wy = 0;
-					p_ptr->recall_pos.wz = -1;
-					p_ptr->global_event_temp = PEVF_PASS_00 | PEVF_NOGHOST_00 |
-					    PEVF_SAFEDUN_00 | PEVF_SEPDUN_00;
-	                    		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
-				        recall_player(i, "");
-				}
-				/* Give him the amulet of the highlands */
-				invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_HIGHLANDS));
-			        o_ptr->number = 1;
-				o_ptr->level = 0;
-			        o_ptr->discount = 0;
-			        o_ptr->ident |= ID_MENTAL;
-			        o_ptr->owner = p_ptr->id;
-			        o_ptr->mode = p_ptr->mode;
-			        object_aware(i, o_ptr);
-		        	object_known(o_ptr);
-				inven_carry(i, o_ptr);
-				/* give some safe time for exp'ing */
-				if (cfg.use_pk_rules == PK_RULES_DECLARE) {
-					p_ptr->pkill &= ~PKILL_KILLABLE;
-				}
-				p_ptr->global_event_progress[ge_id][0] = 1; /* now in 0,0,0-dungeon! */
 			}
 
 			ge->state[0] = 1;
@@ -7089,16 +6984,16 @@ static void process_global_event(int ge_id) {
 				for (j = INVEN_TOTAL - 1; j >= 0; j--)
 					if (p_ptr->inventory[j].tval == TV_AMULET && p_ptr->inventory[j].sval == SV_AMULET_HIGHLANDS) {
 						invcopy(&p_ptr->inventory[j], lookup_kind(TV_AMULET, SV_AMULET_HIGHLANDS2));
-					        p_ptr->inventory[j].number = 1;
+						p_ptr->inventory[j].number = 1;
 						p_ptr->inventory[j].level = 0;
-					        p_ptr->inventory[j].discount = 0;
-					        p_ptr->inventory[j].ident |= ID_MENTAL;
-					        p_ptr->inventory[j].owner = p_ptr->id;
-					        p_ptr->inventory[j].mode = p_ptr->mode;
-					        object_aware(i, &p_ptr->inventory[j]);
-				        	object_known(&p_ptr->inventory[j]);
+						p_ptr->inventory[j].discount = 0;
+						p_ptr->inventory[j].ident |= ID_MENTAL;
+						p_ptr->inventory[j].owner = p_ptr->id;
+						p_ptr->inventory[j].mode = p_ptr->mode;
+						object_aware(i, &p_ptr->inventory[j]);
+						object_known(&p_ptr->inventory[j]);
 					}
-			        p_ptr->update |= (PU_BONUS | PU_VIEW);
+				p_ptr->update |= (PU_BONUS | PU_VIEW);
 				p_ptr->window |= (PW_INVEN | PW_EQUIP);
 				handle_stuff(i);
 
@@ -7109,8 +7004,8 @@ static void process_global_event(int ge_id) {
 					p_ptr->recall_pos.wx = 0;
 					p_ptr->recall_pos.wy = 0;
 					p_ptr->recall_pos.wz = 0;
-	                    		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
-				        recall_player(i, "");
+					p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+					recall_player(i, "");
 				}
 
 				p_ptr->global_event_progress[ge_id][0] = 4; /* now before deathmatch */
@@ -7188,17 +7083,18 @@ static void process_global_event(int ge_id) {
 
 				/* don't create a actual reward here, but just a signed deed that can be turned in (at mayor's office)! */
 				k = lookup_kind(TV_PARCHMENT, SV_DEED_HIGHLANDER);
-			        invcopy(o_ptr, k);
-			        o_ptr->number = 1;
-			        object_aware(j, o_ptr);
-		        	object_known(o_ptr);
-			        o_ptr->discount = 0;
-			        o_ptr->level = 0;
-			        o_ptr->ident |= ID_MENTAL;
+				invcopy(o_ptr, k);
+				o_ptr->number = 1;
+				object_aware(j, o_ptr);
+				object_known(o_ptr);
+				o_ptr->discount = 0;
+				o_ptr->level = 0;
+				o_ptr->ident |= ID_MENTAL;
 				o_ptr->note = quark_add("Tournament reward");
 				inven_carry(j, o_ptr);
 
 				s_printf("%s EVENT_WON: %s wins %d (%s)\n", showtime(), p_ptr->name, ge_id+1, ge->title);
+				l_printf("%s \\{s%s has won %s\n", showdate(), p_ptr->name, ge->title);
 
 				/* avoid him dying */
 				set_poisoned(j, 0, 0);
@@ -7231,14 +7127,14 @@ static void process_global_event(int ge_id) {
 						if (p_ptr->inventory[j].tval == TV_AMULET &&
 						    ((p_ptr->inventory[j].sval == SV_AMULET_HIGHLANDS) ||
 						    (p_ptr->inventory[j].sval == SV_AMULET_HIGHLANDS2))) {
-    			                                inven_item_increase(i, j, -p_ptr->inventory[j].number);
-		        	                        inven_item_optimize(i, j);
+							inven_item_increase(i, j, -p_ptr->inventory[j].number);
+							inven_item_optimize(i, j);
 						}
 					p_ptr->global_event_type[ge_id] = GE_NONE; /* no longer participant */
 					p_ptr->recall_pos.wx = cfg.town_x;
 					p_ptr->recall_pos.wy = cfg.town_y;
 					p_ptr->recall_pos.wz = 0;
-	                    		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+					p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 					p_ptr->global_event_temp = PEVF_PASS_00; /* clear all other flags, allow a final recall out */
 				        recall_player(i, "");
 				}
@@ -7456,21 +7352,24 @@ void calc_techniques(int Ind) {
 		if (p_ptr->lev >= 15) p_ptr->melee_techniques |= 0x0002; /* Taunt */
 //		if (p_ptr->lev >= 22) p_ptr->melee_techniques |= 0x0004; /* Jump */
 		Send_technique_info(Ind);
-		return;	
+		return;
 	case CLASS_ROGUE:
 		if (p_ptr->lev >= 3) p_ptr->melee_techniques |= 0x0001; /* Sprint - Rogues know how to get away! */
 		if (p_ptr->lev >= 6) p_ptr->melee_techniques |= 0x0002; /* Taunt - Rogues are bad-mouthed ;) */
 		if (p_ptr->lev >= 9) p_ptr->melee_techniques |= 0x0008; /* Distract */
 		if (p_ptr->lev >= 12) p_ptr->melee_techniques |= 0x0080; /* Flash bomb */
 //		if (p_ptr->lev >= 18) p_ptr->melee_techniques |= 0x0004; /* Jump */
+#ifdef ENABLE_ASSASSINATE
+		if (p_ptr->lev >= 35) p_ptr->melee_techniques |= 0x0400; /* Assassinate */
+#endif
 		if (p_ptr->lev >= 50 && p_ptr->total_winner) p_ptr->melee_techniques |= 0x4000; /* Shadow run */
 		Send_technique_info(Ind);
-		return;	
+		return;
 	case CLASS_RUNEMASTER:
 		if (p_ptr->lev >= 4) p_ptr->melee_techniques |= 0x0001; /* Sprint - Rogues know how to get away! */
 		if (p_ptr->lev >= 9) p_ptr->melee_techniques |= 0x0002; /* Taunt - Rogues are bad-mouthed ;) */
 		Send_technique_info(Ind);
-		return;	
+		return;
 	case CLASS_MINDCRAFTER:
 		if (p_ptr->lev >= 8) p_ptr->melee_techniques |= 0x0002; /* Taunt */
 		if (p_ptr->lev >= 12) p_ptr->melee_techniques |= 0x0008; /* Distract */

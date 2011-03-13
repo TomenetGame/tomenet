@@ -176,11 +176,6 @@ s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_cri
 	the small weak spot of an opponent's armour, hitting exactly
 	into his artery or sth. So #if 0.. */
 
-#if 0
-	/* Extract "blow" power */
-	i = (weight + ((p_ptr->to_h + plus) * 5) +
-                 get_skill_scale(p_ptr, SKILL_MASTERY, 150));
-#else
 	/* Extract critical maneuver potential (interesting term..) */
 	/* The larger the weapon the more difficult to quickly strike
 	the critical spot. Cap weight influence at 100+ lbs */
@@ -189,9 +184,9 @@ s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_cri
 	else w = 110 - w;
 	if (w < 10) w = 10; /* shouldn't happen anyways */
 	i = (w * 2) + ((p_ptr->to_h + plus) * 5) + get_skill_scale(p_ptr, SKILL_MASTERY, 150);
-#endif
-        i += 50 * BOOST_CRIT(p_ptr->xtra_crit + o_crit);
-        if (allow_skill_crit) i += get_skill_scale(p_ptr, SKILL_CRITS, 40 * 50);
+
+	i += 50 * BOOST_CRIT(p_ptr->xtra_crit + o_crit);
+	if (allow_skill_crit) i += get_skill_scale(p_ptr, SKILL_CRITS, 40 * 50);
 
 	/* Chance */
 	if (randint(5000) <= i) {
@@ -1745,14 +1740,12 @@ void carry(int Ind, int pickup, int confirm)
 		old_note = o_ptr->note;
 
 		/* Remove dangerous inscriptions when picking up items owned by other players - mikaelh */
-		if (p_ptr->id != o_ptr->owner && o_ptr->note) {
+		if (p_ptr->id != o_ptr->owner && o_ptr->note && p_ptr->clear_inscr) {
 			char *inscription, *scan;
 			scan = inscription = strdup(quark_str(o_ptr->note));
 
-			while (*scan != '\0')
-			{
-				if (*scan == '@')
-				{
+			while (*scan != '\0') {
+				if (*scan == '@') {
 					/* Replace @ with space */
 					*scan = ' ';
 				}
@@ -2052,7 +2045,7 @@ if (is_weapon(o_ptr->tval) && !(k_info[o_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_
 						object_type *i_ptr = &(p_ptr->inventory[index]);
 
 						/* ID rod && ID staff (no *perc*) */
-						if (can_use(Ind, i_ptr) && 
+						if (can_use(Ind, i_ptr) &&
 						    ((i_ptr->tval == TV_ROD && i_ptr->sval == SV_ROD_IDENTIFY && !i_ptr->pval) || 
 						    (i_ptr->tval == TV_STAFF && i_ptr->sval == SV_STAFF_IDENTIFY && i_ptr->pval > 0))) {
 							if (p_ptr->antimagic || get_skill(p_ptr, SKILL_ANTIMAGIC)) {
@@ -2329,9 +2322,7 @@ void hit_trap(int Ind)
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
 	struct c_special *cs_ptr;
-
 	cave_type               *c_ptr;
-
 	bool ident=FALSE;
 
 	/* Ghosts ignore traps */
@@ -2347,11 +2338,9 @@ void hit_trap(int Ind)
 	if(!(cs_ptr=GetCS(c_ptr, CS_TRAPS))) return;
 	t_idx = cs_ptr->sc.trap.t_idx;
 
-	if (t_idx)
-	{
+	if (t_idx) {
 		ident = player_activate_trap_type(Ind, p_ptr->py, p_ptr->px, NULL, -1);
-		if (ident && !p_ptr->trap_ident[t_idx])
-		{
+		if (ident && !p_ptr->trap_ident[t_idx]) {
 			p_ptr->trap_ident[t_idx] = TRUE;
 			msg_format(Ind, "You identified the trap as %s.",
 				   t_name + t_info[t_idx].name);
@@ -2369,25 +2358,45 @@ void hit_trap(int Ind)
 /*
  * NOTE: New attacking features from PernAngband are not
  * implemented yet for pvp!! (FIXME)		- Jir -
+ *
+ * Note: old == TRUE if not auto-retaliating actually
+ *       (important for dual-backstab treatment) - C. Blue
  */
 /* TODO: q_ptr/p_ptr->name should be replaced by strings made by player_desc */
 static void py_attack_player(int Ind, int y, int x, bool old)
 {
 	player_type *p_ptr = Players[Ind];
-	int num = 0, k, bonus, chance;
+	int num = 0, bonus, chance, slot;
+	int k, k2, bs_multiplier;
+	long int kl;
 	player_type *q_ptr;
-
 	object_type *o_ptr = NULL;
-
-	char p_name[80], brand_msg[80] = { '\0' }, hit_desc[80];
-
+	char q_name[80], brand_msg[80] = { '\0' }, hit_desc[80];
 	bool do_quake = FALSE;
-
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 	cave_type *c_ptr;
-
 	int fear_chance;
+	bool pierced;
+
+	bool		stab_skill = (get_skill(p_ptr, SKILL_BACKSTAB) != 0);
+	bool		sleep_stab = TRUE, cloaked_stab = (p_ptr->cloaked == 1), shadow_stab = (p_ptr->shadow_running); /* can player backstab the monster? */
+	bool		backstab = FALSE, stab_fleeing = FALSE; /* does player backstab the player? */
+	bool		primary_wield = (p_ptr->inventory[INVEN_WIELD].k_idx != 0);
+	bool		secondary_wield = (p_ptr->inventory[INVEN_ARM].k_idx != 0 && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD);
+	bool		dual_wield = primary_wield && secondary_wield && p_ptr->dual_mode; /* Note: primary_wield && secondary_wield == p_ptr->dual_wield (from xtra1.c) actually. */
+	int		dual_stab = (dual_wield ? 1 : 0); /* organizer variable for dual-wield backstab */
+	bool		martial = FALSE;
+
+	int		vorpal_cut = 0;
+	int		chaos_effect = 0;
+	int		vampiric_melee;
+	bool		drain_msg = TRUE;
+	int		drain_result = 0, drain_heal = 0, drain_frac;
+	int		drain_left = MAX_VAMPIRIC_DRAIN;
+	bool		drainable = TRUE;
+//	bool		py_slept;
+	bool		no_pk;
 
 	monster_race *pr_ptr = &r_info[p_ptr->body_monster];
 	bool apply_monster_effects = TRUE;
@@ -2398,23 +2407,28 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 	monster_effect[3] = 0;
 	monster_effect[4] = 0;
 	monster_effect[5] = 0;
+	u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5 = 0, esp = 0;
 
-	if(!(zcave=getcave(wpos))) return;
-	c_ptr=&zcave[y][x];
+	if (!(zcave = getcave(wpos))) return;
+	c_ptr = &zcave[y][x];
 	q_ptr = Players[0 - c_ptr->m_idx];
+//	py_slept = (q_ptr->sleep != 0);
+//	py_slept = q_ptr->afk; /* :D - unused though (also, AFK status can't be toggled for this anyway */
+	no_pk = ((zcave[p_ptr->py][p_ptr->px].info & CAVE_NOPK) ||
+	   (zcave[q_ptr->py][q_ptr->px].info & CAVE_NOPK));
+
 
 #if 0
         /* May not assault AFK players, sportsmanship ;)
 	   Also required for ranged attacks though, hence currently if0'ed - C. Blue */
-        if (q_ptr->afk)
-        {
+	if (q_ptr->afk) {
 		if (!p_ptr->afk) {
-	                /* Message, reduce spamming frequency */
-//	                if (!old)
+			/* Message, reduce spamming frequency */
+//			if (!old)
 			if (!(turn % (cfg.fps * 3))) msg_print(Ind, "For sportsmanship you may not assault players who are AFK.");
 		}
 		return;
-        }
+	}
 #endif
 
 	/* Restrict attacking in WRAITHFORM */
@@ -2425,15 +2439,14 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 	disturb(0 - c_ptr->m_idx, 0, 0);
 
 	/* Extract name */
-//	strcpy(p_name, q_ptr->name);
-	player_desc(Ind, p_name, 0 - c_ptr->m_idx, 0);
+//	strcpy(q_name, q_ptr->name);
+	player_desc(Ind, q_name, 0 - c_ptr->m_idx, 0);
 
 	/* Track player health */
 	if (p_ptr->play_vis[0 - c_ptr->m_idx]) health_track(Ind, c_ptr->m_idx);
 
 	/* If target isn't already hostile toward attacker, make it so */
-	if (!check_hostile(0 - c_ptr->m_idx, Ind))
-	{
+	if (!check_hostile(0 - c_ptr->m_idx, Ind)) {
 		/* Make hostile */
 		if (Players[0 - c_ptr->m_idx]->pvpexception < 2)
 		add_hostility(0 - c_ptr->m_idx, p_ptr->name, FALSE);
@@ -2451,7 +2464,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 	/* Handle attacker fear */
 	if (p_ptr->afraid) {
 		/* Message */
-		msg_format(Ind, "You are too afraid to attack %s!", p_name);
+		msg_format(Ind, "You are too afraid to attack %s!", q_name);
 
 		/* Done */
 		return;
@@ -2459,24 +2472,25 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 
 	if (q_ptr->store_num == STORE_HOME) {
 		/* Message */
-//		msg_format(Ind, "You are too afraid to attack %s!", p_name);
+//		msg_format(Ind, "You are too afraid to attack %s!", q_name);
 
 		/* Done */
 		return;
 	}
-	
+
 	break_cloaking(Ind, 0);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
+	/* Disturb the player */
+//	q_ptr->sleep = 0;
 
-	if (cfg.use_pk_rules == PK_RULES_DECLARE)
-	{
-		if(!(q_ptr->pkill & PKILL_KILLABLE)){
+	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
+		if (!(q_ptr->pkill & PKILL_KILLABLE)) {
 			char string[30];
 			snprintf(string, 30, "attacking %s", q_ptr->name);
 			s_printf("%s attacked defenceless %s\n", p_ptr->name, q_ptr->name);
-			if(!imprison(Ind, 500, string)){
+			if (!imprison(Ind, 500, string)) {
 				/* This wrath can be too much */
 				//take_hit(Ind, randint(p_ptr->lev*30), "wrath of the Gods", 0);
 				/* It's prison here :) */
@@ -2485,6 +2499,50 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				return;
 			}
 			else return;
+		}
+	}
+
+	k = drain_left / p_ptr->num_blow;
+	/* ..and make up for rounding errors :) */
+	drain_left = k + (magik(((drain_left - (k * p_ptr->num_blow)) * 100) / p_ptr->num_blow) ? 1 : 0);
+
+	/* Handle player fear */
+	if (p_ptr->afraid) {
+		msg_format(Ind, "You are too afraid to attack %s!", q_name);
+		suppress_message = FALSE;
+		/* Done */
+		return;
+	}
+
+	/* Cannot 'stab' with martial-arts */
+	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS)
+	    && !p_ptr->inventory[INVEN_WIELD].k_idx
+	    && !p_ptr->inventory[INVEN_ARM].k_idx
+	    && !p_ptr->inventory[INVEN_BOW].k_idx)
+		martial = TRUE;
+
+#if 0
+	/* check whether player can be backstabbed */
+//	if (!q_ptr->sleep)
+	if (!q_ptr->afk) /* :D */
+		sleep_stab = FALSE;
+	if (q_ptr->backstabbed) {
+		cloaked_stab = FALSE; /* a monster can only be backstabbed once, except if it gets resleeped or stabbed while fleeing */
+		shadow_stab = FALSE; /* assume monster doesn't fall twice for it */
+	}
+	if (!sleep_stab && !cloaked_stab && !shadow_stab) dual_stab = 0;
+#else
+	sleep_stab = FALSE;
+#endif
+
+	/* Re-check piercing */
+	if (p_ptr->piercing_charged) {
+		if (p_ptr->cst < 9) {
+			msg_print(Ind, "Not enough stamina to execute an assassinating attack.");
+			p_ptr->piercing_charged = FALSE;
+			p_ptr->piercing = 0;
+		} else {
+			p_ptr->cst -= 9;
 		}
 	}
 
@@ -2504,18 +2562,79 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 		}
 #endif
 
-		/* Access the weapon */
-		o_ptr = &(p_ptr->inventory[INVEN_WIELD]);
-		if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD && magik(50))
-			o_ptr = &(p_ptr->inventory[INVEN_ARM]); /* dual-wield! */
+		/* Access the weapon. Added dual-mode check:
+		   Only use secondary weapon if we're not in main-hand mode!
+		   This is to prevent bad Nazgul accidents where both weapons go poof
+		   although character wasn't in dual-mode. - C. Blue */
+		if (!primary_wield && secondary_wield && p_ptr->dual_mode) slot = INVEN_ARM;
+		else slot = INVEN_WIELD;
+
+		if (dual_wield) {
+			switch (dual_stab) {
+			case 0: if (magik(50)) slot = INVEN_ARM; break; /* not in a situation to dual-stab */
+			case 1:	if (magik(50)) { /* we may dual-stab, randomly pick 1st or 2nd weapon.. */
+					slot = INVEN_ARM;
+					dual_stab = 3;
+				} else {
+					dual_stab = 2;
+				}
+				break;
+			case 2: slot = INVEN_ARM; /* and switch to opposite weapon in the second attack.. */
+			case 3: dual_stab = 4; break; /* becomes 0 at end of attack, disabling further dual-stabs */
+			}
+		}
+
+		o_ptr = &p_ptr->inventory[slot];
+
+		/* Manage backstabbing and 'flee-stabbing' */
+		if (stab_skill && (o_ptr->tval == TV_SWORD)) { /* Need TV_SWORD type weapon to backstab */
+			if (sleep_stab || cloaked_stab || shadow_stab) { /* Note: Cloaked backstab takes precedence over backstabbing a fleeing monster */
+				backstab = TRUE;
+//				q_ptr->backstabbed = 1;
+			} else if (q_ptr->afraid) {
+				stab_fleeing = TRUE;
+			}
+		}
+
+		f1 = f2 = f3 = f4 = f5 = esp = 0x0;
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		chaos_effect = 0; // we need this methinks..?
+
+		if ((f4 & TR4_NEVER_BLOW)) {
+			msg_print(Ind, "You can't attack with that weapon.");
+			break;
+		}
+
+		/* check whether this weapon or we in general, are vampiric */
+		if ((f1 & TR1_VAMPIRIC)) vampiric_melee = 100; /* weapon chance is always 100% */
+		else vampiric_melee = p_ptr->vampiric_melee; /* non-weapon chance from other items is applied from xtra1.c */
+#ifdef TEST_SERVER
+		msg_format(Ind, "slot %d vamp %d", slot, vampiric_melee);
+#endif
 
 		/* Calculate the "attack quality" */
 		bonus = p_ptr->to_h + o_ptr->to_h + p_ptr->to_h_melee;
 		chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
 
 		/* Test for hit */
-		if (test_hit_melee(chance, q_ptr->ac + q_ptr->to_a, 1))
-		{
+		pierced = FALSE;
+#ifndef PVP_AC_REDUCTION
+		if (p_ptr->piercing || backstab || test_hit_melee(chance, q_ptr->ac + q_ptr->to_a, 1)) {
+#else
+//		if (p_ptr->piercing || backstab || test_hit_melee(chance, ((q_ptr->ac + q_ptr->to_a) * 2) / 3, 1)) {
+		if (p_ptr->piercing || backstab ||
+		    test_hit_melee(chance, (q_ptr->ac + q_ptr->to_a) > AC_CAP ?
+		    AC_CAP : q_ptr->ac + q_ptr->to_a, 1)) {
+#endif
+			/* handle 'piercing' countdown */
+			if (p_ptr->piercing) {
+				pierced = TRUE;
+				p_ptr->piercing_charged = FALSE;
+				p_ptr->piercing -= 1000 / p_ptr->num_blow;
+				/* since above division is rounded down, discard remainder, just to 'clean up' */
+				if (p_ptr->piercing < 1000 / p_ptr->num_blow) p_ptr->piercing = 0;
+			}
+
 #ifndef NEW_DODGING
  #if 1 /*SKILL_DODGE works in pvp? ^_^" */
 			/* 20 dodge vs lvl 20 => 22% max chance
@@ -2528,34 +2647,34 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			 * 50 dodge vs lvl 70 => 17% max chance
 			 * ---- Level 79+ melee hits are not dodgable ----
 			 */
-			int dodge_chance = q_ptr->dodge_level - p_ptr->lev*19/10;
+			int dodge_chance = q_ptr->dodge_level - p_ptr->lev * 19 / 10;
 			if (dodge_chance > DODGE_MAX_CHANCE) dodge_chance = DODGE_MAX_CHANCE;
-			if ((dodge_chance > 0) && magik(dodge_chance)) {
-				msg_format(Ind, "\377c%s dodges your attack!", COLOUR_DODGE_PLY, p_name);
+			if (!backstab && (dodge_chance > 0) && magik(dodge_chance)) {
+				msg_format(Ind, "\377c%s dodges your attack!", COLOUR_DODGE_PLY, q_name);
 				msg_format(0 - c_ptr->m_idx, "\377%cYou dodge %s's attack!", COLOUR_DODGE_GOOD, p_ptr->name); 
-#ifdef USE_SOUND_2010
+  #ifdef USE_SOUND_2010
 				if (sfx == 0) {
 					if (o_ptr->k_idx && is_weapon(o_ptr->tval)
 						sound(Ind, "miss_weapon", "miss", SFX_TYPE_ATTACK, FALSE);
 					else
 						sound(Ind, "miss", NULL, SFX_TYPE_ATTACK, FALSE);
 				}
-#endif
+  #endif
 				continue;
 			}
  #endif
 #else /* :-o */
-			if (magik(apply_dodge_chance(0 - c_ptr->m_idx, p_ptr->lev))) {
-				msg_format(Ind, "\377%c%s dodges your attack!", COLOUR_DODGE_PLY, p_name);
+			if (!backstab && magik(apply_dodge_chance(0 - c_ptr->m_idx, p_ptr->lev))) {
+				msg_format(Ind, "\377%c%s dodges your attack!", COLOUR_DODGE_PLY, q_name);
 				msg_format(0 - c_ptr->m_idx, "\377%cYou dodge %s's attack!", COLOUR_DODGE_GOOD, p_ptr->name);
-#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
 				if (sfx == 0) {
 					if (o_ptr->k_idx && is_weapon(o_ptr->tval))
 						sound(Ind, "miss_weapon", "miss", SFX_TYPE_ATTACK, FALSE);
 					else
 						sound(Ind, "miss", NULL, SFX_TYPE_ATTACK, FALSE);
 				}
-#endif
+ #endif
 				continue;
 			}
 #endif
@@ -2565,32 +2684,34 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			/* choose whether to attempt to block or to parry (can't do both at once),
 			   50% chance each, except for if weapon is missing (anti-retaliate-inscription
 			   has been left out, since if you want max block, you'll have to take off your weapon!) */
-			if (q_ptr->shield_deflect && (!q_ptr->weapon_parry || magik(q_ptr->combat_stance == 1 ? 75 : 50))) {
-				if (magik(apply_block_chance(q_ptr, q_ptr->shield_deflect + 15))) { /* boost for PvP! */
-					msg_format(Ind, "\377%c%s blocks your attack!", COLOUR_BLOCK_PLY, p_name);
+			if (!backstab && q_ptr->shield_deflect && (!q_ptr->weapon_parry || magik(q_ptr->combat_stance == 1 ? 75 : 50))) {
+				if (magik(apply_block_chance(q_ptr, q_ptr->shield_deflect + 10))) { /* boost for PvP! */
+					msg_format(Ind, "\377%c%s blocks your attack!", COLOUR_BLOCK_PLY, q_name);
 					msg_format(0 - c_ptr->m_idx, "\377%cYou block %s's attack!", COLOUR_BLOCK_GOOD, p_ptr->name);
-#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
 					if (sfx == 0) {
 						sound(Ind, "block_shield", NULL, SFX_TYPE_ATTACK, FALSE);
 					}
-#endif
+ #endif
 					continue;
 				}
 			}
 #endif
 #ifdef USE_PARRYING
-			if (q_ptr->weapon_parry) {
-				if (magik(apply_parry_chance(q_ptr, q_ptr->weapon_parry +
+			if (!backstab && q_ptr->weapon_parry) {
+				if (magik(apply_parry_chance(q_ptr, q_ptr->weapon_parry
 				     /* boost for PvP!:  Note: No need to check second hand, because 2h cannot be dual-wielded.
 				        this implies that 2h-weapons always go into INVEN_WIELD though. */
-				    (k_info[q_ptr->inventory[INVEN_WIELD].k_idx].flags4 & TR4_MUST2H) ? 20 : 10))) {
-					msg_format(Ind, "\377%c%s parries your attack!", COLOUR_PARRY_PLY, p_name);
+				    + ((k_info[q_ptr->inventory[INVEN_WIELD].k_idx].flags4 & TR4_MUST2H) ? 10 : 5)
+				    + (q_ptr->dual_wield && q_ptr->dual_mode ? 10 : 0)
+				    ))) {
+					msg_format(Ind, "\377%c%s parries your attack!", COLOUR_PARRY_PLY, q_name);
 					msg_format(0 - c_ptr->m_idx, "\377%cYou parry %s's attack!", COLOUR_PARRY_GOOD, p_ptr->name);
-#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
 					if (sfx == 0) {
 						sound(Ind, "parry_weapon", "parry", SFX_TYPE_ATTACK, FALSE);
 					}
-#endif
+ #endif
 					continue;
 				}
 			}
@@ -2612,7 +2733,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 #else
 			sound(Ind, SOUND_HIT);
 #endif
-			sprintf(hit_desc, "You hit %s", p_name);
+			sprintf(hit_desc, "You hit %s", q_name);
 
 			/* Hack -- bare hands do one damage */
 			k = 1;
@@ -2625,11 +2746,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				k = p_ptr->lev;
 			*/
 				//k = p_ptr->lev * (p_ptr->lev + 50) / 50;
-#if 1
-			if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !o_ptr->k_idx
-					&& !p_ptr->inventory[INVEN_ARM].k_idx
-					&& !p_ptr->inventory[INVEN_BOW].k_idx)
-			{
+			if (martial) {
 				int special_effect = 0, stun_effect = 0, times = 0;
 				martial_arts *ma_ptr = &ma_blows[0], *old_ptr = &ma_blows[0];
 				int resist_stun = 0;
@@ -2637,11 +2754,9 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				if (q_ptr->resist_conf) resist_stun += 44;
 				if (q_ptr->free_act) resist_stun += 44;
 
-				for (times = 0; times < (marts<7?1:marts/7); times++)
-				/* Attempt 'times' */
-				{
-					do
-					{
+				for (times = 0; times < (marts < 7 ? 1 : marts / 7); times++) {
+					/* Attempt 'times' */
+					do {
 						ma_ptr = &ma_blows[rand_int(p_ptr->total_winner ? MAX_MA : MAX_NONWINNER_MA)];
 					}
 					while ((ma_ptr->min_level > marts)
@@ -2649,39 +2764,31 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 
 					/* keep the highest level attack available we found */
 					if ((ma_ptr->min_level >= old_ptr->min_level) &&
-					    !(p_ptr->stun || p_ptr->confused))
-					{
+					    !(p_ptr->stun || p_ptr->confused)) {
 						old_ptr = ma_ptr;
-					}
-					else
-					{
+					} else {
 						ma_ptr = old_ptr;
 					}
 				}
 
 				k = damroll(ma_ptr->dd, ma_ptr->ds);
 
-				if (ma_ptr->effect == MA_KNEE)
-				{
-					if (q_ptr->male)
-					{
-						msg_format(Ind, "You hit %s in the groin with your knee!", p_name);
+				if (ma_ptr->effect == MA_KNEE) {
+					if (q_ptr->male) {
+						msg_format(Ind, "You hit %s in the groin with your knee!", q_name);
 						special_effect = MA_KNEE;
-					}
-					else
-						sprintf(hit_desc, ma_ptr->desc, p_name);
-//						msg_format(Ind, ma_ptr->desc, p_name);
+					} else
+						sprintf(hit_desc, ma_ptr->desc, q_name);
+//						msg_format(Ind, ma_ptr->desc, q_name);
 				}
 
-				else
-				{
-					if (ma_ptr->effect)
-					{
+				else {
+					if (ma_ptr->effect) {
 						stun_effect = (ma_ptr->effect/2) + randint(ma_ptr->effect/2);
 					}
 
-					sprintf(hit_desc, ma_ptr->desc, p_name);
-//					msg_format(Ind, ma_ptr->desc, p_name);
+					sprintf(hit_desc, ma_ptr->desc, q_name);
+//					msg_format(Ind, ma_ptr->desc, q_name);
 				}
 
 				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
@@ -2690,27 +2797,48 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 
-				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d + p_ptr->to_d_melee) < q_ptr->chp))
-				{
-					msg_format(Ind, "%^s moans in agony!", p_name);
+				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d + p_ptr->to_d_melee) < q_ptr->chp)) {
+					msg_format(Ind, "%^s moans in agony!", q_name);
 					stun_effect = 3 + randint(3);
 					resist_stun /= 3;
 				}
 
-				if (stun_effect && ((k + p_ptr->to_d + p_ptr->to_d_melee) < q_ptr->chp))
-				{
-					if (marts > randint((q_ptr->lev * 2) + resist_stun + 10))
-					{
-						msg_format(Ind, "\377y%^s is stunned.", p_name);
+				if (stun_effect && ((k + p_ptr->to_d + p_ptr->to_d_melee) < q_ptr->chp)) {
+					if (marts > randint((q_ptr->lev * 2) + resist_stun + 10)) {
+						msg_format(Ind, "\377y%^s is stunned.", q_name);
 
 						set_stun(0 - c_ptr->m_idx, q_ptr->stun + stun_effect);
 					}
 				}
-			} else
-#endif	// 1 (Martial arts)
+
+				/* Vampiric drain */
+				if ((magik(vampiric_melee)) && drainable)
+					drain_result = q_ptr->chp;
+				else
+					drain_result = 0;
 			/* Handle normal weapon */
-			if (o_ptr->k_idx)
-			{
+			} else if (o_ptr->k_idx) {
+
+				k = damroll(o_ptr->dd, o_ptr->ds);
+
+				if (f5 & TR5_VORPAL && (randint(6) == 1)) {
+//					k = o_ptr->dd * o_ptr->ds; /* full weapon efficiency */
+//					if (magik(25)) k *= 3; else k *= 2; /* multi dice! */
+					vorpal_cut = k; /* save dice */
+				} else vorpal_cut = FALSE;
+
+				/* weapons that inflict little damage, especially of only 1 damage dice,
+				   mostly don't cause earthquakes at all */
+				if ((p_ptr->impact || (f5 & TR5_IMPACT)) &&
+				    500 / (10 + (k - o_ptr->dd) * o_ptr->dd * o_ptr->ds / (o_ptr->dd * (o_ptr->ds - 1) + 1)) < randint(35)) do_quake = TRUE;
+				    /* I made the new formula above, to get a better chance curve over all the different weapon types. -C. Blue- */
+				    /* Some old tries: */
+//				    130 - ((k - o_ptr->dd) * o_ptr->dd * o_ptr->ds / (o_ptr->dd * (o_ptr->ds - 1) + 1)) < randint(130)) do_quake = TRUE;
+//				    (150 / (10 + k - o_ptr->dd) < 11 - (2 / o_ptr->dd))) do_quake = TRUE;
+//				    (150 / (1 + k - o_ptr->dd) < 23 - (2 / o_ptr->dd))) do_quake = TRUE;
+
+				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
+
 #ifdef ENABLE_STANCES
 				/* apply stun from offensive combat stance */
 				if (p_ptr->combat_stance == 2) {
@@ -2725,82 +2853,237 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 					resist_stun -= adj_con_fix[p_ptr->stat_cur[A_DEX]];
 					if (resist_stun < 0) resist_stun = 0; /* 0..17 (usually 8 vs fighters) */
 
-					switch(p_ptr->combat_stance_power) {
+					switch (p_ptr->combat_stance_power) {
 					case 0: if (!magik(20 - resist_stun * 2)) stun_effect = 0; break;
 					case 1: if (!magik(25 - resist_stun * 2)) stun_effect = 0; break;
 					case 2: if (!magik(30 - resist_stun * 2)) stun_effect = 0; break;
 					case 3: if (!magik(35 - resist_stun * 2)) stun_effect = 0; break;
 					}
-					msg_format(Ind, "\377y%^s is stunned.", p_name);
+					msg_format(Ind, "\377y%^s is stunned.", q_name);
 					set_stun(0 - c_ptr->m_idx, q_ptr->stun + stun_effect);
 				}
 #endif
 
-				k = damroll(o_ptr->dd, o_ptr->ds);
-				if ((p_ptr->impact || (k_info[o_ptr->k_idx].flags5 & TR5_IMPACT)) &&
-				    500 / (10 + (k - o_ptr->dd) * o_ptr->dd * o_ptr->ds / (o_ptr->dd * (o_ptr->ds - 1) + 1)) < randint(35)) do_quake = TRUE;
-				    /* I made the new formula above, to get a better chance curve over all the different weapon types. -C. Blue- */
-				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
+				/* Select a chaotic effect (10% chance) */
+//				if ((f5 & TR5_CHAOTIC) && (randint(2)==1)) <- 50%
+				if ((f5 & TR5_CHAOTIC) && (randint(10)==1)) {
+					if (randint(5) < 3) {
+						/* Vampiric (60%) */
+						chaos_effect = 1;
+					} else if (randint(1000) == 1) {
+						/* Quake (0.04%) */
+						chaos_effect = 2;
+					} else if (randint(10) != 1) {
+						/* Confusion (36%) */
+						chaos_effect = 3;
+					}
+//					else if (randint(2) == 1) -> (1.494%)
+					else if (randint(10) == 1) {
+						/* Teleport away (0.4%) */
+						chaos_effect = 4;
+					}
+//					else -> (1.494%)
+					else if (randint(10) == 1) {
+						/* Polymorph (0.36%) */
+						chaos_effect = 5;
+					} else if (randint(100) == 1) {
+						/* New: Clone^^ (0.0324%) */
+						chaos_effect = 6;
+					}
+				}
+
+				/* Vampiric drain */
+				if (((chaos_effect == 1) ||
+				    magik(vampiric_melee)) && drainable)
+					drain_result = q_ptr->chp;
+				else
+					drain_result = 0;
+
+				if (chaos_effect == 2) do_quake = TRUE;
+				if (vorpal_cut) msg_format(Ind, "Your weapon cuts deep into %s!", q_name);
+
 				k += o_ptr->to_d;
 
 				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
+
+				/* Critical strike moved here, since it works best
+				with light weapons, which have low dice. So for gain
+				we need the full damage including all to-dam boni */
+				k2 = k; /* remember damage before crit */
+#ifdef CRIT_VS_BACKSTAB
+				if (!backstab && !stab_fleeing)
+#endif
 				k = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor), calc_crit_obj(Ind, o_ptr));
-			}
+
 			/* handle bare fists/bat/ghost */
-			else
-			{
+			} else {
 				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
 
 				/* Apply the player damage boni */
+				/* (should this also cancelled by nazgul?(for now not)) */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
+
+				/* Vampiric drain */
+				if ((magik(vampiric_melee)) && drainable)
+					drain_result = q_ptr->chp;
+				else
+					drain_result = 0;
 			}
-			
-			/* factor in AC */
-			k -= (k * (((q_ptr->ac + q_ptr->to_a) < AC_CAP) ? (q_ptr->ac + q_ptr->to_a) : AC_CAP) / AC_CAP_DIV);
 
 			/* No negative damage */
 			if (k < 0) k = 0;
 
-			/* XXX Reduce damage by 1/3 */
+			/* New backstab formula: it works like criticals now and takes a bit of monster hp into account */
+			/* Note that the multiplier is after all the damage calc is done! So may need tweaking! */
+			if (backstab || stab_fleeing) {
+				bs_multiplier = get_skill_scale(p_ptr, SKILL_BACKSTAB, 350 + rand_int(101));
+				kl = k * (100 + bs_multiplier);
+				kl /= (dual_stab ? 150 : 100);
+				kl += q_ptr->chp / (dual_stab ? 30 : 20);
+				k = kl;
+#ifdef CRIT_VS_VORPAL
+				kl = k2 * (100 + bs_multiplier);
+				kl /= (dual_stab ? 150 : 100);
+				kl += q_ptr->chp / (dual_stab ? 30 : 20);
+				k2 = kl;
+#endif
+			}
+
+			/* Vorpal bonus - multi-dice!
+			   (currently +37.5% more branded dice damage and o_ptr->to_d on total average, just for the records) */
+                        if (vorpal_cut) {
+#ifdef CRIT_VS_VORPAL
+				k2 += (magik(25) ? 2 : 1) * (o_ptr->to_d + tot_dam_aux_player(Ind, o_ptr, vorpal_cut, q_ptr, brand_msg, FALSE)); /* exempts critical strike */
+				/* either critical hit or vorpal, not both */
+				if (k2 > k) k = k2;
+#else
+				k += (magik(25) ? 2 : 1) * (o_ptr->to_d + tot_dam_aux_player(Ind, o_ptr, vorpal_cut, q_ptr, brand_msg, FALSE)); /* exempts critical strike */
+#endif
+			}
+
+			/* factor in AC */
+			if (!pierced) k -= (k * (((q_ptr->ac + q_ptr->to_a) < AC_CAP) ? (q_ptr->ac + q_ptr->to_a) : AC_CAP) / AC_CAP_DIV);
+
+			/* Special hack: In pvp, make (royal defensive) stance somewhat less great */
+			if (p_ptr->combat_stance == 1) k = (k * 2 + 1) / 3;
+
+			/* Remember original damage for vampirism (less rounding trouble..) */
+			k2 = k;
+			/* Reduce damage in PvP */
 			k = (k + PVP_MELEE_DAM_REDUCTION - 1) / PVP_MELEE_DAM_REDUCTION;
 
-			/* Damage */
-			if (zcave[p_ptr->py][p_ptr->px].info & CAVE_NOPK ||
-			   zcave[q_ptr->py][q_ptr->px].info & CAVE_NOPK) {
-				if(k > q_ptr->chp) k -= q_ptr->chp;
+			/* Cannot kill on this grid? */
+			if (no_pk) {
+				if (k > q_ptr->chp) k -= q_ptr->chp;
+				if (k2 > q_ptr->chp) k2 -= q_ptr->chp;
+			}
 
-				/* Messages */
+			/* Messages */
+			if (backstab) {
+				backstab = FALSE;
+			   if (martial) {
+				msg_format(Ind, "You twist the neck of %s for \377L%d \377wdamage.", q_name, k);
+				msg_format(0 - c_ptr->m_idx, "%s twists your neck for \377R%d \377wdamage.", p_ptr->name, k);
+			   } else {
+				msg_format(Ind, "You stab helpless %s for \377L%d \377wdamage.", q_name, k);
+				msg_format(0 - c_ptr->m_idx, "%s backstabs you for \377R%d \377wdamage.", p_ptr->name, k);
+			   }
+			}
+			else if (stab_fleeing) {
+				stab_fleeing = FALSE;
+			   if (martial) {
+				msg_format(Ind, "You strike the back of %s for \377L%d \377wdamage.", q_name, k);
+				msg_format(0 - c_ptr->m_idx, "%s strikes your back for \377R%d \377wdamage.", p_ptr->name, k);
+			   } else {
+				msg_format(Ind, "You backstab fleeing %s for \377L%d \377wdamage.", q_name, k);
+				msg_format(0 - c_ptr->m_idx, "%s backstabs you for \377R%d \377wdamage.", p_ptr->name, k);
+			   }
+			}
+//			else if (!martial) msg_format(Ind, "You hit %s for \377g%d \377wdamage.", m_name, k);
+			else {
 				msg_format(Ind, "%s for \377y%d \377wdamage.", hit_desc, k);
 				msg_format(0 - c_ptr->m_idx, "%s hits you for \377R%d \377wdamage.", p_ptr->name, k);
-//less spam for now - C. Blue	if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
-
-				if (q_ptr->chp < 5) {
-					msg_format(Ind, "\374You have beaten %s", q_ptr->name);
-					msg_format(0-c_ptr->m_idx, "\374%s has beaten you up!", p_ptr->name);
-					teleport_player(0 - c_ptr->m_idx, 400, TRUE);
-				}
-
-				take_hit(0 - c_ptr->m_idx, k, p_ptr->name, Ind);
-			} else {
-				/* Messages */
-				msg_format(Ind, "%s for \377y%d \377wdamage.", hit_desc, k);
-				msg_format(0 - c_ptr->m_idx, "%s hits you for \377R%d \377wdamage.", p_ptr->name, k);
+			}
 //less spam for now - C. Blue   if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
-				if (cfg.use_pk_rules == PK_RULES_NEVER && q_ptr->chp < 5){
-					msg_format(Ind, "\374You have beaten %s", q_ptr->name);
-					msg_format(0 - c_ptr->m_idx, "\374%s has beaten you up!", p_ptr->name);
-					teleport_player(0 - c_ptr->m_idx, 400, TRUE);
-				}
-
-				take_hit(0 - c_ptr->m_idx, k, p_ptr->name, Ind);
+			if (cfg.use_pk_rules == PK_RULES_NEVER && q_ptr->chp < 5){
+				msg_format(Ind, "\374You have beaten %s", q_ptr->name);
+				msg_format(0 - c_ptr->m_idx, "\374%s has beaten you up!", p_ptr->name);
+				teleport_player(0 - c_ptr->m_idx, 400, TRUE);
 			}
+
+			take_hit(0 - c_ptr->m_idx, k, p_ptr->name, Ind);
 
 			if (!c_ptr->m_idx) break;
 
 			/* Check for death */
 			if (q_ptr->death) break;
+
+			py_touch_zap_player(Ind, -c_ptr->m_idx);
+
+			/* VAMPIRIC: Are we draining it?  A little note: If the monster is
+			   dead, the drain does not work... */
+			if (drain_result) {
+				drain_result -= q_ptr->chp;  /* Calculate the difference */
+				/* Compensate for PvP damage reduction */
+				drain_result *= PVP_MELEE_DAM_REDUCTION;
+				if (drain_result > k2) drain_result = k2;
+
+				if (drain_result > 0) { /* Did we really hurt it? */
+					drain_heal = randint(2)
+					    + damroll(2, /* was 4,../6 -- was 8 for 50 max_drain */
+					    drain_result / 16);
+
+					if (drain_left) {
+						if (drain_heal < drain_left) {
+#if 0
+							drain_left -= drain_heal;
+#endif
+						} else {
+							drain_heal = drain_left;
+#if 0
+							drain_left = 0;
+#endif
+						}
+
+						/* factor in the melee damage reduction for PvP,
+						   compensate fractions from dividing low integers here */
+						drain_frac = (drain_heal * 10 + PVP_MELEE_DAM_REDUCTION - 1) / PVP_MELEE_DAM_REDUCTION;
+						drain_heal = (drain_heal + PVP_MELEE_DAM_REDUCTION - 1) / PVP_MELEE_DAM_REDUCTION;
+						drain_frac -= (drain_heal * 10);
+						if (drain_frac > rand_int(10)) drain_heal++;
+
+						if (drain_msg) {
+							if (martial || !o_ptr->k_idx) {
+#ifndef TEST_SERVER
+								if (is_admin(p_ptr)) /* for debugging purpose */
+#endif
+								msg_format(Ind, "Your hits drain \377o%d\377w life from %s!", drain_heal, q_name);
+#ifndef TEST_SERVER
+								else
+								msg_format(Ind, "Your hits drain life from %s!", q_name);
+#endif
+							} else {
+#ifndef TEST_SERVER
+								if (is_admin(p_ptr))
+#endif
+								msg_format(Ind, "Your weapon drains \377o%d\377w life from %s!", drain_heal, q_name);
+#ifndef TEST_SERVER
+								else
+								msg_format(Ind, "Your weapon drains life from %s!", q_name);
+#endif
+							}
+#if 0
+							drain_msg = FALSE;
+#endif
+						}
+
+						hp_player_quiet(Ind, drain_heal, TRUE);
+						/* We get to keep some of it! */
+					}
+				}
+			}
 
 			/* Apply effects from mimic monster forms */
 			if (p_ptr->body_monster) {
@@ -2820,130 +3103,99 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				/* change a.m.b.=TRUE to =FALSE at declaration above if u use this if0-part again */
 #endif
 				/* If monster is fighting with a weapon, the player gets the effect(s) even with a weapon */
-		        	/* If monster is fighting without weapons, the player gets the effect(s) only if
-		    		he fights with bare hands/martial arts */
+				/* If monster is fighting without weapons, the player gets the effect(s) only if
+				he fights with bare hands/martial arts */
 				if (!pr_ptr->body_parts[BODY_WEAPON])
 					if (o_ptr->k_idx) apply_monster_effects = FALSE;
 
 				/* Get monster effects. If monster has several, choose one randomly */
 				monster_effects = 0;
 				for (i = 0; i < 4; i++) {
-				        if (pr_ptr->blow[i].d_dice * pr_ptr->blow[i].d_side) {
+					if (pr_ptr->blow[i].d_dice * pr_ptr->blow[i].d_side) {
 						monster_effects++;
 						monster_effect[monster_effects] = pr_ptr->blow[i].effect;
 					}
 				}
 				/* Choose random brand from the ones available */
 				monster_effect_chosen = monster_effect[1 + rand_int(monster_effects)];
-				
-				
+
 				/* Modify damage effect */
 				if (apply_monster_effects) {
 					switch (monster_effect_chosen) {
 					case RBE_DISEASE:
-                                        /* Take "poison" effect */
-					        if (q_ptr->resist_pois || q_ptr->oppose_pois || q_ptr->immune_poison) {
-		                                        msg_format(Ind, "%^s is unaffected.", p_name);
-	                                        } else if (rand_int(100) < q_ptr->skill_sav) {
-							msg_format(Ind, "%^s resists the disease.", p_name);
-	                                        } else {
-							msg_format(Ind, "%^s suffers from disease.", p_name);
-				                        set_poisoned(0 - c_ptr->m_idx, q_ptr->poisoned + randint(p_ptr->lev) + 5, Ind);
+						/* Take "poison" effect */
+						if (q_ptr->resist_pois || q_ptr->oppose_pois || q_ptr->immune_poison) {
+							msg_format(Ind, "%^s is unaffected.", q_name);
+						} else if (rand_int(100) < q_ptr->skill_sav) {
+							msg_format(Ind, "%^s resists the disease.", q_name);
+						} else {
+							msg_format(Ind, "%^s suffers from disease.", q_name);
+							set_poisoned(0 - c_ptr->m_idx, q_ptr->poisoned + randint(p_ptr->lev) + 5, Ind);
 						}
 						break;
 					case RBE_BLIND:
-				                /* Increase "blind" */
-	        	                        if (q_ptr->resist_blind)
+						/* Increase "blind" */
+						if (q_ptr->resist_blind)
 						/*  for (i = 1; i <= NumPlayers; i++)
-				                if (Players[i]->id == q_ptr->id) { */
-		                                {
-		                                        msg_format(Ind, "%^s is unaffected.", p_name);
-	                                        }
-	                                        else if (rand_int(100) < q_ptr->skill_sav)
-	                                        {
-							msg_format(Ind, "%^s resists the effect.", p_name);
-	                                        }
-	                                        else
+						if (Players[i]->id == q_ptr->id) { */
 						{
+							msg_format(Ind, "%^s is unaffected.", q_name);
+						} else if (rand_int(100) < q_ptr->skill_sav) {
+							msg_format(Ind, "%^s resists the effect.", q_name);
+						} else {
 							set_blind(0 - c_ptr->m_idx, q_ptr->blind + 10 + randint(p_ptr->lev));
 						}
 						break;
 					case RBE_HALLU:
-	                                        /* Increase "image" */
-	                                        if (q_ptr->resist_chaos)
-		                                {
-		                                        msg_format(Ind, "%^s is unaffected.", p_name);
-	                                        }
-	                                        else if (rand_int(100) < q_ptr->lev)
-	                                        {
-							msg_format(Ind, "%^s resists the effect.", p_name);
-	                                        }
-	                                        else
-						{
-                                    			set_image(0 - c_ptr->m_idx, q_ptr->image + 3 + randint(p_ptr->lev / 2));
+						/* Increase "image" */
+						if (q_ptr->resist_chaos) {
+							msg_format(Ind, "%^s is unaffected.", q_name);
+						} else if (rand_int(100) < q_ptr->lev) {
+							msg_format(Ind, "%^s resists the effect.", q_name);
+						} else {
+							set_image(0 - c_ptr->m_idx, q_ptr->image + 3 + randint(p_ptr->lev / 2));
 						}
 						break;
 					case RBE_CONFUSE:
-						if (!p_ptr->confusing)
-						{
+						if (!p_ptr->confusing) {
 							/* Confuse the monster */
-							if (q_ptr->resist_conf)
-							{
-								msg_format(Ind, "%^s is unaffected.", p_name);
-							}
-							else if (rand_int(100) < q_ptr->lev)
-			    				{
-								msg_format(Ind, "%^s resists the effect.", p_name);
-							}
-							else
-							{
-								msg_format(Ind, "%^s appears confused.", p_name);
+							if (q_ptr->resist_conf) {
+								msg_format(Ind, "%^s is unaffected.", q_name);
+							} else if (rand_int(100) < q_ptr->lev) {
+								msg_format(Ind, "%^s resists the effect.", q_name);
+							} else {
+								msg_format(Ind, "%^s appears confused.", q_name);
 								set_confused(0 - c_ptr->m_idx, q_ptr->confused + 10 + rand_int(get_skill(p_ptr, SKILL_COMBAT)) / 5);
 							}
-							
 						}
 						break;
 					case RBE_TERRIFY:
 						fear_chance = 50 + (p_ptr->lev - q_ptr->lev) * 5;
-		                                if (q_ptr->resist_fear)
-		                                {
-		                                        msg_format(Ind, "%^s is unaffected.", p_name);
-	                                        }
-						else if (rand_int(100) < fear_chance)
-						{
-							msg_format(Ind, "%^s appears afraid.", p_name);
+						if (q_ptr->resist_fear) {
+							msg_format(Ind, "%^s is unaffected.", q_name);
+						} else if (rand_int(100) < fear_chance) {
+							msg_format(Ind, "%^s appears afraid.", q_name);
 							set_afraid(0 - c_ptr->m_idx, q_ptr->afraid + 4 + rand_int(get_skill(p_ptr, SKILL_COMBAT)) / 5);
-						}
-						else
-		    				{
-							msg_format(Ind, "%^s resists the effect.", p_name);
+						} else {
+							msg_format(Ind, "%^s resists the effect.", q_name);
 						}
 						break;
 					case RBE_PARALYZE:
-	                                        /* Increase "paralyzed" */
-		                                if (q_ptr->free_act)
-		                                {
-		                                        msg_format(Ind, "%^s is unaffected.", p_name);
-	                                        }
-	                                        else if (rand_int(100) < q_ptr->skill_sav)
-	                                        {
-							msg_format(Ind, "%^s resists the effect.", p_name);
-	                                        }
-	                                        else
-						{
-                            				set_paralyzed(0 - c_ptr->m_idx, q_ptr->paralyzed + 3 + randint(p_ptr->lev));
-				                }
+						/* Increase "paralyzed" */
+						if (q_ptr->free_act) {
+							msg_format(Ind, "%^s is unaffected.", q_name);
+						} else if (rand_int(100) < q_ptr->skill_sav) {
+							msg_format(Ind, "%^s resists the effect.", q_name);
+						} else {
+							set_paralyzed(0 - c_ptr->m_idx, q_ptr->paralyzed + 3 + randint(p_ptr->lev));
+						}
 #if 0
-						if (!p_ptr->stunning)
-						{
+						if (!p_ptr->stunning) {
 							/* Stun the monster */
-							if (rand_int(100) < q_ptr->lev)
-							{
-								msg_format(Ind, "%^s resists the effect.", p_name);
-							}
-							else
-							{
-								msg_format(Ind, "\377o%^s appears stunned.", p_name);
+							if (rand_int(100) < q_ptr->lev) {
+								msg_format(Ind, "%^s resists the effect.", q_name);
+							} else {
+								msg_format(Ind, "\377o%^s appears stunned.", q_name);
 								set_stun(0 - c_ptr->m_idx, q_ptr->stun + 20 + rand_int(get_skill(p_ptr, SKILL_COMBAT)) / 5);
 							}
 						}
@@ -2954,8 +3206,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			}
 
 			/* Confusion attack */
-			if (p_ptr->confusing)
-			{
+			if (p_ptr->confusing) {
 				/* Cancel glowing hands */
 				p_ptr->confusing = FALSE;
 
@@ -2963,24 +3214,18 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				msg_print(Ind, "Your hands stop glowing.");
 
 				/* Confuse the monster */
-				if (q_ptr->resist_conf)
-				{
-					msg_format(Ind, "%^s is unaffected.", p_name);
-				}
-				else if (rand_int(100) < q_ptr->lev)
-				{
-					msg_format(Ind, "%^s resists the effect.", p_name);
-				}
-				else
-				{
-					msg_format(Ind, "%^s appears confused.", p_name);
+				if (q_ptr->resist_conf) {
+					msg_format(Ind, "%^s is unaffected.", q_name);
+				} else if (rand_int(100) < q_ptr->lev) {
+					msg_format(Ind, "%^s resists the effect.", q_name);
+				} else {
+					msg_format(Ind, "%^s appears confused.", q_name);
 					set_confused(0 - c_ptr->m_idx, q_ptr->confused + 3 + rand_int(2 + get_skill(p_ptr, SKILL_COMBAT) / 5));
 				}
 			}
 
 			/* Stunning attack */
-			if (p_ptr->stunning)
-			{
+			if (p_ptr->stunning) {
 				/* Cancel heavy hands */
 				p_ptr->stunning = FALSE;
 
@@ -2988,49 +3233,42 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				msg_print(Ind, "Your hands feel less heavy.");
 
 				/* Stun the monster */
-				if (rand_int(100) < q_ptr->lev)
-				{
-					msg_format(Ind, "%^s resists the effect.", p_name);
-				}
-				else
-				{
-					msg_format(Ind, "\377o%^s appears stunned.", p_name);
+				if (rand_int(100) < q_ptr->lev) {
+					msg_format(Ind, "%^s resists the effect.", q_name);
+				} else {
+					msg_format(Ind, "\377o%^s appears stunned.", q_name);
 					set_stun(0 - c_ptr->m_idx, q_ptr->stun + 20 + rand_int(get_skill(p_ptr, SKILL_COMBAT)) / 5);
 				}
 			}
 
 			/* Ghosts get fear attacks */
-			if (p_ptr->ghost)
-			{
+			if (p_ptr->ghost) {
 				fear_chance = 50 + (p_ptr->lev - q_ptr->lev) * 5;
 
-				if (rand_int(100) < fear_chance)
-				{
-					msg_format(Ind, "%^s appears afraid.", p_name);
+				if (rand_int(100) < fear_chance) {
+					msg_format(Ind, "%^s appears afraid.", q_name);
 					set_afraid(0 - c_ptr->m_idx, q_ptr->afraid + 4 + rand_int(get_skill(p_ptr, SKILL_COMBAT)) / 5);
-				}
-				else
-				{
-					msg_format(Ind, "%^s resists the effect.", p_name);
+				} else {
+					msg_format(Ind, "%^s resists the effect.", q_name);
 				}
 			}
 
-			/* Fruit bats get life stealing */
-			if (p_ptr->fruit_bat == 1 && !p_ptr->body_monster)
-			{
-				int leech;
-				
-				leech = q_ptr->chp;
+			/* Fruit bats get life stealing.
+			   Note: This is ok because fruit bats cannot wear weapons/gloves as a
+			   source of vampirism.
+			   Still to check: Vampire fruit bats! CURRENTLY STACKS! */
+			if (p_ptr->fruit_bat == 1 && !p_ptr->body_monster) {
+				int leech = q_ptr->chp;
 				if (k < leech) leech = k;
 				leech /= 10;
-			
 				hp_player_quiet(Ind, rand_int(leech), TRUE);
 			}
 		}
 
 		/* Player misses */
-		else
-		{
+		else {
+			backstab = stab_fleeing = FALSE;
+
 #ifdef USE_SOUND_2010
 			if (sfx == 0) {
 				if (o_ptr->k_idx && is_weapon(o_ptr->tval))
@@ -3042,22 +3280,27 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			sound(Ind, SOUND_MISS);
 #endif
 			/* Messages */
-			msg_format(Ind, "You miss %s.", p_name);
+			msg_format(Ind, "You miss %s.", q_name);
 			msg_format(0 - c_ptr->m_idx, "%s misses you.", p_ptr->name);
 		}
 
-		/* Hack -- divided turn for auto-retaliator */
-		if (!old)
-		{
-			break;
+		/* hack for dual-backstabbing: get a free b.p.r.
+		   (needed as workaround for sleep-dual-stabbing executed
+		   by auto-retaliator, where old-check below would otherwise break) - C. Blue */
+		if (dual_stab == 4) dual_stab = 0;
+		if (!dual_stab) sleep_stab = cloaked_stab = shadow_stab = FALSE;
+		if (dual_stab) {
+			num--;
+			continue;
 		}
+
+		/* Hack -- divided turn for auto-retaliator */
+		if (!old) break;
 	}
 
 	/* Mega-Hack -- apply earthquake brand */
-	if (do_quake)
-	{
-		if (o_ptr->k_idx && !check_guard_inscription(o_ptr->note, 'E' ))
-		{
+	if (do_quake) {
+		if (o_ptr->k_idx && !check_guard_inscription(o_ptr->note, 'E' )) {
 			/* Giga-Hack -- equalize the chance (though not likely..) */
 			if (old || randint(p_ptr->num_blow) < 3)
 				earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10);
@@ -3079,36 +3322,38 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 #define CRIT_VS_BACKSTAB
 static void py_attack_mon(int Ind, int y, int x, bool old)
 {
-	player_type 	*p_ptr = Players[Ind];
-	int             num = 0, bonus, chance, slot, owner_Ind = 0;
-	int		k, k2, sfx = 0;
-        object_type     *o_ptr = NULL;
-	bool            do_quake = FALSE;
+	player_type	*p_ptr = Players[Ind];
+	int		num = 0, bonus, chance, slot, owner_Ind = 0, sfx = 0;
+	int		k, k2, bs_multiplier;
+	long int	kl;
+	object_type	*o_ptr = NULL;
+	bool		do_quake = FALSE;
 
-	char            m_name[80], brand_msg[80] = { '\0' }, hit_desc[80];
+	char		m_name[80], brand_msg[80] = { '\0' }, hit_desc[80];
 	monster_type	*m_ptr;
-	monster_race    *r_ptr;
+	monster_race	*r_ptr;
 
 	bool		fear = FALSE;
 	int 		fear_chance;
 
 	bool		stab_skill = (get_skill(p_ptr, SKILL_BACKSTAB) != 0);
 	bool		sleep_stab = TRUE, cloaked_stab = (p_ptr->cloaked == 1), shadow_stab = (p_ptr->shadow_running); /* can player backstab the monster? */
-	bool            backstab = FALSE, stab_fleeing = FALSE; /* does player backstab the monster? */
+	bool		backstab = FALSE, stab_fleeing = FALSE; /* does player backstab the monster? */
 	bool		primary_wield = (p_ptr->inventory[INVEN_WIELD].k_idx != 0);
 	bool		secondary_wield = (p_ptr->inventory[INVEN_ARM].k_idx != 0 && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD);
-	bool		dual_wield = primary_wield && secondary_wield && p_ptr->dual_mode;
+	bool		dual_wield = primary_wield && secondary_wield && p_ptr->dual_mode; /* Note: primary_wield && secondary_wield == p_ptr->dual_wield (from xtra1.c) actually. */
 	int		dual_stab = (dual_wield ? 1 : 0); /* organizer variable for dual-wield backstab */
-	bool 		nolite, nolite2, martial = FALSE;
-	int 		block = 0, parry = 0;
+	bool		nolite, nolite2, martial = FALSE;
+	int		block, parry;
 
-	int             vorpal_cut = 0;
-	int             chaos_effect = 0;
+	int		vorpal_cut = 0;
+	int		chaos_effect = 0;
 	int		vampiric_melee;
-	bool            drain_msg = TRUE;
-	int             drain_result = 0, drain_heal = 0;
-	int             drain_left = MAX_VAMPIRIC_DRAIN;
+	bool		drain_msg = TRUE;
+	int		drain_result = 0, drain_heal = 0;
+	int		drain_left = MAX_VAMPIRIC_DRAIN;
 	bool		drainable = TRUE;
+	bool		mon_slept;
 
 
 	struct worldpos	*wpos = &p_ptr->wpos;
@@ -3126,16 +3371,17 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	monster_effect[4] = 0;
 	monster_effect[5] = 0;
 
-	if(!(zcave = getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
 	m_ptr = &m_list[c_ptr->m_idx];
 	r_ptr = race_inf(m_ptr);
-	
+	mon_slept = (m_ptr->csleep != 0);
+
 	if ((r_ptr->flags3 & RF3_UNDEAD) ||
 //	    (r_ptr->flags3 & RF3_DEMON) ||
 	    (r_ptr->flags3 & RF3_NONLIVING) ||
-            (strchr("Egv", r_ptr->d_char)))
+	    (strchr("Egv", r_ptr->d_char)))
 		drainable = FALSE;
 
 	nolite = !((c_ptr->info & (CAVE_LITE | CAVE_GLOW)) ||
@@ -3171,10 +3417,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		int ox = m_ptr->fx, oy = m_ptr->fy, nx = p_ptr->px, ny = p_ptr->py;
 
 		msg_format(Ind, "You swap positions with %s.", m_name);
-		
+
 		/* Update the new location */
 		zcave[ny][nx].m_idx=c_ptr->m_idx;
-
 		/* Update the old location */
 		zcave[oy][ox].m_idx=-Ind;
 
@@ -3183,30 +3428,23 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		m_ptr->fx = nx;
 		p_ptr->py = oy;
 		p_ptr->px = ox;
-		
+
 		cave_midx_debug(wpos, oy, ox, -Ind);
 
 		/* Update the monster (new location) */
 		update_mon(zcave[ny][nx].m_idx, TRUE);
-
 		/* Redraw the old grid */
 		everyone_lite_spot(wpos, oy, ox);
-
 		/* Redraw the new grid */
 		everyone_lite_spot(wpos, ny, nx);
-
 		/* Check for new panel (redraw map) */
 		verify_panel(Ind);
-
 		/* Update stuff */
 		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
-
 		/* Update the monsters */
 		p_ptr->update |= (PU_DISTANCE);
-
 		/* Window stuff */
 		p_ptr->window |= (PW_OVERHEAD);
-
 		/* Handle stuff XXX XXX XXX */
 		handle_stuff(Ind);
 
@@ -3215,10 +3453,8 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 	/* Hack -- suppress messages */
 	if (p_ptr->taciturn_messages) suppress_message = TRUE;
-
 	/* Auto-Recall if possible and visible */
 	if (p_ptr->mon_vis[c_ptr->m_idx]) recent_track(m_ptr->r_idx);
-
 	/* Track a new monster */
 	if (p_ptr->mon_vis[c_ptr->m_idx]) health_track(Ind, c_ptr->m_idx);
 
@@ -3226,13 +3462,10 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	/* wraithed players can attack wraithed monsters - mikaelh */
 	if (p_ptr->tim_wraith && !is_admin(p_ptr) &&
 	    ((r_ptr->flags2 & RF2_KILL_WALL) || !(r_ptr->flags2 & RF2_PASS_WALL))) /* lil fix (Morgoth) - C. Blue */
-	{
 		return;
-	}
 
 	/* Hack -- divided turn for auto-retaliator */
-	if (!old)
-	{
+	if (!old) {
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_blow;
 		/* -C. Blue- We're only executing ONE blow and will break out then,
 		   so adjust the maximum drain accordingly: */
@@ -3242,6 +3475,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		drain_left = k + (magik(((drain_left - (k * p_ptr->num_blow)) * 100) / p_ptr->num_blow) ? 1 : 0);
 #endif
 	}
+
 #if 1
 	k = drain_left / p_ptr->num_blow;
 	/* ..and make up for rounding errors :) */
@@ -3249,13 +3483,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 #endif
 
 	/* Handle player fear */
-	if (p_ptr->afraid)
-	{
-		/* Message */
+	if (p_ptr->afraid) {
 		msg_format(Ind, "You are too afraid to attack %s!", m_name);
-
 		suppress_message = FALSE;
-
 		/* Done */
 		return;
 	}
@@ -3265,9 +3495,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	    && !p_ptr->inventory[INVEN_WIELD].k_idx
 	    && !p_ptr->inventory[INVEN_ARM].k_idx
 	    && !p_ptr->inventory[INVEN_BOW].k_idx)
-	{
 		martial = TRUE;
-	}
 
 	/* check whether monster can be backstabbed */
 	if (!m_ptr->csleep /*&& m_ptr->ml*/) sleep_stab = FALSE;
@@ -3279,15 +3507,26 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 	/* cloaking mode stuff */
 	break_cloaking(Ind, 0);
-	break_shadow_running(Ind); 
+	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 	/* Disturb the monster */
 	m_ptr->csleep = 0;
 
+	/* Re-check piercing */
+	if (p_ptr->piercing_charged) {
+		if (p_ptr->cst < 9) {
+			msg_print(Ind, "Not enough stamina to execute an assassinating attack.");
+			p_ptr->piercing_charged = FALSE;
+			p_ptr->piercing = 0;
+		} else {
+			p_ptr->cst -= 9;
+			p_ptr->redraw |= PR_STAMINA;
+		}
+	}
+
 	/* Attack once for each legal blow */
-	while (num++ < p_ptr->num_blow)
-	{
+	while (num++ < p_ptr->num_blow) {
 #ifdef USE_SOUND_2010
 		if (p_ptr->cut_sfx_attack) {
 			sfx = extract_energy[p_ptr->pspeed] * p_ptr->num_blow;
@@ -3302,11 +3541,14 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		}
 #endif
 
-		/* Access the weapon */
-		if (!primary_wield && secondary_wield) slot = INVEN_ARM;
+		/* Access the weapon. Added dual-mode check:
+		   Only use secondary weapon if we're not in main-hand mode!
+		   This is to prevent bad Nazgul accidents where both weapons go poof
+		   although character wasn't in dual-mode. - C. Blue */
+		if (!primary_wield && secondary_wield && p_ptr->dual_mode) slot = INVEN_ARM;
 		else slot = INVEN_WIELD;
 
-	        if (dual_wield) {
+		if (dual_wield) {
 			switch (dual_stab) {
 			case 0: if (magik(50)) slot = INVEN_ARM; break; /* not in a situation to dual-stab */
 			case 1:	if (magik(50)) { /* we may dual-stab, randomly pick 1st or 2nd weapon.. */
@@ -3322,10 +3564,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		}
 
 		o_ptr = &p_ptr->inventory[slot];
-		
+
 		/* Manage backstabbing and 'flee-stabbing' */
-		if (stab_skill && (o_ptr->tval == TV_SWORD)) /* Need TV_SWORD type weapon to backstab */
-		{
+		if (stab_skill && (o_ptr->tval == TV_SWORD)) { /* Need TV_SWORD type weapon to backstab */
 			if (sleep_stab || cloaked_stab || shadow_stab) { /* Note: Cloaked backstab takes precedence over backstabbing a fleeing monster */
 				backstab = TRUE;
 				m_ptr->backstabbed = 1;
@@ -3334,12 +3575,11 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			}
 		}
 
-		u32b f1=0, f2=0, f3=0, f4=0, f5=0, esp=0;
+		u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5 = 0, esp = 0;
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-		chaos_effect = 0;	// we need this methinks..?
+		chaos_effect = 0; // we need this methinks..?
 
-		if((f4 & TR4_NEVER_BLOW))
-		{
+		if ((f4 & TR4_NEVER_BLOW)) {
 			msg_print(Ind, "You can't attack with that weapon.");
 			break;
 		}
@@ -3352,9 +3592,34 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		bonus = p_ptr->to_h + o_ptr->to_h + p_ptr->to_h_melee;
 		chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
 
+		/* Plan ahead if a missed attack would be a blocked or parried one or just an
+		   [hitchance-vs-AC-induced] miss. 'Piercing' requires this to be calculated ahead now. */
+		block = parry = 0;
+		if (strchr("AhHJkpPty", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
+		    !(r_ptr->flags3 & RF3_ANIMAL)) {
+#ifdef USE_BLOCKING
+			block = 10;
+#endif
+#ifdef USE_PARRYING
+			parry = 5 + m_ptr->ac / 10;
+#endif
+		}
+		/* Evaluate: 0 = no, other values = yes */
+		if (mon_slept || !magik(block)) block = 0;
+		if (mon_slept || !magik(parry)) parry = 0;
+
 		/* Test for hit */
-		if (test_hit_melee(chance, m_ptr->ac, p_ptr->mon_vis[c_ptr->m_idx]) || instakills(Ind))
-		{
+		if (instakills(Ind) || backstab ||
+		    test_hit_melee(chance, m_ptr->ac, p_ptr->mon_vis[c_ptr->m_idx]) ||
+		    (p_ptr->piercing && !block && !parry)) {
+			/* handle 'piercing' countdown */
+			if (p_ptr->piercing) {
+				p_ptr->piercing_charged = FALSE;
+				p_ptr->piercing -= 1000 / p_ptr->num_blow;
+				/* since above division is rounded down, discard remainder, just to 'clean up' */
+				if (p_ptr->piercing < 1000 / p_ptr->num_blow) p_ptr->piercing = 0;
+			}
+
 #ifdef USE_SOUND_2010
 			if (sfx == 0) {
 				if (o_ptr->k_idx && is_weapon(o_ptr->tval))
@@ -3396,9 +3661,8 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				if (r_ptr->flags3 & RF3_UNDEAD)
 					resist_stun += 88;
 
-				for (times = 0; times < (marts<7?1:marts/7); times++)
-				/* Attempt 'times' */
-				{
+				for (times = 0; times < (marts < 7 ? 1 : marts / 7); times++) {
+					/* Attempt 'times' */
 					do {
 						ma_ptr = &ma_blows[rand_int(p_ptr->total_winner ? MAX_MA : MAX_NONWINNER_MA)];
 					}
@@ -3407,8 +3671,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 					/* keep the highest level attack available we found */
 					if ((ma_ptr->min_level >= old_ptr->min_level) &&
-					    !(p_ptr->stun || p_ptr->confused))
-					{
+					    !(p_ptr->stun || p_ptr->confused)) {
 						old_ptr = ma_ptr;
 					} else {
 						ma_ptr = old_ptr;
@@ -3429,36 +3692,26 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 				else if (ma_ptr->effect == MA_SLOW) {
 					if (!((r_ptr->flags1 & RF1_NEVER_MOVE)
-					    || strchr("ANUjmeEv$,DdsbBFIJQSXclnw!=?", r_ptr->d_char)))
-					{
+					    || strchr("ANUjmeEv$,DdsbBFIJQSXclnw!=?", r_ptr->d_char))) {
 						msg_format(Ind, "You kick %s in the ankle.", m_name);
 						special_effect = MA_SLOW;
-					}
-					else {
+					} else {
 						sprintf(hit_desc, ma_ptr->desc, m_name);
 //						msg_format(Ind, ma_ptr->desc, m_name);
 					}
-				}
-				else if (ma_ptr->effect == MA_ROYAL_SLOW)
-				{
+				} else if (ma_ptr->effect == MA_ROYAL_SLOW) {
 					if (!((r_ptr->flags1 & RF1_NEVER_MOVE)
-					    || strchr("ANjmeEv$,sbBFIJQSXlw!=?", r_ptr->d_char)))
-					{
+					    || strchr("ANjmeEv$,sbBFIJQSXlw!=?", r_ptr->d_char))) {
 						msg_format(Ind, "You strike %s's pressure points.", m_name);
 						special_effect = MA_SLOW;
-					}
-					else {
+					} else {
 						sprintf(hit_desc, ma_ptr->desc, m_name);
 //						msg_format(Ind, ma_ptr->desc, m_name);
 					}
-				}
-				else
-				{
+				} else {
 					if (ma_ptr->effect)
-					{
 						stun_effect = (ma_ptr->effect/2) + randint(ma_ptr->effect/2);
-					}
-
+	
 					sprintf(hit_desc, ma_ptr->desc, m_name);
 //					msg_format(Ind, ma_ptr->desc, m_name);
 				}
@@ -3467,35 +3720,28 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				k2 = k; /* remember damage before crit */
 				k = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE, 0);
 
-				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d + p_ptr->to_d_melee) < m_ptr->hp))
-				{
+				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d + p_ptr->to_d_melee) < m_ptr->hp)) {
 					msg_format(Ind, "%^s moans in agony!", m_name);
 					stun_effect = 7 + randint(13);
 					resist_stun /= 3;
 				}
 
-				else if ((special_effect == MA_SLOW) && ((k + p_ptr->to_d + p_ptr->to_d_melee) < m_ptr->hp))
-				{
+				else if ((special_effect == MA_SLOW) && ((k + p_ptr->to_d + p_ptr->to_d_melee) < m_ptr->hp)) {
 					if (!(r_ptr->flags1 & RF1_UNIQUE) &&
 					    !((r_ptr->flags2 & RF2_POWERFUL) && (r_ptr->flags8 & RF8_NO_CUT)) &&
 					    (randint(marts * 2) > r_ptr->level) &&
-					    m_ptr->mspeed > m_ptr->speed - 20)
-					{
+					    m_ptr->mspeed > m_ptr->speed - 20) {
 						msg_format(Ind, "\377o%^s starts limping slower.", m_name);
 						m_ptr->mspeed -= 3 + rand_int(3);
 					}
 				}
 
-				if (stun_effect && ((k + p_ptr->to_d + p_ptr->to_d_melee) < m_ptr->hp))
-				{
+				if (stun_effect && ((k + p_ptr->to_d + p_ptr->to_d_melee) < m_ptr->hp)) {
 					/* Stun the monster */
-					if (r_ptr->flags3 & RF3_NO_STUN)
-					{
+					if (r_ptr->flags3 & RF3_NO_STUN) {
 						/* nothing:
 						msg_format(Ind, "%^s is unaffected.", m_name);*/
-					}
-					else if (marts > randint(r_ptr->level + resist_stun + 10))
-					{
+					} else if (marts > randint(r_ptr->level + resist_stun + 10)) {
 						m_ptr->stunned += (stun_effect);
 
 						if (m_ptr->stunned > 100)
@@ -3516,18 +3762,14 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 					drain_result = m_ptr->hp;
 				else
 					drain_result = 0;
-			} else
-
 			/* Handle normal weapon */
-			if (o_ptr->k_idx)
-			{
+			} else if (o_ptr->k_idx) {
 #ifdef ENABLE_STANCES
 				int stun_effect, resist_stun;
 #endif
 				k = damroll(o_ptr->dd, o_ptr->ds);
 
-                                if (f5 & TR5_VORPAL && (randint(6) == 1))
-				{
+				if (f5 & TR5_VORPAL && (randint(6) == 1)) {
 //					k = o_ptr->dd * o_ptr->ds; /* full weapon efficiency */
 //					if (magik(25)) k *= 3; else k *= 2; /* multi dice! */
 					vorpal_cut = k; /* save dice */
@@ -3588,44 +3830,34 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 				/* Select a chaotic effect (10% chance) */
 //				if ((f5 & TR5_CHAOTIC) && (randint(2)==1)) <- 50%
-				if ((f5 & TR5_CHAOTIC) && (randint(10)==1))
-				{
-					if (randint(5) < 3)
-					{
+				if ((f5 & TR5_CHAOTIC) && (randint(10)==1)) {
+					if (randint(5) < 3) {
 						/* Vampiric (60%) */
 						chaos_effect = 1;
-					}
-					else if (randint(1000) == 1)
-					{
+					} else if (randint(1000) == 1) {
 						/* Quake (0.04%) */
 						chaos_effect = 2;
-					}
-					else if (randint(10) != 1)
-					{
+					} else if (randint(10) != 1) {
 						/* Confusion (36%) */
 						chaos_effect = 3;
 					}
 //					else if (randint(2) == 1) -> (1.494%)
-					else if (randint(10) == 1)
-					{
+					else if (randint(10) == 1) {
 						/* Teleport away (0.4%) */
 						chaos_effect = 4;
 					}
 //					else -> (1.494%)
-					else if (randint(10) == 1)
-					{
+					else if (randint(10) == 1) {
 						/* Polymorph (0.36%) */
 						chaos_effect = 5;
-					}
-					else if (randint(100) == 1)
-					{
+					} else if (randint(100) == 1) {
 						/* New: Clone^^ (0.0324%) */
 						chaos_effect = 6;
 					}
 				}
 
 				/* Vampiric drain */
-				if (((chaos_effect == 1) || 
+				if (((chaos_effect == 1) ||
 				    magik(vampiric_melee)) && drainable)
 					drain_result = m_ptr->hp;
 				else
@@ -3633,15 +3865,14 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 				if (chaos_effect == 2) do_quake = TRUE;
 
-                                if (vorpal_cut)	msg_format(Ind, "Your weapon cuts deep into %s!", m_name);
+				if (vorpal_cut)	msg_format(Ind, "Your weapon cuts deep into %s!", m_name);
 
 				k += o_ptr->to_d;
-				
+
 				/* Does the weapon take damage from hitting acidic/fiery/aquatic monsters? */
-				for (i = 0; i < 4; i++)
-				{
-				        if (r_ptr->blow[i].effect == RBE_ACID) mon_acid++;
-				        if (r_ptr->blow[i].effect == RBE_FIRE) mon_fire++;
+				for (i = 0; i < 4; i++) {
+					if (r_ptr->blow[i].effect == RBE_ACID) mon_acid++;
+					if (r_ptr->blow[i].effect == RBE_FIRE) mon_fire++;
 				}
 				if (r_ptr->flags4 & RF4_BR_ACID) mon_acid += 2;
 				if (r_ptr->flags4 & RF4_BR_FIRE) mon_fire += 2;
@@ -3665,8 +3896,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 				/* May it clone the monster ? */
 				if (((f4 & TR4_CLONE) && randint(1000) == 1)
-				    || chaos_effect == 6)
-				{
+				    || chaos_effect == 6) {
 					msg_format(Ind, "Your weapon clones %^s!", m_name);
 					multiply_monster(c_ptr->m_idx);
 				}
@@ -3687,10 +3917,8 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 #endif
 				k = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor), calc_crit_obj(Ind, o_ptr));
 
-			}
 			/* handle bare fists/bat/ghost */
-			else
-			{
+			} else {
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
 
 				/* Apply the player damage boni */
@@ -3710,14 +3938,16 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			/* New backstab formula: it works like criticals now and takes a bit of monster hp into account */
 			/* Note that the multiplier is after all the damage calc is done! So may need tweaking! */
 			if (backstab || stab_fleeing) {
-				int bs_multiplier = get_skill_scale(p_ptr, SKILL_BACKSTAB, 350 + rand_int(101));
-				k *= (100 + bs_multiplier);
-				k /= (dual_stab ? 150 : 100);
-				k += m_ptr->hp / 33; /**0.03; <- floats are evil */
+				bs_multiplier = get_skill_scale(p_ptr, SKILL_BACKSTAB, 350 + rand_int(101));
+				kl = k * (100 + bs_multiplier);
+				kl /= (dual_stab ? 150 : 100);
+				kl += m_ptr->hp / (dual_stab ? 30 : 20);
+				k = kl;
 #ifdef CRIT_VS_VORPAL
-				k2 *= (100 + bs_multiplier);
-				k2 /= (dual_stab ? 150 : 100);
-				k2 += m_ptr->hp / 33; /**0.03; <- floats are evil */
+				kl = k2 * (100 + bs_multiplier);
+				kl /= (dual_stab ? 150 : 100);
+				kl += m_ptr->hp / (dual_stab ? 30 : 20);
+				k2 = kl;
 #endif
 			}
 
@@ -3741,8 +3971,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			}
 
 			/* DEG Updated hit message to include damage */
-			if(backstab)
-			{
+			if (backstab) {
 				backstab = FALSE;
 			   if (martial) {
 				if (r_ptr->flags1 & RF1_UNIQUE)
@@ -3758,8 +3987,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				else msg_format(Ind, "You stab the helpless, sleeping %s for \377p%d \377wdamage.", r_name_get(m_ptr), k);
 			   }
 			}
-			else if (stab_fleeing)
-			{
+			else if (stab_fleeing) {
 				stab_fleeing = FALSE;
 			   if (martial) {
 				if (r_ptr->flags1 & RF1_UNIQUE)
@@ -3777,8 +4005,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			}
 //			else if ((r_ptr->flags1 & RF1_UNIQUE) && (!martial)) msg_format(Ind, "You hit %s for \377p%d \377wdamage.", m_name, k);
 //			else if (!martial) msg_format(Ind, "You hit %s for \377g%d \377wdamage.", m_name, k);
-			else
-			{
+			else {
 				if (r_ptr->flags1 & RF1_UNIQUE)
 				msg_format(Ind, "%s for \377e%d \377wdamage.", hit_desc, k);
 				else msg_format(Ind, "%s for \377g%d \377wdamage.", hit_desc, k);
@@ -3798,20 +4025,21 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 			/* Damage, check for fear and death */
 			if (mon_take_hit(Ind, c_ptr->m_idx, k, &fear, NULL)) {
-	            		/* Vampires feed off the life force! (if any) */
+				/* Vampires feed off the life force! (if any) */
 				// mimic forms for vampires/bats: 432, 520, 521, 623, 989
-	        		if (p_ptr->prace == RACE_VAMPIRE && drainable) {
+				if (p_ptr->prace == RACE_VAMPIRE && drainable) {
 					int feed = m_ptr->maxhp + 100;
 //					feed = (4 - (300 / feed)) * 1000;//1000..4000
 					feed = (6 - (300 / feed)) * 100;//300..600
 					if (r_ptr->flags3 & RF3_DEMON) feed /= 2;
 					if (r_ptr->d_char == 'A') feed /= 3;
-					set_food(Ind, p_ptr->food + feed);
-					if (p_ptr->food >= PY_FOOD_MAX) set_food(Ind, PY_FOOD_MAX - 1);
+					/* Never get gorged */
+					feed += p_ptr->food;
+					if (feed >= PY_FOOD_MAX) feed = PY_FOOD_MAX - 1;
+					set_food(Ind, feed);
 				}
 				break; /* monster is dead */
 			}
-
 
 			touch_zap_player(Ind, c_ptr->m_idx);
 
@@ -3825,75 +4053,56 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 				/* Get monster effects. If monster has several, choose one randomly */
 				monster_effects = 0;
-				for (i = 0; i < 4; i++)
-				{
-				        if (pr_ptr->blow[i].d_dice * pr_ptr->blow[i].d_side)
-					{
+				for (i = 0; i < 4; i++) {
+					if (pr_ptr->blow[i].d_dice * pr_ptr->blow[i].d_side) {
 						monster_effects++;
 						monster_effect[monster_effects] = pr_ptr->blow[i].effect;
 					}
 				}
 				/* Choose random brand from the ones available */
 				monster_effect_chosen = monster_effect[1 + rand_int(monster_effects)];
-				
-				
+
 				/* Modify damage effect */
-				if (apply_monster_effects)
-				{
-					switch (monster_effect_chosen)
-					{
+				if (apply_monster_effects) {
+					switch (monster_effect_chosen) {
 					case RBE_BLIND:
 						if (r_ptr->flags3 & RF3_NO_SLEEP) break;
 					case RBE_HALLU:
 						if (r_ptr->flags3 & RF3_NO_CONF) break;
 					case RBE_CONFUSE:
-						if (!p_ptr->confusing)
-						{
+						if (!p_ptr->confusing) {
 							/* Confuse the monster */
-							if (r_ptr->flags3 & RF3_NO_CONF)
-							{
+							if (r_ptr->flags3 & RF3_NO_CONF) {
 #ifdef OLD_MONSTER_LORE
 								if (p_ptr->mon_vis[c_ptr->m_idx]) r_ptr->r_flags3 |= RF3_NO_CONF;
 #endif
 								msg_format(Ind, "%^s is unaffected.", m_name);
-							}
-							else if (rand_int(100) < r_ptr->level)
-							{
+							} else if (rand_int(100) < r_ptr->level) {
 								msg_format(Ind, "%^s resists the effect.", m_name);
-							}
-							else
-							{
+							} else {
 								msg_format(Ind, "%^s appears confused.", m_name);
 								m_ptr->confused += 10 + rand_int(p_ptr->lev) / 5;
 							}
-							
 						}
 						break;
 					case RBE_TERRIFY:
 						fear_chance = 50 + (p_ptr->lev - r_ptr->level) * 5;
-						if (!(r_ptr->flags3 & RF3_NO_FEAR) && rand_int(100) < fear_chance)
-						{
+						if (!(r_ptr->flags3 & RF3_NO_FEAR) && rand_int(100) < fear_chance) {
 							msg_format(Ind, "%^s appears afraid.", m_name);
 							m_ptr->monfear = m_ptr->monfear + 4 + rand_int(p_ptr->lev) / 5;
 						}
 						break;
 					case RBE_PARALYZE:
-						if (!p_ptr->stunning)
-						{
+						if (!p_ptr->stunning) {
 							/* Stun the monster */
-							if (r_ptr->flags3 & RF3_NO_STUN)
-							{
+							if (r_ptr->flags3 & RF3_NO_STUN) {
 #ifdef OLD_MONSTER_LORE
 								if (p_ptr->mon_vis[c_ptr->m_idx]) r_ptr->r_flags3 |= RF3_NO_STUN;
 #endif
 								msg_format(Ind, "%^s is unaffected.", m_name);
-							}
-							else if (rand_int(115) < r_ptr->level)
-							{
+							} else if (rand_int(115) < r_ptr->level) {
 								msg_format(Ind, "%^s resists the effect.", m_name);
-							}
-							else
-							{
+							} else {
 								if (!m_ptr->stunned)
 									msg_format(Ind, "\377o%^s appears stunned.", m_name);
 								else
@@ -3908,42 +4117,43 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 			/* VAMPIRIC: Are we draining it?  A little note: If the monster is
 			   dead, the drain does not work... */
-			if (drain_result)
-			{
+			if (drain_result) {
 				drain_result -= m_ptr->hp;  /* Calculate the difference */
 
-				if (drain_result > 0) /* Did we really hurt it? */
-				{
+				if (drain_result > 0) { /* Did we really hurt it? */
 					drain_heal = randint(2) + damroll(2,(drain_result / 16));/* was 4,../6 -- was 8 for 50 max_drain */
 
-					if (drain_left)
-					{
-						if (drain_heal < drain_left)
-						{
+					if (drain_left) {
+						if (drain_heal < drain_left) {
 #if 0
 							drain_left -= drain_heal;
 #endif
-						}
-						else
-						{
+						} else {
 							drain_heal = drain_left;
 #if 0
 							drain_left = 0;
 #endif
 						}
 
-						if (drain_msg)
-						{
+						if (drain_msg) {
 							if (martial || !o_ptr->k_idx) {
+#ifndef TEST_SERVER
 								if (is_admin(p_ptr)) /* for debugging purpose */
+#endif
 								msg_format(Ind, "Your hits drain \377o%d\377w life from %s!", drain_heal, m_name);
+#ifndef TEST_SERVER
 								else
 								msg_format(Ind, "Your hits drain life from %s!", m_name);
+#endif
 							} else {
+#ifndef TEST_SERVER
 								if (is_admin(p_ptr))
+#endif
 								msg_format(Ind, "Your weapon drains \377o%d\377w life from %s!", drain_heal, m_name);
+#ifndef TEST_SERVER
 								else
 								msg_format(Ind, "Your weapon drains life from %s!", m_name);
+#endif
 							}
 #if 0
 							drain_msg = FALSE;
@@ -3957,8 +4167,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			}
 
 			/* Confusion attack */
-			if ((p_ptr->confusing) || (chaos_effect == 3))
-			{
+			if ((p_ptr->confusing) || (chaos_effect == 3)) {
 				/* Cancel glowing hands */
 				p_ptr->confusing = FALSE;
 
@@ -3966,28 +4175,21 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				msg_print(Ind, "Your hands stop glowing.");
 
 				/* Confuse the monster */
-				if (r_ptr->flags3 & RF3_NO_CONF)
-				{
+				if (r_ptr->flags3 & RF3_NO_CONF) {
 #ifdef OLD_MONSTER_LORE
 					if (p_ptr->mon_vis[c_ptr->m_idx]) r_ptr->r_flags3 |= RF3_NO_CONF;
 #endif
 					msg_format(Ind, "%^s is unaffected.", m_name);
-				}
-				else if (rand_int(100) < r_ptr->level)
-				{
+				} else if (rand_int(100) < r_ptr->level) {
 					msg_format(Ind, "%^s resists the effect.", m_name);
-				}
-				else
-				{
+				} else {
 					msg_format(Ind, "%^s appears confused.", m_name);
 					m_ptr->confused += 10 + rand_int(p_ptr->lev) / 5;
 				}
 			}
 
-			else if (chaos_effect == 4)
-			{
-				if (teleport_away(c_ptr->m_idx, 50))
-				{
+			else if (chaos_effect == 4) {
+				if (teleport_away(c_ptr->m_idx, 50)) {
 					msg_format(Ind, "%^s disappears!", m_name);
 					num = p_ptr->num_blow + 1; /* Can't hit it anymore! */
 				}
@@ -3996,8 +4198,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 /*			else if ((chaos_effect == 5) && cave_floor_bold(zcave,y,x)
 					&& (randint(90) > m_ptr->level))*/
-			else if ((chaos_effect == 5) && (randint(150) > m_ptr->level))
-			{
+			else if ((chaos_effect == 5) && (randint(150) > m_ptr->level)) {
 				if (!((r_ptr->flags1 & RF1_UNIQUE) ||
 				    (r_ptr->flags4 & RF4_BR_CHAO) ||
 				    (r_ptr->flags9 & RF9_RES_CHAOS) ))
@@ -4008,8 +4209,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 					/* Pick a "new" monster race */
 
 					/* Handle polymorph */
-					if (tmp != m_ptr->r_idx)
-					{
+					if (tmp != m_ptr->r_idx) {
 						msg_format(Ind, "%^s changes!", m_name);
 
 						/* Create a new monster (no groups) */
@@ -4030,7 +4230,6 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 						r_ptr = race_inf(m_ptr);
 
 						fear = FALSE;
-
 					}
 				}
 				else
@@ -4039,8 +4238,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 
 			/* Stunning attack */
-			if (p_ptr->stunning)
-			{
+			if (p_ptr->stunning) {
 				/* Cancel heavy hands */
 				p_ptr->stunning = FALSE;
 
@@ -4048,19 +4246,14 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				msg_print(Ind, "Your hands feel less heavy.");
 
 				/* Stun the monster */
-				if (r_ptr->flags3 & RF3_NO_STUN)
-				{
+				if (r_ptr->flags3 & RF3_NO_STUN) {
 #ifdef OLD_MONSTER_LORE
 					if (p_ptr->mon_vis[c_ptr->m_idx]) r_ptr->r_flags3 |= RF3_NO_STUN;
 #endif
 					msg_format(Ind, "%^s is unaffected.", m_name);
-				}
-				else if (rand_int(115) < r_ptr->level)
-				{
+				} else if (rand_int(115) < r_ptr->level) {
 					msg_format(Ind, "%^s resists the effect.", m_name);
-				}
-				else
-				{
+				} else {
 					if (!m_ptr->stunned)
 						msg_format(Ind, "\377o%^s appears stunned.", m_name);
 					else
@@ -4070,59 +4263,44 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			}
 
 			/* Ghosts get fear attacks */
-			if (p_ptr->ghost)
-			{
+			if (p_ptr->ghost) {
 				fear_chance = 50 + (p_ptr->lev - r_ptr->level) * 5;
-
-				if (!(r_ptr->flags3 & RF3_NO_FEAR) && rand_int(100) < fear_chance)
-				{
+				if (!(r_ptr->flags3 & RF3_NO_FEAR) && rand_int(100) < fear_chance) {
 					msg_format(Ind, "%^s appears afraid.", m_name);
 					m_ptr->monfear = m_ptr->monfear + 4 + rand_int(p_ptr->lev) / 5;
 				}
 			}
 
-
-			/* Fruit bats get life stealing */
-			if (p_ptr->fruit_bat == 1 && !p_ptr->body_monster)
-			{
-				int leech;
-				
-				leech = m_ptr->hp;
+			/* Fruit bats get life stealing.
+			   Note: This is ok because fruit bats cannot wear weapons/gloves as a
+			   source of vampirism.
+			   Still to check: Vampire fruit bats! CURRENTLY STACKS! */
+			if (p_ptr->fruit_bat == 1 && !p_ptr->body_monster && drainable) {
+				int leech = m_ptr->hp;
 				if (k < leech) leech = k;
 				leech /= 10;
-			
 				hp_player_quiet(Ind, rand_int(leech), TRUE);
 			}
 		}
 
 		/* Player misses */
 		else {
-			backstab = FALSE;
-
-			if (strchr("AhHJkpPty", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
-			    !(r_ptr->flags3 & RF3_ANIMAL)) {
-#ifdef USE_BLOCKING
-				block = 10;
-#endif
-#ifdef USE_PARRYING
-				parry = 5 + m_ptr->ac / 10;
-#endif
-			}
+			backstab = stab_fleeing = FALSE;
 
 			/* Message */
-			if (!m_ptr->csleep && magik(block)) {
-				msg_format(Ind, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
+			if (block) {
+				sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
+				hit_desc[0] = toupper(hit_desc[0]);
+				msg_format(Ind, hit_desc);
 #ifdef USE_SOUND_2010
-				if (sfx == 0) {
-					sound(Ind, "block_shield", NULL, SFX_TYPE_ATTACK, FALSE);
-				}
+				if (sfx == 0) sound(Ind, "block_shield", NULL, SFX_TYPE_ATTACK, FALSE);
 #endif
-			} else if (!m_ptr->csleep && magik(parry)) {
-				msg_format(Ind, "\377%c%s parries.", COLOUR_PARRY_MON, m_name);
+			} else if (parry) {
+				sprintf(hit_desc, "\377%c%s parries.", COLOUR_PARRY_MON, m_name);
+				hit_desc[0] = toupper(hit_desc[0]);
+				msg_format(Ind, hit_desc);
 #ifdef USE_SOUND_2010
-				if (sfx == 0) {
-					sound(Ind, "parry_weapon", "parry", SFX_TYPE_ATTACK, FALSE);
-				}
+				if (sfx == 0) sound(Ind, "parry_weapon", "parry", SFX_TYPE_ATTACK, FALSE);
 #endif
 			} else {
 				msg_format(Ind, "You miss %s.", m_name);
@@ -4150,15 +4328,11 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		}
 
 		/* Hack -- divided turn for auto-retaliator */
-		if (!old)
-		{
-			break;
-		}
+		if (!old) break;
 	}
 
 	/* Hack -- delay fear messages */
-	if (fear && p_ptr->mon_vis[c_ptr->m_idx])
-	{
+	if (fear && p_ptr->mon_vis[c_ptr->m_idx]) {
 #ifdef USE_SOUND_2010
 #else
 		sound(Ind, SOUND_FLEE);
@@ -4172,10 +4346,8 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	}
 
 	/* Mega-Hack -- apply earthquake brand */
-	if (do_quake)
-	{
-		if (o_ptr->k_idx && !check_guard_inscription(o_ptr->note, 'E' ))
-		{
+	if (do_quake) {
+		if (o_ptr->k_idx && !check_guard_inscription(o_ptr->note, 'E' )) {
 			/* Giga-Hack -- equalize the chance (though not likely..) */
 			if (old || randint(p_ptr->num_blow) < 3)
 				earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10);
@@ -4200,35 +4372,34 @@ void py_attack(int Ind, int y, int x, bool old)
 	cave_type **zcave;
 	cave_type *c_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
-	if(!(zcave = getcave(wpos))) return;
-	c_ptr=&zcave[y][x];
+	if (!(zcave = getcave(wpos))) return;
+	c_ptr = &zcave[y][x];
 
-	if (r_info[p_ptr->body_monster].flags1 & RF1_NEVER_BLOW
-			|| !p_ptr->num_blow) return;
+	if ((p_ptr->body_monster &&
+	    (r_info[p_ptr->body_monster].flags1 & RF1_NEVER_BLOW))
+	    || !p_ptr->num_blow) return;
 
 	/* Break goi/manashield */
 #if 0
-	if (p_ptr->invuln)
-	{
-		set_invuln(Ind, 0);
-	}
-	if (p_ptr->tim_manashield)
-	{
-		set_tim_manashield(Ind, 0);
-	}
-	if (p_ptr->tim_wraith)
-	{
-		set_tim_wraith(Ind, 0);
-	}
+	if (p_ptr->invuln) set_invuln(Ind, 0);
+	if (p_ptr->tim_manashield) set_tim_manashield(Ind, 0);
+	if (p_ptr->tim_wraith) set_tim_wraith(Ind, 0);
 #endif	// 0
 
 	/* Check for monster */
 	if (c_ptr->m_idx > 0)
 		py_attack_mon(Ind, y, x, old);
-
 	/* Check for player */
 	else if (c_ptr->m_idx < 0 && cfg.use_pk_rules != PK_RULES_NEVER)
 		py_attack_player(Ind, y, x, old);
+
+	if (p_ptr->warning_ranged_autoret == 0) {
+		p_ptr->warning_ranged_autoret = 1;
+		if (p_ptr->max_plv <= 10) {
+			msg_print(Ind, "\374\377yHINT: Inscribe your ranged weapon '\377R@O\377y' to use it for auto-retaliation!");
+			s_printf("warning_ranged_autoret: %s\n", p_ptr->name);
+		}
+	}
 }
 
 void spin_attack(int Ind)
@@ -4250,18 +4421,9 @@ void spin_attack(int Ind)
 				
 	/* Break goi/manashield */
 #if 0
-	if (p_ptr->invuln)
-	{
-		set_invuln(Ind, 0);
-	}
-	if (p_ptr->tim_manashield)
-	{
-		set_tim_manashield(Ind, 0);
-	}
-	if (p_ptr->tim_wraith)
-	{
-		set_tim_wraith(Ind, 0);
-	}
+	if (p_ptr->invuln) set_invuln(Ind, 0);
+	if (p_ptr->tim_manashield) set_tim_manashield(Ind, 0);
+	if (p_ptr->tim_wraith) set_tim_wraith(Ind, 0);
 #endif	// 0
 
 	j = rand_int(8);
@@ -4293,10 +4455,8 @@ void touch_zap_player(int Ind, int m_idx)
 	int aura_damage = 0;
 	monster_race *r_ptr = race_inf(m_ptr);
 
-	if (r_ptr->flags2 & (RF2_AURA_FIRE))
-	{
-		if (!(p_ptr->immune_fire))
-		{
+	if (r_ptr->flags2 & (RF2_AURA_FIRE)) {
+		if (!(p_ptr->immune_fire)) {
 			char aura_dam[80];
 
 			aura_damage = damroll(1 + (m_ptr->level / 26), 1 + (m_ptr->level / 17));
@@ -4318,10 +4478,8 @@ void touch_zap_player(int Ind, int m_idx)
 	}
 
 
-	if (r_ptr->flags2 & (RF2_AURA_ELEC))
-	{
-		if (!(p_ptr->immune_elec))
-		{
+	if (r_ptr->flags2 & (RF2_AURA_ELEC)) {
+		if (!(p_ptr->immune_elec)) {
 			char aura_dam[80];
 
 			aura_damage = damroll(1 + (m_ptr->level / 26), 1 + (m_ptr->level / 17));
@@ -4343,10 +4501,8 @@ void touch_zap_player(int Ind, int m_idx)
 	}
 
 
-	if (r_ptr->flags2 & (RF3_AURA_COLD))
-	{
-		if (!(p_ptr->immune_cold))
-		{
+	if (r_ptr->flags2 & (RF3_AURA_COLD)) {
+		if (!(p_ptr->immune_cold)) {
 			char aura_dam[80];
 
 			aura_damage = damroll(1 + (m_ptr->level / 26), 1 + (m_ptr->level / 17));
@@ -4363,6 +4519,48 @@ void touch_zap_player(int Ind, int m_idx)
 #ifdef OLD_MONSTER_LORE
 			r_ptr->r_flags3 |= RF3_AURA_COLD;
 #endif
+			handle_stuff(Ind);
+		}
+	}
+}
+void py_touch_zap_player(int Ind, int Ind2)
+{
+	player_type *q_ptr = Players[Ind2], *p_ptr = Players[Ind];
+	int aura_damage = 0;
+
+	if (q_ptr->sh_fire) {
+		if (!(p_ptr->immune_fire)) {
+			aura_damage = damroll(2, 6);
+			if (p_ptr->oppose_fire) aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->resist_fire) aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->suscep_fire) aura_damage = aura_damage * 2;
+
+			msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
+			take_hit(Ind, aura_damage, "a fire aura", 0);
+			handle_stuff(Ind);
+		}
+	}
+	if (q_ptr->sh_cold) {
+		if (!(p_ptr->immune_cold)) {
+			aura_damage = damroll(2, 6);
+			if (p_ptr->oppose_cold) aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->resist_cold) aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->suscep_cold) aura_damage = aura_damage * 2;
+
+			msg_format(Ind, "You are chilled by frost for \377w%d\377w damage!", aura_damage);
+			take_hit(Ind, aura_damage, "a frost aura", 0);
+			handle_stuff(Ind);
+		}
+	}
+	if (q_ptr->sh_elec) {
+		if (!(p_ptr->immune_elec)) {
+			aura_damage = damroll(2, 6);
+			if (p_ptr->oppose_elec) aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->resist_elec) aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->suscep_elec) aura_damage = aura_damage * 2;
+
+			msg_format(Ind, "You are struck by lightning for \377w%d\377w damage!", aura_damage);
+			take_hit(Ind, aura_damage, "a lightning aura", 0);
 			handle_stuff(Ind);
 		}
 	}
@@ -4427,7 +4625,7 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
 				s_printf("NAZGUL_DISI_ARTLIKE: %s : %s.\n", Players[Ind]->name, o_name);
 
 				if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
-				msg_print(Ind, "\376\377rYour weapon is destroyed !");
+				msg_print(Ind, "\376\377rYour weapon is destroyed!");
 //				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
 //				inven_item_optimize(Ind, INVEN_WIELD + weap);
 				inven_item_increase(Ind, slot, -1);
@@ -4442,8 +4640,8 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
 				*k = 0;
 			}
 
-			/* Dark Swords resist the magic, other weapons
-			   have a high chance of getting destroyed */
+			/* Dark Swords and *Slay Undead* weapons resist the Nazgul,
+			   other (ego) weapons have a high chance of getting destroyed */
 			if (((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD)
 			    || o_ptr->name2 == EGO_KILL_UNDEAD || o_ptr->name2b == EGO_KILL_UNDEAD
 			    ) ? magik(3) : magik(20))
@@ -4451,7 +4649,7 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
 				object_desc(0, o_name, o_ptr, TRUE, 3);
 				s_printf("NAZGUL_DISI_EGO: %s : %s.\n", Players[Ind]->name, o_name);
 
-				msg_print(Ind, "\376\377rYour weapon is destroyed !");
+				msg_print(Ind, "\376\377rYour weapon is destroyed!");
 //				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
 //				inven_item_optimize(Ind, INVEN_WIELD + weap);
 				inven_item_increase(Ind, slot, -1);
@@ -4463,7 +4661,8 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
 		}
 
 		/* If any damage is done, then 25% chance of getting the Black Breath */
-		if ((*k) && magik(25) && !Players[Ind]->black_breath) {
+//		if ((*k) && magik(25) && !Players[Ind]->black_breath) {
+		if (magik(15) && !Players[Ind]->black_breath) {
 			s_printf("EFFECT: BLACK-BREATH - %s was infected by a Nazgul\n", Players[Ind]->name);
 			set_black_breath(Ind);
 		}
@@ -4754,16 +4953,16 @@ bool player_can_enter(int Ind, byte feature)
  * any monster which might be in the destination grid.  Previously,
  * moving into walls was "free" and did NOT hit invisible monsters.
  */
- 
+
  /* Bounds checking is used in dungeon levels <= 0, which is used
-    to move between wilderness levels. 
-    
+    to move between wilderness levels.
+
     The wilderness levels are stored in rings radiating from the town,
     see calculate_world_index for more information.
 
     Diagonals aren't handled properly, but I don't feel that is important.
-	
-    -APD- 
+
+    -APD-
  */
 
 void move_player(int Ind, int dir, int do_pickup)
@@ -5032,7 +5231,7 @@ void move_player(int Ind, int dir, int do_pickup)
 				/* Don't tell people they bumped into the Dungeon Master */
 				if (!q_ptr->admin_dm) {
 					/* Hack if invisible */
-					if (p_ptr->play_vis[Ind2])                              
+					if (p_ptr->play_vis[Ind2])
 						msg_format(Ind, "You switch places with %s.", q_ptr->name);
 					else
 						msg_print(Ind, "You switch places with it.");
@@ -5358,18 +5557,26 @@ void move_player(int Ind, int dir, int do_pickup)
 		p_ptr->px = x;
 		if (old_grid_sunlit != new_grid_sunlit) calc_boni(Ind);
 
-		if(zcave[y][x].info & CAVE_STCK && !(zcave[oy][ox].info & CAVE_STCK)) {
+		if (zcave[y][x].info & CAVE_STCK && !(zcave[oy][ox].info & CAVE_STCK)) {
 			msg_print(Ind, "\377DThe air in here feels very still.");
 			p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
+#ifdef USE_SOUND_2010
+			/* New: Have bgm indicate no-tele too! */
+			handle_music(Ind);
+#endif
 
 			msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");
 			msg_print(Ind, "You lose your wraith powers.");
 			/* Automatically disable permanent wraith form (set_tim_wraith) */
 			p_ptr->update |= PU_BONUS;
 		}
-		if(zcave[oy][ox].info & CAVE_STCK && !(zcave[y][x].info & CAVE_STCK)) {
+		if (zcave[oy][ox].info & CAVE_STCK && !(zcave[y][x].info & CAVE_STCK)) {
 			msg_print(Ind, "\377sFresh air greets you as you leave the vault.");
 			p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
+#ifdef USE_SOUND_2010
+			/* New: Have bgm indicate no-tele too! */
+			handle_music(Ind);
+#endif
 
 			/* Automatically re-enable permanent wraith form (set_tim_wraith) */
 			p_ptr->update |= PU_BONUS;
@@ -5398,7 +5605,6 @@ void move_player(int Ind, int dir, int do_pickup)
 		p_ptr->window |= (PW_OVERHEAD);
 
 		/* Hack -- quickly update the view, to reduce perceived lag */
-		
 		redraw_stuff(Ind);
 		window_stuff(Ind);
 
@@ -5412,7 +5618,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		if (p_ptr->searching) {
 			if (p_ptr->pclass == CLASS_ROGUE && !p_ptr->rogue_heavyarmor) {
 				//Radius of 5 ... 15 squares
-				detect_bounty(Ind, (p_ptr->lev/5) + 5);
+				detect_bounty(Ind, (p_ptr->lev / 5) + 5);
 			} else {
 				search(Ind);
 			}
@@ -6578,8 +6784,8 @@ int apply_block_chance(player_type *p_ptr, int n) { /* n can already be modified
 	if (p_ptr->confused) n = (n * 5) / 10;
 	if (p_ptr->blind) n = (n * 3) / 10;
 	if (p_ptr->image) n = (n * 5) / 10;
-	if (p_ptr->stun) n = (n * 8) / 10;
-	if (p_ptr->stun > 50) n = (n * 8) / 10;
+	if (p_ptr->stun) n = (n * 7) / 10;
+	if (p_ptr->stun > 50) n = (n * 7) / 10;
 	if (!n) n = 1;
 	return (n);
 }
@@ -6588,9 +6794,9 @@ int apply_parry_chance(player_type *p_ptr, int n) { /* n can already be modified
 	if (!p_ptr->weapon_parry || n <= 0 || p_ptr->paralyzed || p_ptr->stun >= 100) return(0);
 	if (p_ptr->confused) n = (n * 6) / 10;
 	if (p_ptr->blind) n = (n * 1) / 10;
-	if (p_ptr->image) n = (n * 8) / 10;
-	if (p_ptr->stun) n = (n * 8) / 10;
-	if (p_ptr->stun > 50) n = (n * 8) / 10;
+	if (p_ptr->image) n = (n * 7) / 10;
+	if (p_ptr->stun) n = (n * 7) / 10;
+	if (p_ptr->stun > 50) n = (n * 7) / 10;
 	if (!n) n = 1;
 	return (n);
 }

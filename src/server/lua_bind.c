@@ -56,11 +56,10 @@ bool lua_spell_success(magic_power *spell, int stat, char *oups_fct)
 	chance -= 3 * (p_ptr->lev - spell->min_lev);
 
 	/* Reduce failure rate by INT/WIS adjustment */
-        chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[stat]] - 1);
+	chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[stat]] - 1);
 
 	/* Not enough mana to cast */
-	if (spell->mana_cost > p_ptr->csp)
-	{
+	if (spell->mana_cost > p_ptr->csp) {
 		chance += 5 * (spell->mana_cost - p_ptr->csp);
 	}
 
@@ -78,8 +77,7 @@ bool lua_spell_success(magic_power *spell, int stat, char *oups_fct)
 	if (chance > 95) chance = 95;
 
 	/* Failed spell */
-	if (rand_int(100) < chance)
-	{
+	if (rand_int(100) < chance) {
 		if (flush_failure) flush();
 		msg_print("You failed to concentrate hard enough!");
 #ifdef USE_SOUND_2010
@@ -152,12 +150,9 @@ static bool lua_item_tester(object_type* o_ptr)
 
 void    lua_set_item_tester(int tval, char *fct)
 {
-	if (tval)
-	{
+	if (tval) {
 		item_tester_tval = tval;
-	}
-	else
-	{
+	} else {
 		lua_item_tester_fct = fct;
 		item_tester_hook = lua_item_tester;
 	}
@@ -179,11 +174,9 @@ void find_position(int y, int x, int *yy, int *xx)
 {
 	int attempts = 500;
 
-	do
-	{
+	do {
 		scatter(yy, xx, y, x, 6, 0);
-	}
-	while (!(in_bounds(*yy, *xx) && cave_floor_bold(*yy, *xx)) && --attempts);
+	} while (!(in_bounds(*yy, *xx) && cave_floor_bold(*yy, *xx)) && --attempts);
 }
 
 static char *summon_lua_okay_fct;
@@ -239,28 +232,28 @@ void    desc_quest(int q_idx, int d, char *desc)
  */
 bool    get_com_lua(cptr prompt, int *com)
 {
-        char c;
+	char c;
 
-        if (!get_com(prompt, &c)) return (FALSE);
-        *com = c;
-        return (TRUE);
+	if (!get_com(prompt, &c)) return (FALSE);
+	*com = c;
+	return (TRUE);
 }
 #endif	// 0
 
 /* Spell schools */
 s16b new_school(int i, cptr name, s16b skill)
 {
-        schools[i].name = string_make(name);
-        schools[i].skill = skill;
-        return (i);
+	schools[i].name = string_make(name);
+	schools[i].skill = skill;
+	return (i);
 }
 
 s16b new_spell(int i, cptr name)
 {
-        school_spells[i].name = string_make(name);
-        school_spells[i].level = 0;
-        school_spells[i].level = 0;
-        return (i);
+	school_spells[i].name = string_make(name);
+	school_spells[i].level = 0;
+	school_spells[i].level = 0;
+	return (i);
 }
 
 spell_type *grab_spell_type(s16b num)
@@ -277,23 +270,23 @@ school_type *grab_school_type(s16b num)
 s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus)
 {
 	player_type *p_ptr = Players[Ind];
-        s32b tmp;
+	s32b tmp;
 
-        tmp = lvl - ((school_spells[s].skill_level - 1) * (SKILL_STEP / 10));
-        lvl = (tmp * (max * (SKILL_STEP / 10)) / (SKILL_MAX / 10)) / (SKILL_STEP / 10);
-        if (lvl < min) lvl = min;
-        else if (lvl > 0) {
-//                tmp += p_ptr->to_s * (SKILL_STEP / 10);
-                tmp += bonus;
-//                tmp += (get_skill_scale(p_ptr, SKILL_SPELL, 20) * (SKILL_STEP / 10));
-//                tmp /= 100; tmp *= (100 + (get_skill_scale(p_ptr, SKILL_SPELL, 40) * (SKILL_STEP / 10)));
-                lvl = (tmp * (max * (SKILL_STEP / 10)) / (SKILL_MAX / 10)) / (SKILL_STEP / 10);
-                if (school_spells[s].spell_power) {
+	tmp = lvl - ((school_spells[s].skill_level - 1) * (SKILL_STEP / 10));
+	lvl = (tmp * (max * (SKILL_STEP / 10)) / (SKILL_MAX / 10)) / (SKILL_STEP / 10);
+	if (lvl < min) lvl = min;
+	else if (lvl > 0) {
+//		tmp += p_ptr->to_s * (SKILL_STEP / 10);
+		tmp += bonus;
+//		  tmp += (get_skill_scale(p_ptr, SKILL_SPELL, 20) * (SKILL_STEP / 10));
+//		  tmp /= 100; tmp *= (100 + (get_skill_scale(p_ptr, SKILL_SPELL, 40) * (SKILL_STEP / 10)));
+		lvl = (tmp * (max * (SKILL_STEP / 10)) / (SKILL_MAX / 10)) / (SKILL_STEP / 10);
+		if (school_spells[s].spell_power) {
 			lvl *= (100 + get_skill_scale(p_ptr, SKILL_SPELL, 40));
 			lvl /= 100;
 		}
-        }
-        return lvl;
+	}
+	return lvl;
 }
 
 /* adj_mag_stat? stat_ind??  pfft */
@@ -302,7 +295,7 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus)
 s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, int cur_mana, int stat)
 {
 	player_type *p_ptr = Players[i];
-        int             minfail;
+	int             minfail;
 
 //DEBUG:s_printf("chance %d - level %d - skill_level %d", chance, level, skill_level);
 	/* correct LUA overflow bug ('fail' is type char, ie unsigned byte) */
@@ -316,25 +309,25 @@ s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, 
 #endif
 
 	/* Reduce failure rate by "effective" level adjustment */
-        chance -= 3 * (level - skill_level);
+	chance -= 3 * (level - skill_level);
 
 	/* Reduce failure rate by INT/WIS adjustment */
-        chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[stat]] - 1);
+	chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[stat]] - 1);
 
 	 /* Not enough mana to cast */
-        if (chance < 0) chance = 0;
+	if (chance < 0) chance = 0;
 #if 0 /* you cannot cast the spell anyway, so this just confuses */
-        if (mana > cur_mana) {
-                chance += 15 * (mana - cur_mana);
+	if (mana > cur_mana) {
+		chance += 15 * (mana - cur_mana);
 	}
 #endif
 
 	/* Extract the minimum failure rate */
-        minfail = adj_mag_fail[p_ptr->stat_ind[stat]];
+	minfail = adj_mag_fail[p_ptr->stat_ind[stat]];
 
 #if 0	// disabled for the time being
 	/*
-         * Non mage characters never get too good
+	 * Non mage characters never get too good
 	 */
 	if (!(PRACE_FLAG(PR1_ZERO_FAIL))) {
 		if (minfail < 5) minfail = 5;
@@ -362,20 +355,20 @@ s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, 
 /* Cave */
 cave_type *lua_get_cave(int y, int x)
 {
-        return (&(cave[y][x]));
+	return (&(cave[y][x]));
 }
 
 void set_target(int y, int x)
 {
-        target_who = -1;
-        target_col = x;
-        target_row = y;
+	target_who = -1;
+	target_col = x;
+	target_row = y;
 }
 
 /* Level gen */
 void get_map_size(char *name, int *ysize, int *xsize)
 {
-        *xsize = 0;
+	*xsize = 0;
 	*ysize = 0;
 	init_flags = INIT_GET_SIZE;
 	process_dungeon_file_full = TRUE;
@@ -400,7 +393,7 @@ void load_map(char *name, int *y, int *x)
 
 bool alloc_room(int by0, int bx0, int ysize, int xsize, int *y1, int *x1, int *y2, int *x2)
 {
-        int xval, yval, x, y;
+	int xval, yval, x, y;
 
 	/* Try to allocate space for room.  If fails, exit */
 	if (!room_alloc(xsize + 2, ysize + 2, FALSE, by0, bx0, &xval, &yval)) return FALSE;
@@ -412,24 +405,22 @@ bool alloc_room(int by0, int bx0, int ysize, int xsize, int *y1, int *x1, int *y
 	*x2 = xval + (xsize) / 2;
 
 	/* Place a full floor under the room */
-	for (y = *y1 - 1; y <= *y2 + 1; y++)
-	{
-		for (x = *x1 - 1; x <= *x2 + 1; x++)
-		{
+	for (y = *y1 - 1; y <= *y2 + 1; y++) {
+		for (x = *x1 - 1; x <= *x2 + 1; x++) {
 			cave_type *c_ptr = &cave[y][x];
 			cave_set_feat(y, x, floor_type[rand_int(1000)]);
 			c_ptr->info |= (CAVE_ROOM);
 			c_ptr->info |= (CAVE_GLOW);
 		}
-        }
-        return TRUE;
+	}
+	return TRUE;
 }
 
 
 /* Files */
 void lua_print_hook(cptr str)
 {
-        fprintf(hook_file, str);
+	fprintf(hook_file, str);
 }
 
 
@@ -452,9 +443,9 @@ static bool lua_mon_hook_bounty(int r_idx)
 	/* Reject those who cannot leave anything */
 	if (!(r_ptr->flags9 & RF9_DROP_CORPSE)) return (FALSE);
 
-        /* Accept only monsters that can be generated */
-        if (r_ptr->flags9 & RF9_SPECIAL_GENE) return (FALSE);
-        if (r_ptr->flags9 & RF9_NEVER_GENE) return (FALSE);
+	/* Accept only monsters that can be generated */
+	if (r_ptr->flags9 & RF9_SPECIAL_GENE) return (FALSE);
+	if (r_ptr->flags9 & RF9_NEVER_GENE) return (FALSE);
 
 	/* Reject pets */
 	if (r_ptr->flags7 & RF7_PET) return (FALSE);
@@ -465,17 +456,17 @@ static bool lua_mon_hook_bounty(int r_idx)
 	/* Reject neutral creatures */
 	if (r_ptr->flags7 & RF7_NEUTRAL) return (FALSE);
 
-        /* Accept only monsters that are not breeders */
-        if (r_ptr->flags4 & RF4_MULTIPLY) return (FALSE);
+	/* Accept only monsters that are not breeders */
+	if (r_ptr->flags4 & RF4_MULTIPLY) return (FALSE);
 
-        /* Forbid joke monsters */
-        if (r_ptr->flags8 & RF8_JOKEANGBAND) return (FALSE);
+	/* Forbid joke monsters */
+	if (r_ptr->flags8 & RF8_JOKEANGBAND) return (FALSE);
 
-        /* Forbid C. Blue's monsters */
-        if (r_ptr->flags8 & RF8_BLUEBAND) return (FALSE);
+	/* Forbid C. Blue's monsters */
+	if (r_ptr->flags8 & RF8_BLUEBAND) return (FALSE);
 
-        /* Accept only monsters that are not good */
-        if (r_ptr->flags3 & RF3_GOOD) return (FALSE);
+	/* Accept only monsters that are not good */
+	if (r_ptr->flags3 & RF3_GOOD) return (FALSE);
 
 	/* The rest are acceptable */
 	return (TRUE);
@@ -483,7 +474,7 @@ static bool lua_mon_hook_bounty(int r_idx)
 
 int lua_get_new_bounty_monster(int lev)
 {
-        int r_idx;
+	int r_idx;
 
 	/*
 	 * Set up the hooks -- no bounties on uniques or monsters
@@ -498,7 +489,7 @@ int lua_get_new_bounty_monster(int lev)
 	/* Undo the filters */
 	get_mon_num_hook = dungeon_aux;
 
-        return r_idx;
+	return r_idx;
 }
 
 #endif
@@ -506,9 +497,9 @@ int lua_get_new_bounty_monster(int lev)
 /* To do some connection magik ! */
 void remote_update_lua(int Ind, cptr file)
 {
-        player_type *p_ptr = Players[Ind];
+	player_type *p_ptr = Players[Ind];
 
-        remote_update(p_ptr->conn, file);
+	remote_update(p_ptr->conn, file);
 	return;
 }
 
@@ -522,7 +513,7 @@ void lua_add_anote(char *anote) {
 	int i;
 	bracer_ff(anote); /* allow colouring */
 	for (i = 0; i < MAX_ADMINNOTES; i++)
-	        if (!strcmp(admin_note[i], "")) break;
+		if (!strcmp(admin_note[i], "")) break;
 	if (i < MAX_ADMINNOTES) {
 		strcpy(admin_note[i], anote);
 		msg_broadcast_format(0, "\377s->MotD: %s", anote);
@@ -537,8 +528,8 @@ void lua_count_houses(int Ind) {
 	Players[Ind]->houses_owned = 0;
 	for (i = 0; i < num_houses; i++)
 		if ((houses[i].dna->owner_type==OT_PLAYER) &&
-    		    (houses[i].dna->owner == Players[Ind]->id))
-	    	    Players[Ind]->houses_owned++;
+		    (houses[i].dna->owner == Players[Ind]->id))
+		    Players[Ind]->houses_owned++;
 	return;
 }
 
@@ -546,7 +537,7 @@ void lua_count_houses(int Ind) {
 void lua_recalc_char(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i, j, min_value, max_value, min_value_king = 0, max_value_king = 9999;
-        int tries = 300;
+	int tries = 300;
 
 	/* Hitdice */
 	p_ptr->hitdie = p_ptr->rp_ptr->r_mhp + p_ptr->cp_ptr->c_mhp;
@@ -580,14 +571,12 @@ void lua_recalc_char(int Ind) {
 	p_ptr->player_hp[0] = p_ptr->hitdie;
 
 	/* Roll out the hitpoints */
-	while (--tries)
-	{
+	while (--tries) {
 		/* Roll the hitpoint values */
-		for (i = 1; i < PY_MAX_LEVEL; i++)
-		{
-//		        j = randint(p_ptr->hitdie);
-		        j = 2 + randint(p_ptr->hitdie - 4);
-		        p_ptr->player_hp[i] = p_ptr->player_hp[i-1] + j;
+		for (i = 1; i < PY_MAX_LEVEL; i++) {
+//			j = randint(p_ptr->hitdie);
+			j = 2 + randint(p_ptr->hitdie - 4);
+			p_ptr->player_hp[i] = p_ptr->player_hp[i-1] + j;
 		}
 		/* XXX Could also require acceptable "mid-level" hitpoints */
 
@@ -790,11 +779,9 @@ void lua_fix_spellbooks(int spell, int mod)
 
 #ifndef USE_MANG_HOUSE_ONLY
 	/* scan world (includes MAngband-style houses) */
-	for (i = 0; i < o_max; i++)
-	{
+	for (i = 0; i < o_max; i++) {
 		o_ptr = &o_list[i];
-		if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK && o_ptr->pval >= spell)
-		{
+		if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK && o_ptr->pval >= spell) {
 			o_ptr->pval += mod;
 		}
 	}
@@ -805,9 +792,9 @@ void lua_fix_spellbooks(int spell, int mod)
 		h_ptr = &houses[j];
 		for (i = 0; i < h_ptr->stock_num; i++) {
 			o_ptr = &h_ptr->stock[i];
-	                if(!o_ptr->k_idx) continue;
-			if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK && o_ptr->pval >= spell)
-			{
+			if (!o_ptr->k_idx) continue;
+			if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK
+			    && o_ptr->pval >= spell) {
 				o_ptr->pval += mod;
 			}
 		}
@@ -844,7 +831,7 @@ void lua_start_global_event(int Ind, int evtype, char *parm) {
 
 /* Fix items that were changed on updating the server. If Ind == 0 -> scan world/houses - C. Blue */
 void lua_apply_item_changes(int Ind, int changes) {
-        int i, j;
+	int i, j;
 	object_type *o_ptr;
 	house_type *h_ptr;
 
@@ -862,16 +849,16 @@ void lua_apply_item_changes(int Ind, int changes) {
 		}
 #endif
 		/* scan world (includes MAngband-style houses) */
-	        for(i = 0; i < o_max; i++) {
-    	        	o_ptr = &o_list[i];
-        	        if(!o_ptr->k_idx) continue;
+		for(i = 0; i < o_max; i++) {
+			o_ptr = &o_list[i];
+			if(!o_ptr->k_idx) continue;
 			lua_apply_item_changes_aux(o_ptr, changes);
-    		}
+		}
 	} else {
 		/* scan a player's inventory/equipment */
 		for (i = 0; i < INVEN_TOTAL; i++){
 			o_ptr = &Players[Ind]->inventory[i];
-    		        if(!o_ptr->k_idx) continue;
+			if (!o_ptr->k_idx) continue;
 			lua_apply_item_changes_aux(o_ptr, changes);
 		}
 	}
@@ -917,22 +904,21 @@ void lua_fix_equip_slots(int Ind) {
 			    p_ptr->inventory[i].tval == TV_RING)
 				continue;
 
-		    	bypass_inscrption = TRUE;
+			bypass_inscrption = TRUE;
 			inven_takeoff(Ind, i, 255);
 	}
 	bypass_inscrption = FALSE;
 
 	/* excise bugged zero-items */
 	/* (same as in do_cmd_refresh) */
-        /* Hack -- fix the inventory count */
-        p_ptr->inven_cnt = 0;
-        for (i = 0; i < INVEN_PACK; i++)
-        {
-                o_ptr = &p_ptr->inventory[i];
-                /* Skip empty items */
-                if (!o_ptr->k_idx || !o_ptr->tval) {
-	        	/* hack - make sure the item is really erased - had some bugs there
-		           since some code parts use k_idx, and some tval, to kill/test items - C. Blue */
+	/* Hack -- fix the inventory count */
+	p_ptr->inven_cnt = 0;
+	for (i = 0; i < INVEN_PACK; i++) {
+		o_ptr = &p_ptr->inventory[i];
+		/* Skip empty items */
+		if (!o_ptr->k_idx || !o_ptr->tval) {
+			/* hack - make sure the item is really erased - had some bugs there
+			   since some code parts use k_idx, and some tval, to kill/test items - C. Blue */
 			invwipe(o_ptr);
 			continue;
 		}
@@ -948,20 +934,20 @@ void lua_season_change(int s, int force) {
 /* added for changing seasons via lua cron_24h() - C. Blue */
 void lua_get_date(int *weekday, int *day, int *month, int *year)
 {
-        time_t		now;
-        struct tm	*tmp;
-        time(&now);
-        tmp = localtime(&now);
-        *weekday = tmp->tm_wday;
-        *day = tmp->tm_mday;
-        *month = tmp->tm_mon + 1;
-        *year = tmp->tm_mday;
+	time_t		now;
+	struct tm	*tmp;
+	time(&now);
+	tmp = localtime(&now);
+	*weekday = tmp->tm_wday;
+	*day = tmp->tm_mday;
+	*month = tmp->tm_mon + 1;
+	*year = tmp->tm_mday;
 }
 #endif
 
 /* for Player-Customizable Tomes feature - C. Blue */
 int get_inven_sval(int Ind, int inven_slot) {
-        return (Players[Ind]->inventory[inven_slot].sval);
+	return (Players[Ind]->inventory[inven_slot].sval);
 }
 int get_inven_xtra(int Ind, int inven_slot, int n) {
 	switch (n) {
@@ -983,43 +969,47 @@ void lua_fix_skill_chart(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i, j;
 
-        for (i = 1; i < MAX_SKILLS; i++)
-        	p_ptr->s_info[i].dev = FALSE;
-        for (i = 1; i < MAX_SKILLS; i++) {
+	for (i = 1; i < MAX_SKILLS; i++)
+		p_ptr->s_info[i].dev = FALSE;
+	for (i = 1; i < MAX_SKILLS; i++) {
 //		s32b value = 0, mod = 0;
-                /* Make sure all are touched */
-                p_ptr->s_info[i].touched = TRUE;
-//	        compute_skills(p_ptr, &value, &mod, i);
-//	        init_skill(p_ptr, value, mod, i);
+		/* Make sure all are touched */
+		p_ptr->s_info[i].touched = TRUE;
+//		compute_skills(p_ptr, &value, &mod, i);
+//		init_skill(p_ptr, value, mod, i);
 		/* pseudo-init-skill */
 #if 0 //SMOOTH_SKILLS
-	        if (s_info[i].flags1 & SKF1_HIDDEN) {
-		        p_ptr->s_info[i].hidden = TRUE;
-	        } else {
-	                p_ptr->s_info[i].hidden = FALSE;
-	        }
-	        if (s_info[i].flags1 & SKF1_DUMMY) {
-	                p_ptr->s_info[i].dummy = TRUE;
-	        } else {
-	                p_ptr->s_info[i].dummy = FALSE;
-	        }
+		if (s_info[i].flags1 & SKF1_HIDDEN) {
+			p_ptr->s_info[i].hidden = TRUE;
+		} else {
+			p_ptr->s_info[i].hidden = FALSE;
+		}
+		if (s_info[i].flags1 & SKF1_DUMMY) {
+			p_ptr->s_info[i].dummy = TRUE;
+		} else {
+			p_ptr->s_info[i].dummy = FALSE;
+		}
 #else
 		p_ptr->s_info[i].flags1 = (char)(s_info[i].flags1 & 0xFF);
 
 		/* hack: Rangers can train limited Archery skill */
 		if (p_ptr->pclass == CLASS_RANGER && i == SKILL_ARCHERY)
-		    p_ptr->s_info[i].flags1 |= SKF1_MAX_10;
+			p_ptr->s_info[i].flags1 |= SKF1_MAX_10;
+		/* hack: Druids/Vampires can't train Mimicry skill */
+		if ((p_ptr->pclass == CLASS_DRUID || p_ptr->prace == RACE_VAMPIRE)
+		    && i == SKILL_MIMIC)
+			p_ptr->s_info[i].flags1 |= SKF1_MAX_1;
 #endif
-                /* Develop only revelant branches */
-                if (p_ptr->s_info[i].value || p_ptr->s_info[i].mod) {
-                        j = s_info[i].father;
-                        while (j != -1) {
-                                p_ptr->s_info[j].dev = TRUE;
-                                j = s_info[j].father;
-                                if (j == 0) break;
-                        }
-                }
-        }
+		/* Develop only revelant branches */
+		if (p_ptr->s_info[i].value || p_ptr->s_info[i].mod) {
+			j = s_info[i].father;
+			while (j != -1) {
+				p_ptr->s_info[j].dev = TRUE;
+				j = s_info[j].father;
+				if (j == 0) break;
+			}
+		}
+	}
 
 	/* hack - fix SKILL_STANCE skill */
 	if (get_skill(p_ptr, SKILL_STANCE) && p_ptr->lev <= 50) {
@@ -1028,11 +1018,11 @@ void lua_fix_skill_chart(int Ind) {
 		Send_skill_info(Ind, SKILL_STANCE);
 		/* Also update the client's 'm' menu for fighting techniques */
 		calc_techniques(Ind);
-		Send_skill_info(Ind, SKILL_MASTERY);
+		Send_skill_info(Ind, SKILL_TECHNIQUE);
 	}
 
-        p_ptr->update |= PU_SKILL_INFO | PU_SKILL_MOD;
-        update_stuff(Ind);
+	p_ptr->update |= PU_SKILL_INFO | PU_SKILL_MOD;
+	update_stuff(Ind);
 }
 
 void lua_takeoff_costumes(int Ind) {
@@ -1048,4 +1038,19 @@ void lua_takeoff_costumes(int Ind) {
 
 bool lua_is_unique(int r_idx) {
 	if (r_info[r_idx].flags1 & RF1_UNIQUE) return TRUE; else return FALSE;
+}
+
+/* Return if a certain race/class combo could in theory learn a monster form if mimicry was high enough */
+bool lua_mimic_egligible(int Ind, int r_idx) {
+	if (Players[Ind]->prace == RACE_VAMPIRE) {
+		return (mimic_vampire(r_idx, Players[Ind]->lev));
+	}
+
+	if (Players[Ind]->pclass == CLASS_SHAMAN) {
+		return (mimic_shaman(r_idx));
+	} else if (Players[Ind]->pclass == CLASS_DRUID) {
+		return (mimic_druid(r_idx, Players[Ind]->lev));
+	}
+
+	return TRUE;
 }

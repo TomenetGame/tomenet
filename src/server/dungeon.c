@@ -585,6 +585,9 @@ static void regenhp(int Ind, int percent)
 
 	s32b        new_chp, new_chp_frac;
 	int                   old_chp;
+#ifdef TEST_SERVER
+	int freeze_test_heal = p_ptr->test_heal;
+#endif
 
 	/* Save the old hitpoints */
 	old_chp = p_ptr->chp;
@@ -606,6 +609,10 @@ static void regenhp(int Ind, int percent)
 	} else {
 		p_ptr->chp_frac = new_chp_frac;
 	}
+
+#ifdef TEST_SERVER
+	p_ptr->test_heal = freeze_test_heal;
+#endif
 }
 
 
@@ -1289,19 +1296,6 @@ void world_surface_day(struct worldpos *wpos) {
 		c_ptr->info |= CAVE_GLOW;
 		c_ptr->info &= ~CAVE_DARKEN;
 	}
-
-#if 0 //in process_day_and_night() instead
-	/* Update players' views */
-	for (i = 1; i <= NumPlayers; i++) {
-		/* Skip non-connected players */
-//		if (Players[i]->conn == NOT_CONNECTED) continue;
-		/* Skip players not in this sector */
-		if (!inarea(&Players[i]->wpos, wpos)) continue;
-
-		/* update his view */
-		player_day(i);
-	}
-#endif
 }
 
 /* turn an allocated wpos to dark night and update view of players on it */
@@ -1348,19 +1342,6 @@ void world_surface_night(struct worldpos *wpos) {
 			c_ptr->info |= CAVE_GLOW;
 		}
 	}
-
-#if 0 //in process_day_and_night() instead
-	/* Update players' views */
-	for (i = 1; i <= NumPlayers; i++) {
-		/* Skip non-connected players */
-//		if (Players[i]->conn == NOT_CONNECTED) continue;
-		/* Skip players not in this sector */
-		if (!inarea(&Players[i]->wpos, wpos)) continue;
-
-		/* update his view */
-		player_night(i);
-	}
-#endif
 }
 
 /* Day starts */
@@ -1888,14 +1869,14 @@ static int auto_retaliate(int Ind)
 				}
 				/* If it is a tie attack the higher level monster */
 				else if (m_ptr->hp * m_target_ptr->maxhp == m_target_ptr->hp * m_ptr->maxhp) {
-                                        if (r_ptr->level > r_ptr2->level) {
+					if (r_ptr->level > r_ptr2->level) {
 						prev_m_target_ptr = m_target_ptr;
 						m_target_ptr = m_ptr;
 						prev_target = target;
 						target = i;
 					}
 					/* If it is a tie attack the monster with less hit points */
-                                        else if (r_ptr->level == r_ptr2->level) {
+					else if (r_ptr->level == r_ptr2->level) {
 						if (m_ptr->hp < m_target_ptr->hp) {
 							prev_m_target_ptr = m_target_ptr;
 							m_target_ptr = m_ptr;
@@ -1964,159 +1945,15 @@ static int auto_retaliate(int Ind)
 			}
 		}
 	}
-	
-#if 0
-	/* This code is not so efficient when many monsters are on the floor..
-	 * However it can be 'recycled' for automatons in the future.	- Jir -
-	 */
-	/* Check each monster */
-	for (i = 1; i < m_max; i++) {
-		m_ptr = &m_list[i];
-
-		/* Paranoia -- Skip dead monsters */
-		if (!m_ptr->r_idx) continue;
-
-		/* Skip monsters that aren't at this depth */
-		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
-
-		/* Make sure that the player can see this monster */
-		if (!p_ptr->mon_vis[i]) continue;
-
-                if (p_ptr->id == m_ptr->owner) continue;
-
-		/* A monster is next to us */
-		if (distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) == 1)
-		{
-			/* Figure out if this is the best target so far */
-			if (m_target_ptr) {
-				/* If it is a Q, then make it our new target. */
-				/* We don't handle the case of choosing between two
-				 * Q's because if the player is standing next to two Q's
-				 * he deserves whatever punishment he gets.
-				 */
-                                if (race_inf(m_ptr)->d_char == 'Q') {
-					prev_m_target_ptr = m_target_ptr;
-					m_target_ptr = m_ptr;
-					prev_target = target;
-					target = i;
-				}
-				/* Otherwise if it is 20 levels higher than everything
-				 * else attack it.
-				 */
-                                else if ((race_inf(m_ptr)->level - 20) >=
-                                    R_INFO(m_target_ptr)->level) {
-					prev_m_target_ptr = m_target_ptr;
-					m_target_ptr = m_ptr;
-					prev_target = target;
-					target = i;
-				}
-				/* Otherwise if it is the most proportionatly wounded monster
-				 * attack it.
-				 */
-				else if (m_ptr->hp * m_target_ptr->maxhp < m_target_ptr->hp * m_ptr->maxhp) {
-					prev_m_target_ptr = m_target_ptr;
-					m_target_ptr = m_ptr;
-					prev_target = target;
-					target = i;
-				}
-				/* If it is a tie attack the higher level monster */
-				else if (m_ptr->hp * m_target_ptr->maxhp == m_target_ptr->hp * m_ptr->maxhp) {
-                                        if (race_inf(m_ptr)->level > R_INFO(m_target_ptr)->level) {
-						prev_m_target_ptr = m_target_ptr;
-						m_target_ptr = m_ptr;
-						prev_target = target;
-						target = i;
-					}
-					/* If it is a tie attack the monster with less hit points */
-                                        else if (race_inf(m_ptr)->level == R_INFO(m_target_ptr)->level) {
-						if (m_ptr->hp < m_target_ptr->hp) {
-							prev_m_target_ptr = m_target_ptr;
-							m_target_ptr = m_ptr;
-							prev_target = target;
-							target = i;
-						}
-					}
-				}
-			} else {
-				prev_m_target_ptr = m_target_ptr;
-				m_target_ptr = m_ptr;
-				prev_target = target;
-				target = i;
-			}
-		}
-	}
-
-	/* Check each player */
-	for (i = 1; i <= NumPlayers; i++) {
-		q_ptr = Players[i];
-
-		/* Skip non-connected players */
-		if (q_ptr->conn == NOT_CONNECTED) continue;
-
-		/* Skip players not at this depth */
-		if(!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
-
-		/* Skip ourselves */
-		if (Ind == i) continue;
-
-		/* Skip players we aren't hostile to */
-		if (!check_hostile(Ind, i)) continue;
-
-		/* Skip players we cannot see */
-		if (!p_ptr->play_vis[i]) continue;
-
-		/* A hostile player is next to us */
-		if (distance(p_ptr->py, p_ptr->px, q_ptr->py, q_ptr->px) == 1) {
-			/* Figure out if this is the best target so far */
-			if (p_target_ptr) {
-				/* If we are 15 levels over the old target, make this
-				 * player our new target.
-				 */
-				if ((q_ptr->lev - 15) >= p_target_ptr->lev) {
-					prev_p_target_ptr = p_target_ptr;
-					p_target_ptr = q_ptr;
-					prev_target = target;
-					target = -i;
-				}
-				/* Otherwise attack this player if he is more proportionatly
-				 * wounded than our old target.
-				 */
-				else if (q_ptr->chp * p_target_ptr->mhp < p_target_ptr->chp * q_ptr->mhp) {
-					prev_p_target_ptr = p_target_ptr;
-					p_target_ptr = q_ptr;
-					prev_target = target;
-					target = -i;
-				}
-				/* If it is a tie attack the higher level player */
-				else if (q_ptr->chp * p_target_ptr->mhp == p_target_ptr->chp * q_ptr->mhp) {
-					if (q_ptr->lev > p_target_ptr->lev) {
-						prev_p_target_ptr = p_target_ptr;
-						p_target_ptr = q_ptr;
-						prev_target = target;
-						target = -i;
-					}
-					/* If it is a tie attack the player with less hit points */
-					else if (q_ptr->lev == p_target_ptr->lev) {
-						if (q_ptr->chp < p_target_ptr->chp) {
-							prev_p_target_ptr = p_target_ptr;
-							p_target_ptr = q_ptr;
-							prev_target = target;
-							target = -i;
-						}
-					}
-				}
-			} else {
-				prev_p_target_ptr = p_target_ptr;
-				p_target_ptr = q_ptr;
-				prev_target = target;
-				target = -i;
-			}
-		}
-	}
-#endif	// 0
 
 	/* Nothing to attack */
-	if (!p_target_ptr && !m_target_ptr) return 0;
+	if (!p_target_ptr && !m_target_ptr) {
+		/* Hack: If we don't have a 'continuous attack' ie are out of
+		   adjacent targets, which just happened here, stop 'piercing' attacks */
+		if (p_ptr->piercing && !p_ptr->piercing_charged) p_ptr->piercing = 0;
+
+		return 0;
+	}
 
 	/* Pick an item with {@O} inscription */
 	for (i = 0; i < INVEN_TOTAL; i++) {
@@ -2261,7 +2098,7 @@ static void process_player_begin(int Ind)
 	/* for AT_VALINOR: */
 	int i, x, y, xstart = 0, ystart = 0, ox, oy;
 	dungeon_type *d_ptr;
-        cave_type **zcave;
+	cave_type **zcave;
 	dun_level *l_ptr;
 
 	p_ptr->heal_turn_20 +=  p_ptr->heal_turn[0] - p_ptr->heal_turn[20];
@@ -2286,7 +2123,7 @@ static void process_player_begin(int Ind)
 	case AT_VALINOR: /* allocate Valinor; recall player there */
 #if 0
 		if (players_on_depth(wpos) && !getcave(wpos)) {
-		    	/* Allocate space for it */
+			/* Allocate space for it */
 			alloc_dungeon_level(wpos);
 			/* Generate a dungeon level there */
 			generate_cave(wpos, p_ptr);
@@ -2298,11 +2135,11 @@ static void process_player_begin(int Ind)
 		for (y = 0; y < MAX_WILD_Y; y++) {
 			for (x = 0; x < MAX_WILD_X; x++) {
 				if ((d_ptr = wild_info[y][x].tower) && (!strcmp(d_name + d_info[d_ptr->type].name, "The Shores of Valinor"))) {
-				        p_ptr->recall_pos.wx = x;
-			    		p_ptr->recall_pos.wy = y;
+					p_ptr->recall_pos.wx = x;
+					p_ptr->recall_pos.wy = y;
 					p_ptr->recall_pos.wz = 1;
-				        p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
-				        recall_player(Ind, "");
+					p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+					recall_player(Ind, "");
 					break;
 				}
 				if ((d_ptr = wild_info[y][x].dungeon) && (!strcmp(d_name + d_info[d_ptr->type].name, "The Shores of Valinor"))) {
@@ -2320,8 +2157,8 @@ static void process_player_begin(int Ind)
 		break;
 #endif
 	case AT_VALINOR2: /* (re-)generate Valinor from scratch; move player into position; lite it up for the show; place 'monsters' */
-	        zcave = getcave(&p_ptr->wpos);
-                l_ptr = getfloor(&p_ptr->wpos);
+		zcave = getcave(&p_ptr->wpos);
+		l_ptr = getfloor(&p_ptr->wpos);
 		/* Get rid of annoying level flags */
 		l_ptr->flags1 &= ~(LF1_NO_MAP | LF1_NO_MAGIC_MAP);
 		for (y = 0; y < MAX_HGT; y++) {
@@ -2330,8 +2167,8 @@ static void process_player_begin(int Ind)
 			}
 		}
 		/* Wipe any monsters/objects */
-                wipe_o_list_safely(&p_ptr->wpos);
-                wipe_m_list(&p_ptr->wpos);
+		wipe_o_list_safely(&p_ptr->wpos);
+		wipe_m_list(&p_ptr->wpos);
 		/* Regenerate the level from fixed layout */
 		process_dungeon_file("t_valinor.txt", &p_ptr->wpos, &ystart, &xstart, 21, 67, TRUE);
 		for (x = 0; x <= 65; x++) zcave[21][x].feat = FEAT_GLIT_WATER;
@@ -2406,8 +2243,7 @@ static void process_player_begin(int Ind)
 		p_ptr->energy = (level_speed(&p_ptr->wpos) * 2) - 1;
 
 	/* Check "resting" status */
-	if (p_ptr->resting)
-	{
+	if (p_ptr->resting) {
 		/* No energy availiable while resting */
 		// This prevents us from instantly waking up.
 		p_ptr->energy = 0;
@@ -2571,6 +2407,15 @@ void recall_player(int Ind, char *message){
 
 	/* cancel any user recalls */
 	p_ptr->word_recall = 0;
+
+	/* Did we really make it through all (99?) floors of the ironman challenge dungeon? */
+	if (old_wpos.wx == WPOS_IRONDEEPDIVE_X &&
+	    old_wpos.wy == WPOS_IRONDEEPDIVE_Y &&
+	    old_wpos.wz != 0
+	    && !is_admin(p_ptr)) {
+		msg_broadcast_format(0, "\374\377L***\377a%s made it through the Ironman Deep Dive challenge!\377L***", p_ptr->name);
+		l_printf("%s \\{U%s (%d) made it through the Ironman Deep Dive challenge\n", showdate(), p_ptr->name, p_ptr->lev);
+	}
 }
 
 
@@ -3044,7 +2889,7 @@ static bool process_player_end_aux(int Ind)
 		/* Digest normally */
 		if (p_ptr->food < PY_FOOD_MAX) {
 			/* Every 50/6 level turns */
-//		        if (!(turn%((level_speed((&p_ptr->wpos))*10)/12)))
+//			if (!(turn%((level_speed((&p_ptr->wpos))*10)/12)))
 			if (!(turn % ((level_speed((&p_ptr->wpos)) / 12) * 10))) {
 				/* Basic digestion rate based on speed */
 //				i = extract_energy[p_ptr->pspeed]*2;	// 1.3 (let them starve)
@@ -3059,15 +2904,15 @@ static bool process_player_end_aux(int Ind)
 				/* Regeneration takes more food */
 				if (p_ptr->regenerate) i += 30;
 
-                                /* Regeneration takes more food */
-                                if (p_ptr->tim_regen) i += p_ptr->tim_regen_pow / 10;
+				/* Regeneration takes more food */
+				if (p_ptr->tim_regen) i += p_ptr->tim_regen_pow / 10;
 
 				/* DragonRider and Half-Troll take more food */
 				if (p_ptr->prace == RACE_DRIDER
 						|| p_ptr->prace == RACE_HALF_TROLL) i += 15;
 
-                                /* Vampires consume food very quickly */
-                                if (p_ptr->prace == RACE_VAMPIRE) i += 20;
+				/* Vampires consume food very quickly */
+				if (p_ptr->prace == RACE_VAMPIRE) i += 20;
 
 				/* Invisibility consume a lot of food */
 				i += p_ptr->invis / 2;
@@ -3213,9 +3058,7 @@ static bool process_player_end_aux(int Ind)
 	/* Disturb if we are done resting */
 	if ((p_ptr->resting) && (p_ptr->chp == p_ptr->mhp) && (p_ptr->csp == p_ptr->msp) && (p_ptr->cst == p_ptr->mst)
 	    && !(p_ptr->prace == RACE_ENT && p_ptr->food < PY_FOOD_FULL))
-	{
 		disturb(Ind, 0, 0);
-	}
 
 	/* Finally, at the end of our turn, update certain counters. */
 	/*** Timeout Various Things ***/
@@ -3302,12 +3145,6 @@ static bool process_player_end_aux(int Ind)
 			zcave[jy][jx].info |= CAVE_STCK;
 		}
 	}
-#if 0	// moved to process_player_change_wpos
-	if(!p_ptr->wpos.wz && p_ptr->tim_susp){
-		imprison(Ind, 0, "old crimes");
-		return;
-	}
-#endif	// 0
 
 	/* Hack -- Tunnel */
 #if 0	// not used
@@ -3421,12 +3258,8 @@ static bool process_player_end_aux(int Ind)
 
 	if (p_ptr->cloak_neutralized) p_ptr->cloak_neutralized--;
 	if (p_ptr->cloaked > 1) {
-#if 0 /* done in un_afk_idle now */
-		if (!p_ptr->idle_char) stop_cloaking(Ind); /* stop preparations if we perform any action */
-		else
-#endif
 		if (--p_ptr->cloaked == 1) {
-			msg_print(Ind, "\377sYou cloaked your appearance!");
+			msg_print(Ind, "\377DYou cloaked your appearance!");
 			msg_format_near(Ind, "\377w%s disappears before your eyes!", p_ptr->name);
 			p_ptr->update |= (PU_BONUS | PU_MONSTERS);
 			p_ptr->redraw |= (PR_STATE | PR_SPEED);
@@ -3573,14 +3406,6 @@ static bool process_player_end_aux(int Ind)
 		/* Apply some healing */
 		//(void)set_stun(Ind, p_ptr->stun - adjust - minus_health * 2);
 		(void)set_stun(Ind, p_ptr->stun - (adjust + minus_health) * (minus_health + 1));
-#endif
-#if 0
-		int adjust = minus + minus_combat;
-		if (get_skill(p_ptr, SKILL_HCURING) >= 40) adjust++; /* '*= 2' would be a bit too fast w/ max combat I think */
-#endif
-#if 0
-		int adjust = minus + minus_combat / 2 + ((minus_combat == 1 || minus_combat == 3) && magik(50) ? 1 : 0);
-		if (get_skill(p_ptr, SKILL_HCURING) >= 40) adjust++;
 #endif
 		int adjust = minus + get_skill_scale_fine(p_ptr, SKILL_COMBAT, 2);
 //		if (get_skill(p_ptr, SKILL_HCURING) >= 40) adjust = (adjust * 5) / 3;
@@ -3787,13 +3612,23 @@ static bool process_player_end_aux(int Ind)
 		/* Moltor is right, exp drain was too weak for up to quite high levels. Need to make a new formula.. */
 	{
 		long exploss = 1 + p_ptr->lev + p_ptr->max_exp / 2000L;
+
+		/* Reduce exploss the more difficult it is for a race/class combination
+		   to aquire exp, ie depending on the character's exp% penalty.
+		   Otherwise wearing rings of power on Draconian or Maiar becomes quite harsh,
+		   and might require special strategies to counter such as taking ood U pits. */
+		exploss = (exploss * 120L) / (50 + p_ptr->expfact / 2);
+
+		/* Cap it against level thresholds */
 #ifdef ALT_EXPRATIO
 		if ((p_ptr->lev >= 2) && (player_exp[p_ptr->lev - 2] > p_ptr->exp - exploss))
 			exploss = p_ptr->exp - player_exp[p_ptr->lev - 2];
 #else
-		if ((p_ptr->lev >= 2) && ((((s64b)player_exp[p_ptr->lev - 2]) * ((s64b)p_ptr->exp_fact)) / 100L > p_ptr->exp - exploss))
+		if ((p_ptr->lev >= 2) && ((((s64b)player_exp[p_ptr->lev - 2]) * ((s64b)p_ptr->expfact)) / 100L > p_ptr->exp - exploss))
 			exploss = p_ptr->exp - player_exp[p_ptr->lev - 2];
 #endif
+
+		/* Drain it! */
 		if (exploss > 0) take_xp_hit(Ind, exploss, "Draining", TRUE, FALSE);
 	}
 
@@ -3833,43 +3668,13 @@ static bool process_player_end_aux(int Ind)
 	/* Handle experience draining.  In Oangband, the effect
 	 * is worse, especially for high-level characters.
 	 * As per Tolkien, hobbits are resistant.
-	 */ 
+	 */
 	if ((p_ptr->black_breath || p_ptr->black_breath_tmp) &&
 	    rand_int((get_skill(p_ptr, SKILL_HCURING) >= 50) ? 250 : 150) < (p_ptr->prace == RACE_HOBBIT ? 2 : 5))
 	{
 		(void)do_dec_stat_time(Ind, rand_int(6), STAT_DEC_NORMAL, 25, 0, TRUE);
 		take_xp_hit(Ind, 1 + p_ptr->lev * 3 + p_ptr->max_exp / 5000L,
-				"Black Breath", TRUE, TRUE);
-#if 0
-		byte chance = (p_ptr->prace == RACE_HOBBIT) ? 2 : 5;
-		int plev = p_ptr->lev;
-
-		//                if (PRACE_FLAG(PR1_RESIST_BLACK_BREATH)) chance = 2;
-
-		//                if ((rand_int(100) < chance) && (p_ptr->exp > 0))
-		/* Toned down a little, considering it's realtime. */
-		if ((rand_int(200) < chance))
-			take_xp_hit(Ind, 1 + plev / 5 + p_ptr->max_exp / 10000L,
-					"Black Breath", TRUE, TRUE);
-		{
-			int reduce = 1 + plev / 5 + p_ptr->max_exp / 10000L;
-			p_ptr->exp -= reduce;
-			p_ptr->max_exp -= reduce;
-			//                        (void)do_dec_stat(Ind, randint(6)+1, STAT_DEC_NORMAL);
-			(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
-			check_experience(Ind);
-
-			/* Now you can die from this :) */
-			if (p_ptr->exp < 1 && !p_ptr->ghost)
-			{
-				p_ptr->chp=-3;
-				strcpy(p_ptr->died_from, "Black Breath");
-				strcpy(p_ptr->really_died_from, "Black Breath");
-				p_ptr->deathblow = 0;
-				player_death(Ind);
-			}
-		}
-#endif	// 0
+		    "Black Breath", TRUE, TRUE);
 	}
 
 	/* Drain Mana */
@@ -3890,15 +3695,6 @@ static bool process_player_end_aux(int Ind)
 	if (p_ptr->drain_life) {
 		int drain = p_ptr->drain_life * (rand_int(p_ptr->mhp / 100) + 1);
 		take_hit(Ind, drain < p_ptr->chp ? drain : p_ptr->chp, "life draining", 0);
-#if 0
-		p_ptr->chp -= (drain < p_ptr->chp ? drain : p_ptr->chp);
-
-		/* Redraw */
-		p_ptr->redraw |= (PR_HP);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_PLAYER);
-#endif	// 0
 	}
 
 	/* Note changes */
@@ -4005,9 +3801,10 @@ static bool process_player_end_aux(int Ind)
 				bool bye = FALSE;
 
 				for (j = 1; j < NumPlayers + 1; j++) {
-					q_ptr = Players[j];
 					if (Ind == j) continue;
-					if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue; 
+					if (admin_p(Ind)) continue;
+					q_ptr = Players[j];
+					if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 					if (q_ptr->afk) continue;
 
 					bye = TRUE;
@@ -4997,11 +4794,11 @@ static void process_various(void)
 			x = rand_range(1, MAX_WID - 1);
 
 			/* Acquire pointer */
-#ifdef NEW_DUNGEON
+ #ifdef NEW_DUNGEON
 			c_ptr = &zcave[0][y][x];
-#else
+ #else
 			c_ptr = &cave[0][y][x];
-#endif
+ #endif
 
 			/* Only allow "dirt" */
 			if (c_ptr->feat != FEAT_DIRT) continue;
@@ -5183,20 +4980,6 @@ static void process_player_change_wpos(int Ind)
 			p_ptr->pvp_prevent_tele = 0;
 			p_ptr->redraw |= PR_DEPTH;
 		}
-
-#if 0 //now in player_day/player_night
-		/* Memorize the town for this player if interesting */
-		for (y = 0; y < MAX_HGT; y++) {
-			for (x = 0; x < MAX_WID; x++) {
-				w_ptr = &p_ptr->cave_flag[y][x];
-				c_ptr = &zcave[y][x];
-
-				/* Memorize if "interesting" */
-				if (!cave_plain_floor_grid(c_ptr) || c_ptr->info & CAVE_ROOM)
-					*w_ptr |= CAVE_MARK;
-			}
-		}
-#endif
 	} else if (wpos->wz) {
 #if 1
 		/* Hack -- tricky formula, but needed */
@@ -5526,20 +5309,13 @@ static void process_player_change_wpos(int Ind)
 		s_printf("warning_lite: %s\n", p_ptr->name);
 	}
 
-	/* Did we enter a no-tele vault? */
-        if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) {
-		msg_print(Ind, "\377DThe air in here feels very still.");
-		p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
-	}
-
 	/* Hack -- jail her/him */
-	if(!p_ptr->wpos.wz && p_ptr->tim_susp){
+	if (!p_ptr->wpos.wz && p_ptr->tim_susp)
 		imprison(Ind, 0, "old crimes");
-	}
-	
+
 	/* daylight problems for vampires */
 	if (!p_ptr->wpos.wz && p_ptr->prace == RACE_VAMPIRE) calc_boni(Ind);
-	
+
 	/* moved here, since it simplifies the wpos-changing process and
 	   should keep it highly consistent and linear.
 	   Note: Basically every case that sets p_ptr->new_level_flag = TRUE
@@ -5601,8 +5377,16 @@ static void process_player_change_wpos(int Ind)
 	/* If he found a town in the dungeon, map it as much as a normal town would be at night */
 	if (l_ptr && (l_ptr->flags1 & LF1_DUNGEON_TOWN)) player_dungeontown(Ind);
 
+	/* Did we enter a no-tele vault? */
+	if (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) {
+		msg_print(Ind, "\377DThe air in here feels very still.");
+		p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
+		/* New: Have bgm indicate no-tele too! (done below in handle_music()) */
+	}
+
 #ifdef USE_SOUND_2010
-	p_ptr->music_monster = -1; //clear boss-specific music
+	/* clear boss/floor-specific music */
+	p_ptr->music_monster = -1;
 	handle_music(Ind);
 #endif
 }
@@ -6265,7 +6049,7 @@ void play_game(bool new_game) {
 		/* Actually generate the town */
 		generate_cave(&twpos, NULL);
 	}
-	
+
 	/* Finish initializing dungeon monsters */
 	setup_monsters();
 

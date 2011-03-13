@@ -502,6 +502,7 @@ struct monster_race
 {
 	u16b name;				/* Name (offset) */
 	u16b text;				/* Text (offset) */
+	u16b dup_idx;				/* For mimicry: Race idx of duplicate that differs only in FRIENDS flag */
 
 	u16b hdice;				/* Creatures hit dice count */
 	u16b hside;				/* Creatures hit dice sides */
@@ -538,7 +539,7 @@ struct monster_race
 
 	byte body_parts[BODY_MAX];	/* To help to decide what to use when body changing */
 
-	s16b level;				/* Level of creature */
+	s16b level;			/* Level of creature */
 	byte rarity;			/* Rarity of creature */
 
 
@@ -566,7 +567,7 @@ struct monster_race
 
 	/*byte r_xtra1;			changed to time for japanese patch APD Something (unused)
 	  byte r_xtra2;                    Something (unused) */
-	  
+
 	byte r_drop_gold;		/* Max number of gold dropped at once */
 	byte r_drop_item;		/* Max number of item dropped at once */
 
@@ -591,7 +592,7 @@ struct monster_race
 #endif
 
 	obj_theme drops;		/* The drops type */
-	
+
 	int u_idx;			/* Counter for sorted unique positioning */
 };
 
@@ -1349,6 +1350,8 @@ struct dun_level
 	char *uniques_killed;
 
 	cave_type **cave;	/* Leave this the last entry (for aesthetic reason) */
+
+	int fake_town_num;	/* for dungeon stores: which town we abuse the stores from */
 };
 
 /* dungeon_type structure
@@ -1391,6 +1394,8 @@ struct town_type
 	u16b terraformed_walls; /* keep track of and limit players modifying town layout */
 	u16b terraformed_water; /* keep track of and limit players modifying town layout */
 	u16b terraformed_glyphs; /* keep track of and limit players modifying town layout */
+
+	u32b dlev_id; /* for dungeon towns, abusing fake stores from real towns */
 };
 
 typedef struct wilderness_type wilderness_type;
@@ -1910,7 +1915,7 @@ struct skill_player
 #define ACC_VRESTRICTED	0x00000020	/* is restricted (ie after cheating) */
 #define ACC_PRIVILEGED	0x00000040	/* has privileged powers (ie for running quests) */
 #define ACC_VPRIVILEGED	0x00000080	/* has privileged powers (ie for running quests) */
-#define ACC_PVP		0x00000100		/* may kill other players */
+#define ACC_PVP		0x00000100	/* may kill other players */
 #define ACC_NOPVP	0x00000200	/* is not able to kill other players */
 #define ACC_ANOPVP	0x00000400	/* cannot kill other players; gets punished on trying */
 #define ACC_GREETED	0x00000800	/* This player has received a one-time greeting. */
@@ -1918,6 +1923,7 @@ struct skill_player
 #define ACC_VQUIET	0x00002000	/* may not chat or emote, be it public or private */
 #define ACC_BANNED	0x00004000	/* account is temporarily suspended */
 #define ACC_DELD	0x00008000	/* Delete account/members */
+#define ACC_WARN_SALE	0x40000000	/* 'Warn' that he has sold items in a player store */
 #define ACC_WARN_REST	0x80000000	/* Received a one-time warning about resting */
 /*
  * new account struct - pass in player_type will be removed
@@ -2064,14 +2070,14 @@ struct player_type
 	byte pclass;		/* Class index */
 	byte ptrait;
 	byte male;			/* Sex of character */
-        byte oops;			/* Unused */
+	byte oops;			/* Unused */
 
-        skill_player s_info[MAX_SKILLS]; /* Player skills */
-        s16b skill_points;      /* number of skills assignable */
+	skill_player s_info[MAX_SKILLS]; /* Player skills */
+	s16b skill_points;      /* number of skills assignable */
 
-        /* Copies for /undoskills - mikaelh */
-        skill_player s_info_old[MAX_SKILLS]; /* Player skills */
-        s16b skill_points_old;  /* number of skills assignable */
+	/* Copies for /undoskills - mikaelh */
+	skill_player s_info_old[MAX_SKILLS]; /* Player skills */
+	s16b skill_points_old;  /* number of skills assignable */
 	bool reskill_possible;
 	
 	s16b class_extra;	/* Class extra info */
@@ -2440,9 +2446,9 @@ struct player_type
 	s16b brand; 	/* Timed -- Weapon Branding */
 	byte brand_t; 	/* Timed -- Weapon Branding */
 	s16b brand_d; 	/* Timed -- Weapon Branding */
-        s16b prob_travel;       /* Timed -- Probability travel */
-        s16b st_anchor;         /* Timed -- Space/Time Anchor */
-        s16b tim_esp;           /* Timed -- ESP */
+	s16b prob_travel;       /* Timed -- Probability travel */
+	s16b st_anchor;         /* Timed -- Space/Time Anchor */
+	s16b tim_esp;           /* Timed -- ESP */
 	s16b adrenaline;
 	s16b biofeedback;
 	s16b mindboost;
@@ -2532,10 +2538,10 @@ struct player_type
 	bool immune_fire;	/* Immunity to fire */
 	bool immune_cold;	/* Immunity to cold */
 
-        s16b reduc_fire;        /* Fire damage reduction */
-        s16b reduc_elec;        /* elec damage reduction */
-        s16b reduc_acid;        /* acid damage reduction */
-        s16b reduc_cold;        /* cold damage reduction */
+	s16b reduc_fire;        /* Fire damage reduction */
+	s16b reduc_elec;        /* elec damage reduction */
+	s16b reduc_acid;        /* acid damage reduction */
+	s16b reduc_cold;        /* cold damage reduction */
 
 	bool resist_acid;	/* Resist acid */
 	bool resist_elec;	/* Resist lightning */
@@ -2585,7 +2591,7 @@ struct player_type
 	bool impact;		/* Earthquake blows */
         bool auto_id; /* Pickup = Id */
 	bool reduce_insanity;	/* For mimic forms with weird/empty mind */
-	
+
 	s16b invis;		/* Invisibility */
 
 	s16b dis_to_h;		/* Known bonus to hit */
@@ -2754,17 +2760,17 @@ struct player_type
 	s16b melkor_sacrifice;          /* How much hp has been sacrified for damage */
 #endif	/* 0 */
 
-        byte spell_project;             /* Do the spells(some) affect nearby party members ? */
+	byte spell_project;             /* Do the spells(some) affect nearby party members ? */
 
-        /* Special powers */
-        s16b powers[MAX_POWERS];        /* What powers do we possess? */
-        s16b power_num;                 /* How many */
+	/* Special powers */
+	s16b powers[MAX_POWERS];        /* What powers do we possess? */
+	s16b power_num;                 /* How many */
 
 	/* evileye games */
 	s16b team;			/* what team */
 
 	/* Moltor's arcade crap */
-        int arc_a, arc_b, arc_c, arc_d, arc_e, arc_f, arc_g, arc_h, arc_i, arc_j, arc_k, arc_l;
+	int arc_a, arc_b, arc_c, arc_d, arc_e, arc_f, arc_g, arc_h, arc_i, arc_j, arc_k, arc_l;
 	char firedir; 
 	char game;
 	int gametime;
@@ -2773,7 +2779,7 @@ struct player_type
 
 	/* C. Blue - was the last shutdown a panic save? */
 	bool panic;
-	
+
 	/* Anti-cheeze */
 	s16b supported_by;		/* level of the highest supporter */
 	s16b support_timer;		/* safe maximum possible duration of the support spells */
@@ -2799,7 +2805,7 @@ struct player_type
 	bool auto_retaliating;
 	bool auto_retaliaty; /* TRUE for code-wise duration of autorataliation
 				actions, to prevent going un-AFK from them! */
-	
+
 	/* Global events participant? */
 	int global_event_type[MAX_GLOBAL_EVENTS]; /* 0 means 'not participating' */
 	time_t global_event_signup[MAX_GLOBAL_EVENTS];
@@ -2849,7 +2855,7 @@ struct player_type
 	int shoot_till_kill_book, shoot_till_kill_spell;
 	bool shadow_running;
 	bool dual_mode; /* for dual-wield: TRUE = dual-mode, FALSE = main-hand-mode */
-	
+
 #ifdef ENABLE_RCRAFT
 	/* Last attack spell cast for ftk mode */
 	u32b shoot_till_kill_rune_spell;
@@ -2870,7 +2876,7 @@ struct player_type
 	u32b heal_turn_20, heal_turn_10, heal_turn_5;
 	int dam_turn[20 + 1]; /* records the amount of damage the player dealt for each of 20 consecutive turns */
 	u32b dam_turn_20, dam_turn_10, dam_turn_5;
-	
+
 	/* for PvP mode: keep track of kills/progress for adding a reward or something - C. Blue */
 	int kills, kills_lower, kills_higher, kills_equal, kills_own;
 	int free_mimic, pvp_prevent_tele, pvp_prevent_phase;
@@ -2889,12 +2895,12 @@ struct player_type
 	bool sun_burn;		/* Player is vampire, currently burning in the sun? */
 
 	/* server-side animation timing flags */
-	bool invis_phase; /* for invisible players who flicker towards others */
+	int invis_phase; /* for invisible players who flicker towards others */
 //not needed!	int colour_phase; /* for mimics mimicking multi-coloured stuff */
 
 	/* for hunting down bots generating exp by opening and magelocking doors */
 	u32b silly_door_exp;
-	
+
 #if (MAX_PING_RECVS_LOGGED > 0)
 	/* list of ping reception times */
 	struct timeval pings_received[MAX_PING_RECVS_LOGGED];
@@ -2907,7 +2913,7 @@ struct player_type
 	int admin_godly_strike, admin_set_defeat;
 
 #ifdef TEST_SERVER
-	u32b test_count, test_dam;
+	u32b test_count, test_dam, test_heal;
 #endif
 
 	/* give players certain warnings, meant to guide newbies along, and remember
@@ -2922,7 +2928,7 @@ struct player_type
 	char warning_ghost, warning_autoret, warning_autoret_ok;
 	char warning_ma_weapon, warning_ma_shield;
 	char warning_technique_melee, warning_technique_ranged;
-	char warning_hungry;
+	char warning_hungry, warning_autopickup, warning_ranged_autoret;
 	/* note: a sort of "warning_skills" is already implemented, in a different manner */
 
 #ifdef USE_SOUND_2010
@@ -2937,8 +2943,14 @@ struct player_type
 
 	/* Stuff for new SPECIAL stores and PKT_REQUEST_...;
 	   could also be used for quests and neutral monsters. - C. Blue */
+	int store_action; /* What the player is currently doing in a store */
 	int request_id, request_type; /* to keep track of PKT_REQUEST_... requests */
 	char go_level, go_sublevel; /* For playing Go */
+
+	char reply_name[MAX_CHARS]; /* last player who sent us a private message, for replying */
+
+	int piercing; /* Rogue skill 'assassinate' */
+	bool piercing_charged;
 };
 
 /* For Monk martial arts */
