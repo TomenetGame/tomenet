@@ -1,4 +1,4 @@
--- $Id$
+-- $Id: player-info.lua,v 1.18 2007/12/28 16:44:42 cblue Exp $
 
 --
 -- simple scripts to examine/modify players' status.

@@ -60,6 +60,7 @@ function allrec()
     local p = 0
     for p = 1, NumPlayers do
 	if players(p).wpos.wz ~= 0 then
+	    players(p).recall_pos.wz = 0;
 	    recall_player(p, "")
 	end
     end
@@ -878,14 +879,18 @@ function mf(name, minlev, maxlev)
 	    if k >= n and k >= 1 then
 		if n >= 80 then
 		    msg_print(Ind, "\255v"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
-		elseif n >= 65 then
+		elseif n >= 70 then
+		    msg_print(Ind, "\255R"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
+		elseif n >= 60 then
 		    msg_print(Ind, "\255r"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
 		elseif n >= 50 then
 		    msg_print(Ind, "\255o"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
-		elseif n >= 30 then
+		elseif n >= 40 then
 		    msg_print(Ind, "\255y"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
-		elseif n > 0 then
+		elseif n >= 30 then
 		    msg_print(Ind, "\255w"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
+		elseif n > 0 then
+		    msg_print(Ind, "\255s"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
 		else
 		    msg_print(Ind, "\255D"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
 		end
@@ -895,30 +900,44 @@ function mf(name, minlev, maxlev)
 end
 --displays forms affected by specified form-learning progress */
 function mfp(name, minlev, progress)
-    local i, k, n, p
+    local i, k, n, p, str
 --    if maxlev == nil then maxlev = 127 end
     p = ind_loose(name)
     if (p == -1) then return -1 end
     msg_print(Ind, "scanning "..MAX_R_IDX.." forms.")
     for i = 1, MAX_R_IDX - 1 do
-	n = lua_get_mon_lev(i)
-	k = players(p).r_killed[i + 1]
---        if n >= minlev and n <= maxlev and lua_is_unique(i) == 0 then
-        if n >= minlev and k >= progress and k < n and lua_is_unique(i) == 0 then
---        if k >= progress and k < n and lua_is_unique(i) == 0 then
+	if lua_mimic_egligible(p, i) == TRUE then
+	    n = lua_get_mon_lev(i)
+	    k = players(p).r_killed[i + 1]
+--	if n >= minlev and n <= maxlev and lua_is_unique(i) == 0 then
+--	if k >= progress and k < n and lua_is_unique(i) == 0 then
+--	if n >= minlev and k >= progress and k < n and lua_is_unique(i) == 0 then
+	    if n >= minlev and k >= progress and lua_is_unique(i) == 0 then
 		if n >= 80 then
-		    msg_print(Ind, "\255v"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
-		elseif n >= 65 then
-		    msg_print(Ind, "\255r"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
+		    str = "\255v"
+		elseif n >= 70 then
+		    str = "\255R"
+		elseif n >= 60 then
+		    str = "\255r"
 		elseif n >= 50 then
-		    msg_print(Ind, "\255o"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
+		    str = "\255o"
+		elseif n >= 40 then
+		    str = "\255y"
 		elseif n >= 30 then
-		    msg_print(Ind, "\255y"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
+		    str = "\255w"
 		elseif n > 0 then
-		    msg_print(Ind, "\255w"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
+		    str = "\255s"
 		else
-		    msg_print(Ind, "\255D"..n.."\255W ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
+		    str = "\255D"
 		end
+		str = str..n
+		if (k < n) then
+		    str = str.."\255W"
+		else
+		    str = str.."\255D"
+		end
+		msg_print(Ind, str.." ("..i..") "..lua_get_mon_name(i)..": "..k.."/"..n)
+	    end
 	end
     end
 end
@@ -1201,6 +1220,7 @@ function wrec(name, x, y)
     players(i).recall_pos.wz = 0;
 -- let's try LEVEL_OUTSIDE_RAND (5) instead of LEVEL_OUTSIDE (4) - C. Blue :)
     players(i).new_level_method = 5;
+    msg_print(i, "\255yA magical gust of wind lifts you up and carries you away!");
     recall_player(i, "");
 end
 
@@ -1212,6 +1232,7 @@ function rec(name)
     players(i).recall_pos.wz = 0;
 -- 7 = LEVEL_RECALL_UP, 8 = LEVEL_RECALL_DOWN
     players(i).new_level_method = 7;
+    msg_print(i, "\255yA strong magical force carries you away!");
     recall_player(i, "");
 end
 

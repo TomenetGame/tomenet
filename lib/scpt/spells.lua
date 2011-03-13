@@ -1,4 +1,4 @@
--- $Id$
+-- $Id: spells.lua,v 1.36 2003/11/22 23:47:44 cblue Exp $
 -- This file takes care of the schools of magic
 -- (Edit this file and funny funny things will happen :)
 

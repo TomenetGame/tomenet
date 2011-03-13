@@ -1,5 +1,12 @@
-#!/usr/pkg/bin/perl
+#!/usr/bin/perl
+# $Id: renumber.pl,v 1.1.1.1 2002/06/15 16:32:53 jir Exp $
 #from http://www.fragment.com/~jl8e/angband/
+
+# This script renumber the ID numbers in *_info.txt of *angband..
+#
+# ** WARNING **
+# Since many of ID numbers are hard-coded, renumbering them often means
+# corrupted savefiles and strange program behaviors. You are warned.
 
 #inform the user of changes in numbers, so you can fix defines.h
 $logchange = 0;

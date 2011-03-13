@@ -1,4 +1,4 @@
--- $Id$
+-- $Id: s_aux.lua,v 1.25 2007/12/28 16:44:42 cblue Exp $
 -- Server side functions to help with spells, do not touch
 --
 
@@ -258,13 +258,14 @@ function print_book(i, book, spl)
 				sch_str = sch_str..school(sch).name
 			end
 		end
+		sch_str = sch_str_lim(sch_str)
 
-		c_prt(color, format("%c) %-20s%-16s   %3d %4s %3d%s %s", size + strbyte("a"), spell(s).name, sch_str, lvl, get_mana(i, s), spell_chance(i, s), "%", __spell_info[s]()), y, x)
+		c_prt(color, format("%c) %-22s%-16s %3d %4s %3d%s %s", size + strbyte("a"), spell(s).name, sch_str, lvl, get_mana(i, s), spell_chance(i, s), "%", __spell_info[s]()), y, x)
 		y = y + 1
 		size = size + 1
 	end
 
-	prt(format("   %-20s%-16s Level Cost Fail Info", "Name", "School"), 1, x)
+	prt(format("   %-22s%-14s Level Cost Fail Info", "Name", "School"), 1, x)
 	return y
 end
 
@@ -327,13 +328,14 @@ function print_book2(i, inven_slot, sval, spl)
 		                sch_str = sch_str..school(sch).name
 	                end
                 end
+		sch_str = sch_str_lim(sch_str)
 
-                c_prt(color, format("%c) %-20s%-16s   %3d %4s %3d%s %s", size + strbyte("a"), spell(s).name, sch_str, lvl, get_mana(i, s), spell_chance(i, s), "%", __spell_info[s]()), y, x)
+                c_prt(color, format("%c) %-22s%-16s %3d %4s %3d%s %s", size + strbyte("a"), spell(s).name, sch_str, lvl, get_mana(i, s), spell_chance(i, s), "%", __spell_info[s]()), y, x)
 		y = y + 1
                 size = size + 1
         end
 
-        prt(format("   %-20s%-16s Level Cost Fail Info", "Name", "School"), 1, x)
+        prt(format("   %-22s%-14s Level Cost Fail Info", "Name", "School"), 1, x)
         return y
 end
 
@@ -401,13 +403,14 @@ function print_custom_tome(i, inven_slot)
 		                sch_str = sch_str..school(sch).name
 	                end
                 end
+		sch_str = sch_str_lim(sch_str)
 
-                c_prt(color, format("%c) %-20s%-16s   %3d %4s %3d%s %s", size + strbyte("a"), spell(s).name, sch_str, lvl, get_mana(i, s), spell_chance(i, s), "%", __spell_info[s]()), y, x)
+                c_prt(color, format("%c) %-22s%-16s %3d %4s %3d%s %s", size + strbyte("a"), spell(s).name, sch_str, lvl, get_mana(i, s), spell_chance(i, s), "%", __spell_info[s]()), y, x)
 		y = y + 1
                 size = size + 1
         end
 
-        prt(format("   %-20s%-16s Level Cost Fail Info", "Name", "School"), 1, x)
+        prt(format("   %-22s%-14s Level Cost Fail Info", "Name", "School"), 1, x)
         return y
 end
 
@@ -872,4 +875,63 @@ end
 function get_spell_friendly(s)
         if not __tmp_spells[s].friendly then return 0
         else return __tmp_spells[s].friendly end
+end
+
+-- Reduce length of multi-school spells' "School" entry string
+function sch_str_lim(s)
+	local i
+
+	-- nothing to do?
+	if strlen(s) <= 16 then
+		return s
+	end
+
+	-- shorten common words
+	while 1 do
+		i = strfind(s, "Holy ")
+		if i ~= nil then
+			s = strsub(s, 1, i).."."..strsub(s, i + 5)
+		else
+			break
+		end
+	end
+
+	while 1 do
+		i = strfind(s, "Lore")
+		if i ~= nil then
+			s = strsub(s, 1, i).."."..strsub(s, i + 4)
+		else
+			break
+		end
+	end
+
+	while 1 do
+		i = strfind(s, "Thought ")
+		if i ~= nil then
+			s = strsub(s, 1, i).."."..strsub(s, i + 8)
+		else
+			break
+		end
+	end
+	while 1 do
+		i = strfind(s, "Mental ")
+		if i ~= nil then
+			s = strsub(s, 1, i).."."..strsub(s, i + 7)
+		else
+			break
+		end
+	end
+	while 1 do
+		i = strfind(s, "Psycho-")
+		if i ~= nil then
+			s = strsub(s, 1, i).."."..strsub(s, i + 7)
+		else
+			break
+		end
+	end
+
+	-- limit length if still not enough
+	s = strsub(s, 1, 16)
+
+	return s
 end

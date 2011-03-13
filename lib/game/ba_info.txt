@@ -94,9 +94,9 @@ C:0:0:0
 I:2:0:h:0
 
 #N:16:Race legends
-N:16:Race legends
+N:16:Noteworthy occurances
 C:0:0:0
-I:3:0:l:0
+I:3:0:n:0
 
 N:17:Look at busts of Kings
 C:0:0:0

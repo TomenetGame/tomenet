@@ -1,4 +1,4 @@
--- $Id$
+-- $Id: c-init.lua,v 1.8 2002/09/03 14:01:38 darkgod Exp $
 -- Client side LUA initialization of TomeNET
 
 -- Beware of the scary undefined globals

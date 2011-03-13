@@ -279,7 +279,8 @@ F:HOLD_LIFE | REGEN | ESP_DRAGON |
 F:RES_ACID | RES_FIRE | RES_COLD | RES_ELEC | RES_POIS | FEATHER | FLY |
 F:RES_NETHER | RES_NEXUS | RES_CHAOS | RES_LITE | RES_DARK | 
 #ULTIMATE | 
-F:RES_SHARDS | RES_SOUND | RES_DISEN | RES_BLIND | RES_CONF |
+F:RES_SHARDS | RES_SOUND | RES_DISEN | RES_BLIND |
+#RES_CONF (chaos)
 F:ACTIVATE | LIFE
 D:A suit of adamant, set with scales of every color, surrounded in a nimbus  
 D:of perfectly untramelled yet inextricably intermingled and utterly mastered 
@@ -306,9 +307,10 @@ I:37:30:2
 #W:75:9:400:200000
 W:75:9:300:200000
 P:40:2d4:-4:0:20
-F:CON | 
-F:HOLD_LIFE | SUST_CON | ESP_UNDEAD | RES_CONF | RES_FEAR | 
-F:RES_ACID | RES_COLD | RES_DARK | RES_NETHER | RES_NEXUS | RES_CHAOS | 
+F:CON |
+F:HOLD_LIFE | SUST_CON | ESP_UNDEAD | RES_FEAR |
+F:RES_ACID | RES_COLD | RES_DARK | RES_NETHER | RES_NEXUS | RES_CHAOS |
+# | RES_CONF (chaos)
 F:ACTIVATE
 D:A suit of imperishable adamant, with conquerable strength to endure evil 
 D:and disruptive magics, that protects the life force of its wearer like 
@@ -520,7 +522,8 @@ F:STR | INT | WIS | DEX | CON | CHR | INFRA | HIDE_TYPE |
 #F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS |
 F:RES_SOUND | 
 F:RES_LITE | RES_DARK | RES_NEXUS | RES_NETHER | RES_CHAOS | RES_DISEN | 
-F:RES_CONF | RES_BLIND | SEE_INVIS | ESP_ALL | 
+#RES_CONF | (chaos)
+F:RES_BLIND | SEE_INVIS | ESP_ALL | 
 F:LITE1 | CURSED | HEAVY_CURSE | PERMA_CURSE |
 F:INSTA_ART | SPECIAL_GENE
 D:Two Silmarils of Feanor blaze from the thunderous crown of twisted 
@@ -867,7 +870,8 @@ W:10:25:20:80000
 P:2:1d1:0:0:15
 F:DEX | HIDE_TYPE | CHR | SUST_CHR |
 F:ACTIVATE | FREE_ACT |
-F:RES_NETHER | RES_CHAOS | RES_CONF | SUST_CON
+F:RES_NETHER | RES_CHAOS | SUST_CON
+#RES_CONF | (chaos)
 D:A pair of high-laced shoes, strong against the powers of corruption and 
 D:withering, that grant the wearer extraordinary agility.
 
@@ -1068,7 +1072,8 @@ D:who wield it eventually.
 
 N:77:'Zarcuthra'
 I:23:22:4
-W:30:80:250:80000
+#W:30:80:250:80000
+W:30:40:250:80000
 P:0:5d6:19:25:0
 F:STR | CHR | INFRA | HIDE_TYPE | VORPAL | DRAIN_MANA | 
 F:KILL_DRAGON | SLAY_ANIMAL | SLAY_EVIL | BRAND_FIRE |
@@ -1240,9 +1245,7 @@ W:20:8:130:133333
 P:0:2d5:19:11:0
 F:INT | WIS | BLOWS |
 F:SLAY_ANIMAL | SLAY_EVIL | SLAY_UNDEAD | SLAY_DRAGON | SLAY_DEMON |
-F:RES_CHAOS | RES_NEXUS | 
-F:SEE_INVIS | BLESSED |
-F:SHOW_MODS
+F:RES_CHAOS | RES_NEXUS | SEE_INVIS | BLESSED | SHOW_MODS
 D:A damascened scimitar that seems wondrously easy to hold.  Famed in song as 
 D:the "Sickle of Harad", and a deadly foe to the undead.
 
@@ -1263,7 +1266,8 @@ D:Brethil.
 
 N:91:'Doomcaller'
 I:23:30:0
-W:70:25:180:65000
+#W:70:25:180:65000
+W:70:20:180:65000
 P:0:6d5:18:28:-30
 F:KILL_DRAGON | SLAY_ANIMAL | SLAY_EVIL | BRAND_COLD | SLAY_TROLL | 
 F:SLAY_ORC | FREE_ACT | RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
@@ -1278,7 +1282,7 @@ D:owner as they inflict wounds that will never heal.
 N:92:'Vorpal Blade'
 #I:23:17:2
 I:23:31:2
-W:50:30:150:160000
+W:50:30:80:160000
 P:0:5d5:32:32:0
 F:VORPAL | SLAY_EVIL | WOUNDING | HIDE_TYPE
 F:FREE_ACT | SEE_INVIS | SLOW_DIGEST | REGEN | SPEED | STR | DEX
@@ -1683,7 +1687,7 @@ D:mountains.
 N:121:'Deathwreaker'
 I:21:20:6
 #W:80:38:400:444444
-W:80:58:400:444444
+W:80:48:400:444444
 P:0:8d8:25:25:0
 F:STR | TUNNEL | HIDE_TYPE | DRAIN_MANA | SLAY_TROLL | 
 F:KILL_DRAGON | SLAY_ANIMAL | SLAY_EVIL | KILL_UNDEAD | BRAND_FIRE | 
@@ -2079,7 +2083,7 @@ D:This powerful piece of armour was made using the remains of
 D:the Sandworm Queen.
 
 
-# The Lochaber Axe 'Dragonbane'
+# The Heavy War Axe 'Dragonbane'
 
 N:154:'Dragonbane'
 I:24:28:2
@@ -2233,11 +2237,8 @@ N:166:'Mediator'
 I:38:20:1
 W:95:12:500:1000000
 P:40:2d4:-8:0:30
-F:FEATHER | FLY | ESP_DRAGON | LIFE | 
-F:RES_NEXUS | RES_CHAOS | REGEN | 
-F:RES_SHARDS | RES_SOUND | RES_DISEN |
-F:ACTIVATE
-F:REGEN_MANA
+F:FEATHER | FLY | ESP_DRAGON | LIFE | REGEN | REGEN_MANA
+F:RES_NEXUS | RES_CHAOS | RES_SHARDS | RES_SOUND | RES_DISEN | ACTIVATE
 D:A mighty suit of dragon armour, set with the scales of dragons of both 
 D:Law and Chaos, and with power over both.
 
@@ -2464,7 +2465,7 @@ N:201:
 I:9:1:0
 W:200:1:10:0
 P:0:1d1:0:0:0
-F:INSTA_ART 
+F:INSTA_ART
 
 
 # The Palantir of Orthanc
@@ -2769,8 +2770,8 @@ D:very end. Baruk Khazad!
 
 N:220:of the Durin
 I:32:10:3
-#W:40:70:60:100000
-W:40:40:60:100000
+#W:40:40:60:100000
+W:40:20:60:100000
 P:9:0d0:0:0:23
 F:STR | CON | HIDE_TYPE | RES_FEAR | SUST_STR | SUST_CON | 
 F:IM_FIRE | RES_CONF | SEARCH | SEE_INVIS | LITE1 
@@ -2800,7 +2801,7 @@ D:Made of alloy of iron and ebonite, a *hard* material.
 D:Strange enough, noone managed to enchant it yet.
 
 
-# The Scythe Of Slicing 'Soul Reaver'
+# The Scythe of Slicing 'Soul Reaver'
 
 N:223:'Soul Reaver'
 I:22:30:-10
@@ -3044,9 +3045,9 @@ F:SLAY_EVIL | SLAY_UNDEAD | SLAY_DEMON
 D:Where Quietus hits, silence follows.
 
 
-# The Great Claymore 'Icon Of Life'
+# The Great Claymore 'Icon of Life'
 
-N:243:'Icon Of Life'
+N:243:'Icon of Life'
 I:23:29:2
 W:80:50:300:150000
 P:0:4d8:0:0:20
@@ -3059,7 +3060,7 @@ D:A sacred artifact to defend life rather than to threaten it.
 
 N:244:'Spirit Shard'
 I:40:40:10
-W:70:70:3:150000
+W:70:60:3:150000
 # Maybe activate for invis and special_gene from Tselakus..
 # hm it would be too common and easy if Tselakus drops it.
 F:HIDE_TYPE | INSTA_ART | SEE_INVIS | CURSED | TY_CURSE
@@ -3239,10 +3240,10 @@ D:allowing him to discover new ideas.
 
 # +++note+++ currently not findable due to set RESF_NOTRUEART from total_winner status! +++
 # ^has been fixed; however, still restricted from being created in create_reward() (seems fair though).
-# The Heavy Mithril Scale Armour 'Mirror Of Glory'
-N:260:'Mirror Of Glory'
+# The Heavy Mithril Scale Armour 'Mirror of Glory'
+N:260:'Mirror of Glory'
 I:37:26:5
-W:97:40:300:200000
+W:97:25:300:200000
 P:65:4d4:-3:0:20
 F:WINNERS_ONLY | REGEN | IM_ACID | IM_FIRE | RES_ELEC | STR | CON | CHR
 D:An armor of thick gleaming scales forged from finest Mithril, without a
@@ -3265,7 +3266,7 @@ D:(Not to be acquired by players!)
 
 N:262:'Ars Numenis'
 I:21:22:6
-W:50:25:380:100000
+W:50:20:380:100000
 P:0:6d7:20:25:0
 F:SHOW_MODS | STR | KILL_DEMON | ESP_DEMON | BLESSED | SLAY_EVIL
 D:This hammer carries divine will to purge the unclean.
@@ -3287,11 +3288,12 @@ D:out evil spirits.
 
 N:264:'Veridis Quo'
 I:32:11:3
-W:90:30:75:100000
+W:90:15:75:100000
 P:8:1d3:0:0:17
-F:RES_FEAR | RES_CONF | RES_CHAOS | SEE_INVIS |
+F:RES_FEAR | RES_CHAOS | SEE_INVIS |
 F:SUST_INT | SUST_WIS | SUST_CHR | INT | WIS |
 F:AUTO_ID | SEARCH | LITE1 | IGNORE_MANA
+#RES_CONF | (chaos)
 D:This radiating and impervious head gear will ensure
 D:that its wearer will see nothing but the very truth.
 
@@ -3374,8 +3376,8 @@ D:of Mordor with relentless force.
 #	depth is minimum dlev. however, 'ood' (ie on easier dlevs) is possible.
 #	rarity roll succeeds at chance 1/rarity.
 #	note: rarity should be choosen for gameplay purpose (so arts dont become
-#             too super-rare) somewhat lower in case the k_info base type has
-#             already a very high rarity (this was already mentioned in randart.c).
+#	      too super-rare) somewhat lower in case the k_info base type has
+#	      already a very high rarity (this was already mentioned in randart.c).
 #	note: for make_artifact_special (INSTA_ART) the global variable object_level
 #	      is also tested as a minimum for the arts k_info base object level
 #	      (ood possible here too, ie higher insta art despite lower object level).

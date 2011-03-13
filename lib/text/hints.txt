@@ -4,7 +4,7 @@
 # (amount number below N: is last used lines - 7)
 
 N:*:Default
-18
+20
 Press shift+P to form a party and share experience within 7 levels!
 Somewhat experienced rogues may use shift+V to become nigh invisible!
 Most fighter classes will learn special techniques they can use with 'm'!
@@ -14,7 +14,7 @@ Potions of resistance protect both you and your items from harm quite well!
 If you use weapons, specializing in one of the four masteries is mandatory!
 If specializing in martial arts, only light armour will help, if any at all!
 Races and classes have many special abilities. Make sure to read up on them!
-If you want to know something, don't forget to read file 'TomeNET-Guide.txt'!
+Have a question? Make sure to look into file 'TomeNET-Guide.txt' too!
 If you die and want to keep your items, just ask other players for help!
 Keep in mind that true artifacts cannot be dropped in houses but will vanish!
 Press shift+G to spend skill points you gain on each level-up!
@@ -23,3 +23,5 @@ You can also bind macros to SHIFT+key or CTRL+key, for multiple use of a key.
 Creating ammo from a larger stack of raw materials results in more ammo!
 Notebook users should consider plugging in an USB keyboard.
 Party members should stick together to survive.
+Have a suggestion or bug report? Please use the /rfe command!
+Higher-level towns usually have higher-level spells more often in store {o9

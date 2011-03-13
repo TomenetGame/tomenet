@@ -1,4 +1,4 @@
--- $Id$
+-- $Id: init.lua,v 1.20 2007/12/28 17:40:19 mikaelh Exp $
 -- Server side LUA initialization of TomeNET
 
 -- Get a normal alert to stdout so we can see bugs at server init
@@ -52,7 +52,7 @@ pern_dofile(Ind, "update.lua")
 
 pern_dofile(Ind, "cblue.lua")
 --pern_dofile(Ind, "dg.lua")
---pern_dofile(Ind, "evil.lua")
+pern_dofile(Ind, "evil.lua")
 -- pern_dofile(Ind, "zz.lua") -- file isn't there? -the_sandman
 --pern_dofile(Ind, "jir.lua")
 pern_dofile(Ind, "it.lua")

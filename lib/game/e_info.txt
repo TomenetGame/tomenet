@@ -497,17 +497,20 @@ F:STEALTH |
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER | 
 F:OLD_RESIST
 
-# Aura, Fire
-N:44:of Immolation
-X:A:31:16
-W:0:2:30:4000
-C:0:0:4:0
-T:35:0:255
-R:100
-F:IGNORE_ACID | IGNORE_FIRE | SH_FIRE | RES_FIRE | IGNORE_WATER | ACTIVATE
+#disabled, because it's now a suffix instead of prefix
+## Aura, Fire
+#N:44:of Immolation
+#X:A:31:16
+#W:0:2:30:4000
+#C:0:0:4:0
+#T:35:0:255
+#R:100
+#F:IGNORE_ACID | IGNORE_FIRE | SH_FIRE | RES_FIRE | IGNORE_WATER | ACTIVATE
 
-N:45:of Enveloping
-X:A:31:0
+#changed from suffix to prefix
+#N:45:of Enveloping
+N:45:Enveloping
+X:B:31:0
 W:0:1:3:0
 C:-10:-10:0:0
 T:35:0:255
@@ -522,22 +525,25 @@ T:35:0:255
 R:100
 F:AGGRAVATE
 
-N:47:of Irritation
-X:A:31:0
+#changed from suffix to prefix
+#N:47:of Irritation
+N:47:Irritating
+X:B:31:0
 W:0:1:3:0
 C:-15:-15:0:0
 T:35:0:255
 R:100
 F:AGGRAVATE | SHOW_MODS
 
-# Aura, Electricity
-N:48:of Electricity
-X:A:31:16
-W:0:2:30:4000
-C:0:0:4:0
-T:35:0:255
-R:100
-F:IGNORE_ACID | IGNORE_ELEC | SH_ELEC | RES_ELEC | IGNORE_WATER | ACTIVATE
+#changed from suffix to prefix
+## Aura, Electricity
+#N:48:of Electricity
+#X:A:31:16
+#W:0:2:30:4000
+#C:0:0:4:0
+#T:35:0:255
+#R:100
+#F:IGNORE_ACID | IGNORE_ELEC | SH_ELEC | RES_ELEC | IGNORE_WATER | ACTIVATE
 
 ### Gloves ###
 
@@ -915,7 +921,7 @@ T:21:0:255
 T:20:0:99
 X:A:24:20
 W:0:1:107:4000
-C:10:10:0:6
+C:10:10:0:5
 R:100
 F:IMPACT | STR | TUNNEL | HIDE_TYPE
 
@@ -1551,7 +1557,7 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
 N:131:Gnomish
 T:35:0:1
 T:35:3:255
-T:36:1:1
+T:36:2:2
 X:B:30:15
 W:0:1:60:5000
 C:0:0:5:2
@@ -2494,14 +2500,15 @@ R:100
 F:RES_FEAR | REGEN | IM_FIRE
 # | RES_COLD | RES_ELEC | RES_ACID | RES_POIS |
 
-# Aura, Cold (finally! Why didn't we add it earlier^^ - C. Blue)
-N:213:of Frostweaving
-X:A:31:16
-W:0:2:30:4000
-C:0:0:4:0
-T:35:0:255
-R:100
-F:IGNORE_ACID | IGNORE_FIRE | IGNORE_COLD | SH_COLD | RES_COLD | IGNORE_WATER | ACTIVATE
+#disabled, because it's now a suffix instead of prefix
+## Aura, Cold (finally! Why didn't we add it earlier^^ - C. Blue)
+#N:213:of Frostweaving
+#X:A:31:16
+#W:0:2:30:4000
+#C:0:0:4:0
+#T:35:0:255
+#R:100
+#F:IGNORE_ACID | IGNORE_FIRE | IGNORE_COLD | SH_COLD | RES_COLD | IGNORE_WATER | ACTIVATE
 
 ##N:214:Retaining
 #N:214:Arcane
@@ -2586,9 +2593,29 @@ R:100
 F:IGNORE_FIRE
 F:NO_SEED
 
+N:221:Sparkling
+X:B:31:16
+W:0:2:30:4000
+C:0:0:4:0
+T:35:0:255
+R:100
+F:IGNORE_ACID | IGNORE_ELEC | SH_ELEC | RES_ELEC | IGNORE_WATER | ACTIVATE
 
+N:222:Frostwoven
+X:B:31:16
+W:0:2:30:4000
+C:0:0:4:0
+T:35:0:255
+R:100
+F:IGNORE_ACID | IGNORE_FIRE | IGNORE_COLD | SH_COLD | RES_COLD | IGNORE_WATER | ACTIVATE
 
-
+N:223:Flaming
+X:B:31:16
+W:0:2:30:4000
+C:0:0:4:0
+T:35:0:255
+R:100
+F:IGNORE_ACID | IGNORE_FIRE | SH_FIRE | RES_FIRE | IGNORE_WATER | ACTIVATE
 
 
 

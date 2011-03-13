@@ -1591,7 +1591,8 @@ A:5/1
 N:190:Rune of Protection
 G:?:d
 I:70:38:0
-W:50:0:5:500
+#W:50:0:5:500
+W:50:0:5:1000
 A:50/2:90/4
 
 N:191:*Remove Curse*
@@ -4123,7 +4124,7 @@ F:IGNORE_WATER
 N:533:& Hatchet~
 G:/:s
 I:24:1:0
-W:6:0:60:45
+W:6:0:50:45
 A:6/1
 P:0:1d5:0:0:0
 F:SHOW_MODS
@@ -4989,7 +4990,7 @@ F:INSTA_ART
 
 # Here are the boomerangs
 
-N:648:& small wooden Boomerang~
+N:648:& Small Wooden Boomerang~
 G:{:y
 I:15:1:0
 W:5:0:60:30
@@ -4997,7 +4998,7 @@ A:5/1
 P:0:1d4:0:0:0
 F:IGNORE_WATER
 
-N:649:& wooden Boomerang~
+N:649:& Wooden Boomerang~
 G:{:y
 I:15:2:0
 W:10:0:60:45
@@ -5005,14 +5006,14 @@ A:10/1
 P:0:1d9:0:0:0
 F:IGNORE_WATER
 
-N:650:& small metal Boomerang~
+N:650:& Small Metal Boomerang~
 G:{:y
 I:15:3:0
 W:15:0:60:40
 A:15/1
 P:0:1d8:0:0:0
 
-N:651:& metal Boomerang~
+N:651:& Metal Boomerang~
 G:{:y
 I:15:4:0
 W:20:0:60:60
@@ -7045,7 +7046,8 @@ F:FULL_NAME | EASY_KNOW | IGNORE_FIRE | IGNORE_WATER
 $ENABLE_DIVINE$N:974:& Astral Grimoire~
 $ENABLE_DIVINE$G:?:L
 $ENABLE_DIVINE$I:111:18:0
-$ENABLE_DIVINE$W:50:0:30:800
+#$ENABLE_DIVINE$W:50:0:30:800
+$ENABLE_DIVINE$W:50:0:30:25000
 $ENABLE_DIVINE$A:20/30:40/65
 $ENABLE_DIVINE$P:0:1d1:0:0:0
 $ENABLE_DIVINE$F:FULL_NAME | EASY_KNOW | IGNORE_FIRE
@@ -7685,6 +7687,14 @@ I:20:8:1
 W:10:10:10:2500
 P:0:1d4:9:12:0
 F:INSTA_ART | TUNNEL
+
+N:1033:& Tomahawk~
+G:/:u
+I:24:3:0
+W:15:0:70:45
+A:15/2
+P:0:2d4:0:0:0
+F:SHOW_MODS
 
 
 #N:(No.):(name)
