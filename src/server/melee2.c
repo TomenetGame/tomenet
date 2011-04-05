@@ -9189,7 +9189,7 @@ void process_monsters(void)
 					_Players[m_ptr->charmedignore]->mcharming--;
 					m_ptr->charmedignore = 0;
 				/* monster gets a sort of saving throw */
-				} else if (test_charmedignore(pl, m_ptr->charmedignore, r_ptr))
+				} else if (test_charmedignore(pl, m_ptr->charmedignore, m_ptr->r_idx))
 					continue;
 			}
 
