@@ -1074,6 +1074,10 @@ G:.:U
 F:FLOOR | CAN_RUN | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | PROTECTED | BLOCK_CONTACT
 
+N:227:orange wall
+G:#:o
+F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING | TUNNELABLE
 
 # generic scheme (all lines are unique except
 # where it's mentioned otherwise) - C. Blue
