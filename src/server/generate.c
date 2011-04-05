@@ -9601,6 +9601,15 @@ for(mx = 1; mx < 131; mx++) {
                 for(mx = 1; mx < 12; mx++)
                 cave_set_feat(wpos, mx, 21, 61);
                 }
+
+if (wpos->wz == 9) {
+for(mx = 1; mx < 131; mx++) {
+        for(my = 1; my < 43; my++) {
+                cave_set_feat(wpos, my, mx, 187);
+                }
+        }
+}
+
 #endif
 
 	cave_set_quietly = FALSE;
