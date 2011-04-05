@@ -446,3 +446,4 @@ extern void go_challenge_cancel(void);	/* Aborts currently running game, if any 
 
 
 extern u16b numtowns;
+extern s16b quark__num;
