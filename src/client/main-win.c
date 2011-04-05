@@ -3746,7 +3746,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					/* Attempt to print out some usage information */
 					puts(longVersion);
 					puts("Usage  : tomenet [options] [servername]");
-					puts("Example: tomenet -lMorgoth MorgyPass -p18348 tomenet.servegame.com");
+					puts("Example: tomenet -lMorgoth MorgyPass -p18348 europe.tomenet.net");
 					puts("  -C                 Compatibility mode for very old servers");
 					puts("  -F                 Client FPS");
 					puts("  -l<nick> <passwd>  Login as");

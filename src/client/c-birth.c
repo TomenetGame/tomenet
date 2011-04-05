@@ -1085,7 +1085,7 @@ static bool enter_server_name(void)
 	move_cursor(5, 1);
 
 	/* Default */
-        strcpy(server_name, "tomenet.servegame.com");
+        strcpy(server_name, "europe.tomenet.net");
 
 	/* Ask for server name */
 	return askfor_aux(server_name, 80, 0);

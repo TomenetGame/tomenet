@@ -14,8 +14,7 @@
 #include <errno.h>
 
 #define PORT 8800
-// #define HOST "meta.tomenet.net"
-#define HOST "metaserver.servegame.com"
+#define HOST "meta.tomenet.net"
 
 void callup(int val);
 int connsocket(int port, char *host);

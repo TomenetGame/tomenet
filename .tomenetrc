@@ -18,7 +18,7 @@
 
 ## - Server and port you wish to connect to;
 ##   leave commented out to get a list of servers
-#server		tomenet.servegame.com
+#server		europe.tomenet.net
 #port		18348
 
 ## - Perform automatic login with nick, pass and also character name
