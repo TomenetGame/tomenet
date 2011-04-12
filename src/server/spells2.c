@@ -63,10 +63,8 @@ bool do_divine_hp(int Ind, int v, int p) {
         v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
         /* Open */
-        if (v)
-        {
-                if (!p_ptr->divine_hp)
-                {
+        if (v) {
+                if (!p_ptr->divine_hp) {
                         msg_format_near(Ind, "%s prepares for aggression!", p_ptr->name);
                         msg_print(Ind, "You feel couragious.");
 			p_ptr->divine_hp_mod = p;
@@ -76,10 +74,8 @@ bool do_divine_hp(int Ind, int v, int p) {
         }
 
         /* Shut */
-        else	//v = 0;
-        {
-                if (p_ptr->divine_hp)
-                {
+        else { //v = 0;
+                if (p_ptr->divine_hp) {
 			p_ptr->divine_hp_mod = 0;
                         msg_format_near(Ind, "%s returns to %s normal self.", p_ptr->name, (p_ptr->male? "his" : "her"));
                         msg_print(Ind, "You no longer feel couragious.");
@@ -97,7 +93,6 @@ bool do_divine_hp(int Ind, int v, int p) {
 
         /* Recalculate bonuses */
         p_ptr->update |= (PU_BONUS|PU_HP);
-
         /* Handle stuff */
         handle_stuff(Ind);
 
@@ -111,9 +106,9 @@ bool do_divine_hp(int Ind, int v, int p) {
  * tele_to's all monsters in LOS.
  * For demonic beings, do a dispel on LOS.
  */
-void divine_vengeance(int Ind, int power) { 
+void divine_vengeance(int Ind, int power) {
 	player_type *p_ptr = Players[Ind];
-	if (p_ptr->ptrait==TRAIT_ENLIGHTENED) {
+	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) {
 		int i;
 		/* players TELE_TO */
 		for (i = 1; i <= NumPlayers; i++) {
@@ -139,7 +134,7 @@ void divine_vengeance(int Ind, int power) {
 		}
 		/* monsters TELE_TO */
 		project_hack(Ind, GF_TELE_TO, 0, " commands return");
-	} else if (p_ptr->ptrait==TRAIT_CORRUPTED) {
+	} else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
 		dispel_monsters(Ind, power);
 	//	project_hack(Ind, GF_DISP_ALL, power, " commands leave");
 	}
@@ -149,9 +144,9 @@ void divine_vengeance(int Ind, int power) {
  */
 void divine_empowerment(int Ind, int level) { 
 	player_type *p_ptr = Players[Ind];
-	if (p_ptr->ptrait==TRAIT_ENLIGHTENED) {
-		set_fury(Ind, 20+level/10);
-	} else if (p_ptr->ptrait==TRAIT_CORRUPTED) {
+	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) {
+		set_fury(Ind, 20 + level / 10);
+	} else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
 		int bonus = 0;
 		if (level >= 55) {
 			bonus = 3;
@@ -159,7 +154,7 @@ void divine_empowerment(int Ind, int level) {
 			bonus = 2;
 		} else if (level >= 40) {
 			bonus = 1;
-		} 
+		}
 		(void)do_divine_hp(Ind, (level * 3) / 2, bonus);
 	}
 	return;
@@ -178,10 +173,8 @@ bool do_divine_crit(int Ind, int v, int p) {
         v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
         /* Open */
-        if (v)
-        {
-                if (!p_ptr->divine_crit)
-                {
+        if (v) {
+                if (!p_ptr->divine_crit) {
                         msg_format_near(Ind, "%s seems focused.", p_ptr->name);
                         msg_print(Ind, "You focus your intentions.");
 			p_ptr->divine_crit_mod = p;
@@ -191,10 +184,8 @@ bool do_divine_crit(int Ind, int v, int p) {
         }
 
         /* Shut */
-        else	//v = 0;
-        {
-                if (p_ptr->divine_crit)
-                {
+        else { //v = 0;
+                if (p_ptr->divine_crit) {
 			p_ptr->divine_crit_mod = 0;
                         msg_format_near(Ind, "%s seems less focused", p_ptr->name);
                         msg_print(Ind, "Your focus dissipates.");
@@ -212,7 +203,6 @@ bool do_divine_crit(int Ind, int v, int p) {
 
         /* Recalculate bonuses */
         p_ptr->update |= (PU_BONUS);
-
         /* Handle stuff */
         handle_stuff(Ind);
 
@@ -639,6 +629,10 @@ bool hp_player(int Ind, int num) {
 
 	long e = PVP_DIMINISHING_HEALING_CAP(p_ptr);
 
+#ifdef TEST_SERVER
+	p_ptr->test_heal += num;
+#endif
+
 	// The "number" that the character is displayed as before healing
 	old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
 	if (old_num >= 7) old_num = 10;
@@ -728,6 +722,10 @@ bool hp_player_quiet(int Ind, int num, bool autoeffect) {
 	long eff_num; /* actual amount of HP gain */
 
 	long e = PVP_DIMINISHING_HEALING_CAP(p_ptr);
+
+#ifdef TEST_SERVER
+	p_ptr->test_heal += num;
+#endif
 
 	old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
 	if (old_num >= 7) old_num = 10;
@@ -2079,8 +2077,7 @@ bool detect_invisible(int Ind)
 	clear_ovl(Ind);
 
 	/* Detect all invisible monsters */
-	for (i = 1; i < m_max; i++)
-	{
+	for (i = 1; i < m_max; i++) {
 		monster_type *m_ptr = &m_list[i];
                 monster_race *r_ptr = race_inf(m_ptr);
 
@@ -2097,8 +2094,7 @@ bool detect_invisible(int Ind)
 		if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
 
 		/* Detect all invisible monsters */
-		if (panel_contains(fy, fx) && (r_ptr->flags2 & RF2_INVISIBLE))
-		{
+		if (panel_contains(fy, fx) && (r_ptr->flags2 & RF2_INVISIBLE)) {
 			byte a;
 			char c;
 
@@ -2124,8 +2120,7 @@ bool detect_invisible(int Ind)
 	}
 
 	/* Detect all invisible players */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		player_type *q_ptr = Players[i];
 
 		int py = q_ptr->py;
@@ -2141,8 +2136,7 @@ bool detect_invisible(int Ind)
 		if (q_ptr->admin_dm && !player_sees_dm(Ind)) continue;
 
 		/* Detect all invisible players but not the dungeon master */
-		if (panel_contains(py, px) && q_ptr->ghost) 
-		{
+		if (panel_contains(py, px) && q_ptr->ghost)  {
 			byte a;
 			char c;
 
@@ -2163,8 +2157,7 @@ bool detect_invisible(int Ind)
 	}
 
 	/* Describe result, and clean up */
-	if (flag)
-	{
+	if (flag) {
 		/* Describe, and wait for acknowledgement */
 		msg_print(Ind, "You sense the presence of invisible creatures!");
 		msg_print(Ind, NULL);
@@ -2177,11 +2170,9 @@ bool detect_invisible(int Ind)
 		update_monsters(FALSE);
 		update_players();
 #endif
-	}
-	else
-	{
-        msg_print(Ind, "You sense the absence of invisible creatures.");
-        msg_print(Ind, NULL);
+	} else {
+		msg_print(Ind, "You sense the absence of invisible creatures.");
+		msg_print(Ind, NULL);
 	}
 
 	/* Result */
@@ -3168,23 +3159,21 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 	return (TRUE);
 }
 
-bool create_artifact(int Ind)
-{
-  player_type *p_ptr = Players[Ind];
+bool create_artifact(int Ind) {
+	player_type *p_ptr = Players[Ind];
 
-  /* just in case */
-  s_printf("(%s) Player %s initiates Artifact Creation.\n", showtime(), p_ptr->name);
+	/* just in case */
+	s_printf("(%s) Player %s initiates Artifact Creation.\n", showtime(), p_ptr->name);
 
-  clear_current(Ind);
+	clear_current(Ind);
 
-  p_ptr->current_artifact = TRUE;
-  get_item(Ind);
+	p_ptr->current_artifact = TRUE;
+	get_item(Ind);
 
-  return TRUE;
+	return TRUE;
 }
 
-bool create_artifact_aux(int Ind, int item)
-{
+bool create_artifact_aux(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 	artifact_type *a_ptr;
@@ -3193,16 +3182,10 @@ bool create_artifact_aux(int Ind, int item)
 	s32b old_owner;/* anti-cheeze :) */
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &p_ptr->inventory[item];
-	}
-
+	if (item >= 0) o_ptr = &p_ptr->inventory[item];
 	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
+	else o_ptr = &o_list[0 - item];
+
 	old_owner = o_ptr->owner;
 
 	/* Description */
@@ -3233,8 +3216,8 @@ bool create_artifact_aux(int Ind, int item)
 
 	/* Describe */
 	msg_format(Ind, "%s %s glow%s brightly!",
-	           ((item >= 0) ? "Your" : "The"), o_name,
-	           ((o_ptr->number > 1) ? "" : "s"));
+	    ((item >= 0) ? "Your" : "The"), o_name,
+	    ((o_ptr->number > 1) ? "" : "s"));
 
 	o_ptr->name1 = ART_RANDART;
 
@@ -3249,8 +3232,7 @@ bool create_artifact_aux(int Ind, int item)
 		o_ptr->name3 += rand_int(0xFFFF);
 
 		/* Check the tval is allowed */
-		if (randart_make(o_ptr) == NULL)
-		{
+		if (randart_make(o_ptr) == NULL) {
 			/* If not, wipe seed. No randart today */
 			o_ptr->name1 = 0;
 			o_ptr->name3 = 0L;
@@ -3267,6 +3249,9 @@ bool create_artifact_aux(int Ind, int item)
 	   apply_magic() is used to set level requirements, and copy the a_ptr to o_ptr. */
 	apply_magic(&p_ptr->wpos, o_ptr, 50, FALSE, FALSE, FALSE, FALSE, FALSE);
 	o_ptr->owner = old_owner;
+
+	/* Hack - lose discount on item, looks bad/silly */
+	o_ptr->discount = 0;
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -3286,8 +3271,7 @@ bool create_artifact_aux(int Ind, int item)
 	s_printf("ART_CREATION succeeded: %s\n", o_name);
 
 	/* Did we use up an item? (minus 1 art scroll) */
-	if (p_ptr->using_up_item >= 0)
-	{
+	if (p_ptr->using_up_item >= 0) {
 		inven_item_describe(Ind, p_ptr->using_up_item);
 		inven_item_optimize(Ind, p_ptr->using_up_item);
 		p_ptr->using_up_item = -1;
@@ -5115,25 +5099,17 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 {
 	int		i, t, y, x, yy, xx, dy, dx, oy, ox;
-
 	int		damage = 0;
-
 	int		sn = 0, sy = 0, sx = 0;
-
 	int Ind;
-
 	player_type *p_ptr;
-
 	/*bool	hurt = FALSE;*/
-
 	cave_type	*c_ptr;
-
 	bool	map[32][32];
 	dun_level *l_ptr = getfloor(wpos);
-
 	struct c_special *cs_ptr;	/* for special key doors */
-
 	cave_type **zcave;
+
 	if(!(zcave=getcave(wpos))) return;
 	if(l_ptr && (l_ptr->flags1 & LF1_NO_DESTROY) && !override_LF1_NO_DESTROY) return;
 	override_LF1_NO_DESTROY = FALSE;
@@ -5325,7 +5301,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 							break;
 						}
 					}
-		
+
 					/* Save the old location */
 					oy = p_ptr->py;
 					ox = p_ptr->px;
@@ -6448,7 +6424,8 @@ bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker) {
 	char pattacker[80];
 	int tx, ty;
 
-	int flg = PROJECT_HIDE | PROJECT_BEAM | PROJECT_STOP | PROJECT_KILL;//PROJECT_ITEM | PROJECT_GRID
+	// (project_grid is required for disarm beam! same for project_item, for chests!)
+	int flg = PROJECT_HIDE | PROJECT_BEAM | PROJECT_STOP | PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM;
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) dam /= 2;
@@ -6941,12 +6918,9 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 
 
 	/* Assign maximal hitpoints */
-	if (r_ptr->flags1 & RF1_FORCE_MAXHP)
-	{
+	if (r_ptr->flags1 & RF1_FORCE_MAXHP) {
 		m_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
-	}
-	else
-	{
+	} else {
 		m_ptr->maxhp = damroll(r_ptr->hdice, r_ptr->hside);
 	}
 
@@ -6961,8 +6935,7 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 	/* Extract base ac and  other things */
 	m_ptr->ac = r_ptr->ac;
 
-	for (j = 0; j < 4; j++)
-	{
+	for (j = 0; j < 4; j++) {
 		m_ptr->blow[j].effect = r_ptr->blow[j].effect;
 		m_ptr->blow[j].method = r_ptr->blow[j].method;
 		m_ptr->blow[j].d_dice = r_ptr->blow[j].d_dice;
@@ -6973,17 +6946,15 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 	m_ptr->owner = 0;
 
 	/* Hack -- small racial variety */
-	if (!(r_ptr->flags1 & RF1_UNIQUE))
-	{
+	if (!(r_ptr->flags1 & RF1_UNIQUE)) {
 		/* Allow some small variation per monster */
 		i = extract_energy[m_ptr->speed] / 10;
-		if (i)
-		{
+		if (i) {
 			j = rand_spread(0, i);
 			m_ptr->mspeed += j;
 
 			if (m_ptr->mspeed < j) m_ptr->mspeed = 255;
-		} 
+		}
 	}
 
 
@@ -6991,8 +6962,7 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 	m_ptr->energy = rand_int(100);
 
 	/* Hack -- Reduce risk of "instant death by breath weapons" */
-	if (r_ptr->flags1 & RF1_FORCE_SLEEP)
-	{
+	if (r_ptr->flags1 & RF1_FORCE_SLEEP) {
 		/* Start out with minimal energy */
 		m_ptr->energy = rand_int(10);
 	}
@@ -7011,8 +6981,7 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
         m_ptr->owner = 0;
         m_ptr->pet = 0;
 
-	for (Ind = 1; Ind < NumPlayers + 1; Ind++)
-	{
+	for (Ind = 1; Ind < NumPlayers + 1; Ind++) {
 		if (Players[Ind]->conn == NOT_CONNECTED)
 			continue;
 
@@ -7825,9 +7794,8 @@ void do_mstopcharm(int Ind) {
 	}
 }
 
-bool test_charmedignore(int Ind, int Ind_charmer, int r_idx) {
+bool test_charmedignore(int Ind, int Ind_charmer, monster_race *r_ptr) {
 	player_type *q_ptr = Players[Ind_charmer];
-	monster_race *r_ptr = &r_info[r_idx];
 	int chance = 1, cost = 1;
 
 	/* non team-mates are not affected (and would cost extra mana) */

@@ -1433,7 +1433,7 @@ extern void call_chaos(int Ind, int dir, int extra_damage);
 extern bool turn_monsters(int Ind, int dam);
 extern void wizard_lock(int Ind, int dir);
 extern void do_mstopcharm(int Ind);
-extern bool test_charmedignore(int Ind, int Ind_charmer, int r_idx);
+extern bool test_charmedignore(int Ind, int Ind_charmer, monster_race *r_ptr);
 
 
 /* store.c */
