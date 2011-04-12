@@ -431,7 +431,7 @@ F:MEDIUM_LEVEL
 W:12
 
 N:10:Mayor's Office
-A:63:64:16:65:35:0
+A:16:64:35:65:63:0
 O:1:1:1:1:1:1
 G:+:o
 W:0
@@ -472,7 +472,7 @@ N:13:Library
 I:100:Identify
 A:0:0:14:15:16:2
 O:4:4:4:4:4:4
-G:+:U
+G:+:o
 W:2
 
 N:14:Castle
@@ -485,7 +485,7 @@ N:15:Casino
 F:SPECIAL
 A:13:66:9:10:11:12
 O:17:17:17:17:17:17
-G:+:s
+G:+:y
 W:0
 
 N:16:Beastmaster Shanty
@@ -569,7 +569,7 @@ N:28:Library
 I:100:Identify
 A:0:0:14:15:16:2
 O:58:58:58:58:58:58
-G:+:U
+G:+:o
 W:2
 
 N:29:The White Tree
@@ -616,7 +616,7 @@ T:10:71:32
 F:PRICE4 | PRICE2
 A:2:4:28:48:0:0
 O:64:64:64:64:64:64
-G:+:U
+G:+:g
 #W:7
 W:12
 
@@ -643,7 +643,7 @@ N:38:Axe Smith
 T:100:24:256
 A:0:0:1:2:3:4
 O:12:13:14:15:44:68
-G:3:w
+G:3:W
 F:RANDOM | MEDIUM_LEVEL
 W:12
 F:BUY67
@@ -652,7 +652,7 @@ N:39:Blunt Smith
 T:100:21:256
 A:0:0:1:2:3:4
 O:12:13:14:15:44:68
-G:3:w
+G:3:W
 F:RANDOM | MEDIUM_LEVEL
 W:12
 F:BUY67
@@ -661,7 +661,7 @@ N:40:Polearm Smith
 T:100:22:256
 A:0:0:1:2:3:4
 O:12:13:14:15:44:68
-G:3:w
+G:3:W
 F:RANDOM | MEDIUM_LEVEL
 W:12
 F:BUY67
@@ -670,7 +670,7 @@ N:41:Sword Smith
 T:100:23:256
 A:0:0:1:2:3:4
 O:12:13:14:15:44:68
-G:3:w
+G:3:W
 F:RANDOM | MEDIUM_LEVEL
 W:12
 F:BUY67
@@ -844,7 +844,7 @@ N:52:Scribe
 T:100:70:256
 A:0:0:1:2:3:4
 O:42:43:44:45:4:58
-G:5:B
+G:5:w
 F:RANDOM | MEDIUM_LEVEL | DEPEND_LEVEL
 W:12
 F:BUY67
@@ -857,7 +857,7 @@ O:30:31:32:33:30:33
 G:5:B
 F:RANDOM | MEDIUM_LEVEL | DEPEND_LEVEL | PRICE2
 W:12
-F:BUY67
+F:BUY67 | NO_DISCOUNT2
 
 N:54:Recaller
 I:100:Word of Recall
@@ -878,7 +878,7 @@ T:50:17:256
 T:50:18:256
 A:0:0:1:2:3:0
 O:12:13:14:15:44:68
-G:3:g
+G:3:o
 F:RANDOM | MEDIUM_LEVEL | DEPEND_LEVEL
 F:RARE
 W:24
@@ -888,13 +888,13 @@ N:56:Merchants Guild
 #A:0:0:56:57:58:0
 A:60:61:56:57:58:0
 O:68:68:68:68:68:68
-G:+:g
+G:+:u
 W:0
 
 N:57:The Mathom-house
 A:0:0:59:0:3:0
 O:0:0:0:0:0:0
-G:+:g
+G:+:U
 F:MUSEUM
 W:48
 
@@ -906,7 +906,7 @@ I:100:& Pint~ of Fine Wine
 I:100:& Pint~ of Fine Ale
 A:2:4:5:6:7:0
 O:69:69:69:69:69:69
-G:+:w
+G:+:u
 W:8
 
 ##### Mining equipment for Khazad-Dum #####
@@ -969,7 +969,7 @@ T:30:39:3
 A:0:0:1:2:3:4
 #O:34:35:36:37:46:49
 O:19:24:25:45:54:67
-G:1:B
+G:1:y
 F:RANDOM | DEEP_LEVEL | NO_DISCOUNT | ZEROLEVEL | 
 F:GOOD | GREAT | PRICE4 | PRICE2 | VHARD_STEAL
 W:24
@@ -1069,7 +1069,7 @@ T:100:22:256
 T:100:23:256
 A:0:0:1:2:3:4
 O:12:13:14:15:44:68
-G:3:w
+G:3:W
 #needs PRICE4 because it very often sells ego items
 F:RANDOM | MEDIUM_LEVEL | PRICE4
 W:24
@@ -1086,3 +1086,410 @@ W:24
 N:66:Player Store Template
 A:0:0:0:2:3:0
 F:VHARD_STEAL
+
+
+##################################################################################################
+# A copy of the standard town shops to be used as pseudo-town stores for dungeon towns - C. Blue #
+##################################################################################################
+
+N:70:General Store
+#more light sources (for RPG mainly) to get higher chance for brightness lamps
+I:100:& Wooden Torch~
+I:100:& Wooden Torch~
+I:100:& Wooden Torch~
+I:100:& Brass Lantern~
+I:100:& Brass Lantern~
+#I:95:& Flask~ of oil
+I:100:& Flask~ of oil
+I:100:& Flask~ of oil
+I:100:& Ration~ of Food
+I:100:& Hard Biscuit~
+I:90:& Strip~ of Venison
+I:70:& Pint~ of Fine Wine
+I:80:& Pint~ of Fine Ale
+I:60:& Shovel~
+I:50:& Pick~
+I:100:& Iron Spike~
+I:70:& Rounded Pebble~
+I:70:& Iron Shot~
+I:70:& Bolt~
+I:70:& Arrow~
+I:98:& Cloak~
+I:46:& Fur Cloak~
+#boomerang
+T:30:15:1
+#trapping kits
+T:20:46:1
+T:5:46:2
+T:5:46:3
+T:15:46:4
+T:12:46:5
+T:9:46:6
+A:0:0:1:2:3:4
+O:0:5:6:7:1:35
+G:1:U
+W:24
+
+N:71:Armoury
+I:70:& Pair~ of Soft Leather Boots
+I:60:& Pair~ of Hard Leather Boots
+I:80:& Hard Leather Cap~
+I:70:& Metal Cap~
+I:65:& Iron Helm~
+I:100:& Robe~
+I:90:Soft Leather Armour~
+I:90:Soft Studded Leather~
+I:90:Hard Leather Armour~
+I:85:Hard Studded Leather~
+I:90:Leather Scale Mail~
+I:80:Metal Scale Mail~
+I:70:Double Chain Mail~
+I:70:Ring Mail~
+I:70:Double Ring Mail~
+I:75:Chain Mail~
+I:80:Augmented Chain Mail~
+I:75:Metal Brigandine Armour~
+I:68:Bar Chain Mail~
+I:100:& Set~ of Leather Gloves
+I:80:& Set~ of Gauntlets
+I:100:& Small Leather Shield~
+I:90:& Large Leather Shield~
+I:80:& Small Metal Shield~
+A:0:0:1:2:3:4
+O:8:9:10:11:38:20
+G:2:s
+#W:24
+W:36
+
+N:72:Weaponsmith
+I:100:& Dagger~
+I:100:& Main Gauche~
+I:100:& Rapier~
+I:100:& Small Sword~
+I:100:& Short Sword~
+I:100:& Sabre~
+I:100:& Cutlass~
+I:100:& Tulwar~
+I:100:& Broad Sword~
+I:100:& Long Sword~
+I:100:& Scimitar~
+I:100:& Katana~
+I:100:& Bastard Sword~
+I:100:& Spear~
+I:100:& Awl-Pike~
+I:100:& Trident~
+I:100:& Pike~
+I:100:& Beaked Axe~
+I:100:& Broad Axe~
+I:100:& Lance~
+I:100:& Battle Axe~
+I:100:& Hatchet~
+I:100:& Sling~
+I:100:& Short Bow~
+I:100:& Long Bow~
+I:100:& Light Crossbow~
+I:100:& Iron Shot~
+I:100:& Arrow~
+I:100:& Bolt~
+I:100:& Whip~
+A:0:0:1:2:3:4
+O:12:13:14:15:44:68
+G:3:w
+#W:24
+W:36
+
+N:73:Temple
+I:100:& Nunchaku~
+I:100:& Quarterstaff~
+I:100:& Mace~
+I:100:& Bo Staff~
+I:100:& War Hammer~
+I:100:& Lucerne Hammer~
+I:100:& Morning Star~
+I:100:& Flail~
+I:100:& Lead-Filled Mace~
+I:100:Remove Curse
+I:100:Blessing
+I:100:Holy Chant
+I:100:Heroism
+I:100:Word of Recall
+I:100:Word of Recall
+I:100:Word of Recall
+#I:100:Cure Light Wounds
+T:100:71:34
+#I:100:Cure Serious Wounds
+#I:100:Cure Serious Wounds
+T:100:71:35
+T:100:71:35
+I:100:Cure Critical Wounds
+I:100:Cure Critical Wounds
+I:100:Restore Life Levels
+I:100:Restore Life Levels
+I:100:Restore Life Levels
+I:100:& Whip~
+I:100:& Mace~
+I:100:& Ball-and-Chain~
+I:100:& War Hammer~
+I:100:Word of Recall
+I:100:Word of Recall
+I:100:Word of Recall
+I:100:Cure Critical Wounds
+I:100:Cure Critical Wounds
+I:100:Restore Life Levels
+I:100:Restore Life Levels
+I:100:Restore Life Levels
+I:100:Remove Curse
+I:100:Remove Curse
+I:2:*Remove Curse*
+#I:100:*Remove Curse*
+I:100:Neutralize Poison
+#Scroll of Life
+T:100:70:56
+T:100:70:56
+A:0:0:1:2:3:4
+O:26:27:28:29:26:43
+G:4:g
+#W:24
+W:36
+
+N:74:Alchemy shop
+I:100:Enchant Weapon To-Hit
+I:100:Enchant Weapon To-Dam
+I:100:Enchant Armour
+I:100:Identify
+I:100:Identify
+I:100:Identify
+I:100:Identify
+I:100:Identify
+I:100:Light
+I:100:Phase Door
+I:100:Phase Door
+I:100:Phase Door
+#T:100:70:9
+I:100:Monster Confusion
+I:100:Magic Mapping
+I:100:Magic Mapping
+I:100:Magic Mapping
+I:100:Magic Mapping
+I:100:Treasure Detection
+I:100:Object Detection
+I:100:Trap Detection
+I:100:Trap Detection
+I:100:Detect Invisible
+I:100:Recharging
+I:100:Satisfy Hunger
+I:100:Word of Recall
+I:100:Word of Recall
+#let's sell trap/door dest. scrolls
+T:100:70:39
+#(Scroll of Teleportation)
+T:2:70:9
+#T:100:70:9
+#I:100:Restore Strength
+T:100:71:42
+I:100:Restore Intelligence
+I:100:Restore Wisdom
+I:100:Restore Dexterity
+#I:100:Restore Constitution
+T:100:71:46
+I:100:Restore Charisma
+I:100:Identify
+I:100:Identify
+# Maybe needing discussion
+#I:100:*Identify*
+I:2:*Identify*
+I:100:Light
+#I:100:Restore Strength
+T:100:71:42
+I:100:Restore Intelligence
+I:100:Restore Wisdom
+I:100:Restore Dexterity
+#I:100:Restore Constitution
+T:100:71:46
+I:100:Restore Charisma
+I:100:Enchant Armour
+I:100:Enchant Armour
+I:100:Recharging
+I:100:Satisfy Hunger
+I:100:Satisfy Hunger
+I:100:Satisfy Hunger
+#Scroll of Door/Stair Location
+T:100:70:29
+T:100:70:29
+I:100:Resist Heat
+I:100:Resist Cold
+A:0:0:1:2:3:4
+O:30:31:32:33:30:33
+G:5:b
+#W:24
+W:36
+
+N:75:Magic shop
+I:100:Protection
+I:100:Levitation
+I:100:Protection
+I:100:Fire Resistance
+I:100:Cold Resistance
+I:100:Charisma
+#I:100:Slow Digestion
+T:100:40:3
+I:100:Acid Resistance
+I:100:Lightning Resistance
+I:100:Searching
+I:100:Slow Monster
+I:100:Confuse Monster
+I:100:Sleep Monster
+I:100:Magic Missile
+I:100:Stinking Cloud
+I:100:Wonder
+I:100:Disarming
+#I:100:Light
+T:100:65:7
+#I:100:Enlightenment
+T:100:55:9
+I:100:Trap Location
+#I:100:Door/Stair Location
+T:100:55:13
+I:100:Treasure Location
+I:100:Object Location
+#I:100:Detect Invisible
+T:100:55:14
+#I:100:Detect Evil
+T:100:55:15
+#Staff of Teleportation
+T:100:55:4
+T:100:55:4
+T:100:55:4
+T:100:55:4
+I:100:Perception
+I:100:Perception
+I:100:Perception
+I:100:Perception
+I:100:Perception
+#I:100:Remove Curse
+T:100:55:6
+I:100:Cure Light Wounds
+I:100:Probing
+# & Book~ of Beginner Cantrips
+T:100:111:50
+T:100:111:50
+T:100:111:50
+A:0:0:1:2:3:4
+#O:34:35:36:37:31:44 need more keepers first in ow_info
+#O:34:35:36:37:36:37
+O:34:35:36:37:46:49
+G:6:r
+#W:24
+W:36
+
+N:76:Black Market
+#potion of Speed
+T:100:71:29
+T:100:71:29
+#potion of Healing
+T:100:71:38
+T:100:71:38
+T:100:71:38
+#scroll of Teleportation
+T:90:70:9
+#potion of Restore Mana
+T:100:71:64
+T:100:71:64
+#potion of resistance
+#T:25:71:60
+#T:80:71:60
+T:100:71:60
+T:100:71:60
+#scroll of *enchant weapon*
+T:10:70:21
+#scroll of *enchant armour*
+T:10:70:20
+#scroll of holy prayer
+T:5:70:35
+#potion of curing
+T:5:71:61
+#scroll of vermin control
+T:10:70:61
+#pot of *healing* - added especially for Nether Realm visits
+T:5:71:37
+#pot of *restore mana* - shouldn't be buyable. too exquisite!
+#T:5:71:40
+#mummy wrapping
+T:5:12:7
+I:50:Blood Bond
+A:30:0:1:2:3:4
+#O:38:39:40:41:42:
+O:39:40:41:39:40:41
+G:7:D
+F:ALL_ITEM | MEDIUM_LEVEL | PRICE4
+#W:24
+W:36
+
+N:77:Home
+A:62:0:54:55:3:0
+O:0:0:0:0:0:0
+G:8:y
+W:24
+
+N:78:Book Store
+#I:100:[Minstrel's Music]
+#I:100:[Life in symbiosis]
+# & Book~ of Beginner Cantrips
+#T:3:111:256
+T:1:111:100
+T:7:111:50
+T:100:111:255
+A:0:0:1:2:3:4
+O:42:43:44:45:42:43
+G:9:o
+W:48
+# more fireproof spell scrolls and codices:
+#F:GOOD
+F:GREAT
+
+#N:79:Pet Shop
+#I:100:Egg
+#T:100:70:6
+#I:100:& Hard Biscuit~
+N:79:Rune Repository
+$ENABLE_RCRAFT!T:100:104:1
+$ENABLE_RCRAFT!T:80:104:2
+$ENABLE_RCRAFT!T:50:104:3
+$ENABLE_RCRAFT!T:50:104:5
+$ENABLE_RCRAFT!T:90:105:1
+$ENABLE_RCRAFT!T:90:105:2
+$ENABLE_RCRAFT!T:90:105:3
+$ENABLE_RCRAFT!T:90:105:4
+$ENABLE_RCRAFT!T:90:105:5
+$ENABLE_RCRAFT!T:50:105:11
+$ENABLE_RCRAFT!T:50:105:12
+$ENABLE_RCRAFT!T:50:105:13
+$ENABLE_RCRAFT!T:50:105:14
+$ENABLE_RCRAFT$T:80:105:0
+$ENABLE_RCRAFT$T:80:105:1
+$ENABLE_RCRAFT$T:80:105:2
+$ENABLE_RCRAFT$T:80:105:3
+$ENABLE_RCRAFT$T:80:105:4
+$ENABLE_RCRAFT$T:60:105:5
+$ENABLE_RCRAFT$T:60:105:6
+$ENABLE_RCRAFT$T:60:105:7
+$ENABLE_RCRAFT$T:60:105:8
+$ENABLE_RCRAFT$T:60:105:9
+$ENABLE_RCRAFT$T:60:105:10
+$ENABLE_RCRAFT$T:60:105:11
+$ENABLE_RCRAFT$T:60:105:12
+$ENABLE_RCRAFT$T:30:105:13
+$ENABLE_RCRAFT$T:60:105:14
+$ENABLE_RCRAFT$T:60:105:15
+$ENABLE_RCRAFT$T:60:105:16
+A:0:0:1:2:3:4
+O:46:47:48:46:47:48
+#G:+:b
+G:+:B
+F:MEDIUM_LEVEL
+#with new runecraft probably obsolete: | HARD_STEAL
+W:12
+
+# End of pseudo town stores
+##################################################################################################
+
