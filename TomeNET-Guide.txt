@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. Mar 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 24. Apr 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -484,6 +484,8 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
 '       lets you peek at the equipment of party members or players within
         sight.
 #       displays the high scores (same as ~c).
+        (Note: If you press this while browsing any text you can jump to a
+        line number of your choice.)
 |       displays the unique monster list (same as ~1).
 X       quickly swap between two equippable items. They must be inscribed
         '@x0'. (It's basically just the macro 'x0' bound to shift+x key.)
@@ -504,6 +506,8 @@ K       forcibly combines a level 0 item in your inventory with other items of
         the same type that aren't level 0. Be warned, that this will change the
         level of all the items involved to 0.
 CTRL+P  view previous messages.
+        Note: You can also press this when in chat prompt, to cycle backward
+        through lines that you previously typed (also see CTRL+N).
 CTRL+O  view previous chat messages.
 CTRL+X  save your character & quit the game. (You should do this in town!)
         This also automatically saves some settings, like window positions on
@@ -526,6 +530,8 @@ TAB or CTRL+I
 CTRL+U  Displays/exits the audio mixer settings. (Also see (2.1a).)
 CTRL+C  Toggles music. (Shortcut for toggling it in the mixer settings.)
 CTRL+N  Toggles audio. (Shortcut for master toggle in the mixer settings).
+        Note: If you press this while in chat prompt, you can cycle forward
+        through lines you previously typed (also see CTRL+P).
 Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
 (Compare troubleshooting section (8.6), problem 21.)
 
@@ -1919,7 +1925,8 @@ This line consists of the following icons that may show up:
                    separated into yellow and blue '(' icon.
     Blue (         You're a rogue or using primarily rogueish skills such
                    as dodging or dual-wield which depend on especially
-                   flexible armour, but your armour is exceeding that limit!
+                   flexible armour (meaning: Your total armour weight must not
+                   be too high), but your armour is exceeding that limit!
                    You will lose some of the benefits, see (5.5)!
     Violet (       Your armour is so heavy that it reduces your MP.
                    This only affects classes that have a mana pool.
@@ -5304,13 +5311,15 @@ Radiation/Nuke/ This is a poisonous attack (player suffers pure poison damage)
                 - your equipment will be safe from acidic damage.
                 Breath damage is monster HP/3 and caps at 800.
                 Nuke balls (radiation balls) do (level*3)+(10d6) damage.
-Rocket          Rockets combine shard & sound effects with heat influence on
-                your inventory and shard damage to the player. Rockets do
-                insane damage.
+Rocket          Rockets combine fire, shard & sound effects and can also damage
+                your inventory. Rockets do insane damage if unresisted:
                 Rocket damage is monster HP/4, it caps at 800.
-                Shard and sound resistance will lower damage to 5/6 each,
-                fire resistance will lower damage to 4/5, fire immunity to
-                3/4 (overriding fire resistance).
+                Shard and sound resistance will lower damage by 1/6 each,
+                fire resistance will lower damage by 1/5, fire immunity by
+                1/4 (overriding fire resistance). These reductions stack (as in
+                they are consecutively applied to the damage).
+                Shard resistance will prevent cuts, sound resistance will
+                prevent getting stunned.
                 (Rockets are treated internally like breathing.)
 
 
@@ -5588,11 +5597,13 @@ CHAOTIC ('Your weapon produces chaotic effects')
         On hitting, you have a 50% chance to do one of the following:
         a) drain life (VAMPIRIC, see (5.15)) (very likely)
         b) earthquake (see (5.13))
+           (Can be suppressed with !E inscription)
         c) confuse target (very likely)
         d) teleport target away
         e) polymorph target
 IMPACT ('It can cause earthquakes')
         Causes earthquakes if the damage is > 50. (See (5.13).)
+        (Can be suppressed with !E inscription)
 WOUNDING ('It is very sharp and makes your foes bleed.')
         Has additional to-hit/to-dam bonus.
 Weapons of Spinning
@@ -5875,6 +5886,10 @@ Lottery         This might be your chance today to win the Jackpot!
                 Just read it, if you win any money, it will appear under/around
                 your character on the floor. You will always get a message that
                 tells you if you won or not.
+                A common question is if someone ever won the first prize and
+                how much it is:
+                Yes, several people have won it, although it happens extremely
+                rarely. The prize at the time of writing this is about 1.5M Au.
 Vermin Control  Stops breeders on the map from multiplying. Doesn't have effect
                 on certain non-natural breeders such as Unmakers.
 Wilderness Mapping  Maps the wilderness area around the worldmap sector you
@@ -7395,9 +7410,9 @@ Note that not every skill is available to every profession (class).
                                 they will provide a great damage boost.
     .Dodging                    Ability to evade attacks. In order to get any
                                 benefits from doding skill at all, your armour
-                                mustn't be so heavy that you get a flexibility
-                                warning (compare (5.5)) and also you must not
-                                be using a shield.
+                                mustn't be too heavy. If it is, you will get a
+                                flexibility warning (compare (5.5)).
+                                Also, you must not be using a shield.
                                 There are various attacks that can be dodged:
                                 Melee attacks mostly, bolts, arrows and the
                                 likes (both magical and physical) shot by
@@ -8143,6 +8158,8 @@ Mindcrafter
     pressing 'p'. Pressing it again will return one's mind to normal.
     The effects of some necromancy skills are somewhat distracting to
     mindcrafters, so training them may require somewhat more effort.
+    They are able to detect 'Telepath' ego monsters via ESP, which usually are
+    able to conceal their presence telepathically vs all other classes.
     Hint: Mindcrafters have a powerful ranged attack spell they can use very
     early on, Psionic Blast. Look for it in the book store right away.
 
@@ -9466,6 +9483,27 @@ Here you can..
     -The Great Pumpkin (Halloween special event monster)
     These two always give credit, no matter what level difference the players
     have.
+
+    Special case: A player who lost levels due to death plays together with
+    another player who is now just within range of his lowered level.
+    Example: Player A was level 45, but lost 5 levels due to dying twice and is
+    now level 40. He teams up with player B whose level is a regular 33.
+    What happens depends on the server settings, there are two rules:
+    a) the difference of player A's real level and his current level counts in
+       50%. So he'd be treated like a 40 + (45-40)/2 = 42 (rounded down) player
+       and player B wouldn't get any exp since he's not level 35 or higher.
+    b) if player B is way below player A's top level (default is more than 5
+       levels) the exp he gets will be cut down depending on the difference
+       between player B's current level and player A's top level, but he still
+       receives exp.
+    c) the server only looks at the highest reached level and compares the
+       current level of all team members to it. So it would compare player B's
+       33 to player A's 45 when it wants to determine if player B receives a
+       share of exp from player A, which is more than 7 levels apart, so player
+       B gets nothing.
+    The rule effective on the official servers is b), so teaming up with
+    everlasting characters that have lost a bunch of levels shouldn't be much
+    of an issue.
 
     A party owner may set access to one or more of his houses to 'party access'
     (use 'h' key next to the door) to allow all party members to access that
