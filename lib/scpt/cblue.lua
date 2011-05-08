@@ -340,7 +340,7 @@ function resist(name)
     else
 	aggr = ""
     end
-    msg_print(Ind, "  \255DHL: "..players(p).hold_life.."  \255GFeather: "..players(p).feather_fall.."  \255yFear: "..players(p).resist_fear.."  \255oConf: "..players(p).resist_conf.."  \255rBlind: "..players(p).resist_blind.."  \255RFA: "..players(p).free_act.."  \255r+H\255s/\255v+M\255s: \255r"..(players(p).to_l * 10).."\255s/\255v"..players(p).to_m..aggr)
+    msg_print(Ind, "  \255DHL: "..players(p).hold_life.."  \255GFeather: "..players(p).feather_fall.."  \255yFear: "..players(p).resist_fear.."  \255oConf: "..players(p).resist_conf.."  \255rBlind: "..players(p).resist_blind.."  \255RFA: "..players(p).free_act.."  \255v+L: "..players(p).to_l..aggr)
 --    msg_print(Ind, "  \255yReflect: "..players(p).reflect.."  \255uNo-cut: "..players(p).no_cut.."  \255oRes.Tele.: "..players(p).feather_fall.."  \255rFA:  "..players(p).free_act.."  \255gBlind: "..players(p).res_tele)
 -- display sustenances:
     susstr = "---"

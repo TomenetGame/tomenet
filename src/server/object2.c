@@ -2692,12 +2692,10 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		}
 
 		/* Food and Potions and Scrolls */
-		case TV_SCROLL:
-			/* cheques may have different value, so they must not stack */
-			if (o_ptr->sval == SV_SCROLL_CHEQUE) return FALSE;
 		case TV_FOOD:
 		case TV_POTION:
 		case TV_POTION2:
+		case TV_SCROLL:
 		{
 			/* Hack for ego foods :) */
 			if (o_ptr->name2 != j_ptr->name2) return (FALSE);
