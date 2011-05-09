@@ -575,6 +575,9 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 	    j_ptr->sval < SV_SPELLBOOK && j_ptr->xtra1)
 		return(0);
 
+	/* cheques may have different value, so they must not stack */
+	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE) return FALSE;
+
 	/* Require matching discounts */
 	if (o_ptr->discount != j_ptr->discount) return (0);
 
@@ -4403,10 +4406,12 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 		return (FALSE);
 
 	/* Food and Potions and Scrolls */
+	case TV_SCROLL:
+		/* cheques may have different value, so they must not stack */
+		if (o_ptr->sval == SV_SCROLL_CHEQUE) return FALSE;
 	case TV_FOOD:
 	case TV_POTION:
 	case TV_POTION2:
-	case TV_SCROLL:
 		/* Hack for ego foods :) */
 		if (o_ptr->name2 != j_ptr->name2) return (FALSE);
 		if (o_ptr->name2b != j_ptr->name2b) return (FALSE);
