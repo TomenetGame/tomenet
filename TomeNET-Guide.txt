@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 24. Apr 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 10. May 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -165,8 +165,9 @@ compile the game under '(2.1) Installing TomeNET'.
 -Either run 'TomeNET-main.bat' to directly connect to official main server
  (recommended), or run TomeNET.exe and choose a server (Enter 85.118.45.235
  to connect to the official main server).
- NOTE: The official main server may appear in the server list as
- "totem.ielf.org" instead of "tomenet.servegame.com". Don't worry about this.
+ NOTE: The official main server's hostname is "europe.tomenet.net",
+       the meta server's hostname is "meta.tomenet.net" (the meta server is the
+       server that presents you the list of actual game servers).
 
  -Create a character, Half-Troll warrior is good for beginners.
  The server should now allow you to manually choose your stats.
@@ -11033,7 +11034,7 @@ SOLUTION:   This is a typical problem on Windows XP. There are 3
              example C:\TomeNET\.. .
             -Make sure the path name does not contain any spaces!
             -to edit your "TomeNET.ini" file and specify a host directly by
-             specifying "HOST=tomenet.servegame.com".
+             specifying "HOST=europe.tomenet.net".
              Or you can even give the IP address "HOST=85.118.45.235".
 
 PROBLEM 02: I get to a server list, but it doesn't show any servers. It just
@@ -11047,7 +11048,7 @@ SOLUTION:   There are 2 possible solutions.
              longer period of time though, being very annoying.
              That the server isn't listed doesn't mean that it's down though.
              You should try to connect manually (press 'Q') to either:
-             tomenet.servegame.com
+             europe.tomenet.net
              or (if that doesn't work either) directly to its IP adress:
              85.118.45.235
 
@@ -11247,6 +11248,10 @@ SOLUTION:   If you are behind a firewall make sure that the TCP ports
             blocked. (Well, the metaserver isn't needed to play - specify the
             game server via command-line or when asked for it after starting
             up the game then.)
+            The meta server's hostname is "meta.tomenet.net" and its IP is
+            actually the same as the official game servers (85.118.45.235);
+            In case there is a DNS problem somewhere in the internet you could
+            just edit TomeNET.ini and replace the hostname by its actual IP.
 
 PROBLEM 10: I'm not blocked by a firewall, but I still don't see the
             metaserver when I run Tomenet. Instead after waiting for a short
@@ -11255,13 +11260,13 @@ SOLUTION:   The meta-server might be down or a DNS problem might be occuring
             right now. This can happen from time to time. You don't need the
             meta-server to play TomeNET though.
             Just type in the hostname of the server you'd like to connect to,
-            for official main server:   tomenet.servegame.com
+            for official main server:   europe.tomenet.net
             If the hostname doesn't work you can also try entering its IP
             address 85.118.45.235.
             Make sure your TomeNET.ini file contains the correct server port,
             usually 18348! This port isn't needed if you use the meta-list to
             choose a server to connect to, but it's important if you connect
-            directly!
+            directly! (For linux the file is ".tomenetrc".)
             You can connect directly to a TomeNET server and skip the meta
             server list by running your Tomenet directly from the command-line
             (DOS window) within its folder, adding the server IP as a
@@ -11271,7 +11276,7 @@ SOLUTION:   The meta-server might be down or a DNS problem might be occuring
             right-clicking, dragging, releasing it. Edit this shortcut's
             properties and add the server IP to the command-line.)
             For official main server it would look like this:
-            TomeNET.exe tomenet.servegame.com
+            TomeNET.exe europe.tomenet.net
             If the hostname doesn't work for whatever reason you may try the
             IP adress:
             TomeNET.exe 85.118.45.235
