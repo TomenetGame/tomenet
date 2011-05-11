@@ -117,24 +117,31 @@ static bool read_mangrc(cptr filename)
 			{
 				char *name;
 
-				/* Extract name */
 				name = strtok(buf, " \t\n");
 				name = strtok(NULL, "\t\n");
 
-				/* Default nickname */
 				strcpy(cname, name);
 			}
 
-			/* server line */
+			/* meta server line */
+			if (!strncmp(buf, "meta", 4))
+			{
+				char *p;
+
+				p = strtok(buf, " :\t\n");
+				p = strtok(NULL, ":\t\n");
+
+				if (p) strcpy(meta_address, p);
+			}
+
+			/* game server line (note: should be named 'host' for consistency with tomenet.ini) */
 			if (!strncmp(buf, "server", 6))
 			{
 				char *p;
 
-				/* Extract password */
 				p = strtok(buf, " :\t\n");
 				p = strtok(NULL, ":\t\n");
 
-				/* Default password */
 				if (p)
 				{
 					strcpy(svname, p);
@@ -417,6 +424,7 @@ bool write_mangrc(void) {
 		fputs(format("#name\t\t%s\n", cname), config2);
 		fputs("\n", config2);
 
+		fputs(format("#meta\t\t%s\n", ""), config2);//keep using internal defaults
 		fputs(format("#server\t\t%s\n", svname), config2);
 		fputs(format("#port\t\t%d\n", cfg_game_port), config2);
 		fputs("\n", config2);

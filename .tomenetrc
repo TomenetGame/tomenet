@@ -16,6 +16,10 @@
 ## - Character name for fully automatic login
 #name		Gandalf
 
+## - Meta server providing a list of game servers
+##   leave commented out to use internal default
+#meta		meta.tomenet.net
+
 ## - Server and port you wish to connect to;
 ##   leave commented out to get a list of servers
 #server		europe.tomenet.net

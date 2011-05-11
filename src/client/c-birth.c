@@ -1129,6 +1129,9 @@ bool get_server_name(void)
 
 	/* Failed to connect to metaserver in config file, connect to hard-coded address */
 	if (socket == -1) {
+		prt("Failed to connect to used-specified meta server.", 2, 1);
+		prt("Trying to connect to default metaserver instead....", 3, 1);
+
 	        /* Connect to metaserver */
 		socket = CreateClientSocket(META_ADDRESS, 8801);
 	}
@@ -1137,6 +1140,8 @@ bool get_server_name(void)
 	/* Check for failure */
 	if (socket == -1)
 	{
+		prt("Failed to connect to meta server.", 2, 1);
+		prt("Trying to connect to default alternate metaserver instead....", 3, 1);
 		/* Hack -- Connect to metaserver #2 */
 		socket = CreateClientSocket(META_ADDRESS_2, 8801);
 	}
@@ -1145,6 +1150,7 @@ bool get_server_name(void)
 	/* Check for failure */
 	if (socket == -1)
 	{
+		prt("Failed to connect to meta server.", 2, 1);
 		return enter_server_name();
 	}
 
