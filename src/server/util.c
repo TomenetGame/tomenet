@@ -1319,9 +1319,12 @@ void handle_music(int Ind) {
 //	    && p_ptr->wpos.wz == WPOS_ARCADE_Z
 	    ) {
 		p_ptr->music_monster = -2;
-		//47 and 48 are actually pieces used in other arena events
-		if (rand_int(2)) Send_music(Ind, 47);
-		else Send_music(Ind, 48);
+		if (p_ptr->wpos.wz == 0) Send_music(Ind, 1); /* 'generic town' music instead of Bree default */
+		else {
+			//47 and 48 are actually pieces used in other arena events
+			if (rand_int(2)) Send_music(Ind, 47);
+			else Send_music(Ind, 48);
+		}
 		return;
 	}
 #endif

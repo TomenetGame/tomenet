@@ -9421,9 +9421,15 @@ static int Receive_autophase(int ind)
 
 void end_mind(int Ind, bool update)
 {
-	player_type *p_ptr=Players[Ind];
-	if (!(p_ptr->esp_link_flags & LINKF_HIDDEN))
+	int Ind2;
+	player_type *p_ptr2, *p_ptr = Players[Ind];
+
+	if ((Ind2 = get_esp_link(Ind, LINKF_VIEW, &p_ptr2))) p_ptr2->esp_link_music = TRUE;
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) p_ptr->esp_link_music = TRUE;
+
+	if (!(p_ptr->esp_link_flags & LINKF_HIDDEN)) {
 		msg_print(Ind, "\377REnding mind link.");
+	}
 	p_ptr->esp_link = 0;
 	p_ptr->esp_link_type = 0;
 	p_ptr->esp_link_flags = 0;

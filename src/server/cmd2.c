@@ -6020,33 +6020,34 @@ void do_cmd_fusion(int Ind) {
 		q_ptr = Players[i];
 
 		/* Skip disconnected players */
-                if (q_ptr->conn == NOT_CONNECTED) continue;
-                /* Skip DM if not DM himself */
-                if (q_ptr->admin_dm && !p_ptr->admin_dm) continue;
-                /* Skip Ghosts */
-                if (q_ptr->ghost && !q_ptr->admin_dm) continue;
-                /* Skip players not in the same party */
-                if (q_ptr->party == 0 || p_ptr->party != q_ptr->party)
-                /* Skip players who haven't opened their mind */
-                if (!(q_ptr->esp_link_flags & LINKF_OPEN)) continue;
-                /* Skip players who are already in a fusion */
-                if (q_ptr->esp_link) continue;
+		if (q_ptr->conn == NOT_CONNECTED) continue;
+		/* Skip DM if not DM himself */
+		if (q_ptr->admin_dm && !p_ptr->admin_dm) continue;
+		/* Skip Ghosts */
+		if (q_ptr->ghost && !q_ptr->admin_dm) continue;
+		/* Skip players not in the same party */
+		if (q_ptr->party == 0 || p_ptr->party != q_ptr->party)
+		/* Skip players who haven't opened their mind */
+		if (!(q_ptr->esp_link_flags & LINKF_OPEN)) continue;
+		/* Skip players who are already in a fusion */
+		if (q_ptr->esp_link) continue;
 
-                /* found one - establish! */
-                q_ptr->esp_link = p_ptr->id;
-                p_ptr->esp_link = q_ptr->id;
-                q_ptr->esp_link_type = LINK_DOMINANT; /* transmit to me */
-                p_ptr->esp_link_type = LINK_DOMINATED; /* receive from him */
-                p_ptr->esp_link_end = q_ptr->esp_link_end = 0;
-                q_ptr->esp_link_flags = LINKF_VIEW | LINKF_PAIN | LINKF_MISC | LINKF_OBJ;
-                p_ptr->esp_link_flags = LINKF_VIEW_DEDICATED; /* don't show own map info */
-                /* redraw map of target player, which will redraw our view too */
-                q_ptr->redraw |= PR_MAP;
+		/* found one - establish! */
+		q_ptr->esp_link = p_ptr->id;
+		p_ptr->esp_link = q_ptr->id;
+		q_ptr->esp_link_type = LINK_DOMINANT; /* transmit to me */
+		p_ptr->esp_link_type = LINK_DOMINATED; /* receive from him */
+		p_ptr->esp_link_end = q_ptr->esp_link_end = 0;
+		q_ptr->esp_link_flags = LINKF_VIEW | LINKF_PAIN | LINKF_MISC | LINKF_OBJ;
+		p_ptr->esp_link_flags = LINKF_VIEW_DEDICATED; /* don't show own map info */
+		p_ptr->esp_link_music = TRUE; /* don't hear own music */
+		/* redraw map of target player, which will redraw our view too */
+		q_ptr->redraw |= PR_MAP;
 
-                /* notify and done */
-                msg_format(Ind, "\377BMind fusion with %s was successful!", q_ptr->name);
-                msg_format(i, "\377BMind fusion with %s was successful!", p_ptr->name);
-                return;
+		/* notify and done */
+		msg_format(Ind, "\377BMind fusion with %s was successful!", q_ptr->name);
+		msg_format(i, "\377BMind fusion with %s was successful!", p_ptr->name);
+		return;
 	}
 
 	/* failure */
