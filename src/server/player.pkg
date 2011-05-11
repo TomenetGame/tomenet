@@ -853,10 +853,11 @@ struct player_type
 
         byte mode; /* Difficulty MODE */
 
-        s32b esp_link; /* Mental link */
-        byte esp_link_type;
-        u16b esp_link_flags;
-        u16b esp_link_end; /* Time before actual end */
+	s32b esp_link; /* Mental link */
+	byte esp_link_type;
+	u16b esp_link_flags;
+	u16b esp_link_end; /* Time before actual end */
+	bool esp_link_music; /* 'link state changed' flag, to handle music updating */
 
 		/* additions */
         bool black_breath;      /* The Tolkien's Black Breath */

@@ -3769,6 +3769,8 @@ static bool process_player_end_aux(int Ind)
 					msg_format(Ind, "\377RYou break the mind link with %s.", p_ptr2->name);
 					msg_format(Ind2, "\377R%s breaks the mind link with you.", p_ptr->name);
 				}
+				if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) p_ptr->esp_link_music = TRUE;
+				if (p_ptr2->esp_link_flags & LINKF_VIEW_DEDICATED) p_ptr2->esp_link_music = TRUE;
 				p_ptr->esp_link = 0;
 				p_ptr->esp_link_type = 0;
 				p_ptr->esp_link_flags = 0;
