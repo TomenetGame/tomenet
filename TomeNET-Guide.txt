@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 11. May 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 12. May 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -87,6 +87,7 @@ Contents
     (4.11a) Drain effects
     (4.12)  Malicious effects monsters can suffer
     (4.13)  Quests and Events
+    (4.14)  In-game time system
 (5) Item and monster details
     (5.1)   Melee weapons, brands
     (5.1a)  Melee weapon types
@@ -616,11 +617,8 @@ They all start with a slash '/':
             you suffer poison damage each on each turn that passes if you're
             poisoned.
             Turns pass slower on deeper dungeon levels to make up for increased
-            monster and player speed, keeping the game playable in real-time.
-            A turn in Bree, ie on the world surface, will last somewhat between
-            1/2 and 2/3 seconds. You can also observe the passing of turns if
-            you watch your light source losing fuel (hit CTRL+R to refresh the
-            display, when taking measure points!).
+            monster and player speed, keeping the game playable in real-time,
+            see (4.14) for details.
             (Note that the server also has a type of internal turn counter,
             which counts a different sort of turns, one each frame. Usually,
             the server will run at 100 fps, so these turns pass much faster.
@@ -722,7 +720,7 @@ They all start with a slash '/':
  (/quest)   of time passes (continues to expire even while not logged on).
             The player who completes it gets a great item as reward. It will
             appear in your inventory and carry an inscription indicating
-            it's the quest reward.
+            it's the quest reward. (See (4.13) for more info.)
 /rec -550   recalls you to -550ft, using an item inscribed {@R}.
 /rec 32 32  recalls you to Bree (Town at 32,32 world map coordinates),
  (/recall)  using an item inscribed {@R}. See "(0.3) Important Inscriptions"
@@ -3733,7 +3731,7 @@ The 1..9 are standard shops, namely..
         Mayor's Office (in Bree)
                         Allows you to turn in deed parchments you won in
                         tournaments or on other occasions for a reward.
-                        Also, you can receive a quest here.
+                        Also, you can receive a quest here (also see (4.13)).
         The Bank        Several towns have a bank where you can deposit and
                         withdraw money, so you won't lose it accidentally on a
                         dungeon trip.
@@ -3794,11 +3792,13 @@ will be slowed down to make it easier to fight very fast monsters. By the time
 your character enters those depths, it should already have boosted speed so
 the slowdown won't bother you but come in handy. For example if you enter
 Mordor you will notice a slowdown to to approx. 1/2 standard time.
+See (4.14) for more information about the in-game time system.
 
 
 Dungeons
 --------
 Also, there are several dungeons that aren't bound to a town. Here's a list:
+(The staircase colour in-game indicates the dungeon type, compare (4.3).)
 
 Dungeon                         |   Depth/Level         | Min. required player
                                 |                       |   level to enter
@@ -4395,6 +4395,9 @@ Kill quest
     doors in town), or simply type "/quest" in the chat.
     There is a certain time limit which in most cases is easily sufficient,
     especially if you have the according ESP ability.
+    The time limit is actually one 'in-game day', which in real time lasts
+    slightly longer than an hour. (See (4.14) for more information about the
+    in-game time system.)
     The time will continue to run out even while you're not logged on.
     If you fulfil the kill quest you received, you will be rewarded with a
     good or great item, depending on the difficulty (monster level) and chance.
@@ -4462,6 +4465,80 @@ Ironman Deep Dive Challenge
     keep in mind that your character will, as usually when logging out outside
     of towns, stay in the game for about 30 more seconds during which it could
     be killed if you log out in an unsafe place.
+
+
+
+(4.14) In-game time system
+--------------------------
+Two time systems are relevant for the players' game experience:
+-real time (you can check the server's time with /time command by the way)
+-in-game 'turns'
+
+Events for example are usually measured in real-time, ie /evinfo command will
+return information that mentions minutes and seconds. This is, because event
+information is 'out-of-game' information that is supposed to inform the player,
+not the character played.
+
+Most other things in-game are measured by the passing of 'game turns'.
+
+Before explaining more about them, I'd like to interject that there is a second
+meaning to the term 'turns' in the game, which is used to describe frames of
+the game engine, usually running at 60 fps internally. Instead of just calling
+those internal processing steps 'frames' as would be precise, unfortunately
+they are also called 'turns'. But those 'frame-turns' aren't what we'll be
+talking about here, since they don't matter to the players at all.
+The only place players will ever come in contact with frame-turns unfortunately
+is the high score board, which should probably really be changed to either
+'in-game' turns or just to real days/hours/minutes, which make more sense.
+
+So, how do game turns work?
+They measure the time experienced by characters and monsters.
+For example if you are poisoned then you will see your hit points ticking down.
+This is done once each turn, so it will allow you to observe how long a turn
+actually lasts in real time.
+Same for lamp fuel: It runs out by -1 each turn.
+The speed of characters and monsters also depends on game turns:
+A creature moving at +0 speed can move once per game turn, while creatures at
+higher speed may move several times per game turn, and of lower speed only once
+in several game turns, depending on the exact speed.
+
+Note that +SPEED is actually not linear in in-game time! To find out how often
+your character can really move per game turn, use the /ex command. You will
+find that increasing your speed more and more will yield somewhat diminishing
+returns on the amount of actions your character can actually perform per turn.
+
+An special thing about game turns is that their passing depends on the dungeon
+level your character is on!
+A turn in Bree, ie on the world surface, will last like about 1/2..2/3 seconds.
+(You can for example observe the passing of turns if you watch your light
+source losing fuel and hit CTRL+R to refresh the display and thereby take
+measure points).
+In the dungeon however, the time will pass slower. The deeper you are, the
+slower game turns will pass in real-time. For example if you enter Mordor, you
+might feel as if your character only moves at half his usual speed. This is
+because each in-game turn is slowed down quite much on dungeon level 34, which
+corresponds to the floor at Mordor -50 ft.
+The reason for this is that higher level monsters usually move faster than
+lower level monsters. This would make the game more and more dangerous to play,
+since your reaction times would need to be *very* short. Actually much shorter
+than is feasible.
+To counter that, the whole time itself is just slowed down on deeper levels, to
+allow you to react more easily.
+
+Day/night change:
+In the game there is day and night. Vampires burn if they move around in day
+light without a protective wrapping or at least in bat form which has HP
+regeneration to counter the drain effect. Wanderers in the wilderness in turn
+would rather prefer day light in order to locate the entrance to that dungeon
+they are looking out for.
+
+The in-game day time can be checked with /ex chat command too.
+Usually a whole day (day + night, ie full 24h in-game time cycle) will last for
+slightly more than one hour real time.
+The sun will usually rise at around 6am, while night falls at around 7pm. Again
+use the /ex command to see the in-game time for your character.
+Quests (see (4.13)) usually have a time limit of one full in-game day, so you
+will have about 1 h to fulfil them.
 
 
 
@@ -5130,7 +5207,8 @@ Poison          Poison resistance doesn't belong to the basic resistances but
 
 
 Make sure that you have the basic resistances as soon as possible, and poison
-resistance before going into deeper Mordor.
+resistance before going into deeper Mordor. Also, get 'Free Action' before
+going as deep as about -1000 ft or deeper since many monsters can paralyze you.
 
 
 There are also five minor resistances:
@@ -8638,7 +8716,8 @@ the monster in order to activate the ring. The ring will disintegrate and the
 player will polymorph into the according form, for the number of turns the
 ring specified. The turns are depending on floor speed, which means they will
 run out faster on shallow levels and slower on deeper levels relative to
-real time, but in fact always at same speed in character time!
+real time, but in fact always at same speed in character time! (See (4.14) for
+more information about the in-game time system.)
 As a rule of thumb, a dungeon turn lasts about 1 second on average (noticably
 less in town or very shallow levels).
 However, the remaining polymorph duration will stop decreasing while you are
