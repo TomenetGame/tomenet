@@ -4389,6 +4389,13 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000, /* make newbies' lives easier */
                                 '+', 650,
                         },
+                        /* Added nullifying of interception here, since some newbie
+                           trained it as a human druid (mad waste of points) */
+                        {
+                                SKILL_INTERCEPT,
+                                '%', 0,
+                                '%', 0,
+                        },
                         {
                                 SKILL_MAGIC,
                                 '+', 1000,
