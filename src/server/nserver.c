@@ -2530,7 +2530,7 @@ static int Handle_login(int ind)
 			msg_format(NumPlayers, "\374\377bGuild Note: %s", guild_note[i]);
 		}
 	}
-	if (server_warning[0]) msg_broadcast_format(0, "\377R*** Note: %s ***", server_warning);
+	if (server_warning[0]) msg_format(NumPlayers, "\374\377R*** Note: %s ***", server_warning);
 
 	/* Warn the player if some of his/her characters are about to expire */
 	account_checkexpiry(NumPlayers);

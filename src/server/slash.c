@@ -2040,7 +2040,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_format(Ind, "\377sMotD: %s", admin_note[i]);
 				}
 			}
-			if (server_warning[0]) msg_broadcast_format(0, "\377R*** Note: %s ***", server_warning);
+			if (server_warning[0]) msg_format(Ind, "\377R*** Note: %s ***", server_warning);
 			return;
 		}
 		else if (prefix(message, "/notes"))
@@ -4048,7 +4048,7 @@ void do_slash_cmd(int Ind, char *message)
 
 				/* search for free admin note */
 				for (i = 0; i < MAX_ADMINNOTES; i++) {
-	    				if (!strcmp(admin_note[i], "")) {
+					if (!strcmp(admin_note[i], "")) {
 						/* found a free memory spot */
 						break;
 					}
@@ -4057,7 +4057,7 @@ void do_slash_cmd(int Ind, char *message)
 					/* Add admin note */
 					strcpy(admin_note[i], &message2[j]);
 					msg_print(Ind, "\377yNote has been stored.");
-				} else {	
+				} else {
 					msg_format(Ind, "\377oSorry, the server reached the maximum of %d pending admin notes.", MAX_ADMINNOTES);
 				}
 				return;
@@ -4088,7 +4088,7 @@ void do_slash_cmd(int Ind, char *message)
 							}
 
 				strcpy(server_warning, &message2[j]);
-				if (server_warning[0]) msg_broadcast_format(0, "\377R*** Note: %s ***", server_warning);
+				if (server_warning[0]) msg_broadcast_format(0, "\374\377R*** Note: %s ***", server_warning);
 				return;
 			}
 			else if (prefix(message, "/reart")) /* re-roll a random artifact */
