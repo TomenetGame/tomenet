@@ -805,7 +805,7 @@
 /* Reduce damage in PvP by this factor */
 #define PVP_MELEE_DAM_REDUCTION 3
 /* Reduce damage in PvP by this factor */
-#define PVP_SHOOT_DAM_REDUCTION 3
+#define PVP_SHOOT_DAM_REDUCTION 5 /* [3] */
 /* Reduce damage in PvP by this factor */
 #define PVP_THROW_DAM_REDUCTION 3
 /* divide magical damage by this in PvP */
