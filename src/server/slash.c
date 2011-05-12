@@ -2035,11 +2035,12 @@ void do_slash_cmd(int Ind, char *message)
 		}
 		else if (prefix(message, "/snotes") ||
 			prefix(message, "/motd")) { /* same as /anotes for admins basically */
-	    		for (i = 0; i < MAX_ADMINNOTES; i++) {
-		                if (strcmp(admin_note[i], "")) {
-			        	msg_format(Ind, "\377sMotD: %s", admin_note[i]);
-			        }
-		        }
+			for (i = 0; i < MAX_ADMINNOTES; i++) {
+				if (strcmp(admin_note[i], "")) {
+					msg_format(Ind, "\377sMotD: %s", admin_note[i]);
+				}
+			}
+			if (server_warning[0]) msg_broadcast_format(0, "\377R*** Note: %s ***", server_warning);
 			return;
 		}
 		else if (prefix(message, "/notes"))
@@ -4066,6 +4067,28 @@ void do_slash_cmd(int Ind, char *message)
 				for (i = 0; i < MAX_ADMINNOTES; i++)
 					if (strcmp(admin_note[i], ""))
 						msg_broadcast_format(0, "\377sGlobal Admin Note: %s", admin_note[i]);
+				return;
+			}
+			else if (prefix(message, "/swarn")) /* Send a global server warning everyone */
+			{
+				j = 0;
+				if (tk < 1) {
+					strcpy(server_warning, "");
+					msg_print(Ind, "Server warning has been cleared.");
+					return;
+				}
+				/* Search for begin of parms ( == text of the note) */
+				for (i = 6; i < (int)strlen(message2); i++)
+					if (message2[i] == ' ')
+						for (j = i; j < (int)strlen(message2); j++)
+							if (message2[j] != ' ') {
+								/* save start pos in j for latter use */
+								i = strlen(message2);
+								break;
+							}
+
+				strcpy(server_warning, &message2[j]);
+				if (server_warning[0]) msg_broadcast_format(0, "\377R*** Note: %s ***", server_warning);
 				return;
 			}
 			else if (prefix(message, "/reart")) /* re-roll a random artifact */

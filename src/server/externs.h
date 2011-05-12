@@ -399,7 +399,7 @@ extern s16b max_set_idx;
 extern char priv_note_sender[MAX_NOTES][80], priv_note_target[MAX_NOTES][80], priv_note[MAX_NOTES][80];
 extern char party_note[MAX_PARTYNOTES][80], party_note_target[MAX_PARTYNOTES][80];
 extern char guild_note[MAX_GUILDNOTES][80], guild_note_target[MAX_GUILDNOTES][80];
-extern char admin_note[MAX_ADMINNOTES][80];
+extern char admin_note[MAX_ADMINNOTES][80], server_warning[160];
 
 extern char bbs_line[BBS_LINES][140];
 extern char pbbs_line[MAX_PARTIES][BBS_LINES][140];
