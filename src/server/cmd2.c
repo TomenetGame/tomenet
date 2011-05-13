@@ -1070,57 +1070,69 @@ bool access_door(int Ind, struct dna_type *dna, bool note) {
 
 	/* Test for cumulative restrictions */
 	if (p_ptr->dna != dna->creator) {
-		if(dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level) {
+		if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level) {
 			if (note) msg_print(Ind, "Your level doesn't match the house restriction yet.");
 			return(FALSE); /* defies logic a bit, but for speed */
 		}
-		if((dna->a_flags & ACF_CLASS) && (p_ptr->pclass != (dna->creator & 0xff))) {
+		if ((dna->a_flags & ACF_CLASS) && (p_ptr->pclass != (dna->creator & 0xff))) {
 			if (note) msg_print(Ind, "Your class doesn't match the house restriction.");
 			return(FALSE);
 		}
-		if((dna->a_flags & ACF_RACE) && (p_ptr->prace != ((dna->creator >> 8) & 0xff))) {
+		if ((dna->a_flags & ACF_RACE) && (p_ptr->prace != ((dna->creator >> 8) & 0xff))) {
 			if (note) msg_print(Ind, "Your race doesn't match the house restriction.");
 			return(FALSE);
 		}
-		if((dna->a_flags & ACF_WINNER) && !p_ptr->total_winner) {
+
+		/* Allow ACF_WINNER and ACF_FALLEN_WINNER to actually stack positively */
+		if ((dna->a_flags & ACF_WINNER) && (dna->a_flags & ACF_FALLEN_WINNER) && !p_ptr->once_winner) {
+			if (note) msg_print(Ind, "You must be (fallen) royalty to match the house restriction.");
+			return(FALSE);
+		}
+		else if ((dna->a_flags & ACF_WINNER) && !p_ptr->total_winner) {
 			if (note) msg_print(Ind, "You must be royalty to match the house restriction.");
 			return(FALSE);
 		}
-		if((dna->a_flags & ACF_FALLENWINNER) && (p_ptr->total_winner || !p_ptr->once_winner)) {
+		else if ((dna->a_flags & ACF_FALLENWINNER) && (p_ptr->total_winner || !p_ptr->once_winner)) {
 			if (note) msg_print(Ind, "You must be fallen royalty to match the house restriction.");
 			return(FALSE);
 		}
-		if((dna->a_flags & ACF_WINNER) && !(p_ptr->mode & MODE_NO_GHOST)) {
-			if (note) msg_print(Ind, "You must be emperor or empress to match the house restriction.");
+
+		if ((dna->a_flags & ACF_NOGHOST) && !(p_ptr->mode & MODE_NO_GHOST)) {
+			/* extra message in case ACF_WINNER is also specified, just for fanciness */
+			if (dna->a_flags & ACF_WINNER) {
+				if (note) msg_print(Ind, "You must be emperor or empress to match the house restriction.");
+			} else {
+				if (note) msg_print(Ind, "You must be unworldly to match the house restriction.");
+			}
 			return(FALSE);
 		}
 	}
 
-	switch(dna->owner_type){
-		case OT_PLAYER:
-			/* new doors in new server different */
-			if(p_ptr->id == dna->owner && p_ptr->dna == dna->creator)
+	switch (dna->owner_type) {
+	case OT_PLAYER:
+		/* new doors in new server different */
+		if (p_ptr->id == dna->owner && p_ptr->dna == dna->creator)
+			return(TRUE);
+		if (dna->a_flags & ACF_PARTY){
+			if (!p_ptr->party) return(FALSE);
+			if (!strcmp(parties[p_ptr->party].owner, lookup_player_name(dna->owner)))
 				return(TRUE);
-			if(dna->a_flags & ACF_PARTY){
-				if(!p_ptr->party) return(FALSE);
-				if(!strcmp(parties[p_ptr->party].owner, lookup_player_name(dna->owner)))
-					return(TRUE);
-			}
-			return(FALSE);
-		case OT_PARTY:
-			if(!p_ptr->party) return(FALSE);
-			if(player_in_party(dna->owner, Ind)) return(TRUE);
-			return(FALSE);
-		case OT_CLASS:
-			if(p_ptr->pclass == dna->owner) return(TRUE);
-			return(FALSE);
-		case OT_RACE:
-			if(p_ptr->prace == dna->owner) return(TRUE);
-			return(FALSE);
-		case OT_GUILD:
-			if(!p_ptr->guild) return(FALSE);
-			if(p_ptr->guild == dna->owner) return(TRUE);
-			return(FALSE);
+		}
+		return(FALSE);
+	case OT_PARTY:
+		if (!p_ptr->party) return(FALSE);
+		if (player_in_party(dna->owner, Ind)) return(TRUE);
+		return(FALSE);
+	case OT_CLASS:
+		if (p_ptr->pclass == dna->owner) return(TRUE);
+		return(FALSE);
+	case OT_RACE:
+		if (p_ptr->prace == dna->owner) return(TRUE);
+		return(FALSE);
+	case OT_GUILD:
+		if (!p_ptr->guild) return(FALSE);
+		if (p_ptr->guild == dna->owner) return(TRUE);
+		return(FALSE);
 	}
 	return(FALSE);
 }
@@ -1153,81 +1165,90 @@ int access_door_colour(int Ind, struct dna_type *dna){
 	}
 
 	/* test house access permissions */
-	switch(dna->owner_type){
-		case OT_PLAYER:
-			/* new doors in new server different */
-			if(p_ptr->id == dna->owner && p_ptr->dna == dna->creator)
-				return(TERM_L_GREEN);
-			if(dna->a_flags & ACF_PARTY){
-				if(!p_ptr->party) return(TERM_SLATE);
-				/* exploit fix: create party houses, then promote someone else to leader */
-				if(!strcmp(parties[p_ptr->party].owner, lookup_player_name(dna->owner))) {
-					if(dna->a_flags & ACF_CLASS) {
-						if(p_ptr->pclass == (dna->creator & 0xff)) {
-							if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
-							return(TERM_WHITE);
-						} else return(TERM_ORANGE);
-					}
-					if(dna->a_flags & ACF_RACE) {
-						if(p_ptr->prace == ((dna->creator >> 8) & 0xff)) {
-							if(dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
-							return(TERM_WHITE);
-						} else return(TERM_ORANGE);
-					}
-					if(dna->a_flags & ACF_WINNER) {
-						if(p_ptr->total_winner) {
-							if(dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
-							return(TERM_L_RED);
-						} else return(TERM_RED);
-					}
-					if(dna->a_flags & ACF_FALLENWINNER) {
-						if(!p_ptr->total_winner && p_ptr->once_winner) {
-							if(dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
-							return(TERM_L_RED);
-						} else return(TERM_RED);
-					}
-					if(dna->a_flags & ACF_NOGHOST) {
-						if(p_ptr->mode & MODE_NO_GHOST) {
-							if(dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
-						}
-						return(TERM_L_DARK);
-					}
-					if(dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
-					return(TERM_L_BLUE);
+	switch (dna->owner_type) {
+	case OT_PLAYER:
+		/* new doors in new server different */
+		if (p_ptr->id == dna->owner && p_ptr->dna == dna->creator)
+			return(TERM_L_GREEN);
+		if (dna->a_flags & ACF_PARTY){
+			if (!p_ptr->party) return(TERM_SLATE);
+			/* exploit fix: create party houses, then promote someone else to leader */
+			if (!strcmp(parties[p_ptr->party].owner, lookup_player_name(dna->owner))) {
+				if (dna->a_flags & ACF_CLASS) {
+					if (p_ptr->pclass == (dna->creator & 0xff)) {
+						if (dna->a_flags&ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
+						return(TERM_WHITE);
+					} else return(TERM_ORANGE);
 				}
-			}
-			break;
-		case OT_PARTY:
-			if(!p_ptr->party) return(TERM_SLATE);
-			if(player_in_party(dna->owner, Ind)) {
-				if(dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
+				if (dna->a_flags & ACF_RACE) {
+					if (p_ptr->prace == ((dna->creator >> 8) & 0xff)) {
+						if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
+						return(TERM_WHITE);
+					} else return(TERM_ORANGE);
+				}
+
+				/* ACF_WINNER and ACF_FALLEN_WINNER can be used together */
+				if ((dna->a_flags & ACF_WINNER) && (dna->a_flags & ACF_FALLEN_WINNER)) {
+					if (p_ptr->once_winner) {
+						if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
+						return(TERM_L_RED);
+					} else return(TERM_RED);
+				}
+				else if (dna->a_flags & ACF_WINNER) {
+					if (p_ptr->total_winner) {
+						if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
+						return(TERM_L_RED);
+					} else return(TERM_RED);
+				}
+				else if (dna->a_flags & ACF_FALLENWINNER) {
+					if (!p_ptr->total_winner && p_ptr->once_winner) {
+						if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
+						return(TERM_L_RED);
+					} else return(TERM_RED);
+				}
+
+				if (dna->a_flags & ACF_NOGHOST) {
+					if (p_ptr->mode & MODE_NO_GHOST) {
+						if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
+					}
+					return(TERM_L_DARK);
+				}
+				if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 				return(TERM_L_BLUE);
 			}
-			break;
-		case OT_CLASS:
-			if(p_ptr->pclass == dna->owner) {
-				if(dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
-				return(TERM_WHITE);
-			}
-			break;
-		case OT_RACE:
-			if(p_ptr->pclass == dna->owner) {
-				if(dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
-				return(TERM_WHITE);
-			}
-			break;
-		case OT_GUILD:
-			if(!p_ptr->guild) return(TERM_SLATE);
-			if(p_ptr->guild == dna->owner) {
-				if(dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
-				return(TERM_VIOLET);
-			}
-			break;
+		}
+		break;
+	case OT_PARTY:
+		if (!p_ptr->party) return(TERM_SLATE);
+		if (player_in_party(dna->owner, Ind)) {
+			if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
+			return(TERM_L_BLUE);
+		}
+		break;
+	case OT_CLASS:
+		if (p_ptr->pclass == dna->owner) {
+			if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
+			return(TERM_WHITE);
+		}
+		break;
+	case OT_RACE:
+		if (p_ptr->pclass == dna->owner) {
+			if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
+			return(TERM_WHITE);
+		}
+		break;
+	case OT_GUILD:
+		if (!p_ptr->guild) return(TERM_SLATE);
+		if (p_ptr->guild == dna->owner) {
+			if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
+			return(TERM_VIOLET);
+		}
+		break;
 	}
 
 	/* we have no permission to access */
 	return(TERM_SLATE);
-//	if(dna->a_flags & ACF_STORE) return(TERM_MULTI); /* older idea. Instead, see PLAYER_STORE - C. Blue */
+//	if (dna->a_flags & ACF_STORE) return(TERM_MULTI); /* older idea. Instead, see PLAYER_STORE - C. Blue */
 }
 
 cptr get_house_owner(struct c_special *cs_ptr)
@@ -1235,29 +1256,29 @@ cptr get_house_owner(struct c_special *cs_ptr)
 	static char string[80];
 	struct dna_type *dna = cs_ptr->sc.ptr;
 	strcpy(string,"nobody.");
-	if(dna->owner){
+	if (dna->owner) {
 //		char *name;
 		cptr name;
-		switch(dna->owner_type){
-			case OT_PLAYER:
-				if((name = lookup_player_name(dna->owner)))
-				strcpy(string, name);
-				break;
-			case OT_PARTY:
-				if(strlen(parties[dna->owner].name))
-				strcpy(string, parties[dna->owner].name);
-				break;
-			case OT_CLASS:
-				strcpy(string, class_info[dna->owner].title);
-				strcat(string, "s");
-				break;
-			case OT_RACE:
-				strcpy(string, race_info[dna->owner].title);
-				strcat(string, "s");
-				break;
-			case OT_GUILD:
-				strcpy(string, guilds[dna->owner].name);
-				break;
+		switch (dna->owner_type) {
+		case OT_PLAYER:
+			if((name = lookup_player_name(dna->owner)))
+			strcpy(string, name);
+			break;
+		case OT_PARTY:
+			if(strlen(parties[dna->owner].name))
+			strcpy(string, parties[dna->owner].name);
+			break;
+		case OT_CLASS:
+			strcpy(string, class_info[dna->owner].title);
+			strcat(string, "s");
+			break;
+		case OT_RACE:
+			strcpy(string, race_info[dna->owner].title);
+			strcat(string, "s");
+			break;
+		case OT_GUILD:
+			strcpy(string, guilds[dna->owner].name);
+			break;
 		}
 	}
 	return (string);
