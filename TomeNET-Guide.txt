@@ -893,6 +893,8 @@ Ammunition:
     !L          inscribe stacks of ammo in your inventory !L to make them be
                 automatically reloaded into your quiver as soon as the ammo
                 you're currently using runs out.
+                Note that you can place ammo in your inventory in the desired
+                order for reloading by dropping it/picking it up again!
 
 Weapons that ricochet (sling ammo):
     !R          Prevents ricochetting.
