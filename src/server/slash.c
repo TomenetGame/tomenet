@@ -355,14 +355,22 @@ void do_slash_cmd(int Ind, char *message)
 		return;
 	}
 	else if ((prefix(message, "/rfe")) ||
-			prefix(message, "/bug") ||
-			prefix(message, "/cookie"))
+		prefix(message, "/cookie"))
 	{
 		if (colon) {
-			rfe_printf("[%s]%s\n", p_ptr->name, colon);
+			rfe_printf("RFE [%s]%s\n", p_ptr->name, colon);
 			msg_print(Ind, "\377GThank you for sending us a message!");
 		} else {
-			msg_print(Ind, "\377oUsage: /rfe (message)");
+			msg_print(Ind, "\377oUsage: /rfe <message>");
+		}
+		return;
+	}
+	else if (prefix(message, "/bug") {
+		if (colon) {
+			rfe_printf("BUG [%s]%s\n", p_ptr->name, colon);
+			msg_print(Ind, "\377GThank you for sending us a message!");
+		} else {
+			msg_print(Ind, "\377oUsage: /bug <message>");
 		}
 		return;
 	}
