@@ -5296,7 +5296,7 @@ static void process_player_change_wpos(int Ind)
 		msg_print(Ind, "\374\377y    (If you plan to train 'Martial Arts' skill, ignore this warning.)");
 		s_printf("warning_wield: %s\n", p_ptr->name);
 	}
-	else if (p_ptr->max_plv <= 2 && p_ptr->warning_run == 0) {
+	else if (p_ptr->max_plv <= 3 && p_ptr->warning_run == 0) {
 		p_ptr->warning_run = 1;
 		msg_print(Ind, "\374\377yHINT: To run fast, use \377RSHIFT + direction\377y keys.");
 		msg_print(Ind, "\374\377y      For that, Numlock key must be OFF and no awake monster in sight!");
