@@ -131,6 +131,31 @@ POWERBALL = add_spell
 			"Neutral: conjures up a ball of lightning"
 		}
 }
+
+RELOCATION = add_spell
+{
+	["name"] =	"Relocation",
+	["school"] =	SCHOOL_ASTRAL,
+	["level"] =	20, --the same level that one gets initiated (!)
+	["mana"] =	20,
+	["mana_max"] =	20,
+	["fail"] =	10,
+	["spell_power"] = 0,
+	["am"] =	67,
+	["blind"] =	0,
+	["spell"] =	function(args)
+		local dur = randint(21 - get_level(Ind, RECALL, 15)) + 15 - get_level(Ind, RECALL, 10)
+		if args.book < 0 then return end
+		set_recall(Ind, dur, player.inventory[1 + args.book])
+	end,
+	["info"] =	function()
+		return "dur "..(15 - get_level(Ind, RECALL, 10)).."+d"..(21 - get_level(Ind, RECALL, 15))
+	end,
+	["desc"] =	{
+		"Recalls into the dungeon, back to he surface or across the world.",
+	}
+}
+
 VENGEANCE = add_spell
 {
 	["name"] = 	"Vengeance",
@@ -165,6 +190,8 @@ EMPOWERMENT = add_spell
 	["fail"] = 	-98,
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
+	["am"] =	33,
+	["blind"] =	0,
 	["spell"] = 	function(args)
 --				if (get_astral_lev(Ind) >= 40) then
 					divine_empowerment(Ind, get_astral_lev(Ind));
@@ -190,6 +217,7 @@ INTENSIFY = add_spell
 	["fail"] = 	-98,
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
+	["am"] =	67,
 	["spell"] = 	function(args)
 --				if (get_astral_lev(Ind) >= 45) then
 					divine_intensify(Ind, get_astral_lev(Ind));
