@@ -7495,14 +7495,20 @@ Note that not every skill is available to every profession (class).
                                 get caught on such an item, the blacklist time
                                 will be much shorter too.
     .Backstabbing               Lets you backstab enemies, afflicting high
-                                damage. Works best if the opponent is
-                                sleeping. Requires sword-type weapons.
+                                damage. Works if the opponent is asleep or
+                                running away in fear, exposing his back to you.
+                                Also works when you are cloaked (only once per
+                                monster though, so re-cloaking won't help) or
+                                shadow running.
+                                Backstabbing requires sword-type weapons!
                                 If you dual-wield, you will also dual-backstab
                                 if the moster is either asleep, or you perform
                                 the attack from cloaking mode or shadow run.
                                 Although you'll deal somewhat less damage with
                                 each stab, since they are executed both at once
                                 they will provide a great damage boost.
+                                Note: Weapon weight or whether it's 1-h, 1 1/2h
+                                or 2h weapon does not matter for backstabbing.
     .Dodging                    Ability to evade attacks. In order to get any
                                 benefits from doding skill at all, your armour
                                 mustn't be too heavy. If it is, you will get a
