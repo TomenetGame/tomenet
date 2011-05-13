@@ -5814,9 +5814,9 @@ Resistance      Gives you temporary resistance against heat, cold, acid,
                 to lower the damage to 1/9 (1/3 temp * 1/3 perm)).
 Speed           Temporary speed increase by +10.
 Cure Light Wounds
-                Cures blindness and cuts; heals 2d8 HP.
+                Cures blindness and cuts; heals 3d8 HP.
 Cure Serious Wounds
-                Cures blindness, cuts, confusion; heals 5d8 HP.
+                Cures blindness, cuts, confusion; heals 6d8 HP.
 Cure Critical Wounds
                 Cures blindness, cuts, confusion, stun; heals 14d8 HP.
 Healing         Cures blindness, cuts, confusion, stun, poison; heals 300 HP.
