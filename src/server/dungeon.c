@@ -66,8 +66,7 @@ cptr value_check_aux1(object_type *o_ptr)
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 	/* Artifacts */
-	if (artifact_p(o_ptr))
-	{
+	if (artifact_p(o_ptr)) {
 		/* Cursed/Broken */
 		if (cursed_p(o_ptr) || broken_p(o_ptr)) return "terrible";
 
@@ -76,8 +75,7 @@ cptr value_check_aux1(object_type *o_ptr)
 	}
 
 	/* Ego-Items */
-	if (ego_item_p(o_ptr))
-	{
+	if (ego_item_p(o_ptr)) {
 		/* Hack for Stormbringer, so it doesn't show as "worthless" */
 		if (o_ptr->name2 == EGO_STORMBRINGER) return "terrible";
 
@@ -85,9 +83,14 @@ cptr value_check_aux1(object_type *o_ptr)
 		if (cursed_p(o_ptr) || broken_p(o_ptr)) return "worthless";
 
 		/* Normal */
+#if 0
 		/* exploding ammo is excellent */
 		if (is_ammo(o_ptr->tval) && (o_ptr->pval != 0)) return "excellent";
-		
+#else
+		/* All exploding or ego-ammo is excellent */
+		if (is_ammo(o_ptr->tval) && (o_ptr->pval || o_ptr->name2 || o_ptr->name2b)) return "excellent";
+#endif
+
 		if (object_value(0, o_ptr) < 4000) return "good";
 		return "excellent";
 	}
@@ -99,40 +102,39 @@ cptr value_check_aux1(object_type *o_ptr)
 	if (broken_p(o_ptr)) return "broken";
 
 	/* Valid "tval" codes */
-	switch (o_ptr->tval)
-	{
-		case TV_DIGGING:
-		case TV_BLUNT:
-		case TV_POLEARM:
-		case TV_SWORD:
-		case TV_BOOTS:
-		case TV_GLOVES:
-		case TV_HELM:
-		case TV_CROWN:
-		case TV_SHIELD:
-		case TV_CLOAK:
-		case TV_SOFT_ARMOR:
-		case TV_HARD_ARMOR:
-		case TV_DRAG_ARMOR:
-		case TV_AXE:
-		case TV_SHOT:
-		case TV_ARROW:
-		case TV_BOLT:
-		case TV_BOW:
-		case TV_BOOMERANG:
-			/* Good "armor" bonus */
-			if ((o_ptr->to_a > k_ptr->to_a) &&
-			    (o_ptr->to_a > 0)) return "good";
-			/* Good "weapon" bonus */
-			if ((o_ptr->to_h - k_ptr->to_h + o_ptr->to_d - k_ptr->to_d > 0) &&
-			    (o_ptr->to_h > 0 || o_ptr->to_d > 0)) return "good";
-			break;
-		default:
-			/* Good "armor" bonus */
-			if (o_ptr->to_a > 0) return "good";
-			/* Good "weapon" bonus */
-			if (o_ptr->to_h + o_ptr->to_d > 0) return "good";
-			break;
+	switch (o_ptr->tval) {
+	case TV_DIGGING:
+	case TV_BLUNT:
+	case TV_POLEARM:
+	case TV_SWORD:
+	case TV_BOOTS:
+	case TV_GLOVES:
+	case TV_HELM:
+	case TV_CROWN:
+	case TV_SHIELD:
+	case TV_CLOAK:
+	case TV_SOFT_ARMOR:
+	case TV_HARD_ARMOR:
+	case TV_DRAG_ARMOR:
+	case TV_AXE:
+	case TV_SHOT:
+	case TV_ARROW:
+	case TV_BOLT:
+	case TV_BOW:
+	case TV_BOOMERANG:
+		/* Good "armor" bonus */
+		if ((o_ptr->to_a > k_ptr->to_a) &&
+		    (o_ptr->to_a > 0)) return "good";
+		/* Good "weapon" bonus */
+		if ((o_ptr->to_h - k_ptr->to_h + o_ptr->to_d - k_ptr->to_d > 0) &&
+		    (o_ptr->to_h > 0 || o_ptr->to_d > 0)) return "good";
+		break;
+	default:
+		/* Good "armor" bonus */
+		if (o_ptr->to_a > 0) return "good";
+		/* Good "weapon" bonus */
+		if (o_ptr->to_h + o_ptr->to_d > 0) return "good";
+		break;
 	}
 
 	/* Default to "average" */
@@ -144,60 +146,54 @@ cptr value_check_aux1_magic(object_type *o_ptr)
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 
-	switch (o_ptr->tval)
-	{
-		/* Scrolls, Potions, Wands, Staves and Rods */
-		case TV_SCROLL:
-			/* hack for cheques */
-			if (k_ptr->sval == SV_SCROLL_CHEQUE) return "good";
-		case TV_POTION:
-		case TV_POTION2:
-		case TV_WAND:
-		case TV_STAFF:
-		case TV_ROD:
-		case TV_ROD_MAIN:
-		{
-			/* "Cursed" scrolls/potions have a cost of 0 */
-			if (k_ptr->cost == 0) return "bad";//"terrible";
+	switch (o_ptr->tval) {
+	/* Scrolls, Potions, Wands, Staves and Rods */
+	case TV_SCROLL:
+		/* hack for cheques */
+		if (k_ptr->sval == SV_SCROLL_CHEQUE) return "good";
+	case TV_POTION:
+	case TV_POTION2:
+	case TV_WAND:
+	case TV_STAFF:
+	case TV_ROD:
+	case TV_ROD_MAIN:
+		/* "Cursed" scrolls/potions have a cost of 0 */
+		if (k_ptr->cost == 0) return "bad";//"terrible";
 
-			/* Artifacts */
-			if (artifact_p(o_ptr)) return "special";
+		/* Artifacts */
+		if (artifact_p(o_ptr)) return "special";
 
-			/* Scroll of Nothing, Apple Juice, etc. */
-			if (k_ptr->cost < 3) return "worthless"; //"average" or "worthless"
+		/* Scroll of Nothing, Apple Juice, etc. */
+		if (k_ptr->cost < 3) return "worthless"; //"average" or "worthless"
 
-			/*
-			 * Identify, Phase Door, Cure Light Wounds, etc. are
-			 * just average
-			 */
-			if (k_ptr->cost < 100) return "average";
+		/*
+		 * Identify, Phase Door, Cure Light Wounds, etc. are
+		 * just average
+		 */
+		if (k_ptr->cost < 100) return "average";
 
-			/* Enchant Armor, *Identify*, Restore Stat, etc. */
-			if (k_ptr->cost < 4000) return "good";
+		/* Enchant Armor, *Identify*, Restore Stat, etc. */
+		if (k_ptr->cost < 4000) return "good";
 
-			/* Acquirement, Deincarnation, Strength, Blood of Life, ... */
-			if (k_ptr->cost >= 4000) return "excellent";
+		/* Acquirement, Deincarnation, Strength, Blood of Life, ... */
+		if (k_ptr->cost >= 4000) return "excellent";
 
-			break;
-		}
+		break;
+	/* Food */
+	case TV_FOOD:
+		/* "Cursed" food */
+		if (k_ptr->cost == 0) return "bad";//"terrible";
 
-		/* Food */
-		case TV_FOOD:
-		{
-			/* "Cursed" food */
-			if (k_ptr->cost == 0) return "bad";//"terrible";
+		/* Artifacts */
+		if (artifact_p(o_ptr)) return "special";
 
-			/* Artifacts */
-			if (artifact_p(o_ptr)) return "special";
+		/* Normal food (no magical properties) */
+		if (k_ptr->cost <= 10) return "average";
 
-			/* Normal food (no magical properties) */
-			if (k_ptr->cost <= 10) return "average";
+		/* Everything else is good */
+		if (k_ptr->cost > 10) return "good";
 
-			/* Everything else is good */
-			if (k_ptr->cost > 10) return "good";
-
-			break;
-		}
+		break;
 	}
 
 	/* No feeling */
@@ -229,38 +225,37 @@ cptr value_check_aux2(object_type *o_ptr)
 		return "good";
 	}
 
-	switch (o_ptr->tval)
-	{
-		case TV_DIGGING:
-		case TV_BLUNT:
-		case TV_POLEARM:
-		case TV_SWORD:
-		case TV_BOOTS:
-		case TV_GLOVES:
-		case TV_HELM:
-		case TV_CROWN:
-		case TV_SHIELD:
-		case TV_CLOAK:
-		case TV_SOFT_ARMOR:
-		case TV_HARD_ARMOR:
-		case TV_DRAG_ARMOR:
-		case TV_AXE:
-		case TV_SHOT:
-		case TV_ARROW:
-		case TV_BOLT:
-		case TV_BOW:
-		case TV_BOOMERANG:
-			/* Good "armor" bonus */
-			if (o_ptr->to_a > k_ptr->to_a) return "good";
-			/* Good "weapon" bonus */
-			if (o_ptr->to_h - k_ptr->to_h + o_ptr->to_d - k_ptr->to_d > 0) return "good";
-			break;
-		default:
-			/* Good "armor" bonus */
-			if (o_ptr->to_a > 0) return "good";
-			/* Good "weapon" bonus */
-			if (o_ptr->to_h + o_ptr->to_d > 0) return "good";
-			break;
+	switch (o_ptr->tval) {
+	case TV_DIGGING:
+	case TV_BLUNT:
+	case TV_POLEARM:
+	case TV_SWORD:
+	case TV_BOOTS:
+	case TV_GLOVES:
+	case TV_HELM:
+	case TV_CROWN:
+	case TV_SHIELD:
+	case TV_CLOAK:
+	case TV_SOFT_ARMOR:
+	case TV_HARD_ARMOR:
+	case TV_DRAG_ARMOR:
+	case TV_AXE:
+	case TV_SHOT:
+	case TV_ARROW:
+	case TV_BOLT:
+	case TV_BOW:
+	case TV_BOOMERANG:
+		/* Good "armor" bonus */
+		if (o_ptr->to_a > k_ptr->to_a) return "good";
+		/* Good "weapon" bonus */
+		if (o_ptr->to_h - k_ptr->to_h + o_ptr->to_d - k_ptr->to_d > 0) return "good";
+		break;
+	default:
+		/* Good "armor" bonus */
+		if (o_ptr->to_a > 0) return "good";
+		/* Good "weapon" bonus */
+		if (o_ptr->to_h + o_ptr->to_d > 0) return "good";
+		break;
 	}
 
 	/* No feeling */
@@ -272,59 +267,54 @@ cptr value_check_aux2_magic(object_type *o_ptr)
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 
-	switch (o_ptr->tval)
-	{
-		/* Scrolls, Potions, Wands, Staves and Rods */
-		case TV_SCROLL:
-			/* hack for cheques */
-			if (k_ptr->sval == SV_SCROLL_CHEQUE) return "good";
-		case TV_POTION:
-		case TV_POTION2:
-		case TV_WAND:
-		case TV_STAFF:
-		case TV_ROD:
-		{
-			/* "Cursed" scrolls/potions have a cost of 0 */
-			if (k_ptr->cost == 0) return "bad";//"cursed";
+	switch (o_ptr->tval) {
+	/* Scrolls, Potions, Wands, Staves and Rods */
+	case TV_SCROLL:
+		/* hack for cheques */
+		if (k_ptr->sval == SV_SCROLL_CHEQUE) return "good";
+	case TV_POTION:
+	case TV_POTION2:
+	case TV_WAND:
+	case TV_STAFF:
+	case TV_ROD:
+		/* "Cursed" scrolls/potions have a cost of 0 */
+		if (k_ptr->cost == 0) return "bad";//"cursed";
 
-			/* Artifacts */
-			if (artifact_p(o_ptr)) return "good";
+		/* Artifacts */
+		if (artifact_p(o_ptr)) return "good";
 
-			/* Scroll of Nothing, Apple Juice, etc. */
-			if (k_ptr->cost < 3) return "average";//or "worthless"
+		/* Scroll of Nothing, Apple Juice, etc. */
+		if (k_ptr->cost < 3) return "average";//or "worthless"
 
-			/*
-			 * Identify, Phase Door, Cure Light Wounds, etc. are
-			 * just average
-			 */
-			if (k_ptr->cost < 100) return "average";
+		/*
+		 * Identify, Phase Door, Cure Light Wounds, etc. are
+		 * just average
+		 */
+		if (k_ptr->cost < 100) return "average";
 
-			/* Enchant Armor, *Identify*, Restore Stat, etc. */
-			if (k_ptr->cost < 4000) return "good";
+		/* Enchant Armor, *Identify*, Restore Stat, etc. */
+		if (k_ptr->cost < 4000) return "good";
 
-			/* Acquirement, Deincarnation, Strength, Blood of Life, ... */
-			if (k_ptr->cost >= 4000) return "good";
+		/* Acquirement, Deincarnation, Strength, Blood of Life, ... */
+		if (k_ptr->cost >= 4000) return "good";
 
-			break;
-		}
+		break;
 
-		/* Food */
-		case TV_FOOD:
-		{
-			/* "Cursed" food */
-			if (k_ptr->cost == 0) return "bad";//"cursed";
+	/* Food */
+	case TV_FOOD:
+		/* "Cursed" food */
+		if (k_ptr->cost == 0) return "bad";//"cursed";
 
-			/* Artifacts */
-			if (artifact_p(o_ptr)) return "good";
+		/* Artifacts */
+		if (artifact_p(o_ptr)) return "good";
 
-			/* Normal food (no magical properties) */
-			if (k_ptr->cost <= 10) return "average";
+		/* Normal food (no magical properties) */
+		if (k_ptr->cost <= 10) return "average";
 
-			/* Everything else is good */
-			if (k_ptr->cost > 10) return "good";
+		/* Everything else is good */
+		if (k_ptr->cost > 10) return "good";
 
-			break;
-		}
+		break;
 	}
 
 	/* No feeling */
