@@ -136,7 +136,7 @@ RELOCATION = add_spell
 {
 	["name"] =	"Relocation",
 	["school"] =	SCHOOL_ASTRAL,
-	["level"] =	20, --the same level that one gets initiated (!)
+	["level"] =	22, --the same level that one gets initiated (!) (ie 20 + 2)
 	["mana"] =	20,
 	["mana_max"] =	20,
 	["fail"] =	10,
