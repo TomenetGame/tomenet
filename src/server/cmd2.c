@@ -1084,7 +1084,7 @@ bool access_door(int Ind, struct dna_type *dna, bool note) {
 		}
 
 		/* Allow ACF_WINNER and ACF_FALLEN_WINNER to actually stack positively */
-		if ((dna->a_flags & ACF_WINNER) && (dna->a_flags & ACF_FALLEN_WINNER) && !p_ptr->once_winner) {
+		if ((dna->a_flags & ACF_WINNER) && (dna->a_flags & ACF_FALLENWINNER) && !p_ptr->once_winner) {
 			if (note) msg_print(Ind, "You must be (fallen) royalty to match the house restriction.");
 			return(FALSE);
 		}
@@ -1187,8 +1187,8 @@ int access_door_colour(int Ind, struct dna_type *dna){
 					} else return(TERM_ORANGE);
 				}
 
-				/* ACF_WINNER and ACF_FALLEN_WINNER can be used together */
-				if ((dna->a_flags & ACF_WINNER) && (dna->a_flags & ACF_FALLEN_WINNER)) {
+				/* ACF_WINNER and ACF_FALLENWINNER can be used together */
+				if ((dna->a_flags & ACF_WINNER) && (dna->a_flags & ACF_FALLENWINNER)) {
 					if (p_ptr->once_winner) {
 						if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 						return(TERM_L_RED);
