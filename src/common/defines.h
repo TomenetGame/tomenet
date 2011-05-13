@@ -2387,8 +2387,8 @@ that keeps many algorithms happy.
 #define EGO_ETHEREAL		204
 #define EGO_AURA_COLD		213
 #define EGO_AURA_ELEC2		221
-#define EGO_AURA_FIRE2		222
-#define EGO_AURA_COLD2		223
+#define EGO_AURA_COLD2		222
+#define EGO_AURA_FIRE2		223
 
 
 
