@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. May 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 13. May 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -4157,6 +4157,9 @@ Houses with party access allow further restrictions. Those are:
  (Kings/Queens/Emperors/Empresses) or to fallen winners (winners who died and
  thus lost their title), and you may access it because you match the condition.
 -a red door means that you fail to match above restriction.
+(Note: The restrictions 'winners' and 'fallen winners' can be applied together
+when setting house door restrictions. In that case, they will require anyone
+who wants to enter to be either winner or fallen winner.)
 
 -a dark grey door means that this house may only be accessed by no-ghost
  characters, that means either unworldly or hellish.
