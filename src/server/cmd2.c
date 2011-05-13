@@ -981,13 +981,12 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args){
 /*	msg_print(Ind,"\377ySorry, this feature is not available"); -- see below
 	if (!is_admin(p_ptr)) return(FALSE);*/
 
-	if (!is_admin(p_ptr))
-	{
-		if(dna->creator!=p_ptr->dna) return(FALSE);
+	if (!is_admin(p_ptr)) {
+		if (dna->creator!=p_ptr->dna) return(FALSE);
 //(covered below)		if(args[1]>='3' && args[1]<'5') return(FALSE);
 		/* maybe make party leader only chown party */
 	}
-	switch(args[1]){
+	switch (args[1]) {
 		case '1':
 			/* Check house limit of target player! */
 			i = name_lookup_loose(Ind, &args[2], FALSE);
@@ -995,22 +994,25 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args){
 				msg_print(Ind, "Target player isn't logged on.");
 				return(FALSE);
 			}
-			if(cfg.houses_per_player && (Players[i]->houses_owned >= ((Players[i]->lev > 50 ? 50 : Players[i]->lev) / cfg.houses_per_player)) && !is_admin(Players[i])) {
+			if (compat_pmode(Ind, i)) {
+				msg_format(Ind, "You cannot transfer houses to %s players!", compat_pmode(Ind, i));
+				return(FALSE);
+			}
+			if (Players[i]->inval) {
+				msg_print(Ind, "You cannot transfer houses to players that aren't validated!");
+				return(FALSE);
+			}
+			if (cfg.houses_per_player && (Players[i]->houses_owned >= ((Players[i]->lev > 50 ? 50 : Players[i]->lev) / cfg.houses_per_player)) && !is_admin(Players[i])) {
 				if ((int)(Players[i]->lev / cfg.houses_per_player) == 0)
 					msg_format(Ind, "That player needs to be at least level %d to own a house!", cfg.houses_per_player);
 				else
 					msg_print(Ind, "At his current level, that player cannot own more houses!");
 				return (FALSE);
 			}
-			
-			if (compat_pmode(Ind, i)) {
-				msg_format(Ind, "You cannot transfer houses to %s players!", compat_pmode(Ind, i));
-				return(FALSE);
-			}
-			
+
 			/* Finally change the owner */
-			newowner=lookup_player_id_messy(&args[2]);
-			if(!newowner) newowner=-1;
+			newowner = lookup_player_id_messy(&args[2]);
+			if (!newowner) newowner = -1;
 			break;
 		default:
 			msg_print(Ind,"\377ySorry, this feature is not available");
