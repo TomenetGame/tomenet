@@ -890,13 +890,13 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				}
 
 			case SV_POTION_CURE_LIGHT:
-				if (hp_player(Ind, damroll(2, 8))) ident = TRUE;
+				if (hp_player(Ind, damroll(3, 8))) ident = TRUE;
 				if (set_blind(Ind, 0)) ident = TRUE;
 				if (set_cut(Ind, p_ptr->cut - 10, p_ptr->cut_attacker)) ident = TRUE;
 				break;
 
 			case SV_POTION_CURE_SERIOUS:
-				if (hp_player(Ind, damroll(5, 8))) ident = TRUE;
+				if (hp_player(Ind, damroll(6, 8))) ident = TRUE;
 				if (set_blind(Ind, 0)) ident = TRUE;
 				if (set_confused(Ind, 0)) ident = TRUE;
 				if (set_cut(Ind, (p_ptr->cut / 2) - 50, p_ptr->cut_attacker)) ident = TRUE;
