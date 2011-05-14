@@ -4190,8 +4190,9 @@ they aren't logged on. Other players can enter your store and buy items, but
 not sell any. You will receive cheques that you can turn in for money by simply
 reading them with 'r' key, same as scrolls. You can also 'I'nspect them.
 The prices customers will see listed when they enter your store are at least as
-high as in the Black Market, except that prices in player stores do not depend
-on race or charisma. You can further increase item's price by inscribing it, if
+high as twice of the item's base value (or in other words half of normal Black
+Market price, except that prices in player stores do not depend on race or
+charisma). You can further increase an item's price by inscribing it, if
 you like:
 
 To turn a house into a player-store, simply put an item in it that carries the
