@@ -3832,8 +3832,10 @@ void check_experience(int Ind)
 				msg_print(Ind, "\374\377GYou learn the fighting technique 'Distract'");
 			if (old_lev < 12 && p_ptr->lev >= 12)
 				msg_print(Ind, "\374\377GYou learn the fighting technique 'Flash bomb'");
+#ifdef ENABLE_ASSASSINATE
 			if (old_lev < 35 && p_ptr->lev >= 35)
 				msg_print(Ind, "\374\377GYou learn the fighting technique 'Assasinate'");
+#endif
 			if (old_lev < 50 && p_ptr->lev >= 50 && p_ptr->total_winner)
 				msg_print(Ind, "\374\377GYou learn the royal fighting technique 'Shadow run'");
 			/* Also update the client's 'm' menu for fighting techniques */
