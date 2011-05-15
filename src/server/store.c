@@ -689,6 +689,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_PARCHMENT:
 				/* and now new... :) */
 				case TV_TRAPKIT:
+				case TV_BOOMERANG:
 				break;
 				default:
 				return (FALSE);
