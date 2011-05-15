@@ -3029,21 +3029,16 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 	/* Artifacts cannot be enchanted. */
 	if (a) return (FALSE);
 
-	/* Ethereal ammo cannot be enchanted */
-	if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) return (FALSE);
-	
 	/* Large piles resist enchantment */
 	prob = o_ptr->number * 100;
 
 	/* Missiles are easy to enchant */
-	if (is_ammo(o_ptr->tval))
-	{
+	if (is_ammo(o_ptr->tval)) {
 		prob = prob / 20;
 	}
 
 	/* Try "n" times */
-	for (i=0; i<n; i++)
-	{
+	for (i = 0; i < n; i++) {
 		/* Hack -- Roll for pile resistance */
 		if (rand_int(prob) >= 100) continue;
 

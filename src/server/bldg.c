@@ -1207,10 +1207,6 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 	        /* Artifacts cannot be enchanted. */                                                                             
 	        if (artifact_p(o_ptr)) continue;                                                                           
 
-	        /* Ethereal ammo cannot be enchanted */                                                                          
-	        if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) continue;                               
-
-
 		if (ispecific > 0) {
 			if (o_ptr->tval != ispecific)
 				continue;
