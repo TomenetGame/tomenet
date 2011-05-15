@@ -4355,8 +4355,10 @@ F:IGNORE_ACID | IGNORE_FIRE | IGNORE_COLD | IGNORE_ELEC | IGNORE_WATER
 N:564:Nothing
 G:?:d
 I:70:53:0
-W:1:0:5:2
-A:1/1
+#W:1:0:5:2
+#A:1/1
+W:127:255:5:2
+A:127/255
 P:0:1d1:0:0:0
 
 #N:565:Poison
@@ -4369,31 +4371,40 @@ P:0:1d1:0:0:0
 N:566:Nothing
 G:-:d
 I:65:30:0
-W:2:0:10:20
-A:2/1
+#W:2:0:10:20
+#A:2/1
+W:127:255:10:20
+A:127/255
 P:0:1d1:0:0:0
 F:NO_RECHARGE
 
-N:567:Nothing
+#N:567:Nothing
+N:567:Adornment
 G:=:d
 I:45:50:0
 W:5:0:2:20
 A:5/1
 P:0:1d1:0:0:0
+#added for 'Adornment' usage:
+F:EASY_KNOW
 
 N:568:Nothing
 G:_:d
 I:55:30:0
-W:5:0:50:50
-A:5/1
+#W:5:0:50:50
+#A:5/1
+W:127:255:50:50
+A:127/255
 P:0:1d1:0:0:0
 F:NO_RECHARGE
 
 N:569:Nothing
 G:-:d
 I:66:0:1
-W:5:0:10:50
-A:5/1
+#W:5:0:10:50
+#A:5/1
+W:127:255:10:50
+A:127/255
 P:0:1d1:0:0:0
 
 
@@ -4418,8 +4429,10 @@ P:0:1d1:0:0:0
 N:572:Nothing
 G:":d
 I:40:16:0
-W:10:0:3:20
-A:10/1
+#W:10:0:3:20
+#A:10/1
+W:127:255:3:20
+A:127/255
 P:0:1d1:0:0:0
 
 # An artifact potion! The Blood of Life...
