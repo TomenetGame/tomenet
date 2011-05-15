@@ -7057,7 +7057,8 @@ Note that not every skill is available to every profession (class).
                                 point penalty.
                                 Lets you wear heavier armour without losing
                                 dodge chance, or other roguish abilities like
-                                dodging, dual-wield, critical-strike.
+                                boni from dual-wielding, critical-strike,
+                                area-searching and cloaking.
                                 Lets you wear heavier armour without getting
                                 a penalty to to-hit or sneakiness
                                 (See (5.5) for details about encumberment.)
