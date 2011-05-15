@@ -4668,8 +4668,7 @@ bool mon_hit_trap(int m_idx)
 	j_ptr = &object_type_body;
 
 	/* Paranoia */
-	if (!kit_o_ptr || !load_o_ptr)
-		return (FALSE);
+	if (!kit_o_ptr || !load_o_ptr) return (FALSE);
 
 	/* Get trap properties */
 	object_flags(kit_o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
@@ -4679,8 +4678,7 @@ bool mon_hit_trap(int m_idx)
 	if ((r_ptr->flags2 & RF2_PASS_WALL) && !(f2 & TRAP2_KILL_GHOST)) return (FALSE);
 
 	/* Some traps are specialized to some creatures */
-	if (f2 & TRAP2_ONLY_MASK)
-	{
+	if (f2 & TRAP2_ONLY_MASK) {
 		bool affect = FALSE;
 		if ((f2 & TRAP2_ONLY_DRAGON) && (r_ptr->flags3 & RF3_DRAGON)) affect = TRUE;
 		if ((f2 & TRAP2_ONLY_DEMON)  && (r_ptr->flags3 & RF3_DEMON))  affect = TRUE;
@@ -4693,13 +4691,11 @@ bool mon_hit_trap(int m_idx)
 	}
 
 	/* XXX Hack -- is the trapper online? */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 
 		/* Check if they are in here */
-		if (kit_o_ptr->owner == p_ptr->id)
-		{
+		if (kit_o_ptr->owner == p_ptr->id) {
 			who = i;
 			break;
 		}
@@ -4718,8 +4714,7 @@ bool mon_hit_trap(int m_idx)
 		difficulty += 20;
 
 	/* Some traps are well-hidden */
-	if (f1 & TR1_STEALTH)
-	{
+	if (f1 & TR1_STEALTH) {
 		difficulty += 10 * (kit_o_ptr->pval);
 	}
 
@@ -4733,7 +4728,7 @@ bool mon_hit_trap(int m_idx)
 	/* Some monsters are great at detecting traps */
 #if 0 /* DGDGDGDG */
 	if (r_ptr->flags2 & RF2_NOTICE_TRAP) smartness += 20;
-#endif 
+#endif
 	/* Some monsters have already noticed one of out traps */
 	//        if (m_ptr->smart & SM_NOTE_TRAP) smartness += 20;
 
@@ -4744,8 +4739,7 @@ bool mon_hit_trap(int m_idx)
 	if (randint(300) > (difficulty - smartness + 150)) notice = TRUE;
 
 	/* Disarm check */
-	if (notice)
-	{
+	if (notice) {
 		/* The next traps will be easier to spot! */
 		//                m_ptr->smart |= SM_NOTE_TRAP;
 
@@ -4782,8 +4776,7 @@ bool mon_hit_trap(int m_idx)
 	}
 
 	/* If disarmed, remove the trap and print a message */
-	if (disarm)
-	{
+	if (disarm) {
 		remove = TRUE;
 
 		/* Next time disarming will be easier */
@@ -4791,8 +4784,7 @@ bool mon_hit_trap(int m_idx)
 		m_ptr->status |= STATUS_DISARM_TRAP;
 #endif
 #if 0
-		if (who > 0 && p_ptr->mon_vis[m_idx]) 
-		{
+		if (who > 0 && p_ptr->mon_vis[m_idx]) {
 			/* Get the name */
 			monster_desc(who, m_name, m_idx, 0);
 
@@ -4814,20 +4806,16 @@ bool mon_hit_trap(int m_idx)
 	if (kit_o_ptr->timeout) return (FALSE);
 
 	/* Otherwise, activate the trap! */
-	if (!disarm)
-	{
+	if (!disarm) {
 #if 0
-		/* Message for visible monster */		
-		if (who > 0 && p_ptr->mon_vis[m_idx]) 
-		{
+		/* Message for visible monster */
+		if (who > 0 && p_ptr->mon_vis[m_idx]) {
 			/* Get the name */
 			monster_desc(who, m_name, m_idx, 0);
 
 			/* Print a message */
 			msg_format(who, "%^s sets off a trap!", m_name);
-		}
-		else
-		{
+		} else {
 			/* No message if monster isn't visible ? */
 		}
 #endif
@@ -4840,358 +4828,313 @@ bool mon_hit_trap(int m_idx)
 		//                if (randint(100) < 80) m_ptr->smart |= SM_NOTE_TRAP;
 
 		/* Actually activate the trap */
-		switch (kit_o_ptr->sval)
-		{
-			case SV_TRAPKIT_BOW:
-			case SV_TRAPKIT_XBOW:
-			case SV_TRAPKIT_SLING:
-			{
-				/* Get number of shots */
-				shots = 1;
-				if (f3 & TR3_XTRA_SHOTS) shots += kit_o_ptr->pval;
-				if (shots <= 0) shots = 1;
-				if (shots > load_o_ptr->number) shots = load_o_ptr->number;
+		switch (kit_o_ptr->sval) {
+		case SV_TRAPKIT_BOW:
+		case SV_TRAPKIT_XBOW:
+		case SV_TRAPKIT_SLING:
+			/* Get number of shots */
+			shots = 1;
+			if (f3 & TR3_XTRA_SHOTS) shots += kit_o_ptr->pval;
+			if (shots <= 0) shots = 1;
+			if (shots > load_o_ptr->number) shots = load_o_ptr->number;
 
-				/* Paranoia */
-				if (shots <=0) remove = TRUE;
+			/* Paranoia */
+			if (shots <= 0) remove = TRUE;
 
-				while (shots-- && !dead)
-				{
-					/* Total base damage */
-					dam = damroll(load_o_ptr->dd, load_o_ptr->ds) + (load_o_ptr->to_d + kit_o_ptr->to_d + 10) / 2;
+			while (shots-- && !dead) {
+				/* Total base damage */
+				dam = damroll(load_o_ptr->dd, load_o_ptr->ds) + (load_o_ptr->to_d + kit_o_ptr->to_d + 10) / 2;
 
-					/* Total hit probability */
-					chance = (kit_o_ptr->to_h + load_o_ptr->to_h + 20) * BTH_PLUS_ADJ;
+				/* Total hit probability */
+				chance = (kit_o_ptr->to_h + load_o_ptr->to_h + 20) * BTH_PLUS_ADJ;
 
-					/* Damage multiplier */
-					if (kit_o_ptr->sval == SV_TRAPKIT_SLING) mul = 25;
-					if (kit_o_ptr->sval == SV_TRAPKIT_BOW) mul = 30;
-					if (kit_o_ptr->sval == SV_TRAPKIT_XBOW) mul = 35;
-					if (f3 & TR3_XTRA_MIGHT) mul += (kit_o_ptr->pval * 10);
-					if (mul < 0) mul = 0;
+				/* Damage multiplier */
+				if (kit_o_ptr->sval == SV_TRAPKIT_SLING) mul = 25;
+				if (kit_o_ptr->sval == SV_TRAPKIT_BOW) mul = 30;
+				if (kit_o_ptr->sval == SV_TRAPKIT_XBOW) mul = 35;
+				if (f3 & TR3_XTRA_MIGHT) mul += (kit_o_ptr->pval * 10);
+				if (mul < 0) mul = 0;
 
-					/* Multiply damage */
-					dam = (dam * mul) / 10;
+				/* Multiply damage */
+				dam = (dam * mul) / 10;
 
-					/* Trapping skill influences damage - C. Blue */
+				/* Trapping skill influences damage - C. Blue */
 //a little bit toned down here O_o	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
-					dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 1;
+				dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 1;
 
-					/* Check if we hit the monster */
-					if (test_hit_fire(chance, m_ptr->ac, TRUE)) {
-						/* Assume a default death */
-						cptr note_dies = " dies.";
+				/* Check if we hit the monster */
+				if (test_hit_fire(chance, m_ptr->ac, TRUE)) {
+					/* Assume a default death */
+					cptr note_dies = " dies.";
 
-						/* Some monsters get "destroyed" */
-						if ((r_ptr->flags3 & (RF3_DEMON)) ||
-								(r_ptr->flags3 & (RF3_UNDEAD)) ||
-								(r_ptr->flags2 & (RF2_STUPID)) ||
-								(strchr("Evg", r_ptr->d_char)))
-						{
-							/* Special note at death */
-							note_dies = " is destroyed.";
-						}
+					/* Some monsters get "destroyed" */
+					if ((r_ptr->flags3 & (RF3_DEMON)) ||
+							(r_ptr->flags3 & (RF3_UNDEAD)) ||
+							(r_ptr->flags2 & (RF2_STUPID)) ||
+							(strchr("Evg", r_ptr->d_char)))
+					{
+						/* Special note at death */
+						note_dies = " is destroyed.";
+					}
 
-						/* Message if visible */
+					/* Message if visible */
 #if 0
-						if (who > 0 && p_ptr->mon_vis[m_idx]) 
-						{
-							/* describe the monster (again, just in case :-) */
-							monster_desc(who, m_name, m_idx, 0);
+					if (who > 0 && p_ptr->mon_vis[m_idx]) {
+						/* describe the monster (again, just in case :-) */
+						monster_desc(who, m_name, m_idx, 0);
 
-							/* Print a message */
-							msg_format(who, "%^s is hit by a missile.", m_name);
-						}
+						/* Print a message */
+						msg_format(who, "%^s is hit by a missile.", m_name);
+					}
 #endif	// 0
-						msg_print_near_monster(m_idx, "is hit by a missile.");
+					msg_print_near_monster(m_idx, "is hit by a missile.");
 
-						/* Apply slays, brand, critical hits */
-						// dam = tot_dam_aux(who, load_o_ptr, dam, m_ptr, &special, brand_msg);
-						dam = tot_dam_aux(who, load_o_ptr, dam, m_ptr, brand_msg, FALSE);
-						dam = critical_shot(who, load_o_ptr->weight + trapping * 10, load_o_ptr->to_h, dam);
+					/* Apply slays, brand, critical hits */
+					// dam = tot_dam_aux(who, load_o_ptr, dam, m_ptr, &special, brand_msg);
+					dam = tot_dam_aux(who, load_o_ptr, dam, m_ptr, brand_msg, FALSE);
+					dam = critical_shot(who, load_o_ptr->weight + trapping * 10, load_o_ptr->to_h, dam);
 
-						/* No negative damage */
-						if (dam < 0) dam = 0;
+					/* No negative damage */
+					if (dam < 0) dam = 0;
 
-						/* If another monster did the damage, hurt the monster by hand */
-						if (who <= 0)
-						{
-							/* Redraw (later) if needed */
-							update_health(c_ptr->m_idx);
+					/* If another monster did the damage, hurt the monster by hand */
+					if (who <= 0) {
+						/* Redraw (later) if needed */
+						update_health(c_ptr->m_idx);
 
-							/* Some mosnters are immune to death */
-							if (r_ptr->flags7 & RF7_NO_DEATH) dam = 0;
+						/* Some mosnters are immune to death */
+						if (r_ptr->flags7 & RF7_NO_DEATH) dam = 0;
 
-							/* Wake the monster up */
-							m_ptr->csleep = 0;
+						/* Wake the monster up */
+						m_ptr->csleep = 0;
 
-							/* Hurt the monster */
-							m_ptr->hp -= dam;
+						/* Hurt the monster */
+						m_ptr->hp -= dam;
 
-							/* Dead monster */
-							if (m_ptr->hp < 0)
-							{
-								/* Generate treasure, etc */
-								//			if (!quiet) monster_death(Ind, c_ptr->m_idx);
-								/* if treasure is generated, change TRUE to FALSE in below delete_monster_idx ! */
-								/* Delete the monster */
-								delete_monster_idx(c_ptr->m_idx,TRUE);
+						/* Dead monster */
+						if (m_ptr->hp < 0) {
+							/* Generate treasure, etc */
+							//			if (!quiet) monster_death(Ind, c_ptr->m_idx);
+							/* if treasure is generated, change TRUE to FALSE in below delete_monster_idx ! */
+							/* Delete the monster */
+							delete_monster_idx(c_ptr->m_idx,TRUE);
 
-								dead = TRUE;
-
-								/* Give detailed messages if destroyed */
-								//			if (!quiet && note) msg_format(Ind, "%^s%s", m_name, note);
-							}
-
-							/* Damaged monster */
-							else
-							{
-#if 0
-								/* Give detailed messages if visible or destroyed */
-								if (!quiet && note && seen) msg_format(Ind, "%^s%s", m_name, note);
-
-								/* Hack -- Pain message */
-								else if (!quiet && dam > 0) message_pain(Ind, c_ptr->m_idx, dam);
-
-								/* Hack -- handle sleep */
-								if (do_sleep) m_ptr->csleep = do_sleep;
-#endif	// 0
-							}
-						}
-						/* Hit the monster, check for death */
-						else if (mon_take_hit(who, m_idx, dam, &fear, note_dies))
-						{
-							/* Dead monster */
 							dead = TRUE;
+
+							/* Give detailed messages if destroyed */
+							//if (!quiet && note) msg_format(Ind, "%^s%s", m_name, note);
 						}
 
-						/* No death */
-						else
-						{
-//							if (who > 0 && p_ptr->mon_vis[m_idx]) 
-							if (p_ptr->mon_vis[m_idx]) 
-							{
-								/* Message */
-								message_pain(who, m_idx, dam);
+						/* Damaged monster */
+						else {
+#if 0
+							/* Give detailed messages if visible or destroyed */
+							if (!quiet && note && seen) msg_format(Ind, "%^s%s", m_name, note);
 
-//								if (special) attack_special(m_ptr, special, dam);
+							/* Hack -- Pain message */
+							else if (!quiet && dam > 0) message_pain(Ind, c_ptr->m_idx, dam);
 
-								/* Take note */
-								if (fear) 
-								{
-									/* Message */
-//									msg_format(who, "%^s flees in terror!", m_name);
-									if (!streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness"))
-										msg_print_near_monster(m_idx, "flees in terror!");
-									else
-										msg_print_near_monster(m_idx, "retreats!");
-								}
+							/* Hack -- handle sleep */
+							if (do_sleep) m_ptr->csleep = do_sleep;
+#endif // 0
+						}
+					}
+					/* Hit the monster, check for death */
+					else if (mon_take_hit(who, m_idx, dam, &fear, note_dies)) {
+						/* Dead monster */
+						dead = TRUE;
+					}
+
+					/* No death */
+					else {
+//						if (who > 0 && p_ptr->mon_vis[m_idx]) 
+						if (p_ptr->mon_vis[m_idx]) {
+							message_pain(who, m_idx, dam);
+
+//							if (special) attack_special(m_ptr, special, dam);
+
+							/* Take note */
+							if (fear) {
+//								msg_format(who, "%^s flees in terror!", m_name);
+								if (!streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness"))
+									msg_print_near_monster(m_idx, "flees in terror!");
+								else
+									msg_print_near_monster(m_idx, "retreats!");
 							}
 						}
-
-					}
-
-					/* KABOOM! */
-					/* Hack -- minus * minus * minus = minus */
-					if (load_o_ptr->pval) do_arrow_explode(who > 0 ? who : 0 - who, load_o_ptr, &wpos, my, mx, 2);
-
-					if ((load_o_ptr->tval != TV_ARROW ||
-					    load_o_ptr->sval != SV_AMMO_MAGIC) &&
-					    !artifact_p(load_o_ptr))
-					{
-
-						/* Copy and decrease ammo */
-						object_copy(j_ptr, load_o_ptr);
-
-						j_ptr->number = 1;
-
-						load_o_ptr->number--;
-
-						if (load_o_ptr->number <= 0)
-						{
-							remove = TRUE;
-							delete_object_idx(kit_o_ptr->next_o_idx, FALSE);
-							kit_o_ptr->next_o_idx = 0;
-						}
-
-						/* Drop (or break) near that location */
-						if (!load_o_ptr->pval) drop_near(j_ptr, breakage_chance(j_ptr), &wpos, my, mx);
 					}
 
 				}
 
-				break;
-			}
+				/* KABOOM! */
+				/* Hack -- minus * minus * minus = minus */
+				if (load_o_ptr->pval) do_arrow_explode(who > 0 ? who : 0 - who, load_o_ptr, &wpos, my, mx, 2);
 
-			case SV_TRAPKIT_POTION:
-			{
-				/* Get number of shots */
-				shots = 1;
-				if (f3 & TR3_XTRA_SHOTS) shots += kit_o_ptr->pval;
-				if (shots <= 0) shots = 1;
-				if (shots > load_o_ptr->number) shots = load_o_ptr->number;
-
-				/* Paranoia */
-				if (shots <=0) remove = TRUE;
-
-				while (shots-- && !dead)
-				{
-
-					/* Message if visible */
-#if 0
-					if (who > 0 && p_ptr->mon_vis[m_idx]) 
-					{
-						/* describe the monster (again, just in case :-) */
-						monster_desc(who, m_name, m_idx, 0);
-
-						/* Print a message */
-						msg_format(who, "%^s is hit by fumes.", m_name);
-					}
-#endif	// 0
-					msg_print_near_monster(m_idx, "is hit by fumes.");
-
-					/* Get the potion effect */
-					dead = mon_hit_trap_aux_potion(who, m_idx, load_o_ptr);
+				if (!(load_o_ptr->tval == TV_ARROW &&
+				    load_o_ptr->sval == SV_AMMO_MAGIC)
+				    && !artifact_p(load_o_ptr)) {
 
 					/* Copy and decrease ammo */
 					object_copy(j_ptr, load_o_ptr);
-
 					j_ptr->number = 1;
 
-					load_o_ptr->number--;
+					/* Ethereal ammo decreases more slowly */
+					if (load_o_ptr->name2 == EGO_ETHEREAL || load_o_ptr->name2b == EGO_ETHEREAL) {
+						if (magik(breakage_chance(load_o_ptr))) load_o_ptr->number--;
+					} else load_o_ptr->number--;
 
-					if (load_o_ptr->number <= 0)
-					{
+					if (load_o_ptr->number <= 0) {
 						remove = TRUE;
-						delete_object_idx(kit_o_ptr->next_o_idx, TRUE);
+						delete_object_idx(kit_o_ptr->next_o_idx, FALSE);
 						kit_o_ptr->next_o_idx = 0;
 					}
+
+					/* Drop (or break) near that location */
+					if (!load_o_ptr->pval) drop_near(j_ptr, breakage_chance(j_ptr), &wpos, my, mx);
 				}
 
-				break;
 			}
+			break;
 
-			case SV_TRAPKIT_SCROLL_RUNE:
-			{
-				/* Get number of shots */
-				shots = 1;
-				if (f3 & TR3_XTRA_SHOTS) shots += kit_o_ptr->pval;
-				if (shots <= 0) shots = 1;
-				if (shots > load_o_ptr->number) shots = load_o_ptr->number;
+		case SV_TRAPKIT_POTION:
+			/* Get number of shots */
+			shots = 1;
+			if (f3 & TR3_XTRA_SHOTS) shots += kit_o_ptr->pval;
+			if (shots <= 0) shots = 1;
+			if (shots > load_o_ptr->number) shots = load_o_ptr->number;
 
-				/* Paranoia */
-				if (shots <=0) remove = TRUE;
+			/* Paranoia */
+			if (shots <=0) remove = TRUE;
 
-				while (shots-- && !dead)
-				{
+			while (shots-- && !dead) {
 
-					/* Message if visible */
+				/* Message if visible */
 #if 0
-					if (who > 0 && p_ptr->mon_vis[m_idx]) 
-					{
-						/* describe the monster (again, just in case :-) */
-						monster_desc(who, m_name, m_idx, 0);
+				if (who > 0 && p_ptr->mon_vis[m_idx]) {
+					/* describe the monster (again, just in case :-) */
+					monster_desc(who, m_name, m_idx, 0);
 
-						/* Print a message */
-						msg_format(who, "%^s activates a spell!", m_name);
-					}
+					/* Print a message */
+					msg_format(who, "%^s is hit by fumes.", m_name);
+				}
 #endif	// 0
-					msg_print_near_monster(m_idx, "activates a spell!");
+				msg_print_near_monster(m_idx, "is hit by fumes.");
 
-					/* Get the scroll or rune effect */
-					if (load_o_ptr->tval == TV_SCROLL)
-						dead = mon_hit_trap_aux_scroll(who, m_idx, load_o_ptr->sval);
-					else
-						dead = mon_hit_trap_aux_rune(who, m_idx, load_o_ptr->sval);
+				/* Get the potion effect */
+				dead = mon_hit_trap_aux_potion(who, m_idx, load_o_ptr);
 
-					/* Copy and decrease ammo */
-					object_copy(j_ptr, load_o_ptr);
+				/* Copy and decrease ammo */
+				object_copy(j_ptr, load_o_ptr);
 
-					j_ptr->number = 1;
+				j_ptr->number = 1;
 
-					load_o_ptr->number--;
+				load_o_ptr->number--;
 
-					if (load_o_ptr->number <= 0)
-					{
-						remove = TRUE;
-						delete_object_idx(kit_o_ptr->next_o_idx, TRUE);
-						kit_o_ptr->next_o_idx = 0;
-					}
+				if (load_o_ptr->number <= 0) {
+					remove = TRUE;
+					delete_object_idx(kit_o_ptr->next_o_idx, TRUE);
+					kit_o_ptr->next_o_idx = 0;
 				}
-
-				break;
 			}
+			break;
 
-			case SV_TRAPKIT_DEVICE:
-			{
-				/* Get number of shots */
-				shots = 1;
-				if (load_o_ptr->tval == TV_ROD)
-				{
-					if (load_o_ptr->pval) shots = 0;
+		case SV_TRAPKIT_SCROLL_RUNE:
+			/* Get number of shots */
+			shots = 1;
+			if (f3 & TR3_XTRA_SHOTS) shots += kit_o_ptr->pval;
+			if (shots <= 0) shots = 1;
+			if (shots > load_o_ptr->number) shots = load_o_ptr->number;
+
+			/* Paranoia */
+			if (shots <= 0) remove = TRUE;
+
+			while (shots-- && !dead) {
+
+				/* Message if visible */
+#if 0
+				if (who > 0 && p_ptr->mon_vis[m_idx]) {
+					/* describe the monster (again, just in case :-) */
+					monster_desc(who, m_name, m_idx, 0);
+
+					/* Print a message */
+					msg_format(who, "%^s activates a spell!", m_name);
 				}
+#endif	// 0
+				msg_print_near_monster(m_idx, "activates a spell!");
+
+				/* Get the scroll or rune effect */
+				if (load_o_ptr->tval == TV_SCROLL)
+					dead = mon_hit_trap_aux_scroll(who, m_idx, load_o_ptr->sval);
 				else
-				{
-					if (f3 & TR3_XTRA_SHOTS) shots += kit_o_ptr->pval;
-					if (shots <= 0) shots = 1;
-					if (shots > load_o_ptr->pval) shots = load_o_ptr->pval;
-				}				
-				while (shots-- && !dead)
-				{
-#if 0
-					/* Message if visible */
-					// if (m_ptr->ml)
-					if (who > 0 && p_ptr->mon_vis[m_idx]) 
-					{
-						/* describe the monster (again, just in case :-) */
-						monster_desc(m_name, m_idx, 0);
+					dead = mon_hit_trap_aux_rune(who, m_idx, load_o_ptr->sval);
 
-						/* Print a message */
-						msg_format(Ind, "%^s is hit by some magic.", m_name);
-					}
-#endif					
-					/* Get the effect effect */
-					switch(load_o_ptr->tval)
-					{
-						case TV_ROD:
-							dead = mon_hit_trap_aux_rod(who, m_idx, load_o_ptr);
-							break;
-						case TV_WAND:
-							dead = mon_hit_trap_aux_wand(who, m_idx, load_o_ptr->sval);
-							break;
-						case TV_STAFF:
-							dead = mon_hit_trap_aux_staff(who, m_idx, load_o_ptr->sval);
-							break;					        
-					}
-					/* Decrease charges */
-					if (load_o_ptr->tval != TV_ROD)
-					{
-						load_o_ptr->pval--;
-					}
+				/* Copy and decrease ammo */
+				object_copy(j_ptr, load_o_ptr);
+				j_ptr->number = 1;
+				load_o_ptr->number--;
+
+				if (load_o_ptr->number <= 0) {
+					remove = TRUE;
+					delete_object_idx(kit_o_ptr->next_o_idx, TRUE);
+					kit_o_ptr->next_o_idx = 0;
 				}
-
-				break;
 			}
+			break;
 
-			default:
+		case SV_TRAPKIT_DEVICE:
+			/* Get number of shots */
+			shots = 1;
+			if (load_o_ptr->tval == TV_ROD) {
+				if (load_o_ptr->pval) shots = 0;
+			} else {
+				if (f3 & TR3_XTRA_SHOTS) shots += kit_o_ptr->pval;
+				if (shots <= 0) shots = 1;
+				if (shots > load_o_ptr->pval) shots = load_o_ptr->pval;
+			}				
+			while (shots-- && !dead) {
+#if 0
+				/* Message if visible */
+				// if (m_ptr->ml)
+				if (who > 0 && p_ptr->mon_vis[m_idx]) {
+					/* describe the monster (again, just in case :-) */
+					monster_desc(m_name, m_idx, 0);
+
+					/* Print a message */
+					msg_format(Ind, "%^s is hit by some magic.", m_name);
+				}
+#endif
+				/* Get the effect effect */
+				switch(load_o_ptr->tval) {
+				case TV_ROD:
+					dead = mon_hit_trap_aux_rod(who, m_idx, load_o_ptr);
+					break;
+				case TV_WAND:
+					dead = mon_hit_trap_aux_wand(who, m_idx, load_o_ptr->sval);
+					break;
+				case TV_STAFF:
+					dead = mon_hit_trap_aux_staff(who, m_idx, load_o_ptr->sval);
+					break;
+				}
+				/* Decrease charges */
+				if (load_o_ptr->tval != TV_ROD) {
+					load_o_ptr->pval--;
+				}
+			}
+			break;
+
+		default:
 			s_printf("oops! nonexisting trap(sval: %d)!\n", kit_o_ptr->sval);
-
 		}
 
 		/* Non-automatic traps are removed */
-		if (!(f2 & (TRAP2_AUTOMATIC_5 | TRAP2_AUTOMATIC_99)))
-		{
-			remove = TRUE;
-		}
+		if (!(f2 & (TRAP2_AUTOMATIC_5 | TRAP2_AUTOMATIC_99))) remove = TRUE;
 		else if (f2 & TRAP2_AUTOMATIC_5) remove = (randint(5) == 1);
 
 	}
 
 	/* Special trap effect -- teleport to */
 	if ((f2 & TRAP2_TELEPORT_TO) && (!disarm) && (!dead) && who > 0)
-	{
 		teleport_to_player(who, m_idx);
-	}
 
 	/* Remove the trap if inactive now */	
 //	if (remove) cave_set_feat(wpos, my, mx, FEAT_FLOOR);
