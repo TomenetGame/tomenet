@@ -5,7 +5,7 @@ function get_astral_lev(Ind)
 end
 
 function get_astral_dam(Ind)
-	return (3 + get_astral_lev(Ind) / 3), (3 + get_astral_lev(Ind) / 2)
+	return (3 + get_astral_lev(Ind) / 2), (3 + get_astral_lev(Ind) / 2)
 end
 
 function get_astral_dam_ball(Ind)
