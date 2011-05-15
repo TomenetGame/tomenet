@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 13. May 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 15. May 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -6091,8 +6091,9 @@ Codex, Spellbook, Grimoire
                     Condition for this to work is that the book still has free
                     space left, and that the player has actually learned the
                     spell he wants to transcribe.
-                    Codices can carry the least amount of spells, while
-                    Grimoires have the most space.
+                    Codices can carry the least amount of spells (3),
+                    spellbooks being intermediate (4), while Grimoires have
+                    the most space (5).
                     (Note that you cannot use these books if your game client
                     version is below 4.4.2!)
 (Small) Firestones  These can be eaten by Draconians and players in dragon
