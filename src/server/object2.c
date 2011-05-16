@@ -5485,6 +5485,14 @@ void determine_level_req(int level, object_type *o_ptr)
 		}
 	}
 
+#if 0 /* done above instead, where EGO_ are tested */
+	/* Reduce outrageous ego item levels (double-ego adamantite of immunity for example */
+	if (o_ptr->name2) {
+		if (o_ptr->level > 51) o_ptr->level = 48 + rand_int(4);
+		else if (o_ptr->level > 48) o_ptr->level = 48 + rand_int(2);
+	}
+//	else {
+#endif
 	/* Slightly reduce high levels */
 	if (o_ptr->level > 55) o_ptr->level--;
 	if (o_ptr->level > 50) o_ptr->level--;
@@ -5704,7 +5712,11 @@ void determine_level_req(int level, object_type *o_ptr)
 		case EGO_TELEPATHY:
 			base += 13;
 			break;
-		
+		case EGO_IMMUNE:
+			/* only occurs on mithril/adamantite plate, which is already quite
+			   high level -> need reduction (usually like level 56 without it) */
+			base -= 10;
+			break;
 		default:
 			base += 8;
 		}
