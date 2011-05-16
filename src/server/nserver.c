@@ -9425,7 +9425,9 @@ void end_mind(int Ind, bool update)
 	int Ind2;
 	player_type *p_ptr2, *p_ptr = Players[Ind];
 
+#if 0 /* end_mind() is called by get_esp_link() ! -> infinite recursion in a rare case */
 	if ((Ind2 = get_esp_link(Ind, LINKF_VIEW, &p_ptr2))) p_ptr2->esp_link_music = TRUE;
+#endif
 	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) p_ptr->esp_link_music = TRUE;
 
 	if (!(p_ptr->esp_link_flags & LINKF_HIDDEN)) {
