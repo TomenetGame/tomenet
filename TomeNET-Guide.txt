@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 15. May 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 16. May 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -4738,6 +4738,12 @@ message:
 That means you'll get neither any benefits from your 'Archery' skill nor from
 any particular ranged mastery (extra shots!) at all when using that weapon.
 
+Note: +damage bonus from other items besides the ranged weapon itself or the
+ammunition it uses will not be added to ranged attacks, while +hit bonus will.
+This means for example that 'a Ring of Slaying (+10,+12)' will add +10 to both
+your melee hit chance and your ranged hit chance, but the +12 damage will only
+be added to your melee damage, not your ranged.
+
 
 (5.2a)  Fire-till-kill mode
 ----------------------------
@@ -5640,7 +5646,7 @@ LIFE ('It affects your hit points')
 AGGRAVATE ('It aggravates nearby creatures')
         Wakes up all monsters in whose radius of awareness you are.
         (Does not haste them as scrolls do, compare to (5.9)).
-LUCK ('The item increases your luck')
+LUCK ('It affects your luck')
         If you are lucky, your chance to find better items increases.
         Luck caps at 40, having higher bonus won't help any more.
         The higher your luck is, the more diminishing is the effect of
@@ -5670,7 +5676,7 @@ ANTIMAGIC ('Antimagic field')
 BLESSED ('It has been blessed by the gods')
         These weapons resist cursing. Priests can use blessed weapons
         without penalties, even if they are not blunt.
-VAMPIRIC ('The weapon drains life from your victim')
+VAMPIRIC ('It drains life from your foes')
         Drains life from your victim, which you gain as hit points.
         For details see '(5.15) Vampirism'.
 VORPAL ('Sharp' weapons, 'It is very sharp and can cut your foes.')
@@ -5678,7 +5684,16 @@ VORPAL ('Sharp' weapons, 'It is very sharp and can cut your foes.')
         hitting, you'll see 'Your weapon cuts deep into your enemy'.
         The multiplication is done after brand/slay effects have been applied,
         so brand/slay effects will increase VORPAL efficiency.
-CHAOTIC ('Your weapon produces chaotic effects')
+CRIT    ('It affects your ability to score critical hits.')
+        This item adds to your chance to score critical hits.
+        If the item is a weapon then it will only affect hits done with this
+        weapon in particular, so for example a boomerang that provides +CRIT
+        bonus will not affect your melee attacks.
+        If the item is not a weapon (eg a piece of armour or a ring) then it
+        will affect all of your physical attacks, including throwing items.
+        For more information about critical strikes and attacks, see the
+        description of the "Critical-strike" skill in (6.2).
+CHAOTIC ('It produces chaotic effects')
         On hitting, you have a 50% chance to do one of the following:
         a) drain life (VAMPIRIC, see (5.15)) (very likely)
         b) earthquake (see (5.13))
@@ -5708,7 +5723,7 @@ FUEL_LITE ('It provides light when fueled')
         If this item provides other abilities besides emitting light, be aware
         that you need to keep it fueled for it to do so! If it runs out of fuel
         your character will lose all abilities it provided until you refuel it.
-(NO_SEED 
+(NO_SEED
         An ego item that is never created randomly (in terms of abilities
         or power).)
 CURSED, HEAVY_CURSE, PERMA_CURSE, AUTO_CURSE,
@@ -5728,7 +5743,8 @@ SPECIAL_GENE
 'Imbued' books and tomes.
         Those especially treatened books and tomes resist the influence of
         heat, water and acid strongly.
-INVIS   Turns you invisible. Items 'of Invisibility' often have a +mod,
+INVIS   ('It makes you invisible.')
+        Turns you invisible. Items 'of Invisibility' often have a +mod,
         which gives you additional stealth. Note that this +mod does not
         qualify or affect your invisibility in any way, but is purely for an
         extra stealth bonus. Invisibility is binary: Either you are invisible
