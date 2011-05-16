@@ -3147,13 +3147,13 @@ void interact_macros(void)
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yl\377w) Load macros from a pref file");
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377ys\377w) Save macros to a pref file");
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377ua\377w) Enter a new macro action");
-		Term_putstr(5, l++, -1, TERM_SLATE, "(\377u1\377s) Create a normal macro       (persists everywhere)");
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377u2\377w) Create a hybrid macro       (recommended for most cases)");
-		Term_putstr(5, l++, -1, TERM_SLATE, "(\377u3\377s) Create a command macro      (eg for using / and * key)");
+		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uc\377s) Create a command macro      (eg for using / and * key)");
+		Term_putstr(5, l++, -1, TERM_WHITE, "(\377uh\377w) Create a hybrid macro       (recommended for most cases)");
+		Term_putstr(5, l++, -1, TERM_SLATE, "(\377un\377s) Create a normal macro       (persists everywhere)");
 //		Term_putstr(5, l++, -1, TERM_SLATE, "(\377u4\377s) Create a identity macro  (erases a macro)");
-		Term_putstr(5, l++, -1, TERM_SLATE, "(\377u4\377s) Delete a macro from a key");
-		Term_putstr(5, l++, -1, TERM_SLATE, "(\377u5\377s) Create an empty macro       (completely disables a key)");
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377uy\377w) Query an existing macro on a key");
+		Term_putstr(5, l++, -1, TERM_SLATE, "(\377ud\377s) Delete a macro from a key");
+		Term_putstr(5, l++, -1, TERM_SLATE, "(\377ue\377s) Create an empty macro       (completely disables a key)");
+		Term_putstr(5, l++, -1, TERM_WHITE, "(\377ut\377w) Test a key for an existing macro and its type");
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377ui\377w) List all macros");
 //		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uq\377s/\377yQ\377w) Enter and create a 'quick & dirty' macro / set preferences"),
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377uq\377w) Enter and create a 'quick & dirty' macro"),
@@ -3235,7 +3235,7 @@ void interact_macros(void)
 		}
 
 		/* Create a command macro */
-		else if (i == '1') {
+		else if (i == 'c') {
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Create a command macro");
 
@@ -3258,7 +3258,7 @@ void interact_macros(void)
 		}
 
 		/* Create a hybrid macro */
-		else if (i == '2') {
+		else if (i == 'h') {
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Create a hybrid macro");
 
@@ -3281,7 +3281,7 @@ void interact_macros(void)
 		}
 
 		/* Create a normal macro */
-		else if (i == '3') {
+		else if (i == 'n') {
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Create a normal macro");
 
@@ -3305,7 +3305,7 @@ void interact_macros(void)
 
 #if 0
 		/* Create an identity macro */
-		else if (i == '4') {
+		else if (i == 'd') {
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Create an identity macro");
 
@@ -3323,7 +3323,7 @@ void interact_macros(void)
 		}
 #else
 		/* Delete a macro */
-		else if (i == '4') {
+		else if (i == 'd') {
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Delete a macro");
 
@@ -3342,7 +3342,7 @@ void interact_macros(void)
 #endif
 
 		/* Create an empty macro */
-		else if (i == '5') {
+		else if (i == 'e') {
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Create an empty macro");
 
@@ -3365,9 +3365,9 @@ void interact_macros(void)
 		}
 
 		/* Query a macro */
-		else if (i == 'y') {
+		else if (i == 't') {
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Query a macro");
+			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Test key for a macro");
 
 			/* Prompt */
 			Term_putstr(0, 19, -1, TERM_WHITE, "Trigger: ");
@@ -3386,7 +3386,10 @@ void interact_macros(void)
 					/* Message */
 					if (macro__hyb[i]) c_msg_print("A hybrid macro was found.");
 					else if (macro__cmd[i]) c_msg_print("A command macro was found.");
-					else c_msg_print("A normal macro was found.");
+					else {
+						if (!macro__act[i][0]) c_msg_print("An empty macro was found.");
+						else c_msg_print("A normal macro was found.");
+					}
 
 					/* Update windows */
 					window_stuff();
