@@ -3301,9 +3301,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 	int num;
 
 	object_type *o_ptr, *j_ptr, *i_ptr;
-	
 //	cptr q,s,c;
-	
 	object_type object_type_body;
 
 	u32b f1, f2, f3, f4, f5, esp;
@@ -3312,41 +3310,40 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 	cave_type **zcave;
 	struct c_special *cs_ptr;
 
-	zcave=getcave(&p_ptr->wpos);
-
+	zcave = getcave(&p_ptr->wpos);
 	c_ptr = &zcave[py][px];
 
 	/* Check some conditions */
-	if (p_ptr->blind)            
-	{
+	if (p_ptr->blind) {
 		msg_print(Ind, "You can't see anything.");
 		return;
 	}
-	if (no_lite(Ind))
-	{
+	if (no_lite(Ind)) {
 		msg_print(Ind, "You don't dare to set a trap in the darkness.");
 		return;
 	}
-	if (p_ptr->confused)
-	{
+	if (p_ptr->confused) {
 		msg_print(Ind, "You are too confused!");
 		return;
 	}
 
 #if 0
-	if (!wpos->wz)
-	{
+	if (!wpos->wz) {
 		/* because it crashes :-/ */
 		msg_print(Ind, "You cannot set monster traps on the surface!");
 		return;
 	}
-#endif	// 0
+#endif
+	if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) ||
+	    (c_ptr->info & CAVE_PROT)) {
+		msg_print(Ind, "You cannot set monster traps on this special floor.");
+		return;
+	}
 
 	/* Only set traps on clean floor grids */
 	/* TODO: allow to set traps on poisoned floor */
 	if (!cave_clean_bold(zcave, py, px) ||
-			c_ptr->special)
-	{
+	    c_ptr->special) {
 		msg_print(Ind, "You cannot set a trap on this.");
 		return;
 	}
@@ -3359,35 +3356,34 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 	q = "Use which trapping kit? ";
 	s = "You have no trapping kits.";
 	if (!get_item(&item_kit, q, s, USE_INVEN)) return;
-	
+
 	o_ptr = &inventory[item_kit];
-	
+
 	/* Trap kits need a second object */
-	switch (o_ptr->sval)
-	{
-                case SV_TRAPKIT_BOW:
-			item_tester_tval = TV_ARROW;
-			break;
-                case SV_TRAPKIT_XBOW:
-			item_tester_tval = TV_BOLT;
-			break;
-                case SV_TRAPKIT_SLING:
-			item_tester_tval = TV_SHOT;
-			break;
-                case SV_TRAPKIT_POTION:
-                        item_tester_hook = item_tester_hook_potion;
-			break;
-                case SV_TRAPKIT_SCROLL_RUNE:
-			item_tester_hook = item_tester_hook_scroll_rune;
-			break;
-                case SV_TRAPKIT_DEVICE:
-                        item_tester_hook = item_tester_hook_device;
-			break;
-		default:
-			msg_print(Ind, "Unknown trapping kit type!");
-			break;
+	switch (o_ptr->sval) {
+	case SV_TRAPKIT_BOW:
+		item_tester_tval = TV_ARROW;
+		break;
+	case SV_TRAPKIT_XBOW:
+		item_tester_tval = TV_BOLT;
+		break;
+	case SV_TRAPKIT_SLING:
+		item_tester_tval = TV_SHOT;
+		break;
+	case SV_TRAPKIT_POTION:
+		item_tester_hook = item_tester_hook_potion;
+		break;
+	case SV_TRAPKIT_SCROLL_RUNE:
+		item_tester_hook = item_tester_hook_scroll_rune;
+		break;
+	case SV_TRAPKIT_DEVICE:
+		item_tester_hook = item_tester_hook_device;
+		break;
+	default:
+		msg_print(Ind, "Unknown trapping kit type!");
+		break;
 	}
-	
+
 	/* Get the second item */
 	q = "Load with what? ";
 	s = "You have nothing to load that trap with.";
@@ -3405,8 +3401,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 	if (!can_use_verbose(Ind, j_ptr)) return;
 
 	/* Trap kits need a second object */
-	switch (o_ptr->sval)
-	{
+	switch (o_ptr->sval) {
 		case SV_TRAPKIT_BOW:
 			if (j_ptr->tval != TV_ARROW) return;
 			break;
@@ -3431,39 +3426,32 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 	}
 
 	/* Hack -- yet another anti-cheeze(yaac) */
-	if (p_ptr->max_plv < cfg.newbies_cannot_drop || p_ptr->inval)
-	{
+	if (p_ptr->max_plv < cfg.newbies_cannot_drop || p_ptr->inval) {
 		o_ptr->level = 0;
 		j_ptr->level = 0;
 	}
 
 	/* Assume a single object */
 	num = 1;
-				
+
 	/* In some cases, take multiple objects to load */
 	/* Hack -- don't ask XXX */
-	if (o_ptr->sval != SV_TRAPKIT_DEVICE)
-	{
+	if (o_ptr->sval != SV_TRAPKIT_DEVICE) {
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 		if ((f3 & TR3_XTRA_SHOTS) && (o_ptr->pval > 0)) num += o_ptr->pval;
-
 		if (f2 & (TRAP2_AUTOMATIC_5 | TRAP2_AUTOMATIC_99)) num = 99;
-
 		if (num > j_ptr->number) num = j_ptr->number;
-
 #if 0
 		c = format("How many (1-%d)? ", num);
-
 		/* Ask for number of items to use */
 		num = get_quantity(c, num);
 #endif	// 0
-
 	}
 
 	/* Canceled */
-	if (!num) return; 
-		
+	if (!num) return;
+
 	/* S(he) is no longer afk */
 	un_afk_idle(Ind);
 
@@ -3477,13 +3465,13 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 
 	/* Get local object */
 	i_ptr = &object_type_body;
-	
+
 	/* Obtain local object for trap content */
 	object_copy(i_ptr, j_ptr);
 
 	/* Set number */
 	i_ptr->number = num;
-	
+
 	/* Drop it here */
 //	cave[py][px].special = floor_carry(py, px, i_ptr);
 	if (!(cs_ptr=AddCS(c_ptr, CS_MON_TRAP))) return;
@@ -3502,7 +3490,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 
 	/* Obtain local object for trap trigger kit */
 	object_copy(i_ptr, o_ptr);
-	
+
 	/* Set number */
 	i_ptr->number = 1;
 
@@ -3519,12 +3507,10 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 	inven_item_increase(Ind, item_load, -num);
 	inven_item_describe(Ind, item_load);
 
-	for (i = 0; i < INVEN_WIELD; i++)
-	{
+	for (i = 0; i < INVEN_WIELD; i++) {
 		if (inven_item_optimize(Ind, i)) break;
 	}
-	for (i = 0; i < INVEN_WIELD; i++)
-	{
+	for (i = 0; i < INVEN_WIELD; i++) {
 		inven_item_optimize(Ind, i);
 	}
 
