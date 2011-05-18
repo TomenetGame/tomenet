@@ -10787,7 +10787,6 @@ prevention, tarpaulin, flint, mummy wrapping, climbing set. These won't work!
 
 DOESN'T WORK ON EGOS / ARTS:
 -Don't use them on ego items or artifacts, or you will lose the scroll!
-If you use it on items with a discount, the artifact will get it too.
 Watch out: 'Indestructible' and 'Cursed' rings are ego items too, so are
 'Amulets of Telepathic Awareness', 'Rings of Polymorphing' and
 Dragon Scale Mails 'of Defense'!
@@ -10826,6 +10825,9 @@ in the final randart. Examples: Shadow Blades and Witan Boots will always
 modify stealth, Demon Hammers will always have at least SLAY_DEMON mod (but can
 also end up 'upgraded' in case they randomly receive a KILL_DEMON mod from the
 artifact creation process).
+
+DISCOUNTED ITEMS:
+Items will lose any discount tag when they are artified.
 
 Also note that randarts cannot get more than two immunities in total.
 
