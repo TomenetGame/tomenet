@@ -818,6 +818,9 @@
    Intended to counter heavy royal armour, which would otherwise be near impossible to beat. */
 #define PVP_AC_REDUCTION
 
+/* Does backstabbing bypass damage reduction from AC? (somewhat experimental, needs play-testing) */
+#define PVP_BACKSTAB_PIERCES
+
 /* Reduction of vampirism in PvP (melee and ranged) */
 //unused atm #define PVP_VAMPIRISM_REDUCTION 3
 

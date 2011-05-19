@@ -2963,7 +2963,12 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			}
 
 			/* factor in AC */
-			if (!pierced) k -= (k * (((q_ptr->ac + q_ptr->to_a) < AC_CAP) ? (q_ptr->ac + q_ptr->to_a) : AC_CAP) / AC_CAP_DIV);
+			if (!pierced
+#ifdef PVP_BACKSTAB_PIERCES
+			    && !backstab
+#endif
+			    )
+				k -= (k * (((q_ptr->ac + q_ptr->to_a) < AC_CAP) ? (q_ptr->ac + q_ptr->to_a) : AC_CAP) / AC_CAP_DIV);
 
 			/* Special hack: In pvp, make (royal defensive) stance somewhat less great */
 			if (p_ptr->combat_stance == 1) k = (k * 2 + 1) / 3;
