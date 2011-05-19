@@ -2747,7 +2747,8 @@ static void player_talk_aux(int Ind, char *message)
 			s_printf("[%s] %s\n", sender, message);
 
 			/* Keep track of repeating chat lines to avoid log file spam (slash commands like '/rec' mostly) */
-			strcpy(p_ptr->last_chat_line, message);
+			strncpy(p_ptr->last_chat_line, message, MSG_LEN - 1);
+			p_ptr->last_chat_line[MSG_LEN - 1] = 0;
 		} else p_ptr->last_chat_line_cnt++;
 	}
 

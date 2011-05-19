@@ -2953,7 +2953,7 @@ struct player_type
 	int piercing; /* Rogue skill 'assassinate' */
 	bool piercing_charged;
 
-	char last_chat_line[MAX_CHARS]; /* last slash command the player used, to prevent log file spam */
+	char last_chat_line[MSG_LEN]; /* last slash command the player used, to prevent log file spam */
 	int last_chat_line_cnt;
 };
 
