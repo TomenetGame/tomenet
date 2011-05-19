@@ -3602,8 +3602,9 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 
 			/* Don't allow silyl combinations that either don't
 			   make sense or that cause technical problems: */
-			switch (o_ptr->name2) {
+
 			/* Prevent redundant resistance flags (elven armour of resist xxxx) */
+			switch (o_ptr->name2) {
 			case EGO_RESIST_FIRE:
 				if (i == EGO_DWARVEN_ARMOR) {
 					/* upgrade first ego power! */
@@ -3634,7 +3635,10 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 					continue;
 				}
 				break;
+			}
+
 			/* Prevent two ego powers that can both be activated */
+			switch (o_ptr->name2) {
 			case EGO_CLOAK_LORDLY_RES:
 				switch (i) {
 				case EGO_AURA_ELEC2:
@@ -3670,6 +3674,28 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 			case EGO_FURY:
 			case EGO_DRAGON: /* of the Thunderlords */
 				if (i == EGO_SPECTRAL) continue;
+			}
+
+			/* Prevent contradicting ego powers */
+			switch (o_ptr->name2) {
+			case EGO_CLOAK_INVIS:
+				switch (i) {
+				case EGO_AURA_ELEC2:
+				case EGO_AURA_COLD2:
+				case EGO_AURA_FIRE2:
+					continue;
+				}
+				break;
+			case EGO_AURA_ELEC2:
+			case EGO_AURA_COLD2:
+			case EGO_AURA_FIRE2:
+				if (i == EGO_CLOAK_INVIS) {
+					/* upgrade first ego power! */
+					o_ptr->name2 = i;
+					i = 0;
+					break;
+				}
+				break;
 			}
 
 			/* Hack: If we upgraded the first ego power, the second one hasn't become set.
