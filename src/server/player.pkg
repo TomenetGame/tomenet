@@ -1026,3 +1026,5 @@ struct player_trait
 	s32b choice;
 };
 extern player_trait trait_info[MAX_TRAIT];
+
+extern void do_mimic_change(int Ind, int r_idx, bool force);
