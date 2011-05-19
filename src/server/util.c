@@ -2739,8 +2739,18 @@ static void player_talk_aux(int Ind, char *message)
 	/* no big brother */
 //	if(cfg.log_u && (!colon || message[0] != '#' || message[0] != '/')){ /* message[0] != '#' || message[0] != '/' is always true -> big brother mode - mikaelh */
 	if (cfg.log_u && (!colon)) {
-		s_printf("[%s] %s\n", sender, message);
+		if (strcmp(message, p_ptr->last_chat_line)) {
+			if (p_ptr->last_chat_line_cnt) {
+				s_printf("[%s (x%d)]\n", sender, p_ptr->last_chat_line_cnt + 1);
+				p_ptr->last_chat_line_cnt = 0;
+			}
+			s_printf("[%s] %s\n", sender, message);
+
+			/* Keep track of repeating chat lines to avoid log file spam (slash commands like '/rec' mostly) */
+			strcpy(p_ptr->last_chat_line, message);
+		} else p_ptr->last_chat_line_cnt++;
 	}
+
 	/* Special - shutdown command (for compatibility) */
 	if (prefix(message, "@!shutdown") && admin) {
 		/*world_reboot();*/

@@ -2079,7 +2079,7 @@ struct player_type
 	skill_player s_info_old[MAX_SKILLS]; /* Player skills */
 	s16b skill_points_old;  /* number of skills assignable */
 	bool reskill_possible;
-	
+
 	s16b class_extra;	/* Class extra info */
 
 	byte hitdie;		/* Hit dice (sides) */
@@ -2412,7 +2412,7 @@ struct player_type
 	s16b fury;			/* Timed -- Furry */
 	s16b tim_thunder;   	/* Timed thunderstorm */
 	s16b tim_thunder_p1;	/* Timed thunderstorm */
-        s16b tim_thunder_p2;	/* Timed thunderstorm */
+	s16b tim_thunder_p2;	/* Timed thunderstorm */
 	s16b tim_ffall;     	/* Timed Levitation */
 	s16b tim_fly;       	/* Timed Levitation */
 	s16b shield;		/* Timed -- Shield Spell */
@@ -2634,7 +2634,7 @@ struct player_type
 	byte tval_ammo;		/* Correct ammo tval */
 
 	s16b pspeed;		/* Current speed */
-	
+
  	s16b r_killed[MAX_R_IDX];	/* Monsters killed */
 
 	s32b melee_techniques_old; /* melee techniques before last skill point update */
@@ -2643,7 +2643,7 @@ struct player_type
 	s32b ranged_techniques; /* ranged techniques */
 	s32b innate_spells[3]; /* Monster spells */
 	bool body_changed;
-	
+
 	bool anti_magic;	/* Can the player resist magic */
 
 	player_list_type	*blood_bond;	/* Norc is now happy :) */
@@ -2711,7 +2711,7 @@ struct player_type
 	bool can_swim;		/* Can swim like a fish (or Lizard..whatever) */
 	bool pass_trees;	/* Can pass thick forest */
 	bool town_pass_trees;	/* Can pass forest in towns, as an exception to make movement easier */
-	
+
 	int luck;	/* Extra luck of this player */
 
 	/*        byte anti_magic_spell;    *//* Anti-magic(newer one..) */
@@ -2871,7 +2871,7 @@ struct player_type
 #endif
 
 	bool aura[MAX_AURAS]; /* allow toggling auras for possibly more tactical utilization - C. Blue */
-	
+
 	/* for C_BLUE_AI, new thingy: Monsters that are able to ignore a "tank" player */
 	int heal_turn[20 + 1]; /* records the amount of healing the player received for each of 20 consecutive turns */
 	u32b heal_turn_20, heal_turn_10, heal_turn_5;
@@ -2952,6 +2952,9 @@ struct player_type
 
 	int piercing; /* Rogue skill 'assassinate' */
 	bool piercing_charged;
+
+	char last_chat_line[MAX_CHARS]; /* last slash command the player used, to prevent log file spam */
+	int last_chat_line_cnt;
 };
 
 /* For Monk martial arts */
