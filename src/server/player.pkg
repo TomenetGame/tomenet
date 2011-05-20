@@ -358,10 +358,10 @@ struct player_type
 
 	const char *savefile;	/* Name of the savefile */
 
-        byte restricted;        /* account is restricted (ie after cheating) */
-        byte privileged;        /* account is privileged (ie for quest running) */
-        byte pvpexception;      /* account uses different pvp rules than server settings */
-        byte mutedchat;         /* account has chat restrictions */
+	byte restricted;        /* account is restricted (ie after cheating) */
+	byte privileged;        /* account is privileged (ie for quest running) */
+	byte pvpexception;      /* account uses different pvp rules than server settings */
+	byte mutedchat;         /* account has chat restrictions */
 	bool inval;		/* dont make them logout to validate */
 
 	bool alive;		/* Are we alive */
@@ -387,7 +387,7 @@ struct player_type
 	skill_player s_info_old[MAX_SKILLS]; /* Player skills */
 	s16b skill_points_old;  /* number of skills assignable */
 	bool reskill_possible;
-	
+
 	byte hitdie;		/* Hit dice (sides) */
 	s16b expfact;		/* Experience factor */
 
@@ -411,9 +411,9 @@ struct player_type
 	s16b csp;		/* Cur mana pts */
 	u16b csp_frac;		/* Cur mana frac (times 2^16) */
 
-        s16b mst;                       /* Max stamina pts */
-        s16b cst;                       /* Cur stamina pts */
-        s16b cst_frac;                  /* 1/10000 */
+	s16b mst;                       /* Max stamina pts */
+	s16b cst;                       /* Cur stamina pts */
+	s16b cst_frac;                  /* 1/10000 */
 
 	object_type inventory[INVEN_TOTAL];	/* Player's inventory */
 	inventory_change_type *inventory_changes; /* List of recent inventory changes */
@@ -569,9 +569,9 @@ struct player_type
 
 	int look_index;		/* Used for looking or targeting */
 
-  s32b current_char;
+	s32b current_char;
 	s16b current_spell;	/* Spell being cast */
-  s16b current_mind;	/* Power being use */
+	s16b current_mind;	/* Power being use */
 	s16b current_rod;	/* Rod being zapped */
 	s16b current_activation;/* Artifact (or dragon mail) being activated */
 	s16b current_enchant_h; /* Current enchantments */
@@ -580,8 +580,8 @@ struct player_type
 	s16b current_identify;	/* Are we identifying something? */
 	s16b current_star_identify;
 	s16b current_recharge;
-  s16b current_artifact;
-  object_type *current_telekinesis;
+	s16b current_artifact;
+	object_type *current_telekinesis;
 	s16b current_curse;
 
 	s16b current_selling;
@@ -634,9 +634,9 @@ struct player_type
 	s16b bow_brand; 	/* Timed -- Bow Branding */
 	byte bow_brand_t; 	/* Timed -- Bow Branding */
 	s16b bow_brand_d; 	/* Timed -- Bow Branding */
-        s16b prob_travel;       /* Timed -- Probability travel */
-        s16b st_anchor;         /* Timed -- Space/Time Anchor */
-        s16b tim_esp;           /* Timed -- ESP */
+	s16b prob_travel;       /* Timed -- Probability travel */
+	s16b st_anchor;         /* Timed -- Space/Time Anchor */
+	s16b tim_esp;           /* Timed -- ESP */
 	s16b adrenaline;
 	s16b biofeedback;
 	s16b mindboost;
@@ -701,10 +701,10 @@ struct player_type
 	bool immune_fire;	/* Immunity to fire */
 	bool immune_cold;	/* Immunity to cold */
 
-        s16b reduc_fire;        /* Fire damage reduction */
-        s16b reduc_elec;        /* elec damage reduction */
-        s16b reduc_acid;        /* acid damage reduction */
-        s16b reduc_cold;        /* cold damage reduction */
+	s16b reduc_fire;        /* Fire damage reduction */
+	s16b reduc_elec;        /* elec damage reduction */
+	s16b reduc_acid;        /* acid damage reduction */
+	s16b reduc_cold;        /* cold damage reduction */
 
 	bool resist_acid;	/* Resist acid */
 	bool resist_elec;	/* Resist lightning */
@@ -726,25 +726,25 @@ struct player_type
 
 	bool immune_neth;       /* Immunity to nether */
 
-        bool suscep_fire;     /* Fire does more damage on the player */
-        bool suscep_cold;     /* Cold does more damage on the player */
-        bool suscep_acid;     /* Acid does more damage on the player */
-        bool suscep_elec;     /* Electricity does more damage on the player */
-        bool suscep_pois;     /* Poison does more damage on the player */
+	bool suscep_fire;     /* Fire does more damage on the player */
+	bool suscep_cold;     /* Cold does more damage on the player */
+	bool suscep_acid;     /* Acid does more damage on the player */
+	bool suscep_elec;     /* Electricity does more damage on the player */
+	bool suscep_pois;     /* Poison does more damage on the player */
 	bool suscep_lite;
 	bool suscep_good;
 	bool suscep_life;
 
 	bool reflect;       /* Reflect 'bolt' attacks */
-        byte shield_deflect;       /* Deflect various attacks (ranged), needs USE_BLOCKING */
-        byte weapon_parry;       /* Parry various attacks (melee), needs USE_PARRYING */
-        bool res_tele;          /* Prevents being teleported from someone else */
+	byte shield_deflect;       /* Deflect various attacks (ranged), needs USE_BLOCKING */
+	byte weapon_parry;       /* Parry various attacks (melee), needs USE_PARRYING */
+	bool res_tele;          /* Prevents being teleported from someone else */
 
 	bool ty_curse;		/* bad curses from artifacts */
 	bool dg_curse;
 
-        u16b quest_id;          /* Quest number */
-        s16b quest_num;         /* Number of kills needed */
+	u16b quest_id;          /* Quest number */
+	s16b quest_num;         /* Number of kills needed */
 
 	bool sustain_str;	/* Keep strength */
 	bool sustain_int;	/* Keep intelligence */
@@ -767,10 +767,10 @@ struct player_type
 	bool free_act;		/* Never paralyzed */
 	bool see_inv;		/* Can see invisible */
 	bool regenerate;	/* Regenerate hit pts */
-        bool resist_time;       /* Resist Time */
-        bool resist_mana;       /* Resist mana / magic */
-        bool immune_poison;     /* Poison Immunity */
-        bool immune_water;      /* Water Immunity, would also let you breathe under water. */
+	bool resist_time;       /* Resist Time */
+	bool resist_mana;       /* Resist mana / magic */
+	bool immune_poison;     /* Poison Immunity */
+	bool immune_water;      /* Water Immunity, would also let you breathe under water. */
 	bool resist_water;	/* Resist Water */
 	bool resist_plasma;     /* Resist Plasma */
 	bool regen_mana;	/* Regenerate mana */
@@ -780,17 +780,17 @@ struct player_type
 	bool bless_blade;	/* Blessed blade */
 	bool xtra_might;	/* Extra might bow */
 	bool impact;		/* Earthquake blows */
-        bool auto_id; /* Pickup = Id */
+	bool auto_id; /* Pickup = Id */
 	bool no_cut;		/* for mimic forms */
 	bool fly;
 	bool can_swim;		/* for mimic forms mainly */
 	bool pass_trees;
 	bool town_pass_trees;
 	bool reduce_insanity;	/* for mimic forms with weird/empty mind */
-	
+
 	s16b invis;		/* Invisibility */
 	bool admin_wiz;         /* Is this char Wizard? */
-        bool admin_dm;          /* or Dungeon Master? */
+	bool admin_dm;          /* or Dungeon Master? */
 
 	s16b extra_blows;
 	s16b xtra_crit;
@@ -833,41 +833,39 @@ struct player_type
 	s16b num_spell;		/* Number of spells */
 
 	byte tval_xtra;		/* Correct xtra tval */
-
 	byte tval_ammo;		/* Correct ammo tval */
 
 	s16b pspeed;		/* Current speed */
-	
- 	s16b r_killed[MAX_R_IDX];	/* Monsters killed */
+
+	s16b r_killed[MAX_R_IDX];	/* Monsters killed */
 
 	s32b melee_techniques; /* for weaponmastery */
 	s32b ranged_techniques; /* for archery */
 	s32b innate_spells[3]; /* Monster spells */
 	bool body_changed;
-	
+
 	bool anti_magic;	/* Can the player resist magic */
 	byte antimagic;		/* Anti-magic(in percent) */
 	byte antimagic_dis;	/* Radius of the anti magic field */
 
-        player_list_type	*blood_bond;	/* Norc is now happy :) */
+	player_list_type	*blood_bond;	/* Norc is now happy :) */
 
-        byte mode; /* Difficulty MODE */
+	byte mode; /* Difficulty MODE */
 
 	s32b esp_link; /* Mental link */
 	byte esp_link_type;
 	u16b esp_link_flags;
 	u16b esp_link_end; /* Time before actual end */
-	bool esp_link_music; /* 'link state changed' flag, to handle music updating */
 
-		/* additions */
-        bool black_breath;      /* The Tolkien's Black Breath */
+	/* additions */
+	bool black_breath;      /* The Tolkien's Black Breath */
 
-        s16b msane;                   /* Max sanity */
-        s16b csane;                   /* Cur sanity */
-        u16b csane_frac;              /* Cur sanity frac */
+	s16b msane;                   /* Max sanity */
+	s16b csane;                   /* Cur sanity */
+	u16b csane_frac;              /* Cur sanity frac */
 
 
-        byte spell_project;             /* Do the spells(some) affect nearby party members ? */
+	byte spell_project;             /* Do the spells(some) affect nearby party members ? */
 	s16b dodge_level;
 	s32b tim_blacklist;
 	s32b tim_watchlist;
@@ -887,42 +885,42 @@ struct player_type
 	int arc_j;
 	int arc_k;
 	int arc_l;
-        char firedir;
-        char game;
-        int gametime;
-        char pushed;
-        char pushdir;
+	char firedir;
+	char game;
+	int gametime;
+	char pushed;
+	char pushdir;
 
 	int ret_dam;			/* Drained life from a monster */
 	const char *attacker;		/* Attacking player string, contains name and attack */
 
-        int luck;   /* Extra luck of this player */
+	int luck;   /* Extra luck of this player */
 
-        /* C. Blue - was the last shutdown a panic save? */
-        bool panic;
+	/* C. Blue - was the last shutdown a panic save? */
+	bool panic;
 
-        /* Anti-cheeze */
-        s16b supported_by;              /* level of the highest supporter */
-        s16b support_timer;             /* safe maximum possible duration of the support spells */
+	/* Anti-cheeze */
+	s16b supported_by;              /* level of the highest supporter */
+	s16b support_timer;             /* safe maximum possible duration of the support spells */
 
-        /* C. Blue - any automatic savegame update to perform? (toggle) */
-        byte updated_savegame;
-        /* for auto-artreset */
-        byte artifact_reset;
-	
+	/* C. Blue - any automatic savegame update to perform? (toggle) */
+	byte updated_savegame;
+	/* for auto-artreset */
+	byte artifact_reset;
+
 	/* C. Blue - fun stuff */
 	s16b corner_turn;
 	int joke_weather;
-	
+
 	/* Muting variable - the_sandman */
 	bool muted;
 	byte has_pet;
-	
+
 	/* global events */
-        int global_event_type[MAX_GLOBAL_EVENTS]; /* 0 means 'not participating' */
-        time_t global_event_signup[MAX_GLOBAL_EVENTS];
-        time_t global_event_started[MAX_GLOBAL_EVENTS];
-//        u32b global_event_progress[MAX_GLOBAL_EVENTS][4];
+	int global_event_type[MAX_GLOBAL_EVENTS]; /* 0 means 'not participating' */
+	time_t global_event_signup[MAX_GLOBAL_EVENTS];
+	time_t global_event_started[MAX_GLOBAL_EVENTS];
+//	u32b global_event_progress[MAX_GLOBAL_EVENTS][4];
 
 	int combat_stance;
 	int combat_stance_power;
@@ -930,7 +928,7 @@ struct player_type
 	bool shoot_till_kill;
 	bool shooty_till_kill;
 	bool shooting_till_kill;
-        int shoot_till_kill_book;
+	int shoot_till_kill_book;
 	int shoot_till_kill_spell;
 
 	int kills_own;

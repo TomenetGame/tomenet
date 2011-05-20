@@ -6063,7 +6063,7 @@ void do_cmd_fusion(int Ind) {
 		p_ptr->esp_link_end = q_ptr->esp_link_end = 0;
 		q_ptr->esp_link_flags = LINKF_VIEW | LINKF_PAIN | LINKF_MISC | LINKF_OBJ;
 		p_ptr->esp_link_flags = LINKF_VIEW_DEDICATED; /* don't show own map info */
-		p_ptr->esp_link_music = TRUE; /* don't hear own music */
+		p_ptr->update |= PU_MUSIC; /* don't hear own music */
 		/* redraw map of target player, which will redraw our view too */
 		q_ptr->redraw |= PR_MAP;
 

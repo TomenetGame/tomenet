@@ -6017,10 +6017,34 @@ void update_stuff(int Ind)
 		update_players();
 	}
 
+
+#ifdef USE_SOUND_2010
+	/* Have we freshly forged or broken a mind link? */
+	if (p_ptr->update & PU_MUSIC) {
+		p_ptr->update &= ~PU_MUSIC;
+		/* hack: update music, if we're mind-linked to someone */
+		int Ind2;
+		player_type *p_ptr2;
+		u32b f;
+
+		/* we just forged a link (and we are sender) */
+		if ((Ind2 = get_esp_link(Ind, LINKF_VIEW, &p_ptr2))) {
+			/* hack: temporarily remove the dedicated mind-link flag, to allow Send_music() */
+			f = Players[Ind2]->esp_link_flags;
+			Players[Ind2]->esp_link_flags &= ~LINKF_VIEW_DEDICATED;
+			Send_music(Ind2, Players[Ind]->music_current);
+			Players[Ind2]->esp_link_flags = f;
+		}
+		/* we just broke a link (and we were receiver) */
+		else handle_music(Ind); /* restore music after a mind-link has been broken */
+	}
+#endif
+
+
 	if (p_ptr->update & PU_LUA) {
 		/* update the client files */
 		p_ptr->update &= ~(PU_LUA);
-                exec_lua(Ind, "update_client()");
+		exec_lua(Ind, "update_client()");
 	}
 }
 
@@ -6059,29 +6083,6 @@ void redraw_stuff(int Ind)
 #endif
 		p_ptr->panel_changed = FALSE;
 	}
-
-
-#ifdef USE_SOUND_2010
-	/* Have we freshly forged or broken a mind link? */
-	if (p_ptr->esp_link_music) {
-		p_ptr->esp_link_music = FALSE;
-		/* hack: update music, if we're mind-linked to someone */
-		int Ind2;
-		player_type *p_ptr2;
-		u32b f;
-
-		/* we just forged a link (and we are sender) */
-		if ((Ind2 = get_esp_link(Ind, LINKF_VIEW, &p_ptr2))) {
-			/* hack: temporarily remove the dedicated mind-link flag, to allow Send_music() */
-			f = Players[Ind2]->esp_link_flags;
-			Players[Ind2]->esp_link_flags &= ~LINKF_VIEW_DEDICATED;
-			Send_music(Ind2, Players[Ind]->music_current);
-			Players[Ind2]->esp_link_flags = f;
-		}
-		/* we just broke a link (and we were receiver) */
-		else handle_music(Ind); /* restore music after a mind-link has been broken */
-	}
-#endif
 
 
 	if (p_ptr->redraw & PR_BASIC) {
