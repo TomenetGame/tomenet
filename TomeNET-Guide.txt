@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 16. May 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 20. May 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -7476,7 +7476,10 @@ Note that not every skill is available to every profession (class).
                                 with stolen goods, which means that very
                                 expensive items, depending on their value, have
                                 a certain chance of their level becoming 0,
-                                making them untradable.
+                                making them untradable. (Note: Even if you were
+                                stealing Morgoth's crown, which has a value of
+                                10 million Au, you'd still have at least a 5%
+                                chance of it retaining its original level.)
                                 Your chance to steal an item from a shop
                                 depends on your dexterity, your stealing skill
                                 and the price and weight of the item. Stealth
