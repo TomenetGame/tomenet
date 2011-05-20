@@ -6041,19 +6041,21 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* The new cursing spell - basically slow/blind/conf all in one. the_sandman */
 		/* Following the pattern, use "dam" as "power". */
 		case GF_CURSE:
-		{	
-			if (seen) obvious = TRUE;
+		{
+			/* Assume no obvious effect */
+			obvious = FALSE;
 			int curse = randint(3);
 			if (curse == 1) { //Slow
 /*				if (((r_ptr->flags1 & RF1_UNIQUE) && magik(r_ptr->level * 4)) ||
 					magik(r_ptr->level * 2)) {*/
 				if (r_ptr->flags1 & RF1_UNIQUE) {
 					note = " is unaffected";
-				} else if (r_ptr->level > randint((dam/3 - 10) < 1 ? 1 : (dam/3 - 10)) + 10) { /* consistent with GF_OLD_SLOW */
+				} else if (r_ptr->level > randint((dam / 3 - 10) < 1 ? 1 : (dam / 3 - 10)) + 10) { /* consistent with GF_OLD_SLOW */
 					note = " resists";
 				} else if (m_ptr->mspeed > 100 && m_ptr->mspeed > m_ptr->speed - 10) {
 					m_ptr->mspeed -= 10;
 					note = " starts moving slower";
+					if (seen) obvious = TRUE;
 				} else {
 					note = " is unaffected";
 				}
@@ -6063,7 +6065,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			} else if (curse == 2) { //Conf
 				/* Get confused later */
 				do_conf = damroll(3, (dam / 2)) + 1;
-	
+
 				/* Attempt a saving throw */
 				if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags3 & RF3_NO_CONF) ||
 				  (r_ptr->level > randint((dam/3 - 10) < 1 ? 1 : (dam/3 - 10)) + 10)) /* consistent with GF_OLD_CONF */
@@ -6072,8 +6074,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 					if (r_ptr->flags1 & RF1_UNIQUE) note = " is unaffected";
 
 					/* Memorize a flag */
-					if (r_ptr->flags3 & RF3_NO_CONF)
-					{
+					if (r_ptr->flags3 & RF3_NO_CONF) {
 #ifdef OLD_MONSTER_LORE
 						if (seen) r_ptr->r_flags3 |= RF3_NO_CONF;
 #endif
@@ -6081,17 +6082,17 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 					}
 					/* Resist */
 					do_conf = 0;
-					/* No obvious effect */
-					obvious = FALSE;
 				}
-				//let's do some actual damage, too
-				//dam = 0;
-				//quiet_dam = TRUE;
+				//let's do some actual damage, too?
+				dam = 0;
+				quiet_dam = TRUE;
 				break;
 			} else { //Blind
 				do_blind = dam;
 				dam = 0;
 				quiet_dam = TRUE;
+				/* No obvious effect */
+				obvious = FALSE;
 			}
 			break;
 		}

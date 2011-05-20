@@ -15,7 +15,7 @@ HCURSE = add_spell
                         if get_level(Ind, HCURSE, 50) >= 25 then
 				project_los(Ind, GF_CURSE, 10 + get_level(Ind, HCURSE, 150), "points and curses for")
                         elseif get_level(Ind, HCURSE, 50) >= 15 then
-				fire_grid_beam(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, HCURSE, 150), "points and curses for")
+				fire_beam(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, HCURSE, 150), "points and curses for")
 			else
 				fire_grid_bolt(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, HCURSE, 150), "points and curses for")
                         end

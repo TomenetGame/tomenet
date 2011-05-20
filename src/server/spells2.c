@@ -6395,8 +6395,7 @@ bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 	ty = p_ptr->py + 99 * ddy[dir];
 
 	/* Hack -- Use an actual "target" */
-	if ((dir == 5) && target_okay(Ind))
-	{
+	if ((dir == 5) && target_okay(Ind)) {
 		flg &= ~PROJECT_STOP;
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
@@ -6411,39 +6410,43 @@ bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
 }
 
-/* Target bolt-like, but able to pass 'over' untargetted enemies to hit target grid.
-   Added for new mindcrafter spells. This one is for floor/item feats eg traps.
-   It kind of manually fakes a PROJECT_JUMP. - C. Blue */
+/* Added for new mindcrafter spells.
+   The '_grid_' part here means that the beam also hits the floor grids,
+   ie feat/terrain/item! Added for mindcrafter disarming. - C. Blue */
 bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker) {
 	player_type *p_ptr = Players[Ind];
 	char pattacker[80];
-	int tx, ty;
 
 	// (project_grid is required for disarm beam! same for project_item, for chests!)
-	int flg = PROJECT_HIDE | PROJECT_BEAM | PROJECT_STOP | PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM;
+	int flg = PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM;
+//	flg |= PROJECT_STOP | PROJECT_HIDE;
 
-	/* WRAITHFORM reduces damage/effect! */
-	if (p_ptr->tim_wraith) dam /= 2;
-
-	/* Use the given direction */
-	tx = p_ptr->px + 99 * ddx[dir];
-	ty = p_ptr->py + 99 * ddy[dir];
-
-	/* Hack -- Use an actual "target" */
-	if ((dir == 5) && target_okay(Ind))
-	{
-		flg &= ~PROJECT_STOP;
-		tx = p_ptr->target_col;
-		ty = p_ptr->target_row;
-	}
+	/* Analyze the "dir" and the "target".  Hurt items on floor. */
+	snprintf(pattacker, 80, "%s%s", p_ptr->name, attacker);
 
 #ifdef USE_SOUND_2010
 	sound(Ind, "cast_beam", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
-	/* Analyze the "dir" and the "target".  Hurt items on floor. */
-	snprintf(pattacker, 80, "%s%s", p_ptr->name, attacker);
+#if 0 /* why needed for beam? */
+	/* Use the given direction */
+	int tx = p_ptr->px + 99 * ddx[dir], ty = p_ptr->py + 99 * ddy[dir];
+
+	/* WRAITHFORM reduces damage/effect! */
+	if (p_ptr->tim_wraith) dam /= 2;
+
+	/* Hack -- Use an actual "target" */
+	if ((dir == 5) && target_okay(Ind)) {
+		flg &= ~PROJECT_STOP;
+		tx = p_ptr->target_col;
+		ty = p_ptr->target_row;
+	}
+
 	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
+#else
+	return (project_hook(Ind, typ, dir, dam, flg, pattacker));
+#endif
+
 }
 
 
@@ -6614,19 +6617,19 @@ bool sleep_monsters_touch(int Ind)
 /* Scan magical powers for the golem */
 static void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr)
 {
-	    u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, esp;
 
-			  /* Extract the flags */
-			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	/* Extract the flags */
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
-        if (f1 & TR1_LIFE) r_ptr->hdice += o_ptr->pval;
-        if (f1 & TR1_SPEED) r_ptr->speed += o_ptr->pval * 2 / 3;
-        if (f1 & TR1_TUNNEL) r_ptr->flags2 |= RF2_KILL_WALL;
-        if (f2 & TR2_RES_FIRE) r_ptr->flags3 |= RF3_IM_FIRE;
-        if (f2 & TR2_RES_ACID) r_ptr->flags3 |= RF3_IM_ACID;
-        if (f2 & TR2_RES_NETHER) r_ptr->flags3 |= RF3_RES_NETH;
-        if (f2 & TR2_RES_NEXUS) r_ptr->flags3 |= RF3_RES_NEXU;
-        if (f2 & TR2_RES_DISEN) r_ptr->flags3 |= RF3_RES_DISE;
+	if (f1 & TR1_LIFE) r_ptr->hdice += o_ptr->pval;
+	if (f1 & TR1_SPEED) r_ptr->speed += o_ptr->pval * 2 / 3;
+	if (f1 & TR1_TUNNEL) r_ptr->flags2 |= RF2_KILL_WALL;
+	if (f2 & TR2_RES_FIRE) r_ptr->flags3 |= RF3_IM_FIRE;
+	if (f2 & TR2_RES_ACID) r_ptr->flags3 |= RF3_IM_ACID;
+	if (f2 & TR2_RES_NETHER) r_ptr->flags3 |= RF3_RES_NETH;
+	if (f2 & TR2_RES_NEXUS) r_ptr->flags3 |= RF3_RES_NEXU;
+	if (f2 & TR2_RES_DISEN) r_ptr->flags3 |= RF3_RES_DISE;
 }
 
 /* multi builder stuff - move when complete */
