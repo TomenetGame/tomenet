@@ -4435,7 +4435,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 				{
 					/* Bonus to damage and to hit */
 					o_ptr->to_d = 3 + randint(6) + m_bonus(10, level);
-					o_ptr->to_h = 3 + randint(6) + m_bonus(10, level);
+					o_ptr->to_h = 3 + randint(5) + m_bonus(9, level);
 
 					/* Cursed */
 					if (power < 0)
