@@ -513,8 +513,8 @@ CTRL+P  view previous messages.
 CTRL+O  view previous chat messages.
 CTRL+X  save your character & quit the game. (You should do this in town!)
         This also automatically saves some settings, like window positions on
-        MS-Windows, or mixer settings, and you will be asked to save a chat
-        log.
+        MS-Windows, or mixer settings (CTRL+U to change), and you will be asked
+        to save a chat log.
         Note that if you quit the game just by clicking on the 'x' button in
         the game window's titlebar, these extra features will be skipped, and
         any changes in settings or window positions will be discarded.
@@ -9839,9 +9839,12 @@ The techniques are as follows:
         Your character will be able to move faster, so you can catch up to
         runners and other monsters that avoid you. Note: This does not affect
         your SPEED stat, nor has anything to do with 'running' (shift+dir),
-        but means that moving one step will only cost you half a turn of
+        but simply means that moving one step will only cost you half a turn of
         energy, allowing you to move two steps during each of your turns
-        instead of one!
+        instead of one! So the ONLY thing 'Sprint' affects is normal walking.
+        (Advanced note: Certain hit & run tactics aka kiting might also become
+        more effective accordingly, since half of your turn could be utilized
+        by the auto-retaliator if you keep time intervals between each step.)
         Running (shift + directional keys) is not affected.
     Taunt               2 stamina
         Attempts to draw attention of humanoid mobs, causing them to attack
