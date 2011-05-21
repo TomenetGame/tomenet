@@ -3334,7 +3334,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	object_type	*o_ptr = NULL;
 	bool		do_quake = FALSE;
 
-	char		m_name[80], brand_msg[80] = { '\0' }, hit_desc[80];
+	char		m_name[80], brand_msg[80] = { '\0' }, hit_desc[80], mbname[80];
 	monster_type	*m_ptr;
 	monster_race	*r_ptr;
 
@@ -3399,6 +3399,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 	/* Extract monster name (or "it") */
 	monster_desc(Ind, m_name, c_ptr->m_idx, 0);
+	/* Prepare lower-case'd name for elementality tests */
+	strcpy(mbname, m_name);
+	mbname[0] = tolower(mbname[0]);
 
 	/* try to find its owner online */
 	if (m_ptr->owner)
@@ -3881,9 +3884,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				}
 				if (r_ptr->flags4 & RF4_BR_ACID) mon_acid += 2;
 				if (r_ptr->flags4 & RF4_BR_FIRE) mon_fire += 2;
-				if (strstr(r_name + r_ptr->name, "Water")) mon_aqua = 4;
-				if (strstr(r_name + r_ptr->name, "Acid")) mon_acid = 4;
-				if (strstr(r_name + r_ptr->name, "Fire")) mon_fire = 4;
+				if (strstr(mbname, "water")) mon_aqua = 4;
+				if (strstr(mbname, "acid")) mon_acid = 4;
+				if (strstr(mbname, "fire") || strstr(mbname, "fiery")) mon_fire = 4;
 				if (p_ptr->resist_water) mon_aqua /= 2;
 				if (p_ptr->immune_water) mon_aqua = 0;
 				if (p_ptr->resist_acid || p_ptr->oppose_acid) mon_acid /= 2;
