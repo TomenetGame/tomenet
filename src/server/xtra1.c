@@ -1923,13 +1923,18 @@ static void calc_body_bonus(int Ind)
 	int i, j;
 	bool wepless = FALSE;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
-	
+	char mname[80];
+
+	/* If in the player body nothing have to be done */
+	if (!p_ptr->body_monster) return;
+
 	immunity[1] = 0; immunity[2] = 0; immunity[3] = 0;
 	immunity[4] = 0; immunity[5] = 0; immunity[6] = 0;
 	immrand[1] = 0; immrand[2] = 0;
 
-	/* If in the player body nothing have to be done */
-	if (!p_ptr->body_monster) return;
+	/* Prepare lower-case'd name for worry-free testing */
+	strcpy(mname, r_name + r_ptr->name);
+	mname[0] = tolower(mname[0]);
 
 	/* keep random monster-body abilities static over quit/rejoin */
 	Rand_value = p_ptr->mimic_seed;
@@ -1946,7 +1951,7 @@ static void calc_body_bonus(int Ind)
 		j = (r_ptr->blow[i].d_dice * r_ptr->blow[i].d_side);
 
 		if (j) n++;
-		
+
 		switch (r_ptr->blow[i].effect) {
 			case RBE_EXP_10:
 			case RBE_EXP_20:
@@ -1969,15 +1974,15 @@ static void calc_body_bonus(int Ind)
 		d += (j * 2);
 	}
 	d /= 4;
-	
+
 	/* Apply STR bonus/malus, derived from form damage and race */
 	if (!d) d = 1;
 	/* 0..147 (greater titan) -> 0..5 -> -1..+4 */
 	i = (((15000 / ((15000 / d) + 50)) / 29) - 1);
-	if (strstr(r_name + r_ptr->name, "bear") && (r_ptr->flags3 & RF3_ANIMAL)) i++; /* Bears get +1 STR */
+	if (strstr(mname, "bear") && (r_ptr->flags3 & RF3_ANIMAL)) i++; /* Bears get +1 STR */
 	if (r_ptr->flags3 & RF3_TROLL) i += 1;
 	if (r_ptr->flags3 & RF3_GIANT) i += 1;
-	if ((r_ptr->flags3 & RF3_DRAGON) && (strstr(r_name + r_ptr->name, "Mature ") ||
+	if ((r_ptr->flags3 & RF3_DRAGON) && (strstr(mname, "mature ") ||
 	    (r_ptr->d_char == 'D')))
 		i += 1; /* only +1 since more bonus is coming from its damage already */
 	p_ptr->stat_add[A_STR] += i;
