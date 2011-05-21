@@ -4201,9 +4201,13 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 							to give found poly rings random levels to allow surprises :)
 							Nah my idea was too cheezy, Blue DR at 21 -C. Blue */
 							if (r_info[i].level > 0) {
-								o_ptr->level = 10 + (1000 / ((2000 / r_info[i].level) + 10));
+								//o_ptr->level = 10 + (1000 / ((2000 / r_info[i].level) + 10));
+								//o_ptr->level = 5 + (1000 / ((1500 / r_info[i].level) + 5));
+								/* keep consistent with cmd6.c ! */
+								o_ptr->level = 5 + (1000 / ((1500 / r_info[i].level) + 7));
 							} else {
-								o_ptr->level = 10;
+								//o_ptr->level = 10;
+								o_ptr->level = 5;
 							}
 							/* Make the ring last only over a certain period of time >:) - C. Blue */
 							o_ptr->timeout = 3000 + rand_int(3001);
@@ -5271,7 +5275,7 @@ void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool g
 void determine_level_req(int level, object_type *o_ptr)
 {
 	int i, j, klev = k_info[o_ptr->k_idx].level, base;
- 	artifact_type *a_ptr = NULL;
+	artifact_type *a_ptr = NULL;
 	base = klev / 2;
 
 	/* Exception */
@@ -5561,11 +5565,9 @@ void determine_level_req(int level, object_type *o_ptr)
 		(o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_COSTUME)) return;
 
 	/* artifact */
-	if (o_ptr->name1)
-	{
-	 	/* Randart */
-		if (o_ptr->name1 == ART_RANDART)
-		{
+	if (o_ptr->name1) {
+		/* Randart */
+		if (o_ptr->name1 == ART_RANDART) {
 			a_ptr = randart_make(o_ptr);
 			if(a_ptr == (artifact_type*)NULL){
 				o_ptr->name1=0;
@@ -5576,8 +5578,7 @@ void determine_level_req(int level, object_type *o_ptr)
 			base = a_ptr->level;
 		}
 		/* Normal artifacts */
-		else
-		{
+		else {
 			a_ptr = &a_info[o_ptr->name1];
 			base = a_ptr->level;
 			base += 15; /*general increase for artifacts! */
@@ -5591,10 +5592,9 @@ void determine_level_req(int level, object_type *o_ptr)
 							(base = k_info level / 2, level = dungeonlevel usually) */
 		return;
 	}
-	
+
 	/* stat/heal potions harder to cheeze-transfer */
-	if (o_ptr->tval == TV_POTION)
-	{
+	if (o_ptr->tval == TV_POTION) {
 		switch(o_ptr->sval) {
 		case SV_POTION_HEALING:
 			base += 12;
@@ -5633,7 +5633,7 @@ void determine_level_req(int level, object_type *o_ptr)
 			break;
 		}
 	}
-	
+
 	/* jewelry shop has too low levels on powerful amulets */
 	if (o_ptr->tval == TV_AMULET) {
 		switch (o_ptr->sval) {
@@ -5644,7 +5644,7 @@ void determine_level_req(int level, object_type *o_ptr)
 			break;
 		}
 	}
-	
+
 	if (o_ptr->tval == TV_DRAG_ARMOR) {
 		switch(o_ptr->sval) {
 		case SV_DRAGON_MULTIHUED:
@@ -5661,16 +5661,15 @@ void determine_level_req(int level, object_type *o_ptr)
 	}
 
 	if (o_ptr->tval == TV_LITE) {
-	        switch (o_ptr->sval) {
-	        case SV_LITE_DWARVEN: base += 18; break;
-	        case SV_LITE_FEANORIAN: base += 27; break;
-	        default: if (o_ptr->name2) base += 10;
+		switch (o_ptr->sval) {
+		case SV_LITE_DWARVEN: base += 18; break;
+		case SV_LITE_FEANORIAN: base += 27; break;
+		default: if (o_ptr->name2) base += 10;
 		}
-        }
+	}
 
 	/* Hack -- ego boosts */
-	if (o_ptr->name2 || o_ptr->name2b)
-	{
+	if (o_ptr->name2 || o_ptr->name2b) {
 		if (o_ptr->name2) base += e_info[o_ptr->name2].rating / 2;
 		if (o_ptr->name2b) base += e_info[o_ptr->name2b].rating / 2;
 		/* general level boost for ego items!
@@ -5768,9 +5767,9 @@ void determine_level_req(int level, object_type *o_ptr)
 	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && (o_ptr->level < 30 + o_ptr->bpval - 1) && (o_ptr->bpval > 0))
 		o_ptr->level = 30 + o_ptr->bpval - 1 + rand_int(3);
 	if (o_ptr->tval == TV_LITE) {
-	        switch (o_ptr->sval) {
-	        case SV_LITE_DWARVEN: if (o_ptr->level < 20) o_ptr->level = 20; break;
-	        case SV_LITE_FEANORIAN: if (o_ptr->level < 32) o_ptr->level = 32; break;
+		switch (o_ptr->sval) {
+		case SV_LITE_DWARVEN: if (o_ptr->level < 20) o_ptr->level = 20; break;
+		case SV_LITE_FEANORIAN: if (o_ptr->level < 32) o_ptr->level = 32; break;
 		}
         }
 #endif

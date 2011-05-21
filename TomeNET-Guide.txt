@@ -8768,11 +8768,12 @@ The level of the ring will change depending on the form. Here are some levels:
 form level              ring level
 ----------------------------------
       0 (townspeople)        5
-      1                      6
-     30                     26
-     60                     42
-     80                     51
-    100 (theoretical)       58
+      1                      5
+     15                     14
+     30                     22
+     60                     36
+     80                     43
+    100 (theoretical)       50
 
 Polymorph rings contain a certain amount of energy that cannot be changed,
 which determined for how long the player will keep the form until he polymorphs
