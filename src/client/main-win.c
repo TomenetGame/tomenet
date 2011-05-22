@@ -914,6 +914,7 @@ static void load_prefs(void)
 #ifdef USE_SOUND
 	/* Extract the "use_sound" flag */
 	use_sound = (GetPrivateProfileInt("Base", "Sound", 0, ini_file) != 0);
+	if (!use_sound) quiet_mode = TRUE;
 
  #ifdef USE_SOUND_2010
 	sound_hint = (GetPrivateProfileInt("Base", "HintSound", 1, ini_file) != 0);

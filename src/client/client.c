@@ -218,7 +218,10 @@ static bool read_mangrc(cptr filename)
 				char *p;
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
-				if (p) use_sound = (atoi(p) != 0);
+				if (p) {
+					use_sound = (atoi(p) != 0);
+					if (!use_sound) quiet_mode = TRUE;
+				}
 			}
 #endif
 #ifdef USE_SOUND_2010
