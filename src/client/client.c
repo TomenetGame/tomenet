@@ -219,7 +219,7 @@ static bool read_mangrc(cptr filename)
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) {
-					use_sound = (atoi(p) != 0);
+					use_sound_org = use_sound = (atoi(p) != 0);
 					if (!use_sound) quiet_mode = TRUE;
 				}
 			}
@@ -445,7 +445,7 @@ bool write_mangrc(void) {
 		fputs("\n", config2);
 //#endif
 //#ifdef USE_SOUND
-		fputs(format("sound\t\t\t%s\n", use_sound ? "1" : "0"), config2);
+		fputs(format("sound\t\t\t%s\n", use_sound_org ? "1" : "0"), config2);
 //#endif
 //#ifdef USE_SOUND_2010
 		fputs("soundHint\n", config2);

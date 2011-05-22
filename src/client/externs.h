@@ -210,7 +210,7 @@ extern cptr ANGBAND_DIR_XTRA;
 extern cptr ANGBAND_DIR_SCPT;
 
 extern bool use_graphics;
-extern bool use_sound;
+extern bool use_sound, use_sound_org;
 extern bool quiet_mode;
 extern bool noweather_mode;
 

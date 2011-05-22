@@ -150,9 +150,9 @@ cptr ANGBAND_DIR_XTRA;
 
 bool use_graphics;
 #ifdef USE_SOUND_2010
-bool use_sound = TRUE; //ought to be set via TOMENET_SOUND environment var in linux, probably (compare TOMENET_GRAPHICS) -C. Blue
+bool use_sound = TRUE, use_sound_org = TRUE; //ought to be set via TOMENET_SOUND environment var in linux, probably (compare TOMENET_GRAPHICS) -C. Blue
 #else
-bool use_sound;
+bool use_sound, use_sound_org;
 #endif
 bool quiet_mode = FALSE;
 bool noweather_mode = FALSE;

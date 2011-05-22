@@ -774,7 +774,7 @@ static void save_prefs(void)
 	WritePrivateProfileString("Base", "Graphics", buf, ini_file);
 #endif
 #ifdef USE_SOUND
-	strcpy(buf, use_sound ? "1" : "0");
+	strcpy(buf, use_sound_org ? "1" : "0");
 	WritePrivateProfileString("Base", "Sound", buf, ini_file);
 
  #ifdef USE_SOUND_2010
@@ -913,7 +913,7 @@ static void load_prefs(void)
 
 #ifdef USE_SOUND
 	/* Extract the "use_sound" flag */
-	use_sound = (GetPrivateProfileInt("Base", "Sound", 0, ini_file) != 0);
+	use_sound_org = use_sound = (GetPrivateProfileInt("Base", "Sound", 0, ini_file) != 0);
 	if (!use_sound) quiet_mode = TRUE;
 
  #ifdef USE_SOUND_2010
