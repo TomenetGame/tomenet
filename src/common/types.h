@@ -2058,6 +2058,8 @@ struct player_type
 
 	bool alive;		/* Are we alive */
 	bool death;		/* Have we died */
+	bool safe_float;	/* for safe_float option */
+	int safe_float_turns;
 	bool safe_sane;		/* Save players from insanity-death on resurrection (atomic flag) - C. Blue */
 	int deathblow;          /* How much damage the final blow afflicted */
 	u16b deaths, soft_deaths;	/* Times this character died so far / safely-died (no real death) so far */
@@ -3227,7 +3229,7 @@ struct client_opts
 
 	bool view_reduce_lite;
 	bool view_reduce_view;
-	bool avoid_abort;
+	bool safe_float;//avoid_abort;
 	bool avoid_other;
 	bool flush_failure;
 	bool flush_disturb;

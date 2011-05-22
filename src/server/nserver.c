@@ -2284,6 +2284,9 @@ static void sync_options(int Ind, bool *options)
 	if ((p_ptr->view_reduce_lite = options[44]) != tmp) p_ptr->redraw |= PR_MAP;
 	tmp = p_ptr->view_reduce_view;
 	if ((p_ptr->view_reduce_view = options[45]) != tmp) p_ptr->redraw |= PR_MAP;
+
+	p_ptr->safe_float = options[46];
+
 	tmp = p_ptr->view_yellow_lite;
 	if ((p_ptr->view_yellow_lite = options[56]) != tmp) p_ptr->redraw |= PR_MAP;
 	tmp = p_ptr->view_bright_lite;

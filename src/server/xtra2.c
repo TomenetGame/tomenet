@@ -6430,6 +6430,8 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 
 	/* Turn him into a ghost */
 	p_ptr->ghost = 1;
+	/* Prevent accidental floating up/downwards depending on client option. - C. Blue */
+	if (p_ptr->safe_float) p_ptr->safe_float_turns = 5;
 
 	/* Hack -- drop bones :) */
 	for (i = 0; i < 4; i++) {

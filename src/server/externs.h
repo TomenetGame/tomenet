@@ -245,7 +245,7 @@ extern char *sST;
 
 extern bool use_color;
 extern bool hilite_player;
-extern bool avoid_abort;
+extern bool safe_float;//avoid_abort;
 extern bool avoid_other;
 extern bool flush_disturb;
 extern bool flush_failure;

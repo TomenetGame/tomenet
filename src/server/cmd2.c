@@ -293,6 +293,11 @@ void do_cmd_go_up(int Ind)
 	}
 	else
 	{
+		if (p_ptr->safe_float_turns) {
+			msg_print(Ind, "Floating attempt blocked by client option.");
+			return;
+		}
+
 #ifdef RPG_SERVER /* This is an iron-server... Prob trav should not work - the_sandman */
 		msg_print(Ind, "This harsh world knows not what you're trying to do.");
 		forget_view(Ind); //the_sandman
@@ -682,6 +687,11 @@ void do_cmd_go_down(int Ind)
 	}
 	else
 	{
+		if (p_ptr->safe_float_turns) {
+			msg_print(Ind, "Floating attempt blocked by client option.");
+			return;
+		}
+
 #ifdef RPG_SERVER	/* This is an iron-server... Prob trav should not work - the_sandman */
 		msg_print(Ind, "This harsh world knows not what you're trying to do.");
 	        forget_view(Ind);//the_sandman

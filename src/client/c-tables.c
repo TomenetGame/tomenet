@@ -643,8 +643,8 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.view_reduce_view,	FALSE,	3,	1, 17, TRUE,
 	"view_reduce_view",		"Reduce view-radius in town" },
 
-	{ &c_cfg.avoid_abort,		FALSE,	1,	1, 18, FALSE,
-	"avoid_abort",			"(obsolete) Avoid checking for user abort" },
+	{ &c_cfg.safe_float,		FALSE,	3,	1, 18, TRUE, /* was avoid_abort (obsolete) */
+	"safe_float",			"Prevent floating for a short while after death" },
 
 	{ &c_cfg.avoid_other,		FALSE,	1,	1, 19, FALSE,
 	"avoid_other",			"(broken) Avoid processing special colors" },

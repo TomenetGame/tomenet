@@ -3476,6 +3476,9 @@ static bool process_player_end_aux(int Ind)
 	}
 #endif
 
+	/* Don't accidentally float after dieing */
+	if (p_ptr->safe_float_turns) p_ptr->safe_float_turns--;
+
 	/*** Process Light ***/
 
 	/* Check for light being wielded */
