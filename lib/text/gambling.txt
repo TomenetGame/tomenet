@@ -105,8 +105,8 @@ Examples on a 5x5 board (o = stone, . = free grid):
 
 Strategy:
 -Stones have a balance between securing territory (if they stand lower, ie on
- 3rd line) and radiating influence (if they stand higher, 4th line or more
- towards board centre)
+ 3rd line) and radiating influence (if they stand higher, ie 4th line or more,
+ which can't really happen well on small boards such as 9x9 though).
 -Moves on the first line should be avoided in the beginning of the game,
  because they neither secure territory below them, nor do they have influence
  because they are much too far away from the centre.
@@ -120,6 +120,9 @@ Strategy:
  single stone of your opponent, which just captured your own stone, since the
  previous board position would be repeated by that. So, play elsewhere first,
  then you may recapture.
+-Usually Go is played on a 19x19 board, which allows for a huge amount of
+ strategy. Smaller boards are used for non-serious games, 9x9 somewhat common,
+ whereby the games become purely tactical and lack much of the 19x19 strategy.
 
 Nice read ;)
 http://users.eniinternet.com/bradleym/America.html
