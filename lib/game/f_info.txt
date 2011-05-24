@@ -1079,6 +1079,17 @@ G:#:o
 F:FLOOR | NO_WALK | CAN_PASS | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING
 
+N:228:ai tron dood
+G:@:s
+F:FLOOR | CAN_RUN | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING
+
+N:229:moving powerup
+G:*:y
+F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING | TUNNELABLE
+D:1:You tunnel into the moving powerup.
+
 # generic scheme (all lines are unique except
 # where it's mentioned otherwise) - C. Blue
 # N:<number>:<name>
