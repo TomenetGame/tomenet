@@ -132,6 +132,15 @@ static char board_line_old[10][10], board_line[10][10];//set by receiving 'showb
 static int random_move_prob;
 static bool random_move = FALSE;
 
+/* Gameplay configuration */
+static int wager_lvl[9] = {
+      5000,   7500,
+     10000,  15000,
+     20000,  30000,
+     50000, 100000,
+    0,
+};
+
 
 /* ------------------------------------------------------------------------- */
 
@@ -363,6 +372,7 @@ void go_engine_terminate(void) {
 
 void go_challenge(int Ind) {
 	player_type *p_ptr = Players[Ind];
+	char challenge_req[20];
 
 	Send_store_special_clr(Ind, 4, 18);
 
@@ -384,6 +394,7 @@ void go_challenge(int Ind) {
 
 	/* Owner talk about how you suck..or not!
 	   And making a new proposal accordingly. */
+	strcpy(challenge_req, format("Bet %d Au? ", wager_lvl[p_ptr->go_level / 2]));
 	switch (p_ptr->go_level) {
 	case 0:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "So you think you're any good at this huh?");
@@ -391,7 +402,7 @@ void go_challenge(int Ind) {
 		Send_store_special_str(Ind, 9, 3, TERM_ORANGE, "If you lose, and I dun' expect much really, I'll just keep it until");
 		Send_store_special_str(Ind, 10, 3, TERM_ORANGE, "you've become a bit stronger and can win it back.. as if, haha!");
 		Send_store_special_str(Ind, 12, 3, TERM_ORANGE, "..oh and I'll let you take black even, what d'you say eh?");
-		Send_request_cfr(Ind, RID_GO, "Bet 500 Au? ");
+		Send_request_cfr(Ind, RID_GO, challenge_req);
 		return;
 	case 1:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Got a grip on the basic ideas by now?");
@@ -401,7 +412,7 @@ void go_challenge(int Ind) {
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "You begin to understand how this stuff works");
 		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "eh? At least that's what you think..");
 		Send_store_special_str(Ind, 8, 3, TERM_ORANGE, "You ready to bet a lil more dough this time?");
-		Send_request_cfr(Ind, RID_GO, "Bet 1000 Au? ");
+		Send_request_cfr(Ind, RID_GO, challenge_req);
 		return;
 	case 3:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Have you become at least somewhat adept by now?");
@@ -410,7 +421,7 @@ void go_challenge(int Ind) {
 	case 4:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "You again, and you look like you want to make more");
 		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "bucks off of me, hah. Well, I'll take you up on that!");
-		Send_request_cfr(Ind, RID_GO, "Bet 2000 Au? ");
+		Send_request_cfr(Ind, RID_GO, challenge_req);
 		return;
 	case 5:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "You trained harder? I guess we aren't done yet..");
@@ -418,7 +429,7 @@ void go_challenge(int Ind) {
 	case 6:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Ah it's you. I've got someone who's not a beginner");
 		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "anymore in the house today. You up for it?");
-		Send_request_cfr(Ind, RID_GO, "Bet 5000 Au? ");
+		Send_request_cfr(Ind, RID_GO, challenge_req);
 		return;
 	case 7:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "You've come back for your money, eh?");
@@ -428,7 +439,7 @@ void go_challenge(int Ind) {
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "I know your skill isn't too shabby.");
 		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "I've got someone rather skilled for you,");
 		Send_store_special_str(Ind, 8, 3, TERM_ORANGE, "but it'll take a higher wager this time!");
-		Send_request_cfr(Ind, RID_GO, "Bet 10000 Au? ");
+		Send_request_cfr(Ind, RID_GO, challenge_req);
 		return;
 	case 9:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Yeah, can't always win right away.");
@@ -438,7 +449,7 @@ void go_challenge(int Ind) {
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Aha, it's the person skilled in this game..");
 		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "dare to try someone of quite serious skills?");
 		Send_store_special_str(Ind, 8, 3, TERM_ORANGE, "Then let's see some serious money, friend!");
-		Send_request_cfr(Ind, RID_GO, "Bet 20000 Au? ");
+		Send_request_cfr(Ind, RID_GO, challenge_req);
 		return;
 	case 11:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "I didn't really expect you to win that one.");
@@ -450,7 +461,7 @@ void go_challenge(int Ind) {
 		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "renowned for ya skills. So I did my best");
 		Send_store_special_str(Ind, 8, 3, TERM_ORANGE, "and invited a real master to play today!");
 		Send_store_special_str(Ind, 9, 3, TERM_ORANGE, "He's got his price though, you got enough?");
-		Send_request_cfr(Ind, RID_GO, "Bet 50000 Au? ");
+		Send_request_cfr(Ind, RID_GO, challenge_req);
 		return;
 	case 13:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "There's just no way you could beat that guy.");
@@ -462,7 +473,7 @@ void go_challenge(int Ind) {
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "I can't believe you beat that guy!");
 		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "I haven't heard of anyone stronger around,");
 		Send_store_special_str(Ind, 8, 3, TERM_ORANGE, "but, can you beat him if you..play white!");
-		Send_request_cfr(Ind, RID_GO, "Bet 100000 Au? ");
+		Send_request_cfr(Ind, RID_GO, challenge_req);
 		return;
 	case TOP_RANK * 2 + 1:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "There's a limit to everything, you had to");
@@ -487,16 +498,7 @@ void go_challenge_accept(int Ind, bool new_wager) {
 
 	if (new_wager) {
 		/* Prepare to deduct wager */
-		switch (p_ptr->go_level) {
-		case 0: wager = 500; break;
-		case 2: wager = 1000; break;
-		case 4: wager = 2000; break;
-		case 6: wager = 5000; break;
-		case 8: wager = 10000; break;
-		case 10: wager = 20000; break;
-		case 12: wager = 50000; break;
-		case TOP_RANK * 2: wager = 100000; break;
-		}
+		wager = wager_lvl[p_ptr->go_level / 2];
 		if (p_ptr->au < wager) {
 			Send_store_special_str(Ind, 8, 5, TERM_RED, "You don't have the money!");
 
@@ -1394,8 +1396,8 @@ static void go_engine_move_result(int move_result) {
 				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "short work of Dougan, saw");
 				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "right through ya! I'll make");
 				Send_store_special_str(Ind, 12, GO_BOARD_X + 13, TERM_ORANGE, "y'a better offer next time!");
+				wager = wager_lvl[p_ptr->go_level / 2];
 				p_ptr->go_level++;
-				wager = 500;
 			} else {
 				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "You two are on the same..");
 				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "level eh? Hahaha! That's");
@@ -1409,8 +1411,8 @@ static void go_engine_move_result(int move_result) {
 			} else if (won) {
 				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Yeah yeah, Rabbik isn't strong");
 				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "really, I was sure you'd win.");
+				wager = wager_lvl[p_ptr->go_level / 2];
 				p_ptr->go_level++;
-				wager = 1000;
 			} else {
 				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Oh, a draw. Happens rarely.");
 			}
@@ -1424,8 +1426,8 @@ static void go_engine_move_result(int move_result) {
 			} else if (won) {
 				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Ho, so Lima wasn't witty");
 				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "enough for you. Go on!");
+				wager = wager_lvl[p_ptr->go_level / 2];
 				p_ptr->go_level++;
-				wager = 2000;
 			} else {
 				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "A draw.. small chance for");
 				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "that to happen.");
@@ -1440,8 +1442,8 @@ static void go_engine_move_result(int move_result) {
 				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "You beat Zar'am, not bad.");
 				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "I'll see to giving you a");
 				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "stronger opponent next time!");
+				wager = wager_lvl[p_ptr->go_level / 2];
 				p_ptr->go_level++;
-				wager = 5000;
 			} else {
 				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Hah, that's not result, it's");
 				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "an excuse!");
@@ -1457,8 +1459,8 @@ static void go_engine_move_result(int move_result) {
 				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "Talithe? She's quite strong.");
 				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "Well looks like things start");
 				Send_store_special_str(Ind, 12, GO_BOARD_X + 13, TERM_ORANGE, "getting interesting.");
+				wager = wager_lvl[p_ptr->go_level / 2];
 				p_ptr->go_level++;
-				wager = 10000;
 			} else {
 				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "You kidding me, I don't want");
 				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "a draw. I want a winner!");
@@ -1475,8 +1477,8 @@ static void go_engine_move_result(int move_result) {
 				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "Glynn? I didn't expect that.");
 				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "Seems it takes a master to");
 				Send_store_special_str(Ind, 12, GO_BOARD_X + 13, TERM_ORANGE, "stop you.");
+				wager = wager_lvl[p_ptr->go_level / 2];
 				p_ptr->go_level++;
-				wager = 20000;
 			} else {
 				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Whoa, that's one high-level");
 				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "draw if I ever saw one.");
@@ -1495,8 +1497,8 @@ static void go_engine_move_result(int move_result) {
 				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "Well that leaves me kinda");
 				Send_store_special_str(Ind, 12, GO_BOARD_X + 13, TERM_ORANGE, "dumb-founded. I can just say");
 				Send_store_special_str(Ind, 13, GO_BOARD_X + 13, TERM_ORANGE, "why don't you switch colours!");
+				wager = wager_lvl[p_ptr->go_level / 2];
 				p_ptr->go_level++;
-				wager = 50000;
 			} else {
 				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Impressive, never believed");
 				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "you could achieve so much as");
@@ -1516,8 +1518,8 @@ static void go_engine_move_result(int move_result) {
 				Send_store_special_str(Ind, 12, GO_BOARD_X + 13, TERM_ORANGE, "with white..here's your money!");
 				Send_store_special_str(Ind, 13, GO_BOARD_X + 13, TERM_ORANGE, "If you want to play again,");
 				Send_store_special_str(Ind, 14, GO_BOARD_X + 13, TERM_ORANGE, "it'll be on the house, my word!");
+				wager = wager_lvl[p_ptr->go_level / 2];
 				p_ptr->go_level++;
-				wager = 100000;
 			} else {
 				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Oho a draw between masters..");
 				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "can't ask for much more!");
