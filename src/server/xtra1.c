@@ -1976,9 +1976,14 @@ static void calc_body_bonus(int Ind)
 	d /= 4;
 
 	/* Apply STR bonus/malus, derived from form damage and race */
+	/* <damage> */
 	if (!d) d = 1;
 	/* 0..147 (greater titan) -> 0..5 -> -1..+4 */
 	i = (((15000 / ((15000 / d) + 50)) / 29) - 1);
+	/* <corpse weight> : Non-light creatures won't get a STR malus,
+	   even if they don't deal much damage. */
+	if (r_ptr->weight >= 1500 && i < 0) i = 0;
+	/* <race> */
 	if (strstr(mname, "bear") && (r_ptr->flags3 & RF3_ANIMAL)) i++; /* Bears get +1 STR */
 	if (r_ptr->flags3 & RF3_TROLL) i += 1;
 	if (r_ptr->flags3 & RF3_GIANT) i += 1;
@@ -2311,7 +2316,7 @@ static void calc_body_bonus(int Ind)
 	//        if(r_ptr->flags1 & RF1_NEVER_MOVE) p_ptr->immovable = TRUE;
 	if (r_ptr->flags2 & RF2_STUPID) p_ptr->stat_add[A_INT] -= 2;
 	if (r_ptr->flags2 & RF2_SMART) p_ptr->stat_add[A_INT] += 2;
-	if (r_ptr->flags2 & RF2_INVISIBLE){
+	if (r_ptr->flags2 & RF2_INVISIBLE) {
 		//		p_ptr->tim_invisibility = 100;
 		p_ptr->tim_invis_power = p_ptr->lev * 4 / 5;
 	}
@@ -5034,7 +5039,7 @@ void calc_boni(int Ind)
 			/* the_sandman: needs to be played out properly.. */
 			/* the new addition. max dex (40) -> 90 to_h base.. decent imo */
 			/* DEX influence the to hit. lets make every 5 dex -> +1 toHit */
-			p_ptr->to_h_melee += (int)((p_ptr->stat_cur[A_DEX])/5);
+			p_ptr->to_h_melee += (int)((p_ptr->stat_cur[A_DEX]) / 5);
 			p_ptr->to_d_melee += (marts / 3);/* was 3, experimental 
 							    was 4, too low w/o mimicry for decent forms -,- reverted back to 3. the_sandman */
 			/* Testing: added a new bonus. No more single digit dmg at lvl 20, I hope, esp as warrior. the_sandman */
