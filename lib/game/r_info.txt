@@ -10600,7 +10600,7 @@ N:641:Minotaur
 G:H:U
 #improved compared to 5-headed hydra, for druid forms
 #I:130:100d10:13:25:10
-I:130:100d11:13:40:10
+I:130:100d12:13:40:10
 W:40:2:15000:2100
 E:1:1:1:2:1:1
 O:0:0:0:0
