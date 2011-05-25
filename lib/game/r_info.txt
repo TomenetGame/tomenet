@@ -10598,14 +10598,18 @@ D:surfaces and its screech echoes through the many winding dungeon corridors.
 
 N:641:Minotaur
 G:H:U
-I:130:100d10:13:25:10
+#improved compared to 5-headed hydra, for druid forms
+#I:130:100d10:13:25:10
+I:130:100d11:13:40:10
 W:40:2:15000:2100
 E:1:1:1:2:1:1
 O:0:0:0:0
 B:BUTT:HURT:4d6
 B:BUTT:HURT:4d6
-B:BUTT:HURT:2d6
-B:BUTT:HURT:2d6
+#B:BUTT:HURT:2d6
+#B:BUTT:HURT:2d6
+B:BUTT:HURT:3d6
+B:BUTT:HURT:3d6
 F:BASH_DOOR | DROP_SKELETON | DROP_CORPSE | 
 F:EVIL | MORTAL | BASEANGBAND
 D:It is a cross between a human and a bull. 
