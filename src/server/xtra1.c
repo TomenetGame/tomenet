@@ -1983,6 +1983,9 @@ static void calc_body_bonus(int Ind)
 	/* <corpse weight> : Non-light creatures won't get a STR malus,
 	   even if they don't deal much damage. */
 	if (r_ptr->weight >= 1500 && i < 0) i = 0;
+	if (r_ptr->weight >= 4500 && i < 1) i++;
+	if (r_ptr->weight >= 20000 && i < 2) i++;
+	if (r_ptr->weight >= 100000 && i < 3) i++;
 	/* <race> */
 	if (strstr(mname, "bear") && (r_ptr->flags3 & RF3_ANIMAL)) i++; /* Bears get +1 STR */
 	if (r_ptr->flags3 & RF3_TROLL) i += 1;
