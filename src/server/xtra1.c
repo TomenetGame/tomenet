@@ -3410,8 +3410,9 @@ void calc_boni(int Ind)
 			/* Modify the stats for "race" */
 			/* yeek mimic no longer rocks too much */
 //			if (!p_ptr->body_monster) p_ptr->stat_add[i] += (p_ptr->rp_ptr->r_adj[i]);
-			p_ptr->stat_add[i] += (p_ptr->rp_ptr->r_adj[i]) * 3 / (p_ptr->body_monster ? 4 : 3);
-			p_ptr->stat_add[i] += (p_ptr->cp_ptr->c_adj[i]);
+//done in calc_body_bonus()!			p_ptr->stat_add[i] += (p_ptr->rp_ptr->r_adj[i]) * 3 / (p_ptr->body_monster ? 4 : 3);
+			p_ptr->stat_add[i] += p_ptr->rp_ptr->r_adj[i];
+			p_ptr->stat_add[i] += p_ptr->cp_ptr->c_adj[i];
 		}
 	}
 
@@ -3527,12 +3528,12 @@ void calc_boni(int Ind)
 		/* Hack -- first add any "base bonuses" of the item.  A new
 		 * feature in MAngband 0.7.0 is that the magnitude of the
 		 * base bonuses is stored in bpval instead of pval, making the
-		 * magnitude of "base bonuses" and "ego bonuses" independent 
+		 * magnitude of "base bonuses" and "ego bonuses" independent
 		 * from each other.
 		 * An example of an item that uses this independency is an
 		 * Orcish Shield of the Avari that gives +1 to STR and +3 to
 		 * CON. (base bonus from the shield +1 STR,CON, ego bonus from
-		 * the Avari +2 CON).  
+		 * the Avari +2 CON).
 		 * Of course, the proper fix would be to redesign the object
 		 * type so that each of the ego bonuses has its own independent
 		 * parameter.
