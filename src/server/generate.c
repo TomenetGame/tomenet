@@ -9738,14 +9738,14 @@ for(mx = 1; mx < 131; mx++) {
 					case 7: x1 = x - 1; y1 = y; break;
 					}
 					cr_ptr = &zcave[y1][x1];
-		    			if ((cr_ptr->feat != FEAT_PERM_SOLID) &&
-		    			    (cr_ptr->feat != FEAT_PERM_INNER) &&
-	    				    (cr_ptr->feat != FEAT_PERM_EXTRA) &&
-	    				    (cr_ptr->feat != FEAT_PERM_OUTER) &&
-		    			    (cr_ptr->feat != FEAT_WALL_SOLID) &&
-		    			    (cr_ptr->feat != FEAT_WALL_INNER) &&
-	    				    (cr_ptr->feat != FEAT_WALL_EXTRA) &&
-	    				    (cr_ptr->feat != FEAT_WALL_OUTER) &&
+					if ((cr_ptr->feat != FEAT_PERM_SOLID) &&
+					    (cr_ptr->feat != FEAT_PERM_INNER) &&
+					    (cr_ptr->feat != FEAT_PERM_EXTRA) &&
+					    (cr_ptr->feat != FEAT_PERM_OUTER) &&
+					    (cr_ptr->feat != FEAT_WALL_SOLID) &&
+					    (cr_ptr->feat != FEAT_WALL_INNER) &&
+					    (cr_ptr->feat != FEAT_WALL_EXTRA) &&
+					    (cr_ptr->feat != FEAT_WALL_OUTER) &&
 					    (cr_ptr->feat != FEAT_MAGMA) && 
 					    (cr_ptr->feat != FEAT_QUARTZ) &&
 					    (cr_ptr->feat != FEAT_MAGMA_H) &&
@@ -9781,14 +9781,14 @@ for(mx = 1; mx < 131; mx++) {
 						case 7:x1 = x - 1; y1 = y; break;
 						}
 						cr_ptr = &zcave[y1][x1];
-	    		    			if (!((cr_ptr->feat != FEAT_PERM_SOLID) &&
-			    			    (cr_ptr->feat != FEAT_PERM_INNER) &&
-    						    (cr_ptr->feat != FEAT_PERM_EXTRA) &&
-    						    (cr_ptr->feat != FEAT_PERM_OUTER) &&
-			    			    (cr_ptr->feat != FEAT_WALL_SOLID) &&
-	    		    			    (cr_ptr->feat != FEAT_WALL_INNER) &&
-		    				    (cr_ptr->feat != FEAT_WALL_EXTRA) &&
-		    				    (cr_ptr->feat != FEAT_WALL_OUTER) &&
+						if (!((cr_ptr->feat != FEAT_PERM_SOLID) &&
+						    (cr_ptr->feat != FEAT_PERM_INNER) &&
+						    (cr_ptr->feat != FEAT_PERM_EXTRA) &&
+						    (cr_ptr->feat != FEAT_PERM_OUTER) &&
+						    (cr_ptr->feat != FEAT_WALL_SOLID) &&
+						    (cr_ptr->feat != FEAT_WALL_INNER) &&
+						    (cr_ptr->feat != FEAT_WALL_EXTRA) &&
+						    (cr_ptr->feat != FEAT_WALL_OUTER) &&
 						    (cr_ptr->feat != FEAT_MAGMA) && 
 						    (cr_ptr->feat != FEAT_QUARTZ) &&
 						    (cr_ptr->feat != FEAT_MAGMA_H) &&
@@ -9815,8 +9815,8 @@ for(mx = 1; mx < 131; mx++) {
 						if((cs_ptr=AddCS(csbm_ptr, CS_SHOP))){
 							csbm_ptr->feat = FEAT_SHOP;
 							csbm_ptr->info |= CAVE_NOPK;
-				    			/* Declare this to be a room & illuminate */
-		    					csbm_ptr->info |= CAVE_ROOM | CAVE_GLOW;
+							/* Declare this to be a room & illuminate */
+							csbm_ptr->info |= CAVE_ROOM | CAVE_GLOW;
 							if (!nether_level) {
 								if (build_special_store == 1) {
 									if (cfg.dungeon_shop_type == 999){
