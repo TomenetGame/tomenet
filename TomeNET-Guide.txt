@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 20. May 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 26. May 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1381,6 +1381,8 @@ Last but not least, you may use the following command-line options:
 -l<Account> <Password>  for example -lGandalf geheim
 -N<character name>      for example -NDruidor
 <ip address>            for example 85.118.45.235
+-q                      turns off loading/initializing of audio ('quiet mode')
+-w                      disables weather effects
 
 
 Linux (compiling from source):
@@ -1469,6 +1471,8 @@ Last but not least, you may use the following command-line options:
 -l<Account> <Password>  for example -lGandalf geheim
 -N<character name>      for example -NDruidor
 <ip address>            for example 85.118.45.235
+-q                      turns off loading/initializing of audio ('quiet mode')
+-w                      disables weather effects
 
 Full command-line example:
         ./tomenet -p19348 -lGandalf geheim -NGandalf 85.118.45.235
@@ -1497,12 +1501,18 @@ and further subfolders for either sound effects or background music.
 Now start or restart the game, and you should have sound. You can control mixer
 settings with CTRL+U key (or use CTRL+C to toggle music and CTRL+N to toggle
 the master mixer on/off).
+If you don't have sound, check CTRL+U for a red error message and also verify
+that your config file (TomeNET.ini or .tomenetrc) has 'Sound' set to '1'.
 
 Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
 (Compare troubleshooting section (8.6), problem 21.)
 
 Also be sure to press '=' key to have a look at the audio options, which are in
 'User Interface Options 2'.
+
+If you want to temporarily disable all loading/initializing of audio then
+instead of editing the config file's 'Sound' entry you can just use the '-q'
+command-line option.
 
 If you want to use your own sound and music, and create audio packs for other
 players, read sound.cfg and music.cfg in your lib/xtra/sound or lib/xtra/music
