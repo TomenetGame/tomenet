@@ -152,7 +152,7 @@ RELOCATION = add_spell
 		return "dur "..(15 - get_level(Ind, RECALL, 10)).."+d"..(21 - get_level(Ind, RECALL, 15))
 	end,
 	["desc"] =	{
-		"Recalls into the dungeon, back to he surface or across the world.",
+		"Recalls into the dungeon, back to the surface or across the world.",
 	}
 }
 
