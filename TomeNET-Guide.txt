@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 26. May 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 28. May 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -4697,6 +4697,10 @@ Polearms    low / high            high / medium
 For example if you stick with dual-wielding two weapons, you might want to go
 with swords and definitely not with polearms, since there are a lot of 1h
 swords, and very few 1h polearms.
+
+In-game you can press 'I' (or 'x' if inside a store) to examine an item.
+Even if you haven't *identified* it, it will still tell you the weapon class
+the item belongs to, if it is a weapon.
 
 
 
