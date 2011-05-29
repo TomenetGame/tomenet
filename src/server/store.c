@@ -1853,6 +1853,16 @@ static void store_create(store_type *st_ptr)
 		/* Attempt to carry the (known) item */
 		carry_ok = (store_carry(st_ptr, o_ptr) != -1);
 
+#if 1 /* debug herbalist store */
+		if (st_ptr->st_idx == STORE_HERBALIST) {
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+			s_name = st_name + st_info[st_ptr->st_idx].name;
+			s_printf("%s: STORE_CARRY: %d/%d - %d, %s (%s)", showtime(), st_ptr->town, town[st_ptr->town].type, st_ptr->st_idx, o_name, s_name);
+			if (carry_ok) s_printf(" OK.\n");
+			else s_printf(" FAILED.\n");
+		}
+#endif
+
 		/* Log occurances of special items */
 #ifndef TEST_SERVER
 //		if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION && st_ptr->st_idx != 60) || /* avoid spam from SBM which offers lots of these */
@@ -2538,6 +2548,7 @@ void store_stole(int Ind, int item)
 	}
 
 	/* Level restriction (mainly anticheeze) */
+#ifndef RPG_SERVER
 	if (p_ptr->lev < 5) {
 		msg_print(Ind, "You dare not to! Your level needs to be 5 at least.");
 		return;
@@ -2552,6 +2563,12 @@ void store_stole(int Ind, int item)
 		return;
 	}
 */
+#else
+	if (p_ptr->lev < 5 && object_value(Ind, o_ptr) >= 200) {
+		msg_print(Ind, "You dare not to steal this expensive item! Hit level 5 first.");
+		return;
+	}
+#endif
 
 	/* I'm not saying this is the way to go, but they
 	   can cheeze by attempting repeatedly */

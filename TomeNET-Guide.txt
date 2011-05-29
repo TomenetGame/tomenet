@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 28. May 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 30. May 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -11136,6 +11136,8 @@ The differences between RPG ruleset and normal servers are as follows:
   -Usually, scheduled artifact resets happen less frequently (if at all).
   -Halloween event allows players up to 40 instead of 35,
    and the Great Pumpkin spawns on floors up to level 49 instead of 39.
+  -Stealing from stores is possible right away instead of requiring a certain
+   character level (usually 5 on normal servers).
 
 
 
