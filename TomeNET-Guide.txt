@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 30. May 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 31. May 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -7486,6 +7486,11 @@ Note that not every skill is available to every profession (class).
                                 steal until the shopkeepers stop to watch you
                                 so intensely. The watchlist runs out slower
                                 than the blacklist, but allows you to be AFK.
+                                The time period you'll be on these lists solely
+                                depends on the item's _base_ value (so it does
+                                not matter whether you got caught in a normal
+                                store or in the black market.) Price discount
+                                applies though, reducing the base value.
                                 Note that usually people don't want to be seen
                                 with stolen goods, which means that very
                                 expensive items, depending on their value, have
@@ -7530,6 +7535,9 @@ Note that not every skill is available to every profession (class).
                                 especially easy to steal. Also, if you still
                                 get caught on such an item, the blacklist time
                                 will be much shorter too.
+                                Trying to 'steal back' an item that was already
+                                owned by a player, ie an item that has been
+                                sold to the shop, is especially hard.
     .Backstabbing               Lets you backstab enemies, afflicting high
                                 damage. Works if the opponent is asleep or
                                 running away in fear, exposing his back to you.
