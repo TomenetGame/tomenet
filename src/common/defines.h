@@ -1039,33 +1039,33 @@
 #define STORE_MAX_ACTION	6
 
 /* Store flags */
-#define SF1_DEPEND_LEVEL        0x00000001L
-#define SF1_SHALLOW_LEVEL       0x00000002L
-#define SF1_MEDIUM_LEVEL        0x00000004L
-#define SF1_DEEP_LEVEL          0x00000008L
+#define SF1_DEPEND_LEVEL        0x00000001L	/* Item kind levels depend on dungeon level */
+#define SF1_SHALLOW_LEVEL       0x00000002L	/* Add a little to minimum item level */
+#define SF1_MEDIUM_LEVEL        0x00000004L	/* Add to minimum item level */
+#define SF1_DEEP_LEVEL          0x00000008L	/* Add much to minimum item level */
 #define SF1_RARE                0x00000010L
 #define SF1_VERY_RARE           0x00000020L
-#define SF1_COMMON              0x00000040L
-#define SF1_ALL_ITEM            0x00000080L     /* Works as the BM */
-#define SF1_RANDOM              0x00000100L
-#define SF1_FORCE_LEVEL         0x00000200L
+#define SF1_COMMON              0x00000040L	/* Currently no effect */
+#define SF1_ALL_ITEM            0x00000080L	/* Works as the BM */
+#define SF1_RANDOM              0x00000100L	/* Sets level to 0 for apply_magic() if it isn't increased by ..._LEVEL store flags anyway. */
+#define SF1_FORCE_LEVEL         0x00000200L	/* Prevent items of much lower kind level than store level. Applies to T-256 wildcard only. */
 #define SF1_MUSEUM              0x00000400L
 #define SF1_NO_DISCOUNT		0x00000800L	/* no discount at all */
 #define SF1_NO_DISCOUNT2	0x00001000L	/* no 50%/75%/90% off */
-#define SF1_EGO     	      	0x00002000L     /* often has ego items */
+#define SF1_EGO     	      	0x00002000L	/* often has ego items */
 #define SF1_RARE_EGO            0x00004000L	/* reroll on cheap ego items (value<25000) at 67% probability */
-#define SF1_PRICE1     	      	0x00008000L     /* prices * 1.5 */
-#define SF1_PRICE2     	      	0x00010000L     /* double prices */
+#define SF1_PRICE1     	      	0x00008000L	/* prices * 1.5 */
+#define SF1_PRICE2     	      	0x00010000L	/* double prices */
 #define SF1_PRICE4            	0x00020000L	/* prices * 4 */
 #define SF1_PRICE16            	0x00040000L	/* prices * 16 */
-#define SF1_GOOD     	      	0x00080000L     /* apply_magic good */
+#define SF1_GOOD     	      	0x00080000L	/* apply_magic good */
 #define SF1_GREAT            	0x00100000L	/* apply_magic great */
-#define SF1_PRICY_ITEMS1     	0x00200000L     /* items are worth 1000+ */
-#define SF1_PRICY_ITEMS2      	0x00400000L     /* items are worth 5000+ */
+#define SF1_PRICY_ITEMS1     	0x00200000L	/* items are worth 1000+ */
+#define SF1_PRICY_ITEMS2      	0x00400000L	/* items are worth 5000+ */
 #define SF1_PRICY_ITEMS3      	0x00800000L	/* items are worth 10000+ */
 #define SF1_PRICY_ITEMS4      	0x01000000L	/* items are worth 20000+ */
-#define SF1_HARD_STEAL 	      	0x02000000L     /* hard to steal from this shop */
-#define SF1_VHARD_STEAL	      	0x04000000L     /* very hard to steal from this shop */
+#define SF1_HARD_STEAL 	      	0x02000000L	/* hard to steal from this shop */
+#define SF1_VHARD_STEAL	      	0x04000000L	/* very hard to steal from this shop */
 #define SF1_SPECIAL		0x08000000L	/* Store doesn't have an inventory but prints arbitrary text to screen instead */
 #define SF1_BUY67		0x10000000L	/* Shop buys for 67% of value */
 #define SF1_BUY50		0x20000000L	/* Shop buys for 50% of value (stacks with BUY67) */
