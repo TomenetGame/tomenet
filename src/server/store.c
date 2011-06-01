@@ -1855,11 +1855,19 @@ static void store_create(store_type *st_ptr)
 
 #if 1 /* debug herbalist store */
 		if (st_ptr->st_idx == STORE_HERBALIST) {
+ #if 0
 			object_desc(0, o_name, o_ptr, TRUE, 3);
 			s_name = st_name + st_info[st_ptr->st_idx].name;
 			s_printf("%s: STORE_CARRY: %d/%d - %d, %s (%s)", showtime(), st_ptr->town, town[st_ptr->town].type, st_ptr->st_idx, o_name, s_name);
 			if (carry_ok) s_printf(" OK.\n");
 			else s_printf(" FAILED.\n");
+ #else
+			if (!carry_ok) {
+				object_desc(0, o_name, o_ptr, TRUE, 3);
+				s_name = st_name + st_info[st_ptr->st_idx].name;
+				s_printf("%s: STORE_CARRY_FAILED: %d/%d - %d, %s (%s)\n", showtime(), st_ptr->town, town[st_ptr->town].type, st_ptr->st_idx, o_name, s_name);
+			}
+ #endif
 		}
 #endif
 
