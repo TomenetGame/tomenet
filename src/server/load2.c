@@ -921,8 +921,7 @@ static errr rd_store(store_type *st_ptr)
 	st_ptr->owner = own;
 
 	/* Read the items */
-	for (j = 0; j < num; j++)
-	{
+	for (j = 0; j < num; j++) {
 		object_type forge;
 
 		/* Read the item */
@@ -932,8 +931,8 @@ static errr rd_store(store_type *st_ptr)
 		if (!forge.k_idx) s_printf("Warning! Non-existing item detected(erased).\n");
 
 		/* Acquire valid items */
-		else if (st_ptr->stock_num < STORE_INVEN_MAX)
-		{
+		else if (st_ptr->stock_num < STORE_INVEN_MAX &&
+		    st_ptr->stock_num < st_ptr->stock_size) {
 			/* Acquire the item */
 			st_ptr->stock[st_ptr->stock_num++] = forge;
 		}
