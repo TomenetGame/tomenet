@@ -1673,7 +1673,7 @@ static void store_create(store_type *st_ptr)
 		if ((st_info[st_ptr->st_idx].flags1 & SF1_EGO) &&
 		    !(o_ptr->name2) && magik(50))
 			continue;
-		}
+
 		/* Shop has extra rare egos? */
 #if 0
 		if ((o_ptr->name2 || o_ptr->name2b)) {
