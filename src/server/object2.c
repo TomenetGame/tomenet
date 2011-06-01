@@ -3824,15 +3824,15 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power, u32b resf)
 
 	artifact_bias = 0;
 
-        /* Very good */
-        if (power > 1) {
-                /* Make ego item */
-//                if (!rand_int(RANDART_WEAPON) && (o_ptr->tval != TV_TRAPKIT)) create_artifact(o_ptr, FALSE, TRUE);	else
-                make_ego_item(level, o_ptr, TRUE, resf);
-        } else if (power < -1) {
-                /* Make ego item */
-                make_ego_item(level, o_ptr, FALSE, resf);
-        }
+	/* Very good */
+	if (power > 1) {
+		/* Make ego item */
+//		if (!rand_int(RANDART_WEAPON) && (o_ptr->tval != TV_TRAPKIT)) create_artifact(o_ptr, FALSE, TRUE);	else
+		make_ego_item(level, o_ptr, TRUE, resf);
+	} else if (power < -1) {
+		/* Make ego item */
+		make_ego_item(level, o_ptr, FALSE, resf);
+	}
 
 	/* Good */
 	if ((power > 0) && (o_ptr->tval != TV_MSTAFF)) {
@@ -3875,15 +3875,6 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power, u32b resf)
 	/* Some special cases */
 	switch (o_ptr->tval) {
 		case TV_MSTAFF:
-#if 0 //oops, ADDS to normal pval bonus -> +18 staff occured. 'granted_pval' will do the job instead.
-
-			switch(o_ptr->name2) {
-			case 2: if (o_ptr->pval < 4) o_ptr->pval = 4;
-				break;
-			case 3: if (o_ptr->pval < 7) o_ptr->pval = 7;
-				break;
-			}
-#endif
 			break;
 		case TV_BOLT:
 		case TV_ARROW:
@@ -3950,48 +3941,39 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power, u32b resf)
 static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf)
 {
 	int toac1 = randint(5) + m_bonus(5, level);
-
 	int toac2 = m_bonus(10, level);
 
 	artifact_bias = 0;
 
-        /* Very good */
-        if (power > 1)
-        {
-                /* Make ego item */
-//                if (!rand_int(RANDART_ARMOR)) create_artifact(o_ptr, FALSE, TRUE);	else
-                make_ego_item(level, o_ptr, TRUE, resf);
-        }
-        else if (power < -1)
-        {
-                /* Make ego item */
-                make_ego_item(level, o_ptr, FALSE, resf);
-        }
-
+	/* Very good */
+	if (power > 1) {
+		/* Make ego item */
+//		if (!rand_int(RANDART_ARMOR)) create_artifact(o_ptr, FALSE, TRUE);	else
+		make_ego_item(level, o_ptr, TRUE, resf);
+	} else if (power < -1) {
+		/* Make ego item */
+		make_ego_item(level, o_ptr, FALSE, resf);
+	}
 
 	/* Good */
-	if (power > 0)
-	{
+	if (power > 0) {
 		/* Enchant */
 		o_ptr->to_a += toac1;
 
 		/* Very good */
-		if (power > 1)
-		{
+		if (power > 1) {
 			/* Enchant again */
 			o_ptr->to_a += toac2;
 		}
 	}
 
 	/* Cursed */
-	else if (power < 0)
-	{
+	else if (power < 0) {
 		/* Penalize */
 		o_ptr->to_a -= toac1;
 
 		/* Very cursed */
-		if (power < -1)
-		{
+		if (power < -1) {
 			/* Penalize again */
 			o_ptr->to_a -= toac2;
 		}
@@ -4002,25 +3984,20 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf)
 
 #if 1	// once..
 	/* Analyze type */
-	switch (o_ptr->tval)
-	{
+	switch (o_ptr->tval) {
 		case TV_CLOAK:
-		{
 			if (o_ptr->sval == SV_ELVEN_CLOAK) {
 //experimentally changed:	o_ptr->bpval = randint(4);       /* No cursed elven cloaks...? */
 				o_ptr->bpval = randint(3);       /* No cursed elven cloaks...? */
                         }
 #if 1
 			/* Set the Kolla cloak's base bonuses*/
-			if(o_ptr->sval == SV_KOLLA) {
+			if (o_ptr->sval == SV_KOLLA) {
 				o_ptr->bpval = randint(2);
 			}
 #endif	// 0
-
-                        break;
-                }
+			break;
 		case TV_DRAG_ARMOR:
-		{
 			if (o_ptr->sval == SV_DRAGON_MULTIHUED) {
 				int i = 2, tries = 100; /* give 2 random immunities */
 				while (i && tries) {
@@ -4050,9 +4027,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf)
 				}
 			}
 			break;
-		}
 		case TV_SOFT_ARMOR:
-		{
 			/* Costumes */
 			if (o_ptr->sval == SV_COSTUME) {
 				int i, tries = 0;
@@ -4062,9 +4037,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf)
 				if (season_xmas) {
 					o_ptr->bpval = 733; /* JOKEBAND Santa Claus */
 					o_ptr->level = 1;
-				}
-				else {
-
+				} else {
 					/* Default to the "player" */
 					o_ptr->bpval = 0;
 					o_ptr->level = 1;
@@ -4090,9 +4063,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf)
 				}
 			}
 			break;
-		}
 		case TV_SHIELD:
-		{
 			if (o_ptr->sval == SV_DRAGON_SHIELD) {
 				/* pfft */
 //				dragon_resist(o_ptr);
@@ -4110,16 +4081,12 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf)
 				break;
 			}
 #endif
-		}
 #if 1
 		case TV_BOOTS:
-		{
 			/* Set the Witan Boots stealth penalty */
-                        if (o_ptr->sval == SV_PAIR_OF_WITAN_BOOTS) {
-                                o_ptr->bpval = -2;
-                        }
-
-		}
+			if (o_ptr->sval == SV_PAIR_OF_WITAN_BOOTS) {
+				o_ptr->bpval = -2;
+			}
 #endif	// 0
 	}
 #endif	// 0
