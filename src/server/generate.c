@@ -4347,7 +4347,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	        if (!what[i]) s_printf("HOLE(%d)\n", i);
 
 		/* abuse the debugging code for setting extra level feelings =p */
-		if (r_info[what[i]].level >= 60) l_ptr->flags2 |= LF2_PITNEST_HI;
+		else if (r_info[what[i]].level >= 60) l_ptr->flags2 |= LF2_PITNEST_HI;
 	}
 	l_ptr->flags2 |= LF2_PITNEST;
 	/* summoner pits are dangerous albeit not that high level really */
