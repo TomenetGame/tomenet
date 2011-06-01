@@ -1272,9 +1272,15 @@ void do_cmd_drop(int Ind, int item, int quantity)
 /* 	un_afk_idle(Ind); */
 
 #if (STARTEQ_TREATMENT > 1)
+#ifndef RPG_SERVER
 	if (o_ptr->owner == p_ptr->id && p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
 	    !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
 		o_ptr->level = 0;
+#else
+	if (o_ptr->owner == p_ptr->id && p_ptr->max_plv < 2 && !is_admin(p_ptr) &&
+	    !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
+		o_ptr->level = 0;
+#endif 
 #endif
 
 	/* Take a partial turn */
