@@ -1052,7 +1052,7 @@
 #define SF1_MUSEUM              0x00000400L
 #define SF1_NO_DISCOUNT		0x00000800L	/* no discount at all */
 #define SF1_NO_DISCOUNT2	0x00001000L	/* no 50%/75%/90% off */
-#define SF1_EGO     	      	0x00002000L	/* often has ego items */
+#define SF1_EGO     	      	0x00002000L	/* often has ego items (should go with SF1_GOOD and SF1_GREAT) */
 #define SF1_RARE_EGO            0x00004000L	/* reroll on cheap ego items (value<25000) at 67% probability */
 #define SF1_PRICE1     	      	0x00008000L	/* prices * 1.5 */
 #define SF1_PRICE2     	      	0x00010000L	/* double prices */
