@@ -98,7 +98,6 @@ I:80:& Small Metal Shield~
 A:0:0:1:2:3:4
 O:8:9:10:11:38:20
 G:2:s
-#W:24
 W:36
 
 N:2:Weaponsmith
@@ -135,7 +134,6 @@ I:100:& Whip~
 A:0:0:1:2:3:4
 O:12:13:14:15:44:68
 G:3:w
-#W:24
 W:36
 
 N:3:Temple
@@ -189,7 +187,6 @@ T:100:70:56
 A:0:0:1:2:3:4
 O:26:27:28:29:26:43
 G:4:g
-#W:24
 W:36
 
 N:4:Alchemy shop
@@ -261,7 +258,6 @@ I:100:Resist Cold
 A:0:0:1:2:3:4
 O:30:31:32:33:30:33
 G:5:b
-#W:24
 W:36
 
 N:5:Magic shop
@@ -319,7 +315,6 @@ A:0:0:1:2:3:4
 #O:34:35:36:37:36:37
 O:34:35:36:37:46:49
 G:6:r
-#W:24
 W:36
 
 N:6:Black Market
@@ -362,7 +357,6 @@ A:30:0:1:2:3:4
 O:39:40:41:39:40:41
 G:7:D
 F:ALL_ITEM | MEDIUM_LEVEL | PRICE4
-#W:24
 W:36
 
 N:7:Home
@@ -424,7 +418,6 @@ $ENABLE_RCRAFT$T:60:105:15
 $ENABLE_RCRAFT$T:60:105:16
 A:0:0:1:2:3:4
 O:46:47:48:46:47:48
-#G:+:b
 G:+:B
 F:MEDIUM_LEVEL
 #with new runecraft probably obsolete: | HARD_STEAL
@@ -461,12 +454,7 @@ O:3:3:3:3:3:3
 G:+:B
 F:RANDOM | 
 F:PRICE4 | PRICE1 | NO_DISCOUNT2
-#F:PRICE4 | PRICE2 | NO_DISCOUNT2 | ZEROLEVEL
-#F:PRICE4 | PRICE2 | NO_DISCOUNT2
-#F:PRICE4 | PRICE2 | PRICE1 | NO_DISCOUNT2
-#F:PRICE16 | NO_DISCOUNT3
 W:4
-#W:12
 
 N:13:Library
 I:100:Identify
@@ -533,7 +521,7 @@ F:PRICE4 | PRICE2
 A:0:0:33:2:34:4
 O:25:25:25:25:25:25
 G:+:U
-W:5
+W:2
 
 N:23:The Mirror
 A:0:0:44:15:16:43
@@ -617,7 +605,6 @@ F:PRICE4 | PRICE2
 A:2:4:28:48:0:0
 O:64:64:64:64:64:64
 G:+:g
-#W:7
 W:12
 
 N:35:Sea-Dome
@@ -644,52 +631,45 @@ T:100:24:256
 A:0:0:1:2:3:4
 O:12:13:14:15:44:68
 G:3:W
-F:RANDOM | MEDIUM_LEVEL
-W:12
-F:BUY67
+F:RANDOM | MEDIUM_LEVEL | BUY67
+W:0
+#UNUSED W:12
 
 N:39:Blunt Smith
 T:100:21:256
 A:0:0:1:2:3:4
 O:12:13:14:15:44:68
 G:3:W
-F:RANDOM | MEDIUM_LEVEL
-W:12
-F:BUY67
+F:RANDOM | MEDIUM_LEVEL | BUY67
+W:0
+#UNUSED W:12
 
 N:40:Polearm Smith
 T:100:22:256
 A:0:0:1:2:3:4
 O:12:13:14:15:44:68
 G:3:W
-F:RANDOM | MEDIUM_LEVEL
-W:12
-F:BUY67
+F:RANDOM | MEDIUM_LEVEL | BUY67
+W:0
+#UNUSED W:12
 
 N:41:Sword Smith
 T:100:23:256
 A:0:0:1:2:3:4
 O:12:13:14:15:44:68
 G:3:W
-F:RANDOM | MEDIUM_LEVEL
-W:12
-F:BUY67
+F:RANDOM | MEDIUM_LEVEL | BUY67
+W:0
+#UNUSED W:12
 
 N:42:Rare Jewelry Shop
 T:60:40:256
 T:100:45:256
-#Trap-scrolls
-T:100:70:48
-T:100:70:49
-T:100:70:50
 A:0:0:1:2:3:0
 O:34:35:36:37:46:49
 G:6:v
-#F:RANDOM | DEPEND_LEVEL | DEEP_LEVEL | FORCE_LEVEL
-#F:VERY_RARE
 F:RANDOM | DEEP_LEVEL | SHALLOW_LEVEL | FORCE_LEVEL | NO_DISCOUNT2 | 
 F:GOOD | GREAT | PRICE4 | PRICE2 | PRICY_ITEMS3
-#W:13
 W:12
 
 N:43:Jewelry Shop
@@ -698,9 +678,10 @@ T:100:45:256
 A:0:0:1:2:3:4
 O:34:35:36:37:46:49
 G:6:y
-F:RANDOM | DEPEND_LEVEL | MEDIUM_LEVEL | FORCE_LEVEL
+F:RANDOM | DEPEND_LEVEL | SHALLOW_LEVEL | FORCE_LEVEL
 F:RARE
-W:20
+W:0
+#UNUSED W:20
 
 N:44:Footwear Shop
 T:100:30:256
@@ -709,7 +690,8 @@ O:8:9:10:11:38:20
 G:2:r
 F:RANDOM | MEDIUM_LEVEL
 F:COMMON
-W:12
+W:0
+#UNUSED W:12
 
 N:45:Rare Footwear Shop
 T:100:30:256
@@ -721,7 +703,6 @@ F:RANDOM | DEEP_LEVEL |
 #F:VERY_RARE | FORCE_LEVEL
 F:GOOD | GREAT | EGO | RARE_EGO | NO_DISCOUNT2 | 
 F:PRICE4 | PRICE2 | PRICY_ITEMS2
-#W:13
 W:12
 
 N:46:Library
@@ -748,7 +729,8 @@ A:27:0:1:2:3:4
 O:42:43:44:45:4:58
 G:9:y
 F:RANDOM | DEPEND_LEVEL | MEDIUM_LEVEL
-W:24
+W:0
+#UNUSED W:24
 
 N:47:Forbidden Library
 #T:100:110:256
@@ -775,7 +757,8 @@ O:42:43:44:45:4:58
 G:9:v
 F:RANDOM | DEPEND_LEVEL | DEEP_LEVEL
 F:RARE
-W:12
+W:0
+#UNUSED W:12
 
 #note: this title is too long to fit on screen :/
 #N:48:Expensive Black Market
@@ -797,7 +780,6 @@ O:39:40:70:40:41:70
 G:7:v
 F:ALL_ITEM | RARE | DEEP_LEVEL | NO_DISCOUNT2 |
 F:PRICE4 | PRICE2 | PRICY_ITEMS2
-#W:24
 W:36
 
 N:49:Common Shop
@@ -817,7 +799,8 @@ I:100:Cure Critical Wounds
 A:0:0:1:2:3:4
 O:0:5:6:7:1:35
 G:1:U
-W:12
+W:0
+#UNUSED W:12
 
 N:50:Dragon Hunter
 T:100:38:256
@@ -827,27 +810,28 @@ G:2:v
 F:RANDOM | DEEP_LEVEL | DEPEND_LEVEL
 #F:VERY_RARE <- changed this to RARE since shop is unused anyway and log got 'spammed' - C. Blue
 F:RARE
-W:12
+W:0
+#UNUSED W:12
 
 #pfft, causing infinite loop :/
-#N:51:Speed Ring Market
-#T:100:45:31
-#A:0:0:1:2:3:0
-#O:34:35:36:37:34:35
-#O:34:35:36:37:46:49
-#G:6:G
-#F:RANDOM | SHALLOW_LEVEL | DEPEND_LEVEL
-#F:VERY_RARE
-#W:6
+N:51:Speed Ring Market
+T:100:45:31
+A:0:0:1:2:3:0
+O:34:35:36:37:34:35
+O:34:35:36:37:46:49
+G:6:G
+F:RANDOM | SHALLOW_LEVEL | VERY_RARE
+W:0
+#DISABLED W:6
 
 N:52:Scribe
 T:100:70:256
 A:0:0:1:2:3:4
 O:42:43:44:45:4:58
 G:5:w
-F:RANDOM | MEDIUM_LEVEL | DEPEND_LEVEL
+F:RANDOM | MEDIUM_LEVEL | DEPEND_LEVEL | BUY67
 W:12
-F:BUY67
+
 
 N:53:Potion Store
 T:100:71:256
@@ -855,9 +839,9 @@ T:100:72:256
 A:0:0:1:2:3:4
 O:30:31:32:33:30:33
 G:5:B
-F:RANDOM | MEDIUM_LEVEL | DEPEND_LEVEL | PRICE2
 W:12
-F:BUY67 | NO_DISCOUNT2
+F:BUY67 | RANDOM | MEDIUM_LEVEL | DEPEND_LEVEL
+F:NO_DISCOUNT2 | PRICE2 | PRICE1
 
 N:54:Recaller
 I:100:Word of Recall
@@ -879,10 +863,8 @@ T:50:18:256
 A:0:0:1:2:3:0
 O:12:13:14:15:44:68
 G:3:o
-F:RANDOM | MEDIUM_LEVEL | DEPEND_LEVEL
-F:RARE
+F:RANDOM | MEDIUM_LEVEL | RARE | BUY67
 W:24
-F:BUY67
 
 N:56:Merchants Guild
 #A:0:0:56:57:58:0
@@ -933,7 +915,6 @@ O:39:40:70:40:41:70
 G:7:U
 F:ALL_ITEM | VERY_RARE | DEEP_LEVEL | NO_DISCOUNT | 
 F:PRICE16 | PRICY_ITEMS4
-#W:13
 #W:24 --increasing it in hope to see ART scrolls more often..
 W:36
 
@@ -998,7 +979,6 @@ O:0:5:6:7:1:35
 G:5:u
 W:24
 F:RANDOM
-# | PRICE2
 
 #the_sandman: added normal ammos to shop & increased amount of ids
 N:63:Seasoned Tradesman
@@ -1071,9 +1051,8 @@ A:0:0:1:2:3:4
 O:12:13:14:15:44:68
 G:3:W
 #needs PRICE4 because it very often sells ego items
-F:RANDOM | MEDIUM_LEVEL | PRICE4
+F:RANDOM | MEDIUM_LEVEL | PRICE4 | BUY67
 W:24
-F:BUY67
 
 N:65:Hidden Library
 T:6:111:50
@@ -1081,6 +1060,10 @@ T:100:111:255
 A:27:0:1:2:3:0
 O:42:43:44:45:4:58
 G:9:r
+#deeper store -> higher level books
+F:DEPEND_LEVEL
+#more fireproof stuff:
+F:GREAT
 W:24
 
 N:66:Player Store Template
