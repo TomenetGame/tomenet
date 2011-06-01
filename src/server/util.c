@@ -2739,7 +2739,11 @@ static void player_talk_aux(int Ind, char *message)
 	/* no big brother */
 //	if(cfg.log_u && (!colon || message[0] != '#' || message[0] != '/')){ /* message[0] != '#' || message[0] != '/' is always true -> big brother mode - mikaelh */
 	if (cfg.log_u && (!colon)) {
-		if (strcmp(message, p_ptr->last_chat_line)) {
+		/* Shorten multiple identical messages to prevent log file spam,
+		   eg recall rod activation attempts. - Exclude admins. */
+		if (is_admin(p_ptr))
+			s_printf("[%s] %s\n", sender, message);
+		else if (strcmp(message, p_ptr->last_chat_line)) {
 			if (p_ptr->last_chat_line_cnt) {
 				s_printf("[%s (x%d)]\n", sender, p_ptr->last_chat_line_cnt + 1);
 				p_ptr->last_chat_line_cnt = 0;
