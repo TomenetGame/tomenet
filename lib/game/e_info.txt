@@ -2029,9 +2029,10 @@ F:RES_NEXUS | FEATHER
 # Boots of Elvenkind (leather boots only)
 N:175:of Elvenkind
 X:A:35:30
-#reduce to 150k for rare boot store? ie too expensive compared to plain speed boots?
-W:60:1:30:200000
-C:0:0:0:5
+#W:60:1:30:200000 -- reduce rarity a bit, since they're so rare compared to speed boots:
+W:50:1:30:200000
+#C:0:0:0:5 -- boost them a bit too, compared to speed boots
+C:0:0:5:5
 T:30:2:4
 R:100
 F:STEALTH | SPEED | HIDE_TYPE | FEATHER | IGNORE_ACID | IGNORE_FIRE | IGNORE_WATER
