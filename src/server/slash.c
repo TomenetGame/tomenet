@@ -3328,6 +3328,10 @@ void do_slash_cmd(int Ind, char *message)
 //				wipe_t_list(&wp);
 
 				msg_format(Ind, "\377rItems/monsters on %s are cleared.", wpos_format(Ind, &wp));
+				for (i = 1; i <= NumPlayers; i++) {
+					if (!inarea(&wp, &Players[i]->wpos)) continue;
+					Players[i]->redraw |= PR_MAP;
+				}
 				return;
 			}
 			/* erase items (prevent loot-mass-freeze) */
