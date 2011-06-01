@@ -1401,6 +1401,7 @@ static int kind_is_storeok(int k_idx, u32b resf)
 static void store_create(store_type *st_ptr)
 {
 	int i = 0, tries, level, chance, item;
+	int value, rarity; /* for ego power checks */
 
 	object_type tmp_obj;
 	object_type *o_ptr = &tmp_obj;
@@ -1415,6 +1416,12 @@ static void store_create(store_type *st_ptr)
 
 	char o_name[ONAME_LEN];
 	cptr s_name;
+
+#if 0 /* see below where they're used */
+	int boots_witan_idx = lookup_kind(TV_BOOTS, SV_PAIR_OF_WITAN_BOOTS);
+	int boots_soft_idx = lookup_kind(TV_BOOTS, SV_PAIR_OF_SOFT_LEATHER_BOOTS);
+	int boots_hard_idx = lookup_kind(TV_BOOTS, SV_PAIR_OF_HARD_LEATHER_BOOTS);
+#endif
 
 	/* Paranoia -- no room left */
 	if (st_ptr->stock_num >= st_ptr->stock_size) return;
@@ -1527,11 +1534,22 @@ static void store_create(store_type *st_ptr)
 
 				/* Invalidate the cached allocation table */
 //				alloc_kind_table_valid = FALSE;
+
+#if 0 /* done in st_info.txt instead by specifying boots probabilities directly */
+				/* Mad hack for Rare Footwear Store (STORE_SHOESX): Less Witans */
+				if ((st_info[st_ptr->st_idx].flags1 & SF1_RARE_EGO) &&
+				    (st_info[st_ptr->st_idx].flags1 & SF1_DEEP_LEVEL) &&
+				    i == boots_witan_idx && rand_int(2)) {
+					if (rand_int(2)) i = boots_soft_idx;
+					else i = boots_hard_idx;
+				}
+#endif
 			}
 
 			if (!i) continue;
 		}
 
+		/* Create the selected base object */
 		invcopy(o_ptr, i);
 
 		/* Apply some "low-level" magic (no artifacts) */
@@ -1541,6 +1559,7 @@ static void store_create(store_type *st_ptr)
 		if (st_info[st_ptr->st_idx].flags1 & SF1_GREAT) great = TRUE;
 		else great = FALSE;
 		apply_magic(&o_ptr->wpos, o_ptr, level, FALSE, good, great, FALSE, resf);
+
 #ifdef PREVENT_CURSED_TOOLS
 		/* prevent 'cursed' diggers/tools which aren't really cursed (see a_m_aux_1) - C. Blue */
 		if ((o_ptr->tval == TV_DIGGING && o_ptr->tval == TV_TOOL) &&
@@ -1646,6 +1665,10 @@ static void store_create(store_type *st_ptr)
 			}//o_ptr->tval switch
 		}
 
+		k_ptr = &k_info[o_ptr->k_idx];
+		e_ptr = &e_info[o_ptr->name2];
+		e2_ptr = &e_info[o_ptr->name2b];
+
 		/* Shop has many egos? */
 		if (!(o_ptr->name2 || o_ptr->name2b)) {
 			if ((st_info[st_ptr->st_idx].flags1 & SF1_EGO) &&
@@ -1653,11 +1676,23 @@ static void store_create(store_type *st_ptr)
 				continue;
 		}
 		/* Shop has extra rare egos? */
+#if 0
 		if ((o_ptr->name2 || o_ptr->name2b)) {
 			if ((st_info[st_ptr->st_idx].flags1 & SF1_RARE_EGO) &&
 			    (object_value(0, o_ptr) < 25000) &&
 			    (magik(50)))
 				continue;
+#else
+		if ((st_info[st_ptr->st_idx].flags1 & SF1_RARE_EGO) && o_ptr->name2) {
+			value = e_ptr->cost + flag_cost(o_ptr, o_ptr->pval);
+			rarity = e_ptr->mrarity / e_ptr->rarity;
+			if (o_ptr->name2b) {
+				value += e2_ptr->cost;
+				if (e2_ptr->mrarity / e2_ptr->rarity > rarity)
+					rarity = e2_ptr->mrarity / e2_ptr->rarity;
+			}
+			if ((rarity < 7 || value < 8000) && magik(75)) continue;
+#endif
 		}
 
 		/* Is the item too cheap for this shop? */
@@ -1671,9 +1706,6 @@ static void store_create(store_type *st_ptr)
 			continue;
 
 		/* Further store flag checks */
-		k_ptr = &k_info[o_ptr->k_idx];
-		e_ptr = &e_info[o_ptr->name2]; //unused atm
-		e2_ptr = &e_info[o_ptr->name2b];//unused atm
 		/* Rare enough? */
 		/* Interesting numbers: 3+, 6+, 8+, 16+ */
 		if ((st_info[st_ptr->st_idx].flags1 & SF1_VERY_RARE)) {
