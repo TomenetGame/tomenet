@@ -4122,9 +4122,7 @@ void store_maint(store_type *st_ptr)
 {
 //	int         i, j;
 	int j;
-
 	owner_type *ot_ptr;
-
 	int tries = 200;
 
 #if 0
@@ -4132,7 +4130,8 @@ void store_maint(store_type *st_ptr)
 	if (which == STORE_HOME) return;
 #endif
 
-#if 1 /* HACK: Ignore non-occuring stores (dungeon stores outside of hack-town-index '0' - C. Blue */
+#if 0 /* disabled, since we have gettown_dun() now which may use ALL towns for dungeon stores */
+	 /* HACK: Ignore non-occuring stores (dungeon stores outside of hack-town-index '0' - C. Blue */
 	switch (st_ptr->st_idx) {
 	/* unused stores that would just waste cpu time: */
 	case 50:
@@ -4143,6 +4142,13 @@ void store_maint(store_type *st_ptr)
 	case 42: case 45: case 60:
 		if (st_ptr->town != 0) return; else break;
 	/* stores that don't occur in every town */
+	case 57: case 58: if (town[st_ptr->town].type != 1) return; else break;//bree
+	case 59: if (town[st_ptr->town].type != 5) return; else break;//khazad
+	case 48: if (town[st_ptr->town].type != 3) return; else break;//minas anor - but it's town 0, type 1?!
+	}
+#else
+	/* stores that don't occur in every town */
+	switch (st_ptr->st_idx) {
 	case 57: case 58: if (town[st_ptr->town].type != 1) return; else break;//bree
 	case 59: if (town[st_ptr->town].type != 5) return; else break;//khazad
 	case 48: if (town[st_ptr->town].type != 3) return; else break;//minas anor - but it's town 0, type 1?!
