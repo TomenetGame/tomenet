@@ -1617,7 +1617,7 @@ static void store_create(store_type *st_ptr)
 			if (object_value(0, o_ptr) <= 0) continue;
 
 			/* ego rarity control for normal stores */
-			if ((o_ptr->name2 || o_ptr->name2b)) {
+			if (o_ptr->name2) {
 				if ((!(st_info[st_ptr->st_idx].flags1 & SF1_EGO)) &&
 				    !magik(STORE_EGO_CHANCE) && st_ptr->st_idx != STORE_GENERAL) /* more ego lamps in general store please */
 					continue;
@@ -1670,10 +1670,9 @@ static void store_create(store_type *st_ptr)
 		e2_ptr = &e_info[o_ptr->name2b];
 
 		/* Shop has many egos? */
-		if (!(o_ptr->name2 || o_ptr->name2b)) {
-			if ((st_info[st_ptr->st_idx].flags1 & SF1_EGO) &&
-			    (magik(50)))
-				continue;
+		if ((st_info[st_ptr->st_idx].flags1 & SF1_EGO) &&
+		    !(o_ptr->name2) && magik(50))
+			continue;
 		}
 		/* Shop has extra rare egos? */
 #if 0
