@@ -2192,12 +2192,15 @@ try_an_other_ego:
 			a_ptr->pval -= randint(a_ptr->pval - 2);
 	}
 
-	/* Obtain granted minimum pval */
+	/* --- Obtain granted minimum pval --- */
 	granted_pval = 0;
+	/* Mage staves have pvals minima */
 	if ((o_ptr->tval == TV_MSTAFF) && (o_ptr->sval == SV_MSTAFF)) {
 		if ((o_ptr->name2b == 2)||(o_ptr->name2 == 2)) granted_pval = 4;
 		if ((o_ptr->name2b == 3)||(o_ptr->name2 == 3)) granted_pval = 7;
 	}
+	/* Elvenkind boots are more likely to get good pval, ugh */
+	if (e_idx == EGO_ELVENKIND2) granted_pval = rand_int(e_ptr->max_pval - 2);
 
 	/* Hack -- obtain pval */
 	if (e_ptr->max_pval > 0) a_ptr->pval += granted_pval + randint(e_ptr->max_pval - granted_pval);
@@ -2257,9 +2260,10 @@ try_an_other_ego:
 	}
 	/* While +MANA is capped at 10 for randarts, it's 12 for egos(!) */
         if ((a_ptr->flags1 & TR1_MANA) && a_ptr->pval > 12) a_ptr->pval = 12;
-        /* Stealth cap; stealth/speed cap for 'of Swiftness' */
-	if(a_ptr->flags1 & TR1_STEALTH) {
-		if(a_ptr->flags1 & TR1_SPEED) {
+        /* Stealth cap; stealth/speed cap on all items except boots (for 'of Swiftness') */
+	if (a_ptr->flags1 & TR1_STEALTH) {
+		/* Don't limit elvenkind boots */
+		if ((a_ptr->flags1 & TR1_SPEED) && o_ptr->tval != TV_BOOTS) {
 			if (a_ptr->pval > 4) a_ptr->pval = 3 + rand_int(2);
 		} else {
 			if (a_ptr->pval > 6) a_ptr->pval = 6;
