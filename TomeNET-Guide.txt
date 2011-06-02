@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 1. June 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 3. June 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -6057,6 +6057,8 @@ Holiness        Dispels nearby evil. Also protects you from evil for a while.
                 Cures poison/cuts, removes fear/stun, heals you somewhat.
 Dragon's Breath These wands fire a ball of dragon odem (more powerful than
                 normal ball spell wands.)
+Restoration     Restores experience points (aka live levels) and drained stats,
+                ie STR/INT/WIS/DEX/CON/CHR.
 Havoc           Fires balls or beams of random type, the exact outcome is hard
                 to tell.. it's very powerful though.
 
