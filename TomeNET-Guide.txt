@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 31. May 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 1. June 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -8471,6 +8471,13 @@ more potions to cure it.
 
 If your sanity is lowered, there's an increasing chance that flashbacks will
 storm your head, leaving you with mad visions for a while..
+
+When your sanity suffers from an attack, you'll see a light red message in the
+message window telling you so, instead of the usual white or yellow combat
+messages, to make it easily visible.
+
+Certain classes such as priests or mindcrafters may depending on their skills
+be able to cure insanity.
 
 
 
