@@ -8,9 +8,9 @@ MAGELOCK = add_spell
 	["mana"] = 	1,
 	["mana_max"] = 	60,
 	["fail"] = 	10,
-	["direction"] = function () if get_level(Ind, MAGELOCK, 50) >= 30 then return FALSE else return TRUE end end,
+	["direction"] = function () if get_level(Ind, MAGELOCK, 50) >= 40 then return FALSE else return TRUE end end,
 	["spell"] = 	function(args)
-			if get_level(Ind, MAGELOCK, 50) >= 30 then
+			if get_level(Ind, MAGELOCK, 50) >= 40 then
 				local ret, x, y, c_ptr
 
 --				if get_level(Ind, MAGELOCK, 50) >= 40 then
@@ -30,7 +30,7 @@ MAGELOCK = add_spell
 	end,
 	["desc"] =	{
 			"Magically locks a door",
-			"At level 30 it creates a glyph of warding"
+			"At level 40 it creates a glyph of warding"
 --			,"At level 40 the glyph can be placed anywhere in the field of vision"
 	}
 }
