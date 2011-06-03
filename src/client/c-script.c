@@ -302,6 +302,8 @@ static void set_server_features() {
 
 	oldtop = lua_gettop(L);
 
+	/* Server type flags */
+
 	sprintf(buf, "RPG_SERVER = %d", s_RPG);
 	lua_dostring(L, buf);
 	lua_settop(L, oldtop);
@@ -319,6 +321,40 @@ static void set_server_features() {
 	lua_settop(L, oldtop);
 
 	sprintf(buf, "TEST_SERVER = %d", s_TEST);
+	lua_dostring(L, buf);
+	lua_settop(L, oldtop);
+
+	/* Temporary features flags */
+
+	sprintf(buf, "TEMP0 = %d", sflags_TEMP & 0x00000001);
+	lua_dostring(L, buf);
+	lua_settop(L, oldtop);
+
+	sprintf(buf, "TEMP1 = %d", sflags_TEMP & 0x00000002);
+	lua_dostring(L, buf);
+	lua_settop(L, oldtop);
+
+	sprintf(buf, "TEMP2 = %d", sflags_TEMP & 0x00000004);
+	lua_dostring(L, buf);
+	lua_settop(L, oldtop);
+
+	sprintf(buf, "TEMP3 = %d", sflags_TEMP & 0x00000008);
+	lua_dostring(L, buf);
+	lua_settop(L, oldtop);
+
+	sprintf(buf, "TEMP4 = %d", sflags_TEMP & 0x00000010);
+	lua_dostring(L, buf);
+	lua_settop(L, oldtop);
+
+	sprintf(buf, "TEMP5 = %d", sflags_TEMP & 0x00000020);
+	lua_dostring(L, buf);
+	lua_settop(L, oldtop);
+
+	sprintf(buf, "TEMP6 = %d", sflags_TEMP & 0x00000040);
+	lua_dostring(L, buf);
+	lua_settop(L, oldtop);
+
+	sprintf(buf, "TEMP7 = %d", sflags_TEMP & 0x00000080);
 	lua_dostring(L, buf);
 	lua_settop(L, oldtop);
 }

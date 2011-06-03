@@ -270,6 +270,9 @@ extern bool s_ARCADE;
 extern bool s_TEST;
 extern bool s_RPG_ADMIN;
 
+/* Server's temporary features flags */
+extern s32b sflags_TEMP;
+
 /* Auto-inscriptions */
 extern char auto_inscription_match[MAX_AUTO_INSCRIPTIONS][40];
 extern char auto_inscription_tag[MAX_AUTO_INSCRIPTIONS][20];

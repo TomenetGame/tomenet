@@ -212,6 +212,8 @@ void set_server_features()
 {
         int oldtop = lua_gettop(L);
 
+	/* Server flags */
+
 #ifdef RPG_SERVER
 	lua_dostring(L, "RPG_SERVER = 1");
 #else
@@ -245,6 +247,38 @@ void set_server_features()
 #else
 	lua_dostring(L, "TEST_SERVER = 0");
 #endif
+	lua_settop(L, oldtop);
+
+	/* Misc flags */
+
+#ifdef ENABLE_DIVINE
+	lua_dostring(L, "TEMP0 = 1");
+	sflags_TEMP |= 0x00000001;
+#else
+	lua_dostring(L, "TEMP0 = 0");
+#endif
+	lua_settop(L, oldtop);
+
+//	sflags_TEMP |= 0x00000002;
+	lua_dostring(L, "TEMP1 = 0");
+	lua_settop(L, oldtop);
+//	sflags_TEMP |= 0x00000004;
+	lua_dostring(L, "TEMP2 = 0");
+	lua_settop(L, oldtop);
+//	sflags_TEMP |= 0x00000008;
+	lua_dostring(L, "TEMP3 = 0");
+	lua_settop(L, oldtop);
+//	sflags_TEMP |= 0x00000010;
+	lua_dostring(L, "TEMP4 = 0");
+	lua_settop(L, oldtop);
+//	sflags_TEMP |= 0x00000020;
+	lua_dostring(L, "TEMP5 = 0");
+	lua_settop(L, oldtop);
+//	sflags_TEMP |= 0x00000040;
+	lua_dostring(L, "TEMP6 = 0");
+	lua_settop(L, oldtop);
+//	sflags_TEMP |= 0x00000080;
+	lua_dostring(L, "TEMP7 = 0");
 	lua_settop(L, oldtop);
 }
 
