@@ -338,13 +338,22 @@ void Receive_login(void)
 	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &sflag3, &sflag2, &sflag1, &sflag0)) <= 0) {
 		return;
 	}
+
+	/* Set server type flags */
 	if (sflag0 & SFLG_RPG) s_RPG = TRUE;
 	if (sflag0 & SFLG_FUN) s_FUN = TRUE;
 	if (sflag0 & SFLG_PARTY) s_PARTY = TRUE;
 	if (sflag0 & SFLG_ARCADE) s_ARCADE = TRUE;
 	if (sflag0 & SFLG_TEST) s_TEST = TRUE;
 	if (sflag0 & SFLG_RPG_ADMIN) s_RPG_ADMIN = TRUE;
+
+	/* Set client mode */
 	client_mode = sflag1;
+
+	/* Set temporary features */
+	sflags_TEMP = sflag2;
+
+	/* Set XXX */
 
 	/* Now that we have the server flags, we can finish setting up Lua - mikaelh */
 	open_lua();

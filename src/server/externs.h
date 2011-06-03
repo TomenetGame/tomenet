@@ -280,6 +280,7 @@ extern s16b hitpoint_warn;
 extern u32b old_id[MAX_ID];
 extern struct swear swear[30];
 extern struct ip_ban *banlist;
+extern s32b sflags_TEMP;
 extern player_type **Players;
 extern party_type parties[MAX_PARTIES];
 extern struct guild_type guilds[MAX_GUILDS];

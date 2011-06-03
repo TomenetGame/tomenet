@@ -3396,6 +3396,13 @@ static int Receive_login(int ind){
 			byte tmpm;
 			char colour_sequence[3];
 			s32b sflg3 = 0, sflg2 = 0, sflg1 = 0, sflg0 = 0; /* server flags to tell the client more about us - just informational purpose */
+			/* flag array 0: server type flags
+			   flag array 1: client mode (special screen layout for showing party stats maybe (TODO//unused))
+			   flag array 2: temporary testing flags for experimental features
+			   flag array 3: unused
+			*/
+
+			/* Set server type flags */
 #ifdef RPG_SERVER
 			sflg0 |= SFLG_RPG;
 			if (l_acc->flags & ACC_ADMIN) sflg0 |= SFLG_RPG_ADMIN; /* Allow multiple chars per account for admins! */
@@ -3412,6 +3419,15 @@ static int Receive_login(int ind){
 #ifdef TEST_SERVER
 			sflg0 |= SFLG_TEST;
 #endif
+
+			/* Set client mode flags */
+
+			/* Set temporary flags */
+			sflg2 = sflags_TEMP;
+
+			/* Set XXX flags */
+
+			/* Send all flags! */
 			Packet_printf(&connp->c, "%c%d%d%d%d", PKT_SERVERDETAILS, sflg3, sflg2, sflg1, sflg0);
 
 			connp->password_verified = TRUE;

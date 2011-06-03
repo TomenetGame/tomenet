@@ -185,7 +185,7 @@ pern_dofile(Ind, "m_mintrusion.lua")
 __lua_M_LAST = __tmp_spells_num - 1
 
 -- Only on RPG server
-if (def_hack("RPG_SERVER", nil)) then
+if (def_hack("TEMP0", nil)) then
 pern_dofile(Ind, "d_astral.lua")
 end
 
@@ -287,7 +287,7 @@ school_book[17] = {
 }
 
 -- Only on RPG server
-if (def_hack("RPG_SERVER", nil)) then
+if (def_hack("TEMP0", nil)) then
 -- Divine Race Tome
 school_book[18] = {
 	POWERBOLT, POWERBEAM, POWERBALL, RELOCATION, VENGEANCE, EMPOWERMENT, INTENSIFY, POWERCLOUD,
