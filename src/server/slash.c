@@ -1280,114 +1280,164 @@ void do_slash_cmd(int Ind, char *message)
 		}
 		/* Now this command is opened for everyone */
 		else if (prefix(message, "/recall") ||
-				prefix(message, "/rec"))
+		    prefix(message, "/rec"))
 		{
-			if (admin)
-			{
-				set_recall_timer(Ind, 1);
-			}
-			else
-			{
-				int item=-1;
+			if (admin) set_recall_timer(Ind, 1);
+			else {
+				int item = -1, spell = -1, spell_rec = -1, spell_rel = -1;
+				bool spell_rec_found = FALSE, spell_rel_found = FALSE;
 				object_type *o_ptr;
 
 				/* Paralyzed or just not enough energy left to perform a move? */
 
 				/* this also prevents recalling while resting, too harsh maybe */
 //				if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+				if (p_ptr->paralyzed) return;
 
 				/* Don't drain energy far below zero - mikaelh */
 				if (p_ptr->energy < 0) return;
 
-				if (p_ptr->paralyzed) return;
+				/* Test for 'Recall' istar spell and for 'Relocation' astral spell */
+#if 0 /* hm, which version might be easier/better?.. */
+				spell_rec = exec_lua(Ind, "return find_spell(\"Recall\")"); 
+ #ifdef ENABLE_DIVINE
+				spell_rel = exec_lua(Ind, "return find_spell(\"Relocation\")");
+ #endif
+#else
+				spell_rec = exec_lua(Ind, "return RECALL");
+ #ifdef ENABLE_DIVINE
+				spell_rel = exec_lua(Ind, "return RELOCATION");
+ #endif
+#endif
 
 				/* Turn off resting mode */
 				disturb(Ind, 0, 0);
 
-//				for(i = 0; i < INVEN_PACK; i++)
-				for(i = 0; i < INVEN_TOTAL; i++) /* allow to activate equipped items for recall (some art(s)!) */
-				{
+//				for (i = 0; i < INVEN_PACK; i++)
+				for (i = 0; i < INVEN_TOTAL; i++) { /* allow to activate equipped items for recall (some art(s)!) */
 					o_ptr = &(p_ptr->inventory[i]);
 					if (!o_ptr->tval) continue;
+					if (!find_inscription(o_ptr->note, "@R")) continue;
 
-					if (find_inscription(o_ptr->note, "@R"))
-					{
-						item = i;
-						break;
-					}
-				}
-
-				if (item == -1)
-				{
-					msg_print(Ind, "\377oInscription {@R} not found.");
-					//return;
-				}
-				else
-				{
-					int spell;
-					disturb(Ind, 1, 0);
-
-					/* ALERT! Hard-coded! */
-					switch (o_ptr->tval)
-					{
-						case TV_SCROLL:
-							do_cmd_read_scroll(Ind, item);
-							break;
-						case TV_ROD:
-							do_cmd_zap_rod(Ind, item, 0);
-							break;
-						/* Cast Recall spell - mikaelh */
-						case TV_BOOK:
-							spell = exec_lua(Ind, "return find_spell(\"Recall\")");
-							if (o_ptr->sval == SV_SPELLBOOK)
-							{
-								if (o_ptr->pval != spell)
-								{
-									msg_print(Ind, "\377oThis is not a Spell Scroll of Recall.");
+					/* For spell books: Test if we can actually use this item at all,
+					   ie have learned the spell yet, otherwise skip it completely!
+					   This is because we might've picked up books from someone else. */
+					if (o_ptr->tval == TV_BOOK) {
+						if (o_ptr->sval == SV_SPELLBOOK) {
+							if (o_ptr->pval == spell_rec || o_ptr->pval == spell_rel) {
+								/* Have we learned this spell yet at all? */
+								if (!exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, o_ptr->pval)))
+									/* Just continue&ignore instead of return, since we
+									   might just have picked up someone else's book! */
+									continue;
+								/* If so then use it */
+								spell = o_ptr->pval;
+							} else {
+								/* "No recall spell found in this book!" */
+								//continue;
+								/* Be severe and point out the wrong inscription: */
+								msg_print(Ind, "\377oThe inscribed spell scroll isn't a recall spell.");
+								return;
+							}
+						} else {
+							if (MY_VERSION < (4 << 12 | 4 << 8 | 1 << 4 | 8)) {
+								spell_rec_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell_rec));
+#ifdef ENABLE_DIVINE
+								spell_rel_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell_rel));
+#endif
+								if (!spell_rec_found && !spell_rel_found) {
+									/* Be severe and point out the wrong inscription: */
+									msg_print(Ind, "\377oThe inscribed book doesn't contain a recall spell.");
+									return;
+								}
+							} else {
+								spell_rec_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", i, o_ptr->sval, spell_rec));
+#ifdef ENABLE_DIVINE
+								spell_rel_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", i, o_ptr->sval, spell_rel));
+#endif
+								if (!spell_rec_found && !spell_rel_found) {
+									/* Be severe and point out the wrong inscription: */
+									msg_print(Ind, "\377oThe inscribed book doesn't contain a recall spell.");
 									return;
 								}
 							}
-							else
-							{
-								if (MY_VERSION < (4 << 12 | 4 << 8 | 1 << 4 | 8)) {
-									if (exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell)) == FALSE) {
-										msg_print(Ind, "\377oRecall spell not found in this book.");
-										return;
-									}
-								} else {
-									if (exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", item, o_ptr->sval, spell)) == FALSE) {
-										msg_print(Ind, "\377oRecall spell not found in this book.");
-										return;
-									}
-								}
-							}
-							cast_school_spell(Ind, item, spell, -1, -1, 0);
-							break;
-						default:
-							do_cmd_activate(Ind, item, 0);
-							//msg_print(Ind, "\377oYou cannot recall with that.");
-							break;
+							/* Have we learned this spell yet at all? */
+							if (spell_rec_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell_rec)))
+								spell = spell_rec;
+							if (spell_rel_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell_rel)))
+								spell = spell_rel;
+							/* Just continue&ignore instead of return, since we
+							   might just have picked up someone else's book! */
+							if (spell == -1) continue;
+						}
 					}
+
+					item = i;
+					break;
+				}
+
+				if (item == -1) {
+					msg_print(Ind, "\377oNo usable item with '@R' inscription found.");
+					return;
+				}
+
+				disturb(Ind, 1, 0);
+
+				/* ALERT! Hard-coded! */
+				switch (o_ptr->tval) {
+				case TV_SCROLL:
+					do_cmd_read_scroll(Ind, item);
+					break;
+				case TV_ROD:
+					do_cmd_zap_rod(Ind, item, 0);
+					break;
+				/* Cast Recall spell - mikaelh */
+				case TV_BOOK:
+#if 0
+					if (o_ptr->sval == SV_SPELLBOOK) {
+						/* Test for 'Recall' istar spell: */
+						if (o_ptr->pval != spell_rec) {
+							msg_print(Ind, "\377oThis is not a Spell Scroll of Recall.");
+							return;
+						}
+						/* Test for 'Relocation' astral spell: */
+					} else {
+						if (MY_VERSION < (4 << 12 | 4 << 8 | 1 << 4 | 8)) {
+							if (exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell)) == FALSE) {
+								msg_print(Ind, "\377oRecall spell not found in this book.");
+								return;
+							}
+						} else {
+							if (exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", item, o_ptr->sval, spell)) == FALSE) {
+								msg_print(Ind, "\377oRecall spell not found in this book.");
+								return;
+							}
+						}
+					}
+#endif
+					cast_school_spell(Ind, item, spell, -1, -1, 0);
+					break;
+				default:
+					do_cmd_activate(Ind, item, 0);
+					//msg_print(Ind, "\377oYou cannot recall with that.");
+					break;
 				}
 			}
 
-			switch (tk)
-			{
-				case 1:
-					/* depth in feet */
-					p_ptr->recall_pos.wz = k / (p_ptr->depth_in_feet ? 50 : 1);
-					break;
-
-				case 2:
-					p_ptr->recall_pos.wx = k % MAX_WILD_X;
-					p_ptr->recall_pos.wy = atoi(token[2]) % MAX_WILD_Y;
-					p_ptr->recall_pos.wz = 0;
-					break;
-
-//				default:	/* follow the inscription */
-					/* TODO: support tower */
-//					p_ptr->recall_pos.wz = 0 - p_ptr->max_dlv;
-//					p_ptr->recall_pos.wz = 0;
+			switch (tk) {
+			case 1:
+				/* depth in feet */
+				p_ptr->recall_pos.wz = k / (p_ptr->depth_in_feet ? 50 : 1);
+				break;
+			case 2:
+				p_ptr->recall_pos.wx = k % MAX_WILD_X;
+				p_ptr->recall_pos.wy = atoi(token[2]) % MAX_WILD_Y;
+				p_ptr->recall_pos.wz = 0;
+				break;
+//			default:	/* follow the inscription */
+				/* TODO: support tower */
+//				p_ptr->recall_pos.wz = 0 - p_ptr->max_dlv;
+//				p_ptr->recall_pos.wz = 0;
 			}
 
 			return;
