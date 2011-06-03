@@ -693,7 +693,8 @@ P:0:1d5:0:0:0
 F:SHOW_MODS
 
 N:81:& Seeker Bolt~
-G:{:B
+#G:{:B
+G:{:y
 I:18:2:0
 W:65:0:4:30
 A:65/2:90/2
@@ -701,7 +702,8 @@ P:0:3d5:0:0:0
 F:SHOW_MODS
 
 N:82:& Rounded Pebble~
-G:{:s
+#G:{:s
+G:{:u
 I:16:0:0
 W:0:0:1:1
 A:0/1:10/2
@@ -709,7 +711,7 @@ P:0:1d2:0:0:0
 F:SHOW_MODS | IGNORE_WATER
 
 N:83:& Iron Shot~
-G:{:s
+G:{:D
 I:16:1:0
 W:3:0:2:2
 A:3/1:40/2
@@ -3614,7 +3616,8 @@ P:0:1d5:0:0:0
 F:SHOW_MODS | NO_ENCHANT
 
 N:445:& Magic Shot~
-G:{:D
+#G:{:D
+G:{:o
 I:16:3:0
 W:10:0:2:100
 A:15/2:30/2
