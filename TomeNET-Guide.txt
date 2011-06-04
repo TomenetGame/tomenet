@@ -122,10 +122,9 @@ Contents
     (6.5)   Classes/Professions, titles, melee blows/round
     (6.5a)  Start-up Blows/Round Table
     (6.6)   Sanity
-    (6.7)   Mimicry details, polymorph rings
+    (6.7)   Mimicry details
     (6.7a)  Polymorph rings
-    (6.7b)  Intrinsic abilities that aren't kept when changing forms
-    (6.7c)  Druid form details
+    (6.7b)  Druid form details
     (6.8)   Magic spells and prayers
     (6.9)   Parties, Iron Teams, Guilds
     (6.10)  Magic Device skill/ability details
@@ -641,7 +640,7 @@ They all start with a slash '/':
               helpful to figure out what types of items you may equip while in
               this form.
             - forms you have learned if you're a druid, and their according
-              polymorph codes so you don't have to look them up in (6.7c) if
+              polymorph codes so you don't have to look them up in (6.7b) if
               you forgot them;
             - runecraft status details, if you're adept in runemastery;
             - pvp kills;
@@ -8241,7 +8240,7 @@ Druid
     (Special note (compare 6.7): If they wield a weapon while using a form
     which usually cannot use weapons, they will only get 1 blow per round.)
     To recheck which forms you can transform into, use the /ex command.
-    To see an overview of the forms and their abilities, see (6.7c).
+    To see an overview of the forms and their abilities, see (6.7b).
     Hint: Druids have a powerful ranged area attack spell they can use very
     early on, Toxic Moisture. Look for it in the book store right away.
 
@@ -8483,8 +8482,8 @@ be able to cure insanity.
 
 
 
-(6.7) Mimicry details, polymorph rings
---------------------------------------
+(6.7) Mimicry details
+---------------------
 If a mimic polymorphs into a certain monster form, abilities and stats will be
 averaged between the normal ('@') body and the form. In most cases if the form
 is performing worse than @-form in a certain ability, the @-form will dominate
@@ -8504,8 +8503,12 @@ the number of blows per round will be set to 1 (regardless of extra attacks).
 To find out the special abilities of a monster form, consult the file
 /lib/game/r_info.txt in your tomenet directory, and look up the monster.
 (See (7.4) for more info about spoiler files.)
-It's abilities will transform to the mimic's body as follows:
+It's abilities will transform to the mimic's body as follows.
 
+
+Form aspects derived from r_info.txt monster definitions file
+(you find this file in TomeNET/lib/game/ folder, view it in any text editor):
+-----------------------------------------------------------------------------
 W: depth : rarity : corpse weight : experience for kill
   depth:
     The depth is also the basic level of these monsters. It tells you how
@@ -8718,6 +8721,7 @@ Especially interesting spells of mimics are 'Blink' (Phase Door) and
 'Teleport'. These usually cost very little mana and can be very helpful,
 so you might want to create macros for them.
 
+
 Further, certain races and classes get abilities (even if they are not
 mentioned in r_info.txt for monster forms):
 -------------------------------------------
@@ -8768,9 +8772,10 @@ you had in player form, because they were bound to your normal form.
 Example: An ent mimic won't drown in water, but if it polymorphs into an orc,
 it loses the intrinsic ability to pass water since orcs aren't made of wood.
 
-Last but not least, attributes and miscellaneous abilities can also be affected
-by certain aspects of the monster form you use:
------------------------------------------------
+
+Attributes and miscellaneous abilities can also be affected by certain aspects
+of the monster form you use:
+----------------------------
 (Note that all bonus aspects stack, so a troll might get much more than just +1
 to strength, because he's also quite heavy and therefore gets another bonus.)
 STR     Melee damage: -1..+4 (-1 won't apply if creature is very heavy though)
@@ -8800,6 +8805,24 @@ CHR     Dragonriders: +1
 Stealth         Body weight: -4..+3
 Infra-Vision    Undead in general: +1
                 Ghosts specifically: +3
+
+
+Intrinsic abilities that aren't kept when changing forms:
+---------------------------------------------------------
+Characters keep certain racial abilities even if they change form, while some
+other abilities might not persist through polymorphing. The following abilities
+will NOT remain active when changing shape, ie are not "polymorph-proof":
+
+Hobbit:
+    +DEX bonus from not wearing shoes.
+Dwarf:
+    Climbing.
+Yeek:
+    Pass trees.
+Ent:
+    Speed malus (will be reduced), swimming, pass trees.
+Draconian:
+    Feather falling, flying.
 
 
 (6.7a) Polymorph rings:
@@ -8848,25 +8871,7 @@ If a player forges a ring, his magic device skill helps to obtain a high
 amount of energy in the ring.
 
 
-(6.7b) Intrinsic abilities that aren't kept when changing forms
----------------------------------------------------------------
-Characters keep certain racial abilities even if they change form, while some
-other abilities might not persist through polymorphing. The following abilities
-will NOT remain active when changing shape, ie are not "polymorph-proof":
-
-Hobbit:
-    +DEX bonus from not wearing shoes.
-Dwarf:
-    Climbing.
-Yeek:
-    Pass trees.
-Ent:
-    Speed malus (will be reduced), swimming, pass trees.
-Draconian:
-    Feather falling, flying.
-
-
-(6.7c) Druid form details
+(6.7b) Druid form details
 -------------------------
 Note: Some forms can open doors, others may try to bash doors.
       Also, all animal forms are able to travel through woods.
