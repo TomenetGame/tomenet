@@ -4262,16 +4262,20 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 			if (o_ptr->xtra2 & 0x10) fprintf(fff, "It provides immunity to poison.\n");
 			else fprintf(fff, "It provides resistance to poison.\n");
 		}
-        } else {
-		if (f2 & (TR2_RES_FIRE))
+	} else {
+		/* Note: The immunity checks are for items that get both,
+		   resistance AND immunity to the same element. This can
+		   happen if art/ego gives IM, while base item type
+		   already has RES. */
+		if ((f2 & (TR2_RES_FIRE)) && !(f2 & (TR2_IM_FIRE)))
 			fprintf(fff, "It provides resistance to fire.\n");
-		if (f2 & (TR2_RES_COLD))
+		if ((f2 & (TR2_RES_COLD)) && !(f2 & (TR2_IM_COLD)))
 			fprintf(fff, "It provides resistance to cold.\n");
-		if (f2 & (TR2_RES_ELEC))
+		if ((f2 & (TR2_RES_ELEC)) && !(f2 & (TR2_IM_ELEC)))
 			fprintf(fff, "It provides resistance to electricity.\n");
-		if (f2 & (TR2_RES_ACID))
+		if ((f2 & (TR2_RES_ACID)) && !(f2 & (TR2_IM_ACID)))
 			fprintf(fff, "It provides resistance to acid.\n");
-		if (f2 & (TR2_RES_POIS))
+		if ((f2 & (TR2_RES_POIS)) && !(f2 & (TR5_IM_POISON)))
 			fprintf(fff, "It provides resistance to poison.\n");
 	}
 
@@ -4291,7 +4295,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
 	if (f4 & (TR4_IM_NETHER))
 		fprintf(fff, "It provides immunity to nether.\n");
-	if (f2 & (TR2_RES_NETHER))
+	else if (f2 & (TR2_RES_NETHER))
 		fprintf(fff, "It provides resistance to nether.\n");
 	if (f2 & (TR2_RES_NEXUS))
 		fprintf(fff, "It provides resistance to nexus.\n");
@@ -4301,7 +4305,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		fprintf(fff, "It provides resistance to disenchantment.\n");
 	if (f5 & (TR5_IM_WATER))
 		fprintf(fff, "It provides complete protection from unleashed water.\n");
-	if (f5 & (TR5_RES_WATER))
+	else if (f5 & (TR5_RES_WATER))
 		fprintf(fff, "It provides resistance to unleashed water.\n");
 	if (f5 & (TR5_RES_TIME))
 		fprintf(fff, "It provides resistance to time.\n");
