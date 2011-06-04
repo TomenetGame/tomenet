@@ -694,7 +694,7 @@ F:SHOW_MODS
 
 N:81:& Seeker Bolt~
 #G:{:B
-G:{:y
+G:{:r
 I:18:2:0
 W:65:0:4:30
 A:65/2:90/2
