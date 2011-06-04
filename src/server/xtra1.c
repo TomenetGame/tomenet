@@ -2001,12 +2001,12 @@ static void calc_body_bonus(int Ind)
 		if (r_ptr->level >= 23) p_ptr->stat_add[A_DEX] += 2;
 		else p_ptr->stat_add[A_DEX]++;
 	}
-	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_ORANGE) p_ptr->stat_add[A_DEX] += 2; /* Mystics */
 	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_UMBER && strstr(mname, "master")) p_ptr->stat_add[A_DEX]++; /* Skilled warriors */
+	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_ORANGE) p_ptr->stat_add[A_DEX] += 2; /* Mystics */
 	if (p_ptr->body_monster == 370) p_ptr->stat_add[A_DEX]++; /* Jade Monk */
 	if (p_ptr->body_monster == 492) p_ptr->stat_add[A_DEX]++; /* Ivory Monk */
-	if (p_ptr->body_monster == 485) p_ptr->stat_add[A_DEX] += 2; /* Ninja */
 	if (p_ptr->body_monster == 532) p_ptr->stat_add[A_DEX]++; /* Dagashi */
+	if (p_ptr->body_monster == 485) p_ptr->stat_add[A_DEX] += 2; /* Ninja */
 
 #if 0
 	if (n == 0) n = 1;
