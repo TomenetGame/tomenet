@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 3. June 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 4. June 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -8761,12 +8761,41 @@ All vampires and vampire bats
             the other half is biting). For details see '(5.15) Vampirism'.
 All angels  Resist light, blindness and poison (usually immunity, see r_info
             flags), resist confusion, see invisible.
-Note: Fallen angels only get blindness and poison resistance/immunity.
+            Note: 'Fallen Angel' doesn't get light resistance.
 
 Keep in mind that by changing forms you can potentially lose abilities that
 you had in player form, because they were bound to your normal form.
 Example: An ent mimic won't drown in water, but if it polymorphs into an orc,
 it loses the intrinsic ability to pass water since orcs aren't made of wood.
+
+Last but not least, attributes and miscellaneous abilities can also be affected
+by certain aspects of the monster form you use:
+-----------------------------------------------
+(Note that all bonus aspects stack, so a troll might get much more than just +1
+to strength, because he's also quite heavy and therefore gets another bonus.)
+STR     Melee damage: -1..+4 (-1 won't apply if creature is very heavy though)
+        Earthquaking melee hits: +1 each
+        Body weight: +1..+3
+        Bears: +1
+        Trolls: +1
+        Giants: +1
+        Dragons (mature and higher): +1
+INT     Cast speed (1_IN_1 to 1_IN_3): +1..+5
+        (will also give up to +40% base mana)
+        STUPID creatures: -2
+        SMART creatures: +2
+DEX     Halfling forms when no boots are worn: +2
+CHR     Dragonriders: +1
+        Small, non-nasty animals: +1
+        Spiders, orcs: -1
+        Trolls, giants: -2
+        Nonliving/evil creatures: -1
+        Undead/demons: -2
+        GOOD creatures: +2
+
+Stealth         Body weight: -4..+3
+Infra-Vision    Undead in general: +1
+                Ghosts specifically: +3
 
 
 (6.7a) Polymorph rings:
