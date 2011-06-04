@@ -8785,6 +8785,10 @@ INT     Cast speed (1_IN_1 to 1_IN_3): +1..+5
         STUPID creatures: -2
         SMART creatures: +2
 DEX     Halfling forms when no boots are worn: +2
+        Rogues: +1..+2
+        Monks/Master warriors: +1
+        Ninjas/Mystics: +2
+        Cats: +2
 CHR     Dragonriders: +1
         Small, non-nasty animals: +1
         Spiders, orcs: -1
