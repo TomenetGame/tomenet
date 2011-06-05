@@ -3790,8 +3790,14 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	}
 #endif
 
-	fprintf(fff, "%s\n", o_name);
-	if (strlen(o_name) > 77) fprintf(fff, "%s\n", o_name + 77);
+	if (strlen(o_name) > 79) {
+		strncpy(buf_tmp, o_name, 79);
+		buf_tmp[79] = 0;
+		fprintf(fff, "%s\n", buf_tmp);
+		fprintf(fff, "%s\n", o_name + 79);
+	} else {
+		fprintf(fff, "%s\n", o_name);
+	}
 
 	/* in case we just *ID* it because an admin inspected it */
 	if (!(o_ptr->ident & ID_MENTAL)) fprintf(fff, "\377y(This item has not been *identified* yet.)\n");
