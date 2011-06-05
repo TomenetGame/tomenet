@@ -1356,7 +1356,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 
 		if (q_ptr->cloaked || q_ptr->shadow_running) continue;
 
-		if (q_ptr->confused || q_ptr->stun || q_ptr->afraid || q_ptr->paralyzed)
+		if (q_ptr->confused || q_ptr->stun || q_ptr->afraid || q_ptr->paralyzed || q_ptr->resting)
 			continue;
 
 		/* Cannot grab what you cannot see */

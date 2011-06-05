@@ -3981,15 +3981,10 @@ static void process_player_end(int Ind)
 	if (p_ptr->esp_link && p_ptr->esp_link_type && (p_ptr->esp_link_flags & LINKF_OBJ)) return;
 
 	/* Check for auto-retaliate */
-#if 0
-	if ((p_ptr->energy >= level_speed(&p_ptr->wpos)) && !p_ptr->confused &&
-			(!p_ptr->autooff_retaliator ||
-			 !(p_ptr->invuln || p_ptr->tim_manashield)))
-#else
-	if ((p_ptr->energy >= level_speed(&p_ptr->wpos)) && !p_ptr->confused &&
-			(!p_ptr->autooff_retaliator || /* <- these conditions seem buggy/wrong/useless? */
-			 !p_ptr->invuln))
-#endif
+	if ((p_ptr->energy >= level_speed(&p_ptr->wpos)) &&
+	    !p_ptr->confused && !p_ptr->resting &&
+	    (!p_ptr->autooff_retaliator || /* <- these conditions seem buggy/wrong/useless? */
+	     !p_ptr->invuln))//&& !p_ptr->tim_manashield)))
 	{
 		/* assume nothing will happen here */
 		p_ptr->auto_retaliating = FALSE;
