@@ -229,7 +229,7 @@ INTENSIFY = add_spell
 	["desc"] =	{
 --			"Requires astral level of 45",
 			"Enlightened: slows down monsters in sight",
---			"         grants temporary mana and time resistance",
+			"         grants temporary mana and time resistance",
 			"Corrupted: increases your critical chance (+2 base",
 			"         +2 per 5 astral levels thereafter)"
 		}
