@@ -22,18 +22,18 @@
 #define WP_SINFO	13	/* server info */
 
 /* World packet flags */
-#define WPF_CHAT	0x001	/* chat message - C */
-#define WPF_NPLAYER	0x002	/* player enters - N */
-#define WPF_QPLAYER	0x004	/* player leaves - Q */
-#define WPF_DEATH	0x008	/* player death - D */
-#define WPF_LOCK	0x010
-#define WPF_UNLOCK	0x020
-#define WPF_MESSAGE	0x040	/* all critical server messages - M */
-#define WPF_AUTH	0x080
-#define WPF_SQUIT	0x100
-#define WPF_RESTART	0x200
-#define WPF_LACCOUNT	0x400
-#define WPF_PMSG	0x800	/* private message - P */
+#define WPF_CHAT	0x0001	/* chat message - C */
+#define WPF_NPLAYER	0x0002	/* player enters - N */
+#define WPF_QPLAYER	0x0004	/* player leaves - Q */
+#define WPF_DEATH	0x0008	/* player death - D */
+#define WPF_LOCK	0x0010
+#define WPF_UNLOCK	0x0020
+#define WPF_MESSAGE	0x0040	/* all critical server messages - M */
+#define WPF_AUTH	0x0080
+#define WPF_SQUIT	0x0100
+#define WPF_RESTART	0x0200
+#define WPF_LACCOUNT	0x0400
+#define WPF_PMSG	0x0800	/* private message - P */
 #define WPF_SINFO	0x1000
 
 /* World message flags */

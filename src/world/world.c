@@ -393,7 +393,9 @@ int get_message_type(char *msg) {
 		return WMF_PLEAVE;
 	} else if (strstr(msg, " has entered the game.")) {
 		return WMF_PJOIN;
-	} else if (strstr(msg, " is henceforth known as  ")) {
+	} else if (strstr(msg, "Morgoth, Lord of Darkness was slain by ")) {
+		return (WMF_PWIN | WMF_UNIDEATH);
+	} else if (strstr(msg, " is henceforth known as ")) {
 		return WMF_PWIN;
 	} else if (strstr(msg, " has attained level ")) {
 		return WMF_LVLUP;
