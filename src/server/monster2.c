@@ -2576,11 +2576,13 @@ void update_player(int Ind)
 				/* Draw the player */
 				lite_spot(i, py, px);
 
+#ifdef HOSTILITY_ABORTS_RUNNING
 				/* Disturb on appearance */
-				if (p_ptr->disturb_move && c_hostile) {
+				if (p_ptr->disturb_move && hostile) {
 					/* Disturb */
 					disturb(i, 1, 0);
 				}
+#endif
 			}
 		}
 
@@ -2594,11 +2596,13 @@ void update_player(int Ind)
 				/* Erase the player */
 				lite_spot(i, py, px);
 
+#ifdef HOSTILITY_ABORTS_RUNNING
 				/* Disturb on disappearance */
-				if (p_ptr->disturb_move && check_hostile(i, Ind)) {
+				if (p_ptr->disturb_move && hostile) {
 					/* Disturb */
 					disturb(i, 1, 0);
 				}
+#endif
 			}
 		}
 
@@ -2609,11 +2613,13 @@ void update_player(int Ind)
 				/* Mark as easily visible */
 				p_ptr->play_los[Ind] = TRUE;
 
+#ifdef HOSTILITY_ABORTS_RUNNING
 				/* Disturb on appearance */
-				if (p_ptr->disturb_near && check_hostile(i, Ind)) {
+				if (p_ptr->disturb_near && hostile) {
 					/* Disturb */
 					disturb(i, 1, 0);
 				}
+#endif
 			}
 		}
 
@@ -2624,11 +2630,13 @@ void update_player(int Ind)
 				/* Mark as not easily visible */
 				p_ptr->play_los[Ind] = FALSE;
 
+#ifdef HOSTILITY_ABORTS_RUNNING
 				/* Disturb on disappearance */
-				if (p_ptr->disturb_near && check_hostile(i, Ind)) {
+				if (p_ptr->disturb_near && hostile) {
 					/* Disturb */
 					disturb(i, 1, 0);
 				}
+#endif
 			}
 		}
 	}
