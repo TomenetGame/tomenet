@@ -6582,6 +6582,10 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 	if (p_ptr->safe_float) p_ptr->safe_float_turns = 5;
 
 	/* Hack -- drop bones :) */
+#ifdef ENABLE_DIVINE
+	/* hackhack: Maiar don't have a real physical body ;) */
+	if (p_ptr->prace != RACE_DIVINE)
+#endif
 	for (i = 0; i < 4; i++) {
 		object_type	forge;
 		o_ptr = &forge;
@@ -7163,10 +7167,8 @@ for(i=1; i < 5; i++) {
 		char m_name[80];
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
 		/* Had to change it for Halloween -C. Blue */
-		if(m_ptr->level == 0)
-		tmp_exp = r_ptr->mexp;
-		else
-		tmp_exp = r_ptr->mexp * m_ptr->level;
+		if (m_ptr->level == 0) tmp_exp = r_ptr->mexp;
+		else tmp_exp = r_ptr->mexp * m_ptr->level;
 
 		/* Hack -- remove possible suppress flag */
 		suppress_message = FALSE;
