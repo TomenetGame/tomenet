@@ -723,7 +723,6 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_BOLT:
 				case TV_ARROW:
 				case TV_BOW:
-				case TV_DIGGING:
 				case TV_BLUNT:
 				case TV_POLEARM:
 				case TV_SWORD:
@@ -931,7 +930,6 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_BOLT:
 				case TV_ARROW:
 				case TV_BOW:
-				case TV_DIGGING:
 				case TV_BLUNT:
 				case TV_POLEARM:
 				case TV_SWORD:
