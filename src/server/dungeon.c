@@ -3786,7 +3786,7 @@ static bool process_player_end_aux(int Ind)
 #ifdef ENABLE_GO_GAME
 		else if (go_game_up && go_engine_player_id == p_ptr->id) p_ptr->tim_store = 0;
 #endif
-		else {
+		else if (!admin_p(Ind)) {
 			/* Count down towards turnout */
 			p_ptr->tim_store--;
 
@@ -3797,7 +3797,7 @@ static bool process_player_end_aux(int Ind)
 
 				for (j = 1; j < NumPlayers + 1; j++) {
 					if (Ind == j) continue;
-					if (admin_p(Ind)) continue;
+					if (admin_p(j)) continue;
 					q_ptr = Players[j];
 					if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 					if (q_ptr->afk) continue;
