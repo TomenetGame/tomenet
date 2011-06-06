@@ -3073,6 +3073,154 @@ bool set_kinetic_shield(int Ind, int v) {
 	return (TRUE);
 }
 
+#ifdef ENABLE_DIVINE
+/* timed hp bonus for RACE_DIVINE.
+   *fastest* path (SKILL_ASTRAL = lvl+2):
+   +1 at lvl 39
+   +2 at lvl 54
+   +3 at lvl 60
+*/
+bool do_divine_hp(int Ind, int v, int p) {
+        player_type *p_ptr = Players[Ind];
+        bool notice = (FALSE);
+
+        /* Hack -- Force good values */
+        v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+        /* Open */
+        if (v) {
+                if (!p_ptr->divine_hp) {
+                        msg_format_near(Ind, "%s prepares for aggression!", p_ptr->name);
+                        msg_print(Ind, "You feel courageous.");
+			p_ptr->divine_hp_mod = p;
+
+                        notice = (TRUE);
+                }
+        }
+
+        /* Shut */
+        else { //v = 0;
+                if (p_ptr->divine_hp) {
+			p_ptr->divine_hp_mod = 0;
+                        msg_format_near(Ind, "%s returns to %s normal self.", p_ptr->name, (p_ptr->male? "his" : "her"));
+                        msg_print(Ind, "You no longer feel courageous.");
+                        notice = (TRUE);
+                }
+        }
+
+        p_ptr->divine_hp = v;
+
+        /* Nothing to notice */
+        if (!notice) return (FALSE);
+
+        /* Disturb */
+        if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+        /* Recalculate bonuses */
+        p_ptr->update |= (PU_BONUS|PU_HP);
+        /* Handle stuff */
+        handle_stuff(Ind);
+
+        /* Result */
+        return (TRUE);
+}
+
+/* 
+   timed crit bonus for RACE_DIVINE. 
+   *fastest* path (SKILL_ASTRAL = lvl+2):
+   +2 at lvl 44, +2 per 5 levels thereafter
+*/
+bool do_divine_crit(int Ind, int v, int p) {
+        player_type *p_ptr = Players[Ind];
+        bool notice = (FALSE);
+
+        /* Hack -- Force good values */
+        v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+        /* Open */
+        if (v) {
+                if (!p_ptr->divine_crit) {
+                        msg_format_near(Ind, "%s seems focussed.", p_ptr->name);
+                        msg_print(Ind, "You focus your intentions.");
+			p_ptr->divine_crit_mod = p;
+
+                        notice = (TRUE);
+                }
+        }
+
+        /* Shut */
+        else { //v = 0;
+                if (p_ptr->divine_crit) {
+			p_ptr->divine_crit_mod = 0;
+                        msg_format_near(Ind, "%s seems less focussed", p_ptr->name);
+                        msg_print(Ind, "Your focus dissipates.");
+                        notice = (TRUE);
+                }
+        }
+
+        p_ptr->divine_crit = v;
+
+        /* Nothing to notice */
+        if (!notice) return (FALSE);
+
+        /* Disturb */
+        if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+        /* Recalculate bonuses */
+        p_ptr->update |= (PU_BONUS);
+        /* Handle stuff */
+        handle_stuff(Ind);
+
+        /* Result */
+        return (TRUE);
+}
+
+/* 
+   timed time and mana res bonus for RACE_DIVINE. 
+*/
+bool do_divine_xtra_res_time_mana(int Ind, int v) {
+        player_type *p_ptr = Players[Ind];
+        bool notice = (FALSE);
+
+        /* Hack -- Force good values */
+        v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+        /* Open */
+        if (v) {
+                if (!p_ptr->divine_xtra_res_time_mana) {
+                        msg_print(Ind, "You no longer fear time and magical energy."); 
+                        notice = (TRUE);
+                }
+        }
+
+        /* Shut */
+        else { //v = 0;
+                if (p_ptr->divine_xtra_res_time_mana) {
+                        msg_print(Ind, "\377WYour divine protection from \377Btime\377W and \377vmana\377W based attacks ends.");
+                        notice = (TRUE);
+                }
+        }
+
+        p_ptr->divine_xtra_res_time_mana = v;
+
+        /* Nothing to notice */
+        if (!notice) return (FALSE);
+
+        /* Disturb */
+        if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+        /* Recalculate bonuses */
+        p_ptr->update |= (PU_BONUS);
+
+        /* Handle stuff */
+        handle_stuff(Ind);
+
+        /* Result */
+        return (TRUE);
+}
+#endif
+
+
 /*
  * Set "p_ptr->food", notice observable changes
  *

@@ -47,59 +47,7 @@
 #define PVP_DIMINISHING_HEALING_CAP(p) (((p)->lev + 5) * ((p)->lev + 5)) /* 10: 225, 20: 625, 30: 1225 */
 
 
-
 #ifdef ENABLE_DIVINE
-/* timed hp bonus for RACE_DIVINE.
-   *fastest* path (SKILL_ASTRAL = lvl+2):
-   +1 at lvl 39
-   +2 at lvl 54
-   +3 at lvl 60
-*/
-bool do_divine_hp(int Ind, int v, int p) {
-        player_type *p_ptr = Players[Ind];
-        bool notice = (FALSE);
-
-        /* Hack -- Force good values */
-        v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
-
-        /* Open */
-        if (v) {
-                if (!p_ptr->divine_hp) {
-                        msg_format_near(Ind, "%s prepares for aggression!", p_ptr->name);
-                        msg_print(Ind, "You feel couragious.");
-			p_ptr->divine_hp_mod = p;
-
-                        notice = (TRUE);
-                }
-        }
-
-        /* Shut */
-        else { //v = 0;
-                if (p_ptr->divine_hp) {
-			p_ptr->divine_hp_mod = 0;
-                        msg_format_near(Ind, "%s returns to %s normal self.", p_ptr->name, (p_ptr->male? "his" : "her"));
-                        msg_print(Ind, "You no longer feel couragious.");
-                        notice = (TRUE);
-                }
-        }
-
-        p_ptr->divine_hp = v;
-
-        /* Nothing to notice */
-        if (!notice) return (FALSE);
-
-        /* Disturb */
-        if (p_ptr->disturb_state) disturb(Ind, 0, 0);
-
-        /* Recalculate bonuses */
-        p_ptr->update |= (PU_BONUS|PU_HP);
-        /* Handle stuff */
-        handle_stuff(Ind);
-
-        /* Result */
-        return (TRUE);
-}
-
 /*
  * For angelic beings, this spell will gather any party 
  * members on the same level to him/herself. This also 
@@ -139,6 +87,7 @@ void divine_vengeance(int Ind, int power) {
 	//	project_hack(Ind, GF_DISP_ALL, power, " commands leave");
 	}
 }
+
 /* A: fury
  * D: +hp (does not stack with +LIFE)
  */
@@ -160,105 +109,6 @@ void divine_empowerment(int Ind, int level) {
 	return;
 }
 
-/* 
-   timed crit bonus for RACE_DIVINE. 
-   *fastest* path (SKILL_ASTRAL = lvl+2):
-   +2 at lvl 44, +2 per 5 levels thereafter
-*/
-bool do_divine_crit(int Ind, int v, int p) {
-        player_type *p_ptr = Players[Ind];
-        bool notice = (FALSE);
-
-        /* Hack -- Force good values */
-        v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
-
-        /* Open */
-        if (v) {
-                if (!p_ptr->divine_crit) {
-                        msg_format_near(Ind, "%s seems focused.", p_ptr->name);
-                        msg_print(Ind, "You focus your intentions.");
-			p_ptr->divine_crit_mod = p;
-
-                        notice = (TRUE);
-                }
-        }
-
-        /* Shut */
-        else { //v = 0;
-                if (p_ptr->divine_crit) {
-			p_ptr->divine_crit_mod = 0;
-                        msg_format_near(Ind, "%s seems less focused", p_ptr->name);
-                        msg_print(Ind, "Your focus dissipates.");
-                        notice = (TRUE);
-                }
-        }
-
-        p_ptr->divine_crit = v;
-
-        /* Nothing to notice */
-        if (!notice) return (FALSE);
-
-        /* Disturb */
-        if (p_ptr->disturb_state) disturb(Ind, 0, 0);
-
-        /* Recalculate bonuses */
-        p_ptr->update |= (PU_BONUS);
-        /* Handle stuff */
-        handle_stuff(Ind);
-
-        /* Result */
-        return (TRUE);
-}
-
-/* 
-   timed time and mana res bonus for RACE_DIVINE. 
-*/
-bool do_divine_xtra_res_time_mana(int Ind, int v) {
-        player_type *p_ptr = Players[Ind];
-        bool notice = (FALSE);
-
-        /* Hack -- Force good values */
-        v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
-
-        /* Open */
-        if (v)
-        {
-                if (!p_ptr->divine_xtra_res_time_mana)
-                {
-                        msg_print(Ind, "You no longer fear time and magical energy."); 
-                        notice = (TRUE);
-                }
-        }
-
-        /* Shut */
-        else	//v = 0;
-        {
-                if (p_ptr->divine_xtra_res_time_mana)
-                {
-                        msg_print(Ind, "Your resistance to time and magical energy ends.");
-                        notice = (TRUE);
-                }
-        }
-
-        p_ptr->divine_xtra_res_time_mana = v;
-
-        /* Nothing to notice */
-        if (!notice) return (FALSE);
-
-        /* Disturb */
-        if (p_ptr->disturb_state) disturb(Ind, 0, 0);
-
-        /* Recalculate bonuses */
-        p_ptr->update |= (PU_BONUS);
-
-        /* Handle stuff */
-        handle_stuff(Ind);
-
-        /* Result */
-        return (TRUE);
-}
-
-
 /* A: aoe slow, time/mana res
  * D: +crit
  */
@@ -275,7 +125,7 @@ void divine_intensify(int Ind, int level) {
 	}
 }
 
-#else //lol, shared .pkg
+#else /*lol, shared .pkg*/
 void divine_vengeance(int Ind, int power) {
 	return;
 }
