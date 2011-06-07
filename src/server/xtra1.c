@@ -3273,23 +3273,27 @@ void calc_boni(int Ind)
 	}
 #ifdef ENABLE_DIVINE
 	else if (p_ptr->prace == RACE_DIVINE) {
-		//Help em out a little..
+		//Help em out a little.. (to locate candlebearer/darkling)
 		p_ptr->telepathy |= ESP_DEMON;
 		p_ptr->telepathy |= ESP_GOOD;
 
 		if (p_ptr->ptrait == TRAIT_ENLIGHTENED) {
-			p_ptr->cur_lite += 1 + (p_ptr->lev - 20) / 6; //REAL light!
+			p_ptr->suscep_evil = TRUE;
+
+			p_ptr->see_inv = TRUE;
 			p_ptr->resist_lite = TRUE;
+			p_ptr->cur_lite += 1 + (p_ptr->lev - 20) / 6; //REAL light!
 			p_ptr->to_a += (p_ptr->lev - 20);
 			p_ptr->dis_to_a += (p_ptr->lev - 20);
+
 			if (p_ptr->lev >= 50) {
 				p_ptr->resist_pois = TRUE;
+				p_ptr->resist_elec = TRUE;
 				p_ptr->sh_elec = TRUE;
+				p_ptr->resist_cold = TRUE;
 				p_ptr->sh_cold = TRUE;
 				p_ptr->fly = TRUE;
 			}
-
-			p_ptr->suscep_evil = TRUE;
 
 			/* Bonus resistance for the good side */
 			if (p_ptr->divine_xtra_res_time_mana > 0) {
@@ -3297,15 +3301,16 @@ void calc_boni(int Ind)
 				p_ptr->resist_mana = TRUE;
 			}
 		} else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
+			p_ptr->suscep_good = TRUE;
+
 			p_ptr->resist_fire = TRUE;
 			p_ptr->resist_dark = TRUE;
+
 			if (p_ptr->lev >= 50) {
-				p_ptr->immune_fire = TRUE;
 				p_ptr->resist_pois = TRUE;
+				p_ptr->immune_fire = TRUE;
 				p_ptr->sh_fire = TRUE;
 			}
-
-			p_ptr->suscep_good = TRUE;
 
 			/* Bonus crit for the bad side */
 			if (p_ptr->divine_crit > 0)
