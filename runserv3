@@ -2,6 +2,7 @@
 # Runserv, by Chris Atenasio
 # Upgraded to store server logs by evileye
 # Modified by mikaelh
+# Added protection of compressed previous log file on crash - C. Blue
 
 PIDFILE=lib/data/tomenet.pid
 PATH=/bin:/usr/bin:/usr/local/bin
@@ -35,7 +36,14 @@ files_check () {
 	fi
 	if [ -f lib/data/tomenet.log ] ; then
 		bzip2 lib/data/tomenet.log
-		mv lib/data/tomenet.log.bz2 lib/data/`date +"%Y%m%d%H%M.log.bz2"`
+		# Don't overwrite compressed log file of same timestamp,
+		# which would likely have resulted result from a crash.
+		# Instead, add seconds to time stamp to save the new file. - C. Blue
+		if [ -f lib/data/`date +"%Y%m%d%H%M.log.bz2"` ] ; then
+			mv lib/data/tomenet.log.bz2 lib/data/`date +"%Y%m%d%H%M%S.log.bz2"`
+		else
+			mv lib/data/tomenet.log.bz2 lib/data/`date +"%Y%m%d%H%M.log.bz2"`
+		fi
 	fi
 }
 
