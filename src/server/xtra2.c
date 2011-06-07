@@ -3449,10 +3449,10 @@ bool bless_temp_luck(int Ind, int pow, int dur)
 	return (TRUE);
 }
 
+#ifdef ENABLE_DIVINE
 /* helper function to modify Maia skills when they get a trait - C. Blue
    NOTE: IF THIS IS CALLED TOO MANY TIMES IN A ROW IT
          _MIGHT_ DISCONNET THE CLIENT WITH A 'write error'. */
-#ifdef ENABLE_DIVINE
 static void do_Maia_skill(int Ind, int s, int m) {
 	/* Save old skill value */
 	s32b val = Players[Ind]->s_info[s].value, tmp_val = Players[Ind]->s_info[s].mod;
@@ -3473,7 +3473,12 @@ static void do_Maia_skill(int Ind, int s, int m) {
 #else
 	while (Players[Ind]->s_info[s].value + Players[Ind]->s_info[s].mod <= val /* no "overskilling" */
 #endif
-	    && Players[Ind]->s_info[s].value != tmp_val) /* avoid getting stuck */ {
+	    /* avoid game maximum overflow - paranoia: */
+	    && Players[Ind]->s_info[s].value < 50000
+	    /* avoid cap overflow - extreme cases only (maxed auras): */
+	    && Players[Ind]->s_info[s].value / 1000 < Players[Ind]->max_plv + 2
+	    /* avoid getting stuck - paranoia (could waste 1 point actually if it really happened): */
+	    && Players[Ind]->s_info[s].value != tmp_val) {
 		/* make sure we don't loop forever in case we can't go higher */
 		tmp_val = Players[Ind]->s_info[s].value;
 		/* invest a point */
