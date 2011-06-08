@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 4. June 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 8. June 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -6482,7 +6482,7 @@ UN_POWER        none.(drains charges/energy from your items)
                 See (6.10) for more information about the Magic Device skill.
 TIME            time.
 DISEASE         poison. This attack can also decrease your constitution.
-SANITY          none. (mimics using WEIRD_MIND/EMPTY_MIND form resist slightly)
+INSANITY        none. (mimics using WEIRD_MIND/EMPTY_MIND form resist slightly)
 HALLU           chaos.
 PARASITE        <no effect>
 DISARM          fighting skill.
@@ -8590,9 +8590,10 @@ B: attack method : attack effect : damage
       scare the target.
     PARALYZE won't work on monsters that have NO_STUN, otherwise it'll
       stun the target.
-    EXPxx means the monster drains life on attacking. The player will
+    EXP_xx means the monster drains life on attacking. The player will
       receive HOLD_LIFE (resist life-draining attacks) from this form.
     SHATTER will result in a bonus to player's STRength attribute.
+    LOSE_xxx will give the according sustenance.
 
     Monster effects (like poisoning or paralyzing) are applied to
     the player's attacks with a probability that corresponds to their

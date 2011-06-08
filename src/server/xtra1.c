@@ -1962,6 +1962,32 @@ static void calc_body_bonus(int Ind)
 			case RBE_SHATTER:
 				p_ptr->stat_add[A_STR]++;
 				break;
+			case RBE_LOSE_STR:
+				p_ptr->sustain_str = TRUE;
+				break;
+			case RBE_LOSE_INT:
+				p_ptr->sustain_int = TRUE;
+				break;
+			case RBE_LOSE_WIS:
+				p_ptr->sustain_wis = TRUE;
+				break;
+			case RBE_LOSE_DEX:
+				p_ptr->sustain_dex = TRUE;
+				break;
+			case RBE_LOSE_CON:
+				p_ptr->sustain_con = TRUE;
+				break;
+			case RBE_LOSE_CHR:
+				p_ptr->sustain_chr = TRUE;
+				break;
+			case RBE_LOSE_ALL:
+				p_ptr->sustain_str = TRUE;
+				p_ptr->sustain_int = TRUE;
+				p_ptr->sustain_wis = TRUE;
+				p_ptr->sustain_dex = TRUE;
+				p_ptr->sustain_con = TRUE;
+				p_ptr->sustain_chr = TRUE;
+				break;
 		}
 
 		/* Hack -- weaponless combat */
