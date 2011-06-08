@@ -6480,6 +6480,15 @@ static void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr)
 	if (f2 & TR2_RES_NETHER) r_ptr->flags3 |= RF3_RES_NETH;
 	if (f2 & TR2_RES_NEXUS) r_ptr->flags3 |= RF3_RES_NEXU;
 	if (f2 & TR2_RES_DISEN) r_ptr->flags3 |= RF3_RES_DISE;
+
+	/* Allow use of runes */
+	if (o_ptr->tval == TV_RUNE2) switch(o_ptr->sval) {
+	case SV_RUNE2_FIRE: r_ptr->flags3 |= RF3_IM_FIRE; break;
+	case SV_RUNE2_ACID: r_ptr->flags3 |= RF3_IM_ACID; break;
+	case SV_RUNE2_NETHER: r_ptr->flags3 |= RF3_RES_NETH; break;
+	case SV_RUNE2_NEXUS: r_ptr->flags3 |= RF3_RES_NEXU; break;
+//	case SV_RUNE2_MANA: r_ptr->flags9 |= RF9_RES_MANA; break;
+	}
 }
 
 /* multi builder stuff - move when complete */
