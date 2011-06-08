@@ -9995,7 +9995,8 @@ F:IM_POIS | OPEN_DOOR | BASH_DOOR | MALE | RES_PLAS | IM_FIRE |
 F:IM_FIRE | NO_CONF | NO_SLEEP | EVIL | DEMON | FORCE_MAXHP | RES_TELE | 
 F:ZANGBAND | HAS_LITE
 #F:NONLIVING
-S:1_IN_2 |
+#S:1_IN_2 | reduced to avoid mad int/mana bonus compared to angels
+S:1_IN_3 |
 S:BO_PLAS
 D:A minor demon lord with a goat's head, tough to kill. 
 
@@ -10462,7 +10463,8 @@ F:SMART | TAKE_ITEM | OPEN_DOOR | BASH_DOOR | NO_NEST |
 F:EVIL | GIANT | MALE | BASEANGBAND | HAS_LITE | NO_CONF |
 F:RES_FIRE | RES_COLD | RES_ELEC | RES_ACID | RES_POIS
 #F:NO_SLEEP | RES_SHARDS
-S:1_IN_3 | 
+#S:1_IN_3 | avoid getting angel-like spell boni
+S:1_IN_4
 S:HEAL | TELE_TO | SCARE | BOULDER
 S:S_MONSTERS
 D:It is a humanoid figure thirty feet tall that gives off an aura of power 
@@ -11918,7 +11920,8 @@ F:SMART | TAKE_ITEM | OPEN_DOOR | BASH_DOOR | NO_STUN | NO_NEST |
 F:EVIL | GIANT | MALE | BASEANGBAND | HAS_LITE | NO_CONF
 F:RES_FIRE | RES_COLD | RES_ELEC | RES_ACID | RES_POIS
 #F:NO_SLEEP | RES_SHARDS
-S:1_IN_3 | 
+#S:1_IN_3 | avoid getting angel-like spell boni
+S:1_IN_4 | 
 S:HEAL | TELE_TO | BOULDER
 S:S_MONSTERS
 D:A forty foot tall humanoid that shakes the ground as it walks. The power 
@@ -17761,14 +17764,15 @@ B:HIT:HURT:4d6
 B:HIT:HURT:4d6
 B:BITE:EXP_80:5d6
 B:BITE:EXP_80:5d6
-F:FORCE_SLEEP | FORCE_MAXHP | CAN_FLY |
+F:FORCE_SLEEP | FORCE_MAXHP | CAN_FLY | SMART | 
 F:DROP_60 | DROP_4D2 | DROP_GOOD | RES_DARK | RES_NETH |
 F:COLD_BLOOD | OPEN_DOOR | BASH_DOOR | REGENERATE | RES_TELE | 
 F:EVIL | UNDEAD | IM_COLD | IM_POIS | HURT_LITE | 
 F:NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
 S:1_IN_7 | 
-S:BLIND | HOLD | SCARE | CURSE | CURSE | DRAIN_MANA | 
+S:BLIND | HOLD | CURSE | CURSE | DRAIN_MANA | 
 S:BRAIN_SMASH | DARKNESS | BO_NETH | S_UNDEAD
+#SCARE | disabled it for now to make their spellcasting less weak
 D:A terrible robed undead figure, this creature has existed in its 
 D:unlife for many centuries by stealing the life of others. It can 
 D:summon the very shades of its victims from beyond the grave to 

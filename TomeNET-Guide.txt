@@ -8700,11 +8700,11 @@ S: spell list
     fact magic spells, not if the monster cannot do anything except firing
     missiles, shrieking or shooting arrows (etc).
     If the creature is able to cast 1_IN_3, the player receives +1 INT and
-    +10% Mana bonus (of base mana, same way +MANA items work).
+    +20% Mana bonus (of base mana, same way +MANA items work).
     If the creature is able to cast 1_IN_2, the player receives +3 INT and
-    +30% Mana bonus (of base mana, same way +MANA items work).
-    If the creature is able to cast 1_IN_1, the player receives +5 INT and
-    +40% Mana bonus (of base mana, same way +MANA items work).
+    +35% Mana bonus (of base mana, same way +MANA items work).
+    If the creature is able to cast 1_IN_1, the player receives +4 INT and
+    +50% Mana bonus (of base mana, same way +MANA items work).
 
     About specific spells:
     BR_xxx      (breathing) will give the according resistance to the player

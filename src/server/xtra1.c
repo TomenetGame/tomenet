@@ -2130,17 +2130,17 @@ static void calc_body_bonus(int Ind)
 		if (r_ptr->freq_inate > 30) {
 			p_ptr->num_spell++;	// 1_IN_3
 			p_ptr->stat_add[A_INT] += 1;
-			p_ptr->to_m += 10;
+			p_ptr->to_m += 20;
 		}
 		if (r_ptr->freq_inate >= 50) {
 			p_ptr->num_spell++;	// 1_IN_2
 			p_ptr->stat_add[A_INT] += 2;
-			p_ptr->to_m += 20;
+			p_ptr->to_m += 15;
 		}
-		if (r_ptr->freq_inate == 100) { /* well, _which_ monster would that be? :) */
+		if (r_ptr->freq_inate == 100) { /* well, drujs and quylthulgs >_> */
 			p_ptr->num_spell++;	// 1_IN_1
-			p_ptr->stat_add[A_INT] += 2;
-			p_ptr->to_m += 10;
+			p_ptr->stat_add[A_INT] += 1;
+			p_ptr->to_m += 15;
 		}
 	}
 
