@@ -4,12 +4,25 @@ function get_astral_lev(Ind)
 	return (players(Ind).s_info[SKILL_ASTRAL + 1].value + 1) / 2000 + players(Ind).lev / 2
 end
 
+--[[ 
+manathrust does 3...53 d 1 .. 21 damage base
+powerbolt/beam doing 3 .. 53 d 1 .. 26 might be OK because:
+1. mana school on its own is severely lacking (manathrust as main nuke only really viable with spell power)
+2. reflection 
+
+I'll let you know about #1 when Pikachu is higher level :) 
+]]
 function get_astral_dam(Ind)
-	return (3 + get_astral_lev(Ind) / 2), (3 + get_astral_lev(Ind) / 2)
+	return (3 + ((get_astral_lev(Ind) * 3) / 5)), (1 + get_astral_lev(Ind) / 2)
 end
 
+--orb of draining (main nuke for priests) go from 20 + (0 .. 475)
+--fireflash (main nuke for mages) go from 20 + (0 .. 500)
+--PROPOSED: due to lack of SUSECP_MANA/NETHER, we should be able to at least average out to ~750 per nuke (similar to resisted FF on SUSCEPT and FIRE_IMM monsters (754, to be exact))
+-- proposed: 40 + astral_lev*15  => 40 + (0 .. 750) at lvl 50
 function get_astral_dam_ball(Ind)
-	return (3 + get_astral_lev(Ind) / 3), (3 + get_astral_lev(Ind) / 1)
+--	return 40 + get_astral_lev(Ind) * 12;
+	return (3 + ((get_astral_lev(Ind) * 2) / 5)), (3 + get_astral_lev(Ind) / 1)
 end
 
 function get_astral_bonus_hp(Ind)
@@ -70,9 +83,9 @@ POWERBEAM = add_spell
 	["name"] = 	"Power Ray",
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
-	["level"] = 	8,
-	["mana"] = 	8,
-	["mana_max"] = 	28,
+	["level"] = 	5,
+	["mana"] = 	2,
+	["mana_max"] = 	25,
 	["fail"] = 	10,
 	["stat"] = 	A_INT,
 	["direction"] = TRUE,
@@ -104,26 +117,31 @@ POWERBALL = add_spell
 	["name"] = 	"Power Blast",
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
-	["level"] = 	12,
-	["mana"] = 	12,
-	["mana_max"] = 	35,
-	["fail"] = 	5,
+	["level"] = 	10,
+	["mana"] = 	5,
+	["mana_max"] = 	30,
+	["fail"] = 	15,
 	["stat"] = 	A_INT,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
 			if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
-				fire_ball(Ind, GF_MANA, args.dir, damroll(get_astral_dam_ball(Ind)), 2 + get_level(Ind, POWERBALL, 25) / 8, " casts a ball of mana for")
+				fire_ball(Ind, GF_MANA, args.dir, damroll(get_astral_dam_ball(Ind)), 2 + get_level(Ind, POWERBALL, 2), " casts a mana ball for")
+				--fire_ball(Ind, GF_MANA, args.dir, get_astral_dam_ball(Ind), 2 + get_level(Ind, POWERBALL, 2), " casts a ball of mana for")
 			elseif (players(Ind).ptrait == TRAIT_CORRUPTED) then
-				fire_ball(Ind, GF_NETHER, args.dir, damroll(get_astral_dam_ball(Ind)), 2 + get_level(Ind, POWERBALL, 25) / 8, " casts a nether ball for")
+				fire_ball(Ind, GF_NETHER, args.dir, damroll(get_astral_dam_ball(Ind)), 2 + get_level(Ind, POWERBALL, 2), " casts a nether ball for")
+				--fire_ball(Ind, GF_NETHER, args.dir, get_astral_dam_ball(Ind), 2 + get_level(Ind, POWERBALL, 2), " casts a ball of nether for")
 			else	
-				fire_ball(Ind, GF_ELEC, args.dir, damroll(get_astral_dam_ball(Ind)), 2 + get_level(Ind, POWERBALL, 25) / 8, " casts a ball of lightning for")
+				fire_ball(Ind, GF_ELEC, args.dir, damroll(get_astral_dam_ball(Ind)), 2 + get_level(Ind, POWERBALL, 2), " casts a lightning ball for")
+				--fire_ball(Ind, GF_ELEC, args.dir, get_astral_dam_ball(Ind), 2 + get_level(Ind, POWERBALL, 2), " casts a ball of lightning for")
 			end
 	end,
 	["info"] = 	function()
 			local xx, yy
+			--xx = get_astral_dam_ball(Ind)
 			xx, yy = get_astral_dam_ball(Ind)
-			return "dam "..xx.."d"..yy.." rad "..2 + get_level(Ind, POWERBALL, 25) / 8
+			return "dam "..xx.."d"..yy.." rad "..2 + get_level(Ind, POWERBALL, 2)
+			--return "dam "..xx.." rad "..2 + get_level(Ind, POWERBALL, 2);
 	end,
 	["desc"] =	{
 			"Enlightened: conjures up a powerful ball of mana",
@@ -270,19 +288,21 @@ GATEWAY = add_spell
 	["name"] = 	"Gateway",
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
-	["level"] = 	50,
-	["mana"] = 	999,
-	["mana_max"] = 	999,
-	["fail"] = 	1,
+	["level"] = 	40,
+	["mana"] = 	50,
+	["mana_max"] = 	50,
+	["fail"] = 	-98,
 	["stat"] = 	A_WIS,
-	["direction"] = TRUE,
+	["direction"] = FALSE,
 	["spell"] = 	function(args)
+				if (players(Ind).lev >= 62 and get_astral_lev(Ind) >= 50) then
+					divine_gateway(Ind);
+				end
 	end,
 	["info"] = 	function()
-			return ""
+			return "";
 	end,
 	["desc"] =	{
-			"DOES NOT WORK (yet)",
 			"Requires level 50 Astral Knowledge and at least character level 62",
 			"Enlightened: instantaneous wor for every party member on the level",
 			"Corrupted: creates a void jump gate",
