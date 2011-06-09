@@ -3488,6 +3488,55 @@ static void do_Maia_skill(int Ind, int s, int m) {
 	/* Update it after the re-increasing has been finished */
 	Send_skill_info(Ind, s);
 }
+/* Change Maia skill chart after initiation */
+void shape_Maia_skills(int Ind) {
+	player_type *p_ptr = Players[Ind];
+
+	switch (p_ptr->ptrait) {
+	case TRAIT_CORRUPTED:
+		/* Doh! */
+		p_ptr->s_info[SKILL_HOFFENSE].mod = 0;
+		p_ptr->s_info[SKILL_HCURING].mod = 0;
+		p_ptr->s_info[SKILL_HDEFENSE].mod = 0;
+		p_ptr->s_info[SKILL_HSUPPORT].mod = 0;
+
+		/* Yay */
+		do_Maia_skill(Ind, SKILL_AXE, 13);
+		do_Maia_skill(Ind, SKILL_MARTIAL_ARTS, 13);
+		do_Maia_skill(Ind, SKILL_FIRE, 17);
+		do_Maia_skill(Ind, SKILL_AIR, 17);
+		do_Maia_skill(Ind, SKILL_CONVEYANCE, 17);
+		do_Maia_skill(Ind, SKILL_UDUN, 20);
+		do_Maia_skill(Ind, SKILL_TRAUMATURGY, 30);
+		do_Maia_skill(Ind, SKILL_NECROMANCY, 30);
+		do_Maia_skill(Ind, SKILL_AURA_FEAR, 30);
+		do_Maia_skill(Ind, SKILL_AURA_SHIVER, 30);
+		do_Maia_skill(Ind, SKILL_AURA_DEATH, 30);
+		break;
+
+	case TRAIT_ENLIGHTENED:
+		/* Doh! */
+		p_ptr->s_info[SKILL_TRAUMATURGY].mod *= 0;
+		p_ptr->s_info[SKILL_NECROMANCY].mod *= 0;
+		p_ptr->s_info[SKILL_AURA_DEATH].mod *= 0;
+
+		/* Yay */
+		do_Maia_skill(Ind, SKILL_AURA_FEAR, 30);
+		do_Maia_skill(Ind, SKILL_AURA_SHIVER, 30);
+		do_Maia_skill(Ind, SKILL_HOFFENSE, 24);
+		do_Maia_skill(Ind, SKILL_HCURING, 24);
+		do_Maia_skill(Ind, SKILL_HDEFENSE, 24);
+		do_Maia_skill(Ind, SKILL_HSUPPORT, 24);
+		do_Maia_skill(Ind, SKILL_DIVINATION, 17);
+		do_Maia_skill(Ind, SKILL_SWORD, 13);
+		do_Maia_skill(Ind, SKILL_BLUNT, 13);
+		do_Maia_skill(Ind, SKILL_POLEARM, 13);
+		do_Maia_skill(Ind, SKILL_SNEAKINESS, 21);
+		do_Maia_skill(Ind, SKILL_STEALTH, 21);
+		break;
+	default: ;
+	}
+}
 #endif
 
 /*
@@ -3908,50 +3957,13 @@ void check_experience(int Ind)
 					//A demon appears!
 					msg_print(Ind, "\374\377p*** \377GYour corruption grows well within you. \377p***");
 					p_ptr->ptrait = TRAIT_CORRUPTED;
-
-					/* Doh! */
-					p_ptr->s_info[SKILL_HOFFENSE].mod = 0;
-					p_ptr->s_info[SKILL_HCURING].mod = 0;
-					p_ptr->s_info[SKILL_HDEFENSE].mod = 0;
-					p_ptr->s_info[SKILL_HSUPPORT].mod = 0;
-
-					/* Yay */
-					do_Maia_skill(Ind, SKILL_AXE, 13);
-					do_Maia_skill(Ind, SKILL_MARTIAL_ARTS, 13);
-					do_Maia_skill(Ind, SKILL_FIRE, 17);
-					do_Maia_skill(Ind, SKILL_AIR, 17);
-					do_Maia_skill(Ind, SKILL_CONVEYANCE, 17);
-					do_Maia_skill(Ind, SKILL_UDUN, 20);
-					do_Maia_skill(Ind, SKILL_TRAUMATURGY, 30);
-					do_Maia_skill(Ind, SKILL_NECROMANCY, 30);
-					do_Maia_skill(Ind, SKILL_AURA_FEAR, 30);
-					do_Maia_skill(Ind, SKILL_AURA_SHIVER, 30);
-					do_Maia_skill(Ind, SKILL_AURA_DEATH, 30);
 				} else {
 					//An angel appears!
 					msg_print(Ind, "\374\377p*** \377sYou have been ordained to be order in presence of chaos. \377p***");
 					p_ptr->ptrait = TRAIT_ENLIGHTENED;
-
-					/* Doh! */
-					p_ptr->s_info[SKILL_TRAUMATURGY].mod *= 0;
-					p_ptr->s_info[SKILL_NECROMANCY].mod *= 0;
-					p_ptr->s_info[SKILL_AURA_DEATH].mod *= 0;
-
-					/* Yay */
-					do_Maia_skill(Ind, SKILL_AURA_FEAR, 30);
-					do_Maia_skill(Ind, SKILL_AURA_SHIVER, 30);
-					do_Maia_skill(Ind, SKILL_HOFFENSE, 24);
-					do_Maia_skill(Ind, SKILL_HCURING, 24);
-					do_Maia_skill(Ind, SKILL_HDEFENSE, 24);
-					do_Maia_skill(Ind, SKILL_HSUPPORT, 24);
-					do_Maia_skill(Ind, SKILL_DIVINATION, 17);
-					do_Maia_skill(Ind, SKILL_SWORD, 13);
-					do_Maia_skill(Ind, SKILL_BLUNT, 13);
-					do_Maia_skill(Ind, SKILL_POLEARM, 13);
-					do_Maia_skill(Ind, SKILL_SNEAKINESS, 21);
-					do_Maia_skill(Ind, SKILL_STEALTH, 21);
 				}
 
+				shape_Maia_skills(Ind);
 				calc_techniques(Ind);
 
 				p_ptr->redraw |= PR_SKILLS | PR_MISC;
