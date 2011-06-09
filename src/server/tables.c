@@ -2494,7 +2494,7 @@ Nothing here that truly heals/buffs people (those bonus are to self only). They 
 		/* Plan is to disable warrior and archer since they do not have SP */
 //                0xFFFFFFFF, //All classess for now
 //		0x00000F99,
-		CFP+CFI+CFR+CFL+CFN+CFX+CFD+CFS+CFU+CFC,
+		CFP+CFI+CFR+CFM+CFL+CFN+CFX+CFD+CFS+CFU+CFC,
                 125,
                 {
 /* The plan is to have a skill tree that is updated as the player level.
