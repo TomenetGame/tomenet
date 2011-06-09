@@ -3537,6 +3537,8 @@ void shape_Maia_skills(int Ind) {
 	default: ;
 	}
 }
+#else /* shared player.pkg file */
+void shape_Maia_skills(int Ind) { }
 #endif
 
 /*
