@@ -660,25 +660,70 @@ static void place_altar(int y, int x)
 #endif	/* 0 */
 
 
+/*
+ * Place a between gate at the two specified locations
+ */
+bool place_between_targetted(struct worldpos *wpos, int y, int x, int ty, int tx) {
+	cave_type **zcave;
+	cave_type *c_ptr, *c1_ptr;
+	c_special *cs_ptr;
+
+	if (!(zcave = getcave(wpos))) return FALSE;
+	c_ptr = &zcave[y][x];
+
+	/* No between-gate over traps/house doors etc */
+	if (c_ptr->special) return FALSE;
+
+	/* Require "naked" floor grid */
+	if (!cave_naked_bold(zcave, ty, tx)) return FALSE;
+
+	/* Access the target grid */
+	c1_ptr = &zcave[ty][tx];
+	if (c1_ptr->special) return FALSE;
+
+	if (!(cs_ptr = AddCS(c_ptr, CS_BETWEEN))) return FALSE;
+	cave_set_feat(wpos, y, x, FEAT_BETWEEN);
+	cs_ptr->sc.between.fy = ty;
+	cs_ptr->sc.between.fx = tx;
+
+	/* XXX not 'between' gate can be generated */
+	if (!(cs_ptr = AddCS(c1_ptr, CS_BETWEEN))) return FALSE;
+	cave_set_feat(wpos, ty, tx, FEAT_BETWEEN);
+	cs_ptr->sc.between.fy = y;
+	cs_ptr->sc.between.fx = x;
+
+	return TRUE;
+}
 
 /*
  * Place a between gate at the given location
  */
 static void place_between(struct worldpos *wpos, int y, int x)
 {
+//calls place_between_targetted; too slow maybe?
+#if 1
+
+	int gx, gy, tries = 1000;
+	while (TRUE) {
+		gy = rand_int(dun->l_ptr->hgt);
+		gx = rand_int(dun->l_ptr->wid);
+		if (place_between_targetted(wpos, y, x, gy, gx)) break;
+
+		if (tries-- == 0) return;
+	}
+#else //the old function
 	cave_type **zcave;
 	cave_type *c_ptr, *c1_ptr;
 	int gx, gy, tries = 1000;
 	c_special *cs_ptr;
 
-	if(!(zcave=getcave(wpos))) return;
-	c_ptr=&zcave[y][x];
+	if (!(zcave = getcave(wpos))) return;
+	c_ptr = &zcave[y][x];
 
 	/* No between-gate over traps/house doors etc */
 	if (c_ptr->special) return;
 
-	while (TRUE)	/* TODO: add a counter to prevent infinite-loop */
-	{
+	while (TRUE) {
 		/* Location */
 		/* XXX if you call it from outside of cave-generation code,
 		 * you should change here */
@@ -686,8 +731,7 @@ static void place_between(struct worldpos *wpos, int y, int x)
 		gx = rand_int(dun->l_ptr->wid);
 
 		/* Require "naked" floor grid */
-		if (cave_naked_bold(zcave, gy, gx))
-		{
+		if (cave_naked_bold(zcave, gy, gx)) {
 			/* Access the target grid */
 			c1_ptr = &zcave[gy][gx];
 
@@ -697,16 +741,17 @@ static void place_between(struct worldpos *wpos, int y, int x)
 		if (tries-- == 0) return;
 	}
 
-	if (!(cs_ptr=AddCS(c_ptr, CS_BETWEEN))) return;
+	if (!(cs_ptr = AddCS(c_ptr, CS_BETWEEN))) return;
 	cave_set_feat(wpos, y, x, FEAT_BETWEEN);
 	cs_ptr->sc.between.fy = gy;
 	cs_ptr->sc.between.fx = gx;
 
 	/* XXX not 'between' gate can be generated */
-	if (!(cs_ptr=AddCS(c1_ptr, CS_BETWEEN))) return;
+	if (!(cs_ptr = AddCS(c1_ptr, CS_BETWEEN))) return;
 	cave_set_feat(wpos, gy, gx, FEAT_BETWEEN);
 	cs_ptr->sc.between.fy = y;
 	cs_ptr->sc.between.fx = x;
+#endif
 }
 
 /*
