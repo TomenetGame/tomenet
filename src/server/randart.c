@@ -2108,6 +2108,8 @@ artifact_type *ego_make(object_type *o_ptr)
 
 	/* Wipe the artifact_type structure */
 	WIPE(&randart, artifact_type);
+	a_ptr->tval = k_ptr->tval;
+	a_ptr->sval = k_ptr->sval;
 
 	e_idx = o_ptr->name2;
 
