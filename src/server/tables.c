@@ -2502,8 +2502,8 @@ Only 70%-ify the skills that could potentially be updated when the player mutate
  */
 			{
 				SKILL_ASTRAL,	
-				'+', 1000,
-				'+', 1000,
+				'+', 1250,
+				'+', 1250,
 			},
                         {
                                 SKILL_HOFFENSE,

@@ -1763,6 +1763,7 @@ extern bool master_level_specific(int Ind, struct worldpos *wpos, char * parms);
 extern void unstatic_level(struct worldpos *wpos);
 
 extern int det_exp_level(int lev);
+extern void shape_Maia_skills(int Ind);
 
 /*
  * Hack -- conditional (or "bizarre") externs
