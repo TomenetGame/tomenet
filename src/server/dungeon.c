@@ -4850,10 +4850,16 @@ static void process_player_change_wpos(int Ind)
 	/* Decide whether we stayed long enough on the previous
 	   floor to get distinct floor feelings here, and also
 	   start counting turns we spend on this floor. */
+	//there's no scumming in RPG_SERVER!
+#ifdef RPG_SERVER
+	
+	p_ptr->distinct_floor_feeling = TRUE;
+#else
 	if (p_ptr->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)
 		p_ptr->distinct_floor_feeling = TRUE;
 	else
 		p_ptr->distinct_floor_feeling = FALSE;
+#endif
 	if (p_ptr->new_level_method != LEVEL_OUTSIDE &&
 	    p_ptr->new_level_method != LEVEL_OUTSIDE_RAND &&
 	    p_ptr->new_level_method != LEVEL_HOUSE)

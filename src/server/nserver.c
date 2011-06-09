@@ -4642,8 +4642,10 @@ int Send_depth(int ind, struct worldpos *wpos)
 			if (p_ptr2->word_recall) colour2 = TERM_ORANGE;
 			/* use as indicator for pvp_prevent_tele, actually */
 			else if ((p_ptr2->mode & MODE_PVP) && p_ptr2->pvp_prevent_tele) colour2 = TERM_RED;
+#ifndef RPG_SERVER
 			/* able to get extra level feeling on next floor? */
 			else if (TURNS_FOR_EXTRA_FEELING && (p_ptr2->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)) colour2 = TERM_L_BLUE;
+#endif
 			/* in a town? ignore town level */
 			else if (ville) colour2 = TERM_WHITE;
 			/* way too low to get good exp? */
