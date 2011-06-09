@@ -1852,7 +1852,15 @@ int Receive_skill_info(void)
 
 	p_ptr->s_info[i].value = val;
 	p_ptr->s_info[i].mod = mod;
-	p_ptr->s_info[i].dev = dev;
+
+	if (is_newer_than(&server_version, 4, 4, 6, 2, 0, 0)) {
+		switch (dev) {
+		case -1: break;
+		case 0: p_ptr->s_info[i].dev = FALSE; break;
+		case 1: p_ptr->s_info[i].dev = TRUE; break;
+		}
+	} else p_ptr->s_info[i].dev = dev;
+
 	s_info[i].action_mkey = mkey;
 	p_ptr->s_info[i].flags1 = flags1;
 

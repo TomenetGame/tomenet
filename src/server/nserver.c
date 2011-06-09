@@ -4198,7 +4198,8 @@ int Send_skill_points(int ind){
         return Packet_printf(&connp->c, "%c%d", PKT_SKILL_PTS, p_ptr->skill_points);
 }
 
-int Send_skill_info(int ind, int i)
+/* i is skill index, keep means if we want the client to keep his 'deflated?' state */
+int Send_skill_info(int ind, int i, bool keep)
 {
 	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
@@ -4223,8 +4224,10 @@ int Send_skill_info(int ind, int i)
 	        return Packet_printf(&connp->c, "%c%d%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1 & SKF1_HIDDEN, mkey);
 	} else if (!is_newer_than(&connp->version, 4, 4, 4, 1, 0, 0)) {
 	        return Packet_printf(&connp->c, "%c%d%d%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1 & SKF1_HIDDEN, mkey, p_ptr->s_info[i].flags1 & SKF1_DUMMY);
-	} else {
+	} else if (!is_newer_than(&connp->version, 4, 4, 6, 2, 0, 0)) {
 	        return Packet_printf(&connp->c, "%c%d%d%d%d%c%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1, mkey);
+	} else {
+	        return Packet_printf(&connp->c, "%c%d%d%d%d%c%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, keep ? -1 : (p_ptr->s_info[i].dev ? 1 : 0), p_ptr->s_info[i].flags1, mkey);
 	}
 }
 

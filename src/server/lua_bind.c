@@ -1015,10 +1015,10 @@ void lua_fix_skill_chart(int Ind) {
 	if (get_skill(p_ptr, SKILL_STANCE) && p_ptr->lev <= 50) {
 		p_ptr->s_info[SKILL_STANCE].value = p_ptr->lev * 1000;
 		/* Update the client */
-		Send_skill_info(Ind, SKILL_STANCE);
+		Send_skill_info(Ind, SKILL_STANCE, TRUE);
 		/* Also update the client's 'm' menu for fighting techniques */
 		calc_techniques(Ind);
-		Send_skill_info(Ind, SKILL_TECHNIQUE);
+		Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
 	}
 
 	p_ptr->update |= PU_SKILL_INFO | PU_SKILL_MOD;

@@ -5994,7 +5994,7 @@ void update_stuff(int Ind)
 		p_ptr->update &= ~(PU_SKILL_MOD);
 		for (i = 1; i < MAX_SKILLS; i++) {
 			if (s_info[i].name && p_ptr->s_info[i].touched) {
-				Send_skill_info(Ind, i);
+				Send_skill_info(Ind, i, FALSE);
 				p_ptr->s_info[i].touched = FALSE;
 			}
 		}

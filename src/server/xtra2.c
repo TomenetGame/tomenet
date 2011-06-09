@@ -3486,7 +3486,7 @@ static void do_Maia_skill(int Ind, int s, int m) {
 	}
 
 	/* Update it after the re-increasing has been finished */
-	Send_skill_info(Ind, s);
+	Send_skill_info(Ind, s, FALSE);
 }
 /* Change Maia skill chart after initiation */
 void shape_Maia_skills(int Ind) {
@@ -3984,7 +3984,7 @@ void check_experience(int Ind)
 				msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'!");
 			/* Also update the client's 'm' menu for fighting techniques */
 			calc_techniques(Ind);
-			Send_skill_info(Ind, SKILL_TECHNIQUE);
+			Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
 			break;
 		case CLASS_ROGUE:
 #ifdef ENABLE_CLOAKING
@@ -4007,7 +4007,7 @@ void check_experience(int Ind)
 				msg_print(Ind, "\374\377GYou learn the royal fighting technique 'Shadow run'");
 			/* Also update the client's 'm' menu for fighting techniques */
 			calc_techniques(Ind);
-			Send_skill_info(Ind, SKILL_TECHNIQUE);
+			Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
 			break;
 		case CLASS_RANGER:
 			if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou learn how to move through dense forests easily.");
@@ -4035,7 +4035,7 @@ void check_experience(int Ind)
 			if (old_lev < 55 && p_ptr->lev >= 55) msg_print(Ind, "\374\377GYou learn how to change into a Horned Serpent (#1131)");
 			if (old_lev < 60 && p_ptr->lev >= 60) msg_print(Ind, "\374\377GYou learn how to change into a Firebird (#1127)");
 			calc_techniques(Ind);
-			Send_skill_info(Ind, SKILL_TECHNIQUE);
+			Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
 			break;
 		case CLASS_SHAMAN:
 			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn to see the invisible!");
@@ -4047,7 +4047,7 @@ void check_experience(int Ind)
 				msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'");
 			/* Also update the client's 'm' menu for fighting techniques */
 			calc_techniques(Ind);
-			Send_skill_info(Ind, SKILL_TECHNIQUE);
+			Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
 			break;
 		case CLASS_MINDCRAFTER:
 			if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou learn to keep hold of your sanity!");
@@ -4058,7 +4058,7 @@ void check_experience(int Ind)
 				msg_print(Ind, "\374\377GYou learn the fighting technique 'Distract'");
 			/* Also update the client's 'm' menu for fighting techniques */
 			calc_techniques(Ind);
-			Send_skill_info(Ind, SKILL_TECHNIQUE);
+			Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
 			break;
 		}
 
@@ -4067,10 +4067,10 @@ void check_experience(int Ind)
 		if (get_skill(p_ptr, SKILL_STANCE) && p_ptr->lev <= 50) {
 			p_ptr->s_info[SKILL_STANCE].value = p_ptr->lev * 1000;
 			/* Update the client */
-			Send_skill_info(Ind, SKILL_STANCE);
+			Send_skill_info(Ind, SKILL_STANCE, TRUE);
 			/* Also update the client's 'm' menu for fighting techniques */
 			calc_techniques(Ind);
-			Send_skill_info(Ind, SKILL_TECHNIQUE);
+			Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
 			/* give message if we learn a new stance (compare cmd6.c! keep it synchronized */
 		        /* take care of message about fighting techniques too: */
 			msg_gained_abilities(Ind, (p_ptr-> lev - 1) * 10, SKILL_STANCE);
@@ -4123,7 +4123,7 @@ void check_experience(int Ind)
 		msg_broadcast(Ind, str);
 
 		/* Update the skill points info on the client */
-		Send_skill_info(Ind, 0);
+		Send_skill_info(Ind, 0, TRUE);
 	}
 }
 
@@ -4950,7 +4950,7 @@ if(cfg.unikill_format){
 					if (p_ptr->lev >= 50 && p_ptr->pclass == CLASS_ROGUE) {
 						msg_print(Ind, "\374\377GYou learn the royal fighting technique 'Shadow Run'");
 						calc_techniques(Ind);
-						Send_skill_info(Ind, SKILL_TECHNIQUE);
+						Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
 					}
 				}
 			}	

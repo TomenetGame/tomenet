@@ -936,7 +936,7 @@ extern int Send_skill_init(int ind, int type, int i);
 extern int Send_skill_init(int ind, u16b i);
 #endif
 extern int Send_skill_points(int ind);
-extern int Send_skill_info(int ind, int i);
+extern int Send_skill_info(int ind, int i, bool keep);
 extern int Send_gold(int Ind, s32b gold, s32b balance);
 extern int Send_hp(int Ind, int mhp, int chp);
 extern int Send_stamina(int Ind, int mst, int cst);

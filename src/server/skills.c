@@ -639,7 +639,7 @@ static void increase_related_skills(int Ind, int i, bool quiet)
 			/* Update the client */
 			if (!quiet) {
 				calc_techniques(Ind);
-				Send_skill_info(Ind, j);
+				Send_skill_info(Ind, j, TRUE);
 			}
 
 			/* Take care of gained abilities */
@@ -669,13 +669,13 @@ void increase_skill(int Ind, int i, bool quiet)
 
 	/* No skill points to be allocated */
 	if (p_ptr->skill_points <= 0) {
-		if (!quiet) Send_skill_info(Ind, i);
+		if (!quiet) Send_skill_info(Ind, i, TRUE);
 		return;
 	}
 
 	/* The skill cannot be increased */
 	if (p_ptr->s_info[i].mod <= 0) {
-		if (!quiet) Send_skill_info(Ind, i);
+		if (!quiet) Send_skill_info(Ind, i, TRUE);
 		return;
 	}
 
@@ -690,7 +690,7 @@ void increase_skill(int Ind, int i, bool quiet)
 	    /* unused: doesn't go over 25 */
 	    ((p_ptr->s_info[i].flags1 & SKF1_MAX_25) && (p_ptr->s_info[i].value >= 25000)))
 	{
-		if (!quiet) Send_skill_info(Ind, i);
+		if (!quiet) Send_skill_info(Ind, i, TRUE);
 		return;
 	}
 
@@ -698,7 +698,7 @@ void increase_skill(int Ind, int i, bool quiet)
 	if ((p_ptr->s_info[i].value / SKILL_STEP) >= p_ptr->lev + 2)  /* <- this allows limit breaks at very high step values  -- handled in GET_SKILL now! */
 //	if ((((p_ptr->s_info[i].value + p_ptr->s_info[i].mod) * 10) / SKILL_STEP) > (p_ptr->lev * 10) + 20)  /* <- this often doesn't allow proper increase to +2 at high step values */
 	{
-		if (!quiet) Send_skill_info(Ind, i);
+		if (!quiet) Send_skill_info(Ind, i, TRUE);
 		return;
 	}
 
@@ -735,7 +735,7 @@ void increase_skill(int Ind, int i, bool quiet)
 	/* Update the client */
 	if (!quiet) {
 		calc_techniques(Ind);
-		Send_skill_info(Ind, i);
+		Send_skill_info(Ind, i, TRUE);
 	}
 
 	/* XXX updating is delayed till player leaves the skill screen */
@@ -1837,7 +1837,7 @@ void respec_skill(int Ind, int i, bool update_skill, bool polymorph) {
 			p_ptr->s_info[j].value = val;
 
 			/* Update the client */
-			Send_skill_info(Ind, j);
+			Send_skill_info(Ind, j, FALSE);
 		}
 	}
 
@@ -1858,7 +1858,7 @@ void respec_skill(int Ind, int i, bool update_skill, bool polymorph) {
 
 	/* Update the client */
 	calc_techniques(Ind);
-	Send_skill_info(Ind, i);
+	Send_skill_info(Ind, i, FALSE);
 	/* XXX updating is delayed till player leaves the skill screen */
 	p_ptr->update |= (PU_SKILL_MOD);
 	/* also update 'C' character screen live! */
@@ -1890,7 +1890,7 @@ void respec_skills(int Ind, bool update_skills) {
 			p_ptr->s_info[i].value = p_ptr->s_info[i].base_value;
 		}
 		/* Update the client */
-		Send_skill_info(Ind, i);
+		Send_skill_info(Ind, i, FALSE);
 	}
 
 	/* Calculate amount of skill points that should be
