@@ -42,7 +42,10 @@ audio_sfx = {
     "death_male",
     "death_female",
 
+    "insanity",
+
     "levelup",
+
     --commands
     "activate",
     "aim_wand",
