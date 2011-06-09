@@ -436,13 +436,13 @@ $ENABLE_RCRAFT!N:76:Runemastery
 $ENABLE_RCRAFT!D:Access to the Runic knowledge
 $ENABLE_RCRAFT!D:Intelligence and dexterity will affect the power.
 $ENABLE_RCRAFT!A:12:Draw a rune
-$ENABLE_RCRAFT!I:1000:0
+$ENABLE_RCRAFT!I:1000:104
 $ENABLE_RCRAFT!F:MKEY_HARDCODE
 
 $ENABLE_DIVINE$N:77:Astral Knowledge
 $ENABLE_DIVINE$D:Access to the astral spells
 $ENABLE_DIVINE$A:11:Cast a spell
-$ENABLE_DIVINE$I:1000:0
+$ENABLE_DIVINE$I:1000:111
 
 $DUAL_WIELD$N:78:Dual-Wield
 $DUAL_WIELD$D:Ability to wield two one-handed weapons at once.
@@ -460,17 +460,17 @@ $ENABLE_STANCES$F:MKEY_HARDCODE
 $ENABLE_MCRAFT$N:80:Psycho-Power
 $ENABLE_MCRAFT$D:Access to psi-spells that create physical or energetical effects.
 $ENABLE_MCRAFT$A:11:Cast a spell
-$ENABLE_MCRAFT$I:1000:0
+$ENABLE_MCRAFT$I:1000:111
 
 $ENABLE_MCRAFT$N:81:Thought Contact
 $ENABLE_MCRAFT$D:Access to psi-spells that elevate and connect to minds.
 $ENABLE_MCRAFT$A:11:Cast a spell
-$ENABLE_MCRAFT$I:1000:0
+$ENABLE_MCRAFT$I:1000:111
 
 $ENABLE_MCRAFT$N:82:Mental Intrusion
 $ENABLE_MCRAFT$D:Access to psi-spells that attack mind or physis of others.
 $ENABLE_MCRAFT$A:11:Cast a spell
-$ENABLE_MCRAFT$I:1000:0
+$ENABLE_MCRAFT$I:1000:111
 
 
 N:83:Magic Schools
@@ -523,49 +523,49 @@ $ENABLE_RCRAFT$F:DUMMY
 $ENABLE_RCRAFT$N:96:Fire and Cold
 $ENABLE_RCRAFT$D:Ability to summon elemental fire and cold
 $ENABLE_RCRAFT$A:18:Draw a rune
-$ENABLE_RCRAFT$I:1000:0
+$ENABLE_RCRAFT$I:1000:105
 $ENABLE_RCRAFT$F:MKEY_HARDCODE
 
 $ENABLE_RCRAFT$N:97:Water and Acid
 $ENABLE_RCRAFT$D:Ability to summon elemental water and acid
 $ENABLE_RCRAFT$A:18:Draw a rune
-$ENABLE_RCRAFT$I:1000:0
+$ENABLE_RCRAFT$I:1000:105
 $ENABLE_RCRAFT$F:MKEY_HARDCODE
 
 $ENABLE_RCRAFT$N:98:Lightning and Earth
 $ENABLE_RCRAFT$D:Ability to summon elemental earth and electricity
 $ENABLE_RCRAFT$A:18:Draw a rune
-$ENABLE_RCRAFT$I:1000:0
+$ENABLE_RCRAFT$I:1000:105
 $ENABLE_RCRAFT$F:MKEY_HARDCODE
 
 $ENABLE_RCRAFT$N:99:Poison and Wind
 $ENABLE_RCRAFT$D:Ability to summon elemental wind and poison
 $ENABLE_RCRAFT$A:18:Draw a rune
-$ENABLE_RCRAFT$I:1000:0
+$ENABLE_RCRAFT$I:1000:105
 $ENABLE_RCRAFT$F:MKEY_HARDCODE
 
 $ENABLE_RCRAFT$N:100:Mana and Chaos
 $ENABLE_RCRAFT$D:Ability to invoke mana and chaos
 $ENABLE_RCRAFT$A:18:Draw a rune
-$ENABLE_RCRAFT$I:1000:0
+$ENABLE_RCRAFT$I:1000:105
 $ENABLE_RCRAFT$F:MKEY_HARDCODE
 
 $ENABLE_RCRAFT$N:101:Force and Gravity
 $ENABLE_RCRAFT$D:Ability to manipulate terrestrial forces
 $ENABLE_RCRAFT$A:18:Draw a rune
-$ENABLE_RCRAFT$I:1000:0
+$ENABLE_RCRAFT$I:1000:105
 $ENABLE_RCRAFT$F:MKEY_HARDCODE
 
 $ENABLE_RCRAFT$N:102:Nether and Time
 $ENABLE_RCRAFT$D:Ability to manipulate life and time
 $ENABLE_RCRAFT$A:18:Draw a rune
-$ENABLE_RCRAFT$I:1000:0
+$ENABLE_RCRAFT$I:1000:105
 $ENABLE_RCRAFT$F:MKEY_HARDCODE
 
 $ENABLE_RCRAFT$N:103:Mind and Nexus
 $ENABLE_RCRAFT$D:Ability to control mind and space
 $ENABLE_RCRAFT$A:18:Draw a rune
-$ENABLE_RCRAFT$I:1000:0
+$ENABLE_RCRAFT$I:1000:105
 $ENABLE_RCRAFT$F:MKEY_HARDCODE
 
 #
