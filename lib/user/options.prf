@@ -54,7 +54,7 @@ X:smart_cheat
 
 X:view_reduce_lite
 X:view_reduce_view
-X:avoid_abort
+X:safe_float
 X:avoid_other
 Y:flush_failure
 X:flush_disturb
