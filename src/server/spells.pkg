@@ -427,6 +427,7 @@ extern bool do_focus_shot(int Ind, int p, int v);
 extern void divine_vengeance(int Ind, int power);
 extern void divine_empowerment(int Ind, int level);
 extern void divine_intensify(int Ind, int level);
+extern void divine_gateway(int Ind);
 
 extern void set_recall_depth(player_type * p_ptr, object_type * o_ptr);
 extern bool set_recall_timer(int Ind, int v);

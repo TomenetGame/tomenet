@@ -773,6 +773,7 @@ extern void dealloc_dungeon_level(struct worldpos *wpos);
 extern void generate_cave(struct worldpos *wpos, player_type *p_ptr);
 extern bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, player_type *p_ptr);
 extern void place_fountain(struct worldpos *wpos, int y, int x);
+extern bool place_between_targetted(struct worldpos *, int y, int x, int ty, int tx);
 
 extern void place_floor(worldpos *wpos, int y, int x);
 extern void place_floor_live(worldpos *wpos, int y, int x);
@@ -1422,6 +1423,7 @@ extern bool do_focus_shot(int Ind, int p, int v);
 extern void divine_vengeance(int Ind, int power);
 extern void divine_empowerment(int Ind, int level);
 extern void divine_intensify(int Ind, int level);
+extern void divine_gateway(int Ind);
 
 extern bool do_divine_xtra_res_time_mana(int Ind, int p);
 extern bool do_divine_hp(int Ind, int p, int v);

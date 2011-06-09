@@ -4865,6 +4865,11 @@ static void process_player_change_wpos(int Ind)
 	    p_ptr->new_level_method != LEVEL_HOUSE)
 		p_ptr->turns_on_floor = 0;
 
+#ifdef ENABLE_DIVINE
+	/* reset void gate coordinates */
+	p_ptr->voidx = 0; p_ptr->voidy = 0;
+#endif
+
 	/* being on different floors destabilizes mind fusion */
 	if (p_ptr->esp_link_type && p_ptr->esp_link)
 		change_mind(Ind, FALSE);

@@ -125,6 +125,58 @@ void divine_intensify(int Ind, int level) {
 	}
 }
 
+/* A: instant wor for every party member on level. INCLUDING town recalls?
+ *    /rec 32 32 -> will attempt to teleport party members to Bree.
+ * further note: hm, this could fatally disturb idle party members. also dangerous if all party teleports into a D pit!!. make this only active if player (and therefore interested party members) are not in town.
+ * D: void jumpgate creation
+ */
+void divine_gateway(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) {
+
+		//XXX call set_recall ?
+		if (istown(&p_ptr->wpos)) return;
+
+		set_recall_timer(Ind, 1);
+
+		int i;
+		for (i = 1; i <= NumPlayers; i++) {
+                        if (i == Ind) continue; 
+                        if (Players[i]->conn == NOT_CONNECTED) continue;
+
+                        /* on the same dungeon floor */
+                        if (!inarea(&p_ptr->wpos, &Players[i]->wpos)) continue;
+
+                        /* must be in the same party */
+                        if (!Players[i]->party || p_ptr->party != Players[i]->party) continue;
+			
+			set_recall_timer(i, 1);
+		} 
+	} else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
+		struct worldpos *wpos = &(p_ptr->wpos);
+
+		if (p_ptr->voidx && p_ptr->voidy) {
+			if (place_between_targetted(wpos, p_ptr->py, p_ptr->px, p_ptr->voidy, p_ptr->voidx)) {
+				//When successfull, we clear state, so we can create more.
+				//TODO: jumpgate limit?
+				p_ptr->voidx = 0;
+				p_ptr->voidy = 0;
+
+				p_ptr->redraw |= (PR_MAP);
+				msg_format(Ind, "You successfully create a gateway between the two points!");
+				msg_format_near(Ind, "%s has successfully created a gateway!", p_ptr->name);
+			}
+		} else {
+
+			// Let's not have this in towns/houses; OK everywhere else
+			if (!allow_terraforming(wpos, FEAT_TREE)) return;
+		
+			p_ptr->voidx = p_ptr->px;
+			p_ptr->voidy = p_ptr->py;
+		}
+	}
+}
+
 #else /*lol, shared .pkg*/
 void divine_vengeance(int Ind, int power) {
 	return;
@@ -135,23 +187,11 @@ void divine_empowerment(int Ind, int power) {
 void divine_intensify(int Ind, int power) {
 	return;
 }
-#endif
-
-
-#if 0 //Divine spell def'ns
-
-/* A: instant wor for every party member on level. INCLUDING town recalls. 
- *    /rec 32 32 -> will attempt to teleport party members to Bree.
- * D: void jumpgate creation
- */
 void divine_gateway(int Ind) {
-	player_type *p_ptr = Players[Ind];
-	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) {
-	} else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
-	}
+	return;
 }
-
 #endif
+
 
 /* for mindcrafters: teleport to friendly player with open mind - C. Blue */
 void do_autokinesis_to(int Ind, int dis) { 
@@ -259,8 +299,7 @@ bool create_garden(int Ind, int chance) {
 			if (cave_valid_bold(zcave, y, x) && ( /* <- destroyable, no art on grid, not FF1_PERMANENT */
 //				(c_ptr->feat == FEAT_QUARTZ) ||
 //				(c_ptr->feat == FEAT_MAGMA) || 
-//				(c_ptr->feat == FEAT_QUARTZ_H) || 
-//				(c_ptr->feat == FEAT_MAGMA_H) || 
+//				(c_ptr->feat == FEAT_QUARTZ_H) ||
 //				(c_ptr->feat == FEAT_QUARTZ_K) || 
 //				(c_ptr->feat == FEAT_MAGMA_K) || 
 //				(c_ptr->feat == FEAT_SAND_WALL) || 

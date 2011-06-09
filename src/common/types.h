@@ -2826,6 +2826,8 @@ struct player_type
 #endif //runemaster
 
 #ifdef ENABLE_DIVINE
+	int voidx; int voidy; //for the void jumpgate creation spell; reset on every recall/levelchange/relogins
+
 	int divine_crit;
 	int divine_hp;
 	int divine_xtra_res_time_mana;
