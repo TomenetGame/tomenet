@@ -6623,7 +6623,8 @@ void global_event_signup(int Ind, int n, cptr parm) {
 		    (p_ptr->wpos.wx != WPOS_ARENA_X || p_ptr->wpos.wy != WPOS_ARENA_Y || p_ptr->wpos.wz != WPOS_ARENA_Z)) {
 			msg_print(Ind, "\377yYou have to be in Bree or in the arena to sign up for this event!");
 #else /* need to be in Bree or in the training tower? */
-		if (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz < 0) {
+		if ((p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz < 0)
+		    && !is_admin(p_ptr)) {
 			msg_print(Ind, "\377yYou have to be in Bree or in the training tower to sign up for this event!");
 #endif
 			return;
@@ -6654,7 +6655,8 @@ void global_event_signup(int Ind, int n, cptr parm) {
 				    (r_info[i].flags7 & RF7_NEUTRAL) ||
 				    (r_info[i].flags7 & RF7_FRIENDLY) ||
 				    (r_info[i].flags8 & RF8_JOKEANGBAND) ||
-				    (r_info[i].rarity == 255))) {
+				    (r_info[i].rarity == 255))
+				    || is_admin(p_ptr)) {
 #ifdef GE_ARENA_ALLOW_EGO
 					if (r_found_len < (int)strlen(c)) {
 #else
