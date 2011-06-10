@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 8. June 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 10. June 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.6b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -11196,6 +11196,8 @@ The differences between RPG ruleset and normal servers are as follows:
    and the Great Pumpkin spawns on floors up to level 49 instead of 39.
   -Stealing from stores is possible right away instead of requiring a certain
    character level (usually 5 on normal servers).
+  -Server settings that would usually turn items dropped/thrown by very low
+   level characters to level 0 will be ignored, ie item level is kept.
 
 
 
