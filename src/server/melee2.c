@@ -570,9 +570,13 @@ static void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad)
 	player_type *p_ptr = Players[Ind];
 
 #ifdef USE_SOUND_2010
-	if (typ == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_MON_SPELL, TRUE);
+	if (typ == GF_ROCKET) {
+		sound(Ind, "rocket", NULL, SFX_TYPE_MON_SPELL, TRUE);
+		/* everyone nearby the monster can hear it too, even if no LOS */
+		sound_near_site(m_list[m_idx].fy, m_list[m_idx].fx, &m_list[m_idx].wpos, Ind, "rocket", NULL, SFX_TYPE_MON_SPELL, FALSE);
+	}
 	else if (typ == GF_STONE_WALL) sound(Ind, "stone_wall", NULL, SFX_TYPE_MON_SPELL, TRUE);
-	sound(Ind, "monster_cast_ball", NULL, SFX_TYPE_MON_SPELL, TRUE);
+	else sound(Ind, "monster_cast_ball", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 
 	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
