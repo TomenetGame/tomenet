@@ -1758,16 +1758,17 @@ bool Destroy_connection(int ind, char *reason_orig)
 		p_ptr = Players[player];
 	}
 	if (p_ptr)
-		s_printf("%s: Goodbye %s(%s)=%s@%s (\"%s\") (ind=%d,wpos=%d,%d,%d)\n",
+		s_printf("%s: Goodbye %s(%s)=%s@%s (\"%s\") (ind=%d;wpos=%d,%d,%d;xy=%d,%d)\n",
 		    showtime(),
 		    connp->c_name ? connp->c_name : "",
 		    connp->nick ? connp->nick : "",
 		    connp->real ? connp->real : "",
 		    connp->host ? connp->host : "",
 		    reason, ind,
-		    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+		    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+		    p_ptr->px, p_ptr->py);
 	else
-		s_printf("%s: Goodbye %s(%s)=%s@%s (\"%s\") (ind=%d,wpos=-,-,-)\n",
+		s_printf("%s: Goodbye %s(%s)=%s@%s (\"%s\") (ind=%d;wpos=-,-,-;xy=-,-)\n",
 		    showtime(),
 		    connp->c_name ? connp->c_name : "",
 		    connp->nick ? connp->nick : "",
