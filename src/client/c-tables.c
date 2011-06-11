@@ -667,8 +667,8 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.fresh_message,		FALSE,	1,	1, 25, FALSE,
 	"fresh_message",		"(obsolete) Flush output after every message" },
 
-	{ &c_cfg.safe_macros,		TRUE,	3,	1, 26, FALSE, /* was compress_savefile (broken&obsolete); use term_flush() to clear macro execution */
-	"safe_macros",			"Clear buffer if a macro action fails" },
+	{ &c_cfg.safe_macros,		TRUE,	3,	1, 26, TRUE, /* was compress_savefile (broken&obsolete); use Term_flush() to clear macro execution */
+	"safe_macros",			"Abort macro execution if an action fails" },
 
 	{ &c_cfg.hilite_player,		FALSE,	1,	1, 27, FALSE, /* (resurrect me) */
 	"hilite_player",		"(broken) Hilite the player with the cursor" },
