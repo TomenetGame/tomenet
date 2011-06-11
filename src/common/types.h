@@ -3239,7 +3239,7 @@ struct client_opts
 	bool fresh_before;
 	bool fresh_after;
 	bool fresh_message;
-	bool compress_savefile;
+	bool safe_macros;//compress_savefile;
 	bool hilite_player;
 	bool view_yellow_lite;
 	bool view_bright_lite;
