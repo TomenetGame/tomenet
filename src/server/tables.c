@@ -1451,7 +1451,7 @@ player_race race_info[MAX_RACE] =
 //                                SKILL_TRAINING,
                                 SKILL_INTERCEPT,
                                 '+', 1000,
-                                '+', 150,
+                                '%', 115,
                         },
                         {
                                 SKILL_CLIMB,
@@ -1493,7 +1493,7 @@ player_race race_info[MAX_RACE] =
 //                                SKILL_TRAINING,
 				SKILL_INTERCEPT,
                                 '+', 500,
-                                '+', 100,
+                                '%', 110,
                         },
                         {
                                 SKILL_CLIMB,
@@ -1531,7 +1531,7 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_BOW,
                                 '+', 1000,
-                                '%', 120,
+                                '%', 110,
                         },
                         {
                                 SKILL_MAGIC,
@@ -1546,22 +1546,22 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_DODGE,
                                 '+', 0,/*1000*/
-                                '+', 100,
+                                '%', 110,
                         },
                         {
                                 SKILL_AGILITY,
                                 '+', 1000,
-                                '+', 100,
+                                '%', 110,
                         },
                         {
                                 SKILL_CALMNESS,
                                 '+', 1000,
-                                '+', 100,
+                                '%', 110,
                         },
                         {
                                 SKILL_SNEAKINESS,
                                 '+', 1000,
-                                '+', 100,
+                                '%', 110,
                         },
                         {
                                 SKILL_CLIMB,
@@ -1601,22 +1601,22 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_SLING,
                                 '+', 1000,
-                                '+', 100,
+                                '%', 110,
                         },
                         {
                                 SKILL_STEALTH,
                                 '+', 1000,
-                                '+', 200,
+                                '%', 120,
                         },
                         {
                                 SKILL_SNEAKINESS,
                                 '+', 2000,
-                                '+', 100,
+                                '%', 110,
                         },
                         {
                                 SKILL_DODGE,
                                 '+', 0,/*1000*/
-                                '+', 100,
+                                '%', 110,
                         },
                         {
                                 SKILL_CLIMB,
@@ -1654,7 +1654,7 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_XBOW,
                                 '+', 1000,
-                                '%', 120,
+                                '%', 110,
                         },
                         {
                                 SKILL_MAGIC,
@@ -1664,12 +1664,12 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_DIG,
                                 '+', 1000,
-                                '+', 300,
+                                '%', 130,
                         },
                         {
                                 SKILL_DODGE,
                                 '+', 0,/*1000*/
-                                '+', 125,
+                                '%', 115,
                         },
                         {
                                 SKILL_CLIMB,
@@ -1707,12 +1707,12 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_AXE,
                                 '+', 0,
-                                '%', 120,
+                                '%', 110,
                         },
                         {
                                 SKILL_DIG,
                                 '+', 5000,
-                                '+', 500,
+                                '%', 150,
                         },
                         {
                                 SKILL_CLIMB,
@@ -1752,7 +1752,7 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_BACKSTAB,
                                 '+', 1000,
-                                '+', 50,
+                                '%', 105,
                         },
                         {
                                 SKILL_MASTERY,
@@ -1811,17 +1811,12 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_BLUNT,
                                 '+', 0,
-                                '%', 120,
+                                '%', 110,
                         },
                         {
                                 SKILL_HEALTH,
                                 '+', 3000,
                                 '%', 110,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '%', 80,
                         },
                         /* Not banned, but *hard* */
                         {
@@ -1842,7 +1837,7 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_SWIM,
                                 '+', 0,
-                                '+', 40,
+                                '+', 30,
                         },
                         {
                                 SKILL_SHOOT_TILL_KILL,
@@ -1917,7 +1912,7 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_BOW,
                                 '+', 1000,
-                                '+', 50,
+                                '%', 110,
                         },
                         {
                                 SKILL_MAGIC,
@@ -1932,17 +1927,17 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_DODGE,
                                 '+', 0,/*1000*/
-                                '+', 75,
+                                '%', 110,
                         },
                         {
                                 SKILL_AGILITY,
                                 '+', 2000,
-                                '+', 150,
+                                '%', 115,
                         },
                         {
                                 SKILL_CALMNESS,
                                 '+', 2000,
-                                '+', 150,
+                                '%', 115,
                         },
                         {
                                 SKILL_CLIMB,
@@ -2014,7 +2009,7 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_BOOMERANG,
                                 '+', 1000,
-                                '+', 100,
+                                '%', 110,
                         },
                         {
                                 SKILL_STEALING,
@@ -2042,7 +2037,7 @@ player_race race_info[MAX_RACE] =
         {
                 "Ent",
                 { 8, -4, +2, -4,  8, -4 },
-                -4, 0, 20, -6, 5, 4, 15, 5,
+                -4, 0, 20, -6, 5, 4, 5, -20,
                 14, 320,
                 255, 70,
                 72, 6, 100, 25,
@@ -2072,7 +2067,7 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_CALMNESS,
                                 '+', 1000,
-                                '+', 150,
+                                '%', 115,
                         },
                         /* Ent loves water and the Earth */
                         {
@@ -2133,13 +2128,13 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_AURA_FEAR,
                                 '+', 2000,
-                                '+', 150,
+                                '%', 120,
                         },
                         /* TL is jumpy */
                         {
                                 SKILL_CONVEYANCE,
                                 '+', 0,
-                                '+', 150,
+                                '%', 120,
                         },
                         {
                                 SKILL_FIRE,
@@ -2192,17 +2187,17 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_DODGE,
                                 '+', 0,/*1000,*/
-                                '+', 75,
+                                '%', 110,
                         },
                         {
                                 SKILL_AGILITY,
                                 '+', 2000,
-                                '+', 150,
+                                '%', 115,
                         },
                         {
                                 SKILL_SNEAKINESS,
                                 '+', 2000,
-                                '+', 100,
+                                '%', 110,
                         },
                         {
                                 SKILL_CLIMB,
@@ -2292,27 +2287,27 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_NECROMANCY,
                                 '+', 5000,
-                                '+', 150,
+                                '%', 115,
                         },
                         {
                                 SKILL_TRAUMATURGY,
                                 '+', 0,
-                                '+', 50,
+                                '%', 105,
                         },
                         {
                                 SKILL_AURA_FEAR,
                                 '+', 0,
-                                '+', 150,
+                                '%', 115,
                         },
                         {
                                 SKILL_AURA_SHIVER,
                                 '+', 0,
-                                '+', 150,
+                                '%', 115,
                         },
                         {
                                 SKILL_AURA_DEATH,
                                 '+', 0,
-                                '+', 150,
+                                '%', 115,
                         },
                         {
                                 SKILL_CLIMB,
@@ -2332,7 +2327,6 @@ player_race race_info[MAX_RACE] =
                 },
         },
 #ifdef ENABLE_DIVINE
-
 /*
  * Player Race Information:
  *    Title,
@@ -2484,9 +2478,9 @@ Nothing here that truly heals/buffs people (those bonus are to self only). They 
 62.A: Activating /rec XX YY from Bree also ports every party member in Bree to XX YY :)
 62.D: No idea about the amount of work required.
 */
-                { 2,  3, 3,  1,  1, 2 }, //boosted int/wisdom/dex
+                { 1,  3, 3,  1,  0, 2 }, //boosted int/wisdom/dex
                 3, 20, 3, 0,  5, 1, 15, 5,
-		10, 380,//too low == bad since you need the quest mobs
+		11, 380,//too low == bad since you need the quest mobs
 		255, 250,
                 180, 20, 180, 20,
                 120, 30, 170, 15,
@@ -2501,7 +2495,7 @@ Nothing here that truly heals/buffs people (those bonus are to self only). They 
 Only 70%-ify the skills that could potentially be updated when the player mutates!!
  */
 			{
-				SKILL_ASTRAL,	
+				SKILL_ASTRAL,
 				'+', 1250,
 				'+', 1250,
 			},
@@ -2664,7 +2658,7 @@ player_class class_info[MAX_CLASS] =
 		{ 5, -2, -2, 2, 2, -1},
 		{ 22+100, 0, 0, 0+100, 0, 0},
 		20, 18, 18, 1,  14, 2, 70, 55,
-		10, 7,  10, 0,  0,  0,  45, 45,
+		10, 7,  10, 0,  0,  0,  45, 40,
 		10, 0,//6,  10,//9, 10,
 //		11, 0,
                 {
@@ -2997,7 +2991,7 @@ player_class class_info[MAX_CLASS] =
                 {-1, -3, 3, -1, 0, 2},
 		{19, 0, 0+100, 10, 0, 0},
 		25, 30, 32, 2,  16, 8, 48, 35,
-		7,  10, 12, 0,  0,  0, 20, 20,
+		7,  10, 12, 0,  0,  0, 20, 15,
 		4, 20, //2, 20,//4,20
 //		7, 20,
                 {
@@ -3117,7 +3111,7 @@ player_class class_info[MAX_CLASS] =
 		{ 2, 1, -2, 3, 1, -1},
 		{15, 0, 0, 19+100, 0, 0},
 		45, 32, 28, 5, 32, 24, 60, 66,
-		15, 10, 10, 0, 10, 10, 40, 30,// ..0,0,40,30
+		15, 10, 10, 0, 10, 10, 40, 40,// ..0,0,40,30
 		5, 15, //3, 25,//5, 25
 //		8, 25,
                 {
@@ -3308,7 +3302,7 @@ player_class class_info[MAX_CLASS] =
 //		 TERM_ORANGE, <- more confusing since they're supposed to use a monster form
 		{ 1, 0, 0, 1, 1, -4},
 		{21+100, 0, 0, 19+100, 0, 0},
-		25, 35, 28, 1, 18, 18, 60, 66,
+		25, 35, 28, 1, 18, 18, 60, 46,
 	         9, 10, 10, 0,  0,  0, 40, 30,
 		6, 30,//3, 40,//4, 25
 //		8, 40,
@@ -3618,7 +3612,7 @@ player_class class_info[MAX_CLASS] =
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		10, 21, 54, 1,  13, 16, 60, 45, //was c_thb 29
+		10, 21, 54, 1,  13, 16, 60, 40, //was c_thb 29
 		2, 4,  10, 0,  0,  2,  35, 10,
 		8, 30,//5, 30,//7,30
 //		10, 30,
@@ -3782,7 +3776,7 @@ player_class class_info[MAX_CLASS] =
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
 		34, 32, 30, 5, 30, 30, 50, 60,
-		10, 10, 10, 0, 15,  5, 30, 35,
+		10, 10, 10, 0, 15,  5, 30, 45,
 		7, 35,//4, 35,//6, 35
 //		9, 35,
                 {
@@ -4350,8 +4344,8 @@ player_class class_info[MAX_CLASS] =
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		30, 40, 30, 4, 25, 25, 50, 60,
-		8, 5, 10, 0, 10,  5, 20, 30,
+		30, 40, 30, 4, 25, 25, 50, 44,
+		8, 5, 10, 0, 10,  5, 20, 25,
 		5, 40,//5, 50
                 {
                         {
@@ -4491,8 +4485,8 @@ player_class class_info[MAX_CLASS] =
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		10, 30, 30,  4, 20, 30, 45, 20,
-		 0, 11, 10,  0,  3,  5, 20,  5,
+		10, 30, 30,  4, 20, 30, 45, 23,
+		 0, 11, 10,  0,  3,  5, 20, 12,
 		3, 45, //4, 30
                 {
 #if 0 /* mimicmage/mimicpriest/mimicmagepriest pure caster shaman as actually intended */
@@ -4864,8 +4858,8 @@ player_class class_info[MAX_CLASS] =
         //Great at searching, bad at stealth. Great @ MD? I say no because we don't want them carrying
         //support rods + runes
         //HP dice... Hm, tough question. What other skills will be made available to them? *Keeping @ 5 for now*
-		10, 20, 20,  2, 20, 30, 45, 20,
-		 0, 11, 10,  0,  3,  5, 20, 10,
+		10, 20, 20,  2, 20, 30, 45, 40,
+		 0, 11, 10,  0,  3,  5, 20, 20,
 		5, 20,//5, 20
                 {
 			{
@@ -5081,8 +5075,8 @@ player_class class_info[MAX_CLASS] =
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		30, 30, 36,  3, 35, 14, 55, 35,
-		 0,  5,  5,  0,  3,  3, 26, 20,
+		30, 30, 36,  3, 35, 14, 55, 45,
+		 0,  5,  5,  0,  3,  3, 26, 18,
 //		5, 25,
 		6, 25,
                 {
