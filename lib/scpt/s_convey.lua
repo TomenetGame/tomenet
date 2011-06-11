@@ -28,7 +28,7 @@ DISARM = add_spell
 {
 	["name"] = 	"Disarm",
         ["school"] = 	{SCHOOL_CONVEYANCE},
-        ["level"] = 	3,
+        ["level"] = 	5,
         ["mana"] = 	2,
         ["mana_max"] = 	4,
         ["fail"] = 	10,
