@@ -1601,6 +1601,20 @@ or that are especially important are listed in detail here:
         Should always be enabled! Will reduce probability for off-screen kills,
         since the screen scrolls much earlier when you come close to a border!
 
+    Prevent floating for a short while after death (safe_float)
+        For a few turns after your character dies you cannot float up or down
+        with the '<' or '>' key. This prevents accidentally leaving the floor
+        in case you were just trying to take a staircase right the moment you
+        died, which would result in losing your items since the dungeon level
+        would probably regenerate if you left it.
+
+    Abort macro execution if an action fails (safe_macros)
+        If any sub-action in a macro you execute fails then the whole macro/key
+        queue will be discarded and cleared.
+        This is useful if you for example have a spellcasting macro that would
+        just do something weird in case you lost the according spell book and
+        then tried to cast it anyway, accidentally.
+
     Clear @-inscriptions on taking item ownership (clear_inscr)
         When you pick up items that belonged to another player, any '@...'
         inscriptions will be rendered effectless by replacing the @ by a space.
@@ -1626,7 +1640,6 @@ or that are especially important are listed in detail here:
         like the arrow flying or the balls of explosions.
         If you have a slow network or are lagging a lot, you may try to disable
         this. Certain animations might visually suffer from doing so.
-
 
 (8) Check Server Options
     Displays a list of the server rules and configuration.
