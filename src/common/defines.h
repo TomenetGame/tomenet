@@ -53,8 +53,8 @@
 /* MAJOR/MINOR/PATCH version should be 0-15. */
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		4
-#define VERSION_PATCH		6
-#define VERSION_EXTRA		3
+#define VERSION_PATCH		7
+#define VERSION_EXTRA		0
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -62,14 +62,14 @@
 #define VERSION_MAJOR_OUTDATED	4
 #define VERSION_MINOR_OUTDATED	4
 #define VERSION_PATCH_OUTDATED	6
-#define VERSION_EXTRA_OUTDATED	1
+#define VERSION_EXTRA_OUTDATED	2
 #define VERSION_BRANCH_OUTDATED	0
 #define VERSION_BUILD_OUTDATED	0
 /* _one before_ MAJOR/MINOR/PATCH version that counts as 'latest' (should be 0-15). */
 #define VERSION_MAJOR_LATEST	4
 #define VERSION_MINOR_LATEST	4
 #define VERSION_PATCH_LATEST	6
-#define VERSION_EXTRA_LATEST	1
+#define VERSION_EXTRA_LATEST	2
 #define VERSION_BRANCH_LATEST	0
 #define VERSION_BUILD_LATEST	0
 
@@ -172,13 +172,13 @@
 #define HOUSE_PAINTING		/* Allow players to paint their entrance area or house (for PLAYER_STORES) - C. Blue */
 
 #define ENABLE_GO_GAME		/* Allows players to play vs CPU games of Go/Weiqi/Baduk. - C. Blue */
+#define ENABLE_DIVINE		/* enable RACE_DIVINE, ie Maiar race */
 
 /* --------------------- Server-type dependant features -------------------- */
 
 #ifdef RPG_SERVER
  #define MUCHO_RUMOURS		/* print a rumour on day changes and unique kills (the_sandman) */
 // #define PRECIOUS_STONES
- #define ENABLE_DIVINE		/* enable RACE_DIVINE */
 
  #define AUCTION_BETA		/* less restrictions while beta testing */
  #define AUCTION_SYSTEM
@@ -189,7 +189,6 @@
 
 #ifdef TEST_SERVER
  #define ENABLE_ASSASSINATE	/* experimental fighting technique for rogues - devalues Backstabbing too much probably */
- #define ENABLE_DIVINE		/* enable RACE_DIVINE */
 
  #define AUCTION_BETA		/* less restrictions while beta testing */
  #define AUCTION_SYSTEM
