@@ -7009,7 +7009,7 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 			if (TOWN_TERRAFORM_GLYPHS == 0) return;
 			break;
 		}
-#else
+//#else //no; they're still irritating
 		/* hack: only allow around store entrances */
 		if (feat == FEAT_GLYPH) {
 			for (i = 0; i < 9; i++)
