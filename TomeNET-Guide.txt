@@ -8034,8 +8034,8 @@ Vampire
     a vampire bat may improve hit point regeneration rate.
 
 Maia
-    The Maiar are lesser spirits who may or may not be subordinate of Valar,
-    the great gods. Being of divine origin they can shape themselves in fashion
+    The Maiar are lesser spirits who are associated with one or more Valar, the
+    greater gods. Being of divine origin they can shape themselves in fashion
     of elves or humans as they see fit, often acting as powerful wizards to
     guide elves and man by gaining their trust. Appearing in such shape, their
     abilities will seem somewhat superior in all aspects and they also possess
