@@ -2310,14 +2310,14 @@ c) a potion of Cure Light Wounds {+,1} {@q2}
 d) a scroll of Phase Door {+,1} {@r1}
 
 Now we will create macros that make use of these items. Invoke the macro menu
-by pressing '%' key. Then choose "(3) Enter a new action" and enter the
+by pressing '%' key. Then choose "(a) Enter a new action" and enter the
 following two characters and press Enter:
 q1
-Now choose "(5) Create a hybrid macro", then press the F1 key.
+Now choose "(h) Create a hybrid macro", then press the F1 key.
 Now enter a new action, this time q2 instead of q1. Create another macro, this
 time hit F2. Then Enter the third macro, r1, and choose F3 key.
 Have your TomeNET client save the macros to a file on your hard disk, in your
-TomeNET directory at \lib\user by choosing "(2) Save macros" and entering a
+TomeNET directory at \lib\user by choosing "(s) Save macros" and entering a
 filename, or simply confirming the shown default file name which is the same
 as your character (recommended!).
 
@@ -2327,7 +2327,7 @@ dungeon now. If you still have some spare money, buy a flask of oil to fuel
 your lantern if it runs out, as well as some rations of food in case you get
 hungry.
 The next time you log on, you may load your previously saved macro file by
-invoking the macro menu again ('%'), choosing "(1) Load macros" and
+invoking the macro menu again ('%'), choosing "(l) Load macros" and
 entering the filename. If you saved the macros to the same name as your
 character, they will be automatically loaded, saving you that hassle.
 
@@ -2421,7 +2421,7 @@ Delete macros:
 If you accidentally bound a macro to a key which wasn't free, for example
 the key 'r' which is used to read a scroll, you can reset the key by
 -pressing % to invoke the macro menu
--choosing '(7) - delete macro'
+-choosing '(d) - delete macro'
 -pressing the key wich you want to reset.
 
 
@@ -2455,7 +2455,7 @@ a) casting a magical spell
     that it must be a single digit! @m20 does not work.
     Now we can create the macro.
     -Press '%' to invoke the macro menu,
-    -press '3' to enter a new action,
+    -press 'a' to enter a new action,
     -enter:    \e)*tmb2a-
      This means:    \e)     clear the keyboard buffer
                     *t      designate the closest enemy as the target for the
@@ -2468,15 +2468,15 @@ a) casting a magical spell
                             that target is actually valid. Otherwise cancel the
                             spell!
     -press ENTER key to accept that macro,
-    -now hit '5 - create a hybrid macro'
+    -now hit 'h - create a hybrid macro'
     -hit the key you want to bind this macro to, for example the 'F1' key.
      F-keys are a good choice for macros, since they're not used otherwise.
-    -To save your macros, press '2 - Save macros' and enter a filename of
+    -To save your macros, press 's - Save macros' and enter a filename of
      your choice. If you want your macros to be loaded automatically when you
      log in with your character, save them to '<yourname>.prf'. For example
      to 'Gandalf.prf' if your character is called 'Gandalf'.
      If your macros are not automatically loaded, you'll have to do it
-     manually after logging in, by pressing % and choosing '1 - Load macros',
+     manually after logging in, by pressing % and choosing 'l - Load macros',
      then specifying the according filename.
     Note that if your character gains additional abilities that show up
     in the 'm' menu, it might happen that 'b) cast a spell' becomes
@@ -2491,7 +2491,7 @@ b) throwing an item at a monster (or player)
     target.
     The macro:
     -Press '%' to invoke the macro menu,
-    -press '3' to enter a new action,
+    -press 'a' to enter a new action,
     -lets assume the item you want to throw is at position 'c)'.
      It's 'c) 3 potions of blindness'.
      You could now either specify the slot 'c)' in the macro or you could
@@ -2509,17 +2509,17 @@ b) throwing an item at a monster (or player)
                             inscribed @v1
                     *t      designate the closest enemy as the target!
     -press ENTER key to accept that macro,
-    -now hit '5 - Create a hybrid macro'
+    -now hit 'h - Create a hybrid macro'
     -hit the key you want to bind this macro to, for example the 'F2' key.
      F-keys are a good choice for macros, since they're not used otherwise.
-    -Don't forget to save your macro by pressing '2 - Save macros' if you
+    -Don't forget to save your macro by pressing 's - Save macros' if you
      plan to use it again.
 c) firing your equipped ranged weapon (sling, bow, crossbow)
     The keys we need are 'f' to fire and a direction key or *t to simply
     target the closest enemy.
     The macro:
     -Press '%' to invoke the macro menu,
-    -press '3' to enter a new action,
+    -press 'a' to enter a new action,
     -Since ammunition for firing or a boomerang is always at a fixed position
      in your equipment, we do not need any inscriptions on the weapon or
      ammunition - the game knows which item we want to use since there's only
@@ -2532,10 +2532,10 @@ c) firing your equipped ranged weapon (sling, bow, crossbow)
                     -       use previously designated target as direction, if
                             it's still valid, otherwise cancel firing!
     -press ENTER key to accept that macro,
-    -now hit '5 - Create a hybrid macro'
+    -now hit 'h - Create a hybrid macro'
     -hit the key you want to bind this macro to, for example the 'F2' key.
      F-keys are a good choice for macros, since they're not used otherwise.
-    -Don't forget to save your macro by pressing '2 - Save macros' if you
+    -Don't forget to save your macro by pressing 's - Save macros' if you
      plan to use it again.
 d) zapping a magical rod or aiming with a magical wand
     Rods are used by 'z' (zap a rod) and wands by 'a' (aim a wand),
@@ -2543,7 +2543,7 @@ d) zapping a magical rod or aiming with a magical wand
     designate the closest enemy as target.
     The macro:
     -Press '%' to invoke the macro menu,
-    -press '3' to enter a new action,
+    -press 'a' to enter a new action,
     -lets assume you want to aim the wand at position 'c)'.
      It's 'c) a wand of magic missiles'.
      You could now either specify the slot 'c)' in the macro or you could
@@ -2563,10 +2563,10 @@ d) zapping a magical rod or aiming with a magical wand
                     -       use previously designated target as direction, if
                             it's still valid, otherwise cancel firing!
     -press ENTER key to accept that macro,
-    -now hit '5 - Create a hybrid macro'
+    -now hit 'h - Create a hybrid macro'
     -hit the key you want to bind this macro to, for example the 'F2' key.
      F-keys are a good choice for macros, since they're not used otherwise.
-    -Don't forget to save your macro by pressing '2 - Save macros' if you
+    -Don't forget to save your macro by pressing 's - Save macros' if you
      plan to use it again.
 
 What happens if you leave out the '\e)' part?
@@ -2803,7 +2803,7 @@ An example macro set for fighters or archers:
 This macro set is already in your /lib/user folder! If it's not there,
 download the latest client from www.tomenet.net or our personal pages.
 You can load this macro file by hitting % to invoke the macro menu,
-then enter '1' to load a macro file, and specifying its filename,
+then enter 'l' to load a macro file, and specifying its filename,
 which is depending on your operating system:
 
 linux_fighter.prf    or    windows_fighter.prf
@@ -2811,7 +2811,7 @@ linux_fighter.prf    or    windows_fighter.prf
 If you plan on using it for a longer time, immediately save it again
 with the filename being identical to your character name, example: Killer.prf
 if your character is named 'Killer'.
-(You can save macros by choosing '(2) Save macros' in the macro menu.
+(You can save macros by choosing '(s) Save macros' in the macro menu.
 Note: The example macro sets are write-protected to avoid overwriting.)
 
 Of course you can just use any other potion/scroll instead of those mentioned,
@@ -2868,7 +2868,7 @@ additional needs of a low level istar or other casters:
 This macro set is already in your /lib/user folder! If it's not there,
 download the latest client from www.tomenet.net or our personal pages.
 You can load this macro file by hitting % to invoke the macro menu,
-then enter '1' to load a macro file, and specifying its filename,
+then enter 'l' to load a macro file, and specifying its filename,
 which is depending on your operating system:
 
 linux_caster.prf    or    windows_caster.prf
@@ -2876,7 +2876,7 @@ linux_caster.prf    or    windows_caster.prf
 If you plan on using it for a longer time, immediately save it again
 with the filename being identical to your character name, example: Killer.prf
 if your character is named 'Killer'.
-(You can save macros by choosing '(2) Save macros' in the macro menu.)
+(You can save macros by choosing '(s) Save macros' in the macro menu.)
 Note: The example macro sets are write-protected to avoid overwriting.)
 
 Of course you can just use any other potion/scroll instead of those mentioned,
@@ -2995,12 +2995,12 @@ There are three different ways to easily talk to your party.
 3.) Create a macro to chat with a specific party, so you can write a
     party-message by hitting a single key, party-chatting becomes as easy as
     hitting ':' for normal chat.
-    Enter the macro menu ('%'), enter a new action ('3'), enter the macro
+    Enter the macro menu ('%'), enter a new action ('a'), enter the macro
     according to your party name. For example, if your party is called
     'Scarlet Knights', enter this string:
         :Scarlet:
-    hit the Enter key to accept it, create a command macro ('6'), choose a
-    key you wish to use for party chat from now on, and save your macro ('2')
+    hit the Enter key to accept it, create a command macro ('c'), choose a
+    key you wish to use for party chat from now on, and save your macro ('s')
     to a file which is loaded automatically, like '<Your charname>.prf', for
     example Kinkan.prf.
     Using longer or shorter (at least 4 letters) strings works too of course,
@@ -3008,10 +3008,10 @@ There are three different ways to easily talk to your party.
     with yours.
 The best way in my opinion is to combine the two ways and to set up a macro
 which types   :!:   for you on a single key press automatically:
-    Enter the macro menu ('%'), enter a new action ('3'), enter the macro
-    :!:
-    hit the Enter key to accept it, create a command macro ('6'), choose a
-    key you wish to use for party chat from now on, and save your macro ('2')
+    Enter the macro menu ('%'), enter a new action ('a'), enter the macro:
+        :!:
+    hit the Enter key to accept it, create a command macro ('c'), choose a
+    key you wish to use for party chat from now on, and save your macro ('s')
     to a file which is loaded automatically, like '<Your charname>.prf', for
     example Kinkan.prf. This way, no matter what your party is called, you
     will always be able to chat to it by pressing a single key.
