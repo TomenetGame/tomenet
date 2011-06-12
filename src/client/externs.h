@@ -213,6 +213,7 @@ extern bool use_graphics;
 extern bool use_sound, use_sound_org;
 extern bool quiet_mode;
 extern bool noweather_mode;
+extern bool no_lua_updates;
 
 
 extern client_opts c_cfg;

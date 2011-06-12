@@ -181,6 +181,12 @@ int Receive_file(void){
 					
 					return n;
 				}
+				if (no_lua_updates) {
+					sprintf(outbuf, "\377yIgnoring update for file %s [%d]", fname, fnum);
+					c_msg_print(outbuf);
+					x = FALSE;
+					break;
+				}
 				x = local_file_init(0, fnum, fname);
 				if (x) {
 					sprintf(outbuf, "\377oReceiving updated file %s [%d]", fname, fnum);

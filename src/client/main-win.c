@@ -3756,6 +3756,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					puts("  -P<path>           set the lib directory Path");
 					puts("  -q                 disable audio capabilities ('quiet mode')");
 					puts("  -w                 disable client-side weather effects");
+					puts("  -u                 disable client-side automatic lua updates");
 					quit(NULL);
 					break;
 #endif // 0
@@ -3778,6 +3779,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					break;
 				case 'w':
 					noweather_mode = TRUE;
+					break;
+				case 'u':
+					no_lua_updates = TRUE;
 					break;
 			}
 		}

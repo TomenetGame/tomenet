@@ -645,8 +645,11 @@ s32b get_school_spell(cptr do_what, int *item_book)
 	{
 		get_item_extra_hook = get_item_hook_find_spell;
 		item_tester_tval = TV_BOOK;
-		sprintf(buf2, "You have no book to %s from", do_what);
-		if (!c_get_item(&item, format("%^s from which book?", do_what), (USE_INVEN | USE_EXTRA) )) return -1;
+		sprintf(buf2, "You have no book to %s from.", do_what);
+		if (!c_get_item(&item, format("%^s from which book?", do_what), (USE_INVEN | USE_EXTRA) )) {
+			if (item == -2) c_msg_format("%s", buf2);
+			return -1;
+		}
 	}
 	else
 	{

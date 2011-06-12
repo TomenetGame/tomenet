@@ -3727,7 +3727,7 @@ void interact_macros(void)
 					Term_putstr(15, 12, -1, TERM_L_GREEN, "a) Drink a potion");
 					Term_putstr(15, 13, -1, TERM_L_GREEN, "b) Read a scroll");
 					Term_putstr(15, 14, -1, TERM_L_GREEN, "c) Fire ranged weapon at closest enemy");
-					Term_putstr(15, 15, -1, TERM_L_GREEN, "d) Cast a spell that doesn't use a target");
+					Term_putstr(15, 15, -1, TERM_L_GREEN, "d) Cast a spell that doesn't use a target (or target manually)");
 					Term_putstr(15, 16, -1, TERM_L_GREEN, "e) Cast a spell that uses a target (attack spell)");
 					Term_putstr(15, 17, -1, TERM_L_GREEN, "f) Use a fighting technique (most melee classes)");
 					Term_putstr(15, 18, -1, TERM_L_GREEN, "g) Use a ranged technique (archers and rangers)");
@@ -3967,7 +3967,7 @@ void interact_macros(void)
 							i = -1;
 							continue;
 						}
-						strcat(buf, "\\r@");
+						strcat(buf, "\\r");
 
 						/* ---------- Enter ammo/load name ---------- */
 						clear_from(10);
@@ -3976,17 +3976,21 @@ void interact_macros(void)
 						Term_putstr(10, 13, -1, TERM_GREEN, "and lower-case letters!");
 						Term_putstr(10, 14, -1, TERM_GREEN, "For example, enter:     \377GPebbl     \377gif you want");
 						Term_putstr(10, 15, -1, TERM_GREEN, "to load a catapult trap kit with 'Rounded Pebbles'.");
-						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter partial ammo/load name:");
+						Term_putstr(10, 16, -1, TERM_GREEN, "If you want to choose ammo manually, just press the \377GRETURN\377g key.");
+						Term_putstr(5, 18, -1, TERM_L_GREEN, "Enter partial ammo/load name or blank line:");
 
 						/* Get an item name */
-						Term_gotoxy(40, 17);
+						Term_gotoxy(50, 18);
 						strcpy(buf2, "");
 						if (!askfor_aux(buf2, 159, 0)) {
 							i = -1;
 							continue;
 						}
-						strcat(buf2, "\\r");
+						/* Choose ammo manually? Terminate partial macro here. */
+						if (streq(buf2, "")) break;
 
+						strcat(buf2, "\\r");
+						strcat(buf, "@");
 						strcat(buf, buf2);
 						break;
 					case 'k':

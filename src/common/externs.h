@@ -160,7 +160,7 @@ extern bool always_repeat;
 extern bool use_old_target;
 extern bool depth_in_feet;
 extern bool use_color;
-extern bool compress_savefile;
+extern bool safe_macros;//compress_savefile;
 extern bool hilite_player;
 extern bool ring_bell;
 extern bool find_ignore_stairs;

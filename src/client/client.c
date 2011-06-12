@@ -652,6 +652,10 @@ int main(int argc, char **argv)
 			noweather_mode = TRUE;
 			break;
 
+		case 'u':
+			no_lua_updates = TRUE;
+			break;
+
 		default:
 			modus = -1;
 			i = argc;
@@ -679,6 +683,7 @@ int main(int argc, char **argv)
 		puts("  -P<path>           set the lib directory Path");
 		puts("  -q                 disable audio capabilities ('quiet mode')");
 		puts("  -w                 disable client-side weather effects");
+		puts("  -u                 disable client-side automatic lua updates");
 
 #ifdef USE_SOUND_2010
 #if 0 //we don't have 'modules' for everything, yet :-p only sound_modules for now - C. Blue

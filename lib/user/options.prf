@@ -62,7 +62,7 @@ X:flush_command
 Y:fresh_before
 X:fresh_after
 X:fresh_message
-Y:compress_savefile
+Y:safe_macros
 X:hilite_player
 Y:view_yellow_lite
 Y:view_bright_lite

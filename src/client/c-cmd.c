@@ -827,7 +827,8 @@ void cmd_inven(void)
 	show_inven();
 
 	ch = inkey();
-	if (ch >= 'A' && ch < 'A' + INVEN_PACK) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
+	if (ch == KTRL('T')) xhtml_screenshot("screenshot????");
+	else if (ch >= 'A' && ch < 'A' + INVEN_PACK) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
 		c = ch - 'A';
 
 		if (inventory[c].tval) {
@@ -867,7 +868,8 @@ void cmd_equip(void)
 	item_tester_full = FALSE;
 
 	ch = inkey();
-	if (ch >= 'A' && ch < 'A' + (INVEN_TOTAL - INVEN_WIELD)) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
+	if (ch == KTRL('T')) xhtml_screenshot("screenshot????");
+	else if (ch >= 'A' && ch < 'A' + (INVEN_TOTAL - INVEN_WIELD)) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
 		c = ch - 'A';
 		if (inventory[INVEN_WIELD + c].tval) {
 			if (chat_mode == CHAT_MODE_PARTY)
