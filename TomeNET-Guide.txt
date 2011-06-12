@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. June 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 13. June 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -9730,8 +9730,8 @@ Astral
                     enlightened -> mana,
                     corrupted -> nether.
                     Required skill level for first spell level: 1.
-    Power Ray       Casts a beam of electricity/mana/nether depending on your
-                    alignment (see Power Bolt spell above).
+    Power Ray       Casts a beam of electricity/light/darkness depending on
+                    your alignment (see Power Bolt spell above).
                     Required skill level for first spell level: 5.
     Power Blast     Casts a ball of electricity/mana/nether depending on your
                     alignment (see Power Bolt spell above).
