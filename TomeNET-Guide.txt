@@ -1371,6 +1371,7 @@ Last but not least, you may use the following command-line options:
 <ip address>            for example 85.118.45.235
 -q                      turns off loading/initializing of audio ('quiet mode')
 -w                      disables weather effects
+-u                      disables automatic LUA script updating
 
 
 Linux (compiling from source):
@@ -1459,6 +1460,7 @@ Last but not least, you may use the following command-line options:
 <ip address>            for example 85.118.45.235
 -q                      turns off loading/initializing of audio ('quiet mode')
 -w                      disables weather effects
+-u                      disables automatic LUA script updating
 
 Full command-line example:
         ./tomenet -p19348 -lGandalf geheim -NGandalf 85.118.45.235
