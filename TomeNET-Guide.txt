@@ -21,10 +21,6 @@
 |
 | If you have any suggestions about the guide or the game, please use the /rfe
 | command in the game or write to the official forum on www.tomenet.net.
-+---
-| Latest changes of the guide are viewable easily by going directly to CVS:
-| http://angband.oook.cz/cgi-bin/cvsweb.cgi/tomenet/TomeNET-Guide.txt?cvsroot=tome
-| and clicking on "coloured" in a line saying "Diff to previous <version>".
 \
 
 
@@ -1181,18 +1177,8 @@ the first couple of lines of this guide.
 Note that ToME and TomeNET although both coming from similar roots are actually
 quite different games that are maintained by different persons/teams.
 
-If you want to download the source code, you can get it via CVS, avoid any
-snapshot tarballs and stuff. The repository is at http://angband.oook.cz/.
-The cvs command-line to completely download the latest sources and files for
-TomeNET is:
-
-cvs -d:pserver:anonymous@angband.oook.cz:/var/cvs/tome co tomenet
-
-You can browse the CVS with a normal web browser easily!
-Here's a shortcut to save you time of searching angband.oook.cz, since
-navigating to CVS is somewhat confusing ;) (might change if angband.oook.cz
-changes the site layout) :
-http://angband.oook.cz/cgi-bin/cvsweb.cgi/tomenet/?cvsroot=tome
+If you want to download the source code, you can get it from www.tomenet.net in
+the download section.
 
 
 
@@ -1391,9 +1377,7 @@ Linux (compiling from source):
 ------------------------------
 (For using the pre-compiled client instead, see further below.)
 
-You can get the source from www.tomenet.net or directly from CVS via
-  cvs -d:pserver:anonymous@angband.oook.cz:/var/cvs/tome co tomenet
-also see (1.1).
+You can get the source from www.tomenet.net, also see (1.1).
 
 How to compile the game binary:
 Go into '/tomenet/src' where the file 'makefile' is located.
