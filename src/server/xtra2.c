@@ -3516,9 +3516,9 @@ void shape_Maia_skills(int Ind) {
 
 	case TRAIT_ENLIGHTENED:
 		/* Doh! */
-		p_ptr->s_info[SKILL_TRAUMATURGY].mod *= 0;
-		p_ptr->s_info[SKILL_NECROMANCY].mod *= 0;
-		p_ptr->s_info[SKILL_AURA_DEATH].mod *= 0;
+		p_ptr->s_info[SKILL_TRAUMATURGY].mod = 0;
+		p_ptr->s_info[SKILL_NECROMANCY].mod = 0;
+		p_ptr->s_info[SKILL_AURA_DEATH].mod = 0;
 
 		/* Yay */
 		do_Maia_skill(Ind, SKILL_AURA_FEAR, 30);

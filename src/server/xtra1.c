@@ -1635,7 +1635,7 @@ void calc_hitpoints(int Ind)
 
  #ifdef ENABLE_DIVINE
 	/* Extra bonus hp (2 per level) for the evil path */
-	if (p_ptr->prace == RACE_DIVINE && (p_ptr->ptrait == TRAIT_CORRUPTED)) {
+	if (p_ptr->prace == RACE_DIVINE && (p_ptr->ptrait == TRAIT_CORRUPTED) && p_ptr->lev >= 20) {
 		mhp += (p_ptr->lev - 20) * 2;
 	}
  #endif
@@ -3308,9 +3308,11 @@ void calc_boni(int Ind)
 
 			p_ptr->see_inv = TRUE;
 			p_ptr->resist_lite = TRUE;
-			p_ptr->cur_lite += 1 + (p_ptr->lev - 20) / 6; //REAL light!
-			p_ptr->to_a += (p_ptr->lev - 20);
-			p_ptr->dis_to_a += (p_ptr->lev - 20);
+			if (p_ptr->lev >= 20) {
+				p_ptr->cur_lite += 1 + (p_ptr->lev - 20) / 6; //REAL light!
+				p_ptr->to_a += (p_ptr->lev - 20);
+				p_ptr->dis_to_a += (p_ptr->lev - 20);
+			}
 
 			if (p_ptr->lev >= 50) {
 				p_ptr->resist_pois = TRUE;
