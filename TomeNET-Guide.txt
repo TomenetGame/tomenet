@@ -8059,7 +8059,9 @@ Maia
     which has spells of different effect depending on the caster's alignment.
     Initiation to either enlightened or corrupted beings will decide the effect
     of astral spells, extra abilities, and also their skill chart layout!
-    Maiar can be any class that can utilize mana.
+    Maiar can be any class that can utilize mana. They get the best shop prices
+    of all races since they are either greatly respected or feared by all other
+    creatures.
     They gain experience extremely slowly, and rarely need to feed before
     initiation. Afterwards they have no more need for any worldly food at all.
     Alignment-dependant boni are..
