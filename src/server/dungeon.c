@@ -5729,7 +5729,8 @@ void dungeon(void)
 				for (i = NumPlayers; i > 0 ;i--) {
 					if (Players[i]->conn == NOT_CONNECTED) continue;
 
-					if (admin_p(i)) continue;
+					/* Don't remove loot from ghosts waiting for res */
+					if (admin_p(i) || Players[i]->ghost) continue;
 
 					if (Players[i]->wpos.wz) {
 						Players[i]->recall_pos.wx = Players[i]->wpos.wx;
