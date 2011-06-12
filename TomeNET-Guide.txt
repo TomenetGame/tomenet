@@ -1616,6 +1616,7 @@ or that are especially important are listed in detail here:
         This is useful if you for example have a spellcasting macro that would
         just do something weird in case you lost the according spell book and
         then tried to cast it anyway, accidentally.
+        This only affects magic spells and monster traps.
 
     Clear @-inscriptions on taking item ownership (clear_inscr)
         When you pick up items that belonged to another player, any '@...'
