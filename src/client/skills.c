@@ -699,7 +699,7 @@ static void do_trap(int item_kit)
 		if (!c_get_item(&item_kit, "Use which trapping kit? ", (USE_INVEN | USE_EXTRA)))
 		{
 			if (item_kit == -2) c_msg_print("You have no trapping kits.");
-			if (c_cfg.safe_macros) Term_flush();
+			if (c_cfg.safe_macros) flush_now();//Term_flush();
 			return;
 		}
 	}
@@ -728,7 +728,7 @@ static void do_trap(int item_kit)
 			break;
 		default:
 			c_msg_print("Unknown trapping kit type!");
-			if (c_cfg.safe_macros) Term_flush();
+			if (c_cfg.safe_macros) flush_now();//Term_flush();
 			break;
 	}
 
@@ -737,7 +737,7 @@ static void do_trap(int item_kit)
 	if (!c_get_item(&item_load, "Load with what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA)))
 	{
 		if (item_load == -2) c_msg_print("You have nothing to load that trap with.");
-		if (c_cfg.safe_macros) Term_flush();
+		if (c_cfg.safe_macros) flush_now();//Term_flush();
 		return;
 	}
 
@@ -825,7 +825,7 @@ void do_activate_skill(int x_idx, int item)
 
 		/* Ask for a spell, allow cancel */
 		if ((spell = get_school_spell("cast", &item)) == -1) {
-			if (c_cfg.safe_macros) Term_flush();
+			if (c_cfg.safe_macros) flush_now();//Term_flush();
 			return;
 		}
 
