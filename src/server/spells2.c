@@ -59,6 +59,9 @@ void divine_vengeance(int Ind, int power) {
 	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) {
 		int i;
 		/* players TELE_TO */
+		if (p_ptr->party == 0) {
+			msg_print(Ind, "You can only teleport to party members.");
+		}
 		for (i = 1; i <= NumPlayers; i++) {
 			/* Skip self */
 			if (i == Ind) continue;
@@ -73,6 +76,9 @@ void divine_vengeance(int Ind, int power) {
 
 			/* Skip DM if not DM himself */
 			if (q_ptr->admin_dm && !p_ptr->admin_dm) continue;
+
+			/* Skip players who haven't opened their mind */
+			if (!(q_ptr->esp_link_flags & LINKF_OPEN)) continue;
 
 			/* Skip players not in the same party */
 			if (q_ptr->party == 0 || p_ptr->party == 0) continue;
