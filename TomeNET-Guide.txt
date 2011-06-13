@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. June 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 13. June 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -8049,10 +8049,7 @@ Maia
     demonkind before reaching level 20 or they will lose the ability to stay in
     the realm and their physical form will be destroyed. They will also meet
     such a fate if they kill both of these kind indiscriminately before having
-    reached initiation, so take care. The earliest time for initiation is level
-    15. Earlier defeats of a darkling or candlebearer will count too, except
-    you will have to wait for your intiation (or banishment) until you reach
-    level 15.
+    reached initiation, so take care.
     Using but their mind they can easily perceive both, good and demonkind,
     whose servants and harbingers occur between dungeon level 12 and 20.
     Maiar are able to train in the 'Astral' school, an exclusive divine magic
@@ -9733,8 +9730,8 @@ Astral
                     enlightened -> mana,
                     corrupted -> nether.
                     Required skill level for first spell level: 1.
-    Power Ray       Casts a beam of electricity/mana/nether depending on your
-                    alignment (see Power Bolt spell above).
+    Power Ray       Casts a beam of electricity/light/darkness depending on
+                    your alignment (see Power Bolt spell above).
                     Required skill level for first spell level: 5.
     Power Blast     Casts a ball of electricity/mana/nether depending on your
                     alignment (see Power Bolt spell above).
