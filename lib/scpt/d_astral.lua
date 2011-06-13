@@ -1,7 +1,7 @@
 -- The astral school ///update-dummy-bytes
 
 function get_astral_lev(Ind)
-	return (players(Ind).s_info[SKILL_ASTRAL + 1].value + 1) / 2000 + players(Ind).lev / 2
+	return ((players(Ind).s_info[SKILL_ASTRAL + 1].value + 1) / 2000 + players(Ind).lev / 2)
 end
 
 --[[ 
@@ -16,6 +16,10 @@ function get_astral_dam(Ind)
 	return (3 + ((get_astral_lev(Ind) * 3) / 5)), (1 + get_astral_lev(Ind) / 2)
 end
 
+
+function get_veng_power(Ind)
+	return (get_astral_lev(Ind)*get_astral_lev(Ind) / 5);
+end
 --orb of draining (main nuke for priests) go from 20 + (0 .. 475)
 --fireflash (main nuke for mages) go from 20 + (0 .. 500)
 --PROPOSED: due to lack of SUSECP_MANA/NETHER, we should be able to at least average out to ~750 per nuke (similar to resisted FF on SUSCEPT and FIRE_IMM monsters (754, to be exact))
@@ -186,10 +190,10 @@ VENGEANCE = add_spell
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			divine_vengeance(Ind, (30 + get_astral_lev(Ind) * 10))
+			divine_vengeance(Ind, get_veng_power(Ind));
 	end,
 	["info"] = 	function()
-			return "power "..(30 + get_astral_lev(Ind) * 10)
+			return "power "..get_veng_power(Ind);
 	end,
 	["desc"] =	{
 			"Enlightened: summons party member on the same area to you",
