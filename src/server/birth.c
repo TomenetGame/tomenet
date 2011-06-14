@@ -283,7 +283,7 @@ static hist_type bg[] =
 	{"Nienna, Lady of Mercy.  ",					80,101,102,0},
 	{"Este the Gentle.  ",						85,101,102,0},
 	{"Vaire the Weaver.  ",						90,101,102,0},
-	{"Vána the Ever-young.  ",					95,101,102,0},
+	{"Vana the Ever-young.  ",					95,101,102,0},
 	{"Nessa the Dancer.  ",						100,101,102,0},
 
 
@@ -294,7 +294,7 @@ static hist_type bg[] =
 	
 
 	{"Your physical form is Elven in feature, with long blonde hair.", 				50, 103, 0, 50},
-	{"Your facial feature is Human to a casual observer, with green eyes and short brown hair", 	100, 103, 0, 50},
+	{"Your facial features are Human to a casual observer, with green eyes and short brown hair.", 	100, 103, 0, 50},
 };
 
 
