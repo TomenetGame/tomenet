@@ -3921,10 +3921,11 @@ void check_experience(int Ind)
 			break;
 #ifdef ENABLE_DIVINE
 		case RACE_DIVINE:
+			if (p_ptr->ptrait) break; /* In case we got *bad* exp drain for some unfathomable reason ;) */
 			if (old_lev < 12 && p_ptr->lev >= 12) msg_print(Ind, "\374\377GWe all have to pick our own path some time...");
 //			if (old_lev < 14 && p_ptr->lev >= 14) msg_print(Ind, "\374\377GYou are thirsty for blood: be it good or evil");
 			if (old_lev < 14 && p_ptr->lev >= 14) msg_print(Ind, "\374\377GYour soul thirsts for shaping, either enlightenment or corruption!");
-			if (old_lev <= 19 && p_ptr->lev >= 15 && old_lev < p_ptr->lev && !p_ptr->ptrait) {
+			if (old_lev <= 19 && p_ptr->lev >= 15 && old_lev < p_ptr->lev) {
 				/* Killed none? nothing happens except if we reached the threshold level */
 				if (p_ptr->r_killed[MONSTER_RIDX_CANDLEBEARER] == 0
 				    && p_ptr->r_killed[MONSTER_RIDX_DARKLING] == 0) {
