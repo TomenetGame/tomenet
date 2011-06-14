@@ -881,7 +881,7 @@ int party_create_ironteam(int Ind, cptr name)
 int guild_add(int adder, cptr name){
 	player_type *p_ptr;
 	player_type *q_ptr = Players[adder];
-	int guild_id = q_ptr->guild, Ind = 0;
+	int guild_id = q_ptr->guild, Ind = 0, i;
 
 	if (!guild_id) {
 		msg_print(adder, "\377yYou are not in a guild");
@@ -931,6 +931,15 @@ int guild_add(int adder, cptr name){
 	Send_guild(Ind);
 #endif
 
+	/* Display the guild note to him */
+	for (i = 0; i < MAX_GUILDNOTES; i++) {
+		if (!strcmp(guild_note_target[i], guilds[p_ptr->guild].name)) {
+			if (strcmp(guild_note[i], ""))
+				msg_format(Ind, "\374\377bGuild Note: %s", guild_note[i]);
+			break;
+		}
+	}
+
 	/* Success */
 	return TRUE;
 }
@@ -942,7 +951,7 @@ int party_add(int adder, cptr name)
 {
 	player_type *p_ptr;
 	player_type *q_ptr = Players[adder];
-	int party_id = q_ptr->party, Ind = 0;
+	int party_id = q_ptr->party, Ind = 0, i;
 	
 	Ind = name_lookup_loose(adder, name, FALSE);
 
@@ -1000,6 +1009,15 @@ int party_add(int adder, cptr name)
 	/* Resend info */
 	Send_party(Ind);
 
+	/* Display the party note to him */
+	for (i = 0; i < MAX_PARTYNOTES; i++) {
+		if (!strcmp(party_note_target[i], parties[p_ptr->party].name)) {
+			if (strcmp(party_note[i], ""))
+				msg_format(Ind, "\374\377bParty Note: %s", party_note[i]);
+			break;
+		}
+	}
+
 	/* Success */
 	return TRUE;
 }
@@ -1021,6 +1039,7 @@ static void del_guild(int id){
 		if (!strcmp(guild_note_target[i], guilds[id].name)) {
 			strcpy(guild_note_target[i], "");
 			strcpy(guild_note[i], "");
+			break;
 		}
 	}
 
@@ -1047,6 +1066,7 @@ static void del_party(int id){
 		if (!strcmp(party_note_target[i], parties[id].name)) {
 			strcpy(party_note_target[i], "");
 			strcpy(party_note[i], "");
+			break;
 		}
 	}
 

@@ -2524,14 +2524,16 @@ static int Handle_login(int ind)
 	for (i = 0; i < MAX_PARTYNOTES; i++) {
 		if (!strcmp(party_note_target[i], parties[Players[NumPlayers]->party].name)) {
 			if (strcmp(party_note[i], ""))
-			msg_format(NumPlayers, "\374\377bParty Note: %s", party_note[i]);
+				msg_format(NumPlayers, "\374\377bParty Note: %s", party_note[i]);
+			break;
 		}
 	}
 	if (p_ptr->guild)
 	for (i = 0; i < MAX_GUILDNOTES; i++) {
 		if (!strcmp(guild_note_target[i], guilds[Players[NumPlayers]->guild].name)) {
 			if (strcmp(guild_note[i], ""))
-			msg_format(NumPlayers, "\374\377bGuild Note: %s", guild_note[i]);
+				msg_format(NumPlayers, "\374\377bGuild Note: %s", guild_note[i]);
+			break;
 		}
 	}
 	if (server_warning[0]) msg_format(NumPlayers, "\374\377R*** Note: %s ***", server_warning);

@@ -1946,6 +1946,7 @@ void do_slash_cmd(int Ind, char *message)
 							msg_format(Ind, "\377bParty Note: %s", party_note[i]);
 							found_note = TRUE;
 						}
+						break;
 					}
 				}
 				if (!found_note) msg_print(Ind, "\377bNo party note stored.");
@@ -2041,6 +2042,7 @@ void do_slash_cmd(int Ind, char *message)
 							msg_format(Ind, "\377bGuild Note: %s", guild_note[i]);
 							found_note = TRUE;
 						}
+						break;
 					}
 				}
 				if (!found_note) msg_print(Ind, "\377bNo guild note stored.");
