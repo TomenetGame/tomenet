@@ -1510,7 +1510,7 @@ static void process_world(int Ind)
 //			!(turn % ((5100L - p_ptr->lev * 50)*GHOST_FADING)))
 			!(turn % (GHOST_FADING / p_ptr->lev * 50)))
 //			(rand_int(10000) < p_ptr->lev * p_ptr->lev))
-			take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 10000L, "fading", TRUE, TRUE);
+			take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 10000L, "fading", TRUE, TRUE, FALSE);
 #endif	// GHOST_FADING
 
 }
@@ -3601,7 +3601,7 @@ static bool process_player_end_aux(int Ind)
 //	if (p_ptr->drain_exp && magik(p_ptr->wpos.wz != 0 ? 50 : (istown(&p_ptr->wpos) ? 0 : 25)) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
 	/* changing above line to use istownarea() so you can sort your houses without drain */
 	if (p_ptr->drain_exp && magik(p_ptr->wpos.wz != 0 ? 50 : (istownarea(&p_ptr->wpos, 2) ? 0 : 25)) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
-//		take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L, "Draining", TRUE, FALSE);
+//		take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L, "Draining", TRUE, FALSE, FALSE);
 		/* Moltor is right, exp drain was too weak for up to quite high levels. Need to make a new formula.. */
 	{
 		long exploss = 1 + p_ptr->lev + p_ptr->max_exp / 2000L;
@@ -3622,7 +3622,7 @@ static bool process_player_end_aux(int Ind)
 #endif
 
 		/* Drain it! */
-		if (exploss > 0) take_xp_hit(Ind, exploss, "Draining", TRUE, FALSE);
+		if (exploss > 0) take_xp_hit(Ind, exploss, "Draining", TRUE, FALSE, FALSE);
 	}
 
 #if 0
@@ -3646,7 +3646,7 @@ static bool process_player_end_aux(int Ind)
 		(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
 		else
 		lose_exp(Ind, (p_ptr->exp / 100) * MON_DRAIN_LIFE);
-		/* take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L, "an ancient foul curse", TRUE, TRUE); */
+		/* take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L, "an ancient foul curse", TRUE, TRUE, TRUE); */
 #else
 		(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
 #endif
@@ -3667,7 +3667,7 @@ static bool process_player_end_aux(int Ind)
 	{
 		(void)do_dec_stat_time(Ind, rand_int(6), STAT_DEC_NORMAL, 25, 0, TRUE);
 		take_xp_hit(Ind, 1 + p_ptr->lev * 3 + p_ptr->max_exp / 5000L,
-		    "Black Breath", TRUE, TRUE);
+		    "Black Breath", TRUE, TRUE, TRUE);
 	}
 
 	/* Drain Mana */

@@ -1249,7 +1249,7 @@ extern void teardown_timer(void);
 /* spells1.c */
 extern byte spell_color(int type);
 extern bool spell_color_animation(int type);
-extern void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal);
+extern void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool disturb);
 extern void take_sanity_hit(int Ind, int damage, cptr hit_from);
 extern s16b poly_r_idx(int r_idx);
 extern bool check_st_anchor(struct worldpos *wpos, int y, int x);

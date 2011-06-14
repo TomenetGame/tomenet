@@ -4917,7 +4917,7 @@ static void ring_of_power(int Ind, int dir)
 			(void)dec_stat(Ind, A_CHR, 50, STAT_DEC_NORMAL);
 
 			/* Lose some experience (permanently) */
-			take_xp_hit(Ind, p_ptr->exp / 4, "Ring of Power", TRUE, FALSE);
+			take_xp_hit(Ind, p_ptr->exp / 4, "Ring of Power", TRUE, FALSE, TRUE);
 #if 0
 			p_ptr->exp -= (p_ptr->exp / 4);
 			p_ptr->max_exp -= (p_ptr->exp / 4);

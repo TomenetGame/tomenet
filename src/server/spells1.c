@@ -1697,22 +1697,26 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
  * if not permanent nor fatal, use lose_exp instead.
  * - Jir -
  */
-void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal)
+void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool disturb)
 {
 	player_type *p_ptr = Players[Ind];
 
-        /* Amulet of Immortality */
-        object_type *o_ptr = &p_ptr->inventory[INVEN_NECK];
-        /* Skip empty items */
-        if (o_ptr->k_idx)
-        {
-                if (o_ptr->tval == TV_AMULET &&
-                    (o_ptr->sval == SV_AMULET_INVINCIBILITY || o_ptr->sval == SV_AMULET_INVULNERABILITY))
-	                return;
-        }
+	/* Amulet of Immortality */
+	object_type *o_ptr = &p_ptr->inventory[INVEN_NECK];
+	/* Skip empty items */
+	if (o_ptr->k_idx) {
+		if (o_ptr->tval == TV_AMULET &&
+		    (o_ptr->sval == SV_AMULET_INVINCIBILITY || o_ptr->sval == SV_AMULET_INVULNERABILITY))
+			return;
+	}
 
 	/* Paranoia */
 	if (p_ptr->death) return;
+
+	if (disturb) {
+		break_cloaking(Ind, 0);
+		stop_precision(Ind);
+	}
 
 	/* arena is safe, although this may be doubtful */
 	if (safe_area(Ind)) return;
@@ -1739,11 +1743,11 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal)
 		   depth, use died_from_depth. */
 		
 		(void)strcpy(p_ptr->died_from, hit_from);
-		if (!p_ptr->ghost) 
-		{	strcpy(p_ptr->died_from_list, hit_from);
+		if (!p_ptr->ghost) {
+			strcpy(p_ptr->died_from_list, hit_from);
 			p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
 			/* Hack to remember total winning */
-						if (p_ptr->total_winner) strcat(p_ptr->died_from_list, "\001");
+			if (p_ptr->total_winner) strcat(p_ptr->died_from_list, "\001");
 		}
 
 		/* No longer a winner */
@@ -1760,7 +1764,6 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal)
 		stop_shooting_till_kill(Ind);
 		return;
 	}
-	break_cloaking(Ind, 0);
 }
 
 
