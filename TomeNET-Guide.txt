@@ -9721,8 +9721,8 @@ Mental Intrusion
                     Required skill level for first spell level: 33.
 
 
-Maiars' divine school:
-----------------------
+Divine school of Maiar:
+-----------------------
 Astral
     Power Bolt      Casts a bolt of electricity/mana/nether depending on your
                     alignment:
