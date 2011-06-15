@@ -1684,7 +1684,10 @@ static void store_create(store_type *st_ptr)
 			value = e_ptr->cost + flag_cost(o_ptr, o_ptr->pval);
 			rarity = e_ptr->mrarity / e_ptr->rarity;
 			if (o_ptr->name2b) {
-				value += e2_ptr->cost;
+				/* Take more valuable of both powers */
+				if (e2_ptr->cost > value)
+					value = e2_ptr->cost;
+				/* Take rarer of both powers */
 				if (e2_ptr->mrarity / e2_ptr->rarity > rarity)
 					rarity = e2_ptr->mrarity / e2_ptr->rarity;
 			}
