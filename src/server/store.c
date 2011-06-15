@@ -1684,14 +1684,12 @@ static void store_create(store_type *st_ptr)
 			value = e_ptr->cost + flag_cost(o_ptr, o_ptr->pval);
 			rarity = e_ptr->mrarity / e_ptr->rarity;
 			if (o_ptr->name2b) {
-				/* Take more valuable of both powers */
-				if (e2_ptr->cost > value)
-					value = e2_ptr->cost;
+				value += e2_ptr->cost;
 				/* Take rarer of both powers */
 				if (e2_ptr->mrarity / e2_ptr->rarity > rarity)
 					rarity = e2_ptr->mrarity / e2_ptr->rarity;
 			}
-			if ((rarity < 7 || value < 8000) && magik(75)) continue;
+			if ((rarity < 7 || value < 9000) && magik(75)) continue;
 #endif
 		}
 
