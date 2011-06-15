@@ -7009,9 +7009,11 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 			if (TOWN_TERRAFORM_GLYPHS == 0) return;
 			break;
 		}
-//#else //no; they're still irritating
+#else
 		/* hack: only allow around store entrances */
 		if (feat == FEAT_GLYPH) {
+			return; //disallow glyphs
+		
 			for (i = 0; i < 9; i++)
 				if (zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat == FEAT_SHOP) break;
 			/* no nearby store entrance found? */
