@@ -4544,7 +4544,7 @@ void py_touch_zap_player(int Ind, int Ind2)
 			if (p_ptr->suscep_fire) aura_damage = aura_damage * 2;
 
 			msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
-			take_hit(Ind, aura_damage, "a fire aura", 0);
+			take_hit(Ind, aura_damage, "a fire aura", Ind2);
 			handle_stuff(Ind);
 		}
 	}
@@ -4556,7 +4556,7 @@ void py_touch_zap_player(int Ind, int Ind2)
 			if (p_ptr->suscep_cold) aura_damage = aura_damage * 2;
 
 			msg_format(Ind, "You are chilled by frost for \377w%d\377w damage!", aura_damage);
-			take_hit(Ind, aura_damage, "a frost aura", 0);
+			take_hit(Ind, aura_damage, "a frost aura", Ind2);
 			handle_stuff(Ind);
 		}
 	}
@@ -4568,7 +4568,7 @@ void py_touch_zap_player(int Ind, int Ind2)
 			if (p_ptr->suscep_elec) aura_damage = aura_damage * 2;
 
 			msg_format(Ind, "You are struck by lightning for \377w%d\377w damage!", aura_damage);
-			take_hit(Ind, aura_damage, "a lightning aura", 0);
+			take_hit(Ind, aura_damage, "a lightning aura", Ind2);
 			handle_stuff(Ind);
 		}
 	}
