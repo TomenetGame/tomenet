@@ -1770,8 +1770,10 @@ static void store_create(store_type *st_ptr)
 					    k_ptr->sval >= SV_CUSTOM_TOME_1 && k_ptr->sval <= SV_CUSTOM_TOME_3)
 						continue;
 
-					/* XBM must not offer nearly as many (ego/magi) lamps as Khazad Mining Supply Store! */
-					else if (o_ptr->tval == TV_LITE && magik(75)) continue;
+					/* XBM must not make Khazad Mining Supply Store unemployed! */
+					else if (o_ptr->tval == TV_LITE || o_ptr->tval == TV_DIGGING) {
+						if (magik(75)) continue;
+					}
 				}
 			}
 		}
