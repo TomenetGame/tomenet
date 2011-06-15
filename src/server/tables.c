@@ -2482,8 +2482,8 @@ Nothing here that truly heals/buffs people (those bonus are to self only). They 
                 3, 20, 3, 0,  5, 1, 15, 5,
 		11, 380,//too low == bad since you need the quest mobs
 		255, 250,
-                180, 20, 180, 20,
-                120, 30, 170, 15,
+                72,  16, 150, 55,
+                66,  8, 130, 40,
                 10,
 		/* Plan is to disable warrior and archer since they do not have SP */
 //                0xFFFFFFFF, //All classess for now
