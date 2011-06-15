@@ -1795,6 +1795,15 @@ static void store_create(store_type *st_ptr)
 					    ) {
 						continue;
 #endif
+					/* no need for stat potions, just wasting space */
+					} else if (k_ptr->tval == TV_POTION &&
+					    (k_ptr->sval == SV_POTION_INC_STR ||
+					    k_ptr->sval == SV_POTION_INC_INT ||
+					    k_ptr->sval == SV_POTION_INC_WIS ||
+					    k_ptr->sval == SV_POTION_INC_DEX ||
+					    k_ptr->sval == SV_POTION_INC_CON ||
+					    k_ptr->sval == SV_POTION_INC_CHR)) {
+						continue;
 					/* keep custom books out of XBM, so they may appear more often in BM/SBM */
 					} else if (k_ptr->tval == TV_BOOK &&
 					    k_ptr->sval >= SV_CUSTOM_TOME_1 && k_ptr->sval <= SV_CUSTOM_TOME_3) {
