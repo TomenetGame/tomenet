@@ -26,6 +26,12 @@
    Adjusting it to balance art scroll rarity in EBM - C. Blue (see EBM in st_info.txt for more) */
 #define MAX_MAINTENANCES	10
 
+/* Prevent items in stores which got a power < 0 in apply_magic() yet didn't turn out CURSED?
+   These items will end up with very low boni, below their k_info values, and therefore be somewhat
+   useless, since they won't be bought anyway. - C. Blue */
+#define NO_PSEUDO_CURSED_ITEMS
+
+
 static int gettown(int Ind);
 static int gettown_dun(int Ind);
 
@@ -1565,6 +1571,17 @@ static void store_create(store_type *st_ptr)
 			continue;
 #endif
 
+		k_ptr = &k_info[o_ptr->k_idx];
+
+#ifdef NO_PSEUDO_CURSED_ITEMS
+		/* Prevent items with boni that are below their k_info boni */
+		if (!o_ptr->name2 && (
+		    o_ptr->to_h < k_ptr->to_h ||
+		    o_ptr->to_d < k_ptr->to_d ||
+		    o_ptr->to_a < k_ptr->to_a))
+			continue;
+#endif
+
 		/* Hack -- Charge lite uniformly */
 		if (o_ptr->tval == TV_LITE) {
 			u32b f1, f2, f3, f4, f5, esp;
@@ -1659,7 +1676,6 @@ static void store_create(store_type *st_ptr)
 			}//o_ptr->tval switch
 		}
 
-		k_ptr = &k_info[o_ptr->k_idx];
 		e_ptr = &e_info[o_ptr->name2];
 		e2_ptr = &e_info[o_ptr->name2b];
 
