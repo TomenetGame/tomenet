@@ -295,7 +295,7 @@ static hist_type bg[] =
 */
 	
 
-	{"Your physical form is Elven in feature.  ", 				50, 102, 50, 70},
+	{"Your physical form is Elven in feature.  ", 				50, 102, 54, 70},
 	{"You manifest as a Human to casual observers.  ", 	100, 102, 50, 70},
 };
 
