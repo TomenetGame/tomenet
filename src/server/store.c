@@ -1787,7 +1787,9 @@ static void store_create(store_type *st_ptr)
 						continue;
 
 					/* XBM must not make Khazad Mining Supply Store unemployed! */
-					else if (o_ptr->tval == TV_LITE || o_ptr->tval == TV_DIGGING) {
+					else if (o_ptr->tval == TV_LITE) {
+						if (magik(90)) continue;
+					} else if (o_ptr->tval == TV_DIGGING) {
 						if (magik(75)) continue;
 					}
 				}
