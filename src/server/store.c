@@ -1622,12 +1622,8 @@ static void store_create(store_type *st_ptr)
 			}
 
 			/* Hack -- General store shouldn't sell too much aman cloaks etc */
-/* C. Blue: Softened it up to allow brightness lamps! (for RPG mainly) */
-#if 0
-			if (st_ptr->st_idx == 0 && object_value(0, o_ptr) > 1000 &&
-#else
+			/* Softened it up to allow brightness lamps! (for RPG mainly) - C. Blue */
 			if (st_ptr->st_idx == STORE_GENERAL && object_value(0, o_ptr) > 18000 && /* ~13000 probably max */
-#endif
 			    magik(33) &&
 			    !(st_info[st_ptr->st_idx].flags1 & SF1_EGO))
 				continue;
@@ -1673,13 +1669,6 @@ static void store_create(store_type *st_ptr)
 			continue;
 
 		/* Shop has extra rare egos? */
-#if 0
-		if ((o_ptr->name2 || o_ptr->name2b)) {
-			if ((st_info[st_ptr->st_idx].flags1 & SF1_RARE_EGO) &&
-			    (object_value(0, o_ptr) < 25000) &&
-			    (magik(50)))
-				continue;
-#else
 		if ((st_info[st_ptr->st_idx].flags1 & SF1_RARE_EGO) && o_ptr->name2) {
 			value = e_ptr->cost + flag_cost(o_ptr, o_ptr->pval);
 			rarity = e_ptr->mrarity / e_ptr->rarity;
@@ -1690,7 +1679,6 @@ static void store_create(store_type *st_ptr)
 					rarity = e2_ptr->mrarity / e2_ptr->rarity;
 			}
 			if ((rarity < 7 || value < 9000) && magik(75)) continue;
-#endif
 		}
 
 		/* Is the item too cheap for this shop? */
@@ -1707,46 +1695,45 @@ static void store_create(store_type *st_ptr)
 		/* Rare enough? */
 		/* Interesting numbers: 3+, 6+, 8+, 16+ */
 		if ((st_info[st_ptr->st_idx].flags1 & SF1_VERY_RARE)) {
+			/* Note that items generated in the non-magik(99)-case will still profit from the shop flags. */
 			if (magik(99)) { /* just for some diversification, no real reason though unlike for SF1_RARE flag */
 				if ((k_ptr->chance[0] && k_ptr->chance[0] < 8) ||
 				    (k_ptr->chance[1] && k_ptr->chance[1] < 8) ||
 				    (k_ptr->chance[2] && k_ptr->chance[2] < 8) ||
 				    (k_ptr->chance[3] && k_ptr->chance[3] < 8))
 					continue;
-				
+
 				if (black_market) {
-/* Note that armour generated in the non-magik(99)-case will still profit from the shop flags. */
-#if 0 /* offer easy high-level armour? */
-					/* hack - also no low/mid DSMs */
-					if (k_ptr->tval == TV_DRAG_ARMOR &&
-					    (sv_dsm_low(k_ptr->sval) || sv_dsm_mid(k_ptr->sval)))
-						continue;
-					/* hack - no tomes, pretty pointless for SBM to offer those */
-					if (k_ptr->tval == TV_BOOK) continue;
-#else /* no. let's require players to actually find their items! Allowing weapons though. */
-					if (is_rare_armour(k_ptr->tval, k_ptr->sval))
-						continue;
-					/* keep offering books though */
-#endif
-					/* quite artificial hack - less amulet of weaponmastery spam */
-#if 0 /* btw, these 3 have same prob, but diff lvl */
-					if (k_ptr->tval == TV_AMULET) {
-						if (k_ptr->sval == SV_AMULET_ESP && magik(80)) continue;
-						if (k_ptr->sval == SV_AMULET_WEAPONMASTERY && magik(80)) continue;//80
-						if (k_ptr->sval == SV_AMULET_RAGE && magik(80)) continue;//50
-					}
-#else
-					/* no amulet spam, we have a secret jewelry for that */
-					if (k_ptr->tval == TV_AMULET && magik(90)) continue;
-#endif
+					/* players need to actually find their items! Allowing weapons though. */
+					if (is_rare_armour(k_ptr->tval, k_ptr->sval)) continue;
+
+					/* prevent books in SBM too? */
+					//else if (k_ptr->tval == TV_BOOK) continue;
+
 					/* make uber rods harder to get */
-					if (k_ptr->tval == TV_ROD) continue;
+					else if (k_ptr->tval == TV_ROD) continue;
+
 					/* no easy golem parts */
-					if (k_ptr->tval == TV_GOLEM) continue;
+					else if (k_ptr->tval == TV_GOLEM) continue;
+
+					/* no amulet spam, we have a secret jewelry for that */
+					else if (k_ptr->tval == TV_AMULET && magik(90)) continue;
 				}
 			}
 		}
 		if ((st_info[st_ptr->st_idx].flags1 & SF1_RARE)) {
+			/* no need for stat potions in a rare store, just wasting space.
+			   They occur fine in normal BMs or dedicated potion store (RPG). */
+			if (k_ptr->tval == TV_POTION &&
+			    (k_ptr->sval == SV_POTION_INC_STR ||
+			    k_ptr->sval == SV_POTION_INC_INT ||
+			    k_ptr->sval == SV_POTION_INC_WIS ||
+			    k_ptr->sval == SV_POTION_INC_DEX ||
+			    k_ptr->sval == SV_POTION_INC_CON ||
+			    k_ptr->sval == SV_POTION_INC_CHR)
+			    && magik(99))
+				continue;
+
 			/* experimental: allow the SF1_RARE flag to 'not kick in' periodically! - C. Blue
 			   explanation: top-class ego armour was easily obtainable here..too easily!
 					the whole point of actually finding l00t was partially nullified by this,
@@ -1757,6 +1744,7 @@ static void store_create(store_type *st_ptr)
 					note that these 'normal bm' fits still profit from all other shop flags,
 					that normal bms don't have, so cheap/low items won't appear. :D
 			   (note: it should (for mages) probably be kept ensured that soft leather boots can appear in boot store too.) */
+			/* Note that items generated in the non-magik(95)-case will still profit from the shop flags. */
 			if (magik(95)) {
 				if ((k_ptr->chance[0] && k_ptr->chance[0] < 3) ||
 				    (k_ptr->chance[1] && k_ptr->chance[1] < 3) ||
@@ -1765,56 +1753,25 @@ static void store_create(store_type *st_ptr)
 					continue;
 
 				if (black_market) {
-/* Note that armour generated in the non-magik(99)-case will still profit from the shop flags. */
-#if 0 /* offer easy high-level armour? */
-					/* hack - also no/less low/mid DSMs */
-					if (k_ptr->tval == TV_DRAG_ARMOR &&
-					    (sv_dsm_low(k_ptr->sval) || sv_dsm_mid(k_ptr->sval))) {
-						if (magik(67)) continue;
-/*					} else if (is_rare_armour(k_ptr->tval, k_ptr->sval)) { // <- was enabled when SF1_RARE flag was static
-						if (magik(95)) continue;*/
-					} else if (is_armour(k_ptr->tval)) { // <- is enabled now where SF1_RARE flag is periodic
-						/*if (magik(100))*/ continue;
-#else /* no. let's require players to actually find their items! Allowing weapons though */
-					if (is_armour(k_ptr->tval)) {
-						continue;
-#endif
-					} else if (is_weapon(k_ptr->tval)) { // <- otherwise the rare weapons occur too often with nice ego powers for too low price
-						/*if (magik(100))*/ continue;
-					} else if (k_ptr->tval == TV_AMULET || k_ptr->tval == TV_RING) {
-						/*if (magik(100))*/ continue; /* don't make rare jewelry store unemployed */
+					/* Important: Don't allow easy armour gathering. */
+					if (is_armour(k_ptr->tval)) continue;
+
+					/* otherwise the rare weapons occur too often with nice ego powers for too low price */
+					else if (is_weapon(k_ptr->tval)) continue;
+
+					/* don't make rare jewelry store unemployed */
+					else if (k_ptr->tval == TV_AMULET || k_ptr->tval == TV_RING) continue;
+
 					/* make uber rods harder to get */
-					} else if (k_ptr->tval == TV_ROD) {
-						continue;
-#if 0 /* since it's FALSE'd anyway, for efficiency */
-					/* reduced frequency of art scrolls. (Base is ~ 1/30min max-scum, 1/90min min-scum) */
-					} else if (k_ptr->tval == TV_SCROLL && k_ptr->sval == SV_SCROLL_ARTIFACT_CREATION
-//					    && magik(50) <- was pretty annoying due to shopkeeper racial hate!
-//					    && magik(33) <- still annoying
-					    && FALSE
-					    ) {
-						continue;
-#endif
-					/* no need for stat potions, just wasting space */
-					} else if (k_ptr->tval == TV_POTION &&
-					    (k_ptr->sval == SV_POTION_INC_STR ||
-					    k_ptr->sval == SV_POTION_INC_INT ||
-					    k_ptr->sval == SV_POTION_INC_WIS ||
-					    k_ptr->sval == SV_POTION_INC_DEX ||
-					    k_ptr->sval == SV_POTION_INC_CON ||
-					    k_ptr->sval == SV_POTION_INC_CHR)) {
-						continue;
+					else if (k_ptr->tval == TV_ROD) continue;
+
 					/* keep custom books out of XBM, so they may appear more often in BM/SBM */
-					} else if (k_ptr->tval == TV_BOOK &&
-					    k_ptr->sval >= SV_CUSTOM_TOME_1 && k_ptr->sval <= SV_CUSTOM_TOME_3) {
+					else if (k_ptr->tval == TV_BOOK &&
+					    k_ptr->sval >= SV_CUSTOM_TOME_1 && k_ptr->sval <= SV_CUSTOM_TOME_3)
 						continue;
-					}
-					/* XBM must not offer nearly as many magi lamps as Khazad Mining Supply Store! */
-					else if (o_ptr->tval == TV_LITE &&
-					    (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI) &&
-					    magik(75)) {
-						continue;
-					}
+
+					/* XBM must not offer nearly as many (ego/magi) lamps as Khazad Mining Supply Store! */
+					else if (o_ptr->tval == TV_LITE && magik(75)) continue;
 				}
 			}
 		}
