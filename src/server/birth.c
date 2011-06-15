@@ -269,32 +269,34 @@ static hist_type bg[] =
 
 
 	/* Maiar background */
-	{"You are a Maiar spirit, bound to ", 				100, 100, 101, 50},
+	{"You are a Maiar spirit, bound to ", 				100, 100, 101, 70},
 	
-	{"Manwe Sulimo, King of the Valar.  ",				10,101,102,0},
-	{"Ulmo, King of the Sea.  ",					20,101,102,0},
-	{"Aule, the Smith.  ",						30,101,102,0},
-	{"Orome Aldaron, the Great Rider and Hunter of Valinor.  ",	40,101,102,0},
-	{"Mandos, Judge of the Dead.  ",				50,101,102,0},
-	{"Irmo, Master of Dreams and Desires.  ",			60,101,102,0},
-	{"Tulkas Astaldo, Champion of Valinor.  ",			65,101,102,0},
-	{"Varda Elentari, Queen of the Stars, wife of Manwe.  ",	70,101,102,0},
-	{"Yavanna Kementari, Giver of Fruits, wife of Aule.  ",		75,101,102,0},
-	{"Nienna, Lady of Mercy.  ",					80,101,102,0},
-	{"Este the Gentle.  ",						85,101,102,0},
-	{"Vaire the Weaver.  ",						90,101,102,0},
-	{"Vana the Ever-young.  ",					95,101,102,0},
-	{"Nessa the Dancer.  ",						100,101,102,0},
+	{"Manwe Sulimo, King of the Valar.  ",				10,101,102,150},
+	{"Ulmo, King of the Sea.  ",					20,101,102,100},
+	{"Aule, the Smith.  ",						30,101,102,100},
+	{"Orome Aldaron, the Great Rider and Hunter of Valinor.  ",	40,101,102,120},
+	{"Mandos, Judge of the Dead.  ",				50,101,102,100},
+	{"Irmo, Master of Dreams and Desires.  ",			60,101,102,100},
+	{"Tulkas Astaldo, Champion of Valinor.  ",			65,101,102,130},
+	{"Varda Elentari, Queen of the Stars, wife of Manwe.  ",	70,101,102,120},
+	{"Yavanna Kementari, Giver of Fruits, wife of Aule.  ",		75,101,102,90},
+	{"Nienna, Lady of Mercy.  ",					80,101,102,90},
+	{"Este the Gentle.  ",						85,101,102,90},
+	{"Vaire the Weaver.  ",						90,101,102,90},
+	{"Vana the Ever-young.  ",					95,101,102,90},
+	{"Nessa the Dancer.  ",						100,101,102,90},
 
 
+/* //too long :(
 	{"You were sent to assist the Elves that stayed in the East.  ",			25,102,103,0},
 	{"You suspend your pilgrimage in Aman to spend some time in the mortal land.  ",	50,102,103,0},
 	{"Your ambition compels your physical manifestation here in Arda.  ",			75,102,103,0},
 	{"You were ordered to assist the humans and elves in the West.  ",			100,102,103,0},
+*/
 	
 
-	{"Your physical form is Elven in feature, with long blonde hair.", 				50, 103, 0, 50},
-	{"Your facial features are Human to a casual observer, with green eyes and short brown hair.", 	100, 103, 0, 50},
+	{"Your physical form is Elven in feature.  ", 				50, 102, 50, 70},
+	{"You manifest as a Human to casual observers.  ", 	100, 102, 50, 70},
 };
 
 
