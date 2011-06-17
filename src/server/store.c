@@ -1418,9 +1418,6 @@ static void store_create(store_type *st_ptr)
 	bool black_market = (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM);
 	bool carry_ok;
 
-	char o_name[ONAME_LEN];
-	cptr s_name;
-
 #if 0 /* see below where they're used */
 	int boots_witan_idx = lookup_kind(TV_BOOTS, SV_PAIR_OF_WITAN_BOOTS);
 	int boots_soft_idx = lookup_kind(TV_BOOTS, SV_PAIR_OF_SOFT_LEATHER_BOOTS);
@@ -1869,8 +1866,10 @@ static void store_create(store_type *st_ptr)
 		/* Attempt to carry the (known) item */
 		carry_ok = (store_carry(st_ptr, o_ptr) != -1);
 
-#if 1 /* debug herbalist store */
+#if 0 /* debug herbalist store */
 		if (st_ptr->st_idx == STORE_HERBALIST) {
+			char o_name[ONAME_LEN];
+			cptr s_name;
  #if 0
 			object_desc(0, o_name, o_ptr, TRUE, 3);
 			s_name = st_name + st_info[st_ptr->st_idx].name;
@@ -1887,27 +1886,31 @@ static void store_create(store_type *st_ptr)
 		}
 #endif
 
+#if 0
 		/* Log occurances of special items */
-#ifndef TEST_SERVER
+ #ifndef TEST_SERVER
 //		if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION && st_ptr->st_idx != 60) || /* avoid spam from SBM which offers lots of these */
 		if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION) ||
 		    (o_ptr->tval == TV_LITE && (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI)) ||
- #if 0
+  #if 0
 		    (o_ptr->tval == TV_BOOK && st_ptr->st_idx == 48) ||
- #endif
+  #endif
 		    (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_POWER && st_ptr->st_idx != 60)) {
-#else
+ #else
 //		if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION && st_ptr->st_idx != 60) || /* avoid spam from SBM which offers lots of these */
 		if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION) ||
 		    (o_ptr->tval == TV_LITE && (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI)) ||
 		    (o_ptr->tval == TV_LITE && (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI))) {
-#endif
+ #endif
+			char o_name[ONAME_LEN];
+			cptr s_name;
 			object_desc(0, o_name, o_ptr, TRUE, 3);
 			s_name = st_name + st_info[st_ptr->st_idx].name;
 			s_printf("%s: STORE_CARRY: %d/%d - %d, %s (%s)", showtime(), st_ptr->town, town[st_ptr->town].type, st_ptr->st_idx, o_name, s_name);
 			if (carry_ok) s_printf(" OK.\n");
 			else s_printf(" FAILED.\n");
 		}
+#endif
 
 		/* Definitely done */
 		break;
@@ -5684,8 +5687,6 @@ void store_debug_stock()
 	int i, j, n, maintain_num, what;
 	store_type *st_ptr;
 	object_type *o_ptr;
-	char o_name[ONAME_LEN];
-	cptr s_name;
 
 	/* process all stores in all towns */
 
@@ -5738,17 +5739,21 @@ void store_debug_stock()
 				if (o_ptr->xtra1 != 222) continue;
 				o_ptr->xtra1 = 0;
 
+#if 0
 				/* Log occurances of special items */
 				if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION && st_ptr->st_idx != 60) || /* avoid spam from SBM which offers lots of these */
 				    (o_ptr->tval == TV_LITE && (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI)) ||
-#if 0
+ #if 0
 				    (o_ptr->tval == TV_BOOK && st_ptr->st_idx == 48) ||
-#endif
+ #endif
 				    (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_POWER && st_ptr->st_idx != 60)) {
+					char o_name[ONAME_LEN];
+					cptr s_name;
 					object_desc(0, o_name, o_ptr, TRUE, 3);
 					s_name = st_name + st_info[st_ptr->st_idx].name;
 					s_printf("%s: REAL_STORE_CARRY: %d/%d - %d, %s (%s).\n", showtime(), st_ptr->town, town[st_ptr->town].type, st_ptr->st_idx, o_name, s_name);
 				}
+#endif
 			}
 		}
 	}
@@ -6066,8 +6071,8 @@ static void player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 	bool mass_cheque = FALSE;
 	house_type *h_ptr;
 	int h_idx, i, x, y;
-	object_type *ho_ptr;
-	cave_type **zcave, *c_ptr;
+	object_type *ho_ptr = NULL;
+	cave_type **zcave, *c_ptr = NULL;
 	char o_name[ONAME_LEN], o0_name[ONAME_LEN];
 	u32b old_value;
 	char owner_name[MAX_CHARS];
