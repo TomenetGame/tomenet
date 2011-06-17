@@ -2753,7 +2753,9 @@ static bool process_player_end_aux(int Ind)
 		    ((r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC) &&
 		    !(r_info[p_ptr->body_monster].flags3 & RF3_UNDEAD))
 		    && ((c_ptr->feat != FEAT_SHAL_WATER) ||
-		    r_info[p_ptr->body_monster].weight > 700))
+		    r_info[p_ptr->body_monster].weight > 700)
+		    /* new: don't get stunned from crossing door/stair grids every time - C. Blue */
+		    && !(is_door(c_ptr->feat) || is_stair(c_ptr->feat)))
 		{
 			long hit = p_ptr->mhp>>6; /* Take damage */
 			hit += randint(p_ptr->chp>>5);

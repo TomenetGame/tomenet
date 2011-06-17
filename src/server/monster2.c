@@ -5104,8 +5104,7 @@ static bool monster_ground(int r_idx)
 bool monster_can_cross_terrain(byte feat, monster_race *r_ptr)
 {
 	/* Deep water */
-	if (feat == FEAT_DEEP_WATER)
-	{
+	if (feat == FEAT_DEEP_WATER) {
 		if ((r_ptr->flags7 & RF7_AQUATIC) ||
 		    (r_ptr->flags7 & RF7_CAN_FLY) ||
 		    (r_ptr->flags9 & RF9_IM_WATER) ||
@@ -5115,8 +5114,7 @@ bool monster_can_cross_terrain(byte feat, monster_race *r_ptr)
 			return FALSE;
 	}
 	/* Shallow water */
-	else if (feat == FEAT_SHAL_WATER)
-	{
+	else if (feat == FEAT_SHAL_WATER) {
 		if (r_ptr->flags2 & RF2_AURA_FIRE)
 			return FALSE;
 		else
@@ -5124,14 +5122,15 @@ bool monster_can_cross_terrain(byte feat, monster_race *r_ptr)
 	}
 	/* Aquatic monster */
 	else if ((r_ptr->flags7 & RF7_AQUATIC) &&
-		    !(r_ptr->flags7 & RF7_CAN_FLY))
-	{
-		return FALSE;
+	    !(r_ptr->flags7 & RF7_CAN_FLY)) {
+		/* MAY pass all sorts of doors, so they don't get stuck
+		   in water-filled rooms all the time, waiting to get shot - C. Blue */
+		if (is_door(feat) || is_stair(feat)) return TRUE;
+		else return FALSE;
 	}
 	/* Lava */
 	else if ((feat == FEAT_SHAL_LAVA) ||
-	    (feat == FEAT_DEEP_LAVA))
-	{
+	    (feat == FEAT_DEEP_LAVA)) {
 		if ((r_ptr->flags3 & RF3_IM_FIRE) ||
 		    (r_ptr->flags9 & RF9_RES_FIRE) ||
 		    (r_ptr->flags3 & RF3_RES_PLAS) ||
