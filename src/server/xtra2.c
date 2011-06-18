@@ -4402,6 +4402,7 @@ void monster_death(int Ind, int m_idx)
 
 	monster_type *m_ptr = &m_list[m_idx];
         monster_race *r_ptr = race_inf(m_ptr);
+        bool is_Morgoth = (strcmp(r_name_get(m_ptr), "Morgoth, Lord of Darkness") == 0);
 	int credit_idx = r_ptr->dup_idx ? r_ptr->dup_idx : m_ptr->r_idx;
 	bool visible = (p_ptr->mon_vis[m_idx] || (r_ptr->flags1 & RF1_UNIQUE));
 
@@ -4597,7 +4598,7 @@ if (season_halloween) {
 	if (m_ptr->clone) return;
 	/* neither do cheezed kills -- make exception for Morgoth, so hi-lvl fallen kings can re-king */
 	if (henc_cheezed &&
-		!streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness") &&
+		!is_Morgoth &&
 		!streq(r_name_get(m_ptr), "Great Pumpkin")) return; /* allow a mixed hunting group */
 
 
@@ -4674,7 +4675,7 @@ if (season_halloween) {
 				resf_tmp = make_resf(p_ptr);
 
 				/* Morgoth never drops true artifacts */
-				if (!strcmp(r_name_get(m_ptr), "Morgoth, Lord of Darkness")) resf_tmp |= RESF_NOTRUEART;
+				if (is_Morgoth) resf_tmp |= RESF_NOTRUEART;
 
 				/* hack to allow custom test l00t drop for admins: */
 				if (is_admin(p_ptr)) {
@@ -4820,7 +4821,7 @@ if(cfg.unikill_format){
 		else
 		titlebuf = player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_PLAYER_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male];
 
-		if (streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness")) {
+		if (is_Morgoth) {
 			snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s %s.\377v**", r_name_get(m_ptr), titlebuf, p_ptr->name);
 		} else {
 			snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by %s %s.\377b**", r_name_get(m_ptr), titlebuf, p_ptr->name);
@@ -4830,12 +4831,12 @@ if(cfg.unikill_format){
 	   at the moment, and party names would make the line grow too long if
 	   combined with title before the actual name :/ -C. Blue */
 		if (!Ind2) {
-			if (streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness"))
+			if (is_Morgoth)
 				snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s.\377v**", r_name_get(m_ptr), p_ptr->name);
 			else
 				snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by %s.\377b**", r_name_get(m_ptr), p_ptr->name);
 		} else {
-			if (streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness"))
+			if (is_Morgoth)
 				snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by fusion %s-%s.\377v**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 			else
 				snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by fusion %s-%s.\377b**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
@@ -4847,7 +4848,7 @@ if(cfg.unikill_format){
 			for (i = 1; i <= NumPlayers; i++) {
 				if ( (Players[i]->party == p_ptr->party) && (inarea(&Players[i]->wpos, &p_ptr->wpos)) && (i != Ind) && (p_ptr->wpos.wz) )
 				{
-					if (streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness"))
+					if (is_Morgoth)
 						snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s of %s.\377v**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
 					else
 						snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by %s of %s.\377b**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
@@ -4862,19 +4863,37 @@ if(cfg.unikill_format){
 #ifdef TOMENET_WORLDS
 		if (cfg.worldd_unideath)
 			world_msg(buf);
-		else if (cfg.worldd_pwin && streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness"))
+		else if (cfg.worldd_pwin && is_Morgoth)
 			world_msg(buf);
 #endif
 		/* Tell every player */
 		msg_broadcast(-1, buf);
 		/* Log event */
 		s_printf("%s was slain by %s.\n", r_name_get(m_ptr), p_ptr->name);
+
 	}
     }
 
+	/* If the dungeon where Morgoth is killed is Ironman/Forcedown/No-Recall
+	   allow recalling on this particular floor, since player will lose all true arts.
+	   Originally for RPG_SERVER, but atm enabled for all. - C. Blue */
+	if (is_Morgoth) {
+		dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
+		dun_level *l_ptr = getfloor(&p_ptr->wpos);
+		if ((((d_ptr->flags2 & DF2_IRON || d_ptr->flags1 & DF1_FORCE_DOWN)
+		    && d_ptr->maxdepth > ABS(p_ptr->wpos.wz)) ||
+		    (d_ptr->flags1 & DF1_NO_RECALL))
+		    && !(l_ptr->flags1 & LF1_IRON_RECALL)) {
+			/* Allow exceptional recalling.. */
+			l_ptr->flags1 |= LF1_IRON_RECALL;
+			/* ..and notify everyone on the level about it */
+			floor_msg_format(&p_ptr->wpos, "\377gYou don't sense a magic barrier here!");
+		}
+	}
+
 	if (r_ptr->flags1 & (RF1_DROP_CHOSEN)) {
 		/* Mega-Hack -- drop "winner" treasures */
-		if (strstr((r_name + r_ptr->name),"Morgoth, Lord of Darkness") && !pvp) {
+		if (is_Morgoth && !pvp) {
 			/* Hack -- an "object holder" */
 			object_type prize;
 
