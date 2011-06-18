@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 13. June 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 18. June 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10922,11 +10922,13 @@ The following rules are applied:
 -An item 'of life (+x)' increases the hit dice number by x.
 -An item that raises the player's speed by x speeds the golem up by 2 / 3 * x.
 -An item that improves the player's tunneling ability bestows the KILL_WALL
-ability upon the golem.
--An item that gives fire or acid resitance will make the golem immune(!) to
-fire or acid.
+ ability upon the golem.
+-An item that gives fire or acid resistance will make the golem immune(!) to
+ fire or acid.
 -An item that gives nether or nexus or disenchantment resistance will give
-the according resistance to the golem.
+ the according resistance to the golem.
+-Appropriate runes can be used for the resistances/immunities listed above,
+ which is probably cheaper than using items.
 All other items/abilities have no effect.
 
 Golems can't be detected by ESP, they regenerate quickly, they are powerful
