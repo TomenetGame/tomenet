@@ -34,7 +34,7 @@ struct account{
 	char name[30];	/* login */
 	char pass[20];	/* some crypts are not 13 */
 	/* new additions - C. Blue */
-	unsigned int acc_laston;	/* last time this account logged on (for expiry check) */
+	time_t acc_laston;	/* last time this account logged on (for expiry check) */
 	signed int cheeze;	/* value in gold of cheezed goods or money */
 	signed int cheeze_self; /* value in gold of cheezed goods or money to own characters */
 };
