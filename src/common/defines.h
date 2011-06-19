@@ -1884,7 +1884,7 @@ that keeps many algorithms happy.
 /* former Dirty Hack (XXX this can overlook spiked door!) */
 #define is_door(feat) (f_info[feat].flags1 & FF1_DOOR)
 
-#define is_stair(feat) ((feat) == FEAT_MORE || (feat) == FEAT_LESS || (feat) == FEAT_WAY_MORE || (feat) == FEAT_WAY_LESS)
+#define is_stair(feat) ((feat) == FEAT_MORE || (feat) == FEAT_LESS || (feat) == FEAT_WAY_MORE || (feat) == FEAT_WAY_LESS || (feat) == FEAT_BETWEEN || (feat) == FEAT_BETWEEN2)
 
 #endif	/* 0 */ //-------------------------------------------------------------------------------------------
 
