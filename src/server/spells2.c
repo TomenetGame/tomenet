@@ -3082,7 +3082,9 @@ bool create_artifact_aux(int Ind, int item) {
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
 	s_printf("ART_CREATION by player %s: %s\n", p_ptr->name, o_name);
 
-	if (o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT && !is_admin(p_ptr)) {
+	if (((o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) ||
+	    (o_ptr->tval == TV_SPECIAL)) /* <- must be checked here, not in randart_make() due to seals, see randart_make(). */
+	     && !is_admin(p_ptr)) {
 		msg_print(Ind, "The item appears unchanged!");
 		return FALSE;
 	}
@@ -3105,7 +3107,7 @@ bool create_artifact_aux(int Ind, int item) {
 	}
 
 	/* Describe */
-	msg_format(Ind, "%s %s glow%s brightly!",
+	msg_format(Ind, "%s %s glow%s *brightly*!",
 	    ((item >= 0) ? "Your" : "The"), o_name,
 	    ((o_ptr->number > 1) ? "" : "s"));
 
@@ -3127,6 +3129,7 @@ bool create_artifact_aux(int Ind, int item) {
 			o_ptr->name1 = 0;
 			o_ptr->name3 = 0L;
 
+			msg_print(Ind, "The item appears unchanged!");
 			return FALSE;
 		}
 

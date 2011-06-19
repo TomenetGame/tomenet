@@ -5240,12 +5240,11 @@ byte get_attr_from_tval(object_type *o_ptr) {
 		attr = TERM_L_UMBER;
 #endif
 
-	if (o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) {
+	if ((o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) ||
+	    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT)) {
 		if (!o_ptr->xtra1) o_ptr->xtra1 = attr;
 		attr = o_ptr->xtra1;
 	}
-
-	/* Note: For TV_SPECIAL just use the new \{ colouring inscription - C. Blue */
 
 	return(attr);
 }

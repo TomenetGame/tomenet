@@ -1672,7 +1672,8 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription)
 	msg_print(Ind, NULL);
 
 	/* small hack to prevent using colour codes in inscriptions:
-	   convert \{ to just {, compare nserver.c:Send_special_line()! */
+	   convert \{ to just {, compare nserver.c:Send_special_line()!
+	   Note: Colour codes in inscriptions/item names aren't implemented anyway. */
 	if (!is_admin(p_ptr)) while ((c = strstr(inscription, "\\{")))
 		c[0] = '{';
 
