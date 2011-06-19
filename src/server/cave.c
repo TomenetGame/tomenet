@@ -2981,6 +2981,12 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				if (o_ptr->tval == TV_BOOK && o_ptr->sval >= SV_CUSTOM_TOME_1 &&
 				    o_ptr->sval < SV_SPELLBOOK)
 					(*ap) = get_book_name_color(Ind, o_ptr);
+				/* hack: colour of fancy shirts or custom objects can vary  */
+				if ((o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) ||
+				    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT)) {
+					if (!o_ptr->xtra1) o_ptr->xtra1 = (*ap);
+					(*ap) = o_ptr->xtra1;
+				}
 
 				/* Abnormal attr */
 /*      	                  if ((!avoid_other) && (!(((*ap) & 0x80) && ((*cp) & 0x80))) && (k_info[o_ptr->k_idx].flags5 & TR5_ATTR_MULTI)) (*ap) = get_shimmer_color(); */
