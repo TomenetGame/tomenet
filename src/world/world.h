@@ -2,6 +2,8 @@
  *
  */
 
+#include <stdint.h>
+
 #define MAX_LTTL	20	/* Max TTL for temporary locks */
 
 #define MAX_SERVERS	30	/* Max servers we will deal */
@@ -55,8 +57,8 @@
 struct serverinfo{
 	char name[20];		/* server world name */
 	char pass[20];		/* server plaintext password */
-	int rflags;		/* relay flags for packets sent to server */
-	int mflags;		/* messages flags */
+	int32_t rflags;		/* relay flags for packets sent to server */
+	int32_t mflags;		/* messages flags */
 };
 
 /* Single linked list - its not like we are sorting it */
@@ -66,66 +68,66 @@ struct list{
 };
 
 struct rplist{
-	unsigned long id;
-	short server;
+	uint32_t id;
+	int16_t server;
 	char name[30];
 };
 
 /* linked list will use less mem */
 struct objlock{
-	short owner;		/* Owner ID */
-	unsigned long ttl;	/* time to live for non final lock */
-	unsigned long obj;	/* lock object by number (monster, item etc.) */
+	int16_t owner;		/* Owner ID */
+	uint32_t ttl;	/* time to live for non final lock */
+	uint32_t obj;	/* lock object by number (monster, item etc.) */
 };
 
 struct client{
 	int fd;
-	unsigned short flags;
-	short authed;		/* Server ID (>0), authing (0), or failed authentication (-1) */
-	unsigned short blen;
+	uint16_t flags;
+	int16_t authed;		/* Server ID (>0), authing (0), or failed authentication (-1) */
+	uint16_t blen;
 	char buf[1024];
 };
 
 struct secure{
-	short secure;	/* kick off ALL unauthed clients */
-	short chat;	/* Permit chat if unauthed (and not secure) */
-	short play;	/* Players online messages (no tracing on unauthed) */
-	short msgs;	/* Permit server messages */
+	int16_t secure;	/* kick off ALL unauthed clients */
+	int16_t chat;	/* Permit chat if unauthed (and not secure) */
+	int16_t play;	/* Players online messages (no tracing on unauthed) */
+	int16_t msgs;	/* Permit server messages */
 };
 
 /* The structures of these packets will be
    changed when we merge data */
 
 struct player{
-	unsigned long id;	/* UNIQUE player id */
-	short server;		/* server info 0 means unknown */
+	uint32_t id;	/* UNIQUE player id */
+	uint16_t server;		/* server info 0 means unknown */
 	char name[30];		/* temp. player name */
-	unsigned char silent;	/* Left due to death for instance */
+	uint8_t silent;	/* Left due to death for instance */
 };
 
 struct death{
-	unsigned long id;
-	unsigned short dtype;	/* death type */
+	uint32_t id;
+	uint16_t dtype;	/* death type */
 	char name[30];		/* temp. player name */
 	char method[40];	/* death method */
 };
 
 struct chat{
-	unsigned long id;	/* From ID */
+	uint32_t id;	/* From ID */
 	char ctxt[160];
 };
 
 struct pmsg{
-	unsigned long id;	/* From ID */
-	unsigned short sid;	/* To server ID */
+	uint32_t id;	/* From ID */
+	uint16_t sid;	/* To server ID */
 	char player[80];	/* thats what it is in server :( */
 	char victim[80];	/* thats what it is in server :( */
 	char ctxt[160];
 };
 
 struct sinfo{
-	unsigned short sid;
-	unsigned short port;	/* needed for client transfers */
+	uint16_t sid;
+	uint16_t port;	/* needed for client transfers */
 	char name[30];
 };
 
@@ -133,7 +135,7 @@ struct sinfo{
 /* server world authentication */
 struct auth{
 	char pass[21];
-	unsigned long val;
+	uint32_t val;
 };
 
 #define PL_INIT	1	/* init from client with password */
@@ -146,9 +148,9 @@ struct auth{
 /* identical to struct account */
 /* only AUTHED servers can do this */
 struct pl_auth{
-	u_int32_t id;	/* account id */
-	u_int16_t flags;	/* account flags */
-	u_int16_t stat;	/* status (for return) */
+	uint32_t id;	/* account id */
+	uint16_t flags;	/* account flags */
+	uint16_t stat;	/* status (for return) */
 	char name[30];	/* login */
 	char pass[20];	/* some crypts are not 13 */
 	char pname[80];	/* player character name */
@@ -158,9 +160,9 @@ struct pl_auth{
 #define LT_MONSTER	2	/* not sure how i'm gonna do this yet */
 
 struct lock{
-	unsigned short ltype;	/* Lock type */
-	unsigned long ttl;	/* time to live for non final lock */
-	unsigned long obj;	/* lock object by number (monster, item etc.) */
+	uint16_t ltype;	/* Lock type */
+	uint32_t ttl;	/* time to live for non final lock */
+	uint32_t obj;	/* lock object by number (monster, item etc.) */
 };
 
 struct smsg{
@@ -168,10 +170,10 @@ struct smsg{
 };
   
 struct wpacket{
-	unsigned short type;	/* TYPE */
-	unsigned short serverid;
+	uint16_t type;	/* TYPE */
+	uint16_t serverid;
 	union {
-		short sid;
+		int16_t sid;
 		struct chat chat;
 		struct smsg smsg;
 		struct player play;

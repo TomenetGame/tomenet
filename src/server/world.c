@@ -13,7 +13,7 @@
 /* pfft. i'll use generic lists when i get around to it */
 struct svlist{
 	struct svlist *next;
-	unsigned short sid;
+	uint16_t sid;
 	char name[30];
 };
 
@@ -22,11 +22,11 @@ struct list *svlist=NULL;
 
 struct wpacket spk;
 
-unsigned long chk(char *s1, char *s2);
-void rem_server(short id);
+uint32_t chk(char *s1, char *s2);
+void rem_server(int16_t id);
 void add_rplayer(struct wpacket *wpk);
 void add_server(struct sinfo *sinfo);
-bool world_check_ignore(int Ind, unsigned long id, short server);
+bool world_check_ignore(int Ind, uint32_t id, int16_t server);
 void world_update_players(void);
 int world_find_server(char *pname);
 void world_msg(char *text);
@@ -83,7 +83,7 @@ void world_update_players(){
 	}
 }
 
-bool world_check_ignore(int Ind, unsigned long id, short server){
+bool world_check_ignore(int Ind, uint32_t id, int16_t server){
 	struct remote_ignore *curr;
 	curr=Players[Ind]->w_ignore;
 	while(curr){
@@ -215,7 +215,7 @@ int world_find_server(char *pname){
 }
 
 /* returns list entry, or NULL */
-struct rplist *world_find_player(char *pname, short server){
+struct rplist *world_find_player(char *pname, int16_t server){
 	struct list *lp;
 	struct rplist *c_pl;
 	lp=rpmlist;
@@ -279,7 +279,7 @@ void add_server(struct sinfo *sinfo){
 }
 
 /* This is called when a remote server disconnects */
-void rem_server(short id){
+void rem_server(int16_t id){
 	struct rplist *c_pl;
 	struct svlist *c_sr;
 
@@ -309,7 +309,7 @@ void rem_server(short id){
 void add_rplayer(struct wpacket *wpk){
 	struct list *lp;
 	struct rplist *n_pl, *c_pl;
-	unsigned short found=0;
+	unsigned char found=0;
 	if(!wpk->d.play.silent)
 		msg_broadcast_format(0, "\374\377s%s has %s the game on another server.", wpk->d.play.name, (wpk->type==WP_NPLAYER ? "entered" : "left"));
 
@@ -337,7 +337,7 @@ void add_rplayer(struct wpacket *wpk){
 		remlist(&rpmlist, lp);
 }
 
-void world_pmsg_send(unsigned long id, char *name, char *pname, char *text){
+void world_pmsg_send(uint32_t id, char *name, char *pname, char *text){
 	int x, len;
 	if(WorldSocket==-1) return;
 	spk.type=WP_PMSG;
@@ -350,7 +350,7 @@ void world_pmsg_send(unsigned long id, char *name, char *pname, char *text){
 	x=send(WorldSocket, &spk, len, 0);
 }
 
-void world_chat(unsigned long id, char *text){
+void world_chat(uint32_t id, char *text){
 	int x, len;
 	if(WorldSocket==-1) return;
 	spk.type=WP_CHAT;
@@ -378,7 +378,7 @@ void world_msg(char *text){
 }
 
 /* we can rely on ID alone when we merge data */
-void world_player(unsigned long id, char *name, unsigned short enter, byte quiet){
+void world_player(uint32_t id, char *name, uint16_t enter, byte quiet){
 	int x, len;
 	if(WorldSocket==-1) return;
 	spk.type=(enter ? WP_NPLAYER : WP_QPLAYER);
@@ -390,10 +390,10 @@ void world_player(unsigned long id, char *name, unsigned short enter, byte quiet
 }
 
 /* unified, hopefully unique password check function */
-unsigned long chk(char *s1, char *s2){
+uint32_t chk(char *s1, char *s2){
 	unsigned int i, j=0;
 	int m1, m2;
-	static unsigned long rval[2]={0, 0};
+	static uint32_t rval[2]={0, 0};
 	rval[0]=0L;
 	rval[1]=0L;
 	m1=strlen(s1);

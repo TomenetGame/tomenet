@@ -9,9 +9,9 @@
 #include "../account/account.h"
 #include "externs.h"
 
-u_int32_t account_id;		/* Current account ID */
+uint32_t account_id;		/* Current account ID */
 
-static u_int32_t new_accid(void);
+static uint32_t new_accid(void);
 static char *t_crypt(char *inbuf, unsigned char *salt);
 static struct account *GetAccount(unsigned char *name, char *pass);
 
@@ -24,7 +24,7 @@ void l_account(struct wpacket *wpk, struct client *ccl){
 			login->stat=PL_FAIL;
 			if(!strlen(login->pass) || !strlen(login->name))
 				break;
-			if((acc=GetAccount(login->name, login->pass))){
+			if((acc=GetAccount((unsigned char *)login->name, login->pass))){
 				login->stat=PL_OK;
 			}
 			break;
@@ -66,7 +66,7 @@ static struct account *GetAccount(unsigned char *name, char *pass){
 				delpos=ftell(fp)-sizeof(struct account);
 			continue;
 		}
-		if(!strcmp(c_acc->name, name)){
+		if(!strcmp((char *)c_acc->name, (char *)name)){
 			int val;
 			if(pass==NULL)		/* direct name lookup */
 				val=0;
@@ -88,7 +88,7 @@ static struct account *GetAccount(unsigned char *name, char *pass){
 		if(delpos)
 			fseek(fp, delpos, SEEK_SET);
 		c_acc->flags=(ACC_TRIAL|ACC_NOSCORE);
-		strcpy(c_acc->name, name);
+		strcpy(c_acc->name, (char *)name);
 		strcpy(c_acc->pass, t_crypt(pass, name));
 		fwrite(c_acc, sizeof(struct account), 1, fp);
 	}
@@ -113,7 +113,7 @@ static char *t_crypt(char *inbuf, unsigned char *salt){
 #endif
 }
 
-struct account *GetAccountID(u_int32_t id){
+struct account *GetAccountID(uint32_t id){
 	FILE *fp;
 	struct account *c_acc;
 
@@ -137,8 +137,8 @@ struct account *GetAccountID(u_int32_t id){
 	return(NULL);
 }
 
-static u_int32_t new_accid(){
-	u_int32_t id;
+static uint32_t new_accid(){
+	uint32_t id;
 	FILE *fp;
 	char *t_map;
 	struct account t_acc;

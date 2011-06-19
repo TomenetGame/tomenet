@@ -36,7 +36,7 @@ int main(int argc, char *argv[]){
 	return(0);
 }
 
-int createsocket(int port, unsigned long ip){
+int createsocket(int port, uint32_t ip){
 	int option=1;
 	struct sockaddr_in s_in;
 	int check;

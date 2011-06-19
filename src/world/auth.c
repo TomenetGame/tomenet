@@ -13,12 +13,12 @@
 
 char salt[21];
 
-unsigned long chk(unsigned char *s1, unsigned char *s2);
+uint32_t chk(unsigned char *s1, unsigned char *s2);
 char *rpgen(char *dest);
 
 void initrand(){
 	time_t now;
-	long x;
+	unsigned int x;
 	time(&now);
 	x=now;
 	srandom(x);
@@ -36,7 +36,7 @@ void initauth(struct client *ccl){
 /* Generate a random password */
 char *rpgen(char *dest){
 	int i=0;
-	long x;
+	int x;
 	for(i=0; i<20; i++){
 		x=random();
 		salt[i]=58 + (x & 0x3f);
@@ -53,11 +53,11 @@ char *rpgen(char *dest){
 }
 
 /* return server number, or -1 on failure */
-short pwcheck(char *cpasswd, unsigned long val){
+short pwcheck(char *cpasswd, uint32_t val){
 	int i;
 	fprintf(stderr, "authing..\n");
 	for(i=0; i<snum; i++){
-		if(val==chk(slist[i].pass, cpasswd)){
+		if(val==chk((unsigned char *)slist[i].pass, (unsigned char *)cpasswd)){
 			printf("auth success\n");
 			return(i+1);
 		}
@@ -67,14 +67,14 @@ short pwcheck(char *cpasswd, unsigned long val){
 }
 
 /* unified, hopefully unique password check function */
-unsigned long chk(unsigned char *s1, unsigned char *s2){
+uint32_t chk(unsigned char *s1, unsigned char *s2){
 	unsigned int i, j=0;
 	int m1, m2;
-	static unsigned long rval[2]={0, 0};
+	static uint32_t rval[2]={0, 0};
 	rval[0]=0L;
 	rval[1]=0L;
-	m1=strlen(s1);
-	m2=strlen(s2);
+	m1=strlen((char *)s1);
+	m2=strlen((char *)s2);
 	for(i=0; i<m1; i++){
 		rval[0]+=s1[i];
 		rval[0]<<=5;
@@ -87,7 +87,7 @@ unsigned long chk(unsigned char *s1, unsigned char *s2){
 		rval[1]+=s1[i];
 		rval[1]<<=(3+rval[0]%5);
 		rval[0]+=s2[j];
-		j=(unsigned long)rval[0]%m2;
+		j=(unsigned int)rval[0]%m2;
 		rval[0]<<=(3+rval[1]%3);
 	}
 	return(rval[0]+rval[1]);

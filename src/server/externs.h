@@ -20,11 +20,11 @@ extern void world_comm(int fd, int arg);
 extern int WorldSocket;
 
 extern void world_msg(char *text);
-extern void world_player(unsigned long id, char *name, unsigned short enter, byte quiet);
-extern void world_chat(unsigned long id, char *text);
+extern void world_player(uint32_t id, char *name, uint16_t enter, byte quiet);
+extern void world_chat(uint32_t id, char *text);
 extern int world_remote_players(FILE *fff);
-struct rplist *world_find_player(char *pname, short server);
-void world_pmsg_send(unsigned long id, char *name, char *pname, char *text);
+struct rplist *world_find_player(char *pname, int16_t server);
+void world_pmsg_send(uint32_t id, char *name, char *pname, char *text);
 #endif
 
 /* common/common.c */

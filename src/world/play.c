@@ -67,7 +67,7 @@ void send_rplay(struct client *ccl){
 }
 
 /* Remove all players from a server */
-void rem_players(short id){
+void rem_players(int16_t id){
 	struct rplist *c_pl;
 	struct list *lp;
 
@@ -84,7 +84,7 @@ void rem_players(short id){
 void add_rplayer(struct wpacket *wpk){
 	struct list *lp;
 	struct rplist *n_pl, *c_pl;
-	unsigned short found=0;
+	unsigned char found=0;
 
 	if(wpk->type==WP_NPLAYER && !wpk->d.play.server) return;
 	lp=rpmlist;
