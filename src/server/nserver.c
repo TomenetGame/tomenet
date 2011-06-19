@@ -2718,16 +2718,25 @@ static int Handle_login(int ind)
  #endif
 #endif
 
-	/* Handle the cfg_secret_dungeon_master option */
+
+	/* Prepare title for possibly telling others about our new player (or admin) */
+	title = "";
+	if (p_ptr->admin_dm) title = (p_ptr->male) ? "Dungeon Master " : "Dungeon Mistress ";
+	else if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
+	else if (p_ptr->total_winner) {
+		if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) {
+			title = (p_ptr->male) ? "Emperor " : "Empress ";
+		} else {
+			title = (p_ptr->male) ? "King " : "Queen ";
+		}
+	}
+
+	/* Handle the cfg_secret_dungeon_master option: Only tell other admins. */
 	if (p_ptr->admin_dm && (cfg.secret_dungeon_master)) {
 		/* Tell other secret dungeon masters about our new player */
 		for (i = 1; i < NumPlayers; i++) {
-			title = "";
-			if (Players[i]->conn == NOT_CONNECTED)
-				continue;
+			if (Players[i]->conn == NOT_CONNECTED) continue;
 			if (!is_admin(Players[i])) continue;
-			if (p_ptr->admin_dm) title = (p_ptr->male)?"Dungeon Master ":"Dungeon Mistress ";
-			if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
 			msg_format(i, "\374\377U%s%s has entered the game.", title, p_ptr->name);
 		}
 		return 0;
@@ -2739,18 +2748,7 @@ static int Handle_login(int ind)
 
 	/* Tell everyone about our new player */
 	for (i = 1; i < NumPlayers; i++) {
-		title = "";
-		if (Players[i]->conn == NOT_CONNECTED)
-			continue;
-		if (p_ptr->total_winner) {
-			if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) {
-				title = (p_ptr->male)?"Emperor ":"Empress ";
-			} else {
-				title = (p_ptr->male)?"King ":"Queen ";
-			}
-		}
-		if (p_ptr->admin_dm) title = (p_ptr->male)?"Dungeon Master ":"Dungeon Mistress ";
-		if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
+		if (Players[i]->conn == NOT_CONNECTED) continue;
 		msg_format(i, "\374\377U%s%s has entered the game.", title, p_ptr->name);
 	}
 
