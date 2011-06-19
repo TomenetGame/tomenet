@@ -3313,7 +3313,7 @@ D:(Not to be acquired by players!)
 
 N:266:of Moltor
 I:30:9:5
-W:44:30:30:50000
+W:24:30:30:50000
 P:3:0d0:0:0:-5
 F:INSTA_ART | HIDE_TYPE | SPEED | AGGRAVATE
 D:The remains of a dwarven archer who fearlessly rushed into peril.
