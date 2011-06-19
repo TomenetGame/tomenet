@@ -1673,7 +1673,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription)
 
 	/* small hack to prevent using colour codes in inscriptions:
 	   convert \{ to just {, compare nserver.c:Send_special_line()! */
-	while ((c = strstr(inscription, "\\{")))
+	if (!is_admin(p_ptr)) while ((c = strstr(inscription, "\\{")))
 		c[0] = '{';
 
 	/* hack to fix auto-inscriptions: convert empty inscription to a #-type inscription */

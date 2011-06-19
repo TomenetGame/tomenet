@@ -5245,5 +5245,7 @@ byte get_attr_from_tval(object_type *o_ptr) {
 		attr = o_ptr->xtra1;
 	}
 
+	/* Note: For TV_SPECIAL just use the new \{ colouring inscription - C. Blue */
+
 	return(attr);
 }
