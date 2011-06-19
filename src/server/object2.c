@@ -26,6 +26,12 @@
 /* At 50% there were too many cursed jewelry in general in my opinion, using a macro now - C. Blue */
 #define CURSED_JEWELRY_CHANCE	25
 
+/* Add extra price bonus to randart armour/weapon which has especially 'useful' mod combo.
+   Pretty experimental and totally optional. Just disable in case some randarts end up with
+   outrageous prices. - C. Blue */
+#define RANDART_PRICE_BONUS
+
+
 /*
  * Excise a dungeon object from any stacks
  * Borrowed from ToME.
@@ -1893,7 +1899,6 @@ s64b object_value_real(int Ind, object_type *o_ptr)
    Note: Some pretty unimportant flags are missing. */
 s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	artifact_type *a_ptr;
-
 	s32b total = 0, am, minus, slay = 0;
 	u32b f1, f2, f3, f4, f5, esp;
 	int res_amass = 0;
@@ -1920,9 +1925,9 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	if (f3 & TR3_WRAITH) total += 100000;
 	if (f5 & TR5_INVIS) total += 10000;
 	if (!(f4 & TR4_FUEL_LITE)) {
-	        if (f3 & TR3_LITE1) total += 750;
-	        if (f4 & TR4_LITE2) total += 1250;
-	        if (f4 & TR4_LITE3) total += 2750;
+		if (f3 & TR3_LITE1) total += 750;
+		if (f4 & TR4_LITE2) total += 1250;
+		if (f4 & TR4_LITE3) total += 2750;
 	}
 
 	if ((!(f4 & TR4_FUEL_LITE)) && (f3 & TR3_IGNORE_FIRE)) total += 100;
@@ -1937,8 +1942,8 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	if (f1 & TR1_SLAY_TROLL) slay += 1500;
 	if (f1 & TR1_SLAY_GIANT) slay += 2000;
 	if (f1 & TR1_SLAY_DRAGON) slay += 3000;
-        if (f1 & TR1_KILL_DEMON) slay += 7500;
-        if (f1 & TR1_KILL_UNDEAD) slay += 7500;
+	if (f1 & TR1_KILL_DEMON) slay += 7500;
+	if (f1 & TR1_KILL_UNDEAD) slay += 7500;
 	if (f1 & TR1_KILL_DRAGON) slay += 7500;
 	if (f1 & TR1_BRAND_POIS) slay += 2500;
 	if (f1 & TR1_BRAND_ACID) slay += 4500;
@@ -1961,28 +1966,6 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	if (f2 & TR2_SUST_DEX) total += 2850;
 	if (f2 & TR2_SUST_CON) total += 2850;
 	if (f2 & TR2_SUST_CHR) total += 1250;
-	if (f2 & TR2_IM_ACID) {
-		total += 30000;
-		res_amass += 2;
-	}
-	if (f2 & TR2_IM_ELEC) {
-		total += 20000;
-		res_amass += 2;
-	}
-	if (f2 & TR2_IM_FIRE) {
-		total += 30000;
-		res_amass += 2;
-	}
-	if (f2 & TR2_IM_COLD) {
-		total += 20000;
-		res_amass += 2;
-	}
-/* f6 Not yet implemented in object_flags/eliminate_common_ego_flags etc. Really needed??
-//        if (f5 & TR5_SENS_FIRE) total -= 100;
-        if (f6 & TR6_SENS_COLD) total -= 100;
-        if (f6 & TR6_SENS_ACID) total -= 100;
-        if (f6 & TR6_SENS_ELEC) total -= 100;
-        if (f6 & TR6_SENS_POIS) total -= 100; */
 	if (f5 & TR5_REFLECT) total += 10000;
 	if (f2 & TR2_FREE_ACT) {
 		total += 4500;
@@ -1992,10 +1975,32 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 		total += 8500;
 		res_amass++;
 	}
-	if (f2 & TR2_RES_ACID) total += 1250;
-	if (f2 & TR2_RES_ELEC) total += 1250;
-	if (f2 & TR2_RES_FIRE) total += 1250;
-	if (f2 & TR2_RES_COLD) total += 1250;
+/* f6 Not yet implemented in object_flags/eliminate_common_ego_flags etc. Really needed??
+//	if (f5 & TR5_SENS_FIRE) total -= 100;
+	if (f6 & TR6_SENS_COLD) total -= 100;
+	if (f6 & TR6_SENS_ACID) total -= 100;
+	if (f6 & TR6_SENS_ELEC) total -= 100;
+	if (f6 & TR6_SENS_POIS) total -= 100; */
+	if (f2 & TR2_IM_ACID) {
+		total += 30000;
+		res_amass += 2;
+		f2 |= TR2_RES_ACID;
+	} else if (f2 & TR2_RES_ACID) total += 1250;
+	if (f2 & TR2_IM_ELEC) {
+		total += 20000;
+		res_amass += 2;
+		f2 |= TR2_RES_ELEC;
+	} else if (f2 & TR2_RES_ELEC) total += 1250;
+	if (f2 & TR2_IM_FIRE) {
+		total += 30000;
+		res_amass += 2;
+		f2 |= TR2_RES_FIRE;
+	} else if (f2 & TR2_RES_FIRE) total += 1250;
+	if (f2 & TR2_IM_COLD) {
+		total += 20000;
+		res_amass += 2;
+		f2 |= TR2_RES_COLD;
+	} else if (f2 & TR2_RES_COLD) total += 1250;
 	/* count complete base res as 1up too */
 	if ((f2 & (TR2_RES_ACID | TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_COLD))
 	    == (TR2_RES_ACID | TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_COLD))
@@ -2065,7 +2070,7 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	if (esp & ESP_NONLIVING) total += 5000;
 	if (esp & ESP_UNIQUE) total += 4000;
 	if (esp & ESP_SPIDER) total += 3000;
-        if (esp & ESP_ALL) total += 150000 + 40000; /* hm, extra bonus */
+	if (esp & ESP_ALL) total += 150000 + 40000; /* hm, extra bonus */
 	if (f3 & TR3_SLOW_DIGEST) total += 750;
 	if (f3 & TR3_REGEN) total += 3500;
 	if (f5 & TR5_REGEN_MANA) total += 2500;
@@ -2129,6 +2134,157 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	return total;
 }
 
+/* Return rating for especially useful armour, that means
+   armour that has top +AC and at the same time useful resistances.
+   We don't discriminate between pre/postking though. - C. Blue */
+static int artifact_flag_rating_armour(object_type *o_ptr) {
+	s32b total = 0, slay = 0;
+	u32b f1, f2, f3, f4, f5, esp;
+
+	/* this routine treats armour only */
+	if ((o_ptr->name1 != ART_RANDART) || !is_armour(o_ptr->tval)) return 0;
+
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+	if (f5 & TR5_TEMPORARY) return 0;
+
+	/* Hack - This shouldn't be here, still.. */
+	eliminate_common_ego_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+
+	if (f2 & TR2_IM_ACID) {
+		total += 6;
+		f2 |= TR2_RES_ACID;
+	}
+	else if (f2 & TR2_RES_ACID) total++;
+	if (f2 & TR2_IM_ELEC) {
+		total += 6;
+		f2 |= TR2_RES_ELEC;
+	}
+	else if (f2 & TR2_RES_ELEC) total++;
+	if (f2 & TR2_IM_FIRE) {
+		total += 6;
+		f2 |= TR2_RES_FIRE;
+	}
+	else if (f2 & TR2_RES_FIRE) total++;
+	if (f2 & TR2_IM_COLD) {
+		total += 6;
+		f2 |= TR2_RES_COLD;
+	}
+	else if (f2 & TR2_RES_COLD) total++;
+	/* count complete base res as 1up too */
+	if ((f2 & (TR2_RES_ACID | TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_COLD))
+	    == (TR2_RES_ACID | TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_COLD))
+		total += 4;
+	if (f2 & TR2_RES_POIS) total += 4;
+	if (f2 & TR2_RES_LITE) total += 2;
+	if (f2 & TR2_RES_DARK) total += 2;
+	if (f2 & TR2_RES_BLIND) total += 2;
+	if (f2 & TR2_RES_SOUND) total += 4;
+	if (f2 & TR2_RES_SHARDS) total += 4;
+	if (f2 & TR2_RES_NETHER) total += 4;
+	if (f2 & TR2_RES_NEXUS) total += 3;
+	if (f2 & TR2_RES_CHAOS) total += 4;
+	if (f2 & TR2_RES_DISEN) total += 4;
+	if (f5 & TR5_RES_MANA) total += 2;
+	if (f5 & TR5_REGEN_MANA) total += 2;
+	if (f4 & TR4_FLY) total += 2;
+	if (f2 & TR2_FREE_ACT) total += 2;
+	if (f2 & TR2_HOLD_LIFE) total += 4;
+	/* Give credit for extra HP bonus */
+	if (f1 & TR1_LIFE) total += o_ptr->pval * 2;
+	/* Too good to ignore */
+	if (esp & ESP_EVIL) total += 1;
+	if (esp & ESP_ALL) total += 3;
+
+	/* Glove mods mostly */
+	if (f1 & TR1_VAMPIRIC) total += 10;
+	if (f1 & TR1_BLOWS) total += o_ptr->pval * 5;
+	if (f5 & TR5_CRIT) total += o_ptr->pval;
+	if (f1 & TR1_KILL_DEMON) slay++;
+	if (f1 & TR1_KILL_UNDEAD) slay++;
+	if (f1 & TR1_KILL_DRAGON) slay++;
+	if (f1 & TR1_SLAY_EVIL) {
+		if (slay <= 1) slay += 2;
+		else if (slay <= 2) slay += 1;
+	}
+	if (f1 & TR1_BRAND_ACID) {
+		if (slay <= 1) slay += 2;
+		else if (slay <= 2) slay += 1;
+	}
+	if (f1 & TR1_BRAND_ELEC) {
+		if (slay <= 1) slay += 2;
+		else if (slay <= 2) slay += 1;
+	}
+	total += slay * 4;
+
+
+	if (f3 & TR3_DRAIN_EXP) total >>= 1;
+
+	return total;
+}
+
+/* Return rating for especially useful weapon, that means
+   armour that has top +hit and especially +dam, and at the
+   same time useful damage mods such as EA/Vamp/Crit. - C. Blue */
+static int artifact_flag_rating_weapon(object_type *o_ptr) {
+	s32b total = 0;
+	u32b f1, f2, f3, f4, f5, esp;
+	int slay = 0;
+
+	/* this routine treats armour only */
+	if ((o_ptr->name1 != ART_RANDART) || !is_weapon(o_ptr->tval)) return 0;
+
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+	if (f5 & TR5_TEMPORARY) return 0;
+	if (f4 & TR4_NEVER_BLOW) return 0;
+
+	/* Hack - This shouldn't be here, still.. */
+	eliminate_common_ego_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+
+	/* Too useful to ignore, but not really helping damage */
+	if (f2 & TR2_IM_ACID) total++;
+	if (f2 & TR2_IM_ELEC) total++;
+	if (f2 & TR2_IM_FIRE) total++;
+	if (f2 & TR2_IM_COLD) total++;
+	if (esp & ESP_ALL) total++;
+
+	/* 'The' weapon mods */
+	if (f1 & TR1_VAMPIRIC) total += 3;
+	if (f1 & TR1_BLOWS) total += o_ptr->pval * 2;
+	if (f5 & TR5_CRIT) total += (o_ptr->pval + 1) / 2;
+	else if (f5 & TR5_VORPAL) total += 2;
+
+	if (f1 & TR1_KILL_DEMON) slay++;
+	if (f1 & TR1_KILL_UNDEAD) slay++;
+	if (f1 & TR1_KILL_DRAGON) slay++;
+	if (f1 & TR1_SLAY_EVIL) {
+		if (slay <= 1) slay += 2;
+		else if (slay <= 2) slay += 1;
+	}
+	if (f1 & TR1_BRAND_ACID) {
+		if (slay <= 1) slay += 2;
+		else if (slay <= 2) slay += 1;
+	}
+	if (f1 & TR1_BRAND_ELEC) {
+		if (slay <= 1) slay += 2;
+		else if (slay <= 2) slay += 1;
+	}
+	/* slay value depends on weapon dice :-o */
+	if (f4 & (TR4_MUST2H | TR4_SHOULD2H)) {
+		total += (slay * ((o_ptr->dd * (o_ptr->ds + 1)) + 70)) / 80;
+	} else {
+		total += (slay * ((o_ptr->dd * (o_ptr->ds + 1)) + 30)) / 35;
+	}
+
+
+	if (f4 & TR4_CLONE) total >>= 1;
+
+	return total;
+}
+
 /* Return a sensible pricing for randarts, which
    gets added to k_info base item price - C. Blue */
 s64b artifact_value_real(int Ind, object_type *o_ptr)
@@ -2149,7 +2305,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr)
 	if (o_ptr->name1) {
 		artifact_type *a_ptr;
 
-	 	/* Randarts */
+		/* Randarts */
 		if (o_ptr->name1 == ART_RANDART) {
 			a_ptr = randart_make(o_ptr);
 			if ((a_ptr->flags4 & TR4_CURSE_NO_DROP) || (a_ptr->flags3 & TR3_AUTO_CURSE)) {
@@ -2546,6 +2702,26 @@ s64b artifact_value_real(int Ind, object_type *o_ptr)
 			/* Done */
 			break;
 	}
+
+#ifdef RANDART_PRICE_BONUS /* just disable in case some randarts end up with outrageous value */
+	/* OPTIONAL/EXPERIMENTAL: Add extra bonus for ranged weapon that has absolute top damage */
+	if (o_ptr->tval == TV_BOW && (i = o_ptr->to_h + o_ptr->to_d * 2) >= 60) {
+		i = i - 30;
+		if (f3 & TR3_XTRA_SHOTS) i *= 2;
+		if (f3 & TR3_XTRA_MIGHT) i *= 4;
+		value += i * 500;
+	}
+	/* OPTIONAL/EXPERIMENTAL: Add extra bonus for armour that has both, top AC and resists */
+	else if (is_armour(o_ptr->tval) && o_ptr->to_a >= 25) {
+		i = artifact_flag_rating_armour(o_ptr);
+		if (i >= 15) value += (o_ptr->to_a + i - 30) * 3000;
+	}
+	/* OPTIONAL/EXPERIMENTAL: Add extra bonus for weapon that has both, top hit/_dam_ and ea/crit/vamp */
+	else if (is_weapon(o_ptr->tval) && (i = o_ptr->to_h + o_ptr->to_d * 2) >= 60) {
+		i = artifact_flag_rating_weapon(o_ptr) * 4;
+		if (i >= 24) value += (o_ptr->to_h + o_ptr->to_d * 2 + i - 70) * 2000;
+	}
+#endif
 
 	if (f3 & TR3_AGGRAVATE) value >>= 1; /* one generic aggravate penalty fits it all */
 	if (f3 & TR3_NO_TELE) value >>= 1; /* generic no-tele penalty fits too ^^ */
