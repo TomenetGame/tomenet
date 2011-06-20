@@ -11774,7 +11774,7 @@ D:what I can only describe as gloating menace."
 N:696:Grand master thief
 G:p:b
 I:130:15d100:50:75:40
-W:46:2:0:1500
+W:46:2:0:2500
 E:1:1:1:2:1:1
 O:70:10:10:10
 B:HIT:EAT_ITEM:5d5
@@ -14052,7 +14052,7 @@ D:the very rock of the dungeon cannot prevent it reaching you.
 N:799:Master mindcrafter
 G:p:y
 I:120:80d10:20:60:10
-W:40:2:1700:2000
+W:40:2:1700:2600
 E:1:1:1:2:1:1
 O:20:40:40:0
 B:HIT:HURT:4d5
@@ -17931,7 +17931,7 @@ D:It is a massive humanoid demon wreathed in flames.
 N:997:Master mystic
 G:p:o
 I:130:11d100:30:60:5
-W:50:3:1600:6000
+W:50:3:1600:3800
 E:1:1:1:2:1:1
 O:40:0:40:20
 B:KICK:HURT:10d2
@@ -17955,7 +17955,7 @@ D:wild if need be.
 N:998:Grand master mystic
 G:p:o
 I:130:22d100:30:80:5
-W:57:3:1800:15000
+W:57:3:1800:7000
 E:1:1:1:2:1:1
 O:40:0:40:20
 B:KICK:HURT:20d2
@@ -18943,7 +18943,7 @@ D:A scarred warrior who moves with strange confidence.
 N:1049:Master Unbeliever
 G:p:u
 I:130:11d100:30:60:5
-W:50:3:1600:6000
+W:50:3:1600:3800
 E:1:1:1:2:1:1
 O:0:100:0:0
 B:HIT:HURT:10d2
@@ -18964,7 +18964,7 @@ S:UNMAGIC
 N:1050:True Believer
 G:p:u
 I:130:30d100:30:80:5
-W:57:3:1800:20000
+W:57:3:1800:8000
 E:1:1:1:2:1:1
 O:0:100:0:0
 B:HIT:HURT:10d5
@@ -19107,7 +19107,7 @@ D:A warrior of considerable skill.
 N:1059:Grand Swordsmaster
 G:p:u
 I:130:50d50:40:80:8
-W:60:3:2000:7000
+W:60:3:2000:8000
 E:1:1:1:2:1:1
 O:20:70:0:10
 B:HIT:HURT:10d8
