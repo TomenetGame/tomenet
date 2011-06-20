@@ -3188,7 +3188,8 @@ bool do_divine_xtra_res_time_mana(int Ind, int v) {
         /* Open */
         if (v) {
                 if (!p_ptr->divine_xtra_res_time_mana) {
-                        msg_print(Ind, "You no longer fear time and magical energy."); 
+			msg_print(Ind, "You feel resistant to time.");
+			msg_print(Ind, "You feel resistant to mana.");
                         notice = (TRUE);
                 }
         }
@@ -3196,7 +3197,8 @@ bool do_divine_xtra_res_time_mana(int Ind, int v) {
         /* Shut */
         else { //v = 0;
                 if (p_ptr->divine_xtra_res_time_mana) {
-                        msg_print(Ind, "\377WYour divine protection from \377Btime\377W and \377vmana\377W based attacks ends.");
+			msg_print(Ind, "You feel less resistant to time.");
+			msg_print(Ind, "You feel less resistant to mana.");
                         notice = (TRUE);
                 }
         }
