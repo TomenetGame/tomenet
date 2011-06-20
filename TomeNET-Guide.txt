@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 18. June 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 20. June 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -3657,6 +3657,8 @@ Red/orange/yellow '~' is deep lava, which deals a lot of heat damage.
 The fire damage lava inflicts might also destroy items in your inventory in
 case you're not immune to fire or at least double-resist fire - potions of
 resist heat are a cheap way to attain double resistance for a short time.
+(See (5.6) for more information about resistances, double resistance and
+(5.10) for details about item destruction by elemental effects.)
 
 Fountains-
 '_' are fountains. To drink from them use /sip command or press the '_' key.
@@ -5114,9 +5116,11 @@ Permanent resistances (for example if you wear a ring and an armor that both
 give fire resistance) will not stack. So one item is suffient for each
 resistance. There is no difference if it's a helmet or an armour.
 However, a temporary resistance (by potion or spell) and a permanent
-resistance can stack. That means if you quaff a 'potion of resist heat'
-(temporary resistance) and wear an armour of fire resistance (permanent
-resistance) fire attacks will do only 1/3 * 1/3 = 1/9 of the original damage.
+resistance can stack (NOTE: This only applies to base and poison resistance,
+base ones being fire, cold, electricity and acid).
+That means if you quaff a 'potion of resist heat' (temporary resistance) and
+wear an armour of fire resistance (permanent resistance) fire attacks will do
+only 1/3 * 1/3 = 1/9 of the original damage.
 This is known as 'double resistance'.
 For more information on resistance/ability stacking see (5.17).
 
@@ -5162,7 +5166,7 @@ Fire/Heat               These attacks can burn items in your inventory.
                         Fire balls do (level*7/2)+10 damage.
                         Fire breaths do HP / 3 damage, capping at 1200.
                         Immunity or double resistance protects items in your
-                        inventory from getting harmed (5.10).
+                        inventory from getting harmed (5.10), (5.17).
                         Potions of resist heat are a cheap way to attain
                         double-resistance for a short time in order to pass
                         lava streams without your inventory taking damage.
@@ -5172,7 +5176,7 @@ Frost/Cold              These attacks can shatter potions.
                         Cold balls do (level*2)+10 damage.
                         Cold breaths do HP / 3 damage, capping at 1200.
                         Immunity or double resistance protects items in your
-                        inventory from getting harmed (5.10).
+                        inventory from getting harmed (5.10), (5.17).
 Lightning/Electricity   These attacks can destroy rings, damage amulets
                         (reducing their (+X) bonus pval) and discharge magic
                         devices, draining their charges (or energy in case of
@@ -5182,7 +5186,7 @@ Lightning/Electricity   These attacks can destroy rings, damage amulets
                         Lightning balls do (level*3/2)+8 damage.
                         Lightning breaths do HP / 3 damage, capping at 1200.
                         Immunity or double resistance protects items in your
-                        inventory from getting harmed (5.10).
+                        inventory from getting harmed (5.10), (5.17).
 Acid                    These attacks can destroy items in your inventory.
                         They can also damage your equipment.
                         Without resistance it can reduce your charisma.
@@ -5190,7 +5194,7 @@ Acid                    These attacks can destroy items in your inventory.
                         Acid balls do (level*3)+15 damage.
                         Acid breaths do HP / 3 damage, capping at 1200.
                         Immunity or double resistance protects items in your
-                        inventory from getting harmed (5.10).
+                        inventory from getting harmed (5.10), (5.17).
 
 Note: Equipment is mostly safe, except that some weapons and shields can take
 damage from coming in contact with fire, acid or water, depending on the item
@@ -6343,8 +6347,9 @@ attack. Those attacks even have a very slim chance of destroying an item
 that you have equipped!
 
 In order for an item to guaranteedly survive such an attack, you must either
-be immune or double-resisting (have permanent AND temporary resistance) to
-that specific element. (Double resistance is nearly as good as immunity.)
+be immune or double-resisting (have permanent AND temporary resistance, also
+see (5.17)) to that specific element. Double resistance is nearly as good as
+immunity in regard to item protection.
 Some items have IGNORE_xxx flags which let them ignore certain elements,
 preventing them from being destroyed.
 All artifacts, random and static ones, cannot be harmed by elemental attacks
@@ -6695,6 +6700,8 @@ number to indicate their effectiveness, like faster mana recharging or hit
 point regeneration, telepathic powers, slow digestion, etc.
 
 However, there is a way to further increase your resistances temporarily:
+(NOTE: THIS ONLY APPLIES FOR BASE (fire/cold/acid/elec) AND POISON RESISTANCE!)
+
 Use an item that provides some temporary resistance. Temporary resistance and
 permanent (such from your equipment) resistance stack and their effects are
 multiplied! For example if you wear a shield of resist fire and you quaff a
