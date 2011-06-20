@@ -7371,7 +7371,7 @@ int divide_charged_item(object_type *o_ptr, int amt)
 	if (o_ptr->number < amt) return (-1);
 
 	if (o_ptr->tval == TV_WAND) {
-		charge = o_ptr->pval * amt / o_ptr->number;
+		charge = (o_ptr->pval * amt) / o_ptr->number;
 		if (amt < o_ptr->number) o_ptr->pval -= charge;
 	}
 
