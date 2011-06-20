@@ -1312,6 +1312,9 @@ static char *object_desc_per(char *t, sint v)
  *  +8 -- Cloak Death [1,+3](+2stl){nifty}
  *  +16 - Replace full owner name by a symbol to shorten the string - C. Blue
  *  +32 - Suppress the "(+2 to Stealth)" part (used for Fancy Shirts and seals only) - C. Blue
+ *  +64 - Don't add 'total' behind amount of wand charges;
+ *        used in store inventory in case STORE_SHOWS_SINGLE_WAND_CHARGES isn't defined;
+ *        (not used in player/home inventory, but used in player stores again.) - C. Blue
  *
  * If the strings created with mode 0-3 are too long, this function is called
  * again with 8 added to 'mode' and attempt to 'abbreviate' the strings. -Jir-
@@ -2175,6 +2178,10 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		{
 			t = object_desc_str(t, " charge");
 			if (o_ptr->pval != 1) t = object_desc_chr(t, 's');
+			if (o_ptr->tval == TV_WAND &&
+			    o_ptr->number > 1 &&
+			    !(mode & 64))
+				t = object_desc_str(t, " total");
 		}
 		t = object_desc_chr(t, p2);
 	}

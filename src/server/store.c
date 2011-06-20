@@ -31,6 +31,13 @@
    useless, since they won't be bought anyway. - C. Blue */
 #define NO_PSEUDO_CURSED_ITEMS
 
+/* Stores display the charges per wand, not the combined number of charges of all wands. */
+#define STORE_SHOWS_SINGLE_WAND_CHARGES
+/* If STORE_SHOWS_SINGLE_WAND_CHARGES is enabled, this one will result in wands listed in stores
+   having the same amount of charges each, even if they 'lose' a charge in case a player sells
+   same wands of different charge amounts to the same store. This may be less confusing though! */
+#define STORE_ROUNDS_SINGLE_WAND_CHARGES
+
 
 static int gettown(int Ind);
 static int gettown_dun(int Ind);
@@ -615,7 +622,16 @@ static void store_object_absorb(object_type *o_ptr, object_type *j_ptr)
 	o_ptr->number = (total > 99) ? 99 : total;
 
 	/* Hack -- combine wands' charge */
-	if (o_ptr->tval == TV_WAND) o_ptr->pval += j_ptr->pval;
+	if (o_ptr->tval == TV_WAND) {
+		o_ptr->pval += j_ptr->pval;
+#ifdef STORE_ROUNDS_SINGLE_WAND_CHARGES
+		/* Hack: Avoid odd jumps of extra charges due to rounding problems.
+		   Looks bad and confuses people. For example:
+		   Store "4 Wands a 10" -> inven: "4 Wands (43)".
+		   Drawback: Wands may 'lose' a charge when stocked in a store. - C. Blue */
+		o_ptr->pval -= o_ptr->pval % o_ptr->number;
+#endif
+	}
 }
 
 
@@ -2060,7 +2076,6 @@ static void display_entry(int Ind, int pos)
 	byte		attr;
 	int		wgt;
 	int		i;
-
 	int maxwid = 75;
 
 	i = gettown(Ind);
@@ -2096,13 +2111,17 @@ static void display_entry(int Ind, int pos)
 		/*if (show_weights) maxwid -= 10;*/
 
 		/* Describe the object */
+#ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
 		/* hack for wand charges to not get displayed accumulated (less comfortable) */
 		if (o_ptr->tval == TV_WAND) {
 			i = o_ptr->pval;
 			o_ptr->pval = i / o_ptr->number;
 		}
-		object_desc(Ind, o_name, o_ptr, TRUE, 3);
+		object_desc(Ind, o_name, o_ptr, TRUE, 3 + 64);
 		if (o_ptr->tval == TV_WAND) o_ptr->pval = i; /* hack clean-up */
+#else
+		object_desc(Ind, o_name, o_ptr, TRUE, 3);
+#endif
 		o_name[maxwid] = '\0';
 
 		attr = get_attr_from_tval(o_ptr);
@@ -2141,19 +2160,25 @@ static void display_entry(int Ind, int pos)
 		/*if (show_weights) maxwid -= 7;*/
 
 		/* Describe the object (fully) */
+#ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
 		/* hack for wand charges to not get displayed accumulated (less comfortable) */
 		if (o_ptr->tval == TV_WAND) {
 			i = o_ptr->pval;
 			o_ptr->pval = i / o_ptr->number;
 		}
+#endif
 #ifdef PLAYER_STORES
 		/* Don't display items as fake *ID*ed in player stores! */
 		if (p_ptr->store_num <= -2)
 			object_desc(Ind, o_name, o_ptr, TRUE, 3);
 		else
 #endif
-		object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
+#ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
+		object_desc_store(Ind, o_name, o_ptr, TRUE, 3 + 64);
 		if (o_ptr->tval == TV_WAND) o_ptr->pval = i; /* hack clean-up */
+#else
+		object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
+#endif
 		o_name[maxwid] = '\0';
 
 		attr = get_attr_from_tval(o_ptr);
