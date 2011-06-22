@@ -2992,11 +2992,22 @@ static void player_talk_aux(int Ind, char *message)
 				player_list_add(&p_ptr->afk_noticed, q_ptr->id);
 			}
 
+#if 0
 			/* hack: assume that the target player will become the
 			   one we want to 'reply' to, afterwards, if we don't
 			   have a reply-to target yet. */
 			if (!p_ptr->reply_name || !strlen(p_ptr->reply_name))
 				strcpy(p_ptr->reply_name, q_ptr->name);
+#else
+			/* hack: assume that the target player will become the
+			   one we want to 'reply' to, afterwards.
+			   This might get somewhat messy if we're privchatting
+			   to two players at the same time, but so would
+			   probably the other variant above. That one stays
+			   true to the '+:' definition given in the guide though,
+			   while this one diverges a bit. */
+			strcpy(p_ptr->reply_name, q_ptr->name);
+#endif
 
 			exec_lua(0, "chat_handler()");
 			return;
