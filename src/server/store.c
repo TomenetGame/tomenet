@@ -1328,6 +1328,7 @@ static void store_delete(store_type *st_ptr)
 		}
 	}
 
+#if 0
 #ifndef TEST_SERVER
 	/* keep track of artifact creation scrolls in log */
 	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION
@@ -1344,6 +1345,7 @@ static void store_delete(store_type *st_ptr)
 		s_name = st_name + st_info[st_ptr->st_idx].name;
 		s_printf("%s: STORE_DELETE: %d/%d - %d, %s (%s).\n", showtime(), st_ptr->town, town[st_ptr->town].type, st_ptr->st_idx, o_name, s_name);
 	}
+#endif
 #endif
 
 	/* Actually destroy (part of) the item */
