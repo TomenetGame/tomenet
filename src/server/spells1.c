@@ -9231,7 +9231,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Rocket -- stun, cut, fire, raw impact */
 		case GF_ROCKET:
 		{
-			bool res_heat = (p_ptr->resist_fire || p_ptr->oppose_fire);
+			bool ignore_heat = (p_ptr->resist_fire && p_ptr->oppose_fire) || p_ptr->immune_fire;
 			if (p_ptr->resist_shard)
 				dam = (dam * 5) / 6;
 			if (p_ptr->resist_sound)
@@ -9249,7 +9249,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (!p_ptr->resist_sound)
 				(void)set_stun(Ind, p_ptr->stun + randint(20));
 
-			if (!p_ptr->resist_shard || !p_ptr->resist_sound || !res_heat) {
+			if (!p_ptr->resist_shard || !p_ptr->resist_sound || !ignore_heat) {
 				/* Don't kill inventory in bloodbond... */
 				int breakable = 1;
 				if (IS_PVP) {
@@ -9259,7 +9259,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 				if (breakable) {
 					if (p_ptr->resist_shard && p_ptr->resist_sound) inven_damage(Ind, set_fire_destroy, 3);
-					else if (res_heat) inven_damage(Ind, set_impact_destroy, 3);
+					else if (ignore_heat) inven_damage(Ind, set_impact_destroy, 3);
 					else inven_damage(Ind, set_rocket_destroy, 4);
 				}
 			}
