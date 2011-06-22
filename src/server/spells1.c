@@ -1768,8 +1768,6 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool
 
 
 
-
-
 /*
  * Note that amulets, rods, and high-level spell books are immune
  * to "inventory damage" of any kind.  Also sling ammo and shovels.
@@ -1783,75 +1781,61 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool
 static bool hates_acid(object_type *o_ptr)
 {
 	/* Analyze the type */
-	switch (o_ptr->tval)
-	{
-		/* Wearable items */
-		case TV_ARROW:
-		case TV_BOLT:
-		case TV_BOW:
-		case TV_BOOMERANG:
-		case TV_SWORD:
-		case TV_BLUNT:
-		case TV_POLEARM:
-		case TV_AXE:
-		case TV_HELM:
-		case TV_CROWN:
-		case TV_SHIELD:
-		case TV_BOOTS:
-		case TV_GLOVES:
-		case TV_CLOAK:
-		case TV_SOFT_ARMOR:
-		case TV_HARD_ARMOR:
-		case TV_DRAG_ARMOR:
-		{
-			return (TRUE);
-		}
+	switch (o_ptr->tval) {
+	/* Wearable items */
+	case TV_ARROW:
+	case TV_BOLT:
+	case TV_BOW:
+	case TV_BOOMERANG:
+	case TV_SWORD:
+	case TV_BLUNT:
+	case TV_POLEARM:
+	case TV_AXE:
+	case TV_HELM:
+	case TV_CROWN:
+	case TV_SHIELD:
+	case TV_BOOTS:
+	case TV_GLOVES:
+	case TV_CLOAK:
+	case TV_SOFT_ARMOR:
+	case TV_HARD_ARMOR:
+	case TV_DRAG_ARMOR:
+		return (TRUE);
 
-		/* Staffs/Scrolls are wood/paper */
-		case TV_STAFF:
-		case TV_SCROLL:
-		case TV_PARCHMENT:
-		case TV_BOOK:
-		{
-			return (TRUE);
-		}
+	/* Staffs/Scrolls are wood/paper */
+	case TV_STAFF:
+	case TV_SCROLL:
+	case TV_PARCHMENT:
+	case TV_BOOK:
+		return (TRUE);
 
-		/* Ouch */
-		case TV_CHEST:
-		{
-			return (TRUE);
-		}
+	/* Ouch */
+	case TV_CHEST:
+		return (TRUE);
 
-		/* Junk is useless */
-		case TV_SKELETON:
-		case TV_BOTTLE:
-		case TV_JUNK:
-		{
-			return (TRUE);
-		}
+	/* Junk is useless */
+	case TV_SKELETON:
+	case TV_BOTTLE:
+	case TV_JUNK:
+		return (TRUE);
 	}
 
 	return (FALSE);
 }
-
 
 /*
  * Does a given object (usually) hate electricity?
  */
 static bool hates_elec(object_type *o_ptr)
 {
-	switch (o_ptr->tval)
-	{
-		case TV_RING:
-		case TV_WAND:
-		{
-			return (TRUE);
-		}
+	switch (o_ptr->tval) {
+	case TV_RING:
+	case TV_WAND:
+		return (TRUE);
 	}
 
 	return (FALSE);
 }
-
 
 /*
  * Does a given object (usually) hate fire?
@@ -1861,111 +1845,89 @@ static bool hates_elec(object_type *o_ptr)
 bool hates_fire(object_type *o_ptr)
 {
 	/* Analyze the type */
-	switch (o_ptr->tval)
-	{
-		/* Wearable */
-		case TV_LITE:
-		case TV_ARROW:
-		case TV_BOW:
-		case TV_BLUNT:
-		case TV_POLEARM:
-		case TV_AXE:
-		case TV_BOOTS:
-		case TV_GLOVES:
-		case TV_CLOAK:
-		case TV_SOFT_ARMOR:
-		{
-			return (TRUE);
-		}
-		case TV_BOOMERANG:
-		{
-			if (o_ptr->sval == SV_BOOM_S_METAL || o_ptr->sval == SV_BOOM_METAL) return(FALSE);
-			return (TRUE);
-		}
+	switch (o_ptr->tval) {
+	/* Wearable */
+	case TV_LITE:
+	case TV_ARROW:
+	case TV_BOW:
+	case TV_BLUNT:
+	case TV_POLEARM:
+	case TV_AXE:
+	case TV_BOOTS:
+	case TV_GLOVES:
+	case TV_CLOAK:
+	case TV_SOFT_ARMOR:
+		return (TRUE);
+	case TV_BOOMERANG:
+		if (o_ptr->sval == SV_BOOM_S_METAL || o_ptr->sval == SV_BOOM_METAL) return(FALSE);
+		return (TRUE);
 
-		/* Chests */
-		case TV_CHEST:
-		{
-			return (TRUE);
-		}
+	/* Chests */
+	case TV_CHEST:
+		return (TRUE);
 
-		/* Staffs/Scrolls burn */
-		case TV_STAFF:
-		case TV_SCROLL:
-		case TV_PARCHMENT:
-		case TV_BOOK:
-		{
-			return (TRUE);
-		}
+	/* Staffs/Scrolls burn */
+	case TV_STAFF:
+	case TV_SCROLL:
+	case TV_PARCHMENT:
+	case TV_BOOK:
+		return (TRUE);
 
-		/* Potions evaporate */
-		case TV_POTION:
-		case TV_POTION2:
-		{
-			return (TRUE);
-		}
+	/* Potions evaporate */
+	case TV_POTION:
+	case TV_POTION2:
+		return (TRUE);
 	}
 
 	return (FALSE);
 }
-
 
 /*
  * Does a given object (usually) hate cold?
  */
 static bool hates_cold(object_type *o_ptr)
 {
-	switch (o_ptr->tval)
-	{
-		case TV_POTION:
-		case TV_POTION2:
-		case TV_FLASK:
-		case TV_BOTTLE:
-		{
-			return (TRUE);
-		}
+	switch (o_ptr->tval) {
+	case TV_POTION:
+	case TV_POTION2:
+	case TV_FLASK:
+	case TV_BOTTLE:
+		return (TRUE);
 	}
 
 	return (FALSE);
 }
-
 
 /*
  * Does a given object (usually) hate impact?
  */
 static bool hates_impact(object_type *o_ptr)
 {
-	switch (o_ptr->tval)
-	{
-		case TV_POTION:
-		case TV_POTION2:
-		case TV_FLASK:
-		case TV_BOTTLE:
-		case TV_EGG:
-		{
-			return (TRUE);
-		}
+	switch (o_ptr->tval) {
+	case TV_POTION:
+	case TV_POTION2:
+	case TV_FLASK:
+	case TV_BOTTLE:
+	case TV_EGG:
+		return (TRUE);
 	}
 
 	return (FALSE);
 }
-
 
 /*
  * Does a given object (usually) hate water?
  */
 bool hates_water(object_type *o_ptr)
 {
-	switch (o_ptr->tval)
-	{
-//		case TV_POTION:		/* dilutes */
-//		case TV_POTION2:	/* dilutes */
-		case TV_SCROLL:		/* fades */
-		case TV_BOOK:
-		{
-			return (TRUE);
-		}
+	switch (o_ptr->tval) {
+//	case TV_POTION:		/* dilutes */
+//	case TV_POTION2:	/* dilutes */
+	case TV_SCROLL:		/* fades */
+	case TV_BOOK:
+		return (TRUE);
 	}
+
 	return (FALSE);
 }
 
@@ -1974,36 +1936,29 @@ bool hates_water(object_type *o_ptr)
  */
 static bool can_rust(object_type *o_ptr)
 {
-	switch (o_ptr->tval)
-	{
+	switch (o_ptr->tval) {
 #if 0
-		case TV_BOOMERANG: if (o_ptr->sval == SV_BOOM_WOOD || o_ptr->sval == SV_BOOM_S_WOOD) return(FALSE); else return(TRUE);
-		case TV_CROWN: if (o_ptr->sval == SV_IRON_CROWN) return(TRUE); else return(FALSE);
-		case TV_SHIELD: if (o_ptr->sval == SV_SMALL_LEATHER_SHIELD || o_ptr->sval == SV_LARGE_LEATHER_SHIELD) return(FALSE); else return(TRUE);
-		case TV_HARD_ARMOR: if (o_ptr->sval == SV_MITHRIL_CHAIN_MAIL || o_ptr->sval == SV_MITHRIL_PLATE_MAIL || o_ptr->sval == SV_ADAMANTITE_PLATE_MAIL) return (FALSE); else return(TRUE);
-		case TV_HELM: if (o_ptr->sval == SV_HARD_LEATHER_CAP) return(FALSE); else return(TRUE);
+	case TV_BOOMERANG: if (o_ptr->sval == SV_BOOM_WOOD || o_ptr->sval == SV_BOOM_S_WOOD) return(FALSE); else return(TRUE);
+	case TV_CROWN: if (o_ptr->sval == SV_IRON_CROWN) return(TRUE); else return(FALSE);
+	case TV_SHIELD: if (o_ptr->sval == SV_SMALL_LEATHER_SHIELD || o_ptr->sval == SV_LARGE_LEATHER_SHIELD) return(FALSE); else return(TRUE);
+	case TV_HARD_ARMOR: if (o_ptr->sval == SV_MITHRIL_CHAIN_MAIL || o_ptr->sval == SV_MITHRIL_PLATE_MAIL || o_ptr->sval == SV_ADAMANTITE_PLATE_MAIL) return (FALSE); else return(TRUE);
+	case TV_HELM: if (o_ptr->sval == SV_HARD_LEATHER_CAP) return(FALSE); else return(TRUE);
 #else
-		case TV_BOOMERANG:
-		case TV_CROWN:
-		case TV_SHIELD:
-		case TV_HARD_ARMOR:
-		case TV_HELM:
+	case TV_BOOMERANG:
+	case TV_CROWN:
+	case TV_SHIELD:
+	case TV_HARD_ARMOR:
+	case TV_HELM:
 #endif
-		case TV_SWORD:
-// :)		case TV_BLUNT:
-//		case TV_POLEARM:
-//		case TV_AXE:
-		{
-			return (TRUE);
-		}
+	case TV_SWORD:
+// :)	case TV_BLUNT:
+//	case TV_POLEARM:
+//	case TV_AXE:
+		return (TRUE);
 	}
+
 	return (FALSE);
 }
-
-
-
-
-
 
 
 
@@ -2021,7 +1976,6 @@ static int set_acid_destroy(object_type *o_ptr)
 	return (TRUE);
 }
 
-
 /*
  * Electrical damage
  */
@@ -2036,7 +1990,6 @@ static int set_elec_destroy(object_type *o_ptr)
 	return (TRUE);
 }
 
-
 /*
  * Burn something
  */
@@ -2050,7 +2003,6 @@ static int set_fire_destroy(object_type *o_ptr)
 	if (f3 & TR3_IGNORE_FIRE) return (FALSE);
 	return (TRUE);
 }
-
 
 /*
  * Freeze things
@@ -2077,10 +2029,9 @@ int set_impact_destroy(object_type *o_ptr)
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 	/* Hack -- borrow flag */
-	if (f3 & TR3_IGNORE_COLD) return (FALSE);
+//	if (f3 & TR3_IGNORE_COLD) return (FALSE);
 	return (TRUE);
 }
-
 
 /*
  * Soak something
@@ -2096,7 +2047,6 @@ int set_water_destroy(object_type *o_ptr)
 	return (TRUE);
 }
 
-
 /*
  * Rust
  */
@@ -2111,6 +2061,26 @@ static int set_rust_destroy(object_type *o_ptr)
 	return (TRUE);
 }
 
+/*
+ * Burn/Crash things
+ */
+/*
+ * Does a given object (usually) hate GF_ROCKET damage,
+ * ie hates_fire() or hates_impact()?
+ * (Note: Add shards too in case hates_shards() is ever added to the game)
+ */
+int set_rocket_destroy(object_type *o_ptr)
+{
+	u32b f1, f2, f3, f4, f5, esp;
+
+	if (!hates_impact(o_ptr)) {
+		if (!hates_fire(o_ptr)) return (FALSE);
+		/* Extract the flags */
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		if (f3 & TR3_IGNORE_FIRE) return (FALSE);
+	}
+	return (TRUE);
+}
 
 /*
  * Every things
@@ -2127,7 +2097,6 @@ int set_all_destroy(object_type *o_ptr)
 	}
 	return (TRUE);
 }
-
 
 
 
@@ -9262,36 +9231,25 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Rocket -- stun, cut, fire, raw impact */
 		case GF_ROCKET:
 		{
+			bool res_heat = (p_ptr->resist_fire || p_ptr->oppose_fire);
 			if (p_ptr->resist_shard)
-			{
 				dam = (dam * 5) / 6;
-			}
-
 			if (p_ptr->resist_sound)
-			{
 				dam = (dam * 5) / 6;
-			}
-			
 			if (p_ptr->immune_fire)
-			{
 				dam = (dam * 3) / 4;
-			}
-			else if (p_ptr->resist_fire)
-			{
+			else if (p_ptr->resist_fire || p_ptr->oppose_fire)
 				dam = (dam * 4) / 5;
-			}
 
 			if (fuzzy) msg_format(Ind, "There is an explosion around you of \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 
 			if (!p_ptr->resist_shard && !p_ptr->no_cut)
-				(void)set_cut(Ind, p_ptr->  cut + ( dam / 2), -who );
+				(void)set_cut(Ind, p_ptr->cut + ( dam / 2), -who );
 			if (!p_ptr->resist_sound)
 				(void)set_stun(Ind, p_ptr->stun + randint(20));
 
-			if (((!p_ptr->resist_shard) || (!p_ptr->resist_fire)) || (randint(3)==1))
-			if (((!p_ptr->resist_shard) && (!p_ptr->resist_fire)) || (randint(4)==1))
-			{
+			if (!p_ptr->resist_shard || !p_ptr->resist_sound || !res_heat) {
 				/* Don't kill inventory in bloodbond... */
 				int breakable = 1;
 				if (IS_PVP) {
@@ -9299,7 +9257,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 						breakable = 0;
 					}
 				}
-				if (breakable) inven_damage(Ind, set_cold_destroy, 3);
+				if (breakable) {
+					if (p_ptr->resist_shard && p_ptr->resist_sound) inven_damage(Ind, set_fire_destroy, 3);
+					else if (res_heat) inven_damage(Ind, set_impact_destroy, 3);
+					else inven_damage(Ind, set_rocket_destroy, 4);
+				}
 			}
 
 			take_hit(Ind, dam, killer, -who);
