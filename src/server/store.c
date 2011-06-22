@@ -1291,9 +1291,6 @@ static void store_delete(store_type *st_ptr)
 	int what, num;
 	object_type *o_ptr;
 
-	char o_name[ONAME_LEN];
-	cptr s_name;
-
 	/* Pick a random slot */
 	what = rand_int(st_ptr->stock_num);
 
@@ -1333,16 +1330,18 @@ static void store_delete(store_type *st_ptr)
 	/* keep track of artifact creation scrolls in log */
 	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION
 	    && o_ptr->number == num) {
+		char o_name[ONAME_LEN];
+		cptr s_name = st_name + st_info[st_ptr->st_idx].name;
 		object_desc(0, o_name, o_ptr, TRUE, 3);
-		s_name = st_name + st_info[st_ptr->st_idx].name;
 		s_printf("%s: STORE_DELETE: %d/%d - %d, %s (%s).\n", showtime(), st_ptr->town, town[st_ptr->town].type, st_ptr->st_idx, o_name, s_name);
 	}
 #else
 	/* keep track of artifact creation scrolls in log */
 	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION
 	    && o_ptr->number == num) {
+		char o_name[ONAME_LEN];
+		cptr s_name = st_name + st_info[st_ptr->st_idx].name;
 		object_desc(0, o_name, o_ptr, TRUE, 3);
-		s_name = st_name + st_info[st_ptr->st_idx].name;
 		s_printf("%s: STORE_DELETE: %d/%d - %d, %s (%s).\n", showtime(), st_ptr->town, town[st_ptr->town].type, st_ptr->st_idx, o_name, s_name);
 	}
 #endif
