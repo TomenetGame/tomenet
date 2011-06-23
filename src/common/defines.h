@@ -177,6 +177,8 @@
 /* --------------------- Server-type dependant features -------------------- */
 
 #ifdef RPG_SERVER
+ #define BONE_AND_TREASURE_CHAMBERS	/* New experimental room types: Generate pits of bones or treasure - C. Blue */
+
  #define MUCHO_RUMOURS		/* print a rumour on day changes and unique kills (the_sandman) */
 // #define PRECIOUS_STONES
 
@@ -188,22 +190,22 @@
 #endif
 
 #ifdef TEST_SERVER
+ #define ART_DIZ		/* Load 'D:' tags from a_info.txt file and display them on examining - C. Blue */
+
  #define ENABLE_ASSASSINATE	/* experimental fighting technique for rogues - devalues Backstabbing too much probably */
+
+ #ifdef MAX_CLOUDS
+  #undef MAX_CLOUDS
+  #define MAX_CLOUDS 10		/* note that this number gets divided depending on season */
+ #endif
+
+ #define BONE_AND_TREASURE_CHAMBERS	/* New experimental room types: Generate pits of bones or treasure - C. Blue */
 
  #define AUCTION_BETA		/* less restrictions while beta testing */
  #define AUCTION_SYSTEM
  #define AUCTION_DEBUG
 
  #define OPTIMIZED_ANIMATIONS	/* testing */
-
- #define CLIENT_SIDE_WEATHER	/* server uses Send_weather() instead of displaying own weather animation */
- #ifdef MAX_CLOUDS
-  #undef MAX_CLOUDS
-  #define MAX_CLOUDS 10		/* note that this number gets divided depending on season */
- #endif
-// #define CLIENT_WEATHER_GLOBAL	/* use global weather instead of sector-specific (requires CLIENT_SIDE_WEATHER) */
-
- #define ART_DIZ		/* Load 'D:' tags from a_info.txt file and display them on examining - C. Blue */
 #endif
 
 /* ------------------------ Client-side only features -----------------------*/
