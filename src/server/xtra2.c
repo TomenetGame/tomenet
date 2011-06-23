@@ -4587,13 +4587,13 @@ if (season_halloween) {
 		}
 	}
 
-	/* clones don't drop treasure or complete quests */
+	/* clones don't drop treasure or complete quests.. */
 	if (m_ptr->clone) return;
-	/* neither do cheezed kills -- make exception for Morgoth, so hi-lvl fallen kings can re-king */
+	/* ..neither do cheezed kills */
 	if (henc_cheezed &&
-		!is_Morgoth &&
-		!streq(r_name_get(m_ptr), "Great Pumpkin")) return; /* allow a mixed hunting group */
-
+	    !is_Morgoth && /* make exception for Morgoth, so hi-lvl fallen kings can re-king */
+	    !streq(r_name_get(m_ptr), "Great Pumpkin")) /* allow a mixed hunting group */
+		return;
 
 
 	/* Determine how much we can drop */
@@ -4947,23 +4947,23 @@ if(cfg.unikill_format){
 
 #ifdef ENABLE_STANCES
 					/* increase SKILL_STANCE by +1 automatically (just for show :-p) if we actually have that skill */
-					if (get_skill(p_ptr, SKILL_STANCE) >= 45) {
+					if (get_skill(q_ptr, SKILL_STANCE) >= 45) {
 						/* give message if we learn a new stance (compare cmd6.c! keep it synchronized */
-						msg_print(Ind, "\374\377GYou learn how to enter Royal Rank combat stances.");
+						msg_print(i, "\374\377GYou learn how to enter Royal Rank combat stances.");
 						/* automatically upgrade currently taken stance power */
-						if (p_ptr->combat_stance) p_ptr->combat_stance_power = 3;
+						if (q_ptr->combat_stance) q_ptr->combat_stance_power = 3;
 					}
 #endif
 
-					if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) >= 48) {
-	                            		msg_print(Ind, "\374\377GYou learn the Royal Titan's Fist technique.");
-				                msg_print(Ind, "\374\377GYou learn the Royal Phoenix Claw technique.");
+					if (get_skill(q_ptr, SKILL_MARTIAL_ARTS) >= 48) {
+	                            		msg_print(i, "\374\377GYou learn the Royal Titan's Fist technique.");
+				                msg_print(i, "\374\377GYou learn the Royal Phoenix Claw technique.");
 		                        }
 					
-					if (p_ptr->lev >= 50 && p_ptr->pclass == CLASS_ROGUE) {
-						msg_print(Ind, "\374\377GYou learn the royal fighting technique 'Shadow Run'");
-						calc_techniques(Ind);
-						Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
+					if (q_ptr->lev >= 50 && q_ptr->pclass == CLASS_ROGUE) {
+						msg_print(i, "\374\377GYou learn the royal fighting technique 'Shadow Run'");
+						calc_techniques(i);
+						Send_skill_info(i, SKILL_TECHNIQUE, TRUE);
 					}
 				}
 			}	
