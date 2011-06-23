@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 20. June 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 23. June 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -9151,7 +9151,9 @@ longer than it did on power level 1 when you just barely learned it.
 
 Casting spells on other players:
 Magic spells, prayers and druid magic are partially able to be used on fellow
-players. However, the ways this is done differs from each other.
+players, this works regardless of whether they are in the same party or not,
+the target player just needs to stand next to the caster for it to work.
+However, the ways projecting is done differ between magic school types:
 - Istari and other users of their magic may cast some magic spells on others
   by summoning an ethereal projector sphere on their mind. While this project
   spell is active, some of their spells will affect not only themselves but
@@ -9161,9 +9163,15 @@ players. However, the ways this is done differs from each other.
   The spells which are projectable are marked by a '(project)' tag below.
 - Priests and other classes who rely on prayers, as well as druids do not use
   any kind of projector sphere. Their spells will always affect fellow players
-  nearby
+  nearby.
   The prayers and druid spells which are projected on others are marked by a
   '(auto-project)' tag at the end of the spell description below. 
+- Mindcrafter spells either auto-project (same as priest/druid spells described
+  above) or require the target player to open his mind ('p' key) to receive the
+  spell effect.
+- Just for completeness:
+  Rune magic that can affect other players does so automatically. (Basically
+  same principle as for priests/druids, as described above).
 
 Shared school spells:
 Some spells are shared between different schools, occuring possibly but not
