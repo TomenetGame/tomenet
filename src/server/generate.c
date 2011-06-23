@@ -2840,8 +2840,8 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 
 	/* Inner room variations */
-#ifndef RPG_SERVER
-	switch (randint(10)) { //+1 to enable bones/treasure chamber
+#ifndef BONE_AND_TREASURE_CHAMBERS
+	switch (randint(10)) {
 #else
 	switch (randint(11)) {
 #endif
