@@ -598,7 +598,8 @@ bool Report_to_meta(int flag)
 		strcat(buf_meta, "<game>TomeNET TEST-ONLY</game>");
 #else
  #ifdef ARCADE_SERVER /* made this one higher priority since using RPG_SERVER as an "ARCADE-addon" might be desired :) */
-		strcat(buf_meta, "<game>TomeNET Smash Arcade</game>");
+		//removed "Smash." -Moltor
+		strcat(buf_meta, "<game>TomeNET Arcade</game>");
  #else
   #ifdef RPG_SERVER
 		strcat(buf_meta, "<game>TomeNET RPG (not for beginners)</game>");
