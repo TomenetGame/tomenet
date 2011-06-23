@@ -203,7 +203,7 @@ bool set_tim_thunder(int Ind, int v, int p1, int p2)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Update the monsters */
@@ -343,7 +343,7 @@ bool set_tim_ffall(int Ind, int v)
 	if (p_ptr->disturb_state)
 		disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Result */
@@ -388,7 +388,7 @@ bool set_tim_fly(int Ind, int v)
 	if (p_ptr->disturb_state)
 		disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Result */
@@ -575,7 +575,7 @@ bool set_tim_esp(int Ind, int v)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS | PU_MONSTERS);
 
 	/* Handle stuff */
@@ -623,7 +623,7 @@ bool set_st_anchor(int Ind, int v)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Handle stuff */
@@ -670,7 +670,7 @@ bool set_prob_travel(int Ind, int v)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Handle stuff */
@@ -767,7 +767,7 @@ bool set_brand(int Ind, int v, int t, int p)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS | PU_MONSTERS);
 
 	/* Handle stuff */
@@ -851,7 +851,7 @@ bool set_bow_brand(int Ind, int v, int t, int p)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS | PU_MONSTERS);
 
 	/* Handle stuff */
@@ -909,7 +909,7 @@ bool set_mimic(int Ind, int v, int p)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS | PU_MONSTERS);
 
 	/* Handle stuff */
@@ -956,7 +956,7 @@ bool set_tim_manashield(int Ind, int v)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA);
 
 	/* update so everyone sees the colour animation */
@@ -1006,7 +1006,7 @@ bool set_tim_traps(int Ind, int v)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Handle stuff */
@@ -1057,7 +1057,7 @@ bool set_invis(int Ind, int v, int p)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS | PU_MONSTERS);
 
 	/* Handle stuff */
@@ -1104,8 +1104,8 @@ bool set_fury(int Ind, int v)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
-	p_ptr->update |= (PU_BONUS);
+	/* Recalculate boni + hit points */
+	p_ptr->update |= (PU_BONUS | PU_HP);
 
 	/* Handle stuff */
 	handle_stuff(Ind);
@@ -1154,7 +1154,7 @@ bool set_tim_meditation(int Ind, int v)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_HP | PU_MANA);
 
 	/* Handle stuff */
@@ -1251,7 +1251,7 @@ bool set_tim_wraith(int Ind, int v)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Handle stuff */
@@ -1689,7 +1689,7 @@ bool set_fast(int Ind, int v, int p)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Handle stuff */
@@ -1742,7 +1742,7 @@ bool set_slow(int Ind, int v)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Handle stuff */
@@ -1796,7 +1796,7 @@ bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Handle stuff */
@@ -1845,7 +1845,7 @@ bool set_tim_deflect(int Ind, int v)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Handle stuff */
@@ -1896,7 +1896,7 @@ bool set_blessed(int Ind, int v)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Handle stuff */
@@ -1937,7 +1937,7 @@ bool set_res_fear(int Ind, int v)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Handle stuff */
@@ -1986,11 +1986,8 @@ bool set_hero(int Ind, int v)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
-	p_ptr->update |= (PU_BONUS);
-
-	/* Recalculate hitpoints */
-	p_ptr->update |= (PU_HP);
+	/* Recalculate boni & hit points */
+	p_ptr->update |= (PU_BONUS | PU_HP);
 
 	/* Handle stuff */
 	handle_stuff(Ind);
@@ -2039,11 +2036,8 @@ bool set_shero(int Ind, int v)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
-	p_ptr->update |= (PU_BONUS);
-
-	/* Recalculate hitpoints */
-	p_ptr->update |= (PU_HP);
+	/* Recalculate boni + hit points */
+	p_ptr->update |= (PU_BONUS | PU_HP);
 
 	/* Handle stuff */
 	handle_stuff(Ind);
@@ -2089,11 +2083,8 @@ bool set_berserk(int Ind, int v)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
-	p_ptr->update |= (PU_BONUS);
-
-	/* Recalculate hitpoints */
-	p_ptr->update |= (PU_HP);
+	/* Recalculate boni + hit points */
+	p_ptr->update |= (PU_BONUS | PU_HP);
 
 	/* Handle stuff */
 	handle_stuff(Ind);
@@ -2139,7 +2130,7 @@ bool set_melee_sprint(int Ind, int v)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Recalculate hitpoints */
@@ -2356,7 +2347,7 @@ bool set_invuln(int Ind, int v)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* update so everyone sees the colour animation */
@@ -2388,7 +2379,7 @@ bool set_invuln_short(int Ind, int v)
 	/* Use the value */
 	p_ptr->invuln = v;
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Handle stuff */
@@ -2435,7 +2426,7 @@ bool set_tim_invis(int Ind, int v)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Update the monsters */
@@ -2486,7 +2477,7 @@ bool set_tim_infra(int Ind, int v)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Update the monsters */
@@ -2824,7 +2815,7 @@ bool set_stun(int Ind, int v)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Redraw the "stun" */
@@ -2972,7 +2963,7 @@ bool set_cut(int Ind, int v, int attacker)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Redraw the "cut" */
@@ -3116,7 +3107,7 @@ bool do_divine_hp(int Ind, int v, int p) {
         /* Disturb */
         if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-        /* Recalculate bonuses */
+        /* Recalculate boni */
         p_ptr->update |= (PU_BONUS|PU_HP);
         /* Handle stuff */
         handle_stuff(Ind);
@@ -3166,7 +3157,7 @@ bool do_divine_crit(int Ind, int v, int p) {
         /* Disturb */
         if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-        /* Recalculate bonuses */
+        /* Recalculate boni */
         p_ptr->update |= (PU_BONUS);
         /* Handle stuff */
         handle_stuff(Ind);
@@ -3211,7 +3202,7 @@ bool do_divine_xtra_res_time_mana(int Ind, int v) {
         /* Disturb */
         if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-        /* Recalculate bonuses */
+        /* Recalculate boni */
         p_ptr->update |= (PU_BONUS);
 
         /* Handle stuff */
@@ -3400,7 +3391,7 @@ bool set_food(int Ind, int v)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Redraw hunger */
@@ -3441,7 +3432,7 @@ bool bless_temp_luck(int Ind, int pow, int dur)
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-	/* Recalculate bonuses */
+	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
 	/* Handle stuff */
