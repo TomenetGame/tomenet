@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 23. June 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 24. June 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -6084,7 +6084,9 @@ Rings of Sustain Cunningness    sustain strength, intelligence and charisma.
 Rings of Sustain Steadiness     sustain wisdom and constitution.
 Rings of Sustain Ready Wit      sustain dexterity, intelligence and charisma.
 Rings of Sustain Brilliance     sustain intelligence and wisdom.
-Amulets of Sustenance           sustain all six attributes.
+Amulets of Sustenance           sustain all six attributes, provide 'Hold Life'
+                                aka resistance to experience-draining attacks,
+                                and provide slow digestion.
                         Sustenance of a stat will prevent it from being drained
                         by various sort of attacks, potions, or other effects.
                         For most things it works 100% of the time, but for some
