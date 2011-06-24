@@ -5682,7 +5682,7 @@ cptr player_title[MAX_CLASS][11][4] =
 		{"Convincer", "Convincer", "Convincer", "Convincer", },
 		{"Warper", "Warper", "Warper", "Warper", },
 		{"Psychic", "Psychic", "Psychic", "Psychic", },
-		{"Mindcrafter", "Mindcraftress", "Mindcrafter", "Mindcraftrs.", },
+		{"Telepath", "Telepath", "Telepath", "Telepath", },
 		{"Manipulator", "Manipulatress", "Manipulator", "Manipulatrs.", },
 		{"Controller", "Controller", "Controller", "Controller", },
 		{"Master Mindcrafter", "Master Mindcraftress", "M-Mindcrftr.", "M-Mindcrftr.", },
