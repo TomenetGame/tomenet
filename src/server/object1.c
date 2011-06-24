@@ -3158,6 +3158,7 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 	/* XXX this hack can be even worse under TomeNET, dunno :p */
 	object_copy(old_ptr, &p_ptr->inventory[INVEN_WIELD]);
 	object_copy(&p_ptr->inventory[INVEN_WIELD], o_ptr);
+	p_ptr->inventory[INVEN_WIELD].number = 1; /* fix weight */
 
 	/* handle secondary weapon or shield */
 	object_copy(old_ptr2, &p_ptr->inventory[INVEN_ARM]);
@@ -3362,6 +3363,7 @@ static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff, bool
 	/* Ok now the hackish stuff, we replace the current armour with this one */
 	object_copy(old_ptr, &p_ptr->inventory[slot]);
 	object_copy(&p_ptr->inventory[slot], o_ptr);
+	p_ptr->inventory[slot].number = 1; /* fix weight, for martial arts especially */
 	if (!star_identify) {
 		p_ptr->inventory[slot].name1 = p_ptr->inventory[slot].name2 = p_ptr->inventory[slot].name2b = 0;
 		p_ptr->inventory[slot].pval = 0;
@@ -3484,7 +3486,11 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff, bool
 	object_copy(old_ptr, &p_ptr->inventory[INVEN_WIELD]);
 	object_copy(old_ptr2, &p_ptr->inventory[INVEN_ARM]);
 	object_copy(&p_ptr->inventory[INVEN_WIELD], o_ptr);
+	p_ptr->inventory[INVEN_WIELD].number = 1; /* fix weight */
 	if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H) p_ptr->inventory[INVEN_ARM].k_idx = 0;
+	else if ((k_info[o_ptr->k_idx].flags4 & TR4_SHOULD2H) &&
+	    (is_weapon(p_ptr->inventory[INVEN_ARM].tval)))
+		p_ptr->inventory[INVEN_ARM].k_idx = 0;
 	/* If we don't really know the item, rely on k_info flags only! */
 	if (!star_identify) {
 		p_ptr->inventory[INVEN_WIELD].name1 = p_ptr->inventory[INVEN_WIELD].name2 = p_ptr->inventory[INVEN_WIELD].name2b = 0;
@@ -3583,6 +3589,7 @@ static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff, boo
 	/* Ok now the hackish stuff, we replace the current weapon/shield with this one */
 	object_copy(old_ptr, &p_ptr->inventory[INVEN_BOW]);
 	object_copy(&p_ptr->inventory[INVEN_BOW], o_ptr);
+	p_ptr->inventory[INVEN_BOW].number = 1; /* fix weight */
 	/* If we don't really know the item, rely on k_info flags only! */
 	if (!star_identify) {
 		p_ptr->inventory[INVEN_BOW].name1 = p_ptr->inventory[INVEN_BOW].name2 = p_ptr->inventory[INVEN_BOW].name2b = 0;
@@ -3687,6 +3694,7 @@ void observe_aux(int Ind, object_type *o_ptr) {
 		long tim_wraith = p_ptr->tim_wraith;
 		object_copy(old_ptr, &p_ptr->inventory[INVEN_WIELD]);
 		object_copy(&p_ptr->inventory[INVEN_WIELD], o_ptr);
+		p_ptr->inventory[INVEN_WIELD].number = 1; /* fix weight */
 		object_copy(old_ptr2, &p_ptr->inventory[INVEN_ARM]);
 		if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H)
 			p_ptr->inventory[INVEN_ARM].k_idx = 0;
