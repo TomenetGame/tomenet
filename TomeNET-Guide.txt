@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 24. June 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 25. June 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -382,7 +382,10 @@ c   while in a store:
 d       d       drop an item.
 $       $       drop some gold. You can use 'k' and 'm' for thousands or
                 millions, example: 3k -> drops 3000. 2m -> drops 2000000.
-D       D       disarm a trap.
+D       D       disarm a trap. This yields experience points, depending on the
+                trap type. (Note that you won't get experience points for
+                disarming traps via magic spells or magic devices.)
+                Also see (4.7) for details about traps.
 k       CTRL+D  destroy an item. (Note that artifacts are indestructible.)
 G       G       skills screen.
 B       f       bash/force something (ie a stuck door).
@@ -417,7 +420,7 @@ P       O       party screen. Form/disband/modify a party with other players
                 levels instead of 7.
 
 SPACE   Stop executing repeatable actions such as searching, tunnelling or
-        disarming. Also stops fire-till-kill.
+        disarming traps. Also stops fire-till-kill.
 < or >  go upstairs/downstairs. Press '>' to use a void gate (violet '+').
         Void jump gates teleport you to their counterpart and vice versa.
 {       inscribe an item.
@@ -3626,7 +3629,8 @@ rubble and use their 'create ammo' ability to create ammunition from it.
 Pits-
 Dark '^' are pits that can only be crossed if you have levitation or flying
 ability. Bree is protected by pits around the outer tree wall. These pits
-cannot be disarmed or destroyed.
+cannot be disarmed (because they don't count as trap, as opposed to the
+actual 'chasm traps' and 'pit traps') or destroyed.
 
 Walls-
 White '#' are permanent walls which cannot be damaged or destroyed, or in
@@ -3888,11 +3892,19 @@ decrease your stats temporarily, they are annoying but not a big danger.
 However, later on traps will become extremely nasty and you should either get
 a very high searching skill or make sure that you have staves, spells or
 scrolls that can detect traps. If you encounter a dangerous trap do not try to
-disarm it if you are not very sure that you can do it without setting it off.
-Fighting traps will become an essential part of the gameplay later on. Vaults
+disarm it if you are not very sure that you can do it without setting it off,
+or if you don't at least know that setting it off won't have too bad effects
+(some traps aren't very harmful, so you can just keep trying to disarm them).
+
+If you manually disarm a trap (ie via the disarm command instead of relying on
+magic spells or magic devices that do the disarming for you) you will get a
+certain amount of experience points depending on the trap type; it can pay off
+to disarm a large patch of traps.
+
+Disarming traps will become an essential part of the gameplay later on. Vaults
 will have *lots* of traps and if you haven't got superior disarming skills (or
-wands of disarming / trap destruction) every single move of your character has
-to be planned then! This can be especially annoying and dangerous if there are
+wands of disarming / trap destruction) every single move of your character will
+have to be planned! This can be especially annoying and dangerous if there are
 multiplying or extremely tough monsters inside the vault. If your searching
 ability is 'Heroic' or 'Legendary' you will discover most traps instantly just
 by coming close to them without having to explicitely search for them.
@@ -6188,7 +6200,7 @@ Tarpaulin           When equipped, prevents your inventory and equipment from
                     are attacked with water-based effects.
                     Note that your weapon is not included in this protection
                     while attacking.
-Picklock            When equipped, improves your disarm ability.
+Picklock            When equipped, improves your trap-disarming ability.
 Money Belt          When equipped, greatly reduces chance of thieves succeeding
                     in stealing your money.
 Device of theft prevention
@@ -6494,7 +6506,7 @@ INSANITY        none. (mimics using WEIRD_MIND/EMPTY_MIND form resist slightly)
 HALLU           chaos.
 PARASITE        <no effect>
 DISARM          fighting skill.
-                Weapons worn 2-handed are harder to disarm (stacking).
+                Weapons wielded 2-handely are harder to disarm (stacking).
                 Artifacts are also harder to disarm (stacking).
                 Heavily cursed items are quite hard to disarm (stacking).
 FAMINE          none. Makes you hungry.
@@ -7043,7 +7055,7 @@ Intelligence (INT)
     -Has influence on your mana pool size. (class-dependant)
     -How well can you cast spells that use INT to determine failure rate?
     -Has influence on your magic device handling skill.
-    -Has influence on your disarming skill.
+    -Has influence on your trap-disarming skill.
     -Do you notice if someone tries to steal from you?
     Also see (6.10) for more information about the 'Magic Device' skill.
 Wisdom (WIS)
@@ -7065,7 +7077,7 @@ Dexterity (DEX)
     -How likely are items or money stolen from you?
     -Can you prevent getting stunned from bashing a door clumsily?
     -Allows you to try hard to swim and not drown in deep water.
-    -Has influence on your disarming skill.
+    -Has influence on your trap-disarming skill.
 Constitution (CON)
     -How many HP (hit points) do you have? Very essential.
      Note that CON effect caps depending on your character level. Roughly:
@@ -7618,7 +7630,10 @@ Note that not every skill is available to every profession (class).
                                 -invoke a mimic spell,
                                 -set a monster trap,
                                 -use a staircase.
-    +Disarming                  Improves your disarming ability.
+    +Disarming                  Improves your disarming ability, making it
+                                safer to disarm traps via the manual disarm
+                                command. (The experience you gain from manually
+                                disarming traps is not affected by the skill).
                                 Also gives you a chance to salvage a trap kit
                                 from any trap when you disarm it!
         .Trapping               Improves your ability to set traps:
@@ -7774,7 +7789,8 @@ Here is a list of detailed information about miscellaneous abilities:
 
 Fighting
     How well you can fight (hit chance; further boni like skills or +hit from
-    equipment are added to the ability) or how easily you get disarmed.
+    equipment are added to the ability) or how easily you get disarmed
+    ("You lose the grip of your weapon!").
 Bows/Throw
     How well you can shoot/throw.
 Saving Throw
@@ -7795,6 +7811,8 @@ Searching
 Disarming
     How well you can disarm traps (without setting them off), and how likely
     you avoid known traps if you accidentally step on them again.
+    (Note that manually disarming traps like this will yield experience points
+    if successful, while disarming via magic or magic devices won't.)
 Magic Device
     How well you can use magic items like wands, staves, rods (these are often
     especially hard to use) or activate magic items like Dragon Scale Mails.
