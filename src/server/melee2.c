@@ -9351,6 +9351,9 @@ void process_monsters(void)
 			/* Skip non-multi-hued monsters */
 //			if (!(r_ptr->flags1 & RF1_ATTR_MULTI)) continue;
 			if (!((r_ptr->flags1 & RF1_ATTR_MULTI) ||
+#ifdef SLOW_ATTR_BNW
+			    (r_ptr->flags7 & RF7_ATTR_BNW) ||
+#endif
 			    (r_ptr->flags2 & RF2_SHAPECHANGER) ||
 			    (r_ptr->flags1 & RF1_UNIQUE) ||
 			    (r_ptr->flags2 & RF2_WEIRD_MIND) ||

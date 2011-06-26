@@ -1755,8 +1755,7 @@ static byte multi_hued_attr(monster_race *r_ptr)
 #endif
 
 	/* Check breaths */
-	for (i = 0; i < 32; i++)
-	{
+	for (i = 0; i < 32; i++) {
 		bool stored = FALSE;
 
 		/* Don't have that breath */
@@ -1788,13 +1787,11 @@ static byte multi_hued_attr(monster_race *r_ptr)
 
 
 		/* Always store the first color */
-		for (j = 0; j < stored_colors; j++)
-		{
+		for (j = 0; j < stored_colors; j++) {
 			/* Already stored */
 			if (allowed_attrs[j] == first_color) stored = TRUE;
 		}
-		if (!stored)
-		{
+		if (!stored) {
 			allowed_attrs[stored_colors] = first_color;
 			stored_colors++;
 		}
@@ -1803,8 +1800,7 @@ static byte multi_hued_attr(monster_race *r_ptr)
 		 * Remember (but do not immediately store) the second color 
 		 * of the first breath.
 		 */
-		if (breaths == 1)
-		{
+		if (breaths == 1) {
 			second_color = breath_to_attr[i][1];
 			/* make sure breath colour gets more showtime than base colour - C. Blue */
 			if (!second_color) second_color = first_color;
@@ -1813,7 +1809,7 @@ static byte multi_hued_attr(monster_race *r_ptr)
 
 	/* Monsters with no breaths may be of any color. */
 #ifdef CLIENT_SHIMMER
-	if (breaths == 0 || breaths==5) {
+	if (breaths == 0 || breaths == 5) {
 		return (TERM_HALF);
 	}
 #else
@@ -1821,8 +1817,7 @@ static byte multi_hued_attr(monster_race *r_ptr)
 #endif
 
 	/* If monster has one breath, store the second color too. */
-	if (breaths == 1)
-	{
+	if (breaths == 1) {
 		/* only 1 breath, and one of these? -> discard its r_info
 		   base colour completely if ATTR_BASE isn't set: */
 		if (!(r_ptr->flags7 & RF7_ATTR_BASE)) {
@@ -2000,6 +1995,22 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 		/* Multi-hued attr */
 		(*ap) = randint(15);
 #endif	/* 0 */
+	}
+	/* Special ATTR_BNW flag: Monster just flickers black and white,
+	   possibly also its base colour if ATTR_BASE is set either.
+	   Added this 'hack flag' to display silly Pandas - C. Blue */
+	else if (r_ptr->flags7 & RF7_ATTR_BNW) {
+		(*cp) = c;
+#ifdef SLOW_ATTR_BNW /* handle server-side -> slower speed flickering */
+		if ((r_ptr->flags7 & RF7_ATTR_BASE) && !rand_int(3)) {
+			/* Use base attr */
+			(*ap) = a;
+		} else {
+			(*ap) = rand_int(2) ? TERM_L_DARK : TERM_WHITE;
+		}
+#else /* handle client-side -> the usual fast flickering, same as dungeon wizards */
+		(*ap) = TERM_BNW + ((r_ptr->flags7 & RF7_ATTR_BASE) ? a : 0x0);
+#endif
 	}
 	/* Normal monster (not "clear" in any way) */
 	else if (!(r_ptr->flags1 & (RF1_ATTR_CLEAR | RF1_CHAR_CLEAR))) {

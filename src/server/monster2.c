@@ -2305,6 +2305,9 @@ void update_mon(int m_idx, bool dist)
 //			if (r_ptr->flags1 & RF1_ATTR_MULTI) scan_monsters = TRUE;
 #ifdef RANDUNIS
 			if ((r_ptr->flags1 & RF1_ATTR_MULTI) ||
+ #ifdef SLOW_ATTR_BNW
+			    (r_ptr->flags7 & RF7_ATTR_BNW) ||
+ #endif
 			    (r_ptr->flags2 & RF2_SHAPECHANGER) ||
 			    (r_ptr->flags2 & RF2_WEIRD_MIND) ||
 			    (r_ptr->flags1 & RF1_UNIQUE) ||
@@ -2312,6 +2315,9 @@ void update_mon(int m_idx, bool dist)
 				scan_monsters = TRUE;
 #else
 			if ((r_ptr->flags1 & RF1_ATTR_MULTI) ||
+ #ifdef SLOW_ATTR_BNW
+			    (r_ptr->flags7 & RF7_ATTR_BNW) ||
+ #endif
 			    (r_ptr->flags2 & RF2_SHAPECHANGER) ||
 			    (r_ptr->flags2 & RF2_WEIRD_MIND) ||
 			    (r_ptr->flags1 & RF1_UNIQUE))

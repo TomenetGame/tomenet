@@ -846,10 +846,10 @@
  * in percent. [50]
  */
 #define STAIR_FAIL_IF_CONFUSED  50
-      
+
 /* duration of GoI when climbing stairs.        [2] */
 #define STAIR_GOI_LENGTH        3
-      
+
 /* when do rogues learn cloaking mode? */
 #define LEARN_CLOAKING_LEVEL 15
 
@@ -1142,6 +1142,15 @@
    slightly increase amount of tools generated in stores since they will
    be generated fine even if they'd otherwise have come out as 'cursed'. */
 //#define PREVENT_CURSED_TOOLS
+/* If enabled, ATTR_BNW is calculated 'manually' on server-side same as
+   breath-based flickering. This makes the BNW flickering much slower, which
+   might or might not look better than the client-side fast flickering of
+   dungeon wizards. Added ATTR_BNW and all this for silyl Panda Bear. - C. Blue
+   NOTE: ATTR_BNW Stacks with ATTR_BASE. If SLOW_ATTR_BNW is NOT defined, then
+   ATTR_BNW even cannot be used without ATTR_BASE if client is <= v447, because
+   sole ATTR_BNW will also return TERM_DARK otherwise, which looks pretty bad. */
+#define SLOW_ATTR_BNW
+
 
 /*
  * There is a 1/20 (5%) chance of inflating the requested object_level
@@ -4854,17 +4863,17 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF7_NO_THEFT		0x00040000  /* Monster is neutral */
 #define RF7_NEVER_ACT		0x00080000  /* Monster is neutral */
 #define RF7_NO_ESP			0x00100000	/* monster isn't ESPable */
-#define RF7_ATTR_BASE			0x00200000	/* show base attr too, even if only 1 breath and ATTR_MULTI (DRs) - C. Blue */
+#define RF7_ATTR_BASE			0x00200000	/* show base attr too. Atm works if a) only 1 breath and ATTR_MULTI (DRs) or b) ATTR_BNW is set */
 #define RF7_VORTEX			0x00400000	/* experimental: flicker extremely fast - not working atm */
 #define RF7_OOD_20			0x00800000	/* Cannot occur more than 20 levels OoD */
 #define RF7_OOD_15		0x01000000	/* Cannot occur more than 15 levels OoD */
 #define RF7_OOD_10		0x02000000	/* Cannot occur more than 10 levels OoD */
-//FREE FLAGS HOLE
-#define RF7_S_LOWEXP			0x08000000  /* Summons/Clones give little exp */
-#define RF7_S_NOEXP		0x10000000  /* Summons/Clones don't give exp */
-#define RF7_ATTR_BREATH		0x20000000  /* Use client breath colouring */
-#define RF7_MULTIPLY		0x40000000  /* Monster reproduces */
-#define RF7_DISBELIEVE		0x80000000	/* Antimagic shield */
+#define RF7_ATTR_BNW		0x04000000	/* Monster flickers w/ TERM_BNW colour (ie black and white), also see SLOW_ATTR_BNW */
+#define RF7_S_LOWEXP		0x08000000  /* Summons/Clones give little exp */
+#define RF7_S_NOEXP			0x10000000  /* Summons/Clones don't give exp */
+#define RF7_ATTR_BREATH			0x20000000  /* Use client breath colouring (unused & not implemented) */
+#define RF7_MULTIPLY			0x40000000  /* Monster reproduces */
+#define RF7_DISBELIEVE			0x80000000	/* Antimagic shield */
 
 
 /*
