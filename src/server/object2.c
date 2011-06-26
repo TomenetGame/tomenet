@@ -2254,7 +2254,7 @@ static int artifact_flag_rating_weapon(object_type *o_ptr) {
 	/* 'The' weapon mods */
 	if (f1 & TR1_VAMPIRIC) total += 3;
 	if (f1 & TR1_BLOWS) total += o_ptr->pval * 2;
-	if (f5 & TR5_CRIT) total += (o_ptr->pval + 1) / 2;
+	if (f5 & TR5_CRIT) total += (o_ptr->pval + 4) / 2;
 	else if (f5 & TR5_VORPAL) total += 2;
 
 	if (f1 & TR1_KILL_DEMON) slay++;
