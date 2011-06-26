@@ -16219,7 +16219,8 @@ D:everybody in the water is in danger!
 N:902:Scrag
 G:T:B
 I:110:40d10:20:50:50
-W:35:1:5000:440
+#W:35:1:5000:440
+W:37:1:5000:440
 E:1:1:1:2:1:1
 O:0:100:0:0
 B:HIT:HURT:1d10
