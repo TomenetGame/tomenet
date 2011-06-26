@@ -535,11 +535,11 @@ byte flick_colour(byte attr){
 
 	/* additional flickering from 'black'n'white' flag? */
 	if (flags & TERM_BNW) {
-		if (rand_int(7) < 5) return(attr);
-		return(randint(2) < 2 ? TERM_L_DARK : TERM_WHITE);
+		if (attr && rand_int(7) < 5) return (attr);
+		return (randint(2) < 2 ? TERM_L_DARK : TERM_WHITE);
 	/* additional flickering from 'pvp' flag? */
 	} else if (flags & TERM_PVP) {
-		if (rand_int(6) < 3) return (attr);
+		if (attr && rand_int(6) < 3) return (attr);
 		switch (randint(3)) {
 		case 1: return TERM_L_DARK;
 		case 2: return TERM_L_RED;
@@ -576,7 +576,7 @@ byte flick_colour(byte attr){
 		case 5: return (TERM_WHITE);
 */		}
 	}
-	switch(attr){
+	switch(attr) {
 		case TERM_MULTI:
 			return(randint(15));
 			break;	/* unnecessary breaks ;) */

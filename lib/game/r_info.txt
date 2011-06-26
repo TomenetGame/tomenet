@@ -20502,9 +20502,23 @@ F:RAND_50 | RAND_25 |
 F:FRIENDS | SUSCEP_FIRE |
 F:BASH_DOOR | WILD_TOO | WILD_WASTE |
 F:ANIMAL | RES_COLD | DROP_SKELETON | DROP_CORPSE |
-F:MORTAL | BASEANGBAND
+F:MORTAL | BLUEBAND
 D:A tiny young wolf from the northern wastes. Its breath is cold and 
 D:icy and its fur coated in frost. 
+
+N:1135:Panda
+G:q:D
+I:110:6d6:10:35:10
+W:127:255:1600:25
+E:0:1:0:2:1:0
+O:0:0:0:0
+B:CLAW:HURT:1d4
+B:CLAW:HURT:1d4
+B:BITE:HURT:1d6
+F:BASH_DOOR | FORCE_MAXHP | FORCE_SLEEP | DROP_CORPSE |
+F:ANIMAL | WILD_TOO | WILD_WOOD | WILD_WOOD |
+F:MORTAL | ATTR_BASE | ATTR_BNW | BLUEBAND
+D:A black and white spotted bear that doesn't seem overly agressive.
 
 
 
