@@ -2,7 +2,7 @@ function ind(i)
 	local id
 
         id = get_playerind(i)
-        if id == -1 then msg_print(Ind, "Unknown player "..i) end
+        if id == -1 then msg_print(Ind, "Unknown player '"..i.."'") end
         return id
 end
 
@@ -11,15 +11,33 @@ function ind_loose(i)
 	local id
 
         id = get_playerind_loose(i)
-        if id == -1 then msg_print(Ind, "Unknown player "..i) end
+        if id == -1 then msg_print(Ind, "Unknown player '"..i.."'") end
         return id
+end
+
+-- If there's someone of exactly matching name, returns his (Ind, name) again;
+-- otherwise returns (Ind, name) of loose lookup result;
+-- if no match at all, returns (-1, ""). - C. Blue
+function ind_combo(name)
+	local p, p2, n
+
+	p = get_playerind_loose(i)
+	p2 = get_playerind(i)
+	if p == -1 then
+		msg_print(Ind, "Unknown player '"..name.."'") end
+		return -1, ""
+	end
+
+	if p2 == -1 then p2 = p end
+	if p2 ~= p then p = p2 end
+	return p, players(p).name
 end
 
 function slot_loose(pind, iname)
 	local s
 
         s = get_playerslot_loose(pind, iname)
-        if s == -1 then msg_print(Ind, "Unknown item "..iname) end
+        if s == -1 then msg_print(Ind, "Unknown item '"..iname.."'") end
         return s
 end
 
@@ -35,7 +53,7 @@ function players(i)
                 local id
 
                 id = get_playerind(i)
-                if id == -1 then msg_print(Ind, "Unknown player "..i) return end
+                if id == -1 then msg_print(Ind, "Unknown player '"..i.."'") return end
                 return Players_real[id + 1]
         end
 end
