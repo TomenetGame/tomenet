@@ -95,6 +95,7 @@ D:of evil could stand.
 
 # The Necklace 'Nauglamir'
 # (former The Necklace of the Dwarves)
+#ZAng: of the Dwarves
 
 N:6:'Nauglamir'
 I:40:12:3
@@ -344,10 +345,11 @@ D:cloth.  Within it is the spirit of Eorl the Young, matchless in combat.
 
 
 # The Mithril Chain Mail 'Belegennon'
+#ZAng: Lohengrin
 
 N:22:'Belegennon'
 I:37:24:4
-W:40:10:150:80000
+W:40:10:150:100000
 P:28:1d4:-1:0:20
 F:STEALTH | WIS | INT | HIDE_TYPE
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS | RES_NEXUS | 
@@ -509,6 +511,7 @@ D:troll-bane smoked in the black blood of Gothmog's guards.
 
 
 # The Massive Iron Crown of Morgoth
+#ZAng: Chaos
 
 N:34:of Morgoth
 I:33:50:125
@@ -586,6 +589,7 @@ D:blows of Helm, the Hammerhand!
 
 
 # The _DRAGON_ Helm of Dor-Lomin
+#ZAng: also has ESP
 
 N:39:of Dor-Lomin
 I:32:7:4
@@ -611,6 +615,7 @@ D:awareness.
 
 
 # The Iron Helm of Gorlim
+#ZAng: Terror Mask
 
 N:41:of Gorlim
 I:32:5:-4
@@ -627,6 +632,7 @@ D:needed succor.
 
 
 # The Golden Crown of Gondor
+#ZAng: Amber
 
 N:42:of Gondor
 I:33:11:3
@@ -773,8 +779,8 @@ D:A hero's handgear that lends great prowess in battle.
 
 N:53:'Cammithrim'
 I:31:1:3
-W:10:3:5:20000
-P:1:1d1:0:0:10
+W:10:3:5:30000
+P:1:1d1:5:5:10
 F:DEX | CHR | FREE_ACT | RES_LITE | SUST_CON | LITE1 | ACTIVATE |
 F:SPECIAL_GENE | REGEN
 D:These gloves glow so brightly as to light the way for their owner and cast 
@@ -863,6 +869,7 @@ D:Middle Earth at last.
 
 
 # The Pair of Soft Leather Boots 'Dal-i-thalion'
+#ZAng: Flora
 
 N:61:'Dal-i-thalion'
 I:30:2:5
@@ -912,6 +919,7 @@ D:eldest son of Feanor, and wielded with his left hand after the loss of
 D:his right hand in the pits of Thangorodrim.
 
 # The Dagger 'Angrist'
+#ZAng: Caine
 
 N:65:'Angrist'
 I:23:4:4
@@ -967,6 +975,7 @@ D:wearer seems oddly immune.
 
 
 # The Dagger 'Belangil'
+#ZAng: Fiona
 
 N:70:'Belangil'
 I:23:4:2
@@ -996,6 +1005,7 @@ D:peril.
 
 
 # The Broad Sword 'Arunruth'
+#ZAng: Grayswandir
 
 N:72:'Arunruth'
 I:23:16:4
@@ -1128,6 +1138,7 @@ D:both the living and undead.
 
 
 # The Katana 'Aglarang'
+#ZAng: Groo
 
 N:81:'Aglarang'
 I:23:20:5
@@ -1172,6 +1183,7 @@ D:broken even in defeat.
 
 
 # The Claymore 'Anguirel'
+#ZAng: (part) Werewindle
 
 N:84:'Anguirel'
 I:23:23:2
@@ -1238,6 +1250,7 @@ D:abilities they did not know they had.
 
 
 # The Scimitar 'Haradekket'
+#ZAng: Soulsword
 
 N:89:'Haradekket'
 I:23:18:2
@@ -1251,6 +1264,7 @@ D:the "Sickle of Harad", and a deadly foe to the undead.
 
 
 # The Short Sword 'Gilettar'
+#ZAng: Gilettar
 
 N:90:'Gilettar'
 I:23:10:2
@@ -1278,6 +1292,7 @@ D:into the flesh of its enemies. It gathers shadows of death into its
 D:owner as they inflict wounds that will never heal.
 
 # The Bluesteel Blade 'Vorpal Blade'
+#ZAng: (part) Werewindle
 
 N:92:'Vorpal Blade'
 #I:23:17:2
@@ -1358,6 +1373,7 @@ D:Elves, against which all the foul corruptions of Sauron dashed in vain.
 
 
 # The Hunting Spear of Orome
+#ZAng: Destiny/Runespear
 
 N:98:of Orome
 I:22:1:4
@@ -1375,6 +1391,7 @@ D:which can melt rock or flesh with ease.
 
 
 # The Spear 'Nimloth'
+#ZAng: Hagen
 
 N:99:'Nimloth'
 I:22:2:3
@@ -1457,6 +1474,7 @@ D:allows rapid recovery from their blows.
 
 
 # The Heavy War Axe 'Mundwine' -> of the Dwarves
+#ZAng: Mundwine
 
 N:105:of the Dwarves
 I:24:28:10
@@ -1669,6 +1687,7 @@ D:grants keen sight and the knowledge of many hidden things.
 
 
 # The Quarterstaff of Olorin
+#ZAng: Gandalf
 
 N:120:of Olorin
 I:21:3:4
@@ -1758,6 +1777,7 @@ D:songs record.
 
 
 # The Light Crossbow 'Cubragol'
+#ZAng: Brand
 
 N:126:'Cubragol'
 #I:19:23:10
@@ -2519,9 +2539,6 @@ F:SLOW_DIGEST | AUTO_CURSE | HEAVY_CURSE
 F:ESP_GOOD | ESP_EVIL | HOLD_LIFE
 F:INSTA_ART | SPECIAL_GENE
 F:REGEN_MANA | 
-#SPELL |
-#since SPELL doesn't work atm:
-F:MANA
 D:A blue stone, with an incredible number of incredibly small runes of power 
 D:on it. It carries many secrets.
 
