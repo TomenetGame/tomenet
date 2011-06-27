@@ -1841,6 +1841,7 @@ extern void msg_gained_abilities(int Ind, int old_value, int i);
 extern void respec_skill(int Ind, int i, bool update_skill, bool polymorph);
 extern void respec_skills(int Ind, bool update_skills);
 extern int invested_skill_points(int Ind, int i);
+extern void fruit_bat_skills(player_type *p_ptr);
 
 /* hooks.c */
 extern bool process_hooks(int h_idx, char *fmt, ...);

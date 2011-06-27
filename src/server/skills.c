@@ -1852,6 +1852,7 @@ void respec_skill(int Ind, int i, bool update_skill, bool polymorph) {
 		p_ptr->s_info[i].value = v;
 		p_ptr->s_info[i].base_value = v;
 	}
+	if (p_ptr->fruit_bat == 1) fruit_bat_skills(p_ptr);
 
 	/* in case we changed mimicry skill */
 	if (polymorph) do_mimic_change(Ind, 0, TRUE);
@@ -1889,9 +1890,10 @@ void respec_skills(int Ind, bool update_skills) {
 		} else {
 			p_ptr->s_info[i].value = p_ptr->s_info[i].base_value;
 		}
-		/* Update the client */
-		Send_skill_info(Ind, i, FALSE);
 	}
+	if (p_ptr->fruit_bat == 1) fruit_bat_skills(p_ptr);
+	/* Update the client */
+	for (i = 1; i < MAX_SKILLS; i++) Send_skill_info(Ind, i, FALSE);
 
 	/* Calculate amount of skill points that should be
 	    available to the player depending on his level */
@@ -1935,4 +1937,20 @@ int invested_skill_points(int Ind, int i) {
 	if (real_user_increase < 0) real_user_increase = 0;
 	/* calculate skill points spent into this skill */
 	return(real_user_increase / m);
+}
+
+/* Disable skills that fruit bats could not put to use anyway */
+void fruit_bat_skills(player_type *p_ptr) {
+	p_ptr->s_info[SKILL_MASTERY].value = p_ptr->s_info[SKILL_MASTERY].mod = 0;
+	p_ptr->s_info[SKILL_SWORD].value = p_ptr->s_info[SKILL_SWORD].mod = 0;
+	p_ptr->s_info[SKILL_BLUNT].value = p_ptr->s_info[SKILL_BLUNT].mod = 0;
+	p_ptr->s_info[SKILL_AXE].value = p_ptr->s_info[SKILL_AXE].mod = 0;
+	p_ptr->s_info[SKILL_POLEARM].value = p_ptr->s_info[SKILL_POLEARM].mod = 0;
+	p_ptr->s_info[SKILL_DUAL].value = p_ptr->s_info[SKILL_DUAL].mod = 0;
+
+	p_ptr->s_info[SKILL_ARCHERY].value = p_ptr->s_info[SKILL_ARCHERY].mod = 0;
+	p_ptr->s_info[SKILL_BOW].value = p_ptr->s_info[SKILL_BOW].mod = 0;
+	p_ptr->s_info[SKILL_XBOW].value = p_ptr->s_info[SKILL_XBOW].mod = 0;
+	p_ptr->s_info[SKILL_SLING].value = p_ptr->s_info[SKILL_SLING].mod = 0;
+	p_ptr->s_info[SKILL_BOOMERANG].value = p_ptr->s_info[SKILL_BOOMERANG].mod = 0;
 }

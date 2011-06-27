@@ -2726,6 +2726,11 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		do_bard_skill(Ind);
 	}
 #endif
+
+	/* Fruit bats get some skills nulled that they cannot put to use anyway,
+	   just to clean up and avoid newbies accidentally putting points into them. */
+	if (p_ptr->mode & MODE_FRUIT_BAT) fruit_bat_skills(p_ptr);
+
 	/* Give the player some resurrections */
 	p_ptr->lives = cfg.lifes + 1;
 
