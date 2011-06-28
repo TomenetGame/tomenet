@@ -95,11 +95,12 @@ s16b monster_level_min = 0;	/* Current monster creation minimum level, -1 = auto
 s32b turn, session_turn;	/* Current game turn; session_turn is the turn this server went online, ie start of current session */
 s32b turn_overflow = 2000000000;/* Limit when to reset 'turn' to 1 to prevent overflow symptoms */
 
-/* ARCADE_SERVER */
+#ifdef ARCADE_SERVER
 char tron_speed = 9;
 char tron_dark = 0;
 char tron_forget = 0;
 worldpos arcpos[100];
+#endif
 
 s32b player_id;                 /* Current player ID */
 u32b account_id;		/* Current account ID */

@@ -422,8 +422,6 @@ extern void arcade_wipe(worldpos *wpos)
 	}
 	return;
 }
-#else
-extern void arcade_wipe(worldpos *wpos) { return; }
 #endif
 
 /*
