@@ -185,6 +185,15 @@ CLI_LUAOBJS = \
 #
 CC = gcc
 
+# For allowing #if..#else..#endif constructs in LUA files - C. Blue
+# Note: The flags must contain
+# 1) the option that turns off elimination of comment lines (ie cpp
+#    must just copy comments 1:1). Usually this is '-C'.
+# 2) the option that turns off generation of a preprocessor header
+#    (lines starting on '# '). Usually this is '-P'.
+CPP = cpp
+CPPFLAGS = -C -P
+
 
 #
 # Standard version (see main-x11.c and main-gcu.c)
@@ -321,8 +330,22 @@ mini_install: install
 date:
 	touch common/common.c
 
+
+#
+# Build the account editor
+#
+
 accedit: account/accedit.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o accedit account/accedit.o -lcurses -lcrypt
+
+
+#
+# Build the custom LUA preprocessor
+#
+
+preproc/preproc: preproc/preproc.o
+	$(CC) $(CFLAGS) -o preproc/preproc preproc/preproc.o
+
 
 #
 # Build the TomeNET server
@@ -330,6 +353,7 @@ accedit: account/accedit.o
 
 tomenet.server: $(SERV_OBJS) $(TOLUA)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o tomenet.server $(SERV_OBJS) $(LIBS)
+
 
 #
 # Build the evileye meta client
@@ -369,8 +393,8 @@ $(TOLUA): $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c
 #
 
 clean:
-	cd server; rm -f *.o w_play.c w_util.c w_spells.c
-	cd client; rm -f *.o w_play.c w_util.c w_spells.c
+	cd server; rm -f *.o w_play.c w_util.c w_spells.c *.pkg
+	cd client; rm -f *.o w_play.c w_util.c w_spells.c *.pkg
 	cd common; rm -f *.o w_z_pack.c
 	cd console; rm -f *.o
 
@@ -379,6 +403,24 @@ re: clean all
 #
 # Lua library compilation rules
 #
+
+server/util.pkg: server/util.pre preproc/preproc
+	cd server; ../preproc/preproc util.pre util.pkg $(CPP) $(CPPFLAGS); cd ..
+
+server/player.pkg: server/player.pre preproc/preproc
+	cd server; ../preproc/preproc player.pre player.pkg $(CPP) $(CPPFLAGS); cd ..
+
+server/spells.pkg: server/spells.pre preproc/preproc
+	cd server; ../preproc/preproc spells.pre spells.pkg $(CPP) $(CPPFLAGS); cd ..
+
+client/util.pkg: client/util.pre preproc/preproc
+	cd client; ../preproc/preproc util.pre util.pkg $(CPP) $(CPPFLAGS); cd ..
+
+client/player.pkg: client/player.pre preproc/preproc
+	cd client; ../preproc/preproc player.pre player.pkg $(CPP) $(CPPFLAGS); cd ..
+
+client/spells.pkg: client/spells.pre preproc/preproc
+	cd client; ../preproc/preproc spells.pre spells.pkg $(CPP) $(CPPFLAGS); cd ..
 
 server/w_util.c: server/util.pkg $(TOLUA)
 	cd server; ./tolua -n util -o w_util.c util.pkg; cd ..
