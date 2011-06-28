@@ -9536,21 +9536,14 @@ if (!nether_bottom) {
 		} while (!(cave_empty_bold(zcave, y1, x1) &&
 		    (zcave[y1][x1].info & CAVE_ROOM)) &&
 		    --tries);
-		if (!tries) {
-			s_printf("SPAWN DEBUG: Scattered.\n");
-			scatter(wpos, &y, &x, y1, x1, 20, FALSE);
-		} else {
+		if (!tries) scatter(wpos, &y, &x, y1, x1, 20, FALSE);
+		else {
 			x = x1;
 			y = y1;
 		}
 
-		if (randint(2) == 1) {
-			s_printf("SPAWN DEBUG: 1104 requested at %d,%d,%d\n", wpos->wx, wpos->wy, wpos->wz);
-			place_monster_one(wpos, y, x, 1104, FALSE, FALSE, FALSE, 0, 0);
-		} else {
-			s_printf("SPAWN DEBUG: 1105 requested at %d,%d,%d\n", wpos->wx, wpos->wy, wpos->wz);
-			place_monster_one(wpos, y, x, 1105, FALSE, FALSE, FALSE, 0, 0);
-		}
+		if (rand_int(2) == 1) place_monster_one(wpos, y, x, 1104, FALSE, FALSE, FALSE, 0, 0);
+		else place_monster_one(wpos, y, x, 1105, FALSE, FALSE, FALSE, 0, 0);
 	}
 #endif
 
