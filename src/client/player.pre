@@ -1,3 +1,7 @@
+/* register server type for #if..#else..#endif structures with 'preproc' */
+#include "../common/defines-local.h"
+
+
 /* $Id$ */
 $#include "angband.h"
 
