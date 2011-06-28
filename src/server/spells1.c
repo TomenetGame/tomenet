@@ -10614,7 +10614,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 				effect = new_effect(who, typ, dam, project_time, project_interval, wpos,
 						(y + y2) / 2, (x + x2) / 2, dist_hack / 2 + 1,
 						project_time_effect);
-// #ifdef ARCADE_SERVER
+#ifdef ARCADE_SERVER
 #if 0
                                                 if (project_time_effect & EFF_CROSSHAIR_A || project_time_effect & EFF_CROSSHAIR_B ||
                                         	    project_time_effect & EFF_CROSSHAIR_C) {
@@ -10622,6 +10622,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
     	        	                                player_type *pfft_ptr = Players[project_interval];
         	                                        pfft_ptr->e = effect;
                                                 }
+#endif
 #endif
 			} else {
 				effect = new_effect(who, typ, dam, project_time, project_interval, wpos,

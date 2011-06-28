@@ -876,6 +876,8 @@ struct player_type
 	s32b pstealing;
 
 	u16b team;
+
+#ifdef ARCADE_SERVER
 	/* Moltor's arcade crap */
 	int arc_a;
 	int arc_b;
@@ -894,6 +896,7 @@ struct player_type
 	int gametime;
 	char pushed;
 	char pushdir;
+#endif
 
 	int ret_dam;			/* Drained life from a monster */
 	const char *attacker;		/* Attacking player string, contains name and attack */

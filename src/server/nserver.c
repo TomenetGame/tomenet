@@ -688,7 +688,7 @@ void Start_evilmeta(void)
 		}
 		if (metapid == 0) {
 #ifdef ARCADE_SERVER /* made this one top priority since using RPG_SERVER as an "ARCADE-addon" might be desired :) */
-			char *cmd = "./evilmeta.smash";
+			char *cmd = "./evilmeta.arcade";
 #else
 #ifdef RPG_SERVER
 			char *cmd = "./evilmeta.rpg";

@@ -2771,6 +2771,7 @@ struct player_type
 	/* evileye games */
 	s16b team;			/* what team */
 
+#ifdef ARCADE_SERVER
 	/* Moltor's arcade crap */
 	int arc_a, arc_b, arc_c, arc_d, arc_e, arc_f, arc_g, arc_h, arc_i, arc_j, arc_k, arc_l;
 	char firedir; 
@@ -2778,6 +2779,7 @@ struct player_type
 	int gametime;
 	char pushed;
 	char pushdir;
+#endif
 
 	/* C. Blue - was the last shutdown a panic save? */
 	bool panic;

@@ -130,7 +130,7 @@
 	<< 4 | VERSION_EXTRA)
 
 
-/* Determine fundamental server type (Normal, RPG, Smash arcade, Fun flagged). */
+/* Determine fundamental server type (Normal, RPG, Arcade, Fun flagged). */
 #include "defines-local.h"
 
 

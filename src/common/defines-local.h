@@ -13,7 +13,7 @@
  */
 /* #define RPG_SERVER */
 
-/* Server is Moltor's Smash Arcade server?
+/* Server is Moltor's Arcade server?
    (allows additional definition of RPG_SERVER if desired!) */
 /* #define ARCADE_SERVER */
 
