@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 25. June 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 28. June 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -118,7 +118,7 @@ Contents
     (6.4)   Races
     (6.5)   Classes/Professions, titles, melee blows/round
     (6.5a)  Start-up Blows/Round Table
-    (6.6)   Sanity
+    (6.6)   Sanity (or insanity..)
     (6.7)   Mimicry details
     (6.7a)  Polymorph rings
     (6.7b)  Druid form details
@@ -8551,8 +8551,8 @@ given by the 'Max. base blows/round' shown further above, and other parameters.
 
 
 
-(6.6) Sanity
-------------
+(6.6) Sanity (or insanity..)
+----------------------------
 Your sanity can have the following values:
 Sound, Sane, Weird, Insane, Mad, Vegetable.
 
