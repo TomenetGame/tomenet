@@ -1649,7 +1649,9 @@ extern void handle_request_return_cfr(int Ind, int id, bool cfr);
 
 /* xtra2.c */
 
+#ifdef ARCADE_SERVER
 extern void set_pushed(int Ind, int dir);
+#endif
 extern bool set_brand(int Ind, int v, int t, int p);
 extern s16b questid;
 extern bool imprison(int Ind, u16b time, char *reason);

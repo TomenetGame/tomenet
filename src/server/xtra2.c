@@ -1401,6 +1401,7 @@ bool set_confused(int Ind, int v)
 	return (TRUE);
 }
 
+#ifdef ARCADE_SERVER
 void set_pushed(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	p_ptr->pushed = 20;
@@ -1409,6 +1410,7 @@ void set_pushed(int Ind, int dir) {
 	handle_stuff(Ind);
 	return;
 }
+#endif
 
 /*
  * Set "p_ptr->poisoned", notice observable changes
