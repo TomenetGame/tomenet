@@ -178,9 +178,12 @@ struct server_opts
 };
 
 extern s32b turn;
+
+/* ARCADE_SERVER */
 extern char tron_speed;
 extern char tron_dark;
 extern char tron_forget;
+extern worldpos arcpos[100];
 
 extern server_opts cfg;
 extern s32b player_exp[101];

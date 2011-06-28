@@ -408,19 +408,23 @@ static void correct_dir(int *rdir, int *cdir, int y1, int x1, int y2, int x2)
 	}
 }
 
+#ifdef ARCADE_SERVER
 extern void arcade_wipe(worldpos *wpos)
 {
-    cave_type **zcave;
+	cave_type **zcave;
 //	cave_type *c_ptr;
 	if(!(zcave=getcave(wpos))) return;
-int my, mx;
-for(mx = 1; mx < 131; mx++) {
-        for(my = 1; my < 43; my++) {
-                cave_set_feat(wpos, my, mx, 1);
-                }
-        }
-return;
+	int my, mx;
+	for(mx = 1; mx < 131; mx++) {
+		for(my = 1; my < 43; my++) {
+			cave_set_feat(wpos, my, mx, 1);
+		}
+	}
+	return;
 }
+#else
+extern void arcade_wipe(worldpos *wpos) { return; }
+#endif
 
 /*
  * Pick a random direction

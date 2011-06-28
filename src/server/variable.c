@@ -95,13 +95,11 @@ s16b monster_level_min = 0;	/* Current monster creation minimum level, -1 = auto
 s32b turn, session_turn;	/* Current game turn; session_turn is the turn this server went online, ie start of current session */
 s32b turn_overflow = 2000000000;/* Limit when to reset 'turn' to 1 to prevent overflow symptoms */
 
-/*yo molt, here we have a lua prob: pkg files appearently dont know #if, so util.pkg always has tron_speed
-  which means rpg/pm will also need it here, otherwise the util.pkg won't be compatible if it's "missing" here*/
-//#ifdef ARCADE_SERVER
+/* ARCADE_SERVER */
 char tron_speed = 9;
 char tron_dark = 0;
 char tron_forget = 0;
-//#endif
+worldpos arcpos[100];
 
 s32b player_id;                 /* Current player ID */
 u32b account_id;		/* Current account ID */

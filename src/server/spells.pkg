@@ -203,8 +203,10 @@ extern int check_feat(worldpos *wpos, int y, int x);
 extern void do_cmd_fusion(int Ind);
 
 /* generate.c */
-extern void arcade_wipe(worldpos *wpos);
 extern void place_up_stairs(worldpos *wpos, int y, int x);
+
+/* ARCADE_SERVER */
+extern void arcade_wipe(worldpos *wpos);
 
 /* spells1.c */
 extern byte spell_color(int type);

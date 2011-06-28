@@ -188,9 +188,13 @@ extern void new_level_down_y(struct worldpos *wpos, int y);
 extern void new_level_rand_x(struct worldpos *wpos, int x);
 extern void new_level_rand_y(struct worldpos *wpos, int y);
 extern s32b turn, session_turn, turn_overflow;
+
+/* ARCADE_SERVER */
 extern char tron_speed;
 extern char tron_dark;
 extern char tron_forget;
+extern worldpos arcpos[100];
+
 extern s32b player_id;
 extern u32b account_id;
 extern u16b panic_save;
@@ -763,7 +767,10 @@ extern bool highscore_file_convert(int Ind);
 
 /* generate.c */
 extern void place_up_stairs(worldpos *wpos, int y, int x); 
+
+/* ARCADE_SERVER */
 extern void arcade_wipe(worldpos *wpos);
+
 extern bool room_alloc(worldpos *wpos, int x, int y, bool crowded, int by0, int bx0, int *xx, int *yy);
 extern bool dungeon_aux(int r_idx);
 extern void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, int flags2, bool tower, int type);
