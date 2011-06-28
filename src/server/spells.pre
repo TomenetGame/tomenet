@@ -201,7 +201,9 @@ typedef unsigned int u32b;
 // Argh, I need cave_set_feat for arcade stuff. -Moltor
 extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
 extern void warding_glyph(int Ind);
+#ifdef ARCADE_SERVER
 extern int check_feat(worldpos *wpos, int y, int x);
+#endif
 
 /* cmd2.c */
 extern void do_cmd_fusion(int Ind);

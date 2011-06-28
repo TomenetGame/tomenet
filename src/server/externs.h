@@ -459,7 +459,9 @@ extern void FreeCS(cave_type *c_ptr);
 extern dun_level *getfloor(struct worldpos *wpos);
 extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
 extern void cave_set_feat_live(worldpos *wpos, int y, int x, int feat);
+#ifdef ARCADE_SERVER
 extern int check_feat(worldpos *wpos, int y, int x);
+#endif
 extern struct dungeon_type *getdungeon(struct worldpos *wpos);
 extern bool can_go_up(struct worldpos *wpos, byte mode);
 extern bool can_go_down(struct worldpos *wpos, byte mode);

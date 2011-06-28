@@ -6885,7 +6885,7 @@ void wiz_dark(int Ind)
 	}
 }
 
-
+#ifdef ARCADE_SERVER
 extern int check_feat(worldpos *wpos, int y, int x)
 {
         cave_type **zcave;
@@ -6898,6 +6898,7 @@ extern int check_feat(worldpos *wpos, int y, int x)
         c_ptr = &zcave[y][x];
 	return(c_ptr->feat);
 }
+#endif
 
 /*
  * Change the "feat" flag for a grid, and notice/redraw the grid
