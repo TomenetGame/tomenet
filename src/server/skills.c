@@ -1939,7 +1939,9 @@ int invested_skill_points(int Ind, int i) {
 	return(real_user_increase / m);
 }
 
-/* Disable skills that fruit bats could not put to use anyway */
+/* Disable skills that fruit bats could not put to use anyway.
+   This could be moved to tables.c to form a new type, aka body mod skills
+   like racial/class skills currently do (applied by compute_skills()). */
 void fruit_bat_skills(player_type *p_ptr) {
 	p_ptr->s_info[SKILL_MASTERY].value = p_ptr->s_info[SKILL_MASTERY].mod = 0;
 	p_ptr->s_info[SKILL_SWORD].value = p_ptr->s_info[SKILL_SWORD].mod = 0;
