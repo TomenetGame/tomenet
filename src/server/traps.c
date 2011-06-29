@@ -525,7 +525,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	player_type *p_ptr = Players[Ind];
 	worldpos *wpos = &p_ptr->wpos;
 	bool ident = FALSE, never_id = FALSE;
-	s16b trap=0, vanish;
+	s16b trap = 0, vanish;
 	//   dungeon_info_type *d_ptr = &d_info[dungeon_type];
 
 	s16b k, l, glev = getlevel(wpos);
@@ -538,35 +538,27 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	cave_type **zcave;
 	if (!in_bounds(y, x)) return(FALSE);
 
-	if(!(zcave=getcave(wpos))) return(FALSE);
-	c_ptr=&zcave[y][x];
+	if (!(zcave = getcave(wpos))) return(FALSE);
+	c_ptr = &zcave[y][x];
 
 #ifdef USE_SOUND_2010
 	sound(Ind, "trap_setoff", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 
-	if (item < 0)
-	{
-		trap = GetCS(c_ptr, CS_TRAPS)->sc.trap.t_idx;
-	}
+	if (item < 0) trap = GetCS(c_ptr, CS_TRAPS)->sc.trap.t_idx;
 
-	if (i_ptr == NULL)
-	{
+	if (i_ptr == NULL) {
 		if (c_ptr->o_idx==0) i_ptr=NULL;
 		else i_ptr=&o_list[c_ptr->o_idx];
-	}
-	else
-		trap=i_ptr->pval;
+	} else trap = i_ptr->pval;
 
-	if (trap == TRAP_OF_RANDOM_EFFECT)
-	{
+	if (trap == TRAP_OF_RANDOM_EFFECT) {
 		never_id = TRUE;
 		trap = TRAP_OF_ALE;
-		for (l = 0; l < 99 ; l++)
-		{
+		for (l = 0; l < 99 ; l++) {
 			k = rand_int(MAX_T_IDX);
 			if (!t_info[k].name || t_info[k].minlevel > glev ||
-					k == TRAP_OF_ACQUIREMENT || k == TRAP_OF_RANDOM_EFFECT)
+			    k == TRAP_OF_ACQUIREMENT || k == TRAP_OF_RANDOM_EFFECT)
 				continue;
 
 			trap = k;
@@ -578,72 +570,71 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	vanish = t_ptr->vanish;
 	never_id = never_id || (t_ptr->flags & FTRAP_NO_ID);
 
-	/* Debugging trap crash */
-	s_printf("Trap %d triggered by %s.\n", trap, p_ptr->name);
+	s_printf("Trap %d (%s) triggered by %s.\n", trap, t_name + t_info[trap].name, p_ptr->name);
 
-	switch(trap)
-	{
-		/* stat traps */
+	switch (trap) {
 #ifdef ARCADE_SERVER
-case TRAP_OF_SPREAD: {
-if(p_ptr->game == 1) 
-{
-p_ptr->arc_a = 30;
-p_ptr->arc_b = 1;
-msg_print(Ind, "Spread shot, w00t.");
-}
-else if (p_ptr->game == 3) 
-{
-p_ptr->arc_b += 3;
-msg_print(Ind, "+3 Length!");
-}
-destroy_doors_touch(Ind, 0);
-break;
-}
+		case TRAP_OF_SPREAD: {
+			if(p_ptr->game == 1) 
+			{
+				p_ptr->arc_a = 30;
+				p_ptr->arc_b = 1;
+				msg_print(Ind, "Spread shot, w00t.");
+			}
+			else if (p_ptr->game == 3) 
+			{
+				p_ptr->arc_b += 3;
+				msg_print(Ind, "+3 Length!");
+			}
+			destroy_doors_touch(Ind, 0);
+			break;
+		}
 
-case TRAP_OF_LASER: {
-p_ptr->arc_a = 30;
-p_ptr->arc_b = 2;
-destroy_doors_touch(Ind, 0);
-msg_print(Ind, "You got a frickin laser beam!");
-break;
-}
+		case TRAP_OF_LASER: {
+			p_ptr->arc_a = 30;
+			p_ptr->arc_b = 2;
+			destroy_doors_touch(Ind, 0);
+			msg_print(Ind, "You got a frickin laser beam!");
+			break;
+		}
 
-case TRAP_OF_ROCKETS: {
-p_ptr->arc_a = 30;
-p_ptr->arc_b = 3;
-p_ptr->arc_c = 0;
-p_ptr->arc_d = 1;
+		case TRAP_OF_ROCKETS: {
+			p_ptr->arc_a = 30;
+			p_ptr->arc_b = 3;
+			p_ptr->arc_c = 0;
+			p_ptr->arc_d = 1;
 
-destroy_doors_touch(Ind, 0);
-msg_print(Ind, "You're a rocket man.");
-break;
-}
+			destroy_doors_touch(Ind, 0);
+			msg_print(Ind, "You're a rocket man.");
+			break;
+		}
 
-case TRAP_OF_HEALING: {
-destroy_doors_touch(Ind, 0);
-hp_player(Ind, p_ptr->mhp-p_ptr->chp);
-break;
-}
+		case TRAP_OF_HEALING: {
+			destroy_doors_touch(Ind, 0);
+			hp_player(Ind, p_ptr->mhp-p_ptr->chp);
+			break;
+		}
 #endif
-		case TRAP_OF_WEAKNESS_I:       ident=do_dec_stat(Ind, A_STR, STAT_DEC_TEMPORARY); break;
-		case TRAP_OF_WEAKNESS_II:      ident=do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL); break;
-		case TRAP_OF_WEAKNESS_III:     ident=do_dec_stat(Ind, A_STR, STAT_DEC_PERMANENT); break;
-		case TRAP_OF_INTELLIGENCE_I:   ident=do_dec_stat(Ind, A_INT, STAT_DEC_TEMPORARY); break;
-		case TRAP_OF_INTELLIGENCE_II:  ident=do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL); break;
-		case TRAP_OF_INTELLIGENCE_III: ident=do_dec_stat(Ind, A_INT, STAT_DEC_PERMANENT); break;
-		case TRAP_OF_WISDOM_I:         ident=do_dec_stat(Ind, A_WIS, STAT_DEC_TEMPORARY); break;
-		case TRAP_OF_WISDOM_II:        ident=do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL); break;
-		case TRAP_OF_WISDOM_III:       ident=do_dec_stat(Ind, A_WIS, STAT_DEC_PERMANENT); break;
-		case TRAP_OF_FUMBLING_I:       ident=do_dec_stat(Ind, A_DEX, STAT_DEC_TEMPORARY); break;
-		case TRAP_OF_FUMBLING_II:      ident=do_dec_stat(Ind, A_DEX, STAT_DEC_NORMAL); break;
-		case TRAP_OF_FUMBLING_III:     ident=do_dec_stat(Ind, A_DEX, STAT_DEC_PERMANENT); break;
-		case TRAP_OF_WASTING_I:        ident=do_dec_stat(Ind, A_CON, STAT_DEC_TEMPORARY); break;
-		case TRAP_OF_WASTING_II:       ident=do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL); break;
-		case TRAP_OF_WASTING_III:      ident=do_dec_stat(Ind, A_CON, STAT_DEC_PERMANENT); break;
-		case TRAP_OF_BEAUTY_I:         ident=do_dec_stat(Ind, A_CHR, STAT_DEC_TEMPORARY); break;
-		case TRAP_OF_BEAUTY_II:        ident=do_dec_stat(Ind, A_CHR, STAT_DEC_NORMAL); break;
-		case TRAP_OF_BEAUTY_III:       ident=do_dec_stat(Ind, A_CHR, STAT_DEC_PERMANENT); break;
+
+		/* stat traps */
+		case TRAP_OF_WEAKNESS_I:       ident = do_dec_stat(Ind, A_STR, STAT_DEC_TEMPORARY); break;
+		case TRAP_OF_WEAKNESS_II:      ident = do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL); break;
+		case TRAP_OF_WEAKNESS_III:     ident = do_dec_stat(Ind, A_STR, STAT_DEC_PERMANENT); break;
+		case TRAP_OF_INTELLIGENCE_I:   ident = do_dec_stat(Ind, A_INT, STAT_DEC_TEMPORARY); break;
+		case TRAP_OF_INTELLIGENCE_II:  ident = do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL); break;
+		case TRAP_OF_INTELLIGENCE_III: ident = do_dec_stat(Ind, A_INT, STAT_DEC_PERMANENT); break;
+		case TRAP_OF_WISDOM_I:         ident = do_dec_stat(Ind, A_WIS, STAT_DEC_TEMPORARY); break;
+		case TRAP_OF_WISDOM_II:        ident = do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL); break;
+		case TRAP_OF_WISDOM_III:       ident = do_dec_stat(Ind, A_WIS, STAT_DEC_PERMANENT); break;
+		case TRAP_OF_FUMBLING_I:       ident = do_dec_stat(Ind, A_DEX, STAT_DEC_TEMPORARY); break;
+		case TRAP_OF_FUMBLING_II:      ident = do_dec_stat(Ind, A_DEX, STAT_DEC_NORMAL); break;
+		case TRAP_OF_FUMBLING_III:     ident = do_dec_stat(Ind, A_DEX, STAT_DEC_PERMANENT); break;
+		case TRAP_OF_WASTING_I:        ident = do_dec_stat(Ind, A_CON, STAT_DEC_TEMPORARY); break;
+		case TRAP_OF_WASTING_II:       ident = do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL); break;
+		case TRAP_OF_WASTING_III:      ident = do_dec_stat(Ind, A_CON, STAT_DEC_PERMANENT); break;
+		case TRAP_OF_BEAUTY_I:         ident = do_dec_stat(Ind, A_CHR, STAT_DEC_TEMPORARY); break;
+		case TRAP_OF_BEAUTY_II:        ident = do_dec_stat(Ind, A_CHR, STAT_DEC_NORMAL); break;
+		case TRAP_OF_BEAUTY_III:       ident = do_dec_stat(Ind, A_CHR, STAT_DEC_PERMANENT); break;
 
 		/* Trap of Curse Weapon */
 		case TRAP_OF_CURSE_WEAPON:
@@ -654,7 +645,7 @@ break;
 				break;
 			}
 			ident = curse_weapon(Ind);
-			destroy_chest(i_ptr); 
+			destroy_chest(i_ptr);
 			break;
 		}
 		/* Trap of Curse Armor */
