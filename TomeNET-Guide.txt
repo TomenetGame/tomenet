@@ -1057,6 +1057,10 @@ OoD         Out-of-depth. Means a monster or an item encounter that happened at
             you would usually start expecting to find it.
             Vaults often containing OoD monsters and items, increasing threat
             and reward for the brave.
+            Note: OoD is limited to at most +40 levels (happens in high-level
+            vaults); unique monsters can actually only be up to 20 levels OoD
+            (even in vaults) and, as a specialty, Great Wyrms of Power can only
+            ever occur up to 10 levels OoD.
 Party       A group of players who fight together and share experience.
             In a party you will share experience points if you are within 7
             character levels to each other and on the same dungeon/tower level
