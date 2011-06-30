@@ -20509,7 +20509,7 @@ D:icy and its fur coated in frost.
 N:1135:Panda
 G:q:D
 I:110:6d6:10:35:10
-W:127:255:1600:25
+W:5:255:1600:25
 E:0:1:0:2:1:0
 O:0:0:0:0
 #B:CLAW:HURT:1d4
@@ -20518,7 +20518,7 @@ O:0:0:0:0
 #B:CLAW:*
 #B:BITE:*
 F:BASH_DOOR | FORCE_MAXHP | FORCE_SLEEP | DROP_CORPSE
-F:ANIMAL | WILD_TOO | WILD_WOOD | WILD_WOOD |
+F:ANIMAL | WILD_TOO | WILD_WOOD | WILD_WOOD | RAND_5 | NO_TARGET
 F:MORTAL | ATTR_BASE | ATTR_BNW | BLUEBAND | NO_DEATH
 D:A black and white spotted bear that doesn't seem overly agressive.
 

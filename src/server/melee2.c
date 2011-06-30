@@ -6796,6 +6796,19 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 		random_move = TRUE;
 	}
 
+	/* 5% random movement */
+	else if ((r_ptr->flags8 & RF8_RAND_5) &&
+	    (rand_int(100) < 5)) {
+#ifdef OLD_MONSTER_LORE
+		/* Memorize flags */
+		if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags8 |= RF8_RAND_5;
+#endif
+
+		/* Try four "random" directions */
+		mm[0] = mm[1] = mm[2] = mm[3] = 5;
+		random_move = TRUE;
+	}
+
 	/* Normal movement */
 	else {
 		/* Logical moves */

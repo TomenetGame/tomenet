@@ -128,9 +128,9 @@ static cptr r_info_blow_effect[] =
 	"EXP_80",
 	"DISEASE",	// below are PernA additions
 	"TIME",
-        "INSANITY",
-        "HALLU",
-        "PARASITE",
+	"INSANITY",
+	"HALLU",
+	"PARASITE",
 	"DISARM",	// ToME-NET ones
 	"FAMINE",
 	"SEDUCE",
@@ -273,7 +273,6 @@ static cptr r_info_flags4[] =
 {
 	"SHRIEK",
 	"UNMAGIC",		//	"CAUSE_4",
-//	"XXX2X4",	//	"MULTIPLY",
 	"S_ANIMAL",	// "XXX3X4",
 	"ROCKET",	// "XXX4X4",
 	"ARROW_1",	// former 1/2 (arrow), now arrow/light
@@ -359,17 +358,17 @@ static cptr r_info_flags6[] =
 	"BLINK",
 	"TPORT",
 	"RAISE_DEAD",	// "XXX3X6",
-        "S_BUG",	// "XXX4X6",
+	"S_BUG",	// "XXX4X6",
 	"TELE_TO",
 	"TELE_AWAY",
 	"TELE_LEVEL",
-        "S_RNG",	// "XXX5",
+	"S_RNG",	// "XXX5",
 	"DARKNESS",
 	"TRAPS",
 	"FORGET",
-        "S_DRAGONRIDER",	// "XXX6X6",
+	"S_DRAGONRIDER",	// "XXX6X6",
 	"S_KIN",	// "XXX7X6",
-        "S_HI_DEMON",	// "XXX8X6",
+	"S_HI_DEMON",	// "XXX8X6",
 	"S_MONSTER",
 	"S_MONSTERS",
 	"S_ANT",
@@ -388,11 +387,11 @@ static cptr r_info_flags6[] =
 
 #if 0	/* flags6 */
 	"RAISE_DEAD", /* ToDo: Implement RAISE_DEAD */
-        "S_BUG",
-        "S_RNG",
-        "S_DRAGONRIDER",  /* DG : Summon DragonRider */
+	"S_BUG",
+	"S_RNG",
+	"S_DRAGONRIDER",  /* DG : Summon DragonRider */
 	"S_KIN",
-        "S_HI_DEMON",
+	"S_HI_DEMON",
 #endif
 
 /*
@@ -452,15 +451,15 @@ static cptr r_info_flags8[] =
 	"WILD_WASTE",
 	"WILD_WOOD",
 	"WILD_VOLCANO",
-	"XXX8X08",
+	"RAND_5",
 	"WILD_MOUNTAIN",
 	"WILD_GRASS",
-        "NO_CUT",
-        "CTHANGBAND",
-        "PERNANGBAND",
-        "ZANGBAND",
-        "JOKEANGBAND",
-        "BASEANGBAND",
+	"NO_CUT",
+	"CTHANGBAND",
+	"PERNANGBAND",
+	"ZANGBAND",
+	"JOKEANGBAND",
+	"BASEANGBAND",
 	"BLUEBAND",
 	"XXX8X18",
 	"XXX8X19",
@@ -475,7 +474,7 @@ static cptr r_info_flags8[] =
 	"XXX8X28",
 	"CLIMB",
 	"WILD_SWAMP",	/* ToDo: Implement Swamp */
-        "WILD_TOO",
+	"WILD_TOO",
 };
 
 
@@ -486,22 +485,22 @@ static cptr r_info_flags9[] =
 {
 	"DROP_CORPSE",
 	"DROP_SKELETON",
-        "HAS_LITE",
-        "MIMIC",
+	"HAS_LITE",
+	"MIMIC",
 
-        "HAS_EGG",
-        "IMPRESSED",
-        "SUSCEP_ACID",
-        "SUSCEP_ELEC",
+	"HAS_EGG",
+	"IMPRESSED",
+	"SUSCEP_ACID",
+	"SUSCEP_ELEC",
 
-        "SUSCEP_POIS",
-        "KILL_TREES",
-        "WYRM_PROTECT",
-        "DOPPLEGANGER",
+	"SUSCEP_POIS",
+	"KILL_TREES",
+	"WYRM_PROTECT",
+	"DOPPLEGANGER",
 
-        "ONLY_DEPTH",
-        "SPECIAL_GENE",
-        "NEVER_GENE",
+	"ONLY_DEPTH",
+	"SPECIAL_GENE",
+	"NEVER_GENE",
 	"RES_ACID",
 
 	"RES_ELEC",

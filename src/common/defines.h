@@ -4887,8 +4887,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF8_WILD_WASTE			0x00000020
 #define RF8_WILD_WOOD			0x00000040
 #define RF8_WILD_VOLCANO		0x00000080
-//FREE FLAG HOLE
-#define RF8_XXX8X08		0x00000100
+#define RF8_RAND_5		0x00000100	/* Moves very slightly randomly (5%) (for Panda, so it's not appearing totally 'passive' - C. Blue) */
 #define RF8_WILD_MOUNTAIN	0x00000200
 #define RF8_WILD_GRASS		0x00000400
 #define RF8_NO_CUT		0x00000800
