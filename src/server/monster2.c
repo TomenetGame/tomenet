@@ -484,6 +484,15 @@ void compact_monsters(int size, bool purge)
 			/* Paranoia -- skip "dead" monsters */
 			if (!m_ptr->r_idx) continue;
 
+#if 0
+			/* Skip monsters that are 'trapped' in houses */
+	//		& CAVE_ICKY
+//			if((zcave = getcave(wpos))) zcave[ny][nx].m_idx = i;
+#else
+			/* Skip golems and pandas */
+			if (m_ptr->pet || m_ptr->owner || m_ptr->r_idx == 1135) continue;
+#endif
+
 			/* Skip special hard-coded monsters (target dummy, invis dummy, santa) */
 			if (m_ptr->r_idx == 1101 || m_ptr->r_idx == 1126 ||
 			    m_ptr->r_idx == 1102 || m_ptr->r_idx == 1132)
@@ -648,6 +657,17 @@ void thin_surface_spawns() {
 		/* Only affect surface monsters, and only 20% of them (randomly) */
 //		if ((m_ptr->wpos.wz != 0) || !magik(20)) continue; //high towns end up pretty empty, even if a player idles for hours
 		if ((m_ptr->wpos.wz != 0) || !magik(10)) continue; //<testing>
+
+#if 0
+		/* Skip monsters that are 'trapped' in houses */
+//		& CAVE_ICKY
+/*	cave_type **zcave;
+	if (!(zcave = getcave(wpos))) return;
+*/
+#else
+		/* Skip golems and pandas */
+		if (m_ptr->pet || m_ptr->owner || m_ptr->r_idx == 1135) continue;
+#endif
 
 		/* hardcoded which ones aren't to be touched -_- */
 		if (m_ptr->r_idx == 1101 || m_ptr->r_idx == 1126 ||
