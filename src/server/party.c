@@ -913,6 +913,9 @@ int guild_add(int adder, cptr name){
 		return FALSE;
 	}
 
+	/* Log - security */
+	s_printf("GUILD_ADD: %s has been added to %s by %s.\n", p_ptr->name, guilds[guild_id].name, q_ptr->name);
+
 	/* Tell the guild about its new member */
 	guild_msg_format(guild_id, "\377y%s has been added to %s.", p_ptr->name, guilds[guild_id].name);
 
@@ -989,6 +992,9 @@ int party_add(int adder, cptr name)
 		msg_print(adder, "\377yOnly newly created characters without experience can join an iron team.");
 		return FALSE;
 	}
+
+	/* Log - security */
+	s_printf("PARTY_ADD: %s has been added to %s by %s.\n", p_ptr->name, parties[party_id].name, q_ptr->name);
 
 	/* Tell the party about its new member */
 	party_msg_format(party_id, "\377y%s has been added to party %s.", p_ptr->name, parties[party_id].name);
