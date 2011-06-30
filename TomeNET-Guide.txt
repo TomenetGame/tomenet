@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 28. June 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 30. June 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -7108,6 +7108,22 @@ points to distribute on various abilities. To invoke the skill system overview
 press 'G' (capital G!).
 If you make a mistake while distributing skill points, look up the /undoskills
 command in (0.2). "/undoskills" can only be used once per level.
+
+
+Skills of dark grey colour cannot be used by your character at all.
+Skills that are light grey are just dummy skills that serve for organizing
+other skills in paragraphs.
+Skills coloured orange can be used by your character, but are currently still
+at zero.
+Skills that your character can train and that have already been increased above
+zero will change from orange to white.
+Skills that have reached their maximum possible value and therefore cannot be
+increased any further are displayed in light blue.
+
+You can collapse/expand blocks of subskills by pressing RETURN key while having
+selected the parent skill of that block. Useful for example for collapsing
+whole blocks of skills that you cannot or don't want to use anyway.
+
 
 Here is a list of the available skills and brief explanations to each one:
 Note that not every skill is available to every profession (class).
