@@ -3145,6 +3145,22 @@ bool dungeon_aux(int r_idx){
 }
 
 /*
+ * Quest monster filter
+ */
+bool quest_aux(int r_idx) {
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* Reject monsters that occur in the wilderness instead of the dungeon */
+	if (!(r_ptr->flags8 & RF8_DUNGEON))
+		return FALSE;
+
+	/* Reject 'non-spawning' monsters */
+	if (r_ptr->rarity == 255) return (FALSE);
+
+	return TRUE;
+}
+
+/*
  * Helper function for "monster nest (jelly)"
  */
 static bool vault_aux_jelly(int r_idx)

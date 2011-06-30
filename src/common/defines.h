@@ -4897,6 +4897,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF8_JOKEANGBAND			0x00008000
 #define RF8_ANGBAND		0x00010000
 #define RF8_BLUEBAND		0x00020000	/* C. Blue's bestiary */
+#define RF8_NO_AUTORET		0x00040000	/* don't auto-retaliate against this monster */
 /*
 #define RF8_EVENT_HALLOWEEN	0x00040000
 #define RF8_EVENTN_HALLOWEEN	0x00080000

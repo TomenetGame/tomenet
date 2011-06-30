@@ -7016,7 +7016,7 @@ bool prepare_quest(int Ind, int j, u16b flags, int *level, u16b *type, u16b *num
 	if (lev <= 50) lev += (lev * lev) / 83;
 	else lev = 80 + rand_int(20);
 
-	get_mon_num_hook=dungeon_aux;
+	get_mon_num_hook = quest_aux;
 	get_mon_num_prep(0, NULL);
 	i = 2 + randint(5);
 

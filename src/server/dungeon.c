@@ -1812,7 +1812,15 @@ static int auto_retaliate(int Ind)
 			/* Make sure that the player can see this monster */
 			if (!p_ptr->mon_vis[i]) continue;
 
+			/* Stop annoying auto-retaliation against certain 'monsters' */
+			if (r_info[m_ptr->r_idx].flags8 & RF8_NO_AUTORET) continue;
+
+			/* Protect pets/golems */
+#if 0 /* Only vs our own pet/golem? */
 			if (p_ptr->id == m_ptr->owner && !p_ptr->stormbringer) continue;
+#else /* vs own+other players' pets/golems? */
+			if (m_ptr->owner && !p_ptr->stormbringer) continue;
+#endif
 
 			/* Figure out if this is the best target so far */
 			if (!m_target_ptr) {

@@ -1589,7 +1589,7 @@ void do_slash_cmd(int Ind, char *message)
 			if (lev <= 50) lev += (lev * lev) / 83;
 			else lev = 80 + rand_int(20);
 
-			get_mon_num_hook = dungeon_aux;
+			get_mon_num_hook = quest_aux;
 			get_mon_num_prep(0, NULL);
 			i = 2 + randint(5);
 
