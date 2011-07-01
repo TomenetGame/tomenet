@@ -4079,12 +4079,10 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 int mon_will_run(int Ind, int m_idx)
 {
 	player_type *p_ptr = Players[Ind];
-
 	monster_type *m_ptr = &m_list[m_idx];
-
 	cave_type **zcave;
-#ifdef ALLOW_TERROR
 
+#ifdef ALLOW_TERROR
         monster_race *r_ptr = race_inf(m_ptr);
 
 	u16b p_lev, m_lev;
@@ -4092,24 +4090,21 @@ int mon_will_run(int Ind, int m_idx)
 	long m_chp, m_mhp;
 	u32b p_val, m_val;
 
-	if(!(zcave=getcave(&m_ptr->wpos))) return(FALSE);
+	if (!(zcave = getcave(&m_ptr->wpos))) return(FALSE);
 
-#if 0 // I'll run instead!
+ #if 0 // I'll run instead!
 	/* Hack -- aquatic life outa water */
-	if (zcave[m_ptr->fy][m_ptr->fx].feat != FEAT_DEEP_WATER)
-	{
+	if (zcave[m_ptr->fy][m_ptr->fx].feat != FEAT_DEEP_WATER) {
 		if (r_ptr->flags7 & RF7_AQUATIC) return (TRUE);
-	}
-	else
-	{
+	} else {
 		if (!(r_ptr->flags3 & RF3_UNDEAD) &&
 		    !(r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY) ))
 			return(TRUE);
 	}
-#else	// 0
+ #else	// 0
 	if (!monster_can_cross_terrain(zcave[m_ptr->fy][m_ptr->fx].feat, r_ptr))
 		return (TRUE);
-#endif	// 0
+ #endif	// 0
 
 #endif
 
@@ -4121,7 +4116,8 @@ int mon_will_run(int Ind, int m_idx)
 
 #ifdef ALLOW_TERROR /* player level >> monster level -> 'terror' */
 	/* only if monster has a mind */
-	if ((r_ptr->flags3 & RF3_NONLIVING) || (r_ptr->flags2 & RF2_EMPTY_MIND))
+	if ((r_ptr->flags3 & RF3_NONLIVING) || (r_ptr->flags2 & RF2_EMPTY_MIND)
+	    || (r_ptr->flags3 & RF3_NO_FEAR) || (r_ptr->flags7 & RF7_FRIENDLY))
 		return(FALSE);
 
 	/* Nearby monsters will not become terrified */
@@ -4153,7 +4149,6 @@ int mon_will_run(int Ind, int m_idx)
 
 	/* Strong players scare strong monsters */
 	if (p_val * m_mhp > m_val * p_mhp) return (TRUE);
-
 #endif
 
 	/* Assume no terror */
