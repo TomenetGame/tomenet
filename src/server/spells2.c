@@ -5841,6 +5841,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 #if 1
 #ifdef USE_SOUND_2010
 	if (typ == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_COMMAND, FALSE);
+	else if (typ == GF_DETONATION) sound(Ind, "detonation", NULL, SFX_TYPE_COMMAND, FALSE);
 	else if (typ == GF_STONE_WALL) sound(Ind, "stone_wall", NULL, SFX_TYPE_COMMAND, FALSE);
 	else {
 		/* The 'cast_ball' sound is only for attack spells */
@@ -5913,6 +5914,7 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int inter
 #ifdef USE_SOUND_2010
 	/* paranoia, aka this won't exist as "clouds".. */
 	if (typ == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_COMMAND, FALSE);
+	else if (typ == GF_DETONATION) sound(Ind, "detonation", NULL, SFX_TYPE_COMMAND, FALSE);
 	else if (typ == GF_STONE_WALL) sound(Ind, "stone_wall", NULL, SFX_TYPE_COMMAND, FALSE);
 	/* only this one needed really */
 	else sound(Ind, "cast_cloud", NULL, SFX_TYPE_COMMAND, FALSE);

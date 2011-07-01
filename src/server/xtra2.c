@@ -4573,7 +4573,7 @@ if (season_halloween) {
 			case RBE_LOSE_CHR:  typ = GF_MISSILE; break;
 			case RBE_LOSE_ALL:  typ = GF_MISSILE; break;
 			case RBE_PARASITE:  typ = GF_MISSILE; break;
-			case RBE_SHATTER:   typ = GF_ROCKET; break;
+			case RBE_SHATTER:   typ = GF_DETONATION; break;
 			case RBE_EXP_10:    typ = GF_MISSILE; break;
 			case RBE_EXP_20:    typ = GF_MISSILE; break;
 			case RBE_EXP_40:    typ = GF_MISSILE; break;

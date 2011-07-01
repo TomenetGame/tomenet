@@ -575,6 +575,11 @@ static void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad)
 		/* everyone nearby the monster can hear it too, even if no LOS */
 		sound_near_site(m_list[m_idx].fy, m_list[m_idx].fx, &m_list[m_idx].wpos, Ind, "rocket", NULL, SFX_TYPE_MON_SPELL, FALSE);
 	}
+	else if (typ == GF_DETONATION) {
+		sound(Ind, "detonation", NULL, SFX_TYPE_MON_SPELL, TRUE);
+		/* everyone nearby the monster can hear it too, even if no LOS */
+		sound_near_site(m_list[m_idx].fy, m_list[m_idx].fx, &m_list[m_idx].wpos, Ind, "detonation", NULL, SFX_TYPE_MON_SPELL, FALSE);
+	}
 	else if (typ == GF_STONE_WALL) sound(Ind, "stone_wall", NULL, SFX_TYPE_MON_SPELL, TRUE);
 	else sound(Ind, "monster_cast_ball", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
@@ -2122,7 +2127,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 //			else msg_format(Ind, "%^s fires a rocket.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s fires a rocket for", m_name);
 			ball(Ind, m_idx, GF_ROCKET,
-					((m_ptr->hp / 4) > 800 ? 800 : (m_ptr->hp / 4)), y, x, 2);
+			    ((m_ptr->hp / 4) > 800 ? 800 : (m_ptr->hp / 4)), y, x, 2);
 			update_smart_learn(m_idx, DRS_SHARD);
 			break;
 		}
@@ -4421,6 +4426,8 @@ static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr,
 		case GF_CURSE:
 		case GF_WATERPOISON:
 		case GF_ICEPOISON:
+		case GF_INFERNO:
+		case GF_DETONATION:
 		case GF_ROCKET:
 		case GF_DEC_STR:
 		case GF_DEC_DEX:

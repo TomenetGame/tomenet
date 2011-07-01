@@ -273,7 +273,7 @@ POWERCLOUD = add_spell
 				if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
 					fire_cloud(Ind, GF_MANA, args.dir, (1 + lev * 2), 3, (5 + lev / 5), 9, " conjures up a mana storm of")
 				else
-					fire_cloud(Ind, GF_ROCKET, args.dir, (1 + lev * 2), 3, (5 + lev / 5), 9, " conjures up a raging inferno of")
+					fire_cloud(Ind, GF_INFERNO, args.dir, (1 + lev * 2), 3, (5 + lev / 5), 9, " conjures up a raging inferno of")
 				end
 --			end
 	end,

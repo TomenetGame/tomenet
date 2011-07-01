@@ -256,7 +256,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 		case SV_POTION_DETONATIONS:
 			radius = 3;
 //			dt = GF_DISINTEGRATE; /* GF_ROCKET;/* was GF_SHARD */
-			dt = GF_ROCKET; /* GF_ROCKET was reworked to partially DISI ;) - C. Blue */
+			dt = GF_DETONATION; /* GF_DETONATION like GF_ROCKET does partially DISI ;) - C. Blue */
 			dam = damroll(45, 25);
 			aggravate_monsters_floorpos(wpos, y, x);
 			angry = TRUE;
@@ -1229,6 +1229,7 @@ byte spell_color(int type)
 		case GF_PLASMA:		return (randint(5)==1?TERM_RED:TERM_L_RED);
 		case GF_METEOR:		return (randint(3)==1?TERM_RED:TERM_UMBER);
 		case GF_ICE:		return (randint(4)==1?TERM_L_BLUE:TERM_WHITE);
+		case GF_INFERNO: case GF_DETONATION:
 		case GF_ROCKET:		return (randint(6)<4?TERM_L_RED:(randint(4)==1?TERM_RED:TERM_L_UMBER));
 		case GF_NUKE:		return (mh_attr(2));
 		case GF_DISINTEGRATE:   return (randint(3)!=1?TERM_L_DARK:(randint(2)==1?TERM_ORANGE:TERM_L_UMBER));
@@ -1289,6 +1290,7 @@ bool spell_color_animation(int type)
 		case GF_PLASMA:		return (randint(5)==1?TERM_RED:TERM_L_RED);
 		case GF_METEOR:		return (randint(3)==1?TERM_RED:TERM_UMBER);
 		case GF_ICE:		return (randint(4)==1?TERM_L_BLUE:TERM_WHITE);
+		case GF_INFERNO: case GF_DETONATION:
 		case GF_ROCKET:		return (randint(6)<4?TERM_L_RED:(randint(4)==1?TERM_RED:TERM_L_UMBER));
 		case GF_NUKE:		return (mh_attr(2));
 		case GF_DISINTEGRATE:   return (randint(3)!=1?TERM_L_DARK:(randint(2)==1?TERM_ORANGE:TERM_L_UMBER));
@@ -4335,6 +4337,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
+		case GF_INFERNO:
+		case GF_DETONATION:
 		case GF_ROCKET:
 		{
 			do_smash_effect = FALSE; /* was exploitable for easy insta-killing */
@@ -5416,6 +5420,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 
 		/* Rocket: Shard resistance helps (PernA) */
+		case GF_INFERNO:
+		case GF_DETONATION:
 		case GF_ROCKET:
 #if 0
 //			if (magik(12)) do_cut = (10 + randint(15) +r) / (r + 1);
@@ -9229,6 +9235,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		
 		/* PernA ones */
 		/* Rocket -- stun, cut, fire, raw impact */
+		case GF_INFERNO:
+		case GF_DETONATION:
 		case GF_ROCKET:
 		{
 			bool ignore_heat = (p_ptr->resist_fire && p_ptr->oppose_fire) || p_ptr->immune_fire;
@@ -10413,7 +10421,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 #if 1
 			if ((typ == GF_DISINTEGRATE) ||
 			    /* Reduce disintegration effect of rockets to radius 1 - C. Blue */
-			    ((typ == GF_ROCKET) && (ABS(y - y2) <= 1) && (ABS(x - x2) <= 1)) )
+			    ((typ == GF_ROCKET || typ == GF_DETONATION) && (ABS(y - y2) <= 1) && (ABS(x - x2) <= 1)) )
 			{
 				c_ptr2 = &zcave[y][x];
 				if (cave_valid_bold(zcave,y,x))
@@ -11179,6 +11187,8 @@ int approx_damage(int m_idx, int dam, int typ) {
 				dam /= 3;
 			break;
 
+		case GF_INFERNO:
+		case GF_DETONATION:
 		case GF_ROCKET:
 		{
 			int res1 = 0, res2 = 0, res3 = 0; //shard,sound,fire

@@ -94,7 +94,10 @@ typedef unsigned int u32b;
 #define GF_HELL_FIRE    82 /* was GF_HOLY_ORB */
 
 #define GF_MAKE_GLYPH   85
-#define GF_ROCKET       91
+
+#define GF_INFERNO	89
+#define GF_DETONATION	90
+#define GF_ROCKET	91
 
 #define GF_NUKE         110
 #define GF_BLIND	111

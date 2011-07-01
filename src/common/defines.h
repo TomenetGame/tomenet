@@ -3909,6 +3909,8 @@ that keeps many algorithms happy.
 
 #define GF_MAKE_GLYPH		85
 
+#define GF_INFERNO		89 /* damage-wise like GF_ROCKET, but no special sfx and doesn't hurt terrain (could be changed, dunno) */
+#define GF_DETONATION		90 /* damage-wise like GF_ROCKET, but different sfx */
 #define GF_ROCKET		91
 
 /* for traps.h :) - C. Blue */

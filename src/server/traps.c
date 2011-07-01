@@ -1790,18 +1790,18 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		break;
 
 		/* Bolt Trap */
-		case TRAP_OF_ROCKET: ident=player_handle_breath_trap(Ind, 1, GF_ROCKET, trap); destroy_chest(i_ptr); break;
-		case TRAP_OF_NUKE_BOLT: ident=player_handle_breath_trap(Ind, 1, GF_NUKE, trap); break;
-#if 1	// coming..when it comes :) //very powerful btw. insta-kills weaker chars.
-		case TRAP_OF_HOLY_FIRE: ident=player_handle_breath_trap(Ind, 1, GF_HOLY_FIRE, trap); break;
-		case TRAP_OF_HELL_FIRE: ident=player_handle_breath_trap(Ind, 1, GF_HELL_FIRE, trap); destroy_chest(i_ptr); break;
+		case TRAP_OF_ROCKET: ident = player_handle_breath_trap(Ind, 1, GF_ROCKET, trap); destroy_chest(i_ptr); break;
+		case TRAP_OF_NUKE_BOLT: ident =player_handle_breath_trap(Ind, 1, GF_NUKE, trap); break;
+#if 1	// coming..when it comes :) //very pow erful btw. insta-kills weaker chars.
+		case TRAP_OF_HOLY_FIRE: ident = player_handle_breath_trap(Ind, 1, GF_HOLY_FIRE, trap); break;
+		case TRAP_OF_HELL_FIRE: ident = player_handle_breath_trap(Ind, 1, GF_HELL_FIRE, trap); destroy_chest(i_ptr); break;
 #endif	// 0
-		case TRAP_OF_PSI_BOLT: ident=player_handle_breath_trap(Ind, 1, GF_PSI, trap); break;
-//      case TRAP_OF_PSI_DRAIN: ident=player_handle_breath_trap(1, GF_PSI_DRAIN, trap); break;
+		case TRAP_OF_PSI_BOLT: ident = player_handle_breath_trap(Ind, 1, GF_PSI, trap); break;
+//      case TRAP_OF_PSI_DRAIN: ident = player_handle_breath_trap(1, GF_PSI_DRAIN, trap); break;
 
 		/* Ball Trap */
-		case TRAP_OF_NUKE_BALL: ident=player_handle_breath_trap(Ind, 3, GF_NUKE, TRAP_OF_NUKE_BALL); destroy_chest(i_ptr); break;
-//      case TRAP_OF_PSI_BALL: ident=player_handle_breath_trap(3, GF_PSI, TRAP_OF_NUKE_BALL); break;
+		case TRAP_OF_NUKE_BALL: ident = player_handle_breath_trap(Ind, 3, GF_NUKE, TRAP_OF_NUKE_BALL); destroy_chest(i_ptr); break;
+//      case TRAP_OF_PSI_BALL: ident = player_handle_breath_trap(3, GF_PSI, TRAP_OF_NUKE_BALL); break;
 
 		/* PernMangband additions */
 		/* Trap? of Ale vendor */
@@ -4185,6 +4185,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, int sval)
 #ifdef USE_SOUND_2010
 	if (rad && who > 0) { /* TODO: make it audible for ALL players in LOS maybe? probably too much */
 		if (typ == GF_ROCKET) sound(who, "rocket", NULL, SFX_TYPE_MISC, FALSE);
+		else if (typ == GF_DETONATION) sound(who, "detonation", NULL, SFX_TYPE_MISC, FALSE);
 		else sound(who, "cast_ball", NULL, SFX_TYPE_MISC, FALSE);
 	}
 //	else sound(Ind, "", NULL, SFX_TYPE_MISC, FALSE);
@@ -4343,7 +4344,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 				break;			
 			case SV_POTION_DETONATIONS:
 //				typ = GF_DISINTEGRATE;
-				typ = GF_ROCKET;
+				typ = GF_DETONATION;
 				dam = damroll(40, 20);
 				rad = 3;
 #ifdef USE_SOUND_2010
