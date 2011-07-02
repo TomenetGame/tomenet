@@ -2242,6 +2242,25 @@ byte get_trap_color(int Ind, int t_idx, int feat)
 	return a;
 }
 
+byte get_monster_trap_color(int Ind, int o_idx, int feat) {
+	byte a;
+	object_type *kit_o_ptr;
+//	object_type *load_o_ptr;
+
+	/* Get the trap objects */
+	kit_o_ptr = &o_list[o_idx];
+//	load_o_ptr = &o_list[kit_o_ptr->next_o_idx];
+
+	/* Get attr */
+	a = k_info[kit_o_ptr->k_idx].d_attr;
+
+	/* Hack -- always l.blue if underwater */
+	if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER)
+		a = TERM_L_BLUE;
+
+	return a;
+}
+
 /*
  * Manipulate map grid colours, for example outside on world surface,
  * depending on clima or daytime!  - C. Blue
@@ -2642,7 +2661,26 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 
 			/* Normal attr */
 			a = p_ptr->f_attr[feat];
-			
+
+
+			/* Hack to display monster traps */
+			if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP))) {
+
+				/* Hack -- random hallucination */
+				if (p_ptr->image) {
+/*					image_random(ap, cp); */
+					image_object(ap, cp);
+					a = randint(15);
+				} else {
+					/* If trap isn't on door display it */
+					/* if (!(f_ptr->flags1 & FF1_DOOR)) c = '^'; */
+//					(*cp) = ';';
+					a = get_monster_trap_color(Ind,
+					    cs_ptr->sc.montrap.trap_kit,
+					    feat);
+				}
+			}
+
 			/* Hack to display detected traps */
 			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)))
 			{
@@ -2668,7 +2706,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			}
 
 			/* Quick Hack -- shop */
-			if ((cs_ptr=GetCS(c_ptr, CS_SHOP)))
+			if ((cs_ptr = GetCS(c_ptr, CS_SHOP)))
 			{
 				(*cp) = st_info[cs_ptr->sc.omni].d_char;
 				a = st_info[cs_ptr->sc.omni].d_attr;
@@ -2676,7 +2714,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 
 			/* apply colour to OPEN house doors (which have FF1_FLOOR,
 			   are hence separated from close house doors - C. Blue */
-			else if ((cs_ptr=GetCS(c_ptr, CS_DNADOOR)))
+			else if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR)))
 				a = access_door_colour(Ind, cs_ptr->sc.ptr);
 
 			/* Special lighting effects */

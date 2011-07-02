@@ -2568,7 +2568,7 @@ void do_cmd_disarm(int Ind, int dir)
 	/* Ghosts cannot disarm ; not in WRAITHFORM */
 	if ((p_ptr->ghost) || (p_ptr->tim_wraith)) {
 		msg_print(Ind, "You cannot disarm things!");
-		return;
+		if (!is_admin(p_ptr)) return;
 	}
 
 	break_shadow_running(Ind);
