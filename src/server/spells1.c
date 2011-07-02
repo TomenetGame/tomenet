@@ -3563,10 +3563,12 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Destroy Doors (and traps) */
 		case GF_KILL_DOOR:
 		{
+			byte feat = twall_erosion(wpos, y, x);
+
 			struct c_special *cs_ptr;
 			/* Destroy invisible traps */
 //			if (c_ptr->feat == FEAT_INVIS)
-			if((cs_ptr=GetCS(c_ptr, CS_TRAPS))){
+			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
 				/* Hack -- special message */
 				if (!quiet && player_can_see_bold(Ind, y, x))
 				{
@@ -3598,7 +3600,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			/* Destroy all visible traps and open doors */
 			if ((c_ptr->feat == FEAT_OPEN) ||
-				(c_ptr->feat == FEAT_BROKEN)) 
+				(c_ptr->feat == FEAT_BROKEN))
 			{
 				/* Hack -- special message */
 				if (!quiet && (*w_ptr & CAVE_MARK))
@@ -3608,7 +3610,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 
 				/* Destroy the feature */
-				cave_set_feat_live(wpos, y, x, FEAT_FLOOR);
+				cave_set_feat_live(wpos, y, x, feat);
 
 				/* Forget the wall */
 				everyone_forget_spot(wpos, y, x);
@@ -3640,7 +3642,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 
 				/* Destroy the feature */
-				cave_set_feat_live(wpos, y, x, FEAT_FLOOR);
+				cave_set_feat_live(wpos, y, x, feat);
 
 				/* Forget the wall */
 				everyone_forget_spot(wpos, y, x);
@@ -3664,6 +3666,8 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Destroy walls (and doors) */
 		case GF_KILL_WALL:
 		{
+			byte feat = twall_erosion(wpos, y, x);
+
 			if (!allow_terraforming(wpos, FEAT_TREE)) break;
 			/* Non-walls (etc) */
 			if (cave_los(zcave, y, x)) break;
@@ -3686,7 +3690,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 
 				/* Destroy the wall */
-				cave_set_feat_live(wpos, y, x, FEAT_SAND);
+				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_SAND : feat);
 			}
 			/* Sandwall with treasure */
 			else if (c_ptr->feat == FEAT_SANDWALL_H || c_ptr->feat == FEAT_SANDWALL_K)
@@ -3700,7 +3704,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 
 				/* Destroy the wall */
-				cave_set_feat_live(wpos, y, x, FEAT_SAND);
+				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_SAND : feat);
 
 				/* Place some gold */
 				if (!istown(wpos)) place_gold(wpos, y, x, 0);
@@ -3708,7 +3712,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Granite */
 			else if (c_ptr->feat >= FEAT_WALL_EXTRA)
 			{
-				byte feat;
 				/* Message */
 				if (!quiet && (*w_ptr & CAVE_MARK))
 				{
@@ -3717,7 +3720,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 
 				/* Destroy the wall */
-				feat = twall_erosion(wpos, y, x);
 				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_DIRT : feat);
 			}
 			/* Quartz / Magma with treasure */
@@ -3732,7 +3734,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 
 				/* Destroy the wall */
-				cave_set_feat_live(wpos, y, x, FEAT_DIRT);
+				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_DIRT : feat);
 
 				/* Place some gold */
 				if (!istown(wpos)) place_gold(wpos, y, x, 0);
@@ -3749,7 +3751,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 
 				/* Destroy the wall */
-				cave_set_feat_live(wpos, y, x, FEAT_DIRT);
+				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_DIRT : feat);
 			}
 
 			/* Rubble */
@@ -3763,7 +3765,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 
 				/* Destroy the rubble */
-				cave_set_feat_live(wpos, y, x, FEAT_DIRT);
+				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_DIRT : feat);
 
 				/* Hack -- place an object */
 				if (rand_int(100) < 10)
