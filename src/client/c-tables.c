@@ -1063,7 +1063,7 @@ Runespell methods.
 	{ 4, R_BALL, "ball",  	2, 13 },
 	{ 5, R_WAVE, "wave",  	3, 12 },
 	{ 6, R_CLOU, "cloud", 	3, 15 },
-	{ 7, R_LOS,  "sight", 	3, 40 },
+	{ 7, R_STOR, "storm", 	3, 20 },
 };
 
 #endif

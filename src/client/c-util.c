@@ -3920,7 +3920,7 @@ void interact_macros(void)
 						Term_putstr(15, 19, -1, TERM_L_GREEN, "e) Ball  (  +3,  130% )");
 						Term_putstr(15, 20, -1, TERM_L_GREEN, "f) Wave  (  +4,  120% )");
 						Term_putstr(15, 21, -1, TERM_L_GREEN, "g) Cloud (  +8,  150% )");
-						Term_putstr(15, 22, -1, TERM_L_GREEN, "h) Sight ( +10,  400% )");
+						Term_putstr(15, 22, -1, TERM_L_GREEN, "h) Storm ( +10,  200% )");
 
 						switch (choice = inkey()) {
 						case ESCAPE:

@@ -7361,7 +7361,7 @@ extern int PlayerUID;
 #define R_BALL 0x000010
 #define R_WAVE 0x000020
 #define R_CLOU 0x000040
-#define R_LOS  0x000080
+#define R_STOR 0x000080
 
 //Spell constituents
 #define R_FIRE 0x000100

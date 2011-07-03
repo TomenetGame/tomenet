@@ -1444,7 +1444,7 @@ static void print_rune_methods()
 	prt("", j, col); put_str("e) Ball  (  +3,  130% )", j++, col);
 	prt("", j, col); put_str("f) Wave  (  +4,  120% )", j++, col);
 	prt("", j, col); put_str("g) Cloud (  +8,  150% )", j++, col);
-	prt("", j, col); put_str("h) Sight ( +10,  400% )", j++, col);
+	prt("", j, col); put_str("h) Storm ( +10,  200% )", j++, col);
 
 	/* Clear the bottom line */
 	prt("", j++, col);

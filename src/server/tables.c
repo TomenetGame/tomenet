@@ -6287,7 +6287,7 @@ r_type runespell_types[8] =
 	{ 4, R_BALL, "ball",  	 3, 12 },
 	{ 5, R_WAVE, "wave",  	 3, 11 },
 	{ 6, R_CLOU, "cloud", 	 5, 13 },
-	{ 7, R_LOS,  "sight", 	10, 20 },
+	{ 7, R_STOR, "storm", 	10, 20 },
 };
 
 /* Table of valid runespell types and their meta information.

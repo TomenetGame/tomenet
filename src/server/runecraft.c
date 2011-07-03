@@ -155,7 +155,7 @@ byte meth_to_id(u32b s_meth)
 	else if (s_meth & R_BALL) m = 4;
 	else if (s_meth & R_WAVE) m = 5;
 	else if (s_meth & R_CLOU) m = 6;
-	else if (s_meth & R_LOS) m = 7;
+	else if (s_meth & R_STOR) m = 7;
 		
 	return m;
 }
@@ -291,7 +291,7 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 		/* Damage should be proportional to radius and duration. */
 		damage = randint(4) + rget_level(80 - (*radius + *duration) / 2);
 	}
-	else if ((s_flags & R_LOS) == R_LOS)
+	else if ((s_flags & R_STOR) == R_STOR)
 	{
 		damage = e_level + 3 + rget_level(100);
 	}
@@ -1579,7 +1579,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 	}
 	else
 	{
-		if (type_flags & R_LOS)
+		if (type_flags & R_STOR)
 		{
 			sprintf(p_ptr->attacker, " fills the air with %s for", runespell_list[type].title);
 			msg_format(Ind, "%s%s fill the air with %s %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
@@ -1720,7 +1720,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 
 bool is_attack(u32b s_flags)
 {
-	return (!(s_flags & R_MELE) && !(s_flags & R_SELF) && !(s_flags & R_WAVE) && !(s_flags & R_LOS));
+	return (!(s_flags & R_MELE) && !(s_flags & R_SELF) && !(s_flags & R_WAVE) && !(s_flags & R_STOR));
 }
 
 byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative)
