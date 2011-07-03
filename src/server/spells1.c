@@ -5568,7 +5568,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (seen) obvious = TRUE;
 			if ((r_ptr->flags4 & RF4_BR_TIME) || (r_ptr->flags9 & RF9_RES_TIME)
 			    || (r_ptr->flags4 & RF3_DEMON) || (r_ptr->flags4 & RF3_NONLIVING)
-			    || (r_ptr->flags4 & RF3_UNDEAD))
+			    || (r_ptr->flags4 & RF3_UNDEAD) || (r_ptr->d_char == 'A'))
 			{
 				note = " resists";
 				dam *= 3; dam /= (randint(6)+6);
