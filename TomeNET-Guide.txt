@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 30. June 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 3. July 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -6881,13 +6881,18 @@ side effects: use it with care.
 
 Macros:
 -------
+In general it is recommended to just use the macro wizard (key 'z' in the macro
+menu). If you want to create macros manually though by all means read on.
+
 Runemastery macros look like this: (The magic number for runemastery is 18)
     \e)*tm@18\ra\rac-
 
 Which is fire--minimized--bolt, or a minimized fire bolt.
 
 Fire ball looks like this (key translation in brackets):
-    \e)*tm@18\ra\rae- (fire--minimized--ball)
+    \e)*tm@18\ra\rae- (fire--minimized--ball;
+                       note: the 'size' determines max damage, radius, cost
+                             and chance for failure)
 
 To increase the radius of the ball, adjust the modifier to something that
 sounds bigger (this will also increase the damage, difficulty and cost):
@@ -6902,7 +6907,8 @@ Or a widened fire ball:
 Or some self-spells:
 
 Resist fire:
-    \e)m@18\ra\rbb (fire--moderate--self)
+    \e)m@18\ra\rbb (fire--moderate--self;
+                    note: 'moderate' here determines duration/cost/fail chance)
 
 (In the same way that you can increase or decrease a fire ball's radius, you
 can increase or decrease the duration of any timed spell by selecting
@@ -6910,23 +6916,32 @@ can increase or decrease the duration of any timed spell by selecting
 lesser extent.)
 
 Blink:
-    \e)m@18\rh\rab (wind--minimized--self)
-
-Or monster detection:
-    \e)m@18\racgab (fire/cold/poison--minimized--self)
+    \e)m@18\rd\rab (water--minimized--self;
+                    note: the 'size' here determines radius, cost, fail chance)
 
 Note that if you choose three runes for a spell, the \r is not required.
-
-Occasionally, something like 'teleport to' (a level 26+ spell), requires
-that you set a target before casting. i.e:
-    \e)*tm@18\rke\rab (force/electricity--minimized--self)
 
 
 Autoretaliation & Melee spells:
 -------------------------------
 If you inscribe @O[a-h] on a rune, you will automatically retaliate with a
-moderate spell of the selected type. If you set the type to @Oa, or just @O,
-the 'melee' spell type will be selected.
+moderate spell of the selected type. Not specifying a letter is same as
+actually choosing 'a'. Here is a table again of the effect types:
+
+a - melee
+b - self
+c - bolt
+d - beam
+e - ball
+f - wave
+g - cloud
+h - storm
+
+So if you set the type to 'a' by inscribing a rune
+ @Oa
+or (which is the same) just
+ @O
+then the 'melee' spell type will be selected.
 
 A melee spell is a bolt spell with a range of a single tile. It is cheaper than
 a regular bolt, and usually does more damage, but is very difficult to use
@@ -6936,10 +6951,13 @@ outside of autoretaliation.
 Hints:
 ------
 You can find out other spell combinations by experimenting. Do this in a safe
-location (preferably somewhere that you are unable to be killed), bearing in
-mind that if you frequently fail or *fail* to cast a spell, you are not yet
-skillful enough to cast it: try a minimized version instead, or if that fails,
-wait a few levels and try again.
+location (preferably somewhere that you are unable to be killed), best is by
+far during 'Arena Monster Challenge' event where really nothing happens to a
+character who 'dies' in the actual arena level.
+
+Bear in mind that if you frequently fail or *fail* to cast a spell, you are not
+yet skillful enough to cast it: try a minimized version instead, or if that
+fails, wait a few levels and try again.
 
 The casting adjective will give you an idea of the difficulty of a spell
 compared to your skill. Ideally, you should try to choose spells where the
@@ -6953,9 +6971,9 @@ build your macro set slowly as you gain levels. The last thing you want to do
 is to have a high level spell like 'nuke ball' macroed at level five, and end
 up committing suicide when you accidentally hit the wrong key in the dungeon.
 
-To get started, you'll probably want to macro a couple of attack spells, blink,
-and detect monsters. You may also need to use a melee or ranged weapon to help
-gain the first few levels of a new runemaster.
+To get started, you'll probably want to macro a couple of attack spells and
+possibly blink (phase door). You may also wait a melee or ranged weapon for
+when you run out of mana, at least in the beginning.
 
 
 
