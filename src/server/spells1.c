@@ -4224,7 +4224,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-		/* Fire + Elec */
+		/* Fire + Elec + a bit Force */
 		case GF_PLASMA:
 		{
 			do_smash_effect = TRUE;
@@ -4243,6 +4243,9 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (f3 & TR3_IGNORE_ELEC) ignore = TRUE;
 			}
 			else apply_discharge_item(this_o_idx, dam / 2);
+
+			/* Note: Force item destruction is probably already covered
+			   by applied fire item destruction above */
 
 			break;
 		}
@@ -8175,6 +8178,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Plasma -- Fire/Lightning/Force */
 		case GF_PLASMA:
 		{
+			bool ignore_fire = p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire;
+			bool ignore_elec = p_ptr->oppose_elec || p_ptr->resist_elec || p_ptr->immune_elec;
+			bool inven_fire = (p_ptr->oppose_fire && p_ptr->resist_fire) || p_ptr->immune_fire;
+			bool inven_elec = (p_ptr->oppose_elec && p_ptr->resist_elec) || p_ptr->immune_elec;
+
 			if (p_ptr->immune_fire && p_ptr->immune_elec) dam = (dam + 8) / 9;
 			else {
 				if (p_ptr->immune_fire) dam = (dam + 3) / 4;
@@ -8195,7 +8203,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			if (fuzzy) msg_format(Ind, "You are hit by something hot for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-	
+
 			take_hit(Ind, dam, killer, -who);
 
 			if (!p_ptr->resist_sound) {
@@ -8204,19 +8212,33 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 
 			/* Reduce stats */
-			if ((!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire)) &&
-			    randint(HURT_CHANCE)==1)
-				(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+			if (!ignore_fire && !ignore_elec) {
+				if (randint(HURT_CHANCE)==1) {
+					if (rand_int(3)) (void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+					else (void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+				}
+			} else if (ignore_elec) {
+				if (randint(HURT_CHANCE)==1)
+					(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+			} else if (ignore_fire) {
+				if (randint(HURT_CHANCE)==1)
+					(void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+			}
 
 			/* Don't kill inventory in bloodbond... */
 			int breakable = 1;
-			if (IS_PVP) {
-				if (check_blood_bond(Ind, -who)) breakable = 0;
+			if (IS_PVP && check_blood_bond(Ind, -who)) {
+				breakable = 0;
+				break;
 			}
 
 			/* Inventory damage */
-			if (!(p_ptr->resist_fire && p_ptr->oppose_fire) && !p_ptr->immune_fire && breakable)
-				inven_damage(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+			if (inven_fire && inven_elec) break;
+			if (!inven_fire && !inven_elec) {
+				if (rand_int(3)) inven_damage(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+				else inven_damage(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+			} else if (inven_elec) inven_damage(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+			else inven_damage(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
 
 			break;
 		}
