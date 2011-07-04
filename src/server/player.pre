@@ -971,6 +971,7 @@ struct player_type
 	char warning_ma_weapon;
 	char warning_ma_shield;
 
+	/* USE_SOUND_2010 */
 	int music_current;
 	int music_monster;
 
