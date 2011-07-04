@@ -1142,10 +1142,10 @@ void do_cmd_check_players(int Ind, int line)
 			if (admin) fprintf(fff, "[%d,%d] %s", q_ptr->panel_row, q_ptr->panel_col, wpos_format(Ind, &q_ptr->wpos)); else
 #endif
 			fprintf(fff, "%s", wpos_format(-Ind, &q_ptr->wpos));
-		}
 
-		/* Print questing flag */
-		if (q_ptr->quest_id) fprintf(fff, " \377oQ\377U");
+			/* Print questing flag */
+			if (q_ptr->quest_id) fprintf(fff, " \377U(Q)\377U");
+		}
 
 //		fprintf(fff, ", %s@%s", q_ptr->accountname, q_ptr->hostname);
 
