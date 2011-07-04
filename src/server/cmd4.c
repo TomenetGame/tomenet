@@ -1141,7 +1141,7 @@ void do_cmd_check_players(int Ind, int line)
 #if 0
 			if (admin) fprintf(fff, "[%d,%d] %s", q_ptr->panel_row, q_ptr->panel_col, wpos_format(Ind, &q_ptr->wpos)); else
 #endif
-			fprintf(fff, "%s %d,%d", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
+			fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
 
 			/* Print questing flag */
 			if (q_ptr->quest_id) fprintf(fff, " Q");
