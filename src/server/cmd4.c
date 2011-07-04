@@ -636,7 +636,7 @@ static void do_admin_woa(FILE *fff, player_type *q_ptr, char attr)
 
 }
 
-static void do_write_others_attributes(FILE *fff, player_type *q_ptr, char attr)
+static void do_write_others_attributes(FILE *fff, player_type *q_ptr, char attr, bool admin)
 {
 #ifndef COMPACT_PLAYERLIST
 	int modify_number = 0;
@@ -965,7 +965,6 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, char attr)
 
 	/* Line break here, it's getting too long with all those mods -C. Blue */
 	fprintf(fff, "\n  \377");
-
 	if (q_ptr->fruit_bat == 1)
 		strcpy(info_chars, format("\377%cb", color_attr_to_char(q_ptr->cp_ptr->color)));
 	else
@@ -996,6 +995,7 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, char attr)
 	fprintf(fff, "*%s\377U ", info_chars);
 	fprintf(fff, "%s", q_ptr->male ? "male" : "female");
 	if (q_ptr->fruit_bat == 1) fprintf(fff, " bat"); /* only for true battys, not polymorphed ones */
+//	if (admin) fprintf(fff, " (%s@%s)", q_ptr->accountname, q_ptr->hostname); else
 	fprintf(fff, " (%s)", q_ptr->accountname);
 	if (q_ptr->guild || q_ptr->party) fprintf(fff, ",");
 
@@ -1070,7 +1070,7 @@ void do_cmd_check_players(int Ind, int line)
 		fprintf(fff, "\377%c", attr);
 
 		/* Print a message */
-		do_write_others_attributes(fff, q_ptr, attr);
+		do_write_others_attributes(fff, q_ptr, attr, is_admin(p_ptr));
 		/* Colour might have changed due to Iron Team party name,
 		   so print the closing ')' in the original colour again: */
 		/* not needed anymore since we have linebreak now
@@ -1128,7 +1128,7 @@ void do_cmd_check_players(int Ind, int line)
 		else if (check_hostile(Ind, k)) attr = 'r';
 
 		/* Print a message */
-		do_write_others_attributes(fff, q_ptr, attr);
+		do_write_others_attributes(fff, q_ptr, attr, is_admin(p_ptr));
 
 		fprintf(fff, "\n  %s", q_ptr->inval ? (!outdated ? (!latest && is_admin(p_ptr) ? "\377yI\377sL\377U" : "\377yI \377U") : "\377yI\377DO\377U") :
 		    (outdated ? "\377DO \377U" : (!latest && is_admin(p_ptr) ? "\377sL \377U" :  "\377U")));
@@ -1139,8 +1139,8 @@ void do_cmd_check_players(int Ind, int line)
 		}
 		/* Print extra info if these people are in the same party or if viewer is DM */
 		else if ((p_ptr->party == q_ptr->party && p_ptr->party) || Ind == k || admin) {
-#if 0
-			if (admin) fprintf(fff, "[%d,%d] %s", q_ptr->panel_row, q_ptr->panel_col, wpos_format(Ind, &q_ptr->wpos)); else
+#if 1
+			if (admin) fprintf(fff, "%s [%d,%d] (%s)", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col, q_ptr->hostname); else
 #endif
 			fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
 
@@ -1455,7 +1455,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 		fprintf(fff, "\377%c", attr);
 
 		/* Print a message */
-		do_write_others_attributes(fff, q_ptr, attr);
+		do_write_others_attributes(fff, q_ptr, attr, admin);
 		/* Colour might have changed due to Iron Team party name,
 		   so print the closing ')' in the original colour again: */
 		/* not needed anymore since we have a linebreak now
