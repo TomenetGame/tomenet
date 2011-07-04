@@ -4831,8 +4831,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				dam /= 2;
 				if (!(r_ptr->flags3 & RF3_NO_CONF) && !rand_int(10)) do_conf = randint(8);
 			} else if (randint(dam > 20 ? 20 : dam) > randint(r_ptr->level)) {
-				if (!(r_ptr->flags3 & RF3_NO_STUN)) do_stun = randint(6);
-				if (!(r_ptr->flags3 & RF3_NO_CONF)) do_conf = randint(20);
+				do_stun = randint(6);
+				do_conf = randint(20);
 				if (!(r_ptr->flags3 & RF3_NO_SLEEP)) do_sleep = rand_int(2) ? randint(randint(90)) : 0;
 				if (!(r_ptr->flags3 & RF3_NO_FEAR)) do_fear = randint(15);
 			}
@@ -5297,28 +5297,40 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			break;
 		}
 
-		/* Plasma -- XXX perhaps check ELEC or FIRE */
+		/* Plasma -- Fire/Elec/Force */
 		case GF_PLASMA:
 		{
 			if (seen) obvious = TRUE;
-			if (r_ptr->flags3 & RF3_IM_FIRE)
-			{
-				note = " resists a lot";
-				dam /= 5;
+
+			do_stun = (10 + randint(15)) / div;
+
+			if ((r_ptr->flags3 & RF3_IM_FIRE) && (r_ptr->flags3 & RF3_IM_ELEC)) {
+				note = "resists a lot";
+				dam /= 9;
+			} else {
+				if (r_ptr->flags3 & RF3_IM_FIRE) {
+					note = " resists a lot";
+					dam /= 4;
+				} else if (prefix(name, "Plasma") ||
+				    (r_ptr->flags4 & RF4_BR_PLAS) ||
+				    (r_ptr->flags3 & RF3_RES_PLAS)) {
+					note = " resists";
+					dam *= 3; dam /= (randint(6)+6);
+				} else if (r_ptr->flags9 & RF9_RES_FIRE) {
+					note = " resists somewhat";
+					dam *= 3;
+					dam /= 5;
+				} else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
+					note = " is hit hard";
+					dam = (dam * 3) / 2;
+				}
+
+				if ((r_ptr->flags9 & RF9_RES_ELEC) || (r_ptr->flags3 & RF3_IM_ELEC)) {
+					dam *= 4;
+					dam /= 5;
+				} else if (r_ptr->flags3 & RF3_SUSCEP_ELEC) dam = (dam * 4) / 3;
 			}
-			else if (prefix(name, "Plasma") ||
-				(r_ptr->flags4 & RF4_BR_PLAS) ||
-				(r_ptr->flags3 & RF3_RES_PLAS))
-			{
-				note = " resists";
-				dam *= 3; dam /= (randint(6)+6);
-			}
-			else if (r_ptr->flags9 & RF9_RES_FIRE)
-			{
-				note = " resists somewhat";
-				dam *= 3;
-				dam /= 5;
-			}
+
 			break;
 		}
 
@@ -5373,25 +5385,16 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		case GF_WAVE:
 		{
 			if (seen) obvious = TRUE;
-			if (r_ptr->flags9 & RF9_IM_WATER)
-			{
+			if (r_ptr->flags9 & RF9_IM_WATER) {
 				note = " is immune";
 				dam = 0;
-			}
-			else if (r_ptr->flags7 & RF7_AQUATIC)
-			{
+			} else if (r_ptr->flags7 & RF7_AQUATIC) {
 				note = " resists a lot";
 				dam /= 9;
-			}
-			else if (r_ptr->flags3 & RF3_RES_WATE)
-			{
+			} else if (r_ptr->flags3 & RF3_RES_WATE) {
 				note = " resists";
 				dam /= 4;
-			}
-			else
-			{
-				do_stun = randint(15) / div;
-			}
+			} else do_stun = randint(15) / div;
 			break;
 		}
 
@@ -5472,7 +5475,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		case GF_STUN:
 		{
 			do_stun = (10 + randint(15)) / div;
-			if (r_ptr->flags9 & RF9_RES_SOUND) do_stun /= 4;
 			break;
 		}
 
@@ -5485,7 +5487,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			{
 				note = " resists";
 				dam *= 2; dam /= (randint(6)+6);
-				do_stun = 0;
 			}
 			break;
 		}
@@ -5551,14 +5552,25 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 
 		/* Inertia -- breathers resist */
-		case GF_INERTIA:
+		case GF_INERTIA: //Slowing effect -- NOTE: KEEP CONSISTENT WITH GF_CURSE AND GF_OLD_SLOW
 		{
 			if (seen) obvious = TRUE;
-			if (r_ptr->flags4 & RF4_BR_INER)
-			{
+			if (r_ptr->flags4 & RF4_BR_INER) {
 				note = " resists";
 				dam *= 3; dam /= (randint(6)+6);
 			}
+			/* Powerful monsters can resist */
+			else if (r_ptr->flags1 & RF1_UNIQUE) {
+			} else if (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) { /* cannot randint higher? (see 'resist' branch below) */
+			} else if (r_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10) {
+			} else if (m_ptr->mspeed >= 100 && m_ptr->mspeed > m_ptr->speed - 10) /* Normal monsters slow down */
+//			else if (m_ptr->mspeed >= 100) /* Normal monsters slow down */
+			{
+//				if (m_ptr->mspeed > 100) m_ptr->mspeed -= 10;
+				m_ptr->mspeed -= 10;
+				note = " starts moving slower";
+			}
+
 			break;
 		}
 
@@ -5899,12 +5911,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 
 		/* Slow Monster (Use "dam" as "power") */
-		case GF_OLD_SLOW:
+		case GF_OLD_SLOW: //Slowing effect -- NOTE: KEEP CONSISTENT WITH GF_INERTIA AND GF_CURSE
 		{
 			if (seen) obvious = TRUE;
 
 			/* Powerful monsters can resist */
-			if (r_ptr->flags1 & RF1_UNIQUE) {
+			if ((r_ptr->flags1 & RF1_UNIQUE) ||
+			    (r_ptr->flags4 & RF4_BR_INER)) {
 				note = " is unaffected";
 				obvious = FALSE;
 			} else if (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) { /* cannot randint higher? (see 'resist' branch below) */
@@ -6025,10 +6038,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			/* Assume no obvious effect */
 			obvious = FALSE;
 			int curse = randint(3);
-			if (curse == 1) { //Slow
+			if (curse == 1) { //Slowing effect -- NOTE: KEEP CONSISTENT WITH GF_INERTIA AND GF_OLD_SLOW
 /*				if (((r_ptr->flags1 & RF1_UNIQUE) && magik(r_ptr->level * 4)) ||
 					magik(r_ptr->level * 2)) {*/
-				if (r_ptr->flags1 & RF1_UNIQUE) {
+				if ((r_ptr->flags1 & RF1_UNIQUE) ||
+				    (r_ptr->flags4 & RF4_BR_INER)) {
 					note = " is unaffected";
 				} else if (r_ptr->level > randint((dam / 3 - 10) < 1 ? 1 : (dam / 3 - 10)) + 10) { /* consistent with GF_OLD_SLOW */
 					note = " resists";
@@ -7146,25 +7160,25 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Blindness (confusion): Not for uniques or powerful monsters */
 	if (do_blind &&
-		 !(r_ptr->flags2 & RF2_POWERFUL) &&
-		 !(r_ptr->flags2 & RF2_PASS_WALL) && /* Ethereal monsters */
-		 !((r_ptr->flags4 & RF4_BR_LITE) && (r_ptr->flags4 & RF4_BR_DARK)) &&
-		 !(r_ptr->flags3 & RF3_UNDEAD) &&
-		 !(r_ptr->flags3 & RF3_NONLIVING) &&
-		 !(r_ptr->flags3 & RF3_DEMON) &&
-		 !(r_ptr->flags3 & RF3_DRAGON) &&
-		 !(r_ptr->flags3 & RF3_DRAGONRIDER) &&
-		 !(r_ptr->flags1 & RF1_UNIQUE) &&
-		 (m_ptr->level < 45))
-/*		 !((r_ptr->flags3 & RF3_DEMON) && (m_ptr->level >= 40)) &&
-		 !((r_ptr->flags3 & RF3_DRAGON) && (m_ptr->level >= 40)) &&
-		 !((r_ptr->flags3 & RF3_DRAGONRIDER) && (m_ptr->level >= 40)) &&
-		 !(r_ptr->flags1 & RF1_UNIQUE))*/
-/*		 !(((r_ptr->flags3 & RF3_DEMON) ||
-		 (r_ptr->flags3 & RF3_DRAGON) ||
-		 (r_ptr->flags3 & RF3_DRAGONRIDER) ||
-		 (r_ptr->flags1 & RF1_UNIQUE)) &&
-		 (r_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10)))  <- this line would require a " resists." note btw. */
+	     !(r_ptr->flags2 & RF2_POWERFUL) &&
+	    !(r_ptr->flags2 & RF2_PASS_WALL) && /* Ethereal monsters */
+	    !((r_ptr->flags4 & RF4_BR_LITE) && (r_ptr->flags4 & RF4_BR_DARK)) &&
+	    !(r_ptr->flags3 & RF3_UNDEAD) &&
+	    !(r_ptr->flags3 & RF3_NONLIVING) &&
+	    !(r_ptr->flags3 & RF3_DEMON) &&
+	    !(r_ptr->flags3 & RF3_DRAGON) &&
+	    !(r_ptr->flags3 & RF3_DRAGONRIDER) &&
+	    !(r_ptr->flags1 & RF1_UNIQUE) &&
+	    (m_ptr->level < 45))
+/*	    !((r_ptr->flags3 & RF3_DEMON) && (m_ptr->level >= 40)) &&
+	    !((r_ptr->flags3 & RF3_DRAGON) && (m_ptr->level >= 40)) &&
+	    !((r_ptr->flags3 & RF3_DRAGONRIDER) && (m_ptr->level >= 40)) &&
+	    !(r_ptr->flags1 & RF1_UNIQUE))*/
+/*	    !(((r_ptr->flags3 & RF3_DEMON) ||
+	    (r_ptr->flags3 & RF3_DRAGON) ||
+	    (r_ptr->flags3 & RF3_DRAGONRIDER) ||
+	    (r_ptr->flags1 & RF1_UNIQUE)) &&
+	    (r_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10)))  <- this line would require a " resists." note btw. */
 	{
 		/* Obvious */
 		if (seen) obvious = TRUE;
@@ -8158,18 +8172,26 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		take_hit(Ind, dam, killer, -who);
 		break;
 
-		/* Plasma -- XXX Fire helps a bit */
+		/* Plasma -- Fire/Lightning/Force */
 		case GF_PLASMA:
 		{
-			if (p_ptr->immune_fire) dam /= 5;
-			else if (p_ptr->resist_plasma) {
-				dam *= 3;
-				dam /= (randint(6)+6);
+			if (p_ptr->immune_fire && p_ptr->immune_elec) dam = (dam + 8) / 9;
+			else {
+				if (p_ptr->immune_fire) dam = (dam + 3) / 4;
+				else if (p_ptr->resist_plasma) {
+					dam *= 3;
+					dam = (dam + 6) / (randint(6) + 6);
+				}
+				else if (p_ptr->resist_fire || p_ptr->oppose_fire) {
+					dam *= 3;
+					dam = (dam + 4) / 5;
+				} else if (p_ptr->suscep_fire) dam = (dam * 3) / 2;
+
+				if (p_ptr->resist_elec || p_ptr->oppose_elec || p_ptr->immune_elec)
+					dam = ((dam + 4) * 4) / 5;
+				else if (p_ptr->suscep_elec) dam = (dam * 4) / 3;
 			}
-			else if (p_ptr->resist_fire) {
-				dam *= 3;
-				dam /= 5;
-			}
+
 
 			if (fuzzy) msg_format(Ind, "You are hit by something hot for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
@@ -8182,7 +8204,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 
 			/* Reduce stats */
-			if ((!(p_ptr->oppose_fire || p_ptr->resist_fire)) &&
+			if ((!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire)) &&
 			    randint(HURT_CHANCE)==1)
 				(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
 

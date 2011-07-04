@@ -5424,12 +5424,21 @@ Ice             Ice attacks combine shard & sound effects with cold damage.
                 Ice damage (bolt only) is (6d6)+monsterlevel.
                 Ice damage consists of 60% cold damage and 40% shards damage.
                 Missing sound resistance will result in additional stunning.
-Plasma          Plasma attacks combine raw force and immense heat.
-                Fire immunity will cut damage to 1/5.
-                Fire resistance will cut damage to 3/5.
-                Plasma resistance (only mimics that use a plasma-breathing
+Plasma          Plasma attacks combine raw force, electricity and immense heat.
+                Being immune to both, fire and lightning will cut damage to
+                1/9. If that's not the case, two checks are applied for fire
+                and for lightning, whose results stack with each other,
+                as follows:
+                1) Fire check:
+                -Fire immunity will cut damage to 1/4.
+                -Fire resistance will cut damage to 3/5.
+                -Plasma resistance (only mimics that use a plasma-breathing
                 form) will cut damage to 3/7..3/12.
-                Also has stun effect if sound resistance is missing.
+                -Fire susceptibility will increase damage by 1/2.
+                2) Lightning check:
+                -Lightning resistance or immunity will cut damage to 4/5.
+                -Lightning susceptibility will increase damage by 1/3.
+                Plasma also has stun effect if sound resistance is missing.
                 Breath damage is monster HP/6. Plasma breath caps at 150.
                 Plasma bolts do 10+level+(8d7) damage.
 Radiation/Nuke/ This is a poisonous attack (player suffers pure poison damage)
