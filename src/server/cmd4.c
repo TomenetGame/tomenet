@@ -884,19 +884,19 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, char attr)
 	/* Print a message */
 	fprintf(fff," ");
 	if (q_ptr->admin_dm) {
-		if (q_ptr->male) fprintf(fff,"\377bDungeon Master");
-		else fprintf(fff,"\377bDungeon Mistress");
-	} else if (q_ptr->admin_wiz) fprintf(fff,"\377bDungeon Wizard");
-	else if (q_ptr->mode & MODE_PVP) fprintf(fff, "\377%cGladiator", COLOUR_MODE_PVP);
-	else if (q_ptr->ghost) fprintf(fff, "\377rGhost");
+		if (q_ptr->male) fprintf(fff,"\377bDungeon Master ");
+		else fprintf(fff,"\377bDungeon Mistress ");
+	} else if (q_ptr->admin_wiz) fprintf(fff,"\377bDungeon Wizard ");
+	else if (q_ptr->mode & MODE_PVP) fprintf(fff, "\377%cGladiator ", COLOUR_MODE_PVP);
+	else if (q_ptr->ghost) fprintf(fff, "\377rGhost ");
 	else if (q_ptr->total_winner) {
-		fprintf(fff, "\377v%s",
+		fprintf(fff, "\377v%s ",
 		    (q_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) ?
 			(q_ptr->male ? "Emperor" : "Empress") :
 			(q_ptr->male ? "King" : "Queen"));
 	}
 
-	fprintf(fff, " \377%c%s, L%d ", attr, q_ptr->name, q_ptr->lev);
+	fprintf(fff, "\377%c%s, L%d ", attr, q_ptr->name, q_ptr->lev);
 
  #ifdef ENABLE_DIVINE
 	if (q_ptr->prace == RACE_DIVINE && q_ptr->ptrait) {
