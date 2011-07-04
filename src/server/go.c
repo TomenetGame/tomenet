@@ -29,9 +29,10 @@
 #define SERVER
 
 #include "angband.h"
-#include <sys/wait.h> /* for waitpid() */
 
 #ifdef ENABLE_GO_GAME
+
+#include <sys/wait.h> /* for waitpid() */
 
 /* Pick one of the engines to use: */
 /* Use 'gnugno' engine? (recommended) */
