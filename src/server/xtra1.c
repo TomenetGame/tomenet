@@ -4423,7 +4423,7 @@ void calc_boni(int Ind)
 	p_ptr->rogue_heavyarmor = rogue_heavy_armor(p_ptr);
 	if (p_ptr->old_rogue_heavyarmor != p_ptr->rogue_heavyarmor) {
 		if (p_ptr->rogue_heavyarmor) {
-			msg_print(Ind, "\377oThe weight of your armour strains your flexibility and awareness.");
+			msg_print(Ind, "\377RThe weight of your armour strains your flexibility and awareness.");
 			break_cloaking(Ind, 0);
 			break_shadow_running(Ind);
 			if (p_ptr->dual_wield && !p_ptr->warning_dual && p_ptr->pclass != CLASS_ROGUE && p_ptr->max_plv <= 10) {
