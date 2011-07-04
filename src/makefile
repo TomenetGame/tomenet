@@ -191,8 +191,15 @@ CC = gcc
 #    must just copy comments 1:1). Usually this is '-C'.
 # 2) the option that turns off generation of a preprocessor header
 #    (lines starting on '# '). Usually this is '-P'.
+# Also, if your system doesnt have a dedicated cpp command, you might
+# need to use the gcc invocation below instead.
+#
+# cpp variant:
 CPP = cpp
 CPPFLAGS = -C -P
+# gcc variant:
+#CPP = gcc
+#CPPFLAGS = -x c -E -Wp,-C,-P
 
 
 #

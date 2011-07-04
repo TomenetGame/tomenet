@@ -123,8 +123,16 @@ int main(int argc, char *arg[]) {
 	}
 	strcat(line, tmp_file);
 	strcat(line, " ");
+#if 0 /* This works if we just invoke 'cpp', but it doesn't if the system doesn't \
+         have a 'cpp' command and we need to fallback to 'gcc', because gcc \
+         doesn't take another file name parm in the same syntax as cpp. */
 	strcat(line, tmp_file);
 	strcat(line, "_");
+#else /* So instead we'll just grab the stdout output, which works fine with both */
+	strcat(line, "> ");
+	strcat(line, tmp_file);
+	strcat(line, "_");
+#endif
 
 	if (system(line) == -1) {
 		printf("Error: Couldn't execute C preprocessor.\n");
