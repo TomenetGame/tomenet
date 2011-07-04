@@ -1039,7 +1039,7 @@ void do_cmd_check_players(int Ind, int line)
 		outdated = !is_newer_than(&q_ptr->version, VERSION_MAJOR_OUTDATED, VERSION_MINOR_OUTDATED, VERSION_PATCH_OUTDATED, VERSION_EXTRA_OUTDATED, VERSION_BRANCH_OUTDATED, VERSION_BUILD_OUTDATED);
 		latest = is_newer_than(&q_ptr->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, 0, 0);
 
-		byte attr = 'w';
+		byte attr = 'U';
 
 		/* Only print connected players */
 		if (q_ptr->conn == NOT_CONNECTED)
