@@ -1066,7 +1066,8 @@ void bell(void)
  */
 #ifndef USE_SOUND_2010
 void sound(int Ind, int val) {
-	Send_sound(Ind, val);
+//	Send_sound(Ind, val);
+	Send_sound(Ind, val, 0, 0, 100, 0);
 }
 #else
 /* 'type' is used client-side, for efficiency options concerning near-simultaneous sounds
