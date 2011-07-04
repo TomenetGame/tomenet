@@ -128,6 +128,7 @@ extern byte item_tester_tval;
 extern bool (*item_tester_hook)(object_type *o_ptr);
 
 extern int special_line_type;
+extern int special_page_size;
 
 extern bool inkey_base;
 extern bool inkey_scan;

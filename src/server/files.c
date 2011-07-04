@@ -535,54 +535,46 @@ void display_player(int Ind)
  *
  * XXX XXX XXX Consider using a temporary file.
  *
+ * Added 'odd_line' flag: Usually FALSE -> 20 lines available per 'page'.
+ *                        If TRUE -> 21 lines available! Added this for
+ *                        @-screen w/ COMPACT_PLAYERLIST - C. Blue
  */
-static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
+static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color, bool odd_line)
 {
-	int             i, k = 0;
-
+	int lines_per_page = 20;
+	int i, k = 0;
 	/* Number of "real" lines passed by */
-	int             next = 0;
-
+	int next = 0;
 	/* Number of "real" lines in the file */
-	int             size = 0;
-
+	int size = 0;
 	/* Backup value for "line" */
-	int             back = 0;
-
+	int back = 0;
 	/* This screen has sub-screens */
-	bool    menu = FALSE;
-
+	bool menu = FALSE;
 	/* Current help file */
-	FILE    *fff = NULL;
-
+	FILE *fff = NULL;
 	/* Find this string (if any) */
-	cptr    find = NULL;
-
+	cptr find = NULL;
 	/* Hold a string to find */
-	char    finder[128];
-
+	char finder[128];
 	/* Hold a string to show */
-	char    shower[128];
-
+	char shower[128];
 	/* Describe this thing */
-	char    caption[128];
-
+	char caption[128];
 	/* Path buffer */
-	char    path[MAX_PATH_LENGTH];
-
+	char path[MAX_PATH_LENGTH];
 	/* General buffer */
-	char    buf[1024];
-
+	char buf[1024];
 	/* Sub-menu information */
-	char    hook[10][32];
+	char hook[10][32];
 
+	/* 21-lines-per-page feature requires client 4.4.7.1 aka 4.4.7a */
+	if (is_newer_than(&Players[Ind]->version, 4, 4, 7, 0, 0, 0) && odd_line) lines_per_page = 21;
 
 	/* Wipe finder */
 	strcpy(finder, "");
-
 	/* Wipe shower */
 	strcpy(shower, "");
-
 	/* Wipe caption */
 	strcpy(caption, "");
 
@@ -591,34 +583,27 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 
 
 	/* Hack XXX XXX XXX */
-	if (what)
-	{
+	if (what) {
 		/* Caption */
 		strcpy(caption, what);
-
 		/* Access the "file" */
 		strcpy(path, name);
-
 		/* Open */
 		fff = my_fopen(path, "rb");
 	}
 
 	/* Look in "help" */
-	if (!fff)
-	{
+	if (!fff) {
 		/* Caption */
 		snprintf(caption, sizeof(caption), "Help file '%s'", name);
-
 		/* Build the filename */
 		path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, name);
-
 		/* Open the file */
 		fff = my_fopen(path, "rb");
 	}
 
 	/* Oops */
-	if (!fff)
-	{
+	if (!fff) {
 		/* Message */
 		msg_format(Ind, "Cannot open '%s'.", name);
 		msg_print(Ind, NULL);
@@ -629,14 +614,12 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 
 
 	/* Pre-Parse the file */
-	while (TRUE)
-	{
+	while (TRUE) {
 		/* Read a line or stop */
 		if (my_fgets(fff, buf, 1024, FALSE)) break;
 
 		/* XXX Parse "menu" items */
-		if (prefix(buf, "***** "))
-		{
+		if (prefix(buf, "***** ")) {
 			char b1 = '[', b2 = ']';
 
 			/* Notice "menu" requests */
@@ -672,8 +655,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 
 
 	/* Re-open the file if needed */
-	if (next > line)
-	{
+	if (next > line) {
 		/* Close it */
 		my_fclose(fff);
 
@@ -688,16 +670,14 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 	}
 
 	/* Skip lines if needed */
-	for (; next < line; next++)
-	{
+	for (; next < line; next++) {
 		/* Skip a line */
 		if (my_fgets(fff, buf, 1024, FALSE)) break;
 	}
 
 
 	/* Dump the next 20 lines of the file */
-	for (i = 0; i < 20; )
-	{
+	for (i = 0; i < lines_per_page; ) {
 		byte attr = TERM_WHITE;
 
 		/* Hack -- track the "first" line */
@@ -739,8 +719,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 	}
 
 	/* Hack -- failed search */
-	if (find)
-	{
+	if (find) {
 		bell();
 		line = back;
 		find = NULL;
@@ -770,7 +749,7 @@ void do_cmd_help(int Ind, int line)
 	cptr name = "tomenet.hlp";
 
 	/* Peruse the main help file */
-	(void)do_cmd_help_aux(Ind, name, NULL, line, FALSE);
+	(void)do_cmd_help_aux(Ind, name, NULL, line, FALSE, FALSE);
 }
 
 
@@ -783,10 +762,10 @@ void do_cmd_help(int Ind, int line)
  * XXX XXX XXX Use this function for commands such as the
  * "examine object" command.
  */
-errr show_file(int Ind, cptr name, cptr what, int line, int color)
+errr show_file(int Ind, cptr name, cptr what, int line, int color, bool odd_line)
 {
 	/* Peruse the requested file */
-	(void)do_cmd_help_aux(Ind, name, what, line, color);
+	(void)do_cmd_help_aux(Ind, name, what, line, color, odd_line);
 
 	/* Success */
 	return (0);
@@ -1867,7 +1846,7 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "High Scores", line, 0);
+	show_file(Ind, file_name, "High Scores", line, 0, FALSE);
 
 	/* Remove the file */
 	fd_kill(file_name);

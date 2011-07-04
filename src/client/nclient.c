@@ -2955,6 +2955,9 @@ int Receive_special_line(void)
 	/* Maximum */
 	max_line = max;
 
+	/* Recognize 'odd_line' type pages, aka 21 lines instead of just 20 - C. Blue */
+	if (line == 20) special_page_size = 21;
+
 	/* Cause inkey() to break, if inkey_max_line flag was set */	
 	inkey_max_line = FALSE;
 

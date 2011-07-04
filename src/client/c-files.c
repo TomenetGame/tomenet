@@ -1126,6 +1126,7 @@ void peruse_file(void)
 
 	/* Initialize */
 	cur_line = 0;
+	special_page_size = 20; /* assume 'non-odd_line' aka normal page size (vs 21) */
 
 	/* Save the old screen */
 	Term_save();
@@ -1134,8 +1135,7 @@ void peruse_file(void)
 	Term_clear();
 
 	/* Show the stuff */
-	while (TRUE)
-	{
+	while (TRUE) {
 		/* Clear the screen */
 		/* hack: no need for full tearm clearing if we only updated 'max_line'.
 		   purpose: avoid the extra flickering when 'max_line' arrives over the network. */
@@ -1153,12 +1153,12 @@ void peruse_file(void)
 
 		/* Prompt */
 		/* indicate EOF by different status line colour */
-		if (cur_line + 20 >= max_line)
+		if (cur_line + special_page_size >= max_line)
 			c_prt(TERM_ORANGE, format("[Press Return, Space, -, b, or ESC to exit.] (%d-%d/%d)",
-			    cur_line + 1, cur_line + 20, max_line), 23, 0);
+			    cur_line + 1, cur_line + special_page_size, max_line), 23, 0);
 		else
 			prt(format("[Press Return, Space, -, b, or ESC to exit.] (%d-%d/%d)",
-			    cur_line + 1, cur_line + 20, max_line), 23, 0);
+			    cur_line + 1, cur_line + special_page_size, max_line), 23, 0);
 		/* Get a keypress -
 		   hack: update max_line to its real value as soon as possible */
 		if (!max_line) inkey_max_line = TRUE;
@@ -1192,10 +1192,10 @@ void peruse_file(void)
 		/* Hack -- Allow backing up ala 'less' */
 		if (k == 'b' || k == 'p' || k == KTRL('U'))
 		{
-			cur_line -= 20;
+			cur_line -= special_page_size;
 #if 1 /* take a break at beginning of list before wrapping around */
 			if (cur_line < 0 &&
-			    cur_line > -20)
+			    cur_line > -special_page_size)
 				cur_line = 0;
 #endif
 		}
@@ -1215,11 +1215,11 @@ void peruse_file(void)
 		/* Advance one page */
 		if (k == ' ' || k == KTRL('D'))
 		{
-			cur_line += 20;
+			cur_line += special_page_size;
 #if 1 /* take a break at end of list before wrapping around */
-			if (cur_line > max_line - 20 &&
+			if (cur_line > max_line - special_page_size &&
 			    cur_line < max_line)
-				cur_line = max_line - 20;
+				cur_line = max_line - special_page_size;
 #endif
 		}
 
@@ -1232,7 +1232,7 @@ void peruse_file(void)
 		/* Hack -- go to the bottom (it's vi, u know ;) */
 		if (k == 'G')
 		{
-			cur_line = max_line - 20;
+			cur_line = max_line - special_page_size;
 		}
 
 		if (k == KTRL('T'))
@@ -1246,14 +1246,14 @@ void peruse_file(void)
 
 		/* Check maximum line */
 #if 1 /* don't allow 'empty lines' at end of list but wrap around immediately */
-		if (cur_line > max_line - 20)
+		if (cur_line > max_line - special_page_size)
 #else
 		if (cur_line >= max_line)
 #endif
 			cur_line = 0;
 		/* ..and wrap around backwards too */
 		else if (cur_line < 0) {
-			cur_line = max_line - 20;
+			cur_line = max_line - special_page_size;
 			if (cur_line < 0) cur_line = 0;
 		}
 	}

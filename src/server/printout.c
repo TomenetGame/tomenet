@@ -147,7 +147,7 @@ extern bool do_cmd_view_rfe(int Ind, char *str, int line)
 	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, str);
 
 	/* Display the file contents */
-	show_file(Ind, path, str, line, FALSE);
+	show_file(Ind, path, str, line, FALSE, FALSE);
 	return(TRUE);
 }
 #endif	// 0

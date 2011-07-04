@@ -223,7 +223,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "Artifacts Seen", line, 0);
+	show_file(Ind, file_name, "Artifacts Seen", line, 0, FALSE);
 
 	/* Remove the file */
 	fd_kill(file_name);
@@ -423,7 +423,7 @@ void do_cmd_check_uniques(int Ind, int line)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "Known Uniques", line, 0);
+	show_file(Ind, file_name, "Known Uniques", line, 0, FALSE);
 
 	/* Remove the file */
 	fd_kill(file_name);
@@ -1141,10 +1141,10 @@ void do_cmd_check_players(int Ind, int line)
 #if 0
 			if (admin) fprintf(fff, "[%d,%d] %s", q_ptr->panel_row, q_ptr->panel_col, wpos_format(Ind, &q_ptr->wpos)); else
 #endif
-			fprintf(fff, "%s", wpos_format(-Ind, &q_ptr->wpos));
+			fprintf(fff, "%s %d,%d", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
 
 			/* Print questing flag */
-			if (q_ptr->quest_id) fprintf(fff, " \377U(Q)\377U");
+			if (q_ptr->quest_id) fprintf(fff, " Q");
 		}
 
 //		fprintf(fff, ", %s@%s", q_ptr->accountname, q_ptr->hostname);
@@ -1170,14 +1170,25 @@ void do_cmd_check_players(int Ind, int line)
 #endif
 
 	/* add blank lines for more aesthetic browsing */
+#ifndef COMPACT_PLAYERLIST
 	lines = ((20 - (lines % 20)) % 20);
+#else
+	if (is_newer_than(&p_ptr->version, 4, 4, 7, 0, 0, 0))
+		lines = ((21 - (lines % 21)) % 21);
+	else
+		lines = ((20 - (lines % 20)) % 20);
+#endif
 	for (k = 1; k <= lines; k++) fprintf(fff, "\n");
 
 	/* Close the file */
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "Player list", line, 0);
+#ifndef COMPACT_PLAYERLIST
+	show_file(Ind, file_name, "Player list", line, 0, FALSE);
+#else
+	show_file(Ind, file_name, "Player list", line, 0, TRUE);
+#endif
 
 	/* Remove the file */
 	fd_kill(file_name);
@@ -1348,7 +1359,11 @@ void do_admin_cmd_check_players(int Ind, int line)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "Player list", line, 0);
+#ifndef COMPACT_PLAYERLIST
+	show_file(Ind, file_name, "Player list", line, 0, FALSE);
+#else
+	show_file(Ind, file_name, "Player list", line, 0, TRUE);
+#endif
 
 	/* Remove the file */
 	fd_kill(file_name);
@@ -1487,7 +1502,7 @@ void do_cmd_check_player_equip(int Ind, int line)
        my_fclose(fff);
 
        /* Display the file contents */
-       show_file(Ind, file_name, "Someone's equipments", line, 0);
+       show_file(Ind, file_name, "Someone's equipments", line, 0, FALSE);
 
        /* Remove the file */
        fd_kill(file_name);
@@ -2629,8 +2644,8 @@ void do_cmd_check_other(int Ind, int line)
 	if (!p_ptr->special_file_type) return;
 
 	/* Display the file contents */
-	show_file(Ind, p_ptr->cur_file, "Extra Info", line, 0);
-//	show_file(Ind, p_ptr->cur_file, "Extra Info", line, color);
+	show_file(Ind, p_ptr->cur_file, "Extra Info", line, 0, FALSE);
+//	show_file(Ind, p_ptr->cur_file, "Extra Info", line, color, FALSE);
 
 #if 0
 	/* Remove the file */
@@ -2678,7 +2693,7 @@ void do_cmd_check_other(int Ind, int line)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "Extra Info", line, 0);
+	show_file(Ind, file_name, "Extra Info", line, 0, FALSE);
 
 	/* Remove the file */
 	fd_kill(file_name);

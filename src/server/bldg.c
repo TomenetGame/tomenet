@@ -60,7 +60,7 @@ static bool is_state_aux(int Ind, store_type *s_ptr, int state)
 static void race_legends(int Ind) {
 	char path[MAX_PATH_LENGTH];
 //	cptr name = "legends.log";
-//	(void)do_cmd_help_aux(Ind, name, NULL, line, FALSE);
+//	(void)do_cmd_help_aux(Ind, name, NULL, line, FALSE, FALSE);
 	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends.log");
 	do_cmd_check_other_prepare(Ind, path);
 }
@@ -271,7 +271,7 @@ static void arena_comm(int cmd)
 			screen_save();
 
 			/* Peruse the arena help file */
-			(void)show_file("arena.txt", NULL, 0, 0);
+			(void)show_file("arena.txt", NULL, 0, 0, FALSE);
 
 			/* Load screen */
 			screen_load();
@@ -413,7 +413,7 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 
 	if (cmd == BACT_GAMBLE_RULES) {
 		/* Peruse the gambling help file */
-		//(void)show_file(Ind, "gambling.txt", NULL, 0, 0);
+		//(void)show_file(Ind, "gambling.txt", NULL, 0, 0, FALSE);
 
 		/* Get the filename */
 		char    path[MAX_PATH_LENGTH];
@@ -921,7 +921,7 @@ static void town_history(void)
 	screen_save();
 
 	/* Peruse the building help file */
-	(void)show_file("bldg.txt", NULL, 0, 0);
+	(void)show_file("bldg.txt", NULL, 0, 0, FALSE);
 
 	/* Load screen */
 	screen_load();
