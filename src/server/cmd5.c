@@ -840,7 +840,7 @@ void do_mimic_power_aux(int Ind, int dir)
       break;
 //#define RF4_BR_POIS			0x00001000	/* Breathe Poison */
     case 12:
-    sprintf(p_ptr->attacker, " breathes poison for");
+    sprintf(p_ptr->attacker, " breathes gas for");
       fire_ball(Ind, GF_POIS, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), rad, p_ptr->attacker);
       break;
 //#define RF4_BR_NETH			0x00002000	/* Breathe Nether */
