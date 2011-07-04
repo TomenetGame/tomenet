@@ -964,7 +964,8 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, char attr,
 	if (text_pk || text_silent || text_afk || text_ignoring_chat || text_allow_dm_chat) fprintf(fff, ")");
 
 	/* Line break here, it's getting too long with all those mods -C. Blue */
-	fprintf(fff, "\n  \377");
+	fprintf(fff, "\n   \377");
+
 	if (q_ptr->fruit_bat == 1)
 		strcpy(info_chars, format("\377%cb", color_attr_to_char(q_ptr->cp_ptr->color)));
 	else
@@ -1130,7 +1131,7 @@ void do_cmd_check_players(int Ind, int line)
 		/* Print a message */
 		do_write_others_attributes(fff, q_ptr, attr, is_admin(p_ptr));
 
-		fprintf(fff, "\n  %s", q_ptr->inval ? (!outdated ? (!latest && is_admin(p_ptr) ? "\377yI\377sL\377U" : "\377yI \377U") : "\377yI\377DO\377U") :
+		fprintf(fff, "\n   %s", q_ptr->inval ? (!outdated ? (!latest && is_admin(p_ptr) ? "\377yI\377sL\377U" : "\377yI \377U") : "\377yI\377DO\377U") :
 		    (outdated ? "\377DO \377U" : (!latest && is_admin(p_ptr) ? "\377sL \377U" :  "\377U")));
 
 		/* Print location if both players are PvP-Mode */
