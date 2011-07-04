@@ -5328,7 +5328,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if ((r_ptr->flags9 & RF9_RES_ELEC) || (r_ptr->flags3 & RF3_IM_ELEC)) {
 					dam *= 4;
 					dam /= 5;
-				} else if (r_ptr->flags3 & RF3_SUSCEP_ELEC) dam = (dam * 4) / 3;
+				} else if (r_ptr->flags9 & RF9_SUSCEP_ELEC) dam = (dam * 4) / 3;
 			}
 
 			break;
