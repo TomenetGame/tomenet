@@ -5099,6 +5099,11 @@ If the armour becomes too heavy to perform those, a message will appear:
 This 'rogueish weight limit' (the skills are mostly used by rogues) is:
 20.0 + (Combat skill * 6 / 50) lbs, ie max 26.0 lbs.
 
+IMPORTANT: If you get the above flexibility warning message, that means your
+           secondary weapon is NOT APPLIED AT ALL!
+           So you won't receive any boni/resistances/whatever from it, it's
+           basically as if you don't have it equipped at all.
+
 
 Glove encumberment (concerning magic)
 -------------------------------------

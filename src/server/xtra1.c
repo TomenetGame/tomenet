@@ -3562,6 +3562,10 @@ void calc_boni(int Ind)
 		/* Not-burning light source does nothing, good or bad */
 		if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout < 1)) continue;
 
+		/* Anti-Cheeze (DWing in MH mode on heavy armoured warriors):
+		   Dual-wielding won't apply the second weapon if encumbered */
+		if (i == INVEN_ARM && o_ptr->tval != TV_SHIELD && rogue_heavy_armor(p_ptr)) continue;
+
 		/* MEGA ugly hack -- set spacetime distortion resistance */
 		if (o_ptr->name1 == ART_ANCHOR) {
 			p_ptr->resist_continuum = TRUE;
