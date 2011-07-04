@@ -895,8 +895,9 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, char attr)
 			(q_ptr->male ? "Emperor" : "Empress") :
 			(q_ptr->male ? "King" : "Queen"));
 	}
+	else fprintf(fff, "\377%c", attr);
 
-	fprintf(fff, "\377%c%s, L%d ", attr, q_ptr->name, q_ptr->lev);
+	fprintf(fff, "%s,\377%c L%d ", q_ptr->name, attr, q_ptr->lev);
 
  #ifdef ENABLE_DIVINE
 	if (q_ptr->prace == RACE_DIVINE && q_ptr->ptrait) {
