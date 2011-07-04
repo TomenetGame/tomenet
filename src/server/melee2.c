@@ -1332,6 +1332,7 @@ if (season_halloween) {
 }
 #endif	// 0
 
+/* Check if player intercept's a monster's attempt to do something */
 //bool monst_check_grab(int Ind, int m_idx, cptr desc)
 bool monst_check_grab(int m_idx, int mod, cptr desc)
 {
@@ -1346,7 +1347,11 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 	int grabchance = 0;
 	int rlev = r_ptr->level;
 
-	if (!(zcave=getcave(wpos))) return(FALSE);
+	/* hack: if we dont auto-retaliate vs a monster than we dont intercept either */
+	if (r_info->flags8 & RF8_NO_AUTORET) return(FALSE);
+
+	/* paranoia? */
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	for (i = 1; i <= NumPlayers; i++) {
 		player_type *q_ptr = Players[i];
