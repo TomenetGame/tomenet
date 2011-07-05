@@ -918,12 +918,13 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, char attr,
 	}
 
 	fprintf(fff, "*%s\377U", info_chars);
-	fprintf(fff, " %s@%s", q_ptr->accountname, q_ptr->hostname);
+	fprintf(fff, " (%s@%s)", q_ptr->accountname, q_ptr->hostname);
 
 	if (q_ptr->guild) {
-		fprintf(fff, " \377y[\377U%s\377y]\377U", guilds[q_ptr->guild].name);
+		fprintf(fff, ", \377y[\377U%s\377y]\377U", guilds[q_ptr->guild].name);
 	}
 	if (q_ptr->party) {
+		if (!q_ptr->guild) fprintf(fff, ", Party:");
 		fprintf(fff, " '%s%s\377U'",
 		(parties[q_ptr->party].mode == PA_IRONTEAM) ? "\377s" : "",
 		parties[q_ptr->party].name);
