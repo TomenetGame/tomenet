@@ -914,7 +914,7 @@ extern int monster_gain_exp(int m_idx, u32b exp, bool silent);
 #ifdef MONSTER_INVENTORY
 extern void monster_drop_carried_objects(monster_type *m_ptr);
 #endif	/* MONSTER_INVENTORY */
-extern bool monster_can_cross_terrain(byte feat, monster_race *r_ptr);
+extern bool monster_can_cross_terrain(byte feat, monster_race *r_ptr, bool spawn);
 
 extern void monster_carry(monster_type *m_ptr, int m_idx, object_type *q_ptr);
 extern void player_desc(int Ind, char *desc, int Ind2, int mode);

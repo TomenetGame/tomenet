@@ -4112,7 +4112,7 @@ int mon_will_run(int Ind, int m_idx)
 			return(TRUE);
 	}
  #else	// 0
-	if (!monster_can_cross_terrain(zcave[m_ptr->fy][m_ptr->fx].feat, r_ptr))
+	if (!monster_can_cross_terrain(zcave[m_ptr->fy][m_ptr->fx].feat, r_ptr, FALSE))
 		return (TRUE);
  #endif	// 0
 
@@ -4623,7 +4623,7 @@ static bool find_terrain(int m_idx, int *yp, int *xp)
 		if (!negate && zcave[y][x].feat != feat) continue;
 		if (negate && zcave[y][x].feat == feat) continue;
 #endif	// 0
-		if (!monster_can_cross_terrain(zcave[y][x].feat, r_ptr)) continue;
+		if (!monster_can_cross_terrain(zcave[y][x].feat, r_ptr, FALSE)) continue;
 
 #ifdef MONSTER_FLOW
 		/* Check for "availability" (if monsters can flow) */
@@ -6739,7 +6739,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 	/* All the monsters */
 	/* You cannot breathe? */
 	//if (!monster_is_comfortable(r_ptr, c_ptr))
-	if (!monster_can_cross_terrain(c_ptr->feat, r_ptr))
+	if (!monster_can_cross_terrain(c_ptr->feat, r_ptr, FALSE))
 		m_ptr->ai_state |= AI_STATE_TERRAIN;
 
 
@@ -7595,11 +7595,11 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 		 * to allow monsters to attack an enemy,
 		 * even if it can't enter the terrain.
 		 */
-		if (do_move && !monster_can_cross_terrain(c_ptr->feat, r_ptr)
-//				&& monster_can_cross_terrain(zcave[oy][ox].feat, r_ptr)
+		if (do_move && !monster_can_cross_terrain(c_ptr->feat, r_ptr, FALSE)
+//				&& monster_can_cross_terrain(zcave[oy][ox].feat, r_ptr, FALSE)
 				)
 		{
-			if (monster_can_cross_terrain(zcave[oy][ox].feat, r_ptr) ||
+			if (monster_can_cross_terrain(zcave[oy][ox].feat, r_ptr, FALSE) ||
 					!magik(MONSTER_CROSS_IMPOSSIBLE_CHANCE))
 			{
 				/* Assume no move allowed */
