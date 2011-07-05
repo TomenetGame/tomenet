@@ -5414,6 +5414,7 @@ Time            Time is pure temporary distortion. There are only rumours
                 Resistance will cut damage to 6/7..6/12.
                 Breath damage is monster HP/3. Time breath caps at 150.
 Meteor          This is an irresistable attack of pure impact.
+                Sound resistance will prevent stun effect.
 Disintegration  This is an irresistable attack of raw destruction.
                 Damage (breath only) is monster HP/3, capping at 300.
 
