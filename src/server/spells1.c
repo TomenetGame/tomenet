@@ -5680,6 +5680,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		case GF_METEOR:
 		{
 			if (seen) obvious = TRUE;
+			do_stun = randint(15) / div;
 			break;
 		}
 
@@ -8627,6 +8628,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			take_hit(Ind, dam, killer, -who);
+			if (!p_ptr->resist_sound) (void)set_stun(Ind, p_ptr->stun + 25 + randint(15));
 			break;
 
 		/* Ice -- cold plus stun plus cuts */
