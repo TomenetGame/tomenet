@@ -4602,7 +4602,7 @@ int Send_depth(int ind, struct worldpos *wpos)
 {
 	connection_t *connp = Conn[Players[ind]->conn], *connp2;
 	player_type *p_ptr = Players[ind], *p_ptr2 = NULL;
-	bool ville = istown(wpos); /* -> print name (TRUE) or a depth value (FALSE)? */
+	bool ville = istown(wpos) && !isdungeontown(wpos); /* -> print name (TRUE) or a depth value (FALSE)? */
 	cptr desc = "";
 	int colour, colour2, colour_sector = TERM_L_GREEN, colour2_sector = TERM_L_GREEN, Ind2;
 	cave_type **zcave;

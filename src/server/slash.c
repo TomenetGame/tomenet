@@ -2535,6 +2535,10 @@ void do_slash_cmd(int Ind, char *message)
 
 			/* prevent exploit */
 			if (!istown(&p_ptr->wpos)) {
+				if (isdungeontown(&p_ptr->wpos)) {
+					msg_print(Ind, "\377yYou cannot enter the arena from within a dungeon!");
+					if (!is_admin(p_ptr)) return;
+				}
 				msg_print(Ind, "\377yYou need to be in town to enter the arena!");
 				if (!is_admin(p_ptr)) return;
 			}
