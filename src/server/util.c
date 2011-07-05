@@ -3754,7 +3754,7 @@ char *wpos_format(int Ind, worldpos *wpos)
 {
 	int i = Ind, d = 0, n;
 	cptr desc = "";
-	bool ville = istown(wpos);
+	bool ville = istown(wpos) && !isdungeontown(wpos);
 	dungeon_type *d_ptr;
 	/* Hack for Valinor originally */
 	if (i < 0) i = -i;
@@ -3775,17 +3775,17 @@ char *wpos_format(int Ind, worldpos *wpos)
 			return (format("%dft of (%d,%d)", wpos->wz * 50, wpos->wx, wpos->wy));
 		} else
 			if (!ville)
-				return (format("%dft in %s", wpos->wz * 50, d_info[d].name + d_name));
+				return (format("%dft %s", wpos->wz * 50, d_info[d].name + d_name));
 			else
-				return (format("%dft in %s", wpos->wz * 50, desc));
+				return (format("%s", desc));
 	} else {
 		if (Ind >= 0 || (!d && !ville)) {
-			return (format("Lev %d of (%d,%d)", wpos->wz, wpos->wx, wpos->wy));
+			return (format("Lv %d of (%d,%d)", wpos->wz, wpos->wx, wpos->wy));
 		} else
 			if (!ville)
-				return (format("Lev %d in %s", wpos->wz, d_info[d].name + d_name));
+				return (format("Lv %d %s", wpos->wz, d_info[d].name + d_name));
 			else
-				return (format("Lev %d of %s", wpos->wz, desc));
+				return (format("%s", desc));
 	}
 }
 
