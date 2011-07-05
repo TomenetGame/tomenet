@@ -4260,7 +4260,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				note_kill = (plural ? " burn up!" : " burns up!");
 				if (f3 & TR3_IGNORE_FIRE) ignore = TRUE;
 			}
-			if (hates_cold(o_ptr))
+			if (hates_impact(o_ptr))
 			{
 				ignore = FALSE;
 				do_kill = TRUE;
@@ -4275,12 +4275,24 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Hack -- break potions and such */
 		case GF_ICE:
-		case GF_SHARDS:
 		case GF_ICEPOISON:
+		{
+			if (hates_cold(o_ptr) || hates_impact(o_ptr))
+			{
+				note_kill = (plural ? " shatter!" : " shatters!");
+				do_kill = TRUE;
+#ifdef USE_SOUND_2010
+				if (!quiet) sound(Ind, "shatter_potion", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+			}
+			break;
+		}
+
+		case GF_SHARDS:
 		case GF_FORCE:
 		case GF_SOUND:
 		{
-			if (hates_cold(o_ptr))
+			if (hates_impact(o_ptr))
 			{
 				note_kill = (plural ? " shatter!" : " shatters!");
 				do_kill = TRUE;
