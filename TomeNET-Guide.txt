@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 4. July 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 5. July 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -423,6 +423,8 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
         disarming traps. Also stops fire-till-kill.
 < or >  go upstairs/downstairs. Press '>' to use a void gate (violet '+').
         Void jump gates teleport you to their counterpart and vice versa.
+        If you take staircases up/down, you'll receive the stair-GoI buff,
+        see (0.4) for details on that.
 {       inscribe an item.
 }       remove inscription from an item.
 /       in general, use an item (combines q,r, etc..).
@@ -986,6 +988,8 @@ EA          Extra Attacks. Rings, gloves or weapons which increase your number
             of blows per round with melee weapons. Quite expensive.
 FA          Free Action (immunity to paralysis).
 FF          Feather falling (Levitation).
+GoI         Globe of invulnerability. This only exists as 'Stair-GoI', see
+            further below.
 Gorth       Room in the dungeon, divided into 4 chambers, similar to a pit.
             Also see 'Room', 'Pit' and (4.6).
 GV          Greater Vault. (See 4.6)
@@ -1107,6 +1111,10 @@ Static      A level that is static will not change if you leave it but stay
             while depending on the dungeon level, see (3.11) for details about
             static-by-death levels.
 Static Art  See 'Art' at the top of this section.
+Stair-GoI   Stair-globe of invulnerability. This describes the magical
+            protection that any player who takes a staircase up or down will
+            receive a temporary buff of +100 AC and high chance to deflect any
+            projections (bolts/balls/breaths/curses..) that hit him.
 True Art    See 'Art' at the top of this section.
 Unique      A monster that is named and exists only once (although it can
             respawn for another player who hasn't defeated it yet, each player
@@ -3474,6 +3482,8 @@ the '>' key to enter. Same for entering towers, except their staircase goes
 upwards instead of downwards, and hence is a '<' symbol instead of '>'.
 In Bree, there is often a so-called Training Tower, which is represented by a
 dark green '<'. Enter it by pressing the '<' key.
+Whenever you take staircases up/down, you'll receive the stair-GoI buff, see
+(0.4) for details on that.
 The training tower allows you to 'die' without suffering major consequences
 (except for a slight loss in experience and gold), and is easier in general.
 An experience penalty might be applied for killing monsters in the tower
@@ -3612,7 +3622,8 @@ ranger or druid. Trees can also be burned up. Dead trees and bushes are '*' symb
 
 Staircases-
 '<' and '>' are staircases leading upwards or downwards into towers or
-dungeons. (Press the according key to walk the staircase.)
+dungeons. (Press the according key to walk the staircase. Whenever you take a
+staircase, you'll receive the stair-GoI buff, see (0.4) for details on that.)
 
 Doors-
 Light brown '+' are closed doors, ' are open or broken doors.
