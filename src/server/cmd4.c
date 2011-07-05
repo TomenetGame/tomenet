@@ -20,7 +20,7 @@
 #define ABUNDANT_TITLES
 
 /* use more compact @-list to get more information displayed?
-   Requires ABUNDANT_TITLES in do_write_others_attributes()! */
+   Requires ABUNDANT_TITLES! (in do_write_others_attributes()) */
 #define COMPACT_PLAYERLIST
 /* if COMPACT_PLAYERLIST is enabled, this will switch to an even denser layout,
    which however displays the hostnames to all players again, traditionally. */
@@ -661,19 +661,18 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, char attr,
 		: (q_ptr->male ? "Male " : "Female ")));
 		break;
 	}
-	
-	if (q_ptr->party) {
-	fprintf(fff, "%sLevel %d, Party: '%s%s\377U'",
-		q_ptr->fruit_bat == 1 ? "Batty " : "", /* only for true battys, not polymorphed ones */
-		q_ptr->lev,
-		(parties[q_ptr->party].mode == PA_IRONTEAM) ? "\377s" : "",
-		parties[q_ptr->party].name);
-	}
 
-	else
-	fprintf(fff, "%sLevel %d",
-		q_ptr->fruit_bat == 1 ? "Batty " : "", /* only for true battys, not polymorphed ones */
-		q_ptr->lev);
+	fprintf(fff, "Lv %d", q_ptr->lev);
+//		q_ptr->fruit_bat == 1 ? "Batty " : "", /* only for true battys, not polymorphed ones */
+
+	if (q_ptr->guild)
+		fprintf(fff, ", \377y[\377U%s\377y]\377U",
+		    guilds[q_ptr->guild].name);
+	if (q_ptr->party)
+		fprintf(fff, "%s '%s%s\377U'",
+		    q_ptr->guild ? "" : ", Party:",
+		    (parties[q_ptr->party].mode == PA_IRONTEAM) ? "\377s" : "",
+		    parties[q_ptr->party].name);
  #endif	// 0
 
 #else /* COMPACT_PLAYERLIST new way */
@@ -1003,32 +1002,28 @@ void do_cmd_check_players(int Ind, int line)
 		/* -AD- will this work? - Sure -C. Blue- */
 		fprintf(fff, "\n\377U");
 
-		if (is_admin(p_ptr)) fprintf(fff, "  (%d)", k);
+//		if (is_admin(p_ptr)) fprintf(fff, "  (%d)", k);
 
- #if 0 /* show local system username? */
-		fprintf(fff, " %s %s@%s", q_ptr->inval ? "(I)" : "   ", q_ptr->realname, q_ptr->hostname);
- #else /* show account name instead? */
-		fprintf(fff, " %s %s@%s", q_ptr->inval ? (!outdated ? (!latest && is_admin(p_ptr) ? "\377yI\377U+\377sL\377U" : "\377y(I)\377U") : "\377yI\377U+\377DO\377U") :
+		//show local system username? q_ptr->realname
+		fprintf(fff, " %s (%s@%s) ", q_ptr->inval ? (!outdated ? (!latest && is_admin(p_ptr) ? "\377yI\377U+\377sL\377U" : "\377y(I)\377U") : "\377yI\377U+\377DO\377U") :
 		    (outdated ? "\377D(O)\377U" : (!latest && is_admin(p_ptr) ? "\377s(L)\377U" :  "   ")), q_ptr->accountname, q_ptr->hostname);
- #endif
+
 		/* Print location if both players are PvP-Mode */
 		if (((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) && !admin) {
-			fprintf(fff, "  {[%d,%d] %s}", q_ptr->panel_row, q_ptr->panel_col, wpos_format(-Ind, &q_ptr->wpos));
+			fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
 		}
 		/* Print extra info if these people are in the same party */
 		/* Hack -- always show extra info to dungeon master */
 		else if ((p_ptr->party == q_ptr->party && p_ptr->party) || Ind == k || admin) {
-			/* maybe too kind? */
-//			fprintf(fff, "   {[%d,%d] of %dft(%d,%d)}", q_ptr->panel_row, q_ptr->panel_col, q_ptr->wpos.wz*50, q_ptr->wpos.wx, q_ptr->wpos.wy);
-			if (admin) fprintf(fff, "  {[%d,%d] %s}", q_ptr->panel_row, q_ptr->panel_col, wpos_format(Ind, &q_ptr->wpos));
-			else fprintf(fff, "  {[%d,%d] %s}", q_ptr->panel_row, q_ptr->panel_col, wpos_format(-Ind, &q_ptr->wpos));
+			if (admin) fprintf(fff, "%s", wpos_format(Ind, &q_ptr->wpos));
+			else fprintf(fff, "%s", wpos_format(-Ind, &q_ptr->wpos));
 
+			fprintf(fff, " [%d,%d]", q_ptr->panel_row, q_ptr->panel_col);
 		}
-		if ((p_ptr->guild == q_ptr->guild && q_ptr->guild) || Ind == k || admin) {
-			if(q_ptr->guild)
-				fprintf(fff, " \377y[\377U%s\377y]\377U", guilds[q_ptr->guild].name);
-			fprintf(fff, " \377o%c\377U", (q_ptr->quest_id ? 'Q' : ' '));
-		}
+
+		/* Quest flag */
+		fprintf(fff, " %c", (q_ptr->quest_id ? 'Q' : ' '));
+
 		if ((!q_ptr->afk) || !strlen(q_ptr->afk_msg)) {
 			if (!q_ptr->info_msg[0])
 				fprintf(fff, "\n\n");
