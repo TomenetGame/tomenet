@@ -48,6 +48,11 @@
 #define IS_PLAYER(i)	(i > 0 && i <= NumPlayers)
 #define IS_MONSTER(i)	(i < 0)
 
+/* Take damage before applying polymorph effect?
+   Traditionally, polymorph would cancel damage instead. - C. Blue */
+#define DAMAGE_BEFORE_POLY
+
+
 
  /*
   * Potions "smash open" and cause an area effect when
@@ -7046,6 +7051,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		note = note_dies;
 	}
 
+#ifndef DAMAGE_BEFORE_POLY
 	/* Mega-Hack -- Handle "polymorph" -- monsters get a saving throw */
 	if (do_poly && (randint(90) > r_ptr->level)) {
 		/* Default -- assume no polymorph */
@@ -7091,6 +7097,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			r_ptr = race_inf(m_ptr);
 		}
 	}
+#endif
 
 	/* Handle "teleport" */
 	if (do_dist) {
@@ -7266,6 +7273,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				msg_format(Ind, "%^s%s by \377e%d \377wdamage.", m_name, note, dam);
 			else if (!quiet && note)
 				msg_format(Ind, "%^s%s by \377g%d \377wdamage.", m_name, note, dam);
+
+#ifdef DAMAGE_BEFORE_POLY
+			do_poly = FALSE;
+#endif
 		}
 
 		/* Damaged monster */
@@ -7294,6 +7305,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		if (!quiet && mon_take_hit(Ind, c_ptr->m_idx, dam, &fear, note_dies))
 		{
 			/* Dead monster */
+#ifdef DAMAGE_BEFORE_POLY
+			do_poly = FALSE;
+#endif
 		}
 
 		/* Damaged monster */
@@ -7329,8 +7343,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			}
 #if 0 /* see above */
 			/* Take note */
-			if (!quiet && (fear || do_fear) && (p_ptr->mon_vis[c_ptr->m_idx]))
-			{
+			if (!quiet && (fear || do_fear) && (p_ptr->mon_vis[c_ptr->m_idx])) {
 #ifdef USE_SOUND_2010
 #else
 				sound(Ind, SOUND_FLEE);
@@ -7416,6 +7429,43 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 	}
 
+#ifdef DAMAGE_BEFORE_POLY
+	/* Mega-Hack -- Handle "polymorph" -- monsters get a saving throw */
+	if (do_poly && (randint(90) > r_ptr->level)) {
+		/* Default -- assume no polymorph */
+		if (!do_sleep) note = " is unaffected";
+
+		/* Pick a "new" monster race */
+		i = poly_r_idx(m_ptr->r_idx);
+
+		/* Handle polymorh */
+		if (i != m_ptr->r_idx) {
+			int clone, clone_summoning;
+
+			/* Obvious */
+			if (seen) obvious = TRUE;
+
+			/* Monster polymorphs */
+			note = " changes";
+
+			/* Save clone status - mikaelh */
+			clone = m_list[c_ptr->m_idx].clone;
+			clone_summoning = m_list[c_ptr->m_idx].clone_summoning;
+
+			/* "Kill" the "old" monster */
+			delete_monster_idx(c_ptr->m_idx, TRUE);
+
+			/* Create a new monster (no groups) */
+			(void)place_monster_aux(wpos, y, x, i, FALSE, FALSE, clone, clone_summoning);
+
+			/* XXX XXX XXX Hack -- Assume success */
+			if (!quiet && c_ptr->m_idx == 0) {
+				msg_format(Ind, "%^s disappears!", m_name);
+				return (FALSE);
+			}
+		}
+	}
+#endif
 
 	/* Update the monster XXX XXX XXX */
 	update_mon(c_ptr->m_idx, FALSE);
