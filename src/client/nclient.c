@@ -4808,7 +4808,11 @@ void do_ping()
 		time_t ct = time(NULL);
 		struct tm* ctl = localtime(&ct);
 		if (ctl->tm_hour != time_stamp_hour) {
-			if (time_stamp_hour != -1) c_msg_format("\374\376\377y[%02d:00h]", ctl->tm_hour);
+			if (time_stamp_hour != -1) {
+				if (screen_icky && !party_mode && !shopping) Term_switch(0);
+				c_msg_format("\374\376\377y[%02d:00h]", ctl->tm_hour);
+				if (screen_icky && !party_mode && !shopping) Term_switch(0);
+			}
 			time_stamp_hour = ctl->tm_hour;
 		}
 	}
