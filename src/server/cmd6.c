@@ -2064,12 +2064,12 @@ static void do_lottery(int Ind, object_type *o_ptr)
 		s_printf("Lottery results: %s won the %d%s prize of %d Au.\n", p_ptr->name, k, p, i);
 
 		if (k < 4) {
-			if (k == 1) msg_broadcast_format(0, "\374\377y$$$ \377B%s seems to hit the big time! \377y$$$", p_ptr->name);
-			else msg_broadcast_format(0, "\374\377B%s seems to hit the big time!", p_ptr->name);
+			if (k == 1) msg_broadcast_format(0, "\374\377y$$$ \377%c%s seems to hit the big time! \377y$$$", COLOUR_CHAT, p_ptr->name);
+			else msg_broadcast_format(0, "\374\377%c%s seems to hit the big time!", COLOUR_CHAT, p_ptr->name);
 			set_confused(Ind, p_ptr->confused + rand_int(10) + 10);
 			set_image(Ind, p_ptr->image + rand_int(10) + 10);
 		}
-		msg_format(Ind, "\374\377BYou won the %d%s prize!", k, p);
+		msg_format(Ind, "\374\377%cYou won the %d%s prize!", COLOUR_CHAT, k, p);
 
 		gold = i;
 		

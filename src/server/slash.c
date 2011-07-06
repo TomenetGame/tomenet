@@ -137,10 +137,10 @@ void sc_shout(int Ind, void *string){
 
 	aggravate_monsters(Ind, 1);
 	if(string)
-		msg_format_near(Ind, "\377B%^s shouts:%s", p_ptr->name, (char*)string);
+		msg_format_near(Ind, "\377%c%^s shouts:%s", COLOUR_CHAT, p_ptr->name, (char*)string);
 	else
-		msg_format_near(Ind, "\377BYou hear %s shout!", p_ptr->name);
-	msg_format(Ind, "\377BYou shout %s", (char*)string);
+		msg_format_near(Ind, "\377%cYou hear %s shout!", COLOUR_CHAT, p_ptr->name);
+	msg_format(Ind, "\377%cYou shout %s", COLOUR_CHAT, (char*)string);
 }
 
 void sc_shutdown(int Ind, void *value){
@@ -379,8 +379,8 @@ void do_slash_cmd(int Ind, char *message)
 			prefix(message, "/cou"))
 	{
 		break_cloaking(Ind, 4);
-		msg_format_near(Ind, "\377B%^s coughs noisily.", p_ptr->name);
-		msg_format(Ind, "\377BYou cough noisily..");
+		msg_format_near(Ind, "\377%c%^s coughs noisily.", COLOUR_CHAT, p_ptr->name);
+		msg_format(Ind, "\377%cYou cough noisily..", COLOUR_CHAT);
 		wakeup_monsters_somewhat(Ind, 1);
 		return;
 	}
@@ -389,11 +389,11 @@ void do_slash_cmd(int Ind, char *message)
 	{
 		break_cloaking(Ind, 4);
 		if (colon) {
-			msg_format_near(Ind, "\377B%^s shouts:%s", p_ptr->name, colon);
-			msg_format(Ind, "\377BYou shout:%s", colon);
+			msg_format_near(Ind, "\377%c%^s shouts:%s", COLOUR_CHAT, p_ptr->name, colon);
+			msg_format(Ind, "\377%cYou shout:%s", COLOUR_CHAT, colon);
 		} else {
-			msg_format_near(Ind, "\377BYou hear %s shout!", p_ptr->name);
-			msg_print(Ind, "\377BYou shout!");
+			msg_format_near(Ind, "\377%cYou hear %s shout!", COLOUR_CHAT, p_ptr->name);
+			msg_format(Ind, "\377%cYou shout!", COLOUR_CHAT);
 		}
 		wakeup_monsters(Ind, 1);
 		return;
@@ -403,11 +403,11 @@ void do_slash_cmd(int Ind, char *message)
 	{
 		break_cloaking(Ind, 6);
 		if (colon) {
-			msg_format_near(Ind, "\377B%^s screams:%s", p_ptr->name, colon);
-			msg_format(Ind, "\377BYou scream:%s", colon);
+			msg_format_near(Ind, "\377%c%^s screams:%s", COLOUR_CHAT, p_ptr->name, colon);
+			msg_format(Ind, "\377%cYou scream:%s", COLOUR_CHAT, colon);
 		} else {
-			msg_format_near(Ind, "\377BYou hear %s scream!", p_ptr->name);
-			msg_print(Ind, "\377BYou scream!");
+			msg_format_near(Ind, "\377%cYou hear %s scream!", COLOUR_CHAT, p_ptr->name);
+			msg_format(Ind, "\377%cYou scream!", COLOUR_CHAT);
 		}
 		aggravate_monsters(Ind, 1);
 		return;
@@ -416,11 +416,11 @@ void do_slash_cmd(int Ind, char *message)
 	else if (prefix(message, "/say"))
 	{
 		if (colon) {
-			msg_format_near(Ind, "\377B%^s says:%s", p_ptr->name, colon);
-			msg_format(Ind, "\377BYou say:%s", colon);
+			msg_format_near(Ind, "\377%c%^s says:%s", COLOUR_CHAT, p_ptr->name, colon);
+			msg_format(Ind, "\377%cYou say:%s", COLOUR_CHAT, colon);
 		} else {
-			msg_format_near(Ind, "\377B%s clears %s throat.", p_ptr->name, p_ptr->male ? "his" : "her");
-			msg_print(Ind, "\377BYou clear your throat.");
+			msg_format_near(Ind, "\377%c%s clears %s throat.", COLOUR_CHAT, p_ptr->name, p_ptr->male ? "his" : "her");
+			msg_format(Ind, "\377%cYou clear your throat.", COLOUR_CHAT);
 		}
 		return;
 // :)		break_cloaking(Ind, 3);
@@ -428,8 +428,8 @@ void do_slash_cmd(int Ind, char *message)
 	else if (prefix(message, "/whisper"))
 	{
 		if (colon) {
-			msg_format_verynear(Ind, "\377B%^s whispers:%s", p_ptr->name, colon);
-			msg_format(Ind, "\377BYou whisper:%s", colon);
+			msg_format_verynear(Ind, "\377%c%^s whispers:%s", COLOUR_CHAT, p_ptr->name, colon);
+			msg_format(Ind, "\377%cYou whisper:%s", COLOUR_CHAT, colon);
 		} else {
 			msg_print(Ind, "What do you want to whisper?");
 		}
@@ -1784,16 +1784,16 @@ void do_slash_cmd(int Ind, char *message)
 			{
 			    rn += randint(6);
 			}
-			msg_format(Ind, "\374\377UYou throw %d dice and get a %d", k, rn);
-			msg_format_near(Ind, "\374\377U%s throws %d dice and gets a %d", p_ptr->name, k, rn);
+			msg_format(Ind, "\374\377%cYou throw %d dice and get a %d", COLOUR_GAMBLE, k, rn);
+			msg_format_near(Ind, "\374\377%c%s throws %d dice and gets a %d", COLOUR_GAMBLE, p_ptr->name, k, rn);
 			return;
 		}
 		else if (prefix(message, "/coin")) {
 			bool coin = (rand_int(2) == 0);
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-			msg_format(Ind, "\374\377UYou flip a coin and get %s.", coin ? "heads" : "tails");
-			msg_format_near(Ind, "\374\377U%s flips a coin and gets %d", p_ptr->name, coin ? "heads" : "tails");
+			msg_format(Ind, "\374\377%cYou flip a coin and get %s.", COLOUR_GAMBLE, coin ? "heads" : "tails");
+			msg_format_near(Ind, "\374\377%c%s flips a coin and gets %d", COLOUR_GAMBLE, p_ptr->name, coin ? "heads" : "tails");
 			return;
 		}
 #ifdef RPG_SERVER /* too dangerous on the pm server right now - mikaelh */
@@ -1875,20 +1875,20 @@ void do_slash_cmd(int Ind, char *message)
                         }
                         switch (flower) {
                                 case 1:
-                                        msg_format(Ind, "\377U%s was dealt the %s of Diamond", p_ptr->name, temp);
-                                        msg_format_near(Ind, "\377U%s was dealt the %s of Diamond", p_ptr->name, temp);
+                                        msg_format(Ind, "\377%c%s was dealt the %s of Diamond", COLOUR_GAMBLE, p_ptr->name, temp);
+                                        msg_format_near(Ind, "\377%c%s was dealt the %s of Diamond", COLOUR_GAMBLE, p_ptr->name, temp);
                                         break;
                                 case 2:
-                                        msg_format(Ind, "\377U%s was dealt the %s of Club", p_ptr->name, temp);
-                                        msg_format_near(Ind, "\377U%s was dealt the %s of Club", p_ptr->name, temp);
+                                        msg_format(Ind, "\377%c%s was dealt the %s of Club", COLOUR_GAMBLE, p_ptr->name, temp);
+                                        msg_format_near(Ind, "\377%c%s was dealt the %s of Club", COLOUR_GAMBLE, p_ptr->name, temp);
                                         break;
                                 case 3:
-                                        msg_format(Ind, "\377U%s was dealt the %s of Heart", p_ptr->name, temp);
-                                        msg_format_near(Ind, "\377U%s was dealt the %s of Heart", p_ptr->name, temp);
+                                        msg_format(Ind, "\377%c%s was dealt the %s of Heart", COLOUR_GAMBLE, p_ptr->name, temp);
+                                        msg_format_near(Ind, "\377%c%s was dealt the %s of Heart", COLOUR_GAMBLE, p_ptr->name, temp);
                                         break;
                                 case 4:
-                                        msg_format(Ind, "\377U%s was dealt the %s of Spade", p_ptr->name, temp);
-                                        msg_format_near(Ind, "\377U%s was dealt the %s of Spade", p_ptr->name, temp);
+                                        msg_format(Ind, "\377%c%s was dealt the %s of Spade", COLOUR_GAMBLE, p_ptr->name, temp);
+                                        msg_format_near(Ind, "\377%c%s was dealt the %s of Spade", COLOUR_GAMBLE, p_ptr->name, temp);
                                         break;
                                 default:
                                         break;
@@ -2529,7 +2529,7 @@ void do_slash_cmd(int Ind, char *message)
 				p_ptr->recall_pos.wz = 0;
 				p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 				recall_player(Ind, "");
-				msg_print(Ind, "\377uYou leave the arena again.");
+				msg_format(Ind, "\377%cYou leave the arena again.", COLOUR_DUNGEON);
 				return;
 			}
 
@@ -2903,7 +2903,7 @@ void do_slash_cmd(int Ind, char *message)
 #endif
 #if 0
 		else if (prefix(message, "/pray")) { /* hidden broadcast to all admins :) */
-			msg_admin("\377b[\377%c%s\377b]\377D%s", p_ptr->name, 'w', message3);
+			msg_admin("\377b[\377U%s\377b]\377D%s", p_ptr->name, 'w', message3);
 			return;
 		}
 #endif

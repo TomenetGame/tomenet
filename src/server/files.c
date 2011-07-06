@@ -30,6 +30,11 @@
  */
 /* #undef _POSIX_SAVED_IDS */
 
+/* Use first line of file as stationary title caption? If disabled,
+   'what' parm of do_cmd_help_aux() will be used instead (normal). - C. Blue */
+//#define HELP_AUX_GRABS_TITLE
+
+
 /*
  * Extract the first few "tokens" from a buffer
  *
@@ -567,9 +572,20 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color, 
 	char buf[1024];
 	/* Sub-menu information */
 	char hook[10][32];
+	/* Stationary title bar, derived from 1st line of the file or from 'what' parm. */
+	bool use_title = FALSE;
 
 	/* 21-lines-per-page feature requires client 4.4.7.1 aka 4.4.7a */
-	if (is_newer_than(&Players[Ind]->version, 4, 4, 7, 0, 0, 0) && odd_line) lines_per_page = 21;
+	if (is_newer_than(&Players[Ind]->version, 4, 4, 7, 0, 0, 0)) {
+		/* use first line in the file as stationary title */
+		use_title = TRUE;
+
+		if (odd_line) {
+			lines_per_page = 21;
+			/* hack: prepare client so it can choose a somewhat nicer page layout */
+			Send_special_line(Ind, 0, 21, 0, "");
+		}
+	}
 
 	/* Wipe finder */
 	strcpy(finder, "");
@@ -601,6 +617,19 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color, 
 		/* Open the file */
 		fff = my_fopen(path, "rb");
 	}
+
+#ifndef HELP_AUX_GRABS_TITLE
+	if (strlen(caption)) {
+		k = (72 - strlen(caption)) / 2;
+		strcpy(buf, "");
+		for (i = 0; i < k; i++) strcat(buf, " ");
+		strcat(buf, "\377W- [\377w");
+		strcat(buf, caption);
+		strcat(buf, "\377W] -");
+		Send_special_line(Ind, size, -1, TERM_WHITE, buf);
+		k = 0;
+	}
+#endif
 
 	/* Oops */
 	if (!fff) {
@@ -646,7 +675,9 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color, 
 
 	/* Save the number of "real" lines */
 	size = next;
-
+#ifdef HELP_AUX_GRABS_TITLE
+	if (use_title) size--;
+#endif
 
 
 	/* Display the file */
@@ -667,6 +698,13 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color, 
 
 		/* File has been restarted */
 		next = 0;
+
+#ifdef HELP_AUX_GRABS_TITLE
+		/* Use special 'title' line? -> Skip in regular use. */
+		if (use_title)
+			if (!my_fgets(fff, buf, 1024, FALSE))
+				Send_special_line(Ind, size, -1, TERM_WHITE, buf);
+#endif
 	}
 
 	/* Skip lines if needed */

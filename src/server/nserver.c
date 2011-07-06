@@ -1610,10 +1610,10 @@ static void Delete_player(int Ind)
 				if (i == Ind) continue;
 
 				/* Send a little message */
-				msg_format(i, "\374\377U%s%s has left the game.", title, p_ptr->name);
+				msg_format(i, "\374\377%c%s%s has left the game.", COLOUR_SERVER, title, p_ptr->name);
 			}
 #ifdef TOMENET_WORLDS
-			if (cfg.worldd_pleave) world_msg(format("\374\377U%s%s has left the game.", title, p_ptr->name));
+			if (cfg.worldd_pleave) world_msg(format("\374\377%c%s%s has left the game.", COLOUR_SERVER, title, p_ptr->name));
 #endif
 		} else {
 			cptr title = "";
@@ -1624,8 +1624,7 @@ static void Delete_player(int Ind)
 			world_player(p_ptr->id, p_ptr->name, FALSE, TRUE); /* last flag is 'quiet' mode -> no public msg */
 #endif
 #endif
-			for (i = 1; i < NumPlayers + 1; i++)
-			{
+			for (i = 1; i < NumPlayers + 1; i++) {
 				if (Players[i]->conn == NOT_CONNECTED)
 					continue;
 				if (!is_admin(Players[i]))
@@ -1635,7 +1634,7 @@ static void Delete_player(int Ind)
 				if (i == Ind) continue;
 
 				/* Send a little message */
-				msg_format(i, "\374\377U%s%s has left the game.", title, p_ptr->name);
+				msg_format(i, "\374\377%c%s%s has left the game.", COLOUR_SERVER, title, p_ptr->name);
 				/* missing TOMENET_WORLDS relay here :/ (currently no way to send to 'foreign' admins only) - C. Blue */
 			}
 		}
@@ -2738,7 +2737,7 @@ static int Handle_login(int ind)
 		for (i = 1; i < NumPlayers; i++) {
 			if (Players[i]->conn == NOT_CONNECTED) continue;
 			if (!is_admin(Players[i])) continue;
-			msg_format(i, "\374\377U%s%s has entered the game.", title, p_ptr->name);
+			msg_format(i, "\374\377%c%s%s has entered the game.", COLOUR_SERVER, title, p_ptr->name);
 		}
 		return 0;
 	}
@@ -2750,11 +2749,11 @@ static int Handle_login(int ind)
 	/* Tell everyone about our new player */
 	for (i = 1; i < NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
-		msg_format(i, "\374\377U%s%s has entered the game.", title, p_ptr->name);
+		msg_format(i, "\374\377%c%s%s has entered the game.", COLOUR_SERVER, title, p_ptr->name);
 	}
 
 #ifdef TOMENET_WORLDS
-	if (cfg.worldd_pjoin) world_msg(format("\374\377U%s%s has entered the game.", title, p_ptr->name));
+	if (cfg.worldd_pjoin) world_msg(format("\374\377%c%s%s has entered the game.", COLOUR_SERVER, title, p_ptr->name));
 #endif
 
 	/* Tell the meta server about the new player */
@@ -8901,79 +8900,76 @@ static int Receive_special_line(int ind)
 	if (connp->id != -1) player = GetInd[connp->id];
 		else player = 0;
 
-	if ((n = Packet_scanf(&connp->r, "%c%c%hd", &ch, &type, &line)) <= 0)
-	{
+	if ((n = Packet_scanf(&connp->r, "%c%c%hd", &ch, &type, &line)) <= 0) {
 		if (n == -1)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
 
-	if (player)
-	{
+	if (player) {
 		char kludge[2] = "";
 		kludge[0] = (char) line;
 		kludge[1] = '\0';
-		switch (type)
-		{
-			case SPECIAL_FILE_NONE:
-				Players[player]->special_file_type = FALSE;
-				/* Remove the file */
-/*				if (!strcmp(Players[player]->infofile,
-							Players[player]->cur_file))	*/
-					fd_kill(Players[player]->infofile);
-				break;
-			case SPECIAL_FILE_UNIQUE:
-				do_cmd_check_uniques(player, line);
-				break;
-			case SPECIAL_FILE_ARTIFACT:
-				do_cmd_check_artifacts(player, line);
-				break;
-			case SPECIAL_FILE_PLAYER:
-				do_cmd_check_players(player, line);
-				break;
-			case SPECIAL_FILE_PLAYER_EQUIP:
-				do_cmd_check_player_equip(player, line);
-				break;
-			case SPECIAL_FILE_OTHER:
-				do_cmd_check_other(player, line);
-				break;
-			case SPECIAL_FILE_SCORES:
-				display_scores(player, line);
-				break;
-			case SPECIAL_FILE_HELP:
-				do_cmd_help(player, line);
- 				break;
-			/* Obsolete, just left for compatibility (DELETEME) */
-			case SPECIAL_FILE_LOG:
-				if (is_admin(Players[player]))
-					do_cmd_view_rfe(player, "tomenet.log", line);
- 				break;
-			case SPECIAL_FILE_RFE:
-				if (is_admin(Players[player]) || cfg.public_rfe)
-					do_cmd_view_rfe(player, "tomenet.rfe", line);
- 				break;
-			/*
-			 * Hack -- those special files actually use do_cmd_check_other
-			 * XXX redesign it
-			 */
-			case SPECIAL_FILE_SERVER_SETTING:
-				do_cmd_check_server_settings(player);
- 				break;
-			case SPECIAL_FILE_MONSTER:
-				do_cmd_show_monster_killed_letter(player, kludge);
- 				break;
-			case SPECIAL_FILE_OBJECT:
-				do_cmd_show_known_item_letter(player, kludge);
- 				break;
-			case SPECIAL_FILE_HOUSE:
-				do_cmd_show_houses(player);
- 				break;
-			case SPECIAL_FILE_TRAP:
-				do_cmd_knowledge_traps(player);
- 				break;
-			case SPECIAL_FILE_RECALL:
-				do_cmd_knowledge_dungeons(player);
- 				break;
+		switch (type) {
+		case SPECIAL_FILE_NONE:
+			Players[player]->special_file_type = FALSE;
+			/* Remove the file */
+/*			if (!strcmp(Players[player]->infofile,
+						Players[player]->cur_file))	*/
+				fd_kill(Players[player]->infofile);
+			break;
+		case SPECIAL_FILE_UNIQUE:
+			do_cmd_check_uniques(player, line);
+			break;
+		case SPECIAL_FILE_ARTIFACT:
+			do_cmd_check_artifacts(player, line);
+			break;
+		case SPECIAL_FILE_PLAYER:
+			do_cmd_check_players(player, line);
+			break;
+		case SPECIAL_FILE_PLAYER_EQUIP:
+			do_cmd_check_player_equip(player, line);
+			break;
+		case SPECIAL_FILE_OTHER:
+			do_cmd_check_other(player, line);
+			break;
+		case SPECIAL_FILE_SCORES:
+			display_scores(player, line);
+			break;
+		case SPECIAL_FILE_HELP:
+			do_cmd_help(player, line);
+			break;
+		/* Obsolete, just left for compatibility (DELETEME) */
+		case SPECIAL_FILE_LOG:
+			if (is_admin(Players[player]))
+				do_cmd_view_rfe(player, "tomenet.log", line);
+			break;
+		case SPECIAL_FILE_RFE:
+			if (is_admin(Players[player]) || cfg.public_rfe)
+				do_cmd_view_rfe(player, "tomenet.rfe", line);
+			break;
+		/*
+		 * Hack -- those special files actually use do_cmd_check_other
+		 * XXX redesign it
+		 */
+		case SPECIAL_FILE_SERVER_SETTING:
+			do_cmd_check_server_settings(player);
+			break;
+		case SPECIAL_FILE_MONSTER:
+			do_cmd_show_monster_killed_letter(player, kludge);
+ 			break;
+		case SPECIAL_FILE_OBJECT:
+			do_cmd_show_known_item_letter(player, kludge);
+ 			break;
+		case SPECIAL_FILE_HOUSE:
+			do_cmd_show_houses(player);
+ 			break;
+		case SPECIAL_FILE_TRAP:
+			do_cmd_knowledge_traps(player);
+ 			break;
+		case SPECIAL_FILE_RECALL:
+			do_cmd_knowledge_dungeons(player);
+ 			break;
 		}
 	}
 

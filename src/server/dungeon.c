@@ -2173,7 +2173,7 @@ static void process_player_begin(int Ind)
 		zcave[20][0].feat = FEAT_GLIT_WATER;
 		zcave[20][65].feat = FEAT_GLIT_WATER;
 		/* Some lil hacks */
-		msg_print(Ind, "\377uYou enter the shores of Valinor..");
+		msg_format(Ind, "\377%cYou enter the shores of Valinor..", COLOUR_DUNGEON);
 		wiz_lite(Ind);
 		/* Move @ to designated starting position (level_rand_x/y()) and redraw */
 		oy = p_ptr->py;
@@ -2462,7 +2462,7 @@ static void do_recall(int Ind, bool bypass)
 			}
 		}
 		if (recall_ok) {
-			msg_format(Ind, "\377uYou are transported out of %s..", d_name + d_info[d_ptr->type].name);
+			msg_format(Ind, "\377%cYou are transported out of %s..", COLOUR_DUNGEON, d_name + d_info[d_ptr->type].name);
 			if(p_ptr->wpos.wz > 0) {
 				message="You feel yourself yanked downwards!";
 				msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
@@ -2566,7 +2566,7 @@ static void do_recall(int Ind, bool bypass)
 				p_ptr->recall_pos.wz = 0;
 			} else {
 				message="You feel yourself yanked downwards!";
-		                msg_format(Ind, "\377uYou are transported into %s..", d_name + d_info[d_ptr->type].name);
+		                msg_format(Ind, "\377%cYou are transported into %s..", COLOUR_DUNGEON, d_name + d_info[d_ptr->type].name);
 				msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
 			}
 		}
@@ -2607,7 +2607,7 @@ static void do_recall(int Ind, bool bypass)
 				p_ptr->recall_pos.wz = 0;
 			} else {
 				message = "You feel yourself yanked upwards!";
-		                msg_format(Ind, "\377uYou are transported into %s..", d_name + d_info[d_ptr->type].name);
+		                msg_format(Ind, "\377%cYou are transported into %s..", COLOUR_DUNGEON, d_name + d_info[d_ptr->type].name);
 				msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
 			}
 		} else {

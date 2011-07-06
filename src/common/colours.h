@@ -55,3 +55,13 @@
 #define COLOUR_PARRY_GOOD      'W'
 #define COLOUR_PARRY_NEAR      'w'
 
+/* Misc event messages */
+#define COLOUR_DUNGEON		'u' /* enter/leave dungeon or tower */
+#define COLOUR_SERVER		'u' /* enter/leave the server */
+#define COLOUR_GAMBLE		'U' /* throwing dice, flipping coins, dealing cards */
+
+/* Chat modes */
+#define COLOUR_CHAT		'B'
+#define COLOUR_CHAT_PARTY	'G'
+#define COLOUR_CHAT_GUILD	'U'
+#define COLOUR_CHAT_LEVEL	'y'

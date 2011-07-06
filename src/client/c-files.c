@@ -1146,10 +1146,13 @@ void peruse_file(void)
 		Send_special_line(special_line_type, cur_line);
 
 		/* Show a general "title" */
-		prt(format("[%s]", shortVersion), 0, 0);
-/*		prt(format("[TomeNET %d.%d.%d%s]",
-			VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG), 0, 0);	*/
-
+#if 0 /* Don't just print the version as a title, better keep the line free in \
+         that case - ideal for the new 21-lines feature (odd_line). \
+         This should be kept in sync with Receive_special_line() in nclient.c! */
+//		prt(format("[%s]", shortVersion), 0, 0);
+		prt(format("[TomeNET %d.%d.%d%s]",
+			VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG), 0, 0);
+#endif
 
 		/* Prompt */
 		/* indicate EOF by different status line colour */
@@ -1157,7 +1160,7 @@ void peruse_file(void)
 			c_prt(TERM_ORANGE, format("[Press Return, Space, -, b, or ESC to exit.] (%d-%d/%d)",
 			    cur_line + 1, cur_line + special_page_size, max_line), 23, 0);
 		else
-			prt(format("[Press Return, Space, -, b, or ESC to exit.] (%d-%d/%d)",
+			c_prt(TERM_L_WHITE, format("[Press Return, Space, -, b, or ESC to exit.] (%d-%d/%d)",
 			    cur_line + 1, cur_line + special_page_size, max_line), 23, 0);
 		/* Get a keypress -
 		   hack: update max_line to its real value as soon as possible */
@@ -1167,20 +1170,15 @@ void peruse_file(void)
 
 
 		/* Hack -- go to a specific line */
-		if (k == '#')
-		{
+		if (k == '#') {
 			char tmp[80];
 			prt(format("Goto Line(max %d): ", max_line), 23, 0);
 			strcpy(tmp, "0");
-			if (askfor_aux(tmp, 10, 0))
-			{
-				cur_line = atoi(tmp);
-			}
+			if (askfor_aux(tmp, 10, 0)) cur_line = atoi(tmp);
 		}
 
 		/* Hack -- Allow backing up */
-		if (k == '-')
-		{
+		if (k == '-') {
 			cur_line -= 10;
 #if 1 /* take a break at beginning of list before wrapping around */
 			if (cur_line < 0 &&
@@ -1190,8 +1188,7 @@ void peruse_file(void)
 		}
 
 		/* Hack -- Allow backing up ala 'less' */
-		if (k == 'b' || k == 'p' || k == KTRL('U'))
-		{
+		if (k == 'b' || k == 'p' || k == KTRL('U')) {
 			cur_line -= special_page_size;
 #if 1 /* take a break at beginning of list before wrapping around */
 			if (cur_line < 0 &&
@@ -1202,19 +1199,14 @@ void peruse_file(void)
 
 		/* Hack -- Advance one line */
 		if ((k == '\n') || (k == '\r') || (k == 'j') || k == '2')
-		{
 			cur_line++;
-		}
 
 		/* Hack -- backing up one line (octal 010 = BACKSPACE) */
 		if (k == 'k' || k == '8' || k == '\010')
-		{
 			cur_line--;
-		}
 
 		/* Advance one page */
-		if (k == ' ' || k == KTRL('D'))
-		{
+		if (k == ' ' || k == KTRL('D')) {
 			cur_line += special_page_size;
 #if 1 /* take a break at end of list before wrapping around */
 			if (cur_line > max_line - special_page_size &&
@@ -1224,22 +1216,13 @@ void peruse_file(void)
 		}
 
 		/* Hack -- back to the top */
-		if (k == 'g')
-		{
-			cur_line = 0;
-		}
+		if (k == 'g') cur_line = 0;
 
 		/* Hack -- go to the bottom (it's vi, u know ;) */
-		if (k == 'G')
-		{
-			cur_line = max_line - special_page_size;
-		}
+		if (k == 'G') cur_line = max_line - special_page_size;
 
-		if (k == KTRL('T'))
-		{
-			/* Take a screenshot */
-			xhtml_screenshot("screenshot????");
-		}
+		/* Take a screenshot */
+		if (k == KTRL('T')) xhtml_screenshot("screenshot????");
 
 		/* Exit on escape */
 		if (k == ESCAPE || k == KTRL('X')) break;

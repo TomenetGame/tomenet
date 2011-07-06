@@ -2825,8 +2825,8 @@ static void player_talk_aux(int Ind, char *message)
 #endif
 		/* Send message to target party */
 		if (p_ptr->mutedchat < 2) {
-			party_msg_format_ignoring(Ind, target, "\375\377G[%s:%s] %s", parties[target].name, sender, message + 2);
-//			party_msg_format_ignoring(Ind, target, "\375\377G[%s:%s] %s", parties[target].name, sender, message + 1);
+			party_msg_format_ignoring(Ind, target, "\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[target].name, sender, message + 2);
+//			party_msg_format_ignoring(Ind, target, "\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[target].name, sender, message + 1);
 		}
 		/* Done */
 		return;
@@ -2846,11 +2846,11 @@ static void player_talk_aux(int Ind, char *message)
 			msg_print(Ind, "You aren't in a dungeon or tower.");
 #else /* Darkie's idea: */
 			if (*(message + 2)) {
-				msg_format_near(Ind, "\377B%^s says: %s", p_ptr->name, message + 2);
-				msg_format(Ind, "\377BYou say: %s", message + 2);
+				msg_format_near(Ind, "\377%c%^s says: %s", COLOUR_CHAT, p_ptr->name, message + 2);
+				msg_format(Ind, "\377%cYou say: %s", COLOUR_CHAT, message + 2);
 			} else {
-				msg_format_near(Ind, "\377B%s clears %s throat.", p_ptr->name, p_ptr->male ? "his" : "her");
-				msg_print(Ind, "\377BYou clear your throat.");
+				msg_format_near(Ind, "\377%c%s clears %s throat.", COLOUR_CHAT, p_ptr->name, p_ptr->male ? "his" : "her");
+				msg_format(Ind, "\377%cYou clear your throat.", COLOUR_CHAT);
 			}
 #endif
 			return;
@@ -2858,7 +2858,7 @@ static void player_talk_aux(int Ind, char *message)
 
 		/* Send message to target party */
 		if (p_ptr->mutedchat < 2) {
-			floor_msg_format_ignoring(Ind, &p_ptr->wpos, "\375\377y[%s] %s", sender, message + 2);
+			floor_msg_format_ignoring(Ind, &p_ptr->wpos, "\375\377%c[%s] %s", COLOUR_CHAT_LEVEL, sender, message + 2);
 		}
 		/* Done */
 		return;
@@ -2923,7 +2923,7 @@ static void player_talk_aux(int Ind, char *message)
 		struct rplist *w_player;
 		if (!stricmp(search, "Guild")) {
 			if (!p_ptr->guild) msg_print(Ind, "You are not in a guild");
-			else guild_msg_format(p_ptr->guild, "\377v[\377w%s\377v]\377y %s", p_ptr->name, colon + 1);
+			else guild_msg_format(p_ptr->guild, "\377y[\377U%s\377y]\377%c %s", p_ptr->name, COLOUR_CHAT_GUILD, colon + 1);
 			return;
 		}
 
@@ -3022,13 +3022,13 @@ static void player_talk_aux(int Ind, char *message)
 	/* Send to appropriate party */
 	if (len && target < 0) {
 		/* Send message to target party */
-		party_msg_format_ignoring(Ind, 0 - target, "\375\377G[%s:%s] %s",
-				 parties[0 - target].name, sender, colon);
+		party_msg_format_ignoring(Ind, 0 - target, "\375\377%c[%s:%s] %s",
+		    COLOUR_CHAT, parties[0 - target].name, sender, colon);
 
 		/* Also send back to sender if not in that party */
-		if (!player_in_party(0-target, Ind)) {
-			msg_format(Ind, "\375\377G[%s:%s] %s",
-			   parties[0 - target].name, sender, colon);
+		if (!player_in_party(0 - target, Ind)) {
+			msg_format(Ind, "\375\377%c[%s:%s] %s",
+			   COLOUR_CHAT, parties[0 - target].name, sender, colon);
 		}
 
 		exec_lua(0, "chat_handler()");
@@ -3070,9 +3070,9 @@ static void player_talk_aux(int Ind, char *message)
 
 #ifdef TOMENET_WORLDS
 	if (broadcast)
-		snprintf(tmessage, sizeof(tmessage), "\375\377r[\377%c%s\377r] \377B%s", c_n, sender, message + 11);
+		snprintf(tmessage, sizeof(tmessage), "\375\377r[\377%c%s\377r] \377%c%s", c_n, sender, COLOUR_CHAT, message + 11);
 	else if (!me)
-		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s] \377B%s", c_n, sender, message + mycolor);
+		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s] \377%c%s", c_n, sender, COLOUR_CHAT, message + mycolor);
 	else {
 		/* Why not... */
 		if (strlen(message) > 4) mycolor = (prefix(&message[4], "}") && (color_char_to_attr(*(message + 5)) != -1)) ? 2 : 0;
@@ -3113,9 +3113,9 @@ static void player_talk_aux(int Ind, char *message)
 
 		/* Send message */
 		if (broadcast)
-			msg_format(i, "\375\377r[\377%c%s\377r] \377B%s", c_n, sender, message + 11);
+			msg_format(i, "\375\377r[\377%c%s\377r] \377%c%s", c_n, sender, COLOUR_CHAT, message + 11);
 		else if (!me) {
-			msg_format(i, "\375\377%c[%s] \377B%s", c_n, sender, message + mycolor);
+			msg_format(i, "\375\377%c[%s] \377%c%s", c_n, sender, COLOUR_CHAT, message + mycolor);
 			/* msg_format(i, "\375\377%c[%s] %s", Ind ? 'B' : 'y', sender, message); */
 		}
 		else msg_format(i, "%s %s", sender, message + 4);

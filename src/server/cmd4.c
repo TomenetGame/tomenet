@@ -272,22 +272,19 @@ void do_cmd_check_uniques(int Ind, int line)
 	/* Open a new file */
 	fff = my_fopen(file_name, "wb");
 
-	fprintf(fff, "\377U============== Unique Monster List ==============\n");
+	if (!is_newer_than(&q_ptr->version, 4, 4, 7, 0, 0, 0))
+		fprintf(fff, "\377U============== Unique Monster List ==============\n");
 
 	/* Scan the monster races */
-	for (k = 1; k < MAX_R_IDX-1; k++)
-	{
+	for (k = 1; k < MAX_R_IDX-1; k++) {
 		r_ptr = &r_info[k];
 
 		/* Only print Uniques */
-		if (r_ptr->flags1 & RF1_UNIQUE)
-		{
+		if (r_ptr->flags1 & RF1_UNIQUE) {
 			/* Only display known uniques */
 //			if (r_ptr->r_sights && mon_allowed(r_ptr))
 			if (r_ptr->r_sights && mon_allowed_view(r_ptr))
-			{
 				idx[total++] = k;
-			}
 
 			/* remember highest unique the viewing player actually killed */
 			if ((q_ptr->r_killed[k] == 1) && (own_highest_level <= r_ptr->level)) {
@@ -426,7 +423,7 @@ void do_cmd_check_uniques(int Ind, int line)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "Known Uniques", line, 0, FALSE);
+	show_file(Ind, file_name, "\377U============== Unique Monster List ==============", line, 0, FALSE);
 
 	/* Remove the file */
 	fd_kill(file_name);
@@ -1147,9 +1144,9 @@ void do_cmd_check_players(int Ind, int line)
 
 	/* Display the file contents */
 #ifndef COMPACT_PLAYERLIST
-	show_file(Ind, file_name, "Player list", line, 0, FALSE);
+	show_file(Ind, file_name, "Players Online", line, 0, FALSE);
 #else
-	show_file(Ind, file_name, "Player list", line, 0, TRUE);
+	show_file(Ind, file_name, "Players Online", line, 0, TRUE);
 #endif
 
 	/* Remove the file */
@@ -1289,7 +1286,7 @@ void do_cmd_check_player_equip(int Ind, int line)
        my_fclose(fff);
 
        /* Display the file contents */
-       show_file(Ind, file_name, "Someone's equipments", line, 0, FALSE);
+       show_file(Ind, file_name, "Equipment of Inspectable Players", line, 0, FALSE);
 
        /* Remove the file */
        fd_kill(file_name);

@@ -2947,10 +2947,19 @@ int Receive_special_line(void)
 	char	ch, attr;
 	s16b	max, line;
 	char	buf[ONAME_LEN]; /* Allow colour codes! (was: MAX_CHARS, which is just 80) */
-	int	x, y;
+	int	x, y, phys_line;
 
 	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c%I", &ch, &max, &line, &attr, buf)) <= 0)
 		return n;
+
+	/* Hack - just 'prepare' for a 21-lines page. What this does is making
+	   sure that the first real line will be placed at physical line 1
+	   instead of 2, ie starting the whole page one line up higher.
+	   (That will simply look a bit better than touching the bottom status line.) */
+	if (line == 21) {
+		special_page_size = 21;
+		return 1;
+	}
 
 	/* Maximum */
 	max_line = max;
@@ -2966,10 +2975,20 @@ int Receive_special_line(void)
 		/* remember cursor position */
 		Term_locate(&x, &y);
 
-		/* Always clear the whole line first */
-		Term_erase(0, line + 2, 255);
+		/* Hack: 'Title line' */
+		if (line == -1) phys_line = 0;
+		/* Normal line */
+		else {
+			phys_line = line + (special_page_size == 21 ? 1 : 2);
 
-		c_put_str(attr, buf, line + 2, 0);
+			/* Keep in sync: If peruse_file() displays a title, it must be line + 2.
+			   Else line + 1 to save some space for 21-lines (odd_line) feature. */
+
+			/* Always clear the whole line first */
+			Term_erase(0, phys_line, 255);
+		}
+
+		c_put_str(attr, buf, phys_line, 0);
 
 		/* restore cursor position */
 		Term_gotoxy(x, y);

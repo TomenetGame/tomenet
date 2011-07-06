@@ -214,7 +214,7 @@ void do_cmd_go_up(int Ind)
 	{
 		process_hooks(HOOK_STAIR, "d", Ind);
 		if (!wpos->wz) {
-			msg_format(Ind, "\377uYou enter %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
+			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
 #ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
 			if (p_ptr->party)
 			for (i = 1; i <= NumPlayers; i++) {
@@ -227,7 +227,7 @@ void do_cmd_go_up(int Ind)
 #endif
 		}
 		else if (wpos->wz == -1) {
-			msg_format(Ind, "\377uYou leave %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
+			msg_format(Ind, "\377%cYou leave %s..", COLOUR_DUNGEON, d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
 #ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
 			if (p_ptr->party)
 			for (i = 1; i <= NumPlayers; i++) {
@@ -316,8 +316,8 @@ void do_cmd_go_up(int Ind)
 			}
 		}
 
-		if (!wpos->wz) msg_format(Ind, "\377uYou float into %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
-		else if (wpos->wz == -1) msg_format(Ind, "\377uYou float out of %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
+		if (!wpos->wz) msg_format(Ind, "\377%cYou float into %s..", COLOUR_DUNGEON, d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
+		else if (wpos->wz == -1) msg_format(Ind, "\377%cYou float out of %s..", COLOUR_DUNGEON, d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
 		else msg_print(Ind, "You float upwards.");
 		if (p_ptr->ghost) p_ptr->new_level_method = LEVEL_GHOST;
 		else p_ptr->new_level_method = LEVEL_PROB_TRAVEL;
@@ -608,7 +608,7 @@ void do_cmd_go_down(int Ind)
 	{
 		process_hooks(HOOK_STAIR, "d", Ind);
 		if (!wpos->wz) {
-			msg_format(Ind, "\377uYou enter %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
+			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
 #ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
 			if (p_ptr->party)
 			for (i = 1; i <= NumPlayers; i++) {
@@ -621,7 +621,7 @@ void do_cmd_go_down(int Ind)
 #endif
 		}
 		else if (wpos->wz == 1) {
-			msg_format(Ind, "\377uYou leave %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
+			msg_format(Ind, "\377%cYou leave %s..", COLOUR_DUNGEON, d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
 #ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
 			if (p_ptr->party)
 			for (i = 1; i <= NumPlayers; i++) {
@@ -710,8 +710,8 @@ void do_cmd_go_down(int Ind)
 			}
 		}
 
-		if (!wpos->wz) msg_format(Ind, "\377uYou float into %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
-		else if (wpos->wz == 1) msg_format(Ind, "\377uYou float out of %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
+		if (!wpos->wz) msg_format(Ind, "\377%cYou float into %s..", COLOUR_DUNGEON, d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
+		else if (wpos->wz == 1) msg_format(Ind, "\377%cYou float out of %s..", COLOUR_DUNGEON, d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
 		else msg_print(Ind, "You float downwards.");
 		if (p_ptr->ghost) p_ptr->new_level_method = LEVEL_GHOST;
 		else p_ptr->new_level_method = LEVEL_PROB_TRAVEL;
