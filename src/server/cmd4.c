@@ -417,13 +417,14 @@ void do_cmd_check_uniques(int Ind, int line)
 	}
 
 	/* finally.. */
-	fprintf(fff, "\377U========== End of Unique Monster List ==========\n");
+	if (!is_newer_than(&q_ptr->version, 4, 4, 7, 0, 0, 0))
+		fprintf(fff, "\377U========== End of Unique Monster List ==========\n");
 
 	/* Close the file */
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "\377U============== Unique Monster List ==============", line, 0, FALSE);
+	show_file(Ind, file_name, "Unique Monster List", line, 0, FALSE);
 
 	/* Remove the file */
 	fd_kill(file_name);
