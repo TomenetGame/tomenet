@@ -647,14 +647,14 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 		case SV_POTION_SALT_WATER:
 			if (!p_ptr->suscep_life && p_ptr->prace != RACE_ENT) {
-				msg_print(Ind, "The potion makes you vomit!");
+				msg_print(Ind, "The salty potion makes you vomit!");
 				msg_format_near(Ind, "%s vomits!", p_ptr->name);
 				/* made salt water less deadly -APD */
 				(void)set_food(Ind, (p_ptr->food/2)-400);
 				(void)set_poisoned(Ind, 0, 0);
 				(void)set_paralyzed(Ind, p_ptr->paralyzed + 4);
 			} else {
-				msg_print(Ind, "That potion tastes awful.");
+				msg_print(Ind, "That potion tastes awfully salty.");
 			}
 			ident = TRUE;
 			break;
