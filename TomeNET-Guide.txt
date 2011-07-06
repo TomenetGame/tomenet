@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 5. July 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 7. July 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -9871,7 +9871,7 @@ Astral
 Press 'P' to display the party menu.
 Here you can..
 
--Create a party
+-Create or rename a party
     In a party you will share experience points if you are within 7 character
     levels to each other and on the same dungeon/tower level respectively
     the same worldmap/wilderness sector. A slight experience bonus is applied
@@ -9933,11 +9933,17 @@ Here you can..
     on spell-users in the same party, to allow the party to still be a vital
     combination.
 
--Create an 'Iron Team' party
+    If you choose 'Create or rename a party' while already being in a party,
+    you will be prompted to rename the party. Only the party owner can do this.
+
+-Create or rename an 'Iron Team' party
     An iron team is like a party with the following differences:
     An 'Iron Team' can only be formed with newly created characters. Its
     members will only get experience for killing monsters if ALL members
     are online and on the same dungeon level!
+
+    If you choose this while already being in an iron team, you will be
+    prompted to rename it. Only the iron team owner can do this.
 
 -Add a player to party
     This can be done by all members of the party, not just by the owner!
