@@ -283,7 +283,7 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 		damage = rget_level(400 + randint(50));
 		r = rget_level(base_radius);
 	}
-	else if ((s_flags & R_CLOU) == R_CLOU || (s_flags & R_WAVE) == R_WAVE)
+	else if ((s_flags & R_CLOU) == R_CLOU)
 	{
 		r = rget_level(base_radius);
 		dur = randint(10) + rget_level(10);
@@ -291,9 +291,22 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 		/* Damage should be proportional to radius and duration. */
 		damage = randint(4) + rget_level(80 - (*radius + *duration) / 2);
 	}
+ 	else if ((s_flags & R_WAVE) == R_WAVE)
+	{
+    /* Wave uses duration, instead of radius. */
+		dur = rget_level(15) / 2;
+		
+		/* Damage should be proportional to radius and duration. */
+		damage = randint(4) + rget_level(90 - (*radius + *duration) / 2);
+	}
 	else if ((s_flags & R_STOR) == R_STOR)
 	{
-		damage = e_level + 3 + rget_level(100);
+		//damage = e_level + 3 + rget_level(100);
+    r = rget_level(base_radius);
+		dur = (randint(10) + rget_level(10));
+		
+		/* Damage should be proportional to radius and duration. (and interval) */
+		damage = randint(4) + rget_level(40 - (*radius + *duration) / 2);
 	}
 	else //R_MELE
 	{
@@ -307,8 +320,9 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 	
 	if ((s_flags & R_WAVE) == R_WAVE) //Waves are cheaper standing clouds, with a slight boost to radius.
 	{
-		r += 1;
-		r = (r < 2 ? 2 : r);
+    //duration IS radius only for the new wave, don't boost! - Kurzel
+		//r += 1;
+		//r = (r < 2 ? 2 : r);
 		dur += 1;
 	}
 	else if ((s_flags & R_BALL) == R_BALL)
@@ -939,7 +953,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 		description = " fail to";
 		modifier = 100;
 	}
-	else if (margin < -10)
+	else if (margin < 0) //changed from -10 to 0 to avoid 'blank' (no effect/dmg) projections - Kurzel
 	{
 		description = " barely manage to";
 	}
@@ -1006,7 +1020,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			case RT_MAGIC_CIRCLE:
 				msg_format(Ind, "%s%s surround yourself with protective sigils.", begin, description);
 				
-				if (success) 
+				if (success) //change this to circle like trap of walls (no center, perhaps compressed rad 0?) - Kurzel
 				{
 					for(x = 0; x<3;x++)
 					{
@@ -1028,7 +1042,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			
 				if (success)
 				{
-					fire_ball(Ind, GF_STONE_WALL, 0, 1, 1, "");
+					fire_ball(Ind, GF_STONE_WALL, 0, 1, 1, ""); //maybe copy this for GF_MAGIC_GLYPH (above) or time+base trap glyphs
 				}
 				break;
 			
@@ -1136,7 +1150,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			
 			case RT_FIRE:
 				msg_format(Ind, "%s%s cast a %s rune of fire resistance. (%i turns)", begin, description, r_imperatives[imper].name, duration);
-				
+				//XOR immunity @ r-skill of 50? - Kurzel
 				if (success)
 				{
 					set_oppose_fire(Ind, duration);
@@ -1182,7 +1196,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			case RT_ICEPOISON:
 			case RT_DISPERSE:
 				msg_format(Ind, "%s%s banish the magical energies.", begin, description);
-				
+				//re-check this for new planned temporary buffs (unmagic too?) - Kurzel
 				if (success)
 				{
 					set_fast(Ind, 0, 0);
@@ -1240,7 +1254,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				{
 					if (inarea(&p_ptr->memory.wpos, &p_ptr->wpos))
 					{
-						teleport_player_to(Ind, p_ptr->memory.y, p_ptr->memory.x);
+						teleport_player_to(Ind, p_ptr->memory.y, p_ptr->memory.x); //use swap position for accuracy? - Kurzel
 						p_ptr->memory.wpos.wx = 0;
 						p_ptr->memory.wpos.wy = 0;
 						p_ptr->memory.wpos.wz = 0;
@@ -1518,6 +1532,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				break;
 			
 			/* RT_FURY and RT_BERSERK are out of theme and therefore disabled */
+   //re-enable berserk though? - Kurzel
 			case RT_FURY:
 				msg_format(Ind, "%s%s summon fury. (%i turns)", begin, description, duration);
 				
@@ -1583,14 +1598,18 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 		{
 			sprintf(p_ptr->attacker, " fills the air with %s for", runespell_list[type].title);
 			msg_format(Ind, "%s%s fill the air with %s %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
-			if (success) project_hack(Ind, gf_type, damage, p_ptr->attacker);
+			if (success) //project_hack(Ind, gf_type, damage, p_ptr->attacker);
+                //fire_wave(Ind, gf_type, 0, damage, radius, duration, 10, EFF_STORM, " summons an elemental storm for");
+                fire_wave(Ind, gf_type, 0, damage, radius, duration, 10, EFF_STORM, p_ptr->attacker);
 		}
 		else if (type_flags & R_WAVE)
 		{
 			sprintf(p_ptr->attacker, " summons a wave of %s for", runespell_list[type].title);
 			msg_format(Ind, "%s%s summon a %s wave of %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
-			if (success) fire_wave(Ind, gf_type, 0, damage, radius, duration, 10, EFF_LAST, p_ptr->attacker);
-		}
+			if (success) //fire_wave(Ind, gf_type, 0, damage, radius, duration, 10, EFF_LAST, p_ptr->attacker);
+                //fire_wave(Ind, gf_type, 0, damage, 0, duration, 5, EFF_WAVE, " casts a pulse wave for");
+                fire_wave(Ind, gf_type, 0, damage, 0, duration, 2, EFF_WAVE, p_ptr->attacker);
+  }
 		if (type_flags & R_MELE)
 		{
 			int px = p_ptr->px;
@@ -1852,7 +1871,7 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative)
 		if (randint(100)==50)
 		{
 			msg_print(Ind, "\377sYour invocation is particularly flashy.");
-			project_hack(Ind, GF_TELE_TO, 0, " summons");
+			//project_hack(Ind, GF_TELE_TO, 0, " summons"); /*Use wonder instead? - Kurzel */
 		}
 	}
 	

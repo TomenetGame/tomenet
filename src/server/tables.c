@@ -6258,14 +6258,18 @@ r_element r_elements[RCRAFT_MAX_ELEMENTS] =
 */
 r_imper r_imperatives [RG_MAX] = 
 {
-	//i			n		 l+ c%, f+, d%, p%, r+, t%,
-	{ 0, "minimized",	-1,  5,-10,  6,  9, -1,  5 },
+	//i			n		      +l, c%, f+, d%, p%, r+, t%
+	{ 0, "minimized",	-1,  5,-10,  6, 10, -1,  5 },
 	{ 1, "moderate",	 0, 10,  0, 10, 10,  0, 10 },
-	{ 2, "maximized",	 1, 16, 20, 15, 10, -1,  8 },
-	{ 3, "compressed",	 2, 15,-10, 13, 10, -2,  5 },
-	{ 4, "expanded",	 2, 13,  0, 10, 10, +2, 10 },
-	{ 5, "brief",		 3, 13, 15,  6,  5,  5,  5 },
-	{ 6, "lengthened",	 3, 15, 10,  6, 10,  0, 16 },
+	//{ 2, "maximized",	 1, 16, 20, 15, 10, -1,  8 }, //Old version, boosted slightly
+  { 2, "maximized",	 1, 15, 20, 15, 10, +1, 13 },
+	//{ 3, "compressed", 2, 15,-10, 13, 10, -2,  5 }, //Old version, duration balanced
+  { 3, "compressed", 2, 15,-10, 13, 10, -2,  8 },
+	//{ 4, "expanded",	 2, 13,  0, 10, 10, +2, 10 }, //Old version, R_WAVE uses duration
+  { 4, "expanded",	 2, 13,  0, 10, 10, +2, 13 },
+	//{ 5, "brief",		   3, 13, 15,  6,  5,  5,  5 }, //Old version, error in radius fixed
+  { 5, "brief",		   3, 13, 15,  6,  5,  0,  5 },
+	{ 6, "lengthened", 3, 15, 10,  6, 10,  0, 16 },
 	{ 7, "chaotic",		 1,  0,  0,  0, 10,  5,  0 },
 };
 
