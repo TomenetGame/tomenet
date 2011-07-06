@@ -836,6 +836,8 @@ void cmd_inven(void)
 				Send_msg(format("!:\377s%s", inventory_name[c]));
 			else if (chat_mode == CHAT_MODE_LEVEL)
 				Send_msg(format("#:\377s%s", inventory_name[c]));
+			else if (chat_mode == CHAT_MODE_GUILD)
+				Send_msg(format("$:\377s%s", inventory_name[c]));
 			else
 				Send_msg(format("\377s%s", inventory_name[c]));
 		}
@@ -876,6 +878,8 @@ void cmd_equip(void)
 				Send_msg(format("!:\377s%s", inventory_name[INVEN_WIELD + c]));
 			else if (chat_mode == CHAT_MODE_LEVEL)
 				Send_msg(format("#:\377s%s", inventory_name[INVEN_WIELD + c]));
+			else if (chat_mode == CHAT_MODE_GUILD)
+				Send_msg(format("$:\377s%s", inventory_name[INVEN_WIELD + c]));
 			else
 				Send_msg(format("\377s%s", inventory_name[INVEN_WIELD + c]));
 		}

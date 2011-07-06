@@ -1361,7 +1361,7 @@ bool askfor_aux(char *buf, int len, char mode)
 			{
 				/* Change chatting mode - mikaelh */
 				chat_mode++;
-				if (chat_mode > CHAT_MODE_LEVEL)
+				if (chat_mode > CHAT_MODE_GUILD)
 					chat_mode = CHAT_MODE_NORMAL;
 
 				/* HACK - Change the prompt */
@@ -1378,6 +1378,12 @@ bool askfor_aux(char *buf, int len, char mode)
 
 						/* Recalculate visible length */
 						vis_len = wid - 1 - sizeof("Level: ");
+						break;
+					case CHAT_MODE_GUILD:
+						c_prt(TERM_L_UMBER, "Guild: ", 0, 0);
+
+						/* Recalculate visible length */
+						vis_len = wid - 1 - sizeof("Guild: ");
 						break;
 					default:
 						prt("Message: ", 0, 0);
@@ -1528,14 +1534,14 @@ bool askfor_aux(char *buf, int len, char mode)
 	if ((mode & ASKFOR_CHATTING) && chat_mode != CHAT_MODE_NORMAL && buf[0] != '/' && !(buf[0] == '%' && buf[1] == ':'))
 	{
 		for (i = k; i >= 0; i--)
-		{
 			buf[i + 2] = buf[i];
-		}
 
 		if (chat_mode == CHAT_MODE_PARTY)
 			buf[0] = '!';
 		else if (chat_mode == CHAT_MODE_LEVEL)
 			buf[0] = '#';
+		else if (chat_mode == CHAT_MODE_GUILD)
+			buf[0] = '$';
 		else
 			buf[0] = '\0';
 		buf[1] = ':';
@@ -1580,6 +1586,9 @@ bool get_string(cptr prompt, char *buf, int len)
 				break;
 			case CHAT_MODE_LEVEL:
 				c_prt(TERM_YELLOW, "Level: ", 0, 0);
+				break;
+			case CHAT_MODE_GUILD:
+				c_prt(TERM_L_UMBER, "Guild: ", 0, 0);
 				break;
 		}
 	}

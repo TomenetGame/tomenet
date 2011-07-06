@@ -7515,6 +7515,7 @@ extern int PlayerUID;
 #define CHAT_MODE_NORMAL	0
 #define CHAT_MODE_PARTY		1
 #define CHAT_MODE_LEVEL		2
+#define CHAT_MODE_GUILD		3
 
 /* Mode bits for askfor_aux */
 #define ASKFOR_PRIVATE		0x01

@@ -382,6 +382,8 @@ static void store_chat(void)
 		Send_msg(format("!:\377s%s:%s", where, out_val));
 	else if (chat_mode == CHAT_MODE_LEVEL)
 		Send_msg(format("#:\377s%s:%s", where, out_val));
+	else if (chat_mode == CHAT_MODE_GUILD)
+		Send_msg(format("$:\377s%s:%s", where, out_val));
 	else
 		Send_msg(format("\377s%s::%s", where, out_val));
 }

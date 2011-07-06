@@ -2808,7 +2808,7 @@ static void player_talk_aux(int Ind, char *message)
 		return;
 	}
 
-	for(i = 1; i <= NumPlayers; i++){
+	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		Players[i]->talk = 0;
 	}
@@ -2817,17 +2817,20 @@ static void player_talk_aux(int Ind, char *message)
 //	if ((strlen(message) >= 1) && (message[0] == ':') && (!colon) && (p_ptr->party))
 	if ((strlen(message) >= 2) && (message[0] == '!') && (message[1] == ':') && (colon) && (p_ptr->party)) {
 		target = p_ptr->party;
+
 #if 1 /* No private chat for invalid accounts ? */
 		if (p_ptr->inval) {
 			msg_print(Ind, "Your account is not valid! Ask an admin to validate it.");
 			return;
 		}
 #endif
+
 		/* Send message to target party */
 		if (p_ptr->mutedchat < 2) {
 			party_msg_format_ignoring(Ind, target, "\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[target].name, sender, message + 2);
 //			party_msg_format_ignoring(Ind, target, "\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[target].name, sender, message + 1);
 		}
+
 		/* Done */
 		return;
 	}
@@ -2860,6 +2863,7 @@ static void player_talk_aux(int Ind, char *message)
 		if (p_ptr->mutedchat < 2) {
 			floor_msg_format_ignoring(Ind, &p_ptr->wpos, "\375\377%c[%s] %s", COLOUR_CHAT_LEVEL, sender, message + 2);
 		}
+
 		/* Done */
 		return;
 	}
@@ -2881,6 +2885,7 @@ static void player_talk_aux(int Ind, char *message)
 			return;
 		}
 #endif
+
 		/* Haven't received an initial private msg yet? */
 		if (!p_ptr->reply_name || !strlen(p_ptr->reply_name)) {
 			msg_print(Ind, "You haven't received any private message to reply to yet.");
@@ -2896,6 +2901,24 @@ static void player_talk_aux(int Ind, char *message)
 		colon = message + strlen(p_ptr->reply_name);
 
 		/* Continue with forged private message */
+	}
+
+	/* '$:' at beginning of message sends to guild - C. Blue */
+	if ((strlen(message) >= 2) && (message[0] == '$') && (message[1] == ':') && (colon) && (p_ptr->guild)) {
+#if 1 /* No private chat for invalid accounts ? */
+		if (p_ptr->inval) {
+			msg_print(Ind, "Your account is not valid! Ask an admin to validate it.");
+			return;
+		}
+#endif
+
+		/* Send message to target party */
+		if (p_ptr->mutedchat < 2) {
+			guild_msg_format(p_ptr->guild, "\377y[\377U%s:%s\377y]\377%c %s", guilds[p_ptr->guild].name, sender, COLOUR_CHAT_GUILD, message + 2);
+		}
+
+		/* Done */
+		return;
 	}
 
 
@@ -2921,11 +2944,6 @@ static void player_talk_aux(int Ind, char *message)
 	/* Look for a recipient who matches the search string */
 	if (len) {
 		struct rplist *w_player;
-		if (!stricmp(search, "Guild")) {
-			if (!p_ptr->guild) msg_print(Ind, "You are not in a guild");
-			else guild_msg_format(p_ptr->guild, "\377y[\377U%s\377y]\377%c %s", p_ptr->name, COLOUR_CHAT_GUILD, colon + 1);
-			return;
-		}
 
 		/* NAME_LOOKUP_LOOSE DESPERATELY NEEDS WORK */
 		target = name_lookup_loose_quiet(Ind, search, TRUE);
@@ -3023,12 +3041,12 @@ static void player_talk_aux(int Ind, char *message)
 	if (len && target < 0) {
 		/* Send message to target party */
 		party_msg_format_ignoring(Ind, 0 - target, "\375\377%c[%s:%s] %s",
-		    COLOUR_CHAT, parties[0 - target].name, sender, colon);
+		    COLOUR_CHAT_PARTY, parties[0 - target].name, sender, colon);
 
 		/* Also send back to sender if not in that party */
 		if (!player_in_party(0 - target, Ind)) {
 			msg_format(Ind, "\375\377%c[%s:%s] %s",
-			   COLOUR_CHAT, parties[0 - target].name, sender, colon);
+			   COLOUR_CHAT_PARTY, parties[0 - target].name, sender, colon);
 		}
 
 		exec_lua(0, "chat_handler()");
