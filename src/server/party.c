@@ -556,13 +556,21 @@ int guild_create(int Ind, cptr name){
 	}
 
 	/* Prevent abuse */
-	if (streq(name, "Neutral")) {
+	if (streq(name, "Neutral")
+	    || streq(name, "!") || streq(name, "#")
+	    || streq(name, "%") || streq(name, "$")) {
 		msg_print(Ind, "\377yThat's not a legal guild name.");
 		return FALSE;
 	}
 
+	/* Check for already existing party by that name */
+	if (party_lookup(name) != -1) {
+		msg_print(Ind, "\377yThere's already a party using that name.");
+		return FALSE;
+	}
 	/* Check for already existing guild by that name */
 	if ((index = guild_lookup(name) != -1)) {
+		/* Admin can actually create a duplicate 'spare' key this way */
 		if (p_ptr->admin_dm) {
 			/* make the guild key */
 			invcopy(o_ptr, lookup_kind(TV_KEY, 2));
@@ -712,7 +720,9 @@ int party_create(int Ind, cptr name)
 	int index = 0, i, oldest = turn;
 
 	/* Prevent abuse */
-	if (streq(name, "Neutral") || streq(name, "!") || streq(name, "#")) {
+	if (streq(name, "Neutral")
+	    || streq(name, "!") || streq(name, "#")
+	    || streq(name, "%") || streq(name, "$")) {
 		msg_print(Ind, "\377yThat's not a legal party name.");
 		return FALSE;
 	}
@@ -720,6 +730,11 @@ int party_create(int Ind, cptr name)
 	/* Check for already existing party by that name */
 	if (party_lookup(name) != -1) {
 		msg_print(Ind, "\377yA party by that name already exists.");
+		return FALSE;
+	}
+	/* Check for already existing guild by that name */
+	if (guild_lookup(name) != -1) {
+		msg_print(Ind, "\377yThere's already a guild using that name.");
 		return FALSE;
 	}
 
