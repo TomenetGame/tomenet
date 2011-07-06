@@ -60,8 +60,13 @@
 #define COLOUR_SERVER		'u' /* enter/leave the server */
 #define COLOUR_GAMBLE		'U' /* throwing dice, flipping coins, dealing cards */
 
-/* Chat modes */
+/* Chat modes (server-side) */
 #define COLOUR_CHAT		'B'
 #define COLOUR_CHAT_PARTY	'G'
 #define COLOUR_CHAT_GUILD	'U'
 #define COLOUR_CHAT_LEVEL	'y'
+/* .. and client-side */
+#define C_COLOUR_CHAT		TERM_L_BLUE
+#define C_COLOUR_CHAT_PARTY	TERM_L_GREEN
+#define C_COLOUR_CHAT_GUILD	TERM_L_UMBER
+#define C_COLOUR_CHAT_LEVEL	TERM_YELLOW

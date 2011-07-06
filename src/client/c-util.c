@@ -1368,19 +1368,19 @@ bool askfor_aux(char *buf, int len, char mode)
 				switch (chat_mode)
 				{
 					case CHAT_MODE_PARTY:
-						c_prt(TERM_L_GREEN, "Party: ", 0, 0);
+						c_prt(C_COLOUR_CHAT_PARTY, "Party: ", 0, 0);
 
 						/* Recalculate visible length */
 						vis_len = wid - 1 - sizeof("Party: ");
 						break;
 					case CHAT_MODE_LEVEL:
-						c_prt(TERM_YELLOW, "Level: ", 0, 0);
+						c_prt(C_COLOUR_CHAT_LEVEL, "Level: ", 0, 0);
 
 						/* Recalculate visible length */
 						vis_len = wid - 1 - sizeof("Level: ");
 						break;
 					case CHAT_MODE_GUILD:
-						c_prt(TERM_L_UMBER, "Guild: ", 0, 0);
+						c_prt(C_COLOUR_CHAT_GUILD, "Guild: ", 0, 0);
 
 						/* Recalculate visible length */
 						vis_len = wid - 1 - sizeof("Guild: ");
@@ -1582,13 +1582,13 @@ bool get_string(cptr prompt, char *buf, int len)
 		/* HACK - Change the prompt according to current chat mode */
 		switch (chat_mode) {
 			case CHAT_MODE_PARTY:
-				c_prt(TERM_L_GREEN, "Party: ", 0, 0);
+				c_prt(C_COLOUR_CHAT_PARTY, "Party: ", 0, 0);
 				break;
 			case CHAT_MODE_LEVEL:
-				c_prt(TERM_YELLOW, "Level: ", 0, 0);
+				c_prt(C_COLOUR_CHAT_LEVEL, "Level: ", 0, 0);
 				break;
 			case CHAT_MODE_GUILD:
-				c_prt(TERM_L_UMBER, "Guild: ", 0, 0);
+				c_prt(C_COLOUR_CHAT_GUILD, "Guild: ", 0, 0);
 				break;
 		}
 	}
