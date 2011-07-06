@@ -6257,7 +6257,7 @@ Skeletons/Bones/Skulls  You can create ammunition from these if your Archery
                         skill is sufficient (see (6.12)).
 Rubble ':' on the floor You can create sling ammo from this. You cannot pick
                         up rubble, just stand next to it (see (6.12)).
-Guild key               See (6.9).
+Guild key           See (6.9).
 Chests              Chests may contain treasures or items. Usually, chests
                     you find will have hidden traps on them. So what you do is
                     to hit 's' to search for traps while standing next to the
@@ -9969,7 +9969,7 @@ Here you can..
     The guild creator will receive a 'Guild Key' which designates him as the
     guild master. In case the guild master dies, another guild member may
     fetch the key to become the new guild master.
-    (Guilds currently have no practical use aside from looking cool.)
+    (Currently guilds look cool and have a dedicated guild chat.)
 
 -Add player to guild
     Only the guild master can do this.
