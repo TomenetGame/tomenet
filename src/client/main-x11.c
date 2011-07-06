@@ -2408,7 +2408,7 @@ errr init_x11(void) {
 		int gfd;
 		/* Build the name of the "graf" file */
 		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8x8.bmp");
-		strcpy(filename, "/usr/local/mangband/lib/xtra/graf/16x16.bmp");
+		strcpy(filename, "/usr/local/tomenet/lib/xtra/graf/16x16.bmp");
 
 		printf("Trying for graphics file: %s\n", filename);
 		/* Use graphics if bitmap file exists */

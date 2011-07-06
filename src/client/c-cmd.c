@@ -2940,8 +2940,8 @@ static void cmd_master_aux_system()
 	while(i!=ESCAPE){
 		Term_clear();
 		Term_putstr(0, 2, -1, TERM_BLUE, "System commands");
-		Term_putstr(5, 4, -1, TERM_WHITE, "(1) View mangband.log");
-		Term_putstr(5, 5, -1, TERM_WHITE, "(2) View mangband.rfe");
+		Term_putstr(5, 4, -1, TERM_WHITE, "(1) View tomenet.log");
+		Term_putstr(5, 5, -1, TERM_WHITE, "(2) View tomenet.rfe");
 		Term_putstr(5, 7, -1, TERM_WHITE, "(e) Execute script command");
 		Term_putstr(5, 8, -1, TERM_WHITE, "(u) Upload script file");
 		Term_putstr(5, 9, -1, TERM_WHITE, "(c) Execute local script command");

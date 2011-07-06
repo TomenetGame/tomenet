@@ -114,7 +114,7 @@ static void init_stuff(void)
 #if defined(AMIGA) || defined(VM)
 
 	/* Hack -- prepare "path" */
-	strcpy(path, "PMAngband:");
+	strcpy(path, "TomeNET:");
 
 #else /* AMIGA / VM */
 
