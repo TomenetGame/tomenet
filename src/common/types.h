@@ -2703,8 +2703,11 @@ struct player_type
 	int weapon_parry;       /* Parry various attacks (melee), needs USE_PARRYING */
 	bool no_cut;	    /* For mimic forms */
 	bool sh_fire;       /* Fiery 'immolation' effect */
+	bool sh_fire_tim, sh_fire_fix;
 	bool sh_elec;       /* Electric 'immolation' effect */
+	bool sh_elec_tim, sh_elec_fix;
 	bool sh_cold;       /* Cold 'immolation' effect */
+	bool sh_cold_tim, sh_cold_fix;
 	bool wraith_form;   /* wraithform */
 	bool immune_neth;       /* Immunity to nether */
 	bool climb;             /* Can climb mountains */

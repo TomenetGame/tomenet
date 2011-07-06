@@ -2374,9 +2374,9 @@ static void calc_body_bonus(int Ind)
 		p_ptr->drain_life++;
 	}
 	if (r_ptr->flags2 & RF2_KILL_WALL) p_ptr->auto_tunnel = TRUE;
-	if (r_ptr->flags2 & RF2_AURA_FIRE) p_ptr->sh_fire = TRUE;
-	if (r_ptr->flags2 & RF2_AURA_ELEC) p_ptr->sh_elec = TRUE;
-	if (r_ptr->flags2 & RF3_AURA_COLD) p_ptr->sh_cold = TRUE;
+	if (r_ptr->flags2 & RF2_AURA_FIRE) p_ptr->sh_fire = p_ptr->sh_fire_fix = TRUE;
+	if (r_ptr->flags2 & RF2_AURA_ELEC) p_ptr->sh_elec = p_ptr->sh_elec_fix = TRUE;
+	if (r_ptr->flags2 & RF3_AURA_COLD) p_ptr->sh_cold = p_ptr->sh_cold_fix = TRUE;
 
 	if (r_ptr->flags5 & RF5_MIND_BLAST) p_ptr->reduce_insanity = 1;
 	if (r_ptr->flags5 & RF5_BRAIN_SMASH) p_ptr->reduce_insanity = 2;
@@ -3028,9 +3028,9 @@ void calc_boni(int Ind)
 	p_ptr->immune_elec = FALSE;
 	p_ptr->immune_fire = FALSE;
 	p_ptr->immune_cold = FALSE;
-	p_ptr->sh_fire = FALSE;
-	p_ptr->sh_elec = FALSE;
-	p_ptr->sh_cold = FALSE;
+	p_ptr->sh_fire = p_ptr->sh_fire_fix = FALSE;
+	p_ptr->sh_elec = p_ptr->sh_elec_fix = FALSE;
+	p_ptr->sh_cold = p_ptr->sh_cold_fix = FALSE;
 	p_ptr->auto_tunnel = FALSE;
 	p_ptr->fly = FALSE;
 	p_ptr->can_swim = FALSE;
@@ -3337,7 +3337,7 @@ void calc_boni(int Ind)
 			if (p_ptr->lev >= 50) {
 				p_ptr->resist_pois = TRUE;
 				p_ptr->immune_fire = TRUE;
-				p_ptr->sh_fire = TRUE;
+				p_ptr->sh_fire = p_ptr->sh_fire_fix = TRUE;
 			}
 
 			/* Bonus crit for the bad side */
@@ -3957,9 +3957,9 @@ void calc_boni(int Ind)
 		if ((f5 & (TR5_REFLECT)) &&
 		    (o_ptr->tval != TV_SHIELD || !p_ptr->heavy_shield))
 			p_ptr->reflect = TRUE;
-		if (f3 & (TR3_SH_FIRE)) p_ptr->sh_fire = TRUE;
-		if (f5 & (TR5_SH_COLD)) p_ptr->sh_cold = TRUE;
-		if (f3 & (TR3_SH_ELEC)) p_ptr->sh_elec = TRUE;
+		if (f3 & (TR3_SH_FIRE)) p_ptr->sh_fire = p_ptr->sh_fire_fix = TRUE;
+		if (f5 & (TR5_SH_COLD)) p_ptr->sh_cold = p_ptr->sh_cold_fix = TRUE;
+		if (f3 & (TR3_SH_ELEC)) p_ptr->sh_elec = p_ptr->sh_elec_fix = TRUE;
 		if (f3 & (TR3_NO_MAGIC)) p_ptr->anti_magic = TRUE;
 		if (f3 & (TR3_NO_TELE)) p_ptr->anti_tele = TRUE;
 
@@ -4398,6 +4398,12 @@ void calc_boni(int Ind)
 	}
 
 	if (p_ptr->shadow_running) p_ptr->pspeed += 10;
+
+	if (p_ptr->sh_fire_tim) p_ptr->sh_fire = TRUE;
+	if (p_ptr->sh_cold_tim) p_ptr->sh_cold = TRUE;
+	if (p_ptr->sh_elec_tim) p_ptr->sh_elec = TRUE;
+
+
 
 	/* Assume player not encumbered by armor */
 	p_ptr->cumber_armor = FALSE;

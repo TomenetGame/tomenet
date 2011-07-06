@@ -3436,6 +3436,11 @@ static bool process_player_end_aux(int Ind)
 	/* Temporary blessing of luck */
 	if (p_ptr->bless_temp_luck) (void)bless_temp_luck(Ind, p_ptr->bless_temp_luck_power, p_ptr->bless_temp_luck - 1);
 
+	/* Temporary auras */
+	if (p_ptr->sh_fire_tim) (void)set_sh_fire_tim(Ind, p_ptr->sh_fire_tim - 1);
+	if (p_ptr->sh_cold_tim) (void)set_sh_cold_tim(Ind, p_ptr->sh_cold_tim - 1);
+	if (p_ptr->sh_elec_tim) (void)set_sh_elec_tim(Ind, p_ptr->sh_elec_tim - 1);
+
 	/* Still possible effects from another player's support spell on this player? */
 	if (p_ptr->support_timer) {
 		p_ptr->support_timer--;

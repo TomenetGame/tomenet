@@ -3215,6 +3215,125 @@ bool do_divine_xtra_res_time_mana(int Ind, int v) {
 }
 #endif
 
+/*
+ * Set "p_ptr->sh_fire/cold/elec", notice observable changes
+ */
+bool set_sh_fire_tim(int Ind, int v)
+{
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->sh_fire_tim) {
+			if (!p_ptr->sh_fire_fix) {
+				msg_print(Ind, "You are enveloped by scorching flames!");
+				notice = TRUE;
+			} else msg_print(Ind, "The scorching flames surrounding you are blazing high!");
+		}
+	}
+	/* Shut */
+	else {
+		if (p_ptr->sh_fire_tim && !p_ptr->sh_fire_fix) {
+			msg_print(Ind, "The scorching flames surrounding you cease.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->sh_fire_tim = v;
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+	/* Recalculate boni */
+	p_ptr->update |= (PU_BONUS);
+	/* Handle stuff */
+	handle_stuff(Ind);
+	/* Result */
+	return (TRUE);
+}
+bool set_sh_cold_tim(int Ind, int v)
+{
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->sh_cold_tim) {
+			if (!p_ptr->sh_cold_fix) {
+				msg_print(Ind, "You are enveloped by freezing cold!");
+				notice = TRUE;
+			} else msg_print(Ind, "The frost around you blows colder even!");
+		}
+	}
+	/* Shut */
+	else {
+		if (p_ptr->sh_cold_tim && !p_ptr->sh_cold_fix) {
+			msg_print(Ind, "The scorching flames surrounding you cease.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->sh_cold_tim = v;
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+	/* Recalculate boni */
+	p_ptr->update |= (PU_BONUS);
+	/* Handle stuff */
+	handle_stuff(Ind);
+	/* Result */
+	return (TRUE);
+}
+bool set_sh_elec_tim(int Ind, int v)
+{
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->sh_elec_tim) {
+			if (!p_ptr->sh_elec_fix) {
+				msg_print(Ind, "You are enveloped by sparkling static!");
+				notice = TRUE;
+			} else msg_print(Ind, "Static around you surges brightly!");
+		}
+	}
+	/* Shut */
+	else {
+		if (p_ptr->sh_elec_tim && !p_ptr->sh_elec_fix) {
+			msg_print(Ind, "The static sparkling around you ceases.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->sh_elec_tim = v;
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+	/* Recalculate boni */
+	p_ptr->update |= (PU_BONUS);
+	/* Handle stuff */
+	handle_stuff(Ind);
+	/* Result */
+	return (TRUE);
+}
+
+
 
 /*
  * Set "p_ptr->food", notice observable changes

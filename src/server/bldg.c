@@ -202,6 +202,10 @@ static void reset_tim_flags()
 	p_ptr->zeal = 0;	    /* Holy +EA */
 	p_ptr->martyr = 0;	    /* Holy martyr / invulnerability */
 	p_ptr->martyr_timeout = 0;
+
+	p_ptr->sh_fire_tim = 0;
+	p_ptr->sh_cold_tim = 0;
+	p_ptr->sh_elec_tim = 0;
 }
 
 

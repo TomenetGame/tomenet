@@ -1758,6 +1758,9 @@ extern void telekinesis_aux(int Ind, int item);
 extern bool set_bow_brand(int Ind, int v, int t, int p);
 
 extern bool bless_temp_luck(int Ind, int pow, int dur);
+extern bool set_sh_fire_tim(int Ind, int v);
+extern bool set_sh_cold_tim(int Ind, int v);
+extern bool set_sh_elec_tim(int Ind, int v);
 
 extern void toggle_aura(int Ind, int aura);
 extern void check_aura(int Ind, int aura);

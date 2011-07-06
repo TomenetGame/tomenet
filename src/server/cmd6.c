@@ -7249,37 +7249,40 @@ bool unmagic(int Ind)
 	if (p_ptr->invuln) return FALSE;
 
 	if (
-			set_adrenaline(Ind, 0) |
-			set_biofeedback(Ind, 0) |
-			set_tim_esp(Ind, 0) |
-			set_st_anchor(Ind, 0) |
-			set_prob_travel(Ind, 0) |
-			set_bow_brand(Ind, 0, 0, 0) |
-			set_mimic(Ind, 0, 0) |
-			set_tim_manashield(Ind, 0) |
-			set_tim_traps(Ind, 0) |
-			set_invis(Ind, 0, 0) |
-			set_fury(Ind, 0) |
-			set_tim_meditation(Ind, 0) |
-			set_tim_wraith(Ind, 0) |
-			set_fast(Ind, 0, 0) |
-			set_shield(Ind, 0, 50, SHIELD_NONE, 0, 0) |
-			set_blessed(Ind, 0) |
-			set_hero(Ind, 0) |
-			set_shero(Ind, 0) |
-			set_protevil(Ind, 0) |
-			set_invuln(Ind, 0) |
-			set_tim_invis(Ind, 0) |
-			set_tim_infra(Ind, 0) |
-			set_oppose_acid(Ind, 0) |
-			set_oppose_elec(Ind, 0) |
-			set_oppose_fire(Ind, 0) |
-			set_oppose_cold(Ind, 0) |
-			set_oppose_pois(Ind, 0) |
-			set_zeal(Ind, 0, 0) |
-			set_mindboost(Ind, 0, 0)
-//			set_martyr(Ind, 0)
-			) ident = TRUE;
+		set_adrenaline(Ind, 0) |
+		set_biofeedback(Ind, 0) |
+		set_tim_esp(Ind, 0) |
+		set_st_anchor(Ind, 0) |
+		set_prob_travel(Ind, 0) |
+		set_bow_brand(Ind, 0, 0, 0) |
+		set_mimic(Ind, 0, 0) |
+		set_tim_manashield(Ind, 0) |
+		set_tim_traps(Ind, 0) |
+		set_invis(Ind, 0, 0) |
+		set_fury(Ind, 0) |
+		set_tim_meditation(Ind, 0) |
+		set_tim_wraith(Ind, 0) |
+		set_fast(Ind, 0, 0) |
+		set_shield(Ind, 0, 50, SHIELD_NONE, 0, 0) |
+		set_blessed(Ind, 0) |
+		set_hero(Ind, 0) |
+		set_shero(Ind, 0) |
+		set_protevil(Ind, 0) |
+		set_invuln(Ind, 0) |
+		set_tim_invis(Ind, 0) |
+		set_tim_infra(Ind, 0) |
+		set_oppose_acid(Ind, 0) |
+		set_oppose_elec(Ind, 0) |
+		set_oppose_fire(Ind, 0) |
+		set_oppose_cold(Ind, 0) |
+		set_oppose_pois(Ind, 0) |
+		set_zeal(Ind, 0, 0) |
+		set_mindboost(Ind, 0, 0) |
+//		set_martyr(Ind, 0) |
+		set_sh_fire_tim(Ind, 0) |
+		set_sh_cold_tim(Ind, 0) |
+		set_sh_elec_tim(Ind, 0)
+	) ident = TRUE;
 
 	if (p_ptr->word_recall) ident |= set_recall_timer(Ind, 0);
 
