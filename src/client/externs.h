@@ -469,6 +469,7 @@ extern void toggle_audio(void);
 extern bool sound_page(void);
 extern int page_sound_idx, rain1_sound_idx, rain2_sound_idx, snow1_sound_idx, snow2_sound_idx, browse_sound_idx, browsebook_sound_idx;
 #endif
+extern errr options_dump(cptr fname);
 
 /* c-spell.c */
 /*extern void show_browse(int book); */

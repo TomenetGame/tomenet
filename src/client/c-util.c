@@ -4915,7 +4915,7 @@ static void do_cmd_options_win(void)
 }
 
 
-static errr options_dump(cptr fname)
+errr options_dump(cptr fname)
 {
 	int i, j;
 

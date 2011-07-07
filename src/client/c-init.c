@@ -209,6 +209,34 @@ void initialize_main_pref_files(void)
 
 	/* Process that file */
 	process_pref_file(buf);
+
+
+	/* Hack: Convert old window.prf or user.prf files that
+	   were made < 4.4.7.1. - C. Blue */
+	for (i = 0; i < ANGBAND_TERM_MAX; i++) {
+		/* in 4.7.7.1.0.0 there are only 8 flags up to 0x80: */
+		if (window_flag[i] >= 0x0100) {
+			i = -1;
+			break;
+		}
+	}
+	/* Found outdated flags? */
+	if (i == -1) {
+		for (i = 0; i < ANGBAND_TERM_MAX; i++) {
+			u32b new_flags = 0x0;
+			/* translate old->new */
+			if (window_flag[i] & 0x00001) new_flags |= PW_INVEN;
+			if (window_flag[i] & 0x00002) new_flags |= PW_EQUIP;
+			if (window_flag[i] & 0x00008) new_flags |= PW_PLAYER;
+			if (window_flag[i] & 0x00010) new_flags |= PW_LAGOMETER;
+			if (window_flag[i] & 0x00040) new_flags |= PW_MESSAGE;
+			if (window_flag[i] & 0x40000) new_flags |= PW_CHAT;
+			if (window_flag[i] & 0x80000) new_flags |= PW_MSGNOCHAT;
+			window_flag[i] = new_flags;
+		}
+		/* and.. save them! */
+		(void)options_dump("user.prf");
+	}
 }
 
 void initialize_player_pref_files(void){
