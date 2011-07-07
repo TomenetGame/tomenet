@@ -21,14 +21,14 @@
 
 /* use more compact @-list to get more information displayed?
    NOTE: Requires ABUNDANT_TITLES! (in do_write_others_attributes()) */
-//#define COMPACT_PLAYERLIST
+#define COMPACT_PLAYERLIST
 /* if COMPACT_PLAYERLIST is enabled, this will switch to an even denser layout,
    which in exchange displays the hostnames to all players again (tradition). */
 #define COMPACT_ALT
 
 /* use ultra compact @-list that uses only 2 lines per entry.
    NOTE: COMPACT_PLAYERLIST must be disabled when using this! */
-#define ULTRA_COMPACT_PLAYERLIST
+//#define ULTRA_COMPACT_PLAYERLIST
 
 /* print compressed gender in 1st line. If disabled, gender might instead get
    printed in the 2nd line, depending on the actual display mode.
