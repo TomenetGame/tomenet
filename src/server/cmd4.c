@@ -21,14 +21,20 @@
 
 /* use more compact @-list to get more information displayed?
    NOTE: Requires ABUNDANT_TITLES! (in do_write_others_attributes()) */
-#define COMPACT_PLAYERLIST
+//#define COMPACT_PLAYERLIST
 /* if COMPACT_PLAYERLIST is enabled, this will switch to an even denser layout,
    which in exchange displays the hostnames to all players again (tradition). */
 #define COMPACT_ALT
 
 /* use ultra compact @-list that uses only 2 lines per entry.
    NOTE: COMPACT_PLAYERLIST must be disabled when using this! */
-//#define ULTRA_COMPACT_PLAYERLIST
+#define ULTRA_COMPACT_PLAYERLIST
+
+/* print compressed gender in 1st line. If disabled, gender might instead get
+   printed in the 2nd line, depending on the actual display mode.
+   This can be optionally added to either COMPACT_PLAYERLIST or ULTRA_COMPACT_PLAYERLIST. */
+//#define COMPACT_GENDER
+
 
 
 /*
@@ -595,7 +601,11 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 	}
 	else fprintf(fff, "\377%c", attr);
 
+  #ifdef COMPACT_GENDER
 	fprintf(fff, "%s,\377%c %c.L%d ", q_ptr->name, attr, q_ptr->male ? 'm' : 'f', q_ptr->lev);
+  #else
+	fprintf(fff, "%s,\377%c L%d %s ", q_ptr->name, attr, q_ptr->lev, q_ptr->male ? "Male" : "Female");
+  #endif
 
   #ifdef ENABLE_DIVINE
 	if (q_ptr->prace == RACE_DIVINE && q_ptr->ptrait) {
@@ -716,7 +726,11 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 	else if (q_ptr->total_winner) fprintf(fff, "\377v");
 	else fprintf(fff, "\377%c", attr);
 
+  #ifdef COMPACT_GENDER
 	fprintf(fff, "%s,\377%c %c.L%d ", q_ptr->name, attr, q_ptr->male ? 'm' : 'f', q_ptr->lev);
+  #else
+	fprintf(fff, "%s,\377%c L%d ", q_ptr->name, attr, q_ptr->lev);
+  #endif
 
   #ifdef ENABLE_DIVINE
 	if (q_ptr->prace == RACE_DIVINE && q_ptr->ptrait) {
@@ -824,8 +838,12 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 	}
 
 	fprintf(fff, "*%s\377U", info_chars);
+//	fprintf(fff, " (%s@%s)", q_ptr->accountname, q_ptr->hostname);
 	fprintf(fff, " (%s@%s)", q_ptr->accountname, q_ptr->hostname);
 
+  #ifndef COMPACT_GENDER
+	fprintf(fff, ", %s", q_ptr->male ? "Male" : "Female");
+  #endif
 
 	/* overlapping AFK msg with guild/party names */
 	if (q_ptr->afk && strlen(q_ptr->afk_msg)) {
