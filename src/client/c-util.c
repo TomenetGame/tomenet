@@ -4854,6 +4854,10 @@ static void do_cmd_options_win(void)
 
 				/* Set flag */
 				window_flag[x] |= (1L << y);
+
+				/* Update windows */
+				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP);//PW_LAGOMETER is called automatically, no need.
+				window_stuff();
 				break;
 			}
 
@@ -4862,6 +4866,10 @@ static void do_cmd_options_win(void)
 			{
 				/* Clear flag */
 				window_flag[x] &= ~(1L << y);
+
+				/* Update windows */
+				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP);//PW_LAGOMETER is called automatically, no need.
+				window_stuff();
 				break;
 			}
 
@@ -4902,9 +4910,7 @@ static void do_cmd_options_win(void)
 	}
 
 	/* Update windows */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_MESSAGE | PW_PLAYER | PW_CHAT | PW_MSGNOCHAT);
-
-	/* Update windows */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP);//PW_LAGOMETER is called automatically, no need.
 	window_stuff();
 }
 
