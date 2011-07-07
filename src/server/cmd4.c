@@ -20,11 +20,15 @@
 #define ABUNDANT_TITLES
 
 /* use more compact @-list to get more information displayed?
-   Requires ABUNDANT_TITLES! (in do_write_others_attributes()) */
+   NOTE: Requires ABUNDANT_TITLES! (in do_write_others_attributes()) */
 #define COMPACT_PLAYERLIST
 /* if COMPACT_PLAYERLIST is enabled, this will switch to an even denser layout,
-   which however displays the hostnames to all players again, traditionally. */
+   which in exchange displays the hostnames to all players again (tradition). */
 #define COMPACT_ALT
+
+/* use ultra compact @-list that uses only 2 lines per entry.
+   NOTE: COMPACT_PLAYERLIST must be disabled when using this! */
+//#define ULTRA_COMPACT_PLAYERLIST
 
 
 /*
@@ -430,9 +434,9 @@ void do_cmd_check_uniques(int Ind, int line)
 	fd_kill(file_name);
 }
 
-static void do_write_others_attributes(FILE *fff, player_type *q_ptr, char attr, bool admin)
+static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, char attr, bool admin)
 {
-#ifndef COMPACT_PLAYERLIST
+#if !defined COMPACT_PLAYERLIST && !defined ULTRA_COMPACT_PLAYERLIST
 	int modify_number = 0;
 #endif
 	cptr p = "";
@@ -445,235 +449,7 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, char attr,
 	else
 		p = player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_PLAYER_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male];
 
-#ifndef COMPACT_PLAYERLIST /* outdated way */
-	/* Check for special character */
-	/* Uncomment these as you feel it's needed ;) */
-	//if(!strcmp(q_ptr->name,"")) modify_number=1; //wussy Cheezer
-	//if(!strcmp(q_ptr->name,"")) modify_number=2; //silyl Slacker
-	//if(!strcmp(q_ptr->name,"Duncan McLeod")) modify_number=3; //Highlander games Judge ;) Bread and games to them!!
-	//if(!strcmp(q_ptr->name,"Tomenet")) modify_number=4;//Server-specific Dungeon Masters
-	//if(!strcmp(q_ptr->name,"C. Blue")) modify_number=4;//Server-specific Dungeon Masters
-	//if(!strcmp(q_ptr->name,"C.Blue")) modify_number=4;//Server-specific Dungeon Masters
-	if(q_ptr->admin_dm) modify_number=4;
-	if(q_ptr->admin_wiz) modify_number=5;
-
-	/* Print a message */
- #if 0
-	fprintf(fff, "  %s the %s%s %s (%s%sLv %d, %s)",
-			q_ptr->name, (q_ptr->mode == MODE_HARD)?"hellish ":"",
-			race_info[q_ptr->prace].title, class_info[q_ptr->pclass].title,
-			(q_ptr->total_winner)?
-			    ((p_ptr->mode & (MODE_HARD | MODE_NO_GHOST))?
-				((q_ptr->male)?"Emperor":"Empress"):
-				((q_ptr->male)?"King, ":"Queen, ")):
-			    ((q_ptr->male)?"Male, ":"Female, "),
-			q_ptr->fruit_bat ? "Fruit bat, " : "",
-			q_ptr->lev, parties[q_ptr->party].name);
- #else	// 0
-  #ifndef ABUNDANT_TITLES
-	fprintf(fff, "  %s the ", q_ptr->name);
-	switch(modify_number){
-	case 1:	fprintf(fff, "wussy "); break;
-	case 2: fprintf(fff, "silyl "); break;
-	default:
-		switch (q_ptr->mode & MODE_MASK)	// TODO: give better modifiers
-		{
-    			case MODE_NORMAL:
-				break;
-			case MODE_HARD:
-				fprintf(fff, "purgatorial ");
-				break;
-			case MODE_NO_GHOST:
-				fprintf(fff, "unworldly ");
-				break;
-			case MODE_EVERLASTING:
-				fprintf(fff, "everlasting ");
-				break;
-	    		case (MODE_HARD + MODE_NO_GHOST):
-				fprintf(fff, "hellish ");
-				break;
-		}
-		break;
-	}
-
-	switch (modify_number) {
-	case 3: fprintf(fff, "Highlander "); break; //Judge for Highlander games
-	default: fprintf(fff, "%s ", race_info[q_ptr->prace].title); break;
-	}
-	
-	switch (modify_number) {
-	case 1: fprintf(fff, "Cheezer "); break;
-	case 2: fprintf(fff, "Slacker "); break;
-	case 3: if (q_ptr->male) fprintf(fff, "Swordsman ");
-		else fprintf(fff, "Swordswoman ");
-		break; //Judge for Highlander games
-	default:
-		fprintf(fff, "%s", class_info[q_ptr->pclass].title); break;
-	}
-
-	if (q_ptr->mode & MODE_PVP) fprintf(fff, " Gladiator");
-  #else
-   #if 0
-	switch (q_ptr->mode & MODE_MASK)	// TODO: give better modifiers
-	{
-		case MODE_NORMAL:
-			break;
-		case MODE_HARD:
-			fprintf(fff, "\377s");
-			break;
-		case MODE_NO_GHOST:
-			fprintf(fff, "\377D");
-			break;
-		case MODE_EVERLASTING:
-			fprintf(fff, "\377B");
-			break;
-		case MODE_PVP:
-			fprintf(fff, "\377%c", COLOUR_MODE_PVP);
-			break;
-		case (MODE_HARD | MODE_NO_GHOST):
-			fprintf(fff, "\377s");
-			break;
-	}
-	fprintf(fff, "  %s\377%c the ", q_ptr->name, attr);
-   #else
-	fprintf(fff, "  %s the ", q_ptr->name);
-   #endif
-	//e.g., God the Human Grand Runemistress =P
-   #ifdef ENABLE_DIVINE
-	if (q_ptr->prace == RACE_DIVINE && q_ptr->ptrait) {
-		if (q_ptr->ptrait==TRAIT_ENLIGHTENED)
-			fprintf(fff, "%s %s", "Enlightened", p);
-		else if (q_ptr->ptrait==TRAIT_CORRUPTED)
-			fprintf(fff, "%s %s", "Corrupted", p);
-	}
-	else
-   #endif
-	{
-		fprintf(fff, "%s %s", special_prace_lookup[q_ptr->prace],  p); 
-	}
-  #endif
-	if (q_ptr->mode & MODE_PVP) fprintf(fff, " Gladiator");
-
-	/* PK */
-	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
-		text_pk = TRUE;
-		if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
-			fprintf(fff, "   (PK");
-		else if(!(q_ptr->pkill & PKILL_KILLABLE))
-			fprintf(fff, "   (SAFE");
-		else if(!(q_ptr->tim_pkill))
-			fprintf(fff, q_ptr->lev < 5 ? "   (Newbie" : "   (Killable");
-		else
-			text_pk = FALSE;
-	}
-	if (q_ptr->limit_chat) {
-		text_silent = TRUE;
-		if (text_pk)
-			fprintf(fff, ", Silent");
-		else
-			fprintf(fff, "   (Silent");
-	}
-	/* AFK */
-	if (q_ptr->afk) {
-		text_afk = TRUE;
-		if (text_pk || text_silent) {
-//			if (strlen(q_ptr->afk_msg) == 0)
-				fprintf(fff, ", AFK");
-//			else
-//				fprintf(fff, ", AFK: %s", q_ptr->afk_msg);
-		} else {
-//			if (strlen(q_ptr->afk_msg) == 0)
-				fprintf(fff, "   (AFK");
-//			else
-//				fprintf(fff, "   (AFK: %s", q_ptr->afk_msg);
-		}
-	}
-	/* Ignoring normal chat (sees only private & party messages) */
-	if (q_ptr->ignoring_chat) {
-		text_ignoring_chat = TRUE;
-		if (text_pk || text_silent || text_afk) {
-			fprintf(fff, ", Private mode");
-		} else {
-			fprintf(fff, "   (Private mode");
-		}
-	}
-	if (q_ptr->admin_dm_chat) {
-		text_allow_dm_chat = TRUE;
-		if (text_pk || text_silent || text_afk || text_ignoring_chat) {
-			fprintf(fff, ", Allow chat");
-		} else {
-			fprintf(fff, "   (Allow chat");
-		}
-	}
-	if (text_pk || text_silent || text_afk || text_ignoring_chat || text_allow_dm_chat) fprintf(fff, ")");
-
-	/* Line break here, it's getting too long with all that mods -C. Blue */
-  #ifdef ABUNDANT_TITLES
-   #if 0
-	strcpy(info_chars, " "));
-   #else
-	if (q_ptr->fruit_bat == 1)
-		strcpy(info_chars, format("\377%cb", color_attr_to_char(q_ptr->cp_ptr->color)));
-	else
-		strcpy(info_chars, format("\377%c@", color_attr_to_char(q_ptr->cp_ptr->color)));
-   #endif
-	switch (q_ptr->mode & MODE_MASK)	// TODO: give better modifiers
-	{
-		case MODE_NORMAL:
-			fprintf(fff, "\n\377W  *%s\377U ", info_chars);
-			break;
-		case MODE_EVERLASTING:
-			fprintf(fff, "\n\377B  *%s\377U ", info_chars);
-			break;
-		case MODE_PVP:
-			fprintf(fff, "\n\377%c  *%s\377U ", COLOUR_MODE_PVP, info_chars);
-			break;
-		case (MODE_HARD | MODE_NO_GHOST):
-			fprintf(fff, "\n\377r  *%s\377U ", info_chars);
-			break;
-		case MODE_HARD:
-			fprintf(fff, "\n\377s  *%s\377U ", info_chars);
-			break;
-		case MODE_NO_GHOST:
-			fprintf(fff, "\n\377D  *%s\377U ", info_chars);
-			break;
-	}
-  #else
-	fprintf(fff, "\n\377U     ");
-  #endif
-
-	switch (modify_number) {
-	case 3: fprintf(fff, "\377rJudge\377U "); break; //Judge for Highlander games
-	case 4: if (q_ptr->male) fprintf(fff,"\377bDungeon Master\377U ");
-		else fprintf(fff,"\377bDungeon Mistress\377U ");
-		break; //Server Admin
-	case 5: if (q_ptr->male) fprintf(fff,"\377bDungeon Wizard\377U ");
-		else fprintf(fff,"\377bDungeon Wizard\377U ");
-		break; //Server Admin
-	default: fprintf(fff, "%s",
-		q_ptr->ghost ? "\377rGhost\377U " :
-		(q_ptr->total_winner ?
-		    ((q_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) ?
-			(q_ptr->male ? "\377vEmperor\377U " : "\377vEmpress\377U ") :
-		        (q_ptr->male ? "\377vKing\377U " : "\377vQueen\377U "))
-		: (q_ptr->male ? "Male " : "Female ")));
-		break;
-	}
-
-	fprintf(fff, "Lv %d", q_ptr->lev);
-//		q_ptr->fruit_bat == 1 ? "Batty " : "", /* only for true battys, not polymorphed ones */
-
-	if (q_ptr->guild)
-		fprintf(fff, ", \377y[\377U%s\377y]\377U",
-		    guilds[q_ptr->guild].name);
-	if (q_ptr->party)
-		fprintf(fff, "%s '%s%s\377U'",
-		    q_ptr->guild ? "" : ", Party:",
-		    (parties[q_ptr->party].mode == PA_IRONTEAM) ? "\377s" : "",
-		    parties[q_ptr->party].name);
- #endif	// 0
-
-#else /* COMPACT_PLAYERLIST new way */
+#ifdef COMPACT_PLAYERLIST
  #ifndef COMPACT_ALT
 	/* Print a message */
 	fprintf(fff," ");
@@ -928,7 +704,373 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, char attr,
 		parties[q_ptr->party].name);
 	}
  #endif
-#endif
+
+#else /* COMPACT_PLAYERLIST */
+ #ifdef ULTRA_COMPACT_PLAYERLIST
+
+	/* Print a message */
+	fprintf(fff," ");
+	if (is_admin(q_ptr)) fprintf(fff,"\377b");
+	else if (q_ptr->mode & MODE_PVP) fprintf(fff, "\377%c", COLOUR_MODE_PVP);
+	else if (q_ptr->ghost) fprintf(fff, "\377r");
+	else if (q_ptr->total_winner) fprintf(fff, "\377v");
+	else fprintf(fff, "\377%c", attr);
+
+	fprintf(fff, "%s,\377%c %c.L%d ", q_ptr->name, attr, q_ptr->male ? 'm' : 'f', q_ptr->lev);
+
+  #ifdef ENABLE_DIVINE
+	if (q_ptr->prace == RACE_DIVINE && q_ptr->ptrait) {
+		if (q_ptr->ptrait == TRAIT_ENLIGHTENED)
+			fprintf(fff, "%s", "Enlightened");
+		else if (q_ptr->ptrait == TRAIT_CORRUPTED)
+			fprintf(fff, "%s", "Corrupted");
+	} else
+  #endif
+	fprintf(fff, "%s", special_prace_lookup[q_ptr->prace]);
+	fprintf(fff, " %s", class_info[q_ptr->pclass].title);
+
+	/* location */
+	if (attr == 'G' || admin) {
+		// BAD HACK: just replacing 'Ind' by number constants..
+  #if 0 /* 'The Sacred Land of Mountains' <- too long for this ultra compact scheme! */
+		if (admin) fprintf(fff, ", %s", wpos_format(1, &q_ptr->wpos));
+		else fprintf(fff, ", %s", wpos_format(-1, &q_ptr->wpos));
+  #else /* ..so give everyone exact wpos, like otherwise only admins get */
+		fprintf(fff, ", %s", wpos_format_compact(Ind, &q_ptr->wpos));
+  #endif
+
+		fprintf(fff, " [%d,%d]", q_ptr->panel_row, q_ptr->panel_col);
+
+		/* Quest flag */
+//		fprintf(fff, " %c", (q_ptr->quest_id ? 'Q' : ' '));
+	}
+
+	/* PK */
+	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
+		text_pk = TRUE;
+		if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
+			fprintf(fff, " (PK");
+		else if(!(q_ptr->pkill & PKILL_KILLABLE))
+			fprintf(fff, " (SAFE");
+		else if(!(q_ptr->tim_pkill))
+			fprintf(fff, q_ptr->lev < 5 ? " (New" : " (Kill");
+		else
+			text_pk = FALSE;
+	}
+	if (q_ptr->limit_chat) {
+		text_silent = TRUE;
+		if (text_pk)
+			fprintf(fff, ", Silent");
+		else
+			fprintf(fff, " (Silent");
+	}
+	/* AFK */
+	if (q_ptr->afk) {
+		text_afk = TRUE;
+		if (text_pk || text_silent) {
+				fprintf(fff, ", AFK");
+		} else {
+				fprintf(fff, " (AFK");
+		}
+	}
+	/* Ignoring normal chat (sees only private & party messages) */
+	if (q_ptr->ignoring_chat) {
+		text_ignoring_chat = TRUE;
+		if (text_pk || text_silent || text_afk) {
+			fprintf(fff, ", Private");
+		} else {
+			fprintf(fff, " (Private");
+		}
+	}
+	if (q_ptr->admin_dm_chat) {
+		text_allow_dm_chat = TRUE;
+		if (text_pk || text_silent || text_afk || text_ignoring_chat) {
+			fprintf(fff, ", Chat");
+		} else {
+			fprintf(fff, " (Chat");
+		}
+	}
+	if (text_pk || text_silent || text_afk || text_ignoring_chat || text_allow_dm_chat) fprintf(fff, ")");
+
+
+	/* 2nd line */
+	fprintf(fff, "\n   \377");
+
+	if (q_ptr->fruit_bat == 1)
+		strcpy(info_chars, format("\377%cb", color_attr_to_char(q_ptr->cp_ptr->color)));
+	else
+		strcpy(info_chars, format("\377%c@", color_attr_to_char(q_ptr->cp_ptr->color)));
+
+	switch (q_ptr->mode & MODE_MASK) { // TODO: give better modifiers
+		default:
+		case MODE_NORMAL:
+			fprintf(fff, "W");
+			break;
+		case MODE_EVERLASTING:
+			fprintf(fff, "B");
+			break;
+		case MODE_PVP:
+			fprintf(fff, "%c", COLOUR_MODE_PVP);
+			break;
+		case (MODE_HARD | MODE_NO_GHOST):
+			fprintf(fff, "r");
+			break;
+		case MODE_HARD:
+			fprintf(fff, "s");
+			break;
+		case MODE_NO_GHOST:
+			fprintf(fff, "D");
+			break;
+	}
+
+	fprintf(fff, "*%s\377U", info_chars);
+	fprintf(fff, " (%s@%s)", q_ptr->accountname, q_ptr->hostname);
+
+
+	/* overlapping AFK msg with guild/party names */
+	if (q_ptr->afk && strlen(q_ptr->afk_msg)) {
+		fprintf(fff, "  \377u(%s\377u)", q_ptr->afk_msg);
+	} else {
+		if (q_ptr->guild) {
+			fprintf(fff, ", \377y[\377U%s\377y]\377U", guilds[q_ptr->guild].name);
+		}
+		if (q_ptr->party) {
+			if (!q_ptr->guild) fprintf(fff, ", Party:");
+			fprintf(fff, " '%s%s\377U'",
+			(parties[q_ptr->party].mode == PA_IRONTEAM) ? "\377s" : "",
+			parties[q_ptr->party].name);
+		}
+	}
+
+ #else
+	/* Check for special character */
+	/* Uncomment these as you feel it's needed ;) */
+	//if(!strcmp(q_ptr->name,"")) modify_number=1; //wussy Cheezer
+	//if(!strcmp(q_ptr->name,"")) modify_number=2; //silyl Slacker
+	//if(!strcmp(q_ptr->name,"Duncan McLeod")) modify_number=3; //Highlander games Judge ;) Bread and games to them!!
+	//if(!strcmp(q_ptr->name,"Tomenet")) modify_number=4;//Server-specific Dungeon Masters
+	//if(!strcmp(q_ptr->name,"C. Blue")) modify_number=4;//Server-specific Dungeon Masters
+	//if(!strcmp(q_ptr->name,"C.Blue")) modify_number=4;//Server-specific Dungeon Masters
+	if(q_ptr->admin_dm) modify_number=4;
+	if(q_ptr->admin_wiz) modify_number=5;
+
+	/* Print a message */
+  #if 0
+	fprintf(fff, "  %s the %s%s %s (%s%sLv %d, %s)",
+			q_ptr->name, (q_ptr->mode == MODE_HARD)?"hellish ":"",
+			race_info[q_ptr->prace].title, class_info[q_ptr->pclass].title,
+			(q_ptr->total_winner)?
+			    ((p_ptr->mode & (MODE_HARD | MODE_NO_GHOST))?
+				((q_ptr->male)?"Emperor":"Empress"):
+				((q_ptr->male)?"King, ":"Queen, ")):
+			    ((q_ptr->male)?"Male, ":"Female, "),
+			q_ptr->fruit_bat ? "Fruit bat, " : "",
+			q_ptr->lev, parties[q_ptr->party].name);
+  #else	// 0
+   #ifndef ABUNDANT_TITLES
+	fprintf(fff, "  %s the ", q_ptr->name);
+	switch(modify_number){
+	case 1:	fprintf(fff, "wussy "); break;
+	case 2: fprintf(fff, "silyl "); break;
+	default:
+		switch (q_ptr->mode & MODE_MASK)	// TODO: give better modifiers
+		{
+    			case MODE_NORMAL:
+				break;
+			case MODE_HARD:
+				fprintf(fff, "purgatorial ");
+				break;
+			case MODE_NO_GHOST:
+				fprintf(fff, "unworldly ");
+				break;
+			case MODE_EVERLASTING:
+				fprintf(fff, "everlasting ");
+				break;
+	    		case (MODE_HARD + MODE_NO_GHOST):
+				fprintf(fff, "hellish ");
+				break;
+		}
+		break;
+	}
+
+	switch (modify_number) {
+	case 3: fprintf(fff, "Highlander "); break; //Judge for Highlander games
+	default: fprintf(fff, "%s ", race_info[q_ptr->prace].title); break;
+	}
+	
+	switch (modify_number) {
+	case 1: fprintf(fff, "Cheezer "); break;
+	case 2: fprintf(fff, "Slacker "); break;
+	case 3: if (q_ptr->male) fprintf(fff, "Swordsman ");
+		else fprintf(fff, "Swordswoman ");
+		break; //Judge for Highlander games
+	default:
+		fprintf(fff, "%s", class_info[q_ptr->pclass].title); break;
+	}
+
+	if (q_ptr->mode & MODE_PVP) fprintf(fff, " Gladiator");
+   #else
+    #if 0
+	switch (q_ptr->mode & MODE_MASK)	// TODO: give better modifiers
+	{
+		case MODE_NORMAL:
+			break;
+		case MODE_HARD:
+			fprintf(fff, "\377s");
+			break;
+		case MODE_NO_GHOST:
+			fprintf(fff, "\377D");
+			break;
+		case MODE_EVERLASTING:
+			fprintf(fff, "\377B");
+			break;
+		case MODE_PVP:
+			fprintf(fff, "\377%c", COLOUR_MODE_PVP);
+			break;
+		case (MODE_HARD | MODE_NO_GHOST):
+			fprintf(fff, "\377s");
+			break;
+	}
+	fprintf(fff, "  %s\377%c the ", q_ptr->name, attr);
+    #else
+	fprintf(fff, "  %s the ", q_ptr->name);
+    #endif
+	//e.g., God the Human Grand Runemistress =P
+    #ifdef ENABLE_DIVINE
+	if (q_ptr->prace == RACE_DIVINE && q_ptr->ptrait) {
+		if (q_ptr->ptrait==TRAIT_ENLIGHTENED)
+			fprintf(fff, "%s %s", "Enlightened", p);
+		else if (q_ptr->ptrait==TRAIT_CORRUPTED)
+			fprintf(fff, "%s %s", "Corrupted", p);
+	}
+	else
+    #endif
+	{
+		fprintf(fff, "%s %s", special_prace_lookup[q_ptr->prace],  p); 
+	}
+   #endif
+	if (q_ptr->mode & MODE_PVP) fprintf(fff, " Gladiator");
+
+	/* PK */
+	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
+		text_pk = TRUE;
+		if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
+			fprintf(fff, "   (PK");
+		else if(!(q_ptr->pkill & PKILL_KILLABLE))
+			fprintf(fff, "   (SAFE");
+		else if(!(q_ptr->tim_pkill))
+			fprintf(fff, q_ptr->lev < 5 ? "   (Newbie" : "   (Killable");
+		else
+			text_pk = FALSE;
+	}
+	if (q_ptr->limit_chat) {
+		text_silent = TRUE;
+		if (text_pk)
+			fprintf(fff, ", Silent");
+		else
+			fprintf(fff, "   (Silent");
+	}
+	/* AFK */
+	if (q_ptr->afk) {
+		text_afk = TRUE;
+		if (text_pk || text_silent) {
+//			if (strlen(q_ptr->afk_msg) == 0)
+				fprintf(fff, ", AFK");
+//			else
+//				fprintf(fff, ", AFK: %s", q_ptr->afk_msg);
+		} else {
+//			if (strlen(q_ptr->afk_msg) == 0)
+				fprintf(fff, "   (AFK");
+//			else
+//				fprintf(fff, "   (AFK: %s", q_ptr->afk_msg);
+		}
+	}
+	/* Ignoring normal chat (sees only private & party messages) */
+	if (q_ptr->ignoring_chat) {
+		text_ignoring_chat = TRUE;
+		if (text_pk || text_silent || text_afk) {
+			fprintf(fff, ", Private mode");
+		} else {
+			fprintf(fff, "   (Private mode");
+		}
+	}
+	if (q_ptr->admin_dm_chat) {
+		text_allow_dm_chat = TRUE;
+		if (text_pk || text_silent || text_afk || text_ignoring_chat) {
+			fprintf(fff, ", Allow chat");
+		} else {
+			fprintf(fff, "   (Allow chat");
+		}
+	}
+	if (text_pk || text_silent || text_afk || text_ignoring_chat || text_allow_dm_chat) fprintf(fff, ")");
+
+	/* Line break here, it's getting too long with all that mods -C. Blue */
+   #ifdef ABUNDANT_TITLES
+    #if 0
+	strcpy(info_chars, " "));
+    #else
+	if (q_ptr->fruit_bat == 1)
+		strcpy(info_chars, format("\377%cb", color_attr_to_char(q_ptr->cp_ptr->color)));
+	else
+		strcpy(info_chars, format("\377%c@", color_attr_to_char(q_ptr->cp_ptr->color)));
+    #endif
+	switch (q_ptr->mode & MODE_MASK)	// TODO: give better modifiers
+	{
+		case MODE_NORMAL:
+			fprintf(fff, "\n\377W  *%s\377U ", info_chars);
+			break;
+		case MODE_EVERLASTING:
+			fprintf(fff, "\n\377B  *%s\377U ", info_chars);
+			break;
+		case MODE_PVP:
+			fprintf(fff, "\n\377%c  *%s\377U ", COLOUR_MODE_PVP, info_chars);
+			break;
+		case (MODE_HARD | MODE_NO_GHOST):
+			fprintf(fff, "\n\377r  *%s\377U ", info_chars);
+			break;
+		case MODE_HARD:
+			fprintf(fff, "\n\377s  *%s\377U ", info_chars);
+			break;
+		case MODE_NO_GHOST:
+			fprintf(fff, "\n\377D  *%s\377U ", info_chars);
+			break;
+	}
+   #else
+	fprintf(fff, "\n\377U     ");
+   #endif
+
+	switch (modify_number) {
+	case 3: fprintf(fff, "\377rJudge\377U "); break; //Judge for Highlander games
+	case 4: if (q_ptr->male) fprintf(fff,"\377bDungeon Master\377U ");
+		else fprintf(fff,"\377bDungeon Mistress\377U ");
+		break; //Server Admin
+	case 5: if (q_ptr->male) fprintf(fff,"\377bDungeon Wizard\377U ");
+		else fprintf(fff,"\377bDungeon Wizard\377U ");
+		break; //Server Admin
+	default: fprintf(fff, "%s",
+		q_ptr->ghost ? "\377rGhost\377U " :
+		(q_ptr->total_winner ?
+		    ((q_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) ?
+			(q_ptr->male ? "\377vEmperor\377U " : "\377vEmpress\377U ") :
+		        (q_ptr->male ? "\377vKing\377U " : "\377vQueen\377U "))
+		: (q_ptr->male ? "Male " : "Female ")));
+		break;
+	}
+
+	fprintf(fff, "Lv %d", q_ptr->lev);
+//		q_ptr->fruit_bat == 1 ? "Batty " : "", /* only for true battys, not polymorphed ones */
+
+	if (q_ptr->guild)
+		fprintf(fff, ", \377y[\377U%s\377y]\377U",
+		    guilds[q_ptr->guild].name);
+	if (q_ptr->party)
+		fprintf(fff, "%s '%s%s\377U'",
+		    q_ptr->guild ? "" : ", Party:",
+		    (parties[q_ptr->party].mode == PA_IRONTEAM) ? "\377s" : "",
+		    parties[q_ptr->party].name);
+  #endif // 0
+ #endif	/* ULTRA_COMPACT_PLAYERLIST */
+#endif /* COMPACT_PLAYERLIST */
 }
 
 /*
@@ -972,68 +1114,7 @@ void do_cmd_check_players(int Ind, int line)
 		if (q_ptr->admin_dm &&
 		   (cfg.secret_dungeon_master) && !admin) continue;
 
-#ifndef COMPACT_PLAYERLIST /* outdated way */
-		/*** Determine color ***/
-
-		/* Print self in green */
-		if (Ind == k) attr = 'G';
-
-		/* Print other PvP-mode chars in orange */
-		else if ((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) attr = COLOUR_MODE_PVP;
-
-		/* Print party members in blue */
-		else if (p_ptr->party && p_ptr->party == q_ptr->party) attr = 'B';
-
-		/* Print hostile players in red */
-		else if (check_hostile(Ind, k)) attr = 'r';
-
-		/* Output color byte */
-		fprintf(fff, "\377%c", attr);
-
-		/* Print a message */
-		do_write_others_attributes(fff, q_ptr, attr, is_admin(p_ptr));
-		/* Colour might have changed due to Iron Team party name,
-		   so print the closing ')' in the original colour again: */
-		/* not needed anymore since we have linebreak now
-		fprintf(fff, "\377%c)", attr);*/
-
-		/* Newline */
-		/* -AD- will this work? - Sure -C. Blue- */
-		fprintf(fff, "\n\377U");
-
-//		if (is_admin(p_ptr)) fprintf(fff, "  (%d)", k);
-
-		//show local system username? q_ptr->realname
-		fprintf(fff, " %s (%s@%s) ", q_ptr->inval ? (!outdated ? (!latest && is_admin(p_ptr) ? "\377yI\377U+\377sL\377U" : "\377y(I)\377U") : "\377yI\377U+\377DO\377U") :
-		    (outdated ? "\377D(O)\377U" : (!latest && is_admin(p_ptr) ? "\377s(L)\377U" :  "   ")), q_ptr->accountname, q_ptr->hostname);
-
-		/* Print location if both players are PvP-Mode */
-		if (((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) && !admin) {
-			fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
-		}
-		/* Print extra info if these people are in the same party */
-		/* Hack -- always show extra info to dungeon master */
-		else if ((p_ptr->party == q_ptr->party && p_ptr->party) || Ind == k || admin) {
-			if (admin) fprintf(fff, "%s", wpos_format(Ind, &q_ptr->wpos));
-			else fprintf(fff, "%s", wpos_format(-Ind, &q_ptr->wpos));
-
-			fprintf(fff, " [%d,%d]", q_ptr->panel_row, q_ptr->panel_col);
-		}
-
-		/* Quest flag */
-		fprintf(fff, " %c", (q_ptr->quest_id ? 'Q' : ' '));
-
-		if ((!q_ptr->afk) || !strlen(q_ptr->afk_msg)) {
-			if (!q_ptr->info_msg[0])
-				fprintf(fff, "\n\n");
-			else
-				fprintf(fff, "\n     \377U(%s\377U)\n", q_ptr->info_msg);
-		} else
-			fprintf(fff, "\n     \377u(%s\377u)\n", q_ptr->afk_msg);
-
-		lines += 4;
-
-#else /* COMPACT_PLAYERLIST - new way to fit in more info */
+#ifdef COMPACT_PLAYERLIST
  #ifndef COMPACT_ALT
 		/*** Determine color ***/
 		/* Print self in green */
@@ -1046,7 +1127,7 @@ void do_cmd_check_players(int Ind, int line)
 		else if (check_hostile(Ind, k)) attr = 'r';
 
 		/* Print a message */
-		do_write_others_attributes(fff, q_ptr, attr, is_admin(p_ptr));
+		do_write_others_attributes(Ind, fff, q_ptr, attr, is_admin(p_ptr));
 
 		fprintf(fff, "\n   %s", q_ptr->inval ? (!outdated ? (!latest && is_admin(p_ptr) ? "\377yI\377sL\377U" : "\377yI \377U") : "\377yI\377DO\377U") :
 		    (outdated ? "\377DO \377U" : (!latest && is_admin(p_ptr) ? "\377sL \377U" :  "\377U")));
@@ -1090,7 +1171,7 @@ void do_cmd_check_players(int Ind, int line)
 		else if (check_hostile(Ind, k)) attr = 'r';
 
 		/* Print a message */
-		do_write_others_attributes(fff, q_ptr, attr, is_admin(p_ptr));
+		do_write_others_attributes(Ind, fff, q_ptr, attr, is_admin(p_ptr));
 
 		fprintf(fff, "\n   %s", q_ptr->inval ? (!outdated ? (!latest && is_admin(p_ptr) ? "\377yI\377U+\377sL\377U" : "\377y(I) \377U") : "\377yI\377U+\377DO\377U") :
 		    (outdated ? "\377D(O) \377U" : (!latest && is_admin(p_ptr) ? "\377s(L) \377U" :  "\377U")));
@@ -1119,6 +1200,80 @@ void do_cmd_check_players(int Ind, int line)
 
 		lines += 3;
  #endif
+#else /* COMPACT_PLAYERLIST - new way to fit in more info */
+ #ifdef ULTRA_COMPACT_PLAYERLIST
+		/* nothing really! only has 2 lines per entry. */
+
+		/*** Determine color ***/
+		/* Print self in green */
+		if (Ind == k) attr = 'G';
+		/* Print other PvP-mode chars in orange */
+		else if ((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) attr = COLOUR_MODE_PVP;
+		/* Print party members in blue */
+		else if (p_ptr->party && p_ptr->party == q_ptr->party) attr = 'B';
+		/* Print hostile players in red */
+		else if (check_hostile(Ind, k)) attr = 'r';
+
+		do_write_others_attributes(Ind, fff, q_ptr, attr, is_admin(p_ptr));
+		fprintf(fff, "\n");
+
+		lines += 2;
+ #else
+		/*** Determine color ***/
+		/* Print self in green */
+		if (Ind == k) attr = 'G';
+		/* Print other PvP-mode chars in orange */
+		else if ((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) attr = COLOUR_MODE_PVP;
+		/* Print party members in blue */
+		else if (p_ptr->party && p_ptr->party == q_ptr->party) attr = 'B';
+		/* Print hostile players in red */
+		else if (check_hostile(Ind, k)) attr = 'r';
+
+		/* Output color byte */
+		fprintf(fff, "\377%c", attr);
+		/* Print a message */
+		do_write_others_attributes(Ind, fff, q_ptr, attr, is_admin(p_ptr));
+		/* Colour might have changed due to Iron Team party name,
+		   so print the closing ')' in the original colour again: */
+		/* not needed anymore since we have linebreak now
+		fprintf(fff, "\377%c)", attr);*/
+
+		/* Newline */
+		/* -AD- will this work? - Sure -C. Blue- */
+		fprintf(fff, "\n\377U");
+
+//		if (is_admin(p_ptr)) fprintf(fff, "  (%d)", k);
+
+		//show local system username? q_ptr->realname
+		fprintf(fff, " %s (%s@%s) ", q_ptr->inval ? (!outdated ? (!latest && is_admin(p_ptr) ? "\377yI\377U+\377sL\377U" : "\377y(I)\377U") : "\377yI\377U+\377DO\377U") :
+		    (outdated ? "\377D(O)\377U" : (!latest && is_admin(p_ptr) ? "\377s(L)\377U" :  "   ")), q_ptr->accountname, q_ptr->hostname);
+
+		/* Print location if both players are PvP-Mode */
+		if (((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) && !admin) {
+			fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
+		}
+		/* Print extra info if these people are in the same party */
+		/* Hack -- always show extra info to dungeon master */
+		else if ((p_ptr->party == q_ptr->party && p_ptr->party) || Ind == k || admin) {
+			if (admin) fprintf(fff, "%s", wpos_format(Ind, &q_ptr->wpos));
+			else fprintf(fff, "%s", wpos_format(-Ind, &q_ptr->wpos));
+
+			fprintf(fff, " [%d,%d]", q_ptr->panel_row, q_ptr->panel_col);
+		}
+
+		/* Quest flag */
+		fprintf(fff, " %c", (q_ptr->quest_id ? 'Q' : ' '));
+
+		if ((!q_ptr->afk) || !strlen(q_ptr->afk_msg)) {
+			if (!q_ptr->info_msg[0])
+				fprintf(fff, "\n\n");
+			else
+				fprintf(fff, "\n     \377U(%s\377U)\n", q_ptr->info_msg);
+		} else
+			fprintf(fff, "\n     \377u(%s\377u)\n", q_ptr->afk_msg);
+
+		lines += 4;
+ #endif
 #endif
 	}
 
@@ -1130,13 +1285,13 @@ void do_cmd_check_players(int Ind, int line)
 #endif
 
 	/* add blank lines for more aesthetic browsing */
-#ifndef COMPACT_PLAYERLIST
-	lines = ((20 - (lines % 20)) % 20);
-#else
+#ifdef COMPACT_PLAYERLIST
 	if (is_newer_than(&p_ptr->version, 4, 4, 7, 0, 0, 0))
 		lines = ((21 - (lines % 21)) % 21);
 	else
 		lines = ((20 - (lines % 20)) % 20);
+#else
+	lines = ((20 - (lines % 20)) % 20);
 #endif
 	for (k = 1; k <= lines; k++) fprintf(fff, "\n");
 
@@ -1144,10 +1299,10 @@ void do_cmd_check_players(int Ind, int line)
 	my_fclose(fff);
 
 	/* Display the file contents */
-#ifndef COMPACT_PLAYERLIST
-	show_file(Ind, file_name, "Players Online", line, 0, FALSE);
-#else
+#ifdef COMPACT_PLAYERLIST
 	show_file(Ind, file_name, "Players Online", line, 0, TRUE);
+#else
+	show_file(Ind, file_name, "Players Online", line, 0, FALSE);
 #endif
 
 	/* Remove the file */
@@ -1239,7 +1394,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 		fprintf(fff, "\377%c", attr);
 
 		/* Print a message */
-		do_write_others_attributes(fff, q_ptr, attr, admin);
+		do_write_others_attributes(Ind, fff, q_ptr, attr, admin);
 		/* Colour might have changed due to Iron Team party name,
 		   so print the closing ')' in the original colour again: */
 		/* not needed anymore since we have a linebreak now

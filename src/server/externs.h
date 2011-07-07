@@ -1575,6 +1575,7 @@ extern void toggle_afk(int Ind, char *msg);
 extern void player_talk(int Ind, char *msg);
 extern bool is_a_vowel(int ch);
 extern char *wpos_format(int Ind, worldpos *wpos);
+extern char *wpos_format_compact(int Ind, worldpos *wpos);
 extern s32b bst(s32b what, s32b t);
 extern cptr get_month_name(int day, bool full, bool compact);
 extern cptr get_day(int day);

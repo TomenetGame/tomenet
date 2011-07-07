@@ -3774,6 +3774,7 @@ char *wpos_format(int Ind, worldpos *wpos)
 	cptr desc = "";
 	bool ville = istown(wpos) && !isdungeontown(wpos);
 	dungeon_type *d_ptr;
+
 	/* Hack for Valinor originally */
 	if (i < 0) i = -i;
 	if (wpos->wz > 0 && (d_ptr = wild_info[wpos->wy][wpos->wx].tower))
@@ -3804,6 +3805,33 @@ char *wpos_format(int Ind, worldpos *wpos)
 				return (format("Lv %d %s", wpos->wz, d_info[d].name + d_name));
 			else
 				return (format("%s", desc));
+	}
+}
+char *wpos_format_compact(int Ind, worldpos *wpos)
+{
+	int d = 0, n;
+	cptr desc = "";
+	bool ville = istown(wpos) && !isdungeontown(wpos);
+	dungeon_type *d_ptr;
+
+	if (wpos->wz > 0 && (d_ptr = wild_info[wpos->wy][wpos->wx].tower))
+		d = d_ptr->type;
+	if (wpos->wz < 0 && (d_ptr = wild_info[wpos->wy][wpos->wx].dungeon))
+		d = d_ptr->type;
+	if (!wpos->wz && ville)
+		for (n = 0; n < numtowns; n++)
+			if (town[n].x == wpos->wx && town[n].y == wpos->wy) {
+				desc = town_profile[town[n].type].name;
+				break;
+			}
+	if (!strcmp(desc, "")) ville = FALSE;
+
+	if (ville) return (format("%s", desc));
+	else {
+		if (Players[Ind]->depth_in_feet)
+			return (format("%dft (%d,%d)", wpos->wz * 50, wpos->wx, wpos->wy));
+		else
+			return (format("Lv %d (%d,%d)", wpos->wz, wpos->wx, wpos->wy));
 	}
 }
 
