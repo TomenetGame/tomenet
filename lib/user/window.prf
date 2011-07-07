@@ -8,13 +8,17 @@
 #   0 - Inventory    1 - Equipment   3 - Character sheet
 #   6 - Messages    18 - Chat only  19 - Messages except chat
 
-# Window 'Mirror', Flag 'Display messages'
-W:1:6
+# Window 'Mirror', Flag 'Display all messages'
+W:1:4
 # Window 'Recall', Flag 'Display inven/equip'
 W:2:0
 # Window 'Choice', Flag 'Display character'
-W:3:3
-# Window 'Term-4', Flag 'Display chat'
-W:4:18
+W:3:2
+# Window 'Term-4', Flag 'Display chat messages'
+W:4:5
 # Window 'Term-5', Flag 'Display equip/inven'
 W:5:1
+# Window 'Term-6', Flag 'Display mini-map'
+W:6:6
+# Window 'Term-7', Flag 'Display lag-o-meter'
+W:7:7

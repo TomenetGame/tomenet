@@ -632,7 +632,7 @@ void flicker() {
 
 	old = Term;
 
-	for(i = 0; i < 8; i++) {
+	for(i = 0; i < ANGBAND_TERM_MAX; i++) {
 		tterm = ang_term[i];
 		if (!tterm) continue;
 		y2 = tterm->hgt;

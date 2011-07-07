@@ -1499,7 +1499,7 @@ static void fix_inven(void)
 	int j;
 
 	/* Scan windows */
-	for (j = 0; j < 8; j++)
+	for (j = 0; j < ANGBAND_TERM_MAX; j++)
 	{
 		term *old = Term;
 
@@ -1532,7 +1532,7 @@ static void fix_equip(void)
 	int j;
 
 	/* Scan windows */
-	for (j = 0; j < 8; j++)
+	for (j = 0; j < ANGBAND_TERM_MAX; j++)
 	{
 		term *old = Term;
 
@@ -1565,7 +1565,7 @@ static void fix_player(void)
 	int j;
 
 	/* Scan windows */
-	for (j = 0; j < 8; j++)
+	for (j = 0; j < ANGBAND_TERM_MAX; j++)
 	{
 		term *old = Term;
 
@@ -1607,7 +1607,7 @@ static void fix_message(void)
 	/* Display messages in different colors -Zz */
 
         /* Scan windows */
-        for (j = 0; j < 8; j++)
+        for (j = 0; j < ANGBAND_TERM_MAX; j++)
         {
                 term *old = Term;
 
@@ -1692,7 +1692,7 @@ static void fix_lagometer(void) {
 	int j;
 
 	/* Scan windows */
-	for (j = 0; j < 8; j++)
+	for (j = 0; j < ANGBAND_TERM_MAX; j++)
 	{
 		term *old = Term;
 

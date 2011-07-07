@@ -1480,32 +1480,37 @@ void cmd_help(void)
 void cmd_check_misc(void)
 {
 	char i=0, choice;
-	int second = 13;
+	int second = 11;
 
 	Term_save();
 	Term_clear();
-	Term_putstr(0,  2, -1, TERM_BLUE, "Display current knowledge");
-	Term_putstr(5,  4, -1, TERM_WHITE, "(1) Unique monsters");
-	Term_putstr(5,  5, -1, TERM_WHITE, "(2) Artifacts");
-	Term_putstr(5,  6, -1, TERM_WHITE, "(3) Monsters");
-	Term_putstr(5,  7, -1, TERM_WHITE, "(4) Objects");
-	Term_putstr(5,  8, -1, TERM_WHITE, "(5) Traps");
-	Term_putstr(5,  9, -1, TERM_WHITE, "(6) Houses");
-	Term_putstr(5, 10, -1, TERM_WHITE, "(7) Recall depths and Towns");
-	Term_putstr(5, 11, -1, TERM_WHITE, "(8) Wilderness Map");
+//	Term_putstr(0,  0, -1, TERM_BLUE, "Display current knowledge");
 
-	Term_putstr(5, second + 0, -1, TERM_WHITE, "(a) Players online");
-	Term_putstr(5, second + 1, -1, TERM_WHITE, "(b) Other players' equipments");
-	Term_putstr(5, second + 2, -1, TERM_WHITE, "(c) Score list");
-	Term_putstr(5, second + 3, -1, TERM_WHITE, "(d) Server settings");
-	Term_putstr(5, second + 4, -1, TERM_WHITE, "(e) Opinions (if available)");
-	Term_putstr(5, second + 5, -1, TERM_WHITE, "(f) News (login message)");
-	Term_putstr(5, second + 6, -1, TERM_WHITE, "(g) Message history");
-	Term_putstr(5, second + 7, -1, TERM_WHITE, "(h) Chat history");
-	Term_putstr(5, second + 8, -1, TERM_WHITE, "(l) Lag-o-meter");
-	Term_putstr(5, second + 9, -1, TERM_WHITE, "(?) Help");
+	Term_putstr(5,  2, -1, TERM_WHITE, "(\377y1\377w) Unique monsters");
+	Term_putstr(5,  3, -1, TERM_WHITE, "(\377y2\377w) Artifacts");
+	Term_putstr(5,  4, -1, TERM_WHITE, "(\377y3\377w) Monsters");
+	Term_putstr(5,  5, -1, TERM_WHITE, "(\377y4\377w) Objects");
+	Term_putstr(5,  6, -1, TERM_WHITE, "(\377y5\377w) Traps");
+	Term_putstr(5,  7, -1, TERM_WHITE, "(\377y6\377w) Houses");
+	Term_putstr(5,  8, -1, TERM_WHITE, "(\377y7\377w) Recall depths and Towns");
+	Term_putstr(5,  9, -1, TERM_WHITE, "(\377y8\377w) Wilderness Map");
+
+	Term_putstr(5, second + 0, -1, TERM_WHITE, "(\377ya\377w) Players online");
+	Term_putstr(5, second + 1, -1, TERM_WHITE, "(\377yb\377w) Other players' equipments");
+	Term_putstr(5, second + 2, -1, TERM_WHITE, "(\377yc\377w) Score list");
+	Term_putstr(5, second + 3, -1, TERM_WHITE, "(\377yd\377w) Server settings");
+	Term_putstr(5, second + 4, -1, TERM_WHITE, "(\377ye\377w) Opinions (if available)");
+	Term_putstr(5, second + 5, -1, TERM_WHITE, "(\377yf\377w) News (login message)");
+	Term_putstr(5, second + 6, -1, TERM_WHITE, "(\377yg\377w) Message history");
+	Term_putstr(5, second + 7, -1, TERM_WHITE, "(\377yh\377w) Chat history");
+	Term_putstr(5, second + 8, -1, TERM_WHITE, "(\377yl\377w) Lag-o-meter");
+	Term_putstr(5, second + 9, -1, TERM_WHITE, "(\377y?\377w) Help");
+
+	Term_putstr(0, 22, -1, TERM_BLUE, "Command: ");
 
 	while(i!=ESCAPE){
+		Term_putstr(0,  0, -1, TERM_BLUE, "Display current knowledge");
+
 		i=inkey();
 		choice = 0;
 		switch(i){

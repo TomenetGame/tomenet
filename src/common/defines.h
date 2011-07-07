@@ -296,6 +296,9 @@
 #define SEASON_WINTER 3
 
 
+/* Client-side: Maximum amount of terminal windows the client may have. */
+#define ANGBAND_TERM_MAX 8
+
 
 /* Define this to make 'exp ratio' determine exp-gain instead of exp-to-adv:
    (has no effect if KINGCAP_EXP is defined) */
@@ -3761,6 +3764,8 @@ that keeps many algorithms happy.
 /*
  * Bit flags for the "p_ptr->window" variable (etc)
  */
+#if 0
+
 #define PW_INVEN	0x00000001L	/* Display inven/equip */
 #define PW_EQUIP	0x00000002L	/* Display equip/inven */
 /* xxx */
@@ -3782,6 +3787,23 @@ that keeps many algorithms happy.
 #define PW_CHAT		0x00040000L	/* Display chat messages */
 #define PW_MSGNOCHAT	0x00080000L	/* Display messages except chat */
 
+#else
+
+/* flags also used by the client as term window flags */
+#define PW_INVEN	0x00000001L	/* Display inven/equip */
+#define PW_EQUIP	0x00000002L	/* Display equip/inven */
+#define PW_PLAYER	0x00000004L	/* Display character */
+#define PW_MSGNOCHAT	0x00000008L	/* Display messages except chat */
+#define PW_MESSAGE	0x00000010L	/* Display messages */
+#define PW_CHAT		0x00000020L	/* Display chat messages */
+#define PW_MINIMAP	0x00000040L	/* Display minimap */
+#define PW_LAGOMETER	0x00000080L	/* Display the lag-o-meter */
+/* flags currently not used by the client */
+#define PW_OVERHEAD	0x00001000L	/* Display overhead view */
+#define PW_MONSTER	0x00002000L	/* Display monster recall */
+#define PW_OBJECT	0x00004000L	/* Display object recall */
+
+#endif
 
 /*** General index values ***/
 

@@ -4,7 +4,7 @@
 #define MACRO_USE_STD	0x02
 #define MACRO_USE_HYB	0x04
 
-#define NR_OPTIONS_SHOWN	20
+#define NR_OPTIONS_SHOWN	8 /*was 32 when there were 32 window_flag_desc[]*/
 
 /* Have the Macro Wizard generate target code in
    the form *tXXX- instead of XXX*t? - C. Blue */
@@ -4742,7 +4742,7 @@ static void do_cmd_options_win(void)
 
 
 	/* Memorize old flags */
-	for (j = 0; j < 8; j++)
+	for (j = 0; j < ANGBAND_TERM_MAX; j++)
 	{
 		/* Acquire current flags */
 		old_flag[j] = window_flag[j];
@@ -4759,7 +4759,7 @@ static void do_cmd_options_win(void)
 		prt("Window flags (<dir>, t, y, n, ESC) ", 0, 0);
 
 		/* Display the windows */
-		for (j = 0; j < 8; j++)
+		for (j = 0; j < ANGBAND_TERM_MAX; j++)
 		{
 			byte a = TERM_WHITE;
 
@@ -4789,7 +4789,7 @@ static void do_cmd_options_win(void)
 			Term_putstr(0, i + vertikal_offset + 2, -1, a, (char*)str);
 
 			/* Display the windows */
-			for (j = 0; j < 8; j++)
+			for (j = 0; j < ANGBAND_TERM_MAX; j++)
 			{
 				byte a = TERM_WHITE;
 
@@ -4832,7 +4832,7 @@ static void do_cmd_options_win(void)
 			case 't':
 			{
 				/* Clear windows */
-				for (j = 0; j < 8; j++)
+				for (j = 0; j < ANGBAND_TERM_MAX; j++)
 				{
 					window_flag[j] &= ~(1L << y);
 				}
@@ -4878,7 +4878,7 @@ static void do_cmd_options_win(void)
 	}
 
 	/* Notice changes */
-	for (j = 0; j < 8; j++)
+	for (j = 0; j < ANGBAND_TERM_MAX; j++)
 	{
 		term *old = Term;
 
@@ -4973,10 +4973,7 @@ static errr options_dump(cptr fname)
 	fprintf(fff, "\n");
 
 	/* Dump window flags */
-#if 0
 	for (i = 1; i < ANGBAND_TERM_MAX; i++)
-#endif
-	for (i = 1; i < 8; i++)
 	{
 		/* Require a real window */
 		if (!ang_term_name[i]) continue;
@@ -5037,27 +5034,25 @@ void do_cmd_options(void)
 		Term_clear();
 
 		/* Why are we here */
-		prt("TomeNET options", 2, 0);
+		c_prt(TERM_L_GREEN, "TomeNET options", 2, 0);
 
 		/* Give some choices */
-		prt("(1) User Interface Options 1", 4, 5);
-		prt("(2) User Interface Options 2", 5, 5);
-		prt("(3) Game-Play Options 1", 6, 5);
-		prt("(4) Game-Play Options 2", 7, 5);
+		Term_putstr(5,  4, -1, TERM_WHITE, "(\377y1\377w) User Interface Options 1");
+		Term_putstr(5,  5, -1, TERM_WHITE, "(\377y2\377w) User Interface Options 2");
+		Term_putstr(5,  6, -1, TERM_WHITE, "(\377y3\377w) Game-Play Options 1");
+		Term_putstr(5,  7, -1, TERM_WHITE, "(\377y4\377w) Game-Play Options 2");
 
-		prt("(8) Check Server Options", 10, 5);
+		Term_putstr(5,  9, -1, TERM_WHITE, "(\377yw\377w) Window Flags");
 
-		prt("(9) Save Options", 12, 5);
-		prt("(0) Load Options", 13, 5);
-		
-		/* Account options */
-		prt("(A) Account options", 15, 5);
+		Term_putstr(5, 11, -1, TERM_WHITE, "(\377yA\377w) Account Options");
 
-		/* Window flags */
-		prt("(W) Window flags", 16, 5);
+		Term_putstr(5, 13, -1, TERM_WHITE, "(\377yv\377w) Check Server Options");
+
+		Term_putstr(5, 15, -1, TERM_WHITE, "(\377ys\377w) Save Options");
+		Term_putstr(5, 16, -1, TERM_WHITE, "(\377yl\377w) Load Options from pref file");
 
 		/* Prompt */
-		prt("Command: ", 18, 0);
+		c_prt(TERM_L_GREEN, "Command: ", 18, 0);
 
 		/* Get command */
 		k = inkey();
@@ -5082,19 +5077,19 @@ void do_cmd_options(void)
 		}
 
 		/* Server Options */
-		else if (k == '8')
+		else if (k == 'v')
 		{
 			Send_special_line(SPECIAL_FILE_SERVER_SETTING, 0);
 		}
 
 		/* Save a 'option' file */
-		else if (k == '9')
+		else if (k == 's')
 		{
 			/* Prompt */
-			Term_putstr(0, 18, -1, TERM_WHITE, "Command: Save an option file");
+			Term_putstr(0, 18, -1, TERM_L_GREEN, "Command: Save an option file");
 
 			/* Get a filename, handle ESCAPE */
-			Term_putstr(0, 19, -1, TERM_WHITE, "File: ");
+			Term_putstr(0, 19, -1, TERM_YELLOW, "File: ");
 
 			/* Default filename */
 			sprintf(tmp, "user.prf");
@@ -5106,13 +5101,13 @@ void do_cmd_options(void)
 			(void)options_dump(tmp);
 		}
 		/* Load a pref file */
-		else if (k == '0')
+		else if (k == 'l')
 		{
 			/* Prompt */
-			Term_putstr(0, 18, -1, TERM_WHITE, "Command: Load a user pref file");
+			Term_putstr(0, 18, -1, TERM_L_GREEN, "Command: Load a user pref file");
 
 			/* Get a filename, handle ESCAPE */
-			Term_putstr(0, 19, -1, TERM_WHITE, "File: ");
+			Term_putstr(0, 19, -1, TERM_YELLOW, "File: ");
 
 			/* Default filename */
 			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
@@ -5131,7 +5126,7 @@ void do_cmd_options(void)
 		}
 
 		/* Window flags */
-		else if (k == 'W')
+		else if (k == 'w')
 		{
 			/* Spawn */
 			do_cmd_options_win();

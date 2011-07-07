@@ -55,8 +55,8 @@ extern char hexsym[16];
 extern option_type option_info[];
 extern cptr stat_names[6];
 extern cptr stat_names_reduced[6];
-extern char ang_term_name[10][40];
-extern cptr window_flag_desc[32];
+extern char ang_term_name[ANGBAND_TERM_MAX][40];
+extern cptr window_flag_desc[8];
 extern monster_spell_type monster_spells4[32];
 extern monster_spell_type monster_spells5[32];
 extern monster_spell_type monster_spells6[32];
@@ -171,8 +171,8 @@ extern char *message__buf_msgnochat;
 
 extern bool msg_flag;
 
-extern term *ang_term[8];
-extern u32b window_flag[8];
+extern term *ang_term[ANGBAND_TERM_MAX];
+extern u32b window_flag[ANGBAND_TERM_MAX];
 
 extern byte color_table[256][4];
 

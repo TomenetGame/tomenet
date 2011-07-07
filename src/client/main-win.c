@@ -3417,7 +3417,7 @@ static void hook_quit(cptr str)
 	save_prefs();
 
 	/* Nuke each term */
-	for (i = 8 - 1; i >= 0; i--)
+	for (i = ANGBAND_TERM_MAX - 1; i >= 0; i--)
 	{
 		/* Unused */
 		if (!ang_term[i]) continue;

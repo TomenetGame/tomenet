@@ -111,8 +111,8 @@ char *message__buf_msgnochat;
 bool msg_flag;
 
 
-term *ang_term[8];
-u32b window_flag[8];
+term *ang_term[ANGBAND_TERM_MAX];
+u32b window_flag[ANGBAND_TERM_MAX];
 
 byte color_table[256][4];
 

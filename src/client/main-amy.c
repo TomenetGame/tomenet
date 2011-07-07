@@ -948,7 +948,7 @@ void quit_amy(cptr s){
         Net_cleanup();
 
         /* Nuke each term */
-        for (j = 8 - 1; j >= 0; j--)
+        for (j = ANGBAND_TERM_MAX - 1; j >= 0; j--)
         {
                 /* Unused */
                 if (!ang_term[j]) continue;

@@ -393,7 +393,7 @@ cptr stat_names_reduced[6] =
  * Standard window names
  */
 #if 0
-char ang_term_name[8][40] =
+char ang_term_name[ANGBAND_TERM_MAX][40] =
 {
 	"Angband",
 	"Mirror",
@@ -405,7 +405,7 @@ char ang_term_name[8][40] =
 	"Term-7"
 };
 #else
-char ang_term_name[10][40] =
+char ang_term_name[ANGBAND_TERM_MAX][40] =
 {
 	"TomeNET",
 	"Msg/Chat",
@@ -433,6 +433,7 @@ char ang_term_name[10][40] =
  * The "ctrl-g" command (or pseudo-command) should perhaps grab a snapshot
  * of the main screen into any interested windows.
  */
+#if 0
 cptr window_flag_desc[32] =
 {
 	"Display inven/equip",
@@ -468,7 +469,20 @@ cptr window_flag_desc[32] =
 	NULL,
 	NULL
 };
-
+#else
+cptr window_flag_desc[8] =
+{
+	"Display inven/equip",
+	"Display equip/inven",
+	"Display character",
+	"Display non-chat messages",
+	"Display all messages",
+	"Display chat messages",
+//	"Display mini-map",//
+	NULL,
+	"Display lag-o-meter",
+};
+#endif
 
 /*
  * Available Options

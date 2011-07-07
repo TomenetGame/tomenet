@@ -495,7 +495,7 @@ static void quit_hook(cptr s)
 #endif
 
 	/* Nuke each term */
-	for (j = 8 - 1; j >= 0; j--)
+	for (j = ANGBAND_TERM_MAX - 1; j >= 0; j--)
 	{
 		/* Unused */
 		if (!ang_term[j]) continue;
