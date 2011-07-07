@@ -4732,7 +4732,7 @@ static void do_cmd_options_win(void)
 	int i, j, d, vertikal_offset = 1;
 
 	int y = 0;
-	int x = 0;
+	int x = 1;
 
 	char ch;
 
@@ -4759,7 +4759,7 @@ static void do_cmd_options_win(void)
 		prt("Window flags (<dir>, t, y, n, ESC) ", 0, 0);
 
 		/* Display the windows */
-		for (j = 0; j < ANGBAND_TERM_MAX; j++)
+		for (j = 1; j < ANGBAND_TERM_MAX; j++)
 		{
 			byte a = TERM_WHITE;
 
@@ -4789,7 +4789,7 @@ static void do_cmd_options_win(void)
 			Term_putstr(0, i + vertikal_offset + 2, -1, a, (char*)str);
 
 			/* Display the windows */
-			for (j = 0; j < ANGBAND_TERM_MAX; j++)
+			for (j = 1; j < ANGBAND_TERM_MAX; j++)
 			{
 				byte a = TERM_WHITE;
 
@@ -4832,13 +4832,13 @@ static void do_cmd_options_win(void)
 			case 't':
 			{
 				/* Clear windows */
-				for (j = 0; j < ANGBAND_TERM_MAX; j++)
+				for (j = 1; j < ANGBAND_TERM_MAX; j++)
 				{
 					window_flag[j] &= ~(1L << y);
 				}
 
 				/* Clear flags */
-				for (i = 0; i < NR_OPTIONS_SHOWN; i++)
+				for (i = 1; i < NR_OPTIONS_SHOWN; i++)
 				{
 					window_flag[x] &= ~(1L << i);
 				}
@@ -4869,7 +4869,7 @@ static void do_cmd_options_win(void)
 			{
 				d = keymap_dirs[ch & 0x7F];
 
-				x = (x + ddx[d] + 8) % 8;
+				x = (x + ddx[d] + 6) % 7 + 1;
 				y = (y + ddy[d] + NR_OPTIONS_SHOWN) % NR_OPTIONS_SHOWN;
 
 				if (!d) bell();
