@@ -6233,18 +6233,18 @@ int p_tough_ac[51] = {
 /* Table of valid runespell elements, their flags, and the sylables for their casting. */
 r_element r_elements[RCRAFT_MAX_ELEMENTS] = 
 {
-	{ 0, "Acid", 		"Delibro",	 	1, SKILL_R_ACIDWATE, R_ACID,},
-	{ 1, "Lighting",	"Fulmin", 		1, SKILL_R_ELECEART, R_ELEC,},
-	{ 2, "Heat", 		"Aestus", 		1, SKILL_R_FIRECHAO, R_FIRE,},
-	{ 3, "Cold", 		"Gelum",		1, SKILL_R_COLDNETH, R_COLD,},
-	{ 4, "Poison", 		"Lepis", 		1, SKILL_R_POISNEXU, R_POIS,},
-	{ 5, "Force", 		"Fero",		 	1, SKILL_R_FORCTIME, R_FORC,},
-	{ 6, "Water",		"Mio",	 		1, SKILL_R_ACIDWATE, R_WATE,},
-	{ 7, "Earth", 		"Ostes", 		2, SKILL_R_ELECEART, R_EART,},
-	{ 8, "Chaos", 		"Emuto", 		2, SKILL_R_FIRECHAO, R_CHAO,},
-	{ 9, "Nether", 		"Elido", 		1, SKILL_R_COLDNETH, R_NETH,},
-	{10, "Nexus", 		"Vicis", 		1, SKILL_R_POISNEXU, R_NEXU,},
-	{11, "Time", 		"Emero",	 	2, SKILL_R_FORCTIME, R_TIME,},
+	{ 0, "Acid",		"Delibro",	 	1, SKILL_R_ACIDWATE, R_ACID,},
+	{ 1, "Lighting",	"Fulmin",		1, SKILL_R_ELECEART, R_ELEC,},
+	{ 2, "Heat",		"Aestus",		1, SKILL_R_FIRECHAO, R_FIRE,},
+	{ 3, "Cold",		"Gelum",		1, SKILL_R_COLDNETH, R_COLD,},
+	{ 4, "Poison",		"Lepis",		1, SKILL_R_POISNEXU, R_POIS,},
+	{ 5, "Force",		"Fero",		 	1, SKILL_R_FORCTIME, R_FORC,},
+	{ 6, "Water",		"Mio",			1, SKILL_R_ACIDWATE, R_WATE,},
+	{ 7, "Earth",		"Ostes",		2, SKILL_R_ELECEART, R_EART,},
+	{ 8, "Chaos",		"Emuto",		2, SKILL_R_FIRECHAO, R_CHAO,},
+	{ 9, "Nether",		"Elido",		1, SKILL_R_COLDNETH, R_NETH,},
+	{10, "Nexus",		"Vicis",		1, SKILL_R_POISNEXU, R_NEXU,},
+	{11, "Time",		"Emero",	 	2, SKILL_R_FORCTIME, R_TIME,},
 };
 /* Old table by Relsiet preserved below - Kurzel */
 /*
@@ -6280,18 +6280,18 @@ r_element r_elements[RCRAFT_MAX_ELEMENTS] =
 */
 r_imper r_imperatives [RCRAFT_MAX_IMPERATIVES] = 
 {
-	//i			n		      +l, c%, f+, d%, p%, r+, t%
+	//i	n		 +l, c%, f+, d%, p%, r+, t%
 	{ 0, "minimized",	-1,  5,-10,  6, 10, -1,  5 },
 	{ 1, "moderate",	 0, 10,  0, 10, 10,  0, 10 },
 	//{ 2, "maximized",	 1, 16, 20, 15, 10, -1,  8 }, //Old version, boosted slightly
 	{ 2, "maximized",	 1, 15, 20, 15, 10, +1, 13 },
-	//{ 3, "compressed", 2, 15,-10, 13, 10, -2,  5 }, //Old version, duration balanced
-	{ 3, "compressed", 2, 15,-10, 13, 10, -2,  8 },
+	//{ 3, "compressed",	 2, 15,-10, 13, 10, -2,  5 }, //Old version, duration balanced
+	{ 3, "compressed",	 2, 15,-10, 13, 10, -2,  8 },
 	//{ 4, "expanded",	 2, 13,  0, 10, 10, +2, 10 }, //Old version, R_WAVE uses duration
 	{ 4, "expanded",	 2, 13,  0, 10, 10, +2, 13 },
-	//{ 5, "brief",		   3, 13, 15,  6,  5,  5,  5 }, //Old version, error in radius fixed
-	{ 5, "brief",		   3, 13, 15,  6,  5,  0,  5 },
-	{ 6, "lengthened", 3, 15, 10,  6, 10,  0, 16 },
+	//{ 5, "brief",		 3, 13, 15,  6,  5,  5,  5 }, //Old version, error in radius fixed
+	{ 5, "brief",		 3, 13, 15,  6,  5,  0,  5 },
+	{ 6, "lengthened",	 3, 15, 10,  6, 10,  0, 16 },
 	{ 7, "chaotic",		 1,  0,  0,  0, 10,  5,  0 },
 };
 
@@ -6306,14 +6306,14 @@ Runespell types.
 */
 r_type runespell_types[RCRAFT_MAX_TYPES] =
 {
-	{ 0, R_MELE, "burst", 	 0,  5 },
-	{ 1, R_SELF, "self",  	 0, 10 },
-	{ 2, R_BOLT, "bolt",  	 1, 10 },
-	{ 3, R_BEAM, "beam",  	 2, 11 },
-	{ 4, R_BALL, "ball",  	 3, 12 },
-	{ 5, R_WAVE, "wave",  	 3, 11 },
-	{ 6, R_CLOU, "cloud", 	 5, 13 },
-	{ 7, R_STOR, "storm", 	10, 20 },
+	{ 0, R_MELE, "burst",	 0,  5 },
+	{ 1, R_SELF, "self",	 0, 10 },
+	{ 2, R_BOLT, "bolt",	 1, 10 },
+	{ 3, R_BEAM, "beam",	 2, 11 },
+	{ 4, R_BALL, "ball",	 3, 12 },
+	{ 5, R_WAVE, "wave",	 3, 11 },
+	{ 6, R_CLOU, "cloud",	 5, 13 },
+	{ 7, R_STOR, "storm",	10, 20 },
 };
 
 /* Table of valid runespell types and their meta information.
