@@ -3885,6 +3885,10 @@ void interact_macros(void)
 						Term_putstr(10, 12, -1, TERM_GREEN, "ie how powerful you want to try and make the spell.");
 
 						Term_putstr(15, 14, -1, TERM_L_GREEN, "Name          ( Lvl, Dam%, Cost%, Fail% )");
+
+#if 0
+						for (i = 0; i < RCRAFT_MAX_IMPERATIVES; i++) {
+#else
 						Term_putstr(15, 15, -1, TERM_L_GREEN, "a) minimized  (  -1,  60%,   50%,  -10% )");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "b) moderate   (  +0, 100%,  100%,  + 0% )");
 						Term_putstr(15, 17, -1, TERM_L_GREEN, "c) maximized  (  +1, 150%,  160%,  +20% )");
@@ -3893,6 +3897,7 @@ void interact_macros(void)
 						Term_putstr(15, 20, -1, TERM_L_GREEN, "f) brief      (  +3,  60%,  130%,  +15% )");
 						Term_putstr(15, 21, -1, TERM_L_GREEN, "g) lengthened (  +3,  60%,  150%,  +10% )");
 						Term_putstr(15, 22, -1, TERM_L_GREEN, "h) chaotic    (  +1, ???%,  ???%,  +??% )");
+#endif
 
 						switch (choice = inkey()) {
 						case ESCAPE:
@@ -3922,6 +3927,10 @@ void interact_macros(void)
 						Term_putstr(10, 12, -1, TERM_GREEN, "ie the shape you want to manifest the spell in.");
 
 						Term_putstr(15, 14, -1, TERM_L_GREEN, "Name     ( Lvl, Cost% )");
+
+#if 0
+						for (i = 0; i < RCRAFT_MAX_TYPES; i++) {
+#else
 						Term_putstr(15, 15, -1, TERM_L_GREEN, "a) Melee (  +0,   50% )");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "b) Self  (  +0,  100% )");
 						Term_putstr(15, 17, -1, TERM_L_GREEN, "c) Bolt  (  +1,  100% )");
@@ -3930,6 +3939,7 @@ void interact_macros(void)
 						Term_putstr(15, 20, -1, TERM_L_GREEN, "f) Wave  (  +4,  120% )");
 						Term_putstr(15, 21, -1, TERM_L_GREEN, "g) Cloud (  +8,  150% )");
 						Term_putstr(15, 22, -1, TERM_L_GREEN, "h) Storm ( +10,  200% )");
+#endif
 
 						switch (choice = inkey()) {
 						case ESCAPE:
