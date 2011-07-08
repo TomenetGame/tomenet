@@ -1576,17 +1576,17 @@ static int get_rune_type(u32b s_flags, u32b *sn)
 
 static int get_rune_imperative(byte *sn)
 {
-	int		i, num = 8;
+	int		i, num = RCRAFT_MAX_IMPERATIVES;
 	bool		flag, redraw;
 	char		choice;
 	char		out_val[160];
-	byte            corresp[8];
+	byte            corresp[RCRAFT_MAX_IMPERATIVES];
 
-	for (i=0;i<8;i++)
+	for (i = 0; i < RCRAFT_MAX_IMPERATIVES; i++)
 		corresp[i] = r_imperatives[i].id;
 
 	/* Assume cancelled */
-	(*sn) = 9;
+	(*sn) = num + 1;
 
 	/* Nothing chosen yet */
 	flag = FALSE;
@@ -1678,7 +1678,7 @@ static int get_rune_imperative(byte *sn)
 	if (!flag) return (FALSE);
 
 	/* Save the choice */
-	if(i>=0 && i<=num)
+	if (i >= 0 && i <= num)
 	{
 		(*sn) = corresp[i];
 	}
@@ -1691,17 +1691,17 @@ static int get_rune_imperative(byte *sn)
 
 static int get_rune_method(u32b *sn, u16b * method)
 {
-	int		i, num = 8;
+	int		i, num = RCRAFT_MAX_TYPES;
 	bool		flag, redraw;
 	char		choice;
 	char		out_val[160];
-	byte            corresp[8];
+	byte            corresp[RCRAFT_MAX_TYPES];
 
-	for (i=0;i<8;i++)
+	for (i = 0; i < RCRAFT_MAX_TYPES; i++)
 		corresp[i] = runespell_types[i].type;
 
 	/* Assume cancelled */
-	(*sn) = 9;
+	(*sn) = num + 1;
 
 	/* Nothing chosen yet */
 	flag = FALSE;
@@ -1793,7 +1793,7 @@ static int get_rune_method(u32b *sn, u16b * method)
 	if (!flag) return (FALSE);
 
 	/* Save the choice */
-	if(i>=0 && i<=num)
+	if (i >= 0 && i <= num)
 	{
 		(*sn) = corresp[i];
 		(*method) = i;

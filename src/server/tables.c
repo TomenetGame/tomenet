@@ -6278,7 +6278,7 @@ r_element r_elements[RCRAFT_MAX_ELEMENTS] =
 
 	cost, fail, damage, danger and duration are /10 multipliers; radius is a +/- value
 */
-r_imper r_imperatives [RG_MAX] = 
+r_imper r_imperatives [RCRAFT_MAX_IMPERATIVES] = 
 {
 	//i			n		      +l, c%, f+, d%, p%, r+, t%
 	{ 0, "minimized",	-1,  5,-10,  6, 10, -1,  5 },
@@ -6304,7 +6304,7 @@ Runespell types.
 	int cost;	//+ skill level to overall spell
 	byte pen; 	//MP multiplier
 */
-r_type runespell_types[8] =
+r_type runespell_types[RCRAFT_MAX_TYPES] =
 {
 	{ 0, R_MELE, "burst", 	 0,  5 },
 	{ 1, R_SELF, "self",  	 0, 10 },

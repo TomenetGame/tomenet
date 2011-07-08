@@ -7255,9 +7255,9 @@ extern int PlayerUID;
 
 #ifdef ENABLE_RCRAFT
 
-#define RCRAFT_MAX_ELEMENTS 12 //reduced from 16 to 12 - Kurzel
-
 /* Rune flags */
+
+#define RCRAFT_MAX_TYPES 8
 
 //Spell types
 #define R_MELE 0x000001
@@ -7269,6 +7269,9 @@ extern int PlayerUID;
 #define R_WAVE 0x000020
 #define R_CLOU 0x000040
 #define R_STOR 0x000080
+
+
+#define RCRAFT_MAX_ELEMENTS 12 //reduced from 16 to 12 - Kurzel
 
 //Spell constituents
 #define R_ACID 0x000100
@@ -7477,8 +7480,9 @@ extern int PlayerUID;
 #define RT_EXAMPLE 139
 #define RT_LAST 298
 
+
 /* 	Max runespell imperatives */
-#define RG_MAX		  8
+#define RCRAFT_MAX_IMPERATIVES		8
 
 /* Runic Imperatives */
 
@@ -7490,8 +7494,6 @@ extern int PlayerUID;
 #define RG_MIGH 5
 #define RG_DEMA 6
 #define RG_LUCK 7
-
-#define MAX_GR 8 //Max imperatives
 
 /* Runic failure penalties, minor and major */
 

@@ -760,8 +760,8 @@ extern int stricmp(cptr a, cptr b);
 #ifdef ENABLE_RCRAFT
 extern void do_runespell();
 extern r_element r_elements[RCRAFT_MAX_ELEMENTS];
-extern r_imper r_imperatives[RG_MAX];
-extern r_type runespell_types[8];
+extern r_imper r_imperatives[RCRAFT_MAX_IMPERATIVES];
+extern r_type runespell_types[RCRAFT_MAX_TYPES];
 #endif
 
 extern const cptr angband_sound_name[SOUND_MAX];

@@ -1068,8 +1068,10 @@ r_element r_elements[RCRAFT_MAX_ELEMENTS] =
 /*
 Runespell imperatives (OBSOLETE - c-util.c hardcodes them instead in the macro wizard -.-)
 */
-r_imper r_imperatives [RG_MAX] = 
+r_imper r_imperatives [RCRAFT_MAX_IMPERATIVES] = 
 {
+#if 1
+#else /* Relsiet's stuff preserved below */
 	{RG_HOPE, "minimized",	 5,  6,  6,  8 },
 	{RG_ASKS, "tiny",		 8,  9,  8, 10 },
 	{RG_REQU, "small",		10, 10, 10, 10 },
@@ -1078,13 +1080,16 @@ r_imper r_imperatives [RG_MAX] =
 	{RG_MIGH, "massive",	15, 17, 16, 18 },
 	{RG_DEMA, "maximized",	17, 20, 18, 20 },
 	{RG_LUCK, "chaotic",	 0,  0,  0, 22 }, 	/* (Random cost, fail, damage) */
+#endif
 };
 
-r_type runespell_types[8] =
+r_type runespell_types[RCRAFT_MAX_TYPES] =
 /*
 Runespell methods. (OBSOLETE - c-util.c hardcodes them instead in the macro wizard -.-)
 */
 {
+#if 1
+#else /* Relsiet's stuff preserved below */
 	{ 0, R_MELE, "shield", 	0, 5 },
 	{ 1, R_SELF, "self",  	0, 10 },
 	{ 2, R_BOLT, "bolt",  	1, 10 },
@@ -1093,6 +1098,7 @@ Runespell methods. (OBSOLETE - c-util.c hardcodes them instead in the macro wiza
 	{ 5, R_WAVE, "wave",  	3, 12 },
 	{ 6, R_CLOU, "cloud", 	5, 15 },
 	{ 7, R_STOR, "storm", 	10, 20 },
+#endif
 };
 
 #endif
