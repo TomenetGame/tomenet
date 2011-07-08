@@ -1031,6 +1031,20 @@ Runespell elements
 */
 r_element r_elements[RCRAFT_MAX_ELEMENTS] = 
 {
+#if 1
+	{ 0, "Acid", 		"Delibro",	 	1, SKILL_R_ACIDWATE, R_ACID,},
+	{ 1, "Lighting",	"Fulmin", 		1, SKILL_R_ELECEART, R_ELEC,},
+	{ 2, "Heat", 		"Aestus", 		1, SKILL_R_FIRECHAO, R_FIRE,},
+	{ 3, "Cold", 		"Gelum",		1, SKILL_R_COLDNETH, R_COLD,},
+	{ 4, "Poison", 		"Lepis", 		1, SKILL_R_POISNEXU, R_POIS,},
+	{ 5, "Force", 		"Fero",		 	1, SKILL_R_FORCTIME, R_FORC,},
+	{ 6, "Water",		"Mio",	 		1, SKILL_R_ACIDWATE, R_WATE,},
+	{ 7, "Earth", 		"Ostes", 		2, SKILL_R_ELECEART, R_EART,},
+	{ 8, "Chaos", 		"Emuto", 		2, SKILL_R_FIRECHAO, R_CHAO,},
+	{ 9, "Nether", 		"Elido", 		1, SKILL_R_COLDNETH, R_NETH,},
+	{10, "Nexus", 		"Vicis", 		1, SKILL_R_POISNEXU, R_NEXU,},
+	{11, "Time", 		"Emero",	 	2, SKILL_R_FORCTIME, R_TIME,},
+#else /* Relsiet's stuff preserved below */
 	{ 0, "Heat", 		"Aestus", 		1, SKILL_R_FIRECOLD, R_FIRE,},
 	{ 1, "Cold", 		"Gelum",		1, SKILL_R_FIRECOLD, R_COLD,},
 	{ 2, "Acid", 		"Delibro",	 	1, SKILL_R_WATEACID, R_ACID,},
@@ -1047,11 +1061,12 @@ r_element r_elements[RCRAFT_MAX_ELEMENTS] =
 	{13, "Time", 		"Emero",	 	2, SKILL_R_NETHTIME, R_TIME,},
 	{14, "Mind",		"Cogito", 		1, SKILL_R_MINDNEXU, R_MIND,},
 	{15, "Nexus", 		"Vicis", 		1, SKILL_R_MINDNEXU, R_NEXU,},
+#endif
 };
 
 
 /*
-Runespell imperatives
+Runespell imperatives (OBSOLETE - c-util.c hardcodes them instead in the macro wizard -.-)
 */
 r_imper r_imperatives [RG_MAX] = 
 {
@@ -1067,17 +1082,17 @@ r_imper r_imperatives [RG_MAX] =
 
 r_type runespell_types[8] =
 /*
-Runespell methods.
+Runespell methods. (OBSOLETE - c-util.c hardcodes them instead in the macro wizard -.-)
 */
 {
 	{ 0, R_MELE, "shield", 	0, 5 },
-	{ 1, R_SELF, "self",  	1, 10 },
+	{ 1, R_SELF, "self",  	0, 10 },
 	{ 2, R_BOLT, "bolt",  	1, 10 },
 	{ 3, R_BEAM, "beam",  	2, 11 },
-	{ 4, R_BALL, "ball",  	2, 13 },
+	{ 4, R_BALL, "ball",  	3, 13 },
 	{ 5, R_WAVE, "wave",  	3, 12 },
-	{ 6, R_CLOU, "cloud", 	3, 15 },
-	{ 7, R_STOR, "storm", 	3, 20 },
+	{ 6, R_CLOU, "cloud", 	5, 15 },
+	{ 7, R_STOR, "storm", 	10, 20 },
 };
 
 #endif
