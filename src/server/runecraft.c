@@ -902,7 +902,8 @@ u32b rspell_type (u32b flags)
 u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration, s16b cost, u32b type, s16b difficulty, byte imper, u32b type_flags, u16b s_av, s16b mali)
 /* Now that we have some numbers and figures to work with, cast the spell. MP is deducted here, and negative spell effects/failure stuff happens here. */
 {
-	u16b m, y, x;
+	u16b m;
+//	u16b y, x;
 	u16b fail_chance = 0;
 	s16b margin = 0;
 	s16b modifier = 100;
@@ -936,7 +937,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 	shield = shield > shield_max ? shield_max : shield;
 	shield = shield < 5 ? 5 : shield;
 	
-	s16b spell_duration = 0;
+//	s16b spell_duration = 0;
 	s16b spell_damage = 0;
 	
 	int level = s_av - e_level;
