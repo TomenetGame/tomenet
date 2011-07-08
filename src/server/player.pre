@@ -951,6 +951,12 @@ struct player_type
 	u32b turns_on_floor;
 	bool dual_mode;
 
+	/* ENABLE_RCRAFT */
+	/* New variables to keep track of new temporary debuffs on players */
+	int temporary_speed_dur; int temporary_speed;
+	int temporary_am;
+	int temporary_to_l_dur; int temporary_to_l;
+
 	bool panel_changed;
 
 	char warning_bpr;

@@ -1808,7 +1808,7 @@ bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2)
 	return (TRUE);
 }
 
-
+#ifdef ENABLE_RCRAFT
 /*
  * Set "p_ptr->tim_deflect", notice observable changes
  */
@@ -1856,6 +1856,7 @@ bool set_tim_deflect(int Ind, int v)
 	/* Result */
 	return (TRUE);
 }
+#endif
 
 
 /*
@@ -3215,6 +3216,140 @@ bool do_divine_xtra_res_time_mana(int Ind, int v) {
 }
 #endif
 
+#ifdef ENABLE_RCRAFT
+bool do_life_bonus(int Ind, int v, int p) {
+        player_type *p_ptr = Players[Ind];
+	return do_life_bonus_aux(Ind, v, p + p_ptr->temporary_to_l);
+}
+/* 
+ *  temporary LIFE modifier. p can be negative.
+ */
+bool do_life_bonus_aux(int Ind, int v, int p) {
+        player_type *p_ptr = Players[Ind];
+        bool notice = (FALSE);
+
+        /* Hack -- Force good values */
+        v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+        /* Open */
+        if (v) {
+		p_ptr->temporary_to_l = p;
+		notice = (TRUE);
+        }
+
+        /* Shut */
+        else { //v = 0;
+		p_ptr->temporary_to_l = 0;
+		notice = (TRUE);
+        }
+
+        p_ptr->temporary_to_l_dur = v;
+
+        /* Nothing to notice */
+        if (!notice) return (FALSE);
+
+        /* Disturb */
+        if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+        /* Recalculate boni */
+        p_ptr->update |= (PU_HP);
+
+        /* Handle stuff */
+        handle_stuff(Ind);
+
+        /* Result */
+        return (TRUE);
+}
+
+bool do_speed_bonus(int Ind, int v, int p) {
+        player_type *p_ptr = Players[Ind];
+	return do_speed_bonus_aux(Ind, v, p+p_ptr->temporary_speed);
+}
+/* 
+ *  temporary SPEED modifier. p can be negative.
+ */
+bool do_speed_bonus_aux(int Ind, int v, int p) {
+        player_type *p_ptr = Players[Ind];
+        bool notice = (FALSE);
+
+        /* Hack -- Force good values */
+        v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+        /* Open */
+        if (v) {
+		p_ptr->temporary_speed = p;
+		notice = (TRUE);
+        }
+
+        /* Shut */
+        else { //v = 0;
+		p_ptr->temporary_speed = 0;
+		notice = (TRUE);
+        }
+
+        p_ptr->temporary_speed_dur = v;
+
+        /* Nothing to notice */
+        if (!notice) return (FALSE);
+
+        /* Disturb */
+        if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+        /* Recalculate boni */
+        p_ptr->update |= (PU_BONUS);
+
+        /* Handle stuff */
+        handle_stuff(Ind);
+
+        /* Result */
+        return (TRUE);
+}
+
+/* 
+ *  temporary AM shell!
+ */
+bool do_temporary_antimagic(int Ind, int v) {
+        player_type *p_ptr = Players[Ind];
+        bool notice = (FALSE);
+
+        /* Hack -- Force good values */
+        v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+        /* Open */
+        if (v) {
+                if (!p_ptr->temporary_am) {
+			msg_print(Ind, "You are enveloped in an antimagic shell.");
+                        notice = (TRUE);
+                }
+        }
+
+        /* Shut */
+        else { //v = 0;
+                if (p_ptr->temporary_am) {
+			msg_print(Ind, "Your antimagic shell disappears.");
+                        notice = (TRUE);
+                }
+        }
+
+        p_ptr->temporary_am = v;
+
+        /* Nothing to notice */
+        if (!notice) return (FALSE);
+
+        /* Disturb */
+        if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+        /* Recalculate boni */
+        p_ptr->update |= (PU_BONUS);
+
+        /* Handle stuff */
+        handle_stuff(Ind);
+
+        /* Result */
+        return (TRUE);
+}
+
+#endif //ENABLE_RCRAFT
 /*
  * Set "p_ptr->sh_fire/cold/elec", notice observable changes
  */

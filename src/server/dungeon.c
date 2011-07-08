@@ -3304,11 +3304,21 @@ static bool process_player_end_aux(int Ind)
 	if (p_ptr->shield)
 		(void)set_shield(Ind, p_ptr->shield - 1, p_ptr->shield_power, p_ptr->shield_opt, p_ptr->shield_power_opt, p_ptr->shield_power_opt2);
 
-	#ifdef ENABLE_RCRAFT
+#ifdef ENABLE_RCRAFT
 	/* Timed deflection */
 	if (p_ptr->tim_deflect)
 		(void)set_tim_deflect(Ind, p_ptr->tim_deflect - 1);
-	#endif
+
+	/* New debuffs */
+	if (p_ptr->temporary_am)
+		(void)do_temporary_antimagic(Ind, p_ptr->temporary_am - minus_magic);
+
+	if (p_ptr->temporary_to_l_dur)
+		(void)do_life_bonus_aux(Ind, p_ptr->temporary_to_l_dur - minus_magic, p_ptr->temporary_to_l);
+
+	if (p_ptr->temporary_speed_dur)
+		(void)do_speed_bonus_aux(Ind, p_ptr->temporary_speed_dur - minus_magic, p_ptr->temporary_speed);
+#endif
 	
 	/* Timed Levitation */
 	if (p_ptr->tim_ffall)
@@ -3319,11 +3329,11 @@ static bool process_player_end_aux(int Ind)
 	/* Timed regen */
 	if (p_ptr->tim_regen)
 		(void)set_tim_regen(Ind, p_ptr->tim_regen - 1, p_ptr->tim_regen_pow);
-	#ifdef ENABLE_RCRAFT
+#ifdef ENABLE_RCRAFT
 	/* Trauma boost */
 	if (p_ptr->tim_trauma)
 		(void)set_tim_trauma(Ind, p_ptr->tim_trauma - 1, p_ptr->tim_trauma_pow);
-	#endif
+#endif
 	/* Thunderstorm */
 	if (p_ptr->tim_thunder) {
                 int dam = damroll(p_ptr->tim_thunder_p1, p_ptr->tim_thunder_p2);

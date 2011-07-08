@@ -1506,7 +1506,7 @@ void calc_hitpoints(int Ind)
 	int bonus, Ind2 = 0, cr_mhp = p_ptr->cp_ptr->c_mhp + p_ptr->rp_ptr->r_mhp;
 	long mhp, mhp_playerform, weakling_boost;
 	u32b mHPLim, finalHP;
-	int bonus_cap;
+	int bonus_cap, to_life;
 
 	if ((Ind2 = get_esp_link(Ind, LINKF_PAIN, &p_ptr2))) {
 	}
@@ -1613,21 +1613,6 @@ void calc_hitpoints(int Ind)
 #endif
 
 
-        /* HP Bonus from SKILL_HEALTH */
-#if 0
-	/* it's a bit too much, and doesn't feel 'smooth' at all IMHO, balance-wise :/
-	 Mainly because already strong chars can now get uber-tough - but.. see #else branch below..
-	 Also, +LIFE is mostly to give non-mimics a chance to catch up a bit to mimics,
-	 especially postking. Pre-king using a +LIFE weapon (only way) will be costly since it's
-	 a whole slot used up, which could otherwise give resistances or deal more damage from an
-	 artifact/ego weapon (archers have it easier than warriors though). */
-        if (get_skill(p_ptr, SKILL_HEALTH) >= 30)
-	        to_life++;
-        if (get_skill(p_ptr, SKILL_HEALTH) >= 40)
-	        to_life++;
-        if (get_skill(p_ptr, SKILL_HEALTH) >= 50)
-	        to_life++;
-#else 
 	/* instead let's make it an option to weak chars, instead of further buffing chars with don't
          need it at all (warriors, druids, mimics, etc). However, now chars can get this AND +LIFE items.
 	 So in total it might be even more. A scale to 100 is hopefully ok. *experimental* */
@@ -1639,8 +1624,6 @@ void calc_hitpoints(int Ind)
 		mhp += (p_ptr->lev - 20) * 2;
 	}
  #endif
-#endif
-
 
 	/* Now we calculated the base player form mhp. Save it for use with
 	   +LIFE bonus. This will prevent mimics from total uber HP,
@@ -1725,27 +1708,41 @@ void calc_hitpoints(int Ind)
 	if (!p_ptr->body_monster) p_ptr->form_hp_ratio = 100;
 	else p_ptr->form_hp_ratio = (mhp * 100) / mhp_playerform;
 
+	/* calculate +LIFE bonus */
+	to_life = p_ptr->to_l;
+
 #ifdef ENABLE_DIVINE
 	/* Bonus from RACE_DIVINE */
 	if (p_ptr->divine_hp > 0) {
 		/* count as if from item? */
-		p_ptr->to_l += p_ptr->divine_hp_mod;
+		to_life += p_ptr->divine_hp_mod;
 	}
 #endif
 
-	/* Bonus from +LIFE items (should be weapons only -- not anymore, Bladeturner / Randarts etc.!).
-	   Also, cap it at +3 (boomerang + weapon could result in +6) (Boomerangs can't have +LIFE anymore) */
-	if (!is_admin(p_ptr) && p_ptr->to_l > 3) p_ptr->to_l = 3;
-
-	/* Reduce use of +LIFE items for mimics while in monster-form */
-	if (mhp > mhp_playerform) {
-		if (p_ptr->to_l > 0)
-			mhp += (mhp_playerform * p_ptr->to_l * mhp_playerform) / (10 * mhp);
-		else
-			mhp += (mhp_playerform * p_ptr->to_l) / 10;
-	} else {
-		mhp += (mhp * p_ptr->to_l) / 10;
+#ifdef ENABLE_RCRAFT
+	/* New overall LIFE bonus handler */
+	if (p_ptr->temporary_to_l_dur) {
+		to_life += p_ptr->temporary_to_l;
 	}
+#endif
+
+	/* cap it at +30% HP and at -100% HP */
+	if (to_life > 3 && !is_admin(p_ptr)) to_life = 3;
+	if (to_life < -10) to_life = -10;
+
+	/* new hack (see below): if life bonus is negative, dont apply player form hp */
+	if (to_life > 0) {
+		/* Reduce use of +LIFE items for mimics while in monster-form */
+		if (mhp > mhp_playerform) {
+			if (to_life > 0)
+				mhp += (mhp_playerform * to_life * mhp_playerform) / (10 * mhp);
+			else
+				mhp += (mhp_playerform * to_life) / 10;
+		} else {
+			mhp += (mhp * to_life) / 10;
+		}
+	}
+
 #if 1
 	if (p_ptr->body_monster) {
 		/* add flat bonus to maximum HP limit for char levels > 50, if form is powerful, to keep it useful */
@@ -1753,6 +1750,20 @@ void calc_hitpoints(int Ind)
 		    (((p_ptr->lev - 50) * ((r_info[p_ptr->body_monster].level > 80 ? 80 :
 		    r_info[p_ptr->body_monster].level) + 30)) / 100) * 8 : 0;
 	}
+#endif
+
+	/* new hack (see above): player form hp doesn't matter if life bonus is negative */
+	if (to_life < 0) mhp += (mhp * to_life) / 10;
+	/* some places divide by mhp, so hack it for now */
+	if (mhp == 0) mhp = 1;
+
+	/* Factor in the hero / superhero settings.
+	   Specialty: It's applied AFTER mimic form HP influence. */
+	if (p_ptr->hero) mhp += 10;
+	if (p_ptr->shero) mhp += 20;
+#if 1 /* hmm */
+	else if (p_ptr->fury) mhp += 20;
+	else if (p_ptr->berserk) mhp += 20;
 #endif
 
 #if 0 /* p_ptr->to_hp is unused atm! */
@@ -1782,15 +1793,6 @@ void calc_hitpoints(int Ind)
 	/* commented out (evileye for power) */
 	/*	mhp += p_ptr->msp * 2 / 3; */
 	}
-
-	/* Factor in the hero / superhero settings */
-	if (p_ptr->hero) mhp += 10;
-	if (p_ptr->shero) mhp += 20;
-#if 1 /* hmm */
-	else if (p_ptr->fury) mhp += 20;
-	else if (p_ptr->berserk) mhp += 20;
-#endif
-	
 
 	/* New maximum hitpoints */
 	if (mhp != p_ptr->mhp)
@@ -2894,7 +2896,7 @@ void calc_boni(int Ind)
 	cave_type **zcave;
 	if (!(zcave=getcave(&p_ptr->wpos))) return;
 
-	int			j, hold, minus, am_bonus = 0, am_temp, to_life = 0;
+	int			j, hold, minus, am_bonus = 0, am_temp;
 	long			w, i;
 
 	int			old_speed;
@@ -3429,6 +3431,18 @@ void calc_boni(int Ind)
 		p_ptr->antimagic_dis += 1 + (get_skill(p_ptr, SKILL_ANTIMAGIC) / 10); /* was /11, but let's reward max skill! */
 #endif
 	}
+
+#ifdef ENABLE_RCRAFT
+	/* Do we have temporary AM (de)buff? */
+	if (p_ptr->temporary_am) {
+		p_ptr->anti_magic = TRUE;
+	}
+
+	/* Do we have any temporary speed (de)buff? */
+	if (p_ptr->temporary_speed_dur) {
+		p_ptr->pspeed += p_ptr->temporary_speed;
+	}
+#endif
 
 	/* Ghost */
 	if (p_ptr->ghost) {
@@ -4078,10 +4092,6 @@ void calc_boni(int Ind)
 	p_ptr->antimagic_dis += (am_bonus / 15);
 #endif
 
-	/* calculate higher to-life bonus from items / skills (non-stacking!) */
-	if (p_ptr->to_l < 0) p_ptr->to_l += to_life;
-	else if (p_ptr->to_l < to_life) p_ptr->to_l = to_life;
-
 	/* Hard/Hellish mode also gives mana penalty */
 	if (p_ptr->mode & MODE_HARD) p_ptr->to_m = (p_ptr->to_m * 2) / 3;
 
@@ -4402,6 +4412,10 @@ void calc_boni(int Ind)
 	if (p_ptr->sh_fire_tim) p_ptr->sh_fire = TRUE;
 	if (p_ptr->sh_cold_tim) p_ptr->sh_cold = TRUE;
 	if (p_ptr->sh_elec_tim) p_ptr->sh_elec = TRUE;
+
+	/* Bonus from +LIFE items (should be weapons only -- not anymore, Bladeturner / Randarts etc.!).
+	   Also, cap it at +3 (boomerang + weapon could result in +6) (Boomerangs can't have +LIFE anymore) */
+	if (!is_admin(p_ptr) && p_ptr->to_l > 3) p_ptr->to_l = 3;
 
 
 

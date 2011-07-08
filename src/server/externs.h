@@ -1442,6 +1442,14 @@ extern bool do_divine_xtra_res_time_mana(int Ind, int p);
 extern bool do_divine_hp(int Ind, int p, int v);
 extern bool do_divine_crit(int Ind, int p, int v);
 
+#ifdef ENABLE_RCRAFT
+extern bool do_temporary_antimagic(int Ind, int p);
+extern bool do_life_bonus(int Ind, int p, int v);
+extern bool do_life_bonus_aux(int Ind, int p, int v);
+extern bool do_speed_bonus(int Ind, int p, int v);
+extern bool do_speed_bonus_aux(int Ind, int p, int v);
+#endif
+
 extern void do_autokinesis_to(int Ind, int dis);
 extern bool do_res_stat_temp(int Ind, int stat);
 extern void swap_position(int Ind, int lty, int ltx);
@@ -1684,8 +1692,10 @@ extern bool set_fast(int Ind, int v, int p);
 extern bool set_slow(int Ind, int v);
 extern bool set_tim_thunder(int Ind, int v, int p1, int p2);
 extern bool set_tim_regen(int Ind, int v, int p);
+#ifdef ENABLE_RCRAFT
 extern bool set_tim_trauma(int Ind, int v, int p);
 extern bool set_tim_deflect(int Ind, int v);
+#endif
 extern bool set_tim_ffall(int Ind, int v);
 extern bool set_tim_fly(int Ind, int v);
 extern bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2);

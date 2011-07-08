@@ -2869,6 +2869,13 @@ struct player_type
 	/* Last attack spell cast for ftk mode */
 	u32b shoot_till_kill_rune_spell;
 	byte shoot_till_kill_rune_modifier;
+
+	/* New variables to keep track of new temporary debuffs on players */
+	int temporary_speed_dur, temporary_speed;
+	int temporary_am;
+	int temporary_to_l_dur, temporary_to_l;
+
+
 #endif
 
 #if 0 /* deprecated */

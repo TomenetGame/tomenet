@@ -441,6 +441,11 @@ extern void divine_empowerment(int Ind, int level);
 extern void divine_intensify(int Ind, int level);
 extern void divine_gateway(int Ind);
 
+/* ENABLE_RCRAFT */
+extern bool do_temporary_antimagic(int Ind, int p);
+extern bool do_life_bonus(int Ind, int p, int v);
+extern bool do_speed_bonus(int Ind, int p, int v);
+
 extern void set_recall_depth(player_type * p_ptr, object_type * o_ptr);
 extern bool set_recall_timer(int Ind, int v);
 extern bool set_recall(int Ind, int v, object_type * o_ptr);
