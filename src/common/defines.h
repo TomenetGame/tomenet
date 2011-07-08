@@ -6786,15 +6786,24 @@ extern int PlayerUID;
 #if 1 /* or player.pkg throws an error */
  #define SKILL_SCHOOL_RUNECRAFT	95	//was 87..
 
- #define SKILL_R_FIRECOLD	96
- #define SKILL_R_WATEACID	97
- #define SKILL_R_ELECEART	98	//was 94..
- #define SKILL_R_WINDPOIS	99
+ //#define SKILL_R_FIRECOLD	96
+ //#define SKILL_R_WATEACID	97
+ //#define SKILL_R_ELECEART	98	//was 94..
+ //#define SKILL_R_WINDPOIS	99
 
- #define SKILL_R_MANACHAO	100
- #define SKILL_R_FORCGRAV	101
- #define SKILL_R_NETHTIME	102
- #define SKILL_R_MINDNEXU	103
+ //#define SKILL_R_MANACHAO	100
+ //#define SKILL_R_FORCGRAV	101
+ //#define SKILL_R_NETHTIME	102
+ //#define SKILL_R_MINDNEXU	103
+ 
+ /* Rune reduction */
+ #define SKILL_R_ACIDWATE	96
+ #define SKILL_R_ELECEART	97
+ #define SKILL_R_FIRECHAO	98
+ #define SKILL_R_COLDNETH	99
+ #define SKILL_R_POISNEXU	100
+ #define SKILL_R_FORCTIME	101
+ 
 #endif
 
 /*#define MAX_SKILLS              70 */
@@ -7246,7 +7255,7 @@ extern int PlayerUID;
 
 #ifdef ENABLE_RCRAFT
 
-#define RCRAFT_MAX_ELEMENTS 16
+#define RCRAFT_MAX_ELEMENTS 12 //reduced from 16 to 12 - Kurzel
 
 /* Rune flags */
 
@@ -7262,25 +7271,25 @@ extern int PlayerUID;
 #define R_STOR 0x000080
 
 //Spell constituents
-#define R_FIRE 0x000100
-#define R_COLD 0x000200
-#define R_ACID 0x000400
-#define R_WATE 0x000800
+#define R_ACID 0x000100
+#define R_WATE 0x000200
+#define R_ELEC 0x000400
+#define R_EART 0x000800
 
-#define R_ELEC 0x001000
-#define R_EART 0x002000
-#define R_POIS 0x004000
-#define R_WIND 0x008000
+#define R_FIRE 0x001000
+#define R_CHAO 0x002000
+#define R_COLD 0x004000
+#define R_NETH 0x008000
 
-#define R_MANA 0x010000
-#define R_CHAO 0x020000
+#define R_POIS 0x010000
+#define R_NEXU 0x020000
 #define R_FORC 0x040000
-#define R_GRAV 0x080000
+#define R_TIME 0x080000
 
-#define R_NETH 0x100000
-#define R_TIME 0x200000
-#define R_MIND 0x400000
-#define R_NEXU 0x800000
+//#define R_NETH 0x100000
+//#define R_TIME 0x200000
+//#define R_MIND 0x400000
+//#define R_NEXU 0x800000
 
 #define S_COST_MIN 1
 #define S_COST_MAX 85
@@ -7288,74 +7297,185 @@ extern int PlayerUID;
 #define S_DAM_MAX 500 //This is before size/fail, etc modifiers. Max for 500 results in a hard limit of around 2000
 
 /* Rune spell effect types */
-#define RT_MAX 66
+#define RT_MAX 141 //Out of (220+66+12+1):(299); Update as new effects are added! - Kurzel
 
-#define RT_NONE 0
-#define RT_SHADOW 1
-#define RT_COLD 2
-#define RT_ACID 3
-#define RT_ELEC 4
-#define RT_CLONE_BLINK 5
-#define RT_FIRE 6
-#define RT_LIGHT 7
-#define RT_SATIATION 8
-#define RT_WIND_BLINK 9
-#define RT_DETECTION_BLIND 10
-#define RT_POISON 11
-#define RT_SEE_INVISIBLE 12
-#define RT_FORCE 13
-#define RT_DETECT_TRAP 14
-#define RT_STASIS_DISARM 15
-#define RT_SHARDS 16
-#define RT_DARK_SLOW 17
-#define RT_BESERK 18
-#define RT_TELEPORT 19
-#define RT_STUN 20
-#define RT_HEALING 21
-#define RT_MISSILE 22
-#define RT_DETECT_STAIR 23
-#define RT_DIG 24
-#define RT_POLYMORPH 25
-#define RT_FURY 26
-#define RT_BRILLIANCE 27
-#define RT_OBSCURITY 28
-#define RT_WATER 29
-#define RT_BLESSING 30
-#define RT_TRAUMATURGY 31
-#define RT_PLASMA 32
-#define RT_FLY 33
-#define RT_AURA 34
-#define RT_VISION 35
-#define RT_WATERPOISON 36
-#define RT_DISPERSE 37
-#define RT_QUICKEN 38
-#define RT_ANCHOR 39
-#define RT_CHAOS 40
-#define RT_INERTIA 41
-#define RT_NEXUS 42
-#define RT_PSI_ESP 43
-#define RT_GRAVITY 44
-#define RT_TIME_INVISIBILITY 45
-#define RT_MEMORY 46
-#define RT_SUMMON 47
-#define RT_RESISTANCE 48
-#define RT_ICE 49
-#define RT_THUNDER 50
-#define RT_TELEPORT_TO 51
-#define RT_STEALTH 52
-#define RT_WALLS 53
-#define RT_HELL_FIRE 54
-#define RT_ICEPOISON 55
-#define RT_DISINTEGRATE 56
-#define RT_MYSTIC_SHIELD 57
-#define RT_MAGIC_WARD 58
-#define RT_RECALL 59
-#define RT_NETHER 60
-#define RT_TELEPORT_LEVEL 61
-#define RT_EARTHQUAKE 62
-#define RT_NUKE 63
-#define RT_ROCKET 64
-#define RT_MAGIC_CIRCLE 65
+/* Single rune effects (named by projection) */
+/* None (1 set 1):(1) */
+/* Low  (6 set 1):(6) */
+/* High (6 set 1):(6) */
+#define RT_NONE 0 //Use RT_NULL for elements that 'cancel'
+#define RT_ACID 1
+#define RT_ELEC 2
+#define RT_FIRE 3
+#define RT_COLD 4
+#define RT_POISON 5
+#define RT_FORCE 6
+#define RT_WATER 7
+#define RT_SHARDS 8
+#define RT_CHAOS 9
+#define RT_NETHER 10
+#define RT_NEXUS 11
+#define RT_TIME 12
+
+/* Single school effects and augments (named by projection) */
+/* Low/High         (6 set  1):( 6) */
+/* Low/High/Augment (6 set 10):(60) */
+#define RT_POWER 13
+#define RT_DISINTEGRATE_ELEC 14
+#define RT_DISINTEGRATE_FIRE 15
+#define RT_DISINTEGRATE_COLD 16
+#define RT_DISINTEGRATE_POISON 17
+#define RT_DISINTEGRATE_FORCE 18
+#define RT_DISINTEGRATE_SHARDS 19
+#define RT_DISINTEGRATE_CHAOS 20
+#define RT_DISINTEGRATE_NETHER 21
+#define RT_DISINTEGRATE_NEXUS 22
+#define RT_DISINTEGRATE_TIME 23
+
+#define RT_HI_ELEC 24
+#define RT_STARLIGHT_ACID 25
+#define RT_STARLIGHT_FIRE 26
+#define RT_STARLIGHT_COLD 27
+#define RT_STARLIGHT_POISON 28
+#define RT_STARLIGHT_FORCE 29
+#define RT_STARLIGHT_WATER 30
+#define RT_STARLIGHT_CHAOS 31
+#define RT_STARLIGHT_NETHER 32
+#define RT_STARLIGHT_NEXUS 33
+#define RT_STARLIGHT_TIME 34
+
+#define RT_HELL_FIRE 35
+#define RT_DETONATION_ACID 36
+#define RT_DETONATION_ELEC 37
+#define RT_DETONATION_COLD 38
+#define RT_DETONATION_POISON 39
+#define RT_DETONATION_FORCE 40
+#define RT_DETONATION_WATER 41
+#define RT_DETONATION_SHARDS 42
+#define RT_DETONATION_NETHER 43
+#define RT_DETONATION_NEXUS 44
+#define RT_DETONATION_TIME 45
+
+#define RT_ANNIHILATION 46 //RT_TRAUMATURGY
+#define RT_STASIS_ACID 47
+#define RT_STASIS_ELEC 48
+#define RT_STASIS_FIRE 49
+#define RT_STASIS_POISON 50
+#define RT_STASIS_FORCE 51
+#define RT_STASIS_WATER 52
+#define RT_STASIS_SHARDS 53
+#define RT_STASIS_CHAOS 54
+#define RT_STASIS_NEXUS 55
+#define RT_STASIS_TIME 56
+
+#define RT_UNBREATH 57 //RT_STEALTH
+#define RT_DRAIN_ACID 58
+#define RT_DRAIN_ELEC 59
+#define RT_DRAIN_FIRE 60
+#define RT_DRAIN_COLD 61
+#define RT_DRAIN_FORCE 62
+#define RT_DRAIN_WATER 63
+#define RT_DRAIN_SHARDS 64
+#define RT_DRAIN_CHAOS 65
+#define RT_DRAIN_NETHER 66
+#define RT_DRAIN_TIME 67
+
+#define RT_INERTIA 68
+#define RT_GRAVITY_ACID 69
+#define RT_GRAVITY_ELEC 70
+#define RT_GRAVITY_FIRE 71
+#define RT_GRAVITY_COLD 72
+#define RT_GRAVITY_POISON 73
+#define RT_GRAVITY_WATER 74
+#define RT_GRAVITY_SHARDS 75
+#define RT_GRAVITY_CHAOS 76
+#define RT_GRAVITY_NETHER 77
+#define RT_GRAVITY_NEXUS 78
+
+/* Double school effects (named by projection) */
+/* Low/Low   (6 combination 2):(15) */
+/* Low/High  (6 set 5):(30) */
+/* High/High (6 combination 2):(15) */
+#define RT_ACID_ELEC 79
+#define RT_ACID_FIRE 80
+#define RT_ACID_COLD 81
+#define RT_ACID_POISON 82
+#define RT_ACID_TIME 83
+#define RT_PLASMA 84 //RT_ELEC_FIRE
+#define RT_ELEC_COLD 85
+#define RT_ELEC_POISON 86
+#define RT_ELEC_TIME 87
+#define RT_NULL 88 //RT_FIRE_COLD
+#define RT_FIRE_POISON 89
+#define RT_FIRE_TIME 90
+#define RT_COLD_POISON 91
+#define RT_COLD_TIME 92
+#define RT_SLOW 93 //RT_POISON_TIME
+/* Acid */
+#define RT_DISARM_ACID 94
+#define RT_NUKE 95
+#define RT_OBSCURITY_ACID 96
+#define RT_HI_ACID 97
+#define RT_ACID_NEXUS 98 //RT_ELEC
+/* Electricity */
+#define RT_ELEC_WATER 99 //RT_NULL
+#define RT_BRILLIANCE_ELEC 100
+#define RT_TELEPORT_ELEC 101
+#define RT_THUNDER 102
+#define RT_ELEC_NEXUS 103 //RT_ACID
+/* Fire */
+#define RT_FIRE_WATER 104 //RT_NULL
+#define RT_DIG_FIRE 105
+#define RT_OBSCURITY_FIRE 106
+#define RT_HI_FIRE 107
+#define RT_FIRE_NEXUS 108 //RT_COLD
+/* Cold */
+#define RT_ICE 109
+#define RT_DISARM_COLD 110
+#define RT_BRILLIANCE_COLD 111
+#define RT_HI_COLD 112
+#define RT_COLD_NEXUS 113 //RT_FIRE
+/* Poison */
+#define RT_WATERPOISON 114
+#define RT_ICEPOISON 115
+#define RT_CONFUSION 116
+#define RT_BLINDNESS 117
+#define RT_STUN 118 //RT_POISON_NEXUS
+/* Force */
+#define RT_HI_SHARD 119
+#define RT_MISSILE 120
+#define RT_LIGHT 121
+#define RT_SHADOW 122
+#define RT_TELEPORT_NEXUS 123
+/* Water */
+#define RT_DIG 124
+#define RT_POLYMORPH 125
+#define RT_CLONE 126
+#define RT_WATER_NEXUS 127 //RT_SHARDS
+#define RT_DIG_TELEPORT 128 //RT_WATER_TIME
+/* Earth */
+#define RT_INFERNO 129
+#define RT_GENOCIDE 130
+#define RT_DIG_MEMORY 131 //RT_WATER_EARTH
+#define RT_EARTH_NEXUS 132 //RT_WATER
+/* Chaos */
+#define RT_CHAOS_NETHER 133 //RT_NEXUS
+#define RT_DISENCHANT 134
+#define RT_WONDER 135
+/* Nether */
+#define RT_MANA 136
+#define RT_NETHER_TIME 137 //RT_NULL
+/* Nexus */
+#define RT_SLEEP 138
+
+/* Triple school effects (named by self-effect) */
+/* Low/Low/Low    (6 combination 3):(20) */
+/* Low/Low/High   (6 combination 2 set 4):(60) */
+/* Low/High/High  (6 combination 2 set 4):(60) */
+/* High/High/High (6 combination 3):(20) */
+/* Currently unassigned (139 to 298); projections will be handled based on 3rd rune (exploding) - Kurzel */
+#define RT_EXAMPLE 139
+#define RT_LAST 298
 
 /* 	Max runespell imperatives */
 #define RG_MAX		  8
@@ -7385,7 +7505,7 @@ extern int PlayerUID;
 #define RPEN_MAJ_BB 0x40 //Black breath
 #define RPEN_MAJ_DT 0x80 //Death?
 
-#define MAX_RSPELL_SEL 697 //Max entries in rspell selector
+#define MAX_RSPELL_SEL 299 //Max entries in rspell selector (RT_MAX combination 3!):(was 697, now 299) - Kurzel
 
 #define rget_level(x) ((s_av * (x)) / 50) //No longer uses spell level: not used in fail rate calculator
 

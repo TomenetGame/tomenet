@@ -154,6 +154,7 @@ typedef unsigned int u32b;
 #define SKILL_RESCONF           93
 
 #define SKILL_SCHOOL_RUNECRAFT	95	//was 87..
+#if 0
 #define SKILL_R_FIRECOLD	96
 #define SKILL_R_WATEACID	97
 #define SKILL_R_ELECEART	98	//was 94..
@@ -162,6 +163,14 @@ typedef unsigned int u32b;
 #define SKILL_R_FORCGRAV	101
 #define SKILL_R_NETHTIME	102
 #define SKILL_R_MINDNEXU	103
+#else /* Rune reduction */
+#define SKILL_R_ACIDWATE	96
+#define SKILL_R_ELECEART	97
+#define SKILL_R_FIRECHAO	98	//was 94..
+#define SKILL_R_COLDNETH	99
+#define SKILL_R_POISNEXU	100
+#define SKILL_R_FORCTIME	101
+#endif
 
 /* Ugly but needed */
 #define MAX_SKILLS              128

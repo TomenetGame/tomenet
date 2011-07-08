@@ -3440,6 +3440,7 @@ struct r_spell
 	s16b fail; /* Fail rate multiplier */
 	s16b radius; /* Radius at 50 before multipliers: linear scale */
 	u16b gf_type; /* Projection type */
+	u16b gf_explode; /* Exploding projection type - Kurzel */
 };
 
 typedef struct r_imper r_imper;
