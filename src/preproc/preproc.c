@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int main(int argc, char *arg[]) {
+int main(int argc, char *argv[]) {
 	FILE *f_in, *f_out;
 	char tmp_file[160 + 3], line[320 + 1], *line_p, line_mod[320 + 1 + 6];
 	/* 320 + 1 + 6 -> allow +6 extra marker chars (originally '//', but interferes
@@ -38,15 +38,15 @@ int main(int argc, char *arg[]) {
 		printf("       C preprocessor options should usually (cpp) be: -C -P\n");
 		return -1;
 	}
-	if (strlen(arg[1]) == 0) { /* paranoia */
+	if (strlen(argv[1]) == 0) { /* paranoia */
 		printf("Error: No input filename specified.\n");
 		return -2;
 	}
-	if (strlen(arg[1]) > 160) {
+	if (strlen(argv[1]) > 160) {
 		printf("Error: Input filename must not be longer than 160 characters.\n");
 		return -3;
 	}
-	if (strlen(arg[2]) == 0) { /* paranoia */
+	if (strlen(argv[2]) == 0) { /* paranoia */
 		printf("Error: No output filename specified.\n");
 		return -4;
 	}
@@ -54,9 +54,9 @@ int main(int argc, char *arg[]) {
 
 	/* open file */
 
-	sprintf(tmp_file, "%s_", arg[1]);
+	sprintf(tmp_file, "%s_", argv[1]);
 
-	f_in = fopen(arg[1], "r");
+	f_in = fopen(argv[1], "r");
 	if (f_in == NULL) {
 		printf("Error: Couldn't open input file.\n");
 		return -5;
@@ -117,9 +117,9 @@ int main(int argc, char *arg[]) {
 
 	/* call C preprocessor on temporary file */
 
-	sprintf(line, "%s ", arg[3]);
+	sprintf(line, "%s ", argv[3]);
 	for (cpp_opts = 5; cpp_opts <= argc; cpp_opts++) {
-		strcat(line, arg[cpp_opts - 1]);
+		strcat(line, argv[cpp_opts - 1]);
 		strcat(line, " ");
 	}
 	strcat(line, tmp_file);
@@ -147,7 +147,7 @@ int main(int argc, char *arg[]) {
 
 	/* clean up preprocessed file to generate output file */
 
-	sprintf(tmp_file, "%s__", arg[1]);
+	sprintf(tmp_file, "%s__", argv[1]);
 
 	f_in = fopen(tmp_file, "r");
 	if (f_in == NULL) {
@@ -155,7 +155,7 @@ int main(int argc, char *arg[]) {
 		return -8;
 	}
 
-	f_out = fopen(arg[2], "w");
+	f_out = fopen(argv[2], "w");
 	if (f_out == NULL) {
 		printf("Error: Couldn't create output file.\n");
 		return -9;
