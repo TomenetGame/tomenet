@@ -6274,9 +6274,10 @@ r_element r_elements[RCRAFT_MAX_ELEMENTS] =
 	Table of spell potencies.
 	
 	id, name, level, cost, fail, damage, cast_time, radius, duration
-						 
-
+	
+	WRONG APPEARENTLY (also, what's 'danger'?? No such thing in above line):
 	cost, fail, damage, danger and duration are /10 multipliers; radius is a +/- value
+	INSTEAD IT SEEMS THAT 'fail' is a percentage bonus, while 'cost' and 'damage' are percentage/10 multiplier.
 */
 r_imper r_imperatives [RCRAFT_MAX_IMPERATIVES] = 
 {
