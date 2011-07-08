@@ -520,50 +520,38 @@ $ENABLE_RCRAFT$D:
 $ENABLE_RCRAFT$I:1000:0
 $ENABLE_RCRAFT$F:DUMMY
 
-$ENABLE_RCRAFT$N:96:Fire and Cold
-$ENABLE_RCRAFT$D:Ability to summon elemental fire and cold
+$ENABLE_RCRAFT$N:96:Acid and Water
+$ENABLE_RCRAFT$D:Ability to transmute dispersion forces.
 $ENABLE_RCRAFT$A:18:Draw a rune
 $ENABLE_RCRAFT$I:1000:105
 $ENABLE_RCRAFT$F:MKEY_HARDCODE
 
-$ENABLE_RCRAFT$N:97:Water and Acid
-$ENABLE_RCRAFT$D:Ability to summon elemental water and acid
+$ENABLE_RCRAFT$N:97:Electricity and Earth
+$ENABLE_RCRAFT$D:Ability to conjure electrostatic forces.
 $ENABLE_RCRAFT$A:18:Draw a rune
 $ENABLE_RCRAFT$I:1000:105
 $ENABLE_RCRAFT$F:MKEY_HARDCODE
 
-$ENABLE_RCRAFT$N:98:Lightning and Earth
-$ENABLE_RCRAFT$D:Ability to summon elemental earth and electricity
+$ENABLE_RCRAFT$N:98:Fire and Chaos
+$ENABLE_RCRAFT$D:Ability to evoke entropic forces.
 $ENABLE_RCRAFT$A:18:Draw a rune
 $ENABLE_RCRAFT$I:1000:105
 $ENABLE_RCRAFT$F:MKEY_HARDCODE
 
-$ENABLE_RCRAFT$N:99:Poison and Wind
-$ENABLE_RCRAFT$D:Ability to summon elemental wind and poison
+$ENABLE_RCRAFT$N:99:Cold and Nether
+$ENABLE_RCRAFT$D:Ability to abjure energetic forces.
 $ENABLE_RCRAFT$A:18:Draw a rune
 $ENABLE_RCRAFT$I:1000:105
 $ENABLE_RCRAFT$F:MKEY_HARDCODE
 
-$ENABLE_RCRAFT$N:100:Mana and Chaos
-$ENABLE_RCRAFT$D:Ability to invoke mana and chaos
+$ENABLE_RCRAFT$N:100:Poison and Nexus
+$ENABLE_RCRAFT$D:Ability to illude natural forces.
 $ENABLE_RCRAFT$A:18:Draw a rune
 $ENABLE_RCRAFT$I:1000:105
 $ENABLE_RCRAFT$F:MKEY_HARDCODE
 
-$ENABLE_RCRAFT$N:101:Force and Gravity
-$ENABLE_RCRAFT$D:Ability to manipulate terrestrial forces
-$ENABLE_RCRAFT$A:18:Draw a rune
-$ENABLE_RCRAFT$I:1000:105
-$ENABLE_RCRAFT$F:MKEY_HARDCODE
-
-$ENABLE_RCRAFT$N:102:Nether and Time
-$ENABLE_RCRAFT$D:Ability to manipulate life and time
-$ENABLE_RCRAFT$A:18:Draw a rune
-$ENABLE_RCRAFT$I:1000:105
-$ENABLE_RCRAFT$F:MKEY_HARDCODE
-
-$ENABLE_RCRAFT$N:103:Mind and Nexus
-$ENABLE_RCRAFT$D:Ability to control mind and space
+$ENABLE_RCRAFT$N:101:Force and Time
+$ENABLE_RCRAFT$D:Ability to compel fundamental forces.
 $ENABLE_RCRAFT$A:18:Draw a rune
 $ENABLE_RCRAFT$I:1000:105
 $ENABLE_RCRAFT$F:MKEY_HARDCODE
@@ -693,14 +681,12 @@ $ENABLE_MCRAFT$f:Psycho-Power:Magic%10
 $ENABLE_MCRAFT$f:Thought Contact:Magic%10
 $ENABLE_MCRAFT$f:Mental Intrusion:Magic%10
 
-$ENABLE_RCRAFT$f:Fire and Cold:Magic%15
-$ENABLE_RCRAFT$f:Water and Acid:Magic%15
-$ENABLE_RCRAFT$f:Lightning and Earth:Magic%15
-$ENABLE_RCRAFT$f:Poison and Wind:Magic%15
-$ENABLE_RCRAFT$f:Mana and Chaos:Magic%15
-$ENABLE_RCRAFT$f:Force and Gravity:Magic%15
-$ENABLE_RCRAFT$f:Nether and Time:Magic%15
-$ENABLE_RCRAFT$f:Mind and Nexus:Magic%15
+$ENABLE_RCRAFT$f:Acid and Water:Magic%15
+$ENABLE_RCRAFT$f:Electricity and Earth:Magic%15
+$ENABLE_RCRAFT$f:Fire and Chaos:Magic%15
+$ENABLE_RCRAFT$f:Cold and Nether:Magic%15
+$ENABLE_RCRAFT$f:Poison and Nexus:Magic%15
+$ENABLE_RCRAFT$f:Force and Time:Magic%15
 
 f:Stealth:Sneakiness%15
 f:Disarming:Sneakiness%10
@@ -808,14 +794,12 @@ $ENABLE_MCRAFT$T:Mindcraft Schools:Psycho-Power
 $ENABLE_MCRAFT$T:Mindcraft Schools:Thought Contact
 $ENABLE_MCRAFT$T:Mindcraft Schools:Mental Intrusion
 
-$ENABLE_RCRAFT$T:Runecraft:Fire and Cold
-$ENABLE_RCRAFT$T:Runecraft:Water and Acid
-$ENABLE_RCRAFT$T:Runecraft:Lightning and Earth
-$ENABLE_RCRAFT$T:Runecraft:Poison and Wind
-$ENABLE_RCRAFT$T:Runecraft:Mana and Chaos
-$ENABLE_RCRAFT$T:Runecraft:Force and Gravity
-$ENABLE_RCRAFT$T:Runecraft:Nether and Time
-$ENABLE_RCRAFT$T:Runecraft:Mind and Nexus
+$ENABLE_RCRAFT$T:Runecraft:Acid and Water
+$ENABLE_RCRAFT$T:Runecraft:Electricity and Earth
+$ENABLE_RCRAFT$T:Runecraft:Fire and Chaos
+$ENABLE_RCRAFT$T:Runecraft:Cold and Nether
+$ENABLE_RCRAFT$T:Runecraft:Poison and Nexus
+$ENABLE_RCRAFT$T:Runecraft:Force and Time
 
 #T:Main:Spirituality
 #T:Spirituality:Prayer
