@@ -1389,21 +1389,21 @@ static void print_runes(int flags)
 
 	/* Title the list */
 	prt("", 1, col); put_str("Element,      Rune", 1, col);
-	if((flags & R_ACID)!=R_ACID) { prt("", j, col); put_str("c) Acid:      delibro", j++, col); }
-	if((flags & R_ELEC)!=R_ELEC) { prt("", j, col); put_str("e) Lightning: fulmin", j++, col); }
-	if((flags & R_FIRE)!=R_FIRE) { prt("", j, col); put_str("a) Fire:      aestus", j++, col); }
-	if((flags & R_COLD)!=R_COLD) { prt("", j, col); put_str("b) Cold:      gelum", j++, col); }
-	if((flags & R_POIS)!=R_POIS) { prt("", j, col); put_str("g) Poison:    lepis", j++, col); }
-	if((flags & R_FORC)!=R_FORC) { prt("", j, col); put_str("k) Force:     fero", j++, col); }
-	if((flags & R_WATE)!=R_WATE) { prt("", j, col); put_str("d) Water:     mio", j++, col); }
-	if((flags & R_EART)!=R_EART) { prt("", j, col); put_str("f) Earth:     ostes", j++, col); }
+	if((flags & R_ACID)!=R_ACID) { prt("", j, col); put_str("a) Acid:      delibro", j++, col); }
+	if((flags & R_ELEC)!=R_ELEC) { prt("", j, col); put_str("b) Lightning: fulmin", j++, col); }
+	if((flags & R_FIRE)!=R_FIRE) { prt("", j, col); put_str("c) Fire:      aestus", j++, col); }
+	if((flags & R_COLD)!=R_COLD) { prt("", j, col); put_str("d) Cold:      gelum", j++, col); }
+	if((flags & R_POIS)!=R_POIS) { prt("", j, col); put_str("e) Poison:    lepis", j++, col); }
+	if((flags & R_FORC)!=R_FORC) { prt("", j, col); put_str("f) Force:     fero", j++, col); }
+	if((flags & R_WATE)!=R_WATE) { prt("", j, col); put_str("g) Water:     mio", j++, col); }
+	if((flags & R_EART)!=R_EART) { prt("", j, col); put_str("h) Earth:     ostes", j++, col); }
 	//if((flags & R_WIND)!=R_WIND) { prt("", j, col); put_str("h) Wind:      ventus", j++, col); }
 	//if((flags & R_MANA)!=R_MANA) { prt("", j, col); put_str("i) Mana:      sacer", j++, col); }
-	if((flags & R_CHAO)!=R_CHAO) { prt("", j, col); put_str("j) Chaos:     emuto", j++, col); }
+	if((flags & R_CHAO)!=R_CHAO) { prt("", j, col); put_str("i) Chaos:     emuto", j++, col); }
 	//if((flags & R_GRAV)!=R_GRAV) { prt("", j, col); put_str("l) Gravity:   numen", j++, col); }
-	if((flags & R_NETH)!=R_NETH) { prt("", j, col); put_str("m) Nether:    elido", j++, col); }
-	if((flags & R_NEXU)!=R_NEXU) { prt("", j, col); put_str("p) Nexus:     vicis", j++, col); }
-	if((flags & R_TIME)!=R_TIME) { prt("", j, col); put_str("n) Time:      emero", j++, col); }
+	if((flags & R_NETH)!=R_NETH) { prt("", j, col); put_str("j) Nether:    elido", j++, col); }
+	if((flags & R_NEXU)!=R_NEXU) { prt("", j, col); put_str("k) Nexus:     vicis", j++, col); }
+	if((flags & R_TIME)!=R_TIME) { prt("", j, col); put_str("l) Time:      emero", j++, col); }
 	//if((flags & R_MIND)!=R_MIND) { prt("", j, col); put_str("o) Mind:      cogito", j++, col); }
 	prt("", j++, col);
 	put_str("Select the maximum of three runes, or press \"Return\" when done.", j++, col);
