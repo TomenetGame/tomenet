@@ -1,5 +1,6 @@
 /* register server type for #if..#else..#endif structures with 'preproc' */
 #include "../common/defines-local.h"
+#include "../common/defines-features.h"
 
 
 /* $Id$ */
@@ -128,8 +129,9 @@ typedef unsigned int u32b;
 #define SKILL_RUNEMASTERY	76
 
 /* Divine race */
-/* ENABLE_DIVINE */
+#ifdef ENABLE_DIVINE
 #define SKILL_ASTRAL		77
+#endif
 
 #define SKILL_DUAL		78
 #define SKILL_STANCE		79
@@ -233,8 +235,9 @@ typedef unsigned int u32b;
 #define RACE_DRIDER   	13
 #define RACE_DARK_ELF	14
 #define RACE_VAMPIRE	15
-/* ENABLE_DIVINE */
+#ifdef ENABLE_DIVINE
 #define RACE_DIVINE	16
+#endif
 
 struct worldpos{
 	s16b wx;	/* west to east */
@@ -951,11 +954,12 @@ struct player_type
 	u32b turns_on_floor;
 	bool dual_mode;
 
-	/* ENABLE_RCRAFT */
+#ifdef ENABLE_RCRAFT
 	/* New variables to keep track of new temporary debuffs on players */
 	int temporary_speed_dur; int temporary_speed;
 	int temporary_am;
 	int temporary_to_l_dur; int temporary_to_l;
+#endif
 
 	bool panel_changed;
 
@@ -977,17 +981,19 @@ struct player_type
 	char warning_ma_weapon;
 	char warning_ma_shield;
 
-	/* USE_SOUND_2010 */
+#ifdef USE_SOUND_2010
 	int music_current;
 	int music_monster;
+#endif
 
 	int admin_stasis;
 	int admin_godly_strike;
 	int admin_set_defeat;
 
-	/* for ENABLE_GO_GAME */
+#ifdef ENABLE_GO_GAME
 	int go_level;
 	int go_sublevel;
+#endif
 
 	int vampiric_melee;
 	int vampiric_ranged;

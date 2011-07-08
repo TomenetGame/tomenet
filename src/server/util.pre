@@ -1,5 +1,6 @@
 /* register server type for #if..#else..#endif structures with 'preproc' */
 #include "../common/defines-local.h"
+#include "../common/defines-features.h"
 
 
 /* $Id$ */
@@ -444,13 +445,14 @@ extern int Send_weather(int ind, int weather_type, int weather_wind, int weather
 extern void timed_shutdown(int k);
 extern void geno_towns(void);
 
-/* for ENABLE_GO_GAME */
+#ifdef ENABLE_GO_GAME
 extern bool go_engine_up;
 extern bool go_game_up;
 extern u32b go_engine_player_id;
 extern int go_engine_init(void);	/* Starts up the engine */
 extern void go_engine_terminate(void);	/* Terminates the engine */
 extern void go_challenge_cancel(void);	/* Aborts currently running game, if any */
+#endif
 
 
 extern u16b numtowns;

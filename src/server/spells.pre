@@ -1,5 +1,6 @@
 /* register server type for #if..#else..#endif structures with 'preproc' */
 #include "../common/defines-local.h"
+#include "../common/defines-features.h"
 
 
 /* $Id$ */
@@ -435,16 +436,18 @@ extern bool do_banish_animals(int Ind, int chance);
 extern bool do_xtra_stats(int Ind, int p, int v);
 extern bool do_focus_shot(int Ind, int p, int v);
 
-/* ENABLE_DIVINE */
+#ifdef ENABLE_DIVINE
 extern void divine_vengeance(int Ind, int power);
 extern void divine_empowerment(int Ind, int level);
 extern void divine_intensify(int Ind, int level);
 extern void divine_gateway(int Ind);
+#endif
 
-/* ENABLE_RCRAFT */
+#ifdef ENABLE_RCRAFT
 extern bool do_temporary_antimagic(int Ind, int p);
 extern bool do_life_bonus(int Ind, int p, int v);
 extern bool do_speed_bonus(int Ind, int p, int v);
+#endif
 
 extern void set_recall_depth(player_type * p_ptr, object_type * o_ptr);
 extern bool set_recall_timer(int Ind, int v);
