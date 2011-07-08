@@ -1071,12 +1071,20 @@ Runespell imperatives (OBSOLETE - c-util.c hardcodes them instead in the macro w
 r_imper r_imperatives [RCRAFT_MAX_IMPERATIVES] = 
 {
 #if 1
+	{ 0, "minimized",	-1,  5,-10,  6, 10, -1,  5 },
+	{ 1, "moderate",	 0, 10,  0, 10, 10,  0, 10 },
+	{ 2, "maximized",	 1, 15, 20, 15, 10, +1, 13 },
+	{ 3, "compressed",	 2, 15,-10, 13, 10, -2,  8 },
+	{ 4, "expanded",	 2, 13,  0, 10, 10, +2, 13 },
+	{ 5, "brief",		 3, 13, 15,  6,  5,  0,  5 },
+	{ 6, "lengthened",	 3, 15, 10,  6, 10,  0, 16 },
+	{ 7, "chaotic",		 1,  0,  0,  0, 10,  5,  0 },
 #else /* Relsiet's stuff preserved below */
 	{RG_HOPE, "minimized",	 5,  6,  6,  8 },
-	{RG_ASKS, "tiny",		 8,  9,  8, 10 },
-	{RG_REQU, "small",		10, 10, 10, 10 },
+	{RG_ASKS, "tiny",	8,  9,  8, 10 },
+	{RG_REQU, "small",	10, 10, 10, 10 },
 	{RG_VOLU, "moderate",	11, 13, 12, 14 },
-	{RG_WILL, "large",		13, 15, 14, 16 },
+	{RG_WILL, "large",	13, 15, 14, 16 },
 	{RG_MIGH, "massive",	15, 17, 16, 18 },
 	{RG_DEMA, "maximized",	17, 20, 18, 20 },
 	{RG_LUCK, "chaotic",	 0,  0,  0, 22 }, 	/* (Random cost, fail, damage) */
@@ -1089,13 +1097,21 @@ Runespell methods. (OBSOLETE - c-util.c hardcodes them instead in the macro wiza
 */
 {
 #if 1
+	{ 0, R_MELE, "burst",	 0,  5 },
+	{ 1, R_SELF, "self",	 0, 10 },
+	{ 2, R_BOLT, "bolt",	 1, 10 },
+	{ 3, R_BEAM, "beam",	 2, 11 },
+	{ 4, R_BALL, "ball",	 3, 12 },
+	{ 5, R_WAVE, "wave",	 3, 11 },
+	{ 6, R_CLOU, "cloud",	 5, 13 },
+	{ 7, R_STOR, "storm",	 10, 20 },
 #else /* Relsiet's stuff preserved below */
-	{ 0, R_MELE, "shield", 	0, 5 },
-	{ 1, R_SELF, "self",  	0, 10 },
-	{ 2, R_BOLT, "bolt",  	1, 10 },
-	{ 3, R_BEAM, "beam",  	2, 11 },
-	{ 4, R_BALL, "ball",  	3, 13 },
-	{ 5, R_WAVE, "wave",  	3, 12 },
+	{ 0, R_MELE, "shield",	0, 5 },
+	{ 1, R_SELF, "self", 	0, 10 },
+	{ 2, R_BOLT, "bolt", 	1, 10 },
+	{ 3, R_BEAM, "beam", 	2, 11 },
+	{ 4, R_BALL, "ball", 	3, 13 },
+	{ 5, R_WAVE, "wave", 	3, 12 },
 	{ 6, R_CLOU, "cloud", 	5, 15 },
 	{ 7, R_STOR, "storm", 	10, 20 },
 #endif
