@@ -4276,9 +4276,11 @@ static bool get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 	player_type *p_ptr = Players[Ind];
 	cave_type **zcave, *c_ptr;
 
+#if 0 /* just disabled while unused, to prevent compiler warnings */
 	astar_list_open *ao = &astar_info_open[m_ptr->astar_idx];
 	astar_list_closed *ac = &astar_info_closed[m_ptr->astar_idx];
 	int astarF = 0, astarG = 0, astarH = 0;
+#endif
 	int cost = 999;
 
 	if(!(zcave = getcave(&m_ptr->wpos))) return FALSE;
