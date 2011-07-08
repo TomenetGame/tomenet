@@ -1066,7 +1066,7 @@ r_element r_elements[RCRAFT_MAX_ELEMENTS] =
 
 
 /*
-Runespell imperatives (OBSOLETE - c-util.c hardcodes them instead in the macro wizard -.-)
+Runespell imperatives
 */
 r_imper r_imperatives [RCRAFT_MAX_IMPERATIVES] = 
 {
@@ -1093,7 +1093,7 @@ r_imper r_imperatives [RCRAFT_MAX_IMPERATIVES] =
 
 r_type runespell_types[RCRAFT_MAX_TYPES] =
 /*
-Runespell methods. (OBSOLETE - c-util.c hardcodes them instead in the macro wizard -.-)
+Runespell methods.
 */
 {
 #if 1
