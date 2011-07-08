@@ -26,7 +26,8 @@ int main(int argc, char *arg[]) {
 	   ie a character sequence that doesn't occur in valid C code at line beginning.
 	   It must also end on a C comment tag if we want the preprocessor to not remove
 	   'obsolete' whitespace. This isn't required, but allows for better comparability
-	   if the files are viewed by a human. Current sequence therefore: '1/0=//' */
+	   if the files are viewed by a human. Current sequence therefore: */
+	char seq[7] = {'1', '=', '/', '0', '/', '/', 0};
 	int cpp_opts;
 
 
@@ -103,7 +104,7 @@ int main(int argc, char *arg[]) {
 		/* normal line - protect it from being changed by the C preprocessor */
 		} else {
 			/* add the marker that indicates a line that is not to be touched */
-			sprintf(line_mod, "1/0=//%s\n", line);
+			sprintf(line_mod, "%s%s\n", seq, line);
 		}
 
 		/* write modified line to temporary file */
@@ -163,12 +164,12 @@ int main(int argc, char *arg[]) {
 	/* read a line */
 	while (fgets(line_mod, 320 + 2, f_in)) {
 		/* strip prefixed marker sequence again and write line to output file */
-		if (line_mod[0] == '1' &&
-		    line_mod[1] == '/' &&
-		    line_mod[2] == '0' &&
-		    line_mod[3] == '=' &&
-		    line_mod[4] == '/' &&
-		    line_mod[5] == '/')
+		if (line_mod[0] == seq[0] &&
+		    line_mod[1] == seq[1] &&
+		    line_mod[2] == seq[2] &&
+		    line_mod[3] == seq[3] &&
+		    line_mod[4] == seq[4] &&
+		    line_mod[5] == seq[5])
 			fputs(line_mod + 6, f_out);
 		/* lines that were eliminated by the preprocessor don't need any treatment */
 		else fputs(line_mod, f_out);
