@@ -1389,6 +1389,11 @@ static void print_runes(int flags)
 
 	/* Title the list */
 	prt("", 1, col); put_str("Element,      Rune", 1, col);
+
+#if 0
+	int i;
+	for (i = 0; i < RCRAFT_MAX_ELEMENTS)
+#else
 	if((flags & R_ACID)!=R_ACID) { prt("", j, col); put_str("a) Acid:      delibro", j++, col); }
 	if((flags & R_ELEC)!=R_ELEC) { prt("", j, col); put_str("b) Lightning: fulmin", j++, col); }
 	if((flags & R_FIRE)!=R_FIRE) { prt("", j, col); put_str("c) Fire:      aestus", j++, col); }
@@ -1405,6 +1410,8 @@ static void print_runes(int flags)
 	if((flags & R_NEXU)!=R_NEXU) { prt("", j, col); put_str("k) Nexus:     vicis", j++, col); }
 	if((flags & R_TIME)!=R_TIME) { prt("", j, col); put_str("l) Time:      emero", j++, col); }
 	//if((flags & R_MIND)!=R_MIND) { prt("", j, col); put_str("o) Mind:      cogito", j++, col); }
+#endif
+
 	prt("", j++, col);
 	put_str("Select the maximum of three runes, or press \"Return\" when done.", j++, col);
 
@@ -1418,6 +1425,11 @@ static void print_rune_imperatives()
 
 	/* Title the list */
 	prt("", 1, col); put_str("Name          ( Lvl, Dam%, Cost%, Fail% )", 1, col);
+
+#if 0
+	int i;
+	for (i = 0; i < RCRAFT_MAX_IMPERATIVES)
+#else
 	prt("", j, col); put_str("a) minimized  (  -1,  60%,   50%,  -10% )", j++, col);
 	prt("", j, col); put_str("b) moderate   (  +0, 100%,  100%,  + 0% )", j++, col);
 	prt("", j, col); put_str("c) maximized  (  +1, 150%,  160%,  +20% )", j++, col);
@@ -1426,7 +1438,8 @@ static void print_rune_imperatives()
 	prt("", j, col); put_str("f) brief      (  +3,  60%,  130%,  +15% )", j++, col);
 	prt("", j, col); put_str("g) lengthened (  +3,  60%,  150%,  +10% )", j++, col);
 	prt("", j, col); put_str("h) chaotic    (  +1, ???%,  ???%,  +??% )", j++, col);
-	
+#endif
+
 	/* Clear the bottom line */
 	prt("", j++, col);
 }
@@ -1437,6 +1450,11 @@ static void print_rune_methods()
 
 	/* Title the list */
 	prt("", 1, col); put_str("Name     ( Lvl, Cost% )", 1, col);
+
+#if 0
+	int i;
+	for (i = 0; i < RCRAFT_MAX_TYPES)
+#else
 	prt("", j, col); put_str("a) Melee (  +0,   50% )", j++, col);
 	prt("", j, col); put_str("b) Self  (  +0,  100% )", j++, col);
 	prt("", j, col); put_str("c) Bolt  (  +1,  100% )", j++, col);
@@ -1445,6 +1463,7 @@ static void print_rune_methods()
 	prt("", j, col); put_str("f) Wave  (  +4,  120% )", j++, col);
 	prt("", j, col); put_str("g) Cloud (  +8,  150% )", j++, col);
 	prt("", j, col); put_str("h) Storm ( +10,  200% )", j++, col);
+#endif
 
 	/* Clear the bottom line */
 	prt("", j++, col);
