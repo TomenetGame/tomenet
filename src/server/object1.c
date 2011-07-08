@@ -1608,8 +1608,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 #else
 		case TV_RUNE2:
 			append_name = TRUE;
-			if(o_ptr->sval >=0 && o_ptr->sval <=15)
+			if (o_ptr->sval >= 0 && o_ptr->sval < RCRAFT_MAX_ELEMENTS)
 				modstr = r_elements[o_ptr->sval].e_syl;
+			else	modstr = "";
 			basenm = "& '#' Rune~";
 			break;
 #endif
