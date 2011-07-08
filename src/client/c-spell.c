@@ -1385,32 +1385,22 @@ void do_ranged_technique()
 
 static void print_runes(int flags)
 {
-	int col = 10, j = 2;
+	int col = 10, j = 2, i;
+	char tmpbuf[80];
 
 	/* Title the list */
 	prt("", 1, col); put_str("Element,      Rune", 1, col);
 
-#if 0
-	int i;
-	for (i = 0; i < RCRAFT_MAX_ELEMENTS)
-#else
-	if((flags & R_ACID)!=R_ACID) { prt("", j, col); put_str("a) Acid:      delibro", j++, col); }
-	if((flags & R_ELEC)!=R_ELEC) { prt("", j, col); put_str("b) Lightning: fulmin", j++, col); }
-	if((flags & R_FIRE)!=R_FIRE) { prt("", j, col); put_str("c) Fire:      aestus", j++, col); }
-	if((flags & R_COLD)!=R_COLD) { prt("", j, col); put_str("d) Cold:      gelum", j++, col); }
-	if((flags & R_POIS)!=R_POIS) { prt("", j, col); put_str("e) Poison:    lepis", j++, col); }
-	if((flags & R_FORC)!=R_FORC) { prt("", j, col); put_str("f) Force:     fero", j++, col); }
-	if((flags & R_WATE)!=R_WATE) { prt("", j, col); put_str("g) Water:     mio", j++, col); }
-	if((flags & R_EART)!=R_EART) { prt("", j, col); put_str("h) Earth:     ostes", j++, col); }
-	//if((flags & R_WIND)!=R_WIND) { prt("", j, col); put_str("h) Wind:      ventus", j++, col); }
-	//if((flags & R_MANA)!=R_MANA) { prt("", j, col); put_str("i) Mana:      sacer", j++, col); }
-	if((flags & R_CHAO)!=R_CHAO) { prt("", j, col); put_str("i) Chaos:     emuto", j++, col); }
-	//if((flags & R_GRAV)!=R_GRAV) { prt("", j, col); put_str("l) Gravity:   numen", j++, col); }
-	if((flags & R_NETH)!=R_NETH) { prt("", j, col); put_str("j) Nether:    elido", j++, col); }
-	if((flags & R_NEXU)!=R_NEXU) { prt("", j, col); put_str("k) Nexus:     vicis", j++, col); }
-	if((flags & R_TIME)!=R_TIME) { prt("", j, col); put_str("l) Time:      emero", j++, col); }
-	//if((flags & R_MIND)!=R_MIND) { prt("", j, col); put_str("o) Mind:      cogito", j++, col); }
-#endif
+	for (i = 0; i < RCRAFT_MAX_ELEMENTS; i++) {
+		if ((flags & r_elements[i].self) != r_elements[i].self) {
+			sprintf(tmpbuf, "%c) %-10s '%s'",
+			    'a' + i,
+			    r_elements[i].title,
+			    r_elements[i].e_syl);
+			prt("", j, col);
+			put_str(tmpbuf, j++, col);
+		}
+	}
 
 	prt("", j++, col);
 	put_str("Select the maximum of three runes, or press \"Return\" when done.", j++, col);
@@ -1421,24 +1411,35 @@ static void print_runes(int flags)
 
 static void print_rune_imperatives()
 {
-	int col = 10, j = 2;
+	int col = 10, j = 2, i;
+	char tmpbuf[80];
 
 	/* Title the list */
-	prt("", 1, col); put_str("Name          ( Lvl, Dam%, Cost%, Fail% )", 1, col);
+	prt("", 1, col);
+	put_str("Name            ( Lvl, Dam%, Cost%, Fail% )", 1, col);
 
-#if 0
-	int i;
-	for (i = 0; i < RCRAFT_MAX_IMPERATIVES)
-#else
-	prt("", j, col); put_str("a) minimized  (  -1,  60%,   50%,  -10% )", j++, col);
-	prt("", j, col); put_str("b) moderate   (  +0, 100%,  100%,  + 0% )", j++, col);
-	prt("", j, col); put_str("c) maximized  (  +1, 150%,  160%,  +20% )", j++, col);
-	prt("", j, col); put_str("d) compressed (  +2, 130%,  150%,  -10% )", j++, col);
-	prt("", j, col); put_str("e) expanded   (  +2, 100%,  130%,  + 0% )", j++, col);
-	prt("", j, col); put_str("f) brief      (  +3,  60%,  130%,  +15% )", j++, col);
-	prt("", j, col); put_str("g) lengthened (  +3,  60%,  150%,  +10% )", j++, col);
-	prt("", j, col); put_str("h) chaotic    (  +1, ???%,  ???%,  +??% )", j++, col);
-#endif
+	for (i = 0; i < RCRAFT_MAX_IMPERATIVES; i++) {
+
+		/* catch 'chaotic' (only one that has dam or cost of zero) */
+		if (!r_imperatives[i].cost) {
+			sprintf(tmpbuf, "%c) %-10s   (  %s%d, ???%%,  ???%%,  +??%% )",
+			    'a' + i,
+			    r_imperatives[i].name,
+			    r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level);
+		} else {
+			/* normal imperatives */
+			sprintf(tmpbuf, "%c) %-10s   (  %s%d, %3d%%,  %3d%%,  %s%2d%% )",
+			    'a' + i,
+			    r_imperatives[i].name,
+			    r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level,
+			    r_imperatives[i].dam * 10,
+			    r_imperatives[i].cost * 10,
+			    r_imperatives[i].fail >= 0 ? "+" : "" , r_imperatives[i].fail);
+		}
+
+		prt("", j, col);
+		put_str(tmpbuf, j++, col);
+	}
 
 	/* Clear the bottom line */
 	prt("", j++, col);
@@ -1446,24 +1447,22 @@ static void print_rune_imperatives()
 
 static void print_rune_methods()
 {
-	int col = 10, j = 2;
+	int col = 10, j = 2, i;
+	char tmpbuf[80];
 
 	/* Title the list */
-	prt("", 1, col); put_str("Name     ( Lvl, Cost% )", 1, col);
+	prt("", 1, col);
+	put_str("Name         (  Lvl,  Cost%  )", 1, col);
 
-#if 0
-	int i;
-	for (i = 0; i < RCRAFT_MAX_TYPES)
-#else
-	prt("", j, col); put_str("a) Melee (  +0,   50% )", j++, col);
-	prt("", j, col); put_str("b) Self  (  +0,  100% )", j++, col);
-	prt("", j, col); put_str("c) Bolt  (  +1,  100% )", j++, col);
-	prt("", j, col); put_str("d) Beam  (  +2,  110% )", j++, col);
-	prt("", j, col); put_str("e) Ball  (  +3,  130% )", j++, col);
-	prt("", j, col); put_str("f) Wave  (  +4,  120% )", j++, col);
-	prt("", j, col); put_str("g) Cloud (  +8,  150% )", j++, col);
-	prt("", j, col); put_str("h) Storm ( +10,  200% )", j++, col);
-#endif
+	for (i = 0; i < RCRAFT_MAX_TYPES; i++) {
+		sprintf(tmpbuf, "%c) %-7s   (  %s%2d,   %3d%%  )",
+		    'a' + i,
+		    runespell_types[i].title,
+		    runespell_types[i].cost >= 0 ? "+" : "", runespell_types[i].cost,
+		    runespell_types[i].pen * 10);
+		prt("", j, col);
+		put_str(tmpbuf, j++, col);
+	}
 
 	/* Clear the bottom line */
 	prt("", j++, col);

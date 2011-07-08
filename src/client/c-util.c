@@ -3884,20 +3884,30 @@ void interact_macros(void)
 						Term_putstr(10, 11, -1, TERM_GREEN, "Please choose the rune imperative,");
 						Term_putstr(10, 12, -1, TERM_GREEN, "ie how powerful you want to try and make the spell.");
 
-						Term_putstr(15, 14, -1, TERM_L_GREEN, "Name          ( Lvl, Dam%, Cost%, Fail% )");
+						Term_putstr(15, 14, -1, TERM_L_GREEN, "Name            ( Lvl, Dam%, Cost%, Fail%  )");
 
-#if 0
 						for (i = 0; i < RCRAFT_MAX_IMPERATIVES; i++) {
-#else
-						Term_putstr(15, 15, -1, TERM_L_GREEN, "a) minimized  (  -1,  60%,   50%,  -10% )");
-						Term_putstr(15, 16, -1, TERM_L_GREEN, "b) moderate   (  +0, 100%,  100%,  + 0% )");
-						Term_putstr(15, 17, -1, TERM_L_GREEN, "c) maximized  (  +1, 150%,  160%,  +20% )");
-						Term_putstr(15, 18, -1, TERM_L_GREEN, "d) compressed (  +2, 130%,  150%,  -10% )");
-						Term_putstr(15, 19, -1, TERM_L_GREEN, "e) expanded   (  +2, 100%,  130%,  + 0% )");
-						Term_putstr(15, 20, -1, TERM_L_GREEN, "f) brief      (  +3,  60%,  130%,  +15% )");
-						Term_putstr(15, 21, -1, TERM_L_GREEN, "g) lengthened (  +3,  60%,  150%,  +10% )");
-						Term_putstr(15, 22, -1, TERM_L_GREEN, "h) chaotic    (  +1, ???%,  ???%,  +??% )");
-#endif
+							char tmpbuf[80];
+
+							/* catch 'chaotic' (only one that has dam or cost of zero) */
+							if (!r_imperatives[i].cost) {
+								sprintf(tmpbuf, "%c) %-10s   (  %s%d, ???%%,  ???%%,  +??%%  )",
+								    'a' + i,
+								    r_imperatives[i].name,
+								    r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level);
+							} else {
+							/* normal imperatives */
+								sprintf(tmpbuf, "%c) %-10s   (  %s%d, %3d%%,  %3d%%,  %s%2d%%  )",
+								    'a' + i,
+								    r_imperatives[i].name,
+								    r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level,
+								    r_imperatives[i].dam * 10,
+								    r_imperatives[i].cost * 10,
+								    r_imperatives[i].fail >= 0 ? "+" : "" , r_imperatives[i].fail);
+							}
+
+							Term_putstr(15, 15 + i, -1, TERM_L_GREEN, tmpbuf);
+						}
 
 						switch (choice = inkey()) {
 						case ESCAPE:
@@ -3926,20 +3936,17 @@ void interact_macros(void)
 						Term_putstr(10, 11, -1, TERM_GREEN, "Please choose the rune method,");
 						Term_putstr(10, 12, -1, TERM_GREEN, "ie the shape you want to manifest the spell in.");
 
-						Term_putstr(15, 14, -1, TERM_L_GREEN, "Name     ( Lvl, Cost% )");
+						Term_putstr(15, 14, -1, TERM_L_GREEN, "Name         (  Lvl, Cost%  )");
 
-#if 0
 						for (i = 0; i < RCRAFT_MAX_TYPES; i++) {
-#else
-						Term_putstr(15, 15, -1, TERM_L_GREEN, "a) Melee (  +0,   50% )");
-						Term_putstr(15, 16, -1, TERM_L_GREEN, "b) Self  (  +0,  100% )");
-						Term_putstr(15, 17, -1, TERM_L_GREEN, "c) Bolt  (  +1,  100% )");
-						Term_putstr(15, 18, -1, TERM_L_GREEN, "d) Beam  (  +2,  110% )");
-						Term_putstr(15, 19, -1, TERM_L_GREEN, "e) Ball  (  +3,  130% )");
-						Term_putstr(15, 20, -1, TERM_L_GREEN, "f) Wave  (  +4,  120% )");
-						Term_putstr(15, 21, -1, TERM_L_GREEN, "g) Cloud (  +8,  150% )");
-						Term_putstr(15, 22, -1, TERM_L_GREEN, "h) Storm ( +10,  200% )");
-#endif
+							char tmpbuf[80];
+							sprintf(tmpbuf, "%c) %-7s   (  %s%2d,  %3d%%  )",
+							    'a' + i,
+							    runespell_types[i].title,
+							    runespell_types[i].cost >= 0 ? "+" : "", runespell_types[i].cost,
+							    runespell_types[i].pen * 10);
+							Term_putstr(15, 15 + i, -1, TERM_L_GREEN, tmpbuf);
+						}
 
 						switch (choice = inkey()) {
 						case ESCAPE:
