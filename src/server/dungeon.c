@@ -1729,8 +1729,8 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 			The letters correspond to the mkey spell selector
 		*/
 		case TV_RUNE2:
-			if(o_ptr->sval >= 0 && o_ptr->sval <= 15) {
-				if(choice < 0 || choice >= 8) choice = 0;
+			if (o_ptr->sval >= 0 && o_ptr->sval <= RCRAFT_MAX_ELEMENTS) {
+				if (choice < 0 || choice >= 8) choice = 0;
 				execute_rspell(Ind, 5, r_elements[o_ptr->sval].self | runespell_types[choice].type, 1);
 				//execute_rspell(Ind, 5, NULL, 0, r_elements[o_ptr->sval].self | R_BOLT, 0); //choice sometimes has wrong value
 				return TRUE;
