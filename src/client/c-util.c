@@ -3726,7 +3726,7 @@ void interact_macros(void)
 				Term_putstr(12, 3, -1, i == 0 ? TERM_L_GREEN : TERM_SLATE, "Step 1:  Choose an action for the macro to perform.");
 				Term_putstr(12, 4, -1, i == 1 ? TERM_L_GREEN : TERM_SLATE, "Step 2:  If required, choose item, spell, and target method.");
 				Term_putstr(12, 5, -1, i == 2 ? TERM_L_GREEN : TERM_SLATE, "Step 3:  Choose the key you want to bind the macro to.");
-				Term_putstr(1, 7, -1, TERM_L_DARK, "Don't forget to save your macros with '2' when you are back in the macro menu!");
+				Term_putstr(1, 7, -1, TERM_L_DARK, "Don't forget to save your macros with 's' when you are back in the macro menu!");
 
 				clear_from(10);
 
