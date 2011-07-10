@@ -516,7 +516,7 @@ CTRL+X  save your character & quit the game. (You should do this in town!)
         This also automatically saves some settings, like window positions on
         MS-Windows, or mixer settings (CTRL+U to change), and you will be asked
         to save a chat log.
-        Note that if you quit the game just by clicking on the 'x' button in
+        Note that if you exit the game just by clicking on the 'x' button in
         the game window's titlebar, these extra features will be skipped, and
         any changes in settings or window positions will be discarded.
 Q or CTRL+K
