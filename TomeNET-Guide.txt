@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 7. July 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 10. July 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -585,7 +585,8 @@ They all start with a slash '/':
             average, good. Works only on items that actually can be destroyed.
             Skips 'flavoured' items that are not known to you yet (example:
             'a blue potion {+,?}' or 'a malachite ring {+,?}').
-            Skips items which inscription contains more than a pseudo-ID tag.
+            Skips items which 
+            inscription contains more than a pseudo-ID tag.
             Also see /tag and /untag. Note that artifacts cannot be destroyed.
 /dis a      DESTROYS items like /dis, and additionally destroys all items that
             have no inscription at all.
@@ -800,6 +801,8 @@ They all start with a slash '/':
 
 (0.3) Important inscriptions
 ----------------------------
+To inscribe an item, press the { key. To uninscribe, press }.
+
 All items:
     Inscribing an item with an '!' followed by a key will cause that key to
     cease working on the item anymore. You may also specify several keys.
@@ -2300,9 +2303,9 @@ keypresses or commands when pressed. These macros can also interact with
 certain items of your inventory by using "item inscriptions". You can inscribe
 items (usually with the '{' key) as often as you like to, the inscription is
 for example useful if an item has special abilities that you want to remember
-by looking at it. You would for example inscribe an Elven Cord Armor that you
-know helps you to resist the effects of poison. Then it might look like this
-in your inventory:
+by looking at it. To remove an inscription, use the } key.
+You would for example inscribe an Elven Cord Armor that you know helps you to
+resist the effects of poison. Then it might look like this in your inventory:
 Before: d) an Elven Cord Armor [6,+20] (+1) {+,10}
 After:  d) an Elven Cord Armor [6,+20] (+1) {+,10} {resists poison!}
 Inscriptions don't just help you to remember the abilities of certain items,
@@ -2465,7 +2468,7 @@ a) casting a magical spell
     inventory. Let's assume you have learned spell 'a)' from book 'b)' in
     your inventory. Since the order of your books could change if you pick up
     new items or drop old ones, we will inscribe your magical book that is
-    currently at position 'b)' like this:
+    currently at position 'b)' like this (press '{' key to inscribe):
     @m2
     The '2' is our own choice. We could've used 7 or 0 if we wanted to. Note
     that it must be a single digit! @m20 does not work.
@@ -2832,6 +2835,7 @@ Note: The example macro sets are write-protected to avoid overwriting.)
 
 Of course you can just use any other potion/scroll instead of those mentioned,
 as long as you put the according inscription on that item.
+(To inscribe an item press '{' key, to uninscribe press '}'.)
 
 Key         Purpose of the Macro                    The macro   Inscription
                                                     itself      on the item(s)
@@ -2897,6 +2901,7 @@ Note: The example macro sets are write-protected to avoid overwriting.)
 
 Of course you can just use any other potion/scroll instead of those mentioned,
 as long as you put the according inscription on that item.
+(To inscribe an item press '{' key, to uninscribe press '}'.)
 
 Key         Purpose of the Macro                    The macro   Inscription
                                                     itself      on the item(s)
@@ -3366,7 +3371,8 @@ Instead of melee attacks, you can also configure the auto-retaliator to use
 other items. To do so, you use '@O...' (the letter 'O', not the number zero!)
 item inscriptions:
 
-Please note that you cannot use any sort of teleportation for auto-retaliation.
+Note: To inscribe an item press '{' key, to uninscribe press '}'.
+Note: You cannot use any sort of teleportation for auto-retaliation.
 
 Weapons:
     @Ox         Don't auto-retaliate with it.
@@ -4239,7 +4245,7 @@ you like:
 To turn a house into a player-store, simply put an item in it that carries the
   @S
 inscription. This inscription means that this item will be put up for sale in
-your store.
+your store. (Press '{' key to inscribe an item, '}' to remove an inscription.)
 As soon as a house contains at least one item inscribed this way, if a player
 who does not have access to the house tries to open the door, he will be
 presented with a store screen where he can buy those inscribed items.
@@ -4764,6 +4770,7 @@ and choosing nearest target, t means exiting target mode and remember currently
 selected target, f means fire, - means to aim at previously acquired target if
 it's valid and otherwise to cancel the action.
 To automatically pick up your arrows simply inscribe them:  !=
+To inscribe an item press '{' key, to remove an inscription press '}'.
 Ranged weapons can also auto-retaliate, that means you will fire automatically
 at targets on sight. See (4.1a) for details about auto-retaliation.
 However, auto-retaliating with a ranged weapon works only if the enemy stands
