@@ -158,6 +158,23 @@ typedef unsigned int u32b;
 #define GF_SILENCE	160
 #define GF_CHARMIGNORE	161
 
+#define GF_ACID_ELEC		170 /* for new runemasters */
+#define GF_ACID_FIRE 171
+#define GF_ACID_COLD 172
+#define GF_ACID_POISON 173
+//#define GF_PLASMA 174 //GF_ELEC_FIRE
+#define GF_DIG_FIRE 174
+#define GF_ELEC_COLD 175
+#define GF_ELEC_POISON 176
+//#define GF_NULL 177 //GF_FIRE_COLD
+#define GF_FIRE_POISON 178
+#define GF_COLD_POISON 179
+#define GF_SHATTER 180
+#define GF_CORRODE 181
+#define GF_GENOCIDE 182 //special case
+#define GF_WONDER 183 //special case
+#define GF_ANNIHILATION 184 //special case
+
 /* special 'projector' types, used in project(). */
 #define PROJECTOR_UNUSUAL	-1000
 #define PROJECTOR_TRAP		-1001

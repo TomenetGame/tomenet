@@ -1246,6 +1246,22 @@ byte spell_color(int type)
 		case GF_HEALINGCLOUD:	return (TERM_LITE);//return (randint(5)>1?TERM_WHITE:TERM_L_BLUE);
 		case GF_WATERPOISON:	return (TERM_COLD);return (randint(2)==1?TERM_L_BLUE:(randint(2)==1?TERM_BLUE:(randint(2)==1?TERM_GREEN:TERM_L_GREEN)));
 		case GF_ICEPOISON:	return (TERM_SHAR);//return (randint(3)>1?TERM_UMBER:(randint(2)==1?TERM_GREEN:TERM_SLATE));
+  /* Gestalts for new runemasters */
+  case GF_ACID_ELEC: return (randint(2)==1?TERM_ACID:TERM_ELEC);
+  case GF_ACID_FIRE: return (randint(2)==1?TERM_ACID:TERM_FIRE);
+  case GF_ACID_COLD: return (randint(2)==1?TERM_ACID:TERM_COLD);
+  case GF_ACID_POISON: return (randint(2)==1?TERM_ACID:TERM_POIS);
+//  case GF_PLASMA: //GF_ELEC_FIRE: return (randint(2)==1?TERM_FIRE:TERM_ELEC);
+  case GF_ELEC_COLD: return (randint(2)==1?TERM_ELEC:TERM_COLD);
+  case GF_ELEC_POISON: return (randint(2)==1?TERM_ELEC:TERM_POIS);
+//  case GF_NULL: //GF_FIRE_COLD: return (randint(2)==1?TERM_FIRE:TERM_COLD);
+  case GF_FIRE_POISON: return (randint(2)==1?TERM_FIRE:TERM_POIS);
+  case GF_COLD_POISON: return (randint(2)==1?TERM_COLD:TERM_POIS);
+  case GF_SHATTER: return (randint(2)==1?TERM_COLD:TERM_LITE);
+  case GF_CORRODE: return (randint(2)==1?TERM_ACID:TERM_LITE);
+  case GF_GENOCIDE: return (randint(4)==1?TERM_SLATE:TERM_L_DARK);
+  case GF_WONDER: return (TERM_MULTI);
+  case GF_ANNIHILATION: return (randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
 	}
 
 	/* Standard "color" */
@@ -1307,6 +1323,22 @@ bool spell_color_animation(int type)
 		case GF_HEALINGCLOUD:	return FALSE;//return (randint(5)>1?TERM_WHITE:TERM_L_BLUE);
 		case GF_WATERPOISON:	return FALSE;return (randint(2)==1?TERM_L_BLUE:(randint(2)==1?TERM_BLUE:(randint(2)==1?TERM_GREEN:TERM_L_GREEN)));
 		case GF_ICEPOISON:	return FALSE;//return (randint(3)>1?TERM_UMBER:(randint(2)==1?TERM_GREEN:TERM_SLATE));
+  /* Gestalts for new runemasters */
+  case GF_ACID_ELEC: 	return FALSE;
+  case GF_ACID_FIRE: 	return FALSE;
+  case GF_ACID_COLD: 	return FALSE;
+  case GF_ACID_POISON: 	return FALSE;
+//  case GF_PLASMA: //GF_ELEC_FIRE: 	return FALSE;
+  case GF_ELEC_COLD: 	return FALSE;
+  case GF_ELEC_POISON: 	return FALSE;
+//  case GF_NULL: //GF_FIRE_COLD:	return FALSE;
+  case GF_FIRE_POISON:	return FALSE;
+  case GF_COLD_POISON:	return FALSE;
+  case GF_SHATTER:	return FALSE;
+  case GF_CORRODE:	return FALSE;
+  case GF_GENOCIDE:	return FALSE;
+  case GF_WONDER:	return FALSE;
+  case GF_ANNIHILATION:	return FALSE;
 	}
 
 	/* Standard "color" */
@@ -3379,6 +3411,11 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	{
 		/* Ignore most effects */
 		case GF_ACID:
+  //case GF_CORRODE: /* This checks for Traps/Doors XOR */
+  case GF_ACID_ELEC:
+  //case GF_ACID_FIRE: /* Adjoined with GF_FIRE: XOR*/
+  case GF_ACID_COLD:
+  case GF_ACID_POISON:
 			if (!allow_terraforming(wpos, FEAT_TREE)) break;
 			/* Destroy trees */
 			if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_BUSH)
@@ -3455,7 +3492,10 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 
 		case GF_FIRE:
-
+		case GF_ACID_FIRE:
+//  case GF_NULL: //GF_FIRE_COLD:  
+  case GF_FIRE_POISON:
+   /* Burns more than wilts */
 		case GF_METEOR:
 		case GF_PLASMA:
 
@@ -3566,6 +3606,8 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		/* Destroy Doors (and traps) */
+  case GF_SHATTER:
+  case GF_CORRODE:
 		case GF_KILL_DOOR:
 		{
 			byte feat = twall_erosion(wpos, y, x);
@@ -3670,6 +3712,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Destroy walls (and doors) */
 		case GF_KILL_WALL:
+  case GF_DIG_FIRE: /* fix this to leave fire tile, melt l00t? - Kurzel */
 		{
 			byte feat = twall_erosion(wpos, y, x);
 
@@ -4164,6 +4207,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		
 		/* Acid -- Lots of things */
 		case GF_ACID:
+  case GF_CORRODE:
 		{
 			if (hates_acid(o_ptr))
 			{
@@ -4203,6 +4247,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Cold -- potions and flasks */
 		case GF_COLD:
+  case GF_SHATTER:
 		{
 			if (hates_cold(o_ptr))
 			{
@@ -4229,7 +4274,89 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-		/* Fire + Elec + a bit Force */
+  /* Acid + Elec */
+  case GF_ACID_ELEC:
+		{
+			if (hates_acid(o_ptr))
+			{
+				do_kill = TRUE;
+				note_kill = (plural ? " melt!" : " melts!");
+				if (f3 & TR3_IGNORE_ACID) ignore = TRUE;
+			}
+			if (hates_elec(o_ptr))
+			{
+				do_kill = TRUE;
+				note_kill = (plural ? " are destroyed!" : " is destroyed!");
+				if (f3 & TR3_IGNORE_ELEC) ignore = TRUE;
+			}
+			else apply_discharge_item(this_o_idx, dam);
+			break;
+		}
+  
+  /* Acid + Fire */
+  case GF_ACID_FIRE:
+		{
+			if (hates_acid(o_ptr))
+			{
+				do_kill = TRUE;
+				note_kill = (plural ? " melt!" : " melts!");
+				if (f3 & TR3_IGNORE_ACID) ignore = TRUE;
+			}
+			do_smash_effect = TRUE;
+			if (hates_fire(o_ptr))
+			{
+				do_kill = TRUE;
+				note_kill = is_potion ? (plural ? " evaporate!" : " evaporates!")
+					: (plural ? " burn up!" : " burns up!");
+				if (f3 & TR3_IGNORE_FIRE) ignore = TRUE;
+			}
+			break;
+		}
+  
+  /* Acid + Cold */
+  case GF_ACID_COLD:
+		{
+			if (hates_acid(o_ptr))
+			{
+				do_kill = TRUE;
+				note_kill = (plural ? " melt!" : " melts!");
+				if (f3 & TR3_IGNORE_ACID) ignore = TRUE;
+			}
+			if (hates_cold(o_ptr))
+			{
+				note_kill = (plural ? " shatter!" : " shatters!");
+				do_kill = TRUE;
+				if (f3 & TR3_IGNORE_COLD) ignore = TRUE;
+#ifdef USE_SOUND_2010
+				else if (!quiet) sound(Ind, "shatter_potion", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+			}
+			break;
+		}
+  
+  /* Elec + Cold */
+  case GF_ELEC_COLD:
+		{
+			if (hates_elec(o_ptr))
+			{
+				do_kill = TRUE;
+				note_kill = (plural ? " are destroyed!" : " is destroyed!");
+				if (f3 & TR3_IGNORE_ELEC) ignore = TRUE;
+			}
+			else apply_discharge_item(this_o_idx, dam);
+			if (hates_cold(o_ptr))
+			{
+				note_kill = (plural ? " shatter!" : " shatters!");
+				do_kill = TRUE;
+				if (f3 & TR3_IGNORE_COLD) ignore = TRUE;
+#ifdef USE_SOUND_2010
+				else if (!quiet) sound(Ind, "shatter_potion", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+			}
+			break;
+		}
+  
+  /* Fire + Elec + a bit Force */
 		case GF_PLASMA:
 		{
 			do_smash_effect = TRUE;
@@ -4254,8 +4381,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			break;
 		}
-
-		/* Fire + Cold */
+  
+		/* Fire + Impact */
 		case GF_METEOR:
 		{
 			do_smash_effect = TRUE;
@@ -4924,6 +5051,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Acid */
 		case GF_ACID:
+  case GF_CORRODE:
 		{
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags3 & RF3_IM_ACID)
@@ -5017,6 +5145,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Cold */
 		case GF_COLD:
+  case GF_SHATTER:
 		{
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags3 & RF3_IM_COLD)
@@ -5046,7 +5175,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			break;
 		}
 
-				/* Poison */
+		/* Poison */
 		case GF_POIS:
 		{
 			if (seen) obvious = TRUE;
@@ -5353,7 +5482,335 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 			break;
 		}
-
+  
+  /* Acid + Elec */
+  case GF_ACID_ELEC:
+		{
+			if (seen) obvious = TRUE;
+			if ((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags3 & RF3_IM_ELEC)) {
+				note = " is immune";
+				dam = 0;
+			} else if (r_ptr->flags3 & RF3_IM_ACID) || (r_ptr->flags3 & RF3_IM_ELEC) {
+					note = " resists";
+					dam /= 2;
+     if (r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_ELEC) {
+					note = " resists a lot";
+					dam /= 4;
+     } else if (r_ptr->flags3 & RF3_SUSCEP_ACID) || (r_ptr->flags3 & RF3_SUSCEP_ELEC) {
+					note = " is hit";
+     dam *= 2;
+     }
+    } else if (r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF9_RES_ELEC) {
+					note = " resists";
+     dam /= 4;
+				} else if (r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_ELEC) {
+					note = " resists somewhat";
+					dam *= 5;
+					dam /= 8;
+     if (r_ptr->flags3 & RF3_SUSCEP_ACID) || (r_ptr->flags3 & RF3_SUSCEP_ELEC) {
+					note = " is hit hard";
+					dam *= 2;
+     }
+				} else if (r_ptr->flags3 & RF3_SUSCEP_ACID) && (r_ptr->flags3 & RF3_SUSCEP_ELEC) {
+					note = " is hit hard";
+					dam *= 2;
+				} else if (r_ptr->flags3 & RF3_SUSCEP_ACID) || (r_ptr->flags3 & RF3_SUSCEP_ELEC) {
+					note = " is hit hard";
+					dam *= 3;
+     dam /= 2;
+				}
+			break;
+		}
+  
+  /* Acid + Fire */
+  case GF_ACID_FIRE:
+		{
+			if (seen) obvious = TRUE;
+			if ((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags3 & RF3_IM_FIRE)) {
+				note = " is immune";
+				dam = 0;
+			} else if (r_ptr->flags3 & RF3_IM_ACID) || (r_ptr->flags3 & RF3_IM_FIRE) {
+					note = " resists";
+					dam /= 2;
+     if (r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_FIRE) {
+					note = " resists a lot";
+					dam /= 4;
+     } else if (r_ptr->flags3 & RF3_SUSCEP_ACID) || (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
+					note = " is hit";
+     dam *= 2;
+     }
+    } else if (r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF9_RES_FIRE) {
+					note = " resists";
+     dam /= 4;
+				} else if (r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_FIRE) {
+					note = " resists somewhat";
+					dam *= 5;
+					dam /= 8;
+     if (r_ptr->flags3 & RF3_SUSCEP_ACID) || (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
+					note = " is hit hard";
+					dam *= 2;
+     }
+				} else if (r_ptr->flags3 & RF3_SUSCEP_ACID) && (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
+					note = " is hit hard";
+					dam *= 2;
+				} else if (r_ptr->flags3 & RF3_SUSCEP_ACID) || (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
+					note = " is hit hard";
+					dam *= 3;
+     dam /= 2;
+				}
+			break;
+		}
+  
+  /* Acid + Cold */
+  case GF_ACID_COLD:
+		{
+			if (seen) obvious = TRUE;
+			if ((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags3 & RF3_IM_COLD)) {
+				note = " is immune";
+				dam = 0;
+			} else if (r_ptr->flags3 & RF3_IM_ACID) || (r_ptr->flags3 & RF3_IM_COLD) {
+					note = " resists";
+					dam /= 2;
+     if (r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_COLD) {
+					note = " resists a lot";
+					dam /= 4;
+     } else if (r_ptr->flags3 & RF3_SUSCEP_ACID) || (r_ptr->flags3 & RF3_SUSCEP_COLD) {
+					note = " is hit";
+     dam *= 2;
+     }
+    } else if (r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF9_RES_COLD) {
+					note = " resists";
+     dam /= 4;
+				} else if (r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_COLD) {
+					note = " resists somewhat";
+					dam *= 5;
+					dam /= 8;
+     if (r_ptr->flags3 & RF3_SUSCEP_ACID) || (r_ptr->flags3 & RF3_SUSCEP_COLD) {
+					note = " is hit hard";
+					dam *= 2;
+     }
+				} else if (r_ptr->flags3 & RF3_SUSCEP_ACID) && (r_ptr->flags3 & RF3_SUSCEP_COLD) {
+					note = " is hit hard";
+					dam *= 2;
+				} else if (r_ptr->flags3 & RF3_SUSCEP_ACID) || (r_ptr->flags3 & RF3_SUSCEP_COLD) {
+					note = " is hit hard";
+					dam *= 3;
+     dam /= 2;
+				}
+			break;
+		}
+  
+  /* Acid + Poison */
+  case GF_ACID_POISON:
+		{
+			if (seen) obvious = TRUE;
+			if ((r_ptr->flags3 & RF3_IM_ACID) && (((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) {
+				note = " is immune";
+				dam = 0;
+			} else if (r_ptr->flags3 & RF3_IM_ACID) || (((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) {
+					note = " resists";
+					dam /= 2;
+     if (r_ptr->flags9 & RF9_RES_ACID) || ((r_ptr->flags9 & RF9_RES_POIS) {
+					note = " resists a lot";
+					dam /= 4;
+     } else if (r_ptr->flags3 & RF3_SUSCEP_ACID) || (r_ptr->flags3 & RF3_SUSCEP_POIS) {
+					note = " is hit";
+     dam *= 2;
+     }
+    } else if (r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF9_RES_POIS) {
+					note = " resists";
+     dam /= 4;
+				} else if (r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_POIS) {
+					note = " resists somewhat";
+					dam *= 5;
+					dam /= 8;
+     if (r_ptr->flags3 & RF3_SUSCEP_ACID) || (r_ptr->flags3 & RF3_SUSCEP_POIS) {
+					note = " is hit hard";
+					dam *= 2;
+     }
+				} else if (r_ptr->flags3 & RF3_SUSCEP_ACID) && (r_ptr->flags3 & RF3_SUSCEP_POIS) {
+					note = " is hit hard";
+					dam *= 2;
+				} else if (r_ptr->flags3 & RF3_SUSCEP_ACID) || (r_ptr->flags3 & RF3_SUSCEP_POIS) {
+					note = " is hit hard";
+					dam *= 3;
+     dam /= 2;
+				}
+			break;
+		}
+  
+  /* Elec + Cold */
+  case GF_ELEC_COLD:
+		{
+			if (seen) obvious = TRUE;
+			if ((r_ptr->flags3 & RF3_IM_ELEC) && (r_ptr->flags3 & RF3_IM_COLD)) {
+				note = " is immune";
+				dam = 0;
+			} else if (r_ptr->flags3 & RF3_IM_ELEC) || (r_ptr->flags3 & RF3_IM_COLD) {
+					note = " resists";
+					dam /= 2;
+     if (r_ptr->flags9 & RF9_RES_ELEC) || (r_ptr->flags9 & RF9_RES_COLD) {
+					note = " resists a lot";
+					dam /= 4;
+     } else if (r_ptr->flags3 & RF3_SUSCEP_ELEC) || (r_ptr->flags3 & RF3_SUSCEP_COLD) {
+					note = " is hit";
+     dam *= 2;
+     }
+    } else if (r_ptr->flags9 & RF9_RES_ELEC) && (r_ptr->flags9 & RF9_RES_COLD) {
+					note = " resists";
+     dam /= 4;
+				} else if (r_ptr->flags9 & RF9_RES_ELEC) || (r_ptr->flags9 & RF9_RES_COLD) {
+					note = " resists somewhat";
+					dam *= 5;
+					dam /= 8;
+     if (r_ptr->flags3 & RF3_SUSCEP_ELEC) || (r_ptr->flags3 & RF3_SUSCEP_COLD) {
+					note = " is hit hard";
+					dam *= 2;
+     }
+				} else if (r_ptr->flags3 & RF3_SUSCEP_ELEC) && (r_ptr->flags3 & RF3_SUSCEP_COLD) {
+					note = " is hit hard";
+					dam *= 2;
+				} else if (r_ptr->flags3 & RF3_SUSCEP_ELEC) || (r_ptr->flags3 & RF3_SUSCEP_COLD) {
+					note = " is hit hard";
+					dam *= 3;
+     dam /= 2;
+				}
+			break;
+		}
+  
+  /* Elec + Poison */
+  case GF_ELEC_POISON:
+		{
+			if (seen) obvious = TRUE;
+			if ((r_ptr->flags3 & RF3_IM_ELEC) && (((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) {
+				note = " is immune";
+				dam = 0;
+			} else if (r_ptr->flags3 & RF3_IM_ELEC) || (((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) {
+					note = " resists";
+					dam /= 2;
+     if (r_ptr->flags9 & RF9_RES_ELEC) || ((r_ptr->flags9 & RF9_RES_POIS) {
+					note = " resists a lot";
+					dam /= 4;
+     } else if (r_ptr->flags3 & RF3_SUSCEP_ELEC) || (r_ptr->flags3 & RF3_SUSCEP_POIS) {
+					note = " is hit";
+     dam *= 2;
+     }
+    } else if (r_ptr->flags9 & RF9_RES_ELEC) && (r_ptr->flags9 & RF9_RES_POIS) {
+					note = " resists";
+     dam /= 4;
+				} else if (r_ptr->flags9 & RF9_RES_ELEC) || (r_ptr->flags9 & RF9_RES_POIS) {
+					note = " resists somewhat";
+					dam *= 5;
+					dam /= 8;
+     if (r_ptr->flags3 & RF3_SUSCEP_ELEC) || (r_ptr->flags3 & RF3_SUSCEP_POIS) {
+					note = " is hit hard";
+					dam *= 2;
+     }
+				} else if (r_ptr->flags3 & RF3_SUSCEP_ELEC) && (r_ptr->flags3 & RF3_SUSCEP_POIS) {
+					note = " is hit hard";
+					dam *= 2;
+				} else if (r_ptr->flags3 & RF3_SUSCEP_ELEC) || (r_ptr->flags3 & RF3_SUSCEP_POIS) {
+					note = " is hit hard";
+					dam *= 3;
+     dam /= 2;
+				}
+			break;
+		}
+  
+  /* Fire + Poison */
+  case GF_FIRE_POISON:
+		{
+			if (seen) obvious = TRUE;
+			if ((r_ptr->flags3 & RF3_IM_FIRE) && (((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) {
+				note = " is immune";
+				dam = 0;
+			} else if (r_ptr->flags3 & RF3_IM_FIRE) || (((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) {
+					note = " resists";
+					dam /= 2;
+     if (r_ptr->flags9 & RF9_RES_FIRE) || ((r_ptr->flags9 & RF9_RES_POIS) {
+					note = " resists a lot";
+					dam /= 4;
+     } else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) || (r_ptr->flags3 & RF3_SUSCEP_POIS) {
+					note = " is hit";
+     dam *= 2;
+     }
+    } else if (r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags9 & RF9_RES_POIS) {
+					note = " resists";
+     dam /= 4;
+				} else if (r_ptr->flags9 & RF9_RES_FIRE) || (r_ptr->flags9 & RF9_RES_POIS) {
+					note = " resists somewhat";
+					dam *= 5;
+					dam /= 8;
+     if (r_ptr->flags3 & RF3_SUSCEP_FIRE) || (r_ptr->flags3 & RF3_SUSCEP_POIS) {
+					note = " is hit hard";
+					dam *= 2;
+     }
+				} else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) && (r_ptr->flags3 & RF3_SUSCEP_POIS) {
+					note = " is hit hard";
+					dam *= 2;
+				} else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) || (r_ptr->flags3 & RF3_SUSCEP_POIS) {
+					note = " is hit hard";
+					dam *= 3;
+     dam /= 2;
+				}
+			break;
+		}
+  
+  /* Cold + Poison */
+  case GF_COLD_POISON:
+		{
+			if (seen) obvious = TRUE;
+			if ((r_ptr->flags3 & RF3_IM_COLD) && (((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) {
+				note = " is immune";
+				dam = 0;
+			} else if (r_ptr->flags3 & RF3_IM_COLD) || (((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) {
+					note = " resists";
+					dam /= 2;
+     if (r_ptr->flags9 & RF9_RES_COLD) || ((r_ptr->flags9 & RF9_RES_POIS) {
+					note = " resists a lot";
+					dam /= 4;
+     } else if (r_ptr->flags3 & RF3_SUSCEP_COLD) || (r_ptr->flags3 & RF3_SUSCEP_POIS) {
+					note = " is hit";
+     dam *= 2;
+     }
+    } else if (r_ptr->flags9 & RF9_RES_COLD) && (r_ptr->flags9 & RF9_RES_POIS) {
+					note = " resists";
+     dam /= 4;
+				} else if (r_ptr->flags9 & RF9_RES_COLD) || (r_ptr->flags9 & RF9_RES_POIS) {
+					note = " resists somewhat";
+					dam *= 5;
+					dam /= 8;
+     if (r_ptr->flags3 & RF3_SUSCEP_COLD) || (r_ptr->flags3 & RF3_SUSCEP_POIS) {
+					note = " is hit hard";
+					dam *= 2;
+     }
+				} else if (r_ptr->flags3 & RF3_SUSCEP_COLD) && (r_ptr->flags3 & RF3_SUSCEP_POIS) {
+					note = " is hit hard";
+					dam *= 2;
+				} else if (r_ptr->flags3 & RF3_SUSCEP_COLD) || (r_ptr->flags3 & RF3_SUSCEP_POIS) {
+					note = " is hit hard";
+					dam *= 3;
+     dam /= 2;
+				}
+			break;
+		}
+  
 		/* Nether -- see above */
 		case GF_NETHER:
 			if (seen) obvious = TRUE;
@@ -5735,6 +6192,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Drain Life */
 		case GF_OLD_DRAIN:
+  case GF_ANNIHILATION: /*fix GF_OLD_DRAIN for runie life leech - Kurzel */
 		{
 			if (seen) obvious = TRUE;
 			
@@ -11123,6 +11581,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			break;
 
 		case GF_ACID:
+  case GF_CORRODE:
 			if (r_ptr->flags3 & RF3_IM_ACID)
 				dam = 0;
 			else if (r_ptr->flags9 & RF9_RES_ACID)
@@ -11150,6 +11609,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			break;
 
 		case GF_COLD:
+  case GF_SHATTER:
 			if (r_ptr->flags3 & RF3_IM_COLD)
 				dam = 0;
 			else if (r_ptr->flags9 & RF9_RES_COLD)
@@ -11426,6 +11886,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			break;
 
 		case GF_OLD_DRAIN:
+  case GF_ANNIHILATION:
 			if (m_ptr->hp > 9362)
 				dam = (m_ptr->hp / 100) * dam;
 			else if (m_ptr->hp > 936)
@@ -11618,6 +12079,8 @@ int approx_damage(int m_idx, int dam, int typ) {
 			break;
 
 		case GF_DISINTEGRATE:
+  case GF_CORRODE:
+  case GF_SHATTER:
 			if (r_ptr->flags3 & (RF3_HURT_ROCK))
 				dam *= 2;
 			if (r_ptr->flags1 & RF1_UNIQUE)

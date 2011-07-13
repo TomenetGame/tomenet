@@ -3887,6 +3887,25 @@ that keeps many algorithms happy.
 #define GF_SILENCE		160 /* for new mindcrafters */
 #define GF_CHARMIGNORE		161
 
+#define GF_ACID_ELEC		170 /* for new runemasters */
+#define GF_ACID_FIRE 171
+#define GF_ACID_COLD 172
+#define GF_ACID_POISON 173
+//#define GF_PLASMA 174 //GF_ELEC_FIRE
+#define GF_DIG_FIRE 174
+#define GF_ELEC_COLD 175
+#define GF_ELEC_POISON 176
+//#define GF_NULL 177 //GF_FIRE_COLD
+#define GF_FIRE_POISON 178
+#define GF_COLD_POISON 179
+
+#define GF_SHATTER 180
+#define GF_CORRODE 181
+#define GF_GENOCIDE 182 //special case
+#define GF_WONDER 183 //special case
+#define GF_ANNIHILATION 184
+
+
 /* For snowflakes on WINTER_SEASON. Could use 0 for type, but let's complete it. -C. Blue */
 #define GF_SNOWFLAKE		200
 /* For fireworks on NEW_YEARS_EVE - C. Blue */
@@ -7300,7 +7319,7 @@ extern int PlayerUID;
 #define S_DAM_MAX 500 //This is before size/fail, etc modifiers. Max for 500 results in a hard limit of around 2000
 
 /* Rune spell effect types */
-#define RT_MAX 141 //Out of (220+66+12+1):(299); Update as new effects are added! - Kurzel
+#define RT_MAX 87 //Out of (220+66+12+1):(299); Update as new effects are added! - Kurzel
 
 /* Single rune effects (named by projection) */
 /* None (1 set 1):(1) */
@@ -7321,79 +7340,25 @@ extern int PlayerUID;
 #define RT_TIME 12
 
 /* Single school effects and augments (named by projection) */
-/* Low/High         (6 set  1):( 6) */
-/* Low/High/Augment (6 set 10):(60) */
+/* Low/High         (6 set 1):( 6) */
+/* Low/High/Augment (6 set 1)x10:(60) */
 #define RT_POWER 13
-#define RT_DISINTEGRATE_ELEC 14
-#define RT_DISINTEGRATE_FIRE 15
-#define RT_DISINTEGRATE_COLD 16
-#define RT_DISINTEGRATE_POISON 17
-#define RT_DISINTEGRATE_FORCE 18
-#define RT_DISINTEGRATE_SHARDS 19
-#define RT_DISINTEGRATE_CHAOS 20
-#define RT_DISINTEGRATE_NETHER 21
-#define RT_DISINTEGRATE_NEXUS 22
-#define RT_DISINTEGRATE_TIME 23
+#define RT_DISINTEGRATE 14
 
 #define RT_HI_ELEC 24
-#define RT_STARLIGHT_ACID 25
-#define RT_STARLIGHT_FIRE 26
-#define RT_STARLIGHT_COLD 27
-#define RT_STARLIGHT_POISON 28
-#define RT_STARLIGHT_FORCE 29
-#define RT_STARLIGHT_WATER 30
-#define RT_STARLIGHT_CHAOS 31
-#define RT_STARLIGHT_NETHER 32
-#define RT_STARLIGHT_NEXUS 33
-#define RT_STARLIGHT_TIME 34
+#define RT_STARLIGHT 25
 
 #define RT_HELL_FIRE 35
-#define RT_DETONATION_ACID 36
-#define RT_DETONATION_ELEC 37
-#define RT_DETONATION_COLD 38
-#define RT_DETONATION_POISON 39
-#define RT_DETONATION_FORCE 40
-#define RT_DETONATION_WATER 41
-#define RT_DETONATION_SHARDS 42
-#define RT_DETONATION_NETHER 43
-#define RT_DETONATION_NEXUS 44
-#define RT_DETONATION_TIME 45
+#define RT_DETONATION 36
 
 #define RT_ANNIHILATION 46 //RT_TRAUMATURGY
-#define RT_STASIS_ACID 47
-#define RT_STASIS_ELEC 48
-#define RT_STASIS_FIRE 49
-#define RT_STASIS_POISON 50
-#define RT_STASIS_FORCE 51
-#define RT_STASIS_WATER 52
-#define RT_STASIS_SHARDS 53
-#define RT_STASIS_CHAOS 54
-#define RT_STASIS_NEXUS 55
-#define RT_STASIS_TIME 56
+#define RT_STASIS 47
 
 #define RT_UNBREATH 57 //RT_STEALTH
-#define RT_DRAIN_ACID 58
-#define RT_DRAIN_ELEC 59
-#define RT_DRAIN_FIRE 60
-#define RT_DRAIN_COLD 61
-#define RT_DRAIN_FORCE 62
-#define RT_DRAIN_WATER 63
-#define RT_DRAIN_SHARDS 64
-#define RT_DRAIN_CHAOS 65
-#define RT_DRAIN_NETHER 66
-#define RT_DRAIN_TIME 67
+#define RT_DRAIN 58
 
 #define RT_INERTIA 68
-#define RT_GRAVITY_ACID 69
-#define RT_GRAVITY_ELEC 70
-#define RT_GRAVITY_FIRE 71
-#define RT_GRAVITY_COLD 72
-#define RT_GRAVITY_POISON 73
-#define RT_GRAVITY_WATER 74
-#define RT_GRAVITY_SHARDS 75
-#define RT_GRAVITY_CHAOS 76
-#define RT_GRAVITY_NETHER 77
-#define RT_GRAVITY_NEXUS 78
+#define RT_GRAVITY 69
 
 /* Double school effects (named by projection) */
 /* Low/Low   (6 combination 2):(15) */
@@ -7445,7 +7410,7 @@ extern int PlayerUID;
 #define RT_BLINDNESS 117
 #define RT_STUN 118 //RT_POISON_NEXUS
 /* Force */
-#define RT_HI_SHARD 119
+#define RT_WAVE 119
 #define RT_MISSILE 120
 #define RT_LIGHT 121
 #define RT_SHADOW 122

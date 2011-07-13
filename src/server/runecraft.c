@@ -58,22 +58,18 @@ s16b rspell_time(u32b Ind, byte imperative)
 
 byte runes_in_flag(byte runes[], u32b flags)
 {
-	if ((flags & R_ACID) == R_ACID) { runes[0] = 1; } else { runes[2] = 0; }
-	if ((flags & R_ELEC) == R_ELEC) { runes[1] = 1; } else { runes[4] = 0; }
-	if ((flags & R_FIRE) == R_FIRE) { runes[2] = 1; } else { runes[0] = 0; }
-	if ((flags & R_COLD) == R_COLD) { runes[3] = 1; } else { runes[1] = 0; }
-	if ((flags & R_POIS) == R_POIS) { runes[4] = 1; } else { runes[6] = 0; }
-	if ((flags & R_FORC) == R_FORC) { runes[5] = 1; } else { runes[10] = 0; }
-	if ((flags & R_WATE) == R_WATE) { runes[6] = 1; } else { runes[3] = 0; }
-	if ((flags & R_EART) == R_EART) { runes[7] = 1; } else { runes[5] = 0; }
-	//if ((flags & R_WIND) == R_WIND) { runes[7] = 1; } else { runes[7] = 0; }
-	//if ((flags & R_MANA) == R_MANA) { runes[8] = 1; } else { runes[8] = 0; }
-	if ((flags & R_CHAO) == R_CHAO) { runes[8] = 1; } else { runes[9] = 0; }
-	//if ((flags & R_GRAV) == R_GRAV) { runes[11] = 1; } else { runes[11] = 0; }
-	if ((flags & R_NETH) == R_NETH) { runes[9] = 1; } else { runes[12] = 0; }
-	if ((flags & R_NEXU) == R_NEXU) { runes[10] = 1; } else { runes[15] = 0; }
-	if ((flags & R_TIME) == R_TIME) { runes[11] = 1; } else { runes[13] = 0; }
-	//if ((flags & R_MIND) == R_MIND) { runes[14] = 1; } else { runes[14] = 0; }
+	if ((flags & R_ACID) == R_ACID) { runes[0] = 1; } else { runes[0] = 0; }
+	if ((flags & R_ELEC) == R_ELEC) { runes[1] = 1; } else { runes[1] = 0; }
+	if ((flags & R_FIRE) == R_FIRE) { runes[2] = 1; } else { runes[2] = 0; }
+	if ((flags & R_COLD) == R_COLD) { runes[3] = 1; } else { runes[3] = 0; }
+	if ((flags & R_POIS) == R_POIS) { runes[4] = 1; } else { runes[4] = 0; }
+	if ((flags & R_FORC) == R_FORC) { runes[5] = 1; } else { runes[5] = 0; }
+	if ((flags & R_WATE) == R_WATE) { runes[6] = 1; } else { runes[6] = 0; }
+	if ((flags & R_EART) == R_EART) { runes[7] = 1; } else { runes[7] = 0; }
+	if ((flags & R_CHAO) == R_CHAO) { runes[8] = 1; } else { runes[8] = 0; }
+	if ((flags & R_NETH) == R_NETH) { runes[9] = 1; } else { runes[9] = 0; }
+	if ((flags & R_NEXU) == R_NEXU) { runes[10] = 1; } else { runes[10] = 0; }
+	if ((flags & R_TIME) == R_TIME) { runes[11] = 1; } else { runes[11] = 0; }
 
 	/*
 	if ((flags & R_FIRE) == R_FIRE) { runes[0] = 1; } else { runes[0] = 0; }
@@ -100,7 +96,7 @@ byte rune_value(byte runes[])
 {
 	byte i,count;
 	count=0;
-	for(i=0;i<16;i++)
+	for(i=0;i<RCRAFT_MAX_ELEMENTS;i++)
 		if (runes[i])
 			count+=r_elements[i].cost;
 	return count;
@@ -119,9 +115,9 @@ byte rspell_check(u32b Ind, s16b * mali, u32b s_flags)
 	player_type * p_ptr = Players[Ind];
 	s16b i, k, j;
 	object_type	*o_ptr;
-	s16b p_runes[16];
+	s16b p_runes[RCRAFT_MAX_ELEMENTS];
 	s16b p_rc = 0;
-	byte runes[16];
+	byte runes[RCRAFT_MAX_ELEMENTS];
 	
 	for (j = 0; j < INVEN_TOTAL; j++)
 	{
@@ -139,7 +135,7 @@ byte rspell_check(u32b Ind, s16b * mali, u32b s_flags)
 	
 	runes_in_flag(runes,s_flags);
 	/* Type check */
-	for(i=0;i<16;i++)
+	for(i=0;i<RCRAFT_MAX_ELEMENTS;i++)
 	{
 		if (runes[i]==1)
 		{
@@ -197,7 +193,7 @@ s16b rspell_cost (u32b Ind, u16b s_type, u32b s_flags, u16b s_av, byte imperativ
 {
 	player_type *p_ptr = Players[Ind];
 	byte m = meth_to_id(s_flags);
-	byte runes[16];
+	byte runes[RCRAFT_MAX_ELEMENTS];
 	byte value = 0;	
 	byte penalty = 0;
 	s16b cost = 0;
@@ -265,7 +261,7 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 */
 {
 	u16b e_level = runespell_list[s_type].level;
-	byte runes[16];
+	byte runes[RCRAFT_MAX_ELEMENTS];
 	runes_in_flag(runes, s_flags);
 	int damage = 1;
 	int base_radius = runespell_list[s_type].radius;
@@ -338,7 +334,7 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 	
 	if ((s_flags & R_WAVE) == R_WAVE) //Waves are cheaper standing clouds, with a slight boost to radius.
 	{
-    //duration IS radius only for the new wave, don't boost! - Kurzel
+  //duration IS radius only for the new wave, don't boost! - Kurzel
 		//r += 1;
 		//r = (r < 2 ? 2 : r);
 		dur += 1;
@@ -488,7 +484,7 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 	int mod_luck = p_ptr->luck+10; //Player's current luck as a positive value between 0 and 50
 	u16b d = 0;
 	
-	byte runes[16];
+	byte runes[RCRAFT_MAX_ELEMENTS];
 	runes_in_flag(runes,s_flags);
 	
 	if (duration<5)
@@ -609,7 +605,7 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 		{
 			int hit = (p_ptr->mhp*(randint(15)+1)/100);
 			msg_format(Ind, "\377rThe runespell hits you for \377u%i \377rdamage!", hit);
-			take_hit(Ind, hit, "a malformed invocation", 0);
+			take_hit(Ind, hit, "a malformed invocation", 0); //match GF_type for damage here?
 		}
 		
 		p_ptr->redraw |= PR_HP;
@@ -729,13 +725,13 @@ u16b rspell_skill(u32b Ind, u32b s_type)
 	
 	byte rune_c = 0;
 	byte skill_c = 0;
-	byte skills[8] = {0,0,0,0,0,0,0,0};
+	byte skills[RCRAFT_MAX_ELEMENTS/2] = {0,0,0,0,0,0};
 	byte runes[3] = {0,0,0};
 	
-	byte s_runes[16];
+	byte s_runes[RCRAFT_MAX_ELEMENTS];
 	runes_in_flag(s_runes, s_type);
 	
-	for (i=0; i<16; i++)
+	for (i=0; i<RCRAFT_MAX_ELEMENTS; i++)
 	{
 		if (s_runes[i]==1)
 		{
@@ -743,7 +739,7 @@ u16b rspell_skill(u32b Ind, u32b s_type)
 			value = get_skill(p_ptr, skill);
 			//Ugh. We need an index from 0-7. FIRECOLD through MINDNEXU is 96-103
 			//skills[skill - SKILL_R_FIRECOLD] = 1;
-   skills[skill - SKILL_R_FIRECHAO] = 1;
+   skills[skill - SKILL_R_ACIDWATE] = 1;
 			//ACIDWATE through FORCTIME is 96-101.
 			if (rune_c > 2)
 			{
@@ -754,7 +750,7 @@ u16b rspell_skill(u32b Ind, u32b s_type)
 		}
 	}
 	
-	for (i=0; i<8; i++)
+	for (i=0; i<RCRAFT_MAX_ELEMENTS/2; i++)
 	{
 		if (skills[i]==1)
 		{

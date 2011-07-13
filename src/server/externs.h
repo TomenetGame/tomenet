@@ -2024,6 +2024,7 @@ extern byte execute_rspell (u32b, byte, u32b, byte);
 extern bool rune_backlash(int Ind, int typ, int dam);
 /* tables.c */
 extern r_element r_elements[RCRAFT_MAX_ELEMENTS];
+extern r_augment r_augments[RCRAFT_MAX_ELEMENTS];
 extern r_imper r_imperatives[RCRAFT_MAX_IMPERATIVES];
 extern r_type runespell_types[RCRAFT_MAX_TYPES];
 extern r_spell runespell_list[RT_MAX];

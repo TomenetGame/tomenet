@@ -3458,6 +3458,20 @@ struct r_imper
 	s16b duration; //Duration multiplier
 };
 
+typedef struct r_augment r_augment;
+/* Spell augmentations */
+struct r_augment
+{
+	u32b rune; //Rune flag
+	s16b level; //Level required
+	s16b cost; //Cost multiplier
+	s16b fail; //Fail multiplier
+	s16b dam; //Damage multipler
+	s16b time; //Time to cast
+	s16b radius; //Radius +/-
+	s16b duration; //Duration multiplier
+};
+
 typedef struct rspell_sel rspell_sel;
 /* Spell selectors */
 struct rspell_sel

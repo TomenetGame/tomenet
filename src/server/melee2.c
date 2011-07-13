@@ -4449,6 +4449,22 @@ static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr,
 		case GF_DISP_DEMON:
 //		case GF_HAND_DOOM:
 		case GF_STASIS:
+  case GF_ACID_ELEC: /* for new runemasters */
+  case GF_ACID_FIRE:
+  case GF_ACID_COLD:
+  case GF_ACID_POISON:
+//  case GF_PLASMA: //GF_ELEC_FIRE:
+  case GF_ELEC_COLD:
+  case GF_ELEC_POISON:
+//  case GF_NULL: //GF_FIRE_COLD:
+  case GF_FIRE_POISON:
+  case GF_COLD_POISON:
+  case GF_DIG_FIRE:
+  case GF_SHATTER:
+  case GF_CORRODE:
+  case GF_GENOCIDE:
+  case GF_WONDER:
+  case GF_ANNIHILATION:
 			break;
 
 		default: /* no need to avoid healing cloud or similar effects - C. Blue */

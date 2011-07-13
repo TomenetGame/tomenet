@@ -6234,8 +6234,8 @@ int p_tough_ac[51] = {
 r_element r_elements[RCRAFT_MAX_ELEMENTS] = 
 {
 	{ 0, "Acid",		"Delibro",	 	1, SKILL_R_ACIDWATE, R_ACID,},
-	{ 1, "Lighting",	"Fulmin",		1, SKILL_R_ELECEART, R_ELEC,},
-	{ 2, "Heat",		"Aestus",		1, SKILL_R_FIRECHAO, R_FIRE,},
+	{ 1, "Electricity",	"Fulmin",		1, SKILL_R_ELECEART, R_ELEC,},
+	{ 2, "Fire",		"Aestus",		1, SKILL_R_FIRECHAO, R_FIRE,},
 	{ 3, "Cold",		"Gelum",		1, SKILL_R_COLDNETH, R_COLD,},
 	{ 4, "Poison",		"Lepis",		1, SKILL_R_POISNEXU, R_POIS,},
 	{ 5, "Force",		"Fero",		 	1, SKILL_R_FORCTIME, R_FORC,},
@@ -6273,13 +6273,11 @@ r_element r_elements[RCRAFT_MAX_ELEMENTS] =
 /*
 	Table of spell potencies.
 	
-	id, name, level, cost, fail, damage, cast_time, radius, duration
-	
-	WRONG APPEARENTLY (also, what's 'danger'?? No such thing in above line):
-	cost, fail, damage, danger and duration are /10 multipliers; radius is a +/- value
-	INSTEAD IT SEEMS THAT 'fail' is a percentage bonus, while 'cost' and 'damage' are percentage/10 multiplier.
-*/
-r_imper r_imperatives [RCRAFT_MAX_IMPERATIVES] = 
+	id, name, level +#, cost *10%, fail +%, damage *10%, cast_time *10%, radius +#, duration *10%
+	cost, damage, cast_time and duration are /10 multipliers; fail is a percentage bonus; level, radius are +/- value
+ 
+ */
+r_imper r_imperatives[RCRAFT_MAX_IMPERATIVES] = 
 {
 	//i	n		 +l, c%, f+, d%, p%, r+, t%
 	{ 0, "minimized",	-1,  5,-10,  6, 10, -1,  5 },
@@ -6294,6 +6292,32 @@ r_imper r_imperatives [RCRAFT_MAX_IMPERATIVES] =
 	{ 5, "brief",		 3, 13, 15,  6,  5,  0,  5 },
 	{ 6, "lengthened",	 3, 15, 10,  6, 10,  0, 16 },
 	{ 7, "chaotic",		 1,  0,  0,  0, 10,  5,  0 },
+};
+
+/*
+	Table of spell augmentations, similar to imperatives. (Uses third rune in permutation!)
+ Modifiers have more benefits / less drawbacks scaling with skill level.
+ Modifiers will scale from 0% of the benefit / 200% of the drawback, to 100% of each.
+ 
+	Rune, level req, cost *10%, fail +%, damage *10%, cast_time *10%, radius +#, duration *10%
+	cost, damage, cast_time and duration are /10 multipliers; fail is a percentage bonus; level, radius are +/- value 
+ 
+ */
+r_augment r_augments[RCRAFT_MAX_ELEMENTS] = 
+{
+	//R_FLAG,	+l$, *c%, +f%, *d%, *p%, r+, *t%
+	{ R_ACID,   1,  10,   0,  10,  10,   0, 14}, //40% duration increase
+	{ R_ELEC,   1,   7,   0,  10,  10,   0, 10}, //30% cost reduction
+	{ R_FIRE,   1,  12,   0,  12,  10,   0, 10}, //20% damage/cost increase
+	{ R_COLD,   1,  10, -10,  10,  10,   0, 10}, //10% failure reduction
+	{ R_POIS,   5,  10,   0,  10,   8,   0, 10}, //20% energy decrease
+	{ R_FORC,  15,  10,   0,  10,  10,   1, 10}, // +1 radius increase
+	{ R_WATE,  15,  10,  -5,   8,   8,   0, 10}, //20% energy/damage decrease, 5% failure decrease
+	{ R_EART,  15,  11,   0,  11,  10,   0, 11}, //10% damage/cost increase, 10% duration increase
+	{ R_CHAO,  25,  14, +20,  14,  10,   0, 10}, //40% damage/cost increase, 20% failure increase
+	{ R_NETH,  25,  14,   0,  14,  10,  -1, 10}, //40% damage/cost increase, -1 radius decrease
+	{ R_NEXU,  25,  10,   0,  10,  10,   2,  6}, // +2 radius increase, 40% duration decrease
+	{ R_TIME,  30,  10, +10,   6,   6,   0, 12}, //40% energy/damage decrease, 20% duration increase
 };
 
 /*
@@ -6328,72 +6352,80 @@ GF_TYPES are zero if they represent a new/special spell, dealt with case by case
 	byte level; //  Average skill level for success 
 	byte fail; // fail rate multiplier (how much more difficult is it than something else?)
 	int gf_type; //0 for special cases (handled by cast_runespell)
- int gf_explode; //0 for no explosion, 1 explodes, w/ hack for permutation of 3rd rune?
+ 
+ int gf_explode; //0 for no explosion, -1 explodes, w/ hack for permutation of 3rd rune?, otherwise explode with type
  //should decide on and add augment types here, and method to implement - Kurzel <.<
  
 Removed description with a view to having many paths to the same places
 */
 r_spell runespell_list[RT_MAX] =
 {
-{ RT_NONE,   "nothing",     10,  0,  0,  0, 0, 0, 1 },
+{ RT_NONE,   "nothing",     10,  0,  0,  0, 0, 0, -1 }, //gf_explode hack for unassigned combos?
 { RT_ACID,   "acid",        11, 10,  1,  0, 1, GF_ACID, 0 },
 { RT_ELEC,   "electricity", 11, 10,  1,  0, 1, GF_ELEC, 0 },
 { RT_FIRE,   "heat",        11, 10,  1,  0, 1, GF_FIRE, 0 },
 { RT_COLD,   "cold",        11, 10,  1,  0, 1, GF_COLD, 0 },
 { RT_POISON, "gas",         12, 10,  5,  5, 1, GF_POIS, 0 },
 { RT_FORCE,  "force",        9, 12, 15, 10, 1, GF_FORCE, 0 },
-{ RT_WATER,  "water",       10, 12, 15, 10, 1, GF_WATER, 0 }, //should confuse
+{ RT_WATER,  "water",       10, 12, 15, 10, 1, GF_WATER, 0 },
 { RT_SHARDS, "shards",      11, 12, 15, 10, 1, GF_SHARDS, 0 },
 { RT_CHAOS,  "chaos",       13, 15, 25, 15, 1, GF_CHAOS, 0 },
 { RT_NETHER, "nether",      13, 15, 25, 15, 1, GF_NETHER, 0 },
-{ RT_NEXUS,  "nexus",       12, 14, 20, 10, 1, GF_NEXUS, 0 },
+{ RT_NEXUS,  "nexus",       12, 14, 25, 10, 1, GF_NEXUS, 0 },
 { RT_TIME,   "time",        10, 20, 30, 10, 1, GF_TIME, 0 },
 
 { RT_POWER,        "dissolution", 12, 20, 30, 15, 2, GF_TIME, 0 },
 { RT_HI_ELEC,      "charge",      15, 15, 20, 10, 2, GF_ELEC, 0 },
-{ RT_HELL_FIRE,    "hellfire",    13, 15, 25, 15, 2, GF_HELL_FIRE, 0 },
-{ RT_ANNIHILATION, "void",        10, 15, 30, 15, 2, 0, 0 }, //check drain power levels?
+{ RT_HELL_FIRE,    "hellfire",    13, 13, 25, 15, 2, GF_HELL_FIRE, 0 },
+{ RT_ANNIHILATION, "void",         1, 20, 30, 15, 2, GF_ANNIHILATION, 0 }, //power check
 { RT_UNBREATH,     "unbreath",    13, 15, 25, 15, 2, GF_UNBREATH, 0 },
 { RT_INERTIA,      "inertia",     12, 12, 20, 10, 2, GF_INERTIA, 0 },
 
+{ RT_DISINTEGRATE, "disintegration", 12, 25, 40, 20, 3, GF_DISINTEGRATE, 0 },
+{ RT_STARLIGHT,    "starlight",      11, 15, 30, 10, 3, GF_LITE, 0 },
+{ RT_DETONATION,   "detonations",    14, 15, 35, 15, 3, GF_DETONATION, 0 },
+{ RT_STASIS,       "stasis",         10, 10, 30, 10, 3, GF_STASIS, 0 }, //needs a colour scheme? power check
+{ RT_DRAIN,        "drain",           1, 25, 35, 20, 3, GF_OLD_DRAIN, 0 }, //power check - lifesteal fix
+{ RT_GRAVITY,      "gravity",        13, 13, 30, 15, 3, GF_GRAVITY, 0 },
+
 /* Flavorful gestalt names? - Kurzel */
-{ RT_ACID_ELEC,   "conductivity",     12, 12,  1,  0, 2, 0, 0 }, //GF_GESTALT?
-{ RT_ACID_FIRE,   "scorching",        12, 12,  1,  0, 2, 0, 0 }, //GF_GESTALT?
-{ RT_ACID_COLD,   "rime",             12, 12,  1,  0, 2, 0, 0 }, //GF_GESTALT?
-{ RT_ACID_POISON, "venom",            13, 12,  5,  0, 2, 0, 0 }, //GF_GESTALT?
-{ RT_ACID_TIME,   "acid",             12, 12, 10, 15, 2, 0, 0 }, //quickened
+{ RT_ACID_ELEC,   "conductivity",     12, 12,  1,  0, 2, GF_ACID_ELEC, 0 },
+{ RT_ACID_FIRE,   "scorching bile",   12, 12,  1,  0, 2, GF_ACID_FIRE, 0 },
+{ RT_ACID_COLD,   "rime",             12, 12,  1,  0, 2, GF_ACID_COLD, 0 },
+{ RT_ACID_POISON, "venom",            13, 12,  5,  0, 2, GF_ACID_POISON, 0 },
+{ RT_ACID_TIME,   "acid",             12, 12, 10, 15, 2, GF_ACID, 0 }, //quickened
 { RT_PLASMA,      "plasma",           13, 13, 10,  5, 2, GF_PLASMA, 0 },
-{ RT_ELEC_COLD,   "superconductance", 12, 12,  1,  0, 2, 0, 0 }, //GF_GESTALT?
-{ RT_ELEC_POISON, "jolting",          13, 12,  5,  0, 2, 0, 0 }, //GF_GESTALT?
-{ RT_ELEC_TIME,   "electricity",      12, 12, 10, 15, 2, 0, 0 }, //quickened
-{ RT_NULL,        "nothing",          10,  0,  0,  0, 0, 0, 0 }, //RT_FIRE_COLD - defines RT_NULL (RT_NONE w/o 3rd rune explosion hack?)
-{ RT_FIRE_POISON, "consumption",      13, 12,  1,  0, 2, 0, 0 }, //GF_GESTALT?
-{ RT_FIRE_TIME,   "fire",             12, 12, 10, 15, 2, 0, 0 }, //quickened
-{ RT_COLD_POISON, "hypothermia",      13, 12,  1,  0, 2, 0, 0 }, //GF_GESTALT?
-{ RT_COLD_TIME,   "cold",             12, 12, 10, 15, 2, 0, 0 }, //quickened
+{ RT_ELEC_COLD,   "superconductance", 12, 12,  1,  0, 2, GF_ELEC_COLD, 0 },
+{ RT_ELEC_POISON, "jolting",          13, 12,  5,  0, 2, GF_ELEC_POISON, 0 },
+{ RT_ELEC_TIME,   "electricity",      12, 12, 10, 15, 2, GF_ELEC, 0 }, //quickened
+{ RT_NULL,        "nothing",          10,  0,  0,  0, 0, 0, 0 }, //GF/RT_FIRE_COLD - defines GF/RT_NULL
+{ RT_FIRE_POISON, "consumption",      13, 12,  1,  0, 2, GF_FIRE_POISON, 0 },
+{ RT_FIRE_TIME,   "fire",             12, 12, 10, 15, 2, GF_FIRE, 0 }, //quickened
+{ RT_COLD_POISON, "hypothermia",      13, 12,  1,  0, 2, RT_COLD_POISON, 0 },
+{ RT_COLD_TIME,   "cold",             12, 12, 10, 15, 2, GF_COLD, 0 }, //quickened
 { RT_SLOW,        "mire",             10, 12,  5,  0, 2, GF_OLD_SLOW, 0 }, //quickened
 
-{ RT_DISARM_ACID,     "melting",        5, 10,  5,  5, 2, 0, 0 }, //disarm+acid projection
+{ RT_DISARM_ACID,     "corrosion",      5, 10,  5,  5, 2, GF_CORRODE, 0 },
 { RT_NUKE,            "toxic waste",   15, 15, 25, 15, 2, GF_NUKE, 0 },
-{ RT_OBSCURITY_ACID,  "hungry mist",   12, 12, 12,  0, 2, GF_DARK, 1 }, //explodes w/ acid
-{ RT_HI_ACID,         "corrosion",     15, 15, 20, 10, 2, GF_ACID, 0 }, 
+{ RT_OBSCURITY_ACID,  "hungry mist",   12, 12, 12,  0, 2, GF_DARK, GF_ACID }, //explodes w/ acid
+{ RT_HI_ACID,         "ablation",      15, 15, 20, 10, 2, GF_ACID, 0 }, 
 { RT_ACID_NEXUS,      "electrolysis",  13, 12,  5,  0, 2, GF_ELEC, 0 },
 
-{ RT_ELEC_WATER,      "nothing",       10,  0,  0,  0, 0, 0, 0 }, //RT_NULL - another 'nothing' define, reserved self-spell slot
-{ RT_BRILLIANCE_ELEC, "shining light",  8, 12, 12,  0, 2, GF_LITE, 1 }, //explodes w/ elec
+{ RT_ELEC_WATER,      "nothing",       10,  0,  0,  0, 0, 0, 0 },
+{ RT_BRILLIANCE_ELEC, "shining light",  8, 12, 12,  0, 2, GF_LITE, GF_ELEC }, //explodes w/ elec
 { RT_TELEPORT_ELEC,   "displacement",  13, 10, 15,  5, 2, GF_AWAY_ALL, 0 }, //self explodes w/ elec
 { RT_THUNDER,         "corrosion",     13, 13, 10,  5, 2, GF_SOUND, 0 }, 
 { RT_ELEC_NEXUS,      "oxidation",     13, 12,  5,  0, 2, GF_ACID, 0 },
 
-{ RT_FIRE_WATER,      "nothing",       10,  0,  0,  0, 0, 0, 0 }, //RT_NULL - another 'nothing' define, reserved self-spell slot
-{ RT_DIG_FIRE,        "molten tephra", 10, 12, 10,  0, 2, GF_KILL_WALL, 0 }, //dig+fire tiles - fun name for this?
-{ RT_OBSCURITY_FIRE,  "burning smoke", 12, 12, 12,  0, 2, GF_DARK, 1 }, //explodes w/ fire
+{ RT_FIRE_WATER,      "nothing",       10,  0,  0,  0, 0, 0, 0 }, 
+{ RT_DIG_FIRE,        "molten tephra", 10, 12, 10,  0, 2, GF_DIG_FIRE, 0 }, //Fix spells1.c effect
+{ RT_OBSCURITY_FIRE,  "burning smoke", 12, 12, 12,  0, 2, GF_DARK, GF_FIRE }, //explodes w/ fire
 { RT_HI_FIRE,         "corrosion",     15, 15, 20, 10, 2, GF_FIRE, 0 },
 { RT_FIRE_NEXUS,      "wicking fire",  13, 12,  5,  0, 2, GF_COLD, 0 },
 
 { RT_ICE,             "ice",           13, 13, 10,  5, 2, GF_ICE, 0 },
-{ RT_DISARM_COLD,     "shattering",     5, 10,  5,  5, 2, 0, 0 }, //disarm+cold projection
-{ RT_BRILLIANCE_COLD, "grim light",     8, 12, 12,  0, 2, GF_LITE, 1 }, //explodes w/ cold
+{ RT_DISARM_COLD,     "shattering",     5, 10,  5,  5, 2, GF_SHATTER, 0 },
+{ RT_BRILLIANCE_COLD, "grim light",     8, 12, 12,  0, 2, GF_LITE, GF_COLD }, //explodes w/ cold
 { RT_HI_COLD,         "hoarfrost",     15, 15, 20, 10, 2, GF_COLD, 0 },
 { RT_COLD_NEXUS,      "exothermy",     13, 12,  5,  0, 2, GF_FIRE, 0 },
 
@@ -6403,9 +6435,9 @@ r_spell runespell_list[RT_MAX] =
 { RT_BLINDNESS,       "blindness",      4, 10,  5, 10, 2, GF_BLIND, 0 },
 { RT_STUN,            "concussion",     2, 10, 10, 10, 2, GF_STUN, 0 },
 
-{ RT_HI_SHARD,        "pressure",      15, 20, 35, 10, 2, GF_SHARDS, 0 },
-{ RT_MISSILE,         "magic missiles",12, 20, 30,  0, 2, GF_MISSILE, 0 }, //similar to RT_POWER
-{ RT_LIGHT,           "light",          5, 10,  1,  0, 2, GF_LITE, 0 }, 
+{ RT_WAVE,            "pressure",      15, 20, 35, 10, 2, GF_WAVE, 0 },
+{ RT_MISSILE,         "magic missiles",12, 20, 30,  0, 2, GF_MISSILE, 0 },
+{ RT_LIGHT,           "light",          5, 10,  1,  0, 2, GF_LITE, 0 }, //NOT GF_LITE_WEAK
 { RT_SHADOW,          "shadow",        10, 10,  1,  0, 2, GF_DARK, 0 },
 { RT_TELEPORT_NEXUS,  "displacement",  13, 10, 15,  5, 2, GF_AWAY_ALL, 0 }, //self explodes w/ nexus
 
@@ -6415,19 +6447,19 @@ r_spell runespell_list[RT_MAX] =
 { RT_WATER_NEXUS,     "solidification",13, 14, 20, 10, 2, GF_SHARDS, 0 },
 { RT_DIG_TELEPORT,    "erosion",       10, 12, 10,  0, 2, GF_KILL_WALL, 0 }, //self teleport
 
-{ RT_INFERNO,         "erosion",       13, 15, 20, 15, 2, GF_ROCKET, 0 }, //RT_NEW_INFERNO or sth?
-{ RT_GENOCIDE,        "genocide",      10, 15, 20, 15, 2, 0, 0 }, //RT_NULL until working
+{ RT_INFERNO,         "erosion",       13, 15, 20, 15, 2, GF_INFERNO, 0 },
+{ RT_GENOCIDE,        "genocide",       1, 20, 30, 15, 2, 0, 0 }, //GF_GENOCIDE - Add effect!
 { RT_DIG_MEMORY,      "erosion",       10, 12, 10,  0, 2, GF_KILL_WALL, 0 }, //self memory
 { RT_EARTH_NEXUS,     "softening",     12, 14, 20, 10, 2, GF_WATER, 0 },
 
 { RT_CHAOS_NETHER,    "nexus",         12, 14, 20, 10, 1, GF_NEXUS, 0 }, //exactly nexus -> chaos+nether+3rd invert
-{ RT_DISENCHANT,      "disenchantment",12, 12, 30, 10, 2, 0, 0 }, //Balance this! (with mana)
-{ RT_WONDER,          "wonder",        10, 10, 10,  0, 2, 0, 0 }, //GF_WONDER ?
+{ RT_DISENCHANT,      "disenchantment",12, 12, 30, 10, 2, GF_DISENCHANT, 0 }, //Balance this! (with mana)
+{ RT_WONDER,          "wonder",        10, 10, 10,  0, 2, 0, 0 }, //GF_WONDER - Add effect!
 
-{ RT_MANA,            "pure energy",   12, 12, 25, 10, 2, GF_MANA, 0 }, //Balance this! (this is the reference)
-{ RT_NETHER_TIME,     "nothing",       10,  0,  0,  0, 2, 0, 0 }, //RT_NULL
+{ RT_MANA,            "mana",          12, 12, 25, 10, 2, GF_MANA, 0 },
+{ RT_NETHER_TIME,     "nothing",       10,  0,  0,  0, 2, 0, 0 },
 
-{ RT_SLEEP,           "slumber",        8, 10, 15, 10, 2, 0, 0 }, //GF_OLD_SLEEP ?
+{ RT_SLEEP,           "slumber",        8, 10, 15, 10, 2, GF_OLD_SLEEP, 0 },
 
 
 //Add more RT_EFFECTs here! - Kurzel
@@ -6505,16 +6537,16 @@ r_spell runespell_list[RT_MAX] =
 
 rspell_sel rspell_selector[MAX_RSPELL_SEL] =
 {
-{ R_ACID | R_WATE | R_ELEC, RT_DISINTEGRATE_ELEC },
-{ R_ACID | R_WATE | R_FIRE, RT_DISINTEGRATE_FIRE },
-{ R_ACID | R_WATE | R_COLD, RT_DISINTEGRATE_COLD },
-{ R_ACID | R_WATE | R_POIS, RT_DISINTEGRATE_POISON },
-{ R_ACID | R_WATE | R_FORC, RT_DISINTEGRATE_FORCE },
-{ R_ACID | R_WATE | R_EART, RT_DISINTEGRATE_SHARDS },
-{ R_ACID | R_WATE | R_CHAO, RT_DISINTEGRATE_CHAOS },
-{ R_ACID | R_WATE | R_NETH, RT_DISINTEGRATE_NETHER },
-{ R_ACID | R_WATE | R_NEXU, RT_DISINTEGRATE_NEXUS },
-{ R_ACID | R_WATE | R_TIME, RT_DISINTEGRATE_TIME },
+{ R_ACID | R_WATE | R_ELEC, RT_DISINTEGRATE },
+{ R_ACID | R_WATE | R_FIRE, RT_DISINTEGRATE },
+{ R_ACID | R_WATE | R_COLD, RT_DISINTEGRATE },
+{ R_ACID | R_WATE | R_POIS, RT_DISINTEGRATE },
+{ R_ACID | R_WATE | R_FORC, RT_DISINTEGRATE },
+{ R_ACID | R_WATE | R_EART, RT_DISINTEGRATE },
+{ R_ACID | R_WATE | R_CHAO, RT_DISINTEGRATE },
+{ R_ACID | R_WATE | R_NETH, RT_DISINTEGRATE },
+{ R_ACID | R_WATE | R_NEXU, RT_DISINTEGRATE },
+{ R_ACID | R_WATE | R_TIME, RT_DISINTEGRATE },
 
 { R_ACID | R_ELEC | R_FIRE, RT_NONE },
 { R_ACID | R_ELEC | R_CHAO, RT_NONE },
@@ -6612,16 +6644,16 @@ rspell_sel rspell_selector[MAX_RSPELL_SEL] =
 { R_WATE | R_NEXU | R_FORC, RT_NONE },
 { R_WATE | R_NEXU | R_TIME, RT_NONE }, //80
 
-{ R_ELEC | R_EART | R_ACID, RT_STARLIGHT_ACID },
-{ R_ELEC | R_EART | R_FIRE, RT_STARLIGHT_FIRE },
-{ R_ELEC | R_EART | R_COLD, RT_STARLIGHT_COLD },
-{ R_ELEC | R_EART | R_POIS, RT_STARLIGHT_POISON },
-{ R_ELEC | R_EART | R_FORC, RT_STARLIGHT_FORCE },
-{ R_ELEC | R_EART | R_WATE, RT_STARLIGHT_WATER },
-{ R_ELEC | R_EART | R_CHAO, RT_STARLIGHT_CHAOS },
-{ R_ELEC | R_EART | R_NETH, RT_STARLIGHT_NETHER },
-{ R_ELEC | R_EART | R_NEXU, RT_STARLIGHT_NEXUS },
-{ R_ELEC | R_EART | R_TIME, RT_STARLIGHT_TIME },
+{ R_ELEC | R_EART | R_ACID, RT_STARLIGHT },
+{ R_ELEC | R_EART | R_FIRE, RT_STARLIGHT },
+{ R_ELEC | R_EART | R_COLD, RT_STARLIGHT },
+{ R_ELEC | R_EART | R_POIS, RT_STARLIGHT },
+{ R_ELEC | R_EART | R_FORC, RT_STARLIGHT },
+{ R_ELEC | R_EART | R_WATE, RT_STARLIGHT },
+{ R_ELEC | R_EART | R_CHAO, RT_STARLIGHT },
+{ R_ELEC | R_EART | R_NETH, RT_STARLIGHT },
+{ R_ELEC | R_EART | R_NEXU, RT_STARLIGHT },
+{ R_ELEC | R_EART | R_TIME, RT_STARLIGHT },
 
 { R_ELEC | R_FIRE | R_COLD, RT_NONE },
 { R_ELEC | R_FIRE | R_NETH, RT_NONE },
@@ -6683,16 +6715,16 @@ rspell_sel rspell_selector[MAX_RSPELL_SEL] =
 { R_EART | R_NEXU | R_FORC, RT_NONE },
 { R_EART | R_NEXU | R_TIME, RT_NONE }, //48
 
-{ R_FIRE | R_CHAO | R_ACID, RT_DETONATION_ACID },
-{ R_FIRE | R_CHAO | R_ELEC, RT_DETONATION_ELEC },
-{ R_FIRE | R_CHAO | R_COLD, RT_DETONATION_COLD },
-{ R_FIRE | R_CHAO | R_POIS, RT_DETONATION_POISON },
-{ R_FIRE | R_CHAO | R_FORC, RT_DETONATION_FORCE },
-{ R_FIRE | R_CHAO | R_WATE, RT_DETONATION_WATER },
-{ R_FIRE | R_CHAO | R_EART, RT_DETONATION_SHARDS },
-{ R_FIRE | R_CHAO | R_NETH, RT_DETONATION_NETHER },
-{ R_FIRE | R_CHAO | R_NEXU, RT_DETONATION_NEXUS },
-{ R_FIRE | R_CHAO | R_TIME, RT_DETONATION_TIME },
+{ R_FIRE | R_CHAO | R_ACID, RT_DETONATION },
+{ R_FIRE | R_CHAO | R_ELEC, RT_DETONATION },
+{ R_FIRE | R_CHAO | R_COLD, RT_DETONATION },
+{ R_FIRE | R_CHAO | R_POIS, RT_DETONATION },
+{ R_FIRE | R_CHAO | R_FORC, RT_DETONATION },
+{ R_FIRE | R_CHAO | R_WATE, RT_DETONATION },
+{ R_FIRE | R_CHAO | R_EART, RT_DETONATION },
+{ R_FIRE | R_CHAO | R_NETH, RT_DETONATION },
+{ R_FIRE | R_CHAO | R_NEXU, RT_DETONATION },
+{ R_FIRE | R_CHAO | R_TIME, RT_DETONATION },
 
 { R_FIRE | R_COLD | R_POIS, RT_NONE },
 { R_FIRE | R_COLD | R_NEXU, RT_NONE },
@@ -6726,16 +6758,16 @@ rspell_sel rspell_selector[MAX_RSPELL_SEL] =
 { R_CHAO | R_NEXU | R_FORC, RT_NONE },
 { R_CHAO | R_NEXU | R_TIME, RT_NONE }, //24
 
-{ R_COLD | R_NETH | R_ACID, RT_STASIS_ACID },
-{ R_COLD | R_NETH | R_ELEC, RT_STASIS_ELEC },
-{ R_COLD | R_NETH | R_FIRE, RT_STASIS_FIRE },
-{ R_COLD | R_NETH | R_POIS, RT_STASIS_POISON },
-{ R_COLD | R_NETH | R_FORC, RT_STASIS_FORCE },
-{ R_COLD | R_NETH | R_WATE, RT_STASIS_WATER },
-{ R_COLD | R_NETH | R_EART, RT_STASIS_SHARDS },
-{ R_COLD | R_NETH | R_CHAO, RT_STASIS_CHAOS },
-{ R_COLD | R_NETH | R_NEXU, RT_STASIS_NEXUS },
-{ R_COLD | R_NETH | R_TIME, RT_STASIS_TIME },
+{ R_COLD | R_NETH | R_ACID, RT_STASIS },
+{ R_COLD | R_NETH | R_ELEC, RT_STASIS },
+{ R_COLD | R_NETH | R_FIRE, RT_STASIS },
+{ R_COLD | R_NETH | R_POIS, RT_STASIS },
+{ R_COLD | R_NETH | R_FORC, RT_STASIS },
+{ R_COLD | R_NETH | R_WATE, RT_STASIS },
+{ R_COLD | R_NETH | R_EART, RT_STASIS },
+{ R_COLD | R_NETH | R_CHAO, RT_STASIS },
+{ R_COLD | R_NETH | R_NEXU, RT_STASIS },
+{ R_COLD | R_NETH | R_TIME, RT_STASIS },
 
 { R_COLD | R_POIS | R_FORC, RT_NONE },
 { R_COLD | R_POIS | R_TIME, RT_NONE },
@@ -6749,27 +6781,27 @@ rspell_sel rspell_selector[MAX_RSPELL_SEL] =
 { R_NETH | R_NEXU | R_FORC, RT_NONE },
 { R_NETH | R_NEXU | R_TIME, RT_NONE }, //8
 
-{ R_POIS | R_NEXU | R_ACID, RT_DRAIN_ACID },
-{ R_POIS | R_NEXU | R_ELEC, RT_DRAIN_ELEC },
-{ R_POIS | R_NEXU | R_FIRE, RT_DRAIN_FIRE },
-{ R_POIS | R_NEXU | R_COLD, RT_DRAIN_COLD },
-{ R_POIS | R_NEXU | R_FORC, RT_DRAIN_FORCE },
-{ R_POIS | R_NEXU | R_WATE, RT_DRAIN_WATER },
-{ R_POIS | R_NEXU | R_EART, RT_DRAIN_SHARDS },
-{ R_POIS | R_NEXU | R_CHAO, RT_DRAIN_CHAOS },
-{ R_POIS | R_NEXU | R_NETH, RT_DRAIN_NETHER },
-{ R_POIS | R_NEXU | R_TIME, RT_DRAIN_TIME },
+{ R_POIS | R_NEXU | R_ACID, RT_DRAIN },
+{ R_POIS | R_NEXU | R_ELEC, RT_DRAIN },
+{ R_POIS | R_NEXU | R_FIRE, RT_DRAIN },
+{ R_POIS | R_NEXU | R_COLD, RT_DRAIN },
+{ R_POIS | R_NEXU | R_FORC, RT_DRAIN },
+{ R_POIS | R_NEXU | R_WATE, RT_DRAIN },
+{ R_POIS | R_NEXU | R_EART, RT_DRAIN },
+{ R_POIS | R_NEXU | R_CHAO, RT_DRAIN },
+{ R_POIS | R_NEXU | R_NETH, RT_DRAIN },
+{ R_POIS | R_NEXU | R_TIME, RT_DRAIN },
 
-{ R_FORC | R_TIME | R_ACID, RT_GRAVITY_ACID },
-{ R_FORC | R_TIME | R_ELEC, RT_GRAVITY_ELEC },
-{ R_FORC | R_TIME | R_FIRE, RT_GRAVITY_FIRE },
-{ R_FORC | R_TIME | R_COLD, RT_GRAVITY_COLD },
-{ R_FORC | R_TIME | R_POIS, RT_GRAVITY_POISON },
-{ R_FORC | R_TIME | R_WATE, RT_GRAVITY_WATER },
-{ R_FORC | R_TIME | R_EART, RT_GRAVITY_SHARDS },
-{ R_FORC | R_TIME | R_CHAO, RT_GRAVITY_CHAOS },
-{ R_FORC | R_TIME | R_NETH, RT_GRAVITY_NETHER },
-{ R_FORC | R_TIME | R_NEXU, RT_GRAVITY_NEXUS },
+{ R_FORC | R_TIME | R_ACID, RT_GRAVITY },
+{ R_FORC | R_TIME | R_ELEC, RT_GRAVITY },
+{ R_FORC | R_TIME | R_FIRE, RT_GRAVITY },
+{ R_FORC | R_TIME | R_COLD, RT_GRAVITY },
+{ R_FORC | R_TIME | R_POIS, RT_GRAVITY },
+{ R_FORC | R_TIME | R_WATE, RT_GRAVITY },
+{ R_FORC | R_TIME | R_EART, RT_GRAVITY },
+{ R_FORC | R_TIME | R_CHAO, RT_GRAVITY },
+{ R_FORC | R_TIME | R_NETH, RT_GRAVITY },
+{ R_FORC | R_TIME | R_NEXU, RT_GRAVITY },
 
 { R_ACID | R_WATE, RT_POWER },
 { R_ACID | R_ELEC, RT_ACID_ELEC },
@@ -6791,7 +6823,7 @@ rspell_sel rspell_selector[MAX_RSPELL_SEL] =
 { R_WATE | R_NETH, RT_CLONE },
 { R_WATE | R_POIS, RT_WATERPOISON },
 { R_WATE | R_NEXU, RT_WATER_NEXUS },
-{ R_WATE | R_FORC, RT_HI_SHARD },
+{ R_WATE | R_FORC, RT_WAVE },
 { R_WATE | R_TIME, RT_DIG_TELEPORT },
 
 { R_ELEC | R_EART, RT_HI_ELEC },
