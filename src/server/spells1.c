@@ -3715,6 +3715,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_DIG_FIRE: /* fix this to leave fire tile, melt l00t? - Kurzel */
 		{
 			byte feat = twall_erosion(wpos, y, x);
+			if (typ == GF_DIG_FIRE && feat == FEAT_FLOOR) feat = FEAT_SHAL_LAVA;
 
 			if (!allow_terraforming(wpos, FEAT_TREE)) break;
 			/* Non-walls (etc) */
