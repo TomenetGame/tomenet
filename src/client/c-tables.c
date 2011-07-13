@@ -1033,17 +1033,17 @@ r_element r_elements[RCRAFT_MAX_ELEMENTS] =
 {
 #if 1
 	{ 0, "Acid", 		"Delibro",	 	1, SKILL_R_ACIDWATE, R_ACID,},
-	{ 1, "Lighting",	"Fulmin", 		1, SKILL_R_ELECEART, R_ELEC,},
-	{ 2, "Heat", 		"Aestus", 		1, SKILL_R_FIRECHAO, R_FIRE,},
+	{ 1, "Electricity",	"Fulmin", 		1, SKILL_R_ELECEART, R_ELEC,},
+	{ 2, "Fire", 		"Aestus", 		1, SKILL_R_FIRECHAO, R_FIRE,},
 	{ 3, "Cold", 		"Gelum",		1, SKILL_R_COLDNETH, R_COLD,},
 	{ 4, "Poison", 		"Lepis", 		1, SKILL_R_POISNEXU, R_POIS,},
 	{ 5, "Force", 		"Fero",		 	1, SKILL_R_FORCTIME, R_FORC,},
 	{ 6, "Water",		"Mio",	 		1, SKILL_R_ACIDWATE, R_WATE,},
-	{ 7, "Earth", 		"Ostes", 		2, SKILL_R_ELECEART, R_EART,},
-	{ 8, "Chaos", 		"Emuto", 		2, SKILL_R_FIRECHAO, R_CHAO,},
+	{ 7, "Earth", 		"Ostes", 		1, SKILL_R_ELECEART, R_EART,},
+	{ 8, "Chaos", 		"Emuto", 		1, SKILL_R_FIRECHAO, R_CHAO,},
 	{ 9, "Nether", 		"Elido", 		1, SKILL_R_COLDNETH, R_NETH,},
 	{10, "Nexus", 		"Vicis", 		1, SKILL_R_POISNEXU, R_NEXU,},
-	{11, "Time", 		"Emero",	 	2, SKILL_R_FORCTIME, R_TIME,},
+	{11, "Time", 		"Emero",	 	1, SKILL_R_FORCTIME, R_TIME,},
 #else /* Relsiet's stuff preserved below */
 	{ 0, "Heat", 		"Aestus", 		1, SKILL_R_FIRECOLD, R_FIRE,},
 	{ 1, "Cold", 		"Gelum",		1, SKILL_R_FIRECOLD, R_COLD,},

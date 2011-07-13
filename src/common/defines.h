@@ -7290,28 +7290,23 @@ extern int PlayerUID;
 #define R_STOR 0x000080
 
 
-#define RCRAFT_MAX_ELEMENTS 12 //reduced from 16 to 12 - Kurzel
+#define RCRAFT_MAX_ELEMENTS 12 //reduced from 16 to 12, order matches rspell_skill() - Kurzel
 
 //Spell constituents
 #define R_ACID 0x000100
-#define R_WATE 0x000200
-#define R_ELEC 0x000400
-#define R_EART 0x000800
+#define R_ELEC 0x000200
+#define R_FIRE 0x000400
+#define R_COLD 0x000800
 
-#define R_FIRE 0x001000
-#define R_CHAO 0x002000
-#define R_COLD 0x004000
-#define R_NETH 0x008000
+#define R_POIS 0x001000
+#define R_FORC 0x002000
+#define R_WATE 0x004000
+#define R_EART 0x008000
 
-#define R_POIS 0x010000
-#define R_NEXU 0x020000
-#define R_FORC 0x040000
+#define R_CHAO 0x010000
+#define R_NETH 0x020000
+#define R_NEXU 0x040000
 #define R_TIME 0x080000
-
-//#define R_NETH 0x100000
-//#define R_TIME 0x200000
-//#define R_MIND 0x400000
-//#define R_NEXU 0x800000
 
 #define S_COST_MIN 1
 #define S_COST_MAX 85
