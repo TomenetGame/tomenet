@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 10. July 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 21. July 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1685,6 +1685,7 @@ or that are especially important are listed in detail here:
 First you may choose your gender. This will not have actual influence on your
 strengths or weaknesses.
 
+
 Next you have to choose your class. Spellcasters like Istari or Shamans are
 physically weaker and especially hard to play for beginners.
 If you choose a spellcaster, be aware that his casting ability depends on
@@ -1694,6 +1695,7 @@ Spellcasting involves using 'macros' (see (3.6)) and might be a bit difficult
 for beginners.
 Classes definitely NOT recommended for beginners are:
 Istar (mage), Priest, Shaman, Adventurer.
+
 
 Then you have to choose your race. Humans are good allrounders, while the other
 races are more or less specialized. For example half-trolls are usually quite
@@ -1706,24 +1708,26 @@ for now.
 Note that the availability of various races will depend on the class you chose,
 some class-race combinations are not possible.
 
+
 Now you will see your six basic attributes STRength, INTelligence, WISdom,
 DEXterity, CONstitution, CHaRisma.
-
-IMPORTANT NOTE: For fighters (rogues also belong to these) that use weapons,
-it is important that you have enough STRength and DEXterity to execute at
-least two attacks per round, called bpr (blows per round, see (6.5a)).
+IMPORTANT NOTE: For fighters (rogues also belong to these, ie all characters
+that rely on close combat) that use weapons, it is important that you have
+enough STRength and DEXterity to execute at least two attacks per round, called
+bpr (blows per round, see (6.5a)).
 Sometimes this requires you to get rid of your initial weapon and buy a very
 light weapon, for example one of these:
-dagger or main gauche (sword class),
-whip (blunt class),
-hatched (axe class) or
-spear (polearm class).
+ -dagger or main gauche (sword class),
+ -whip (blunt class),
+ -hatchet (axe class) or
+ -spear (polearm class).
+(For more information about the different weapon classes see (5.1a).)
 Sometimes it is even possible to start out with 3 bpr (warriors mostly).
 
 Depending on the server configuration, starting at TomeNET version 4.2.0,
 there are 2 alternative stages of character creation that may follow now.
 
-1) The old way - random stats:
+1) The old way - random stats:  (deprecated)
 You see the short names for the 6 stats written from the left to the right
 on the very bottom of the screen, and you're asked to choose a stat order.
 You have to determine how important each of the 6 stats is to you by defining
@@ -1741,6 +1745,14 @@ Right above them you see your free points (30) that you may distribute on the
 stats. Use the numpad (numlock turned on) to navigate and increase or decrease
 your stats until you used up all free points. Hit ESC when you're happy with
 your choice.
+In general, if you play a character that relies on close combat, try to at
+least match the STR and DEX values shown in the table in the column titled
+'Min. recommended, if possible'.
+If you can do that then you should start with at least 2 bpr with a light
+weapon, or even with your starting weapon. If your starting weapon already
+gives 2 bpr you could still examine even lighter weapons in stores to find one
+that gives you one more bpr i.e. 3 bpr and just discard your starting weapon.
+
 
 Now you can choose a difficulty level you wish to play on. Options are
 n) Normal  g) no Ghost  h) Hard  H) Hellish e) Everlasting
@@ -1749,10 +1761,6 @@ to play a normal character without a ghost.
 You can also choose e), that will give your character an infinite amount of
 resurrections, while 'normal' characters often have a limited amount of lives
 (depending on the server configuration).
-
-Last you can choose a body modification. It's strongly recommended for
-beginners to choose 'normal body' and NOT 'fruit bat'. ;)
-
 
 Mode: 'Normal'
 --------------
@@ -1764,7 +1772,6 @@ resume playing. If the ghost dies, the character will finally be erased
 permanently, watch out!
 Depending on the server configuration the number of times a ghost is limited,
 standard is 3 lifes.
-
 
 Mode: 'Everlasting'
 -------------------
@@ -1781,13 +1788,11 @@ killed Sauron and Morgoth yet and team up with him, because those two won't
 Since it was often asked: Non-everlasting and everlasting players can revive
 each other without problems.
 
-
 Mode: 'Unworldly' (no-ghost) and 'Hellish' (no-ghost + hard)
 ------------------------------------------------------------
 Unworldly characters are like normal characters, but they have only one life.
 Unworldly as well as hellish characters (who are a combination of 'no-ghost'
 and 'hard') will be completely annihilated and deleted on death.
-
 
 Mode: 'Hard' (like 'Normal' but with additional penalties) and 'Hellish':
 -------------------------------------------------------------------------
@@ -1800,13 +1805,18 @@ These are:
 -any speed changes above or below +0 are reduced by 50%
 -max number of melee attacks per round is reduced by 1.
 
-
 Mode: 'PvP'
 -----------
 This is a special restricted mode that has nothing to do with normal gameplay.
 If you're new to the game, it's absolutely not recommended to choose this.
 More information about 'PvP' mode is given in (6.13).
 
+Hard / Unworldly characters will receive 25% bonus on their high score.
+Hellish (Hard + Unworldly) characters receive 50% bonus on their high score.
+
+
+Last you can choose a body modification. It's strongly recommended for
+beginners to choose 'normal body' and NOT 'fruit bat'. ;)
 
 Body: 'Fruit bat' (Batty)
 -------------------------
@@ -1820,9 +1830,6 @@ vampiric, making them leech life on each hit, replenishing their hit points.
 Fruit bats are said to make good explorers. If you're new to the game, it's
 absolutely not recommended to try and play fruit bat.
 
-
-Hard / Unworldly characters will receive 25% bonus on their high score.
-Hellish (Hard + Unworldly) characters receive 50% bonus on their high score.
 
 Note that race and class will have influence on how much experience you will
 need to gain a new character level. For example, High-Elves already know a
@@ -7177,8 +7184,8 @@ whole blocks of skills that you cannot or don't want to use anyway.
 Here is a list of the available skills and brief explanations to each one:
 Note that not every skill is available to every profession (class).
 
-+Combat                         Lets you wear heavier armour without spell
-                                point penalty.
++Combat                         Lets you wear heavier armour without mana
+                                points penalty.
                                 Lets you wear heavier armour without losing
                                 dodge chance, or other roguish abilities like
                                 boni from dual-wielding, critical-strike,
@@ -7473,7 +7480,7 @@ Note that not every skill is available to every profession (class).
                                 (It won't raise the level of spells which you
                                 haven't learned yet.)
                                 Note that Spell-power does not affect magic of
-                                druids, mindcrafters, or runemasters.
+                                druids, mindcrafters, runemasters or maiar.
     +Druidic Schools
         .Arcane Lore            Learn druid magic tought by arcane lore.
         .Physical Lore          Learn druid magic tought by physical lore.
