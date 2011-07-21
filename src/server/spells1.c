@@ -5746,25 +5746,26 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				} else if ((r_ptr->flags3 & RF3_SUSCEP_FIRE) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
 					note = " is hit";
 					dam *= 2;
-				} else if ((r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags9 & RF9_RES_POIS)) {
-					note = " resists";
-					dam /= 4;
-				} else if ((r_ptr->flags9 & RF9_RES_FIRE) || (r_ptr->flags9 & RF9_RES_POIS)) {
-					note = " resists somewhat";
-					dam *= 5;
-					dam /= 8;
-					if ((r_ptr->flags3 & RF3_SUSCEP_FIRE) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
-						note = " is hit hard";
-						dam *= 2;
-					}
-				} else if ((r_ptr->flags3 & RF3_SUSCEP_FIRE) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
+				}
+			} else if ((r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags9 & RF9_RES_POIS)) {
+				note = " resists";
+				dam /= 4;
+			} else if ((r_ptr->flags9 & RF9_RES_FIRE) || (r_ptr->flags9 & RF9_RES_POIS)) {
+				note = " resists somewhat";
+				dam *= 5;
+				dam /= 8;
+				if ((r_ptr->flags3 & RF3_SUSCEP_FIRE) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
 					note = " is hit hard";
 					dam *= 2;
-				} else if ((r_ptr->flags3 & RF3_SUSCEP_FIRE) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
-					note = " is hit hard";
-					dam *= 3;
-					dam /= 2;
 				}
+			} else if ((r_ptr->flags3 & RF3_SUSCEP_FIRE) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
+				note = " is hit hard";
+				dam *= 2;
+			} else if ((r_ptr->flags3 & RF3_SUSCEP_FIRE) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
+				note = " is hit hard";
+				dam *= 3;
+				dam /= 2;
+			}
 			break;
 		}
 
