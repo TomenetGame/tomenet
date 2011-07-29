@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 21. July 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 29. July 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -3616,8 +3616,10 @@ Hellish       yes     yes       yes             yes         yes           +10%
 Terrain features in the main window:
 ------------------------------------
 Town buildings-
-Consisting of red '#' (roof) and white '#' (wall), these cannot be damaged or
-destroyed.
+Consisting of red or yellow '#' (roof) and white '#' (wall), these cannot be
+damaged or destroyed and some of them contain the basic town stores (numbers
+1 to 9 marking the entrance) as well as special stores (+ sign marking the
+entrance). See (4.5) for details about stores.
 
 Floor-
 Dots '.' rensemble empty floor. Green dots are grass, brown ones dirt, grey
@@ -3651,13 +3653,14 @@ Store entrances are represented by coloured numbers '1'..'7', '9' and '+'.
 See (4.5) for details about stores.
 
 Rubble-
-':' is rubble. Characters with high enough archery skill can stand next to
-rubble and use their 'create ammo' ability to create ammunition from it.
+':' is rubble. Characters with high enough archery skill who use a sling-type
+weapon can stand next to rubble and use their 'create ammo' ability to create
+sling ammunition from it.
 
 Pits-
-Dark '^' are pits that can only be crossed if you have levitation or flying
-ability. Bree is protected by pits around the outer tree wall. These pits
-cannot be disarmed (because they don't count as trap, as opposed to the
+Dark grey '^' are pits that can only be crossed if you have levitation or
+flying ability. Bree is protected by pits around the outer tree wall. These
+pits cannot be disarmed (because they don't count as trap, as opposed to the
 actual 'chasm traps' and 'pit traps') or destroyed.
 
 Walls-
@@ -3709,14 +3712,25 @@ Lakes-          are displayed as blue '~' fields on the world map.
 Grassland-      green '.'
 Forest-         green '*'
 Swamps-         violet '%'
-Dense forests-  dark grey '*'
+Dense forests-  dark grey '*'       - danger of getting stuck (*)
 Wasteland-      umber (bronze) '.'
 Towns-          yellow 'T'
-Mountains-      dark grey '^'
-Volcanos-       red '^' - careful, you may get stuck in this terrain!
+Mountains-      dark grey '^'       - danger of getting stuck (**)
+Volcanos-       red '^'             - danger of getting stuck (**)
 Rivers-         light blue '~'
 Coast areas-    yellow ','
-Oceans-         blue '%' fields.
+Oceans-         blue '%' fields.    - might be hard to traverse (***)
+
+(*) You could get stuck in the trees if you enter such a sector;
+    a digging tool or just using a sword or axe will allow you to hack down
+    the trees relatively easily though to get you out of there.
+    Note that flying also allows you to pass trees easily.
+(**) You might get stuck in there if you enter such a sector without being
+     able to climb. Especially nasty in case of volcanos, since the fiery
+     ground might burn your items. Use word-of-recall to get out of here.
+(***) If your backpack is too heavy for you to swim then it'll be a big hassle
+      to try and cross deep water without drowning. In that case just get an
+      item that allows you to fly and you'll be fine.
 
 
 
@@ -5775,6 +5789,9 @@ CHAOTIC ('It produces chaotic effects')
         c) confuse target (very likely)
         d) teleport target away
         e) polymorph target
+        f) clone target
+        Note that most of these have an *extremely* low chance to occur.
+        Most of the time the vampirism or confusion effect is chosen.
 IMPACT ('It can cause earthquakes')
         Causes earthquakes if the damage is > 50. (See (5.13).)
         (Can be suppressed with !E inscription)
@@ -7078,6 +7095,20 @@ Stats are displayed as values from 3 (minimum) to 18.
 'linear_stats' option. It is recommended to keep the traditional way though,
 which represents the D&D system of throwing three 6-sided dice to determine a
 stat).
+
+Certain effects can drain stats, for example unresisted fire or cold damage can
+drain your strength, unresisted lightning damage your dexterity, unresisted
+acid damage your charisma. Also many monsters have stat-draining attacks.
+Traps can also drain your stats, some temporarily and some permanently.
+If a stat is drained and can be restored it will be displayed in yellow.
+In that case buy a potion for restoring that particular stat from town store 5
+provided it is not out of stock in which case you'll have to wait a bit or go
+to another town. Maybe the stat drain isn't even that important to you and you
+save your money for the time being.
+Some traps can permanently drain a stat, in which case it gets lowered but
+remains green instead of turning yellow. In this case a stat restoring potion
+has no effect, instead you'll need a "stat potion" that increases a stat
+permanently (up to a certain limit depending on class/race).
 
 It is possible to gain even higher stats, those will be displayed as 18/xxx
 where xxx is roughly the value above 18 multiplied by 10 (to allow fractions).
@@ -9790,7 +9821,7 @@ Mental Intrusion
                     Lv15: Becomes a ball effect.
                     Lv30: Affects all monsters in LoS.
                     Required skill level for first spell level: 3.
-    Sleep           Puts your target's mind to sleep.
+    Hypnosis        Puts your target's mind to sleep.
                     Lv20: Affects all monsters in LoS.
                     Required skill level for first spell level: 5.
     Drain Strength  Slows your target down, draining power from its muscles.
