@@ -2936,8 +2936,15 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 #if 0
 			(*ap) = spell_color(effects[c_ptr->effect].type);
 #else /* allow 'transparent' spells */
+			/* Hack -- Decode extra runespell info for color. - Kurzel */
+			u32b typ_original = effects[c_ptr->effect].type;
+			effects[c_ptr->effect].type = effects[c_ptr->effect].type % 1000;
+					
 			a = spell_color(effects[c_ptr->effect].type);
 			if (a != 127) (*ap) = a;
+						
+			/* Hack -- Restore runespell info. - Kurzel */
+			effects[c_ptr->effect].type = typ_original;	
 #endif
 		}
 

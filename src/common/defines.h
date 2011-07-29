@@ -7313,14 +7313,18 @@ extern int PlayerUID;
 #define S_DAM_MIN 5
 #define S_DAM_MAX 500 //This is before size/fail, etc modifiers. Max for 500 results in a hard limit of around 2000
 
-/* Rune spell effect types */
-#define RT_MAX 225 //Out of (220+66+12+1):(299); Update as new effects are added! - Kurzel
+/* Rune spell effect type indexes.
+ * This serves as the runespell_list[index#] for quick lookup; make sure they match!
+ * Sorted and counted by combination 'family'; this helps with skill access and assignment.
+ * RT_MAX is out of (220+66+12+1):(299) combinations; Update as new effects are added (and overlap is removed)! - Kurzel 
+ */
+#define RT_MAX 227
 
 /* Single rune effects (named by projection) */
 /* None (1 set 1):(1) */
 /* Low  (6 set 1):(6) */
 /* High (6 set 1):(6) */
-#define RT_NONE 0 //Use RT_NULL for elements that 'cancel'
+#define RT_NONE 0
 #define RT_ACID 1
 #define RT_ELEC 2
 #define RT_FIRE 3
@@ -7373,7 +7377,7 @@ extern int PlayerUID;
 #define RT_DETONATION_FORCE 44
 #define RT_DETONATION_TIME 45
 
-#define RT_ANNIHILATION 46 //RT_TRAUMATURGY
+#define RT_ANNIHILATION 46
 #define RT_STASIS_ACID 47
 #define RT_STASIS_WATER 48
 #define RT_STASIS_ELEC 49
@@ -7385,7 +7389,7 @@ extern int PlayerUID;
 #define RT_STASIS_FORCE 55
 #define RT_STASIS_TIME 56
 
-#define RT_UNBREATH 57 //RT_STEALTH
+#define RT_UNBREATH 57
 #define RT_DRAIN_ACID 58
 #define RT_DRAIN_WATER 59
 #define RT_DRAIN_ELEC 60
@@ -7418,46 +7422,46 @@ extern int PlayerUID;
 #define RT_ACID_COLD 81
 #define RT_ACID_POISON 82
 #define RT_ACID_TIME 83
-#define RT_PLASMA 84 //RT_ELEC_FIRE
+#define RT_PLASMA 84
 #define RT_ELEC_COLD 85
 #define RT_ELEC_POISON 86
 #define RT_ELEC_TIME 87
-#define RT_NULL 88 //RT_FIRE_COLD
+#define RT_NULL 88
 #define RT_FIRE_POISON 89
 #define RT_FIRE_TIME 90
 #define RT_COLD_POISON 91
 #define RT_COLD_TIME 92
-#define RT_SLOW 93 //RT_POISON_TIME
+#define RT_SLOW 93
 /* Acid */
 #define RT_DISARM_ACID 94
 #define RT_NUKE 95
 #define RT_DARKNESS_ACID 96
 #define RT_HI_ACID 97
-#define RT_ACID_NEXUS 98 //RT_ELEC
+#define RT_ACID_NEXUS 98
 /* Electricity */
-#define RT_ELEC_WATER 99 //RT_NULL
+#define RT_ELEC_WATER 99
 #define RT_BRILLIANCE_ELEC 100
 #define RT_TELEPORT_ELEC 101
 #define RT_THUNDER 102
-#define RT_ELEC_NEXUS 103 //RT_ACID
+#define RT_ELEC_NEXUS 103
 /* Fire */
-#define RT_FIRE_WATER 104 //RT_NULL
+#define RT_FIRE_WATER 104
 #define RT_DIG_FIRE 105
 #define RT_DARKNESS_FIRE 106
 #define RT_HI_FIRE 107
-#define RT_FIRE_NEXUS 108 //RT_COLD
+#define RT_FIRE_NEXUS 108
 /* Cold */
 #define RT_ICE 109
 #define RT_DISARM_COLD 110
 #define RT_BRILLIANCE_COLD 111
 #define RT_HI_COLD 112
-#define RT_COLD_NEXUS 113 //RT_FIRE
+#define RT_COLD_NEXUS 113
 /* Poison */
 #define RT_WATERPOISON 114
 #define RT_ICEPOISON 115
 #define RT_CONFUSION 116
 #define RT_BLINDNESS 117
-#define RT_STUN 118 //RT_POISON_NEXUS
+#define RT_STUN 118
 /* Force */
 #define RT_WAVE 119
 #define RT_MISSILE 120
@@ -7468,20 +7472,20 @@ extern int PlayerUID;
 #define RT_DIG 124
 #define RT_POLYMORPH 125
 #define RT_CLONE 126
-#define RT_WATER_NEXUS 127 //RT_SHARDS
-#define RT_DIG_TELEPORT 128 //RT_WATER_TIME
+#define RT_WATER_NEXUS 127
+#define RT_DIG_TELEPORT 128
 /* Earth */
 #define RT_INFERNO 129
 #define RT_GENOCIDE 130
-#define RT_DIG_MEMORY 131 //RT_WATER_EARTH
-#define RT_EARTH_NEXUS 132 //RT_WATER
+#define RT_DIG_MEMORY 131
+#define RT_EARTH_NEXUS 132
 /* Chaos */
-#define RT_CHAOS_NETHER 133 //RT_NEXUS
+#define RT_CHAOS_NETHER 133
 #define RT_DISENCHANT 134
 #define RT_WONDER 135
 /* Nether */
 #define RT_MANA 136
-#define RT_NETHER_TIME 137 //RT_NULL
+#define RT_NETHER_TIME 137
 /* Nexus */
 #define RT_SLEEP 138
 
@@ -7498,70 +7502,81 @@ extern int PlayerUID;
 #define RT_GLYPH_DARK_ACID 143
 #define RT_GLYPH_DARK_FIRE 144
 #define RT_GLYPH_DARK_POISON 145
+
 #define RT_DARKNESS_SHARDS 146
 #define RT_BRILLIANCE_SHARDS 147
-#define RT_CHAOS_BASE 148
-#define RT_ACID_WONDER 149
 
+#define RT_CHAOS_BASE 148
+
+#define RT_ACID_WONDER 149
 #define RT_ELEC_WONDER 150
 #define RT_COLD_WONDER 151
 #define RT_POISON_WONDER 152
 #define RT_WATER_WONDER 153
 #define RT_SHARDS_WONDER 154
+
 #define RT_WATERPOISON_CHAOS 155
 #define RT_ICEPOISON_CHAOS 156
+
 #define RT_ACID_ELEC_NETHER 157
 #define RT_ACID_FIRE_NETHER 158
 #define RT_ACID_POISON_NETHER 159
-
 #define RT_ELEC_POISON_NETHER 160
 #define RT_FIRE_POISON_NETHER 161
+
 #define RT_ACID_FIRE_FORCE 162
 #define RT_ACID_COLD_FORCE 163
 #define RT_ACID_POISON_FORCE 164
 #define RT_FIRE_POISON_FORCE 165
 #define RT_COLD_POISON_FORCE 166
+
 #define RT_ACID_ELEC_TIME 167
 #define RT_ACID_FIRE_TIME 168
 #define RT_ACID_COLD_TIME 169
-
 #define RT_ACID_POISON_TIME 170
 #define RT_ELEC_COLD_TIME 171
 #define RT_ELEC_POISON_TIME 172
 #define RT_FIRE_POISON_TIME 173
 #define RT_COLD_POISON_TIME 174
+
 #define RT_WATERPOISON_TIME 175
 #define RT_ICEPOISON_TIME 176
+
 #define RT_ROCKET 177
+
 #define RT_DIG_FIRE_TIME 178
 #define RT_DISARM_COLD_TIME 179
-
 #define RT_DISARM_ACID_TIME 180
+
 #define RT_ACID_ELEC_NEXUS 181
 #define RT_DIG_NEXUS 182
+
 #define RT_HI_PLASMA 183
 #define RT_PLASMA_ACID 184
 #define RT_PLASMA_WATER 185
 #define RT_PLASMA_NETHER 186
 #define RT_PLASMA_POISON 187
 #define RT_PLASMA_TIME 188
-#define RT_THUNDER_ACID 189
 
+#define RT_THUNDER_ACID 189
 #define RT_THUNDER_CHAOS 190
 #define RT_THUNDER_COLD 191
 #define RT_THUNDER_NETHER 192
 #define RT_THUNDER_POISON 193
+
 #define RT_ICE_ELEC 194
 #define RT_ICE_SHARDS 195
 #define RT_ICE_CHAOS 196
 #define RT_ICE_POISON 197
-#define RT_ICE_FORCE 198
+#define RT_HI_ICE 198
 #define RT_ICE_TIME 199
 
 #define RT_HI_FORCE 200
+
 #define RT_WAVE_CHAOS 201
 #define RT_WAVE_NETHER 202
 #define RT_WAVE_POISON 203
+
 #define RT_MISSILE_ACID 204
 #define RT_MISSILE_FIRE 205
 #define RT_MISSILE_CHAOS 206
@@ -7570,6 +7585,7 @@ extern int PlayerUID;
 #define RT_MISSILE_POISON 209
 
 #define RT_HI_NEXUS 210
+
 #define RT_DISENCHANT_ACID 211
 #define RT_DISENCHANT_WATER 212
 #define RT_DISENCHANT_ELEC 213
@@ -7577,17 +7593,21 @@ extern int PlayerUID;
 #define RT_DISENCHANT_COLD 215
 #define RT_DISENCHANT_FORCE 216
 #define RT_DISENCHANT_TIME 217
+
 #define RT_MANA_ACID 218
 #define RT_MANA_WATER 219
-
 #define RT_MANA_ELEC 220
 #define RT_MANA_SHARDS 221
 #define RT_MANA_FIRE 222
 #define RT_MANA_FORCE 223
 #define RT_MANA_TIME 224
 
-/* Currently unassigned (225 to 298); remainder are overlaps - Kurzel */
-#define RT_EXAMPLE 225
+/* Sort these! */
+#define RT_WATERPOISON_NETHER 225
+#define RT_ICEPOISON_NETHER 226
+
+/* Currently unassigned (227 to 298); remainder are overlaps - Kurzel */
+#define RT_EXAMPLE 227
 #define RT_LAST 298
 
 

@@ -793,6 +793,10 @@ static void process_effects(void)
 
 #ifdef ANIMATE_EFFECTS
  #ifdef FREQUENT_EFFECT_ANIMATION
+		/* Hack -- Decode extra runespell info for color. - Kurzel */
+		u32b typ_original = e_ptr->type;
+		e_ptr->type = e_ptr->type % 1000;
+		
 		/* hack: animate the effect! Note that this is independant of the effect interval,
 		   as opposed to the other animation code below. - C. Blue */
 		if (!(turn % (cfg.fps / 5)) && e_ptr->time && spell_color_animation(e_ptr->type))
@@ -802,6 +806,9 @@ static void process_effects(void)
 				if (!in_bounds2(wpos, j, i)) continue;
 				everyone_lite_spot(wpos, j, i);
 			}
+			
+		/* Hack -- Restore runespell info. - Kurzel */
+		e_ptr->type = typ_original;			
  #endif
 #endif
 
@@ -871,7 +878,6 @@ static void process_effects(void)
 					else
 						project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type,
 						    PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP, "");
-
 					/* Oh, destroyed? RIP */
 					if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
 							Players[0 - who]->conn == NOT_CONNECTED)
@@ -882,11 +888,18 @@ static void process_effects(void)
 					
 #ifdef ANIMATE_EFFECTS
  #ifndef FREQUENT_EFFECT_ANIMATION
+					/* Hack -- Decode extra runespell info for color. - Kurzel */
+					u32b typ_original = e_ptr->type;
+					e_ptr->type = e_ptr->type % 1000;
+					
 					/* C. Blue - hack: animate effects inbetween
 					   ie allow random changes in spell_color().
 					   Note: animation speed depends on effect interval. */
 					if (spell_color_animation(e_ptr->type))
 					    everyone_lite_spot(wpos, j, i);
+			
+					/* Hack -- Restore runespell info. - Kurzel */
+					e_ptr->type = typ_original;	
  #endif
 #endif
 				} else {
