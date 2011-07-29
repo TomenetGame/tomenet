@@ -10612,7 +10612,23 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
-
+	/* Hack -- Decode any 'encoded' exploding 'typ' flag, effect type, imperative - Kurzel */
+	u32b typ_original = typ; //For 'effects'.
+	u32b typ_explode = 0; //Default non-exploding.
+	u16b typ_effect = 0; //Default instantaneous.
+	u16b typ_imper = 0; //Directly added to radius. (+/-1)
+	if (typ >= 1000) { //Mega-Hack -- Works with less than 1000 GF_typ + 2 digit places.
+		typ_effect = (typ / 10000000);
+		typ = typ % 10000000;
+		typ_imper = (typ / 1000000) - 3; //Also revert radius +3.
+		typ = typ % 1000000;
+		typ_explode = typ / 1000;
+		typ = typ % 1000;
+		//Reduce mods to +/-1 for less effect on explosion radius.
+		if (typ_imper > 0) typ_imper = 1;
+		if (typ_imper < 0) typ_imper = -1;
+	}	
+	
 	/* Spells which never affect monsters, read:
 	   Spells which we want to exclude from merely _waking monsters up_!
 	   Note: Bolt spells will still be 'stopped' when hitting a monster. */
@@ -11223,6 +11239,9 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 
 		/* Effect ? */
 		if (flg & PROJECT_STAY) {
+		
+			typ = typ_original; //Hack -- Pass the runespell info. - Kurzel
+		
 			/* I believe it's not right */
 //			effect = new_effect(typ, dam, project_time, py, px, rad, project_time_effect);
 			/* MEGAHACK -- quick hack to make fire_wall work
@@ -11358,6 +11377,23 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			}
 */
 			if (project_m(0 - who, who, y2, x2, dist, wpos, y, x, dam, typ, flg)) notice = TRUE;
+			
+			/* Generate additional runespell explosions, based on hacky decoded 'typ' information. - Kurzel
+			 * Explosions use project() and are always treated as 'ball' effects, appearing at the sub-target locations (who = 0).
+			 * Bolt/Beam/Ball types always explode, and in similar fashion. (Instantaneous)
+			 * Wave/Cloud/Storm types have a chance to explode, and in unique fashion. (Interval)
+			 * Bolt/Beam/Ball: Explode 1 in 1. Radius 1 to 2. 1/10x damage. (+1/10 explosion damage) ~10%
+			 * Wave: Explode 1 in 2. Radius 2 to 3. 1x damage. (+5/10 explosion damage) ~30%
+			 * Cloud: Explode 1 in 5. Radius 1 to 2. 1.5x damage. (+3/10 explosion damage) ~50%
+			 * Storm: Explode 1 in 3. Radius 1. 2x damage. (+6/9 explosion damage) ~70%
+			 * typ_imper modifies the radius by an additional +1 to -1, to a minimum of 0.
+			 */
+			if (typ_explode != 0) {
+				if (typ_effect == 0) project(who, randint(2)+typ_imper, wpos, y, x, dam / 10, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				if (typ_effect == EFF_WAVE && randint(2) == 1) project(who, 1+randint(2)+typ_imper, wpos, y, x, dam, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				if (typ_effect == EFF_LAST && randint(5) == 1) project(who, randint(2)+typ_imper, wpos, y, x, dam * 3/2, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				if (typ_effect == EFF_STORM && randint(3) == 1) project(who, 1+typ_imper, wpos, y, x, dam * 2, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+			 }
 		}
 
 		/* Mega-Hack */

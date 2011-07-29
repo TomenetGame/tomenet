@@ -768,7 +768,8 @@ struct effect_type
 	s16b	interval;	/* How quickly does it tick (10 = normal, once per 10 frames at 0 ft depth) */
 	s16b    time;           /* For how long */
 	s16b    dam;            /* How much damage */
-	s16b    type;           /* Of which type */ /* GF_XXX, for now */
+	u32b    type;            /* Hack -- Store extra runespell info - Kurzel */
+	//s16b    type;           /* Of which type */ /* GF_XXX, for now */
 	s16b    cy;             /* Center of the cast*/
 	s16b    cx;             /* Center of the cast*/
 	s16b    rad;            /* Radius -- if needed *//* Not used? */
@@ -3439,8 +3440,8 @@ struct r_spell
 	s16b level; /* Minimum level to cast */
 	s16b fail; /* Fail rate multiplier */
 	s16b radius; /* Radius at 50 before multipliers: linear scale */
-	u16b gf_type; /* Projection type */
-	u16b gf_explode; /* Exploding projection type - Kurzel */
+	u32b gf_type; /* Projection type */
+	u32b gf_explode; /* Exploding projection type - Kurzel */
 	u32b self; /* Augment rune type - Kurzel */
 };
 

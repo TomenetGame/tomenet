@@ -285,12 +285,14 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 	}
 	else if ((s_flags & R_BEAM) == R_BEAM)
 	{
-		damage = damroll(3 + rget_level(40), 1 + rget_level(20));
+		//damage = damroll(3 + rget_level(40), 1 + rget_level(20));
+		damage = damroll(3 + rget_level(40), 1 + rget_level(30));
 	}
 	else if ((s_flags & R_SELF) == R_SELF)
 	{
 		damage = randint(20) + rget_level(136);
-		dur = randint(50) + rget_level(75);
+		//dur = randint(50) + rget_level(75);
+		dur = randint(25) + rget_level(75);
 	}
 	else if ((s_flags & R_BALL) == R_BALL)
 	{
@@ -307,7 +309,7 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 	}
  	else if ((s_flags & R_WAVE) == R_WAVE)
 	{
-    /* Wave uses duration, instead of radius. */
+		/* Wave uses duration, instead of radius. */
 		dur = rget_level(15) / 2;
 		
 		/* Damage should be proportional to radius and duration. */
@@ -316,7 +318,7 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 	else if ((s_flags & R_STOR) == R_STOR)
 	{
 		//damage = e_level + 3 + rget_level(100);
-    r = rget_level(base_radius);
+		r = rget_level(base_radius);
 		dur = (randint(10) + rget_level(10));
 		
 		/* Damage should be proportional to radius and duration. (and interval) */
@@ -334,7 +336,7 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 	
 	if ((s_flags & R_WAVE) == R_WAVE) //Waves are cheaper standing clouds, with a slight boost to radius.
 	{
-  //duration IS radius only for the new wave, don't boost! - Kurzel
+		//duration IS radius only for the new wave, don't boost! - Kurzel
 		//r += 1;
 		//r = (r < 2 ? 2 : r);
 		dur += 1;
@@ -739,7 +741,7 @@ u16b rspell_skill(u32b Ind, u32b s_type)
 			value = get_skill(p_ptr, skill);
 			//Ugh. We need an index from 0-7. FIRECOLD through MINDNEXU is 96-103
 			//skills[skill - SKILL_R_FIRECOLD] = 1;
-   skills[skill - SKILL_R_ACIDWATE] = 1;
+			skills[skill - SKILL_R_ACIDWATE] = 1;
 			//ACIDWATE through FORCTIME is 96-101.
 			if (rune_c > 2)
 			{
@@ -912,7 +914,9 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 	char * begin = NULL;
 	fail_chance = randint(100);
 	player_type * p_ptr = Players[Ind];
-	u16b gf_type = runespell_list[type].gf_type;
+	//u16b gf_type = runespell_list[type].gf_type;
+	u32b gf_type = runespell_list[type].gf_type; //Hack -- More info to pass! - Kurzel
+	u32b gf_explode = runespell_list[type].gf_explode;
 	u16b e_level = runespell_list[type].level;
 	m = meth_to_id(type_flags);
 	e_level += runespell_types[m].cost;
@@ -1619,22 +1623,37 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 	}
 	else
 	{
+		/* Hack -- Encode the exploding typ_explode, and imperative - Kurzel */
+		if (gf_explode != 0) {
+			gf_type = gf_type + 1000*gf_explode;
+			gf_type = gf_type + 1000000*(r_imperatives[imper].radius+3); //hard-coded 3 (max-radius mod?)
+			//Note that 'augments' don't effect explosions! (eg. radius)
+		}
+		
 		if (type_flags & R_STOR)
 		{
 			sprintf(p_ptr->attacker, " fills the air with %s for", runespell_list[type].title);
 			msg_format(Ind, "%s%s fill the air with %s %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
-			if (success) //project_hack(Ind, gf_type, damage, p_ptr->attacker);
-                //fire_wave(Ind, gf_type, 0, damage, radius, duration, 10, EFF_STORM, " summons an elemental storm for");
-                fire_wave(Ind, gf_type, 0, damage, radius, duration, 10, EFF_STORM, p_ptr->attacker);
+			if (success) { //project_hack(Ind, gf_type, damage, p_ptr->attacker);
+			
+			/* Hack -- Encode the typ_effect for explosion */
+			if (gf_explode != 0) gf_type = gf_type + 10000000*EFF_STORM;
+			
+			fire_wave(Ind, gf_type, 0, damage, radius, duration, 10, EFF_STORM, p_ptr->attacker);
+			}
 		}
 		else if (type_flags & R_WAVE)
 		{
 			sprintf(p_ptr->attacker, " summons a wave of %s for", runespell_list[type].title);
 			msg_format(Ind, "%s%s summon a %s wave of %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
-			if (success) //fire_wave(Ind, gf_type, 0, damage, radius, duration, 10, EFF_LAST, p_ptr->attacker);
-                //fire_wave(Ind, gf_type, 0, damage, 0, duration, 5, EFF_WAVE, " casts a pulse wave for");
-                fire_wave(Ind, gf_type, 0, damage, 0, duration, 2, EFF_WAVE, p_ptr->attacker);
-  }
+			if (success) { //fire_wave(Ind, gf_type, 0, damage, radius, duration, 10, EFF_LAST, p_ptr->attacker);
+			
+			/* Hack -- Encode the typ_effect for explosion */
+			if (gf_explode != 0) gf_type = gf_type + 10000000*EFF_WAVE;
+			
+			fire_wave(Ind, gf_type, 0, damage, 0, duration, 2, EFF_WAVE, p_ptr->attacker);
+			}
+		}
 		if (type_flags & R_MELE)
 		{
 			int px = p_ptr->px;
@@ -1688,7 +1707,10 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			msg_format(Ind, "%s%s summon a %s cloud of %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
 			
 			if (success)
-			{
+			{		
+				/* Hack -- Encode the typ_effect for explosion */
+				if (gf_explode != 0) gf_type = gf_type + 10000000*EFF_LAST; //Minor Hack -- This is 'unused' / not related to cloud type.
+			
 				fire_cloud(Ind, gf_type, dir, damage, radius, duration, 9, p_ptr->attacker);
 			}
 		}
