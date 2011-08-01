@@ -6462,11 +6462,11 @@ extern int PlayerUID;
 /*
  * Shield effect options
  */
-#define SHIELD_NONE             0x0000
-#define SHIELD_COUNTER          0x0001
-#define SHIELD_FIRE             0x0002
-#define SHIELD_ELEC             0x0004
-#define SHIELD_FEAR             0x0008
+#define SHIELD_NONE		0x0000
+#define SHIELD_COUNTER		0x0001
+#define SHIELD_FIRE		0x0002
+#define SHIELD_ELEC		0x0004
+#define SHIELD_FEAR		0x0008
 
 /* special 'projector' types, used in project(). */
 #define PROJECTOR_UNUSUAL	-1000
@@ -6476,7 +6476,7 @@ extern int PlayerUID;
 #define PROJECTOR_MON_TRAP	-1004
 #define PROJECTOR_EFFECT	-1005
 #define PROJECTOR_PLAYER	-1006
-
+#define PROJECTOR_RUNE		-1007
 
 //see true_artifact_p - #define TRUE_ARTS(o_ptr) ((artifact_p(o_ptr)) && (!o_ptr->name3))
 #define PRICE_BOOST(value, base, step) \
