@@ -1246,22 +1246,22 @@ byte spell_color(int type)
 		case GF_HEALINGCLOUD:	return (TERM_LITE);//return (randint(5)>1?TERM_WHITE:TERM_L_BLUE);
 		case GF_WATERPOISON:	return (TERM_COLD);return (randint(2)==1?TERM_L_BLUE:(randint(2)==1?TERM_BLUE:(randint(2)==1?TERM_GREEN:TERM_L_GREEN)));
 		case GF_ICEPOISON:	return (TERM_SHAR);//return (randint(3)>1?TERM_UMBER:(randint(2)==1?TERM_GREEN:TERM_SLATE));
-  /* Gestalts for new runemasters */
-  case GF_ACID_ELEC: return (randint(2)==1?TERM_ACID:TERM_ELEC);
-  case GF_ACID_FIRE: return (randint(2)==1?TERM_ACID:TERM_FIRE);
-  case GF_ACID_COLD: return (randint(2)==1?TERM_ACID:TERM_COLD);
-  case GF_ACID_POISON: return (randint(2)==1?TERM_ACID:TERM_POIS);
-//  case GF_PLASMA: //GF_ELEC_FIRE: return (randint(2)==1?TERM_FIRE:TERM_ELEC);
-  case GF_ELEC_COLD: return (randint(2)==1?TERM_ELEC:TERM_COLD);
-  case GF_ELEC_POISON: return (randint(2)==1?TERM_ELEC:TERM_POIS);
-//  case GF_NULL: //GF_FIRE_COLD: return (randint(2)==1?TERM_FIRE:TERM_COLD);
-  case GF_FIRE_POISON: return (randint(2)==1?TERM_FIRE:TERM_POIS);
-  case GF_COLD_POISON: return (randint(2)==1?TERM_COLD:TERM_POIS);
-  case GF_SHATTER: return (randint(2)==1?TERM_COLD:TERM_LITE);
-  case GF_CORRODE: return (randint(2)==1?TERM_ACID:TERM_LITE);
-  case GF_GENOCIDE: return (randint(4)==1?TERM_SLATE:TERM_L_DARK);
-  case GF_WONDER: return (TERM_MULTI);
-  case GF_ANNIHILATION: return (randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
+		/* Gestalts for new runemasters */
+		case GF_ACID_ELEC: return (randint(2)==1?TERM_ACID:TERM_ELEC);
+		case GF_ACID_FIRE: return (randint(2)==1?TERM_ACID:TERM_FIRE);
+		case GF_ACID_COLD: return (randint(2)==1?TERM_ACID:TERM_COLD);
+		case GF_ACID_POISON: return (randint(2)==1?TERM_ACID:TERM_POIS);
+		//case GF_PLASMA: //GF_ELEC_FIRE: return (randint(2)==1?TERM_FIRE:TERM_ELEC);
+		case GF_ELEC_COLD: return (randint(2)==1?TERM_ELEC:TERM_COLD);
+		case GF_ELEC_POISON: return (randint(2)==1?TERM_ELEC:TERM_POIS);
+		//case GF_NULL: //GF_FIRE_COLD: return (randint(2)==1?TERM_FIRE:TERM_COLD);
+		case GF_FIRE_POISON: return (randint(2)==1?TERM_FIRE:TERM_POIS);
+		case GF_COLD_POISON: return (randint(2)==1?TERM_COLD:TERM_POIS);
+		case GF_SHATTER: return (randint(2)==1?TERM_COLD:TERM_LITE);
+		case GF_CORRODE: return (randint(2)==1?TERM_ACID:TERM_LITE);
+		case GF_GENOCIDE: return (randint(4)==1?TERM_SLATE:TERM_L_DARK);
+		case GF_WONDER: return (TERM_MULTI);
+		case GF_ANNIHILATION: return (randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
 	}
 
 	/* Standard "color" */
@@ -1323,22 +1323,22 @@ bool spell_color_animation(int type)
 		case GF_HEALINGCLOUD:	return FALSE;//return (randint(5)>1?TERM_WHITE:TERM_L_BLUE);
 		case GF_WATERPOISON:	return FALSE;return (randint(2)==1?TERM_L_BLUE:(randint(2)==1?TERM_BLUE:(randint(2)==1?TERM_GREEN:TERM_L_GREEN)));
 		case GF_ICEPOISON:	return FALSE;//return (randint(3)>1?TERM_UMBER:(randint(2)==1?TERM_GREEN:TERM_SLATE));
-  /* Gestalts for new runemasters */
-  case GF_ACID_ELEC: 	return FALSE;
-  case GF_ACID_FIRE: 	return FALSE;
-  case GF_ACID_COLD: 	return FALSE;
-  case GF_ACID_POISON: 	return FALSE;
-//  case GF_PLASMA: //GF_ELEC_FIRE: 	return FALSE;
-  case GF_ELEC_COLD: 	return FALSE;
-  case GF_ELEC_POISON: 	return FALSE;
-//  case GF_NULL: //GF_FIRE_COLD:	return FALSE;
-  case GF_FIRE_POISON:	return FALSE;
-  case GF_COLD_POISON:	return FALSE;
-  case GF_SHATTER:	return FALSE;
-  case GF_CORRODE:	return FALSE;
-  case GF_GENOCIDE:	return FALSE;
-  case GF_WONDER:	return FALSE;
-  case GF_ANNIHILATION:	return FALSE;
+		/* Gestalts for new runemasters */
+		case GF_ACID_ELEC: 	return FALSE;
+		case GF_ACID_FIRE: 	return FALSE;
+		case GF_ACID_COLD: 	return FALSE;
+		case GF_ACID_POISON: 	return FALSE;
+		//case GF_PLASMA: //GF_ELEC_FIRE: 	return FALSE;
+		case GF_ELEC_COLD: 	return FALSE;
+		case GF_ELEC_POISON: 	return FALSE;
+		//case GF_NULL: //GF_FIRE_COLD:	return FALSE;
+		case GF_FIRE_POISON:	return FALSE;
+		case GF_COLD_POISON:	return FALSE;
+		case GF_SHATTER:	return FALSE;
+		case GF_CORRODE:	return FALSE;
+		case GF_GENOCIDE:	return FALSE;
+		case GF_WONDER:	return FALSE;
+		case GF_ANNIHILATION:	return FALSE;
 	}
 
 	/* Standard "color" */
@@ -5452,10 +5452,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		{
 			if (seen) obvious = TRUE;
 
-			do_stun = (10 + randint(15)) / div;
+			do_stun = randint(15) / div;
 
 			if ((r_ptr->flags3 & RF3_IM_FIRE) && (r_ptr->flags3 & RF3_IM_ELEC)) {
-				note = "resists a lot";
+				note = " resists a lot";
 				dam /= 9;
 			} else {
 				if (r_ptr->flags3 & RF3_IM_FIRE) {
@@ -5959,7 +5959,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		case GF_SOUND:
 		{
 			if (seen) obvious = TRUE;
-			do_stun = (10 + randint(15)) / div;
+			do_stun = randint(15) / div;
 			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND))
 			{
 				note = " resists";
@@ -8164,6 +8164,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* TODO: add potion name */
 		sprintf(killer, "an evaporating potion");
 		sprintf(m_name, "an evaporating potion");
+		sprintf(m_name_gen, "the");
+	}
+	/* hack -- by malformed invocation (runespell backlash) */
+	else if (who == PROJECTOR_RUNE) {
+		sprintf(killer, "a malformed invocation");
+		sprintf(m_name, "a malformed invocation");
 		sprintf(m_name_gen, "the");
 	}
 	/* hack -- another player who has logged out */

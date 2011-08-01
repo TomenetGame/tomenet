@@ -52,7 +52,7 @@ s16b rspell_time(u32b Ind, byte imperative)
 	player_type * p_ptr = Players[Ind];
 	
 	int cast_time = r_imperatives[imperative].time;
-	
+
 	return (level_speed(&p_ptr->wpos) * cast_time) / 10;
 }
 
@@ -310,7 +310,7 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
  	else if ((s_flags & R_WAVE) == R_WAVE)
 	{
 		/* Wave uses duration, instead of radius. */
-		dur = rget_level(15) / 2;
+		dur = rget_level(15) / 3;
 		
 		/* Damage should be proportional to radius and duration. */
 		damage = randint(4) + rget_level(90 - (*radius + *duration) / 2);
@@ -405,6 +405,8 @@ Returns a byte of penalty flags.
 #define RPEN_MAJ_BK 0x20 //Spell backlash
 #define RPEN_MAJ_BB 0x40 //Black breath
 #define RPEN_MAJ_DT 0x80 //Death?
+
+No longer deal serious penalties when a rune can be broken instead. - Kurzel
 */
 byte rspell_penalty(u32b Ind, u16b pow)
 {
@@ -431,26 +433,31 @@ byte rspell_penalty(u32b Ind, u16b pow)
 			if (roll > 320)
 			{
 				penalty_flag |= RPEN_MAJ_DT;
+				penalty_flag |= RPEN_MIN_RN;
 				break;
 			}
 			else if (roll > 270)
 			{
 				penalty_flag |= RPEN_MAJ_BB;
+				penalty_flag |= RPEN_MIN_RN;
 				break;
 			}
 			else if (roll > 220)
 			{
 				penalty_flag |= RPEN_MAJ_BK;
+				penalty_flag |= RPEN_MIN_RN;
 				break;
 			}
 			else if (roll > 160)
 			{
 				penalty_flag |= RPEN_MAJ_SN;
+				penalty_flag |= RPEN_MIN_RN;
 				break;
 			}
 			else if (roll > 110)
 			{
 				penalty_flag |= RPEN_MIN_ST;
+				penalty_flag |= RPEN_MIN_RN;
 				break;
 			}
 			else if (roll > 80)
@@ -478,6 +485,7 @@ byte rspell_penalty(u32b Ind, u16b pow)
 Executes the penalties worked out in rspell_penalty()
 
 Destroys runes, inflicts damage and other negative effects on player Ind.
+No longer deal serious penalties when a rune can be broken instead. - Kurzel
 
 */
 u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cost, u32b s_type, char * attacker, byte imperative, u32b s_flags)
@@ -495,10 +503,11 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 	if (damage<10)
 		damage = 10;
 	
+	int amt = 0;
+	
 	if (type & RPEN_MIN_RN)
 	{
-		int i,amt;
-		amt = 0;
+		int i;
 		object_type	*o_ptr;
 		char o_name[160];
 
@@ -520,14 +529,15 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 					{
 						if (runes[o_ptr->sval]==1)
 						{
-							if (rand_int(100) < 70)
-							{
+							//if (rand_int(100) < 70) //Always break a rune if able. - Kurzel
+							//{
 								/* Select up to a third */
-								amt = rand_int(o_ptr->number/3);
+								amt = 0; //Only break 1 rune, but more often - Kurzel */
+								//amt = rand_int(o_ptr->number/3);
 								
 								if (amt == 0 && o_ptr->number >= 1)
 									amt = 1;
-							}
+							//}
 						}
 					}
 				}
@@ -560,7 +570,8 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 		d = randint(20)+1;
 		if (d == 20)
 		{
-			set_paralyzed(Ind, 2);
+			//set_paralyzed(Ind, 2);
+			set_paralyzed(Ind, 1); //A single turn may still be too long!
 		}
 		else if (d >= 17)
 		{
@@ -605,9 +616,11 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 		}
 		else
 		{
-			int hit = (p_ptr->mhp*(randint(15)+1)/100);
-			msg_format(Ind, "\377rThe runespell hits you for \377u%i \377rdamage!", hit);
-			take_hit(Ind, hit, "a malformed invocation", 0); //match GF_type for damage here?
+			//int hit = (p_ptr->mhp*(randint(15)+1)/100);
+			//msg_format(Ind, "\377rThe runespell hits you for \377u%i \377rdamage!", hit);
+			//take_hit(Ind, hit, "a malformed invocation", 0); //match GF_type for damage here? - Kurzel
+			project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage/5, s_type, PROJECT_KILL, "");
+			//static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ, int rad, int flg, char *attacker)
 		}
 		
 		p_ptr->redraw |= PR_HP;
@@ -620,7 +633,8 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 		
 		if (randint(40) > 2)
 			mode = STAT_DEC_TEMPORARY;
-		else
+		//else
+		else if (amt == 0)
 			mode = STAT_DEC_PERMANENT;
 		
 		switch(randint(12+mod_luck))
@@ -661,10 +675,12 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 		}
 	}
 	/* Hurt sanity. With luck it may only confuse, scare or cause hallucinations. Should be less dangerous at low levels. */
-	if (type & RPEN_MAJ_SN)
+	//if (type & RPEN_MAJ_SN)
+	if ((type & RPEN_MAJ_SN) && (amt == 0))
 	{
 		msg_print(Ind, "\377rYou feel a little less sane!");
-		d = damroll(1,(p_ptr->lev*(55/mod_luck)));
+		//d = damroll(1,(p_ptr->lev*(55/mod_luck)));
+		d = damroll(1,(p_ptr->lev*(25/mod_luck))); //Reduced to avoid 1 shot vegetation at high levels! ;) - Kurzel
 		if (d<= 3)
 		{
 			set_image(Ind, duration/5);
@@ -683,18 +699,19 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 		}
 	}
 		
-	if (type & RPEN_MAJ_BK || type & RPEN_MAJ_BB)
+	if ((type & RPEN_MAJ_BK || type & RPEN_MAJ_BB) && (amt == 0))
 	{
-		msg_format(Ind, "\377rYour grasp on the invocation slips! It hits you for \377u%i \377rdamage!", damage);
-		take_hit(Ind, damage, "a malformed invocation", 0);
+		//msg_format(Ind, "\377rYour grasp on the invocation slips! It hits you for \377u%i \377rdamage!", damage);
+		//take_hit(Ind, damage, "a malformed invocation", 0); //match GF_type for damage here? - Kurzel
+		project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage, s_type, PROJECT_KILL, "");
 	}
-	
-	if (type & RPEN_MAJ_DT)
+	/*
+	if ((type & RPEN_MAJ_DT) && (amt == 0)) //Disabled for now. - Kurzel
 	{
 		msg_format(Ind, "\377rYou lose control of the invocation! It hits you for \377u%i \377rdamage!", damage);
 		take_hit(Ind, damage*10, "a malformed invocation", 0);
 	}
-	
+	*/
 	p_ptr->redraw |= PR_HP;
 	p_ptr->redraw |= PR_MANA;
 	p_ptr->redraw |= PR_SPEED;
@@ -1794,8 +1811,8 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative)
 	player_type * p_ptr = Players[Ind];
 	
 	u32b s_type = rspell_type(s_flags);
-	s16b s_cost = 0; u16b s_dam = 0;  s16b s_diff = 0;
-	u16b s_av = 0;
+	s16b s_cost = 0; u16b s_dam = 0;  s16b s_diff = 0; s16b s_time = 0;
+	u16b s_av = 0; u16b augment_level = 0;
 	
 	u16b radius = 0; u16b duration = 0;
 	s16b mali = 0;
@@ -1805,8 +1822,36 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative)
 	s_dam = rspell_dam(Ind, &radius, &duration, s_type, s_flags, s_av, imperative);
 	s_diff = rspell_diff(Ind, imperative, s_cost, s_av, s_type, s_flags, &mali);
 	
+	s_time = rspell_time(Ind, imperative);
+	
+	if (!rspell_check(Ind, &mali, s_flags))
+	{
+		mali += 5; //+15% fail for first missing rune, +10% per additional rune
+	}
+	
+	/* Augment the runespell if augment level requirement is met - Kurzel */
+	u32b s_augment = runespell_list[s_type].self;
+	int i;
+	if (s_augment != 0) {
+		augment_level = rspell_skill(Ind, s_augment);
+		for (i=0;i<RCRAFT_MAX_ELEMENTS;i++) {
+			if (s_augment == r_augments[i].rune) {
+				//Check the level requirement for a single rune.
+				if(augment_level >= r_augments[i].level) {
+					s_cost = s_cost * (((r_augments[i].cost)-10 > 0) ? (r_augments[i].cost-10)*(100-augment_level)/50+10 : (r_augments[i].cost-10)*augment_level/50+10) / 10;
+					mali = mali + (((r_augments[i].fail) > 0) ? r_augments[i].fail*(100-augment_level)/50 : r_augments[i].fail*augment_level/50);
+					s_dam = s_dam * (((r_augments[i].dam)-10 < 0) ? (r_augments[i].dam-10)*(100-augment_level)/50+10 : (r_augments[i].dam-10)*augment_level/50+10) / 10;
+					s_time = s_time * (((r_augments[i].time)-10 > 0) ? (r_augments[i].time-10)*(100-augment_level)/50+10 : (r_augments[i].time-10)*augment_level/50+10) / 10;
+					radius = radius + (((r_augments[i].radius) > 0) ? r_augments[i].radius*(100-augment_level)/50 : r_augments[i].radius*augment_level/50);
+					duration = duration * (((r_augments[i].duration)-10 < 0) ? (r_augments[i].duration-10)*(100-augment_level)/50+10 : (r_augments[i].duration-10)*augment_level/50+10) / 10;
+				}
+				break;
+			}
+		}
+	}
+
 	/* Time to cast can be varied by the active spell modifier. */
-	if (p_ptr->energy < rspell_time(Ind, imperative))
+	if (p_ptr->energy < s_time)
 	{
 		return 0;
 	}
@@ -1814,14 +1859,30 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative)
 	if (s_av<=0)
 	{
 		msg_print(Ind, "\377rYou don't know these runes.");
-		p_ptr->energy -= rspell_time(Ind, imperative);
+		p_ptr->energy -= s_time;
+		return 0;
+	}
+	
+	/* Forbid casting 15 levels above skill level - Kurzel */
+	s16b type_level = 0;
+	int j = 0;
+	for (j=0;j<RCRAFT_MAX_TYPES;j++) {
+		if((s_flags & runespell_types[j].type) == runespell_types[j].type) {
+			type_level = runespell_types[j].cost;
+			break;
+		}
+	}
+	if (s_av<=runespell_list[s_type].level+r_imperatives[imperative].level+type_level-15)
+	{
+		msg_print(Ind, "\377rYou don't dare invoke such a dangerous spell.");
+		p_ptr->energy -= s_time;
 		return 0;
 	}
 	
 	if (s_type == RT_NONE)
 	{
 		msg_print(Ind, "\377rThis is not a runespell.");
-		p_ptr->energy -= rspell_time(Ind, imperative);
+		p_ptr->energy -= s_time;
 		return 0;
 	}
 
@@ -1832,7 +1893,7 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative)
 			if (s_flags & (1 << bit)) runes++;
 		if (runes > 2 && p_ptr->pclass != CLASS_RUNEMASTER) {
 			msg_print(Ind, "\377rYou are not adept enough to draw more than two runes.");
-			p_ptr->energy -= rspell_time(Ind, imperative);
+			p_ptr->energy -= s_time;
 			return 0;
 		}
 	}
@@ -1850,18 +1911,18 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative)
 	/* AM checks for runes assume that not the person is emitting the magic, but the runes are! */
 	if (check_antimagic(Ind, 100))
 	{
-		p_ptr->energy -= rspell_time(Ind, imperative);
+		p_ptr->energy -= s_time;
 		return 0;
 	}
 	if (p_ptr->anti_magic && (s_flags & R_SELF)) {
 		msg_format(Ind, "\377%cYour anti-magic shell absorbs the spell.", COLOUR_AM_OWN);
-		p_ptr->energy -= rspell_time(Ind, imperative);
+		p_ptr->energy -= s_time;
 		return 0;
 	}
 
 	/* school spell casting interference chance used for this */
 	if (interfere(Ind, cfg.spell_interfere)) {
-		p_ptr->energy -= rspell_time(Ind, imperative);
+		p_ptr->energy -= s_time;
 		return 0;
 	}
 
@@ -1904,11 +1965,6 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative)
 				p_ptr->shooty_till_kill = TRUE;
 			}
 		}
-	}
-	
-	if (!rspell_check(Ind, &mali, s_flags))
-	{
-		mali += 5; //+15% fail for first missing rune, +10% per additional rune
 	}
 	
 	cast_runespell(Ind, dir, s_dam, radius, duration, s_cost, s_type, s_diff, imperative, s_flags, s_av, mali);

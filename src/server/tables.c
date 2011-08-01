@@ -6302,21 +6302,32 @@ r_imper r_imperatives[RCRAFT_MAX_IMPERATIVES] =
 	Rune, level req, cost *10%, fail +%, damage *10%, cast_time *10%, radius +#, duration *10%
 	cost, damage, cast_time and duration are /10 multipliers; fail is a percentage bonus; level, radius are +/- value 
  
+	struct r_augment
+	{
+		u32b rune; //Rune flag
+		s16b level; //Level required
+		s16b cost; //Cost multiplier
+		s16b fail; //Fail multiplier
+		s16b dam; //Damage multipler
+		s16b time; //Time to cast
+		s16b radius; //Radius +/-
+		s16b duration; //Duration multiplier
+	};
  */
 r_augment r_augments[RCRAFT_MAX_ELEMENTS] = 
 {
 	//R_FLAG,	+l$, *c%, +f%, *d%, *p%, r+, *t%
-	{ R_ACID,   1,  10,   0,  10,  10,   0, 14}, //40% duration increase
+	{ R_ACID,   1,  10,   0,  10,  10,   0, 13}, //30% duration increase
 	{ R_ELEC,   1,   7,   0,  10,  10,   0, 10}, //30% cost reduction
 	{ R_FIRE,   1,  12,   0,  12,  10,   0, 10}, //20% damage/cost increase
 	{ R_COLD,   1,  10, -10,  10,  10,   0, 10}, //10% failure reduction
 	{ R_POIS,   5,  10,   0,  10,   8,   0, 10}, //20% energy decrease
-	{ R_FORC,  15,  10,   0,  10,  10,   1, 10}, // +1 radius increase
+	{ R_FORC,  15,  10,   0,  10,  10,   2, 10}, // +2 radius increase
 	{ R_WATE,  15,  10,  -5,   8,   8,   0, 10}, //20% energy/damage decrease, 5% failure decrease
 	{ R_EART,  15,  11,   0,  11,  10,   0, 11}, //10% damage/cost increase, 10% duration increase
 	{ R_CHAO,  25,  14, +20,  14,  10,   0, 10}, //40% damage/cost increase, 20% failure increase
-	{ R_NETH,  25,  14,   0,  14,  10,  -1, 10}, //40% damage/cost increase, -1 radius decrease
-	{ R_NEXU,  25,  10,   0,  10,  10,   2,  6}, // +2 radius increase, 40% duration decrease
+	{ R_NETH,  25,  14,   0,  14,  10,  -2, 10}, //40% damage/cost increase, -2 radius decrease
+	{ R_NEXU,  25,  10,   0,  10,  10,   3,  7}, // +3 radius increase, 30% duration decrease
 	{ R_TIME,  30,  10, +10,   6,   6,   0, 12}, //40% energy/damage decrease, 20% duration increase
 };
 
@@ -6377,7 +6388,7 @@ r_spell runespell_list[RT_MAX] =
 { RT_NEXUS,		"nexus",		12, 14, 25, 10, 1, GF_NEXUS,		0,	0 }, //3
 { RT_TIME,		"time",		10, 20, 30, 10, 1, GF_TIME,		0,	0 }, //5
 
-{ RT_POWER,		"dissolution",	 9, 20, 30, 15, 2, GF_DISP_ALL,	0,	0 }, //1 (power check)
+{ RT_POWER,		"dissolution",	10, 20, 30, 15, 2, GF_DISP_ALL,	0,	0 }, //1
 { RT_DISINTEGRATE_ELEC,	"disintegration",	12, 25, 40, 20, 3, GF_DISINTEGRATE,	0,	R_ELEC }, //1
 { RT_DISINTEGRATE_SHARDS,	"disintegration",	12, 25, 40, 20, 3, GF_DISINTEGRATE,	0,	R_EART }, //1
 { RT_DISINTEGRATE_FIRE,	"disintegration",	12, 25, 40, 20, 3, GF_DISINTEGRATE,	0,	R_FIRE }, //1
@@ -6413,7 +6424,7 @@ r_spell runespell_list[RT_MAX] =
 { RT_DETONATION_FORCE,	"detonations",	14, 15, 35, 15, 3, GF_DETONATION,	0,	R_FORC }, //1
 { RT_DETONATION_TIME,	"detonations",	14, 15, 35, 15, 3, GF_DETONATION,	0,	R_TIME }, //1
 
-{ RT_ANNIHILATION,		"annihilation",	 1, 20, 30, 15, 2, GF_ANNIHILATION,	0,	0 }, //1 (power check, was RT_TRAUMATURGY)
+{ RT_ANNIHILATION,		"annihilation",	 5, 20, 30, 15, 2, GF_ANNIHILATION,	0,	0 }, //1
 { RT_STASIS_ACID,		"stasis",		10, 10, 30, 10, 3, GF_STASIS,		0,	R_ACID }, //1 (needs a colour scheme? power check)
 { RT_STASIS_WATER,		"stasis",		10, 10, 30, 10, 3, GF_STASIS,		0,	R_WATE }, //1
 { RT_STASIS_ELEC,		"stasis",		10, 10, 30, 10, 3, GF_STASIS,		0,	R_ELEC }, //1
@@ -6425,17 +6436,17 @@ r_spell runespell_list[RT_MAX] =
 { RT_STASIS_FORCE,		"stasis",		10, 10, 30, 10, 3, GF_STASIS,		0,	R_FORC }, //1
 { RT_STASIS_TIME,		"stasis",		10, 10, 30, 10, 3, GF_STASIS,		0,	R_TIME }, //1
 
-{ RT_UNBREATH,		"noxious unbreath",	16, 15, 25, 10, 2, GF_UNBREATH,	GF_POIS,	R_POIS }, //2 (was RT_STEALTH, make this non-identical to 'air' unbreath w/ explosion, aka hi_base rules)
-{ RT_DRAIN_ACID,		"drain",		 1, 25, 35, 20, 3, GF_OLD_DRAIN,	0,	R_ACID }, //1 (power check - lifesteal fix)
-{ RT_DRAIN_WATER,		"drain",		 1, 25, 35, 20, 3, GF_OLD_DRAIN,	0,	R_WATE }, //1
-{ RT_DRAIN_ELEC,		"drain",		 1, 25, 35, 20, 3, GF_OLD_DRAIN,	0,	R_ELEC }, //1
-{ RT_DRAIN_SHARDS,		"drain",		 1, 25, 35, 20, 3, GF_OLD_DRAIN,	0,	R_EART }, //1
-{ RT_DRAIN_FIRE,		"drain",		 1, 25, 35, 20, 3, GF_OLD_DRAIN,	0,	R_FIRE }, //1
-{ RT_DRAIN_CHAOS,		"drain",		 1, 25, 35, 20, 3, GF_OLD_DRAIN,	0,	R_CHAO }, //1
-{ RT_DRAIN_COLD,		"drain",		 1, 25, 35, 20, 3, GF_OLD_DRAIN,	0,	R_COLD }, //1
-{ RT_DRAIN_NETHER,		"drain",		 1, 25, 35, 20, 3, GF_OLD_DRAIN,	0,	R_NETH }, //1
-{ RT_DRAIN_FORCE,		"drain",		 1, 25, 35, 20, 3, GF_OLD_DRAIN,	0,	R_FORC }, //1
-{ RT_DRAIN_TIME,		"drain",		 1, 25, 35, 20, 3, GF_OLD_DRAIN,	0,	R_TIME }, //1
+{ RT_UNBREATH,		"noxious unbreath",	16, 15, 25, 10, 2, GF_UNBREATH,	GF_POIS,	R_POIS }, //2
+{ RT_DRAIN_ACID,		"drain",		 3, 25, 35, 20, 3, GF_OLD_DRAIN,	0,	R_ACID }, //1 (lifesteal fix)
+{ RT_DRAIN_WATER,		"drain",		 3, 25, 35, 20, 3, GF_OLD_DRAIN,	0,	R_WATE }, //1
+{ RT_DRAIN_ELEC,		"drain",		 3, 25, 35, 20, 3, GF_OLD_DRAIN,	0,	R_ELEC }, //1
+{ RT_DRAIN_SHARDS,		"drain",		 3, 25, 35, 20, 3, GF_OLD_DRAIN,	0,	R_EART }, //1
+{ RT_DRAIN_FIRE,		"drain",		 3, 25, 35, 20, 3, GF_OLD_DRAIN,	0,	R_FIRE }, //1
+{ RT_DRAIN_CHAOS,		"drain",		 3, 25, 35, 20, 3, GF_OLD_DRAIN,	0,	R_CHAO }, //1
+{ RT_DRAIN_COLD,		"drain",		 3, 25, 35, 20, 3, GF_OLD_DRAIN,	0,	R_COLD }, //1
+{ RT_DRAIN_NETHER,		"drain",		 3, 25, 35, 20, 3, GF_OLD_DRAIN,	0,	R_NETH }, //1
+{ RT_DRAIN_FORCE,		"drain",		 3, 25, 35, 20, 3, GF_OLD_DRAIN,	0,	R_FORC }, //1
+{ RT_DRAIN_TIME,		"drain",		 3, 25, 35, 20, 3, GF_OLD_DRAIN,	0,	R_TIME }, //1
 
 { RT_INERTIA,		"inertia",	12, 12, 20, 10, 2, GF_INERTIA,	0,	0 }, //1
 { RT_GRAVITY_ACID,		"gravity",	13, 13, 30, 15, 3, GF_GRAVITY,	0,	R_ACID }, //1
