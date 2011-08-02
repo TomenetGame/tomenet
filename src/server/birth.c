@@ -1144,11 +1144,11 @@ static byte player_init[2][MAX_CLASS][5][3] =
 		{ TV_SWORD, SV_DAGGER, 0 },
 		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0 },
 		{ TV_RUNE2, SV_RUNE2_ACID, 0 },
-		{ TV_RUNE2, SV_RUNE2_ELEC, 0 },
-		{ TV_RUNE2, SV_RUNE2_FIRE, 0 },
-		{ TV_RUNE2, SV_RUNE2_COLD, 0 },
+//		{ TV_RUNE2, SV_RUNE2_ELEC, 0 },
+//		{ TV_RUNE2, SV_RUNE2_FIRE, 0 },
+//		{ TV_RUNE2, SV_RUNE2_COLD, 0 },
 		{ TV_STAFF, SV_STAFF_DETECT_GOLD, 30 },
-//		{ TV_POTION2, SV_POTION2_CURE_LIGHT_SANITY, 0 },
+		{ TV_DIGGING, SV_PICK, 0 },
 #endif
 	},
 	{
@@ -1274,10 +1274,7 @@ static byte player_init[2][MAX_CLASS][5][3] =
 #else
 		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
 		{ TV_CLOAK, SV_CLOAK, 0 },
-		{ TV_RUNE2, SV_RUNE2_ACID, 0 },
-		{ TV_RUNE2, SV_RUNE2_ELEC, 0 },
-		{ TV_RUNE2, SV_RUNE2_FIRE, 0 },
-		{ TV_RUNE2, SV_RUNE2_COLD, 0 },
+		{ TV_RUNE2, 0, 0 }, /* place holder */
 		{ TV_STAFF, SV_STAFF_DETECT_GOLD, 30 },
 //		{ TV_POTION2, SV_POTION2_CURE_LIGHT_SANITY, 0 },
 #endif
@@ -1641,24 +1638,45 @@ static void player_outfit(int Ind)
 		if (tv == 255 && sv == 255) {
 			/* nothing */
 		} else {
+#ifdef ENABLE_RCRAFT
+			/* Multiply runes */
+			if (tv == TV_RUNE2) {
+				sv = SV_RUNE2_ACID;
+				k_idx = lookup_kind(tv, sv);
+				invcopy(o_ptr, k_idx);
+				o_ptr->number = 5;
+				do_player_outfit();
+
+				sv = SV_RUNE2_FIRE;
+				k_idx = lookup_kind(tv, sv);
+				invcopy(o_ptr, k_idx);
+				o_ptr->number = 5;
+				do_player_outfit();
+
+				sv = SV_RUNE2_COLD;
+				k_idx = lookup_kind(tv, sv);
+				invcopy(o_ptr, k_idx);
+				o_ptr->number = 5;
+				do_player_outfit();
+
+				sv = SV_RUNE2_ELEC;
+				k_idx = lookup_kind(tv, sv);
+				invcopy(o_ptr, k_idx);
+				o_ptr->number = 5;
+				do_player_outfit();
+
+				continue;
+			}
+#endif
+
 			k_idx = lookup_kind(tv, sv);
-			if (k_idx < 2)	/* '1' is 'something' */
-			{
+			if (k_idx < 2) { /* '1' is 'something' */
 				j = rand_int(BARD_INIT_NUM);
 				k_idx = lookup_kind(bard_init[j][0], bard_init[j][1]);
-			}
-			if (k_idx > 1)
-			{
+			} else {
 				invcopy(o_ptr, k_idx);
 				o_ptr->pval = pv;
 				o_ptr->number = 1;
-
-#ifdef ENABLE_RCRAFT
-				/* Multiply runes */
-				if (tv == TV_RUNE2) {
-					o_ptr->number = 5;
-				}
-#endif
 
 #if 1 /* use check in do_cmd_ranged_technique() instead? */
 				/* hack: prevent newbie archers from wasting their
