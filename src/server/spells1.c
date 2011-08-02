@@ -10876,6 +10876,19 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 		y9 = y;
 		x9 = x;
 		mmove2(&y9, &x9, y1, x1, y2, x2);
+		
+		/* Extra (exploding) hack, bolt/beam/ball (and other?) runespells explode like ammo - Kurzel */
+		/* This could make melee runemasters quite effective in close quarters (disabled for now) */
+		if (typ_explode !=0) {
+			if (!cave_floor_bold(zcave, y9, x9)) {/* Stopped by walls/doors ?*/
+			   // || (dir == 5 && !target_ok)) { /* fired 'at oneself'? */
+				if (typ_effect == 0) project(who, randint(2)+typ_imper, wpos, y9, x9, dam / 10, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				//if (typ_effect == EFF_WAVE && randint(2) == 1) project(who, 1+randint(2)+typ_imper, wpos, y9, x9, dam, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				//if (typ_effect == EFF_LAST && randint(5) == 1) project(who, randint(2)+typ_imper, wpos, y9, x9, dam * 3/2, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				//if (typ_effect == EFF_STORM && randint(3) == 1) project(who, 1+typ_imper, wpos, y9, x9, dam * 2, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				break;
+			}
+		}
 
 		/* Hack -- Balls explode BEFORE reaching walls or doors */
 		if (flg & PROJECT_GRAV) { /* Running along the floor?.. */

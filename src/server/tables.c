@@ -6342,14 +6342,14 @@ Runespell types.
 */
 r_type runespell_types[RCRAFT_MAX_TYPES] =
 {
-	{ 0, R_MELE, "burst",	 0,  5 },
+	{ 0, R_MELE, "burst",	-3,  5 },
 	{ 1, R_SELF, "self",	 0, 10 },
-	{ 2, R_BOLT, "bolt",	 1, 10 },
-	{ 3, R_BEAM, "beam",	 2, 11 },
+	{ 2, R_BOLT, "bolt",	 0, 10 },
+	{ 3, R_BEAM, "beam",	 1, 11 },
 	{ 4, R_BALL, "ball",	 3, 12 },
 	{ 5, R_WAVE, "wave",	 3, 11 },
 	{ 6, R_CLOU, "cloud",	 5, 13 },
-	{ 7, R_STOR, "storm",	10, 20 },
+	{ 7, R_STOR, "storm",	 7, 20 },
 };
 
 /* Table of valid runespell types and their meta information.
@@ -6462,7 +6462,7 @@ r_spell runespell_list[RT_MAX] =
 
 /* Gestalts (names should be somewhat mystic/arcane/esoteric, but also scientific) - Kurzel */
 { RT_ACID_ELEC,		"conductivity",	12, 12, 10,  5, 2, GF_ACID_ELEC,	0, 	0 }, //1 (opposing nexus boost)
-{ RT_ACID_FIRE,		"scorching bile",	 2, 12, 10,  5, 2, GF_ACID_FIRE,	0,	0 }, //2
+{ RT_ACID_FIRE,		"scorching bile",	12, 12, 10,  5, 2, GF_ACID_FIRE,	0,	0 }, //2
 { RT_ACID_COLD,		"rime",		12, 12, 10,  5, 2, GF_ACID_COLD,	0,	0 }, //2
 { RT_ACID_POISON,		"venom",		13, 12, 15,  5, 2, GF_ACID_POISON,	GF_BLIND,	0 }, //1 (not GF_CONFUSION to avoid extra dmg, same effect)
 { RT_ACID_TIME,		"ancient acid",	14, 12, 20, 10, 2, GF_ACID,		GF_TIME,	R_TIME }, //2 (+20% damage, +20% cost/level on 'ancient' versions)
@@ -6486,25 +6486,25 @@ r_spell runespell_list[RT_MAX] =
 { RT_NUKE,		"toxine",		15, 15, 25, 15, 2, GF_NUKE,		0,	0 }, //1 (explode with poly?, name -> toxic waste?)
 { RT_DARKNESS_ACID,		"hungry darkness",	12, 12, 15,  5, 2, GF_DARK,		GF_ACID,	0 }, //1
 { RT_HI_ACID,		"ablation",	15, 15, 20, 10, 2, GF_ACID,		GF_ACID,	R_ACID }, //2
-{ RT_ACID_NEXUS,		"electrolysis",	13, 12, 25,  0, 2, GF_ELEC,		0,	R_NEXU }, //1 (name -> reduction?)
+{ RT_ACID_NEXUS,		"electrolysis",	13, 12, 10,  0, 2, GF_ELEC,		0,	R_NEXU }, //1 (name -> reduction?)
 /* Electricity */
 { RT_ELEC_WATER,		"conductive water",	13, 12, 10,  0, 2, GF_ELEC,		GF_WATER,	0 }, //3 (this might do something for the self spell ^^) (self-shock? projection is mostly elec, +20% dmg, water difficulty)
 { RT_BRILLIANCE_ELEC,	"shining brilliance",8, 12, 15,  5, 2, GF_LITE,		GF_ELEC,	0 }, //1
 { RT_TELEPORT_ELEC,   	"displacement",	13, 10, 15,  5, 2, GF_AWAY_ALL,	0,	0 }, //1 (self explodes w/ elec)
 { RT_THUNDER,         	"thunder",	13, 13, 20,  5, 2, GF_SOUND,		0,	0 }, //2
-{ RT_ELEC_NEXUS,      	"oxidation",	13, 12, 25,  5, 2, GF_ACID,		0,	R_NEXU }, //1
+{ RT_ELEC_NEXUS,      	"oxidation",	13, 12, 10,  5, 2, GF_ACID,		0,	R_NEXU }, //1
 /* Fire */
 { RT_FIRE_WATER,		"steam",		10,  0,  0,  0, 0, 0,		0,	0 }, //0 (this might do something for the self spell ^^)
 { RT_DIG_FIRE,		"eroding heat",	10, 12, 15,  5, 2, GF_DIG_FIRE,	0,	0 }, //2 (also burn trees?)
 { RT_DARKNESS_FIRE,		"burning darkness",	12, 12, 15,  5, 2, GF_DARK,		GF_FIRE,	0 }, //1
 { RT_HI_FIRE,		"fire",		15, 15, 20, 10, 2, GF_FIRE,		GF_FIRE,	R_FIRE }, //2
-{ RT_FIRE_NEXUS,		"wicking fire",	13, 12, 25,  5, 2, GF_COLD,		0,	R_NEXU }, //1 (nomenclature for nexus+base? unique atm)
+{ RT_FIRE_NEXUS,		"wicking fire",	13, 12, 10,  5, 2, GF_COLD,		0,	R_NEXU }, //1 (nomenclature for nexus+base? unique atm)
 /* Cold */
 { RT_ICE,			"ice",		13, 13, 20,  5, 2, GF_ICE,		0,	0 }, //2
 { RT_DISARM_COLD,		"shattering",	 5, 10, 15,  5, 2, GF_SHATTER,	0,	0 }, //2
 { RT_BRILLIANCE_COLD,	"grim brilliance",	 8, 12, 15,  5, 2, GF_LITE,		GF_COLD,	0 }, //1
 { RT_HI_COLD,		"hoarfrost",	15, 15, 20, 10, 2, GF_COLD,		GF_COLD,	R_COLD }, //2
-{ RT_COLD_NEXUS,		"exothermy",	13, 12, 25,  5, 2, GF_FIRE,		0,	R_NEXU }, //1
+{ RT_COLD_NEXUS,		"exothermy",	13, 12, 10,  5, 2, GF_FIRE,		0,	R_NEXU }, //1
 /* Poison */
 { RT_WATERPOISON,		"waterpoison",	14, 12, 20, 10, 2, GF_WATERPOISON,	0,	0 }, //1
 { RT_ICEPOISON,		"icepoison",	14, 12, 20, 10, 2, GF_ICEPOISON,	0,	0 }, //1 (misnomer -> shards != ice)

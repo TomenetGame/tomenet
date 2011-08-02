@@ -1143,6 +1143,8 @@ static byte player_init[2][MAX_CLASS][5][3] =
 #else
 		{ TV_SWORD, SV_DAGGER, 0 },
 		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0 },
+		{ TV_RUNE2, SV_RUNE2_ACID, 0 },
+		{ TV_RUNE2, SV_RUNE2_ELEC, 0 },
 		{ TV_RUNE2, SV_RUNE2_FIRE, 0 },
 		{ TV_RUNE2, SV_RUNE2_COLD, 0 },
 		{ TV_STAFF, SV_STAFF_DETECT_GOLD, 30 },
@@ -1272,6 +1274,8 @@ static byte player_init[2][MAX_CLASS][5][3] =
 #else
 		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
 		{ TV_CLOAK, SV_CLOAK, 0 },
+		{ TV_RUNE2, SV_RUNE2_ACID, 0 },
+		{ TV_RUNE2, SV_RUNE2_ELEC, 0 },
 		{ TV_RUNE2, SV_RUNE2_FIRE, 0 },
 		{ TV_RUNE2, SV_RUNE2_COLD, 0 },
 		{ TV_STAFF, SV_STAFF_DETECT_GOLD, 30 },

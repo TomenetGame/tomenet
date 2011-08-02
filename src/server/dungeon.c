@@ -874,10 +874,12 @@ static void process_effects(void)
 					/* Apply damage */
 					if (e_ptr->type == GF_HEALINGCLOUD)
 						project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type,
-						    PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP | PROJECT_PLAY, "");
-					else
+						    PROJECT_GRID | PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP | PROJECT_PLAY, "");
+						    //PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP | PROJECT_PLAY, "");
+					else //Effects should also hit grids, for runemaster EFF_WAVE/STOR functionality. - Kurzel
 						project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type,
-						    PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP, "");
+						    PROJECT_GRID | PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP, "");
+						    //PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP, "");
 					/* Oh, destroyed? RIP */
 					if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
 							Players[0 - who]->conn == NOT_CONNECTED)
@@ -1742,6 +1744,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 			The letters correspond to the mkey spell selector
 		*/
 		case TV_RUNE2:
+#if 0
 			if (o_ptr->sval >= 0 && o_ptr->sval <= RCRAFT_MAX_ELEMENTS) {
 				if (choice < 0 || choice >= 8) choice = 0;
 				execute_rspell(Ind, 5, r_elements[o_ptr->sval].self | runespell_types[choice].type, 1);
@@ -1749,6 +1752,64 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 				return TRUE;
 			}
 			break;
+#else
+			/* New runemaster retaliation. - Kurzel */
+			/* Search for up to 2 more runes with the same inscription as the first found. */
+			if (o_ptr->sval >= 0 && o_ptr->sval <= RCRAFT_MAX_ELEMENTS) {
+				int i, runes = 1;
+				u16b rune_type = 0;
+				u32b rune_flags = 0;
+				int imperative = *inscription;
+				if (inscription != NULL) {
+					choice = *inscription - 96 - 1;
+					if (choice < 0 || choice > RCRAFT_MAX_IMPERATIVES) choice = 0;
+				}
+				inscription++;
+				int type = *inscription;
+				if (inscription != NULL) {
+					rune_type = *inscription - 96 - 1;
+					if (rune_type < 0 || rune_type > RCRAFT_MAX_TYPES) choice = 0;
+				}
+				/* Pick the next rune with {@O} inscription */
+				for (i = item; i < INVEN_TOTAL && runes < 3; i++) {
+					o_ptr = &p_ptr->inventory[i];
+					if (!o_ptr->tval) continue;
+
+					inscription = quark_str(o_ptr->note);
+
+					/* check for a valid inscription */
+					if (inscription == NULL) continue;
+
+					/* scan the inscription for @O */
+					while (*inscription != '\0') {
+						if (*inscription == '@' && o_ptr->tval == TV_RUNE2) {
+							inscription++;
+
+							/* a valid @O has been located */
+							/* @O shouldn't work on weapons or ammo in inventory - mikaelh */
+							if (*inscription == 'O') {
+								inscription++;
+
+								/* Skip this item in case it isn't the same */
+								if (*inscription != imperative) break;
+								inscription++;
+								if (*inscription != type) break;
+								
+								/* Select the first usable item with @O */
+								rune_flags |= r_elements[o_ptr->sval].self;
+								runes++;
+								
+								break;
+							}
+						}
+						inscription++;
+					}
+				}
+				execute_rspell(Ind, 5, rune_flags | runespell_types[rune_type].type, choice);
+				return TRUE;
+			}
+			break;
+#endif
 #endif
 		/* not likely :) */
 	}
