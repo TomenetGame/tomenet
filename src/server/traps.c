@@ -4509,6 +4509,7 @@ static bool mon_hit_trap_aux_rune(int who, int m_idx, int sval) {
 		else typ = GF_POIS;
 		rad = 3;
 		break;
+#if 0 /* Rune reduction */
 	case SV_RUNE2_WIND:
 //		if (!rand_int(2)) {
 			typ = GF_AWAY_ALL;
@@ -4519,12 +4520,12 @@ static bool mon_hit_trap_aux_rune(int who, int m_idx, int sval) {
 		}
 */		rad = 3;
 		break;
-
 	case SV_RUNE2_MANA:
 		typ = GF_MANA;
 		dam = damroll(10, 30);
 		rad = 3;
 		break;
+#endif
 	case SV_RUNE2_CHAOS:
 		typ = GF_CHAOS;
 		dam = damroll(10, 30);
@@ -4535,12 +4536,13 @@ static bool mon_hit_trap_aux_rune(int who, int m_idx, int sval) {
 		dam = damroll(10, 30);
 		rad = 3;
 		break;
+#if 0 /* Rune reduction */
 	case SV_RUNE2_GRAVITY:
 		typ = GF_GRAVITY;
 		dam = damroll(10, 30);
 		rad = 3;
 		break;
-
+#endif
 	case SV_RUNE2_NETHER:
 		typ = GF_GRAVITY;
 		dam = damroll(10, 30);
@@ -4556,11 +4558,13 @@ static bool mon_hit_trap_aux_rune(int who, int m_idx, int sval) {
 		}
 		rad = 3;
 		break;
+#if 0 /* Rune reduction */
 	case SV_RUNE2_MIND:
 		typ = GF_PSI;
 		dam = damroll(10, 30);
 		rad = 3;
 		break;
+#endif
 	case SV_RUNE2_NEXUS:
 		typ = GF_NEXUS;
 		dam = damroll(10, 30);
