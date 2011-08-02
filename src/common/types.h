@@ -3413,7 +3413,7 @@ struct r_type
 	byte id;
 	u32b type; /* Flag */
 	char * title;
-	byte cost; /* Extra levels required to cast */
+	s16b cost; /* Extra levels required to cast */
 	byte pen; /* MP multiplier */
 };
 

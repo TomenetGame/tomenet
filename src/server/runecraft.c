@@ -30,7 +30,7 @@ A high level rune-master (lv 50) should only have a few runes skilled > 40.
 #define LIMIT_NON_RUNEMASTERS
 
 
-byte execute_rspell (u32b Ind, byte dir, u32b spell, byte imperative);
+byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative);
 s16b rspell_time(u32b Ind, byte imperative);
 bool is_attack(u32b s_flags);
 u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration, s16b cost, u32b type, s16b diff, byte imper, u32b type_flags, u16b s_av, s16b mali);
@@ -326,7 +326,9 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 	}
 	else //R_MELE
 	{
-		damage = damroll(3 + rget_level(50), 5 + rget_level(20));
+		//damage = damroll(3 + rget_level(50), 5 + rget_level(20));
+		//Damage reduced to allow for multiple 'blows' with skill level - Kurzel
+		damage = damroll(3 + rget_level(50), 5 + rget_level(20)) / 2;
 	}
 	
 	if (r < 1 || r > 5)
@@ -532,7 +534,7 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 							//if (rand_int(100) < 70) //Always break a rune if able. - Kurzel
 							//{
 								/* Select up to a third */
-								amt = 0; //Only break 1 rune, but more often - Kurzel */
+								amt = 0; //Only break 1 rune, but more often (maybe also 1 of each involved?)  - Kurzel */
 								//amt = rand_int(o_ptr->number/3);
 								
 								if (amt == 0 && o_ptr->number >= 1)
@@ -934,7 +936,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 	//u16b gf_type = runespell_list[type].gf_type;
 	u32b gf_type = runespell_list[type].gf_type; //Hack -- More info to pass! - Kurzel
 	u32b gf_explode = runespell_list[type].gf_explode;
-	u16b e_level = runespell_list[type].level;
+	s16b e_level = runespell_list[type].level;
 	m = meth_to_id(type_flags);
 	e_level += runespell_types[m].cost;
 	e_level += r_imperatives[imper].level;
@@ -1673,6 +1675,8 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 		}
 		if (type_flags & R_MELE)
 		{
+			/* Hack disabled for now. - Kurzel */
+			/*
 			int px = p_ptr->px;
 			int py = p_ptr->py;
 			int tx = p_ptr->target_col;
@@ -1706,6 +1710,13 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				{
 					fire_bolt(Ind, gf_type, dir, damage, p_ptr->attacker);
 				}
+			}
+			*/
+			sprintf(p_ptr->attacker, " is summons %s for", runespell_list[type].title);
+			msg_format(Ind, "%s%s summon a %s burst of %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
+			if (success)
+			{
+				fire_ball(Ind, gf_type, dir, damage, 0, p_ptr->attacker);
 			}
 		}
 		else if ((type_flags & R_BALL))
@@ -1763,7 +1774,10 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					
 					if (success)
 					{
-						fire_beam(Ind, gf_type, dir, damage, p_ptr->attacker);
+						if (gf_type == GF_LITE || gf_type == GF_DARK || gf_type == GF_CORRODE || gf_type == GF_SHATTER) 
+							fire_grid_beam(Ind, gf_type, dir, damage, p_ptr->attacker);
+						else 
+							fire_beam(Ind, gf_type, dir, damage, p_ptr->attacker);
 					}
 				}
 			}
@@ -1789,8 +1803,6 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 		difficulty = (difficulty-margin>0 ? difficulty-margin : 0);
 		rspell_do_penalty(Ind, rspell_penalty(Ind, difficulty), damage, duration, cost, gf_type, "",  imper, type_flags);
 	}
-	
-	p_ptr->energy -= rspell_time(Ind, imper);
 	
 	if (p_ptr->shooty_till_kill)
 	{
@@ -1823,6 +1835,13 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative)
 	s_diff = rspell_diff(Ind, imperative, s_cost, s_av, s_type, s_flags, &mali);
 	
 	s_time = rspell_time(Ind, imperative);
+	
+	/* R_MELE reduces s_time for multiple 'blows', experimental - Kurzel */
+#if 1
+	if (s_flags & R_MELE) { 
+		if (s_av >= 15) s_time = s_time / (s_av / 15); //Up to 3.3 bpr!
+	}
+#endif
 	
 	if (!rspell_check(Ind, &mali, s_flags))
 	{
@@ -1966,7 +1985,8 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative)
 			}
 		}
 	}
-	
+		
+	p_ptr->energy -= s_time;
 	cast_runespell(Ind, dir, s_dam, radius, duration, s_cost, s_type, s_diff, imperative, s_flags, s_av, mali);
 	
 	if (r_imperatives[imperative].id == 7) //Chaotic type
