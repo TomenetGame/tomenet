@@ -2500,25 +2500,20 @@ that keeps many algorithms happy.
 #ifdef ENABLE_RCRAFT
 
  //New runes (k_info.txt)
- #define SV_RUNE2_FIRE   	 0
- #define SV_RUNE2_COLD   	 1
- #define SV_RUNE2_ACID   	 2
- #define SV_RUNE2_WATER   	 3
+ #define SV_RUNE2_ACID  	 0
+ #define SV_RUNE2_ELEC   	 1
+ #define SV_RUNE2_FIRE   	 2
+ #define SV_RUNE2_COLD   	 3
 
- #define SV_RUNE2_ELEC   	 4
- #define SV_RUNE2_EARTH   	 5
- #define SV_RUNE2_POISON   	 6
- #define SV_RUNE2_WIND   	 7
+ #define SV_RUNE2_POISON   	 4
+ #define SV_RUNE2_FORCE   	 5
+ #define SV_RUNE2_WATER   	 6
+ #define SV_RUNE2_EARTH  	 7
 
- #define SV_RUNE2_MANA   	 8
- #define SV_RUNE2_CHAOS   	 9
- #define SV_RUNE2_FORCE		10
- #define SV_RUNE2_GRAVITY	11
-
- #define SV_RUNE2_NETHER	12
- #define SV_RUNE2_TIME		13
- #define SV_RUNE2_MIND		14
- #define SV_RUNE2_NEXUS		15
+ #define SV_RUNE2_CHAOS  	 8
+ #define SV_RUNE2_NETHER   	 9
+ #define SV_RUNE2_NEXUS	10
+ #define SV_RUNE2_TIME	11
 
 #endif /* ENABLE_RCRAFT */
 
