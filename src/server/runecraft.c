@@ -22,7 +22,7 @@ A high level rune-master (lv 50) should only have a few runes skilled > 40.
 
 #ifdef ENABLE_RCRAFT
 
-#define R_CAP 60 // / 100
+#define R_CAP 60 // used for calculating the average rune skill (was 100)
 
 /* Limit adventurers so they cannot utilize 3-runes-spells?
    Reason is that one rune school might give them ~ 15 utility spells,
