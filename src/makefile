@@ -62,7 +62,7 @@ SERV_SRCS = \
   server/main.c server/traps.c server/csfunc.c server/skills.c server/bldg.c \
   common/files.c common/w_z_pack.c server/world.c server/slash.c \
   server/runes.c server/runecraft.c server/auction.c common/SFMT.c \
-  server/go.c
+  server/go.c common/tables.c
 
 SERV_OBJS = \
   common/z-util.o common/z-virt.o common/z-form.o common/z-rand.o \
@@ -79,7 +79,7 @@ SERV_OBJS = \
   server/main.o server/traps.o server/csfunc.o server/skills.o server/bldg.o \
   common/files.o common/w_z_pack.o server/world.o server/slash.o \
   server/runes.o server/runecraft.o server/auction.o common/SFMT.o \
-  server/go.o
+  server/go.o common/tables.o
 
 
 CLI_SRCS = \
@@ -90,7 +90,8 @@ CLI_SRCS = \
   client/variable.c client/main-ibm.c client/main-cap.c client/main-gcu.c \
   client/main-x11.c client/main-xaw.c client/nclient.c client/c-birth.c \
   client/c-xtra1.c client/c-xtra2.c client/c-spell.c client/client.c \
-  client/skills.c common/files.c common/SFMT.c client/snd-sdl.c
+  client/skills.c common/files.c common/SFMT.c client/snd-sdl.c \
+  common/tables.c
 
 CLI_OBJS = \
   common/z-util.o common/z-virt.o common/z-form.o common/z-rand.o \
@@ -100,7 +101,8 @@ CLI_OBJS = \
   client/variable.o client/main-ibm.o client/main-cap.o client/main-gcu.o \
   client/main-x11.o client/main-xaw.o client/nclient.o client/c-birth.o \
   client/c-xtra1.o client/c-xtra2.o client/c-spell.o client/client.o \
-  client/skills.o common/files.o common/SFMT.o client/snd-sdl.o
+  client/skills.o common/files.o common/SFMT.o client/snd-sdl.o \
+  common/tables.o
 
 
 CONS_SRCS = \

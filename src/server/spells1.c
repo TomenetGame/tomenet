@@ -10882,7 +10882,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 		if (typ_explode !=0) {
 			if (!cave_floor_bold(zcave, y9, x9)) {/* Stopped by walls/doors ?*/
 			   // || (dir == 5 && !target_ok)) { /* fired 'at oneself'? */
-				if (typ_effect == 0) project(who, randint(2)+typ_imper, wpos, y9, x9, dam / 10, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				if (typ_effect == 0) project(who, randint(2)+typ_imper, wpos, y9, x9, dam / 4, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
 				//if (typ_effect == EFF_WAVE && randint(2) == 1) project(who, 1+randint(2)+typ_imper, wpos, y9, x9, dam, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
 				//if (typ_effect == EFF_LAST && randint(5) == 1) project(who, randint(2)+typ_imper, wpos, y9, x9, dam * 3/2, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
 				//if (typ_effect == EFF_STORM && randint(3) == 1) project(who, 1+typ_imper, wpos, y9, x9, dam * 2, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
@@ -11401,14 +11401,14 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			 * Explosions use project() and are always treated as 'ball' effects, appearing at the sub-target locations (who = 0).
 			 * Bolt/Beam/Ball types always explode, and in similar fashion. (Instantaneous)
 			 * Wave/Cloud/Storm types have a chance to explode, and in unique fashion. (Interval)
-			 * Bolt/Beam/Ball: Explode 1 in 1. Radius 1 to 2. 1/10x damage. (+1/10 explosion damage) ~10%
+			 * Bolt/Beam/Ball: Explode 1 in 1. Radius 1 to 2. 1/4x damage. (+1/4 explosion damage) ~25%
 			 * Wave: Explode 1 in 2. Radius 2 to 3. 1x damage. (+5/10 explosion damage) ~30%
 			 * Cloud: Explode 1 in 5. Radius 1 to 2. 1.5x damage. (+3/10 explosion damage) ~50%
 			 * Storm: Explode 1 in 3. Radius 1. 2x damage. (+6/9 explosion damage) ~70%
 			 * typ_imper modifies the radius by an additional +1 to -1, to a minimum of 0.
 			 */
 			if (typ_explode != 0) {
-				if (typ_effect == 0) project(who, randint(2)+typ_imper, wpos, y, x, dam / 10, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				if (typ_effect == 0) project(who, randint(2)+typ_imper, wpos, y, x, dam / 4, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
 				if (typ_effect == EFF_WAVE && randint(2) == 1) project(who, 1+randint(2)+typ_imper, wpos, y, x, dam, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
 				if (typ_effect == EFF_LAST && randint(5) == 1) project(who, randint(2)+typ_imper, wpos, y, x, dam * 3/2, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
 				if (typ_effect == EFF_STORM && randint(3) == 1) project(who, 1+typ_imper, wpos, y, x, dam * 2, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
