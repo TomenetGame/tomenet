@@ -487,6 +487,7 @@ extern void do_stance(void);
 extern void do_melee_technique(void);
 extern void do_ranged_technique(void);
 extern bool get_item_hook_find_spell(int *item, bool inven_first);
+extern char runecraft_colourize(u16b flags, int level_mod);
 
 /* c-store.c */
 extern bool leave_store;

@@ -6796,8 +6796,7 @@ extern int PlayerUID;
  #define SKILL_EGO_POWER
 #endif	/* 0 */
 
-//#ifdef ENABLE_RCRAFT
-#if 1 /* or player.pkg throws an error */
+#ifdef ENABLE_RCRAFT
  #define SKILL_SCHOOL_RUNECRAFT	95	//was 87..
 
  //#define SKILL_R_FIRECOLD	96
@@ -6809,15 +6808,14 @@ extern int PlayerUID;
  //#define SKILL_R_FORCGRAV	101
  //#define SKILL_R_NETHTIME	102
  //#define SKILL_R_MINDNEXU	103
- 
+
  /* Rune reduction */
- #define SKILL_R_ACIDWATE	96
+ #define SKILL_R_ACIDWATE	96 /* used for hardcoding some stuff - careful if modifiying this value */
  #define SKILL_R_ELECEART	97
  #define SKILL_R_FIRECHAO	98
  #define SKILL_R_COLDNETH	99
  #define SKILL_R_POISNEXU	100
  #define SKILL_R_FORCTIME	101
- 
 #endif
 
 /*#define MAX_SKILLS              70 */
@@ -7268,6 +7266,8 @@ extern int PlayerUID;
 
 
 #ifdef ENABLE_RCRAFT
+
+#define R_CAP 60 // used for calculating the average rune skill (was 100)
 
 /* Rune flags */
 

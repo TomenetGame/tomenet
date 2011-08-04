@@ -1383,18 +1383,179 @@ void do_ranged_technique()
 
 #ifdef ENABLE_RCRAFT
 
+static int b_compare (const void * a, const void * b)
+{
+	return ( *(byte*)b - *(byte*)a );
+}
+
+static byte runes_in_flag(byte runes[], u32b flags)
+{
+	if ((flags & R_ACID) == R_ACID) { runes[0] = 1; } else { runes[0] = 0; }
+	if ((flags & R_ELEC) == R_ELEC) { runes[1] = 1; } else { runes[1] = 0; }
+	if ((flags & R_FIRE) == R_FIRE) { runes[2] = 1; } else { runes[2] = 0; }
+	if ((flags & R_COLD) == R_COLD) { runes[3] = 1; } else { runes[3] = 0; }
+	if ((flags & R_POIS) == R_POIS) { runes[4] = 1; } else { runes[4] = 0; }
+	if ((flags & R_FORC) == R_FORC) { runes[5] = 1; } else { runes[5] = 0; }
+	if ((flags & R_WATE) == R_WATE) { runes[6] = 1; } else { runes[6] = 0; }
+	if ((flags & R_EART) == R_EART) { runes[7] = 1; } else { runes[7] = 0; }
+	if ((flags & R_CHAO) == R_CHAO) { runes[8] = 1; } else { runes[8] = 0; }
+	if ((flags & R_NETH) == R_NETH) { runes[9] = 1; } else { runes[9] = 0; }
+	if ((flags & R_NEXU) == R_NEXU) { runes[10] = 1; } else { runes[10] = 0; }
+	if ((flags & R_TIME) == R_TIME) { runes[11] = 1; } else { runes[11] = 0; }
+	
+	return 0;
+}
+
+/* rspell_type
+
+Selects a spell based on the rspell_selector[] array 
+*/
+static u32b rspell_type (u32b flags)
+{
+	u16b i;
+	
+	for (i = 0; i<MAX_RSPELL_SEL; i++)
+	{
+		if (rspell_selector[i].flags)
+		{
+			if ((rspell_selector[i].flags & flags) == rspell_selector[i].flags)
+			{
+				return rspell_selector[i].type;
+			}
+		}
+	}
+	return RT_NONE;
+}
+
+/* rspell_skill (for client level comparison in color selector) - Kurzel
+
+Calculates a skill average value for the requested runes.
+
+Uses a series of formulas created by Kurzel.
+
+Assumes a max of 3 runes in a spell. Needs to be adjusted if this ever changes.
+Also assumes that the rune skill flags are in order, starting with FIRECOLD.
+*/
+static u16b rspell_skill_client(u32b s_type) //u16b rspell_skill_client(u32b s_flags);
+{
+	u16b s = 0; u16b i; u16b skill = 0; u16b value = 0;
+	s16b a=0,b=0,c=0;
+	
+	byte rune_c = 0;
+	byte skill_c = 0;
+	byte skills[RCRAFT_MAX_ELEMENTS/2] = {0,0,0,0,0,0};
+	byte runes[3] = {0,0,0};
+	
+	byte s_runes[RCRAFT_MAX_ELEMENTS];
+	runes_in_flag(s_runes, s_type);
+	
+	for (i=0; i<RCRAFT_MAX_ELEMENTS; i++)
+	{
+		if (s_runes[i]==1)
+		{
+			skill = r_elements[i].skill;
+			value = get_skill(skill);
+			//Ugh. We need an index from 0-7. FIRECOLD through MINDNEXU is 96-103
+			//skills[skill - SKILL_R_FIRECOLD] = 1;
+			skills[skill - SKILL_R_ACIDWATE] = 1;
+			//ACIDWATE through FORCTIME is 96-101.
+			if (rune_c > 2)
+			{
+				break;
+			}
+			
+			runes[rune_c++] = value;
+		}
+	}
+	
+	for (i=0; i<RCRAFT_MAX_ELEMENTS/2; i++)
+	{
+		if (skills[i]==1)
+		{
+			skill_c++;
+		}
+	}
+	
+	if (rune_c == 1 || (rune_c == 2 && runes[0] == runes[1]) || (rune_c == 3 && (runes[0] == runes[1] && runes[1] == runes[2])))
+	{
+		return runes[0];
+	}
+	
+	qsort(runes, 3, sizeof(byte), b_compare);
+	
+	switch (skill_c)
+	{
+		case 2:
+			if (rune_c == 2)
+			{
+				a = 50 * R_CAP / 100;
+				
+				s = ((a*runes[0])+((100-a)*runes[1])) / 100;
+			}
+			else if (rune_c == 3)
+			{
+				if (runes[1] == runes[2])
+				{
+					a = 33 * R_CAP / 100;
+				}
+				else // if (runes[0] == runes[1])
+				{
+					a = 66 * R_CAP / 100;
+				}
+				
+				s = ((a*runes[0])+((100-a)*runes[1])) / 100;
+			}
+			break;
+		
+		case 3:
+			a = 33 * R_CAP / 100;
+			b = 33;
+			c = 100 - a - b;
+			
+			s = (a*runes[0] + b*runes[1] + c*runes[2]) / 100;
+			break;
+		
+		default:
+			s = runes[0];
+			break;
+	}
+	
+	return s;
+}
+
+/* Color-selector Code - Kurzel.
+   Return colour that indicates difficulty of a rune spell depending on
+   the choice of certain runes, imperative (via level_mod), method (via level_mod). */
+char runecraft_colourize(u16b flags, int level_mod) {
+	int s_av = 0;
+	int e_level = 0;
+
+	e_level = runespell_list[rspell_type(flags)].level + level_mod;
+	s_av = rspell_skill_client(flags);
+
+	/* catch if we don't know the runes and hence can't cast this spell at all */
+	if (s_av <= 0) return 'D';
+
+	if (e_level < (s_av - 10)) return 'B';
+	else if (e_level < s_av) return 'w';
+	else if (e_level < (s_av +  5)) return 'y';
+	else if (e_level < (s_av + 15)) return 'o';
+	else return 'D';
+}
+
 static void print_runes(int flags)
 {
 	int col = 10, j = 2, i;
 	char tmpbuf[80];
-
+	
 	/* Title the list */
-	prt("", 1, col); put_str("Element,      Rune", 1, col);
+	prt("", 1, col); put_str("Element,       Rune", 1, col);
 
 	for (i = 0; i < RCRAFT_MAX_ELEMENTS; i++) {
 		if ((flags & r_elements[i].self) != r_elements[i].self) {
-			sprintf(tmpbuf, "%c) %-10s '%s'",
+			sprintf(tmpbuf, "%c) \377%c%-11s\377w '%s'",
 			    'a' + i,
+			    runecraft_colourize(flags | r_elements[i].self, 0),
 			    r_elements[i].title,
 			    r_elements[i].e_syl);
 			prt("", j, col);
@@ -1409,7 +1570,7 @@ static void print_runes(int flags)
 	prt("", j++, col);
 }
 
-static void print_rune_imperatives()
+static void print_rune_imperatives(u32b flags)
 {
 	int col = 10, j = 2, i;
 	char tmpbuf[80];
@@ -1422,14 +1583,16 @@ static void print_rune_imperatives()
 
 		/* catch 'chaotic' (only one that has dam or cost of zero) */
 		if (!r_imperatives[i].cost) {
-			sprintf(tmpbuf, "%c) %-10s   (  %s%d, ???%%,  ???%%,  +??%% )",
+			sprintf(tmpbuf, "%c) \377%c%-10s\377w   (  %s%d, ???%%,  ???%%,  +??%% )",
 			    'a' + i,
+			    runecraft_colourize(flags, r_imperatives[i].level),
 			    r_imperatives[i].name,
 			    r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level);
 		} else {
 			/* normal imperatives */
-			sprintf(tmpbuf, "%c) %-10s   (  %s%d, %3d%%,  %3d%%,  %s%2d%% )",
+			sprintf(tmpbuf, "%c) \377%c%-10s\377w   (  %s%d, %3d%%,  %3d%%,  %s%2d%% )",
 			    'a' + i,
+			    runecraft_colourize(flags, r_imperatives[i].level),
 			    r_imperatives[i].name,
 			    r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level,
 			    r_imperatives[i].dam * 10,
@@ -1445,7 +1608,7 @@ static void print_rune_imperatives()
 	prt("", j++, col);
 }
 
-static void print_rune_methods()
+static void print_rune_methods(u32b flags, byte *imper)
 {
 	int col = 10, j = 2, i;
 	char tmpbuf[80];
@@ -1455,8 +1618,9 @@ static void print_rune_methods()
 	put_str("Name         (  Lvl,  Cost%  )", 1, col);
 
 	for (i = 0; i < RCRAFT_MAX_TYPES; i++) {
-		sprintf(tmpbuf, "%c) %-7s   (  %s%2d,   %3d%%  )",
+		sprintf(tmpbuf, "%c) \377%c%-7s\377w   (  %s%d,   %3d%%  )",
 		    'a' + i,
+		    runecraft_colourize(flags, r_imperatives[(*imper)].level + runespell_types[i].cost),
 		    runespell_types[i].title,
 		    runespell_types[i].cost >= 0 ? "+" : "", runespell_types[i].cost,
 		    runespell_types[i].pen * 10);
@@ -1592,7 +1756,7 @@ static int get_rune_type(u32b s_flags, u32b *sn)
 	return (TRUE);
 }
 
-static int get_rune_imperative(byte *sn)
+static int get_rune_imperative(u32b s_flags, byte *sn)
 {
 	int		i, num = RCRAFT_MAX_IMPERATIVES;
 	bool		flag, redraw;
@@ -1628,7 +1792,7 @@ static int get_rune_imperative(byte *sn)
 		Term_save();
 
 		/* Display a list of techniques */
-		print_rune_imperatives();
+		print_rune_imperatives(s_flags);
 	}
 
 	/* Get a technique from the user */
@@ -1647,7 +1811,7 @@ static int get_rune_imperative(byte *sn)
 				Term_save();
 
 				/* Display a list of techniques */
-				print_rune_imperatives();
+				print_rune_imperatives(s_flags);
 			}
 
 			/* Hide the list */
@@ -1707,13 +1871,16 @@ static int get_rune_imperative(byte *sn)
 	return (TRUE);
 }
 
-static int get_rune_method(u32b *sn, u16b * method)
+static int get_rune_method(u32b s_flags, u32b *sn, byte *imperative, u16b *method)
 {
 	int		i, num = RCRAFT_MAX_TYPES;
 	bool		flag, redraw;
 	char		choice;
 	char		out_val[160];
 	byte            corresp[RCRAFT_MAX_TYPES];
+	
+	//Pass imperative - Kurzel
+	byte imper = (*imperative);
 
 	for (i = 0; i < RCRAFT_MAX_TYPES; i++)
 		corresp[i] = runespell_types[i].type;
@@ -1743,7 +1910,7 @@ static int get_rune_method(u32b *sn, u16b * method)
 		Term_save();
 
 		/* Display a list of techniques */
-		print_rune_methods();
+		print_rune_methods(s_flags, &imper);
 	}
 
 	/* Get a technique from the user */
@@ -1762,7 +1929,7 @@ static int get_rune_method(u32b *sn, u16b * method)
 				Term_save();
 
 				/* Display a list of techniques */
-				print_rune_methods();
+				print_rune_methods(s_flags, &imper);
 			}
 
 			/* Hide the list */
@@ -1840,9 +2007,9 @@ void do_runespell()
 	}
 	if(!s_flags) { Term_load(); return; } //Didn't set anything, user is trying to cancel
 
-	if(!get_rune_imperative(&imperative)){ Term_load(); return; }
+	if(!get_rune_imperative(s_flags, &imperative)){ Term_load(); return; }
 
-	if(!get_rune_method(&flag,&method)) { Term_load(); return; }
+	if(!get_rune_method(s_flags, &flag, &imperative, &method)) { Term_load(); return; }
 	else
 		s_flags |= flag;
 

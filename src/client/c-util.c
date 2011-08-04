@@ -3836,9 +3836,10 @@ void interact_macros(void)
 							Term_putstr(10, 14, -1, TERM_GREEN, format("Runes chosen so far: \377s%s", buf2));
 							for (i = 0; i < RCRAFT_MAX_ELEMENTS; i++) {
 								/* Don't draw a rune twice */
-								if (flags & (1 << (i + 4))) continue;
-								Term_putstr(15 + (i / 6) * 15, 16 + i % 6, -1, TERM_L_GREEN,
-								    format("%c) %s", 'a' + i, r_elements[i].title));
+								if (flags & r_elements[i].self) continue;
+								Term_putstr(15 + (i / 6) * 15, 16 + i % 6, -1,
+								    TERM_L_GREEN,
+								    format("%c) \377%c%s", 'a' + i, runecraft_colourize(flags | r_elements[i].self, 0), r_elements[i].title));
 							}
 
 							switch (choice = inkey()) {
@@ -3862,13 +3863,13 @@ void interact_macros(void)
 								}
 
 								/* don't add duplicate rune */
-								if (flags & (1 << (choice - 'a' + 4))) {
+								if (flags & r_elements[choice - 'a'].self) {
 									j--;
 									continue;
 								}
 
 								/* add this rune.. */
-								flags |= 1 << (choice - 'a' + 4);
+								flags |= r_elements[choice - 'a'].self;
 								strcat(buf2, r_elements[choice - 'a'].title);
 								strcat(buf2, " ");
 							}
@@ -3891,14 +3892,16 @@ void interact_macros(void)
 
 							/* catch 'chaotic' (only one that has dam or cost of zero) */
 							if (!r_imperatives[i].cost) {
-								sprintf(tmpbuf, "%c) %-10s   (  %s%d, ???%%,  ???%%,  +??%%  )",
+								sprintf(tmpbuf, "%c) \377%c%-10s\377G   (  %s%d, ???%%,  ???%%,  +??%%  )",
 								    'a' + i,
+								    runecraft_colourize(flags, r_imperatives[i].level),
 								    r_imperatives[i].name,
 								    r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level);
 							} else {
 							/* normal imperatives */
-								sprintf(tmpbuf, "%c) %-10s   (  %s%d, %3d%%,  %3d%%,  %s%2d%%  )",
+								sprintf(tmpbuf, "%c) \377%c%-10s\377G   (  %s%d, %3d%%,  %3d%%,  %s%2d%%  )",
 								    'a' + i,
+								    runecraft_colourize(flags, r_imperatives[i].level),
 								    r_imperatives[i].name,
 								    r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level,
 								    r_imperatives[i].dam * 10,
@@ -3940,8 +3943,9 @@ void interact_macros(void)
 
 						for (i = 0; i < RCRAFT_MAX_TYPES; i++) {
 							char tmpbuf[80];
-							sprintf(tmpbuf, "%c) %-7s   (  %s%2d,  %3d%%  )",
+							sprintf(tmpbuf, "%c) \377%c%-7s\377G   (  %s%2d,  %3d%%  )",
 							    'a' + i,
+							    runecraft_colourize(flags, r_imperatives[choice - 'a'].level + runespell_types[i].cost),
 							    runespell_types[i].title,
 							    runespell_types[i].cost >= 0 ? "+" : "", runespell_types[i].cost,
 							    runespell_types[i].pen * 10);
