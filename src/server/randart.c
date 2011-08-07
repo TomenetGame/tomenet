@@ -2271,8 +2271,11 @@ try_an_other_ego:
 			if (a_ptr->pval > 6) a_ptr->pval = 6;
 		}
 	}
-	/* Speed cap for gnomish cloaks of magi/bat */
-	if ((a_ptr->flags1 & TR1_SPEED) && is_armour(a_ptr->tval) && a_ptr->pval > 4) a_ptr->pval = 4;
+	/* Speed cap for gnomish cloaks of magi/bat (check for consistency with above check) */
+	if ((a_ptr->flags1 & TR1_SPEED)
+	    && is_armour(a_ptr->tval) && a_ptr->tval != TV_BOOTS
+	    && a_ptr->pval > 4)
+		a_ptr->pval = 4;
 	if ((a_ptr->tval == TV_HELM || a_ptr->tval == TV_CROWN)) {
 		/* Not more than +6 IV on helms and crowns */
 		if ((a_ptr->flags1 & TR1_INFRA) && (a_ptr->pval > 6)) a_ptr->pval = 6;
