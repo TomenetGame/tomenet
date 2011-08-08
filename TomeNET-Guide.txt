@@ -7345,10 +7345,14 @@ Note that not every skill is available to every profession (class).
                                 Dual-wielding will give you additional parry
                                 chance as well as a blows/round bonus
                                 (see (6.11) for details about parrying).
-                                You won't receive these boni if your armour is
-                                too heavy (see (5.5)). By dual-wielding, your
-                                character gains all magical abilities of both
-                                weapons at once (only very few don't stack)!
+                                NOTE: If your armour is too heavy (see (5.5))
+                                then you won't receive any bonus and your
+                                second weapon will actually be ignored as if
+                                you didn't wield it at all ie you won't gain
+                                any resistances/abilities/whatever from it.
+                                By dual-wielding, your character gains all
+                                magical abilities of both weapons at once (only
+                                very few don't stack)!
                                 In combat, a coin is flipped for each blow you
                                 deal, determining randomly which weapon will
                                 be used for that particular hit.
