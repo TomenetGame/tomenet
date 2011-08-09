@@ -1526,9 +1526,9 @@ static u16b rspell_skill_client(u32b s_type) //u16b rspell_skill_client(u32b s_f
 /* Color-selector Code - Kurzel.
    Return colour that indicates difficulty of a rune spell depending on
    the choice of certain runes, imperative (via level_mod), method (via level_mod). */
-char runecraft_colourize(u16b flags, int level_mod) {
-	int s_av = 0;
-	int e_level = 0;
+char runecraft_colourize(u32b flags, int level_mod) {
+	s32b s_av = 0;
+	s32b e_level = 0;
 
 	e_level = runespell_list[rspell_type(flags)].level + level_mod;
 	s_av = rspell_skill_client(flags);
@@ -1543,7 +1543,7 @@ char runecraft_colourize(u16b flags, int level_mod) {
 	else return 'D';
 }
 
-static void print_runes(int flags)
+static void print_runes(u32b flags)
 {
 	int col = 10, j = 2, i;
 	char tmpbuf[80];

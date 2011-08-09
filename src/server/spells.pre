@@ -171,9 +171,11 @@ typedef unsigned int u32b;
 #define GF_COLD_POISON 179
 #define GF_SHATTER 180
 #define GF_CORRODE 181
-#define GF_GENOCIDE 182 //special case
-#define GF_WONDER 183 //special case
-#define GF_ANNIHILATION 184 //special case
+#define GF_GENOCIDE 182
+#define GF_WONDER 183
+#define GF_ANNIHILATION 184
+//#define GF_ 185
+#define GF_BASE 186
 
 /* special 'projector' types, used in project(). */
 #define PROJECTOR_UNUSUAL	-1000

@@ -3896,10 +3896,11 @@ that keeps many algorithms happy.
 
 #define GF_SHATTER 180
 #define GF_CORRODE 181
-#define GF_GENOCIDE 182 //special case
-#define GF_WONDER 183 //special case
+#define GF_GENOCIDE 182
+#define GF_WONDER 183
 #define GF_ANNIHILATION 184
-
+//FREE (was GF_FEAR; but it's just duplicate of GF_TURN_ALL) 185
+#define GF_BASE 186
 
 /* For snowflakes on WINTER_SEASON. Could use 0 for type, but let's complete it. -C. Blue */
 #define GF_SNOWFLAKE		200

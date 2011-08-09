@@ -1261,6 +1261,7 @@ byte spell_color(int type)
 		case GF_CORRODE: return (randint(2)==1?TERM_ACID:TERM_LITE);
 		case GF_GENOCIDE: return (randint(4)==1?TERM_SLATE:TERM_L_DARK);
 		case GF_WONDER: return (TERM_MULTI);
+		case GF_BASE:
 		case GF_ANNIHILATION: return (randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
 	}
 
@@ -1338,6 +1339,7 @@ bool spell_color_animation(int type)
 		case GF_CORRODE:	return FALSE;
 		case GF_GENOCIDE:	return FALSE;
 		case GF_WONDER:	return FALSE;
+		case GF_BASE:
 		case GF_ANNIHILATION:	return FALSE;
 	}
 
@@ -3992,11 +3994,11 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		/* from PernA	- Jir - */
-#if 0
+#if 1 //enabled for runespell 'magic circle' - Kurzel
 		case GF_MAKE_GLYPH:
 		{
 			/* Require a "naked" floor grid */
-			if (!cave_clean_bold(y, x)) break;
+			if (!cave_clean_bold(zcave, y, x)) break;
 			if((f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) break;
 			cave_set_feat_live(&p_ptr->wpos, y, x, FEAT_GLYPH);
 			break;
@@ -6192,7 +6194,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Drain Life */
 		case GF_OLD_DRAIN:
-		case GF_ANNIHILATION: /*fix GF_OLD_DRAIN for runie life leech - Kurzel */
+		case GF_ANNIHILATION:
 		{
 			if (seen) obvious = TRUE;
 			
@@ -6211,7 +6213,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			   (drain cloud) it will be too much) we aim for balance 
 			   HACK: the priest_spell variable is defined above. 
 			*/
-			if (priest_spell) {
+			if (priest_spell || typ == GF_OLD_DRAIN) { //Runespell lifesteal fix - Kurzel
 				p_ptr->chp += (dam * 15) / 100;
 				if (p_ptr->chp > p_ptr->mhp) p_ptr->chp = p_ptr->mhp;
 				p_ptr->ret_dam = 0;
