@@ -1,12 +1,12 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 29. July 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 10. August 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 |
-| IF YOU GOT THIS GUIDE WITH THE PROGRAM DOWNLOAD, IE IN A CLIENT-ZIP FILE,
+| IF YOU GOT THIS GUIDE WITH THE PROGRAM DOWNLOAD, IE IN A CLIENT ZIP FILE,
 | THEN FIRST THING YOU SHOULD DO NOW IS GO TO www.tomenet.net AND DOWNLOAD THE
 | LATEST COPY OF THIS GUIDE TO MAKE SURE YOU AREN'T LOOKING AT OUTDATED INFO!
 |
@@ -8288,6 +8288,10 @@ Adventurer
     and more distinct classes in one character, creating unusual mixtures of
     abilities.
 
+    Hint: Adventurers are difficult to play for beginners because to fully
+    utilize them you need to know exactly what you are trying to achieve and
+    how you want to distribute their skill points to make them effective.
+
 Warrior
     A Warrior is a hack-and-slash character, who solves most of his problems
     by cutting them to pieces, but will occasionally fall back on the help of
@@ -8315,7 +8319,19 @@ Warrior
     Warriors can also choose to become monk-like fighters, by training the
     'Martial Arts' skill. This will require them to wear no armour or only very
     light armour later on.
-    The warrior class is recommended for beginners.
+    The warrior class is recommended for beginners because it's forgiving in
+    the early game and you can do fine with just a macro for potions of cure
+    wounds and maybe also a macro for phase door scrolls until you reach a
+    somewhat higher level.
+
+    Hint: Make sure to create a macro for your fighting techniques 'Sprint' and
+    'Taunt' when you learn them, which you do pretty early on. They are great
+    for catching annoying monsters that try to keep their distance from you.
+    (See (6.12) for details about fighting techniques.)
+    If you die and revive you could save a lot of money by foregoing heavy
+    armour for attack power by just buying some light armour and two cheap
+    1-handed weapons which you dual-wield (which requires light armour). This
+    should last you until you find some heavy armour and shield in the dungeon.
 
 Istar (elvish word for Mage)
     Istari use intelligence primarily, determining how much mana they have
@@ -8325,7 +8341,8 @@ Istar (elvish word for Mage)
     difficult journey. On the downside, they are the worst fighters, being
     unable to use any weapon but a Mage Staff comfortably, and still unable
     to be anything even remotely approaching effective with it.
-    An Istari has very few hit points compared to other classes, making
+
+    Hint: An istar has very few hit points compared to other classes, making
     survival difficult in the beginning. That's why this class is not
     recommended for beginners.
 
@@ -8348,8 +8365,12 @@ Priest
     of their type.
     Priests are especially adept at sensing curses on any sort of item, an
     ability that grows with their character level.
+
     Hint: Note that their spell Holy Light can be used to deal decent damage
     after it's been brought up a few levels. Orcs are said to fear it a lot.
+    Priests aren't easy to play in the beginning, since they don't deal much
+    damage and also can't take a lot of punishment, so they aren't recommended
+    for beginners.
 
 Rogue
     A Rogue is a character that prefers to live by cunning, but is capable of
@@ -8380,6 +8401,11 @@ Rogue
     Auto-retaliation is disabled while cloaked.
     A rogue's primary stats are Intelligence and Dexterity.
 
+    Hint: Make sure to create a macro for your fighting techniques 'Sprint' and
+    'Taunt' when you learn them, which you do pretty early on. They are great
+    for catching annoying monsters that try to keep their distance from you.
+    (See (6.12) for details about fighting techniques.)
+
 Mimic
     Mimics can learn how to shapechange and use monsters' forms, thus
     inheriting nearly all of the monster's abilities. Mimics learn forms
@@ -8398,6 +8424,9 @@ Mimic
     want to use these forms.)
     To find out the special abilities of a monster form, see section (6.7).
 
+    Hint: Maybe there's a friendly mimicry-user around who can forge some
+    'Rings of Polymorphing' for you from forms he or she no longer uses.
+
 Archer
     Archers aren't good at fighting, but can deliever extremely high damage
     with their ranged weapons. They can die quickly too, however.
@@ -8405,8 +8434,10 @@ Archer
     around with any bow/xbow/sling, usually most familiar with bows.
     An Archer is very bad at melee, being only better than the Sorcerer.
     Archers can create ammunition from the bones of their opponents (6.12).
+
     Hint: Enchanting your ranged weapon to-damage is especially effective,
     because the enchantment will be multiplied by the weapons multiplier.
+    Also make sure to have an ample supply of 'Scrolls of Phase Door'.
 
 Paladin
     Paladins are a combination of warrior and priest. Holy knights that
@@ -8419,20 +8450,34 @@ Paladin
     protection. Their primary stats are strength and wisdom, although
     intelligence can slightly help too.
 
+    Hint: Note that the spell Holy Light can be used to deal decent damage
+    after it's been brought up a few levels. Orcs are said to fear it a lot.
+    Also make sure to create a macro for your fighting techniques 'Sprint' and
+    'Taunt' when you learn them, they are great for catching annoying monsters
+    that try to keep their distance from you. (See (6.12) for details.)
+
 Ranger
-    Rangers are able to fight well in close combat, they are adept at various
-    types of magic, and are skilled trappers too, devoted to nature.
-    They also display great performance with ranged weapons, able to train
-    Archery skill up to 10.000, which apart from increasing their damage dealt
-    also enables them to employ special techniques used by archers.
+    Devoted to nature and second only to adventurers regarding versatility,
+    rangers excel at a lot of skills: They are able to fight well in close
+    combat and may even dual-wield two one-handed weapons at once which
+    requires light armour to be efficient. This goes well with magic or archery
+    which also would suffer from heavy armour. They are adept at various types
+    of magic and skilled trappers. They also display great performance with
+    ranged weapons, able to train 'Archery' skill up to 10.000, which apart
+    from increasing their damage dealt also enables them to employ various
+    special techniques as they see fit.
     Rangers have good stealth, perception, searching, saving throws, and are
     good with magical devices. Rangers can find several different ways out of
     any situation. They use intelligence for spellcasting, same as mages.
-    They are able to dual-wield two one-handed weapons, which requires light
-    armour to be efficient. This goes well with magic or archery, which also
-    would suffer from heavy armour.
-    Apart from adventurers, rangers are the most versatile of all classes.
     At level 20 rangers learn to find paths passing thick woods.
+
+    Hint: Make sure to create a macro for your fighting techniques 'Sprint' and
+    'Taunt' when you learn them, which you do pretty early on. They are great
+    for catching annoying monsters that try to keep their distance from you.
+    (See (6.12) for details about fighting techniques.)
+    Since rangers can dual-wield and you start with light armour which is
+    required for dual-wielding you might want to buy a secondary weapon right
+    away, for example a cheap dagger. (See (6.2) for details on dual-wielding.)
 
 Druid
     Druids are able to call upon the mystical powers of nature and very good
@@ -8455,8 +8500,12 @@ Druid
     which usually cannot use weapons, they will only get 1 blow per round.)
     To recheck which forms you can transform into, use the /ex command.
     To see an overview of the forms and their abilities, see (6.7b).
+
     Hint: Druids have a powerful ranged area attack spell they can use very
     early on, Toxic Moisture. Look for it in the book store right away.
+    Also make sure to create a macro for your fighting technique 'Sprint' when
+    you learn it, which you do pretty early on. It is great for catching
+    annoying monsters that try to keep their distance from you. (See (6.12).)
 
 Shaman
     Shamans are able to call upon both spiritual and magical powers,
@@ -8474,6 +8523,11 @@ Shaman
     spiritual abilities allow them to easily train various aspects of
     necromancy as they see fit.
     At level 20 shamans learn to perceive the invisible.
+
+    Hint: Maybe there's a friendly mimicry-user around who can forge some
+    'Rings of Polymorphing' for you from forms he or she no longer uses.
+    In the beginning shamans have few hit points and skill point distribution
+    isn't easy either, that's why this class is not recommended for beginners.
 
 Runemaster
     Runemasters use arcane symbols or 'runes' to summon pure elemental magic.
@@ -8493,6 +8547,10 @@ Runemaster
     Note that runemasters don't need actual runes in their inventory to cast
     rune spells. However, having the physical runes present increases the
     chance to succeed greatly.
+
+    Hint: If you want to test rune combinations that pose a risk of going wrong
+    badly, do so in the arena of the 'Arena Monster Challenge' event so you
+    will get away unscathed.
 
 Mindcrafter
     Mindcrafters are great melee fighters who additionally train the use of
@@ -8523,8 +8581,10 @@ Mindcrafter
     mindcrafters, so training them may require somewhat more effort.
     They are able to detect 'Telepath' ego monsters via ESP, which usually are
     able to conceal their presence telepathically vs all other classes.
+
     Hint: Mindcrafters have a powerful ranged attack spell they can use very
     early on, Psionic Blast. Look for it in the book store right away.
+    Also get the spell 'Autokinesis I' early on, which is like phase door.
 
 
 If you raise in levels, you will get new titles. These are displayed between
