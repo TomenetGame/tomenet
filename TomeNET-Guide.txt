@@ -8293,18 +8293,19 @@ Adventurer
     how you want to distribute their skill points to make them effective.
 
 Warrior
-    A Warrior is a hack-and-slash character, who solves most of his problems
+    A warrior is a hack-and-slash character, who solves most of his problems
     by cutting them to pieces, but will occasionally fall back on the help of
-    a magical device. Their prime stats are Strength and Constitution, and a
-    good Dexterity can really help at times. A Warrior will be good at melee
-    and bows, but bad at most other skills. A Warrior learns no magic but can
-    train to use magic devices; also he may dual-wield two one-handed weapons
-    at once, although he will need to use light armour for this strategy to be
-    effective. Provided his strength is high enough, a two-handed weapon will
-    usually be preferable over dual-wielding if a warrior seeks to forego
-    defense to maximize damage, since it will still allow heavy armour at the
-    same time, which dual-wielding doesn't.
-    Warriors have more attacks per round than any other class.
+    a magical device. His prime stats are strength and constitution, and a
+    good dexterity can really help at times. Warriors will be good at melee
+    and bows, but bad at most other skills. They don't learn any magic but can
+    train to use magic devices; also they may dual-wield two one-handed weapons
+    at once, although they will need to use light armour for this strategy to
+    be effective (see (6.2)).
+    Provided his strength is high enough, a two-handed weapon will usually
+    be preferable over dual-wielding when a warrior seeks to forego defense to
+    maximize damage, because two-handed weapons will still allow the use of
+    heavy armour which dual-wielding doesn't.
+    Warriors have more melee attacks per round than any other class.
     They may decide to become 'Unbelievers' by spending points irreversibly
     into the 'Anti-magic' skill. As soon as they spend the first point here
     they will immediately become unable to use any magic wand/staff/rod!
@@ -8376,30 +8377,33 @@ Rogue
     A Rogue is a character that prefers to live by cunning, but is capable of
     fighting their way out of a tight spot. The master of traps and locks, no
     device is impossible for him to overcome.
+    Their primary stats are intelligence and dexterity, intelligence being very
+    important if they aim to become proficient at magic, while dexterity makes
+    up in combat prowess for what their strength might be lacking.
     Rogues have very high stealth allowing them to sneak around many creatures
     without having to fight, or to sneak up and get the first blow,
     backstabbing his opponent.
-    Also, rogues are especially fond of dual-wielding two light one-handed
-    weapons at once. They prefer light armour, since many of their special
-    abilities won't work well with heavy armour or two-handed weapons.
+    Rogues are especially fond of dual-wielding two light one-handed weapons at
+    once (see (6.2). They prefer light armour, since dual-wielding and many of
+    their special abilities won't work with heavy armour or two-handed weapons
+    (see (5.5)).
     A rogue's perception is higher than any other class, and usually they
     notice traps or secret doors without needing a search. Rarely will a
-    rogue be unable to avoid or disarm a trap. Rogues also have the unique
-    ability to train stealing from his fellow men, a dangerous but sometimes
-    very rewarding profession. Rogues are better than warriors or paladins
-    with magical devices, but still can not rely on their performance.
-    Rogues can also learn a few spells. When searching for hidden traps, doors
-    and stairs, they may spot them more easily, even from a distance, which
-    increases when the rogue gains levels.
+    rogue be unable to avoid or disarm a trap. Rogues also have the unusual
+    ability to train stealing from shops and their fellow men, a dangerous but
+    sometimes very rewarding profession.
+    Rogues are better than warriors or paladins with magical devices, but still
+    can not rely on their performance. They can also learn a few magic spells.
+    When searching for hidden traps, doors and stairs, they may spot them more
+    easily, even from a distance, which increases when the rogue gains levels.
     At level 15, rogues will learn another special ability: Cloaking mode.
     (Press 'V' to make your character prepare for cloaking up / uncloaking.)
     By cloaking their physical appearance and body warmth pattern perfectly,
     which takes a certain time to get prepared, they become completely
     untrackable to almost any monster, for exceptions see (0.2).
-    Attacking, taking damage, and a couple of other actions immediately
-    breaks cloaking, again see (0.2) for details.
-    Auto-retaliation is disabled while cloaked.
-    A rogue's primary stats are Intelligence and Dexterity.
+    Attacking, taking damage (with the exception of floor grid induced damage
+    such as fire damage from lava) and a couple of other actions immediately
+    break cloaking, again see (0.2) for details.
 
     Hint: Make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, which you do pretty early on. They are great
@@ -8407,13 +8411,17 @@ Rogue
     (See (6.12) for details about fighting techniques.)
 
 Mimic
-    Mimics can learn how to shapechange and use monsters' forms, thus
-    inheriting nearly all of the monster's abilities. Mimics learn forms
-    by killing as many of a certain monster type as that type has a high
-    level. Further, their 'Mimicry' skill must be at least 1/2 of the
-    monster level. If mimics kill monsters whose level is higher than
-    2 x their mimicry skill those kills will nevertheless be counted in
-    case the skill is raised to the appropriate level later.
+    Mimics are melee fighters who can learn how to shapechange and use the form
+    of any monsters (except for unique ones) they slay, thereby inheriting
+    nearly all of the monster's abilities.
+    Their primary stats are same as the warrior i.e. strength and constituion
+    with dexterity coming in handy too.
+    Mimics learn forms by killing as many of a certain monster type as that
+    type has a high level. Further, their 'Mimicry' skill must be at least 1/2
+    of the monster level.
+    If mimics kill monsters whose level is higher than twice their mimicry
+    skill those kills will nevertheless be counted in case the skill is raised
+    to the appropriate level later, so those kills won't be 'lost'.
     Example: To use the form of an Ancient Bronze Dragon (level 40) the
     mimic has to kill 40 of them and have a mimicry skill of at least 20.
     To find out how many monsters you already killed and how many you need
@@ -8431,9 +8439,12 @@ Archer
     Archers aren't good at fighting, but can deliever extremely high damage
     with their ranged weapons. They can die quickly too, however.
     Archers are to bows what warriors are to melee. They are the best class
-    around with any bow/xbow/sling, usually most familiar with bows.
+    around with any bow, crossbow or sling and their primary stat is dexterity.
     An Archer is very bad at melee, being only better than the Sorcerer.
-    Archers can create ammunition from the bones of their opponents (6.12).
+    Archers will receive an array of special techniques to their disposal from
+    training the 'Archery' skill, such as setting up a precise sniping shot at
+    a target asleep or how to create ammunition from rubble or from the bones
+    of their opponents (see (6.12)).
 
     Hint: Enchanting your ranged weapon to-damage is especially effective,
     because the enchantment will be multiplied by the weapons multiplier.
@@ -8441,14 +8452,17 @@ Archer
 
 Paladin
     Paladins are a combination of warrior and priest. Holy knights that
-    fight the evil with hammers and swords as well as divine support.
-    Paladins are nearly as strong as pure warriors. They cannot become
-    unbelievers.
-    Paladins are not very good at missile weapons. They are poor at 
-    stealth, perception, and searching. They are better than fighters
-    with magical devices and have a decent saving throw due to divine
-    protection. Their primary stats are strength and wisdom, although
-    intelligence can slightly help too.
+    fight evil with a variety of melee weapons and divine support.
+    Their primary stats are thus strength for fighting and wisdom for making
+    use of divine prayers, with constitution and dexterity helping as usual.
+    Paladins are nearly as strong as pure warriors and also highly proficient
+    with shields which they use to deflect incoming attacks - although there
+    is certainly no rule stating that they may not instead choose to use huge
+    two-handed weapons for bestowing divine retribution upon their foes.
+    Paladins however are not very good at missile weapons. They are poor at
+    stealth, perception, and searching. They are better than warriors with
+    magical devices and have an outstanding saving throw due to divine
+    protection.
 
     Hint: Note that the spell Holy Light can be used to deal decent damage
     after it's been brought up a few levels. Orcs are said to fear it a lot.
@@ -8457,18 +8471,22 @@ Paladin
     that try to keep their distance from you. (See (6.12) for details.)
 
 Ranger
-    Devoted to nature and second only to adventurers regarding versatility,
-    rangers excel at a lot of skills: They are able to fight well in close
-    combat and may even dual-wield two one-handed weapons at once which
-    requires light armour to be efficient. This goes well with magic or archery
-    which also would suffer from heavy armour. They are adept at various types
-    of magic and skilled trappers. They also display great performance with
-    ranged weapons, able to train 'Archery' skill up to 10.000, which apart
-    from increasing their damage dealt also enables them to employ various
-    special techniques as they see fit.
+    Second only to adventurers regarding versatility rangers excel at a lot of
+    skills: They are able to fight well in close combat and may even dual-wield
+    two one-handed weapons at once which requires light armour to be efficient.
+    This goes well with magic or archery which also would suffer from heavy
+    armour.
+    Devoted to nature in a similar way as druids rangers will avoid corrupted
+    magic such as necromancy. They are however very adept at most other types
+    of magic and also skilled trappers. Last but not least rangers display
+    great performance with ranged weapons, able to train 'Archery' skill up to
+    10.000, which apart from increasing their damage dealt also unlocks various
+    special techniques to employ as they see fit.
     Rangers have good stealth, perception, searching, saving throws, and are
     good with magical devices. Rangers can find several different ways out of
-    any situation. They use intelligence for spellcasting, same as mages.
+    any situation. They use intelligence for spellcasting same as mages, they
+    need strength if they rely on fighting in close combat, and they should
+    have good dexterity if they aim at training ranged weapons.
     At level 20 rangers learn to find paths passing thick woods.
 
     Hint: Make sure to create a macro for your fighting techniques 'Sprint' and
@@ -8483,22 +8501,21 @@ Druid
     Druids are able to call upon the mystical powers of nature and very good
     at it. Their wisdom is of primary importance to determine their mana and
     success chances when casting spells.
-    Druids fight using Martial Arts (the only melee skill they are able to
-    train) as well as spells.
+    Druids fight using Martial Arts, which is the only melee skill they are
+    able to train, as well as a variety of magic spells.
     Druids can shapechange into several animal forms without having to fight
-    or kill them in order to learn about their form. They learn one or more
-    new forms at each character level that is dividable by 5. Druids are able
-    to always use their full equipment, even while transformed.
-    They're about as good at fighting as priests or shamans, not too great but
-    fair enough; they despise the use of weapons though.
-    A specialty of druids is, that they are still able to wear their full
+    or kill them in order to learn those forms. Instead they learn one or more
+    new forms automatically every five character levels.
+    Druids are able to always use their full equipment, even while transformed.
+    Despising the use of weapons they aren't as superb at close combat as
+    warriors, but their Martial Arts training will make up for that and allow
+    them quite a respectable performance.
+    A specialty of druids is that they are still able to wear their full
     equipment even if their appearent shape is not human but of an animal.
     Druids learn how to quickly pass through thick forest at level 10 --
     note though that they can already do this at level 5 by simply polymorphing
     into an animal ('m' key), since all animals can pass forest easily.
-    (Special note (compare 6.7): If they wield a weapon while using a form
-    which usually cannot use weapons, they will only get 1 blow per round.)
-    To recheck which forms you can transform into, use the /ex command.
+    To review which forms you can transform into, use the /ex command.
     To see an overview of the forms and their abilities, see (6.7b).
 
     Hint: Druids have a powerful ranged area attack spell they can use very
@@ -8508,21 +8525,24 @@ Druid
     annoying monsters that try to keep their distance from you. (See (6.12).)
 
 Shaman
-    Shamans are able to call upon both spiritual and magical powers,
-    whatever they deem most appropriate. Their mind is also trained in a very
-    versatile manner, allowing them to collect energy from intelligence or
-    wisdom, whatever currently is easiest for them! Shamans are able to learn
-    to take on shape of animals, giants or dragons, and even ride on summoned
-    dragons, taking on the shape of dragonriders. They can also appear as a
-    spirit, elemental or ghost after they destroyed enough of them, while
-    still using their full equipment! Shamans are always able to move straight
-    even if the creature in whose shape they appear usually doesn't. They learn
-    elemental ('E') forms especially quickly.
-    Shamans are excellent at magic and may have weaker combat abilities than
-    rangers or paladins, but still don't need to hide from a melee. Their
-    spiritual abilities allow them to easily train various aspects of
-    necromancy as they see fit.
-    At level 20 shamans learn to perceive the invisible.
+    Shamans are able to call upon both spiritual and magical powers, whatever
+    they deem most appropriate. Their mind is also trained in a very versatile
+    manner, allowing them to collect energy from intelligence or wisdom,
+    whatever currently is easiest for them!
+    Shamans are able to shapeshift same as mimics (see mimics above for details
+    about how to learn forms) but they are limited to animals, giants, dragons,
+    dragonriders, spirits, elementals or ghosts.
+    However, they may use the latter three types while still wearing their full
+    equipment and they are always able to move straight even if the creature in
+    whose shape they appear usually moves erratically - these two are feats
+    that mimics cannot achieve.
+    Shamans learn elemental ('E') forms especially quickly.
+    While they are excellent at magic they have weaker combat abilities than
+    rangers or paladins but still don't need to hide from a melee if trained
+    properly.
+    Their spiritual abilities allow them to easily train various aspects of
+    necromancy as they see fit. Accordingly at level 20 shamans learn to
+    perceive the invisible.
 
     Hint: Maybe there's a friendly mimicry-user around who can forge some
     'Rings of Polymorphing' for you from forms he or she no longer uses.
@@ -8562,12 +8582,13 @@ Mindcrafter
     are up against creatures of little or no intelligence.
     Their primary stat attribute is intelligence, which determines their spell
     fail rates as well as the most part of their mana pool. Also somewhat
-    affecting the mana pool are their secondary and tertiary attributes,
-    charisma and wisdom, although especially wisdom is hardly of any importance
-    to become an able telepathy user.
+    affecting the mana pool are charisma and wisdom, although especially wisdom
+    is hardly of any importance to become an able telepathy user.
+    Aside from intelligence as primary spell-casting stat they will also want
+    decent strength for engaging in close combat.
     They don't lack stealth and are adept at wearing decent armour, except that
-    putting on too heavy head gear might negatively impact their amount of
-    psychic energy.
+    putting on too heavy head gear (above 4.0 lbs) might negatively impact
+    their amount of psychic energy.
     Mindcrafters will learn to resist sanity-draining effects a bit at level
     10, and somewhat better even at level 20.
     A lot of their spells can actually be cast while blind (or even confused),
@@ -8579,7 +8600,7 @@ Mindcrafter
     pressing 'p'. Pressing it again will return one's mind to normal.
     The effects of some necromancy skills are somewhat distracting to
     mindcrafters, so training them may require somewhat more effort.
-    They are able to detect 'Telepath' ego monsters via ESP, which usually are
+    They are able to detect 'Telepath' ego monsters via ESP which usually are
     able to conceal their presence telepathically vs all other classes.
 
     Hint: Mindcrafters have a powerful ranged attack spell they can use very
