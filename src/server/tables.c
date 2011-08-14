@@ -5073,7 +5073,7 @@ player_class class_info[MAX_CLASS] =
 				  actually view them as 'fighters with psi abilities' instead, improving vitality. */
                 TERM_SLATE,
 //		{ -1, 3, 0, -1, -1, 1},
-		{ 0, 2, 0, 0, 0, 1},
+		{ 2, 2, 0, 0, 0, 1},
 //		{21+100, 0+100, 0, 19+100, 0, 0}, 18/30;10 pretty unreachable with {0,2,0,0,0,1}
 		{19+100, 0+100, 0, 10+100, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
