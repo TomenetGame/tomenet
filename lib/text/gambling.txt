@@ -58,6 +58,10 @@ You will play the ~3000 year old asian strategy game of Go, also often
 dubbed 'the divine game', on a 9x9 board against an opponent that gets
 picked for you based on your past results, for cold hard money!
 
+You pay a wager only once on each of the 8 difficulty levels. You may then
+play for free until you manage to win on your current level. If you win you
+will be paid twice your bet and advance into the next difficulty level.
+
 Progress: Two players take turns placing black and white stones on the board
 respectively. Those stones cannot be moved once placed, they can however be
 captured (explained below). There is no limit to the stone supply.
