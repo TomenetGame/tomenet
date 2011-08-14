@@ -8325,7 +8325,9 @@ Warrior
     wounds and maybe also a macro for phase door scrolls until you reach a
     somewhat higher level.
 
-    Hint: Make sure to create a macro for your fighting techniques 'Sprint' and
+    Hint: On character creation increase your strength to 18/30 at the very
+    least and your dexterity to at least 10, to get a decent attack speed.
+    Make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, which you do pretty early on. They are great
     for catching annoying monsters that try to keep their distance from you.
     (See (6.12) for details about fighting techniques.)
