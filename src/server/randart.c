@@ -630,7 +630,7 @@ static void add_ability (artifact_type *a_ptr) {
 					a_ptr->flags1 |= TR1_VAMPIRIC;
 				}
 			}
-#if 0 /* activate any time you like :) - note: REMOVE THE "-2" at the start of add_ability() then! */
+#if 1 /* activate any time you like :) - note: REMOVE THE "-2" at the start of add_ability() then! */
 			else if (r < 98 && a_ptr->tval != TV_DIGGING) {
 				/* chaotic and blessed are exclusive atm */
 				if (!(a_ptr->flags3 & TR3_BLESSED)) {
