@@ -261,6 +261,8 @@ G:5:b
 W:36
 
 N:5:Magic shop
+T:100:6:1
+T:100:6:1
 I:100:Protection
 I:100:Levitation
 I:100:Protection
