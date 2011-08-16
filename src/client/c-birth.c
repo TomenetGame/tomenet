@@ -652,7 +652,9 @@ static void choose_stat_order(void)
 			c = inkey();
 			crb = cp_ptr->c_adj[j] + rp_ptr->r_adj[j];
 			if (c == '-' || c == '4') {
-				if (stat_order[j] > 10-2 && stat_order[j]+crb > 3) {
+				if (stat_order[j] > 10-2 &&
+				    /* exception: allow going below 3 if we initially were below 3 too */
+				    (stat_order[j] > 10 || stat_order[j]+crb > 3)) {
 					if (stat_order[j] <= 12) {
 						/* intermediate */
 						stat_order[j]--;
