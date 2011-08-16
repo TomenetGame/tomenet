@@ -1147,7 +1147,7 @@ void do_cmd_check_players(int Ind, int line)
 		/* Print a message */
 		do_write_others_attributes(Ind, fff, q_ptr, attr, is_admin(p_ptr));
 
-		fprintf(fff, "\n   %s", q_ptr->inval ? (!outdated ? (!latest && is_admin(p_ptr) ? "\377yI\377sL\377U" : "\377yI \377U") : "\377yI\377DO\377U") :
+		fprintf(fff, "\n   %s", q_ptr->inval ? (!outdated ? (!latest && is_admin(p_ptr) ? "\377yI\377sL \377U" : "\377yI \377U") : "\377yI\377DO \377U") :
 		    (outdated ? "\377DO \377U" : (!latest && is_admin(p_ptr) ? "\377sL \377U" :  "\377U")));
 
 		/* Print location if both players are PvP-Mode */
@@ -1191,7 +1191,7 @@ void do_cmd_check_players(int Ind, int line)
 		/* Print a message */
 		do_write_others_attributes(Ind, fff, q_ptr, attr, is_admin(p_ptr));
 
-		fprintf(fff, "\n   %s", q_ptr->inval ? (!outdated ? (!latest && is_admin(p_ptr) ? "\377yI\377U+\377sL\377U" : "\377y(I) \377U") : "\377yI\377U+\377DO\377U") :
+		fprintf(fff, "\n   %s", q_ptr->inval ? (!outdated ? (!latest && is_admin(p_ptr) ? "\377yI\377U+\377sL \377U" : "\377y(I) \377U") : "\377yI\377U+\377DO \377U") :
 		    (outdated ? "\377D(O) \377U" : (!latest && is_admin(p_ptr) ? "\377s(L) \377U" :  "\377U")));
 
 		/* Print location if both players are PvP-Mode */
