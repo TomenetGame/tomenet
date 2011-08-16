@@ -2346,7 +2346,8 @@ T:23:20:20
 T:23:31:32
 C:15:5:0:10
 R:100
-F:CRIT | HIDE_TYPE | IGNORE_ACID | IGNORE_FIRE | IGNORE_WATER
+#current idea regarding ignoring damage: hardened steel + moonwood
+F:CRIT | HIDE_TYPE | IGNORE_FIRE
 
 #Some prefix-egos for missile launchers :) -C. Blue
 N:200:Moonwood
