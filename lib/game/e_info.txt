@@ -2348,6 +2348,8 @@ C:15:5:0:10
 R:100
 #current idea regarding ignoring damage: hardened steel + moonwood
 F:CRIT | HIDE_TYPE | IGNORE_FIRE
+#also inherit similar bonus as 'Sharp' ego has:
+F:IGNORE_WATER
 
 #Some prefix-egos for missile launchers :) -C. Blue
 N:200:Moonwood
