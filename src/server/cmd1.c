@@ -2865,29 +2865,24 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 #endif
 
 				/* Select a chaotic effect (10% chance) */
-//				if ((f5 & TR5_CHAOTIC) && (randint(2)==1)) <- 50%
-				if ((f5 & TR5_CHAOTIC) && (randint(10)==1)) {
-					if (randint(5) < 3) {
-						/* Vampiric (60%) */
+				if ((f5 & TR5_CHAOTIC) && !rand_int(10)) {
+					if (!rand_int(2)) {
+						/* Vampiric (50%) (50%) */
 						chaos_effect = 1;
-					} else if (randint(1000) == 1) {
-						/* Quake (0.04%) */
+					} else if (!rand_int(1000)) {
+						/* Quake (0.050%) (49.975%) */
 						chaos_effect = 2;
-					} else if (randint(10) != 1) {
-						/* Confusion (36%) */
+					} else if (!rand_int(2)) {
+						/* Confusion (25%) (24.9875%) */
 						chaos_effect = 3;
-					}
-//					else if (randint(2) == 1) -> (1.494%)
-					else if (randint(10) == 1) {
-						/* Teleport away (0.4%) */
+					} else if (!rand_int(30)) {
+						/* Teleport away (0.83%) (24.1545833%) */
 						chaos_effect = 4;
-					}
-//					else -> (1.494%)
-					else if (randint(10) == 1) {
-						/* Polymorph (0.36%) */
+					} else if (!rand_int(50)) {
+						/* Polymorph (0.48%) (23.6714917%) */
 						chaos_effect = 5;
-					} else if (randint(100) == 1) {
-						/* New: Clone^^ (0.0324%) */
+					} else if (!rand_int(300)) {
+						/* Clone (0.079%) */
 						chaos_effect = 6;
 					}
 				}
@@ -3837,29 +3832,24 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 #endif
 
 				/* Select a chaotic effect (10% chance) */
-//				if ((f5 & TR5_CHAOTIC) && (randint(2)==1)) <- 50%
-				if ((f5 & TR5_CHAOTIC) && (randint(10)==1)) {
-					if (randint(5) < 3) {
-						/* Vampiric (60%) */
+				if ((f5 & TR5_CHAOTIC) && !rand_int(10)) {
+					if (!rand_int(2)) {
+						/* Vampiric (50%) (50%) */
 						chaos_effect = 1;
-					} else if (randint(1000) == 1) {
-						/* Quake (0.04%) */
+					} else if (!rand_int(1000)) {
+						/* Quake (0.050%) (49.975%) */
 						chaos_effect = 2;
-					} else if (randint(10) != 1) {
-						/* Confusion (36%) */
+					} else if (!rand_int(2)) {
+						/* Confusion (25%) (24.9875%) */
 						chaos_effect = 3;
-					}
-//					else if (randint(2) == 1) -> (1.494%)
-					else if (randint(10) == 1) {
-						/* Teleport away (0.4%) */
+					} else if (!rand_int(30)) {
+						/* Teleport away (0.83%) (24.1545833%) */
 						chaos_effect = 4;
-					}
-//					else -> (1.494%)
-					else if (randint(10) == 1) {
-						/* Polymorph (0.36%) */
+					} else if (!rand_int(50)) {
+						/* Polymorph (0.48%) (23.6714917%) */
 						chaos_effect = 5;
-					} else if (randint(100) == 1) {
-						/* New: Clone^^ (0.0324%) */
+					} else if (!rand_int(300)) {
+						/* Clone (0.079%) */
 						chaos_effect = 6;
 					}
 				}
