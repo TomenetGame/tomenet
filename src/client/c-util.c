@@ -3769,46 +3769,46 @@ void interact_macros(void)
 				case 1:
 					switch (choice) {
 					case 'a':
-						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter a distinctive part of the potion's name");
-						Term_putstr(10, 12, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
-						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GCritical Wounds");
-						Term_putstr(10, 14, -1, TERM_GREEN, "if you want to quaff a 'Potion of Cure Critical Wounds'.");
-						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter partial potion name:");
+						Term_putstr(5, 11, -1, TERM_GREEN, "Please enter a distinctive part of the potion's name or inscription");
+						Term_putstr(5, 12, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
+						Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GCritical Wounds");
+						Term_putstr(5, 14, -1, TERM_GREEN, "if you want to quaff a 'Potion of Cure Critical Wounds'.");
+						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter partial potion name or inscription:");
 						break;
 					case 'b':
-						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter a distinctive part of the scroll's name");
-						Term_putstr(10, 12, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
-						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GPhase Door");
-						Term_putstr(10, 14, -1, TERM_GREEN, "if you want to read a 'Scroll of Phase Door'.");
-						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter partial scroll name:");
+						Term_putstr(5, 11, -1, TERM_GREEN, "Please enter a distinctive part of the scroll's name or inscription");
+						Term_putstr(5, 12, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
+						Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GPhase Door");
+						Term_putstr(5, 14, -1, TERM_GREEN, "if you want to read a 'Scroll of Phase Door'.");
+						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter partial scroll name or inscription:");
 						break;
 					case 'd':
 						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact spell name and pay attention");
 						Term_putstr(10, 12, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
 						Term_putstr(10, 13, -1, TERM_GREEN, "or another example:     \377GPhase Door");
 						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
-						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter exact spell name:");
+						Term_putstr(15, 17, -1, TERM_L_GREEN, "Enter exact spell name:");
 						break;
 					case 'e':
 						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact spell name and pay attention");
 						Term_putstr(10, 12, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
 						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GManathrust");
 						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
-						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter exact spell name:");
+						Term_putstr(15, 17, -1, TERM_L_GREEN, "Enter exact spell name:");
 						break;
 					case 'f':
 						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact technique name and pay attention");
 						Term_putstr(10, 12, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
 						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GSprint");
 						Term_putstr(10, 14, -1, TERM_GREEN, "You must have learned a technique before you can use it!");
-						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter exact technique name:");
+						Term_putstr(15, 17, -1, TERM_L_GREEN, "Enter exact technique name:");
 						break;
 					case 'g':
 						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact technique name and pay attention");
 						Term_putstr(10, 12, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
 						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GFlare missile");
 						Term_putstr(10, 14, -1, TERM_GREEN, "You must have learned a technique before you can use it!");
-						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter exact technique name:");
+						Term_putstr(15, 17, -1, TERM_L_GREEN, "Enter exact technique name:");
 						break;
 					case 'h':
 						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact monster code. You can find codes");
@@ -3816,7 +3816,7 @@ void interact_macros(void)
 						Term_putstr(10, 13, -1, TERM_GREEN, "or by pressing  \377s:  \377gto chat and then typing the command:  \377s/mon");
 						Term_putstr(10, 14, -1, TERM_GREEN, "For example, enter   \377G37   \377gto polymorph into a 'fruit bat'.");
 						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a form before you can use it!");
-						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter exact monster code:");
+						Term_putstr(15, 17, -1, TERM_L_GREEN, "Enter exact monster code:");
 						break;
 					case 'i':
 						strcpy(buf2, "");
@@ -3984,14 +3984,14 @@ void interact_macros(void)
 						break;
 					case 'j':
 						/* ---------- Enter trap kit name ---------- */
-						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter a distinctive part of the trap kit name");
-						Term_putstr(10, 12, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
-						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GCatapult");
-						Term_putstr(10, 14, -1, TERM_GREEN, "if you want to use a 'Catapult Trap Set'.");
-						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter partial trap kit name:");
+						Term_putstr(5, 11, -1, TERM_GREEN, "Please enter a distinctive part of the trap kit name or inscription");
+						Term_putstr(5, 12, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
+						Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GCatapult");
+						Term_putstr(5, 14, -1, TERM_GREEN, "if you want to use a 'Catapult Trap Set'.");
+						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter partial trap kit name or inscription:");
 
 						/* Get an item name */
-						Term_gotoxy(40, 17);
+						Term_gotoxy(50, 17);
 						strcpy(buf, "");
 						if (!askfor_aux(buf, 159, 0)) {
 							i = -1;
@@ -4001,13 +4001,13 @@ void interact_macros(void)
 
 						/* ---------- Enter ammo/load name ---------- */
 						clear_from(10);
-						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter a distinctive part of the item you want to");
-						Term_putstr(10, 12, -1, TERM_GREEN, "load the trap kit with, and pay attention to upper-case");
-						Term_putstr(10, 13, -1, TERM_GREEN, "and lower-case letters!");
-						Term_putstr(10, 14, -1, TERM_GREEN, "For example, enter:     \377GPebbl     \377gif you want");
-						Term_putstr(10, 15, -1, TERM_GREEN, "to load a catapult trap kit with 'Rounded Pebbles'.");
-						Term_putstr(10, 16, -1, TERM_GREEN, "If you want to choose ammo manually, just press the \377GRETURN\377g key.");
-						Term_putstr(5, 18, -1, TERM_L_GREEN, "Enter partial ammo/load name or blank line:");
+						Term_putstr(5, 11, -1, TERM_GREEN, "Please enter a distinctive part of the item name or inscription you");
+						Term_putstr(5, 12, -1, TERM_GREEN, "want to load the trap kit with, and pay attention to upper-case");
+						Term_putstr(5, 13, -1, TERM_GREEN, "and lower-case letters!");
+						Term_putstr(5, 14, -1, TERM_GREEN, "For example, enter:     \377GPebbl     \377gif you want");
+						Term_putstr(5, 15, -1, TERM_GREEN, "to load a catapult trap kit with 'Rounded Pebbles'.");
+						Term_putstr(5, 16, -1, TERM_GREEN, "If you want to choose ammo manually, just press the \377GRETURN\377g key.");
+						Term_putstr(5, 18, -1, TERM_L_GREEN, "Enter partial ammo/load name or inscription:");
 
 						/* Get an item name */
 						Term_gotoxy(50, 18);
@@ -4075,18 +4075,29 @@ void interact_macros(void)
 						/* ---------- Enter device name ---------- */
 
 						clear_from(10);
-						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter a distinctive part of the magic device's name");
-						Term_putstr(10, 12, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
+						Term_putstr(5, 11, -1, TERM_GREEN, "Please enter a distinctive part of the magic device's name or");
+						Term_putstr(5, 12, -1, TERM_GREEN, "inscription and pay attention to upper-case and lower-case letters!");
 						switch (choice) {
-						case 'a': Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GMagic Mis"); break;
-						case 'b': Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GTelep"); break;
-						case 'c': Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GProb"); break;
-						case 'd': Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GLightn"); break;
-						case 'e': Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GFrostweav"); break;
-						case 'f': Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GSerpen"); break;
+						case 'a': Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GMagic Mis");
+							Term_putstr(5, 14, -1, TERM_GREEN, "if you want to use a 'Wand of Magic Missiles'.");
+							break;
+						case 'b': Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GTelep");
+							Term_putstr(5, 14, -1, TERM_GREEN, "if you want to use a 'Staff of Teleportation'.");
+							break;
+						case 'c': Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GTrap Det");
+							Term_putstr(5, 14, -1, TERM_GREEN, "if you want to use a 'Rod of Trap Detection'.");
+							break;
+						case 'd': Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GLightn");
+							Term_putstr(5, 14, -1, TERM_GREEN, "if you want to use a 'Rod of Lightning Bolts'.");
+							break;
+						case 'e': Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GFrostweav");
+							Term_putstr(5, 14, -1, TERM_GREEN, "if you want to use a 'Cloak of Frostweaving'.");
+							break;
+						case 'f': Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GSerpen");
+							Term_putstr(5, 14, -1, TERM_GREEN, "if you want to use an 'Amulet of the Serpents'.");
+							break;
 						}
-						Term_putstr(10, 14, -1, TERM_GREEN, "if you want to use a 'Staff of Teleportation'.");
-						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter partial device name:");
+						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter partial device name or inscription:");
 
 						/* hack before we exit: remember menu choice 'magic device' */
 						choice = 'k';
@@ -4096,7 +4107,7 @@ void interact_macros(void)
 
 					/* no need for inputting an item/spell to use with the macro? */
 					if (choice != 'c' && choice != 'i' && choice != 'j') {
-						Term_gotoxy(40, 17);
+						Term_gotoxy(47, 17);
 
 						/* Get an item name */
 						strcpy(buf, "");
