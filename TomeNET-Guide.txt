@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 18. August 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 20. August 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -371,7 +371,7 @@ V       V       enter 'cloaking mode'. This can only be used by rogues.
                 (Also see (5.16) for details on 'normal' invisibility.)
 A       A       activate an item. Usually an artifact, a dragon scale mail or
                 a ring of polymorphing (shapechanging).
-T or +  +       tunnel through an obstacle or a wall.
+T or +  +       tunnel (dig) through an obstacle or a wall.
 R       R       rest. Your hit points and mana will regenerate faster while
                 resting.
 o       o       open something.
@@ -8202,10 +8202,12 @@ Maia
     reached initiation, so take care.
     Using but their mind they can easily perceive both good and demonkind
     telepathically. The servants and harbingers of those factions that Maiar
-    need to slay occur between dungeon level 12 and 20 (aka -600..-1000 ft,
-    for example in Barrow-Downs). If a Maia generates the dungeon level, there
-    will be a guaranteed spawn, so if you are in a party with non-Maiar, make
-    sure you are the first one taking the staircase so you generate the level.
+    need to slay occur between dungeon level 12 and 20 (which correspond to
+    -600..-1000 ft in dungeon 'Barrow-Downs' for example, since that dungeon
+    starts at level 1).
+    If a Maia generates the dungeon level, there will be a guaranteed spawn, so
+    if you are in a party with non-Maiar, make sure you are the first one
+    taking the staircase so you generate the level.
     Maiar are able to train in the 'Astral' school, an exclusive divine magic
     which has spells of different effect depending on the caster's alignment.
     Initiation to either enlightened or corrupted beings will decide the effect
