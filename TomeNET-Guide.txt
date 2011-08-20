@@ -873,8 +873,18 @@ Word-of-Recall scrolls:
     @R-350      will teleport you to depth -350ft (dungeon).
     @RW32,32    will teleport you to sector 32,32 on the worldmap (Bree).
                 World map ranges from 0,0 to 63,63.
-    You must've already been at that depth or deeper in order to teleport
+    or even better..
+    @R          This inscription makes the above versions sort of obsolete.
+                If you have inscribed a word-of-recall item like this then you
+                can just type the command    /rec    into chat to invoke the
+                word-of-recall. Examples replacing above inscriptions:
+                /rec 500
+                /rec -350
+                /rec 32 32        <- notice: No komma between the coordinates!
+
+    NOTE: You must've already been at that depth or deeper in order to teleport
     there via WoR!
+
     IMPORTANT: In order to recall to a place on the world map, you need to
     have been there before, NOT while you were dead (ghost), but while you
     were alive! So don't try to travel to Gondolin as a ghost, the priest
