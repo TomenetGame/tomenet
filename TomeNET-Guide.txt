@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 20. August 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 21. August 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10159,7 +10159,9 @@ Note: Keys are indestructible, they can be lost though..
 ------------------------------------------
 The player's "Magic Device" ability in the character overview screen is
 calculated from a base ability depending on race/class, and the magic device
-skill in the skill screen ('G').
+skill in the skill screen ('G'). It determines how well a character can make
+use of magical devices such as wands, staves, rods and activatable items.
+
 The Magic Device ability is not limited to a maximum value, although the
 player won't be able to increase it unlimitedly. The scale is:
   0+    Bad
@@ -10172,7 +10174,7 @@ player won't be able to increase it unlimitedly. The scale is:
   84+   Heroic
   108+  Legendary
 
-The magic device ability does this...
+In detail, the magic device ability does this...
 -makes it easier to use wands, staves and rods and to activate items:
   If random(1 to (skill - itemlevel)) > 3 then you will successfully
   use the item. (There's always a slim chance to succeed even if your
