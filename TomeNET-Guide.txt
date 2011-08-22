@@ -3884,29 +3884,41 @@ Dungeons
 Also, there are several dungeons that aren't bound to a town. Here's a list:
 (The staircase colour in-game indicates the dungeon type, compare (4.3).)
 
-Dungeon                         |   Depth/Level         | Min. required player
-                                |                       |   level to enter
---------------------------------+-----------------------+---------------------
-Death Fate                      |   50..  50/  1..1     |        1
-The Halls of Mandos             |   50..4900/  1..98    |        1
-The Orc Cave                    |  500..1150/ 10..23    |        3
-Mirkwood                        |  550..1700/ 11..34    |        5
-The Old Forest                  |  650..1300/ 13..26    |        5
-The Helcaraxe                   | 1000..2050/ 20..41    |       10
-The Sandworm lair               | 1100..1500/ 22..30    |       12
-The Heart of the Earth          | 1250..1850/ 25..37    |       10
-The Maze                        | 1250..1900/ 25..38    |       15
-Cirith Ungol                    | 1250..2550/ 25..51    |       10
-The Land Of Rhun                | 1300..2050/ 26..41    |       13
-Moria                           | 1500..2500/ 30..50    |       15
-The Small Water Cave            | 1600..1750/ 32..35    |       15
-Submerged Ruins                 | 1750..2550/ 35..51    |       15
-The Illusory Castle             | 1750..2600/ 35..52    |       10
-The Sacred Land Of Mountains    | 2000..2250/ 40..45    |       20
-Erebor                          | 2500..3050/ 50..61    |       35
-Dol Guldur                      | 2850..3550/ 57..71    |       28
-Mount Doom                      | 4250..5000/ 85..100   |       38
-Nether Realm                    | 8300..9800/166..196   |       40 (*)
+'Depth/Level' describe a dungeon's starting level and final level. Depth is
+actually just a different way for expressing a dungeon floor level, so they're
+redundant: Each dungeon level corresponds to 50 ft.
+
+So for example Orc Cave starts at dungeon level 10 and ends at dungeon level 23
+which means:
+The first floor (ie -50 ft) in The Orc Cave is the same difficulty level as the
+tenth floor (ie -500 ft) in the Barrow-Downs dungeon (which starts at level 1).
+Since The Orc Cave goes from level 10 to level 23 that means it has 14 floors,
+so its final floor will be -700 ft which is of the same difficulty level as
+-1150 ft Barrow-Downs (ie level 23).
+
+Dungeon                        |     Depth* / Level    | Min. required player
+                               |  (*relative to Lv.1)  |   level to enter
+-------------------------------+-----------------------+---------------------
+Death Fate                     |    50..  50/  1..1    |        1
+The Halls of Mandos            |    50..4900/  1..98   |        1
+The Orc Cave                   |   500..1150/ 10..23   |        3
+Mirkwood                       |   550..1700/ 11..34   |        5
+The Old Forest                 |   650..1300/ 13..26   |        5
+The Helcaraxe                  |  1000..2050/ 20..41   |       10
+The Sandworm lair              |  1100..1500/ 22..30   |       12
+The Heart of the Earth         |  1250..1850/ 25..37   |       10
+The Maze                       |  1250..1900/ 25..38   |       15
+Cirith Ungol                   |  1250..2550/ 25..51   |       10
+The Land Of Rhun               |  1300..2050/ 26..41   |       13
+Moria                          |  1500..2500/ 30..50   |       15
+The Small Water Cave           |  1600..1750/ 32..35   |       15
+Submerged Ruins                |  1750..2550/ 35..51   |       15
+The Illusory Castle            |  1750..2600/ 35..52   |       10
+The Sacred Land Of Mountains   |  2000..2250/ 40..45   |       20
+Erebor                         |  2500..3050/ 50..61   |       35
+Dol Guldur                     |  2850..3550/ 57..71   |       28
+Mount Doom                     |  4250..5000/ 85..100  |       38
+Nether Realm                   |  8300..9800/166..196  |       40 (*)
 
 The official main server usually has one or several 'ironman' dungeons
 (see (4.8)), their entrances (stairs) waiting to be discovered by some bold
