@@ -68,8 +68,8 @@
 /* _one before_ MAJOR/MINOR/PATCH version that counts as 'latest' (should be 0-15). */
 #define VERSION_MAJOR_LATEST	4
 #define VERSION_MINOR_LATEST	4
-#define VERSION_PATCH_LATEST	7
-#define VERSION_EXTRA_LATEST	0
+#define VERSION_PATCH_LATEST	6
+#define VERSION_EXTRA_LATEST	2
 #define VERSION_BRANCH_LATEST	0
 #define VERSION_BUILD_LATEST	0
 
