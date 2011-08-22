@@ -3887,7 +3887,7 @@ int get_playerslot_loose(int Ind, char *iname) {
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		if (!Players[Ind]->inventory[i].k_idx) continue;
 
-		object_desc(0, o_name, &Players[Ind]->inventory[i], FALSE, 0);
+		object_desc(0, o_name, &Players[Ind]->inventory[i], FALSE, 3+16+32);
 		for (j = 0; o_name[j]; j++) o_name[j] = tolower(o_name[j]);
 
 		if (strstr(o_name, i_name)) return(i);
