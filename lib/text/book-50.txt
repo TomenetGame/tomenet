@@ -7,7 +7,7 @@
                             Welcome to TomeNET
 
 If you are new to TomeNET, read the 'TomeNET-Guide.txt' in your TomeNET
-directory. Latest version is available online at www.c-blue.de/rogue.html.
+directory. Latest version available online at www.tomenet.net -> 'The Guide'.
 It contains all information about TomeNET, as well as a 'how-to-start' part.
 
 ****************************************************************************
