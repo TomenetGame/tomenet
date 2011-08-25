@@ -80,7 +80,7 @@ r_augment r_augments[RCRAFT_MAX_ELEMENTS] =
 	{ R_EART,  15,  11,   0,  11,  10,   0, 11}, //10% damage/cost increase, 10% duration increase
 	{ R_CHAO,  25,  14, +20,  14,  10,   0, 10}, //40% damage/cost increase, 20% failure increase
 	{ R_NETH,  25,  14,   0,  14,  10,  -2, 10}, //40% damage/cost increase, -2 radius decrease
-	{ R_NEXU,  25,  10,   0,  10,  10,   3,  7}, // +3 radius increase, 30% duration decrease
+	{ R_NEXU,  25,  10,   0,  10,  10,   4,  6}, // +4 radius increase, 40% duration decrease
 	{ R_TIME,  30,  10, +10,   6,   6,   0, 12}, //40% energy/damage decrease, 20% duration increase
 };
 
@@ -213,7 +213,7 @@ r_spell runespell_list[RT_MAX] =
 { RT_WATER,		"water",	 5,  8, 15,  0, 1, GF_WATER,		0,	0 }, //4
 { RT_SHARDS,		"shards",	 7,  9, 15,  0, 1, GF_SHARDS,		0,	0 }, //4
 { RT_CHAOS,		"chaos",	13, 11, 35,  0, 1, GF_CHAOS,		0,	0 }, //4
-{ RT_NETHER,		"nether",	13, 11, 35,  0, 1, GF_NETHER,		0,	0 }, //5
+{ RT_NETHER,		"nether",	13, 11, 35,  0, 1, GF_NETHER,		0,	0 }, //4
 { RT_NEXUS,		"nexus",	 6,  8, 15,  0, 1, GF_NEXUS,		0,	0 }, //3
 { RT_TIME,		"time",		10, 10, 40,  0, 1, GF_TIME,		0,	0 }, //5
 
@@ -295,7 +295,7 @@ r_spell runespell_list[RT_MAX] =
 { RT_ACID_COLD,		"rime",			12, 11,  5,  5, 2, GF_ACID_COLD,	0,		0 }, //2
 { RT_ACID_POISON,	"venom",		12, 11,  5,  5, 2, GF_ACID_POISON,	GF_BLIND,	0 }, //1
 { RT_ACID_TIME,		"temporal acid",	11, 10,  5,  5, 2, GF_ACID,		GF_TIME,	R_TIME }, //2
-{ RT_PLASMA,		"plasma",		11, 10,  5,  5, 2, GF_PLASMA,		0,		0 }, //2 (RT_ELEC_FIRE)
+{ RT_PLASMA,		"plasma",		14, 10, 20,  5, 2, GF_PLASMA,		0,		0 }, //2 (RT_ELEC_FIRE)
 { RT_ELEC_COLD,		"static",		12, 11,  5,  5, 2, GF_ELEC_COLD,	0,		0 }, //2
 { RT_ELEC_POISON,	"jolting",		12, 11,  5,  5, 2, GF_ELEC_POISON,	GF_STUN,	0 }, //1
 { RT_ELEC_TIME,		"temporal lightning",	11, 10,  5,  5, 2, GF_ELEC,		GF_TIME,	R_TIME }, //2
@@ -384,7 +384,7 @@ r_spell runespell_list[RT_MAX] =
 
 //LITE/DARK + SHARDS , balanced at loss of fire+water combinations
 { RT_BRILLIANCE_SHARDS,"slicing brilliance",	 8,  9, 25, 10, 3, GF_LITE,		GF_SHARDS,	0 }, //1
-{ RT_DARKNESS_SHARDS,	"slicing darkness",	14, 12, 25, 10, 3, GF_DARK,		GF_SHARDS,	0 }, //1
+{ RT_DARKNESS_SHARDS,	"slicing darkness",	14, 12, 25, 10, 3, GF_DARK,		GF_SHARDS,	0 }, //2
 
 //R_CHAO dominates base elements.
 { RT_CHAOS_BASE,	"limbic chaos",		11, 10, 20, 10, 3, GF_CHAOS,		GF_BASE,	0 }, //6
@@ -451,16 +451,15 @@ r_spell runespell_list[RT_MAX] =
 //Exceptions:
 //Plasma/ice has no cold/fire augment due to R_FIRE | R_COLD -> RT_NULL
 //Thunder has no water augment due to R_ELEC | R_WATE -> RT_NULL
-//Thunder also has no force augment, plasma gets a special one, giving trinity some more unique-pattern aspects within itself when augmented 
 
 //Fire/Elec/Force -> hi_plasma
 { RT_HI_PLASMA,		"flaring plasma",	16, 13, 20, 10, 3, GF_PLASMA,		GF_LITE,	R_FORC }, //1
 //PLASMA uses augments
-{ RT_PLASMA_ACID,	"plasma",		11, 10,  5, 10, 3, GF_PLASMA,		0,		R_ACID }, //1
-{ RT_PLASMA_WATER,	"liquid plasma",	11, 10,  5, 10, 3, GF_PLASMA,		GF_WATER,	R_WATE }, //1
-{ RT_PLASMA_NETHER,	"dark plasma",		11, 10,  5, 10, 3, GF_PLASMA,		GF_DARK,	R_NETH }, //1 (nether -> dark to counter chaos in ice)
-{ RT_PLASMA_POISON,	"fainting plasma",	11, 10,  5, 10, 3, GF_PLASMA,		GF_OLD_SLEEP,	R_POIS }, //1 (name? poison rule)
-{ RT_PLASMA_TIME,	"temporal plasma",	11, 10,  5, 10, 3, GF_PLASMA,		GF_TIME,	R_TIME }, //1 
+{ RT_PLASMA_ACID,	"plasma",		14, 10, 20, 10, 3, GF_PLASMA,		0,		R_ACID }, //1
+{ RT_PLASMA_WATER,	"liquid plasma",	14, 10, 20, 10, 3, GF_PLASMA,		GF_WATER,	R_WATE }, //1
+{ RT_PLASMA_NETHER,	"dark plasma",		14, 10, 20, 10, 3, GF_PLASMA,		GF_DARK,	R_NETH }, //1 (nether -> dark to counter chaos in ice)
+{ RT_PLASMA_POISON,	"fainting plasma",	14, 10, 20, 10, 3, GF_PLASMA,		GF_OLD_SLEEP,	R_POIS }, //1 (name? poison rule)
+{ RT_PLASMA_TIME,	"temporal plasma",	14, 10, 20, 10, 3, GF_PLASMA,		GF_TIME,	R_TIME }, //1 
 //THUNDER uses augments (power may be too weak?)
 { RT_THUNDER_ACID,	"thunder",		 8, 12, 20,  5, 3, GF_SOUND,		0,		R_ACID }, //1
 { RT_THUNDER_CHAOS,	"addling thunder",	 8, 12, 20,  5, 3, GF_SOUND,		GF_CONFUSION,	R_CHAO }, //1 (exception, chaos shouldn't explode with itself? see others for pattern.)
@@ -544,7 +543,7 @@ rspell_sel rspell_selector[MAX_RSPELL_SEL] =
 { R_ACID | R_EART | R_FIRE, RT_FIRE },
 { R_ACID | R_EART | R_CHAO, RT_CHAOS },
 { R_ACID | R_EART | R_COLD, RT_COLD },
-{ R_ACID | R_EART | R_NETH, RT_NETHER },
+{ R_ACID | R_EART | R_NETH, RT_DARKNESS_SHARDS },
 { R_ACID | R_EART | R_POIS, RT_POISON },
 { R_ACID | R_EART | R_NEXU, RT_ELEC_WATER },
 { R_ACID | R_EART | R_FORC, RT_MISSILE_ACID },

@@ -526,10 +526,14 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 				
 				if (o_ptr->tval == TV_RUNE2)
 				{
-					if (o_ptr->sval <=15)
+					if (o_ptr->sval <= RCRAFT_MAX_ELEMENTS)
 					{
 						if (runes[o_ptr->sval]==1)
 						{
+							//Look for other runes here? - Kurzel
+						
+						
+						
 							//if (rand_int(100) < 70) //Always break a rune if able. - Kurzel
 							//{
 								/* Select up to a third */
@@ -927,7 +931,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 	s16b cost_m = 0;
 	int success = 0;
 //	int t = 0;
-//	int brand_type = 0;
+	int brand_type = 0;
 //	int d = 0;
 	char * description = NULL;
 	char * begin = NULL;
@@ -1073,6 +1077,46 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 		/* Handle self spells here */
 		switch (type)
 		{
+			//New weapon branding spells; Basic elements and 'vorpal'. - Kurzel
+			//Normal only right now, could also add the exploding ammo brands? eg. thunder - Kurzel
+			case RT_POWER:
+			case RT_HI_ACID:
+			case RT_HI_ELEC:
+			case RT_HI_FIRE:
+			case RT_HI_COLD:
+			//case RT_WATER:
+				msg_format(Ind, "%s%s cast a %s rune of branding. (%i turns)", begin, description, r_imperatives[imper].name, duration);
+				if (success)
+				{
+					if (type==RT_POWER) brand_type = BRAND_SHARP;
+					//if (type==RT_WATER) brand_type = BRAND_CONF;
+					if (type==RT_ACID) brand_type = BRAND_ACID;
+					if (type==RT_ELEC) brand_type = BRAND_ELEC;
+					if (type==RT_FIRE) brand_type = BRAND_FIRE;
+					if (type==RT_COLD) brand_type = BRAND_COLD;
+					//Experimental - What's damage? - Kurzel
+					set_brand(Ind, duration, brand_type, damage);
+					set_bow_brand(Ind, duration, brand_type, damage);
+				}
+				break;
+			
+			//New general backlash for mal effects, maybe just make this default? - Kurzel
+			case RT_CONFUSION:
+			case RT_BLINDNESS:
+			case RT_STUN:
+			case RT_SLOW:
+			case RT_POLYMORPH:
+			case RT_ELEC_WATER:
+			case RT_CHAOS: //Maybe change chaos/nether? (Nexus->self just gives the effect, no dmg) - Kurzel
+			case RT_NETHER:
+			//case RT_DISINTEGRATE: //Needs to be something useful? -.-
+				msg_format(Ind, "%s%s runespell turns upon your self.", begin, description);
+				if (success)
+				{
+					project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage/5, gf_type, PROJECT_KILL, "");
+				}
+				break;
+			
 			/*
 			case RT_PSI_ESP:
 				msg_format(Ind, "%s%s cast a %s rune of extra-sensory perception. (%i turns)", begin, description, r_imperatives[imper].name, duration);
@@ -1087,7 +1131,8 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			case RT_GLYPH_DARK_POISON:
 			//case RT_MAGIC_WARD:
 				msg_format(Ind, "%s%s draw a sigil of protection.", begin, description);
-				if (success) {
+				if (success)
+				{
 					warding_glyph(Ind);
 				}
 				break;
@@ -1149,11 +1194,21 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			case RT_SHARDS:
 			//case RT_MYSTIC_SHIELD:
 				//msg_format(Ind, "%s%s summon %s mystic protection. (%i turns)", begin, description, r_imperatives[imper].name, duration);
-				msg_format(Ind, "%s%s summon %s quaking. (%i turns)", begin, description, r_imperatives[imper].name, duration);
+				msg_format(Ind, "%s%s summon %s quaking.", begin, description, r_imperatives[imper].name);
 				if (success)
 				{
-					earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15);
+					//earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15);
+					earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 5+radius); //Small size? - Kurzel
 					//(void)set_shield(Ind, duration, shield, SHIELD_NONE, 0, 0);
+				}
+				break;
+				
+			case RT_INFERNO: //change this? match rocket to this? - Kurzel
+				msg_format(Ind, "%s%s summon %s great quaking.", begin, description, r_imperatives[imper].name);
+				if (success)
+				{
+					//maybe do an earthquake brand or detonation glyph? - Kurzel (p_ptr->impact) 
+					earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10+radius); //Large size? - Kurzel
 				}
 				break;
 			/*
@@ -1165,8 +1220,6 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					detect_trap(Ind, 36);
 				}
 				break;
-			
-			case RT_FORCE:
 			*/
 			case RT_DISARM_ACID:
 			case RT_DISARM_COLD:
@@ -1200,14 +1253,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					set_tim_trauma(Ind, duration, speed);
 				}
 				break;
-			/*
-			case RT_THUNDER:
-				if (success)
-				{
-					set_tim_thunder(Ind, 10+randint(10)+rget_level(25), 5+rget_level(10), 10+rget_level(25));
-				}
-				break;
-			*/
+
 			case RT_TIME:
 				msg_format(Ind, "%s%s cast a %s rune of quickening. (%i turns)", begin, description, r_imperatives[imper].name, duration);
 				
@@ -1216,8 +1262,18 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					set_fast(Ind, duration, speed_max); //Ranges from 6 to 15
 				}
 				break;
-			/*
-			case RT_SATIATION:
+
+			case RT_STASIS_ACID:
+			case RT_STASIS_WATER:
+			case RT_STASIS_ELEC:
+			case RT_STASIS_SHARDS:
+			case RT_STASIS_FIRE:
+			case RT_STASIS_CHAOS:
+			case RT_STASIS_POISON:
+			case RT_STASIS_NEXUS:
+			case RT_STASIS_FORCE:
+			case RT_STASIS_TIME:
+			//case RT_SATIATION:
 				msg_format(Ind, "%s%s cast a %s rune of satiation.", begin, description, r_imperatives[imper].name);
 				
 				if (success)
@@ -1227,14 +1283,9 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 						set_food(Ind, PY_FOOD_MAX - 1);
 				}
 				break;
-			*/
+
 			case RT_WONDER_RESIST:
-			//case RT_RESISTANCE:
 				spell_duration = duration / 2;
-				/*
-				spell_duration = spell_duration > 35 ? 35 : spell_duration;
-				spell_duration = spell_duration < 5 ? 5 : spell_duration;
-				*/
 				msg_format(Ind, "%s%s summon %s elemental protection. (%i turns)", begin, description, r_imperatives[imper].name, spell_duration);
 				
 				if (success)
@@ -1329,7 +1380,6 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				
 			case RT_FIRE:
 				msg_format(Ind, "%s%s cast a %s rune of fire resistance. (%i turns)", begin, description, r_imperatives[imper].name, duration);
-				//XOR immunity @ r-skill of 50? - Kurzel
 				if (success)
 				{
 					set_oppose_fire(Ind, duration);
@@ -1338,7 +1388,6 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			
 			case RT_COLD:
 				msg_format(Ind, "%s%s cast a %s rune of cold resistance. (%i turns)", begin, description, r_imperatives[imper].name, duration);
-				
 				if (success)
 				{
 					set_oppose_cold(Ind, duration);
@@ -1347,7 +1396,6 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			
 			case RT_ACID:
 				msg_format(Ind, "%s%s cast a %s rune of acid resistance. (%i turns)", begin, description, r_imperatives[imper].name, duration);
-				
 				if (success)
 				{
 					set_oppose_acid(Ind, duration);
@@ -1356,7 +1404,6 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			
 			case RT_ELEC:
 				msg_format(Ind, "%s%s cast a %s rune of electrical resistance. (%i turns)", begin, description, r_imperatives[imper].name, duration);
-				
 				if (success)
 				{
 					set_oppose_elec(Ind, duration);
@@ -1364,16 +1411,13 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				break;
 			
 			case RT_POISON:
-				msg_format(Ind, "%s%s cast a %s rune of poison resistance.", begin, description, r_imperatives[imper].name);
-				
+				msg_format(Ind, "%s%s cast a %s rune of poison resistance. (%i turns)", begin, description, r_imperatives[imper].name, duration);
 				if (success)
 				{
 					set_oppose_pois(Ind, duration);
 				}
 				break;
-			/*
-			case RT_ICEPOISON:
-			*/
+
 			case RT_DISENCHANT_ACID:
 			case RT_DISENCHANT_WATER:
 			case RT_DISENCHANT_ELEC:
@@ -1383,22 +1427,32 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			case RT_DISENCHANT_TIME:
 			case RT_DISENCHANT:
 				msg_format(Ind, "%s%s banish the magical energies.", begin, description);
-				//re-check this for new planned temporary buffs (unmagic too?) - Kurzel
 				if (success)
 				{
+					//Speed
 					set_fast(Ind, 0, 0);
+					//Resist
 					set_oppose_acid(Ind, 0);
 					set_oppose_elec(Ind, 0);
 					set_oppose_fire(Ind, 0);
 					set_oppose_cold(Ind, 0);
 					set_oppose_pois(Ind, 0);
+					//Brand
+					set_brand(Ind, 0, 0, 0);
+					set_bow_brand(Ind, 0, 0, 0);
+					//Shield
+					(void)set_shield(Ind, 0, 0, SHIELD_NONE, 0, 0);
+					//Misc
 					set_tim_fly(Ind, 0);
 					set_tim_ffall(Ind, 0);
 					set_tim_esp(Ind, 0);
 					set_blessed(Ind,0);
 					set_st_anchor(Ind, 0);
-					(void)set_shield(Ind, 0, 0, SHIELD_NONE, 0, 0);
+					set_tim_deflect(Ind,0);
+					set_adrenaline(Ind, 0);
 					
+					/* Removed Stealth Buff */
+					/*
 					if (p_ptr->rune_stealth)
 					{
 						p_ptr->rune_stealth = 0;
@@ -1406,6 +1460,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 						
 						p_ptr->redraw |= PR_SKILLS;
 					}
+					*/
 					
 					/* Remove glyph */
 					if (zcave[p_ptr->py][p_ptr->px].feat == FEAT_GLYPH)
@@ -1417,23 +1472,10 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					p_ptr->memory.wpos.wz = 0;
 					p_ptr->memory.x = 0;
 					p_ptr->memory.y = 0;
-					set_tim_deflect(Ind,0);
-				}
-				break;
-			/*
-			case RT_QUICKEN:
-				msg_format(Ind, "%s%s cast a %s rune of quickening. (%i turns)", begin, description, r_imperatives[imper].name, duration);
 				
-				if (success)
-				{
-					speed += 2;
-					
-					set_fast(Ind, duration, speed);
 				}
 				break;
 			
-			case RT_DISINTEGRATE:
-			*/
 			case RT_TELEPORT_NEXUS:
 			case RT_TELEPORT_ELEC:
 			case RT_DIG_TELEPORT: //teleport distance based on imperative? - Kurzel
@@ -1452,15 +1494,14 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					}
 					else 
 					{
-						teleport_player(Ind, ((100 + teleport_level * 100) / 5), FALSE);
+						//teleport_player(Ind, ((100 + teleport_level * 100) / 5), FALSE);
+						teleport_player(Ind, ((30*(radius+1) + teleport_level * 30*(radius+1)) / 5), FALSE);
 					}
 					if (type == RT_TELEPORT_ELEC) fire_ball(Ind, GF_ELEC, 5, damage, radius, p_ptr->attacker);
-					if (type == RT_TELEPORT_ELEC) fire_ball(Ind, GF_NEXUS, 5, damage, radius, p_ptr->attacker);
+					if (type == RT_TELEPORT_NEXUS) fire_ball(Ind, GF_NEXUS, 5, damage, radius, p_ptr->attacker);
 				}
 				break;
-			/*
-			case RT_CHAOS:
-			*/
+				
 			case RT_INERTIA: //location or targetting bug here - Kurzel
 			//case RT_TELEPORT_TO:
 				msg_format(Ind, "%s%s teleport forward.", begin, description);
@@ -1472,32 +1513,31 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 						teleport_player_to(Ind, p_ptr->target_row, p_ptr->target_col);
 				}
 				break;
-			/*
-			#if 0
-			case RT_TELEPORT_LEVEL:
-				msg_format(Ind, "%s%s teleport out.", begin, description);
-				
+
+			#if 1
+			case RT_DIG_FIRE:
+			//case RT_TELEPORT_LEVEL:
+				msg_format(Ind, "%s%s melt a shaft of rock.", begin, description);
 				if (success)
 				{
-					teleport_player_level(Ind);
+					teleport_player_level(Ind); //This should go down only? - Kurzel
+					/* Backlash and Stun (Mal Effect) - Kurzel */
+					project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage/5, GF_FIRE, PROJECT_KILL, "");
+					set_stun(Ind, duration/5);
 					
 					if (randint(100)<=1) //A small amount of unreliability
 						teleport_player_level(Ind);
-					
+					/*
 					if (modifier != 130)
 					{
 						msg_format(Ind, "You are hit by debris for \377u%i \377wdamage", (p_ptr->mhp*(0-(modifier-115))/100));
 						take_hit(Ind, (p_ptr->mhp*(0-(modifier-115))/100), "level teleportation", 0); //Hit for up to 60% of health, depending on inverse sucessfullness
 					}
-					
+					*/
 				}
 				break;
 			#endif
-				
-			
-			case RT_TELEPORT_LEVEL:
-			*/
-			//case RT_GRAVITY:
+
 			case RT_GRAVITY_ACID:
 			case RT_GRAVITY_WATER:
 			case RT_GRAVITY_ELEC:
@@ -1508,18 +1548,14 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			case RT_GRAVITY_NETHER:
 			case RT_GRAVITY_POISON:
 			case RT_GRAVITY_NEXUS:
-			//case RT_SUMMON:
-				msg_format(Ind, "%s%s summon monsters.", begin, description);
+				msg_format(Ind, "%s%s compel monsters to return.", begin, description);
 				if (success)
 				{
 					project_hack(Ind, GF_TELE_TO, 0, " summons"); 
 				}
 				break;
-			/*
-			case RT_ICE:
-			*/
+
 			case RT_DIG_MEMORY:
-			//case RT_MEMORY:
 				msg_format(Ind, "%s%s memorise your position.", begin, description);
 				
 				if (success)
@@ -1539,6 +1575,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				}
 				break;
 			*/
+
 			case RT_DETONATION_ACID:
 			case RT_DETONATION_WATER:
 			case RT_DETONATION_ELEC:
@@ -1548,22 +1585,59 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			case RT_DETONATION_POISON:
 			case RT_DETONATION_NEXUS:
 			case RT_DETONATION_FORCE:
-			case RT_DETONATION_TIME: //radius based on imperative? no need for msg - Kurzel
-			//case RT_EARTHQUAKE:
-				//msg_format(Ind, "%s%s summon an earthquake.", begin, description);
-				//check the radius of effect and use imperatives - Kurzel
+			case RT_DETONATION_TIME:
+				//*DESTRUCTION* is too powerful, let's make a deto-trap? - Kurzel
 				if (success)
 				{
-					destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR, 120);
+					//destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR, 120);
+				}
+				break;
+			
+			case RT_WATERPOISON_CHAOS:
+			case RT_WATERPOISON_NETHER:
+			case RT_WATERPOISON_TIME:
+			case RT_WATERPOISON:
+				msg_format(Ind, "%s%s saturate the area with miasma.", begin, description);
+				if (success)
+				{
+					do_vermin_control(Ind);
+				}
+				break;
+				
+			case RT_ICEPOISON_CHAOS:
+			case RT_ICEPOISON_NETHER:
+			case RT_ICEPOISON_TIME:
+			case RT_ICEPOISON:
+				msg_format(Ind, "%s%s conjure a bitter tea.", begin, description);
+				if (success)
+				{
+					set_poisoned(Ind, 0, 0);
+				}
+				break;
+				
+			case RT_MISSILE_ACID:
+			case RT_MISSILE_FIRE:
+			case RT_MISSILE_CHAOS:
+			case RT_MISSILE_COLD:
+			case RT_MISSILE_NETHER:
+			case RT_MISSILE_POISON:
+			case RT_MISSILE:
+				msg_format(Ind, "%s%s summon %s ethereal armor. (%i turns)", begin, description, r_imperatives[imper].name, duration);
+				if (success)
+				{
+					shield = shield * 6 / 10; //60% of the +AC given by the equivalent Mystic Shield
+					//set_shield(Ind, duration, shield, SHIELD_FIRE, SHIELD_FIRE, 0);
+					set_shield(Ind, duration, shield, SHIELD_NONE, SHIELD_NONE, 0);
 				}
 				break;
 			/*
-			case RT_WATERPOISON:
 			case RT_DETECTION_BLIND:
-				msg_format(Ind, "%s%s cast a rune of detection.", begin, description);
-				
+				//msg_format(Ind, "%s%s cast a rune of detection.", begin, description);
+				//msg_format(Ind, "%s%s cast a rune of treasure detection.", begin, description);
 				if (success) 
 				{
+					detect_treasure(Ind, DEFAULT_RADIUS * 2)
+					
 					if (level>40)
 					{
 						detection(Ind, DEFAULT_RADIUS * 2);
@@ -1572,9 +1646,9 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					{
 						detect_creatures(Ind);
 					}
+					
 				}
 				break;
-			
 			case RT_DETECT_STAIR:
 				msg_format(Ind, "%s%s cast a rune of exit detection.", begin, description);
 				
@@ -1597,10 +1671,10 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					}
 				}
 				break;
-			*/
-			case RT_NUKE:
-			case RT_NEXUS:
-				msg_format(Ind, "%s%s summon nexus.", begin, description);
+			*/		
+			case RT_NUKE: //something else? poly?
+			case RT_NEXUS: //same as nexus backlash/ normal effects? - Kurzel
+				msg_format(Ind, "%s%s wrap yourself in nexus.", begin, description);
 				if (success)
 				{
 					switch(randint(10))
@@ -1616,19 +1690,16 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					}
 				}
 				break;
-			/*
-			case RT_CLONE:
-			case RT_WIND_BLINK:
-			*/
-			case RT_WATER: //Use imperatives for range - Kurzel
-				msg_format(Ind, "%s%s blink.", begin, description);
 				
+			case RT_WATER:
+			//case RT_WIND_BLINK:
+				msg_format(Ind, "%s%s cast a %s rune of dimension door.", begin, description, r_imperatives[imper].name);
+				//msg_format(Ind, "%s%s blink.", begin, description);
 				if (success)
 				{
-					teleport_player(Ind, (10 + (teleport_level * 10) / 50), FALSE);
+					teleport_player(Ind, (10*radius + (teleport_level * 10*radius) / 50), FALSE);
 				}
 				break;
-			
 			case RT_HI_PLASMA:
 			case RT_LIGHT:
 				msg_format(Ind, "%s%s summon light.", begin, description);
@@ -1640,13 +1711,10 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				}
 				
 				break;
-			/*
-			case RT_PLASMA:
-			*/
+
 			case RT_BRILLIANCE_ELEC:
 			case RT_BRILLIANCE_COLD:
 			case RT_BRILLIANCE_SHARDS:
-			//case RT_BRILLIANCE:
 				msg_format(Ind, "%s%s summon bright light.", begin, description);
 				if (success)
 				{
@@ -1658,11 +1726,10 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				}
 				
 				break;
-			/*
-			case RT_DARK_SLOW:
-			*/
+
+			case RT_HI_ICE: //this and HI_PLASMA need something? - Kurzel
 			case RT_SHADOW:
-				msg_format(Ind, "%s%s summon shadows.", begin, description);
+				msg_format(Ind, "%s%s summon %s shadows.", begin, description, r_imperatives[imper].name);
 			
 				if (success)
 				{
@@ -1671,14 +1738,47 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				}
 				
 				break;
-			/*
+				
 			case RT_HELL_FIRE:
-			*/
+				msg_format(Ind, "%s%s summon %s ethereal flames. (%i turns)", begin, description, r_imperatives[imper].name, duration);
+				if (success)
+				{
+					set_shield(Ind, duration, shield, SHIELD_FIRE, SHIELD_FIRE, 0);
+				}
+				break;
+			
+			case RT_ICE_ELEC:
+			case RT_ICE_SHARDS:
+			case RT_ICE_CHAOS:
+			case RT_ICE_POISON:
+			case RT_ICE_TIME:
+			case RT_ICE:
+				msg_format(Ind, "%s%s summon %s ethereal ice. (%i turns)", begin, description, r_imperatives[imper].name, duration);
+				if (success)
+				{
+					set_shield(Ind, duration, shield, SHIELD_FEAR, SHIELD_FEAR, 0); //should be cold - Kurzel
+				}
+				break;
+				
+			case RT_THUNDER_ACID:
+			case RT_THUNDER_CHAOS:
+			case RT_THUNDER_COLD:
+			case RT_THUNDER_NETHER:
+			case RT_THUNDER_POISON:	
+			case RT_THUNDER:
+				msg_format(Ind, "%s%s summon %s ethereal thunder. (%i turns)", begin, description, r_imperatives[imper].name, duration);
+				if (success)
+				{
+					set_shield(Ind, duration, shield, SHIELD_ELEC, SHIELD_ELEC, 0);
+					set_bow_brand(Ind, duration, BRAND_BALL_SOUND, damage); //Experimental - Kurzel
+					//set_tim_thunder(Ind, 10+randint(10)+rget_level(25), 5+rget_level(10), 10+rget_level(25));
+				}
+				break;
+				
 			case RT_DARKNESS_ACID:
 			case RT_DARKNESS_FIRE:
 			case RT_DARKNESS_SHARDS:
-			//case RT_OBSCURITY:
-				msg_format(Ind, "%s%s summon obscurity.", begin, description);
+				msg_format(Ind, "%s%s summon %s darkness. (%i turns)", begin, description, r_imperatives[imper].name, duration);
 				if (success)
 				{
 					unlite_area(Ind, 10, radius + 2);
@@ -1688,9 +1788,18 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				break;
 
 			case RT_UNBREATH:
+			//case RT_FLY:
+				msg_format(Ind, "%s%s summon %s ethereal wings. (%i turns)", begin, description, r_imperatives[imper].name, duration);
+				if (success)
+				{
+					set_tim_fly(Ind, duration*3); //Increased duration for usefulness. - Kurzel
+				}
+				break;
+			
+			/*
 				msg_format(Ind, "%s%s cast a %s rune of stealth.", begin, description, r_imperatives[imper].name);
 				//This should be changed to a timed spell...
-				/* Unset */
+				// Unset 
 				if (success)
 				{
 					unlite_area(Ind, 10, 2);
@@ -1703,7 +1812,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 						p_ptr->rune_num_of_buffs = p_ptr->rune_num_of_buffs - 1;
 						msg_print(Ind, "You feel less stealthy.");
 					}
-					/* Set */
+					// Set
 					else
 					{
 						speed /= 2; //Stealth ranges from 1-11
@@ -1718,11 +1827,25 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					p_ptr->redraw |= PR_SKILLS;
 					handle_stuff(Ind);
 				}
+			*/
 				break;
 			/*
 			case RT_ROCKET:
-			case RT_MISSILE:
 			*/
+			case RT_FORCE:
+				spell_duration = duration;
+				/*
+				spell_duration = (spell_duration < 5 ? 5 : spell_duration);
+				spell_duration = (spell_duration > 20 && (type == RT_MISSILE || type == RT_MANA) ? 20 : spell_duration);
+				spell_duration = (spell_duration > 60 ? 60 : spell_duration);
+				*/
+				msg_format(Ind, "%s%s summon %s deflection. (%i turns)", begin, description, r_imperatives[imper].name, spell_duration);
+				if (success)
+				{
+					set_tim_deflect(Ind, spell_duration);
+				}
+				break;
+			
 			case RT_MANA_ACID:
 			case RT_MANA_WATER:
 			case RT_MANA_ELEC:
@@ -1731,21 +1854,13 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			case RT_MANA_FORCE:
 			case RT_MANA_TIME:
 			case RT_MANA:
-				spell_duration = duration / 2;
-				/*
-				spell_duration = (spell_duration < 5 ? 5 : spell_duration);
-				spell_duration = (spell_duration > 20 && (type == RT_MISSILE || type == RT_MANA) ? 20 : spell_duration);
-				spell_duration = (spell_duration > 60 ? 60 : spell_duration);
-				*/
-				msg_format(Ind, "%s%s cast a %s rune of deflection. (%i turns)", begin, description, r_imperatives[imper].name, spell_duration);
+				msg_format(Ind, "%s%s cast a %s rune of mana resistance. (%i turns)", begin, description, r_imperatives[imper].name, duration);
 				if (success)
 				{
-					set_tim_deflect(Ind, spell_duration);
+					//set_oppose_mana(Ind, duration);
 				}
 				break;
-			/*
-			case RT_NUKE:
-			*/
+				
 			case RT_SLEEP:
 			//case RT_ANCHOR:
 				msg_format(Ind, "%s%s constrict the space-time continuum. (%i turns)", begin, description, duration);
@@ -1775,7 +1890,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			case RT_DRAIN_FORCE:
 			case RT_DRAIN_TIME:
 			//case RT_BESERK:
-				msg_format(Ind, "%s%s cast a rune of beserking. (%i turns)", begin, description, duration);
+				msg_format(Ind, "%s%s cast a %s rune of beserking. (%i turns)", begin, description, r_imperatives[imper].name, duration);
 				
 				if (success)
 				{
@@ -1786,10 +1901,9 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					set_adrenaline(Ind, duration);
 				}
 				break;
-			/*
-			case RT_POLYMORPH:
-			*/
+				
 			case RT_DIG:
+			case RT_CLONE: //anti-heal?
 			//case RT_HEALING:
 				spell_damage = damage;
 				if (p_ptr->csp < cost)
@@ -1809,21 +1923,8 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					fire_ball(Ind, GF_HEAL_PLAYER, 0, spell_damage, radius, p_ptr->attacker);
 				}
 				break;
-			/*
-			case RT_NETHER:
-			case RT_AURA:
-				msg_format(Ind, "%s%s summon a %s fiery aura. (%i turns)", begin, description, r_imperatives[imper].name, duration);
-				
-				if (success)
-				{
-					shield = shield * 6 / 10; //60% of the +AC given by the equivalent Mystic Shield
-					set_shield(Ind, duration, shield, SHIELD_FIRE, SHIELD_FIRE, 0);
-				}
-				break;
-			
 			default:
 				break;
-			*/
 		}
 	}
 	else
@@ -1854,8 +1955,6 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 		}
 		if (type_flags & R_MELE)
 		{
-			/* Hack disabled for now. - Kurzel */
-			/*
 			int px = p_ptr->px;
 			int py = p_ptr->py;
 			int tx = p_ptr->target_col;
@@ -1890,13 +1989,15 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					fire_bolt(Ind, gf_type, dir, damage, p_ptr->attacker);
 				}
 			}
-			*/
+			/* Hack enabled for testing. - Kurzel */
+			/*
 			sprintf(p_ptr->attacker, " is summons %s for", runespell_list[type].title);
 			msg_format(Ind, "%s%s summon a %s burst of %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
 			if (success)
 			{
 				fire_ball(Ind, gf_type, dir, damage, 0, p_ptr->attacker);
 			}
+			*/
 		}
 		else if ((type_flags & R_BALL))
 		{
