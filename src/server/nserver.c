@@ -6029,7 +6029,8 @@ int Send_party(int ind)
 
 			snprintf(buf, 10, "%d", parties[p_ptr->party].members);
 			strcpy(bufm, buf);
-			strcat(bufm, " members");
+			if (parties[p_ptr->party].members == 1) strcat(bufm, " member");
+			else strcat(bufm, " members");
 
 			strcpy(bufo, "owner: ");
 			strcat(bufo, parties[p_ptr->party].owner);
@@ -6072,7 +6073,8 @@ int Send_guild(int ind)
 
 		snprintf(buf, 10, "%d", guilds[p_ptr->guild].members);
 		strcpy(bufm, buf);
-		strcat(bufm, " members");
+		if (guilds[p_ptr->guild].members == 1) strcat(bufm, " member");
+		else strcat(bufm, " members");
 
 		strcpy(bufo, "master: ");
 		strcat(bufo, lookup_player_name(guilds[p_ptr->guild].master));
