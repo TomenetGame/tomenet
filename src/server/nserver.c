@@ -5999,7 +5999,7 @@ int Send_party(int ind)
 		return 0;
 	}
 
-	if (!is_newer_than(&Players[ind]->version, 4, 4, 6, 2, 0, 0)) {
+	if (!is_newer_than(&Players[ind]->version, 4, 4, 7, 0, 0, 0)) {
 		if (parties[p_ptr->party].mode == PA_IRONTEAM)
 			snprintf(bufn, 90, "Party (Iron Team): %s", parties[p_ptr->party].name);
 		else
@@ -6045,7 +6045,7 @@ int Send_guild(int ind)
 {
     int i;
 
-    if (!is_newer_than(&Players[ind]->version, 4, 4, 6, 2, 0, 0)) return(0);
+    if (!is_newer_than(&Players[ind]->version, 4, 4, 7, 0, 0, 0)) return(0);
 
     for (i = 1; i <= NumPlayers; i++)
     {
