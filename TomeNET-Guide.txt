@@ -2059,10 +2059,17 @@ between the three chat modes:
 -normal
 -party chat: All messages are sent exclusively to your own party.
 -level chat: All messages are sent to everyone on your dungeon level.
+-guild chat: All messages are sent to all your fellow guild members (if any).
+
+Note: While TAB cycles forward, you can also press CTRL+U to cycle backwards,
+CTRL+A to switch to 'normal' mode, CTRL+T to switch to 'party' (team) mode,
+CTRL+G for 'guild' mode and CTRL+L for 'level' (floor) mode.
+
 
 Also you can use the following prefixes in the beginning of a chat line,
 to get similar behaviour as in one of the chat modes just for one line:
 !:      Sends the following text to your current party.
+$:      Sends the following text to your current guild.
 #:      Sends the following text to everyone on your dungeon level.
         Note: While in town this will instead become a /say.
 %:      Sends the following text to yourself (has some use in macros).
