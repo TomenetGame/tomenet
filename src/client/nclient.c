@@ -3069,11 +3069,22 @@ int Receive_party(void)
 
 	/* Re-show party info */
 	if (party_mode) {
-		Term_erase(0, 18, 70);
-		Term_erase(0, 21, 90);
-		Term_putstr(0, 18, -1, TERM_WHITE, "Command: ");
-		if (strlen(pname)) Term_putstr(0, 21, -1, TERM_WHITE, format("%s (%s, %s)", pname, pmembers, powner));
-		else Term_putstr(0, 21, -1, TERM_SLATE, "(You are not in a party.)");
+		if (is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
+			Term_erase(0, 18, 70);
+			Term_erase(0, 21, 90);
+			Term_putstr(0, 18, -1, TERM_WHITE, "Command: ");
+			if (strlen(pname)) Term_putstr(0, 21, -1, TERM_WHITE, format("%s (%s, %s)", pname, pmembers, powner));
+			else Term_putstr(0, 21, -1, TERM_SLATE, "(You are not in a party.)");
+		} else {
+			Term_erase(0, 18, 70);
+			Term_erase(0, 20, 90);
+			Term_erase(0, 21, 20);
+			Term_erase(0, 22, 50);
+			Term_putstr(0, 18, -1, TERM_WHITE, "Command: ");
+			Term_putstr(0, 20, -1, TERM_WHITE, pname);
+			Term_putstr(0, 21, -1, TERM_WHITE, pmembers);
+			Term_putstr(0, 22, -1, TERM_WHITE, powner);
+		}
 	}
 
 	return 1;

@@ -1675,10 +1675,16 @@ void cmd_party(void)
 		Term_putstr(5, 16, -1, TERM_WHITE, "(d) Leave guild");
 
 		/* Show current party status */
-		if (strlen(party_info_name)) Term_putstr(0, 21, -1, TERM_WHITE, format("%s (%s, %s)", party_info_name, party_info_members, party_info_owner));
-		else Term_putstr(0, 21, -1, TERM_SLATE, "(You are not in a party.)");
-		if (strlen(guild_info_name)) Term_putstr(0, 22, -1, TERM_WHITE, format("%s (%s, %s)", guild_info_name, guild_info_members, guild_info_owner));
-		else Term_putstr(0, 22, -1, TERM_SLATE, "(You are not in a guild.)");
+		if (is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
+			if (strlen(party_info_name)) Term_putstr(0, 21, -1, TERM_WHITE, format("%s (%s, %s)", party_info_name, party_info_members, party_info_owner));
+			else Term_putstr(0, 21, -1, TERM_SLATE, "(You are not in a party.)");
+			if (strlen(guild_info_name)) Term_putstr(0, 22, -1, TERM_WHITE, format("%s (%s, %s)", guild_info_name, guild_info_members, guild_info_owner));
+			else Term_putstr(0, 22, -1, TERM_SLATE, "(You are not in a guild.)");
+		} else {
+			Term_putstr(0, 20, -1, TERM_WHITE, party_info_name);
+			Term_putstr(0, 21, -1, TERM_WHITE, party_info_members);
+			Term_putstr(0, 22, -1, TERM_WHITE, party_info_owner);
+		}
 
 		/* Prompt */
 		Term_putstr(0, 18, -1, TERM_WHITE, "Command: ");
