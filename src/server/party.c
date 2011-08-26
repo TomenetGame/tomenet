@@ -607,7 +607,7 @@ int guild_create(int Ind, cptr name){
 		return FALSE;
 	}
 	/* broadcast the news */
-	snprintf(temp, 160, "\377GA new guild '%s' has been created.", name);
+	snprintf(temp, 160, "\374\377GA new guild '\377U%s\377G' has been created.", name);
 	msg_broadcast(0, temp);
 
 	p_ptr->au -= 2000000;
@@ -1068,7 +1068,7 @@ static void del_guild(int id){
 	}
 
 	/* Tell everyone */
-	snprintf(temp, 160, "\374\377gThe guild \377r'\377y%s\377r'\377g no longer exists.", guilds[id].name);
+	snprintf(temp, 160, "\374\377yThe guild '\377U%s\377y' no longer exists.", guilds[id].name);
 	msg_broadcast(0, temp);
 	/* Clear the basic info */
 	guilds[id].members=0;	/* it should be zero anyway */
