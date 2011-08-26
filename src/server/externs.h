@@ -1010,6 +1010,7 @@ extern int Send_special_line(int ind, int max, int line, byte attr, cptr buf);
 extern int Send_floor(int ind, char tval);
 extern int Send_pickup_check(int ind, cptr buf);
 extern int Send_party(int ind);
+extern int Send_guild(int ind);
 extern int Send_special_other(int ind);
 extern int Send_skills(int ind);
 extern int Send_pause(int ind);

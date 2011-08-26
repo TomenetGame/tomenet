@@ -41,6 +41,9 @@ char spell_info[MAX_REALM + 9][9][9][80];		/* Spell information */
 char party_info_name[90];		/* Information about your party: */
 char party_info_members[20];
 char party_info_owner[50];
+char guild_info_name[90];		/* Information about your guild: */
+char guild_info_members[20];
+char guild_info_owner[50];
 
 setup_t Setup;				/* The information given to us by the server */
 client_setup_t Client_setup;		/* The information we give to the server */

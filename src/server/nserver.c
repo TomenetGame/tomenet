@@ -2465,8 +2465,9 @@ static int Handle_login(int ind)
 		return -1;
 	}
 
-	/* Send party information */
+	/* Send party/guild information */
 	Send_party(NumPlayers);
+	Send_guild(NumPlayers);
 
 	/* Hack -- terminate the data stream sent to the client */
 	if (Packet_printf(&connp->c, "%c", PKT_END) <= 0) {
@@ -5998,25 +5999,86 @@ int Send_party(int ind)
 		return 0;
 	}
 
-	if (parties[p_ptr->party].mode == PA_IRONTEAM)
-		snprintf(bufn, 90, "Party (Iron Team): %s", parties[p_ptr->party].name);
-	else
-		snprintf(bufn, 90, "Party  : %s", parties[p_ptr->party].name);
+	if (!is_newer_than(&Players[ind]->version, 4, 4, 6, 2, 0, 0)) {
+		if (parties[p_ptr->party].mode == PA_IRONTEAM)
+			snprintf(bufn, 90, "Party (Iron Team): %s", parties[p_ptr->party].name);
+		else
+			snprintf(bufn, 90, "Party  : %s", parties[p_ptr->party].name);
 
-	bufm[0] = '\0';
-	bufo[0] = '\0';
+		bufm[0] = '\0';
+		bufo[0] = '\0';
 
-	if (p_ptr->party > 0)
-	{
-		strcpy(bufm, "Members: ");
-		snprintf(buf, 10, "%d", parties[p_ptr->party].members);
-		strcat(bufm, buf);
+		if (p_ptr->party > 0) {
+			strcpy(bufm, "Members: ");
+			snprintf(buf, 10, "%d", parties[p_ptr->party].members);
+			strcat(bufm, buf);
 
-		strcpy(bufo, "Owner  : ");
-		strcat(bufo, parties[p_ptr->party].owner);
+			strcpy(bufo, "Owner  : ");
+			strcat(bufo, parties[p_ptr->party].owner);
+		}
+	} else {
+		bufn[0] = '\0';
+		bufm[0] = '\0';
+		bufo[0] = '\0';
+
+		if (p_ptr->party > 0) {
+			if (parties[p_ptr->party].mode == PA_IRONTEAM)
+				snprintf(bufn, 90, "Iron Team: '\377G%s\377w'", parties[p_ptr->party].name);
+			else
+				snprintf(bufn, 90, "Party: '\377G%s\377w'", parties[p_ptr->party].name);
+
+			snprintf(buf, 10, "%d", parties[p_ptr->party].members);
+			strcpy(bufm, buf);
+			strcat(bufm, " members");
+
+			strcpy(bufo, "owner: ");
+			strcat(bufo, parties[p_ptr->party].owner);
+		}
 	}
 
 	Packet_printf(&connp->c, "%c%s%s%s", PKT_PARTY, bufn, bufm, bufo);
+    }
+    return(1);
+}
+
+int Send_guild(int ind)
+{
+    int i;
+
+    if (!is_newer_than(&Players[ind]->version, 4, 4, 6, 2, 0, 0)) return(0);
+
+    for (i = 1; i <= NumPlayers; i++)
+    {
+	player_type *p_ptr = Players[i];
+	connection_t *connp = Conn[p_ptr->conn];
+	char bufn[90], bufm[20], bufo[50], buf[10];
+
+	if (Players[i]->guild != Players[ind]->guild) continue;
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection nor ready for guild info (%d.%d.%d)",
+			i, connp->state, connp->id));
+		return 0;
+	}
+
+	bufn[0] = '\0';
+	bufm[0] = '\0';
+	bufo[0] = '\0';
+
+	if (p_ptr->guild > 0) {
+		snprintf(bufn, 90, "Guild: '\377U%s\377w'", guilds[p_ptr->guild].name);
+
+		snprintf(buf, 10, "%d", guilds[p_ptr->guild].members);
+		strcpy(bufm, buf);
+		strcat(bufm, " members");
+
+		strcpy(bufo, "master: ");
+		strcat(bufo, lookup_player_name(guilds[p_ptr->guild].master));
+	}
+
+	Packet_printf(&connp->c, "%c%s%s%s", PKT_GUILD, bufn, bufm, bufo);
     }
     return(1);
 }

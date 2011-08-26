@@ -115,6 +115,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_FLOOR]		= Receive_floor;
 	receive_tbl[PKT_PICKUP_CHECK]	= Receive_pickup_check;
 	receive_tbl[PKT_PARTY]		= Receive_party;
+	receive_tbl[PKT_GUILD]		= Receive_guild;
 	receive_tbl[PKT_PARTY_STATS]	= Receive_party_stats;
 	receive_tbl[PKT_SKILLS]		= Receive_skills;
 	receive_tbl[PKT_PAUSE]		= Receive_pause;
@@ -3059,10 +3060,7 @@ int Receive_party(void)
 	int n;
 	char ch, pname[90], pmembers[MAX_CHARS], powner[MAX_CHARS];
 
-	if ((n = Packet_scanf(&rbuf, "%c%s%s%s", &ch, pname, pmembers, powner)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%s%s%s", &ch, pname, pmembers, powner)) <= 0) return n;
 
 	/* Copy info */
 	strcpy(party_info_name, pname);
@@ -3070,16 +3068,36 @@ int Receive_party(void)
 	strcpy(party_info_owner, powner);
 
 	/* Re-show party info */
-	if (party_mode)
-	{
+	if (party_mode) {
 		Term_erase(0, 18, 70);
-		Term_erase(0, 20, 90);
-		Term_erase(0, 21, 20);
-		Term_erase(0, 22, 50);
+		Term_erase(0, 21, 90);
 		Term_putstr(0, 18, -1, TERM_WHITE, "Command: ");
-		Term_putstr(0, 20, -1, TERM_WHITE, pname);
-		Term_putstr(0, 21, -1, TERM_WHITE, pmembers);
-		Term_putstr(0, 22, -1, TERM_WHITE, powner);
+		if (strlen(pname)) Term_putstr(0, 21, -1, TERM_WHITE, format("%s (%s, %s)", pname, pmembers, powner));
+		else Term_putstr(0, 21, -1, TERM_SLATE, "(You are not in a party.)");
+	}
+
+	return 1;
+}
+
+int Receive_guild(void)
+{
+	int n;
+	char ch, gname[90], gmembers[MAX_CHARS], gowner[MAX_CHARS];
+
+	if ((n = Packet_scanf(&rbuf, "%c%s%s%s", &ch, gname, gmembers, gowner)) <= 0) return n;
+
+	/* Copy info */
+	strcpy(guild_info_name, gname);
+	strcpy(guild_info_members, gmembers);
+	strcpy(guild_info_owner, gowner);
+
+	/* Re-show party info */
+	if (party_mode) {
+		Term_erase(0, 18, 70);
+		Term_erase(0, 22, 90);
+		Term_putstr(0, 18, -1, TERM_WHITE, "Command: ");
+		if (strlen(gname)) Term_putstr(0, 22, -1, TERM_WHITE, format("%s (%s, %s)", gname, gmembers, gowner));
+		else Term_putstr(0, 22, -1, TERM_SLATE, "(You are not in a guild.)");
 	}
 
 	return 1;

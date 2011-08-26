@@ -101,6 +101,9 @@ extern char spell_info[MAX_REALM + 9][9][9][80];
 extern char party_info_name[90];
 extern char party_info_members[20];
 extern char party_info_owner[50];
+extern char guild_info_name[90];
+extern char guild_info_members[20];
+extern char guild_info_owner[50];
 
 extern setup_t Setup;
 extern client_setup_t Client_setup;

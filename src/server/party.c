@@ -645,6 +645,9 @@ int guild_create(int Ind, cptr name){
 	/* Add the owner as a member */
 	p_ptr->guild = index;
 	guilds[index].members = 1;
+
+	Send_guild(Ind);
+
 	return(TRUE);
 }
 
@@ -813,7 +816,9 @@ int party_create_ironteam(int Ind, cptr name)
 	}
 
 	/* Prevent abuse */
-	if (streq(name, "Neutral") || streq(name, "!") || streq(name, "#")) {
+	if (streq(name, "Neutral")
+	    || streq(name, "!") || streq(name, "#")
+	    || streq(name, "%") || streq(name, "$")) {
 		msg_print(Ind, "\377yThat's not a legal party name.");
 		return FALSE;
 	}
@@ -944,10 +949,8 @@ int guild_add(int adder, cptr name){
 	p_ptr->guild = guild_id;
 	clockin(Ind, 3);
 
-#if 0
 	/* Resend info */
 	Send_guild(Ind);
-#endif
 
 	/* Display the guild note to him */
 	for (i = 0; i < MAX_GUILDNOTES; i++) {
@@ -1185,10 +1188,9 @@ int guild_remove(int remover, cptr name){
 		msg_print(Ind, "\374\377yYou have been removed from the guild.");
 		guild_msg_format(guild_id, "\374\377y%s has been removed from the guild.", p_ptr->name);
 
-#if 0
 		/* Resend info */
 		Send_guild(Ind);
-#endif
+
 		/* Last member deleted? */
 		if(guilds[guild_id].members==0)
 			del_guild(guild_id);
@@ -1317,10 +1319,8 @@ void guild_leave(int Ind){
 		guilds[guild_id].master=0;
 	}
 
-#if 0
 	/* Resend info */
 	Send_guild(Ind);
-#endif
 
 	/* Last member deleted? */
 	if(guilds[guild_id].members==0)
