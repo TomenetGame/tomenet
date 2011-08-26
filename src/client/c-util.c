@@ -1397,9 +1397,100 @@ bool askfor_aux(char *buf, int len, char mode)
 			}
 			break;
 
+			case KTRL('U'): /* reverse KTRL('I') */
+			if (mode & ASKFOR_CHATTING)
+			{
+				/* Reverse change chatting mode */
+				chat_mode--;
+				if (chat_mode < CHAT_MODE_NORMAL)
+					chat_mode = CHAT_MODE_GUILD;
+
+				/* HACK - Change the prompt */
+				switch (chat_mode)
+				{
+					case CHAT_MODE_PARTY:
+						c_prt(C_COLOUR_CHAT_PARTY, "Party: ", 0, 0);
+
+						/* Recalculate visible length */
+						vis_len = wid - 1 - sizeof("Party: ");
+						break;
+					case CHAT_MODE_LEVEL:
+						c_prt(C_COLOUR_CHAT_LEVEL, "Level: ", 0, 0);
+
+						/* Recalculate visible length */
+						vis_len = wid - 1 - sizeof("Level: ");
+						break;
+					case CHAT_MODE_GUILD:
+						c_prt(C_COLOUR_CHAT_GUILD, "Guild: ", 0, 0);
+
+						/* Recalculate visible length */
+						vis_len = wid - 1 - sizeof("Guild: ");
+						break;
+					default:
+						prt("Message: ", 0, 0);
+
+						/* Recalculate visible length */
+						vis_len = wid - 1 - sizeof("Message: ");
+						break;
+				}
+
+				Term_locate(&x, &y);
+			}
+			break;
+
+			case KTRL('A'): /* All ('message') */
+			if (mode & ASKFOR_CHATTING) {
+				chat_mode = CHAT_MODE_NORMAL;
+				prt("Message: ", 0, 0);
+
+				/* Recalculate visible length */
+				vis_len = wid - 1 - sizeof("Message: ");
+
+				Term_locate(&x, &y);
+			}
+			break;
+
+			case KTRL('T'): /* Party */
+			if (mode & ASKFOR_CHATTING) {
+				chat_mode = CHAT_MODE_PARTY;
+				c_prt(C_COLOUR_CHAT_PARTY, "Party: ", 0, 0);
+
+				/* Recalculate visible length */
+				vis_len = wid - 1 - sizeof("Party: ");
+
+				Term_locate(&x, &y);
+			}
+			break;
+
+			case KTRL('L'): /* Level */
+			if (mode & ASKFOR_CHATTING) {
+				chat_mode = CHAT_MODE_LEVEL;
+				c_prt(C_COLOUR_CHAT_LEVEL, "Level: ", 0, 0);
+
+				/* Recalculate visible length */
+				vis_len = wid - 1 - sizeof("Level: ");
+
+				Term_locate(&x, &y);
+			}
+			break;
+
+			case KTRL('G'): /* Guild */
+			if (mode & ASKFOR_CHATTING) {
+				chat_mode = CHAT_MODE_GUILD;
+				c_prt(C_COLOUR_CHAT_GUILD, "Guild: ", 0, 0);
+
+				/* Recalculate visible length */
+				vis_len = wid - 1 - sizeof("Guild: ");
+
+				Term_locate(&x, &y);
+			}
+			break;
+
+#if 0 /* was: erase line. Can just hit ESC though, so if 0'ed. */
 			case KTRL('U'):
 			k = 0;
 			break;
+#endif
 
 			case KTRL('N'):
 			if (nohist) break;
