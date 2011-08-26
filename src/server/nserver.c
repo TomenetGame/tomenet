@@ -6052,7 +6052,7 @@ int Send_guild(int ind)
 	connection_t *connp = Conn[p_ptr->conn];
 	char bufn[90], bufm[20], bufo[50], buf[10];
 
-	if (!is_newer_than(&p_ptr->version, 4, 4, 7, 0, 0, 0)) return(0);
+	if (!is_newer_than(&p_ptr->version, 4, 4, 7, 0, 0, 0)) continue;
 
 	if (Players[i]->guild != Players[ind]->guild) continue;
 
