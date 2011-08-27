@@ -5791,6 +5791,7 @@ LUCK ('It affects your luck')
         armour class. How much exactly it has isn't affected by luck!
         'Great' means that an item has ego powers or is an artifact. Luck does
         not affect how great its ego power or artifact abilities will be!
+        Note: Luck has NO effect on 'acquirement' and 'artifact creation'.
 NO_MAGIC ('Antimagic shell')
         Raises your saving throw to 95%, making you nearly immune to any
         malicious magical influence (like paralysation). Also prevents
@@ -6114,6 +6115,7 @@ Acquirement     Gives you a great item. Reading it on deeper dungeon levels
                 Note that while some towns also have a high level, reading this
                 scroll in town won't guarantee a 'great' item, which will
                 be guaranteed if you read it in the dungeon.
+                Acquirement is not affected by 'luck'.
 *Acquirement*   Same as Acquirement, but gives you two or three great items.
 Fire/Ice/Chaos  Fires a ball of the according type around you. Make sure you
                 resist it or you will take damage too.
