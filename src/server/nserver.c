@@ -2570,7 +2570,7 @@ static int Handle_login(int ind)
 	/* Give a more visible message about outdated client usage - C. Blue */
 	if (!is_newer_than(&Players[NumPlayers]->version, VERSION_MAJOR_OUTDATED, VERSION_MINOR_OUTDATED, VERSION_PATCH_OUTDATED, VERSION_EXTRA_OUTDATED, VERSION_BRANCH_OUTDATED, VERSION_BUILD_OUTDATED)) {
 		msg_print(NumPlayers, "\374\377y --- Your client is outdated! Get newest one from www.tomenet.net ---");
-	} else if (!is_newer_than(&Players[NumPlayers]->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, VERSION_BRANCH_LATEST, VERSION_BUILD_LATEST)) {
+	} else if (is_older_than(&Players[NumPlayers]->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, VERSION_BRANCH_LATEST, VERSION_BUILD_LATEST)) {
 		msg_print(NumPlayers, "\374\377D --- Your client is NOT the latest version, it's not 'outdated' though. ---");
 	}
 #endif

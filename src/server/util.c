@@ -4322,8 +4322,53 @@ bool is_newer_than(version_type *version, int major, int minor, int patch, int e
 		else if (version->build > build)
 			return TRUE;
 	}
-	
+
 	/* Default */
+	return FALSE;
+}
+
+bool is_older_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build)
+{
+	if (version->major > major)
+		return FALSE; /* very new */
+	else if (version->major < major)
+		return TRUE; /* very old */
+	else if (version->minor > minor)
+		return FALSE; /* pretty new */
+	else if (version->minor < minor)
+		return TRUE; /* pretty old */
+	else if (version->patch > patch)
+		return FALSE; /* somewhat new */
+	else if (version->patch < patch)
+		return TRUE; /* somewhat old */
+	else if (version->extra > extra)
+		return FALSE; /* a little newer */
+	else if (version->extra < extra)
+		return TRUE; /* a little older */
+	/* Check that the branch is an exact match */
+	else if (version->branch == branch)
+	{
+		/* Now check the build */
+		if (version->build > build)
+			return FALSE;
+		else if (version->build < build)
+			return TRUE;
+	}
+
+	/* Default */
+	return FALSE;
+}
+
+bool is_same_as(version_type *version, int major, int minor, int patch, int extra, int branch, int build)
+{
+	if (version->major == major
+	    && version->minor == minor
+	    && version->patch == patch
+	    && version->extra == extra
+	    && version->branch == branch
+	    && version->build == build)
+		return TRUE;
+
 	return FALSE;
 }
 

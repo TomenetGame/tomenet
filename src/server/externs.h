@@ -1609,6 +1609,8 @@ extern bool player_list_del(player_list_type **list, s32b player);
 extern void player_list_free(player_list_type *list);
 
 extern bool is_newer_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build);
+extern bool is_older_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build);
+extern bool is_same_as(version_type *version, int major, int minor, int patch, int extra, int branch, int build);
 extern void my_memfrob(void *s, int n);
 
 extern cptr compat_pmode(int Ind1, int Ind2);

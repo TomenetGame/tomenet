@@ -33,22 +33,6 @@
  */
 
 
-//note to note: r_info monsters are dependant, so server restart will still be required :/
-//NOTE: SUPERFLUOUS. INSTEAD, USE 'season_halloween' in variable.c or lua!
-/* Enable/disable Halloween Event Mode- by C. Blue :) -
-   also see r_info.txt for 'Pumpkin' and follow instructions there. */
-//#define HALLOWEEN
-
-//NOTE: SUPERFLUOUS. INSTEAD, USE 'season' in variable.c or lua!
-/* Enable/disable Winter season
-   Also defines how snowy the weather is: 0 (never snowing) .. 4 (always snowing) */
-//#define WINTER_SEASON   2
-
-//NOTE: SUPERFLUOUS. INSTEAD, USE 'season_newyearseve' in variable.c or lua!
-/* Enable/disable New Year's Eve */
-//#define NEW_YEARS_EVE
-
-
 
 /* MAJOR/MINOR/PATCH version should be 0-15. */
 #define VERSION_MAJOR		4
@@ -65,11 +49,15 @@
 #define VERSION_EXTRA_OUTDATED	2
 #define VERSION_BRANCH_OUTDATED	0
 #define VERSION_BUILD_OUTDATED	0
-/* _one before_ MAJOR/MINOR/PATCH version that counts as 'latest' (should be 0-15). */
+
+/* MAJOR/MINOR/PATCH version that counts as 'latest' (should be 0-15).
+   If a player is online with a version > this && <= current version (VERSION_)
+   it will be assumed that he's using a 'test client' and be marked in @ list
+   with a 'T' marker which is visible only to admins.*/
 #define VERSION_MAJOR_LATEST	4
 #define VERSION_MINOR_LATEST	4
-#define VERSION_PATCH_LATEST	6
-#define VERSION_EXTRA_LATEST	2
+#define VERSION_PATCH_LATEST	7
+#define VERSION_EXTRA_LATEST	0
 #define VERSION_BRANCH_LATEST	0
 #define VERSION_BUILD_LATEST	0
 
@@ -77,10 +65,10 @@
    Minimum client version tag required to "play 100%". */
 #define SERVER_VERSION_TAG ""
 
-/* Maximum client version allowed to log in */
-#define MAX_VERSION_MAJOR	4
-#define MAX_VERSION_MINOR	15
-#define MAX_VERSION_PATCH	15
+
+/* Client-side only: Client release version tag
+   (such as "a", "b" etc) used in window title and file dumps */
+#define CLIENT_VERSION_TAG "a"
 
 /* Minimum client version required to be allowed to log in */
 #define MIN_VERSION_MAJOR	4
@@ -88,6 +76,10 @@
 #define MIN_VERSION_PATCH	1
 #define MIN_VERSION_EXTRA	0
 
+/* Maximum client version allowed to log in */
+#define MAX_VERSION_MAJOR	4
+#define MAX_VERSION_MINOR	15
+#define MAX_VERSION_PATCH	15
 
 
 /* For savefile purpose only */
@@ -98,16 +90,17 @@
 
 
 
-/* Client-side only: Client release version tag
-   (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG "a"
-
-
-
 /*
  * Base version strings of TomeNET (see version_build)
  */
 #define TOMENET_VERSION_SHORT		"TomeNET"
+
+/*
+ * This value is a single 16-bit number holding the version info
+ */
+
+#define MY_VERSION (VERSION_MAJOR << 12 | VERSION_MINOR << 8 | VERSION_PATCH \
+	<< 4 | VERSION_EXTRA)
 
 
 
@@ -122,23 +115,15 @@
 
 
 
-/*
- * This value is a single 16-bit number holding the version info
- */
-
-#define MY_VERSION (VERSION_MAJOR << 12 | VERSION_MINOR << 8 | VERSION_PATCH \
-	<< 4 | VERSION_EXTRA)
-
-
 /* Determine fundamental server type (Normal, RPG, Arcade, Fun flagged). */
 #include "defines-local.h"
 
+/* Add feature enabling/disabling definitions - C. Blue */
+#include "defines-features.h"
 
 /* Add colour schemes - C. Blue */
 #include "colours.h"
 
-/* Add feature enabling/disabling definitions - C. Blue */
-#include "defines-features.h"
 
 
 #ifdef MONSTER_ASTAR

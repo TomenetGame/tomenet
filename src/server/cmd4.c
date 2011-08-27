@@ -1104,8 +1104,8 @@ void do_cmd_check_players(int Ind, int line)
 	player_type *p_ptr = Players[Ind], *q_ptr;
 
 	bool admin = is_admin(p_ptr);
-	bool outdated;
-	bool latest;
+	bool outdated, latest, test, unknown;
+	char flag_str[10];
 
 	/* Temporary file */
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
@@ -1117,8 +1117,13 @@ void do_cmd_check_players(int Ind, int line)
 	/* Scan the player races */
 	for (k = 1; k < NumPlayers + 1; k++) {
 		q_ptr = Players[k];
+
+		unknown = is_newer_than(&q_ptr->version, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, VERSION_BUILD);
+		test = !unknown && is_newer_than(&q_ptr->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, VERSION_BRANCH_LATEST, VERSION_BUILD_LATEST);
 		outdated = !is_newer_than(&q_ptr->version, VERSION_MAJOR_OUTDATED, VERSION_MINOR_OUTDATED, VERSION_PATCH_OUTDATED, VERSION_EXTRA_OUTDATED, VERSION_BRANCH_OUTDATED, VERSION_BUILD_OUTDATED);
-		latest = is_newer_than(&q_ptr->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, 0, 0);
+		latest = is_same_as(&q_ptr->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, VERSION_BRANCH_LATEST, VERSION_BUILD_LATEST);
+
+		flag_str[0] = '\0';
 
 		byte attr = 'w';
 
@@ -1147,8 +1152,18 @@ void do_cmd_check_players(int Ind, int line)
 		/* Print a message */
 		do_write_others_attributes(Ind, fff, q_ptr, attr, is_admin(p_ptr));
 
+#if 0
 		fprintf(fff, "\n   %s", q_ptr->inval ? (!outdated ? (!latest && is_admin(p_ptr) ? "\377yI\377sL \377U" : "\377yI \377U") : "\377yI\377DO \377U") :
 		    (outdated ? "\377DO \377U" : (!latest && is_admin(p_ptr) ? "\377sL \377U" :  "\377U")));
+#else
+		if (q_ptr->inval) strcpy(flag_str, "\377yI");
+		if (unknown) strcat(flag_str, "\377rU");
+		else if (test) strcat(flag_str, "\377oT");
+		else if (outdated) strcat(flag_str, "\377DO");
+		else if (!latest && is_admin(p_ptr)) strcat(flag_str, "\377sL");
+		if (flag_str[0]) strcat(flag_str, " ");
+		fprintf(fff, "\n   %s\377U", flag_str);
+#endif
 
 		/* Print location if both players are PvP-Mode */
 		if (((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) && !admin) {
@@ -1191,8 +1206,25 @@ void do_cmd_check_players(int Ind, int line)
 		/* Print a message */
 		do_write_others_attributes(Ind, fff, q_ptr, attr, is_admin(p_ptr));
 
+#if 0
 		fprintf(fff, "\n   %s", q_ptr->inval ? (!outdated ? (!latest && is_admin(p_ptr) ? "\377yI\377U+\377sL \377U" : "\377y(I) \377U") : "\377yI\377U+\377DO \377U") :
 		    (outdated ? "\377D(O) \377U" : (!latest && is_admin(p_ptr) ? "\377s(L) \377U" :  "\377U")));
+#else
+		if (q_ptr->inval) {
+			if (unknown) strcpy(flag_str, "\377yI\377U+\377rU");
+			else if (test) strcpy(flag_str, "\377yI\377U+\377oT");
+			else if (outdated) strcpy(flag_str, "\377yI\377U+\377DO");
+			else if (!latest && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377sL");
+			else strcpy(flag_str, "\377y(I)");
+		} else {
+			if (unknown) strcpy(flag_str, "\377r(U)");
+			else if (test) strcpy(flag_str, "\377o(T)");
+			else if (outdated) strcpy(flag_str, "\377D(O)");
+			else if (!latest && is_admin(p_ptr)) strcpy(flag_str, "\377s(L)");
+		}
+		if (flag_str[0]) strcat(flag_str, " ");
+		fprintf(fff, "\n   %s\377U", flag_str);
+#endif
 
 		/* Print location if both players are PvP-Mode */
 		if (((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) && !admin) {
@@ -1263,8 +1295,25 @@ void do_cmd_check_players(int Ind, int line)
 //		if (is_admin(p_ptr)) fprintf(fff, "  (%d)", k);
 
 		//show local system username? q_ptr->realname
+#if 0
 		fprintf(fff, " %s (%s@%s) ", q_ptr->inval ? (!outdated ? (!latest && is_admin(p_ptr) ? "\377yI\377U+\377sL\377U" : "\377y(I)\377U") : "\377yI\377U+\377DO\377U") :
 		    (outdated ? "\377D(O)\377U" : (!latest && is_admin(p_ptr) ? "\377s(L)\377U" :  "   ")), q_ptr->accountname, q_ptr->hostname);
+#else
+		if (q_ptr->inval) {
+			if (unknown) strcpy(flag_str, "\377yI\377U+\377rU");
+			else if (test) strcpy(flag_str, "\377yI\377U+\377oT");
+			else if (outdated) strcpy(flag_str, "\377yI\377U+\377DO");
+			else if (!latest && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377sL");
+			else strcpy(flag_str, "\377y(I)");
+		} else {
+			if (unknown) strcpy(flag_str, "\377r(U)");
+			else if (test) strcpy(flag_str, "\377o(T)");
+			else if (outdated) strcpy(flag_str, "\377D(O)");
+			else if (!latest && is_admin(p_ptr)) strcpy(flag_str, "\377s(L)");
+			else strcpy(flag_str, "   ");
+		}
+		fprintf(fff, " %s\377U (%s@%s) ", flag_str, q_ptr->accountname, q_ptr->hostname);
+#endif
 
 		/* Print location if both players are PvP-Mode */
 		if (((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) && !admin) {
