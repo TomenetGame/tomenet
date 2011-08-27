@@ -1157,8 +1157,8 @@ void do_cmd_check_players(int Ind, int line)
 		    (outdated ? "\377DO \377U" : (!latest && is_admin(p_ptr) ? "\377sL \377U" :  "\377U")));
 #else
 		if (q_ptr->inval) strcpy(flag_str, "\377yI");
-		if (unknown) strcat(flag_str, "\377rU");
-		else if (test) strcat(flag_str, "\377oT");
+		if (unknown && is_admin(p_ptr)) strcat(flag_str, "\377rU");
+		else if (test && is_admin(p_ptr)) strcat(flag_str, "\377oT");
 		else if (outdated) strcat(flag_str, "\377DO");
 		else if (!latest && is_admin(p_ptr)) strcat(flag_str, "\377sL");
 		if (flag_str[0]) strcat(flag_str, " ");
@@ -1211,14 +1211,14 @@ void do_cmd_check_players(int Ind, int line)
 		    (outdated ? "\377D(O) \377U" : (!latest && is_admin(p_ptr) ? "\377s(L) \377U" :  "\377U")));
 #else
 		if (q_ptr->inval) {
-			if (unknown) strcpy(flag_str, "\377yI\377U+\377rU");
-			else if (test) strcpy(flag_str, "\377yI\377U+\377oT");
+			if (unknown && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377rU");
+			else if (test && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377oT");
 			else if (outdated) strcpy(flag_str, "\377yI\377U+\377DO");
 			else if (!latest && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377sL");
 			else strcpy(flag_str, "\377y(I)");
 		} else {
-			if (unknown) strcpy(flag_str, "\377r(U)");
-			else if (test) strcpy(flag_str, "\377o(T)");
+			if (unknown && is_admin(p_ptr)) strcpy(flag_str, "\377r(U)");
+			else if (test && is_admin(p_ptr)) strcpy(flag_str, "\377o(T)");
 			else if (outdated) strcpy(flag_str, "\377D(O)");
 			else if (!latest && is_admin(p_ptr)) strcpy(flag_str, "\377s(L)");
 		}
@@ -1300,14 +1300,14 @@ void do_cmd_check_players(int Ind, int line)
 		    (outdated ? "\377D(O)\377U" : (!latest && is_admin(p_ptr) ? "\377s(L)\377U" :  "   ")), q_ptr->accountname, q_ptr->hostname);
 #else
 		if (q_ptr->inval) {
-			if (unknown) strcpy(flag_str, "\377yI\377U+\377rU");
-			else if (test) strcpy(flag_str, "\377yI\377U+\377oT");
+			if (unknown && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377rU");
+			else if (test && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377oT");
 			else if (outdated) strcpy(flag_str, "\377yI\377U+\377DO");
 			else if (!latest && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377sL");
 			else strcpy(flag_str, "\377y(I)");
 		} else {
-			if (unknown) strcpy(flag_str, "\377r(U)");
-			else if (test) strcpy(flag_str, "\377o(T)");
+			if (unknown && is_admin(p_ptr)) strcpy(flag_str, "\377r(U)");
+			else if (test && is_admin(p_ptr)) strcpy(flag_str, "\377o(T)");
 			else if (outdated) strcpy(flag_str, "\377D(O)");
 			else if (!latest && is_admin(p_ptr)) strcpy(flag_str, "\377s(L)");
 			else strcpy(flag_str, "   ");
