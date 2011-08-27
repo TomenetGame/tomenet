@@ -4536,6 +4536,7 @@ Highlander Tournament
     redeem it for luck for that character of his.
     All losers will also receive a deed on the next character they log in with
     which can be turned in for a small temporary luck bonus.
+    For details about luck see LUCK flag in (5.8).
 
 Arena Monster Challenge
     The wizards of Arena Monster Challenge (tm) have prepared a spectacular
@@ -5943,6 +5944,7 @@ Ethereal ammunition     Magically returns after being fired, has a small chance
 Dragonrider Coat        Resists heat & cold.
 Serpent Scale Mail      Resists acid.
 Elven Cloak     Increases your stealth, searching ability and luck.
+                For details about luck see LUCK flag in (5.8).
 Shadow Cloak    Makes you hard to spot for other players, regarding
                 a) them seeing you
                 b) them being able to look at your current equipment.
@@ -6183,8 +6185,8 @@ Jewelry
 -------
 Amulets of Adornment    They might be looking fancy, but they don't do
                         anything and have no effect on your character.
-Talisman (Amulet)       Increases your luck, helps you finding better loot.
-                        (See (5.8) for more information about luck.)
+Talisman (Amulet)       Increases your luck, helping you finding better loot.
+                        (See LUCK flag in (5.8) for details about luck.)
 Rings of Might          increase strength and constitution.
 Rings of Toughness      increase dexterity and constitution.
 Rings of Cunningness    increase strength and intelligence.
@@ -8224,11 +8226,12 @@ Maia
     infra-vision.
     Maiar have a choice of ascending to enlightenment, or submit to corruption
     of the promise of demonic powers. To determine their fate, they must kill
-    either a candlebearer, a servant of good, or a darkling, a harbinger of
-    demonkind before reaching level 20 or they will lose the ability to stay in
-    the realm and their physical form will be destroyed. They will also meet
-    such a fate if they kill both of these kind indiscriminately before having
-    reached initiation, so take care.
+    either a candlebearer, a servant of good (to become corrupted), or a
+    darkling, a harbinger of demonkind (to become enlightened) before reaching
+    level 20 or they will lose the ability to stay in the realm and their
+    physical form will be destroyed.
+    They will also meet such a fate if they kill both of these kind
+    indiscriminately before having reached initiation, so take care.
     Using but their mind they can easily perceive both good and demonkind
     telepathically. The servants and harbingers of those factions that Maiar
     need to slay occur between dungeon level 12 and 20 (which correspond to
