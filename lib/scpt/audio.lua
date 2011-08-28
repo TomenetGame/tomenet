@@ -9,6 +9,8 @@
 audio_sfx = {
     --[misc]
     "page",
+    "warning",
+    "error",
 
     --[weather]
     "rain_soft",
