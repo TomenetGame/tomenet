@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 26. August 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 28. August 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -122,6 +122,7 @@ Contents
     (6.7)   Mimicry details
     (6.7a)  Polymorph rings
     (6.7b)  Druid form details
+    (6.7c)  Useful low-level forms for weapon-using mimics
     (6.8)   Magic spells and prayers
     (6.9)   Parties, Iron Teams, Guilds
     (6.10)  Magic Device skill/ability details
@@ -8463,17 +8464,21 @@ Rogue
 Mimic
     Mimics are melee fighters who can learn how to shapechange and use the form
     of any monsters (except for unique ones) they slay, thereby inheriting
-    nearly all of the monster's abilities.
+    nearly all of the monster's abilities. That way they may even cast spells
+    the monster was able to use or breathe elements like the monster did.
     Their primary stats are same as the warrior i.e. strength and constituion
     with dexterity coming in handy too.
+    Intelligence is not of primary importance but it can help somewhat to
+    increase the mana pool for making use of monster spells/breaths.
     Mimics learn forms by killing as many of a certain monster type as that
-    type has a high level. Further, their 'Mimicry' skill must be at least 1/2
-    of the monster level.
+    monster has high a level. Further, their 'Mimicry' skill must be at least
+    1/2 of the monster level.
     If mimics kill monsters whose level is higher than twice their mimicry
     skill those kills will nevertheless be counted in case the skill is raised
     to the appropriate level later, so those kills won't be 'lost'.
     Example: To use the form of an Ancient Bronze Dragon (level 40) the
     mimic has to kill 40 of them and have a mimicry skill of at least 20.
+
     To find out how many monsters you already killed and how many you need
     in total to learn a form, press the '~' key followed by '3'.
     To polymorph into a form, press 'm' key, like casting a magic spell.
@@ -8481,6 +8486,10 @@ Mimic
     'Polymorph Self' spell. You have to use 'Polymorph Self Into..' if you
     want to use these forms.)
     To find out the special abilities of a monster form, see section (6.7).
+    A list of useful low-level forms for weapon-using mimics is give in (6.7c)
+    because those have a somewhat harder time to find usable forms early on
+    than martial artists who might just utilize easy to get forms such as fruit
+    bat, wild cat or spiders right away for great effect.
 
     Hint: Maybe there's a friendly mimicry-user around who can forge some
     'Rings of Polymorphing' for you from forms he or she no longer uses.
@@ -9378,6 +9387,48 @@ Firebird                speedy and tough; can fly and passes most terrains;
                         resists poison, plasma and light;
                         regenerates HP quickly;
                         can breathe fire and light
+
+
+(6.7c) Useful low-level forms for weapon-using mimics
+-----------------------------------------------------
+Mimics who use weapons have less choices for forms than martial arts users who
+do not need to rely on humanoid forms.
+To use weapons the form must be humanoid or very close to it. To make form-
+hunting a bit easier in the beginning here is a list of useful low-level forms
+that are humanoid and allow the player to wear/wield full equipment:
+
+Village Idiot    1  You can get this form in town. It can be a bit annoying
+                    because of slightly erratic movement but it will give a
+                    speed bonus which can be useful when fighting.
+Mean-looking Mercenary / Battle-scarred Veteran
+                 1  You can get these forms in town. They can initially improve
+                    your HP (hit points) and AC (armour class) fairly well.
+                    They both have slightly erratic movement though.
+
+Novice Mage      2  Sort of weak but has 'blink' spell (aka phase door) and
+                    more.
+Novice Ranger    4  Can pass trees easily. Gives an extra shot with ranged
+                    weapons. This can be pretty powerful early on if the
+                    character has a decent bows/throws ability or has a bow
+                    that is well enchanted to-hit.
+Rotting Corpse   8  Free action, resists confusion/fear/cold, poison immunity,
+                    brands melee attacks with poison.
+Tengu           10  Good HP, can blink/teleport and more, resists fear and
+                    fire, can fly.
+Lizard Man      16  High HP, can swim easily, resists water, immune to acid.
+                    (This monster occurs somewhat more rarely than the others.)
+Ogrillion       16  Very high HP for its level, good melee damage.
+                    (This monster occurs somewhat more rarely than the others.)
+Uruk            16  Good HP, good melee damage, +1 extra shot, poison immunity.
+Elite Uruk      20  Good HP, very high melee damage, +1 extra shot, poison
+                    immunity.
+
+(The number is the monster level and therefore the amount of monsters you need
+kill to learn the form.)
+
+Of course some of these forms might also be useful for martial arts users,
+except for those forms that provide an extra shot, since martial artists cannot
+make use of ranged weapons.
 
 
 
