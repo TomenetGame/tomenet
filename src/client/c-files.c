@@ -502,10 +502,17 @@ errr my_fgets2(FILE *fff, char **line, int *n)
 	int done = FALSE;
 	long len = 0;
 	long alloc = 4096;
-	char *buf;
+	char *buf, *tmp;
 
 	/* Allocate some memory for the line */
-	buf = mem_alloc(alloc);
+	if ((tmp = buf = mem_alloc(alloc)) == NULL) {
+		/* Set the pointer to NULL and count to zero */
+		*line = NULL;
+		*n = 0;
+
+		/* Grave error */
+		return 2;
+	}
 
 	while (TRUE)
 	{
@@ -566,17 +573,26 @@ errr my_fgets2(FILE *fff, char **line, int *n)
 				int i;
 
 				/* Make sure that we have enough space */
-				if (len + 8 > alloc)
-				{
+				if (len + 8 > alloc) {
 					buf = mem_realloc(buf, alloc + 4096);
 					alloc += 4096;
+
+					if (buf == NULL) {
+						/* Free the old memory */
+						mem_free(tmp);
+
+						/* Set the pointer to NULL and count to zero */
+						*line = NULL;
+						*n = 0;
+
+						/* Grave error */
+						return 2;
+					}
+					tmp = buf;
 				}
 
 				/* Add 8 spaces */
-				for (i = 0; i < 8; i++)
-				{
-					buf[len++] = ' ';
-				}
+				for (i = 0; i < 8; i++) buf[len++] = ' ';
 
 				break;
 			}
@@ -584,10 +600,7 @@ errr my_fgets2(FILE *fff, char **line, int *n)
 			/* Handle printables */
 			default:
 			{
-				if (isprint(c))
-				{
-					buf[len++] = c;
-				}
+				if (isprint(c)) buf[len++] = c;
 
 				break;
 			}
@@ -600,6 +613,19 @@ errr my_fgets2(FILE *fff, char **line, int *n)
 		{
 			buf = mem_realloc(buf, alloc + 4096);
 			alloc += 4096;
+
+			if (buf == NULL) {
+				/* Free the old memory */
+				mem_free(tmp);
+
+				/* Set the pointer to NULL and count to zero */
+				*line = NULL;
+				*n = 0;
+
+				/* Grave error */
+				return 2;
+			}
+			tmp = buf;
 		}
 	}
 
@@ -1036,7 +1062,7 @@ errr process_pref_file(cptr name)
 
 	char buf[1024];
         char *buf2;
-	int n;
+	int n, err;
 
         /* Build the filename */
         path_build(buf, 1024, ANGBAND_DIR_USER, name);
@@ -1048,7 +1074,7 @@ errr process_pref_file(cptr name)
         if (!fp) return (-1);
 
         /* Process the file */
-        while (0 == my_fgets2(fp, &buf2, &n))
+        while (0 == (err = my_fgets2(fp, &buf2, &n)))
         {
                 /* Process the line */
                 if (process_pref_file_aux(buf2))
@@ -1059,6 +1085,10 @@ errr process_pref_file(cptr name)
 
 		mem_free(buf2);
         }
+	if (err == 2) {
+		printf("Grave error: Couldn't allocate memory when parsing '%s'.\n", name);
+		plog(format("!!! GRAVE ERROR: Couldn't allocate memory when parsing file '%s' !!!\n", name));
+	}
 
         /* Close the file */
         my_fclose(fp);
