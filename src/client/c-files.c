@@ -781,7 +781,7 @@ errr process_pref_file_aux(char *buf)
         char *zz[16];
 
 	/* We use our own macro__buf - mikaelh */
-	static char *macro__buf;
+	static char *macro__buf = NULL;
 
         /* Skip "empty" lines */
         if (!buf[0]) return (0);
@@ -894,6 +894,9 @@ errr process_pref_file_aux(char *buf)
         /* Process "A:<str>" -- save an "action" for later */
         else if (buf[0] == 'A')
         {
+		/* Free the previous action */
+		if (macro__buf) C_FREE(macro__buf, strlen(macro__buf) + 1, char);
+
 		/* Allocate enough space for the ascii string - mikaelh */
 		macro__buf = mem_alloc(strlen(buf));
 
@@ -907,10 +910,6 @@ errr process_pref_file_aux(char *buf)
                 char tmp[1024];
                 text_to_ascii(tmp, buf+2);
                 macro_add(tmp, macro__buf, FALSE, FALSE);
-
-		/* Free the action */
-		mem_free(macro__buf);
-
                 return (0);
         }
 
@@ -920,10 +919,6 @@ errr process_pref_file_aux(char *buf)
                 char tmp[1024];
                 text_to_ascii(tmp, buf+2);
                 macro_add(tmp, macro__buf, FALSE, TRUE);
-
-		/* Free the action */
-		C_FREE(macro__buf, strlen(macro__buf) + 1, char);
-
                 return (0);
         }
 
@@ -933,10 +928,6 @@ errr process_pref_file_aux(char *buf)
                 char tmp[1024];
                 text_to_ascii(tmp, buf+2);
                 macro_add(tmp, macro__buf, TRUE, FALSE);
-
-		/* Free the action */
-		C_FREE(macro__buf, strlen(macro__buf) + 1, char);
-
                 return (0);
         }
 
