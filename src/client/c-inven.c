@@ -316,7 +316,7 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 		   that might follow because there are no egligible items available.
 		   Otherwise the macro might 'run wild' by causing unintended key
 		   presses instead of picking the item. */
-		if (parse_macro) macro_missing_item = 1;
+		if (parse_macro) macro_missing_item = extra ? 1 : 3;
 
 		/* Done */
 		done = TRUE;

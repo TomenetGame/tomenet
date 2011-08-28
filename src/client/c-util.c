@@ -522,12 +522,19 @@ static char inkey_aux(void)
 				/* Case closed */
 				macro_missing_item = 0;
 			}
+			/* Expected item choice is missing IN the macro - bad macro! Case closed though. */
+			else macro_missing_item = 0;
 		/* Still within call-by-name sequence? */
 		} else if (macro_missing_item == 2) {
 			if (ch == '\r') {
 				/* Sequence finally ends here */
 				macro_missing_item = 0;
 			} else ch = 0;
+		/* Check for problems with missing inscription-called items */
+		} else if (macro_missing_item == 3) {
+			if (ch >= '0' && ch <= '9') ch = 0;
+			/* Case closed in any way */
+			macro_missing_item = 0;
 		}
 
 		/* return next macro character */
