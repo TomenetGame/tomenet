@@ -2962,13 +2962,35 @@ int Receive_special_line(void)
 		return 1;
 	}
 
-	/* Maximum */
-	max_line = max;
+	/* Maximum (initialize / update) */
+	if (max_line != max) {
+		max_line = max;
+
+		/* Update the prompt too (important if max_line got smaller).
+		   (Prompt consistent with peruse_file() in c-files.c.)*/
+		/* indicate EOF by different status line colour */
+		if (cur_line + special_page_size >= max_line)
+			c_prt(TERM_ORANGE, format("[Press Return, Space, -, b, or ESC to exit.] (%d-%d/%d)",
+			    cur_line + 1, max_line , max_line), 23, 0);
+		else
+			c_prt(TERM_L_WHITE, format("[Press Return, Space, -, b, or ESC to exit.] (%d-%d/%d)",
+			    cur_line + 1, cur_line + special_page_size, max_line), 23, 0);
+	}
 
 	/* Recognize 'odd_line' type pages, aka 21 lines instead of just 20 - C. Blue */
 	if (line == 20) special_page_size = 21;
 
-	/* Cause inkey() to break, if inkey_max_line flag was set */	
+	/* Also adjust our current starting line to the possibly updated max_line in case
+	   max_line got smaller for some reason (for example when viewing equipment).
+	   This is kept consistent with behaviour in peruse_file() in c-files.c and
+	   do_cmd_help_aux() in files.c */
+	if (cur_line > max_line - special_page_size &&
+	    cur_line < max_line) {
+		cur_line = max_line - special_page_size;
+		if (cur_line < 0) cur_line = 0;
+	}
+
+	/* Cause inkey() to break, if inkey_max_line flag was set */
 	inkey_max_line = FALSE;
 
 	/* Print out the info */

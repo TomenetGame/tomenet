@@ -1154,11 +1154,11 @@ void peruse_file(void)
 			VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG), 0, 0);
 #endif
 
-		/* Prompt */
+		/* Prompt. (Consistent with prompt in Receive_special_line() in nclient.c.) */
 		/* indicate EOF by different status line colour */
 		if (cur_line + special_page_size >= max_line)
 			c_prt(TERM_ORANGE, format("[Press Return, Space, -, b, or ESC to exit.] (%d-%d/%d)",
-			    cur_line + 1, cur_line + special_page_size, max_line), 23, 0);
+			    cur_line + 1, max_line , max_line), 23, 0);
 		else
 			c_prt(TERM_L_WHITE, format("[Press Return, Space, -, b, or ESC to exit.] (%d-%d/%d)",
 			    cur_line + 1, cur_line + special_page_size, max_line), 23, 0);
@@ -1208,10 +1208,14 @@ void peruse_file(void)
 		/* Advance one page */
 		if (k == ' ' || k == KTRL('D')) {
 			cur_line += special_page_size;
-#if 1 /* take a break at end of list before wrapping around */
+#if 1 /* take a break at end of list before wrapping around \
+         (consistent with behavior in nclient.c: Receive_special_line() \
+         and with do_cmd_help_aux() in files.c.) */
 			if (cur_line > max_line - special_page_size &&
-			    cur_line < max_line)
+			    cur_line < max_line) {
 				cur_line = max_line - special_page_size;
+				if (cur_line < 0) cur_line = 0;
+			}
 #endif
 		}
 

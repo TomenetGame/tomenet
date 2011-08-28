@@ -684,6 +684,13 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color, 
 	/* Restart when necessary */
 	if (line >= size) line = 0;
 
+	/* (Consistent behavior with peruse_file() in c-files.c
+	   and Receive_special_line() in nclient.c.) */
+	if (line > size - lines_per_page) {
+		line = size - lines_per_page;
+		if (line < 0) line = 0;
+	}
+
 
 	/* Re-open the file if needed */
 	if (next > line) {
