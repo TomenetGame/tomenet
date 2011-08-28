@@ -318,6 +318,9 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 		   presses instead of picking the item. */
 		if (parse_macro) macro_missing_item = extra ? 1 : 3;
 
+		/* Actually output a warning to combat message window */
+		c_msg_print("\376You do not have an egligible item.");
+
 		/* Done */
 		done = TRUE;
 	}
