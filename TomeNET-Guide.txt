@@ -8211,8 +8211,11 @@ Vampire
     life force. They also have partially life leeching (vampiric) attacks
     (see '(5.15) Vampirism' for more information).
     Vampires cannot eat normal food, instead they need to feed off living
-    creatures. Vampires dislike blunt weapons, get a small penalty
-    on divination magic, but receive a bonus on all necromancy skills.
+    creatures. This means that you need to kill monsters in melee combat in
+    order to satisfy your hunger, which might be quite easy for melee classes
+    but sometimes a hassle for ranged/caster classes.
+    Vampires dislike blunt weapons, get a small penalty on divination magic,
+    but receive a bonus on all necromancy skills.
     They become able to turn into a bat at level 20.
     Vampires start with a mummy wrapping, because it can protect them from the
     sunlight (press 'w' to wear it). If they are moving on the world surface
