@@ -9400,14 +9400,19 @@ To use weapons the form must be humanoid or very close to it. To make form-
 hunting a bit easier in the beginning here is a list of useful low-level forms
 that are humanoid and allow the player to wear/wield full equipment:
 
-Village Idiot    1  You can get this form in town. It can be a bit annoying
-                    because of slightly erratic movement but it will give a
-                    speed bonus which can be useful when fighting.
-Mean-looking Mercenary / Battle-scarred Veteran
-                 1  You can get these forms in town. They can initially improve
-                    your HP (hit points) and AC (armour class) fairly well.
+Forms you can already get in Bree town:
+---------------------------------------
+Village idiot    1  Its slightly erratic movement can be a bit annoying but it
+                    will give a speed bonus which can be useful when fighting.
+Mean-looking mercenary / Battle-scarred veteran
+                 1  They can improve your initial HP (hit points) and AC
+                    (armour class) fairly well.
                     They both have slightly erratic movement though.
+Agent of the black market
+                 1  This form is able to cross mountain terrain.
 
+Further forms:
+--------------
 Novice Mage      2  Sort of weak but has 'blink' spell (aka phase door) and
                     more.
 Novice Ranger    4  Can pass trees easily. Gives an extra shot with ranged
@@ -9418,6 +9423,7 @@ Rotting Corpse   8  Free action, resists confusion/fear/cold, poison immunity,
                     brands melee attacks with poison.
 Tengu           10  Good HP, can blink/teleport and more, resists fear and
                     fire, can fly.
+Ogre            13  This form can cross thick woods and mountain terrain.
 Lizard Man      16  High HP, can swim easily, resists water, immune to acid.
                     (This monster occurs somewhat more rarely than the others.)
 Ogrillion       16  Very high HP for its level, good melee damage.
