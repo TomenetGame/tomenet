@@ -16,7 +16,8 @@ static int MACRO_WAIT = 96;
 static void ascii_to_text(char *buf, cptr str);
 
 static bool after_macro = FALSE;
-static bool parse_macro = FALSE;
+bool parse_macro = FALSE;
+int macro_missing_item = 0;
 static bool parse_under = FALSE;
 static bool parse_slash = FALSE;
 static bool strip_chars = FALSE;
@@ -506,7 +507,32 @@ static char inkey_aux(void)
 	}
 
 	/* Do not check macro actions */
-	if (parse_macro) return (ch);
+	if (parse_macro) {
+		/* Check for problems with missing items the macro was supposed to use - C. Blue */
+		if (macro_missing_item == 1) {
+			/* Check for discarding item called by name */
+			if (ch == '@') {
+				ch = 0;
+				/* Prepare to ignore the (partial) item name sequence */
+				macro_missing_item = 2;
+			}
+			/* Check for discarding item called by numeric inscription */
+			else if (ch >= '0' && ch <= '9') {
+				ch = 0;
+				/* Case closed */
+				macro_missing_item = 0;
+			}
+		/* Still within call-by-name sequence? */
+		} else if (macro_missing_item == 2) {
+			if (ch == '\r') {
+				/* Sequence finally ends here */
+				macro_missing_item = 0;
+			} else ch = 0;
+		}
+
+		/* return next macro character */
+		return (ch);
+	}
 
 	/* Do not check "control-underscore" sequences */
 	if (parse_under) return (ch);
@@ -605,6 +631,8 @@ static char inkey_aux(void)
 
 	/* We are now inside a macro */
 	parse_macro = TRUE;
+	/* Assume that the macro has no problems with possibly missing items so far */
+	macro_missing_item = 0;
 
 	/* Push the "macro complete" key */
 	if (Term_key_push(29)) return (0);

@@ -312,6 +312,11 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 
 		/* Hack -- Nothing to choose */
 		*cp = -2;
+		/* more hack: Tell macro that it should skip any item-selection code
+		   that might follow because there are no egligible items available.
+		   Otherwise the macro might 'run wild' by causing unintended key
+		   presses instead of picking the item. */
+		if (parse_macro) macro_missing_item = 1;
 
 		/* Done */
 		done = TRUE;
