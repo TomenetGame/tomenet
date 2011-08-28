@@ -2966,15 +2966,18 @@ int Receive_special_line(void)
 	if (max_line != max) {
 		max_line = max;
 
-		/* Update the prompt too (important if max_line got smaller).
-		   (Prompt consistent with peruse_file() in c-files.c.)*/
-		/* indicate EOF by different status line colour */
-		if (cur_line + special_page_size >= max_line)
-			c_prt(TERM_ORANGE, format("[Press Return, Space, -, b, or ESC to exit.] (%d-%d/%d)",
-			    cur_line + 1, max_line , max_line), 23, 0);
-		else
-			c_prt(TERM_L_WHITE, format("[Press Return, Space, -, b, or ESC to exit.] (%d-%d/%d)",
-			    cur_line + 1, cur_line + special_page_size, max_line), 23, 0);
+		/* Are we still browsing or have we actually just quit? */
+		if (special_line_type) {
+			/* Update the prompt too (important if max_line got smaller).
+			   (Prompt consistent with peruse_file() in c-files.c.)*/
+			/* indicate EOF by different status line colour */
+			if (cur_line + special_page_size >= max_line)
+				c_prt(TERM_ORANGE, format("[Press Return, Space, -, b, or ESC to exit.] (%d-%d/%d)",
+				    cur_line + 1, max_line , max_line), 23, 0);
+			else
+				c_prt(TERM_L_WHITE, format("[Press Return, Space, -, b, or ESC to exit.] (%d-%d/%d)",
+				    cur_line + 1, cur_line + special_page_size, max_line), 23, 0);
+		}
 	}
 
 	/* Recognize 'odd_line' type pages, aka 21 lines instead of just 20 - C. Blue */
