@@ -4852,7 +4852,7 @@ static void do_cmd_options_acc(void)
  */
 static void do_cmd_options_win(void)
 {
-	int i, j, d, vertikal_offset = 1;
+	int i, j, d, vertikal_offset = 2;
 
 	int y = 0;
 	int x = 1;
@@ -4879,7 +4879,7 @@ static void do_cmd_options_win(void)
 	while (go)
 	{
 		/* Prompt XXX XXX XXX */
-		prt("Window flags (<dir>, t, y, n, ESC) ", 0, 0);
+		Term_putstr(0, 0, -1, TERM_WHITE, "Window flags (<\377ydir\377w>, \377yt\377w (take), \377yy\377w (set), \377yn\377w (clear), \377yENTER\377w (toggle), \377yESC\377w) ");
 
 		/* Display the windows */
 		for (j = 1; j < ANGBAND_TERM_MAX; j++)
@@ -4906,7 +4906,7 @@ static void do_cmd_options_win(void)
 			if (c_cfg.use_color && (i == y)) a = TERM_L_BLUE;
 
 			/* Unused option */
-			if (!str) str = "(Unused option)";
+			if (!str) str = "\377D(Unused option)\377w";
 
 			/* Flag name */
 			Term_putstr(0, i + vertikal_offset + 2, -1, a, (char*)str);
@@ -4914,15 +4914,17 @@ static void do_cmd_options_win(void)
 			/* Display the windows */
 			for (j = 1; j < ANGBAND_TERM_MAX; j++)
 			{
-				byte a = TERM_WHITE;
-
+				byte a = TERM_SLATE;
 				char c = '.';
 
 				/* Use color */
 				if (c_cfg.use_color && (i == y) && (j == x)) a = TERM_L_BLUE;
 
 				/* Active flag */
-				if (window_flag[j] & (1L << i)) c = 'X';
+				if (window_flag[j] & (1L << i)) {
+					a = TERM_L_GREEN;
+					c = 'X';
+				}
 
 				/* Flag value */
 				Term_putch(35 + j * 5, i + vertikal_offset + 2, a, c);
@@ -4995,6 +4997,15 @@ static void do_cmd_options_win(void)
 				window_stuff();
 				break;
 			}
+
+			case '\r':
+				/* Toggle flag */
+				window_flag[x] ^= (1L << y);
+
+				/* Update windows */
+				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP);//PW_LAGOMETER is called automatically, no need.
+				window_stuff();
+				break;
 
 			default:
 			{
