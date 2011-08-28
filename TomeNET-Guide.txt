@@ -9417,13 +9417,15 @@ Novice Mage      2  Sort of weak but has 'blink' spell (aka phase door) and
                     more.
 Novice Ranger    4  Can pass trees easily. Gives an extra shot with ranged
                     weapons. This can be pretty powerful early on if the
-                    character has a decent bows/throws ability or has a bow
+                    character has a decent 'bows/throws' ability or has a bow
                     that is well enchanted to-hit.
 Rotting Corpse   8  Free action, resists confusion/fear/cold, poison immunity,
                     brands melee attacks with poison.
-Tengu           10  Good HP, can blink/teleport and more, resists fear and
+Tengu           10  High HP, can blink/teleport and more, resists fear and
                     fire, can fly.
+                    (Does not occur in packs unlike the other monsters listed.)
 Ogre            13  This form can cross thick woods and mountain terrain.
+                    (This monster occurs somewhat more rarely than the others.)
 Lizard Man      16  High HP, can swim easily, resists water, immune to acid.
                     (This monster occurs somewhat more rarely than the others.)
 Ogrillion       16  Very high HP for its level, good melee damage.
