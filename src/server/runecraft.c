@@ -1720,7 +1720,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				{
 					lite_area(Ind, 10, radius + 2);
 					lite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-					for (k = 0; k < 8; k++) lite_line(Ind, ddd[k]);
+					for (k = 0; k < 8; k++) lite_line(Ind, ddd[k], damroll(6, 8));
 					if (p_ptr->suscep_lite) take_hit(Ind, damroll((p_ptr->resist_lite ? 10: 30), 3), "a rune of brilliance", 0);
 					if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 				}

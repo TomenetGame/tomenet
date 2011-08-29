@@ -1397,7 +1397,7 @@ extern bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam, char *attacker);
 extern bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker);
-extern bool lite_line(int Ind, int dir);
+extern bool lite_line(int Ind, int dir, int dam);
 extern bool drain_life(int Ind, int dir, int dam);
 extern bool wall_to_mud(int Ind, int dir);
 extern bool destroy_door(int Ind, int dir);

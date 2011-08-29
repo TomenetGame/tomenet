@@ -6355,10 +6355,10 @@ bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker) {
  */
 /* TODO: the result should be affected by skills (and not plev) */
 
-bool lite_line(int Ind, int dir)
+bool lite_line(int Ind, int dir, int dam)
 {
 	int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_KILL;
-	return (project_hook(Ind, GF_LITE_WEAK, dir, damroll(6, 8), flg, ""));
+	return (project_hook(Ind, GF_LITE_WEAK, dir, dam, flg, ""));
 }
 
 bool drain_life(int Ind, int dir, int dam)

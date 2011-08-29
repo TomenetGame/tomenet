@@ -6156,6 +6156,7 @@ Wands/Rods/Staves
 Genocide        See 'Scrolls'.
 *Destruction*   See 'Scrolls'.
 Wonder          Wands of wonder cast random magic spells.
+Starlight       Casts 8 beams of light in a star-shaped pattern.
 Curing          Cures being gorged, removes blindness/confusion/stun,
                 cures poison/cuts.
 Probing         Tells you hit points, melee attacks, speed and armour class of
