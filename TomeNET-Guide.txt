@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 28. August 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 30. August 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -3830,6 +3830,9 @@ The 1..9 are standard shops, namely..
         Rune Repository
                         Sells and buys runes used by Runemasters.
         Casino          Minas Anor has a casino. Go and try your luck!
+                        (There are various gambling opportunities, and also
+                        the ancient board game 'Go' which can be played on a
+                        9x9 board for a one-time fee on each difficulty level.)
         Mass Identify Service
                         Will identify all items you currently carry for a fee.
         *Identify* Service
