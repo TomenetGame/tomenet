@@ -1834,7 +1834,8 @@ Body: 'Fruit bat' (Batty)
 A fruit bat is like a normal character, just not in humanoid shape but in bat
 form! Fruit bats cannot wear certain equipment like boots, gloves or weapons.
 These restrictions won't change even if they choose a class which can make use
-if mimicry and thereby mimic a humanoid form.
+if mimicry and thereby mimic a humanoid form (druid fruit bats would in fact be
+the most ineffective choice).
 However, fruit bats are twice as fast as normal characters at the beginning
 (they get a flat +10 speed bonus added) and their melee attacks are somewhat
 vampiric, making them leech life on each hit, replenishing their hit points.
@@ -8573,7 +8574,9 @@ Druid
     Druids can shapechange into several animal forms without having to fight
     or kill them in order to learn those forms. Instead they learn one or more
     new forms automatically every five character levels.
-    Druids are able to always use their full equipment, even while transformed.
+    Druids are able to always use their full equipment, even while transformed;
+    because of this, going with a 'fruit bat' body modification in character
+    creation would be especially ineffective for druids.
     Despising the use of weapons they aren't as superb at close combat as
     warriors, but their Martial Arts training will make up for that and allow
     them quite a respectable performance.
