@@ -1825,7 +1825,7 @@ player_race race_info[MAX_RACE] =
                                 '%', 50,
                         },
                         {
-                                SKILL_CRITICAL,
+                                SKILL_CRITS,
                                 '+', 0,
                                 '%', 50,
                         },
