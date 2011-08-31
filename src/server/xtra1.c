@@ -3314,8 +3314,8 @@ void calc_boni(int Ind)
 			p_ptr->resist_lite = TRUE;
 			if (p_ptr->lev >= 20) {
 				p_ptr->cur_lite += 1 + (p_ptr->lev - 20) / 6; //REAL light!
-				p_ptr->to_a += (p_ptr->lev - 20);
-				p_ptr->dis_to_a += (p_ptr->lev - 20);
+				p_ptr->to_a += (p_ptr->lev - 20)/2;
+				p_ptr->dis_to_a += (p_ptr->lev - 20)/2;
 			}
 
 			if (p_ptr->lev >= 50) {
