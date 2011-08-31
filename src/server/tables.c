@@ -1818,6 +1818,17 @@ player_race race_info[MAX_RACE] =
                                 '+', 3000,
                                 '%', 110,
                         },
+                        /* Silly Half-Troll archers/rogues */
+                        {
+                                SKILL_ARCHERY,
+                                '+', 0,
+                                '%', 50,
+                        },
+                        {
+                                SKILL_CRITICAL,
+                                '+', 0,
+                                '%', 50,
+                        },
                         /* Not banned, but *hard* */
                         {
                                 SKILL_MAGIC,
