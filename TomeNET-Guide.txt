@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 30. August 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 31. August 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -8113,7 +8113,8 @@ Half-Troll
     bad at searching, disarming, perception, and stealth. They are so ugly
     that a Half-Orc grimaces in their presence. They need to eat often.
     Half-Trolls get bonus on 'Blunt-Mastery', 'Health' and 'Swimming'. They
-    receive larger penalties on 'Magic' and 'Sorcery'.
+    receive large penalties on 'Critical-Strike', 'Archery', 'Magic' and
+    'Sorcery'.
 
 Dunadan
     Dunadain have their constitution sustained. Dunadain are a race of hardy
@@ -8264,7 +8265,7 @@ Maia
         Able to see invisible and resisting light, while being susceptible to
         evil-based attacks.
         Intrinsic light aura that adds to any light source's radius.
-        +1 bonus AC for each level above 20.
+        +1 bonus AC for every 2 levels above 20.
         At level 50 they will be able to fly, become resistant to poison,
         electricity, cold and be enveloped in an aura of frost and lightning;
         also, their melee attacks will slay evil opponents intrinsically.
