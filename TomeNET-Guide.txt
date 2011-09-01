@@ -8114,8 +8114,7 @@ Half-Troll
     bad at searching, disarming, perception, and stealth. They are so ugly
     that a Half-Orc grimaces in their presence. They need to eat often.
     Half-Trolls get bonus on 'Blunt-Mastery', 'Health' and 'Swimming'. They
-    receive large penalties on 'Critical-Strike', 'Archery', 'Magic' and
-    'Sorcery'.
+    receive large penalties on 'Archery', 'Magic' and 'Sorcery'.
 
 Dunadan
     Dunadain have their constitution sustained. Dunadain are a race of hardy

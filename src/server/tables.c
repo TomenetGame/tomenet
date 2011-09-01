@@ -1824,11 +1824,13 @@ player_race race_info[MAX_RACE] =
                                 '+', 0,
                                 '%', 50,
                         },
+#if 0 /* instead count on HTs' bad stealth solely atm */
                         {
                                 SKILL_CRITS,
                                 '+', 0,
                                 '%', 50,
                         },
+#endif
                         /* Not banned, but *hard* */
                         {
                                 SKILL_MAGIC,
@@ -3245,7 +3247,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_STEALTH,
                                 '+', 1000,
-                                '+', 1200,
+                                '+', 700,
                         },
                         {
                                 SKILL_DISARM,
@@ -3579,7 +3581,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_STEALTH,
                                 '+', 1000,
-                                '+', 800,
+                                '+', 600,
                         },
                         {
                                 SKILL_DISARM,
@@ -3963,7 +3965,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_STEALTH,
                                 '+', 0,
-                                '+', 800,
+                                '+', 600,
                         },
                         {
                                 SKILL_TRAPPING,
@@ -4274,7 +4276,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_STEALTH,
                                 '+', 1000,
-                                '+', 900,
+                                '+', 600,
                         },
                         {
                                 SKILL_STEALING,
@@ -4464,7 +4466,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_STEALTH,
                                 '+', 0,
-                                '+', 900,
+                                '+', 600,
                         },
                         {
                                 SKILL_CALMNESS,
@@ -4613,7 +4615,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_STEALTH,
                                 '+', 1000,
-                                '+', 800,
+                                '+', 600,
                         },
 
                         /* Necromancy tree */
@@ -4804,7 +4806,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_STEALTH,
                                 '+', 1000,
-                                '+', 800,
+                                '+', 600,
                         },
 
                         /* Necromancy tree */
@@ -5199,7 +5201,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_STEALTH,
                                 '+', 1000,
-                                '+', 900, /* high stealth- yoda-style *wave hands* maybe add as a buff spell! */
+                                '+', 700, /* high stealth- jedi hand wave? */
                         },
 			{
 				SKILL_DISARM,
