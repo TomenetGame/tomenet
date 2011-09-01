@@ -874,11 +874,11 @@ static void process_effects(void)
 					/* Apply damage */
 					if (e_ptr->type == GF_HEALINGCLOUD)
 						project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type,
-						    PROJECT_GRID | PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP | PROJECT_PLAY, "");
+						    PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP | PROJECT_PLAY, "");
 						    //PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP | PROJECT_PLAY, "");
 					else //Effects should also hit grids, for runemaster EFF_WAVE/STOR functionality. - Kurzel
 						project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type,
-						    PROJECT_GRID | PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP, "");
+						    PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP, "");
 						    //PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP, "");
 					/* Oh, destroyed? RIP */
 					if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
@@ -2388,7 +2388,7 @@ static void apply_effect(int Ind)
 
 				/* Apply damage */
 				project(PROJECTOR_TERRAIN, 0, &p_ptr->wpos, y, x, dam, f_ptr->d_type[i],
-				        PROJECT_KILL | PROJECT_HIDE | PROJECT_JUMP, "");
+				        PROJECT_NORF | PROJECT_KILL | PROJECT_HIDE | PROJECT_JUMP, "");
 
 				/* Hack -- notice death */
 //				if (!alive || death) return;

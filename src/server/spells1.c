@@ -343,7 +343,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 	dam *= 2;
 
 	(void) project(who, radius, wpos, y, x, dam, dt,
-	    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF), "");
+	    (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF), "");
 
 	/* XXX	those potions that explode need to become "known" */
 	return angry;
@@ -4834,7 +4834,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Handle reflection - it's back, though weaker - C. Blue */
 	if ((r_ptr->flags2 & RF2_REFLECTING) && magik(50) &&
-	    (flg & PROJECT_KILL) && !((flg & PROJECT_GRID) || (flg & PROJECT_JUMP))) { /* only for fire_bolt() */
+	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP))) { /* only for fire_bolt() */
 		if (seen) msg_print(Ind, "Your attack was deflected.");
 		return (TRUE); /* notice */
 	}
@@ -8379,7 +8379,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 //	if ((!rad) && get_skill(p_ptr, SKILL_DODGE) && (who > 0))
 	/* Hack -- HIDE(direct) spell cannot be dodged */
 	if (!friendly_player &&
-	    get_skill(p_ptr, SKILL_DODGE) && !(flg & PROJECT_HIDE) && !((flg & PROJECT_GRID) || (flg & PROJECT_JUMP)))
+	    get_skill(p_ptr, SKILL_DODGE) && !(flg & PROJECT_HIDE | PROJECT_NORF | PROJECT_JUMP))
 	{
 		if ((!rad) && (who >= PROJECTOR_TRAP)) {
 			//		int chance = (p_ptr->dodge_level - ((r_info[who].level * 5) / 6)) / 3;
@@ -8407,7 +8407,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Bolt attack from a monster, a player or a trap */
 //	if (!p_ptr->blind && !(flg & (PROJECT_HIDE | PROJECT_GRID | PROJECT_JUMP)) && magik(apply_dodge_chance(Ind, getlevel(wpos) + 1000))) { /* hack - more difficult to dodge ranged attacks */
 	if (!friendly_player &&
-	    !p_ptr->blind && !(flg & (PROJECT_HIDE | PROJECT_GRID | PROJECT_JUMP | PROJECT_STAY)) && magik(apply_dodge_chance(Ind, getlevel(wpos)))) {
+	    !p_ptr->blind && !(flg & (PROJECT_HIDE | PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY)) && magik(apply_dodge_chance(Ind, getlevel(wpos)))) {
 		if ((!rad) && (who >= PROJECTOR_TRAP)) {
 			msg_format(Ind, "\377%cYou dodge %s projectile!", COLOUR_DODGE_GOOD, m_name_gen);
 			return (TRUE);
@@ -8454,7 +8454,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* pre-calc kinetic shield mana tax before doing the reflection check below */
 	if (!friendly_player && p_ptr->kinetic_shield && typ == GF_ARROW && p_ptr->csp >= dam / 7 &&
 	    !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
-	    (flg & PROJECT_KILL) && !(flg & (PROJECT_GRID | PROJECT_JUMP | PROJECT_STAY))) {
+	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY))) {
 		/* drain mana */
 		p_ptr->csp -= dam / 7;
 		p_ptr->redraw |= PR_MANA;
@@ -8469,13 +8469,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    /* reflect? */
 	    || (p_ptr->reflect &&
 	    !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
-	    (flg & PROJECT_KILL) && !(flg & (PROJECT_GRID | PROJECT_JUMP | PROJECT_STAY)) &&
+	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY)) &&
 	    rand_int(10) < ((typ == GF_ARROW || typ == GF_MISSILE) ? 7 : 3))
 #ifdef USE_BLOCKING
 	    /* using a shield? requires USE_BLOCKING */
 	    || (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect / 5)) &&
 	    !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
-	    (flg & PROJECT_KILL) && !(flg & (PROJECT_GRID | PROJECT_JUMP | PROJECT_STAY)) &&
+	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY)) &&
 	    rand_int(10) < ((typ == GF_ARROW || typ == GF_MISSILE) ? 7 : 3))
 #endif
 	    ))
@@ -8533,9 +8533,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #ifdef USE_BLOCKING
 	/* Bolt attacks: Took cover behind a shield? requires USE_BLOCKING */
 	if (!friendly_player &&  /* cannot take cover from clouds or LOS projections (latter might be subject to change?) - C. Blue */
-	     /* jump for LOS projecting, stay for clouds; !grid was already checked above -- not sure if fire_beam was covered (PROJECT_BEAM)! */
+	     /* jump for LOS projecting, stay for clouds; !norf was already checked above -- not sure if fire_beam was covered (PROJECT_BEAM)! */
 	    !rad && (flg & PROJECT_KILL) &&
-	    !(flg & (PROJECT_GRID | PROJECT_JUMP | PROJECT_STAY))
+	    !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY))
 	    ) /* requires stances to * 2 etc.. post-king -> best stance */
 	{
 		if (p_ptr->shield_deflect && magik(apply_block_chance(p_ptr, p_ptr->shield_deflect))) {
@@ -8551,10 +8551,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	}
 	/* Ball attacks: Took cover behind a shield? requires USE_BLOCKING */
 	else if (!friendly_player && /* cannot take cover from clouds or LOS projections (latter might be subject to change?) - C. Blue */
-	     /* jump for LOS projecting, stay for clouds; !grid was already checked above -- not sure if fire_beam was covered (PROJECT_BEAM)! */
-	    (flg & PROJECT_KILL) && (flg & PROJECT_GRID) &&
-	    !(flg & (PROJECT_JUMP | PROJECT_STAY))
-	    ) /* requires stances to * 2 etc.. post-king -> best stance */
+	     /* jump for LOS projecting, stay for clouds; !norf was already checked above -- not sure if fire_beam was covered (PROJECT_BEAM)! */
+	    (flg & PROJECT_KILL) && (flg & PROJECT_NORF) && !(flg & (PROJECT_JUMP | PROJECT_STAY))) /* PROJECT_STAY to exempt 'cloud' spells! */
+	    /* requires stances to * 2 etc.. post-king -> best stance */
 	{
 		if (p_ptr->shield_deflect && magik(apply_block_chance(p_ptr, p_ptr->shield_deflect))) {
 			if (blind) msg_format(Ind, "\377%cSomething hurls along your shield!", COLOUR_BLOCK_GOOD);
@@ -10884,10 +10883,10 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 		if (typ_explode !=0) {
 			if (!cave_floor_bold(zcave, y9, x9)) {/* Stopped by walls/doors ?*/
 			   // || (dir == 5 && !target_ok)) { /* fired 'at oneself'? */
-				if (typ_effect == 0) project(who, randint(2)+typ_imper, wpos, y9, x9, dam / 4, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
-				//if (typ_effect == EFF_WAVE && randint(2) == 1) project(who, 1+randint(2)+typ_imper, wpos, y9, x9, dam, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
-				//if (typ_effect == EFF_LAST && randint(5) == 1) project(who, randint(2)+typ_imper, wpos, y9, x9, dam * 3/2, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
-				//if (typ_effect == EFF_STORM && randint(3) == 1) project(who, 1+typ_imper, wpos, y9, x9, dam * 2, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				if (typ_effect == 0) project(who, randint(2)+typ_imper, wpos, y9, x9, dam / 4, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				//if (typ_effect == EFF_WAVE && randint(2) == 1) project(who, 1+randint(2)+typ_imper, wpos, y9, x9, dam, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				//if (typ_effect == EFF_LAST && randint(5) == 1) project(who, randint(2)+typ_imper, wpos, y9, x9, dam * 3/2, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				//if (typ_effect == EFF_STORM && randint(3) == 1) project(who, 1+typ_imper, wpos, y9, x9, dam * 2, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
 				break;
 			}
 		}
@@ -11410,10 +11409,10 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			 * typ_imper modifies the radius by an additional +1 to -1, to a minimum of 0.
 			 */
 			if (typ_explode != 0) {
-				if (typ_effect == 0) project(who, randint(2)+typ_imper, wpos, y, x, dam / 4, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
-				if (typ_effect == EFF_WAVE && randint(2) == 1) project(who, 1+randint(2)+typ_imper, wpos, y, x, dam, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
-				if (typ_effect == EFF_LAST && randint(5) == 1) project(who, randint(2)+typ_imper, wpos, y, x, dam * 3/2, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
-				if (typ_effect == EFF_STORM && randint(3) == 1) project(who, 1+typ_imper, wpos, y, x, dam * 2, typ_explode, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				if (typ_effect == 0) project(who, randint(2)+typ_imper, wpos, y, x, dam / 4, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				if (typ_effect == EFF_WAVE && randint(2) == 1) project(who, 1+randint(2)+typ_imper, wpos, y, x, dam, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				if (typ_effect == EFF_LAST && randint(5) == 1) project(who, randint(2)+typ_imper, wpos, y, x, dam * 3/2, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				if (typ_effect == EFF_STORM && randint(3) == 1) project(who, 1+typ_imper, wpos, y, x, dam * 2, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
 			 }
 		}
 
@@ -11599,7 +11598,7 @@ bool rune_backlash(int Ind, int typ, int dam) {
 	dam *= 2;
 
 	(void) project(0 - Ind, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, typ,
-	   (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF), "");
+	   (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF), "");
 	return TRUE;
 }
 #endif

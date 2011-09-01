@@ -3806,7 +3806,7 @@ bool project_hack(int Ind, int typ, int dam, char *attacker) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos=&p_ptr->wpos;
 	int		i, x, y;
-	int		flg = PROJECT_JUMP | PROJECT_KILL | PROJECT_HIDE;
+	int		flg = PROJECT_NORF | PROJECT_JUMP | PROJECT_KILL | PROJECT_HIDE;
 	bool		obvious = FALSE;
 	char		pattacker[80];
 
@@ -5760,7 +5760,7 @@ void unlite_room(int Ind, struct worldpos *wpos, int y1, int x1)
 bool lite_area(int Ind, int dam, int rad) {
 	player_type *p_ptr = Players[Ind];
 
-	int flg = PROJECT_GRID | PROJECT_KILL;
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL;
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) dam /= 2;
@@ -5788,7 +5788,7 @@ bool unlite_area(int Ind, int dam, int rad)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int flg = PROJECT_GRID | PROJECT_KILL;
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL;
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) dam /= 2;
@@ -5823,7 +5823,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 	char pattacker[80];
 	int tx, ty;
 
-	int flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) dam /= 2;
@@ -5886,7 +5886,7 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int inter
 	player_type *p_ptr = Players[Ind];
 	int tx, ty;
 
-	int flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY;
+	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY;
 
 	char pattacker[80];
 
@@ -6241,7 +6241,7 @@ bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char 
 	player_type *p_ptr = Players[Ind];
 	int tx, ty;
 
-	int flg = PROJECT_BEAM | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_THRU | PROJECT_GRAV;
+	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_THRU | PROJECT_GRAV;
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) dam /= 2;
@@ -6277,15 +6277,15 @@ bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam, char *attac
 		return (fire_bolt(Ind, typ, dir, dam, attacker));
 }
 
-/* Target bolt-like, but able to pass 'over' untargetted enemies to hit target grid.
-   Added for new mindcrafter spells.
-   It kind of manually fakes a PROJECT_JUMP. - C. Blue */
+/* Target bolt-like, but able to pass 'over' untargetted enemies to hit target grid,
+   ie it manifests directly at the target location (like a ball of radius 0).
+   Added for new mindcrafter spells; sort of a fake PROJECT_JUMP. - C. Blue */
 bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 	player_type *p_ptr = Players[Ind];
 	char pattacker[80];
 	int tx, ty;
 
-	int flg = PROJECT_HIDE | PROJECT_STOP | PROJECT_KILL;//PROJECT_ITEM | PROJECT_GRID
+	int flg = PROJECT_NORF | PROJECT_HIDE | PROJECT_STOP | PROJECT_KILL;//PROJECT_ITEM | PROJECT_GRID
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) dam /= 2;
@@ -6318,7 +6318,7 @@ bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker) {
 	char pattacker[80];
 
 	// (project_grid is required for disarm beam! same for project_item, for chests!)
-	int flg = PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM;
+	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM;
 //	flg |= PROJECT_STOP | PROJECT_HIDE;
 
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
@@ -6357,7 +6357,7 @@ bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker) {
 
 bool lite_line(int Ind, int dir, int dam)
 {
-	int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_KILL;
+	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_KILL;
 	return (project_hook(Ind, GF_LITE_WEAK, dir, dam, flg, ""));
 }
 
@@ -6369,19 +6369,19 @@ bool drain_life(int Ind, int dir, int dam)
 
 bool wall_to_mud(int Ind, int dir)
 {
-	int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 	return (project_hook(Ind, GF_KILL_WALL, dir, 20 + randint(30), flg, ""));
 }
 
 bool destroy_door(int Ind, int dir)
 {
-	int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM;
+	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM;
 	return (project_hook(Ind, GF_KILL_DOOR, dir, 0, flg, ""));
 }
 
 bool disarm_trap(int Ind, int dir)
 {
-	int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM;
+	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM;
 	return (project_hook(Ind, GF_KILL_TRAP, dir, 0, flg, ""));
 }
 
@@ -6486,7 +6486,7 @@ bool door_creation(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
 	return (project(0 - Ind, 1, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_MAKE_DOOR, flg, ""));
 }
 
@@ -6494,7 +6494,7 @@ bool trap_creation(int Ind, int mod, int rad)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
 	return (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, mod, GF_MAKE_TRAP, flg, ""));
 }
 
@@ -6502,7 +6502,7 @@ bool destroy_doors_touch(int Ind, int rad)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
 	return (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_DOOR, flg, ""));
 }
 
@@ -6510,7 +6510,7 @@ bool sleep_monsters_touch(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int flg = PROJECT_KILL | PROJECT_HIDE;
+	int flg = PROJECT_NORF | PROJECT_KILL | PROJECT_HIDE;
 	return (project(0 - Ind, 1, &p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev, GF_OLD_SLEEP, flg, ""));
 }
 

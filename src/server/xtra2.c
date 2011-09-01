@@ -4767,7 +4767,7 @@ if (season_halloween) {
 
 	/* One more ultra-hack: An Unmaker goes out with a big bang! */
 	else if (strstr((r_name + r_ptr->name),"Unmaker")) {
-		int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+		int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 		(void)project(m_idx, 6, wpos, y, x, 150, GF_CHAOS, flg, "The Unmaker explodes for");
 	}
 
@@ -4793,7 +4793,7 @@ if (season_halloween) {
 	/* Let monsters explode! */
 	for (i = 0; i < 4; i++) {
 		if (m_ptr->blow[i].method == RBM_EXPLODE) {
-			int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+			int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 			int typ = GF_MISSILE;
 			int d_dice = m_ptr->blow[i].d_dice;
 			int d_side = m_ptr->blow[i].d_side;

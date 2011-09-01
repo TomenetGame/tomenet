@@ -537,7 +537,7 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int ra
 	sound(Ind, "monster_breath", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 
-	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
 	/* Target the player with a ball attack */
 	(void)project(m_idx, rad, &p_ptr->wpos, y, x, dam_hp, typ, flg, p_ptr->attacker);
@@ -549,7 +549,7 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int rad)
 
 //	int rad;
 
-	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
 	monster_type *m_ptr = &m_list[m_idx];
         monster_race *r_ptr = race_inf(m_ptr);
@@ -584,7 +584,7 @@ static void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad)
 	else sound(Ind, "monster_cast_ball", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 
-	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
 	/* Target the player with a ball attack */
 	(void)project(m_idx, rad, &p_ptr->wpos, y, x, dam_hp, typ, flg, p_ptr->attacker);
@@ -614,7 +614,7 @@ static void cloud(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad
 {
 	player_type *p_ptr = Players[Ind];
 
-	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY;
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY;
 	project_time = duration;
 	project_interval = interval;
 

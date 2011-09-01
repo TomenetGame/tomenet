@@ -2026,7 +2026,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 		{
 			if (type==RT_DIG) //Regular bolt and beam will stop before the wall
 			{
-				int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+				int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 				
 				if (success)
 				{

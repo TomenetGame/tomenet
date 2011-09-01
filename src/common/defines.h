@@ -3443,36 +3443,24 @@ that keeps many algorithms happy.
 /*
  * Bit flags for the "project()" function
  *
- *   JUMP: Jump directly to the target location (this is a hack)
- *   BEAM: Work as a beam weapon (affect every grid passed through)
- *   THRU: Continue "through" the target (used for "bolts"/"beams")
- *   STOP: Stop as soon as we hit a monster (used for "bolts")
- *   GRID: Affect each grid in the "blast area" in some way
- *   ITEM: Affect each object in the "blast area" in some way
- *   KILL: Affect each monster in the "blast area" in some way
- *   HIDE: Hack -- disable "visual" feedback from projection
- *   STAY: Create an 'effect' on the grid (cloud/wall/special fx)
- *   SELF: Affect the projector too
- *   DUMY: Don't affect anything or anybody (just visual fx, used for EFF_FIREWORKS etc.)
- *   GRAV: Affected by gravity ie running along the ground. Example: Fire Wall. (Will hence stop at FEAT_DARK_PIT)
- *   PLAY: Affect players too, including the projector.
  */
-#define PROJECT_JUMP	0x00000001
-#define PROJECT_BEAM	0x00000002
-#define PROJECT_THRU	0x00000004
-#define PROJECT_STOP	0x00000008
+#define PROJECT_JUMP	0x00000001	/* Jump directly to the target location (this is a hack) */
+#define PROJECT_BEAM	0x00000002	/* Work as a beam weapon (affect every grid passed through) */
+#define PROJECT_THRU	0x00000004	/* Continue "through" the target (used for "bolts"/"beams") */
+#define PROJECT_STOP	0x00000008	/* Stop as soon as we hit a monster (used for "bolts") */
 
-#define PROJECT_GRID	0x00000010
-#define PROJECT_ITEM	0x00000020
-#define PROJECT_KILL	0x00000040
-#define PROJECT_HIDE	0x00000080
+#define PROJECT_GRID	0x00000010	/* Affect each grid in the "blast area" in some way */
+#define PROJECT_ITEM	0x00000020	/* Affect each object in the "blast area" in some way */
+#define PROJECT_KILL	0x00000040	/* Affect each monster in the "blast area" in some way */
+#define PROJECT_HIDE	0x00000080	/* Hack -- disable "visual" feedback from projection */
 
-#define PROJECT_STAY    0x00000100
-#define PROJECT_SELF	0x00000200
-#define PROJECT_DUMY	0x00000400
-#define PROJECT_GRAV	0x00000800
+#define PROJECT_STAY    0x00000100	/* Create an 'effect' on the grid (cloud/wall/special fx) */
+#define PROJECT_SELF	0x00000200	/* Affect the projector too */
+#define PROJECT_DUMY	0x00000400	/* Don't affect anything or anybody (just visual fx, used for EFF_FIREWORKS etc.) */
+#define PROJECT_GRAV	0x00000800	/* Affected by gravity ie running along the ground. Example: Fire Wall. (Will hence stop at FEAT_DARK_PIT) */
 
-#define PROJECT_PLAY	0x00001000	/* for GF_HEALINGCLOUD */
+#define PROJECT_PLAY	0x00001000	/* Affect players too, including the projector. (for GF_HEALINGCLOUD) */
+#define PROJECT_NORF	0x00002000	/* cannot be deflected by REFLECT monster flag */
 
 
 /* ToME expansions */
