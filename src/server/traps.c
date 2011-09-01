@@ -3561,6 +3561,24 @@ void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x)
 //	cave[py][px].special = cave[py][px].special2 = 0;
 	cs_erase(c_ptr, cs_ptr);
 }
+	/* hack: Identify the load? */
+static void identify_mon_trap_load(int who, object_type *o_ptr) {
+	if (who <= 0) return;
+
+	/* Combine / Reorder the pack (later) */
+	//Players[who]->notice |= (PN_COMBINE | PN_REORDER);
+	/* The item has been tried */
+	object_tried(who, o_ptr);
+	/* An identification was made */
+	if (!object_aware_p(who, o_ptr)) {
+		object_aware(who, o_ptr);
+		//object_known(o_ptr);//only for object1.c artifact potion description... maybe obsolete
+		gain_exp(who, (k_info[o_ptr->k_idx].level + (Players[who]->lev >> 1)) / Players[who]->lev);
+	}
+	/* Window stuff */
+	//p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+}
+
 /* 
  * Monster hitting a rod trap -MWK-
  *
@@ -3681,7 +3699,9 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr)
 		default:
 			return (FALSE);
 	}
-	
+
+	if (dam) identify_mon_trap_load(who, o_ptr);
+
 	/* Trapping skill influences damage - C. Blue */
 	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
 	dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
@@ -3701,7 +3721,7 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr)
  *
  * Return TRUE if the monster died
  */ 
-static bool mon_hit_trap_aux_staff(int who, int m_idx, int sval)
+static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 //	monster_race    *r_ptr = race_inf(m_ptr);
@@ -3711,10 +3731,11 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, int sval)
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;	
 	cave_type **zcave;
-	zcave=getcave(&wpos);
+	zcave = getcave(&wpos);
+	bool id = FALSE;
 
 	/* Depend on staff type */
-	switch (sval) {
+	switch (o_ptr->sval) {
 		case SV_STAFF_IDENTIFY:
 		case SV_STAFF_DETECT_DOOR:
 		case SV_STAFF_DETECT_INVIS:
@@ -3749,7 +3770,9 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, int sval)
 			break;
 		case SV_STAFF_SUMMONING:
 			for (k = 0; k < randint(4) ; k++)
-				(void)summon_specific(&wpos, y, x, getlevel(&wpos), 0, 0, 1, 0);
+				if (summon_specific(&wpos, y, x, getlevel(&wpos), 0, 0, 1, 0))
+					id = TRUE;
+			if (id) identify_mon_trap_load(who, o_ptr);
 			return (FALSE);
 		case SV_STAFF_TELEPORTATION:
 			typ = GF_AWAY_ALL;
@@ -3824,18 +3847,23 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, int sval)
 		{
 			monster_race    *r_ptr = race_inf(m_ptr);
 			genocide_aux(0, &wpos, r_ptr->d_char);
+			identify_mon_trap_load(who, o_ptr);
 			/* although there's no point in a multiple genocide trap... */
 			return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 		}
 		case SV_STAFF_EARTHQUAKES:
 			earthquake(&wpos, y, x, 10);
+			identify_mon_trap_load(who, o_ptr);
 			return (FALSE);
 		case SV_STAFF_DESTRUCTION:
 			destroy_area(&wpos, y, x, 15, TRUE, FEAT_FLOOR, 120);
+			identify_mon_trap_load(who, o_ptr);
 			return (FALSE);
 		default:
 			return (FALSE);
 	}
+
+	identify_mon_trap_load(who, o_ptr);
 
 	/* Trapping skill influences damage - C. Blue */
 	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
@@ -3851,7 +3879,7 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, int sval)
  *
  * Return TRUE if the monster died
  */
-static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
+static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = race_inf(m_ptr);
@@ -3860,27 +3888,28 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;
 	int k;
+	bool id = FALSE;
 	cave_type **zcave;
-	zcave=getcave(&wpos);
-		
+	zcave = getcave(&wpos);
+
 	/* Depend on scroll type */
-	switch (sval)
+	switch (o_ptr->sval)
 	{
-		case SV_SCROLL_CURSE_ARMOR:	
-		case SV_SCROLL_CURSE_WEAPON:		
+		case SV_SCROLL_CURSE_ARMOR:
+		case SV_SCROLL_CURSE_WEAPON:
 		case SV_SCROLL_TRAP_CREATION: /* these don't work :-( */
 		case SV_SCROLL_WORD_OF_RECALL: /* should these? */
 		case SV_SCROLL_IDENTIFY:
 		case SV_SCROLL_STAR_IDENTIFY:
-		case SV_SCROLL_MAPPING:			
+		case SV_SCROLL_MAPPING:
 		case SV_SCROLL_DETECT_GOLD:
 		case SV_SCROLL_DETECT_ITEM:
-		case SV_SCROLL_ENCHANT_ARMOR:	
+		case SV_SCROLL_ENCHANT_ARMOR:
 		case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
-		case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:	
+		case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:
 		case SV_SCROLL_STAR_ENCHANT_ARMOR:
-		case SV_SCROLL_STAR_ENCHANT_WEAPON:	
-		case SV_SCROLL_RECHARGING:	
+		case SV_SCROLL_STAR_ENCHANT_WEAPON:
+		case SV_SCROLL_RECHARGING:
 		case SV_SCROLL_DETECT_DOOR:
 		case SV_SCROLL_DETECT_INVIS:
 		case SV_SCROLL_SATISFY_HUNGER:
@@ -3896,6 +3925,8 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 			break;
 		case SV_SCROLL_AGGRAVATE_MONSTER:
 			if (who > 0) {
+				identify_mon_trap_load(who, o_ptr);
+
 #ifdef USE_SOUND_2010
 				sound_near(who, "monster_shriek", NULL, SFX_TYPE_MON_SPELL);
 #endif
@@ -3905,28 +3936,31 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 			}
 			return (FALSE);
 		case SV_SCROLL_SUMMON_MONSTER:
-                        for (k = 0; k < randint(3) ; k++) summon_specific(&wpos, y, x, getlevel(&wpos), 0, 0, 1, 0);
-			return (FALSE);	
-		case SV_SCROLL_SUMMON_UNDEAD:	
-                        for (k = 0; k < randint(3) ; k++) summon_specific(&wpos, y, x, getlevel(&wpos), 0, SUMMON_UNDEAD, 1, 0);
-			return (FALSE);	
+			for (k = 0; k < randint(3) ; k++) if (summon_specific(&wpos, y, x, getlevel(&wpos), 0, 0, 1, 0)) id = TRUE;
+			if (id) identify_mon_trap_load(who, o_ptr);
+			return (FALSE);
+		case SV_SCROLL_SUMMON_UNDEAD:
+			for (k = 0; k < randint(3) ; k++) if (summon_specific(&wpos, y, x, getlevel(&wpos), 0, SUMMON_UNDEAD, 1, 0)) id = TRUE;
+			if (id) identify_mon_trap_load(who, o_ptr);
+			return (FALSE);
 		case SV_SCROLL_PHASE_DOOR:
 			typ = GF_AWAY_ALL;
 			dam = 10;
-			break;	
+			break;
 		case SV_SCROLL_TELEPORT:
 			typ = GF_AWAY_ALL;
 			dam = 100;
 			break;
 		case SV_SCROLL_TELEPORT_LEVEL:
 			delete_monster(&wpos, y, x, TRUE);
+			identify_mon_trap_load(who, o_ptr);
 			return (TRUE);
-		case SV_SCROLL_LIGHT:		
+		case SV_SCROLL_LIGHT:
 //			lite_room(y, x);
 			typ = GF_LITE_WEAK;
 			dam = damroll(2, 8);
 			rad = 2;
-			break;			
+			break;
 		case SV_SCROLL_DETECT_TRAP:
 //                        m_ptr->smart |= SM_NOTE_TRAP;
 			return (FALSE);
@@ -3939,7 +3973,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
                         typ = GF_HOLY_FIRE;
 			dam = damroll(10, 4);
 			break;
-		case SV_SCROLL_HOLY_PRAYER:		
+		case SV_SCROLL_HOLY_PRAYER:
                         typ = GF_HOLY_FIRE;
 			dam = damroll(50, 4);
 			break;
@@ -3949,7 +3983,8 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 			break;
 		case SV_SCROLL_STAR_DESTRUCTION:
 			destroy_area(&wpos, y, x, 15, TRUE, FEAT_FLOOR, 120);
-			return (FALSE);			
+			identify_mon_trap_load(who, o_ptr);
+			return (FALSE);
 		case SV_SCROLL_DISPEL_UNDEAD:
 			typ = GF_DISP_UNDEAD;
 			rad = 5;
@@ -3960,18 +3995,22 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 			genocide_aux(0, &wpos, r_ptr->d_char);
 			/* although there's no point in a multiple genocide trap... */
 //			return (!(r_ptr->flags1 & RF1_UNIQUE));
+			identify_mon_trap_load(who, o_ptr);
 			return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 		}
 		case SV_SCROLL_MASS_GENOCIDE:	// Hrm uniques too?
 			for (k = 0; k < 8; k++)
 				delete_monster(&wpos, y+ddy[k], x+ddx[k], TRUE);
 			delete_monster(&wpos, y, x, TRUE);
+			identify_mon_trap_load(who, o_ptr);
 			return(TRUE);
 		case SV_SCROLL_ACQUIREMENT:
-                        acquirement(&wpos, y, x, 1, TRUE, (wpos.wz != 0), !Players[who]->total_winner);
+			acquirement(&wpos, y, x, 1, TRUE, (wpos.wz != 0), !Players[who]->total_winner);
+			identify_mon_trap_load(who, o_ptr);
 			return (FALSE);
 		case SV_SCROLL_STAR_ACQUIREMENT:
-                        acquirement(&wpos, y, x, randint(2) + 1, TRUE, (wpos.wz != 0), !Players[who]->total_winner);
+			acquirement(&wpos, y, x, randint(2) + 1, TRUE, (wpos.wz != 0), !Players[who]->total_winner);
+			identify_mon_trap_load(who, o_ptr);
 			return (FALSE);
 		case SV_SCROLL_REMOVE_CURSE:
 			typ = GF_DISP_EVIL;
@@ -3984,7 +4023,10 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 			dam = 200;
 			break;
 		case SV_SCROLL_LIFE:
-			if (r_ptr->d_char == 'G') delete_monster(&wpos, y, x, TRUE);
+			if (r_ptr->d_char == 'G') {
+				delete_monster(&wpos, y, x, TRUE);
+				identify_mon_trap_load(who, o_ptr);
+			}
 			return (TRUE);
 		case SV_SCROLL_FIRE:
 			typ = GF_FIRE;
@@ -4005,7 +4047,9 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 		default:
 			return (FALSE);
 	}
-	
+
+	identify_mon_trap_load(who, o_ptr);
+
 	/* Trapping skill influences damage - C. Blue */
 	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
 	dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
@@ -4020,19 +4064,18 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
  *
  * Return TRUE if the monster died
  */
-static bool mon_hit_trap_aux_wand(int who, int m_idx, int sval)
+static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 	int dam = 0, typ = 0, rad = 0, cloud = 0, cloudi = 0;
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;
 	cave_type **zcave;
-	zcave=getcave(&m_ptr->wpos);
+	zcave = getcave(&m_ptr->wpos);
 	u32b flg = PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP;
 
-	if (sval == SV_WAND_WONDER) sval = rand_int(SV_WAND_WONDER);
 	/* Depend on wand type */
-	switch (sval) {
+	switch ((o_ptr->sval == SV_WAND_WONDER) ? rand_int(SV_WAND_WONDER) : o_ptr->sval) {
 		case SV_WAND_HEAL_MONSTER:
 			typ = GF_OLD_HEAL;
 			dam = damroll(4, 6);
@@ -4173,6 +4216,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, int sval)
 			rad = 3;
 			break;
 		case SV_WAND_WALL_CREATION:
+			identify_mon_trap_load(who, o_ptr);
 			/* create a stone prison same as the istar spell - C. Blue */
 			project(PROJECTOR_TRAP, 1, &m_ptr->wpos, y, x, 1, GF_STONE_WALL,
 				PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM, "");
@@ -4181,7 +4225,9 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, int sval)
 		default:
 			return (FALSE);
 	}
-	
+
+	identify_mon_trap_load(who, o_ptr);
+
 	/* Trapping skill influences damage - C. Blue */
 	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
 	dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
@@ -4213,13 +4259,12 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 //	int i;
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;
-        int sval = o_ptr->sval;
 	cave_type **zcave;
-	zcave=getcave(&m_ptr->wpos);
-	
+	zcave = getcave(&m_ptr->wpos);
+
 	/* Depend on potion type */
 	if (o_ptr->tval == TV_POTION) {
-		switch (sval) {
+		switch (o_ptr->sval) {
 			/* Nothing happens */
 			case SV_POTION_WATER:
 			case SV_POTION_APPLE_JUICE:
@@ -4441,7 +4486,9 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 	else {
 		return (FALSE);
 	}
-	
+
+	identify_mon_trap_load(who, o_ptr);
+
 	/* Trapping skill influences damage - C. Blue */
 	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
 	dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
@@ -4453,17 +4500,17 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
         return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
-static bool mon_hit_trap_aux_rune(int who, int m_idx, int sval) {
+static bool mon_hit_trap_aux_rune(int who, int m_idx, object_type *o_ptr) {
 	monster_type *m_ptr = &m_list[m_idx];
 	worldpos wpos = m_ptr->wpos;
 	int dam = 0, typ = 0, rad = 0, cloud = 0, cloudi = 0;
-        int y = m_ptr->fy;
-        int x = m_ptr->fx;
+	int y = m_ptr->fy;
+	int x = m_ptr->fx;
 	cave_type **zcave;
 	zcave = getcave(&wpos);
-		
+
 	/* Depend on scroll type */
-	switch (sval) {
+	switch (o_ptr->sval) {
 	case SV_RUNE2_FIRE:
 //unclear: what happens if player leaves game before his trap goes off?
 //		if (!rand_int(3) && who < 0 && who > PROJECTOR_UNUSUAL) lite_room(-who, &wpos, y, x);
@@ -5051,9 +5098,9 @@ bool mon_hit_trap(int m_idx)
 
 				/* Get the scroll or rune effect */
 				if (load_o_ptr->tval == TV_SCROLL)
-					dead = mon_hit_trap_aux_scroll(who, m_idx, load_o_ptr->sval);
+					dead = mon_hit_trap_aux_scroll(who, m_idx, load_o_ptr);
 				else
-					dead = mon_hit_trap_aux_rune(who, m_idx, load_o_ptr->sval);
+					dead = mon_hit_trap_aux_rune(who, m_idx, load_o_ptr);
 
 				/* Copy and decrease ammo */
 				object_copy(j_ptr, load_o_ptr);
@@ -5096,10 +5143,10 @@ bool mon_hit_trap(int m_idx)
 					dead = mon_hit_trap_aux_rod(who, m_idx, load_o_ptr);
 					break;
 				case TV_WAND:
-					dead = mon_hit_trap_aux_wand(who, m_idx, load_o_ptr->sval);
+					dead = mon_hit_trap_aux_wand(who, m_idx, load_o_ptr);
 					break;
 				case TV_STAFF:
-					dead = mon_hit_trap_aux_staff(who, m_idx, load_o_ptr->sval);
+					dead = mon_hit_trap_aux_staff(who, m_idx, load_o_ptr);
 					break;
 				}
 				/* Decrease charges */
