@@ -1824,13 +1824,11 @@ player_race race_info[MAX_RACE] =
                                 '+', 0,
                                 '%', 50,
                         },
-#if 0 /* instead count on HTs' bad stealth solely atm */
                         {
                                 SKILL_CRITS,
                                 '+', 0,
-                                '%', 50,
+                                '%', 80,
                         },
-#endif
                         /* Not banned, but *hard* */
                         {
                                 SKILL_MAGIC,

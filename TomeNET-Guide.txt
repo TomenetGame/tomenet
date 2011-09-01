@@ -8114,7 +8114,8 @@ Half-Troll
     bad at searching, disarming, perception, and stealth. They are so ugly
     that a Half-Orc grimaces in their presence. They need to eat often.
     Half-Trolls get bonus on 'Blunt-Mastery', 'Health' and 'Swimming'. They
-    receive large penalties on 'Archery', 'Magic' and 'Sorcery'.
+    receive large penalties on 'Archery', 'Magic' and 'Sorcery' and a light
+    penalty on 'Critical-Strike'.
 
 Dunadan
     Dunadain have their constitution sustained. Dunadain are a race of hardy
@@ -8171,8 +8172,8 @@ Ent
     the ground by entering 'R'esting mode, provided it's natural ground such
     as grass, earth, mud or water.
     They get boni on 'Health', 'Calmness' and on the magic schools 'Earth' and
-    'Water' and they receive penalties on 'Fire' school, 'Axe-mastery' and a
-    slight penalty on 'Sword-mastery'.
+    'Water' and they receive a large penalty 'Fire' school, a small penalty on
+    'Axe-mastery' and a very slight penalty on 'Sword-mastery'.
 
 Draconian
     These humanoid half-breeds of dragon and man surpass common humans in all
