@@ -5655,7 +5655,7 @@ void dungeon(void)
 
 		/* Print queued log messages (anti-spam feature) - C. Blue */
 		if (Players[i]->last_gold_drop && turn - Players[i]->last_gold_drop_timer >= cfg.fps * 2) {
-			s_printf("Gold dropped (%ld by %s at %d,%d,%d).\n", Players[i]->last_gold_drop, Players[i]->name, Players[i]->wpos.wx, Players[i]->wpos.wy, Players[i]->wpos.wz);
+			s_printf("Gold dropped (%ld by %s at %d,%d,%d) [anti-spam].\n", Players[i]->last_gold_drop, Players[i]->name, Players[i]->wpos.wx, Players[i]->wpos.wy, Players[i]->wpos.wz);
 			Players[i]->last_gold_drop = 0;
 			Players[i]->last_gold_drop_timer = turn;
 		}
