@@ -1067,11 +1067,14 @@ static void del_guild(int id){
 		}
 	}
 
+	/* erase guild bbs */
+	for (i = 0; i < BBS_LINES; i++) strcpy(gbbs_line[id][i], "");
+
 	/* Tell everyone */
 	snprintf(temp, 160, "\374\377yThe guild '\377U%s\377y' no longer exists.", guilds[id].name);
 	msg_broadcast(0, temp);
 	/* Clear the basic info */
-	guilds[id].members=0;	/* it should be zero anyway */
+	guilds[id].members = 0;	/* it should be zero anyway */
 	strcpy(guilds[id].name,"");
 }
 
@@ -1094,15 +1097,16 @@ static void del_party(int id){
 		}
 	}
 
+	/* erase party bbs */
+	for (i = 0; i < BBS_LINES; i++) strcpy(pbbs_line[id][i], "");
+
 	/* Set the number of people in this party to zero */
 	parties[id].members = 0;
 
 	/* Remove everyone else */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		/* Check if they are in here */
-		if (player_in_party(id, i))
-		{
+		if (player_in_party(id, i)) {
 			Players[i]->party = 0;
 			clockin(i, 2);
 			if (parties[id].mode == PA_IRONTEAM)
