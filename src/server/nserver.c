@@ -6971,10 +6971,17 @@ static int Receive_stand(int ind)
 		return n;
 	}
 
-	if (connp->id != -1) {
+//	if (connp->id != -1) { 		/* disallow picking up items while paralyzed: */
+	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_stay(player, 1);
 		return 2;
 	}
+#if 0
+	else if (player) {
+		Packet_printf(&connp->q, "%c%c", ch, dir);
+		return 0;
+	}
+#endif
 
 	return -1;
 }
