@@ -19,6 +19,11 @@
 /* use character class titles more often when describing a character? */
 #define ABUNDANT_TITLES
 
+#if 0 /* replaced by client-side options: \
+    -- + -- = nothing \
+    o1 + -- = COMPACT_PLAYERLIST \
+    -- + o2 = COMPACT_PLAYERLIST+COMPACT_ALT \
+    o1 + o2 = ULTRA_COMPACT_PLAYERLIST */
 /* use more compact @-list to get more information displayed?
    NOTE: Requires ABUNDANT_TITLES! (in do_write_others_attributes()) */
 #define COMPACT_PLAYERLIST
@@ -34,6 +39,7 @@
    printed in the 2nd line, depending on the actual display mode.
    This can be optionally added to either COMPACT_PLAYERLIST or ULTRA_COMPACT_PLAYERLIST. */
 //#define COMPACT_GENDER
+#endif
 
 
 
@@ -442,9 +448,7 @@ void do_cmd_check_uniques(int Ind, int line)
 
 static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, char attr, bool admin)
 {
-#if !defined COMPACT_PLAYERLIST && !defined ULTRA_COMPACT_PLAYERLIST
-	int modify_number = 0;
-#endif
+	int modify_number = 0, compaction = (Players[Ind]->player_list ? 1 : 0) + (Players[Ind]->player_list2 ? 2 : 0);
 	cptr p = "";
 	char info_chars[4];
 	bool text_pk = FALSE, text_silent = FALSE, text_afk = FALSE, text_ignoring_chat = FALSE, text_allow_dm_chat = FALSE;
@@ -455,8 +459,8 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 	else
 		p = player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_PLAYER_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male];
 
-#ifdef COMPACT_PLAYERLIST
- #ifndef COMPACT_ALT
+if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
+ if (compaction != 2) { /* #ifndef COMPACT_ALT */
 	/* Print a message */
 	fprintf(fff," ");
 	if (q_ptr->admin_dm) {
@@ -584,7 +588,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 		(parties[q_ptr->party].mode == PA_IRONTEAM) ? "\377s" : "",
 		parties[q_ptr->party].name);
 	}
- #else /* COMPACT_ALT */
+ } else { /* COMPACT_ALT */
 	/* Print a message */
 	fprintf(fff," ");
 	if (q_ptr->admin_dm) {
@@ -713,10 +717,10 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 		(parties[q_ptr->party].mode == PA_IRONTEAM) ? "\377s" : "",
 		parties[q_ptr->party].name);
 	}
- #endif
+ }
 
-#else /* COMPACT_PLAYERLIST */
- #ifdef ULTRA_COMPACT_PLAYERLIST
+} else { /* COMPACT_PLAYERLIST */
+ if (compaction == 3) { /* #ifdef ULTRA_COMPACT_PLAYERLIST */
 
 	/* Print a message */
 	fprintf(fff," ");
@@ -860,7 +864,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 		}
 	}
 
- #else
+ } else { //#else
 	/* Check for special character */
 	/* Uncomment these as you feel it's needed ;) */
 	//if(!strcmp(q_ptr->name,"")) modify_number=1; //wussy Cheezer
@@ -893,7 +897,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 	default:
 		switch (q_ptr->mode & MODE_MASK)	// TODO: give better modifiers
 		{
-    			case MODE_NORMAL:
+			case MODE_NORMAL:
 				break;
 			case MODE_HARD:
 				fprintf(fff, "purgatorial ");
@@ -1087,8 +1091,8 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 		    (parties[q_ptr->party].mode == PA_IRONTEAM) ? "\377s" : "",
 		    parties[q_ptr->party].name);
   #endif // 0
- #endif	/* ULTRA_COMPACT_PLAYERLIST */
-#endif /* COMPACT_PLAYERLIST */
+ } //#endif	/* ULTRA_COMPACT_PLAYERLIST */
+}//#endif /* COMPACT_PLAYERLIST */
 }
 
 /*
@@ -1098,10 +1102,10 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
  */
 void do_cmd_check_players(int Ind, int line)
 {
-	int k, lines = 0;
+	player_type *p_ptr = Players[Ind], *q_ptr;
+	int k, lines = 0, compaction = (p_ptr->player_list ? 1 : 0) + (p_ptr->player_list2 ? 2 : 0) ;
 	FILE *fff;
 	char file_name[MAX_PATH_LENGTH];
-	player_type *p_ptr = Players[Ind], *q_ptr;
 
 	bool admin = is_admin(p_ptr);
 	bool outdated, latest, test, unknown;
@@ -1112,7 +1116,7 @@ void do_cmd_check_players(int Ind, int line)
 
 	/* Open a new file */
 	fff = my_fopen(file_name, "wb");
-	if(fff==(FILE*)NULL) return;
+	if(fff == (FILE*)NULL) return;
 
 	/* Scan the player races */
 	for (k = 1; k < NumPlayers + 1; k++) {
@@ -1137,8 +1141,8 @@ void do_cmd_check_players(int Ind, int line)
 		if (q_ptr->admin_dm &&
 		   (cfg.secret_dungeon_master) && !admin) continue;
 
-#ifdef COMPACT_PLAYERLIST
- #ifndef COMPACT_ALT
+if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
+ if (compaction != 2) { //#ifndef COMPACT_ALT
 		/*** Determine color ***/
 		/* Print self in green */
 		if (Ind == k) attr = 'G';
@@ -1192,7 +1196,7 @@ void do_cmd_check_players(int Ind, int line)
 			fprintf(fff, "  \377u(%s\377u)\n", q_ptr->afk_msg);
 
 		lines += 3;
- #else /* COMPACT_ALT */
+ } else { //#else /* COMPACT_ALT */
 		/*** Determine color ***/
 		/* Print self in green */
 		if (Ind == k) attr = 'G';
@@ -1249,9 +1253,9 @@ void do_cmd_check_players(int Ind, int line)
 			fprintf(fff, "  \377u(%s\377u)\n", q_ptr->afk_msg);
 
 		lines += 3;
- #endif
-#else /* COMPACT_PLAYERLIST - new way to fit in more info */
- #ifdef ULTRA_COMPACT_PLAYERLIST
+ } //#endif
+} else { //#else /* COMPACT_PLAYERLIST - new way to fit in more info */
+ if (compaction == 3) { // #ifdef ULTRA_COMPACT_PLAYERLIST
 		/* nothing really! only has 2 lines per entry. */
 
 		/*** Determine color ***/
@@ -1268,7 +1272,7 @@ void do_cmd_check_players(int Ind, int line)
 		fprintf(fff, "\n");
 
 		lines += 2;
- #else
+ } else { //#else
 		/*** Determine color ***/
 		/* Print self in green */
 		if (Ind == k) attr = 'G';
@@ -1340,8 +1344,8 @@ void do_cmd_check_players(int Ind, int line)
 			fprintf(fff, "\n     \377u(%s\377u)\n", q_ptr->afk_msg);
 
 		lines += 4;
- #endif
-#endif
+ } //#endif
+} //#endif
 	}
 
 #ifdef TOMENET_WORLDS
@@ -1352,25 +1356,25 @@ void do_cmd_check_players(int Ind, int line)
 #endif
 
 	/* add blank lines for more aesthetic browsing */
-#ifdef COMPACT_PLAYERLIST
+if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 	if (is_newer_than(&p_ptr->version, 4, 4, 7, 0, 0, 0))
 		lines = ((21 - (lines % 21)) % 21);
 	else
 		lines = ((20 - (lines % 20)) % 20);
-#else
+} else {//#else
 	lines = ((20 - (lines % 20)) % 20);
-#endif
+}//#endif
 	for (k = 1; k <= lines; k++) fprintf(fff, "\n");
 
 	/* Close the file */
 	my_fclose(fff);
 
 	/* Display the file contents */
-#ifdef COMPACT_PLAYERLIST
+if (compaction == 1 || compaction == 2) {//#ifdef COMPACT_PLAYERLIST
 	show_file(Ind, file_name, "Players Online", line, 0, TRUE);
-#else
+} else {//#else
 	show_file(Ind, file_name, "Players Online", line, 0, FALSE);
-#endif
+}//#endif
 
 	/* Remove the file */
 	fd_kill(file_name);
@@ -1394,8 +1398,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 	fff = my_fopen(file_name, "wb");
 
 	/* Scan the player races */
-	for (k = 1; k < NumPlayers + 1; k++)
-	{
+	for (k = 1; k < NumPlayers + 1; k++) {
 		player_type *q_ptr = Players[k];
 		byte attr = 'w';
 		bool hidden = FALSE;
@@ -1431,8 +1434,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 
 		/* Only party member or those on the same dungeon level */
 		//                              if ((attr != 'B') && (p_ptr->dun_depth != q_ptr->dun_depth)) continue;
-		if ((attr != 'B') && (attr != 'w') && !admin)
-		{
+		if ((attr != 'B') && (attr != 'w') && !admin) {
 			/* Make sure this player is at this depth */
 			if(!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 
@@ -1474,7 +1476,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 
 		/* Print equipments */
 		for (i = (admin ? 0 : INVEN_WIELD);
-				i < (hidden ? INVEN_LEFT : INVEN_TOTAL); i++)
+		    i < (hidden ? INVEN_LEFT : INVEN_TOTAL); i++)
 		{
 			object_type *o_ptr = &q_ptr->inventory[i];
 			char o_name[ONAME_LEN];

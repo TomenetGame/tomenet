@@ -669,11 +669,11 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.flush_disturb,		FALSE,	1,	1, 21, FALSE,
 	"flush_disturb",		"(broken) Flush input whenever disturbed" },
 
-	{ &c_cfg.flush_command,		FALSE,	1,	1, 22, FALSE,
-	"flush_command",		"(obsolete) Flush input before every command" },
+	{ &c_cfg.player_list,		FALSE,	4,	1, 22, TRUE,
+	"player_list",			"Show a more compact player list in @ screen" },//flush_command
 
-	{ &c_cfg.fresh_before,		TRUE,	1,	1, 23, FALSE,
-	"fresh_before",			"(obsolete) Flush output before every command" },
+	{ &c_cfg.player_list2,		FALSE,	4,	1, 23, TRUE,
+	"player_list2",			"Compacts the player list in @ screen even more" },//fresh_before
 
 	{ &c_cfg.fresh_after,		FALSE,	1,	1, 24, FALSE,
 	"fresh_after",			"(obsolete) Flush output after every command" },

@@ -2329,6 +2329,8 @@ static void sync_options(int Ind, bool *options)
 
 	p_ptr->page_on_privmsg = options[40];
 	p_ptr->page_on_afk_privmsg = options[41];
+	p_ptr->player_list = options[50];
+	p_ptr->player_list2 = options[51];
 	p_ptr->cut_sfx_attack = options[87];
 }
 

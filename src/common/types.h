@@ -2282,6 +2282,8 @@ struct player_type
 
 	bool page_on_privmsg;
 	bool page_on_afk_privmsg;
+	bool player_list;
+	bool player_list2;
 
 	s16b max_panel_rows;
 	s16b max_panel_cols;
@@ -3249,8 +3251,8 @@ struct client_opts
 	bool avoid_other;
 	bool flush_failure;
 	bool flush_disturb;
-	bool flush_command;
-	bool fresh_before;
+	bool player_list;
+	bool player_list2;
 	bool fresh_after;
 	bool fresh_message;
 	bool safe_macros;//compress_savefile;
