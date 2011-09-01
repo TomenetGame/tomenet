@@ -5153,10 +5153,12 @@ static void get_moves(int Ind, int m_idx, int *mm)
  #if 1 /* Different behaviour, depending on monster type and level? */
 		/* Demons are reckless, undead/nonliving are rarely intelligent, animals neither */
 		((r_ptr->level >= 30) &&
-		!(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_ANIMAL | RF3_DEMON))) ||
+		!(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_ANIMAL | RF3_DEMON)) &&
+		!(r_ptr->flags2 & RF2_EMPTY_MIND)) ||
 		/* Elder animals have great instinct or intelligence */
-		((r_ptr->level >= 50) && 
-		!(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_DEMON))) ||
+		((r_ptr->level >= 50) &&
+		!(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_DEMON)) &&
+		!(r_ptr->flags2 & RF2_EMPTY_MIND)) ||
  #endif
 		(r_ptr->flags2 & RF2_SMART)) && !(r_ptr->flags2 & RF2_STUPID) &&
 		/* Distance must == 2; distance() won't work for diagonals here */
@@ -5377,9 +5379,10 @@ static void get_moves(int Ind, int m_idx, int *mm)
  #if 1 /* Different behaviour, depending on monster type and level? */
 		/* Demons are reckless, undead/nonliving are rarely intelligent, animals neither */
 		((r_ptr->level >= 30) &&
-		!(r_ptr->flags3 & (RF3_UNDEAD | RF3_ANIMAL | RF3_DEMON))) ||
+		!(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_DEMON)) &&
+		!(r_ptr->flags2 & RF2_EMPTY_MIND)) || /* RF3_ANIMAL | */
 		/* Elder animals have great instinct or intelligence */
-		((r_ptr->level >= 50)) ||
+		((r_ptr->level >= 50) && !(r_ptr->flags2 & RF2_EMPTY_MIND)) || /* no smart death orbs */
  #endif
 		(r_ptr->flags2 & RF2_SMART)) && !(r_ptr->flags2 & RF2_STUPID) &&
 		/* Distance must == 2; distance() won't work for diagonals here */
