@@ -6975,13 +6975,10 @@ static int Receive_stand(int ind)
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_stay(player, 1);
 		return 2;
-	}
-#if 0
-	else if (player) {
-		Packet_printf(&connp->q, "%c%c", ch, dir);
+	} else if (player) {
+		Packet_printf(&connp->q, "%c", ch);
 		return 0;
 	}
-#endif
 
 	return -1;
 }
