@@ -3356,7 +3356,7 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 		p_ptr->warning_autoret_ok = 0;
 
 		/* Take a turn */
-		if (!p_ptr->melee_sprint) {
+		if (!(p_ptr->melee_sprint || p_ptr->shadow_running)) {
 			if (p_ptr->mode & MODE_PVP)
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 			else
