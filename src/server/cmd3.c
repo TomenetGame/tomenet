@@ -1364,8 +1364,14 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 #endif
 
 /* #if DEBUG_LEVEL > 3 */
-	if (amt >= 10000)
-		s_printf("Gold dropped (%ld by %s at %d,%d,%d).\n", amt, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+//	if (amt >= 10000) {
+		p_ptr->last_gold_drop += amt;
+		if (turn - p_ptr->last_gold_drop_timer >= cfg.fps * 2) {
+			s_printf("Gold dropped (%ld by %s at %d,%d,%d).\n", p_ptr->last_gold_drop, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+			p_ptr->last_gold_drop = 0;
+			p_ptr->last_gold_drop_timer = turn;
+		}
+//	}
 
 	break_cloaking(Ind, 5);
 	break_shadow_running(Ind);

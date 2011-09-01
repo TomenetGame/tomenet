@@ -2051,7 +2051,10 @@ static int auto_retaliate(int Ind)
 					inscription++;
 
 					/* Skip this item in case it has @Ox */
-					if (*inscription == 'x') break;
+					if (*inscription == 'x') {
+						p_ptr->warning_autoret = 99; /* seems he knows what he's doing! */
+						break;
+					}
 
 					/* Select the first usable item with @O */
 					item = i;
@@ -2059,6 +2062,8 @@ static int auto_retaliate(int Ind)
 
 					/* Remember the inscription */
 					at_O_inscription = inscription;
+
+					p_ptr->warning_autoret = 99; /* seems he knows what he's doing! */
 					break;
 				}
 			}
@@ -2079,6 +2084,8 @@ static int auto_retaliate(int Ind)
 		/* scan the inscription for @O */
 		while (*inscription != '\0') {
 			if (inscription[0] == '@' && inscription[1] == 'O' && inscription[2] == 'x') {
+				p_ptr->warning_autoret = 99; /* seems he knows what he's doing! */
+
 				if (i == INVEN_WIELD || i == INVEN_ARM) {
 					/* Prevent melee retaliation - mikaelh */
 					no_melee = TRUE;
@@ -5645,6 +5652,13 @@ void dungeon(void)
 	for (i = 1; i < NumPlayers + 1; i++) {
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
+
+		/* Print queued log messages (anti-spam feature) - C. Blue */
+		if (Players[i]->last_gold_drop && turn - Players[i]->last_gold_drop_timer >= cfg.fps * 2) {
+			s_printf("Gold dropped (%ld by %s at %d,%d,%d).\n", Players[i]->last_gold_drop, Players[i]->name, Players[i]->wpos.wx, Players[i]->wpos.wy, Players[i]->wpos.wz);
+			Players[i]->last_gold_drop = 0;
+			Players[i]->last_gold_drop_timer = turn;
+		}
 
 		/* Play server-side animations (consisting of cycling/random colour choices,
 		   instead of animated colours which are circled client-side) */

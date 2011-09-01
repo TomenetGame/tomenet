@@ -2969,8 +2969,9 @@ struct player_type
 	int piercing; /* Rogue skill 'assassinate' */
 	bool piercing_charged;
 
-	char last_chat_line[MSG_LEN]; /* last slash command the player used, to prevent log file spam */
+	char last_chat_line[MSG_LEN]; /* last slash command (or chat msg) the player used, to prevent log file spam */
 	int last_chat_line_cnt;
+	int last_gold_drop, last_gold_drop_timer;
 };
 
 /* For Monk martial arts */
