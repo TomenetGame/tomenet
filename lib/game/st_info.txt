@@ -306,7 +306,7 @@ I:100:Perception
 I:100:Perception
 #I:100:Remove Curse
 T:100:55:6
-I:100:Cure Light Wounds
+#I:100:Cure Light Wounds
 I:100:Probing
 # & Book~ of Beginner Cantrips
 T:100:111:50
