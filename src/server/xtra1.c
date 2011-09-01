@@ -4832,14 +4832,7 @@ void calc_boni(int Ind)
 
 		if (archery != -1) {
 			p_ptr->to_h_ranged += get_skill_scale(p_ptr, archery, 25);
-			/* the "xtra_might" adds damage for specifics */
-			p_ptr->to_d_ranged += get_skill_scale(p_ptr, SKILL_ARCHERY, 10);
-#if 0 /* new, since RPG_SERVER - C. Blue */
-			/* Isn't 4 shots/turn too small? Not with art ammo */
-			p_ptr->num_fire += (get_skill(p_ptr, archery) / 16);
-//				+ get_skill_scale(p_ptr, SKILL_ARCHERY, 1);
-#else
-			switch(archery){
+			switch (archery) {
 			case SKILL_SLING:
 				p_ptr->num_fire += get_skill_scale(p_ptr, archery, 500) / 100;
 				break;
@@ -4854,34 +4847,16 @@ void calc_boni(int Ind)
 				if (get_skill_scale(p_ptr, archery, 500) >= 500) p_ptr->num_fire++;
 				if (get_skill_scale(p_ptr, archery, 500) >= 333) p_ptr->num_fire++;
 				if (get_skill_scale(p_ptr, archery, 500) >= 166) p_ptr->num_fire++;
-				break;
-			}
-#endif
-//			p_ptr->xtra_might += (get_skill(p_ptr, archery) / 50);
-			p_ptr->xtra_might += (get_skill(p_ptr, SKILL_ARCHERY) / 50);
-			/* Boomerang-mastery directly increases damage! - C. Blue */
-			if (archery == SKILL_BOOMERANG)
+
+				/* Boomerang-mastery directly increases damage! - C. Blue */
 				p_ptr->to_d_ranged += get_skill_scale(p_ptr, archery, 20);
-#if 0	// not so meaningful (25,30,50)
-			switch (archery) {
-			case SKILL_SLING:
-				if (p_ptr->tval_ammo == TV_SHOT)
-					p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
-				break;
-			case SKILL_BOW:
-				if (p_ptr->tval_ammo == TV_ARROW)
-					p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
-				break;
-			case SKILL_XBOW:
-				if (p_ptr->tval_ammo == TV_BOLT)
-					p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
-				break;
-			case SKILL_BOOMERANG:
-				if (!p_ptr->tval_ammo)
-					p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
 				break;
 			}
-#endif	// 0
+			if (archery != SKILL_BOOMERANG) {
+	//			p_ptr->xtra_might += (get_skill(p_ptr, archery) / 50);
+				p_ptr->xtra_might += (get_skill(p_ptr, SKILL_ARCHERY) / 50);
+				p_ptr->to_d_ranged += get_skill_scale(p_ptr, SKILL_ARCHERY, 10);
+			}
 		}
 
 		/* Add in the "bonus shots" */

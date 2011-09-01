@@ -100,56 +100,43 @@ bool test_hit_melee(int chance, int ac, int vis)
  */
 s16b critical_shot(int Ind, int weight, int plus, int dam)
 {
-	player_type *p_ptr = Players[Ind];
+	player_type *p_ptr = NULL;
 	int i, k;
+	bool boomerang = FALSE;
 //	int xtra_crit = p_ptr->xtra_crit + p_ptr->inventory;
 //	if xtra_crit > 50 cap
 //	xtra_crit = 65 - (975 / (xtra_crit + 15));
-	
 
 	/* Extract "shot" power */
-	if (Ind > 0)
-	{
+	if (Ind > 0) {
 		player_type *p_ptr = Players[Ind];
+		if (p_ptr->inventory[INVEN_BOW].tval == TV_BOOMERANG) boomerang = TRUE;
 
 		i = (weight + ((p_ptr->to_h + plus) * 5) +
-				get_skill_scale(p_ptr, SKILL_ARCHERY, 150));
+		    (boomerang ? 0 : get_skill_scale(p_ptr, SKILL_ARCHERY, 150)));
 		i += 50 * BOOST_CRIT(p_ptr->xtra_crit);
 	}
 	else i = weight;
 
 	/* Critical hit */
-	if (randint(3500) <= i)
-	{
+	if (randint(3500) <= i) {
 		k = weight + randint(700);
-		
-		if (Ind > 0)
-		{
-			k += get_skill_scale(p_ptr, SKILL_ARCHERY, 100) + randint(600 - (12000 / (BOOST_CRIT(p_ptr->xtra_crit) + 20)));
-		}
 
-		if (k < 350)
-		{
+		if (Ind > 0) k += (boomerang ? 0 : get_skill_scale(p_ptr, SKILL_ARCHERY, 100)) + randint(600 - (12000 / (BOOST_CRIT(p_ptr->xtra_crit) + 20)));
+
+		if (k < 350) {
 			msg_print(Ind, "It was a good hit!");
 			dam = (4 * dam) / 3 + 5;
-		}
-		else if (k < 650)
-		{
+		} else if (k < 650) {
 			msg_print(Ind, "It was a great hit!");
 			dam = (5 * dam) / 3 + 10;
-		}
-		else if (k < 900)
-		{
+		} else if (k < 900) {
 			msg_print(Ind, "It was a superb hit!");
 			dam = (6 * dam) / 3 + 10;
-		}
-		else if (k < 1100)
-		{
+		} else if (k < 1100) {
 			msg_print(Ind, "It was a *GREAT* hit!");
 			dam = (7 * dam) / 3 + 10;
-		}
-		else
-		{
+		} else {
 			msg_print(Ind, "It was a *SUPERB* hit!");
 			dam = (8 * dam) / 3 + 15;
 		}
