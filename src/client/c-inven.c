@@ -1,6 +1,8 @@
 /* $Id$ */
 #include "angband.h"
 
+bool verified_item = FALSE;
+
 s16b index_to_label(int i)
 {
 	/* Indices for "inven" are easy */
@@ -267,6 +269,9 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 
 	/* Default to "no item" */
 	*cp = -1;
+
+	/* Clear previous flag */
+	verified_item = FALSE;
 
 	if (mode & (USE_EQUIP)) equip = TRUE;
 	if (mode & (USE_INVEN)) inven = TRUE;
@@ -663,6 +668,9 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 				(*cp) = k;
 				item = TRUE;
 				done = TRUE;
+
+				/* Remember that we hit SHIFT+slot to override whole_ammo_stack */
+				if (ver) verified_item = TRUE;
 				break;
 			}
 		}

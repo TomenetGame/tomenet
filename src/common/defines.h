@@ -2416,6 +2416,8 @@ that keeps many algorithms happy.
 	(tval) == TV_SOFT_ARMOR || (tval) == TV_CLOAK || \
 	((tval) == TV_HELM && ((sval) == SV_CLOTH_CAP || (sval) == SV_HARD_LEATHER_CAP || (sval) == SV_GOGGLES_DM)) || \
 	((tval) == TV_SHIELD && ((sval) == SV_SMALL_LEATHER_SHIELD || (sval) == SV_LARGE_LEATHER_SHIELD)))
+#define is_cheap_misc(tval) \
+	(is_ammo(tval) || (tval) == TV_FIRESTONE || (tval) == TV_SPIKE || (tval) == TV_JUNK)
 /* more possibilities: is_potion, is_rune, is_jewelry, is_rare_armour(tval,sval) */
 
 

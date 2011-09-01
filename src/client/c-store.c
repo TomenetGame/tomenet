@@ -416,7 +416,7 @@ static void store_sell(void)
 
 	/* Get an amount */
 	if (inventory[item].number > 1) {
-		if (is_ammo(inventory[item].tval) && c_cfg.whole_ammo_stack) amt = inventory[item].number;
+		if (is_cheap_misc(inventory[item].tval) && c_cfg.whole_ammo_stack && !verified_item) amt = inventory[item].number;
 		else amt = c_get_quantity("How many? ", inventory[item].number);
 	} else amt = 1;
 

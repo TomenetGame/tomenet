@@ -629,7 +629,7 @@ option_type option_info[OPT_MAX] =
 	"no_verify_destroy",		"Skip safety question when destroying items" },
 
 	{ &c_cfg.whole_ammo_stack,	FALSE,	4,	0, 9, TRUE,	/* former dungeon_stair */
-	"whole_ammo_stack",		"For ammunition always operate on whole stack" },
+	"whole_ammo_stack",		"For ammo/misc items always operate on whole stack" },
 
 	{ &c_cfg.recall_flicker,	FALSE,	1,	1, 10, TRUE,
 	"recall_flicker",		"Flicker messages in recall" },
