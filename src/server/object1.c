@@ -1683,8 +1683,13 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		}
 
 		/* A single one, with a vowel in the modifier */
-		else if ((*s == '#') && (is_a_vowel(modstr[0])))
+		else if ((*s == '#') && is_a_vowel(modstr[0])) {
 			t = object_desc_str(t, "an ");
+		}
+		/* for runes, which have a quotation mark before the mod string */
+		else if ((*(s+1) == '#') && is_a_vowel(modstr[0])) {
+			t = object_desc_str(t, "an ");
+		}
 
 		else if (ego != NULL) {
 			if (is_a_vowel(ego[0])) t = object_desc_str(t, "an ");
