@@ -4851,7 +4851,7 @@ bool mon_hit_trap(int m_idx)
 				/* Check if we hit the monster */
 				if (test_hit_fire(chance, m_ptr->ac, TRUE)) {
 					/* Assume a default death */
-					cptr note_dies = " dies.";
+					cptr note_dies = " dies";
 
 					/* Some monsters get "destroyed" */
 					if ((r_ptr->flags3 & (RF3_DEMON)) ||
@@ -4860,7 +4860,7 @@ bool mon_hit_trap(int m_idx)
 							(strchr("Evg", r_ptr->d_char)))
 					{
 						/* Special note at death */
-						note_dies = " is destroyed.";
+						note_dies = " is destroyed";
 					}
 
 					/* Message if visible */
