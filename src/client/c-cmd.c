@@ -1018,8 +1018,19 @@ void cmd_inscribe(void)
 	int item;
 	char buf[1024];
 
-	if (!c_get_item(&item, "Inscribe what? ", (USE_EQUIP | USE_INVEN)))
-	{
+	if (!c_get_item(&item, "Inscribe what? ", (USE_EQUIP | USE_INVEN | SPECIAL_REQ))) {
+		if (item != -3) return;
+
+		/* '-3' hack: Get inscription before item (SPECIAL_REQ) */
+		buf[0] = '\0';
+
+		/* Get an inscription first */
+		if (!get_string("Inscription: ", buf, 59)) return;
+
+		/* Get the item afterwards */
+		if (!c_get_item(&item, "Inscribe what? ", (USE_EQUIP | USE_INVEN))) return;
+
+		Send_inscribe(item, buf);
 		return;
 	}
 

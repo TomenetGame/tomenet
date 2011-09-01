@@ -3529,6 +3529,7 @@ that keeps many algorithms happy.
 #define USE_FLOOR	0x04	/* Allow floor items */
 #define USE_EXTRA	0x08	/* Allow extra items */
 #define INVEN_FIRST	0x10	/* Seach for inscription tag in inventory first */
+#define SPECIAL_REQ	0x20	/* Allow pressing '-' key to switch the request in a special way */
 
 /*
  * Bit flags for the "p_ptr->notice" variable

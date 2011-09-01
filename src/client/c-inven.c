@@ -254,6 +254,7 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 	bool	floor = FALSE;
 	bool	extra = FALSE;
 	bool	inven_first = FALSE;
+	bool	special_req = FALSE;
 
 	/* The top line is icky */
 	topline_icky = TRUE;
@@ -272,6 +273,7 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 	if (mode & (USE_FLOOR)) floor = TRUE;
 	if (mode & (USE_EXTRA)) extra = TRUE;
 	if (mode & (INVEN_FIRST)) inven_first = TRUE;
+	if (mode & (SPECIAL_REQ)) special_req = TRUE;
 
 	/* Paranoia */
 	if (!inven && !equip) return (FALSE);
@@ -432,9 +434,12 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 			/* Append */
 			if (inven) strcat(out_val, " / for Inven,");
 		}
-		
+
 		/* Extra? */
 		if (extra) strcat(out_val, " @ to name,");
+
+		/* Special request toggle? */
+		if (special_req) strcat(out_val, " - to switch,");
 
 		/* Finish the prompt */
 		strcat(out_val, " ESC");
@@ -602,6 +607,16 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 				}
 				break;
 			}
+
+			case '-':
+				if (special_req) {
+					command_gap = 50;
+					done = TRUE;
+					item = FALSE;
+					*cp = -3;
+					break;
+				}
+				/* fall through */
 
 			default:
 			{

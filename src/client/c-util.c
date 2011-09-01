@@ -2871,14 +2871,12 @@ void c_msg_format(cptr fmt, ...)
  *
  * Hack -- allow "command_arg" to specify a quantity
  */
-s32b c_get_quantity(cptr prompt, int max)
+s32b c_get_quantity(cptr prompt, s32b max)
 {
-	int amt;
-
+	s32b amt;
 	char tmp[80];
-
 	char buf[80];
-	
+
 	char bi1[80], bi2[6 + 1];
 	int n = 0, i = 0, j = 0;
 	s32b i1 = 0, i2 = 0, mul = 1;
@@ -2901,7 +2899,7 @@ s32b c_get_quantity(cptr prompt, int max)
 	sprintf(buf, "%d", amt);
 
 	/* Ask for a quantity */
-	if (!get_string(prompt, buf, 8)) return (0);
+	if (!get_string(prompt, buf, 10)) return (0);
 
 
 #if 1
@@ -2912,7 +2910,7 @@ s32b c_get_quantity(cptr prompt, int max)
 		buf[0] = '0';
 	}
 	/* new method for inputting amounts of gold:  1m35 = 1,350,000  - C. Blue */
-	while(buf[n] >= '0' && buf[n] <= '9') bi1[i++] = buf[n++];
+	while (buf[n] >= '0' && buf[n] <= '9') bi1[i++] = buf[n++];
 	bi1[n] = '\0';
 	i1 = atoi(bi1);
 	if (buf[n] == 'k' || buf[n] == 'K') mul = 1000;
@@ -2942,7 +2940,7 @@ s32b c_get_quantity(cptr prompt, int max)
 		amt = i1 * mul + i2;
 	} else amt = i1;
 
-#else	
+#else
 
 	/* Extract a number */
 	amt = atoi(buf);
@@ -2950,9 +2948,8 @@ s32b c_get_quantity(cptr prompt, int max)
 	/* Analyse abreviation like '15k' */
 	if (strchr(buf, 'k'))
 		amt = amt * 1000;
-	else
-		if (strchr(buf,'m'))
-			amt=amt * 1000000;
+	else if (strchr(buf, 'm') || strchr(buf, 'M')
+		amt = amt * 1000000;
 #endif
 
 
@@ -2961,7 +2958,7 @@ s32b c_get_quantity(cptr prompt, int max)
 	/* hack for drop gold: - C. Blue */
 	if (buf[0] == '*') {
 		if (max > 0) amt = max;
-		else amt = 100000000; /* 1 more than you could actually type :) (8 chars limit) */
+		else amt = 1000000000; /* 1 more than you could actually type :) (8 chars limit) */
 	}
 
 	/* Enforce the maximum, if maximum is defined */
