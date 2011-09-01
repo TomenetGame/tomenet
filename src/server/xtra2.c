@@ -3182,8 +3182,8 @@ bool do_divine_xtra_res_time_mana(int Ind, int v) {
         /* Open */
         if (v) {
                 if (!p_ptr->divine_xtra_res_time_mana) {
-			msg_print(Ind, "You feel resistant to time.");
-			msg_print(Ind, "You feel resistant to mana.");
+			msg_print(Ind, "You feel resistant to \377Btime\377w.");
+			msg_print(Ind, "You feel resistant to \377vmana\377w.");
                         notice = (TRUE);
                 }
         }
@@ -3191,8 +3191,8 @@ bool do_divine_xtra_res_time_mana(int Ind, int v) {
         /* Shut */
         else { //v = 0;
                 if (p_ptr->divine_xtra_res_time_mana) {
-			msg_print(Ind, "You feel less resistant to time.");
-			msg_print(Ind, "You feel less resistant to mana.");
+			msg_print(Ind, "You feel less resistant to \377Btime\377w.");
+			msg_print(Ind, "You feel less resistant to \377vmana\377w.");
                         notice = (TRUE);
                 }
         }
