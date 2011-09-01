@@ -2612,7 +2612,7 @@ static void player_talk_aux(int Ind, char *message)
 	char message2[MSG_LEN];
 	player_type *p_ptr = Players[Ind], *q_ptr;
  	char *colon;
-	bool me = FALSE;
+	bool me = FALSE, log = TRUE;
 	char c_n = 'B', c_b = 'B'; /* colours of sender name and of brackets (unused atm) around this name */
 	int mycolor = 0;
 	bool admin = FALSE;
@@ -2647,6 +2647,8 @@ static void player_talk_aux(int Ind, char *message)
 	strncpy(last_chat_line, message, 160);
 	/* do exec_lua() not here instead of in dungeon.c - mikaelh */
 
+	/* don't log spammy slash commands */
+	if (prefix(message, "/untag ")) log = FALSE;
 
 	colon = strchr(message, ':');
 
@@ -2739,7 +2741,7 @@ static void player_talk_aux(int Ind, char *message)
 
 	/* no big brother */
 //	if(cfg.log_u && (!colon || message[0] != '#' || message[0] != '/')){ /* message[0] != '#' || message[0] != '/' is always true -> big brother mode - mikaelh */
-	if (cfg.log_u && (!colon)) {
+	if (cfg.log_u && (!colon) && log) {
 		/* Shorten multiple identical messages to prevent log file spam,
 		   eg recall rod activation attempts. - Exclude admins. */
 		if (is_admin(p_ptr))
