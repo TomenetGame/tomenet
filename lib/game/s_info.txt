@@ -690,8 +690,8 @@ $ENABLE_RCRAFT$f:Force and Time:Magic%15
 
 f:Stealth:Sneakiness%15
 f:Disarming:Sneakiness%10
-#f:Trapping:Sneakiness%15
-f:Trapping:Disarming%15
+f:Trapping:Sneakiness%15
+#f:Trapping:Disarming%15
 f:Backstabbing:Sneakiness%5
 f:Stealing:Sneakiness%20
 f:Dodging:Sneakiness%10
@@ -833,8 +833,10 @@ T:Sneakiness:Dodging
 #T:Dodging:Interception
 T:Sneakiness:Calmness
 #T:Sneakiness:Interception
-T:Sneakiness:Disarming
-T:Disarming:Trapping
+
+#T:Sneakiness:Disarming
+#T:Disarming:Trapping
+T:Sneakiness:Trapping
 
 T:Main:Health
 #T:Health:Training

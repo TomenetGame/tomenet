@@ -2517,7 +2517,8 @@ static void do_id_trap(int Ind, int t_idx)
 
 	/* Need proper skill */
 //	if (get_skill(p_ptr, SKILL_DISARM) < 20) return;
-	if (!get_skill(p_ptr, SKILL_DISARM)) return;
+//	if (!get_skill(p_ptr, SKILL_DISARM)) return;
+	if (!get_skill(p_ptr, SKILL_TRAPPING)) return;
 
 	/* Impossible? */
 	if (tr_ptr->flags & FTRAP_NO_ID) return;
@@ -2527,7 +2528,8 @@ static void do_id_trap(int Ind, int t_idx)
 	power = (tr_ptr->difficulty + 2) * (tr_ptr->minlevel + 10) * 5;
 	if (tr_ptr->flags & FTRAP_EASY_ID) power /= 10;
 
-	if (randint(power) > get_skill(p_ptr, SKILL_DISARM)) return;
+//	if (randint(power) > get_skill(p_ptr, SKILL_DISARM)) return;
+	if (randint(power) > get_skill(p_ptr, SKILL_TRAPPING)) return;
 
 	/* Good job */
 	p_ptr->trap_ident[t_idx] = TRUE;
@@ -2773,7 +2775,8 @@ void do_cmd_disarm(int Ind, int dir)
 #endif
 
 				/* A chance to drop a trapkit! - the_sandman */
-				int sdis = (int)(p_ptr->s_info[SKILL_DISARM].value / 1000);
+//				int sdis = (int)(p_ptr->s_info[SKILL_DISARM].value / 1000);
+				int sdis = (int)(p_ptr->s_info[SKILL_TRAPPING].value / 1000);
 				if (rand_int(100) < sdis) {
 					object_type forge;
 					object_type* yay = &forge;

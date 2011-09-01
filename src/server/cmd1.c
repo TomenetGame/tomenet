@@ -5691,9 +5691,8 @@ void move_player(int Ind, int dir, int do_pickup)
 				/* Pick a trap */
 				pick_trap(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 			}
-			else if (magik(get_skill_scale(p_ptr, SKILL_DISARM, 90)
-						- UNAWARENESS(p_ptr)))
-			{
+//			else if (magik(get_skill_scale(p_ptr, SKILL_DISARM, 90)
+			else if (magik(get_skill_scale(p_ptr, SKILL_TRAPPING, 90) - UNAWARENESS(p_ptr))) {
 #ifndef ARCADE_SERVER
 				msg_print(Ind, "You carefully avoid touching the trap.");
 				hit = FALSE;

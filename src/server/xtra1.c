@@ -5626,7 +5626,8 @@ void calc_boni(int Ind)
 	p_ptr->skill_dig += adj_str_dig[p_ptr->stat_ind[A_STR]];
 
 	/* Affect Skill -- disarming (Level, by Class) */
-	p_ptr->skill_dis += (p_ptr->cp_ptr->x_dis * get_skill(p_ptr, SKILL_DISARM) / 10);
+//	p_ptr->skill_dis += (p_ptr->cp_ptr->x_dis * get_skill(p_ptr, SKILL_DISARM) / 10);
+	p_ptr->skill_dis += (p_ptr->cp_ptr->x_dis * get_skill(p_ptr, SKILL_TRAPPING) / 10);
 
 	/* Affect Skill -- magic devices (Level, by Class) */
 	p_ptr->skill_dev += (p_ptr->cp_ptr->x_dev * get_skill(p_ptr, SKILL_DEVICE) / 10);
