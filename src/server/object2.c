@@ -2822,7 +2822,6 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 	player_type *p_ptr = NULL;
 	int total = o_ptr->number + j_ptr->number;
 
-
 	/* Hack -- gold always merge */
 //	if (o_ptr->tval == TV_GOLD && j_ptr->tval == TV_GOLD) return(TRUE);
 
@@ -2835,9 +2834,9 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 	    (o_ptr->level != j_ptr->level))
 		return (FALSE);
 
-		/* Require same owner or convertable to same owner */
+	/* Require same owner or convertable to same owner */
 //
-/*		if (o_ptr->owner != j_ptr->owner) return (FALSE); */
+/*	if (o_ptr->owner != j_ptr->owner) return (FALSE); */
 	if (Ind) {
 		p_ptr = Players[Ind];
 		if (((o_ptr->owner != j_ptr->owner)
@@ -3058,8 +3057,9 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 			}
 #endif
 
-			/* Require identical random seeds */
-			if (o_ptr->name3 != j_ptr->name3) return (FALSE);
+			/* Require identical random seeds
+			   hack: fix 'old' ammo that didn't have NO_SEED flag yet.. */
+			if (!is_ammo(o_ptr->tval) && o_ptr->name3 != j_ptr->name3) return (FALSE);
 
 			/* Hack -- Never stack "powerful" items */
 //			if (o_ptr->xtra1 || j_ptr->xtra1) return (FALSE);
