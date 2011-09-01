@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 31. August 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 1. September 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -8203,7 +8203,7 @@ Dark-Elf
     Dark-Elves are good fighters and sorcerors, but also decent priests.
     Dark-Elves intrinsically resist darkness, but are susceptible to light.
     At level 20 they learn to see the invisible.
-    They get bonus on 'Archery', 'Stealth', 'Dodging' and 'Sneakiness'.
+    They get bonus on 'Stealth', 'Dodging', 'Sneakiness' and 'Backstabbing'.
 
 Vampire
     These powerful undead creatues move out in the night to hunt living prey

@@ -2185,8 +2185,15 @@ player_race race_info[MAX_RACE] =
 		CFW+CFI+CFP+CFR+CFM+CFA+CFN+CFX+CFD+CFS+CFU+CFC,
                 115,
                 {
+#if 0
                         {
                                 SKILL_ARCHERY,
+                                '+', 1000,
+                                '%', 110,
+                        },
+#endif
+                        {
+                                SKILL_BACKSTAB,
                                 '+', 1000,
                                 '%', 110,
                         },
@@ -2203,7 +2210,7 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_AGILITY,
                                 '+', 2000,
-                                '%', 115,
+                                '%', 110,
                         },
                         {
                                 SKILL_SNEAKINESS,
