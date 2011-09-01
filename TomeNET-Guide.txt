@@ -5813,7 +5813,7 @@ BLESSED ('It has been blessed by the gods')
         These weapons resist cursing. Priests can use blessed weapons
         without penalties, even if they are not blunt.
 VAMPIRIC ('It drains life from your foes')
-        Drains life from your victim, which you gain as hit points.
+        Drains life from your victim, which heals you slightly.
         For details see '(5.15) Vampirism'.
 VORPAL ('Sharp' weapons, 'It is very sharp and can cut your foes.')
         Has a chance that the weapon damage dice result is multiplied on
@@ -6733,19 +6733,23 @@ Although demons and angels don't really 'live', vampirism is able to drain
 the powers that allow them to exist, and so vampirism works against those too.
 
 The best case is to have vampiric flag on a weapon, that will drain at maximum
-efficiency. If you use vampiric equipment like gloves, they will be a bit less
-efficient than an actual vampiric weapon, meaning that you won't leech on
-_every_ hit (the amount of leeched life per hit is not penalized though).
+efficiency. However, it will only drain if you hit the monster with that
+particular weapon.
+If you use other vampiric equipment, like gloves, they will be a bit less
+efficient than an actual vampiric weapon, meaning that you will leech less
+frequently (the amount of leeched life per hit is not penalized though) but in
+turn it will work with any weapon you use (ranged too).
 For ranged weapons it doesn't matter which part is vampiric, the bow or the
 ammunition. It won't increase your over all life leeching if both are
 vampiric either.
 
 In general, vampiric flags don't stack from multiple items! Just the item that
-fits the situation better (weapons) overrides the weaker ones (non-weapons).
-Note that vampirism from mimicked forms only works on melee combat and has a
-50% chance to go off (except for vampire bat which has 100%) due to a half of
-vampires' attacks being normal hits and the other half being biting (which
-does the actual leeching!).
+fits the situation best (weapon/ammo) overrides the weaker ones (non-weapons).
+
+Note that vampirism gained from mimicked forms only works on melee combat and
+has a 50% chance to go off (except for vampire bat which has 100%) due to a
+half of vampires' attacks being normal hits and the other half being biting
+(which does the actual leeching!).
 
 
 
