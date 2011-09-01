@@ -2447,10 +2447,8 @@ void recall_player(int Ind, char *message){
 
 #if 1 //todo: fix again after it broke: actually this code should instead have been done already in process_player_change_wpos() or related functions >.>
 	/* sanity check on recall coordinates */
-	if (p_ptr->recall_pos.wx < 0) p_ptr->recall_pos.wx = 0;
-	if (p_ptr->recall_pos.wx > 63) p_ptr->recall_pos.wx = 63;
-	if (p_ptr->recall_pos.wy < 0) p_ptr->recall_pos.wy = 0;
-	if (p_ptr->recall_pos.wy > 63) p_ptr->recall_pos.wy = 63;
+	p_ptr->recall_pos.wx %= MAX_WILD_X;
+	p_ptr->recall_pos.wy %= MAX_WILD_Y;
 	if (p_ptr->recall_pos.wz < 0) {
 		if (wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx].dungeon) {
 			if (-p_ptr->recall_pos.wz > wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx].dungeon->maxdepth)
@@ -2533,11 +2531,11 @@ static void do_recall(int Ind, bool bypass)
 		d_ptr = getdungeon(&p_ptr->wpos);
 
 		/* Messages */
-		if ((((d_ptr->flags2 & DF2_IRON || d_ptr->flags1 & DF1_FORCE_DOWN) && d_ptr->maxdepth>ABS(p_ptr->wpos.wz)) ||
+		if ((((d_ptr->flags2 & DF2_IRON || d_ptr->flags1 & DF1_FORCE_DOWN) && d_ptr->maxdepth > ABS(p_ptr->wpos.wz)) ||
 		    (d_ptr->flags1 & DF1_NO_RECALL)) && !(getfloor(&p_ptr->wpos)->flags1 & LF1_IRON_RECALL)) {
 			msg_print(Ind, "You feel yourself being pulled toward the surface!");
 			if (!is_admin(p_ptr)) {
-				recall_ok=FALSE;
+				recall_ok = FALSE;
 				/* Redraw the depth(colour) */
 				p_ptr->redraw |= (PR_DEPTH);
 			}
@@ -2545,10 +2543,10 @@ static void do_recall(int Ind, bool bypass)
 		if (recall_ok) {
 			msg_format(Ind, "\377%cYou are transported out of %s..", COLOUR_DUNGEON, d_name + d_info[d_ptr->type].name);
 			if(p_ptr->wpos.wz > 0) {
-				message="You feel yourself yanked downwards!";
+				message = "You feel yourself yanked downwards!";
 				msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
 			} else {
-				message="You feel yourself yanked upwards!";
+				message = "You feel yourself yanked upwards!";
 				msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
 			}
 
@@ -2565,14 +2563,13 @@ static void do_recall(int Ind, bool bypass)
 	/* beware! bugs inside! (jir) (no longer I hope) */
 	/* world travel */
 	/* why wz again? (jir) */
-	else if ((!(p_ptr->recall_pos.wz) || !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & (WILD_F_UP|WILD_F_DOWN))) && !bypass)
-	{
+	else if ((!(p_ptr->recall_pos.wz) || !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & (WILD_F_UP|WILD_F_DOWN))) && !bypass) {
 		int dis;
 
 		if (((!(p_ptr->wild_map[(wild_idx(&p_ptr->recall_pos))/8] &
-							(1 << (wild_idx(&p_ptr->recall_pos))%8))) &&
-					!is_admin(p_ptr) ) ||
-				inarea(&p_ptr->wpos, &p_ptr->recall_pos))
+		    (1 << (wild_idx(&p_ptr->recall_pos))%8))) &&
+		    !is_admin(p_ptr) ) ||
+		    inarea(&p_ptr->wpos, &p_ptr->recall_pos))
 		{
 			/* back to the last town (s)he visited.
 			 * (This can fail if gone too far) */
@@ -2601,7 +2598,7 @@ static void do_recall(int Ind, bool bypass)
 		msg_format_near(Ind, "%s is yanked sideways!", p_ptr->name);
 
 		/* New location */
-		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;												
+		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 	}
 
 	/* into dungeon/tower */
@@ -2611,10 +2608,18 @@ static void do_recall(int Ind, bool bypass)
 //		wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
 		/* Messages */
 		if (p_ptr->recall_pos.wz < 0 && w_ptr->flags & WILD_F_DOWN) {
-			dungeon_type *d_ptr=wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx].dungeon;
+			dungeon_type *d_ptr = wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx].dungeon;
+
+			/* check character/dungeon limits */
+			if (p_ptr->max_dlv < w_ptr->dungeon->baselevel - p_ptr->recall_pos.wz)
+				p_ptr->recall_pos.wz = w_ptr->dungeon->baselevel - p_ptr->max_dlv - 1;
+			if (-p_ptr->recall_pos.wz > w_ptr->dungeon->maxdepth)
+				p_ptr->recall_pos.wz = 0 - w_ptr->dungeon->maxdepth;
+			if (p_ptr->inval && -p_ptr->recall_pos.wz > 10)
+				p_ptr->recall_pos.wz = -10;
 
 			//if(d_ptr->baselevel-p_ptr->max_dlv>2){
-			if ((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
+			if ((!d_ptr->type && d_ptr->baselevel - p_ptr->max_dlv > 2) ||
 			    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev) ||
 			    (d_ptr->flags1 & (DF1_NO_RECALL | DF1_NO_UP | DF1_FORCE_DOWN)) ||
 #ifdef RPG_SERVER /* Prevent recalling into NO_DEATH dungeons */
@@ -2635,24 +2640,24 @@ static void do_recall(int Ind, bool bypass)
 					msg_print(Ind, "(You feel yourself yanked toward nowhere...)");
 			}
 
-			if (p_ptr->max_dlv < w_ptr->dungeon->baselevel - p_ptr->recall_pos.wz)
-				p_ptr->recall_pos.wz = w_ptr->dungeon->baselevel - p_ptr->max_dlv - 1;
-
-			if (-p_ptr->recall_pos.wz > w_ptr->dungeon->maxdepth)
-				p_ptr->recall_pos.wz = 0 - w_ptr->dungeon->maxdepth;
-			if (p_ptr->inval && -p_ptr->recall_pos.wz > 10)
-				p_ptr->recall_pos.wz = -10;
-
 			if (p_ptr->recall_pos.wz >= 0) {
 				p_ptr->recall_pos.wz = 0;
 			} else {
-				message="You feel yourself yanked downwards!";
+				message = "You feel yourself yanked downwards!";
 		                msg_format(Ind, "\377%cYou are transported into %s..", COLOUR_DUNGEON, d_name + d_info[d_ptr->type].name);
 				msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
 			}
 		}
 		else if (p_ptr->recall_pos.wz > 0 && w_ptr->flags & WILD_F_UP) {
 			dungeon_type *d_ptr=wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx].tower;
+
+			/* check character/tower limits */
+			if (p_ptr->max_dlv < w_ptr->tower->baselevel + p_ptr->recall_pos.wz + 1)
+				p_ptr->recall_pos.wz = 0 - w_ptr->tower->baselevel + p_ptr->max_dlv + 1;
+			if (p_ptr->recall_pos.wz > w_ptr->tower->maxdepth)
+				p_ptr->recall_pos.wz = w_ptr->tower->maxdepth;
+			if (p_ptr->inval && -p_ptr->recall_pos.wz > 10)
+				p_ptr->recall_pos.wz = 10;
 
 			//if(d_ptr->baselevel-p_ptr->max_dlv>2){
 			if ((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
@@ -2675,14 +2680,6 @@ static void do_recall(int Ind, bool bypass)
 				else
 					msg_print(Ind, "(You feel yourself yanked toward nowhere...)");
 			}
-
-			if (p_ptr->max_dlv < w_ptr->tower->baselevel + p_ptr->recall_pos.wz + 1)
-				p_ptr->recall_pos.wz = 0 - w_ptr->tower->baselevel + p_ptr->max_dlv + 1;
-
-			if (p_ptr->recall_pos.wz > w_ptr->tower->maxdepth)
-				p_ptr->recall_pos.wz = w_ptr->tower->maxdepth;
-			if (p_ptr->inval && -p_ptr->recall_pos.wz > 10)
-				p_ptr->recall_pos.wz = 10;
 
 			if (p_ptr->recall_pos.wz <= 0) {
 				p_ptr->recall_pos.wz = 0;
