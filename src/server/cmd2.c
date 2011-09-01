@@ -5281,7 +5281,8 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 	   note: currently number has no effect on throwing range (weight!) */
 	if (bashing) {
 		if ((o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH)
-		    || is_ammo(o_ptr->tval))
+		    || is_cheap_misc(o_ptr->tval))
+//		    || is_ammo(o_ptr->tval))
 			moved_number = o_ptr->number;
 	}
 	throw_obj.number = moved_number;
