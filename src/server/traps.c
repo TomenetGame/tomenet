@@ -3850,16 +3850,16 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, int sval)
  * Monster hitting a scroll trap -MWK-
  *
  * Return TRUE if the monster died
- */ 
+ */
 static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = race_inf(m_ptr);
 	worldpos wpos = m_ptr->wpos;
 	int dam = 0, typ = 0, rad = 0;//unused huh  , cloud = 0, cloudi = 0;
-        int y = m_ptr->fy;
-        int x = m_ptr->fx;
-        int k;
+	int y = m_ptr->fy;
+	int x = m_ptr->fx;
+	int k;
 	cave_type **zcave;
 	zcave=getcave(&wpos);
 		
@@ -4015,11 +4015,11 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
         return (zcave[y][x].m_idx == 0 ? TRUE : FALSE); 
 }
 
-/* 
+/*
  * Monster hitting a wand trap -MWK-
  *
  * Return TRUE if the monster died
- */ 
+ */
 static bool mon_hit_trap_aux_wand(int who, int m_idx, int sval)
 {
 	monster_type *m_ptr = &m_list[m_idx];
@@ -4218,10 +4218,8 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 	zcave=getcave(&m_ptr->wpos);
 	
 	/* Depend on potion type */
-	if (o_ptr->tval == TV_POTION)
-	{
-		switch (sval)
-		{
+	if (o_ptr->tval == TV_POTION) {
+		switch (sval) {
 			/* Nothing happens */
 			case SV_POTION_WATER:
 			case SV_POTION_APPLE_JUICE:
@@ -4416,20 +4414,20 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 				rad = 4;
 				break;
 			case SV_POTION_LIFE:
-/*					if (r_ptr->flags3 & RF3_UNDEAD)
-					{
-						typ = GF_HOLY_FIRE;
-						dam = damroll(20, 20);
-					}
-					else
-					{	
-						typ = GF_OLD_HEAL;
-						dam = 5000;
-					}*/
-					typ = GF_LIFEHEAL;
-					dam = damroll(50, 20); /* Holy Fire damage vs undead */
-					rad = 3;
-					break;
+/*				if (r_ptr->flags3 & RF3_UNDEAD)
+				{
+					typ = GF_HOLY_FIRE;
+					dam = damroll(20, 20);
+				}
+				else
+				{	
+					typ = GF_OLD_HEAL;
+					dam = 5000;
+				}*/
+				typ = GF_LIFEHEAL;
+				dam = damroll(50, 20); /* Holy Fire damage vs undead */
+				rad = 3;
+				break;
 			default:
 				return (FALSE);
 
@@ -4450,8 +4448,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 
 	/* Actually hit the monster */
 //	(void) project_m(who, y, x, 0, y, x, dam, typ);
-	(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ,
-	               (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL), "");
+	(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL), "");
 
         return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
@@ -4619,9 +4616,7 @@ bool mon_hit_trap(int m_idx)
 	int difficulty = 0;
 	int smartness;
 
-#if 0 /* see below */
 	char m_name[80];
-#endif
 	char brand_msg[80] = { '\0' };
 
 	bool notice = FALSE;
@@ -4640,7 +4635,7 @@ bool mon_hit_trap(int m_idx)
 //	worldpos *wpos = &m_ptr->wpos;
 	worldpos wpos = m_ptr->wpos;
 
-	zcave=getcave(&wpos);
+	zcave = getcave(&wpos);
 	if (!zcave) return(FALSE);
 
 	c_ptr = &zcave[my][mx];
@@ -4686,6 +4681,7 @@ bool mon_hit_trap(int m_idx)
 			break;
 		}
 	}
+	if (who > 0 && p_ptr->mon_vis[m_idx]) monster_desc(who, m_name, m_idx, 0);
 
 	/* Get detection difficulty */
 	/* High level players hide traps better */
@@ -4805,7 +4801,7 @@ bool mon_hit_trap(int m_idx)
 			/* No message if monster isn't visible ? */
 		}
 #endif
-		msg_print_near_monster(m_idx, "sets off a trap!");
+//		msg_print_near_monster(m_idx, "sets off a trap!");
 #ifdef USE_SOUND_2010
 		sound_near_monster(m_idx, "trap_setoff", NULL, SFX_TYPE_MISC);
 #endif
@@ -4851,7 +4847,7 @@ bool mon_hit_trap(int m_idx)
 				/* Check if we hit the monster */
 				if (test_hit_fire(chance, m_ptr->ac, TRUE)) {
 					/* Assume a default death */
-					cptr note_dies = " dies";
+					cptr note_dies = " sets off a missile trap and dies";
 
 					/* Some monsters get "destroyed" */
 					if ((r_ptr->flags3 & (RF3_DEMON)) ||
@@ -4860,7 +4856,7 @@ bool mon_hit_trap(int m_idx)
 							(strchr("Evg", r_ptr->d_char)))
 					{
 						/* Special note at death */
-						note_dies = " is destroyed";
+						note_dies = " sets off a missile trap and is destroyed";
 					}
 
 					/* Message if visible */
@@ -4873,7 +4869,6 @@ bool mon_hit_trap(int m_idx)
 						msg_format(who, "%^s is hit by a missile.", m_name);
 					}
 #endif	// 0
-					msg_print_near_monster(m_idx, "is hit by a missile.");
 
 					/* Apply slays, brand, critical hits */
 					// dam = tot_dam_aux(who, load_o_ptr, dam, m_ptr, &special, brand_msg);
@@ -4922,7 +4917,8 @@ bool mon_hit_trap(int m_idx)
 
 							/* Hack -- handle sleep */
 							if (do_sleep) m_ptr->csleep = do_sleep;
-#endif // 0
+#endif
+							msg_print_near_monster(m_idx, format("sets off a missile trap for %d damage.", dam));
 						}
 					}
 					/* Hit the monster, check for death */
@@ -4933,8 +4929,13 @@ bool mon_hit_trap(int m_idx)
 
 					/* No death */
 					else {
-//						if (who > 0 && p_ptr->mon_vis[m_idx]) 
-						if (p_ptr->mon_vis[m_idx]) {
+						if (who > 0 && p_ptr->mon_vis[m_idx]) {
+//						if (p_ptr->mon_vis[m_idx]) {
+							if (r_ptr->flags1 & RF1_UNIQUE)
+								msg_format(who, "%^s sets off a missile trap for \377e%d \377wdamage.", m_name, dam);
+							else
+								msg_format(who, "%^s sets off a missile trap for \377g%d \377wdamage.", m_name, dam);
+
 							message_pain(who, m_idx, dam);
 
 //							if (special) attack_special(m_ptr, special, dam);
@@ -5003,7 +5004,7 @@ bool mon_hit_trap(int m_idx)
 					/* Print a message */
 					msg_format(who, "%^s is hit by fumes.", m_name);
 				}
-#endif	// 0
+#endif
 				msg_print_near_monster(m_idx, "is hit by fumes.");
 
 				/* Get the potion effect */
@@ -5045,7 +5046,7 @@ bool mon_hit_trap(int m_idx)
 					/* Print a message */
 					msg_format(who, "%^s activates a spell!", m_name);
 				}
-#endif	// 0
+#endif
 				msg_print_near_monster(m_idx, "activates a spell!");
 
 				/* Get the scroll or rune effect */
