@@ -2725,6 +2725,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 						else sound(Ind, "hit_blunt", "hit", SFX_TYPE_ATTACK, FALSE); break;
 				case TV_AXE: sound(Ind, "hit_axe", "hit", SFX_TYPE_ATTACK, FALSE); break;
 				case TV_POLEARM: sound(Ind, "hit_polearm", "hit", SFX_TYPE_ATTACK, FALSE); break;
+				case TV_MSTAFF: sound(Ind, "hit_blunt", "hit", SFX_TYPE_ATTACK, FALSE); break;
 				}
 			else
 				if (sfx == 0) {
@@ -3632,6 +3633,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 							else sound(Ind, "hit_blunt", "hit", SFX_TYPE_ATTACK, FALSE); break;
 					case TV_AXE: sound(Ind, "hit_axe", "hit", SFX_TYPE_ATTACK, FALSE); break;
 					case TV_POLEARM: sound(Ind, "hit_polearm", "hit", SFX_TYPE_ATTACK, FALSE); break;
+					case TV_MSTAFF: sound(Ind, "hit_blunt", "hit", SFX_TYPE_ATTACK, FALSE); break;
 					}
 				else
 					sound(Ind, "hit", NULL, SFX_TYPE_ATTACK, FALSE);

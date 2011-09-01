@@ -3145,6 +3145,7 @@ bool create_artifact_aux(int Ind, int item) {
 
 	/* Hack - lose discount on item, looks bad/silly */
 	o_ptr->discount = 0;
+	o_ptr->note = 0;
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
