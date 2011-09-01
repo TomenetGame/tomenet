@@ -1862,7 +1862,7 @@ static int auto_retaliate(int Ind)
 	if (p_ptr->new_level_flag) return 0;
 
 	/* disable auto-retaliation while cloaked, shadow_running, charming */
-	if ((p_ptr->cloaked || p_ptr->shadow_running || p_ptr->mcharming)
+	if ((((p_ptr->cloaked || p_ptr->shadow_running) && !(p_ptr->blood_bond && safe_area(Ind))) || p_ptr->mcharming)
 	    && !p_ptr->stormbringer) return 0;
 
 	/* Just to kill compiler warnings */
