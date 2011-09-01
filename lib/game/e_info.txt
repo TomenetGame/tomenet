@@ -1343,7 +1343,7 @@ F:R_HIGH | DEX | SUST_DEX
 #X:A:23:10
 #W:0:2:19:25
 #R:100
-#F:SLAY_ANIMAL
+#F:SLAY_ANIMAL | NO_SEED
 
 #N:113:of Slay Evil
 #T:16:0:99
@@ -1352,7 +1352,7 @@ F:R_HIGH | DEX | SUST_DEX
 #X:A:23:10
 #W:0:2:19:25
 #R:100
-#F:SLAY_EVIL
+#F:SLAY_EVIL | NO_SEED
 
 #N:114:of Slay Undead
 #T:16:0:99
@@ -1361,7 +1361,7 @@ F:R_HIGH | DEX | SUST_DEX
 #X:A:23:10
 #W:0:1:19:35
 #R:100
-#F:SLAY_UNDEAD
+#F:SLAY_UNDEAD | NO_SEED
 
 N:115:of Venom
 T:16:0:2
@@ -1371,7 +1371,7 @@ T:18:0:2
 T:18:4:4
 X:A:23:10
 R:100
-F:BRAND_POIS
+F:BRAND_POIS | NO_SEED
 W:0:2:19:25
 
 #N:116:of Acid
@@ -1380,7 +1380,7 @@ W:0:2:19:25
 #T:18:0:99
 #X:A:23:10
 #R:100
-#F:BRAND_ACID | IGNORE_ACID | IGNORE_WATER
+#F:BRAND_ACID | IGNORE_ACID | IGNORE_WATER | NO_SEED
 #W:0:1:19:30
 
 # 117 All Elements at once - melee weapon
@@ -1406,7 +1406,7 @@ F:BRAND_POIS | RES_POIS | DRAIN_MANA
 #X:A:23:10
 #W:0:1:19:35
 #R:100
-#F:SLAY_DEMON
+#F:SLAY_DEMON | NO_SEED
 
 #2nd ego-diversity reduction
 #N:119:of Slay Dragon
@@ -1415,7 +1415,7 @@ F:BRAND_POIS | RES_POIS | DRAIN_MANA
 #T:18:0:99
 #X:A:23:10
 #R:100
-#F:SLAY_DRAGON
+#F:SLAY_DRAGON | NO_SEED
 #W:0:1:19:35
 
 #N:120:of Slaying
@@ -1423,7 +1423,7 @@ F:BRAND_POIS | RES_POIS | DRAIN_MANA
 #W:0:1:19:20
 #C:12:12:0:0
 #R:100
-#F:DAM_DIE
+#F:DAM_DIE | NO_SEED
 
 #2nd ego-diversity reduction, actually enables these again!
 N:121:of Lightning
@@ -1435,7 +1435,7 @@ T:18:0:2
 T:18:4:4
 X:A:23:10
 R:100
-F:BRAND_ELEC | IGNORE_ELEC | IGNORE_FIRE
+F:BRAND_ELEC | IGNORE_ELEC | IGNORE_FIRE | NO_SEED
 W:0:1:19:35
 
 N:122:of Flame
@@ -1447,7 +1447,7 @@ T:18:0:2
 T:18:4:4
 X:A:23:10
 R:100
-F:BRAND_FIRE | IGNORE_FIRE
+F:BRAND_FIRE | IGNORE_FIRE | NO_SEED
 W:0:2:19:15
 
 #2nd ego-diversity reduction, actually enables these again!
@@ -1457,7 +1457,7 @@ W:0:2:19:15
 #T:18:0:99
 #X:A:23:10
 #R:100
-#F:BRAND_COLD | IGNORE_COLD
+#F:BRAND_COLD | IGNORE_COLD | NO_SEED
 #W:0:2:19:25
 
 #WOUNDING has currently no effect as a flag by the way
@@ -1468,6 +1468,7 @@ W:0:2:19:15
 #X:A:23:5
 #W:0:3:19:20
 #C:6:6:0:0
+#F:NO_SEED
 
 N:125:of Backbiting
 T:16:0:2
@@ -1479,6 +1480,7 @@ T:18:4:4
 X:A:23:0
 W:0:1:2:0
 C:-50:-50:0:0
+F:NO_SEED
 
 
 ### Special Broken Items ###
