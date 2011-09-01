@@ -748,7 +748,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	fprintf(fff, " %s", class_info[q_ptr->pclass].title);
 
 	/* location */
-	if (attr == 'G' || admin) {
+	if (attr == 'G' || attr == 'B' || admin) {
 		// BAD HACK: just replacing 'Ind' by number constants..
   #if 0 /* 'The Sacred Land of Mountains' <- too long for this ultra compact scheme! */
 		if (admin) fprintf(fff, ", %s", wpos_format(1, &q_ptr->wpos));
