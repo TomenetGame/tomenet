@@ -1296,6 +1296,8 @@ void do_slash_cmd(int Ind, char *message)
 
 				/* Don't drain energy far below zero - mikaelh */
 				if (p_ptr->energy < 0) return;
+				/* hm, how about this? - C. Blue */
+				if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 
 				/* Test for 'Recall' istar spell and for 'Relocation' astral spell */
 #if 0 /* hm, which version might be easier/better?.. */
