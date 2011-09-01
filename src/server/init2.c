@@ -2418,7 +2418,7 @@ static errr init_other(void)
 	/* Some extra strings */
 	(void)quark_add("uncursed");
 	(void)quark_add("on sale");
-	(void)quark_add("Handmade");
+	(void)quark_add("handmade");
 
 	/* Turn on color */
 	use_color = TRUE;
