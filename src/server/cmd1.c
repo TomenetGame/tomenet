@@ -222,7 +222,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 	u32b f1, f2, f3, f4, f5, esp;
 	player_type *p_ptr = NULL;
 
-	struct worldpos *wpos = &p_ptr->wpos;
+	struct worldpos *wpos = &m_ptr->wpos;
 	cave_type **zcave;
 	cave_type *c_ptr;
 	char m_name[80];
@@ -760,11 +760,8 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_ptr, char *brand_msg, bool thrown)
 {
 	int mult = FACTOR_MULT;
-
 	u32b f1, f2, f3, f4, f5, esp;
-
 	player_type *p_ptr = Players[Ind];
-
 	object_type *e_ptr;
 	u32b ef1, ef2, ef3, ef4, ef5, eesp;
 	int brands_total, brand_msgs_added;
@@ -783,17 +780,14 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 	/* Extract the flags */
 	if (o_ptr->k_idx)
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-	else
-	{
-	    f1 = 0; f2 = 0; f3 = 0; f4 = 0; f5 = 0;
+	else {
+		f1 = 0; f2 = 0; f3 = 0; f4 = 0; f5 = 0;
 	}
 
 	/* Apply brands from mimic monster forms */
-        if (p_ptr->body_monster)
-	{
+	if (p_ptr->body_monster) {
 #if 0
-		switch (pr_ptr->r_ptr->d_char)
-		{
+		switch (pr_ptr->r_ptr->d_char) {
 			/* If monster is fighting with a weapon, the player gets the brand(s) even with a weapon */
 			case 'p':	case 'h':	case 't':
 			case 'o':	case 'y':	case 'k':
@@ -828,12 +822,9 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 			apply_monster_brands = FALSE;
 
 		/* Get monster brands. If monster has several, choose one randomly */
-		for (i = 0; i < 4; i++)
-		{
-		        if (pr_ptr->blow[i].d_dice * pr_ptr->blow[i].d_side)
-			{
-				switch (pr_ptr->blow[i].effect)
-				{
+		for (i = 0; i < 4; i++) {
+		        if (pr_ptr->blow[i].d_dice * pr_ptr->blow[i].d_side) {
+				switch (pr_ptr->blow[i].effect) {
 				case RBE_ACID:
 					monster_brands++;
 					monster_brand[monster_brands] = TR1_BRAND_ACID;
@@ -869,8 +860,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 	}
 
 	/* Add brands/slaying from non-weapon items (gloves, frost-armour) */
-        for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
-        {
+        for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
                 e_ptr = &p_ptr->inventory[i];
                 /* k_ptr = &k_info[e_ptr->k_idx];
                 pval = e_ptr->pval; not needed */
@@ -907,8 +897,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 
 	strcpy(brand_msg,q_ptr->name);
 	strcat(brand_msg," is ");//"%^s is ");
-	switch (brands_total)
-	{
+	switch (brands_total) {
 		/* full messages for only 1 brand */
 		case 1:
 		if (f1 & TR1_BRAND_ACID) strcat(brand_msg,"covered in acid");
