@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 1. September 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 2. September 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -6115,11 +6115,16 @@ Mass Genocide   Removes all monsters that are close to you.
                 Monsters have a chance to resist genocide, depending on their
                 level. Monsters inside vaults, Uniques, and monsters that are
                 immune to teleportation attacks cannot be genocided.
-Acquirement     Gives you a great item. Reading it on deeper dungeon levels
-                produces better results mostly.
+Acquirement     Gives you a great item, generated randomly (may sometimes be
+                very great and sometimes less great).
+                Reading it on deeper dungeon levels produces better results in
+                general (although the outcome is still pretty random).
                 Note that while some towns also have a high level, reading this
                 scroll in town won't guarantee a 'great' item, which will
                 be guaranteed if you read it in the dungeon.
+                What you usually do: Either try to quickly visit a really deep
+                dungeon level just to read the scroll, grab the item and get
+                out of there. Or sell it to a town store for good cash.
                 Acquirement is not affected by 'luck'.
 *Acquirement*   Same as Acquirement, but gives you two or three great items.
 Fire/Ice/Chaos  Fires a ball of the according type around you. Make sure you
