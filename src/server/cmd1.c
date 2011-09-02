@@ -225,7 +225,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 	struct worldpos *wpos = &m_ptr->wpos;
 	cave_type **zcave;
 	cave_type *c_ptr;
-	char m_name[80];
+	char m_name[MNAME_LEN];
 
 	object_type *e_ptr;
 	u32b ef1, ef2, ef3, ef4, ef5, eesp;
@@ -3198,7 +3198,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	object_type	*o_ptr = NULL;
 	bool		do_quake = FALSE;
 
-	char		m_name[80], brand_msg[80] = { '\0' }, hit_desc[80], mbname[80];
+	char		m_name[MNAME_LEN], brand_msg[80] = { '\0' }, hit_desc[80], mbname[MNAME_LEN];
 	monster_type	*m_ptr;
 	monster_race	*r_ptr;
 

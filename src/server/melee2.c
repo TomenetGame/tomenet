@@ -1416,7 +1416,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 		/* Got disrupted ? */
 		if (magik(grabchance))
 		{
-			char		m_name[80];
+			char		m_name[MNAME_LEN];
 			/* Get the monster name (or "it") */
 			monster_desc(i, m_name, m_idx, 0x00);
 
@@ -1494,7 +1494,7 @@ static bool monst_check_antimagic(int Ind, int m_idx)
 	/* Got disrupted ? */
 	if (magik(highest_antichance))
 	{
-		char		m_name[80];
+		char		m_name[MNAME_LEN];
 		/* Get the monster name (or "it") */
 		monster_desc(Ind, m_name, m_idx, 0x00);
 
@@ -1548,7 +1548,7 @@ static bool monst_check_antimagic(int Ind, int m_idx)
 			{
 				if (p_ptr->mon_vis[m_idx])
 				{
-					char m_name[80];
+					char m_name[MNAME_LEN];
 					monster_desc(Ind, m_name, m_idx, 0);
 					msg_format(Ind, "\377%c%^s's anti-magic field disrupts your attempts.", COLOUR_AM_MON, m_name);
 				}
@@ -1735,9 +1735,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 	monster_type	*m_ptr = &m_list[m_idx];
         monster_race    *r_ptr = race_inf(m_ptr);
 	//object_type *o_ptr = &p_ptr->inventory[INVEN_WIELD];
-	char		m_name[80];
-	char		m_poss[80];
-	char		ddesc[80];
+	char		m_name[MNAME_LEN];
+	char		m_poss[MNAME_LEN];
+	char		ddesc[MNAME_LEN];
 
 	/* Target location */
 	int x = p_ptr->px;
@@ -6553,7 +6553,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 #if 0
 				if (p_ptr->mon_vis[m_idx]) {
-					char m_name[80];
+					char m_name[MNAME_LEN];
 					monster_desc(Ind, m_name, m_idx, 0);
 					msg_format(Ind, "%^s wakes up.", m_name);
 
@@ -6599,7 +6599,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			msg_print_near_monster(m_idx, "is no longer stunned.");
 #if 0
 			if (p_ptr->mon_vis[m_idx]) {
-				char m_name[80];
+				char m_name[MNAME_LEN];
 				monster_desc(Ind, m_name, m_idx, 0);
 				msg_format(Ind, "\377o%^s is no longer stunned.", m_name);
 			}
@@ -6633,7 +6633,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			msg_print_near_monster(m_idx, "is no longer confused.");
 #if 0
 			if (p_ptr->mon_vis[m_idx]) {
-				char m_name[80];
+				char m_name[MNAME_LEN];
 				monster_desc(Ind, m_name, m_idx, 0);
 				msg_format(Ind, "%^s is no longer confused.", m_name);
 			}
@@ -6661,8 +6661,8 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			msg_print_near_monster(m_idx, "becomes courageous again.");
 #if 0
 			if (p_ptr->mon_vis[m_idx]) {
-				char m_name[80];
-				char m_poss[80];
+				char m_name[MNAME_LEN];
+				char m_poss[MNAME_LEN];
 
 				/* Acquire the monster name/poss */
 				monster_desc(Ind, m_name, m_idx, 0);
@@ -7737,7 +7737,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			else if (c_ptr->m_idx < 0)
 			{
 				player_type *q_ptr = Players[0 - c_ptr->m_idx];
-				char m_name[80];
+				char m_name[MNAME_LEN];
 
 				/* Acquire the monster name */
 				monster_desc(Ind, m_name, m_idx, 0x04);
@@ -7795,8 +7795,8 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			    ((r_ptr->flags2 & RF2_TAKE_ITEM) ||
 			     (r_ptr->flags2 & RF2_KILL_ITEM)))
 			{
-				char m_name[80];
-				char m_name_real[80];
+				char m_name[MNAME_LEN];
+				char m_name_real[MNAME_LEN];
 				char o_name[ONAME_LEN];
 
 				/* Check the grid */
@@ -8002,7 +8002,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 		/* Message if seen */
 		if (p_ptr->mon_vis[m_idx])
 		{
-			char m_name[80];
+			char m_name[MNAME_LEN];
 
 			/* Acquire the monster name */
 			monster_desc(Ind, m_name, m_idx, 0);
@@ -8981,7 +8981,7 @@ void process_monsters(void)
 	player_type	*p_ptr;
 	bool		reveal_cloaking, spot_cloaking;
 	int		may_move_Ind, may_move_dis;
-	char		m_name[80];
+	char		m_name[MNAME_LEN];
 
 	/* Local copies for speed - mikaelh */
 	s16b *_m_fast = m_fast;

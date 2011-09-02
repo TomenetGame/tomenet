@@ -4645,7 +4645,7 @@ void monster_death(int Ind, int m_idx)
 	int	number = 0;
 	int	total = 0;
 
-	char buf[160], m_name[80];
+	char buf[160], m_name[MAX_CHARS];
 	cptr titlebuf;
 
 	cave_type *c_ptr;
@@ -5872,7 +5872,7 @@ void player_death(int Ind)
 	monster_type *m_ptr;
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
-	char buf[1024], o_name[ONAME_LEN], m_name_extra[80], msg_layout = 'a';
+	char buf[1024], o_name[ONAME_LEN], m_name_extra[MNAME_LEN], msg_layout = 'a';
 	int i, inventory_loss = 0, equipment_loss = 0, k, j, tries = 0;
 //	int inven_sort_map[INVEN_TOTAL];
 	//wilderness_type *wild;
@@ -7456,7 +7456,7 @@ for(i=1; i < 5; i++) {
 		}
 		}
 #endif
-		char m_name[80];
+		char m_name[MNAME_LEN];
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
 		/* Had to change it for Halloween -C. Blue */
 		if (m_ptr->level == 0) tmp_exp = r_ptr->mexp;

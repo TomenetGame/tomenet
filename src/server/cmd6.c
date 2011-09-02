@@ -2163,7 +2163,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 	int	k, ident, lev, d_no, d_tries, x, y; //, antichance;
 	bool	used_up, keep = FALSE;
-	char	m_name[80];
+	char	m_name[MNAME_LEN];
 
 	object_type	*o_ptr;
 
@@ -7298,7 +7298,7 @@ bool unmagic(int Ind)
  */
 void fortune(int Ind, bool broadcast)
 {
-	char Rumor[160], Broadcast[80];
+	char Rumor[MAX_CHARS_WIDE], Broadcast[MAX_CHARS];
 	
 	strcpy(Broadcast, "Suddenly a thought comes to your mind:");
 	msg_print(Ind, NULL);
@@ -7307,21 +7307,21 @@ void fortune(int Ind, bool broadcast)
 	switch(randint(80))
 	{
 		case 1:
-			get_rnd_line("chainswd.txt",0 , Rumor, 160);
+			get_rnd_line("chainswd.txt",0 , Rumor, MAX_CHARS_WIDE);
 			break;
 		case 2:
-			get_rnd_line("error.txt",0 , Rumor, 160);
+			get_rnd_line("error.txt",0 , Rumor, MAX_CHARS_WIDE);
 			break;
 		case 3:
 		case 4:
 		case 5:
-			get_rnd_line("death.txt",0 , Rumor, 160);
+			get_rnd_line("death.txt",0 , Rumor, MAX_CHARS_WIDE);
 			break;
 		default:
-			if (magik(95)) get_rnd_line("rumors.txt",0 , Rumor, 160);
+			if (magik(95)) get_rnd_line("rumors.txt",0 , Rumor, MAX_CHARS_WIDE);
 			else {
 				strcpy(Broadcast, "Suddenly an important thought comes to your mind:");
-				get_rnd_line("hints.txt",0 , Rumor, 160);
+				get_rnd_line("hints.txt",0 , Rumor, MAX_CHARS_WIDE);
 			}
 	}
 	bracer_ff(Rumor);
@@ -7329,8 +7329,7 @@ void fortune(int Ind, bool broadcast)
 	msg_print(Ind, Rumor);
 	msg_print(Ind, NULL);
 
-	if (broadcast)
-	{
+	if (broadcast) {
 		msg_broadcast(Ind, Broadcast);
 		msg_broadcast(Ind, Rumor);
 	}

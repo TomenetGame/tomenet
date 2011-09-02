@@ -4655,7 +4655,7 @@ static bool psi_backlash(int Ind, int m_idx, int dam)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = race_inf(m_ptr);
-	char m_name[80];
+	char m_name[MNAME_LEN];
 	player_type *p_ptr;
 
 	if (!Ind) return FALSE;
@@ -4771,7 +4771,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	int do_fear = 0;
 
 	/* Hold the monster name */
-	char m_name[80];
+	char m_name[MNAME_LEN];
 
 	bool resist = FALSE;
 	/* Assume no note */
@@ -8036,10 +8036,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Source monster */
 	monster_type *m_ptr = NULL;
 	/* Monster name (for attacks) */
-	char m_name[80], m_name_gen[80];
+	char m_name[MNAME_LEN], m_name_gen[MNAME_LEN];
 
 	/* Monster name (for damage) */
-	char killer[80];
+	char killer[MNAME_LEN];
 
 	/* Colour of the damage, either r (standard) or e (unique monster) */
 	char damcol = 'o';

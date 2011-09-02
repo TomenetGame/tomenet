@@ -3778,11 +3778,11 @@ int Receive_request_num(void) {
 /* Request string (1 line) */
 int Receive_request_str(void) {
 	int n, id;
-	char ch, prompt[80], buf[160];
+	char ch, prompt[80], buf[MAX_CHARS_WIDE];
 	if ((n = Packet_scanf(&rbuf, "%c%d%s%s", &ch, &id, prompt, buf)) <= 0) return n;
 
 	request_pending = TRUE;
-	if (get_string(prompt, buf, 159)) Send_request_str(id, buf);
+	if (get_string(prompt, buf, MAX_CHARS_WIDE - 1)) Send_request_str(id, buf);
 	else Send_request_str(id, "\e");
 	request_pending = FALSE;
 	return 1;

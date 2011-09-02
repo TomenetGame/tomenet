@@ -185,7 +185,7 @@ bool check_antimagic(int Ind, int percentage) {
 		/* Got disrupted ? */
 		if (magik((antichance * percentage) / 100)) {
 			if (p_ptr->mon_vis[m_idx]) {
-				char m_name[80];
+				char m_name[MNAME_LEN];
 				monster_desc(Ind, m_name, m_idx, 0);
 				msg_format(Ind, "\377%c%^s's anti-magic field disrupts your attempts.", COLOUR_AM_MON, m_name);
 			} else {

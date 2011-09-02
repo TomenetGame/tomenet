@@ -405,7 +405,7 @@ extern s16b max_set_idx;
 extern char priv_note_sender[MAX_NOTES][80], priv_note_target[MAX_NOTES][80], priv_note[MAX_NOTES][80];
 extern char party_note[MAX_PARTYNOTES][80], party_note_target[MAX_PARTYNOTES][80];
 extern char guild_note[MAX_GUILDNOTES][80], guild_note_target[MAX_GUILDNOTES][80];
-extern char admin_note[MAX_ADMINNOTES][80], server_warning[160];
+extern char admin_note[MAX_ADMINNOTES][80], server_warning[MSG_LEN];
 
 extern char bbs_line[BBS_LINES][140];
 extern char pbbs_line[MAX_PARTIES][BBS_LINES][140];
@@ -1514,9 +1514,9 @@ extern void handle_store_leave(int Ind);
 /* util.c */
 extern bool suppress_message;
 /* The next buffers are for catching the chat */
-extern char last_chat_line[160]; /* What was said */ 
-extern char last_chat_owner[20]; /* Who said it */
-// extern char last_chat_prev[160]; /* What was said before the above*/
+extern char last_chat_line[MSG_LEN]; /* What was said */ 
+extern char last_chat_owner[NAME_LEN]; /* Who said it */
+// extern char last_chat_prev[MSG_LEN]; /* What was said before the above*/
 
 extern void use_ability_blade(int Ind);
 extern void check_parryblock(int Ind);

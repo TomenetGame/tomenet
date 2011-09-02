@@ -157,7 +157,7 @@ bool do_player_scatter_items(int Ind, int chance, int rad)
 			}
 			if (player_has_los_bold(Ind, cy, cx))
 			{
-				char i_name[80];
+				char i_name[ONAME_LEN];
 				object_desc(Ind, i_name, &tmp_obj, TRUE, 3);
 				note_spot(Ind, cy, cx);
 				lite_spot(Ind, cy, cx);
@@ -243,7 +243,7 @@ static bool do_player_trap_call_out(int Ind)
         s16b          h_level = 0;
         monster_type  *m_ptr;
         monster_race  *r_ptr;
-        char          m_name[80];
+        char          m_name[MNAME_LEN];
         bool          ident = FALSE;
         cave_type **zcave;
         zcave=getcave(&p_ptr->wpos);
@@ -400,7 +400,7 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr, forge;
 	s16b        i, dam, k_idx = lookup_kind(tval, sval);
-	char        i_name[80];
+	char        i_name[ONAME_LEN];
 #ifndef NEW_DODGING
 	int	dodge = p_ptr->dodge_level - (dd * ds) / 2;
 #else
@@ -892,7 +892,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			/* Find an item */
 			for (k = 0; k < rand_int(10); k++)
 			{
-				char i_name[80];
+				char i_name[ONAME_LEN];
 
 				/* Pick an item */
 				s16b i = rand_int(INVEN_PACK);
@@ -4663,7 +4663,7 @@ bool mon_hit_trap(int m_idx)
 	int difficulty = 0;
 	int smartness;
 
-	char m_name[80];
+	char m_name[MNAME_LEN];
 	char brand_msg[80] = { '\0' };
 
 	bool notice = FALSE;

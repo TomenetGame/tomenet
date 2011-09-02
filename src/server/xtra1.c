@@ -1925,7 +1925,7 @@ static void calc_body_bonus(int Ind)
 	int i, j;
 	bool wepless = FALSE;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
-	char mname[80];
+	char mname[MNAME_LEN];
 
 	/* If in the player body nothing have to be done */
 	if (!p_ptr->body_monster) return;
@@ -6786,7 +6786,7 @@ static void process_global_event(int ge_id) {
 	cave_type **zcave, *c_ptr;
 	int xstart = 0, ystart = 0; /* for arena generation */
 	long elapsed, elapsed_turns; /* amounts of seconds elapsed since the event was started (created) */
-	char m_name[80];
+	char m_name[MNAME_LEN];
 	int m_idx, tries = 0;
 	time_t now;
 
@@ -7535,6 +7535,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 #ifdef ENABLE_GO_GAME
 	case RID_GO_MOVE:
 		if (p_ptr->store_num == -1) return; /* Discard if we left the building */
+		str[160] = '\0'; /* prevent possile buffer overflow */
 		go_engine_move_human(Ind, str);
 		return;
 #endif

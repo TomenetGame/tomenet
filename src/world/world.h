@@ -4,6 +4,8 @@
 
 #include <stdint.h>
 
+#define MSG_LEN 256
+
 #define MAX_LTTL	20	/* Max TTL for temporary locks */
 
 #define MAX_SERVERS	30	/* Max servers we will deal */
@@ -114,7 +116,7 @@ struct death{
 
 struct chat{
 	uint32_t id;	/* From ID */
-	char ctxt[160];
+	char ctxt[MSG_LEN];
 };
 
 struct pmsg{
@@ -122,7 +124,7 @@ struct pmsg{
 	uint16_t sid;	/* To server ID */
 	char player[80];	/* thats what it is in server :( */
 	char victim[80];	/* thats what it is in server :( */
-	char ctxt[160];
+	char ctxt[MSG_LEN];
 };
 
 struct sinfo{
@@ -166,7 +168,7 @@ struct lock{
 };
 
 struct smsg{
-	char stxt[160];		/* may need more info than this sometime */
+	char stxt[MSG_LEN];		/* may need more info than this sometime */
 };
   
 struct wpacket{

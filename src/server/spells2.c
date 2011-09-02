@@ -4361,7 +4361,7 @@ void wake_minions(int Ind, int who)
 
 	monster_type	*mw_ptr = &m_list[who], *m_ptr = NULL;
 	monster_race    *rw_ptr = race_inf(m_ptr), *r_ptr = NULL;
-	char		mw_name[80];
+	char		mw_name[MNAME_LEN];
 
 	int i;
 
@@ -4749,7 +4749,7 @@ bool probing(int Ind)
 		/* Probe visible monsters */
 		if (p_ptr->mon_vis[i])
 		{
-			char m_name[80];
+			char m_name[MNAME_LEN];
                         char buf[80];
                         int j;
 
@@ -5552,7 +5552,7 @@ static void cave_temp_room_lite(int Ind)
 				/* Notice the "waking up" */
 				if (p_ptr->mon_vis[c_ptr->m_idx])
 				{
-					char m_name[80];
+					char m_name[MNAME_LEN];
 
 					/* Acquire the monster name */
 					monster_desc(Ind, m_name, c_ptr->m_idx, 0);

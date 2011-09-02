@@ -330,7 +330,7 @@ static bool do_seduce(int Ind, int m_idx)
 	monster_type    *m_ptr = &m_list[m_idx];
 	monster_race    *r_ptr = race_inf(m_ptr);
 	object_type		*o_ptr;
-	char            m_name[80];
+	char            m_name[MNAME_LEN];
 	char		o_name[ONAME_LEN];
 	int d, i, j, ty, tx, chance, crowd = 0, piece = 0;
 	bool done = FALSE;
@@ -513,8 +513,8 @@ bool make_attack_melee(int Ind, int m_idx)
 	object_type     *o_ptr;
 
 	char            o_name[ONAME_LEN];
-	char            m_name[80], m_name_gen[80];
-	char            ddesc[80];
+	char            m_name[MNAME_LEN], m_name_gen[MNAME_LEN];
+	char            ddesc[MNAME_LEN];
 	char		dam_msg[80] = { '\0' };
 
 	bool            blinked, prot = FALSE;
@@ -2749,7 +2749,7 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 			}
 #ifdef RPG_SERVER
 			if (dead && m_ptr->pet) {
-				char monster_name[80];
+				char monster_name[MNAME_LEN];
 				monster_desc(find_player(m_ptr->owner), monster_name, tm_idx, 0x04&0x08);
 				msg_format(find_player(m_ptr->owner), "\377yYour pet killed %s.", monster_name);
 				if (!(Players[find_player(m_ptr->owner)]->mode & MODE_PVP))

@@ -253,7 +253,7 @@ extern player_type **Players;
 extern long GetInd[];
 /*extern char player_name[32];
 extern char player_base[32];
-extern char died_from[80];
+extern char died_from[MAX_CHARS];
 extern char history[4][60];
 extern char savefile[1024];*/
 /*extern s16b lite_n;
@@ -684,7 +684,7 @@ extern bool inc_stat(int Ind, int stat);
 extern bool dec_stat(int Ind, int stat, int amount, int permanent);
 extern bool res_stat(int Ind, int stat);
 extern bool apply_disenchant(int Ind, int mode);
-extern bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int flg, char attacker[80]);
+extern bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int flg, char attacker[]);
 
 /* spells2.c */
 extern bool hp_player(int Ind, int num);

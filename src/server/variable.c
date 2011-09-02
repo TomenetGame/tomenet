@@ -794,7 +794,7 @@ int gametype;
 char priv_note[MAX_NOTES][80], priv_note_sender[MAX_NOTES][80], priv_note_target[MAX_NOTES][80];
 char party_note[MAX_PARTYNOTES][80], party_note_target[MAX_PARTYNOTES][80];
 char guild_note[MAX_GUILDNOTES][80], guild_note_target[MAX_GUILDNOTES][80];
-char admin_note[MAX_ADMINNOTES][80], server_warning[160];
+char admin_note[MAX_ADMINNOTES][80], server_warning[MSG_LEN];
 
 /* in-game bbs :) - C. Blue */
 char bbs_line[BBS_LINES][140];
@@ -903,9 +903,9 @@ int fireworks = 0;
 int fireworks_delay = 0;
 
 
-char last_chat_line[160];  /* What was said */
-char last_chat_owner[20]; /* Who said it */
-// char last_chat_prev[160];  /* What was said before the above*/
+char last_chat_line[MSG_LEN];  /* What was said */
+char last_chat_owner[NAME_LEN]; /* Who said it */
+// char last_chat_prev[MSG_LEN];  /* What was said before the above*/
 
 auction_type *auctions;
 u32b auction_alloc;

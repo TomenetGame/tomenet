@@ -2318,7 +2318,7 @@ void msg_print_near_monster(int m_idx, cptr msg)
 	int i;
 	player_type *p_ptr;
 	cave_type **zcave;
-	char m_name[80];
+	char m_name[MNAME_LEN];
 
 	monster_type	*m_ptr = &m_list[m_idx];
 	worldpos *wpos=&m_ptr->wpos;
@@ -2572,7 +2572,7 @@ static int checkallow(char *buff, int pos){
 static int censor(char *line){
 	int i, j;
 	char *word;
-	char lcopy[160];
+	char lcopy[MSG_LEN];
 	int level = 0;
 	strcpy(lcopy, line);
 	for(i = 0; lcopy[i]; i++){
@@ -2608,7 +2608,7 @@ static int censor(char *line){
 static void player_talk_aux(int Ind, char *message)
 {
  	int i, len, target = 0;
-	char search[160], sender[80];
+	char search[MSG_LEN], sender[MAX_CHARS];
 	char message2[MSG_LEN];
 	player_type *p_ptr = Players[Ind], *q_ptr;
  	char *colon;
@@ -2619,7 +2619,7 @@ static void player_talk_aux(int Ind, char *message)
 	bool broadcast = FALSE;
 
 #ifdef TOMENET_WORLDS
-	char tmessage[160];		/* TEMPORARY! We will not send the name soon */
+	char tmessage[MSG_LEN];		/* TEMPORARY! We will not send the name soon */
 #endif
 
 	/* Get sender's name */
@@ -2643,8 +2643,8 @@ static void player_talk_aux(int Ind, char *message)
 
 	/* tBot's stuff */
 	/* moved here to allow tbot to see fake pvt messages. -Molt */
-	strncpy(last_chat_owner, sender, 20);
-	strncpy(last_chat_line, message, 160);
+	strncpy(last_chat_owner, sender, NAME_LEN);
+	strncpy(last_chat_line, message, MSG_LEN);
 	/* do exec_lua() not here instead of in dungeon.c - mikaelh */
 
 	/* don't log spammy slash commands */
@@ -3161,7 +3161,7 @@ void un_afk_idle(int Ind) {
 void toggle_afk(int Ind, char *msg)
 {
 	player_type *p_ptr = Players[Ind];
-	char afk[160];
+	char afk[MAX_CHARS];
 	int i;
 
 	/* don't go un-AFK from auto-retaliation */
@@ -3196,8 +3196,8 @@ void toggle_afk(int Ind, char *msg)
 		/* stop every major action */
 		disturb(Ind, 1, 1); /* ,1) = keep resting! */
 
-		strncpy(p_ptr->afk_msg, msg, 79);
-		p_ptr->afk_msg[79] = '\0';
+		strncpy(p_ptr->afk_msg, msg, MAX_CHARS - 1);
+		p_ptr->afk_msg[MAX_CHARS - 1] = '\0';
 
 		if (strlen(p_ptr->afk_msg) == 0)
 			msg_print(Ind, "AFK mode is turned \377rON\377w.");
@@ -3878,7 +3878,7 @@ int get_playerind_loose(char *name)
 
 int get_playerslot_loose(int Ind, char *iname) {
 	int i, j;
-	char o_name[160], i_name[160];
+	char o_name[ONAME_LEN], i_name[ONAME_LEN];
 
 	if (iname == (char*)NULL) return(-1);
 	if ((*iname) == 0) return(-1);

@@ -1846,7 +1846,7 @@ static void sanity_blast(int Ind, int m_idx, bool necro)
 
 	if (!necro)
 	{
-		char            m_name[80];
+		char            m_name[MNAME_LEN];
 		monster_race    *r_ptr;
 
 		if (m_ptr != NULL) r_ptr = race_inf(m_ptr);
@@ -2757,7 +2757,7 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	monster_race    *r_ptr = &r_info[r_idx];
 	player_type	*p_ptr;
 
-	char buf[80];
+	char buf[MNAME_LEN];
 
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return (FALSE);
@@ -4280,7 +4280,7 @@ void message_pain(int Ind, int m_idx, int dam)
 	monster_type		*m_ptr = &m_list[m_idx];
         monster_race            *r_ptr = race_inf(m_ptr);
 
-	char                    m_name[80];
+	char                    m_name[MNAME_LEN];
 
 
 	/* Get the monster name */

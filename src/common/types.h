@@ -1668,8 +1668,8 @@ typedef struct party_type party_type;
 
 struct party_type
 {
-	char name[80];		/* Name of the party */
-	char owner[20];		/* Owner's name */
+	char name[MAX_CHARS];	/* Name of the party */
+	char owner[NAME_LEN];	/* Owner's name */
 	s32b members;		/* Number of people in the party */
 	s32b created;		/* Creation (or disband-tion) time */
 	byte mode;		/* 'Iron Team' or normal party? (C. Blue) */
@@ -1700,7 +1700,7 @@ struct party_type
 #define GF_PKILL 4		/* pkill within guild? */
 
 struct guild_type{
-	char name[80];
+	char name[MAX_CHARS];
 	s32b master;		/* Guildmaster unique player ID */
 	s32b members;		/* Number of guild members */
 	u32b flags;		/* Guild rules flags */
@@ -1797,7 +1797,7 @@ struct key_type{
 };
 
 struct floor_insc{
-	char text[80];		/* that should be enough */
+	char text[MAX_CHARS];	/* that should be enough */
 	u16b found;		/* we may want hidden inscription? */
 };
 
@@ -2308,9 +2308,9 @@ struct player_type
 	
 	s32b mimic_seed;	/* seed for random mimic immunities etc. */
 
-	char died_from[80];	/* What off-ed him */
-	char really_died_from[80];	/* What off-ed him */
-	char died_from_list[80]; /* what goes on the high score list */
+	char died_from[MAX_CHARS];	/* What off-ed him */
+	char really_died_from[MAX_CHARS];	/* What off-ed him */
+	char died_from_list[MAX_CHARS]; /* what goes on the high score list */
 	s16b died_from_depth;	/* what depth we died on */
 
 	u16b total_winner;	/* Is this guy the winner */
@@ -2684,8 +2684,8 @@ struct player_type
 	long int idle;   	/* player is idling for <idle> seconds.. */
 	long int idle_char;   	/* character is idling for <idle_char> seconds (player still might be chatting etc) */
 	bool	afk;		/* player is afk */
-	char	afk_msg[80];	/* afk reason */
-	char	info_msg[80];	/* public info message (display gets overridden by an afk reason, if specified) */
+	char	afk_msg[MAX_CHARS];	/* afk reason */
+	char	info_msg[MAX_CHARS];	/* public info message (display gets overridden by an afk reason, if specified) */
 	bool	use_r_gfx;	/* hack - client uses gfx? */
 	player_list_type	*afk_noticed; /* Only display AFK messages once in private conversations */
 
@@ -2757,7 +2757,7 @@ struct player_type
 	s32b tim_watchlist;		/* Player is on the 'Watch List' (he may not steal) */
 	s32b pstealing;			/* Player has just tried to steal from another player. Cooldown timer. */
 	int ret_dam;                    /* Drained life from a monster */
-	char attacker[80];		/* Monster doing a ranged attack on the player */
+	char attacker[MAX_CHARS];		/* Monster doing a ranged attack on the player */
 #if 0
 	s16b mtp;                       /* Max tank pts */
 	s16b ctp;                       /* Cur tank pts */
@@ -3308,7 +3308,7 @@ struct client_opts
 typedef struct c_player_extra c_player_extra;
 struct c_player_extra
 {
-	char body_name[80];	/* Form of Player */
+	char body_name[MAX_CHARS];	/* Form of Player */
 	char sanity[10];	/* Sanity strings */
 	byte sanity_attr;	/* Colour to display sanity */
 	char location_name[20];	/* Name of location (eg. 'Bree') */

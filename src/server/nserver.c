@@ -5694,10 +5694,9 @@ int Send_target_info(int ind, int x, int y, cptr str)
 	}
 
 	/* Copy */
-	strncpy(buf, str, 79);
-
+	strncpy(buf, str, 80 - 1);
 	/* Paranoia -- Add null */
-	buf[79] = '\0';
+	buf[80 - 1] = '\0';
 
 	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
@@ -8390,8 +8389,9 @@ static int Receive_message(int ind)
 		return n;
 	}
 
-	/* A message longer than 159 characters will certainly cause problems - mikaelh */
-	buf[159] = '\0';
+	/* A message longer than 159 characters will certainly cause problems - mikaelh
+	   (Changed it to MSG_LEN - C. Blue) */
+	buf[MSG_LEN - 1] = '\0';
 	player_talk(player, buf);
 	return 1;
 }
@@ -10123,7 +10123,7 @@ static int Receive_request_str(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
-	char ch, id, str[160];
+	char ch, id, str[MSG_LEN];
 	int n, player = -1;
 	if (connp->id != -1) {
 		player = GetInd[connp->id];

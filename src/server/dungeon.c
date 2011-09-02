@@ -3440,7 +3440,7 @@ static bool process_player_end_aux(int Ind)
 		}
 
 		if (tries) {
-			char m_name[80];
+			char m_name[MNAME_LEN];
 
 			monster_desc(Ind, m_name, i, 0);
 			msg_format(Ind, "Lightning strikes %s.", m_name, i, dam/3);
@@ -3980,14 +3980,14 @@ static bool process_player_end_aux(int Ind)
 }
 
 /* process any team games */
-static void process_games(int Ind){
-	player_type *p_ptr=Players[Ind];
+static void process_games(int Ind) {
+	player_type *p_ptr = Players[Ind];
 	cave_type **zcave;
 	cave_type *c_ptr;
 	char sstr[80];
-	int score=0;
-	if(!(zcave=getcave(&p_ptr->wpos))) return;
-	c_ptr=&zcave[p_ptr->py][p_ptr->px];
+	int score = 0;
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
+	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	if(c_ptr->feat==FEAT_AGOAL || c_ptr->feat==FEAT_BGOAL){
 		int ball;

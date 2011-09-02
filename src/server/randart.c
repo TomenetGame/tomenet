@@ -2045,7 +2045,7 @@ void randart_name(object_type *o_ptr, char *buffer, char *raw_buffer)
 	Rand_quick = TRUE;
 
 	/* Take a random name */
-	o_ptr->name4 = get_rnd_line("randarts.txt", 0, tmp, 80);
+	o_ptr->name4 = get_rnd_line("randarts.txt", 0, tmp, MAX_CHARS);
 
 	/* Capitalise first character */
 	tmp[0] = toupper(tmp[0]);

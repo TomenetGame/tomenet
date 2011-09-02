@@ -510,7 +510,7 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 	{
 		int i;
 		object_type	*o_ptr;
-		char o_name[160];
+		char o_name[ONAME_LEN];
 
 		for (i = 0; i < INVEN_TOTAL; i++)	/* Modified version of inven_damage from spells1.c */
 		{

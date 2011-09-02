@@ -169,7 +169,7 @@ void wproto(struct client *ccl){
 			case WP_CHAT:
                                 /* only relay all for now */
 				if(ccl->authed && ((ccl->authed>0) || secure.chat)){
-					char msg[160], *p = wpk->d.chat.ctxt;
+					char msg[MSG_LEN], *p = wpk->d.chat.ctxt;
 					/* strip chat codes and reinsert them at the beginning */
 					if (*p == '\374') {
 						client_all = 1;
@@ -183,13 +183,13 @@ void wproto(struct client *ccl){
 						client_ctrlo = 1;
 						p++;
 					}
-//					snprintf(msg, 160, "\377o[\377%c%d\377o] %s", (ccl->authed>0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt);
-					snprintf(msg, 160, "%s%s\377%c[%d]\377w %s%c",
+//					snprintf(msg, MSG_LEN, "\377o[\377%c%d\377o] %s", (ccl->authed>0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt);
+					snprintf(msg, MSG_LEN, "%s%s\377%c[%d]\377w %s%c",
 					    client_all ? "\374" : (client_chat ? "\375" : ""),
 					    client_ctrlo ? "\376" : "",
 					    (ccl->authed>0 ? 'g' : 'r'), ccl->authed, p, '\0');
-//					msg[159] = '\0';
-					strncpy(wpk->d.chat.ctxt, msg, 160);
+//					msg[MSG_LEN - 1] = '\0';
+					strncpy(wpk->d.chat.ctxt, msg, MSG_LEN);
 					relay(wpk, ccl);
 				}
 				break;
@@ -198,9 +198,9 @@ void wproto(struct client *ccl){
 				if(ccl->authed>0){
 
 					/* add same code in front as for WP_CHAT */
-//					char msg[160];
-//					snprintf(msg, 160, "\377%c[%d]\377w %s", (ccl->authed>0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt);
-//					strncpy(wpk->d.chat.ctxt, msg, 160);
+//					char msg[MSG_LEN];
+//					snprintf(msg, MSG_LEN, "\377%c[%d]\377w %s", (ccl->authed>0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt);
+//					strncpy(wpk->d.chat.ctxt, msg, MSG_LEN);
 //d.pmsg.player
 //d.pmsg.victim
 //d.pmsg.ctxt
@@ -231,7 +231,7 @@ void wproto(struct client *ccl){
 				if(ccl->authed && (ccl->authed>0 || secure.msgs)){
 
 					/* add same code in front as for WP_CHAT */
-					char msg[160], *p = wpk->d.smsg.stxt;
+					char msg[MSG_LEN], *p = wpk->d.smsg.stxt;
 					/* strip chat codes and reinsert them at the beginning */
 					if (*p == '\374') {
 						client_all = 1;
@@ -245,13 +245,14 @@ void wproto(struct client *ccl){
 						client_ctrlo = 1;
 						p++;
 					}
-					snprintf(msg, 160, "%s%s\377%c[%d]\377w %s",
+					snprintf(msg, MSG_LEN, "%s%s\377%c[%d]\377w %s",
 					    client_all ? "\374" : (client_chat ? "\375" : ""),
 					    client_ctrlo ? "\376" : "",
 					    (ccl->authed>0 ? 'g' : 'r'), ccl->authed, p);
-					/* make sure it's null terminated (if snprintf exceeds 160 chars and places no \0) - mikaelh */
-					msg[159] = '\0';
-					strncpy(wpk->d.smsg.stxt, msg, 160);
+					/* make sure it's null terminated (if snprintf exceeds 160 chars and places no \0) - mikaelh
+					   (replaced 160 by MSG_LEN - C. Blue) */
+					msg[MSG_LEN - 1] = '\0';
+					strncpy(wpk->d.smsg.stxt, msg, MSG_LEN);
 
 					relay(wpk, ccl);
 				}

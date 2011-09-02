@@ -194,17 +194,17 @@
 /*
  * Define the maximum number of characters to use in many things
  */
-#define MAX_CHARS	80
+#define MAX_CHARS	80	/* typically 1 line */
+#define MAX_CHARS_WIDE	160	/* typically a line with possibly colour codes */
 
 /* max length of item names including inscription */
 #define ONAME_LEN	160
 
-/*
- * The maximum number of player ID's / accounts
- */
-#define MAX_ID 65536
-#define MAX_ACCOUNTS	8192
+/* max length of monster names (with pronominum etc) */
+#define MNAME_LEN	80
 
+/* max length of character names */
+#define NAME_LEN	20
 
 /*
  * Maximum message length
@@ -215,6 +215,14 @@
  * Define the maximum size of temporary file-name length.
  */
 #define MAX_TMP_PATH_LEN	256
+
+/*
+ * The maximum number of player ID's / accounts
+ */
+#define MAX_ID 65536
+#define MAX_ACCOUNTS	8192
+
+
 
 
 /*

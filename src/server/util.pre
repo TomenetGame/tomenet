@@ -361,8 +361,8 @@ extern int ge_contender_buffer_deed[128];
 
 struct party_type
 {
-	char name[80];		/* Name of the party */
-	char owner[20];		/* Owner's name */
+	char name[80];	/* Name of the party */
+	char owner[NAME_LEN];	/* Owner's name */
 	s32b members;		/* Number of people in the party */
 	s32b created;		/* Creation (or disband-tion) time */
 	byte mode;		/* 'Iron Team' or normal party? (C. Blue) */

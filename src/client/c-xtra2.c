@@ -571,7 +571,7 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 	cptr message_recall[MESSAGE_MAX] = {0};
 	cptr msg = "", msg2;
 
-	char buf[160];
+	char buf[MSG_LEN];
 
 	cptr nomsg_target = "Target selected.";
 	cptr nomsg_map = "Map sector ";

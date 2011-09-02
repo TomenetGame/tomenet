@@ -1884,7 +1884,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 	cave_type **zcave;
 
 	object_type forge;
-	char o_name[80];
+	char o_name[ONAME_LEN];
 
 	if(!(zcave = getcave(wpos))) return;
 
@@ -4505,7 +4505,7 @@ void do_cmd_fire(int Ind, int dir)
 				/* Did we hit it (penalize range) */
 				if (test_hit_fire(chance - cur_dis, m_ptr->ac, visible)) {
 					bool fear = FALSE;
-					char m_name[80];
+					char m_name[MNAME_LEN];
 
 					/* Assume a default death */
 					cptr note_dies = " dies";
@@ -4620,7 +4620,7 @@ void do_cmd_fire(int Ind, int dir)
 						m_ptr->confused = (i < 200) ? i : 200;
 
 						if (visible) {
-							char m_name[80];
+							char m_name[MNAME_LEN];
 
 							/* Get "the monster" or "it" */
 							monster_desc(Ind, m_name, c_ptr->m_idx, 0);
@@ -4699,7 +4699,7 @@ void do_cmd_fire(int Ind, int dir)
 
 						/* Take note */
 						if (fear && visible) {
-							char m_name[80];
+							char m_name[MNAME_LEN];
 
 #ifdef USE_SOUND_2010
 #else
@@ -5084,7 +5084,7 @@ bool interfere(int Ind, int chance)
 		if (chance > 95) chance = 95;
 		if (rand_int(100) < chance)
 		{
-			char m_name[80];
+			char m_name[MNAME_LEN];
 			if (i > 0)
 			{
 				monster_desc(Ind, m_name, i, 0);
@@ -5124,7 +5124,7 @@ bool interfere(int Ind, int chance)
 
 			if (rand_int(100) < chance)
 			{
-				char m_name[80];
+				char m_name[MNAME_LEN];
 				if (i > 0)
 				{
 					monster_desc(Ind, m_name, i, 0);
@@ -5577,7 +5577,7 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 
 				/* Handle visible monster */
 				else {
-					char m_name[80];
+					char m_name[MNAME_LEN];
 
 					/* Get "the monster" or "it" */
 					monster_desc(Ind, m_name, c_ptr->m_idx, 0);
@@ -5620,7 +5620,7 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 
 					/* Take note */
 					if (fear && visible) {
-						char m_name[80];
+						char m_name[MNAME_LEN];
 
 #ifdef USE_SOUND_2010
 #else
@@ -5721,7 +5721,7 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 				{
 #if 0
 					if (cave[y][x].m_idx) {
-						char m_name[80];
+						char m_name[MNAME_LEN];
 						monster_desc(m_name, &m_list[cave[y][x].m_idx], 0);
 						switch (is_friend(&m_list[cave[y][x].m_idx]))
 						{

@@ -2891,8 +2891,8 @@ void do_slash_cmd(int Ind, char *message)
 		else if (prefix(message, "/info")) { /* set a personal info message - C. Blue */
 			char to_strip[80];
 			if (strlen(message2) > 6) {
-				strncpy(to_strip, message2 + 6, 80);
-				if (strlen(message2 + 6) >= 80) to_strip[79] = '\0';
+				strncpy(to_strip, message2 + 6, MAX_CHARS);
+				if (strlen(message2 + 6) >= MAX_CHARS) to_strip[MAX_CHARS - 1] = '\0';
 				else to_strip[strlen(message2 + 6)] = '\0';
 				strip_control_codes(p_ptr->info_msg, to_strip);
 				msg_print(Ind, "Personal info message has been changed.");
@@ -3469,7 +3469,7 @@ void do_slash_cmd(int Ind, char *message)
 				} else if (!strcmp(token[1], "stop")) { /* stop all games - mikaelh */
 					char sstr[80];
 					msg_broadcast(0, "\377pThe game has been stopped!");
-					snprintf(sstr, 80, "Score: \377RReds: %d  \377BBlues: %d", teamscore[0], teamscore[1]);
+					snprintf(sstr, MAX_CHARS, "Score: \377RReds: %d  \377BBlues: %d", teamscore[0], teamscore[1]);
 					msg_broadcast(0, sstr);
 					teamscore[0] = 0;
 					teamscore[1] = 0;

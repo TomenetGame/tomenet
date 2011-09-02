@@ -1774,7 +1774,7 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 		char which = ' ';
 
 		/* Build the prompt */
-		strnfmt(tmp_val, 80, "Choose an item to steal (a-%c) or ESC:",
+		strnfmt(tmp_val, MAX_CHARS, "Choose an item to steal (a-%c) or ESC:",
 				'a' - 1 + num);
 
 		/* Show the prompt */
@@ -2992,8 +2992,8 @@ void do_cmd_locate(int Ind, int dir)
 	int	y1, x1, y2, x2;
 	int	prow = p_ptr->panel_row;
 	int	pcol = p_ptr->panel_col;
-	char	tmp_val[80];
-	char	out_val[160];
+	char	tmp_val[MAX_CHARS];
+	char	out_val[MAX_CHARS_WIDE];
 
 
 	/* No direction, recenter */
