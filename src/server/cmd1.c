@@ -217,16 +217,12 @@ s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_cri
 /* accepts Ind <=0 */
 s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, char *brand_msg, bool thrown)
 {
-//	player_type *p_ptr = Players[Ind];
-
 	int mult = FACTOR_MULT;
-
 	monster_race *r_ptr = race_inf(m_ptr);
-
 	u32b f1, f2, f3, f4, f5, esp;
-	player_type *p_ptr = Players[Ind];
+	player_type *p_ptr = NULL;
 
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 	cave_type *c_ptr;
 	char m_name[80];
@@ -236,7 +232,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 	int brands_total = 0, brand_msgs_added = 0;
 	/* char brand_msg[80];*/
 
-	monster_race *pr_ptr = &r_info[p_ptr->body_monster];
+	monster_race *pr_ptr = NULL;
 	bool apply_monster_brands = TRUE;
 	int i, monster_brands = 0;
 	u32b monster_brand[6], monster_brand_chosen;
@@ -246,56 +242,50 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 	monster_brand[4] = 0;
 	monster_brand[5] = 0;
 
-	if(!(zcave=getcave(wpos))) return(tdam);
-	c_ptr=&zcave[m_ptr->fy][m_ptr->fx];
+	if (Ind > 0) {
+		p_ptr = Players[Ind];
+		pr_ptr = &r_info[p_ptr->body_monster];
+	}
+
+	if (!(zcave = getcave(wpos))) return(tdam);
+	c_ptr = &zcave[m_ptr->fy][m_ptr->fx];
 
 	/* Extract monster name (or "it") */
 	monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 
 	/* Extract the flags */
-	if (o_ptr->k_idx)
-	{
+	if (o_ptr->k_idx) {
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 		/* Hack -- extract temp branding */
-		if (Ind > 0)
-		{
-			if (p_ptr->bow_brand)
-			{
-	
-				switch (p_ptr->bow_brand_t)
-				{
-					case BRAND_ELEC:
-						f1 |= TR1_BRAND_ELEC;
-						break;
-					case BRAND_COLD:
-						f1 |= TR1_BRAND_COLD;
-						break;
-					case BRAND_FIRE:
-						f1 |= TR1_BRAND_FIRE;
-						break;
-					case BRAND_ACID:
-						f1 |= TR1_BRAND_ACID;
-						break;
-					case BRAND_POIS:
-						f1 |= TR1_BRAND_POIS;
-						break;
-				}
+		if (Ind > 0 && p_ptr->bow_brand) {
+			switch (p_ptr->bow_brand_t) {
+			case BRAND_ELEC:
+				f1 |= TR1_BRAND_ELEC;
+				break;
+			case BRAND_COLD:
+				f1 |= TR1_BRAND_COLD;
+				break;
+			case BRAND_FIRE:
+				f1 |= TR1_BRAND_FIRE;
+				break;
+			case BRAND_ACID:
+				f1 |= TR1_BRAND_ACID;
+				break;
+			case BRAND_POIS:
+				f1 |= TR1_BRAND_POIS;
+				break;
 			}
 		}
-	}
-	else
-	{
+	} else {
 		f1 = 0; f2 = 0; f3 = 0; f4 = 0; f5 = 0;
 	}
 
 
 	/* Apply brands from mimic monster forms */
-        if (p_ptr->body_monster)
-	{
+        if (Ind > 0 && p_ptr->body_monster) {
 #if 0
-		switch (pr_ptr->r_ptr->d_char)
-		{
+		switch (pr_ptr->r_ptr->d_char) {
 			/* If monster is fighting with a weapon, the player gets the brand(s) even with a weapon */
 			case 'p':	case 'h':	case 't':
 			case 'o':	case 'y':	case 'k':
@@ -330,12 +320,9 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			apply_monster_brands = FALSE;
 
 		/* Get monster brands. If monster has several, choose one randomly */
-		for (i = 0; i < 4; i++)
-		{
-		        if (pr_ptr->blow[i].d_dice * pr_ptr->blow[i].d_side)
-			{
-				switch (pr_ptr->blow[i].effect)
-				{
+		for (i = 0; i < 4; i++) {
+			if (pr_ptr->blow[i].d_dice * pr_ptr->blow[i].d_side) {
+				switch (pr_ptr->blow[i].effect) {
 				case RBE_ACID:
 					monster_brands++;
 					monster_brand[monster_brands] = TR1_BRAND_ACID;
@@ -371,15 +358,14 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 	}
 
 	/* Add brands/slaying from non-weapon items (gloves, frost-armour) */
-        for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
-        {
-                e_ptr = &p_ptr->inventory[i];
-                /* k_ptr = &k_info[e_ptr->k_idx];
-                pval = e_ptr->pval; not needed */
-	        /* Skip missing items */
-        	if (!e_ptr->k_idx) continue;
-	        /* Extract the item flags */
-                object_flags(e_ptr, &ef1, &ef2, &ef3, &ef4, &ef5, &eesp);
+	if (Ind > 0) for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
+		e_ptr = &p_ptr->inventory[i];
+		/* k_ptr = &k_info[e_ptr->k_idx];
+		pval = e_ptr->pval; not needed */
+		/* Skip missing items */
+		if (!e_ptr->k_idx) continue;
+		/* Extract the item flags */
+		object_flags(e_ptr, &ef1, &ef2, &ef3, &ef4, &ef5, &eesp);
 
 		/* Weapon/Bow/Ammo/Tool brands don't have general effect on all attacks */
 		/* All other items have general effect! */
@@ -388,16 +374,16 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			f1 |= ef1;
 
 		/* Add bow branding on correct ammo types */
-		if(i==INVEN_BOW && e_ptr->tval==TV_BOW){
-			if(( (e_ptr->sval==SV_SHORT_BOW || e_ptr->sval==SV_LONG_BOW) && o_ptr->tval==TV_ARROW) ||
-			   ( (e_ptr->sval==SV_LIGHT_XBOW || e_ptr->sval==SV_HEAVY_XBOW) && o_ptr->tval==TV_BOLT) ||
-			   (e_ptr->sval==SV_SLING && o_ptr->tval==TV_SHOT))
-				f1|=ef1;
+		if (i == INVEN_BOW && e_ptr->tval == TV_BOW) {
+			if(( (e_ptr->sval == SV_SHORT_BOW || e_ptr->sval == SV_LONG_BOW) && o_ptr->tval == TV_ARROW) ||
+			   ( (e_ptr->sval == SV_LIGHT_XBOW || e_ptr->sval == SV_HEAVY_XBOW) && o_ptr->tval == TV_BOLT) ||
+			   (e_ptr->sval == SV_SLING && o_ptr->tval == TV_SHOT))
+				f1 |= ef1;
 		}
 	}
 
 	/* Extra melee branding */
-	if (!is_ammo(o_ptr->tval)) {
+	if (Ind > 0 && !is_ammo(o_ptr->tval)) {
 		/* Apply brands from (powerful) auras! */
 		if (get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) f1 |= TR1_BRAND_COLD;
 		if (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) f1 |= (TR1_BRAND_COLD | TR1_BRAND_FIRE);
@@ -405,23 +391,22 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		if ((p_ptr->inventory[INVEN_WIELD].k_idx || 
 		    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) && /* dual-wield */
 		    p_ptr->brand) {
-			switch (p_ptr->brand_t)
-			{
-				case BRAND_ELEC:
-					f1 |= TR1_BRAND_ELEC;
-					break;
-				case BRAND_COLD:
-					f1 |= TR1_BRAND_COLD;
-					break;
-				case BRAND_FIRE:
-					f1 |= TR1_BRAND_FIRE;
-					break;
-				case BRAND_ACID:
-					f1 |= TR1_BRAND_ACID;
-					break;
-				case BRAND_POIS:
-					f1 |= TR1_BRAND_POIS;
-					break;
+			switch (p_ptr->brand_t) {
+			case BRAND_ELEC:
+				f1 |= TR1_BRAND_ELEC;
+				break;
+			case BRAND_COLD:
+				f1 |= TR1_BRAND_COLD;
+				break;
+			case BRAND_FIRE:
+				f1 |= TR1_BRAND_FIRE;
+				break;
+			case BRAND_ACID:
+				f1 |= TR1_BRAND_ACID;
+				break;
+			case BRAND_POIS:
+				f1 |= TR1_BRAND_POIS;
+				break;
 			}
 		}
 	}
@@ -445,8 +430,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 
 	strcpy(brand_msg,m_name);
 	strcat(brand_msg," is ");//"%^s is ");
-	switch (brands_total)
-	{
+	switch (brands_total) {
 		/* full messages for only 1 brand */
 		case 1:
 		if (f1 & TR1_BRAND_ACID) strcat(brand_msg,"covered in acid");
@@ -457,46 +441,37 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		break;
 		/* fully combined messages for 2 brands */
 		case 2:
-		if (f1 & TR1_BRAND_ACID)
-		{
+		if (f1 & TR1_BRAND_ACID) {
 			strcat(brand_msg,"covered in acid");
 			brand_msgs_added++;
 		}
-		if (f1 & TR1_BRAND_COLD)
-		{
+		if (f1 & TR1_BRAND_COLD) {
 			/* cold is grammatically combined with acid since the verbum 'covered' is identical */
-			if (brand_msgs_added > 0)
-			{
+			if (brand_msgs_added > 0) {
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and frost");
 			    else strcat(brand_msg,", frost");
 			}
 			else strcat(brand_msg,"covered with frost");
 			brand_msgs_added++;
 		}
-		if (f1 & TR1_BRAND_ELEC)
-		{
-			if (brand_msgs_added > 0)
-			{
+		if (f1 & TR1_BRAND_ELEC) {
+			if (brand_msgs_added > 0) {
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
 			    else strcat(brand_msg,", ");
 			}
 			strcat(brand_msg,"struck by electricity");
 			brand_msgs_added++;
 		}
-		if (f1 & TR1_BRAND_FIRE)
-		{
-			if (brand_msgs_added > 0)
-			{
+		if (f1 & TR1_BRAND_FIRE) {
+			if (brand_msgs_added > 0) {
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
 			    else strcat(brand_msg,", ");
 			}
 			strcat(brand_msg,"enveloped in flames");
 			brand_msgs_added++;
 		}
-		if (f1 & TR1_BRAND_POIS)
-		{
-			if (brand_msgs_added > 0)
-			{
+		if (f1 & TR1_BRAND_POIS) {
+			if (brand_msgs_added > 0) {
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
 			    else strcat(brand_msg,", ");
 			}
@@ -507,45 +482,36 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		/* shorter messages if more brands have to fit in the message-line */
 		case 3:		case 4:
 		strcat(brand_msg,"hit by ");
-		if (f1 & TR1_BRAND_ACID)
-		{
+		if (f1 & TR1_BRAND_ACID) {
 			strcat(brand_msg,"acid");
 			brand_msgs_added++;
 		}
-		if (f1 & TR1_BRAND_COLD)
-		{
-			if (brand_msgs_added > 0)
-			{
+		if (f1 & TR1_BRAND_COLD) {
+			if (brand_msgs_added > 0) {
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
 			    else strcat(brand_msg,", ");
 			}
 			strcat(brand_msg,"frost");
 			brand_msgs_added++;
 		}
-		if (f1 & TR1_BRAND_ELEC)
-		{
-			if (brand_msgs_added > 0)
-			{
+		if (f1 & TR1_BRAND_ELEC) {
+			if (brand_msgs_added > 0) {
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
 			    else strcat(brand_msg,", ");
 			}
 			strcat(brand_msg,"electricity");
 			brand_msgs_added++;
 		}
-		if (f1 & TR1_BRAND_FIRE)
-		{
-			if (brand_msgs_added > 0)
-			{
+		if (f1 & TR1_BRAND_FIRE) {
+			if (brand_msgs_added > 0) {
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
 			    else strcat(brand_msg,", ");
 			}
 			strcat(brand_msg,"flames");
 			brand_msgs_added++;
 		}
-		if (f1 & TR1_BRAND_POIS)
-		{
-			if (brand_msgs_added > 0)
-			{
+		if (f1 & TR1_BRAND_POIS) {
+			if (brand_msgs_added > 0) {
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
 			    else strcat(brand_msg,", ");
 			}
@@ -559,15 +525,13 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		break;
 	}
 	strcat(brand_msg,"!");
-	if (brands_total > 0)
-	{
+	if (brands_total > 0) {
 		//msg_format(Ind, brand_msg, m_name);
 	}
 	else strcpy(brand_msg,"");
 #endif
 	/* Some "weapons" and "ammo" do extra damage */
-	switch (o_ptr->tval)
-	{
+	switch (o_ptr->tval) {
 /*		case TV_SHOT:
 		case TV_ARROW:
 		case TV_BOLT:
@@ -580,264 +544,182 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		{
 			/* Slay Animal */
 			if ((f1 & TR1_SLAY_ANIMAL) &&
-			    (r_ptr->flags3 & RF3_ANIMAL))
-			{
+			    (r_ptr->flags3 & RF3_ANIMAL)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_ANIMAL;*/
 
 				if (mult < FACTOR_HURT) mult = FACTOR_HURT;
 			}
 
 			/* Slay Evil */
-			if (((f1 & TR1_SLAY_EVIL) || (get_skill(p_ptr, SKILL_HOFFENSE) >= 50)
+			if (((f1 & TR1_SLAY_EVIL) || (Ind > 0 && get_skill(p_ptr, SKILL_HOFFENSE) >= 50)
 #ifdef ENABLE_DIVINE
-				|| (p_ptr->prace == RACE_DIVINE && (p_ptr->ptrait == TRAIT_ENLIGHTENED) && p_ptr->lev >= 50)
+			    || (Ind > 0 && p_ptr->prace == RACE_DIVINE && (p_ptr->ptrait == TRAIT_ENLIGHTENED) && p_ptr->lev >= 50)
 #endif
-				) && (r_ptr->flags3 & RF3_EVIL))
-			{
+			    ) && (r_ptr->flags3 & RF3_EVIL)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_EVIL;*/
-
 				if (mult < FACTOR_HURT) mult = FACTOR_HURT;
 			}
 
 			/* Slay Undead */
-			if (((f1 & TR1_SLAY_UNDEAD) || (get_skill(p_ptr, SKILL_HOFFENSE) >= 30)) &&
-			    (r_ptr->flags3 & RF3_UNDEAD))
-			{
+			if (((f1 & TR1_SLAY_UNDEAD) || (Ind > 0 && get_skill(p_ptr, SKILL_HOFFENSE) >= 30)) &&
+			    (r_ptr->flags3 & RF3_UNDEAD)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_UNDEAD;*/
-
 				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
 			}
 
 			/* Slay Demon */
-			if (((f1 & TR1_SLAY_DEMON) || (get_skill(p_ptr, SKILL_HOFFENSE) >= 40)) &&
-			    (r_ptr->flags3 & RF3_DEMON))
-			{
+			if (((f1 & TR1_SLAY_DEMON) || (Ind > 0 && get_skill(p_ptr, SKILL_HOFFENSE) >= 40)) &&
+			    (r_ptr->flags3 & RF3_DEMON)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DEMON;*/
-
 				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
 			}
 
 			/* Slay Orc */
 			if ((f1 & TR1_SLAY_ORC) &&
-			    (r_ptr->flags3 & RF3_ORC))
-			{
+			    (r_ptr->flags3 & RF3_ORC)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_ORC;*/
-
 				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
 			}
 
 			/* Slay Troll */
 			if ((f1 & TR1_SLAY_TROLL) &&
-			    (r_ptr->flags3 & RF3_TROLL))
-			{
+			    (r_ptr->flags3 & RF3_TROLL)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_TROLL;*/
-
 				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
 			}
 
 			/* Slay Giant */
 			if ((f1 & TR1_SLAY_GIANT) &&
-			    (r_ptr->flags3 & RF3_GIANT))
-			{
+			    (r_ptr->flags3 & RF3_GIANT)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_GIANT;*/
-
 				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
 			}
 
 			/* Slay Dragon  */
 			if ((f1 & TR1_SLAY_DRAGON) &&
-			    (r_ptr->flags3 & RF3_DRAGON))
-			{
+			    (r_ptr->flags3 & RF3_DRAGON)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DRAGON;*/
-
 				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
 			}
 
 			/* Execute Dragon */
 			if ((f1 & TR1_KILL_DRAGON) &&
-			    (r_ptr->flags3 & RF3_DRAGON))
-			{
+			    (r_ptr->flags3 & RF3_DRAGON)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DRAGON;*/
-
 				if (mult < FACTOR_KILL) mult = FACTOR_KILL;
 			}
 
 			/* Execute Undead */
 			if ((f1 & TR1_KILL_UNDEAD) &&
-			    (r_ptr->flags3 & RF3_UNDEAD))
-			{
+			    (r_ptr->flags3 & RF3_UNDEAD)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_UNDEAD;*/
-
 				if (mult < FACTOR_KILL) mult = FACTOR_KILL;
 			}
 
 			/* Execute Undead */
 			if ((f1 & TR1_KILL_DEMON) &&
-			    (r_ptr->flags3 & RF3_DEMON))
-			{
+			    (r_ptr->flags3 & RF3_DEMON)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DEMON;*/
-
 				if (mult < FACTOR_KILL) mult = FACTOR_KILL;
 			}
 
 
 			/* Brand (Acid) */
-			if (f1 & TR1_BRAND_ACID)
-			{
+			if (f1 & TR1_BRAND_ACID) {
 				/* Notice immunity */
-				if (r_ptr->flags3 & RF3_IM_ACID)
-				{
+				if (r_ptr->flags3 & RF3_IM_ACID) {
 					/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_ACID;*/
 				}
 				/* Notice susceptibility */
-				else if (r_ptr->flags9 & (RF9_SUSCEP_ACID))
-				{
+				else if (r_ptr->flags9 & (RF9_SUSCEP_ACID)) {
 #if 0
-					if (m_ptr->ml)
-					{
-						r_ptr->r_flags9 |= (RF9_SUSCEP_ACID);
-					}
+					if (m_ptr->ml) r_ptr->r_flags9 |= (RF9_SUSCEP_ACID);
 #endif
 					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
-				}
-				else if (r_ptr->flags9 & RF9_RES_ACID)
-				{
+				} else if (r_ptr->flags9 & RF9_RES_ACID) {
 					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
-
 				/* Otherwise, take the damage */
-				else
-				{
-					if(mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-				}
+				else if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 			}
 
 			/* Brand (Elec) */
-			if (f1 & TR1_BRAND_ELEC)
-			{
+			if (f1 & TR1_BRAND_ELEC) {
 				/* Notice immunity */
-				if (r_ptr->flags3 & RF3_IM_ELEC)
-				{
+				if (r_ptr->flags3 & RF3_IM_ELEC) {
 					/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_ELEC;*/
 				}
-
 				/* Notice susceptibility */
-				else if (r_ptr->flags9 & (RF9_SUSCEP_ELEC))
-				{
+				else if (r_ptr->flags9 & (RF9_SUSCEP_ELEC)) {
 #if 0
-					if (m_ptr->ml)
-					{
-						r_ptr->r_flags9 |= (RF9_SUSCEP_ELEC);
-					}
+					if (m_ptr->ml) r_ptr->r_flags9 |= (RF9_SUSCEP_ELEC);
 #endif
 					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
-				}
-				else if (r_ptr->flags9 & RF9_RES_ELEC)
-				{
+				} else if (r_ptr->flags9 & RF9_RES_ELEC) {
 				    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
-
 				/* Otherwise, take the damage */
-				else
-				{
-					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-				}
+				else if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 			}
 
 			/* Brand (Fire) */
-			if (f1 & TR1_BRAND_FIRE)
-			{
+			if (f1 & TR1_BRAND_FIRE) {
 				/* Notice immunity */
-				if (r_ptr->flags3 & RF3_IM_FIRE)
-				{
+				if (r_ptr->flags3 & RF3_IM_FIRE) {
 					/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_FIRE;*/
 				}
 				/* Notice susceptibility */
-				else if (r_ptr->flags3 & (RF3_SUSCEP_FIRE))
-				{
+				else if (r_ptr->flags3 & (RF3_SUSCEP_FIRE)) {
 #if 0
-					if (m_ptr->ml)
-					{
-						r_ptr->r_flags3 |= (RF3_SUSCEP_FIRE);
-					}
+					if (m_ptr->ml) r_ptr->r_flags3 |= (RF3_SUSCEP_FIRE);
 #endif
 					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
-				}
-				else if (r_ptr->flags9 & RF9_RES_FIRE)
-				{
+				} else if (r_ptr->flags9 & RF9_RES_FIRE) {
 				    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
-
 				/* Otherwise, take the damage */
-				else
-				{
-					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-				}
+				else if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 			}
 
 			/* Brand (Cold) */
-			if (f1 & TR1_BRAND_COLD)
-			{
+			if (f1 & TR1_BRAND_COLD) {
 				/* Notice immunity */
-				if (r_ptr->flags3 & RF3_IM_COLD)
-				{
+				if (r_ptr->flags3 & RF3_IM_COLD) {
 					/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_COLD;*/
 				}
 				/* Notice susceptibility */
-				else if (r_ptr->flags3 & (RF3_SUSCEP_COLD))
-				{
+				else if (r_ptr->flags3 & (RF3_SUSCEP_COLD)) {
 #if 0
-					if (m_ptr->ml)
-					{
-						r_ptr->r_flags3 |= (RF3_SUSCEP_COLD);
-					}
+					if (m_ptr->ml) r_ptr->r_flags3 |= (RF3_SUSCEP_COLD);
 #endif
 					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
 				}
-				else if (r_ptr->flags9 & RF9_RES_COLD)
-				{
+				else if (r_ptr->flags9 & RF9_RES_COLD) {
 				    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
-
 				/* Otherwise, take the damage */
-				else
-				{
-					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-				}
+				else if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 			}
 
 
 			/* Brand (Pois) */
-			if (f1 & TR1_BRAND_POIS)
-			{
+			if (f1 & TR1_BRAND_POIS) {
 				/* Notice immunity */
-				if (r_ptr->flags3 & RF3_IM_POIS)
-				{
+				if (r_ptr->flags3 & RF3_IM_POIS) {
 					/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_POIS;*/
 				}
-
 				/* Notice susceptibility */
-				else if (r_ptr->flags9 & (RF9_SUSCEP_POIS))
-				{
+				else if (r_ptr->flags9 & (RF9_SUSCEP_POIS)) {
 #if 0
-					if (m_ptr->ml)
-					{
-						r_ptr->r_flags9 |= (RF9_SUSCEP_POIS);
-					}
+					if (m_ptr->ml) r_ptr->r_flags9 |= (RF9_SUSCEP_POIS);
 #endif
 					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
 //					if (magik(95)) *special |= SPEC_POIS;
-				}
-				else if (r_ptr->flags9 & RF9_RES_POIS)
-				{
+				} else if (r_ptr->flags9 & RF9_RES_POIS) {
 				    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
-
 				/* Otherwise, take the damage */
-				else
-				{
-					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-				}
+				else if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 			}
 
 			break;
