@@ -628,7 +628,7 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.no_verify_destroy,	FALSE,	4,	0, 8, TRUE,	/* former dungeon_align */
 	"no_verify_destroy",		"Skip safety question when destroying items" },
 
-	{ &c_cfg.whole_ammo_stack,	FALSE,	4,	0, 9, TRUE,	/* former dungeon_stair */
+	{ &c_cfg.whole_ammo_stack,	FALSE,	3,	0, 9, TRUE,	/* former dungeon_stair */
 	"whole_ammo_stack",		"For ammo/misc items always operate on whole stack" },
 
 	{ &c_cfg.recall_flicker,	FALSE,	1,	1, 10, TRUE,
@@ -645,8 +645,8 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.page_on_afk_privmsg,	TRUE,	4,	1, 13, TRUE,
 	"page_on_afk_privmsg",		"Beep when receiving a private message while AFK" },
 
-	{ &c_cfg.smart_learn,		FALSE,	2,	1, 14, FALSE,
-	"smart_learn",			"(obsolete) Monsters learn from their mistakes" },
+	{ &c_cfg.auto_untag,		FALSE,	3,	1, 14, TRUE,
+	"auto_untag",			"Remove unique monster inscription on pick-up" },
 
 	{ &c_cfg.smart_cheat,		FALSE,	2,	1, 15, FALSE,
 	"smart_cheat",			"(obsolete) Monsters exploit players weaknesses" },
@@ -721,7 +721,7 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.auto_inscribe,		FALSE,	3,	9, 64, FALSE,
 	"auto_inscribe",		"Automatically inscribe books and so on" },
 #else
-	{ &c_cfg.auto_inscribe,		FALSE,	4,	9, 64, TRUE,
+	{ &c_cfg.auto_inscribe,		FALSE,	3,	9, 64, TRUE,
 	"auto_inscribe",		"Use additional predefined auto-inscriptions" },
 #endif
 

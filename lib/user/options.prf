@@ -49,7 +49,7 @@ Y:recall_flicker
 X:time_stamp_chat
 X:page_on_privmsg
 Y:page_on_afk_privmsg
-X:smart_learn
+X:auto_untag
 X:smart_cheat
 
 X:view_reduce_lite

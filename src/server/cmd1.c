@@ -1459,8 +1459,7 @@ void carry(int Ind, int pickup, int confirm)
 	if (nothing_test(o_ptr, p_ptr, &p_ptr->wpos, p_ptr->px, p_ptr->py)) return;
 
 	/* Auto id ? */
-	if (p_ptr->auto_id)
-	{
+	if (p_ptr->auto_id) {
 		object_aware(Ind, o_ptr);
 		object_known(o_ptr);
 	}
@@ -1477,8 +1476,7 @@ void carry(int Ind, int pickup, int confirm)
 
 
 	/* Pick up gold */
-	if (o_ptr->tval == TV_GOLD)
-	{
+	if (o_ptr->tval == TV_GOLD) {
 		/* Disturb */
 		disturb(Ind, 0, 0);
 
@@ -1494,8 +1492,7 @@ void carry(int Ind, int pickup, int confirm)
 			return;
 		}
 
-		if (p_ptr->inval && o_ptr->owner && p_ptr->id != o_ptr->owner)
-		{
+		if (p_ptr->inval && o_ptr->owner && p_ptr->id != o_ptr->owner) {
 			msg_print(Ind, "\377oYou cannot take gold of other players without a valid account.");
 			return;
 		}
@@ -1535,8 +1532,7 @@ void carry(int Ind, int pickup, int confirm)
 
 		/* Take log for possible cheeze */
 #if CHEEZELOG_LEVEL > 1
-		if (o_ptr->owner)
-		{
+		if (o_ptr->owner) {
 			cptr name = lookup_player_name(o_ptr->owner);
 			int lev = lookup_player_level(o_ptr->owner);
 			cptr acc_name = lookup_accountname(o_ptr->owner);
@@ -1586,8 +1582,7 @@ void carry(int Ind, int pickup, int confirm)
 	}
 
 	/* Pick it up */
-	else
-	{
+	else {
 		bool force_pickup = check_guard_inscription(o_ptr->note, '=')
 			&& p_ptr->id == o_ptr->owner;
 
@@ -1636,7 +1631,7 @@ void carry(int Ind, int pickup, int confirm)
 			} else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_PINT_OF_ALE) {
 				o_ptr->mode = p_ptr->mode;
 				o_ptr->discount = 100;
-   			} else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_PINT_OF_WINE) {
+  			} else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_PINT_OF_WINE) {
                                 o_ptr->mode = p_ptr->mode;
 				o_ptr->discount = 100;
                         } else {
@@ -1741,6 +1736,21 @@ void carry(int Ind, int pickup, int confirm)
 
 			o_ptr->note = quark_add(inscription);
 			free(inscription);
+		}
+
+		if (p_ptr->auto_untag && o_ptr->note_utag && o_ptr->note) {
+			/* copy-pasted from slash.c '/untag' command basically */
+			char note2[80];
+			int j = strlen(quark_str(o_ptr->note)) - o_ptr->note_utag;
+			if (j >= 0) { /* bugfix hack */
+				//s_printf("j: %d, strlen: %d, note_utag: %d, i: %d.\n", j, strlen(quark_str(o_ptr->note)), o_ptr->note_utag, i);
+				strncpy(note2, quark_str(o_ptr->note), j);
+				if (j > 0 && note2[j - 1] == '-') j--; /* absorb '-' orphaned spacers */
+				note2[j] = 0; /* terminate string */
+				o_ptr->note_utag = 0;
+				if (note2[0]) o_ptr->note = quark_add(note2);
+				else o_ptr->note = 0;
+			} else o_ptr->note_utag = 0; //paranoia?
 		}
 
 #if 1

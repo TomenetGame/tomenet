@@ -2285,6 +2285,7 @@ struct player_type
 	bool page_on_afk_privmsg;
 	bool player_list;
 	bool player_list2;
+	bool auto_untag;
 
 	s16b max_panel_rows;
 	s16b max_panel_cols;
@@ -3243,7 +3244,7 @@ struct client_opts
 	bool time_stamp_chat; //flow_by_smell;
 	bool page_on_privmsg;
 	bool page_on_afk_privmsg;
-	bool smart_learn;
+	bool auto_untag;//smart_learn;
 	bool smart_cheat;
 
 	bool view_reduce_lite;
