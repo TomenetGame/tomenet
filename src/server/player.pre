@@ -351,6 +351,10 @@ struct player_type
 	const char *addr;	/* His IP address */
 //	unsigned int version;	/* His version */
 	version_type version;
+	bool v_outdated;
+	bool v_latest;
+	bool v_test;
+	bool v_unknown;
 
 	s32b id;		/* Unique ID to each player */
 	u32b account;           /* account group id */

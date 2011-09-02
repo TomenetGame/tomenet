@@ -21,8 +21,8 @@
 
 #if 0 /* replaced by client-side options: \
     -- + -- = nothing \
-    o1 + -- = COMPACT_PLAYERLIST \
-    -- + o2 = COMPACT_PLAYERLIST+COMPACT_ALT \
+    o1 + -- = COMPACT_PLAYERLIST+COMPACT_ALT \
+    -- + o2 = COMPACT_PLAYERLIST \
     o1 + o2 = ULTRA_COMPACT_PLAYERLIST */
 /* use more compact @-list to get more information displayed?
    NOTE: Requires ABUNDANT_TITLES! (in do_write_others_attributes()) */
@@ -448,7 +448,7 @@ void do_cmd_check_uniques(int Ind, int line)
 
 static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, char attr, bool admin)
 {
-	int modify_number = 0, compaction = (Players[Ind]->player_list ? 1 : 0) + (Players[Ind]->player_list2 ? 2 : 0);
+	int modify_number = 0, compaction = (Players[Ind]->player_list ? 2 : 0) + (Players[Ind]->player_list2 ? 1 : 0);
 	cptr p = "";
 	char info_chars[4];
 	bool text_pk = FALSE, text_silent = FALSE, text_afk = FALSE, text_ignoring_chat = FALSE, text_allow_dm_chat = FALSE;
@@ -721,6 +721,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 
 } else { /* COMPACT_PLAYERLIST */
  if (compaction == 3) { /* #ifdef ULTRA_COMPACT_PLAYERLIST */
+	char flag_str[10];
 
 	/* Print a message */
 	fprintf(fff," ");
@@ -812,7 +813,21 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 
 
 	/* 2nd line */
-	fprintf(fff, "\n   \377");
+	if (q_ptr->inval) {
+		if (q_ptr->v_unknown && admin) strcpy(flag_str, "\377yI\377rU");
+		else if (q_ptr->v_test && admin) strcpy(flag_str, "\377yI\377oT");
+		else if (q_ptr->v_outdated) strcpy(flag_str, "\377yI\377DO");
+		else if (!q_ptr->v_latest && admin) strcpy(flag_str, "\377yI\377sL");
+		else strcpy(flag_str, "\377yI ");
+	} else {
+		if (q_ptr->v_unknown && admin) strcpy(flag_str, "\377rU ");
+		else if (q_ptr->v_test && admin) strcpy(flag_str, "\377oT ");
+		else if (q_ptr->v_outdated) strcpy(flag_str, "\377DO ");
+		else if (!q_ptr->v_latest && admin) strcpy(flag_str, "\377sL ");
+		else strcpy(flag_str, "  ");
+	}
+	fprintf(fff, "\n %s\377", flag_str);
+
 
 	if (q_ptr->fruit_bat == 1)
 		strcpy(info_chars, format("\377%cb", color_attr_to_char(q_ptr->cp_ptr->color)));
@@ -1103,12 +1118,11 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 void do_cmd_check_players(int Ind, int line)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr;
-	int k, lines = 0, compaction = (p_ptr->player_list ? 1 : 0) + (p_ptr->player_list2 ? 2 : 0) ;
+	int k, lines = 0, compaction = (p_ptr->player_list ? 2 : 0) + (p_ptr->player_list2 ? 1 : 0) ;
 	FILE *fff;
 	char file_name[MAX_PATH_LENGTH];
 
 	bool admin = is_admin(p_ptr);
-	bool outdated, latest, test, unknown;
 	char flag_str[10];
 
 	/* Temporary file */
@@ -1121,14 +1135,7 @@ void do_cmd_check_players(int Ind, int line)
 	/* Scan the player races */
 	for (k = 1; k < NumPlayers + 1; k++) {
 		q_ptr = Players[k];
-
-		unknown = is_newer_than(&q_ptr->version, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, VERSION_BUILD);
-		test = !unknown && is_newer_than(&q_ptr->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, VERSION_BRANCH_LATEST, VERSION_BUILD_LATEST);
-		outdated = !is_newer_than(&q_ptr->version, VERSION_MAJOR_OUTDATED, VERSION_MINOR_OUTDATED, VERSION_PATCH_OUTDATED, VERSION_EXTRA_OUTDATED, VERSION_BRANCH_OUTDATED, VERSION_BUILD_OUTDATED);
-		latest = is_same_as(&q_ptr->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, VERSION_BRANCH_LATEST, VERSION_BUILD_LATEST);
-
 		flag_str[0] = '\0';
-
 		byte attr = 'w';
 
 		/* Only print connected players */
@@ -1161,10 +1168,10 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 		    (outdated ? "\377DO \377U" : (!latest && is_admin(p_ptr) ? "\377sL \377U" :  "\377U")));
 #else
 		if (q_ptr->inval) strcpy(flag_str, "\377yI");
-		if (unknown && is_admin(p_ptr)) strcat(flag_str, "\377rU");
-		else if (test && is_admin(p_ptr)) strcat(flag_str, "\377oT");
-		else if (outdated) strcat(flag_str, "\377DO");
-		else if (!latest && is_admin(p_ptr)) strcat(flag_str, "\377sL");
+		if (q_ptr->v_unknown && is_admin(p_ptr)) strcat(flag_str, "\377rU");
+		else if (q_ptr->v_test && is_admin(p_ptr)) strcat(flag_str, "\377oT");
+		else if (q_ptr->v_outdated) strcat(flag_str, "\377DO");
+		else if (!q_ptr->v_latest && is_admin(p_ptr)) strcat(flag_str, "\377sL");
 		if (flag_str[0]) strcat(flag_str, " ");
 		fprintf(fff, "\n   %s\377U", flag_str);
 #endif
@@ -1215,16 +1222,16 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 		    (outdated ? "\377D(O) \377U" : (!latest && is_admin(p_ptr) ? "\377s(L) \377U" :  "\377U")));
 #else
 		if (q_ptr->inval) {
-			if (unknown && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377rU");
-			else if (test && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377oT");
-			else if (outdated) strcpy(flag_str, "\377yI\377U+\377DO");
-			else if (!latest && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377sL");
+			if (q_ptr->v_unknown && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377rU");
+			else if (q_ptr->v_test && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377oT");
+			else if (q_ptr->v_outdated) strcpy(flag_str, "\377yI\377U+\377DO");
+			else if (!q_ptr->v_latest && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377sL");
 			else strcpy(flag_str, "\377y(I)");
 		} else {
-			if (unknown && is_admin(p_ptr)) strcpy(flag_str, "\377r(U)");
-			else if (test && is_admin(p_ptr)) strcpy(flag_str, "\377o(T)");
-			else if (outdated) strcpy(flag_str, "\377D(O)");
-			else if (!latest && is_admin(p_ptr)) strcpy(flag_str, "\377s(L)");
+			if (q_ptr->v_unknown && is_admin(p_ptr)) strcpy(flag_str, "\377r(U)");
+			else if (q_ptr->v_test && is_admin(p_ptr)) strcpy(flag_str, "\377o(T)");
+			else if (q_ptr->v_outdated) strcpy(flag_str, "\377D(O)");
+			else if (!q_ptr->v_latest && is_admin(p_ptr)) strcpy(flag_str, "\377s(L)");
 		}
 		if (flag_str[0]) strcat(flag_str, " ");
 		fprintf(fff, "\n   %s\377U", flag_str);
@@ -1304,16 +1311,16 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 		    (outdated ? "\377D(O)\377U" : (!latest && is_admin(p_ptr) ? "\377s(L)\377U" :  "   ")), q_ptr->accountname, q_ptr->hostname);
 #else
 		if (q_ptr->inval) {
-			if (unknown && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377rU");
-			else if (test && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377oT");
-			else if (outdated) strcpy(flag_str, "\377yI\377U+\377DO");
-			else if (!latest && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377sL");
+			if (q_ptr->v_unknown && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377rU");
+			else if (q_ptr->v_test && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377oT");
+			else if (q_ptr->v_outdated) strcpy(flag_str, "\377yI\377U+\377DO");
+			else if (!q_ptr->v_latest && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377sL");
 			else strcpy(flag_str, "\377y(I)");
 		} else {
-			if (unknown && is_admin(p_ptr)) strcpy(flag_str, "\377r(U)");
-			else if (test && is_admin(p_ptr)) strcpy(flag_str, "\377o(T)");
-			else if (outdated) strcpy(flag_str, "\377D(O)");
-			else if (!latest && is_admin(p_ptr)) strcpy(flag_str, "\377s(L)");
+			if (q_ptr->v_unknown && is_admin(p_ptr)) strcpy(flag_str, "\377r(U)");
+			else if (q_ptr->v_test && is_admin(p_ptr)) strcpy(flag_str, "\377o(T)");
+			else if (q_ptr->v_outdated) strcpy(flag_str, "\377D(O)");
+			else if (!q_ptr->v_latest && is_admin(p_ptr)) strcpy(flag_str, "\377s(L)");
 			else strcpy(flag_str, "   ");
 		}
 		fprintf(fff, " %s\377U (%s@%s) ", flag_str, q_ptr->accountname, q_ptr->hostname);

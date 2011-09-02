@@ -2383,6 +2383,10 @@ static int Handle_login(int ind)
 	strcpy(p_ptr->accountname, connp->nick);
 	strcpy(p_ptr->addr, connp->addr);
 	p_ptr->version = connp->version; /* this actually copies the extended version structure */
+	p_ptr->v_unknown = is_newer_than(&p_ptr->version, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, VERSION_BUILD);
+	p_ptr->v_test = !p_ptr->v_unknown && is_newer_than(&p_ptr->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, VERSION_BRANCH_LATEST, VERSION_BUILD_LATEST);
+	p_ptr->v_outdated = !is_newer_than(&p_ptr->version, VERSION_MAJOR_OUTDATED, VERSION_MINOR_OUTDATED, VERSION_PATCH_OUTDATED, VERSION_EXTRA_OUTDATED, VERSION_BRANCH_OUTDATED, VERSION_BUILD_OUTDATED);
+	p_ptr->v_latest = is_same_as(&p_ptr->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, VERSION_BRANCH_LATEST, VERSION_BUILD_LATEST);
 
 	/* Copy the client preferences to the player struct */
 	for (i = 0; i < OPT_MAX; i++)
