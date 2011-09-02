@@ -109,7 +109,7 @@ s16b critical_shot(int Ind, int weight, int plus, int dam)
 
 	/* Extract "shot" power */
 	if (Ind > 0) {
-		player_type *p_ptr = Players[Ind];
+		p_ptr = Players[Ind];
 		if (p_ptr->inventory[INVEN_BOW].tval == TV_BOOMERANG) boomerang = TRUE;
 
 		i = (weight + ((p_ptr->to_h + plus) * 5) +
