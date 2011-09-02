@@ -58,8 +58,8 @@ X:safe_float
 X:avoid_other
 Y:flush_failure
 X:flush_disturb
-X:flush_command
-Y:fresh_before
+X:player_list
+X:player_list2
 X:fresh_after
 X:fresh_message
 Y:safe_macros
