@@ -35,7 +35,7 @@ X:alert_hitpoint
 X:alert_failure
 
 Y:auto_afk
-X:newb_suicide
+Y:newb_suicide
 Y:stack_allow_items
 Y:stack_allow_wands
 X:expand_look
