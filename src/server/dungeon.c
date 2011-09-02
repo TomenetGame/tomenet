@@ -7076,7 +7076,7 @@ void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr) {
    Added this for use within LUA files, for automatic seasonal event updating. - C. Blue */
 void timed_shutdown(int k) {
 //	msg_admins(0, format("\377w* Shutting down in %d minutes *", k));
-	msg_broadcast_format(0, "\374\377I*** \377RAutomatic town-recall and server restart in max %d minute%s. \377I***", k, (k == 1) ? "" : "s");
+	msg_broadcast_format(0, "\374\377I*** \377RAutomatic recall and server restart in max %d minute%s. \377I***", k, (k == 1) ? "" : "s");
 
 	cfg.runlevel = 2043;
 	shutdown_recall_timer = k * 60;
