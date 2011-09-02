@@ -1396,7 +1396,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 	FILE *fff;
 	char file_name[MAX_PATH_LENGTH];
 	player_type *p_ptr = Players[Ind];
-	bool admin = is_admin(p_ptr);
+	bool admin = is_admin(p_ptr), init = FALSE;
 
 	/* Temporary file */
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
@@ -1466,6 +1466,10 @@ void do_cmd_check_player_equip(int Ind, int line)
 			continue;
 		if (q_ptr->cloaked == 1 && !q_ptr->cloak_neutralized && !admin && attr != 'B') continue;
 
+		/* Add blank line for spacing */
+		if (init) fprintf(fff, "\377%c\n", 'w');
+		init = TRUE;
+
 		/* Output color byte */
 		fprintf(fff, "\377%c", attr);
 
@@ -1508,9 +1512,6 @@ void do_cmd_check_player_equip(int Ind, int line)
 #endif
 			fprintf(fff, "\377%c (Covered by a grubby wrapping)\n", 'D');
 		}
-
-		/* Add blank line */
-		fprintf(fff, "\377%c\n", 'w');
 
 	}
 

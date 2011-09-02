@@ -104,13 +104,14 @@
    by ground-IDing them, then have someone else to pick them up! (especially for Nazgul rings) */
 #define PRE_OWN_DROP_CHOSEN
 
+/* death_type definitions */
+#define DEATH_PERMA	0
+#define DEATH_INSANITY	1
+#define DEATH_GHOST	2
+#define DEATH_QUIT	3 /* suicide/retirement */
 
 /* If during certain events, remember his/her account ID, for handing out a reward
    to a different character which he chooses on next login! - C. Blue
-   death_type: 0 - perma-death
-               1 - insanity-death
-	       2 - ghost-death
-	       3 - suicide / retirement
 */
 static void buffer_account_for_event_deed(player_type *p_ptr, int death_type)
 {
@@ -127,7 +128,7 @@ static void buffer_account_for_event_deed(player_type *p_ptr, int death_type)
 		switch (p_ptr->global_event_type[j]) {
 		case GE_HIGHLANDER:
 			if (p_ptr->global_event_progress[j][0] < 5) break; /* only rewarded if already in deathmatch phase! */
-			if (death_type >= 3) break; /* no reward for suiciding! */
+			if (death_type >= DEATH_QUIT) break; /* no reward for suiciding! */
 			/* hand out the reward: */
 			ge_contender_buffer_deed[i] = SV_DEED2_HIGHLANDER;
 			return;
@@ -6341,8 +6342,8 @@ s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s\n", race_info[p_ptr
 			}
 #endif	// CHATTERBOX_LEVEL
 
-			death_type = 1;
-			if (p_ptr->ghost) death_type = 2;
+			death_type = DEATH_INSANITY;
+			if (p_ptr->ghost) death_type = DEATH_GHOST;
 
 			Send_chardump(Ind, "-death");
 			Net_output1(Ind);
@@ -6370,7 +6371,7 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s\n", race_info[p_pt
 			}
 #endif	// CHATTERBOX_LEVEL
 
-			death_type = 2;
+			death_type = DEATH_GHOST;
 		} else {
 			/* Tell him */
 			msg_print(Ind, "\374\377RYou die.");
@@ -6444,7 +6445,7 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", pvp ? "PVP" : "NOGHOS
 				msg_print(Ind, death_message);
 			}
 #endif	// CHATTERBOX_LEVEL
-			death_type = 0;
+			death_type = DEATH_PERMA;
 			Send_chardump(Ind, "-death");
 			Net_output1(Ind);
 		}
@@ -6680,15 +6681,12 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", pvp ? "PVP" : "NOGHOS
 s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title);
 	}
 	else if (!p_ptr->total_winner) {
-		if (p_ptr->max_plv >= 5)
-			snprintf(buf, sizeof(buf), "\374\377D%s committed suicide.", p_ptr->name);
-		else {
-			snprintf(buf, sizeof(buf), "\376\377D%s committed suicide.", p_ptr->name);
-			world_broadcast = FALSE;
-		}
+		/* assume newb_suicide option for world broadcasts */
+		if (p_ptr->max_plv == 1) world_broadcast = FALSE;
+
+		snprintf(buf, sizeof(buf), "\374\377D%s committed suicide.", p_ptr->name);
 		s_printf("%s (%d) committed suicide.\n", p_ptr->name, p_ptr->lev);
-		world_broadcast = FALSE;
-		death_type = 3;
+		death_type = DEATH_QUIT;
 s_printf("CHARACTER_TERMINATION: SUICIDE race=%s ; class=%s\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title);
 	} else {
 		if (getlevel(&p_ptr->wpos) == 200) {
@@ -6699,7 +6697,7 @@ s_printf("CHARACTER_TERMINATION: SUICIDE race=%s ; class=%s\n", race_info[p_ptr-
 			if (!is_admin(p_ptr)) l_printf("%s \\{v%s (%d) retired to a warm, sunny climate\n", showdate(), p_ptr->name, p_ptr->lev);
 		}
 		s_printf("%s (%d) committed suicide. (Retirement)\n", p_ptr->name, p_ptr->lev);
-		death_type = 3;
+		death_type = DEATH_QUIT;
 s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title);
 	}
 
@@ -6708,17 +6706,23 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 	/* Tell the players */
 	/* handle the secret_dungeon_master option */
 	if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master)) {
+		/* handle newbie suicide option by manually doing 'msg_broadcast': */
+		if (death_type == DEATH_QUIT) {
+			/* Tell every player */
+			for (i = 1; i <= NumPlayers; i++) {
+				if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (i == Ind) continue;
+				if (!Players[i]->newb_suicide && p_ptr->max_plv == 1)
+					msg_format(i, "\376\377D%s committed suicide.", p_ptr->name);
+				else
+					msg_format(i, "\374\377D%s committed suicide.", p_ptr->name);
+			}
+		} else msg_broadcast(Ind, buf);
+
 #ifdef TOMENET_WORLDS
 		if (cfg.worldd_pdeath && world_broadcast) world_msg(buf);
 #endif
-/*		if(p_ptr->lev>1)*/
-			msg_broadcast(Ind, buf);
-/*		else{
-			for(i=1; i<=NumPlayers; i++)
-				if(((p_ptr->lev>1 || p_ptr->alive) || Players[i]->newb_suicide) && i!=Ind)
-					msg_print(i, buf);
-		}
-*/	}
+	}
 
 #if 0
 	/* Unown land */
