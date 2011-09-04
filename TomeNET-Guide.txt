@@ -12175,8 +12175,9 @@ SOLUTION:   Macros or client options can be saved to various .prf files which
             make sure they don't get loaded if you don't intend them to.
             For example the file 'user.prf' usually carries your client options
             and overrides the default file 'options.prf'. However, if there's a
-            file 'user-x11.prf' (system-specific for Linux X11) that one in
-            turn will override settings in user.prf.
+            file 'user-x11.prf' (system-specific for Linux X11 - on Windows
+            systems it'd be 'user-win.prf' accordingly) that one in turn will
+            override settings in user.prf.
             An example regarding macro files: Let's say your character's name
             is 'Gandalf' and you saved your macros to 'Gandalf.prf' faithfully.
             However, since Gandalf is a human warrior, the client will also
