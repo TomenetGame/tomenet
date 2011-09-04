@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 2. September 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 4. September 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.7a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -12160,6 +12160,26 @@ SOLUTION:   Closing a sub-window sets it to 'invisible'. To change that, close
             TomeNET first, then edit the file 'TomeNET.ini' in any text editor,
             locate the particular window, and you'll see a line saying
             "Visibility=0". Change the 0 to 1 and start TomeNET again.
+
+PROBLEM 30: Changes I do to my macros seem to not get saved or macros I deleted
+            seem to still be there or client options I configured seem to reset
+            to their previous values although I saved the macros/options to
+            their respective .prf file.
+SOLUTION:   Macros or client options can be saved to various .prf files which
+            might _all_ get loaded automatically and partially override each
+            other. So check _all_ (except for font*.prf and graf*.prf usually)
+            .prf files in your lib/user folder and/or move or delete them to
+            make sure they don't get loaded if you don't intend them to.
+            For example the file 'user.prf' usually carries your client options
+            and overrides the default file 'options.prf'. However, if there's a
+            file 'user-x11.prf' (system-specific for Linux X11) that one in
+            turn will override settings in user.prf.
+            An example regarding macro files: Let's say your character's name
+            is 'Gandalf' and you saved your macros to 'Gandalf.prf' faithfully.
+            However, since Gandalf is a human warrior, the client will also
+            automatically load the files called 'Human.prf' and 'Warrior.prf'
+            if those exist and also try to load a .prf file named like your
+            account name.
 
 
 
