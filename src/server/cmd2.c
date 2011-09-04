@@ -3819,6 +3819,18 @@ void do_cmd_fire(int Ind, int dir)
 	/* Get the "bow" (if any) */
 	j_ptr = &(p_ptr->inventory[INVEN_BOW]);
 
+	/* if no launcher is equipped check for boomerangs
+	   inscribed '!L' in inventory - C. Blue */
+	if ((!j_ptr->tval || !j_ptr->number) && item_tester_hook_wear(Ind, INVEN_BOW)) {
+		for (i = 0; i < INVEN_PACK; i++) {
+			if (p_ptr->inventory[i].tval == TV_BOOMERANG &&
+			    check_guard_inscription(p_ptr->inventory[i].note, 'L')) {
+				do_cmd_wield(Ind, i, 0x0);
+				break;
+			}
+		}
+	}
+
 	/* Require a launcher */
 	if (!j_ptr->tval) {
 		msg_print(Ind, "You have nothing to fire with.");
@@ -3826,7 +3838,7 @@ void do_cmd_fire(int Ind, int dir)
 	}
 
 	/* Extract the item flags */
-        object_flags(j_ptr, &f1, &fx, &fx, &fx, &fx, &esp);
+	object_flags(j_ptr, &f1, &fx, &fx, &fx, &fx, &esp);
 
 	if (j_ptr->tval == TV_BOOMERANG) {
 		boomerang = TRUE;

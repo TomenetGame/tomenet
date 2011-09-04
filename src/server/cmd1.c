@@ -1455,7 +1455,9 @@ void carry(int Ind, int pickup, int confirm)
 	/* Pick it up */
 	else {
 		bool force_pickup = check_guard_inscription(o_ptr->note, '=')
-			&& p_ptr->id == o_ptr->owner;
+		    && p_ptr->id == o_ptr->owner;
+		bool auto_load = check_guard_inscription(o_ptr->note, 'L')
+		    && p_ptr->id == o_ptr->owner;
 
 		/* Hack -- disturb */
 		disturb(Ind, 0, 0);
@@ -1674,13 +1676,84 @@ void carry(int Ind, int pickup, int confirm)
 			p_ptr->window |= PW_EQUIP;
 		}
 		/* Try to add to the empty quiver (XXX rewrite me - too long!) */
-		else if (force_pickup && !p_ptr->inventory[INVEN_AMMO].k_idx &&
-				wield_slot(Ind, o_ptr) == INVEN_AMMO)
+		else if (auto_load && is_ammo(o_ptr->tval) &&
+		    !p_ptr->inventory[INVEN_AMMO].k_idx)
 		{
 			int slot = INVEN_AMMO;
 			u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
 
 			msg_print(Ind, "You add the ammo to your quiver.");
+
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+			o_ptr->marked = 0;
+			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
+
+			/* Auto Curse */
+			if (f3 & TR3_AUTO_CURSE) {
+				/* The object recurse itself ! */
+				o_ptr->ident |= ID_CURSED;
+			}
+
+			/* Cursed! */
+			if (cursed_p(o_ptr)) {
+				/* Warn the player */
+				msg_print(Ind, "Oops! It feels deathly cold!");
+
+				/* Note the curse */
+				o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
+			}
+
+			/* Structure copy to insert the new item */
+			p_ptr->inventory[slot] = (*o_ptr);
+
+			/* Forget the old location */
+			p_ptr->inventory[slot].iy = p_ptr->inventory[slot].ix = 0;
+			p_ptr->inventory[slot].wpos.wx = 0;
+			p_ptr->inventory[slot].wpos.wy = 0;
+			p_ptr->inventory[slot].wpos.wz = 0;
+			/* Clean out unused fields */
+			p_ptr->inventory[slot].next_o_idx = 0;
+			p_ptr->inventory[slot].held_m_idx = 0;
+
+
+			/* Increase the weight, prepare to redraw */
+			p_ptr->total_weight += (o_ptr->number * o_ptr->weight);
+
+			/* Get the item again */
+			o_ptr = &(p_ptr->inventory[slot]);
+
+			/* Describe the object */
+			object_desc(Ind, o_name, o_ptr, TRUE, 3);
+			o_ptr->marked = 0;
+			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
+
+			/* Message */
+			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
+
+			/* Delete original */
+			//			delete_object(wpos, p_ptr->py, p_ptr->px);
+			delete_object_idx(c_ptr->o_idx, FALSE);
+
+			/* Hack -- tell the player of the next object on the pile */
+			whats_under_your_feet(Ind);
+
+			/* Tell the client */
+			Send_floor(Ind, 0);
+
+			/* Recalculate boni */
+			p_ptr->update |= (PU_BONUS);
+
+			/* Window stuff */
+			p_ptr->window |= (PW_EQUIP);
+		}
+		/* Boomerangs: */
+		else if (auto_load && o_ptr->tval == TV_BOOMERANG &&
+		    !p_ptr->inventory[INVEN_BOW].k_idx && item_tester_hook_wear(Ind, INVEN_BOW))
+		{
+			int slot = INVEN_BOW;
+			u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
+
+			msg_print(Ind, "You ready the boomerang.");
 
 			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 			o_ptr->marked = 0;
