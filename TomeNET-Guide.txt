@@ -221,7 +221,10 @@ compile the game under '(2.1) Installing TomeNET'.
  allows you to move diagonally too, which is very important.
 -You can wear/wield your armour/weapons by pressing 'w' and choosing them
  from your inventory which is displayed in the bottom right window.
--You can pick up items if you stand on them and press 'g'.
+-You can pick up items if you stand on them and press 'g'. Items that are
+ especially valuable in the beginning are magic wands and staves, so make sure
+ to pick those up, identify them with a scroll of identify, and sell them to
+ the magic shop in town.
 -You can drop items with 'd' or destroy items with 'k'.
 -You can enter stairs down/upwards by standing on them and pressing the
  corresponding key '<' or '>'.
