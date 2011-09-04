@@ -32,7 +32,7 @@ X:disturb_state
 X:disturb_minor
 X:disturb_other
 X:alert_hitpoint
-X:alert_failure
+X:alert_afk_dam
 
 Y:auto_afk
 Y:newb_suicide
