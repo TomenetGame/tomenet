@@ -9364,6 +9364,8 @@ void blood_bond(int Ind, object_type *o_ptr)
 //      bool ok = FALSE;
         int Ind2;
 	player_list_type *pl_ptr;
+	cave_type **zcave;
+	cave_type *c_ptr;
 
 	if (p_ptr->pvpexception == 3) {
 		msg_print(Ind, "Sorry, you're *not* allowed to attack other players.");
@@ -9375,8 +9377,6 @@ void blood_bond(int Ind, object_type *o_ptr)
 		msg_print(Ind, "\377rCouldn't blood bond.");
 		return;
 	}
-
-
 	p2_ptr = Players[Ind2];
 
 	/* not during pvp-only or something (Highlander Tournament) */
@@ -9396,6 +9396,15 @@ void blood_bond(int Ind, object_type *o_ptr)
 	if (p2_ptr->afk) {
 		msg_print(Ind, "That player is currently AFK.");
 		return;
+	}
+
+	/* protect players in inns */
+	if ((zcave = getcave(&p2_ptr->wpos))) {
+		c_ptr = &zcave[p2_ptr->py][p2_ptr->px];
+		if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) {
+			msg_print(Ind, "That player currently dwells on protected grounds.");
+			return;
+		}
 	}
 
 	MAKE(pl_ptr, player_list_type);
