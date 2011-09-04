@@ -2647,7 +2647,7 @@ Here is a list of all available ability codes:
 6       Shooting techniques (see (6.12))
 8       Check your dodge chance (for dodging skill)
 (included in '6' now: 9       Create ammunition (for archery skill))
-10      Set a monster trap (for trapping skill)
+10      Set a monster trap (for trapping skill, see (4.7))
 11      Cast a magic spell / recite a holy prayer
 13      Change combat stance (for combat stances skill)
 14      Check your chances of parrying and blocking (for melee fighters,
@@ -4005,8 +4005,8 @@ type appended to it in { } brackets. It looks like this:
 ^ A potion of Constitution {Chaos Ball Trap}
 
 
-About trap sets (or trapkits):
-------------------------------
+About trap sets (or "trapping kits"):
+-------------------------------------
 The 'Trapping' skill allows a player to set up 'monster traps'.
 
 A monster trap consists of
@@ -4068,6 +4068,29 @@ makes it harder for monsters to disarm the trap. Trap sets and ammo that were
 disarmed by a monster cannot be recovered.
 
 You can disarm your own traps to get back the trap set (and ammunition).
+
+
+Hints for quick and easy handling:
+----------------------------------
+It is a good idea to inscribe trap kits and their loads.
+For example you could inscribe all trapping-related items  !=  so you will pick
+them up from the floor automatically when you want to retrieve trap sets that
+went off.
+
+Also you could inscribe the ammo/load items  @m1  so you can macro them easily.
+
+In the macro wizard you could even make a macro that prompts you for which trap
+kit to use if you enter a blank line (just hit ENTER key) when it asks you
+which item you want to load a trap with.
+
+Last but not least when your trapper is low level and you pick up all sorts of
+bad potions you could make a macro to load a fumes trap set with a potion
+inscribed  @m1 . Now make another macro that lets you inscribe all the bad
+potions you pick up  @m1  so you won't have to do that manually for each of
+them. That inscribing-macro could look like this:
+{-@m1\r
+where the '-' will cause the { inscribe command to prompt for inscription first
+and the item afterwards, effectively simply asking you to specify the item.
 
 
 
