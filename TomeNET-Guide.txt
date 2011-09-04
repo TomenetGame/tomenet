@@ -8046,21 +8046,21 @@ a new character level. You also might have certain intrinsic abilities.
 For Beginners a powerful yet simple race/class combination like Half-Troll
 Warrior is strongly recommended.
 
-Human
+- Human
     Humans are allrounders with no special weaknesses or strengths.
     Humans have no experience penalties and tend to go up levels faster than
     most other races. No racial adjustments or intrinsics occur to characters
     choosing human.
     Humans get a bonus on 'Interception' and 'Climbing'.
 
-Half-Elf
+- Half-Elf
     Half-elves tend to be smarter and faster than humans, but not as strong.
     Half-elves are slightly better at searching, disarming, saving throws,
     stealth, bows, and magic, but they are not as good at hand weapons.
     Half-elves resist light intrinsically.
     They get bonus on 'Bow-Mastery' and 'Interception'.
 
-Elf
+- Elf
     Elves resist light effects intrinsically and see invisible creatures.
     Elves are better magicians then humans, but not as good at fighting.
     They tend to be smarter and faster than either humans or half-elves and
@@ -8070,7 +8070,7 @@ Elf
     Elves get bonus on 'Bow-Mastery', 'Magic', 'Stealth', 'Dodging',
     'Calmness' and 'Sneakiness'.
 
-Hobbit
+- Hobbit
     Hobbits have their dexterity sustained. Further, they get a dexterity bonus
     from not wearing shoes! Hobbits, or Halflings, are very good at shooting,
     throwing, and have good saving throws. They also are very good at searching
@@ -8080,7 +8080,7 @@ Hobbit
     warm-blooded creatures at a distance. Hobbits resist black breath somewhat.
     They get bonus on 'Sling-Mastery', 'Stealth', 'Sneakiness' and 'Dodging'.
 
-Gnome
+- Gnome
     Gnomes are intrinsically protected to paralysis effects. Gnomes are smaller
     than dwarves but larger than halflings. They, like the hobbits, live in the
     earth in burrow-like homes. Gnomes make excellent Warlocks & Sorcerers, and
@@ -8091,7 +8091,7 @@ Gnome
     Gnomes receive bonus on 'Crossbow-Mastery', 'Magic', 'Dodging' and
     'Digging'.
 
-Dwarf
+- Dwarf
     Dwarves can never be blinded and at level 30 they learn to travel across
     even the highest mountain regions.
     Dwarves are the headstrong miners and fighters of legend. Since dungeons
@@ -8106,7 +8106,7 @@ Dwarf
     stealth.
     They receive bonus on 'Axe-Mastery' and 'Digging'.
 
-Half-Orc
+- Half-Orc
     Because of their preference to living underground to on the surface,
     Half-orcs resist darkness intrinsically. They make excellent warriors and
     decent priests, but are terrible at magic. They are as bad as dwarves at
@@ -8117,7 +8117,7 @@ Half-Orc
     They get bonus on 'Weaponmastery', 'Backstabbing', 'Necromancy' and receive
     slight penalties on 'Magic' and 'Sorcery'.
 
-Half-Troll
+- Half-Troll
     Half-trolls have their strength sustained. They are very strong, but also
     very stupid and slow. They make great warriors and iffy priests. They are
     bad at searching, disarming, perception, and stealth. They are so ugly
@@ -8126,14 +8126,14 @@ Half-Troll
     receive large penalties on 'Archery', 'Magic' and 'Sorcery' and a light
     penalty on 'Critical-Strike'.
 
-Dunadan
+- Dunadan
     Dunadain have their constitution sustained. Dunadain are a race of hardy
     men from the West. This elder race surpasses human abilities in every
     field, especially constitution. However, being men of the world, very
     little is new to them, and levels are very hard for them to gain.
     A Dunadan gets bonus on 'Combat', 'Magic' and 'Archery'.
 
-High-Elf
+- High-Elf
     High-Elves can see the invisible and resist light and the flow of time
     intrinsically. They are a race of immortal beings dating from the
     beginning of time, masters of all skills, strong and intelligent, although
@@ -8143,7 +8143,7 @@ High-Elf
     High-Elves receive bonus on 'Bow-Mastery', 'Magic', 'Stealth', 'Calmness'
     and 'Dodging'.
 
-Yeek
+- Yeek
     Being weak and losing many childhood fights, they have learned the
     ability to float gently to the ground. They have intrinsic feather
     falling (same as 'levitation' effect).
@@ -8154,7 +8154,7 @@ Yeek
     compensate Yeeks learn, and thus gain levels, extremely quickly.
     Yeeks don't receive boni or mali on any skills.
 
-Goblin
+- Goblin
     Goblins resist darkness intrinsically. Goblins have a decidedly
     mixed reputation. They are almost always grinning, and more often than
     not you cannot tell whether or not they are eyeing you like a side of
@@ -8163,7 +8163,7 @@ Goblin
     Golbins have natural resistance to darkness.
     They receive bonus on 'Boomerang-Mastery' and 'Stealing'.
 
-Ent
+- Ent
     The Ents are a powerful race dating from the beginning of the world,
     eldest of all animals or plants who inhabit Arda. Spirits of the
     land, they were summoned to guard the forests of Middle-earth.
@@ -8184,7 +8184,7 @@ Ent
     'Water' and they receive a large penalty 'Fire' school, a small penalty on
     'Axe-mastery' and a very slight penalty on 'Sword-mastery'.
 
-Draconian
+- Draconian
     These humanoid half-breeds of dragon and man surpass common humans in all
     ways, except that they are really bad at moving stealthily. Similar to
     dragons, they can eat firestones to temporarily boost their powers.
@@ -8199,7 +8199,7 @@ Draconian
     They receive bonus on 'Polearm-Mastery', 'Aura of Fear' and the magic
     schools 'Conveyance' and 'Fire'.
 
-Dark-Elf
+- Dark-Elf
     Dark-Elves dwell below the surface in huge caverns of their underground
     city. The children are already drilled to become sworn enemies of most
     other races of the underground, and also of the hated Elves and High-Elves
@@ -8210,7 +8210,7 @@ Dark-Elf
     At level 20 they learn to see the invisible.
     They get bonus on 'Stealth', 'Dodging', 'Sneakiness' and 'Backstabbing'.
 
-Vampire
+- Vampire
     These powerful undead creatues move out in the night to hunt living prey
     and suck its blood to sustain themselves. Vampires resist darkness, but
     are susceptible to light. They fear the sun light and any other kind of
@@ -8238,7 +8238,7 @@ Vampire
     they don't resist light or wear a mummy wrapping. Hint: Polymorphing into
     a vampire bat may improve hit point regeneration rate.
 
-Maia
+- Maia
     The Maiar are lesser spirits who are associated with one or more Valar, the
     greater gods. Being of divine origin they can shape themselves in fashion
     of elves or humans as they see fit, often acting as powerful wizards to
@@ -8344,7 +8344,7 @@ Maia        +2  +3  +3  +1  +1  +2      11      380%   100ft
 Depending on your class, your start-up equipment and your skill tree will
 vary. For example a warrior cannot learn magic spells.
 
-Adventurer
+- Adventurer
     Adventurers are hardy and versatile, they have no preferred way of fighting
     or magic, and can adapt to any situation at hand.
     They have no big big strengths nor weaknesses.
@@ -8359,7 +8359,7 @@ Adventurer
     utilize them you need to know exactly what you are trying to achieve and
     how you want to distribute their skill points to make them effective.
 
-Warrior
+- Warrior
     A warrior is a hack-and-slash character, who solves most of his problems
     by cutting them to pieces, but will occasionally fall back on the help of
     a magical device. His prime stats are strength and constitution, and a
@@ -8403,7 +8403,7 @@ Warrior
     1-handed weapons which you dual-wield (which requires light armour). This
     should last you until you find some heavy armour and shield in the dungeon.
 
-Istar (elvish word for Mage)
+- Istar (elvish word for Mage)
     Istari use intelligence primarily, determining how much mana they have
     to cast spells and how low their failure rate is.
     They are the all-around best magicians, having the most powerful spells.
@@ -8416,7 +8416,7 @@ Istar (elvish word for Mage)
     survival difficult in the beginning. That's why this class is not
     recommended for beginners.
 
-Priest
+- Priest
     Priests use certain divine magic, uttered as prayers. Unlike mages they
     have a fair fighting potential with blunt or blessed weapons. Priests
     can learn many spells that are helpful to their party members. They use
@@ -8442,7 +8442,7 @@ Priest
     damage and also can't take a lot of punishment, so they aren't recommended
     for beginners.
 
-Rogue
+- Rogue
     A Rogue is a character that prefers to live by cunning, but is capable of
     fighting their way out of a tight spot. The master of traps and locks, no
     device is impossible for him to overcome.
@@ -8479,7 +8479,7 @@ Rogue
     for catching annoying monsters that try to keep their distance from you.
     (See (6.12) for details about fighting techniques.)
 
-Mimic
+- Mimic
     Mimics are melee fighters who can learn how to shapechange and use the form
     of any monsters (except for unique ones) they slay, thereby inheriting
     nearly all of the monster's abilities. That way they may even cast spells
@@ -8512,7 +8512,7 @@ Mimic
     Hint: Maybe there's a friendly mimicry-user around who can forge some
     'Rings of Polymorphing' for you from forms he or she no longer uses.
 
-Archer
+- Archer
     Archers aren't good at fighting, but can deliever extremely high damage
     with their ranged weapons. They can die quickly too, however.
     Archers are to bows what warriors are to melee. They are the best class
@@ -8527,7 +8527,7 @@ Archer
     because the enchantment will be multiplied by the weapons multiplier.
     Also make sure to have an ample supply of 'Scrolls of Phase Door'.
 
-Paladin
+- Paladin
     Paladins are a combination of warrior and priest. Holy knights that
     fight evil with a variety of melee weapons and divine support.
     Their primary stats are thus strength for fighting and wisdom for making
@@ -8547,7 +8547,7 @@ Paladin
     'Taunt' when you learn them, they are great for catching annoying monsters
     that try to keep their distance from you. (See (6.12) for details.)
 
-Ranger
+- Ranger
     Second only to adventurers regarding versatility rangers excel at a lot of
     skills: They are able to fight well in close combat and may even dual-wield
     two one-handed weapons at once which requires light armour to be efficient.
@@ -8574,7 +8574,7 @@ Ranger
     required for dual-wielding you might want to buy a secondary weapon right
     away, for example a cheap dagger. (See (6.2) for details on dual-wielding.)
 
-Druid
+- Druid
     Druids are able to call upon the mystical powers of nature and very good
     at it. Their wisdom is of primary importance to determine their mana and
     success chances when casting spells.
@@ -8603,7 +8603,7 @@ Druid
     you learn it, which you do pretty early on. It is great for catching
     annoying monsters that try to keep their distance from you. (See (6.12).)
 
-Shaman
+- Shaman
     Shamans are able to call upon both spiritual and magical powers, whatever
     they deem most appropriate. Their mind is also trained in a very versatile
     manner, allowing them to collect energy from intelligence or wisdom,
@@ -8628,7 +8628,7 @@ Shaman
     In the beginning shamans have few hit points and skill point distribution
     isn't easy either, that's why this class is not recommended for beginners.
 
-Runemaster
+- Runemaster
     Runemasters use arcane symbols or 'runes' to summon pure elemental magic.
     They use their intelligence and dexterity to both manipulate and protect
     themselves from the fickle and dangerous forces of their art.
@@ -8651,7 +8651,7 @@ Runemaster
     badly, do so in the arena of the 'Arena Monster Challenge' event so you
     will get away unscathed.
 
-Mindcrafter
+- Mindcrafter
     Mindcrafters are great melee fighters who additionally train the use of
     telepathy to unleash spells formed by their psychic powers.
     Their intellect is supreme compared to primitive warriors, making them calm
