@@ -299,6 +299,7 @@ static void Init_receive(void)
 	playing_receive[PKT_READ]		= Receive_read;
 	playing_receive[PKT_SEARCH]		= Receive_search;
 	playing_receive[PKT_TAKE_OFF]		= Receive_take_off;
+	playing_receive[PKT_TAKE_OFF_AMT]	= Receive_take_off_amt;
 	playing_receive[PKT_USE]		= Receive_use;
 	playing_receive[PKT_THROW]		= Receive_throw;
 	playing_receive[PKT_WIELD]		= Receive_wield;
@@ -7514,12 +7515,59 @@ static int Receive_take_off(int ind)
 			return 1;
 		}
 
-		do_cmd_takeoff(player, item);
+		do_cmd_takeoff(player, item, 255);
 		return 2;
 	}
 	else if (player)
 	{
 		Packet_printf(&connp->q, "%c%hd", ch, item);
+		return 0;
+	}
+
+	return 1;
+}
+
+static int Receive_take_off_amt(int ind)
+{
+	connection_t *connp = Conn[ind];
+	player_type *p_ptr = NULL;
+	char ch;
+	s16b item, amt;
+	int n, player = -1;
+
+	if (connp->id != -1)
+	{
+		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
+		p_ptr = Players[player];
+	}
+
+	if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &item, &amt)) <= 0)
+	{
+		if (n == -1)
+			Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	/* Sanity check - mikaelh */
+	if (item >= INVEN_TOTAL)
+		return 1;
+
+	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
+	{
+		item = replay_inven_changes(player, item);
+		if (item == 0xFF)
+		{
+			msg_print(player, "Command failed because item is gone.");
+			return 1;
+		}
+
+		do_cmd_takeoff(player, item, amt);
+		return 2;
+	}
+	else if (player)
+	{
+		Packet_printf(&connp->q, "%c%hd%hd", ch, item, amt);
 		return 0;
 	}
 

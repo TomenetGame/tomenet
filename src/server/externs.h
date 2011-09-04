@@ -605,7 +605,7 @@ extern void inven_drop(int Ind, int item, int amt);
 extern void inven_takeoff(int Ind, int item, int amt);
 extern void do_takeoff_impossible(int Ind);
 extern void do_cmd_wield(int Ind, int item, u16b alt_slots);
-extern void do_cmd_takeoff(int Ind, int item);
+extern void do_cmd_takeoff(int Ind, int item, int amt);
 extern void do_cmd_drop(int Ind, int item, int quantity);
 extern void do_cmd_drop_gold(int Ind, s32b amt);
 extern void do_cmd_destroy(int Ind, int item, int quantity);

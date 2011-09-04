@@ -80,6 +80,7 @@
 
 
 /* Packet types 67-116 are sent from the client */
+#define PKT_TAKE_OFF_AMT	66
 #define PKT_MIND		67
 #define PKT_STORE_EXAMINE	68
 #define PKT_KING		69
@@ -116,7 +117,7 @@
 #define PKT_LOCATE		98
 #define PKT_MAP			99
 
-#define PKT_SEARCH_MODE		100	
+#define PKT_SEARCH_MODE		100
 #define PKT_FIGHT		101
 #define PKT_CLOSE		103
 #define PKT_GAIN		104

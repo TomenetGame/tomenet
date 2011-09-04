@@ -616,6 +616,7 @@ extern int Send_disarm(int dir);
 extern int Send_wield(int item);
 extern int Send_observe(int item);
 extern int Send_take_off(int item);
+extern int Send_take_off_amt(int item, int amt);
 extern int Send_destroy(int item, int amt);
 extern int Send_inscribe(int item, cptr buf);
 extern int Send_uninscribe(int item);

@@ -114,6 +114,7 @@ static int Receive_quaff(int ind);
 static int Receive_read(int ind);
 static int Receive_search(int ind);
 static int Receive_take_off(int ind);
+static int Receive_take_off_amt(int ind);
 static int Receive_use(int ind);
 static int Receive_throw(int ind);
 static int Receive_wield(int ind);

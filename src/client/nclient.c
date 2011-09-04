@@ -4021,6 +4021,15 @@ int Send_take_off(int item)
 	return 1;
 }
 
+int Send_take_off_amt(int item, int amt)
+{
+	int n;
+
+	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_TAKE_OFF_AMT, item, amt)) <= 0) return n;
+
+	return 1;
+}
+
 int Send_destroy(int item, int amt)
 {
 	int	n;

@@ -963,15 +963,17 @@ void cmd_observe(void)
 
 void cmd_take_off(void)
 {
-	int item;
+	int item, amt = 255;
 
-	if (!c_get_item(&item, "Takeoff which item? ", (USE_EQUIP)))
-	{
-		return;
+	if (!c_get_item(&item, "Takeoff which item? ", (USE_EQUIP))) return;
+
+	/* New in 4.4.7a, for ammunition: Can take off a certain amount - C. Blue */
+	if (inventory[item].number > 1 && verified_item) {
+		amt = c_get_quantity("How many? ", inventory[item].number);
+		Send_take_off_amt(item, amt);
+	} else {
+		Send_take_off(item);
 	}
-
-	/* Send it */
-	Send_take_off(item);
 }
 
 void cmd_swap(void) {

@@ -193,10 +193,12 @@ void inven_takeoff(int Ind, int item, int amt)
 	/* Handles overflow */
 	pack_overflow(Ind);
 
-	/* Describe the result */
-	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
-	/* Message */
+	/* Describe the result */
+	if (amt < o_ptr->number)
+		object_desc(Ind, o_name, &tmp_obj, TRUE, 3);
+	else
+		object_desc(Ind, o_name, o_ptr, TRUE, 3);
 	msg_format(Ind, "%^s %s (%c).", act, o_name, index_to_label(posn));
 
 	/* Delete (part of) it */
@@ -1145,12 +1147,12 @@ return;
 /*
  * Take off an item
  */
-void do_cmd_takeoff(int Ind, int item)
+void do_cmd_takeoff(int Ind, int item, int amt)
 {
 	player_type *p_ptr = Players[Ind];
-
 	object_type *o_ptr;
 
+	if (amt <= 0) return;
 
 #if 0
 	/* Verify potential overflow */
@@ -1201,7 +1203,7 @@ void do_cmd_takeoff(int Ind, int item)
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
 	/* Take off the item */
-	inven_takeoff(Ind, item, 255);
+	inven_takeoff(Ind, item, amt);
 }
 
 
