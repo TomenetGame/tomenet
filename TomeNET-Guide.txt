@@ -338,7 +338,7 @@ g       g       pick up an item from the floor. You have to stand on the item
                 the number pad while numlock is turned off. Gold is always
                 picked up automatically.
 C       C       see a character overview.
-L or M  W or M  navigate on the map (use direction keys if using L).
+L, M    W, M    look around/display the map (use direction keys with L).
 s       s       search adjacent fields, objects or walls for hidden traps or
                 doors.
 S       #       enter 'search mode'. You will search your adjacent fields once
