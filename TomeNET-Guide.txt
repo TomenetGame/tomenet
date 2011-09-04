@@ -8107,7 +8107,7 @@ Warrior is strongly recommended.
     voices, arguing with themselves for no good reason, and screaming out
     challenges at nearby foes. In other words, dwarves have a miserable
     stealth.
-    They receive bonus on 'Axe-Mastery' and 'Digging'.
+    They receive a bonus on 'Axe-Mastery' and a large bonus on 'Digging'.
 
 - Half-Orc
     Because of their preference to living underground to on the surface,

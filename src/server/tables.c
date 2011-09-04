@@ -2897,7 +2897,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DIG,
                                 '+', 0,
-                                '+', 500,
+                                '+', 700,
                         },
 
                         {
@@ -3108,7 +3108,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DIG,
                                 '+', 0,
-                                '+', 500,
+                                '+', 700,
                         },
                         {
                                 SKILL_CALMNESS,
@@ -3304,7 +3304,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DIG,
                                 '+', 0,
-                                '+', 900,
+                                '+', 1100,
                         },
                         {
                                 SKILL_INTERCEPT,
@@ -3770,7 +3770,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DIG,
                                 '+', 1000,
-                                '+', 500,
+                                '+', 700,
                         },
                         {
                                 SKILL_CALMNESS,
@@ -4339,7 +4339,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DIG,
                                 '+', 1000,
-                                '+', 1000,
+                                '+', 1400,
                         },
 						/* Misc tree */
                         {
@@ -5078,7 +5078,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DIG,
                                 '+', 1000,
-                                '+', 2000,
+                                '+', 1600,
                         }, 
                 }
 	},
@@ -5264,7 +5264,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DIG,
                                 '+', 1000,
-                                '+', 700,
+                                '+', 900,
                         },
                 }
 	}
