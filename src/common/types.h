@@ -2245,6 +2245,8 @@ struct player_type
 	bool disturb_minor;
 	bool disturb_other;
 
+	bool alert_hitpoints;
+	bool alert_afk_dam;
 	bool auto_afk;
 	bool newb_suicide;
 	bool stack_allow_items;
@@ -3227,7 +3229,7 @@ struct client_opts
 	bool disturb_minor;
 	bool disturb_other;
 	bool alert_hitpoint;
-	bool alert_failure;
+	bool alert_afk_dam;//alert_failure;
 
 	bool auto_afk;
 	bool newb_suicide;

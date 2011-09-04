@@ -154,6 +154,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_STORE_SPECIAL_CLR]	= Receive_store_special_clr;
 }
 
+
 /* Head of file transfer system receive */
 /* DO NOT TOUCH - work in progress */
 int Receive_file(void){
@@ -1162,9 +1163,9 @@ int Receive_sanity(void)
 	if (screen_icky) Term_switch(0);
 
 	prt_sane(attr, (char*)buf);
-	if (c_cfg.alert_hitpoint && (attr == TERM_MULTI))
-	{
-		if (c_cfg.ring_bell) bell();
+	if (c_cfg.alert_hitpoint && (attr == TERM_MULTI)) {
+		page();
+		c_msg_print("\377R*** LOW SANITY WARNING! ***");
 	}
 
 	if (screen_icky) Term_switch(0);
@@ -1222,10 +1223,9 @@ int Receive_hp(void)
 	if (screen_icky) Term_switch(0);
 
 	prt_hp(max, cur);
-	if (c_cfg.alert_hitpoint && (cur < max / 5))
-	{
-		if (c_cfg.ring_bell) bell();
-		c_msg_print("\377r*** LOW HITPOINT WARNING! ***");
+	if (c_cfg.alert_hitpoint && (cur < max / 5)) {
+		page();
+		c_msg_print("\377R*** LOW HITPOINT WARNING! ***");
 	}
 
 	if (screen_icky) Term_switch(0);
@@ -3273,21 +3273,7 @@ int Receive_beep(void)
 
 	if (!c_cfg.allow_paging) return 1;
 
-#ifdef USE_SOUND_2010
-#ifdef SOUND_SDL
-	if (c_cfg.audio_paging && sound_page()) return 1;
-#endif
-#endif
-
-#ifdef WIN32
-//	Beep(880,200);
-	MessageBeep(MB_OK);
-#else
-	fprintf(stderr, "\007");
-	fflush(stderr);
-#endif
-
-	return 1;
+	return page();
 }
 
 int Receive_AFK(void)

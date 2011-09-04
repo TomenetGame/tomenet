@@ -1245,6 +1245,24 @@ void bell(void)
 	flush();
 }
 
+/* Generate a page sfx (beep) */
+int page(void) {
+#ifdef USE_SOUND_2010
+#ifdef SOUND_SDL
+	/* Try to beep via page sfx of the SDL audio system first */
+	if (c_cfg.audio_paging && sound_page()) return 1;
+#endif
+#endif
+
+	/* Fall back on system-specific default beeps */
+	//Term_fresh();
+	Term_xtra(TERM_XTRA_NOISE, 0);
+	//flush();
+
+	return 1;
+}
+
+
 /*
  * Display a string on the screen using an attribute, and clear
  * to the end of the line.

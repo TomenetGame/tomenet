@@ -1370,6 +1370,8 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 	// The "number" that the character is displayed as before the hit
 	int old_num, new_num;
 
+	if (p_ptr->alert_afk_dam && p_ptr->afk && p_ptr->paging == 0) p_ptr->paging = 1;
+
 	/* Amulet of Immortality */
 	object_type *o_ptr = &p_ptr->inventory[INVEN_NECK];
 	/* Skip empty items */
@@ -1617,6 +1619,8 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 	int old_csane = p_ptr->csane;
 	int warning = (p_ptr->msane * hitpoint_warn / 10);
 #endif	// 0
+
+	if (p_ptr->alert_afk_dam && p_ptr->afk && p_ptr->paging == 0) p_ptr->paging = 1;
 
 	/* For 'Arena Monster Challenge' event: */
 	if (safe_area(Ind)) {

@@ -2272,6 +2272,8 @@ static void sync_options(int Ind, bool *options)
 	p_ptr->disturb_state = options[23];
 	p_ptr->disturb_minor = options[24];
 	p_ptr->disturb_other = options[25];
+	p_ptr->alert_hitpoints = options[26];
+	p_ptr->alert_afk_dam = options[27];
 	p_ptr->auto_afk = options[28];
 	p_ptr->newb_suicide = options[29];
 	p_ptr->stack_allow_items = options[30];

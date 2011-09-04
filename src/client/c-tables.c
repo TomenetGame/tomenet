@@ -557,11 +557,12 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.show_details,		FALSE,	1,	0, 13, FALSE,
 	"show_details",			"(broken) Show details in certain sub-windows" },
 
-	{ &c_cfg.ring_bell,		TRUE,	1,	0, 14, TRUE,
-	"ring_bell",			"Audible bell (on errors, etc)" },
-
-	{ &c_cfg.use_color,		TRUE,	1,	0, 15, TRUE,
+	{ &c_cfg.use_color,		TRUE,	1,	0, 14, TRUE,
 	"use_color",			"Use color if possible (slow)" },
+
+	{ &c_cfg.ring_bell,		TRUE,	1,	0, 15, TRUE,
+	"ring_bell",			"Audible bell on misc warnings and errors" },
+
 
 	/*** Disturbance ***/
 
@@ -596,10 +597,10 @@ option_type option_info[OPT_MAX] =
 	"disturb_other",		"Disturb whenever various things happen" },
 
 	{ &c_cfg.alert_hitpoint,	FALSE,	1,	0, 26, TRUE,
-	"alert_hitpoint",		"Alert user to critical hitpoints/sanity" },
+	"alert_hitpoint",		"Beep about critical hitpoints/sanity" },
 
-	{ &c_cfg.alert_failure,		FALSE,	1,	0, 27, FALSE,
-	"alert_failure",		"(broken) Alert user to various failures" },
+	{ &c_cfg.alert_afk_dam,		FALSE,	1,	0, 27, TRUE,
+	"alert_afk_dam",		"Beep when taking damage while AFK" },//alert_failure
 
 	{ &c_cfg.auto_afk,		FALSE,	2,	1, 0, TRUE,	/* former auto_haggle */
 	"auto_afk",			"Set 'AFK mode' automatically" },

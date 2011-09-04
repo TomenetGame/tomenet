@@ -434,6 +434,7 @@ extern bool macro_del(cptr pat);
 extern char inkey(void);
 extern void keymap_init(void);
 extern void bell(void);
+extern int page(void);
 extern void c_prt(byte attr, cptr str, int row, int col);
 extern void prt(cptr str, int row, int col);
 extern bool get_string(cptr prompt, char *buf, int len);
