@@ -7827,13 +7827,7 @@ Note that not every skill is available to every profession (class).
                                 -invoke a mimic spell,
                                 -set a monster trap,
                                 -use a staircase.
-    +Disarming                  Improves your disarming ability, making it
-                                safer to disarm traps via the manual disarm
-                                command. (The experience you gain from manually
-                                disarming traps is not affected by the skill).
-                                Also gives you a chance to salvage a trap kit
-                                from any trap when you disarm it!
-        .Trapping               Improves your ability to set traps:
+    .Trapping                   Improves your ability to set traps:
                                 Gives you a higher chance to successfully
                                 place a trap if a monster is close to you and
                                 trying to interfere. Also, monsters will have
@@ -7841,6 +7835,13 @@ Note that not every skill is available to every profession (class).
                                 Last but not least you learn to optimize your
                                 traps for higher damage output.
                                 See (4.7) for details about monster traps.
+                                Trapping also improves your disarming ability,
+                                making it safer to disarm traps via the manual
+                                disarm command. (The experience you gain from
+                                manually disarming traps is not affected by the
+                                skill but only by the traps' level).
+                                Also gives you a chance to salvage a trap kit
+                                from any trap when you disarm it!
 +Health                         Increases your hit point regeneration rate:
                                 (skill_level * 2)% chance to regenerate 1,5x
                                 the normal amount of HP per turn (stacks with
