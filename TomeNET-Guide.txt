@@ -7232,7 +7232,7 @@ Intelligence (INT)
     -Has influence on your mana pool size. (class-dependant)
     -How well can you cast spells that use INT to determine failure rate?
     -Has influence on your magic device handling skill.
-    -Has influence on your trap-disarming skill.
+    -Has influence on your trap-disarming ability.
     -Do you notice if someone tries to steal from you?
     Also see (6.10) for more information about the 'Magic Device' skill.
 Wisdom (WIS)
@@ -7254,7 +7254,7 @@ Dexterity (DEX)
     -How likely are items or money stolen from you?
     -Can you prevent getting stunned from bashing a door clumsily?
     -Allows you to try hard to swim and not drown in deep water.
-    -Has influence on your trap-disarming skill.
+    -Has influence on your trap-disarming ability.
 Constitution (CON)
     -How many HP (hit points) do you have? Very essential.
      Note that CON effect caps depending on your character level. Roughly:
@@ -8052,7 +8052,7 @@ Stealth         Mimic form weight, stealth items, _'Stealth'_, cloaking,
                 'Martial Arts', runecraft
 Perception      search items, _'Sneakiness'_
 Searching       search items, _'Sneakiness'_, cloaking
-Disarming       Intelligence, dexterity, _'Disarming'_
+Disarming       Intelligence, dexterity, _'Trapping'_
 Magic Device    Intelligence, _'Magic-Device'_
 
 
