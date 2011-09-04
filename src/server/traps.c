@@ -3497,13 +3497,11 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 	inven_item_describe(Ind, item_kit);
 	inven_item_increase(Ind, item_load, -num);
 	inven_item_describe(Ind, item_load);
-	inven_item_optimize(Ind, item_kit);
-	inven_item_optimize(Ind, item_load);
 
-	for (i = 0; i < INVEN_WIELD; i++) {
+	for (i = 0; i < INVEN_TOTAL; i++) {
 		if (inven_item_optimize(Ind, i)) break;
 	}
-	for (i = 0; i < INVEN_WIELD; i++) {
+	for (i = 0; i < INVEN_TOTAL; i++) {
 		inven_item_optimize(Ind, i);
 	}
 
