@@ -1604,8 +1604,9 @@ void cmd_check_misc(void)
 
 void cmd_message(void)
 {
-	/* _hacky_: A note INCLUDES the sender name, the brackets, the space and the newlines. Ouch. - C. Blue */
-	char buf[MSG_LEN - strlen(cname) - 5 - 3];
+	/* _hacky_: A note INCLUDES the sender name, the brackets, spaces/newlines? Ouch. - C. Blue
+	   Note: the -8 are additional world server tax (8 chars are used for world server line prefix etc.) */
+	char buf[MSG_LEN - strlen(cname) - 5 - 3 - 8];
 	int i;
 
 	/* Wipe the whole buffer to stop valgrind from complaining about the color code conversion - mikaelh */

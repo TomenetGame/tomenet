@@ -342,7 +342,7 @@ void world_pmsg_send(uint32_t id, char *name, char *pname, char *text){
 	if(WorldSocket==-1) return;
 	spk.type=WP_PMSG;
 	len=sizeof(struct wpacket);
-	snprintf(spk.d.pmsg.ctxt, 160, "%s", text);
+	snprintf(spk.d.pmsg.ctxt, MSG_LEN, "%s", text);
 	spk.d.pmsg.id=id;
 	spk.d.pmsg.sid=world_find_server(pname);
 	snprintf(spk.d.pmsg.player, 80, "%s", name);
@@ -355,7 +355,7 @@ void world_chat(uint32_t id, char *text){
 	if(WorldSocket==-1) return;
 	spk.type=WP_CHAT;
 	len=sizeof(struct wpacket);
-	snprintf(spk.d.chat.ctxt, 160, "%s", text);
+	snprintf(spk.d.chat.ctxt, MSG_LEN, "%s", text);
 	spk.d.chat.id=id;
 	x=send(WorldSocket, &spk, len, 0);
 }
@@ -373,7 +373,7 @@ void world_msg(char *text){
 	if(WorldSocket==-1) return;
 	spk.type=WP_MESSAGE;
 	len=sizeof(struct wpacket);
-	snprintf(spk.d.smsg.stxt, 160, "%s", text);
+	snprintf(spk.d.smsg.stxt, MSG_LEN, "%s", text);
 	x=send(WorldSocket, &spk, len, 0);
 }
 
