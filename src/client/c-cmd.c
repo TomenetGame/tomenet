@@ -968,7 +968,8 @@ void cmd_take_off(void)
 	if (!c_get_item(&item, "Takeoff which item? ", (USE_EQUIP))) return;
 
 	/* New in 4.4.7a, for ammunition: Can take off a certain amount - C. Blue */
-	if (inventory[item].number > 1 && verified_item) {
+	if (inventory[item].number > 1 && verified_item
+	    && is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
 		amt = c_get_quantity("How many? ", inventory[item].number);
 		Send_take_off_amt(item, amt);
 	} else {
