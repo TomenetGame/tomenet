@@ -9168,8 +9168,9 @@ All vampires and vampire bats
             real vampire forms have 50% chance (half their attacks are hits,
             the other half is biting). For details see '(5.15) Vampirism'.
 All angels  Resist light, blindness and poison (usually immunity, see r_info
-            flags), resist confusion, see invisible.
-            Note: 'Fallen Angel' doesn't get light resistance.
+            flags), resist fear, resist confusion, see invisible, strong
+            resistance to insanity-inducing attacks.
+            Note: 'Fallen Angel' doesn't get light/confusion resistances.
 
 Keep in mind that by changing forms you can potentially lose abilities that
 you had in player form, because they were bound to your normal form.

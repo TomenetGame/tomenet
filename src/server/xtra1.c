@@ -2261,13 +2261,10 @@ static void calc_body_bonus(int Ind)
 		/* Angels resist light, blindness and poison (usually immunity) */
 		case 417:	case 456:	case 511:	case 605:	
 		case 661:	case 1071:	case 1072:	case 1073:
-			p_ptr->resist_lite = TRUE;
-			p_ptr->resist_conf = TRUE;
 			p_ptr->see_inv = TRUE;
 		/* Fallen Angel */
 		case 652:
 			p_ptr->resist_blind = TRUE;
-			p_ptr->resist_pois = TRUE;
 			break;
 	}
 
