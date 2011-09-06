@@ -223,26 +223,10 @@ s16b rspell_cost (u32b Ind, u16b s_type, u32b s_flags, u16b s_av, byte imperativ
 	cost = (cost * d_pen) / 10;
 	
 	/* Alternative to these just increasing fail rates: */
-	if (no_lite(Ind) || p_ptr->blind)
-	{
-		penalty += 20;
-	}
-	if (p_ptr->confused)
-	{
-		penalty += 20;
-	}
-	if (p_ptr->cut)
-	{
-		penalty += p_ptr->cut / 5;
-	}
-	if (p_ptr->stun > 50)
-	{
-		penalty += 20;
-	}
-	else if (p_ptr->stun)
-	{
-		penalty += 10;
-	}
+	if (no_lite(Ind) || p_ptr->blind) penalty += 20;
+	if (p_ptr->confused) penalty += 20;
+	if (p_ptr->stun > 50) penalty += 20;
+	else if (p_ptr->stun) penalty += 10;
 	
 	cost = cost+((cost*penalty)/100); //Costs can increase up to 60% if everything is going wrong.
 	
