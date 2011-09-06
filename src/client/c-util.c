@@ -1718,7 +1718,8 @@ bool get_string(cptr prompt, char *buf, int len)
 	inkey_msg = TRUE;
 
 	/* Display prompt */
-	prt(prompt, 0, 0);
+	Term_erase(0, 0, 255);
+	Term_putstr(0, 0, -1, TERM_WHITE, (char *)prompt);
 
 	if (streq(prompt, "Message: ")) {
 		askfor_mode |= ASKFOR_CHATTING;
