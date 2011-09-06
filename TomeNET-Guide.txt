@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 4. September 2011 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.7a - official websites are:
+| Latest update: 6. September 2011 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.8 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 |
@@ -6955,7 +6955,7 @@ experience points permanently. Here are some details about that process:
 Runes are magical symbols used to summon and manipulate the raw elemental
 forces which sustain the world of life. They are the motivating force behind
 the traditional systems of magic in TomeNET. The Istari's spell-scroll, for
-example, are composed of a series complicated runes which both protect the
+example, are composed of a series of complicated runes which both protect the
 mage from immediate harm, and create the desired effect: from fireballs to
 magical satiation.
 
@@ -6967,10 +6967,10 @@ only by their wits, their strength and their skill.
 
 This approach is not necessarily a safe one. Inexperienced Runemasters risk
 losing control of their spells, which can result in broken runes, physical
-damage, sickness, madness or even death.
+damage, sickness, madness or even death. (See Penalties & Backlash below.)
 
-These risks are compounded when the Runemaster is confused, stunned, cut, low
-on magical stamina or simply attempting a particularly dangerous spell. While
+These risks are compounded when the Runemaster is confused, stunned, low on
+magical stamina or simply attempting a particularly dangerous spell. While
 an Istar is always prevented from casting outside of his or her ability,
 Runemasters may continue making spell attempts with increased risks (drawing
 on his or her own health, if necessary), until the penalties are fatal.
@@ -6978,18 +6978,17 @@ on his or her own health, if necessary), until the penalties are fatal.
 Runemasters are able to cast many kinds of spells, but it's important to note
 that some are much more difficult to manage than others. All rune-spells can
 either be projected at the world or a monster, or directed at the Runemaster
-for a different result.
+for a different result. These are 'projection' and 'self' spells.
 
 Successful Runemasters will develop an affinity for a small number of runes.
 Eventually, they may come to a point where they can safely recite these runes
 from memory, especially when casting simple spells. However, having the
-physical runes present increases the chance of success, and spell efficiency
-increases with successfulness, so even high level Runemasters will usually
-carry their selected runes.
+physical runes present increases the chance of success, and mitigates many
+of the penalties of failing a rune-spell.
 
-Runemastery requires dexterious physical and intellectual manipulation of
+Runemastery requires dexterous physical and intellectual manipulation of
 the rune-forms, requiring high INT and DEX character stats. For this reason,
-Runemasters also make decent thieves and fighters: some rune-spells may even
+Runemasters also make decent thieves and fighters- some rune-spells may even
 boost the caster's combat abilities.
 
 To some extent, Runemasters will need to experiment to find out their own
@@ -7003,118 +7002,314 @@ To cast a rune-spell, enter the m-key menu and select 'Draw a rune'.
 
 Rune-spells are made up of three components:
     1. A combination of up to three runes
-    2. A spell-modifier
-    3. A spell-type, or format (bolt, ball, etc.)
+    2. A spell-modifier (minimized, brief, etc.)
+    3. A spell-type (bolt, ball, self, etc.)
 
 Each component has different associated costs; some of these can be viewed in
 the menu. When selecting runes, press return once you are finished, or enter
 the maximum of three runes and continue to the modifier selection. The menu
-will prompt for a direction if it is required after you're done.
-Note that only true runemasters will be able to draw the full amount of three
-runes, while other classes that train in rune skills can draw up to a maximum
-of two runes.
+will prompt for a direction if it is required after you're done. Note that
+only true Runemasters will be able to draw the full amount of three runes,
+while other classes that train in rune skills can draw up to a maximum of two
+runes.
+
+Each component has an associated level modifier, contributing to the overall
+average level of skill needed to cast or even attempt to cast a rune-spell.
+While selecting components with the m-key menu or the macro wizard, the color
+of each component can give you an estimate of the skill level needed for a
+particular spell. Keep in mind that it is impossible to attempt a rune-spell
+15 levels or higher above your effective average skill level, and that
+combining runes corresponding to skills that vary widely in level will result
+in a reduced average. Most rune combinations use the maximum level of the
+runes involved (see Trait Rules, below).
+
+You can discover new spell combinations and exceptions to many patterns by
+experimenting. Utilizing the color ratings of the m-key menu and macro wizard
+and keeping the physical runes required for a combination are often enough for
+safety, although having more resists can protect against backlash. Here is an
+approximation of the color system, assuming runes in inventory (add 5-10% fail
+for each missing rune):
+Blue   ->  Comfortable (10+ skill levels above)
+White  ->  Safe with Runes (Appropriate level)
+Yellow ->  Risky with Runes (1-5 skill levels below)
+Orange ->  Dangerous with Runes (6-14 skill levels below)
+Slate  ->  Impossible (15+ skill levels below, or no skill)
+
+
+Penalties & Backlash:
+---------------------
+Should your average skill level be much lower than the level of the specified
+rune-spell, or if a number of penalties have accrued- by casting while
+stunned, confused, from memory (no physical runes), or without enough
+MP, the risk of suffering backlash and other negative effects increases. In
+addition to an increased chance of outright failure of the rune-spell, high
+penalty levels also increase the danger of backlash effects. For this reason,
+experienced Runemasters will often try to minimize these penalties; having
+the physical runes for a rune-spell at hand is the first step in doing this.
+
+Keeping the correct runes in your inventory additionally serves to mitigate
+many of the more dangerous rune-spell backlash effects, breaking runes rather
+than the Runemaster. This is especially important once damaging effects of
+rune-spells begin to outpace the Runemaster's intrinsic durability; resisting
+one's own rune-spells can be an important factor for survival in critical
+situations.
+
+
+Gestalt, Null, Exploding Spells:
+--------------------------------
+Runemastery is often a chaotic and unstable approach to magic, and many of
+the spells weaved by Runemasters combine elements in unlikely ways, with
+flashy and varied results. Gestalt spells combine the basic elements of
+acid, electricity, fire, cold, and even poison, to create an effect with
+the properties of each that contributes. Examples include combining cold
+and acid to produce an element with both properties, 'rime', or combining
+electricity and fire to produce 'plasma', a higher level exceptional gestalt
+with an added stunning effect.
+
+Following similar trait rules, combining fire and cold results in a
+nullified spell, the opposing elements counteracting and consuming one
+another. It may be practical for aspiring runemasters to learn the
+properties associated with each element, and their relationships in
+combination, to aid in the discovery of new rune-spells.
+
+Exploding runespells encompass a powerful subcategory of the art, in which a
+projection such as a bolt, beam, ball, and even waves, clouds and storms
+strike the area around their targets with addition elemental damage. Instant
+effects (bolt, beam, ball) always explode and additionally explode when
+colliding with terrain, while timed effects (waves, clouds, storms) have a
+chance to explode each tick. Timed effects also explode in unique manners;
+a cloud explosion acts much like an instant effect when triggered, while
+waves have an increased radius with less damage, and storms have a reduced
+radius with more damage.
+
+
+Rune Schools, Families, Augments:
+---------------------------------
+A runemaster's choice of skills is a strong defining characteristic of the
+class; other classes training runemastery will never venture into the subtle
+realm of 3-rune spells and augmentation effects. Much like an Istar augments
+spells with spell-power, a true Runemaster will augment many spells with
+powers and effects drawn from choice schools, such as the evocation 'school'
+of fire and chaos. (See Table of Augments, below)
+
+Spell families are formed in 3-rune combinations that share the same effect,
+as well as common contributing runes. All single school 3-rune spells (spells
+that combine the two elements of a skill school, plus a third) form groups
+called families. A family of spells shares a common projection element and
+self spell, but recieves the benefit of any augment the runemaster can provide
+through choice of a third element. This results in a number of similar spells,
+with variable modifications based on the runemaster's skill with the third,
+augmenting, element.
+
+Augments require a minimum skill level in the rune with which the rune-spell
+takes as an augment. Additionally, not all augments appear in every family of
+spells, precisely because those elements are already in use within the spell
+to be augmented. Augments may also appear outside of families, such as is
+common with the time element in combination, resulting in family-like traits
+among many rune-spells (See Regarding Element Traits, Below). Augments scale
+linearly with rune skill level, and grant from 0% of their benefit and 200%
+of their drawback to 100% of each at skill level 50.
+
+
+Trait Rules:
+------------
+Fundamental rune elements [a-h] follow rules in combining with other elements.
+With the exception of single-school 2-rune spells (eg. acid/water, one skill)
+rune-spells generally follow the rules as outlined below.
+
+'Base' rune elements of acid, electricity, fire, and cold combine with each
+other in gestalt fashion and flavor other more powerful elements when combined.
+
+'Water' and 'Earth' are considered classical elements, combining with high
+elements to produce powerful attacks, and low elements for utility spells.
+
+'Chaos' and 'Nether' are elements of power, maintaining a high level of
+influence in combination. They average their level with combining elements.
+
+'Poison' as a gestalt will add a status ailment to a projected spell with a
+burst of dehabilitating gas (sleep, confusion, stun).
+
+'Nexus' works like an inverting element, changing weaker elements it is
+combined with into their polar opposites, eg. fire->cold and water->earth.
+
+'Force' in combination is always a minimum of level 20 (the minimum level of a
+stunning effect), with the exception of light and dark, level 5 combinations
+with chaos and nether, respectively.
+
+'Time' based spells assume the lower level of the other runes, despite
+including a high level rune itself. Time projections are often augmented with
+time.
+
+Although some rune combinations are an exception to these rules, all families
+of rune-spells abide by strict patterns that dictate their powers and effects.
+Minor exceptions abound however, due to the nature of the combining elements;
+the trinity of plasma, ice and thunder often make example of this.
+
+
+Macros & Spell Construction:
+----------------------------
+Runemastery macros look like this (key translation in parenthesis):
+(Note: The ability code for runemastery is 18.)
+
+'Projection' one to three rune-spells use the following format:
+    \e)*tm@18\r[a-h]\r[a-h][a-h]-
+    \e)*tm@18\r[a-h][a-h]\r[a-h][a-h]-
+    \e)*tm@18\r[a-h][a-h][a-h][a-h][a-h]-
+
+'Self' one to three rune-spells (spell type 'b') us the following format:
+    \e)m@18\r[a-h]\r[a-h]b
+    \e)m@18\r[a-h][a-h]\r[a-h]b
+    \e)m@18\r[a-h][a-h][a-h][a-h]b
+
+Note that you must choose at least one and up to three runes, one
+imperative modifier, and one spell type. If you choose three runes for a
+spell, the \r is not required. [a-h] denotes the choice of a letter from
+a to h inclusive, which represents a rune, modifier, or type.
+
+Here is a single-rune element example, using fire (one-rune, code 'c'):
+
+'Projection' with 'Fire':
+    \e)*tm@18\rc\rac-  (fire--minimized--bolt)
+
+Which is a minimized fire bolt, a projection targetting a single opponent.
+
+A fire ball spell looks like this:
+    \e)*tm@18\rc\rae-  (fire--minimized--ball)
+
+To increase the radius of the ball, adjust the modifier to something that
+sounds bigger (also increasing the level, difficulty and cost):
+
+A moderate fire ball:
+    \e)*tm@18\rc\rbe-  (fire--moderate--ball)
+
+Or an expanded fire ball:
+    \e)*tm@18\rc\rge-  (fire--expanded--ball)
+
+
+'Self' Spells with 'Fire':
+    \e)m@18\rc\rab     (fire--minimized--self)
+
+Which is a minimized resist fire spell, a self-spell affecting the caster.
+
+A lengthened resist fire spell:
+    \e)m@18\rc\rgb     (fire--lengthened--self)
+
+In the same way that you can increase or decrease a fire ball's radius, you can
+increase or decrease the duration of any timed spell by selecting 'lengthened'
+or 'brief'. Other modifiers may adjust the duration to a lesser extent.
+
+A brief resist fire spell:
+    \e)m@18\rc\rfb     (fire--brief--self)
+
+
+Occasionally, more complex spells such as 'teleport to' or 'stone-to-mud'
+require a special macro that deviates from the examples above.
+
+Teleport-to requires that you set a target before casting:
+    \e)*tm@18\rkl\rab  (force/time--minimized--self)
+
+Stone-to-Mud, a projection with no *t...- (manual target):
+    \e)m@18\rbh\rac    (water/earth--minimized--bolt)
+
+Advanced runemasters may wish to create macro sets which construct spells
+on the fly, swap macro sets containing preset rune-spells, or set up
+combinations of macros to chain together spells quickly and efficiently.
+Spells with a lowered casting time might even be combined in one macro,
+creating a 'dual-cast' effect (especially true with the 'brief' modifier).
+
+Note that every modifier has drawbacks associated with the benefits of using
+it: higher cost, level, reduced damage, increased failure rates- check the
+specifics in the m-key menu before you create a new macro.
+
+
+Auto-retaliation & burst type:
+------------------------------
+The 'burst' spell type is also called 'melee' spell. It is only usable on
+adjacent targets, a lashing-out of magical power at an opponent in melee range.
+It is technically a ball spell with a range and radius of a single tile.
+It is cheaper than a regular bolt, cannot be deflected, and usually does
+more damage. It may be difficult to use manually but it is very useful for
+auto-retaliation.
+As a runemaster gains levels, melee spells take less and less time to cast,
+and function similar to other melee weapons, with multiple blows (in this case,
+casts) per round. Note that melee spells affect the ground tile on which it is
+targetted, possibly resulting in damaged items or other terrain features.
+
+If you inscribe @O[a-h][a-h] on a rune, you will automatically retaliate with
+a spell of the selected modifier and type, or the rune element inscribed. For
+example, if you set the inscription to @Oaa on a rune of fire, the 'burst'
+spell type will be selected, with a 'minimized' spell modifier. This will
+result in retaliation with a minimized fire melee rune-spell.
+
+Inscribing multiple rune types with identical inscriptions will result with a
+retaliation spell that combines the elements of the inscribed runes. This takes
+the first rune found in your inventory with an @O[a-h][a-h] inscription, and
+checks for other runes with the same @O[a-h][a-h] inscription format.
+For example, an inventory like so, resulting in a moderate wave of ice:
+    a) 1 'Gelum' Rune of Cold {+,1} {@Obf}
+    b) 1 'Ostes' Rune of Earth {+,1} {@Oaa}
+    c) 1 'Mio' Rune of Water {+,1} {@Obf}
+Note that the earth rune in slot b) is skipped, as @Oaa does not match @Obf,
+which is the first inscription of a rune found in the runemaster's inventory.
+
+Note that although you can set any spell for retailation, some spells will be
+disabled, such as blink or teleport. Other spells that affect an area over time
+such as 'cloud' and 'storm' spells, and many self-spells with timed durations,
+make poor choices for auto-retaliation.
+
+
+Quickstart Guide:
+-----------------
+To get started, you'll probably want to macro a couple of minimized or
+moderate single rune (base element) attack spells; make sure the level isn't
+too high. Utilizing minimized burst auto-retaliation on a single element or
+(a bit riskier) minimized ball spells from full MP/HP can speed the early few
+levels. Runemasters excel at area damage, so be sure to take down packs of
+creatures while you still have starting runes to keep you safe from any major
+backlash effects. Keeping your MP high (use a mage staff, casters) is essential
+at early levels.
+
+Once you are around level 10, with enough skill to comfortably cast the basic
+elements of your choosing, macro a couple of spell types that work for a
+variety of situations. At this stage it is often best to invest more in potions
+than physical runes, as backlash is still minor, and the penalties for casting
+with HP not as severe. Risking high damage ball spells without MP to fuel them
+can be balanced by using a resist spell to reduce incoming backlash damage, and
+potions to sustain your HP.
+
+Around level 20, try to expand upon the variety of spell types and especially
+projection elements you have prepared. Build your macro set slowly as you gain
+levels, and be cautious when experimenting with new spells; not all self
+spells are beneficial, and unresisted backlash from your own projections can
+be lethal, especially when casting without runes or MP.
+
+
+Hints:
+------
+If you must experiment with high level spells, do this in a safe location
+(preferably somewhere that you are unable to be killed), bearing in mind that
+if you frequently fail or *fail* to cast a spell, you are not yet skillful
+enough to cast it: try a minimized version instead, or if that fails, increase
+your skill level and try again.
+
+The casting adjective will further elaborate on the difficulty of a spell
+compared to your skill. Ideally, you should try to choose spells where the
+average outcome is 'efficiently', or better. These are 'safe' spells, and tend
+to be more efficient than spells that you 'barely manage to', or 'clumsily'
+cast. (Note that this is not possible at skill level 1, where everything is
+dangerous.)
 
 If you choose the 'chaotic' modifier, the resulting damage, cost and duration
 will be increased or decreased by a random amount. This can result in very high
 damage spells at low cost. However, this spell modifier sometimes has negative
 side effects: use it with care.
 
-
-Macros:
--------
-In general it is recommended to just use the macro wizard (key 'z' in the macro
-menu). If you want to create macros manually though by all means read on.
-
-Runemastery macros look like this: (The magic number for runemastery is 18)
-    \e)*tm@18\ra\rac-
-
-Which is fire--minimized--bolt, or a minimized fire bolt.
-
-Fire ball looks like this (key translation in brackets):
-    \e)*tm@18\ra\rae- (fire--minimized--ball;
-                       note: the 'size' determines max damage, radius, cost
-                             and chance for failure)
-
-To increase the radius of the ball, adjust the modifier to something that
-sounds bigger (this will also increase the damage, difficulty and cost):
-
-A moderate fire ball:
-    \e)*tm@18\ra\rbe- (fire--moderate--ball)
-
-Or a widened fire ball:
-    \e)*tm@18\ra\rge- (fire--widened--ball)
-
-
-Or some self-spells:
-
-Resist fire:
-    \e)m@18\ra\rbb (fire--moderate--self;
-                    note: 'moderate' here determines duration/cost/fail chance)
-
-(In the same way that you can increase or decrease a fire ball's radius, you
-can increase or decrease the duration of any timed spell by selecting
-'lengthened' or 'brief'. Some other modifiers will adjust the duration to a
-lesser extent.)
-
-Blink:
-    \e)m@18\rd\rab (water--minimized--self;
-                    note: the 'size' here determines radius, cost, fail chance)
-
-Note that if you choose three runes for a spell, the \r is not required.
-
-
-Autoretaliation & Melee spells:
--------------------------------
-If you inscribe @O[a-h] on a rune, you will automatically retaliate with a
-moderate spell of the selected type. Not specifying a letter is same as
-actually choosing 'a'. Here is a table again of the effect types:
-
-a - melee
-b - self
-c - bolt
-d - beam
-e - ball
-f - wave
-g - cloud
-h - storm
-
-So if you set the type to 'a' by inscribing a rune
- @Oa
-or (which is the same) just
- @O
-then the 'melee' spell type will be selected.
-
-A melee spell is a bolt spell with a range of a single tile. It is cheaper than
-a regular bolt, and usually does more damage, but is very difficult to use
-outside of autoretaliation.
-
-
-Hints:
-------
-You can find out other spell combinations by experimenting. Do this in a safe
-location (preferably somewhere that you are unable to be killed), best is by
-far during 'Arena Monster Challenge' event where really nothing happens to a
-character who 'dies' in the actual arena level.
-
-Bear in mind that if you frequently fail or *fail* to cast a spell, you are not
-yet skillful enough to cast it: try a minimized version instead, or if that
-fails, wait a few levels and try again.
-
-The casting adjective will give you an idea of the difficulty of a spell
-compared to your skill. Ideally, you should try to choose spells where the
-average is 'efficiently', or better. These are 'safe' spells, and tend to be
-more efficient than spells that you 'barely manage to', or 'clumsily' cast.
-(Note that this is not possible at skill level 1, where everything is
-dangerous.)
-
-Find a couple of combinations that work for a variety of effects, and then
-build your macro set slowly as you gain levels. The last thing you want to do
-is to have a high level spell like 'nuke ball' macroed at level five, and end
-up committing suicide when you accidentally hit the wrong key in the dungeon.
-
-To get started, you'll probably want to macro a couple of attack spells and
-possibly blink (phase door). You may also wait a melee or ranged weapon for
-when you run out of mana, at least in the beginning.
+If you are a full caster (at least 3 schools), be sure to macro a glyph spell
+and carry mana potions. If you are a hybrid-melee, you will have less
+(especially so for 1 school Runemasters) versatility, but may still have access
+to additional utility through your school selection. Be sure to experiment with
+2-rune and 3-rune spells outside your school(s) at higher levels, because you
+will still be able to access lower-level utility.
 
 
 
@@ -7610,14 +7805,12 @@ Note that not every skill is available to every profession (class).
         .Thought Contact        Learn mindcrafter spells of tought contact.
         .Mental Intrusion       Learn mindcrafter spells of mental intrusion.
     +Runecraft                  Determines how skillful you are in handling
-        .Fire and Cold          specific magical symbols or Runes.
-        .Acid and Water
-        .Lighning and Earth     For more info about runes, see
-        .Poison and Wind        '(5.20) Runes & Runemastery'.
-        .Mana and Chaos
-        .Force and Gravity
-        .Nether and Time
-        .Mind and Nexus
+        .Acid and Water         specific magical symbols or Runes.
+        .Lightning and Earth    For more info about runes, see
+        .Fire and Chaos         '(5.20) Runes & Runemastery'.
+        .Cold and Nether
+        .Poison and Nexus
+        .Force and Time
     .Mimicry                    Ability to shapechange into a monster!
                                 You also inherit the monsters abilities,
                                 weaknesses and resistances!
