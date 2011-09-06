@@ -902,7 +902,7 @@ void cmd_drop(void)
 		if (is_cheap_misc(inventory[item].tval) && c_cfg.whole_ammo_stack && !verified_item
 		    && item < INVEN_WIELD) /* <- new: ignore whole_ammo_stack for equipped ammo, so it can easily be shared */
 			amt = inventory[item].number;
-		else amt = c_get_quantity("How many? ", inventory[item].number);
+		else amt = c_get_quantity("How many (a for all)? ", inventory[item].number);
 	}
 	else amt = 1;
 
@@ -915,7 +915,7 @@ void cmd_drop_gold(void)
 	s32b amt;
 
 	/* Get how much */
-	amt = c_get_quantity("How much gold? ", -1);
+	amt = c_get_quantity("How much gold (a for all)? ", -1);
 
 	/* Send it */
 	if (amt)
@@ -970,7 +970,7 @@ void cmd_take_off(void)
 	/* New in 4.4.7a, for ammunition: Can take off a certain amount - C. Blue */
 	if (inventory[item].number > 1 && verified_item
 	    && is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
-		amt = c_get_quantity("How many? ", inventory[item].number);
+		amt = c_get_quantity("How many (a for all)? ", inventory[item].number);
 		Send_take_off_amt(item, amt);
 	} else {
 		Send_take_off(item);
@@ -997,7 +997,7 @@ void cmd_destroy(void)
 	/* Get an amount */
 	if (inventory[item].number > 1) {
 		if (is_cheap_misc(inventory[item].tval) && c_cfg.whole_ammo_stack && !verified_item) amt = inventory[item].number;
-		else amt = c_get_quantity("How many? ", inventory[item].number);
+		else amt = c_get_quantity("How many (a for all)? ", inventory[item].number);
 	} else amt = 1;
 
 	/* Sanity check */

@@ -306,7 +306,7 @@ static void store_purchase(void)
 			if (o_ptr->number <= amt_afford)
 				amt = c_get_quantity(NULL, o_ptr->number);
 			else if (amt_afford > 1)
-				amt = c_get_quantity(format("Quantity (1-\377y%d\377w): ", amt_afford), amt_afford);
+				amt = c_get_quantity(format("Quantity (1-\377y%d\377w, a for all): ", amt_afford), amt_afford);
 			else
 				amt = c_get_quantity("Quantity (\377y1\377w): ", 1);
 		} else {
@@ -430,7 +430,7 @@ static void store_sell(void)
 	/* Get an amount */
 	if (inventory[item].number > 1) {
 		if (is_cheap_misc(inventory[item].tval) && c_cfg.whole_ammo_stack && !verified_item) amt = inventory[item].number;
-		else amt = c_get_quantity("How many? ", inventory[item].number);
+		else amt = c_get_quantity("How many (a for all)? ", inventory[item].number);
 	} else amt = 1;
 
 	/* Hack -- verify for Museum(Mathom house) */
@@ -515,7 +515,7 @@ static void store_do_command(int num)
 	if (c_store.flags[num] & BACT_F_GOLD)
 	{
 		/* Get how much */
-		gold = c_get_quantity("How much gold? ", -1);
+		gold = c_get_quantity("How much gold (a for all)? ", -1);
 
 		/* Send it */
 		if (!gold) return;

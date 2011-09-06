@@ -2904,7 +2904,7 @@ s32b c_get_quantity(cptr prompt, s32b max)
 	if (!prompt)
 	{
 		/* Build a prompt */
-		sprintf(tmp, "Quantity (1-%d): ", max);
+		sprintf(tmp, "Quantity (1-%d, a for all): ", max);
 
 		/* Use that prompt */
 		prompt = tmp;
@@ -2972,12 +2972,11 @@ s32b c_get_quantity(cptr prompt, s32b max)
 #endif
 
 
-	/* A letter means "all" */
-	if (isalpha(buf[0])) amt = max;
-	/* hack for drop gold: - C. Blue */
-	if (buf[0] == '*') {
-		if (max > 0) amt = max;
-		else amt = 1000000000; /* 1 more than you could actually type :) (8 chars limit) */
+	/* 'a' means "all" - C. Blue */
+	if (buf[0] == 'a') {
+		if (max >= 0) amt = max;
+		/* hack for dropping gold (max is -1) */
+		else amt = 1000000000;
 	}
 
 	/* Enforce the maximum, if maximum is defined */
