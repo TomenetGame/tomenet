@@ -1664,7 +1664,7 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_DIG,
                                 '+', 1000,
-                                '%', 130,
+                                '%', 115,
                         },
                         {
                                 SKILL_DODGE,
@@ -1712,7 +1712,7 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_DIG,
                                 '+', 5000,
-                                '%', 150,
+                                '%', 130,
                         },
                         {
                                 SKILL_CLIMB,
