@@ -244,7 +244,7 @@ static void store_examine(void)
 
 static void store_purchase(void)
 {
-        int                     i, amt;
+        int                     i, amt, amt_afford;
         int                     item;
 
         object_type             *o_ptr;
@@ -286,20 +286,33 @@ static void store_purchase(void)
         /* Get the actual item */
         o_ptr = &store.stock[item];
 
+	/* Client-side check already, for item stacks: Too expensive? */
+	if (store_prices[item] > p_ptr->au) {
+		c_msg_print("You do not have enough gold.");
+		return;
+	}
+
         /* Assume the player wants just one of them */
         amt = 1;
 
         /* Find out how many the player wants */
-        if (o_ptr->number > 1)
-        {
+        if (o_ptr->number > 1) {
                 /* Hack -- note cost of "fixed" items */
-                if (store_num != 7)
-                {
+                if (store_num != 7) {
                         c_msg_print(format("That costs %ld gold per item.", (long)(store_prices[item])));
-                }
+                        amt_afford = p_ptr->au / store_prices[item];
 
-                /* Get a quantity */
-                amt = c_get_quantity(NULL, o_ptr->number);
+			/* Get a quantity */
+			if (o_ptr->number <= amt_afford)
+				amt = c_get_quantity(NULL, o_ptr->number);
+			else if (amt_afford > 1)
+				amt = c_get_quantity(format("Quantity (1-\377y%d\377w): ", amt_afford), amt_afford);
+			else
+				amt = c_get_quantity("Quantity (\377y1\377w): ", 1);
+		} else {
+			/* Get a quantity */
+			amt = c_get_quantity(NULL, o_ptr->number);
+		}
 
                 /* Allow user abort */
                 if (amt <= 0) return;
