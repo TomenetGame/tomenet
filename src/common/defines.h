@@ -1501,92 +1501,6 @@
 #define COL_LAG                 0       /* mini lag-o-meter */
 
 /*** Terrain Feature Indexes (see "lib/edit/f_info.txt") ***/
-#if 0 //-------------------------------------------------------------------------------------------
-/* Reform scheduled!! */
-
-/* Nothing */
-#define FEAT_NONE		0x00
-
-/* Various */
-#define FEAT_FLOOR		0x01
-#define FEAT_GRASS		0x02
-#define FEAT_DIRT		0x03
-#define FEAT_CROP		0x04
-#define FEAT_LOOSE_DIRT		0x05
-#define FEAT_WATER		0x06
-#define	FEAT_MUD		0x07
-
-#define FEAT_INVIS		0x08
-#define FEAT_GLYPH		0x09
-#define FEAT_OPEN		0x0A
-#define FEAT_BROKEN		0x0B
-#define FEAT_LESS		0x0C
-#define FEAT_MORE		0x0D
-#define FEAT_HOME_OPEN		0x0E
-
-/* Traps */
-#define FEAT_TRAP_HEAD	0x10
-#define FEAT_TRAP_TAIL	0x1F
-
-/* Trees */
-#define FEAT_TREE	0x20
-#define FEAT_EVIL_TREE  0x21
-
-#define FEAT_SIGN	0x22
-
-/* Special "home doors" */
-#define FEAT_HOME_HEAD	0x28
-#define FEAT_HOME_TAIL	0x2F
-
-/* adding various wilderness features here.
-FEAT_PERM_CLEAR is used for an "invisible" outside wall
-that keeps many algorithms happy.
--APD- */
-
-#define FEAT_PERM_CLEAR 0x30
-#define FEAT_LOGS	0x31
-#define FEAT_DRAWBRIDGE 0x40	
-
-/* Shops */
-/* changed FEAT_SHOP_TAIL to 0x50 for auction house */
-#define FEAT_SHOP_HEAD	0x48
-#define FEAT_SHOP_TAIL	0x50
-
-/* Doors */
-#define FEAT_DOOR_HEAD	0x60
-#define FEAT_DOOR_TAIL	0x6F
-
-/* Extra */
-#define FEAT_SECRET		0x70
-#define FEAT_RUBBLE		0x71
-
-/* Seams */
-#define FEAT_MAGMA		0x72
-#define FEAT_QUARTZ		0x73
-#define FEAT_MAGMA_H	0x74
-#define FEAT_QUARTZ_H	0x75
-#define FEAT_MAGMA_K	0x76
-#define FEAT_QUARTZ_K	0x77
-
-/* Walls */
-#define FEAT_WALL_EXTRA	0x78
-#define FEAT_WALL_INNER	0x79
-#define FEAT_WALL_OUTER	0x7A
-#define FEAT_WALL_SOLID	0x7B
-#define FEAT_PERM_EXTRA	0x7C
-#define FEAT_PERM_INNER	0x7D
-#define FEAT_PERM_OUTER	0x7E
-#define FEAT_PERM_SOLID	0x7F
-
-/* XXX Temporary Additions	- Jir - */
-#define FEAT_MON_TRAP           0x80 /* 128 */
-
-/* Dirty Hack till feature code will be redone */
-#define is_door(feat)	(feat == FEAT_OPEN || feat == FEAT_BROKEN || \
-		(FEAT_DOOR_HEAD <= feat && feat <= FEAT_SECRET))
-
-#else	/* 0 */ //-------------------------------------------------------------------------------------------
-/*** Terrain Feature Indexes (see "lib/edit/f_info.txt") ***/
 
 /* Nothing */
 #define FEAT_NONE               0x00
@@ -1749,16 +1663,17 @@ that keeps many algorithms happy.
 /* Feature 0xCC -- Underground Tunnel */
 #define FEAT_FIRE               0xCD /* 205 */
 /* Feature 0xCE -- pile of rubble (permanent) */
-
 /* Features 0xCF - 0xFF */
-#define FEAT_AGOAL	208
-#define FEAT_BGOAL	209
-
-#define FEAT_DECO_WATER	211
-#define FEAT_BUSH	219
-
+#define FEAT_AGOAL		208
+#define FEAT_BGOAL		209
+//
+#define FEAT_DECO_WATER		211
+#define FEAT_BUSH		219
+//
 #define FEAT_SEALED_DOOR	224	/* for pvp-arena, like Andur suggested */
 #define FEAT_UNSEALED_DOOR	225
+//
+#define FEAT_RUNE_TRAP		230
 
 
 /* number of connected void gates or something? */
@@ -1768,8 +1683,6 @@ that keeps many algorithms happy.
 #define is_door(feat) (f_info[feat].flags1 & FF1_DOOR)
 
 #define is_stair(feat) ((feat) == FEAT_MORE || (feat) == FEAT_LESS || (feat) == FEAT_WAY_MORE || (feat) == FEAT_WAY_LESS || (feat) == FEAT_BETWEEN || (feat) == FEAT_BETWEEN2)
-
-#endif	/* 0 */ //-------------------------------------------------------------------------------------------
 
 
 /*
@@ -5958,7 +5871,8 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 /* Monster can crush walls (note: Morgoth isn't taken into account here, shouldn't matter much though) */ \
 /*  -- added check whether it's actually a WALL, to prevent monsters from crossing terrain they don't like (eg lava) */ \
 ((f_info[(C)->feat].flags1 & FF1_WALL) &&!(f_info[(C)->feat].flags1 & FF1_PERMANENT) && ((R)->flags2 & (RF2_KILL_WALL))) || \
-((C)->feat == FEAT_MON_TRAP)) /* Floor is trapped? */
+((C)->feat == FEAT_MON_TRAP) || /* Floor is trapped? */ \
+((C)->feat == FEAT_RUNE_TRAP))
 
 
 
@@ -6801,6 +6715,12 @@ extern int PlayerUID;
  #define SKILL_R_COLDNETH	99
  #define SKILL_R_POISNEXU	100
  #define SKILL_R_FORCTIME	101
+
+ #define RUNETRAP_DETO 0
+ #define RUNETRAP_ACID 1
+ #define RUNETRAP_ELEC 2
+ #define RUNETRAP_FIRE 3
+ #define RUNETRAP_COLD 4
 #endif
 
 /*#define MAX_SKILLS              70 */

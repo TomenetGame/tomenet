@@ -7298,7 +7298,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			}
 		}
 		/* Floor is trapped? */
-		else if (c_ptr->feat == FEAT_MON_TRAP)
+		else if (c_ptr->feat == FEAT_MON_TRAP || c_ptr->feat == FEAT_RUNE_TRAP)
 		{
 			/* Go ahead and move */
 			do_move = TRUE;
@@ -7940,10 +7940,8 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			}
 
 			/* Check for monster trap */
-			if (c_ptr->feat == FEAT_MON_TRAP)
-			{
-				if (mon_hit_trap(m_idx)) return;
-			}
+			if (c_ptr->feat == FEAT_MON_TRAP && mon_hit_trap(m_idx)) return;
+			if (c_ptr->feat == FEAT_RUNE_TRAP && mon_hit_rune_trap(m_idx)) return;
 		}
 
 		/* Stop when done */

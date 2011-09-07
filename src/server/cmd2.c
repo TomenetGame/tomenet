@@ -2604,7 +2604,8 @@ void do_cmd_disarm(int Ind, int dir)
 
 		if ((!t_idx || !cs_ptr->sc.trap.found) &&
 		    (o_ptr->tval != TV_CHEST) &&
-		    !(cs_ptr = GetCS(c_ptr, CS_MON_TRAP))) {
+		    !(cs_ptr = GetCS(c_ptr, CS_MON_TRAP)) &&
+		    !(cs_ptr = GetCS(c_ptr, CS_RUNE_TRAP))) {
 			/* Message */
 			msg_print(Ind, "You see nothing there to disarm.");
 			done = TRUE;
@@ -2723,6 +2724,54 @@ void do_cmd_disarm(int Ind, int dir)
 			more = FALSE;
 			done = TRUE;
 
+		}
+
+		if (!done && cs_ptr->type == CS_RUNE_TRAP) { /* same thing.. */
+			/* S(he) is no longer afk */
+			un_afk_idle(Ind);
+			break_shadow_running(Ind);
+			stop_precision(Ind);
+			stop_shooting_till_kill(Ind);
+
+			i = p_ptr->skill_dis;
+			if (p_ptr->blind || no_lite(Ind)) i = i / 10;
+			if (p_ptr->confused || p_ptr->image) i = i / 10;
+			if (p_ptr->pclass == CLASS_RUNEMASTER) i *= 2;
+
+			/* Always have a small chance of success */
+			if (i < 2) i = 2;
+			if (rand_int(150) < i) {
+				msg_print(Ind, "You disarm the rune trap.");
+#ifdef USE_SOUND_2010
+				sound(Ind, "bolt", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
+				cave_set_feat_live(wpos, y, x, cs_ptr->sc.runetrap.feat);
+				cs_erase(c_ptr, cs_ptr);
+
+				more = FALSE;
+			}
+
+			/* Failure -- Keep trying */
+			else if ((i > 5) && (randint(i) > 5)) {
+				msg_print(Ind, "You failed to disarm the rune trap.");
+				/* We may keep trying */
+				more = TRUE;
+			}
+
+			/* Failure -- Set off the trap */
+			else {
+				/* Message */
+				msg_print(Ind, "You set off the rune trap!");
+
+				/* Move the player onto the trap */
+				if (dir != 5) move_player(Ind, dir, FALSE); /* moving doesn't 100% imply setting it off */
+				rune_trap_backlash(Ind); /* but we can allow this weakness, assuming that you are less likely to get hit if you stand besides the trap instead of right on it */
+				break_cloaking(Ind, 0);
+				more = FALSE;
+			}
+
+			done = TRUE;
 		}
 
 		/* Disarm a trap */

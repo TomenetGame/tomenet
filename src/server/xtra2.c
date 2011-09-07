@@ -683,6 +683,7 @@ bool set_prob_travel(int Ind, int v)
 
 /*
  * Set "p_ptr->brand", notice observable changes
+ * Experimentally applied feature for runemastery. - Kurzel
  */
 bool set_brand(int Ind, int v, int t, int p)
 {
@@ -692,11 +693,13 @@ bool set_brand(int Ind, int v, int t, int p)
 	
 	char weapons[20], dual[2];
 	
-	strcpy(weapons, "\377oYour weapon");
+	//strcpy(weapons, "\377oYour weapon");
+	strcpy(weapons, "\377wYour weapon");
 	strcpy(dual, "s");
 	if (p_ptr->inventory[INVEN_WIELD].k_idx &&
 	    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) {
-		strcpy(weapons, "\377oYour weapons");
+		//strcpy(weapons, "\377oYour weapons");
+		strcpy(weapons, "\377wYour weapons");
 		strcpy(dual, "");
 	}
 
@@ -712,22 +715,27 @@ bool set_brand(int Ind, int v, int t, int p)
 		  switch (t) {
 		    case BRAND_ELEC:
                     case BRAND_BALL_ELEC:
-		      msg_format(Ind, "%s sparkle%s with lightning!", weapons, dual);
+		      //msg_format(Ind, "%s sparkle%s with lightning!", weapons, dual);
+		      msg_format(Ind, "%s glow%s with electricity!", weapons, dual);
 		      break;
                     case BRAND_BALL_COLD:
 		    case BRAND_COLD:
-		      msg_format(Ind, "%s freeze%s!", weapons, dual);
+		      //msg_format(Ind, "%s freeze%s!", weapons, dual);
+		      msg_format(Ind, "%s glow%s with cold!", weapons, dual);
 		      break;
                     case BRAND_BALL_FIRE:
 		    case BRAND_FIRE:
-		      msg_format(Ind, "%s burn%s!", weapons, dual);
+		      //msg_format(Ind, "%s burn%s!", weapons, dual);
+		      msg_format(Ind, "%s glow%s with fire!", weapons, dual);
 		      break;
                     case BRAND_BALL_ACID:
 		    case BRAND_ACID:
-		      msg_format(Ind, "%s look%s acidic!", weapons, dual);
+		      //msg_format(Ind, "%s look%s acidic!", weapons, dual);
+		      msg_format(Ind, "%s glow%s with acid!", weapons, dual);
 		      break;
 		    case BRAND_POIS:
-		      msg_format(Ind, "%s drip%s with venom!", weapons, dual);
+		      //msg_format(Ind, "%s drip%s with venom!", weapons, dual);
+		      msg_format(Ind, "%s glow%s with poison!", weapons, dual);
 		      break;
 		    case BRAND_MANA:
 		      msg_format(Ind, "% glow%s with power!", weapons, dual);
@@ -736,7 +744,8 @@ bool set_brand(int Ind, int v, int t, int p)
 		      msg_format(Ind, "%s glow%s many colors!", weapons, dual);
 		      break;
 		    case BRAND_SHARP:
-		      msg_format(Ind, "%s sharpen%s!", weapons, dual);
+		      //msg_format(Ind, "%s sharpen%s!", weapons, dual);
+		      msg_format(Ind, "%s take%s on a vorpal glow!", weapons, dual);
 		      break;
                     case BRAND_BALL_SOUND:
                       msg_format(Ind, "%s vibrate%s!", weapons, dual);
@@ -749,7 +758,8 @@ bool set_brand(int Ind, int v, int t, int p)
 	/* Shut */
 	else {
 		if (p_ptr->brand && p_ptr->inventory[INVEN_WIELD].k_idx) {
-			msg_print(Ind, "\377oYour weapon seems normal again.");
+			//msg_print(Ind, "\377oYour weapon seems normal again.");
+			msg_print(Ind, "\377sYour weapon seems normal again.");
 			notice = TRUE;
 			t = 0;
 			p = 0;

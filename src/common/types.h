@@ -689,6 +689,7 @@ struct trap_kind{
 #define CS_MON_TRAP	8	/* monster traps */
 #define CS_SHOP		9	/* shop/building */
 #define CS_MIMIC	10	/* mimic-ing feature (eg. secret door) */
+#define CS_RUNE_TRAP	11	/* runecraft traps */
 
 /* heheh it's kludge.. */
 #define sc_is_pointer(type)	(type < 3 || type == 4 || type > 10)
@@ -697,7 +698,7 @@ typedef struct c_special c_special;
 
 struct c_special{
 	unsigned char type;
-	union	/* 32bits */
+	union	/* 32bits -> 64bits (runetrap) */
 	{
 		void *ptr;		/* lazy - refer to other arrays or sth */
 		s32b omni;		/* needless of other arrays? k, add here! */
@@ -706,6 +707,7 @@ struct c_special{
 		struct { byte wx, wy; s16b wz; } wpos;	/* XXX */
 		struct { byte type, rest; bool known; } fountain;
 		struct { u16b trap_kit; byte difficulty, feat; } montrap;
+		struct { byte typ, mod, lev, feat; s32b id; } runetrap;
 	} sc;
 	struct c_special *next;
 };

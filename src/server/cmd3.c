@@ -2664,7 +2664,7 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 	}
 
 	/* Monster Traps */
-	if(GetCS(c_ptr, CS_MON_TRAP)){
+	if(GetCS(c_ptr, CS_MON_TRAP) || GetCS(c_ptr, CS_RUNE_TRAP)){
 		return (TRUE);
 	}
 

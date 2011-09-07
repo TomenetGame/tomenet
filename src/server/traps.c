@@ -2453,7 +2453,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			if (!c_ptr) break;
 			if (!p_ptr->blind) msg_print(Ind, "A pool of water appears under you!");
 			//			c_ptr->feat = FEAT_WATER;
-			cave_set_feat(wpos, y, x, FEAT_DEEP_WATER);
+			cave_set_feat_live(wpos, y, x, FEAT_DEEP_WATER);
 			break;
 		}
 		case TRAP_OF_MOAT_II:
@@ -2461,7 +2461,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			msg_print(Ind, "As you touch the trap, the ground starts to shake.");
 			destroy_chest(i_ptr); 
 			destroy_area(wpos, y, x, 10, TRUE, FEAT_DEEP_WATER, 30);
-			if (c_ptr) cave_set_feat(wpos, y, x, FEAT_DEEP_WATER);
+			if (c_ptr) cave_set_feat_live(wpos, y, x, FEAT_DEEP_WATER);
 			break;
 		}
 		/* why not? :) */
@@ -3318,13 +3318,6 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 		return;
 	}
 
-#if 0
-	if (!wpos->wz) {
-		/* because it crashes :-/ */
-		msg_print(Ind, "You cannot set monster traps on the surface!");
-		return;
-	}
-#endif
 	if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) ||
 	    (c_ptr->info & CAVE_PROT)) {
 		msg_print(Ind, "You cannot set monster traps on this special floor.");
@@ -3339,51 +3332,6 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 		return;
 	}
 
-#if 0
-	/* Restrict choices to trapkits */
-	item_tester_tval = TV_TRAPKIT;
-
-	/* Get an item */
-	q = "Use which trapping kit? ";
-	s = "You have no trapping kits.";
-	if (!get_item(&item_kit, q, s, USE_INVEN)) return;
-
-	o_ptr = &inventory[item_kit];
-
-	/* Trap kits need a second object */
-	switch (o_ptr->sval) {
-	case SV_TRAPKIT_BOW:
-		item_tester_tval = TV_ARROW;
-		break;
-	case SV_TRAPKIT_XBOW:
-		item_tester_tval = TV_BOLT;
-		break;
-	case SV_TRAPKIT_SLING:
-		item_tester_tval = TV_SHOT;
-		break;
-	case SV_TRAPKIT_POTION:
-		item_tester_hook = item_tester_hook_potion;
-		break;
-	case SV_TRAPKIT_SCROLL_RUNE:
-		item_tester_hook = item_tester_hook_scroll_rune;
-		break;
-	case SV_TRAPKIT_DEVICE:
-		item_tester_hook = item_tester_hook_device;
-		break;
-	default:
-		msg_print(Ind, "Unknown trapping kit type!");
-		break;
-	}
-
-	/* Get the second item */
-	q = "Load with what? ";
-	s = "You have nothing to load that trap with.";
-	if (!get_item(&item_load, q, s, USE_INVEN)) return;
-	
-	/* Get the second object */
-	j_ptr = &inventory[item_load];
-
-#endif	// 0
 	/* Get the objects */
 	o_ptr = &p_ptr->inventory[item_kit];
 	j_ptr = &p_ptr->inventory[item_load];
@@ -3513,6 +3461,74 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 }
 
 /*
+ * Set a rune trap (runecraft) - C. Blue
+ */
+void do_cmd_set_rune_trap(int Ind, int typ, int mod, int lev)
+{
+	player_type *p_ptr = Players[Ind];
+	int py = p_ptr->py, px = p_ptr->px;
+
+	cave_type *c_ptr;
+	cave_type **zcave;
+	struct c_special *cs_ptr;
+
+	zcave = getcave(&p_ptr->wpos);
+	c_ptr = &zcave[py][px];
+
+	/* Check some conditions */
+	if (p_ptr->blind) {
+		msg_print(Ind, "You can't see anything.");
+		return;
+	}
+	if (no_lite(Ind)) {
+		msg_print(Ind, "You can't set a trap in the darkness.");
+		return;
+	}
+	if (p_ptr->confused) {
+		msg_print(Ind, "You are too confused!");
+		return;
+	}
+
+	if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) ||
+	    (c_ptr->info & CAVE_PROT)) {
+		msg_print(Ind, "You cannot set rune traps on this special floor.");
+		return;
+	}
+
+	/* Only set traps on clean floor grids */
+	/* TODO: allow to set traps on poisoned floor */
+	if (!cave_clean_bold(zcave, py, px) ||
+	    c_ptr->special) {
+		msg_print(Ind, "You cannot set a trap on this.");
+		return;
+	}
+
+	/* S(he) is no longer afk */
+	un_afk_idle(Ind);
+
+	/* Take a turn */
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+	/* Check interference */
+	/* Basically it's not so good idea to set traps next to the enemy */
+	if (interfere(Ind, 50 - get_skill_scale(p_ptr, SKILL_TRAPPING, 30))) /* setting-trap interference chance */
+		return;
+
+	/* Set it here */
+	if (!(cs_ptr = AddCS(c_ptr, CS_RUNE_TRAP))) return;
+
+	cs_ptr->sc.runetrap.typ = typ;
+	cs_ptr->sc.runetrap.mod = mod;
+	cs_ptr->sc.runetrap.lev = lev;
+
+	/* Preserve former feat */
+	cs_ptr->sc.runetrap.feat = c_ptr->feat;
+
+	/* Actually set the trap */
+	cave_set_feat_live(&p_ptr->wpos, py, px, FEAT_RUNE_TRAP);
+}
+
+/*
  * Disamrs the monster traps(no failure)
  */
 /* Hrm it's complicated.. 
@@ -3531,7 +3547,7 @@ void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x)
 
 	c_ptr = &zcave[y][x];
 	cs_ptr=GetCS(c_ptr, CS_MON_TRAP);
-	cave_set_feat(wpos, y, x, cs_ptr->sc.montrap.feat);
+	cave_set_feat_live(wpos, y, x, cs_ptr->sc.montrap.feat);
 
 	/* Drop objects being carried */
 	for (this_o_idx = cs_ptr->sc.montrap.trap_kit; this_o_idx; this_o_idx = next_o_idx)
@@ -3561,7 +3577,8 @@ void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x)
 //	cave[py][px].special = cave[py][px].special2 = 0;
 	cs_erase(c_ptr, cs_ptr);
 }
-	/* hack: Identify the load? */
+
+/* hack: Identify the load? */
 static void identify_mon_trap_load(int who, object_type *o_ptr) {
 	if (who <= 0) return;
 
@@ -5171,11 +5188,190 @@ bool mon_hit_trap(int m_idx)
 		teleport_to_player(who, m_idx);
 
 	/* Remove the trap if inactive now */	
-//	if (remove) cave_set_feat(wpos, my, mx, FEAT_FLOOR);
+//	if (remove) cave_set_feat_live(wpos, my, mx, FEAT_FLOOR);
 	if (remove) do_cmd_disarm_mon_trap_aux(&wpos, my, mx);
 
 	/* did it die? */
 	return (dead);
+}
+
+bool mon_hit_rune_trap(int m_idx)
+{
+	player_type *p_ptr=(player_type*)NULL;
+	monster_type *m_ptr = &m_list[m_idx];
+	//	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	monster_race    *r_ptr = race_inf(m_ptr);
+
+	struct c_special *cs_ptr;
+
+	int mx = m_ptr->fx;
+	int my = m_ptr->fy;
+
+	int difficulty = 0;
+	int smartness;
+
+	char m_name[MNAME_LEN];
+
+	bool notice = FALSE;
+	bool disarm = FALSE;
+
+	int dam = 0, trapping;
+
+	int i, who = PROJECTOR_MON_TRAP;
+	int typ = GF_FIRE, rad = 1;
+	cave_type *c_ptr;
+	cave_type **zcave;
+	worldpos *wpos = &m_ptr->wpos;
+
+	zcave = getcave(wpos);
+	if (!zcave) return(FALSE);
+
+	c_ptr = &zcave[my][mx];
+
+	cs_ptr = GetCS(c_ptr, CS_RUNE_TRAP);
+	if(!cs_ptr) return(FALSE);
+
+	/* XXX Hack -- is the trapper online? */
+	for (i = 1; i <= NumPlayers; i++) {
+		p_ptr = Players[i];
+
+		/* Check if they are in here */
+		if (cs_ptr->sc.runetrap.id == p_ptr->id) {
+			who = i;
+			break;
+		}
+	}
+	if (who > 0 && p_ptr->mon_vis[m_idx]) monster_desc(who, m_name, m_idx, 0);
+
+	/* Get detection difficulty */
+	trapping = cs_ptr->sc.runetrap.lev;
+	difficulty = (trapping * 3) / 2;
+
+	/* Darkness helps */
+	if (!(c_ptr->info & (CAVE_LITE | CAVE_GLOW)) &&
+	    !(r_ptr->flags9 & RF9_HAS_LITE) &&
+	    !(r_ptr->flags4 & RF4_BR_DARK) &&
+	    !(r_ptr->flags6 & RF6_DARKNESS))
+		difficulty += 20;
+
+	/* Get monster smartness for trap detection */
+	/* Higher level monsters are smarter */
+	smartness = m_ptr->level;
+
+	/* Smart monsters are better at detecting traps */
+	if (r_ptr->flags2 & RF2_SMART) smartness += 10;
+
+	/* Stupid monsters are no good at detecting traps */
+	if (r_ptr->flags2 & (RF2_STUPID | RF2_EMPTY_MIND)) smartness = -150;
+
+	/* Check if the monster notices the trap */
+	if (randint(300) > (difficulty - smartness + 150)) notice = TRUE;
+
+	/* Disarm check */
+	if (notice) {
+		/* Get trap disarming difficulty */
+		difficulty = cs_ptr->sc.runetrap.lev;
+
+		/* Get monster disarming ability */
+		/* Higher level monsters are better */
+		smartness = m_ptr->level / 5;
+
+		/* Smart monsters are better at disarming */
+		if (r_ptr->flags2 & RF2_SMART) smartness *= 2;
+
+		/* Stupid monsters never disarm traps */
+		if (r_ptr->flags2 & RF2_STUPID) smartness = -150;
+
+		/* Nonsmart animals never disarm traps */
+		if ((r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags2 & RF2_SMART)) smartness = -150;
+
+		/* Check if the monster disarms the trap */
+		if (randint(120) > (difficulty - smartness + 80)) disarm = TRUE;
+	}
+
+	/* If disarmed, remove the trap and print a message */
+	if (disarm) {
+		/* Next time disarming will be easier */
+		msg_print_near_monster(m_idx, "disarms a trap!");
+#ifdef USE_SOUND_2010
+		sound_near_monster(m_idx, "disarm", NULL, SFX_TYPE_MISC);
+#endif
+
+		/* trap is gone */
+		cave_set_feat_live(wpos, my, mx, cs_ptr->sc.runetrap.feat);
+		return FALSE;
+	}
+
+	/* otherwise activate the trap! */
+
+	/* Message for visible monster */
+	if (who > 0 && p_ptr->mon_vis[m_idx]) {
+		/* Get the name */
+		monster_desc(who, m_name, m_idx, 0);
+
+		/* Print a message */
+		msg_format(who, "%^s sets off a trap!", m_name);
+	} else {
+		/* No message if monster isn't visible ? */
+	}
+#ifdef USE_SOUND_2010
+	sound_near_monster(m_idx, "detonation", NULL, SFX_TYPE_MISC);
+#endif
+
+	/* Actually activate the trap */
+	switch (cs_ptr->sc.runetrap.typ) {
+	case RUNETRAP_DETO:
+		typ = GF_DETONATION;
+		rad = 2;
+		dam = damroll(20, 10);
+		break;
+	case RUNETRAP_ACID:
+		typ = GF_ACID;
+		rad = 2;
+		dam = damroll(5, 10);
+		break;
+	case RUNETRAP_ELEC:
+		typ = GF_ELEC;
+		rad = 2;
+		dam = damroll(5, 10);
+		break;
+	case RUNETRAP_FIRE:
+		typ = GF_FIRE;
+		rad = 2;
+		dam = damroll(5, 10);
+		break;
+	case RUNETRAP_COLD:
+		typ = GF_COLD;
+		rad = 2;
+		dam = damroll(5, 10);
+		break;
+	default:
+		s_printf("oops! nonexisting rune trap(typ: %d)!\n", cs_ptr->sc.runetrap.typ);
+	}
+
+#ifdef USE_SOUND_2010
+	/* sound only if we can see the trap detonate */
+	if (who > 0 && los(&m_ptr->wpos, Players[who]->py, Players[who]->px, my, mx)) {
+		if (cs_ptr->sc.runetrap.typ != RUNETRAP_DETO)
+			sound(who, "ball", NULL, SFX_TYPE_MISC, FALSE);
+		else
+			sound(who, "detonation", NULL, SFX_TYPE_MISC, FALSE);
+	}
+#endif
+
+	/* Trapping skill influences damage - C. Blue */
+	dam *= (5 + cs_ptr->sc.runetrap.mod); dam /= 10;
+	dam *= (50 + cs_ptr->sc.runetrap.lev); dam /= 50;
+
+	/* Actually hit the monster */
+//	(void) project_m(who, y, x, 0, y, x, dam, typ);
+	(void) project(0 - who, rad, &m_ptr->wpos, my, mx, dam, typ, (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL), "");
+
+	/* trap is gone */
+	cave_set_feat_live(wpos, my, mx, cs_ptr->sc.runetrap.feat);
+
+	/* did it die? */
+        return (zcave[my][mx].m_idx == 0 ? TRUE : FALSE);
 }
 
 static void destroy_chest(object_type *o_ptr) {

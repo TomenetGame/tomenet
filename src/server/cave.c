@@ -2261,6 +2261,24 @@ byte get_monster_trap_color(int Ind, int o_idx, int feat) {
 	return a;
 }
 
+byte get_runecraft_trap_color(int Ind, int typ, int feat) {
+	byte a = TERM_CONF;
+
+	switch (typ) {
+	case RUNETRAP_ACID: a = TERM_ACID; break;
+	case RUNETRAP_ELEC: a = TERM_ELEC; break;
+	case RUNETRAP_FIRE: a = TERM_FIRE; break;
+	case RUNETRAP_COLD: a = TERM_COLD; break;
+	case RUNETRAP_DETO: a = TERM_SHAR; break;
+	}
+
+	/* Hack -- always l.blue if underwater */
+	if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER)
+		a = TERM_L_BLUE;
+
+	return a;
+}
+
 /*
  * Manipulate map grid colours, for example outside on world surface,
  * depending on clima or daytime!  - C. Blue
@@ -2677,6 +2695,24 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 //					(*cp) = ';';
 					a = get_monster_trap_color(Ind,
 					    cs_ptr->sc.montrap.trap_kit,
+					    feat);
+				}
+			}
+
+			/* Hack to display runecraft traps */
+			if ((cs_ptr = GetCS(c_ptr, CS_RUNE_TRAP))) {
+
+				/* Hack -- random hallucination */
+				if (p_ptr->image) {
+/*					image_random(ap, cp); */
+					image_object(ap, cp);
+					a = randint(15);
+				} else {
+					/* If trap isn't on door display it */
+					/* if (!(f_ptr->flags1 & FF1_DOOR)) c = '^'; */
+//					(*cp) = ';';
+					a = get_runecraft_trap_color(Ind,
+					    cs_ptr->sc.runetrap.typ,
 					    feat);
 				}
 			}

@@ -474,6 +474,7 @@ extern bool player_can_see_bold(int Ind, int y, int x);
 extern bool no_lite(int Ind);
 extern byte get_trap_color(int Ind, int t_idx, int feat);
 extern byte get_monster_trap_color(int Ind, int o_idx, int feat);
+extern byte get_runecraft_trap_color(int Ind, int typ, int feat);
 extern void map_info(int Ind, int y, int x, byte *ap, char *cp);
 extern void move_cursor_relative(int row, int col);
 extern void print_rel(char c, byte a, int y, int x);
@@ -1851,8 +1852,10 @@ extern void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, in
 
 extern void place_trap_object(object_type *o_ptr);
 extern void do_cmd_set_trap(int Ind, int item_kit, int item_load);
+extern void do_cmd_set_rune_trap(int Ind, int typ, int mod, int lev);
 extern void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x);
 extern bool mon_hit_trap(int m_idx);
+extern bool mon_hit_rune_trap(int m_idx);
 
 extern void wiz_place_trap(int Ind, int trap);
 
@@ -2022,7 +2025,8 @@ extern void cast_rune_spell(int, int);
 extern void cast_rune_spell_header(int Ind, int a, int b);
 #else
 /* runecraft.c */
-extern byte execute_rspell (u32b, byte, u32b, byte);
+extern byte execute_rspell(u32b, byte, u32b, byte);
+extern void rune_trap_backlash(int Ind);
 /* spells1.c */
 extern bool rune_backlash(int Ind, int typ, int dam);
 /* tables.c */

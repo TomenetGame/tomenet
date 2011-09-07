@@ -83,25 +83,8 @@ CS_LOAD(montrapload);
 CS_SAVE(montrapsave);
 CS_LOAD(s32bload);
 CS_SAVE(s32bsave);
-
-#if 0
-void defload(c_special *cs_ptr);
-void defsave(c_special *cs_ptr);
-void defsee(c_special *cs_ptr, char *c, byte *a, int Ind);
-int defhit(c_special *cs_ptr, int y, int x, int Ind);
-void dnaload(c_special *cs_ptr);
-void dnasave(c_special *cs_ptr);
-void dnasee(c_special *cs_ptr, char *c, byte *a, int Ind);
-int dnahit(c_special *cs_ptr, int y, int x, int Ind);
-void keyload(c_special *cs_ptr);
-void keysave(c_special *cs_ptr);
-void keysee(c_special *cs_ptr, char *c, byte *a, int Ind);
-int keyhit(c_special *cs_ptr, int y, int x, int Ind);
-void tload(c_special *cs_ptr);
-void tsave(c_special *cs_ptr);
-void tsee(c_special *cs_ptr, char *c, byte *a, int Ind);
-int thit(c_special *cs_ptr, int y, int x, int Ind);
-#endif
+CS_LOAD(runetrapload);
+CS_SAVE(runetrapsave);
 
 void defload(c_special *cs_ptr){
 }
@@ -331,6 +314,24 @@ void montrapsave(c_special *cs_ptr)
 	wr_byte(cs_ptr->sc.montrap.feat);
 }
 
+void runetrapload(c_special *cs_ptr)
+{
+	rd_byte(&cs_ptr->sc.runetrap.typ);
+	rd_byte(&cs_ptr->sc.runetrap.mod);
+	rd_byte(&cs_ptr->sc.runetrap.lev);
+	rd_byte(&cs_ptr->sc.runetrap.feat);
+	rd_s32b(&cs_ptr->sc.runetrap.id);
+}
+
+void runetrapsave(c_special *cs_ptr)
+{
+	wr_byte(cs_ptr->sc.runetrap.typ);
+	wr_byte(cs_ptr->sc.runetrap.mod);
+	wr_byte(cs_ptr->sc.runetrap.lev);
+	wr_byte(cs_ptr->sc.runetrap.feat);
+	wr_s32b(cs_ptr->sc.runetrap.id);
+}
+
 
 void s32bload(c_special *cs_ptr)
 {
@@ -375,6 +376,7 @@ struct sfunc csfunc[]={
 	/* CS_FOUNTAIN, CS_BETWEEN, CS_BETWEEN2 to come */
 	{ s32bload, s32bsave, defsee, defhit },	/* CS_SHOP */
 	{ s32bload, s32bsave, defsee, defhit },	/* CS_MIMIC */
+	{ runetrapload, runetrapsave, defsee, defhit },	/* CS_RUNE_TRAP */
 /*
 	{ iload, isave, isee, ihit }
 */

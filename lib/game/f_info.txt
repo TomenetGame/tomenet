@@ -1090,6 +1090,10 @@ $ARCADE_SERVER$F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
 $ARCADE_SERVER$F:DONT_NOTICE_RUNNING | TUNNELABLE
 D:1:You tunnel into the moving powerup.
 
+N:230:rune trap
+G:;:B
+F:FLOOR
+
 # generic scheme (all lines are unique except
 # where it's mentioned otherwise) - C. Blue
 # N:<number>:<name>
