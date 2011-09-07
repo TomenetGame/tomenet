@@ -2746,8 +2746,9 @@ void do_cmd_disarm(int Ind, int dir)
 				sound(Ind, "bolt", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
-				cave_set_feat_live(wpos, y, x, cs_ptr->sc.runetrap.feat);
+				i = cs_ptr->sc.runetrap.feat;
 				cs_erase(c_ptr, cs_ptr);
+				cave_set_feat_live(wpos, y, x, i);
 
 				more = FALSE;
 			}

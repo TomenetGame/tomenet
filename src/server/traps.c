@@ -3520,6 +3520,7 @@ void do_cmd_set_rune_trap(int Ind, int typ, int mod, int lev)
 	cs_ptr->sc.runetrap.typ = typ;
 	cs_ptr->sc.runetrap.mod = mod;
 	cs_ptr->sc.runetrap.lev = lev;
+	cs_ptr->sc.runetrap.id = p_ptr->id;
 
 	/* Preserve former feat */
 	cs_ptr->sc.runetrap.feat = c_ptr->feat;
@@ -5234,6 +5235,7 @@ bool mon_hit_rune_trap(int m_idx)
 	/* XXX Hack -- is the trapper online? */
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
+		if (p_ptr->conn == NOT_CONNECTED) continue;
 
 		/* Check if they are in here */
 		if (cs_ptr->sc.runetrap.id == p_ptr->id) {
@@ -5298,7 +5300,9 @@ bool mon_hit_rune_trap(int m_idx)
 #endif
 
 		/* trap is gone */
-		cave_set_feat_live(wpos, my, mx, cs_ptr->sc.runetrap.feat);
+		who = cs_ptr->sc.runetrap.feat;
+		cs_erase(c_ptr, cs_ptr);
+		cave_set_feat_live(wpos, my, mx, who);
 		return FALSE;
 	}
 
@@ -5314,9 +5318,6 @@ bool mon_hit_rune_trap(int m_idx)
 	} else {
 		/* No message if monster isn't visible ? */
 	}
-#ifdef USE_SOUND_2010
-	sound_near_monster(m_idx, "detonation", NULL, SFX_TYPE_MISC);
-#endif
 
 	/* Actually activate the trap */
 	switch (cs_ptr->sc.runetrap.typ) {
@@ -5361,14 +5362,16 @@ bool mon_hit_rune_trap(int m_idx)
 
 	/* Trapping skill influences damage - C. Blue */
 	dam *= (5 + cs_ptr->sc.runetrap.mod); dam /= 10;
-	dam *= (50 + cs_ptr->sc.runetrap.lev); dam /= 50;
+	dam *= (50 + cs_ptr->sc.runetrap.lev); dam /= 100;
+
+	/* trap is gone */
+	i = cs_ptr->sc.runetrap.feat;
+	cs_erase(c_ptr, cs_ptr);
+	cave_set_feat_live(wpos, my, mx, i);
 
 	/* Actually hit the monster */
 //	(void) project_m(who, y, x, 0, y, x, dam, typ);
-	(void) project(0 - who, rad, &m_ptr->wpos, my, mx, dam, typ, (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL), "");
-
-	/* trap is gone */
-	cave_set_feat_live(wpos, my, mx, cs_ptr->sc.runetrap.feat);
+	(void) project(-who, rad, &m_ptr->wpos, my, mx, dam, typ, (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL), "");
 
 	/* did it die? */
         return (zcave[my][mx].m_idx == 0 ? TRUE : FALSE);

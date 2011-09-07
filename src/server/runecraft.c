@@ -2312,7 +2312,7 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative)
 void rune_trap_backlash(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int typ = GF_FIRE, dam = 0, rad = 1;
+	int typ = GF_FIRE, dam = 0, rad = 1, i;
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 	struct c_special *cs_ptr;
@@ -2366,12 +2366,13 @@ void rune_trap_backlash(int Ind)
 #endif
 
 	/* trap is gone */
-	cave_set_feat_live(wpos, p_ptr->py, p_ptr->px, cs_ptr->sc.runetrap.feat);
+	i = cs_ptr->sc.runetrap.feat;
 	cs_erase(c_ptr, cs_ptr);
+	cave_set_feat_live(wpos, p_ptr->py, p_ptr->px, i);
 
 	/* Trapping skill influences damage - C. Blue */
 	dam *= (5 + cs_ptr->sc.runetrap.mod); dam /= 10;
-	dam *= (50 + cs_ptr->sc.runetrap.lev); dam /= 50;
+	dam *= (50 + cs_ptr->sc.runetrap.lev); dam /= 100;
 
 	project(PROJECTOR_RUNE, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, typ, PROJECT_KILL | PROJECT_NORF, "");
 }
