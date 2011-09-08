@@ -489,14 +489,12 @@ void compact_monsters(int size, bool purge)
 	//		& CAVE_ICKY
 //			if((zcave = getcave(wpos))) zcave[ny][nx].m_idx = i;
 #else
-			/* Skip golems and pandas */
-			if (m_ptr->pet || m_ptr->owner || m_ptr->r_idx == 1135) continue;
+			/* Skip golems/pets */
+			if (m_ptr->pet || m_ptr->owner) continue;
 #endif
 
 			/* Skip special hard-coded monsters (target dummy, invis dummy, santa) */
-			if (m_ptr->r_idx == 1101 || m_ptr->r_idx == 1126 ||
-			    m_ptr->r_idx == 1102 || m_ptr->r_idx == 1132)
-				continue;
+			if (r_info[m_ptr->r_idx].flags8 & RF8_GENO_NO_THIN) continue;
 
 			/* Hack -- High level monsters start out "immune" */
 			if (r_ptr->level > cur_lev) continue;
@@ -649,7 +647,7 @@ void thin_surface_spawns() {
 	int i;
 	player_type *p_ptr;
 
-	/* Delete all the monsters, except for target dummies (1101, 1126) and santa (1102),
+	/* Delete all the monsters, except for dummies and santa,
 	   because those are usually in town, and this function is called periodically for towns. */
 	for (i = m_max - 1; i >= 1; i--) {
 		monster_type *m_ptr = &m_list[i];
@@ -665,15 +663,12 @@ void thin_surface_spawns() {
 	if (!(zcave = getcave(wpos))) return;
 */
 #else
-		/* Skip golems and pandas */
-		if (m_ptr->pet || m_ptr->owner || m_ptr->r_idx == 1135) continue;
+		/* Skip golems/pets */
+		if (m_ptr->pet || m_ptr->owner) continue;
 #endif
 
-		/* hardcoded which ones aren't to be touched -_- */
-		if (m_ptr->r_idx == 1101 || m_ptr->r_idx == 1126 ||
-		    m_ptr->r_idx == 1102 || m_ptr->r_idx == 1132 ||
-		    m_ptr->r_idx == 1112 || m_ptr->r_idx == 1113 || m_ptr->r_idx == 1114)
-			continue;
+		/* special ones aren't to be touched */
+		if (r_info[m_ptr->r_idx].flags8 & RF8_GENO_NO_THIN) continue;
 
 		/* new: Don't affect monsters in LOS of a player, doesn't look good */
 		if (m_ptr->closest_player && m_ptr->closest_player <= NumPlayers) {
@@ -700,15 +695,13 @@ void thin_surface_spawns() {
 void geno_towns() {
 	int i;
 
-	/* Delete all the monsters, except for target dummies
-	   (1101, 1126) and grid-occupying dummy (1132) */
+	/* Delete all the monsters, except for target dummies and grid-occupying dummy */
 	for (i = m_max - 1; i >= 1; i--) {
 		monster_type *m_ptr = &m_list[i];
 
-		if (istown(&m_ptr->wpos) &&  /* hardcoded -_- */
-		    (m_ptr->r_idx != 1101) && (m_ptr->r_idx != 1126) &&
-		    (m_ptr->r_idx != 1102) && (m_ptr->r_idx != 1132)) {
-			if (season_halloween &&
+		if (istown(&m_ptr->wpos) &&
+		    !(r_info[m_ptr->r_idx].flags8 & RF8_GENO_PERSIST)) {
+			if (season_halloween && /* hardcoded -_- */
 			    (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088))
 				 great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
 			delete_monster_idx(i, TRUE);

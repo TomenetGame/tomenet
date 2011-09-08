@@ -4717,6 +4717,8 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF8_EVENTN_XMAS			0x00200000
 */
 //FREE FLAGS HOLE
+#define RF8_GENO_PERSIST	0x08000000	/* Don't automatically genocide/compact this monster */
+#define RF8_GENO_NO_THIN		0x10000000	/* Don't genocide this monster when thinning out surface spawns */
 #define RF8_CLIMB			0x20000000	/* NOT YET IMPLEMENTED: Can walk over mountain fields */
 #define RF8_WILD_SWAMP			0x40000000	/* ToDo: Implement Swamp */
 #define RF8_WILD_TOO			0x80000000
