@@ -8393,13 +8393,14 @@ Warrior is strongly recommended.
     of the Trees, they can learn to sense the presence of others, such
     as animals  at level 10, orcs at 15, trolls at 20, giants at 25,
     dragons at 30, demons at 40 and all evil-minded creatures at level 50.
-    Trees will slightly bend aside to let ents pass through.
-    At level 4 they learn to see invisible things.
-    They accumulate experience very slowly. Ents do not eat normal food, but
-    are able to consume liquids. Ents resist the force of unleashed water.
-    Ents are able to slowly replenish themselves by drawing nourishment from
-    the ground by entering 'R'esting mode, provided it's natural ground such
-    as grass, earth, mud or water.
+    At level 4 Ents learn to see invisible things. In general, they accumulate
+    experience very slowly and they do not eat normal food but they are able to
+    consume liquids. Trees will slightly bend aside to let ents pass through.
+    Ents are able to slowly replenish their nourishment by rooting themselves
+    into the ground by entering 'R'esting mode, provided it's natural ground
+    such as grass, earth, mud or water. Their food state will go up to 'Full'
+    that way.
+    Ents intrinsically resist the force of unleashed water.
     They get boni on 'Health', 'Calmness' and on the magic schools 'Earth' and
     'Water' and they receive a large penalty 'Fire' school, a small penalty on
     'Axe-mastery' and a very slight penalty on 'Sword-mastery'.
