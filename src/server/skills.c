@@ -204,9 +204,17 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			msg_print(Ind, "\377oYou cannot dodge attacks while wielding a shield!");
 		break;
 	case SKILL_MARTIAL_ARTS:
-		if (old_value == 0 && new_value > 0 &&
-		    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)
-			msg_print(Ind, "\377oYou cannot use special martial art styles with a shield!");
+		if (old_value == 0 && new_value > 0) {
+			if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)
+				msg_print(Ind, "\377oYou cannot use special martial art styles with a shield!");
+			/* Martial artists shouldn't get a weapon-wield warning */
+			p_ptr->warning_wield = 1;
+			/* also don't send any weapon-bpr related warnings since their
+			   suggested remedies don't work for us as MA user */
+			p_ptr->warning_bpr = 1;
+			p_ptr->warning_bpr2 = 1;
+			p_ptr->warning_bpr3 = 1;
+		}
 		if (old_value < 10 && new_value >= 10) { /* the_sandman */
 //			msg_print(Ind, "\374\377GYou feel as if you could take on the world!");
 			msg_print(Ind, "\374\377GYou learn to use punching techniques.");

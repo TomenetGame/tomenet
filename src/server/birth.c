@@ -2386,6 +2386,16 @@ static void disable_specific_warnings(player_type *p_ptr) {
 
 	/* Vampires don't use normal light sources */
 	if (p_ptr->prace == RACE_VAMPIRE) p_ptr->warning_lite = 1;
+
+	/* Martial artists shouldn't get a weapon-wield warning */
+	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS)) {
+		p_ptr->warning_wield = 1;
+		/* also don't send any weapon-bpr related warnings since their
+		   suggested remedies don't work for us as MA user */
+		p_ptr->warning_bpr = 1;
+		p_ptr->warning_bpr2 = 1;
+		p_ptr->warning_bpr3 = 1;
+	}
 }
 
 /*
