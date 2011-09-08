@@ -20516,10 +20516,59 @@ O:0:0:0:0
 #B:CLAW:*
 #B:BITE:*
 F:BASH_DOOR | FORCE_MAXHP | FORCE_SLEEP | DROP_CORPSE | NO_FEAR
-F:MORTAL | ANIMAL | WILD_TOO | WILD_WOOD | WILD_WOOD | RAND_5
+F:MORTAL | ANIMAL | WILD_TOO | WILD_WOOD | RAND_5
 F:ATTR_BASE | ATTR_BNW | BLUEBAND | NO_DEATH | NO_TARGET | NO_AUTORET
 D:A black and white spotted bear that doesn't seem overly agressive.
 
+N:1136:Horse
+G:q:D
+I:110:6d6:10:35:10
+W:5:255:1600:25
+E:0:1:0:2:1:0
+O:0:0:0:0
+F:BASH_DOOR | FORCE_MAXHP | DROP_CORPSE | NO_FEAR | MORTAL | ANIMAL 
+F:WILD_TOO | WILD_WOOD | BLUEBAND | NO_DEATH | NO_TARGET | NO_AUTORET
+D:A black and white spotted bear that doesn't seem overly agressive.
+
+N:1137:Horse
+G:q:s
+I:110:6d6:10:35:10
+W:5:255:1600:25
+E:0:1:0:2:1:0
+O:0:0:0:0
+F:BASH_DOOR | FORCE_MAXHP | DROP_CORPSE | NO_FEAR | MORTAL | ANIMAL 
+F:WILD_TOO | WILD_WOOD | BLUEBAND | NO_DEATH | NO_TARGET | NO_AUTORET
+D:A black and white spotted bear that doesn't seem overly agressive.
+
+N:1138:Horse
+G:q:W
+I:110:6d6:10:35:10
+W:5:255:1600:25
+E:0:1:0:2:1:0
+O:0:0:0:0
+F:BASH_DOOR | FORCE_MAXHP | DROP_CORPSE | NO_FEAR | MORTAL | ANIMAL 
+F:WILD_TOO | WILD_WOOD | BLUEBAND | NO_DEATH | NO_TARGET | NO_AUTORET
+D:A black and white spotted bear that doesn't seem overly agressive.
+
+N:1139:Horse
+G:q:u
+I:110:6d6:10:35:10
+W:5:255:1600:25
+E:0:1:0:2:1:0
+O:0:0:0:0
+F:BASH_DOOR | FORCE_MAXHP | DROP_CORPSE | NO_FEAR | MORTAL | ANIMAL 
+F:WILD_TOO | WILD_WOOD | BLUEBAND | NO_DEATH | NO_TARGET | NO_AUTORET
+D:A black and white spotted bear that doesn't seem overly agressive.
+
+N:1140:Horse
+G:q:U
+I:110:6d6:10:35:10
+W:5:255:1600:25
+E:0:1:0:2:1:0
+O:0:0:0:0
+F:BASH_DOOR | FORCE_MAXHP | DROP_CORPSE | NO_FEAR | MORTAL | ANIMAL 
+F:WILD_TOO | WILD_WOOD | BLUEBAND | NO_DEATH | NO_TARGET | NO_AUTORET
+D:A black and white spotted bear that doesn't seem overly agressive.
 
 
 # N: serial number : monster name
