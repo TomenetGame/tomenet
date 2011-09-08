@@ -308,7 +308,8 @@ F:ATTR_MULTI
 F:RES_CHAOS | CHAOTIC | SHOW_MODS | SHOULD2H
 F:IGNORE_FIRE | IGNORE_ACID | IGNORE_WATER
 
-N:37:& Two-Handed Sword~
+#N:37:& Two-Handed Sword~
+N:37:& Espadon~
 G:|:W
 I:23:25:0
 W:30:0:200:775
@@ -380,7 +381,7 @@ A:5/1
 P:0:1d7:0:0:0
 F:SHOW_MODS
 
-N:46:& Small Sword~
+N:46:& Smallsword~
 G:|:W
 I:23:8:0
 W:5:0:70:48
@@ -4213,7 +4214,8 @@ A:40/2
 P:0:2d8:0:0:0
 F:SHOW_MODS | COULD2H
 
-N:547:& Espadon~
+#N:547:& Espadon~
+N:547:& Kampilan~
 G:|:W
 I:23:24:0
 W:40:0:200:549
