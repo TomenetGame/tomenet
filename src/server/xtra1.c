@@ -1072,9 +1072,9 @@ void calc_mana(int Ind)
 	int Ind2;
 
 	int levels, cur_wgt, max_wgt;
-	s32b new_mana=0;
+	s32b new_mana = 0, free_mana = 0, free_mana_tmp;
 
-	object_type	*o_ptr;
+	object_type *o_ptr;
 	u32b f1, f2, f3, f4, f5, esp;
 
 	if ((Ind2 = get_esp_link(Ind, LINKF_PAIN, &p_ptr2))) {
@@ -1187,6 +1187,9 @@ void calc_mana(int Ind)
 	/* Hack -- usually add one mana */
 	if (new_mana) new_mana++;
 
+	/* Keep track of unencumbered mana reservoir (for runecraft) */
+	free_mana = new_mana;
+
 	/* Get the gloves */
 	o_ptr = &p_ptr->inventory[INVEN_HANDS];
 
@@ -1194,8 +1197,7 @@ void calc_mana(int Ind)
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Only Sorcery/Magery users are affected */
-	if (get_skill(p_ptr, SKILL_SORCERY) || get_skill(p_ptr, SKILL_MAGERY))
-	{
+	if (get_skill(p_ptr, SKILL_SORCERY) || get_skill(p_ptr, SKILL_MAGERY)) {
 		/* Assume player is not encumbered by gloves */
 		p_ptr->cumber_glove = FALSE;
 
@@ -1239,8 +1241,7 @@ void calc_mana(int Ind)
 // removed instead. Mimics and mimic-sorcs were punished too much.
 	/* Forms that don't have proper 'hands' (arms) have mana penalty.
 	   this will hopefully stop the masses of D form Istar :/ */
-	if (p_ptr->body_monster)
-	{
+	if (p_ptr->body_monster) {
 		monster_race *r_ptr = &r_info[p_ptr->body_monster];
 		if (!r_ptr->body_parts[BODY_ARMS]) new_mana = (new_mana * 1) / 2;
 	}
@@ -1251,19 +1252,19 @@ void calc_mana(int Ind)
 	/* Sorcery helps mana */
 #if 0 // C. Blue - If sorcery gives HP penalty, that will be nullified by
 // mana bonus because of disruption shield. Instead, base mana for istari is raised.
-	if (get_skill(p_ptr, SKILL_SORCERY))
-	{
+	if (get_skill(p_ptr, SKILL_SORCERY)) {
 		new_mana += (new_mana * get_skill(p_ptr, SKILL_SORCERY)) / 200;
 	}
 #endif
 #if 0 // DGDGDGDG
 	/* Mimic really need that */
-	if (p_ptr->pclass == CLASS_MIMIC)
-	{
+	if (p_ptr->pclass == CLASS_MIMIC) {
 		new_mana = (new_mana * 7) / 10;
 		if (new_mana < 1) new_mana = 1;
         }
 #endif
+
+	free_mana_tmp = new_mana;
 
 	/* adjustment so paladins won't become OoD sentry guns and
 	   rangers won't become invulnerable manashield tanks, and
@@ -1295,14 +1296,13 @@ void calc_mana(int Ind)
 	}
 
 	/* Meditation increase mana at the cost of hp */
-	if (p_ptr->tim_meditation)
-	{
-		new_mana += (new_mana * get_skill(p_ptr, SKILL_SORCERY)) / 100;
-	}
+	if (p_ptr->tim_meditation) new_mana += (new_mana * get_skill(p_ptr, SKILL_SORCERY)) / 100;
+
+	/* Keep track of unencumbered mana reservoir (for runecraft) */
+	free_mana = (free_mana * new_mana) / free_mana_tmp;
 
 	/* Disruption Shield now increases hp at the cost of mana */
-	if (p_ptr->tim_manashield)
-	{
+	if (p_ptr->tim_manashield) {
 	/* commented out (evileye for power) */
 	/*	new_mana -= new_mana / 2; */
 	}
@@ -1335,8 +1335,7 @@ void calc_mana(int Ind)
 	}
 
 	/* Heavy armor penalizes mana */
-	if (((cur_wgt - max_wgt) / 10) > 0)
-	{
+	if (((cur_wgt - max_wgt) / 10) > 0) {
 		/* Reduce mana */
 //		new_mana -= ((cur_wgt - max_wgt) * 2 / 3);
 
@@ -1360,10 +1359,7 @@ void calc_mana(int Ind)
 	}
 #endif
 
-	if (Ind2)
-	{
-		new_mana += p_ptr2->msp / 2;
-	}
+	if (Ind2) new_mana += p_ptr2->msp / 2;
 
 	/* Mana can never be negative */
 	if (new_mana < 0) new_mana = 0;
@@ -1371,28 +1367,36 @@ void calc_mana(int Ind)
 	/* Some classes dont use mana */
 	if ((p_ptr->pclass == CLASS_WARRIOR) ||
 	    (p_ptr->pclass == CLASS_ARCHER))
-	{
-		new_mana = 0;
-	}
+		new_mana = free_mana = 0;
 
 #ifdef ARCADE_SERVER
         new_mana = 100;
 #endif
 
+	/* Keep track of unencumbered mana and original max mana (for runecraft) */
+	p_ptr->msp_freely = free_mana;
+	p_ptr->msp_normal = new_mana;
+	/* Apply upkeep penalty for runecraft traps */
+	new_mana -= (free_mana * p_ptr->runetraps) / RUNETRAP_UPKEEP;
+	/* Even if we couldn't keep up the traps still keep them going,
+	   so players cannot use encumberment as a sort of 'trap switch' (silyl).
+	   Instead, add life drain! (Consistent with usual runecraft: Use HP in place of missing SP.) */
+	if (new_mana < 0) {
+		p_ptr->runetrap_drain_life = -new_mana / (free_mana / RUNETRAP_UPKEEP) + 1;
+		new_mana = 0;
+	}
+
 	/* Maximum mana has changed */
-	if (p_ptr->msp != new_mana)
-	{
+	if (p_ptr->msp != new_mana) {
 		/* Player has no mana now */
-		if (!new_mana)
-		{
+		if (!new_mana) {
 			/* No mana left */
 			p_ptr->csp = 0;
 			p_ptr->csp_frac = 0;
 		}
 
 		/* Player had no mana, has some now */
-		else if (!p_ptr->msp)
-		{
+		else if (!p_ptr->msp) {
 			/* Reset mana */
 #if 0 /* completely cheezable restoration */
 			p_ptr->csp = new_mana;
@@ -1401,8 +1405,7 @@ void calc_mana(int Ind)
 		}
 
 		/* Player had some mana, adjust current mana */
-		else
-		{
+		else {
 			s32b value;
 
 			/* change current mana proportionately to change of max mana, */
@@ -1425,36 +1428,25 @@ void calc_mana(int Ind)
 		p_ptr->window |= (PW_PLAYER);
 	}
 
-
 	/* Take note when "glove state" changes */
-	if (p_ptr->old_cumber_glove != p_ptr->cumber_glove)
-	{
+	if (p_ptr->old_cumber_glove != p_ptr->cumber_glove) {
 		/* Message */
 		if (p_ptr->cumber_glove)
-		{
 			msg_print(Ind, "\377oYour covered hands feel unsuitable for spellcasting.");
-		}
 		else
-		{
 			msg_print(Ind, "\377gYour hands feel more suitable for spellcasting.");
-		}
 
 		/* Save it */
 		p_ptr->old_cumber_glove = p_ptr->cumber_glove;
 	}
 
 	/* Take note when "helm state" changes */
-	if (p_ptr->old_cumber_helm != p_ptr->cumber_helm)
-	{
+	if (p_ptr->old_cumber_helm != p_ptr->cumber_helm) {
 		/* Message */
 		if (p_ptr->cumber_helm)
-		{
 			msg_print(Ind, "\377oYour heavy headgear feels unsuitable for mindcrafting.");
-		}
 		else
-		{
 			msg_print(Ind, "\377gYour headgear feels more suitable for mindcrafting.");
-		}
 
 		/* Save it */
 		p_ptr->old_cumber_helm = p_ptr->cumber_helm;
@@ -1462,23 +1454,18 @@ void calc_mana(int Ind)
 
 
 	/* Take note when "armor state" changes */
-	if (p_ptr->old_awkward_armor != p_ptr->awkward_armor)
-	{
-	    if (p_ptr->pclass != CLASS_WARRIOR && p_ptr->pclass != CLASS_ARCHER) {
-		/* Message */
-		if (p_ptr->awkward_armor)
-		{
-			msg_print(Ind, "\377oThe weight of your armour strains your spellcasting.");
+	if (p_ptr->old_awkward_armor != p_ptr->awkward_armor) {
+		if (p_ptr->pclass != CLASS_WARRIOR && p_ptr->pclass != CLASS_ARCHER) {
+			/* Message */
+			if (p_ptr->awkward_armor)
+				msg_print(Ind, "\377oThe weight of your armour strains your spellcasting.");
+			else
+				msg_print(Ind, "\377gYou feel able to cast more freely.");
 		}
-		else
-		{
-			msg_print(Ind, "\377gYou feel able to cast more freely.");
-		}
-	    }
 		/* Save it */
 		p_ptr->old_awkward_armor = p_ptr->awkward_armor;
 	}
-	
+
 	/* refresh encumberment status line */
 //	p_ptr->redraw |= PR_ENCUMBERMENT;// <- causes bad packet bugs when shopping
 }

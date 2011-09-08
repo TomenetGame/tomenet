@@ -2018,7 +2018,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 				    }
 #ifdef ENABLE_RUNEMASTER
 				    else {
- #ifndef ENABLE_CRAFT
+ #ifndef ENABLE_RCRAFT
 					if (!rand_int(4)) tval = TV_RUNE1; else
  #endif
 					tval = TV_RUNE2;
@@ -2726,6 +2726,7 @@ void do_cmd_disarm(int Ind, int dir)
 
 		}
 
+#ifdef ENABLE_RCRAFT
 		if (!done && cs_ptr->type == CS_RUNE_TRAP) { /* same thing.. */
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
@@ -2745,6 +2746,8 @@ void do_cmd_disarm(int Ind, int dir)
 #ifdef USE_SOUND_2010
 				sound(Ind, "bolt", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
+
+				remove_rune_trap_upkeep(0, cs_ptr->sc.runetrap.id, x, y);
 
 				i = cs_ptr->sc.runetrap.feat;
 				cs_erase(c_ptr, cs_ptr);
@@ -2774,6 +2777,7 @@ void do_cmd_disarm(int Ind, int dir)
 
 			done = TRUE;
 		}
+#endif
 
 		/* Disarm a trap */
 		if (!done && (t_idx && cs_ptr->sc.trap.found)) {

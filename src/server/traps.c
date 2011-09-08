@@ -3460,10 +3460,59 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 	cave_set_feat_live(&p_ptr->wpos, py, px, FEAT_MON_TRAP);
 }
 
+#ifdef ENABLE_RCRAFT
+/* Check if setting a rune trap is possible in general - C. Blue */
+bool set_rune_trap_okay(int Ind) {
+	player_type *p_ptr = Players[Ind];
+
+	cave_type *c_ptr;
+	cave_type **zcave;
+
+	zcave = getcave(&p_ptr->wpos);
+	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+
+	/* Check some conditions */
+	if (p_ptr->blind) {
+		msg_print(Ind, "You can't see anything.");
+		return FALSE;
+	}
+	if (no_lite(Ind)) {
+		msg_print(Ind, "You can't set a trap in the darkness.");
+		return FALSE;
+	}
+	if (p_ptr->confused) {
+		msg_print(Ind, "You are too confused!");
+		return FALSE;
+	}
+
+	if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) ||
+	    (c_ptr->info & CAVE_PROT)) {
+		msg_print(Ind, "You cannot set rune traps on this special floor.");
+		return FALSE;
+	}
+
+	/* Only set traps on clean floor grids */
+	/* TODO: allow to set traps on poisoned floor */
+	if (!cave_clean_bold(zcave, p_ptr->py, p_ptr->px) ||
+	    c_ptr->special) {
+		msg_print(Ind, "You cannot set a trap on this.");
+		return FALSE;
+	}
+
+	/* Can we sustain one more rune trap? */
+	if (p_ptr->runetraps == RUNETRAP_UPKEEP) {
+		msg_print(Ind, "You cannot sustain another rune trap!");
+		return FALSE;
+	}
+
+	/* looks ok */
+	return TRUE;
+}
+
 /*
  * Set a rune trap (runecraft) - C. Blue
  */
-void do_cmd_set_rune_trap(int Ind, int typ, int mod, int lev)
+void set_rune_trap_aux(int Ind, int typ, int mod, int lev)
 {
 	player_type *p_ptr = Players[Ind];
 	int py = p_ptr->py, px = p_ptr->px;
@@ -3474,34 +3523,6 @@ void do_cmd_set_rune_trap(int Ind, int typ, int mod, int lev)
 
 	zcave = getcave(&p_ptr->wpos);
 	c_ptr = &zcave[py][px];
-
-	/* Check some conditions */
-	if (p_ptr->blind) {
-		msg_print(Ind, "You can't see anything.");
-		return;
-	}
-	if (no_lite(Ind)) {
-		msg_print(Ind, "You can't set a trap in the darkness.");
-		return;
-	}
-	if (p_ptr->confused) {
-		msg_print(Ind, "You are too confused!");
-		return;
-	}
-
-	if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) ||
-	    (c_ptr->info & CAVE_PROT)) {
-		msg_print(Ind, "You cannot set rune traps on this special floor.");
-		return;
-	}
-
-	/* Only set traps on clean floor grids */
-	/* TODO: allow to set traps on poisoned floor */
-	if (!cave_clean_bold(zcave, py, px) ||
-	    c_ptr->special) {
-		msg_print(Ind, "You cannot set a trap on this.");
-		return;
-	}
 
 	/* S(he) is no longer afk */
 	un_afk_idle(Ind);
@@ -3517,6 +3538,12 @@ void do_cmd_set_rune_trap(int Ind, int typ, int mod, int lev)
 	/* Set it here */
 	if (!(cs_ptr = AddCS(c_ptr, CS_RUNE_TRAP))) return;
 
+	/* Calculate mana upkeep for the trap */
+	p_ptr->runetrap_x[p_ptr->runetraps] = px;
+	p_ptr->runetrap_y[p_ptr->runetraps] = py;
+	p_ptr->runetraps++;
+	calc_mana(Ind);
+
 	cs_ptr->sc.runetrap.typ = typ;
 	cs_ptr->sc.runetrap.mod = mod;
 	cs_ptr->sc.runetrap.lev = lev;
@@ -3528,6 +3555,7 @@ void do_cmd_set_rune_trap(int Ind, int typ, int mod, int lev)
 	/* Actually set the trap */
 	cave_set_feat_live(&p_ptr->wpos, py, px, FEAT_RUNE_TRAP);
 }
+#endif
 
 /*
  * Disamrs the monster traps(no failure)
@@ -5196,6 +5224,7 @@ bool mon_hit_trap(int m_idx)
 	return (dead);
 }
 
+#ifdef ENABLE_RCRAFT
 bool mon_hit_rune_trap(int m_idx)
 {
 	player_type *p_ptr=(player_type*)NULL;
@@ -5236,6 +5265,7 @@ bool mon_hit_rune_trap(int m_idx)
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 		if (p_ptr->conn == NOT_CONNECTED) continue;
+		if (!inarea(&p_ptr->wpos, wpos)) continue;
 
 		/* Check if they are in here */
 		if (cs_ptr->sc.runetrap.id == p_ptr->id) {
@@ -5243,7 +5273,6 @@ bool mon_hit_rune_trap(int m_idx)
 			break;
 		}
 	}
-	if (who > 0 && p_ptr->mon_vis[m_idx]) monster_desc(who, m_name, m_idx, 0);
 
 	/* Get detection difficulty */
 	trapping = cs_ptr->sc.runetrap.lev;
@@ -5308,15 +5337,28 @@ bool mon_hit_rune_trap(int m_idx)
 
 	/* otherwise activate the trap! */
 
-	/* Message for visible monster */
-	if (who > 0 && p_ptr->mon_vis[m_idx]) {
-		/* Get the name */
-		monster_desc(who, m_name, m_idx, 0);
+	if (who > 0) {
+		/* Message for visible monster */
+		if (p_ptr->mon_vis[m_idx]) {
+			/* Get the name */
+			monster_desc(who, m_name, m_idx, 0);
+			/* Print a message */
+			msg_format(who, "%^s sets off a trap!", m_name);
+		} else {
+			/* No message if monster isn't visible ? */
+		}
 
-		/* Print a message */
-		msg_format(who, "%^s sets off a trap!", m_name);
-	} else {
-		/* No message if monster isn't visible ? */
+#ifdef USE_SOUND_2010
+		/* sound only if we can see the trap detonate */
+		if (los(&m_ptr->wpos, p_ptr->py, p_ptr->px, my, mx)) {
+			if (cs_ptr->sc.runetrap.typ != RUNETRAP_DETO)
+				sound(who, "ball", NULL, SFX_TYPE_MISC, FALSE);
+			else
+				sound(who, "detonation", NULL, SFX_TYPE_MISC, FALSE);
+		}
+#endif
+
+		remove_rune_trap_upkeep(who, 0, mx, my);
 	}
 
 	/* Actually activate the trap */
@@ -5350,16 +5392,6 @@ bool mon_hit_rune_trap(int m_idx)
 		s_printf("oops! nonexisting rune trap(typ: %d)!\n", cs_ptr->sc.runetrap.typ);
 	}
 
-#ifdef USE_SOUND_2010
-	/* sound only if we can see the trap detonate */
-	if (who > 0 && los(&m_ptr->wpos, Players[who]->py, Players[who]->px, my, mx)) {
-		if (cs_ptr->sc.runetrap.typ != RUNETRAP_DETO)
-			sound(who, "ball", NULL, SFX_TYPE_MISC, FALSE);
-		else
-			sound(who, "detonation", NULL, SFX_TYPE_MISC, FALSE);
-	}
-#endif
-
 	/* Trapping skill influences damage - C. Blue */
 	dam *= (5 + cs_ptr->sc.runetrap.mod); dam /= 10;
 	dam *= (50 + cs_ptr->sc.runetrap.lev); dam /= 100;
@@ -5376,6 +5408,7 @@ bool mon_hit_rune_trap(int m_idx)
 	/* did it die? */
         return (zcave[my][mx].m_idx == 0 ? TRUE : FALSE);
 }
+#endif
 
 static void destroy_chest(object_type *o_ptr) {
 	/* Hack to destroy chests */

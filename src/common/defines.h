@@ -6721,6 +6721,8 @@ extern int PlayerUID;
  #define RUNETRAP_ELEC 2
  #define RUNETRAP_FIRE 3
  #define RUNETRAP_COLD 4
+
+ #define RUNETRAP_UPKEEP 7	/* 1/x of sp an active rune trap eats up. Also the max # of rune traps. */
 #endif
 
 /*#define MAX_SKILLS              70 */

@@ -1495,6 +1495,27 @@ static void Delete_player(int Ind)
 		everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 	}
 
+#ifdef ENABLE_RCRAFT
+	/* remove all rune traps of this player */
+	if (p_ptr->runetraps) {
+		cave_type *c_ptr;
+		struct c_special *cs_ptr;
+		int f;
+		if (zcave) {
+			for (i = 0; i < p_ptr->runetraps; i++) {
+				c_ptr = &zcave[p_ptr->runetrap_y[i]][p_ptr->runetrap_x[i]];
+				if (c_ptr->feat != FEAT_RUNE_TRAP) continue; /* paranoia */
+				if (!(cs_ptr = GetCS(c_ptr, CS_RUNE_TRAP))) continue; /* paranoia */
+
+				f = cs_ptr->sc.runetrap.feat;
+				cs_erase(c_ptr, cs_ptr);
+				cave_set_feat_live(&p_ptr->wpos, p_ptr->runetrap_y[i], p_ptr->runetrap_x[i], f);
+			}
+		}
+		remove_rune_trap_upkeep(Ind, 0, -1, -1);
+	}
+#endif
+
 	/* If (s)he was in a game team, remove him/her - mikaelh */
 	if (p_ptr->team != 0)
 	{
@@ -2706,6 +2727,10 @@ static int Handle_login(int ind)
 
 	/* Check Morgoth, if player had saved a level where he was generated */
 	check_Morgoth(NumPlayers);
+
+#ifdef ENABLE_RCRAFT
+	wpcopy(&Players[NumPlayers]->wpos_old, &Players[NumPlayers]->wpos);
+#endif
 
 #ifdef CLIENT_SIDE_WEATHER
 	/* update his client-side weather */

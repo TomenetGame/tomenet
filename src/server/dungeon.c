@@ -3788,8 +3788,8 @@ static bool process_player_end_aux(int Ind)
 	}
 
 	/* Drain Hitpoints */
-	if (p_ptr->drain_life) {
-		int drain = p_ptr->drain_life * (rand_int(p_ptr->mhp / 100) + 1);
+	if (p_ptr->drain_life || p_ptr->runetrap_drain_life) {
+		int drain = (p_ptr->drain_life + p_ptr->runetrap_drain_life) * (rand_int(p_ptr->mhp / 100) + 1);
 		take_hit(Ind, drain < p_ptr->chp ? drain : p_ptr->chp, "life draining", 0);
 	}
 
@@ -4949,6 +4949,27 @@ static void process_player_change_wpos(int Ind)
 	//worldpos twpos;
 	dun_level *l_ptr;
 	int d, j, x, y, startx = 0, starty = 0, m_idx, my, mx, tries, emergency_x, emergency_y;
+
+#ifdef ENABLE_RCRAFT
+	/* remove all rune traps of this player */
+	if (p_ptr->runetraps) {
+		cave_type *c_ptr;
+		struct c_special *cs_ptr;
+		if ((zcave = getcave(&p_ptr->wpos_old))) {
+			for (j = 0; j < p_ptr->runetraps; j++) {
+				c_ptr = &zcave[p_ptr->runetrap_y[j]][p_ptr->runetrap_x[j]];
+				if (c_ptr->feat != FEAT_RUNE_TRAP) continue; /* paranoia */
+				if (!(cs_ptr = GetCS(c_ptr, CS_RUNE_TRAP))) continue; /* paranoia */
+
+				d = cs_ptr->sc.runetrap.feat;
+				cs_erase(c_ptr, cs_ptr);
+				cave_set_feat_live(&p_ptr->wpos_old, p_ptr->runetrap_y[j], p_ptr->runetrap_x[j], d);
+			}
+		}
+		remove_rune_trap_upkeep(Ind, 0, -1, -1);
+	}
+	wpcopy(&p_ptr->wpos_old, &p_ptr->wpos);
+#endif
 
 	/* Decide whether we stayed long enough on the previous
 	   floor to get distinct floor feelings here, and also

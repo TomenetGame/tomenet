@@ -952,7 +952,28 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 	
 	cave_type **zcave; //For glyph removal function of "disperse"
 	if (!(zcave = getcave(&p_ptr->wpos))) return 0;
-	
+
+	/* pre-check rune trap conditions */
+	if (type_flags & R_SELF) switch (type) {
+		case RT_DETONATION_ACID:
+		case RT_DETONATION_WATER:
+		case RT_DETONATION_ELEC:
+		case RT_DETONATION_SHARDS:
+		case RT_DETONATION_COLD:
+		case RT_DETONATION_NETHER:
+		case RT_DETONATION_POISON:
+		case RT_DETONATION_NEXUS:
+		case RT_DETONATION_FORCE:
+		case RT_DETONATION_TIME:
+		case RT_ACID_TIME:
+		case RT_ELEC_TIME:
+		case RT_FIRE_TIME:
+		case RT_COLD_TIME:
+			if (!set_rune_trap_okay(Ind)) return 0;
+	}
+
+
+
 	margin = fail_chance - difficulty;
 	if (margin > -30) //For small failure values cast the spell
 	{
@@ -1075,7 +1096,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				msg_format(Ind, "%s%s draw a sigil of warding.", begin, description);
 				if (success)
 				{
-					do_cmd_set_rune_trap(Ind, RUNETRAP_DETO, imper, margin / 2);
+					set_rune_trap_aux(Ind, RUNETRAP_DETO, imper, margin / 2);
 					//destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR, 120);
 				}
 				break;
@@ -1091,7 +1112,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					if (type == RT_ELEC_TIME) glyph_type = RUNETRAP_ELEC;
 					if (type == RT_FIRE_TIME) glyph_type = RUNETRAP_FIRE;
 					if (type == RT_COLD_TIME) glyph_type = RUNETRAP_COLD;
-					do_cmd_set_rune_trap(Ind, glyph_type, imper, margin / 2);
+					set_rune_trap_aux(Ind, glyph_type, imper, margin / 2);
 					//destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR, 120);
 				}
 				break;
@@ -2324,7 +2345,6 @@ void rune_trap_backlash(int Ind)
 	/* Get the cave grid */
 	if(!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
-
 	if(!(cs_ptr = GetCS(c_ptr, CS_RUNE_TRAP))) return;
 
 	switch (cs_ptr->sc.runetrap.typ) {
@@ -2357,6 +2377,9 @@ void rune_trap_backlash(int Ind)
 		s_printf("oops! nonexisting rune trap(typ: %d)!\n", cs_ptr->sc.runetrap.typ);
 	}
 
+	remove_rune_trap_upkeep(0, cs_ptr->sc.runetrap.id, p_ptr->px, p_ptr->py);
+
+
 #ifdef USE_SOUND_2010
 	if (cs_ptr->sc.runetrap.typ != RUNETRAP_DETO) {
 		sound(Ind, "ball", NULL, SFX_TYPE_MISC, FALSE);
@@ -2375,6 +2398,47 @@ void rune_trap_backlash(int Ind)
 	dam *= (50 + cs_ptr->sc.runetrap.lev); dam /= 100;
 
 	project(PROJECTOR_RUNE, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, typ, PROJECT_KILL | PROJECT_NORF, "");
+}
+
+/* Remove a rune trap from the caster's upkeep,
+   by either specifying a wpos or a player Index. - C. Blue
+   Specify either Ind or id
+   and add x,y or -1,y for specific trap/all traps. */
+void remove_rune_trap_upkeep(int Ind, s32b id, int x, int y) {
+	player_type *p_ptr = NULL;
+	int i;
+
+	if (!Ind) for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (Players[i]->id != id) continue;
+
+		Ind = i;
+		break;
+	}
+	if (!Ind) return; /* shouldn't happen */
+
+	p_ptr = Players[Ind];
+
+	/* erase all traps of a player? (when leaving/changing wpos) */
+	if (x == -1) {
+		p_ptr->runetraps = 0;
+		calc_mana(Ind);
+		return;
+	}
+
+	/* erase this trap */
+	for (i = 0; i < p_ptr->runetraps; i++) {
+		if (p_ptr->runetrap_x[i] == x && p_ptr->runetrap_y[i] == y) {
+			for (; i < p_ptr->runetraps - 1; i++) {
+				p_ptr->runetrap_x[i] = p_ptr->runetrap_x[i + 1];
+				p_ptr->runetrap_y[i] = p_ptr->runetrap_y[i + 1];
+			}
+			p_ptr->runetrap_x[i] = p_ptr->runetrap_y[i] = 0;
+			p_ptr->runetraps--;
+			break;
+		}
+	}
+	calc_mana(Ind);
 }
 
 #endif

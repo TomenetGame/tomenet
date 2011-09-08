@@ -1852,7 +1852,8 @@ extern void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, in
 
 extern void place_trap_object(object_type *o_ptr);
 extern void do_cmd_set_trap(int Ind, int item_kit, int item_load);
-extern void do_cmd_set_rune_trap(int Ind, int typ, int mod, int lev);
+extern bool set_rune_trap_okay(int Ind);
+extern void set_rune_trap_aux(int Ind, int typ, int mod, int lev);
 extern void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x);
 extern bool mon_hit_trap(int m_idx);
 extern bool mon_hit_rune_trap(int m_idx);
@@ -2027,6 +2028,7 @@ extern void cast_rune_spell_header(int Ind, int a, int b);
 /* runecraft.c */
 extern byte execute_rspell(u32b, byte, u32b, byte);
 extern void rune_trap_backlash(int Ind);
+extern void remove_rune_trap_upkeep(int Ind, s32b id, int x, int y);
 /* spells1.c */
 extern bool rune_backlash(int Ind, int typ, int dam);
 /* tables.c */

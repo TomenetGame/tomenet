@@ -7188,6 +7188,14 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 		cs_erase(c_ptr, cs_ptr);
 	}
 
+#ifdef ENABLE_RCRAFT
+	/* If we're killing a rune trap (eg by *destruction*), clear the caster's upkeep - C. Blue */
+	if (c_ptr->feat == FEAT_RUNE_TRAP && (cs_ptr = GetCS(c_ptr, CS_RUNE_TRAP))) {
+		remove_rune_trap_upkeep(0, cs_ptr->sc.runetrap.id, x, y);
+		cs_erase(c_ptr, cs_ptr);
+	}
+#endif
+
 	/* Change the feature */
 	if (c_ptr->feat != feat) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if it gets changed */
 	c_ptr->feat = feat;

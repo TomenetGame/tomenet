@@ -963,6 +963,8 @@ struct player_type
 	int temporary_speed_dur; int temporary_speed;
 	int temporary_am;
 	int temporary_to_l_dur; int temporary_to_l;
+	s16b msp_freely;
+	s16b msp_normal;
 #endif
 
 	bool panel_changed;

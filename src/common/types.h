@@ -2884,7 +2884,10 @@ struct player_type
 	int temporary_am;
 	int temporary_to_l_dur, temporary_to_l;
 
-
+	/* Runecraft traps, draining MP as (uncontrollable!) upkeep each */
+	s16b runetraps, runetrap_x[RUNETRAP_UPKEEP], runetrap_y[RUNETRAP_UPKEEP];
+	s16b msp_freely, msp_normal, runetrap_drain_life;
+	struct worldpos wpos_old;
 #endif
 
 #if 0 /* deprecated */
