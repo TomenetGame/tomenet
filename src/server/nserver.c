@@ -7217,7 +7217,7 @@ static int Receive_activate_skill(int ind)
 			}
 
 			if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
-			execute_rspell(player, dir, (u32b)((book * 10000) + spell), item);
+			execute_rspell(player, dir, (u32b)((book * 10000) + spell), item, 0);
 			p_ptr->shooty_till_kill = FALSE;
 			break;
 #endif

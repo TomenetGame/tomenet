@@ -1747,8 +1747,8 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 #if 0
 			if (o_ptr->sval >= 0 && o_ptr->sval <= RCRAFT_MAX_ELEMENTS) {
 				if (choice < 0 || choice >= 8) choice = 0;
-				execute_rspell(Ind, 5, r_elements[o_ptr->sval].self | runespell_types[choice].type, 1);
-				//execute_rspell(Ind, 5, NULL, 0, r_elements[o_ptr->sval].self | R_BOLT, 0); //choice sometimes has wrong value
+				execute_rspell(Ind, 5, r_elements[o_ptr->sval].self | runespell_types[choice].type, 1, 1);
+				//execute_rspell(Ind, 5, NULL, 0, r_elements[o_ptr->sval].self | R_BOLT, 0, 1); //choice sometimes has wrong value
 				return TRUE;
 			}
 			break;
@@ -1768,7 +1768,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 				int type = *inscription;
 				if (inscription != NULL) {
 					rune_type = *inscription - 96 - 1;
-					if (rune_type < 0 || rune_type > RCRAFT_MAX_TYPES) choice = 0;
+					if (rune_type < 0 || rune_type > RCRAFT_MAX_TYPES) rune_type = 0;
 				}
 				/* Pick the next rune with {@O} inscription */
 				for (i = item; i < INVEN_TOTAL && runes < 3; i++) {
@@ -1805,7 +1805,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 						inscription++;
 					}
 				}
-				execute_rspell(Ind, 5, rune_flags | runespell_types[rune_type].type, choice);
+				execute_rspell(Ind, 5, rune_flags | runespell_types[rune_type].type, choice, 1);
 				return TRUE;
 			}
 			break;
@@ -4104,7 +4104,7 @@ static void process_player_end(int Ind)
 				}
 #ifdef ENABLE_RCRAFT
 				else if (p_ptr->shoot_till_kill_rune_spell) {
-					execute_rspell(Ind, 5, p_ptr->shoot_till_kill_rune_spell, p_ptr->shoot_till_kill_rune_modifier);
+					execute_rspell(Ind, 5, p_ptr->shoot_till_kill_rune_spell, p_ptr->shoot_till_kill_rune_modifier, 0);
 				}
 #endif
 				else {

@@ -2026,7 +2026,7 @@ extern void cast_rune_spell(int, int);
 extern void cast_rune_spell_header(int Ind, int a, int b);
 #else
 /* runecraft.c */
-extern byte execute_rspell(u32b, byte, u32b, byte);
+extern byte execute_rspell(u32b, byte, u32b, byte, bool);
 extern void rune_trap_backlash(int Ind);
 extern void remove_rune_trap_upkeep(int Ind, s32b id, int x, int y);
 /* spells1.c */
