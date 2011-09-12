@@ -1423,12 +1423,12 @@ s32b flag_cost(object_type * o_ptr, int plusses)
  */
 s64b object_value_real(int Ind, object_type *o_ptr)
 {
-	u32b f1, f2, f3, f4, f5, esp, i;
+	u32b f1, f2, f3, f4, f5, esp;
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 	bool star = (Ind == 0 || object_fully_known_p(Ind, o_ptr));
 
 	/* Base cost */
-	s64b value = k_ptr->cost;
+	s64b value = k_ptr->cost, i;
 
 	/* Hack -- "worthless" items */
 	if (!value) return (0L);
@@ -2289,12 +2289,12 @@ static int artifact_flag_rating_weapon(object_type *o_ptr) {
    gets added to k_info base item price - C. Blue */
 s64b artifact_value_real(int Ind, object_type *o_ptr)
 {
-	u32b f1, f2, f3, f4, f5, esp, i;
+	u32b f1, f2, f3, f4, f5, esp;
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 	bool star = (Ind == 0 || object_fully_known_p(Ind, o_ptr));
 
 	/* Base cost */
-	s64b value = k_ptr->cost;
+	s64b value = k_ptr->cost, i;
 	/* Hack -- "worthless" items */
 	if (!value) return (0L);
 
