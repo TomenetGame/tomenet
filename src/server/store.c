@@ -316,6 +316,15 @@ static s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 		/* Never get "silly" */
 		if (adjust > 100 - STORE_BENEFIT) adjust = 100 - STORE_BENEFIT;
 
+		/* To prevent cheezing; keep consistent with object2.c: object_value_real() */
+		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)){
+			price = k_info[o_ptr->k_idx].cost;
+			if (o_ptr->pval != 0) {
+				price += r_info[o_ptr->pval].level * 100;
+				//price += (r_info[o_ptr->pval].level * r_info[o_ptr->pval].mexp) / 500;
+			}
+		}
+
 		/* Mega-Hack -- Black market sucks */
 		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) price /= 4;
 
@@ -325,15 +334,6 @@ static s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 
 		/* You're not a welcomed customer.. */
 		if (p_ptr->tim_blacklist) price = price / 4;
-
-		/* To prevent cheezing */
-		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)){
-			if(o_ptr->pval == 0) {
-				price = 1000;
-			} else {
-				price = 1000 + r_info[o_ptr->pval].level * 100;
-			}
-		}
 	}
 
 	/* Shop is selling */
