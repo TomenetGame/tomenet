@@ -1705,6 +1705,7 @@ void msg_print(int Ind, cptr msg)
 	char msg_minibuf[3]; /* temp buffer for adding characters */
 	int text_len, msg_scan = 0, space_scan, tab_spacer = 0, tmp;
 	char colour_code = 0;
+	bool no_colour_code = FALSE;
 	bool first_character = TRUE;
 //	bool is_chat = ((msg != NULL) && (strlen(msg) > 2) && (msg[2] == '['));
 	bool client_ctrlo = FALSE, client_chat = FALSE, client_all = FALSE;
@@ -1786,24 +1787,26 @@ void msg_print(int Ind, cptr msg)
 				text_len = line_len;
 				continue;
 			case '\377': /* Colour code! Text length does not increase. */
-#if 0
-				/* Avoid lines ending on special colour char #255 */
-				if ((text_len == line_len) && (msg[msg_scan - 1] == '\377')) {
-					msg_scan--;
-					msg_buf[strlen(msg_buf) - 1] = '\0';
-				}
-#endif
-				msg_minibuf[0] = msg[msg_scan];
-				msg_scan++;
-				/* Is it a complete colour code, or just a half-way fake? */
-				if (msg[msg_scan] != '\0') {
-					msg_minibuf[1] = msg[msg_scan];
-					colour_code = msg[msg_scan];
-					msg_scan++;
-					msg_minibuf[2] = '\0';
-					strcat(msg_buf, msg_minibuf);
-				}
-				break;
+				if (!no_colour_code) {
+					/* broken \377 at the end of the text? ignore */
+					if (msg[msg_scan + 1] == '\0') {
+						msg_scan++;
+						continue;
+					}
+					/* Capture double \377 which stand for a normal { char instead of a colour code: */
+					if (msg[msg_scan + 1] != '\377') {
+						msg_minibuf[0] = msg[msg_scan];
+						msg_scan++;
+						msg_minibuf[1] = msg[msg_scan];
+						colour_code = msg[msg_scan];
+						msg_scan++;
+						msg_minibuf[2] = '\0';
+						strcat(msg_buf, msg_minibuf);
+						break;
+					}
+					no_colour_code = TRUE;
+				} else no_colour_code = FALSE;
+				/* fall through if it's a '{' character */
 			default: /* Text length increases by another character.. */
 				/* Depending on message type, remember to tab the following
 				   lines accordingly to make it look better ^^
