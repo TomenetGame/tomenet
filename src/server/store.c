@@ -2077,7 +2077,7 @@ static void display_entry(int Ind, int pos)
 	byte		attr;
 	int		wgt;
 	int		i;
-	int maxwid = 75;
+//	int maxwid = 75;
 
 	i = gettown(Ind);
 	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
@@ -2106,7 +2106,7 @@ static void display_entry(int Ind, int pos)
 
 	/* Describe an item in the home */
 	if (p_ptr->store_num == STORE_HOME) {
-		maxwid = 75;
+//		maxwid = 75;
 
 		/* Leave room for weights, if necessary -DRS- */
 		/*if (show_weights) maxwid -= 10;*/
@@ -2156,7 +2156,7 @@ static void display_entry(int Ind, int pos)
 	/* Describe an item (fully) in a store */
 	else {
 		/* Must leave room for the "price" */
-		maxwid = 65;
+//		maxwid = 65;
 
 		/* Leave room for weights, if necessary -DRS- */
 		/*if (show_weights) maxwid -= 7;*/
@@ -5386,7 +5386,7 @@ static void display_house_entry(int Ind, int pos, house_type *h_ptr)
 	byte		attr;
 	int		wgt;
 
-	int maxwid = 75;
+//	int maxwid = 75;
 
 	/* This should never happen */
 	if (p_ptr->store_num != 7) return;
