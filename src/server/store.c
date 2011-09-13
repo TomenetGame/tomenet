@@ -2123,7 +2123,8 @@ static void display_entry(int Ind, int pos)
 #else
 		object_desc(Ind, o_name, o_ptr, TRUE, 3);
 #endif
-		o_name[maxwid] = '\0';
+//		o_name[maxwid] = '\0';
+		o_name[ONAME_LEN - 1] = '\0';
 
 		attr = get_attr_from_tval(o_ptr);
 
@@ -2180,7 +2181,8 @@ static void display_entry(int Ind, int pos)
 #else
 		object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
 #endif
-		o_name[maxwid] = '\0';
+//		o_name[maxwid] = '\0';
+		o_name[ONAME_LEN - 1] = '\0';
 
 		attr = get_attr_from_tval(o_ptr);
 
@@ -5405,7 +5407,8 @@ static void display_house_entry(int Ind, int pos, house_type *h_ptr)
 
 	/* Describe the object */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
-	o_name[maxwid] = '\0';
+//	o_name[maxwid] = '\0';
+	o_name[ONAME_LEN - 1] = '\0';
 
 	attr = get_attr_from_tval(o_ptr);
 
