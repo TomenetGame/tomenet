@@ -488,70 +488,97 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 		damage = 10;
 	
 	int amt = 0;
-	
-	if (type & RPEN_MIN_RN)
-	{
-		int i;
-		object_type	*o_ptr;
+
+	/* Destroy a random rune of those used in the rune spell */
+	if (type & RPEN_MIN_RN) {
+		int i, n;
+		int rune_array_size = 0, amt_broken = 0;
+		int rune_inven_slot[3], rune_index[RCRAFT_MAX_ELEMENTS];
+		bool rune_inven_slot_breaks[3];
+		byte break_pointer[3];
+		object_type *o_ptr;
 		char o_name[ONAME_LEN];
 
-		for (i = 0; i < INVEN_TOTAL; i++)	/* Modified version of inven_damage from spells1.c */
-		{
-			if (i >= INVEN_PACK)
-				continue;
+		/* prepare management arrays for up to 3 runes */
+		for (i = 0; i <= RCRAFT_MAX_ELEMENTS; i++)
+			if (runes[i] != 0) rune_index[i] = rune_array_size++;
 
+		/* Init stuff */
+		for (i = 0; i < 3; i++) {
+			rune_inven_slot[i] = -1;
+			rune_inven_slot_breaks[i] = FALSE;
+		}
+
+		/* scan inventory for physical presence of runes we used */
+		for (i = 0; i < INVEN_PACK; i++) {
 			/* Get the item in that slot */
 			o_ptr = &p_ptr->inventory[i];
 
-			/* Give this item slot a shot at death */
-			if (o_ptr->k_idx)
-			{
-				
-				if (o_ptr->tval == TV_RUNE2)
-				{
-					if (o_ptr->sval <= RCRAFT_MAX_ELEMENTS)
-					{
-						if (runes[o_ptr->sval]==1)
-						{
-							//Look for other runes here? - Kurzel
-						
-						
-						
-							//if (rand_int(100) < 70) //Always break a rune if able. - Kurzel
-							//{
-								/* Select up to a third */
-								amt = 0; //Only break 1 rune, but more often (maybe also 1 of each involved?)  - Kurzel */
-								//amt = rand_int(o_ptr->number/3);
-								
-								if (amt == 0 && o_ptr->number >= 1)
-									amt = 1;
-							//}
-						}
-					}
-				}
-				
-				/* Break */
-				if (amt)
-				{
-					/* Get a description */
-					object_desc(Ind, o_name, o_ptr, FALSE, 3);
-
-					/* Message */
-					msg_format(Ind, "\376\377o%sour %s (%c) %s destroyed!", ((o_ptr->number > 1) ? ((amt == o_ptr->number) ? "All of y" : (amt > 1 ? "Some of y" : "One of y")) : "Y"), o_name, index_to_label(i), ((amt > 1) ? "were" : "was"));
-					
-					inven_item_increase(Ind, i, -amt); inven_item_optimize(Ind, i);
-					
-					i = INVEN_TOTAL;
-					break;
-				}
+			/* Found a rune that is used in this rune spell? */
+			if (o_ptr->k_idx && o_ptr->tval == TV_RUNE2
+			    && o_ptr->sval <= RCRAFT_MAX_ELEMENTS /* paranoia */
+			    && runes[o_ptr->sval] == 1) {
+				/* remember in which inven slot we found at least 1 rune of this type */
+				rune_inven_slot[rune_index[o_ptr->sval]] = i;
 			}
 		}
-		/* If we didn't break any runes, take some HP */
-		if (amt == 0)
-		{
-			type |= RPEN_MIN_HP;
+
+		/* init stuff */
+		for (i = 0; i < rune_array_size; i++) {
+			/* no physical rune found? discard it */
+			if (rune_inven_slot[i] == -1) {
+				for (n = i; n < rune_array_size - 1; n++)
+					rune_inven_slot[n] = rune_inven_slot[n + 1];
+
+				rune_array_size--;
+				i--;
+				continue;
+			}
+
+			/* init pointer for randomly picking runes */
+			break_pointer[i] = i;
+		}
+
+		/* If we didn't use any physical runes, take some HP */
+		if (rune_array_size == 0) type |= RPEN_MIN_HP;
+		else {
+			/* determine amount of runes to break (0..3) */
+			amt = rand_int(rune_array_size) + 1;
+
+			/* randomly fate amt runes to be broken */
+			while (amt--) {
+				/* pick one rune */
+				i = rand_int(rune_array_size - amt_broken++);
+				rune_inven_slot_breaks[break_pointer[i]] = TRUE;
+
+				/* Scroll the following 1 or 2 slots up */
+				for (n = i; n < rune_array_size - 1; n++)
+					break_pointer[n] = n + 1;
+			}
+
+			/* Test up to 3 rune types for breaking */
+			for (i = 0; i < rune_array_size; i++) {
+				if (!rune_inven_slot_breaks[i]) continue;
+
+				/* break one of a type */
+				o_ptr = &p_ptr->inventory[rune_inven_slot[i]];
+				object_desc(Ind, o_name, o_ptr, FALSE, 3);
+				msg_format(Ind, "\376\377o%sour %s (%c) %s destroyed!",
+				    ((o_ptr->number > 1) ? ((amt == o_ptr->number) ? "All of y" :
+				    (amt > 1 ? "Some of y" : "One of y")) : "Y"),
+				    o_name, index_to_label(rune_inven_slot[i]), ((amt > 1) ? "were" : "was"));
+
+				/* Erase a rune from inventory */
+				inven_item_increase(Ind, rune_inven_slot[i], -1);
+			}
+
+			/* Clean up inventory */
+			for (n = 0; n < rune_array_size; n++)
+				for (i = 0; i < INVEN_PACK; i++)
+					if (inven_item_optimize(Ind, i)) break;
 		}
 	}
+
 	if (type & RPEN_MIN_SP)
 	{
 		msg_print(Ind, "\377rYou feel a little drained.");
