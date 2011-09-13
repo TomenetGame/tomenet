@@ -2322,7 +2322,7 @@ if (!(mode & 32)) {
 		t = object_desc_str(t, r_info[o_ptr->pval].name + r_name);
 
 		/* Polymorph rings that run out.. */
-		t = object_desc_str(t, "(");
+		t = object_desc_str(t, !(mode & 8) ? " (" : "(");
 		t = object_desc_num(t, o_ptr->timeout);
 		t = object_desc_str(t, !(mode & 8) ? " turns of energy)" : "t)");
 	}
