@@ -328,7 +328,7 @@ static void store_chat(void)
 
 	object_type	*o_ptr;
 
-	char	out_val[160];
+	char	out_val[MSG_LEN];
 	char	store_color;
 	char	store_char;
 	char	price[16];
