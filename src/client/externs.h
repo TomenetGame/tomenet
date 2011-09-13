@@ -93,7 +93,7 @@ extern int inventory_inscription_len[INVEN_TOTAL];
 extern store_type store;
 extern c_store_extra c_store;
 extern int store_prices[STORE_INVEN_MAX];
-extern char store_names[STORE_INVEN_MAX][80];
+extern char store_names[STORE_INVEN_MAX][ONAME_LEN];
 extern s16b store_num;
 
 extern char spell_info[MAX_REALM + 9][9][9][80];

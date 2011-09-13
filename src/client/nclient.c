@@ -2679,7 +2679,8 @@ int Receive_store(void)
 	store.stock[(int)pos].weight = wgt;
 	store.stock[(int)pos].number = num;
 	store_prices[(int) pos] = price;
-	strncpy(store_names[(int) pos], name, 80);
+	strncpy(store_names[(int) pos], name, ONAME_LEN - 1);
+	store_names[(int) pos][ONAME_LEN - 1] = 0;
 	store.stock[(int)pos].tval = tval;
 	store.stock[(int)pos].attr = attr;
 	store.stock[(int)pos].pval = pval;
@@ -2708,7 +2709,8 @@ int Receive_store_wide(void)
 	store.stock[(int)pos].weight = wgt;
 	store.stock[(int)pos].number = num;
 	store_prices[(int) pos] = price;
-	strncpy(store_names[(int) pos], name, 80);
+	strncpy(store_names[(int) pos], name, ONAME_LEN - 1);
+	store_names[(int) pos][ONAME_LEN - 1] = 0;
 	store.stock[(int)pos].tval = tval;
 	store.stock[(int)pos].attr = attr;
 	store.stock[(int)pos].pval = pval;

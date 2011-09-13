@@ -32,7 +32,7 @@ int inventory_inscription_len[INVEN_TOTAL];	/* Length of a special inscription *
 store_type store;			/* The general info about the current store */
 c_store_extra c_store;	/* Extra info about the current store */
 int store_prices[STORE_INVEN_MAX];			/* The prices of the items in the store */
-char store_names[STORE_INVEN_MAX][80];		/* The names of the stuff in the store */
+char store_names[STORE_INVEN_MAX][ONAME_LEN];		/* The names of the stuff in the store */
 s16b store_num;				/* The current store number */
 
 /* XXX Mergin for future expansion -- this should be handled in Net_setup */
