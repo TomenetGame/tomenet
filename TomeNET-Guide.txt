@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 6. September 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 13. September 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -260,6 +260,14 @@ compile the game under '(2.1) Installing TomeNET'.
  is still awaiting account validation by an admin.
  Also, if a grey '(O)' is in front of a player name, it means that player is
  using an outdated client. It's very important to keep your client up to date!
+-Note that your character's "speed" may change. Speed is the factor telling you
+ how fast your character can move, fight or perform any other kind of action.
+ If your character's speed gets increased (for example by drinking a potion of
+ speed) you will see a green indicator (for example 'Fast +10') at the bottom
+ line of the main window.
+ If your character loses speed, for example by carrying around too many heavy
+ items in your inventory, you will see a light brown indicator (for example
+ 'Slow -3') at the bottom line instead.
 
 It is recommended that you continue reading at (3.2) now,
 or glance at (7.3) first ;)
