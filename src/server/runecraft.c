@@ -1097,7 +1097,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				msg_format(Ind, "%s%s draw a sigil of warding.", begin, description);
 				if (success)
 				{
-					set_rune_trap_aux(Ind, RUNETRAP_DETO, imper, margin / 2);
+					set_rune_trap_aux(Ind, RUNETRAP_DETO, imper, s_av);
 				}
 				break;
 				
@@ -1112,7 +1112,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					if (type == RT_ELEC_TIME) glyph_type = RUNETRAP_ELEC;
 					if (type == RT_FIRE_TIME) glyph_type = RUNETRAP_FIRE;
 					if (type == RT_COLD_TIME) glyph_type = RUNETRAP_COLD;
-					set_rune_trap_aux(Ind, glyph_type, imper, margin / 2);
+					set_rune_trap_aux(Ind, glyph_type, imper, s_av);
 				}
 				break;
 				
@@ -2351,31 +2351,34 @@ void rune_trap_backlash(int Ind)
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 	if(!(cs_ptr = GetCS(c_ptr, CS_RUNE_TRAP))) return;
 	
+	
+	int s_av = cs_ptr->sc.runetrap.lev; //For rget_level() - Kurzel
+	
 	switch (cs_ptr->sc.runetrap.typ) {
 	case RUNETRAP_DETO:
 		typ = GF_DETONATION;
-		rad = 2;
-		dam = damroll(10, 10);
+		rad = 2+r_imperatives[cs_ptr->sc.runetrap.mod].radius;
+		dam = rget_level(400 + randint(50));
 		break;
 	case RUNETRAP_ACID:
 		typ = GF_ACID;
-		rad = 2;
-		dam = damroll(5, 10);
+		rad = 2+r_imperatives[cs_ptr->sc.runetrap.mod].radius;
+		dam = rget_level(400 + randint(50));
 		break;
 	case RUNETRAP_ELEC:
 		typ = GF_ELEC;
-		rad = 2;
-		dam = damroll(5, 10);
+		rad = 2+r_imperatives[cs_ptr->sc.runetrap.mod].radius;
+		dam = rget_level(400 + randint(50));
 		break;
 	case RUNETRAP_FIRE:
 		typ = GF_FIRE;
-		rad = 2;
-		dam = damroll(5, 10);
+		rad = 2+r_imperatives[cs_ptr->sc.runetrap.mod].radius;
+		dam = rget_level(400 + randint(50));
 		break;
 	case RUNETRAP_COLD:
 		typ = GF_COLD;
-		rad = 2;
-		dam = damroll(5, 10);
+		rad = 2+r_imperatives[cs_ptr->sc.runetrap.mod].radius;
+		dam = rget_level(400 + randint(50));
 		break;
 	default:
 		s_printf("oops! nonexisting rune trap(typ: %d)!\n", cs_ptr->sc.runetrap.typ);
@@ -2398,8 +2401,41 @@ void rune_trap_backlash(int Ind)
 	cave_set_feat_live(wpos, p_ptr->py, p_ptr->px, i);
 
 	/* Trapping skill influences damage - C. Blue */
-	dam *= (5 + cs_ptr->sc.runetrap.mod); dam /= 10;
-	dam *= (50 + cs_ptr->sc.runetrap.lev); dam /= 100;
+	//dam *= (5 + cs_ptr->sc.runetrap.mod); dam /= 10;
+	//dam *= (50 + cs_ptr->sc.runetrap.lev); dam /= 100;
+	if (dam > S_DAM_MAX)
+	{
+		dam = S_DAM_MAX;
+	}
+	if (dam < 1)
+	{
+		dam = 1;
+	}
+	dam = (dam * (r_imperatives[cs_ptr->sc.runetrap.mod].dam != 0 ? r_imperatives[cs_ptr->sc.runetrap.mod].dam : randint(15)+5)) / 10;
+	//dam = (dam * d_multiplier) / 10;
+	//Use runespell damage calculation, hardcoded types? (see tables.c) - Kurzel
+		switch (cs_ptr->sc.runetrap.typ) {
+	case RUNETRAP_DETO:
+		dam = (dam * 16) / 10;
+		break;
+	case RUNETRAP_ACID:
+		dam = (dam * 11) / 10;
+		break;
+	case RUNETRAP_ELEC:
+		dam = (dam * 11) / 10;
+		break;
+	case RUNETRAP_FIRE:
+		dam = (dam * 11) / 10;
+		break;
+	case RUNETRAP_COLD:
+		dam = (dam * 11) / 10;
+		break;
+	default:
+		s_printf("oops! nonexisting rune trap(typ: %d)!\n", cs_ptr->sc.runetrap.typ);
+	}
+	
+	//Use minor backlash calculation. - Kurzel
+	dam = dam / 10;
 
 	project(PROJECTOR_RUNE, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, typ, PROJECT_KILL | PROJECT_NORF, "");
 }

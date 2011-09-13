@@ -3528,12 +3528,14 @@ void set_rune_trap_aux(int Ind, int typ, int mod, int lev)
 	un_afk_idle(Ind);
 
 	/* Take a turn */
-	p_ptr->energy -= level_speed(&p_ptr->wpos);
+	//p_ptr->energy -= level_speed(&p_ptr->wpos); 
+	//Already consumed in casting a rune-spell. - Kurzel
 
 	/* Check interference */
 	/* Basically it's not so good idea to set traps next to the enemy */
-	if (interfere(Ind, 50 - get_skill_scale(p_ptr, SKILL_TRAPPING, 30))) /* setting-trap interference chance */
-		return;
+	//if (interfere(Ind, 50 - get_skill_scale(p_ptr, SKILL_TRAPPING, 30))) /* setting-trap interference chance */
+	//	return;
+	//Rune-trapping is a spell effect, not subject to interference. - Kurzel
 
 	/* Set it here */
 	if (!(cs_ptr = AddCS(c_ptr, CS_RUNE_TRAP))) return;
@@ -5247,7 +5249,7 @@ bool mon_hit_rune_trap(int m_idx)
 
 	int dam = 0, trapping;
 
-	int i, who = PROJECTOR_MON_TRAP;
+	int i, who = PROJECTOR_MON_TRAP, s_av;
 	int typ = GF_FIRE, rad = 1;
 	cave_type *c_ptr;
 	cave_type **zcave;
@@ -5362,39 +5364,61 @@ bool mon_hit_rune_trap(int m_idx)
 	}
 
 	/* Actually activate the trap */
+	s_av = cs_ptr->sc.runetrap.lev; //For rget_level() - Kurzel
 	switch (cs_ptr->sc.runetrap.typ) {
 	case RUNETRAP_DETO:
 		typ = GF_DETONATION;
-		rad = 2;
-		dam = damroll(20, 10);
+		rad = 2 + r_imperatives[cs_ptr->sc.runetrap.mod].radius;
+		dam = rget_level(400 + randint(50));
 		break;
 	case RUNETRAP_ACID:
 		typ = GF_ACID;
-		rad = 2;
-		dam = damroll(5, 10);
+		rad = 2 + r_imperatives[cs_ptr->sc.runetrap.mod].radius;
+		dam = rget_level(400 + randint(50));
 		break;
 	case RUNETRAP_ELEC:
 		typ = GF_ELEC;
-		rad = 2;
-		dam = damroll(5, 10);
+		rad = 2 + r_imperatives[cs_ptr->sc.runetrap.mod].radius;
+		dam = rget_level(400 + randint(50));
 		break;
 	case RUNETRAP_FIRE:
 		typ = GF_FIRE;
-		rad = 2;
-		dam = damroll(5, 10);
+		rad = 2 + r_imperatives[cs_ptr->sc.runetrap.mod].radius;
+		dam = rget_level(400 + randint(50));
 		break;
 	case RUNETRAP_COLD:
 		typ = GF_COLD;
-		rad = 2;
-		dam = damroll(5, 10);
+		rad = 2 + r_imperatives[cs_ptr->sc.runetrap.mod].radius;
+		dam = rget_level(400 + randint(50));
 		break;
 	default:
 		s_printf("oops! nonexisting rune trap(typ: %d)!\n", cs_ptr->sc.runetrap.typ);
 	}
 
-	/* Trapping skill influences damage - C. Blue */
-	dam *= (5 + cs_ptr->sc.runetrap.mod); dam /= 10;
-	dam *= (50 + cs_ptr->sc.runetrap.lev); dam /= 100;
+	if (dam > S_DAM_MAX) dam = S_DAM_MAX;
+	if (dam < 1) dam = 1;
+	dam = (dam * (r_imperatives[cs_ptr->sc.runetrap.mod].dam != 0 ? r_imperatives[cs_ptr->sc.runetrap.mod].dam : randint(15) + 5)) / 10;
+	//dam = (dam * d_multiplier) / 10;
+	//Use runespell damage calculation, hardcoded RT_types? (see common\tables.c) - Kurzel
+		switch (cs_ptr->sc.runetrap.typ) {
+	case RUNETRAP_DETO:
+		dam = (dam * 16) / 10;
+		break;
+	case RUNETRAP_ACID:
+		dam = (dam * 11) / 10;
+		break;
+	case RUNETRAP_ELEC:
+		dam = (dam * 11) / 10;
+		break;
+	case RUNETRAP_FIRE:
+		dam = (dam * 11) / 10;
+		break;
+	case RUNETRAP_COLD:
+		dam = (dam * 11) / 10;
+		break;
+	default:
+		s_printf("oops! nonexisting rune trap(typ: %d)!\n", cs_ptr->sc.runetrap.typ);
+	}
 
 	/* trap is gone */
 	i = cs_ptr->sc.runetrap.feat;
@@ -5402,11 +5426,12 @@ bool mon_hit_rune_trap(int m_idx)
 	cave_set_feat_live(wpos, my, mx, i);
 
 	/* Actually hit the monster */
-//	(void) project_m(who, y, x, 0, y, x, dam, typ);
-	(void) project(-who, rad, &m_ptr->wpos, my, mx, dam, typ, (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL), "");
+//	(void) project(-who, rad, &m_ptr->wpos, my, mx, dam, typ, (PROJECT_NORF | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL), "");
+	(void) fire_ball(who, typ, 5, dam, rad, "");
+	//s_printf("radius: %d\n",rad);
 
 	/* did it die? */
-        return (zcave[my][mx].m_idx == 0 ? TRUE : FALSE);
+	return (zcave[my][mx].m_idx == 0 ? TRUE : FALSE);
 }
 #endif
 
