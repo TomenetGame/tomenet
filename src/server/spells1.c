@@ -4792,6 +4792,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	cave_type **zcave;
 	cave_type *c_ptr;
 	player_type *p_ptr = NULL;
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	c_ptr = &zcave[y][x];
 
@@ -4809,13 +4810,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	if (c_ptr->m_idx <= 0) return (FALSE);
 
 	/* Acquire monster pointer */
- 	m_ptr = &m_list[c_ptr->m_idx];
+	m_ptr = &m_list[c_ptr->m_idx];
 
 	/* Acquire race pointer */
-		r_ptr = race_inf(m_ptr);
+	r_ptr = race_inf(m_ptr);
 
 	/* Acquire name */
-		name = r_name_get(m_ptr);
+	name = r_name_get(m_ptr);
 
 	/* Never affect projector */
 	if ((who > 0) && (c_ptr->m_idx == who)) return (FALSE);
@@ -4881,6 +4882,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			dam = 700;
 		}
 	}
+
 
 	/* Analyze the damage type */
 	switch (typ) {
@@ -7987,7 +7989,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		everyone_lite_spot(wpos, y, x);
 	}
 
-
 	/* Return "Anything seen?" */
 	return (obvious);
 }
@@ -10565,7 +10566,7 @@ bool lua_project(int who, int rad, struct worldpos *wpos, int y, int x, int dam,
 	return(project(who, rad, wpos, y, x, dam, typ, flg, attacker));
 }
 #endif
-bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg, char *attacker)
+bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam, int typ, int flg, char *attacker)
 {
 	int			i, j, t;
 	int				 y1, x1, y2, x2;
@@ -10581,6 +10582,9 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 	int path_x[MAX_RANGE];
 	int path_num = 0;
 #endif
+	struct worldpos wpos_fix, *wpos = &wpos_fix;
+	/* copy wpos in case it was a monster's wpos that gets erased from mon_take_hit() if monster dies */
+	wpos_fix = *wpos_tmp;
 
 	/* Affected location(s) */
 	cave_type *c_ptr, *c_ptr2;
@@ -11061,7 +11065,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 		for (i = 0; i <= tdi[rad]; i++) {
 			/* Encode some more "radius" info */
 			if (i == tdi[dist]) {
-				gm[++dist] = grids; 
+				gm[++dist] = grids;
 #if DEBUG_LEVEL > 2
 				s_printf("dist:%d  i:%d\n", dist, i);
 #endif
@@ -11162,7 +11166,6 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 #endif	// 0
 	}
 
-
 	/* Speed -- ignore "non-explosions" */
 	if (!grids) return (FALSE);
 
@@ -11256,6 +11259,10 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 #endif
 
 
+	/* PROJECT_DUMY means we don't have to project on floor/items/monsters/players,
+	   because the effect was just for visual entertainment.. - C. Blue */
+	if (flg & PROJECT_DUMY) return(FALSE);
+
 	/* Check features */
 	if (flg & PROJECT_GRID) {
 		/* Start with "dist" of zero */
@@ -11323,10 +11330,6 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			}
 		}
 	}
-
-	/* PROJECT_DUMY means we don't have to project on floor/items/monsters/players,
-	   because the effect was just for visual entertainment.. - C. Blue */
-	if (flg & PROJECT_DUMY) return(FALSE);
 
 	/* Check objects */
 	if (flg & PROJECT_ITEM) {
@@ -11400,6 +11403,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 				monster_race *ref_ptr = race_inf(&m_list[zcave[y][x].m_idx]);
 			}
 */
+
 			if (project_m(0 - who, who, y2, x2, dist, wpos, y, x, dam, typ, flg)) notice = TRUE;
 			
 			/* Generate additional runespell explosions, based on hacky decoded 'typ' information. - Kurzel

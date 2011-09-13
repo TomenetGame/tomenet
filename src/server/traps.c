@@ -5426,8 +5426,9 @@ bool mon_hit_rune_trap(int m_idx)
 	cave_set_feat_live(wpos, my, mx, i);
 
 	/* Actually hit the monster */
-//	(void) project(-who, rad, &m_ptr->wpos, my, mx, dam, typ, (PROJECT_NORF | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL), "");
-	(void) fire_ball(who, typ, 5, dam, rad, "");
+	/* WRAITHFORM reduces damage/effect! */
+	if (who > 0 && p_ptr->tim_wraith) dam /= 2;
+	(void) project(-who, rad, &m_ptr->wpos, my, mx, dam, typ, (PROJECT_NORF | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL), "");
 	//s_printf("radius: %d\n",rad);
 
 	/* did it die? */
