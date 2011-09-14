@@ -208,7 +208,7 @@ r_spell runespell_list[RT_MAX] =
 { RT_ELEC,		"lightning",	11, 10,  5,  0, 1, GF_ELEC,		0,	0 }, //3
 { RT_FIRE,		"fire",		11, 10,  5,  0, 1, GF_FIRE,		0,	0 }, //4
 { RT_COLD,		"frost",	11, 10,  5,  0, 1, GF_COLD,		0,	0 }, //2
-{ RT_POISON,		"gas",		 9, 10,  5,  0, 1, GF_POIS,		0,	0 }, //7
+{ RT_POISON,		"gas",		 9, 10,  5,  0, 1, GF_POIS,		0,	0 }, //6
 { RT_FORCE,		"force",	 6,  8, 20,  0, 1, GF_FORCE,		0,	0 }, //3
 { RT_WATER,		"water",	 5,  8, 15,  0, 1, GF_WATER,		0,	0 }, //4
 { RT_SHARDS,		"shards",	 7,  9, 15,  0, 1, GF_SHARDS,		0,	0 }, //4
@@ -359,7 +359,7 @@ r_spell runespell_list[RT_MAX] =
 { RT_WONDER,		"wonder",		13, 11, 35,  5, 2, GF_WONDER,		0,		0 }, //1
 /* Nether */
 { RT_MANA,		"mana",			11, 10, 30,  5, 2, GF_MANA,		0,		0 }, //1
-{ RT_NETHER_TIME,	"oblivion",		 9, 10, 35,  5, 2, GF_TIME,		GF_ANNIHILATION,R_NETH }, //0
+{ RT_NETHER_TIME,	"oblivion",		 9, 10, 35,  5, 2, GF_TIME,		GF_ANNIHILATION,	0 }, //1
 /* Time */
 { RT_SLEEP,		"slumber",		10, 10, 15,  5, 2, GF_OLD_SLEEP,	0,		0 }, //2
 
@@ -370,7 +370,7 @@ r_spell runespell_list[RT_MAX] =
 //Powerful combination elements always 'augment' rather than explode, but may do both
 
 //RESISTANCE self utility (should be removed, more 'unique' spells or families should be added)
-{ RT_WONDER_RESIST,	"elements",		11, 10,  5, 10, 3, GF_BASE,		0,		0 }, //7
+{ RT_WONDER_RESIST,	"elements",		11, 10,  5, 10, 3, GF_BASE,		0,		0 }, //8
 
 //GLYPH self utility combinations, use light/dark+explosion to project, elec/earth school absent due to starlite/self -> circle (minimized circle should be a single glyph!)
 //Level fixed to 30, starlite 35 (for usability =.=) +20% damage to correct level malus (balance, will be /weaker/ than brilliance/darkness)
@@ -412,8 +412,9 @@ r_spell runespell_list[RT_MAX] =
 { RT_FIRE_POISON_NETHER,"corrupted consumption",14, 12, 25, 10, 3, GF_FIRE_POISON,	GF_OLD_SLEEP,	0 }, //1
 
 //R_FORC generally explodes with force
-{ RT_ACID_FIRE_FORCE,	"forceful bile",	15, 12, 20, 10, 3, GF_ACID_FIRE,	GF_FORCE,	0 }, //1 (name is too awesome? ^^)
+{ RT_ACID_FIRE_FORCE,	"forceful bile",	15, 12, 20, 10, 3, GF_ACID_FIRE,	GF_FORCE,	0 }, //1
 { RT_ACID_COLD_FORCE,	"forceful rime",	15, 12, 20, 10, 3, GF_ACID_COLD,	GF_FORCE,	0 }, //1
+//These could be improved upon...conflict w/ explosion elements.
 { RT_ACID_POISON_FORCE,	"forceful venom",	13, 11, 20, 10, 3, GF_ACID_POISON,	GF_BLIND,	0 }, //1
 { RT_FIRE_POISON_FORCE,	"forceful consumption",	13, 11, 20, 10, 3, GF_FIRE_POISON,	GF_OLD_SLEEP,	0 }, //1
 { RT_COLD_POISON_FORCE,	"forceful hypothermia",	13, 11, 20, 10, 3, GF_COLD_POISON,	GF_OLD_SLOW,	0 }, //1
@@ -709,7 +710,7 @@ rspell_sel rspell_selector[MAX_RSPELL_SEL] =
 { R_FIRE | R_CHAO | R_NEXU, RT_DETONATION_NEXUS },
 { R_FIRE | R_CHAO | R_TIME, RT_DETONATION_TIME },
 
-{ R_FIRE | R_COLD | R_POIS, RT_POISON },
+{ R_FIRE | R_COLD | R_POIS, RT_WONDER_RESIST },
 { R_FIRE | R_COLD | R_NEXU, RT_NEXUS },
 { R_FIRE | R_COLD | R_FORC, RT_FORCE },
 { R_FIRE | R_COLD | R_TIME, RT_TIME },
@@ -852,7 +853,7 @@ rspell_sel rspell_selector[MAX_RSPELL_SEL] =
 { R_NETH | R_POIS, RT_BLINDNESS },
 { R_NETH | R_NEXU, RT_MANA },
 { R_NETH | R_FORC, RT_SHADOW },
-{ R_NETH | R_TIME, RT_NULL },
+{ R_NETH | R_TIME, RT_NETHER_TIME },
 
 { R_POIS | R_NEXU, RT_UNBREATH },
 { R_POIS | R_FORC, RT_STUN },

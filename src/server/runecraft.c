@@ -1267,6 +1267,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				}
 				break;
 			*/
+			case RT_WATER_NEXUS:
 			case RT_SHARDS:
 			//case RT_MYSTIC_SHIELD:
 				//msg_format(Ind, "%s%s summon %s mystic protection.", begin, description, r_imperatives[imper].name);
@@ -1360,7 +1361,9 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					set_oppose_pois(Ind, spell_duration);
 				}
 				break;
-
+				
+			case RT_ACID_ELEC_TIME:
+			case RT_ACID_ELEC_NEXUS:
 			case RT_ACID_ELEC:
 				msg_format(Ind, "%s%s cast a %s rune of gestalt resistance.", begin, description, r_imperatives[imper].name);
 				if (success)
@@ -1369,6 +1372,8 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					set_oppose_elec(Ind, spell_duration);
 				}
 				break;
+				
+			case RT_ACID_FIRE_TIME:	
 			case RT_ACID_FIRE:
 				msg_format(Ind, "%s%s cast a %s rune of gestalt resistance.", begin, description, r_imperatives[imper].name);
 				if (success)
@@ -1377,6 +1382,8 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					set_oppose_fire(Ind, spell_duration);
 				}
 				break;
+				
+			case RT_ACID_COLD_TIME:	
 			case RT_ACID_COLD:
 				msg_format(Ind, "%s%s cast a %s rune of gestalt resistance.", begin, description, r_imperatives[imper].name);
 				if (success)
@@ -1385,6 +1392,8 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					set_oppose_cold(Ind, spell_duration);
 				}
 				break;
+				
+			case RT_ACID_POISON_TIME:
 			case RT_ACID_POISON:
 				msg_format(Ind, "%s%s cast a %s rune of gestalt resistance.", begin, description, r_imperatives[imper].name);
 				if (success)
@@ -1408,6 +1417,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				}
 				break;
 				
+			case RT_ELEC_COLD_TIME:	
 			case RT_ELEC_COLD:
 				msg_format(Ind, "%s%s cast a %s rune of gestalt resistance.", begin, description, r_imperatives[imper].name);
 				if (success)
@@ -1416,6 +1426,8 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					set_oppose_cold(Ind, spell_duration);
 				}
 				break;
+				
+			case RT_ELEC_POISON_TIME:	
 			case RT_ELEC_POISON:
 				msg_format(Ind, "%s%s cast a %s rune of gestalt resistance.", begin, description, r_imperatives[imper].name);
 				if (success)
@@ -1424,6 +1436,8 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					set_oppose_pois(Ind, spell_duration);
 				}
 				break;
+				
+			case RT_FIRE_POISON_TIME:	
 			case RT_FIRE_POISON:
 				msg_format(Ind, "%s%s cast a %s rune of gestalt resistance.", begin, description, r_imperatives[imper].name);
 				if (success)
@@ -1432,6 +1446,8 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					set_oppose_pois(Ind, spell_duration);
 				}
 				break;
+				
+			case RT_COLD_POISON_TIME:
 			case RT_COLD_POISON:
 				msg_format(Ind, "%s%s cast a %s rune of gestalt resistance.", begin, description, r_imperatives[imper].name);
 				if (success)
@@ -1440,7 +1456,8 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					set_oppose_pois(Ind, spell_duration);
 				}
 				break;
-				
+			
+			case RT_COLD_NEXUS:
 			case RT_FIRE:
 				msg_format(Ind, "%s%s cast a %s rune of fire resistance.", begin, description, r_imperatives[imper].name);
 				if (success)
@@ -1448,7 +1465,8 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					set_oppose_fire(Ind, duration);
 				}
 				break;
-			
+				
+			case RT_FIRE_NEXUS:
 			case RT_COLD:
 				msg_format(Ind, "%s%s cast a %s rune of cold resistance.", begin, description, r_imperatives[imper].name);
 				if (success)
@@ -1457,6 +1475,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				}
 				break;
 			
+			case RT_ELEC_NEXUS:
 			case RT_ACID:
 				msg_format(Ind, "%s%s cast a %s rune of acid resistance.", begin, description, r_imperatives[imper].name);
 				if (success)
@@ -1465,6 +1484,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				}
 				break;
 			
+			case RT_ACID_NEXUS:
 			case RT_ELEC:
 				msg_format(Ind, "%s%s cast a %s rune of electrical resistance.", begin, description, r_imperatives[imper].name);
 				if (success)
