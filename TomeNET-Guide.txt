@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 13. September 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 14. September 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -109,6 +109,7 @@ Contents
     (5.18)  Monster auras
     (5.19)  Experience-draining items
     (5.20)  Runes & Runemastery
+    (5.20a) Runemastery Tables
     (5.21)  Digging
 (6) Character details
     (6.1)   Attributes
@@ -7265,6 +7266,9 @@ disabled, such as blink or teleport. Other spells that affect an area over time
 such as 'cloud' and 'storm' spells, and many self-spells with timed durations,
 make poor choices for auto-retaliation.
 
+You can omit the type parameter and just inscribe @O[a-h], which will use a
+'burst' spell as default. For example @Ob for a moderate burst.
+
 
 Quickstart Guide:
 -----------------
@@ -7318,6 +7322,336 @@ and carry mana potions. If you are a hybrid-melee, you will have less
 to additional utility through your school selection. Be sure to experiment with
 2-rune and 3-rune spells outside your school(s) at higher levels, because you
 will still be able to access lower-level utility.
+
+
+
+(5.20a) Runemastery Tables
+--------------------------
+Runemastery covers a breadth of spells and effects, covered in the tables below.
+
+Key
+---
+Names shortened in the table:
+Electricity  -> Elec
+Disintegrate -> Disi
+Acid/Elec/Fire/Cold/Poison -> Base (Any base/poison rune fits here)
+
+* - Duplicate Spell (Accessable through multiple combinations)
+
+Imperatives
+-----------
+A comprehensive effect listing of every spell modifier. Imperatives alter the
+nature of a spell, influencing level, cost, fail rate, damage, casting time, 
+radius, and duration. The 'chaotic' modifier uses a set of random values, 
+denoted by **.
+
+-------------------------------------------------------------------------------
+Mod | Name       | Cost | Fail | Damage | Casting Time | Radius | Duration
+-------------------------------------------------------------------------------
+ -1 | Minimized  |  50% | -10% |   60%  |     100%     |   -1   |    50%
+  0 | Moderate   | 100% | + 0% |  100%  |     100%     |   +0   |   100%
+  1 | Maximized  | 150% | +15% |  150%  |     100%     |   +1   |   130%
+  2 | Compressed | 150% | -10% |  130%  |     100%     |   -2   |    80%
+  2 | Expanded   | 130% | + 0% |  100%  |     100%     |   +2   |   130%
+  3 | Brief      | 130% | +10% |   60%  |      50%     |   +0   |    50%
+  3 | Lengthened | 150% | + 5% |   60%  |     100%     |   +0   |   160%
+  0 | Chaotic    |  **  |  **  |   **   |     100%     |   **   |    **%
+        
+
+Types
+-----
+A comprehensive effect listing of every spell type. Type controls the shape and
+area that a completed rune-spell will affect. Area of effect increases with
+level, but may be limited by projection elements.
+
+-------------------------------------------------------------------------------
+Level Modifier | Name  | Description
+-------------------------------------------------------------------------------
+       -3      | Melee | Quick burst attack at melee retaliation range.
+        0      | Self  | Affects the caster or creates some special effect.
+        1      | Bolt  | Hits a single target in line of effect.
+        2      | Beam  | Hits every target in line of effect. May be deflected.
+        3      | Ball  | Explodes about a single target in line of effect.
+        4      | Wave  | Radiates outward from the caster. Hits rapidly.
+        5      | Cloud | Damages an area of effect over time around the target.
+        7      | Storm | Creates a damaging area that moves with the caster.
+
+
+Effects
+-------
+A comprehensive effect listing of every unique runespell. Duplicate spells not 
+listed here are the products of rune combinations with one or more elements that
+oppose each other, including:
+
+Electricity/Water
+Fire/Cold
+Acid/Earth
+Water/Earth
+Nether/Time
+
+Other overlapping effects are the product of the rune 'nexus', or the inclusion
+of chaos+nether, which creates the nexus element. Remember that rune order is
+irrelevant, eg. fire+chaos is the same as chaos+fire.
+
+Sorted by Level, Family, # of Runes
+-------------------------------------------------------------------------------
+Lvl | Projection | Explosions | Self-spell | Rune 1 | Rune 2 | Rune 3 | Augment
+-------------------------------------------------------------------------------
+  5 | Acid       |            | Resist     | Acid   |        |        |        
+  5 | Lightning  |            | Resist     | Elec   |        |        |        
+  5 | Fire       |            | Resist     | Fire   |        |        |        
+  5 | Frost      |            | Resist     | Cold   |        |        |        
+  5 | Gas        |            | Resist     | Poison |        |        |        
+  5 | Gestalt    |            | Resist(x2) | Acid   | Elec   |        |        
+  5 | Gestalt    | Time       | Resist(x2) | Acid   | Elec   | Time   | Time   
+  5 | Gestalt    |            | Resist(x2) | Acid   | Fire   |        |        
+  5 | Gestalt    | Time       | Resist(x2) | Acid   | Fire   | Time   | Time   
+  5 | Gestalt    |            | Resist(x2) | Acid   | Cold   |        |        
+  5 | Gestalt    | Time       | Resist(x2) | Acid   | Cold   | Time   | Time   
+  5 | Gestalt    | Blindness  | Resist(x2) | Acid   | Poison |        |        
+  5 | Gestalt    | Blindness  | Resist(x2) | Acid   | Poison | Time   | Time   
+  5 | Acid       | Time       | Rune Trap  | Acid   | Time   |        | Time   
+  5 | Gestalt    |            | Resist(x2) | Elec   | Cold   |        |        
+  5 | Gestalt    | Time       | Resist(x2) | Elec   | Cold   | Time   | Time   
+  5 | Gestalt    | Stun       | Resist(x2) | Elec   | Poison |        |        
+  5 | Gestalt    | Stun       | Resist(x2) | Elec   | Poison | Time   | Time   
+  5 | Lightning  | Time       | Rune Trap  | Elec   | Time   |        | Time   
+  5 | Gestalt    | Sleep      | Resist(x2) | Fire   | Poison |        |        
+  5 | Gestalt    | Sleep      | Resist(x2) | Fire   | Poison | Time   | Time   
+  5 | Fire       | Time       | Rune Trap  | Fire   | Time   |        | Time   
+  5 | Gestalt    | Slow       | Resist(x2) | Cold   | Poison |        |        
+  5 | Gestalt    | Slow       | Resist(x2) | Cold   | Poison | Time   | Time   
+  5 | Frost      | Time       | Rune Trap  | Cold   | Time   |        | Time   
+  5 | Slow       |            |            | Poison | Time   |        |        
+  5 | Light      |            | Light      | Chaos  | Force  |        |        
+  5 | Darkness   |            | Darkness   | Nether | Force  |        |        
+  5 | Elements   |            | Resistance | Base   | Base   | Base   |        
+-------------------------------------------------------------------------------
+ 10 | Lightning  |            | Resist     | Acid   | Nexus  |        | Nexus  
+ 10 | Lightning  | Water      |            | Elec   | Water  |        | Elec   
+ 10 | Acid       |            | Resist     | Elec   | Nexus  |        | Nexus  
+ 10 | Frost      |            | Resist     | Fire   | Nexus  |        | Nexus  
+ 10 | Fire       |            | Resist     | Cold   | Nexus  |        | Nexus  
+ 10 | Blindness  |            |            | Nether | Poison |        | Nexus  
+-------------------------------------------------------------------------------
+ 15 | Water      |            | Phase Door | Water  |        |        |        
+ 15 | Water      |            | Phase Door | Earth  | Nexus  |        | Nexus  
+ 15 | Shards     |            | Earthquake | Earth  |        |        |        
+ 15 | Shards     |            | Earthquake | Water  | Nexus  |        | Nexus  
+ 15 | Nexus      |            |            | Nexus  |        |        |        
+*15 | Nexus      |            |            | Chaos  | Nether |        |        
+ 15 | Lightning  | Lightning  | Brand      | Elec   | Earth  |        | Elec   
+ 15 | Unbreath   |            | Fly        | Poison | Nexus  |        |        
+ 15 | Corrosion  |            | Disarm     | Acid   | Earth  |        |        
+ 15 | Dig (Fire) |            | Dig Floor  | Fire   | Earth  |        |        
+ 15 | Shattering |            | Disarm     | Earth  | Cold   |        |        
+ 15 | Gestalt    |            | VerminCtrl | Poison | Water  |        |        
+ 15 | Gestalt    |            | VerminCtrl | Poison | Water  | Time   | Time   
+ 15 | Gestalt    |            | CurePoison | Poison | Earth  |        |        
+ 15 | Gestalt    |            | CurePoison | Poison | Earth  | Time   | Time   
+ 15 | Dig        |            | Heal       | Water  | Earth  |        |        
+ 15 | Dig        |            | Teleport   | Water  | Time   |        | Time   
+ 15 | Dig        |            | Memory     | Earth  | Time   |        | Time   
+ 15 | Sleep      |            | Anchor     | Nexus  | Time   |        |        
+ 15 | Rockets    |            |            | Fire   | Poison | Earth  |        
+ 15 | Dig (Fire) |            | Dig Floor  | Fire   | Earth  | Time   | Time   
+ 15 | Corrosion  |            | Disarm     | Acid   | Earth  | Time   | Time   
+ 15 | Shattering |            | Disarm     | Cold   | Earth  | Time   | Time   
+ 15 | Gestalt    |            | Resist(x2) | Acid   | Elec   | Nexus  |        
+ 15 | Nexus      | Dig        | Dig Floor  | Water  | Earth  | Nexus  |        
+-------------------------------------------------------------------------------
+ 20 | Force      |            | Deflection | Force  |        |        |        
+ 20 | Plasma     |            | Resist(x2) | Elec   | Fire   |        |        
+ 20 | Plasma     |            | Resist(x2) | Elec   | Fire   | Acid   | Acid   
+ 20 | Plasma     | Water      | Resist(x2) | Elec   | Fire   | Water  | Water  
+ 20 | Plasma     | Light      | Resist(x2) | Elec   | Fire   | Force  | Force  
+ 20 | Plasma     | Darkness   | Resist(x2) | Elec   | Fire   | Nether | Nether 
+ 20 | Plasma     | Sleep      | Resist(x2) | Elec   | Fire   | Poison | Poison 
+ 20 | Plasma     | Time       | Resist(x2) | Elec   | Fire   | Time   | Time   
+ 20 | Darkness   | Acid       | Obscurity  | Acid   | Nether |        |        
+ 20 | Acid       | Acid       | Brand      | Acid   | Force  |        | Acid   
+ 20 | Light      | Lightning  | Light      | Elec   | Chaos  |        |        
+ 20 | Teleport   | Lightning  | Zap Tele   | Elec   | Nether |        |        
+ 20 | Sound      |            | Sparkle    | Elec   | Force  |        |        
+ 20 | Sound      |            | Sparkle    | Elec   | Acid   | Force  | Acid   
+ 20 | Sound      |            | Sparkle    | Elec   | Cold   | Force  | Cold   
+ 20 | Sound      | Stun       | Sparkle    | Elec   | Poison | Force  | Poison 
+ 20 | Sound      | Confusion  | Sparkle    | Elec   | Force  | Chaos  | Chaos  
+ 20 | Sound      | Nether     | Sparkle    | Elec   | Force  | Nether | Nether 
+ 20 | Darkness   | Fire       | Obscurity  | Fire   | Nether |        |        
+ 20 | Fire       | Fire       | Brand      | Fire   | Force  |        | Fire   
+ 20 | Ice        |            | Frostweave | Cold   | Water  |        |        
+ 20 | Ice        |            | Frostweave | Cold   | Water  | Elec   | Elec   
+ 20 | Ice        | Slow       | Frostweave | Cold   | Water  | Poison | Poison 
+ 20 | Ice        | Shards     | Frostweave | Cold   | Water  | Earth  | Earth  
+ 20 | Ice        | Force      | Frostweave | Cold   | Water  | Force  | Force  
+ 20 | Ice        | Light      | Frostweave | Cold   | Water  | Chaos  | Chaos  
+ 20 | Ice        | Time       | Frostweave | Cold   | Water  | Time   | Time   
+ 20 | Light      | Frost      | Light      | Cold   | Chaos  |        |        
+ 20 | Frost      | Frost      | Brand      | Cold   | Force  |        | Cold   
+ 20 | Confusion  |            |            | Poison | Chaos  |        |        
+ 20 | Stun       |            |            | Poison | Force  |        |        
+ 20 | Water      |            | Levitation | Force  | Water  |        |        
+ 20 | Water      |            | Levitation | Force  | Water  | Poison | Poison 
+ 20 | Water      |            | Levitation | Force  | Water  | Chaos  | Chaos  
+ 20 | Water      |            | Levitation | Force  | Water  | Nether | Nether 
+ 20 | Missile    |            | Deflection | Force  | Earth  |        |        
+ 20 | Missile    | Acid       | Deflection | Force  | Earth  | Acid   |        
+ 20 | Missile    | Fire       | Deflection | Force  | Earth  | Fire   |        
+ 20 | Missile    | Frost      | Deflection | Force  | Earth  | Cold   |        
+ 20 | Missile    | Gas        | Deflection | Force  | Earth  | Poison |        
+ 20 | Teleport   | Nexus      | Warp Tele  | Nexus  | Force  |        |        
+ 20 | Chaos      | Elements   |            | Chaos  | Base   | Base   |        
+ 20 | Acid       | Wonder     |            | Acid   | Chaos  | Time   | Time   
+ 20 | Lightning  | Wonder     |            | Elec   | Chaos  | Time   | Time   
+ 20 | Frost      | Wonder     |            | Cold   | Chaos  | Time   | Time   
+ 20 | Poison     | Wonder     |            | Poison | Chaos  | Time   | Time   
+ 20 | Gestalt    | Force      |            | Acid   | Fire   | Force  |        
+ 20 | Gestalt    | Force      |            | Acid   | Cold   | Force  |        
+ 20 | Gestalt    | Blind      |            | Acid   | Poison | Force  |        
+ 20 | Gestalt    | Sleep      |            | Fire   | Poison | Force  |        
+ 20 | Gestalt    | Slow       |            | Cold   | Poison | Force  |        
+-------------------------------------------------------------------------------
+ 25 | Polymorph  |            |            | Water  | Chaos  |        |        
+ 25 | Clone      |            | Harm       | Water  | Nether |        |        
+ 25 | Inferno    |            |            | Earth  | Chaos  |        |        
+ 25 | Light      | Shards     | Light      | Cold   | Chaos  | Earth  |        
+ 25 | Darkness   | Shards     | Obscurity  | Acid   | Nether | Earth  |        
+*25 | Darkness   | Shards     | Obscurity  | Fire   | Nether | Earth  |        
+ 25 | Water      | Wonder     |            | Water  | Chaos  | Time   | Time   
+ 25 | Shards     | Wonder     |            | Shards | Chaos  | Time   | Time   
+ 25 | Gestalt    | Confusion  | VerminCtrl | Water  | Poison | Chaos  | Chaos  
+ 25 | Gestalt    | Confusion  | CurePoison | Earth  | Poison | Chaos  | Chaos  
+ 25 | Gestalt    | Darkness   | VerminCtrl | Water  | Poison | Nether | Nether 
+ 25 | Gestalt    | Darkness   | CurePoison | Earth  | Poison | Nether | Nether 
+ 25 | Gestalt    | Nether     |            | Acid   | Elec   | Nether |        
+ 25 | Gestalt    | Nether     |            | Acid   | Fire   | Nether |        
+ 25 | Gestalt    | Blind      |            | Acid   | Poison | Nether |        
+ 25 | Gestalt    | Stun       |            | Elec   | Poison | Nether |        
+ 25 | Gestalt    | Sleep      |            | Fire   | Poison | Nether |        
+-------------------------------------------------------------------------------
+ 30 | Power      |            | Brand      | Acid   | Water  |        |        
+ 30 | Annihilate |            | Trauma     | Cold   | Nether |        |        
+ 30 | Inertia    |            | Tele-to    | Force  | Time   |        |        
+ 30 | Disenchant |            | Dispel     | Nexus  | Chaos  |        |        
+ 30 | Disenchant |            | Dispel     | Nexus  | Chaos  | Acid   | Acid   
+ 30 | Disenchant |            | Dispel     | Nexus  | Chaos  | Elec   | Elec   
+ 30 | Disenchant |            | Dispel     | Nexus  | Chaos  | Cold   | Cold   
+ 30 | Disenchant |            | Dispel     | Nexus  | Chaos  | Water  | Water  
+ 30 | Disenchant |            | Dispel     | Nexus  | Chaos  | Earth  | Earth  
+ 30 | Disenchant |            | Dispel     | Nexus  | Chaos  | Force  | Force  
+ 30 | Disenchant |            | Dispel     | Nexus  | Chaos  | Time   | Time   
+ 30 | Mana       |            | Recharge   | Nexus  | Nether |        |        
+ 30 | Mana       |            | Recharge   | Nexus  | Nether | Acid   | Acid   
+ 30 | Mana       |            | Recharge   | Nexus  | Nether | Elec   | Elec   
+ 30 | Mana       |            | Recharge   | Nexus  | Nether | Fire   | Fire   
+ 30 | Mana       |            | Recharge   | Nexus  | Nether | Water  | Water  
+ 30 | Mana       |            | Recharge   | Nexus  | Nether | Earth  | Earth  
+ 30 | Mana       |            | Recharge   | Nexus  | Nether | Force  | Force  
+ 30 | Mana       |            | Recharge   | Nexus  | Nether | Time   | Time   
+ 30 | Light      | Acid       | Glyph      | Force  | Chaos  | Acid   |        
+ 30 | Light      | Frost      | Glyph      | Force  | Chaos  | Cold   |        
+ 30 | Light      | Nuke       | Glyph      | Force  | Chaos  | Poison |        
+ 30 | Darkness   | Acid       | Glyph      | Force  | Nether | Acid   |        
+ 30 | Darkness   | Fire       | Glyph      | Force  | Nether | Fire   |        
+ 30 | Darkness   | Fear       | Glyph      | Force  | Nether | Poison |        
+ 30 | Missile    | Chaos      | Deflection | Force  | Earth  | Chaos  |        
+ 30 | Missile    | Nether     | Deflection | Force  | Earth  | Nether |        
+ 30 | Nexus      | Nexus      |            | Nexus  | Chaos  | Nether | Nexus  
+-------------------------------------------------------------------------------
+ 35 | Chaos      |            |            | Chaos  |        |        |        
+ 35 | Nether     |            |            | Nether |        |        |        
+ 35 | Hellfire   |            | Scorch     | Fire   | Chaos  |        |        
+ 35 | Nuke       | Gas        | Brand      | Acid   | Chaos  |        |        
+ 35 | Wonder     |            |            | Chaos  | Time   |        |        
+ 35 | Time       | Annihilate |            | Nether | Time   |        |        
+ 35 | Light      | Light      | Circle     | Elec   | Earth  | Acid   | Acid   
+ 35 | Light      | Light      | Circle     | Elec   | Earth  | Fire   | Fire   
+ 35 | Light      | Light      | Circle     | Elec   | Earth  | Cold   | Cold   
+ 35 | Light      | Light      | Circle     | Elec   | Earth  | Poison | Poison 
+ 35 | Light      | Light      | Circle     | Elec   | Earth  | Water  | Water  
+ 35 | Light      | Light      | Circle     | Elec   | Earth  | Nexus  | Nexus  
+ 35 | Light      | Light      | Circle     | Elec   | Earth  | Force  | Force  
+ 35 | Light      | Light      | Circle     | Elec   | Earth  | Chaos  | Chaos  
+ 35 | Light      | Light      | Circle     | Elec   | Earth  | Nether | Nether 
+ 35 | Light      | Light      | Circle     | Elec   | Earth  | Time   | Time   
+ 35 | Stasis     |            | Satiation  | Cold   | Nether | Acid   | Acid   
+ 35 | Stasis     |            | Satiation  | Cold   | Nether | Elec   | Elec   
+ 35 | Stasis     |            | Satiation  | Cold   | Nether | Fire   | Fire   
+ 35 | Stasis     |            | Satiation  | Cold   | Nether | Poison | Poison 
+ 35 | Stasis     |            | Satiation  | Cold   | Nether | Water  | Water  
+ 35 | Stasis     |            | Satiation  | Cold   | Nether | Earth  | Earth  
+ 35 | Stasis     |            | Satiation  | Cold   | Nether | Nexus  | Nexus  
+ 35 | Stasis     |            | Satiation  | Cold   | Nether | Force  | Force  
+ 35 | Stasis     |            | Satiation  | Cold   | Nether | Chaos  | Chaos  
+ 35 | Stasis     |            | Satiation  | Cold   | Nether | Time   | Time   
+ 35 | Drain      |            | Berserk    | Poison | Nexus  | Acid   | Acid   
+ 35 | Drain      |            | Berserk    | Poison | Nexus  | Elec   | Elec   
+ 35 | Drain      |            | Berserk    | Poison | Nexus  | Fire   | Fire   
+ 35 | Drain      |            | Berserk    | Poison | Nexus  | Cold   | Cold   
+ 35 | Drain      |            | Berserk    | Poison | Nexus  | Water  | Water  
+ 35 | Drain      |            | Berserk    | Poison | Nexus  | Earth  | Earth  
+ 35 | Drain      |            | Berserk    | Poison | Nexus  | Chaos  | Chaos  
+ 35 | Drain      |            | Berserk    | Poison | Nexus  | Nether | Nether 
+ 35 | Drain      |            | Berserk    | Poison | Nexus  | Force  | Force  
+ 35 | Drain      |            | Berserk    | Poison | Nexus  | Time   | Time   
+ 35 | Gravity    |            | Summoning  | Force  | Time   | Acid   | Acid   
+ 35 | Gravity    |            | Summoning  | Force  | Time   | Elec   | Elec   
+ 35 | Gravity    |            | Summoning  | Force  | Time   | Fire   | Fire   
+ 35 | Gravity    |            | Summoning  | Force  | Time   | Cold   | Cold   
+ 35 | Gravity    |            | Summoning  | Force  | Time   | Poison | Poison 
+ 35 | Gravity    |            | Summoning  | Force  | Time   | Water  | Water  
+ 35 | Gravity    |            | Summoning  | Force  | Time   | Earth  | Earth  
+ 35 | Gravity    |            | Summoning  | Force  | Time   | Nexus  | Nexus  
+ 35 | Gravity    |            | Summoning  | Force  | Time   | Chaos  | Chaos  
+ 35 | Gravity    |            | Summoning  | Force  | Time   | Nether | Nether 
+-------------------------------------------------------------------------------
+ 40 | Time       |            | Haste Self | Time   |        |        |        
+ 40 | Disi       |            |            | Acid   | Water  | Elec   | Elec   
+ 40 | Disi       |            |            | Acid   | Water  | Fire   | Fire   
+ 40 | Disi       |            |            | Acid   | Water  | Cold   | Cold   
+ 40 | Disi       |            |            | Acid   | Water  | Poison | Poison 
+ 40 | Disi       |            |            | Acid   | Water  | Earth  | Earth  
+ 40 | Disi       |            |            | Acid   | Water  | Nexus  | Nexus  
+ 40 | Disi       |            |            | Acid   | Water  | Force  | Force  
+ 40 | Disi       |            |            | Acid   | Water  | Chaos  | Chaos  
+ 40 | Disi       |            |            | Acid   | Water  | Nether | Nether 
+ 40 | Disi       |            |            | Acid   | Water  | Time   | Time   
+ 40 | Detonation |            | Rune Trap  | Fire   | Chaos  | Acid   | Acid   
+ 40 | Detonation |            | Rune Trap  | Fire   | Chaos  | Elec   | Elec   
+ 40 | Detonation |            | Rune Trap  | Fire   | Chaos  | Cold   | Cold   
+ 40 | Detonation |            | Rune Trap  | Fire   | Chaos  | Poison | Poison 
+ 40 | Detonation |            | Rune Trap  | Fire   | Chaos  | Water  | Water  
+ 40 | Detonation |            | Rune Trap  | Fire   | Chaos  | Earth  | Earth  
+ 40 | Detonation |            | Rune Trap  | Fire   | Chaos  | Nexus  | Nexus  
+ 40 | Detonation |            | Rune Trap  | Fire   | Chaos  | Force  | Force  
+ 40 | Detonation |            | Rune Trap  | Fire   | Chaos  | Nether | Nether 
+ 40 | Detonation |            | Rune Trap  | Fire   | Chaos  | Time   | Time   
+ 40 | Meteor     |            |            | Water  | Earth  | Force  | Force  
+-------------------------------------------------------------------------------
+
+
+Augment Effects
+---------------
+A comprehensive effect listing of every augment. Augments increase towards the 
+listed benefit linearly with skill level in the associated rune school, from a
+minimum 200% of the drawback and 0% of the benefit at level 0. 
+
+-------------------------------------------------------------------------------
+Lvl | Rune ID | Description
+-------------------------------------------------------------------------------
+  1 | Acid    | 30% duration increase
+  1 | Elec    | 30% cost reduction
+  1 | Fire    | 20% damage/cost increase
+  1 | Cold    | 10% failure reduction
+  1 | Poison  | 20% energy decrease
+ 15 | Force   | +2 radius increase
+ 15 | Water   | 20% energy/damage decrease, 5% failure decrease
+ 15 | Earth   | 10% damage/cost increase, 10% duration increase
+ 25 | Chaos   | 40% damage/cost increase, 20% failure increase
+ 25 | Nether  | 40% damage/cost increase, -2 radius decrease
+ 25 | Nexus   | +4 radius increase, 40% duration decrease
+ 30 | Time    | 40% energy/damage decrease, 20% duration increase
 
 
 
