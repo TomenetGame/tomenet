@@ -2890,6 +2890,7 @@ void c_msg_format(cptr fmt, ...)
  *
  * Hack -- allow "command_arg" to specify a quantity
  */
+#define QUANTITY_WIDTH 10
 s32b c_get_quantity(cptr prompt, s32b max)
 {
 	s32b amt;
@@ -2904,7 +2905,7 @@ s32b c_get_quantity(cptr prompt, s32b max)
 	if (!prompt)
 	{
 		/* Build a prompt */
-		sprintf(tmp, "Quantity (1-%d, a for all): ", max);
+		sprintf(tmp, "Quantity (1-%d, any letter = all): ", max);
 
 		/* Use that prompt */
 		prompt = tmp;
@@ -2918,21 +2919,21 @@ s32b c_get_quantity(cptr prompt, s32b max)
 	sprintf(buf, "%d", amt);
 
 	/* Ask for a quantity */
-	if (!get_string(prompt, buf, 10)) return (0);
+	if (!get_string(prompt, buf, QUANTITY_WIDTH)) return (0);
 
 
 #if 1
 	/* new method slightly extended: allow leading 'k' or 'm' too */
-	if (buf[0] == 'k' || buf[0] == 'K' || buf[0] == 'm' || buf[0] == 'M') {
+	if ((buf[0] == 'k' || buf[0] == 'K' || buf[0] == 'm' || buf[0] == 'M') && buf[1]) {
 		/* add leading '0' to revert it to the usual format */
-		for (i = 9; i >= 1; i--) buf[i] = buf[i - 1];
+		for (i = QUANTITY_WIDTH + 1; i >= 1; i--) buf[i] = buf[i - 1];
 		buf[0] = '0';
 	}
 	/* new method for inputting amounts of gold:  1m35 = 1,350,000  - C. Blue */
 	while (buf[n] >= '0' && buf[n] <= '9') bi1[i++] = buf[n++];
-	bi1[n] = '\0';
+	bi1[i] = '\0';
 	i1 = atoi(bi1);
-	if (buf[n] == 'k' || buf[n] == 'K') mul = 1000;
+	if ((buf[n] == 'k' || buf[n] == 'K') && n > 0) mul = 1000;
 	else if (buf[n] == 'm' || buf[n] == 'M') mul = 1000000;
 	if (mul > 1) {
 		n++;
@@ -2973,7 +2974,7 @@ s32b c_get_quantity(cptr prompt, s32b max)
 
 
 	/* 'a' means "all" - C. Blue */
-	if (buf[0] == 'a') {
+	if (isalpha(buf[0])) {
 		if (max >= 0) amt = max;
 		/* hack for dropping gold (max is -1) */
 		else amt = 1000000000;
