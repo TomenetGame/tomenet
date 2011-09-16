@@ -10043,11 +10043,11 @@ Elite Uruk      20  Good HP, very high melee damage, +1 extra shot, poison
                     immunity.
 
 (The number is the monster level and therefore the amount of monsters you need
-kill to learn the form.)
+to kill to learn the form.)
 
-Of course some of these forms might also be useful for martial arts users,
-except for those forms that provide an extra shot, since martial artists cannot
-make use of ranged weapons.
+Of course some of these forms might also be useful for martial arts users.
+(Note that martial artists cannot make use of ranged weapons or weapons in
+general though, without losing their excellent bare-handed melee skills.)
 
 
 
