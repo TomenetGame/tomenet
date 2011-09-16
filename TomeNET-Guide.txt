@@ -9093,6 +9093,8 @@ vary. For example a warrior cannot learn magic spells.
 
     Hint: Maybe there's a friendly mimicry-user around who can forge some
     'Rings of Polymorphing' for you from forms he or she no longer uses.
+    As for all shape-shifters going with fruit bat body modification is not
+    recommended, since it will restrict your equipment even if you polymorph.
 
 - Archer
     Archers aren't good at fighting, but can deliever extremely high damage
@@ -9209,6 +9211,8 @@ vary. For example a warrior cannot learn magic spells.
     'Rings of Polymorphing' for you from forms he or she no longer uses.
     In the beginning shamans have few hit points and skill point distribution
     isn't easy either, that's why this class is not recommended for beginners.
+    As for all shape-shifters going with fruit bat body modification is not
+    recommended, since it will restrict your equipment even if you polymorph.
 
 - Runemaster
     Runemasters use arcane symbols or 'runes' to summon pure elemental magic.
