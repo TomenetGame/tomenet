@@ -312,7 +312,6 @@ GATEWAY = add_spell
 			"Requires level 50 Astral Knowledge and at least character level 62",
 			"Enlightened: instantaneous wor for every party member on the level",
 			"Corrupted: creates a void jump gate",
-			"         (cast once to set the first location and the second for the target)",
-			"         (Maximum of one pair of jump gate is allowed)."
+			"         (cast once to set the first location and the second for the target)"
 		}
 }

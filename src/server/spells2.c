@@ -160,6 +160,11 @@ void divine_gateway(int Ind) {
 		} 
 	} else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
 		struct worldpos *wpos = &(p_ptr->wpos);
+		cave_type **zcave;
+
+		if (!wpos->wz) return;
+		if (!(zcave = getcave(wpos))) return;
+		if (!cave_clean_bold(zcave, p_ptr->py, p_ptr->px)) return;
 
 		if (p_ptr->voidx && p_ptr->voidy) {
 			if (place_between_targetted(wpos, p_ptr->py, p_ptr->px, p_ptr->voidy, p_ptr->voidx)) {
@@ -169,14 +174,16 @@ void divine_gateway(int Ind) {
 				p_ptr->voidy = 0;
 
 				p_ptr->redraw |= (PR_MAP);
-				msg_format(Ind, "You successfully create a gateway between the two points!");
-				msg_format_near(Ind, "%s has successfully created a gateway!", p_ptr->name);
+				msg_format(Ind, "\377vYou successfully create a gateway between the two points!");
+				msg_format_near(Ind, "\377v%s has successfully created a gateway!", p_ptr->name);
 			}
 		} else {
 
 			// Let's not have this in towns/houses; OK everywhere else
 			if (!allow_terraforming(wpos, FEAT_TREE)) return;
 		
+			msg_format(Ind, "\377vYou set your mind to create a gateway here.");
+
 			p_ptr->voidx = p_ptr->px;
 			p_ptr->voidy = p_ptr->py;
 		}
