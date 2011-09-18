@@ -86,7 +86,9 @@ X:always_show_lists
 X:target_history
 X:linear_stats
 X:exp_need
+X:short_item_names
 
+X:disable_flush
 X:hide_unusable_skills
 Y:allow_paging
 Y:audio_paging

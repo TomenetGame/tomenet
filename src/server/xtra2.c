@@ -3928,7 +3928,7 @@ void check_experience(int Ind)
 #endif
 	{
 		if(p_ptr->inval && p_ptr->lev >= 25) {
-			msg_print(Ind, "\377rYou cannot gain level further. Ask an admin to validate your account.");
+			msg_print(Ind, "\377rYou cannot gain level further, wait for an admin to validate your account.");
 			break;
 //			return;
 		}

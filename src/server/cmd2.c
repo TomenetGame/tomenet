@@ -5929,7 +5929,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 	}
 
 	if (p_ptr->inval) {
-		msg_print(Ind, "You may not buy/sell a house. Ask an admin to validate your account.");
+		msg_print(Ind, "\377yYou may not buy/sell a house, wait for an admin to validate your account.");
 		return;
 	}
 

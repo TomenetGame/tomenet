@@ -1231,7 +1231,7 @@ void do_cmd_drop(int Ind, int item, int quantity)
 #if (STARTEQ_TREATMENT == 1)
 	if (p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
 	    !((o_ptr->tval == 1) && (o_ptr->sval >= 9))) {
-		msg_print(Ind, "You are not experienced enough to drop items. (Sell/destroy it instead.)");
+		msg_print(Ind, "\377yYou are not experienced enough to drop items. (Destroy it with 'k' or sell it instead.)");
 		return;
 	}
 #endif
@@ -1257,7 +1257,7 @@ void do_cmd_drop(int Ind, int item, int quantity)
 	}
 
 	if (p_ptr->inval) {
-		msg_print(Ind, "You may not drop items. Ask an admin to validate your account.");
+		msg_print(Ind, "\377yYou may not drop items, wait for an admin to validate your account. (Destroy it with 'k' or sell it instead.)");
 		return;
 	}
 
@@ -1319,7 +1319,7 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	}
 
 	if (p_ptr->inval) {
-		msg_print(Ind, "You may not drop gold. Ask an admin to validate your account.");
+		msg_print(Ind, "You may not drop gold, wait for an admin to validate your account.");
 		return;
 	}
 

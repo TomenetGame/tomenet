@@ -7270,6 +7270,26 @@ You can omit the type parameter and just inscribe @O[a-h], which will use a
 'burst' spell as default. For example @Ob for a moderate burst.
 
 
+Rune traps:
+-----------
+Certain type 'self' spells will result in placing a 'rune trap'. That is an
+explosive charge of rune energy placed on the floor that will detonate when
+a monster runs across.
+
+Such traps are no longer under the full control of the runemaster: He cannot
+retract them, but he may attempt to disarm them as for any other trap.
+A runemaster has a much higher chance (usually succeeds) in disarming rune
+traps than other classes.
+
+Rune traps will remain drawing power from the rune master and thereby limiting
+the amount of concurrent rune traps he may set: Each rune trap taxes his amount
+of maximum mana, so when his mana pool capacity reaches zero that means he has
+set as many rune traps as possible at most.
+When a rune trap detonates its upkeep tax will be lifted from the mana pool.
+When a runemaster leaves the current level all rune traps will vanish and the
+upkeep tax be cancelled completely.
+
+
 Quickstart Guide:
 -----------------
 To get started, you'll probably want to macro a couple of minimized or
@@ -7322,7 +7342,6 @@ and carry mana potions. If you are a hybrid-melee, you will have less
 to additional utility through your school selection. Be sure to experiment with
 2-rune and 3-rune spells outside your school(s) at higher levels, because you
 will still be able to access lower-level utility.
-
 
 
 (5.20a) Runemastery Tables
@@ -9074,6 +9093,8 @@ vary. For example a warrior cannot learn magic spells.
 
     Hint: Maybe there's a friendly mimicry-user around who can forge some
     'Rings of Polymorphing' for you from forms he or she no longer uses.
+    As for all shape-shifters going with fruit bat body modification is not
+    recommended, since it will restrict your equipment even if you polymorph.
 
 - Archer
     Archers aren't good at fighting, but can deliever extremely high damage
@@ -9190,6 +9211,8 @@ vary. For example a warrior cannot learn magic spells.
     'Rings of Polymorphing' for you from forms he or she no longer uses.
     In the beginning shamans have few hit points and skill point distribution
     isn't easy either, that's why this class is not recommended for beginners.
+    As for all shape-shifters going with fruit bat body modification is not
+    recommended, since it will restrict your equipment even if you polymorph.
 
 - Runemaster
     Runemasters use arcane symbols or 'runes' to summon pure elemental magic.
@@ -10020,11 +10043,11 @@ Elite Uruk      20  Good HP, very high melee damage, +1 extra shot, poison
                     immunity.
 
 (The number is the monster level and therefore the amount of monsters you need
-kill to learn the form.)
+to kill to learn the form.)
 
-Of course some of these forms might also be useful for martial arts users,
-except for those forms that provide an extra shot, since martial artists cannot
-make use of ranged weapons.
+Of course some of these forms might also be useful for martial arts users.
+(Note that martial artists cannot make use of ranged weapons or weapons in
+general though, without losing their excellent bare-handed melee skills.)
 
 
 
