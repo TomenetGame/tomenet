@@ -5538,7 +5538,7 @@ void do_cmd_trad_house(int Ind)
 	if (!(h_ptr->flags & HF_TRAD)) return;
 
 	if (p_ptr->inval) {
-		msg_print(Ind, "You may not use a house. Ask an admin to validate your account.");
+		msg_print(Ind, "\377yYou may not use a house, wait for an admin to validate your account.");
 		return;
 	}
 
@@ -5999,7 +5999,7 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 	if (!is_store) return FALSE;
 
 	if (p_ptr->inval) {
-		msg_print(Ind, "\377UYou may not use a player store. Ask an admin to validate your account.");
+		msg_print(Ind, "\377yYou may not use a player store, wait for an admin to validate your account.");
 		return FALSE;
 	}
 

@@ -2825,7 +2825,7 @@ static void player_talk_aux(int Ind, char *message)
 
 #if 1 /* No private chat for invalid accounts ? */
 		if (p_ptr->inval) {
-			msg_print(Ind, "Your account is not valid! Ask an admin to validate it.");
+			msg_print(Ind, "\377yYour account is not valid, wait for an admin to validate it.");
 			return;
 		}
 #endif
@@ -2844,7 +2844,7 @@ static void player_talk_aux(int Ind, char *message)
 	if ((strlen(message) >= 2) && (message[0] == '#') && (message[1] == ':') && (colon)) {
 #if 1 /* No private chat for invalid accounts ? */
 		if (p_ptr->inval) {
-			msg_print(Ind, "Your account is not valid! Ask an admin to validate it.");
+			msg_print(Ind, "\377yYour account is not valid, wait for an admin to validate it.");
 			return;
 		}
 #endif
@@ -2886,7 +2886,7 @@ static void player_talk_aux(int Ind, char *message)
 	if ((strlen(message) >= 2) && (message[0] == '+') && (message[1] == ':') && colon) {
 #if 1 /* No private chat for invalid accounts ? */
 		if (p_ptr->inval) {
-			msg_print(Ind, "Your account is not valid! Ask an admin to validate it.");
+			msg_print(Ind, "\377yYour account is not valid, wait for an admin to validate it.");
 			return;
 		}
 #endif
@@ -2912,7 +2912,7 @@ static void player_talk_aux(int Ind, char *message)
 	if ((strlen(message) >= 2) && (message[0] == '$') && (message[1] == ':') && (colon) && (p_ptr->guild)) {
 #if 1 /* No private chat for invalid accounts ? */
 		if (p_ptr->inval) {
-			msg_print(Ind, "Your account is not valid! Ask an admin to validate it.");
+			msg_print(Ind, "\377yYour account is not valid, wait for an admin to validate it.");
 			return;
 		}
 #endif
@@ -2932,7 +2932,7 @@ static void player_talk_aux(int Ind, char *message)
 		if (p_ptr->mutedchat == 2) return;
 #if 1 /* No private chat for invalid accounts ? */
 		if (p_ptr->inval) {
-			msg_print(Ind, "Your account is not valid! Ask an admin to validate it.");
+			msg_print(Ind, "\377yYour account is not valid, wait for an admin to validate it.");
 			return;
 		}
 #endif
