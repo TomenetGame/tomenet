@@ -164,9 +164,8 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, bool inven_first)
                 /* Skip empty objects */
                 if (!buf[0]) continue;
 
-		/* Skip wrong tval (for mkey) */
-		if (item_tester_tval && inventory[i].tval != item_tester_tval)
-			continue;
+		/* Skip items that don't fit (for mkey) */
+		if (!item_tester_okay(&inventory[i])) continue;
 
                 /* Skip empty inscriptions (those which don't contain any @.. tag) */
                 if (!(buf2 = strchr(buf, '@'))) continue;
@@ -281,7 +280,15 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 	if (mode & (SPECIAL_REQ)) special_req = TRUE;
 
 	/* Paranoia */
-	if (!inven && !equip) return (FALSE);
+	if (!inven && !equip) {
+		/* Forget the item_tester_tval restriction */
+		item_tester_tval = 0;
+
+		/* Forget the item_tester_hook restriction */
+		item_tester_hook = 0;
+
+		return (FALSE);
+	}
 
 	/* Command macros work as an exception here */
 //	inkey_get_item = TRUE;
