@@ -1855,15 +1855,14 @@ static int auto_retaliate(int Ind)
 	monster_race *r_ptr = NULL, *r_ptr2;
 	object_type *o_ptr;
 	cptr inscription = NULL, at_O_inscription = NULL;
-	bool no_melee = FALSE;
+	bool no_melee = FALSE, skip_monsters = (p_ptr->cloaked || p_ptr->shadow_running) && !p_ptr->stormbringer;
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
 
 	if (p_ptr->new_level_flag) return 0;
 
-	/* disable auto-retaliation while cloaked, shadow_running, charming */
-	if ((((p_ptr->cloaked || p_ptr->shadow_running) && !(p_ptr->blood_bond && safe_area(Ind))) || p_ptr->mcharming)
-	    && !p_ptr->stormbringer) return 0;
+	/* disable auto-retaliation if we skip monsters/hostile players and blood-bonded players likewise */
+	if ((skip_monsters && !p_ptr->blood_bond) return 0;
 
 	/* Just to kill compiler warnings */
 	target = prev_target = 0;
@@ -1895,6 +1894,10 @@ static int auto_retaliate(int Ind)
 #else /* vs own+other players' pets/golems? */
 			if (m_ptr->owner && !p_ptr->stormbringer) continue;
 #endif
+
+			/* specialty: don't auto-retaliate charmed monsters.
+			   Maybe slightly inconsistent with the fact that we still auto-ret sleeping monsters ;). */
+			if (m_ptr->charmedignore && !p_ptr->stormbringer) continue;
 
 			/* Figure out if this is the best target so far */
 			if (!m_target_ptr) {
