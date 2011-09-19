@@ -6098,9 +6098,6 @@ Blood Bond      Inscribe this @P<playername>, for example @PGandalf, then read
                 cancelled when the blood bond ends or when a player logs out.
                 Everyone on the server will be informed about the result:
                 "<A> wins the blood bond against <B>".
-                (Hit 'P' for party menu to declare war on someone after you
-                read blood bond. Making peace will be done automatically when
-                a blood bond ends!)
 Remove Curse    Breaks lesser curses on items, allowing you to unwear or
                 destroy them. Note that many items can be sold for good cash
                 as soon as they are uncursed!
