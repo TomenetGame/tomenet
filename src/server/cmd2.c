@@ -4354,7 +4354,8 @@ void do_cmd_fire(int Ind, int dir)
 					if ((p_ptr->pkill & PKILL_KILLER ||
 					    check_hostile(Ind, 0 - c_ptr->m_idx) ||
 					    magik(NEUTRAL_FIRE_CHANCE)) &&
-					    (p_ptr->party == 0 ||
+					    (check_blood_bond(Ind, 0 - c_ptr->m_idx) ||
+					     p_ptr->party == 0 ||
 					     !player_in_party(p_ptr->party, 0 - c_ptr->m_idx) ||
 					     magik(FRIEND_FIRE_CHANCE))
 					    && !p_ptr->admin_dm) {
@@ -4366,8 +4367,8 @@ void do_cmd_fire(int Ind, int dir)
 						hit_body = TRUE;
 
 						if (cfg.use_pk_rules == PK_RULES_DECLARE) {
-							if(zcave[p_ptr->py][p_ptr->px].info&CAVE_NOPK || zcave[q_ptr->py][q_ptr->px].info&CAVE_NOPK){
-								if(visible && (!player_in_party(Players[0 - c_ptr->m_idx]->party, Ind))){
+							if (zcave[p_ptr->py][p_ptr->px].info & CAVE_NOPK || zcave[q_ptr->py][q_ptr->px].info & CAVE_NOPK) {
+								if (visible && (!player_in_party(Players[0 - c_ptr->m_idx]->party, Ind))) {
 									p_ptr->target_who = 0;
 									do_player_drop_items(Ind, 40, FALSE);
 									imprison(Ind, 100, "attempted murder");
