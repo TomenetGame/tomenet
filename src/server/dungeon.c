@@ -1862,7 +1862,7 @@ static int auto_retaliate(int Ind)
 	if (p_ptr->new_level_flag) return 0;
 
 	/* disable auto-retaliation if we skip monsters/hostile players and blood-bonded players likewise */
-	if ((skip_monsters && !p_ptr->blood_bond) return 0;
+	if (skip_monsters && !p_ptr->blood_bond) return 0;
 
 	/* Just to kill compiler warnings */
 	target = prev_target = 0;
