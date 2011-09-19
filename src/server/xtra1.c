@@ -4716,6 +4716,33 @@ void calc_boni(int Ind)
 	}
 #endif
 
+	/* Actual Modifier Bonuses (Un-inflate stat bonuses) */
+	p_ptr->to_a += ((int)(adj_dex_ta[p_ptr->stat_ind[A_DEX]]) - 128);
+	p_ptr->to_d_melee += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
+#if 0 /* addition */
+	p_ptr->to_h_melee += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
+#else /* multiplication (percent) */
+	p_ptr->to_h_melee = ((int)((p_ptr->to_h_melee * adj_dex_th[p_ptr->stat_ind[A_DEX]]) / 100));
+#endif
+//	p_ptr->to_h_melee += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128) / 2;
+//	p_ptr->to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
+//	p_ptr->to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
+//	p_ptr->to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
+
+	/* Displayed Modifier Bonuses (Un-inflate stat bonuses) */
+	p_ptr->dis_to_a += ((int)(adj_dex_ta[p_ptr->stat_ind[A_DEX]]) - 128);
+//	p_ptr->dis_to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
+//	p_ptr->dis_to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
+//	p_ptr->dis_to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
+
+	/* Modify ranged weapon boni. DEX now very important for to_hit */
+//	p_ptr->to_h_ranged += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128) / 2;
+#if 0 /* addition */
+	p_ptr->to_h_ranged += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
+#else /* multiplication (percent) */
+	if (p_ptr->to_h_ranged > 0) p_ptr->to_h_ranged = ((int)((p_ptr->to_h_ranged * adj_dex_th[p_ptr->stat_ind[A_DEX]]) / 100));
+	else p_ptr->to_h_ranged = ((int)((p_ptr->to_h_ranged * 100) / adj_dex_th[p_ptr->stat_ind[A_DEX]]));
+#endif
 
 	/* Evaluate monster AC (if skin or armor etc) */
 	if (p_ptr->body_monster) {
@@ -4856,7 +4883,6 @@ void calc_boni(int Ind)
 		/* Other classes than archer or ranger have cap at 4 - the_sandman and mikaelh */
 /*		if (p_ptr->pclass != CLASS_ARCHER && p_ptr->pclass != CLASS_RANGER && p_ptr->num_fire > 4) p_ptr->num_fire = 4;
 */
-
 	}
 
 	/* Add in the "bonus spells" */
@@ -4875,7 +4901,7 @@ void calc_boni(int Ind)
 		p_ptr->skill_dig += o_ptr->to_d;
 
 		p_ptr->skill_dig += p_ptr->skill_dig *
-			get_skill_scale(p_ptr, SKILL_DIG, 200) / 100;
+		    get_skill_scale(p_ptr, SKILL_DIG, 200) / 100;
 	}
 
 
@@ -5039,7 +5065,6 @@ void calc_boni(int Ind)
 		p_ptr->to_h_melee += ((lev1 + lev2) / 2);
 		p_ptr->to_d_melee += ((lev1 + lev2) / 4);
 //		p_ptr->num_blow += get_skill_scale(p_ptr, get_weaponmastery_skill(p_ptr), 2);
-
 	}
 
 
@@ -5393,9 +5418,11 @@ void calc_boni(int Ind)
 		//d /= ((p_ptr->num_blow > 0) ? p_ptr->num_blow : 1);
 
 		/* GWoP: 472, GB: 270, Green DR: 96 */
+		/* GWoP: 254, GT: 364, GB: 149, GDR: 56 */
 		/* Quarter the damage and cap against 150 (unreachable though)
 		- even The Destroyer form would reach just 138 ;) */
 		d /= 4; /* average monster damage per blow */
+		/* GWoP: 63, GT: 91, GB: 37, GDR: 14 */
 
 		/* Cap the to-dam if it's too great */
 #if 0 /* OLD: */
@@ -5427,40 +5454,11 @@ void calc_boni(int Ind)
 		(((p_ptr->dis_to_d * 1) + (d * 1)) / 2);	*/
 	}
 
+
 #if 0 /* disabled atm (it's already not easy to find two weapons that both deal great damage) */
 	/* dual-wielding gets a slight to-hit malus */
 	if (p_ptr->dual_wield && p_ptr->dual_mode) p_ptr->to_h_melee = (p_ptr->to_h_melee * 17) / 20; /* 85% */
 #endif
-
-
-	/* Actual Modifier Bonuses (Un-inflate stat bonuses) */
-	p_ptr->to_a += ((int)(adj_dex_ta[p_ptr->stat_ind[A_DEX]]) - 128);
-	p_ptr->to_d_melee += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
-#if 0 /* addition */
-	p_ptr->to_h_melee += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
-#else /* multiplication (percent) */
-	p_ptr->to_h_melee = ((int)((p_ptr->to_h_melee * adj_dex_th[p_ptr->stat_ind[A_DEX]]) / 100));
-#endif
-//	p_ptr->to_h_melee += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128) / 2;
-//	p_ptr->to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
-//	p_ptr->to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
-//	p_ptr->to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
-
-	/* Displayed Modifier Bonuses (Un-inflate stat bonuses) */
-	p_ptr->dis_to_a += ((int)(adj_dex_ta[p_ptr->stat_ind[A_DEX]]) - 128);
-//	p_ptr->dis_to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
-//	p_ptr->dis_to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
-//	p_ptr->dis_to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
-
-	/* Modify ranged weapon boni. DEX now very important for to_hit */
-//	p_ptr->to_h_ranged += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128) / 2;
-#if 0 /* addition */
-	p_ptr->to_h_ranged += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
-#else /* multiplication (percent) */
-	if (p_ptr->to_h_ranged > 0) p_ptr->to_h_ranged = ((int)((p_ptr->to_h_ranged * adj_dex_th[p_ptr->stat_ind[A_DEX]]) / 100));
-	else p_ptr->to_h_ranged = ((int)((p_ptr->to_h_ranged * 100) / adj_dex_th[p_ptr->stat_ind[A_DEX]]));
-#endif
-
 
 
 	/* Note that stances currently factor in AFTER mimicry effect has been calculated!
