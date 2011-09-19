@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 14. September 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 19. September 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10525,7 +10525,7 @@ Physical Lore
                     Lv15: Also increases strength.
                     Lv20: Also increases constitution.
                     Lv25: Also increases intelligence.
-                    Required skill level for first spell level: 10.
+                    Required skill level for first spell level: 15.
     Focus           Increases your accuracy, adding a bonus to your
                     melee-to-hit and ranged-to-hit.
                     Required skill level for first spell level: 1.
