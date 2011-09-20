@@ -4089,7 +4089,7 @@ void interact_macros(void)
 							    'a' + i,
 							    runecraft_colourize(flags, r_imperatives[choice - 'a'].level + runespell_types[i].cost),
 							    runespell_types[i].title,
-							    runespell_types[i].cost >= 0 ? "+" : "", runespell_types[i].cost,
+							    runespell_types[i].cost >= 0 ? "+" : "-", ABS(runespell_types[i].cost),
 							    runespell_types[i].pen * 10);
 							Term_putstr(15, 15 + i, -1, TERM_L_GREEN, tmpbuf);
 						}

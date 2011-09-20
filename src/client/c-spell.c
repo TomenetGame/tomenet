@@ -1622,7 +1622,7 @@ static void print_rune_methods(u32b flags, byte *imper)
 		    'a' + i,
 		    runecraft_colourize(flags, r_imperatives[(*imper)].level + runespell_types[i].cost),
 		    runespell_types[i].title,
-		    runespell_types[i].cost >= 0 ? "+" : "", runespell_types[i].cost,
+		    runespell_types[i].cost >= 0 ? "+" : "-", ABS(runespell_types[i].cost),
 		    runespell_types[i].pen * 10);
 		prt("", j, col);
 		put_str(tmpbuf, j++, col);
