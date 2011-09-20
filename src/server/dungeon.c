@@ -1556,14 +1556,17 @@ static int retaliate_mimic_power(int Ind, int choice)
 /*
  * Handle items for auto-retaliation  - Jir -
  * use_old_target is *strongly* recommended to actually make use of it.
+ * If fallback is TRUE the melee weapon will be used if the intended means failed. - C. Blue
  */
-static bool retaliate_item(int Ind, int item, cptr inscription)
+static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 {
 	player_type *p_ptr = Players[Ind];
-	object_type *o_ptr = &p_ptr->inventory[item];
+	object_type *o_ptr;;
 	int cost, choice = 0, spell = 0;
 
 	if (item < 0) return FALSE;
+	o_ptr = &p_ptr->inventory[item];
+	if (!o_ptr->k_idx) return FALSE;
 
 	/* 'Do nothing' inscription */
 	if (inscription != NULL && *inscription == 'x') return TRUE;
@@ -1591,6 +1594,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 					return TRUE;
 				} else {
 					int power = retaliate_mimic_power(Ind, choice);
+					if (innate_powers[power].smana > p_ptr->csp && fallback) return (p_ptr->fail_no_melee);
 					if (power) {
 						/* undirected power? */
 						switch (power) {
@@ -1641,12 +1645,20 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 #else
 	switch (o_ptr->tval) {
 	case TV_STAFF:
+		if (((o_ptr->ident & ID_EMPTY) || ((o_ptr->ident & ID_KNOWN) && o_ptr->pval == 0))
+		    && fallback)
+			return (p_ptr->fail_no_melee);
 		do_cmd_use_staff(Ind, item);
 		return TRUE;
 	case TV_ROD:
+		if (o_ptr->pval != 0 && fallback)
+			return (p_ptr->fail_no_melee);
 		do_cmd_zap_rod(Ind, item, 5);
 		return TRUE;
 	case TV_WAND:
+		if (((o_ptr->ident & ID_EMPTY) || ((o_ptr->ident & ID_KNOWN) && o_ptr->pval == 0))
+		    && fallback)
+			return (p_ptr->fail_no_melee);
 		do_cmd_aim_wand(Ind, item, 5);
 		return TRUE;
 	}
@@ -1724,6 +1736,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 			}
 
 			cost = exec_lua(Ind, format("return get_mana(%d, %d)", Ind, spell));
+			if (cost > p_ptr->csp && fallback) return (p_ptr->fail_no_melee);
 
 			/* Check that it's ok... more checks needed here? */
 			/* Limit amount of mana used? */
@@ -1787,7 +1800,8 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 
 							/* a valid @O has been located */
 							/* @O shouldn't work on weapons or ammo in inventory - mikaelh */
-							if (*inscription == 'O') {
+							if (*inscription == 'O' || *inscription == 'Q') {
+								if (*inscription == 'Q') fallback = TRUE;
 								inscription++;
 
 								/* Skip this item in case it isn't the same */
@@ -1805,7 +1819,9 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 						inscription++;
 					}
 				}
-				execute_rspell(Ind, 5, rune_flags | runespell_types[rune_type].type, choice, 1);
+				if (execute_rspell(Ind, 5, rune_flags | runespell_types[rune_type].type, choice, 1) == 2
+				    && fallback)
+					return (p_ptr->fail_no_melee);
 				return TRUE;
 			}
 			break;
@@ -1855,7 +1871,8 @@ static int auto_retaliate(int Ind)
 	monster_race *r_ptr = NULL, *r_ptr2;
 	object_type *o_ptr;
 	cptr inscription = NULL, at_O_inscription = NULL;
-	bool no_melee = FALSE, skip_monsters = (p_ptr->cloaked || p_ptr->shadow_running) && !p_ptr->stormbringer;
+	bool no_melee = FALSE, fallback = FALSE;
+	bool skip_monsters = (p_ptr->cloaked || p_ptr->shadow_running) && !p_ptr->stormbringer;
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
 
@@ -2047,10 +2064,11 @@ static int auto_retaliate(int Ind)
 
 				/* a valid @O has been located */
 				/* @O shouldn't work on weapons or ammo in inventory - mikaelh */
-				if (*inscription == 'O' && !(i < INVEN_WIELD &&
+				if ((*inscription == 'O' || *inscription == 'Q') && !(i < INVEN_WIELD &&
 				    (is_weapon(o_ptr->tval) || is_ammo(o_ptr->tval) ||
 				    is_armour(o_ptr->tval) || o_ptr->tval == TV_MSTAFF ||
 				    o_ptr->tval == TV_BOW || o_ptr->tval == TV_BOOMERANG))) {
+					if (*inscription == 'Q') fallback = TRUE;
 					inscription++;
 
 					/* Skip this item in case it has @Ox */
@@ -2086,7 +2104,7 @@ static int auto_retaliate(int Ind)
 
 		/* scan the inscription for @O */
 		while (*inscription != '\0') {
-			if (inscription[0] == '@' && inscription[1] == 'O' && inscription[2] == 'x') {
+			if (inscription[0] == '@' && (inscription[1] == 'O' || inscription[1] == 'Q') && inscription[2] == 'x') {
 				p_ptr->warning_autoret = 99; /* seems he knows what he's doing! */
 
 				if (i == INVEN_WIELD || i == INVEN_ARM) {
@@ -2118,7 +2136,7 @@ static int auto_retaliate(int Ind)
 		/* Stormbringer bypasses everything!! */
 //		py_attack(Ind, p_target_ptr->py, p_target_ptr->px);
 		if (p_ptr->stormbringer ||
-		    (!retaliate_item(Ind, item, at_O_inscription) && !p_ptr->afraid && !no_melee)) {
+		    (!retaliate_item(Ind, item, at_O_inscription, fallback) && !p_ptr->afraid && !no_melee)) {
 			py_attack(Ind, p_target_ptr->py, p_target_ptr->px, FALSE);
 		}
 
@@ -2147,7 +2165,7 @@ static int auto_retaliate(int Ind)
 
 		/* Attack it */
 //		py_attack(Ind, m_target_ptr->fy, m_target_ptr->fx);
-		if (!retaliate_item(Ind, item, at_O_inscription) && !p_ptr->afraid && !no_melee) {
+		if (!retaliate_item(Ind, item, at_O_inscription, fallback) && !p_ptr->afraid && !no_melee) {
 			py_attack(Ind, m_target_ptr->fy, m_target_ptr->fx, FALSE);
 
 			/* manage autoretaliation warning for newbies (reset it) */

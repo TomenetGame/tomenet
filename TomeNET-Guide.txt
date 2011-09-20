@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 19. September 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 20. September 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -3436,10 +3436,10 @@ Ranged weapons:
                 (Note: @O can either be on your ammunition or on the bow.)
 
 Magic devices:
-   @O           Auto-retaliate with it. (Wands, staves, rods.)
+    @O          Auto-retaliate with it. (Wands, staves, rods.)
 
 Spellbooks:
-   @Oc          You will auto-retaliate by casting the spell 'c)' from this
+    @Oc         You will auto-retaliate by casting the spell 'c)' from this
                 book (or any other spell, change the inscription accordingly).
                 IMPORTANT: If you cannot cast spells from the book or you
                 inscribe an unsuitable item, auto-retaliation will be disabled
@@ -3449,13 +3449,18 @@ Spellbooks:
 Runes:          See (5.20).
 
 Any item:
-   @OMd         Use innate mimic power 'd)' (for example).
+    @OMd        Use innate mimic power 'd)' (for example).
                 (Note that you cannot auto-retaliate with 'polymorph into...'
                 power aka 'c)', instead it will be treated like power 'b)' aka
                 'polymorph into next form with fitting extremities'.)
 
 If you want an auto-retaliation-enabling inscription to only work while you are
 around a town, add a 't' after the 'O', examples: '@Ot', '@Otb'.
+
+If you want to fall back on melee-autoretaliation in case you are out of mana,
+use 'Q' symbol instead of 'O'. Examples: '@Qt', '@Qtb'.
+This is useful for classes that may use attack spells yet can perform decently
+in close combat, such as paladin or mindcrafter.
 
 
 

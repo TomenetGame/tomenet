@@ -2347,7 +2347,7 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative, bool ret
 				
 				/* Cancel if we're going to exhaust ourselves */
 				if (s_cost > p_ptr->csp)
-					return 0;
+					return 2;
 				
 				/* Cancel if we're being stupid */
 				if (s_diff > 60)
@@ -2365,7 +2365,7 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative, bool ret
 	{
 		/* Cancel if we're going to exhaust ourselves */
 		if (s_cost > p_ptr->csp)
-			return 0;
+			return 2;
 	}
 		
 	p_ptr->energy -= s_time;
