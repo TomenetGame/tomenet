@@ -845,12 +845,12 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		{
 #ifdef USE_SOUND_2010
 			sound_near(Ind, "monster_shriek", NULL, SFX_TYPE_MON_SPELL);
-			msg_print(Ind, "You hear a high-pitched humming noise echoing through the dungeons.");
-			msg_print_near(Ind, "You hear a high-pitched humming noise echoing through the dungeons.");
+			msg_print(Ind, "\377RYou hear a high-pitched humming noise echoing through the dungeons.");
+			msg_print_near(Ind, "\377RYou hear a high-pitched humming noise echoing through the dungeons.");
 #else
 			/* wonder why this one was actually a hollow noise instead of the usual shriek.. */
-			msg_print(Ind, "You hear a hollow noise echoing through the dungeons.");
-			msg_print_near(Ind, "You hear a hollow noise echoing through the dungeons.");
+			msg_print(Ind, "\377RYou hear a hollow noise echoing through the dungeons.");
+			msg_print_near(Ind, "\377RYou hear a hollow noise echoing through the dungeons.");
 #endif
 			aggravate_monsters(Ind, 1);
 			break;
@@ -3978,8 +3978,8 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr)
 #ifdef USE_SOUND_2010
 				sound_near(who, "monster_shriek", NULL, SFX_TYPE_MON_SPELL);
 #endif
-				msg_print(who, "You hear a high-pitched humming noise echoing through the dungeons.");
-				msg_print_near(who, "You hear a high-pitched humming noise echoing through the dungeons.");
+				msg_print(who, "\377RYou hear a high-pitched humming noise echoing through the dungeons.");
+				msg_print_near(who, "\377RYou hear a high-pitched humming noise echoing through the dungeons.");
  				aggravate_monsters(who, m_idx);
 			}
 			return (FALSE);

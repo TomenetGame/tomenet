@@ -2366,8 +2366,8 @@ s_printf("PLAYER_STORE_CASH: Player %s redeems cheque of value %d (%s).\n", p_pt
 #ifdef USE_SOUND_2010
 				sound_near(Ind, "monster_shriek", NULL, SFX_TYPE_MON_SPELL);
 #endif
- 				msg_print(Ind, "There is a high pitched humming noise.");
- 				msg_print_near(Ind, "There is a high pitched humming noise.");
+ 				msg_print(Ind, "\377RThere is a high-pitched humming noise.");
+ 				msg_print_near(Ind, "\377RThere is a high-pitched humming noise.");
 				aggravate_monsters(Ind, 1);
 				ident = TRUE;
 				break;

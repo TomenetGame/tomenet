@@ -2069,8 +2069,8 @@ bool make_attack_spell(int Ind, int m_idx) {
 			//if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			/* the_sandman: changed it so that other ppl nearby will know too */
-			msg_format(Ind, "\377R%^s makes a high pitched shriek.", m_name); 
-			msg_format_near(Ind, "\377R%^s makes a high pitched shriek.", m_name);
+			msg_format(Ind, "\377R%^s makes a high-pitched shriek.", m_name); 
+			msg_format_near(Ind, "\377R%^s makes a high-pitched shriek.", m_name);
 #ifdef USE_SOUND_2010
 			sound_near(Ind, "monster_shriek", NULL, SFX_TYPE_MON_SPELL);
 #endif
