@@ -3975,7 +3975,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_TRAPPING,
                                 '+', 1000,
-                                '+', 1200,
+                                '+', 1100,
                         },
 
 					/* Health tree */
@@ -4957,6 +4957,11 @@ player_class class_info[MAX_CLASS] =
 				SKILL_STEALTH,
 				'+', 1000,
 				'+', 600,
+			},
+			{
+				SKILL_TRAPPING,
+				'+', 0,
+				'+', 900,
 			},
 			{
 				SKILL_DISARM,
