@@ -95,14 +95,14 @@ Runespell types.
 */
 r_type runespell_types[RCRAFT_MAX_TYPES] =
 {
-	{ 0, R_MELE, "burst",	-3, 10 },
+	{ 0, R_MELE, "burst",	-3,  5 },
 	{ 1, R_SELF, "self",	 0, 10 },
 	{ 2, R_BOLT, "bolt",	 1, 10 },
-	{ 3, R_BEAM, "beam",	 2, 10 },
-	{ 4, R_BALL, "ball",	 3, 10 },
-	{ 5, R_WAVE, "wave",	 4, 10 },
-	{ 6, R_CLOU, "cloud",	 5, 10 },
-	{ 7, R_STOR, "storm",	 7, 10 },
+	{ 3, R_BEAM, "beam",	 2, 11 },
+	{ 4, R_BALL, "ball",	 3, 12 },
+	{ 5, R_WAVE, "wave",	 4, 11 },
+	{ 6, R_CLOU, "cloud",	 5, 13 },
+	{ 7, R_STOR, "storm",	 7, 20 },
 };
 
 /* Table of valid runespell types and their meta information.
