@@ -2049,37 +2049,39 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			int py = p_ptr->py;
 			int tx = p_ptr->target_col;
 			int ty = p_ptr->target_row;
-			
-			int dx = px - tx;
-			int dy = py - ty;
-			
-			if (dx > 1 || dx < -1 || dy > 1 || dy < -1)
-			{
-				p_ptr->target_col = px;
-				p_ptr->target_row = py;
+
+			/* Limit to distance 1 */
+			if (dir == 5 && target_okay(Ind)) {
+				/* .. for targetting use */
+				if (tx - px > 1) tx = px + 1;
+				if (px - tx > 1) tx = px - 1;
+				if (ty - py > 1) ty = py + 1;
+				if (py - ty > 1) ty = py - 1;
+
+				msg_format(Ind, "%s%s summon a %s burst of %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title, tx, ty);
+			} else {
+				/* .. for directional use */
+				tx = px + ddx[dir];
+				ty = py + ddy[dir];
+
+				if (dir == 5) msg_format(Ind, "%s%s summon a %s burst of undirected %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
+				else msg_format(Ind, "%s%s summon a %s burst of %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
 			}
-			
-			if ((dx > 1 || dx < -1 || dy > 1 || dy < -1) && tx != 0 && ty != 0)
-			{
-				sprintf(p_ptr->attacker, " is summons %s for", runespell_list[type].title);
-				msg_format(Ind, "%s%s summon a %s burst of undirected %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
-				
-				if (success)
-				{
-					//fire_wave(Ind, gf_type, 0, (damage - damage/4), 1, 1, 1, EFF_STORM, p_ptr->attacker);
-					fire_ball(Ind, gf_type, 5, damage, 0, p_ptr->attacker);
-				}
-			}
-			else
-			{
-				sprintf(p_ptr->attacker, " is summons %s for", runespell_list[type].title);
-				
-				msg_format(Ind, "%s%s summon a %s burst of %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
-				if (success)
-				{
-					//fire_bolt(Ind, gf_type, dir, damage, p_ptr->attacker);
-					fire_ball(Ind, gf_type, dir, damage, 0, p_ptr->attacker);
-				}
+
+			if (success) {
+				//fire_wave(Ind, gf_type, 0, (damage - damage/4), 1, 1, 1, EFF_STORM, p_ptr->attacker);
+				//fire_bolt(Ind, gf_type, dir, damage, p_ptr->attacker);
+				//fire_ball(Ind, gf_type, dir, damage, 0, p_ptr->attacker);
+
+				/* Emulate a fire_ball() call, so we can hack our (tx, ty) values in without modifying p_ptr->target_col/row - C. Blue */
+#ifdef USE_SOUND_2010
+				if (gf_type == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_COMMAND, FALSE);
+				else if (gf_type == GF_DETONATION) sound(Ind, "detonation", NULL, SFX_TYPE_COMMAND, FALSE);
+				else if (gf_type == GF_STONE_WALL) sound(Ind, "stone_wall", NULL, SFX_TYPE_COMMAND, FALSE);
+				else sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, TRUE);
+#endif
+				sprintf(p_ptr->attacker, " summons a burst of %s for", runespell_list[type].title);
+				project(0 - Ind, 0, &p_ptr->wpos, ty, tx, damage, gf_type, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, p_ptr->attacker);
 			}
 		}
 		else if ((type_flags & R_BALL))
@@ -2355,6 +2357,7 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative, bool ret
 				p_ptr->shooty_till_kill = TRUE;
 			}
 		}
+		else p_ptr->shooty_till_kill = FALSE; /* Required for 'burst' which isn't FTK-able */
 	}
 	
 	//No 'dangerous' retaliation! - Kurzel

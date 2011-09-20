@@ -1995,6 +1995,7 @@ void do_runespell()
 	u32b s_flags = 0; u16b method = 0; byte imperative = 0; int dir = 0;
 	u32b flag = 0; int i = 0;
 	int part1 = 0; int part2 = 0;
+
 	for(i = 0; i<3; i++)
 	{
 		if(get_rune_type(s_flags,&flag))
@@ -2015,10 +2016,11 @@ void do_runespell()
 
 	if(s_flags == 0) { Term_load(); return; } //Empty spell
 
-	if(method>=2 && method != 5 && method != 7)
-		if (!get_dir(&dir))
-			return;
+	if(method != 1 && method != 5 && method != 7)
+		if (!get_dir(&dir)) return;
+
 	Term_load();
+
 	/* Split the long into two ints */
 	part1 = s_flags / 10000;
 	part2 = s_flags % 10000;

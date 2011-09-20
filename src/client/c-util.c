@@ -4117,7 +4117,7 @@ void interact_macros(void)
 
 						/* ---------- Determine if a direction is needed (hard-coded) ---------- */
 
-						if (choice - 'a' >= 2 && choice - 'a' != 5 && choice - 'a' != 7)
+						if (choice - 'a' != 1 && choice - 'a' != 5 && choice - 'a' != 7)
 							strcat(buf, "*t");
 
 						/* hack before we exit: remember menu choice 'runespell' */
