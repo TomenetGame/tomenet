@@ -1763,6 +1763,8 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool
 		stop_precision(Ind);
 	}
 
+	if (p_ptr->alert_afk_dam && p_ptr->afk && p_ptr->paging == 0) p_ptr->paging = 1;
+
 	/* arena is safe, although this may be doubtful */
 	if (safe_area(Ind)) return;
 
