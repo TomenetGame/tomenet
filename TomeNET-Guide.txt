@@ -8780,8 +8780,8 @@ Warrior is strongly recommended.
     they learn how to fly. Draconians need a very long time to gain further
     experience and need to eat often. They have feather falling (levitation)
     instrinsically from birth.
-    They receive bonus on 'Polearm-Mastery', 'Aura of Fear' and the magic
-    schools 'Conveyance' and 'Fire'.
+    They receive bonus on 'Polearm-Mastery', 'Aura of Fear', 'Thought Contact'
+    and the magic schools 'Conveyance' and 'Fire'.
 
 - Dark-Elf
     Dark-Elves dwell below the surface in huge caverns of their underground
@@ -8814,7 +8814,7 @@ Warrior is strongly recommended.
     order to satisfy your hunger, which might be quite easy for melee classes
     but sometimes a hassle for ranged/caster classes.
     Vampires dislike blunt weapons, get a small penalty on divination magic,
-    but receive a bonus on all necromancy skills.
+    but receive a bonus on 'Mental Intrusion' and on all necromancy skills.
     They become able to turn into a bat at level 20.
     Vampires start with a mummy wrapping, because it can protect them from the
     sunlight (press 'w' to wear it). If they are moving on the world surface
