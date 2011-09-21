@@ -19,10 +19,10 @@ NOXIOUSCLOUD = add_spell
 --		        fire_cloud(Ind, type, args.dir, (1 + get_level(Ind, NOXIOUSCLOUD, 75)), 3, 5 + get_level(Ind, NOXIOUSCLOUD, 40), 10, " fires a noxious cloud of")
 --		        fire_cloud(Ind, type, args.dir, (1 + get_level(Ind, NOXIOUSCLOUD, 113)), 3, 5 + get_level(Ind, NOXIOUSCLOUD, 10), 10, " fires a noxious cloud of")
 --1.5		        fire_cloud(Ind, type, args.dir, (1 + get_level(Ind, NOXIOUSCLOUD, 113)), 3, 5 + get_level(Ind, NOXIOUSCLOUD, 14), 9, " fires a noxious cloud of")
-		        fire_cloud(Ind, type, args.dir, (1 + get_level(Ind, NOXIOUSCLOUD, 136)), 3, 5 + get_level(Ind, NOXIOUSCLOUD, 14), 9, " fires a noxious cloud of")
+		        fire_cloud(Ind, type, args.dir, (1 + get_level(Ind, NOXIOUSCLOUD, 156)), 3, 5 + get_level(Ind, NOXIOUSCLOUD, 14), 9, " fires a noxious cloud of")
 	end,
 	["info"] = 	function()
-			return "dam "..(1 + (get_level(Ind, NOXIOUSCLOUD, 113))).." rad 3 dur "..(5 + get_level(Ind, NOXIOUSCLOUD, 11))
+			return "dam "..(1 + (get_level(Ind, NOXIOUSCLOUD, 156))).." rad 3 dur "..(5 + get_level(Ind, NOXIOUSCLOUD, 14))
 	end,
         ["desc"] =	{
         		"Creates a cloud of poison",
