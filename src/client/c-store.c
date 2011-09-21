@@ -126,7 +126,7 @@ void display_inventory(void)
 		prt("-more-", k + 6, 3);
 
 		/* Indicate the "current page" */
-		put_str(format("(Page %d of %d)", store_top / 12 + 1, store.stock_num / 12 + 1), 5, 20);
+		put_str(format("(Page %d of %d)", store_top / 12 + 1, store.stock_num == 0 ? 1 : (store.stock_num + 11) / 12), 5, 20);
 	}
 
 	/* Hack - Get rid of the cursor - mikaelh */
