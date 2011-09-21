@@ -261,7 +261,7 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 	if (s_av < e_level + 1)
 		s_av = e_level + 1; //Give a minimum of damage
 	
-	if ((s_flags & R_BOLT) == R_BOLT) 
+	if ((s_flags & R_BOLT) == R_BOLT)
 	{
 		damage = damroll(3 + rget_level(45), 1 + rget_level(20));
 	}
@@ -274,7 +274,8 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 	{
 		damage = randint(20) + rget_level(136);
 		//dur = randint(50) + rget_level(75);
-		dur = randint(25) + rget_level(75);
+		//dur = randint(25) + rget_level(75);
+		dur = 5 + randint(10) + rget_level(40);
 	}
 	else if ((s_flags & R_BALL) == R_BALL)
 	{
@@ -284,10 +285,12 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 	else if ((s_flags & R_CLOU) == R_CLOU)
 	{
 		r = rget_level(base_radius);
-		dur = randint(10) + rget_level(10);
+		dur = 2 + randint(3) + rget_level(10);
 		
 		/* Damage should be proportional to radius and duration. */
-		damage = randint(4) + rget_level(80 - (*radius + *duration) / 2);
+		//damage = randint(4) + rget_level(80 - (*radius + *duration) / 2);
+		//damage = randint(2) + 2 + rget_level(50) * (10 + rget_level(50)) / 30;
+		damage = randint(2) + 2 + rget_level(40) * (10 + rget_level(40)) / 30;
 	}
  	else if ((s_flags & R_WAVE) == R_WAVE)
 	{
@@ -295,16 +298,20 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 		dur = rget_level(15) / 3;
 		
 		/* Damage should be proportional to radius and duration. */
-		damage = randint(4) + rget_level(90 - (*radius + *duration) / 2);
+		//damage = randint(4) + rget_level(90 - (*radius + *duration) / 2);
+		//damage = randint(2) + 2 + rget_level(50) * (10 + rget_level(50)) / 20;
+		damage = randint(2) + 2 + rget_level(40) * (10 + rget_level(40)) / 20;
 	}
 	else if ((s_flags & R_STOR) == R_STOR)
 	{
 		//damage = e_level + 3 + rget_level(100);
 		r = rget_level(base_radius);
-		dur = (randint(10) + rget_level(10));
+		dur = 2 + randint(3) + rget_level(15);
 		
 		/* Damage should be proportional to radius and duration. (and interval) */
-		damage = randint(4) + rget_level(40 - (*radius + *duration) / 2);
+		//damage = randint(4) + rget_level(40 - (*radius + *duration) / 2);
+		//damage = randint(2) + 2 + rget_level(50) * (10 + rget_level(50)) / 50;
+		damage = randint(2) + 2 + rget_level(40) * (10 + rget_level(40)) / 50;
 	}
 	else //R_MELE
 	{
@@ -2188,7 +2195,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 
 bool is_attack(u32b s_flags)
 {
-	return (!(s_flags & R_MELE) && !(s_flags & R_SELF) && !(s_flags & R_WAVE) && !(s_flags & R_STOR));
+	return (!(s_flags & R_MELE) && !(s_flags & R_SELF) && !(s_flags & R_CLOU) && !(s_flags & R_WAVE) && !(s_flags & R_STOR));
 }
 
 byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative, bool retaliate)
