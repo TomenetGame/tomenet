@@ -2152,6 +2152,11 @@ player_race race_info[MAX_RACE] =
                                 '+', 0,
                                 '%', 120,
                         },
+			{
+                                SKILL_TCONTACT,
+                                '+', 0,
+                                '%', 110,
+                        },
                         {
                                 SKILL_CLIMB,
                                 '+', 0,
@@ -2300,6 +2305,11 @@ player_race race_info[MAX_RACE] =
                                 SKILL_ANTIMAGIC, /* keep mimicry usable for bat form. vampires believe! for now at least... */
                                 '%', 0,
                                 '%', 0,
+                        },
+                        {
+                                SKILL_MINTRUSION,
+                                '+', 0,
+                                '%', 110,
                         },
 
                         {
