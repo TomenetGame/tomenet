@@ -2955,12 +2955,15 @@ int Receive_special_line(void)
 {
 	int	n;
 	char	ch, attr;
-	s16b	max, line;
+	s32b	max, line;
 	char	buf[ONAME_LEN]; /* Allow colour codes! (was: MAX_CHARS, which is just 80) */
 	int	x, y, phys_line;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c%I", &ch, &max, &line, &attr, buf)) <= 0)
-		return n;
+	if (is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%d%d%c%I", &ch, &max, &line, &attr, buf)) <= 0) return n;
+	} else {
+		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c%I", &ch, &max, &line, &attr, buf)) <= 0) return n;
+	}
 
 	/* Hack - just 'prepare' for a 21-lines page. What this does is making
 	   sure that the first real line will be placed at physical line 1
@@ -4468,13 +4471,14 @@ int Send_clear_actions(void) {
 	return 1;
 }
 
-int Send_special_line(int type, int line)
+int Send_special_line(int type, s32b line)
 {
 	int	n;
 
-	if ((n = Packet_printf(&wbuf, "%c%c%hd", PKT_SPECIAL_LINE, type, line)) <= 0)
-	{
-		return n;
+	if (is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
+		if ((n = Packet_printf(&wbuf, "%c%c%d", PKT_SPECIAL_LINE, type, line)) <= 0) return n;
+	} else {
+		if ((n = Packet_printf(&wbuf, "%c%c%hd", PKT_SPECIAL_LINE, type, line)) <= 0) return n;
 	}
 
 	return 1;

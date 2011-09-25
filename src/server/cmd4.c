@@ -2652,7 +2652,7 @@ void do_cmd_check_other_prepare(int Ind, char *path)
  * Scroll through *ID* or Self Knowledge information.
  */
 //void do_cmd_check_other(int Ind, int line, int color)
-void do_cmd_check_other(int Ind, int line)
+void do_cmd_check_other(int Ind, s32b line)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -2673,7 +2673,7 @@ void do_cmd_check_other(int Ind, int line)
 }
 
 #if 0
-void do_cmd_check_other(int Ind, int line)
+void do_cmd_check_other(int Ind, s32b line)
 {
 	player_type *p_ptr = Players[Ind];
 

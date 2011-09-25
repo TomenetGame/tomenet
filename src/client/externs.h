@@ -111,8 +111,8 @@ extern client_setup_t Client_setup;
 extern bool shopping;
 
 extern s16b last_line_info;
-extern s16b cur_line;
-extern s16b max_line;
+extern s32b cur_line;
+extern s32b max_line;
 
 extern player_type Players[2];
 extern player_type *p_ptr;
@@ -650,7 +650,7 @@ extern int Send_store_sell(int item, int amt);
 extern int Send_store_leave(void);
 extern int Send_store_confirm(void);
 extern int Send_redraw(char mode);
-extern int Send_special_line(int type, int line);
+extern int Send_special_line(int type, s32b line);
 extern int Send_party(s16b command, cptr buf);
 extern int Send_guild(s16b command, cptr buf);
 extern int Send_purchase_house(int dir);

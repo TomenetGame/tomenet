@@ -51,8 +51,8 @@ client_setup_t Client_setup;		/* The information we give to the server */
 bool shopping;				/* Are we in a store? */
 
 s16b last_line_info;			/* Last line of info we've received */
-s16b max_line;				/* Maximum amount of "special" info */
-s16b cur_line;				/* Current displayed line of "special" info */
+s32b max_line;				/* Maximum amount of "special" info */
+s32b cur_line;				/* Current displayed line of "special" info */
 
 player_type Players[2];			/* The client-side copy of some of the player information */
 player_type *p_ptr = &Players[1];

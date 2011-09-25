@@ -5894,7 +5894,7 @@ int Send_encumberment(int ind, byte cumber_armor, byte awkward_armor, byte cumbe
 }
 
 
-int Send_special_line(int ind, int max, int line, byte attr, cptr buf)
+int Send_special_line(int ind, s32b max, s32b line, byte attr, cptr buf)
 {
 	connection_t *connp = Conn[Players[ind]->conn];
 	char temp[ONAME_LEN - 3], xattr = 'w', temp2[ONAME_LEN];
@@ -5988,12 +5988,14 @@ int Send_special_line(int ind, int max, int line, byte attr, cptr buf)
  #endif
 #endif
 
-	if (is_newer_than(&Players[ind]->version, 4, 4, 6, 1, 0, 0))
+	if (is_newer_than(&Players[ind]->version, 4, 4, 7, 0, 0, 0))
+		return Packet_printf(&connp->c, "%c%d%d%c%I", PKT_SPECIAL_LINE, max, line, attr, temp2);
+	else if (is_newer_than(&Players[ind]->version, 4, 4, 6, 1, 0, 0))
 		return Packet_printf(&connp->c, "%c%hd%hd%c%I", PKT_SPECIAL_LINE, max, line, attr, temp2);
 	else {
 		/* Cut it off so old clients can handle it, ouch */
 		temp2[79] = 0;
-		return Packet_printf(&connp->c, "%c%hd%hd%c%s", PKT_SPECIAL_LINE, max, line, attr, temp2);
+		return Packet_printf(&connp->c, "%c%d%d%c%s", PKT_SPECIAL_LINE, max, line, attr, temp2);
 	}
 }
 
@@ -9063,15 +9065,23 @@ static int Receive_special_line(int ind)
 	connection_t *connp = Conn[ind];
 	int player = -1, n;
 	char ch, type;
-	s16b line;
+	s32b line;
 
 	if (connp->id != -1) player = GetInd[connp->id];
 		else player = 0;
 
-	if ((n = Packet_scanf(&connp->r, "%c%c%hd", &ch, &type, &line)) <= 0) {
-		if (n == -1)
-			Destroy_connection(ind, "read error");
-		return n;
+	if (is_newer_than(&connp->version, 4, 4, 7, 0, 0, 0)) {
+		if ((n = Packet_scanf(&connp->r, "%c%c%d", &ch, &type, &line)) <= 0) {
+			if (n == -1)
+				Destroy_connection(ind, "read error");
+			return n;
+		}
+	} else {
+		if ((n = Packet_scanf(&connp->r, "%c%c%hd", &ch, &type, &line)) <= 0) {
+			if (n == -1)
+				Destroy_connection(ind, "read error");
+			return n;
+		}
 	}
 
 	if (player) {

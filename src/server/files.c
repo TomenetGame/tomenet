@@ -544,16 +544,16 @@ void display_player(int Ind)
  *                        If TRUE -> 21 lines available! Added this for
  *                        @-screen w/ COMPACT_PLAYERLIST - C. Blue
  */
-static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color, bool odd_line)
+static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color, bool odd_line)
 {
 	int lines_per_page = 20;
 	int i, k = 0;
 	/* Number of "real" lines passed by */
-	int next = 0;
+	s32b next = 0;
 	/* Number of "real" lines in the file */
-	int size = 0;
+	s32b size = 0;
 	/* Backup value for "line" */
-	int back = 0;
+	s32b back = 0;
 	/* This screen has sub-screens */
 	bool menu = FALSE;
 	/* Current help file */
@@ -807,7 +807,7 @@ void do_cmd_help(int Ind, int line)
  * XXX XXX XXX Use this function for commands such as the
  * "examine object" command.
  */
-errr show_file(int Ind, cptr name, cptr what, int line, int color, bool odd_line)
+errr show_file(int Ind, cptr name, cptr what, s32b line, int color, bool odd_line)
 {
 	/* Peruse the requested file */
 	(void)do_cmd_help_aux(Ind, name, what, line, color, odd_line);
