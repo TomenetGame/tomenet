@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 20. September 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 25. September 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -8977,15 +8977,16 @@ vary. For example a warrior cannot learn magic spells.
     somewhat higher level.
 
     Hint: On character creation increase your strength to 18/30 at the very
-    least and your dexterity to at least 10, to get a decent attack speed.
+    least to get a decent attack speed (3 blows per round with light weapons).
     Make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, which you do pretty early on. They are great
     for catching annoying monsters that try to keep their distance from you.
     (See (6.12) for details about fighting techniques.)
     If you die and revive you could save a lot of money by foregoing heavy
-    armour for attack power by just buying some light armour and two cheap
-    1-handed weapons which you dual-wield (which requires light armour). This
-    should last you until you find some heavy armour and shield in the dungeon.
+    armour for attack power by just buying some light armour and two cheap and
+    very light 1-handed weapons such as daggers or whips which you dual-wield
+    (which requires light armour). This should last you until you find some
+    heavy armour and shield in the dungeon.
 
 - Istar (elvish word for Mage)
     Istari use intelligence primarily, determining how much mana they have
@@ -9158,7 +9159,9 @@ vary. For example a warrior cannot learn magic spells.
     (See (6.12) for details about fighting techniques.)
     Since rangers can dual-wield and you start with light armour which is
     required for dual-wielding you might want to buy a secondary weapon right
-    away, for example a cheap dagger. (See (6.2) for details on dual-wielding.)
+    away, for example a cheap dagger, or even dispose of your starter weapon
+    completely and go with two cheap and light weapons instead. (See (6.2) for
+    details on dual-wielding.)
 
 - Druid
     Druids are able to call upon the mystical powers of nature and very good
