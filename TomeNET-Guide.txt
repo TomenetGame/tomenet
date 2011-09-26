@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 25. September 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 26. September 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -3541,44 +3541,49 @@ the owner.
 To enter a dungeon, you look for the staircase symbol '>', step on it and press
 the '>' key to enter. Same for entering towers, except their staircase goes
 upwards instead of downwards, and hence is a '<' symbol instead of '>'.
+
 In Bree, there is often a so-called Training Tower, which is represented by a
 dark green '<'. Enter it by pressing the '<' key.
-Whenever you take staircases up/down, you'll receive the stair-GoI buff, see
-(0.4) for details on that.
 The training tower allows you to 'die' without suffering major consequences
 (except for a slight loss in experience and gold), and is easier in general.
 An experience penalty might be applied for killing monsters in the tower
 (usually 50%). You might ask other players in game (use ':' to chat) where/if
 there is a newbie tower (also called 'Training Tower'), or you might search for
 it yourself. It's usually in Bree, to the lower right of the town centre.
+
 In general, when you take a staircase, your character will temporarily get a
 high Armour bonus (+100) and a chance to deflect enemy attacks, for a very
-short duration. This is an extra protection to help surviving nasty surprises.
+short duration. This is an extra protection (also called 'stair-GoI', compare
+(0.4)) to help surviving nasty surprises.
 Keep your scrolls of teleportation ready anyway!
 
-While inside a town, you get a good overview including the staircases upwards
-and downwards by invoking the map by pressing SHIFT+'M' (capital M !).
+While in a town, you can invoke a map that shows the staircases upwards
+and downwards by pressing SHIFT+'M' (ie capital M).
 If you leave a town and explore the wilderness, M will bring up a map showing
 you towns and areas that you have explored so far.
 
-After you entered the dungeon, make sure again that you have equipped a light
-source! Note the bright dots around you, these are lightened fields within the
-radius of your light source. To look at your current dungeon/tower level or
-city, press 'L' and use direction keys to navigate on the map.
-Also know that there are interesting dungeons found in the wilderness that are
-not connected to a town at all!
+Before you enter a dungeon, make sure that you have equipped a light source!
+Note the bright dots around you, these are lightened fields within the
+radius of your light source. To look around your current dungeon/tower level
+or town, press 'L' and use direction keys to move your view panel. ESC key
+bring you back to normal view mode.
 
-When you enter the dungeon from within the starting town Bree, you will note
-in the main window instead of "Bree" your actual depth is displayed, telling
-you on which dungeon level you are. Each dungeon level is 50 feet deeper.
-Monsters have approximately the same level than the dungeon level they appear
-on. You should try to figure out how deep you can go without dying. The
-dungeon depth I can recommend is between 1/3 (if you are _very_ weak) of your
-own character level and 3/4 of your character level. You can also go deeper,
-in case you want to try diving quickly. On 750 ft you can encounter hounds
-(their symbol is a 'Z'). These don't have much Hit Points but give much
-experience. They are a valued target for divers.
+The wilderness actually bears many interesting dungeons apart from the usual
+well known town dungeons.
+
+When you enter the dungeon 'Barrow-Downs' in the starting town Bree, you will
+note in the main window instead of "Bree" your actual depth is displayed,
+telling you on which dungeon level you are. Each dungeon level is 50 feet
+deeper.
+Monsters have approximately the same level as the dungeon level they appear
+on. You should try to figure out how deep you can go without dying.
+The dungeon depth I can recommend is between 1/3 (if you are _very_ weak) of
+your own character level and 3/4 of your character level. You can also go
+deeper, in case you want to try diving quickly. On 750 ft you can often find
+hounds (their symbol is a 'Z' for 'Zephyrs'). These don't have many hit points
+but give a lot of experience, making them a valued target for divers.
 For a list of the dungeons see '(4.5) Towns'.
+
 
 Dungeon types
 -------------
@@ -3646,11 +3651,11 @@ dungeon or tower. Those have no further functionality and are coloured grey.
 Overview:
 Dungeon type  Death?  No-ghost? Recall          Staircase   Prob travel   +Exp
 ------------------------------------------------------------------------------
-Normal        yes     (char)    yes             yes         yes           0%
+Normal        yes     (char)    yes             yes         yes           + 0%
 No death      no      no        yes             yes         yes           -50%
 No recall     yes     (char)    no              yes         no            +10%
-No rec down   yes     (char)    upwards only    yes         upwards       +5%
-No up         yes     (char)    yes             downwards   downwards     +5%
+No rec down   yes     (char)    upwards only    yes         upwards       + 5%
+No up         yes     (char)    yes             downwards   downwards     + 5%
 Force down    yes     (char)    at bottom only  downwards   downwards     +10%
 Ironman       yes     yes       at bottom only  downwards   no            +15%
 Hellish       yes     yes       yes             yes         yes           +10%
