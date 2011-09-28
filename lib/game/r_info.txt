@@ -14747,7 +14747,7 @@ S:1_IN_5 | SCARE | HOLD
 #arjen claimed they occured in packs. in that case, maybe no nether breath.
 #ATTR_MULTI | 
 #S:1_IN_5 | BR_NETH | HOLD
-D:It is a giant notcurnal spectre, a portent of death, with large glowing eyes.
+D:It is a giant nocturnal spectre, a portent of death, with large glowing eyes.
 
 N:830:Cantoras, the Skeletal Lord
 G:s:v
