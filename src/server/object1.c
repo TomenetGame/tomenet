@@ -4302,7 +4302,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 			fprintf(fff, "It provides resistance to electricity.\n");
 		if ((f2 & (TR2_RES_ACID)) && !(f2 & (TR2_IM_ACID)))
 			fprintf(fff, "It provides resistance to acid.\n");
-		if ((f2 & (TR2_RES_POIS)) && !(f2 & (TR5_IM_POISON)))
+		if ((f2 & (TR2_RES_POIS)) && !(f5 & (TR5_IM_POISON)))
 			fprintf(fff, "It provides resistance to poison.\n");
 	}
 
