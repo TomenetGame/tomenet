@@ -2371,11 +2371,38 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 
 			/* Default to secret doors */
 			else if (c_ptr->feat == FEAT_SECRET) {
+#if 0
 				/* Message, keep digging */
 				msg_print(Ind, "You tunnel into the granite wall.");
 				more = TRUE;
-#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
 				if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+ #endif
+#else
+				struct c_special *cs_ptr;
+				int featm = c_ptr->feat; /* just to kill compiler warning */
+				if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) {
+					featm = cs_ptr->sc.omni;
+				} else { /* Apply "mimic" field */
+					featm = f_info[featm].mimic;
+				}
+
+				/* Is the mimicked feat tunnelable? */
+				if (!(f_info[featm].flags1 & FF1_TUNNELABLE) ||
+				    (f_info[featm].flags1 & FF1_PERMANENT)) {
+					/* Message */
+					msg_print(Ind, f_text + f_info[featm].tunnel);
+					return;
+				}
+
+				msg_print(Ind, f_text + f_info[featm].tunnel);
+				more = TRUE;
+
+ #ifdef USE_SOUND_2010
+				/* sound: for now assume that only such features get mimicked that
+				   would cause 'tunnel_rock' sfx, eg no trees or rubble. - C. Blue */
+				if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+ #endif
 #endif
 
 				/* Set off trap */
@@ -2384,7 +2411,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 				/* Hack -- Search */
 				search(Ind);
 			}
-			/* Granite */
+			/* Granite + misc (Ice..) */
 			else if (c_ptr->feat >= FEAT_WALL_EXTRA) {
 				/* Tunnel */
 				if ((power > 40 + rand_int(1600)) && twall(Ind, y, x)) { /* 1600 */
@@ -2426,7 +2453,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 				/* Keep trying */
 				else {
 					/* We may continue tunelling */
-					msg_print(Ind, "You tunnel into the granite wall.");
+					//msg_print(Ind, "You tunnel into the granite wall.");
+					msg_print(Ind, f_text + f_ptr->tunnel);
 					more = TRUE;
 #ifdef USE_SOUND_2010
 					if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
