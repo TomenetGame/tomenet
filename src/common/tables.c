@@ -37,13 +37,13 @@ r_element r_elements[RCRAFT_MAX_ELEMENTS] =
 r_imper r_imperatives [RCRAFT_MAX_IMPERATIVES] =
 {
 	//i	n	 +l, c%, f+, d%, p%, r+, t%
-	{ 0, "minimized",	-1,  5,-10,  6, 10, -1,  5 },
+	{ 0, "minimized",	-3,  5,-10,  6, 10, -1,  5 },
 	{ 1, "moderate",	 0, 10,  0, 10, 10,  0, 10 },
-	{ 2, "maximized",	 1, 15, 15, 15, 10, +1, 13 },
-	{ 3, "compressed",	 2, 15,-10, 13, 10, -2,  8 },
+	{ 2, "maximized",	 3, 15, 15, 15, 10, +1, 13 },
+	{ 3, "compressed",	-2, 15,-10, 13, 10, -2,  8 },
 	{ 4, "expanded",	 2, 13,  0, 10, 10, +2, 13 },
-	{ 5, "brief",		 3, 13, 10,  6,  5,  0,  5 },
-	{ 6, "lengthened",	 3, 15,  5,  6, 10,  0, 16 },
+	{ 5, "brief",		-1, 13, 10,  6,  5,  0,  5 },
+	{ 6, "lengthened",	 1, 15,  5,  6, 10,  0, 16 },
 	{ 7, "chaotic",		 0,  0,  0,  0, 10,  5,  0 },
 };
 
@@ -95,14 +95,14 @@ Runespell types.
 */
 r_type runespell_types[RCRAFT_MAX_TYPES] =
 {
-	{ 0, R_MELE, "burst",	-3,  5 },
+	{ 0, R_MELE, "burst",	-1,  4 },
 	{ 1, R_SELF, "self",	 0, 10 },
-	{ 2, R_BOLT, "bolt",	 1, 10 },
-	{ 3, R_BEAM, "beam",	 2, 20 },
-	{ 4, R_BALL, "ball",	 3, 25 },
-	{ 5, R_WAVE, "wave",	 4, 15 },
-	{ 6, R_CLOU, "cloud",	 5, 25 },
-	{ 7, R_STOR, "storm",	 7, 20 },
+	{ 2, R_BOLT, "bolt",	 0,  6 },
+	{ 3, R_BEAM, "beam",	 2, 12 },
+	{ 4, R_BALL, "ball",	 5, 18 },
+	{ 5, R_WAVE, "wave",	 1, 11 },
+	{ 6, R_CLOU, "cloud",	 3, 15 },
+	{ 7, R_STOR, "storm",	 4, 13 },
 };
 
 /* Table of valid runespell types and their meta information.
