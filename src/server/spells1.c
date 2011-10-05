@@ -8629,7 +8629,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				set_confused(Ind, p_ptr->confused + rand_int(20) + 10);
 		}
 		take_hit(Ind, dam, killer, -who);
-   		break;
+		take_sanity_hit(Ind, dam / 8, killer); /* note: traps deal ~130..320 damage (depth 0..100) */
+		break;
 
 
 		/* Standard damage -- hurts inventory too */
