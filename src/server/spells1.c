@@ -52,6 +52,11 @@
    Traditionally, polymorph would cancel damage instead. - C. Blue */
 #define DAMAGE_BEFORE_POLY
 
+/* Method of preventing a monster getting hit twice by the same effect.
+   Using the got_hit way similar to players seems like a waste of resources,
+   so maybe instead the teleportation should be postponed to the end of the
+   turn at which the projection will already be over. - C. Blue */
+#define MON_GOT_HIT_FAST
 
 
  /*
@@ -4753,7 +4758,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* do not notice things the player did to themselves by ball spell */
 	/* fix me XXX XXX XXX */
-	
+
 	int priest_spell = 0;
 	/* the_sandman: the priest spell? (0 or 1) */
 	if (dam == 9999) {
@@ -4813,6 +4818,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Acquire monster pointer */
 	m_ptr = &m_list[c_ptr->m_idx];
+
+#ifndef MON_GOT_HIT_FAST
+	if (m_ptr->got_hit) return (FALSE);
+#endif
 
 	/* Acquire race pointer */
 	r_ptr = race_inf(m_ptr);
@@ -7541,6 +7550,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			break;
 	}
 
+#ifndef MON_GOT_HIT_FAST
+	m_ptr->got_hit = TRUE;
+#endif
 
 
 	/* "Unique" monsters cannot be polymorphed */
@@ -8066,10 +8078,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if (Ind <= 0) return (FALSE);
 
 	p_ptr = Players[Ind];
-	r_ptr = &r_info[p_ptr->body_monster];
 
 	/* Player has already been hit, return - mikaelh */
 	if (p_ptr->got_hit) return (FALSE);
+
+	r_ptr = &r_info[p_ptr->body_monster];
 
 	/* shadow running protects from taking ranged damage - C. Blue
 	   note: currently thereby also affecting friendly effects' 'damage'. */
@@ -11360,6 +11373,11 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	if ((flg & PROJECT_KILL) && !players_only) {
 		/* Start with "dist" of zero */
 		dist = 0;
+
+#ifndef MON_GOT_HIT_FAST
+		/* Clear the got_hit flags */
+		for (i = 0; i < m_top; i++) m_list[m_fast[i]].got_hit = FALSE;
+#endif
 
 		/* Mega-Hack */
 		project_m_n = 0;

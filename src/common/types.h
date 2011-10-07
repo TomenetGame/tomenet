@@ -1043,6 +1043,8 @@ struct monster_type
 #ifdef MONSTER_ASTAR
     int astar_idx;		/* index in available A* arrays. A* is expensive, so we only provide a couple of instances for a few monsters to use */
 #endif
+
+	bool got_hit; /* same as for player_type: prevent monster getting hit twice by the same effect */
 };
 
 typedef struct monster_ego monster_ego;
