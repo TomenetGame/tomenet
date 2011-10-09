@@ -1526,7 +1526,7 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 		case TV_AMULET: item = "amulet"; break;
 		case TV_TOOL: item = "tool"; break;
 		case TV_DIGGING: item = "tool_digger"; break;
-//		case TV_MSTAFF: item = ""; break;
+		case TV_MSTAFF: item = "magestaff"; break;
 //		case TV_BOOMERANG: item = ""; break;
 //		case TV_BOW: item = ""; break;
 //		case TV_SHOT: item = ""; break;

@@ -4268,6 +4268,7 @@ void do_cmd_fire(int Ind, int dir)
 	case TV_SHOT: sound(Ind, "fire_shot", NULL, SFX_TYPE_ATTACK, FALSE); break;
 	case TV_ARROW: sound(Ind, "fire_arrow", NULL, SFX_TYPE_ATTACK, FALSE); break;
 	case TV_BOLT: sound(Ind, "fire_bolt", NULL, SFX_TYPE_ATTACK, FALSE); break;
+	case TV_BOOMERANG: sound(Ind, "fire_boomerang", NULL, SFX_TYPE_ATTACK, FALSE); break;
 	}
 #endif
 

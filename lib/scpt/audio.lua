@@ -39,6 +39,7 @@ audio_sfx = {
     "fire_arrow",
     "fire_bolt",
     "fire_missile",
+    "fire_boomerang",
 
     "death", --everyone's favourite DOOM scream....
     "death_male",
