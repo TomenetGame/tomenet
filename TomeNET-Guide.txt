@@ -111,6 +111,7 @@ Contents
     (5.20)  Runes & Runemastery
     (5.20a) Runemastery Tables
     (5.21)  Digging
+    (5.22)  Recharging
 (6) Character details
     (6.1)   Attributes
     (6.2)   Skills, opposed skills
@@ -7727,6 +7728,58 @@ want to hack down organic material such as trees, bushes, ivy or spider webs.
 (Dual-wielding does not help, so two swords/axes can't dig better than just
 one. Wielding a 1.5-handed weapon in only 1 hand will decrease your digging
 chance though, so take off your shield for best results.)
+
+
+
+(5.22) Recharging
+-----------------
+While electricity or disenchantment based attacks may deplete magic devices,
+they can usually also be magically recharged when necessary.
+Wands and staves will need to be actively recharged by the player when depleted
+while rods and other magic devices (jewelry, artifacts, special ego-powered
+items) will automatically recharge themselves over time, displaying 'charging'
+label or just '#' if the item name is very long and there's not enough space.
+
+
+Recharging can be done via shop service, a scroll, another magic device or a
+magic/rune spell. Devices that can be recharged are:
+
+-Wands
+-Staves
+-Rods
+-Certain jewelry (eg elemental rings)
+-Some artifacts
+-Items that possess certain activatable ego-powers (eg weapons of fury)
+
+For wands and staves recharging will replenish their charges, while for the
+other item types recharging will reduce their 'charging' delay.
+
+Note: Rings of polymorphing cannot be recharged.
+
+
+When an item is recharged the result depends on the method of recharging and
+the item's base type level. For wands and staves it also depends on the current
+amount of charges in the device, to get the most out of it and to minimize the
+risk of a failure you should only recharge wands and staves that are already
+fully depleted ie have zero charges left.
+
+If unlucky, recharging may result in a failure. Even when recharging at highest
+magic spell level there is still a very slim chance for a failure to occur.
+While a failed recharge may drain rods even further, wands and staves may even
+blow up completely. So only recharge those when they are already fully depleted
+to minimize that risk.
+
+Means of recharging:
+-Scrolls            (60 power)
+-Thingol artifact   (60..100 power, depending on magic device skill)
+-Shop service       (80 power)
+-Rune spell         (50 power)
+-Magic spell        (10..150 power)
+
+The power determines both, the chance of succeeding in recharging the item and
+the degree of recharging done to the item.
+Note: Staves 'of plenty' will receive about twice as many charges from
+      recharging, so look out for those.
 
 
 
