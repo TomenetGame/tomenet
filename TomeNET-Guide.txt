@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 26. September 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 11. October 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -12834,6 +12834,15 @@ SOLUTION:   Macros or client options can be saved to various .prf files which
             automatically load the files called 'Human.prf' and 'Warrior.prf'
             if those exist and also try to load a .prf file named like your
             account name.
+
+PROBLEM 31: After logging on, the file 'audio.lua' was updated automatically.
+            Now the wrong sound effects seem to be played for game events.
+SOLUTION:   Just log out and back in, and your sound should be fine again.
+            This typically happen if 'audio.lua' was updated.
+            On a side note: Also check if maybe the sound pack was updated too,
+            so you can redownload it and not miss out on newly added sound
+            effects. Usually an update to file 'audio.lua' means that the sound
+            pack has also been updated indeed.
 
 
 
