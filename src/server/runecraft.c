@@ -1088,11 +1088,11 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 	/* Hack -- Choose a new GF_type for 'GF_WONDER' and 'GF_BASE' effects - Kurzel */
 	switch (gf_type) {
 		case GF_WONDER: gf_type = runespell_list[randint(RT_MAX)].gf_type; break;
-		case GF_BASE: gf_type = randint(5); //Uberhack -- GF_blah aren't even in order!
+		case GF_BASE: gf_type = randint(4) + 1; //Uberhack -- GF_blah aren't even in order!
 	}
 	switch (gf_explode) {
 		case GF_WONDER: gf_explode = runespell_list[randint(RT_MAX)].gf_type; break;
-		case GF_BASE: gf_explode = randint(5); //Uberhack -- GF_blah aren't even in order!
+		case GF_BASE: gf_explode = randint(4) + 1; //Uberhack -- GF_blah aren't even in order!
 	}
 	
 	/* Hack -- Reduce Drain/Annihilation Damage by Type - Kurzel */
@@ -2019,6 +2019,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				msg_format(Ind, "%s%s runespell turns upon your self.", begin, description);
 				if (success)
 				{
+					gf_type = gf_type % 1000; //Paranoia; Don't blast the player with a HACK type (no explosion effect either, perhaps to be added later). - Kurzel
 					project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage/5, gf_type, PROJECT_KILL | PROJECT_NORF, "");
 				}
 				break;
@@ -2167,6 +2168,8 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 		take_hit(Ind, (cost-p_ptr->csp), "magical exhaustion", 0);
 		p_ptr->csp = 0;
 	}
+	
+	gf_type = gf_type % 1000; //Paranoia; Don't blast the player with a HACK type (no explosion effect either, perhaps to be added later). - Kurzel
 	
 	//Lite Susceptability Check, could have better placement? - Kurzel
 	if (success && gf_original==GF_LITE) {

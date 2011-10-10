@@ -8828,6 +8828,499 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
+		/* New Runemaster Gestalts - Kurzel */
+		/* Acid + Elec */
+		case GF_ACID_ELEC:
+		{
+			bool ignore_acid = p_ptr->oppose_acid || p_ptr->resist_acid || p_ptr->immune_acid;
+			bool ignore_elec = p_ptr->oppose_elec || p_ptr->resist_elec || p_ptr->immune_elec;
+			bool inven_acid = (p_ptr->oppose_acid && p_ptr->resist_acid) || p_ptr->immune_acid;
+			bool inven_elec = (p_ptr->oppose_elec && p_ptr->resist_elec) || p_ptr->immune_elec;
+
+			if (p_ptr->immune_acid && p_ptr->immune_elec) dam = 0; //Immune + Immune. (0)
+			else if ((p_ptr->immune_acid && (p_ptr->resist_elec && p_ptr->oppose_elec)) || (p_ptr->immune_elec && (p_ptr->resist_acid && p_ptr->oppose_acid))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
+			else if ((p_ptr->immune_acid && (p_ptr->resist_elec || p_ptr->oppose_elec)) || (p_ptr->immune_elec && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
+			else if (p_ptr->immune_acid || p_ptr->immune_elec) dam = (dam + 1) / 2; //Immune + None. (1/2)
+			else if ((p_ptr->immune_acid && p_ptr->suscep_elec) || (p_ptr->immune_elec && p_ptr->suscep_acid)) dam = dam; //Immune + Susceptable. (1)
+			
+			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_elec && p_ptr->oppose_elec)) dam = (dam + 8) / 9; //Double + Double. (1/9)
+			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_elec || p_ptr->oppose_elec)) || ((p_ptr->resist_elec && p_ptr->oppose_elec) && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
+			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) || (p_ptr->resist_elec && p_ptr->oppose_elec)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
+			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && p_ptr->suscep_elec) || ((p_ptr->resist_elec && p_ptr->oppose_elec) && p_ptr->suscep_acid)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
+			
+			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) && (p_ptr->resist_elec || p_ptr->oppose_elec)) dam = (dam + 2) / 3; //Single + Single. (1/3)
+			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) || (p_ptr->resist_elec || p_ptr->oppose_elec)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
+			else if (((p_ptr->resist_acid || p_ptr->oppose_acid) && p_ptr->suscep_elec) || ((p_ptr->resist_elec || p_ptr->oppose_elec) && p_ptr->suscep_acid)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			
+			else if (p_ptr->suscep_acid && p_ptr->suscep_elec) dam *= 2; //Susceptable + Susceptable. (2)
+			else if (p_ptr->suscep_acid || p_ptr->suscep_elec) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
+
+			if (fuzzy) msg_format(Ind, "You are hit by ionization for \377%c%d \377wdamage!", damcol, dam); //Should this be more descriptive? - Kurzel
+			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+
+			take_hit(Ind, dam, killer, -who);
+
+			/* Reduce stats */
+			if (!ignore_acid && !ignore_elec) {
+				if (randint(HURT_CHANCE)==1) {
+					if (rand_int(3)) (void) do_dec_stat(Ind, A_CHR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+					else (void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+				}
+			} else if (ignore_elec) {
+				if (randint(HURT_CHANCE)==1)
+					(void) do_dec_stat(Ind, A_CHR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+			} else if (ignore_acid) {
+				if (randint(HURT_CHANCE)==1)
+					(void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+			}
+
+			/* Don't kill inventory in bloodbond... */
+			int breakable = 1;
+			if (IS_PVP && check_blood_bond(Ind, -who)) {
+				breakable = 0;
+				break;
+			}
+
+			/* Inventory damage */
+			if (inven_acid && inven_elec) break;
+			if (!inven_acid && !inven_elec) {
+				if (rand_int(3)) inven_damage(Ind, set_acid_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+				else inven_damage(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+			} else if (inven_elec) inven_damage(Ind, set_acid_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+			else inven_damage(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+
+			break;
+		}
+
+		/* Acid + Fire */
+		case GF_ACID_FIRE:
+		{
+			bool ignore_acid = p_ptr->oppose_acid || p_ptr->resist_acid || p_ptr->immune_acid;
+			bool ignore_fire = p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire;
+			bool inven_acid = (p_ptr->oppose_acid && p_ptr->resist_acid) || p_ptr->immune_acid;
+			bool inven_fire = (p_ptr->oppose_fire && p_ptr->resist_fire) || p_ptr->immune_fire;
+
+			if (p_ptr->immune_acid && p_ptr->immune_fire) dam = 0; //Immune + Immune. (0)
+			else if ((p_ptr->immune_acid && (p_ptr->resist_fire && p_ptr->oppose_fire)) || (p_ptr->immune_fire && (p_ptr->resist_acid && p_ptr->oppose_acid))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
+			else if ((p_ptr->immune_acid && (p_ptr->resist_fire || p_ptr->oppose_fire)) || (p_ptr->immune_fire && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
+			else if (p_ptr->immune_acid || p_ptr->immune_fire) dam = (dam + 1) / 2; //Immune + None. (1/2)
+			else if ((p_ptr->immune_acid && p_ptr->suscep_fire) || (p_ptr->immune_fire && p_ptr->suscep_acid)) dam = dam; //Immune + Susceptable. (1)
+			
+			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_fire && p_ptr->oppose_fire)) dam = (dam + 8) / 9; //Double + Double. (1/9)
+			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_fire || p_ptr->oppose_fire)) || ((p_ptr->resist_fire && p_ptr->oppose_fire) && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
+			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) || (p_ptr->resist_fire && p_ptr->oppose_fire)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
+			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && p_ptr->suscep_fire) || ((p_ptr->resist_fire && p_ptr->oppose_fire) && p_ptr->suscep_acid)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
+			
+			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) && (p_ptr->resist_fire || p_ptr->oppose_fire)) dam = (dam + 2) / 3; //Single + Single. (1/3)
+			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) || (p_ptr->resist_fire || p_ptr->oppose_fire)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
+			else if (((p_ptr->resist_acid || p_ptr->oppose_acid) && p_ptr->suscep_fire) || ((p_ptr->resist_fire || p_ptr->oppose_fire) && p_ptr->suscep_acid)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			
+			else if (p_ptr->suscep_acid && p_ptr->suscep_fire) dam *= 2; //Susceptable + Susceptable. (2)
+			else if (p_ptr->suscep_acid || p_ptr->suscep_fire) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
+
+			if (fuzzy) msg_format(Ind, "You are hit by bile for \377%c%d \377wdamage!", damcol, dam); //Should this be more descriptive? - Kurzel
+			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+
+			take_hit(Ind, dam, killer, -who);
+
+			/* Reduce stats */
+			if (!ignore_acid && !ignore_fire) {
+				if (randint(HURT_CHANCE)==1) {
+					if (rand_int(3)) (void) do_dec_stat(Ind, A_CHR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+					else (void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+				}
+			} else if (ignore_fire) {
+				if (randint(HURT_CHANCE)==1)
+					(void) do_dec_stat(Ind, A_CHR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+			} else if (ignore_acid) {
+				if (randint(HURT_CHANCE)==1)
+					(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+			}
+
+			/* Don't kill inventory in bloodbond... */
+			int breakable = 1;
+			if (IS_PVP && check_blood_bond(Ind, -who)) {
+				breakable = 0;
+				break;
+			}
+
+			/* Inventory damage */
+			if (inven_acid && inven_fire) break;
+			if (!inven_acid && !inven_fire) {
+				if (rand_int(3)) inven_damage(Ind, set_acid_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+				else inven_damage(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+			} else if (inven_fire) inven_damage(Ind, set_acid_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+			else inven_damage(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+
+			break;
+		}
+
+		/* Acid + Cold */
+		case GF_ACID_COLD:
+		{
+			bool ignore_acid = p_ptr->oppose_acid || p_ptr->resist_acid || p_ptr->immune_acid;
+			bool ignore_cold = p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold;
+			bool inven_acid = (p_ptr->oppose_acid && p_ptr->resist_acid) || p_ptr->immune_acid;
+			bool inven_cold = (p_ptr->oppose_cold && p_ptr->resist_cold) || p_ptr->immune_cold;
+
+			if (p_ptr->immune_acid && p_ptr->immune_cold) dam = 0; //Immune + Immune. (0)
+			else if ((p_ptr->immune_acid && (p_ptr->resist_cold && p_ptr->oppose_cold)) || (p_ptr->immune_cold && (p_ptr->resist_acid && p_ptr->oppose_acid))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
+			else if ((p_ptr->immune_acid && (p_ptr->resist_cold || p_ptr->oppose_cold)) || (p_ptr->immune_cold && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
+			else if (p_ptr->immune_acid || p_ptr->immune_cold) dam = (dam + 1) / 2; //Immune + None. (1/2)
+			else if ((p_ptr->immune_acid && p_ptr->suscep_cold) || (p_ptr->immune_cold && p_ptr->suscep_acid)) dam = dam; //Immune + Susceptable. (1)
+			
+			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_cold && p_ptr->oppose_cold)) dam = (dam + 8) / 9; //Double + Double. (1/9)
+			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_cold || p_ptr->oppose_cold)) || ((p_ptr->resist_cold && p_ptr->oppose_cold) && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
+			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) || (p_ptr->resist_cold && p_ptr->oppose_cold)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
+			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && p_ptr->suscep_cold) || ((p_ptr->resist_cold && p_ptr->oppose_cold) && p_ptr->suscep_acid)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
+			
+			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) && (p_ptr->resist_cold || p_ptr->oppose_cold)) dam = (dam + 2) / 3; //Single + Single. (1/3)
+			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) || (p_ptr->resist_cold || p_ptr->oppose_cold)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
+			else if (((p_ptr->resist_acid || p_ptr->oppose_acid) && p_ptr->suscep_cold) || ((p_ptr->resist_cold || p_ptr->oppose_cold) && p_ptr->suscep_acid)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			
+			else if (p_ptr->suscep_acid && p_ptr->suscep_cold) dam *= 2; //Susceptable + Susceptable. (2)
+			else if (p_ptr->suscep_acid || p_ptr->suscep_cold) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
+
+			if (fuzzy) msg_format(Ind, "You are hit by rime for \377%c%d \377wdamage!", damcol, dam); //Should this be more descriptive? - Kurzel
+			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+
+			take_hit(Ind, dam, killer, -who);
+
+			/* Reduce stats */
+			if (!ignore_acid && !ignore_cold) {
+				if (randint(HURT_CHANCE)==1) {
+					if (rand_int(3)) (void) do_dec_stat(Ind, A_CHR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+					else (void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+				}
+			} else if (ignore_cold) {
+				if (randint(HURT_CHANCE)==1)
+					(void) do_dec_stat(Ind, A_CHR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+			} else if (ignore_acid) {
+				if (randint(HURT_CHANCE)==1)
+					(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+			}
+
+			/* Don't kill inventory in bloodbond... */
+			int breakable = 1;
+			if (IS_PVP && check_blood_bond(Ind, -who)) {
+				breakable = 0;
+				break;
+			}
+
+			/* Inventory damage */
+			if (inven_acid && inven_cold) break;
+			if (!inven_acid && !inven_cold) {
+				if (rand_int(3)) inven_damage(Ind, set_acid_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+				else inven_damage(Ind, set_cold_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+			} else if (inven_cold) inven_damage(Ind, set_acid_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+			else inven_damage(Ind, set_cold_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+
+			break;
+		}
+
+		/* Acid + Poison */
+		case GF_ACID_POISON:
+		{
+			bool ignore_acid = p_ptr->oppose_acid || p_ptr->resist_acid || p_ptr->immune_acid;
+			//bool ignore_pois = p_ptr->oppose_pois || p_ptr->resist_pois || p_ptr->immune_poison;
+			bool inven_acid = (p_ptr->oppose_acid && p_ptr->resist_acid) || p_ptr->immune_acid;
+			//bool inven_pois = (p_ptr->oppose_pois && p_ptr->resist_pois) || p_ptr->immune_poison;
+
+			if (p_ptr->immune_acid && p_ptr->immune_poison) dam = 0; //Immune + Immune. (0)
+			else if ((p_ptr->immune_acid && (p_ptr->resist_pois && p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_acid && p_ptr->oppose_acid))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
+			else if ((p_ptr->immune_acid && (p_ptr->resist_pois || p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
+			else if (p_ptr->immune_acid || p_ptr->immune_poison) dam = (dam + 1) / 2; //Immune + None. (1/2)
+			else if ((p_ptr->immune_acid && p_ptr->suscep_pois) || (p_ptr->immune_poison && p_ptr->suscep_acid)) dam = dam; //Immune + Susceptable. (1)
+			
+			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) / 9; //Double + Double. (1/9)
+			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_pois || p_ptr->oppose_pois)) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
+			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) || (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
+			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && p_ptr->suscep_pois) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && p_ptr->suscep_acid)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
+			
+			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) && (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) / 3; //Single + Single. (1/3)
+			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) || (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
+			else if (((p_ptr->resist_acid || p_ptr->oppose_acid) && p_ptr->suscep_pois) || ((p_ptr->resist_pois || p_ptr->oppose_pois) && p_ptr->suscep_acid)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			
+			else if (p_ptr->suscep_acid && p_ptr->suscep_pois) dam *= 2; //Susceptable + Susceptable. (2)
+			else if (p_ptr->suscep_acid || p_ptr->suscep_pois) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
+
+			if (fuzzy) msg_format(Ind, "You are hit by venom for \377%c%d \377wdamage!", damcol, dam); //Should this be more descriptive? - Kurzel
+			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+
+			take_hit(Ind, dam, killer, -who);
+			
+			/* Poison */
+			if (!(p_ptr->resist_pois || p_ptr->oppose_pois)) {
+				/* don't poison for too long in pvp */
+				if (IS_PVP) {
+					if (p_ptr->poisoned < 10) (void)set_poisoned(Ind, p_ptr->poisoned + rand_int(4), -who);
+				} else {
+					(void)set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10, -who);
+				}
+			}
+
+			/* Reduce stats */
+			if (!ignore_acid) {
+				if (randint(HURT_CHANCE)==1)
+					(void) do_dec_stat(Ind, A_CHR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+			}
+
+			/* Don't kill inventory in bloodbond... */
+			int breakable = 1;
+			if (IS_PVP && check_blood_bond(Ind, -who)) {
+				breakable = 0;
+				break;
+			}
+
+			/* Inventory damage */
+			if (!inven_acid) inven_damage(Ind, set_acid_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+
+			break;
+		}
+
+		/* Elec + Cold */
+		case GF_ELEC_COLD:
+		{
+			bool ignore_elec = p_ptr->oppose_elec || p_ptr->resist_elec || p_ptr->immune_elec;
+			bool ignore_cold = p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold;
+			bool inven_elec = (p_ptr->oppose_elec && p_ptr->resist_elec) || p_ptr->immune_elec;
+			bool inven_cold = (p_ptr->oppose_cold && p_ptr->resist_cold) || p_ptr->immune_cold;
+
+			if (p_ptr->immune_elec && p_ptr->immune_cold) dam = 0; //Immune + Immune. (0)
+			else if ((p_ptr->immune_elec && (p_ptr->resist_cold && p_ptr->oppose_cold)) || (p_ptr->immune_cold && (p_ptr->resist_elec && p_ptr->oppose_elec))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
+			else if ((p_ptr->immune_elec && (p_ptr->resist_cold || p_ptr->oppose_cold)) || (p_ptr->immune_cold && (p_ptr->resist_elec || p_ptr->oppose_elec))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
+			else if (p_ptr->immune_elec || p_ptr->immune_cold) dam = (dam + 1) / 2; //Immune + None. (1/2)
+			else if ((p_ptr->immune_elec && p_ptr->suscep_cold) || (p_ptr->immune_cold && p_ptr->suscep_elec)) dam = dam; //Immune + Susceptable. (1)
+			
+			else if ((p_ptr->resist_elec && p_ptr->oppose_elec) && (p_ptr->resist_cold && p_ptr->oppose_cold)) dam = (dam + 8) / 9; //Double + Double. (1/9)
+			else if (((p_ptr->resist_elec && p_ptr->oppose_elec) && (p_ptr->resist_cold || p_ptr->oppose_cold)) || ((p_ptr->resist_cold && p_ptr->oppose_cold) && (p_ptr->resist_elec || p_ptr->oppose_elec))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
+			else if ((p_ptr->resist_elec && p_ptr->oppose_elec) || (p_ptr->resist_cold && p_ptr->oppose_cold)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
+			else if (((p_ptr->resist_elec && p_ptr->oppose_elec) && p_ptr->suscep_cold) || ((p_ptr->resist_cold && p_ptr->oppose_cold) && p_ptr->suscep_elec)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
+			
+			else if ((p_ptr->resist_elec || p_ptr->oppose_elec) && (p_ptr->resist_cold || p_ptr->oppose_cold)) dam = (dam + 2) / 3; //Single + Single. (1/3)
+			else if ((p_ptr->resist_elec || p_ptr->oppose_elec) || (p_ptr->resist_cold || p_ptr->oppose_cold)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
+			else if (((p_ptr->resist_elec || p_ptr->oppose_elec) && p_ptr->suscep_cold) || ((p_ptr->resist_cold || p_ptr->oppose_cold) && p_ptr->suscep_elec)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			
+			else if (p_ptr->suscep_elec && p_ptr->suscep_cold) dam *= 2; //Susceptable + Susceptable. (2)
+			else if (p_ptr->suscep_elec || p_ptr->suscep_cold) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
+
+			if (fuzzy) msg_format(Ind, "You are hit by static for \377%c%d \377wdamage!", damcol, dam); //Should this be more descriptive? - Kurzel
+			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+
+			take_hit(Ind, dam, killer, -who);
+
+			/* Reduce stats */
+			if (!ignore_elec && !ignore_cold) {
+				if (randint(HURT_CHANCE)==1) {
+					if (rand_int(3)) (void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+					else (void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+				}
+			} else if (ignore_cold) {
+				if (randint(HURT_CHANCE)==1)
+					(void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+			} else if (ignore_elec) {
+				if (randint(HURT_CHANCE)==1)
+					(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+			}
+
+			/* Don't kill inventory in bloodbond... */
+			int breakable = 1;
+			if (IS_PVP && check_blood_bond(Ind, -who)) {
+				breakable = 0;
+				break;
+			}
+
+			/* Inventory damage */
+			if (inven_elec && inven_cold) break;
+			if (!inven_elec && !inven_cold) {
+				if (rand_int(3)) inven_damage(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+				else inven_damage(Ind, set_cold_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+			} else if (inven_cold) inven_damage(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+			else inven_damage(Ind, set_cold_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+
+			break;
+		}
+
+		/* Elec + Poison */
+		case GF_ELEC_POISON:
+		{
+			bool ignore_elec = p_ptr->oppose_elec || p_ptr->resist_elec || p_ptr->immune_elec;
+			//bool ignore_pois = p_ptr->oppose_pois || p_ptr->resist_pois || p_ptr->immune_poison;
+			bool inven_elec = (p_ptr->oppose_elec && p_ptr->resist_elec) || p_ptr->immune_elec;
+			//bool inven_pois = (p_ptr->oppose_pois && p_ptr->resist_pois) || p_ptr->immune_poison;
+
+			if (p_ptr->immune_elec && p_ptr->immune_poison) dam = 0; //Immune + Immune. (0)
+			else if ((p_ptr->immune_elec && (p_ptr->resist_pois && p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_elec && p_ptr->oppose_elec))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
+			else if ((p_ptr->immune_elec && (p_ptr->resist_pois || p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_elec || p_ptr->oppose_elec))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
+			else if (p_ptr->immune_elec || p_ptr->immune_poison) dam = (dam + 1) / 2; //Immune + None. (1/2)
+			else if ((p_ptr->immune_elec && p_ptr->suscep_pois) || (p_ptr->immune_poison && p_ptr->suscep_elec)) dam = dam; //Immune + Susceptable. (1)
+			
+			else if ((p_ptr->resist_elec && p_ptr->oppose_elec) && (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) / 9; //Double + Double. (1/9)
+			else if (((p_ptr->resist_elec && p_ptr->oppose_elec) && (p_ptr->resist_pois || p_ptr->oppose_pois)) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && (p_ptr->resist_elec || p_ptr->oppose_elec))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
+			else if ((p_ptr->resist_elec && p_ptr->oppose_elec) || (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
+			else if (((p_ptr->resist_elec && p_ptr->oppose_elec) && p_ptr->suscep_pois) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && p_ptr->suscep_elec)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
+			
+			else if ((p_ptr->resist_elec || p_ptr->oppose_elec) && (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) / 3; //Single + Single. (1/3)
+			else if ((p_ptr->resist_elec || p_ptr->oppose_elec) || (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
+			else if (((p_ptr->resist_elec || p_ptr->oppose_elec) && p_ptr->suscep_pois) || ((p_ptr->resist_pois || p_ptr->oppose_pois) && p_ptr->suscep_elec)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			
+			else if (p_ptr->suscep_elec && p_ptr->suscep_pois) dam *= 2; //Susceptable + Susceptable. (2)
+			else if (p_ptr->suscep_elec || p_ptr->suscep_pois) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
+
+			if (fuzzy) msg_format(Ind, "You are hit by jolting for \377%c%d \377wdamage!", damcol, dam); //Should this be more descriptive? - Kurzel
+			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+
+			take_hit(Ind, dam, killer, -who);
+			
+			/* Poison */
+			if (!(p_ptr->resist_pois || p_ptr->oppose_pois)) {
+				/* don't poison for too long in pvp */
+				if (IS_PVP) {
+					if (p_ptr->poisoned < 10) (void)set_poisoned(Ind, p_ptr->poisoned + rand_int(4), -who);
+				} else {
+					(void)set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10, -who);
+				}
+			}
+
+			/* Reduce stats */
+			if (!ignore_elec) {
+				if (randint(HURT_CHANCE)==1)
+					(void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+			}
+
+			/* Don't kill inventory in bloodbond... */
+			int breakable = 1;
+			if (IS_PVP && check_blood_bond(Ind, -who)) {
+				breakable = 0;
+				break;
+			}
+
+			/* Inventory damage */
+			if (!inven_elec) inven_damage(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+
+			break;
+		}
+
+		/* Fire + Poison */
+		case GF_FIRE_POISON:
+		{
+			bool ignore_fire = p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire;
+			//bool ignore_pois = p_ptr->oppose_pois || p_ptr->resist_pois || p_ptr->immune_poison;
+			bool inven_fire = (p_ptr->oppose_fire && p_ptr->resist_fire) || p_ptr->immune_fire;
+			//bool inven_pois = (p_ptr->oppose_pois && p_ptr->resist_pois) || p_ptr->immune_poison;
+
+			if (p_ptr->immune_fire && p_ptr->immune_poison) dam = 0; //Immune + Immune. (0)
+			else if ((p_ptr->immune_fire && (p_ptr->resist_pois && p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_fire && p_ptr->oppose_fire))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
+			else if ((p_ptr->immune_fire && (p_ptr->resist_pois || p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_fire || p_ptr->oppose_fire))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
+			else if (p_ptr->immune_fire || p_ptr->immune_poison) dam = (dam + 1) / 2; //Immune + None. (1/2)
+			else if ((p_ptr->immune_fire && p_ptr->suscep_pois) || (p_ptr->immune_poison && p_ptr->suscep_fire)) dam = dam; //Immune + Susceptable. (1)
+			
+			else if ((p_ptr->resist_fire && p_ptr->oppose_fire) && (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) / 9; //Double + Double. (1/9)
+			else if (((p_ptr->resist_fire && p_ptr->oppose_fire) && (p_ptr->resist_pois || p_ptr->oppose_pois)) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && (p_ptr->resist_fire || p_ptr->oppose_fire))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
+			else if ((p_ptr->resist_fire && p_ptr->oppose_fire) || (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
+			else if (((p_ptr->resist_fire && p_ptr->oppose_fire) && p_ptr->suscep_pois) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && p_ptr->suscep_fire)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
+			
+			else if ((p_ptr->resist_fire || p_ptr->oppose_fire) && (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) / 3; //Single + Single. (1/3)
+			else if ((p_ptr->resist_fire || p_ptr->oppose_fire) || (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
+			else if (((p_ptr->resist_fire || p_ptr->oppose_fire) && p_ptr->suscep_pois) || ((p_ptr->resist_pois || p_ptr->oppose_pois) && p_ptr->suscep_fire)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			
+			else if (p_ptr->suscep_fire && p_ptr->suscep_pois) dam *= 2; //Susceptable + Susceptable. (2)
+			else if (p_ptr->suscep_fire || p_ptr->suscep_pois) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
+
+			if (fuzzy) msg_format(Ind, "You are hit by consumption for \377%c%d \377wdamage!", damcol, dam); //Should this be more descriptive? - Kurzel
+			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+
+			take_hit(Ind, dam, killer, -who);
+			
+			/* Poison */
+			if (!(p_ptr->resist_pois || p_ptr->oppose_pois)) {
+				/* don't poison for too long in pvp */
+				if (IS_PVP) {
+					if (p_ptr->poisoned < 10) (void)set_poisoned(Ind, p_ptr->poisoned + rand_int(4), -who);
+				} else {
+					(void)set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10, -who);
+				}
+			}
+
+			/* Reduce stats */
+			if (!ignore_fire) {
+				if (randint(HURT_CHANCE)==1)
+					(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+			}
+
+			/* Don't kill inventory in bloodbond... */
+			int breakable = 1;
+			if (IS_PVP && check_blood_bond(Ind, -who)) {
+				breakable = 0;
+				break;
+			}
+
+			/* Inventory damage */
+			if (!inven_fire) inven_damage(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+
+			break;
+		}
+
+		/* Cold + Poison */
+		case GF_COLD_POISON:
+		{
+			bool ignore_cold = p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold;
+			//bool ignore_pois = p_ptr->oppose_pois || p_ptr->resist_pois || p_ptr->immune_poison;
+			bool inven_cold = (p_ptr->oppose_cold && p_ptr->resist_cold) || p_ptr->immune_cold;
+			//bool inven_pois = (p_ptr->oppose_pois && p_ptr->resist_pois) || p_ptr->immune_poison;
+
+			if (p_ptr->immune_cold && p_ptr->immune_poison) dam = 0; //Immune + Immune. (0)
+			else if ((p_ptr->immune_cold && (p_ptr->resist_pois && p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_cold && p_ptr->oppose_cold))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
+			else if ((p_ptr->immune_cold && (p_ptr->resist_pois || p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_cold || p_ptr->oppose_cold))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
+			else if (p_ptr->immune_cold || p_ptr->immune_poison) dam = (dam + 1) / 2; //Immune + None. (1/2)
+			else if ((p_ptr->immune_cold && p_ptr->suscep_pois) || (p_ptr->immune_poison && p_ptr->suscep_cold)) dam = dam; //Immune + Susceptable. (1)
+			
+			else if ((p_ptr->resist_cold && p_ptr->oppose_cold) && (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) / 9; //Double + Double. (1/9)
+			else if (((p_ptr->resist_cold && p_ptr->oppose_cold) && (p_ptr->resist_pois || p_ptr->oppose_pois)) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && (p_ptr->resist_cold || p_ptr->oppose_cold))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
+			else if ((p_ptr->resist_cold && p_ptr->oppose_cold) || (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
+			else if (((p_ptr->resist_cold && p_ptr->oppose_cold) && p_ptr->suscep_pois) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && p_ptr->suscep_cold)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
+			
+			else if ((p_ptr->resist_cold || p_ptr->oppose_cold) && (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) / 3; //Single + Single. (1/3)
+			else if ((p_ptr->resist_cold || p_ptr->oppose_cold) || (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
+			else if (((p_ptr->resist_cold || p_ptr->oppose_cold) && p_ptr->suscep_pois) || ((p_ptr->resist_pois || p_ptr->oppose_pois) && p_ptr->suscep_cold)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			
+			else if (p_ptr->suscep_cold && p_ptr->suscep_pois) dam *= 2; //Susceptable + Susceptable. (2)
+			else if (p_ptr->suscep_cold || p_ptr->suscep_pois) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
+
+			if (fuzzy) msg_format(Ind, "You are hit by hypothermia for \377%c%d \377wdamage!", damcol, dam); //Should this be more descriptive? - Kurzel
+			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+
+			take_hit(Ind, dam, killer, -who);
+			
+			/* Poison */
+			if (!(p_ptr->resist_pois || p_ptr->oppose_pois)) {
+				/* don't poison for too long in pvp */
+				if (IS_PVP) {
+					if (p_ptr->poisoned < 10) (void)set_poisoned(Ind, p_ptr->poisoned + rand_int(4), -who);
+				} else {
+					(void)set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10, -who);
+				}
+			}
+
+			/* Reduce stats */
+			if (!ignore_cold) {
+				if (randint(HURT_CHANCE)==1)
+					(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+			}
+
+			/* Don't kill inventory in bloodbond... */
+			int breakable = 1;
+			if (IS_PVP && check_blood_bond(Ind, -who)) {
+				breakable = 0;
+				break;
+			}
+
+			/* Inventory damage */
+			if (!inven_cold) inven_damage(Ind, set_cold_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+
+			break;
+		}
+		
 		/* Nether -- drain experience */
 		case GF_NETHER:
 		if (p_ptr->immune_neth)
@@ -12004,7 +12497,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			break;
 
 		case GF_OLD_DRAIN:
-  case GF_ANNIHILATION:
+		case GF_ANNIHILATION:
 			if (m_ptr->hp > 9362)
 				dam = (m_ptr->hp / 100) * dam;
 			else if (m_ptr->hp > 936)
@@ -12248,4 +12741,3 @@ int approx_damage(int m_idx, int dam, int typ) {
 
 	return (dam);
 }
-
