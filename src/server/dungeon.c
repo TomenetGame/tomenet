@@ -5727,6 +5727,13 @@ void dungeon(void)
 	/* Process spell effects */
 	process_effects();
 
+	/* Process projections' teleportation effects on monsters */
+	for (i = 0; i < m_top; i++)
+		if (m_list[m_fast[i]].do_dist) {
+			teleport_away(m_fast[i], m_list[m_fast[i]].do_dist);
+			m_list[m_fast[i]].do_dist = FALSE;
+		}
+
 	/* Process all of the monsters */
 	if (!(turn % MONSTER_TURNS))
 		process_monsters();

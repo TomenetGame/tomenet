@@ -52,12 +52,6 @@
    Traditionally, polymorph would cancel damage instead. - C. Blue */
 #define DAMAGE_BEFORE_POLY
 
-/* Method of preventing a monster getting hit twice by the same effect.
-   Using the got_hit way similar to players seems like a waste of resources,
-   so maybe instead the teleportation should be postponed to the end of the
-   turn at which the projection will already be over. - C. Blue */
-#define MON_GOT_HIT_FAST
-
 
  /*
   * Potions "smash open" and cause an area effect when
@@ -4819,10 +4813,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Acquire monster pointer */
 	m_ptr = &m_list[c_ptr->m_idx];
 
-#ifndef MON_GOT_HIT_FAST
-	if (m_ptr->got_hit) return (FALSE);
-#endif
-
 	/* Acquire race pointer */
 	r_ptr = race_inf(m_ptr);
 
@@ -7550,10 +7540,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			break;
 	}
 
-#ifndef MON_GOT_HIT_FAST
-	m_ptr->got_hit = TRUE;
-#endif
-
 
 	/* "Unique" monsters cannot be polymorphed */
 	if (r_ptr->flags1 & RF1_UNIQUE) do_poly = FALSE;
@@ -7637,7 +7623,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Teleport */
 		/* TODO: handle failure (eg. st-anchor)	*/
-		teleport_away(c_ptr->m_idx, do_dist);
+
+//		teleport_away(c_ptr->m_idx, do_dist);
+		m_ptr->do_dist = do_dist;
 
 		/* Hack -- get new location */
 		y = m_ptr->fy;
@@ -11373,11 +11361,6 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	if ((flg & PROJECT_KILL) && !players_only) {
 		/* Start with "dist" of zero */
 		dist = 0;
-
-#ifndef MON_GOT_HIT_FAST
-		/* Clear the got_hit flags */
-		for (i = 0; i < m_top; i++) m_list[m_fast[i]].got_hit = FALSE;
-#endif
 
 		/* Mega-Hack */
 		project_m_n = 0;

@@ -1034,17 +1034,17 @@ struct monster_type
       towards that player, so low players who get powerful help
       will get less exp out of it. */
 //   s16b highest_encounter_mlvl;	/* lol.. */
-   byte backstabbed;	/* has this monster been backstabbed from cloaking mode already? prevent exploit */
-   byte taunted;	/* has this monster been taunted (melee technique)? */
+   byte backstabbed;		/* has this monster been backstabbed from cloaking mode already? prevent exploit */
+   byte taunted;		/* has this monster been taunted (melee technique)? */
 
-   bool no_esp_phase;	/* for WEIRD_MIND esp flickering */
-   int extra;	/* extra flag for debugging/testing purpose; also used for target dummy's "snowiness" now */
+   bool no_esp_phase;		/* for WEIRD_MIND esp flickering */
+   int extra;			/* extra flag for debugging/testing purpose; also used for target dummy's "snowiness" now */
 
 #ifdef MONSTER_ASTAR
     int astar_idx;		/* index in available A* arrays. A* is expensive, so we only provide a couple of instances for a few monsters to use */
 #endif
 
-	bool got_hit; /* same as for player_type: prevent monster getting hit twice by the same effect */
+    u16b do_dist;		/* execute all monster teleportation at the end of turn */
 };
 
 typedef struct monster_ego monster_ego;
