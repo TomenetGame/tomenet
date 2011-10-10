@@ -8840,17 +8840,17 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->immune_acid && p_ptr->immune_elec) dam = 0; //Immune + Immune. (0)
 			else if ((p_ptr->immune_acid && (p_ptr->resist_elec && p_ptr->oppose_elec)) || (p_ptr->immune_elec && (p_ptr->resist_acid && p_ptr->oppose_acid))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
 			else if ((p_ptr->immune_acid && (p_ptr->resist_elec || p_ptr->oppose_elec)) || (p_ptr->immune_elec && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if (p_ptr->immune_acid || p_ptr->immune_elec) dam = (dam + 1) / 2; //Immune + None. (1/2)
 			else if ((p_ptr->immune_acid && p_ptr->suscep_elec) || (p_ptr->immune_elec && p_ptr->suscep_acid)) dam = dam; //Immune + Susceptable. (1)
+			else if (p_ptr->immune_acid || p_ptr->immune_elec) dam = (dam + 1) / 2; //Immune + None. (1/2)
 			
 			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_elec && p_ptr->oppose_elec)) dam = (dam + 8) / 9; //Double + Double. (1/9)
 			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_elec || p_ptr->oppose_elec)) || ((p_ptr->resist_elec && p_ptr->oppose_elec) && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
-			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) || (p_ptr->resist_elec && p_ptr->oppose_elec)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
 			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && p_ptr->suscep_elec) || ((p_ptr->resist_elec && p_ptr->oppose_elec) && p_ptr->suscep_acid)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
+			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) || (p_ptr->resist_elec && p_ptr->oppose_elec)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
 			
 			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) && (p_ptr->resist_elec || p_ptr->oppose_elec)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) || (p_ptr->resist_elec || p_ptr->oppose_elec)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
 			else if (((p_ptr->resist_acid || p_ptr->oppose_acid) && p_ptr->suscep_elec) || ((p_ptr->resist_elec || p_ptr->oppose_elec) && p_ptr->suscep_acid)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) || (p_ptr->resist_elec || p_ptr->oppose_elec)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
 			
 			else if (p_ptr->suscep_acid && p_ptr->suscep_elec) dam *= 2; //Susceptable + Susceptable. (2)
 			else if (p_ptr->suscep_acid || p_ptr->suscep_elec) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
@@ -8903,17 +8903,17 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->immune_acid && p_ptr->immune_fire) dam = 0; //Immune + Immune. (0)
 			else if ((p_ptr->immune_acid && (p_ptr->resist_fire && p_ptr->oppose_fire)) || (p_ptr->immune_fire && (p_ptr->resist_acid && p_ptr->oppose_acid))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
 			else if ((p_ptr->immune_acid && (p_ptr->resist_fire || p_ptr->oppose_fire)) || (p_ptr->immune_fire && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if (p_ptr->immune_acid || p_ptr->immune_fire) dam = (dam + 1) / 2; //Immune + None. (1/2)
 			else if ((p_ptr->immune_acid && p_ptr->suscep_fire) || (p_ptr->immune_fire && p_ptr->suscep_acid)) dam = dam; //Immune + Susceptable. (1)
+			else if (p_ptr->immune_acid || p_ptr->immune_fire) dam = (dam + 1) / 2; //Immune + None. (1/2)
 			
 			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_fire && p_ptr->oppose_fire)) dam = (dam + 8) / 9; //Double + Double. (1/9)
 			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_fire || p_ptr->oppose_fire)) || ((p_ptr->resist_fire && p_ptr->oppose_fire) && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
-			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) || (p_ptr->resist_fire && p_ptr->oppose_fire)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
 			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && p_ptr->suscep_fire) || ((p_ptr->resist_fire && p_ptr->oppose_fire) && p_ptr->suscep_acid)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
+			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) || (p_ptr->resist_fire && p_ptr->oppose_fire)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
 			
 			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) && (p_ptr->resist_fire || p_ptr->oppose_fire)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) || (p_ptr->resist_fire || p_ptr->oppose_fire)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
 			else if (((p_ptr->resist_acid || p_ptr->oppose_acid) && p_ptr->suscep_fire) || ((p_ptr->resist_fire || p_ptr->oppose_fire) && p_ptr->suscep_acid)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) || (p_ptr->resist_fire || p_ptr->oppose_fire)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
 			
 			else if (p_ptr->suscep_acid && p_ptr->suscep_fire) dam *= 2; //Susceptable + Susceptable. (2)
 			else if (p_ptr->suscep_acid || p_ptr->suscep_fire) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
@@ -8966,17 +8966,17 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->immune_acid && p_ptr->immune_cold) dam = 0; //Immune + Immune. (0)
 			else if ((p_ptr->immune_acid && (p_ptr->resist_cold && p_ptr->oppose_cold)) || (p_ptr->immune_cold && (p_ptr->resist_acid && p_ptr->oppose_acid))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
 			else if ((p_ptr->immune_acid && (p_ptr->resist_cold || p_ptr->oppose_cold)) || (p_ptr->immune_cold && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if (p_ptr->immune_acid || p_ptr->immune_cold) dam = (dam + 1) / 2; //Immune + None. (1/2)
 			else if ((p_ptr->immune_acid && p_ptr->suscep_cold) || (p_ptr->immune_cold && p_ptr->suscep_acid)) dam = dam; //Immune + Susceptable. (1)
+			else if (p_ptr->immune_acid || p_ptr->immune_cold) dam = (dam + 1) / 2; //Immune + None. (1/2)
 			
 			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_cold && p_ptr->oppose_cold)) dam = (dam + 8) / 9; //Double + Double. (1/9)
 			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_cold || p_ptr->oppose_cold)) || ((p_ptr->resist_cold && p_ptr->oppose_cold) && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
-			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) || (p_ptr->resist_cold && p_ptr->oppose_cold)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
 			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && p_ptr->suscep_cold) || ((p_ptr->resist_cold && p_ptr->oppose_cold) && p_ptr->suscep_acid)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
+			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) || (p_ptr->resist_cold && p_ptr->oppose_cold)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
 			
 			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) && (p_ptr->resist_cold || p_ptr->oppose_cold)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) || (p_ptr->resist_cold || p_ptr->oppose_cold)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
 			else if (((p_ptr->resist_acid || p_ptr->oppose_acid) && p_ptr->suscep_cold) || ((p_ptr->resist_cold || p_ptr->oppose_cold) && p_ptr->suscep_acid)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) || (p_ptr->resist_cold || p_ptr->oppose_cold)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
 			
 			else if (p_ptr->suscep_acid && p_ptr->suscep_cold) dam *= 2; //Susceptable + Susceptable. (2)
 			else if (p_ptr->suscep_acid || p_ptr->suscep_cold) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
@@ -9029,17 +9029,17 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->immune_acid && p_ptr->immune_poison) dam = 0; //Immune + Immune. (0)
 			else if ((p_ptr->immune_acid && (p_ptr->resist_pois && p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_acid && p_ptr->oppose_acid))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
 			else if ((p_ptr->immune_acid && (p_ptr->resist_pois || p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if (p_ptr->immune_acid || p_ptr->immune_poison) dam = (dam + 1) / 2; //Immune + None. (1/2)
 			else if ((p_ptr->immune_acid && p_ptr->suscep_pois) || (p_ptr->immune_poison && p_ptr->suscep_acid)) dam = dam; //Immune + Susceptable. (1)
+			else if (p_ptr->immune_acid || p_ptr->immune_poison) dam = (dam + 1) / 2; //Immune + None. (1/2)
 			
 			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) / 9; //Double + Double. (1/9)
 			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_pois || p_ptr->oppose_pois)) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
-			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) || (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
 			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && p_ptr->suscep_pois) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && p_ptr->suscep_acid)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
+			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) || (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
 			
 			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) && (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) || (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
 			else if (((p_ptr->resist_acid || p_ptr->oppose_acid) && p_ptr->suscep_pois) || ((p_ptr->resist_pois || p_ptr->oppose_pois) && p_ptr->suscep_acid)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) || (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
 			
 			else if (p_ptr->suscep_acid && p_ptr->suscep_pois) dam *= 2; //Susceptable + Susceptable. (2)
 			else if (p_ptr->suscep_acid || p_ptr->suscep_pois) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
@@ -9089,17 +9089,17 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->immune_elec && p_ptr->immune_cold) dam = 0; //Immune + Immune. (0)
 			else if ((p_ptr->immune_elec && (p_ptr->resist_cold && p_ptr->oppose_cold)) || (p_ptr->immune_cold && (p_ptr->resist_elec && p_ptr->oppose_elec))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
 			else if ((p_ptr->immune_elec && (p_ptr->resist_cold || p_ptr->oppose_cold)) || (p_ptr->immune_cold && (p_ptr->resist_elec || p_ptr->oppose_elec))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if (p_ptr->immune_elec || p_ptr->immune_cold) dam = (dam + 1) / 2; //Immune + None. (1/2)
 			else if ((p_ptr->immune_elec && p_ptr->suscep_cold) || (p_ptr->immune_cold && p_ptr->suscep_elec)) dam = dam; //Immune + Susceptable. (1)
+			else if (p_ptr->immune_elec || p_ptr->immune_cold) dam = (dam + 1) / 2; //Immune + None. (1/2)
 			
 			else if ((p_ptr->resist_elec && p_ptr->oppose_elec) && (p_ptr->resist_cold && p_ptr->oppose_cold)) dam = (dam + 8) / 9; //Double + Double. (1/9)
 			else if (((p_ptr->resist_elec && p_ptr->oppose_elec) && (p_ptr->resist_cold || p_ptr->oppose_cold)) || ((p_ptr->resist_cold && p_ptr->oppose_cold) && (p_ptr->resist_elec || p_ptr->oppose_elec))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
-			else if ((p_ptr->resist_elec && p_ptr->oppose_elec) || (p_ptr->resist_cold && p_ptr->oppose_cold)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
 			else if (((p_ptr->resist_elec && p_ptr->oppose_elec) && p_ptr->suscep_cold) || ((p_ptr->resist_cold && p_ptr->oppose_cold) && p_ptr->suscep_elec)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
+			else if ((p_ptr->resist_elec && p_ptr->oppose_elec) || (p_ptr->resist_cold && p_ptr->oppose_cold)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
 			
 			else if ((p_ptr->resist_elec || p_ptr->oppose_elec) && (p_ptr->resist_cold || p_ptr->oppose_cold)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if ((p_ptr->resist_elec || p_ptr->oppose_elec) || (p_ptr->resist_cold || p_ptr->oppose_cold)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
 			else if (((p_ptr->resist_elec || p_ptr->oppose_elec) && p_ptr->suscep_cold) || ((p_ptr->resist_cold || p_ptr->oppose_cold) && p_ptr->suscep_elec)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			else if ((p_ptr->resist_elec || p_ptr->oppose_elec) || (p_ptr->resist_cold || p_ptr->oppose_cold)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
 			
 			else if (p_ptr->suscep_elec && p_ptr->suscep_cold) dam *= 2; //Susceptable + Susceptable. (2)
 			else if (p_ptr->suscep_elec || p_ptr->suscep_cold) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
@@ -9152,17 +9152,17 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->immune_elec && p_ptr->immune_poison) dam = 0; //Immune + Immune. (0)
 			else if ((p_ptr->immune_elec && (p_ptr->resist_pois && p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_elec && p_ptr->oppose_elec))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
 			else if ((p_ptr->immune_elec && (p_ptr->resist_pois || p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_elec || p_ptr->oppose_elec))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if (p_ptr->immune_elec || p_ptr->immune_poison) dam = (dam + 1) / 2; //Immune + None. (1/2)
 			else if ((p_ptr->immune_elec && p_ptr->suscep_pois) || (p_ptr->immune_poison && p_ptr->suscep_elec)) dam = dam; //Immune + Susceptable. (1)
+			else if (p_ptr->immune_elec || p_ptr->immune_poison) dam = (dam + 1) / 2; //Immune + None. (1/2)
 			
 			else if ((p_ptr->resist_elec && p_ptr->oppose_elec) && (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) / 9; //Double + Double. (1/9)
 			else if (((p_ptr->resist_elec && p_ptr->oppose_elec) && (p_ptr->resist_pois || p_ptr->oppose_pois)) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && (p_ptr->resist_elec || p_ptr->oppose_elec))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
-			else if ((p_ptr->resist_elec && p_ptr->oppose_elec) || (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
 			else if (((p_ptr->resist_elec && p_ptr->oppose_elec) && p_ptr->suscep_pois) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && p_ptr->suscep_elec)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
+			else if ((p_ptr->resist_elec && p_ptr->oppose_elec) || (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
 			
 			else if ((p_ptr->resist_elec || p_ptr->oppose_elec) && (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if ((p_ptr->resist_elec || p_ptr->oppose_elec) || (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
 			else if (((p_ptr->resist_elec || p_ptr->oppose_elec) && p_ptr->suscep_pois) || ((p_ptr->resist_pois || p_ptr->oppose_pois) && p_ptr->suscep_elec)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			else if ((p_ptr->resist_elec || p_ptr->oppose_elec) || (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
 			
 			else if (p_ptr->suscep_elec && p_ptr->suscep_pois) dam *= 2; //Susceptable + Susceptable. (2)
 			else if (p_ptr->suscep_elec || p_ptr->suscep_pois) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
@@ -9212,17 +9212,17 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->immune_fire && p_ptr->immune_poison) dam = 0; //Immune + Immune. (0)
 			else if ((p_ptr->immune_fire && (p_ptr->resist_pois && p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_fire && p_ptr->oppose_fire))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
 			else if ((p_ptr->immune_fire && (p_ptr->resist_pois || p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_fire || p_ptr->oppose_fire))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if (p_ptr->immune_fire || p_ptr->immune_poison) dam = (dam + 1) / 2; //Immune + None. (1/2)
 			else if ((p_ptr->immune_fire && p_ptr->suscep_pois) || (p_ptr->immune_poison && p_ptr->suscep_fire)) dam = dam; //Immune + Susceptable. (1)
+			else if (p_ptr->immune_fire || p_ptr->immune_poison) dam = (dam + 1) / 2; //Immune + None. (1/2)
 			
 			else if ((p_ptr->resist_fire && p_ptr->oppose_fire) && (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) / 9; //Double + Double. (1/9)
 			else if (((p_ptr->resist_fire && p_ptr->oppose_fire) && (p_ptr->resist_pois || p_ptr->oppose_pois)) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && (p_ptr->resist_fire || p_ptr->oppose_fire))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
-			else if ((p_ptr->resist_fire && p_ptr->oppose_fire) || (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
 			else if (((p_ptr->resist_fire && p_ptr->oppose_fire) && p_ptr->suscep_pois) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && p_ptr->suscep_fire)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
+			else if ((p_ptr->resist_fire && p_ptr->oppose_fire) || (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
 			
 			else if ((p_ptr->resist_fire || p_ptr->oppose_fire) && (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if ((p_ptr->resist_fire || p_ptr->oppose_fire) || (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
 			else if (((p_ptr->resist_fire || p_ptr->oppose_fire) && p_ptr->suscep_pois) || ((p_ptr->resist_pois || p_ptr->oppose_pois) && p_ptr->suscep_fire)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			else if ((p_ptr->resist_fire || p_ptr->oppose_fire) || (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
 			
 			else if (p_ptr->suscep_fire && p_ptr->suscep_pois) dam *= 2; //Susceptable + Susceptable. (2)
 			else if (p_ptr->suscep_fire || p_ptr->suscep_pois) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
@@ -9272,17 +9272,17 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->immune_cold && p_ptr->immune_poison) dam = 0; //Immune + Immune. (0)
 			else if ((p_ptr->immune_cold && (p_ptr->resist_pois && p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_cold && p_ptr->oppose_cold))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
 			else if ((p_ptr->immune_cold && (p_ptr->resist_pois || p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_cold || p_ptr->oppose_cold))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if (p_ptr->immune_cold || p_ptr->immune_poison) dam = (dam + 1) / 2; //Immune + None. (1/2)
 			else if ((p_ptr->immune_cold && p_ptr->suscep_pois) || (p_ptr->immune_poison && p_ptr->suscep_cold)) dam = dam; //Immune + Susceptable. (1)
+			else if (p_ptr->immune_cold || p_ptr->immune_poison) dam = (dam + 1) / 2; //Immune + None. (1/2)
 			
 			else if ((p_ptr->resist_cold && p_ptr->oppose_cold) && (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) / 9; //Double + Double. (1/9)
 			else if (((p_ptr->resist_cold && p_ptr->oppose_cold) && (p_ptr->resist_pois || p_ptr->oppose_pois)) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && (p_ptr->resist_cold || p_ptr->oppose_cold))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
-			else if ((p_ptr->resist_cold && p_ptr->oppose_cold) || (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
 			else if (((p_ptr->resist_cold && p_ptr->oppose_cold) && p_ptr->suscep_pois) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && p_ptr->suscep_cold)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
+			else if ((p_ptr->resist_cold && p_ptr->oppose_cold) || (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
 			
 			else if ((p_ptr->resist_cold || p_ptr->oppose_cold) && (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if ((p_ptr->resist_cold || p_ptr->oppose_cold) || (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
 			else if (((p_ptr->resist_cold || p_ptr->oppose_cold) && p_ptr->suscep_pois) || ((p_ptr->resist_pois || p_ptr->oppose_pois) && p_ptr->suscep_cold)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			else if ((p_ptr->resist_cold || p_ptr->oppose_cold) || (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
 			
 			else if (p_ptr->suscep_cold && p_ptr->suscep_pois) dam *= 2; //Susceptable + Susceptable. (2)
 			else if (p_ptr->suscep_cold || p_ptr->suscep_pois) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
@@ -12320,6 +12320,167 @@ int approx_damage(int m_idx, int dam, int typ) {
 			else if (r_ptr->flags9 & RF9_RES_FIRE)
 				dam = (dam * 3) / 5;
 			break;
+			
+		/* New Runemaster Gestalts - Kurzel */
+		/* Acid + Elec */
+		case GF_ACID_ELEC:
+		{
+			if ((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags3 & RF3_IM_ELEC)) dam = 0; //Immune + Immune. (0)
+			else if (((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags9 & RF9_RES_ELEC)) || ((r_ptr->flags3 & RF3_IM_ELEC) && (r_ptr->flags9 & RF9_RES_ACID))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
+			else if (((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags9 & RF9_SUSCEP_ELEC)) || ((r_ptr->flags3 & RF3_IM_ELEC) && (r_ptr->flags9 & RF9_SUSCEP_ACID))) dam = dam; //Immune + Susceptable. (1)
+			else if ((r_ptr->flags3 & RF3_IM_ACID) || (r_ptr->flags3 & RF3_IM_ELEC)) dam = (dam + 1) / 2; //Immune + None. (1/2)
+			
+			else if ((r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF9_RES_ELEC)) dam = (dam + 2) / 3; //Single + Single. (1/3)
+			else if (((r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF9_SUSCEP_ELEC)) || ((r_ptr->flags9 & RF9_RES_ELEC) && (r_ptr->flags9 & RF9_SUSCEP_ACID))) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			else if ((r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_ELEC)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
+			
+			else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) && (r_ptr->flags9 & RF9_SUSCEP_ELEC)) dam *= 2; //Susceptable + Susceptable. (2)
+			else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) || (r_ptr->flags9 & RF9_SUSCEP_ELEC)) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
+		}
+
+		/* Acid + Fire */
+		case GF_ACID_FIRE:
+		{
+			if ((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags3 & RF3_IM_FIRE)) dam = 0; //Immune + Immune. (0)
+			else if (((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags9 & RF9_RES_FIRE)) || ((r_ptr->flags3 & RF3_IM_FIRE) && (r_ptr->flags9 & RF9_RES_ACID))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
+			else if (((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags9 & RF3_SUSCEP_FIRE)) || ((r_ptr->flags3 & RF3_IM_FIRE) && (r_ptr->flags9 & RF9_SUSCEP_ACID))) dam = dam; //Immune + Susceptable. (1)
+			else if ((r_ptr->flags3 & RF3_IM_ACID) || (r_ptr->flags3 & RF3_IM_FIRE)) dam = (dam + 1) / 2; //Immune + None. (1/2)
+			
+			else if ((r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF9_RES_FIRE)) dam = (dam + 2) / 3; //Single + Single. (1/3)
+			else if (((r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF3_SUSCEP_FIRE)) || ((r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags9 & RF9_SUSCEP_ACID))) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			else if ((r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_FIRE)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
+			
+			else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) && (r_ptr->flags9 & RF3_SUSCEP_FIRE)) dam *= 2; //Susceptable + Susceptable. (2)
+			else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) || (r_ptr->flags9 & RF3_SUSCEP_FIRE)) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
+		}
+
+		/* Acid + Cold */
+		case GF_ACID_COLD:
+		{
+			if ((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags3 & RF3_IM_COLD)) dam = 0; //Immune + Immune. (0)
+			else if (((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags9 & RF9_RES_COLD)) || ((r_ptr->flags3 & RF3_IM_COLD) && (r_ptr->flags9 & RF9_RES_ACID))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
+			else if (((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags9 & RF3_SUSCEP_COLD)) || ((r_ptr->flags3 & RF3_IM_COLD) && (r_ptr->flags9 & RF9_SUSCEP_ACID))) dam = dam; //Immune + Susceptable. (1)
+			else if ((r_ptr->flags3 & RF3_IM_ACID) || (r_ptr->flags3 & RF3_IM_COLD)) dam = (dam + 1) / 2; //Immune + None. (1/2)
+			
+			else if ((r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF9_RES_COLD)) dam = (dam + 2) / 3; //Single + Single. (1/3)
+			else if (((r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF3_SUSCEP_COLD)) || ((r_ptr->flags9 & RF9_RES_COLD) && (r_ptr->flags9 & RF9_SUSCEP_ACID))) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			else if ((r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_COLD)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
+			
+			else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) && (r_ptr->flags9 & RF3_SUSCEP_COLD)) dam *= 2; //Susceptable + Susceptable. (2)
+			else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) || (r_ptr->flags9 & RF3_SUSCEP_COLD)) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
+		}
+
+		/* Acid + Poison */
+		case GF_ACID_POISON:
+		{
+			if ((r_ptr->flags3 & RF3_IM_ACID) && ((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) dam = 0; //Immune + Immune. (0)
+			else if (((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags9 & RF9_RES_POIS)) || (((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) && (r_ptr->flags9 & RF9_RES_ACID))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
+			else if (((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) || (((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) && (r_ptr->flags9 & RF9_SUSCEP_ACID))) dam = dam; //Immune + Susceptable. (1)
+			else if ((r_ptr->flags3 & RF3_IM_ACID) || ((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) dam = (dam + 1) / 2; //Immune + None. (1/2)
+			
+			else if ((r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF9_RES_POIS)) dam = (dam + 2) / 3; //Single + Single. (1/3)
+			else if (((r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) || ((r_ptr->flags9 & RF9_RES_POIS) && (r_ptr->flags9 & RF9_SUSCEP_ACID))) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			else if ((r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_POIS)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
+			
+			else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) dam *= 2; //Susceptable + Susceptable. (2)
+			else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
+		}
+
+		/* Elec + Cold */
+		case GF_ELEC_COLD:
+		{
+			if ((r_ptr->flags3 & RF3_IM_ELEC) && (r_ptr->flags3 & RF3_IM_COLD)) dam = 0; //Immune + Immune. (0)
+			else if (((r_ptr->flags3 & RF3_IM_ELEC) && (r_ptr->flags9 & RF9_RES_COLD)) || ((r_ptr->flags3 & RF3_IM_COLD) && (r_ptr->flags9 & RF9_RES_ELEC))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
+			else if (((r_ptr->flags3 & RF3_IM_ELEC) && (r_ptr->flags9 & RF3_SUSCEP_COLD)) || ((r_ptr->flags3 & RF3_IM_COLD) && (r_ptr->flags9 & RF9_SUSCEP_ELEC))) dam = dam; //Immune + Susceptable. (1)
+			else if ((r_ptr->flags3 & RF3_IM_ELEC) || (r_ptr->flags3 & RF3_IM_COLD)) dam = (dam + 1) / 2; //Immune + None. (1/2)
+			
+			else if ((r_ptr->flags9 & RF9_RES_ELEC) && (r_ptr->flags9 & RF9_RES_COLD)) dam = (dam + 2) / 3; //Single + Single. (1/3)
+			else if (((r_ptr->flags9 & RF9_RES_ELEC) && (r_ptr->flags9 & RF3_SUSCEP_COLD)) || ((r_ptr->flags9 & RF9_RES_COLD) && (r_ptr->flags9 & RF9_SUSCEP_ELEC))) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			else if ((r_ptr->flags9 & RF9_RES_ELEC) || (r_ptr->flags9 & RF9_RES_COLD)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
+			
+			else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) && (r_ptr->flags9 & RF3_SUSCEP_COLD)) dam *= 2; //Susceptable + Susceptable. (2)
+			else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) || (r_ptr->flags9 & RF3_SUSCEP_COLD)) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
+		}
+
+		/* Elec + Poison */
+		case GF_ELEC_POISON:
+		{
+			if ((r_ptr->flags3 & RF3_IM_ELEC) && ((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) dam = 0; //Immune + Immune. (0)
+			else if (((r_ptr->flags3 & RF3_IM_ELEC) && (r_ptr->flags9 & RF9_RES_POIS)) || (((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) && (r_ptr->flags9 & RF9_RES_ELEC))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
+			else if (((r_ptr->flags3 & RF3_IM_ELEC) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) || (((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) && (r_ptr->flags9 & RF9_SUSCEP_ELEC))) dam = dam; //Immune + Susceptable. (1)
+			else if ((r_ptr->flags3 & RF3_IM_ELEC) || ((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) dam = (dam + 1) / 2; //Immune + None. (1/2)
+			
+			else if ((r_ptr->flags9 & RF9_RES_ELEC) && (r_ptr->flags9 & RF9_RES_POIS)) dam = (dam + 2) / 3; //Single + Single. (1/3)
+			else if (((r_ptr->flags9 & RF9_RES_ELEC) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) || ((r_ptr->flags9 & RF9_RES_POIS) && (r_ptr->flags9 & RF9_SUSCEP_ELEC))) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			else if ((r_ptr->flags9 & RF9_RES_ELEC) || (r_ptr->flags9 & RF9_RES_POIS)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
+			
+			else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) dam *= 2; //Susceptable + Susceptable. (2)
+			else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
+		}
+
+		/* Fire + Poison */
+		case GF_FIRE_POISON:
+		{
+			if ((r_ptr->flags3 & RF3_IM_FIRE) && ((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) dam = 0; //Immune + Immune. (0)
+			else if (((r_ptr->flags3 & RF3_IM_FIRE) && (r_ptr->flags9 & RF9_RES_POIS)) || (((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) && (r_ptr->flags9 & RF9_RES_FIRE))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
+			else if (((r_ptr->flags3 & RF3_IM_FIRE) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) || (((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) && (r_ptr->flags9 & RF3_SUSCEP_FIRE))) dam = dam; //Immune + Susceptable. (1)
+			else if ((r_ptr->flags3 & RF3_IM_FIRE) || ((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) dam = (dam + 1) / 2; //Immune + None. (1/2)
+			
+			else if ((r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags9 & RF9_RES_POIS)) dam = (dam + 2) / 3; //Single + Single. (1/3)
+			else if (((r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) || ((r_ptr->flags9 & RF9_RES_POIS) && (r_ptr->flags9 & RF3_SUSCEP_FIRE))) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			else if ((r_ptr->flags9 & RF9_RES_FIRE) || (r_ptr->flags9 & RF9_RES_POIS)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
+			
+			else if ((r_ptr->flags9 & RF3_SUSCEP_FIRE) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) dam *= 2; //Susceptable + Susceptable. (2)
+			else if ((r_ptr->flags9 & RF3_SUSCEP_FIRE) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
+		}
+
+		/* Cold + Poison */
+		case GF_COLD_POISON:
+		{
+			if ((r_ptr->flags3 & RF3_IM_COLD) && ((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) dam = 0; //Immune + Immune. (0)
+			else if (((r_ptr->flags3 & RF3_IM_COLD) && (r_ptr->flags9 & RF9_RES_POIS)) || (((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) && (r_ptr->flags9 & RF9_RES_COLD))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
+			else if (((r_ptr->flags3 & RF3_IM_COLD) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) || (((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) && (r_ptr->flags9 & RF3_SUSCEP_COLD))) dam = dam; //Immune + Susceptable. (1)
+			else if ((r_ptr->flags3 & RF3_IM_COLD) || ((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) dam = (dam + 1) / 2; //Immune + None. (1/2)
+			
+			else if ((r_ptr->flags9 & RF9_RES_COLD) && (r_ptr->flags9 & RF9_RES_POIS)) dam = (dam + 2) / 3; //Single + Single. (1/3)
+			else if (((r_ptr->flags9 & RF9_RES_COLD) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) || ((r_ptr->flags9 & RF9_RES_POIS) && (r_ptr->flags9 & RF3_SUSCEP_COLD))) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
+			else if ((r_ptr->flags9 & RF9_RES_COLD) || (r_ptr->flags9 & RF9_RES_POIS)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
+			
+			else if ((r_ptr->flags9 & RF3_SUSCEP_COLD) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) dam *= 2; //Susceptable + Susceptable. (2)
+			else if ((r_ptr->flags9 & RF3_SUSCEP_COLD) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
+		}
 
 		case GF_NETHER:
 			if (r_ptr->flags3 & RF3_UNDEAD)
