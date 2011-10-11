@@ -2055,11 +2055,13 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 		{
 			int px = p_ptr->px;
 			int py = p_ptr->py;
-			int tx = p_ptr->target_col;
-			int ty = p_ptr->target_row;
+			int tx, ty;
 
 			/* Limit to distance 1 */
 			if (dir == 5 && target_okay(Ind)) {
+				tx = p_ptr->target_col;
+				ty = p_ptr->target_row;
+
 				/* .. for targetting use */
 				if (tx - px > 1) tx = px + 1;
 				if (px - tx > 1) tx = px - 1;
