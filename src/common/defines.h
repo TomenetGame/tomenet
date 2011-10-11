@@ -5961,8 +5961,8 @@ extern int PlayerUID;
 #define SOUND_MAX	8
 
 #ifdef USE_SOUND_2010
- #define SOUND_MAX_2010	200 /*for experimenting purpose - C. Blue*/
- #define MUSIC_MAX	50 /*for experimenting purpose - C. Blue*/
+ #define SOUND_MAX_2010	400 /*for experimenting purpose - C. Blue*/
+ #define MUSIC_MAX	100 /*for experimenting purpose - C. Blue*/
 
  //defines.h: (for client-side, from angband)
  /* Given an array, determine how many elements are in it: */
