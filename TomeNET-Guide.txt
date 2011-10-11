@@ -9153,6 +9153,13 @@ vary. For example a warrior cannot learn magic spells.
     than martial artists who might just utilize easy-to-get forms such as fruit
     bat, wild cat, crow or spiders right away for great effect.
 
+    Mimics can get the highest amount of hit points of any class, even in the
+    very long run ie at very high character levels far above 50, provided they
+    acquire an appropriate high-level form (preferably level 80 or better).
+    Low- and mid-level forms won't help high-level mimics that much to keep up
+    their advantage in hit points, ie the extra hit points they gain from such
+    forms will diminish as they continue to rise to very high character levels.
+
     Hint: Maybe there's a friendly mimicry-user around who can forge some
     'Rings of Polymorphing' for you from forms he or she no longer uses.
     As for all shape-shifters going with fruit bat body modification is not
