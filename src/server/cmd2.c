@@ -2740,13 +2740,16 @@ void do_cmd_disarm(int Ind, int dir)
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
 
+			/* Take a turn */
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+
 			break_shadow_running(Ind);
 			stop_precision(Ind);
 			stop_shooting_till_kill(Ind);
 
 			msg_print(Ind, "You disarm the monster trap.");
 #ifdef USE_SOUND_2010
-				sound(Ind, "disarm", NULL, SFX_TYPE_COMMAND, FALSE);
+			sound(Ind, "disarm", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 			do_cmd_disarm_mon_trap_aux(wpos, y, x);
 			more = FALSE;
@@ -2761,6 +2764,9 @@ void do_cmd_disarm(int Ind, int dir)
 			break_shadow_running(Ind);
 			stop_precision(Ind);
 			stop_shooting_till_kill(Ind);
+
+			/* Take a turn */
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			i = p_ptr->skill_dis;
 			if (p_ptr->blind || no_lite(Ind)) i = i / 10;
