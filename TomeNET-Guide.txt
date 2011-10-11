@@ -8065,6 +8065,7 @@ Note that not every skill is available to every profession (class).
                                 averaged, and rounded up, then bpr bonus for
                                 dual-wielding is added.
                                 Example: 4bpr & 5bpr = 4.5bpr rounded to 5bpr.
+                                +1 bonus bpr for dual-wielding -> 6bpr total.
                                 Also by pressing 'm' you can disable/reenable
                                 dual-wield mode.
                                 While disabled ('Main-Hand mode') you will just
