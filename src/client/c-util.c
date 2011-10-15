@@ -4226,8 +4226,8 @@ void interact_macros(void)
 						case 'b': Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GTelep");
 							Term_putstr(5, 14, -1, TERM_GREEN, "if you want to use a 'Staff of Teleportation'.");
 							break;
-						case 'c': Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GTrap Det");
-							Term_putstr(5, 14, -1, TERM_GREEN, "if you want to use a 'Rod of Trap Detection'.");
+						case 'c': Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GTrap Loc");
+							Term_putstr(5, 14, -1, TERM_GREEN, "if you want to use a 'Rod of Trap Location'.");
 							break;
 						case 'd': Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GLightn");
 							Term_putstr(5, 14, -1, TERM_GREEN, "if you want to use a 'Rod of Lightning Bolts'.");
