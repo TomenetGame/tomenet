@@ -38,15 +38,15 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		4
 #define VERSION_PATCH		8
-#define VERSION_EXTRA		0
+#define VERSION_EXTRA		1
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
 /* maximum MAJOR/MINOR/PATCH version that counts as 'outdated' (should be 0-15). */
 #define VERSION_MAJOR_OUTDATED	4
 #define VERSION_MINOR_OUTDATED	4
-#define VERSION_PATCH_OUTDATED	7
-#define VERSION_EXTRA_OUTDATED	1
+#define VERSION_PATCH_OUTDATED	8
+#define VERSION_EXTRA_OUTDATED	0
 #define VERSION_BRANCH_OUTDATED	0
 #define VERSION_BUILD_OUTDATED	0
 
@@ -57,7 +57,7 @@
 #define VERSION_MAJOR_LATEST	4
 #define VERSION_MINOR_LATEST	4
 #define VERSION_PATCH_LATEST	8
-#define VERSION_EXTRA_LATEST	0
+#define VERSION_EXTRA_LATEST	1
 #define VERSION_BRANCH_LATEST	0
 #define VERSION_BUILD_LATEST	0
 
@@ -5961,8 +5961,8 @@ extern int PlayerUID;
 #define SOUND_MAX	8
 
 #ifdef USE_SOUND_2010
- #define SOUND_MAX_2010	200 /*for experimenting purpose - C. Blue*/
- #define MUSIC_MAX	50 /*for experimenting purpose - C. Blue*/
+ #define SOUND_MAX_2010	400 /*for experimenting purpose - C. Blue*/
+ #define MUSIC_MAX	100 /*for experimenting purpose - C. Blue*/
 
  //defines.h: (for client-side, from angband)
  /* Given an array, determine how many elements are in it: */
