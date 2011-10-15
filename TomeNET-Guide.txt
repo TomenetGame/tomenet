@@ -8065,6 +8065,7 @@ Note that not every skill is available to every profession (class).
                                 averaged, and rounded up, then bpr bonus for
                                 dual-wielding is added.
                                 Example: 4bpr & 5bpr = 4.5bpr rounded to 5bpr.
+                                +1 bonus bpr for dual-wielding -> 6bpr total.
                                 Also by pressing 'm' you can disable/reenable
                                 dual-wield mode.
                                 While disabled ('Main-Hand mode') you will just
@@ -9151,6 +9152,13 @@ vary. For example a warrior cannot learn magic spells.
     because those have a somewhat harder time to find usable forms early on
     than martial artists who might just utilize easy-to-get forms such as fruit
     bat, wild cat, crow or spiders right away for great effect.
+
+    Mimics can get the highest amount of hit points of any class, even in the
+    very long run ie at very high character levels far above 50, provided they
+    acquire an appropriate high-level form (preferably level 80 or better).
+    Low- and mid-level forms won't help high-level mimics that much to keep up
+    their advantage in hit points, ie the extra hit points they gain from such
+    forms will diminish as they continue to rise to very high character levels.
 
     Hint: Maybe there's a friendly mimicry-user around who can forge some
     'Rings of Polymorphing' for you from forms he or she no longer uses.

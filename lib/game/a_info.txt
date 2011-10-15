@@ -627,6 +627,7 @@ F:SEE_INVIS | HEAVY_CURSE | TY_CURSE |
 F:RES_DISEN | RES_FEAR | FREE_ACT | RES_ACID | RES_FIRE | RES_POIS |
 F:IM_COLD | ACTIVATE | DRAIN_HP | AUTO_CURSE | AGGRAVATE
 #F:NO_TELE | NO_MAGIC | 
+F:DG_CURSE
 D:A headpiece, gaudy and barbaric, that betrayed a warrior when he most 
 D:needed succor.
 
