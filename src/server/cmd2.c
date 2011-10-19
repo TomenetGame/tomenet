@@ -6190,7 +6190,7 @@ void do_cmd_fusion(int Ind) {
 	}
 
 	/* failure */
-	msg_print(Ind, "\377yNo egligible target found nearby.");
+	msg_print(Ind, "\377yNo eligible target found nearby.");
 #endif
 }
 
