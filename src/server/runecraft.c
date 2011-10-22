@@ -503,7 +503,7 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 		char o_name[ONAME_LEN];
 		int rune_in_inventory[3];
 		int runes_in_inventory = 0;
-		bool rune_in_inventory_poofs[3];
+		bool rune_in_inventory_poofs[3] = {FALSE, FALSE, FALSE};
 
 		/* prepare management arrays for up to 3 runes */
 		for (i = 0; i < RCRAFT_MAX_ELEMENTS; i++) {
