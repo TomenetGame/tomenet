@@ -9339,6 +9339,8 @@ vary. For example a warrior cannot learn magic spells.
     mindcrafters, so training them may require somewhat more effort.
     They are able to detect 'Telepath' ego monsters via ESP which usually are
     able to conceal their presence telepathically vs all other classes.
+    Also they are able to resist malicious mind-affecting effects better than
+    other classes, for example such as forgetfulness or psionic attacks.
 
     Hint: Mindcrafters have a powerful ranged attack spell they can use very
     early on, Psionic Blast. Look for it in the book store right away.
