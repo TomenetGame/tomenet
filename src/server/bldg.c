@@ -61,7 +61,7 @@ static void race_legends(int Ind) {
 	char path[MAX_PATH_LENGTH];
 //	cptr name = "legends.log";
 //	(void)do_cmd_help_aux(Ind, name, NULL, line, FALSE, FALSE);
-	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends.log");
+	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends-rev.log");
 	do_cmd_check_other_prepare(Ind, path);
 }
 
