@@ -201,15 +201,24 @@ HSANITY = add_spell
 	["fail"] =      50,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
+			set_afraid(Ind, 0)
+			set_res_fear(Ind, get_level(Ind, HSANITY, 50))
+			set_confused(Ind, 0)
 			set_image(Ind, 0)
+
 			heal_insanity(Ind, 15 + get_level(Ind, HSANITY, 55))
+			if player.csane == player.msane then
+				msg_print(Ind, "You are in full command of your mental faculties.")
+			end
+
 			fire_ball(Ind, GF_SANITY_PLAYER, 0, 30 + get_level(Ind, HSANITY, 110), 1, " waves over your eyes, murmuring some words..")
 			end,
 	["info"] =      function()
 			return "cures "..(15 + get_level(Ind, HSANITY, 55)).." SN"
 			end,
 	["desc"] =      {
-			"Frees your mind from hallucinations and later on cures some insanity",
+			"Frees your mind from fear, confusion, hallucinations",
+			"and also cures some insanity.",
 			"***Automatically projecting***",
 		}
 }

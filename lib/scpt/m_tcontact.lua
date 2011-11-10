@@ -143,14 +143,26 @@ MCURE = add_spell
 	["mana_max"] =  10,
 	["fail"] =      5,
 	["spell"] =     function()
-			fire_ball(Ind, GF_REMFEAR_PLAYER, 0, get_level(Ind, MCURE, 50 * 2), 4, " waves over your eyes.")
-			set_afraid(Ind, 0)
-			set_res_fear(Ind, get_level(Ind, MSANITY, 50))
-			if get_level(Ind, MCURE, 50) >= 5 then
-				set_confused(Ind, 0)
-			end
 			if get_level(Ind, MCURE, 50) >= 10 then
+				set_afraid(Ind, 0)
+				set_res_fear(Ind, get_level(Ind, MCURE, 50))
+				set_confused(Ind, 0)
 				set_image(Ind, 0)
+
+				fire_ball(Ind, GF_REMIMAGE_PLAYER, 0, 1, 4, " waves over your eyes.")
+			else
+				if get_level(Ind, MCURE, 50) >= 5 then
+					set_afraid(Ind, 0)
+					set_res_fear(Ind, get_level(Ind, MCURE, 50))
+					set_confused(Ind, 0)
+
+					fire_ball(Ind, GF_REMCONF_PLAYER, 0, 1, 4, " waves over your eyes.")
+				else
+					set_afraid(Ind, 0)
+					set_res_fear(Ind, get_level(Ind, MCURE, 50))
+
+					fire_ball(Ind, GF_REMFEAR_PLAYER, 0, 1, 4, " waves over your eyes.")
+				end
 			end
 			end,
 	["info"] =      function()
@@ -176,17 +188,16 @@ MSANITY = add_spell
 	["mana_max"] =  100,
 	["fail"] =      40,
 	["spell"] =     function()
-			fire_ball(Ind, GF_REMFEAR_PLAYER, 0, get_level(Ind, MSANITY, 50 * 2), 4, " waves over your eyes.")
 			set_afraid(Ind, 0)
 			set_res_fear(Ind, get_level(Ind, MSANITY, 50))
-
-			set_image(Ind, 0)
 			set_confused(Ind, 0)
+			set_image(Ind, 0)
 
 			heal_insanity(Ind, 15 + get_level(Ind, MSANITY, 55))
 			if player.csane == player.msane then
 				msg_print(Ind, "You are in full command of your mental faculties.")
 			end
+
 			fire_ball(Ind, GF_SANITY_PLAYER, 0, 30 + get_level(Ind, MSANITY, 110), 1, " focusses on your mind.")
 			end,
 	["info"] =      function()

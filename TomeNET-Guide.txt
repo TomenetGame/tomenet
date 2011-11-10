@@ -6353,11 +6353,11 @@ Mummy Wrapping      Reduces your charisma slightly, and prevents other players
                     wear a mummy wrapping.
                     Hint: Polymorphing into a vampire bat may improve hit
                     point regeneration rate.
-Tarpaulin           When equipped, prevents your inventory and equipment from
-                    taking water damage when crossing water fields or when you
-                    are attacked with water-based effects.
+Tarpaulin           When equipped a tarp prevents your inventory and equipment
+                    from taking water damage when crossing water fields or when
+                    you are attacked with water-based effects.
                     Note that your weapon is not included in this protection
-                    while attacking.
+                    when you for example attack a water-based monster with it.
 Picklock            When equipped, improves your trap-disarming ability.
 Money Belt          When equipped, greatly reduces chance of thieves succeeding
                     in stealing your money.
@@ -6810,17 +6810,20 @@ While characters either having or not having 'invisible' property is a binary
 choice, the actual effect it has on gameplay will be affected by player/monster
 level, the ability to see invisible, and shadow cloaks, as follows here:
 
-A player who is invisible is harder to spot for monsters, making them move
+A player who is invisible is harder to spot for monsters in the way that they
+only have a certain chance to see the player on each turn, making them move
 erratically instead of directly targetting the player. This also helps against
 casters, archers or breathers who won't be able to target you as well (often)
 as they usually could. Being invisible costs your body a lot of effort,
 resulting in getting hungry quickly.
 
-Invisibility won't work at all on monsters that..
-        -are invisible too.
+Invisibility won't work at all on monsters that are..
+        -invisible too.
         -special quest monsters (Sauron, Morgoth).
-        -are Dragonriders, they have ESP.
+        -Dragonriders, they have ESP.
         -nonliving monsters with empty mind (not using optical senses).
+        -able to see through the rogue-specific 'cloaking' ability,
+         see the cloaking command description in (0.2) for a list.
 
 All other monsters are randomly affected by the player's invisibility,
 meaning that they will only sometimes be able to spot him (they will see the
@@ -6851,7 +6854,10 @@ If another player is invisible and not of higher level than you..
          need some timing, might take several tries.
 Invisibility (on players) overrides ESP. So it does help in a (blood bond)
 duel even if the opponent has ESP.
-The effect of invisibility is greatly reduced in PvP but still gives an edge.
+
+The effect of invisibility is greatly reduced in PvP (you cannot become
+completely invisible even if your level is higher than the other player) but
+still gives a slight edge.
 
 
 Cloaking:
@@ -6860,8 +6866,9 @@ The ability to cloak themselves is exclusive to rogues and automatically
 acquired at level 15. This will effectively render them invisible, but it is in
 fact NOT the "Invisibility" that has been described above.
 Cloaking overrides any detection mechanism, a cloaked player can only be seen
-by party members, or while the cloaking is weakened because the cloaked player
-performed certain (noisy) actions. (Also see (0.2) for more information.)
+by party members, certain special monsters, or while the cloaking is weakened
+because the cloaked player performed certain (noisy) actions.
+See (0.2) for more information about cloaking.
 
 
 

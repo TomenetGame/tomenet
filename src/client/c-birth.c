@@ -715,7 +715,7 @@ static void choose_stat_order(void)
 					c_put_str(TERM_YELLOW, "  How well you can use magic                   ", 4, 30);
 					c_put_str(TERM_YELLOW, "    (depending on your class and spells).      ", 5, 30);
 					c_put_str(TERM_YELLOW, "  How well you can use magic devices.          ", 6, 30);
-					c_put_str(TERM_YELLOW, "  Helps your disarming skill.                  ", 7, 30);
+					c_put_str(TERM_YELLOW, "  Helps your disarming ability.                ", 7, 30);
 					c_put_str(TERM_YELLOW, "  Helps noticing attempts to steal from you.   ", 8, 30);
 					c_put_str(TERM_YELLOW, "                                               ", 9, 30);
 					c_put_str(TERM_YELLOW, "                                               ", 10, 30);
@@ -738,7 +738,7 @@ static void choose_stat_order(void)
 					c_put_str(TERM_YELLOW, "  Helps your stealing skills (if any).         ", 7, 30);
 					c_put_str(TERM_YELLOW, "  Helps to prevent foes stealing from you.     ", 8, 30);
 					c_put_str(TERM_YELLOW, "  Helps keeping your balance after bashing.    ", 9, 30);
-					c_put_str(TERM_YELLOW, "  Helps your disarming skill.                  ", 10, 30);
+					c_put_str(TERM_YELLOW, "  Helps your disarming ability.                ", 10, 30);
 					c_put_str(TERM_YELLOW, "  Slightly helps you swimming.                 ", 11, 30);
 					break;
 				case 4:	c_put_str(TERM_L_UMBER, "Constitution -", 3, 30);

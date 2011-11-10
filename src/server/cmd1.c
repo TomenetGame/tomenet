@@ -2659,7 +2659,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 #endif
 
 #ifdef USE_SOUND_2010
-			if (o_ptr->k_idx && is_weapon(o_ptr->tval))
+			if (o_ptr->k_idx && (is_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
 				switch(o_ptr->tval) {
 				case TV_SWORD: sound(Ind, "hit_sword", "hit", SFX_TYPE_ATTACK, FALSE); break;
 				case TV_BLUNT: if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit", SFX_TYPE_ATTACK, FALSE);
@@ -3567,7 +3567,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 #ifdef USE_SOUND_2010
 			if (sfx == 0) {
-				if (o_ptr->k_idx && is_weapon(o_ptr->tval))
+				if (o_ptr->k_idx && (is_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
 					switch(o_ptr->tval) {
 					case TV_SWORD: sound(Ind, "hit_sword", "hit", SFX_TYPE_ATTACK, FALSE); break;
 					case TV_BLUNT: if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit", SFX_TYPE_ATTACK, FALSE);

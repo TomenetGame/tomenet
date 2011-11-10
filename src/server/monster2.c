@@ -2550,14 +2550,15 @@ void update_player(int Ind)
 			}
 
 			/* Can we see invisible players ? */
-			if ((!p_ptr->see_inv ||
+			if (q_ptr->invis && !player_in_party(p_ptr->party, Ind) &&
+			    (!p_ptr->see_inv ||
 			    ((q_ptr->inventory[INVEN_OUTER].k_idx) &&
 			    (q_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK) &&
-			    (q_ptr->inventory[INVEN_OUTER].sval == SV_SHADOW_CLOAK))) &&
-			    q_ptr->invis && !player_in_party(p_ptr->party, Ind))
+			    (q_ptr->inventory[INVEN_OUTER].sval == SV_SHADOW_CLOAK))))
 			{
 				/* in PvP, invis shouldn't help too greatly probably */
-				if ((q_ptr->lev > p_ptr->lev) || q_ptr->invis_phase >= (hostile ? 85 : 25))
+				if ((q_ptr->lev > p_ptr->lev && !hostile) ||
+				    q_ptr->invis_phase >= (hostile ? 85 : 20))
 					flag = FALSE;
 			}
 
