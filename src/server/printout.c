@@ -155,7 +155,9 @@ extern bool do_cmd_view_rfe(int Ind, char *str, int line)
 /* Log "legends" (achievements of various sort, viewable in the town hall) - C. Blue */
 extern int l_printf(char *str, ...) {
 	char path[MAX_PATH_LENGTH];
+	char path_rev[MAX_PATH_LENGTH];
 	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends.log");
+	path_build(path_rev, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends-rev.log");
 	va_list va;
 
 	if (initl == FALSE) { /* in case we don't start her up properly */
@@ -167,6 +169,11 @@ extern int l_printf(char *str, ...) {
 	vfprintf(fpl, str, va);
 	va_end(va);
 	fflush(fpl);
+
+	/* create reverse version of the log for viewing,
+	   so the latest entries are displayed top first! */
+	system(format("tac %s > %s", path, path_rev));
+
 	return(TRUE);
 }
 
