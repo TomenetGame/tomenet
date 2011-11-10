@@ -1532,7 +1532,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_SCROLL:
 			if (artifact_p(o_ptr) && known) break;
 			if (o_ptr->sval == SV_SCROLL_CHEQUE) {
-				basenm = "& Cheque~";
+				basenm = "& Cheque~ worth $ Au";
 				break;
 			}
 			/* Color the object */
@@ -1821,6 +1821,12 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 			/* Insert the modifier */
 			for (u = modstr; *u; u++) *t++ = *u;
+		}
+
+		/* Cheque value */
+		else if (*s == '$') {
+			sprintf(tmp_val, "%d", ps_get_cheque_value(o_ptr));
+			t = object_desc_str(t, tmp_val);
 		}
 
 		/* Normal */
