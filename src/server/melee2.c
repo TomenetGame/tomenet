@@ -6278,8 +6278,27 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm)
 static bool player_invis(int Ind, monster_type *m_ptr, int dist)
 {
 	player_type *p_ptr = Players[Ind];
+	monster_race *r_ptr = race_inf(m_ptr);
 	s16b inv, mlv;
-	monster_race *r_ptr;
+
+	if (r_ptr->flags2 & RF2_INVISIBLE ||
+	    r_ptr->flags1 & RF1_QUESTOR ||
+	    r_ptr->flags3 & RF3_DRAGONRIDER)	/* have ESP */
+		return(FALSE);
+	/* since RF1_QUESTOR is currently not used/completely implemented,
+	   I hard-code Morgoth and Sauron and Zu-Aon here - C. Blue */
+	if ((m_ptr->r_idx == 860) || (m_ptr->r_idx == 862) || (m_ptr->r_idx == 1097)) return(FALSE);
+
+	/* Probably they detect things by non-optical means */
+	if (r_ptr->flags3 & RF3_NONLIVING && r_ptr->flags2 & RF2_EMPTY_MIND)
+		return(FALSE);
+
+	/* Added all monsters that can see through 'Cloaking' ability too - C. Blue */
+	if (strchr("eAN", r_ptr->d_char) ||
+	    ((r_ptr->flags1 & RF1_UNIQUE) && (r_ptr->flags2 & RF2_SMART) && (r_ptr->flags2 & RF2_POWERFUL)) ||
+	    (r_ptr->flags7 & RF7_NAZGUL))
+		return(FALSE);
+
 
 	inv = p_ptr->invis;
 
@@ -6290,19 +6309,6 @@ static bool player_invis(int Ind, monster_type *m_ptr, int dist)
 	if (p_ptr->aggravate) inv /= 3;
 
 	if (inv < 1) return(FALSE);
-
-	r_ptr = race_inf(m_ptr);
-
-	if (r_ptr->flags2 & RF2_INVISIBLE || r_ptr->flags1 & RF1_QUESTOR ||
-			r_ptr->flags3 & RF3_DRAGONRIDER)	/* have ESP */
-		return(FALSE);
-	/* since RF1_QUESTOR is currently not used/completely implemented,
-	   I hard-code Morgoth and Sauron and Zu-Aon here - C. Blue */
-	if ((m_ptr->r_idx == 860) || (m_ptr->r_idx == 862) || (m_ptr->r_idx == 1097)) return(FALSE);
-
-	/* Probably they detect things by non-optical means */
-	if (r_ptr->flags3 & RF3_NONLIVING && r_ptr->flags2 & RF2_EMPTY_MIND)
-		return(FALSE);
 
 	mlv = (s16b) r_ptr->level + r_ptr->aaf - dist * 2;
 
