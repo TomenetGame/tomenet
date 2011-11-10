@@ -5857,6 +5857,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 		    (typ != GF_WRAITH_PLAYER) && (typ != GF_SPEED_PLAYER) &&
 		    (typ != GF_SHIELD_PLAYER) && (typ != GF_RECALL_PLAYER) &&
 		    (typ != GF_BLESS_PLAYER) && (typ != GF_REMFEAR_PLAYER) &&
+		    (typ != GF_REMCONF_PLAYER) && (typ != GF_REMIMAGE_PLAYER) &&
 		    (typ != GF_SATHUNGER_PLAYER) && (typ != GF_RESFIRE_PLAYER) &&
 		    (typ != GF_RESCOLD_PLAYER) && (typ != GF_CUREPOISON_PLAYER) &&
 		    (typ != GF_SEEINVIS_PLAYER) && (typ != GF_SEEMAP_PLAYER) &&

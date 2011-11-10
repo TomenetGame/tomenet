@@ -3759,6 +3759,8 @@
 #define GF_DISP_DEMON   	143
 #define GF_SOULCURE_PLAYER	144
 #define GF_MINDBOOST_PLAYER	145
+#define GF_REMCONF_PLAYER	146
+#define GF_REMIMAGE_PLAYER	147
 
 /* Zangband changes */
 #define GF_TELE_TO		150

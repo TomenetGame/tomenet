@@ -8233,6 +8233,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			(typ != GF_WRAITH_PLAYER) && (typ != GF_SPEED_PLAYER) &&
 			(typ != GF_SHIELD_PLAYER) && (typ != GF_RECALL_PLAYER) &&
 			(typ != GF_BLESS_PLAYER) && (typ != GF_REMFEAR_PLAYER) &&
+			(typ != GF_REMCONF_PLAYER) && (typ != GF_REMIMAGE_PLAYER) &&
 			(typ != GF_SATHUNGER_PLAYER) && (typ != GF_RESFIRE_PLAYER) &&
 			(typ != GF_RESCOLD_PLAYER) && (typ != GF_CUREPOISON_PLAYER) &&
 			(typ != GF_SEEINVIS_PLAYER) && (typ != GF_SEEMAP_PLAYER) &&
@@ -8339,6 +8340,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	(typ == GF_WRAITH_PLAYER) || (typ == GF_SPEED_PLAYER) ||
 	/*(typ == GF_SHIELD_PLAYER) || (typ == GF_RECALL_PLAYER) ||*/
 	(typ == GF_BLESS_PLAYER) || (typ == GF_REMFEAR_PLAYER) ||
+	(typ == GF_REMCONF_PLAYER) || (typ == GF_REMIMAGE_PLAYER) ||
 	(typ == GF_SATHUNGER_PLAYER) || /*(typ == GF_RESFIRE_PLAYER) ||
 	(typ == GF_RESCOLD_PLAYER) ||*/ (typ == GF_CUREPOISON_PLAYER) ||
 	(typ == GF_SEEINVIS_PLAYER) || (typ == GF_SEEMAP_PLAYER) ||
@@ -8362,6 +8364,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	(typ == GF_WRAITH_PLAYER) || (typ == GF_SPEED_PLAYER) ||
 	(typ == GF_SHIELD_PLAYER) || (typ == GF_RECALL_PLAYER) ||
 	(typ == GF_BLESS_PLAYER) || (typ == GF_REMFEAR_PLAYER) ||
+	(typ == GF_REMCONF_PLAYER) || (typ == GF_REMIMAGE_PLAYER) ||
 	(typ == GF_SATHUNGER_PLAYER) || (typ == GF_RESFIRE_PLAYER) ||
 	(typ == GF_RESCOLD_PLAYER) || (typ == GF_CUREPOISON_PLAYER) ||
 	(typ == GF_SEEINVIS_PLAYER) || (typ == GF_SEEMAP_PLAYER) ||
@@ -9934,14 +9937,29 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			(void)set_blessed(Ind, dam);
 			break;
 		}
-	
-		case GF_REMFEAR_PLAYER:
-		{
+
+		/* a special family, actually cumulative.. hacky, yeah */
+		case GF_REMFEAR_PLAYER:		/* just fear */
 			set_afraid(Ind, 0);
 			/* Stay bold for some turns */
 			(void)set_res_fear(Ind, dam);
 			break;
-		}
+		case GF_REMCONF_PLAYER:		/* confusion, and ALSO fear */
+			set_afraid(Ind, 0);
+			/* Stay bold for some turns */
+			(void)set_res_fear(Ind, dam);
+
+			set_confused(Ind, 0);
+			break;
+		case GF_REMIMAGE_PLAYER:	/* hallu, and ALSO conf/fear */
+			set_afraid(Ind, 0);
+			/* Stay bold for some turns */
+			(void)set_res_fear(Ind, dam);
+
+			set_confused(Ind, 0);
+
+			set_image(Ind, 0);
+			break;
 
 		case GF_HPINCREASE_PLAYER:
 		{
@@ -10246,8 +10264,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		case GF_SANITY_PLAYER:
 			msg_format(Ind, "%s waves over your eyes, murmuring some words..", killer);
-			(void)set_image(Ind, 0);
+			set_afraid(Ind, 0);
+			/* Stay bold for some turns */
+			(void)set_res_fear(Ind, dam);
 			(void)set_confused(Ind, 0);
+			(void)set_image(Ind, 0);
+
 			if (dam > 0) {
 #if 1
 				/* Testing new version that increases sanity - mikaelh */
@@ -11153,6 +11175,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		 (typ == GF_SPEED_PLAYER) || (typ == GF_SHIELD_PLAYER) ||
 		 (typ == GF_RECALL_PLAYER) || (typ == GF_BLESS_PLAYER) ||
 		 (typ == GF_REMFEAR_PLAYER) || (typ == GF_SATHUNGER_PLAYER) ||
+		 (typ == GF_REMCONF_PLAYER) || (typ == GF_REMIMAGE_PLAYER) ||
 		 (typ == GF_RESFIRE_PLAYER) || (typ == GF_RESCOLD_PLAYER) ||
 		 (typ == GF_CUREPOISON_PLAYER) || (typ == GF_SEEINVIS_PLAYER) ||
 		 (typ == GF_SEEMAP_PLAYER) || (typ == GF_CURECUT_PLAYER) ||
