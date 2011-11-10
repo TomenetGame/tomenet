@@ -11047,7 +11047,7 @@ fighting techniques that cost 'Stamina' to use. Warriors, rangers, paladins
 and mimics will learn all of them eventually, while rogues may learn sprint
 and taunt, and some rogue-specific techniques.
 Similarly, by training archery your character will gain access to a couple of
-shooting techniques.
+ranged techniques.
 
 All techniques are accessable via 'm' key, also see (3.7a).
 
@@ -11135,7 +11135,7 @@ The techniques are as follows:
         collect a large stack of materials and use the skill on that stack
         (the total weight of that inventory slot determines the stack size).
         The level of the raw materials has no effect on the outcome.
-    Double-shot         1 stamina/turn while using it actively
+    Double-shot         1 stamina/5 turns (random) while using it actively
         Toggle, making you enter or leave double-shot mode. While active, you
         will fire 2 projectiles at once on each shot, dealing way less damage
         than a single shot though. Useful to eradicate weak critters.
@@ -11145,11 +11145,12 @@ The techniques are as follows:
               To permanently leave double-shot mode, you have to toggle it
               explicitely in the 'm' menu.
     Barrage             9 stamina
-        Prepares to fire a powerful multi-shot which will cost you a whole
+        Prepares to fire a powerful multi-shot which will cost you half a
         turn. It stuns the target (if it doesn't resist stunning attacks).
 
-    Note: The technique 'fire-till-kill' is available to any class, and
-    does appear directly under 'm'. See (5.2a) for details.
+    Note: The ability 'fire-till-kill' is available to any class and not
+    considered to be a special shooting technique. It appears directly in the
+    'm' key menu. See (5.2a) for details.
 
 Stamina regenerates slowly over time, faster while resting. Your CONstitution
 stat and 'Health' skill will further improve regeneration speed.
