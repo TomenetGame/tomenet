@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 11. October 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 10. November 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -9339,6 +9339,8 @@ vary. For example a warrior cannot learn magic spells.
     mindcrafters, so training them may require somewhat more effort.
     They are able to detect 'Telepath' ego monsters via ESP which usually are
     able to conceal their presence telepathically vs all other classes.
+    Also they are able to resist malicious mind-affecting effects better than
+    other classes, for example such as forgetfulness or psionic attacks.
 
     Hint: Mindcrafters have a powerful ranged attack spell they can use very
     early on, Psionic Blast. Look for it in the book store right away.
@@ -10107,7 +10109,7 @@ Ogre            13  This form can cross thick woods and mountain terrain.
                     (This monster occurs somewhat more rarely than the others.)
 Lizard Man      16  High HP, can swim easily, resists water, immune to acid.
                     (This monster occurs somewhat more rarely than the others.)
-Ogrillion       16  Very high HP for its level, good melee damage.
+Ogrillon        16  Very high HP for its level, good melee damage.
                     (This monster occurs somewhat more rarely than the others.)
 Uruk            16  Good HP, good melee damage, +1 extra shot, poison immunity.
 Elite Uruk      20  Good HP, very high melee damage, +1 extra shot, poison
@@ -11047,7 +11049,7 @@ fighting techniques that cost 'Stamina' to use. Warriors, rangers, paladins
 and mimics will learn all of them eventually, while rogues may learn sprint
 and taunt, and some rogue-specific techniques.
 Similarly, by training archery your character will gain access to a couple of
-shooting techniques.
+ranged techniques.
 
 All techniques are accessable via 'm' key, also see (3.7a).
 
@@ -11135,7 +11137,7 @@ The techniques are as follows:
         collect a large stack of materials and use the skill on that stack
         (the total weight of that inventory slot determines the stack size).
         The level of the raw materials has no effect on the outcome.
-    Double-shot         1 stamina/turn while using it actively
+    Double-shot         1 stamina/5 turns (random) while using it actively
         Toggle, making you enter or leave double-shot mode. While active, you
         will fire 2 projectiles at once on each shot, dealing way less damage
         than a single shot though. Useful to eradicate weak critters.
@@ -11145,11 +11147,12 @@ The techniques are as follows:
               To permanently leave double-shot mode, you have to toggle it
               explicitely in the 'm' menu.
     Barrage             9 stamina
-        Prepares to fire a powerful multi-shot which will cost you a whole
+        Prepares to fire a powerful multi-shot which will cost you half a
         turn. It stuns the target (if it doesn't resist stunning attacks).
 
-    Note: The technique 'fire-till-kill' is available to any class, and
-    does appear directly under 'm'. See (5.2a) for details.
+    Note: The ability 'fire-till-kill' is available to any class and not
+    considered to be a special shooting technique. It appears directly in the
+    'm' key menu. See (5.2a) for details.
 
 Stamina regenerates slowly over time, faster while resting. Your CONstitution
 stat and 'Health' skill will further improve regeneration speed.

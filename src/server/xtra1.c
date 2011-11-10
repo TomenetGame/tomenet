@@ -6806,7 +6806,7 @@ static void process_global_event(int ge_id) {
 					switch (ge->getype) {
 					case GE_HIGHLANDER:
 						if ((p_ptr->max_exp || p_ptr->max_plv > 1) && !is_admin(p_ptr)) {
-							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' no longer egligible.\n", p_ptr->name);
+							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' no longer eligible.\n", p_ptr->name);
 							msg_print(j, "\377oCharacters need to have 0 experience to be eligible.");
 							p_ptr->global_event_type[ge_id] = GE_NONE;
 							ge->participant[i] = 0;
