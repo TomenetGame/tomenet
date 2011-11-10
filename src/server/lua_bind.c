@@ -1043,7 +1043,7 @@ bool lua_is_unique(int r_idx) {
 }
 
 /* Return if a certain race/class combo could in theory learn a monster form if mimicry was high enough */
-bool lua_mimic_egligible(int Ind, int r_idx) {
+bool lua_mimic_eligible(int Ind, int r_idx) {
 	if (Players[Ind]->prace == RACE_VAMPIRE) {
 		return (mimic_vampire(r_idx, Players[Ind]->lev));
 	}

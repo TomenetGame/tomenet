@@ -544,7 +544,7 @@ extern void lua_fix_equip_slots(int Ind);
 extern void lua_fix_skill_chart(int Ind);
 extern void lua_takeoff_costumes(int Ind);
 extern bool lua_is_unique(int r_idx);
-extern bool lua_mimic_egligible(int Ind, int r_idx);
+extern bool lua_mimic_eligible(int Ind, int r_idx);
 
 /* wild.c */
 extern void wild_flags(int Ind, u32b flags);

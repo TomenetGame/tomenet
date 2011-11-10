@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 11. October 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 10. November 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10107,7 +10107,7 @@ Ogre            13  This form can cross thick woods and mountain terrain.
                     (This monster occurs somewhat more rarely than the others.)
 Lizard Man      16  High HP, can swim easily, resists water, immune to acid.
                     (This monster occurs somewhat more rarely than the others.)
-Ogrillion       16  Very high HP for its level, good melee damage.
+Ogrillon        16  Very high HP for its level, good melee damage.
                     (This monster occurs somewhat more rarely than the others.)
 Uruk            16  Good HP, good melee damage, +1 extra shot, poison immunity.
 Elite Uruk      20  Good HP, very high melee damage, +1 extra shot, poison
