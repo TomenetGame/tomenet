@@ -6353,11 +6353,11 @@ Mummy Wrapping      Reduces your charisma slightly, and prevents other players
                     wear a mummy wrapping.
                     Hint: Polymorphing into a vampire bat may improve hit
                     point regeneration rate.
-Tarpaulin           When equipped, prevents your inventory and equipment from
-                    taking water damage when crossing water fields or when you
-                    are attacked with water-based effects.
+Tarpaulin           When equipped a tarp prevents your inventory and equipment
+                    from taking water damage when crossing water fields or when
+                    you are attacked with water-based effects.
                     Note that your weapon is not included in this protection
-                    while attacking.
+                    when you for example attack a water-based monster with it.
 Picklock            When equipped, improves your trap-disarming ability.
 Money Belt          When equipped, greatly reduces chance of thieves succeeding
                     in stealing your money.
