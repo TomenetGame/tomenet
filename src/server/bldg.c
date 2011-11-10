@@ -2117,6 +2117,7 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			p_ptr->au -= gold;
 
 			msg_format(Ind, "You deposit %i gold pieces.", gold);
+			s_printf("Deposit: %s - %d Au.\n", p_ptr->name, gold);
 
 			paid = TRUE;
 			break;
@@ -2134,6 +2135,7 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			p_ptr->au += gold;
 
 			msg_format(Ind, "You withdraw %i gold pieces.", gold);
+			s_printf("Withdraw: %s - %d Au.\n", p_ptr->name, gold);
 
 			paid = TRUE;
 			break;

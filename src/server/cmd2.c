@@ -4412,13 +4412,16 @@ void do_cmd_fire(int Ind, int dir)
 						}
 
 						/* Did we hit it (penalize range) */
+
 #ifndef PVP_AC_REDUCTION
-						if (test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible)) {
+						if (test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible)
+						    && (!q_ptr->shadow_running || !rand_int(3))) {
 #else
 //						if (test_hit_fire(chance - cur_dis, ((q_ptr->ac + q_ptr->to_a) * 2) / 3, visible)) {
 						if (test_hit_fire(chance - cur_dis,
 						    (q_ptr->ac + q_ptr->to_a > AC_CAP) ? AC_CAP : q_ptr->ac + q_ptr->to_a,
-						    visible)) {
+						    visible)
+						    && (!q_ptr->shadow_running || !rand_int(3))) {
 #endif
 							char p_name[80];
 							bool dodged = FALSE;
