@@ -8597,6 +8597,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Psionics */
 		case GF_PSI:
 		if (rand_int(100) < p_ptr->skill_sav) psi_resists++;
+		if (p_ptr->mindboost && magik(p_ptr->mindboost_power)) psi_resists++;
 		if ((p_ptr->shero || p_ptr->berserk) && (rand_int(100) >= p_ptr->skill_sav)) psi_resists--;
 		if (p_ptr->confused) psi_resists--;
 		if (p_ptr->image) psi_resists--;
@@ -8607,11 +8608,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* No side effects */
 
 			/* Reduce damage */
-			for (k = 0; k < psi_resists ; k++)
-			{
+			for (k = 0; k < psi_resists ; k++) {
 				dam = dam * 4 / (4 + randint(5));
-			}			
-					
+			}
+
 			/* Telepathy reduces damage */
 			if (p_ptr->telepathy) dam = dam * (3 + randint(6)) / 9;
 		} else {
@@ -8627,10 +8627,15 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Unresisted */
 			if (!p_ptr->resist_conf &&
 			    !(p_ptr->mindboost && magik(p_ptr->mindboost_power)))
-				set_confused(Ind, p_ptr->confused + rand_int(20) + 10);
+				//set_confused(Ind, p_ptr->confused + rand_int(20) + 10);    too long for pvp?
+				set_confused(Ind, p_ptr->confused + rand_int(5) + 5);
+
+			/* At the moment:
+			   No sleep/stun/fear effects (like it has on monsters)
+			*/
 		}
 		take_hit(Ind, dam, killer, -who);
-		take_sanity_hit(Ind, dam / 8, killer); /* note: traps deal ~130..320 damage (depth 0..100) */
+		if (!IS_PVP) take_sanity_hit(Ind, dam / 8, killer); /* note: traps deal ~130..320 damage (depth 0..100) */
 		break;
 
 
