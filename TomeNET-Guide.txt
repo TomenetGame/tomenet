@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 10. November 2011 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.8 - official websites are:
+| Latest update: 11. November 2011 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.8a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 |
@@ -137,7 +137,7 @@ Contents
     (7.2)   Preparing the equipment for diving into the dungeon
     (7.3)   Surviving critical situations
     (7.4)   Spoiler files
-    (7.5)   Skill point distribution
+    (7.5)   Monster tactics
 (8) Miscellanous
     (8.1)   'The Art Not To Die'
     (8.2)   Character dumps
@@ -2036,7 +2036,7 @@ Example:
                                where the 'h' is violet. The rest of the
                                message is light blue (standard colour).
 If you cannot see coloured messages in your secondary Tomenet windows other
-than the big main window, check your client option settings by typing  =3
+than the big main window, check your client option settings by typing  =1
 and looking for 'Flicker messages in recall' (recall_flicker). Set it to
 'yes'.
 If you want to type the character '{' in a chat message, rather than using
@@ -3238,7 +3238,6 @@ On the skill chart you can press 'Up'/'Down' keys to select a skill and
 'Right' key to invest one of your spare skill points into it. Choices cannot
 be undone, so be careful here.
 For details about skill point distribution and the different skills see (6.2).
-Also see (7.5) for suggestions about skill point distribution.
 
 
 
@@ -5801,8 +5800,8 @@ the spoiler files section (7.4) or further explanations in (5.8) and (5.9).
 --------------------------------
 FEATHER ('It allows you to levitate.')
         'Feather Falling', also called 'Levitation'.
-        Lets you resist gravitation effects. Lets you float down gently
-        if you accidentally stumble into pits.
+        Lets you resist gravitation damage somewhat.
+        Lets you float down gently if you accidentally stumble into pits.
 FLY     ('It allows you to fly.')
         Allows you to cross water areas without drowning. Enables you to fly
         over trees.
@@ -6673,6 +6672,47 @@ SHATTER         hits & causes an earthquake - very dangerous, see (5.13).
 
 Getting hit by higher undead creatures may also infect you with the
 Black Breath! (See 1.5 for more information about Black Breath.)
+
+
+Further, monsters may have one or more spells they can cast. Breathing elements
+and shooting or throwing boulders belong to those too (but aren't affected by
+anti-magic fields since they aren't 'real spells' but rather physical actions).
+
+Among the monster spells, such as casting bolt or ball spells, teleporting,
+healing, trying to blind/scare/confuse/paralyze/slow the player, summoning
+other monsters for help, or speeding itself up with a haste-self spell, there
+are some particularly special spells that will be explained here in more
+detail:
+
+SHRIEK          Not a real spell but a physical action, some monsters can emit
+                an aggravating noise that will wake up all nearby monsters and
+                even haste those within line-of-sight of the shrieker.
+                This can be extremely dangerous and you'll see a light red
+                message in the combat message log when a monster shrieks.
+                If you have the sound pack installed, you'll also clearly hear
+                it, which can help further to react quickly: On shallow levels
+                shrieking might not be that bad, but on deep levels it might
+                well be reason enough to teleport out instantly.
+TRAPS           Again not a spell but nasty nevertheless. The monster casts a
+                3x3 'circle' of traps around you, watch where you step.
+UNMAGIC         This can be extremely nasty for Istari. Unmagic cancels nearly
+                all kind of magic effects your character is currently under,
+                such as speed from a speed potion and even Disruption Shield.
+                This won't affect classes much such as warriors and archers but
+                is life-threatening if it neutralizes the Disruption Shield
+                of an Istar. (Note: Holy Martyr cannot be cancelled.)
+MIND_BLAST      A psionic attack spell that hurts your sanity and can cause
+                confusion and hallucinations.
+BRAIN_SMASH     A powerful psionic attack spell that hurts your sanity and can
+                cause blindness, confusion, paralyzation and slowness.
+FORGET          This mind blanking spell will create darkness around you and
+                make you forget about some or all of the items you are carrying
+                effectively un-identifying them (except for flavoured items).
+HOLD            Although not so special and already mentioned in the text above
+                this spell is listed because it's a ranged paralyzation spell.
+                Ghouls can do this for example, so make sure that you get
+                Free Action as early as possible, definitely before venturing
+                into Mordor though.
 
 
 
@@ -7800,7 +7840,7 @@ These depend on your race and class and the stat assignments you did during
 character creation process.
 
 Stats are displayed as values from 3 (minimum) to 18.
-(Note: This can be changed in TomeNET options, press key =5 and toggle
+(Note: This can be changed in TomeNET options, press key =1 and toggle
 'linear_stats' option. It is recommended to keep the traditional way though,
 which represents the D&D system of throwing three 6-sided dice to determine a
 stat).
@@ -8483,7 +8523,7 @@ Note that not every skill is available to every profession (class).
                                 water.
                                 Skill maxes at 01.000, with the ability to
                                 swim improving steadily while increasing it.
-                                At 0.0700 you become able to swim very swiftly
+                                At 0.700 you become able to swim very swiftly
                                 if no monsters are within sight, enabling you
                                 to 'run' through water.
     .Climbing                   You need this at 01.000 to learn climbing.
@@ -8510,8 +8550,6 @@ fly over water instead of swimming across. Wands of stone-to-mud will turn any
 obstacle to mud that you could dig through, and some boots or a climbing set
 might grant you the ability to climb highest mountains. Dwarves also learn
 this ability automatically when they reach level 30.
-
-Also see (7.5) for suggestions about skill point distribution.
 
 Here is what the numbers mean (we will use the Axe-Mastery skill for this
 example:
@@ -8804,12 +8842,11 @@ Warrior is strongly recommended.
     Yeeks don't receive boni or mali on any skills.
 
 - Goblin
-    Goblins resist darkness intrinsically. Goblins have a decidedly
-    mixed reputation. They are almost always grinning, and more often than
-    not you cannot tell whether or not they are eyeing you like a side of
-    meat. They are as sturdy as Dwarves and are quite agile making them
-    good fighters, rogues, and mimics. Being creatures of the night,
-    Golbins have natural resistance to darkness.
+    Goblins have a decidedly mixed reputation. They are almost always grinning,
+    and more often than not you cannot tell whether or not they are eyeing you
+    like a side of meat. They are as sturdy as Dwarves and are quite agile
+    making them good fighters, rogues, and mimics. Being creatures of the
+    night, Golbins have natural resistance to darkness.
     They receive bonus on 'Boomerang-Mastery' and 'Stealing'.
 
 - Ent
@@ -9053,6 +9090,8 @@ vary. For example a warrior cannot learn magic spells.
     very light 1-handed weapons such as daggers or whips which you dual-wield
     (which requires light armour). This should last you until you find some
     heavy armour and shield in the dungeon.
+    Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm) or Martial
+    Arts if you don't want to use weapons and always keep it maximized.
 
 - Istar (elvish word for Mage)
     Istari use intelligence primarily, determining how much mana they have
@@ -9129,6 +9168,8 @@ vary. For example a warrior cannot learn magic spells.
     'Taunt' when you learn them, which you do pretty early on. They are great
     for catching annoying monsters that try to keep their distance from you.
     (See (6.12) for details about fighting techniques.)
+    Always keep your sword-mastery skill at maximum (if you don't go for an
+    unusual build that uses martial arts instead).
 
 - Mimic
     Mimics are melee fighters who can learn how to shapechange and use the form
@@ -9171,6 +9212,8 @@ vary. For example a warrior cannot learn magic spells.
     'Rings of Polymorphing' for you from forms he or she no longer uses.
     As for all shape-shifters going with fruit bat body modification is not
     recommended, since it will restrict your equipment even if you polymorph.
+    Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm) or Martial
+    Arts if you don't want to use weapons and always keep it maximized.
 
 - Archer
     Archers aren't good at fighting, but can deliever extremely high damage
@@ -9186,6 +9229,8 @@ vary. For example a warrior cannot learn magic spells.
     Hint: Enchanting your ranged weapon to-damage is especially effective,
     because the enchantment will be multiplied by the weapons multiplier.
     Also make sure to have an ample supply of 'Scrolls of Phase Door'.
+    Pick one of the three ranged masteries (Bow/Crossbow/Sling) and always
+    keep it maximized. Keep your Archery skill maximized too.
 
 - Paladin
     Paladins are a combination of warrior and priest. Holy knights that
@@ -9206,6 +9251,8 @@ vary. For example a warrior cannot learn magic spells.
     Also make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, they are great for catching annoying monsters
     that try to keep their distance from you. (See (6.12) for details.)
+    Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm) or Martial
+    Arts if you don't want to use weapons and always keep it maximized.
 
 - Ranger
     Second only to adventurers regarding versatility rangers excel at a lot of
@@ -9264,6 +9311,7 @@ vary. For example a warrior cannot learn magic spells.
     Also make sure to create a macro for your fighting technique 'Sprint' when
     you learn it, which you do pretty early on. It is great for catching
     annoying monsters that try to keep their distance from you. (See (6.12).)
+    Always keep your Martial Arts skill maximized.
 
 - Shaman
     Shamans are able to call upon both spiritual and magical powers, whatever
@@ -9352,6 +9400,8 @@ vary. For example a warrior cannot learn magic spells.
     Hint: Mindcrafters have a powerful ranged attack spell they can use very
     early on, Psionic Blast. Look for it in the book store right away.
     Also get the spell 'Autokinesis I' early on, which is like phase door.
+    Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm) or Martial
+    Arts if you don't want to use weapons and always keep it maximized.
 
 
 If you raise in levels, you will get new titles. These are displayed between
@@ -10440,7 +10490,7 @@ Priest schools:
 Holy Offense
     Holy Light      Creates a globe of pure light.
                     Lv3: Damages monsters.
-                    Lv15: Calls a more powerful kind of light.
+                    Lv8: Calls a more powerful kind of light.
                     Required skill level for first spell level: 1.
                     Shared spell (see above): H.Offense, H.Support.
     Curse           Randomly causes confusion damage or slowness or blindness.
@@ -10574,8 +10624,12 @@ Druid schools:
 Arcane Lore
     Nature's Call   Quickly grows trees around you.
                     Required skill level for first spell level: 10.
-    Toxic Moisture  Creates a cloud of toxic moisture at a designated target.
-                    At level 30 it turns into ice shards.
+    Toxic Moisture  Creates a cloud of toxic moisture at a designated target,
+                    consisting of poisonous gas.
+                    At level 20 it combines the surrounding air into the
+                    attack, turning it into a water/poison mixture.
+                    At level 30 it condenses the water and turns into
+                    poisonous ice shards.
                     Required skill level for first spell level: 3.
     Ancient Lore    Identifies all items in your inventory.
                     Required skill level for first spell level: 20.
@@ -10600,11 +10654,10 @@ Physical Lore
                     Lv35: Cures black breath!                  (auto-project)
                     Required skill level for first spell level: 3.
     Extra Growth    Increases your attributes temporarily.
-                    Lv5: Increases charisma.
-                    Lv10: Also increases dexterity.
-                    Lv15: Also increases strength.
-                    Lv20: Also increases constitution.
-                    Lv25: Also increases intelligence.
+                    Lv1: Increases strength.
+                    Lv5: Also increases dexterity.
+                    Lv10: Also increases constitution.
+                    Lv20: Also increases intelligence.
                     Required skill level for first spell level: 15.
     Focus           Increases your accuracy, adding a bonus to your
                     melee-to-hit and ranged-to-hit.
@@ -10772,7 +10825,7 @@ Astral
                     Required skill level for first spell level: 22.
     Vengeance       Enlightened: Summons all party members on the same floor
                                  to you (as well as all monsters in line of
-                                 sight).
+                                 sight) who have their mind opened.
                     Corrupted: Damages all monsters in line of sight.
                     (This spell uses WISDOM to determine fail-rates!)
                     Required skill level for first spell level: 30.
@@ -11139,7 +11192,8 @@ The techniques are as follows:
         create sling ammunition from it.
         The quality mainly depends on your archery skill and somewhat on your
         ranged mastery skill, but is still somewhat random.
-        A random discount will be applied to the crafted ammo.
+        A random discount will be applied to the crafted ammo (can be 100% too
+        which makes the ammo unsellable to stores).
         If you want to create larger stacks of the same type of ammunition,
         collect a large stack of materials and use the skill on that stack
         (the total weight of that inventory slot determines the stack size).
@@ -11833,28 +11887,34 @@ very end, which explains the meaning of each discrete info-line.
 
 
 
-(7.5) Skill point distribution
-------------------------------
-Melee fighters should maximize (to get extra attacks and extra damage) one of
-the weapon masteries (Sword, Blunt, Polearm, Axes) or Martial Arts if they
-prefer weaponless combat, and 'Interception'.
-Interception is especially important if they don't train Martial Arts, in
-order to try and prevent their opponent from summoning or casting spells.
-Hybrid classes might choose to not fully train their chosen mastery to have
-spare skill points for spell casting or other skills.
+(7.5) Monster tactics
+---------------------
+Monsters may follow certain schemes regarding their movement, target selection
+and spell-casting.
 
-Spellcasters might want to train Spell-Power additionally to their school
-spells to further boost their powers.
+Movement:
+---------
+Rather mindless monsters might just try to get to the player straight away
+while more clever monsters might try to avoid being kited, depending on their
+hit points or if there are buddies around. Also, some pack animals might avoid
+to encounter you in hallways but jump you all at once when you enter a room.
 
-Archers probably want to train Calmness to keep shooting adjacent enemies,
-without getting intercepted by them. And of course they should train one of
-the ranged-weapon masteries (Bows, Crossbows, Slings) to eventually get some
-extra shots per round, and also train Archery up to 50 to get additional
-extra might.
+Target selection:
+-----------------
+When a monster has multiple players next to it it might choose its target
+depending on its cleverness, power and health state. For example it might go
+for the target it perceives as most squishy.
+Players may counter this by using techniques such as Taunt or Distract.
 
-Spare skill points might be well invested into Stealth and Sneakiness,
-especially in Stealth if your stealth is rather low and you tend to wake up
-every monster nearby early.
+Spell-casting:
+--------------
+Despite appearing random sometimes monsters prefer certain spells over others.
+If a player is close a monster might especially try to blink away to continue
+to throw attack or summon spells at the player from afar.
+If a monster is low on HP or scared it might try to use escape spells and if
+it's low on HP or stunned it might emphasize heal spells (the chance to
+successfully cast those is also negatively affected by stun same as all other
+spells - compare (4.12)).
 
 
 
