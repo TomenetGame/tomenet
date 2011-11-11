@@ -6674,6 +6674,47 @@ Getting hit by higher undead creatures may also infect you with the
 Black Breath! (See 1.5 for more information about Black Breath.)
 
 
+Further, monsters may have one or more spells they can cast. Breathing elements
+and shooting or throwing boulders belong to those too (but aren't affected by
+anti-magic fields since they aren't 'real spells' but rather physical actions).
+
+Among the monster spells, such as casting bolt or ball spells, teleporting,
+healing, trying to blind/scare/confuse/paralyze/slow the player, summoning
+other monsters for help, or speeding itself up with a haste-self spell, there
+are some particularly special spells that will be explained here in more
+detail:
+
+SHRIEK          Not a real spell but a physical action, some monsters can emit
+                an aggravating noise that will wake up all nearby monsters and
+                even haste those within line-of-sight of the shrieker.
+                This can be extremely dangerous and you'll see a light red
+                message in the combat message log when a monster shrieks.
+                If you have the sound pack installed, you'll also clearly hear
+                it, which can help further to react quickly: On shallow levels
+                shrieking might not be that bad, but on deep levels it might
+                well be reason enough to teleport out instantly.
+TRAPS           Again not a spell but nasty nevertheless. The monster casts a
+                3x3 'circle' of traps around you, watch where you step.
+UNMAGIC         This can be extremely nasty for Istari. Unmagic cancels nearly
+                all kind of magic effects your character is currently under,
+                such as speed from a speed potion and even Disruption Shield.
+                This won't affect classes much such as warriors and archers but
+                is life-threatening if it neutralizes the Disruption Shield
+                of an Istar. (Note: Holy Martyr cannot be cancelled.)
+MIND_BLAST      A psionic attack spell that hurts your sanity and can cause
+                confusion and hallucinations.
+BRAIN_SMASH     A powerful psionic attack spell that hurts your sanity and can
+                cause blindness, confusion, paralyzation and slowness.
+FORGET          This mind blanking spell will create darkness around you and
+                make you forget about some or all of the items you are carrying
+                effectively un-identifying them (except for flavoured items).
+HOLD            Although not so special and already mentioned in the text above
+                this spell is listed because it's a ranged paralyzation spell.
+                Ghouls can do this for example, so make sure that you get
+                Free Action as early as possible, definitely before venturing
+                into Mordor though.
+
+
 
 (5.13) Earthquakes
 ------------------
@@ -8801,12 +8842,11 @@ Warrior is strongly recommended.
     Yeeks don't receive boni or mali on any skills.
 
 - Goblin
-    Goblins resist darkness intrinsically. Goblins have a decidedly
-    mixed reputation. They are almost always grinning, and more often than
-    not you cannot tell whether or not they are eyeing you like a side of
-    meat. They are as sturdy as Dwarves and are quite agile making them
-    good fighters, rogues, and mimics. Being creatures of the night,
-    Golbins have natural resistance to darkness.
+    Goblins have a decidedly mixed reputation. They are almost always grinning,
+    and more often than not you cannot tell whether or not they are eyeing you
+    like a side of meat. They are as sturdy as Dwarves and are quite agile
+    making them good fighters, rogues, and mimics. Being creatures of the
+    night, Golbins have natural resistance to darkness.
     They receive bonus on 'Boomerang-Mastery' and 'Stealing'.
 
 - Ent
@@ -10450,7 +10490,7 @@ Priest schools:
 Holy Offense
     Holy Light      Creates a globe of pure light.
                     Lv3: Damages monsters.
-                    Lv15: Calls a more powerful kind of light.
+                    Lv8: Calls a more powerful kind of light.
                     Required skill level for first spell level: 1.
                     Shared spell (see above): H.Offense, H.Support.
     Curse           Randomly causes confusion damage or slowness or blindness.
@@ -10584,8 +10624,12 @@ Druid schools:
 Arcane Lore
     Nature's Call   Quickly grows trees around you.
                     Required skill level for first spell level: 10.
-    Toxic Moisture  Creates a cloud of toxic moisture at a designated target.
-                    At level 30 it turns into ice shards.
+    Toxic Moisture  Creates a cloud of toxic moisture at a designated target,
+                    consisting of poisonous gas.
+                    At level 20 it combines the surrounding air into the
+                    attack, turning it into a water/poison mixture.
+                    At level 30 it condenses the water and turns into
+                    poisonous ice shards.
                     Required skill level for first spell level: 3.
     Ancient Lore    Identifies all items in your inventory.
                     Required skill level for first spell level: 20.
@@ -10610,11 +10654,10 @@ Physical Lore
                     Lv35: Cures black breath!                  (auto-project)
                     Required skill level for first spell level: 3.
     Extra Growth    Increases your attributes temporarily.
-                    Lv5: Increases charisma.
-                    Lv10: Also increases dexterity.
-                    Lv15: Also increases strength.
-                    Lv20: Also increases constitution.
-                    Lv25: Also increases intelligence.
+                    Lv1: Increases strength.
+                    Lv5: Also increases dexterity.
+                    Lv10: Also increases constitution.
+                    Lv20: Also increases intelligence.
                     Required skill level for first spell level: 15.
     Focus           Increases your accuracy, adding a bonus to your
                     melee-to-hit and ranged-to-hit.
