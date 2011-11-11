@@ -137,7 +137,7 @@ Contents
     (7.2)   Preparing the equipment for diving into the dungeon
     (7.3)   Surviving critical situations
     (7.4)   Spoiler files
-    (7.5)   Skill point distribution
+    (7.5)   Monster tactics
 (8) Miscellanous
     (8.1)   'The Art Not To Die'
     (8.2)   Character dumps
@@ -3238,7 +3238,6 @@ On the skill chart you can press 'Up'/'Down' keys to select a skill and
 'Right' key to invest one of your spare skill points into it. Choices cannot
 be undone, so be careful here.
 For details about skill point distribution and the different skills see (6.2).
-Also see (7.5) for suggestions about skill point distribution.
 
 
 
@@ -8511,8 +8510,6 @@ obstacle to mud that you could dig through, and some boots or a climbing set
 might grant you the ability to climb highest mountains. Dwarves also learn
 this ability automatically when they reach level 30.
 
-Also see (7.5) for suggestions about skill point distribution.
-
 Here is what the numbers mean (we will use the Axe-Mastery skill for this
 example:
 
@@ -9053,6 +9050,8 @@ vary. For example a warrior cannot learn magic spells.
     very light 1-handed weapons such as daggers or whips which you dual-wield
     (which requires light armour). This should last you until you find some
     heavy armour and shield in the dungeon.
+    Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm) or Martial
+    Arts if you don't want to use weapons and always keep it maximized.
 
 - Istar (elvish word for Mage)
     Istari use intelligence primarily, determining how much mana they have
@@ -9129,6 +9128,8 @@ vary. For example a warrior cannot learn magic spells.
     'Taunt' when you learn them, which you do pretty early on. They are great
     for catching annoying monsters that try to keep their distance from you.
     (See (6.12) for details about fighting techniques.)
+    Always keep your sword-mastery skill at maximum (if you don't go for an
+    unusual build that uses martial arts instead).
 
 - Mimic
     Mimics are melee fighters who can learn how to shapechange and use the form
@@ -9171,6 +9172,8 @@ vary. For example a warrior cannot learn magic spells.
     'Rings of Polymorphing' for you from forms he or she no longer uses.
     As for all shape-shifters going with fruit bat body modification is not
     recommended, since it will restrict your equipment even if you polymorph.
+    Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm) or Martial
+    Arts if you don't want to use weapons and always keep it maximized.
 
 - Archer
     Archers aren't good at fighting, but can deliever extremely high damage
@@ -9186,6 +9189,8 @@ vary. For example a warrior cannot learn magic spells.
     Hint: Enchanting your ranged weapon to-damage is especially effective,
     because the enchantment will be multiplied by the weapons multiplier.
     Also make sure to have an ample supply of 'Scrolls of Phase Door'.
+    Pick one of the three ranged masteries (Bow/Crossbow/Sling) and always
+    keep it maximized. Keep your Archery skill maximized too.
 
 - Paladin
     Paladins are a combination of warrior and priest. Holy knights that
@@ -9206,6 +9211,8 @@ vary. For example a warrior cannot learn magic spells.
     Also make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, they are great for catching annoying monsters
     that try to keep their distance from you. (See (6.12) for details.)
+    Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm) or Martial
+    Arts if you don't want to use weapons and always keep it maximized.
 
 - Ranger
     Second only to adventurers regarding versatility rangers excel at a lot of
@@ -9264,6 +9271,7 @@ vary. For example a warrior cannot learn magic spells.
     Also make sure to create a macro for your fighting technique 'Sprint' when
     you learn it, which you do pretty early on. It is great for catching
     annoying monsters that try to keep their distance from you. (See (6.12).)
+    Always keep your Martial Arts skill maximized.
 
 - Shaman
     Shamans are able to call upon both spiritual and magical powers, whatever
@@ -9352,6 +9360,8 @@ vary. For example a warrior cannot learn magic spells.
     Hint: Mindcrafters have a powerful ranged attack spell they can use very
     early on, Psionic Blast. Look for it in the book store right away.
     Also get the spell 'Autokinesis I' early on, which is like phase door.
+    Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm) or Martial
+    Arts if you don't want to use weapons and always keep it maximized.
 
 
 If you raise in levels, you will get new titles. These are displayed between
@@ -11833,28 +11843,34 @@ very end, which explains the meaning of each discrete info-line.
 
 
 
-(7.5) Skill point distribution
-------------------------------
-Melee fighters should maximize (to get extra attacks and extra damage) one of
-the weapon masteries (Sword, Blunt, Polearm, Axes) or Martial Arts if they
-prefer weaponless combat, and 'Interception'.
-Interception is especially important if they don't train Martial Arts, in
-order to try and prevent their opponent from summoning or casting spells.
-Hybrid classes might choose to not fully train their chosen mastery to have
-spare skill points for spell casting or other skills.
+(7.5) Monster tactics
+---------------------
+Monsters may follow certain schemes regarding their movement, target selection
+and spell-casting.
 
-Spellcasters might want to train Spell-Power additionally to their school
-spells to further boost their powers.
+Movement:
+---------
+Rather mindless monsters might just try to get to the player straight away
+while more clever monsters might try to avoid being kited, depending on their
+hit points or if there are buddies around. Also, some pack animals might avoid
+to encounter you in hallways but jump you all at once when you enter a room.
 
-Archers probably want to train Calmness to keep shooting adjacent enemies,
-without getting intercepted by them. And of course they should train one of
-the ranged-weapon masteries (Bows, Crossbows, Slings) to eventually get some
-extra shots per round, and also train Archery up to 50 to get additional
-extra might.
+Target selection:
+-----------------
+When a monster has multiple players next to it it might choose its target
+depending on its cleverness, power and health state. For example it might go
+for the target it perceives as most squishy.
+Players may counter this by using techniques such as Taunt or Distract.
 
-Spare skill points might be well invested into Stealth and Sneakiness,
-especially in Stealth if your stealth is rather low and you tend to wake up
-every monster nearby early.
+Spell-casting:
+--------------
+Despite appearing random sometimes monsters prefer certain spells over others.
+If a player is close a monster might especially try to blink away to continue
+to throw attack or summon spells at the player from afar.
+If a monster is low on HP or scared it might try to use escape spells and if
+it's low on HP or stunned it might emphasize heal spells (the chance to
+successfully cast those is also negatively affected by stun same as all other
+spells - compare (4.12)).
 
 
 
