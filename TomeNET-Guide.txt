@@ -2036,7 +2036,7 @@ Example:
                                where the 'h' is violet. The rest of the
                                message is light blue (standard colour).
 If you cannot see coloured messages in your secondary Tomenet windows other
-than the big main window, check your client option settings by typing  =3
+than the big main window, check your client option settings by typing  =1
 and looking for 'Flicker messages in recall' (recall_flicker). Set it to
 'yes'.
 If you want to type the character '{' in a chat message, rather than using
@@ -5800,8 +5800,8 @@ the spoiler files section (7.4) or further explanations in (5.8) and (5.9).
 --------------------------------
 FEATHER ('It allows you to levitate.')
         'Feather Falling', also called 'Levitation'.
-        Lets you resist gravitation effects. Lets you float down gently
-        if you accidentally stumble into pits.
+        Lets you resist gravitation damage somewhat.
+        Lets you float down gently if you accidentally stumble into pits.
 FLY     ('It allows you to fly.')
         Allows you to cross water areas without drowning. Enables you to fly
         over trees.
@@ -7840,7 +7840,7 @@ These depend on your race and class and the stat assignments you did during
 character creation process.
 
 Stats are displayed as values from 3 (minimum) to 18.
-(Note: This can be changed in TomeNET options, press key =5 and toggle
+(Note: This can be changed in TomeNET options, press key =1 and toggle
 'linear_stats' option. It is recommended to keep the traditional way though,
 which represents the D&D system of throwing three 6-sided dice to determine a
 stat).
@@ -8523,7 +8523,7 @@ Note that not every skill is available to every profession (class).
                                 water.
                                 Skill maxes at 01.000, with the ability to
                                 swim improving steadily while increasing it.
-                                At 0.0700 you become able to swim very swiftly
+                                At 0.700 you become able to swim very swiftly
                                 if no monsters are within sight, enabling you
                                 to 'run' through water.
     .Climbing                   You need this at 01.000 to learn climbing.
@@ -10825,7 +10825,7 @@ Astral
                     Required skill level for first spell level: 22.
     Vengeance       Enlightened: Summons all party members on the same floor
                                  to you (as well as all monsters in line of
-                                 sight).
+                                 sight) who have their mind opened.
                     Corrupted: Damages all monsters in line of sight.
                     (This spell uses WISDOM to determine fail-rates!)
                     Required skill level for first spell level: 30.
@@ -11192,7 +11192,8 @@ The techniques are as follows:
         create sling ammunition from it.
         The quality mainly depends on your archery skill and somewhat on your
         ranged mastery skill, but is still somewhat random.
-        A random discount will be applied to the crafted ammo.
+        A random discount will be applied to the crafted ammo (can be 100% too
+        which makes the ammo unsellable to stores).
         If you want to create larger stacks of the same type of ammunition,
         collect a large stack of materials and use the skill on that stack
         (the total weight of that inventory slot determines the stack size).
