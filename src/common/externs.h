@@ -816,6 +816,7 @@ extern s16b get_quantity(cptr prompt, int max);
 extern void pause_line(int row);
 extern void request_command(bool shopping);
 extern bool is_a_vowel(int ch);
+extern bool is_same_as(version_type *version, int major, int minor, int patch, int extra, int branch, int build);
 
 /* xtra1.c */
 extern void cnv_stat(int val, char *out_val);

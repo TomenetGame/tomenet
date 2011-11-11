@@ -501,13 +501,8 @@ void remote_update_lua(int Ind, cptr file)
 {
 	player_type *p_ptr = Players[Ind];
 
-	/* Hack: Client 4.4.8.1 apparently was compiled by a MinGW version
-	   that broke lua updating, resulting in a client crash on logon.
-	   So skip any lua updates for players using that version.
-	   That means that players playing spell-casters that use spells in
-	   the affected LUA files will probably have to update their client
-	   at some point. */
-	if (is_same_as(&p_ptr->version, 4, 4, 8, 1, 0, 0)) return;
+	/* Count # of LUA files to check for updates (for 4.4.8.1.0.0 crash bug) */
+	p_ptr->warning_lua_count++;
 
 	remote_update(p_ptr->conn, file);
 	return;

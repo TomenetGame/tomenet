@@ -1987,6 +1987,8 @@ struct version_type {		/* Extended version structure */
 	int extra;
 	int branch;
 	int build;
+
+	int os; /* after 4.4.8.1.0.0 */
 };
 
 typedef struct inventory_change_type inventory_change_type;
@@ -2960,6 +2962,9 @@ struct player_type
 	char warning_technique_melee, warning_technique_ranged;
 	char warning_hungry, warning_autopickup, warning_ranged_autoret;
 	/* note: a sort of "warning_skills" is already implemented, in a different manner */
+
+	/* For the 4.4.8.1.0.0 lua update crash bug */
+	char warning_lua_update, warning_lua_count;
 
 #ifdef USE_SOUND_2010
 	int music_current, music_monster; //background music currently playing for him/her; an overriding monster music

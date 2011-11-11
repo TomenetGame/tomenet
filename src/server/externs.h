@@ -43,7 +43,7 @@ int local_file_ack(int ind, unsigned short fnum);
 int local_file_err(int ind, unsigned short fnum);
 void do_xfers(void);
 void kill_xfers(int ind);
-int check_return(int ind, unsigned short fnum, unsigned long sum);
+int check_return(int ind, unsigned short fnum, unsigned long sum, int Ind);
 int remote_update(int ind, cptr fname);
 void remote_update_lua(int Ind, cptr file);
 
