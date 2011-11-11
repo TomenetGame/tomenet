@@ -262,7 +262,7 @@ int Receive_file(void){
 					
 					return n;
 				}
-				check_return(0, fnum, csum);
+				check_return(0, fnum, csum, 0);
 				return 1;
 				break;
 			case PKT_FILE_ACK:

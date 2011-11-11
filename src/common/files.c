@@ -15,7 +15,7 @@
 extern errr path_build(char *buf, int max, cptr path, cptr file);
 
 int remote_update(int ind, char *fname);
-int check_return(int ind, unsigned short fnum, u32b sum);
+int check_return(int ind, unsigned short fnum, u32b sum, int Ind);
 void kill_xfers(int ind);
 void do_xfers(void);
 int get_xfers_num(void);
@@ -160,11 +160,14 @@ int remote_update(int ind, char *fname){
 
 /* compare checksums of local/remote files - update if
    necessary */
-int check_return(int ind, unsigned short fnum, u32b sum){
+int check_return(int ind, unsigned short fnum, u32b sum, int Ind){
 	struct ft_data *c_fd;
 	FILE* fp;
 	u32b lsum;
 	char buf[256];
+
+	/* check how many LUA files were already checked (for 4.4.8.1.0.0 crash bug) */
+	if (Ind) Players[Ind]->warning_lua_count--;
 
 	c_fd=getfile(ind, fnum);
 	if(c_fd==(struct ft_data*)NULL){
@@ -175,6 +178,22 @@ int check_return(int ind, unsigned short fnum, u32b sum){
 		return(0);
 	}
 	if(lsum!=sum){
+		/* Hack: Client 4.4.8.1 apparently was compiled by a MinGW version
+		   that broke lua updating, resulting in a client crash on logon.
+		   So skip any lua updates for players using that version.
+		   That means that players playing spell-casters that use spells in
+		   the affected LUA files will probably have to update their client
+		   at some point. */
+		if (Ind && is_same_as(&Players[Ind]->version, 4, 4, 8, 1, 0, 0)) {
+			/* Don't give him messages if he cannot help it */
+			if (!Players[Ind]->v_latest) {
+				Players[Ind]->warning_lua_update = 1;
+				msg_format(Ind, "\377oLUA file %s is outdated.", c_fd->fname);
+			}
+
+			return 0;
+		}
+
 		path_build(buf, 256, ANGBAND_DIR, c_fd->fname);
 		fp=fopen(buf, "rb");
 		if(!fp) {

@@ -695,7 +695,7 @@ void client_init(char *argv1, bool skip)
 	/* Extended version */
 	if (server_protocol >= 2)
 	{
-		Packet_printf(&ibuf, "%d%d%d%d%d%d", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, VERSION_BUILD);
+		Packet_printf(&ibuf, "%d%d%d%d%d%d", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, VERSION_BUILD + (VERSION_OS) * 1000);
 	}
 
 	/* Connect to server */

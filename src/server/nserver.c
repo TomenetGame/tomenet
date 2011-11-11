@@ -1306,6 +1306,12 @@ static void Contact(int fd, int arg)
 			plog(format("Incomplete extended version from %s", host_addr));
 			return;
 		}
+		
+		/* Hack: Clients > 4.4.8.1.0.0 also send their binary type
+		   (OS they were compiled for), useful for MinGW weirdness
+		   in the future, like the LUA crash bug - C. Blue */
+		version_ext.os = version_ext.build / 1000;
+		version_ext.build %= 1000;
 	}
 	else
 	{
@@ -2234,7 +2240,7 @@ static int Handle_listening(int ind)
 		s_printf(" (version %04x)", connp->version);
 #else
 	/* Extended version support */
-	s_printf(" (version %d.%d.%d.%d branch %d build %d)", version->major, version->minor, version->patch, version->extra, version->branch, version->build);
+	s_printf(" (version %d.%d.%d.%d branch %d build %d, os %d)", version->major, version->minor, version->patch, version->extra, version->branch, version->build, version->os);
 #endif
 	s_printf("\n");
 
@@ -3845,7 +3851,16 @@ static int Receive_file(int ind){
 				break;
 			case PKT_FILE_SUM:
 				Packet_scanf(&connp->r, "%d", &csum);
-				check_return(ind, fnum, csum);
+				check_return(ind, fnum, csum, Ind);
+
+				/* for 4.4.8.1.0.0 LUA update crash bug */
+				if (p_ptr->warning_lua_count == 0 && p_ptr->warning_lua_update == 1
+				    /* don't give him messages if he can't help it */
+				    && !p_ptr->v_latest) {
+					msg_print(Ind, "\377RWarning: Due to a bug in client 4.4.8 it cannot update LUA files.");
+					msg_print(Ind, "\377R         If you play spell-casting characters please update your client!");
+				}
+
 				return(1);
 				break;
 			case PKT_FILE_ACK:

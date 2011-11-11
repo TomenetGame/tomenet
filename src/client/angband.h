@@ -6,7 +6,9 @@
 #define INCLUDED_ANGBAND_H
 
 /* Client-side version of the Angband header file */
-#define CLIENT_SIDE
+#ifndef CLIENT_SIDE
+ #define CLIENT_SIDE
+#endif
 
 /*
  * Copyright (c) 1989 James E. Wilson

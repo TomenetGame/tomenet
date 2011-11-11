@@ -38,7 +38,7 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		4
 #define VERSION_PATCH		8
-#define VERSION_EXTRA		1
+#define VERSION_EXTRA		2
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -68,7 +68,7 @@
 
 /* Client-side only: Client release version tag
    (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG ""
+#define CLIENT_VERSION_TAG "a"
 
 /* Minimum client version required to be allowed to log in */
 #define MIN_VERSION_MAJOR	4
@@ -87,6 +87,29 @@
 #define SF_VERSION_MINOR	4
 #define SF_VERSION_PATCH	17
 #define SF_VERSION_EXTRA	0
+
+
+/* version_os constants, set by gcc flags - C. Blue */
+#define OS_UNKNOWN	0
+#define OS_WIN32	1
+#define OS_GCU		2
+#define OS_X11		3
+#define OS_GCU_X11	4
+
+/* Set new VERSION_OS (after 4.4.8.1.0.0) for client - C. Blue */
+#ifdef CLIENT_SIDE
+ #ifdef WIN32
+  #define VERSION_OS		OS_WIN32
+ #elif defined(USE_X11) && defined(USE_GCU)
+  #define VERSION_OS		OS_GCU_X11
+ #elif defined(USE_GCU)
+  #define VERSION_OS		OS_GCU
+ #elif defined(USE_X11)
+  #define VERSION_OS		OS_X11
+ #else
+  #define VERSION_OS		OS_UNKNOWN
+ #endif
+#endif
 
 
 

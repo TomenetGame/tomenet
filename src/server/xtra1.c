@@ -6093,6 +6093,7 @@ void update_stuff(int Ind)
 	if (p_ptr->update & PU_LUA) {
 		/* update the client files */
 		p_ptr->update &= ~(PU_LUA);
+		p_ptr->warning_lua_update = p_ptr->warning_lua_count = 0;
 		exec_lua(Ind, "update_client()");
 	}
 }

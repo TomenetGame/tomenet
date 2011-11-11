@@ -5735,6 +5735,24 @@ bool is_newer_than(version_type *version, int major, int minor, int patch, int e
 	return FALSE;
 }
 
+bool is_same_as(version_type *version, int major, int minor, int patch, int extra, int branch, int build)
+{
+	if (version->major == major
+	    && version->minor == minor
+	    && version->patch == patch
+	    && version->extra == extra
+	    && version->branch == branch
+	    && version->build == build)
+		return TRUE;
+
+	return FALSE;
+}
+
+/* dummy */
+void msg_format(int Ind, cptr fmt, ...) {
+	return;
+}
+
 #ifdef USE_SOUND_2010
 bool sound(int val, int type, int vol, s32b player_id) {
 	if (!use_sound) return FALSE;

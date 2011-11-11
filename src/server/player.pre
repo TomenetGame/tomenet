@@ -326,6 +326,8 @@ struct version_type {	/* Extended version structure */
 	int extra;
 	int branch;
 	int build;
+
+	int os;
 };
 
 /*

@@ -501,6 +501,9 @@ void remote_update_lua(int Ind, cptr file)
 {
 	player_type *p_ptr = Players[Ind];
 
+	/* Count # of LUA files to check for updates (for 4.4.8.1.0.0 crash bug) */
+	p_ptr->warning_lua_count++;
+
 	remote_update(p_ptr->conn, file);
 	return;
 }
