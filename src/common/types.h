@@ -1045,6 +1045,11 @@ struct monster_type
 #endif
 
     u16b do_dist;		/* execute all monster teleportation at the end of turn */
+
+#if 0 /* currently solved by bidirectional LoS testing via DOUBLE_LOS_SAFETY instead! */
+    byte xlos_x[5], xlos_y[5];	/* Prevent system immanent LoS-exploit when monster gets targetted diagonally */
+    /* note: affects near_hit, process_monsters, make_attack_spell, summon_possible, clean_shot..., projectable..., los... */
+#endif
 };
 
 typedef struct monster_ego monster_ego;

@@ -11092,15 +11092,15 @@ bool lua_project(int who, int rad, struct worldpos *wpos, int y, int x, int dam,
 #endif
 bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam, int typ, int flg, char *attacker)
 {
-	int			i, j, t;
-	int				 y1, x1, y2, x2;
-	int			/*y0, x0,*/ y9, x9;
-	int			dist;
-	int y_saver, x_saver; /* For reflecting monsters */
-	int dist_hack = 0;
-	int			who_can_see[26], num_can_see = 0;
+	int	i, j, t;
+	int	 y1, x1, y2, x2;
+	int	/*y0, x0,*/ y9, x9;
+	int	y_saver, x_saver; /* For reflecting monsters */
+	int	dist, dist_hack = 0, true_dist = 0;
+	int	who_can_see[26], num_can_see = 0;
 	int	terrain_resistance = -1, terrain_damage = -1;
-	bool old_tacit = suppress_message;
+	bool	old_tacit = suppress_message;
+
 #ifdef OPTIMIZED_ANIMATIONS
 	int path_y[MAX_RANGE];
 	int path_x[MAX_RANGE];
@@ -11453,11 +11453,20 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		}
 
 
+		/* Distance stuff: The 'dist > MAX_RANGE' part is basically obsolete
+		   now that distance() is used to achieve 'true' distance. */
+
+		/* Distance to target too great?
+		   Use distance() to form a 'natural' circle shaped radius instead of a square shaped radius,
+		   monsters do this too */
+		if ((true_dist = distance(y1, x1, y2, x2)) > MAX_RANGE) break;
+
 		/* Keep track of the distance traveled */
 		dist++;
 
 		/* Nothing can travel furthur than the maximal distance */
 		if (dist > MAX_RANGE) break;
+
 
 		/* Only do visual effects (and delay) if requested */
 		if (!(flg & PROJECT_HIDE))
@@ -11581,7 +11590,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	dist_hack = dist;
 
 	/* If we found a "target", explode there */
-	if (dist <= MAX_RANGE) {
+	if (true_dist <= MAX_RANGE) {
 		/* Mega-Hack -- remove the final "beam" grid */
 //		if ((flg & PROJECT_BEAM) && (grids > 0)) grids--;
 

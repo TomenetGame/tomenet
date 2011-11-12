@@ -717,8 +717,15 @@ static bool summon_possible(worldpos *wpos, int y1, int x1)
  * This is exactly like "projectable", but it will return FALSE if a monster
  * is in the way.
  */
-static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2, int range)
-{
+#ifdef DOUBLE_LOS_SAFETY
+static bool clean_shot_DLS(worldpos *wpos, int y1, int x1, int y2, int x2, int range);
+static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
+	return (clean_shot_DLS(wpos, y1, x1, y2, x2, range) || clean_shot_DLS(wpos, y2, x2, y1, x1, range));
+}
+static bool clean_shot_DLS(worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
+#else
+static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
+#endif
 	int dist, y, x;
 	cave_type **zcave;
 
@@ -751,8 +758,15 @@ static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2, int range
 	return (FALSE);
 }
 /* Relates to clean_shot like projectable_wall to projectable */
-static bool clean_shot_wall(worldpos *wpos, int y1, int x1, int y2, int x2, int range)
-{
+#ifdef DOUBLE_LOS_SAFETY
+static bool clean_shot_wall_DLS(worldpos *wpos, int y1, int x1, int y2, int x2, int range);
+static bool clean_shot_wall(worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
+	return (clean_shot_wall_DLS(wpos, y1, x1, y2, x2, range) || clean_shot_wall_DLS(wpos, y2, x2, y1, x1, range));
+}
+static bool clean_shot_wall_DLS(worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
+#else
+static bool clean_shot_wall(worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
+#endif
 	int dist, y, x;
 	cave_type **zcave;
 
@@ -1615,7 +1629,7 @@ static int near_hit(int m_idx, int *yp, int *xp, int rad)
 
 		/* Check if projectable */
 		if (projectable(&m_ptr->wpos, fy, fx, y, x, MAX_RANGE) &&
-				projectable_wall(&m_ptr->wpos, y, x, py, px, MAX_RANGE))
+		    projectable_wall(&m_ptr->wpos, y, x, py, px, MAX_RANGE))
 		{
 			/* Good location */
 			(*yp) = y;

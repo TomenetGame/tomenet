@@ -2611,7 +2611,7 @@ void do_cmd_target_friendly(int Ind, int dir)
 
 	/* Set the target */
 	if (target_set_friendly(Ind, dir) && !p_ptr->taciturn_messages) {
-		msg_print(Ind, "Target Selected.");
+//		msg_print(Ind, "Target Selected.");
 	} else {
 		/*msg_print(Ind, "Target Aborted.");*/
 	}
