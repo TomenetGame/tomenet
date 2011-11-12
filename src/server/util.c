@@ -3175,7 +3175,7 @@ void toggle_afk(int Ind, char *msg)
 
 	strcpy(afk, "");
 
-	if (p_ptr->afk) {
+	if (p_ptr->afk && !msg[0]) {
 		if (strlen(p_ptr->afk_msg) == 0)
 			msg_print(Ind, "AFK mode is turned \377GOFF\377w.");
 		else
