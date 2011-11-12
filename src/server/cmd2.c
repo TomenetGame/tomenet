@@ -4028,7 +4028,7 @@ void do_cmd_fire(int Ind, int dir)
 	/* Distance to target too great?
 	   Use distance() to form a 'natural' circle shaped radius instead of a square shaped radius,
 	   monsters do this too */
-	if (distance(p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col) > tdis) return;
+	if (dir == 5 && distance(p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col) > tdis) return;
 
 	/* Check if monsters around him/her hinder this */
 //  if (interfere(Ind, cfg.spell_interfere * 3)) return;

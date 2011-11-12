@@ -20573,9 +20573,9 @@ D:A black and white spotted bear that doesn't seem overly agressive.
 
 # For testing LoS stuff - C. Blue
 
-N:1141:Armed Test Blob
+N:1141:Charged Test Blob
 G:j:M
-I:120:200d10:50:50:0
+I:120:300d10:50:50:0
 W:99:255:500:0
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -20585,7 +20585,7 @@ B:TOUCH:*
 B:TOUCH:*
 F:BLUEBAND | NEVER_MOVE | NONLIVING | EMPTY_MIND | COLD_BLOOD
 F:RES_TELE | RES_NEXU | IM_TELE | FORCE_MAXHP
-S:1_IN_1 | ARROW_4
+S:1_IN_1 | MISSILE
 
 
 # N: serial number : monster name
