@@ -11459,7 +11459,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		/* Distance to target too great?
 		   Use distance() to form a 'natural' circle shaped radius instead of a square shaped radius,
 		   monsters do this too */
-		if ((true_dist = distance(y1, x1, y2, x2)) > MAX_RANGE) break;
+		if ((true_dist = distance(y1, x1, y9, x9)) > MAX_RANGE) break;
 
 		/* Keep track of the distance traveled */
 		dist++;
