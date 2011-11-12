@@ -3018,27 +3018,24 @@ void do_cmd_bash(int Ind, int dir)
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 
 	int                 y, x;
-
 	int                     bash, temp, num;
 
 	cave_type               *c_ptr;
 
-	bool            more = FALSE;
+	bool            more = FALSE, water = FALSE, tiny_bash;
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
 
 
 	/* Ghosts cannot bash ; not in WRAITHFORM */
-	if ( (p_ptr->ghost)
-//	    || (p_ptr->fruit_bat && !p_ptr->body_monster)
-	    || (p_ptr->tim_wraith)
-//	    || (p_ptr->body_monster && !(r_ptr->flags2 & RF2_BASH_DOOR))
-	    )
-	{
+	if (p_ptr->ghost || p_ptr->tim_wraith) {
 		/* Message */
 		msg_print(Ind, "You cannot bash things!");
 		if (!is_admin(p_ptr)) return;
 	}
+
+	tiny_bash = ((p_ptr->fruit_bat && !p_ptr->body_monster) ||
+	    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_BASH_DOOR)));
 
 	/* Get a "repeated" direction */
 	if (dir) {
@@ -3048,6 +3045,10 @@ void do_cmd_bash(int Ind, int dir)
 
 		/* Get grid */
 		c_ptr = &zcave[y][x];
+
+		if (c_ptr->feat == FEAT_DEEP_WATER ||
+		    c_ptr->feat == FEAT_SHAL_WATER)
+			tiny_bash = water = TRUE;
 
 		/* Monster in the way */
 		if (c_ptr->m_idx > 0) {
@@ -3073,9 +3074,8 @@ void do_cmd_bash(int Ind, int dir)
 
 				if (nothing_test(o_ptr, p_ptr, &p_ptr->wpos, x, y)) return;
 
-				if (c_ptr->feat == FEAT_DEEP_WATER ||
-				    c_ptr->feat == FEAT_SHAL_WATER)
-				{
+#if 0 /* allow water-bashing of 1 grid range, same as for fruit bats now - C. Blue */
+				if (water) {
 					/* S(he) is no longer afk */
 					un_afk_idle(Ind);
 
@@ -3089,6 +3089,7 @@ void do_cmd_bash(int Ind, int dir)
 					stop_shooting_till_kill(Ind);
 					return;
 				}
+#endif
 
 				/* Potions smash open */
 				if (o_ptr->tval == TV_POTION ||
@@ -3128,7 +3129,8 @@ void do_cmd_bash(int Ind, int dir)
 					return;
 				}
 
-				do_cmd_throw(Ind, dir, 0 - c_ptr->o_idx, TRUE);
+				if (water) msg_print(Ind, "Splash!");
+				do_cmd_throw(Ind, dir, 0 - c_ptr->o_idx, tiny_bash ? 2 : 1);
 
 				/* Set off trap (Hack -- handle like door trap) */
 				if(GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
@@ -5259,7 +5261,7 @@ bool interfere(int Ind, int chance)
  * to hit bonus of the weapon to have an effect?  Should it ever cause
  * the item to be destroyed?  Should it do any damage at all?
  */
-void do_cmd_throw(int Ind, int dir, int item, bool bashing)
+void do_cmd_throw(int Ind, int dir, int item, char bashing)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	struct worldpos *wpos=&p_ptr->wpos;
@@ -5442,10 +5444,8 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 	/* Max distance of 10 */
 	if (tdis > 10) tdis = 10;
 
-	/* Fruit bat bashing? Actually limit throwing too! */
-	if ((p_ptr->fruit_bat && !p_ptr->body_monster) ||
-	    (p_ptr->body_monster && !(r_info[p_ptr->body_monster].flags2 & RF2_BASH_DOOR)))
-		tdis = 1; /* at least allow minimal item movement, especially for bashing piles */
+	/* Fruit bat/water bashing? Actually limit throwing too! */
+	if (bashing == 2) tdis = 1; /* at least allow minimal item movement, especially for bashing piles */
 
 	/* Chance of hitting */
 	chance = (p_ptr->skill_tht + (p_ptr->to_h * BTH_PLUS_ADJ));

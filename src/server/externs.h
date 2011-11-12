@@ -581,7 +581,7 @@ extern void do_cmd_stay(int Ind, int pickup);
 extern int do_cmd_run(int Ind, int dir);
 extern void do_cmd_fire(int Ind, int dir);
 extern bool interfere(int Ind, int chance);
-extern void do_cmd_throw(int Ind, int dir, int item, bool bashing);
+extern void do_cmd_throw(int Ind, int dir, int item, char bashing);
 extern void do_cmd_purchase_house(int Ind, int dir);
 extern int pick_house(struct worldpos *wpos, int y, int x);
 extern void house_admin(int Ind, int dir, char *args);

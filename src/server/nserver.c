@@ -7706,7 +7706,7 @@ static int Receive_throw(int ind)
 			return 1;
 		}
 
-		do_cmd_throw(player, dir, item, FALSE);
+		do_cmd_throw(player, dir, item, 0);
 		return 2;
 	} else if (player) {
 		Packet_printf(&connp->q, "%c%c%hd", ch, dir, item);
@@ -9429,7 +9429,7 @@ void Handle_direction(int Ind, int dir)
 	else if (p_ptr->current_fire != -1)
 		do_cmd_fire(Ind, dir);
 	else if (p_ptr->current_throw != -1)
-		do_cmd_throw(Ind, dir, p_ptr->current_throw, FALSE);
+		do_cmd_throw(Ind, dir, p_ptr->current_throw, 0);
 }
 		
 void Handle_item(int Ind, int item)
