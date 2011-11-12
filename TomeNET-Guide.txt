@@ -1162,6 +1162,10 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
 
 (0.5) Rumours, missing features, technical warnings (READ!)
 -----------------------------------------------------------
+-Do not trust your wireless network regarding lag spikes when you don't want
+ them to happen, if you don't have some high quality wifi equipment running.
+ Most devices that ISPs hand to you for free are pretty mediocre, so plug in
+ your trusted ethernet cable and be fine.
 -To report a bug, use /bug command in game. It allows you to type a line of
  text to explain the bug or problem you encountered. You can use the /bug
  command multiple times if one line is not sufficient for the amount of text
