@@ -8371,6 +8371,11 @@ bool target_able(int Ind, int m_idx)
 		/* Monster must not be owned */
 		if (p_ptr->id == m_ptr->owner) return (FALSE);
 
+		/* Distance to target too great?
+		   Use distance() to form a 'natural' circle shaped radius instead of a square shaped radius,
+		   monsters do this too */
+		if (distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) > MAX_RANGE) return (FALSE);
+
 		/* Monster must be projectable */
 #ifdef PY_PROJ_WALL
 		if (!projectable_wall(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx, MAX_RANGE)) return (FALSE);
@@ -8411,6 +8416,11 @@ bool target_able(int Ind, int m_idx)
 
 		/* Player must be visible */
 		if (!player_can_see_bold(Ind, q_ptr->py, q_ptr->px)) return (FALSE);
+
+		/* Distance to target too great?
+		   Use distance() to form a 'natural' circle shaped radius instead of a square shaped radius,
+		   monsters do this too */
+		if (distance(p_ptr->py, p_ptr->px, q_ptr->py, q_ptr->px) > MAX_RANGE) return (FALSE);
 
 		/* Player must be projectable */
 #ifdef PY_PROJ_WALL

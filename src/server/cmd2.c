@@ -4018,6 +4018,17 @@ void do_cmd_fire(int Ind, int dir)
 	tdis = 9 + 3 * tmul;
 	if (boomerang) tdis = 15;
 
+	/* Play fairly */
+#ifdef ARROW_DIST_LIMIT
+	if (tdis > ARROW_DIST_LIMIT) tdis = ARROW_DIST_LIMIT; /* == MAX_RANGE */
+#else
+	if (tdis > MAX_RANGE) tdis = MAX_RANGE;
+#endif
+
+	/* Distance to target too great?
+	   Use distance() to form a 'natural' circle shaped radius instead of a square shaped radius,
+	   monsters do this too */
+	if (distance(p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col) > tdis) return;
 
 	/* Check if monsters around him/her hinder this */
 //  if (interfere(Ind, cfg.spell_interfere * 3)) return;
@@ -4136,11 +4147,6 @@ void do_cmd_fire(int Ind, int dir)
 	   passed all tests that might return() instead, and ARE shooting
 	   to kill. Note: Cursed arrow failure is exempt a.t.m. - C. Blue */
 	if (p_ptr->shooty_till_kill) p_ptr->shooting_till_kill = TRUE;
-
-	/* Play fairly */
-#ifdef ARROW_DIST_LIMIT
-	if (tdis > ARROW_DIST_LIMIT) tdis = ARROW_DIST_LIMIT;
-#endif	// ARROW_DIST_LIMIT
 
 	if (!boomerang && cursed_p(o_ptr) && magik(50)) {
 		msg_print(Ind, "You somehow failed to fire!");

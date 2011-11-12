@@ -949,8 +949,15 @@ static bool is_wall(cave_type *c_ptr)
  *
  * Use the "update_view()" function to determine player line-of-sight.
  */
-bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2)
-{
+#ifdef DOUBLE_LOS_SAFETY
+static bool los_DLS(struct worldpos *wpos, int y1, int x1, int y2, int x2);
+bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
+	return (los_DLS(wpos, y1, x1, y2, x2) || los_DLS(wpos, y2, x2, y1, x1));
+}
+static bool los_DLS(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
+#else
+bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
+#endif
 	/* Delta */
 	int dx, dy;
 
@@ -1174,8 +1181,15 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2)
 }
 
 /* Same as los, just ignores non-perma-wall grids - for monster targetting - C. Blue */
-bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2)
-{
+#ifdef DOUBLE_LOS_SAFETY
+static bool los_wall_DLS(struct worldpos *wpos, int y1, int x1, int y2, int x2);
+bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
+	return (los_wall_DLS(wpos, y1, x1, y2, x2) || los_wall_DLS(wpos, y2, x2, y1, x1));
+}
+static bool los_wall_DLS(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
+#else
+bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
+#endif
 	/* Delta */
 	int dx, dy;
 
@@ -7330,8 +7344,15 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2)
  *
  * This is slightly (but significantly) different from "los(y1,x1,y2,x2)".
  */
-bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range)
-{
+#ifdef DOUBLE_LOS_SAFETY
+static bool projectable_DLS(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range);
+bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
+	return (projectable_DLS(wpos, y1, x1, y2, x2, range) || projectable_DLS(wpos, y2, x2, y1, x1, range));
+}
+static bool projectable_DLS(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
+#else
+bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
+#endif
 	int dist, y, x;
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return FALSE;
@@ -7359,8 +7380,15 @@ bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2, int rang
 }
 
 /* Same as projectable(), but allows targetting the first grid in a wall */
-bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range)
-{
+#ifdef DOUBLE_LOS_SAFETY
+static bool projectable_wall_DLS(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range);
+bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
+	return (projectable_wall_DLS(wpos, y1, x1, y2, x2, range) || projectable_wall_DLS(wpos, y2, x2, y1, x1, range));
+}
+static bool projectable_wall_DLS(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
+#else
+bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
+#endif
 	int dist, y, x;
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return(FALSE);
