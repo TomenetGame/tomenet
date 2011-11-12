@@ -3824,7 +3824,7 @@ void do_cmd_fire(int Ind, int dir)
 	int                     i, j, y, x, ny, nx, ty, tx, bx, by;
 	int                     tdam, tdis, thits, tmul;
 	int                     bonus, chance, tries = 100;
-	int                     cur_dis, visible;
+	int                     cur_dis, visible, real_dis;
 	int breakage = 0, num_ricochet = 0, ricochet_chance = 0;
 	int item = INVEN_AMMO;
 	int archery = get_archery_skill(p_ptr);
@@ -4298,9 +4298,11 @@ void do_cmd_fire(int Ind, int dir)
 		/* Travel until stopped */
 #if 0 /* I think it travelled once too far, since it's mmove2'ed in the very beginning of every for-pass, */
 /* and it goes from 0 to tdis, that's tdis+1 steps in total. Correct me if wrong~~  C. Blue */
-		for (cur_dis = 0; cur_dis <= tdis; )
+//		for (cur_dis = 0; cur_dis <= tdis; )
+		for (cur_dis = real_dis = 0; real_dis <= tdis; )
 #else
-		for (cur_dis = 0; cur_dis < tdis; )
+//		for (cur_dis = 0; cur_dis < tdis; )
+		for (cur_dis = real_dis = 0; real_dis < tdis; )
 #endif
 		{
 			ny = y;
@@ -4323,6 +4325,11 @@ void do_cmd_fire(int Ind, int dir)
 
 			/* Advance the distance */
 			cur_dis++;
+
+			/* Distance to target too great?
+			   Use distance() to form a 'natural' circle shaped radius instead of a square shaped radius,
+			   monsters do this too */
+			real_dis = distance(by, bx, ny, nx);
 
 			/* Save the new location */
 			x = nx;
@@ -5275,7 +5282,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing)
 	int                     i, j, y, x, ny, nx, ty, tx;
 	int                     chance, tdam, tdis;
 	int                     mul, div;
-	int                     cur_dis, visible;
+	int                     cur_dis, visible, real_dis;
 	int			moved_number = 1;
 
 	object_type         throw_obj;
@@ -5481,7 +5488,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing)
 
 
 	/* Travel until stopped */
-	for (cur_dis = 0; cur_dis <= tdis; ) {
+	for (cur_dis = real_dis = 0; real_dis <= tdis; ) {
 		/* Hack -- Stop at the target */
 		if ((y == ty) && (x == tx)) break;
 
@@ -5499,6 +5506,8 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing)
 
 		/* Advance the distance */
 		cur_dis++;
+
+		real_dis = distance(p_ptr->py, p_ptr->px, ny, nx);
 
 		/* Save the new location */
 		x = nx;
