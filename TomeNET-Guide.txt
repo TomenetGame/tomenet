@@ -44,6 +44,7 @@ Contents
 (2) Installation & setup
     (2.1)   Installing TomeNET
     (2.1a)  Installing sound and music packs
+    (2.1b)  Editing sound and music configuration
     (2.2)   Starting TomeNET and getting to play on an internet server
     (2.3)   Client options
 (3) Creating a character & starting to play
@@ -1547,6 +1548,31 @@ command-line option.
 If you want to use your own sound and music, and create audio packs for other
 players, read sound.cfg and music.cfg in your lib/xtra/sound or lib/xtra/music
 folder to see how it's done and which formats are supported.
+
+
+(2.1b) Editing sound and music configuration
+--------------------------------------------
+You can easily replace or disable certain sound effects or music, or even
+create your own sound and musick packs.
+
+All audio files are in the sub-folders 'sound' and 'music' in the folder
+TomeNET/lib/xtra/. You can just delete or replace the sound files and it'll
+apply as soon as you start/restart the game.
+
+For more specific editing, open the files 'sound.cfg' (in the sound folder) or
+'music.cfg' (in the music folder, if a music pack has been installed) in any
+text editor that supports unix line breaks (Notepad++ for example) and start
+fine-tuning your audio. Both cfg files actually begin with some instructions
+on what file types are supported and about the structure of the files aka how
+to modify/add entries correctly.
+
+For example if you want to disable a certain sound effect, open sound.cfg in
+your text editor, locate the sound effect, and just put a '#' symbol at the
+beginning of the line - that will effectively disable the whole line.
+
+Note: Do not modify the file audio.lua, it has nothing to do with editing your
+      sound or music. Don't worry though if you accidentally modified it, it'll
+      be automatically restored next time you log on to the server.
 
 
 
