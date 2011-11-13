@@ -9416,9 +9416,8 @@ void Handle_direction(int Ind, int dir)
 		else p_ptr->current_spell = -1;
 	}
 #ifndef ENABLE_RCRAFT
-	else if (p_ptr->current_rune1 != -1 && p_ptr->current_rune2 != -1) {
+	else if (p_ptr->current_rune1 != -1 && p_ptr->current_rune2 != -1)
 		cast_rune_spell(Ind, dir);
-	}
 #endif
        	else if (p_ptr->current_rod != -1)
 		do_cmd_zap_rod_dir(Ind, dir);
