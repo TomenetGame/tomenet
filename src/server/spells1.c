@@ -52,6 +52,10 @@
    Traditionally, polymorph would cancel damage instead. - C. Blue */
 #define DAMAGE_BEFORE_POLY
 
+/* Don't allow (ball spell) explosions to extend the effective
+   reach of the caster over MAX_RANGE? */
+#define NO_EXPLOSION_OUT_OF_MAX_RANGE
+
 
  /*
   * Potions "smash open" and cause an area effect when
@@ -11099,13 +11103,14 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	int	dist, dist_hack = 0, true_dist = 0;
 	int	who_can_see[26], num_can_see = 0;
 	int	terrain_resistance = -1, terrain_damage = -1;
-	bool	old_tacit = suppress_message;
+	bool	old_tacit = suppress_message, suppress_explosion = FALSE;
 
 #ifdef OPTIMIZED_ANIMATIONS
 	int path_y[MAX_RANGE];
 	int path_x[MAX_RANGE];
 	int path_num = 0;
 #endif
+
 	struct worldpos wpos_fix, *wpos = &wpos_fix;
 	/* copy wpos in case it was a monster's wpos that gets erased from mon_take_hit() if monster dies */
 	wpos_fix = *wpos_tmp;
@@ -11253,6 +11258,22 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	/*handle_stuff();*/
 
 
+#ifdef DOUBLE_LOS_SAFETY
+	/* Use projectable..() check to pre-determine if the line of fire is ok
+	   and we may skip redundant checking that appears further below. */
+	bool ok_DLS = TRUE; /* Monsters always could target players in walls (even if the projection explodes _before_ the wall.. */
+	if (IS_PVP) { /* ..but we're not a monster? */
+#ifndef PY_PROJ_WALL
+		ok_DLS = projectable(wpos, y1, x1, y2, x2, MAX_RANGE);
+#else
+		ok_DLS = projectable_wall(wpos, y1, x1, y2, x2, MAX_RANGE);
+#endif
+	}
+	/* hack: catch non 'dir == 5' projections, aka manually directed */
+	if (x1 == x2 || y1 == y2 || ABS(x2 - x1) == ABS(y2 - y1)) ok_DLS = FALSE;
+#endif
+
+
 	/* Start at the source */
 	x = x9 = x1;
 	y = y9 = y1;
@@ -11343,16 +11364,29 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 				if (dist && !cave_floor_bold(zcave, y, x)) break;
 #ifndef PROJ_MON_ON_WALL
 			} else if (IS_PVP) { /* ..or rather flying through the air? */
-				if (dist && !cave_los(zcave, y, x)) break;
+				if (dist && !cave_contact(zcave, y, x)
+ #ifdef DOUBLE_LOS_SAFETY
+				    && !ok_DLS
+ #endif
+				    ) break;
 #endif
 			} else { /* monsters can target certain non-los grid types directly */
 				if (dist) {
 #ifdef PROJ_ON_WALL
 					if (broke_on_terrain1) break;
 #else
-					if (!cave_proj(zcave, y, x) || broke_on_terrain1) break;
+ #ifdef DOUBLE_LOS_SAFETY
+					if ((!cave_proj(zcave, y, x) && !ok_DLS)
+ #else
+					if (!cave_proj(zcave, y, x)
+ #endif
+					    || broke_on_terrain1) break;
 #endif
-					else if (!cave_los(zcave, y, x)) {
+					else if (!cave_contact(zcave, y, x)
+#ifdef DOUBLE_LOS_SAFETY
+					    && !ok_DLS
+#endif
+					    ) {
 #ifndef PROJ_MON_ON_WALL
 						/* if there isn't a player on the grid, we can't target it */
 						if (zcave[y][x].m_idx >= 0) break;
@@ -11410,47 +11444,10 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		y9 = y;
 		x9 = x;
 		mmove2(&y9, &x9, y1, x1, y2, x2);
-		
-		/* Extra (exploding) hack, bolt/beam/ball (and other?) runespells explode like ammo - Kurzel */
-		/* This could make melee runemasters quite effective in close quarters (disabled for now) */
-		if (typ_explode !=0) {
-			if (!cave_floor_bold(zcave, y9, x9)) {/* Stopped by walls/doors ?*/
-			   // || (dir == 5 && !target_ok)) { /* fired 'at oneself'? */
-				if (typ_effect == 0) project(who, randint(2)+typ_imper, wpos, y9, x9, dam / 4, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
-				//if (typ_effect == EFF_WAVE && randint(2) == 1) project(who, 1+randint(2)+typ_imper, wpos, y9, x9, dam, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
-				//if (typ_effect == EFF_LAST && randint(5) == 1) project(who, randint(2)+typ_imper, wpos, y9, x9, dam * 3/2, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
-				//if (typ_effect == EFF_STORM && randint(3) == 1) project(who, 1+typ_imper, wpos, y9, x9, dam * 2, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
-				break;
-			}
-		}
-
-		/* Hack -- Balls explode BEFORE reaching walls or doors */
-		if (flg & PROJECT_GRAV) { /* Running along the floor?.. */
-			if (!cave_floor_bold(zcave, y9, x9) && (rad > 0)) break;
-#ifndef PROJ_MON_ON_WALL
-		} else if (IS_PVP) { /* ..or rather flying through the air? */
-			if (!cave_los(zcave, y9, x9) && (rad > 0)) break;
+#ifdef DOUBLE_LOS_SAFETY
+		/* After we reached our target we have no more need for double-los-safety */
+		if (y9 == y2 && x9 == x2) ok_DLS = FALSE;
 #endif
-		} else { /* monsters can target certain non-los grid types directly */
-			if (rad > 0) {
-#ifdef PROJ_ON_WALL
-				if (broke_on_terrain2) break;
-#else
-				if (!cave_proj(zcave, y9, x9) || broke_on_terrain2) break;
-#endif
-				else if (!cave_los(zcave, y9, x9)) {
-#ifndef PROJ_MON_ON_WALL
-					/* if there isn't a player on the grid, we can't target it */
-					if (zcave[y9][x9].m_idx >= 0) break;
-#else
-					/* if there isn't a player/monster on the grid, we can't target it */
-					if (zcave[y9][x9].m_idx == 0) break;
-#endif
-					/* can't travel any further for sure now */
-					broke_on_terrain2 = TRUE;
-				}
-			}
-		}
 
 
 		/* Distance stuff: The 'dist > MAX_RANGE' part is basically obsolete
@@ -11466,6 +11463,69 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 
 		/* Nothing can travel furthur than the maximal distance */
 		if (dist > MAX_RANGE) break;
+
+
+		/* Extra (exploding) hack, bolt/beam/ball (and other?) runespells explode like ammo - Kurzel */
+		/* This could make melee runemasters quite effective in close quarters (disabled for now) */
+		if (typ_explode != 0) {
+			if (!cave_contact(zcave, y9, x9)
+#ifdef DOUBLE_LOS_SAFETY
+			    && !ok_DLS
+#endif
+			    ) {/* Stopped by walls/doors ?*/
+			   // || (dir == 5 && !target_ok)) { /* fired 'at oneself'? */
+				int rad = randint(2) + typ_imper;
+				if (MAX_RANGE - true_dist < rad) rad = MAX_RANGE - true_dist;
+
+				if (typ_effect == 0) project(who, rad, wpos, y9, x9, dam / 4, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				//if (typ_effect == EFF_WAVE && randint(2) == 1) project(who, 1+randint(2)+typ_imper, wpos, y9, x9, dam, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				//if (typ_effect == EFF_LAST && randint(5) == 1) project(who, randint(2)+typ_imper, wpos, y9, x9, dam * 3/2, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				//if (typ_effect == EFF_STORM && randint(3) == 1) project(who, 1+typ_imper, wpos, y9, x9, dam * 2, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				break;
+			}
+		}
+
+
+		/* Hack -- Balls explode BEFORE reaching walls or doors */
+		if (flg & PROJECT_GRAV) { /* Running along the floor?.. */
+			if (!cave_floor_bold(zcave, y9, x9) && (rad > 0)) break;
+#ifndef PROJ_MON_ON_WALL
+		} else if (IS_PVP) { /* ..or rather flying through the air? */
+			if (!cave_contact(zcave, y9, x9)
+ #ifdef DOUBLE_LOS_SAFETY
+			    && !ok_DLS
+ #endif
+			     && (rad > 0)) break;
+#endif
+		} else { /* monsters can target certain non-los grid types directly */
+			if (rad > 0) {
+#ifdef PROJ_ON_WALL
+				if (broke_on_terrain2) break;
+#else
+ #ifdef DOUBLE_LOS_SAFETY
+				if ((!cave_proj(zcave, y9, x9) && !ok_DLS)
+ #else
+				if (!cave_proj(zcave, y9, x9)
+ #endif
+				    || broke_on_terrain2) break;
+#endif
+				else if (!cave_contact(zcave, y9, x9)
+#ifdef DOUBLE_LOS_SAFETY
+				    && !ok_DLS
+#endif
+				    ) {
+#ifndef PROJ_MON_ON_WALL
+					/* if there isn't a player on the grid, we can't target it */
+					if (zcave[y9][x9].m_idx >= 0) break;
+#else
+					/* if there isn't a player/monster on the grid, we can't target it */
+					if (zcave[y9][x9].m_idx == 0) break;
+#endif
+					/* can't travel any further for sure now */
+					broke_on_terrain2 = TRUE;
+				}
+			}
+		}
 
 
 		/* Only do visual effects (and delay) if requested */
@@ -11527,6 +11587,11 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		y = y9;
 		x = x9;
 	}
+
+	/* hack: FF1_BLOCK_CONTACT grids prevent explosions,
+	   since those would carry over on the other side if it's
+	   just a wall of thickness 1 and possibly hit monsters there. */
+	if (f_info[zcave[y9][x9].feat].flags1 & FF1_BLOCK_CONTACT) suppress_explosion = TRUE;
 
 #ifdef OPTIMIZED_ANIMATIONS
 	if (path_num) {
@@ -11590,7 +11655,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	dist_hack = dist;
 
 	/* If we found a "target", explode there */
-	if (true_dist <= MAX_RANGE) {
+	if (true_dist <= MAX_RANGE && !suppress_explosion) {
 		/* Mega-Hack -- remove the final "beam" grid */
 //		if ((flg & PROJECT_BEAM) && (grids > 0)) grids--;
 
@@ -11611,6 +11676,11 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 
 			/* Ignore "illegal" locations */
 			if (!in_bounds3(wpos, l_ptr, y, x)) continue;
+
+#ifdef NO_EXPLOSION_OUT_OF_MAX_RANGE
+			/* Don't create explosions that exceed MAX_RANGE from the caster */
+			if (distance(y, x, y1, x1) > MAX_RANGE) continue;
+#endif
 
 #if 1
 			if ((typ == GF_DISINTEGRATE) ||
@@ -11918,10 +11988,10 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			/* Walls protect monsters */
 //			if (!cave_floor_bold(zcave, y, x)) continue;
 			/* Monsters can be hit on dark pits */
-			if (!cave_los(zcave, y, x)) continue;
+			if (!cave_contact(zcave, y, x)) continue;
 #else
 			/* Walls only protect monsters if it's not the very epicenter of the blast. */
-			if (!cave_los(zcave, y, x) && y != y2 && x != x2) continue;
+			if (!cave_contact(zcave, y, x) && y != y2 && x != x2) continue;
 #endif
 
 			/* Affect the monster */
