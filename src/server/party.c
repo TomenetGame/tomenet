@@ -447,6 +447,7 @@ static u32b new_accid() {
 	FILE *fp;
 	char *t_map;
 	struct account t_acc;
+	int num_entries = 0;
 	id = account_id;
 
 	fp = fopen("tomenet.acc", "rb");
@@ -456,9 +457,22 @@ static u32b new_accid() {
 	while (fread(&t_acc, sizeof(struct account), 1, fp)) {
 		if (t_acc.flags & ACC_DELD) continue;
 		t_map[t_acc.id / 8] |= (1 << (t_acc.id % 8));
+		num_entries++;
 	}
 
 	fclose(fp);
+
+	/* HACK - Make account id 1 unavailable if the file is not empty.
+	 * This prevents the next new player from becoming an admin if the
+	 * first account is ever deleted.
+	 *  - mikaelh
+	 */
+	if (num_entries) {
+		t_map[0] |= (1 << 1);
+	}
+
+	/* Make account id 0 unavailable just to be safe */
+	t_map[0] |= (1 << 0);
 
 	/* Find the next free account ID */
 	for (id = account_id; id < MAX_ACCOUNTS; id++){
