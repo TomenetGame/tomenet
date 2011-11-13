@@ -7357,6 +7357,11 @@ bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2, int rang
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return FALSE;
 
+#ifdef DOUBLE_LOS_SAFETY
+	/* catch ball-spell related call in project() which adds '+ dir * 99' aka distance of 99 */
+	if (!in_bounds(y1, x1)) return(FALSE);
+#endif
+
 	/* Start at the initial location */
 	y = y1, x = x1;
 
@@ -7392,6 +7397,11 @@ bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2, int
 	int dist, y, x;
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return(FALSE);
+
+#ifdef DOUBLE_LOS_SAFETY
+	/* catch ball-spell related call in project() which adds '+ dir * 99' aka distance of 99 */
+	if (!in_bounds(y1, x1)) return(FALSE);
+#endif
 
 	/* Start at the initial location */
 	y = y1, x = x1;

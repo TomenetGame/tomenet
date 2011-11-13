@@ -718,11 +718,11 @@ static bool summon_possible(worldpos *wpos, int y1, int x1)
  * is in the way.
  */
 #ifdef DOUBLE_LOS_SAFETY
-static bool clean_shot_DLS(worldpos *wpos, int y1, int x1, int y2, int x2, int range);
-static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
-	return (clean_shot_DLS(wpos, y1, x1, y2, x2, range) || clean_shot_DLS(wpos, y2, x2, y1, x1, range));
+static bool clean_shot_DLS(worldpos *wpos, int y1, int x1, int y2, int x2, int range, int m_idx);
+static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2, int range, int m_idx) {
+	return (clean_shot_DLS(wpos, y1, x1, y2, x2, range, m_idx) || clean_shot_DLS(wpos, y2, x2, y1, x1, range, m_idx));
 }
-static bool clean_shot_DLS(worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
+static bool clean_shot_DLS(worldpos *wpos, int y1, int x1, int y2, int x2, int range, int m_idx) {
 #else
 static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
 #endif
@@ -738,11 +738,14 @@ static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2, int range
 	for (dist = 0; dist <= range; dist++)
 	{
 		/* Never pass through walls */
-		if (dist && !cave_los(zcave, y, x)) break;
+		if (dist && !cave_contact(zcave, y, x)) break;
 		
 		/* Never pass through monsters */
-		if (dist && zcave[y][x].m_idx > 0)
-		{
+		if (dist && zcave[y][x].m_idx > 0
+#ifdef DOUBLE_LOS_SAFETY
+		    && zcave[y][x].m_idx != m_idx
+#endif
+		    ) {
 			break;
 //			if (is_friend(&m_list[zcave[y][x].m_idx]) < 0) break;
 		}
@@ -759,11 +762,11 @@ static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2, int range
 }
 /* Relates to clean_shot like projectable_wall to projectable */
 #ifdef DOUBLE_LOS_SAFETY
-static bool clean_shot_wall_DLS(worldpos *wpos, int y1, int x1, int y2, int x2, int range);
-static bool clean_shot_wall(worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
-	return (clean_shot_wall_DLS(wpos, y1, x1, y2, x2, range) || clean_shot_wall_DLS(wpos, y2, x2, y1, x1, range));
+static bool clean_shot_wall_DLS(worldpos *wpos, int y1, int x1, int y2, int x2, int range, int m_idx);
+static bool clean_shot_wall(worldpos *wpos, int y1, int x1, int y2, int x2, int range, int m_idx) {
+	return (clean_shot_wall_DLS(wpos, y1, x1, y2, x2, range, m_idx) || clean_shot_wall_DLS(wpos, y2, x2, y1, x1, range, m_idx));
 }
-static bool clean_shot_wall_DLS(worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
+static bool clean_shot_wall_DLS(worldpos *wpos, int y1, int x1, int y2, int x2, int range, int m_idx) {
 #else
 static bool clean_shot_wall(worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
 #endif
@@ -778,7 +781,11 @@ static bool clean_shot_wall(worldpos *wpos, int y1, int x1, int y2, int x2, int 
 	/* See "project()" and "projectable()" */
 	for (dist = 0; dist <= range; dist++) {
 		/* Never pass through monsters */
-		if (dist && zcave[y][x].m_idx > 0) {
+		if (dist && zcave[y][x].m_idx > 0
+#ifdef DOUBLE_LOS_SAFETY
+		    && zcave[y][x].m_idx != m_idx
+#endif
+		    ) {
 			break;
 //			if (is_friend(&m_list[zcave[y][x].m_idx]) < 0) break;
 		}
@@ -787,7 +794,7 @@ static bool clean_shot_wall(worldpos *wpos, int y1, int x1, int y2, int x2, int 
 		if ((x == x2) && (y == y2)) return (TRUE);
 
 		/* Never pass through walls */
-		if (dist && !cave_los(zcave, y, x)) break;
+		if (dist && !cave_contact(zcave, y, x)) break;
 
 		/* Calculate the new location */
 		mmove2(&y, &x, y1, x1, y2, x2);
@@ -1625,7 +1632,7 @@ static int near_hit(int m_idx, int *yp, int *xp, int rad)
 		if (!in_bounds(y, x)) continue;
 
 		/* Skip locations in a wall */
-		if (!cave_los(zcave, y, x)) continue;
+		if (!cave_contact(zcave, y, x)) continue;
 
 		/* Check if projectable */
 		if (projectable(&m_ptr->wpos, fy, fx, y, x, MAX_RANGE) &&
@@ -1658,7 +1665,7 @@ static int near_hit(int m_idx, int *yp, int *xp, int rad)
 
 				/* Skip locations in a wall */
 //				if (!cave_floor_bold(zcave, y, x)) continue;
-				if (!cave_los(zcave, y, x)) continue;
+				if (!cave_contact(zcave, y, x)) continue;
 
 				/* Check distance */
 				if (distance(y, x, py, px) != d) continue;
@@ -1936,7 +1943,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* Stupid monster flag */
 	stupid = r_ptr->flags2 & (RF2_STUPID);
-	
+
 
 #ifdef DRS_SMART_OPTIONS
 
@@ -1954,9 +1961,17 @@ bool make_attack_spell(int Ind, int m_idx) {
 	    ((f4 & (RF4_BOLT_MASK) || f5 & (RF5_BOLT_MASK) || f6 & (RF6_BOLT_MASK) || f0 & (RF0_BOLT_MASK)) &&
 	     !stupid &&
  #ifndef MON_BOLT_ON_WALL
+  #ifdef DOUBLE_LOS_SAFETY
+	     !clean_shot(wpos, m_ptr->fy, m_ptr->fx, y, x, MAX_RANGE, m_idx)))
+  #else
 	     !clean_shot(wpos, m_ptr->fy, m_ptr->fx, y, x, MAX_RANGE)))
+  #endif
  #else
+  #ifdef DOUBLE_LOS_SAFETY
+	     !clean_shot_wall(wpos, m_ptr->fy, m_ptr->fx, y, x, MAX_RANGE, m_idx)))
+  #else
 	     !clean_shot_wall(wpos, m_ptr->fy, m_ptr->fx, y, x, MAX_RANGE)))
+  #endif
  #endif
 	{
 		/* Remove spells that will only hurt friends */
@@ -4912,7 +4927,12 @@ static bool find_hiding(int Ind, int m_idx, int *yp, int *xp)
 #endif
 
 		/* Check for hidden, available grid */
-		if (!player_can_see_bold(Ind, y, x) && clean_shot(&m_ptr->wpos, fy, fx, y, x, MAX_RANGE))
+		if (!player_can_see_bold(Ind, y, x) &&
+#ifdef DOUBLE_LOS_SAFETY
+		    clean_shot(&m_ptr->wpos, fy, fx, y, x, MAX_RANGE, m_idx))
+#else
+		    clean_shot(&m_ptr->wpos, fy, fx, y, x, MAX_RANGE))
+#endif
 		{
 			/* Calculate distance from player */
 			dis = distance(y, x, py, px);
@@ -9184,6 +9204,14 @@ void process_monsters(void)
 					}
 				}
 			}
+#endif
+
+#ifdef DOUBLE_LOS_SAFETY
+			/* los() may actually fail sometimes in both directions,
+			   if monster stands right behind a corner and player is still further away.
+			   In that case the player who doesn't check los() may still be able to cast
+			   while the monster couldn't. So double check via projectable..() here: */
+			new_los |= projectable_wall(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx, MAX_RANGE);
 #endif
 
 			/*	if (p_ptr->ghost)
