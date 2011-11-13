@@ -447,6 +447,7 @@ extern bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, i
 extern bool confirm_admin(int Ind);
 extern void server_birth(void);
 extern void admin_outfit(int Ind, int realm);
+extern void disable_specific_warnings(player_type *p_ptr);
 
 /* cave.c */
 extern bool cave_set_quietly;

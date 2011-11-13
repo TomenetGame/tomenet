@@ -2290,8 +2290,14 @@ static void sync_options(int Ind, bool *options)
 #else
 	if (is_older_than(&p_ptr->version, 4, 4, 8, 2, 0, 0))
 		p_ptr->newbie_hints = TRUE;
-	else
+	else {
+		tmp = p_ptr->newbie_hints;
 		p_ptr->newbie_hints = options[3];
+
+		/* disable some or all newbie hints */
+		if (!p_ptr->newbie_hints) disable_specific_warnings(p_ptr);
+		else if (!tmp) msg_print(Ind, "\374\377yEnabling newbie hints requires you to exit and log in again.");
+	}
 #endif
 	p_ptr->use_old_target = options[4];
 	p_ptr->always_pickup = options[5];

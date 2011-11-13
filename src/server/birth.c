@@ -2322,7 +2322,7 @@ static void do_bard_skill(int Ind)
 #endif /*0*/
 
 /* Disable various warnings, if the player chose a class that isn't affected primarily: */
-static void disable_specific_warnings(player_type *p_ptr) {
+void disable_specific_warnings(player_type *p_ptr) {
 	/* disable ALL warnings? (client-side option) */
 	if (!p_ptr->newbie_hints) {
 		p_ptr->warning_bpr = 1;
@@ -2549,7 +2549,8 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		}
 #endif
 
-		disable_specific_warnings(p_ptr);
+//		disable_specific_warnings(p_ptr);
+		p_ptr->newbie_hints = TRUE;
 
 		return TRUE;
 	}
@@ -2829,7 +2830,8 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 
 	/* Prepare newbie-aiding warnings that ought to occur only
 	   once (not necessarily implemented like that atm) - C. Blue */
-	disable_specific_warnings(p_ptr);
+//	disable_specific_warnings(p_ptr);
+	p_ptr->newbie_hints = TRUE;
 
 	/* To find out which characters crash the server */
 	s_printf("Logged in with character %s.\n", name);
