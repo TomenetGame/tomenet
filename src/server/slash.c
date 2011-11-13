@@ -326,6 +326,9 @@ void do_slash_cmd(int Ind, char *message)
 	bool admin = TRUE;
 #endif
 
+	/* prevent overflow - bad hack for now (needed as you can now enter lines MUCH longer than 140 chars) */
+	message[MAX_SLASH_LINE_LEN - 1] = 0;
+
 	strcpy(message2, message);
 	wpcopy(&wp, &p_ptr->wpos);
 
