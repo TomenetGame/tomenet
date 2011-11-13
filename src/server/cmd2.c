@@ -4323,10 +4323,11 @@ void do_cmd_fire(int Ind, int dir)
 #endif
 #ifndef PY_FIRE_ON_WALL
 			/* Stopped by walls/doors */
-			if (!cave_los(zcave, ny, nx)) break;
-#endif
+			if (!cave_contact(zcave, ny, nx)) break;
+#else
 			/* Stopped by protected grids (Inn doors, also stopping monsters' ranged attacks!) */
 			if (f_info[zcave[ny][nx].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
+#endif
 #ifdef DOUBLE_LOS_SAFETY
 		    }
 		    /* End of skipping redundant checks for targetted shots. */
@@ -4863,7 +4864,7 @@ void do_cmd_fire(int Ind, int dir)
 #endif
 #ifdef PY_FIRE_ON_WALL
 			/* Stopped by walls/doors */
-			if (!cave_los(zcave, ny, nx)) break;
+			if (!cave_contact(zcave, ny, nx)) break;
 #endif
 #ifdef DOUBLE_LOS_SAFETY
 		    }
@@ -4875,7 +4876,7 @@ void do_cmd_fire(int Ind, int dir)
 	    if (dir != 5) {
 #endif
 		/* Extra (exploding) hack: */
-		if (!cave_los(zcave, ny, nx)/* Stopped by walls/doors ?*/
+		if (!cave_contact(zcave, ny, nx)/* Stopped by walls/doors ?*/
 		    || (dir == 5 && !target_ok)) { /* fired 'at oneself'? */
 			if (!boomerang && !magic && o_ptr->pval) {
 				do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
@@ -5005,10 +5006,7 @@ void do_cmd_fire(int Ind, int dir)
 		    if (dir != 5) {
 #endif
 			/* Stopped by walls/doors */
-			if (!cave_los(zcave, ny, nx)) break;
-
-			/* Stopped by protected grids (Inn doors, also stopping monsters' ranged attacks!) */
-			if (f_info[zcave[ny][nx].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
+			if (!cave_contact(zcave, ny, nx)) break;
 #ifdef DOUBLE_LOS_SAFETY
 		    }
 #endif
@@ -5544,14 +5542,14 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing)
 	       additional code to comply with DOUBLE_LOS_SAFETY. */
 	    if (dir != 5) {
 #endif
+		/* Stopped by protected grids (Inn doors, also stopping monsters' ranged attacks!) */
+		if (f_info[zcave[ny][nx].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
+
 		/* Stopped by walls/doors */
 		if (!cave_los(zcave, ny, nx)) {
 			hit_wall = TRUE;
 			break;
 		}
-
-		/* Stopped by protected grids (Inn doors, also stopping monsters' ranged attacks!) */
-		if (f_info[zcave[ny][nx].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
 #ifdef DOUBLE_LOS_SAFETY
 	    }
 #endif

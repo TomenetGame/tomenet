@@ -632,7 +632,8 @@
    protected from balls/breaths by default. Must be on if PY_PROJ_WALL is on. */
 #define PROJ_MON_ON_WALL
 
-/* Allow players to fire ammo at monsters standing on walls. */
+/* Allow players to fire ammo at monsters standing on walls.
+   Also used for throwing. */
 #define PY_FIRE_ON_WALL
 
 /* Allow monsters to cast bolt spells at players standing on a wall/mountain/tree grid?
@@ -5584,6 +5585,11 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define cave_los(ZCAVE,Y,X) \
 	(((f_info[ZCAVE[Y][X].feat].flags1 & FF1_LOS) || (f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR)) && \
 	!(f_info[ZCAVE[Y][X].feat].flags1 & FF1_BLOCK_LOS))
+
+/* Complete check for projections/shots */
+#define cave_contact(ZCAVE,Y,X) \
+	(((f_info[ZCAVE[Y][X].feat].flags1 & FF1_LOS) || (f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR)) && \
+	!(f_info[ZCAVE[Y][X].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)))
 
 /* a 'wall los' which ignores non-perma-walls (for los_wall()) */
 #define cave_los_wall(ZCAVE,Y,X) \
