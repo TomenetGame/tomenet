@@ -524,13 +524,18 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.other_query_flag,	FALSE,	2,	0, 2, TRUE,
 	"other_query_flag",		"Prompt for various information (mimic polymorph)" },
 
+#if 0
 	{ &c_cfg.carry_query_flag,	FALSE,	2,	0, 3, FALSE,
 	"carry_query_flag",		"(broken) Prompt before picking things up" },
+#else
+	{ &c_cfg.newbie_hints,		TRUE,	4,	0, 3, TRUE,
+	"newbie_hints",			"Display yellow hints for new players in chat" },
+#endif
 
-	{ &c_cfg.use_old_target,	FALSE,	2,	0, 4, TRUE,
+	{ &c_cfg.use_old_target,	TRUE,	2,	0, 4, TRUE,
 	"use_old_target",		"Use old target by default" },
 
-	{ &c_cfg.always_pickup,		TRUE,	2,	0, 5, TRUE,
+	{ &c_cfg.always_pickup,		FALSE,	2,	0, 5, TRUE,
 	"always_pickup",		"Pick things up by default" },
 
 	{ &c_cfg.always_repeat,		TRUE,	2,	0, 6, TRUE,
@@ -539,22 +544,22 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.depth_in_feet,		TRUE,	1,	0, 7, TRUE,
 	"depth_in_feet",		"Show dungeon level in feet" },
 
-	{ &c_cfg.stack_force_notes,	FALSE,	2,	0, 8, TRUE,
+	{ &c_cfg.stack_force_notes,	TRUE,	2,	0, 8, TRUE,
 	"stack_force_notes",		"Merge inscriptions when stacking" },
 
-	{ &c_cfg.stack_force_costs,	FALSE,	2,	0, 9, TRUE,
+	{ &c_cfg.stack_force_costs,	TRUE,	2,	0, 9, TRUE,
 	"stack_force_costs",		"Merge discounts when stacking" },
 
 	{ &c_cfg.show_labels,		TRUE,	1,	0, 10, FALSE,
 	"show_labels",			"(broken) Show labels in object listings" },
 
-	{ &c_cfg.show_weights,		FALSE,	1,	0, 11, TRUE,
+	{ &c_cfg.show_weights,		TRUE,	1,	0, 11, TRUE,
 	"show_weights",			"Show weights in object listings" },
 
 	{ &c_cfg.show_choices,		FALSE,	1,	0, 12, FALSE,
 	"show_choices",			"(broken) Show choices in certain sub-windows" },
 
-	{ &c_cfg.show_details,		FALSE,	1,	0, 13, FALSE,
+	{ &c_cfg.show_details,		TRUE,	1,	0, 13, FALSE,
 	"show_details",			"(broken) Show details in certain sub-windows" },
 
 	{ &c_cfg.use_color,		TRUE,	1,	0, 14, TRUE,
@@ -564,9 +569,10 @@ option_type option_info[OPT_MAX] =
 	"ring_bell",			"Audible bell on misc warnings and errors" },
 
 
+
 	/*** Disturbance ***/
 
-	{ &c_cfg.find_ignore_stairs,	TRUE,	2,	0, 16, TRUE,
+	{ &c_cfg.find_ignore_stairs,	FALSE,	2,	0, 16, TRUE,
 	"find_ignore_stairs",		"Run past stairs" },
 
 	{ &c_cfg.find_ignore_doors,	TRUE,	2,	0, 17, TRUE,
@@ -578,34 +584,36 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.find_examine,		TRUE,	2,	0, 19, TRUE,
 	"find_examine",			"Run into potential corners" },
 
-	{ &c_cfg.disturb_move,		TRUE,	2,	0, 20, TRUE,
+	{ &c_cfg.disturb_move,		FALSE,	2,	0, 20, TRUE,
 	"disturb_move",			"Disturb whenever any monster moves" },
 
-	{ &c_cfg.disturb_near,		TRUE,	2,	0, 21, TRUE,
+	{ &c_cfg.disturb_near,		FALSE,	2,	0, 21, TRUE,
 	"disturb_near",			"Disturb whenever viewable monster moves" },
 
-	{ &c_cfg.disturb_panel,		TRUE,	2,	0, 22, TRUE,
+	{ &c_cfg.disturb_panel,		FALSE,	2,	0, 22, TRUE,
 	"disturb_panel",		"Disturb whenever map panel changes" },
 
-	{ &c_cfg.disturb_state,		TRUE,	2,	0, 23, TRUE,
+	{ &c_cfg.disturb_state,		FALSE,	2,	0, 23, TRUE,
 	"disturb_state",		"Disturb whenever player state changes" },
 
-	{ &c_cfg.disturb_minor,		TRUE,	2,	0, 24, TRUE,
+	{ &c_cfg.disturb_minor,		FALSE,	2,	0, 24, TRUE,
 	"disturb_minor",		"Disturb whenever boring things happen" },
 
-	{ &c_cfg.disturb_other,		TRUE,	2,	0, 25, TRUE,
+	{ &c_cfg.disturb_other,		FALSE,	2,	0, 25, TRUE,
 	"disturb_other",		"Disturb whenever various things happen" },
 
 	{ &c_cfg.alert_hitpoint,	FALSE,	1,	0, 26, TRUE,
 	"alert_hitpoint",		"Beep about critical hitpoints/sanity" },
 
-	{ &c_cfg.alert_afk_dam,		FALSE,	1,	0, 27, TRUE,
+	{ &c_cfg.alert_afk_dam,		TRUE,	1,	0, 27, TRUE,
 	"alert_afk_dam",		"Beep when taking damage while AFK" },//alert_failure
 
-	{ &c_cfg.auto_afk,		FALSE,	2,	1, 0, TRUE,	/* former auto_haggle */
+
+
+	{ &c_cfg.auto_afk,		TRUE,	2,	1, 0, TRUE,	/* former auto_haggle */
 	"auto_afk",			"Set 'AFK mode' automatically" },
 
-	{ &c_cfg.newb_suicide,		FALSE,	1,	1, 1, TRUE,	/* former auto_scum */
+	{ &c_cfg.newb_suicide,		TRUE,	1,	1, 1, TRUE,	/* former auto_scum */
 	"newb_suicide",			"Display newbie suicides" },
 
 	{ &c_cfg.stack_allow_items,	TRUE,	2,	1, 2, TRUE,
@@ -632,7 +640,7 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.whole_ammo_stack,	FALSE,	3,	0, 9, TRUE,	/* former dungeon_stair */
 	"whole_ammo_stack",		"For ammo/misc items always operate on whole stack" },
 
-	{ &c_cfg.recall_flicker,	FALSE,	1,	1, 10, TRUE,
+	{ &c_cfg.recall_flicker,	TRUE,	1,	1, 10, TRUE,
 	"recall_flicker",		"Flicker messages in recall" },
 
 	/* currently problematic: best might be to move line-splitting to client side, from util.c
@@ -651,6 +659,8 @@ option_type option_info[OPT_MAX] =
 
 	{ &c_cfg.smart_cheat,		FALSE,	2,	1, 15, FALSE,
 	"smart_cheat",			"(obsolete) Monsters exploit players weaknesses" },
+
+
 
 	{ &c_cfg.view_reduce_lite,	FALSE,	3,	1, 16, TRUE,	/* (44) */
 	"view_reduce_lite",		"Reduce lite-radius when running" },
@@ -688,17 +698,18 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.hilite_player,		FALSE,	1,	1, 27, FALSE, /* (resurrect me) */
 	"hilite_player",		"(broken) Hilite the player with the cursor" },
 
-	{ &c_cfg.view_yellow_lite,	FALSE,	1,	1, 28, TRUE,
+	{ &c_cfg.view_yellow_lite,	TRUE,	1,	1, 28, TRUE,
 	"view_yellow_lite",		"Use special colors for torch-lit grids" },
 
-	{ &c_cfg.view_bright_lite,	FALSE,	1,	1, 29, TRUE,
+	{ &c_cfg.view_bright_lite,	TRUE,	1,	1, 29, TRUE,
 	"view_bright_lite",		"Use special colors for 'viewable' grids" },
 
 	{ &c_cfg.view_granite_lite,	FALSE,	1,	1, 30, TRUE,
 	"view_granite_lite",		"Use special colors for wall grids (slow)" },
 
-	{ &c_cfg.view_special_lite,	FALSE,	1,	1, 31, TRUE,	/* (59) */
+	{ &c_cfg.view_special_lite,	TRUE,	1,	1, 31, TRUE,	/* (59) */
 	"view_special_lite",		"Use special colors for floor grids (slow)" },
+
 
 
 	{ &c_cfg.easy_open,		TRUE,	3,	9, 60, TRUE, //#24 on page 2
@@ -744,7 +755,7 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.autooff_retaliator,	FALSE,	3,	9, 70, TRUE,
 	"autooff_retaliator",		"Stop the retaliator when protected by GoI etc" },
 
-	{ &c_cfg.wide_scroll_margin,	FALSE,	3,	9, 71, TRUE,
+	{ &c_cfg.wide_scroll_margin,	TRUE,	3,	9, 71, TRUE,
 	"wide_scroll_margin",		"Scroll the screen more frequently" },
 
 	{ &c_cfg.fail_no_melee,		FALSE,	3,	9, 72, TRUE,
@@ -764,6 +775,8 @@ option_type option_info[OPT_MAX] =
 
 	{ &c_cfg.short_item_names,      FALSE,	1,	0, 77, TRUE,
         "short_item_names", 		"Don't display 'flavours' in item names" },
+
+
 
 	{ &c_cfg.disable_flush,		FALSE,	3,	9, 78, TRUE,
 	"disable_flush",		"Disable delays from flush signals" },
