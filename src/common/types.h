@@ -2380,7 +2380,11 @@ struct player_type
 	s16b current_fire;
 	s16b current_throw;
 	s16b current_book;
-
+#ifdef ENABLE_RCRAFT
+	s16b current_rcraft;
+	u32b current_rcraft_flags;
+	byte current_rcraft_imp;
+#endif
 	s16b current_selling;
 	s16b current_sell_amt;
 	int current_sell_price;

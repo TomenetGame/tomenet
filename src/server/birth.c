@@ -2152,6 +2152,9 @@ static void player_setup(int Ind, bool new)
 	p_ptr->rune_num_of_buffs = 0;
 	p_ptr->rune_IV = 0;
 	p_ptr->rune_stealth = 0;
+#ifdef ENABLE_RCRAFT
+	p_ptr->current_rcraft = -1;
+#endif
 #ifdef AUCTION_SYSTEM
 	p_ptr->current_auction = 0;
 #endif
