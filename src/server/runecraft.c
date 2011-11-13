@@ -2213,7 +2213,7 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative, bool ret
 		p_ptr->current_rcraft = 1;
 		p_ptr->current_rcraft_flags = s_flags;
 		p_ptr->current_rcraft_imp = imperative;
-		return;
+		return 0;
 	}
 	p_ptr->current_rcraft = -1;
 
