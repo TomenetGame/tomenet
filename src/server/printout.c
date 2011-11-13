@@ -152,6 +152,94 @@ extern bool do_cmd_view_rfe(int Ind, char *str, int line)
 }
 #endif	// 0
 
+static int reverse_lines(cptr input_file, cptr output_file) {
+	FILE *fp1 = NULL;
+	FILE *fp2 = NULL;
+	off_t file_size = 0;
+	char *buf = NULL;
+	char *prev_linebreak = NULL;
+	char *tmp;
+	struct stat stbuf;
+	int fd1 = -1;
+
+	/* Open the input file */
+	fd1 = open(input_file, O_RDONLY);
+	if (fd1 == -1) {
+		return -1;
+	}
+
+	fp1 = fdopen(fd1, "rb");
+	if (!fp1) {
+		close(fd1);
+		return -2;
+	}
+
+	/* Use fstat to get the size of the file */
+	if (fstat(fd1, &stbuf) == -1) {
+		fclose(fp1);
+		return -3;
+	}
+
+	file_size = stbuf.st_size;
+
+	buf = mem_alloc(file_size);
+	if (!buf) {
+		return -4;
+	}
+
+	/* Read the whole input file */
+	if (fread(buf, 1, file_size, fp1) < file_size) {
+		mem_free(buf);
+		fclose(fp1);
+		return -5;
+	}
+
+	/* Open the output file */
+	fp2 = fopen(output_file, "wb");
+	if (!fp2) {
+		mem_free(buf);
+		fclose(fp1);
+		return -6;
+	}
+
+	/* Reverse scan through the buffer for linebreaks */
+	prev_linebreak = buf + file_size - 1;
+	tmp = prev_linebreak;
+	while (tmp >= buf) {
+		if (*tmp == '\n') {
+			if (prev_linebreak - tmp > 0) {
+				/* Write a line to output (including the '\n' at the end) */
+				if (fwrite(tmp + 1, 1, prev_linebreak - tmp, fp2) < prev_linebreak - tmp) {
+					mem_free(buf);
+					fclose(fp1);
+					fclose(fp2);
+					return -7;
+				}
+			}
+			prev_linebreak = tmp;
+		}
+
+		tmp--;
+	}
+
+	if (prev_linebreak - buf + 1 > 0) {
+		/* Write the remaining first line of input to output */
+		if (fwrite(buf, 1, prev_linebreak - buf + 1, fp2) < prev_linebreak - buf + 1) {
+			mem_free(buf);
+			fclose(fp1);
+			fclose(fp2);
+			return -7;
+		}
+	}
+
+	/* Close the files and free memory */
+	mem_free(buf);
+	fclose(fp1);
+	fclose(fp2);
+
+	return 0;
+}
+
 /* Log "legends" (achievements of various sort, viewable in the town hall) - C. Blue */
 extern int l_printf(char *str, ...) {
 	char path[MAX_PATH_LENGTH];
@@ -172,7 +260,7 @@ extern int l_printf(char *str, ...) {
 
 	/* create reverse version of the log for viewing,
 	   so the latest entries are displayed top first! */
-	system(format("tac %s > %s", path, path_rev));
+	reverse_lines(path, path_rev);
 
 	return(TRUE);
 }
