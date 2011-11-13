@@ -9391,6 +9391,9 @@ void Handle_direction(int Ind, int dir)
 		p_ptr->current_rune_dir = -1;
 		p_ptr->current_rune1 = -1;
 		p_ptr->current_rune2 = -1;
+#ifdef ENABLE_RCRAFT
+		p_ptr->current_rcraft = -1;
+#endif
 
 		p_ptr->current_wand = -1;
 		p_ptr->current_item = -1;
@@ -9416,9 +9419,11 @@ void Handle_direction(int Ind, int dir)
 		else p_ptr->current_spell = -1;
 	}
 #ifndef ENABLE_RCRAFT
-	else if (p_ptr->current_rune1 != -1 && p_ptr->current_rune2 != -1) {
+	else if (p_ptr->current_rune1 != -1 && p_ptr->current_rune2 != -1)
 		cast_rune_spell(Ind, dir);
-	}
+#else
+	else if (p_ptr->current_rcraft != -1)
+		execute_rspell(Ind, dir, p_ptr->current_rcraft_flags, p_ptr->current_rcraft_imp, 0);
 #endif
        	else if (p_ptr->current_rod != -1)
 		do_cmd_zap_rod_dir(Ind, dir);

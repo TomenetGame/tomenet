@@ -2205,7 +2205,19 @@ byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative, bool ret
 	s_diff = rspell_diff(Ind, imperative, s_cost, s_av, s_type, s_flags, &mali);
 	
 	s_time = rspell_time(Ind, imperative);
-	
+
+
+	/* Handle '+' targetting mode */
+	if (dir == 11) {
+		get_aim_dir(Ind);
+		p_ptr->current_rcraft = 1;
+		p_ptr->current_rcraft_flags = s_flags;
+		p_ptr->current_rcraft_imp = imperative;
+		return;
+	}
+	p_ptr->current_rcraft = -1;
+
+
 	/* R_MELE reduces s_time for multiple 'blows', experimental - Kurzel */
 #if 1
 	if (s_flags & R_MELE) { 

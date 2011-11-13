@@ -2141,17 +2141,20 @@ static void player_setup(int Ind, bool new)
 	}
 
 	/* Set his "current activities" variables */
-	p_ptr->current_spell = p_ptr->current_rod = p_ptr->current_activation = -1;
+	p_ptr->current_char = 0;
+	p_ptr->current_spell = p_ptr->current_rod = p_ptr->current_wand = p_ptr->current_activation = -1;
 	p_ptr->current_rune_dir = -1;
+	p_ptr->current_mind = -1;
+	p_ptr->current_selling = p_ptr->store_num = -1;
 	p_ptr->current_rune1 = -1;
 	p_ptr->current_rune2 = -1;
 	p_ptr->rune_speed = 0;
 	p_ptr->rune_num_of_buffs = 0;
 	p_ptr->rune_IV = 0;
 	p_ptr->rune_stealth = 0;
-	p_ptr->current_mind = -1;
-	p_ptr->current_selling = p_ptr->store_num = -1;
-	p_ptr->current_char = 0;
+#ifdef ENABLE_RCRAFT
+	p_ptr->current_rcraft = -1;
+#endif
 #ifdef AUCTION_SYSTEM
 	p_ptr->current_auction = 0;
 #endif

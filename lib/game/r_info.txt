@@ -20576,7 +20576,7 @@ D:A black and white spotted bear that doesn't seem overly agressive.
 N:1141:Charged Test Blob
 G:j:M
 I:110:100d10:50:50:0
-W:99:255:500:0
+W:1:255:500:0
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:TOUCH:*

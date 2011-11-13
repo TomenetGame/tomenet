@@ -684,6 +684,11 @@ void thin_surface_spawns() {
 		    (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088))
 			 great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
 
+		/* hack: don't affect non-townies in Bree at all */
+		if (m_ptr->wpos.wx == cfg.town_x && m_ptr->wpos.wy == cfg.town_y && !m_ptr->wpos.wz
+		    && m_ptr->level)
+			continue;
+
 		/* erase the monster, poof */
 		delete_monster_idx(i, TRUE);
 	}

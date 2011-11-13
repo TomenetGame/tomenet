@@ -11263,11 +11263,11 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	   and we may skip redundant checking that appears further below. */
 	bool ok_DLS = TRUE; /* Monsters always could target players in walls (even if the projection explodes _before_ the wall.. */
 	if (IS_PVP) { /* ..but we're not a monster? */
-#ifndef PY_PROJ_WALL
+ #ifndef PY_PROJ_WALL
 		ok_DLS = projectable(wpos, y1, x1, y2, x2, MAX_RANGE);
-#else
+ #else
 		ok_DLS = projectable_wall(wpos, y1, x1, y2, x2, MAX_RANGE);
-#endif
+ #endif
 	}
 	/* hack: catch non 'dir == 5' projections, aka manually directed */
 	if (x1 == x2 || y1 == y2 || ABS(x2 - x1) == ABS(y2 - y1)) ok_DLS = FALSE;
@@ -11450,6 +11450,9 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 #endif
 
 
+		/* Keep track of the distance traveled */
+		dist++;
+
 		/* Distance stuff: The 'dist > MAX_RANGE' part is basically obsolete
 		   now that distance() is used to achieve 'true' distance. */
 
@@ -11457,9 +11460,6 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		   Use distance() to form a 'natural' circle shaped radius instead of a square shaped radius,
 		   monsters do this too */
 		if ((true_dist = distance(y1, x1, y9, x9)) > MAX_RANGE) break;
-
-		/* Keep track of the distance traveled */
-		dist++;
 
 		/* Nothing can travel furthur than the maximal distance */
 		if (dist > MAX_RANGE) break;
