@@ -11679,7 +11679,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 
 #ifdef NO_EXPLOSION_OUT_OF_MAX_RANGE
 			/* Don't create explosions that exceed MAX_RANGE from the caster */
-			if (distance(y, x, y1, x1) > MAX_RANGE) break;
+			if (distance(y, x, y1, x1) > MAX_RANGE) continue;
 #endif
 
 #if 1
