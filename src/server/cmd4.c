@@ -2633,12 +2633,13 @@ void do_cmd_time(int Ind)
  * Unlike show_file and do_cmd_help_aux, this can display the file
  * w/o request from client, ie. no new packet definition etc. is needed.
  */
-void do_cmd_check_other_prepare(int Ind, char *path)
+void do_cmd_check_other_prepare(int Ind, char *path, char *title)
 {
 	player_type *p_ptr = Players[Ind];
 
 	/* Current file viewing */
 	strcpy(p_ptr->cur_file, path);
+	strcpy(p_ptr->cur_file_title, title);
 
 	/* Let the player scroll through the info */
 	p_ptr->special_file_type = TRUE;
@@ -2661,7 +2662,10 @@ void do_cmd_check_other(int Ind, s32b line)
 	if (!p_ptr->special_file_type) return;
 
 	/* Display the file contents */
-	show_file(Ind, p_ptr->cur_file, "Extra Info", line, 0, FALSE);
+	if (p_ptr->cur_file_title[0])
+		show_file(Ind, p_ptr->cur_file, p_ptr->cur_file_title, line, 0, FALSE);
+	else
+		show_file(Ind, p_ptr->cur_file, "Information", line, 0, FALSE);
 //	show_file(Ind, p_ptr->cur_file, "Extra Info", line, color, FALSE);
 
 #if 0

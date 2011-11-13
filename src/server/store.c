@@ -5568,7 +5568,7 @@ void view_cheeze_list(int Ind) {
 //	(void)do_cmd_help_aux(Ind, name, NULL, line, FALSE, FALSE);
 
 	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "cheeze-pub.log");
-	do_cmd_check_other_prepare(Ind, path);
+	do_cmd_check_other_prepare(Ind, path, "Top Guilty Cheezers");
 }
 
 void reward_deed_item(int Ind, int item)

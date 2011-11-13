@@ -2208,6 +2208,7 @@ struct player_type
 
 	char infofile[MAX_PATH_LENGTH];		/* Temp storage of *ID* and Self Knowledge info */
 	char cur_file[MAX_PATH_LENGTH];		/* Filename this player's viewing */
+	char cur_file_title[MAX_CHARS];		/* Filename this player's viewing */
 	byte special_file_type;	/* Is he using *ID* or Self Knowledge? */
 
 	u32b dlev_id;		/* ID of the dungeon floor the player logged out on

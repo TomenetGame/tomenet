@@ -2963,7 +2963,7 @@ s_printf("PLAYER_STORE_CASH: Player %s redeems cheque of value %d (%s).\n", p_pt
 			cptr q = format("book-%d.txt",o_ptr->sval);
 
 			path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, q);
-			do_cmd_check_other_prepare(Ind, path);
+			do_cmd_check_other_prepare(Ind, path, "");
 
 //			used_up = FALSE;
 			keep = TRUE;

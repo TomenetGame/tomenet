@@ -62,7 +62,7 @@ static void race_legends(int Ind) {
 //	cptr name = "legends.log";
 //	(void)do_cmd_help_aux(Ind, name, NULL, line, FALSE, FALSE);
 	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends-rev.log");
-	do_cmd_check_other_prepare(Ind, path);
+	do_cmd_check_other_prepare(Ind, path, "Latest Occurances");
 }
 
 /*
@@ -423,7 +423,7 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 		char    path[MAX_PATH_LENGTH];
 
 		path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, "gambling.txt");
-		do_cmd_check_other_prepare(Ind, path);
+		do_cmd_check_other_prepare(Ind, path, "Gambling Rules");
 	} else {
 		//clear_bldg(5, 23);
 
