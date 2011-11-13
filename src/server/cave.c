@@ -7417,8 +7417,15 @@ bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2, int
 
 /* like projectable_wall(), but assumes that only _permanent walls_ are really obstacles to us
    (for movement strategies of PASS_WALL/KILL_WALL monsters) - C. Blue */
-bool projectable_wall_perm(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range)
-{
+#ifdef DOUBLE_LOS_SAFETY
+static bool projectable_wall_perm_DLS(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range);
+bool projectable_wall_perm(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
+	return (projectable_wall_perm_DLS(wpos, y1, x1, y2, x2, range) || projectable_wall_perm_DLS(wpos, y2, x2, y1, x1, range));
+}
+static bool projectable_wall_perm_DLS(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
+#else
+bool projectable_wall_perm(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
+#endif
 	int dist, y, x;
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return(FALSE);
@@ -7450,8 +7457,38 @@ bool projectable_wall_perm(struct worldpos *wpos, int y1, int x1, int y2, int x2
  * Note: The hostile-player part is commented out for efficiency atm.
  *
  */
-bool projectable_real(int Ind, int y1, int x1, int y2, int x2, int range)
-{
+#ifdef DOUBLE_LOS_SAFETY
+static bool projectable_real_DLS(int Ind, int y1, int x1, int y2, int x2, int range);
+bool projectable_real(int Ind, int y1, int x1, int y2, int x2, int range) {
+	return ((projectable_DLS(&Players[Ind]->wpos, y1, x1, y2, x2, range) || projectable_DLS(&Players[Ind]->wpos, y2, x2, y1, x1, range))
+	    /* important: make sure we really don't hit an awake monster from our direction of shooting :-p  : */
+	    && projectable_real_DLS(Ind, y1, x1, y2, x2, range));
+}
+static bool projectable_real_DLS(int Ind, int y1, int x1, int y2, int x2, int range) {
+	int dist, y = y1, x = x1;
+	cave_type **zcave;
+	if (!(zcave = getcave(&Players[Ind]->wpos))) return FALSE;
+
+	for (dist = 0; dist <= range; dist++) {
+		if ((x == x2) && (y == y2)) return (TRUE);
+
+		/* Never pass through SLEEPING monsters */
+                if (dist && (zcave[y][x].m_idx > 0)
+		    && target_able(Ind, zcave[y][x].m_idx)
+		    && m_list[zcave[y][x].m_idx].csleep) break;
+
+#if 0
+		/* Never pass through hostile player */
+                if (dist && zcave[y][x].m_idx < 0) {
+			if (check_hostile(Ind, -zcave[y][x].m_idx)) break;
+		}
+#endif
+		mmove2(&y, &x, y1, x1, y2, x2);
+	}
+	return (FALSE);
+}
+#else
+bool projectable_real(int Ind, int y1, int x1, int y2, int x2, int range) {
 	int dist, y, x;
 	cave_type **zcave;
 	if (!(zcave = getcave(&Players[Ind]->wpos))) return FALSE;
@@ -7489,7 +7526,49 @@ bool projectable_real(int Ind, int y1, int x1, int y2, int x2, int range)
 	/* Assume obstruction */
 	return (FALSE);
 }
+#endif
+
 /* Relates to projectable_real like projectable_wall to projectable */
+#ifdef DOUBLE_LOS_SAFETY
+static bool projectable_wall_real_DLS(int Ind, int y1, int x1, int y2, int x2, int range);
+bool projectable_wall_real(int Ind, int y1, int x1, int y2, int x2, int range) {
+	return ((projectable_wall_DLS(&Players[Ind]->wpos, y1, x1, y2, x2, range) || projectable_wall_DLS(&Players[Ind]->wpos, y2, x2, y1, x1, range))
+	    /* important: make sure we really don't hit an awake monster from our direction of shooting :-p  : */
+	    && projectable_wall_real_DLS(Ind, y1, x1, y2, x2, range));
+}
+static bool projectable_wall_real_DLS(int Ind, int y1, int x1, int y2, int x2, int range) {
+	int dist, y, x;
+	cave_type **zcave;
+	if (!(zcave = getcave(&Players[Ind]->wpos))) return FALSE;
+
+	/* Start at the initial location */
+	y = y1, x = x1;
+
+	/* See "project()" */
+	for (dist = 0; dist <= range; dist++) {
+		/* Check for arrival at "final target" */
+		if ((x == x2) && (y == y2)) return (TRUE);
+
+		/* Never pass through SLEEPING monsters */
+                if (dist && (zcave[y][x].m_idx > 0)
+		    && target_able(Ind, zcave[y][x].m_idx)
+		    && m_list[zcave[y][x].m_idx].csleep) break;
+
+#if 0
+		/* Never pass through hostile player */
+                if (dist && zcave[y][x].m_idx < 0) {
+			if (check_hostile(Ind, -zcave[y][x].m_idx)) break;
+		}
+#endif
+
+		/* Calculate the new location */
+		mmove2(&y, &x, y1, x1, y2, x2);
+	}
+
+	/* Assume obstruction */
+	return (FALSE);
+}
+#else
 bool projectable_wall_real(int Ind, int y1, int x1, int y2, int x2, int range)
 {
 	int dist, y, x;
@@ -7529,7 +7608,7 @@ bool projectable_wall_real(int Ind, int y1, int x1, int y2, int x2, int range)
 	/* Assume obstruction */
 	return (FALSE);
 }
-
+#endif
 
 /*
  * Standard "find me a location" function
