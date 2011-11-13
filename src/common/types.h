@@ -2300,6 +2300,7 @@ struct player_type
 	bool player_list;
 	bool player_list2;
 	bool auto_untag;
+	bool newbie_hints;
 
 	s16b max_panel_rows;
 	s16b max_panel_cols;
@@ -3261,6 +3262,7 @@ struct client_opts
 	bool expand_list;
 	bool view_perma_grids;
 	bool view_torch_grids;
+	bool newbie_hints;
 	bool no_verify_destroy; //dungeon_align;
 	bool whole_ammo_stack; //dungeon_stair;
 	bool recall_flicker;

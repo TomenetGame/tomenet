@@ -173,7 +173,14 @@ void initialize_main_pref_files(void)
 
 	/* MEGAHACK -- clean up the arrays
 	 * I should have made a mess of something somewhere.. */
+#if 0
 	for (i = 0; i < OPT_MAX; i++) Client_setup.options[i] = FALSE;
+#else
+	for (i = 0; i < OPT_MAX; i++) {
+		if (option_info[i].o_var)
+			Client_setup.options[i] = (*option_info[i].o_var) = option_info[i].o_norm;
+	}
+#endif
 	for (i = 0; i < TV_MAX; i++) Client_setup.u_char[i] = Client_setup.u_attr[i] = 0;
 	for (i = 0; i < MAX_F_IDX; i++) Client_setup.f_char[i] = Client_setup.f_attr[i] = 0;
 	for (i = 0; i < MAX_K_IDX; i++) Client_setup.k_char[i] = Client_setup.k_attr[i] = 0;

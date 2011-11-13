@@ -7,7 +7,8 @@
 X:rogue_like_commands
 Y:quick_messages
 X:other_query_flag
-X:carry_query_flag
+#X:carry_query_flag
+Y:newbie_hints
 Y:use_old_target
 X:always_pickup
 Y:always_repeat
@@ -18,8 +19,8 @@ Y:show_labels
 Y:show_weights
 X:show_choices
 Y:show_details
-Y:ring_bell
 Y:use_color
+Y:ring_bell
 
 X:find_ignore_stairs
 Y:find_ignore_doors

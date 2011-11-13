@@ -2323,6 +2323,37 @@ static void do_bard_skill(int Ind)
 
 /* Disable various warnings, if the player chose a class that isn't affected primarily: */
 static void disable_specific_warnings(player_type *p_ptr) {
+	/* disable ALL warnings? (client-side option) */
+	if (!p_ptr->newbie_hints) {
+		p_ptr->warning_bpr = 1;
+		p_ptr->warning_bpr2 = 1;
+		p_ptr->warning_bpr3 = 1;
+		p_ptr->warning_run = 1;//p_ptr->warning_run_steps = ;
+		p_ptr->warning_run_monlos = 1;
+		p_ptr->warning_run_lite = 1;
+		p_ptr->warning_wield = 1;
+		p_ptr->warning_chat = 1;
+		p_ptr->warning_lite = 1;
+		p_ptr->warning_lite_refill = 1;
+		p_ptr->warning_wield_combat = 1;
+		p_ptr->warning_rest = 1;
+		p_ptr->warning_mimic = 1;
+		p_ptr->warning_dual = 1;
+		p_ptr->warning_dual_mode = 1;
+		p_ptr->warning_potions = 1;
+		p_ptr->warning_wor = 1;
+		p_ptr->warning_ghost = 1;
+		p_ptr->warning_autoret = 99;//p_ptr->warning_autoret_ok = ;
+		//p_ptr->warning_ma_weapon = 1; leave enabled
+		//p_ptr->warning_ma_shield = 1; leave enabled
+		p_ptr->warning_technique_melee = 1;
+		p_ptr->warning_technique_ranged = 1;
+		p_ptr->warning_hungry = 2;
+		p_ptr->warning_autopickup = 1;
+		p_ptr->warning_ranged_autoret = 1;
+		return;
+	}
+
 	if (p_ptr->pclass == CLASS_ARCHER ||
 	    p_ptr->pclass == CLASS_ADVENTURER ||
 	    p_ptr->pclass == CLASS_SHAMAN ||
