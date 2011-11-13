@@ -4315,13 +4315,22 @@ void do_cmd_fire(int Ind, int dir)
 			//			mmove2(&ny, &nx, p_ptr->py, p_ptr->px, ty, tx);
 			mmove2(&ny, &nx, by, bx, ty, tx);
 
+#ifdef DOUBLE_LOS_SAFETY
+		    /* skip checks if we already used projectable..() routines to
+		       determine that it's fine, so it'd be redundant and also require
+		       additional code to comply with DOUBLE_LOS_SAFETY. */
+		    if (dir != 5) {
+#endif
 #ifndef PY_FIRE_ON_WALL
 			/* Stopped by walls/doors */
 			if (!cave_los(zcave, ny, nx)) break;
 #endif
-
 			/* Stopped by protected grids (Inn doors, also stopping monsters' ranged attacks!) */
 			if (f_info[zcave[ny][nx].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
+#ifdef DOUBLE_LOS_SAFETY
+		    }
+		    /* End of skipping redundant checks for targetted shots. */
+#endif
 
 			/* Advance the distance */
 			cur_dis++;
@@ -4848,12 +4857,23 @@ void do_cmd_fire(int Ind, int dir)
 				}
 			}
 
+#ifdef DOUBLE_LOS_SAFETY
+		    /* skip checks if we already used projectable..() routines to test. */
+		    if (dir != 5) {
+#endif
 #ifdef PY_FIRE_ON_WALL
 			/* Stopped by walls/doors */
 			if (!cave_los(zcave, ny, nx)) break;
 #endif
+#ifdef DOUBLE_LOS_SAFETY
+		    }
+#endif
 		}
 
+#ifdef DOUBLE_LOS_SAFETY
+	    /* skip checks if we already used projectable..() routines to test. */
+	    if (dir != 5) {
+#endif
 		/* Extra (exploding) hack: */
 		if (!cave_los(zcave, ny, nx)/* Stopped by walls/doors ?*/
 		    || (dir == 5 && !target_ok)) { /* fired 'at oneself'? */
@@ -4861,6 +4881,9 @@ void do_cmd_fire(int Ind, int dir)
 				do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 			}
 		}
+#ifdef DOUBLE_LOS_SAFETY
+	    }
+#endif
 
 		/*todo: even if not hit_body, boomerangs should have chance to drop to the ground.. */
 
@@ -4977,11 +5000,18 @@ void do_cmd_fire(int Ind, int dir)
 			//			mmove2(&ny, &nx, p_ptr->py, p_ptr->px, ty, tx);
 			mmove2(&ny, &nx, ty, tx, q_ptr->py, q_ptr->px);
 
+#ifdef DOUBLE_LOS_SAFETY
+		    /* skip checks if we already used projectable..() routines to test. */
+		    if (dir != 5) {
+#endif
 			/* Stopped by walls/doors */
 			if (!cave_los(zcave, ny, nx)) break;
 
 			/* Stopped by protected grids (Inn doors, also stopping monsters' ranged attacks!) */
 			if (f_info[zcave[ny][nx].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
+#ifdef DOUBLE_LOS_SAFETY
+		    }
+#endif
 
 			/* Advance the distance */
 			cur_dis++;
@@ -5288,7 +5318,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing)
 	object_type         throw_obj;
 	object_type             *o_ptr;
 
-	bool            hit_body = FALSE;
+	bool            hit_body = FALSE, target_ok = target_okay(Ind);
 
 	bool hit_wall = FALSE;
 
@@ -5315,6 +5345,17 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing)
 		get_aim_dir(Ind);
 		p_ptr->current_throw = item;
 		return;
+	}
+
+	if (dir == 5) {
+		if (target_ok) {
+#ifndef PY_FIRE_ON_WALL
+			if (!projectable_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE))
+#else
+			if (!projectable_wall_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE))
+#endif
+				return;
+		} else return;
 	}
 
 	/* throwing works even while in WRAITHFORM (due to slow speed of
@@ -5477,7 +5518,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing)
 	ty = p_ptr->py + 99 * ddy[dir];
 
 	/* Check for "target request" */
-	if ((dir == 5) && target_okay(Ind)) {
+	if ((dir == 5) && target_ok) {
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
 	}
@@ -5497,12 +5538,23 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing)
 		nx = x;
 		mmove2(&ny, &nx, p_ptr->py, p_ptr->px, ty, tx);
 
+#ifdef DOUBLE_LOS_SAFETY
+	    /* skip checks if we already used projectable..() routines to
+	       determine that it's fine, so it'd be redundant and also require
+	       additional code to comply with DOUBLE_LOS_SAFETY. */
+	    if (dir != 5) {
+#endif
 		/* Stopped by walls/doors */
 		if (!cave_los(zcave, ny, nx)) {
 			hit_wall = TRUE;
 			break;
 		}
 
+		/* Stopped by protected grids (Inn doors, also stopping monsters' ranged attacks!) */
+		if (f_info[zcave[ny][nx].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
+#ifdef DOUBLE_LOS_SAFETY
+	    }
+#endif
 
 		/* Advance the distance */
 		cur_dis++;
