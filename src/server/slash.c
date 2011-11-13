@@ -1455,7 +1455,7 @@ void do_slash_cmd(int Ind, char *message)
 				{
 					//						path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, "mangband.log");
 					path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, token[1]);
-					do_cmd_check_other_prepare(Ind, path);
+					do_cmd_check_other_prepare(Ind, path, "");
 					return;
 				}
 				//					else if (strstr(token[1], "rfe") &&
@@ -1465,7 +1465,7 @@ void do_slash_cmd(int Ind, char *message)
 			else if ((is_admin(p_ptr) || cfg.public_rfe))
 			{
 				path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet.rfe");
-				do_cmd_check_other_prepare(Ind, path);
+				do_cmd_check_other_prepare(Ind, path, "RFE/Bug file");
 				return;
 			}
 			else msg_print(Ind, "\377o/less is not opened for use...");
@@ -1475,7 +1475,7 @@ void do_slash_cmd(int Ind, char *message)
 		{
 			char    path[MAX_PATH_LENGTH];
 			path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, "news.txt");
-			do_cmd_check_other_prepare(Ind, path);
+			do_cmd_check_other_prepare(Ind, path, "News");
 			return;
 		}
 		else if (prefix(message, "/version") ||
@@ -1496,7 +1496,7 @@ void do_slash_cmd(int Ind, char *message)
 			if (admin && !tk) path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, "slash_ad.hlp");
 			else path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, "slash.hlp");
 
-			do_cmd_check_other_prepare(Ind, path);
+			do_cmd_check_other_prepare(Ind, path, "Help");
 			return;
 		}
 		else if(prefix(message, "/pkill") ||
@@ -3839,7 +3839,7 @@ void do_slash_cmd(int Ind, char *message)
 				cheeze_trad_house();
 
 				path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet.log");
-				do_cmd_check_other_prepare(Ind, path);
+				do_cmd_check_other_prepare(Ind, path, "Log File");
 				return;
 			}
 			/* Respawn monsters on the floor
