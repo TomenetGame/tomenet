@@ -610,8 +610,10 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 
 	/* Look in "help" */
 	if (!fff) {
+#if 0 /* will overwrite legens-rev.log's title if the file doesn't exist yet */
 		/* Caption */
 		snprintf(caption, sizeof(caption), "Help file '%s'", name);
+#endif
 		/* Build the filename */
 		path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, name);
 		/* Open the file */
@@ -633,9 +635,11 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 
 	/* Oops */
 	if (!fff) {
+#if 0 /* no spam -  the msg is written many times at once and also not needed */
 		/* Message */
 		msg_format(Ind, "Cannot open '%s'.", name);
 		msg_print(Ind, NULL);
+#endif
 
 		/* Oops */
 		return (TRUE);
