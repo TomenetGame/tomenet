@@ -3810,6 +3810,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 //		if (!i) return (FALSE);
 
 		/* Let the client know it's about to get some info */
+		strcpy(p_ptr->cur_file_title, "Cheque Details");
 		Send_special_other(Ind);
 
 		/* Gave knowledge */
@@ -4636,6 +4637,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 //	if (!i) return (FALSE);
 
 	/* Let the client know it's about to get some info */
+	strcpy(p_ptr->cur_file_title, "Item Details");
 	Send_special_other(Ind);
 
 	/* Gave knowledge */

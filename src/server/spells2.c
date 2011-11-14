@@ -1526,6 +1526,7 @@ void self_knowledge(int Ind) {
 	my_fclose(fff);
 
 	/* Let the client know to expect some info */
+	strcpy(p_ptr->cur_file_title, "Knowledge of Yourself");
 	Send_special_other(Ind);
 }
 

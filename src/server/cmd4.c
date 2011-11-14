@@ -1658,6 +1658,7 @@ void do_cmd_knowledge_dungeons(int Ind)
 	my_fclose(fff);
 
 	/* Let the client know to expect some info */
+	strcpy(p_ptr->cur_file_title, "Towns & Dungeons");
 	Send_special_other(Ind);
 }
 
@@ -1962,6 +1963,7 @@ void do_cmd_check_server_settings(int Ind)
 	my_fclose(fff);
 
 	/* Let the client know to expect some info */
+	strcpy(p_ptr->cur_file_title, "Server Settings");
 	Send_special_other(Ind);
 }
 
@@ -2079,6 +2081,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 	my_fclose(fff);
 
 	/* Let the client know to expect some info */
+	strcpy(p_ptr->cur_file_title, "Monster Information");
 	Send_special_other(Ind);
 }
 
@@ -2227,6 +2230,7 @@ void do_cmd_show_houses(int Ind)
 	my_fclose(fff);
 
 	/* Let the client know to expect some info */
+	strcpy(p_ptr->cur_file_title, "Houses");
 	Send_special_other(Ind);
 }
 
@@ -2445,6 +2449,7 @@ void do_cmd_show_known_item_letter(int Ind, char *letter)
 	my_fclose(fff);
 
 	/* Let the client know to expect some info */
+	strcpy(p_ptr->cur_file_title, "Object Information");
 	Send_special_other(Ind);
 }
 
@@ -2505,6 +2510,7 @@ void do_cmd_knowledge_traps(int Ind)
 	my_fclose(fff);
 
 	/* Let the client know to expect some info */
+	strcpy(p_ptr->cur_file_title, "Trap Information");
 	Send_special_other(Ind);
 }
 
