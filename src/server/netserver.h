@@ -27,7 +27,7 @@
  #define DEFAULT_RETRANSMIT	(FPS / 2)
 #endif
 
-#define MAX_NAME_LEN		20
+#define MAX_NAME_LEN		20	/* apparently unused. use NAME_LEN instead */
 
 typedef struct {
 	int		state;
