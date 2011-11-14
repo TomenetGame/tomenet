@@ -22,3 +22,8 @@
 
 /* Server running in test mode? (usually verbose debugging output) */
 /* #define TEST_SERVER */
+
+
+/* Permanent event "Ironman Deep Dive Challenge": */
+//#define WPOS_IRONDEEPDIVE_X	??
+//#define WPOS_IRONDEEPDIVE_Y	??
