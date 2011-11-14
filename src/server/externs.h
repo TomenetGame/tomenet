@@ -1244,6 +1244,7 @@ extern bool do_cmd_view_rfe(int Ind,char *str, int line);
 extern int c_printf(char *str, ...);
 extern int p_printf(char *str, ...);
 extern int l_printf(char *str, ...);
+extern int reverse_lines(cptr input_file, cptr output_file);
 
 /* save.c */
 extern bool save_player(int Ind);
@@ -2045,3 +2046,7 @@ extern rspell_sel rspell_selector[MAX_RSPELL_SEL];
 extern astar_list_open astar_info_open[ASTAR_MAX_INSTANCES];
 extern astar_list_closed astar_info_closed[ASTAR_MAX_INSTANCES];
 #endif
+
+/* Ironman Deep Dive Challenge */
+extern int deep_dive_level[20];
+extern char deep_dive_name[20][NAME_LEN];

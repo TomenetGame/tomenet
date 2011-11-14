@@ -937,3 +937,7 @@ char audio_sfx[SOUND_MAX_2010][30];
 
 /* nserver.c players' connection array */
 //connection_t **Conn = NULL;
+
+/* Ironman Deep Dive Challenge */
+int deep_dive_level[20];
+char deep_dive_name[20][NAME_LEN];

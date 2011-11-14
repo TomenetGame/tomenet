@@ -2511,6 +2511,19 @@ void recall_player(int Ind, char *message){
 	    old_wpos.wy == WPOS_IRONDEEPDIVE_Y &&
 	    old_wpos.wz != 0
 	    && !is_admin(p_ptr)) {
+		int i, j;
+
+		for (i = 0; i < 20; i++) {
+			if (deep_dive_level[i] == -1) continue;
+			for (j = 20 - 1; j > i; j--) {
+				deep_dive_level[j] = deep_dive_level[j - 1];
+				strcpy(deep_dive_name[j], deep_dive_name[j - 1]);
+			}
+			deep_dive_level[i] = -1;
+			strcpy(deep_dive_name[i], p_ptr->name);
+			break;
+		}
+
 		msg_broadcast_format(0, "\374\377L***\377a%s made it through the Ironman Deep Dive challenge!\377L***", p_ptr->name);
 		l_printf("%s \\{U%s (%d) made it through the Ironman Deep Dive challenge\n", showdate(), p_ptr->name, p_ptr->lev);
 	}

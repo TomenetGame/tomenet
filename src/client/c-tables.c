@@ -789,7 +789,7 @@ option_type option_info[OPT_MAX] =
 	{ NULL,			def, pg, set, ?, TRUE,
 	NULL,			NULL }
 #endif
-	{ &c_cfg.hide_unusable_skills,	FALSE,	4,	0, 79, TRUE,
+	{ &c_cfg.hide_unusable_skills,	TRUE,	4,	0, 79, TRUE,
 	"hide_unusable_skills",		"Hide unusable skills" },
 
 	{ &c_cfg.allow_paging,		TRUE,	4,	0, 80, TRUE,

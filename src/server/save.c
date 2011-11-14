@@ -1985,6 +1985,12 @@ static bool wr_server_savefile()
 
 	wr_auctions();
 
+	/* write Ironman Deep Dive Challenge records */
+	for (i = 0; i < 20; i++) {
+		wr_s16b(deep_dive_level[i]);
+		wr_string(deep_dive_name[i]);
+	}
+
 	/* Write the remaining contents of the buffer */
 	write_buffer();
 

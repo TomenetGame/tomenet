@@ -85,7 +85,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	4
-#define SF_VERSION_PATCH	17
+#define SF_VERSION_PATCH	18
 #define SF_VERSION_EXTRA	0
 
 
@@ -7635,14 +7635,8 @@ extern int PlayerUID;
  #define WPOS_ARCADE_Z		11
 #endif
 
-/* Permanent event (to come) "Ironman Deep Dive Challenge": -- SERVER SPECIFIC HARD CODED!! */
-#ifdef RPG_SERVER
- #define WPOS_IRONDEEPDIVE_X	40
- #define WPOS_IRONDEEPDIVE_Y	22
-#else
- #define WPOS_IRONDEEPDIVE_X	40
- #define WPOS_IRONDEEPDIVE_Y	41
-#endif
+/* WPOS_IRONDEEPDIVE_X/Y are defined in defines-local.h,
+   since those values are server-specific. */
 
 
 /* Inventory change types */
