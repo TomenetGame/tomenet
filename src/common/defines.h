@@ -6965,9 +6965,10 @@ extern int PlayerUID;
 /*	!(r_info[ridx].flags3 & (RF3_UNDEAD | RF3_NONLIVING)) && !(r_info[ridx].d_char == 'O')) || \ */
 #define mimic_shaman(ridx)	\
 	((((r_info[ridx].flags3 & (RF3_ANIMAL | RF3_DRAGON | RF3_GIANT | RF3_DRAGONRIDER)) || \
-	(r_info[ridx].d_char == 'H')) && \
+	(r_info[ridx].d_char == 'H') || (r_info[ridx].d_char == 'T')) && \
  	!(r_info[ridx].flags3 & (RF3_UNDEAD | RF3_NONLIVING))) || \
-	(r_info[ridx].d_char == 'G') || mimic_shaman_E(ridx) || r_info[ridx].d_char == 'X')
+	(r_info[ridx].d_char == 'G') || mimic_shaman_E(ridx) || (r_info[ridx].d_char == 'X') || \
+	(r_info[ridx].d_char == 'g'))
 #define mimic_shaman_E(ridx)	\
 	((r_info[ridx].d_char == 'E') && !(ridx == 514 || ridx == 815 || ridx == 975))
 /*	Druid: Selected Animals and animal-similar creatures. */
