@@ -5974,7 +5974,12 @@ void player_death(int Ind)
 			break;
 		}
 
-		msg_broadcast_format(0, "\374\377a%s reached floor %d in the Ironman Deep Dive challenge!", p_ptr->name, ABS(p_ptr->wpos.wz));
+		if (i < 5)
+			msg_broadcast_format(0, "\374\377a%s reached floor %d in the Ironman Deep Dive challenge, placing %d%s!",
+			    p_ptr->name, ABS(p_ptr->wpos.wz), i + 1, i == 0 ? "st" : (i == 1 ? "nd" : (i == 2 ? "rd" : "th")));
+		else
+			msg_broadcast_format(0, "\374\377a%s reached floor %d in the Ironman Deep Dive challenge!",
+			    p_ptr->name, ABS(p_ptr->wpos.wz));
 		l_printf("%s \\{s%s (%d) reached floor %d in the Ironman Deep Dive challenge\n", showdate(), p_ptr->name, p_ptr->lev, ABS(p_ptr->wpos.wz));
 	}
 

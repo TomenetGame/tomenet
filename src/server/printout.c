@@ -213,9 +213,11 @@ int reverse_lines(cptr input_file, cptr output_file) {
 		/* Display only some of the 20 records */
 		for (i = 0; i < 5 && deep_dive_level[i] != 0; i++) {
 			if (deep_dive_level[i] == -1)
-				fprintf(fp2, "\\{s    %s made it out!\n", deep_dive_name[i]);
+				fprintf(fp2, "\\{s    %d%s - %s made it out!\n",
+				    i + 1, i == 0 ? "st" : (i == 1 ? "nd" : (i == 2 ? "rd" : "th")), deep_dive_name[i]);
 			else
-				fprintf(fp2, "\\{s    %s reached floor %d.\n", deep_dive_name[i], deep_dive_level[i]);
+				fprintf(fp2, "\\{s    %d%s - %s reached floor %d.\n",
+				    i + 1, i == 0 ? "st" : (i == 1 ? "nd" : (i == 2 ? "rd" : "th")), deep_dive_name[i], deep_dive_level[i]);
 		}
 		fprintf(fp2, "\n");
 	}

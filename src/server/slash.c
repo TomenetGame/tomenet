@@ -5935,10 +5935,17 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			/* Reset Ironman Deep Dive Challenge records */
 			else if (prefix(message, "/deepdivereset")) {
+				char path[MAX_PATH_LENGTH];
+				char path_rev[MAX_PATH_LENGTH];
+				path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends.log");
+				path_build(path_rev, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends-rev.log");
+				/* Reset stats */
 				for (i = 0; i < 20; i++) {
 					strcpy(deep_dive_name[i], "");
 					deep_dive_level[i] = 0;
 				}
+				/* Rebuild legends log file */
+				reverse_lines(path, path_rev);
 				msg_print(Ind, "Ironman Deep Dive Challenge records have been reset!");
 				return;
 			}
