@@ -11261,13 +11261,17 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 #ifdef DOUBLE_LOS_SAFETY
 	/* Use projectable..() check to pre-determine if the line of fire is ok
 	   and we may skip redundant checking that appears further below. */
-	bool ok_DLS = TRUE; /* Monsters always could target players in walls (even if the projection explodes _before_ the wall.. */
+	bool ok_DLS;
 	if (IS_PVP) { /* ..but we're not a monster? */
  #ifndef PY_PROJ_WALL
 		ok_DLS = projectable(wpos, y1, x1, y2, x2, MAX_RANGE);
  #else
 		ok_DLS = projectable_wall(wpos, y1, x1, y2, x2, MAX_RANGE);
  #endif
+	} else { /* Catch indirect attack spells! Those are RF4_ROCKET and RF4_BR_DISI. */
+		/* Monsters always could target players in walls (even if the projection explodes _before_ the wall)
+		   so we only need to use projectable_wall() here. */
+		ok_DLS = projectable_wall(wpos, y1, x1, y2, x2, MAX_RANGE);
 	}
 	/* hack: catch non 'dir == 5' projections, aka manually directed */
 	if (x1 == x2 || y1 == y2 || ABS(x2 - x1) == ABS(y2 - y1)) ok_DLS = FALSE;
