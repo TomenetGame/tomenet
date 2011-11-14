@@ -6656,7 +6656,7 @@ damage per _blow_ (not per round).
 WARNING: If the monster is an ego-monster (eg the aforementioned 'Warrior'
 or 'Holy' ego power) this will modify its damage output _after_ the cap was
 applied. That means that some very powerful ego-monsters may deal even more
-than just ~700 damage on average per round, although that's very rare.
+than cap damage on average per round, although that's very rare.
 
 Note that there are melee attacks that cannot be reduced by armour. It depends
 on the way the melee attack is performed. See (5.12) for details.
