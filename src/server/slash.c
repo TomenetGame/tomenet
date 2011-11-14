@@ -5915,6 +5915,33 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 #endif
+			/* Update 'noteworthy occurances' aka legends.log display, for debugging purposes */
+			else if (prefix(message,"/updatelegends")) {
+				char path[MAX_PATH_LENGTH];
+				char path_rev[MAX_PATH_LENGTH];
+				path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends.log");
+				path_build(path_rev, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends-rev.log");
+				/* create reverse version of the log for viewing,
+				   so the latest entries are displayed top first! */
+				reverse_lines(path, path_rev);
+				msg_print(Ind, "updated legends-rev.log");
+				return;
+			}
+			/* Test values of deep_dive..[] deep dive record saving array */
+			else if (prefix(message, "/deepdivestats")) {
+				for (i = 0; i < 20; i++)
+					msg_format(Ind, "#%2d.  %20s  %3d", i + 1, deep_dive_name[i], deep_dive_level[i]);
+				return;
+			}
+			/* Reset Ironman Deep Dive Challenge records */
+			else if (prefix(message, "/deepdivereset")) {
+				for (i = 0; i < 20; i++) {
+					strcpy(deep_dive_name[i], "");
+					deep_dive_level[i] = 0;
+				}
+				msg_print(Ind, "Ironman Deep Dive Challenge records have been reset!");
+				return;
+			}
 		}
 	}
 

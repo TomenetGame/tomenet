@@ -152,7 +152,7 @@ extern bool do_cmd_view_rfe(int Ind, char *str, int line)
 }
 #endif	// 0
 
-static int reverse_lines(cptr input_file, cptr output_file) {
+int reverse_lines(cptr input_file, cptr output_file) {
 	FILE *fp1 = NULL;
 	FILE *fp2 = NULL;
 	off_t file_size = 0;
@@ -201,6 +201,25 @@ static int reverse_lines(cptr input_file, cptr output_file) {
 		fclose(fp1);
 		return -6;
 	}
+
+
+	/* Hack: Add additional lines at the top of the reversed file.
+	   Used for legends.log to add Ironman Deep Dive Challenge records. */
+	if (strstr(output_file, "legends-rev.log")
+	    /* are there any records? */
+	    && deep_dive_level[0]) {
+		int i;
+		fprintf(fp2, "\\{UIronman Deep Dive Challenge Records:\n");
+		/* Display only some of the 20 records */
+		for (i = 0; i < 5 && deep_dive_level[i] != 0; i++) {
+			if (deep_dive_level[i] == -1)
+				fprintf(fp2, "\\{s    %s made it out!\n", deep_dive_name[i]);
+			else
+				fprintf(fp2, "\\{s    %s reached floor %d.\n", deep_dive_name[i], deep_dive_level[i]);
+		}
+		fprintf(fp2, "\n");
+	}
+
 
 	/* Reverse scan through the buffer for linebreaks */
 	prev_linebreak = buf + file_size - 1;

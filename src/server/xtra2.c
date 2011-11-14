@@ -5963,6 +5963,17 @@ void player_death(int Ind)
 	    p_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y &&
 	    p_ptr->wpos.wz != 0
 	    && !is_admin(p_ptr)) {
+		for (i = 0; i < 20; i++) {
+			if (deep_dive_level[i] >= ABS(p_ptr->wpos.wz) || deep_dive_level[i] == -1) continue;
+			for (j = 20 - 1; j > i; j--) {
+				deep_dive_level[j] = deep_dive_level[j - 1];
+				strcpy(deep_dive_name[j], deep_dive_name[j - 1]);
+			}
+			deep_dive_level[i] = ABS(p_ptr->wpos.wz);
+			strcpy(deep_dive_name[i], p_ptr->name);
+			break;
+		}
+
 		msg_broadcast_format(0, "\374\377a%s reached floor %d in the Ironman Deep Dive challenge!", p_ptr->name, ABS(p_ptr->wpos.wz));
 		l_printf("%s \\{s%s (%d) reached floor %d in the Ironman Deep Dive challenge\n", showdate(), p_ptr->name, p_ptr->lev, ABS(p_ptr->wpos.wz));
 	}

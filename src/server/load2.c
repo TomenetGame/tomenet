@@ -2660,6 +2660,15 @@ errr rd_server_savefile()
 
 	if (!s_older_than(4, 3, 25)) rd_auctions();
 
+	/* read Ironman Deep Dive Challenge records */
+	if (!s_older_than(4, 4, 18)) {
+	        for (i = 0; i < 20; i++) {
+			rd_s16b(&tmp16s);
+			deep_dive_level[i] = tmp16s;
+			rd_string(deep_dive_name[i], 20);
+		}
+	}
+
 	/* Hack -- no ghosts */
 	r_info[MAX_R_IDX-1].max_num = 0;
 
