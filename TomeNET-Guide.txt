@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. November 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 14. November 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -6640,16 +6640,23 @@ The power of the resulting cut/stun depends on the damage too.
 So a high armour class helps a lot, to avoid critical monster hits and to
 reduce their power.
 
-Monsters have a cap on melee attacks, which limits their attacks to an
-_average_ of 700 total damage points per round (Monsters, depending on their
-race, can perform up to 4 melee attacks each round they can move/act). Note
-that the monster may attack for more damage, it's just the averaged value,
+Basic monsters (that means before any ego-power such as 'Warrior' or 'Holy'
+is applied as in 'Hill troll warrior' or 'Holy 5-headed hydra') have a cap on
+melee attacks, which limits their attacks to an _average_ of 700 total damage
+points per round (Monsters, depending on their race, can perform up to four
+melee attacks each round they can move/act).
+Note that the monster may attack for more damage, it's just the averaged value,
 the real damage is random and can fluctuate above or below the average.
 Wearing armour will further reduce the total average damage you can expect to
 take per round from that monster. The cap will be used on the monster's raw
 damage output _before_ the player's AC is factored in.
 Sanity-draining melee attacks are capped at 55 points of _average_ sanity
 damage per _blow_ (not per round).
+
+WARNING: If the monster is an ego-monster (eg the aforementioned 'Warrior'
+or 'Holy' ego power) this will modify its damage output _after_ the cap was
+applied. That means that some very powerful ego-monsters may deal even more
+than just ~700 damage on average per round, although that's very rare.
 
 Note that there are melee attacks that cannot be reduced by armour. It depends
 on the way the melee attack is performed. See (5.12) for details.
