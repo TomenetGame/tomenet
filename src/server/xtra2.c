@@ -3722,6 +3722,8 @@ static void do_Maia_skill(int Ind, int s, int m) {
 
 	/* Modify skill, avoiding overflow (mod is u16b) */
 	tmp_val = (tmp_val * m) / 10;
+	/* Cap to 2.0 */
+	if (tmp_val > 2000) tmp_val = 2000;
 	Players[Ind]->s_info[s].mod = tmp_val;
 
 	/* Reinvest some of the points until old skill value is reached again */
@@ -3791,8 +3793,6 @@ void shape_Maia_skills(int Ind) {
 		do_Maia_skill(Ind, SKILL_SWORD, 13);
 		do_Maia_skill(Ind, SKILL_BLUNT, 13);
 		do_Maia_skill(Ind, SKILL_POLEARM, 13);
-		do_Maia_skill(Ind, SKILL_SNEAKINESS, 21);
-		do_Maia_skill(Ind, SKILL_STEALTH, 21);
 		break;
 	default: ;
 	}

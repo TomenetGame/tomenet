@@ -2550,12 +2550,12 @@ Only 70%-ify the skills that could potentially be updated when the player mutate
 			{
 				SKILL_SNEAKINESS,
 				'+', 0,
-				'%', 70,
+				'%', 110,
 			},
 			{
 				SKILL_STEALTH,
 				'+', 0,
-				'%', 70,
+				'%', 110,
 			},
                         {
                                 SKILL_NECROMANCY,
