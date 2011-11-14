@@ -1748,6 +1748,10 @@ artifact_type *randart_make(object_type *o_ptr) {
 	if ((k_ptr->tval == TV_RING) && (k_ptr->sval == SV_RING_POLYMORPH))
 		return (NULL);
 
+	/* Forbid amulets of Telepathic Awareness */
+	if (k_ptr->tval == TV_AMULET && k_ptr->sval == SV_AMULET_ESP)
+		return (NULL);
+
 	/* Forbid costumes too */
 	if ((k_ptr->tval == TV_SOFT_ARMOR) && (k_ptr->sval == SV_COSTUME))
 		return (NULL);
