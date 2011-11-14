@@ -673,6 +673,10 @@ if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_SEAL) {
 			a_ptr = &a_info[o_ptr->name1];
 		}
 
+	    /* Hack: Fix old, meanwhile illegal, randarts */
+	    if (!a_ptr) o_ptr->name1 = 0;
+	    else {
+
 		/* Acquire new artifact "pval" */
 		o_ptr->pval = a_ptr->pval;
 
@@ -686,6 +690,7 @@ if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_SEAL) {
 
 		/* Hack -- extract the "broken" flag */
 		if (!a_ptr->cost) o_ptr->ident |= ID_BROKEN;
+	    }
 	}
 
 	/* Ego items */
