@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 14. November 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 15. November 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -856,8 +856,8 @@ intend to pick up again, you may inscribe the ammo to make it disappear:
 Other !-inscriptions:
 !T  prevent taking off a secondary item.
 !F  prevent filling a light source with this item. (Ok, not really important.)
-!E  prevent eating this item. Note: !E can also turn off earthquakes if used
-    on items which cause those (see below), so it has two meanings.
+!E  prevent eating this item.
+    (Note: !E may also prevent items from causing earthquakes, see below.)
 !q  prevent quaffing this potion.
 !r  prevent reading this scroll.
 !u,!a, !z  prevent using a staff/aim a wand/zap a rod.
@@ -880,8 +880,9 @@ Items that induce random teleportation, like a 'ring of teleportation' or
     A Long Sword Of The Thunderlords (2d5) (+10,+15) {NxFAReg..}
 
 Items that 'can cause Earthquakes':
-    !E          will make the item stop causing earthquakes randomly on
-                striking. (See (5.13) for more information.)
+    !E          Depends on server settings. If it's enabled, it will make the
+                item stop causing earthquakes randomly on striking.
+                (See (5.13) for more information about earthquakes.)
 
 Word-of-Recall scrolls:
     @R500       will teleport you to depth 500ft (tower).
@@ -5916,18 +5917,21 @@ CRIT    ('It affects your ability to score critical hits.')
         description of the "Critical-strike" skill in (6.2).
 CHAOTIC ('It produces chaotic effects')
         On hitting, you have a 50% chance to do one of the following:
-        a) drain life (VAMPIRIC, see (5.15)) (very likely)
-        b) earthquake (see (5.13))
-           (Can be suppressed with !E inscription)
-        c) confuse target (very likely)
-        d) teleport target away
-        e) polymorph target
-        f) clone target
+        a) drain life (VAMPIRIC, see (5.15)) (very likely).
+        b) earthquake (see (5.13) for details).
+           (If enabled in the server settings, it can be suppressed with
+           the !E inscription.)
+        c) confuse target (very likely).
+        d) teleport target away.
+        e) polymorph target.
+        f) clone target.
         Note that most of these have an *extremely* low chance to occur.
         Most of the time the vampirism or confusion effect is chosen.
 IMPACT ('It can cause earthquakes')
-        Causes earthquakes if the damage is > 50. (See (5.13).)
-        (Can be suppressed with !E inscription)
+        Causes earthquakes if the damage is > 50. See (5.13) for details about
+        earthquakes.
+        (If enabled in the server settings, it can be suppressed with
+        the !E inscription.)
 WOUNDING ('It is very sharp and makes your foes bleed.')
         Has additional to-hit/to-dam bonus.
 Weapons of Spinning
