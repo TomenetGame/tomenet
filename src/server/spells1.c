@@ -8487,7 +8487,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	}
 #endif
 	/* pre-calc kinetic shield mana tax before doing the reflection check below */
-	if (!friendly_player && p_ptr->kinetic_shield && typ == GF_ARROW && p_ptr->csp >= dam / 7 &&
+	if (!friendly_player && p_ptr->kinetic_shield && (typ == GF_ARROW || typ == GF_MISSILE)
+	    && p_ptr->csp >= dam / 7 &&
 	    !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
 	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY))) {
 		/* drain mana */

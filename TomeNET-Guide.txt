@@ -100,7 +100,7 @@ Contents
     (5.9a)  Activatable items
     (5.9b)  Artifacts
     (5.10)  Destruction of items by elemental attacks
-    (5.11)  Armour Class vs monster attacks, damage caps
+    (5.11)  Monster attack mechanism, Armour Class, damage caps
     (5.12)  Monster attack types and brands
     (5.13)  Earthquakes
     (5.14)  Curses
@@ -6650,8 +6650,65 @@ For example a Tome of the Eternal Flame cannot be harmed by fire.
 
 
 
-(5.11) Armour Class vs monster attacks, damage caps
----------------------------------------------------
+(5.11) Monster attack mechanism, Armour Class, damage caps
+----------------------------------------------------------
+Monsters may try to attack you in three different ways:
+-Hitting you.
+-Shooting you.
+-Casting a spell that may wound you.
+
+Monster is trying to hit you:
+-----------------------------
+If a monster tries to hit you, the following happens:
+1) Any shielding magic around you is evaluated and may prevent the attack.
+   (Note: Disruption shield is currently evaluated later on.)
+   If this doesn't succeed..
+2) your character may dodge. If this doesn't succeed..
+3) your character may try to parry with a weapon or block with a shield.
+   It will mostly choose the action (either parry or block) where it is more
+   proficient, although it won't always be able to use the preferable method
+   of those two, and sometimes randomly has to rely on the other one.
+   If this doesn't succeed..
+4) your armour class is evaluated and might catch the attack, in which case
+   you don't take any damage, ie the monster misses you. If this doesn't
+   succeed..
+5) your character takes damage, but your armour class will at least reduce it.
+
+Note that some attacks can bypass some of those defenses.
+More info further below.
+
+Monster is trying to shoot you:
+-------------------------------
+If a monster tries to shoot you, the following happens:
+1) Your character may dodge. If this doesn't succeed..
+2) any shielding magic around you is evaluated and may prevent the attack.
+   (Note: Disruption shield is currently evaluated later on.)
+   If this doesn't succeed..
+3) if you have REFLECTION you will try to reflect the shot.
+   If this doesn't succeed..
+4) your character may try to block the shot with a shield.
+   If this doesn't succeed..
+5) your character takes damage. Armour class has no effect.
+
+Monster is casting a spell that wounds you:
+-------------------------------------------
+If a monster casts a spell at you, the following happens:
+1) Your character may dodge if it's a bolt spell. If this doesn't succeed..
+2) any shielding magic around you is evaluated and may prevent the attack.
+   (Note: Disruption shield is currently evaluated later on.)
+   If this doesn't succeed..
+3) if you have REFLECTION and if the spell is a bolt spell, you will try to
+   reflect it. If this doesn't succeed..
+4) if it's a bolt spell, your character may try to block it with a shield.
+   If it isn't then your character may still try to cover behind a shield.
+   If this doesn't succeed..
+5) your character takes damage. Armour class has no effect.
+
+For details about parrying and blocking see (6.11).
+
+
+Armour class:
+-------------
 Armour class helps you twice:
 -It makes monsters miss you more often.
  The more AC the better, it's weighed against the level of the attacking
@@ -11099,6 +11156,9 @@ The magic device skill does the following...
 There are a couple of ways to reduce damage taken. One is simply to have high
 armour class (see (5.11) for details), another one is 'Dodging' skill (see
 (6.2) for details).
+This paragraph is about parrying/blocking only. To get an overview about all
+damage reduction mechanisms and the order they are applied, see (5.11).
+
 For melee fighters that use weapons or shields, two more abilities can help:
 Parrying enemy attacks with a weapon, and blocking attacks with a shield.
 Press 'm' and choose 'Check block/parry chance' to see your actual ability
