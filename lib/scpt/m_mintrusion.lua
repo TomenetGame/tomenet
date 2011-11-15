@@ -82,10 +82,12 @@ MSLEEP = add_spell
         ["direction"] = function() if get_level(Ind, MSLEEP, 50) >= 20 then return FALSE else return TRUE end end,
 	["spell"] =	function(args)
 			if get_level(Ind, MSLEEP, 50) < 20 then
-				fire_grid_bolt(Ind, GF_OLD_SLEEP, args.dir, 3 + get_level(Ind, MSLEEP, 25), "mumbles softly")
 --				project(0 - Ind, get_level(Ind, MSLEEP, 10), player.wpos, player.py, player.px, (3 + get_level(Ind, MSLEEP, 30)) * 2, GF_OLD_SLEEP, 64+16+8, "mumbles softly")
+--				fire_grid_bolt(Ind, GF_OLD_SLEEP, args.dir, 3 + get_level(Ind, MSLEEP, 25), "mumbles softly")
+				fire_grid_bolt(Ind, GF_OLD_SLEEP, args.dir, 10 + get_level(Ind, MSLEEP, 100), "mumbles softly")
 			else
-				project_los(Ind, GF_OLD_SLEEP, 3 + get_level(Ind, MSLEEP, 25), "mumbles softly")
+--				project_los(Ind, GF_OLD_SLEEP, 3 + get_level(Ind, MSLEEP, 25), "mumbles softly")
+				project_los(Ind, GF_OLD_SLEEP, 10 + get_level(Ind, MSLEEP, 100), "mumbles softly")
 			end
 			end,
 	["info"] =	function()

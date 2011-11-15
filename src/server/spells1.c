@@ -129,7 +129,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 			break;
 		case SV_POTION_LOSE_MEMORIES:
 			dt = GF_OLD_CONF;
-			dam = damroll(10, 5);
+			dam = damroll(10, 11);
 			ident = TRUE;
 			angry = TRUE;
 			break;
@@ -224,7 +224,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 		case SV_POTION_SLOWNESS:
 			radius = 1;
 			dt = GF_OLD_SLOW;
-			dam = 5;
+			dam = damroll(10, 5);
 			ident = TRUE;
 			angry = TRUE;
 			break;
@@ -243,14 +243,14 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 			break;
 		case SV_POTION_CONFUSION: /* Booze */
 			radius = 1;
-			dam = damroll(3, 5);
+			dam = damroll(10, 8);
 			dt = GF_OLD_CONF;
 			ident = TRUE;
 			angry = TRUE;
 			break;
 		case SV_POTION_SLEEP:
 			dt = GF_OLD_SLEEP;
-			dam = damroll(3, 5);
+			dam = damroll(10, 8);
 			angry = TRUE;
 			ident = TRUE;
 			break;
