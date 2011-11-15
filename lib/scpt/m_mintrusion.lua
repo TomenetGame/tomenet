@@ -16,7 +16,7 @@ MSCARE = add_spell
         ["spell_power"] = 0,
         ["level"] = 	1,
         ["mana"] = 	1,
-        ["mana_max"] = 	8,
+        ["mana_max"] = 	13,
         ["fail"] = 	10,
         ["direction"] = function() if get_level(Ind, MSCARE, 50) >= 20 then return FALSE else return TRUE end end,
         ["spell"] = 	function(args)
@@ -47,7 +47,7 @@ MCONFUSE = add_spell
         ["spell_power"] = 0,
         ["level"] = 	3,
         ["mana"] = 	3,
-        ["mana_max"] = 	20,
+        ["mana_max"] = 	22,
         ["fail"] = 	10,
         ["direction"] = function() if get_level(Ind, MCONFUSE, 50) >= 30 then return FALSE else return TRUE end end,
         ["spell"] = 	function(args)
