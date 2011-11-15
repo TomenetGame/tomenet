@@ -6025,6 +6025,19 @@ Weapons of Morgul       These are terribly cursed weapons that aren't good for
                         of *remove curse* or use enchant scrolls to break it.
                         For details about the enchant-scrolls trick, which is
                         usually much cheaper, see paragraph '(5.14) Curses'.
+                        Wielding a weapon of Morgul will allow you to see the
+                        invisible but also infect you with the Black Breath,
+                        drain your experience and aggravate nearby monsters.
+                        Note that this weapon can auto-recurse itself when you
+                        move it between equipment and inventory, so when you
+                        uncursed it drop it to the ground right away!
+Weapons of Nothingness  Similarly terribly cursed as weapons of Morgul. You
+                        are unable to strike while wielding this weapon.
+                        See 'Weapons of Morgul' right above on how to break the
+                        curse of this weapon to get rid of it.
+                        Note that this weapon can auto-recurse itself when you
+                        move it between equipment and inventory, so when you
+                        uncursed it drop it to the ground right away!
 
 Magic ammunition (Magic Arrows, Magic Bolts, Magic Shots).
                 Those will return into your quiver magically, so just having
