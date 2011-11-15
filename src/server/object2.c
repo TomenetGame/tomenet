@@ -3656,6 +3656,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 	int *ok_ego, ok_num = 0;
 	bool ret = FALSE;
 	byte tval = o_ptr->tval;
+	bool crystal = exec_lua(0, format("return get_spellbook_name_colour(%d)", o_ptr->pval)) == TERM_YELLOW;
 
 	if (artifact_p(o_ptr) || o_ptr->name2) return (FALSE);
 
@@ -3663,7 +3664,8 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 
 	/* Grab the ok ego */
 	for (i = 0, n = e_tval_size[tval]; i < n; i++) {
-		ego_item_type *e_ptr = &e_info[e_tval[tval][i]];
+		int e_idx = e_tval[tval][i];
+		ego_item_type *e_ptr = &e_info[e_idx];
 		bool ok = FALSE;
 #if 0 /* done in e_info */
                 bool cursed = FALSE;
@@ -3690,6 +3692,13 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 		/* Good should be good, bad should be bad */
 		if (good && (!e_ptr->cost)) continue;
 		if ((!good) && e_ptr->cost) continue;
+
+		/* Bad hack: Mindcrafter non-greater 'crystals' aka spell scrolls
+		   ignore water and fire (via a bad hack) and therefore shouldn't
+		   get 'fireproof' or 'waterproof' ego powers. */
+		if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK && crystal &&
+		    (e_idx == EGO_FIREPROOF_BOOK || e_idx == EGO_WATERPROOF_BOOK))
+			continue;
 
 		/* ok */
 		ok_ego[ok_num++] = e_tval[tval][i];
@@ -5280,7 +5289,9 @@ for (i = 0; i < 25; i++) {
 
 		/* Extract the other fields */
 
-		if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH)
+		if ((o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH)
+		    || o_ptr->tval == TV_BOOK
+		    || is_ammo(o_ptr->tval))
 			; /* keep o_ptr->pval! */
 		else if (!is_magic_device(o_ptr->tval)) /* don't kill charges on EGO (of plenty) devices! */
 			o_ptr->pval = a_ptr->pval; /* paranoia?-> pval might've been limited in ego_make(), so set it here, instead of adding it */
@@ -5567,7 +5578,9 @@ void determine_level_req(int level, object_type *o_ptr)
 		case EGO_BLASTED:
 		case EGO_LFADING:
 		case EGO_INDESTRUCTIBLE:case EGO_CURSED:
-		case EGO_FIREPROOF:	case EGO_PLENTY:
+		case EGO_FIREPROOF:	case EGO_WATERPROOF:
+		case EGO_FIREPROOF_BOOK:case EGO_WATERPROOF_BOOK:
+		case EGO_PLENTY:
 		case EGO_TOBVIOUS:
 		case EGO_VULNERABILITY2:case EGO_VULNERABILITY3:
 		case EGO_BUDWEISER:	case EGO_HEINEKEN:
@@ -5597,6 +5610,7 @@ void determine_level_req(int level, object_type *o_ptr)
 		case EGO_SLAYING:	case EGO_AGILITY:
 		case EGO_MOTION:
 		case EGO_RISTARI:
+		case EGO_AURA_COLD2:	case EGO_AURA_FIRE2:	case EGO_AURA_ELEC2:
 			base += 10;
 			break;
 
