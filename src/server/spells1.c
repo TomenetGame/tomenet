@@ -59,6 +59,9 @@
 /* Typical resistance check for all GF_OLD_ and GF_TURN_ attacks */
 #define RES_OLD(lev, dam) ((lev) > randint(((dam) - 5) < 1 ? 1 : ((dam) - 5)) + 5)
 
+/* Sleep power of any GF_OLD_SLEEP spell [500] */
+#define GF_OLD_SLEEP_DUR 300
+
 
  /*
   * Potions "smash open" and cause an area effect when
@@ -6483,7 +6486,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			} else {
 				/* Go to sleep (much) later */
 				note = " falls asleep";
-				do_sleep = 100;
+				do_sleep = GF_OLD_SLEEP_DUR;
 			}
 
 			/* No "real" damage */
@@ -7335,7 +7338,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			} else {
 				/* Go to sleep (much) later */
 				note = " is suspended";
-				do_sleep = 100;
+				do_sleep = GF_OLD_SLEEP_DUR;
 			}
 
 			/* No "real" damage */
@@ -12835,7 +12838,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			if (!((r_ptr->flags1 & RF1_UNIQUE) ||
 			    (r_ptr->flags3 & RF3_NO_SLEEP) ||
 			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10))) /* RES_OLD() */
-				do_sleep = 100;
+				do_sleep = GF_OLD_SLEEP_DUR;
 			}
 			dam = 0;
 			break;
