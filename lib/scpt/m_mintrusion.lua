@@ -94,7 +94,7 @@ MSLEEP = add_spell
 --			if get_level(Ind, MSLEEP, 50) < 20 then
 --				return "dur "..(3 + get_level(Ind, MSLEEP, 30)).." rad "..get_level(Ind, MSLEEP, 10)
 --			else
-				return "dur "..(3 + get_level(Ind, MSLEEP, 25))
+				return "power "..(10 + get_level(Ind, MSLEEP, 100))
 --			end
 			end,
 	["desc"] = {

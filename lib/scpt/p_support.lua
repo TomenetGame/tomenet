@@ -54,9 +54,9 @@ HSANCTUARY = add_spell
 	end,
 	["info"] = 	function()
                 if get_level(Ind, HSANCTUARY, 50) < 20 then
-			return "dur "..(3 + get_level(Ind, HSANCTUARY, 30)).." rad "..get_level(Ind, HSANCTUARY, 10)
+			return "power "..(10 + get_level(Ind, HSANCTUARY, 100)).." rad "..get_level(Ind, HSANCTUARY, 10)
                 else
-			return "dur "..(3 + get_level(Ind, HSANCTUARY, 25))
+			return "power "..(10 + get_level(Ind, HSANCTUARY, 100))
                 end
 	end,
         ["desc"] =	{

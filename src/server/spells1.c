@@ -3368,6 +3368,17 @@ static void apply_morph(int Ind, int power, char * killer)
 
 
 
+/* For project_..():
+   Decrease the damage over the radius. */
+static int radius_damage(int dam, int div, int typ) {
+	switch (typ) {
+	case GF_RECALL_PLAYER: /* not for recall (dam is timeout) - mikaelh */
+		return (dam);
+
+	/* default: half damage per grid of distance */
+	return (dam / div);
+}
+
 
 
 /*
@@ -3416,7 +3427,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	div = r + 1;
 
 	/* Decrease damage */
-	dam = dam / div;
+	dam = radius_damage(dam, div, typ);
 
 
 	/* XXX XXX */
@@ -4125,17 +4136,11 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ)
 {
 	player_type *p_ptr=NULL;
-
 	u16b this_o_idx, next_o_idx = 0;
-
 	bool	obvious = FALSE;
-
 	bool quiet = ((Ind <= 0 || Ind >= 0 - PROJECTOR_UNUSUAL) ? TRUE : FALSE);
-
 	u32b f1, f2, f3, f4, f5, esp;
-
 	char	o_name[ONAME_LEN];
-
 	int o_sval = 0;
 	bool is_potion = FALSE;
 
@@ -4159,7 +4164,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	div = r + 1;
 
 	/* Adjust damage */
-	dam = dam / div;
+	dam = radius_damage(dam, div, typ);
 
 
 	/* XXX XXX */
@@ -4859,7 +4864,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	div = r + 1;
 
 	/* Decrease damage */
-	dam = dam / div;
+	dam = radius_damage(dam, div, typ);
 
 
 	/* Mega-Hack */
@@ -8110,8 +8115,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	div = r + 1;
 
 	/* Decrease damage */
-	if (typ != GF_RECALL_PLAYER) /* not for recall (dam is timeout) - mikaelh */
-		dam = dam / div;
+	dam = radius_damage(dam, div, typ);
 
 
 	/* Hack -- always do at least one point of damage */
