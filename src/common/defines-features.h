@@ -65,6 +65,9 @@
    Let's just use same as for MONSTER_FLOW_BY_SOUND, so we don't need more fields for cave_type.. - C. Blue */
 //#define MONSTER_FLOW_BY_ESP
 
+/* Allow use of '!E' inscription to prevent earthquakes from TR5_IMPACT items? */
+//#define ALLOW_NO_QUAKE_INSCRIPTION
+
 
 
 /* --------------------- Server-type dependant features -------------------- */
@@ -144,4 +147,3 @@
   #define MONSTER_FLOW
  #endif
 #endif
-

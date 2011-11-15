@@ -1722,11 +1722,15 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 			if (o_ptr->sval == SV_SPELLBOOK) {
 				/* 1: 145, 2: 240, 3: 375, 4: 540, 5: 735 */
 				/*  */
-				int sl = school_spells[o_ptr->pval].skill_level + 5;
+				int sl = school_spells[o_ptr->pval].skill_level + 5,
+				    ego_value = value - k_ptr->cost,
+				    ev = ego_value > 700 ? 700 : ego_value;
 				/* override k_info.txt to have easier handling of possible changes here */
 				value = 4;
 				/* Pay extra for the spell */
 				value = value * (sl * sl);
+				/* Add up 'fireproof' etc cost, but related it to the actual scroll cost. */
+				value += value < ego_value ? (value < ev ? ev : value) : ego_value;
 			}
 			/* Done */
 			break;
@@ -6740,9 +6744,9 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		if ((o_ptr->name1 == ART_RANDART) && (resf & RESF_NORANDART)) continue;
 		if (o_ptr->name1 && (o_ptr->name1 != ART_RANDART) && (resf & RESF_NOTRUEART)) continue;
 		if ((o_ptr->name2 && o_ptr->name2b) && (resf & RESF_NODOUBLEEGO)) continue;
-		if ((resf & RESF_LOWSPEED) && (k_info[o_ptr->k_idx].flags1 & TR1_SPEED) && (o_ptr->bpval > 4 || o_ptr->pval > 4)) continue;
-		if ((resf & RESF_NOHISPEED) && (k_info[o_ptr->k_idx].flags1 & TR1_SPEED) && (o_ptr->bpval > 6 || o_ptr->pval > 6)) continue;
-		if (!(k_info[o_ptr->k_idx].flags1 & TR1_SPEED)) {
+		if ((resf & RESF_LOWSPEED) && (f1 & TR1_SPEED) && (o_ptr->bpval > 4 || o_ptr->pval > 4)) continue;
+		if ((resf & RESF_NOHISPEED) && (f1 & TR1_SPEED) && (o_ptr->bpval > 6 || o_ptr->pval > 6)) continue;
+		if (!(f1 & TR1_SPEED)) {
 			if ((resf & RESF_LOWVALUE) && (object_value_real(0, o_ptr) > 35000)) continue;
 			if ((resf & RESF_MIDVALUE) && (object_value_real(0, o_ptr) > 50000)) continue;
 			if ((resf & RESF_NOHIVALUE) && (object_value_real(0, o_ptr) > 100000)) continue;

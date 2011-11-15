@@ -2514,10 +2514,15 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 	}
 
 	/* Apply Earthquakes */
-	if ((p_ptr->inventory[INVEN_TOOL].k_idx) &&
-	    (p_ptr->impact || k_info[o_ptr->k_idx].flags5 & TR5_IMPACT) &&
-	    (randint(200) < power) && magik(50)) {
-		if (!check_guard_inscription(o_ptr->note, 'E' )) {
+	if (p_ptr->inventory[INVEN_TOOL].k_idx) {
+		u32b fx, f5;
+		object_flags(o_ptr, &fx, &fx, &fx, &fx, &f5, &fx);
+		if ((p_ptr->impact || (f5 & TR5_IMPACT)) &&
+		    (randint(200) < power) && magik(50)
+#ifdef ALLOW_NO_QUAKE_INSCRIPTION
+		    && !check_guard_inscription(o_ptr->note, 'E')
+#endif
+		    ) {
 			earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10);
 			break_cloaking(Ind, 0); /* redundant, done above already */
 			stop_precision(Ind);

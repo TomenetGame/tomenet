@@ -3020,6 +3020,7 @@ bool apply_discharge(int Ind, int dam)
 	bool	damaged_any = FALSE, damaged;
 	object_type *o_ptr;
 	char	o_name[ONAME_LEN];
+	u32b fx, f2, f3;
 
 	if (safe_area(Ind)) return(FALSE);
 
@@ -3045,12 +3046,14 @@ bool apply_discharge(int Ind, int dam)
 
 		if (magik(chance)) continue;
 //		if (o_ptr->tval == TV_AMULET && magik(50)) continue; /* further reduce chance? */
-		
+
+		object_flags(o_ptr, &fx, &f2, &f3, &fx, &fx, &fx);
+
 		/* Hack -- for now, skip artifacts */
 		if (artifact_p(o_ptr) ||
-		    (k_info[o_ptr->k_idx].flags3 & TR3_IGNORE_ELEC) ||
-		    (k_info[o_ptr->k_idx].flags2 & TR2_IM_ELEC) ||
-		    (k_info[o_ptr->k_idx].flags2 & TR2_RES_ELEC)) continue;
+		    (f3 & TR3_IGNORE_ELEC) ||
+		    (f2 & TR2_IM_ELEC) ||
+		    (f2 & TR2_RES_ELEC)) continue;
 
 		damaged = FALSE;
 
@@ -3116,6 +3119,7 @@ bool apply_discharge_item(int o_idx, int dam)
 	int	chance = 95;
 	bool	damaged = FALSE;
 	object_type *o_ptr = &o_list[o_idx];
+	u32b fx, f2, f3;
 
 	/* No item, nothing happens */
 	if (!o_ptr->k_idx) return (FALSE);
@@ -3127,11 +3131,13 @@ bool apply_discharge_item(int o_idx, int dam)
 	if (magik(chance)) return(FALSE);
 //	if (o_ptr->tval == TV_AMULET && magik(50)) return(FALSE); /* further reduce chance? */
 
+	object_flags(o_ptr, &fx, &f2, &f3, &fx, &fx, &fx);
+
 	/* Hack -- for now, skip artifacts */
 	if (artifact_p(o_ptr) ||
-	    (k_info[o_ptr->k_idx].flags3 & TR3_IGNORE_ELEC) ||
-	    (k_info[o_ptr->k_idx].flags2 & TR2_IM_ELEC) ||
-	    (k_info[o_ptr->k_idx].flags2 & TR2_RES_ELEC)) return(FALSE);
+	    (f3 & TR3_IGNORE_ELEC) ||
+	    (f2 & TR2_IM_ELEC) ||
+	    (f2 & TR2_RES_ELEC)) return(FALSE);
 
 	/* damage it */
 	if (o_ptr->tval != TV_ROD && o_ptr->tval != TV_LITE) {
@@ -4449,7 +4455,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Mana -- destroys everything -- except IGNORE_MANA items :p */
 		case GF_MANA:
 		{
-			if (!(k_info[o_ptr->k_idx].flags5 & (TR5_IGNORE_MANA | TR5_RES_MANA))) {
+			if (!(f5 & (TR5_IGNORE_MANA | TR5_RES_MANA))) {
 				do_smash_effect = TRUE;
 				do_kill = TRUE;
 				note_kill = (plural ? " are destroyed!" : " is destroyed!");

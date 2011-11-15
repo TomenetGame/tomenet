@@ -1732,8 +1732,10 @@ void do_cmd_check_server_settings(int Ind)
 		fprintf(fff, "..if ALSO the character is of same race.\n");
 
 	/* Several restrictions */
+#if 0 /* obsolete/unused */
 	if (!cfg.maximize)
 		fprintf(fff, "This server is *NOT* maximized!\n");
+#endif
 
 	fprintf(fff,"\n");
 
@@ -1749,9 +1751,9 @@ void do_cmd_check_server_settings(int Ind)
 	if (cfg.clone_summoning != 999)
 		fprintf(fff, "Monsters may summon up to %d times until the summons start to become clones.\n", cfg.clone_summoning);
 
-	fprintf(fff,"\n");
-	if ((k=cfg.spell_stack_limit))
-		fprintf(fff, "Duration of assistance spells is limited to %d turns.\n", k);
+#ifdef ALLOW_NO_QUAKE_INSCRIPTION
+	fprintf(fff, "You may use !E inscription on items that cause earthquakes to suppress those.\n");
+#endif
 
 	fprintf(fff,"\n");
 	k=cfg.use_pk_rules;

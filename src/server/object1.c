@@ -1078,6 +1078,15 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 		(*f5) |= a_ptr->flags5;
 		(*esp) |= a_ptr->esp;
 	}
+
+	/* Hack for mindcrafter spell scrolls:
+	   Since they're called 'crystals', add water+fire immunity.
+	   Acid immunity is only for the greater crystals. */
+	if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK &&
+	    exec_lua(0, format("return get_spellbook_name_colour(%d)", o_ptr->pval)) == TERM_YELLOW) {
+		(*f3) |= TR3_IGNORE_FIRE;
+		(*f5) |= TR5_IGNORE_WATER;
+	}
 }
 
 
