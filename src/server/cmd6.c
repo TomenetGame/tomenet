@@ -3357,13 +3357,13 @@ void do_cmd_use_staff(int Ind, int item)
 
 		case SV_STAFF_SLEEP_MONSTERS:
 		{
-			if (sleep_monsters(Ind)) ident = TRUE;
+			if (sleep_monsters(Ind, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_SLOW_MONSTERS:
 		{
-			if (slow_monsters(Ind)) ident = TRUE;
+			if (slow_monsters(Ind, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
 			break;
 		}
 
@@ -3732,25 +3732,25 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 
 		case SV_WAND_SLEEP_MONSTER:
 		{
-			if (sleep_monster(Ind, dir)) ident = TRUE;
+			if (sleep_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_SLOW_MONSTER:
 		{
-			if (slow_monster(Ind, dir)) ident = TRUE;
+			if (slow_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_CONFUSE_MONSTER:
 		{
-			if (confuse_monster(Ind, dir, 10 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
+			if (confuse_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_FEAR_MONSTER:
 		{
-			if (fear_monster(Ind, dir, 10 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
+			if (fear_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
 			break;
 		}
 
@@ -4512,7 +4512,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 
 		case SV_ROD_SLEEP_MONSTER:
 		{
-			if (sleep_monster(Ind, dir)) ident = TRUE;
+			if (sleep_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
 			//o_ptr->pval = 18;
 			/* up to 50% faster with maxed MD - the_sandman */
 			o_ptr->pval = 18 - get_skill_scale(p_ptr, SKILL_DEVICE, 9);
@@ -4521,7 +4521,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 
 		case SV_ROD_SLOW_MONSTER:
 		{
-			if (slow_monster(Ind, dir)) ident = TRUE;
+			if (slow_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
 			//o_ptr->pval = 20;
 			/* up to 50% faster with maxed MD - the_sandman */
 			o_ptr->pval = 20 - get_skill_scale(p_ptr, SKILL_DEVICE, 10);
@@ -6475,7 +6475,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 		/* Amulets of the moon can be activated for sleep monster */
 		case SV_AMULET_THE_MOON:
 			msg_print(Ind, "Your amulet glows a deep blue...");
-			sleep_monsters(Ind);
+			sleep_monsters(Ind, 20 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 80));
 			o_ptr->timeout = rand_int(100) + 100;
 			return;
 		/* Amulets of rage can be activated for berserk strength */
@@ -7009,8 +7009,8 @@ void do_cmd_activate_dir(int Ind, int dir)
 
 			case ART_TOTILA:
 			{
-				confuse_monster(Ind, dir, 20 + get_skill_scale(p_ptr, SKILL_DEVICE, 20));
-				o_ptr->timeout = 15;
+				confuse_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50));
+				o_ptr->timeout = 50;
 				break;
 			}
 

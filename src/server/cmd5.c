@@ -353,7 +353,6 @@ void do_cmd_ghost_power(int Ind, int ability)
 void do_cmd_ghost_power_aux(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
-	int plev = p_ptr->lev;
 	magic_type *s_ptr;
 	
 	/* Verify spell number */
@@ -371,30 +370,30 @@ void do_cmd_ghost_power_aux(int Ind, int dir)
 	{
 		case 1:
 		{
-			(void)fear_monster(Ind, dir, plev);
+			(void)fear_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50));
 			break;
 		}
 		case 2:
 		{
-			confuse_monster(Ind, dir, plev);
+			confuse_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50));
 			break;
 		}
 		case 4:
 		{
 			sprintf(p_ptr->attacker, " casts a nether bolt for");
-			fire_bolt_or_beam(Ind, plev * 2, GF_NETHER, dir, 50 + damroll(5, 5) + plev, p_ptr->attacker);
+			fire_bolt_or_beam(Ind, p_ptr->lev * 2, GF_NETHER, dir, 50 + damroll(5, 5) + p_ptr->lev, p_ptr->attacker);
 			break;
 		}
 		case 5:
 		{
 			sprintf(p_ptr->attacker, " casts a nether ball for");
-			fire_ball(Ind, GF_NETHER, dir, 100 + 2 * plev, 2, p_ptr->attacker);
+			fire_ball(Ind, GF_NETHER, dir, 100 + 2 * p_ptr->lev, 2, p_ptr->attacker);
 			break;
 		}
 		case 6:
 		{
 			sprintf(p_ptr->attacker, " casts a darkness storm for");
-			fire_ball(Ind, GF_DARK, dir, plev * 5 + damroll(10, 10), 3, p_ptr->attacker);
+			fire_ball(Ind, GF_DARK, dir, p_ptr->lev * 5 + damroll(10, 10), 3, p_ptr->attacker);
 			break;
 		}
 	}

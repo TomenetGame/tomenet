@@ -3895,41 +3895,33 @@ bool speed_monsters(int Ind)
 /*
  * Slow monsters
  */
-bool slow_monsters(int Ind)
+bool slow_monsters(int Ind, int pow)
 {
-	player_type *p_ptr = Players[Ind];
-
-	return (project_hack(Ind, GF_OLD_SLOW, p_ptr->lev, ""));
+	return (project_hack(Ind, GF_OLD_SLOW, pow, ""));
 }
 
 /*
  * Sleep monsters
  */
-bool sleep_monsters(int Ind)
+bool sleep_monsters(int Ind, int pow)
 {
-	player_type *p_ptr = Players[Ind];
-
-	return (project_hack(Ind, GF_OLD_SLEEP, p_ptr->lev, ""));
+	return (project_hack(Ind, GF_OLD_SLEEP, pow, ""));
 }
 
 /*
  * Fear monsters
  */
-bool fear_monsters(int Ind)
+bool fear_monsters(int Ind, int pow)
 {
-	player_type *p_ptr = Players[Ind];
-
-	return (project_hack(Ind, GF_TURN_ALL, p_ptr->lev, ""));
+	return (project_hack(Ind, GF_TURN_ALL, pow, ""));
 }
 
 /*
  * Stun monsters
  */
-bool stun_monsters(int Ind)
+bool stun_monsters(int Ind, int pow)
 {
-	player_type *p_ptr = Players[Ind];
-
-	return (project_hack(Ind, GF_STUN, p_ptr->lev, ""));
+	return (project_hack(Ind, GF_STUN, pow, ""));
 }
 
 
@@ -6410,26 +6402,22 @@ bool speed_monster(int Ind, int dir)
 	return (project_hook(Ind, GF_OLD_SPEED, dir, p_ptr->lev, flg, ""));
 }
 
-bool slow_monster(int Ind, int dir)
+bool slow_monster(int Ind, int dir, int pow)
 {
-	player_type *p_ptr = Players[Ind];
-
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(Ind, GF_OLD_SLOW, dir, p_ptr->lev, flg, ""));
+	return (project_hook(Ind, GF_OLD_SLOW, dir, pow, flg, ""));
 }
 
-bool sleep_monster(int Ind, int dir)
+bool sleep_monster(int Ind, int dir, int pow)
 {
-	player_type *p_ptr = Players[Ind];
-
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(Ind, GF_OLD_SLEEP, dir, p_ptr->lev, flg, ""));
+	return (project_hook(Ind, GF_OLD_SLEEP, dir, pow, flg, ""));
 }
 
-bool confuse_monster(int Ind, int dir, int plev)
+bool confuse_monster(int Ind, int dir, int pow)
 {
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(Ind, GF_OLD_CONF, dir, plev, flg, ""));
+	return (project_hook(Ind, GF_OLD_CONF, dir, pow, flg, ""));
 }
 
 bool poly_monster(int Ind, int dir)
@@ -6446,10 +6434,10 @@ bool clone_monster(int Ind, int dir)
 	return (project_hook(Ind, GF_OLD_CLONE, dir, 0, flg, ""));
 }
 
-bool fear_monster(int Ind, int dir, int plev)
+bool fear_monster(int Ind, int dir, int pow)
 {
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(Ind, GF_TURN_ALL, dir, plev, flg, ""));
+	return (project_hook(Ind, GF_TURN_ALL, dir, pow, flg, ""));
 }
 
 bool teleport_monster(int Ind, int dir)
