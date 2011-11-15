@@ -2549,8 +2549,8 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		}
 #endif
 
-//		disable_specific_warnings(p_ptr);
 		p_ptr->newbie_hints = TRUE;
+		disable_specific_warnings(p_ptr);
 
 		return TRUE;
 	}
@@ -2830,8 +2830,8 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 
 	/* Prepare newbie-aiding warnings that ought to occur only
 	   once (not necessarily implemented like that atm) - C. Blue */
-//	disable_specific_warnings(p_ptr);
 	p_ptr->newbie_hints = TRUE;
+	disable_specific_warnings(p_ptr);
 
 	/* To find out which characters crash the server */
 	s_printf("Logged in with character %s.\n", name);
