@@ -42,13 +42,17 @@ CONFUSE = add_spell
                         if get_level(Ind, CONFUSE, 50) >= 35 then
                                 project_los(Ind, GF_OLD_CONF, 5 + get_level(Ind, CONFUSE, 100), "focusses on your mind")
                         elseif get_level(Ind, CONFUSE, 50) >= 15 then
-                                fire_ball(Ind, GF_OLD_CONF, args.dir, 5 + get_level(Ind, CONFUSE, 100), 3, "focusses on your mind")
+                                fire_ball(Ind, GF_OLD_CONF, args.dir, 5 + get_level(Ind, CONFUSE, 100), 2, "focusses on your mind")
                         else
                                 fire_bolt(Ind, GF_OLD_CONF, args.dir, 5 + get_level(Ind, CONFUSE, 100), "focusses on your mind")
                         end
 	end,
 	["info"] = 	function()
-                	return "power "..(5 + get_level(Ind, CONFUSE, 100))
+			if get_level(Ind, CONFUSE, 50) < 35 and get_level(Ind, CONFUSE, 50) >= 15 then
+	                	return "power "..(5 + get_level(Ind, CONFUSE, 100)).." rad 2"
+                	else
+	                	return "power "..(5 + get_level(Ind, CONFUSE, 100))
+    	            	end
 	end,
         ["desc"] =	{
         		"Tries to manipulate the mind of a monster to confuse it",
