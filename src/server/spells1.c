@@ -4663,9 +4663,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			delete_object_idx(this_o_idx, TRUE);
 
 			/* Potions produce effects when 'shattered' */
-			if (is_potion) {
+			if (is_potion && do_smash_effect)
 				(void)potion_smash_effect(who, wpos, y, x, o_sval);
-			}
 
 			if (!quiet) {
 				/* Redraw */
