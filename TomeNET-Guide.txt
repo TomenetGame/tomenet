@@ -4666,7 +4666,8 @@ Ironman Deep Dive Challenge
     inside the office, to view the records).
     To provide some support, this dungeon will have 'town levels' occur at
     random, meaning that the whole level is actually not a normal dungeon level
-    but a wild town. Monsters may still spawn on it though!
+    but a wild town. Monsters may still spawn on it though and may even attack
+    you while you're shopping, so take care!
     Since you cannot recall out before reaching the 99th floor, in case you
     need to leave you'll just have to log out inside of the dungeon. For this,
     keep in mind that your character will, as usually when logging out outside
