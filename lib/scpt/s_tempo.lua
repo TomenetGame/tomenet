@@ -46,16 +46,16 @@ SLOWMONSTER = add_spell
         ["direction"] = TRUE,
         ["spell"] = 	function(args)
                         if get_level(Ind, SLOWMONSTER, 50) >= 20 then
-                        	fire_ball(Ind, GF_OLD_SLOW, args.dir, 40 + get_level(Ind, SLOWMONSTER, 160), 1, "")
+                        	fire_ball(Ind, GF_OLD_SLOW, args.dir, 5 + get_level(Ind, SLOWMONSTER, 100), 1, "")
                         else
-                        	fire_bolt(Ind, GF_OLD_SLOW, args.dir, 40 + get_level(Ind, SLOWMONSTER, 160), "")
+                        	fire_bolt(Ind, GF_OLD_SLOW, args.dir, 5 + get_level(Ind, SLOWMONSTER, 100), "")
                         end
 	end,
 	["info"] = 	function()
                         if get_level(Ind, SLOWMONSTER, 50) >= 20 then
-	                       	return "power "..(40 + get_level(Ind, SLOWMONSTER, 160)).." rad 1"
+	                       	return "power "..(5 + get_level(Ind, SLOWMONSTER, 100)).." rad 1"
                         else
-	                       	return "power "..(40 + get_level(Ind, SLOWMONSTER, 160))
+	                       	return "power "..(5 + get_level(Ind, SLOWMONSTER, 100))
                         end
 	end,
         ["desc"] =	{

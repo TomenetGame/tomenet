@@ -56,6 +56,9 @@
    reach of the caster over MAX_RANGE? */
 #define NO_EXPLOSION_OUT_OF_MAX_RANGE
 
+/* Typical resistance check for all GF_OLD_ and GF_TURN_ attacks */
+#define RES_OLD(lev, dam) ((lev) > randint(((dam) - 5) < 1 ? 1 : ((dam) - 5)) + 5)
+
 
  /*
   * Potions "smash open" and cause an area effect when
@@ -3373,7 +3376,14 @@ static void apply_morph(int Ind, int power, char * killer)
 static int radius_damage(int dam, int div, int typ) {
 	switch (typ) {
 	case GF_RECALL_PLAYER: /* not for recall (dam is timeout) - mikaelh */
+
+	case GF_OLD_SLOW: /* When these are cast as 'ball spells' they'd be gimped too much probably */
+	case GF_OLD_CONF:
+	case GF_OLD_SLEEP:
+	case GF_TURN_ALL:
+
 		return (dam);
+	}
 
 	/* default: half damage per grid of distance */
 	return (dam / div);
@@ -5004,7 +5014,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			} else if (randint(dam > 20 ? 20 : dam) > randint(r_ptr->level)) {
 				do_stun = randint(6);
 				do_conf = randint(20);
-				if (!(r_ptr->flags3 & RF3_NO_SLEEP)) do_sleep = rand_int(2) ? randint(randint(90)) : 0;
+				if (!(r_ptr->flags3 & RF3_NO_SLEEP)) do_sleep = rand_int(2) ? 5 + randint(randint(60)) : 0;
 				if (!(r_ptr->flags3 & RF3_NO_FEAR)) do_fear = randint(15);
 			}
   			break;
@@ -6063,7 +6073,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			/* Powerful monsters can resist */
 			else if (r_ptr->flags1 & RF1_UNIQUE) {
 			} else if (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) { /* cannot randint higher? (see 'resist' branch below) */
-			} else if (r_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10) {
+			} else if (RES_OLD(r_ptr->level, dam)) {
 			} else if (m_ptr->mspeed >= 100 && m_ptr->mspeed > m_ptr->speed - 10) /* Normal monsters slow down */
 //			else if (m_ptr->mspeed >= 100) /* Normal monsters slow down */
 			{
@@ -6426,7 +6436,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			} else if (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) { /* cannot randint higher? (see 'resist' branch below) */
 				note = " resists easily"; /* vs damaging it's "resists a lot" and vs effects it's "resists easily" :-o */
 				obvious = FALSE;
-			} else if (r_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10) {
+			} else if (RES_OLD(r_ptr->level, dam)) {
 				note = " resists";
 				obvious = FALSE;
 			}
@@ -6456,7 +6466,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			/* Attempt a saving throw */
 			if ((r_ptr->flags1 & RF1_UNIQUE) ||
 				(r_ptr->flags3 & RF3_NO_SLEEP) ||
-				(r_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10))
+				RES_OLD(r_ptr->level, dam))
 			{
 				note = " resists";
 				if (r_ptr->flags1 & RF1_UNIQUE) note = " is unaffected";
@@ -6473,7 +6483,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			} else {
 				/* Go to sleep (much) later */
 				note = " falls asleep";
-				do_sleep = 500;
+				do_sleep = 100;
 			}
 
 			/* No "real" damage */
@@ -6494,7 +6504,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			/* Attempt a saving throw */
 			if ((r_ptr->flags1 & RF1_UNIQUE) ||
 				(r_ptr->flags3 & RF3_NO_CONF) ||
-				(r_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10))
+				RES_OLD(r_ptr->level, dam))
 			{
 				/* No obvious effect */
 				note = " resists";
@@ -6547,7 +6557,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if ((r_ptr->flags1 & RF1_UNIQUE) ||
 				    (r_ptr->flags4 & RF4_BR_INER)) {
 					note = " is unaffected";
-				} else if (r_ptr->level > randint((dam / 3 - 10) < 1 ? 1 : (dam / 3 - 10)) + 10) { /* consistent with GF_OLD_SLOW */
+				} else if (RES_OLD(r_ptr->level, dam / 3)) { /* consistent with GF_OLD_SLOW */
 					note = " resists";
 				} else if (m_ptr->mspeed > 100 && m_ptr->mspeed > m_ptr->speed - 10) {
 					m_ptr->mspeed -= 10;
@@ -6565,7 +6575,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 				/* Attempt a saving throw */
 				if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags3 & RF3_NO_CONF) ||
-				  (r_ptr->level > randint((dam/3 - 10) < 1 ? 1 : (dam/3 - 10)) + 10)) /* consistent with GF_OLD_CONF */
+				  RES_OLD(r_ptr->level, dam / 3)) /* consistent with GF_OLD_CONF */
 				{
 					note = " resists";
 					if (r_ptr->flags1 & RF1_UNIQUE) note = " is unaffected";
@@ -7009,7 +7019,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				do_fear = damroll(3, (dam / 2)) + 1;
 
 				/* Attempt a saving throw */
-				if (r_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10) {
+				if (RES_OLD(r_ptr->level, dam)) {
 					/* No obvious effect */
 					note = " is unaffected";
 					obvious = FALSE;
@@ -7041,7 +7051,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				do_fear = damroll(3, (dam / 2)) + 1;
 
 				/* Attempt a saving throw */
-				if (r_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10) {
+				if (RES_OLD(r_ptr->level, dam)) {
 					/* No obvious effect */
 					note = " is unaffected";
 					obvious = FALSE;
@@ -7072,7 +7082,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				note = " is unaffected";
 				obvious = FALSE;
 				do_fear = 0;
-			} else if (r_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10) {
+			} else if (RES_OLD(r_ptr->level, dam)) {
 				note = " resists the effect";
 				obvious = FALSE;
 				do_fear = 0;
@@ -7319,13 +7329,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 			/* Attempt a saving throw */
 			if ((r_ptr->flags1 & (RF1_UNIQUE)) ||
-			    (m_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10)) {
+			    RES_OLD(r_ptr->level, dam)) {
 				note = " is unaffected";
 				obvious = FALSE;
 			} else {
 				/* Go to sleep (much) later */
 				note = " is suspended";
-				do_sleep = 500;
+				do_sleep = 100;
 			}
 
 			/* No "real" damage */
@@ -7732,7 +7742,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	    (r_ptr->flags3 & RF3_DRAGON) ||
 	    (r_ptr->flags3 & RF3_DRAGONRIDER) ||
 	    (r_ptr->flags1 & RF1_UNIQUE)) &&
-	    (r_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10)))  <- this line would require a " resists." note btw. */
+	    RES_OLD(r_ptr->level, dam))  <- this line would require a " resists." note btw. */
 	{
 		/* Obvious */
 		if (seen) obvious = TRUE;
@@ -10736,7 +10746,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					msg_print(Ind, "You are unaffected!");
 				}
 				/* Attempt a saving throw */
-				//else if (p_ptr->lev > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10)
+				//else if (RES_OLD(p_ptr->lev, dam))
 				else if (rand_int(100) < p_ptr->skill_sav)
 				{
 					msg_print(Ind, "You resist the effect!");
@@ -10760,7 +10770,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (p_ptr->resist_fear)
 					msg_print(Ind, "You are unaffected!");
 				else if (rand_int(100) < p_ptr->skill_sav)
-//				else if (p_ptr->lev > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10)
+//				else if (RES_OLD(p_ptr->lev, dam))
 				{
 					msg_print(Ind, "You resist the effect!");
 				} else {
@@ -10785,7 +10795,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				msg_print(Ind, "You are unaffected!");
 			}
 			else if (rand_int(100) < p_ptr->skill_sav)
-//			else if (p_ptr->lev > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10))
+//			else if (RES_OLD(p_ptr->lev, dam))
 			{
 				msg_print(Ind, "You resist the effect!");
 			}
@@ -12815,7 +12825,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 		case GF_OLD_SLOW:
 			if ((r_ptr->flags1 & RF1_UNIQUE) ||
 			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) ||
-			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10) ||
+			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10) || /* RES_OLD() */
 			    !(m_ptr->mspeed >= 100 && m_ptr->mspeed > m_ptr->speed - 10))
 				dam = 0;
 			break;
@@ -12823,8 +12833,8 @@ int approx_damage(int m_idx, int dam, int typ) {
 		case GF_OLD_SLEEP:
 			if (!((r_ptr->flags1 & RF1_UNIQUE) ||
 			    (r_ptr->flags3 & RF3_NO_SLEEP) ||
-			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10)))
-				do_sleep = 500;
+			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10))) /* RES_OLD() */
+				do_sleep = 100;
 			}
 			dam = 0;
 			break;
@@ -12833,7 +12843,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			do_conf = damroll(3, (dam / 2)) + 1;
 			if ((r_ptr->flags1 & RF1_UNIQUE) ||
 			    (r_ptr->flags3 & RF3_NO_CONF) ||
-			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10))
+			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10)) /* RES_OLD() */
 				do_conf = 0;
 			dam = 0;
 			break;
@@ -12847,7 +12857,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			do_conf = (damroll(3, (dam / 2)) + 1) / 3;
 			do_blind = dam / 3;
 			if ((r_ptr->flags1 & RF1_UNIQUE) ||
-			    (r_ptr->level > ((dam/3 - 10) < 1 ? 1 : (dam/3 - 10)) / 2 + 10))
+			    (r_ptr->level > ((dam / 3 - 10) < 1 ? 1 : (dam / 3 - 10)) / 2 + 10)) /* RES_OLD */
 				do_blind = do_conf = 0;
 			if (r_ptr->flags3 & RF3_NO_CONF) do_conf = 0;
 			dam /= 3;

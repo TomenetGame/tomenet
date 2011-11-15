@@ -40,15 +40,15 @@ CONFUSE = add_spell
         ["direction"] = function () if get_level(Ind, CONFUSE, 50) >= 35 then return FALSE else return TRUE end end,
         ["spell"] = 	function(args)
                         if get_level(Ind, CONFUSE, 50) >= 35 then
-                                project_los(Ind, GF_OLD_CONF, 10 + get_level(Ind, CONFUSE, 150), "focusses on your mind")
+                                project_los(Ind, GF_OLD_CONF, 5 + get_level(Ind, CONFUSE, 100), "focusses on your mind")
                         elseif get_level(Ind, CONFUSE, 50) >= 15 then
-                                fire_ball(Ind, GF_OLD_CONF, args.dir, 10 + get_level(Ind, CONFUSE, 150), 3, "focusses on your mind")
+                                fire_ball(Ind, GF_OLD_CONF, args.dir, 5 + get_level(Ind, CONFUSE, 100), 3, "focusses on your mind")
                         else
-                                fire_bolt(Ind, GF_OLD_CONF, args.dir, 10 + get_level(Ind, CONFUSE, 150), "focusses on your mind")
+                                fire_bolt(Ind, GF_OLD_CONF, args.dir, 5 + get_level(Ind, CONFUSE, 100), "focusses on your mind")
                         end
 	end,
 	["info"] = 	function()
-                	return "power "..(10 + get_level(Ind, CONFUSE, 150))
+                	return "power "..(5 + get_level(Ind, CONFUSE, 100))
 	end,
         ["desc"] =	{
         		"Tries to manipulate the mind of a monster to confuse it",
@@ -68,13 +68,14 @@ STUN = add_spell
         ["direction"] = TRUE,
         ["spell"] = 	function(args)
                         if get_level(Ind, STUN, 50) >= 25 then
-                                fire_ball(Ind, GF_STUN, args.dir, 10 + get_level(Ind, STUN, 150), 3, "")
+                                fire_ball(Ind, GF_STUN, args.dir, 10 + get_level(Ind, STUN, 50), 2, "")
                         else
-                                fire_bolt(Ind, GF_STUN, args.dir, 10 + get_level(Ind, STUN, 150), "")
+                                fire_bolt(Ind, GF_STUN, args.dir, 10 + get_level(Ind, STUN, 50), "")
                         end
 	end,
 	["info"] = 	function()
-                	return "power "..(10 + get_level(Ind, STUN, 150))
+                	return ""
+                	--return "power "..(10 + get_level(Ind, STUN, 150))
 	end,
         ["desc"] =	{
                         "Tries to manipulate the mind of a monster to stun it",
