@@ -951,13 +951,13 @@ int guild_add(int adder, cptr name){
 	s_printf("GUILD_ADD: %s has been added to %s by %s.\n", p_ptr->name, guilds[guild_id].name, q_ptr->name);
 
 	/* Tell the guild about its new member */
-	guild_msg_format(guild_id, "\377y%s has been added to %s.", p_ptr->name, guilds[guild_id].name);
+	guild_msg_format(guild_id, "\374\377y%s has been added to %s.", p_ptr->name, guilds[guild_id].name);
 
 	/* One more player in this guild */
 	guilds[guild_id].members++;
 
 	/* Tell him about it */
-	msg_format(Ind, "\377yYou've been added to '%s'.", guilds[guild_id].name);
+	msg_format(Ind, "\374\377yYou've been added to '%s'.", guilds[guild_id].name);
 
 	/* Set his guild number */
 	p_ptr->guild = guild_id;
@@ -1029,16 +1029,16 @@ int party_add(int adder, cptr name)
 	s_printf("PARTY_ADD: %s has been added to %s by %s.\n", p_ptr->name, parties[party_id].name, q_ptr->name);
 
 	/* Tell the party about its new member */
-	party_msg_format(party_id, "\377y%s has been added to party %s.", p_ptr->name, parties[party_id].name);
+	party_msg_format(party_id, "\374\377y%s has been added to party %s.", p_ptr->name, parties[party_id].name);
 
 	/* One more player in this party */
 	parties[party_id].members++;
 
 	/* Tell him about it */
 	if (parties[party_id].mode == PA_IRONTEAM)
-		msg_format(Ind, "\377yYou've been added to iron team '%s'.", parties[party_id].name);
+		msg_format(Ind, "\374\377yYou've been added to iron team '%s'.", parties[party_id].name);
 	else
-		msg_format(Ind, "\377yYou've been added to party '%s'.", parties[party_id].name);
+		msg_format(Ind, "\374\377yYou've been added to party '%s'.", parties[party_id].name);
 
 	/* Set his party number */
 	p_ptr->party = party_id;

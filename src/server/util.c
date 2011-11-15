@@ -2864,7 +2864,7 @@ static void player_talk_aux(int Ind, char *message)
 			return;
 		}
 
-		/* Send message to target party */
+		/* Send message to target floor */
 		if (p_ptr->mutedchat < 2) {
 			floor_msg_format_ignoring(Ind, &p_ptr->wpos, "\375\377%c[%s] %s", COLOUR_CHAT_LEVEL, sender, message + 2);
 		}
@@ -2917,9 +2917,9 @@ static void player_talk_aux(int Ind, char *message)
 		}
 #endif
 
-		/* Send message to target party */
+		/* Send message to guild party */
 		if (p_ptr->mutedchat < 2) {
-			guild_msg_format(p_ptr->guild, "\377y[\377U%s:%s\377y]\377%c %s", guilds[p_ptr->guild].name, sender, COLOUR_CHAT_GUILD, message + 2);
+			guild_msg_format(p_ptr->guild, "\375\377y[\377U%s:%s\377y]\377%c %s", guilds[p_ptr->guild].name, sender, COLOUR_CHAT_GUILD, message + 2);
 		}
 
 		/* Done */

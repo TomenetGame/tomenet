@@ -2172,7 +2172,7 @@ if (is_weapon(o_ptr->tval) && !(k_info[o_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_
 				if(o_ptr->tval == TV_KEY && o_ptr->sval == 2){
 					if(o_ptr->pval == p_ptr->guild){
 						if(guilds[p_ptr->guild].master != p_ptr->id){
-							guild_msg_format(p_ptr->guild, "%s is the new guildmaster!", p_ptr->name);
+							guild_msg_format(p_ptr->guild, "\374\377%c%s is the new guildmaster!", COLOUR_CHAT_GUILD, p_ptr->name);
 							guilds[p_ptr->guild].master = p_ptr->id;
 						}
 					}

@@ -7147,14 +7147,14 @@ void kill_quest(int Ind) {
 		if ((temphash = lookup_player(quests[i].creator)) && temphash->guild) {
 			guild_msg(temphash->guild ,temp);
 			if (!p_ptr->guild) {
-				guild_msg_format(temphash->guild, "%s is now a guild member!", p_ptr->name);
+				guild_msg_format(temphash->guild, "\374\377%c%s is now a guild member!", COLOUR_CHAT_GUILD, p_ptr->name);
 				guilds[temphash->guild].members++;
-				msg_format(Ind, "You've been added to '%s'.", guilds[temphash->guild].name);
+				msg_format(Ind, "\374You've been added to '\377U%s\377w'.", guilds[temphash->guild].name);
 				p_ptr->guild = temphash->guild;
 				clockin(Ind, 3);	/* set in db */
 			}
 			else if (p_ptr->guild == temphash->guild) {
-				guild_msg_format(temphash->guild, "%s has completed the quest!", p_ptr->name);
+				guild_msg_format(temphash->guild, "\374\377%c%s has completed the quest!", COLOUR_CHAT_GUILD, p_ptr->name);
 			}
 		}
 	} else{
@@ -7261,7 +7261,7 @@ bool add_quest(int Ind, int target, u16b type, u16b num, u16b flags) {
 	if (questid == 0) questid = 1;
 	if (target != Ind) {
 		if (flags & QUEST_GUILD) {
-			guild_msg_format(Players[Ind]->guild, "%s has been given a quest!", p_ptr->name);
+			guild_msg_format(Players[Ind]->guild, "\374\377%c%s has been given a quest!", COLOUR_CHAT_GUILD, p_ptr->name);
 		}
 		else msg_format(Ind, "Quest given to %s", p_ptr->name);
 		quests[i].creator = Players[Ind]->id;
