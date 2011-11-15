@@ -9975,7 +9975,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	}
 
 	/* Hack -- make building 8's larger */
-	if (n == STORE_HOME) {
+	if (n == STORE_HOME || n == STORE_HOME_DUN) {
 		y1 = y0 - 1 - randint(2);
 		y2 = y0 + 1 + randint(2);
 		x1 = x0 - 3 - randint(2);
@@ -10013,7 +10013,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	}
 
 	/* Hack -- Make store "8" (the old home) empty */
-	if (n == STORE_HOME) {
+	if (n == STORE_HOME || n == STORE_HOME_DUN) {
 		for (y = y1 + 1; y < y2; y++) {
 			for (x = x1 + 1; x < x2; x++) {
 				/* Get the grid */
@@ -10562,11 +10562,13 @@ static void town_gen_hack(struct worldpos *wpos)
 
 	/* Prepare an Array of "remaining stores", and count them */
 	for (n = 0; n < base_stores; n++) {
-		/* For dungeon towns, skip '8' since it allows exploiting 100% riskfree combat */
-		if (n == 7 && dungeon_town) rooms[n] = STORE_POND;
+		/* For dungeon towns, skip '8' since it allows exploiting 100% riskfree combat.
+		   Not true anymore, if STORE_HOME_DUN is used instead. But there is no home in
+		   the middle of the dungeon anyway. >:p */
+		if (n == STORE_HOME && dungeon_town) rooms[n] = STORE_POND;
 		/* allocate base store
 		   (dungeon towns use offset of +70 to avoid collision with normal town stores) */
-		else rooms[n] = n + (dungeon_town ? 70 : 0);
+		else rooms[n] = n + (dungeon_town ? STORE_GENERAL_DUN : 0);
 	}
 	for (n = base_stores; n < base_stores + 10; n++) rooms[n] = STORE_POND;
 	for (n = base_stores + 10; n < base_stores + 20; n++) rooms[n] = STORE_FOREST;
@@ -10662,7 +10664,7 @@ static void town_gen_hack(struct worldpos *wpos)
  			/* Build that store at the proper location */
  #if 0 /* I think I took this out for highlander town, but no need maybe; also required for ironman towns! - C. Blue */
 			/* No Black Market in additional towns - C. Blue */
-			if (rooms[k] != STORE_BLACK + (dungeon_town ? 70 : 0))
+			if (rooms[k] != STORE_BLACK + (dungeon_town ? STORE_GENERAL_DUN : 0)) /* add +70 to get the dungeon version of the store */
 				build_store(wpos, rooms[k], y, x);
 			//else build_store(wpos, STORE_HERBALIST, y, x);
  #else
@@ -10681,7 +10683,7 @@ static void town_gen_hack(struct worldpos *wpos)
 		/* Build that store at the proper location */
  #if 0 /* I think I took this out for highlander town, but no need maybe; also required for ironman towns! - C. Blue */
 		/* No Black Market in additional towns - C. Blue */
-		if (rooms[k] != STORE_BLACK + (dungeon_town ? 70 : 0))
+		if (rooms[k] != STORE_BLACK + (dungeon_town ? STORE_GENERAL_DUN : 0)) /* add +70 to get the dungeon version of the store */
 			build_store(wpos, rooms[k], posy[k], posx[k]);
 		//else build_store(wpos, STORE_HERBALIST, y, x);
  #else

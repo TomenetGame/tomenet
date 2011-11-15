@@ -696,6 +696,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 	switch (p_ptr->store_num) {
 		/* General Store */
 		case STORE_GENERAL:
+		case STORE_GENERAL_DUN:
 			/* Analyze the type */
 			switch (o_ptr->tval) {
 				case TV_FOOD:
@@ -720,6 +721,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 
 		/* Armoury */
 		case STORE_ARMOURY:
+		case STORE_ARMOURY_DUN:
 			/* Analyze the type */
 			switch (o_ptr->tval) {
 				case TV_BOOTS:
@@ -739,6 +741,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 
 		/* Weapon Shop */
 		case STORE_WEAPON:
+		case STORE_WEAPON_DUN:
 			/* Analyze the type */
 			switch (o_ptr->tval) {
 				case TV_SHOT:
@@ -759,6 +762,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 
 		/* Temple */
 		case STORE_TEMPLE:
+		case STORE_TEMPLE_DUN:
 			/* Analyze the type */
 			switch (o_ptr->tval) {
 				case TV_BOOK:
@@ -777,6 +781,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 
 		/* Alchemist */
 		case STORE_ALCHEMIST:
+		case STORE_ALCHEMIST_DUN:
 			/* Analyze the type */
 			switch (o_ptr->tval) {
 				case TV_SCROLL:
@@ -790,6 +795,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 
 		/* Magic Shop */
 		case STORE_MAGIC:
+		case STORE_MAGIC_DUN:
 			/* Analyze the type */
 			switch (o_ptr->tval) {
 				case TV_BOOK:
@@ -813,6 +819,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 
 		/* Bookstore Shop */
 		case STORE_BOOK:
+		case STORE_BOOK_DUN:
 			/* Analyze the type */
 			switch (o_ptr->tval) {
 				case TV_BOOK:
@@ -829,7 +836,9 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 			break;
 
 		/* Pet Shop */
-		case STORE_PET:
+//		case STORE_PET:
+		case STORE_RUNE:
+		case STORE_RUNE_DUN:
 			/* Analyze the type */
 			switch (o_ptr->tval) {
 #ifndef ENABLE_RUNEMASTER /* Are we using this space...? */
@@ -1354,7 +1363,7 @@ static void store_delete(store_type *st_ptr)
 
 
 /* Analyze store flags and return a level */
-static int return_level(store_type *st_ptr)
+static int return_level(store_type *st_ptr, int town_base_level)
 {
 	store_info_type *sti_ptr = &st_info[st_ptr->st_idx];
 	int level;
@@ -1372,9 +1381,9 @@ static int return_level(store_type *st_ptr)
 //	if (sti_ptr->flags1 & SF1_ALL_ITEM) level += p_ptr->lev;
 
 	/* Better books in bookstores outside of Bree */
-	if (st_ptr->st_idx == STORE_BOOK) {
-		level += town[st_ptr->town].baselevel;
-	}
+	if (st_ptr->st_idx == STORE_BOOK ||
+	    st_ptr->st_idx == STORE_BOOK_DUN)
+		level += town_base_level;
 
 	return (level);
 }
@@ -1468,8 +1477,16 @@ static void store_create(store_type *st_ptr)
 			/* Hack -- mass-produce for black-market promised items */
 			else if (black_market) force_num = rand_range(2, 5);//was 3,9
 
+
 			/* Hack -- fake level for apply_magic() */
-			level = return_level(st_ptr); /* note: it's margin is random! */
+
+			/* 'Fake town' dungeon stores don't have a sensible 'town level', use dungeon level instead */
+			if (st_ptr->st_idx >= 70 && st_ptr->st_idx <= 79) {
+				level = return_level(st_ptr, town[st_ptr->town].dlev_depth);
+			} else {
+				level = return_level(st_ptr, town[st_ptr->town].baselevel); /* note: it's margin is random! */
+			}
+
 
 			/* Hack -- i > 10000 means it's a tval and all svals are allowed */
 			if (i > 10000) {
@@ -1523,9 +1540,18 @@ static void store_create(store_type *st_ptr)
 			/* Does it pass the rarity check ? */
 			if (!magik(chance)) continue;
 
+
 			/* Hack -- fake level for apply_magic() */
-			level = return_level(st_ptr); /* note: it's margin is random!
-			    note: if this is moved into the i > 10000 part, book stores will mass-produce pval=0 books (manathrust) */
+
+			/* 'Fake town' dungeon stores don't have a sensible 'town level', use dungeon level instead */
+			if (st_ptr->st_idx >= STORE_GENERAL_DUN && st_ptr->st_idx <= STORE_RUNE_DUN) {
+				level = return_level(st_ptr, town[st_ptr->town].dlev_depth);
+			} else {
+				level = return_level(st_ptr, town[st_ptr->town].baselevel); /* note: it's margin is random! */
+			}
+			/* note: if this is moved into the i > 10000 part, book stores will mass-produce pval=0 books (manathrust)
+			   note about note: should be fixed by now - was probably apply_magic() -> ego_make() setting pval to a_ptr->pval aka 0. */
+
 
 			/* Hack -- i > 10000 means it's a tval and all svals are allowed */
 			if (i > 10000) {
@@ -1648,13 +1674,16 @@ static void store_create(store_type *st_ptr)
 			/* ego rarity control for normal stores */
 			if (o_ptr->name2) {
 				if ((!(st_info[st_ptr->st_idx].flags1 & SF1_EGO)) &&
-				    !magik(STORE_EGO_CHANCE) && st_ptr->st_idx != STORE_GENERAL) /* more ego lamps in general store please */
+				    !magik(STORE_EGO_CHANCE) &&
+				    /* more ego lamps in general store please */
+				    st_ptr->st_idx != STORE_GENERAL && st_ptr->st_idx != STORE_GENERAL_DUN)
 					continue;
 			}
 
-			/* Hack -- General store shouldn't sell too much aman cloaks etc */
+			/* Hack -- General store shouldn't sell too many aman cloaks etc */
 			/* Softened it up to allow brightness lamps! (for RPG mainly) - C. Blue */
-			if (st_ptr->st_idx == STORE_GENERAL && object_value(0, o_ptr) > 18000 && /* ~13000 probably max */
+			if ((st_ptr->st_idx == STORE_GENERAL || st_ptr->st_idx == STORE_GENERAL_DUN)
+			     && object_value(0, o_ptr) > 18000 && /* ~13000 probably max */
 			    magik(33) &&
 			    !(st_info[st_ptr->st_idx].flags1 & SF1_EGO))
 				continue;
@@ -2010,6 +2039,8 @@ static int gettown_dun(int Ind) {
 			town[i].dlev_id = l_ptr->id;
 			l_ptr->fake_town_num = i + 1;
 
+			town[i].dlev_depth = getlevel(&p_ptr->wpos);
+
 			return(i);
 		}
 	}
@@ -2105,7 +2136,7 @@ static void display_entry(int Ind, int pos)
 #endif
 
 	/* Describe an item in the home */
-	if (p_ptr->store_num == STORE_HOME) {
+	if (p_ptr->store_num == STORE_HOME || p_ptr->store_num == STORE_HOME_DUN) {
 //		maxwid = 75;
 
 		/* Leave room for weights, if necessary -DRS- */
@@ -2308,7 +2339,7 @@ static void display_store(int Ind)
 	}
 
 	/* The "Home" is special */
-	if (p_ptr->store_num == STORE_HOME) { /* This shouldn't happen */
+	if (p_ptr->store_num == STORE_HOME || p_ptr->store_num == STORE_HOME_DUN) { /* This shouldn't happen */
 		/* Send the store info */
 		Send_store_info(Ind, p_ptr->store_num, "Your House", "", st_ptr->stock_num, st_ptr->stock_size, TERM_L_UMBER, '+');
 	}
@@ -2587,7 +2618,7 @@ void store_stole(int Ind, int item)
 	/* Check that it's a real item - mikaelh */
 	if (!o_ptr->tval) return;
 
-	if (p_ptr->store_num == STORE_HOME) {
+	if (p_ptr->store_num == STORE_HOME || p_ptr->store_num == STORE_HOME_DUN) {
 		msg_print(Ind, "You don't steal from your home!");
 		return;
 	}
@@ -2948,8 +2979,8 @@ void store_purchase(int Ind, int item, int amt)
 		return;
 	}
 
-	if (p_ptr->store_num == STORE_HOME) /* in defines.h */
-	//if (p_ptr->store_num == STORE_HOME)
+	if (p_ptr->store_num == STORE_HOME || p_ptr->store_num == STORE_HOME_DUN) /* in defines.h */
+	//if (p_ptr->store_num == STORE_HOME || p_ptr->store_num == STORE_HOME_DUN)
 	{
 		home_purchase(Ind, item, amt);
 		return;
@@ -2981,7 +3012,7 @@ void store_purchase(int Ind, int item, int amt)
 
 	/* Empty? */
 	if (st_ptr->stock_num <= 0) {
-		if (p_ptr->store_num == STORE_HOME) msg_print(Ind, "Your home is empty.");
+		if (p_ptr->store_num == STORE_HOME || p_ptr->store_num == STORE_HOME_DUN) msg_print(Ind, "Your home is empty.");
 		else msg_print(Ind, "I am currently out of stock.");
 		return;
 	}
@@ -2995,7 +3026,7 @@ void store_purchase(int Ind, int item, int amt)
 	if (i > 12) i = 12;
 
 	/* Prompt */
-	if (p_ptr->store_num == STORE_HOME) {
+	if (p_ptr->store_num == STORE_HOME || p_ptr->store_num == STORE_HOME_DUN) {
 		snprintf(out_val, sizeof(out_val), "Which item do you want to take? ");
 	} else {
 		snprintf(out_val, sizeof(out_val), "Which item are you interested in? ");
@@ -3374,7 +3405,7 @@ void store_sell(int Ind, int item, int amt)
 		return;
 	}
 
-	if (p_ptr->store_num == STORE_HOME) {
+	if (p_ptr->store_num == STORE_HOME || p_ptr->store_num == STORE_HOME_DUN) {
 		home_sell(Ind, item, amt);
 		return;
 	}
@@ -3454,13 +3485,13 @@ void store_sell(int Ind, int item, int amt)
 	/* Is there room in the store (or the home?) */
 	if (gettown(Ind) != -1) { //DUNGEON STORES
 		if (!store_check_num(&town[gettown(Ind)].townstore[p_ptr->store_num], &sold_obj)) {
-			if (p_ptr->store_num == STORE_HOME) msg_print(Ind, "Your home is full.");
+			if (p_ptr->store_num == STORE_HOME || p_ptr->store_num == STORE_HOME_DUN) msg_print(Ind, "Your home is full.");
 			else msg_print(Ind, "I have not the room in my store to keep it.");
 			return;
 		}
 	} else {
 		if (!store_check_num(&town[gettown_dun(Ind)].townstore[p_ptr->store_num], &sold_obj)) {
-			if (p_ptr->store_num == STORE_HOME) msg_print(Ind, "Your home is full.");
+			if (p_ptr->store_num == STORE_HOME || p_ptr->store_num == STORE_HOME_DUN) msg_print(Ind, "Your home is full.");
 			else msg_print(Ind, "I have not the room in my store to keep it.");
 			return;
 		}
@@ -3761,7 +3792,7 @@ void store_examine(int Ind, int item)
 
 	object_type		*o_ptr;
 
-	if (p_ptr->store_num == STORE_HOME) {
+	if (p_ptr->store_num == STORE_HOME || p_ptr->store_num == STORE_HOME_DUN) {
 		home_examine(Ind, item);
 		return;
 	}
@@ -3786,7 +3817,7 @@ void store_examine(int Ind, int item)
 
 	/* Empty? */
 	if (st_ptr->stock_num <= 0) {
-		if (p_ptr->store_num == STORE_HOME) msg_print(Ind, "Your home is empty.");
+		if (p_ptr->store_num == STORE_HOME || p_ptr->store_num == STORE_HOME_DUN) msg_print(Ind, "Your home is empty.");
 		else msg_print(Ind, "I am currently out of stock.");
 		return;
 	}
@@ -3874,7 +3905,7 @@ void do_cmd_store(int Ind)
 	}
 
 	/* Hack -- Ignore the home */
-	if (which == STORE_HOME) {	/* XXX It'll change */
+	if (which == STORE_HOME || which == STORE_HOME_DUN) {	/* XXX It'll change */
 		/* msg_print(Ind, "The doors are locked."); */
 		return;
 	}
@@ -4010,7 +4041,7 @@ void do_cmd_store(int Ind)
 	}
 
 	/* Temple cures some maladies and gives some bread if starving ;-o */
-	if (!p_ptr->tim_blacklist && which == STORE_TEMPLE && !p_ptr->suscep_life) {
+	if (!p_ptr->tim_blacklist && (which == STORE_TEMPLE || which == STORE_TEMPLE_DUN) && !p_ptr->suscep_life) {
 		if (p_ptr->food < PY_FOOD_ALERT) {
 			msg_print(Ind, "The temple priest hands you a slice of bread.");
 			set_food(Ind, (PY_FOOD_FULL - PY_FOOD_ALERT) / 2);
@@ -4063,7 +4094,7 @@ void store_shuffle(store_type *st_ptr)
 
 #if 0
 	/* Ignore home */
-	if (which == STORE_HOME) return;
+	if (which == STORE_HOME || which == STORE_HOME_DUN) return;
 #endif
 
 	/* Make sure no one is in the store */
@@ -4143,7 +4174,7 @@ void store_maint(store_type *st_ptr)
 
 #if 0
 	/* Ignore home */
-	if (which == STORE_HOME) return;
+	if (which == STORE_HOME || which == STORE_HOME_DUN) return;
 #endif
 
 #if 0 /* disabled, since we have gettown_dun() now which may use ALL towns for dungeon stores */
@@ -4272,8 +4303,11 @@ void store_maint(store_type *st_ptr)
 
 	/* Hack for Libraries: Keep especially many books, which fluctuate often.
 	   Reason: It's probably a bit too annoying to wait for specific books. - C. Blue */
-	if (st_ptr->st_idx == STORE_BOOK || st_ptr->st_idx == STORE_HIDDENLIBRARY ||
-	    st_ptr->st_idx == STORE_LIBRARY || st_ptr->st_idx == STORE_FORBIDDENLIBRARY)
+	if (st_ptr->st_idx == STORE_BOOK ||
+	    st_ptr->st_idx == STORE_BOOK_DUN ||
+	    st_ptr->st_idx == STORE_LIBRARY ||
+	    st_ptr->st_idx == STORE_HIDDENLIBRARY ||
+	    st_ptr->st_idx == STORE_FORBIDDENLIBRARY)
 		j = st_ptr->stock_size - rand_int((st_ptr->stock_size * 3) / 8);
 
 	/* Acquire some new items */

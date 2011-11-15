@@ -3656,7 +3656,12 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 	int *ok_ego, ok_num = 0;
 	bool ret = FALSE;
 	byte tval = o_ptr->tval;
-	bool crystal = exec_lua(0, format("return get_spellbook_name_colour(%d)", o_ptr->pval)) == TERM_YELLOW;
+#if 0 /* make_ego_item() is called BEFORE the book is set to a specific school spell! */
+	bool crystal =
+	    o_ptr->tval == TV_BOOK &&
+	    o_ptr->sval == SV_SPELLBOOK &&
+	    exec_lua(0, format("return get_spellbook_name_colour(%d)", o_ptr->pval)) == TERM_YELLOW;
+#endif
 
 	if (artifact_p(o_ptr) || o_ptr->name2) return (FALSE);
 
@@ -3664,8 +3669,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 
 	/* Grab the ok ego */
 	for (i = 0, n = e_tval_size[tval]; i < n; i++) {
-		int e_idx = e_tval[tval][i];
-		ego_item_type *e_ptr = &e_info[e_idx];
+		ego_item_type *e_ptr = &e_info[e_tval[tval][i]];
 		bool ok = FALSE;
 #if 0 /* done in e_info */
                 bool cursed = FALSE;
@@ -3693,13 +3697,6 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 		if (good && (!e_ptr->cost)) continue;
 		if ((!good) && e_ptr->cost) continue;
 
-		/* Bad hack: Mindcrafter non-greater 'crystals' aka spell scrolls
-		   ignore water and fire (via a bad hack) and therefore shouldn't
-		   get 'fireproof' or 'waterproof' ego powers. */
-		if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK && crystal &&
-		    (e_idx == EGO_FIREPROOF_BOOK || e_idx == EGO_WATERPROOF_BOOK))
-			continue;
-
 		/* ok */
 		ok_ego[ok_num++] = e_tval[tval][i];
 	}
@@ -3718,7 +3715,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 
 		i = ok_ego[rand_int(ok_num)];
 		e_ptr = &e_info[i];
-		
+
 		if (i == EGO_ETHEREAL && (resf & RESF_NOETHEREAL)) continue;
 
 		/* XXX XXX Enforce minimum "depth" (loosely) */
@@ -5072,7 +5069,9 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 
 
 	/* Base chance of being "good" */
-	chance1 = lev + 10;
+	/* Hack: Way too many fire/waterproof books in high level towns! */
+	if (o_ptr->tval == TV_BOOK) chance1 = 10;
+	else chance1 = lev + 10;
 
 	/* Maximal chance of being "good" */
 	if (chance1 > 75) chance1 = 75;
@@ -5277,6 +5276,14 @@ for (i = 0; i < 25; i++) {
 		default:
 			a_m_aux_4(o_ptr, lev, power, resf);
 			break;
+	}
+
+	/* Bad hack: Un-ego mindcrafter spell scrolls if they got fireproof/waterproof ego,
+	   since they (by another bad hack) already ignore those. */
+	if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK &&
+	    exec_lua(0, format("return get_spellbook_name_colour(%d)", o_ptr->pval)) == TERM_YELLOW) {
+	    if (o_ptr->name2 == EGO_FIREPROOF_BOOK || o_ptr->name2 == EGO_WATERPROOF_BOOK) o_ptr->name2 = 0;
+	    if (o_ptr->name2b == EGO_FIREPROOF_BOOK || o_ptr->name2b == EGO_WATERPROOF_BOOK) o_ptr->name2b = 0;
 	}
 
 #if 1	// tweaked pernA ego.. 

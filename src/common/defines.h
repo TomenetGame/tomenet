@@ -1007,6 +1007,19 @@
 #define STORE_SPEC_CLOSECOMBAT	64
 #define STORE_HIDDENLIBRARY	65
 
+/* Dungeon store clones of the normal town stores */
+#define STORE_GENERAL_DUN	70
+#define STORE_ARMOURY_DUN	71
+#define STORE_WEAPON_DUN	72
+#define STORE_TEMPLE_DUN	73
+#define STORE_ALCHEMIST_DUN	74
+#define STORE_MAGIC_DUN		75
+#define STORE_BLACK_DUN		76
+#define STORE_HOME_DUN		77
+#define STORE_BOOK_DUN		78
+#define STORE_PET_DUN		79
+#define STORE_RUNE_DUN	STORE_PET_DUN /* Using this space for now */
+
 /* special 'stores' (hacks for build_store()) */
 #define STORE_FEAT_MORE	100	/* staircase down */
 #define STORE_FEAT_LESS	101	/* staircase up */

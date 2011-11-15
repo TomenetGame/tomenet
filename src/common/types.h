@@ -1388,7 +1388,6 @@ struct dungeon_type
 
 /*
  * TODO:
- * - allow towns in the dungeons/towers
  * - allow towns to have dungeon flags(DFn_*)
  */
 struct town_type
@@ -1406,6 +1405,7 @@ struct town_type
 	u16b terraformed_glyphs; /* keep track of and limit players modifying town layout */
 
 	u32b dlev_id; /* for dungeon towns, abusing fake stores from real towns */
+	u16b dlev_depth; /* know the depth of this dungeon town, for determining store items */
 };
 
 typedef struct wilderness_type wilderness_type;
