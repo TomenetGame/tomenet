@@ -4548,6 +4548,16 @@ Those are:
 
 Fear, blindness, confusion, sleep, slowing, and stun.
 
+Note (except for 'stun' effect):
+      There are basic spells or magic devices that don't do anything except
+      trying to cause one of these effects directly, for example a 'wand of
+      slow monsters' or the spell 'scare'.
+      It is important to know that unique monsters are always unaffected by
+      these basic spells. Other monsters have a chance to resist, depending on
+      their level vs the power (level) of the spell.
+
+Effect details:
+---------------
 Fear is a temporary effect, causing the monster to flee. Many monsters turn
         afraid if their hit points drop very low. Wears off after a while.
 Blindness and confusion are currently the same thing, resulting in erratic
