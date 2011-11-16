@@ -4674,6 +4674,9 @@ Ironman Deep Dive Challenge
     of towns, stay in the game for about 30 more seconds during which it could
     be killed if you log out in an unsafe place.
 
+    Note: The Deep Dive dungeon requires your character to be at most level 12
+    in order to be eligible to enter.
+
 
 
 (4.14) In-game time system
