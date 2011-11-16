@@ -2259,6 +2259,12 @@ bool set_martyr(int Ind, int v)
 
 	bool notice = FALSE;
 
+	/* Hack: Negative v means initiate martyr */
+	if (v < 0) {
+		v = -v;
+		p_ptr->martyr_dur = v;
+	}
+
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
@@ -2273,7 +2279,7 @@ bool set_martyr(int Ind, int v)
 		} else {
 			msg_print(Ind, "\377wYou burn in holy fire!");
 			/* assumes that martyr starts at -15 turns! : */
-			p_ptr->chp = (p_ptr->mhp * p_ptr->martyr) / 15; 
+			p_ptr->chp = (p_ptr->mhp * p_ptr->martyr) / p_ptr->martyr_dur; 
 			/* Update health bars */
 			update_health(0 - Ind);
 			/* Redraw */
@@ -2291,7 +2297,7 @@ bool set_martyr(int Ind, int v)
 			   like nether/fire hit from the ground in the Nether Realm;
 			   assumes that martyr starts at -15 turns! : */
 //			p_ptr->chp = (p_ptr->mhp >= 30 * 15) ? 30 : p_ptr->mhp / 15;
-			p_ptr->chp = (p_ptr->mhp <= 30 * 15) ? 30 : p_ptr->mhp / 15;
+			p_ptr->chp = (p_ptr->mhp <= 30 * p_ptr->martyr_dur) ? 30 : p_ptr->mhp / p_ptr->martyr_dur;
     		        /* Update health bars */
 	                update_health(0 - Ind);
 	                /* Redraw */

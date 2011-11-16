@@ -2430,6 +2430,7 @@ struct player_type
 	s16b zeal_power;
 	s16b martyr;
 	s16b martyr_timeout;
+	s16b martyr_dur;
 	s16b res_fear_temp;
 	s16b invuln, invuln_applied;	/* Timed -- Invulnerable; helper var */
 	s16b hero;			/* Timed -- Heroism */
