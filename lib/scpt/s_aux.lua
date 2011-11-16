@@ -115,7 +115,7 @@ end
 -- Change this fct if I want to switch to learnable spells
 function get_level_school(i, s, max, min)
 	local lvl, sch, index, num, bonus
---	local player = players(i)
+	local player = players(i)
 
 	lvl = 0
         num = 0
@@ -196,7 +196,7 @@ end
 
 -- Return the amount of power(mana, piety, whatever) for the spell
 function get_power(i, s)
---	local player = players(i)
+	local player = players(i)
         if check_affect(s, "piety", FALSE) then
                 return player.grace
         else
@@ -676,7 +676,7 @@ end
 -- one question.. why this should be LUA anyway?
 -- because accessing lua table is so badly easier in lua
 function cast_school_spell(i, s, s_ptr, no_cost, other)
---	local player = players(i)
+	local player = players(i)
 	local use = FALSE
 
 	-- No magic
