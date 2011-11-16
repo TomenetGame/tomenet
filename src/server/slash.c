@@ -709,6 +709,9 @@ void do_slash_cmd(int Ind, char *message)
 
 				/* just remove pseudo-id tags? */
 				if (remove_pseudo) {
+					/* prevent 'empty' inscriptions from being erased by this */
+					if ((quark_str(o_ptr->note))[0] == '\0') continue;
+
 					note_crop_pseudoid(note2, noteid, quark_str(o_ptr->note));
 					if (!note2[0]) {
 						o_ptr->note = 0;
