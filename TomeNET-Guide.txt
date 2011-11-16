@@ -11127,7 +11127,11 @@ Here you can..
 -Leave guild
     If the last member leaves, the whole guild is disbanded.
     If the guild master leaves the guild, the guild becomes leaderless.
-    The next player who grabs the guild key becomes the new guild master.
+    The next player from that guild who grabs the guild key becomes the new
+    guild master.
+
+Note: In general, a player of a guild who grabs the guild key becomes the new
+      guild master.
 
 Note: Keys are indestructible, they can be lost though..
 
