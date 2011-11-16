@@ -6010,11 +6010,13 @@ Dark Sword      Dark Swords have a so-called 'antimagic field', which
                 AC boni on Dark Swords won't affect the antimagic field.
                 The antimagic chance and field radius of a dark sword stacks
                 with the 'Antimagic' skill (see 6.2).
-                Note that if there are multiple dark swords around then the
-                strongest field overrides the weaker fields. Same is true for
-                dual-wielding dark swords, so you won't get any kind of stacked
-                super-AM-field but only the one AM field of the strongest dark
-                dark sword around.
+
+                Note that if you dual-wield dark swords the stronger AM field
+                will override the weaker one, so they don't stack.
+
+                Similarly, if there are multiple players around nearby who have
+                antimagic fields affecting the same monster then only the
+                strongest AM field will work, overriding the weaker ones.
 Bluesteel Blade Cannot rust (not damaged by water attacks) and are especially
                 sharp (see 'VORPAL' under (5.8)).
 Shadow Blade    Resists darkness, cannot be damaged by acid or water, provides
