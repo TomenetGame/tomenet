@@ -25,6 +25,10 @@
     (((t_info[t_idx].difficulty * t_info[t_idx].minlevel) + ((dlev) > 5 ? (dlev) - 5 : 0)) * \
     (200 - t_info[t_idx].probability) / 100)
 
+/* Maximum level a character may have reached so far to still be eligible
+   to enter the Ironman Deep Dive Challenge */
+#define IRONDEEPDIVE_MAXLEV 12
+
 
 /*
  * Go up one level                                      -RAK-
@@ -191,6 +195,13 @@ void do_cmd_go_up(int Ind)
 	if(p_ptr->inval && p_ptr->wpos.wz >= 10){
 		msg_print(Ind, "\377You may go no higher without a valid account.");
 		return;
+	}
+
+	if (p_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y) {
+		if (p_ptr->max_plv > IRONDEEPDIVE_MAXLEV) {
+			msg_format(Ind, "\377DYou may not enter once you exceeded character level %d!", IRONDEEPDIVE_MAXLEV);
+			return;
+		}
 	}
 
 	/* S(he) is no longer afk */
@@ -585,6 +596,13 @@ void do_cmd_go_down(int Ind)
 	if(p_ptr->inval && p_ptr->wpos.wz <= -10){
 		msg_print(Ind, "\377You may go no lower without a valid account.");
 		return;
+	}
+
+	if (p_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y) {
+		if (p_ptr->max_plv > IRONDEEPDIVE_MAXLEV) {
+			msg_format(Ind, "\377DYou may not enter once you exceeded character level %d!", IRONDEEPDIVE_MAXLEV);
+			return;
+		}
 	}
 
 	/* S(he) is no longer afk */
