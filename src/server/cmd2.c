@@ -4050,8 +4050,9 @@ void do_cmd_fire(int Ind, int dir)
 
 	/* Distance to target too great?
 	   Use distance() to form a 'natural' circle shaped radius instead of a square shaped radius,
-	   monsters do this too */
-	if (dir == 5 && distance(p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col) > tdis) return;
+	   monsters do this too.
+	   If target is not ok, it means we fire at our own grid, so don't return() in that case. */
+	if (dir == 5 && target_ok && distance(p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col) > tdis) return;
 
 	/* Check if monsters around him/her hinder this */
 //  if (interfere(Ind, cfg.spell_interfere * 3)) return;
@@ -4240,7 +4241,7 @@ void do_cmd_fire(int Ind, int dir)
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
 	}
-	
+
 	break_chance = breakage_chance(o_ptr);
 
 	break_cloaking(Ind, 0);
