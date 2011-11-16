@@ -8738,13 +8738,15 @@ Take care on the following combinations:
 Maiar start with a low-profile skill chart, which gets boosted or diminished
 depending on their alignment on initiation.
 
+Note: After getting boosted as stated below, a skill's gain ratio will be
+      capped at 2.000.
+
 Modifications for becoming 'enlightened':
     Necromancy, traumaturgy and aura of death become disabled.
     Sword, blunt and polearm skill x 1.3.
     The four priestly schools x 2.4.
     Divination school x 1.7.
     Fear and shivering aura x 3.0.
-    Sneakiness and stealth x 2.1.
 Modifications for becoming 'corrupted':
     The four priestly schools become disabled.
     Axe and martial arts skill x 1.3.
@@ -9090,6 +9092,7 @@ Warrior is strongly recommended.
     which has spells of different effect depending on the caster's alignment.
     Initiation to either enlightened or corrupted beings will decide the effect
     of astral spells, extra abilities, and also their skill chart layout!
+    Maia also get a bonus on 'Sneakiness' and 'Stealth'.
     Maiar can be any class that can utilize mana. They get the best shop prices
     of all races since they are either greatly respected or feared by all other
     creatures.
