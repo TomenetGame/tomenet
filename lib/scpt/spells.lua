@@ -2,16 +2,7 @@
 -- This file takes care of the schools of magic
 -- (Edit this file and funny funny things will happen :)
 
--- <- dummy line to change checksum - C. Blue
 -- Create the schools
-
---hack: these lines are required till next client version is out,
---      which has these defined in player.pkg+defines.h correctly.
-SKILL_ASTRAL = 77
-SKILL_PPOWER = 80
-SKILL_TCONTACT = 81
-SKILL_MINTRUSION = 82
-
 
 SCHOOL_CONVEYANCE = add_school
 {
