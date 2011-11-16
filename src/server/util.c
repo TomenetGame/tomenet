@@ -2654,7 +2654,7 @@ static void player_talk_aux(int Ind, char *message)
 	if (strlen(message) >= 4 && message[1] == ':' && message[2] == '-' && message[3] == ':')
 		message += 4;
 	/* Catch this case too anyway, just for comfort if someone uses fixed macros for -: */
-	else if (strlen(message) >= 2 && message[0] == ':' && message[1] == '-')
+	else if (strlen(message) >= 2 && message[0] == '-' && message[1] == ':')
 		message += 2;
 
 	colon = strchr(message, ':');
