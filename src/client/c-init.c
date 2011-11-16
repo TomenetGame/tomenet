@@ -249,6 +249,13 @@ void initialize_main_pref_files(void)
 void initialize_player_pref_files(void){
 	char buf[1024];
 
+	/* Access the "account" pref file */
+	sprintf(buf, "%s.prf", nick);
+//	buf[0] = tolower(buf[0]);
+
+	/* Process that file */
+	process_pref_file(buf);
+
 	/* Access the "race" pref file */
 	if (race < Setup.max_race)
 	{
@@ -268,13 +275,6 @@ void initialize_player_pref_files(void){
 		/* Process that file */
 		process_pref_file(buf);
 	}
-
-	/* Access the "account" pref file */
-	sprintf(buf, "%s.prf", nick);
-//	buf[0] = tolower(buf[0]);
-
-	/* Process that file */
-	process_pref_file(buf);
 
 	/* Access the "character" pref file */
 	sprintf(buf, "%s.prf", cname);

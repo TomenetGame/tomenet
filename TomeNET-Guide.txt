@@ -2467,6 +2467,9 @@ You can also save macros to <racename>.prf or to <classname>.prf, like
 Warrior.prf to have them being auto-loaded on all characters of that class.
 Priority order (latter one overrides prior one):
 
+These files are meant to store client options and configuration,
+you should NOT use them for macros:
+-----------------------------------
 pref.prf (global for all OS and users on the system)
 user.prf (global, for the specific user)
 pref-<operating system>.prf (loaded if under the specific operating system)
@@ -2474,12 +2477,16 @@ graf-<operating system>.prf OR font-<operating system>.prf
                             (loaded if using graphics / ascii font on the
                              specified system)
 user-<operating system>.prf (loaded if under the specific operating system)
+
+These files can be used for saving your macros to without problems:
+-------------------------------------------------------------------
+<account name>.prf (for the account the player logged in with)
 <race>.prf (for the specific race)
 <class>.prf (for the specific class)
-<account name>.prf (for the account the player logged in with)
 <character name>.prf (for the specific character the player logged in with)
 
-It is recommended to use only race/class/account/character preference files.
+It is recommended to use only race/class/account/character preference files
+for storing your macros.
 
 
 Command macros:  !WORKS DIFFERENT FROM MOST ROGUE-LIKES!
