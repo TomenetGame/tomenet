@@ -4689,6 +4689,7 @@ void do_cmd_fire(int Ind, int dir)
 
 						if (!boomerang && !magic && o_ptr->pval)
 							do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
+
 						break;
 					}
 					
@@ -4906,6 +4907,12 @@ void do_cmd_fire(int Ind, int dir)
 			}
 		}
 #ifdef DOUBLE_LOS_SAFETY
+	    } else {
+		if (!target_ok) { /* fired 'at oneself'? */
+			if (!boomerang && !magic && o_ptr->pval) {
+				do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
+			}
+		}
 	    }
 #endif
 
@@ -4996,6 +5003,10 @@ void do_cmd_fire(int Ind, int dir)
 					break;
 				}
 			}
+#ifdef DOUBLE_LOS_SAFETY
+			/* remove dir 5, or we'll likely panic when we go through all 99 grids without blocking checks */
+			dir = d;
+#endif
 			tx = p_ptr->px + 99 * ddx[d];
 			ty = p_ptr->py + 99 * ddy[d];
 
