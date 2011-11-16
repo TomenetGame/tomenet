@@ -3373,7 +3373,16 @@ static void hook_quit(cptr str)
 
 	if(message_num() && get_check("Save chatlog?")){
 		FILE *fp;
-		char buf[80]="tome_chat.txt";
+		char buf[80];
+		time_t ct = time(NULL);
+		struct tm* ctl = localtime(&ct);
+
+		strcpy(buf, "tomenet-chat_");
+		strcat(buf, format("%04d-%02d-%02d_%02d.%02d.%02d",
+		    1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday,
+		    ctl->tm_hour, ctl->tm_min, ctl->tm_sec));
+		strcat(buf, ".txt");
+
 		i=message_num();
 		get_string("Filename:", buf, 80);
 		fp=my_fopen(buf, "w");
