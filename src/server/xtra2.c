@@ -4179,6 +4179,15 @@ void check_experience(int Ind)
 			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn to see the invisible!");
 			break;
 		case RACE_VAMPIRE:
+			if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYour vision extends.");
+			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYour vision extends.");
+			if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYour vision extends.");
+			if (old_lev < 40 && p_ptr->lev >= 40) msg_print(Ind, "\374\377GYour vision extends.");
+			if (old_lev < 50 && p_ptr->lev >= 50) msg_print(Ind, "\374\377GYour vision extends.");
+			if (old_lev < 60 && p_ptr->lev >= 60) msg_print(Ind, "\374\377GYour vision extends.");
+			if (old_lev < 70 && p_ptr->lev >= 70) msg_print(Ind, "\374\377GYour vision extends.");
+			if (old_lev < 80 && p_ptr->lev >= 80) msg_print(Ind, "\374\377GYour vision extends.");
+			if (old_lev < 90 && p_ptr->lev >= 90) msg_print(Ind, "\374\377GYour vision extends.");
 //			if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn how to fly!");
 			if (old_lev < 20 && p_ptr->lev >= 20) {
 				msg_print(Ind, "\374\377GYou are now able to turn into a vampire bat (#391)!");
