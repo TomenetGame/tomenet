@@ -21,6 +21,10 @@
 // #define ANTI_MAXPLV_EXPLOIT_SOFTLEV	/* be somewhat less strict (average between max_plv and current max_lev) */
  #define ANTI_MAXPLV_EXPLOIT_SOFTEXP	/* be somewhat less strict (use reduced exp instead of preventing any exp) */
 
+/* Check for illegal party/guild name that could be abused to catch special chat commands */
+#define ILLEGAL_GROUP_NAME(N) \
+    (streq(N, "Neutral") || streq(N, "!") || streq(N, "#") || streq(N, "%") || streq(N, "$") || streq(N, "-"))
+
 
 #ifdef HAVE_CRYPT
 #include <unistd.h>
@@ -570,9 +574,7 @@ int guild_create(int Ind, cptr name){
 	}
 
 	/* Prevent abuse */
-	if (streq(name, "Neutral")
-	    || streq(name, "!") || streq(name, "#")
-	    || streq(name, "%") || streq(name, "$")) {
+	if (ILLEGAL_GROUP_NAME(name)) {
 		msg_print(Ind, "\377yThat's not a legal guild name.");
 		return FALSE;
 	}
@@ -737,9 +739,7 @@ int party_create(int Ind, cptr name)
 	int index = 0, i, oldest = turn;
 
 	/* Prevent abuse */
-	if (streq(name, "Neutral")
-	    || streq(name, "!") || streq(name, "#")
-	    || streq(name, "%") || streq(name, "$")) {
+	if (ILLEGAL_GROUP_NAME(name)) {
 		msg_print(Ind, "\377yThat's not a legal party name.");
 		return FALSE;
 	}
@@ -830,9 +830,7 @@ int party_create_ironteam(int Ind, cptr name)
 	}
 
 	/* Prevent abuse */
-	if (streq(name, "Neutral")
-	    || streq(name, "!") || streq(name, "#")
-	    || streq(name, "%") || streq(name, "$")) {
+	if (ILLEGAL_GROUP_NAME(name)) {
 		msg_print(Ind, "\377yThat's not a legal party name.");
 		return FALSE;
 	}

@@ -2650,8 +2650,12 @@ static void player_talk_aux(int Ind, char *message)
 	strncpy(last_chat_line, message, MSG_LEN);
 	/* do exec_lua() not here instead of in dungeon.c - mikaelh */
 
-	/* don't log spammy slash commands */
-	if (prefix(message, "/untag ")) log = FALSE;
+	/* '-:' at beginning of message sends to normal chat, cancelling special chat modes - C. Blue */
+	if (strlen(message) >= 4 && message[1] == ':' && message[2] == '-' && message[3] == ':')
+		message += 4;
+	/* Catch this case too anyway, just for comfort if someone uses fixed macros for -: */
+	else if (strlen(message) >= 2 && message[0] == ':' && message[1] == '-')
+		message += 2;
 
 	colon = strchr(message, ':');
 
@@ -2741,6 +2745,9 @@ static void player_talk_aux(int Ind, char *message)
 			break;
 		}
 	}
+
+	/* don't log spammy slash commands */
+	if (prefix(message, "/untag ")) log = FALSE;
 
 	/* no big brother */
 //	if(cfg.log_u && (!colon || message[0] != '#' || message[0] != '/')){ /* message[0] != '#' || message[0] != '/' is always true -> big brother mode - mikaelh */
