@@ -1787,6 +1787,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
+
 			rn = 0;
 			for (i = 0; i < k; i++)
 			{
@@ -1800,6 +1801,7 @@ void do_slash_cmd(int Ind, char *message)
 			bool coin = (rand_int(2) == 0);
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
+
 			msg_format(Ind, "\374\377%cYou flip a coin and get %s.", COLOUR_GAMBLE, coin ? "heads" : "tails");
 			msg_format_near(Ind, "\374\377%c%s flips a coin and gets %d", COLOUR_GAMBLE, p_ptr->name, coin ? "heads" : "tails");
 			return;
@@ -1863,6 +1865,9 @@ void do_slash_cmd(int Ind, char *message)
                 {
                         int value, flower;
                         char* temp;
+			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+
                         temp = (char*)malloc(10*sizeof(char));
                         value = randint(13); flower = randint(4);
                         switch (value) {
@@ -3041,6 +3046,9 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "Usage: /slap <player name>");
 				return;
 			}
+			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+
 			j = name_lookup_loose(Ind, token[1], FALSE);
 			if (!j || !p_ptr->play_vis[j]) return;
 			for (i = 1; i <= 9; i++) {
@@ -3057,7 +3065,6 @@ void do_slash_cmd(int Ind, char *message)
 #endif
 			msg_format(j, "\377o%s slaps you!", p_ptr->name);
 			msg_format_near(j, "\377y%s slaps %s!", p_ptr->name, Players[j]->name);
-			p_ptr->energy -= level_speed(&p_ptr->wpos);
 			return;
 		}
 		else if (prefix(message, "/pat")) { /* Counterpart to /slap :-p */
@@ -3066,6 +3073,8 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "Usage: /pat <player name>");
 				return;
 			}
+			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, token[1], FALSE);
 			if (!j || !p_ptr->play_vis[j]) return;
@@ -3081,7 +3090,6 @@ void do_slash_cmd(int Ind, char *message)
 
 			msg_format(j, "\377o%s pats you.", p_ptr->name);
 			msg_format_near(j, "\377y%s pats %s.", p_ptr->name, Players[j]->name);
-			p_ptr->energy -= level_speed(&p_ptr->wpos);
 			return;
 		}
 		else if (prefix(message, "/hug")) { /* Counterpart to /slap :-p */
@@ -3090,6 +3098,8 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "Usage: /hug <player name>");
 				return;
 			}
+			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, token[1], FALSE);
 			if (!j || !p_ptr->play_vis[j]) return;
@@ -3105,7 +3115,6 @@ void do_slash_cmd(int Ind, char *message)
 
 			msg_format(j, "\377o%s hugs you.", p_ptr->name);
 			msg_format_near(j, "\377y%s hugs %s.", p_ptr->name, Players[j]->name);
-			p_ptr->energy -= level_speed(&p_ptr->wpos);
 			return;
 		}
 		else if (prefix(message, "/poke")) {
@@ -3114,6 +3123,8 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "Usage: /poke <player name>");
 				return;
 			}
+			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, token[1], FALSE);
 			if (!j || !p_ptr->play_vis[j]) return;
@@ -3129,7 +3140,6 @@ void do_slash_cmd(int Ind, char *message)
 
 			msg_format(j, "\377o%s pokes you.", p_ptr->name);
 			msg_format_near(j, "\377y%s pokes %s.", p_ptr->name, Players[j]->name);
-			p_ptr->energy -= level_speed(&p_ptr->wpos);
 			return;
 		}
 
