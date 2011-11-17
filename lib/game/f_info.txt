@@ -153,7 +153,7 @@ F:FLOOR | NOTICE | REMEMBER | CAN_RUN | DOOR
 
 N:21:signpost
 #G:#:y  looks too much like trees.
-#possible: %:U, %:o, &:y, &:o, &:U
+#possible: %:U, %:o, &:y, &:o, &:U, +:y, +:u, +:o
 G:&:U
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
 
