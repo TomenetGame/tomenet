@@ -1735,7 +1735,7 @@ bool Destroy_connection(int ind, char *reason_orig)
 	int		id, len, sock;
 	char		pkt[MAX_CHARS];
 	char		*reason;
-	int		i, player;
+	int		i, player = 0;
 	char		traffic[50+1];
 	player_type	*p_ptr = NULL;
 
@@ -1752,12 +1752,13 @@ bool Destroy_connection(int ind, char *reason_orig)
 		return FALSE;
 	}
 
-	exec_lua(NumPlayers, format("player_leaves(%d, %d, \"%/s\", \"%s\")", NumPlayers, connp->id, connp->c_name, showtime()));
+	if (connp->id != -1) {
+		exec_lua(0, format("player_leaves(%d, %d, \"%/s\", \"%s\")", GetInd[connp->id], connp->id, connp->c_name, showtime()));
 
-#if 0 /* why do we use NumPlayers? oO is it already sorted? shouldn't we use GetInd? */
-	/* in case winners CAN hold arts as long as they don't leave the floor (default): */
-	lua_strip_true_arts_from_present_player(NumPlayers, int mode)
-#endif
+		/* in case winners CAN hold arts as long as they don't leave the floor (default): */
+		//lua_strip_true_arts_from_present_player(GetInd[connp->id], int mode)
+	} else
+		exec_lua(0, format("player_leaves(%d, %d, \"%/s\", \"%s\")", 0, connp->id, connp->c_name, showtime()));
 
 	sock = connp->w.sock;
 	if (sock != -1) remove_input(sock);
@@ -1786,23 +1787,23 @@ bool Destroy_connection(int ind, char *reason_orig)
 		p_ptr = Players[player];
 	}
 	if (p_ptr)
-		s_printf("%s: Goodbye %s(%s)=%s@%s (\"%s\") (ind=%d;wpos=%d,%d,%d;xy=%d,%d)\n",
+		s_printf("%s: Goodbye %s(%s)=%s@%s (\"%s\") (Ind=%d,ind=%d;wpos=%d,%d,%d;xy=%d,%d)\n",
 		    showtime(),
 		    connp->c_name ? connp->c_name : "",
 		    connp->nick ? connp->nick : "",
 		    connp->real ? connp->real : "",
 		    connp->host ? connp->host : "",
-		    reason, ind,
+		    reason, player, ind,
 		    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
 		    p_ptr->px, p_ptr->py);
 	else
-		s_printf("%s: Goodbye %s(%s)=%s@%s (\"%s\") (ind=%d;wpos=-,-,-;xy=-,-)\n",
+		s_printf("%s: Goodbye %s(%s)=%s@%s (\"%s\") (Ind=%d,ind=%d;wpos=-,-,-;xy=-,-)\n",
 		    showtime(),
 		    connp->c_name ? connp->c_name : "",
 		    connp->nick ? connp->nick : "",
 		    connp->real ? connp->real : "",
 		    connp->host ? connp->host : "",
-		    reason, ind);
+		    reason, player, ind);
 
 	Conn_set_state(connp, CONN_FREE, CONN_FREE);
 
@@ -1815,8 +1816,8 @@ bool Destroy_connection(int ind, char *reason_orig)
 		Delete_player(GetInd[id]);
 	}
 
-	exec_lua(NumPlayers, format("player_has_left(%d, %d, \"%/s\", \"%s\")", NumPlayers + 1, connp->id, connp->c_name, showtime()));
-	if (NumPlayers == 0) exec_lua(NumPlayers, format("last_player_has_left(%d, %d, \"%/s\", \"%s\")", NumPlayers + 1, connp->id, connp->c_name, showtime()));
+	exec_lua(0, format("player_has_left(%d, %d, \"%/s\", \"%s\")", player, connp->id, connp->c_name, showtime()));
+	if (NumPlayers == 0) exec_lua(0, format("last_player_has_left(%d, %d, \"%/s\", \"%s\")", player, connp->id, connp->c_name, showtime()));
 	strcpy(traffic, "");
 	for (i = 1; (i <= NumPlayers) && (i < 50); i++)
 		if (!(i % 5)) strcat(traffic, "* "); else strcat(traffic, "*");
@@ -2233,8 +2234,8 @@ static int Handle_listening(int ind)
 	 */
 
 	/* Log the players connection */
-	s_printf("%s: Welcome %s=%s@%s (%s/%d) (ind=%d)", showtime(), connp->nick,
-		connp->real, connp->host, connp->addr, connp->his_port, ind);
+	s_printf("%s: Welcome %s=%s@%s (%s/%d) (NP=%d,ind=%d)", showtime(), connp->nick,
+		connp->real, connp->host, connp->addr, connp->his_port, NumPlayers, ind);
 #if 0
 	if (connp->version != MY_VERSION)
 		s_printf(" (version %04x)", connp->version);
