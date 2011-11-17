@@ -6461,7 +6461,12 @@ Mushroom of Restoring
 Mushrooms with bad effects are also often poisonous.
 Lembas (elvish waybread)
                     Satisifies your hunger, cures poison and hallucinations.
-Flint               Prevents your light from going out.
+Flint               Prevents your light from going out by automatically
+                    refilling it right when it would've reached 0 turns.
+                    For this to work you'll need to carry appropriate items in
+                    your inventory that will be used up in the process, eg a
+                    flask of oil or another lantern for refilling a lantern or
+                    another torch for refilling a torch.
 Empty bottles       You can /fill these at fountains to turn them into
                     potions. (See 0.2 for more details.)
 Skeletons/Bones/Skulls  You can create ammunition from these if your Archery

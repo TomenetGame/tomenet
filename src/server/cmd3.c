@@ -2251,7 +2251,9 @@ static bool item_tester_refill_lantern(object_type *o_ptr)
 
 	/* Other lanterns are okay */
 	if ((o_ptr->tval == TV_LITE) &&
-	    (o_ptr->sval == SV_LITE_LANTERN)) return (TRUE);
+	    (o_ptr->sval == SV_LITE_LANTERN) &&
+	    o_ptr->timeout)
+		return (TRUE);
 
 	/* Assume not okay */
 	return (FALSE);
@@ -2385,9 +2387,14 @@ static void do_cmd_refill_lamp(int Ind, int item)
  */
 static bool item_tester_refill_torch(object_type *o_ptr)
 {
+	/* (Rand)arts are not usable for refilling */
+	if (o_ptr->name1) return (FALSE);
+
 	/* Torches are okay */
 	if ((o_ptr->tval == TV_LITE) &&
-	    (o_ptr->sval == SV_LITE_TORCH)) return (TRUE);
+	    (o_ptr->sval == SV_LITE_TORCH) &&
+	    o_ptr->timeout)
+		return (TRUE);
 
 	/* Assume not okay */
 	return (FALSE);
