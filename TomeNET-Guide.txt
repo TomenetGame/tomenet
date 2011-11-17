@@ -12583,6 +12583,12 @@ The differences between RPG ruleset and normal servers are as follows:
 
 (8.5a) Special server type 'Arcade Server'
 ------------------------------------------
+*** Under very sporadic development -
+    features might be incomplete/not working.
+    To check the sourc code, look for ARCADE_SERVER definitions.
+    The arcade server might not be running at all times but
+    you could ask for it to be started when an admin is online. ***
+
 Like 'RPG Server' mentioned in the paragraph above, 'Arcade Server' is an
 alternate ruleset, which is however *very* different from normal gameplay:
 
@@ -12590,6 +12596,7 @@ Developed by Moltor, Arcade is not normal dungeon dwelling but instead features
 some hot action games that merely (ab)use the TomeNET 'engine'. :)
 The only thing resemling normal TomeNET is that you still have to create a
 character in order to log in and play.
+Note: After logging in you may press '?' key for a help screen.
 
 On the Arcade server, you can play..
 
@@ -12643,7 +12650,7 @@ SOLUTION:   If you want to connect directly to a specific server by specifying
             standard port servers run on. (If you'd like to play on the RPG
             server, it's port 19348 instead of 18348. See (8.5) for more
             information about RPG settings. For the Arcade server it's port
-            20348.)
+            20348, see (8.5a) for more information about Arcade server.)
             If you want to make use of the server list that appears when you
             don't specify a particular server, you additionally have to allow
             the game to connect to the meta server which provides the server
