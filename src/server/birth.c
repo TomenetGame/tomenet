@@ -1477,9 +1477,9 @@ static void player_outfit(int Ind)
 	}
 	/* XXX problem is that Lembas sell dear.. */
 	else if (p_ptr->prace == RACE_HALF_ELF ||
-			p_ptr->prace == RACE_ELF || p_ptr->prace == RACE_HIGH_ELF) {
+	    p_ptr->prace == RACE_ELF || p_ptr->prace == RACE_HIGH_ELF) {
 		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_WAYBREAD));
-		o_ptr->number = rand_range(2, 3);
+		o_ptr->number = rand_range(3, 4);
 		do_player_outfit();
 	}
 	/* Firestones for Dragonriders */
@@ -1503,7 +1503,7 @@ static void player_outfit(int Ind)
 		do_player_outfit();
 	}
 	/* vampires feed off living prey, using their vampiric life leech *exclusively* */
-	else {
+	else if (p_ptr->prace != RACE_ELF && p_ptr->prace != RACE_HALF_ELF && p_ptr->prace != RACE_HIGH_ELF) {
 		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION));
 		o_ptr->number = rand_range(3, 7);
 		do_player_outfit();
