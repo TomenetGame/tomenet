@@ -767,6 +767,8 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 	return 1
 end
 
+--WARNING: Don't call this via exec_lua(0,..) from within a function that uses 'player' LUA variable!
+--There is also a safe C version of this function in object1.c.
 function get_spellbook_name_colour(i)
 	local s
 	s = __spell_school[i][1]

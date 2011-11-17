@@ -944,3 +944,11 @@ char deep_dive_name[20][NAME_LEN];
 
 /* Global projection counter for m_ptr->hit_proj_id */
 int mon_hit_proj_id, mon_hit_proj_id2;
+
+/* remember school for each spell */
+int spell_school[512];
+/* Also remeber the first and last school of each magic resort */
+int SCHOOL_HOFFENSE, SCHOOL_HSUPPORT;
+int SCHOOL_DRUID_ARCANE, SCHOOL_DRUID_PHYSICAL;
+int SCHOOL_ASTRAL;
+int SCHOOL_PPOWER, SCHOOL_MINTRUSION;

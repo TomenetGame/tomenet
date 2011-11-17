@@ -320,16 +320,25 @@ void init_lua()
 	max = exec_lua(0, "return __schools_num");
 	init_schools(max);
 	for (i = 0; i < max; i++)
-	{
 		exec_lua(0, format("finish_school(%d)", i));
-	}
+	/* Copy certain schools which mark the beginning and end of each magic resort
+	   to local C array for get_spellbook_name_colour() */
+	SCHOOL_HOFFENSE = exec_lua(0, "return SCHOOL_HOFFENSE");
+	SCHOOL_HSUPPORT = exec_lua(0, "return SCHOOL_HSUPPORT");
+	SCHOOL_DRUID_ARCANE = exec_lua(0, "return SCHOOL_DRUID_ARCANE");
+	SCHOOL_DRUID_PHYSICAL = exec_lua(0, "return SCHOOL_DRUID_PHYSICAL");
+	SCHOOL_ASTRAL = exec_lua(0, "return SCHOOL_ASTRAL");
+	SCHOOL_PPOWER = exec_lua(0, "return SCHOOL_PPOWER");
+	SCHOOL_MINTRUSION = exec_lua(0, "return SCHOOL_MINTRUSION");
 
 	/* Finish up the spells */
 	max = exec_lua(0, "return __tmp_spells_num");
 	init_spells(max);
-	for (i = 0; i < max; i++)
-	{
+	for (i = 0; i < max; i++) {
 		exec_lua(0, format("finish_spell(%d)", i));
+
+		/* Copy spells to local C array for get_spellbook_name_colour() */
+		spell_school[i] = exec_lua(0, format("return __spell_school[%d][1]", i));
 	}
 
 #ifdef USE_SOUND_2010

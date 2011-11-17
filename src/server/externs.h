@@ -1158,6 +1158,8 @@ extern void inven_confirm_revision(int Ind, int revision);
 extern byte potion_col[MAX_COLORS];
 #endif
 
+extern byte get_spellbook_name_colour(int pval);
+
 /* party.c */
 extern void account_check(int Ind);
 extern bool WriteAccount(struct account *r_acc, bool new);
@@ -2052,3 +2054,11 @@ extern astar_list_closed astar_info_closed[ASTAR_MAX_INSTANCES];
 /* Ironman Deep Dive Challenge */
 extern int deep_dive_level[20];
 extern char deep_dive_name[20][NAME_LEN];
+
+/* remember school for each spell */
+extern int spell_school[512];
+/* Also remeber the first and last school of each magic resort */
+int SCHOOL_HOFFENSE, SCHOOL_HSUPPORT;
+int SCHOOL_DRUID_ARCANE, SCHOOL_DRUID_PHYSICAL;
+int SCHOOL_ASTRAL;
+int SCHOOL_PPOWER, SCHOOL_MINTRUSION;

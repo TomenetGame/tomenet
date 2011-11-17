@@ -3660,7 +3660,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 	bool crystal =
 	    o_ptr->tval == TV_BOOK &&
 	    o_ptr->sval == SV_SPELLBOOK &&
-	    exec_lua(0, format("return get_spellbook_name_colour(%d)", o_ptr->pval)) == TERM_YELLOW;
+	    get_spellbook_name_colour(o_ptr->pval) == TERM_YELLOW;
 #endif
 
 	if (artifact_p(o_ptr) || o_ptr->name2) return (FALSE);
@@ -5281,7 +5281,7 @@ for (i = 0; i < 25; i++) {
 	/* Bad hack: Un-ego mindcrafter spell scrolls if they got fireproof/waterproof ego,
 	   since they (by another bad hack) already ignore those. */
 	if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK &&
-	    exec_lua(0, format("return get_spellbook_name_colour(%d)", o_ptr->pval)) == TERM_YELLOW) {
+	    get_spellbook_name_colour(o_ptr->pval) == TERM_YELLOW) {
 	    if (o_ptr->name2 == EGO_FIREPROOF_BOOK || o_ptr->name2 == EGO_WATERPROOF_BOOK) o_ptr->name2 = 0;
 	    if (o_ptr->name2b == EGO_FIREPROOF_BOOK || o_ptr->name2b == EGO_WATERPROOF_BOOK) o_ptr->name2b = 0;
 	}

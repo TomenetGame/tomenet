@@ -1083,7 +1083,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 	   Since they're called 'crystals', add water+fire immunity.
 	   Acid immunity is only for the greater crystals. */
 	if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK &&
-	    exec_lua(0, format("return get_spellbook_name_colour(%d)", o_ptr->pval)) == TERM_YELLOW) {
+	    get_spellbook_name_colour(o_ptr->pval) == TERM_YELLOW) {
 		(*f3) |= TR3_IGNORE_FIRE;
 		(*f5) |= TR5_IGNORE_WATER;
 	}
@@ -5247,15 +5247,15 @@ bool can_use_verbose(int Ind, object_type *o_ptr)
 byte get_book_name_color(int Ind, object_type *o_ptr)
 {
 	//player_type *p_ptr = Players[Ind];
-	if (o_ptr->sval == SV_SPELLBOOK) {
-		return (byte)exec_lua(Ind, format("return get_spellbook_name_colour(%d)", o_ptr->pval));
-	} else if (o_ptr->sval >= SV_CUSTOM_TOME_1) {
+	if (o_ptr->sval == SV_SPELLBOOK) { /* Simple spell scrolls */
+		return get_spellbook_name_colour(o_ptr->pval);
+	} else if (o_ptr->sval >= SV_CUSTOM_TOME_1) { /* Custom books */
 		/* first annotated spell decides */
 		if (o_ptr->xtra1)
-			return (byte)exec_lua(Ind, format("return get_spellbook_name_colour(%d)", o_ptr->xtra1 - 1));
+			return get_spellbook_name_colour(o_ptr->xtra1 - 1);
 		else
 			return TERM_WHITE; /* unused custom book */
-	} else {
+	} else { /* School Tomes */
 		/* priests */
 		if ((o_ptr->sval >= 12 && o_ptr->sval <= 15) ||
 		    o_ptr->sval == 53)
@@ -5286,4 +5286,20 @@ byte get_attr_from_tval(object_type *o_ptr) {
 	}
 
 	return(attr);
+}
+
+/* Returns the colour of a spell book in inventory/store.
+   This is the C version to prevent exec_lua(0,..) trouble with 'player' LUA var.
+   There is also an unsafe LUA version of this in s_aux.lua. */
+byte get_spellbook_name_colour(int pval) {
+	/* green for priests */
+	if (spell_school[pval] >= SCHOOL_HOFFENSE && spell_school[pval] <= SCHOOL_HSUPPORT) return TERM_GREEN;
+	/* light green for druids */
+	if (spell_school[pval] == SCHOOL_DRUID_ARCANE || spell_school[pval] == SCHOOL_DRUID_PHYSICAL) return TERM_L_GREEN;
+	/* orange for astral tome */
+	if (spell_school[pval] == SCHOOL_ASTRAL) return TERM_ORANGE;
+	/* yellow for mindcrafters */
+	if (spell_school[pval] >= SCHOOL_PPOWER && spell_school[pval] <= SCHOOL_MINTRUSION) return TERM_YELLOW;
+	/* light blue for the rest (istari schools) */
+	return TERM_L_BLUE;
 }
