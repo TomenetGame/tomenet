@@ -145,6 +145,7 @@ Contents
     (8.3)   Golem creation
     (8.4)   Artifact creation
     (8.5)   Alternative ruleset 'RPG Server'
+    (8.5a)  Special server type 'Arcade Server'
     (8.6)   Troubleshooting
 
 
@@ -12580,6 +12581,53 @@ The differences between RPG ruleset and normal servers are as follows:
    level characters to level 0 will be ignored, ie item level is kept.
 
 
+(8.5a) Special server type 'Arcade Server'
+------------------------------------------
+Like 'RPG Server' mentioned in the paragraph above, 'Arcade Server' is an
+alternate ruleset, which is however *very* different from normal gameplay:
+
+Developed by Moltor, Arcade is not normal dungeon dwelling but instead features
+some hot action games that merely (ab)use the TomeNET 'engine'. :)
+The only thing resemling normal TomeNET is that you still have to create a
+character in order to log in and play.
+
+On the Arcade server, you can play..
+
+
+Smash'em / 2Smash'em
+--------------------
+Play a game of smash where you keep firing to decimate hordes of approaching
+baddies.
+
+To play Smash'em you need to download the Smash'em macros from the download
+page and place them in your TomeNET/lib/user folder.
+Controls are:
+<to come>
+
+
+Tron
+----
+Alight cycle racing game where you leave a trail of energy behind you in which
+you and other competitors can crash which results in their elimination.
+Power-ups will randomly spawn and increase the trail length.
+Up to four players can participate at once.
+
+To play Tron you need to download the Tron macros from the download page and
+place them in your TomeNET/lib/user folder.
+Controls are:
+<to come>
+
+
+Food Fight
+----------
+<to come>
+
+
+Boat Arena
+----------
+<to come>
+
+
 
 (8.6) Troubleshooting
 ---------------------
@@ -12594,8 +12642,8 @@ SOLUTION:   If you want to connect directly to a specific server by specifying
             an outgoing TCP/IP connection to remote port 18348, that's the
             standard port servers run on. (If you'd like to play on the RPG
             server, it's port 19348 instead of 18348. See (8.5) for more
-            information about RPG settings. For the Smash Arcade server it's
-            port 20348.)
+            information about RPG settings. For the Arcade server it's port
+            20348.)
             If you want to make use of the server list that appears when you
             don't specify a particular server, you additionally have to allow
             the game to connect to the meta server which provides the server
@@ -12641,21 +12689,28 @@ PROBLEM 03: When I start TomeNET I don't see anything except a small hollow
             yellow rectangle (the cursor). All windows stay black. It seems
             that the cursor reacts to my inputs by printing out some black
             hence invisible text.
-SOLUTION:   A rare problem that is not caused by TomeNET really. Restart your
-            MS Windows system and the text should be visible again.
+SOLUTION:   A rare problem that is not caused by TomeNET really:
+            MS Windows sometimes keeps the TomeNET font file opened although
+            the client has already been terminated. Next time you start TomeNET
+            it will be unable to open its font files for that reason, resulting
+            in the lack of any text on the screen.
+            What to do is restart your MS Windows system and the text should be
+            visible again.
             (This usually only happens once, after updating the client.)
 
-PROBLEM 04: All windows except for the main window stay empty.
+PROBLEM 04: All windows _except for the main window_ stay empty.
 SOLUTION:   First make sure it's really a bug and not just missing window
-            settings: Press '=' key and 'W' key and configure your windows
+            settings: Press '=' key and 'w' key and configure your windows
             appropriately. It is vital to set one of the windows to display
             game and/or chat messages, so you can actually read what other
             players write, and also keep track of combat messages!
             When you're done setting up the windows, go to 'save options'
-            (key '9'). If all the windows are still blank, read on:
-            Reasons are unknown. Sometimes a simple reboot helps. Otherwise:
-            Open TomeNET.ini file with a text editor, look for the window
-            sections, change the fonts to the same settings (8x13) as in the
+            (key 's').
+            If all the windows are still blank, read on:
+            Exact reasons are unknown but seem to only happen on MS Windows
+            machines. Sometimes a simple reboot helps. If it doesn't, open
+            TomeNET.ini file with a text editor, look for the window sections,
+            change the fonts to the same settings (8x13) as in the
             [Main window] section: FontFile=8X13.FON , Font=8X13.FON .
             Also, you could adjust the width/height of the windows (to 80x24
             for example). Try other fonts too, maybe they work for you.
@@ -12670,6 +12725,8 @@ SOLUTION:   Your LUA script files are outdated. Those files are responsible
              updated.
             -If for some reason auto-update doesn't work for you,
              download the latest client again.
+            Note: There was a bug in client 4.4.8, preventing it from auto-
+            updating LUA files, which was fixed in 4.4.8a and higher again.
 
 PROBLEM 06: TomeNET seems to freeze up while playing. (Also see PROBLEM 25 and
             28, which offer different solutions for similar issues!)
@@ -12870,7 +12927,7 @@ PROBLEM 11: The main window doesn't display the floor dots in town and in
             certain dungeons, like the Training Tower and Angband. Further,
             fields are sometimes not redrawn correctly, resulting in fake
             'trails'.
-SOLUTION:   Seems to happen on Windows machines sometimes.
+SOLUTION:   Seems to happen on MS Windows machines sometimes.
             Workaround (will slightly change the game's look, ie those dots):
             Edit /lib/user/font-win.prf and comment out the lines which end on
             the string '\31' (should be 2 lines at the beginning of the file,
@@ -13074,7 +13131,7 @@ SOLUTION:   Macros or client options can be saved to various .prf files which
 PROBLEM 31: After logging on, the file 'audio.lua' was updated automatically.
             Now the wrong sound effects seem to be played for game events.
 SOLUTION:   Just log out and back in, and your sound should be fine again.
-            This typically happen if 'audio.lua' was updated.
+            This typically happens if 'audio.lua' was updated.
             On a side note: Also check if maybe the sound pack was updated too,
             so you can redownload it and not miss out on newly added sound
             effects. Usually an update to file 'audio.lua' means that the sound
