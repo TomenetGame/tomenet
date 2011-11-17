@@ -12689,7 +12689,8 @@ PROBLEM 03: When I start TomeNET I don't see anything except a small hollow
             yellow rectangle (the cursor). All windows stay black. It seems
             that the cursor reacts to my inputs by printing out some black
             hence invisible text.
-SOLUTION:   A rare problem that is not caused by TomeNET really:
+SOLUTION:   A rare problem that is not caused by TomeNET really, but usually
+            happens on Windows XP and older:
             MS Windows sometimes keeps the TomeNET font file opened although
             the client has already been terminated. Next time you start TomeNET
             it will be unable to open its font files for that reason, resulting
