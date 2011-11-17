@@ -152,7 +152,9 @@ F:FLOOR | NOTICE | REMEMBER | CAN_RUN | DOOR
 # 0x22 --> signpost
 
 N:21:signpost
-G:#:y
+#G:#:y  looks too much like trees.
+#possible: %:U, %:o, &:y, &:o, &:U
+G:&:U
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
 
 # 0x28 --> home door (strength 1)
