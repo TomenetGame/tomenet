@@ -4483,7 +4483,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		case GF_DISINTEGRATE:
 		{
-			do_smash_effect = TRUE;
+			do_smash_effect = FALSE;
 			do_kill = TRUE;
 			note_kill = is_potion ? (plural ? " evaporate!" : " evaporates!")
 						: (plural ? " is pulverized!" : " is pulverized!");
@@ -4525,7 +4525,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_DETONATION:
 		case GF_ROCKET:
 		{
-			do_smash_effect = FALSE; /* was exploitable for easy insta-killing */
+			do_smash_effect = TRUE; /* allow coolness, while preventing exploiting via m_ptr->hit_proj_id; */
 			do_kill = TRUE;
 			note_kill = is_potion ? (plural ? " evaporate!" : " evaporates!")
 						: (plural ? " is pulverized!" : " is pulverized!");
@@ -4663,8 +4663,14 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			delete_object_idx(this_o_idx, TRUE);
 
 			/* Potions produce effects when 'shattered' */
-			if (is_potion && do_smash_effect)
-				(void)potion_smash_effect(who, wpos, y, x, o_sval);
+			if (is_potion && do_smash_effect) {
+				/* prevent mass deto exploit */
+				if (mon_hit_proj_id == mon_hit_proj_id2) {
+					mon_hit_proj_id++;
+					(void)potion_smash_effect(who, wpos, y, x, o_sval);
+					mon_hit_proj_id2++;
+				} else (void)potion_smash_effect(who, wpos, y, x, o_sval);
+			}
 
 			if (!quiet) {
 				/* Redraw */
@@ -4821,6 +4827,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	cave_type *c_ptr;
 	player_type *p_ptr = NULL;
 
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	c_ptr = &zcave[y][x];
 
@@ -4839,6 +4846,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Acquire monster pointer */
 	m_ptr = &m_list[c_ptr->m_idx];
+
+	/* Prevent recursively afflicted potion_smash_effect() hits */
+	if (mon_hit_proj_id != mon_hit_proj_id2) {
+		if (m_ptr->hit_proj_id == mon_hit_proj_id) return(FALSE);
+		else m_ptr->hit_proj_id = mon_hit_proj_id;
+	}
 
 	/* Acquire race pointer */
 	r_ptr = race_inf(m_ptr);
@@ -11176,6 +11189,8 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 
 	dun_level *l_ptr;
 	cave_type **zcave;
+
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
@@ -11195,7 +11210,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		if (typ_imper > 0) typ_imper = 1;
 		if (typ_imper < 0) typ_imper = -1;
 	}	
-	
+
 	/* Spells which never affect monsters, read:
 	   Spells which we want to exclude from merely _waking monsters up_!
 	   Note: Bolt spells will still be 'stopped' when hitting a monster. */
@@ -12048,10 +12063,14 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			 * typ_imper modifies the radius by an additional +1 to -1, to a minimum of 0.
 			 */
 			if (typ_explode != 0) {
-				if (typ_effect == 0) project(who, randint(2)+typ_imper, wpos, y, x, dam / 4, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
-				if (typ_effect == EFF_WAVE && randint(2) == 1) project(who, 1+randint(2)+typ_imper, wpos, y, x, dam, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
-				if (typ_effect == EFF_LAST && randint(5) == 1) project(who, randint(2)+typ_imper, wpos, y, x, dam * 3/2, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
-				if (typ_effect == EFF_STORM && randint(3) == 1) project(who, 1+typ_imper, wpos, y, x, dam * 2, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				if (typ_effect == 0)
+					project(who, randint(2) + typ_imper, wpos, y, x, dam / 4, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				if (typ_effect == EFF_WAVE && randint(2) == 1)
+					project(who, 1+randint(2) + typ_imper, wpos, y, x, dam, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				if (typ_effect == EFF_LAST && randint(5) == 1)
+					project(who, randint(2) + typ_imper, wpos, y, x, dam * 3/2, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				if (typ_effect == EFF_STORM && randint(3) == 1)
+					project(who, 1 + typ_imper, wpos, y, x, dam * 2, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
 			 }
 		}
 

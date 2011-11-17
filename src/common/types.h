@@ -1050,6 +1050,10 @@ struct monster_type
     byte xlos_x[5], xlos_y[5];	/* Prevent system immanent LoS-exploit when monster gets targetted diagonally */
     /* note: affects near_hit, process_monsters, make_attack_spell, summon_possible, clean_shot..., projectable..., los... */
 #endif
+
+    /* Prevent a monster getting hit by cumulative projections caused recursively in project()
+       (except for intended effects such as runecraft sub-explosions). */
+    int hit_proj_id;
 };
 
 typedef struct monster_ego monster_ego;

@@ -436,6 +436,8 @@ extern effect_type effects[MAX_EFFECTS];
 extern char audio_sfx[SOUND_MAX_2010][30];
 #endif
 
+extern int mon_hit_proj_id, mon_hit_proj_id2;
+
 /* variable.c ends here */
 
 /*
