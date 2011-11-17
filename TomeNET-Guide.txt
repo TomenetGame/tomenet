@@ -12592,37 +12592,62 @@ The differences between RPG ruleset and normal servers are as follows:
 Like 'RPG Server' mentioned in the paragraph above, 'Arcade Server' is an
 alternate ruleset, which is however *very* different from normal gameplay:
 
-Developed by Moltor, Arcade is not normal dungeon dwelling but instead features
-some hot action games that merely (ab)use the TomeNET 'engine'. :)
-The only thing resemling normal TomeNET is that you still have to create a
-character in order to log in and play.
+The Arcade Server was originally created and developed by Moltor. Later on
+Kurzel also joined the project. It has nothing to do with normal dungeon
+dwelling but instead features some hot action games that merely (ab)use the
+TomeNET 'engine'. :)
+
 Note: After logging in you may press '?' key for a help screen.
+      The descriptions below are partially taken from that help file.
 
 On the Arcade server, you can play..
 
 
-Smash'em / 2Smash'em
---------------------
-Play a game of smash where you keep firing to decimate hordes of approaching
-baddies.
+Smash'em
+--------
+Smash TV was a kickass arcade game from 1990, similar to Robotron. The player
+is attacked from all sides by mostly-unarmed goons. The arcade version uses two
+joysticks to allow you to run and fire in different directions. Unfortunately
+tomenet doesn't support joystick input. Here you must use special macros to
+shoot. For details press '?' in the game.
 
 To play Smash'em you need to download the Smash'em macros from the download
 page and place them in your TomeNET/lib/user folder.
 Controls are:
-<to come>
+    F1                  starts the game.
+    q,w,e               makes your character auto-fire in the according
+    a, ,d               direction.
+    z,x,c
+    s                   stops firing.
+    CTRL+numpad         shifts the screen.
+    ,                   same as < key
+Type "play 2smash" in chat to start the game and skip the early levels if you
+feel that those are too easy.
 
 
 Tron
 ----
-Alight cycle racing game where you leave a trail of energy behind you in which
-you and other competitors can crash which results in their elimination.
+Like in the movie "Tron", a light cycle racing game where you leave a trail of
+energy behind you forming a wall in which you and other competitors can crash
+which results in their elimination.
 Power-ups will randomly spawn and increase the trail length.
-Up to four players can participate at once.
+Up to four players can participate at once. For details press '?' in the game.
 
 To play Tron you need to download the Tron macros from the download page and
 place them in your TomeNET/lib/user folder.
 Controls are:
-<to come>
+    F3  enter arena.
+    F4  start game.
+    F5  list options.
+    F6  reduce game speed.
+    F7  increase game speed.
+    Q   quit game.
+    Arrow keys or numpad 2,4,6,8 or w,x,a,d are for movement.
+Hit F4 as soon as at least two players have joined the areana via F3 key to
+start the actual match.
+To toggle an option, type "option" or "option on"/"option off" in chat.
+Speed can be changed via "moar speed"/"less speed",
+length can be changed via "moar length"/"less length".
 
 
 Food Fight
