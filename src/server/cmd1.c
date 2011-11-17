@@ -1874,6 +1874,12 @@ if (o_ptr->level != 0) {
 		s_printf("HACK-STORMBRINGER.\n");
 		o_ptr->level = 0;
 	}
+	if (o_ptr->tval == TV_HARD_ARMOR &&
+	    (o_ptr->name2 == EGO_HEAVY_PRESERVANCE || o_ptr->name2b == EGO_HEAVY_PRESERVANCE) &&
+	    o_ptr->pval > 1) {
+		s_printf("HACK-PRESERVANCE: %s(%d) armour: +%d -> +1.\n", p_ptr->name, p_ptr->lev, o_ptr->pval);
+		o_ptr->pval = 1;
+	}
 #ifndef ENABLE_RCRAFT
 	/* Fix high quality runes levels */
 	if (o_ptr->tval == TV_RUNE1) {
