@@ -2976,6 +2976,9 @@ void do_cmd_look(int Ind, int dir) {
 			info = k_name + k_ptr->name;
 		}
 
+		if (feat == FEAT_SIGN) /* give instructions how to actually read it ;) */
+			name = "signpost \377D(bump to read)\377w";
+
 		/* Message */
 		if (strlen(info)) snprintf(out_val, sizeof(out_val), "%s%s%s (%s)", p1, p2, name, info);
 		else snprintf(out_val, sizeof(out_val), "%s%s%s", p1, p2, name);
