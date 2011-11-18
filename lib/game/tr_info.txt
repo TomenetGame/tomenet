@@ -186,7 +186,7 @@ D:You suddenly cannot move!
 F:FLOOR | CHEST | DOOR
 
 N:29:Explosive Device
-I:3:100:80:0:3:4d8:r:10
+I:3:100:80:0:3:4d8:B:10
 D:Ha! It explodes before your hands can illegally touch it!
 F:FLOOR | CHEST | DOOR
 
@@ -532,7 +532,7 @@ D:A violent blast of raw chaos engulfs you!
 F:FLOOR | CHEST | DOOR | LEVEL3
 
 N:99:Nether Ball Trap
-I:10:60:5:10:30:16d20:g:10
+I:10:60:5:10:30:16d20:B:10
 D:A blast of energy from the netherworld engulfs you!
 F:FLOOR | CHEST | DOOR | LEVEL4
 
@@ -764,7 +764,7 @@ F:FLOOR | CHEST | DOOR
 
 # Bolt traps
 N:161:Rocket Trap
-I:6:80:5:6:75:25d40:g:10
+I:6:80:5:6:75:25d40:B:10
 D:A rocket hits you!
 F:FLOOR | CHEST | DOOR | LEVEL3
 F:SPECIAL_GENE
@@ -780,12 +780,12 @@ F:FLOOR | CHEST | DOOR | LEVEL3
 #F:FLOOR | CHEST | DOOR | LEVEL4
 
 N:164:Trap of Holy Fire
-I:6:80:5:6:15:10d12:g:10
+I:6:80:5:6:15:10d12:B:10
 D:Holy fire rises around you!
 F:FLOOR | CHEST | DOOR | LEVEL3
 
 N:165:Trap of Hell Fire
-I:6:80:5:6:15:10d12:g:10
+I:6:80:5:6:15:10d12:B:10
 D:Hellfire rises around you!
 F:FLOOR | CHEST | DOOR | LEVEL3
 
