@@ -5479,7 +5479,7 @@ void move_player(int Ind, int dir, int do_pickup)
 					msg_print(Ind, "There is a dark pit in your way.");
 				}
 				/* Wall (or secret door) */
-				else {
+				else if (c_ptr->feat != FEAT_SIGN) {
 					msg_print(Ind, "There is a wall blocking your way.");
 				}
 			}
