@@ -3751,9 +3751,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 				case 'F':
 					i += cmd_get_number(&lpCmdLine[i + 1], (int*)&cfg_client_fps);
 					break;
-#if 1
 				case 'h':
 					/* Attempt to print out some usage information */
+#if 0 /* we don't have the console attached anymore */
 					puts(longVersion);
 					puts("Usage  : tomenet [options] [servername]");
 					puts("Example: tomenet -lMorgoth MorgyPass -p18348 europe.tomenet.net");
@@ -3766,9 +3766,23 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					puts("  -q                 disable audio capabilities ('quiet mode')");
 					puts("  -w                 disable client-side weather effects");
 					puts("  -u                 disable client-side automatic lua updates");
+#else
+					plog(format("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
+					    longVersion,
+					    "Usage  : tomenet [options] [servername]",
+					    "Example: tomenet -lMorgoth MorgyPass -p18348 europe.tomenet.net",
+					    "  -C                 Compatibility mode for very old servers",
+					    "  -F                 Client FPS",
+					    "  -l<nick> <passwd>  Login as",
+					    "  -N<name>           character Name",
+					    "  -p<num>            change game Port number",
+					    "  -P<path>           set the lib directory Path",
+					    "  -q                 disable audio capabilities ('quiet mode')",
+					    "  -w                 disable client-side weather effects",
+					    "  -u                 disable client-side automatic lua updates"));
+#endif
 					quit(NULL);
 					break;
-#endif // 0
 				case 'l': /* account name & password */
 					i += cmd_get_string(&lpCmdLine[i + 1], nick, MAX_CHARS);
 					i += cmd_get_string(&lpCmdLine[i + 1], pass, MAX_CHARS);
