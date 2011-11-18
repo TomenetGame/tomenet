@@ -253,7 +253,23 @@ void insc_save(c_special *cs_ptr){
 
 int insc_hit(c_special *cs_ptr, int y, int x, int Ind){
 	struct floor_insc *sptr=cs_ptr->sc.ptr;
-	msg_format(Ind, "A sign here reads: %s", sptr->text);
+	char sign_text[MAX_CHARS], *s = sign_text, *p = NULL;
+	strcpy(s, sptr->text);
+
+	/* multi-line inscription? */
+	if ((p = strchr(s, '|'))) {
+		*p = 0;
+		msg_format(Ind, "\377sA sign here reads: \377w%s", s);
+		s = p + 1;
+
+		while (*s) {
+			p = strchr(s, '|');
+			if (p) *p = 0;
+			msg_format(Ind, "                   %s", s);
+			if (p) s = p + 1;
+			else break;
+		}
+	} else msg_format(Ind, "\377sA sign here reads: \377w%s", sptr->text);
 	return(TRUE);
 }
 
