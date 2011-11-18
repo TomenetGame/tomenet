@@ -3845,6 +3845,9 @@ void do_cmd_fire(int Ind, int dir)
 	struct worldpos *wpos=&p_ptr->wpos;
 
 	int                     i, j, y, x, ny, nx, ty, tx, bx, by;
+#ifdef PY_FIRE_ON_WALL
+	int			prev_x, prev_y; /* for flare missile being able to light up a room under projectable_wall() conditions */
+#endif
 	int                     tdam, tdis, thits, tmul;
 	int                     bonus, chance, tries = 100;
 	int                     cur_dis, visible, real_dis;
@@ -4318,6 +4321,12 @@ void do_cmd_fire(int Ind, int dir)
 		s_printf("warning_autopickup: %s\n", p_ptr->name);
 	}
 
+#ifdef PY_FIRE_ON_WALL
+	/* For flare missile under projectable_wall() settings */
+	prev_x = bx;
+	prev_y = by;
+#endif
+
 	while (TRUE) {
 		/* Travel until stopped */
 #if 0 /* I think it travelled once too far, since it's mmove2'ed in the very beginning of every for-pass, */
@@ -4364,6 +4373,12 @@ void do_cmd_fire(int Ind, int dir)
 			   Use distance() to form a 'natural' circle shaped radius instead of a square shaped radius,
 			   monsters do this too */
 			real_dis = distance(by, bx, ny, nx);
+
+#ifdef PY_FIRE_ON_WALL
+			/* For flare missile under projectable_wall() settings */
+			prev_x = x;
+			prev_y = y;
+#endif
 
 			/* Save the new location */
 			x = nx;
@@ -5160,7 +5175,11 @@ void do_cmd_fire(int Ind, int dir)
 		if (!hit_body && !ranged_flare_body) {
 			object_type forge;
 			(void)project(0 - Ind, 2, wpos, y, x, damroll(2, 6), GF_LITE_WEAK, PROJECT_NORF | PROJECT_GRID | PROJECT_KILL, "");
+#ifndef PY_FIRE_ON_WALL
 			lite_room(Ind, wpos, y, x);
+#else
+			lite_room(Ind, wpos, prev_y, prev_x);
+#endif
 			breakage = 0;
 			invcopy(&forge, lookup_kind(o_ptr->tval, SV_AMMO_CHARRED));
 			forge.to_h = -rand_int(10);
@@ -5185,7 +5204,12 @@ void do_cmd_fire(int Ind, int dir)
 
 	/* Drop (or break) near that location */
 	/* by C. Blue - Now art ammo never drops, since it doesn't run out */
-	if (!returning) drop_near(o_ptr, breakage, wpos, y, x);
+	if (!returning)
+#ifndef PY_FIRE_ON_WALL
+		drop_near(o_ptr, breakage, wpos, y, x);
+#else /* drop it right there _before_ the wall, not 'in' the wall and then calling scatter().. */
+		drop_near(o_ptr, breakage, wpos, prev_y, prev_x);
+#endif
 
 	suppress_message = FALSE;
 	
