@@ -242,7 +242,7 @@ SDL_CONFIG = /usr/mingw32/bin/sdl-config
 #LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 ##
 ## With SDL
-CFLAGS = -g -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -DSOUND_SDL `$(SDL_CONFIG) --cflags`
+CFLAGS = -g -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -DSOUND_SDL `$(SDL_CONFIG) --cflags` -DWINVER=0x0501
 LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm -lSDL -lSDL_mixer `$(SDL_CONFIG) --libs`
 
 

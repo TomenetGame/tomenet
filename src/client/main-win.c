@@ -73,6 +73,9 @@
 
 #ifdef WINDOWS
 
+/* for SendInput() */
+#include <winuser.h>
+
 #define MNU_SUPPORT
 /* #define USE_GRAPHICS */
 
@@ -3636,6 +3639,45 @@ static int cmd_get_string(char *str, char *dest, int n)
 	return end + 1;
 }
 
+/* Turn off the num-lock key by toggling it if it's currently on. */
+void turn_off_numlock(void) {
+	KEYBDINPUT k;
+	INPUT inp;
+	int r;
+
+	/* alreay off? Then nothing to do */
+	if (!(GetKeyState(VK_NUMLOCK) & 0xFFFF)) return;
+
+	/* Numlock key */
+	k.wVk = VK_NUMLOCK;
+	k.wScan = 0;
+	k.time = 0;
+	k.dwFlags = 0;
+	k.dwExtraInfo = 0;
+
+	/* Press it */
+	inp.type = INPUT_KEYBOARD;
+	inp.ki = k;
+	r = SendInput(1, &inp, sizeof(INPUT));
+	if (!r) {
+		DWORD err = GetLastError();
+		char *msg = (char*)malloc(sizeof(char)*50);
+		sprintf(msg, "SendInput error (down): %lu", err);
+		plog(msg);
+	}
+
+	/* Release it */
+	k.dwFlags = KEYEVENTF_KEYUP;
+	inp.type = INPUT_KEYBOARD;
+	inp.ki = k;
+	r = SendInput(1, &inp, sizeof(INPUT));
+	if (!r) {
+		DWORD err = GetLastError();
+		char *msg = (char*)malloc(sizeof(char)*50);
+		sprintf(msg, "SendInput error (up): %lu", err);
+		plog(msg);
+	}
+}
 
 int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
                        LPSTR lpCmdLine, int nCmdShow)
@@ -3819,6 +3861,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 		}
 	}
 
+	/* Bam! */
+	turn_off_numlock();
+
 	if (quiet_mode) use_sound = FALSE;
 
 	/* Basic seed */
@@ -3859,7 +3904,5 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 }
 
 #endif /* _Windows */
-
-
 
 
