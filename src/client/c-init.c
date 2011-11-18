@@ -602,6 +602,18 @@ static void plog_hook(cptr s) {
 }
 
 
+static void turn_off_numlock(void) {
+#ifdef USE_X11
+	turn_off_numlock_X11();
+	return;
+#else
+ #ifdef USE_GCU
+	//turn_off_numlock_GCU(); <- via console-ioctl?
+ #endif
+#endif
+}
+
+
 /*
  * Initialize everything, contact the server, and start the loop.
  */
@@ -803,6 +815,9 @@ void client_init(char *argv1, bool skip)
 				quit(format("Connection failed with status %d.", status));
 		}
 	}
+
+	/* Bam! */
+	turn_off_numlock();
 
 /*	printf("Server sent login port %d\n", login_port);
 	printf("Server sent status %u\n", status);  */

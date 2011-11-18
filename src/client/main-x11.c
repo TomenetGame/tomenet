@@ -20,6 +20,7 @@
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <X11/keysymdef.h>
+#include <X11/extensions/XTest.h> /* for turn_off_numlock() */
 #endif /* __MAKEDEPEND__ */
 
 
@@ -2608,6 +2609,19 @@ if (term_prefs[7].visible) {
 	/* Success */
 	return (0);
 }
+
+
+/* Turn off num-lock if it's on */
+void turn_off_numlock_X11(void) {
+	Display* disp = XOpenDisplay(NULL);
+	if (disp == NULL) return; /* Error */
+
+	XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, XK_Num_Lock), True, 0);
+	XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, XK_Num_Lock), False, 0);
+	XFlush(disp);
+	XCloseDisplay(disp);
+}
+
 
 /* SHUT: main-x11.c */
 
