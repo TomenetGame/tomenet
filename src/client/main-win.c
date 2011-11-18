@@ -3640,7 +3640,7 @@ static int cmd_get_string(char *str, char *dest, int n)
 }
 
 /* Turn off the num-lock key by toggling it if it's currently on. */
-void turn_off_numlock(void) {
+static void turn_off_numlock(void) {
 	KEYBDINPUT k;
 	INPUT inp;
 	int r;
