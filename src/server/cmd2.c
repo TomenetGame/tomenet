@@ -4081,7 +4081,7 @@ void do_cmd_fire(int Ind, int dir)
 
 	if (p_ptr->ranged_flare) {
 		if (boomerang) {
-			msg_print(Ind, "You cannot use ranged techniques with a boomerang!");
+			msg_print(Ind, "You cannot use shooting techniques with a boomerang!");
 			p_ptr->ranged_flare = FALSE;
 		} else if (p_ptr->cst < 2) {
 			msg_print(Ind, "Not enough stamina for a flare missile.");
@@ -4096,7 +4096,7 @@ void do_cmd_fire(int Ind, int dir)
 	}
 	if (p_ptr->ranged_precision) {
 		if (boomerang) {
-			msg_print(Ind, "You cannot use ranged techniques with a boomerang!");
+			msg_print(Ind, "You cannot use shooting techniques with a boomerang!");
 			p_ptr->ranged_precision = FALSE;
 		} else if (p_ptr->cst < 7) {
 			msg_print(Ind, "Not enough stamina for a precision shot.");
@@ -4105,7 +4105,7 @@ void do_cmd_fire(int Ind, int dir)
 	}
         if (p_ptr->ranged_double) {
 		if (boomerang) {
-			msg_print(Ind, "You cannot use ranged techniques with a boomerang!");
+			msg_print(Ind, "You cannot use shooting techniques with a boomerang!");
 			p_ptr->ranged_double = FALSE;
 		} else if (o_ptr->number < 2) {
 			msg_print(Ind, "You need at least 2 projectiles for a double-shot!");
@@ -4117,7 +4117,7 @@ void do_cmd_fire(int Ind, int dir)
 	}
 	if (p_ptr->ranged_barrage) {
 		if (boomerang) {
-			msg_print(Ind, "You cannot use ranged techniques with a boomerang!");
+			msg_print(Ind, "You cannot use shooting techniques with a boomerang!");
 			p_ptr->ranged_barrage = FALSE;
 		} else if (o_ptr->number < 6) { /* && !returning) {  :-p */
 			msg_print(Ind, "You need at least 6 projectiles for a barrage!");

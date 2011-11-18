@@ -3881,7 +3881,7 @@ void interact_macros(void)
 					Term_putstr(15, 15, -1, TERM_L_GREEN, "d) Cast a spell that doesn't use a target (or target manually)");
 					Term_putstr(15, 16, -1, TERM_L_GREEN, "e) Cast a spell that uses a target (attack spell)");
 					Term_putstr(15, 17, -1, TERM_L_GREEN, "f) Use a fighting technique (most melee classes)");
-					Term_putstr(15, 18, -1, TERM_L_GREEN, "g) Use a ranged technique (archers and rangers)");
+					Term_putstr(15, 18, -1, TERM_L_GREEN, "g) Use a shooting technique (archers and rangers)");
 					Term_putstr(15, 19, -1, TERM_L_GREEN, "h) Polymorph into a certain monster (mimicry users)");
 					Term_putstr(15, 20, -1, TERM_L_GREEN, "i) Draw runes to cast a runespell");
 					Term_putstr(15, 21, -1, TERM_L_GREEN, "j) Set up a monster trap");
