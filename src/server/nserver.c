@@ -2523,8 +2523,8 @@ static int Handle_login(int ind)
 	}
 
 	/* Send party/guild information */
-	Send_party(NumPlayers);
-	Send_guild(NumPlayers);
+	Send_party(NumPlayers, FALSE, FALSE);
+	Send_guild(NumPlayers, FALSE, FALSE);
 
 	/* Hack -- terminate the data stream sent to the client */
 	if (Packet_printf(&connp->c, "%c", PKT_END) <= 0) {
@@ -6063,7 +6063,7 @@ int Send_pickup_check(int ind, cptr buf)
    -APD-
 */
 
-int Send_party(int ind)
+int Send_party(int ind, bool leave, bool clear)
 {
     int i;
     for (i = 1; i <= NumPlayers; i++)
@@ -6104,7 +6104,7 @@ int Send_party(int ind)
 		bufm[0] = '\0';
 		bufo[0] = '\0';
 
-		if (p_ptr->party > 0) {
+		if (p_ptr->party > 0 && !clear && (!leave || i != ind)) {
 			if (parties[p_ptr->party].mode == PA_IRONTEAM)
 				snprintf(bufn, 90, "Iron Team: '\377G%s\377w'", parties[p_ptr->party].name);
 			else
@@ -6125,7 +6125,7 @@ int Send_party(int ind)
     return(1);
 }
 
-int Send_guild(int ind)
+int Send_guild(int ind, bool leave, bool clear)
 {
     int i;
 
@@ -6151,16 +6151,24 @@ int Send_guild(int ind)
 	bufm[0] = '\0';
 	bufo[0] = '\0';
 
-	if (p_ptr->guild > 0) {
+	if (p_ptr->guild > 0 && !clear && (!leave || i != ind)) {
+		int memb = guilds[p_ptr->guild].members;
+		cptr master = lookup_player_name(guilds[p_ptr->guild].master);
+
 		snprintf(bufn, 90, "Guild: '\377U%s\377w'", guilds[p_ptr->guild].name);
 
-		snprintf(buf, 10, "%d", guilds[p_ptr->guild].members);
+		snprintf(buf, 10, "%d", memb);
 		strcpy(bufm, buf);
-		if (guilds[p_ptr->guild].members == 1) strcat(bufm, " member");
+		if (memb == 1) strcat(bufm, " member");
 		else strcat(bufm, " members");
 
-		strcpy(bufo, "master: ");
-		strcat(bufo, lookup_player_name(guilds[p_ptr->guild].master));
+		
+		if (master) {
+			strcpy(bufo, "master: ");
+			strcat(bufo, master);
+		} else {
+			strcpy(bufo, "master: <leaderless>");
+		}
 	}
 
 	Packet_printf(&connp->c, "%c%s%s%s", PKT_GUILD, bufn, bufm, bufo);

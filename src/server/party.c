@@ -563,6 +563,11 @@ int guild_create(int Ind, cptr name){
 	object_type forge, *o_ptr = &forge;
 	char temp[160];
 
+	/* Make sure this guy isn't in some other guild already */
+	if (p_ptr->guild != 0) {
+		msg_print(Ind, "\377yYou already belong to a guild!");
+		return FALSE;
+	}
 	if (p_ptr->lev < 30) {
 		msg_print(Ind, "\377yYou are not high enough level to start a guild.");
 		return FALSE;
@@ -572,13 +577,11 @@ int guild_create(int Ind, cptr name){
 		msg_print(Ind, "\377yYou need 2,000,000 gold pieces to start a guild.");
 		return FALSE;
 	}
-
 	/* Prevent abuse */
 	if (ILLEGAL_GROUP_NAME(name)) {
 		msg_print(Ind, "\377yThat's not a legal guild name.");
 		return FALSE;
 	}
-
 	/* Check for already existing party by that name */
 	if (party_lookup(name) != -1) {
 		msg_print(Ind, "\377yThere's already a party using that name.");
@@ -604,11 +607,7 @@ int guild_create(int Ind, cptr name){
 		msg_print(Ind, "\377yA guild by that name already exists.");
 		return FALSE;
 	}
-	/* Make sure this guy isn't in some other guild already */
-	if (p_ptr->guild != 0) {
-		msg_print(Ind, "\377yYou already belong to a guild!");
-		return FALSE;
-	}
+
 	/* Find the "best" party index */
 	for (i = 1; i < MAX_GUILDS; i++) {
 		if (guilds[i].members == 0) {
@@ -662,7 +661,7 @@ int guild_create(int Ind, cptr name){
 	p_ptr->guild = index;
 	guilds[index].members = 1;
 
-	Send_guild(Ind);
+	Send_guild(Ind, FALSE, FALSE);
 
 	return(TRUE);
 }
@@ -767,7 +766,7 @@ int party_create(int Ind, cptr name)
 		/* Tell the party about its new name */
 		party_msg_format(p_ptr->party, "\377GYour party is now called '%s'.", name);
 
-		Send_party(Ind);
+		Send_party(Ind, FALSE, FALSE);
 		return TRUE;
 	}
 
@@ -812,7 +811,7 @@ int party_create(int Ind, cptr name)
 	parties[index].created = turn;
 
 	/* Resend party info */
-	Send_party(Ind);
+	Send_party(Ind, FALSE, FALSE);
 
 	/* Success */
 	return TRUE;
@@ -853,7 +852,7 @@ int party_create_ironteam(int Ind, cptr name)
 		/* Tell the party about its new name */
 		party_msg_format(p_ptr->party, "\377GYour iron team is now called '%s'.", name);
 
-		Send_party(Ind);
+		Send_party(Ind, FALSE, FALSE);
 		return TRUE;
 	}
 
@@ -901,7 +900,7 @@ int party_create_ironteam(int Ind, cptr name)
 	parties[index].created = turn;
 
 	/* Resend party info */
-	Send_party(Ind);
+	Send_party(Ind, FALSE, FALSE);
 
 	/* Success */
 	return TRUE;
@@ -930,7 +929,7 @@ int guild_add(int adder, cptr name){
 	/* Make sure this isn't an impostor */
 	if (guilds[guild_id].master!=q_ptr->id && !is_admin(q_ptr)) {
 		/* Message */
-		msg_print(adder, "\377yOnly the guildmaster or a dungeon wizard may add new members.");
+		msg_print(adder, "\377yOnly the guildmaster may add new members.");
 
 		/* Abort */
 		return FALSE;
@@ -962,7 +961,7 @@ int guild_add(int adder, cptr name){
 	clockin(Ind, 3);
 
 	/* Resend info */
-	Send_guild(Ind);
+	Send_guild(Ind, FALSE, FALSE);
 
 	/* Display the guild note to him */
 	for (i = 0; i < MAX_GUILDNOTES; i++) {
@@ -985,13 +984,18 @@ int party_add(int adder, cptr name)
 	player_type *p_ptr;
 	player_type *q_ptr = Players[adder];
 	int party_id = q_ptr->party, Ind = 0, i;
-	
-	Ind = name_lookup_loose(adder, name, FALSE);
 
+	if (q_ptr->party == 0) {
+		msg_print(adder, "\377yYou don't belong to a party.");
+		return FALSE;
+	}
+
+	Ind = name_lookup_loose(adder, name, FALSE);
 	if (Ind <= 0) return FALSE;
 
 	/* Set pointer */
 	p_ptr = Players[Ind];
+
 #if 0 // It's really a prob that the owner can't add his own chars..so if0
 	/* Make sure this isn't an impostor */
 	if (!streq(parties[party_id].owner, q_ptr->name)) {
@@ -1043,7 +1047,7 @@ int party_add(int adder, cptr name)
 	clockin(Ind, 2);
 
 	/* Resend info */
-	Send_party(Ind);
+	Send_party(Ind, FALSE, FALSE);
 
 	/* Display the party note to him */
 	for (i = 0; i < MAX_PARTYNOTES; i++) {
@@ -1119,13 +1123,13 @@ static void del_party(int id){
 	for (i = 1; i <= NumPlayers; i++) {
 		/* Check if they are in here */
 		if (player_in_party(id, i)) {
+			Send_party(i, FALSE, TRUE);
 			Players[i]->party = 0;
 			clockin(i, 2);
 			if (parties[id].mode == PA_IRONTEAM)
 				msg_print(i, "\374\377yYour iron team has been disbanded.");
 			else
 				msg_print(i, "\374\377yYour party has been disbanded.");
-			Send_party(i);
 		}
 	}
 
@@ -1169,7 +1173,7 @@ int guild_remove(int remover, cptr name){
 		return FALSE;
 	}
 
-	if(Ind==remover){	/* remove oneself from guild - leave */
+	if(Ind == remover){	/* remove oneself from guild - leave */
 		guild_leave(remover);
 		return TRUE;
 	}
@@ -1197,19 +1201,19 @@ int guild_remove(int remover, cptr name){
 		/* Lose a member */
 		guilds[guild_id].members--;
 
-		/* Set his party number back to "neutral" */
-		p_ptr->guild = 0;
-
 		/* Messages */
 		msg_print(Ind, "\374\377yYou have been removed from the guild.");
 		guild_msg_format(guild_id, "\374\377y%s has been removed from the guild.", p_ptr->name);
 
-		/* Resend info */
-		Send_guild(Ind);
-
 		/* Last member deleted? */
-		if(guilds[guild_id].members==0)
+		if (guilds[guild_id].members == 0) {
+			Send_guild(Ind, TRUE, TRUE);
+			p_ptr->guild = 0;
 			del_guild(guild_id);
+		} else {
+			Send_guild(Ind, TRUE, FALSE);
+			p_ptr->guild = 0;
+		}
 	}
 
 	return TRUE;
@@ -1266,11 +1270,12 @@ int party_remove(int remover, cptr name)
 			if (is_admin(Players[i])) continue;
 			if (Players[i]->party == q_ptr->party && i != Ind) {
 				strcpy(parties[party_id].owner, Players[i]->name);
-				Send_party(i);
 				msg_print(i, "\374\377yYou are now the party owner!");
+				Send_party(i, FALSE, FALSE);
+
 				for (j = 1; j <= NumPlayers; j++)
 					if (Players[j]->party == Players[i]->party && j != i) {
-						Send_party(j);
+						//Send_party(j);
 						msg_format(j, "\374\377y%s is now the party owner.", Players[i]->name);
 					}
 				break;
@@ -1287,6 +1292,9 @@ int party_remove(int remover, cptr name)
 		/* Lose a member */
 		parties[party_id].members--;
 
+		/* Resend info */
+		Send_party(Ind, TRUE, FALSE);
+
 		/* Set his party number back to "neutral" */
 		p_ptr->party = 0;
 		clockin(Ind, 2);
@@ -1300,9 +1308,6 @@ int party_remove(int remover, cptr name)
 			msg_print(Ind, "\374\377yYou have been removed from your party.");
 			party_msg_format(party_id, "\374\377y%s has been removed from the party.", p_ptr->name);
 		}
-
-		/* Resend info */
-		Send_party(Ind);
 	}
 	return TRUE;
 }
@@ -1321,25 +1326,24 @@ void guild_leave(int Ind){
 	/* Lose a member */
 	guilds[guild_id].members--;
 
-	/* Set him back to "neutral" */
-	p_ptr->guild = 0;
-
 	/* Inform people */
 	msg_print(Ind, "\374\377yYou have been removed from your guild.");
 	guild_msg_format(guild_id, "\374\377y%s has left the guild.", p_ptr->name);
 	
 	/* If he's the guildmaster, set master to zero */
-	if (p_ptr->id==guilds[guild_id].master)
-	{
+	if (p_ptr->id == guilds[guild_id].master) {
 		guild_msg(guild_id, "\374\377yThe guild is currently leaderless");
-		guilds[guild_id].master=0;
+		guilds[guild_id].master = 0;
 	}
 
 	/* Resend info */
-	Send_guild(Ind);
+	Send_guild(Ind, TRUE, FALSE);
+
+	/* Set him back to "neutral" */
+	p_ptr->guild = 0;
 
 	/* Last member deleted? */
-	if(guilds[guild_id].members==0)
+	if (guilds[guild_id].members == 0)
 		del_guild(guild_id);
 }
 
@@ -1369,6 +1373,9 @@ void party_leave(int Ind)
 	/* Lose a member */
 	parties[party_id].members--;
 
+	/* Resend info */
+	Send_party(Ind, TRUE, FALSE);
+
 	/* Set him back to "neutral" */
 	p_ptr->party = 0;
 	clockin(Ind, 2);
@@ -1382,9 +1389,6 @@ void party_leave(int Ind)
 		msg_print(Ind, "\374\377yYou have been removed from your party.");
 		party_msg_format(party_id, "\374\377y%s has left the party.", p_ptr->name);
 	}
-
-	/* Resend info */
-	Send_party(Ind);
 }
 
 /*
@@ -1401,7 +1405,7 @@ void guild_msg(int guild_id, cptr msg)
 			continue;
 
 		/* Check this guy */
-		if (guild_id==Players[i]->guild)
+		if (guild_id == Players[i]->guild)
 			msg_print(i, msg);
 	}
 }
@@ -3131,7 +3135,7 @@ int player_id_list(int **list, u32b account)
 		while (ptr)
 		{
 			/* One more entry */
-			if(!account || ptr->account==account)
+			if(!account || ptr->account == account)
 				len++;
 
 			/* Next entry in chain */
@@ -3156,7 +3160,7 @@ int player_id_list(int **list, u32b account)
 		while (ptr)
 		{
 			/* Store this ID */
-			if(!account || ptr->account==account)
+			if(!account || ptr->account == account)
 			{
 				llist[k++] = ptr->id;
 
