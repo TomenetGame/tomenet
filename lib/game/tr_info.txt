@@ -186,7 +186,7 @@ D:You suddenly cannot move!
 F:FLOOR | CHEST | DOOR
 
 N:29:Explosive Device
-I:3:100:80:0:3:4d8:B:10
+I:3:100:80:0:3:4d8:r:10
 D:Ha! It explodes before your hands can illegally touch it!
 F:FLOOR | CHEST | DOOR
 
