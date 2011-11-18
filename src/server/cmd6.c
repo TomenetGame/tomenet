@@ -8074,7 +8074,7 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 		}
 		if (p_ptr->cst < 2) { msg_print(Ind, "Not enough stamina!"); return; }
 		if (check_guard_inscription(p_ptr->inventory[INVEN_AMMO].note, 'k')) {
-			msg_print(Ind, "Your ammo's inscription (!k) prevents using it as flare.");
+			msg_print(Ind, "Your ammo's inscription (!k) prevents using it as flare missile.");
 			return;
 		}
 #if 0 /* using !k inscription in birth.c instead? */
@@ -8102,7 +8102,7 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 		p_ptr->ranged_precision = FALSE; p_ptr->ranged_double = FALSE; p_ptr->ranged_barrage = FALSE;
 		p_ptr->energy -= level_speed(&p_ptr->wpos); /* prepare the shit.. */
 		msg_print(Ind, "You prepare an oil-drenched shot..");
-s_printf("TECHNIQUE_RANGED: %s - flare\n", p_ptr->name);
+s_printf("TECHNIQUE_RANGED: %s - flare missile\n", p_ptr->name);
 		p_ptr->warning_technique_ranged = 1;
 		break;
 	case 1:	if (!(p_ptr->ranged_techniques & 0x0002)) return; /* Precision shot */

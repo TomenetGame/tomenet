@@ -392,7 +392,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		break;
 	case SKILL_ARCHERY:
 		if (old_value < 40 && new_value >= 40)
-			msg_print(Ind, "\374\377GYou learn the shooting technique 'Flare'! (press 'm')");
+			msg_print(Ind, "\374\377GYou learn the shooting technique 'Flare missile'! (press 'm')");
 		if (old_value < 80 && new_value >= 80)
 			msg_print(Ind, "\374\377GYou learn the shooting technique 'Precision shot'!");
 		if (old_value < 100 && new_value >= 100)

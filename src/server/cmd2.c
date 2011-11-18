@@ -4087,7 +4087,7 @@ void do_cmd_fire(int Ind, int dir)
 			msg_print(Ind, "Not enough stamina for a flare missile.");
 			p_ptr->ranged_flare = FALSE;
 		} else if (check_guard_inscription(p_ptr->inventory[INVEN_AMMO].note, 'k')) {
-			msg_print(Ind, "Your ammo's inscription (!k) prevents using it as flare.");
+			msg_print(Ind, "Your ammo's inscription (!k) prevents using it as flare missile.");
 			p_ptr->ranged_flare = FALSE;
 		} else {
 			p_ptr->cst -= 2;
