@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 15. November 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 18. November 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -4061,6 +4061,21 @@ If you look at an object that is on an already detected trap, you will be
 notified about the trap by an ^ symbol in front of the item name and the trap
 type appended to it in { } brackets. It looks like this:
 ^ A potion of Constitution {Chaos Ball Trap}
+
+Trap symbols ('^') come in different colours. Here's an overview:
+    blue            stat traps (STR/INT/WIS/DEX/CON/CHR), in three difficulties:
+                    1) only reduces an attribute temporarily, heals on its own.
+                    2) reduces an attribute, requiring you to use restoration.
+                    3) permanently reduces an attribute. Counter with stat potion.
+    bright white    teleport traps
+    orange          dungeon/trap rearrangment traps
+    violet          summoning traps
+    yellow          item-affecting traps
+    red             character status-affecting traps
+    green           elemental bolt traps
+    light blue      elemental ball traps
+    light red       arrow/bolt/dagger traps
+    white           miscellaneous traps
 
 
 About trap sets (or "trapping kits"):
