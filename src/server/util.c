@@ -4143,8 +4143,20 @@ int gold_colour(int amt)
 void lua_intrusion(int Ind, char *problem_diz)
 {
 	s_printf(format("LUA INTRUSION: %s : %s\n", Players[Ind]->name, problem_diz));
+
+#if 0 /* 4.4.8 client had a bug, mass-near-killing people. Let's turn this silly stuff off. -C. Blue */
 	take_hit(Ind, Players[Ind]->chp - 1, "", 0);
 	msg_print(Ind, "\377rThat was close huh?!");
+#else
+	if (!strcmp(problem_diz, "bad spell level")) {
+		msg_print(Ind, "\377RERROR: You need higher skill to cast this spell. However, your book shows");
+		msg_print(Ind, "\377R       that you may cast it because your LUA spell scripts are out of date!");
+		msg_print(Ind, "\377R       Please update your client (and don't use '-u' command-line option).");
+	} else {
+		msg_print(Ind, "\377RERROR: Your LUA spell scripts seem to be out of date!");
+		msg_print(Ind, "\377R       Please update your client (and don't use '-u' command-line option).");
+	}
+#endif
 }
 
 void bbs_add_line(cptr textline)
