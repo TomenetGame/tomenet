@@ -4004,6 +4004,10 @@ void do_cmd_fire(int Ind, int dir)
 	/* Use a base distance */
 //	tdis = 10;
 
+	/* Use the proper number of shots */
+//	thits = boomerang? 1 : p_ptr->num_fire;
+	thits = p_ptr->num_fire;
+
 	if (!boomerang) {
 		/* Actually "fire" the object */
 		bonus = (p_ptr->to_h + p_ptr->to_h_ranged * (p_ptr->ranged_precision ? 2 : 1)
@@ -4086,7 +4090,8 @@ void do_cmd_fire(int Ind, int dir)
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 			else
 				/* Take a (partial) turn */
-				p_ptr->energy -= (level_speed(&p_ptr->wpos) / thits);
+				p_ptr->energy -= (level_speed(&p_ptr->wpos) /
+				    (thits * (p_ptr->ranged_double && o_ptr->number >= 2 && p_ptr->cst >= 1 ? 2 : 1)));
 
 			return; /* shooting interference chance */
 		}
@@ -4155,9 +4160,7 @@ void do_cmd_fire(int Ind, int dir)
 		if (!magic || artifact_p(o_ptr)) p_ptr->ranged_flare = FALSE;
 	}
 
-	/* Use the proper number of shots */
-//	thits = boomerang? 1 : p_ptr->num_fire;
-	thits = p_ptr->num_fire;
+	/* Double # of shots? */
 	if (ranged_double_real) {
 		thits *= 2;
 
