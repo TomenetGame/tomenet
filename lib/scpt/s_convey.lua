@@ -4,7 +4,7 @@ BLINK = add_spell
 {
 	["name"] = 	"Phase Door",
         ["school"] = 	{SCHOOL_CONVEYANCE},
-        ["level"] = 	1,
+        ["level"] = 	2,
         ["mana"] = 	1,
         ["mana_max"] =  3,
         ["fail"] = 	10,

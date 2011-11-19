@@ -4,7 +4,7 @@ GLOBELIGHT = add_spell
 {
 	["name"] = 	"Globe of Light",
         ["school"] = 	{SCHOOL_FIRE},
-        ["level"] = 	1,
+        ["level"] = 	2,
         ["mana"] = 	2,
         ["mana_max"] = 	15,
         ["fail"] = 	10,

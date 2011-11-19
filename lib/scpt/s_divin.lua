@@ -154,7 +154,7 @@ DETECTMONSTERS = add_spell
 {
 	["name"] = 	"Detect Monsters",
         ["school"] = 	{SCHOOL_DIVINATION},
-        ["level"] = 	1,
+        ["level"] = 	3,
         ["mana"] =      3,
         ["mana_max"] =  3,
         ["fail"] = 	10,

@@ -10449,7 +10449,7 @@ Fire
     Globe of Light  Creates a globe of magical light.
                     Lv10: Damages monsters.
                     Lv25: Turns into a more powerful kind of light.
-                    Required skill level for first spell level: 1.
+                    Required skill level for first spell level: 2.
     Fireflash       Conjures a fire ball.
                     Lv20: Turns into holy fire which is especially deadly to
                           evil opponents.
@@ -10532,7 +10532,7 @@ Nature
 
 Conveyance
     Phase Door      Teleports you on a small scale range.           (project)
-                    Required skill level for first spell level: 1.
+                    Required skill level for first spell level: 2.
     Disarm          Destroys doors and traps around you.
                     Required skill level for first spell level: 5.
     Teleport        Teleports you within the level.                 (project)
@@ -10555,7 +10555,7 @@ Conveyance
 
 Divination
     Detect Monsters Detects all monsters nearby.                    (project)
-                    Required skill level for first spell level: 1.
+                    Required skill level for first spell level: 3.
     Identify        Identifies items.
                     Lv17: Identifies all items that you carry/wear.
                     Lv27: Also identifies all items on the floor around you.
@@ -10660,16 +10660,16 @@ Meta
 Priest schools:
 ---------------
 Holy Offense
-    Holy Light      Creates a globe of pure light.
-                    Lv3: Damages monsters.
-                    Lv8: Calls a more powerful kind of light.
-                    Required skill level for first spell level: 1.
-                    Shared spell (see above): H.Offense, H.Support.
     Curse           Randomly causes confusion damage or slowness or blindness.
                     Lv15: Turns from bolt into beam, passing through the
                           target and also hitting those behind.
                     Lv25: Affects all monsters in line of sight.
                     Required skill level for first spell level: 1.
+    Holy Light      Creates a globe of pure light.
+                    Lv3: Damages monsters.
+                    Lv8: Calls a more powerful kind of light.
+                    Required skill level for first spell level: 2.
+                    Shared spell (see above): H.Offense, H.Support.
     Exorcism        Dispels nearby undead.
                     Lv20: Dispels nearby demons.
                     Lv30: Dispels nearby evil.
@@ -10763,16 +10763,16 @@ Holy Support
     Holy Light      Creates a globe of pure light.
                     Lv3: Damages monsters.
                     Lv8: Calls a more powerful kind of light.
-                    Required skill level for first spell level: 1.
+                    Required skill level for first spell level: 2.
                     Note that this is a spell shared between offense and
                     support school, meaning that increases in one of those
                     school will increase the spell level by only half as much.
     Sense Monsters  Detect monsters, see invisible for a while.
                     Lv30: Gives full temporary ESP.
-                    Required skill level for first spell level: 1.
+                    Required skill level for first spell level: 3.
     Sanctuary       Puts nearby monsters asleep.
                     Lv20: Lets all monsters in line of sight fall asleep.
-                    Required skill level for first spell level: 1.
+                    Required skill level for first spell level: 3.
     Satisfy Hunger  Satisfies your hunger.                     (auto-project)
                     Required skill level for first spell level: 10.
     Sense Surroundings
