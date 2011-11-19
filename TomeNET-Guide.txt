@@ -8653,8 +8653,7 @@ Note that not every skill is available to every profession (class).
                                 -shoot with ranged weapons,
                                 -use a void jumpgate,
                                 -invoke a mimic spell,
-                                -set a monster trap,
-                                -use a staircase.
+                                -set a monster trap.
     .Trapping                   Improves your ability to set traps:
                                 Gives you a higher chance to successfully
                                 place a trap if a monster is close to you and

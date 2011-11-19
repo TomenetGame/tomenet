@@ -4057,15 +4057,6 @@ void do_cmd_fire(int Ind, int dir)
 	   If target is not ok, it means we fire at our own grid, so don't return() in that case. */
 	if (dir == 5 && target_ok && distance(p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col) > tdis) return;
 
-	/* Check if monsters around him/her hinder this */
-//  if (interfere(Ind, cfg.spell_interfere * 3)) return;
-	/* boomerang is harder to intercept since it can just be swung as weapon :> - C. Blue */
-	if (archery == SKILL_BOOMERANG) {
-		if (interfere(Ind, 25)) return; /* boomerang interference chance */
-	} else {
-		if (interfere(Ind, 50)) return; /* shooting interference chance */
-	}
-
 	/* Only fire in direction 5 if we have a target */
 	/* Also only fire at all at a desired target, if we're actually within shooting range - C. Blue */
 	if (dir == 5) {
@@ -4079,6 +4070,25 @@ void do_cmd_fire(int Ind, int dir)
 		} else {
 			/* for 4.4.6+, allow shooting (exploding) ammo 'at oneself' */
 			if (!is_newer_than(&p_ptr->version, 4, 4, 5, 10, 0, 0)) return;
+		}
+	}
+
+	/* Check if monsters around him/her hinder this */
+//  if (interfere(Ind, cfg.spell_interfere * 3)) return;
+	/* boomerang is harder to intercept since it can just be swung as weapon :> - C. Blue */
+	if (archery == SKILL_BOOMERANG) {
+		if (interfere(Ind, 25)) return; /* boomerang interference chance */
+	} else {
+		if (interfere(Ind, 50)) {
+			if (p_ptr->ranged_barrage &&
+			    o_ptr->number >= 6 &&
+			    p_ptr->cst >= 9)
+				p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+			else
+				/* Take a (partial) turn */
+				p_ptr->energy -= (level_speed(&p_ptr->wpos) / thits);
+
+			return; /* shooting interference chance */
 		}
 	}
 
@@ -4165,7 +4175,7 @@ void do_cmd_fire(int Ind, int dir)
 
 
 	if (p_ptr->ranged_barrage)
-		p_ptr->energy -= level_speed(&p_ptr->wpos);
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 	else
 		/* Take a (partial) turn */
 		p_ptr->energy -= (level_speed(&p_ptr->wpos) / thits);
