@@ -4080,7 +4080,7 @@ void do_cmd_fire(int Ind, int dir)
 	/* Check if monsters around him/her hinder this */
 //  if (interfere(Ind, cfg.spell_interfere * 3)) return;
 	/* boomerang is harder to intercept since it can just be swung as weapon :> - C. Blue */
-	if (archery == SKILL_BOOMERANG) {
+	if (boomerang) {
 		if (interfere(Ind, 25)) return; /* boomerang interference chance */
 	} else {
 		if (interfere(Ind, 50)) {
