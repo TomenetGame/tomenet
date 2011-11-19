@@ -5204,12 +5204,15 @@ void do_cmd_fire(int Ind, int dir)
 
 	/* Drop (or break) near that location */
 	/* by C. Blue - Now art ammo never drops, since it doesn't run out */
-	if (!returning)
-#ifndef PY_FIRE_ON_WALL
-		drop_near(o_ptr, breakage, wpos, y, x);
-#else /* drop it right there _before_ the wall, not 'in' the wall and then calling scatter().. */
-		drop_near(o_ptr, breakage, wpos, prev_y, prev_x);
+	if (!returning) {
+#ifdef PY_FIRE_ON_WALL
+		if (!cave_los(zcave, y, x)) /* target coordinates were in a wall? */
+			/* drop it right there _before_ the wall, not 'in' the wall and then calling scatter().. */
+			drop_near(o_ptr, breakage, wpos, prev_y, prev_x);
+		else
 #endif
+		drop_near(o_ptr, breakage, wpos, y, x);
+	}
 
 	suppress_message = FALSE;
 	
