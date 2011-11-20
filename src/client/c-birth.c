@@ -293,6 +293,9 @@ static void choose_trait(void) {
 	   dummy 'N/A' trait available in general, skip trait choice */
 	if (Setup.max_trait <= 1) return;
 
+	/* Slaughter compiler warning */
+	tp_ptr = &trait_info[0];
+
 	/* If we have no traits available for the race chosen, skip trait choice */
 	if (trait_info[0].choice & BITS(race)) return;
 
