@@ -4216,7 +4216,7 @@ static void process_player_end(int Ind)
 }
 
 
-static bool stale_level(struct worldpos *wpos, int grace)
+bool stale_level(struct worldpos *wpos, int grace)
 {
 	time_t now;
 

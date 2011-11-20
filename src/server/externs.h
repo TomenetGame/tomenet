@@ -736,6 +736,7 @@ extern int timer_pvparena1, timer_pvparena2, timer_pvparena3;
 
 extern void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr);
 extern void timed_shutdown(int k);
+extern bool stale_level(struct worldpos *wpos, int grace);
 
 /* files.c */
 extern int highscore_send(char *buffer, int max);
