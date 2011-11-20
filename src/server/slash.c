@@ -5962,6 +5962,31 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "Ironman Deep Dive Challenge records have been reset!");
 				return;
 			}
+			/* list statics */
+			else if (prefix(message, "/lsl")) {
+				int x, y;
+				struct dungeon_type *d_ptr;
+				worldpos tpos;
+				for (x = 0; x < 64; x++) for (y = 0; y < 64; y++) {
+					/* check surface */
+					k = 0; tpos.wx = x; tpos.wy = y; tpos.wz = 0;
+					for (j = 1; j < NumPlayers + 1; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
+					if (wild_info[y][x].ondepth != k) msg_format(Ind, "%2d,%2d", x, y);
+					/* check tower */
+					if ((d_ptr = wild_info[y][x].tower)) for (i = 0; i <= d_ptr->maxdepth - d_ptr->baselevel; i++) {
+						k = 0; tpos.wx = x; tpos.wy = y; tpos.wz = -(i + 1);
+						for (j = 1; j < NumPlayers + 1; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
+						if (d_ptr->level[i].ondepth != k) msg_format(Ind, "%2d,%2d,%2d", x, y, i + 1);
+					}
+					/* check dungeon */
+					if ((d_ptr = wild_info[y][x].dungeon)) for (i = 0; i <= d_ptr->maxdepth - d_ptr->baselevel; i++) {
+						k = 0; tpos.wx = x; tpos.wy = y; tpos.wz = i + 1;
+						for (j = 1; j < NumPlayers + 1; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
+						if (d_ptr->level[i].ondepth != k) msg_format(Ind, "%2d,%2d,%2d", x, y, -(i + 1));
+					}
+				}
+				return;
+			}
 		}
 	}
 
