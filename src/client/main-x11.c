@@ -20,7 +20,9 @@
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <X11/keysymdef.h>
+#if 0
 #include <X11/extensions/XTest.h> /* for turn_off_numlock() */
+#endif
 #endif /* __MAKEDEPEND__ */
 
 
@@ -2611,6 +2613,7 @@ if (term_prefs[7].visible) {
 }
 
 
+#if 0
 /* Turn off num-lock if it's on */
 void turn_off_numlock_X11(void) {
 	Display* disp = XOpenDisplay(NULL);
@@ -2621,6 +2624,7 @@ void turn_off_numlock_X11(void) {
 	XFlush(disp);
 	XCloseDisplay(disp);
 }
+#endif
 
 
 /* SHUT: main-x11.c */

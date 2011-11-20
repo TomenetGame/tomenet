@@ -13,7 +13,9 @@ extern errr init_gcu(void);
 
 #ifdef USE_X11
 extern errr init_x11(void);
+#if 0
 extern void turn_off_numlock_X11(void);
+#endif
 #endif
 
 #ifdef USE_XAW

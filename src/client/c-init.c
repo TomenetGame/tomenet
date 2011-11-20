@@ -601,7 +601,7 @@ static void plog_hook(cptr s) {
 	if (s) display_message(s, "Warning");
 }
 
-
+#if 0
 static void turn_off_numlock(void) {
 #ifdef USE_X11
 	turn_off_numlock_X11();
@@ -612,6 +612,7 @@ static void turn_off_numlock(void) {
  #endif
 #endif
 }
+#endif
 
 
 /*
@@ -816,8 +817,10 @@ void client_init(char *argv1, bool skip)
 		}
 	}
 
+#if 0
 	/* Bam! */
 	turn_off_numlock();
+#endif
 
 /*	printf("Server sent login port %d\n", login_port);
 	printf("Server sent status %u\n", status);  */
