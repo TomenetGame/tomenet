@@ -185,7 +185,7 @@ CLI_LUAOBJS = \
 #
 # This is my compiler of choice, it seems to work most everywhere
 #
-CC = gcc
+#CC = gcc
 
 # For allowing #if..#else..#endif constructs in LUA files - C. Blue
 # Note: The flags must contain
@@ -197,8 +197,8 @@ CC = gcc
 # need to use the gcc invocation below instead.
 #
 # cpp variant:
-CPP = cpp
-CPPFLAGS = -C -P
+#CPP = cpp
+#CPPFLAGS = -C -P
 # gcc variant:
 #CPP = gcc
 #CPPFLAGS = -x c -E -Wp,-C,-P
@@ -237,18 +237,18 @@ SDL_CONFIG = /usr/mingw32/bin/sdl-config
 ##
 ## Variation -- MinGW on Linux
 ##
-## Without SDL
+## Without SDL:
 #CFLAGS = -g -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937
 #LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 ##
-## With SDL
-CFLAGS = -g -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -DSOUND_SDL `$(SDL_CONFIG) --cflags` -DWINVER=0x0501
-LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm -lSDL -lSDL_mixer `$(SDL_CONFIG) --libs`
+## With SDL, using 'sdl-config':
+#CFLAGS = -g -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -DSOUND_SDL `$(SDL_CONFIG) --cflags` -DWINVER=0x0501 -Wno-unused-but-set-variable
+#LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm -lSDL -lSDL_mixer `$(SDL_CONFIG) --libs`
+##
+## With SDL, without using 'sdl-config', entered SDL's include/lib folders manually (as located on my system - C. Blue):
+CFLAGS = -g -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -DSOUND_SDL -I/usr/i486-mingw32/include/SDL -DWINVER=0x0501 -Wno-unused-but-set-variable
+LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm -lSDL -lSDL_mixer -L/usr/i486-mingw32/lib
 
-
-# MinGW compiler and linker on my system - mikaelh
-CC = mingw32-gcc
-WINDRES = mingw32-windres
 # Added the according preprocessor for 'preproc' - C. Blue
 # If your system doesnt have a dedicated cpp command, you might
 # need to use the gcc invocation below instead.
@@ -257,8 +257,8 @@ WINDRES = mingw32-windres
 #CPP = mingw32-cpp
 #CPPFLAGS = -C -P
 # gcc variant:
-CPP = mingw32-gcc
-CPPFLAGS = -x c -E -Wp,-C,-P
+#CPP = mingw32-gcc
+#CPPFLAGS = -x c -E -Wp,-C,-P
 
 # Use these on Ubuntu
 #CC = i586-mingw32msvc-gcc
@@ -271,6 +271,22 @@ CPPFLAGS = -x c -E -Wp,-C,-P
 #WINDRES = i386-mingw32msvc-windres
 #CPP = i386-mingw32msvc-cpp
 #CPPFLAGS = -C -P
+
+# MinGW compiler and linker on my system - mikaelh
+#CC = mingw32-gcc
+#WINDRES = mingw32-windres
+
+# MinGW compiler, linker and preprocessor on mine - C. Blue
+CC = i486-mingw32-gcc
+WINDRES = i486-mingw32-windres
+CPP = i486-mingw32-gcc
+CPPFLAGS = -x c -E -Wp,-C,-P
+
+
+# Native Linux gcc for compiling preproc.
+# Todo actually: Fix this to allow preproc-win.c -> preproc.exe compilation and use,
+# currently preproc.exe couldn't access the CPP from within wine environment.
+NCC = gcc
 
 
 # Lua
@@ -334,8 +350,15 @@ $(TOLUA): $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c
 # Build the custom LUA preprocessor
 #
 
+preproc/preproc.o: preproc/preproc.c
+	$(NCC) -o preproc/preproc.o -c preproc/preproc.c
 preproc/preproc: preproc/preproc.o
-	$(CC) $(CFLAGS) -o preproc/preproc preproc/preproc.o
+	$(NCC) -o preproc/preproc preproc/preproc.o
+
+preproc/preproc-win.o: preproc/preproc-win.c
+	$(CC) -o preproc/preproc-win.o -c $(CFLAGS) $(LDFLAGS) preproc/preproc-win.c
+preproc/preproc.exe: preproc/preproc-win.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o preproc/preproc.exe preproc/preproc-win.o
 
 
 #
