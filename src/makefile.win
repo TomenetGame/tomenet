@@ -239,7 +239,7 @@ WINDRES = windres
 #LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 ##
 ## With SDL
-CFLAGS = -g -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DCYGWIN -DMEXP=19937 -DSOUND_SDL -DWINVER=0x0501
+CFLAGS = -g -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DCYGWIN -DMEXP=19937 -DSOUND_SDL -DWINVER=0x0501 -Wno-unused-but-set-variable
 LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm -lSDL -lSDL_mixer
 
 
