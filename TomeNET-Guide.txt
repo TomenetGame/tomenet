@@ -10541,7 +10541,7 @@ Conveyance
                     Lv10: Turns into a ball.
                     Lv20: Teleports away all monsters in sight.
                     Required skill level for first spell level: 23.
-    Recall          Works like Word Of Recall.                      (project)
+    Recall          Works like Word of Recall.                      (project)
                     Inscribe your spell scroll or book like you would inscribe
                     a scroll, in order to specify a destination.
                     Required skill level for first spell level: 30.
@@ -10575,7 +10575,7 @@ Divination
 
 Temporal
     Magelock        Magically locks a door.
-                    Lv40: Creates a Glyph Of Warding on the ground that stops
+                    Lv40: Creates a Glyph of Warding on the ground that stops
                           monsters from crossing the field or summoning on it.
                     Required skill level for first spell level: 1.
     Slow Monster    Slows down a monster.
@@ -10676,7 +10676,7 @@ Holy Offense
                     Required skill level for first spell level: 11.
     Release Souls   *Dispels undead*.
                     Required skill level for first spell level: 10.
-    Orb Of Draining Summons a holy orb, devouring monsters.
+    Orb of Draining Summons a holy orb, devouring monsters.
                     This spell deals double damage against evil monsters.
                     Required skill level for first spell level: 20.
     Drain Life      Drains life from a non-undead and non-nonliving creature
@@ -10703,7 +10703,7 @@ Holy Defense
                     Works very well, as long as the creature isn't of a higher
                     level than you.
                     Required skill level for first spell level: 12.
-    Glyph Of Warding
+    Glyph of Warding
                     Creates a rune on the ground that monsters cannot cross
                     nor summon on. Powerful monsters may break it.
                     Required skill level for first spell level: 35.
@@ -11011,7 +11011,7 @@ Astral
                     Corrupted: Increases your chance to strike critically.
                     (This spell uses WISDOM to determine fail-rates!)
                     Required skill level for first spell level: 45.
-    Sphere Of Destruction
+    Sphere of Destruction
                     Enlightened: Conjures up a mana storm.
                     Corrupted: Conjures up raging inferno, which deals similar
                                damage as rockets do.
