@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 18. November 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 21. November 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -3343,8 +3343,9 @@ If you stood in a place where there is no room for your items to drop, for
 example inside a dense forest (green tree fields) or mountain regions (brown ^
 fields) then your items will be scattered randomly over the whole level.
 
-Last but not least, non-validated players and characters below level 5 don't
-drop their items on death, their loot will vanish forever.
+Last but not least, non-validated players and characters below level 3 don't
+drop their items on death, their loot will vanish forever. (The level depends
+on server settings, so check them via ~d to verify.)
 
 
 Ghosts
