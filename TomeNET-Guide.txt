@@ -4230,7 +4230,9 @@ floor to receive an extra feeling on entering the next floor.
 These extra level feelings (displayed in yellow) are:
 
   "What a terrifying place.."
-      means a) there's a highly ood monster (20+ levels) or
+      means a) there's a highly ood monster (20..40 levels above floor level,
+      with 40 actually being the maximum possible ood level shift, compare
+      ood explanation in (0.4)) or
       b) a great vault and some ood monster (10..19 levels) on the level.
 
   "You sense an air of danger.."
