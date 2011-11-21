@@ -3577,7 +3577,7 @@ void do_slash_cmd(int Ind, char *message)
 						a_info[i].cur_num = 0;
 						a_info[i].known = FALSE;
 					}
-					msg_print(Ind, "All the artifacts are \377rfindable\377w!");
+					msg_print(Ind, "All the artifacts are \377Gfindable\377w!");
 				} else if (tk > 0 && prefix(token[1], "ban!")) {
 					for (i = 0; i < MAX_A_IDX ; i++) {
 						a_info[i].cur_num = 1;
@@ -3589,58 +3589,129 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				return;
 			}
-			else if (prefix(message, "/unique"))
+			else if (prefix(message, "/uniques"))
 			{
-				bool done = FALSE;
 				monster_race *r_ptr;
-				for (k = 1; k <= tk; k++) {
-					if (prefix(token[k], "unseen")) {
-						for (i = 0; i < MAX_R_IDX - 1 ; i++) {
-							r_ptr = &r_info[i];
-							if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
-
-							r_ptr->r_sights = 0;
-						}
-						msg_print(Ind, "All the uniques are set as '\377onot seen\377'.");
-						done = TRUE;
-					} else if (prefix(token[k], "nonkill")) {
-						monster_race *r_ptr;
-						for (i = 0; i < MAX_R_IDX - 1 ; i++) {
-							r_ptr = &r_info[i];
-							if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
-
-							r_ptr->r_tkills = 0;
-						}
-						msg_print(Ind, "All the uniques are set as '\377onever killed\377'.");
-						done = TRUE;
-					}
+				if (!tk) {
+					msg_print(Ind, "Usage: /uniques (unseen | nonkill)");
+					return;
 				}
-				if (!done) msg_print(Ind, "Usage: /unique (unseen | nonkill)");
+
+				if (prefix(token[k], "unseen")) {
+					for (i = 0; i < MAX_R_IDX - 1 ; i++) {
+						r_ptr = &r_info[i];
+						if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
+						r_ptr->r_sights = 0;
+					}
+					msg_print(Ind, "All the uniques are set as '\377onot seen\377'.");
+				} else if (prefix(token[k], "nonkill")) {
+					monster_race *r_ptr;
+					for (i = 0; i < MAX_R_IDX - 1 ; i++) {
+						r_ptr = &r_info[i];
+						if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
+						r_ptr->r_tkills = 0;
+					}
+					msg_print(Ind, "All the uniques are set as '\377onever killed\377'.");
+				}
 				return;
 			}
-			else if (prefix(message, "/uninum")) {
+			else if (prefix(message, "/unidisable")) {
 				if (k) {
 					if (!(r_info[k].flags1 & RF1_UNIQUE)) return;
 					if (r_info[k].max_num) {
 						r_info[k].max_num = 0;
-						msg_format(Ind, "Monster %d is now \377Gunfindable\377w.", k);
+						msg_format(Ind, "(%d) %s is now \377runfindable\377w.", k, r_name + r_info[k].name);
 					} else {
 						r_info[k].max_num = 1;
-						msg_format(Ind, "Monster %d is now \377rfindable\377w.", k);
+						msg_format(Ind, "(%d) %s is now \377Gfindable\377w.", k, r_name + r_info[k].name);
 					}
 				} else {
-					msg_print(Ind, "Usage: /uninum <monster_index>");
+					msg_print(Ind, "Usage: /unidisable <monster_index>");
 				}
 				return;
 			}
-			else if (prefix(message, "/unizero")) {
+			else if (prefix(message, "/uniunkill")) {
 				if (k) {
-					if (!(r_info[k].flags1 & RF1_UNIQUE)) return;
+					if (!(r_info[k].flags1 & RF1_UNIQUE)) {
+						msg_print(Ind, "That's not a unique monster.");
+						return;
+					}
+					if (!r_info[k].r_tkills) {
+						msg_print(Ind, "That unique is already at zero kill count.");
+						return;
+					}
 					r_info[k].r_tkills = 0;
-					msg_format(Ind, "Monster %d kill count reset to \377G0\377w.", k);
+					msg_format(Ind, "(%d) %s kill count reset to \377G0\377w.", k, r_name + r_info[k].name);
 				} else {
-					msg_print(Ind, "Usage: /unizero <monster_index>");
+					msg_print(Ind, "Usage: /uniunkill <monster_index>");
 				}
+				return;
+			}
+			else if (prefix(message, "/unicheck")) {
+				if (!k || !(r_info[k].flags1 & RF1_UNIQUE)) {
+					msg_print(Ind, "Usage: /uninum <unique_monster_index>");
+					return;
+				}
+				msg_format(Ind, "(%d) %s has cur_num/max_num of %d/%d.",
+				    k, r_name + r_info[k].name, r_info[k].cur_num, r_info[k].max_num);
+				return;
+			}
+			else if (prefix(message, "/unifix")) {
+				if (!k || !(r_info[k].flags1 & RF1_UNIQUE)) {
+					msg_print(Ind, "Usage: /unifix <unique_monster_index>");
+					return;
+				}
+				if (!r_info[k].cur_num) {
+					msg_print(Ind, "That monster is already at zero cur_num count.");
+					return;
+				}
+				for (i = 1; i < m_max; i++)
+					if (m_list[i].r_idx == k) {
+						msg_print(Ind, "That monster is currently spawned!");
+						return;
+					}
+				r_info[k].cur_num = 0;
+				msg_format(Ind, "(%d) %s has been set to zero cur_num.", k, r_name + r_info[k].name);
+				return;
+			}
+			else if (prefix(message, "/curnumcheck")) {
+				int i;
+				bool uniques_only = (tk);
+
+				/* First set all to zero */
+				for (i = 0; i < MAX_R_IDX; i++) {
+					if (uniques_only && !(r_info[i].flags1 & RF1_UNIQUE)) continue;
+					j = 0;
+					/* Now count how many monsters there are of each race */
+					for (k = 1; k < m_max; k++)
+						if (m_list[k].r_idx == i) j++;
+					if (r_info[i].cur_num != j)
+						msg_format(Ind, "(%d) %s mismatch: cur_num %d, real %d.",
+						    i, r_name + r_info[i].name, r_info[i].cur_num, j);
+				}
+
+				msg_print(Ind, "done.");
+				return;
+			}
+			else if (prefix(message, "/curnumfix")) {
+				/* Fix r_info[i].cur_num counts */
+				int i;
+				bool uniques_only = (tk);
+
+				/* First set all to zero */
+				for (i = 0; i < MAX_R_IDX; i++) {
+					if (uniques_only && !(r_info[i].flags1 & RF1_UNIQUE)) continue;
+					r_info[i].cur_num = 0;
+				}
+
+				/* Now count how many monsters there are of each race */
+				for (i = 1; i < m_max; i++) {
+					if (m_list[i].r_idx && (!uniques_only || (r_info[i].flags1 & RF1_UNIQUE))) {
+						r_info[m_list[i].r_idx].cur_num++;
+					}
+				}
+
+				msg_format(Ind, "cur_num fields fixed for all %s.", uniques_only ? "uniques" : "monsters");
 				return;
 			}
 			else if (prefix(message, "/reload-config") ||
@@ -5830,28 +5901,6 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 #endif
-			else if (prefix(message, "/fixcurnum")) {
-				/* Fix r_info[i].cur_num counts */
-				int i;
-				monster_type *m_ptr;
-
-				/* First set all to zero */
-				for (i = 0; i < MAX_R_IDX; i++) {
-					r_info[i].cur_num = 0;
-				}
-
-				/* Now count how many monsters there are of each race */
-				for (i = 1; i < m_max; i++) {
-					m_ptr = &m_list[i];
-
-					if (m_ptr->r_idx) {
-						r_info[m_ptr->r_idx].cur_num++;
-					}
-				}
-
-				msg_print(Ind, "cur_num fields fixed for all monsters.");
-				return;
-			}
 			/* Display all information about the grid an admin-char is currently standing on - C. Blue */
 			else if (prefix(message, "/debug-grid")){
 				worldpos *tpos = &p_ptr->wpos;
