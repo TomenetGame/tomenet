@@ -5974,9 +5974,9 @@ void do_slash_cmd(int Ind, char *message)
 					/* check surface */
 					k = 0; tpos.wx = x; tpos.wy = y; tpos.wz = 0;
 					for (j = 1; j < NumPlayers + 1; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
-					if (used && k) msg_format(Ind, "\377g- %2d,%2d", x, y);
+					if (used && k) msg_format(Ind, "\377g  %2d,%2d", x, y);
 					else if (wild_info[y][x].ondepth > k) msg_format(Ind, "  %2d,%2d", x, y);
-					else if (stale && getcave(&tpos) && stale_level(&tpos, cfg.anti_scum)) msg_format(Ind, "\377D- %2d,%2d", x, y);
+					else if (stale && getcave(&tpos) && stale_level(&tpos, cfg.anti_scum)) msg_format(Ind, "\377D  %2d,%2d", x, y);
 					/* check tower */
 					if ((d_ptr = wild_info[y][x].tower)) {
 					    //msg_format(Ind, "T max,base = %d,%d", d_ptr->maxdepth, d_ptr->baselevel);
