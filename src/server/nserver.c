@@ -2396,13 +2396,10 @@ static int Handle_login(int ind)
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	object_type forge, *o_ptr = &forge;
-	int i;
-	bool options[OPT_MAX];
-
+	int i, j;
+	bool options[OPT_MAX], greeting;
 	char namebuf1[80], namebuf2[80];
-	int j;
 	cptr title = "";
-
 	char traffic[50+1];
 
 	if (Id >= MAX_ID) {
@@ -2438,6 +2435,8 @@ static int Handle_login(int ind)
 	p_ptr->v_test = !p_ptr->v_unknown && is_newer_than(&p_ptr->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, VERSION_BRANCH_LATEST, VERSION_BUILD_LATEST);
 	p_ptr->v_outdated = !is_newer_than(&p_ptr->version, VERSION_MAJOR_OUTDATED, VERSION_MINOR_OUTDATED, VERSION_PATCH_OUTDATED, VERSION_EXTRA_OUTDATED, VERSION_BRANCH_OUTDATED, VERSION_BUILD_OUTDATED);
 	p_ptr->v_latest = is_same_as(&p_ptr->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, VERSION_BRANCH_LATEST, VERSION_BUILD_LATEST);
+	p_ptr->audio_sfx = connp->audio_sfx;
+	p_ptr->audio_mus = connp->audio_mus;
 
 	/* Copy the client preferences to the player struct */
 	for (i = 0; i < OPT_MAX; i++)
@@ -2569,7 +2568,7 @@ static int Handle_login(int ind)
 		strcpy(namebuf2, connp->nick);
 		j = 0; while(namebuf1[j]) { namebuf1[j] = tolower(namebuf1[j]); j++; }
 		j = 0; while(namebuf2[j]) { namebuf2[j] = tolower(namebuf2[j]); j++; }
-//		if (!strcmp(priv_note_target[i], Players[NumPlayers]->name)) { /* <- sent to a character name */
+//		if (!strcmp(priv_note_target[i], p_ptr->name)) { /* <- sent to a character name */
 //		if (!strcmp(priv_note_target[i], connp->nick)) { /* <- sent to an account name */
 		if (!strcmp(namebuf1, namebuf2)) { /* <- sent to an account name, case-independant */
 			msg_format(NumPlayers, "\374\377RNote from %s: %s", priv_note_sender[i], priv_note[i]);
@@ -2578,17 +2577,15 @@ static int Handle_login(int ind)
 			strcpy(priv_note[i], "");
 		}
 	}
-	if (p_ptr->party)
-	for (i = 0; i < MAX_PARTYNOTES; i++) {
-		if (!strcmp(party_note_target[i], parties[Players[NumPlayers]->party].name)) {
+	if (p_ptr->party) for (i = 0; i < MAX_PARTYNOTES; i++) {
+		if (!strcmp(party_note_target[i], parties[p_ptr->party].name)) {
 			if (strcmp(party_note[i], ""))
 				msg_format(NumPlayers, "\374\377bParty Note: %s", party_note[i]);
 			break;
 		}
 	}
-	if (p_ptr->guild)
-	for (i = 0; i < MAX_GUILDNOTES; i++) {
-		if (!strcmp(guild_note_target[i], guilds[Players[NumPlayers]->guild].name)) {
+	if (p_ptr->guild) for (i = 0; i < MAX_GUILDNOTES; i++) {
+		if (!strcmp(guild_note_target[i], guilds[p_ptr->guild].name)) {
 			if (strcmp(guild_note[i], ""))
 				msg_format(NumPlayers, "\374\377bGuild Note: %s", guild_note[i]);
 			break;
@@ -2601,22 +2598,28 @@ static int Handle_login(int ind)
 
 #ifndef ARCADE_SERVER
 	/* Brand-new players get super-short instructions presented here: */
-	i = (acc_get_flags(p_ptr->accountname) & ACC_GREETED) ? 0 : 1;
-	if (p_ptr->inval || i) {
+	greeting = !(acc_get_flags(p_ptr->accountname) & ACC_GREETED);
+	if (p_ptr->inval || greeting) {
 		s_printf("GREETING: %s\n", p_ptr->name);
 		if (i) acc_set_flags(p_ptr->accountname, ACC_GREETED, TRUE);
 		/* no bloody noob ever seems to read this how2run thingy.. (p_ptr->warning_welcome) */
-		msg_print(NumPlayers, "\374\377L ");
-		msg_print(NumPlayers, "\374\377L   ***  Welcome to Tomenet! You can chat with \377R:\377L key. Say hello :)  ***");
-		msg_print(NumPlayers, "\374\377L      To run fast, use \377RSHIFT + direction\377L keys (numlock must be OFF)");
+		msg_print(NumPlayers, "\374\377y ");
+		msg_print(NumPlayers, "\374\377y   ***  Welcome to Tomenet! You can chat with \377R:\377y key. Say hello :)  ***");
+		msg_print(NumPlayers, "\374\377y      To run fast, use \377RSHIFT + direction\377y keys (numlock must be OFF)");
 		if (p_ptr->warning_wield == 0)
-			msg_print(NumPlayers, "\374\377L      Before you move out, press \377Rw\377L to equip your weapon and armour!");
+			msg_print(NumPlayers, "\374\377y      Before you move out, press \377Rw\377y to equip your weapon and armour!");
 		else
-			msg_print(NumPlayers, "\374\377L      Before you move out, press \377Rw\377L to equip your starting items!");
-		msg_print(NumPlayers, "\374\377L ");
+			msg_print(NumPlayers, "\374\377y      Before you move out, press \377Rw\377y to equip your starting items!");
+		msg_print(NumPlayers, "\374\377y ");
 //		msg_print(NumPlayers, "\377RTurn off numlock and hit SHIFT + numkeys to run (move quickly).");
 //		msg_print(NumPlayers, "\377RHit '?' key for help. Hit ':' to chat. Hit '@' to see who is online.");
 //		msg_print(NumPlayers, "\377R<< Welcome to TomeNET! >>");
+
+		/* Play audio greeting too! - C. Blue */
+		if (greeting) { /* only the very 1st time, might become annoying */
+			s_printf("GREETING_AUDIO: %s\n", p_ptr->name);
+			sound(NumPlayers, "greeting", NULL, SFX_TYPE_MISC, FALSE);
+		}
 	}
 
 	/* warning_rest only occurs once per account */
@@ -2625,9 +2628,9 @@ static int Handle_login(int ind)
 
 #if 1
 	/* Give a more visible message about outdated client usage - C. Blue */
-	if (!is_newer_than(&Players[NumPlayers]->version, VERSION_MAJOR_OUTDATED, VERSION_MINOR_OUTDATED, VERSION_PATCH_OUTDATED, VERSION_EXTRA_OUTDATED, VERSION_BRANCH_OUTDATED, VERSION_BUILD_OUTDATED)) {
+	if (!is_newer_than(&p_ptr->version, VERSION_MAJOR_OUTDATED, VERSION_MINOR_OUTDATED, VERSION_PATCH_OUTDATED, VERSION_EXTRA_OUTDATED, VERSION_BRANCH_OUTDATED, VERSION_BUILD_OUTDATED)) {
 		msg_print(NumPlayers, "\374\377y --- Your client is outdated! Get newest one from www.tomenet.net ---");
-	} else if (is_older_than(&Players[NumPlayers]->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, VERSION_BRANCH_LATEST, VERSION_BUILD_LATEST)) {
+	} else if (is_older_than(&p_ptr->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, VERSION_BRANCH_LATEST, VERSION_BUILD_LATEST)) {
 		msg_print(NumPlayers, "\374\377D --- Your client is NOT the latest version, it's not 'outdated' though. ---");
 	}
 #endif
@@ -2749,7 +2752,7 @@ static int Handle_login(int ind)
 	check_Morgoth(NumPlayers);
 
 #ifdef ENABLE_RCRAFT
-	wpcopy(&Players[NumPlayers]->wpos_old, &Players[NumPlayers]->wpos);
+	wpcopy(&Players[NumPlayers]->wpos_old, &p_ptr->wpos);
 #endif
 
 #ifdef CLIENT_SIDE_WEATHER
@@ -2763,9 +2766,14 @@ static int Handle_login(int ind)
 
 #ifdef USE_SOUND_2010
 	/* Initialize his background music */
-	Players[NumPlayers]->music_current = -1; //hack-init: since 0 is used too..
-	Players[NumPlayers]->music_monster = -1; //hack-init: since 0 is used too.. (boss-specific music)
-	handle_music(NumPlayers);
+	p_ptr->music_current = -1; //hack-init: since 0 is used too..
+	p_ptr->music_monster = -1; //hack-init: since 0 is used too.. (boss-specific music)
+
+	/* Keep music quiet for a moment to allow player to hear the introduction speech? */
+	if (greeting && p_ptr->audio_mus > 0 && p_ptr->audio_sfx >= 2) /* speech is event #2 in unmodified sounds.cfg */
+		p_ptr->music_start = 20; /* wait for this # of turns until starting the music */
+	else
+		handle_music(NumPlayers); /* start music normally (instantly) */
 #endif
 
 	/* Initialize the client's unique list;
@@ -3800,6 +3808,8 @@ static int Receive_play(int ind)
 	}
 
 	s_printf("AUDIO: %s features %hd, %hd.\n", connp->nick, sfx, mus);
+	connp->audio_sfx = (short int)sfx;
+	connp->audio_mus = (short int)mus;
 
 	Sockbuf_clear(&connp->w);
 	if (Handle_login(ind) == -1) {

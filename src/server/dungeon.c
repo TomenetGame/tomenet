@@ -3616,6 +3616,15 @@ static bool process_player_end_aux(int Ind)
 	/* Don't accidentally float after dieing */
 	if (p_ptr->safe_float_turns) p_ptr->safe_float_turns--;
 
+#ifdef USE_SOUND_2010
+	/* Start delayed music for players who were greeted at start via audio */
+	if (p_ptr->music_start) {
+		p_ptr->music_start--;
+		if (p_ptr->music_start == 0) handle_music(Ind);
+	}
+#endif
+
+
 	/*** Process Light ***/
 
 	/* Check for light being wielded */
@@ -5714,7 +5723,7 @@ void dungeon(void)
 
 		/* Play server-side animations (consisting of cycling/random colour choices,
 		   instead of animated colours which are circled client-side) */
-		if (!(turn % 10)) {
+		if (!(turn % (cfg.fps / 6))) {
 			/* Flicker invisible player? (includes colour animation!) */
 //			if (Players[i]->invis) update_player(i);
 			if (Players[i]->invis) {
@@ -5728,7 +5737,7 @@ void dungeon(void)
 		}
 
 		/* Perform beeping players who are currently being paged by others */
-		if (Players[i]->paging && !(turn % 15)) {
+		if (Players[i]->paging && !(turn % (cfg.fps / 4))) {
 			Send_beep(i);
 			Players[i]->paging--;
 		}

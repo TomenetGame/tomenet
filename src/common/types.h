@@ -2984,6 +2984,7 @@ struct player_type
 
 #ifdef USE_SOUND_2010
 	int music_current, music_monster; //background music currently playing for him/her; an overriding monster music
+	int audio_sfx, audio_mus, music_start;
 #endif
 	bool cut_sfx_attack;
 	int count_cut_sfx_attack;

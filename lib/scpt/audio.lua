@@ -9,6 +9,7 @@
 audio_sfx = {
     --[misc]
     "page",
+    "greeting",
     "warning",
     "error",
 
