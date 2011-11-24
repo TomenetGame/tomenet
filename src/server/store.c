@@ -6254,7 +6254,7 @@ s_printf("PLAYER_STORE: Mass Cheque (mang; owner %s (%d), %s, value %d, buyer %s
 				if (h_ptr->stock_num >= h_ptr->stock_size) {
 					/* ouch, no room for dropping a cheque,
 					   money goes poof :( */
-					s_printf("PLAYER_STORE_HANDLE: NO ROOM! (owner %s (%d), value %d, buyer %s)\n",
+					s_printf("PLAYER_STORE_HANDLE: NO SLOT! (owner %s (%d), value %d, buyer %s)\n",
 					    owner_name, h_ptr->dna->owner, value, p_ptr->name);
 					return;
 				}
@@ -6282,7 +6282,7 @@ s_printf("PLAYER_STORE: New Mass Cheque (trad; owner %s (%d), %s, value %d, buye
 					if (c_ptr->o_idx) {
 						/* ouch, no room for dropping a cheque,
 						   money goes poof :( */
-						s_printf("PLAYER_STORE_HANDLE: NO ROOM! (owner %s (%d), value %d, buyer %s)\n",
+						s_printf("PLAYER_STORE_HANDLE: OCCUPIED ROOM! (owner %s (%d), value %d, buyer %s)\n",
 						    owner_name, h_ptr->dna->owner, value, p_ptr->name);
 						return;
 					}
