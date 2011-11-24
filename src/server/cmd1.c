@@ -3256,6 +3256,9 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 		if (o_ptr->k_idx
 #ifdef ALLOW_NO_QUAKE_INSCRIPTION
 		    && !check_guard_inscription(o_ptr->note, 'E')
+#else
+		    && (!check_guard_inscription(o_ptr->note, 'E') ||
+		    o_ptr->name1 != ART_GROND)
 #endif
 		    ) {
 			/* Giga-Hack -- equalize the chance (though not likely..) */
@@ -4306,6 +4309,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		if (o_ptr->k_idx
 #ifdef ALLOW_NO_QUAKE_INSCRIPTION
 		    && !check_guard_inscription(o_ptr->note, 'E')
+#else
+		    && (!check_guard_inscription(o_ptr->note, 'E') ||
+		    o_ptr->name1 != ART_GROND)
 #endif
 		    ) {
 			/* Giga-Hack -- equalize the chance (though not likely..) */

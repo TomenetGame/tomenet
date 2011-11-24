@@ -1753,6 +1753,8 @@ void do_cmd_check_server_settings(int Ind)
 
 #ifdef ALLOW_NO_QUAKE_INSCRIPTION
 	fprintf(fff, "You may use !E inscription on items that cause earthquakes to suppress those.\n");
+#else
+	fprintf(fff, "You may use !E inscription to suppress earthquakes on Grond only.\n");
 #endif
 
 	fprintf(fff,"\n");

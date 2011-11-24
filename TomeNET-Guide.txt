@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 21. November 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 24. November 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -881,8 +881,11 @@ Items that induce random teleportation, like a 'ring of teleportation' or
     A Long Sword Of The Thunderlords (2d5) (+10,+15) {NxFAReg..}
 
 Items that 'can cause Earthquakes':
-    !E          Depends on server settings. If it's enabled, it will make the
-                item stop causing earthquakes randomly on striking.
+    !E          Depends on server settings. If it's enabled for all items, it
+                will make the item stop causing earthquakes randomly on
+                striking. By default !E is only available on the artifact
+                "The Mighty Hammer 'Grond'" though. Press keys  ~d  in the game
+                to check server settings.
                 (See (5.13) for more information about earthquakes.)
 
 Word-of-Recall scrolls:
@@ -5950,7 +5953,7 @@ CHAOTIC ('It produces chaotic effects')
         a) drain life (VAMPIRIC, see (5.15)) (very likely).
         b) earthquake (see (5.13) for details).
            (If enabled in the server settings, it can be suppressed with
-           the !E inscription.)
+           the !E inscription. See (0.3) for !E settings or press ~d in game.)
         c) confuse target (very likely).
         d) teleport target away.
         e) polymorph target.
@@ -5961,7 +5964,7 @@ IMPACT ('It can cause earthquakes')
         Causes earthquakes if the damage is > 50. See (5.13) for details about
         earthquakes.
         (If enabled in the server settings, it can be suppressed with
-        the !E inscription.)
+        the !E inscription. See (0.3) for !E settings or press ~d in game.)
 WOUNDING ('It is very sharp and makes your foes bleed.')
         Has additional to-hit/to-dam bonus.
 Weapons of Spinning
