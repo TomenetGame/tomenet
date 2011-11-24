@@ -222,7 +222,8 @@ D:Your hear a high pitched humming noise...
 F:FLOOR | CHEST | DOOR
 
 N:36:Multiplication Trap
-I:3:90:0:3:5:0d0:o:10
+#I:3:90:0:3:5:0d0:o:10 make it less exp-exploitable: chance to chain-spawn more multi-traps!
+I:3:90:0:3:5:0d0:o:33
 D:The floor around you doesn't seem the same...
 F:FLOOR | DOOR
 #CHEST
@@ -272,7 +273,8 @@ D:The room seems to shrink!
 F:FLOOR | CHEST | DOOR
 
 N:45:Trap of Calling Out
-I:10:100:100:5:15:0d0:v:10
+#I:10:100:100:5:15:0d0:v:10 make it less cheezy
+I:10:100:100:5:15:0d0:v:33
 D:You hear something coming closer, much closer.
 F:FLOOR | DOOR
 #CHEST
@@ -316,7 +318,8 @@ D:Your wands seem different...
 F:FLOOR | CHEST | DOOR
 
 N:53:Trap of Filling
-I:10:100:0:10:25:0d0:o:10
+#I:10:100:0:10:25:0d0:o:10 make it non-exploitable regarding exp from disarming
+I:10:100:0:10:25:0d0:o:100
 D:The whole room vibrates in a strange way...
 F:FLOOR | DOOR
 #CHEST
@@ -886,8 +889,9 @@ D:You exchanged your equipments with nifty presents.
 F:FLOOR | DOOR | CHEST
 F:SPECIAL_GENE
 
-N:182:Garbage Trap
-I:7:30:5:5:30:0d0:W:80
+N:182:Garbage Filling Trap
+#I:7:30:5:5:30:0d0:W:80 make it non-exploitable regarding exp from disarming
+I:7:30:5:5:30:0d0:W:100
 D:You feel like a dustbinman!
 F:FLOOR | DOOR | CHEST
 
@@ -949,7 +953,8 @@ D:Thank you for helping us to keep the dungeon clean.
 F:FLOOR
 
 N:194:Trap of Preparation
-I:10:100:0:10:25:0d0:o:10
+#I:10:100:0:10:25:0d0:o:10 make it non-exploitable regarding exp from disarming
+I:10:100:0:10:25:0d0:o:100
 D:You feel they are ready to welcome you!
 F:FLOOR | CHEST | DOOR
 
