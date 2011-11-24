@@ -20493,7 +20493,7 @@ D:For testing
 N:1134:White wolf cub
 G:c:w
 I:120:2d2:30:0:0
-W:127:255:700:30
+W:1:255:700:30
 E:0:1:0:2:1:4
 O:0:0:0:0
 B:BITE:HURT:1d1
