@@ -2203,7 +2203,11 @@ static void display_entry(int Ind, int pos)
 #ifdef PLAYER_STORES
 		/* Don't display items as fake *ID*ed in player stores! */
 		if (p_ptr->store_num <= -2)
+ #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
+			object_desc(Ind, o_name, o_ptr, TRUE, 3 + 64);
+ #else
 			object_desc(Ind, o_name, o_ptr, TRUE, 3);
+ #endif
 		else
 #endif
 #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
@@ -2398,7 +2402,8 @@ static void display_store(int Ind)
 
 		/* Hack - Items in [common town] shops, which are specified in st_info.txt,
 		   are added to the player's aware-list when he sees them in such a shop. -C. Blue */
-		if (cfg.item_awareness != 0) {
+		if (cfg.item_awareness != 0 &&
+		    p_ptr->store_num > -2) { /* Never become aware of player store items */
 			bool noticed = FALSE, default_stock;
 			bool base_store = (0 <= p_ptr->store_num) && (p_ptr->store_num <= 5);
 
@@ -2797,8 +2802,10 @@ void store_stole(int Ind, int item)
 	/* always 1% chance to fail, so that ppl won't macro it */
 	/* 1% pfft. 5% and rising... */
 	if (rand_int(chance) <= 10 && !magik(5)) {
-		/* Hack -- buying an item makes you aware of it */
-		object_aware(Ind, &sell_obj);
+		if (p_ptr->store_num > -2) { /* Never become aware of player store items */
+			/* Hack -- buying an item makes you aware of it */
+			object_aware(Ind, &sell_obj);
+		}
 
 		/* Hack -- clear the "fixed" flag from the item */
 		sell_obj.ident &= ~ID_FIXED;
@@ -3256,8 +3263,10 @@ void store_purchase(int Ind, int item, int amt)
 				/* Update the display */
 				store_prt_gold(Ind);
 
-				/* Hack -- buying an item makes you aware of it */
-				object_aware(Ind, &sell_obj);
+				if (p_ptr->store_num > -2) { /* Never become aware of player store items */
+					/* Hack -- buying an item makes you aware of it */
+					object_aware(Ind, &sell_obj);
+				}
 
 				/* Hack -- clear the "fixed" flag from the item */
 				sell_obj.ident &= ~ID_FIXED;
@@ -3695,8 +3704,10 @@ void store_confirm(int Ind)
 	/* Update the display */
 	store_prt_gold(Ind);
 
-	/* Become "aware" of the item */
-	object_aware(Ind, o_ptr);
+	if (p_ptr->store_num > -2) { /* Never become aware of player store items */
+		/* Become "aware" of the item */
+		object_aware(Ind, o_ptr);
+	}
 
 	/* Know the item fully */
 	object_known(o_ptr);
