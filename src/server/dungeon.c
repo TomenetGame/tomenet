@@ -6356,13 +6356,13 @@ void pack_overflow(int Ind) {
 		disturb(Ind, 0, 0);
 
 		/* Warning */
-		msg_print(Ind, "Your pack overflows!");
+//		msg_print(Ind, "\376\377oYour pack overflows!");
 
 		/* Describe */
 		object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 		/* Message */
-		msg_format(Ind, "You drop %s.", o_name);
+		msg_format(Ind, "\376\377oYour pack overflows! You drop %s.", o_name);
 
 		/* Drop it (carefully) near the player */
 		drop_near_severe(Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
