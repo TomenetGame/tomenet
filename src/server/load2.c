@@ -740,7 +740,7 @@ static void rd_monster_race(monster_race *r_ptr)
 	rd_byte(&r_ptr->speed);
 	rd_s32b(&r_ptr->mexp);
 	rd_s16b(&r_ptr->extra);
-	rd_byte(&r_ptr->freq_inate);
+	rd_byte(&r_ptr->freq_innate);
 	rd_byte(&r_ptr->freq_spell);
 	rd_u32b(&r_ptr->flags1);
 	rd_u32b(&r_ptr->flags2);

@@ -268,7 +268,7 @@ static cptr r_info_flags3[] =
 /*
  * Monster race flags
  */
-/* spells 96-127 (inate) */
+/* spells 96-127 (innate) */
 static cptr r_info_flags4[] =
 {
 	"SHRIEK",
@@ -4192,7 +4192,7 @@ errr init_r_info_txt(FILE *fp, char *buf)
 			r_ptr->drops.combat = OBJ_GENE_COMBAT;
 			r_ptr->drops.magic = OBJ_GENE_MAGIC;
 			r_ptr->drops.tools = OBJ_GENE_TOOL;
-			r_ptr->freq_inate = r_ptr->freq_spell = 0;
+			r_ptr->freq_innate = r_ptr->freq_spell = 0;
 #endif	// 0
 
 			/* Next... */
@@ -4439,7 +4439,7 @@ errr init_r_info_txt(FILE *fp, char *buf)
 				/* XXX XXX XXX Hack -- Read spell frequency */
 				if (1 == sscanf(s, "1_IN_%d", &i)) {
 					/* Extract a "frequency" */
-					r_ptr->freq_spell = r_ptr->freq_inate = 100 / i;
+					r_ptr->freq_spell = r_ptr->freq_innate = 100 / i;
 
 					/* Start at next entry */
 					s = t;
@@ -5264,7 +5264,7 @@ errr init_re_info_txt(FILE *fp, char *buf)
 				if (1 == sscanf(s, "1_IN_%d", &i))
 				{
 					/* Extract a "frequency" */
-                                        re_ptr->freq_spell = re_ptr->freq_inate = 100 / i;
+                                        re_ptr->freq_spell = re_ptr->freq_innate = 100 / i;
 
 					/* Start at next entry */
 					s = t;

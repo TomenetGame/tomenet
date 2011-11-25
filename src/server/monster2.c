@@ -4939,7 +4939,7 @@ static monster_race* race_info_idx(int r_idx, int ego, int randuni)
 
 //        MODIFY(nr_ptr->weight, re_ptr->weight, 10);
 
-        nr_ptr->freq_inate = re_ptr->freq_inate;
+        nr_ptr->freq_innate = re_ptr->freq_innate;
         nr_ptr->freq_spell = re_ptr->freq_spell;
 
         MODIFY(nr_ptr->level, re_ptr->level, 1);

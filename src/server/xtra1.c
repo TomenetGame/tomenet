@@ -2121,9 +2121,9 @@ static void calc_body_bonus(int Ind)
 		if ((p_ptr->inventory[INVEN_BOW].sval == SV_SLING) ||
 		    (p_ptr->inventory[INVEN_BOW].sval == SV_SHORT_BOW) ||
 		    (p_ptr->inventory[INVEN_BOW].sval == SV_LONG_BOW)) p_ptr->num_fire++;
-		if (r_ptr->freq_inate > 30) p_ptr->num_fire++; /* this time for crossbows too */
+		if (r_ptr->freq_innate > 30) p_ptr->num_fire++; /* this time for crossbows too */
  #else /* give xbow an advantage */
-		if (r_ptr->freq_inate > 30)
+		if (r_ptr->freq_innate > 30)
 		if ((p_ptr->inventory[INVEN_BOW].sval == SV_SLING) ||
 		    (p_ptr->inventory[INVEN_BOW].sval == SV_SHORT_BOW) ||
 		    (p_ptr->inventory[INVEN_BOW].sval == SV_LONG_BOW)) p_ptr->num_fire++;
@@ -2133,7 +2133,7 @@ static void calc_body_bonus(int Ind)
 		if ((p_ptr->inventory[INVEN_BOW].sval == SV_SLING) ||
 		    (p_ptr->inventory[INVEN_BOW].sval == SV_SHORT_BOW) ||
 		    (p_ptr->inventory[INVEN_BOW].sval == SV_LONG_BOW)) p_ptr->num_fire++;
-		if (r_ptr->freq_inate > 30)
+		if (r_ptr->freq_innate > 30)
 			p_ptr->num_fire++; /* this time for crossbows too */
 #endif
 	}
@@ -2142,17 +2142,17 @@ static void calc_body_bonus(int Ind)
 	if ((r_ptr->flags4 & RF4_SPELLCASTER_MASK) ||
 	    (r_ptr->flags5 & RF5_SPELLCASTER_MASK) ||
 	    (r_ptr->flags6 & RF6_SPELLCASTER_MASK)) {
-		if (r_ptr->freq_inate > 30) {
+		if (r_ptr->freq_innate > 30) {
 			p_ptr->num_spell++;	// 1_IN_3
 			p_ptr->stat_add[A_INT] += 1;
 			p_ptr->to_m += 20;
 		}
-		if (r_ptr->freq_inate >= 50) {
+		if (r_ptr->freq_innate >= 50) {
 			p_ptr->num_spell++;	// 1_IN_2
 			p_ptr->stat_add[A_INT] += 2;
 			p_ptr->to_m += 15;
 		}
-		if (r_ptr->freq_inate == 100) { /* well, drujs and quylthulgs >_> */
+		if (r_ptr->freq_innate == 100) { /* well, drujs and quylthulgs >_> */
 			p_ptr->num_spell++;	// 1_IN_1
 			p_ptr->stat_add[A_INT] += 1;
 			p_ptr->to_m += 15;

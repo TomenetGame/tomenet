@@ -1761,11 +1761,9 @@ static byte multi_hued_attr(monster_race *r_ptr)
 
 	/* Monsters with no ranged attacks can be any color */
 #ifdef CLIENT_SHIMMER
-	if (!r_ptr->freq_inate) {
-		return (TERM_HALF);
-	}
+	if (!r_ptr->freq_innate) return (TERM_HALF);
 #else
-	if (!r_ptr->freq_inate) return (get_shimmer_color());
+	if (!r_ptr->freq_innate) return (get_shimmer_color());
 #endif
 
 	/* Check breaths */

@@ -714,7 +714,7 @@ void warding_glyph(int Ind)
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 
-	if (!allow_terraforming(&p_ptr->wpos, FEAT_GLYPH)) return;
+	if (!allow_terraforming(&p_ptr->wpos, FEAT_GLYPH) && !is_admin(p_ptr)) return;
 
 	cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_GLYPH);
 }
@@ -7272,7 +7272,7 @@ void golem_creation(int Ind, int max)
 	r_ptr->x_attr = TERM_YELLOW;
 	r_ptr->x_char = 'g';
 
-	r_ptr->freq_inate = 0;
+	r_ptr->freq_innate = 0;
 	r_ptr->freq_spell = 0;
 	r_ptr->flags1 |= RF1_FORCE_MAXHP;
 	r_ptr->flags2 |= RF2_STUPID | RF2_EMPTY_MIND | RF2_REGENERATE | RF2_POWERFUL | RF2_BASH_DOOR | RF2_MOVE_BODY;

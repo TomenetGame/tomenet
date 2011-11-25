@@ -222,7 +222,7 @@ static void wr_monster_race(monster_race *r_ptr)
 	wr_byte(r_ptr->speed);
 	wr_s32b(r_ptr->mexp);
 	wr_s16b(r_ptr->extra);
-	wr_byte(r_ptr->freq_inate);
+	wr_byte(r_ptr->freq_innate);
 	wr_byte(r_ptr->freq_spell);
 	wr_u32b(r_ptr->flags1);
 	wr_u32b(r_ptr->flags2);

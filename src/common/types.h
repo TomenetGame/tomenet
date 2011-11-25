@@ -518,13 +518,13 @@ struct monster_race
 	s32b weight;		/* Weight of the monster */
 	s16b extra;				/* Unused (for now) */
 
-	byte freq_inate;		/* Inate spell frequency */
+	byte freq_innate;		/* Innate spell frequency */
 	byte freq_spell;		/* Other spell frequency */
 
 	u32b flags1;			/* Flags 1 (general) */
 	u32b flags2;			/* Flags 2 (abilities) */
 	u32b flags3;			/* Flags 3 (race/resist) */
-	u32b flags4;			/* Flags 4 (inate/breath) */
+	u32b flags4;			/* Flags 4 (innate/breath) */
 	u32b flags5;			/* Flags 5 (normal spells) */
 	u32b flags6;			/* Flags 6 (special spells) */
 #if 1
@@ -571,7 +571,7 @@ struct monster_race
 	byte r_drop_gold;		/* Max number of gold dropped at once */
 	byte r_drop_item;		/* Max number of item dropped at once */
 
-	byte r_cast_inate;		/* Max number of inate spells seen */
+	byte r_cast_innate;		/* Max number of innate spells seen */
 	byte r_cast_spell;		/* Max number of other spells seen */
 
 	byte r_blows[4];		/* Number of times each blow type was seen */
@@ -1079,7 +1079,7 @@ struct monster_ego
 
 	s32b weight;                            /* Weight of the monster */
 
-	byte freq_inate;                /* Inate spell frequency */
+	byte freq_innate;               /* Innate spell frequency */
 	byte freq_spell;		/* Other spell frequency */
 
 	/* Ego flags */
@@ -1102,7 +1102,7 @@ struct monster_ego
 	u32b mflags1;                    /* Flags 1 (general) */
 	u32b mflags2;                    /* Flags 2 (abilities) */
 	u32b mflags3;                    /* Flags 3 (race/resist) */
-	u32b mflags4;                    /* Flags 4 (inate/breath) */
+	u32b mflags4;                    /* Flags 4 (innate/breath) */
 	u32b mflags5;                    /* Flags 5 (normal spells) */
 	u32b mflags6;                    /* Flags 6 (special spells) */
 	u32b mflags7;                    /* Flags 7 (movement related abilities) */
@@ -1114,7 +1114,7 @@ struct monster_ego
 	u32b nflags1;                    /* Flags 1 (general) */
 	u32b nflags2;                    /* Flags 2 (abilities) */
 	u32b nflags3;                    /* Flags 3 (race/resist) */
-	u32b nflags4;                    /* Flags 4 (inate/breath) */
+	u32b nflags4;                    /* Flags 4 (innate/breath) */
 	u32b nflags5;                    /* Flags 5 (normal spells) */
 	u32b nflags6;                    /* Flags 6 (special spells) */
 	u32b nflags7;                    /* Flags 7 (movement related abilities) */

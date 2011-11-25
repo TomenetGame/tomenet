@@ -1807,7 +1807,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	if (m_ptr->confused) return (FALSE);
 
 	/* Hack -- Extract the spell probability */
-	chance = (r_ptr->freq_inate + r_ptr->freq_spell) / 2;
+	chance = (r_ptr->freq_innate + r_ptr->freq_spell) / 2;
 
 	/* Not allowed to cast spells */
 //	if (!chance) return (FALSE);
@@ -2003,7 +2003,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 #endif	// STUPID_MONSTER_SPELLS
 
 #if 0
-	/* Extract the "inate" spells */
+	/* Extract the "innate" spells */
 	for (k = 0; k < 32; k++)
 	{
 		if (f4 & (1L << k)) spell[num++] = k + RF4_OFFSET;
@@ -4070,11 +4070,11 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 	/* Remember what the monster did to us */
 	if (seen)
 	{
-		/* Inate spell */
+		/* Innate spell */
 		if (thrown_spell < 32*4)
 		{
 			r_ptr->r_flags4 |= (1L << (thrown_spell - 32*3));
-			if (r_ptr->r_cast_inate < MAX_UCHAR) r_ptr->r_cast_inate++;
+			if (r_ptr->r_cast_innate < MAX_UCHAR) r_ptr->r_cast_inate++;
 		}
 
 		/* Bolt or Ball */
@@ -7347,23 +7347,16 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 
 		/* Hack -- check for Glyph of Warding */
-		if (do_move && (c_ptr->feat == FEAT_GLYPH))
-		{
+		if (do_move && (c_ptr->feat == FEAT_GLYPH)) {
 			/* Assume no move allowed */
 			do_move = FALSE;
 
-			/* Break the ward */
-			if (randint(BREAK_GLYPH) < r_ptr->level)
-			{
+			/* Break the ward - Michael (because he embodies the Glyph power sort of),
+			   Morgoth and certain Nether Realm monsters may insta-break them. */
+			if (randint(BREAK_GLYPH) < r_ptr->level || r_ptr->level == 98 || r_ptr->level >= 100) {
 				/* Describe observable breakage */
 				/* Prolly FIXME */
 				msg_print_near_site(ny, nx, wpos, 0, TRUE, "The rune of protection is broken!");
-#if 0
-				if (Players[Ind]->cave_flag[ny][nx] & CAVE_MARK)
-				{
-					msg_print(Ind, "The rune of protection is broken!");
-				}
-#endif	// 0
 
 				/* Break the rune */
 				cave_set_feat_live(wpos, ny, nx, FEAT_FLOOR);
@@ -7371,7 +7364,19 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				/* Allow movement */
 				do_move = TRUE;
 			}
+#ifdef SAURON_ANTI_GLYPH
+			/* Special power boost for Sauron if he gets hindered by glyphs */
+			else if (m_ptr->r_idx == 860 && base_r_ptr->freq_innate != 75) {
+				base_r_ptr->freq_spell = base_r_ptr->freq_innate = 75;
+				s_printf("SAURON: boost casting.\n");
+			}
+		} else if (do_move && m_ptr->r_idx == 860 && base_r_ptr->freq_innate != 50) {
+			base_r_ptr->freq_spell = base_r_ptr->freq_innate = 50; /* hardcoded :| */
+			s_printf("SAURON: normal casting.\n");
 		}
+#else
+		}
+#endif
 
 		/* Some monsters never attack */
 		if (do_move && (ny == p_ptr->py) && (nx == p_ptr->px) &&
@@ -9393,7 +9398,7 @@ void process_monsters(void)
 		/* Process the monster */
 		if (!m_ptr->special
 #ifdef RPG_SERVER
-	 && !m_ptr->pet
+		    && !m_ptr->pet
 #endif
 		   )
 		{
@@ -9420,6 +9425,28 @@ void process_monsters(void)
 			int p = find_player(m_ptr->owner);
 			process_monster_golem(p, i);
 		}
+
+#ifdef SAURON_ANTI_MELEE
+		/* Special Sauron enhancements */
+		if (m_ptr->r_idx == 860) {
+			/* is player a melee fighter mostly, or can intercept at least? */
+			if (p_ptr->s_info[SKILL_SWORD].value + p_ptr->s_info[SKILL_BLUNT].value +
+			    p_ptr->s_info[SKILL_AXE].value + p_ptr->s_info[SKILL_POLEARM].value +
+			    p_ptr->s_info[SKILL_MARTIAL_ARTS].value >= (p_ptr->max_plv * 2000L) / 3 ||
+			    p_ptr->s_info[SKILL_INTERCEPT].value >= (p_ptr->max_plv * 3000L) / 4 ||
+			    p_ptr->antimagic >= 40) {
+				if (!(r_info[m_ptr->r_idx].flags7 & RF7_AI_ANNOY)) {
+					r_info[m_ptr->r_idx].flags7 |= RF7_AI_ANNOY;
+					s_printf("SAURON: add annoy.\n");
+				}
+			} else {
+				if (r_info[m_ptr->r_idx].flags7 & RF7_AI_ANNOY) {
+					r_info[m_ptr->r_idx].flags7 &= ~RF7_AI_ANNOY;
+					s_printf("SAURON: no annoy.\n");
+				}
+			}
+		}
+#endif
 	}
 
 	/* Only when needed, every five game turns */

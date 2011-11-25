@@ -611,6 +611,15 @@
 #endif
 
 
+/* Make Sauron more dangerous for AM or Intercepters,
+   by giving him AI_ANNOY vs melee targets. */
+#define SAURON_ANTI_MELEE
+
+/* Make Sauron more dangerous for Glyphers
+   by giving him faster cast rate while blocked by glyphs. */
+#define SAURON_ANTI_GLYPH
+
+
 /* Auto-retaliation: */
 /* No class restriction; limit to non-escape mechanisms. */
 #define AUTO_RET_NEW
@@ -1040,7 +1049,7 @@
  #define TOWN_DAWN	(DAY / 2)	/* Number of turns from dawn to dawn XXX */
 #endif /* 0 */
 #define GROW_TREE	5000		/* How often to grow a new tree in town */
-#define BREAK_GLYPH	550		/* Rune of protection resistance */
+#define BREAK_GLYPH	350		/* Rune of protection resistance */
 #define BTH_PLUS_ADJ	3		/* Adjust BTH per plus-to-hit */
 #define MON_MULT_ADJ	8		/* High value slows multiplication */
 #define MON_SUMMON_ADJ	2		/* Adjust level of summoned creatures */

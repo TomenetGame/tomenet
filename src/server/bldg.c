@@ -1565,7 +1565,7 @@ static void sell_quest_monster(void)
 		if (r_ptr->flags1 & (RF1_ONLY_ITEM)) r_ptr->r_drop_gold = 0;
 
 		/* Hack -- observe many spells */
-		r_ptr->r_cast_inate = MAX_UCHAR;
+		r_ptr->r_cast_innate = MAX_UCHAR;
 		r_ptr->r_cast_spell = MAX_UCHAR;
 
 		/* Hack -- know all the flags */
