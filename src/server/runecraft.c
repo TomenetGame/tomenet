@@ -1219,9 +1219,11 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				msg_format(Ind, "%s%s summon a luminous circle of protection.", begin, description);
 				if (success)
 				{
-					lite_area(Ind, 10, radius + 3);
+					//lite_area(Ind, 10, radius + 3);
+					lite_area(Ind, 10, radius + 1);//for better matching of reduced GF_MAKE_GLYPH radius below
 					lite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-					fire_ball(Ind, GF_MAKE_GLYPH, 0, 1, radius/2 + 1, ""); //Divide radius by 2 (max at rad 3-4?) - Kurzel
+					//fire_ball(Ind, GF_MAKE_GLYPH, 0, 1, radius / 2 + 1, ""); //Divide radius by 2 (max at rad 3-4?) - Kurzel
+					fire_ball(Ind, GF_MAKE_GLYPH, 0, 1, 1, ""); //Anything above radius 1 is too easy
 				/*
 					for(x = 0; x<3;x++)
 					{
