@@ -5589,7 +5589,7 @@ void do_cmd_trad_house(int Ind)
 
 
 	/* Save the store number */
-	p_ptr->store_num = 7;
+	p_ptr->store_num = STORE_HOME;
 
 	/* Set the timer */
 	/* XXX well, don't kick her out of her own house :) */
@@ -6060,7 +6060,7 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 	p_ptr->ps_house_x = x;
 	p_ptr->ps_house_y = y;
 	/* Reserve store for this player */
-	fake_store_visited[i] = Ind;
+	fake_store_visited[fsidx] = Ind;
 
 	/* Set the timer (30000 used for homes aka "don't" kick out) */
 	p_ptr->tim_store = STORE_TURNOUT;
