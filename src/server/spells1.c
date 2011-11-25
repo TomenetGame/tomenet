@@ -3244,7 +3244,7 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 				break;
 			}
 
-			msg_print(Ind, "Your body starts to scramble...");
+			msg_print(Ind, "\376\377oYour body starts to scramble...");
 			s_printf("NEXUS_SCRAMBLE: %s\n", p_ptr->name);
 
 			/* Pick a pair of stats */
@@ -3275,7 +3275,7 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 				break;
 			}
 
-			msg_print(Ind, "\377oYour backpack starts to scramble...");
+			msg_print(Ind, "\376\377oYour backpack starts to scramble...");
 
 			if(m_ptr){
 				ii = 10 + m_ptr->level / 3;
@@ -3323,7 +3323,7 @@ static void apply_morph(int Ind, int power, char * killer)
 				break;
 			}
 
-			msg_print(Ind, "Your body starts to scramble...");
+			msg_print(Ind, "\376\377oYour body starts to scramble...");
 			s_printf("MORPH_SCRAMBLE: %s\n", p_ptr->name);
 
 			/* Pick a pair of stats */
