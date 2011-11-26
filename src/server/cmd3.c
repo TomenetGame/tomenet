@@ -435,7 +435,7 @@ void inven_drop(int Ind, int item, int amt)
 	if (o_idx > 0 && o_ptr->note && strstr(quark_str(o_ptr->note), "@S")
 	    && inside_house(&p_ptr->wpos, o_ptr->ix, o_ptr->iy)) {
 		object_desc(0, o_name, o_ptr, TRUE, 3);
-		s_printf("PLAYER_STORES: %s offers %s (%d,%d,%d; %d,%d).\n",
+		s_printf("PLAYER_STORE_OFFER: %s - %s (%d,%d,%d; %d,%d).\n",
 		    p_ptr->name, o_name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
 		    o_ptr->ix, o_ptr->iy);
 	}

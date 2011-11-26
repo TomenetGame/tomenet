@@ -3063,14 +3063,14 @@ void store_purchase(int Ind, int item, int amt)
 		cave_type **zcave, *c_ptr;
 
 		if (!(zcave = getcave(&p_ptr->wpos))) {
-			s_printf("PLAYER_STORE_PURCHASE: NO ZCAVE!\n");
+			s_printf("PLAYER_STORE_ERROR: NO ZCAVE!\n");
 			return; /* can't happen, paranoia */
 		}
 
 		/* Try to locate house linked to this store */
 		h_idx = pick_house(&p_ptr->wpos, p_ptr->ps_house_y, p_ptr->ps_house_x);
 		if (h_idx == -1) {
-			s_printf("PLAYER_STORE_PURCHASE: NO HOUSE!\n");
+			s_printf("PLAYER_STORE_ERROR: NO HOUSE!\n");
 			return; /* oops, he sold his house while we were shopping? :) */
 		}
 		h_ptr = &houses[h_idx];
@@ -3078,7 +3078,7 @@ void store_purchase(int Ind, int item, int amt)
 		/* Access original item in the house */
 		if (h_ptr->flags & HF_TRAD) {
 			if (h_ptr->stock_num <= o_ptr->ps_idx_x) {
-				s_printf("PLAYER_STORE_PURCHASE: BAD stock_num!\n");
+				s_printf("PLAYER_STORE_ERROR: BAD stock_num!\n");
 				msg_print(Ind, "The shopkeeper just modified the store, please re-enter!");
 				return; /* oops, the owner took out some item(s) */
 			}
@@ -3088,7 +3088,7 @@ void store_purchase(int Ind, int item, int amt)
 			if (h_ptr->flags & HF_RECT) {
 				c_ptr = &zcave[o_ptr->ps_idx_y][o_ptr->ps_idx_x];
 				if (!c_ptr->o_idx) {
-					s_printf("PLAYER_STORE_PURCHASE: BAD STOCK x,y!\n");
+					s_printf("PLAYER_STORE_ERROR: BAD STOCK x,y!\n");
 					msg_print(Ind, "The shopkeeper just modified the store, please re-enter!");
 					return; /* oops, the owner picked up our item */
 				}
@@ -3099,16 +3099,16 @@ void store_purchase(int Ind, int item, int amt)
 		/* Some item was still at the position we want to buy from,
 		   so now verify that it's still the SAME item. */
 		if (ho_ptr == NULL) {
-			s_printf("PLAYER_STORE_PURCHASE: BAD ho_ptr!\n");
+			s_printf("PLAYER_STORE_ERROR: BAD ho_ptr!\n");
 			return; /* shouldn't happen (except if we add non-rectangular mang houses.. */
 		}
 		if (ho_ptr->tval != o_ptr->tval || ho_ptr->sval != o_ptr->sval) {
-			s_printf("PLAYER_STORE_PURCHASE: BAD STOCK tval/sval!\n");
+			s_printf("PLAYER_STORE_ERROR: BAD STOCK tval/sval!\n");
 			msg_print(Ind, "The shopkeeper just modified the store, please re-enter!");
 			return; /* oops, the owner swapped our item for something else */
 		}
 		if (ho_ptr->number != o_ptr->number) {
-			s_printf("PLAYER_STORE_PURCHASE: BAD STOCK number! (%d vs %d)\n", ho_ptr->number, o_ptr->number);
+			s_printf("PLAYER_STORE_ERROR: BAD STOCK number! (%d vs %d)\n", ho_ptr->number, o_ptr->number);
 			msg_print(Ind, "The shopkeeper just modified the store, please re-enter!");
 			return; /* oops, the owner took away or added some of that item type.
 			           Actually this could be handled, but we're strict for now. */
@@ -5108,7 +5108,7 @@ void home_sell(int Ind, int item, int amt)
 		o_ptr = &sold_obj;
 		if (o_ptr->note && strstr(quark_str(o_ptr->note), "@S")) {
 			object_desc(0, o_name, o_ptr, TRUE, 3);
-			s_printf("PLAYER_STORES: %s offers %s (%d,%d,%d; %d,%d).\n",
+			s_printf("PLAYER_STORE_OFFER: %s - %s (%d,%d,%d; %d,%d).\n",
 			    p_ptr->name, o_name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
 			    p_ptr->px, p_ptr->py);
 		}
@@ -6187,7 +6187,7 @@ static void player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 	/* Try to locate house linked to this store */
 	h_idx = pick_house(&p_ptr->wpos, p_ptr->ps_house_y, p_ptr->ps_house_x);
 	if (h_idx == -1) {
-		s_printf("PLAYER_STORE_HANDLE: NO HOUSE! (value %d, buyer %s)\n", value, p_ptr->name);
+		s_printf("PLAYER_STORE_ERROR: NO HOUSE! (value %d, buyer %s)\n", value, p_ptr->name);
 		return; /* oops? */
 	}
 	h_ptr = &houses[h_idx];
@@ -6195,7 +6195,7 @@ static void player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 	strcpy(owner_name, lookup_player_name(h_ptr->dna->owner));
 
 	if (!(zcave = getcave(&p_ptr->wpos))) {
-		s_printf("PLAYER_STORE_HANDLE: NO ZCAVE! (owner %s (%d), value %d, buyer %s)\n",
+		s_printf("PLAYER_STORE_ERROR: NO ZCAVE! (owner %s (%d), value %d, buyer %s)\n",
 		    owner_name, h_ptr->dna->owner, value, p_ptr->name);
 		return; /* oops? */
 	}
@@ -6247,14 +6247,14 @@ static void player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 			/* Access existing mass-cheque in the house */
 			if (h_ptr->flags & HF_TRAD) {
 				cheque_ptr = &h_ptr->stock[p_ptr->ps_mcheque_x];
-s_printf("PLAYER_STORE: Mass Cheque (trad; owner %s (%d), %s, value %d, buyer %s)\n",
+s_printf("PLAYER_STORE_HANDLE: mass, trad, owner %s (%d), %s, value %d, buyer %s)\n",
     owner_name, h_ptr->dna->owner, o0_name, value, p_ptr->name);
 			} else {
 				/* ALL houses are currently rectangular, so this check seems obsolete.. */
 				if (h_ptr->flags & HF_RECT) {
 					c_ptr = &zcave[p_ptr->ps_mcheque_y][p_ptr->ps_mcheque_x];
 					cheque_ptr = &o_list[c_ptr->o_idx];
-s_printf("PLAYER_STORE: Mass Cheque (mang; owner %s (%d), %s, value %d, buyer %s)\n",
+s_printf("PLAYER_STORE_HANDLE: mass, mang, owner %s (%d), %s, value %d, buyer %s)\n",
     owner_name, h_ptr->dna->owner, o0_name, value, p_ptr->name);
 				}
 			}
@@ -6266,7 +6266,7 @@ s_printf("PLAYER_STORE: Mass Cheque (mang; owner %s (%d), %s, value %d, buyer %s
 				if (h_ptr->stock_num >= h_ptr->stock_size) {
 					/* ouch, no room for dropping a cheque,
 					   money goes poof :( */
-					s_printf("PLAYER_STORE_HANDLE: NO SLOT! (owner %s (%d), value %d, buyer %s)\n",
+					s_printf("PLAYER_STORE_ERROR: NO SLOT! (owner %s (%d), value %d, buyer %s)\n",
 					    owner_name, h_ptr->dna->owner, value, p_ptr->name);
 					return;
 				}
@@ -6275,7 +6275,7 @@ s_printf("PLAYER_STORE: Mass Cheque (mang; owner %s (%d), %s, value %d, buyer %s
 				         customer, but it shouldn't matter really. */
 				i = home_carry(Ind, h_ptr, cheque_ptr);
 				cheque_ptr = &h_ptr->stock[i];
-s_printf("PLAYER_STORE: New Mass Cheque (trad; owner %s (%d), %s, value %d, buyer %s)\n",
+s_printf("PLAYER_STORE_HANDLE: new mass, trad, owner %s (%d), %s, value %d, buyer %s)\n",
     owner_name, h_ptr->dna->owner, o0_name, value, p_ptr->name);
 			} else {
 				/* ALL houses are currently rectangular, so this check seems obsolete.. */
@@ -6283,7 +6283,7 @@ s_printf("PLAYER_STORE: New Mass Cheque (trad; owner %s (%d), %s, value %d, buye
 					if (p_ptr->ps_mcheque_x == -1) {
 						/* ouch, no room for dropping a cheque,
 						   money goes poof :( */
-						s_printf("PLAYER_STORE_HANDLE: NO ROOM! (owner %s (%d), value %d, buyer %s)\n",
+						s_printf("PLAYER_STORE_ERROR: NO ROOM! (owner %s (%d), value %d, buyer %s)\n",
 						    owner_name, h_ptr->dna->owner, value, p_ptr->name);
 						return;
 					}
@@ -6294,7 +6294,7 @@ s_printf("PLAYER_STORE: New Mass Cheque (trad; owner %s (%d), %s, value %d, buye
 					if (c_ptr->o_idx) {
 						/* ouch, no room for dropping a cheque,
 						   money goes poof :( */
-						s_printf("PLAYER_STORE_HANDLE: OCCUPIED ROOM! (owner %s (%d), value %d, buyer %s)\n",
+						s_printf("PLAYER_STORE_ERROR: OCCUPIED ROOM! (owner %s (%d), value %d, buyer %s)\n",
 						    owner_name, h_ptr->dna->owner, value, p_ptr->name);
 						return;
 					}
@@ -6302,7 +6302,7 @@ s_printf("PLAYER_STORE: New Mass Cheque (trad; owner %s (%d), %s, value %d, buye
 					drop_near(cheque_ptr, -1, &p_ptr->wpos, y, x);
 					/* Access the new item and point to it */
 					cheque_ptr = &o_list[c_ptr->o_idx];
-s_printf("PLAYER_STORE: New Mass Cheque (mang; owner %s (%d), %s, value %d, buyer %s)\n",
+s_printf("PLAYER_STORE_HANDLE: new mass, mang, owner %s (%d), %s, value %d, buyer %s)\n",
     owner_name, h_ptr->dna->owner, o0_name, value, p_ptr->name);
 				}
 			}
@@ -6336,7 +6336,7 @@ s_printf("PLAYER_STORE: New Mass Cheque (mang; owner %s (%d), %s, value %d, buye
 		if (h_ptr->flags & HF_TRAD) {
 			/* For list house, overwriting is enough */
 			object_copy(ho_ptr, cheque_ptr);
-s_printf("PLAYER_STORE: Cheque (trad; owner %s (%d), %s, value %d, buyer %s)\n",
+s_printf("PLAYER_STORE_HANDLE: full, trad, owner %s (%d), %s, value %d, buyer %s)\n",
     owner_name, h_ptr->dna->owner, o0_name, value, p_ptr->name);
 		} else {
 			if (h_ptr->flags & HF_RECT) {
@@ -6349,7 +6349,7 @@ s_printf("PLAYER_STORE: Cheque (trad; owner %s (%d), %s, value %d, buyer %s)\n",
 				floor_item_optimize(c_ptr->o_idx);
 				/* Drop the cheque there */
 				drop_near(cheque_ptr, -1, &p_ptr->wpos, y, x);
-s_printf("PLAYER_STORE: Cheque (mang; owner %s (%d), %s, value %d, buyer %s)\n",
+s_printf("PLAYER_STORE_HANDLE: full, mang, owner %s (%d), %s, value %d, buyer %s)\n",
     owner_name, h_ptr->dna->owner, o0_name, value, p_ptr->name);
 			}
 			//TODO: might require some everyone_lite_spot() etc stuff to redraw mang-houses..

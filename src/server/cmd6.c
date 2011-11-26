@@ -2234,7 +2234,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 		p_ptr->au += value;
 		msg_format(Ind, "\375\377sYou acquire \377y%d\377s gold pieces.", value);
-s_printf("PLAYER_STORE_CASH: Player %s redeems cheque of value %d (%s).\n", p_ptr->name, value, o_ptr->note ? quark_str(o_ptr->note) : "");
+s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? quark_str(o_ptr->note) : "");
 
 
 		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
