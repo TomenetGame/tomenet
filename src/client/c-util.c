@@ -5809,7 +5809,7 @@ void interact_audio(void) {
 			Term_putstr(6, 2, -1, TERM_L_UMBER, "Shortcuts: 'a','w','s','c'/'m'. Shift + shortcut to jump to a slider.");
 
 			if (quiet_mode) Term_putstr(12, 4, -1, TERM_L_RED,                              "  Client is running in 'quiet mode': Audio is disabled.  ");
-			else if (audio_sfx > 1 && audio_music > 0) Term_putstr(12, 4, -1, TERM_L_GREEN, "        Sound and music pack have been detected.         ");
+			else if (audio_sfx > 2 && audio_music > 0) Term_putstr(12, 4, -1, TERM_L_GREEN, "        Sound and music pack have been detected.         ");
 			else if (audio_sfx > 2 && audio_music == 0) Term_putstr(12, 4, -1, TERM_YELLOW, "Sound pack detected. No music pack seems to be installed.");
 			else if (audio_sfx <= 2 && audio_music > 0) Term_putstr(12, 4, -1, TERM_YELLOW, "Music pack detected. No sound pack seems to be installed.");
 			else Term_putstr(12, 4, -1, TERM_L_RED,                                         "   Neither sound nor music pack seems to be installed.   ");
