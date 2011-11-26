@@ -4373,15 +4373,18 @@ void store_init(store_type *st_ptr)
 		
 void store_kick(int Ind, bool say)
 {
-	player_type *p_ptr = Players[Ind];
+	int i = Players[Ind]->store_num; /* (handle_store_leave() erases p_ptr->store_num) */
+
 	if (say) msg_print(Ind, "The shopkeeper asks you to leave the store once.");
-	//				store_leave(Ind);
+	//store_leave(Ind);
+
 	handle_store_leave(Ind);
 	Send_store_kick(Ind);
+
 #ifdef PLAYER_STORES
-	if (p_ptr->store_num <= -2) {
+	if (i <= -2) {
 		/* unlock the fake store again which we had occupied */
-		fake_store_visited[-2 - p_ptr->store_num] = 0;
+		fake_store_visited[-2 - i] = 0;
 	} else
 #endif
 	teleport_player_force(Ind, 1);
@@ -6381,6 +6384,11 @@ void handle_store_leave(int Ind) {
 
 	/* hack: non-town stores (ie dungeon, but could also be wild) */
 	if (i == -1) i = gettown_dun(Ind);
+#ifdef PLAYER_STORES
+	if (p_ptr->store_num <= -2) /* it's a player's private store! */
+		st_ptr = &fake_store[-2 - p_ptr->store_num];
+	else
+#endif
 	st_ptr = &town[i].townstore[p_ptr->store_num];
 
 	/* Leave */
