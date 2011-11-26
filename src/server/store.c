@@ -5101,7 +5101,19 @@ void home_sell(int Ind, int item, int amt)
 	display_trad_house(Ind, h_ptr);
 
 	/* Re-display if item is now in store */
-	if (item_pos >= 0) display_house_inventory(Ind, h_ptr);
+	if (item_pos >= 0) {
+		display_house_inventory(Ind, h_ptr);
+
+#ifdef PLAYER_STORES
+		o_ptr = &sold_obj;
+		if (o_ptr->note && strstr(quark_str(o_ptr->note), "@S")) {
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+			s_printf("PLAYER_STORES: %s offers %s (%d,%d,%d; %d,%d).\n",
+			    p_ptr->name, o_name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+			    p_ptr->px, p_ptr->py);
+		}
+#endif
+	}
 }
 
 

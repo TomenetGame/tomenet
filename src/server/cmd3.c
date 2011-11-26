@@ -252,7 +252,7 @@ void inven_drop(int Ind, int item, int amt)
 	object_type		 tmp_obj;
 
 	cptr		act;
-//	int		j;
+	int		o_idx;
 
 	char		o_name[ONAME_LEN];
 
@@ -428,7 +428,18 @@ void inven_drop(int Ind, int item, int amt)
 	msg_format(Ind, "%^s %s (%c).", act, o_name, index_to_label(item));
 
 	/* Drop it (carefully) near the player */
-	drop_near_severe(Ind, &tmp_obj, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+	o_idx = drop_near_severe(Ind, &tmp_obj, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+
+#ifdef PLAYER_STORES
+	o_ptr = &o_list[o_idx];
+	if (o_idx > 0 && o_ptr->note && strstr(quark_str(o_ptr->note), "@S")
+	    && inside_house(&p_ptr->wpos, o_ptr->ix, o_ptr->iy)) {
+		object_desc(0, o_name, o_ptr, TRUE, 3);
+		s_printf("PLAYER_STORES: %s offers %s (%d,%d,%d; %d,%d).\n",
+		    p_ptr->name, o_name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+		    o_ptr->ix, o_ptr->iy);
+	}
+#endif
 
 	/* Decrease the item, optimize. */
 	inven_item_increase(Ind, item, -amt);
@@ -1287,16 +1298,6 @@ void do_cmd_drop(int Ind, int item, int quantity)
 
 	/* Take a partial turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
-
-#ifdef PLAYER_STORES
-	if (o_ptr->note && strstr(quark_str(o_ptr->note), "@S")) {
-		char o_name[ONAME_LEN];
-		object_desc(0, o_name, o_ptr, TRUE, 3);
-		s_printf("PLAYER_STORES: %s offers %s (%d,%d,%d; %d,%d).\n",
-		    p_ptr->name, o_name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
-		    p_ptr->px, p_ptr->py);
-	}
-#endif
 
 	/* Drop (some of) the item */
 	inven_drop(Ind, item, quantity);

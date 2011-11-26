@@ -965,6 +965,24 @@ int pick_house(struct worldpos *wpos, int y, int x)
 	return -1;
 }
 
+/* Test if a coordinate (player pos usually) is inside a building (or on its edge) - C. Blue */
+bool inside_house(struct worldpos *wpos, int x, int y) {
+	int i;
+
+	for (i = 0; i < num_houses; i++) {
+		if (!inarea(&houses[i].wpos, wpos)) continue;
+
+		if (houses[i].flags & HF_RECT) {
+			if (houses[i].x <= x && houses[i].x + houses[i].coords.rect.width - 1 >= x &&
+			    houses[i].y <= y && houses[i].y + houses[i].coords.rect.height - 1 >= y)
+				return TRUE;
+		} else {
+			/* anyone willing to implement non-rectangular houses? */
+		}
+	}
+	return FALSE;
+}
+
 /* Door change permissions
  * args example: ynn1 -> Party, Class, Race, MinLevel
  */

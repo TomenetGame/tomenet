@@ -587,6 +587,7 @@ extern bool interfere(int Ind, int chance);
 extern void do_cmd_throw(int Ind, int dir, int item, char bashing);
 extern void do_cmd_purchase_house(int Ind, int dir);
 extern int pick_house(struct worldpos *wpos, int y, int x);
+extern bool inside_house(struct worldpos *wpos, int x, int y);
 extern void house_admin(int Ind, int dir, char *args);
 extern void do_cmd_cloak(int Ind);
 extern void shadow_run(int Ind);

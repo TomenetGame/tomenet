@@ -6971,8 +6971,6 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 	int o_idx = -1;
 	int flag = 0;	// 1 = normal, 2 = combine, 3 = crash
 
-	bool inside_house = FALSE;
-
 	cave_type	*c_ptr;
 
 	/* for destruction checks */
@@ -7162,8 +7160,8 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			if (!quiet && p_ptr->obj_vis[this_o_idx] && note_kill)
 				msg_format(Ind, "\377oThe %s%s", o_name, note_kill);
 			/* Potions produce effects when 'shattered' */
-			if (is_potion) (void)potion_smash_effect(who, wpos, y, x, o_sval);
-			if (!quiet) everyone_lite_spot(wpos, y, x);
+			if (is_potion) (void)potion_smash_effect(who, wpos, ny, nx, o_sval);
+			if (!quiet) everyone_lite_spot(wpos, ny, nx);
 		}
 #endif
 		if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1); /* just paranoia here */
@@ -7173,15 +7171,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 	/* Artifact always disappears, depending on tomenet.cfg flags */
 	/* this should be in drop_near_severe, would be cleaner sometime in the future.. */
 	if (wpos->wz == 0) { /* Assume houses are always on surface */
-		//if (true_artifact_p(o_ptr) && !is_admin(p_ptr) && cfg.anti_arts_house && ((pick_house(wpos, ny, nx) != -1))
-		for (i = 0; i < num_houses; i++)
-			/* anyone willing to implement non-rectangular houses? */
-			if ((houses[i].flags & HF_RECT) && inarea(&houses[i].wpos, wpos))
-				for (bx = houses[i].x; bx < (houses[i].x + houses[i].coords.rect.width - 1); bx++)
-					for (by = houses[i].y; by < (houses[i].y + houses[i].coords.rect.height - 1); by++)
-						if ((bx == nx) && (by == ny)) inside_house = TRUE;
-
-		if (undepositable_artifact_p(o_ptr) && cfg.anti_arts_house && inside_house) {
+		if (undepositable_artifact_p(o_ptr) && cfg.anti_arts_house && inside_house(wpos, nx, ny)) {
 //			char	o_name[ONAME_LEN];
 //			object_desc(Ind, o_name, o_ptr, TRUE, 0);
 //			msg_format(Ind, "%s fades into the air!", o_name);
@@ -7207,6 +7197,9 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 
 			/* Success */
 			done = TRUE;
+
+			/* for player-store 'offer' check */
+			o_idx = this_o_idx;
 
 			/* Done */
 			break;
