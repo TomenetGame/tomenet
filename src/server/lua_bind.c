@@ -970,13 +970,16 @@ int get_inven_xtra(int Ind, int inven_slot, int n) {
 }
 
 /* re-initialize the skill chart, keeping all values though */
+//#define MODIFY_DEV_STATE /* mess with expand/collapse status? might be annoying if happens on every login */
 void lua_fix_skill_chart(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i, j;
 
-	for (i = 1; i < MAX_SKILLS; i++)
+#ifdef MODIFY_DEV_STATE
+	for (i = 0; i < MAX_SKILLS; i++)
 		p_ptr->s_info[i].dev = FALSE;
-	for (i = 1; i < MAX_SKILLS; i++) {
+#endif
+	for (i = 0; i < MAX_SKILLS; i++) {
 //		s32b value = 0, mod = 0;
 		/* Make sure all are touched */
 		p_ptr->s_info[i].touched = TRUE;
@@ -1009,7 +1012,9 @@ void lua_fix_skill_chart(int Ind) {
 		if (p_ptr->s_info[i].value || p_ptr->s_info[i].mod) {
 			j = s_info[i].father;
 			while (j != -1) {
+#ifdef MODIFY_DEV_STATE
 				p_ptr->s_info[j].dev = TRUE;
+#endif
 				j = s_info[j].father;
 				if (j == 0) break;
 			}

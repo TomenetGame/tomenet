@@ -38,17 +38,9 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		4
 #define VERSION_PATCH		8
-#define VERSION_EXTRA		2
+#define VERSION_EXTRA		3
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
-
-/* maximum MAJOR/MINOR/PATCH version that counts as 'outdated' (should be 0-15). */
-#define VERSION_MAJOR_OUTDATED	4
-#define VERSION_MINOR_OUTDATED	4
-#define VERSION_PATCH_OUTDATED	8
-#define VERSION_EXTRA_OUTDATED	1
-#define VERSION_BRANCH_OUTDATED	0
-#define VERSION_BUILD_OUTDATED	0
 
 /* MAJOR/MINOR/PATCH version that counts as 'latest' (should be 0-15).
    If a player is online with a version > this && <= current version (VERSION_)
@@ -60,6 +52,14 @@
 #define VERSION_EXTRA_LATEST	2
 #define VERSION_BRANCH_LATEST	0
 #define VERSION_BUILD_LATEST	0
+
+/* maximum MAJOR/MINOR/PATCH version that counts as 'outdated' (should be 0-15). */
+#define VERSION_MAJOR_OUTDATED	4
+#define VERSION_MINOR_OUTDATED	4
+#define VERSION_PATCH_OUTDATED	8
+#define VERSION_EXTRA_OUTDATED	1
+#define VERSION_BRANCH_OUTDATED	0
+#define VERSION_BUILD_OUTDATED	0
 
 /* Server release version tag (such as "a", "b" etc):
    Minimum client version tag required to "play 100%". */

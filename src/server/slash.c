@@ -2883,7 +2883,7 @@ void do_slash_cmd(int Ind, char *message)
 				
 				/* Update all skills */
 				calc_techniques(Ind);
-				for (i = 1; i < MAX_SKILLS; i++)
+				for (i = 0; i < MAX_SKILLS; i++)
 					Send_skill_info(Ind, i, FALSE);
 
 				p_ptr->update |= (PU_SKILL_MOD | PU_BONUS | PU_MANA | PU_HP);

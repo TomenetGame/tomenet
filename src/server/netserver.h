@@ -110,6 +110,7 @@ static int Receive_destroy(int ind);
 static int Receive_look(int ind);
 
 static int Receive_skill_mod(int ind);
+static int Receive_skill_dev(int ind);
 static int Receive_open(int ind);
 static int Receive_ghost(int ind);
 static int Receive_quaff(int ind);

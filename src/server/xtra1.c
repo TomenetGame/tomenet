@@ -5972,7 +5972,7 @@ void update_stuff(int Ind)
 		calc_techniques(Ind);
 
 		p_ptr->update &= ~(PU_SKILL_INFO);
-		for (i = 1; i < MAX_SKILLS; i++) {
+		for (i = 0; i < MAX_SKILLS; i++) {
 			if (s_info[i].name) {
 				Send_skill_init(Ind, i);
 			}
@@ -5983,7 +5983,7 @@ void update_stuff(int Ind)
 		int i;
 
 		p_ptr->update &= ~(PU_SKILL_MOD);
-		for (i = 1; i < MAX_SKILLS; i++) {
+		for (i = 0; i < MAX_SKILLS; i++) {
 			if (s_info[i].name && p_ptr->s_info[i].touched) {
 				Send_skill_info(Ind, i, FALSE);
 				p_ptr->s_info[i].touched = FALSE;

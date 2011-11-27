@@ -2238,7 +2238,7 @@ static void do_bard_skill(int Ind)
 	int i, j;
 	int value, mod;
 
-	for (i = 1; i < MAX_SKILLS; i++)
+	for (i = 0; i < MAX_SKILLS; i++)
 	{
 		/* Receives most of 'father' skills for free */
 		if (i == SKILL_COMBAT || i == SKILL_MASTERY ||
@@ -2300,7 +2300,7 @@ static void do_bard_skill(int Ind)
 	}
 
 	/* Father zero, child zero */
-	for (i = 1; i < MAX_SKILLS; i++)
+	for (i = 0; i < MAX_SKILLS; i++)
 	{
 		//s32b value = 0, mod = 0;
 
@@ -2764,9 +2764,9 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 
 	/* Set up the skills */
 //	p_ptr->skill_last_level = 1;	/* max_plv will do maybe..? */
-	for (i = 1; i < MAX_SKILLS; i++)
+	for (i = 0; i < MAX_SKILLS; i++)
 		p_ptr->s_info[i].dev = FALSE;
-	for (i = 1; i < MAX_SKILLS; i++) {
+	for (i = 0; i < MAX_SKILLS; i++) {
 		s32b value = 0, mod = 0;
 
 		/* Make sure all are touched */

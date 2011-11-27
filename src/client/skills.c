@@ -362,19 +362,24 @@ void do_cmd_skill()
 			if (p_ptr->s_info[table[sel][0]].dev) p_ptr->s_info[table[sel][0]].dev = FALSE;
 			else p_ptr->s_info[table[sel][0]].dev = TRUE;
 			init_table(table, &max, FALSE);
+			Send_skill_dev(table[sel][0], p_ptr->s_info[table[sel][0]].dev);
 		}
 		else if (c == 'c')
 		{
-			for (i = 0; i < max; i++)
+			for (i = 0; i < max; i++) {
 				p_ptr->s_info[table[i][0]].dev = FALSE;
+				Send_skill_dev(-1, FALSE);
+			}
 
 			init_table(table, &max, FALSE);
 			start = sel = 0;
 		}
 		else if (c == 'o')
 		{
-			for (i = 0; i < max; i++)
+			for (i = 0; i < max; i++) {
 				p_ptr->s_info[table[i][0]].dev = TRUE;
+				Send_skill_dev(-1, TRUE);
+			}
 
 			init_table(table, &max, FALSE);
 			/* TODO: memorize and recover the cursor position */

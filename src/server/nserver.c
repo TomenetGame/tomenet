@@ -357,6 +357,7 @@ static void Init_receive(void)
 	playing_receive[PKT_GUILD]		= Receive_guild;
 
         playing_receive[PKT_SKILL_MOD]		= Receive_skill_mod;
+	playing_receive[PKT_SKILL_DEV]		= Receive_skill_dev;
         playing_receive[PKT_ACTIVATE_SKILL]	= Receive_activate_skill;
 	playing_receive[PKT_RAW_KEY]		= Receive_raw_key;
 	playing_receive[PKT_STORE_EXAMINE]	= Receive_store_examine;
@@ -8395,6 +8396,38 @@ static int Receive_skill_mod(int ind)
 	}
 
 	if (connp->id != -1) increase_skill(player, i, FALSE);
+	return 1;
+}
+
+static int Receive_skill_dev(int ind) {
+	connection_t *connp = Conn[ind];
+	player_type *p_ptr = NULL;
+	char ch;
+	s32b i;
+	bool dev;
+	int n, player = -1;
+
+	if (connp->id != -1) {
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+	}
+
+	if ((n = Packet_scanf(&connp->r, "%c%d%c", &ch, &i, &dev)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	if (connp->id != -1) {
+		if (i == -1) {
+			/* do it for whole skill tree? */
+			for (i = 0; i < MAX_SKILLS; i++) {
+				p_ptr->s_info[i].dev = (dev == 0 ? FALSE : TRUE);
+			}
+		} else {
+			/* only do it for one skill */
+			p_ptr->s_info[i].dev = (dev == 0 ? FALSE : TRUE);
+		}
+	}
 	return 1;
 }
 

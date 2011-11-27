@@ -1859,7 +1859,6 @@ int Receive_skill_info(void)
 
 	p_ptr->s_info[i].value = val;
 	p_ptr->s_info[i].mod = mod;
-
 	if (is_newer_than(&server_version, 4, 4, 6, 2, 0, 0)) {
 		switch (dev) {
 		case -1: break;
@@ -4493,6 +4492,15 @@ int Send_skill_mod(int i)
 		return n;
 	}
 
+	return 1;
+}
+
+int Send_skill_dev(int i, bool dev)
+{
+	int	n;
+	if (is_newer_than(&server_version, 4, 4, 8, 2, 0, 0)) {
+		if ((n = Packet_printf(&wbuf, "%c%d%c", PKT_SKILL_DEV, i, dev)) <= 0) return n;
+	}
 	return 1;
 }
 
