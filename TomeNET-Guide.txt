@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 24. November 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 27. November 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -11206,8 +11206,12 @@ The magic device skill does the following...
 There are a couple of ways to reduce damage taken. One is simply to have high
 armour class (see (5.11) for details), another one is 'Dodging' skill (see
 (6.2) for details).
-This paragraph is about parrying/blocking only. To get an overview about all
-damage reduction mechanisms and the order they are applied, see (5.11).
+This paragraph is about parrying/blocking only. Note that the chance values
+given below do not always apply as is, but sometimes depend on the the attack
+type and especially on a little bit of randomness when your character chooses
+which defense method it actually uses (block or parry) - for details about this
+and about all damage reduction mechanisms in general and the order/chance they
+are applied, make sure you also read (5.11).
 
 For melee fighters that use weapons or shields, two more abilities can help:
 Parrying enemy attacks with a weapon, and blocking attacks with a shield.
@@ -11229,7 +11233,7 @@ Note: Above 30% can only be reached in defensive combat stance without a
       shield equipped. (Because if no shield is equipped, defensive combat
       stance which normally bolsters block chance will transfer that defensive
       advantage to the weapon instead, increasing the parry chance.)
-      Also, your class should be fairly skilled at parrying (see below.)
+      Also your class needs to be fairly skilled at parrying (see below.)
 
 "You cannot block at the moment."               You aren't wielding a shield.
 "You have almost no chance of blocking."        Below 5% chance.
@@ -11275,11 +11279,10 @@ The bigger a shield, the more you can block. Depending on server settings,
 the actual block base chance will usually be displayed as a percentage in []
 brackets behind the shield's name, where AC is located for other types of
 armour.
-This base chance in many cases applies as is to standard melee combat, but is
-often modified depending on the type of an incoming attack, so it's not to be
-taken as your character's total overall block chance. For example shots,
-balls, breaths are all blocked at higher probability, and in PvP combat
-blocking receives an additional overall boost.
+This base chance in many cases applies as is to standard melee combat IF your
+character tries to block instead of parrying (compare (5.11)), but is sometimes
+modified depending on the type of an incoming attack: When deflecting bolts
+from bolt traps or when in PvP combat blocking receives an additional bonus.
 
 Parrying and blocking can both be affected by combat stances - see (6.2) for
 "Combat Stances" skill.
