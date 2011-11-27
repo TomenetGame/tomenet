@@ -6764,7 +6764,7 @@ void house_creation(int Ind, bool floor, bool jail)
 	poly_build(Ind, (char*)&buildargs);	/* Its a (char*) ;( */
 }
 
-
+/* (Note: Apparently currently only used by Moltor's second_handler().) */
 extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_idx)
 {
 	int                     i, Ind, j;
@@ -6872,6 +6872,8 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 		m_ptr->energy = rand_int(10);
 	}
 
+	/* Starts 'flickered out'? */
+	if ((r_ptr->flags2 & RF2_WEIRD_MIND) && rand_int(10)) m_ptr->no_esp_phase = TRUE;
 
 	/* No "damage" yet */
 	m_ptr->stunned = 0;

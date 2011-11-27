@@ -3125,6 +3125,9 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 		m_ptr->energy = rand_int(10);
 	}
 
+	/* Starts 'flickered out'? */
+	if ((r_ptr->flags2 & RF2_WEIRD_MIND) && rand_int(10)) m_ptr->no_esp_phase = TRUE;
+
 
 	/* No "damage" yet */
 	m_ptr->stunned = 0;
