@@ -6980,9 +6980,9 @@ vampiric 'brand' on their melee attacks (see (6.7)).
 Vampiric life draining heals you with a part of the damage you afflicted on
 your target, almost each hit! The more damage you deal and the more attacks per
 round you have, the more life you will leech back. There's a maximum amount of
-HP which you can leech from a victim per round (usually around 50..100).
-Said cap of 50..100 HP isn't really reached until your character deals quite a
-lot of damage, remember: Leeching is based on a fraction of your damage dealt.
+HP which you can leech from a victim per round, but this cap isn't really
+reached until your character deals quite a lot of damage, remember:
+Leeching is based on a fraction of your damage dealt.
 
 Vampirism does not work on all types of monsters. From some it is not possible
 to drain life force. Those immune to vampirism are:
@@ -6999,17 +6999,30 @@ If you use other vampiric equipment, like gloves, they will be a bit less
 efficient than an actual vampiric weapon, meaning that you will leech less
 frequently (the amount of leeched life per hit is not penalized though) but in
 turn it will work with any weapon you use (ranged too).
-For ranged weapons it doesn't matter which part is vampiric, the bow or the
-ammunition. It won't increase your over all life leeching if both are
-vampiric either.
+For ranged weapons it doesn't matter whether the bow or the ammunition is
+vampiric. It won't increase your over all life leeching if both are vampiric
+either.
 
-In general, vampiric flags don't stack from multiple items! Just the item that
-fits the situation best (weapon/ammo) overrides the weaker ones (non-weapons).
+Note that vampirism gained from mimicked forms only works on melee combat.
+Vampires (real ones as well as mimicked ones) usually only are half efficient
+at vampiric leeching, compared to vampiric weapons, due to half of vampires'
+attacks being normal hits and the other half being biting (which does the
+actual leeching).
 
-Note that vampirism gained from mimicked forms only works on melee combat and
-has a 50% chance to go off (except for vampire bat which has 100%) due to a
-half of vampires' attacks being normal hits and the other half being biting
-(which does the actual leeching!).
+In general, vampiric flags don't stack from multiple sources! Just the source
+that fits the situation best (usually weapon/ammo) overrides the weaker ones
+(usually non-weapons). Here is a table of priority - as was just explained,
+only the most powerful source is applied, the rest is ignored:
+
+Vampirism source priority table (from best at the top to worst at the bottom)
+The best source overrides all weaker ones, which simply get ignored:
+| Melee                               | Ranged                              |
+-----------------------------------------------------------------------------
+| Weapon                     100%     | Shooter                    100%     |
+| Vampire bat/mist form      100%     | Ammunition                 100%     |
+| Vampire character race      50%     |                                     |
+| Other vampiric forms        50%     |                                     |
+| Non-weapons (gloves)        50%     | Non-weapons (gloves)        33%     |
 
 
 
