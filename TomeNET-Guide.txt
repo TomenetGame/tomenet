@@ -8924,7 +8924,7 @@ Warrior is strongly recommended.
     Humans have no experience penalties and tend to go up levels faster than
     most other races. No racial adjustments or intrinsics occur to characters
     choosing human.
-    Humans get a bonus on 'Interception' and 'Climbing'.
+    Humans get a bonus on 'Climbing' and a large bonus on 'Interception'.
 
 - Half-Elf
     Half-elves tend to be smarter and faster than humans, but not as strong.
@@ -8951,7 +8951,8 @@ Warrior is strongly recommended.
     prefer to be called burglars. They are much weaker than humans, and no good
     at melee fighting. Halflings have fair infravision, so they can detect
     warm-blooded creatures at a distance. Hobbits resist black breath somewhat.
-    They get bonus on 'Sling-Mastery', 'Stealth', 'Sneakiness' and 'Dodging'.
+    They get bonus on 'Sling-Mastery', 'Sneakiness', 'Dodging' and a large
+    bonus on 'Stealth'.
 
 - Gnome
     Gnomes are intrinsically protected to paralysis effects. Gnomes are smaller
@@ -8961,8 +8962,8 @@ Warrior is strongly recommended.
     perception, and stealth. They have lower strength than humans so they are
     not very good at fighting with hand weapons. Gnomes have fair infra-vision,
     so they can detect warm-blooded creatures at a distance.
-    Gnomes receive bonus on 'Crossbow-Mastery', 'Magic', 'Dodging' and
-    'Digging'.
+    Gnomes receive bonus on 'Crossbow-Mastery' and 'Magic' and a large bonus on
+    'Dodging' and 'Digging'.
 
 - Dwarf
     Dwarves can never be blinded and at level 30 they learn to travel across
@@ -8977,7 +8978,7 @@ Warrior is strongly recommended.
     voices, arguing with themselves for no good reason, and screaming out
     challenges at nearby foes. In other words, dwarves have a miserable
     stealth.
-    They receive a bonus on 'Axe-Mastery' and a large bonus on 'Digging'.
+    They receive a bonus on 'Axe-Mastery' and a huge bonus on 'Digging'.
 
 - Half-Orc
     Because of their preference to living underground to on the surface,
@@ -8987,8 +8988,8 @@ Warrior is strongly recommended.
     are quite ugly, and tend to pay more for goods in town. Half-Orcs do make
     good warriors and rogues, for the simple reason that Half-Orcs tend to
     have great constitutions and lots of hit points.
-    They get bonus on 'Weaponmastery', 'Backstabbing', 'Necromancy' and receive
-    slight penalties on 'Magic' and 'Sorcery'.
+    They get a slight bonus on 'Backstabbing', a large bonus on 'Weaponmastery'
+    and a bonus on 'Necromancy' and receive penalties on 'Magic' and 'Sorcery'.
 
 - Half-Troll
     Half-trolls have their strength sustained. They are very strong, but also
@@ -8996,15 +8997,16 @@ Warrior is strongly recommended.
     bad at searching, disarming, perception, and stealth. They are so ugly
     that a Half-Orc grimaces in their presence. They need to eat often.
     Half-Trolls get bonus on 'Blunt-Mastery', 'Health' and 'Swimming'. They
-    receive large penalties on 'Archery', 'Magic' and 'Sorcery' and a light
-    penalty on 'Critical-Strike'.
+    receive a penalty on 'Critical-Strike' and large penalties on 'Archery',
+    'Magic' and 'Sorcery'.
 
 - Dunadan
     Dunadain have their constitution sustained. Dunadain are a race of hardy
     men from the West. This elder race surpasses human abilities in every
     field, especially constitution. However, being men of the world, very
     little is new to them, and levels are very hard for them to gain.
-    A Dunadan gets bonus on 'Combat', 'Magic' and 'Archery'.
+    A Dunadan gets bonus on 'Combat', 'Archery' and 'Interception' and a small
+    bonus to 'Magic'.
 
 - High-Elf
     High-Elves can see the invisible and resist light and the flow of time
@@ -9013,8 +9015,8 @@ Warrior is strongly recommended.
     their wisdom is sometimes suspect. They do very well in all professions.
     There are few things that they have not seen already, and experience is
     hard for them to gain.
-    High-Elves receive bonus on 'Bow-Mastery', 'Magic', 'Stealth', 'Calmness'
-    and 'Dodging'.
+    High-Elves receive bonus on 'Bow-Mastery', 'Magic', 'Stealth', 'Dodging'
+    and a large bonus on 'Calmness'.
 
 - Yeek
     Being weak and losing many childhood fights, they have learned the
@@ -9053,9 +9055,9 @@ Warrior is strongly recommended.
     such as grass, earth, mud or water. Their food state will go up to 'Full'
     that way.
     Ents intrinsically resist the force of unleashed water.
-    They get boni on 'Health', 'Calmness' and on the magic schools 'Earth' and
-    'Water' and they receive a large penalty 'Fire' school, a small penalty on
-    'Axe-mastery' and a very slight penalty on 'Sword-mastery'.
+    They get bonus to 'Health' and a large bonus on 'Calmness' and on the magic
+    schools 'Earth' and 'Water'. They receive a large penalty on 'Fire' school,
+    a penalty on 'Axe-mastery' and a small penalty on 'Sword-mastery'.
 
 - Draconian
     These humanoid half-breeds of dragon and man surpass common humans in all
@@ -9069,8 +9071,9 @@ Warrior is strongly recommended.
     they learn how to fly. Draconians need a very long time to gain further
     experience and need to eat often. They have feather falling (levitation)
     instrinsically from birth.
-    They receive bonus on 'Polearm-Mastery', 'Aura of Fear', 'Thought Contact'
-    and the magic schools 'Conveyance' and 'Fire'.
+    They receive a bonus on 'Thought Contact' and a large bonus on
+    'Polearm-Mastery', 'Aura of Fear' and the magic schools 'Conveyance' and
+    'Fire'.
 
 - Dark-Elf
     Dark-Elves dwell below the surface in huge caverns of their underground
@@ -9091,6 +9094,11 @@ Warrior is strongly recommended.
     They don't actually need a light source, since they are able to determine
     their close surroundings even in complete darkness. This ability grows
     when the vampire rises in character-levels.
+    Vampires start with a mummy wrapping, because it can protect them from the
+    sunlight (press 'w' to wear it). If they are moving on the world surface
+    (meaning not in a dungeon/tower) while it's day, the sun will burn them if
+    they don't resist light or wear a mummy wrapping. Hint: Polymorphing into
+    a vampire bat may improve hit point regeneration rate.
     Vampires are good fighters and decent mages. However, they are unable to
     utilize magic of water or nature school. Neither can they make use of
     mimicry techniques or holy spells. They are unable to try and suppress
@@ -9102,14 +9110,11 @@ Warrior is strongly recommended.
     creatures. This means that you need to kill monsters in melee combat in
     order to satisfy your hunger, which might be quite easy for melee classes
     but sometimes a hassle for ranged/caster classes.
-    Vampires dislike blunt weapons, get a small penalty on divination magic,
-    but receive a bonus on 'Mental Intrusion' and on all necromancy skills.
     They become able to turn into a bat at level 20.
-    Vampires start with a mummy wrapping, because it can protect them from the
-    sunlight (press 'w' to wear it). If they are moving on the world surface
-    (meaning not in a dungeon/tower) while it's day, the sun will burn them if
-    they don't resist light or wear a mummy wrapping. Hint: Polymorphing into
-    a vampire bat may improve hit point regeneration rate.
+    Vampires hate 'Blunt' weapons, get a penalty on 'Divination' magic school,
+    but receive a bonus on 'Mental Intrusion' and a large bonus on 'Necromancy'
+    and all aura skills and a small bonus on 'Traumaturgy'. They cannot use
+    certain magic schools at all as described above.
 
 - Maia
     The Maiar are lesser spirits who are associated with one or more Valar, the
@@ -9138,7 +9143,6 @@ Warrior is strongly recommended.
     which has spells of different effect depending on the caster's alignment.
     Initiation to either enlightened or corrupted beings will decide the effect
     of astral spells, extra abilities, and also their skill chart layout!
-    Maia also get a bonus on 'Sneakiness' and 'Stealth'.
     Maiar can be any class that can utilize mana. They get the best shop prices
     of all races since they are either greatly respected or feared by all other
     creatures.
@@ -9165,6 +9169,7 @@ Warrior is strongly recommended.
     remain as close to their previous values as possible while the character
     gets back any skill points that are freed up due to higher skill ratios
     after the initiation took place, see (6.2a) for details.
+    Maia get a bonus on 'Sneakiness' and 'Stealth' no matter the alignment.
 
 
 Here is a table showing boni/mali of the different races:
