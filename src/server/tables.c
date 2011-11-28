@@ -1606,7 +1606,7 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_STEALTH,
                                 '+', 1000,
-                                '%', 120,
+                                '%', 115,
                         },
                         {
                                 SKILL_SNEAKINESS,
@@ -1880,11 +1880,17 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_MAGIC,
                                 '+', 0,
-                                '%', 110,
+                                '%', 105,
                         },
                         {
                                 SKILL_ARCHERY,
                                 '+', 0,
+                                '%', 110,
+                        },
+                        {
+//                                SKILL_TRAINING,
+                                SKILL_INTERCEPT,
+                                '+', 1000,
                                 '%', 110,
                         },
                         {
