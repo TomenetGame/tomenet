@@ -5888,6 +5888,7 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/testdam")) {
 				if (tk) {
 					p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = 0;
+					p_ptr->test_turn = turn;
 					msg_print(Ind, "test count/dam/heal have been reset.");
 				} else {
 					if (p_ptr->test_count == 0)
@@ -5897,6 +5898,10 @@ void do_slash_cmd(int Ind, char *message)
 						    p_ptr->test_count,
 						    p_ptr->test_dam, p_ptr->test_dam / p_ptr->test_count,
 						    p_ptr->test_heal, p_ptr->test_heal / p_ptr->test_count);
+						msg_format(Ind, "test turns %d - tot dam %d, avg %d - tot heal %d, avg %d",
+						    turn - p_ptr->test_turn,
+						    p_ptr->test_dam, p_ptr->test_dam / (turn - p_ptr->test_turn),
+						    p_ptr->test_heal, p_ptr->test_heal / (turn - p_ptr->test_count));
 				}
 				return;
 			}

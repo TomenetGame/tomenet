@@ -2961,7 +2961,7 @@ struct player_type
 	int admin_godly_strike, admin_set_defeat;
 
 #ifdef TEST_SERVER
-	u32b test_count, test_dam, test_heal;
+	u32b test_count, test_dam, test_heal, test_turn;
 #endif
 
 	/* give players certain warnings, meant to guide newbies along, and remember
