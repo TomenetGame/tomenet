@@ -5331,9 +5331,10 @@ bool mon_hit_rune_trap(int m_idx)
 #endif
 
 		/* trap is gone */
-		who = cs_ptr->sc.runetrap.feat;
+		if (who > 0) remove_rune_trap_upkeep(who, 0, mx, my);
+		i = cs_ptr->sc.runetrap.feat;
 		cs_erase(c_ptr, cs_ptr);
-		cave_set_feat_live(wpos, my, mx, who);
+		cave_set_feat_live(wpos, my, mx, i);
 		return FALSE;
 	}
 
