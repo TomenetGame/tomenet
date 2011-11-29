@@ -854,7 +854,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp)
 	ox = p_ptr->px;
 
 #ifdef USE_SOUND_2010
-	if (org_dis <= 20 && org_dis >= 10) sound(Ind, "phase_door", NULL, SFX_TYPE_COMMAND, TRUE);
+	if (org_dis <= 20 && org_dis >= 7) sound(Ind, "phase_door", NULL, SFX_TYPE_COMMAND, TRUE);
 	else if (org_dis > 20) sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 
