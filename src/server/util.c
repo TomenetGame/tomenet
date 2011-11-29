@@ -2839,7 +2839,8 @@ static void player_talk_aux(int Ind, char *message)
 
 		/* Send message to target party */
 		if (p_ptr->mutedchat < 2) {
-			party_msg_format_ignoring(Ind, target, "\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[target].name, sender, message + 2);
+			party_msg_format_ignoring(Ind, target, "\375\377%c[(P) %s] %s", COLOUR_CHAT_PARTY, sender, message + 2);
+//			party_msg_format_ignoring(Ind, target, "\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[target].name, sender, message + 2);
 //			party_msg_format_ignoring(Ind, target, "\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[target].name, sender, message + 1);
 		}
 
@@ -2926,7 +2927,8 @@ static void player_talk_aux(int Ind, char *message)
 
 		/* Send message to guild party */
 		if (p_ptr->mutedchat < 2) {
-			guild_msg_format(p_ptr->guild, "\375\377y[\377U%s:%s\377y]\377%c %s", guilds[p_ptr->guild].name, sender, COLOUR_CHAT_GUILD, message + 2);
+			guild_msg_format(p_ptr->guild, "\375\377y[\377%c(G) %s\377y]\377%c %s", COLOUR_CHAT_GUILD, sender, COLOUR_CHAT_GUILD, message + 2);
+			//guild_msg_format(p_ptr->guild, "\375\377y[\377%c%s\377y:\377%c%s\377y]\377%c %s", COLOUR_CHAT_GUILD, guilds[p_ptr->guild].name, COLOUR_CHAT_GUILD, sender, COLOUR_CHAT_GUILD, message + 2);
 		}
 
 		/* Done */
@@ -3051,14 +3053,20 @@ static void player_talk_aux(int Ind, char *message)
 
 	/* Send to appropriate party */
 	if (len && target < 0) {
+		/* Can't send msg to party from 'outside' as non-admin */
+		if (p_ptr->party != 0 - target && !admin) {
+			msg_print(Ind, "You aren't in that party.");
+			return;
+		}
+
 		/* Send message to target party */
-		party_msg_format_ignoring(Ind, 0 - target, "\375\377%c[%s:%s] %s",
-		    COLOUR_CHAT_PARTY, parties[0 - target].name, sender, colon);
+		party_msg_format_ignoring(Ind, 0 - target, "\375\377%c[(P) %s] %s", COLOUR_CHAT_PARTY, sender, colon);
+		//party_msg_format_ignoring(Ind, 0 - target, "\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[0 - target].name, sender, colon);
 
 		/* Also send back to sender if not in that party */
 		if (!player_in_party(0 - target, Ind)) {
 			msg_format(Ind, "\375\377%c[%s:%s] %s",
-			   COLOUR_CHAT_PARTY, parties[0 - target].name, sender, colon);
+			    COLOUR_CHAT_PARTY, parties[0 - target].name, sender, colon);
 		}
 
 		exec_lua(0, "chat_handler()");
