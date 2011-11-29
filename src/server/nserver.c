@@ -776,6 +776,18 @@ static bool update_acc_file_version(void) {
 			c_acc.id = c_acc_old.id;
 			strcpy(c_acc.name, c_acc_old.name);
 			strcpy(c_acc.pass, c_acc_old.pass);
+			c_acc.acc_laston = c_acc_old.acc_laston;
+			c_acc.cheeze = c_acc_old.cheeze;
+			c_acc.cheeze_self = c_acc_old.cheeze_self;
+			c_acc.flags = c_acc_old.flags;
+			/* changes/additions: */
+			c_acc.deed_event = c_acc.deed_achievement = c_acc.guild_id = 0;
+#endif
+#if 0
+			/* copy unchanged structure parts: */
+			c_acc.id = c_acc_old.id;
+			strcpy(c_acc.name, c_acc_old.name);
+			strcpy(c_acc.pass, c_acc_old.pass);
 			c_acc.acc_laston = 0;//c_acc_old.expiry;
 			c_acc.cheeze = c_acc_old.cheeze;
 			c_acc.cheeze_self = c_acc_old.cheeze_self;
