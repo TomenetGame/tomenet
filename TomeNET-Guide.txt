@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 28. November 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 29. November 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -9412,11 +9412,11 @@ vary. For example a warrior cannot learn magic spells.
     with their ranged weapons. They can die quickly too, however.
     Archers are to bows what warriors are to melee. They are the best class
     around with any bow, crossbow or sling and their primary stat is dexterity.
-    An Archer is very bad at melee, being only better than the Sorcerer.
+    An Archer is very bad at melee, being only better than mage-like classes.
     Archers will receive an array of special techniques to their disposal from
     training the 'Archery' skill, such as setting up a precise sniping shot at
     a target asleep or how to create ammunition from rubble or from the bones
-    of their opponents (see (6.12)).
+    of their opponents (see (6.12)), accessible via 'm' key or macro wizard.
 
     Hint: Enchanting your ranged weapon to-damage is especially effective,
     because the enchantment will be multiplied by the weapons multiplier.
