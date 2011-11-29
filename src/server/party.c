@@ -920,18 +920,18 @@ int guild_add(int adder, cptr name){
 	}
 
 	Ind = name_lookup_loose(adder, name, FALSE);
-
 	if (Ind <= 0) return FALSE;
-
-	/* Set pointer */
 	p_ptr = Players[Ind];
 
 	/* Make sure this isn't an impostor */
-	if (guilds[guild_id].master!=q_ptr->id && !is_admin(q_ptr)) {
-		/* Message */
+	if (guilds[guild_id].master != q_ptr->id && !is_admin(q_ptr)) {
 		msg_print(adder, "\377yOnly the guildmaster may add new members.");
+		return FALSE;
+	}
 
-		/* Abort */
+	/* Everlasting and other chars cannot be in the same guild */
+	if (compat_pmode(adder, Ind)) {
+		msg_format(adder, "\377yYou cannot add %s characters to this guild.", compat_pmode(adder, Ind));
 		return FALSE;
 	}
 
