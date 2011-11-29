@@ -41,6 +41,8 @@
 //#define COMPACT_GENDER
 #endif
 
+/* Allow to inspect light source and ammo quiver too while target wears mummy wrapping? */
+#define WRAPPING_NEW
 
 
 /*
@@ -1487,10 +1489,20 @@ void do_cmd_check_player_equip(int Ind, int line)
 
 		/* Print equipments */
 		for (i = (admin ? 0 : INVEN_WIELD);
+#ifndef WRAPPING_NEW
 		    i < (hidden ? INVEN_LEFT : INVEN_TOTAL); i++)
+#else
+		    i < INVEN_TOTAL; i++)
+#endif
 		{
 			object_type *o_ptr = &q_ptr->inventory[i];
 			char o_name[ONAME_LEN];
+#ifdef WRAPPING_NEW
+			if (hidden) {
+				if (i == INVEN_LITE || i == INVEN_AMMO) fprintf(fff, "\377%c (Covered by a grubby wrapping)\n", 'D');
+				if (i >= INVEN_LEFT && i != INVEN_LITE && i != INVEN_AMMO) continue;
+			}
+#endif
 			if (o_ptr->tval) {
 				object_desc(Ind, o_name, o_ptr, TRUE, 3 + (i < INVEN_WIELD ? 0 : 0x10));
 				if (admin && i < INVEN_WIELD)
@@ -1499,6 +1511,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 					fprintf(fff, "\377%c %s\n", i < INVEN_WIELD? 'o' : 'w', o_name);
 			}
 		}
+#ifndef WRAPPING_NEW
 		/* Covered by a mummy wrapping? */
 		if (hidden) {
 #if 0 /* changed position of INVEN_ARM to occur before INVEN_LEFT, so following hack isn't needed anymore */
@@ -1512,7 +1525,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 #endif
 			fprintf(fff, "\377%c (Covered by a grubby wrapping)\n", 'D');
 		}
-
+#endif
 	}
 
        /* Close the file */
