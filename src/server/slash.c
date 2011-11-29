@@ -4060,11 +4060,15 @@ void do_slash_cmd(int Ind, char *message)
 					if ((d_ptr = wild->tower)) {
 						type = d_ptr->type;
 
-						//d_ptr->id = d_info[type].id;
-						//d_ptr->baselevel = d_info[type].baselevel;
-						d_ptr->flags1 = d_info[type].flags1;
-						d_ptr->flags2 = d_info[type].flags2 | DF2_RANDOM;
-						d_ptr->maxdepth = d_info[type].maxdepth;
+						if (type) {
+							d_ptr->flags1 = d_info[type].flags1;
+							d_ptr->flags2 = d_info[type].flags2 | DF2_RANDOM;
+							d_ptr->baselevel = d_info[type].mindepth;
+							d_ptr->maxdepth = d_info[type].maxdepth - d_ptr->baselevel + 1;
+						} else {
+							d_ptr->flags1 = d_info[type].flags1;
+							d_ptr->flags2 = d_info[type].flags2;
+						}
 						//d_ptr->r_char = d_info[type].r_char;
 						//d_ptr->nr_char = d_info[type].nr_char;
 
@@ -4101,13 +4105,15 @@ void do_slash_cmd(int Ind, char *message)
 					if ((d_ptr = wild->dungeon)) {
 						type = d_ptr->type;
 
-						//d_ptr->id = d_info[type].id;
-						//d_ptr->baselevel = d_info[type].baselevel;
-						d_ptr->flags1 = d_info[type].flags1;
-						d_ptr->flags2 = d_info[type].flags2 | DF2_RANDOM;
-						d_ptr->maxdepth = d_info[type].maxdepth;
-						//d_ptr->r_char = d_info[type].r_char;
-						//d_ptr->nr_char = d_info[type].nr_char;
+						if (type) {
+							d_ptr->flags1 = d_info[type].flags1;
+							d_ptr->flags2 = d_info[type].flags2 | DF2_RANDOM;
+							d_ptr->baselevel = d_info[type].mindepth;
+							d_ptr->maxdepth = d_info[type].maxdepth - d_ptr->baselevel + 1;
+						} else {
+							d_ptr->flags1 = d_info[type].flags1;
+							d_ptr->flags2 = d_info[type].flags2;
+						}
 
 #ifdef RPG_SERVER /* Make dungeons harder */
 //						d_ptr->flags2 &= ~(DF2_IRON || DF2_IRONFIX1 || DF2_IRONFIX2 || DF2_IRONFIX3 || DF2_IRONFIX4 || 
