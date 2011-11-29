@@ -4036,7 +4036,7 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "No staircase downwards found.");
 				return;
 			}
-			else if (prefix(message, "/debug-dun")){
+			else if (prefix(message, "/update-dun")){
 				/* Reloads dungeon flags from d_info.txt, updating existing
 				   dungeons. Note that you have to call this after you made changes
 				   to d_info.txt, since dungeons will NOT update automatically.
@@ -4060,8 +4060,13 @@ void do_slash_cmd(int Ind, char *message)
 					if ((d_ptr = wild->tower)) {
 						type = d_ptr->type;
 
+						//d_ptr->id = d_info[type].id;
+						//d_ptr->baselevel = d_info[type].baselevel;
 						d_ptr->flags1 = d_info[type].flags1;
 						d_ptr->flags2 = d_info[type].flags2 | DF2_RANDOM;
+						d_ptr->maxdepth = d_info[type].maxdepth;
+						//d_ptr->r_char = d_info[type].r_char;
+						//d_ptr->nr_char = d_info[type].nr_char;
 
 #ifdef RPG_SERVER /* Make towers harder */
 //						d_ptr->flags2 &= ~(DF2_IRON || DF2_IRONFIX1 || DF2_IRONFIX2 || DF2_IRONFIX3 || DF2_IRONFIX4 || 
@@ -4096,8 +4101,13 @@ void do_slash_cmd(int Ind, char *message)
 					if ((d_ptr = wild->dungeon)) {
 						type = d_ptr->type;
 
+						//d_ptr->id = d_info[type].id;
+						//d_ptr->baselevel = d_info[type].baselevel;
 						d_ptr->flags1 = d_info[type].flags1;
 						d_ptr->flags2 = d_info[type].flags2 | DF2_RANDOM;
+						d_ptr->maxdepth = d_info[type].maxdepth;
+						//d_ptr->r_char = d_info[type].r_char;
+						//d_ptr->nr_char = d_info[type].nr_char;
 
 #ifdef RPG_SERVER /* Make dungeons harder */
 //						d_ptr->flags2 &= ~(DF2_IRON || DF2_IRONFIX1 || DF2_IRONFIX2 || DF2_IRONFIX3 || DF2_IRONFIX4 || 
@@ -5983,7 +5993,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 #endif
 			/* Update 'noteworthy occurances' aka legends.log display, for debugging purposes */
-			else if (prefix(message,"/updatelegends")) {
+			else if (prefix(message,"/update-leg")) {
 				char path[MAX_PATH_LENGTH];
 				char path_rev[MAX_PATH_LENGTH];
 				path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends.log");
