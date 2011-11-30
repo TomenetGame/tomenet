@@ -2677,12 +2677,12 @@ static void player_talk_aux(int Ind, char *message)
 		case '\\':	case '|':
 		case 'p': case 'P': case 'o': case 'O':
 			if (message == colon || colon[-1] == ' ' || colon[-1] == '>' || /* >:) -> evil smiley */
-			    ((message == colon - 1) && (colon[-1] != '!') && (colon[-1] != '#') && (colon[-1] != '%'))) /* <- party names must be at least 2 chars then */
+			    ((message == colon - 1) && (colon[-1] != '!') && (colon[-1] != '#') && (colon[-1] != '%') && (colon[-1] != '$'))) /* <- party names must be at least 2 chars then */
 				colon = NULL; /* the check is mostly important for '(' */
 			break;
 		case '-':
 			if (message == colon || colon[-1] == ' ' || colon[-1] == '>' || /* here especially important: '-' often is for numbers/recall depth */
-			    ((message == colon - 1) && (colon[-1] != '!') && (colon[-1] != '#') && (colon[-1] != '%'))) /* <- party names must be at least 2 chars then */
+			    ((message == colon - 1) && (colon[-1] != '!') && (colon[-1] != '#') && (colon[-1] != '%') && (colon[-1] != '$'))) /* <- party names must be at least 2 chars then */
 				if (!strchr("123456789", *(colon + 2))) colon = NULL;
 			break;
 		case '/':
@@ -2705,7 +2705,7 @@ static void player_talk_aux(int Ind, char *message)
 
 			/* new hack: ..but only if the previous two chars aren't  !:  (party chat),
 			   and if it's appearently meant to be a smiley. */
-			if ((colon - message == 1) && (colon[-1]=='!' || colon[-1]=='#' || colon[-1]=='%'))
+			if ((colon - message == 1) && (colon[-1]=='!' || colon[-1]=='#' || colon[-1]=='%' || colon[-1]=='$'))
 			switch (*(colon + 2)) {
 			case '(': case ')':
 			case '[': case ']':
