@@ -3049,7 +3049,7 @@ void do_slash_cmd(int Ind, char *message)
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-			j = name_lookup_loose(Ind, token[1], FALSE);
+			j = name_lookup_loose(Ind, message3, FALSE);
 			if (!j || !p_ptr->play_vis[j]) return;
 			for (i = 1; i <= 9; i++) {
 				if (i == 5) continue;
@@ -3076,7 +3076,7 @@ void do_slash_cmd(int Ind, char *message)
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-			j = name_lookup_loose(Ind, token[1], FALSE);
+			j = name_lookup_loose(Ind, message3, FALSE);
 			if (!j || !p_ptr->play_vis[j]) return;
 
 			for (i = 1; i <= 9; i++) {
@@ -3101,7 +3101,7 @@ void do_slash_cmd(int Ind, char *message)
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-			j = name_lookup_loose(Ind, token[1], FALSE);
+			j = name_lookup_loose(Ind, message3, FALSE);
 			if (!j || !p_ptr->play_vis[j]) return;
 
 			for (i = 1; i <= 9; i++) {
@@ -3126,7 +3126,7 @@ void do_slash_cmd(int Ind, char *message)
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-			j = name_lookup_loose(Ind, token[1], FALSE);
+			j = name_lookup_loose(Ind, message3, FALSE);
 			if (!j || !p_ptr->play_vis[j]) return;
 
 			for (i = 1; i <= 9; i++) {
@@ -3140,6 +3140,107 @@ void do_slash_cmd(int Ind, char *message)
 
 			msg_format(j, "\377o%s pokes you.", p_ptr->name);
 			msg_format_near(j, "\377y%s pokes %s.", p_ptr->name, Players[j]->name);
+			return;
+		}
+		else if (prefix(message, "/guild_adder")) {
+			u32b *flags;
+			struct guild_type *guild;
+			player_type *q_ptr;
+			if (!p_ptr->guild) {
+				msg_print(Ind, "You are not in a guild.");
+				return;
+			}
+			guild = &guilds[p_ptr->guild];
+			if (guild->master != p_ptr->id) {
+				msg_print(Ind, "You are not the guild master.");
+				return;
+			}
+			flags = &guild->flags;
+			if (!tk) {
+				msg_print(Ind, "Usage: /guild_adder <player name>");
+				return;
+			}
+			i = name_lookup_loose(Ind, message3, FALSE);
+			if (!i) {
+				msg_print(Ind, "Player not online.");
+				return;
+			}
+			if (i == Ind) {
+				msg_print(Ind, "As guild master you can always add others.");
+				return;
+			}
+			q_ptr = Players[i];
+			if (q_ptr->guild != p_ptr->guild) {
+				msg_print(Ind, "That player is not in your guild.");
+				return;
+			}
+
+			if (q_ptr->guild_flags & PGF_ADDER) {
+				q_ptr->guild_flags &= ~PGF_ADDER;
+				msg_format(Ind, "Player \377r%s\377w is no longer authorized to add others.", q_ptr->name);
+				msg_format(i, "\374\377UGuild master %s \377rretracted\377U your authorization to add others.", p_ptr->name);
+			} else {
+				q_ptr->guild_flags |= PGF_ADDER;
+				msg_format(Ind, "Player \377G%s\377w is now authorized to add other players.", q_ptr->name);
+				msg_format(i, "\374\377UGuild master %s \377Gauthorized\377U to add other players.", p_ptr->name);
+				if (!(*flags & GFLG_ALLOW_ADDERS)) {
+					msg_print(Ind, "However, note that currently the guild flags still prevent this!");
+					msg_print(Ind, "To toggle the corresponding flag, use '/guild_flags adders' command.");
+				}
+			}
+			return;
+		}
+		else if (prefix(message, "/guild_flags")) {
+			u32b *flags;
+			struct guild_type *guild;
+			if (!p_ptr->guild) {
+				msg_print(Ind, "You are not in a guild.");
+				return;
+			}
+			guild = &guilds[p_ptr->guild];
+			if (guild->master != p_ptr->id) {
+				msg_print(Ind, "You are not the guild master.");
+				return;
+			}
+			flags = &guild->flags;
+
+			if (!tk) {
+				msg_format(Ind,  "\377%cCurrent guild configuration (use /guild_flags <flag name> command to change):", COLOUR_CHAT_GUILD);
+				msg_format(Ind, "\377w    adders     : %s", *flags & GFLG_ALLOW_ADDERS ? "\377GYES" : "\377rno");
+				msg_print(Ind,  "\377W        Allows players designated via /guild_adder command to add others.");
+				msg_format(Ind, "\377w    autoreadd  : %s", *flags & GFLG_AUTO_READD ? "\377GYES" : "\377rno");
+				msg_print(Ind,  "\377W        If a guild mate ghost-dies the next char he logs on with within");
+				msg_print(Ind,  "\377W        20 minutes is automatically added to the guild again.");
+				msg_format(Ind, "\377w    minlev     : \377%c%d", guild->minlev <= 1 ? 'w' : (guild->minlev <= 10 ? 'G' : (guild->minlev < 20 ? 'g' :
+				    (guild->minlev < 30 ? 'y' : (guild->minlev < 40 ? 'o' : (guild->minlev <= 50 ? 'r' : 'v'))))), guild->minlev);
+				msg_print(Ind,  "\377W        Minimum character level required to get added to the guild.");
+				return;
+			}
+			if (streq(token[1], "adders")) {
+				if (*flags & GFLG_ALLOW_ADDERS) {
+					msg_print(Ind, "Flag 'adders' set to NO.");
+					*flags &= ~GFLG_ALLOW_ADDERS;
+				} else {
+					msg_print(Ind, "Flag 'adders' set to YES.");
+					*flags |= GFLG_ALLOW_ADDERS;
+				}
+			} else if (streq(token[1], "autoreadd")) {
+				if (*flags & GFLG_AUTO_READD) {
+					msg_print(Ind, "Flag 'autoreadd' set to NO.");
+					*flags &= ~GFLG_AUTO_READD;
+				} else {
+					msg_print(Ind, "Flag 'autoreadd' set to YES.");
+					*flags |= GFLG_AUTO_READD;
+				}
+			} else if (streq(token[1], "minlev")) {
+				if (tk < 2) {
+					msg_print(Ind, "Usage: /guild_flags minlev <level>");
+					return;
+				}
+				msg_format(Ind, "Minimum level required to join the guild so far was %d..", guild->minlev);
+				guild->minlev = atoi(token[2]);
+				msg_format(Ind, "..and has now been set to %d.", guild->minlev);
+			} else msg_print(Ind, "Unknown guild flag specified.");
 			return;
 		}
 
@@ -4375,7 +4476,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			/* very dangerous if player is poisoned, very weak, or has hp draining */
 			else if (prefix(message, "/threaten") || prefix(message, "/thr")) { /* Nearly kill someone, as threat >:) */
-				j = name_lookup_loose(Ind, token[1], FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE);
 				if (!tk) {
 					msg_print(Ind, "Usage: /threaten <player name>");
 					return;
@@ -4395,7 +4496,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "Usage: /slap <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, token[1], FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE);
 				if (!j) return;
 #ifdef USE_SOUND_2010
 				sound_near_site(Players[j]->py, Players[j]->px, &p_ptr->wpos, 0, "hit_whip", "hit", SFX_TYPE_COMMAND, TRUE);
@@ -4413,7 +4514,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "Usage: /pat <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, token[1], FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE);
 				if (!j) return;
 				msg_format(Ind, "\377yPatting %s.", Players[j]->name);
 				msg_print(j, "\377yYou are patted by something invisible.");
@@ -4425,7 +4526,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "Usage: /hug <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, token[1], FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE);
 				if (!j) return;
 				msg_format(Ind, "\377yHugging %s.", Players[j]->name);
 				msg_print(j, "\377yYou are hugged by something invisible.");
@@ -4437,7 +4538,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "Usage: /poke <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, token[1], FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE);
 				if (!j) return;
 				msg_format(Ind, "\377yPoking %s.", Players[j]->name);
 				msg_print(j, "\377yYou are poked by something invisible.");
@@ -4449,7 +4550,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "Usage: /strangle <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, token[1], FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE);
 				if (!j) return;
 				msg_format(Ind, "\377yPoking %s.", Players[j]->name);
 				msg_print(j, "\377yYou are being strangled by something invisible!");
@@ -4465,7 +4566,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "Usage: /cheer <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, token[1], FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE);
 				if (!j) return;
 				msg_print(j, "\377ySomething invisible is cheering for you!");
 				msg_format_near(j, "\377yYou hear something invisible cheering for %s!", Players[j]->name);
@@ -4478,7 +4579,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "Usage: /applaud <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, token[1], FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE);
 				if (!j) return;
 				msg_format(Ind, "\377yApplauding %s.", Players[j]->name);
 				msg_print(j, "\377ySomeone invisible is applauding for you!");
@@ -4491,7 +4592,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "Usage: /presence <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, token[1], FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE);
 				if (!j) return;
 				msg_print(j, "\377yYou feel an invisible presence watching you!");
 				msg_format_near(j, "\377yYou feel an invisible presence near %s!", Players[j]->name);
@@ -4502,7 +4603,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "Usage: /snicker <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, token[1], FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE);
 				if (!j) return;
 				msg_format(Ind, "\377ySnickering at %s.", Players[j]->name);
 				msg_print(j, "\377yYou hear someone invisible snickering evilly!");

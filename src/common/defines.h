@@ -7705,3 +7705,15 @@ extern int PlayerUID;
 #define RID_GO_START	2
 #define RID_GO_MOVE	3
 #endif
+
+
+/* Guild flags */
+#define GFLG_NONE		0x00000000
+#define GFLG_EVERLASTING	0x00000001	/* it's an everlasting-mode guild (for auto_readd) */
+#define GFLG_PVP		0x00000002	/* it's a pvp-mode guild (for auto_readd) - currently not eligible */
+#define GFLG_AUTO_READD		0x00000004	/* automatically adds a player again after his char died, within 20 minutes */
+#define GFLG_ALLOW_ADDERS	0x00000008	/* enable adding more people by designated 'adders' (see PGF_ADDER below) */
+
+/* Player guild flags */
+#define PGF_NONE		0x00000000
+#define PGF_ADDER		0x00000001	/* player may add other players to the guild although he's not the leader */

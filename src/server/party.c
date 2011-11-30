@@ -226,6 +226,86 @@ int acc_set_flags_id(u32b id, u32b flags, bool set) {
 	return(1);
 }
 
+/* set account guild info */
+int acc_set_guild(char *name, s32b id) {
+	struct account *c_acc;
+
+	c_acc = GetAccount(name, NULL, TRUE);
+	if (!c_acc) return(0);
+
+	c_acc->guild_id = id;
+
+	WriteAccount(c_acc, FALSE);
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
+
+	KILL(c_acc, struct account);
+	return(1);
+}
+
+/* get account guild info */
+s32b acc_get_guild(char *name){
+	struct account *c_acc;
+	s32b guild_id;
+
+	c_acc = GetAccount(name, NULL, FALSE);
+	if (!c_acc) return(0);
+
+	guild_id = c_acc->guild_id;
+	KILL(c_acc, struct account);
+	return guild_id;
+}
+
+int acc_set_deed_event(char *name, char deed_sval) {
+	struct account *c_acc;
+
+	c_acc = GetAccount(name, NULL, TRUE);
+	if (!c_acc) return(0);
+
+	c_acc->deed_event = deed_sval;
+
+	WriteAccount(c_acc, FALSE);
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
+
+	KILL(c_acc, struct account);
+	return(1);
+}
+char acc_get_deed_event(char *name){
+	struct account *c_acc;
+	char deed_sval;
+
+	c_acc = GetAccount(name, NULL, FALSE);
+	if (!c_acc) return(0);
+
+	deed_sval = c_acc->deed_event;
+	KILL(c_acc, struct account);
+	return deed_sval;
+}
+int acc_set_deed_achievement(char *name, char deed_sval) {
+	struct account *c_acc;
+
+	c_acc = GetAccount(name, NULL, TRUE);
+	if (!c_acc) return(0);
+
+	c_acc->deed_achievement = deed_sval;
+
+	WriteAccount(c_acc, FALSE);
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
+
+	KILL(c_acc, struct account);
+	return(1);
+}
+char acc_get_deed_achievement(char *name){
+	struct account *c_acc;
+	char deed_sval;
+
+	c_acc = GetAccount(name, NULL, FALSE);
+	if (!c_acc) return(0);
+
+	deed_sval = c_acc->deed_achievement;
+	KILL(c_acc, struct account);
+	return deed_sval;
+}
+
 /*
  return player account information (by name)
  */
@@ -566,6 +646,11 @@ int guild_create(int Ind, cptr name){
 	object_type forge, *o_ptr = &forge;
 	char temp[160];
 
+	/* zonk */
+	if ((p_ptr->mode & MODE_PVP)) {
+		msg_print(Ind, "\377yPvP characters may not create a guild.");
+		return FALSE;
+	}
 	/* Make sure this guy isn't in some other guild already */
 	if (p_ptr->guild != 0) {
 		msg_print(Ind, "\377yYou already belong to a guild!");
@@ -663,6 +748,10 @@ int guild_create(int Ind, cptr name){
 	/* Add the owner as a member */
 	p_ptr->guild = index;
 	guilds[index].members = 1;
+
+	/* Set guild mode */
+	if ((p_ptr->mode & MODE_EVERLASTING))
+		guilds[index].flags |= GFLG_EVERLASTING;
 
 	Send_guild(Ind, FALSE, FALSE);
 
@@ -912,7 +1001,7 @@ int party_create_ironteam(int Ind, cptr name)
 /*
  * Add player to a guild
  */
-int guild_add(int adder, cptr name){
+int guild_add(int adder, cptr name) {
 	player_type *p_ptr;
 	player_type *q_ptr = Players[adder];
 	int guild_id = q_ptr->guild, Ind = 0, i;
@@ -927,8 +1016,10 @@ int guild_add(int adder, cptr name){
 	p_ptr = Players[Ind];
 
 	/* Make sure this isn't an impostor */
-	if (guilds[guild_id].master != q_ptr->id && !is_admin(q_ptr)) {
-		msg_print(adder, "\377yOnly the guildmaster may add new members.");
+	if (!((guilds[guild_id].flags & GFLG_ALLOW_ADDERS) && (q_ptr->guild_flags & PGF_ADDER))
+	    && guilds[guild_id].master != q_ptr->id
+	    && !is_admin(q_ptr)) {
+		msg_print(adder, "\377yYou cannot add new members.");
 		return FALSE;
 	}
 
@@ -947,6 +1038,11 @@ int guild_add(int adder, cptr name){
 		return FALSE;
 	}
 
+	if (p_ptr->lev < guilds[guild_id].minlev) {
+		msg_format(adder, "\377yThat player does not meet the minimum level requirement of the guild of %d.", guilds[guild_id].minlev);
+		return FALSE;
+	}
+
 	/* Log - security */
 	s_printf("GUILD_ADD: %s has been added to %s by %s.\n", p_ptr->name, guilds[guild_id].name, q_ptr->name);
 
@@ -958,6 +1054,54 @@ int guild_add(int adder, cptr name){
 
 	/* Tell him about it */
 	msg_format(Ind, "\374\377yYou've been added to '%s'.", guilds[guild_id].name);
+
+	/* Set his guild number */
+	p_ptr->guild = guild_id;
+	clockin(Ind, 3);
+
+	/* Resend info */
+	Send_guild(Ind, FALSE, FALSE);
+
+	/* Display the guild note to him */
+	for (i = 0; i < MAX_GUILDNOTES; i++) {
+		if (!strcmp(guild_note_target[i], guilds[p_ptr->guild].name)) {
+			if (strcmp(guild_note[i], ""))
+				msg_format(Ind, "\374\377bGuild Note: %s", guild_note[i]);
+			break;
+		}
+	}
+
+	/* Success */
+	return TRUE;
+}
+
+int guild_auto_add(int Ind, int guild_id) {
+	player_type *p_ptr = Players[Ind];
+	int i;
+
+	if (!guild_id) return FALSE;
+	if (!(guilds[guild_id].flags & GFLG_AUTO_READD)) return FALSE;
+
+	/* currently not eligible */
+	if (p_ptr->mode & MODE_PVP) return FALSE;
+
+	/* Everlasting and other chars cannot be in the same guild */
+	if (guilds[guild_id].flags & GFLG_EVERLASTING) {
+		if (!(p_ptr->mode & MODE_EVERLASTING)) return FALSE;
+	} else
+		if ((p_ptr->mode & MODE_EVERLASTING)) return FALSE;
+
+	/* Log - security */
+	s_printf("GUILD_ADD_AUTO: %s has been added to %s.\n", p_ptr->name, guilds[guild_id].name);
+
+	/* Tell the guild about its new member */
+	guild_msg_format(guild_id, "\374\377y%s has been auto-added to %s.", p_ptr->name, guilds[guild_id].name);
+
+	/* One more player in this guild */
+	guilds[guild_id].members++;
+
+	/* Tell him about it */
+	msg_format(Ind, "\374\377yYou've been auto-added to '%s'.", guilds[guild_id].name);
 
 	/* Set his guild number */
 	p_ptr->guild = guild_id;

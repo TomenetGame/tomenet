@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 29. November 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 30. November 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -555,7 +555,7 @@ Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
 (Compare troubleshooting section (8.6), problem 21.)
 
 There are also some commands that can be entered with ':' like a chat line.
-They all start with a slash '/':
+They all start with a slash '/' hence they're called slash commands:
 
 /help       get a help about slash-commands.
 /afk        toggle AFK (away from keyboard) mode if you have to take a
@@ -672,6 +672,11 @@ They all start with a slash '/':
 /ftkon or /ftkoff
             Enables or disables fire-till-kill mode (see (5.2a)).
             Alternatively, you can toggle it in 'm' menu.
+/guild_adder <name of another player>
+            Allows that player permanently to add other players to the guild too.
+            Use the command a second time to revoke his rights again.
+/guild_flags [<flag> [<value]]
+            Shows you your current guild configuration and allows you to change it.
 /hou        Displays your houses, same as ~6.
  (/house)
 /ig <player name>
@@ -701,11 +706,11 @@ They all start with a slash '/':
 /note <account name>
             Delete all pending notes that were addressed to that player.
 /notes      Display all pending notes that you wrote to other players.
-/notep <text>
+/pnote <text>
             Leave a note to the party you own.
             If <text> is omitted, it will display the current note.
             If <text> is just an '*' char, it will erase the current note.
-/noteg <text>
+/gnote <text>
             Leave a note to the guild you own.
             If <text> is omitted, it will display the current note.
             If <text> is just an '*' char, it will erase the current note.
@@ -11153,21 +11158,25 @@ Here you can..
     If the owner leaves his own party, the whole party is disbanded.
 
 
--Specify player to attack
-    Now you are hostile to that player and you will hurt each other like
-    when fighting a monster (this includes auto-retaliating and targetting)!
-
--Make peace
-    Make peace with a player you are hostile too. Better pay attention that
-    your opponent makes peace too >:).
-
-
 -Create a new guild
     This costs 2,000,000 Au. A guild will stay, even if the owner dies.
     The guild creator will receive a 'Guild Key' which designates him as the
     guild master. In case the guild master dies, another guild member may
     fetch the key to become the new guild master.
     (Currently guilds look cool and have a dedicated guild chat.)
+
+    The following slash commands are available to manage your guild, only the
+    guild master may use them:
+
+    /guild_adder <name of another player>
+        Allows that player permanently to add other players to the guild too.
+        Use the command a second time to revoke his rights again.
+        Note that this only works if you have enabled the guild flag 'adder',
+        see the '/guild_flags' command below.
+
+    /guild_flags [<flag> [<value]]
+        Shows you your current guild configuration if used without any parms
+        and allows you to change it by specifying a flag.
 
 -Add player to guild
     Only the guild master can do this.
@@ -11188,6 +11197,16 @@ Note: In general, a player of a guild who grabs the guild key becomes the new
       guild master.
 
 Note: Keys are indestructible, they can be lost though..
+
+
+-Specify player to attack
+    Now you are hostile to that player and you will hurt each other like
+    when fighting a monster (this includes auto-retaliating and targetting).
+    You can kill each other for real this way, so this is NOT recommended!
+
+-Make peace
+    Make peace with a player you are hostile too. Better pay attention that
+    your opponent makes peace too.
 
 
 

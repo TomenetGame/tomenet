@@ -6615,12 +6615,14 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", pvp ? "PVP" : "NOGHOS
 		auction_player_death(p_ptr->id);
 #endif
 		
-    		/* Remove him from his party */
+    		/* Remove him from his party/guild */
 		if (p_ptr->party) {
 			/* He leaves */
 			party_leave(Ind);
 		}
-		if (p_ptr->guild){
+		if (p_ptr->guild) {
+			if ((guilds[p_ptr->guild].flags & GFLG_AUTO_READD))
+				acc_set_guild(p_ptr->accountname, p_ptr->guild);
 			guild_leave(Ind);
 		}
 
@@ -6798,12 +6800,13 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 		auction_player_death(p_ptr->id);
 #endif
 
-		/* Remove him from his party */
-		if (p_ptr->party) {
-			/* He leaves */
-			party_leave(Ind);
+		/* Remove him from his party/guild */
+		if (p_ptr->party) party_leave(Ind);
+		if (p_ptr->guild) {
+			if ((guilds[p_ptr->guild].flags & GFLG_AUTO_READD))
+				acc_set_guild(p_ptr->accountname, p_ptr->guild);
+			guild_leave(Ind);
 		}
-		if(p_ptr->guild) guild_leave(Ind);
 
 		buffer_account_for_event_deed(p_ptr, death_type);
 
