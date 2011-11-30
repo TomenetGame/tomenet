@@ -1687,6 +1687,7 @@ struct party_type
 	s32b created;		/* Creation (or disband-tion) time */
 	byte mode;		/* 'Iron Team' or normal party? (C. Blue) */
 	s32b experience;	/* For 'Iron Teams': Max experienc of members. */
+	u32b flags;		/* Party rules flags */
 };
 
 /*
@@ -3018,6 +3019,9 @@ struct player_type
 	char last_chat_line[MSG_LEN]; /* last slash command (or chat msg) the player used, to prevent log file spam */
 	int last_chat_line_cnt;
 	int last_gold_drop, last_gold_drop_timer;
+
+	/* For things like 'Officer' status to add others etc */
+	u32b party_flags, guild_flags;
 };
 
 /* For Monk martial arts */

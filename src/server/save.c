@@ -471,9 +471,13 @@ static void wr_party(party_type *party_ptr)
 	/* Save the number of people and creation time */
 	wr_s32b(party_ptr->members);
 	wr_s32b(party_ptr->created);
-	
+
 	/* Save the modus and members */
 	wr_byte(party_ptr->mode);
+
+	/* New - party flags, maybe */
+	wr_u32b(party_ptr->flags);
+
 }
 
 static void wr_wild(wilderness_type *w_ptr)
@@ -857,6 +861,10 @@ static void wr_extra(int Ind)
 	/* for ENABLE_GO_GAME */
 	wr_byte(p_ptr->go_level);
 	wr_byte(p_ptr->go_sublevel);
+
+	/* For things like 'Officer' status to add others etc */
+	wr_u32b(p_ptr->party_flags);
+	wr_u32b(p_ptr->guild_flags);
 }
 
 /*

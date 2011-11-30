@@ -1089,6 +1089,8 @@ static void rd_party(int n)
 	else
 		party_ptr->mode = 0;
 
+	if (!older_than(4, 4, 19)) rd_u32b(&party_ptr->flags);
+
 	/* Hack -- repair dead parties 
 	   I THINK this line was causing some problems....
 	   lets find out
@@ -1733,6 +1735,12 @@ if (p_ptr->updated_savegame == 0) {
 		p_ptr->go_level = tmp8u;
 		rd_byte(&tmp8u);
 		p_ptr->go_sublevel = tmp8u;
+	}
+
+	if (!older_than(4, 4, 19)) {
+		/* For things like 'Officer' status to add others etc */
+		rd_u32b(&p_ptr->party_flags);
+		rd_u32b(&p_ptr->guild_flags);
 	}
 
 	/* Success */
