@@ -1081,7 +1081,7 @@ int guild_auto_add(int Ind, int guild_id) {
 
 	/* paranoia */
 	if (!guild_id) return FALSE;
-	if (p_ptr->guild_id) return FALSE;
+	if (p_ptr->guild) return FALSE;
 
 	if (!(guilds[guild_id].flags & GFLG_AUTO_READD)) return FALSE;
 
