@@ -2902,16 +2902,18 @@ void wilderness_gen(struct worldpos *wpos)
 		zcave[w_ptr->dn_y][w_ptr->dn_x].feat = FEAT_LESS;
 		d_ptr = w_ptr->tower;
 		y = w_ptr->dn_y; x = w_ptr->dn_x;
+		/* Hack to fix custom (type 0) dungeons/towers that were corrupted by old
+		   /debug-dun (/update-dun) command. */
+		if (x == 0) x = w_ptr->dn_x = y = w_ptr->dn_y = 3;
 	}
 	if((w_ptr->flags & WILD_F_DOWN) && can_go_down(wpos, 0x1)) {
 		zcave[w_ptr->up_y][w_ptr->up_x].feat = FEAT_MORE;
 		d_ptr = w_ptr->dungeon;
 		y = w_ptr->up_y; x = w_ptr->up_x;
+		/* Hack to fix custom (type 0) dungeons/towers that were corrupted by old
+		   /debug-dun (/update-dun) command. */
+		if (x == 0) x = w_ptr->up_x = y = w_ptr->up_y = 3;
 	}
-	/* Hack to fix custom (type 0) dungeons/towers that were corrupted by old
-	   /debug-dun (/update-dun) command. */
-	if (x == 0) x = 3;
-	if (y == 0) y = 3;
 	/* add ambient features to the entrance so it looks less bland ;) - C. Blue */
 	if (!istown(wpos) && d_ptr) {
 		int j, k;
