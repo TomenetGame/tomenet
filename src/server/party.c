@@ -764,7 +764,7 @@ int party_create(int Ind, cptr name)
 		strcpy(parties[p_ptr->party].name, name);
 
 		/* Tell the party about its new name */
-		party_msg_format(p_ptr->party, "\377GYour party is now called '%s'.", name);
+		party_msg_format(p_ptr->party, "\377%cYour party is now called '%s'.", COLOUR_CHAT_GUILD, name);
 
 		Send_party(Ind, FALSE, FALSE);
 		return TRUE;
@@ -850,7 +850,7 @@ int party_create_ironteam(int Ind, cptr name)
 		strcpy(parties[p_ptr->party].name, name);
 
 		/* Tell the party about its new name */
-		party_msg_format(p_ptr->party, "\377GYour iron team is now called '%s'.", name);
+		party_msg_format(p_ptr->party, "\377%cYour iron team is now called '%s'.", COLOUR_CHAT_GUILD, name);
 
 		Send_party(Ind, FALSE, FALSE);
 		return TRUE;

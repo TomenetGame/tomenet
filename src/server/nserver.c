@@ -6129,9 +6129,9 @@ int Send_party(int ind, bool leave, bool clear)
 
 		if (p_ptr->party > 0 && !clear && (!leave || i != ind)) {
 			if (parties[p_ptr->party].mode == PA_IRONTEAM)
-				snprintf(bufn, 90, "Iron Team: '\377G%s\377w'", parties[p_ptr->party].name);
+				snprintf(bufn, 90, "Iron Team: '\377%c%s\377w'", COLOUR_CHAT_PARTY, parties[p_ptr->party].name);
 			else
-				snprintf(bufn, 90, "Party: '\377G%s\377w'", parties[p_ptr->party].name);
+				snprintf(bufn, 90, "Party: '\377%c%s\377w'", COLOUR_CHAT_PARTY, parties[p_ptr->party].name);
 
 			snprintf(buf, 10, "%d", parties[p_ptr->party].members);
 			strcpy(bufm, buf);

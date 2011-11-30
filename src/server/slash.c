@@ -2967,7 +2967,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_format(Ind, "\377%c %s", COLOUR_CHAT_GUILD, gbbs_line[p_ptr->guild][n]);
 					bbs_empty = FALSE;
 				}
-			if (bbs_empty) msg_print(Ind, "\377G <nothing has been written on the guild board so far>");
+			if (bbs_empty) msg_format(Ind, "\377%c <nothing has been written on the guild board so far>", COLOUR_CHAT_GUILD);
 			return;
 		}
 		else if (prefix(message, "/ftkon")) {
