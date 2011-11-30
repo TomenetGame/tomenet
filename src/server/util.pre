@@ -359,18 +359,27 @@ extern int ge_special_sector;
 extern u32b ge_contender_buffer_ID[128];
 extern int ge_contender_buffer_deed[128];
 
+/* The party information */
 struct party_type
 {
-	char name[80];	/* Name of the party */
+	char name[MAX_CHARS];	/* Name of the party */
 	char owner[NAME_LEN];	/* Owner's name */
 	s32b members;		/* Number of people in the party */
 	s32b created;		/* Creation (or disband-tion) time */
 	byte mode;		/* 'Iron Team' or normal party? (C. Blue) */
+	s32b experience;	/* For 'Iron Teams': Max experienc of members. */
+	u32b flags;		/* Party rules flags */
 };
-
-/* The party information */
 party_type parties[MAX_PARTIES];
-struct guild_type guilds[MAX_GUILDS];
+struct guild_type
+{
+	char name[MAX_CHARS];
+	s32b master;		/* Guildmaster unique player ID */
+	s32b members;		/* Number of guild members */
+	u32b flags;		/* Guild rules flags */
+	s16b minlev;		/* minimum level to join */
+};
+guild_type guilds[MAX_GUILDS];
 
 /* the four seasons */
 extern void lua_season_change(int s, int force);

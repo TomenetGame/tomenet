@@ -1677,10 +1677,7 @@ struct cave_view_type
 /*
  * Information about a "party"
  */
-typedef struct party_type party_type;
-
-struct party_type
-{
+typedef struct party_type {
 	char name[MAX_CHARS];	/* Name of the party */
 	char owner[NAME_LEN];	/* Owner's name */
 	s32b members;		/* Number of people in the party */
@@ -1688,7 +1685,7 @@ struct party_type
 	byte mode;		/* 'Iron Team' or normal party? (C. Blue) */
 	s32b experience;	/* For 'Iron Teams': Max experienc of members. */
 	u32b flags;		/* Party rules flags */
-};
+} party_type;
 
 /*
  * Information about a guild.
@@ -1713,13 +1710,13 @@ struct party_type
 #define GF_CLASS 2		/* class restricted */
 #define GF_PKILL 4		/* pkill within guild? */
 
-struct guild_type{
+typedef struct guild_type {
 	char name[MAX_CHARS];
 	s32b master;		/* Guildmaster unique player ID */
 	s32b members;		/* Number of guild members */
 	u32b flags;		/* Guild rules flags */
 	s16b minlev;		/* minimum level to join */
-};
+} guild_type;
 
 /* Save data work information for guild halls */
 

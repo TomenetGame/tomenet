@@ -3144,7 +3144,7 @@ void do_slash_cmd(int Ind, char *message)
 		}
 		else if (prefix(message, "/guild_adder")) {
 			u32b *flags;
-			struct guild_type *guild;
+			guild_type *guild;
 			player_type *q_ptr;
 			if (!p_ptr->guild) {
 				msg_print(Ind, "You are not in a guild.");
@@ -3192,7 +3192,7 @@ void do_slash_cmd(int Ind, char *message)
 		}
 		else if (prefix(message, "/guild_flags")) {
 			u32b *flags;
-			struct guild_type *guild;
+			guild_type *guild;
 			if (!p_ptr->guild) {
 				msg_print(Ind, "You are not in a guild.");
 				return;

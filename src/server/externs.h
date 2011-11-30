@@ -288,7 +288,7 @@ extern struct ip_ban *banlist;
 extern s32b sflags_TEMP;
 extern player_type **Players;
 extern party_type parties[MAX_PARTIES];
-extern struct guild_type guilds[MAX_GUILDS];
+extern guild_type guilds[MAX_GUILDS];
 extern struct quest_type quests[20];	/* server quest data */
 extern house_type *houses;
 #ifdef PLAYER_STORES

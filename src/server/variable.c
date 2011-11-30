@@ -249,7 +249,7 @@ player_type **Players;
 
 /* The party information */
 party_type parties[MAX_PARTIES];
-struct guild_type guilds[MAX_GUILDS];
+guild_type guilds[MAX_GUILDS];
 
 struct quest_type quests[20];	/* server quest data */
 
