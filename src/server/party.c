@@ -22,8 +22,11 @@
  #define ANTI_MAXPLV_EXPLOIT_SOFTEXP	/* be somewhat less strict (use reduced exp instead of preventing any exp) */
 
 /* Check for illegal party/guild name that could be abused to catch special chat commands */
+//!(((N)[0] >= 'A' && (N)[0] <= 'Z') || ((N)[0] >= 'a' && (N)[0] <= 'z') || ((N)[0] >= '0' && (N)[0] <= '9'))
 #define ILLEGAL_GROUP_NAME(N) \
-    (streq(N, "Neutral") || streq(N, "!") || streq(N, "#") || streq(N, "%") || streq(N, "$") || streq(N, "-"))
+    ((N)[0] == 0 || (N)[0] == ' ' || \
+    streq(N, "Neutral") || \
+    streq(N, "!") || streq(N, "#") || streq(N, "%") || streq(N, "$") || streq(N, "-"))
 
 
 #ifdef HAVE_CRYPT
