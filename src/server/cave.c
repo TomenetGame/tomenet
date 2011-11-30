@@ -180,6 +180,7 @@ bool can_go_up(struct worldpos *wpos, byte mode)
         struct dungeon_type *d_ptr = wild->tower;
 	if (wpos->wz < 0) d_ptr = wild->dungeon;
 
+#if 0 /* fixed (old /update-dun killed flags2) */
 	/* paranoia, but caused panic: in wilderness_gen() cmd_up({0,0,0},0x1) would return 1
 	   resulting in bad up/down values for staircase generation when it attempts to locate
 	   a staircase leading into pvp-arena and put some feats around it (at coords 0,0 ...).
@@ -187,6 +188,7 @@ bool can_go_up(struct worldpos *wpos, byte mode)
 	   todo: fix this. -C. Blue */
 	if (wpos->wz == 0 && wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y &&
 	    WPOS_PVPARENA_Z > 0) return (FALSE);
+#endif
 
 	/* Check for empty staircase without any connected dungeon/tower! */
 	if (!d_ptr) return((wild->flags&WILD_F_UP)?TRUE:FALSE); /* you MAY create 'empty' staircase */
@@ -216,6 +218,7 @@ bool can_go_down(struct worldpos *wpos, byte mode)
         struct dungeon_type *d_ptr = wild->dungeon;
         if (wpos->wz > 0) d_ptr = wild->tower;
 
+#if 0 /* fixed (old /update-dun killed flags2) */
 	/* paranoia, but caused panic: in wilderness_gen() cmd_up({0,0,0},0x1) would return 1
 	   resulting in bad up/down values for staircase generation when it attempts to locate
 	   a staircase leading into pvp-arena and put some feats around it (at coords 0,0 ...).
@@ -223,6 +226,7 @@ bool can_go_down(struct worldpos *wpos, byte mode)
 	   todo: fix this. -C. Blue */
 	if (wpos->wz == 0 && wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y &&
 	    WPOS_PVPARENA_Z < 0) return (FALSE);
+#endif
 
 	/* Check for empty staircase without any connected dungeon/tower! */
 	if (!d_ptr) return((wild->flags&WILD_F_DOWN)?TRUE:FALSE); /* you MAY create 'empty' staircase */

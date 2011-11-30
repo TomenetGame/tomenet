@@ -4066,8 +4066,12 @@ void do_slash_cmd(int Ind, char *message)
 							d_ptr->baselevel = d_info[type].mindepth;
 							d_ptr->maxdepth = d_info[type].maxdepth - d_ptr->baselevel + 1;
 						} else {
+#if 0 /* don't touch custom dungeons, that might have flags such as ironman or no-entry etc! their flags would get zero'ed here! */
 							d_ptr->flags1 = d_info[type].flags1;
 							d_ptr->flags2 = d_info[type].flags2;
+#else
+							continue;
+#endif
 						}
 						//d_ptr->r_char = d_info[type].r_char;
 						//d_ptr->nr_char = d_info[type].nr_char;
@@ -4111,8 +4115,12 @@ void do_slash_cmd(int Ind, char *message)
 							d_ptr->baselevel = d_info[type].mindepth;
 							d_ptr->maxdepth = d_info[type].maxdepth - d_ptr->baselevel + 1;
 						} else {
+#if 0 /* don't touch custom dungeons, that might have flags such as ironman or no-entry etc! their flags would get zero'ed here! */
 							d_ptr->flags1 = d_info[type].flags1;
 							d_ptr->flags2 = d_info[type].flags2;
+#else
+							continue;
+#endif
 						}
 
 #ifdef RPG_SERVER /* Make dungeons harder */

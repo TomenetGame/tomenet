@@ -2908,6 +2908,10 @@ void wilderness_gen(struct worldpos *wpos)
 		d_ptr = w_ptr->dungeon;
 		y = w_ptr->up_y; x = w_ptr->up_x;
 	}
+	/* Hack to fix custom (type 0) dungeons/towers that were corrupted by old
+	   /debug-dun (/update-dun) command. */
+	if (x == 0) x = 3;
+	if (y == 0) y = 3;
 	/* add ambient features to the entrance so it looks less bland ;) - C. Blue */
 	if (!istown(wpos) && d_ptr) {
 		int j, k;
