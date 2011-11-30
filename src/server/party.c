@@ -582,7 +582,7 @@ int guild_create(int Ind, cptr name){
 	}
 	/* Prevent abuse */
 	if (ILLEGAL_GROUP_NAME(name)) {
-		msg_print(Ind, "\377yThat's not a legal guild name.");
+		msg_print(Ind, "\377yThat's not a legal guild name, please try again.");
 		return FALSE;
 	}
 	/* Check for already existing party by that name */
@@ -742,7 +742,7 @@ int party_create(int Ind, cptr name)
 
 	/* Prevent abuse */
 	if (ILLEGAL_GROUP_NAME(name)) {
-		msg_print(Ind, "\377yThat's not a legal party name.");
+		msg_print(Ind, "\377yThat's not a legal party name, please try again.");
 		return FALSE;
 	}
 
@@ -833,7 +833,7 @@ int party_create_ironteam(int Ind, cptr name)
 
 	/* Prevent abuse */
 	if (ILLEGAL_GROUP_NAME(name)) {
-		msg_print(Ind, "\377yThat's not a legal party name.");
+		msg_print(Ind, "\377yThat's not a legal party name, please try again.");
 		return FALSE;
 	}
 
