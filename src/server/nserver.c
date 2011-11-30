@@ -2749,11 +2749,13 @@ static int Handle_login(int ind)
 
 	/* automatically re-add him to the guild of his last character? */
 	if ((i = acc_get_guild(p_ptr->accountname))) {
-		/* within time limit [20 minutes]? */
-		time_t now = time(&now);
-		if (now - lookup_player_laston(p_ptr->id) <= 60 * 20
-		    && guilds[i].members) /* guild still exists? (TODO: could be a different guild by now :-p) */
-			guild_auto_add(NumPlayers, i);
+		if (p_ptr->newly_created) {
+			/* within time limit [20 minutes]? */
+			time_t now = time(&now);
+			if (now - lookup_player_laston(p_ptr->id) <= 60 * 20
+			    && guilds[i].members) /* guild still exists? (TODO: could be a different guild by now :-p) */
+				guild_auto_add(NumPlayers, i);
+		}
 
 		acc_set_guild(p_ptr->accountname, 0);
 	}

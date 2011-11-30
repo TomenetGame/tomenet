@@ -1079,7 +1079,10 @@ int guild_auto_add(int Ind, int guild_id) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 
+	/* paranoia */
 	if (!guild_id) return FALSE;
+	if (p_ptr->guild_id) return FALSE;
+
 	if (!(guilds[guild_id].flags & GFLG_AUTO_READD)) return FALSE;
 
 	/* currently not eligible */
