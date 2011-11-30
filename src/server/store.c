@@ -3455,19 +3455,18 @@ void store_sell(int Ind, int item, int amt)
 		return;
 	}
 
-#if 0
-
-	/* Not gonna happen XXX inscribe */
-	if ((item >= INVEN_WIELD) && cursed_p(o_ptr))
-	{
-		/* Oops */
-		msg_print("Hmmm, it seems to be cursed.");
-
-		/* Stop */
-		return;
+	/* Specifically for Mathom house which doesn't run store_will_buy() checks! */
+	if (cursed_p(o_ptr) && !is_admin(p_ptr)) {
+		u32b f4, fx;
+		object_flags(o_ptr, &fx, &fx, &fx, &f4, &fx, &fx);
+		if ((item >= INVEN_WIELD) ) {
+			msg_print(Ind, "Hmmm, it seems to be cursed.");
+			return;
+		} else if (f4 & TR4_CURSE_NO_DROP) {
+			msg_print(Ind, "Hmmm, you seem to be unable to drop it.");
+			return;
+		}
 	}
-
-#endif
 
 	/* Create the object to be sold (structure copy) */
 	sold_obj = *o_ptr;
@@ -3629,10 +3628,24 @@ void store_confirm(int Ind)
 	}
 	/* Check that it's a real item - mikaelh */
 	if (!o_ptr->tval) return;
+
 	/* Check for validity of sale */
 	if (!store_will_buy(Ind, o_ptr)) {
 		msg_print(Ind, "I don't want that!");
 		return;
+	}
+
+	/* Specifically for Mathom house which doesn't run store_will_buy() checks! */
+	if (cursed_p(o_ptr) && !is_admin(p_ptr)) {
+		u32b f4, fx;
+		object_flags(o_ptr, &fx, &fx, &fx, &f4, &fx, &fx);
+		if ((item >= INVEN_WIELD) ) {
+			msg_print(Ind, "Hmmm, it seems to be cursed.");
+			return;
+		} else if (f4 & TR4_CURSE_NO_DROP) {
+			msg_print(Ind, "Hmmm, you seem to be unable to drop it.");
+			return;
+		}
 	}
 	/* -------------------------------------------------------------------------------------- */
 
