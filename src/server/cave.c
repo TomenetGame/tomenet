@@ -186,7 +186,7 @@ bool can_go_up(struct worldpos *wpos, byte mode)
 	   Apparently, WILD_F_UP is set here, too. And even w_ptr->tower was also valid.
 	   todo: fix this. -C. Blue */
 	if (wpos->wz == 0 && wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y &&
-	    WPOS_PVPARENA_X > 0) return (FALSE);
+	    WPOS_PVPARENA_Z > 0) return (FALSE);
 
 	/* Check for empty staircase without any connected dungeon/tower! */
 	if (!d_ptr) return((wild->flags&WILD_F_UP)?TRUE:FALSE); /* you MAY create 'empty' staircase */
@@ -222,7 +222,7 @@ bool can_go_down(struct worldpos *wpos, byte mode)
 	   Apparently, WILD_F_UP is set here, too. And even w_ptr->tower was also valid.
 	   todo: fix this. -C. Blue */
 	if (wpos->wz == 0 && wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y &&
-	    WPOS_PVPARENA_X < 0) return (FALSE);
+	    WPOS_PVPARENA_Z < 0) return (FALSE);
 
 	/* Check for empty staircase without any connected dungeon/tower! */
 	if (!d_ptr) return((wild->flags&WILD_F_DOWN)?TRUE:FALSE); /* you MAY create 'empty' staircase */
