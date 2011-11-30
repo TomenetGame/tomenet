@@ -1689,10 +1689,10 @@ void cmd_party(void)
 		Term_putstr(5, 5, -1, TERM_WHITE, "(\377G4\377w) Delete a player from party");
 		Term_putstr(5, 6, -1, TERM_WHITE, "(\377G5\377w) Leave your current party");
 		Term_putstr(5, 8, -1, TERM_WHITE, "(\377Ua\377w) Create a new guild");
-		Term_putstr(5, 9, -1, TERM_WHITE, "(\377Ub\377w) Set guild options");
-		Term_putstr(5, 10, -1, TERM_WHITE, "(\377Uc\377w) Add player to guild");
-		Term_putstr(5, 11, -1, TERM_WHITE, "(\377Ud\377w) Remove player from guild");
-		Term_putstr(5, 12, -1, TERM_WHITE, "(\377Ue\377w) Leave guild");
+		Term_putstr(5, 9, -1, TERM_WHITE, "(\377Ub\377w) Add player to guild");
+		Term_putstr(5, 10, -1, TERM_WHITE, "(\377Uc\377w) Remove player from guild");
+		Term_putstr(5, 11, -1, TERM_WHITE, "(\377Ud\377w) Leave guild");
+//		Term_putstr(5, 12, -1, TERM_WHITE, "(\377Ue\377w) Set guild options");
 		Term_putstr(5, 14, -1, TERM_WHITE, "(\377RA\377w) Declare war on player (not recommended!)");
 		Term_putstr(5, 15, -1, TERM_WHITE, "(\377gP\377w) Make peace with player");
 
@@ -1783,22 +1783,22 @@ void cmd_party(void)
 			if (askfor_aux(buf, 79, 0)) Send_guild(GUILD_CREATE, buf);
 		}
 		else if (i == 'b'){
-			/* Set guild flags/options */
-			cmd_guild_options();
-		}
-		else if (i == 'c'){
 			/* Get player name */
 			Term_putstr(0, 19, -1, TERM_YELLOW, "Enter player name: ");
 			if (askfor_aux(buf, 79, 0)) Send_guild(GUILD_ADD, buf);
 		}
-		else if (i == 'd'){
+		else if (i == 'c'){
 			/* Get player name */
 			Term_putstr(0, 19, -1, TERM_YELLOW, "Enter player name: ");
 			if (askfor_aux(buf, 79, 0)) Send_guild(GUILD_DELETE, buf);
 		}
-		else if (i == 'e'){
+		else if (i == 'd'){
 			if (get_check("Leave the guild ? "))
 				Send_guild(GUILD_REMOVE_ME, "");
+		}
+		else if (i == 'e'){
+			/* Set guild flags/options */
+			cmd_guild_options();
 		}
 
 		/* Oops */
