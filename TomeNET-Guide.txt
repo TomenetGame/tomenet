@@ -1430,6 +1430,10 @@ Linux (compiling from source):
 ------------------------------
 (For using the pre-compiled client instead, see further below.)
 
+There are additional distribution-specific information on Mikael's website at:
+http://koti.mbnet.fi/mikaelh/tomenet/installation-linux.php
+(It's linked on www.tomenet.net -> "Links".)
+
 You can get the source from www.tomenet.net, also see (1.1).
 
 How to compile the game binary:
