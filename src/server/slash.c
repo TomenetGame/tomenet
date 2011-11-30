@@ -2957,14 +2957,14 @@ void do_slash_cmd(int Ind, char *message)
 
 			if (tk) {
 				/* write something */
-				msg_guild_format(Ind, "\374\377G[%s->GBBS] \377W%s", p_ptr->name, message3);
-				gbbs_add_line(p_ptr->guild, format("\377G%s %s: \377W%s",showdate(), p_ptr->name, message3));
+				msg_guild_format(Ind, "\374\377%c[%s->GBBS] \377W%s", COLOUR_CHAT_GUILD, p_ptr->name, message3);
+				gbbs_add_line(p_ptr->guild, format("\377%c%s %s: \377W%s", COLOUR_CHAT_GUILD, showdate(), p_ptr->name, message3));
 				return;
 			}
-			msg_print(Ind, "\377GGuild bulletin board (type '/gbbs <text>' in chat to write something):");
+			msg_format(Ind, "\377%cGuild bulletin board (type '/gbbs <text>' in chat to write something):", COLOUR_CHAT_GUILD);
 			for (n = 0; n < BBS_LINES; n++)
 				if (strcmp(gbbs_line[p_ptr->guild][n], "")) {
-					msg_format(Ind, "\377G %s", gbbs_line[p_ptr->guild][n]);
+					msg_format(Ind, "\377%c %s", COLOUR_CHAT_GUILD, gbbs_line[p_ptr->guild][n]);
 					bbs_empty = FALSE;
 				}
 			if (bbs_empty) msg_print(Ind, "\377G <nothing has been written on the guild board so far>");

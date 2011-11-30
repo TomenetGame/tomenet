@@ -7164,7 +7164,7 @@ void kill_quest(int Ind) {
 			if (!p_ptr->guild) {
 				guild_msg_format(temphash->guild, "\374\377%c%s is now a guild member!", COLOUR_CHAT_GUILD, p_ptr->name);
 				guilds[temphash->guild].members++;
-				msg_format(Ind, "\374You've been added to '\377U%s\377w'.", guilds[temphash->guild].name);
+				msg_format(Ind, "\374You've been added to '\377%c%s\377w'.", COLOUR_CHAT_GUILD, guilds[temphash->guild].name);
 				p_ptr->guild = temphash->guild;
 				clockin(Ind, 3);	/* set in db */
 			}

@@ -583,7 +583,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	if (q_ptr->guild || q_ptr->party) fprintf(fff, ",");
 
 	if (q_ptr->guild) {
-		fprintf(fff, " \377y[\377U%s\377y]\377U", guilds[q_ptr->guild].name);
+		fprintf(fff, " \377y[\377%c%s\377y]\377U", COLOUR_CHAT_GUILD, guilds[q_ptr->guild].name);
 	}
 	if (q_ptr->party) {
 		fprintf(fff, " '%s%s\377U'",
@@ -711,7 +711,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	fprintf(fff, " (%s@%s)", q_ptr->accountname, q_ptr->hostname);
 
 	if (q_ptr->guild) {
-		fprintf(fff, ", \377y[\377U%s\377y]\377U", guilds[q_ptr->guild].name);
+		fprintf(fff, ", \377y[\377%c%s\377y]\377U", COLOUR_CHAT_GUILD, guilds[q_ptr->guild].name);
 	}
 	if (q_ptr->party) {
 		if (!q_ptr->guild) fprintf(fff, ", Party:");
@@ -871,7 +871,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 		fprintf(fff, "  \377u(%s\377u)", q_ptr->afk_msg);
 	} else {
 		if (q_ptr->guild) {
-			fprintf(fff, ", \377y[\377U%s\377y]\377U", guilds[q_ptr->guild].name);
+			fprintf(fff, ", \377y[\377%c%s\377y]\377U", COLOUR_CHAT_GUILD, guilds[q_ptr->guild].name);
 		}
 		if (q_ptr->party) {
 			if (!q_ptr->guild) fprintf(fff, ", Party:");
@@ -1100,8 +1100,8 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 //		q_ptr->fruit_bat == 1 ? "Batty " : "", /* only for true battys, not polymorphed ones */
 
 	if (q_ptr->guild)
-		fprintf(fff, ", \377y[\377U%s\377y]\377U",
-		    guilds[q_ptr->guild].name);
+		fprintf(fff, ", \377y[\377%c%s\377y]\377U",
+		    COLOUR_CHAT_GUILD, guilds[q_ptr->guild].name);
 	if (q_ptr->party)
 		fprintf(fff, "%s '%s%s\377U'",
 		    q_ptr->guild ? "" : ", Party:",

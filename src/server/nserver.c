@@ -6178,7 +6178,7 @@ int Send_guild(int ind, bool leave, bool clear)
 		int memb = guilds[p_ptr->guild].members;
 		cptr master = lookup_player_name(guilds[p_ptr->guild].master);
 
-		snprintf(bufn, 90, "Guild: '\377U%s\377w'", guilds[p_ptr->guild].name);
+		snprintf(bufn, 90, "Guild: '\377%c%s\377w'", COLOUR_CHAT_GUILD, guilds[p_ptr->guild].name);
 
 		snprintf(buf, 10, "%d", memb);
 		strcpy(bufm, buf);
