@@ -1151,6 +1151,7 @@ void peruse_file(void)
 
 	/* Save the old screen */
 	Term_save();
+	perusing = TRUE;
 
 	/* Clear the terminal now */
 	Term_clear();
@@ -1278,6 +1279,7 @@ void peruse_file(void)
 
 	/* Reload the old screen */
 	Term_load();
+	perusing = FALSE;
 
 	/* Flush any events that came in */
 	Flush_queue();

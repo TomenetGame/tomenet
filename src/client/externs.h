@@ -111,7 +111,7 @@ extern char guild_info_owner[50];
 extern setup_t Setup;
 extern client_setup_t Client_setup;
 
-extern bool shopping;
+extern bool shopping, perusing;
 
 extern s16b last_line_info;
 extern s32b cur_line;

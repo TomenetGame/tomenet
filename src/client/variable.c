@@ -49,6 +49,7 @@ setup_t Setup;				/* The information given to us by the server */
 client_setup_t Client_setup;		/* The information we give to the server */
 
 bool shopping;				/* Are we in a store? */
+bool perusing;				/* Are we browinsg a help file or similar? */
 
 s16b last_line_info;			/* Last line of info we've received */
 s32b max_line;				/* Maximum amount of "special" info */

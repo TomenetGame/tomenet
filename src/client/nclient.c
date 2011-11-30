@@ -2026,11 +2026,11 @@ int Receive_message(void)
 		    buf[c] != -4) /* \374 chat+no-chat code */
 			return 1;
 
-	if (screen_icky && !party_mode && !shopping) Term_switch(0);
+	if (screen_icky && (!shopping || perusing)) Term_switch(0);
 
 	c_msg_print(buf);
 
-	if (screen_icky && !party_mode && !shopping) Term_switch(0);
+	if (screen_icky && (!shopping || perusing)) Term_switch(0);
 
 	return 1;
 }
@@ -4879,9 +4879,9 @@ void do_ping()
 		struct tm* ctl = localtime(&ct);
 		if (ctl->tm_hour != time_stamp_hour) {
 			if (time_stamp_hour != -1) {
-				if (screen_icky && !party_mode && !shopping) Term_switch(0);
+				if (screen_icky && (!shopping || perusing)) Term_switch(0);
 				c_msg_format("\374\376\377y[%02d:00h]", ctl->tm_hour);
-				if (screen_icky && !party_mode && !shopping) Term_switch(0);
+				if (screen_icky && (!shopping || perusing)) Term_switch(0);
 			}
 			time_stamp_hour = ctl->tm_hour;
 		}
