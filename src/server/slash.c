@@ -1916,7 +1916,7 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "The heavens are ready to accept your martyrium.");
 			return;
 		}
-		else if (prefix(message, "/notep"))
+		else if (prefix(message, "/pnote"))
 		{
 			j = 0;
 #if 0 /* allow only a party owner to write the note */
@@ -2011,7 +2011,7 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 		}
-		else if (prefix(message, "/noteg"))
+		else if (prefix(message, "/gnote"))
 		{
 			j = 0;
 #if 0 /* only allow the guild master to write the note */
