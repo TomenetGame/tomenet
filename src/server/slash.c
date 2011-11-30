@@ -5972,7 +5972,14 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/fix-wildflock")) {
 				/* erase WILD_F_..LOCK flags from when the server crashed during dungeon removal (??) */
-				wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags &= ~(WILD_F_LOCKDOWN | WILD_F_LOCKUP);
+				if (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_LOCKDOWN) {
+					wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags &= ~WILD_F_LOCKDOWN;
+					msg_print(Ind, "WILD_F_LOCKDOWN was set and is now cleared.");
+				}
+				if (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_LOCKUP) {
+					wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags &= ~WILD_F_LOCKUP;
+					msg_print(Ind, "WILD_F_LOCKUP was set and is now cleared.");
+				}
 				return;
 			}
 			else if (prefix(message, "/fix-house-modes")) {
