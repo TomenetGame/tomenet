@@ -200,7 +200,7 @@ void do_cmd_go_up(int Ind)
 	if (p_ptr->wpos.wz == 0 && p_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y) {
 		if (p_ptr->max_plv > IRONDEEPDIVE_MAXLEV) {
 			msg_format(Ind, "\377DYou may not enter once you exceeded character level %d!", IRONDEEPDIVE_MAXLEV);
-			return;
+			if (!is_admin(p_ptr)) return;
 		}
 	}
 
@@ -601,7 +601,7 @@ void do_cmd_go_down(int Ind)
 	if (p_ptr->wpos.wz == 0 && p_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y) {
 		if (p_ptr->max_plv > IRONDEEPDIVE_MAXLEV) {
 			msg_format(Ind, "\377DYou may not enter once you exceeded character level %d!", IRONDEEPDIVE_MAXLEV);
-			return;
+			if (!is_admin(p_ptr)) return;
 		}
 	}
 
