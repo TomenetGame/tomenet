@@ -6189,6 +6189,15 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "done.");
 				return;
 			}
+			else if (prefix(message, "/fixguild")) { /* Set a guild to GFLG_EVERLASTING */
+				if (!tk) {
+					msg_print(Ind, "Usage: /fixguild <guild_id>");
+					return;
+				}
+				guilds[k].flags |= GFLG_EVERLASTING;
+				msg_print(Ind, "Guild was set to GFLG_EVERLASTING.");
+				return;
+			}
 		}
 	}
 
