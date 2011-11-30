@@ -646,6 +646,21 @@ int guild_create(int Ind, cptr name){
 	object_type forge, *o_ptr = &forge;
 	char temp[160];
 
+	char *ptr, buf[NAME_LEN];
+	strcpy(buf, name);
+	/* remove spaces at the beginning */
+	for (ptr = buf; ptr < buf + strlen(buf); ) {
+		if (isspace(*ptr)) ptr++;
+		else break;
+	}
+	strcpy(buf, ptr);
+	/* remove spaces at the end */
+	for (ptr = buf + strlen(buf); ptr-- > buf; ) {
+		if (isspace(*ptr)) *ptr = '\0';
+		else break;
+	}
+	name = buf;
+
 	/* zonk */
 	if ((p_ptr->mode & MODE_PVP)) {
 		msg_print(Ind, "\377yPvP characters may not create a guild.");
@@ -829,6 +844,21 @@ int party_create(int Ind, cptr name)
 	player_type *p_ptr = Players[Ind];
 	int index = 0, i, oldest = turn;
 
+	char *ptr, buf[NAME_LEN];
+	strcpy(buf, name);
+	/* remove spaces at the beginning */
+	for (ptr = buf; ptr < buf + strlen(buf); ) {
+		if (isspace(*ptr)) ptr++;
+		else break;
+	}
+	strcpy(buf, ptr);
+	/* remove spaces at the end */
+	for (ptr = buf + strlen(buf); ptr-- > buf; ) {
+		if (isspace(*ptr)) *ptr = '\0';
+		else break;
+	}
+	name = buf;
+
 	/* Prevent abuse */
 	if (ILLEGAL_GROUP_NAME(name)) {
 		msg_print(Ind, "\377yThat's not a legal party name, please try again.");
@@ -913,6 +943,21 @@ int party_create_ironteam(int Ind, cptr name)
 {
 	player_type *p_ptr = Players[Ind];
 	int index = 0, i, oldest = turn;
+
+	char *ptr, buf[NAME_LEN];
+	strcpy(buf, name);
+	/* remove spaces at the beginning */
+	for (ptr = buf; ptr < buf + strlen(buf); ) {
+		if (isspace(*ptr)) ptr++;
+		else break;
+	}
+	strcpy(buf, ptr);
+	/* remove spaces at the end */
+	for (ptr = buf + strlen(buf); ptr-- > buf; ) {
+		if (isspace(*ptr)) *ptr = '\0';
+		else break;
+	}
+	name = buf;
 
 	/* Only newly created characters can create an iron team */
 	if (p_ptr->max_exp > 0 || p_ptr->max_plv > 1) {
