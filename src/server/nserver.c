@@ -4558,15 +4558,8 @@ int Send_inven(int ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 	char uses_dir = 0; /* flag whether a rod requires a direction for zapping or not */
 
 	/* Mark rods that require a direction */
-	if (o_ptr->tval == TV_ROD) {
-		/* NOTE: Keep this consistent with do_cmd_zap_rod() in cmd6.c! */
-		if (((o_ptr->sval >= SV_ROD_MIN_DIRECTION) &&
-		    !(o_ptr->sval == SV_ROD_DETECT_TRAP) &&
-		    //<---->!(o_ptr->sval == SV_ROD_HAVOC) &&
-		    !(o_ptr->sval == SV_ROD_HOME)) ||
-		    !object_aware_p(ind, o_ptr))
-			uses_dir = 1;
-	}
+	if (o_ptr->tval == TV_ROD && rod_requires_direction(ind, o_ptr))
+		uses_dir = 1;
 
 	/* Mark activatable items that require a direction */
 	if (activation_requires_direction(o_ptr)

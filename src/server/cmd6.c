@@ -4109,14 +4109,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir)
 
 	/* Get a direction (unless KNOWN not to need it) */
 	/* Pfft, dirty, dirty, diiirrrrtie!! (FIXME) */
-	/* Important: Keep consistent with Send_inven() in nserver.c! */
-//	if ((o_ptr->sval >= SV_ROD_MIN_DIRECTION) || !object_aware_p(Ind, o_ptr))
-        if (((o_ptr->sval >= SV_ROD_MIN_DIRECTION) &&
-	    !(o_ptr->sval == SV_ROD_DETECT_TRAP) &&
-//	    !(o_ptr->sval == SV_ROD_HAVOC) &&
-	    !(o_ptr->sval == SV_ROD_HOME)) ||
-	    !object_aware_p(Ind, o_ptr))
-	{
+	if (rod_requires_direction(Ind, o_ptr)) {
 		if (dir != 0 && dir != 11) {
 		//redundant: lower versions cant have dir != 0. ---  && is_newer_than(&p_ptr->version, 4, 4, 5, 10, 0, 0)) {
 			p_ptr->current_rod = item;
@@ -5082,6 +5075,19 @@ bool activation_requires_direction(object_type *o_ptr) {
 	return FALSE;
 }
 
+bool rod_requires_direction(int Ind, object_type *o_ptr) {
+	int sval = o_ptr->sval;
+
+	if (Ind && !object_aware_p(Ind, o_ptr)) return TRUE;
+
+	if ((sval >= SV_ROD_MIN_DIRECTION) &&
+	    !(sval == SV_ROD_DETECT_TRAP) &&
+	    //!(sval == SV_ROD_HAVOC) &&
+	    !(sval == SV_ROD_HOME))
+		return TRUE;
+
+	return FALSE;
+}
 
 /*
  * Activate a wielded object.  Wielded objects never stack.

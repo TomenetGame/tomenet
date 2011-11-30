@@ -682,6 +682,7 @@ extern void do_cmd_use_staff(int Ind, int item);
 extern void do_cmd_zap_rod(int Ind, int item, int dir);
 extern void do_cmd_zap_rod_dir(int Ind, int dir);
 extern bool activation_requires_direction(object_type *o_ptr);
+extern bool rod_requires_direction(int Ind, object_type *o_ptr);
 extern void do_cmd_activate(int Ind, int item, int dir);
 extern void do_cmd_activate_dir(int Ind, int dir);
 extern bool unmagic(int Ind);

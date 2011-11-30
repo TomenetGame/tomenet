@@ -2402,6 +2402,12 @@
 	((tval) == TV_SHIELD && ((sval) == SV_SMALL_LEATHER_SHIELD || (sval) == SV_LARGE_LEATHER_SHIELD)))
 #define is_cheap_misc(tval) \
 	(is_ammo(tval) || (tval) == TV_FIRESTONE || (tval) == TV_SPIKE || (tval) == TV_JUNK)
+#define is_ranged_item(Ind, o_ptr) \
+	((o_ptr)->tval == TV_BOW || \
+	is_ammo((o_ptr)->tval) || \
+	(o_ptr)->tval == TV_BOOK || \
+	(o_ptr)->tval == TV_WAND || \
+	((o_ptr)->tval == TV_ROD && rod_requires_direction(Ind, o_ptr)))
 /* more possibilities: is_potion, is_rune, is_jewelry, is_rare_armour(tval,sval) */
 
 

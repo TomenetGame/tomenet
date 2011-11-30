@@ -1862,13 +1862,17 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
  * Fighters are allowed to use {@O-}, which is only used if his HP is 1/2 or less.
  * ({@O-} feature is commented out)
  */
+/* handle RF7_NO_TARGET monsters so they won't block auto-retaliation?
+   This involves checking for retal-item before checking for retal-target.
+   That is probably much more expensive on CPU than the other way round. - C. Blue */
+#define EXPENSIVE_NO_TARGET_TEST
 static int auto_retaliate(int Ind)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr, *p_target_ptr = NULL, *prev_p_target_ptr = NULL;
 	int d, i, tx, ty, target, prev_target, item = -1;
 //	char friends = 0;
 	monster_type *m_ptr, *m_target_ptr = NULL, *prev_m_target_ptr = NULL;
-	monster_race *r_ptr = NULL, *r_ptr2;
+	monster_race *r_ptr = NULL, *r_ptr2, *r_ptr0;
 	object_type *o_ptr;
 	cptr inscription = NULL, at_O_inscription = NULL;
 	bool no_melee = FALSE, fallback = FALSE;
@@ -1884,6 +1888,89 @@ static int auto_retaliate(int Ind)
 	/* Just to kill compiler warnings */
 	target = prev_target = 0;
 
+#ifdef EXPENSIVE_NO_TARGET_TEST
+	/* Pick an item with {@O} inscription */
+	for (i = 0; i < INVEN_TOTAL; i++) {
+		o_ptr = &p_ptr->inventory[i];
+		if (!o_ptr->tval) continue;
+
+		inscription = quark_str(o_ptr->note);
+
+		/* check for a valid inscription */
+		if (inscription == NULL) continue;
+
+		/* scan the inscription for @O */
+		while (*inscription != '\0') {
+			if (*inscription == '@') {
+				inscription++;
+
+				/* a valid @O has been located */
+				/* @O shouldn't work on weapons or ammo in inventory - mikaelh */
+				if ((*inscription == 'O' || *inscription == 'Q') && !(i < INVEN_WIELD &&
+				    (is_weapon(o_ptr->tval) || is_ammo(o_ptr->tval) ||
+				    is_armour(o_ptr->tval) || o_ptr->tval == TV_MSTAFF ||
+				    o_ptr->tval == TV_BOW || o_ptr->tval == TV_BOOMERANG))) {
+					if (*inscription == 'Q') fallback = TRUE;
+					inscription++;
+
+					/* Skip this item in case it has @Ox */
+					if (*inscription == 'x') {
+						p_ptr->warning_autoret = 99; /* seems he knows what he's doing! */
+						break;
+					}
+
+					/* Select the first usable item with @O */
+					item = i;
+					i = INVEN_TOTAL;
+
+					/* Remember the inscription */
+					at_O_inscription = inscription;
+
+					p_ptr->warning_autoret = 99; /* seems he knows what he's doing! */
+					break;
+				}
+			}
+			inscription++;
+		}
+	}
+
+	/* Scan for @Ox to disable auto-retaliation only if no @O was found - mikaelh */
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
+		o_ptr = &p_ptr->inventory[i];
+		if (!o_ptr->tval) continue;
+
+		inscription = quark_str(o_ptr->note);
+
+		/* check for a valid inscription */
+		if (inscription == NULL) continue;
+
+		/* scan the inscription for @O */
+		while (*inscription != '\0') {
+			if (inscription[0] == '@' && (inscription[1] == 'O' || inscription[1] == 'Q') && inscription[2] == 'x') {
+				p_ptr->warning_autoret = 99; /* seems he knows what he's doing! */
+
+				if (i == INVEN_WIELD || i == INVEN_ARM) {
+					/* Prevent melee retaliation - mikaelh */
+					no_melee = TRUE;
+				}
+
+				if (item == -1) {
+					/* Select the item with @Ox */
+					item = i;
+
+					/* Make at_O_inscription point to the 'x' */
+					at_O_inscription = inscription + 2;
+
+					i = INVEN_TOTAL; /* exit the outer loop too */
+					break;
+				}
+			}
+			inscription++;
+		}
+	}
+#endif
+
+	/* check for monster/player targets */
 	for (d = 1; d <= 9; d++) {
 		if (d == 5) continue;
 
@@ -1895,6 +1982,7 @@ static int auto_retaliate(int Ind)
 		if (!(i = zcave[ty][tx].m_idx)) continue;
 		if (i > 0) {
 			m_ptr = &m_list[i];
+			r_ptr0 = race_inf(m_ptr);
 
 			/* Paranoia -- Skip dead monsters */
 			if (!m_ptr->r_idx) continue;
@@ -1903,7 +1991,14 @@ static int auto_retaliate(int Ind)
 			if (!p_ptr->mon_vis[i]) continue;
 
 			/* Stop annoying auto-retaliation against certain 'monsters' */
-			if (r_info[m_ptr->r_idx].flags8 & RF8_NO_AUTORET) continue;
+			if (r_ptr0->flags8 & RF8_NO_AUTORET) continue;
+
+#ifdef EXPENSIVE_NO_TARGET_TEST
+			/* Skip monsters we cannot actually target! (Sparrows) */
+			if ((r_ptr0->flags7 & RF7_NO_TARGET) &&
+			    is_ranged_item(Ind, &p_ptr->inventory[item]))
+				continue;
+#endif
 
 			/* Protect pets/golems */
 #if 0 /* Only vs our own pet/golem? */
@@ -2047,6 +2142,7 @@ static int auto_retaliate(int Ind)
 		return 0;
 	}
 
+#ifndef EXPENSIVE_NO_TARGET_TEST
 	/* Pick an item with {@O} inscription */
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
@@ -2126,6 +2222,7 @@ static int auto_retaliate(int Ind)
 			inscription++;
 		}
 	}
+#endif
 
 	/* If we have a player target, attack him. */
 	if (p_target_ptr) {
