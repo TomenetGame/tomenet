@@ -5878,6 +5878,71 @@ static void check_killing_reward(int Ind) {
 	}
 }
 
+/* deletes a ghost-dead player, cleans up his business, and disconnects him */
+static void erase_player(int Ind, int death_type, bool static_floor) {
+	player_type *p_ptr = Players[Ind];
+	int i;
+	char buf[1024];
+
+	kill_houses(p_ptr->id, OT_PLAYER);
+	rem_quest(p_ptr->quest_id);
+	kill_objs(p_ptr->id);
+	p_ptr->death = TRUE;
+
+#ifdef AUCTION_SYSTEM
+	auction_player_death(p_ptr->id);
+#endif
+
+	/* Remove him from his party/guild */
+	if (p_ptr->party) {
+		/* He leaves */
+		party_leave(Ind);
+	}
+	if (p_ptr->guild) {
+		if ((guilds[p_ptr->guild].flags & GFLG_AUTO_READD))
+			acc_set_guild(p_ptr->accountname, p_ptr->guild);
+#ifdef GUILD_ADDERS_LIST
+		if ((p_ptr->guild_flags & PGF_ADDER))
+			for (i = 0; i < 5; i++) if (streq(guilds[p_ptr->guild].adder[i], p_ptr->name)) {
+				guilds[p_ptr->guild].adder[i][0] = '\0';
+				break;
+			}
+#endif
+		guild_leave(Ind);
+	}
+
+	/* Ghosts dont static the lvl if under cfg_preserve_death_level ft. DEG */
+	if (static_floor && getlevel(&p_ptr->wpos) < cfg.preserve_death_level) {
+		struct worldpos old_wpos;
+		/*
+		 * HACK - Change the wpos temporarily so that new_players_on_depth
+		 * won't think that the player is on the level - mikaelh
+		 */
+		wpcopy(&old_wpos, &p_ptr->wpos);
+		p_ptr->wpos.wz++;
+		new_players_on_depth(&old_wpos, -1, TRUE);
+		p_ptr->wpos.wz--;
+	}
+
+	buffer_account_for_event_deed(p_ptr, death_type);
+
+	/* Remove him from the player name database */
+	delete_player_name(p_ptr->name);
+
+	/* Put him on the high score list */
+	if(!p_ptr->noscore && !(p_ptr->mode & (MODE_PVP | MODE_EVERLASTING)))
+		add_high_score(Ind);
+
+	/* Format string for death reason */
+	if (death_type == DEATH_QUIT) strcpy(buf, "Committed suicide");
+	else if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "Insanity") || p_ptr->image)
+		snprintf(buf, sizeof(buf), "Killed by %s (%ld pts)", p_ptr->really_died_from, total_points(Ind));
+	else snprintf(buf, sizeof(buf), "Killed by %s (%ld pts)", p_ptr->died_from, total_points(Ind));
+
+	/* Get rid of him */
+	Destroy_connection(p_ptr->conn, buf);
+}
+
 /*
  * Handle the death of a player and drop their stuff.
  */
@@ -6605,77 +6670,22 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", pvp ? "PVP" : "NOGHOS
 			}
 		}
 
-
-		kill_houses(p_ptr->id, OT_PLAYER);
-		rem_quest(p_ptr->quest_id);
-		kill_objs(p_ptr->id);
-		p_ptr->death = TRUE;
-
-#ifdef AUCTION_SYSTEM
-		auction_player_death(p_ptr->id);
-#endif
-		
-    		/* Remove him from his party/guild */
-		if (p_ptr->party) {
-			/* He leaves */
-			party_leave(Ind);
-		}
-		if (p_ptr->guild) {
-			if ((guilds[p_ptr->guild].flags & GFLG_AUTO_READD))
-				acc_set_guild(p_ptr->accountname, p_ptr->guild);
-			guild_leave(Ind);
-		}
-
-		/* Ghosts dont static the lvl if under cfg_preserve_death_level ft. DEG */
-
-		if (getlevel(&p_ptr->wpos) < cfg.preserve_death_level) {
-			struct worldpos old_wpos;
-
-			wpcopy(&old_wpos, &p_ptr->wpos);
-
-			/*
-			 * HACK - Change the wpos temporarily so that new_players_on_depth
-			 * won't think that the player is on the level - mikaelh
-			 */
-			p_ptr->wpos.wz++;
-
-			new_players_on_depth(&old_wpos, -1, TRUE);
-
-			p_ptr->wpos.wz--;
-		}
-
-		buffer_account_for_event_deed(p_ptr, death_type);
-
 		/* Add to legends log if he was at least 50 or died vs Morgoth */
-	    if (!is_admin(p_ptr)) {
-		if (p_ptr->total_winner)
-			l_printf("%s \\{r%s royalty %s (%d) died\n", showdate(), p_ptr->male ? "His" : "Her", p_ptr->name, p_ptr->lev);
-		else if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_GHOST))
-			l_printf("%s \\{r%s (%d) died facing Morgoth\n", showdate(), p_ptr->name, p_ptr->lev);
+		if (!is_admin(p_ptr)) {
+			if (p_ptr->total_winner)
+				l_printf("%s \\{r%s royalty %s (%d) died\n", showdate(), p_ptr->male ? "His" : "Her", p_ptr->name, p_ptr->lev);
+			else if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_GHOST))
+				l_printf("%s \\{r%s (%d) died facing Morgoth\n", showdate(), p_ptr->name, p_ptr->lev);
 #ifndef RPG_SERVER
-		else if (p_ptr->lev >= 50)
-			l_printf("%s \\{r%s (%d) died\n", showdate(), p_ptr->name, p_ptr->lev);
+			else if (p_ptr->lev >= 50)
+				l_printf("%s \\{r%s (%d) died\n", showdate(), p_ptr->name, p_ptr->lev);
 #else /* for RPG_SERVER, also display more trivial deaths, so people know the player is up for startup-party again */
-		else if (p_ptr->lev >= 20)
-			l_printf("%s \\{r%s (%d) died\n", showdate(), p_ptr->name, p_ptr->lev);
+			else if (p_ptr->lev >= 20)
+				l_printf("%s \\{r%s (%d) died\n", showdate(), p_ptr->name, p_ptr->lev);
 #endif
-	    }
+		}
 
-		/* Remove him from the player name database */
-		delete_player_name(p_ptr->name);
-
-		/* Put him on the high score list */
-//		if(!is_admin(p_ptr) && !p_ptr->noscore && !(p_ptr->mode & MODE_EVERLASTING))
-		if(!p_ptr->noscore && !(p_ptr->mode & (MODE_PVP | MODE_EVERLASTING)))
-			add_high_score(Ind);
-
-		/* Format string */
-		if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "Insanity") || p_ptr->image)
-			snprintf(buf, sizeof(buf), "Killed by %s (%ld pts)", p_ptr->really_died_from, total_points(Ind));
-		else snprintf(buf, sizeof(buf), "Killed by %s (%ld pts)", p_ptr->died_from, total_points(Ind));
-
-		/* Get rid of him */
-		Destroy_connection(p_ptr->conn, buf);
+		erase_player(Ind, death_type, TRUE);
 
 		/* Done */
 		return;
@@ -6789,60 +6799,14 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 
 	/* Handle suicide */
 	if (!p_ptr->alive) {
-		struct worldpos old_wpos;
-
-		/* Delete his houses */
-		kill_houses(p_ptr->id, OT_PLAYER);
-		rem_quest(p_ptr->quest_id);
-		kill_objs(p_ptr->id);
-
-#ifdef AUCTION_SYSTEM
-		auction_player_death(p_ptr->id);
-#endif
-
-		/* Remove him from his party/guild */
-		if (p_ptr->party) party_leave(Ind);
-		if (p_ptr->guild) {
-			if ((guilds[p_ptr->guild].flags & GFLG_AUTO_READD))
-				acc_set_guild(p_ptr->accountname, p_ptr->guild);
-			guild_leave(Ind);
-		}
-
-		buffer_account_for_event_deed(p_ptr, death_type);
-
-		/* Kill him */
-		p_ptr->death = TRUE;
-		p_ptr->deathblow = 0;
-
-		wpcopy(&old_wpos, &p_ptr->wpos);
-
-		/*
-		* HACK - Change the wpos temporarily so that new_players_on_depth
-		* won't think that the player is on the level - mikaelh
-		*/
-		p_ptr->wpos.wz++;
-
-		/* One less player here */
-		new_players_on_depth(&old_wpos, -1, TRUE);
-
-		p_ptr->wpos.wz--;
-
-		check_roller(Ind);
-
-		/* Remove him from the player name database */
-		delete_player_name(p_ptr->name);
-
-		/* Put him on the high score list */
-//		if(!is_admin(p_ptr) && !p_ptr->noscore && !(p_ptr->mode & MODE_EVERLASTING))
-		if(!p_ptr->noscore && !(p_ptr->mode & (MODE_PVP | MODE_EVERLASTING)))
-			add_high_score(Ind);
-
 #ifdef TOMENET_WORLDS
 		world_player(p_ptr->id, p_ptr->name, FALSE, TRUE);
 #endif
 
-		/* Get rid of him */
-		Destroy_connection(p_ptr->conn, "Committed suicide");
+		/* prevent suicide spam, if set in cfg */
+		check_roller(Ind);
+
+		erase_player(Ind, death_type, FALSE);
 
 		/* Done */
 		return;

@@ -444,7 +444,7 @@ static void wr_quests(){
 }
 
 static void wr_guilds(){
-	int i;
+	int i, j;
 	u16b tmp16u;
 
 	tmp16u = MAX_GUILDS;
@@ -457,6 +457,8 @@ static void wr_guilds(){
 		wr_s32b(guilds[i].members);
 		wr_u32b(guilds[i].flags);
 		wr_s16b(guilds[i].minlev);
+		for (j = 0; j < 5; j++)
+			wr_string(guilds[i].adder[j]);
 	}
 }
 

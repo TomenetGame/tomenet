@@ -3146,6 +3146,7 @@ void do_slash_cmd(int Ind, char *message)
 			u32b *flags;
 			guild_type *guild;
 			player_type *q_ptr;
+
 			if (!p_ptr->guild) {
 				msg_print(Ind, "You are not in a guild.");
 				return;
@@ -3176,10 +3177,27 @@ void do_slash_cmd(int Ind, char *message)
 			}
 
 			if (q_ptr->guild_flags & PGF_ADDER) {
+#ifdef GUILD_ADDERS_LIST
+				for (i = 0; i < 5; i++) if (streq(guild->adder[i], q_ptr->name)) {
+					guild->adder[i][0] = '\0';
+					break;
+				}
+#endif
+
 				q_ptr->guild_flags &= ~PGF_ADDER;
 				msg_format(Ind, "Player \377r%s\377w is no longer authorized to add others.", q_ptr->name);
 				msg_format(i, "\374\377UGuild master %s \377rretracted\377U your authorization to add others.", p_ptr->name);
 			} else {
+#ifdef GUILD_ADDERS_LIST
+				/* look if we have less than 5 adders still */
+				for (i = 0; i < 5; i++) if (guild->adder[i][0] == '\0') break; /* found a vacant slot? */
+				if (i == 5) {
+					msg_print(Ind, "You cannot designate more than 5 adders.");
+					return;
+				}
+				strcpy(guild->adder[i], q_ptr->name);
+#endif
+
 				q_ptr->guild_flags |= PGF_ADDER;
 				msg_format(Ind, "Player \377G%s\377w is now authorized to add other players.", q_ptr->name);
 				msg_format(i, "\374\377UGuild master %s \377Gauthorized\377U to add other players.", p_ptr->name);
@@ -3193,19 +3211,24 @@ void do_slash_cmd(int Ind, char *message)
 		else if (prefix(message, "/guild_flags")) {
 			u32b *flags;
 			guild_type *guild;
+			bool master;
 			if (!p_ptr->guild) {
 				msg_print(Ind, "You are not in a guild.");
 				return;
 			}
 			guild = &guilds[p_ptr->guild];
-			if (guild->master != p_ptr->id) {
+			master = (guild->master == p_ptr->id);
+			if (tk && !master) {
 				msg_print(Ind, "You are not the guild master.");
 				return;
 			}
 			flags = &guild->flags;
 
 			if (!tk) {
-				msg_format(Ind,  "\377%cCurrent guild configuration (use /guild_flags <flag name> command to change):", COLOUR_CHAT_GUILD);
+				if (master)
+					msg_format(Ind,  "\377%cCurrent guild configuration (use /guild_flags <flag name> command to change):", COLOUR_CHAT_GUILD);
+				else
+					msg_format(Ind,  "\377%cCurrent guild configuration:", COLOUR_CHAT_GUILD);
 				msg_format(Ind, "\377w    adders     : %s", *flags & GFLG_ALLOW_ADDERS ? "\377GYES" : "\377rno");
 				msg_print(Ind,  "\377W        Allows players designated via /guild_adder command to add others.");
 				msg_format(Ind, "\377w    autoreadd  : %s", *flags & GFLG_AUTO_READD ? "\377GYES" : "\377rno");
@@ -3214,8 +3237,23 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "\377w    minlev     : \377%c%d", guild->minlev <= 1 ? 'w' : (guild->minlev <= 10 ? 'G' : (guild->minlev < 20 ? 'g' :
 				    (guild->minlev < 30 ? 'y' : (guild->minlev < 40 ? 'o' : (guild->minlev <= 50 ? 'r' : 'v'))))), guild->minlev);
 				msg_print(Ind,  "\377W        Minimum character level required to get added to the guild.");
+
+#ifdef GUILD_ADDERS_LIST
+				for (i = 0; i < 5; i++) if (guild->adder[i][0] != '\0') {
+					sprintf(message4, "\377s    Adders are: ");
+					strcat(message4, guild->adder[i]);
+					for (i++; i < 5; i++) {
+						if (guild->adder[i][0] == '\0') continue;
+						strcat(message4, ", ");
+						strcat(message4, guild->adder[i]);
+					}
+					msg_print(Ind, message4);
+					break;
+				}
+#endif
 				return;
 			}
+
 			if (streq(token[1], "adders")) {
 				if (*flags & GFLG_ALLOW_ADDERS) {
 					msg_print(Ind, "Flag 'adders' set to NO.");

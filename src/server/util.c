@@ -1819,11 +1819,22 @@ void msg_print(int Ind, cptr msg)
 						tab_spacer = 1;
 #else
 						{
-							char *bracket = strchr(&msg[msg_scan], ']');
+							const char *bracket = strchr(&msg[msg_scan], ']');
 
 							if (bracket) {
+								const char *ptr = &msg[msg_scan];
+
 								/* Pad lines according to how long the name is - mikaelh */
 								tab_spacer = bracket - &msg[msg_scan] + 2;
+
+								/* Ignore space reserved for colour codes:
+								   Guild chat has coloured [ ] brackets. - C. Blue */
+								while ((ptr = strchr(ptr, '\377')) && ptr < bracket) {
+									ptr++;
+									tab_spacer -= 2; /* colour code consists of two chars
+									    (we can guarantee that here, since the server
+									    generated this colour code) */
+								}
 
 								/* Hack: multiline /me emotes */
 								if (tab_spacer > 70) tab_spacer = 1;
@@ -2839,8 +2850,11 @@ static void player_talk_aux(int Ind, char *message)
 
 		/* Send message to target party */
 		if (p_ptr->mutedchat < 2) {
+#ifdef GROUP_CHAT_NOCLUTTER
 			party_msg_format_ignoring(Ind, target, "\375\377%c[(P) %s] %s", COLOUR_CHAT_PARTY, sender, message + 2);
-//			party_msg_format_ignoring(Ind, target, "\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[target].name, sender, message + 2);
+#else
+			party_msg_format_ignoring(Ind, target, "\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[target].name, sender, message + 2);
+#endif
 //			party_msg_format_ignoring(Ind, target, "\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[target].name, sender, message + 1);
 		}
 
@@ -2927,8 +2941,11 @@ static void player_talk_aux(int Ind, char *message)
 
 		/* Send message to guild party */
 		if (p_ptr->mutedchat < 2) {
+#ifdef GROUP_CHAT_NOCLUTTER
 			guild_msg_format(p_ptr->guild, "\375\377y[\377%c(G) %s\377y]\377%c %s", COLOUR_CHAT_GUILD, sender, COLOUR_CHAT_GUILD, message + 2);
-			//guild_msg_format(p_ptr->guild, "\375\377y[\377%c%s\377y:\377%c%s\377y]\377%c %s", COLOUR_CHAT_GUILD, guilds[p_ptr->guild].name, COLOUR_CHAT_GUILD, sender, COLOUR_CHAT_GUILD, message + 2);
+#else
+			guild_msg_format(p_ptr->guild, "\375\377y[\377%c%s\377y:\377%c%s\377y]\377%c %s", COLOUR_CHAT_GUILD, guilds[p_ptr->guild].name, COLOUR_CHAT_GUILD, sender, COLOUR_CHAT_GUILD, message + 2);
+#endif
 		}
 
 		/* Done */

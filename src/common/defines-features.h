@@ -68,6 +68,13 @@
 /* Allow use of '!E' inscription to prevent earthquakes from TR5_IMPACT items? */
 //#define ALLOW_NO_QUAKE_INSCRIPTION
 
+/* Allow only a limited amount of guild adders, in turn maintain an always
+   accessible list of them, which also allows for removal while they aren't on? */
+#define GUILD_ADDERS_LIST
+
+/* Shorten party/guild name to (P) and (G) in party-/guild-chat for less clutter? */
+#define GROUP_CHAT_NOCLUTTER
+
 
 
 /* --------------------- Server-type dependant features -------------------- */

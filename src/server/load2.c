@@ -1059,6 +1059,11 @@ static void rd_guilds(){
 		rd_s32b(&guilds[i].members);
 		rd_u32b(&guilds[i].flags);
 		rd_s16b(&guilds[i].minlev);
+		if (!older_than(4, 4, 20)) {
+			int j;
+			for (j = 0; j < 5; j++)
+				rd_string(guilds[i].adder[j], NAME_LEN);
+		}
 	}
 }
 
