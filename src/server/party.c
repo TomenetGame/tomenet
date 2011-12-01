@@ -1509,7 +1509,7 @@ int party_remove(int remover, cptr name)
 
 void guild_leave(int Ind){
 	player_type *p_ptr = Players[Ind];
-	int guild_id = p_ptr->guild;
+	int guild_id = p_ptr->guild, i;
 
 	/* Make sure he belongs to a guild */
 	if (!guild_id)
@@ -1517,6 +1517,14 @@ void guild_leave(int Ind){
 		msg_print(Ind, "\377yYou don't belong to a guild.");
 		return;
 	}
+
+#ifdef GUILD_ADDERS_LIST
+	if ((p_ptr->guild_flags & PGF_ADDER))
+		for (i = 0; i < 5; i++) if (streq(guilds[p_ptr->guild].adder[i], p_ptr->name)) {
+			guilds[p_ptr->guild].adder[i][0] = '\0';
+			break;
+		}
+#endif
 
 	/* Lose a member */
 	guilds[guild_id].members--;

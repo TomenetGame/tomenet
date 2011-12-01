@@ -5881,7 +5881,6 @@ static void check_killing_reward(int Ind) {
 /* deletes a ghost-dead player, cleans up his business, and disconnects him */
 static void erase_player(int Ind, int death_type, bool static_floor) {
 	player_type *p_ptr = Players[Ind];
-	int i;
 	char buf[1024];
 
 	kill_houses(p_ptr->id, OT_PLAYER);
@@ -5901,13 +5900,6 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 	if (p_ptr->guild) {
 		if ((guilds[p_ptr->guild].flags & GFLG_AUTO_READD))
 			acc_set_guild(p_ptr->accountname, p_ptr->guild);
-#ifdef GUILD_ADDERS_LIST
-		if ((p_ptr->guild_flags & PGF_ADDER))
-			for (i = 0; i < 5; i++) if (streq(guilds[p_ptr->guild].adder[i], p_ptr->name)) {
-				guilds[p_ptr->guild].adder[i][0] = '\0';
-				break;
-			}
-#endif
 		guild_leave(Ind);
 	}
 

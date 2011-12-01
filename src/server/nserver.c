@@ -2760,6 +2760,18 @@ static int Handle_login(int ind)
 		acc_set_guild(p_ptr->accountname, 0);
 	}
 
+#ifdef GUILD_ADDERS_LIST
+	/* Erase his PGF_ADDER flag if he's been removed from the adder list. */
+	if ((p_ptr->guild_flags & PGF_ADDER)) {
+		for (i = 0; i < 5; i++)
+			if (streq(guilds[p_ptr->guild].adder[i], p_ptr->name)) break;
+		if (i == 5) {
+			p_ptr->guild_flags &= ~PGF_ADDER;
+			msg_format(NumPlayers, "\374\377%cYour authorization to add others to the guild has been \377rretracted\377%c.", COLOUR_CHAT_GUILD, COLOUR_CHAT_GUILD);
+		}
+	}
+#endif
+
 	/* some one-time hints after char creation in player_birth() */
 	if (p_ptr->newly_created) {
 		p_ptr->newly_created = FALSE;

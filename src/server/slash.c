@@ -3163,8 +3163,24 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			i = name_lookup_loose(Ind, message3, FALSE);
 			if (!i) {
+#ifdef GUILD_ADDERS_LIST
+				/* Handle de-authorization */
+				for (j = 0; j < 5; j++) if (streq(guild->adder[j], message3)) break;
+				if (j == 5) {
+					msg_print(Ind, "Player must be online to become an adder.");
+					return;
+				}
+				if (streq(p_ptr->name, message3)) {
+					msg_print(Ind, "As guild master you can always add others.");
+					return;
+				}
+				guild->adder[j][0] = '\0';
+				msg_format(Ind, "Player \377r%s\377w is no longer authorized to add others.", message3);
+				return;
+#else
 				msg_print(Ind, "Player not online.");
 				return;
+#endif
 			}
 			if (i == Ind) {
 				msg_print(Ind, "As guild master you can always add others.");
@@ -3186,7 +3202,7 @@ void do_slash_cmd(int Ind, char *message)
 
 				q_ptr->guild_flags &= ~PGF_ADDER;
 				msg_format(Ind, "Player \377r%s\377w is no longer authorized to add others.", q_ptr->name);
-				msg_format(i, "\374\377UGuild master %s \377rretracted\377U your authorization to add others.", p_ptr->name);
+				msg_format(i, "\374\377%cGuild master %s \377rretracted\377%c your authorization to add others.", COLOUR_CHAT_GUILD, p_ptr->name, COLOUR_CHAT_GUILD);
 			} else {
 #ifdef GUILD_ADDERS_LIST
 				/* look if we have less than 5 adders still */
@@ -3200,7 +3216,7 @@ void do_slash_cmd(int Ind, char *message)
 
 				q_ptr->guild_flags |= PGF_ADDER;
 				msg_format(Ind, "Player \377G%s\377w is now authorized to add other players.", q_ptr->name);
-				msg_format(i, "\374\377UGuild master %s \377Gauthorized\377U to add other players.", p_ptr->name);
+				msg_format(i, "\374\377%cGuild master %s \377Gauthorized\377%c to add other players.", COLOUR_CHAT_GUILD, p_ptr->name, COLOUR_CHAT_GUILD);
 				if (!(*flags & GFLG_ALLOW_ADDERS)) {
 					msg_print(Ind, "However, note that currently the guild flags still prevent this!");
 					msg_print(Ind, "To toggle the corresponding flag, use '/guild_flags adders' command.");
