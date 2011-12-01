@@ -402,14 +402,14 @@ extern u16b max_ow_idx;
 extern u16b max_wf_idx;
 extern s16b max_set_idx;
 
-extern char priv_note_sender[MAX_NOTES][80], priv_note_target[MAX_NOTES][80], priv_note[MAX_NOTES][80];
-extern char party_note[MAX_PARTYNOTES][80], party_note_target[MAX_PARTYNOTES][80];
-extern char guild_note[MAX_GUILDNOTES][80], guild_note_target[MAX_GUILDNOTES][80];
-extern char admin_note[MAX_ADMINNOTES][80], server_warning[MSG_LEN];
+extern char priv_note[MAX_NOTES][MAX_CHARS_WIDE], priv_note_sender[MAX_NOTES][NAME_LEN], priv_note_target[MAX_NOTES][NAME_LEN];
+extern char party_note[MAX_PARTYNOTES][MAX_CHARS_WIDE], party_note_target[MAX_PARTYNOTES][NAME_LEN];
+extern char guild_note[MAX_GUILDNOTES][MAX_CHARS_WIDE], guild_note_target[MAX_GUILDNOTES][NAME_LEN];
+extern char admin_note[MAX_ADMINNOTES][MAX_CHARS], server_warning[MSG_LEN];
 
-extern char bbs_line[BBS_LINES][140];
-extern char pbbs_line[MAX_PARTIES][BBS_LINES][140];
-extern char gbbs_line[MAX_GUILDS][BBS_LINES][140];
+extern char bbs_line[BBS_LINES][MAX_CHARS_WIDE];
+extern char pbbs_line[MAX_PARTIES][BBS_LINES][MAX_CHARS_WIDE];
+extern char gbbs_line[MAX_GUILDS][BBS_LINES][MAX_CHARS_WIDE];
 
 extern auction_type *auctions;
 extern u32b auction_alloc;

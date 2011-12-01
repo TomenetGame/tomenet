@@ -14,8 +14,8 @@
 
 #include "angband.h"
 
-/* how many chars someone may enter (used for /bbs) */
-#define MAX_SLASH_LINE_LEN	140
+/* how many chars someone may enter (formerly used for /bbs, was an ugly hack) */
+#define MAX_SLASH_LINE_LEN	MSG_LEN
 
 static void do_slash_brief_help(int Ind);
 char pet_creation(int Ind);
@@ -1919,21 +1919,17 @@ void do_slash_cmd(int Ind, char *message)
 		else if (prefix(message, "/pnote"))
 		{
 			j = 0;
-#if 0 /* allow only a party owner to write the note */
-			int p = -1;
-			for (i = 1; i < MAX_PARTIES; i++) { /* was i = 0 but real parties start from i = 1 - mikaelh */
-				if(!strcmp(parties[i].owner, p_ptr->name)) p = i;
-			}
-			if (p < 0) {
-				msg_print(Ind, "\377oYou aren't a party owner.");
-				return;
-			}
-#else /* allow every party member to change the note */
 			if (!p_ptr->party) {
 				msg_print(Ind, "\377oYou are not in a party.");
 				return;
 			}
+#if 0 /* allow only a party owner to write the note */
+			if (strcmp(parties[p_ptr->party].owner, p_ptr->name)) {
+				msg_print(Ind, "\377oYou aren't a party owner.");
+				return;
+			}
 #endif
+
 			if (tk == 1 && !strcmp(token[1], "*")) {
 				/* Erase party note */
 				for (i = 0; i < MAX_PARTYNOTES; i++) {
@@ -1984,6 +1980,10 @@ void do_slash_cmd(int Ind, char *message)
 						break;
 					}
 				}
+
+				/* Limit */
+				message2[j + MAX_CHARS_WIDE - 1] = '\0';
+
 				if (i < MAX_PARTYNOTES) {
 					/* change existing party note to new text */
 					strcpy(party_note[i], &message2[j]);
@@ -2004,7 +2004,6 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				strcpy(party_note_target[i], parties[p_ptr->party].name);
-				message2[j + 79] = '\0'; /* Limit to 80 chars */
 				strcpy(party_note[i], &message2[j]);
 //				msg_print(Ind, "\377yNote has been stored.");
 				msg_party_format(Ind, "\377b%s set party note to: %s", p_ptr->name, party_note[i]);
@@ -2014,18 +2013,13 @@ void do_slash_cmd(int Ind, char *message)
 		else if (prefix(message, "/gnote"))
 		{
 			j = 0;
-#if 0 /* only allow the guild master to write the note */
-			int p = -1;
-			for (i = 0; i < MAX_GUILDS; i++) {
-				if(guilds[i].master == p_ptr->id) p = i;
-			}
-			if (p < 0) {
-				msg_print(Ind, "\377oYou aren't a guild master.");
-				return;
-			}
-#else /* allow all guild members to write the note */
 			if (!p_ptr->guild) {
 				msg_print(Ind, "\377oYou are not in a guild.");
+				return;
+			}
+#if 0 /* only allow the guild master to write the note? */
+			if (guilds[p_ptr->guild].master != p_ptr->id) {
+				msg_print(Ind, "\377oYou aren't a guild master.");
 				return;
 			}
 #endif
@@ -2081,7 +2075,7 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				if (i < MAX_GUILDNOTES) {
 					/* change existing guild note to new text */
-					message2[j + 79] = '\0'; /* Limit to 80 chars */
+					message2[j + MAX_CHARS_WIDE - 1] = '\0'; /* Limit */
 					strcpy(guild_note[i], &message2[j]);
 //					msg_print(Ind, "\377yNote has been stored.");
 					msg_guild_format(Ind, "\377b%s changed the guild note to: %s", p_ptr->name, guild_note[i]);
@@ -2202,7 +2196,8 @@ void do_slash_cmd(int Ind, char *message)
 								/* find ':' which terminates target name, save pos in i */
 								if (message2[i] == ':') {
 									/* extract target name up to the ':' */
-									strcpy(tname, message2 + j);
+									strncpy(tname, message2 + j, NAME_LEN);
+									if (i - j >= NAME_LEN) i = j + NAME_LEN - 1;
 									tname[i - j] = '\0';
 									/* save i in j for latter use */
 									j = i;
@@ -2282,6 +2277,9 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 
+			/* limit */
+			message2[j + MAX_CHARS_WIDE - 1] = '\0';
+
 			/* Check whether target is actually online by now :) */
 			if ((i = name_lookup_loose_quiet(Ind, tname, FALSE))) {
 				msg_format(i, "\377bNote from %s: %s", p_ptr->name, message2 + j + 1);
@@ -2290,7 +2288,6 @@ void do_slash_cmd(int Ind, char *message)
 
 			strcpy(priv_note_sender[found_note], p_ptr->name);
 			strcpy(priv_note_target[found_note], tname);
-			message2[j + 1 + 79] = '\0'; /* Limit to 80 chars */
 			strcpy(priv_note[found_note], message2 + j + 1);
 			msg_format(Ind, "\377yNote for account '%s' has been stored.", priv_note_target[found_note]);
 			return;

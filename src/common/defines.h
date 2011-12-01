@@ -226,7 +226,7 @@
 /* max length of monster names (with pronominum etc) */
 #define MNAME_LEN	80
 
-/* max length of character names */
+/* max length of character/party/guild names */
 #define NAME_LEN	20
 
 /*

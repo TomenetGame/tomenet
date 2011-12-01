@@ -4198,7 +4198,7 @@ void bbs_add_line(cptr textline)
 	        for (j = 0; j < BBS_LINES - 1; j++)
 	                strcpy(bbs_line[j], bbs_line[j + 1]);
 	/* write the line to the bbs */
-	strncpy(bbs_line[j], textline, 140 - 3); /* lines get one leading spaces on outputting, so it's 78-1  //  was 77 */
+	strncpy(bbs_line[j], textline, MAX_CHARS_WIDE - 3); /* lines get one leading spaces on outputting, so it's 78-1  //  was 77 */
 }
 
 void bbs_del_line(int entry)
@@ -4231,7 +4231,7 @@ void pbbs_add_line(u16b party, cptr textline)
 	        for (j = 0; j < BBS_LINES - 1; j++)
 	                strcpy(pbbs_line[party][j], pbbs_line[party][j + 1]);
 	/* write the line to the bbs */
-	strncpy(pbbs_line[party][j], textline, 140 - 3);
+	strncpy(pbbs_line[party][j], textline, MAX_CHARS_WIDE - 3);
 }
 
 void gbbs_add_line(byte guild, cptr textline)
@@ -4246,7 +4246,7 @@ void gbbs_add_line(byte guild, cptr textline)
 	        for (j = 0; j < BBS_LINES - 1; j++)
 	                strcpy(gbbs_line[guild][j], gbbs_line[guild][j + 1]);
 	/* write the line to the bbs */
-	strncpy(gbbs_line[guild][j], textline, 140 - 3);
+	strncpy(gbbs_line[guild][j], textline, MAX_CHARS_WIDE - 3);
 }
 
 

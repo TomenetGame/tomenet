@@ -8000,6 +8000,8 @@ static int Receive_inscribe(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+	/* paranoia? */
+	inscription[MAX_CHARS - 1] = '\0';
 
 	/* Sanity check - mikaelh */
 	if (item >= INVEN_TOTAL)

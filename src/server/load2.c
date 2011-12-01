@@ -950,17 +950,17 @@ static errr rd_store(store_type *st_ptr)
 static void rd_bbs() {
         int i, j;
 	s16b saved_lines, parties, guilds;
-	char dummy[140];
+	char dummy[MAX_CHARS_WIDE];
 
         rd_s16b(&saved_lines);
 
 #if 0
         for (i = 0; ((i < BBS_LINES) && (i < saved_lines)); i++)
-                rd_string(bbs_line[i], 140);
+                rd_string(bbs_line[i], MAX_CHARS_WIDE);
 #else
         for (i = 0; i < saved_lines; i++)
-		if (i >= BBS_LINES) rd_string(dummy, 140);
-		else rd_string(bbs_line[i], 140);
+		if (i >= BBS_LINES) rd_string(dummy, MAX_CHARS_WIDE);
+		else rd_string(bbs_line[i], MAX_CHARS_WIDE);
 #endif
 
 	/* load pbbs & gbbs - C. Blue */
@@ -970,22 +970,22 @@ static void rd_bbs() {
 		for (j = 0; j < parties; j++)
 			if (j < MAX_PARTIES) {
 				for (i = 0; i < saved_lines; i++)
-					if (i >= BBS_LINES) rd_string(dummy, 140);
-					else rd_string(pbbs_line[j][i], 140);
+					if (i >= BBS_LINES) rd_string(dummy, MAX_CHARS_WIDE);
+					else rd_string(pbbs_line[j][i], MAX_CHARS_WIDE);
 			} else {
 				for (i = 0; i < saved_lines; i++)
-					rd_string(dummy, 140);
+					rd_string(dummy, MAX_CHARS_WIDE);
 			}
 		/* read old guilds */
 		rd_s16b(&guilds);
 		for (j = 0; j < guilds; j++)
 			if (j < MAX_GUILDS) {
 				for (i = 0; i < saved_lines; i++)
-					if (i >= BBS_LINES) rd_string(dummy, 140);
-					else rd_string(gbbs_line[j][i], 140);
+					if (i >= BBS_LINES) rd_string(dummy, MAX_CHARS_WIDE);
+					else rd_string(gbbs_line[j][i], MAX_CHARS_WIDE);
 			} else {
 				for (i = 0; i < saved_lines; i++)
-					rd_string(dummy, 140);
+					rd_string(dummy, MAX_CHARS_WIDE);
 			}
 	}
 }
@@ -993,41 +993,41 @@ static void rd_bbs() {
 static void rd_notes() {
         int i;
         s16b j;
-        char dummy[80];
+        char dummy[MAX_CHARS_WIDE];
 
         rd_s16b(&j);
         for (i = 0; i < j; i++) {
 	        if (i >= MAX_NOTES) {
-			rd_string(dummy, 80);
-			rd_string(dummy, 80);
-			rd_string(dummy, 80);
+			rd_string(dummy, MAX_CHARS_WIDE);
+			rd_string(dummy, NAME_LEN);
+			rd_string(dummy, NAME_LEN);
 			continue;
 	        }
-                rd_string(priv_note[i], 80);
-                rd_string(priv_note_sender[i], 80);
-                rd_string(priv_note_target[i], 80);
+                rd_string(priv_note[i], MAX_CHARS_WIDE);
+                rd_string(priv_note_sender[i], NAME_LEN);
+                rd_string(priv_note_target[i], NAME_LEN);
         }
 
         rd_s16b(&j);
         for (i = 0; i < j; i++) {
 	        if (i >= MAX_PARTYNOTES) {
-			rd_string(dummy, 80);
-			rd_string(dummy, 80);
+			rd_string(dummy, MAX_CHARS_WIDE);
+			rd_string(dummy, NAME_LEN);
 			continue;
 	        }
-                rd_string(party_note[i], 80);
-                rd_string(party_note_target[i], 80);
+                rd_string(party_note[i], MAX_CHARS_WIDE);
+                rd_string(party_note_target[i], NAME_LEN);
         }
 
         rd_s16b(&j);
         for (i = 0; i < j; i++) {
 	        if (i >= MAX_GUILDNOTES) {
-			rd_string(dummy, 80);
-			rd_string(dummy, 80);
+			rd_string(dummy, MAX_CHARS_WIDE);
+			rd_string(dummy, NAME_LEN);
 			continue;
 	        }
-                rd_string(guild_note[i], 80);
-                rd_string(guild_note_target[i], 80);
+                rd_string(guild_note[i], MAX_CHARS_WIDE);
+                rd_string(guild_note_target[i], NAME_LEN);
         }
         //omitted (use custom.lua instead): admin_note[MAX_ADMINNOTES]
 }

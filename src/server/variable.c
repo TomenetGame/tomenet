@@ -791,16 +791,16 @@ int gametype;
 /* Private notes for fellow players
  * see '/note' command in util.c. -C. Blue
  */
-char priv_note[MAX_NOTES][80], priv_note_sender[MAX_NOTES][80], priv_note_target[MAX_NOTES][80];
-char party_note[MAX_PARTYNOTES][80], party_note_target[MAX_PARTYNOTES][80];
-char guild_note[MAX_GUILDNOTES][80], guild_note_target[MAX_GUILDNOTES][80];
-char admin_note[MAX_ADMINNOTES][80], server_warning[MSG_LEN];
+char priv_note[MAX_NOTES][MAX_CHARS_WIDE], priv_note_sender[MAX_NOTES][NAME_LEN], priv_note_target[MAX_NOTES][NAME_LEN];
+char party_note[MAX_PARTYNOTES][MAX_CHARS_WIDE], party_note_target[MAX_PARTYNOTES][NAME_LEN];
+char guild_note[MAX_GUILDNOTES][MAX_CHARS_WIDE], guild_note_target[MAX_GUILDNOTES][NAME_LEN];
+char admin_note[MAX_ADMINNOTES][MAX_CHARS], server_warning[MSG_LEN];
 
 /* in-game bbs :) - C. Blue */
-char bbs_line[BBS_LINES][140];
+char bbs_line[BBS_LINES][MAX_CHARS_WIDE];
 /* party/guild-internal bbs'es: */
-char pbbs_line[MAX_PARTIES][BBS_LINES][140];
-char gbbs_line[MAX_GUILDS][BBS_LINES][140];
+char pbbs_line[MAX_PARTIES][BBS_LINES][MAX_CHARS_WIDE];
+char gbbs_line[MAX_GUILDS][BBS_LINES][MAX_CHARS_WIDE];
 
 int global_luck = 0;
 int regen_boost_stamina = 4;

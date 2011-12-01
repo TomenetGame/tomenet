@@ -647,7 +647,11 @@ int guild_create(int Ind, cptr name){
 	char temp[160];
 
 	char *ptr, buf[NAME_LEN];
-	strcpy(buf, name);
+	if (strlen(name) >= NAME_LEN) {
+		msg_format(Ind, "Guild name must not exceed %d characters!", NAME_LEN - 1);
+	}
+	strncpy(buf, name, NAME_LEN);
+	buf[NAME_LEN - 1] = '\0';
 	/* remove spaces at the beginning */
 	for (ptr = buf; ptr < buf + strlen(buf); ) {
 		if (isspace(*ptr)) ptr++;
@@ -846,7 +850,11 @@ int party_create(int Ind, cptr name)
 	int index = 0, i, oldest = turn;
 
 	char *ptr, buf[NAME_LEN];
-	strcpy(buf, name);
+	if (strlen(name) >= NAME_LEN) {
+		msg_format(Ind, "Party name must not exceed %d characters!", NAME_LEN - 1);
+	}
+	strncpy(buf, name, NAME_LEN);
+	buf[NAME_LEN - 1] = '\0';
 	/* remove spaces at the beginning */
 	for (ptr = buf; ptr < buf + strlen(buf); ) {
 		if (isspace(*ptr)) ptr++;
