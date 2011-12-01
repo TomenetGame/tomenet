@@ -727,6 +727,7 @@ int guild_create(int Ind, cptr name){
 	/* broadcast the news */
 	snprintf(temp, 160, "\374\377GA new guild '\377%c%s\377G' has been created.", COLOUR_CHAT_GUILD, name);
 	msg_broadcast(0, temp);
+	msg_print(Ind, "\374\377Gou can adjust guild options with the '/guild_cfg' command.");
 
 	p_ptr->au -= 2000000;
 	p_ptr->redraw|=PR_GOLD;

@@ -3218,13 +3218,13 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "Player \377G%s\377w is now authorized to add other players.", q_ptr->name);
 				msg_format(i, "\374\377%cGuild master %s \377Gauthorized\377%c to add other players.", COLOUR_CHAT_GUILD, p_ptr->name, COLOUR_CHAT_GUILD);
 				if (!(*flags & GFLG_ALLOW_ADDERS)) {
-					msg_print(Ind, "However, note that currently the guild flags still prevent this!");
-					msg_print(Ind, "To toggle the corresponding flag, use '/guild_flags adders' command.");
+					msg_print(Ind, "However, note that currently the guild configuration still prevent this!");
+					msg_print(Ind, "To toggle the corresponding flag, use '/guild_cfg adders' command.");
 				}
 			}
 			return;
 		}
-		else if (prefix(message, "/guild_flags")) {
+		else if (prefix(message, "/guild_cfg")) {
 			u32b *flags;
 			guild_type *guild;
 			bool master;
@@ -3242,7 +3242,7 @@ void do_slash_cmd(int Ind, char *message)
 
 			if (!tk) {
 				if (master)
-					msg_format(Ind,  "\377%cCurrent guild configuration (use /guild_flags <flag name> command to change):", COLOUR_CHAT_GUILD);
+					msg_format(Ind,  "\377%cCurrent guild configuration (use /guild_cfg <flag name> command to change):", COLOUR_CHAT_GUILD);
 				else
 					msg_format(Ind,  "\377%cCurrent guild configuration:", COLOUR_CHAT_GUILD);
 				msg_format(Ind, "\377w    adders     : %s", *flags & GFLG_ALLOW_ADDERS ? "\377GYES" : "\377rno");
@@ -3288,7 +3288,7 @@ void do_slash_cmd(int Ind, char *message)
 				}
 			} else if (streq(token[1], "minlev")) {
 				if (tk < 2) {
-					msg_print(Ind, "Usage: /guild_flags minlev <level>");
+					msg_print(Ind, "Usage: /guild_cfg minlev <level>");
 					return;
 				}
 				msg_format(Ind, "Minimum level required to join the guild so far was %d..", guild->minlev);
