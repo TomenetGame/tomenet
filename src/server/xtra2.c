@@ -8337,6 +8337,9 @@ bool ang_sort_comp_tval(int Ind, vptr u, vptr v, int a, int b)
  * Future versions may restrict the ability to target "trappers"
  * and "mimics", but the semantics is a little bit weird.
  */
+/* Allow auto-retaliation to not get 'disabled' by a Sparrow next to the player?
+   Also see EXPENSIVE_NO_TARGET_TEST. */
+//#define CHEAP_NO_TARGET_TEST
 bool target_able(int Ind, int m_idx)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr;
@@ -8379,6 +8382,10 @@ bool target_able(int Ind, int m_idx)
 		/* if (CLEAR_ATTR && CLEAR_CHAR) return (FALSE); */
 		
 		/* Cannot be targeted */
+#ifdef CHEAP_NO_TARGET_TEST
+		/* Allow targetting if it's next to player? */
+		if (!(ABS(p_ptr->px - m_ptr->fx) <= 1 && ABS(p_ptr->py - m_ptr->fy) <= 1))
+#endif
 		if (r_ptr->flags7 & RF7_NO_TARGET) return (FALSE);
 
 		/* Assume okay */

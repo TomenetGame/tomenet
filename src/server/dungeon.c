@@ -1864,7 +1864,8 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
  */
 /* handle RF7_NO_TARGET monsters so they won't block auto-retaliation?
    This involves checking for retal-item before checking for retal-target.
-   That is probably much more expensive on CPU than the other way round. - C. Blue */
+   That is probably much more expensive on CPU than the other way round.
+   Also see CHEAP_NO_TARGET_TEST. - C. Blue */
 #define EXPENSIVE_NO_TARGET_TEST
 static int auto_retaliate(int Ind)
 {
