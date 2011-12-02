@@ -1579,6 +1579,11 @@ void carry(int Ind, int pickup, int confirm)
 			if (cfg.anti_cheeze_pickup) {
 				msg_print(Ind, "You aren't powerful enough yet to pick up that item!");
 				return;
+			/* new: this is to prevent newbies to pick up all nearby stuff with their
+			   level 1 char aimlessly without being able to drop it again. */
+			} else if (p_ptr->max_plv < cfg.newbies_cannot_drop) {
+				msg_format(Ind, "You must at least be level %d to pick up items above your level.", cfg.newbies_cannot_drop);
+				return;
 			}
 			if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup)
 //			if (artifact_p(o_ptr) && cfg.anti_arts_pickup)
