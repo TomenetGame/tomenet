@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 1. December 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 2. December 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -127,6 +127,7 @@ Contents
     (6.7b)  Druid form details
     (6.7c)  Useful low-level forms for weapon-using mimics
     (6.8)   Magic spells and prayers
+    (6.8a)  Spell failure rate
     (6.9)   Parties, Iron Teams, Guilds
     (6.10)  Magic Device skill/ability details
     (6.11)  Parrying and blocking
@@ -10412,6 +10413,10 @@ To do so, they need the according spell scrolls (which contain exactly one
 specific spell) or books (such as Codices, Spell Books, Grimoires, Handbooks
 or Tomes, that contain several different spells) in their inventory.
 
+The failure rate when attempting to successfully cast a spell is usually shown
+when browsing the according spell scroll/crystal, and is determined by your
+intelligence or wisdom, and the spell's level. For details see (6.8a).
+
 Spell scrolls and some books can be purchased in store '9' (the 'book store',
 usually also sells 'Beginner Cantrips' and sometimes also Codices) or in
 '7' (the 'black market' - very expensive but you often find tomes here!).
@@ -11072,6 +11077,39 @@ Astral
                     (This spell uses WISDOM to determine fail-rates!)
                     Required skill level for first spell level: 50.
                     This spell requires a character level of at least 62.
+
+
+(6.8a) Spell failure rate
+-------------------------
+The chance to not successfully cast a spell, aka the spell fail rate is shown
+in percent when browsing a spell scroll/crystal. An exception are currently
+mimic powers which they inherit from mimicking a monster, whose fail rates are
+not shown anywhere at the moment, this might be subject to improvement.
+
+The fail rate of a spell depends on..
+
+Magic schools:
+    Nearly all spells depend on the spell level and your INTelligence,
+    some spells however use WISdom instead of intelligence, those spells are
+    designated in (6.8) in their spell description.
+Prayer schools:
+    All spells depend on the spell level and your WISdom.
+Mindcraft schools:
+    All spells depend on the spell level and your INTelligence.
+Druidic schools:
+    All spells depend on the spell level and your WISdom.
+Astral school:
+    Some spells depend on the spell level and WISdom, some on the spell level
+    and INTelligence, as designated in (6.8) in the spell descriptions.
+
+In general, when you learn a new spell that starts at a high fail rate, you
+will observe a great improvement just by further training the spell's school to
+increase the spell's level. Increasing your INT or WIS (depending on what this
+particular spell uses) will also help.
+At a certain point however, usually when the spell's fail chance is already
+rather low, the spell fail rate might not go down further from increasing its
+level. At that point the only thing you can do to further reduce the spell fail
+rate is to increase the stat (INT or WIS) that the spell uses.
 
 
 
