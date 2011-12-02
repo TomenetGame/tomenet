@@ -1293,9 +1293,13 @@ static void del_guild(int id){
 	/* Tell everyone */
 	snprintf(temp, 160, "\374\377yThe guild '\377%c%s\377y' no longer exists.", COLOUR_CHAT_GUILD, guilds[id].name);
 	msg_broadcast(0, temp);
+
 	/* Clear the basic info */
-	guilds[id].members = 0;	/* it should be zero anyway */
+	guilds[id].members = 0; /* it should be zero anyway */
 	strcpy(guilds[id].name,"");
+	for (i = 0; i < 5; i++) guilds[id].adder[i][0] = '\0'; /* they should be cleared anyway */
+	guilds[id].flags = GFLG_NONE;
+	guilds[id].minlev = 0;
 }
 
 /*
