@@ -3189,7 +3189,7 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 
-			if (q_ptr->guild_flags & PGF_ADDER) {
+			if ((q_ptr->guild_flags & PGF_ADDER)) {
 #ifdef GUILD_ADDERS_LIST
 				for (j = 0; j < 5; j++) if (streq(guild->adder[j], q_ptr->name)) {
 					guild->adder[j][0] = '\0';
@@ -3203,7 +3203,7 @@ void do_slash_cmd(int Ind, char *message)
 			} else {
 #ifdef GUILD_ADDERS_LIST
 				/* look if we have less than 5 adders still */
-				for (j = 0; j < 5; i++) if (guild->adder[j][0] == '\0') break; /* found a vacant slot? */
+				for (j = 0; j < 5; j++) if (guild->adder[j][0] == '\0') break; /* found a vacant slot? */
 				if (j == 5) {
 					msg_print(Ind, "You cannot designate more than 5 adders.");
 					return;
