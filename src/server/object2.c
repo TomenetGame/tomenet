@@ -4355,19 +4355,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 						}
 						if (tries < 1000) {
 							o_ptr->pval = i;
-							/* Let's have the following level req code commented out
-							to give found poly rings random levels to allow surprises :)
-							Nah my idea was too cheezy, Blue DR at 21 -C. Blue */
-							if (r_info[i].level > 0) {
-								//o_ptr->level = 10 + (1000 / ((2000 / r_info[i].level) + 10));
-								//o_ptr->level = 5 + (1000 / ((1500 / r_info[i].level) + 5));
-								/* keep consistent with cmd6.c ! */
-								o_ptr->level = 5 + (1000 / ((1500 / r_info[i].level) + 7));
-							} else {
-								//o_ptr->level = 10;
-								o_ptr->level = 5;
-							}
-							/* Make the ring last only over a certain period of time >:) - C. Blue */
+							o_ptr->level = ring_of_polymorph_level(r_info[i].level);
 							o_ptr->timeout = 3000 + rand_int(3001);
 						} else o_ptr->level = 1;
 					} else o_ptr->level = 1;
@@ -5746,6 +5734,21 @@ void verify_level_req(object_type *o_ptr)
 {
 }
 
+/* Set level req for polymorph ring on its creation - C. Blue */
+int ring_of_polymorph_level(int r_lev) {
+#if 0
+	if (r_lev == 0) return 5;
+	/* 0->5..1->6..30->26..60->42..80->51..85->53..100->58 */
+	//return 5 + (1600 / ((2000 / (r_lev + 1)) + 10));
+	//return 10 + (1000 / ((2000 / r_lev) + 10));
+	//return 5 + (1000 / ((1500 / r_lev) + 5));
+	//return 5 + (1000 / ((1500 / r_lev) + 7));
+#else /* use two curves, low-lev and rest */
+	if (r_lev < 7) return 5;
+	else if (r_lev < 30) return (850 / (1170 / r_lev)); /* 7 -> 5, 15 -> 10, 23 -> 16, 29 -> _21_ */
+	else return 5 + (1000 / ((1500 / r_lev) + 7)); /* 30 -> _22_, 60 -> 36, 80 -> 43, 100 -> 50 */
+#endif
+}
 
 /*
  * Object-theme codes borrowed from ToME.	- Jir -

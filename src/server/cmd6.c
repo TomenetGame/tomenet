@@ -6551,16 +6551,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 						o_ptr->pval = p_ptr->body_monster;
 
 						/* Set appropriate level requirements */
-#if 1
-						if (r_info[p_ptr->body_monster].level > 0) {
-							/* 0->5..1->6..30->26..60->42..80->51..85->53..100->58 */
-							//o_ptr->level = 5 + (1600 / ((2000 / (r_info[p_ptr->body_monster].level + 1)) + 10));
-							/* keep consistent with object2.c! */
-							o_ptr->level = 5 + (1000 / ((1500 / r_info[p_ptr->body_monster].level) + 7));
-						} else {
-							o_ptr->level = 5;
-						}
-#endif
+						o_ptr->level = ring_of_polymorph_level(r_info[p_ptr->body_monster].level);
 
 						/* Make the ring last only over a certain period of time >:) - C. Blue */
 						o_ptr->timeout = 3000 + get_skill_scale(p_ptr, SKILL_DEVICE, 2000) +

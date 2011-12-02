@@ -1162,6 +1162,7 @@ extern byte potion_col[MAX_COLORS];
 #endif
 
 extern byte get_spellbook_name_colour(int pval);
+extern int ring_of_polymorph_level(int r_lev);
 
 /* party.c */
 extern void account_check(int Ind);
