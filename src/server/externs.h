@@ -91,6 +91,7 @@ extern byte adj_wis_sav[];
 extern byte adj_wis_msane[];
 extern byte adj_dex_dis[];
 extern byte adj_int_dis[];
+extern byte adj_int_pow[];
 extern byte adj_dex_ta[];
 extern byte adj_str_td[];
 extern byte adj_dex_th[];

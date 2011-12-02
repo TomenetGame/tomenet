@@ -22,8 +22,10 @@
  * in percent.	[40] */
 #define ENCHANT_DISCOUNT_CHANCE	40
 
+
+#if 0 /* currently disabled because it's unused, just to kill compiler warning */
 /*
- * Rerturn the skill associated with the realm
+ * Return the skill associated with the realm
  */
 static int find_realm_skill(int realm)
 {
@@ -56,12 +58,13 @@ static s16b spell_chance(int Ind, int realm, magic_type *s_ptr)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int		chance, minfail=5, minminfail;
+	int chance, minfail, minminfail;
 
 	/* Extract the base spell failure rate */
 	chance = s_ptr->sfail;
 
 	/* Reduce failure rate by "effective" level adjustment */
+	minfail = 5;
 	chance -= 3 * (get_skill(p_ptr, find_realm_skill(realm)) - s_ptr->slevel);
 
 	/* Reduce failure rate by INT/WIS adjustment */
@@ -108,6 +111,7 @@ static s16b spell_chance(int Ind, int realm, magic_type *s_ptr)
 	/* Return the chance */
 	return (chance);
 }
+#endif
 
 /* ok, it's hacked :) */
 /* of course, you can optimize it further by bandling
@@ -468,9 +472,14 @@ static void do_mimic_power(int Ind, int power, int dir)
 
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
+#if 0 /* note: currently s_ptr->slevel is always 0 and there is no SKILL_MAGERY (0 too), so chance = sptr->sfail basically. */
 	/* Spell failure chance -- Hack, use the same stats as magery*/
 //	chance = spell_chance(Ind, REALM_MAGERY, s_ptr);
-	chance = spell_chance(Ind, REALM_MIMIC, s_ptr);
+//	chance = spell_chance(Ind, REALM_MIMIC, s_ptr);
+#else /* instead use newly added adj_int_pow[] - C. Blue */
+	chance = (s_ptr->sfail * adj_int_pow[p_ptr->stat_ind[A_INT]]) / 100;
+	if (chance < 1) chance = 1; /* minimum fail chance */
+#endif
 
 	if (j >= 32 && interfere(Ind, cfg.spell_interfere)) return; /* mimic spells interference chance */
 
