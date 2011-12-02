@@ -7609,12 +7609,17 @@ for(i=1; i < 5; i++) {
 
 			if (!gain) gain = 1; /* level 0 monsters (and super-low skill) give some energy too */
 
+#if 0 /* strange values I guess */
 			if (gain_sp >= 60) gain_sp = (gain_sp - 60) * 20 + 100;
 			else if (gain_sp >= 40) gain_sp = (gain_sp - 40) * 4 + 20;
 			else if (gain_sp >= 30) gain_sp = (gain_sp - 30) + 7;
 			else if (gain_sp >= 20) gain_sp = (gain_sp - 20) / 2 + 2;
 			else gain_sp /= 10;
 			if (!gain_sp && magik(25)) gain_sp = 1; /* level 0 monsters have chance to give energy too */
+#else
+			gain_sp = ((gain_sp + 1) * (gain_sp + 1)) / 50;
+			if (!gain_sp) gain_sp = 1; /* level 0 monsters give energy */
+#endif
 
 			if ((p_ptr->chp < p_ptr->mhp) || (p_ptr->csp < p_ptr->msp)) {
 				msg_print(Ind, "You absorb the energy of the dying soul.");
