@@ -890,15 +890,15 @@ bool set_mimic(int Ind, int v, int p)
 		if (!p_ptr->tim_mimic) {
 			msg_print(Ind, "Your image changes!");
 			notice = TRUE;
-		} else if (p_ptr->tim_mimic > 50 && v <= 50) {
-			msg_print(Ind, "\377LThe magical force stabilizing your form starts to fade...");
+		} else if (p_ptr->tim_mimic > 100 && v <= 100) {
+			msg_print(Ind, "\376\377LThe magical force stabilizing your form starts to fade...");
 		}
 	}
 
 	/* Shut */
 	else {
 		if (p_ptr->tim_mimic) {
-			msg_print(Ind, "\377LYour image changes back to normality.");
+			msg_print(Ind, "\376\377LYour image changes back to normality.");
 			do_mimic_change(Ind, 0, TRUE);
 			notice = TRUE;
 		}
@@ -945,15 +945,17 @@ bool set_tim_manashield(int Ind, int v)
 	/* Open */
 	if (v) {
 		if (!p_ptr->tim_manashield) {
-			msg_print(Ind, "\377vA purple shimmering shield forms around your body!");
+			msg_print(Ind, "\376\377vA purple shimmering shield forms around your body!");
 			notice = TRUE;
+		} else if (p_ptr->tim_manashield > 20 && v <= 20) {
+			msg_print(Ind, "\376\377vThe disruption shield starts to flicker and fade...");
 		}
 	}
 
 	/* Shut */
 	else {
 		if (p_ptr->tim_manashield) {
-			msg_print(Ind, "\377vThe disruption shield fades away.");
+			msg_print(Ind, "\376\377vThe disruption shield fades away.");
 			notice = TRUE;
 		}
 	}

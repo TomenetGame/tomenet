@@ -3325,10 +3325,9 @@ static bool process_player_end_aux(int Ind)
 	}
 
 	/* Hack -- Timed manashield */
-	if (p_ptr->tim_manashield) {
+	if (p_ptr->tim_manashield)
 		set_tim_manashield(Ind, p_ptr->tim_manashield - minus_magic);
-		if (p_ptr->tim_manashield == 10) msg_print(Ind, "\377vThe disruption shield starts to flicker and fade...");
-	}
+
 	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
 		if (p_ptr->tim_pkill) {
 			p_ptr->tim_pkill--;
@@ -3687,12 +3686,12 @@ static bool process_player_end_aux(int Ind)
 			if ((o_ptr->timeout > 0) && (o_ptr->timeout < 100) && !(o_ptr->timeout % 10))
 			{
 				if (p_ptr->disturb_minor) disturb(Ind, 0, 0);
-				msg_print(Ind, "Your ring flickers and fades, flashes of light run over its surface.");
+				msg_print(Ind, "\376\377LYour ring flickers and fades, flashes of light run over its surface.");
 				/* Window stuff */
 				p_ptr->window |= (PW_INVEN | PW_EQUIP);
 			} else if (o_ptr->timeout == 0) {
 				disturb(Ind, 0, 0);
-				msg_print(Ind, "Your ring disintegrates!");
+				msg_print(Ind, "\376\377LYour ring disintegrates!");
 
     			        if ((p_ptr->body_monster == o_ptr->pval) &&
 		                    ((p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
