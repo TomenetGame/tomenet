@@ -5436,9 +5436,12 @@ void determine_level_req(int level, object_type *o_ptr)
 	artifact_type *a_ptr = NULL;
 	base = klev / 2;
 
-	/* Exception */
-	if ((o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) ||
-		(o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_COSTUME)) return;
+	/* Exceptions */
+	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) {
+		o_ptr->level = ring_of_polymorph_level(r_info[o_ptr->pval].level);
+		return;
+	}
+	if (o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_COSTUME) return;
 
 	/* Unowned yet */
 //	o_ptr->owner = 0;
