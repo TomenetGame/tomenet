@@ -47,7 +47,7 @@
 #define PVP_DIMINISHING_HEALING_CAP(p) (((p)->lev + 5) * ((p)->lev + 5)) /* 10: 225, 20: 625, 30: 1225 */
 
 
-#ifdef ENABLE_DIVINE
+#ifdef ENABLE_MAIA
 /*
  * For angelic beings, this spell will gather any party 
  * members on the same level to him/herself. This also 

@@ -2859,7 +2859,7 @@ void do_cmd_look(int Ind, int dir) {
 			snprintf(out_val, sizeof(out_val), "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)? (q_ptr->lev)/5 : 10][1 - q_ptr->male]);
 			else
 			snprintf(out_val, sizeof(out_val), "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_PLAYER_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male]);
-		} else if (q_ptr->prace == RACE_DIVINE && q_ptr->ptrait != TRAIT_NONE) {
+		} else if (q_ptr->prace == RACE_MAIA && q_ptr->ptrait != TRAIT_NONE) {
 			if (q_ptr->lev < 60)
 				snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, q_ptr->ptrait == TRAIT_ENLIGHTENED ? "enlightened" : "corrupted", player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)?(q_ptr->lev)/5 : 10][1 - q_ptr->male]);
 			else

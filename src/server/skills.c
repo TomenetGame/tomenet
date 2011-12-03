@@ -536,7 +536,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		/* + continuous effect */
                 break;
 	case SKILL_HSUPPORT:
-		if (old_value < 400 && new_value >= 400 && p_ptr->prace != RACE_DIVINE) {
+		if (old_value < 400 && new_value >= 400 && p_ptr->prace != RACE_MAIA) {
 			msg_print(Ind, "\374\377GYou don't feel hunger for worldly food anymore.");
 		} if (old_value < 500 && new_value >= 500) {
 			msg_print(Ind, "\374\377GYou feel superior to ancient curses.");

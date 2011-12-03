@@ -1308,12 +1308,12 @@ void do_slash_cmd(int Ind, char *message)
 				/* Test for 'Recall' istar spell and for 'Relocation' astral spell */
 #if 0 /* hm, which version might be easier/better?.. */
 				spell_rec = exec_lua(Ind, "return find_spell(\"Recall\")"); 
- #ifdef ENABLE_DIVINE
+ #ifdef ENABLE_MAIA
 				spell_rel = exec_lua(Ind, "return find_spell(\"Relocation\")");
  #endif
 #else
 				spell_rec = exec_lua(Ind, "return RECALL");
- #ifdef ENABLE_DIVINE
+ #ifdef ENABLE_MAIA
 				spell_rel = exec_lua(Ind, "return RELOCATION");
  #endif
 #endif
@@ -1350,7 +1350,7 @@ void do_slash_cmd(int Ind, char *message)
 						} else {
 							if (MY_VERSION < (4 << 12 | 4 << 8 | 1 << 4 | 8)) {
 								spell_rec_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell_rec));
-#ifdef ENABLE_DIVINE
+#ifdef ENABLE_MAIA
 								spell_rel_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell_rel));
 #endif
 								if (!spell_rec_found && !spell_rel_found) {
@@ -1360,7 +1360,7 @@ void do_slash_cmd(int Ind, char *message)
 								}
 							} else {
 								spell_rec_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", i, o_ptr->sval, spell_rec));
-#ifdef ENABLE_DIVINE
+#ifdef ENABLE_MAIA
 								spell_rel_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", i, o_ptr->sval, spell_rel));
 #endif
 								if (!spell_rec_found && !spell_rel_found) {

@@ -251,7 +251,7 @@ void set_server_features()
 
 	/* Misc flags */
 
-#ifdef ENABLE_DIVINE
+#ifdef ENABLE_MAIA
 	lua_dostring(L, "TEMP0 = 1");
 	sflags_TEMP |= 0x00000001;
 #else

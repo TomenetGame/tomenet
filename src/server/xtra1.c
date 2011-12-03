@@ -1605,9 +1605,9 @@ void calc_hitpoints(int Ind)
 	 So in total it might be even more. A scale to 100 is hopefully ok. *experimental* */
         mhp += get_skill_scale(p_ptr, SKILL_HEALTH, 100);
 
- #ifdef ENABLE_DIVINE
+ #ifdef ENABLE_MAIA
 	/* Extra bonus hp (2 per level) for the evil path */
-	if (p_ptr->prace == RACE_DIVINE && (p_ptr->ptrait == TRAIT_CORRUPTED) && p_ptr->lev >= 20) {
+	if (p_ptr->prace == RACE_MAIA && (p_ptr->ptrait == TRAIT_CORRUPTED) && p_ptr->lev >= 20) {
 		mhp += (p_ptr->lev - 20) * 2;
 	}
  #endif
@@ -1698,8 +1698,8 @@ void calc_hitpoints(int Ind)
 	/* calculate +LIFE bonus */
 	to_life = p_ptr->to_l;
 
-#ifdef ENABLE_DIVINE
-	/* Bonus from RACE_DIVINE */
+#ifdef ENABLE_MAIA
+	/* Bonus from RACE_MAIA */
 	if (p_ptr->divine_hp > 0) {
 		/* count as if from item? */
 		to_life += p_ptr->divine_hp_mod;
@@ -3246,7 +3246,7 @@ void calc_boni(int Ind)
 	}
 
 	/* Draconian (former Dragonrider, Thunderlord) */
-	else if (p_ptr->prace == RACE_DRIDER) {
+	else if (p_ptr->prace == RACE_DRACONIAN) {
 		/* not while in mimicried form */
 		if (!p_ptr->body_monster) p_ptr->feather_fall = TRUE;
 
@@ -3285,8 +3285,8 @@ void calc_boni(int Ind)
 		p_ptr->cur_vlite = 1 + p_ptr->lev / 10;
 //		if (p_ptr->lev >= 30) p_ptr->fly = TRUE; can poly into bat instead
 	}
-#ifdef ENABLE_DIVINE
-	else if (p_ptr->prace == RACE_DIVINE) {
+#ifdef ENABLE_MAIA
+	else if (p_ptr->prace == RACE_MAIA) {
 		//Help em out a little.. (to locate candlebearer/darkling)
 		p_ptr->telepathy |= ESP_DEMON;
 		p_ptr->telepathy |= ESP_GOOD;

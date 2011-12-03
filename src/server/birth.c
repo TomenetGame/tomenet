@@ -723,13 +723,13 @@ static void get_history(int Ind)
 			break;
 		}
 
-		case RACE_DRIDER:
+		case RACE_DRACONIAN:
 		{
 			chart = 89;
 			break;
 		}
-#ifdef ENABLE_DIVINE
-		case RACE_DIVINE:
+#ifdef ENABLE_MAIA
+		case RACE_MAIA:
 		{
 			chart = 100;
 			break;
@@ -1483,7 +1483,7 @@ static void player_outfit(int Ind)
 		do_player_outfit();
 	}
 	/* Firestones for Dragonriders */
-	else if (p_ptr->prace == RACE_DRIDER) {
+	else if (p_ptr->prace == RACE_DRACONIAN) {
 		invcopy(o_ptr, lookup_kind(TV_FIRESTONE, SV_FIRE_SMALL));
 		o_ptr->number = rand_range(3, 5);
 		do_player_outfit();
@@ -1563,7 +1563,7 @@ static void player_outfit(int Ind)
 				tv = 21; sv = 5; break;//mace
 			case RACE_DWARF:
 				tv = 24; sv = 11; break;//broad axe; 24,2 cleaver
-			case RACE_DRIDER:
+			case RACE_DRACONIAN:
 				tv = 22; sv = 5; break;//trident
 			}
 		}
@@ -1577,7 +1577,7 @@ static void player_outfit(int Ind)
 					tv = TV_BLUNT; sv = SV_MACE; break;
 				case RACE_DWARF:
 					tv = TV_AXE; sv = SV_BROAD_AXE; break;
-				case RACE_DRIDER:
+				case RACE_DRACONIAN:
 					tv = TV_POLEARM; sv = SV_TRIFURCATE_SPEAR; break;
 				} break;
 			case SV_TULWAR:/* mimic */
@@ -1587,7 +1587,7 @@ static void player_outfit(int Ind)
 					tv = TV_BLUNT; sv = SV_BALL_AND_CHAIN; break;
 				case RACE_DWARF:
 					tv = TV_AXE; sv = SV_CLEAVER; break;
-				case RACE_DRIDER:
+				case RACE_DRACONIAN:
 					tv = TV_POLEARM; sv = SV_RHOMPHAIA; break;
 				} break;
 			case SV_LONG_SWORD:/* ranger */
@@ -1597,7 +1597,7 @@ static void player_outfit(int Ind)
 					tv = TV_BLUNT; sv = SV_BALL_AND_CHAIN; break;
 				case RACE_DWARF:
 					tv = TV_AXE; sv = SV_LIGHT_WAR_AXE; break;
-				case RACE_DRIDER:
+				case RACE_DRACONIAN:
 					tv = TV_POLEARM; sv = SV_SICKLE; break;
 				} break;
 			case SV_SHORT_SWORD:/* adventurer */
@@ -1607,7 +1607,7 @@ static void player_outfit(int Ind)
 					tv = TV_BLUNT; sv = SV_CLUB; break;
 				case RACE_DWARF:
 					tv = TV_AXE; sv = SV_HATCHET; break;
-				case RACE_DRIDER:
+				case RACE_DRACONIAN:
 					tv = TV_POLEARM; sv = SV_SPEAR; break;
 				} break;
 			case SV_SHADOW_BLADE:/* shaman, shadow blade is just a placeholder */
@@ -1616,12 +1616,12 @@ static void player_outfit(int Ind)
 				case RACE_HALF_TROLL:
 				case RACE_ENT:
 					tv = TV_BLUNT; sv = SV_QUARTERSTAFF; break;
-				case RACE_DRIDER:
+				case RACE_DRACONIAN:
 					tv = TV_POLEARM; sv = SV_BROAD_SPEAR; break;
 				} break;
 			case SV_RAPIER:/* mindcrafter */
 				switch (p_ptr->prace) {
-				case RACE_DRIDER:
+				case RACE_DRACONIAN:
 					tv = TV_POLEARM; sv = SV_TRIDENT; break;
 				} break;
 			}

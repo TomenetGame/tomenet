@@ -2763,7 +2763,7 @@ struct player_type
 	int rune_vamp;
 #endif //runemaster
 
-#ifdef ENABLE_DIVINE
+#ifdef ENABLE_MAIA
 	int voidx; int voidy; //for the void jumpgate creation spell; reset on every recall/levelchange/relogins
 
 	int divine_crit;

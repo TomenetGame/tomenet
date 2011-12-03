@@ -378,7 +378,7 @@ static bool between_effect(int Ind, cave_type *c_ptr)
 	msg_print(Ind, "Brrrr! It's deadly cold.");
 
 //	if (PRACE_FLAG(PR1_TP))
-	if (p_ptr->prace == RACE_DRIDER) {
+	if (p_ptr->prace == RACE_DRACONIAN) {
 		int reduc = ((p_ptr->ac + p_ptr->to_a) / 50) + 1;
 
 		if (reduc < 1) reduc = 1; /* Really, really low AC, like some TL eating firestones - mikaelh */

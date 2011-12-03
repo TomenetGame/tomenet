@@ -439,10 +439,10 @@ $ENABLE_RCRAFT!A:12:Draw a rune
 $ENABLE_RCRAFT!I:1000:104
 $ENABLE_RCRAFT!F:MKEY_HARDCODE
 
-$ENABLE_DIVINE$N:77:Astral Knowledge
-$ENABLE_DIVINE$D:Access to the astral spells
-$ENABLE_DIVINE$A:11:Cast a spell
-$ENABLE_DIVINE$I:1000:111
+$ENABLE_MAIA$N:77:Astral Knowledge
+$ENABLE_MAIA$D:Access to the astral spells
+$ENABLE_MAIA$A:11:Cast a spell
+$ENABLE_MAIA$I:1000:111
 
 $DUAL_WIELD$N:78:Dual-Wield
 $DUAL_WIELD$D:Ability to wield two one-handed weapons at once.
@@ -674,7 +674,7 @@ f:Holy Support:Magic%10
 f:Arcane Lore:Magic%10
 f:Physical Lore:Magic%10
 
-$ENABLE_DIVINE$f:Astral Knowledge:Magic%10
+$ENABLE_MAIA$f:Astral Knowledge:Magic%10
 
 #%5 wasn't enough, big lack of MP
 $ENABLE_MCRAFT$f:Psycho-Power:Magic%10
@@ -756,7 +756,7 @@ T:Magic:Druidic Schools
 $ENABLE_MCRAFT$T:Magic:Mindcraft Schools
 $ENABLE_RCRAFT$T:Magic:Runecraft
 $ENABLE_RCRAFT!T:Magic:Runemastery
-$ENABLE_DIVINE$T:Magic:Astral Knowledge
+$ENABLE_MAIA$T:Magic:Astral Knowledge
 T:Magic:Mimicry
 T:Magic:Magic-device
 

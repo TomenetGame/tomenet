@@ -1322,10 +1322,10 @@ if (!season_newyearseve) {
 		if (streq(m, "NEW_YEARS_EVE") && negation) invalid = TRUE;
 //#endif
 }
-#ifndef ENABLE_DIVINE
-		if (streq(m, "ENABLE_DIVINE") && !negation) invalid = TRUE;
+#ifndef ENABLE_MAIA
+		if (streq(m, "ENABLE_MAIA") && !negation) invalid = TRUE;
 #else
-		if (streq(m, "ENABLE_DIVINE") && negation) invalid = TRUE;
+		if (streq(m, "ENABLE_MAIA") && negation) invalid = TRUE;
 #endif
 #ifndef USE_NEW_SHIELDS
 		if (streq(m, "USE_NEW_SHIELDS") && !negation) invalid = TRUE;
@@ -1370,7 +1370,7 @@ if (!season_newyearseve) {
 		    strcmp(m, "HALLOWEEN") &&
 		    strcmp(m, "WINTER_SEASON") &&
 		    strcmp(m, "NEW_YEARS_EVE") &&
-		    strcmp(m, "ENABLE_DIVINE") &&
+		    strcmp(m, "ENABLE_MAIA") &&
 		    strcmp(m, "USE_NEW_SHIELDS") &&
 		    strcmp(m, "DUAL_WIELD") &&
 		    strcmp(m, "ENABLE_STANCES") &&
@@ -1416,7 +1416,7 @@ static errr grab_one_race_allow_flag(s32b *choice, cptr what)
 	int i;
 	cptr s;
 
-#ifndef ENABLE_DIVINE
+#ifndef ENABLE_MAIA
 	/* Hack, so ow_info.txt works */
 	if (streq(what, "Maia")) return 0;
 #endif

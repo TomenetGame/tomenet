@@ -3118,7 +3118,7 @@ static bool process_player_end_aux(int Ind)
 				if (p_ptr->tim_regen) i += p_ptr->tim_regen_pow / 10;
 
 				/* DragonRider and Half-Troll take more food */
-				if (p_ptr->prace == RACE_DRIDER
+				if (p_ptr->prace == RACE_DRACONIAN
 						|| p_ptr->prace == RACE_HALF_TROLL) i += 15;
 
 				/* Vampires consume food very quickly */
@@ -3420,7 +3420,7 @@ static bool process_player_end_aux(int Ind)
 	if (p_ptr->slow)
 		(void)set_slow(Ind, p_ptr->slow - minus_magic); // - minus_health
 
-#ifdef ENABLE_DIVINE
+#ifdef ENABLE_MAIA
 	if (p_ptr->divine_crit)
 		(void)do_divine_crit(Ind, p_ptr->divine_crit - minus_magic, p_ptr->divine_crit_mod);
 
@@ -5129,7 +5129,7 @@ static void process_player_change_wpos(int Ind)
 	    p_ptr->new_level_method != LEVEL_HOUSE)
 		p_ptr->turns_on_floor = 0;
 
-#ifdef ENABLE_DIVINE
+#ifdef ENABLE_MAIA
 	/* reset void gate coordinates */
 	p_ptr->voidx = 0; p_ptr->voidy = 0;
 #endif

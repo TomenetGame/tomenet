@@ -44,7 +44,7 @@
 #define HOUSE_PAINTING		/* Allow players to paint their entrance area or house (for PLAYER_STORES) - C. Blue */
 
 #define ENABLE_GO_GAME		/* Allows players to play vs CPU games of Go/Weiqi/Baduk. - C. Blue */
-#define ENABLE_DIVINE		/* enable RACE_DIVINE, ie Maiar race */
+#define ENABLE_MAIA		/* enable RACE_MAIA (formerly 'DIVINE' race) */
 
 /* Allow monsters with AI_ASTAR r_info flag to use A* pathfinding algorithm? - C. Blue */
 #define MONSTER_ASTAR

@@ -9540,12 +9540,12 @@ if (!nether_bottom) {
 	for (i = i + k; i > 0; i--)
 		(void)alloc_monster(wpos, 0, TRUE);
 
-#ifdef ENABLE_DIVINE
+#ifdef ENABLE_MAIA
 	/* Force a pair of darkling and candlebearer when there is at least
 	 * one divine on level that needs it.
 	 */
 	if (dun_lev >= 12 && dun_lev <= 20 &&
-	    p_ptr && p_ptr->prace == RACE_DIVINE && !p_ptr->ptrait) {
+	    p_ptr && p_ptr->prace == RACE_MAIA && !p_ptr->ptrait) {
 		//5 + randint(dun->row_rooms - 5), x1 = randint(dun->col_rooms - 5);
 		int x, y, x1, y1, tries = 2000;
 		do {

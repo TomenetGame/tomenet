@@ -335,7 +335,7 @@
 /*
  * Maximum number of player "race" types (see "table.c", etc)
  */
-#ifdef ENABLE_DIVINE
+#ifdef ENABLE_MAIA
  #define MAX_RACE	17
 #else
  #define MAX_RACE	16
@@ -1284,24 +1284,24 @@
 /*
  * Player race constants (hard-coded by save-files, arrays, etc)
  */
-#define RACE_HUMAN		0
+#define RACE_HUMAN	0
 #define RACE_HALF_ELF	1
-#define RACE_ELF		2
-#define RACE_HOBBIT		3
-#define RACE_GNOME		4
-#define RACE_DWARF		5
+#define RACE_ELF	2
+#define RACE_HOBBIT	3
+#define RACE_GNOME	4
+#define RACE_DWARF	5
 #define RACE_HALF_ORC	6
 #define RACE_HALF_TROLL	7
 #define RACE_DUNADAN	8
 #define RACE_HIGH_ELF	9
-#define RACE_YEEK   	10
-#define RACE_GOBLIN 	11
-#define RACE_ENT   	12
-#define RACE_DRIDER   	13	/* TODO: rename it to RACE_TLORD */
+#define RACE_YEEK	10
+#define RACE_GOBLIN	11
+#define RACE_ENT	12
+#define RACE_DRACONIAN	13
 #define RACE_DARK_ELF	14
 #define RACE_VAMPIRE	15
-//#ifdef ENABLE_DIVINE
- #define RACE_DIVINE 	16
+//#ifdef ENABLE_MAIA
+#define RACE_MAIA	16
 //#endif
 /* (or simply replace all those defines with p_info.txt) */
 
@@ -7170,7 +7170,7 @@ extern int PlayerUID;
 #endif //Runemaster
 
 
-//#ifdef ENABLE_DIVINE  <- now always defined for important purpose of making savefiles uniform!
+//#ifdef ENABLE_MAIA  <- now always defined for important purpose of making savefiles uniform!
  #define MONSTER_RIDX_CANDLEBEARER 1104
  #define MONSTER_RIDX_DARKLING 1105
 //#endif

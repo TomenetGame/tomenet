@@ -525,8 +525,8 @@ void do_cmd_eat_food(int Ind, int item)
 		/* Analyse the firestone */
 		if (!ident)
 		{
-//			if (p_ptr->prace == RACE_DRIDER || dragon)
-			if (p_ptr->prace == RACE_DRIDER)
+//			if (p_ptr->prace == RACE_DRACONIAN || dragon)
+			if (p_ptr->prace == RACE_DRACONIAN)
 			{
 				switch (o_ptr->sval)
 				{

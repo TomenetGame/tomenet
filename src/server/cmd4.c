@@ -481,8 +481,8 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 
 	fprintf(fff, "%s,\377%c L%d ", q_ptr->name, attr, q_ptr->lev);
 
-  #ifdef ENABLE_DIVINE
-	if (q_ptr->prace == RACE_DIVINE && q_ptr->ptrait) {
+  #ifdef ENABLE_MAIA
+	if (q_ptr->prace == RACE_MAIA && q_ptr->ptrait) {
 		if (q_ptr->ptrait == TRAIT_ENLIGHTENED)
 			fprintf(fff, "%s %s", "Enlightened", p);
 		else if (q_ptr->ptrait == TRAIT_CORRUPTED)
@@ -613,8 +613,8 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	fprintf(fff, "%s,\377%c L%d %s ", q_ptr->name, attr, q_ptr->lev, q_ptr->male ? "Male" : "Female");
   #endif
 
-  #ifdef ENABLE_DIVINE
-	if (q_ptr->prace == RACE_DIVINE && q_ptr->ptrait) {
+  #ifdef ENABLE_MAIA
+	if (q_ptr->prace == RACE_MAIA && q_ptr->ptrait) {
 		if (q_ptr->ptrait == TRAIT_ENLIGHTENED)
 			fprintf(fff, "%s %s", "Enlightened", p);
 		else if (q_ptr->ptrait == TRAIT_CORRUPTED)
@@ -739,8 +739,8 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	fprintf(fff, "%s,\377%c L%d ", q_ptr->name, attr, q_ptr->lev);
   #endif
 
-  #ifdef ENABLE_DIVINE
-	if (q_ptr->prace == RACE_DIVINE && q_ptr->ptrait) {
+  #ifdef ENABLE_MAIA
+	if (q_ptr->prace == RACE_MAIA && q_ptr->ptrait) {
 		if (q_ptr->ptrait == TRAIT_ENLIGHTENED)
 			fprintf(fff, "%s", "Enlightened");
 		else if (q_ptr->ptrait == TRAIT_CORRUPTED)
@@ -975,8 +975,8 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	fprintf(fff, "  %s the ", q_ptr->name);
     #endif
 	//e.g., God the Human Grand Runemistress =P
-    #ifdef ENABLE_DIVINE
-	if (q_ptr->prace == RACE_DIVINE && q_ptr->ptrait) {
+    #ifdef ENABLE_MAIA
+	if (q_ptr->prace == RACE_MAIA && q_ptr->ptrait) {
 		if (q_ptr->ptrait==TRAIT_ENLIGHTENED)
 			fprintf(fff, "%s %s", "Enlightened", p);
 		else if (q_ptr->ptrait==TRAIT_CORRUPTED)

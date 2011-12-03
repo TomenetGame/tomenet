@@ -3086,8 +3086,8 @@ bool set_kinetic_shield(int Ind, int v) {
 	return (TRUE);
 }
 
-#ifdef ENABLE_DIVINE
-/* timed hp bonus for RACE_DIVINE.
+#ifdef ENABLE_MAIA
+/* timed hp bonus for RACE_MAIA.
    *fastest* path (SKILL_ASTRAL = lvl+2):
    +1 at lvl 39
    +2 at lvl 54
@@ -3139,7 +3139,7 @@ bool do_divine_hp(int Ind, int v, int p) {
 }
 
 /* 
-   timed crit bonus for RACE_DIVINE. 
+   timed crit bonus for RACE_MAIA. 
    *fastest* path (SKILL_ASTRAL = lvl+2):
    +2 at lvl 44, +2 per 5 levels thereafter
 */
@@ -3189,7 +3189,7 @@ bool do_divine_crit(int Ind, int v, int p) {
 }
 
 /* 
-   timed time and mana res bonus for RACE_DIVINE. 
+   timed time and mana res bonus for RACE_MAIA. 
 */
 bool do_divine_xtra_res_time_mana(int Ind, int v) {
         player_type *p_ptr = Players[Ind];
@@ -3521,7 +3521,7 @@ bool set_food(int Ind, int v)
 
 	/* True Ghosts don't starve */
 	if ((p_ptr->ghost) || (get_skill(p_ptr, SKILL_HSUPPORT) >= 40) ||
-	    (p_ptr->prace == RACE_DIVINE && p_ptr->ptrait))
+	    (p_ptr->prace == RACE_MAIA && p_ptr->ptrait))
 	{
 	    p_ptr->food = PY_FOOD_FULL - 1;
 	    return (FALSE);
@@ -3717,7 +3717,7 @@ bool bless_temp_luck(int Ind, int pow, int dur)
 	return (TRUE);
 }
 
-#ifdef ENABLE_DIVINE
+#ifdef ENABLE_MAIA
 /* helper function to modify Maia skills when they get a trait - C. Blue
    NOTE: IF THIS IS CALLED TOO MANY TIMES IN A ROW IT
          _MIGHT_ DISCONNET THE CLIENT WITH A 'write error'. */
@@ -4169,7 +4169,7 @@ void check_experience(int Ind)
 			if (old_lev < 40 && p_ptr->lev >= 40) msg_print(Ind, "\374\377GYou learn to telepathically sense demons!");
 			if (old_lev < 50 && p_ptr->lev >= 50) msg_print(Ind, "\374\377GYou learn to telepathically sense evil!");
 		break;
-		case RACE_DRIDER:
+		case RACE_DRACONIAN:
 			if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou learn to telepathically sense dragons!");
 			if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou become more resistant to fire!");
 			if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou become more resistant to cold!");
@@ -4196,8 +4196,8 @@ void check_experience(int Ind)
 				msg_print(Ind, "\374\377G(Press 'm' key, and choose 'use innate power', to do so.)");
 			}
 			break;
-#ifdef ENABLE_DIVINE
-		case RACE_DIVINE:
+#ifdef ENABLE_MAIA
+		case RACE_MAIA:
 			if (p_ptr->ptrait) break; /* In case we got *bad* exp drain for some unfathomable reason ;) */
 			if (old_lev < 12 && p_ptr->lev >= 12) msg_print(Ind, "\374\377GWe all have to pick our own path some time...");
 //			if (old_lev < 14 && p_ptr->lev >= 14) msg_print(Ind, "\374\377GYou are thirsty for blood: be it good or evil");
@@ -6497,7 +6497,7 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s\n", race_info[p_pt
 			} else {
 #endif
 				if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
-#ifdef ENABLE_DIVINE
+#ifdef ENABLE_MAIA
 				    || (streq(p_ptr->died_from, "Indecisiveness"))
 #endif
 				    || (streq(p_ptr->died_from, "Insanity"))) {
@@ -6510,7 +6510,7 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s\n", race_info[p_pt
 
 				if (cfg.unikill_format) {
 					if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
-#ifdef ENABLE_DIVINE
+#ifdef ENABLE_MAIA
 					    || (streq(p_ptr->died_from, "Indecisiveness"))
 #endif
 					    || (streq(p_ptr->died_from, "Insanity")))
@@ -6521,7 +6521,7 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s\n", race_info[p_pt
 						snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was vaporized by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 				} else {
 					if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
-#ifdef ENABLE_DIVINE
+#ifdef ENABLE_MAIA
 					    || (streq(p_ptr->died_from, "Indecisiveness"))
 #endif
 					    || (streq(p_ptr->died_from, "Insanity")))
@@ -6707,7 +6707,7 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", pvp ? "PVP" : "NOGHOS
 	/* Tell everyone he died */
 	if (p_ptr->alive) {
 		if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
-#ifdef ENABLE_DIVINE
+#ifdef ENABLE_MAIA
 		    || (streq(p_ptr->died_from, "Indecisiveness"))
 #endif
 		    || (streq(p_ptr->died_from, "Insanity"))) {
@@ -6833,7 +6833,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 	msg_print(Ind, "\374\377RYou die.");
 //	msg_print(Ind, NULL);
 	if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
-#ifdef ENABLE_DIVINE
+#ifdef ENABLE_MAIA
 	    || (streq(p_ptr->died_from, "Indecisiveness"))
 #endif
 	    || (streq(p_ptr->died_from, "Insanity"))) {
@@ -6878,9 +6878,9 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 	if (p_ptr->safe_float) p_ptr->safe_float_turns = 5;
 
 	/* Hack -- drop bones :) */
-#ifdef ENABLE_DIVINE
+#ifdef ENABLE_MAIA
 	/* hackhack: Maiar don't have a real physical body ;) */
-	if (p_ptr->prace != RACE_DIVINE)
+	if (p_ptr->prace != RACE_MAIA)
 #endif
 	for (i = 0; i < 4; i++) {
 		object_type	forge;

@@ -556,8 +556,8 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 
 			/* Slay Evil */
 			if (((f1 & TR1_SLAY_EVIL) || (Ind > 0 && get_skill(p_ptr, SKILL_HOFFENSE) >= 50)
-#ifdef ENABLE_DIVINE
-			    || (Ind > 0 && p_ptr->prace == RACE_DIVINE && (p_ptr->ptrait == TRAIT_ENLIGHTENED) && p_ptr->lev >= 50)
+#ifdef ENABLE_MAIA
+			    || (Ind > 0 && p_ptr->prace == RACE_MAIA && (p_ptr->ptrait == TRAIT_ENLIGHTENED) && p_ptr->lev >= 50)
 #endif
 			    ) && (r_ptr->flags3 & RF3_EVIL)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_EVIL;*/

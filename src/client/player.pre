@@ -100,7 +100,7 @@ typedef unsigned int u32b;
 #define SKILL_RUNEMASTERY   	76
 
 /* Divine race */
-#ifdef ENABLE_DIVINE
+#ifdef ENABLE_MAIA
 #define SKILL_ASTRAL		77
 #endif
 
@@ -189,20 +189,23 @@ typedef unsigned int u32b;
 /*
  * Player race constants (hard-coded by save-files, arrays, etc)
  */
-#define RACE_HUMAN		0
+#define RACE_HUMAN	0
 #define RACE_HALF_ELF	1
-#define RACE_ELF		2
-#define RACE_HOBBIT		3
-#define RACE_GNOME		4
-#define RACE_DWARF		5
+#define RACE_ELF	2
+#define RACE_HOBBIT	3
+#define RACE_GNOME	4
+#define RACE_DWARF	5
 #define RACE_HALF_ORC	6
 #define RACE_HALF_TROLL	7
 #define RACE_DUNADAN	8
 #define RACE_HIGH_ELF	9
-#define RACE_YEEK   	10
-#define RACE_GOBLIN 	11
-#define RACE_ENT   	12
-#define RACE_DRIDER   	13
+#define RACE_YEEK	10
+#define RACE_GOBLIN	11
+#define RACE_ENT	12
+#define RACE_DRACONIAN	13
+#ifdef ENABLE_MAIA
+#define RACE_MAIA	14
+#endif
 
 struct worldpos{
 	s16b wx;	/* west to east */

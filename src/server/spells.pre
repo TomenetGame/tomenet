@@ -458,7 +458,7 @@ extern bool do_banish_animals(int Ind, int chance);
 extern bool do_xtra_stats(int Ind, int p, int v);
 extern bool do_focus_shot(int Ind, int p, int v);
 
-#ifdef ENABLE_DIVINE
+#ifdef ENABLE_MAIA
 extern void divine_vengeance(int Ind, int power);
 extern void divine_empowerment(int Ind, int level);
 extern void divine_intensify(int Ind, int level);

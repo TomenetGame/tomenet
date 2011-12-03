@@ -1042,7 +1042,7 @@ static bool forbidden_name(char *name){
 	    name[4] >= '0' && name[4] <= '9') return TRUE; /* backup save file folders, save00..saveNN */
 	if (!strcmp("tomenet.acc", name)) return TRUE; /* just in case someone copies it over into save folder */
 	if (!strcmp("Insanity", name)) return TRUE;
-#ifdef ENABLE_DIVINE
+#ifdef ENABLE_MAIA
 	if (!strcmp("Indecisiveness", name)) return TRUE;
 #endif
 	/* Hardcode some not so important ones */

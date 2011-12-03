@@ -2405,7 +2405,7 @@ player_race race_info[MAX_RACE] =
                         },
                 },
         },
-#ifdef ENABLE_DIVINE
+#ifdef ENABLE_MAIA
 /*
  * Player Race Information:
  *    Title,
@@ -2694,11 +2694,11 @@ char *special_prace_lookup[MAX_RACE] = {
 /* RACE_YEEK */ 	"Yeek",
 /* RACE_GOBLIN */ 	"Goblin",
 /* RACE_ENT */ 		"Ent",
-/* RACE_DRIDER */ 	"Draconian",
+/* RACE_DRACONIAN */ 	"Draconian",
 /* RACE_DARK_ELF */ 	"Dark-Elven",
 /* RACE_VAMPIRE */ 	"Vampire",
-#ifdef ENABLE_DIVINE
-/* RACE_DIVINE */	"Maia"
+#ifdef ENABLE_MAIA
+/* RACE_MAIA */		"Maia"
 #endif
 };
 
