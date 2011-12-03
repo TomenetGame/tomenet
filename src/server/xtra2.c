@@ -5902,6 +5902,8 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 	if (p_ptr->guild) {
 		if ((guilds[p_ptr->guild].flags & GFLG_AUTO_READD))
 			acc_set_guild(p_ptr->accountname, p_ptr->guild);
+		if ((p_ptr->guild_flags & PGF_ADDER))
+			acc_set_flags(p_ptr->accountname, ACC_GUILD_ADDER, TRUE);
 		guild_leave(Ind);
 	}
 

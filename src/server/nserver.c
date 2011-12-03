@@ -2753,8 +2753,28 @@ static int Handle_login(int ind)
 			/* within time limit [20 minutes]? */
 			time_t now = time(&now);
 			if (now - lookup_player_laston(p_ptr->id) <= 60 * 20
-			    && guilds[i].members) /* guild still exists? (TODO: could be a different guild by now :-p) */
+			    && guilds[i].members) { /* guild still exists? (TODO: could be a different guild by now :-p) */
+				/* auto-re-add him to the guild */
 				guild_auto_add(NumPlayers, i);
+
+				/* also restore his 'adder' status if he was one */
+				if ((acc_get_flags(p_ptr->accountname) & ACC_GUILD_ADDER)) {
+					acc_set_flags(p_ptr->accountname, ACC_GUILD_ADDER, FALSE);
+#ifdef GUILD_ADDERS_LIST
+					/* check for vacant adder slot */
+					for (i = 0; i < 5; i++)
+						if (guilds[p_ptr->guild].adder[i][0] == '\0') break;
+					/* success? */
+					if (i != 5) {
+						strcpy(guilds[p_ptr->guild].adder[i], p_ptr->name);
+						p_ptr->guild_flags |= PGF_ADDER;
+					}
+				}
+#else
+					p_ptr->guild_flags |= PGF_ADDER;
+				}
+#endif
+			}
 		}
 
 		acc_set_guild(p_ptr->accountname, 0);
