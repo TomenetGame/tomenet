@@ -316,7 +316,8 @@ static s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 		/* Never get "silly" */
 		if (adjust > 100 - STORE_BENEFIT) adjust = 100 - STORE_BENEFIT;
 
-		/* To prevent cheezing; keep consistent with object2.c: object_value_real() */
+		/* To prevent cheezing; keep consistent with object2.c: object_value_real():
+		   This store-buys price must be way lower than the store-sells price there. */
 		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)){
 			price = k_info[o_ptr->k_idx].cost;
 			if (o_ptr->pval != 0) {
@@ -5862,6 +5863,8 @@ void store_debug_stock()
 }
 
 #ifdef PLAYER_STORES
+/* Inscription on mass cheques, ie cheques handling items sold partially from item stacks. */
+#define MASS_CHEQUE_NOTE "various piled items"
 /* Is an item inscribed correctly to be sold in a player-run store? - C. Blue
    Returns price or 0 if not for sale.
    Pricing tag format:  @Snnnnnnnnn.  <- with dot for termination. */
@@ -5995,7 +5998,7 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 
 			/* test item if it's an existing mass-cheque */
 			if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE &&
-			    (!o_ptr->note || !strcmp(quark_str(o_ptr->note), "various piled items"))) {
+			    (!o_ptr->note || !strcmp(quark_str(o_ptr->note), MASS_CHEQUE_NOTE))) {
 				/* make sure inscription is consistent with player_store_handle_purchase() */
 				p_ptr->ps_mcheque_x = i;
 			}
@@ -6040,7 +6043,7 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 
 				/* test item if it's an existing mass-cheque */
 				if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE &&
-				    (!o_ptr->note || !strcmp(quark_str(o_ptr->note), "various piled items"))) {
+				    (!o_ptr->note || !strcmp(quark_str(o_ptr->note), MASS_CHEQUE_NOTE))) {
 					/* make sure inscription is consistent with player_store_handle_purchase() */
 					p_ptr->ps_mcheque_x = cx;
 					p_ptr->ps_mcheque_y = cy;
@@ -6324,7 +6327,7 @@ s_printf("PLAYER_STORE_HANDLE: new mass, mang, owner %s (%d), %s, value %d, buye
 			}
 		}
 		/* make sure the inscription is good (and consistent with do_cmd_player_store()) */
-		cheque_ptr->note = quark_add("various piled items");
+		cheque_ptr->note = quark_add(MASS_CHEQUE_NOTE);
 
 		/* Write back additional value to the cheque */
 		old_value = ps_get_cheque_value(cheque_ptr);

@@ -1682,6 +1682,8 @@ extern void handle_request_return_key(int Ind, int id, char c);
 extern void handle_request_return_num(int Ind, int id, int num);
 extern void handle_request_return_cfr(int Ind, int id, bool cfr);
 
+extern void limit_energy(player_type *p_ptr);
+
 /* xtra2.c */
 
 #ifdef ARCADE_SERVER

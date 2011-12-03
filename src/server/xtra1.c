@@ -7591,3 +7591,13 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 	default: ;
 	}
 }
+
+/* Cap a player's energy:
+   Make sure they don't have too much, but let them store up some extra.
+   Storing up extra energy lets us perform actions while we are running */
+void limit_energy(player_type *p_ptr) {
+	//if (p_ptr->energy > (level_speed(p_ptr->dun_depth) * 6) / 5)
+	//	p_ptr->energy = (level_speed(p_ptr->dun_depth) * 6) / 5;
+	if (p_ptr->energy > (level_speed(&p_ptr->wpos) * 2) - 1)
+		p_ptr->energy = (level_speed(&p_ptr->wpos) * 2) - 1;
+}

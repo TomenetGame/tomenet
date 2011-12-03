@@ -1760,7 +1760,8 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 			if (o_ptr->to_d < 0) return (0L);
 #endif
 
-			/* keep consistent with store.c: price_item() */
+			/* keep consistent with store.c: price_item():
+			   This price will be the store-sells price so it must be higher than the store-buys price there. */
 			if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) {
 				if (o_ptr->pval != 0)
 					value += (r_info[o_ptr->pval].level * r_info[o_ptr->pval].mexp >= r_info[o_ptr->pval].level * 100) ?

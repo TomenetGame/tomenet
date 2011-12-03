@@ -2430,15 +2430,7 @@ static void process_player_begin(int Ind)
 
 	/* Give the player some energy */
 	p_ptr->energy += extract_energy[p_ptr->pspeed];
-
-	/* Make sure they don't have too much */
-	/* But let them store up some extra */
-	/* Storing up extra energy lets us perform actions while we are running */
-	//if (p_ptr->energy > (level_speed(p_ptr->dun_depth)*6)/5)
-	//	p_ptr->energy = (level_speed(p_ptr->dun_depth)*6)/5;
-	/* Keep consistent with spells1.c */
-	if (p_ptr->energy > (level_speed(&p_ptr->wpos) * 2) - 1)
-		p_ptr->energy = (level_speed(&p_ptr->wpos) * 2) - 1;
+	limit_energy(p_ptr);
 
 	/* Check "resting" status */
 	if (p_ptr->resting) {

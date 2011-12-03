@@ -6121,10 +6121,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (t > dam) t = dam;
 				if (t > tp) t = tp;
 				p_ptr->energy += (t * level_speed(&p_ptr->wpos)) / 500;
-				/* Prevent too much energy, preventing overflow too.
-				   Keep consistent with dungeon.c */
-				if (p_ptr->energy > (level_speed(&p_ptr->wpos) * 2) - 1)
-					p_ptr->energy = (level_speed(&p_ptr->wpos) * 2) - 1;
+				/* Prevent too much energy, preventing overflow too. */
+				limit_energy(p_ptr);
 			}
 #endif
 			break;
@@ -6572,7 +6570,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if ((r_ptr->flags1 & RF1_UNIQUE) ||
 				    (r_ptr->flags4 & RF4_BR_INER)) {
 					note = " is unaffected";
-				} else if (RES_OLD(r_ptr->level, dam / 3)) { /* consistent with GF_OLD_SLOW */
+				} else if (RES_OLD(r_ptr->level, dam / 3)) {
 					note = " resists";
 				} else if (m_ptr->mspeed > 100 && m_ptr->mspeed > m_ptr->speed - 10) {
 					m_ptr->mspeed -= 10;
@@ -6590,7 +6588,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 				/* Attempt a saving throw */
 				if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags3 & RF3_NO_CONF) ||
-				  RES_OLD(r_ptr->level, dam / 3)) /* consistent with GF_OLD_CONF */
+				  RES_OLD(r_ptr->level, dam / 3))
 				{
 					note = " resists";
 					if (r_ptr->flags1 & RF1_UNIQUE) note = " is unaffected";
