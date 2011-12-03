@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 2. December 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 3. December 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -6618,6 +6618,8 @@ and also
     The Hard Leather Armor 'Gothmog'    (which is actually a random artifact)
 You'd get a small luck bonus. The more artifacts of similar name you equip the
 greater the luck bonus will be.
+The exact luck boni for those 'artifact sets' starting at two items are:
+4, 9, 16, 25, 36, 40 (cap). So it's basically the amount of artifacts squared.
 
 Artifacts of any type cannot be enchanted by any means, nor harmed by elemental
 attacks of any type. Also they have a high chance to resist disenchantment
