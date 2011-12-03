@@ -7788,7 +7788,7 @@ Lvl | Projection | Explosions | Self-spell | Rune 1 | Rune 2 | Rune 3 | Augment
  25 | Darkness   | Shards     | Obscurity  | Acid   | Nether | Earth  |        
 *25 | Darkness   | Shards     | Obscurity  | Fire   | Nether | Earth  |        
  25 | Water      | Wonder     |            | Water  | Chaos  | Time   | Time   
- 25 | Shards     | Wonder     |            | Shards | Chaos  | Time   | Time   
+ 25 | Shards     | Wonder     |            | Earth  | Chaos  | Time   | Time   
  25 | Gestalt    | Confusion  | VerminCtrl | Water  | Poison | Chaos  | Chaos  
  25 | Gestalt    | Confusion  | CurePoison | Earth  | Poison | Chaos  | Chaos  
  25 | Gestalt    | Darkness   | VerminCtrl | Water  | Poison | Nether | Nether 
