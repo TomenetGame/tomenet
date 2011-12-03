@@ -2061,8 +2061,8 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 		}
 
 
-		if (!uniq) fprintf(fff, "\377s(%4d) ", i); /* mimics need that number for Polymorph Self Into.. */
-		else fprintf(fff, "       ");
+		if (!uniq) fprintf(fff, "\377s(%4d) \377%c%c\377s  ", i, color_attr_to_char(r_ptr->d_attr), r_ptr->d_char); /* mimics need that number for Polymorph Self Into.. */
+		else fprintf(fff, "       \377%c%c\377s  ", color_attr_to_char(r_ptr->d_attr), r_ptr->d_char);
 
 		if (uniq) {
 			fprintf(fff, "\377U%-30s\n", r_name + r_ptr->name);
