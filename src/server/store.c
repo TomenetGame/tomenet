@@ -1002,7 +1002,6 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 			if (object_value(Ind, o_ptr) < 10) return (FALSE);
 			break;
 	}
-
 	/* XXX XXX XXX Ignore "worthless" items */
 	if (object_value(Ind, o_ptr) <= 0) return (FALSE);
 

@@ -3744,8 +3744,10 @@ void observe_aux(int Ind, object_type *o_ptr) {
 
 /*
  * Describe a "fully identified" item
+ * New albeit unused: You can call this even if item isn't *ID*ed and it'll
+ * just display some basic information, a note that it isn't *ID*ed, and exit
+ * (for player stores maybe.).
  */
-//bool identify_fully_aux(object_type *o_ptr, FILE *fff)
 bool identify_fully_aux(int Ind, object_type *o_ptr)
 {
 	player_type *p_ptr = Players[Ind];
@@ -3840,7 +3842,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	}
 
 	/* in case we just *ID* it because an admin inspected it */
-	if (!(o_ptr->ident & ID_MENTAL)) fprintf(fff, "\377y(This item has not been *identified* yet.)\n");
+	if (!(o_ptr->ident & ID_MENTAL) && is_admin(p_ptr)) fprintf(fff, "\377y(This item has not been *identified* yet.)\n");
 
 	if (artifact_p(o_ptr)) {
 		if (true_artifact_p(o_ptr)) ca_ptr = " true artifact";
@@ -4036,8 +4038,8 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		/* Add a blank line */
 		info[i++] = "";
 	}
-
 #endif
+
 	if (f4 & TR4_SHOULD2H) fprintf(fff, "It should be wielded two-handed.\n");
 	else if (f4 & TR4_MUST2H) fprintf(fff, "It must be wielded two-handed.\n");
 	else if (f4 & TR4_COULD2H) {
@@ -4058,6 +4060,40 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, o_ptr, fff, TRUE);
 	else if (is_weapon(o_ptr->tval)) display_weapon_handling(Ind, o_ptr, fff, TRUE);
 	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, o_ptr, fff, TRUE);
+
+	/* specialty: recognize custom spell books and display their contents! - C. Blue */
+	if (o_ptr->tval == TV_BOOK &&
+	    (o_ptr->sval == SV_CUSTOM_TOME_1 ||
+	    o_ptr->sval == SV_CUSTOM_TOME_2 ||
+	    o_ptr->sval == SV_CUSTOM_TOME_3)) {
+		if (!o_ptr->xtra1) fprintf(fff, "It contains no spells yet.\n");
+		else fprintf(fff,"It contains spells:\n");
+		if (o_ptr->xtra1) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra1 - 1)));
+		if (o_ptr->xtra2) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra2 - 1)));
+		if (o_ptr->xtra3) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra3 - 1)));
+		if (o_ptr->xtra4) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra4 - 1)));
+		if (o_ptr->xtra5) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra5 - 1)));
+		if (o_ptr->xtra6) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra6 - 1)));
+		if (o_ptr->xtra7) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra7 - 1)));
+		if (o_ptr->xtra8) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra8 - 1)));
+		if (o_ptr->xtra9) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra9 - 1)));
+	}
+
+	/* Hack: Stop here if the item wasn't *ID*ed and we still were allowed to read so far (player stores maybe?) */
+	if (!(o_ptr->ident & ID_MENTAL) && !is_admin(p_ptr)) {
+		fprintf(fff, "\n\377y(This item has not been *identified* yet.)\n");
+		my_fclose(fff);
+		fff = my_fopen(p_ptr->infofile, "rb");
+		if (my_fgets(fff, buf, 1024, FALSE)) {
+			my_fclose(fff);
+			return (FALSE);
+		}
+		my_fclose(fff);
+		strcpy(p_ptr->cur_file_title, "Basic Item Information");
+		Send_special_other(Ind);
+		return (TRUE);
+	}
+
 
 	/* Mega Hack^3 -- describe the amulet of life saving */
 	if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_LIFE_SAVING)
@@ -4602,27 +4638,8 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
 	/* Breakage/Damage display for ammo */
 	if (wield_slot(Ind, o_ptr) == INVEN_AMMO) {
-		fprintf(fff, "\377WIt has %d%% chances to break upon hit.\n"
-				, breakage_chance(o_ptr));
+		fprintf(fff, "\377WIt has %d%% chances to break upon hit.\n", breakage_chance(o_ptr));
 		display_ammo_damage(Ind, o_ptr, fff);
-	}
-
-	/* specialty: recognize custom spell books and display their contents! - C. Blue */
-	if (o_ptr->tval == TV_BOOK &&
-	    (o_ptr->sval == SV_CUSTOM_TOME_1 ||
-	    o_ptr->sval == SV_CUSTOM_TOME_2 ||
-	    o_ptr->sval == SV_CUSTOM_TOME_3)) {
-		if (!o_ptr->xtra1) fprintf(fff, "\n- no spells -\n");
-		else fprintf(fff,"\nSpells:\n");
-		if (o_ptr->xtra1) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra1 - 1)));
-		if (o_ptr->xtra2) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra2 - 1)));
-		if (o_ptr->xtra3) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra3 - 1)));
-		if (o_ptr->xtra4) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra4 - 1)));
-		if (o_ptr->xtra5) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra5 - 1)));
-		if (o_ptr->xtra6) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra6 - 1)));
-		if (o_ptr->xtra7) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra7 - 1)));
-		if (o_ptr->xtra8) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra8 - 1)));
-		if (o_ptr->xtra9) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra9 - 1)));
 	}
 
 	//	info[i]=NULL;
