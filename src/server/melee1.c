@@ -2226,7 +2226,19 @@ bool make_attack_melee(int Ind, int m_idx)
 
 					break;
 				}
+				case RBE_LITE:
+					/* Take damage */
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
+					take_hit(Ind, damage, ddesc, 0);
 
+					/* Increase "blind" */
+					if (!p_ptr->resist_blind && !p_ptr->resist_lite)
+						if (set_blind(Ind, p_ptr->blind + 10 + randint(rlev)))
+							obvious = TRUE;
+
+					/* Learn about the player */
+					update_smart_learn(m_idx, DRS_BLIND);
+					break;
 			}
 
 

@@ -4477,6 +4477,8 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RBE_FAMINE	35
 #define RBE_SEDUCE	36
 
+#define RBE_LITE	37	/* explosion-only effect. No actual hit! */
+
 /*** Monster flag values (hard-coded) ***/
 
 

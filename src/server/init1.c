@@ -134,6 +134,7 @@ static cptr r_info_blow_effect[] =
 	"DISARM",	// ToME-NET ones
 	"FAMINE",
 	"SEDUCE",
+	"LITE",		/* to replace RBE_BLIND for explosion of "yellow light" */
 	NULL
 };
 

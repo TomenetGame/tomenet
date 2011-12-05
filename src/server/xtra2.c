@@ -4842,6 +4842,7 @@ if (season_halloween) {
 			case RBE_FIRE:      typ = GF_FIRE; break;
 			case RBE_COLD:      typ = GF_COLD; break;
 			case RBE_BLIND:     typ = GF_BLIND; break;
+			case RBE_LITE:      typ = GF_LITE; break;
 //			case RBE_HALLU:     typ = GF_CONFUSION; break;
 			case RBE_HALLU:     typ = GF_CHAOS; break;	/* CAUTION! */
 			case RBE_CONFUSE:   typ = GF_CONFUSION; break;
