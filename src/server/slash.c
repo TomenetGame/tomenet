@@ -1302,8 +1302,11 @@ void do_slash_cmd(int Ind, char *message)
 
 				/* Don't drain energy far below zero - mikaelh */
 				if (p_ptr->energy < 0) return;
+/* All of this isn't perfect. In theory, the command to use a specific rec-item would need to be added to the client's command queue I guess. oO */
+#if 0 /* can't use /rec while resting with this enabled, oops. */
 				/* hm, how about this? - C. Blue */
 				if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+#endif
 
 				/* Test for 'Recall' istar spell and for 'Relocation' astral spell */
 #if 0 /* hm, which version might be easier/better?.. */
