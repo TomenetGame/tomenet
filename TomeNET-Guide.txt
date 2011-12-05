@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 3. December 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 5. December 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -7945,6 +7945,7 @@ If you don't have a digging tool equipped, your total digging power is halved.
 
 To dig through certain features, you have to win a random number roll of 1..x
 by having a digging power that is greater than the roll:
+--------------------------------------------------------
 Rubble      200
 Trees       400
 Bushes      300
@@ -7957,6 +7958,14 @@ Granite    1600 + 40
 The +x is a fixed value that gets added to what you have to overcome.
 For example you cannot successfully tunnel through quartz if you don't
 have at least 21 digging power, since you have to overcome the +20.
+
+Some too-long-didn't-calculate values, assuming 0.000 'Digging' skill
+and unenchanted (ie (+0,+0)) digging tools:
+-------------------------------------------
+-You cannot tunnel through granite wall with a shovel if your STRength is
+ below 18/30.
+-You cannot tunnel through granite wall with a pick if your STRength is
+ below 12.
 
 Tunnelling into walls that are actually secret doors will be treated as if
 you were 'searching' instead of tunnelling.
