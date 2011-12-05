@@ -1683,6 +1683,8 @@ extern void handle_request_return_num(int Ind, int id, int num);
 extern void handle_request_return_cfr(int Ind, int id, bool cfr);
 
 extern void limit_energy(player_type *p_ptr);
+extern cptr get_prace(player_type *p_ptr);
+extern cptr get_ptitle(player_type *p_ptr, bool short_form);
 
 /* xtra2.c */
 

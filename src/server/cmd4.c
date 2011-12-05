@@ -455,11 +455,8 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 	char info_chars[4];
 	bool text_pk = FALSE, text_silent = FALSE, text_afk = FALSE, text_ignoring_chat = FALSE, text_allow_dm_chat = FALSE;
 
-	/* Prepare title already */
-	if (q_ptr->lev < 60)
-		p = player_title[q_ptr->pclass][((q_ptr->lev/5) < 10)? (q_ptr->lev/5) : 10][1 - q_ptr->male];
-	else
-		p = player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_PLAYER_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male];
+	/* Prepare title at this point already */
+	p = get_ptitle(q_ptr, FALSE);
 
 if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
  if (compaction != 2) { /* #ifndef COMPACT_ALT */
@@ -481,16 +478,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 
 	fprintf(fff, "%s,\377%c L%d ", q_ptr->name, attr, q_ptr->lev);
 
-  #ifdef ENABLE_MAIA
-	if (q_ptr->prace == RACE_MAIA && q_ptr->ptrait) {
-		if (q_ptr->ptrait == TRAIT_ENLIGHTENED)
-			fprintf(fff, "%s %s", "Enlightened", p);
-		else if (q_ptr->ptrait == TRAIT_CORRUPTED)
-			fprintf(fff, "%s %s", "Corrupted", p);
-	}
-	else
-  #endif
-		fprintf(fff, "%s %s", special_prace_lookup[q_ptr->prace],  p); 
+	fprintf(fff, "%s %s", get_prace(q_ptr),  p);
 
 	/* PK */
 	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
@@ -613,16 +601,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	fprintf(fff, "%s,\377%c L%d %s ", q_ptr->name, attr, q_ptr->lev, q_ptr->male ? "Male" : "Female");
   #endif
 
-  #ifdef ENABLE_MAIA
-	if (q_ptr->prace == RACE_MAIA && q_ptr->ptrait) {
-		if (q_ptr->ptrait == TRAIT_ENLIGHTENED)
-			fprintf(fff, "%s %s", "Enlightened", p);
-		else if (q_ptr->ptrait == TRAIT_CORRUPTED)
-			fprintf(fff, "%s %s", "Corrupted", p);
-	}
-	else
-  #endif
-		fprintf(fff, "%s %s", special_prace_lookup[q_ptr->prace],  p); 
+	fprintf(fff, "%s %s", get_prace(q_ptr),  p); 
 
 	/* PK */
 	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
@@ -739,15 +718,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	fprintf(fff, "%s,\377%c L%d ", q_ptr->name, attr, q_ptr->lev);
   #endif
 
-  #ifdef ENABLE_MAIA
-	if (q_ptr->prace == RACE_MAIA && q_ptr->ptrait) {
-		if (q_ptr->ptrait == TRAIT_ENLIGHTENED)
-			fprintf(fff, "%s", "Enlightened");
-		else if (q_ptr->ptrait == TRAIT_CORRUPTED)
-			fprintf(fff, "%s", "Corrupted");
-	} else
-  #endif
-	fprintf(fff, "%s", special_prace_lookup[q_ptr->prace]);
+	fprintf(fff, "%s", get_prace(q_ptr));
 	fprintf(fff, " %s", class_info[q_ptr->pclass].title);
 
 	/* location */
@@ -975,18 +946,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	fprintf(fff, "  %s the ", q_ptr->name);
     #endif
 	//e.g., God the Human Grand Runemistress =P
-    #ifdef ENABLE_MAIA
-	if (q_ptr->prace == RACE_MAIA && q_ptr->ptrait) {
-		if (q_ptr->ptrait==TRAIT_ENLIGHTENED)
-			fprintf(fff, "%s %s", "Enlightened", p);
-		else if (q_ptr->ptrait==TRAIT_CORRUPTED)
-			fprintf(fff, "%s %s", "Corrupted", p);
-	}
-	else
-    #endif
-	{
-		fprintf(fff, "%s %s", special_prace_lookup[q_ptr->prace],  p); 
-	}
+	fprintf(fff, "%s %s", get_prace(q_ptr),  p); 
    #endif
 	if (q_ptr->mode & MODE_PVP) fprintf(fff, " Gladiator");
 

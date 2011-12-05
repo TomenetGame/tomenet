@@ -4809,3 +4809,24 @@ cptr flags_str(u32b flags) {
 	return (NULL);
 #endif
 }
+
+/* get player's racial attribute */
+cptr get_prace(player_type *p_ptr) {
+#ifdef ENABLE_MAIA
+	if (p_ptr->prace == RACE_MAIA && p_ptr->ptrait) {
+		if (p_ptr->ptrait == TRAIT_ENLIGHTENED)
+			return "Enlightened";
+		else if (p_ptr->ptrait == TRAIT_CORRUPTED)
+			return "Corrupted";
+		else
+			return special_prace_lookup[p_ptr->prace];
+	} else
+#endif
+	return special_prace_lookup[p_ptr->prace];
+}
+
+/* get player's title */
+cptr get_ptitle(player_type *p_ptr, bool short_form) {
+	if (p_ptr->lev < 60) return player_title[p_ptr->pclass][((p_ptr->lev / 5) < 10)? (p_ptr->lev / 5) : 10][(short_form ? 3 : 1) - p_ptr->male];
+	return player_title_special[p_ptr->pclass][(p_ptr->lev < PY_MAX_PLAYER_LEVEL) ? (p_ptr->lev - 60) / 10 : 4][(short_form ? 3 : 1) - p_ptr->male];
+}

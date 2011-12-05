@@ -5091,19 +5091,16 @@ if (season_halloween) {
 #endif
 
 		/* give credit to the killer by default */
-if(cfg.unikill_format){
+if (cfg.unikill_format) {
 	/* let's try with titles before the name :) -C. Blue */
-		if (q_ptr->lev < 60)
-		titlebuf = player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)?(q_ptr->lev)/5 : 10][1 - q_ptr->male];
-		else
-		titlebuf = player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_PLAYER_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male];
+		titlebuf = get_ptitle(q_ptr, FALSE);
 
 		if (is_Morgoth) {
 			snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s %s.\377v**", r_name_get(m_ptr), titlebuf, p_ptr->name);
 		} else {
 			snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by %s %s.\377b**", r_name_get(m_ptr), titlebuf, p_ptr->name);
 		}
-}else{
+} else {
 	/* for now disabled (works though) since we don't have telepath class
 	   at the moment, and party names would make the line grow too long if
 	   combined with title before the actual name :/ -C. Blue */
@@ -5977,10 +5974,7 @@ void player_death(int Ind)
 	}
 
 	/* prepare player's title */
-	if (p_ptr->lev < 60)
-		titlebuf = player_title[p_ptr->pclass][((p_ptr->lev)/5 < 10)?(p_ptr->lev)/5 : 10][1 - p_ptr->male];
-	else
-		titlebuf = player_title_special[p_ptr->pclass][(p_ptr->lev < PY_MAX_PLAYER_LEVEL)? (p_ptr->lev - 60)/10 : 4][1 - p_ptr->male];
+	titlebuf = get_ptitle(p_ptr, FALSE);
 
 	break_cloaking(Ind, 0);
 	break_shadow_running(Ind);

@@ -9491,6 +9491,7 @@ void Handle_direction(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	int Ind2;
+//s_printf("hd dir,current_spell,current_realm=%d,%d,%d\n", dir, p_ptr->current_spell, p_ptr->current_realm);
 
 	/* New '+' feat in 4.4.6.2 */
 	if (dir == 11) { /* repeat forever, if we keep pressing '+', yay.. */

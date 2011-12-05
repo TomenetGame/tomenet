@@ -2855,27 +2855,13 @@ void do_cmd_look(int Ind, int dir) {
 
 		/* Format string */
 		if (q_ptr->body_monster) {
-			if (q_ptr->lev < 60)
-			snprintf(out_val, sizeof(out_val), "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)? (q_ptr->lev)/5 : 10][1 - q_ptr->male]);
-			else
-			snprintf(out_val, sizeof(out_val), "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_PLAYER_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male]);
-		} else if (q_ptr->prace == RACE_MAIA && q_ptr->ptrait != TRAIT_NONE) {
-			if (q_ptr->lev < 60)
-				snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, q_ptr->ptrait == TRAIT_ENLIGHTENED ? "enlightened" : "corrupted", player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)?(q_ptr->lev)/5 : 10][1 - q_ptr->male]);
-			else
-				snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, q_ptr->ptrait == TRAIT_ENLIGHTENED ? "enlightened" : "corrupted", player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_PLAYER_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male]);
+			snprintf(out_val, sizeof(out_val), "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, get_ptitle(q_ptr, FALSE));
 		} else {
 #if 0 /* use normal race_info.title */
-			if (q_ptr->lev < 60)
-			snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)?(q_ptr->lev)/5 : 10][1 - q_ptr->male]);
-			else
-			snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_PLAYER_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male]);
+			snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, get_ptitle(q_ptr, FALSE));
 			//, class_info[q_ptr->pclass].title
 #else /* use special_prace_lookup */
-			if (q_ptr->lev < 60)
-				snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, special_prace_lookup[q_ptr->prace], player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)?(q_ptr->lev)/5 : 10][1 - q_ptr->male]);
-			else
-				snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, special_prace_lookup[q_ptr->prace], player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_PLAYER_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male]);
+			snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, get_prace(q_ptr), get_ptitle(q_ptr, FALSE));
 #endif
 		}
 	} else if (c_ptr->m_idx > 0 && p_ptr->mon_vis[c_ptr->m_idx]) {	/* TODO: handle monster mimics */

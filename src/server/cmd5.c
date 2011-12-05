@@ -790,6 +790,7 @@ void do_mimic_power_aux(int Ind, int dir)
 			return;
 		}
 	}
+//s_printf("dmpa dir,current_spell=%d,%d\n", dir, p_ptr->current_spell);
 
 	/* We assume that the spell can be cast, and so forth */
 	switch(p_ptr->current_spell) {

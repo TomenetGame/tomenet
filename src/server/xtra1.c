@@ -136,30 +136,20 @@ static void prt_stat(int Ind, int stat)
 static void prt_title(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-
 	cptr p = "";
 
 	/* Winner */
-	if (p_ptr->total_winner || (p_ptr->lev > PY_MAX_LEVEL))
-	{
+	if (p_ptr->total_winner || (p_ptr->lev > PY_MAX_LEVEL)) {
 		if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST))
 			p = (p_ptr->male ? "**EMPEROR**" : "**EMPRESS**");
 		else
 			p = (p_ptr->male ? "**KING**" : "**QUEEN**");
 	}
-
 	/* Normal */
-	else
-	{
-		if (p_ptr->lev < 60)
-		p = player_title[p_ptr->pclass][((p_ptr->lev/5) < 10)? (p_ptr->lev/5) : 10][3 - p_ptr->male];
-		else
-		p = player_title_special[p_ptr->pclass][(p_ptr->lev < PY_MAX_PLAYER_LEVEL)? (p_ptr->lev - 60)/10 : 4][3 - p_ptr->male];
-	}
+	else p = get_ptitle(p_ptr, TRUE);
 
 	/* Ghost */
-	if (p_ptr->ghost)
-		p = "\377rGhost (dead)";
+	if (p_ptr->ghost) p = "\377rGhost (dead)";
 
 	Send_title(Ind, p);
 }
