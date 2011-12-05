@@ -858,21 +858,17 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Multiplication Trap */
 		case TRAP_OF_MULTIPLICATION:
 		{
-			{
-				msg_print(Ind, "You hear a loud click.");
-				for(k = -1; k <= 1; k++)
-					for(l = -1; l <= 1; l++)
-					{
-						//cave_type *c2_ptr=&zcave[y + l][x + k];
-						//                if(in_bounds(y + l, px + k) && !cave[y + l][px + k].t_idx)
-						if(in_bounds(y + l, x + k) && (!GetCS(&zcave[y + l][x + k], CS_TRAPS)))
-						{
-							place_trap(wpos, y + l, x + k, 0);
-						}
-					}
-				ident = TRUE;
-				break;
-			}
+			msg_print(Ind, "You hear a loud click.");
+			for (k = -1; k <= 1; k++)
+				for (l = -1; l <= 1; l++) {
+					/* let's keep its spot empty if the multiplication trap runs out? */
+					//if (k == 0 && l == 0) continue;
+
+					if (in_bounds(y + l, x + k) && (!GetCS(&zcave[y + l][x + k], CS_TRAPS)))
+						place_trap(wpos, y + l, x + k, -1);
+				}
+			ident = TRUE;
+			break;
 		}
 		/* Steal Item Trap */
 		case TRAP_OF_STEAL_ITEM:
@@ -2767,10 +2763,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	}
 
 	/* some traps vanish */
-	if (magik(vanish))
-	{
-		struct c_special *cs_ptr;
-		cs_ptr=GetCS(c_ptr, CS_TRAPS);
+	if (magik(vanish)) {
+		struct c_special *cs_ptr = GetCS(c_ptr, CS_TRAPS);
 		if (item < 0) cs_erase(c_ptr, cs_ptr);
 		else i_ptr->pval = 0;
 		ident = FALSE;
@@ -2780,9 +2774,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 	/* Had the player seen it? */
 	if (never_id || p_ptr->image || p_ptr->confused || p_ptr->blind ||
-			no_lite(Ind) || !inarea(&p_ptr->wpos, wpos) ||
-			!los(wpos, p_ptr->py, p_ptr->px, y, x))
-//			no_lite(Ind) || !player_has_los_bold(Ind, y, x))
+	    no_lite(Ind) || !inarea(&p_ptr->wpos, wpos) ||
+	    !los(wpos, p_ptr->py, p_ptr->px, y, x))
+//	    !player_has_los_bold(Ind, y, x))
 		return (FALSE);
 	else return ident;
 }
@@ -2832,13 +2826,10 @@ void player_activate_door_trap(int Ind, s16b y, s16b x)
 
 /*
  * Places a random trap at the given location.
- *
  * The location must be a valid, empty, clean, floor grid.
+ * mod: -1 means no multiplication trap allowed.
  */
-/*
- * FEAT_DOOR stuffs should be revised after f_info reform	- Jir -
- */
-//void place_trap(int y, int x)
+// FEAT_DOOR stuffs should be revised after f_info reform	- Jir -
 void place_trap(struct worldpos *wpos, int y, int x, int mod)
 {
 	bool           more       = TRUE;
@@ -2917,6 +2908,9 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 	while ((more) && (cnt++) < 100) {
 		trap = rand_int(MAX_T_IDX);
 		t_ptr = &t_info[trap];
+
+		/* no 'multiplication 'trap? */
+		if (mod == -1 && trap == TRAP_OF_MULTIPLICATION) continue;
 
 		/* no traps below their minlevel */
 		if (t_ptr->minlevel > lv) continue;

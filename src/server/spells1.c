@@ -3951,13 +3951,12 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (!allow_terraforming(wpos, FEAT_TREE)) break;
 
 			/* Require a "naked" floor grid */
-			if ((zcave[y][x].feat!=FEAT_MORE && zcave[y][x].feat!=FEAT_LESS) && cave_perma_bold(zcave, y, x)) break;
+			if ((zcave[y][x].feat != FEAT_MORE && zcave[y][x].feat != FEAT_LESS) && cave_perma_bold(zcave, y, x)) break;
 
 			/* Place a trap */
 			place_trap(wpos, y, x, dam);
 
-			if (!quiet)
-			{
+			if (!quiet) {
 				/* Notice */
 				note_spot(Ind, y, x);
 

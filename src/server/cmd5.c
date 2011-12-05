@@ -1116,17 +1116,17 @@ void do_mimic_power_aux(int Ind, int dir)
 // RF6_TRAPS			0x00002000	/* Create Traps */
     case 77:
     sprintf(p_ptr->attacker, " cackles evilly");
-	  /* I dunno if you're happy with it :) */
+#if 0 /* Note: These traps would be exploitable for xp badly. */
       fire_ball(Ind, GF_MAKE_TRAP, dir, 1, 1 + rlev / 30, "");
+#endif
       break;
 
-		default:  /* For some reason we got called for a spell that */
-		{         /* doesn't require a direction */
-			msg_format(Ind, "SERVER ERROR: do_mimic_power_aux() called for non-directional power %d!", p_ptr->current_spell);
-			p_ptr->current_spell = -1;
-			return;
-		}
-	}	
+	default: /* For some reason we got called for a spell that
+		    doesn't require a direction */
+		msg_format(Ind, "SERVER ERROR: do_mimic_power_aux() called for non-directional power %d!", p_ptr->current_spell);
+		p_ptr->current_spell = -1;
+		return;
+	}
 
 //	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
