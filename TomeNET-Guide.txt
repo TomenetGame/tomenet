@@ -7962,10 +7962,12 @@ have at least 21 digging power, since you have to overcome the +20.
 Some too-long-didn't-calculate values, assuming 0.000 'Digging' skill
 and unenchanted (ie (+0,+0)) digging tools:
 -------------------------------------------
--You cannot tunnel through granite wall with a shovel if your STRength is
+-You cannot tunnel through granite with a shovel if your STRength is
  below 18/30.
--You cannot tunnel through granite wall with a pick if your STRength is
+-You cannot tunnel through granite with a pick if your STRength is
  below 12.
+-You can tunnel through all other materials with just a basic shovel even if
+ your STRength is only 3.
 
 Tunnelling into walls that are actually secret doors will be treated as if
 you were 'searching' instead of tunnelling.
