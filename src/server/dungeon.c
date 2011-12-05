@@ -2610,7 +2610,8 @@ void recall_player(int Ind, char *message){
 				strcpy(deep_dive_name[j], deep_dive_name[j - 1]);
 			}
 			deep_dive_level[i] = -1;
-			strcpy(deep_dive_name[i], p_ptr->name);
+			//strcpy(deep_dive_name[i], p_ptr->name);
+			sprintf(deep_dive_name[i], "%s the %s %s (%d)", p_ptr->name, get_prace(p_ptr), class_info[p_ptr->pclass].title, p_ptr->max_plv);
 			break;
 		}
 

@@ -6180,7 +6180,8 @@ void do_slash_cmd(int Ind, char *message)
 			/* Test values of deep_dive..[] deep dive record saving array */
 			else if (prefix(message, "/deepdivestats")) {
 				for (i = 0; i < 20; i++)
-					msg_format(Ind, "#%2d.  %20s  %3d", i + 1, deep_dive_name[i], deep_dive_level[i]);
+					//msg_format(Ind, "#%2d.  %20s  %3d", i + 1, deep_dive_name[i], deep_dive_level[i]);//NAME_LEN
+					msg_format(Ind, "#%2d.  %65s  %3d", i + 1, deep_dive_name[i], deep_dive_level[i]);//MAX_CHARS - 15 to fit on screen
 				return;
 			}
 			/* Reset Ironman Deep Dive Challenge records */

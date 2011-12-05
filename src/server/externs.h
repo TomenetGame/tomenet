@@ -2069,7 +2069,8 @@ extern astar_list_closed astar_info_closed[ASTAR_MAX_INSTANCES];
 
 /* Ironman Deep Dive Challenge */
 extern int deep_dive_level[20];
-extern char deep_dive_name[20][NAME_LEN];
+//extern char deep_dive_name[20][NAME_LEN];
+extern char deep_dive_name[20][MAX_CHARS];
 
 /* remember school for each spell */
 extern int spell_school[512];

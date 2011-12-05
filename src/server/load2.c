@@ -2683,7 +2683,7 @@ errr rd_server_savefile()
 	        for (i = 0; i < 20; i++) {
 			rd_s16b(&tmp16s);
 			deep_dive_level[i] = tmp16s;
-			rd_string(deep_dive_name[i], 20);
+			rd_string(deep_dive_name[i], MAX_CHARS);
 		}
 	}
 
