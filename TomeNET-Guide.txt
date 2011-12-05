@@ -7943,21 +7943,28 @@ Ranging from +0 at 3 over +10 at 18/10, +50 at 18/110 up to +100 at 18/***.
 
 If you don't have a digging tool equipped, your total digging power is halved.
 
-To dig through certain features, you have to win a random number roll of 1..x
-by having a digging power that is greater than the roll:
---------------------------------------------------------
-Rubble      200
-Trees       400
-Bushes      300
-Ivy         200
-Dead trees  300
+To successfully dig through certain features, your digging power must be
+greater than the result of a random number roll "random(0..x-1) + y":
+-------------------------------------------------------------------
+Rubble      200 +  0
+Ivy         200 +  0
+Bushes      300 +  0
+Dead trees  300 +  0
+Trees       400 +  0
 Sandwalls   250 +  5
 Magma       400 + 10
 Quartz      800 + 20
 Granite    1600 + 40
-The +x is a fixed value that gets added to what you have to overcome.
+The +y is a fixed value that gets added to the random roll of (1..x), the sum
+of this is what you have to overcome with your digging power value.
 For example you cannot successfully tunnel through quartz if you don't
 have at least 21 digging power, since you have to overcome the +20.
+
+Example: If you have 21 digging power and try to dig into quartz you'll have to
+be very lucky and hope for the random(0..799) roll for quartz to actually be a
+0 so that the result will be 0+20 which is 20 and therefore smaller than your
+digging power of 21. So on each turn of tunnelling your chance to succeed would
+be 1 in 800 in that case.
 
 Some too-long-didn't-calculate values, assuming 0.000 'Digging' skill
 and unenchanted (ie (+0,+0)) digging tools:
@@ -7968,13 +7975,23 @@ and unenchanted (ie (+0,+0)) digging tools:
  below 12.
 -You can tunnel through all other materials with just a basic shovel even if
  your STRength is only 3.
+ (For quartz, you have a 3% chance to succeed at 18/50 STR with the shovel
+  and at 18/10 STR with a pick. If you use an enchanted shovel (+9,+9) (+1)
+  however, you already have a 3% chance to succeed at only 5 STR.)
+
+For digging through granite wall without having to wait for ages to succeed,
+you will definitely want a better digging tool than basic shovels or picks.
+For example ones 'of Digging', a magical ego power for digging tools.
+Or higher level diggers such as gnomish, orcish or dwarven diggers.
 
 Tunnelling into walls that are actually secret doors will be treated as if
 you were 'searching' instead of tunnelling.
 Tunnelling into known doors will just try to open them instead.
 
-Tunnelling might reveal special floor features, items or gold, see
-'Digging' skill in (6.2) for details.
+Tunnelling might reveal special floor features, items or gold (walls that are
+displayed as a '*' symbol will reveal cash worth of gems or precious metal, but
+those walls might not always show it until you use 'Treasure Detection' or
+'Treasure Location' magic), see 'Digging' skill in (6.2) for details.
 Also see (3.4a) for more information on digging tool mods.
 
 If you haven't got a digging tool equipped, or if it's just a basic shovel (+1)
