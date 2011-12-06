@@ -4216,57 +4216,81 @@ static void process_player_end(int Ind)
 	/* Mind Fusion/Control disable the char */
 	if (p_ptr->esp_link && p_ptr->esp_link_type && (p_ptr->esp_link_flags & LINKF_OBJ)) return;
 
-	/* Check for auto-retaliate */
-	if ((p_ptr->energy >= level_speed(&p_ptr->wpos)) &&
-	    !p_ptr->confused && !p_ptr->resting &&
+
+	if (!p_ptr->confused && !p_ptr->resting &&
 	    (!p_ptr->autooff_retaliator || /* <- these conditions seem buggy/wrong/useless? */
 	     !p_ptr->invuln))//&& !p_ptr->tim_manashield)))
 	{
-		/* assume nothing will happen here */
-		p_ptr->auto_retaliating = FALSE;
+		/* Prepare auto-ret/fire-till-kill mode energy requirements */
+		int energy = level_speed(&p_ptr->wpos);
 
+		/* test ftk type and use according energy requirements */
 		if (p_ptr->shooting_till_kill) {
-			/* stop shooting till kill if target is no longer available,
-			   instead of casting a final time into thin air! */
 			if (target_okay(Ind)) {
-				p_ptr->auto_retaliating = TRUE;
-
-				if (p_ptr->shoot_till_kill_spell) {
-					cast_school_spell(Ind, p_ptr->shoot_till_kill_book, p_ptr->shoot_till_kill_spell - 1, 5, -1, 0);
-					if (!p_ptr->shooting_till_kill) p_ptr->shoot_till_kill_spell = 0;
-				}
-#ifdef ENABLE_RCRAFT
-				else if (p_ptr->shoot_till_kill_rune_spell) {
-					execute_rspell(Ind, 5, p_ptr->shoot_till_kill_rune_spell, p_ptr->shoot_till_kill_rune_modifier, 0);
-				}
-#endif
-				else {
-					do_cmd_fire(Ind, 5);
-				}
-
-				p_ptr->auto_retaliating = !p_ptr->auto_retaliating; /* hack, it's unset in do_cmd_fire IF it WAS successfull, ie reverse */
-				//not required really	if (p_ptr->ranged_double && p_ptr->shooting_till_kill) do_cmd_fire(Ind, 5);
-				p_ptr->shooty_till_kill = FALSE; /* if we didn't succeed shooting till kill, then we don't intend it anymore */
+				/* spells always require 1 turn: */
+				if (p_ptr->shoot_till_kill_spell) ;
+				/* note: currently doesn't take into account R_MELE bpr feature, which reduces energy: */
+				else if (p_ptr->shoot_till_kill_rune_spell) energy = rspell_time(Ind, p_ptr->shoot_till_kill_rune_modifier);
+				/* shooting with ranged weapon: */
+				else energy = energy / p_ptr->num_fire;
 			} else {
 				p_ptr->shooting_till_kill = FALSE;
+				/* normal auto-retaliation */
+				//MIGHT NOT BE A MELEE ATTACK, SO COMMENTED OUT!  else energy = energy / p_ptr->num_blow;
 			}
 		}
+		/* normal auto-retaliation */
+		//MIGHT NOT BE A MELEE ATTACK, SO COMMENTED OUT!  else energy = energy / p_ptr->num_blow;
 
-		/* Check for nearby monsters and try to kill them */
-		/* If auto_retaliate returns nonzero than we attacked
-		 * something and so should use energy.
-		 */
-		p_ptr->auto_retaliaty = TRUE; /* hack: prevent going un-AFK from auto-retaliating */
-		if ((!p_ptr->auto_retaliating) /* aren't we doing fire_till_kill already? */
-		    && (attackstatus = auto_retaliate(Ind))) /* attackstatus seems to be unused! */
-		{
-			p_ptr->auto_retaliating = TRUE;
-			/* Use energy */
-//			p_ptr->energy -= level_speed(p_ptr->dun_depth);
+
+		/* Check for auto-retaliate */
+		if (p_ptr->energy >= energy) {
+			/* assume nothing will happen here */
+			p_ptr->auto_retaliating = FALSE;
+
+			if (p_ptr->shooting_till_kill) {
+				/* stop shooting till kill if target is no longer available,
+				   instead of casting a final time into thin air! */
+				if (target_okay(Ind)) {
+					p_ptr->auto_retaliating = TRUE;
+
+					if (p_ptr->shoot_till_kill_spell) {
+						cast_school_spell(Ind, p_ptr->shoot_till_kill_book, p_ptr->shoot_till_kill_spell - 1, 5, -1, 0);
+						if (!p_ptr->shooting_till_kill) p_ptr->shoot_till_kill_spell = 0;
+					}
+#ifdef ENABLE_RCRAFT
+					else if (p_ptr->shoot_till_kill_rune_spell) {
+						execute_rspell(Ind, 5, p_ptr->shoot_till_kill_rune_spell, p_ptr->shoot_till_kill_rune_modifier, 0);
+					}
+#endif
+					else {
+						do_cmd_fire(Ind, 5);
+					}
+
+					p_ptr->auto_retaliating = !p_ptr->auto_retaliating; /* hack, it's unset in do_cmd_fire IF it WAS successfull, ie reverse */
+					//not required really	if (p_ptr->ranged_double && p_ptr->shooting_till_kill) do_cmd_fire(Ind, 5);
+					p_ptr->shooty_till_kill = FALSE; /* if we didn't succeed shooting till kill, then we don't intend it anymore */
+				} else {
+					p_ptr->shooting_till_kill = FALSE;
+				}
+			}
+
+			/* Check for nearby monsters and try to kill them */
+			/* If auto_retaliate returns nonzero than we attacked
+			 * something and so should use energy.
+			 */
+			p_ptr->auto_retaliaty = TRUE; /* hack: prevent going un-AFK from auto-retaliating */
+			if ((!p_ptr->auto_retaliating) /* aren't we doing fire_till_kill already? */
+			    && (attackstatus = auto_retaliate(Ind))) /* attackstatus seems to be unused! */
+			{
+				p_ptr->auto_retaliating = TRUE;
+				/* Use energy */
+				//p_ptr->energy -= level_speed(p_ptr->dun_depth);
+			}
+			p_ptr->auto_retaliaty = FALSE;
+		} else {
+			p_ptr->auto_retaliating = FALSE; /* if no energy left, this is required to turn off the no-run-while-retaliate-hack */
 		}
-		p_ptr->auto_retaliaty = FALSE;
-	} else {
-		p_ptr->auto_retaliating = FALSE; /* if no energy left, this is required to turn off the no-run-while-retaliate-hack */
 	}
 
 	/* ('Handle running' from above was originally at this place) */

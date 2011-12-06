@@ -2051,6 +2051,7 @@ extern void cast_rune_spell_header(int Ind, int a, int b);
 extern byte execute_rspell(u32b, byte, u32b, byte, bool);
 extern void rune_trap_backlash(int Ind);
 extern void remove_rune_trap_upkeep(int Ind, s32b id, int x, int y);
+extern s16b rspell_time(u32b Ind, byte imperative);
 /* spells1.c */
 extern bool rune_backlash(int Ind, int typ, int dam);
 /* tables.c */
