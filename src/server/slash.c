@@ -2972,13 +2972,13 @@ void do_slash_cmd(int Ind, char *message)
 		}
 		else if (prefix(message, "/ftkon")) {
 			msg_print(Ind, "\377wFire-till-kill mode now on.");
-			p_ptr->shooting_till_kill = TRUE;
+			p_ptr->shoot_till_kill = TRUE;
 			s_printf("SHOOT_TILL_KILL: Player %s sets true.\n", p_ptr->name);
 			p_ptr->redraw |= PR_STATE;
 			return;
 		} else if (prefix(message, "/ftkoff")) {
 			msg_print(Ind, "\377wFire-till-kill mode now off.");
-			p_ptr->shooting_till_kill = FALSE;
+			p_ptr->shoot_till_kill = p_ptr->shooting_till_kill = FALSE;
 			s_printf("SHOOT_TILL_KILL: Player %s sets false.\n", p_ptr->name);
 			p_ptr->redraw |= PR_STATE;
 			return;
