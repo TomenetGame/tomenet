@@ -6758,9 +6758,9 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 				if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
 				if (!Players[i]->newb_suicide && p_ptr->max_plv == 1)
-					msg_format(i, "\376\377D%s committed suicide.", p_ptr->name);
+					msg_format(i, "%c%s", '\376', buf + 1);
 				else
-					msg_format(i, "\374\377D%s committed suicide.", p_ptr->name);
+					msg_print(i, buf);
 			}
 		} else msg_broadcast(Ind, buf);
 
