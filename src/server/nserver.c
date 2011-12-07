@@ -2959,11 +2959,6 @@ void process_pending_commands(int ind)
 		}
 		result = (*receive_tbl[type])(ind);
 
-		/* New: Since fire-till-kill is now allowed to begin at <= 1
-		   energy (see dungeon.c, process_player_end()), we need this
-		   to avoid getting 'locked up' in shooting_till_kill. - C. Blue */
-		if (p_ptr) p_ptr->requires_energy = (result == 0);
-
 		/* Check that the player wasn't disconnected - mikaelh */
 		if (!Conn[ind]) {
 			return;
@@ -2991,12 +2986,20 @@ void process_pending_commands(int ind)
 		{
 			connp->start = turn;
 		}
-		if (result == -1)
+		if (result == -1) {
+			/* See 'p_ptr->requires_energy' below in 'result == 0' clause. */
+			if (p_ptr != NULL && p_ptr->conn != NOT_CONNECTED)
+				p_ptr->requires_energy = FALSE;
 			return;
+		}
 
 		// We didn't have enough energy to execute an important command.
-		if (result == 0) 
-		{
+		if (result == 0) {
+			/* New: Since fire-till-kill is now allowed to begin at <= 1
+			   energy (see dungeon.c, process_player_end()), we need this
+			   to avoid getting 'locked up' in shooting_till_kill. - C. Blue */
+			p_ptr->requires_energy = TRUE;
+
 			/* Hack -- if we tried to do something while resting, wake us up.
 			 */
 			if (p_ptr->resting) disturb(player, 0, 0);
@@ -3014,8 +3017,7 @@ void process_pending_commands(int ind)
 			 * actions such as talking while we wait for enough
 			 * energy to execute our next queued in game action.
 			 */
-			if (p_ptr->energy) 
-			{
+			if (p_ptr->energy) {
 				old_energy = p_ptr->energy;
 				p_ptr->energy = 0;
 			}
