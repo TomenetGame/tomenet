@@ -2406,6 +2406,7 @@ struct player_type
 	s16b word_recall;	/* Word of recall counter */
 
 	s16b energy;		/* Current energy */
+	bool requires_energy;	/* Player requires energy to perform a normal action instead of shooting-till-kill (and auto-retaliating?) */
 
 	s16b food;			/* Current nutrition */
 

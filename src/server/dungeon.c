@@ -4217,11 +4217,19 @@ static void process_player_end(int Ind)
 	if (p_ptr->esp_link && p_ptr->esp_link_type && (p_ptr->esp_link_flags & LINKF_OBJ)) return;
 
 
-	if (!p_ptr->confused && !p_ptr->resting &&
+	/* Check for fire-till-kill and auto-retaliation */
+	if (!p_ptr->requires_energy && /* <- new, required for allowing actions here (fire-till-kill)
+					  at <= 100% energy to prevent character lock-up. - C. Blue */
+	    !p_ptr->confused && !p_ptr->resting &&
 	    (!p_ptr->autooff_retaliator || /* <- these conditions seem buggy/wrong/useless? */
 	     !p_ptr->invuln))//&& !p_ptr->tim_manashield)))
 	{
-		/* Prepare auto-ret/fire-till-kill mode energy requirements */
+		/* Prepare auto-ret/fire-till-kill mode energy requirements.
+		   (Note: auto-ret is currently nothing special but always 1 x level_speed() as usual,
+		    so for auto-ret nothing changed basically. Therefore firing with auto-ret will also
+		    still have that small delay in the beginning, if player could fire multiple shots/round.
+		    This cannot be changed easily because here we don't know yet with which methid the
+		    player might auto-ret. - C. Blue) */
 		int energy = level_speed(&p_ptr->wpos);
 
 		/* test ftk type and use according energy requirements */
@@ -4293,13 +4301,13 @@ static void process_player_end(int Ind)
 		}
 	}
 
+
 	/* ('Handle running' from above was originally at this place) */
 	/* Handle running -- 5 times the speed of walking */
 	while (p_ptr->running && p_ptr->energy >= (level_speed(&p_ptr->wpos) * (real_speed + 1))/real_speed) {
 		run_step(Ind, 0);
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / real_speed;
 	}
-
 
 
 	/* Notice stuff */

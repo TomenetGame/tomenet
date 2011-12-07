@@ -2959,6 +2959,11 @@ void process_pending_commands(int ind)
 		}
 		result = (*receive_tbl[type])(ind);
 
+		/* New: Since fire-till-kill is now allowed to begin at <= 1
+		   energy (see dungeon.c, process_player_end()), we need this
+		   to avoid getting 'locked up' in shooting_till_kill. - C. Blue */
+		if (p_ptr) p_ptr->requires_energy = (result == 0);
+
 		/* Check that the player wasn't disconnected - mikaelh */
 		if (!Conn[ind]) {
 			return;
