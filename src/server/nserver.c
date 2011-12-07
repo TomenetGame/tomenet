@@ -6888,7 +6888,11 @@ static int Receive_run(int ind)
 			// Only buffer a run request if we have no previous commands
 			// buffered, and it is a new direction or we aren't already
 			// running.
+#if 0 /* changed so we can 'run' out of fire-till-kill'ing, even if we got there while we were already running - C. Blue */
 			if (((!connp->q.len) && (dir != p_ptr->find_current)) || (!p_ptr->running)) {
+#else
+			if (!connp->q.len) {
+#endif
 				Packet_printf(&connp->q, "%c%c", ch, dir);
 				return 0;
 			}
