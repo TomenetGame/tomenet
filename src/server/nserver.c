@@ -2964,6 +2964,10 @@ void process_pending_commands(int ind)
 			return;
 		}
 
+		/* See 'p_ptr->requires_energy' below in 'result == 0' clause. */
+		if (p_ptr != NULL && p_ptr->conn != NOT_CONNECTED)
+			p_ptr->requires_energy = (result == 0);
+
 		/* Check whether the socket buffer has advanced */
 		if (connp->r.ptr == foo) {
 			/* Return code 0 means that there wasn't enough data in the socket buffer */
@@ -2987,9 +2991,6 @@ void process_pending_commands(int ind)
 			connp->start = turn;
 		}
 		if (result == -1) {
-			/* See 'p_ptr->requires_energy' below in 'result == 0' clause. */
-			if (p_ptr != NULL && p_ptr->conn != NOT_CONNECTED)
-				p_ptr->requires_energy = FALSE;
 			return;
 		}
 
@@ -2998,7 +2999,7 @@ void process_pending_commands(int ind)
 			/* New: Since fire-till-kill is now allowed to begin at <= 1
 			   energy (see dungeon.c, process_player_end()), we need this
 			   to avoid getting 'locked up' in shooting_till_kill. - C. Blue */
-			p_ptr->requires_energy = TRUE;
+			//done above already	p_ptr->requires_energy = TRUE;
 
 			/* Hack -- if we tried to do something while resting, wake us up.
 			 */
@@ -6726,7 +6727,10 @@ static int Receive_walk(int ind)
 	/* Disturb if running or resting */
 	if (p_ptr->running || p_ptr->resting) {
 		disturb(player, 0, 0);
+#if 0 /* disabled, because this would prevent 'walking/running out of fire-till-kill/auto-ret' which is a bit annoying: \
+         it'd actually first just do disturb() here, so the player would have to attempt a second time to run/walk, after that. - C. Blue */
 		return 1;
+#endif
 	}
 
 	if (p_ptr->command_rep) p_ptr->command_rep =- 1;
@@ -6827,7 +6831,9 @@ static int Receive_run(int ind)
 		}
 #endif
 	}
-	
+
+#if 0 /* with new fire-till-kill/auto-ret code that accepts <= 100% energy, and accordingly the new \
+    p_ptr->requires_energy flag, this stuff should no longer be required and hence obsolete. - C. Blue */
 	/* hack to fix 'movelock' bug, which occurs if a player tries to RUN away from a
 	   monster while he's currently auto-retaliating. (WALKING away instead of
 	   trying to run works by the way.)
@@ -6847,6 +6853,8 @@ static int Receive_run(int ind)
 //	if (!p_ptr->admin_dm && p_ptr->auto_retaliating) {
 	if (p_ptr->auto_retaliating || p_ptr->shooting_till_kill)
 		return Receive_walk(ind);
+#endif
+
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0) {
 		if (n == -1)
@@ -6867,8 +6875,9 @@ static int Receive_run(int ind)
 	/* Only process the run command if we are not already running in
 	 * the direction requested.
 	 */
-	if (player && (!p_ptr->running || (dir != p_ptr->find_current))) {
+	if (player && (!p_ptr->running || (dir != p_ptr->find_current)))
 #endif
+	{
 		// If we don't want to queue the command, return now.
 		if ((n = do_cmd_run(player, dir)) == 2) {
 			return 2;
@@ -6884,7 +6893,7 @@ static int Receive_run(int ind)
 				return 0;
 			}
 		}
-	//}
+	}
 
 	return 1;
 }
