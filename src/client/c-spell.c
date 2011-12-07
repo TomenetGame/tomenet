@@ -535,7 +535,7 @@ void do_mimic()
 	else if (spell > 2 && is_newer_than(&server_version, 4, 4, 5, 10, 0, 0)) {
 		j = spell - 3;
 		if (j < 32) uses_dir = monster_spells4[j].uses_dir;
-		else if (j < 32) uses_dir = monster_spells5[j - 32].uses_dir;
+		else if (j < 64) uses_dir = monster_spells5[j - 32].uses_dir;
 		else uses_dir = monster_spells6[j - 64].uses_dir;
 
 		if (uses_dir) {
