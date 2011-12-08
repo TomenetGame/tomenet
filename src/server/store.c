@@ -3688,7 +3688,7 @@ void store_confirm(int Ind)
 	
 	/* Add '!s' inscription, w00t - C. Blue */
 	if (check_guard_inscription(o_ptr->note, 's')) {
-		msg_print(Ind, "The item's inscription prevents it");
+		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	}
 

@@ -128,7 +128,7 @@ void do_cmd_eat_food(int Ind, int item)
 	}
 
 	if (check_guard_inscription( o_ptr->note, 'E' )) {
-		msg_print(Ind, "The item's inscription prevents it");
+		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	}
 
@@ -1281,7 +1281,7 @@ void do_cmd_quaff_potion(int Ind, int item)
 
 
         if( check_guard_inscription( o_ptr->note, 'q' )) {
-                msg_print(Ind, "The item's inscription prevents it");
+                msg_print(Ind, "The item's inscription prevents it.");
                 return;
         };
 
@@ -2203,7 +2203,7 @@ void do_cmd_read_scroll(int Ind, int item)
 	}
 
 	if( check_guard_inscription( o_ptr->note, 'r' )) {
-		msg_print(Ind, "The item's inscription prevents it");
+		msg_print(Ind, "The item's inscription prevents it.");
 		s_printf("%s EFFECT: Inscription prevented scroll for %s.\n", showtime(), p_ptr->name);
 		return;
 	};
@@ -3091,7 +3091,7 @@ void do_cmd_use_staff(int Ind, int item)
 	}
 
 	if( check_guard_inscription( o_ptr->note, 'u' )) {
-                msg_print(Ind, "The item's inscription prevents it");
+                msg_print(Ind, "The item's inscription prevents it.");
                 return;
         }; 
 
@@ -3577,7 +3577,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		o_ptr = &o_list[0 - item];
 	}
 	if( check_guard_inscription( o_ptr->note, 'a' )) {
-                msg_print(Ind, "The item's inscription prevents it");
+                msg_print(Ind, "The item's inscription prevents it.");
                 return;
         }; 
 
@@ -4089,7 +4089,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir)
 		o_ptr = &o_list[0 - item];
 	}
 	if (check_guard_inscription(o_ptr->note, 'z')) {
-                msg_print(Ind, "The item's inscription prevents it");
+                msg_print(Ind, "The item's inscription prevents it.");
                 return;
         };
 
@@ -4397,7 +4397,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		o_ptr = &o_list[0 - item];
 	}
 	if (check_guard_inscription( o_ptr->note, 'z')) {
-                msg_print(Ind, "The item's inscription prevents it");
+                msg_print(Ind, "The item's inscription prevents it.");
                 return;
         };
 
@@ -5152,7 +5152,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 	}
 
 	if( check_guard_inscription( o_ptr->note, 'A' )) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "The item's inscription prevents it..");
 		return;
 	}
 
@@ -6698,7 +6698,7 @@ void do_cmd_activate_dir(int Ind, int dir)
 	}
 
 	if (check_guard_inscription(o_ptr->note, 'A')) {
-                msg_print(Ind, "The item's inscription prevents it");
+                msg_print(Ind, "The item's inscription prevents it.");
                 return;
         };
 
