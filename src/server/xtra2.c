@@ -6686,7 +6686,7 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", pvp ? "PVP" : "NOGHOS
 	/* --- non-noghost-death: everlasting or more lives left --- */
 	/* Add to legends log if he was a winner */
 	if (p_ptr->total_winner && !is_admin(p_ptr) && p_ptr->alive)
-		l_printf("%s \\{r%s (%d) lost his royal title by death\n", showdate(), p_ptr->name, p_ptr->lev);
+		l_printf("%s \\{r%s (%d) lost %s royal title by death\n", showdate(), p_ptr->name, p_ptr->lev, p_ptr->male ? "his" : "her");
 
 #if 1 /* Enable, iff newbies-level leading to perma-death is disabled above. */
 	if (p_ptr->max_plv < cfg.newbies_cannot_drop) {
