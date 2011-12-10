@@ -3336,15 +3336,10 @@ static bool process_player_end_aux(int Ind)
 		}
 	}
 	if (p_ptr->tim_jail && !p_ptr->wpos.wz) {
-		int jy, jx;
 		p_ptr->tim_jail--;
 		if (!p_ptr->tim_jail) {
 			msg_print(Ind, "\377GYou are free to go!");
-			jy = p_ptr->py;
-			jx = p_ptr->px;
-			//zcave[jy][jx].info &= ~CAVE_STCK;
 			teleport_player_force(Ind, 1);
-			//zcave[jy][jx].info |= CAVE_STCK;
 		}
 	}
 
