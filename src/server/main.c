@@ -114,6 +114,22 @@ static void writepid(char *str)
 }
 
 
+/* just call a lua function in custom.lua, usually unused - C. Blue */
+static void post_init_lua(void) {
+	int h = 0, m = 0, s = 0, dwd = 0, dd = 0, dm = 0, dy = 0;
+	time_t now;
+	struct tm *tmp;
+
+	time(&now);
+	tmp = localtime(&now);
+	h = tmp->tm_hour;
+	m = tmp->tm_min;
+	s = tmp->tm_sec;
+	get_date(&dwd, &dd, &dm, &dy);
+	exec_lua(0, format("server_startup_post(\"%s\", %d, %d, %d, %d, %d, %d, %d)", showtime(), h, m, s, dwd, dd, dm, dy));
+}
+
+
 /*
  * Some machines can actually parse command line args
  *
@@ -303,6 +319,9 @@ int main(int argc, char *argv[])
 	/* Initialize & power up the Go AI */
 	go_engine_init();
 #endif
+
+	post_init_lua();
+
 
 	/* Play the game */
 	play_game(new_game);

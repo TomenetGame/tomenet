@@ -284,7 +284,7 @@ extern bool smart_learn;
 extern bool smart_cheat;
 extern s16b hitpoint_warn;
 extern u32b old_id[MAX_ID];
-extern struct swear swear[30];
+extern swear_info swear[30];
 extern struct ip_ban *banlist;
 extern s32b sflags_TEMP;
 extern player_type **Players;
@@ -1956,6 +1956,10 @@ extern void do_slash_cmd(int Ind, char *message);
 extern int global_luck; /* Global +LUCK modifier for the whole server (change the 'weather' - C. Blue) */
 extern void lua_intrusion(int Ind, char *problem_diz);
 extern bool lua_mimic_eligible(int Ind, int r_idx);
+void swear_set(int i, char *word, int level);
+char *swear_get_word(int i);
+int swear_get_level(int i);
+
 
 #ifdef ENABLE_GO_GAME
 /* go.c - C. Blue */

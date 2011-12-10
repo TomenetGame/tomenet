@@ -1069,3 +1069,10 @@ bool lua_mimic_eligible(int Ind, int r_idx) {
 
 	return TRUE;
 }
+
+void swear_set(int i, char *word, int level) {
+	strcpy(swear[i].word, word);
+	swear[i].level = level;
+}
+char *swear_get_word(int i) { return swear[i].word; }
+int swear_get_level(int i) { return swear[i].level; }

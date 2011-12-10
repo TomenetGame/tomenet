@@ -627,10 +627,10 @@ struct vault_type
 #endif	/* 0 */
 };
 
-struct swear{
+typedef struct swear_info {
 	char word[30];
 	int level;
-};
+} swear_info;
 
 /* jk */
 /* name and description are in some other arrays */

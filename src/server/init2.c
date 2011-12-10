@@ -2443,12 +2443,11 @@ static errr init_other(void)
 }
 
 
-static void init_swearing(){
+static void init_swearing() {
 	int i = 0;
 	FILE *fp;
 
 	fp = fopen("swearing.txt", "r");
-
 	if (!fp) return;
 
 	do {
@@ -2459,9 +2458,10 @@ static void init_swearing(){
 		}
 		//printf("%d %s %d\n", i, swear[i].word, swear[i].level);
 		i++;
-	} while (!feof(fp));
+	} while (!feof(fp) && i < 30 - 1);
 
-	swear[i].word[0] = '\0';
+	/* obsolete: (if enabled, swear_set stuff must be placed into server_startup_post, not server_startup) - C. Blue */
+	//swear[i].word[0] = '\0';
 
 	fclose(fp);
 }

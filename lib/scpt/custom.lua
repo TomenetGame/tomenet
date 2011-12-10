@@ -31,6 +31,10 @@ function server_startup(timestamp, h, m, s, dwd, dd, dm, dy)
 	updated_savegame_birth = 0
 end
 
+function server_startup_post(timestamp, h, m, s, dwd, dd, dm, dy)
+	lua_s_print(timestamp.."_SERVERSTARTUPPOST_"..h..":"..m..":"..s.."-"..dy.."/"..dm.."/"..dd.."("..dwd..")\n")
+end
+
 -- Run automatically on play_game()/sched() starting up:
 function playloop_startup(timestamp, h, m, s, dwd, dd, dm, dy)
 	lua_s_print(timestamp.."_PLAYLOOPSTARTUP_"..h..":"..m..":"..s.."-"..dy.."/"..dm.."/"..dd.."("..dwd..")\n")

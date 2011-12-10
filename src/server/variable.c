@@ -215,7 +215,7 @@ server_opts cfg =
 };
 
 struct ip_ban *banlist=NULL;
-struct swear swear[30];
+struct swear_info swear[30];
 
 /* Temporary server feature flags (for LUA files) */
 s32b sflags_TEMP = 0x00000000;
