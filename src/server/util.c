@@ -3120,7 +3120,9 @@ static void player_talk_aux(int Ind, char *message)
 			break;
 		default:
 			imprison(Ind, i * 20, "swearing");
-		case 1:	msg_print(Ind, "Please do not swear");
+		case 1:
+			msg_print(Ind, "Please do not swear");
+			break;
 	}
 
 #ifdef TOMENET_WORLDS

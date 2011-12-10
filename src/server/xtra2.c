@@ -10185,17 +10185,24 @@ bool imprison(int Ind, u16b time, char *reason){
 	cave_type **zcave, **nzcave;
 	struct worldpos old_wpos;
 
-	if (!p_ptr || !(id = lookup_player_id("Jailer"))) return (FALSE);
-
 	if (!(zcave = getcave(&p_ptr->wpos))) return (FALSE);
+
+	s_printf("IMPRISON: %s ", p_ptr->name);
+
+	if (!p_ptr || !(id = lookup_player_id("Jailer"))) {
+		s_printf("JAILER\n");
+		return (FALSE);
+	}
 
 	if (p_ptr->wpos.wz) {
 		p_ptr->tim_susp += time;
+		s_printf("TIM_SUSP.\n");
 		return (TRUE);
 	}
 
 	if (p_ptr->tim_jail) {
 		p_ptr->tim_jail += time;
+		s_printf("TIM_JAIL.\n");
 		return (TRUE);
 	}
 
@@ -10235,9 +10242,12 @@ bool imprison(int Ind, u16b time, char *reason){
 			p_ptr->tim_jail = time + p_ptr->tim_susp;
 			p_ptr->tim_susp = 0;
 			
+			s_printf("DONE.\n");
 			return (TRUE);
 		}
 	}
+
+	s_printf("FAILED.\n");
 	return (FALSE);
 }
 
