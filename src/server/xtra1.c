@@ -7573,6 +7573,7 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		if (!cfr) {
 			Send_store_special_clr(Ind, 5, 18);
 			Send_store_special_str(Ind, 8, 8, TERM_ORANGE, "Now you're chickening out huh!");
+			p_pt->store_action = 0;
 			return;
 		}
 		go_challenge_accept(Ind, TRUE);
