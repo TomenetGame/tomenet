@@ -10208,6 +10208,7 @@ bool imprison(int Ind, u16b time, char *reason){
 
 	for (i = 0; i < num_houses; i++) {
 		if (!(houses[i].flags & HF_JAIL)) continue;
+		if ((houses[i].flags & HF_DELETED)) continue;
 		dna = houses[i].dna;
 		if (dna->owner == id && dna->owner_type == OT_PLAYER){
 			/* lazy, single prison system */
