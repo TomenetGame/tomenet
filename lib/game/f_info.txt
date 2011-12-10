@@ -110,11 +110,11 @@ D:0:There is a shaft up here.
 D:1:You cannot tunnel a shaft.
 
 # 0x0F -> empty fountain
-N:15:fountain
+N:15:dried out fountain
 #G:_:D
 G:_:W
 F:FLOOR | NOTICE | REMEMBER | CAN_RUN
-D:0:The fountain seems empty.
+D:0:The fountain seems dried out.
 
 N:16:web
 G:+:y
