@@ -6093,7 +6093,7 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 	fake_store_visited[fsidx] = Ind;
 
 	/* Set the timer (30000 used for homes aka "don't" kick out) */
-	p_ptr->tim_store = STORE_TURNOUT;
+	p_ptr->tim_store = STORE_TURNOUT * 2; /* extra long duration for player stores */
 
 	/* Display the store */
 	display_store(Ind);
