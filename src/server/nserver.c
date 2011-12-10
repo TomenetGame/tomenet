@@ -1049,7 +1049,7 @@ static bool forbidden_name(char *name){
 	if (!strcmp("tBot", name)) return TRUE; /* Sandman's internal chat bot */
 	if (!strcmp("8ball", name)) return TRUE; /* Sandman's internal chat bot */
 
-	sfp=fopen("forbidlist", "r");
+	sfp=fopen("badnames.txt", "r");
 	if(sfp==(FILE*)NULL)
 		return FALSE;
 	else{
