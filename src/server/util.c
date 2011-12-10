@@ -2584,21 +2584,32 @@ static int checkallow(char *buff, int pos){
 }
 
 static int censor(char *line){
-	int i, j;
+	int i, j, cc[MSG_LEN];
 	char *word;
 	char lcopy[MSG_LEN];
 	int level = 0;
+
 	strcpy(lcopy, line);
-	for(i = 0; lcopy[i]; i++){
-		lcopy[i] = tolower(lcopy[i]);
+	for(i = j = 0; lcopy[i]; i++){
+		/* strip colour codes too */
+		if (lcopy[j] == '\377' && lcopy[j + 1]) j += 2;
+		cc[i] = j;
+		lcopy[i] = tolower(lcopy[j++]);
 	}
-	for(i = 0; strlen(swear[i].word); i++){
-		if((word = strstr(lcopy, swear[i].word))){
-			if(checkallow(lcopy, word - lcopy)) continue;
-			word = (&line[(word - lcopy)]);
-			for(j = 0; j < (int)strlen(swear[i].word); j++){
+
+	for (i = 0; strlen(swear[i].word); i++) {
+		if ((word = strstr(lcopy, swear[i].word))) {
+			if (checkallow(lcopy, word - lcopy)) continue;
+#if 0
+			word = (&line[cc[word - lcopy]]);
+			for (j = 0; j < (int)strlen(swear[i].word); j++) {
 				word[j] = '*';
 			}
+#else
+			for (j = 0; j < (int)strlen(swear[i].word); j++) {
+				line[cc[(word - lcopy) + j]] = '*';
+			}
+#endif
 			level = MAX(level, swear[i].level);
 		}
 	}
@@ -3115,6 +3126,8 @@ static void player_talk_aux(int Ind, char *message)
 	/* Admins have exclusive colour - the_sandman */
 	if (c_n == 'b' && !is_admin(p_ptr)) return;
 
+
+	/* Check for swear words, censor + punish */
 	switch ((i = censor(message))) {
 		case 0:
 			break;
@@ -3124,6 +3137,7 @@ static void player_talk_aux(int Ind, char *message)
 			msg_print(Ind, "Please do not swear");
 			break;
 	}
+
 
 #ifdef TOMENET_WORLDS
 	if (broadcast)
