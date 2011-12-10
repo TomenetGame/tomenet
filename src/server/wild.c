@@ -2937,8 +2937,17 @@ void wilderness_gen(struct worldpos *wpos)
 		if (j == 3 && (i % 2) == 1) i++;
 		if (i == 10) i = 6; /* 10 isn't a legal direction */
 		/* cycle forward 'j' more grids and set them accordingly */
-		for (k = 0; k < j; k++)
-			zcave[y + ddy[cycle[chome[i] + k]]][x + ddx[cycle[chome[i] + k]]].feat = di_ptr->fill_type[0];//->inner_wall;
+		for (k = 0; k < j; k++) {
+			int zx, zy;
+			zx = x + ddx[cycle[chome[i] + k]];
+			zy = y + ddy[cycle[chome[i] + k]];
+
+			/* don't overwrite house walls if house contains a staircase (!) */
+			if ((zcave[zy][zx].info & (CAVE_ROOM | CAVE_ICKY))) continue;
+			if ((f_info[zcave[zy][zx].feat].flags1 & FF1_PERMANENT)) continue;
+
+			zcave[zy][zx].feat = di_ptr->fill_type[0];//->inner_wall;
+		}
 
 		/* restore rng */
 		Rand_quick = rand_old;
