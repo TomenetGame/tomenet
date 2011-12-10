@@ -940,7 +940,7 @@ void go_engine_clocks(void) {
 
 	sprintf(clock, "%02d", player_timeleft_sec);
 	if (CPU_now_to_move)
-		Send_store_special_str(Ind, GO_BOARD_Y, GO_BOARD_X - 8, TERM_SLATE, clock);
+		Send_store_special_str(Ind, GO_BOARD_Y + 1, GO_BOARD_X - 8, TERM_SLATE, clock);
 	else
 		Send_store_special_str(Ind, GO_BOARD_Y + 9, GO_BOARD_X - 8, TERM_L_RED, clock);
 }
@@ -1127,7 +1127,7 @@ static int verify_move_human(void) {
 	player_timeleft_sec = player_timelimit_sec;
 	Send_store_special_str(Ind, GO_BOARD_Y + 9, GO_BOARD_X - 8, TERM_L_RED, "  ");
 	sprintf(clock, "%02d", player_timeleft_sec);
-	Send_store_special_str(Ind, GO_BOARD_Y, GO_BOARD_X - 8, TERM_SLATE, clock);
+	Send_store_special_str(Ind, GO_BOARD_Y + 1, GO_BOARD_X - 8, TERM_SLATE, clock);
 	CPU_now_to_move = TRUE;
 
 	/* display board after player's move */
@@ -1245,7 +1245,7 @@ static int verify_move_CPU(void) {
 	}
 
 	player_timeleft_sec = player_timelimit_sec;
-	Send_store_special_str(Ind, GO_BOARD_Y, GO_BOARD_X - 8, TERM_SLATE, "  ");
+	Send_store_special_str(Ind, GO_BOARD_Y + 1, GO_BOARD_X - 8, TERM_SLATE, "  ");
 	sprintf(clock, "%02d", player_timeleft_sec);
 	Send_store_special_str(Ind, GO_BOARD_Y + 9, GO_BOARD_X - 8, TERM_L_RED, clock);
 	CPU_now_to_move = FALSE;
@@ -1379,6 +1379,11 @@ static void go_engine_move_result(int move_result) {
 	if (move_result >= 2) {
 		Send_store_special_str(Ind, 1, 0, TERM_WHITE, "                                                                              ");
 		Send_store_special_str(Ind, 6, GO_BOARD_X + 6 - strlen(result) / 2, TERM_WHITE, result);
+
+		/* hide clocks */
+		Send_store_special_str(Ind, GO_BOARD_Y + 1, GO_BOARD_X - 8, TERM_L_RED, "  ");
+		Send_store_special_str(Ind, GO_BOARD_Y + 9, GO_BOARD_X - 8, TERM_L_RED, "  ");
+
 #ifdef GO_DEBUGPRINT
 		printf("Result: %s\n", result);
 #endif
