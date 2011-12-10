@@ -637,6 +637,10 @@ struct player_type
 	s16b tim_infra;		/* Timed -- Infra Vision */
 	s16b tim_wraith;	/* Timed -- Wraithform */
 	bool wraith_in_wall;
+	u16b tim_jail;
+	u16b tim_susp;
+	u16b tim_pkill;
+	u16b pkill;
 	s16b tim_meditation;	/* Timed -- Meditation */
 	s16b tim_invisibility;		/* Timed -- Invisibility */
 	s16b tim_invis_power;	/* Timed -- Invisibility Power */
