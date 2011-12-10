@@ -3342,9 +3342,9 @@ static bool process_player_end_aux(int Ind)
 			msg_print(Ind, "\377GYou are free to go!");
 			jy = p_ptr->py;
 			jx = p_ptr->px;
-			zcave[jy][jx].info &= ~CAVE_STCK;
+			//zcave[jy][jx].info &= ~CAVE_STCK;
 			teleport_player_force(Ind, 1);
-			zcave[jy][jx].info |= CAVE_STCK;
+			//zcave[jy][jx].info |= CAVE_STCK;
 		}
 	}
 
