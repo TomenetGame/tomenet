@@ -1601,13 +1601,14 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				msg_format(Ind, "%s%s melt a shaft of rock.", begin, description);
 				if (success)
 				{
-					teleport_player_level(Ind); //This should go down only? - Kurzel
+					//teleport_player_level(Ind, FALSE); //This should go down only? - Kurzel
 					/* Backlash and Stun (Mal Effect) - Kurzel */
 					project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage/5, GF_FIRE, PROJECT_KILL | PROJECT_NORF, "");
 					set_stun(Ind, duration/5);
 					
 					if (randint(100)<=1) //A small amount of unreliability
-						teleport_player_level(Ind);
+						//teleport_player_level(Ind, FALSE)
+						;
 					/*
 					if (modifier != 130)
 					{
@@ -1749,7 +1750,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 						case 2: set_recall_timer(Ind, damroll(1,100)); break;
 						case 3: project_hack(Ind, GF_TELE_TO, 0, " summons"); break;
 						#if 0
-						case 4: teleport_player_level(Ind); break;
+						case 4: //teleport_player_level(Ind, FALSE); break;
 						#endif
 						case 5: teleport_player_to(Ind, p_ptr->target_col, p_ptr->target_row); break;
 						default: teleport_player(Ind, (100 + (teleport_level * 100) / 5), FALSE); break;

@@ -3628,7 +3628,7 @@ if (season_halloween) {
 				msg_print(Ind, "You resist the effects!");
 			} else {
 				msg_format_near(Ind, "%^s teleports %s away.", m_name, p_ptr->name);
-				teleport_player_level(Ind);
+				teleport_player_level(Ind, FALSE);
 			}
 			update_smart_learn(m_idx, DRS_NEXUS);
 			break;

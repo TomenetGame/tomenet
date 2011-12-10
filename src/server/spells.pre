@@ -253,7 +253,7 @@ extern void swap_position(int Ind, int lty, int ltx);
 extern bool teleport_away(int m_idx, int dis);
 extern void teleport_player(int Ind, int dis, bool ignore_pvp);
 extern void teleport_player_to(int Ind, int ny, int nx);
-extern void teleport_player_level(int Ind);
+extern void teleport_player_level(int Ind, bool force);
 extern bool bypass_invuln;
 extern void take_hit(int Ind, int damage, cptr kb_str, int Ind_attacker);
 extern void acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker);
@@ -502,7 +502,7 @@ struct school_type
 //duplicate declarations (see above):
 //extern void teleport_player(int Ind, int dis, bool ignore_pvp);
 //extern void teleport_player_to(int Ind, int ny, int nx);
-//extern void teleport_player_level(int Ind);
+//extern void teleport_player_level(int Ind, bool force);
 
 /* This could have some good uses */
 extern s16b project_interval;

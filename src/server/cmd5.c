@@ -707,7 +707,7 @@ static void do_mimic_power(int Ind, int power, int dir)
       return;
 // RF6_TELE_LEVEL		0x00000400	/* Move player vertically */
     case 74:
-    //Disabled to sync with scrolls.      teleport_player_level(Ind);	/* wrong way, but useful */
+    //Disabled to sync with scrolls.      teleport_player_level(Ind, FALSE);	/* wrong way, but useful */
       break;
 //#define RF6_S_RNG                       0x00000800      /* Summon RNG */
     case 75:

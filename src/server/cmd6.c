@@ -2480,7 +2480,7 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 			}
 			case SV_SCROLL_TELEPORT_LEVEL:
 			{
-				teleport_player_level(Ind);
+				teleport_player_level(Ind, FALSE);
 				ident = TRUE;
 				break;
 			}

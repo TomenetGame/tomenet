@@ -9615,7 +9615,7 @@ void unstatic_level(struct worldpos *wpos){
 	for (i = 1; i <= NumPlayers; i++){
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		if (inarea(&Players[i]->wpos, wpos)) {
-			teleport_player_level(i);
+			teleport_player_level(i, TRUE);
 		}
 	}
 	new_players_on_depth(wpos,0,FALSE);

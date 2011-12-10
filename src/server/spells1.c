@@ -1067,21 +1067,21 @@ void teleport_player_to(int Ind, int ny, int nx)
  */
  
  /* in the wilderness, teleport to a neighboring wilderness level. */
-void teleport_player_level(int Ind) {
+void teleport_player_level(int Ind, bool force) {
 	player_type *p_ptr = Players[Ind];
 	wilderness_type *w_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
 	struct worldpos new_depth, old_wpos;
 //	dun_level *l_ptr = getfloor(&p_ptr->wpos);
-	char *msg="\377rCritical bug!";
+	char *msg = "\377rCritical bug!";
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
-	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
+	if (!(zcave = getcave(wpos))) return;
+	if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) && !force) return;
 //	if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
 
 	/* Space/Time Anchor */
-	if (p_ptr->anti_tele) return;
-	if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) return;
+	if (p_ptr->anti_tele && !force) return;
+	if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px) && !force) return;
 
 	wpcopy(&old_wpos, wpos);
 	wpcopy(&new_depth, wpos);
@@ -3232,7 +3232,7 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 			}
 
 			/* Teleport Level */
-			teleport_player_level(Ind);
+			teleport_player_level(Ind, FALSE);
 			break;
 		}
 
@@ -10118,7 +10118,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_TELEPORTLVL_PLAYER:
 		{
 			if (p_ptr->martyr) break;
-			teleport_player_level(Ind);
+			teleport_player_level(Ind, FALSE);
 			break;
 		}
 
