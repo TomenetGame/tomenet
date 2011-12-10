@@ -3093,15 +3093,15 @@ bool create_artifact_aux(int Ind, int item) {
 	if (((o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) ||
 	    (o_ptr->tval == TV_SPECIAL)) /* <- must be checked here, not in randart_make() due to seals, see randart_make(). */
 	     && !is_admin(p_ptr)) {
-		msg_print(Ind, "The item appears unchanged!");
+		msg_print(Ind, "\376\377yThe item appears unchanged!");
 		return FALSE;
 	}
 	if (o_ptr->name1) {
-		msg_print(Ind, "The creation fails due to the powerful magic of the target object!");
+		msg_print(Ind, "\376\377yThe creation fails due to the powerful magic of the target object!");
 		return FALSE;
 	}
 	if (o_ptr->name2 || o_ptr->name2b) {
-		msg_print(Ind, "The creation fails due to the strong magic of the target object!");
+		msg_print(Ind, "\376\377yThe creation fails due to the strong magic of the target object!");
 		return FALSE;
 		o_ptr->name2 = 0;
 		o_ptr->name2b = 0;
@@ -3220,7 +3220,7 @@ bool curse_spell_aux(int Ind, int item)
 		}
 	}
 
-	msg_format(Ind,"A terrible black aura surrounds your %s",
+	msg_format(Ind,"\376\377yA terrible black aura surrounds your %s",
 	    o_name, o_ptr->number > 1 ? "" : "s");
 	/* except it doesnt actually get cursed properly yet. */
 	o_ptr->name1 = 0;
@@ -6749,8 +6749,14 @@ void house_creation(int Ind, bool floor, bool jail)
 	printf("floor: %d jail: %d\n",floor,jail);
 
 	/* No building in town */
-	if(wpos->wz || istownarea(wpos, 2))
+	if (wpos->wz) {
+		msg_print(Ind, "\376\377yYou must build on the world surface.");
 		return;
+	}
+	if (istownarea(wpos, 2)) {
+		msg_print(Ind, "\376\377yYou cannot build within a town area.");
+		if (!is_admin(p_ptr)) return;
+	}
 	if (house_alloc - num_houses < 32) {
 		GROW(houses, house_alloc, house_alloc + 512, house_type);
 		house_alloc += 512;
