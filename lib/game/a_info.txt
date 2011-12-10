@@ -1203,7 +1203,7 @@ D:living lightning trapped inside.
 N:85:'Elvagil'
 I:23:24:2
 W:12:8:170:25000
-P:0:2d8:15:12:0
+P:0:4d8:15:12:0
 F:DEX | CHR | STEALTH | HIDE_TYPE | ESP_ORC | ESP_TROLL | SLAY_TROLL | RES_FEAR | 
 F:SLAY_TROLL | SLAY_ORC | FEATHER | SEE_INVIS | SHOW_MODS | SLAY_ORC
 D:The "Singing Blade", whose wearer can slay Orcs and Trolls in the hidden 
