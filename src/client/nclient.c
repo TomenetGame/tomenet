@@ -3251,6 +3251,9 @@ int Receive_chardump(void)
 	int	n;
 	char tmp[160], type[20];
 
+	time_t ct = time(NULL);
+	struct tm* ctl = localtime(&ct);
+
 	/* assume death dump at first */
 	strcpy(type, "-death");
 
@@ -3263,11 +3266,15 @@ int Receive_chardump(void)
         if (screen_icky) Term_switch(0);
 
 	/* additionally do a screenshot of the scene */
-	xhtml_screenshot(format("%s%s-screenshot", cname, type));
+	xhtml_screenshot(format("%s%s_%04d-%02d-%02d_%02d.%02d.%02d_screenshot", cname, type,
+	    1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday,
+	    ctl->tm_hour, ctl->tm_min, ctl->tm_sec));
 
 	if (screen_icky) Term_switch(0);
 
-	strnfmt(tmp, 160, "%s%s.txt", cname, type);
+	strnfmt(tmp, 160, "%s%s_%04d-%02d-%02d_%02d.%02d.%02d.txt", cname, type,
+	    1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday,
+	    ctl->tm_hour, ctl->tm_min, ctl->tm_sec);
 	file_character(tmp, FALSE);
 
 	return 1;
