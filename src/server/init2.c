@@ -2458,7 +2458,7 @@ static void init_swearing() {
 		}
 		//printf("%d %s %d\n", i, swear[i].word, swear[i].level);
 		i++;
-	} while (!feof(fp) && i < 30 - 1);
+	} while (!feof(fp) && i < MAX_SWEAR - 1);
 
 	/* obsolete: (if enabled, swear_set stuff must be placed into server_startup_post, not server_startup) - C. Blue */
 	//swear[i].word[0] = '\0';
@@ -2477,7 +2477,7 @@ static void init_swearing() {
 		}
 		//printf("%d %s %d\n", i, swear[i].word, swear[i].level);
 		i++;
-	} while (!feof(fp) && i < 30 - 1);
+	} while (!feof(fp) && i < MAX_NONSWEAR - 1);
 
 	/* obsolete: (if enabled, swear_set stuff must be placed into server_startup_post, not server_startup) - C. Blue */
 	//nonswear[i][0] = '\0';

@@ -552,6 +552,12 @@
 /* does the Jailer remove WoR scrolls and discharge WoR rods? */
 #define JAILER_KILLS_WOR
 
+/* Max amount of swear words */
+#define MAX_SWEAR 50
+
+/* Max amount of legal words that override swear words */
+#define MAX_NONSWEAR 100
+
 
 /* Maximum armour class value that yields in a reduction of damage.
    Note: The chance to get hit still goes down further above this value.

@@ -628,7 +628,7 @@ struct vault_type
 };
 
 typedef struct swear_info {
-	char word[30];
+	char word[NAME_LEN];
 	int level;
 } swear_info;
 
