@@ -10258,9 +10258,9 @@ bool imprison(int Ind, u16b time, char *reason){
 #endif
 
 			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-			snprintf(string, sizeof(string), "\376\377o%s was jailed for %s.", p_ptr->name, reason);
+			snprintf(string, sizeof(string), "\374\377o%s was jailed for %s.", p_ptr->name, reason);
 			msg_broadcast(Ind, string);
-			msg_format(Ind, "\376\377oYou have been jailed for %s.", reason);
+			msg_format(Ind, "\374\377oYou have been jailed for %s.", reason);
 			p_ptr->tim_jail = time + p_ptr->tim_susp;
 			p_ptr->tim_susp = 0;
 
