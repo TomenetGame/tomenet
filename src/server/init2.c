@@ -2471,10 +2471,14 @@ static void init_swearing() {
 	i = 0;
 
 	do {
-		if (fscanf(fp, "%s\n", nonswear[i]) == EOF) {
+//		if (fscanf(fp, "%s\n", nonswear[i]) == EOF) {
+		if (!fgets(nonswear[i], NAME_LEN, fp)) {
 			if (!feof(fp))
 				s_printf("Failed to read nonswearing.txt: %s\n", strerror(ferror(fp)));
 		}
+		/* get rid of '\n' char */
+		else nonswear[i][strlen(nonswear[i]) - 1] = '\0';
+
 		//printf("%d %s %d\n", i, swear[i].word, swear[i].level);
 		i++;
 	} while (!feof(fp) && i < MAX_NONSWEAR - 1);
