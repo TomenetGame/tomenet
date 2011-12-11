@@ -1695,7 +1695,7 @@ bool check_guard_inscription( s16b quark, char what ) {
  * XXX XXX XXX Note that "msg_print(NULL)" will clear the top line
  * even if no messages are pending.  This is probably a hack.
  */
-bool suppress_message = FALSE;
+bool suppress_message = FALSE, censor_message = FALSE;
 
 void msg_print(int Ind, cptr msg_raw)
 {
@@ -1722,7 +1722,7 @@ void msg_print(int Ind, cptr msg_raw)
 
 	strcpy(msg_dup, msg_raw); /* in case msg_raw was constant */
 	/* censor swear words? */
-	if (Players[Ind]->censor_swearing) handle_censor(msg);
+	if (censor_message && Players[Ind]->censor_swearing) handle_censor(msg);
 
 	/* marker for client: add message to 'chat-only buffer', not to 'nochat buffer' */
 	if (msg[0] == '\375') {
@@ -2679,13 +2679,16 @@ static int censor(char *line) {
 				if (j < cc[pos + strlen(swear[i].word) - 1]) continue;
 			}
 
+#if 0
 			for (j = 0; j < strlen(swear[i].word); j++) {
 				/* censor it! */
 				line[cc[(word - lcopy) + j]] = '*';
-
+#else
+			for (j = 0; j < strlen(swear[i].word) - 1; j++) {
 				/* actually censor separator chars too, just so it looks better ;) */
-				for (k = cc[(word - lcopy) + j] + 1; k < cc[(word - lcopy) + j + 1]; k++)
+				for (k = cc[(word - lcopy) + j]; k <= cc[(word - lcopy) + j + 1]; k++)
 					line[k] = '*';
+#endif
 
 				/* for processing lcopy in a while loop instead of just 'if'
 				   -- OBSOLETE ACTUALLY (thanks to 'offset')? */
@@ -3209,7 +3212,7 @@ static void player_talk_aux(int Ind, char *message)
 
 	strcpy(message2, message);
 	handle_punish(Ind, handle_censor(message2));
-
+	censor_message = TRUE;
 
 #ifdef TOMENET_WORLDS
 	if (broadcast)
@@ -3219,7 +3222,10 @@ static void player_talk_aux(int Ind, char *message)
 	else {
 		/* Why not... */
 		if (strlen(message) > 4) mycolor = (prefix(&message[4], "}") && (color_char_to_attr(*(message + 5)) != -1)) ? 2 : 0;
-		else return;
+		else {
+			censor_message = FALSE;
+			return;
+		}
 		if (mycolor) c_n = message[5];
 		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s %s]", c_n, sender, message + 4 + mycolor);
 	}
@@ -3265,6 +3271,7 @@ static void player_talk_aux(int Ind, char *message)
 	}
 #endif
 	p_ptr->warning_chat = 1;
+	censor_message = FALSE;
 
 	exec_lua(0, "chat_handler()");
 

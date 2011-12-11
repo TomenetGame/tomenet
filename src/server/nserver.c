@@ -10084,11 +10084,13 @@ static int Receive_BBS(int ind) {
 	if (connp->id != -1) {
 		/* Look at in-game bbs - C. Blue */
 		msg_print(player, "\377sBulletin board (type '/bbs <text>' in chat to write something):");
+		censor_message = TRUE;
 		for (n = 0; n < BBS_LINES; n++)
 			if (strcmp(bbs_line[n], "")) {
 				msg_format(player, "\377s %s", bbs_line[n]);
 				bbs_empty = FALSE;
 			}
+		censor_message = FALSE;
 		if (bbs_empty) msg_print(player, "\377s <nothing has been written on the board so far>");
 		return 2; /* consume no energy/don't disturb character (resting mode) */
 	} else if (player) {

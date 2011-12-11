@@ -1532,7 +1532,7 @@ extern int auction_examine(int Ind, int auction_id);
 extern void handle_store_leave(int Ind);
 
 /* util.c */
-extern bool suppress_message;
+extern bool suppress_message, censor_message;
 /* The next buffers are for catching the chat */
 extern char last_chat_line[MSG_LEN]; /* What was said */ 
 extern char last_chat_owner[NAME_LEN]; /* Who said it */

@@ -2495,11 +2495,13 @@ void do_slash_cmd(int Ind, char *message)
 				bool bbs_empty = TRUE;
 				/* Look at in-game bbs, instead of "usage" msg above */
 				msg_print(Ind, "\377sBulletin board (type '/bbs <text>' in chat to write something):");
+				censor_message = TRUE;
 				for (i = 0; i < BBS_LINES; i++)
 					if (strcmp(bbs_line[i], "")) {
 						msg_format(Ind, "\377s %s", bbs_line[i]);
 						bbs_empty = FALSE;
 					}
+				censor_message = FALSE;
 				if (bbs_empty) msg_print(Ind, "\377s <nothing has been written on the board so far>");
 #endif
 				return;
@@ -2512,8 +2514,9 @@ void do_slash_cmd(int Ind, char *message)
 
 			strcpy(message, message3);
 			handle_punish(Ind, handle_censor(message));
-
+			censor_message = TRUE;
 			msg_broadcast_format(0, "\374\377s[%s->BBS] \377W%s", p_ptr->name, message3);
+			censor_message = FALSE;
 //			bbs_add_line(format("%s %s: %s",showtime() + 7, p_ptr->name, message3));
 			bbs_add_line(format("\377s%s %s: \377W%s",showdate(), p_ptr->name, message3));
 			return;
