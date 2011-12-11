@@ -852,6 +852,7 @@ extern bool load_server_cfg(void);
 
 extern void init_schools(s16b new_size);
 extern void init_spells(s16b new_size);
+extern void init_swearing(void);
 
 /* load1.c */
 /*extern errr rd_savefile_old(void);*/

@@ -2443,11 +2443,12 @@ static errr init_other(void)
 }
 
 
-static void init_swearing() {
+void init_swearing() {
 	int i = 0;
 	FILE *fp;
 
 	fp = fopen("swearing.txt", "r");
+	swear[0].word[0] = '\0';
 	if (!fp) return;
 
 	do {
@@ -2460,13 +2461,15 @@ static void init_swearing() {
 		i++;
 	} while (!feof(fp) && i < MAX_SWEAR - 1);
 
-	/* obsolete: (if enabled, swear_set stuff must be placed into server_startup_post, not server_startup) - C. Blue */
-	//swear[i].word[0] = '\0';
+	/* obsolete: (if enabled, swear_set stuff must be placed into server_startup_post, not server_startup) - C. Blue
+	   still enabling this though, for re-initialising swearing while server runs. */
+	swear[i].word[0] = '\0';
 
 	fclose(fp);
 
 
 	fp = fopen("nonswearing.txt", "r");
+	nonswear[0][0] = '\0';
 	if (!fp) return;
 	i = 0;
 
@@ -2483,8 +2486,9 @@ static void init_swearing() {
 		i++;
 	} while (!feof(fp) && i < MAX_NONSWEAR - 1);
 
-	/* obsolete: (if enabled, swear_set stuff must be placed into server_startup_post, not server_startup) - C. Blue */
-	//nonswear[i][0] = '\0';
+	/* obsolete: (if enabled, swear_set stuff must be placed into server_startup_post, not server_startup) - C. Blue
+	   still enabling this though, for re-initialising swearing while server runs. */
+	nonswear[i][0] = '\0';
 
 	fclose(fp);
 }
