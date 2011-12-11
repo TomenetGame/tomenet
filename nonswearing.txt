@@ -1,3 +1,21 @@
+as sa
+as sc
+as se
+as sh
+as si
+as sk
+as sl
+as sm
+as sn
+as so
+as sp
+as sq
+as sr
+as st
+as su
+as sv
+as sw
+as sy
 assassin
 assemb
 assert
