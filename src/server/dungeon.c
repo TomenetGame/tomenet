@@ -3359,7 +3359,11 @@ static bool process_player_end_aux(int Ind)
 #endif
 
 			msg_print(Ind, "\377GYou are free to go!");
-			teleport_player_force(Ind, 1);
+
+			/* only teleport him if he didn't take the ironman exit. (could add p_ptr->in_jail to handle it 100% safely) */
+			if (p_ptr->wpos.wz == 0 &&
+			    (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK))
+				teleport_player_force(Ind, 1);
 		}
 	}
 
