@@ -3338,6 +3338,24 @@ static bool process_player_end_aux(int Ind)
 	if (p_ptr->tim_jail && !p_ptr->wpos.wz) {
 		p_ptr->tim_jail--;
 		if (!p_ptr->tim_jail) {
+			bool found = FALSE, one = TRUE;
+			/* eat his WoR scrolls as suggested? */
+			for (j = 0; j < INVEN_WIELD; j++) {
+				object_type *j_ptr;
+				if (!p_ptr->inventory[j].k_idx) continue;
+				j_ptr = &p_ptr->inventory[j];
+				if ((j_ptr->tval == TV_ROD) && (j_ptr->sval == SV_ROD_RECALL)) {
+					if (found) one = FALSE;
+					if (o_ptr->number > 1) one = FALSE;
+					j_ptr->pval = 300;
+					found = TRUE;
+				}
+			}
+			if (found) {
+				msg_format(Ind, "The jailer discharges your rod%s of recall.", one ? "" : "s");
+				p_ptr->window |= PW_INVEN;
+			}
+
 			msg_print(Ind, "\377GYou are free to go!");
 			teleport_player_force(Ind, 1);
 		}

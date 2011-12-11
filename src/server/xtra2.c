@@ -10178,7 +10178,7 @@ bool master_summon(int Ind, char * parms)
 }
 
 bool imprison(int Ind, u16b time, char *reason){
-	int id, i;
+	int id, i, j;
 	struct dna_type *dna;
 	player_type *p_ptr = Players[Ind];
 	char string[160];
@@ -10236,13 +10236,32 @@ bool imprison(int Ind, u16b time, char *reason){
 			p_ptr->new_level_flag = TRUE;
 			p_ptr->new_level_method = LEVEL_HOUSE;
 
+			/* eat his WoR scrolls as suggested? */
+			id = FALSE; //abuse 'id' and 'i'
+			i = TRUE;
+			for (j = 0; j < INVEN_WIELD; j++) {
+				object_type *j_ptr;
+				if (!p_ptr->inventory[j].k_idx) continue;
+				j_ptr = &p_ptr->inventory[j];
+				if ((j_ptr->tval == TV_SCROLL) && (j_ptr->sval == SV_SCROLL_WORD_OF_RECALL)) {
+					if (id) i = FALSE;
+					if (j_ptr->number > 1) i = FALSE;
+					inven_item_increase(Ind, j, -j_ptr->number);
+					inven_item_optimize(Ind, j);
+					combine_pack(Ind);
+					reorder_pack(Ind);
+					id = TRUE;
+				}
+			}
+			if (id) msg_format(Ind, "The jailer confiscates your word-of-recall scroll%s.", i ? "" : "s");
+
 			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 			snprintf(string, sizeof(string), "\377v%s was jailed for %s", p_ptr->name, reason);
 			msg_broadcast(Ind, string);
 			msg_format(Ind, "\377vYou have been jailed for %s", reason);
 			p_ptr->tim_jail = time + p_ptr->tim_susp;
 			p_ptr->tim_susp = 0;
-			
+
 			s_printf("DONE.\n");
 			return (TRUE);
 		}
