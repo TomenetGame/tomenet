@@ -35,6 +35,7 @@ assump
 assura
 assure
 declass
+kickass
 surpass
 again
 age
