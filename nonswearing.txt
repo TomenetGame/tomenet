@@ -13,8 +13,8 @@ assump
 assura
 assure
 brass
-f again
-f age
-f agil
-f agoni
-f agony
+again
+age
+agil
+agoni
+agony
