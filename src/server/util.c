@@ -2600,8 +2600,11 @@ static int checkallow(char *buff, int pos, int sw) {
 }
 #endif
 
+/* Censor swear words while keeping good words, and determining punishment level */
+/* strip all kinds of non-alpha chars too? */
+#define HIGHLY_EFFECTIVE_CENSOR
 static int censor(char *line){
-	int i, j, cc[MSG_LEN], offset;
+	int i, j, k, cc[MSG_LEN], offset;
 	char *word;
 	char lcopy[MSG_LEN], lcopy2[MSG_LEN];
 	int level = 0;
@@ -2609,14 +2612,30 @@ static int censor(char *line){
 	strcpy(lcopy, line);
 
 	/* convert to lower case */
-	for(i = j = 0; lcopy[i]; i++){
-		/* strip colour codes too */
-		if (lcopy[j] == '\377' && lcopy[j + 1]) j += 2;
-	/* build index map for colour code stripped string */
-		cc[i] = j;
-
-		lcopy[i] = tolower(lcopy[j++]);
+	i = 0;
+	while (lcopy[i]) {
+		lcopy[i] = tolower(lcopy[i]);
+		i++;
 	}
+
+	/* strip colour codes */
+	i = j = 0;
+	while (lcopy[j]) {
+		if (lcopy[j] == '\377') {
+			j++;
+			if (lcopy[j]) j++;
+			continue;
+		}
+
+		/* build index map for stripped string */
+		cc[i] = j;
+		lcopy[i] = lcopy[j];
+
+		i++;
+		j++;
+	}
+	lcopy[i] = '\0';
+	cc[i] = 0;
 
 	/* check for legal words first - checkallow() now obsolete */
 	strcpy(lcopy2, lcopy); /* use a 'working copy' to allow _overlapping_ nonswear words */
@@ -2629,10 +2648,29 @@ static int censor(char *line){
 
 			/* prevent it from getting tested for swear words */
 			for (j = 0; j < strlen(nonswear[i]); j++)
-				lcopy2[(word - lcopy) + j] = '*';
+				lcopy2[(word - lcopy) + j] = 'Z';
 		}
 	}
 	strcpy(lcopy, lcopy2);
+
+	/* and possibly non-alpha chars */
+#ifdef HIGHLY_EFFECTIVE_CENSOR
+	i = j = 0;
+	while (lcopy[j]) {
+		if ((lcopy[j] < 'a' || lcopy[j] > 'z') &&
+		    lcopy[j] != 'Z') {
+			j++;
+			continue;
+		}
+
+		/* modify index map for stripped string */
+		cc[i] = cc[j];
+		lcopy[i] = lcopy[j];
+		i++;
+		j++;
+	}
+	lcopy[i] = '\0';
+#endif
 
 	/* check for swear words and censor them */
 	for (i = 0; swear[i].word[0]; i++) {
@@ -2648,9 +2686,13 @@ static int censor(char *line){
 				continue;
 #endif
 
-			for (j = 0; j < (int)strlen(swear[i].word); j++) {
+			for (j = 0; j < strlen(swear[i].word); j++) {
 				/* censor it! */
 				line[cc[(word - lcopy) + j]] = '*';
+
+				/* actually censor separator chars too, just so it looks better ;) */
+				for (k = cc[(word - lcopy) + j] + 1; k < cc[(word - lcopy) + j + 1]; k++)
+					line[k] = '*';
 
 				/* for processing lcopy in a while loop instead of just 'if'
 				   -- OBSOLETE ACTUALLY (thanks to 'offset')? */
