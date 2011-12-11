@@ -2678,8 +2678,28 @@ static int censor(char *line){
 
 		/* check for multiple occurrances of this swear word */
 		while ((word = strstr(lcopy + offset, swear[i].word))) {
+			int pos = word - lcopy;
 			/* prevent checking the same occurance repeatedly */
 			offset = word - lcopy + strlen(swear[i].word);
+
+			/* hm, maybe don't track swear words if proceeded and postceeded by some other letters
+			   and separated by spaces inside it -- and if those nearby letters aren't the same letter,
+			   if someone just duplicates it like 'sshitt' */
+			/* check for swear-word-preceding non-duplicate alpha char */
+			if (cc[pos] > 0 &&
+			    tolower(line[cc[pos] - 1]) >= 'a' && tolower(line[cc[pos] - 1] <= 'z') &&
+			    tolower(line[cc[pos] - 1]) != tolower(line[cc[pos]])) {
+				/* check that the swear word occurance was originally non-continuous, ie separated by space etc.
+				   (if this is FALSE then this is rather a case for nonswearwords.txt instead. */
+				for (j = cc[pos]; j < cc[pos + strlen(swear[i].word) - 1]; j++) {
+					if (tolower(line[j]) < 'a' || tolower(line[j] > 'z')) {
+						/* heuristical non-swear word found! */
+						break;
+					}
+				}
+				/* found? */
+				if (j < cc[pos + strlen(swear[i].word) - 1]) continue;
+			}
 
 #if 0 /* do this within censor() directly, see above */
 			if (checkallow(lcopy, word - lcopy, i))
