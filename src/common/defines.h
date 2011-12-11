@@ -550,7 +550,7 @@
 #define MAX_KING_PARTY_LEVEL_DIFF 11
 
 /* does the Jailer remove WoR scrolls and discharge WoR rods? */
-#define JAILER_KILLS_WOR
+//#define JAILER_KILLS_WOR
 
 /* Max amount of swear words */
 #define MAX_SWEAR 50
