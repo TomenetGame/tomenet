@@ -3285,7 +3285,7 @@ void handle_censor(int Ind, char *message) {
 	case 0:
 		break;
 	case 1:
-		msg_print(Ind, "Please do not swear");
+		msg_print(Ind, "Please do not swear.");
 		break;
 	default:
 		imprison(Ind, i * 20, "swearing");
