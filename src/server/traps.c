@@ -1055,8 +1055,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 						msg_print(Ind, "The fire hasn't finished.");
 					ident=TRUE;
 				}
-				//               else if ((j_ptr->tval==TV_ROD_MAIN) && (j_ptr->pval == SV_ROD_RECALL))
-				else if ((j_ptr->tval==TV_ROD) && (j_ptr->pval == SV_ROD_RECALL))
+				//               else if ((j_ptr->tval==TV_ROD_MAIN) && (j_ptr->sval == SV_ROD_RECALL))
+				else if ((j_ptr->tval==TV_ROD) && (j_ptr->sval == SV_ROD_RECALL))
 				{
 					//                  j_ptr->timeout = 0; /* a long time */
 					j_ptr->pval = 999; /* a long time */
