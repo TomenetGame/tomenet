@@ -41,3 +41,6 @@ age
 agil
 agoni
 agony
+hancock
+peacock
+sushi
