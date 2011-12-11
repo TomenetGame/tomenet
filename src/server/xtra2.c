@@ -10178,7 +10178,10 @@ bool master_summon(int Ind, char * parms)
 }
 
 bool imprison(int Ind, u16b time, char *reason){
-	int id, i, j;
+	int id, i;
+#ifdef JAILER_KILLS_WOR
+	int j;
+#endif
 	struct dna_type *dna;
 	player_type *p_ptr = Players[Ind];
 	char string[160];
