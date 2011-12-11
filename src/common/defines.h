@@ -549,14 +549,17 @@
    and (+1 tolerance here) for supporting fellow players (depending on HENC_STRICTNESS) */
 #define MAX_KING_PARTY_LEVEL_DIFF 11
 
-/* does the Jailer remove WoR scrolls and discharge WoR rods? */
-//#define JAILER_KILLS_WOR
-
 /* Max amount of swear words */
 #define MAX_SWEAR 50
 
 /* Max amount of legal words that override swear words */
 #define MAX_NONSWEAR 100
+
+/* only imprison within town area? Otherwise it can be exploited for world travel. */
+#define JAIL_TOWN_AREA
+
+/* does the Jailer remove WoR scrolls and discharge WoR rods? */
+//#define JAILER_KILLS_WOR
 
 
 /* Maximum armour class value that yields in a reduction of damage.

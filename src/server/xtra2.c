@@ -10177,8 +10177,12 @@ bool master_summon(int Ind, char * parms)
 	return TRUE;
 }
 
-bool imprison(int Ind, u16b time, char *reason){
+#define FIND_CLOSEST_JAIL
+bool imprison(int Ind, u16b time, char *reason) {
 	int id, i;
+#ifdef FIND_CLOSEST_JAIL
+	int dist = 999, tmp, picked = -1;
+#endif
 #ifdef JAILER_KILLS_WOR
 	int j;
 #endif
@@ -10209,71 +10213,99 @@ bool imprison(int Ind, u16b time, char *reason){
 		return (TRUE);
 	}
 
+#ifdef JAIL_TOWN_AREA /* only imprison when within town area? */
+	if (!istownarea(&p_ptr->wpos, 3)) {
+		p_ptr->tim_susp += time;
+		s_printf("NO_TOWN.\n");
+		return (TRUE);
+	}
+#endif
+
+	/* get appropriate prison house */
 	for (i = 0; i < num_houses; i++) {
 		if (!(houses[i].flags & HF_JAIL)) continue;
 		if ((houses[i].flags & HF_DELETED)) continue;
 		dna = houses[i].dna;
-		if (dna->owner == id && dna->owner_type == OT_PLAYER){
-			/* lazy, single prison system */
-			/* hopefully no overcrowding! */
-			if (!(nzcave = getcave(&houses[i].wpos))){
-				alloc_dungeon_level(&houses[i].wpos);
-				generate_cave(&houses[i].wpos, p_ptr);
-				/* nzcave=getcave(&houses[i].wpos); */
+		if (dna->owner == id && dna->owner_type == OT_PLAYER) {
+#ifndef FIND_CLOSEST_JAIL /* get first prison we find? */
+			break;
+#else /* get closest prison we find? */
+			tmp = distance(houses[i].wpos.wy, houses[i].wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wx);
+			if (tmp < dist) {
+				dist = tmp;
+				picked = i;
 			}
-			zcave[p_ptr->py][p_ptr->px].m_idx = 0;
-			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-			forget_lite(Ind);
-			forget_view(Ind);
-			wpcopy(&old_wpos, &p_ptr->wpos);
-			wpcopy(&p_ptr->wpos, &houses[i].wpos);
-			new_players_on_depth(&old_wpos, -1, TRUE);
-
-			p_ptr->py = houses[i].y;
-			p_ptr->px = houses[i].x;
-
-			/* that messes it up */
-			/* nzcave[p_ptr->py][p_ptr->px].m_idx=(0-Ind); */
-			new_players_on_depth(&p_ptr->wpos, 1, TRUE);
-
-			p_ptr->new_level_flag = TRUE;
-			p_ptr->new_level_method = LEVEL_HOUSE;
-
-#ifdef JAILER_KILLS_WOR
-			/* eat his WoR scrolls as suggested? */
-			id = FALSE; //abuse 'id' and 'i'
-			i = TRUE;
-			for (j = 0; j < INVEN_WIELD; j++) {
-				object_type *j_ptr;
-				if (!p_ptr->inventory[j].k_idx) continue;
-				j_ptr = &p_ptr->inventory[j];
-				if ((j_ptr->tval == TV_SCROLL) && (j_ptr->sval == SV_SCROLL_WORD_OF_RECALL)) {
-					if (id) i = FALSE;
-					if (j_ptr->number > 1) i = FALSE;
-					inven_item_increase(Ind, j, -j_ptr->number);
-					inven_item_optimize(Ind, j);
-					combine_pack(Ind);
-					reorder_pack(Ind);
-					id = TRUE;
-				}
-			}
-			if (id) msg_format(Ind, "\376\377oThe jailer confiscates your word-of-recall scroll%s.", i ? "" : "s");
 #endif
-
-			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-			snprintf(string, sizeof(string), "\374\377o%s was jailed for %s.", p_ptr->name, reason);
-			msg_broadcast(Ind, string);
-			msg_format(Ind, "\374\377oYou have been jailed for %s.", reason);
-			p_ptr->tim_jail = time + p_ptr->tim_susp;
-			p_ptr->tim_susp = 0;
-
-			s_printf("DONE.\n");
-			return (TRUE);
 		}
 	}
+#ifndef FIND_CLOSEST_JAIL
+	if (i == num_houses) {
+		s_printf("FAILED.\n");
+		return (FALSE);
+	}
+#else
+	if (picked == -1) {
+		s_printf("FAILED.\n");
+		return (FALSE);
+	}
+	i = picked;
+#endif
 
-	s_printf("FAILED.\n");
-	return (FALSE);
+	/* lazy, single prison system */
+	/* hopefully no overcrowding! */
+	if (!(nzcave = getcave(&houses[i].wpos))){
+		alloc_dungeon_level(&houses[i].wpos);
+		generate_cave(&houses[i].wpos, p_ptr);
+		/* nzcave=getcave(&houses[i].wpos); */
+	}
+	zcave[p_ptr->py][p_ptr->px].m_idx = 0;
+	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+	forget_lite(Ind);
+	forget_view(Ind);
+	wpcopy(&old_wpos, &p_ptr->wpos);
+	wpcopy(&p_ptr->wpos, &houses[i].wpos);
+	new_players_on_depth(&old_wpos, -1, TRUE);
+
+	p_ptr->py = houses[i].y;
+	p_ptr->px = houses[i].x;
+
+	/* that messes it up */
+	/* nzcave[p_ptr->py][p_ptr->px].m_idx=(0-Ind); */
+	new_players_on_depth(&p_ptr->wpos, 1, TRUE);
+
+	p_ptr->new_level_flag = TRUE;
+	p_ptr->new_level_method = LEVEL_HOUSE;
+
+#ifdef JAILER_KILLS_WOR
+	/* eat his WoR scrolls as suggested? */
+	id = FALSE; //abuse 'id' and 'i'
+	i = TRUE;
+	for (j = 0; j < INVEN_WIELD; j++) {
+		object_type *j_ptr;
+		if (!p_ptr->inventory[j].k_idx) continue;
+		j_ptr = &p_ptr->inventory[j];
+		if ((j_ptr->tval == TV_SCROLL) && (j_ptr->sval == SV_SCROLL_WORD_OF_RECALL)) {
+			if (id) i = FALSE;
+			if (j_ptr->number > 1) i = FALSE;
+			inven_item_increase(Ind, j, -j_ptr->number);
+			inven_item_optimize(Ind, j);
+			combine_pack(Ind);
+			reorder_pack(Ind);
+			id = TRUE;
+		}
+	}
+	if (id) msg_format(Ind, "\376\377oThe jailer confiscates your word-of-recall scroll%s.", i ? "" : "s");
+#endif
+
+	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+	snprintf(string, sizeof(string), "\374\377o%s was jailed for %s.", p_ptr->name, reason);
+	msg_broadcast(Ind, string);
+	msg_format(Ind, "\374\377oYou have been jailed for %s.", reason);
+	p_ptr->tim_jail = time + p_ptr->tim_susp;
+	p_ptr->tim_susp = 0;
+
+	s_printf("DONE.\n");
+	return (TRUE);
 }
 
 static void player_edit(char *name){
