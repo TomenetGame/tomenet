@@ -10236,6 +10236,7 @@ bool imprison(int Ind, u16b time, char *reason){
 			p_ptr->new_level_flag = TRUE;
 			p_ptr->new_level_method = LEVEL_HOUSE;
 
+#ifdef JAILER_KILLS_WOR
 			/* eat his WoR scrolls as suggested? */
 			id = FALSE; //abuse 'id' and 'i'
 			i = TRUE;
@@ -10254,6 +10255,7 @@ bool imprison(int Ind, u16b time, char *reason){
 				}
 			}
 			if (id) msg_format(Ind, "The jailer confiscates your word-of-recall scroll%s.", i ? "" : "s");
+#endif
 
 			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 			snprintf(string, sizeof(string), "\377v%s was jailed for %s", p_ptr->name, reason);

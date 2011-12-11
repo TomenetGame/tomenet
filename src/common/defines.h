@@ -549,6 +549,10 @@
    and (+1 tolerance here) for supporting fellow players (depending on HENC_STRICTNESS) */
 #define MAX_KING_PARTY_LEVEL_DIFF 11
 
+/* does the Jailer remove WoR scrolls and discharge WoR rods? */
+#define JAILER_KILLS_WOR
+
+
 /* Maximum armour class value that yields in a reduction of damage.
    Note: The chance to get hit still goes down further above this value.
    Also search code for CAP_ITEM_BONI to find +hit/+dam/+ac cappings. */

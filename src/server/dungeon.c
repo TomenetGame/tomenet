@@ -3338,8 +3338,9 @@ static bool process_player_end_aux(int Ind)
 	if (p_ptr->tim_jail && !p_ptr->wpos.wz) {
 		p_ptr->tim_jail--;
 		if (!p_ptr->tim_jail) {
-			bool found = FALSE, one = TRUE;
+#ifdef JAILER_KILLS_WOR
 			/* eat his WoR scrolls as suggested? */
+			bool found = FALSE, one = TRUE;
 			for (j = 0; j < INVEN_WIELD; j++) {
 				object_type *j_ptr;
 				if (!p_ptr->inventory[j].k_idx) continue;
@@ -3355,6 +3356,7 @@ static bool process_player_end_aux(int Ind)
 				msg_format(Ind, "The jailer discharges your rod%s of recall.", one ? "" : "s");
 				p_ptr->window |= PW_INVEN;
 			}
+#endif
 
 			msg_print(Ind, "\377GYou are free to go!");
 			teleport_player_force(Ind, 1);
