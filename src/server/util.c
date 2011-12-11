@@ -2575,41 +2575,87 @@ s_printf("DUAL_MODE: Player %s toggles %s.\n", p_ptr->name, p_ptr->dual_mode ? "
 }
 
 
+#if 0 /* do this within censor() - C. Blue */
+static int checkallow(char *buff, int pos, int sw) {
+	int i, j;
+	char *c;
+	for (i = 0; nonswear[i][0]; i++) {
+		/* nonswear word must always be longer than swear word */
+		if (strlen(nonswear[i]) <= strlen(swear[sw].word)) continue;
 
-static int checkallow(char *buff, int pos){
-	if(!pos) return(0);
-	if(pos == 1) return(buff[0] == ' ' ? 0 : 1); /* allow things like brass lantern */
-	if(buff[pos-1] == ' ' || buff[pos-2] == '\377') return(0);	/* swearing in colour */
-	return(1);
+		/* swear word must be within the nonswear word */
+		if (!(c = strstr(nonswear[i], swear[sw].word))) continue;
+
+		/* nonswear word must fit into the actual text */
+		j = c - nonswear[i];
+		if (pos - j < 0) continue;
+		if (pos - j + strlen(nonswear[i]) > strlen(buff + pos - j)) continue;
+
+		/* nonswear word must BE in the actual text at correct offset regarding to swear word */
+		if (strstr(buff[pos - j], nonswear[i]) != buff + pos - j) continue;
+
+		return 1;
+	}
+	return 0;
 }
+#endif
 
 static int censor(char *line){
-	int i, j, cc[MSG_LEN];
+	int i, j, cc[MSG_LEN], offset;
 	char *word;
-	char lcopy[MSG_LEN];
+	char lcopy[MSG_LEN], lcopy2[MSG_LEN];
 	int level = 0;
 
 	strcpy(lcopy, line);
+
+	/* convert to lower case */
 	for(i = j = 0; lcopy[i]; i++){
 		/* strip colour codes too */
 		if (lcopy[j] == '\377' && lcopy[j + 1]) j += 2;
+	/* build index map for colour code stripped string */
 		cc[i] = j;
+
 		lcopy[i] = tolower(lcopy[j++]);
 	}
 
-	for (i = 0; strlen(swear[i].word); i++) {
-		if ((word = strstr(lcopy, swear[i].word))) {
-			if (checkallow(lcopy, word - lcopy)) continue;
-#if 0
-			word = (&line[cc[word - lcopy]]);
-			for (j = 0; j < (int)strlen(swear[i].word); j++) {
-				word[j] = '*';
-			}
-#else
-			for (j = 0; j < (int)strlen(swear[i].word); j++) {
-				line[cc[(word - lcopy) + j]] = '*';
-			}
+	/* check for legal words first - checkallow() now obsolete */
+	strcpy(lcopy2, lcopy); /* use a 'working copy' to allow _overlapping_ nonswear words */
+	for (i = 0; nonswear[i][0]; i++) {
+		offset = 0;
+		/* check for multiple occurrances of this nonswear word */
+		while ((word = strstr(lcopy + offset, nonswear[i]))) {
+			/* prevent checking the same occurance repeatedly */
+			offset = word - lcopy + strlen(nonswear[i]);
+
+			/* prevent it from getting tested for swear words */
+			for (j = 0; j < strlen(nonswear[i]); j++)
+				lcopy2[(word - lcopy) + j] = '*';
+		}
+	}
+	strcpy(lcopy, lcopy2);
+
+	/* check for swear words and censor them */
+	for (i = 0; swear[i].word[0]; i++) {
+		offset = 0;
+
+		/* check for multiple occurrances of this swear word */
+		while ((word = strstr(lcopy + offset, swear[i].word))) {
+			/* prevent checking the same occurance repeatedly */
+			offset = word - lcopy + strlen(swear[i].word);
+
+#if 0 /* do this within censor() directly, see above */
+			if (checkallow(lcopy, word - lcopy, i))
+				continue;
 #endif
+
+			for (j = 0; j < (int)strlen(swear[i].word); j++) {
+				/* censor it! */
+				line[cc[(word - lcopy) + j]] = '*';
+
+				/* for processing lcopy in a while loop instead of just 'if'
+				   -- OBSOLETE ACTUALLY (thanks to 'offset')? */
+				lcopy[(word - lcopy) + j] = '*';
+			}
 			level = MAX(level, swear[i].level);
 		}
 	}
@@ -3127,16 +3173,7 @@ static void player_talk_aux(int Ind, char *message)
 	if (c_n == 'b' && !is_admin(p_ptr)) return;
 
 
-	/* Check for swear words, censor + punish */
-	switch ((i = censor(message))) {
-		case 0:
-			break;
-		default:
-			imprison(Ind, i * 20, "swearing");
-		case 1:
-			msg_print(Ind, "Please do not swear");
-			break;
-	}
+	handle_censor(Ind, message);
 
 
 #ifdef TOMENET_WORLDS
@@ -3196,6 +3233,21 @@ static void player_talk_aux(int Ind, char *message)
 
 	exec_lua(0, "chat_handler()");
 
+}
+
+/* Check for swear words, censor + punish */
+void handle_censor(int Ind, char *message) {
+	int i;
+
+	switch ((i = censor(message))) {
+	case 0:
+		break;
+	case 1:
+		msg_print(Ind, "Please do not swear");
+		break;
+	default:
+		imprison(Ind, i * 20, "swearing");
+	}
 }
 
 /* toggle AFK mode off if it's currently on, also reset idle time counter for in-game character.

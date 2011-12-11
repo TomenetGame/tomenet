@@ -285,6 +285,7 @@ extern bool smart_cheat;
 extern s16b hitpoint_warn;
 extern u32b old_id[MAX_ID];
 extern swear_info swear[30];
+extern char nonswear[30][30];
 extern struct ip_ban *banlist;
 extern s32b sflags_TEMP;
 extern player_type **Players;
@@ -1643,6 +1644,7 @@ extern cptr timediff(struct timeval *begin, struct timeval *end);
 #endif
 extern void strip_control_codes(char *ss, char *s);
 extern cptr flags_str(u32b flags);
+extern void handle_censor(int Ind, char *message);
 
 /* xtra1.c */
 extern void cnv_stat(int val, char *out_val);
@@ -1959,6 +1961,8 @@ extern bool lua_mimic_eligible(int Ind, int r_idx);
 void swear_set(int i, char *word, int level);
 char *swear_get_word(int i);
 int swear_get_level(int i);
+void nonswear_set(int i, char *word);
+char *nonswear_get(int i);
 
 
 #ifdef ENABLE_GO_GAME

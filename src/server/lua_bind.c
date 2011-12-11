@@ -1076,3 +1076,6 @@ void swear_set(int i, char *word, int level) {
 }
 char *swear_get_word(int i) { return swear[i].word; }
 int swear_get_level(int i) { return swear[i].level; }
+
+void nonswear_set(int i, char *word) { strcpy(nonswear[i], word); }
+char *nonswear_get(int i) { return nonswear[i]; }

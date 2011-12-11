@@ -2510,6 +2510,8 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 
+			handle_censor(Ind, message3);
+
 			msg_broadcast_format(0, "\374\377s[%s->BBS] \377W%s", p_ptr->name, message3);
 //			bbs_add_line(format("%s %s: %s",showtime() + 7, p_ptr->name, message3));
 			bbs_add_line(format("\377s%s %s: \377W%s",showdate(), p_ptr->name, message3));

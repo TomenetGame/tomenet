@@ -2464,6 +2464,25 @@ static void init_swearing() {
 	//swear[i].word[0] = '\0';
 
 	fclose(fp);
+
+
+	fp = fopen("nonswearing.txt", "r");
+	if (!fp) return;
+	i = 0;
+
+	do {
+		if (fscanf(fp, "%s\n", nonswear[i]) == EOF) {
+			if (!feof(fp))
+				s_printf("Failed to read nonswearing.txt: %s\n", strerror(ferror(fp)));
+		}
+		//printf("%d %s %d\n", i, swear[i].word, swear[i].level);
+		i++;
+	} while (!feof(fp) && i < 30 - 1);
+
+	/* obsolete: (if enabled, swear_set stuff must be placed into server_startup_post, not server_startup) - C. Blue */
+	//nonswear[i][0] = '\0';
+
+	fclose(fp);
 }
 
 /*
