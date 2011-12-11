@@ -2498,6 +2498,7 @@ void do_slash_cmd(int Ind, char *message)
 				censor_message = TRUE;
 				for (i = 0; i < BBS_LINES; i++)
 					if (strcmp(bbs_line[i], "")) {
+						censor_length = bbs_line[i] - strchr(bbs_line[i], ':') - 2;
 						msg_format(Ind, "\377s %s", bbs_line[i]);
 						bbs_empty = FALSE;
 					}
@@ -2515,6 +2516,7 @@ void do_slash_cmd(int Ind, char *message)
 			strcpy(message, message3);
 			handle_punish(Ind, handle_censor(message));
 			censor_message = TRUE;
+			censor_length = strlen(message3);
 			msg_broadcast_format(0, "\374\377s[%s->BBS] \377W%s", p_ptr->name, message3);
 			censor_message = FALSE;
 //			bbs_add_line(format("%s %s: %s",showtime() + 7, p_ptr->name, message3));

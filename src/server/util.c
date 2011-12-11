@@ -1696,6 +1696,7 @@ bool check_guard_inscription( s16b quark, char what ) {
  * even if no messages are pending.  This is probably a hack.
  */
 bool suppress_message = FALSE, censor_message = FALSE;
+int censor_length = 0;
 
 void msg_print(int Ind, cptr msg_raw)
 {
@@ -1722,7 +1723,9 @@ void msg_print(int Ind, cptr msg_raw)
 
 	strcpy(msg_dup, msg_raw); /* in case msg_raw was constant */
 	/* censor swear words? */
-	if (censor_message && Players[Ind]->censor_swearing) handle_censor(msg);
+	if (censor_message && Players[Ind]->censor_swearing)
+		/* skip the name of the sender, etc. */
+		handle_censor(msg + strlen(msg) - censor_length);
 
 	/* marker for client: add message to 'chat-only buffer', not to 'nochat buffer' */
 	if (msg[0] == '\375') {
@@ -2660,6 +2663,7 @@ static int censor(char *line) {
 			/* prevent checking the same occurance repeatedly */
 			offset = word - lcopy + strlen(swear[i].word);
 
+#if 1
 			/* hm, maybe don't track swear words if proceeded and postceeded by some other letters
 			   and separated by spaces inside it -- and if those nearby letters aren't the same letter,
 			   if someone just duplicates it like 'sshitt' */
@@ -2678,6 +2682,7 @@ static int censor(char *line) {
 				/* found? */
 				if (j < cc[pos + strlen(swear[i].word) - 1]) continue;
 			}
+#endif
 
 #if 0
 			for (j = 0; j < strlen(swear[i].word); j++) {
@@ -3215,11 +3220,13 @@ static void player_talk_aux(int Ind, char *message)
 	censor_message = TRUE;
 
 #ifdef TOMENET_WORLDS
-	if (broadcast)
+	if (broadcast) {
 		snprintf(tmessage, sizeof(tmessage), "\375\377r[\377%c%s\377r] \377%c%s", c_n, sender, COLOUR_CHAT, message + 11);
-	else if (!me)
+		censor_length = strlen(message + 11);
+	} else if (!me) {
 		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s] \377%c%s", c_n, sender, COLOUR_CHAT, message + mycolor);
-	else {
+		censor_length = strlen(message + mycolor);
+	} else {
 		/* Why not... */
 		if (strlen(message) > 4) mycolor = (prefix(&message[4], "}") && (color_char_to_attr(*(message + 5)) != -1)) ? 2 : 0;
 		else {
@@ -3228,6 +3235,7 @@ static void player_talk_aux(int Ind, char *message)
 		}
 		if (mycolor) c_n = message[5];
 		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s %s]", c_n, sender, message + 4 + mycolor);
+		censor_length = strlen(message + 4 + mycolor);
 	}
  #if 0
 	if (((broadcast && cfg.worldd_broadcast) || (!broadcast && cfg.worldd_pubchat))
@@ -3250,6 +3258,7 @@ static void player_talk_aux(int Ind, char *message)
 	}
 #else
 	/* Send to everyone */
+	censor_length = strlen(message + 4);
 	for (i = 1; i <= NumPlayers; i++) {
 		q_ptr = Players[i];
 
@@ -3261,13 +3270,18 @@ static void player_talk_aux(int Ind, char *message)
 		}
 
 		/* Send message */
-		if (broadcast)
+		if (broadcast) {
+			censor_length = strlen(message + 11);
 			msg_format(i, "\375\377r[\377%c%s\377r] \377%c%s", c_n, sender, COLOUR_CHAT, message + 11);
-		else if (!me) {
+		} else if (!me) {
+			censor_length = strlen(message + mycolor);
 			msg_format(i, "\375\377%c[%s] \377%c%s", c_n, sender, COLOUR_CHAT, message + mycolor);
 			/* msg_format(i, "\375\377%c[%s] %s", Ind ? 'B' : 'y', sender, message); */
 		}
-		else msg_format(i, "%s %s", sender, message + 4);
+		else {
+			censor_length = strlen(message + 4);
+			msg_format(i, "%s %s", sender, message + 4);
+		}
 	}
 #endif
 	p_ptr->warning_chat = 1;

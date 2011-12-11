@@ -10087,6 +10087,7 @@ static int Receive_BBS(int ind) {
 		censor_message = TRUE;
 		for (n = 0; n < BBS_LINES; n++)
 			if (strcmp(bbs_line[n], "")) {
+				censor_length = bbs_line[n] - strchr(bbs_line[n], ':') - 2;
 				msg_format(player, "\377s %s", bbs_line[n]);
 				bbs_empty = FALSE;
 			}
