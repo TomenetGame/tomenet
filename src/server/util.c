@@ -3560,10 +3560,11 @@ int name_lookup_loose(int Ind, cptr name, u16b party)
 			/* let admins chat */
 			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr)
 			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
-			    && strcasecmp(p_ptr->accountname, "moltor") 
-			    && strcasecmp(p_ptr->accountname, "the_sandman") 
-			    && strcasecmp(p_ptr->accountname, "faith") 
-			    && strcasecmp(p_ptr->accountname, "mikaelh") 
+			    && strcasecmp(p_ptr->accountname, "kurzel")
+			    && strcasecmp(p_ptr->accountname, "moltor")
+			    && strcasecmp(p_ptr->accountname, "the_sandman")
+			    && strcasecmp(p_ptr->accountname, "faith")
+			    && strcasecmp(p_ptr->accountname, "mikaelh")
 			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
 			
 			/* Check name */
@@ -3686,10 +3687,11 @@ int name_lookup_loose_quiet(int Ind, cptr name, u16b party)
 			/* let admins chat */
 			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr)
 			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
-			    && strcasecmp(p_ptr->accountname, "moltor") 
-			    && strcasecmp(p_ptr->accountname, "the_sandman") 
-			    && strcasecmp(p_ptr->accountname, "faith") 
-			    && strcasecmp(p_ptr->accountname, "mikaelh") 
+			    && strcasecmp(p_ptr->accountname, "kurzel")
+			    && strcasecmp(p_ptr->accountname, "moltor")
+			    && strcasecmp(p_ptr->accountname, "the_sandman")
+			    && strcasecmp(p_ptr->accountname, "faith")
+			    && strcasecmp(p_ptr->accountname, "mikaelh")
 			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
 			
 			/* Check name */
@@ -3796,10 +3798,11 @@ int name_lookup(int Ind, cptr name, u16b party)
 			/* let admins chat */
 			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr)
 			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
-			    && strcasecmp(p_ptr->accountname, "moltor") 
-			    && strcasecmp(p_ptr->accountname, "the_sandman") 
-			    && strcasecmp(p_ptr->accountname, "faith") 
-			    && strcasecmp(p_ptr->accountname, "mikaelh") 
+			    && strcasecmp(p_ptr->accountname, "kurzel")
+			    && strcasecmp(p_ptr->accountname, "moltor")
+			    && strcasecmp(p_ptr->accountname, "the_sandman")
+			    && strcasecmp(p_ptr->accountname, "faith")
+			    && strcasecmp(p_ptr->accountname, "mikaelh")
 			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
 			
 			/* Check name */
@@ -3888,6 +3891,7 @@ int name_lookup_quiet(int Ind, cptr name, u16b party)
 			/* let admins chat */
 			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr)
 			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
+			    && strcasecmp(p_ptr->accountname, "kurzel")
 			    && strcasecmp(p_ptr->accountname, "moltor")
 			    && strcasecmp(p_ptr->accountname, "the_sandman")
 			    && strcasecmp(p_ptr->accountname, "faith")
