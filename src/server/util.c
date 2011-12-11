@@ -1697,8 +1697,9 @@ bool check_guard_inscription( s16b quark, char what ) {
  */
 bool suppress_message = FALSE;
 
-void msg_print(int Ind, cptr msg)
+void msg_print(int Ind, cptr msg_raw)
 {
+	char msg_dup[MSG_LEN], *msg = msg_dup;
 	int line_len = 80; /* maximum length of a text line to be displayed;
 		     this is client-dependant, compare c_msg_print (c-util.c) */
 	char msg_buf[line_len + 2 + 2 * 80]; /* buffer for 1 line. + 2 bytes for colour code (+2*80 bytes for colour codeeeezz) */
@@ -1707,18 +1708,21 @@ void msg_print(int Ind, cptr msg)
 	char colour_code = 0;
 	bool no_colour_code = FALSE;
 	bool first_character = TRUE;
-//	bool is_chat = ((msg != NULL) && (strlen(msg) > 2) && (msg[2] == '['));
+//	bool is_chat = ((msg_raw != NULL) && (strlen(msg_raw) > 2) && (msg_raw[2] == '['));
 	bool client_ctrlo = FALSE, client_chat = FALSE, client_all = FALSE;
 
 	/* backward msg window width hack for windows clients (non-x11 clients rather) */
 	if (!is_newer_than(&Players[Ind]->version, 4, 4, 5, 3, 0, 0) && !strcmp(Players[Ind]->realname, "PLAYER")) line_len = 72;
 
-
 	/* Pfft, sorry to bother you.... --JIR-- */
 	if (suppress_message) return;
 
 	/* no message? */
-	if (msg == NULL) return;
+	if (msg_raw == NULL) return;
+
+	strcpy(msg_dup, msg_raw); /* in case msg_raw was constant */
+	/* censor swear words? */
+	if (Players[Ind]->censor_swearing) handle_censor(msg);
 
 	/* marker for client: add message to 'chat-only buffer', not to 'nochat buffer' */
 	if (msg[0] == '\375') {
@@ -2574,36 +2578,10 @@ s_printf("DUAL_MODE: Player %s toggles %s.\n", p_ptr->name, p_ptr->dual_mode ? "
 	return;
 }
 
-
-#if 0 /* do this within censor() - C. Blue */
-static int checkallow(char *buff, int pos, int sw) {
-	int i, j;
-	char *c;
-	for (i = 0; nonswear[i][0]; i++) {
-		/* nonswear word must always be longer than swear word */
-		if (strlen(nonswear[i]) <= strlen(swear[sw].word)) continue;
-
-		/* swear word must be within the nonswear word */
-		if (!(c = strstr(nonswear[i], swear[sw].word))) continue;
-
-		/* nonswear word must fit into the actual text */
-		j = c - nonswear[i];
-		if (pos - j < 0) continue;
-		if (pos - j + strlen(nonswear[i]) > strlen(buff + pos - j)) continue;
-
-		/* nonswear word must BE in the actual text at correct offset regarding to swear word */
-		if (strstr(buff[pos - j], nonswear[i]) != buff + pos - j) continue;
-
-		return 1;
-	}
-	return 0;
-}
-#endif
-
 /* Censor swear words while keeping good words, and determining punishment level */
 /* strip all kinds of non-alpha chars too? */
 #define HIGHLY_EFFECTIVE_CENSOR
-static int censor(char *line){
+static int censor(char *line) {
 	int i, j, k, cc[MSG_LEN], offset;
 	char *word;
 	char lcopy[MSG_LEN], lcopy2[MSG_LEN];
@@ -2700,11 +2678,6 @@ static int censor(char *line){
 				/* found? */
 				if (j < cc[pos + strlen(swear[i].word) - 1]) continue;
 			}
-
-#if 0 /* do this within censor() directly, see above */
-			if (checkallow(lcopy, word - lcopy, i))
-				continue;
-#endif
 
 			for (j = 0; j < strlen(swear[i].word); j++) {
 				/* censor it! */
@@ -3234,8 +3207,8 @@ static void player_talk_aux(int Ind, char *message)
 	/* Admins have exclusive colour - the_sandman */
 	if (c_n == 'b' && !is_admin(p_ptr)) return;
 
-
-	handle_censor(Ind, message);
+	strcpy(message2, message);
+	handle_punish(Ind, handle_censor(message2));
 
 
 #ifdef TOMENET_WORLDS
@@ -3298,17 +3271,18 @@ static void player_talk_aux(int Ind, char *message)
 }
 
 /* Check for swear words, censor + punish */
-void handle_censor(int Ind, char *message) {
-	int i;
-
-	switch ((i = censor(message))) {
+int handle_censor(char *message) {
+	return censor(message);
+}
+void handle_punish(int Ind, int level) {
+	switch (level) {
 	case 0:
 		break;
 	case 1:
 		msg_print(Ind, "Please do not swear.");
 		break;
 	default:
-		imprison(Ind, i * 20, "swearing");
+		imprison(Ind, level * 20, "swearing");
 	}
 }
 

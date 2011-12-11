@@ -2209,6 +2209,7 @@ struct player_type
 	bool player_list2;
 	bool auto_untag;
 	bool newbie_hints;
+	bool censor_swearing;
 
 	s16b max_panel_rows;
 	s16b max_panel_cols;
@@ -3196,7 +3197,7 @@ struct client_opts
 	bool player_list;
 	bool player_list2;
 	bool fresh_after;
-	bool fresh_message;
+	bool censor_swearing;//fresh_message;
 	bool safe_macros;//compress_savefile;
 	bool hilite_player;
 	bool view_yellow_lite;

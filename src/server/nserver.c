@@ -2345,6 +2345,11 @@ static void sync_options(int Ind, bool *options)
 
 	p_ptr->safe_float = options[46];
 
+	if (is_older_than(&p_ptr->version, 4, 4, 8, 4, 0, 0))
+		p_ptr->censor_swearing = TRUE;
+	else
+		p_ptr->censor_swearing = options[53];
+
 	tmp = p_ptr->view_yellow_lite;
 	if ((p_ptr->view_yellow_lite = options[56]) != tmp) p_ptr->redraw |= PR_MAP;
 	tmp = p_ptr->view_bright_lite;

@@ -62,7 +62,7 @@ X:flush_disturb
 X:player_list
 X:player_list2
 X:fresh_after
-X:fresh_message
+Y:censor_swearing
 Y:safe_macros
 X:hilite_player
 Y:view_yellow_lite

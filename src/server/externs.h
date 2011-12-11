@@ -1644,7 +1644,8 @@ extern cptr timediff(struct timeval *begin, struct timeval *end);
 #endif
 extern void strip_control_codes(char *ss, char *s);
 extern cptr flags_str(u32b flags);
-extern void handle_censor(int Ind, char *message);
+extern int handle_censor(char *message);
+extern void handle_punish(int Ind, int level);
 
 /* xtra1.c */
 extern void cnv_stat(int val, char *out_val);

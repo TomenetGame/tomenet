@@ -689,8 +689,13 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.fresh_after,		FALSE,	1,	1, 24, FALSE,
 	"fresh_after",			"(obsolete) Flush output after every command" },
 
+#if 0
 	{ &c_cfg.fresh_message,		FALSE,	1,	1, 25, FALSE,
 	"fresh_message",		"(obsolete) Flush output after every message" },
+#else
+	{ &c_cfg.censor_swearing,	TRUE,	4,	1, 25, TRUE,
+	"censor_swearing",		"Censor certain swear words in public messages" },
+#endif
 
 	{ &c_cfg.safe_macros,		TRUE,	3,	1, 26, TRUE, /* was compress_savefile (broken&obsolete); use Term_flush() to clear macro execution */
 	"safe_macros",			"Abort macro execution if an action fails" },
