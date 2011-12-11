@@ -34,9 +34,8 @@ assume
 assump
 assura
 assure
-bass
-brass
-glass
+declass
+surpass
 again
 age
 agil

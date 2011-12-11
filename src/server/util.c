@@ -2585,9 +2585,9 @@ s_printf("DUAL_MODE: Player %s toggles %s.\n", p_ptr->name, p_ptr->dual_mode ? "
 /* strip all kinds of non-alpha chars too? */
 #define HIGHLY_EFFECTIVE_CENSOR
 static int censor(char *line) {
-	int i, j, k, cc[MSG_LEN], offset;
-	char *word;
+	int i, j, k, cc[MSG_LEN], offset, pos;
 	char lcopy[MSG_LEN], lcopy2[MSG_LEN];
+	char *word, l0, l1, l2, l3;
 	int level = 0;
 
 	strcpy(lcopy, line);
@@ -2659,7 +2659,12 @@ static int censor(char *line) {
 
 		/* check for multiple occurrances of this swear word */
 		while ((word = strstr(lcopy + offset, swear[i].word))) {
-			int pos = word - lcopy;
+			pos = word - lcopy;
+			l0 = tolower(line[cc[pos]]);
+			if (cc[pos] >= 1) l1 = tolower(line[cc[pos] - 1]);
+			if (cc[pos] >= 2) l2 = tolower(line[cc[pos] - 2]);
+			if (cc[pos] >= 3) l3 = tolower(line[cc[pos] - 3]);
+
 			/* prevent checking the same occurance repeatedly */
 			offset = word - lcopy + strlen(swear[i].word);
 
@@ -2669,10 +2674,34 @@ static int censor(char *line) {
 			   if someone just duplicates it like 'sshitt' */
 			/* check for swear-word-preceding non-duplicate alpha char */
 			if (cc[pos] > 0 &&
-			    tolower(line[cc[pos] - 1]) >= 'a' && tolower(line[cc[pos] - 1] <= 'z') &&
-			    tolower(line[cc[pos] - 1]) != tolower(line[cc[pos]])) {
+			    l1 >= 'a' && l1 <= 'z' &&
+			    l1 != l0) {
+				/* special treatment for swear words of <= 3 chars length: */
+				if (strlen(swear[i].word) <= 3) {
+					/* if there's UP TO 2 other chars before it or exactly 1 non-duplicate char, it's exempt.
+					   (for more leading chars, nonswear has to be used.) */
+					if (cc[pos] == 1 && l1 >= 'a' && l1 <= 'z' && l1 != l0) break;
+					if (cc[pos] == 2) {
+						if (l1 >= 'a' && l1 <= 'z' && l2 >= 'a' && l2 <= 'z' &&
+						    (l0 != l1 || l0 != l2 || l1 != l2)) break;
+						/* also test for only 1 leading alpha char */
+						if ((l2 < 'a' || l2 > 'z') &&
+						    l1 >= 'a' && l1 <= 'z' && l1 != l0) break;
+					}
+					if (cc[pos] >= 3) {
+						 if ((l3 < 'a' || l3 > 'z') &&
+						    l1 >= 'a' && l1 <= 'z' && l2 >= 'a' && l2 <= 'z' &&
+						    (l0 != l1 || l0 != l2 || l1 != l2)) break;
+						/* also test for only 1 leading alpha char */
+						if ((l2 < 'a' || l2 > 'z') &&
+						    l1 >= 'a' && l1 <= 'z' && l1 != l0) break;
+					}
+					/* if there's no char before it but 2 other chars after it or 1 non-dup after it, it's exempt. */
+					//TODO maybe
+				}
+
 				/* check that the swear word occurance was originally non-continuous, ie separated by space etc.
-				   (if this is FALSE then this is rather a case for nonswearwords.txt instead. */
+				   (if this is FALSE then this is rather a case for nonswearwords.txt instead.) */
 				for (j = cc[pos]; j < cc[pos + strlen(swear[i].word) - 1]; j++) {
 					if (tolower(line[j]) < 'a' || tolower(line[j] > 'z')) {
 						/* heuristical non-swear word found! */
