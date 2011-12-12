@@ -3738,6 +3738,8 @@ others might get added:
 
 There can be multiple jails. The player will be imprisoned in the one closest
 to him. Also, players will only get caught if they are getting close to a town.
+If you are far away from town, your punishment will be delayed until you move
+close to a town gain, then you will be jailed "for old crimes" accordingly.
 
 Note that jails (if the server has one) don't allow any sort of teleportation,
 nor will you turn into a ghost if you get killed there, instead you will get
