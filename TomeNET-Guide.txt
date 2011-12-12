@@ -3736,6 +3736,10 @@ others might get added:
      duration of imprisonment.
      (These settings are not enabled on the main servers.)
 
+If you commit multiple felonies, whether you are already in jail or not, the
+punishment adds up (except that it doesn't matter how many swear words occured
+in one chat message).
+
 There can be multiple jails. The player will be imprisoned in the one closest
 to him. Also, players will only get caught if they are getting close to a town.
 If you are far away from town, your punishment will be delayed until you move
