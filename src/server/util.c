@@ -2581,7 +2581,8 @@ s_printf("DUAL_MODE: Player %s toggles %s.\n", p_ptr->name, p_ptr->dual_mode ? "
 	return;
 }
 
-/* similar to strstr(), but catches char repetitions and swap-arounds */
+/* similar to strstr(), but catches char repetitions and swap-arounds.
+   TODO: current implementation is pretty naive, need to use more effective algo when less lazy. */
 static char* censor_strstr(char *line, char *word, int *eff_len) {
 	char bufl[MSG_LEN], bufs[NAME_LEN];
 	int i, j, add;
