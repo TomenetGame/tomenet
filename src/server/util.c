@@ -2641,11 +2641,183 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 #define CENSOR_PH_TO_F			/* (slightly picky) convert ph to f ?*/
 #define REDUCE_DUPLICATE_H		/* (slightly picky) reduce multiple h to just one? */
 #define REDUCE_H_CONSONANT		/* (slightly picky) drop h before consonants? */
-static int censor(char *line) {
-	int i, j, k, cc[MSG_LEN], offset, pos, eff_len;
-	char lcopy[MSG_LEN], lcopy2[MSG_LEN];
+static int censor_aux(char *buf, char *lcopy, int *c, bool leet) {
+	int i, j, k, offset, cc[MSG_LEN], pos, eff_len;
+	char line[MSG_LEN];
 	char *word, l0, l1, l2, l3;
 	int level = 0;
+
+	/* create working copies */
+	strcpy(line, buf);
+	for (i = 0; !i || c[i]; i++) cc[i] = c[i];
+	cc[i] = 0;
+
+	/* replace certain non-alpha chars by alpha chars (leet speak detection)? */
+	if (leet) {
+		i = 0;
+		while (lcopy[i]) {
+			switch (lcopy[i]) {
+			case '!': lcopy[i] = 'i'; break;
+			case '$': lcopy[i] = 's'; break;
+			case '|': lcopy[i] = 'i'; break;
+			case '(': lcopy[i] = 'i'; break;
+			case ')': lcopy[i] = 'i'; break;
+			case '/': lcopy[i] = 'i'; break;
+			case '\\': lcopy[i] = 'i'; break;
+			case '+': lcopy[i] = 't'; break;
+			case '1': lcopy[i] = 'i'; break;
+			case '3': lcopy[i] = 'b'; break;
+			case '4': lcopy[i] = 'a'; break;
+			case '5': lcopy[i] = 's'; break;
+			case '7': lcopy[i] = 't'; break;
+			case '8': lcopy[i] = 'b'; break;
+			case '0': lcopy[i] = 'o'; break;
+			}
+			line[cc[i]] = lcopy[i];
+			i++;
+		}
+	}
+
+#ifdef HIGHLY_EFFECTIVE_CENSOR
+	/* check for non-alpha chars and _drop_ them (!) */
+	i = j = 0;
+	while (lcopy[j]) {
+		if ((lcopy[j] < 'a' || lcopy[j] > 'z') &&
+		    lcopy[j] != 'Z') {
+			j++;
+			continue;
+		}
+
+		/* modify index map for stripped string */
+		cc[i] = cc[j];
+		lcopy[i] = lcopy[j];
+		i++;
+		j++;
+	}
+	lcopy[i] = '\0';
+#endif
+
+	/* reduce repeated chars (>3 for consonants, >2 for vowel) */
+	i = j = 0;
+	while (lcopy[j]) {
+		/* paranoia (if HIGHLY_EFFECTIVE_CENSOR is enabled) */
+		if (lcopy[j] < 'a' || lcopy[j] > 'z') {
+			cc[i] = cc[j];
+			lcopy[i] = lcopy[j];
+			i++;
+			j++;
+			continue;
+		}
+
+		switch (lcopy[j]) {
+		case 'a': case 'e': case 'i': case 'o': case 'u': case 'y':
+			if (lcopy[j + 1] == lcopy[j] &&
+			    lcopy[j + 2] == lcopy[j]) {
+				j++;
+				continue;
+			}
+			break;
+		default:
+			if (lcopy[j + 1] == lcopy[j] &&
+			    lcopy[j + 2] == lcopy[j] &&
+			    lcopy[j + 3] == lcopy[j]) {
+				j++;
+				continue;
+			}
+			break;
+		}
+
+		/* modify index map for reduced string */
+		cc[i] = cc[j];
+		lcopy[i] = lcopy[j];
+		i++;
+		j++;
+	}
+
+	/* check for swear words and censor them */
+	for (i = 0; swear[i].word[0]; i++) {
+		offset = 0;
+
+		/* check for multiple occurrances of this swear word */
+		while ((word = censor_strstr(lcopy + offset, swear[i].word, &eff_len))) {
+			pos = word - lcopy;
+			l0 = tolower(line[cc[pos]]);
+			if (cc[pos] >= 1) l1 = tolower(line[cc[pos] - 1]);
+			if (cc[pos] >= 2) l2 = tolower(line[cc[pos] - 2]);
+			if (cc[pos] >= 3) l3 = tolower(line[cc[pos] - 3]);
+
+			/* prevent checking the same occurance repeatedly */
+			offset = pos + strlen(swear[i].word);
+
+#if 1
+			/* hm, maybe don't track swear words if proceeded and postceeded by some other letters
+			   and separated by spaces inside it -- and if those nearby letters aren't the same letter,
+			   if someone just duplicates it like 'sshitt' */
+			/* check for swear-word-preceding non-duplicate alpha char */
+			if (cc[pos] > 0 &&
+			    l1 >= 'a' && l1 <= 'z' &&
+			    l1 != l0) {
+				/* special treatment for swear words of <= 3 chars length: */
+				if (strlen(swear[i].word) <= 3) {
+					/* if there's UP TO 2 other chars before it or exactly 1 non-duplicate char, it's exempt.
+					   (for more leading chars, nonswear has to be used.) */
+					if (cc[pos] == 1 && l1 >= 'a' && l1 <= 'z' && l1 != l0) break;
+					if (cc[pos] == 2) {
+						if (l1 >= 'a' && l1 <= 'z' && l2 >= 'a' && l2 <= 'z' &&
+						    (l0 != l1 || l0 != l2 || l1 != l2)) break;
+						/* also test for only 1 leading alpha char */
+						if ((l2 < 'a' || l2 > 'z') &&
+						    l1 >= 'a' && l1 <= 'z' && l1 != l0) break;
+					}
+					if (cc[pos] >= 3) {
+						 if ((l3 < 'a' || l3 > 'z') &&
+						    l1 >= 'a' && l1 <= 'z' && l2 >= 'a' && l2 <= 'z' &&
+						    (l0 != l1 || l0 != l2 || l1 != l2)) break;
+						/* also test for only 1 leading alpha char */
+						if ((l2 < 'a' || l2 > 'z') &&
+						    l1 >= 'a' && l1 <= 'z' && l1 != l0) break;
+					}
+					/* if there's no char before it but 2 other chars after it or 1 non-dup after it, it's exempt. */
+					//TODO maybe - or just use nonswear for that
+				}
+
+				/* check that the swear word occurance was originally non-continuous, ie separated by space etc.
+				   (if this is FALSE then this is rather a case for nonswearwords.txt instead.) */
+				for (j = cc[pos]; j < cc[pos + strlen(swear[i].word) - 1]; j++) {
+					if (tolower(line[j]) < 'a' || tolower(line[j] > 'z')) {
+						/* heuristical non-swear word found! */
+						break;
+					}
+				}
+				/* found? */
+				if (j < cc[pos + strlen(swear[i].word) - 1]) continue;
+			}
+#endif
+
+#if 0
+			for (j = 0; j < eff_len); j++) {
+				/* censor it! */
+				line[cc[pos + j]] = buf[cc[pos + j]] = '*';
+#else
+			for (j = 0; j < eff_len - 1; j++) {
+				/* actually censor separator chars too, just so it looks better ;) */
+				for (k = cc[pos + j]; k <= cc[pos + j + 1]; k++)
+					line[k] = buf[k] = '*';
+#endif
+
+				/* for processing lcopy in a while loop instead of just 'if'
+				   -- OBSOLETE ACTUALLY (thanks to 'offset')? */
+				lcopy[pos + j] = '*';
+			}
+			level = MAX(level, swear[i].level);
+		}
+	}
+	return(level);
+}
+static int censor(char *line) {
+	int i, j, cc[MSG_LEN], offset;
+	char lcopy[MSG_LEN], lcopy2[MSG_LEN], tmp[MSG_LEN];
+	char *word;
 
 	strcpy(lcopy, line);
 
@@ -2719,6 +2891,7 @@ static int censor(char *line) {
 #endif
 #ifdef REDUCE_H_CONSONANT
 	/* reduce 'h' before consonant */
+	//TODO: first do leet conversion ie move this into censor_aux() - and also do HIGHLY_EFFECTIVE_CENSOR first probably
 	i = j = 0;
 	while (lcopy[j]) {
 		if (lcopy[j] == 'h' &&
@@ -2728,7 +2901,9 @@ static int censor(char *line) {
 		    lcopy[j + 1] != 'i' &&
 		    lcopy[j + 1] != 'o' &&
 		    lcopy[j + 1] != 'u' &&
-		    lcopy[j + 1] != 'y') {
+		    lcopy[j + 1] != 'y'
+		    && lcopy[j + 1] >= 'a' && lcopy[j + 1] <= 'z' /*TODO drop this, see 'TODO' above*/
+		    ) {
 			j++;
 		}
 
@@ -2743,6 +2918,7 @@ static int censor(char *line) {
 	cc[i] = 0;
 
 	/* reduce 'h' after consonant except for c or s */
+	//TODO: first do leet conversion ie move this into censor_aux() - and also do HIGHLY_EFFECTIVE_CENSOR first probably
 	i = j = 1;
 	if (lcopy[0])
 	while (lcopy[j]) {
@@ -2753,7 +2929,9 @@ static int censor(char *line) {
 		    lcopy[j - 1] != 'e' &&
 		    lcopy[j - 1] != 'i' &&
 		    lcopy[j - 1] != 'o' &&
-		    lcopy[j - 1] != 'u') {
+		    lcopy[j - 1] != 'u'
+		    && lcopy[j - 1] >= 'a' && lcopy[j - 1] <= 'z' /*TODO drop this, see 'TODO' above*/
+		    ) {
 			j++;
 			continue;
 		}
@@ -2785,141 +2963,16 @@ static int censor(char *line) {
 	}
 	strcpy(lcopy, lcopy2);
 
-#ifdef HIGHLY_EFFECTIVE_CENSOR
-	/* check for non-alpha chars and _drop_ them (!) */
-	i = j = 0;
-	while (lcopy[j]) {
-		if ((lcopy[j] < 'a' || lcopy[j] > 'z') &&
-		    lcopy[j] != 'Z') {
-			j++;
-			continue;
-		}
+	/* perform two more 'parallel' tests  */
+	strcpy(tmp, line);
+	i = censor_aux(line, lcopy, cc, FALSE); /* continue with normal check  */
+	j = censor_aux(tmp, lcopy2, cc, TRUE); /* continue with leet speek check */
 
-		/* modify index map for stripped string */
-		cc[i] = cc[j];
-		lcopy[i] = lcopy[j];
-		i++;
-		j++;
+	if (j > i) {
+		strcpy(line, tmp);
+		return j;
 	}
-	lcopy[i] = '\0';
-#endif
-
-	/* reduce repeated chars (>3 for consonants, >2 for vowel) */
-	i = j = 0;
-	while (lcopy[j]) {
-		/* paranoia (if HIGHLY_EFFECTIVE_CENSOR is enabled) */
-		if (lcopy[j] < 'a' || lcopy[j] > 'z') {
-			cc[i] = cc[j];
-			lcopy[i] = lcopy[j];
-			i++;
-			j++;
-			continue;
-		}
-
-		switch (lcopy[j]) {
-		case 'a': case 'e': case 'i': case 'o': case 'u': case 'y':
-			if (lcopy[j + 1] == lcopy[j] &&
-			    lcopy[j + 2] == lcopy[j]) {
-				j++;
-				continue;
-			}
-			break;
-		default:
-			if (lcopy[j + 1] == lcopy[j] &&
-			    lcopy[j + 2] == lcopy[j] &&
-			    lcopy[j + 3] == lcopy[j]) {
-				j++;
-				continue;
-			}
-			break;
-		}
-
-		/* modify index map for reduced string */
-		cc[i] = cc[j];
-		lcopy[i] = lcopy[j];
-		i++;
-		j++;
-	}
-
-	/* check for swear words and censor them */
-	for (i = 0; swear[i].word[0]; i++) {
-		offset = 0;
-
-		/* check for multiple occurrances of this swear word */
-		while ((word = censor_strstr(lcopy + offset, swear[i].word, &eff_len))) {
-			pos = word - lcopy;
-			l0 = tolower(line[cc[pos]]);
-			if (cc[pos] >= 1) l1 = tolower(line[cc[pos] - 1]);
-			if (cc[pos] >= 2) l2 = tolower(line[cc[pos] - 2]);
-			if (cc[pos] >= 3) l3 = tolower(line[cc[pos] - 3]);
-
-			/* prevent checking the same occurance repeatedly */
-			offset = word - lcopy + strlen(swear[i].word);
-
-#if 1
-			/* hm, maybe don't track swear words if proceeded and postceeded by some other letters
-			   and separated by spaces inside it -- and if those nearby letters aren't the same letter,
-			   if someone just duplicates it like 'sshitt' */
-			/* check for swear-word-preceding non-duplicate alpha char */
-			if (cc[pos] > 0 &&
-			    l1 >= 'a' && l1 <= 'z' &&
-			    l1 != l0) {
-				/* special treatment for swear words of <= 3 chars length: */
-				if (strlen(swear[i].word) <= 3) {
-					/* if there's UP TO 2 other chars before it or exactly 1 non-duplicate char, it's exempt.
-					   (for more leading chars, nonswear has to be used.) */
-					if (cc[pos] == 1 && l1 >= 'a' && l1 <= 'z' && l1 != l0) break;
-					if (cc[pos] == 2) {
-						if (l1 >= 'a' && l1 <= 'z' && l2 >= 'a' && l2 <= 'z' &&
-						    (l0 != l1 || l0 != l2 || l1 != l2)) break;
-						/* also test for only 1 leading alpha char */
-						if ((l2 < 'a' || l2 > 'z') &&
-						    l1 >= 'a' && l1 <= 'z' && l1 != l0) break;
-					}
-					if (cc[pos] >= 3) {
-						 if ((l3 < 'a' || l3 > 'z') &&
-						    l1 >= 'a' && l1 <= 'z' && l2 >= 'a' && l2 <= 'z' &&
-						    (l0 != l1 || l0 != l2 || l1 != l2)) break;
-						/* also test for only 1 leading alpha char */
-						if ((l2 < 'a' || l2 > 'z') &&
-						    l1 >= 'a' && l1 <= 'z' && l1 != l0) break;
-					}
-					/* if there's no char before it but 2 other chars after it or 1 non-dup after it, it's exempt. */
-					//TODO maybe
-				}
-
-				/* check that the swear word occurance was originally non-continuous, ie separated by space etc.
-				   (if this is FALSE then this is rather a case for nonswearwords.txt instead.) */
-				for (j = cc[pos]; j < cc[pos + strlen(swear[i].word) - 1]; j++) {
-					if (tolower(line[j]) < 'a' || tolower(line[j] > 'z')) {
-						/* heuristical non-swear word found! */
-						break;
-					}
-				}
-				/* found? */
-				if (j < cc[pos + strlen(swear[i].word) - 1]) continue;
-			}
-#endif
-
-#if 0
-			for (j = 0; j < eff_len); j++) {
-				/* censor it! */
-				line[cc[(word - lcopy) + j]] = '*';
-#else
-			for (j = 0; j < eff_len - 1; j++) {
-				/* actually censor separator chars too, just so it looks better ;) */
-				for (k = cc[(word - lcopy) + j]; k <= cc[(word - lcopy) + j + 1]; k++)
-					line[k] = '*';
-#endif
-
-				/* for processing lcopy in a while loop instead of just 'if'
-				   -- OBSOLETE ACTUALLY (thanks to 'offset')? */
-				lcopy[(word - lcopy) + j] = '*';
-			}
-			level = MAX(level, swear[i].level);
-		}
-	}
-	return(level);
+	return i;
 }
 
 /*
