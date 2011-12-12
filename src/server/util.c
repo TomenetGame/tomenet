@@ -2741,6 +2741,32 @@ static int censor(char *line) {
 	}
 	lcopy[i] = '\0';
 	cc[i] = 0;
+
+	/* reduce 'h' after consonant except for c or s */
+	i = j = 1;
+	if (lcopy[0])
+	while (lcopy[j]) {
+		if (lcopy[j] == 'h' &&
+		    lcopy[j - 1] != 'c' &&
+		    lcopy[j - 1] != 's' &&
+		    lcopy[j - 1] != 'a' &&
+		    lcopy[j - 1] != 'e' &&
+		    lcopy[j - 1] != 'i' &&
+		    lcopy[j - 1] != 'o' &&
+		    lcopy[j - 1] != 'u') {
+			j++;
+			continue;
+		}
+
+		/* build index map for stripped string */
+		cc[i] = cc[j];
+		lcopy[i] = lcopy[j];
+
+		i++;
+		j++;
+	}
+	lcopy[i] = '\0';
+	cc[i] = 0;
 #endif
 
 	/* check for legal words first */
