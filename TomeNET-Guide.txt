@@ -8017,10 +8017,12 @@ and unenchanted (ie (+0,+0)) digging tools:
 For digging through granite wall without having to wait for ages to succeed,
 you will definitely want a better digging tool than basic shovels or picks.
 For example ones 'of Digging', a magical ego power for digging tools.
-Or higher level diggers such as gnomish, orcish or dwarven diggers.
+Or higher level diggers such as gnomish, orcish or dwarven diggers or mattocks,
+which have a higher base digging bonus that just (+1).
 
 Tunnelling into walls that are actually secret doors will be treated as if
-you were 'searching' instead of tunnelling.
+you were 'searching' instead of tunnelling. You cannot find secret doors in
+permanent (aka non-tunneable) walls this way though, such as mountains.
 Tunnelling into known doors will just try to open them instead.
 
 Tunnelling might reveal special floor features, items or gold (walls that are
