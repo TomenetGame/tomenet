@@ -9905,11 +9905,14 @@ static int Receive_raw_key(int ind)
 				case '!':
 					/* Look at in-game bbs - C. Blue */
 					msg_print(player, "\377wBulletin board (type '/bbs <text>' in chat to write something) :");
+					censor_message = TRUE;
 					for (n = 0; n < BBS_LINES; n++)
 						if (strcmp(bbs_line[n], "")) {
+							censor_length = strlen(bbs_line[i]) + bbs_line[i] - strchr(bbs_line[i], ':') - 4;
 							msg_format(player, "\377s %s", bbs_line[n]);
 							bbs_empty = FALSE;
 						}
+					censor_message = FALSE;
 					if (bbs_empty) msg_print(player, "\377s <nothing has been written on the board so far>");
 					break;
 //					return 1; /* consume no energy/don't disturb character (resting mode) */
@@ -10087,7 +10090,7 @@ static int Receive_BBS(int ind) {
 		censor_message = TRUE;
 		for (n = 0; n < BBS_LINES; n++)
 			if (strcmp(bbs_line[n], "")) {
-				censor_length = bbs_line[n] - strchr(bbs_line[n], ':') - 2;
+				censor_length = strlen(bbs_line[n]) + bbs_line[n] - strchr(bbs_line[n], ':') - 4;
 				msg_format(player, "\377s %s", bbs_line[n]);
 				bbs_empty = FALSE;
 			}

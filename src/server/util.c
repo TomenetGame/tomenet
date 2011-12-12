@@ -2744,8 +2744,16 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet) {
 			pos = word - lcopy;
 			l0 = tolower(line[cc[pos]]);
 			if (cc[pos] >= 1) l1 = tolower(line[cc[pos] - 1]);
-			if (cc[pos] >= 2) l2 = tolower(line[cc[pos] - 2]);
-			if (cc[pos] >= 3) l3 = tolower(line[cc[pos] - 3]);
+			if (cc[pos] >= 2) {
+				l2 = tolower(line[cc[pos] - 2]);
+				/* catch & dismiss colour codes */
+				if (l2 == '\377') l1 = 'Y'; /* 'disable' char */
+			}
+			if (cc[pos] >= 3) {
+				l3 = tolower(line[cc[pos] - 3]);
+				/* catch & dismiss colour codes */
+				if (l3 == '\377') l2 = 'Y'; /* 'disable' char */
+			}
 
 			/* prevent checking the same occurance repeatedly */
 			offset = pos + strlen(swear[i].word);
@@ -2861,7 +2869,7 @@ static int censor(char *line) {
 		}
 
 		/* build index map for stripped string */
-		cc[i] = j;
+		cc[i] = cc[j];
 		lcopy[i] = lcopy[j];
 
 		i++;

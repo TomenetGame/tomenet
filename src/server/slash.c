@@ -2498,7 +2498,7 @@ void do_slash_cmd(int Ind, char *message)
 				censor_message = TRUE;
 				for (i = 0; i < BBS_LINES; i++)
 					if (strcmp(bbs_line[i], "")) {
-						censor_length = bbs_line[i] - strchr(bbs_line[i], ':') - 2;
+						censor_length = strlen(bbs_line[i]) + bbs_line[i] - strchr(bbs_line[i], ':') - 4;
 						msg_format(Ind, "\377s %s", bbs_line[i]);
 						bbs_empty = FALSE;
 					}
