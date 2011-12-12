@@ -2637,8 +2637,10 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 }
 
 /* Censor swear words while keeping good words, and determining punishment level */
-/* strip all kinds of non-alpha chars too? */
-#define HIGHLY_EFFECTIVE_CENSOR
+#define HIGHLY_EFFECTIVE_CENSOR		/* strip all kinds of non-alpha chars too? */
+#define CENSOR_PH_TO_F			/* (slightly picky) convert ph to f ?*/
+#define REDUCE_DUPLICATE_H		/* (slightly picky) reduce multiple h to just one? */
+#define REDUCE_H_CONSONANT		/* (slightly picky) drop h before consonants? */
 static int censor(char *line) {
 	int i, j, k, cc[MSG_LEN], offset, pos, eff_len;
 	char lcopy[MSG_LEN], lcopy2[MSG_LEN];
@@ -2654,12 +2656,34 @@ static int censor(char *line) {
 		i++;
 	}
 
-	/* strip colour codes */
+	/* strip colour codes and initialize index map (cc[]) at that */
 	i = j = 0;
 	while (lcopy[j]) {
 		if (lcopy[j] == '\377') {
 			j++;
 			if (lcopy[j]) j++;
+			continue;
+		}
+
+		/* initially build index map for stripped string */
+		cc[i] = j;
+		lcopy[i] = lcopy[j];
+
+		i++;
+		j++;
+	}
+	lcopy[i] = '\0';
+	cc[i] = 0;
+
+#ifdef CENSOR_PH_TO_F
+	/* reduce ph to f */
+	i = j = 0;
+	while (lcopy[j]) {
+		if (lcopy[j] == 'p' && lcopy[j + 1] == 'h') {
+			cc[i] = cc[j];
+			lcopy[i] = 'f';
+			i++;
+			j += 2;
 			continue;
 		}
 
@@ -2672,6 +2696,52 @@ static int censor(char *line) {
 	}
 	lcopy[i] = '\0';
 	cc[i] = 0;
+#endif
+
+#ifdef REDUCE_DUPLICATE_H
+	/* reduce hh to h */
+	i = j = 0;
+	while (lcopy[j]) {
+		if (lcopy[j] == 'h' && lcopy[j + 1] == 'h') {
+			j++;
+			continue;
+		}
+
+		/* build index map for stripped string */
+		cc[i] = cc[j];
+		lcopy[i] = lcopy[j];
+
+		i++;
+		j++;
+	}
+	lcopy[i] = '\0';
+	cc[i] = 0;
+#endif
+#ifdef REDUCE_H_CONSONANT
+	/* reduce 'h' before consonant */
+	i = j = 0;
+	while (lcopy[j]) {
+		if (lcopy[j] == 'h' &&
+		    lcopy[j + 1] != '\0' &&
+		    lcopy[j + 1] != 'a' &&
+		    lcopy[j + 1] != 'e' &&
+		    lcopy[j + 1] != 'i' &&
+		    lcopy[j + 1] != 'o' &&
+		    lcopy[j + 1] != 'u' &&
+		    lcopy[j + 1] != 'y') {
+			j++;
+		}
+
+		/* build index map for stripped string */
+		cc[i] = cc[j];
+		lcopy[i] = lcopy[j];
+
+		i++;
+		j++;
+	}
+	lcopy[i] = '\0';
+	cc[i] = 0;
+#endif
 
 	/* check for legal words first */
 	strcpy(lcopy2, lcopy); /* use a 'working copy' to allow _overlapping_ nonswear words */
@@ -2689,8 +2759,8 @@ static int censor(char *line) {
 	}
 	strcpy(lcopy, lcopy2);
 
-	/* and possibly non-alpha chars */
 #ifdef HIGHLY_EFFECTIVE_CENSOR
+	/* check for non-alpha chars and _drop_ them (!) */
 	i = j = 0;
 	while (lcopy[j]) {
 		if ((lcopy[j] < 'a' || lcopy[j] > 'z') &&
@@ -2708,7 +2778,7 @@ static int censor(char *line) {
 	lcopy[i] = '\0';
 #endif
 
-	/* reduce repeated chars (>3 for consonants, >2 for vocals) */
+	/* reduce repeated chars (>3 for consonants, >2 for vowel) */
 	i = j = 0;
 	while (lcopy[j]) {
 		/* paranoia (if HIGHLY_EFFECTIVE_CENSOR is enabled) */
@@ -2842,7 +2912,7 @@ static int censor(char *line) {
  */
 static void player_talk_aux(int Ind, char *message)
 {
- 	int i, len, target = 0;
+ 	int i, j, len, target = 0;
 	char search[MSG_LEN], sender[MAX_CHARS];
 	char message2[MSG_LEN];
 	player_type *p_ptr = Players[Ind], *q_ptr;
@@ -3337,7 +3407,7 @@ static void player_talk_aux(int Ind, char *message)
 	if (c_n == 'b' && !is_admin(p_ptr)) return;
 
 	strcpy(message2, message);
-	handle_punish(Ind, handle_censor(message2));
+	j = handle_censor(message2);
 	censor_message = TRUE;
 
 #ifdef TOMENET_WORLDS
@@ -3407,6 +3477,7 @@ static void player_talk_aux(int Ind, char *message)
 #endif
 	p_ptr->warning_chat = 1;
 	censor_message = FALSE;
+	handle_punish(Ind, j);
 
 	exec_lua(0, "chat_handler()");
 
