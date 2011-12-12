@@ -2668,6 +2668,7 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 }
 
 /* Censor swear words while keeping good words, and determining punishment level */
+#define EXEMPT_BROKEN_SWEARWORDS	/* don't 'recognize' swear words that are broken up into 'innocent' parts */
 #define HIGHLY_EFFECTIVE_CENSOR		/* strip all kinds of non-alpha chars too? */
 #define CENSOR_PH_TO_F			/* (slightly picky) convert ph to f ?*/
 #define REDUCE_DUPLICATE_H		/* (slightly picky) reduce multiple h to just one? */
@@ -2708,6 +2709,64 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet) {
 			i++;
 		}
 	}
+
+#ifdef REDUCE_H_CONSONANT
+	/* reduce 'h' before consonant */
+	//TODO: do HIGHLY_EFFECTIVE_CENSOR first probably
+	i = j = 0;
+	while (lcopy[j]) {
+		if (lcopy[j] == 'h' &&
+		    lcopy[j + 1] != '\0' &&
+		    lcopy[j + 1] != 'a' &&
+		    lcopy[j + 1] != 'e' &&
+		    lcopy[j + 1] != 'i' &&
+		    lcopy[j + 1] != 'o' &&
+		    lcopy[j + 1] != 'u' &&
+		    lcopy[j + 1] != 'y'
+		    && lcopy[j + 1] >= 'a' && lcopy[j + 1] <= 'z' /*TODO drop this, see 'TODO' above*/
+		    ) {
+			j++;
+		}
+
+		/* build index map for stripped string */
+		cc[i] = cc[j];
+		lcopy[i] = lcopy[j];
+
+		i++;
+		j++;
+	}
+	lcopy[i] = '\0';
+	cc[i] = 0;
+
+	/* reduce 'h' after consonant except for c or s */
+	//TODO: do HIGHLY_EFFECTIVE_CENSOR first probably
+	i = j = 1;
+	if (lcopy[0])
+	while (lcopy[j]) {
+		if (lcopy[j] == 'h' &&
+		    lcopy[j - 1] != 'c' &&
+		    lcopy[j - 1] != 's' &&
+		    lcopy[j - 1] != 'a' &&
+		    lcopy[j - 1] != 'e' &&
+		    lcopy[j - 1] != 'i' &&
+		    lcopy[j - 1] != 'o' &&
+		    lcopy[j - 1] != 'u'
+		    && lcopy[j - 1] >= 'a' && lcopy[j - 1] <= 'z' /*TODO drop this, see 'TODO' above*/
+		    ) {
+			j++;
+			continue;
+		}
+
+		/* build index map for stripped string */
+		cc[i] = cc[j];
+		lcopy[i] = lcopy[j];
+
+		i++;
+		j++;
+	}
+	lcopy[i] = '\0';
+	cc[i] = 0;
+#endif
 
 #ifdef HIGHLY_EFFECTIVE_CENSOR
 	/* check for non-alpha chars and _drop_ them (!) */
@@ -2788,7 +2847,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet) {
 			/* prevent checking the same occurance repeatedly */
 			offset = pos + strlen(swear[i].word);
 
-#if 1
+#ifdef EXEMPT_BROKEN_SWEARWORDS
 			/* hm, maybe don't track swear words if proceeded and postceeded by some other letters
 			   and separated by spaces inside it -- and if those nearby letters aren't the same letter,
 			   if someone just duplicates it like 'sshitt' */
@@ -2834,12 +2893,12 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet) {
 #endif
 
 #if 0
+			/* censor it! */
 			for (j = 0; j < eff_len); j++) {
-				/* censor it! */
 				line[cc[pos + j]] = buf[cc[pos + j]] = '*';
 #else
+			/* actually censor separator chars too, just so it looks better ;) */
 			for (j = 0; j < eff_len - 1; j++) {
-				/* actually censor separator chars too, just so it looks better ;) */
 				for (k = cc[pos + j]; k <= cc[pos + j + 1]; k++)
 					line[k] = buf[k] = '*';
 #endif
@@ -2914,63 +2973,6 @@ static int censor(char *line) {
 	i = j = 0;
 	while (lcopy[j]) {
 		if (lcopy[j] == 'h' && lcopy[j + 1] == 'h') {
-			j++;
-			continue;
-		}
-
-		/* build index map for stripped string */
-		cc[i] = cc[j];
-		lcopy[i] = lcopy[j];
-
-		i++;
-		j++;
-	}
-	lcopy[i] = '\0';
-	cc[i] = 0;
-#endif
-#ifdef REDUCE_H_CONSONANT
-	/* reduce 'h' before consonant */
-	//TODO: first do leet conversion ie move this into censor_aux() - and also do HIGHLY_EFFECTIVE_CENSOR first probably
-	i = j = 0;
-	while (lcopy[j]) {
-		if (lcopy[j] == 'h' &&
-		    lcopy[j + 1] != '\0' &&
-		    lcopy[j + 1] != 'a' &&
-		    lcopy[j + 1] != 'e' &&
-		    lcopy[j + 1] != 'i' &&
-		    lcopy[j + 1] != 'o' &&
-		    lcopy[j + 1] != 'u' &&
-		    lcopy[j + 1] != 'y'
-		    && lcopy[j + 1] >= 'a' && lcopy[j + 1] <= 'z' /*TODO drop this, see 'TODO' above*/
-		    ) {
-			j++;
-		}
-
-		/* build index map for stripped string */
-		cc[i] = cc[j];
-		lcopy[i] = lcopy[j];
-
-		i++;
-		j++;
-	}
-	lcopy[i] = '\0';
-	cc[i] = 0;
-
-	/* reduce 'h' after consonant except for c or s */
-	//TODO: first do leet conversion ie move this into censor_aux() - and also do HIGHLY_EFFECTIVE_CENSOR first probably
-	i = j = 1;
-	if (lcopy[0])
-	while (lcopy[j]) {
-		if (lcopy[j] == 'h' &&
-		    lcopy[j - 1] != 'c' &&
-		    lcopy[j - 1] != 's' &&
-		    lcopy[j - 1] != 'a' &&
-		    lcopy[j - 1] != 'e' &&
-		    lcopy[j - 1] != 'i' &&
-		    lcopy[j - 1] != 'o' &&
-		    lcopy[j - 1] != 'u'
-		    && lcopy[j - 1] >= 'a' && lcopy[j - 1] <= 'z' /*TODO drop this, see 'TODO' above*/
-		    ) {
 			j++;
 			continue;
 		}
