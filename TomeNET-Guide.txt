@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 5. December 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 12. December 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -71,7 +71,8 @@ Contents
     (4.1)   Running, picking up items, fighting
     (4.1a)  Auto-retaliation
     (4.2)   Level and owner of items
-    (4.3)   Dungeon and tower types, Ironman, Jail
+    (4.3)   Dungeon and tower types
+    (4.3a)  The Jail
     (4.4)   Terrain
     (4.5)   Towns, shops, the dungeons
     (4.6)   Pits and vaults
@@ -2061,6 +2062,12 @@ message. Politely try again after some time.
 You can scroll back the messages using CTRL+P, or look at chat-only messages
 using CTRL+O.
 
+Please do not use foul language in chat. If you do, depending on the server
+settings you might end up in jail.
+Also, foul language is filtered by default. If you want to turn that off,
+press  = 2  and toggle the client option "censor_swearing". (Requires client
+version newer than 4.4.8a, or the 'test client' download.)
+
 You can also enter slash commands in the chat line. For details about slash
 commands see (0.2).
 
@@ -3589,8 +3596,8 @@ the owner.
 
 
 
-(4.3) Dungeon and tower types, Ironman, Jail
---------------------------------------------
+(4.3) Dungeon and tower types
+-----------------------------
 To enter a dungeon, you look for the staircase symbol '>', step on it and press
 the '>' key to enter. Same for entering towers, except their staircase goes
 upwards instead of downwards, and hence is a '<' symbol instead of '>'.
@@ -3691,12 +3698,6 @@ There are different types of dungeons. The main five are:
 If a dungeon has several of these flags, the latter ones will override the
 staircase colour. So a hellish ironman dungeon has hellish-looking staircases.
 
-Jail:
-Note that jails (if the server has one) don't allow any type of teleportation,
-nor will you turn into a ghost if you get killed there, instead you will get
-destroyed completely. Same as with 'ironman dungeons'.
-A jail usually has an ironman tower inside.
-
 Sometimes you might find ruins of old staircases that don't lead to any
 dungeon or tower. Those have no further functionality and are coloured grey.
 
@@ -3714,11 +3715,43 @@ Ironman       yes     yes       at bottom only  downwards   no            +15%
 Hellish       yes     yes       yes             yes         yes           +10%
 
 
+(4.3a) The Jail
+---------------
+The jail is a dedicated house that does not allow imprisoned characters to
+escape until a timer runs out, after which they will be freed.
+
+The jail was originally built for punishment of the following felonies -
+although depending on the server's configuration some might be disabled while
+others might get added:
+    -Swearing
+     Still the most common felony, it will usually only result in a pretty
+     short time of imprisonment.
+     Foul language will be filtered by '*' characters to other players, except
+     if they have turned the filter off in their clients (also see (3.3)).
+    -Spamming the chat (aka 'talking too much')
+     Very rare to trigger, also results in a pretty short time of imprisonment.
+    -On server settings where players have to declare that they are ready for
+     pvp, attacking a non-pvp player will result in a long time of imprisonment
+     Trying to shoot someone who's on a safe grid will also result in a medium
+     duration of imprisonment.
+     (These settings are not enabled on the main servers.)
+
+There can be multiple jails. The player will be imprisoned in the one closest
+to him. Also, players will only get caught if they are getting close to a town.
+
+Note that jails (if the server has one) don't allow any sort of teleportation,
+nor will you turn into a ghost if you get killed there, instead you will get
+destroyed completely (basically same as if you were a no-ghost mode char).
+
+A jail usually has an ironman tower or dungeon inside. It has no deeper meaning
+and is certainly not required or recommended to take. If you're up for a pretty
+hard extra challenge and take it, you'll be a free man or woman if you make it
+out alive, though.
+
+
 
 (4.4) Terrain
 -------------
-
-
 Terrain features in the main window:
 ------------------------------------
 Town buildings-
@@ -4181,8 +4214,8 @@ and the item afterwards, effectively simply asking you to specify the item.
 
 
 
-(4.8) Level & vault feelings, Jail, Ironman
--------------------------------------------
+(4.8) Level & vault feelings
+----------------------------
 Levels:
 -------
 Sometimes if you enter a new dungeon level your character will have a special
