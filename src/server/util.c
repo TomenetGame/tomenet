@@ -2581,11 +2581,66 @@ s_printf("DUAL_MODE: Player %s toggles %s.\n", p_ptr->name, p_ptr->dual_mode ? "
 	return;
 }
 
+/* similar to strstr(), but catches char repetitions and swap-arounds */
+static char* censor_strstr(char *line, char *word, int *eff_len) {
+	char bufl[MSG_LEN], bufs[NAME_LEN];
+	int i, j, add;
+
+	if (line[0] == '\0') return (char*)NULL;
+	if (word[0] == '\0') return (char*)NULL;//or line, I guess.
+
+	strcpy(bufl, line);
+	strcpy(bufs, word);
+	*eff_len = 0;
+
+	/* (Note: Since we're returning line[] without any char-mapping, we
+	   can only do replacements here, not shortening/expanding. */
+	/* replace 'ck' or 'kc' by just 'kk' */
+	i = 0;
+	while (bufl[i] && bufl[i + 1]) {
+		if (bufl[i] == 'c' && bufl[i + 1] == 'k') bufl[i] = 'k';
+		else if (bufl[i] == 'k' && bufl[i + 1] == 'c') bufl[i + 1] = 'k';
+		i++;
+	}
+	i = 0;
+	while (bufs[i] && bufs[i + 1]) {
+		if (bufs[i] == 'c' && bufs[i + 1] == 'k') bufs[i] = 'k';
+		else if (bufs[i] == 'k' && bufs[i + 1] == 'c') bufs[i + 1] = 'k';
+		i++;
+	}
+
+	/* search while allowing repetitions/swapping of characters */
+	i = 0;
+	while (bufl[i]) {
+		j = 0;
+		add = 0; /* track duplicte chars */
+		while (bufs[j] == bufl[i + j + add]) {
+			if (bufs[j + 1] == '\0') {
+				*eff_len = j + add + 1;
+				return &line[i]; /* FOUND */
+			}
+			j++;
+
+			/* end of line? */
+			if (bufl[i + j + add] == '\0') return (char*)NULL; /* NOT FOUND */
+
+			/* reduce duplicate chars */
+			if (bufs[j] != bufl[i + j + add]) {
+				if (bufs[j - 1] == bufl[i + j + add])
+					add++;
+			}
+		}
+		/* NOT FOUND so far */
+		i++;
+	}
+	return (char*)NULL; /* NOT FOUND */
+}
+
 /* Censor swear words while keeping good words, and determining punishment level */
 /* strip all kinds of non-alpha chars too? */
 #define HIGHLY_EFFECTIVE_CENSOR
 static int censor(char *line) {
-	int i, j, k, cc[MSG_LEN], offset, pos;
+	int i, j, k, cc[MSG_LEN], offset, pos, eff_len;
 	char lcopy[MSG_LEN], lcopy2[MSG_LEN];
 	char *word, l0, l1, l2, l3;
 	int level = 0;
@@ -2618,7 +2673,7 @@ static int censor(char *line) {
 	lcopy[i] = '\0';
 	cc[i] = 0;
 
-	/* check for legal words first - checkallow() now obsolete */
+	/* check for legal words first */
 	strcpy(lcopy2, lcopy); /* use a 'working copy' to allow _overlapping_ nonswear words */
 	for (i = 0; nonswear[i][0]; i++) {
 		offset = 0;
@@ -2653,12 +2708,49 @@ static int censor(char *line) {
 	lcopy[i] = '\0';
 #endif
 
+	/* reduce repeated chars (>3 for consonants, >2 for vocals) */
+	i = j = 0;
+	while (lcopy[j]) {
+		/* paranoia (if HIGHLY_EFFECTIVE_CENSOR is enabled) */
+		if (lcopy[j] < 'a' || lcopy[j] > 'z') {
+			cc[i] = cc[j];
+			lcopy[i] = lcopy[j];
+			i++;
+			j++;
+			continue;
+		}
+
+		switch (lcopy[j]) {
+		case 'a': case 'e': case 'i': case 'o': case 'u': case 'y':
+			if (lcopy[j + 1] == lcopy[j] &&
+			    lcopy[j + 2] == lcopy[j]) {
+				j++;
+				continue;
+			}
+			break;
+		default:
+			if (lcopy[j + 1] == lcopy[j] &&
+			    lcopy[j + 2] == lcopy[j] &&
+			    lcopy[j + 3] == lcopy[j]) {
+				j++;
+				continue;
+			}
+			break;
+		}
+
+		/* modify index map for reduced string */
+		cc[i] = cc[j];
+		lcopy[i] = lcopy[j];
+		i++;
+		j++;
+	}
+
 	/* check for swear words and censor them */
 	for (i = 0; swear[i].word[0]; i++) {
 		offset = 0;
 
 		/* check for multiple occurrances of this swear word */
-		while ((word = strstr(lcopy + offset, swear[i].word))) {
+		while ((word = censor_strstr(lcopy + offset, swear[i].word, &eff_len))) {
 			pos = word - lcopy;
 			l0 = tolower(line[cc[pos]]);
 			if (cc[pos] >= 1) l1 = tolower(line[cc[pos] - 1]);
@@ -2714,11 +2806,11 @@ static int censor(char *line) {
 #endif
 
 #if 0
-			for (j = 0; j < strlen(swear[i].word); j++) {
+			for (j = 0; j < eff_len); j++) {
 				/* censor it! */
 				line[cc[(word - lcopy) + j]] = '*';
 #else
-			for (j = 0; j < strlen(swear[i].word) - 1; j++) {
+			for (j = 0; j < eff_len - 1; j++) {
 				/* actually censor separator chars too, just so it looks better ;) */
 				for (k = cc[(word - lcopy) + j]; k <= cc[(word - lcopy) + j + 1]; k++)
 					line[k] = '*';

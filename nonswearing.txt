@@ -34,6 +34,7 @@ assume
 assump
 assura
 assure
+assyr
 declass
 kickass
 surpass
