@@ -2583,8 +2583,9 @@ s_printf("DUAL_MODE: Player %s toggles %s.\n", p_ptr->name, p_ptr->dual_mode ? "
 
 /* similar to strstr(), but catches char repetitions and swap-arounds.
    TODO: current implementation is pretty naive, need to use more effective algo when less lazy. */
+#define GET_MOST_DELAYED_MATCH /* must be enabled */
 static char* censor_strstr(char *line, char *word, int *eff_len) {
-	char bufl[MSG_LEN], bufs[NAME_LEN];
+	char bufl[MSG_LEN], bufs[NAME_LEN], *best = NULL;
 	int i, j, add;
 
 	if (line[0] == '\0') return (char*)NULL;
@@ -2610,20 +2611,45 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 		i++;
 	}
 
-	/* search while allowing repetitions/swapping of characters */
+	/* search while allowing repetitions/swapping of characters.
+	   Important: Get the furthest possible match for the starting char of
+	   the search term, required for 'preceeding/separated' check which is
+	   executed directly on 'line' further below in censor_aux(). Eg:
+	   sshit -> match the 2nd s and return it as position, not the 1st.
+	   Otherwise, "this shit" -> "thisshit" -> the first s and the h would
+	   be separated by a space in 'line' and therefore trigger the nonswear
+	   special check. */
 	i = 0;
 	while (bufl[i]) {
 		j = 0;
 		add = 0; /* track duplicte chars */
+
+#ifdef GET_MOST_DELAYED_MATCH
+		/* if we already got a match and the test of the upfollowing
+		   position is negative, take that match, since we still want
+		   to get all occurances eventually, not just the last one. */
+		if (bufs[j] != bufl[i + j + add] && best) return best;
+#endif
+
 		while (bufs[j] == bufl[i + j + add]) {
 			if (bufs[j + 1] == '\0') {
 				*eff_len = j + add + 1;
+#ifndef GET_MOST_DELAYED_MATCH
 				return &line[i]; /* FOUND */
+#else
+				best = &line[i];
+				break;
+#endif
 			}
 			j++;
 
 			/* end of line? */
-			if (bufl[i + j + add] == '\0') return (char*)NULL; /* NOT FOUND */
+			if (bufl[i + j + add] == '\0')
+#ifndef GET_MOST_DELAYED_MATCH
+				return (char*)NULL; /* NOT FOUND */
+#else
+				return best;
+#endif
 
 			/* reduce duplicate chars */
 			if (bufs[j] != bufl[i + j + add]) {
@@ -2634,7 +2660,11 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 		/* NOT FOUND so far */
 		i++;
 	}
+#ifndef GET_MOST_DELAYED_MATCH
 	return (char*)NULL; /* NOT FOUND */
+#else
+	return best;
+#endif
 }
 
 /* Censor swear words while keeping good words, and determining punishment level */
