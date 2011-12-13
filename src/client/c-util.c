@@ -3956,9 +3956,10 @@ void interact_macros(void)
 						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact monster code. You can find codes");
 						Term_putstr(10, 12, -1, TERM_GREEN, "you have already learned by pressing  \377s~ 3  \377gin the game");
 						Term_putstr(10, 13, -1, TERM_GREEN, "or by pressing  \377s:  \377gto chat and then typing the command:  \377s/mon");
-						Term_putstr(10, 14, -1, TERM_GREEN, "For example, enter   \377G37   \377gto polymorph into a 'fruit bat'.");
-						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a form before you can use it!");
-						Term_putstr(15, 17, -1, TERM_L_GREEN, "Enter exact monster code:");
+						Term_putstr(10, 14, -1, TERM_GREEN, "The first number on the left, in parentheses, is what you need.");
+						Term_putstr(10, 15, -1, TERM_GREEN, "For example, enter   \377G37   \377gto polymorph into a 'fruit bat'.");
+						Term_putstr(10, 16, -1, TERM_GREEN, "You must have learned a form before you can use it!");
+						Term_putstr(15, 18, -1, TERM_L_GREEN, "Enter exact monster code:");
 						break;
 					case 'i':
 						strcpy(buf2, "");
@@ -4249,7 +4250,8 @@ void interact_macros(void)
 
 					/* no need for inputting an item/spell to use with the macro? */
 					if (choice != 'c' && choice != 'i' && choice != 'j') {
-						Term_gotoxy(47, 17);
+						if (choice == 'h') Term_gotoxy(47, 18);
+						else Term_gotoxy(47, 17);
 
 						/* Get an item name */
 						strcpy(buf, "");
