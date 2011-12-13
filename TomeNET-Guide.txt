@@ -1540,17 +1540,21 @@ Starting with version 4.4.5, TomeNET features a new SDL-based audio system,
 which provides sound effects and background music.
 
 To make use of it, all you have to do is install a sound pack and/or a music
-pack to your lib/xtra/ folder.
+pack to your lib/xtra/ folder. Read on for instructions how to do that.
+
+You can get the official sound pack on http://www.tomenet.net/ in the download
+section, and also look for player-made sound or music packs in the forum!
 
 On Microsoft Windows, the easiest way to do this after you downloaded a sound
-or music zip file (see further below) is to:
+or music zip file is to:
 1. install 7zip, a great zip/unzip tool, if you haven't installed one already.
 2. open a Windows Explorer window and navigate to your TomeNET folder. Then
    double-click the 'lib' folder to enter it. You should now now see a folder
    named 'xtra' being shown.
-3. double-click your downloaded zip file to open it in 7zip or whatever you use
-   and its contents should be displayed: Either a folder named 'sound' or a
-   folder named 'music', depending on what kind of pack you just downloaded.
+3. double-click your downloaded sound or music pack zip file to open it in 7zip
+   or whatever you use, and its contents should be displayed:
+   Either a folder named 'sound' or a folder named 'music', depending on what
+   kind of pack you just downloaded.
    Use the mouse to drag that 'sound' or 'music' folder over to the Windows
    Explorer window you prepared, right onto the 'xtra' folder, and let go.
    7zip will now extract the sound or music folder into the xtra folder (while
@@ -1562,8 +1566,6 @@ or music zip file (see further below) is to:
    mixer screen. If everything went smoothly it should say that a sound or a
    music pack or both have been found.
 
-You can get the official sound pack on http://www.tomenet.net/ in the download
-section, and also look for player-made sound or music packs in the forum!
 After you downloaded a sound pack or a music pack, extract it to your lib/xtra/
 folder, preserving the ZIPs pathname structure. You should end up with a folder
 lib/xtra/sound/ and lib/xtra/music/ respectively, which contain config files
