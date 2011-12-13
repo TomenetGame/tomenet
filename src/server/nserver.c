@@ -2885,14 +2885,14 @@ static int Handle_login(int ind)
 	for (i = 1; i < NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		msg_format(i, "\374\377%c%s%s has entered the game.", COLOUR_SERVER, title, p_ptr->name);
+
+		/* print notification message about guild-auto-add now */
+		if (namebuf1[0] && Players[i]->guild == p_ptr->guild) msg_print(i, namebuf1);
 	}
 
 #ifdef TOMENET_WORLDS
 	if (cfg.worldd_pjoin) world_msg(format("\374\377%c%s%s has entered the game.", COLOUR_SERVER, title, p_ptr->name));
 #endif
-
-	/* print notification message about guild-auto-add now */
-	if (namebuf1[0]) guild_msg(p_ptr->guild, namebuf1);
 
 	/* Tell the meta server about the new player */
 	Report_to_meta(META_UPDATE);
