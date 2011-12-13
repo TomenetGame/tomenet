@@ -6440,6 +6440,18 @@ void shutdown_server(void) {
 		/* Note the we always save the first player */
 		player_type *p_ptr = Players[1];
 
+		/* Notify players who are afk and even pseudo-afk rogues */
+#if 0 /* always send a page beep? */
+		Send_beep(1);
+#endif
+#if 0 /* only when afk or idle? */
+		if (p_ptr->afk) Send_beep(1);
+		else if (p_ptr->turns_idle >= cfg.fps * AUTO_AFK_TIMER) Send_beep(1);
+#endif
+#if 1 /* send a warning sound (usually same as page beep) */
+		sound(1, "warning", "page", SFX_TYPE_NO_OVERLAP, FALSE);
+#endif
+		Net_output1(1);
 
 		/* Indicate cause */
 		strcpy(p_ptr->died_from, "server shutdown");

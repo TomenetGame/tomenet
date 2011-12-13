@@ -6693,13 +6693,13 @@ static int Receive_keepalive(int ind)
 		p_ptr->idle_char += 2;
 
 		/* Kick a starving player */
-		if (p_ptr->food < PY_FOOD_WEAK && connp->inactive_keepalive > 15)
+		if (p_ptr->food < PY_FOOD_WEAK && connp->inactive_keepalive > STARVE_KICK_TIMER / 2)
 		{
 			Destroy_connection(ind, "starving auto-kick");
 			return 2;
 		}
 
-		else if (!p_ptr->afk && p_ptr->auto_afk && connp->inactive_keepalive > 30)	/* dont oscillate ;) */
+		else if (!p_ptr->afk && p_ptr->auto_afk && connp->inactive_keepalive > AUTO_AFK_TIMER / 2)	/* dont oscillate ;) */
 		{
 			/* auto AFK timer (>1 min) */
 //			if (!p_ptr->resting) toggle_afk(Ind, ""); /* resting can take quite long sometimes */
@@ -9978,13 +9978,13 @@ static int Receive_ping(int ind) {
 #endif
 
 			/* Kick a starving player */
-			if (p_ptr->food < PY_FOOD_WEAK && connp->inactive_ping > 30)
+			if (p_ptr->food < PY_FOOD_WEAK && connp->inactive_ping > STARVE_KICK_TIMER)
 			{
 				Destroy_connection(ind, "starving auto-kick");
 				return 2;
 			}
 
-			else if (!p_ptr->afk && p_ptr->auto_afk && connp->inactive_ping > 60)	/* dont oscillate ;) */
+			else if (!p_ptr->afk && p_ptr->auto_afk && connp->inactive_ping > AUTO_AFK_TIMER)	/* dont oscillate ;) */
 			{
 				/* auto AFK timer (>1 min) */
 //				if (!p_ptr->resting) toggle_afk(Ind, ""); /* resting can take quite long sometimes */

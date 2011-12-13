@@ -258,6 +258,13 @@
 #define FPS (cfg.fps)
 
 
+/* Time to be idle for auto-afk to kick in, in seconds [60] */
+#define AUTO_AFK_TIMER 60
+
+/* Time to be idle and starving for auto-kick to kick in, in seconds [30] */
+#define STARVE_KICK_TIMER 30
+
+
 /* Number of days after which an account without any characters on it will expire. */
 #ifdef RPG_SERVER
  #define ACCOUNT_EXPIRY_DAYS 184
