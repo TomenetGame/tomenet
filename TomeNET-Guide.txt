@@ -3757,6 +3757,8 @@ others might get added:
      short time of imprisonment.
      Foul language will be filtered by '*' characters to other players, except
      if they have turned the filter off in their clients (also see (3.3)).
+     It's possible that not all foul language might result in jailing, but most
+     of it certainly will.
     -Spamming the chat (aka 'talking too much')
      Very rare to trigger, also results in a pretty short time of imprisonment.
     -On server settings where players have to declare that they are ready for
