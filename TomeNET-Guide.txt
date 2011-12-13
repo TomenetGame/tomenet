@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. December 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 13. December 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1542,6 +1542,26 @@ which provides sound effects and background music.
 To make use of it, all you have to do is install a sound pack and/or a music
 pack to your lib/xtra/ folder.
 
+On Microsoft Windows, the easiest way to do this after you downloaded a sound
+or music zip file (see further below) is to:
+1. install 7zip, a great zip/unzip tool, if you haven't installed one already.
+2. open a Windows Explorer window and navigate to your TomeNET folder. Then
+   double-click the 'lib' folder to enter it. You should now now see a folder
+   named 'xtra' being shown.
+3. double-click your downloaded zip file to open it in 7zip or whatever you use
+   and its contents should be displayed: Either a folder named 'sound' or a
+   folder named 'music', depending on what kind of pack you just downloaded.
+   Use the mouse to drag that 'sound' or 'music' folder over to the Windows
+   Explorer window you prepared, right onto the 'xtra' folder, and let go.
+   7zip will now extract the sound or music folder into the xtra folder (while
+   preserving the path structure).
+   If you were extracting a sound pack or if you already installed a music pack
+   previously then you will be prompted to overwrite files - choose "yes".
+   Wait for the extraction process to finish.
+4. Start or restart TomeNET and press CTRL+U in the game to view the audio
+   mixer screen. If everything went smoothly it should say that a sound or a
+   music pack or both have been found.
+
 You can get the official sound pack on http://www.tomenet.net/ in the download
 section, and also look for player-made sound or music packs in the forum!
 After you downloaded a sound pack or a music pack, extract it to your lib/xtra/
@@ -1567,7 +1587,8 @@ command-line option.
 
 If you want to use your own sound and music, and create audio packs for other
 players, read sound.cfg and music.cfg in your lib/xtra/sound or lib/xtra/music
-folder to see how it's done and which formats are supported.
+folder to see how it's done and which formats are supported. Those cfg files
+can be opened with any normal text editor.
 
 
 (2.1b) Editing sound and music configuration
