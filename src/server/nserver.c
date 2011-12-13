@@ -2753,6 +2753,7 @@ static int Handle_login(int ind)
 	}
 
 	/* automatically re-add him to the guild of his last character? */
+	namebuf1[0] = '\0'; //abuse namebuf1
 	if ((i = acc_get_guild(p_ptr->accountname))) {
 		if (p_ptr->newly_created) {
 			/* within time limit [20 minutes]? */
@@ -2760,7 +2761,7 @@ static int Handle_login(int ind)
 			if (now - lookup_player_laston(p_ptr->id) <= 60 * 20
 			    && guilds[i].members) { /* guild still exists? (TODO: could be a different guild by now :-p) */
 				/* auto-re-add him to the guild */
-				if (guild_auto_add(NumPlayers, i)) {
+				if (guild_auto_add(NumPlayers, i, namebuf1)) {
 					/* also restore his 'adder' status if he was one */
 					if ((acc_get_flags(p_ptr->accountname) & ACC_GUILD_ADDER)) {
 #ifdef GUILD_ADDERS_LIST
@@ -2869,7 +2870,9 @@ static int Handle_login(int ind)
 		for (i = 1; i < NumPlayers; i++) {
 			if (Players[i]->conn == NOT_CONNECTED) continue;
 			if (!is_admin(Players[i])) continue;
+
 			msg_format(i, "\374\377%c%s%s has entered the game.", COLOUR_SERVER, title, p_ptr->name);
+			if (namebuf1[0] && Players[i]->guild == p_ptr->guild) msg_print(i, namebuf1);
 		}
 		return 0;
 	}
@@ -2887,6 +2890,9 @@ static int Handle_login(int ind)
 #ifdef TOMENET_WORLDS
 	if (cfg.worldd_pjoin) world_msg(format("\374\377%c%s%s has entered the game.", COLOUR_SERVER, title, p_ptr->name));
 #endif
+
+	/* print notification message about guild-auto-add now */
+	if (namebuf1[0]) guild_msg(p_ptr->guild, namebuf1);
 
 	/* Tell the meta server about the new player */
 	Report_to_meta(META_UPDATE);

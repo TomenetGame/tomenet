@@ -1202,7 +1202,7 @@ extern void world_surface_msg(cptr msg);
 extern void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int henc);
 extern int guild_create(int Ind, cptr name);
 extern int guild_add(int adder, cptr name);
-extern int guild_auto_add(int Ind, int guild_id);
+extern int guild_auto_add(int Ind, int guild_id, char *message);
 extern int guild_remove(int remover, cptr name);
 extern void guild_leave(int Ind);
 extern void guild_msg(int guild_id, cptr msg);

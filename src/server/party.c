@@ -1129,7 +1129,7 @@ int guild_add(int adder, cptr name) {
 	return TRUE;
 }
 
-int guild_auto_add(int Ind, int guild_id) {
+int guild_auto_add(int Ind, int guild_id, char *message) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 
@@ -1152,7 +1152,8 @@ int guild_auto_add(int Ind, int guild_id) {
 	s_printf("GUILD_ADD_AUTO: %s has been added to %s.\n", p_ptr->name, guilds[guild_id].name);
 
 	/* Tell the guild about its new member */
-	guild_msg_format(guild_id, "\374\377y%s has been auto-added to %s.", p_ptr->name, guilds[guild_id].name);
+	sprintf(message, "\374\377y%s has been auto-added to %s.", p_ptr->name, guilds[guild_id].name);
+	//guild_msg_format(guild_id, "\374\377y%s has been auto-added to %s.", p_ptr->name, guilds[guild_id].name);
 
 	/* One more player in this guild */
 	guilds[guild_id].members++;
