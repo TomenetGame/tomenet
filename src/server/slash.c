@@ -391,7 +391,7 @@ void do_slash_cmd(int Ind, char *message)
 			prefix(message, "/sho"))
 	{
 		break_cloaking(Ind, 4);
-		if (++colon) {
+		if (colon++) {
 			censor_message = TRUE;
 			censor_length = strlen(colon);
 			msg_format_near(Ind, "\377%c%^s shouts: %s", COLOUR_CHAT, p_ptr->name, colon);
@@ -409,7 +409,7 @@ void do_slash_cmd(int Ind, char *message)
 			prefix(message, "/scr"))
 	{
 		break_cloaking(Ind, 6);
-		if (++colon) {
+		if (colon++) {
 			censor_message = TRUE;
 			censor_length = strlen(colon);
 			msg_format_near(Ind, "\377%c%^s screams: %s", COLOUR_CHAT, p_ptr->name, colon);
@@ -426,7 +426,7 @@ void do_slash_cmd(int Ind, char *message)
 	/* RPG-style talking to people who are nearby, instead of global chat. - C. Blue */
 	else if (prefix(message, "/say"))
 	{
-		if (++colon) {
+		if (colon++) {
 			censor_message = TRUE;
 			censor_length = strlen(colon);
 			msg_format_near(Ind, "\377%c%^s says: %s", COLOUR_CHAT, p_ptr->name, colon);
@@ -442,7 +442,7 @@ void do_slash_cmd(int Ind, char *message)
 	}
 	else if (prefix(message, "/whisper"))
 	{
-		if (++colon) {
+		if (colon++) {
 			censor_message = TRUE;
 			censor_length = strlen(colon);
 			msg_format_verynear(Ind, "\377%c%^s whispers: %s", COLOUR_CHAT, p_ptr->name, colon);
