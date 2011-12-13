@@ -1534,7 +1534,7 @@ extern void handle_store_leave(int Ind);
 
 /* util.c */
 extern bool suppress_message, censor_message;
-extern int censor_length;
+extern int censor_length, censor_punish;
 /* The next buffers are for catching the chat */
 extern char last_chat_line[MSG_LEN]; /* What was said */ 
 extern char last_chat_owner[NAME_LEN]; /* Who said it */

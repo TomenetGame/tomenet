@@ -1696,7 +1696,7 @@ bool check_guard_inscription( s16b quark, char what ) {
  * even if no messages are pending.  This is probably a hack.
  */
 bool suppress_message = FALSE, censor_message = FALSE;
-int censor_length = 0;
+int censor_length = 0, censor_punish = 0;
 
 void msg_print(int Ind, cptr msg_raw)
 {
@@ -1725,7 +1725,7 @@ void msg_print(int Ind, cptr msg_raw)
 	/* censor swear words? */
 	if (censor_message && Players[Ind]->censor_swearing)
 		/* skip the name of the sender, etc. */
-		handle_censor(msg + strlen(msg) - censor_length);
+		censor_punish = handle_censor(msg + strlen(msg) - censor_length);
 
 	/* marker for client: add message to 'chat-only buffer', not to 'nochat buffer' */
 	if (msg[0] == '\375') {
@@ -3032,7 +3032,7 @@ static int censor(char *line) {
  */
 static void player_talk_aux(int Ind, char *message)
 {
- 	int i, j, len, target = 0;
+ 	int i, len, target = 0;
 	char search[MSG_LEN], sender[MAX_CHARS];
 	char message2[MSG_LEN];
 	player_type *p_ptr = Players[Ind], *q_ptr;
@@ -3275,6 +3275,9 @@ static void player_talk_aux(int Ind, char *message)
 
 	/* '#:' at beginning of message sends to dungeon level - C. Blue */
 	if ((strlen(message) >= 2) && (message[0] == '#') && (message[1] == ':') && (colon)) {
+		censor_message = TRUE;
+		censor_length = strlen(message + 2);
+
 #if 1 /* No private chat for invalid accounts ? */
 		if (p_ptr->inval) {
 			msg_print(Ind, "\377yYour account is not valid, wait for an admin to validate it.");
@@ -3303,6 +3306,8 @@ static void player_talk_aux(int Ind, char *message)
 		}
 
 		/* Done */
+		censor_message = FALSE;
+		handle_punish(Ind, censor_punish);
 		return;
 	}
 
@@ -3526,8 +3531,7 @@ static void player_talk_aux(int Ind, char *message)
 	/* Admins have exclusive colour - the_sandman */
 	if (c_n == 'b' && !is_admin(p_ptr)) return;
 
-	strcpy(message2, message);
-	j = handle_censor(message2);
+
 	censor_message = TRUE;
 
 #ifdef TOMENET_WORLDS
@@ -3548,6 +3552,7 @@ static void player_talk_aux(int Ind, char *message)
 		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s %s]", c_n, sender, message + 4 + mycolor);
 		censor_length = strlen(message + 4 + mycolor);
 	}
+
  #if 0
 	if (((broadcast && cfg.worldd_broadcast) || (!broadcast && cfg.worldd_pubchat))
 	    && !(len && (target != 0) && !cfg.worldd_privchat)) /* privchat = to party or to person */
@@ -3556,6 +3561,7 @@ static void player_talk_aux(int Ind, char *message)
 		/* Incoming chat is now filtered instead of outgoing which allows IRC relay to get public chat messages from worldd - mikaelh */
 		world_chat(p_ptr->id, tmessage);	/* no ignores... */
  #endif
+
 	for(i = 1; i <= NumPlayers; i++){
 		q_ptr = Players[i];
 
@@ -3569,7 +3575,6 @@ static void player_talk_aux(int Ind, char *message)
 	}
 #else
 	/* Send to everyone */
-	censor_length = strlen(message + 4);
 	for (i = 1; i <= NumPlayers; i++) {
 		q_ptr = Players[i];
 
@@ -3595,9 +3600,10 @@ static void player_talk_aux(int Ind, char *message)
 		}
 	}
 #endif
+
 	p_ptr->warning_chat = 1;
 	censor_message = FALSE;
-	handle_punish(Ind, j);
+	handle_punish(Ind, censor_punish);
 
 	exec_lua(0, "chat_handler()");
 
