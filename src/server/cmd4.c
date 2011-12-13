@@ -2035,17 +2035,17 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 			j = r_ptr->level - num;
 
 			if ((j > 0) && !druid_form && !vampire_form)
-				fprintf(fff, "\377w%-30s : %d (%d more to go)\n",
+				fprintf(fff, "\377w%-30s : %4d slain  (%d more to go)\n",
 						r_name + r_ptr->name, num, j);
 			else {
 				if (p_ptr->body_monster == i)
-					fprintf(fff, "\377B%-30s : %d  ** Your current form **\n",
+					fprintf(fff, "\377B%-30s : %4d slain  ** Your current form **\n",
 							r_name + r_ptr->name, num);
-				else fprintf(fff, "\377G%-30s : %d (learnt)\n",
+				else fprintf(fff, "\377G%-30s : %4d slain  (learnt)\n",
 						r_name + r_ptr->name, num);
 			}
 		} else {
-			fprintf(fff, "\377w%-30s : %d\n", r_name + r_ptr->name, num);
+			fprintf(fff, "\377w%-30s : %4d slain\n", r_name + r_ptr->name, num);
 		}
 		total += num;
 		shown = TRUE;

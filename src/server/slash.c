@@ -1669,7 +1669,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 
 			/* Directly specify a name (tho no1 would use it..) */
-			r_idx = race_index(token[1]);
+			r_idx = race_index(message3);
 			if (!r_idx) {
 				msg_print(Ind, "No such monster.");
 				return;
@@ -1692,12 +1692,12 @@ void do_slash_cmd(int Ind, char *message)
 				if ((i > 0)
 				    && !((p_ptr->pclass == CLASS_DRUID) && mimic_druid(r_idx, p_ptr->lev))
 				    && !((p_ptr->prace == RACE_VAMPIRE) && mimic_vampire(r_idx, p_ptr->lev)))
-					msg_format(Ind, "%s : %d slain (%d more to go)",
+					msg_format(Ind, "%s : %4d slain (%d more to go)",
 							r_name + r_ptr->name, num, i);
 				else
-					msg_format(Ind, "%s : %d slain (learnt)", r_name + r_ptr->name, num);
+					msg_format(Ind, "%s : %4d slain (learnt)", r_name + r_ptr->name, num);
 			} else {
-				msg_format(Ind, "%s : %d slain.", r_name + r_ptr->name, num);
+				msg_format(Ind, "%s : %4d slain.", r_name + r_ptr->name, num);
 			}
 
 			/* TODO: show monster description */
