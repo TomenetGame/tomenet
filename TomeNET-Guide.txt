@@ -10274,6 +10274,7 @@ amount of energy in the ring.
 
 (6.7b) Druid form details
 -------------------------
+The according polymorph code is given in parentheses below the creature name.
 Note: Some forms can open doors, others may try to bash doors.
       Also, all animal forms are able to travel through woods.
 You can use the /ex command in game to see which forms you can use, and what
@@ -10282,34 +10283,41 @@ polymorph code they have.
 Level 5:
 --------
 Cave bear               tough; can pass mountain terrain
+(Code 160)
 
 Panther                 speedy
+(Code 198)
 
 Level 10:
 ---------
 Grizzly bear            same as Cave Bear, but tougher
+(Code 191)
 
 Yeti                    can pass mountain terrain;
-                        is immune to cold but susceptible to fire
+(Code 154)              is immune to cold but susceptible to fire
 
 Level 15:
 ---------
 Griffon                 can fly; can pass mountain terrain
+(Code 279)
 
 Sasquatch               speedy; similar to Yeti, but not susceptible to fire
+(Code 343)
 
 Level 20:
 ---------
 Werebear                same as Grizzly Bear, but tougher
+(Code 414)
 
 Great eagle             speedy; can fly; passes most terrain types
+(Code 335)
 
 Great White shark       speedy and tough aquatic form
-                        (aquatic means that it requires deep water to breathe
+(Code 898)              (aquatic means that it requires deep water to breathe
                         and greatly resists water-based attacks)
 
 Aranea                  a speedy greater spider;
-                        poisonous hits;
+(Code 963)              poisonous hits;
                         resists fire, completely immune to poison;
                         susceptible to light and to 'good' (creature is evil);
                         has a small array of magic spells at its disposal
@@ -10317,36 +10325,37 @@ Aranea                  a speedy greater spider;
 Level 25:
 ---------
 Wyvern                  speedy; can fly; passes most terrains;
-                        25% poisonous attacks;
+(Code 334)              25% poisonous attacks;
                         immune to poison; susceptible to 'good'
 
 Multi-hued Hound        resists fire/cold/lightning/acid/poison and gets a
-                        random immunity of those five on polymorphing;
+(Code 512)              random immunity of those five on polymorphing;
                         can't be confused or paralyzed;
                         can breathe the five elements mentioned above
 
 Level 30:
 ---------
 5-headed hydra          tough and speedy; can swim;
-                        poisonous attacks; immune to poison;
+(Code 440)              poisonous attacks; immune to poison;
                         can cast fear and poison ball
 
 Minotaur                tough and very speed; susceptible to 'good'
+(Code 641)
 
 Giant squid             tough and speedy aquatic creature;
-                        resists water greatly;
+(Code 482)              resists water greatly;
                         resists cold/acid/lightning/poison;
                         can breathe lightning, acid and poison
 
 Level 35:
 ---------
 7-headed hydra          tough and speedy; can swim;
-                        poisonous (75%) and blinding (25%) attacks;
+(Code 614)              poisonous (75%) and blinding (25%) attacks;
                         immune to poison;
                         can cast fear, poison ball, and breathe poison
 
 Elder aranea            speedy and smart (INT bonus) greater spider;
-                        50% poisonous attacks;
+(Code 964)              50% poisonous attacks;
                         resists darkness, fire, poison; immune to either fire
                         or poison chosen randomly on polymorphing;
                         susceptible to 'good' and to light;
@@ -10355,7 +10364,7 @@ Elder aranea            speedy and smart (INT bonus) greater spider;
                         has a medium array of spells at its disposal
 
 Plasma hound            speedy;
-                        resists plasma, sound; immune to fire;
+(Code 726)              resists plasma, sound; immune to fire;
                         susceptible to cold;
                         can't be cut/stunned/confused or paralyzed;
                         can breathe plasma
@@ -10363,17 +10372,17 @@ Plasma hound            speedy;
 Level 40:
 ---------
 11-headed hydra         speedy and toughest hydra; can swim;
-                        fiery attacks;
+(Code 688)              fiery attacks;
                         immune to fire;
                         has a small array of fire/fear spells
 
 Giant Roc               speedy giant bird; deals high damage;
-                        can fly; passes most terrains;
+(Code 640)              can fly; passes most terrains;
                         immune to electricity; resists sound;
                         can't be paralyzed or confused;
 
 Lesser kraken           speedy, smart and very tough aquatic creature;
-                        resists water greatly as well as lightning, cold,
+(Code 740)              resists water greatly as well as lightning, cold,
                         darkness, poison;
                         completely immune to either water attacks or poison;
                         can't be paralyzed or confused;
@@ -10382,11 +10391,11 @@ Lesser kraken           speedy, smart and very tough aquatic creature;
 Level 45:
 ---------
 Maulotaur               like Minotaur, but tougher; stupid (INT malus);
-                        immune to fire and resisting teleportation attacks;
+(Code 723)              immune to fire and resisting teleportation attacks;
                         can cast plasma bolt and fire ball
 
 Winged Horror           speedy winged creature; can fly;
-                        resists cold, poison, darkness, nether, life drain;
+(Code 704)              resists cold, poison, darkness, nether, life drain;
                         immune to either cold or poison;
                         susceptible to 'good';
                         can breathe nether, darkness and poison
@@ -10394,7 +10403,7 @@ Winged Horror           speedy winged creature; can fly;
 Level 50:
 ---------
 Spectral Tyrannosaur    speedy undead animal;
-                        has 25% scaring attacks;
+(Code 705)              has 25% scaring attacks;
                         resists nexus, teleportation attacks, nether,
                         life drain, cold, acid and poison;
                         becomes immune to one of cold/acid/poison;
@@ -10403,14 +10412,14 @@ Spectral Tyrannosaur    speedy undead animal;
                         can breathe nexus, poison and nether
 
 Greater kraken          speedy, smart and extremely tough aquatic creature;
-                        resists water attacks greatly, as well as cold, poison,
+(Code 775)              resists water attacks greatly, as well as cold, poison,
                         lightning, acid, darkness;
                         completely immune to one of lightning/poison/water;
                         susceptible to 'good';
                         can cast from a large array of spells
 
 Jabberwock              fabulous very speedy and tough hybrid creature that
-                        deals high damage;
+(Code 778)              deals high damage;
                         can fly;
                         resists teleportation attacks and chaos;
                         can curse and breathe chaos
@@ -10418,7 +10427,7 @@ Jabberwock              fabulous very speedy and tough hybrid creature that
 Level 55:
 ---------
 Horned Serpent          speedy and tough; can swim and pass mountain terrain;
-                        33% poisonous attacks;
+(Code 1131)             33% poisonous attacks;
                         resists poison, acid, fire, water attacks,
                         becomes immune to either poison or acid;
                         can't be scared, confused or paralyzed;
@@ -10427,7 +10436,7 @@ Horned Serpent          speedy and tough; can swim and pass mountain terrain;
 Level 60:
 ---------
 Firebird                speedy and tough; can fly and passes most terrains;
-                        fiery attacks and fire aura;
+(Code 1127)             fiery attacks and fire aura;
                         immune to fire and susceptible to cold;
                         resists poison, plasma and light;
                         regenerates HP quickly;
