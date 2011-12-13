@@ -1542,12 +1542,18 @@ which provides sound effects and background music.
 To make use of it, all you have to do is install a sound pack and/or a music
 pack to your lib/xtra/ folder. Read on for instructions how to do that.
 
+Note: Some people have reported that the program 'WinRAR' seems to cause
+      problems in some cases, not being able to handle zip files correctly.
+      A powerful free and open source program that is guaranteed to work is
+      '7zip' (a sourceforge project at the time of writing) downloadable at:
+      http://www.7-zip.org/
+
 You can get the official sound pack on http://www.tomenet.net/ in the download
 section, and also look for player-made sound or music packs in the forum!
 
 On Microsoft Windows, the easiest way to do this after you downloaded a sound
 or music zip file is to:
-1. install 7zip, a great zip/unzip tool, if you haven't installed one already.
+1. install 7zip, a free zip/unzip tool, if you haven't installed one already.
 2. open a Windows Explorer window and navigate to your TomeNET folder. Then
    double-click the 'lib' folder to enter it. You should now now see a folder
    named 'xtra' being shown.
@@ -13388,6 +13394,16 @@ SOLUTION:   Just log out and back in, and your sound should be fine again.
             so you can redownload it and not miss out on newly added sound
             effects. Usually an update to file 'audio.lua' means that the sound
             pack has also been updated indeed.
+
+PROBLEM 32: When trying to extract a music or sound pack to my xtra folder in
+            order to install it, I get an error message or it doesn't seem to
+            work correctly.
+SOLUTION:   See (2.1a) for details on how to install audio packs. Also note
+            that some people have reported that the program 'WinRAR' seems to
+            cause problems in some cases, not being able to handle zip files
+            correctly. A powerful free and open source program that is
+            guaranteed to work is '7zip' (a sourceforge project at the time
+            of writing) downloadable at:  http://www.7-zip.org/
 
 
 
