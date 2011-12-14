@@ -2859,21 +2859,21 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet) {
 				if (strlen(swear[i].word) <= 3) {
 					/* if there's UP TO 2 other chars before it or exactly 1 non-duplicate char, it's exempt.
 					   (for more leading chars, nonswear has to be used.) */
-					if (cc[pos] == 1 && l1 >= 'a' && l1 <= 'z' && l1 != l0) break;
+					if (cc[pos] == 1 && l1 >= 'a' && l1 <= 'z' && l1 != l0) continue;
 					if (cc[pos] == 2) {
 						if (l1 >= 'a' && l1 <= 'z' && l2 >= 'a' && l2 <= 'z' &&
-						    (l0 != l1 || l0 != l2 || l1 != l2)) break;
+						    (l0 != l1 || l0 != l2 || l1 != l2)) continue;
 						/* also test for only 1 leading alpha char */
 						if ((l2 < 'a' || l2 > 'z') &&
-						    l1 >= 'a' && l1 <= 'z' && l1 != l0) break;
+						    l1 >= 'a' && l1 <= 'z' && l1 != l0) continue;
 					}
 					if (cc[pos] >= 3) {
 						 if ((l3 < 'a' || l3 > 'z') &&
 						    l1 >= 'a' && l1 <= 'z' && l2 >= 'a' && l2 <= 'z' &&
-						    (l0 != l1 || l0 != l2 || l1 != l2)) break;
+						    (l0 != l1 || l0 != l2 || l1 != l2)) continue;
 						/* also test for only 1 leading alpha char */
 						if ((l2 < 'a' || l2 > 'z') &&
-						    l1 >= 'a' && l1 <= 'z' && l1 != l0) break;
+						    l1 >= 'a' && l1 <= 'z' && l1 != l0) continue;
 					}
 					/* if there's no char before it but 2 other chars after it or 1 non-dup after it, it's exempt. */
 					//TODO maybe - or just use nonswear for that
@@ -2888,7 +2888,10 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet) {
 					}
 				}
 				/* found? */
-				if (j < cc[pos + strlen(swear[i].word) - 1]) continue;
+				if (j < cc[pos + strlen(swear[i].word) - 1]) {
+					/* prevent it from getting tested for swear words */
+					continue;
+				}
 			}
 #endif
 
@@ -2896,17 +2899,20 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet) {
 			/* censor it! */
 			for (j = 0; j < eff_len); j++) {
 				line[cc[pos + j]] = buf[cc[pos + j]] = '*';
+				lcopy[pos + j] = '*';
+			}
 #else
 			/* actually censor separator chars too, just so it looks better ;) */
 			for (j = 0; j < eff_len - 1; j++) {
 				for (k = cc[pos + j]; k <= cc[pos + j + 1]; k++)
 					line[k] = buf[k] = '*';
-#endif
 
 				/* for processing lcopy in a while loop instead of just 'if'
 				   -- OBSOLETE ACTUALLY (thanks to 'offset')? */
 				lcopy[pos + j] = '*';
 			}
+			lcopy[pos + j] = '*';
+#endif
 			level = MAX(level, swear[i].level);
 		}
 	}
