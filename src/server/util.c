@@ -3281,9 +3281,6 @@ static void player_talk_aux(int Ind, char *message)
 
 	/* '#:' at beginning of message sends to dungeon level - C. Blue */
 	if ((strlen(message) >= 2) && (message[0] == '#') && (message[1] == ':') && (colon)) {
-		censor_message = TRUE;
-		censor_length = strlen(message + 2);
-
 #if 1 /* No private chat for invalid accounts ? */
 		if (p_ptr->inval) {
 			msg_print(Ind, "\377yYour account is not valid, wait for an admin to validate it.");
@@ -3296,8 +3293,14 @@ static void player_talk_aux(int Ind, char *message)
 			msg_print(Ind, "You aren't in a dungeon or tower.");
 #else /* Darkie's idea: */
 			if (*(message + 2)) {
+				censor_message = TRUE;
+				censor_length = strlen(message + 2);
+
 				msg_format_near(Ind, "\377%c%^s says: %s", COLOUR_CHAT, p_ptr->name, message + 2);
 				msg_format(Ind, "\377%cYou say: %s", COLOUR_CHAT, message + 2);
+
+				censor_message = FALSE;
+				handle_punish(Ind, censor_punish);
 			} else {
 				msg_format_near(Ind, "\377%c%s clears %s throat.", COLOUR_CHAT, p_ptr->name, p_ptr->male ? "his" : "her");
 				msg_format(Ind, "\377%cYou clear your throat.", COLOUR_CHAT);
@@ -3308,12 +3311,16 @@ static void player_talk_aux(int Ind, char *message)
 
 		/* Send message to target floor */
 		if (p_ptr->mutedchat < 2) {
+			censor_message = TRUE;
+			censor_length = strlen(message + 2);
+
 			floor_msg_format_ignoring(Ind, &p_ptr->wpos, "\375\377%c[%s] %s", COLOUR_CHAT_LEVEL, sender, message + 2);
+
+			censor_message = FALSE;
+			handle_punish(Ind, censor_punish);
 		}
 
 		/* Done */
-		censor_message = FALSE;
-		handle_punish(Ind, censor_punish);
 		return;
 	}
 
