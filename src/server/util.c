@@ -3001,6 +3001,7 @@ static int censor(char *line) {
 #endif
 
 	/* check for legal words first */
+	//TODO: could be moved into censor_aux and after leet speek conversion, to allow leet speeking of non-swear words (eg "c00k")
 	strcpy(lcopy2, lcopy); /* use a 'working copy' to allow _overlapping_ nonswear words */
 	for (i = 0; nonswear[i][0]; i++) {
 		offset = 0;
