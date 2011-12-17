@@ -30,6 +30,7 @@ assimi
 assist
 associ
 assort
+assuag
 assume
 assump
 assura
@@ -39,6 +40,7 @@ embarass
 harass
 class
 surpass
+cook
 again
 age
 agil
