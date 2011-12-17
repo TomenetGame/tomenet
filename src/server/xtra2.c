@@ -10179,12 +10179,9 @@ bool master_summon(int Ind, char * parms)
 
 #define FIND_CLOSEST_JAIL
 bool imprison(int Ind, u16b time, char *reason) {
-	int id, i;
+	int id, i, j;
 #ifdef FIND_CLOSEST_JAIL
 	int dist = 999, tmp, picked = -1;
-#endif
-#ifdef JAILER_KILLS_WOR
-	int j;
 #endif
 	struct dna_type *dna;
 	player_type *p_ptr = Players[Ind];
@@ -10260,10 +10257,18 @@ bool imprison(int Ind, u16b time, char *reason) {
 
 #if 1
 		/* generate some vermin randomly, for flavour */
-		if (rand_int(2)) for (i = randint(4); i; i--)
+		if (rand_int(2)) for (j = randint(4); j; j--) {
+			int x, y;
+			x = houses[i].y - 2 + rand_int(5);
+			y = houses[i].x - 2 + rand_int(5);
+
+			if (!in_bounds(y, x)) continue;
+			if (!(zcave[y][x].info & CAVE_STCK)) continue;
+
 			place_monster_one(&houses[i].wpos,
-			    houses[i].y - 2 + rand_int(5), houses[i].x - 2 + rand_int(5),
+			    x, y,
 			    1, 0, 0, rand_int(2) ? TRUE : FALSE, 0, 0);
+		}
 #endif
 	}
 
