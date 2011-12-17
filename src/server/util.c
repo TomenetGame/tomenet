@@ -2689,13 +2689,14 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet) {
 		i = 0;
 		while (lcopy[i]) {
 			switch (lcopy[i]) {
+			case '@': lcopy[i] = 'a'; break;
 			case '!': lcopy[i] = 'i'; break;
-			case '$': lcopy[i] = 's'; break;
 			case '|': lcopy[i] = 'i'; break;
 			case '(': lcopy[i] = 'i'; break;
 			case ')': lcopy[i] = 'i'; break;
 			case '/': lcopy[i] = 'i'; break;
 			case '\\': lcopy[i] = 'i'; break;
+			case '$': lcopy[i] = 's'; break;
 			case '+': lcopy[i] = 't'; break;
 			case '1': lcopy[i] = 'i'; break;
 			case '3': lcopy[i] = 'e'; break;
