@@ -6014,7 +6014,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing)
 
 static void destroy_house(int Ind, struct dna_type *dna) {
 	player_type *p_ptr = Players[Ind];
-	int i, x, y;
+	int i;
 	if (!is_admin(p_ptr)) {
 		msg_print(Ind, "\377rYour attempts to destroy the house fail.");
 		return;
@@ -6030,10 +6030,14 @@ static void destroy_house(int Ind, struct dna_type *dna) {
 			fill_house(&houses[i], FILL_MAKEHOUSE, NULL);
 			houses[i].flags |= HF_DELETED;
 
+#if 0 /* let's do this in fill_house(), so it also takes care of poly-houses - C. Blue */
 			/* redraw map so change becomes visible */
-			for (x = 0; x < houses[i].coords.rect.width; x++)
-			for (y = 0; y < houses[i].coords.rect.height; y++)
-				everyone_lite_spot(&houses[i].wpos, houses[i].y + y, houses[i].x + x);
+			if (houses[i].flags & HF_RECT) {
+				for (x = 0; x < houses[i].coords.rect.width; x++)
+				for (y = 0; y < houses[i].coords.rect.height; y++)
+					everyone_lite_spot(&houses[i].wpos, houses[i].y + y, houses[i].x + x);
+			}
+#endif
 			break;
 		}
 	}

@@ -2407,6 +2407,8 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 	int mw, mh;
 	bool success = TRUE;
 	struct worldpos *wpos = &h_ptr->wpos;
+	cave_type *c_ptr;
+	struct c_special *cs_ptr;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
 
@@ -2414,7 +2416,6 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 		success = FALSE;
 
 	if(h_ptr->flags & HF_RECT){
-		cave_type *c_ptr;
 		for(x = 0; x < h_ptr->coords.rect.width; x++){
 			for(y = 0; y < h_ptr->coords.rect.height; y++){
  				c_ptr = &zcave[h_ptr->y + y][h_ptr->x + x];
@@ -2448,8 +2449,17 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 					if(x && y && x < h_ptr->coords.rect.width - 1 && y < h_ptr->coords.rect.height - 1){
 						if((pick_house(wpos, h_ptr->y, h_ptr->x)) != -1)
 							success = FALSE;
+						c_ptr->info &= ~(CAVE_ICKY | CAVE_ROOM | CAVE_STCK | CAVE_JAIL);
 					}
 					else {
+						/* fix: also erase cs-special, or server will panic on restart
+						   if someone kept this area static and has the former door grid
+						   in his los -> will try to call access_door_colour() on it,
+						   but the dna structure has already been nulled -> segfault. - C. Blue */
+						if (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) {
+							cs_ptr = GetCS(c_ptr, CS_DNADOOR);
+							if (cs_ptr) cs_erase(c_ptr, cs_ptr);
+						}
 						c_ptr->feat = FEAT_DIRT;
 						c_ptr->info &= ~(CAVE_ICKY | CAVE_ROOM | CAVE_STCK | CAVE_JAIL);
 					}
@@ -2477,10 +2487,12 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 				else if (func == FILL_UNPAINT) {
 					c_ptr->colour = 0;
 					/* refresh player's view on the freshly applied paint */
-					everyone_lite_spot(&h_ptr->wpos, h_ptr->y + y, h_ptr->x + x);
+					//done below, for all functions
 				}
 #endif
 				else s_printf("rect fill house (func: %d\n", func);
+
+				everyone_lite_spot(&h_ptr->wpos, h_ptr->y + y, h_ptr->x + x);
 			}
 		}
 		return(success);
@@ -2548,8 +2560,6 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 				case 0:	/* inside of walls */
 					if(func==FILL_GUILD){
 						struct key_type *key;
-						cave_type *c_ptr;
-						struct c_special *cs_ptr;
 						u16b id;
 						FILE *gfp=((struct guildsave*)data)->fp;
 						c_ptr=&zcave[miny+(y-1)][minx+(x-1)];
@@ -2598,6 +2608,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 						if((pick_house(wpos,miny+(y-1),minx+(x-1))!=-1)){
 							success=FALSE;
 						}
+						zcave[miny + (y - 1)][minx + (x - 1)].info &= ~(CAVE_ICKY | CAVE_ROOM | CAVE_STCK | CAVE_JAIL);
 						break;
 					}
 					if(func==FILL_OBJECT){ /* object in house */
@@ -2612,11 +2623,12 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 						break;
 					}
 					if(func == FILL_BUILD){
-						if(!(h_ptr->flags&HF_NOFLOOR))
-							zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_FLOOR;
-						zcave[miny+(y-1)][minx+(x-1)].info|=(CAVE_ROOM|CAVE_ICKY);
-						if(h_ptr->flags&HF_JAIL){
-							zcave[miny+(y-1)][minx+(x-1)].info|=CAVE_STCK;
+						c_ptr = &zcave[miny+(y-1)][minx+(x-1)];
+						if(!(h_ptr->flags & HF_NOFLOOR))
+							c_ptr->feat = FEAT_FLOOR;
+							c_ptr->info |= (CAVE_ROOM | CAVE_ICKY);
+						if(h_ptr->flags & HF_JAIL){
+							c_ptr->info |= CAVE_STCK;
 						}
 						break;
 					}
@@ -2624,7 +2636,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 					else if (func == FILL_UNPAINT) {
 						zcave[miny + (y - 1)][minx + (x - 1)].colour = 0;
 						/* refresh player's view on the freshly applied paint */
-						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
+						//done below, for all FILL_ ops
 						break;
 					}
 #endif
@@ -2639,8 +2651,13 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 						break;
 					}
 					if(func==FILL_MAKEHOUSE) {
-						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_DIRT;
-						zcave[miny+(y-1)][minx+(x-1)].info &= ~(CAVE_ICKY | CAVE_ROOM | CAVE_STCK | CAVE_JAIL);
+						c_ptr = &zcave[miny+(y-1)][minx+(x-1)];
+						if (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) {
+							c_special *cs_ptr = GetCS(c_ptr, CS_DNADOOR);
+							if (cs_ptr) cs_erase(c_ptr, cs_ptr);
+						}
+						c_ptr->feat = FEAT_DIRT;
+						c_ptr->info &= ~(CAVE_ICKY | CAVE_ROOM | CAVE_STCK | CAVE_JAIL);
 					}
 					else if(func==FILL_BUILD)
 //						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_PERM_EXTRA;
@@ -2650,12 +2667,13 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 					else if (func == FILL_UNPAINT) {
 						zcave[miny + (y - 1)][minx + (x - 1)].colour = 0;
 						/* refresh player's view on the freshly applied paint */
-						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
+						//done below, for all FILL_ ops
 						break;
 					}
 #endif
 					break;
 			}
+			everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
 		}
 	}
 	C_KILL(matrix,mw*mh,char);
