@@ -3065,6 +3065,9 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			(*ap) = c_ptr->colour - 1;
 #endif
 
+		/* jails */
+		if (c_ptr->info & CAVE_JAIL) (*ap) = TERM_L_DARK;
+
 #endif
 	}
 

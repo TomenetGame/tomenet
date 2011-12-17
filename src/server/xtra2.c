@@ -10253,20 +10253,27 @@ bool imprison(int Ind, u16b time, char *reason) {
 	if (!(nzcave = getcave(&houses[i].wpos))){
 		alloc_dungeon_level(&houses[i].wpos);
 		generate_cave(&houses[i].wpos, p_ptr);
-		/* nzcave=getcave(&houses[i].wpos); */
 
 #if 1
 		/* generate some vermin randomly, for flavour */
-		if (rand_int(2)) for (j = randint(4); j; j--) {
+		nzcave = getcave(&houses[i].wpos);
+		if (rand_int(2)) for (j = randint(2); j; j--) {
 			int x, y;
-			x = houses[i].y - 2 + rand_int(5);
-			y = houses[i].x - 2 + rand_int(5);
+			//abuse 'id'
+			id = 10;
+			while (id--) {
+				if (rand_int(2)) x = houses[i].x - 15 + rand_int(13);
+				else x = houses[i].x + 15 - rand_int(13);
+				if (rand_int(2)) y = houses[i].y - 15 + rand_int(13);
+				else y = houses[i].y + 15 - rand_int(13);
 
-			if (!in_bounds(y, x)) continue;
-			if (!(zcave[y][x].info & CAVE_STCK)) continue;
+				if (!in_bounds(y, x)) continue;
+				if (!(nzcave[y][x].info & CAVE_STCK)) continue;
 
-			place_monster_one(&houses[i].wpos,
-			    x, y,
+				break;
+			}
+			if (id) place_monster_one(&houses[i].wpos,
+			    y, x,
 			    1, 0, 0, rand_int(2) ? TRUE : FALSE, 0, 0);
 		}
 #endif

@@ -2641,6 +2641,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 					else if(func==FILL_BUILD)
 //						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_PERM_EXTRA;
 						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_WALL_HOUSE;
+						if (h_ptr->flags & HF_JAIL) zcave[miny+(y-1)][minx+(x-1)].info |= CAVE_JAIL;
 #ifdef HOUSE_PAINTING
 					else if (func == FILL_UNPAINT) {
 						zcave[miny + (y - 1)][minx + (x - 1)].colour = 0;
@@ -2669,22 +2670,26 @@ void wild_add_uhouse(house_type *h_ptr)
 	if (h_ptr->flags & HF_DELETED) return; /* House destroyed. Ignore */
 
 	/* draw our user defined house */
- 	if (h_ptr->flags & HF_RECT) {
+	if (h_ptr->flags & HF_RECT) {
 		for (x = 0; x < h_ptr->coords.rect.width; x++) {
- 			c_ptr = &zcave[h_ptr->y][h_ptr->x + x];
- 			c_ptr->feat = FEAT_WALL_HOUSE;
+			c_ptr = &zcave[h_ptr->y][h_ptr->x + x];
+			c_ptr->feat = FEAT_WALL_HOUSE;
+			if (h_ptr->flags & HF_JAIL) c_ptr->info |= CAVE_JAIL;
 		}
 		for (y = h_ptr->coords.rect.height - 1, x = 0; x < h_ptr->coords.rect.width; x++) {
- 			c_ptr = &zcave[h_ptr->y + y][h_ptr->x + x];
- 			c_ptr->feat = FEAT_WALL_HOUSE;
+			c_ptr = &zcave[h_ptr->y + y][h_ptr->x + x];
+			c_ptr->feat = FEAT_WALL_HOUSE;
+			if (h_ptr->flags & HF_JAIL) c_ptr->info |= CAVE_JAIL;
 		}
 		for (y = 1; y < h_ptr->coords.rect.height; y++) {
- 			c_ptr = &zcave[h_ptr->y + y][h_ptr->x];
- 			c_ptr->feat = FEAT_WALL_HOUSE;
+			c_ptr = &zcave[h_ptr->y + y][h_ptr->x];
+			c_ptr->feat = FEAT_WALL_HOUSE;
+			if (h_ptr->flags & HF_JAIL) c_ptr->info |= CAVE_JAIL;
 		}
 		for (x = h_ptr->coords.rect.width - 1, y = 1; y < h_ptr->coords.rect.height; y++) {
- 			c_ptr = &zcave[h_ptr->y + y][h_ptr->x + x];
- 			c_ptr->feat = FEAT_WALL_HOUSE;
+			c_ptr = &zcave[h_ptr->y + y][h_ptr->x + x];
+			c_ptr->feat = FEAT_WALL_HOUSE;
+			if (h_ptr->flags & HF_JAIL) c_ptr->info |= CAVE_JAIL;
 		}
 	}
 	fill_house(h_ptr, FILL_BUILD, NULL);

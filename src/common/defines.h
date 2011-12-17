@@ -3438,6 +3438,7 @@
 #define CAVE_PROT	0x1000 	/* protected from monster-spawn + cannot be monster teleport destination */
 #define CAVE_NEST_PIT	0x2000	/* grid is part of a monster nest and target for monster placement */
 #define CAVE_MAGELOCK	0x4000	/* Anti-exploit: Remember magelocked doors so they don't give exp repeatedly */
+#define CAVE_JAIL	0x8000	/* part of a jail: for special colour/lighting of jail walls */
 
 
 #if 0	/* for future expansion.. */
