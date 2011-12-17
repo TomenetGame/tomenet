@@ -1723,9 +1723,13 @@ void msg_print(int Ind, cptr msg_raw)
 
 	strcpy(msg_dup, msg_raw); /* in case msg_raw was constant */
 	/* censor swear words? */
-	if (censor_message && Players[Ind]->censor_swearing)
+	if (censor_message) {
 		/* skip the name of the sender, etc. */
 		censor_punish = handle_censor(msg + strlen(msg) - censor_length);
+		/* we just needed to get censor_punish at least once, above.
+		   Now don't really censor the string if the player doesn't want to.. */
+		if (!Players[Ind]->censor_swearing) strcpy(msg_dup, msg_raw);
+	}
 
 	/* marker for client: add message to 'chat-only buffer', not to 'nochat buffer' */
 	if (msg[0] == '\375') {
@@ -3565,7 +3569,7 @@ static void player_talk_aux(int Ind, char *message)
 		}
 		if (mycolor) c_n = message[5];
 		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s %s]", c_n, sender, message + 4 + mycolor);
-		censor_length = strlen(message + 4 + mycolor);
+		censor_length = strlen(message + 4 + mycolor) + 1;
 	}
 
  #if 0
