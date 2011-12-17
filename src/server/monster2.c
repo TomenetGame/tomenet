@@ -2729,6 +2729,27 @@ static bool allow_unique_level(int r_idx, struct worldpos *wpos)
 	return (FALSE);
 }
 
+/* Pick a random vermin-like monster to spawn in prison houses */
+static int get_prison_monster(void) {
+	switch (rand_int(14)) {
+	case 0: return 27; /* rats and mice */
+	case 1: return 86;
+	case 2: return 156;
+	case 3: return 1005;
+	case 4: return 31; /* worms (low) */
+	case 5: return 58;
+	case 6: return 78;
+	case 7: return 89;
+	case 8: return 105;
+	case 9: return 20; /* mold (except for disenchanter/red) */
+	case 10: return 76;
+	case 11: return 113;
+	case 12: return 146;
+	case 13: return 190;
+	}
+	return 7; /* compiler paranoia dog */
+}
+
 /*
  * Attempt to place a monster of the given race at the given location.
  *
@@ -2814,7 +2835,12 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	/* override protection for monsters spawning inside houses, to generate
 	   monster 'invaders' and/or monster 'owners' in wild houses? */
 	if (!(summon_override_checks & SO_HOUSE)) {
-		if (istownarea(wpos, 9) && (zcave[y][x].info & CAVE_ICKY)) return(FALSE);
+		if (istownarea(wpos, 9) && (zcave[y][x].info & CAVE_ICKY)) {
+			/* exception: spawn certain vermin in prisons :) */
+			if (istownarea(wpos, 4) && (zcave[y][x].info & CAVE_STCK))
+				r_idx = get_prison_monster();
+			else return(FALSE);
+		}
 	}
 
 #ifdef RPG_SERVER /* no spawns in Training Tower at all */

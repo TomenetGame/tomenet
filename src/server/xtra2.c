@@ -10257,7 +10257,16 @@ bool imprison(int Ind, u16b time, char *reason) {
 		alloc_dungeon_level(&houses[i].wpos);
 		generate_cave(&houses[i].wpos, p_ptr);
 		/* nzcave=getcave(&houses[i].wpos); */
+
+#if 1
+		/* generate some vermin randomly, for flavour */
+		if (rand_int(2)) for (i = randint(4); i; i--)
+			place_monster_one(&houses[i].wpos,
+			    houses[i].y - 2 + rand_int(5), houses[i].x - 2 + rand_int(5),
+			    1, 0, 0, rand_int(2) ? TRUE : FALSE, 0, 0);
+#endif
 	}
+
 	zcave[p_ptr->py][p_ptr->px].m_idx = 0;
 	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 	forget_lite(Ind);
