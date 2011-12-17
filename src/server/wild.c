@@ -2449,8 +2449,10 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 						if((pick_house(wpos, h_ptr->y, h_ptr->x)) != -1)
 							success = FALSE;
 					}
-					else
+					else {
 						c_ptr->feat = FEAT_DIRT;
+						c_ptr->info &= ~(CAVE_ICKY | CAVE_ROOM | CAVE_STCK | CAVE_JAIL);
+					}
 				}
 				else if(func == FILL_CLEAR){
 					delete_object(wpos, y, x, TRUE);
@@ -2636,8 +2638,10 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 							success=TRUE;
 						break;
 					}
-					if(func==FILL_MAKEHOUSE)
+					if(func==FILL_MAKEHOUSE) {
 						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_DIRT;
+						zcave[miny+(y-1)][minx+(x-1)].info &= ~(CAVE_ICKY | CAVE_ROOM | CAVE_STCK | CAVE_JAIL);
+					}
 					else if(func==FILL_BUILD)
 //						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_PERM_EXTRA;
 						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_WALL_HOUSE;
