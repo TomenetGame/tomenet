@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 13. December 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 18. December 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -3677,58 +3677,70 @@ For a list of the dungeons see '(4.5) Towns'.
 Dungeon types
 -------------
 There are different types of dungeons. The main five are:
+
 -Normal dungeons. The main dungeons below the five cities Bree, Minas Anor,
  Gondolin, Lothlorien and Khazad-dum are such regular dungeons.
- Normal dungeons/towers are marked by a light grey < or > symbol.
--NO_RECALL. These dungeons don't allow you to use Word-of-Recall nor
- probability travel to change the level. The staircases are the only way.
- Sending items via telekinesis to a player who is currently in a no-recall
- dungeon/tower will only work if both players are on the same dungeon floor.
- Ghosts of dead players can still float up/down.
- No-recall dungeons/towers are marked by a light red < or > symbol.
+ Normal dungeons/towers are marked by a white < or > symbol.
+
 -NO_RECALL_INTO. You may not recall into this dungeon/tower. You can use
  recall to get out of it though. Probability travel works towards the surface
  but not towards the dungeon bottom/tower top. To Telekinesis the same
  restrictions apply as for NO_RECALL. Ghosts may float freely.
  Staircases are yellow.
+
 -NO_UP. These dungeons won't allow you to go upwards, similar to ironman,
  just without the penalty of permanent ghost-death. You are allowed to use
  Word-of-Recall as well! Ghosts of dead players can float upwards.
  No-up dungeons/towers are marked by an orange < or > symbol.
+
+-NO_RECALL. These dungeons don't allow you to use Word-of-Recall nor
+ probability travel to change the level. The staircases are the only way.
+ Sending items via telekinesis to a player who is currently in a no-recall
+ dungeon/tower will only work if both players are on the same dungeon floor.
+ Ghosts of dead players can still float up/down.
+ No-recall dungeons/towers are marked by a red < or > symbol.
+
 -FORCE_DOWN. Same as NO_UP, but you can only recall at the bottom of the
  dungeon, similar to ironman (except for the no-ghost death penalty).
- Force-down dungeons/towers are marked by a red < or > symbol.
--Ironman. Ironman dungeons or towers won't allow you to recall or to use
+ Force-down dungeons/towers are marked by a light red < or > symbol.
+
+-Hellish. Players suffer no-ghost deaths inside hellish dungeons.
+ Even if they're everlasting, meaning that if you die in such a dungeon or
+ tower you won't turn into a ghost either but get destroyed completely.
+ Hellish dungeons/towers are marked by a fire-like flickering < or > symbol
+ (red/yellow).
+
+-Ironman. Same as hellish. Also:
+ Ironman dungeons or towers won't allow you to recall or to use
  staircases that lead upwards or probability travel backwards!
- If you die in such a dungeon or tower you won't turn into a ghost either but
- get destroyed completely.
  Sending items via telekinesis to a player who is currently in an ironman
  dungeon/tower will only work if both players are on the same dungeon floor.
- To leave an ironman dungeon/tower you'll have to get to it's bottom
- respectively top. There might be possibilities to use Word-of-Recall even if
- you're not at bottom/top yet, depending on the server configuration. In
- general you will recognize levels which allow recalling by a green message,
+ To leave an ironman dungeon/tower you'll have to get to it's bottom or top
+ respectively. There might be possibilities to use Word-of-Recall even if
+ you're not at bottom/top yet, depending on the server/dungeon type.
+ In general you will recognize levels which allow recalling by a green message,
  saying "You don't sense a magic barrier here..." (compare (4.8)).
  Ironman dungeons/towers are marked by a dark grey < or > symbol.
+
  NOTE: In the case of RPG-server settings, you can usually recall INTO town
  dungeons every (n*1000)+50 ft, n starting at 0. Example: -50 ft, -1050 ft,
  -2050 ft, etc. Also, ALL dungeons will usually not allow recalling OUT until
  you reach a floor that is equivalent to at least dungeon level 20. Examples:
  At least -1000 ft in Barrow-Downs, at least -550 ft in The Orc Cave.
  (See (8.5) for more information about RPG settings.)
--Hellish. Players suffer no-ghost deaths inside hellish dungeons.
- Even if they're everlasting.
- Hellish dungeons/towers are marked by a fire-like flickering < or > symbol
- (red/yellow).
+
 -NO_DEATH. The Training Tower in Bree has this flag. Players who die inside a
  no-death dungeon won't turn into a ghost if they 'die' but just be teleported
  back to town! They still lose about 20% experience (and gold) though.
  No-death dungeons/towers are marked by a green < or > symbol.
+
 If a dungeon has several of these flags, the latter ones will override the
-staircase colour. So a hellish ironman dungeon has hellish-looking staircases.
+staircase colour. So a hellish NO_RECALL_INTO dungeon has hellish-looking
+staircases.
 
 Sometimes you might find ruins of old staircases that don't lead to any
-dungeon or tower. Those have no further functionality and are coloured grey.
+dungeon or tower. Those have no further functionality and are coloured grey
+(make sure you don't confuse them with an ironman dungeon accidentally).
 
 
 Overview:

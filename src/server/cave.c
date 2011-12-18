@@ -3048,14 +3048,16 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			    (*ap) = TERM_SLATE;
 		    } else {
 			    type = d_ptr->type;
+			    /* override colour from easiest to worst */
 			    (*ap) = TERM_WHITE;
-			    if (d_ptr->flags1 & DF1_NO_RECALL) (*ap) = TERM_L_RED;
-			    if (d_ptr->flags1 & DF1_NO_UP) (*ap) = TERM_ORANGE;
-			    if (d_ptr->flags1 & DF1_FORCE_DOWN) (*ap) = TERM_RED;
-			    if (d_ptr->flags2 & DF2_IRON) (*ap) = TERM_L_DARK;
-			    if (d_ptr->flags2 & DF2_HELL) (*ap) = TERM_FIRE;
-			    if (d_ptr->flags2 & DF2_NO_DEATH) (*ap) = TERM_GREEN;
 			    if (d_ptr->flags2 & DF2_NO_RECALL_INTO) (*ap) = TERM_YELLOW;
+			    if (d_ptr->flags1 & DF1_NO_UP) (*ap) = TERM_ORANGE;
+			    if (d_ptr->flags1 & DF1_NO_RECALL) (*ap) = TERM_RED;
+			    if (d_ptr->flags1 & DF1_FORCE_DOWN) (*ap) = TERM_L_RED;
+			    if (d_ptr->flags2 & DF2_HELL) (*ap) = TERM_FIRE;
+			    if (d_ptr->flags2 & DF2_IRON) (*ap) = TERM_L_DARK;
+			    /* joker overrides the king ;) */
+			    if (d_ptr->flags2 & DF2_NO_DEATH) (*ap) = TERM_GREEN;
 		    }
 		}
 #endif
