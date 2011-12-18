@@ -10369,13 +10369,15 @@ bool master_player(int Ind, char *parms){
 			}
 //			msg_print(Ind, "That player is not in the game.");
 			break;
-		case 'k':	/* admin wrath */
-			Ind2 = name_lookup(Ind, &parms[1], FALSE);
-			if(Ind2){
+		case 'k':	/* admin wrath (preceed name with '!' for no-ghost kill */
+			i = 1;
+			if (parms[1] == '!') i = 2;
+			Ind2 = name_lookup(Ind, &parms[i], FALSE);
+			if (Ind2) {
 				q_ptr = Players[Ind2];
 				msg_print(Ind2, "\377rYou are hit by a bolt from the blue!");
 				strcpy(q_ptr->died_from,"divine wrath");
-				//q_ptr->alive=FALSE;
+				if (i == 2) q_ptr->global_event_temp |= PEVF_NOGHOST_00; //hack: no-ghost death
 				q_ptr->deathblow = 0;
 				player_death(Ind2);
 				return(TRUE);
