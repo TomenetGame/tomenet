@@ -153,10 +153,12 @@ void do_cmd_go_up(int Ind)
 		if (!is_admin(p_ptr)) return;
 	}
 #if 1
+	/* probability travel restrictions */
 	if (tower) {
 		if(c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS &&
 		    !p_ptr->ghost && ((wild_info[wpos->wy][wpos->wx].tower->flags1 & DF1_NO_RECALL) ||
-				      (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_RECALL_INTO))) {
+				      (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_RECALL_INTO) ||
+				      (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON))) {
 			msg_print(Ind,"\377rA magical force prevents you from floating upwards.");
 			if (!is_admin(p_ptr)) return;
 		}
@@ -550,6 +552,7 @@ void do_cmd_go_down(int Ind)
 		if (!is_admin(p_ptr)) return;
 	}
 #if 1
+	/* probability travel restrictions */
 	if (tower) {
 		if((c_ptr->feat != FEAT_MORE) && (c_ptr->feat != FEAT_WAY_MORE) &&
 		    (!p_ptr->ghost) && (wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_NO_RECALL | DF1_NO_UP))) {
@@ -559,7 +562,8 @@ void do_cmd_go_down(int Ind)
 	} else {
 		if((c_ptr->feat != FEAT_MORE) && (c_ptr->feat != FEAT_WAY_MORE) &&
 		    (!p_ptr->ghost) && ((wild_info[wpos->wy][wpos->wx].dungeon->flags1 & DF1_NO_RECALL) ||
-				      (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_RECALL_INTO))) {
+				      (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_RECALL_INTO) ||
+				      (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON))) {
 			msg_print(Ind,"\377rA magical force prevents you from floating downwards.");
 			if (!is_admin(p_ptr)) return;
 		}
