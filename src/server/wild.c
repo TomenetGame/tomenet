@@ -2946,7 +2946,11 @@ void wilderness_gen(struct worldpos *wpos)
 #endif
 	}
 	/* add ambient features to the entrance so it looks less bland ;) - C. Blue */
-	if (!istown(wpos) && d_ptr) {
+	if (!istown(wpos) && d_ptr
+	    /* don't overwrite house walls if house contains a staircase
+	       (also see second check for this, further below) */
+	    && !(zcave[y][x].info & (CAVE_ROOM | CAVE_ICKY))
+	    ) {
 		int j, k;
 		dungeon_info_type *di_ptr = &d_info[d_ptr->type];
 
@@ -2969,8 +2973,11 @@ void wilderness_gen(struct worldpos *wpos)
 			zx = x + ddx[cycle[chome[i] + k]];
 			zy = y + ddy[cycle[chome[i] + k]];
 
-			/* don't overwrite house walls if house contains a staircase (!) */
+			/* don't overwrite house walls if house contains a staircase
+			   (also see first check for this, further above)  */
 			if ((zcave[zy][zx].info & (CAVE_ROOM | CAVE_ICKY))) continue;
+
+			/* don't overwrite any perma walls (usually house walls) */
 			if ((f_info[zcave[zy][zx].feat].flags1 & FF1_PERMANENT)) continue;
 
 			zcave[zy][zx].feat = di_ptr->fill_type[0];//->inner_wall;
