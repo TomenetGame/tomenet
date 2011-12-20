@@ -6259,7 +6259,7 @@ void do_slash_cmd(int Ind, char *message)
 						k = 0; tpos.wx = x; tpos.wy = y; tpos.wz = -(i + 1);
 						for (j = 1; j < NumPlayers + 1; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
 						if (used && k) msg_format(Ind, "\377gD %2d,%2d,%2d", x, y, -(i + 1));
-						else if (d_ptr->level[i].ondepth > k) msg_format(Ind, "d %2d,%2d,%2d", x, y, -(i + 1));
+						else if (d_ptr->level[i].ondepth > k) msg_format(Ind, "D %2d,%2d,%2d", x, y, -(i + 1));
 						else if (stale && getcave(&tpos) && stale_level(&tpos, cfg.anti_scum)) msg_format(Ind, "\377DD %2d,%2d,%2d", x, y, -(i + 1));
 					    }
 					}
