@@ -25,5 +25,5 @@
 
 
 /* Permanent event "Ironman Deep Dive Challenge": */
-//#define WPOS_IRONDEEPDIVE_X	??
-//#define WPOS_IRONDEEPDIVE_Y	??
+#define WPOS_IRONDEEPDIVE_X	63
+#define WPOS_IRONDEEPDIVE_Y	63

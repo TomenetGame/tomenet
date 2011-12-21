@@ -2838,6 +2838,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet) {
 		while ((word = censor_strstr(lcopy + offset, swear[i].word, &eff_len))) {
 			pos = word - lcopy;
 			l0 = tolower(line[cc[pos]]);
+			l1 = l2 = l3 = 0; //kill compiler warnings
 			if (cc[pos] >= 1) l1 = tolower(line[cc[pos] - 1]);
 			if (cc[pos] >= 2) {
 				l2 = tolower(line[cc[pos] - 2]);
