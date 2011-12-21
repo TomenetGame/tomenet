@@ -24,6 +24,7 @@ assam
 assassin
 assau
 assemb
+assent
 assert
 assess
 asset
