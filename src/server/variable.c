@@ -864,7 +864,8 @@ byte season = SEASON_SPRING; /* default is spring on server startup */
 
 /* SERVER-SIDE WEATHER AND GLOBAL CLIENT-SIDE WEATHER: */
 /* for snowfall during WINTER_SEASON mainly */
-int weather = 0;
+int weather = 0;	/* note: for old server-side or global-client-side weather this is a flag (0 or 1),
+			   for modern client-side weather this is 0, 1 (rain), 2 (snow). */
 int weather_duration = 0;
 #ifdef WINTER_SEASON /* backward code compatibility till seasons have finished being implemented...*/
 byte weather_frequency = WINTER_SEASON;

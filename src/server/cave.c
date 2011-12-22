@@ -8138,24 +8138,25 @@ void player_weather(int Ind, bool entered_level, bool weather_changed, bool pane
 
 #else /* send his worldmap sector's specific weather situation */
 	w = ((entered_level) ? ((wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_type) ? 200 : -1) : 0);
-#if 0 /* buggy? */
+ #if 0 /* buggy? */
 	Send_weather(Ind,
 	    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_type + w
-#else
+ #else
 	Send_weather(Ind,
 	    ((w == -1) ? -1 : (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_type + w))
-#endif
+ #endif
 	    + ((weather_changed && (w != -1)) ? 10000 : 0)
-#if 0 /* glitchy? paranoia maybe */
+ #if 0 /* glitchy? paranoia maybe */
 	    + (weather && panel_redraw ? 20000 : 0),
-#else
+ #else
 	    + ((weather && panel_redraw && (w != -1)) ? 20000 : 0),
-#endif
+ #endif
 	    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_wind,
 	    WEATHER_GEN_TICKS,
 	    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_intensity,
 	    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_speed,
 	    TRUE, FALSE); /* <- apply clouds! */
+
  #ifdef TEST_SERVER /* DEBUG */
  #if 0
  s_printf("  updated weather for player %d to type %d (real: %d).\n", Ind,
