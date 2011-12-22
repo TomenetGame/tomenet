@@ -2829,6 +2829,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet) {
 		i++;
 		j++;
 	}
+s_printf("lcopy %s (leet %d)\n", lcopy, leet);
 
 	/* check for swear words and censor them */
 	for (i = 0; swear[i].word[0]; i++) {
@@ -2852,7 +2853,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet) {
 			}
 
 			/* prevent checking the same occurance repeatedly */
-			offset = pos + strlen(swear[i].word);
+			offset = pos + 1;
 
 #ifdef EXEMPT_BROKEN_SWEARWORDS
 			/* hm, maybe don't track swear words if proceeded and postceeded by some other letters
@@ -2902,6 +2903,9 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet) {
 			}
 #endif
 
+			/* we can skip ahead */
+			offset = pos + strlen(swear[i].word);
+
 #if 0
 			/* censor it! */
 			for (j = 0; j < eff_len); j++) {
@@ -2914,11 +2918,13 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet) {
 				for (k = cc[pos + j]; k <= cc[pos + j + 1]; k++)
 					line[k] = buf[k] = '*';
 
+				/* MUST be disabled or interferes with detection overlaps: */
 				/* for processing lcopy in a while loop instead of just 'if'
 				   -- OBSOLETE ACTUALLY (thanks to 'offset')? */
-				lcopy[pos + j] = '*';
+//				lcopy[pos + j] = '*';
 			}
-			lcopy[pos + j] = '*';
+			/* see right above - MUST be disabled: */
+//			lcopy[pos + j] = '*';
 #endif
 			level = MAX(level, swear[i].level);
 		}
@@ -3022,11 +3028,11 @@ static int censor(char *line) {
 	strcpy(tmp, line);
 	i = censor_aux(line, lcopy, cc, FALSE); /* continue with normal check  */
 	j = censor_aux(tmp, lcopy2, cc, TRUE); /* continue with leet speek check */
+	/* combine all censored characters */
+	for (offset = 0; tmp[offset]; offset++)
+		if (tmp[offset] == '*') line[offset] = '*';
 
-	if (j > i) {
-		strcpy(line, tmp);
-		return j;
-	}
+	if (j > i) return j;
 	return i;
 }
 
