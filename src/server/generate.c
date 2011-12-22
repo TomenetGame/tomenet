@@ -11369,6 +11369,34 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 	server_dungeon = TRUE;
 }
 
+/* (Can ONLY be used on surface worldmap sectors.)
+   Rebuilds a level, without re-adding dungeons, because this
+   function assumes that the level has already been generated.
+   Used for season change. - C. Blue */
+void regenerate_cave(struct worldpos *wpos)
+{
+	cave_type **zcave;
+
+	/* world surface only, to keep it simple */
+	if (wpos->wz) return;
+	/* paranoia */
+	if (!(zcave = getcave(wpos))) return;
+
+	/* Build the town */
+	if (istown(wpos)) {
+		/* Make a town */
+		town_gen(wpos);
+	}
+	/* Build wilderness */
+	else if (!wpos->wz) {
+		wilderness_gen(wpos);
+	}
+
+	/* Change features depending on season,
+	   and change lighting depending on daytime */
+	wpos_apply_season_daytime(wpos, zcave);
+}
+
 /* determine whether a feature should be a tree or a
    bush, depending on the season - C. Blue */
 int get_seasonal_tree(void) {

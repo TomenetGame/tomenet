@@ -8068,9 +8068,7 @@ void season_change(int s, bool force) {
 	for (y = 0; y < MAX_WILD_Y; y++) {
 		wpos.wx = x;
 		wpos.wy = y;
-		/* note: NULL is illegal and only works if a surface
-		   floor is being generated (ie wz = 0): */
-		if (getcave(&wpos)) generate_cave(&wpos, NULL);
+		if (getcave(&wpos)) regenerate_cave(&wpos);
 	}
 
 	s_printf("(%s) SEASON_CHANGE: %d", showtime(), s);
