@@ -3143,7 +3143,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			/* Clear invalid monster references - mikaelh */
 
 			/* Log it */
-			s_printf("MIDX_FIX: Cleared invalid monster refence (m_idx = %d, m_max = %d) (wpos = %d, %d, %d) (x = %d, y = %d)\n", c_ptr->m_idx, m_max, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, x, y);
+			s_printf("MIDX_FIX: Cleared an invalid monster reference (m_idx = %d, m_max = %d) (wpos = %d, %d, %d) (x = %d, y = %d)\n", c_ptr->m_idx, m_max, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, x, y);
 
 			c_ptr->m_idx = 0;
 		}
@@ -3173,7 +3173,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			c_ptr->m_idx = 0;
 
 			/* Log it */
-			s_printf("MIDX_FIX: Cleared invalid player m_idx (ind = %d) (wpos = %d, %d, %d) (x = %d, y = %d)\n", Ind2, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, x, y);
+			s_printf("MIDX_FIX: Cleared an invalid player m_idx (ind = %d) (wpos = %d, %d, %d) (x = %d, y = %d)\n", Ind2, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, x, y);
 		}
 
 		/* Check for doppelgangers - mikaelh */
