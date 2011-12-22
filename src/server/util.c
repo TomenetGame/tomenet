@@ -2829,7 +2829,6 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet) {
 		i++;
 		j++;
 	}
-s_printf("lcopy %s (leet %d)\n", lcopy, leet);
 
 	/* check for swear words and censor them */
 	for (i = 0; swear[i].word[0]; i++) {
