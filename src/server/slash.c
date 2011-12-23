@@ -3320,6 +3320,45 @@ void do_slash_cmd(int Ind, char *message)
 			} else msg_print(Ind, "Unknown guild flag specified.");
 			return;
 		}
+		else if (prefix(message, "/testyourmight")) {
+			if (tk > 1 ||
+			    (tk == 1 && strcmp(token[1], "rs"))) {
+				msg_print(Ind, "Usage: /testyourmight [rs]");
+				msg_print(Ind, "       Just the command will display your current damage/heal stats,");
+				msg_print(Ind, "       based on your attack count and on the number of game turns passed.");
+				msg_print(Ind, "       Typing '/testyourmight rs' will reset the recorded stats to zero.");
+				return;
+			}
+			if (tk) {
+				p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = 0;
+				p_ptr->test_turn = turn;
+				msg_print(Ind, "Attack count, damage and healing done have been reset to zero.");
+				return;
+			}
+			msg_print(Ind, "Your total damage and healing done:");
+			msg_format(Ind, "    \377oTotal damage done   : %8d.", p_ptr->test_dam);
+			msg_format(Ind, "    \377gTotal healing done  : %8d.", p_ptr->test_heal);
+			msg_print(Ind, "Your damage and healing done over # of attacks and # of game turns:");
+			if (p_ptr->test_count == 0)
+				msg_print(Ind,  "    \377sNo count-based result available: Attack count is still zero.");
+			else {
+				msg_format(Ind, "    \377wAttack count: %6d.", p_ptr->test_count);
+				msg_format(Ind, "    \377o    Average damage done : %8d.", p_ptr->test_dam / p_ptr->test_count);
+				msg_format(Ind, "    \377g    Average healing done: %8d.", p_ptr->test_heal / p_ptr->test_count);
+			}
+			if (p_ptr->test_turn == 0)
+				msg_print(Ind, "    \377sNo turn-based result available: Initialize via '/testyourmight rs'.");
+			/* this shouldn't happen.. */
+			else if (turn - p_ptr->test_turn == 0)
+				msg_print(Ind,  "    \377sNo turn-based result available: No turn has passed yet.");
+			else {
+				msg_format(Ind, "    \377wTurns passed: %6d.", turn - p_ptr->test_turn);
+				msg_format(Ind, "    \377o    Average damage done : %8d.", p_ptr->test_dam / (turn - p_ptr->test_turn));
+				msg_format(Ind, "    \377g    Average healing done: %8d.", p_ptr->test_heal / (turn - p_ptr->test_turn));
+			}
+			return;
+		}
+
 
 		/*
 		 * Admin commands
@@ -6086,28 +6125,6 @@ void do_slash_cmd(int Ind, char *message)
 				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 				return;
 			}
-#ifdef TEST_SERVER
-			else if (prefix(message, "/testdam")) {
-				if (tk) {
-					p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = 0;
-					p_ptr->test_turn = turn;
-					msg_print(Ind, "test count/dam/heal have been reset.");
-				} else {
-					if (p_ptr->test_count == 0)
-						msg_print(Ind, "test count 0. no result.");
-					else
-						msg_format(Ind, "test count %d - tot dam %d, avg %d - tot heal %d, avg %d",
-						    p_ptr->test_count,
-						    p_ptr->test_dam, p_ptr->test_dam / p_ptr->test_count,
-						    p_ptr->test_heal, p_ptr->test_heal / p_ptr->test_count);
-						msg_format(Ind, "test turns %d - tot dam %d, avg %d - tot heal %d, avg %d",
-						    turn - p_ptr->test_turn,
-						    p_ptr->test_dam, p_ptr->test_dam / (turn - p_ptr->test_turn),
-						    p_ptr->test_heal, p_ptr->test_heal / (turn - p_ptr->test_count));
-				}
-				return;
-			}
-#endif
 			/* Display all information about the grid an admin-char is currently standing on - C. Blue */
 			else if (prefix(message, "/debug-grid")){
 				worldpos *tpos = &p_ptr->wpos;

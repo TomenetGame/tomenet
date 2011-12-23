@@ -7358,10 +7358,8 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 	        d_ptr2 = &d_info[dun_type2];
 	}
 
-#ifdef TEST_SERVER
 	p_ptr->test_count++;
 	p_ptr->test_dam += dam;
-#endif
 
 	/* break charmignore */
 	if (m_ptr->charmedignore) {

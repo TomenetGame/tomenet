@@ -531,9 +531,7 @@ bool hp_player(int Ind, int num) {
 
 	long e = PVP_DIMINISHING_HEALING_CAP(p_ptr);
 
-#ifdef TEST_SERVER
 	p_ptr->test_heal += num;
-#endif
 
 	// The "number" that the character is displayed as before healing
 	old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
@@ -625,9 +623,7 @@ bool hp_player_quiet(int Ind, int num, bool autoeffect) {
 
 	long e = PVP_DIMINISHING_HEALING_CAP(p_ptr);
 
-#ifdef TEST_SERVER
 	p_ptr->test_heal += num;
-#endif
 
 	old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
 	if (old_num >= 7) old_num = 10;

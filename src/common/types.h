@@ -2866,9 +2866,7 @@ struct player_type
 	/* more admin fooling around (give a 1-hit-kill attack to the player, or let him die in 1 hit) */
 	int admin_godly_strike, admin_set_defeat;
 
-#ifdef TEST_SERVER
 	u32b test_count, test_dam, test_heal, test_turn;
-#endif
 
 	/* give players certain warnings, meant to guide newbies along, and remember
 	   if we already gave a specific warning, so we don't spam the player with it

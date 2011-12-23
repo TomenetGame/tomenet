@@ -575,9 +575,7 @@ static void regenhp(int Ind, int percent)
 
 	s32b        new_chp, new_chp_frac;
 	int                   old_chp;
-#ifdef TEST_SERVER
 	int freeze_test_heal = p_ptr->test_heal;
-#endif
 
 	/* Save the old hitpoints */
 	old_chp = p_ptr->chp;
@@ -600,9 +598,7 @@ static void regenhp(int Ind, int percent)
 		p_ptr->chp_frac = new_chp_frac;
 	}
 
-#ifdef TEST_SERVER
 	p_ptr->test_heal = freeze_test_heal;
-#endif
 }
 
 
