@@ -110,6 +110,10 @@
 #define FLOORTILEBUG_WORKAROUND
 
 
+/* Message to send to client when kicking him out due to starvation while being idle */
+//#define STARVING_AUTOKICK_MSG "starving auto-kick"
+#define STARVING_AUTOKICK_MSG format("You were STARVING and idle for %ds, so the game kicked you to prevent death!", STARVE_KICK_TIMER)
+
 /* Sanity check of client input */
 #define bad_dir(d)	((d)<0 || (d)>9)	/* used for non-targetting actions that require a direction */
 //#define bad_dir1(d)	((d)<0 || (d)>9+1)	/* used for most targetting actions */
@@ -6695,7 +6699,7 @@ static int Receive_keepalive(int ind)
 		/* Kick a starving player */
 		if (p_ptr->food < PY_FOOD_WEAK && connp->inactive_keepalive > STARVE_KICK_TIMER / 2)
 		{
-			Destroy_connection(ind, "starving auto-kick");
+			Destroy_connection(ind, STARVING_AUTOKICK_MSG);
 			return 2;
 		}
 
@@ -9980,7 +9984,7 @@ static int Receive_ping(int ind) {
 			/* Kick a starving player */
 			if (p_ptr->food < PY_FOOD_WEAK && connp->inactive_ping > STARVE_KICK_TIMER)
 			{
-				Destroy_connection(ind, "starving auto-kick");
+				Destroy_connection(ind, STARVING_AUTOKICK_MSG);
 				return 2;
 			}
 
