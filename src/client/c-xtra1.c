@@ -778,10 +778,10 @@ void prt_speed(int speed)
 
 	if (speed > 0) {
 		attr = TERM_L_GREEN;
-		sprintf(buf, "Fast (+%d)", speed);
+		sprintf(buf, "Fast +%d", speed);
 	} else if (speed < 0) {
 		attr = TERM_L_UMBER;
-		sprintf(buf, "Slow (%d)", speed);
+		sprintf(buf, "Slow %d", speed);
 	}
 
 	if (no_tele_grid) {
@@ -804,6 +804,7 @@ void prt_speed(int speed)
 
 /*
  * Prints ability to gain skillss
+ * Note: Replacing this in 4.4.8.5 by a Blows/Round display, see function below - C. Blue
  */
 void prt_study(bool study)
 {
@@ -820,6 +821,19 @@ void prt_study(bool study)
 	{
 		put_str("     ", ROW_STUDY, COL_STUDY);
 	}
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
+}
+
+/* Prints blows/round in main window - important and changable stat! - C. Blue */
+void prt_bpr(byte bpr, byte attr) {
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
+	c_put_str(attr, format("%2d BpR", bpr), ROW_BPR, COL_BPR);
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);

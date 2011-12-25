@@ -5087,6 +5087,20 @@ int Send_study(int ind, bool study)
 	return Packet_printf(&connp->c, "%c%c", PKT_STUDY, study);
 }
 
+int Send_bpr(int ind, byte bpr, byte attr)
+{
+	connection_t *connp = Conn[Players[ind]->conn];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection not ready for bpr (%d.%d.%d)",
+			ind, connp->state, connp->id));
+		return 0;
+	}
+	return Packet_printf(&connp->c, "%c%c%c", PKT_BPR, bpr, attr);
+}
+
 int Send_cut(int ind, int cut)
 {
 	connection_t *connp = Conn[Players[ind]->conn], *connp2;
@@ -9041,7 +9055,7 @@ static int Receive_redraw(int ind)
 			/* Tell the server to redraw the player's display */
 			p_ptr->redraw |= PR_MAP | PR_EXTRA | PR_BASIC | PR_HISTORY | PR_VARIOUS | PR_STATE;
 			p_ptr->redraw |= PR_PLUSSES;
-			p_ptr->redraw |= PR_STUDY;
+			if (is_older_than(&p_ptr->version, 4, 4, 8, 5, 0, 0)) p_ptr->redraw |= PR_STUDY;
 
 			/* Update his view, light, bonuses, and torch radius */
 #ifdef ORIG_SKILL_EVIL	/* not to be defined */

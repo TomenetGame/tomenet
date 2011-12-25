@@ -483,6 +483,37 @@ static void prt_study(int Ind)
 }
 
 
+static void prt_bpr(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	byte attr = TERM_L_GREEN;
+
+	switch (p_ptr->pclass) {
+	case CLASS_WARRIOR:
+	case CLASS_MIMIC:
+	case CLASS_PALADIN:
+	case CLASS_RANGER:
+	case CLASS_ROGUE:
+	case CLASS_MINDCRAFTER:
+		if (p_ptr->num_blow == 1) attr = TERM_SLATE;
+		else if (p_ptr->num_blow == 2) attr = TERM_YELLOW;
+		break;
+	case CLASS_SHAMAN:
+	case CLASS_ADVENTURER:
+	case CLASS_RUNEMASTER:
+	case CLASS_PRIEST:
+	case CLASS_DRUID:
+		if (p_ptr->num_blow == 1) attr = TERM_YELLOW;
+		break;
+	case CLASS_MAGE:
+	case CLASS_ARCHER:
+		break;
+	}
+
+	Send_bpr(Ind, p_ptr->num_blow, attr);
+}
+
+
 static void prt_cut(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
@@ -928,8 +959,12 @@ static void prt_frame_extra(int Ind)
 	/* Speed */
 	prt_speed(Ind);
 
-	/* Study spells */
-	prt_study(Ind);
+	if (is_older_than(&Players[Ind]->version, 4, 4, 8, 5, 0, 0))
+		/* Study spells */
+		prt_study(Ind);
+	else
+		/* Blows/Round */
+		prt_bpr(Ind);
 }
 
 
@@ -5878,11 +5913,13 @@ void calc_boni(int Ind)
 	if (p_ptr->ghost && !is_admin(p_ptr)) p_ptr->num_blow = (p_ptr->lev + 15) / 16;
 
 
-
 	/* XXX - Always resend skills */
 	p_ptr->redraw |= (PR_SKILLS);
 	/* also redraw encumberment status line */
 	p_ptr->redraw |= (PR_ENCUMBERMENT);
+	if (is_newer_than(&p_ptr->version, 4, 4, 8, 4, 0, 0))
+		/* Redraw BpR */
+		p_ptr->redraw |= PR_BPR;
 
 
     /* Don't kill warnings by inspecting weapons/armour in stores! */
@@ -6237,7 +6274,8 @@ void redraw_stuff(int Ind)
 		p_ptr->redraw &= ~(PR_HUNGER);
 		p_ptr->redraw &= ~(PR_BLIND | PR_CONFUSED);
 		p_ptr->redraw &= ~(PR_AFRAID | PR_POISONED);
-		p_ptr->redraw &= ~(PR_STATE | PR_SPEED | PR_STUDY);
+		p_ptr->redraw &= ~(PR_STATE | PR_SPEED);
+		if (is_older_than(&p_ptr->version, 4, 4, 8, 5, 0, 0)) p_ptr->redraw &= ~PR_STUDY;
 		prt_frame_extra(Ind);
 		prt_extra_status(Ind);
 	}
@@ -6288,9 +6326,16 @@ void redraw_stuff(int Ind)
 		prt_speed(Ind);
 	}
 
-	if (p_ptr->redraw & PR_STUDY) {
-		p_ptr->redraw &= ~(PR_STUDY);
-		prt_study(Ind);
+	if (is_older_than(&p_ptr->version, 4, 4, 8, 5, 0, 0)) {
+		if (p_ptr->redraw & PR_STUDY) {
+			p_ptr->redraw &= ~(PR_STUDY);
+			prt_study(Ind);
+		}
+	} else {
+		if (p_ptr->redraw & PR_BPR) {
+			p_ptr->redraw &= ~(PR_BPR);
+			prt_bpr(Ind);
+		}
 	}
 }
 

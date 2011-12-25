@@ -1222,7 +1222,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				i = 1 + rand_int(3);
 				p_ptr->skill_points += i;
 				p_ptr->update |= PU_SKILL_MOD;
-				p_ptr->redraw |= PR_STUDY;
+				if (is_older_than(&p_ptr->version, 4, 4, 8, 5, 0, 0)) p_ptr->redraw |= PR_STUDY;
 
 				msg_format(Ind, "You gained %d more skill point%s.", i, (i == 1)?"":"s");
 

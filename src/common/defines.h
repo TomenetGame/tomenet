@@ -38,7 +38,7 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		4
 #define VERSION_PATCH		8
-#define VERSION_EXTRA		4
+#define VERSION_EXTRA		5
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -1550,6 +1550,8 @@
 
 #define ROW_STUDY		23
 #define COL_STUDY		62	/* "Study" */
+#define ROW_BPR			23
+#define COL_BPR			61	/* Blows/Round */
 
 #define ROW_DEPTH		23
 #define COL_DEPTH		69	/* "Lev NNN" / "NNNN ft" */
@@ -3615,9 +3617,8 @@
 #define PR_SANITY	0x20000000L     /* Display Sanity */
 #define PR_ENCUMBERMENT	0x40000000L	/* Display Encumberment status line */
 #define PR_STAMINA	0x80000000L	/* Display Stamina */
-/* xxx */
-/* xxx */
-/* xxx */
+
+#define PR_BPR		0x00400000L	/* Re-use (!) to display BpR */
 
 /*
  * Bit flags for the "p_ptr->window" variable (etc)

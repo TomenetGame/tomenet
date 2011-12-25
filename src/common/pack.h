@@ -148,8 +148,10 @@
 #define PKT_ZAP_DIR		126
 #define PKT_ACTIVATE_DIR	127
 #define PKT_SKILL_DEV		128 /* Sent from client->server: collapse/expand subtree of a skill */
+#define PKT_BPR			129 /* BpR display replaces Study display */
 
 #define PKT_SANITY		130
+//XXX 131-149
 
 /* Packet types 150- are hacks */
 #define PKT_FLUSH		150

@@ -93,6 +93,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_CONFUSED]	= Receive_confused;
 	receive_tbl[PKT_POISON]	= Receive_poison;
 	receive_tbl[PKT_STUDY]		= Receive_study;
+	receive_tbl[PKT_BPR]		= Receive_bpr;
 	receive_tbl[PKT_FOOD]		= Receive_food;
 	receive_tbl[PKT_FEAR]		= Receive_fear;
 	receive_tbl[PKT_SPEED]		= Receive_speed;
@@ -2182,6 +2183,22 @@ int Receive_study(void)
 
 	prt_study(study);
 
+	if (screen_icky) Term_switch(0);
+
+	return 1;
+}
+
+int Receive_bpr(void)
+{
+	int	n;
+	char	ch;
+	byte	bpr, attr;
+
+	if ((n = Packet_scanf(&rbuf, "%c%c%c", &ch, &bpr, &attr)) <= 0)
+		return n;
+
+	if (screen_icky) Term_switch(0);
+	prt_bpr(bpr, attr);
 	if (screen_icky) Term_switch(0);
 
 	return 1;

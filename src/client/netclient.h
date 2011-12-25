@@ -44,6 +44,7 @@ int Receive_depth(void);
 int Receive_confused(void);
 int Receive_poison(void);
 int Receive_study(void);
+int Receive_bpr(void);
 int Receive_food(void);
 int Receive_fear(void);
 int Receive_speed(void);

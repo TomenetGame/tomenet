@@ -3987,7 +3987,7 @@ void check_experience(int Ind)
 				if (rand_int(100) < (xsp * 100 / 50)) p_ptr->skill_points++;
 			}
 #endif
-                        p_ptr->redraw |= PR_STUDY;
+                        if (is_older_than(&p_ptr->version, 4, 4, 8, 5, 0, 0)) p_ptr->redraw |= PR_STUDY;
 			p_ptr->update |= PU_SKILL_MOD;
 
 			newlv = TRUE;
