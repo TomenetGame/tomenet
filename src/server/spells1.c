@@ -1469,7 +1469,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 
 	if (IS_PLAYER(Ind_attacker)) {
 		Players[Ind_attacker]->test_count++;
-		Players[Ind_attacker]->test_dam += dam;
+		Players[Ind_attacker]->test_dam += damage;
 	}
 
 	/* Re allowed by evileye for power */
