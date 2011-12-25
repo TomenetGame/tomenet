@@ -3320,7 +3320,8 @@ void do_slash_cmd(int Ind, char *message)
 			} else msg_print(Ind, "Unknown guild flag specified.");
 			return;
 		}
-		else if (prefix(message, "/testyourmight")) {
+		else if (prefix(message, "/testyourmight")  ||
+		    prefix(message, "/tym")) {
 			if (tk > 1 ||
 			    (tk == 1 && strcmp(token[1], "rs"))) {
 				msg_print(Ind, "Usage: /testyourmight [rs]");

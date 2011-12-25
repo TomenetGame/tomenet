@@ -795,7 +795,8 @@ They all start with a slash '/' hence they're called slash commands:
  (/target)
             Allows you to target a specific grid specified by X,Y as offset
             to your current character position.
-/testyourmight
+/testyourmight [rs]
+or shorter: /tym [rs]
             Displays damage and healing stats for your character, totals and
             averages over number of attacks and over time (# of seconds
             passed).
