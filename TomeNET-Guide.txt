@@ -799,6 +799,10 @@ They all start with a slash '/' hence they're called slash commands:
             Displays damage and healing stats for your character, totals and
             averages over number of attacks and over amount of game engine
             turns (frames) passed.
+            Note: 'Numer of attacks' only counts successful attacks, ie not
+                  attacks that missed, were blocked/parried/dodged or
+                  nullified by invulnerability, etc.
+                  It however counts ALL attacks, for example aura hits too.
 /time       Tells you the current date and time (of the server, not of your
             local timezone).
 /untag [<inscription>]
