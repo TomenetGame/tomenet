@@ -3828,7 +3828,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					    "  -P<path>           set the lib directory Path",
 					    "  -q                 disable audio capabilities ('quiet mode')",
 					    "  -w                 disable client-side weather effects",
-					    "  -u                 disable client-side automatic lua updates"));
+					    "  -u                 disable client-side automatic lua updates",
 					    "  -k                 don't disable numlock on client startup"));
 #endif
 					quit(NULL);
