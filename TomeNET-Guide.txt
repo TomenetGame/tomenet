@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 18. December 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 25. December 2011 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -741,6 +741,8 @@ They all start with a slash '/' hence they're called slash commands:
             Usually you simply enter another player's store by trying to enter
             his house, which will preset you with the store screen.
             (See (4.10a) for more information about player stores.)
+/pvp        Carries you into/out of the PvP arena. Only usable by pvp-mode
+            chars. See (6.13) for details about PvP mode.
 /que        gives a quest! It needs to be fulfilled before a certain period
  (/quest)   of time passes (continues to expire even while not logged on).
             The player who completes it gets a great item as reward. It will
@@ -793,6 +795,12 @@ They all start with a slash '/' hence they're called slash commands:
  (/target)
             Allows you to target a specific grid specified by X,Y as offset
             to your current character position.
+/testyourmight
+            Displays damage and healing stats for your character, totals and
+            averages over amount of melee attacks and over amount of game
+            engine turns (frames) passed.
+/time       Tells you the current date and time (of the server, not of your
+            local timezone).
 /untag [<inscription>]
             If <inscription is omitted, it removes all inscriptions from items
             in your backpack which are exactly '!k' (as done by /tag command).
@@ -807,9 +815,6 @@ They all start with a slash '/' hence they're called slash commands:
 /untag u    will remove all unique-loot tags from your inventory items.
 /at         Apply auto-inscription settings to current inventory.
  (/autotag)
-/version    Displays the server version.
-/time       Tells you the current date and time (of the server, not of your
-            local timezone).
 /undoskills Allows you to undo the skill points you assigned in 'G' menu last
             time. Use this to correct points you accidentally put into a wrong
             skill.
@@ -817,8 +822,7 @@ They all start with a slash '/' hence they're called slash commands:
             making it impossible to undo points spent previously.
             Also, it can only be used ONCE per level, so make sure you get your
             skill point distribution right on the second attempt.
-/pvp        Carries you into/out of the PvP arena. Only usable by pvp-mode
-            chars. See (6.13) for details about PvP mode.
+/version    Displays the server version.
 
 
 
@@ -1431,6 +1435,7 @@ Last but not least, you may use the following command-line options:
 -q                      turns off loading/initializing of audio ('quiet mode')
 -w                      disables weather effects
 -u                      disables automatic LUA script updating
+-k                      don't disable numlock on client startup
 
 
 Linux (compiling from source):
