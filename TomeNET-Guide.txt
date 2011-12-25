@@ -773,8 +773,6 @@ They all start with a slash '/' hence they're called slash commands:
             Same as /shout, but also aggravates monsters in your current
             line of sight. (Same effect as scroll of aggravate monsters,
             see (5.9)).
-/cough      You let out a cough that might disturb the sleep of nearby
-            monsters, or at least make it a less deep sleep..
 /shot  or  /shot <filename>
  (/screenshot)
             Takes a screen shot to a html file. If <filename> is omitted, it
