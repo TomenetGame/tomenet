@@ -909,7 +909,7 @@ static void load_prefs(void)
 #endif
 #endif
 	/* Extract the "disable_numlock" flag */
-	disable_numlock = (GetPrivateProfileInt("Base", "DisableNumlock", 1, ini_file) != 0); 
+	disable_numlock = (GetPrivateProfileInt("Base", "DisableNumlock", 1, ini_file) != 0);
 
 #ifdef USE_GRAPHICS
 	/* Extract the "use_graphics" flag */
@@ -918,7 +918,7 @@ static void load_prefs(void)
 
 #ifdef USE_SOUND
 	/* Extract the "use_sound" flag */
-	use_sound_org = use_sound = (GetPrivateProfileInt("Base", "Sound", 0, ini_file) != 0);
+	use_sound_org = use_sound = (GetPrivateProfileInt("Base", "Sound", 1, ini_file) != 0);
 	if (!use_sound) quiet_mode = TRUE;
 
  #ifdef USE_SOUND_2010
@@ -3814,6 +3814,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					puts("  -q                 disable audio capabilities ('quiet mode')");
 					puts("  -w                 disable client-side weather effects");
 					puts("  -u                 disable client-side automatic lua updates");
+					puts("  -k                 don't disable numlock on client startup");
 #else
 					plog(format("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
 					    longVersion,
@@ -3828,6 +3829,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					    "  -q                 disable audio capabilities ('quiet mode')",
 					    "  -w                 disable client-side weather effects",
 					    "  -u                 disable client-side automatic lua updates"));
+					    "  -k                 don't disable numlock on client startup"));
 #endif
 					quit(NULL);
 					break;
@@ -3853,6 +3855,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					break;
 				case 'u':
 					no_lua_updates = TRUE;
+					break;
+				case 'k':
+					disable_numlock = FALSE;
 					break;
 			}
 		}
