@@ -1467,6 +1467,11 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 		damage = (damage + 1) / 2;
 	}
 
+	if (IS_PLAYER(Ind_attacker)) {
+		Players[Ind_attacker]->test_count++;
+		Players[Ind_attacker]->test_dam += dam;
+	}
+
 	/* Re allowed by evileye for power */
 #if 1
 	//		if (p_ptr->tim_manashield)

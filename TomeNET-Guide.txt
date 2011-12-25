@@ -797,8 +797,8 @@ They all start with a slash '/' hence they're called slash commands:
             to your current character position.
 /testyourmight
             Displays damage and healing stats for your character, totals and
-            averages over amount of melee attacks and over amount of game
-            engine turns (frames) passed.
+            averages over number of attacks and over amount of game engine
+            turns (frames) passed.
 /time       Tells you the current date and time (of the server, not of your
             local timezone).
 /untag [<inscription>]
