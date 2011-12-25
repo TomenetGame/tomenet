@@ -797,8 +797,8 @@ They all start with a slash '/' hence they're called slash commands:
             to your current character position.
 /testyourmight
             Displays damage and healing stats for your character, totals and
-            averages over number of attacks and over amount of game engine
-            turns (frames) passed.
+            averages over number of attacks and over time (# of seconds
+            passed).
             Note: 'Numer of attacks' only counts successful attacks, ie not
                   attacks that missed, were blocked/parried/dodged or
                   nullified by invulnerability, etc.

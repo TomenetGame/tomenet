@@ -3325,7 +3325,7 @@ void do_slash_cmd(int Ind, char *message)
 			    (tk == 1 && strcmp(token[1], "rs"))) {
 				msg_print(Ind, "Usage: /testyourmight [rs]");
 				msg_print(Ind, "       Just the command will display your current damage/heal stats,");
-				msg_print(Ind, "       based on your attack count and on the number of game turns passed.");
+				msg_print(Ind, "       based on your attack count and over the time passed in seconds.");
 				msg_print(Ind, "       Typing '/testyourmight rs' will reset the recorded stats to zero.");
 				return;
 			}
@@ -3338,7 +3338,7 @@ void do_slash_cmd(int Ind, char *message)
 			msg_print(Ind, "Your total damage and healing done:");
 			msg_format(Ind, "    \377oTotal damage done   : %8d.", p_ptr->test_dam);
 			msg_format(Ind, "    \377gTotal healing done  : %8d.", p_ptr->test_heal);
-			msg_print(Ind, "Your damage and healing done over # of attacks and # of game turns:");
+			msg_print(Ind, "Your damage and healing done over # of attacks and amount of time passed:");
 			if (p_ptr->test_count == 0)
 				msg_print(Ind,  "    \377sNo count-based result available: Attack count is still zero.");
 			else {
@@ -3347,14 +3347,14 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "    \377g    Average healing done: %8d.", p_ptr->test_heal / p_ptr->test_count);
 			}
 			if (p_ptr->test_turn == 0)
-				msg_print(Ind, "    \377sNo turn-based result available: Initialize via '/testyourmight rs'.");
+				msg_print(Ind, "    \377sNo time-based result available: Initialize via '/testyourmight rs'.");
 			/* this shouldn't happen.. */
 			else if (turn - p_ptr->test_turn == 0)
-				msg_print(Ind,  "    \377sNo turn-based result available: No turn has passed yet.");
+				msg_print(Ind,  "    \377sNo time-based result available: No turn has passed yet.");
 			else {
-				msg_format(Ind, "    \377wTurns passed: %6d.", turn - p_ptr->test_turn);
-				msg_format(Ind, "    \377o    Average damage done : %8d.", p_ptr->test_dam / (turn - p_ptr->test_turn));
-				msg_format(Ind, "    \377g    Average healing done: %8d.", p_ptr->test_heal / (turn - p_ptr->test_turn));
+				msg_format(Ind, "    \377wSeconds passed: %6d.", (turn - p_ptr->test_turn) / cfg.fps);
+				msg_format(Ind, "    \377o    Average damage done : %8d.", p_ptr->test_dam / ((turn - p_ptr->test_turn) / cfg.fps));
+				msg_format(Ind, "    \377g    Average healing done: %8d.", p_ptr->test_heal / ((turn - p_ptr->test_turn) / cfg.fps));
 			}
 			return;
 		}
