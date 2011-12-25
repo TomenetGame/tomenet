@@ -11255,6 +11255,10 @@ rather low, the spell fail rate might not go down further from increasing its
 level. At that point the only thing you can do to further reduce the spell fail
 rate is to increase the stat (INT or WIS) that the spell uses.
 
+Mimic powers use INT to determine fail rate, have a greater fail rate than
+other spells in general, and do not have a 'spell level'. Their effects are
+pretty much fixed.
+
 
 
 (6.9) Parties, Iron Teams, Guilds
