@@ -3351,8 +3351,8 @@ void do_slash_cmd(int Ind, char *message)
 			if (p_ptr->test_turn == 0)
 				msg_print(Ind, "    \377sNo time-based result available: Initialize via '/testyourmight rs'.");
 			/* this shouldn't happen.. */
-			else if (turn - p_ptr->test_turn == 0)
-				msg_print(Ind,  "    \377sNo time-based result available: No turn has passed yet.");
+			else if ((turn - p_ptr->test_turn) / cfg.fps == 0)
+				msg_print(Ind,  "    \377sNo time-based result available: No second has passed yet.");
 			else {
 				msg_format(Ind, "    \377wSeconds passed: %6d.", (turn - p_ptr->test_turn) / cfg.fps);
 				msg_format(Ind, "    \377o    Average damage done : %8d.", p_ptr->test_dam / ((turn - p_ptr->test_turn) / cfg.fps));
