@@ -2430,6 +2430,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 						if(!cave_plain_floor_grid(c_ptr))
 							c_ptr->info &= ~(CAVE_ROOM);
 					}
+					everyone_lite_spot(&h_ptr->wpos, h_ptr->y + y, h_ptr->x + x);
 				}
 				else if(func == FILL_OBJECT){ /* object in house */
 					object_type *o_ptr = (object_type*)data;
@@ -2463,9 +2464,11 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 						c_ptr->feat = FEAT_DIRT;
 						c_ptr->info &= ~(CAVE_ICKY | CAVE_ROOM | CAVE_STCK | CAVE_JAIL);
 					}
+					everyone_lite_spot(&h_ptr->wpos, h_ptr->y + y, h_ptr->x + x);
 				}
 				else if(func == FILL_CLEAR){
 					delete_object(wpos, y, x, TRUE);
+					everyone_lite_spot(&h_ptr->wpos, h_ptr->y + y, h_ptr->x + x);
 				}
 				else if(func == FILL_BUILD){
 					if(x && y && x < h_ptr->coords.rect.width - 1 && y < h_ptr->coords.rect.height - 1){
@@ -2481,18 +2484,17 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 //done above already				if (x > 0 && x < h_ptr->coords.rect.width - 1 && y > 0 && y < h_ptr->coords.rect.height)
  						if (h_ptr->dna->owner) c_ptr->info |= CAVE_GLOW;
 #endif
+						everyone_lite_spot(&h_ptr->wpos, h_ptr->y + y, h_ptr->x + x);
 					}
 				}
 #ifdef HOUSE_PAINTING
 				else if (func == FILL_UNPAINT) {
 					c_ptr->colour = 0;
 					/* refresh player's view on the freshly applied paint */
-					//done below, for all functions
+					everyone_lite_spot(&h_ptr->wpos, h_ptr->y + y, h_ptr->x + x);
 				}
 #endif
 				else s_printf("rect fill house (func: %d\n", func);
-
-				everyone_lite_spot(&h_ptr->wpos, h_ptr->y + y, h_ptr->x + x);
 			}
 		}
 		return(success);

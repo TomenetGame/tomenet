@@ -4882,7 +4882,7 @@ bool player_can_enter(int Ind, byte feature)
 #if 0
 		case FEAT_WALL_HOUSE:
 		{
-			if (!pass_wall || !wraith_access(Ind)) return (FALSE);
+			if (!pass_wall || !wraith_access_virtual(Ind)) return (FALSE);
 			else return (TRUE);
 		}
 #endif	// 0
