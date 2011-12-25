@@ -3326,7 +3326,8 @@ void do_slash_cmd(int Ind, char *message)
 			    (tk == 1 && strcmp(token[1], "rs"))) {
 				msg_print(Ind, "Usage: /testyourmight [rs]");
 				msg_print(Ind, "       Just the command will display your current damage/heal stats,");
-				msg_print(Ind, "       based on your attack count and over the time passed in seconds.");
+				msg_print(Ind, "       based on your number of *successful* attacks and over the time");
+				msg_print(Ind, "       passed, in seconds.");
 				msg_print(Ind, "       Typing '/testyourmight rs' will reset the recorded stats to zero.");
 				return;
 			}
@@ -3341,9 +3342,9 @@ void do_slash_cmd(int Ind, char *message)
 			msg_format(Ind, "    \377gTotal healing done  : %8d.", p_ptr->test_heal);
 			msg_print(Ind, "Your damage and healing done over # of attacks and amount of time passed:");
 			if (p_ptr->test_count == 0)
-				msg_print(Ind,  "    \377sNo count-based result available: Attack count is still zero.");
+				msg_print(Ind,  "    \377sNo count-based result available: # of successful attacks is still zero.");
 			else {
-				msg_format(Ind, "    \377wAttack count: %6d.", p_ptr->test_count);
+				msg_format(Ind, "    \377wNumber of successful attacks: %6d.", p_ptr->test_count);
 				msg_format(Ind, "    \377o    Average damage done : %8d.", p_ptr->test_dam / p_ptr->test_count);
 				msg_format(Ind, "    \377g    Average healing done: %8d.", p_ptr->test_heal / p_ptr->test_count);
 			}
