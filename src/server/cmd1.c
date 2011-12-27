@@ -4045,7 +4045,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 								msg_format(Ind, "%^s resists the effect.", m_name);
 							} else {
 								msg_format(Ind, "%^s appears confused.", m_name);
-								m_ptr->confused += 10 + rand_int(p_ptr->lev) / 5;
+								m_ptr->confused += 10 + rand_int(p_ptr->lev) / 5 + rand_int(get_skill(p_ptr, SKILL_COMBAT) / 10);
 							}
 						}
 						break;
@@ -4053,7 +4053,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 						fear_chance = 50 + (p_ptr->lev - r_ptr->level) * 5;
 						if (!(r_ptr->flags3 & RF3_NO_FEAR) && rand_int(100) < fear_chance) {
 							msg_format(Ind, "%^s appears afraid.", m_name);
-							m_ptr->monfear = m_ptr->monfear + 4 + rand_int(p_ptr->lev) / 5;
+							m_ptr->monfear = m_ptr->monfear + 4 + rand_int(p_ptr->lev) / 5 + rand_int(get_skill(p_ptr, SKILL_COMBAT) / 10);
 						}
 						break;
 					case RBE_PARALYZE:
@@ -4071,7 +4071,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 									msg_format(Ind, "\377o%^s appears stunned.", m_name);
 								else
 									msg_format(Ind, "\377o%^s appears more stunned.", m_name);
-								m_ptr->stunned += 20 + rand_int(p_ptr->lev) / 5;
+								m_ptr->stunned += 20 + rand_int(p_ptr->lev) / 5 + rand_int(get_skill(p_ptr, SKILL_COMBAT) / 10);
 							}
 						}
 						break;
@@ -4148,7 +4148,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 					msg_format(Ind, "%^s resists the effect.", m_name);
 				} else {
 					msg_format(Ind, "%^s appears confused.", m_name);
-					m_ptr->confused += 10 + rand_int(p_ptr->lev) / 5;
+					m_ptr->confused += 10 + rand_int(p_ptr->lev) / 5 + rand_int(get_skill(p_ptr, SKILL_COMBAT) / 10);
 				}
 			}
 
@@ -4222,7 +4222,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 						msg_format(Ind, "\377o%^s appears stunned.", m_name);
 					else
 						msg_format(Ind, "\377o%^s appears more stunned.", m_name);
-					m_ptr->stunned += 20 + rand_int(p_ptr->lev) / 5;
+					m_ptr->stunned += 20 + rand_int(p_ptr->lev) / 5 + rand_int(get_skill(p_ptr, SKILL_COMBAT) / 10);
 				}
 			}
 
@@ -4231,7 +4231,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				fear_chance = 50 + (p_ptr->lev - r_ptr->level) * 5;
 				if (!(r_ptr->flags3 & RF3_NO_FEAR) && rand_int(100) < fear_chance) {
 					msg_format(Ind, "%^s appears afraid.", m_name);
-					m_ptr->monfear = m_ptr->monfear + 4 + rand_int(p_ptr->lev) / 5;
+					m_ptr->monfear = m_ptr->monfear + 4 + rand_int(p_ptr->lev) / 5 + rand_int(get_skill(p_ptr, SKILL_COMBAT) / 10);
 				}
 			}
 
