@@ -4659,7 +4659,7 @@ void do_cmd_fire(int Ind, int dir)
 								}
 								
 								if (p_ptr->ranged_barrage) {
-									set_stun(0 - c_ptr->m_idx, q_ptr->stun + 35);
+									set_stun(0 - c_ptr->m_idx, q_ptr->stun + 35 + get_skill_scale(p_ptr, SKILL_COMBAT, 5));
 								}
 
 
@@ -4896,7 +4896,7 @@ void do_cmd_fire(int Ind, int dir)
 							if (!(r_ptr->flags3 & RF3_NO_STUN)) {
 								if (!m_ptr->stunned) msg_format(Ind, "\377y%^s is stunned.", m_name);
 								else msg_format(Ind, "\377y%^s appears more stunned.", m_name);
-								m_ptr->stunned = m_ptr->stunned + 20;
+								m_ptr->stunned = m_ptr->stunned + 20 + get_skill_scale(p_ptr, SKILL_COMBAT, 5);
 							} else {
 								msg_format(Ind, "\377o%^s resists the effect.", m_name);
 							}
