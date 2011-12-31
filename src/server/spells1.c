@@ -11907,10 +11907,6 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 #endif
 
 
-	/* PROJECT_DUMY means we don't have to project on floor/items/monsters/players,
-	   because the effect was just for visual entertainment.. - C. Blue */
-	if (flg & PROJECT_DUMY) return(FALSE);
-
 	/* Check features */
 	if (flg & PROJECT_GRID) {
 		/* Start with "dist" of zero */
@@ -11978,6 +11974,10 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			}
 		}
 	}
+
+	/* PROJECT_DUMY means we don't have to project on floor/items/monsters/players,
+	   because the effect was just for visual entertainment.. - C. Blue */
+	if (flg & PROJECT_DUMY) return(FALSE);
 
 	/* Check objects */
 	if (flg & PROJECT_ITEM) {
