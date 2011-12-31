@@ -1907,6 +1907,12 @@ static void store_create(store_type *st_ptr)
 			o_ptr->number = force_num;
 		}
 
+		/* If wands, update the # of charges. stack size can be set by force_num or mass_produce */
+		if (o_ptr->tval == TV_WAND && o_ptr->number > 1) {
+			o_ptr->pval *= o_ptr->number;
+		}
+
+
 		if (st_info[st_ptr->st_idx].flags1 & SF1_ZEROLEVEL) o_ptr->level = 0;
 
 		/* Attempt to carry the (known) item */
