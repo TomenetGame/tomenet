@@ -5194,7 +5194,7 @@ if (cfg.unikill_format) {
 					/* Total winner */
 					q_ptr->total_winner = TRUE;
 					q_ptr->once_winner = TRUE;
-					s_printf("%s *** total_winner : %s (lev %d (%d))\n", showtime(), q_ptr->name, q_ptr->lev, q_ptr->max_lev);
+					s_printf("%s *** total_winner : %s (lev %d (%d,%d))\n", showtime(), q_ptr->name, q_ptr->lev, q_ptr->max_lev, q_ptr->max_plv);
 
 					s_printf("CHARACTER_WINNER: race=%s ; class=%s\n", race_info[q_ptr->prace].title, class_info[q_ptr->pclass].title);
 
