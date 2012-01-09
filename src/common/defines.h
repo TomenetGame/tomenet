@@ -1166,7 +1166,7 @@
 #define START_YEAR              2890                    /* Bilbo birthday year */
 #define START_DAY               265			/* Bilbo birthday (22. Sept.) */
 
-#define MAX_QUEST_TURNS		DAY
+#define MAX_QUEST_TURNS		(DAY * 2)
 
 /*
  * A monster can only "multiply" (reproduce) if there are fewer than 100
