@@ -36,8 +36,7 @@ assist
 associ
 assort
 assuag
-assume
-assump
+assum
 assura
 assure
 assyr
