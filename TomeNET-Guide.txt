@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 25. December 2011 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 10. January 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -4743,8 +4743,8 @@ Kill quest
     doors in town), or simply type "/quest" in the chat.
     There is a certain time limit which in most cases is easily sufficient,
     especially if you have the according ESP ability.
-    The time limit is actually one 'in-game day', which in real time lasts
-    slightly longer than an hour. (See (4.14) for more information about the
+    The time limit is actually two 'in-game days', which in real time lasts
+    somewhat above two hour. (See (4.14) for more information about the
     in-game time system.)
     The time will continue to run out even while you're not logged on.
     If you fulfil the kill quest you received, you will be rewarded with a
@@ -4890,8 +4890,8 @@ Usually a whole day (day + night, ie full 24h in-game time cycle) will last for
 slightly more than one hour real time.
 The sun will usually rise at around 6am, while night falls at around 7pm. Again
 use the /ex command to see the in-game time for your character.
-Quests (see (4.13)) usually have a time limit of one full in-game day, so you
-will have about 1 h to fulfil them.
+Quests (see (4.13)) usually have a time limit of two full in-game days, so you
+will have about 2.5 h to fulfil them.
 
 
 
