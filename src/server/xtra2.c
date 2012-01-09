@@ -7044,7 +7044,7 @@ void check_quests(){
 	struct player_type *q_ptr;
 	for (i = 0; i < 20; i++) {
 		if (quests[i].active && quests[i].id) {
-			if ((turn - quests[i].turn) / 10 > MAX_QUEST_TURNS) {
+			if ((turn - quests[i].turn) > MAX_QUEST_TURNS) {
 				for (j = 1; j <= NumPlayers; j++) {
 					q_ptr = Players[j];
 					if (q_ptr && q_ptr->quest_id == quests[i].id) {
