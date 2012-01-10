@@ -4335,6 +4335,8 @@ The feelings are as follows:
                                         Ironman or no-recall dungeons/towers.
                                         It lets you know that you may use
                                         word-of-recall on this floor!
+                                        (This message is displayed in green
+                                        colour, not orange.)
 
 In addition to those orange level specialties, there are more feelings you
 may get about the danger a level poses. Those only appear if you spent some
