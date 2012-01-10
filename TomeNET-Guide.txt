@@ -8454,6 +8454,8 @@ Note that not every skill is available to every profession (class).
                                 than your secondary weapon.
                                 While enabled ('Dual-hand mode') you will
                                 attack with both weapons, picked randomly.
+                                Classes that are able to dual-wield are
+                                warriors, rangers and rogues.
     .Martial Arts               Ability to fight with bare hands.
                                 Slightly raises your character speed.
                                 Lets you attack with special combat styles.
