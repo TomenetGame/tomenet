@@ -7228,7 +7228,7 @@ bool add_quest(int Ind, int target, u16b type, u16b num, u16b flags) {
 	clockin(j, 4); /* register that player */
 	msg_format(j, "\377oYou have been given a %squest\377y!", flags & QUEST_GUILD ? "guild " : "");
 //	msg_format(j, "\377oFind and kill \377y%d \377g%s%s\377y!", num, r_name+r_info[type].name, flags&QUEST_GUILD?"":" \377obefore any other player");
-	msg_format(j, "\377oFind and kill \377y%d \377g%s\377y!", num, r_name + r_info[type].name);
+	msg_format(j, "\377oFind and kill \377y%d \377g%s\377y (level %d)!", num, r_name + r_info[type].name, r_info[type].level);
 	quests[i].active++;
 
 	if (!quests[i].active) {
@@ -7256,8 +7256,8 @@ bool prepare_quest(int Ind, int j, u16b flags, int *level, u16b *type, u16b *num
 		for (i = 0; i < 20; i++) {
 			if (quests[i].id == Players[j]->quest_id) {
 				if (j == Ind)
-					msg_format(Ind, "\377oYour quest to kill \377y%d \377g%s \377ois not complete.%s",
-					    Players[Ind]->quest_num, r_name + r_info[quests[i].type].name,
+					msg_format(Ind, "\377oYour quest to kill \377y%d \377g%s\377o (level %d) is not complete.%s",
+					    Players[Ind]->quest_num, r_name + r_info[quests[i].type].name, r_info[quests[i].type].level,
 					    quests[i].flags & QUEST_GUILD?" (guild)" : "");
 				return FALSE;
 			}

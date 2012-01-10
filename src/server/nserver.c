@@ -2681,7 +2681,8 @@ static int Handle_login(int ind)
 	if (p_ptr->quest_id) {
 		for (i = 0; i < 20; i++) {
 			if (quests[i].id == p_ptr->quest_id) {
-				msg_format(NumPlayers, "\377oYour quest to kill \377y%d \377g%s \377ois not complete.", p_ptr->quest_num, r_name+r_info[quests[i].type].name);
+				msg_format(NumPlayers, "\377oYour quest to kill \377y%d \377g%s\377o (level %d) is not complete.",
+				    p_ptr->quest_num, r_name + r_info[quests[i].type].name, r_info[quests[i].type].level);
 				break;
 			}
 		}
