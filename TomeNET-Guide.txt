@@ -4340,9 +4340,10 @@ In addition to those orange level specialties, there are more feelings you
 may get about the danger a level poses. Those only appear if you spent some
 time (usually a few minutes) on the dungeon level you were coming from, so
 they won't be helpful while stair-scumming or probability-travelling quickly.
-The number telling you the current floor's depth in the bottom right corner of
-the main window will turn light blue when you spent enough time on your current
-floor to receive an extra feeling on entering the next floor.
+The number telling you the current floor's depth (or a town name if you're in a
+town) in the bottom right corner of the main window will turn light blue when
+you spent enough time on your current floor to receive an extra feeling on
+entering the next floor.
 These extra level feelings (displayed in yellow) are:
 
   "What a terrifying place.."
