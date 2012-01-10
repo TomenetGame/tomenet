@@ -42,6 +42,7 @@ assure
 assyr
 embarass
 harass
+cutlass
 class
 glass
 surpass
