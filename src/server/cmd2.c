@@ -4389,6 +4389,9 @@ void do_cmd_fire(int Ind, int dir)
 		       additional code to comply with DOUBLE_LOS_SAFETY. */
 		    if (dir != 5) {
 #endif
+			/* Sanity check because server crashed here on 2012-01-10 - mikaelh */
+			if (!in_bounds_array(ny, nx)) break;
+
 #ifndef PY_FIRE_ON_WALL
 			/* Stopped by walls/doors */
 			if (!cave_contact(zcave, ny, nx)) break;
