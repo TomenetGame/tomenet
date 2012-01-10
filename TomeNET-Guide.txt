@@ -4353,6 +4353,9 @@ These extra level feelings (displayed in yellow) are:
       with 40 actually being the maximum possible ood level shift, compare
       ood explanation in (0.4)) or
       b) a great vault and some ood monster (10..19 levels) on the level.
+      If you receive this message it will in most cases also change the normal
+      music theme of that dungeon to a special 'terrifying' music, making it
+      easier to notice quickly.
 
   "You sense an air of danger.."
       means there's a freely roaming ood monster (10..19 levels)
@@ -4406,6 +4409,10 @@ feeling as soon as you are about to enter the vault:
                                         your (xx, yy) position display on the
                                         lower left area of the main window
                                         turning from light green to dark grey!
+                                        Also, the music will in most cases
+                                        change from the normal theme of that
+                                        dungeon to the same music played on
+                                        'terrifying' levels, for easier notice.
 As soon as you leave such a no-teleport-vault you'll receive this feeling:
 "Fresh air greets you as you leave the vault."
 
