@@ -428,6 +428,9 @@ p       p       Concentrate on opening your mind for telekinesis.
                 they will receive an according message, telling them that
                 using telekinesis on you is currently not possible.
                 Hit 'p' again to stop concentrating and close your mind.
+                Certain spells of the mindcrafter class might also require
+                players in the same party to open their minds in order to work
+                or to affect them as intended.
 h               buy/sell a house or change house parameters. See (4.10).
 P       O       party screen. Form/disband/modify a party with other players
                 here. In a party you will share experience points if you are
