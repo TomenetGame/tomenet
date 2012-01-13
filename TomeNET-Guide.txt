@@ -45,6 +45,7 @@ Contents
     (2.1)   Installing TomeNET
     (2.1a)  Installing sound and music packs
     (2.1b)  Editing sound and music configuration
+    (2.1c)  "Promoting" TomeNET on Steam ;)
     (2.2)   Starting TomeNET and getting to play on an internet server
     (2.3)   Client options
 (3) Creating a character & starting to play
@@ -1527,8 +1528,9 @@ Dependencies:
  to ./configure packages, just close the terminal and re-open it, to reset all
  vars.
 
-Makefile-related stuff that happens (and how to fix it) if you try to use an
-unmodified Linux makefile to compile:
+It is recommended to use the makefile called 'makefile.osx' for compiling.
+If for whatever reason you try to use an unmodified Linux makefile to compile
+then you might run into the following problems:
 
 -ncurses starts hiding some internal properties at v5.7+ which causes a
  dereference error when trying to compile main-gcu.c. This seems to be a
@@ -1716,6 +1718,16 @@ beginning of the line - that will effectively disable the whole line.
 Note: Do not modify the file audio.lua, it has nothing to do with editing your
       sound or music. Don't worry though if you accidentally modified it, it'll
       be automatically restored next time you log on to the server.
+
+
+(2.1c) "Promoting" TomeNET on Steam ;)
+--------------------------------------
+In Steam's "Games" menu choose "Add a non-Steam game to my library".
+Browse for the TomeNET.exe file and check it.
+Click on "Add selected programs".
+
+Now you can start TomeNET from your Steam library of games like any other game,
+and if you do so then your Steam status will show that you are playing TomeNET!
 
 
 
