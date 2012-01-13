@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 10. January 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 13. January 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1488,6 +1488,76 @@ Make sure that ncurses and crypt libraries are installed, package names are
 usually libncurses5 and libgcrypt11. Type:
         ./tomenet
 to start the game.
+
+
+Mac OS X (compiling from source; tested with Snow Leopard 10.6.6):
+------------------------------------------------------------------
+Basically use the same instructions as for Linux above. Additionally:
+
+-To actually install gcc you will need to install the 'xcode' package, which
+ contains gcc. Download the correct xcode version for your Mac OS X version
+ from developer.apple.com. For this you will first need to create a developer
+ account (choose the free account version of course).
+
+-Download the required packages (tar.gz/tar.bz2 files from ftp.gnupg.org,
+ ftp.gnu.org/pub/gnu and www.libsdl.org) listed in the Linux installation
+ instructions above and extract, compile and install them each via the usual
+   ./configure
+   make
+   sudo make install
+ command chain from a terminal window.
+ Note: libsdl_mixer can be found on www.libsdl.org too, by clicking on the
+ "Libraries" menu and searching for "mixer".
+
+Dependencies:
+-libgcrypt depends on libgpg-error, which you will need to install too.
+-libsdl_mixer may complain about missing dependencies (at least Ogg Vorbis is
+ required for TomeNET, since it's the official audio format - the rest is only
+ needed if you add custom audio files in the according file formats):
+  -Ogg Vorbis library (www.xiph.org -> libogg and libvorbis) for OGG file
+   support, which is what the official TomeNET audio files are.
+  -SMPEG library (icculus.org/smpeg) for MP3 file support. (libsdl_mixer's
+   configure script May also list additional notes regarding the environment
+   variable SMPEG_CONFIG, don't miss them.)
+  -MikMod library (mikmod.raphnet.net) for various module music support.
+  -FLAC library (flac.sourceforge.net) for FLAC file support.
+
+-If you mess with compiler-related environment variables and paths and for
+ whatever reason get a 'compiler cannot create executables' error when trying
+ to ./configure packages, just close the terminal and re-open it, to reset all
+ vars.
+
+Makefile-related stuff that happens (and how to fix it) if you try to use an
+unmodified Linux makefile to compile:
+
+-ncurses starts hiding some internal properties at v5.7+ which causes a
+ dereference error when trying to compile main-gcu.c. This seems to be a
+ Mac OS X specific problem since only the ncurses shipping with Snow Leopard
+ has NCURSES_OPAQUE set to 1 while the Linux version has not.
+ To fix it, add
+   -DNCURSES_OPAQUE=0
+ to CFLAGS compiler options in the makefile.
+
+-For preprocessing LUA files the 'cpp' variant does not work, the 'gcc' variant
+ must be used instead: Edit the makefile, locate 'cpp' and comment out the two
+ cpp-related lines and uncomment the two gcc-related lines, if it's not already
+ like that by default.
+
+-If the LIBS linker flags in the makefile say '-lcrypt' that will cause an
+ error about library not being found. Change it to '-lgcrypt' to fix it.
+
+-If the LDFLAGS are empty the linker will throw a not-found error 22. Fix this
+ by moving (or copying) the -L... library search-folder parameters from LIBS to
+ LDFLAGS so it contains all lib paths.
+
+
+Mac OS X (using pre-compiled binary; tested with Snow Leopard 10.6.6):
+----------------------------------------------------------------------
+Run the file 'Install_TomeNET.run' once, to install the required libraries.
+This is a one-time thing and you don't need to repeat it everytime you want to
+play the game.
+
+Run the file 'TomeNET.run' to start the game.
 
 
 Configure TomeNET on Linux:
