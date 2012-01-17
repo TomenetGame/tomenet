@@ -8051,8 +8051,8 @@ void season_change(int s, bool force) {
 		max_clouds_seasonal = MAX_CLOUDS / 8; break;
 	case SEASON_AUTUMN: /* rain very often */
 		max_clouds_seasonal = MAX_CLOUDS / 3; break;
-	case SEASON_WINTER: /* snow relatively often */
-		max_clouds_seasonal = MAX_CLOUDS / 6; break;
+	case SEASON_WINTER: /* snow pretty often */
+		max_clouds_seasonal = MAX_CLOUDS / 4; break;
 	}
 #endif
 

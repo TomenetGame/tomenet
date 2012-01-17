@@ -393,6 +393,8 @@ extern int wind_gust;
 extern int wind_gust_delay;
 /* for CLIENT_SIDE_WEATHER debugging */
 extern int clouds;
+/* (no purpose) */
+extern int max_clouds_seasonal;
 
 /* special seasons */
 extern int season_halloween;
