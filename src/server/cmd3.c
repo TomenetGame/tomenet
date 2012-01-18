@@ -1281,6 +1281,23 @@ void do_cmd_drop(int Ind, int item, int quantity)
 	}
 #endif
 
+	if (object_known_p(Ind, o_ptr)) {
+#if 0 /* would prevent ppl from getting rid of unsellable artifacts */
+	    if (true_artifact_p(o_ptr) && !is_admin(p_ptr) &&
+	        ((cfg.anti_arts_hoard && undepositable_artifact_p(o_ptr)) || (p_ptr->total_winner && !winner_artifact_p(o_ptr)))) {
+				msg_print(Ind, "\377yThis item is a true artifact and cannot be dropped!");
+				return;
+		}
+#endif
+	    if (p_ptr->wpos.wz == 0) { /* Assume houses are always on surface */
+	        if (undepositable_artifact_p(o_ptr) && cfg.anti_arts_house && inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py)) {
+				msg_print(Ind, "\377yThis item is a true artifact and cannot be dropped in a house!");
+				return;
+			}
+		}
+	}
+
+
 	/* Let's not end afk for this - C. Blue */
 /* 	un_afk_idle(Ind); */
 

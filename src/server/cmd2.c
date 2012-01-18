@@ -971,6 +971,7 @@ int pick_house(struct worldpos *wpos, int y, int x)
 
 /* Test if a coordinate (player pos usually) is inside a building (or on its edge) - C. Blue */
 bool inside_house(struct worldpos *wpos, int x, int y) {
+#if 0
 	int i;
 
 	for (i = 0; i < num_houses; i++) {
@@ -984,6 +985,12 @@ bool inside_house(struct worldpos *wpos, int x, int y) {
 			/* anyone willing to implement non-rectangular houses? */
 		}
 	}
+#else
+	cave_type *c_ptr = &(getcave(wpos)[y][x]);
+	/* assume all houses are on the world surface (and vaults aren't) */
+	if (wpos->wz == 0 && (c_ptr->info & CAVE_ICKY)) return TRUE;
+#endif
+
 	return FALSE;
 }
 
