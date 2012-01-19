@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 13. January 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 19. January 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -9198,6 +9198,10 @@ Warrior is strongly recommended.
     They get bonus on 'Sling-Mastery', 'Sneakiness', 'Dodging' and a large
     bonus on 'Stealth'.
 
+    Note:
+    Since hobbits have low hit points you might consider training the skill
+    'Health' to make up for it, depending on which class you choose to play.
+
 - Gnome
     Gnomes are intrinsically protected to paralysis effects. Gnomes are smaller
     than dwarves but larger than halflings. They, like the hobbits, live in the
@@ -9272,6 +9276,10 @@ Warrior is strongly recommended.
     in all stats and have attributes similar to humans. However, to
     compensate Yeeks learn, and thus gain levels, extremely quickly.
     Yeeks don't receive boni or mali on any skills.
+
+    Note:
+    Since yeeks have low hit points you might consider training the skill
+    'Health' to make up for it, depending on which class you choose to play.
 
 - Goblin
     Goblins have a decidedly mixed reputation. They are almost always grinning,
