@@ -1477,9 +1477,9 @@ Enter these two lines:
         make tomenet
 and the binary 'tomenet' will be created in this folder 'tomenet/src'.
 IMPORTANT NOW: If your makefile is an older version, you need to move the
-binary one level upwards, ie into '/tomenet' ! If your makefile is newer,
+binary one level upwards, ie into 'tomenet/' ! If your makefile is newer,
 it might already have done that for you automatically.
-Go up one level into your '/tomenet' folder. There type:
+Go up one level into your 'tomenet/' folder. There type:
         ./tomenet
 to start the game.
 
@@ -1487,7 +1487,8 @@ to start the game.
 Linux (using pre-compiled binary):
 ----------------------------------
 Make sure that ncurses and crypt libraries are installed, package names are
-usually libncurses5 and libgcrypt11. Type:
+usually libncurses5 and libgcrypt11.
+Enter the 'tomenet/' folder and type:
         ./tomenet
 to start the game.
 
