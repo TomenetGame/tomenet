@@ -1460,7 +1460,7 @@ Go into '/tomenet/src' where the file 'makefile' is located.
 
 Make sure you have the C-devel, X11-devel, ncurses, ncurses-devel and crypt
 libraries installed. The package names are usually:
-build-essentials, xorg-dev, libncurses5, libncurses5-dev, libgcrypt11,
+build-essential, xorg-dev, libncurses5, libncurses5-dev, libgcrypt11,
 libc6-dev.
 
 Since version 4.4.5 which supports music and sound via SDL, you also need
