@@ -1564,6 +1564,8 @@ Mac OS X (using pre-compiled binary; tested with Snow Leopard 10.6.6):
 Run the file 'Install_TomeNET.run' once, to install the required libraries.
 This is a one-time thing and you don't need to repeat it everytime you want to
 play the game.
+(Note that this will overwrite libraries of the same name in your folder
+/usr/local/lib, if those actually existed already.)
 
 Run the file 'TomeNET.run' to start the game.
 
