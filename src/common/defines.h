@@ -95,11 +95,14 @@
 #define OS_GCU		2
 #define OS_X11		3
 #define OS_GCU_X11	4
+#define OS_OSX		5
 
 /* Set new VERSION_OS (after 4.4.8.1.0.0) for client - C. Blue */
 #ifdef CLIENT_SIDE
  #ifdef WIN32
   #define VERSION_OS		OS_WIN32
+ #elif defined(OSX)
+  #define VERSION_OS		OS_OSX
  #elif defined(USE_X11) && defined(USE_GCU)
   #define VERSION_OS		OS_GCU_X11
  #elif defined(USE_GCU)
