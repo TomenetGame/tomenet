@@ -570,6 +570,9 @@ if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC && !o_ptr->name1) o_ptr
 	/* Object does no longer exist? (for example now commented out, in k_info)
 	   - turn it into a 'seal' instead of deleting it! - C. Blue */
 	if (!o_ptr->k_idx) {
+		/* Object does no longer exist? Delete it! */
+		if (!o_ptr->tval && !o_ptr->sval) return;
+
 		s_printf("SEALING: %d, %d\n", o_ptr->tval, o_ptr->sval);
 		o_ptr->tval2 = o_ptr->tval;
 		o_ptr->sval2 = o_ptr->sval;
