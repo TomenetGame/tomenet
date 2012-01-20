@@ -1471,6 +1471,10 @@ libsmpeg-dev.
 If you don't want to use audio, edit the makefile and compare the two
 paragraphs titled 'Without SDL' and 'With SDL' and edit the makefile
 accordingly, to compile it without SDL audio support.
+NOTE: If you are compiling the above packages yourself, make sure that you
+install the specific audio format libs (smpeg, ogg..) _before_ you install
+libsdl-mixer, so its configure script will recognize those formats and enable
+support for the according file types.
 
 Enter these two lines:
         make clean
