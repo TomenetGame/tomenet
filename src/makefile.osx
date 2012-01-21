@@ -215,22 +215,22 @@ CPPFLAGS = -x c -E -Wp,-C,-P
 # including "USE_GETCH" and "USE_CURS_SET".  Note that "config.h" will
 # attempt to "guess" at many of these flags based on your system.
 #
-#CFLAGS = -Wall -g -pipe -DUSE_X11 -DUSE_GCU
+#CFLAGS = -Wall -DOSX -g -pipe -DUSE_X11 -DUSE_GCU
 #LIBS = -L/usr/X11R6/lib -lX11 -lcurses
 
 
 X11BASE = /usr/X11R6
 
 ##
-## Variation -- Linux / FreeBSD
+## Variation -- Mac OS X
 ##
 ## Add -msse2 -DHAVE_SSE2=1 to CFLAGS to enable SSE2 support in SFMT.
 ##
 ## You can compile the client without X11 support by removing -DUSE_X11 from
 ## CFLAGS and -lX11 from LIBS
-## 
+##
 ## Without SDL
-#CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -O2 -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -DNCURSES_OPAQUE=0
+#CFLAGS = -g -pipe -Wall -DOSX -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -O2 -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -DNCURSES_OPAQUE=0
 #LIBS = -lX11 -lncurses -lgcrypt -lm
 #LDFLAGS=-L${X11BASE}/lib -L/usr/local/lib
 ##
@@ -244,14 +244,14 @@ LDFLAGS=-L${X11BASE}/lib -L/usr/local/lib `sdl-config --libs`
 ##
 ## Variation -- Only support "main-x11.c" (not "main-gcu.c")
 ##
-#CFLAGS = -Wall -O2 -pipe -g -DUSE_X11
+#CFLAGS = -Wall -DOSX -O2 -pipe -g -DUSE_X11
 #LIBS = -lX11
 
 
 ##
 ## Variation -- Only support "main-gcu.c" (not "main-x11.c")
 ##
-#CFLAGS = -Wall -O2 -pipe -g -DUSE_GCU
+#CFLAGS = -Wall -DOSX -O2 -pipe -g -DUSE_GCU
 #LIBS = -lcurses -ltermcap
 
 
@@ -262,43 +262,22 @@ LDFLAGS=-L${X11BASE}/lib -L/usr/local/lib `sdl-config --libs`
 ## on the same machine!  Also define META_ADDRESS to be an empty string
 ## in config.h.  --Keldon
 ##
-#CFLAGS = -Wall -O2 -pipe -g -DUSE_GCU -DUNIX_SOCKETS
+#CFLAGS = -Wall -DOSX -O2 -pipe -g -DUSE_GCU -DUNIX_SOCKETS
 #LIBS = -lncurses -ltermcap
 
 
 ##
 ## Variation -- Use "main-xaw.c" instead of "main-x11.c"
 ##
-#CFLAGS = -Wall -O2 -pipe -g -DUSE_XAW -DUSE_GCU
+#CFLAGS = -Wall -DOSX -O2 -pipe -g -DUSE_XAW -DUSE_GCU
 #LIBS = -lXaw -lXmu -lXt -lX11 -lcurses -ltermcap
 
 
 ##
 ## Variation -- Use "main-cap.c" instead of "main-gcu.c"
 ##
-#CFLAGS = -Wall -O2 -pipe -g -DUSE_X11 -DUSE_CAP
+#CFLAGS = -Wall -DOSX -O2 -pipe -g -DUSE_X11 -DUSE_CAP
 #LIBS = -lX11 -ltermcap
-
-
-##
-## Variation -- Only work on simple vt100 terminals
-##
-#CFLAGS = -Wall -O2 -pipe -g -DUSE_CAP -DUSE_HARDCODE
-
-
-##
-## Variation -- FreeBSD 4.3R
-##
-#PREFIX = /usr/local
-#CFLAGS = -Wall -O2 -g -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -DDEFAULT_PATH="\"${PREFIX}/lib/tomenet\""
-#LIBS = -L${X11BASE}/lib -lX11 -lcurses
-
-
-##
-## Variation -- compile for Solaris
-##
-#CFLAGS = -Wall -O2 -pipe -g -DUSE_X11 -DUSE_GCU -DSOLARIS -I/usr/openwin/include
-#LIBS = -L/usr/openwin/lib -R/usr/openwin/lib -lX11 -lsocket -lnsl -lcurses
 
 
 # Lua
