@@ -1584,7 +1584,7 @@ Note: If x,y positioning of windows doesn't work on your system, you can use
 other means such as KDE's native window positioning (right-click the windows
 and modify the "special window settings" or "special application settings") or
 the tool Devilspie (should be in your default repository) if you're on Gnome
-instead.
+or Xfce or anything else.
 
 
 Alternatively to using the .tomenetrc file for window configuration, you can
