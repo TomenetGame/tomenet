@@ -239,6 +239,8 @@ CFLAGS = -g -pipe -Wall -DOSX -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -O2 -D_XO
 LIBS = -lX11 -lncurses -lgcrypt -lm -lSDL_mixer
 LDFLAGS=-L${X11BASE}/lib -L/usr/local/lib `sdl-config --libs`
 #-lXtst (for numlock - obsolete)
+## Uncomment this if you want to bundle libraries with the client
+#LDFLAGS += -Wl,-rpath,\$$ORIGIN
 
 
 ##
