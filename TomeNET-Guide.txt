@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 19. January 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 23. January 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1561,12 +1561,6 @@ then you might run into the following problems:
 
 Mac OS X (using pre-compiled binary; tested with Snow Leopard 10.6.6):
 ----------------------------------------------------------------------
-Run the file 'Install_TomeNET.run' once, to install the required libraries.
-This is a one-time thing and you don't need to repeat it everytime you want to
-play the game.
-(Note that this will overwrite libraries of the same name in your folder
-/usr/local/lib, if those actually existed already.)
-
 Run the file 'TomeNET.run' to start the game.
 
 
