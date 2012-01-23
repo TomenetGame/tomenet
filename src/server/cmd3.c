@@ -1554,6 +1554,10 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 	/* Message */
 	msg_format(Ind, "You destroy %s.", o_name);
 
+#ifdef USE_SOUND_2010
+//	sound_item(Ind, o_ptr->tval, o_ptr->sval, "kill_");
+#endif
+
 	if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
 
 	if (o_ptr->tval == TV_WAND) (void)divide_charged_item(o_ptr, quantity);
