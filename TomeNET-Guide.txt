@@ -1516,6 +1516,9 @@ Basically use the same instructions as for Linux above. Additionally:
  Note: libsdl_mixer can be found on www.libsdl.org too, by clicking on the
  "Libraries" menu and searching for "mixer".
 
+ If you have trouble installing those source packages, you could try to simply
+ use MacPorts to fetch them, at http://www.macports.org/.
+
 Dependencies:
 -libgcrypt depends on libgpg-error, which you will need to install too.
 -libsdl_mixer may complain about missing dependencies (at least Ogg Vorbis is
