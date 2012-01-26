@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 23. January 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 26. January 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -114,6 +114,9 @@ Contents
     (5.20)  Runes & Runemastery
     (5.20a) Runemastery Tables
     (5.21)  Digging
+    (5.21a) Digging - Exact calculation
+    (5.21b) Digging - Common example values
+    (5.21c) Digging - Futher information
     (5.22)  Recharging
 (6) Character details
     (6.1)   Attributes
@@ -8134,6 +8137,12 @@ Lvl | Rune ID | Description
 Your chance to successfully tunnel through an obstacle depends on the obstacle
 and your 'digging power'.
 
+If you're not interested in the exact formula, skip down to (5.21b) which has a
+table  with example values for certain scenarios.
+
+
+(5.21a) Digging - Exact calculation
+-----------------------------------
 Your digging power is calculated as follows:
 An equipped item that provides (+X) to digging will add 20*X.
 If you have a digging tool equipped, its weight is added (eg 25.0 lbs -> +25).
@@ -8148,7 +8157,7 @@ If you don't have a digging tool equipped, your total digging power is halved.
 
 To successfully dig through certain features, your digging power must be
 greater than the result of a random number roll "random(0..x-1) + y":
--------------------------------------------------------------------
+---------------------------------------------------------------------
 Rubble      200 +  0
 Ivy         200 +  0
 Bushes      300 +  0
@@ -8169,9 +8178,16 @@ be very lucky and hope for the random(0..799) roll for quartz to actually be a
 digging power of 21. So on each turn of tunnelling your chance to succeed would
 be 1 in 800 in that case.
 
-Some too-long-didn't-calculate values, assuming 0.000 'Digging' skill
+
+(5.21b) Digging - Common example values
+---------------------------------------
+Some example values, assuming 0.000 'Digging' skill
 and unenchanted (ie (+0,+0)) digging tools:
 -------------------------------------------
+-You cannot tunnel through granite wall without a digging tool if your STRength
+ is below 18/180.
+-You cannot tunnel through quartz without a digging tool if your STRength is
+ below 18/100.
 -You cannot tunnel through granite with a shovel if your STRength is
  below 18/30.
 -You cannot tunnel through granite with a pick if your STRength is
@@ -8182,6 +8198,9 @@ and unenchanted (ie (+0,+0)) digging tools:
   and at 18/10 STR with a pick. If you use an enchanted shovel (+9,+9) (+1)
   however, you already have a 3% chance to succeed at only 5 STR.)
 
+
+(5.21c) Digging - Further information
+-------------------------------------
 For digging through granite wall without having to wait for ages to succeed,
 you will definitely want a better digging tool than basic shovels or picks.
 For example ones 'of Digging', a magical ego power for digging tools.
