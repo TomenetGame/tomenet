@@ -448,7 +448,7 @@ bool write_mangrc(void) {
 		fputs(format("sound\t\t\t%s\n", use_sound_org ? "1" : "0"), config2);
 //#endif
 //#ifdef USE_SOUND_2010
-		fputs("soundHint\n", config2);
+		fputs("hintSound\n", config2);
 		fputs(format("cacheAudio\t\t%s\n", no_cache_audio ? "0" : "1"), config2);
 		fputs(format("audioSampleRate\t\t%d\n", cfg_audio_rate), config2);
 		fputs(format("audioChannels\t\t%d\n", cfg_max_channels), config2);

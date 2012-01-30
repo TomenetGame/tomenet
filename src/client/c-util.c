@@ -1,5 +1,7 @@
 #include "angband.h"
 
+#include <sys/time.h>
+
 #define MACRO_USE_CMD	0x01
 #define MACRO_USE_STD	0x02
 #define MACRO_USE_HYB	0x04

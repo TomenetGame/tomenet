@@ -570,6 +570,9 @@ if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC && !o_ptr->name1) o_ptr
 	/* Object does no longer exist? (for example now commented out, in k_info)
 	   - turn it into a 'seal' instead of deleting it! - C. Blue */
 	if (!o_ptr->k_idx) {
+		/* Object does no longer exist? Delete it! */
+		if (!o_ptr->tval && !o_ptr->sval) return;
+
 		s_printf("SEALING: %d, %d\n", o_ptr->tval, o_ptr->sval);
 		o_ptr->tval2 = o_ptr->tval;
 		o_ptr->sval2 = o_ptr->sval;
@@ -581,6 +584,12 @@ if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC && !o_ptr->name1) o_ptr
 		if (!o_ptr->k_idx) return;
 //		s_printf("sealed to %d, %d\n", o_ptr->tval, o_ptr->sval);
 	} else if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_SEAL) {
+		/* Object didn't exist to begin with? Delete it! */
+		if (!o_ptr->tval2 && !o_ptr->sval2) {
+			o_ptr->tval = o_ptr->sval = o_ptr->k_idx = 0;
+			return;
+		}
+
 		/* Try to restore the original item from the seal */
 		if (lookup_kind(o_ptr->tval2, o_ptr->sval2)) {
 			o_ptr->tval = o_ptr->tval2;
@@ -593,7 +602,10 @@ if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC && !o_ptr->name1) o_ptr
 	}
 #else
 	/* Object does no longer exist? Delete it! */
-	if (!o_ptr->k_idx) return;
+	if (!o_ptr->k_idx) {
+		o_ptr->tval = o_ptr->sval = 0;
+		return;
+	}
 #endif
 
 #if 0 /* commented out again till it's of use once more (hopefully not) */

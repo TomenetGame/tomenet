@@ -275,7 +275,7 @@ MTELEKINESIS = add_spell
 			["prompt"] = 	"Teleport which object? ",
 			["inven"] = 	TRUE,
 			["get"] = 	function (obj)
-					if obj.weight * obj.number <= 6 + get_level(Ind, MTELEKINESIS, 250, 0) then
+					if obj.weight * obj.number <= 4 + get_level(Ind, MTELEKINESIS, 350, 0) then
 						return TRUE
 					end
 					return FALSE

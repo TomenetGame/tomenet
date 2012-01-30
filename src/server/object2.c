@@ -7342,7 +7342,7 @@ s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *
 	/* Artifact always disappears, depending on tomenet.cfg flags */
 	/* hm for now we also allow ring of phasing to be traded between winners. not needed though. */
 	if (true_artifact_p(o_ptr) && !is_admin(p_ptr) &&
-	    (cfg.anti_arts_hoard || (p_ptr->total_winner && !winner_artifact_p(o_ptr))))
+	    ((cfg.anti_arts_hoard && undepositable_artifact_p(o_ptr)) || (p_ptr->total_winner && !winner_artifact_p(o_ptr))))
 	    //(cfg.anti_arts_hoard || (cfg.anti_arts_house && 0)) would be cleaner sometime in the future..
 	{
 		char	o_name[ONAME_LEN];

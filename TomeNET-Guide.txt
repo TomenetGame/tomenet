@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 10. January 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 26. January 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -45,6 +45,7 @@ Contents
     (2.1)   Installing TomeNET
     (2.1a)  Installing sound and music packs
     (2.1b)  Editing sound and music configuration
+    (2.1c)  "Promoting" TomeNET on Steam ;)
     (2.2)   Starting TomeNET and getting to play on an internet server
     (2.3)   Client options
 (3) Creating a character & starting to play
@@ -113,6 +114,9 @@ Contents
     (5.20)  Runes & Runemastery
     (5.20a) Runemastery Tables
     (5.21)  Digging
+    (5.21a) Digging - Exact calculation
+    (5.21b) Digging - Common example values
+    (5.21c) Digging - Futher information
     (5.22)  Recharging
 (6) Character details
     (6.1)   Attributes
@@ -428,6 +432,9 @@ p       p       Concentrate on opening your mind for telekinesis.
                 they will receive an according message, telling them that
                 using telekinesis on you is currently not possible.
                 Hit 'p' again to stop concentrating and close your mind.
+                Certain spells of the mindcrafter class might also require
+                players in the same party to open their minds in order to work
+                or to affect them as intended.
 h               buy/sell a house or change house parameters. See (4.10).
 P       O       party screen. Form/disband/modify a party with other players
                 here. In a party you will share experience points if you are
@@ -1456,7 +1463,8 @@ Go into '/tomenet/src' where the file 'makefile' is located.
 
 Make sure you have the C-devel, X11-devel, ncurses, ncurses-devel and crypt
 libraries installed. The package names are usually:
-xorg-dev, libncurses5, libncurses5-dev, libgcrypt11, libc6-dev.
+build-essential, xorg-dev, libncurses5, libncurses5-dev, libgcrypt11,
+libc6-dev.
 
 Since version 4.4.5 which supports music and sound via SDL, you also need
 libsdl-mixer-devel, libsdl, libsmpeg. Usual package names (SDL version 1.2):
@@ -1466,15 +1474,19 @@ libsmpeg-dev.
 If you don't want to use audio, edit the makefile and compare the two
 paragraphs titled 'Without SDL' and 'With SDL' and edit the makefile
 accordingly, to compile it without SDL audio support.
+NOTE: If you are compiling the above packages yourself, make sure that you
+install the specific audio format libs (smpeg, ogg..) _before_ you install
+libsdl-mixer, so its configure script will recognize those formats and enable
+support for the according file types.
 
 Enter these two lines:
         make clean
         make tomenet
 and the binary 'tomenet' will be created in this folder 'tomenet/src'.
 IMPORTANT NOW: If your makefile is an older version, you need to move the
-binary one level upwards, ie into '/tomenet' ! If your makefile is newer,
+binary one level upwards, ie into 'tomenet/' ! If your makefile is newer,
 it might already have done that for you automatically.
-Go up one level into your '/tomenet' folder. There type:
+Go up one level into your 'tomenet/' folder. There type:
         ./tomenet
 to start the game.
 
@@ -1482,9 +1494,80 @@ to start the game.
 Linux (using pre-compiled binary):
 ----------------------------------
 Make sure that ncurses and crypt libraries are installed, package names are
-usually libncurses5 and libgcrypt11. Type:
+usually libncurses5 and libgcrypt11.
+Enter the 'tomenet/' folder and type:
         ./tomenet
 to start the game.
+
+
+Mac OS X (compiling from source; tested with Snow Leopard 10.6.6):
+------------------------------------------------------------------
+Basically use the same instructions as for Linux above. Additionally:
+
+-To actually install gcc you will need to install the 'xcode' package, which
+ contains gcc. Download the correct xcode version for your Mac OS X version
+ from developer.apple.com. For this you will first need to create a developer
+ account (choose the free account version of course).
+
+-Download the required packages (tar.gz/tar.bz2 files from ftp.gnupg.org,
+ ftp.gnu.org/pub/gnu and www.libsdl.org) listed in the Linux installation
+ instructions above and extract, compile and install them each via the usual
+   ./configure
+   make
+   sudo make install
+ command chain from a terminal window.
+ Note: libsdl_mixer can be found on www.libsdl.org too, by clicking on the
+ "Libraries" menu and searching for "mixer".
+
+ If you have trouble installing those source packages, you could try to simply
+ use MacPorts to fetch them, at http://www.macports.org/.
+
+Dependencies:
+-libgcrypt depends on libgpg-error, which you will need to install too.
+-libsdl_mixer may complain about missing dependencies (at least Ogg Vorbis is
+ required for TomeNET, since it's the official audio format - the rest is only
+ needed if you add custom audio files in the according file formats):
+  -Ogg Vorbis library (www.xiph.org -> libogg and libvorbis) for OGG file
+   support, which is what the official TomeNET audio files are.
+  -SMPEG library (icculus.org/smpeg) for MP3 file support. (libsdl_mixer's
+   configure script May also list additional notes regarding the environment
+   variable SMPEG_CONFIG, don't miss them.)
+  -MikMod library (mikmod.raphnet.net) for various module music support.
+  -FLAC library (flac.sourceforge.net) for FLAC file support.
+
+-If you mess with compiler-related environment variables and paths and for
+ whatever reason get a 'compiler cannot create executables' error when trying
+ to ./configure packages, just close the terminal and re-open it, to reset all
+ vars.
+
+It is recommended to use the makefile called 'makefile.osx' for compiling.
+If for whatever reason you try to use an unmodified Linux makefile to compile
+then you might run into the following problems:
+
+-ncurses starts hiding some internal properties at v5.7+ which causes a
+ dereference error when trying to compile main-gcu.c. This seems to be a
+ Mac OS X specific problem since only the ncurses shipping with Snow Leopard
+ has NCURSES_OPAQUE set to 1 while the Linux version has not.
+ To fix it, add
+   -DNCURSES_OPAQUE=0
+ to CFLAGS compiler options in the makefile.
+
+-For preprocessing LUA files the 'cpp' variant does not work, the 'gcc' variant
+ must be used instead: Edit the makefile, locate 'cpp' and comment out the two
+ cpp-related lines and uncomment the two gcc-related lines, if it's not already
+ like that by default.
+
+-If the LIBS linker flags in the makefile say '-lcrypt' that will cause an
+ error about library not being found. Change it to '-lgcrypt' to fix it.
+
+-If the LDFLAGS are empty the linker will throw a not-found error 22. Fix this
+ by moving (or copying) the -L... library search-folder parameters from LIBS to
+ LDFLAGS so it contains all lib paths.
+
+
+Mac OS X (using pre-compiled binary; tested with Snow Leopard 10.6.6):
+----------------------------------------------------------------------
+Run the file 'TomeNET.run' to start the game.
 
 
 Configure TomeNET on Linux:
@@ -1501,7 +1584,7 @@ Note: If x,y positioning of windows doesn't work on your system, you can use
 other means such as KDE's native window positioning (right-click the windows
 and modify the "special window settings" or "special application settings") or
 the tool Devilspie (should be in your default repository) if you're on Gnome
-instead.
+or Xfce or anything else.
 
 
 Alternatively to using the .tomenetrc file for window configuration, you can
@@ -1643,6 +1726,16 @@ beginning of the line - that will effectively disable the whole line.
 Note: Do not modify the file audio.lua, it has nothing to do with editing your
       sound or music. Don't worry though if you accidentally modified it, it'll
       be automatically restored next time you log on to the server.
+
+
+(2.1c) "Promoting" TomeNET on Steam ;)
+--------------------------------------
+In Steam's "Games" menu choose "Add a non-Steam game to my library".
+Browse for the TomeNET.exe file and check it.
+Click on "Add selected programs".
+
+Now you can start TomeNET from your Steam library of games like any other game,
+and if you do so then your Steam status will show that you are playing TomeNET!
 
 
 
@@ -1941,7 +2034,7 @@ beginners to choose 'normal body' and NOT 'fruit bat'. ;)
 Body: 'Fruit bat' (Batty)
 -------------------------
 A fruit bat is like a normal character, just not in humanoid shape but in bat
-form! Fruit bats cannot wear certain equipment like boots, gloves or weapons.
+form! Fruit bats cannot equip weapons, body armour, boots or gloves.
 These restrictions won't change even if they choose a class which can make use
 if mimicry and thereby mimic a humanoid form (druid fruit bats would in fact be
 the most ineffective choice).
@@ -4335,14 +4428,17 @@ The feelings are as follows:
                                         Ironman or no-recall dungeons/towers.
                                         It lets you know that you may use
                                         word-of-recall on this floor!
+                                        (This message is displayed in green
+                                        colour, not orange.)
 
 In addition to those orange level specialties, there are more feelings you
 may get about the danger a level poses. Those only appear if you spent some
 time (usually a few minutes) on the dungeon level you were coming from, so
 they won't be helpful while stair-scumming or probability-travelling quickly.
-The number telling you the current floor's depth in the bottom right corner of
-the main window will turn light blue when you spent enough time on your current
-floor to receive an extra feeling on entering the next floor.
+The number telling you the current floor's depth (or a town name if you're in a
+town) in the bottom right corner of the main window will turn light blue when
+you spent enough time on your current floor to receive an extra feeling on
+entering the next floor.
 These extra level feelings (displayed in yellow) are:
 
   "What a terrifying place.."
@@ -4350,6 +4446,9 @@ These extra level feelings (displayed in yellow) are:
       with 40 actually being the maximum possible ood level shift, compare
       ood explanation in (0.4)) or
       b) a great vault and some ood monster (10..19 levels) on the level.
+      If you receive this message it will in most cases also change the normal
+      music theme of that dungeon to a special 'terrifying' music, making it
+      easier to notice quickly.
 
   "You sense an air of danger.."
       means there's a freely roaming ood monster (10..19 levels)
@@ -4403,6 +4502,10 @@ feeling as soon as you are about to enter the vault:
                                         your (xx, yy) position display on the
                                         lower left area of the main window
                                         turning from light green to dark grey!
+                                        Also, the music will in most cases
+                                        change from the normal theme of that
+                                        dungeon to the same music played on
+                                        'terrifying' levels, for easier notice.
 As soon as you leave such a no-teleport-vault you'll receive this feeling:
 "Fresh air greets you as you leave the vault."
 
@@ -8034,6 +8137,12 @@ Lvl | Rune ID | Description
 Your chance to successfully tunnel through an obstacle depends on the obstacle
 and your 'digging power'.
 
+If you're not interested in the exact formula, skip down to (5.21b) which has a
+table  with example values for certain scenarios.
+
+
+(5.21a) Digging - Exact calculation
+-----------------------------------
 Your digging power is calculated as follows:
 An equipped item that provides (+X) to digging will add 20*X.
 If you have a digging tool equipped, its weight is added (eg 25.0 lbs -> +25).
@@ -8048,7 +8157,7 @@ If you don't have a digging tool equipped, your total digging power is halved.
 
 To successfully dig through certain features, your digging power must be
 greater than the result of a random number roll "random(0..x-1) + y":
--------------------------------------------------------------------
+---------------------------------------------------------------------
 Rubble      200 +  0
 Ivy         200 +  0
 Bushes      300 +  0
@@ -8069,9 +8178,16 @@ be very lucky and hope for the random(0..799) roll for quartz to actually be a
 digging power of 21. So on each turn of tunnelling your chance to succeed would
 be 1 in 800 in that case.
 
-Some too-long-didn't-calculate values, assuming 0.000 'Digging' skill
+
+(5.21b) Digging - Common example values
+---------------------------------------
+Some example values, assuming 0.000 'Digging' skill
 and unenchanted (ie (+0,+0)) digging tools:
 -------------------------------------------
+-You cannot tunnel through granite wall without a digging tool if your STRength
+ is below 18/180.
+-You cannot tunnel through quartz without a digging tool if your STRength is
+ below 18/100.
 -You cannot tunnel through granite with a shovel if your STRength is
  below 18/30.
 -You cannot tunnel through granite with a pick if your STRength is
@@ -8082,6 +8198,9 @@ and unenchanted (ie (+0,+0)) digging tools:
   and at 18/10 STR with a pick. If you use an enchanted shovel (+9,+9) (+1)
   however, you already have a 3% chance to succeed at only 5 STR.)
 
+
+(5.21c) Digging - Further information
+-------------------------------------
 For digging through granite wall without having to wait for ages to succeed,
 you will definitely want a better digging tool than basic shovels or picks.
 For example ones 'of Digging', a magical ego power for digging tools.
@@ -9103,6 +9222,10 @@ Warrior is strongly recommended.
     They get bonus on 'Sling-Mastery', 'Sneakiness', 'Dodging' and a large
     bonus on 'Stealth'.
 
+    Note:
+    Since hobbits have low hit points you might consider training the skill
+    'Health' to make up for it, depending on which class you choose to play.
+
 - Gnome
     Gnomes are intrinsically protected to paralysis effects. Gnomes are smaller
     than dwarves but larger than halflings. They, like the hobbits, live in the
@@ -9177,6 +9300,10 @@ Warrior is strongly recommended.
     in all stats and have attributes similar to humans. However, to
     compensate Yeeks learn, and thus gain levels, extremely quickly.
     Yeeks don't receive boni or mali on any skills.
+
+    Note:
+    Since yeeks have low hit points you might consider training the skill
+    'Health' to make up for it, depending on which class you choose to play.
 
 - Goblin
     Goblins have a decidedly mixed reputation. They are almost always grinning,

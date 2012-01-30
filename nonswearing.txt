@@ -40,11 +40,16 @@ assum
 assura
 assure
 assyr
+badass
+kickass
+asskick
 embarass
 harass
 cutlass
+brass
 class
 glass
+bypass
 surpass
 cook
 again
@@ -62,3 +67,5 @@ stfun
 stfur
 stfus
 stfut
+watch
+water
