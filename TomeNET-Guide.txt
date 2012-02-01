@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 26. January 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 1. February 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1448,6 +1448,15 @@ Last but not least, you may use the following command-line options:
 -k                      don't disable numlock on client startup
 
 
+Linux (using pre-compiled binary):
+----------------------------------
+Make sure that ncurses and crypt libraries are installed, package names are
+usually libncurses5 and libgcrypt11.
+Enter the 'tomenet/' folder and type:
+        ./tomenet
+to start the game.
+
+
 Linux (compiling from source):
 ------------------------------
 (For using the pre-compiled client instead, see further below.)
@@ -1491,13 +1500,64 @@ Go up one level into your 'tomenet/' folder. There type:
 to start the game.
 
 
-Linux (using pre-compiled binary):
-----------------------------------
-Make sure that ncurses and crypt libraries are installed, package names are
-usually libncurses5 and libgcrypt11.
-Enter the 'tomenet/' folder and type:
-        ./tomenet
-to start the game.
+Configure TomeNET on Linux:
+---------------------------
+To configure which windows are visible and what font they use, edit the file
+.tomenetrc which you also must move from tomenet folder into your home folder
+for it to become active! (Or specify alternative location via -f command-line
+option, see below.)
+About setting font sizes, some possible fonts are:
+4x6, 5x7, 5x8, 6x9, 6x10, 6x12, 7x13, 7x14, 8x13, 9x15, 10x20, 12x24,
+depending on your system.
+
+Note: If x,y positioning of windows doesn't work on your system, you can use
+other means such as KDE's native window positioning (right-click the windows
+and modify the "special window settings" or "special application settings") or
+the tool Devilspie (should be in your default repository) if you're on Gnome
+or Xfce or anything else.
+
+
+Alternatively to using the .tomenetrc file for window configuration, you can
+also set environment variables. These settings will override .tomenetrc:
+TOMENET_X11_FONT_SCREEN (height and width of main window cannot be changed)
+TOMENET_X11_WID_MIRROR, TOMENET_X11_HGT_MIRROR, TOMENET_X11_FONT_MIRROR
+TOMENET_X11_WID_CHOICE, TOMENET_X11_HGT_CHOICE, TOMENET_X11_FONT_CHOICE
+TOMENET_X11_WID_RECALL, TOMENET_X11_HGT_RECALL, TOMENET_X11_FONT_RECALL
+TOMENET_X11_WID_TERM_4, TOMENET_X11_HGT_TERM_4, TOMENET_X11_FONT_TERM_4
+TOMENET_X11_WID_TERM_5, TOMENET_X11_HGT_TERM_5, TOMENET_X11_FONT_TERM_5
+TOMENET_X11_WID_TERM_6, TOMENET_X11_HGT_TERM_6, TOMENET_X11_FONT_TERM_6
+TOMENET_X11_WID_TERM_7, TOMENET_X11_HGT_TERM_7, TOMENET_X11_FONT_TERM_7
+Use the 'export' command to set them, eg:
+        export TOMENET_X11_FONT_SCREEN=8x13
+        export TOMENET_X11_WID_TERM_4=80
+        export TOMENET_X11_HGT_TERM_4=24
+TOMENET_X11_FONT sets one font globally for all windows. It's overridden by
+the window-specific font variables listed above though.
+
+
+Last but not least, you may use the following command-line options:
+-f<config file>         use a different config file than ~/.tomenetrc
+-i                      ignore the ~/.tomenetrc config file
+-p<Port>                for example -p19348
+-l<Account> <Password>  for example -lGandalf geheim
+-N<character name>      for example -NDruidor
+<ip address>            for example 85.118.45.235
+-q                      turns off loading/initializing of audio ('quiet mode')
+-w                      disables weather effects
+-u                      disables automatic LUA script updating
+
+Full command-line example:
+        ./tomenet -p19348 -lGandalf geheim -NGandalf 85.118.45.235
+
+If your name contains spaces, it is neccessary to put a '\' in front of each.
+Example:
+        ./tomenet -p18348 -lIron\ Man geheimer 85.118.45.235
+..if your account name is 'Iron Man'.
+
+
+Mac OS X (using pre-compiled binary; tested with Snow Leopard 10.6.6):
+----------------------------------------------------------------------
+Run the file 'TomeNET.run' to start the game.
 
 
 Mac OS X (compiling from source; tested with Snow Leopard 10.6.6):
@@ -1565,64 +1625,9 @@ then you might run into the following problems:
  LDFLAGS so it contains all lib paths.
 
 
-Mac OS X (using pre-compiled binary; tested with Snow Leopard 10.6.6):
-----------------------------------------------------------------------
-Run the file 'TomeNET.run' to start the game.
-
-
-Configure TomeNET on Linux:
----------------------------
-To configure which windows are visible and what font they use, edit the file
-.tomenetrc which you also must move from tomenet folder into your home folder
-for it to become active! (Or specify alternative location via -f command-line
-option, see below.)
-About setting font sizes, some possible fonts are:
-4x6, 5x7, 5x8, 6x9, 6x10, 6x12, 7x13, 7x14, 8x13, 9x15, 10x20, 12x24,
-depending on your system.
-
-Note: If x,y positioning of windows doesn't work on your system, you can use
-other means such as KDE's native window positioning (right-click the windows
-and modify the "special window settings" or "special application settings") or
-the tool Devilspie (should be in your default repository) if you're on Gnome
-or Xfce or anything else.
-
-
-Alternatively to using the .tomenetrc file for window configuration, you can
-also set environment variables. These settings will override .tomenetrc:
-TOMENET_X11_FONT_SCREEN (height and width of main window cannot be changed)
-TOMENET_X11_WID_MIRROR, TOMENET_X11_HGT_MIRROR, TOMENET_X11_FONT_MIRROR
-TOMENET_X11_WID_CHOICE, TOMENET_X11_HGT_CHOICE, TOMENET_X11_FONT_CHOICE
-TOMENET_X11_WID_RECALL, TOMENET_X11_HGT_RECALL, TOMENET_X11_FONT_RECALL
-TOMENET_X11_WID_TERM_4, TOMENET_X11_HGT_TERM_4, TOMENET_X11_FONT_TERM_4
-TOMENET_X11_WID_TERM_5, TOMENET_X11_HGT_TERM_5, TOMENET_X11_FONT_TERM_5
-TOMENET_X11_WID_TERM_6, TOMENET_X11_HGT_TERM_6, TOMENET_X11_FONT_TERM_6
-TOMENET_X11_WID_TERM_7, TOMENET_X11_HGT_TERM_7, TOMENET_X11_FONT_TERM_7
-Use the 'export' command to set them, eg:
-        export TOMENET_X11_FONT_SCREEN=8x13
-        export TOMENET_X11_WID_TERM_4=80
-        export TOMENET_X11_HGT_TERM_4=24
-TOMENET_X11_FONT sets one font globally for all windows. It's overridden by
-the window-specific font variables listed above though.
-
-
-Last but not least, you may use the following command-line options:
--f<config file>         use a different config file than ~/.tomenetrc
--i                      ignore the ~/.tomenetrc config file
--p<Port>                for example -p19348
--l<Account> <Password>  for example -lGandalf geheim
--N<character name>      for example -NDruidor
-<ip address>            for example 85.118.45.235
--q                      turns off loading/initializing of audio ('quiet mode')
--w                      disables weather effects
--u                      disables automatic LUA script updating
-
-Full command-line example:
-        ./tomenet -p19348 -lGandalf geheim -NGandalf 85.118.45.235
-
-If your name contains spaces, it is neccessary to put a '\' in front of each.
-Example:
-        ./tomenet -p18348 -lIron\ Man geheimer 85.118.45.235
-..if your account name is 'Iron Man'.
+Configure TomeNET on Mac OS X:
+------------------------------
+See 'Configure TomeNET on Linux' above, it's basically the same.
 
 
 (2.1a) Installing sound and music packs
