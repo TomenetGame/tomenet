@@ -656,6 +656,10 @@ int main(int argc, char **argv)
 			no_lua_updates = TRUE;
 			break;
 
+		case 'm':
+			skip_motd = TRUE;
+			break;
+
 		default:
 			modus = -1;
 			i = argc;
@@ -684,6 +688,7 @@ int main(int argc, char **argv)
 		puts("  -q                 disable audio capabilities ('quiet mode')");
 		puts("  -w                 disable client-side weather effects");
 		puts("  -u                 disable client-side automatic lua updates");
+		puts("  -m                 skip motd (message of the day) on login");
 
 #ifdef USE_SOUND_2010
 #if 0 //we don't have 'modules' for everything, yet :-p only sound_modules for now - C. Blue

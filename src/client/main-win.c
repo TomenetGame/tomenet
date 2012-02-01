@@ -3815,6 +3815,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					puts("  -w                 disable client-side weather effects");
 					puts("  -u                 disable client-side automatic lua updates");
 					puts("  -k                 don't disable numlock on client startup");
+					puts("  -m                 skip motd (message of the day) on login");
 #else
 					plog(format("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
 					    longVersion,
@@ -3829,7 +3830,8 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					    "  -q                 disable audio capabilities ('quiet mode')",
 					    "  -w                 disable client-side weather effects",
 					    "  -u                 disable client-side automatic lua updates",
-					    "  -k                 don't disable numlock on client startup"));
+					    "  -k                 don't disable numlock on client startup",
+					    "  -m                 skip motd (message of the day) on login"));
 #endif
 					quit(NULL);
 					break;
@@ -3858,6 +3860,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					break;
 				case 'k':
 					disable_numlock = FALSE;
+					break;
+				case 'm':
+					skip_motd = TRUE;
 					break;
 			}
 		}

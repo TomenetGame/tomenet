@@ -1446,6 +1446,7 @@ Last but not least, you may use the following command-line options:
 -w                      disables weather effects
 -u                      disables automatic LUA script updating
 -k                      don't disable numlock on client startup
+-m                      skip motd (message of the day) on login
 
 
 Linux (using pre-compiled binary):
@@ -1545,6 +1546,7 @@ Last but not least, you may use the following command-line options:
 -q                      turns off loading/initializing of audio ('quiet mode')
 -w                      disables weather effects
 -u                      disables automatic LUA script updating
+-m                      skip motd (message of the day) on login
 
 Full command-line example:
         ./tomenet -p19348 -lGandalf geheim -NGandalf 85.118.45.235

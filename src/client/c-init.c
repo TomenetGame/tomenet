@@ -867,7 +867,8 @@ void client_init(char *argv1, bool skip)
 	keymap_init();
 
 	/* Show the MOTD */
-	show_motd(0); /* could be 2 for example to have ppl look at it.. */
+	if (!skip_motd)
+		show_motd(0); /* could be 2 for example to have ppl look at it.. */
 
 	/* Clear the screen again */
 	Term_clear();

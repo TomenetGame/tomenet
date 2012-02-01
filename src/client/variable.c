@@ -163,6 +163,7 @@ bool use_sound, use_sound_org;
 bool quiet_mode = FALSE;
 bool noweather_mode = FALSE;
 bool no_lua_updates = FALSE;
+bool skip_motd = FALSE;
 
 
 client_opts c_cfg;
