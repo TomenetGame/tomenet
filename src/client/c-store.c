@@ -586,6 +586,26 @@ static void store_process_command(int cmd)
 			break;
 		}
 
+		/* Allow to browse backwards via BACKSPACE */
+		case '\b':
+			if (store.stock_num <= 12)
+			{
+				if (store_top) {
+					/* see above - C. Blue */
+					store_top = 0;
+					display_inventory();
+				} else {
+					c_msg_print("Entire inventory is shown.");
+				}
+			}
+			else
+			{
+				store_top -= 12;
+				if (store_top < 0) store_top = ((store.stock_num - 1) / 12) * 12;
+				display_inventory();
+			}
+			break;
+
 		/* Get (purchase) */
 		case 'g':
 		case 'p':
@@ -617,6 +637,12 @@ static void store_process_command(int cmd)
 			store_chat();
 			break;
 		}
+
+		/* allow to actually chat from within a store, might be cool for
+		   notifying others of items other than just pasting into chat */
+		case ':':
+			cmd_message();
+			break;
 
 		/* Ignore return */
 		case '\r':
