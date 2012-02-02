@@ -3318,7 +3318,8 @@ static void hack_quit(cptr str)
 	WSACleanup();
 
 	/* Exit */
-	exit (0);
+	if (str) exit(-1);
+	exit(0);
 }
 
 
@@ -3331,7 +3332,7 @@ static void hack_core(cptr str)
 	if (str) MessageBox(NULL, str, "Error", MB_OK | MB_ICONSTOP);
 
 	/* Quit */
-	quit (NULL);
+	quit(NULL);
 }
 
 
@@ -3452,6 +3453,7 @@ static void hook_quit(cptr str)
 
 	WSACleanup();
 
+	if (str) exit(-1)
 	exit(0);
 }
 

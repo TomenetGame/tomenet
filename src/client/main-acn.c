@@ -278,6 +278,7 @@ static void quit_hook(cptr str)
 	/*nuke_scorefile();*/
 
 	/* All done */
+	if (str) exit(-1);
 	exit(0);
 }
 
