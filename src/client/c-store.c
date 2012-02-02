@@ -328,8 +328,6 @@ static void store_chat(void)
 {
 	int		i, item;
 
-	object_type	*o_ptr;
-
 	char	out_val[MSG_LEN];
 	char	store_color;
 	char	store_char;
@@ -367,9 +365,6 @@ static void store_chat(void)
 
 	/* Get the actual index */
 	item = item + store_top;
-
-	/* Get the actual item */
-	o_ptr = &store.stock[item];
 
 	/* Hack -- Get the shop symbol */
 	store_color = color_attr_to_char(c_store.store_attr);
