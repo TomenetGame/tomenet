@@ -361,7 +361,7 @@ static void sync_sleep(int milliseconds)
 		{
 			if ((result = Net_input()) == -1)
 			{
-				quit(NULL);
+				quit("Net_input failed.");
 			}
 		}
 
@@ -464,7 +464,7 @@ static char inkey_aux(void)
 
 			/* Parse net input if we got any */
 			if (SocketReadable(net_fd)) {
-				if ((result = Net_input()) == -1) quit(NULL);
+				if ((result = Net_input()) == -1) quit("Net_input failed.");
 			}
 
 			/* Hack - Leave a store */
@@ -855,7 +855,7 @@ char inkey(void)
 
 				/* Parse net input if we got any */
 				if (SocketReadable(net_fd)) {
-					if (Net_input() == -1) quit(NULL);
+					if (Net_input() == -1) quit("Net_input failed.");
 				}
 
  #if 0 /* probably not needed - assumption: we're ONLY called for get_macro_trigger() */
