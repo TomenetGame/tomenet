@@ -2650,7 +2650,7 @@ I:20:8:1
 W:10:10:10:5000
 P:0:1d4:9:12:0
 F:INSTA_ART
-F:TUNNEL | SUST_INT | SUST_WIS | INT | STR | STEALTH | HIDE_TYPE
+F:TUNNEL | SUST_INT | SUST_WIS | INT | STR | SEARCH | HIDE_TYPE
 D:The pick from the heroic tale of escaping through a staircase
 D:hidden by walls and inaccessible if not for this trusted tool.
 
