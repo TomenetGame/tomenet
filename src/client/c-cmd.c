@@ -2278,16 +2278,12 @@ static void cmd_master_aux_generate_vault(void)
 static void cmd_master_aux_generate(void)
 {
 	char i;
-	char buf[80];
 
 	/* Process requests until done */
 	while (1)
 	{
 		/* Clear screen */
 		Term_clear();
-
-		/* Initialize buffer */
-		buf[0] = '\0';
 
 		/* Describe */
 		Term_putstr(0, 2, -1, TERM_WHITE, "Generation commands");
@@ -3037,7 +3033,6 @@ static void cmd_master_aux_system()
 static void cmd_master(void)
 {
 	char i=0;
-	char buf[80];
 
 	party_mode = TRUE;
 
@@ -3049,9 +3044,6 @@ static void cmd_master(void)
 	{
 		/* Clear screen */
 		Term_clear();
-
-		/* Initialize buffer */
-		buf[0] = '\0';
 
 		/* Describe */
 		Term_putstr(0, 2, -1, TERM_WHITE, "Dungeon Master commands");
