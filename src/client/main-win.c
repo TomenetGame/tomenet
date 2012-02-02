@@ -3453,7 +3453,7 @@ static void hook_quit(cptr str)
 
 	WSACleanup();
 
-	if (str) exit(-1)
+	if (str) exit(-1);
 	exit(0);
 }
 
