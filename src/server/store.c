@@ -1025,7 +1025,18 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 	return (TRUE);
 }
 
-
+static int get_spellbook_store_order(int pval) {
+	/* green for priests */
+	if (spell_school[pval] >= SCHOOL_HOFFENSE && spell_school[pval] <= SCHOOL_HSUPPORT) return 2;
+	/* light green for druids */
+	if (spell_school[pval] == SCHOOL_DRUID_ARCANE || spell_school[pval] == SCHOOL_DRUID_PHYSICAL) return 3;
+	/* orange for astral tome */
+	if (spell_school[pval] == SCHOOL_ASTRAL) return 5;
+	/* yellow for mindcrafters */
+	if (spell_school[pval] >= SCHOOL_PPOWER && spell_school[pval] <= SCHOOL_MINTRUSION) return 4;
+	/* light blue for the rest (istari schools) */
+	return 1;
+}
 
 /*
  * Add the item "o_ptr" to a real stores inventory.
@@ -1116,6 +1127,12 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr)
 		/* Objects sort by increasing sval */
 		if (o_ptr->sval < j_ptr->sval) break;
 		if (o_ptr->sval > j_ptr->sval) continue;
+
+		/* (experimental) for libaries/book stores: sort [spell scrolls] by school? */
+		if (j_ptr->tval == TV_BOOK && j_ptr->sval == SV_SPELLBOOK) {
+			if (get_spellbook_store_order(o_ptr->pval) < get_spellbook_store_order(j_ptr->pval)) break;
+			if (get_spellbook_store_order(o_ptr->pval) > get_spellbook_store_order(j_ptr->pval)) continue;
+		}
 
 		/* Evaluate that slot */
 		j_value = object_value(0, j_ptr);
@@ -4875,6 +4892,12 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr)
 		/* Objects sort by increasing sval */
 		if (o_ptr->sval < j_ptr->sval) break;
 		if (o_ptr->sval > j_ptr->sval) continue;
+
+		/* (experimental) for libaries/book stores: sort [spell scrolls] by school? */
+		if (j_ptr->tval == TV_BOOK && j_ptr->sval == SV_SPELLBOOK) {
+			if (get_spellbook_store_order(o_ptr->pval) < get_spellbook_store_order(j_ptr->pval)) break;
+			if (get_spellbook_store_order(o_ptr->pval) > get_spellbook_store_order(j_ptr->pval)) continue;
+		}
 
 		/* Objects in the home can be unknown */
 		if (!object_known_p(Ind, o_ptr)) continue;
