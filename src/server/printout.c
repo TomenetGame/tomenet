@@ -6,6 +6,8 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include "angband.h"
 
 static int print_to_file = FALSE;
