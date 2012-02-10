@@ -7350,7 +7350,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 
 	s64b		new_exp, new_exp_frac;
 	s64b 		tmp_exp, req_lvl;
-	s16b skill_trauma = get_skill(p_ptr, SKILL_TRAUMATURGY);
+	long skill_trauma = get_skill(p_ptr, SKILL_TRAUMATURGY) * SKILL_STEP;
 	long scale_trauma = 0;
 	bool old_tacit = suppress_message;
 
@@ -7375,8 +7375,8 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 	/* Trauma boost spell */
 	if (p_ptr->tim_trauma) {
 		skill_trauma += (skill_trauma < (SKILL_MAX - (p_ptr->tim_trauma_pow * 1000)) ? (p_ptr->tim_trauma_pow * 1000) : SKILL_MAX - skill_trauma);
-		scale_trauma = (((skill_trauma) * 20) / SKILL_MAX);
 	}
+	scale_trauma = (((skill_trauma) * 20) / SKILL_MAX);
 
 	/* Redraw (later) if needed */
 	update_health(m_idx);
