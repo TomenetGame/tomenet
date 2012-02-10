@@ -1822,7 +1822,7 @@ void do_slash_cmd(int Ind, char *message)
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			msg_format(Ind, "\374\377%cYou flip a coin and get %s.", COLOUR_GAMBLE, coin ? "heads" : "tails");
-			msg_format_near(Ind, "\374\377%c%s flips a coin and gets %d", COLOUR_GAMBLE, p_ptr->name, coin ? "heads" : "tails");
+			msg_format_near(Ind, "\374\377%c%s flips a coin and gets %s.", COLOUR_GAMBLE, p_ptr->name, coin ? "heads" : "tails");
 			return;
 		}
 #ifdef RPG_SERVER /* too dangerous on the pm server right now - mikaelh */
