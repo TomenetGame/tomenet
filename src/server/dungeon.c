@@ -1765,24 +1765,29 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 			/* New runemaster retaliation. - Kurzel */
 			/* Search for up to 2 more runes with the same inscription as the first found. */
 			if (o_ptr->sval >= 0 && o_ptr->sval <= RCRAFT_MAX_ELEMENTS) {
-				int i, runes = 1;
-				u16b rune_type = 0;
+				int i, runes = 0;
+				int rune_type = 0;
 				u32b rune_flags = 0;
-				int imperative = *inscription;
-				if (inscription != NULL) {
-					choice = *inscription - 96 - 1;
+				int imperative = 0;
+				int type = 0;
+
+				if (*inscription != '\0') {
+					imperative = *inscription;
+					inscription++;
+					choice = imperative - 'a';
 					if (choice < 0 || choice > RCRAFT_MAX_IMPERATIVES) choice = 0;
 				}
-				inscription++;
-				int type = *inscription;
-				if (inscription != NULL) {
-					rune_type = *inscription - 96 - 1;
+
+				if (*inscription != '\0') {
+					type = *inscription;
+					rune_type = *inscription - 'a';
 					if (rune_type < 0 || rune_type > RCRAFT_MAX_TYPES) rune_type = 0;
 				}
+
 				/* Pick the next rune with {@O} inscription */
 				for (i = item; i < INVEN_TOTAL && runes < 3; i++) {
 					o_ptr = &p_ptr->inventory[i];
-					if (!o_ptr->tval) continue;
+					if (o_ptr->tval != TV_RUNE2) continue;
 
 					inscription = quark_str(o_ptr->note);
 
@@ -1791,21 +1796,28 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 
 					/* scan the inscription for @O */
 					while (*inscription != '\0') {
-						if (*inscription == '@' && o_ptr->tval == TV_RUNE2) {
+						if (*inscription == '@') {
 							inscription++;
 
 							/* a valid @O has been located */
-							/* @O shouldn't work on weapons or ammo in inventory - mikaelh */
 							if (*inscription == 'O' || *inscription == 'Q') {
-								if (*inscription == 'Q') fallback = TRUE;
+								int type2 = 0;
+								int imperative2 = 0;
 								inscription++;
 
+								if (*inscription != '\0') {
+									imperative2 = *inscription;
+									inscription++;
+								}
+
+								if (*inscription != '\0') {
+									type2 = *inscription;
+								}
+
 								/* Skip this item in case it isn't the same */
-								if (*inscription != imperative) break;
-								inscription++;
-								if (*inscription != type) break;
+								if (imperative != imperative2 || type != type2) break;
 								
-								/* Select the first usable item with @O */
+								/* Use this rune element */
 								rune_flags |= r_elements[o_ptr->sval].self;
 								runes++;
 								
