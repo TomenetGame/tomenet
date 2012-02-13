@@ -88,7 +88,7 @@ RECOVERY = add_spell
 	end,
         ["desc"] =	{
         		"Reduces the length of time that you are poisoned",
-                        "At level 10 it cures poison and cuts (projectable)",
+                        "At level 10 it cures poison and cuts (projecttable)",
                         "At level 20 it restores drained stats",
                         "At level 25 it restores lost experience",
                         "***Affected by the Meta spell: Project Spell***",
