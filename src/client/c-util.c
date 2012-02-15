@@ -3876,18 +3876,18 @@ void interact_macros(void)
 
 				switch (i) {
 				case 0:
-					Term_putstr(10, 11, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
-					Term_putstr(15, 12, -1, TERM_L_GREEN, "a) Drink a potion");
-					Term_putstr(15, 13, -1, TERM_L_GREEN, "b) Read a scroll");
-					Term_putstr(15, 14, -1, TERM_L_GREEN, "c) Fire ranged weapon at closest enemy");
-					Term_putstr(15, 15, -1, TERM_L_GREEN, "d) Cast a spell that doesn't use a target (or target manually)");
-					Term_putstr(15, 16, -1, TERM_L_GREEN, "e) Cast a spell that uses a target (attack spell)");
-					Term_putstr(15, 17, -1, TERM_L_GREEN, "f) Use a fighting technique (most melee classes)");
-					Term_putstr(15, 18, -1, TERM_L_GREEN, "g) Use a shooting technique (archers and rangers)");
-					Term_putstr(15, 19, -1, TERM_L_GREEN, "h) Polymorph into a certain monster (mimicry users)");
-					Term_putstr(15, 20, -1, TERM_L_GREEN, "i) Draw runes to cast a runespell");
-					Term_putstr(15, 21, -1, TERM_L_GREEN, "j) Set up a monster trap");
-					Term_putstr(15, 22, -1, TERM_L_GREEN, "k) Use a magic device");
+					Term_putstr(5, 11, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
+					Term_putstr(10, 12, -1, TERM_L_GREEN, "a) Drink a potion");
+					Term_putstr(10, 13, -1, TERM_L_GREEN, "b) Read a scroll");
+					Term_putstr(10, 14, -1, TERM_L_GREEN, "c) Fire ranged weapon at closest enemy");
+					Term_putstr(10, 15, -1, TERM_L_GREEN, "d)/D) Cast school/mimic spell without a target (or target manually)");
+					Term_putstr(10, 16, -1, TERM_L_GREEN, "e)/E) Cast school/mimic spell that uses a target (attack spell)");
+					Term_putstr(10, 17, -1, TERM_L_GREEN, "f) Use a fighting technique (most melee classes)");
+					Term_putstr(10, 18, -1, TERM_L_GREEN, "g) Use a shooting technique (archers and rangers)");
+					Term_putstr(10, 19, -1, TERM_L_GREEN, "h) Polymorph into a certain monster (mimicry users)");
+					Term_putstr(10, 20, -1, TERM_L_GREEN, "i) Draw runes to cast a runespell");
+					Term_putstr(10, 21, -1, TERM_L_GREEN, "j) Set up a monster trap");
+					Term_putstr(10, 22, -1, TERM_L_GREEN, "k) Use a magic device");
 
 					switch (choice = inkey()) {
 					case ESCAPE:
@@ -3902,7 +3902,7 @@ void interact_macros(void)
 					}
 
 					/* invalid action -> exit wizard */
-					if (choice < 'a' || choice > 'k') {
+					if ((choice < 'a' || choice > 'k') && choice != 'D' && choice != 'E') {
 						i = -1;
 						continue;
 					}
@@ -3933,10 +3933,24 @@ void interact_macros(void)
 						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
 						Term_putstr(15, 17, -1, TERM_L_GREEN, "Enter exact spell name:");
 						break;
+					case 'D':
+						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact spell name and pay attention");
+						Term_putstr(10, 12, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
+						Term_putstr(10, 13, -1, TERM_GREEN, "or another example:     \377GBlink");
+						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
+						Term_putstr(15, 17, -1, TERM_L_GREEN, "Enter exact spell name:");
+						break;
 					case 'e':
 						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact spell name and pay attention");
 						Term_putstr(10, 12, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
 						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GManathrust");
+						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
+						Term_putstr(15, 17, -1, TERM_L_GREEN, "Enter exact spell name:");
+						break;
+					case 'E':
+						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact spell name and pay attention");
+						Term_putstr(10, 12, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
+						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GMagic Missile");
 						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
 						Term_putstr(15, 17, -1, TERM_L_GREEN, "Enter exact spell name:");
 						break;
@@ -4301,6 +4315,20 @@ void interact_macros(void)
 						buf2[9] = '@';
 						strcpy(buf2 + 10, buf);
 						if (choice == 'e') {
+							strcpy(buf, "*t");
+							strcat(buf2, buf);
+						}
+						break;
+					case 'D':
+					case 'E':
+						buf2[3] = 'm';
+						buf2[4] = '@';
+						buf2[5] = '3';
+						buf2[6] = '\\';
+						buf2[7] = 'r';
+						buf2[8] = '@';
+						strcpy(buf2 + 9, buf);
+						if (choice == 'E') {
 							strcpy(buf, "*t");
 							strcat(buf2, buf);
 						}
