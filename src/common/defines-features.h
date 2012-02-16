@@ -12,6 +12,9 @@
 
 /* --------------------------------------------------------------------------*/
 /* Features that are allowed in all build types, ie server-type independant: */
+#define DUNGEON_VISIT_BONUS	/* Experimental: Dungeons rarely visited give exp bonus - C. Blue */
+//#define DUNGEON_VISIT_BONUS_DEPTHRANGE /* not yet implemented: enhance DUNGEON_VISIT_BONUS algorithm further (but seems inefficient atm) */
+
 #define ENABLE_RUNEMASTER	/* enable runemaster class */
 #define ENABLE_RCRAFT		/* New runecraft class - relsiet (toggles new alternative code for ENABLE_RUNEMASTER) */
 
@@ -79,9 +82,6 @@
 /* --------------------- Server-type dependant features -------------------- */
 
 #ifdef RPG_SERVER
- #define DUNGEON_VISIT_BONUS	/* Experimental: Dungeons rarely visited give exp bonus - C. Blue */
- //#define DUNGEON_VISIT_BONUS_DEPTHRANGE /* not yet implemented: enhance DUNGEON_VISIT_BONUS algorithm further (but seems inefficient atm) */
-
  #define BONE_AND_TREASURE_CHAMBERS	/* New experimental room types: Generate pits of bones or treasure - C. Blue */
 
  #define MUCHO_RUMOURS		/* print a rumour on day changes and unique kills (the_sandman) */
