@@ -6315,8 +6315,9 @@ void do_slash_cmd(int Ind, char *message)
 #ifdef DUNGEON_VISIT_BONUS
 			else if (prefix(message, "/debugdvb")) { /* debug DUNGEON_VISIT_BONUS */
 				for (i = 1; i <= dungeon_id_max; i++) {
-					msg_format(Ind, "dun %d at (%d,%d): visited %d -> bonus %d.",
-					    i, dungeon_x[i], dungeon_y[i], dungeon_visit_frequency[i], dungeon_bonus[i]);
+					msg_format(Ind, "%s %d at (%d,%d): visited %d -> bonus %d.",
+						dungeon_tower[i] ? "tow" : "dun", i,
+					    dungeon_x[i], dungeon_y[i], dungeon_visit_frequency[i], dungeon_bonus[i]);
 				}
 				return;
 			}
