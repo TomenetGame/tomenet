@@ -4427,7 +4427,7 @@ bool show_floor_feeling(int Ind)
 
 	/* XXX devise a better formula */
 	if (p_ptr->lev * ((p_ptr->lev >= 40) ? 3 : 2) + 5 < getlevel(wpos)) {
-		msg_print(Ind, "\374\377oYou feel an imminent danger!");
+		msg_print(Ind, "\374\377rYou feel an imminent danger!");
 		felt = TRUE;
 	}
 
