@@ -4402,11 +4402,11 @@ experience bonus, until the game perceives them as 'well explored' again.
 If you enter such a rarely visited dungeon you will be notified about the
 experience bonus by one of these dungeon feelings, displayed in light umber:
 
-  "This place has not been explored recently.":        +8% experience gain.
+  "This place has not been explored recently.":        +7% experience gain.
 
-  "This place has not been explored in a long time.":  +15% experience gain.
+  "This place has not been explored in a long time.":  +13% experience gain.
 
-  "This place has not been explored in ages.":         +25% experience gain.
+  "This place has not been explored in ages.":         +20% experience gain.
 
 These boni stack with boni from 'bad' (orange) floor feelings explained below.
 

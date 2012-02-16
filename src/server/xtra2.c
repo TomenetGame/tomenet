@@ -7492,9 +7492,9 @@ for(i=1; i < 5; i++) {
 
 #ifdef DUNGEON_VISIT_BONUS
 			switch (dungeon_bonus[dt_ptr2->id]) {
-			case 3: factor += 25; break;
-			case 2: factor += 15; break;
-			case 1: factor += 8; break;
+			case 3: factor += 20; break;
+			case 2: factor += 13; break;
+			case 1: factor += 7; break;
 			}
 #endif
 
