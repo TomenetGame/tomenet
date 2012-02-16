@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 1. February 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 16. February 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -4145,6 +4145,8 @@ See (5.7) for more information about ID, *ID* and shops!
 Towns
 -----
 Here is a list of towns and their corresponding local dungeons:
+NOTE: Minimum level requirements for entering might be disabled, based on
+      the server's settings.
 
 Town        |Depth/Level|   Local dungeons    | Depth/Level      |Required
             |of the town|                     | of the local     |player level
@@ -4186,6 +4188,9 @@ Since The Orc Cave goes from level 10 to level 23 that means it has 14 floors,
 so its final floor will be -700 ft which is of the same difficulty level as
 -1150 ft Barrow-Downs (ie level 23).
 
+NOTE: Minimum level requirements for entering might be disabled, based on
+      the server's settings.
+
 Dungeon                        |     Depth* / Level    | Min. required player
                                |  (*relative to Lv.1)  |   level to enter
 -------------------------------+-----------------------+---------------------
@@ -4216,12 +4221,16 @@ explorers.
 Such custom dungeons appear as 'Wilderness' in the "Recall depths and Towns"
 list, and usually have no minimum required character level to enter.
 
-((*) To enter the Nether Realm a player must carry the 'King'/'Queen' title,
-acquired by beating Morgoth, Lord of Darkness.
-Each floor in the Nether Realm gives a +2% bonus to experience from monster
-kills.
-The amount of experience is already very high even without the depth-bonus,
-since creatures in the Nether Realm are of a very high level.)
+(*) Nether Realm details:
+-To enter the Nether Realm a player must carry the 'King'/'Queen' title,
+ acquired by beating Morgoth, Lord of Darkness.
+-Each floor in the Nether Realm gives a +2% bonus to experience from monster
+ kills. So hunting at -350ft in there will give a +14% exp bonus. (This bonus
+ is actually multiplied by the usual floor boni, instead of added. So you will
+ get even much more exp when hunting on a floor with a lot of 'bad' special
+ flags.)
+-Note that the amount of experience is already very high even without this
+ depth-bonus, since creatures in the Nether Realm are of a very high level.
 
 
 
@@ -4384,25 +4393,42 @@ and the item afterwards, effectively simply asking you to specify the item.
 
 
 
-(4.8) Level & vault feelings
-----------------------------
-Levels:
--------
+(4.8) Dungeon, floor & vault feelings
+-------------------------------------
+Dungeon feelings:
+-----------------
+Dungeons that haven't been visited for a while will start giving a temporary
+experience bonus, until the game perceives them as 'well explored' again.
+If you enter such a rarely visited dungeon you will be notified about the
+experience bonus by one of these dungeon feelings, displayed in light umber:
+
+  "This place has not been explored recently.":        +8% experience gain.
+
+  "This place has not been explored in a long time.":  +15% experience gain.
+
+  "This place has not been explored in ages.":         +25% experience gain.
+
+These boni stack with boni from 'bad' (orange) floor feelings explained below.
+
+
+Floor feelings:
+---------------
 Sometimes if you enter a new dungeon level your character will have a special
-feeling about it, displayed in orange text.
-The feelings are as follows:
+feeling about it, called 'level feelings' or 'floor feelings', displayed in
+orange text.
+These feelings are as follows:
 
-"You feel an imminent danger!" ->   This dungeon level is *way* higher than
-                                    your character level.
+  "You feel an imminent danger!" ->     This dungeon level is *way* higher
+                                        than your character level.
 
-"You feel a suppressive air." ->    You cannot use wraith form or probability
-                                    travel on this level.
-                                    (NO_MAGIC, +10% experience bonus!)
+  "You feel a suppressive air." ->      You cannot use wraith form or
+                                        probability travel on this level.
+                                        (NO_MAGIC, +10% experience bonus!)
 
-"The air seems distorted." ->       You cannot use genocide on this level!
-(formerly 'feeling of peace')       (NO_GENO, +5% experience bonus!)
+  "The air seems distorted." ->         You cannot use genocide on this level!
+  (formerly 'feeling of peace')         (NO_GENO, +5% experience bonus!)
 
-"You lose all sense of direction..." -> You won't be able to auto-map this
+  "You lose all sense of direction..." -> You won't be able to auto-map this
                                         dungeon, meaning that you won't
                                         remember the dungeon layout.
                                         You can only see your nearby
@@ -4410,15 +4436,15 @@ The feelings are as follows:
                                         line of sight.
                                         (NO_MAP, +15% experience bonus!)
 
-"You feel like a stranger..." ->    You cannot use magic mapping nor
-                                    clairvoyance here!
-                                    (NO_MAGIC_MAP, +10% experience bonus!)
+  "You feel like a stranger..." ->      You cannot use magic mapping nor
+                                        clairvoyance here!
+                                        (NO_MAGIC_MAP, +10% experience bonus!)
 
-"The walls here seem very solid." ->    You cannot destroy the dungeon
+  "The walls here seem very solid." ->  You cannot destroy the dungeon
                                         structure on this level.
                                         (NO_DESTROY, +5% experience bonus!)
 
-"You feel that your life hangs in the balance!" ->      ** Extremely dangerous
+  "You feel that your life hangs in the balance!" ->    ** Extremely dangerous
                                         to normal/everlasting players! **
                                         This only occurs on a level where
                                         Morgoth, Lord of Darkness resides,
@@ -4431,7 +4457,7 @@ The feelings are as follows:
                                         the same way as unworldly and hellish
                                         ones!
 
-"You don't sense a magic barrier here..." ->   This message only occurs in
+  "You don't sense a magic barrier here..." ->   This message only occurs in
                                         Ironman or no-recall dungeons/towers.
                                         It lets you know that you may use
                                         word-of-recall on this floor!
@@ -4495,11 +4521,12 @@ it'll remain to feel like a boring place, despite the new monster that might
 actually make it pretty non-boring now..
 
 
-Vaults:
--------
+Vault feelings:
+---------------
 Vaults can also bear a very dangerous feature that is displayed as dark grey
 feeling as soon as you are about to enter the vault:
-"The air in here feels very still." ->  Means that you cannot use any type of
+
+  "The air in here feels very still." ->  Means that you cannot use any type of
                                         teleportation, including word-of-
                                         recall while inside the vault. Beware!
                                         Further, Wraith Form and probability
@@ -4513,8 +4540,9 @@ feeling as soon as you are about to enter the vault:
                                         change from the normal theme of that
                                         dungeon to the same music played on
                                         'terrifying' levels, for easier notice.
+
 As soon as you leave such a no-teleport-vault you'll receive this feeling:
-"Fresh air greets you as you leave the vault."
+  "Fresh air greets you as you leave the vault."
 
 
 
