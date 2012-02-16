@@ -6357,6 +6357,15 @@ Shadow Cloak    Makes you hard to spot for other players, regarding
                 yourself while being invisible vs. someone who is able to see
                 invisible creatures/players. See '(5.16) Invisibility'.
 Elven Gloves    Regenerate hit points and mana points.
+Royal Armour    Super-heavy armour that can only be worn by (fallen) winners,
+                'winner' meaning queens, kings, empresses and emperors.
+                (These armour pieces usually have a level requirement of 51 or
+                more and can have special boni not found on other armour.)
+                'Royal armour' is not a base item name itself but just
+                describes various types of adamantite and mithril heavy armour
+                or shields that will display
+                "It is to be used by royalties exclusively."
+                in violet colour when inspected/exmamined.
 
 
 Potions
