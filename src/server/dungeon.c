@@ -6524,6 +6524,14 @@ void play_game(bool new_game) {
 	/* Server initialization is now "complete" */
 	server_generated = TRUE;
 
+#ifdef DUNGEON_VISIT_BONUS
+	/* Initialize all dungeons at 'low rest bonus' */
+	for (s = 1; s <= dungeon_id_max; s++) {
+		dungeon_visit_frequency[s] = ((VISIT_TIME_CAP * 17) / 20) - 1; /* somewhat below the threshold */
+		dungeon_bonus[s] = 1;
+	}
+#endif
+
 	/* Set up the contact socket, so we can allow players to connect */
 	setup_contact_socket();
 
