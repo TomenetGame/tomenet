@@ -1693,6 +1693,10 @@ extern void limit_energy(player_type *p_ptr);
 extern cptr get_prace(player_type *p_ptr);
 extern cptr get_ptitle(player_type *p_ptr, bool short_form);
 
+#ifdef DUNGEON_VISIT_BONUS
+extern void reindex_dungeons();
+#endif
+
 /* xtra2.c */
 
 #ifdef ARCADE_SERVER
@@ -2089,7 +2093,18 @@ extern char deep_dive_name[20][MAX_CHARS];
 /* remember school for each spell */
 extern int spell_school[512];
 /* Also remeber the first and last school of each magic resort */
-int SCHOOL_HOFFENSE, SCHOOL_HSUPPORT;
-int SCHOOL_DRUID_ARCANE, SCHOOL_DRUID_PHYSICAL;
-int SCHOOL_ASTRAL;
-int SCHOOL_PPOWER, SCHOOL_MINTRUSION;
+extern int SCHOOL_HOFFENSE, SCHOOL_HSUPPORT;
+extern int SCHOOL_DRUID_ARCANE, SCHOOL_DRUID_PHYSICAL;
+extern int SCHOOL_ASTRAL;
+extern int SCHOOL_PPOWER, SCHOOL_MINTRUSION;
+
+#ifdef DUNGEON_VISIT_BONUS
+# ifdef DUNGEON_VISIT_BONUS_DEPTHRANGE
+extern u16b depthrange_visited[20];
+# endif
+extern int dungeon_id_max;
+extern int dungeon_x[MAX_D_IDX * 2], dungeon_y[MAX_D_IDX * 2];
+extern u16b dungeon_visit_frequency[MAX_D_IDX * 2];
+extern bool dungeon_tower[MAX_D_IDX * 2], dungeon_visit_check[MAX_D_IDX * 2];
+extern int dungeon_bonus[MAX_D_IDX * 2];
+#endif

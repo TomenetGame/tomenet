@@ -955,3 +955,15 @@ int SCHOOL_HOFFENSE, SCHOOL_HSUPPORT;
 int SCHOOL_DRUID_ARCANE, SCHOOL_DRUID_PHYSICAL;
 int SCHOOL_ASTRAL;
 int SCHOOL_PPOWER, SCHOOL_MINTRUSION;
+
+#ifdef DUNGEON_VISIT_BONUS
+# ifdef DUNGEON_VISIT_BONUS_DEPTHRANGE
+u16b depthrange_visited[20]; //(levels 0..9 each, so [19] := 190..199)
+# endif
+int dungeon_id_max = 0;
+/* Note: doubling MAX_D_IDX to also account for possible custom dungeons ("Wilderness") along with the default d_info[] dungeons */
+int dungeon_x[MAX_D_IDX * 2], dungeon_y[MAX_D_IDX * 2];
+u16b dungeon_visit_frequency[MAX_D_IDX * 2];   /* how often players enter this dungeon */
+bool dungeon_tower[MAX_D_IDX * 2], dungeon_visit_check[MAX_D_IDX * 2];
+int dungeon_bonus[MAX_D_IDX * 2];
+#endif

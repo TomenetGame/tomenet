@@ -57,6 +57,13 @@ static void process_weather_control(void);
  #endif
 #endif
 
+#ifdef DUNGEON_VISIT_BONUS
+/* Amount of time until a dungeon cannot be more frequented anymore (in minutes) [800].
+   The time until a dungeon goes back down to 0 ('most unexplored') is that time * 10,
+   so 800 would result in 8000 minutes aka ~6 days. */
+ #define VISIT_TIME_CAP 800
+#endif
+
 
 /*
  * Return a "feeling" (or NULL) about an item.  Method 1 (Heavy).
@@ -6166,10 +6173,105 @@ void dungeon(void)
 		/* Hack -- Regenerate the monsters every hundred game turns */
 		if (!(turn % 100)) regen_monsters();
 	}
-	
+
+#ifdef DUNGEON_VISIT_BONUS
+	/* Keep track of frequented dungeons, every minute */
+	if (!(turn % (cfg.fps * 60))) {
+		dungeon_type *d_ptr;
+		wilderness_type *w_ptr;
+# ifdef DUNGEON_VISIT_BONUS_DEPTHRANGE
+		int depthrange;
+# endif
+
+		for (i = 1; i < NumPlayers + 1; i++) {
+			player_type *p_ptr = Players[i];
+			if (p_ptr->conn == NOT_CONNECTED) continue;
+
+			if (p_ptr->wpos.wz == 0) continue;
+			w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
+			if (p_ptr->wpos.wz < 0) d_ptr = w_ptr->dungeon;
+			else if (p_ptr->wpos.wz > 0) d_ptr = w_ptr->tower;
+			else continue; //paranoia
+
+# if 0
+			/* NOTE: We're currently counting up for -each- player in there.
+			   Maybe should be changed to generic 'visited or not visited'. */
+			if (dungeon_visit_frequency[d_ptr->id] < VISIT_TIME_CAP)
+				dungeon_visit_frequency[d_ptr->id]++;
+# else
+			/* NOTE about NOTE: Not anymore. Now # of players doesn't matter: */
+			if (dungeon_visit_frequency[d_ptr->id] < VISIT_TIME_CAP)
+				dungeon_visit_check[d_ptr->id] = TRUE;
+# endif
+
+# ifdef DUNGEON_VISIT_BONUS_DEPTHRANGE
+			/* Also keep track of which depths are mostly frequented */
+			depthrange = getlevel(&p_ptr->wpos) / 10;
+			/* Excempt Valinor (dlv 200) */
+			if (depthrange < 20
+			    && depthrange_visited[depthrange] < VISIT_TIME_CAP);
+				depthrange_visited[depthrange]++;
+# endif
+		}
+
+# if 1
+		for (i = 1; i <= dungeon_id_max; i++)
+			if (dungeon_visit_check[i]) {
+				dungeon_visit_check[i] = FALSE;
+				dungeon_visit_frequency[i]++;
+			}
+# endif
+	}
+	/* Decay visit frequency for all dungeons over time. */
+	/* Also update the 'rest bonus' each dungeon gives:
+	   Use <startfloor + 2/3 * (startfloor-endfloor)> as main comparison value. */
+	if (!(turn % (cfg.fps * 60 * 10))) {
+# ifdef DUNGEON_VISIT_BONUS_DEPTHRANGE
+		for (i = 0; i < 20; i++) {
+			if (depthrange_visited[i])
+				depthrange_visited[i]--;
+
+			/* update the depth-range scale in regards to its most contributing dungeon */
+			//todo; see below
+		}
+# endif
+		for (i = 1; i <= dungeon_id_max; i++) {
+			if (dungeon_visit_frequency[i])
+				dungeon_visit_frequency[i]--;
+
+			/* update bonus of this dungeon */
+# ifdef DUNGEON_VISIT_BONUS_DEPTHRANGE
+			/* more sophisticated algoritm.
+			   Todo: find a good way how to do this :-p.
+			   Idea (C. Blue):
+			   players increase the depthrange_visited counter for the dlvl they are on,
+			   dungeons then compare it with their average depth (which is as stated above
+			   start + 2/3 * (end-start) floor), and only start counting as "not visited"
+			   if the dungeon depths that ARE visited actually are comparable to the
+			   avg depth of the dungeon in question.
+			   Main problem: Handle multiple dungeons adding to the same depthrange in
+			   pretty different scales, eg 'player A is all the time in dungeon A which
+			   only is lvl 1-9, while player B spends even much more time in the very first
+			   level of dungeon B which goes from lvl 1-49. Now how are the numbers scaled
+			   down to determine the actual 'visitedness' of dungeon A for example? */
+# endif
+
+			/* straightforward simple way without DUNGEON_VISIT_BONUS_DEPTHRANGE */
+			if (dungeon_visit_frequency[i] < VISIT_TIME_CAP / 10)
+				dungeon_bonus[i] = 3;
+			else if (dungeon_visit_frequency[i] < VISIT_TIME_CAP / 2)
+				dungeon_bonus[i] = 2;
+			else if (dungeon_visit_frequency[i] < (VISIT_TIME_CAP * 19) / 20)
+				dungeon_bonus[i] = 1;
+			else
+				dungeon_bonus[i] = 0;
+		}
+	}
+#endif
+
 	/* Process day/night changes on world_surface */
 	if (!(turn % HOUR)) process_day_and_night();
-	
+
 	/* Refresh everybody's displays */
 	for (i = 1; i < NumPlayers + 1; i++) {
 		player_type *p_ptr = Players[i];

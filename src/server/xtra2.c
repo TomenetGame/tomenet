@@ -7459,6 +7459,7 @@ for(i=1; i < 5; i++) {
 		}
 		}
 #endif
+
 		char m_name[MNAME_LEN];
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
 		/* Had to change it for Halloween -C. Blue */
@@ -7488,6 +7489,15 @@ for(i=1; i < 5; i++) {
 			if (d_ptr2->flags2 & DF2_IRON)		factor += 15;
 			if (d_ptr2->flags2 & DF2_HELL)		factor += 10;
 			if (d_ptr2->flags2 & DF2_NO_DEATH)	factor -= 50;
+
+#ifdef DUNGEON_VISIT_BONUS
+			switch (dungeon_bonus[dt_ptr2->id]) {
+			case 3: factor += 25; break;
+			case 2: factor += 15; break;
+			case 1: factor += 8; break;
+			}
+#endif
+
 			tmp_exp = (tmp_exp * factor) / 100;
 		}
 

@@ -2718,6 +2718,9 @@ errr rd_server_savefile()
 void new_rd_wild()
 {
 	int x, y, i;
+#ifdef DUNGEON_VISIT_BONUS
+	int dungeons = 0;
+#endif
 	wilderness_type *wptr;
 	struct dungeon_type *d_ptr;
 	u32b tmp;
@@ -2732,6 +2735,10 @@ void new_rd_wild()
 				rd_byte(&wptr->up_x);
 				rd_byte(&wptr->up_y);
 				rd_u16b(&d_ptr->id);
+#ifdef DUNGEON_VISIT_BONUS
+				dungeons++;
+				if (d_ptr->id > dungeon_id_max) dungeon_id_max = d_ptr->id;
+#endif
 				rd_u16b(&d_ptr->type);
 				rd_u16b(&d_ptr->baselevel);
 				rd_u32b(&d_ptr->flags1);
@@ -2756,6 +2763,10 @@ void new_rd_wild()
 				rd_byte(&wptr->dn_x);
 				rd_byte(&wptr->dn_y);
 				rd_u16b(&d_ptr->id);
+#ifdef DUNGEON_VISIT_BONUS
+				dungeons++;
+				if (d_ptr->id > dungeon_id_max) dungeon_id_max = d_ptr->id;
+#endif
 				rd_u16b(&d_ptr->type);
 				rd_u16b(&d_ptr->baselevel);
 				rd_u32b(&d_ptr->flags1);
@@ -2777,6 +2788,12 @@ void new_rd_wild()
 			}
 		}
 	}
+#ifdef DUNGEON_VISIT_BONUS
+	if (dungeons != dungeon_id_max) {
+		s_printf("Mismatch: Found %d dungeons and %d dungeon ids -> reindexing:\n", dungeons, dungeon_id_max);
+		reindex_dungeons();
+	}
+#endif
 }
 
 void new_rd_dungeons()

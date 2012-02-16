@@ -11130,6 +11130,13 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, i
 
 	d_ptr->type = type;
 
+#ifdef DUNGEON_VISIT_BONUS
+	d_ptr->id = ++dungeon_id_max;
+	dungeon_x[dungeon_id_max] = wpos->wx;
+	dungeon_y[dungeon_id_max] = wpos->wy;
+	dungeon_tower[dungeon_id_max] = tower;
+#endif
+
 	if (type) {
 		/* XXX: flags1, flags2 can be affected if specified so? */
 		d_ptr->baselevel = d_info[type].mindepth;

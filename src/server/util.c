@@ -4426,11 +4426,19 @@ bool show_floor_feeling(int Ind)
 	}
 
 	/* XXX devise a better formula */
-	if (p_ptr->lev * ((p_ptr->lev >= 40) ? 3 : 2) + 5 < getlevel(wpos))
-	{
+	if (p_ptr->lev * ((p_ptr->lev >= 40) ? 3 : 2) + 5 < getlevel(wpos)) {
 		msg_print(Ind, "\374\377oYou feel an imminent danger!");
 		felt = TRUE;
 	}
+
+#ifdef DUNGEON_VISIT_BONUS
+	if (d_ptr && dungeon_bonus[d_ptr->id])
+		switch (dungeon_bonus[d_ptr->id]) {
+		case 3: msg_print(Ind, "\377UThis place has not been explored in ages."); break;
+		case 2: msg_print(Ind, "\377UThis place has not been explored in a long time."); break;
+		case 1: msg_print(Ind, "\377UThis place has not been explored recently."); break;
+		}
+#endif
 
 	if (!l_ptr) return(felt);
 
@@ -5303,3 +5311,49 @@ cptr get_ptitle(player_type *p_ptr, bool short_form) {
 	if (p_ptr->lev < 60) return player_title[p_ptr->pclass][((p_ptr->lev / 5) < 10)? (p_ptr->lev / 5) : 10][(short_form ? 3 : 1) - p_ptr->male];
 	return player_title_special[p_ptr->pclass][(p_ptr->lev < PY_MAX_PLAYER_LEVEL) ? (p_ptr->lev - 60) / 10 : 4][(short_form ? 3 : 1) - p_ptr->male];
 }
+
+#ifdef DUNGEON_VISIT_BONUS
+void reindex_dungeons() {
+# ifdef DUNGEON_VISIT_BONUS_DEPTHRANGE
+	int i;
+# endif
+	int x, y;
+    wilderness_type *w_ptr;
+    struct dungeon_type *d_ptr;
+
+    dungeon_id_max = 0;
+
+    for (y = 0; y < MAX_WILD_Y; y++) {
+        for (x = 0; x < MAX_WILD_X; x++) {
+            w_ptr = &wild_info[y][x];
+            if (w_ptr->flags & WILD_F_UP) {
+            	d_ptr = w_ptr->tower;
+	            d_ptr->id = ++dungeon_id_max;
+
+    	        dungeon_visit_frequency[dungeon_id_max] = 0;
+				dungeon_x[dungeon_id_max] = x;
+				dungeon_y[dungeon_id_max] = y;
+				dungeon_tower[dungeon_id_max] = TRUE;
+				s_printf("  indexed tower   at %d,%d: id = %d\n", x, y, dungeon_id_max);
+			}
+            if (w_ptr->flags & WILD_F_DOWN) {
+            	d_ptr = w_ptr->dungeon;
+	            d_ptr->id = ++dungeon_id_max;
+
+    	        dungeon_visit_frequency[dungeon_id_max] = 0;
+				dungeon_x[dungeon_id_max] = x;
+				dungeon_y[dungeon_id_max] = y;
+				dungeon_tower[dungeon_id_max] = FALSE;
+				s_printf("  indexed dungeon at %d,%d: id = %d\n", x, y, dungeon_id_max);
+			}
+        }
+    }
+
+# ifdef DUNGEON_VISIT_BONUS_DEPTHRANGE
+    for (i = 0; i < 20; i++)
+    	depthrange_visited[i] = 0;
+# endif
+
+    s_printf("Reindexed %d dungeons/towers.\n", dungeon_id_max);
+}
+#endif
