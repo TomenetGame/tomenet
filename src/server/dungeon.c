@@ -2672,6 +2672,7 @@ static void do_recall(int Ind, bool bypass)
 		else if (p_ptr->recall_pos.wz > 0 && (w_ptr->flags & WILD_F_UP))
 			d_ptr = w_ptr->tower;
 
+#ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
 		if (d_ptr && d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev) {
 			msg_print(Ind,"\377rAs you attempt to recall, you are gripped by an uncontrollable fear.");
 			msg_print(Ind, "A tension leaves the air around you...");
@@ -2681,6 +2682,15 @@ static void do_recall(int Ind, bool bypass)
 				return;
 			}
 		}
+#endif
+        /* Nether Realm only for Kings/Queens (currently paranoia, since NR is NO_RECALL_INTO) */
+        if (d_ptr && (d_ptr->type == 6) && !p_ptr->total_winner) {
+            msg_print(Ind,"\377rAs you attempt to ascend, you are gripped by an uncontrollable fear.");
+            if (!is_admin(p_ptr)) {
+                set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
+                return;
+            }
+        }
 	}
 
 	/* Determine the level */

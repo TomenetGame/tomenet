@@ -601,6 +601,9 @@
 #define DODGE_MAX_CHANCE        80
 
 
+/* Dungeons have minimum player level requirements to enter? */
+//#define OBEY_DUNGEON_LEVEL_REQUIREMENTS
+
 /* Levels that Morgoth spawns on will not allow *destruction* nor any use of
    genocide spells. This can also prevent too trivial loot retrieval in
    case of unexpected deathhh - C. Blue */

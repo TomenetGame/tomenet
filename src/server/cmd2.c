@@ -173,8 +173,9 @@ void do_cmd_go_up(int Ind)
 #ifndef ARCADE_SERVER
 	if(wpos->wz == 0){
 		dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].tower;
+#ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
 		//if(d_ptr->baselevel-p_ptr->max_dlv>2){
-		if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
+		if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 10) ||
 			(d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev))
 		{
 			msg_print(Ind,"\377rAs you attempt to ascend, you are gripped by an uncontrollable fear.");
@@ -183,6 +184,7 @@ void do_cmd_go_up(int Ind)
 				return;
 			}
 		}
+#endif
 		/* Nether Realm only for Kings/Queens*/
 		if ((d_ptr->type == 6) && !p_ptr->total_winner)
 		{
@@ -573,10 +575,11 @@ void do_cmd_go_down(int Ind)
 #ifndef ARCADE_SERVER
 	if(wpos->wz == 0){
 		dungeon_type *d_ptr=wild_info[wpos->wy][wpos->wx].dungeon;
+#ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
 		//if(d_ptr->baselevel-p_ptr->max_dlv>2){
-		if(d_ptr->baselevel-p_ptr->max_dlv>2 ||
-				d_info[d_ptr->type].min_plev > p_ptr->lev)
-		if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
+		//if(d_ptr->baselevel-p_ptr->max_dlv>2 ||
+		//		d_info[d_ptr->type].min_plev > p_ptr->lev)
+		if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 10) ||
 			(d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev))
 		{
 			msg_print(Ind,"\377rAs you attempt to descend, you are gripped by an uncontrollable fear.");
@@ -585,6 +588,7 @@ void do_cmd_go_down(int Ind)
 				return;
 			}
 		}
+#endif
 		/* Nether Realm only for Kings/Queens*/
 		if ((d_ptr->type == 6) && !p_ptr->total_winner)
 		{
