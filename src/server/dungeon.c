@@ -2657,6 +2657,25 @@ static void do_recall(int Ind, bool bypass)
 		}
 	}
 
+	if (!p_ptr->wpos.wz && !bypass) {
+		wilderness_type *w_ptr = &wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx];
+		dungeon_type *d_ptr = NULL;
+		if (p_ptr->recall_pos.wz < 0 && (w_ptr->flags & WILD_F_DOWN))
+			d_ptr = w_ptr->dungeon;
+		else if (p_ptr->recall_pos.wz > 0 && (w_ptr->flags & WILD_F_UP))
+			d_ptr = w_ptr->tower;
+
+		if (d_ptr && d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev) {
+			msg_print(Ind,"\377rAs you attempt to recall, you are gripped by an uncontrollable fear.");
+			msg_print(Ind, "A tension leaves the air around you...");
+			p_ptr->redraw |= (PR_DEPTH);
+			if (!is_admin(p_ptr)) {
+				set_afraid(Ind, 10 + (d_ptr->baselevel - p_ptr->max_dlv));
+				return;
+			}
+		}
+	}
+
 	/* Determine the level */
 	/* recalling to surface */
 	if (p_ptr->wpos.wz && !bypass) {
@@ -2770,7 +2789,7 @@ static void do_recall(int Ind, bool bypass)
 				if (!is_admin(p_ptr))
 					p_ptr->recall_pos.wz = 0;
 				else
-					msg_print(Ind, "(You feel yourself yanked toward nowhere...)");
+					msg_print(Ind, "You feel yourself yanked toward nowhere...");
 			}
 
 			if (p_ptr->recall_pos.wz >= 0) {
@@ -2811,7 +2830,7 @@ static void do_recall(int Ind, bool bypass)
 				if (!is_admin(p_ptr))
 					p_ptr->recall_pos.wz = 0;
 				else
-					msg_print(Ind, "(You feel yourself yanked toward nowhere...)");
+					msg_print(Ind, "You feel yourself yanked toward nowhere...");
 			}
 
 			if (p_ptr->recall_pos.wz <= 0) {
