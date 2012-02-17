@@ -1575,6 +1575,7 @@ Basically use the same instructions as for Linux above. Additionally:
  ftp.gnu.org/pub/gnu and www.libsdl.org) listed in the Linux installation
  instructions above and extract, compile and install them each via the usual
    ./configure
+   make clean
    make
    sudo make install
  command chain from a terminal window.
