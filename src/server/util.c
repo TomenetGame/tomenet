@@ -2472,9 +2472,9 @@ void use_ability_blade(int Ind)
 
 	if (chance < 0) chance = 0;
 	if (chance > DODGE_MAX_CHANCE) chance = DODGE_MAX_CHANCE;	// see DODGE_MAX_CHANCE in melee1.c
-	if (is_admin(p_ptr))
-		msg_format(Ind, "You have exactly %d%% chances of dodging a level %d monster.", chance, dun_level);
-
+//	if (is_admin(p_ptr))
+		msg_format(Ind, "You have a %d%% chance of dodging a level %d monster.", chance, dun_level);
+ #if 0
 	if (chance < 5)
 		msg_format(Ind, "You have almost no chance of dodging a level %d monster.", dun_level);
 	else if (chance < 10)
@@ -2487,19 +2487,26 @@ void use_ability_blade(int Ind)
 		msg_format(Ind, "You have a high chance of dodging a level %d monster.", dun_level);
 	else
 		msg_format(Ind, "You will usually dodge a level %d monster.", dun_level);
+ #endif
 #else
 	int lev;
 	lev = p_ptr->lev * 2 < 127 ? p_ptr->lev * 2 : 127;
+
 	if (is_admin(p_ptr))
-		msg_format(Ind, "You have exactly %d%%/%d%% chance of dodging a level %d/%d monster.",
+		msg_format(Ind, "You have a %d%%/%d%% chance of dodging a level %d/%d monster.",
 		    apply_dodge_chance(Ind, p_ptr->lev), apply_dodge_chance(Ind, lev), p_ptr->lev, lev);
 
-/*	msg_format(Ind, "You have %s/%s chance of dodging a level %d/%d monster.",
+/*
+	msg_format(Ind, "You have %s/%s chance of dodging a level %d/%d monster.",
 		dodge_diz(apply_dodge_chance(Ind, p_ptr->lev)), dodge_diz(apply_dodge_chance(Ind, lev)),
 		p_ptr->lev, lev);
-*/
+
 	msg_format(Ind, "You have %s chance of dodging a level %d monster.",
 	    dodge_diz(apply_dodge_chance(Ind, p_ptr->lev)), p_ptr->lev);
+*/
+
+	else msg_format(Ind, "You have a %d%% chance of dodging a level %d monster's attack.",
+	    apply_dodge_chance(Ind, p_ptr->lev), p_ptr->lev);
 #endif
 	return;
 }
@@ -2509,6 +2516,7 @@ void use_ability_blade(int Ind)
 void check_parryblock(int Ind)
 {
 #ifdef ENABLE_NEW_MELEE
+	char msg[80];
 	player_type *p_ptr = Players[Ind];
 	if (is_admin(p_ptr)) {
 		msg_format(Ind, "You have exactly %d%%/%d%% base chance of parrying/blocking.", 
@@ -2517,7 +2525,9 @@ void check_parryblock(int Ind)
 			apply_parry_chance(p_ptr, p_ptr->weapon_parry), apply_block_chance(p_ptr, p_ptr->shield_deflect));
 	} else {
 		if (!apply_parry_chance(p_ptr, p_ptr->weapon_parry))
-			msg_print(Ind, "You cannot parry at the moment.");
+			strcpy(msg, "You cannot parry at the moment. ");
+			//msg_print(Ind, "You cannot parry at the moment.");
+ #if 0
 		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 5)
 			msg_print(Ind, "You have almost no chance of parrying.");
 		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 10)
@@ -2532,9 +2542,15 @@ void check_parryblock(int Ind)
 			msg_print(Ind, "You have an excellent chance of parrying.");
 		else
 			msg_print(Ind, "You have a superb chance of parrying.");
+ #else
+		else strcpy(msg, format("You have a %d%% chance of parrying. ",
+			apply_parry_chance(p_ptr, p_ptr->weapon_parry)));
+ #endif
 
 		if (!apply_block_chance(p_ptr, p_ptr->shield_deflect))
-			msg_print(Ind, "You cannot block at the moment.");
+			strcat(msg, "You cannot block at the moment.");
+			//msg_print(Ind, "You cannot block at the moment.");
+ #if 0
 		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 5)
 			msg_print(Ind, "You have almost no chance of blocking.");
 		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 14)
@@ -2549,6 +2565,11 @@ void check_parryblock(int Ind)
 			msg_print(Ind, "You have an excellent chance of blocking.");
 		else
 			msg_print(Ind, "You have a superb chance of blocking.");
+ #else
+		else strcat(msg, format("You have a %d%% chance of blocking.",
+			apply_block_chance(p_ptr, p_ptr->shield_deflect)));
+ #endif
+		msg_print(Ind, msg);
 	}
 #endif
 	return;
