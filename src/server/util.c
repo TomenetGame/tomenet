@@ -2444,7 +2444,7 @@ void msg_guild_format(int Ind, cptr fmt, ...) {
 	 }
 }
 
-
+#if 0 /* unused atm */
 static char* dodge_diz(int chance) {
 	if (chance < 5)
 		return "almost no";
@@ -2459,6 +2459,7 @@ static char* dodge_diz(int chance) {
 	else
 		return "a high";
 }
+#endif
 
 /*
  * Dodge Chance Feedback.
