@@ -11050,7 +11050,7 @@ void dealloc_dungeon_level(struct worldpos *wpos)
 	else w_ptr->cave = NULL;
 }
 
-static void del_dungeon(struct worldpos *wpos, bool tower){
+static void del_dungeon(struct worldpos *wpos, bool tower) {
 	struct dungeon_type *d_ptr;
 	int i;
 	struct worldpos twpos;
@@ -11059,13 +11059,41 @@ static void del_dungeon(struct worldpos *wpos, bool tower){
 	s_printf("%s at (%d,%d) attempt remove\n", (tower ? "Tower" : "Dungeon"), wpos->wx, wpos->wy);
 
 	wpcopy(&twpos, wpos);
-	d_ptr=(tower ? wild->tower : wild->dungeon);
-	if(d_ptr->flags2 & DF2_DELETED){
+	d_ptr = (tower ? wild->tower : wild->dungeon);
+	if (d_ptr->flags2 & DF2_DELETED) {
+#ifdef DUNGEON_VISIT_BONUS
+		for (i = 1; i <= dungeon_id_max; i++) {
+			if (dungeon_x[i] == wpos->wx &&
+			    dungeon_y[i] == wpos->wy &&
+			    dungeon_tower[i] == tower) {
+				struct dungeon_type *d2_ptr, *d3_ptr;
+				s_printf("removing dungeon of index %d, new amount of dungeons is %d.\n", i, dungeon_id_max - 1);
+				for (; i < dungeon_id_max; i++) {
+					d2_ptr = (dungeon_tower[i] ?
+					    wild_info[dungeon_y[i]][dungeon_x[i]].tower :
+					    wild_info[dungeon_y[i]][dungeon_x[i]].dungeon);
+					d3_ptr = (dungeon_tower[i + 1] ?
+					    wild_info[dungeon_y[i + 1]][dungeon_x[i + 1]].tower :
+					    wild_info[dungeon_y[i + 1]][dungeon_x[i + 1]].dungeon);
+					d2_ptr->id = d3_ptr->id;
+
+					dungeon_tower[i] = dungeon_tower[i + 1];
+					dungeon_x[i] = dungeon_x[i + 1];
+					dungeon_y[i] = dungeon_y[i + 1];
+					dungeon_visit_frequency[i] = dungeon_visit_frequency[i + 1]; /* somewhat below the threshold */
+					dungeon_bonus[i] = dungeon_bonus[i + 1];
+				}
+				dungeon_id_max--;
+				break;
+			}
+		}
+#endif
+
 		s_printf("Deleted flag\n");
-		for(i=0;i<d_ptr->maxdepth;i++){
-			twpos.wz=(tower ? i+1 : 0-(i+1));
-			if(d_ptr->level[i].ondepth) return;
-			if(d_ptr->level[i].cave) dealloc_dungeon_level(&twpos);
+		for (i = 0; i < d_ptr->maxdepth; i++) {
+			twpos.wz = (tower ? i + 1 : 0 - (i + 1));
+			if (d_ptr->level[i].ondepth) return;
+			if (d_ptr->level[i].cave) dealloc_dungeon_level(&twpos);
 			C_KILL(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
 		}
 		C_KILL(d_ptr->level, d_ptr->maxdepth, struct dun_level);
@@ -11135,6 +11163,10 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, i
 	dungeon_x[dungeon_id_max] = wpos->wx;
 	dungeon_y[dungeon_id_max] = wpos->wy;
 	dungeon_tower[dungeon_id_max] = tower;
+	/* mostly affects highlander dungeon: */
+	dungeon_visit_frequency[dungeon_id_max] = ((VISIT_TIME_CAP * 17) / 20) - 1; /* somewhat below the threshold */
+	dungeon_bonus[dungeon_id_max] = 1;
+	s_printf("adding dungeon of index %d.\n", dungeon_id_max);
 #endif
 
 	if (type) {

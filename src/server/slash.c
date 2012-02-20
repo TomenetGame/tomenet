@@ -6321,6 +6321,15 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				return;
 			}
+			else if (prefix(message, "/reindexdvb")) { /* debug DUNGEON_VISIT_BONUS */
+				s_printf("Reindexing dungeons:\n");
+				reindex_dungeons();
+				for (i = 1; i <= dungeon_id_max; i++) {
+					dungeon_visit_frequency[i] = ((VISIT_TIME_CAP * 17) / 20) - 1; /* somewhat below the threshold */
+					dungeon_bonus[i] = 1;
+				}
+				return;
+			}
 #endif
 		}
 	}

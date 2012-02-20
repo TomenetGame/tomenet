@@ -2738,6 +2738,13 @@ void new_rd_wild()
 #ifdef DUNGEON_VISIT_BONUS
 				dungeons++;
 				if (d_ptr->id > dungeon_id_max) dungeon_id_max = d_ptr->id;
+				if (d_ptr->id != 0) {
+					dungeon_x[d_ptr->id] = x;
+					dungeon_y[d_ptr->id] = y;
+					dungeon_tower[d_ptr->id] = FALSE;
+					//dungeon_visit_frequency[d_ptr->id] = ((VISIT_TIME_CAP * 17) / 20) - 1; /* somewhat below the threshold */
+					//dungeon_bonus[d_ptr->id] = 1;
+				}
 #endif
 				rd_u16b(&d_ptr->type);
 				rd_u16b(&d_ptr->baselevel);
@@ -2766,6 +2773,13 @@ void new_rd_wild()
 #ifdef DUNGEON_VISIT_BONUS
 				dungeons++;
 				if (d_ptr->id > dungeon_id_max) dungeon_id_max = d_ptr->id;
+				if (d_ptr->id != 0) {
+					dungeon_x[d_ptr->id] = x;
+					dungeon_y[d_ptr->id] = y;
+					dungeon_tower[d_ptr->id] = TRUE;
+					//dungeon_visit_frequency[d_ptr->id] = ((VISIT_TIME_CAP * 17) / 20) - 1; /* somewhat below the threshold */
+					//dungeon_bonus[d_ptr->id] = 1;
+				}
 #endif
 				rd_u16b(&d_ptr->type);
 				rd_u16b(&d_ptr->baselevel);
