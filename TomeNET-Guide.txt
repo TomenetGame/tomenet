@@ -9500,8 +9500,6 @@ Warrior is strongly recommended.
 Here is a table showing boni/mali of the different races:
 (Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
 Pe:Perception (sight range), Sr:Searching,  Fi:Fighting,        BT:Bows/Throw)
-Note that Yeeks are limited to 4 melee attacks per round (not including boni
-from skills or items yet).
 
             STR INT WIS DEX CON CHR     HP die  Exp%  Infra-Vision
             Di  MD  ST  St  Pe  Sr  Fi  BT
