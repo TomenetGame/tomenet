@@ -474,3 +474,9 @@ extern int swear_get_level(int i);
 extern void nonswear_set(int i, char *word);
 extern char *nonswear_get(int i);
 extern void init_swearing(void);
+
+#ifdef DUNGEON_VISIT_BONUS
+/* 128 = MAX_D_IDX * 2 */
+extern u16b dungeon_visit_frequency[128];
+extern int dungeon_bonus[128];
+#endif
