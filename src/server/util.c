@@ -5356,6 +5356,10 @@ void reindex_dungeons() {
 				dungeon_x[dungeon_id_max] = x;
 				dungeon_y[dungeon_id_max] = y;
 				dungeon_tower[dungeon_id_max] = TRUE;
+
+				/* Initialize all dungeons at 'low rest bonus' */
+				set_dungeon_bonus(dungeon_id_max, TRUE);
+
 				s_printf("  indexed tower   at %d,%d: id = %d\n", x, y, dungeon_id_max);
 			}
             if (w_ptr->flags & WILD_F_DOWN) {
@@ -5366,6 +5370,10 @@ void reindex_dungeons() {
 				dungeon_x[dungeon_id_max] = x;
 				dungeon_y[dungeon_id_max] = y;
 				dungeon_tower[dungeon_id_max] = FALSE;
+
+				/* Initialize all dungeons at 'low rest bonus' */
+				set_dungeon_bonus(dungeon_id_max, TRUE);
+
 				s_printf("  indexed dungeon at %d,%d: id = %d\n", x, y, dungeon_id_max);
 			}
         }
@@ -5377,5 +5385,23 @@ void reindex_dungeons() {
 # endif
 
     s_printf("Reindexed %d dungeons/towers.\n", dungeon_id_max);
+}
+
+void set_dungeon_bonus(int id, bool reset) {
+	if (reset) {
+		/* Initialize dungeon at 'low rest bonus' */
+		dungeon_visit_frequency[id] = ((VISIT_TIME_CAP * 17) / 20) - 1; /* somewhat below the threshold */
+		dungeon_bonus[id] = 1;
+		return;
+	}
+
+	if (dungeon_visit_frequency[id] < VISIT_TIME_CAP / 10)
+		dungeon_bonus[id] = 3;
+	else if (dungeon_visit_frequency[id] < VISIT_TIME_CAP / 2)
+		dungeon_bonus[id] = 2;
+	else if (dungeon_visit_frequency[id] < (VISIT_TIME_CAP * 19) / 20)
+		dungeon_bonus[id] = 1;
+	else
+		dungeon_bonus[id] = 0;
 }
 #endif

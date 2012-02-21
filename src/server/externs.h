@@ -1695,6 +1695,7 @@ extern cptr get_ptitle(player_type *p_ptr, bool short_form);
 
 #ifdef DUNGEON_VISIT_BONUS
 extern void reindex_dungeons();
+extern void set_dungeon_bonus(int id, bool reset);
 #endif
 
 /* xtra2.c */

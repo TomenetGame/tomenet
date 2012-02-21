@@ -2742,8 +2742,6 @@ void new_rd_wild()
 					dungeon_x[d_ptr->id] = x;
 					dungeon_y[d_ptr->id] = y;
 					dungeon_tower[d_ptr->id] = FALSE;
-					//dungeon_visit_frequency[d_ptr->id] = ((VISIT_TIME_CAP * 17) / 20) - 1; /* somewhat below the threshold */
-					//dungeon_bonus[d_ptr->id] = 1;
 				}
 #endif
 				rd_u16b(&d_ptr->type);
@@ -2759,6 +2757,16 @@ void new_rd_wild()
 #else
 				strip_bytes(20);
 #endif
+
+				if (!s_older_than(4, 4, 21)) {
+#ifdef DUNGEON_VISIT_BONUS
+					rd_u16b(&dungeon_visit_frequency[d_ptr->id]);
+					set_dungeon_bonus(d_ptr->id, FALSE);
+#else
+					strip_bytes(2);
+#endif
+				}
+
 				C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
 				for (i = 0; i < d_ptr->maxdepth; i++) {
 					C_MAKE(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
@@ -2777,8 +2785,6 @@ void new_rd_wild()
 					dungeon_x[d_ptr->id] = x;
 					dungeon_y[d_ptr->id] = y;
 					dungeon_tower[d_ptr->id] = TRUE;
-					//dungeon_visit_frequency[d_ptr->id] = ((VISIT_TIME_CAP * 17) / 20) - 1; /* somewhat below the threshold */
-					//dungeon_bonus[d_ptr->id] = 1;
 				}
 #endif
 				rd_u16b(&d_ptr->type);
@@ -2794,6 +2800,16 @@ void new_rd_wild()
 #else
 				strip_bytes(20);
 #endif
+
+				if (!s_older_than(4, 4, 21)) {
+#ifdef DUNGEON_VISIT_BONUS
+					rd_u16b(&dungeon_visit_frequency[d_ptr->id]);
+					set_dungeon_bonus(d_ptr->id, FALSE);
+#else
+					strip_bytes(2);
+#endif
+				}
+
 				C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
 				for (i = 0; i < d_ptr->maxdepth; i++) {
 					C_MAKE(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);

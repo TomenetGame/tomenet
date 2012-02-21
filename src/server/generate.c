@@ -11164,8 +11164,7 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, i
 	dungeon_y[dungeon_id_max] = wpos->wy;
 	dungeon_tower[dungeon_id_max] = tower;
 	/* mostly affects highlander dungeon: */
-	dungeon_visit_frequency[dungeon_id_max] = ((VISIT_TIME_CAP * 17) / 20) - 1; /* somewhat below the threshold */
-	dungeon_bonus[dungeon_id_max] = 1;
+	set_dungeon_bonus(dungeon_id_max, TRUE);
 	s_printf("adding dungeon of index %d.\n", dungeon_id_max);
 #endif
 

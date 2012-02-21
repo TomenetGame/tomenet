@@ -2022,11 +2022,11 @@ static void new_wr_wild(){
 	temp = MAX_WILD_X;
 	wr_u32b(temp);
 
-	for(y = 0; y < MAX_WILD_Y; y++){
-		for(x = 0; x < MAX_WILD_X; x++){
+	for (y = 0; y < MAX_WILD_Y; y++) {
+		for (x = 0; x < MAX_WILD_X; x++) {
 			w_ptr = &wild_info[y][x];
 			wr_wild(w_ptr);
-			if(w_ptr->flags & WILD_F_DOWN){
+			if (w_ptr->flags & WILD_F_DOWN) {
 				wr_byte(w_ptr->up_x);
 				wr_byte(w_ptr->up_y);
 				wr_u16b(w_ptr->dungeon->id);
@@ -2044,8 +2044,13 @@ static void new_wr_wild(){
 					wr_byte(0);
 #endif
 				}
+#ifdef DUNGEON_VISIT_BONUS
+				wr_u16b(dungeon_visit_frequency[w_ptr->dungeon->id]);
+#else
+				wr_u16b(VISIT_TIME_CAP);
+#endif
 			}
-			if(w_ptr->flags & WILD_F_UP) {
+			if (w_ptr->flags & WILD_F_UP) {
 				wr_byte(w_ptr->dn_x);
 				wr_byte(w_ptr->dn_y);
 				wr_u16b(w_ptr->tower->id);
@@ -2054,15 +2059,20 @@ static void new_wr_wild(){
 				wr_u32b(w_ptr->tower->flags1);
 				wr_u32b(w_ptr->tower->flags2);
 				wr_byte(w_ptr->tower->maxdepth);
-				for(i = 0; i < 10; i++){
+				for (i = 0; i < 10; i++){
 #if 0	/* unused - mikaelh */
-					wr_byte(w_ptr->dungeon->r_char[i]);
-					wr_byte(w_ptr->dungeon->nr_char[i]);
+					wr_byte(w_ptr->tower->r_char[i]);
+					wr_byte(w_ptr->tower->nr_char[i]);
 #else
 					wr_byte(0);
 					wr_byte(0);
 #endif
 				}
+#ifdef DUNGEON_VISIT_BONUS
+				wr_u16b(dungeon_visit_frequency[w_ptr->tower->id]);
+#else
+				wr_u16b(VISIT_TIME_CAP);
+#endif
 			}
 		}
 	}
