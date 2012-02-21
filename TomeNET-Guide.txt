@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 16. February 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 21. February 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -4812,7 +4812,9 @@ Hit point drain ('Drains your hit points')
      -Monster forms that provide wall-passing (wraith form)
      -Being entombed in walls, ie stuck without the ability to pass through them
     HP drain can be countered by HP regeneration, which can be gained from:
-     -'Regeneration' ability (flag), gained from items or as racial/form bonus
+     -'Regeneration' ability (which is a flag, ie one source providing it is
+      enough and having more than one regen source won't increase the effect),
+      gained from items or as racial/form bonus
      -Health skill
      -Holy Curing school bonus
      -Nature school spell
@@ -8968,6 +8970,8 @@ Note that not every skill is available to every profession (class).
                                 You can check your average dodging chance
                                 against opponents of same level by pressing
                                 'm' and choosing "Check dodge chance".
+                                Depending on the server version you might see
+                                textual descriptions instead of raw numbers:
                                 "Almost no chance" means less than 5%,
                                 "Slight chance" -> less than 14%,
                                 "Significant chance" -> less than 23%,
@@ -11639,8 +11643,9 @@ Parrying enemy attacks with a weapon, and blocking attacks with a shield.
 Press 'm' and choose 'Check block/parry chance' to see your actual ability
 to block or parry. In order to have this option appear in your 'm' menu, you
 need a combat skill greater than zero.
-The result will map to the following numbers:
 
+Depending on the server version you might see textual descriptions instead of
+raw numbers:
 "You cannot parry at the moment."               You aren't wielding a weapon.
 "You have almost no chance of parrying."        Below 5% chance.
 "You have a slight chance of parrying."         Below 10% chance.
@@ -11656,6 +11661,8 @@ Note: Above 30% can only be reached in defensive combat stance without a
       advantage to the weapon instead, increasing the parry chance.)
       Also your class needs to be fairly skilled at parrying (see below.)
 
+Depending on the server version you might see textual descriptions instead of
+raw numbers:
 "You cannot block at the moment."               You aren't wielding a shield.
 "You have almost no chance of blocking."        Below 5% chance.
 "You have a slight chance of blocking."         Below 14% chance.
