@@ -4363,7 +4363,7 @@ void do_cmd_fire(int Ind, int dir)
 	    && !strstr(o_name, "!=")
 	    && p_ptr->warning_autopickup == 0) {
 		p_ptr->warning_autopickup = 1;
-		msg_print(Ind, "\374\377yHINT: Inscribe your ammunition '\377R!=\377y' to pick it up automatically!");
+		msg_print(Ind, "\374\377yHINT: Press '{' key and inscribe your ammunition '\377R!=\377y' to pick it up automatically!");
 		s_printf("warning_autopickup: %s\n", p_ptr->name);
 	}
 
