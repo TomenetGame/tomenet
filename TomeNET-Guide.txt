@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 21. February 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 24. February 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -4691,6 +4691,11 @@ store-part, you need to terminate the store inscription with a dot. Examples:
 This item will appear in your store with an inscription "HelloCustomer". The
 "S@..." part is always omitted. This way, you can add short notes to the items
 you offer.
+
+If you want to display items that are not for sale, eg create a 'museum', you
+can inscribe the items
+  @S-
+which will make them unsellable, yet they will be on display on your store.
 
 If another player buys your item, there will be a 10% fee that is cut from your
 profits.
