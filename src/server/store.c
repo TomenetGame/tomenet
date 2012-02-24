@@ -50,7 +50,7 @@ static void display_house_inventory(int Ind, house_type *h_ptr);
 static void display_trad_house(int Ind, house_type *h_ptr);
 void home_extend(int Ind);
 #ifdef PLAYER_STORES
-static u32b player_store_inscribed(object_type *o_ptr, u32b price);
+static s64b player_store_inscribed(object_type *o_ptr, u32b price);
 static void player_store_handle_purchase(int Ind, object_type *o_ptr, object_type *s_ptr, u32b value);
 #endif
 
@@ -2261,6 +2261,9 @@ static void display_entry(int Ind, int pos)
 #ifdef PLAYER_STORES
 		if (p_ptr->store_num <= -2) {
 			x = price_item_player_store(Ind, o_ptr);
+
+			/* just to make it look slightly less odd on older clients */
+			if (x == -2) x = -1;
 		} else
 #endif
 		x = price_item(Ind, o_ptr, ot_ptr->min_inflate, FALSE);
@@ -5928,7 +5931,7 @@ void store_debug_stock()
 /* Is an item inscribed correctly to be sold in a player-run store? - C. Blue
    Returns price or -2 if not for sale. Return -1 if not for display/not available.
    Pricing tag format:  @Snnnnnnnnn.  <- with dot for termination. */
-static u32b player_store_inscribed(object_type *o_ptr, u32b price) {
+static s64b player_store_inscribed(object_type *o_ptr, u32b price) {
 	char buf[10], *p;
 	u32b final_price;
 	bool increase = FALSE;
