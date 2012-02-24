@@ -2259,9 +2259,9 @@ static void display_entry(int Ind, int pos)
 
 		/* Extract the "minimum" price */
 #ifdef PLAYER_STORES
-		if (p_ptr->store_num <= -2)
+		if (p_ptr->store_num <= -2) {
 			x = price_item_player_store(Ind, o_ptr);
-		else
+		} else
 #endif
 		x = price_item(Ind, o_ptr, ot_ptr->min_inflate, FALSE);
 
@@ -3135,6 +3135,11 @@ void store_purchase(int Ind, int item, int amt)
 			msg_print(Ind, "The shopkeeper just modified the store, please re-enter!");
 			return; /* oops, the owner took away or added some of that item type.
 			           Actually this could be handled, but we're strict for now. */
+		}
+
+		if (strstr(quark_str(ho_ptr->note), "@S-")) {
+			msg_print(Ind, "That item is not for sale.");
+			return;
 		}
 	}
 #endif
@@ -5147,6 +5152,12 @@ void home_sell(int Ind, int item, int amt)
 
 	/* Re-display if item is now in store */
 	if (item_pos >= 0) {
+#ifdef PLAYER_STORES
+ #ifdef HOUSE_PAINTING_HIDE_UNSELLABLE
+		int i = 0;
+ #endif
+#endif
+
 		display_house_inventory(Ind, h_ptr);
 
 #ifdef PLAYER_STORES
@@ -5157,6 +5168,27 @@ void home_sell(int Ind, int item, int amt)
 			    p_ptr->name, o_name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
 			    p_ptr->px, p_ptr->py);
 		}
+ /* TODO: implement for home_purchase too, and for dropping/picking up in mang-style houses! */
+ #ifdef HOUSE_PAINTING_HIDE_UNSELLABLE
+ 		for (item_pos = 0; item_pos < h_ptr->stock_num; item_pos++) {
+			o_ptr = &h_ptr->stock[item_pos];
+			if (o_ptr->note && strstr(quark_str(o_ptr->note), "@S")) {
+  #ifdef HOUSE_PAINTING_HIDE_MUSEUM
+				if (strstr(quark_str(o_ptr->note), "@S-")) {
+					i--;
+					continue;
+				}
+  #endif
+				i++;
+			}
+			else i--;
+ 		}
+ 		/* more useless items in the house than 'really' sellable ones? */
+ 		if (i < 0) {
+ 			h_ptr->colour = 0;
+ 			fill_house(h_ptr, FILL_UNPAINT, NULL);
+ 		}
+ #endif
 #endif
 	}
 }
@@ -5894,7 +5926,7 @@ void store_debug_stock()
 /* Inscription on mass cheques, ie cheques handling items sold partially from item stacks. */
 #define MASS_CHEQUE_NOTE "various piled items"
 /* Is an item inscribed correctly to be sold in a player-run store? - C. Blue
-   Returns price or 0 if not for sale.
+   Returns price or -2 if not for sale. Return -1 if not for display/not available.
    Pricing tag format:  @Snnnnnnnnn.  <- with dot for termination. */
 static u32b player_store_inscribed(object_type *o_ptr, u32b price) {
 	char buf[10], *p;
@@ -5906,6 +5938,9 @@ static u32b player_store_inscribed(object_type *o_ptr, u32b price) {
 
 	/* does it carry an inscription? */
 	if (!o_ptr->note) return -1;
+
+	/* is it just a 'museum' item, ie not for sale? */
+	if ((p = strstr(quark_str(o_ptr->note), "@S-"))) return -2;
 
 	/* is it a player-store inscription? */
 	if (!(p = strstr(quark_str(o_ptr->note), "@S"))) return -1;
