@@ -704,7 +704,7 @@ struct cave_type
 {
 	u16b info;		/* Hack -- cave flags */
 	byte feat;		/* Hack -- feature type */
-	byte feat_org;		/* Feature type backup */
+	byte feat_org;		/* Feature type backup (todo: for wall-created grids to revert to original feat when tunneled!) */
 	s16b o_idx;		/* Item index (in o_list) or zero */
 	s16b m_idx;		/* Monster index (in m_list) or zero */
 				/* or negative if a player */
@@ -734,7 +734,7 @@ struct cave_type
 	int effect;            /* The lasting effects */
 
 #ifdef HOUSE_PAINTING
-	int colour;	/* colour that overrides the usual colour of a feature */
+	byte colour;	/* colour that overrides the usual colour of a feature */
 #endif
 };
 
