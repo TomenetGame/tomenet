@@ -88,13 +88,14 @@ static void display_entry(int pos)
                         long int wgt = o_ptr->weight;
                         (void)sprintf(out_val, "%3ld.%ld", wgt / 10, wgt % 10);
                         put_str(out_val, i+6, 61);
-                }
+				}
 
-		x = store_prices[pos];
-
-		/* Actually draw the price (not fixed) */
-		(void)sprintf(out_val, "%9ld  ", (long)x);
-		c_put_str(p_ptr->au < x ? TERM_L_DARK : TERM_WHITE, out_val, i+6, 68);
+			x = store_prices[pos];
+            if (x >= 0) {
+				/* Actually draw the price (not fixed) */
+				(void)sprintf(out_val, "%9ld  ", (long)x);
+				c_put_str(p_ptr->au < x ? TERM_L_DARK : TERM_WHITE, out_val, i+6, 68);
+			}
         }
 }
 
