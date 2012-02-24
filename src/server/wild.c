@@ -3601,8 +3601,12 @@ void paint_house(int Ind, int x, int y, int k) {
 	}
 	/* 0 means 'no colour' so we start at 1 for colour 0 */
 	c++;
+
 	/* Hack: water removes paint :) */
 	if (o_ptr->sval == SV_POTION_WATER) c = 0;
+	/* Hack: add owner mode to colour */
+	else if (h_ptr->dna->mode & MODE_EVERLASTING) c += 100;
+
 	/* potion used up */
 	inven_item_increase(Ind, k, -1);
 	inven_item_describe(Ind, k);

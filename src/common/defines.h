@@ -7836,3 +7836,14 @@ extern int PlayerUID;
 /* Player guild flags */
 #define PGF_NONE		0x00000000
 #define PGF_ADDER		0x00000001	/* player may add other players to the guild although he's not the leader */
+
+#ifdef HOUSE_PAINTING
+ /* Don't display house paint of mode-wise unusable player stores? */
+ #define HOUSE_PAINTING_HIDE_BAD_MODE
+ /* Don't display house paint of stores that contain more unsellable items than sellable ones? */
+ //TODO:implement fully
+ //#define HOUSE_PAINTING_HIDE_UNSELLABLE
+ /* Don't display house paint of 'museum' like player stores, where most sellable items are priced > 50x value? Added new '@S-' for this! */
+ //TODO:implement fully
+ //#define HOUSE_PAINTING_HIDE_MUSEUM
+#endif

@@ -3063,8 +3063,18 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 #endif
 
 #ifdef HOUSE_PAINTING
-		if (c_ptr->feat == FEAT_WALL_HOUSE && c_ptr->colour)
-			(*ap) = c_ptr->colour - 1;
+		if (c_ptr->feat == FEAT_WALL_HOUSE && c_ptr->colour) {
+ #ifdef HOUSE_PAINTING_HIDE_BAD_MODE
+			if (c_ptr->colour > 100) {
+				if ((p_ptr->mode & MODE_EVERLASTING)) (*ap) = c_ptr->colour - 100 - 1;
+			} else {
+				if (!(p_ptr->mode & MODE_EVERLASTING)) (*ap) = c_ptr->colour - 1;
+			}
+		}
+ #else
+		if (c_ptr->colour > 100) (*ap) = c_ptr->colour - 100 - 1;
+		else (*ap) = c_ptr->colour - 1;
+ #endif
 #endif
 
 		/* jails */
