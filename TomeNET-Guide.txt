@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 24. February 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 25. February 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -738,6 +738,8 @@ They all start with a slash '/' hence they're called slash commands:
             to see that you run a player store. Further, you could choose the
             colour to indicate the type of items you offer, for example red
             for magic items similar to the red '6' town store.
+            Note that players of incompatible character mode (everlasting vs
+            non-everlasting) won't see each other's house paint.
             (See (4.10a) for more information about player stores.)
 /play       Join/leave a mini-game (such as rugby on the field in Bree).
             Will at some point in the future be absorbed by /evsign and
@@ -4691,6 +4693,11 @@ store-part, you need to terminate the store inscription with a dot. Examples:
 This item will appear in your store with an inscription "HelloCustomer". The
 "S@..." part is always omitted. This way, you can add short notes to the items
 you offer.
+
+You can use 'k' and 'M' to denote a multiplier of thousand and million
+respectively:
+  @S3k  will sell for 3000,
+  @S1M  will sell for 1000000.
 
 If you want to display items that are not for sale, eg create a 'museum', you
 can inscribe the items
