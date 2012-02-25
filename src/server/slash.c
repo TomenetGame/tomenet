@@ -6199,17 +6199,18 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/fix-house-modes")) {
 				/* if house doesn't have its mode set yet, search
 				   hash for player who owns it and set mode to his. */
+				byte m = 0x0;
 				k = 0;
 				tk = 0;
 				for (i = 0; i < num_houses; i++) {
 					if (houses[i].dna->owner &&
 					    (houses[i].dna->owner_type == OT_PLAYER)) {
-						j = lookup_player_mode(houses[i].dna->owner);
-						if (j != houses[i].dna->mode) {
-							houses[i].dna->mode = j;
+						m = lookup_player_mode(houses[i].dna->owner);
+						if (m != houses[i].dna->mode) {
+							houses[i].dna->mode = m;
 							k++;
 						}
-						if (houses[i].colour && (j & MODE_EVERLASTING) && houses[i].colour < 100) {
+						if (houses[i].colour && (m & MODE_EVERLASTING) && houses[i].colour < 100) {
 							houses[i].colour += 100;
 							tk++;
 						}
