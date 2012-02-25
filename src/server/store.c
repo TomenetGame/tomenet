@@ -5932,7 +5932,7 @@ void store_debug_stock()
    Returns price or -2 if not for sale. Return -1 if not for display/not available.
    Pricing tag format:  @Snnnnnnnnn.  <- with dot for termination. */
 static s64b player_store_inscribed(object_type *o_ptr, u32b price) {
-	char buf[10], *p;
+	char buf[10], *p, *pos_dot;
 	u32b final_price;
 	bool increase = FALSE;
 
@@ -5962,6 +5962,17 @@ static s64b player_store_inscribed(object_type *o_ptr, u32b price) {
 
 	/* price limit is 2*10^9 */
 	final_price = atol(buf);
+
+	/* add rudimentary usage of 'k' and 'M' */
+	pos_dot = strchr(buf, '.');
+	if (pos_dot) *pos_dot = '\0';
+	if ((strchr(buf, 'k') || strchr(buf, 'K')) &&
+	    final_price <= 2000000)
+		final_price *= 1000;
+	if ((strchr(buf, 'm') || strchr(buf, 'M')) &&
+	    final_price <= 2000)
+		final_price *= 1000000;
+
 	if (final_price > 2000000000) final_price = 2000000000;
 	/* cannot be negative (paranoia, '-' cought above) */
 	if (final_price <= 0) return price;
