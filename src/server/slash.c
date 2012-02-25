@@ -6200,6 +6200,7 @@ void do_slash_cmd(int Ind, char *message)
 				/* if house doesn't have its mode set yet, search
 				   hash for player who owns it and set mode to his. */
 				k = 0;
+				tk = 0;
 				for (i = 0; i < num_houses; i++) {
 					if (houses[i].dna->owner &&
 					    (houses[i].dna->owner_type == OT_PLAYER)) {
@@ -6208,9 +6209,13 @@ void do_slash_cmd(int Ind, char *message)
 							houses[i].dna->mode = j;
 							k++;
 						}
+						if (houses[i].colour && (j & MODE_EVERLASTING) && houses[i].colour < 100) {
+							houses[i].colour += 100;
+							tk++;
+						}
 					}
 				}
-				msg_format(Ind, "Houses that had their ownership changed: %d.", k);
+				msg_format(Ind, "Houses that had their ownership changed: %d. Colour-mode changed: %d", k, tk);
 				return;
 			}
 #ifdef TEST_SERVER
