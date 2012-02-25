@@ -2016,11 +2016,9 @@ static errr rd_dungeon(void)
 					h_ptr = &houses[h_idx];
 					/* if house is 'painted', colour adjacent walls accordingly */
 					if (h_ptr->colour) {
- #ifdef HOUSE_PAINTING_HIDE_BAD_MODE
-						/* hack: fix old houses before this colour hack was added */
+						/* hack: fix old houses before this colour hack was added for HOUSE_PAINTING_HIDE_BAD_MODE */
 						if ((h_ptr->dna->mode & MODE_EVERLASTING) && h_ptr->colour < 100)
 							h_ptr->colour += 100;
- #endif
 
 						cave_type *hwc_ptr;
 						int hwx, hwy;
