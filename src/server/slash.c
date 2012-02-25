@@ -6333,6 +6333,23 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 #endif
+			else if (prefix(message, "/debug-house")) {
+				int h_idx;
+				house_type *h_ptr;
+
+				h_idx = pick_house(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+				if (h_idx == -1) return;
+				h_ptr = &houses[h_idx];
+
+				j = -1;
+				if (h_ptr->dna->owner &&
+				    (h_ptr->dna->owner_type == OT_PLAYER)) {
+					j = lookup_player_mode(h_ptr->dna->owner);
+				}
+
+				msg_format(Ind, "house #%d, mode %d, owner-mode %d, colour %d.", h_idx, h_ptr->dna->mode, j, h_ptr->colour);
+				return;
+			}
 		}
 	}
 
