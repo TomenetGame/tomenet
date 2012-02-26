@@ -4433,7 +4433,7 @@ int get_playerslot_loose(int Ind, char *iname) {
  * NOTE: differs from traditional 'boring' etc feeling!
  * NOTE: added traditional feelings, to warn of dangers - C. Blue
  */
-bool show_floor_feeling(int Ind)
+bool show_floor_feeling(int Ind, bool dungeon_feeling)
 {
 	player_type *p_ptr = Players[Ind];
 	worldpos *wpos = &p_ptr->wpos;
@@ -4454,12 +4454,14 @@ bool show_floor_feeling(int Ind)
 	}
 
 #ifdef DUNGEON_VISIT_BONUS
-	if (d_ptr && dungeon_bonus[d_ptr->id])
+	if (dungeon_feeling && d_ptr && dungeon_bonus[d_ptr->id]) {
+		felt = TRUE;
 		switch (dungeon_bonus[d_ptr->id]) {
 		case 3: msg_print(Ind, "\377UThis place has not been explored in ages."); break;
 		case 2: msg_print(Ind, "\377UThis place has not been explored in a long time."); break;
 		case 1: msg_print(Ind, "\377UThis place has not been explored recently."); break;
 		}
+	}
 #endif
 
 	if (!l_ptr) return(felt);

@@ -2819,7 +2819,7 @@ static int Handle_login(int ind)
 	/* Check Morgoth, if player had saved a level where he was generated */
 	check_Morgoth(NumPlayers);
 
-#ifdef ENABLE_RCRAFT
+#if (defined(ENABLE_RCRAFT) || defined(DUNGEON_VISIT_BONUS))
 	wpcopy(&Players[NumPlayers]->wpos_old, &p_ptr->wpos);
 #endif
 

@@ -5192,7 +5192,6 @@ static void process_player_change_wpos(int Ind)
 		}
 		remove_rune_trap_upkeep(Ind, 0, -1, -1);
 	}
-	wpcopy(&p_ptr->wpos_old, &p_ptr->wpos);
 #endif
 
 	/* Decide whether we stayed long enough on the previous
@@ -5200,7 +5199,6 @@ static void process_player_change_wpos(int Ind)
 	   start counting turns we spend on this floor. */
 	//there's no scumming in RPG_SERVER!
 #ifdef RPG_SERVER
-	
 	p_ptr->distinct_floor_feeling = TRUE;
 #else
 	if (p_ptr->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)
@@ -5322,7 +5320,7 @@ static void process_player_change_wpos(int Ind)
 		if (istown(wpos)) {
 			p_ptr->town_x = wpos->wx;
 			p_ptr->town_y = wpos->wy;
-			
+
 			/* for PVP-mode, reset diminishing healing */
 			p_ptr->heal_effect = 0;
 			/* and anti-fleeing teleport prevention */
@@ -5342,7 +5340,12 @@ static void process_player_change_wpos(int Ind)
 		p_ptr->cur_hgt = l_ptr->hgt;
 		p_ptr->cur_wid = l_ptr->wid;
 
-		show_floor_feeling(Ind);
+		/* only show 'dungeon explore feelings' when entering a dungeon, for now */
+#ifdef DUNGEON_VISIT_BONUS
+		show_floor_feeling(Ind, (p_ptr->wpos_old.wz == 0));
+#else
+		show_floor_feeling(Ind, FALSE);
+#endif
 	} else {
 		p_ptr->max_panel_rows = (MAX_HGT / SCREEN_HGT) * 2 - 2;
 		p_ptr->max_panel_cols = (MAX_WID / SCREEN_WID) * 2 - 2;
@@ -5350,6 +5353,10 @@ static void process_player_change_wpos(int Ind)
 		p_ptr->cur_hgt = MAX_HGT;
 		p_ptr->cur_wid = MAX_WID;
 	}
+
+#if (defined(ENABLE_RCRAFT) || defined(DUNGEON_VISIT_BONUS))
+	wpcopy(&p_ptr->wpos_old, &p_ptr->wpos);
+#endif
 
 	/* hack -- update night/day in wilderness levels */
 	if (!wpos->wz) {

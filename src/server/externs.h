@@ -1546,7 +1546,7 @@ extern void use_ability_blade(int Ind);
 extern void check_parryblock(int Ind);
 extern void toggle_shoot_till_kill(int Ind);
 extern void toggle_dual_mode(int Ind);
-extern bool show_floor_feeling(int Ind);
+extern bool show_floor_feeling(int Ind, bool dungeon_feeling);
 extern void msg_admin(cptr fmt, ...);
 extern int name_lookup_loose(int Ind, cptr name, u16b party);
 extern int name_lookup_loose_quiet(int Ind, cptr name, u16b party);

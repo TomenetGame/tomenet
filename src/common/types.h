@@ -2813,6 +2813,8 @@ struct player_type
 	/* Runecraft traps, draining MP as (uncontrollable!) upkeep each */
 	s16b runetraps, runetrap_x[RUNETRAP_UPKEEP], runetrap_y[RUNETRAP_UPKEEP];
 	s16b msp_freely, msp_normal, runetrap_drain_life;
+#endif
+#if (defined(ENABLE_RCRAFT) || defined(DUNGEON_VISIT_BONUS))
 	struct worldpos wpos_old;
 #endif
 
