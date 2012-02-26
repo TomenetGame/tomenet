@@ -11062,6 +11062,7 @@ static void del_dungeon(struct worldpos *wpos, bool tower) {
 	d_ptr = (tower ? wild->tower : wild->dungeon);
 	if (d_ptr->flags2 & DF2_DELETED) {
 #ifdef DUNGEON_VISIT_BONUS
+ #if 0 /* bs ^^' */
 		for (i = 1; i <= dungeon_id_max; i++) {
 			if (dungeon_x[i] == wpos->wx &&
 			    dungeon_y[i] == wpos->wy &&
@@ -11080,13 +11081,30 @@ static void del_dungeon(struct worldpos *wpos, bool tower) {
 					dungeon_tower[i] = dungeon_tower[i + 1];
 					dungeon_x[i] = dungeon_x[i + 1];
 					dungeon_y[i] = dungeon_y[i + 1];
-					dungeon_visit_frequency[i] = dungeon_visit_frequency[i + 1]; /* somewhat below the threshold */
+					dungeon_visit_frequency[i] = dungeon_visit_frequency[i + 1];
 					dungeon_bonus[i] = dungeon_bonus[i + 1];
 				}
 				dungeon_id_max--;
 				break;
 			}
 		}
+ #else
+		struct dungeon_type *d2_ptr;
+		s_printf("removing dungeon of index %d, new amount of dungeons is %d.\n", d_ptr->id, dungeon_id_max - 1);
+		for (i = d_ptr->id + 1; i <= dungeon_id_max; i++) {
+			d2_ptr = (dungeon_tower[i] ?
+			    wild_info[dungeon_y[i]][dungeon_x[i]].tower :
+			    wild_info[dungeon_y[i]][dungeon_x[i]].dungeon);
+			d2_ptr->id--;
+
+			dungeon_tower[i - 1] = dungeon_tower[i];
+			dungeon_x[i - 1] = dungeon_x[i];
+			dungeon_y[i - 1] = dungeon_y[i];
+			dungeon_visit_frequency[i - 1] = dungeon_visit_frequency[i];
+			dungeon_bonus[i - 1] = dungeon_bonus[i];
+		}
+		dungeon_id_max--;
+ #endif
 #endif
 
 		s_printf("Deleted flag\n");
