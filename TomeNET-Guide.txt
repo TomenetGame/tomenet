@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 25. February 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 26. February 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -4471,6 +4471,8 @@ In addition to those orange level specialties, there are more feelings you
 may get about the danger a level poses. Those only appear if you spent some
 time (usually a few minutes) on the dungeon level you were coming from, so
 they won't be helpful while stair-scumming or probability-travelling quickly.
+(Exception: On RPG-rule servers these will always be displayed, since all
+dungeons are ironman and stair-scumming is not possible.)
 The number telling you the current floor's depth (or a town name if you're in a
 town) in the bottom right corner of the main window will turn light blue when
 you spent enough time on your current floor to receive an extra feeling on
@@ -5249,6 +5251,9 @@ This means for example that 'a Ring of Slaying (+10,+12)' will add +10 to both
 your melee hit chance and your ranged hit chance, but the +12 damage will only
 be added to your melee damage, not your ranged.
 
+Also see 'Armour weight (concerning ranged weapons)' further below in (5.5)
+for details about how wearing armour affects your ranged weapon accuracy.
+
 
 (5.2a)  Fire-till-kill mode
 ----------------------------
@@ -5574,6 +5579,20 @@ IMPORTANT: If you get the above flexibility warning message, that means your
            secondary weapon is NOT APPLIED AT ALL!
            So you won't receive any boni/resistances/whatever from it, it's
            basically as if you don't have it equipped at all.
+
+
+Armour weight (concerning ranged weapons)
+-----------------------------------------
+If you wear a shield on your arm, no matter its weight and your strength, your
+hit chance with ranged weapons will be reduced by this encumberment. You will
+get an orange message saying
+"You find it hard to aim while carrying your shield."
+and a yellow '}' icon will appear in the encumberment bar.
+
+Also, the greater your total equipped armour weight is, the more your ranged
+to-hit bonus is reduced. This is a fluent, continuous process, and therefore
+it's not considered an 'encumberment' per se, ie you won't see any icons in
+the encumberment bar about this.
 
 
 Glove encumberment (concerning magic)
