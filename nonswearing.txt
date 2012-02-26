@@ -51,6 +51,7 @@ class
 glass
 bypass
 surpass
+pass
 cook
 again
 age
