@@ -3043,7 +3043,8 @@ static bool process_player_end_aux(int Ind)
 		 * WILL BE!
 		 */
 		/* Seemingly the comment above is wrong, dunno */
-		if (!cave_floor_bold(zcave, p_ptr->py, p_ptr->px)) {
+		if (!cave_floor_bold(zcave, p_ptr->py, p_ptr->px)
+		    && !cave_passable(zcave, p_ptr->py, p_ptr->px)) {
 			/* Player can walk through trees */
 			//if ((PRACE_FLAG(PR1_PASS_TREE) || (get_skill(SKILL_DRUID) > 15)) && (cave[py][px].feat == FEAT_TREE))
 #if 0

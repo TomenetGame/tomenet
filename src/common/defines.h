@@ -5982,6 +5982,11 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 ((C)->feat == FEAT_RUNE_TRAP))
 
 
+/* A wall that doesn't "fill" the grid completely, ie could be passed without
+   wraithform provided the required tools/abilities. */
+#define cave_passable(ZCAVE,Y,X) \
+	(f_info[ZCAVE[Y][X].feat].flags1 & FF1_SWITCH_MASK)
+
 
 
 /*
