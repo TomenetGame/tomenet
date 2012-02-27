@@ -11162,10 +11162,24 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, i
 		tower = (d_info[type].flags1 & DF1_TOWER) ? TRUE : FALSE;
 	}
 
-	if(wild->flags & (tower ? WILD_F_LOCKUP : WILD_F_LOCKDOWN)) {
+	if (wild->flags & (tower ? WILD_F_LOCKUP : WILD_F_LOCKDOWN)) {
 		s_printf("add_dungeon failed due to wild_f_ lock.\n");
 		return;
 	}
+
+#ifdef DUNGEON_VISIT_BONUS
+	/* new paranoid debug code: cancel adding of dungeon if wild_info _seems_ to already have a dungeon in place. */
+	if (wild->flags & (tower ? WILD_F_UP : WILD_F_DOWN)) {
+		s_printf("DEBUG: add_dungeon failed (%d,%d,%s) due to already existing wild_f_ flag.\n",
+		    wpos->wx, wpos->wy, tower ? "tower" : "dungeon");
+		return;
+	}
+	if (tower ? wild->tower : wild->dungeon) {
+		s_printf("DEBUG: add_dungeon failed (%d,%d,%s) due to already existing wild-> structure.\n",
+		    wpos->wx, wpos->wy, tower ? "tower" : "dungeon");
+		return;
+	}
+#endif
 
 	wild->flags |= (tower ? WILD_F_UP : WILD_F_DOWN); /* no checking */
 	if (tower)
@@ -11194,8 +11208,8 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, i
 		d_ptr->flags2 = d_info[type].flags2 | flags2 | DF2_RANDOM;
 	} else {
 		d_ptr->baselevel = baselevel;
-		d_ptr->flags1 = flags1; 
-		d_ptr->flags2 = flags2; 
+		d_ptr->flags1 = flags1;
+		d_ptr->flags2 = flags2;
 		d_ptr->maxdepth = maxdep;
 	}
 
