@@ -1600,7 +1600,7 @@ void do_slash_cmd(int Ind, char *message)
 					}
 				}
 			}
-			
+
 			/* don't start too early -C. Blue */
  #ifndef RPG_SERVER
 			if (Players[j]->lev < 5) {
@@ -6320,10 +6320,24 @@ void do_slash_cmd(int Ind, char *message)
 			}
 #ifdef DUNGEON_VISIT_BONUS
 			else if (prefix(message, "/debugdvb")) { /* debug DUNGEON_VISIT_BONUS */
+				msg_print(Ind, "Experience bonus list for dungeons/towers:");
+				/* pre-process data for colourization */
+				j = VISIT_TIME_CAP - 1;
+				for (i = 1; i <= dungeon_id_max; i++)
+					if (dungeon_visit_frequency[i] < j) j = dungeon_visit_frequency[i];
+				/* output the actual list */
 				for (i = 1; i <= dungeon_id_max; i++) {
-					msg_format(Ind, "%s %d at (%d,%d): visited %d -> bonus %d.",
-						dungeon_tower[i] ? "tow" : "dun", i,
-					    dungeon_x[i], dungeon_y[i], dungeon_visit_frequency[i], dungeon_bonus[i]);
+					msg_format(Ind, "  \377%c%s %2d at (%2d,%2d): visit \377%c%3d\377%c -> bonus \377%c%d \377%c- %-28.28s",
+						(i % 2) == 0 ? 'W' : 'U',
+						dungeon_tower[i] ? "tower  " : "dungeon", i,
+					    dungeon_x[i], dungeon_y[i],
+					    (dungeon_visit_frequency[i] == j) ? 'D' : 'w',
+					    dungeon_visit_frequency[i], (i % 2) == 0 ? 'W' : 'U',
+					    (dungeon_bonus[i] == 0) ? 'w' : ((dungeon_bonus[i] == 1) ? 'y' : ((dungeon_bonus[i] == 2) ? 'o' : 'r')),
+					    dungeon_bonus[i],
+					    (i % 2) == 0 ? 'W' : 'U',
+					    d_name + d_info[dungeon_tower[i] ? wild_info[dungeon_y[i]][dungeon_x[i]].tower->type : wild_info[dungeon_y[i]][dungeon_x[i]].dungeon->type].name
+					    );
 				}
 				return;
 			}
