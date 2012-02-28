@@ -3835,6 +3835,11 @@ bool project_hack(int Ind, int typ, int dam, char *attacker) {
 		/* Require line of sight */
 		if (!player_has_los_bold(Ind, y, x)) continue;
 
+		/* Don't exceed max range (which may be < sight range)! */
+		if (distance(p_ptr->py, p_ptr->px, y, x) > MAX_RANGE) continue;
+		/* Maybe also check for BLOCK_LOS/BLOCK_CONTACT grids? (glass walls..) */
+		if (!projectable_wall(wpos, p_ptr->py, p_ptr->px, y, x, MAX_RANGE)) continue;
+
 		/* Jump directly to the target monster */
 		if (project(0 - Ind, 0, wpos, y, x, dam, typ, flg, pattacker)) obvious = TRUE;
 	}
