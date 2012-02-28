@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 26. February 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 28. February 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -5747,6 +5747,12 @@ Poison          Poison resistance doesn't belong to the basic resistances but
                 caps at 800.
                 Stinking clouds, which are small poison balls, inflict 12d2
                 damage.
+Unbreath        A special type of poison, castable by mages and runemasters.
+                This one will just deprive the air of all oxygen, thereby also
+                damaging poison immune monsters.
+                The only monsters immune to this are those that do not require
+                to breathe, which means undead, greater demons, angels and
+                nonliving constructs.
 
 
 Make sure that you have the basic resistances as soon as possible, and poison
@@ -6380,7 +6386,7 @@ Multi-hued Dragon Scale Mail    Gives base + poison resistance (base means
                                 fire/cold/lightning/acid) and two random
                                 immunities out of those five.
                                 For example one MHDSM might give fire and cold
-                                immunity, while a nother MHDSM gives poison and
+                                immunity, while another MHDSM gives poison and
                                 lightning immunity.
 Elven Cloak     Increases your stealth, searching ability and luck.
                 For details about luck see LUCK flag in (5.8).
