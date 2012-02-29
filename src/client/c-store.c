@@ -541,6 +541,7 @@ static void store_process_command(int cmd)
 	}
 
 	/* Parse the command */
+	i = 0; /* for jumping to page 1/2/3/4 */
 	switch (cmd)
 	{
 		/* Leave */
@@ -600,6 +601,17 @@ static void store_process_command(int cmd)
 				if (store_top < 0) store_top = ((store.stock_num - 1) / 12) * 12;
 				display_inventory();
 			}
+			break;
+
+		/* go to page 1/2/3/4 */
+		case '4': i++;
+		case '3': i++;
+		case '2': i++;
+		case '1':
+			if (store.stock_num > 12 * i) {
+				store_top = 12 * i;
+				display_inventory();
+			} else c_msg_format("Page %d is empty.", i + 1);
 			break;
 
 		/* Get (purchase) */
