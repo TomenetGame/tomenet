@@ -1014,6 +1014,12 @@ or character name.
 If multiple matching files are found, the game will attempt to merge them
 accordingly.
 
+NOTE: In addition to this user-defined client-side auto-inscription list, there
+      is also a server-side auto-inscription feature that can be enabled via
+      client option 'auto_inscribe'.
+      This option will add a predefined set of auto-inscriptions that might be
+      generally useful for all types of characters, see (2.3) for details.
+
 
 
 (0.4) Typical slang/abbreviations
@@ -1825,6 +1831,22 @@ or that are especially important are listed in detail here:
         Will provide a predefined (on server-side) set of item-inscriptions
         that will be applied automatically to some selected items, which are
         word-of-Recall items, various scrolls and a few potions.
+        (These inscriptions are applied independantly of the custom auto
+        inscription feature you can access with '&' key.)
+        The server-side auto-inscriptions are currently:
+            Scrolls of Phase Door:      @r1
+            Scrolls of Teleportation:   @r2
+            Scrolls of Word-of-Recall:  @r3@R
+            Rods of Recall:             @z3@R
+            Scrolls of Identify:        @r5!X
+            Scrolls of Trap Detection:  @r8
+            Scrolls of Magic Mapping:   @r9
+            Scrolls of Satisfy Hunger:  @r0
+            Potions of Healing:         @q1
+            Potions of Speed:           @q2
+            Potions of Resistance:      @q3
+            Potions of Restore-L-Lev:   @q4
+        Note: Already inscribed items are not touched.
 
     Hide unusable skills (hide_unusable_skills)
         Skills that your character cannot use will not be displayed in the
