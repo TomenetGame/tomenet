@@ -373,9 +373,13 @@ static void store_chat(void)
 	snprintf(where, 16, "(%d,%d) \377%c%c\377s", p_ptr->wpos.wx, p_ptr->wpos.wy, store_color, store_char);
 
 	/* Get shop price if any */
+	/* Home doesn't price items */
 	if (store_num == 7) {
-		/* Home doesn't price items */
 		sprintf(out_val, " %s", store_names[item]);
+	/* Player stores with '@S-' inscription neither (museum mode) */
+	} else if (store_prices[item] < 0) {
+		sprintf(out_val, " %s", store_names[item]);
+	/* Normal [player-]store */
 	} else {
 		/* Convert the price to more readable format */
 		if (store_prices[item] >= 10000000)
