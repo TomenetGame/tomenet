@@ -7700,7 +7700,7 @@ void auto_inscribe(int Ind, object_type *o_ptr, int flags)
 				return;
 			}
 			if (o_ptr->sval == SV_SCROLL_IDENTIFY) {
-				o_ptr->note = quark_add("@r5");
+				o_ptr->note = quark_add("@r5!X");
 				return;
 			}
 			if (o_ptr->sval == SV_SCROLL_TRAP_DOOR_DESTRUCTION) {
