@@ -124,7 +124,7 @@ EXTRASTATS = add_spell
 			  "At level 5 also increases your dexterity.",
 			  "At level 10 also increases your constitution.",
 			  "At level 20 also increases your intelligence.",
-			  "Not projecttable.",}
+			  "Not projectable.",}
 }
 
 -- A shot that increases a players SPR (if wearing a shooter) 
