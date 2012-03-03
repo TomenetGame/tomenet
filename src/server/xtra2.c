@@ -4243,6 +4243,11 @@ void check_experience(int Ind)
 					p_ptr->ptrait = TRAIT_ENLIGHTENED;
 				}
 
+				/* Reset /undoskills info before reshaping skills, to prevent odd bugging-out */
+				memcpy(p_ptr->s_info_old, p_ptr->s_info, MAX_SKILLS * sizeof(skill_player));
+				p_ptr->skill_points = p_ptr->skill_points_old;
+				p_ptr->reskill_possible = FALSE;
+
 				shape_Maia_skills(Ind);
 				calc_techniques(Ind);
 
