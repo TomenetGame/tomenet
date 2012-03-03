@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 28. February 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 3. March 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -97,6 +97,7 @@ Contents
     (5.5)   Weight of weapons and armour
     (5.6)   Resistances & caps, Immunities, Susceptibilities
     (5.7)   Qualitative classification of items, identifying & selling items
+    (5.7a)  Types of Identification
     (5.8)   Special abilities of items
     (5.9)   What does item xxx do exactly?
     (5.9a)  Activatable items
@@ -959,6 +960,7 @@ Weapons that ricochet (sling ammo):
 Scrolls of Identify, Rods/Staves of Perception:
     !X          If you pick up an unidentified item, you will automatically
                 read a scroll to identify it.
+                See (5.7) for more information about identification.
 
 An item that can be activated:
     @A1         pressing the keys 'A' and then '1' will activate that item.
@@ -1037,6 +1039,7 @@ Auto-ID     A special ability of some items. If you equip an item that grants
             you 'Auto-ID' all items you touch will automatically be
             identified! Items who grant their wielder Auto-Identification are
             highly sought after. Randart helmets or gloves sometimes have it.
+            See (5.7) for more information about identification.
 BM          Black Market (Store '7').
 Cheeze      Questionable action, not quite cheating but close to it.
             This can be transferring items to a store character (mule)
@@ -1059,6 +1062,7 @@ GCV         Greater Checkerboard Vault (looks remotely like a checkerboard).
 ID, *ID*    Identify and *Identify* magic respectively, which is used to
             reveal magic properties of unknown items. Scrolls of ID can be
             bought in store 5.
+            See (5.7) for more information about identification.
 Iron Team   A special type of party which can only be formed with newly
             created characters. Its members only gain experience if all
             members are online and on the same dungeon level.
@@ -1141,6 +1145,7 @@ Pseudo-ID   If a player keeps an unidentified item for a longer time he might
             'feel' if the item is average, good, cursed or special. The item
             will automatically receive a 'pseudo-id inscription' then.
             Pseudo-id intensity and speed depend on the 'Combat' skill.
+            See (5.7) for more information about identification.
 PvP         Player vs player. Describes the act of player characters fighting
             each other. If you want to fight other players to death, create a
             new 'pvp-mode' character. It's an option during the character
@@ -2535,7 +2540,7 @@ the dungeon. If you find a potion/scroll unknown to your character you will
 have to either use it or sell it to a shop or use a scroll of identify to find
 out what it is.
 So to prepare for hunting in the dungeon, buy:
--Potion of Heroism
+-Potion of Heroism (maybe just one, for when you encounter a unique monster)
 -Potion of Cure Light/Serious Wounds
 -Scroll of Phase Door
 The more you can buy of those the better. At least buy one potion of Heroism
@@ -4139,6 +4144,7 @@ The 1..9 are standard shops, namely..
                         9x9 board for a one-time fee on each difficulty level.)
         Mass Identify Service
                         Will identify all items you currently carry for a fee.
+                        See (5.7) for more information about identification.
         *Identify* Service
                         Will *identify* an item for a fee.
                         See (5.7) for more information about ID, *ID*, shops!
@@ -6180,6 +6186,44 @@ tags.
 
 Again - if you want to look up what certain special items can/cannot do, see
 the spoiler files section (7.4) or further explanations in (5.8) and (5.9).
+
+
+(5.7a) Types of Identification
+------------------------------
+There are different stages and types of identification:
+a) pseudo-indentification.
+   This gives you one of the basic feelings like {good}, described above.
+b) identification via ID (eg by scroll, staff or shop service - or from trying
+   to use the item, if your character is able to observe any result, in which
+   case it might yield some experience even):
+   This actually does two types of identification!
+   1) It identifies the magical properties of an item, such as
+      +hit, +damage, +ac, names of ego powers or artifact power.
+      These values are then seen by any player who looks at the item after
+      it has been identified.
+   2) It identifies the flavour of an item (if it is a flavoured item) for
+      the particular player who identifies it.
+      Flavours are prefixes in the base item name, in particular:
+      -potion colours
+      -scroll titles
+      -ring/amulet materials
+      -magic device materials
+      So if you identify a 'clear potion' you will get to know that it's a
+      'clear potion of water'. However, this flavour is now only know to you.
+      Other characters who have not yet identified a clear potion on their own
+      will still not know that it's a 'clear potion of water'.
+c) identification via *ID* (eg by scroll, staff or shop service):
+   This is the same as ID but additionally reveals all details of all ego- or
+   artifact powers the item has.
+   This can lead to an increase in price if some of those powers were not
+   considered obvious, in which case stores wouldn't pay for them when you sell
+   the item. Non-obvious powers are those that are randomly occurring (those
+   don't exist on true artifacts).
+
+Note: There are certain effects that can make your character lose his knowledge
+      of items, which corresponds to 'unindentification' of types a) and b)1)
+      and also loses the additional knowledge gained from c) in the list above.
+      The flavour knowledge as described in b)2) is always preserved though.
 
 
 
