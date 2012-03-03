@@ -4249,7 +4249,6 @@ void check_experience(int Ind)
 				/* Reset /undoskills info before reshaping skills, to prevent odd bugging-out */
 				memcpy(p_ptr->s_info_old, p_ptr->s_info, MAX_SKILLS * sizeof(skill_player));
 				p_ptr->skill_points_old = p_ptr->skill_points;
-				p_ptr->reskill_possible = FALSE;
 
 				p_ptr->redraw |= PR_SKILLS | PR_MISC;
 				p_ptr->update |= PU_SKILL_INFO | PU_SKILL_MOD;
