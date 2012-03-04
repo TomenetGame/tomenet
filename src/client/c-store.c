@@ -302,7 +302,7 @@ static void store_purchase(void)
                 if (store_num != 7) {
                         c_msg_print(format("That costs %ld gold per item.", (long)(store_prices[item])));
 
-			if (store_prices[item] != 0) amt_afford = p_ptr->au / store_prices[item];
+			if (store_prices[item] > 0) amt_afford = p_ptr->au / store_prices[item];
 			else amt_afford = o_ptr->number;
 
 			/* Get a quantity */
