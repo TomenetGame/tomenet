@@ -1225,9 +1225,9 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
  you might find yourself stuck inside a wall, where the previous dungeon had a
  wide room.
  Another problem is that if you don't leave in a town, your character will
- stay for another 20 seconds in the game before it finally disappears from the
+ stay for another 25 seconds in the game before it finally disappears from the
  dungeon! If monsters were around, you might get killed easily during those
- 20 seconds.
+ 25 seconds.
 -The items you find don't depend on your race or class but on monster level
  and depth and luck.
 -Don't drop artifacts inside houses if the server doesn't allow artifacts to
