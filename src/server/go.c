@@ -148,7 +148,26 @@ static int wager_lvl[9] = {
 
 /* Start engine, create & connect pipes, on server startup usually */
 int go_engine_init(void) {
+	char *gocmd = NULL;
+
 	s_printf("GO_INIT: ---INIT---\n");
+
+#ifdef ENGINE_FUEGO
+	gocmd = "./go/fuego";
+#endif
+#ifdef ENGINE_GNUGO
+	gocmd = "./go/gnugo";
+#endif
+
+	if (!gocmd) {
+		s_printf("GO_ERROR: No engine defined during compile.\n");
+		return 7;
+	}
+
+	if (access(gocmd, X_OK) != 0) {
+		s_printf("GO_ERROR: Engine executable not found.\n");
+		return 8;
+	}
 
 	/* Try to create pipes for STDIN and STDOUT */
 	if (pipe(pipeto) != 0) {
