@@ -1070,6 +1070,17 @@ bool lua_mimic_eligible(int Ind, int r_idx) {
 	return TRUE;
 }
 
+/* Return if a monster form is considered basically humanoid, ie has all extremities required for full equipment */
+bool lua_mimic_humanoid(int r_idx) {
+	if (!r_info[r_idx].body_parts[BODY_WEAPON]) return FALSE;
+	if (r_info[r_idx].body_parts[BODY_FINGER] < 2) return FALSE;
+	if (!r_info[r_idx].body_parts[BODY_HEAD]) return FALSE;
+	if (!r_info[r_idx].body_parts[BODY_ARMS]) return FALSE;
+	if (!r_info[r_idx].body_parts[BODY_TORSO]) return FALSE;
+	if (!r_info[r_idx].body_parts[BODY_LEGS]) return FALSE;
+	return TRUE;
+}
+
 void swear_set(int i, char *word, int level) {
 	strcpy(swear[i].word, word);
 	swear[i].level = level;

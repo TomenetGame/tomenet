@@ -1968,6 +1968,7 @@ extern void do_slash_cmd(int Ind, char *message);
 extern int global_luck; /* Global +LUCK modifier for the whole server (change the 'weather' - C. Blue) */
 extern void lua_intrusion(int Ind, char *problem_diz);
 extern bool lua_mimic_eligible(int Ind, int r_idx);
+extern bool lua_mimic_humanoid(int r_idx);
 void swear_set(int i, char *word, int level);
 char *swear_get_word(int i);
 int swear_get_level(int i);
