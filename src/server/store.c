@@ -2132,6 +2132,7 @@ static void display_entry(int Ind, int pos)
 	int		wgt;
 	int		i;
 //	int maxwid = 75;
+	bool museum = FALSE;
 
 	i = gettown(Ind);
 	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
@@ -2142,7 +2143,11 @@ static void display_entry(int Ind, int pos)
 		st_ptr = &fake_store[-2 - p_ptr->store_num];
 	else
 #endif
-	st_ptr = &town[i].townstore[p_ptr->store_num];
+	{
+		st_ptr = &town[i].townstore[p_ptr->store_num];
+		museum = (st_info[p_ptr->store_num].flags1 & SF1_MUSEUM) ? TRUE : FALSE;
+	}
+
 //	ot_ptr = &owners[p_ptr->store_num][st_ptr->owner];
 	ot_ptr = &ow_info[st_ptr->owner];
 
@@ -2257,16 +2262,20 @@ static void display_entry(int Ind, int pos)
 		/* Only show the weight of an individual item */
 		wgt = o_ptr->weight;
 
-		/* Extract the "minimum" price */
+		/* Museums don't sell items */
+		if (museum) x = -1;
+		else {
+			/* Extract the "minimum" price */
 #ifdef PLAYER_STORES
-		if (p_ptr->store_num <= -2) {
-			x = price_item_player_store(Ind, o_ptr);
+			if (p_ptr->store_num <= -2) {
+				x = price_item_player_store(Ind, o_ptr);
 
-			/* just to make it look slightly less odd on older clients */
-			if (x == -2) x = -1;
-		} else
+				/* just to make it look slightly less odd on older clients */
+				if (x == -2) x = -1;
+			} else
 #endif
-		x = price_item(Ind, o_ptr, ot_ptr->min_inflate, FALSE);
+			x = price_item(Ind, o_ptr, ot_ptr->min_inflate, FALSE);
+		}
 
 #ifdef PLAYER_STORES
 		/* HACK: Cut out the @S pricing information from the inscription.
@@ -3704,7 +3713,7 @@ void store_confirm(int Ind)
 	}
 
 	(void) sell_haggle(Ind, &sold_obj, &price_redundance);
-	if (price != price_redundance) {
+	if (price != price_redundance && !museum) {
 		s_printf("$INTRUSION$ Tried to sell %ld for %ld! Sold by %s.\n", (long int)price_redundance, (long int)price, p_ptr->name);
 #if 0
 		msg_print(Ind, "Wrong item!");
@@ -3782,7 +3791,10 @@ void store_confirm(int Ind)
 
 	/* Describe the result (in message buffer) */
 	if (!museum) msg_format(Ind, "You sold %s for %ld gold.", o_name, (long int)price);
-	else msg_format(Ind, "You donate %s.", o_name);
+	else {
+		msg_format(Ind, "You donate %s.", o_name);
+		s_printf("MUSEUM (%d,%d): %s donates %s.\n", p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->name, o_name);
+	}
 #ifdef USE_SOUND_2010
 	sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
 #endif
