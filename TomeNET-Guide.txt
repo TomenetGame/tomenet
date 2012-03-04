@@ -131,7 +131,7 @@ Contents
     (6.7)   Mimicry details
     (6.7a)  Polymorph rings
     (6.7b)  Druid form details
-    (6.7c)  Useful low-level forms for weapon-using mimics
+    (6.7c)  Useful low-level humanoid forms for weapon-using mimics
     (6.8)   Magic spells and prayers
     (6.8a)  Spell failure rate
     (6.9)   Parties, Iron Teams, Guilds
@@ -9814,7 +9814,8 @@ vary. For example a warrior cannot learn magic spells.
     'Polymorph Self' spell. You have to use 'Polymorph Self Into..' if you
     want to use these forms.)
     To find out the special abilities of a monster form, see section (6.7).
-    A list of useful low-level forms for weapon-using mimics is give in (6.7c)
+    A list of useful low-level humanoid forms for weapon-using mimics is given
+    in (6.7c).
     because those have a somewhat harder time to find usable forms early on
     than martial artists who might just utilize easy-to-get forms such as fruit
     bat, wild cat, crow or spiders right away for great effect.
@@ -10759,8 +10760,8 @@ Firebird                speedy and tough; can fly and passes most terrains;
                         can breathe fire and light
 
 
-(6.7c) Useful low-level forms for weapon-using mimics
------------------------------------------------------
+(6.7c) Useful low-level humanoid forms for weapon-using mimics
+--------------------------------------------------------------
 Mimics who use weapons have less choices for forms than martial arts users who
 do not need to rely on humanoid forms and can just utilize easy-to-get forms
 such as fruit bat, wild cat, crow or spiders right away for great effect.
