@@ -4191,7 +4191,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	/* And then describe it fully */
 
 	if (f1 & (TR1_LIFE))
-		fprintf(fff, "It affects your hit points.\n");
+		fprintf(fff, "It affects your hit points%s.\n", o_ptr->name1 == ART_RANDART ? " \377v(royalties only)\377w" : "");
 	if (f1 & (TR1_STR))
 		fprintf(fff, "It affects your strength.\n");
 	if (f1 & (TR1_INT))
@@ -4628,9 +4628,9 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
 	/* special artifacts hardcoded - C. Blue */
 	if (o_ptr->tval == TV_POTION2 && o_ptr->sval == SV_POTION2_AMBER)
-		fprintf(fff, "It turns your skin into amber, increasing your powers.\n");
+		fprintf(fff, "\377wIt turns your skin into amber, increasing your powers.\n");
 	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SLEEPING)
-		fprintf(fff, "It drops a veil of sleep over all your surroundings.\n");
+		fprintf(fff, "\377wIt drops a veil of sleep over all your surroundings.\n");
 
 	/* Damage display for weapons */
 	if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
