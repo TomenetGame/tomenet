@@ -10775,7 +10775,8 @@ Forms you can already get in Bree town:
 ---------------------------------------
 Village idiot    1  Its slightly erratic movement can be a bit annoying but it
                     will give a speed bonus which can be useful when fighting.
-Mean-looking mercenary / Battle-scarred veteran
+Mean-looking mercenary
+Battle-scarred veteran
                  1  They can improve your initial HP (hit points) and AC
                     (armour class) fairly well.
                     They both have slightly erratic movement though.
