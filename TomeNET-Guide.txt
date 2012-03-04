@@ -117,7 +117,7 @@ Contents
     (5.21)  Digging
     (5.21a) Digging - Exact calculation
     (5.21b) Digging - Common example values
-    (5.21c) Digging - Futher information
+    (5.21c) Digging - Further information
     (5.22)  Recharging
 (6) Character details
     (6.1)   Attributes
