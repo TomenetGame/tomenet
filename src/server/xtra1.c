@@ -2268,10 +2268,11 @@ static void calc_body_bonus(int Ind)
 		/* Vampires have VAMPIRIC attacks */
 		case 432:	case 520:	case 521:	case 623:	case 989:
 			if (p_ptr->vampiric_melee < 50) p_ptr->vampiric_melee = 50;
+			p_ptr->suscep_lite = TRUE;
 			break;
 
 		/* Angels resist light, blindness and poison (usually immunity) */
-		case 417:	case 456:	case 511:	case 605:	
+		case 417:	case 456:	case 511:	case 605:
 		case 661:	case 1071:	case 1072:	case 1073:
 			p_ptr->see_inv = TRUE;
 		/* Fallen Angel */

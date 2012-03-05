@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 3. March 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 4. March 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10372,8 +10372,7 @@ F: flag list
     HURT_ROCK   Means that this creature has a rock-like skin and body.
                 Takes damage from Stone-To-Mud and takes more damage from
                 'disintegration' attacks, but at the same time resists shards!
-    WILD_WOOD or ANIMAL
-                The player (like the monster) can pass trees.
+    WILD_WOOD   The player (like the monster) can pass trees.
     WILD_MOUNTAIN or WILD_VOLCANO
                 The player (like the monster) can climb mountains.
     WILD_TOO without any other WILD_xxx flags:
@@ -10396,18 +10395,10 @@ F: flag list
     OPEN_DOOR   This form can open doors.
     BASH_DOOR   This form can bash doors
                 (useful to forms that cannot OPEN_DOORs!).
-    EVIL        Becomes susceptible to certain 'good' or 'holy' effects.
-    DEMON or UNDEAD
-                This form will take 2x damage from holy orbs or holy fire,
-                and suffer from various 'good' effects/spells. UNDEAD has
-                in general more trouble with 'good' effects than DEMON.
-                UNDEAD will also become susceptible to some 'life' effects,
-                regarding healing or cleansing mostly.
-                Also see further below, following the 'spell list' paragraph,
-                a list of intrinsical boni that all all demons or undead
-                creatures get even if the r_info does not list the according
-                flags.
     HURT_LITE   This form will take 2x damage from light attacks.
+
+    For all racial flags such as ANIMAL, SPIDER, EVIL, DEMON etc please see the
+    list of racial abilities further below.
 
 S: spell list
     These spells can be cast by the monster. Most of them are available to
@@ -10439,51 +10430,59 @@ Especially interesting spells of mimics are 'Blink' (Phase Door) and
 so you might want to create macros for them.
 
 
-Further, certain races and classes get abilities (even if they are not
-mentioned in r_info.txt for monster forms):
--------------------------------------------
-Bats        Feather falling (levitation).
-Elves       Resist light.
-Dark-Elves  Resist darkness.
-Hobbits     Dexterity bonus of +2 for not wearing shoes. (Or 'Halflings'.)
-Gnomes      Free action.
-(Dwarves    Blindness resistance, climbing at level 30.)
-(High-Elves  Resist light, see invisible.)
-Yeeks       Feather falling (levitation).
-(Ents       Slow digestion, speed - 2, sensitive to fire, see invisible at
-            level 4, can swim, pass trees.)
-All ghosts  See invisible, Infra-vision +3.
-All orcs    Resist darkness.
+Further, certain races get additional fixed abilities
+(even if they are not explicitely mentioned in r_info.txt):
+-----------------------------------------------------------
+Bats            Feather falling (levitation).
+Elves           Resist light.
+Dark-Elves      Resist darkness.
+Hobbits         Dexterity bonus of +2 for not wearing shoes. (Or 'Halflings'.)
+Gnomes          Free action.
+(Dwarves        Blindness resistance, climbing at level 30.)
+(High-Elves     Resist light, see invisible.)
+Yeeks           Feather falling (levitation).
+(Ents           Slow digestion, speed - 2, sensitive to fire, see invisible at
+                level 4, can swim, pass trees.)
+All animals     Able to pass trees.
+All spiders     Able to pass mountains, able to pass spider webs.
+All ghosts      See invisible, Infra-vision +3.
+All orcs        Resist darkness.
 All trolls and giants
-            Sustain strength.
+                Sustain strength.
 All dragonriders
-            ESP_DRAGON at level 5, feather falling (levitation),
-            flying at level 30.
+                ESP_DRAGON at level 5, feather falling (levitation),
+                flying at level 30.
 All evil creatures
-            Becomes susceptible to certain 'good' or 'holy' effects.
+                Becomes susceptible to certain 'good' or 'holy' effects.
 All undead creatures
-            Resist darkness, blindness, poison (usually immunity, depends on
-            r_info flags);
-            can't bleed (no_cut), infra-vision +1, insanity attacks are
-            reduced by a little bit.
-            Becomes susceptible to 'life', which concerns some healing or
-            cleansing effects for example.
-            However, at the same time they become gorged less quickly when
-            for example quaffing lots of healing potions quickly.
+                Resist darkness, blindness, poison (usually immunity, depends
+                on r_info flags);
+                can't bleed (no_cut), infra-vision +1, insanity attacks are
+                reduced by a little bit.
+                Becomes susceptible to 'life', which concerns some healing or
+                cleansing effects mostly.
+                However, at the same time they become gorged less quickly when
+                for example quaffing lots of healing potions quickly.
+                Take 2x damage from holy orbs or holy fire and suffer
+                from many 'good' effects/spells (even more so than demons).
 All greater demons (capital 'U')
-            Resist poison (in most cases immunity, depends on r_info flags).
+                Resist poison (usually immunity, depends on r_info flags).
+                Take 2x damage from holy orbs or holy fire and suffer
+                from a couple of 'good' effects/spells (similar to undead).
 All non-living creatures
-            Resist poison (usually even immune, depends on r_info flags) and
-            fear; insanity attacks are reduced somewhat.
-All vampires and vampire bats
-            Chance to drain life on attacking in melee.
-            Vampire bat form has 100% chance to do a vampiric attack,
-            real vampire forms have 50% chance (half their attacks are hits,
-            the other half is biting). For details see '(5.15) Vampirism'.
-All angels  Resist light, blindness and poison (usually immunity, see r_info
-            flags), resist fear, resist confusion, see invisible, strong
-            resistance to insanity-inducing attacks.
-            Note: 'Fallen Angel' doesn't get light/confusion resistances.
+                Resist poison (usually even immune, depends on r_info flags)
+                and fear; insanity attacks are reduced somewhat.
+All vampires and vampiric monsters (vampire bats and others)
+                Vampires are susceptible to light.
+                Chance to drain life on attacking in melee.
+                Vampire bats and mist have 100% chance to do a vampiric attack,
+                real vampire forms (and vampiric ixitxachitl) have 50% chance
+                (half their attacks are hits, the other half is biting).
+                For details see '(5.15) Vampirism'.
+All angels      Resist light, blindness and poison (usually immunity, see
+                r_info flags), resist fear, resist confusion, see invisible,
+                strong resistance to insanity-inducing attacks.
+                Note: 'Fallen Angel' doesn't get light/confusion resistances.
 
 Keep in mind that by changing forms you can potentially lose abilities that
 you had in player form, because they were bound to your normal form.
