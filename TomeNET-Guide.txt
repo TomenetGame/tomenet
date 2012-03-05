@@ -48,6 +48,7 @@ Contents
     (2.1c)  "Promoting" TomeNET on Steam ;)
     (2.2)   Starting TomeNET and getting to play on an internet server
     (2.3)   Client options
+    (2.4)   Installing voice chat
 (3) Creating a character & starting to play
     (3.1)   Creating a new character; character modes
     (3.2)   The display (user-interface)
@@ -1924,6 +1925,46 @@ or that are especially important are listed in detail here:
     Here you can configure each of the program windows in detail.
     It is recommended that you have one dedicated window for 'Display chat',
     so you don't miss important messages during combat.
+
+
+
+(2.4) Installing voice chat
+---------------------------
+While chatting in TomeNET is usually fine to communicate with other players and
+party members in particular, using a real voice chat via headset (headphones +
+microphone) can be much more effective, easier and more fun.
+
+To support voice chat, there is actually an official TomeNET 'Mumble' server
+running, Mumble being the name of the voice chat software. (The server part is
+actually called Murmur, Mumble is the name of the client part and the project
+name in general.)
+
+Mumble provides excellent voice quality at low bandwith usage, and is a free
+open source program, hence it is free of charge (both server and client).
+It also allows sending text messages in case you don't have a microphone, those
+can be automatically converted to speech, which is then read to the receipient.
+(This feature can be turned off in the menu 'Configure' -> 'Text-To-Speech'.)
+And same as Ventrilo or Teamspeak, Mumble allows for custom channel structures.
+Mumble is available for all major platforms, ie Windows, Linux and Mac OS X.
+
+Instructions to join the TomeNET Mumble server for voice chatting:
+-Plug in a headset.
+-Download the Mumble client from http://mumble.sourceforge.net/ and install it.
+ NOTE: If you are looking for the Linux version, it should be in your package
+ repository. No need to visit the sourceforge project website in this case.
+-Go through the audio configuration (Audio Wizard) and possibly set up a key to
+ push when you want your voice to be transmitted (or just select voice-
+ activation, which will automatically transmit your voice when you speak).
+-Go to menu 'Server' -> 'Connect' -> 'Add New..'
+ and enter this server information to add the official TomeNET Mumble server:
+ Label:     Choose any name you like, eg "TomeNET Voice Chat".
+ Adress:    europe.tomenet.net
+ Port:      23348
+ Username:  Choose any name you like, it's your nickname on the Mumble server.
+ Click 'Ok', select the newly added server in the list and click 'Connect'.
+
+That's it. To change to a certain chat channel, simply double-click it.
+You can only hear people in the same chat channel (or in a parent channel).
 
 
 
