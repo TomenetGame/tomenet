@@ -6404,6 +6404,8 @@ s_printf("PLAYER_STORE_HANDLE: new mass, trad, owner %s (%d), %s, value %d, buye
 						   money goes poof :( */
 						s_printf("PLAYER_STORE_ERROR: OCCUPIED ROOM! (owner %s (%d), value %d, buyer %s)\n",
 						    owner_name, h_ptr->dna->owner, value, p_ptr->name);
+						s_printf("debug: hidx %d; wpos %d,%d; o_ptr x,y %d,%d; mcheque x,y %d,%d.\n",
+						    h_idx, p_ptr->wpos.wx, p_ptr->wpos.wy, o_ptr->ps_idx_x, o_ptr->ps_idx_y, x, y);
 						return;
 					}
 					/* Drop the cheque there */
