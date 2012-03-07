@@ -2903,7 +2903,10 @@ void do_slash_cmd(int Ind, char *message)
 				p_ptr->skill_points = p_ptr->skill_points_old;
 
 				msg_format(Ind, "\377GYou have regained %d skill points.", gain);
-				
+
+				/* in case we changed mimicry skill */
+				do_mimic_change(Ind, 0, TRUE);
+
 				/* Update all skills */
 				calc_techniques(Ind);
 				for (i = 0; i < MAX_SKILLS; i++)
