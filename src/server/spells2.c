@@ -7404,6 +7404,10 @@ void golem_creation(int Ind, int max)
 	m_ptr->cdis = 0;
 	m_ptr->mind = GOLEM_NONE;
 
+	/* prevent other players from killing it on accident */
+	r_ptr->flags8 |= RF8_NO_AUTORET | RF8_GENO_PERSIST;
+	r_ptr->flags7 |= RF7_NO_TARGET;
+
 	/* Update the monster */
 	update_mon(c_ptr->m_idx, TRUE);
 }
