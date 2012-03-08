@@ -6210,6 +6210,7 @@ void do_slash_cmd(int Ind, char *message)
 					    (houses[i].dna->owner_type == OT_PLAYER)) {
 						m = lookup_player_mode(houses[i].dna->owner);
 						if (m != houses[i].dna->mode) {
+							s_printf("hmode %d; ", i);
 							houses[i].dna->mode = m;
 							k++;
 						}
@@ -6219,6 +6220,7 @@ void do_slash_cmd(int Ind, char *message)
 						}
 					}
 				}
+				s_printf("done.");
 				msg_format(Ind, "Houses that had their ownership changed: %d. Colour-mode changed: %d", k, tk);
 				return;
 			}
