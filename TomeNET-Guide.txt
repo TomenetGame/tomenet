@@ -6949,16 +6949,12 @@ Teleportation rings: Explode for teleportation.
 
 (5.9b) Artifacts and artifact resets
 ------------------------------------
+Artifact types in general
+-------------------------
 Some items are 'named', those possess especially great magic powers and are
 also called 'Artifacts'.
 Different from other items artifacts will pseudo-ID as 'special' (given
 sufficient combat/magic/archery skill) or as 'terrible' if they are cursed.
-
-Artifacts are unique. If an artifact is owned by a player, noone else can find
-it anymore until it's lost (for example if the player dies) or sold to a shop.
-Depending on a server's configuration artifacts usually stay a while in the
-shop and can be bought by other players before they finally disappear from the
-stock.
 
 The artifact name can either be given as a real name, for example:
     The Dagger 'Nimthanc'
@@ -6970,17 +6966,44 @@ To find out all about the magic powers of an artifact it needs to be
 *identified*, for example by a 'Scroll of *Identify*' or in one of the *ID*
 shops that occur in every town, which will usually cost around 2000..3000 gold.
 
-There are two types of artifacts, 'true artifacts' (also called 'static
-artifacts') and 'random artifacts' or short 'randarts'.
+Some artifacts can be 'A'ctivated for a special effect. This will be shown
+in the list of its powers that you get when *identifying* it.
 
+Artifact ammunition never breaks or (in case of boomerangs) falls down to the
+floor instead of returning. Artifact weapons are harder to get disarmed.
+
+There are two classes of artifacts, 'true artifacts' (also called 'static
+artifacts') and 'random artifacts' or short 'randarts':
+
+
+True artifacts
+--------------
 True artifacts are predefined in the a_info.txt file and will always sell for
 their defined value even if they have not been *identified*.
+
+True Artifacts are unique. If an artifact is owned by a player, noone else can
+find it anymore until it's lost (for example if the player dies) or sold to a
+shop, or if the player drops it on the ground and leaves it behind.
+Depending on a server's configuration artifacts that are sold to shops usually
+stay a while in the shop and can be bought by other players before they finally
+disappear from the stock.
+
 Usually true artifacts may not be dropped into a house (will just disappear!)
 and may not be carried by winners, ie characters that have beaten Morgoth.
 Since static artifacts are predefined and have fixed abilities, their number
-therefore is limited. Thanks to the existance of random artifacts, this won't
-be able to cause any shortage of artifacts that can be found though:
+therefore is limited. Thanks to the existance of random artifacts (see below)
+this won't be able to cause any shortage of artifacts that can be found though.
 
+Static artifacts will also be erased if they are left on the ground and the
+dungeon level or worldmap sector gets 'unstaticed', that means it gets reset
+because no players have been on it for a while (can be a few seconds for world
+map sectors or dungeon floors that are left without any players on them, and up
+to many hours in case someone ghost-died on a dungeon level, which can render
+the dungeon level 'static' for that time to allow others to retrieve the loot).
+
+
+Random Artifacts
+----------------
 Random artifacts are composed randomly and even if they happen to bear the same
 name might have totally different powers. Randarts need to be *identified* to
 sell for what they are really worth.
@@ -6997,6 +7020,9 @@ The advantage of creating an artifact is that the player can determine the base
 item type he wants to use. For more information about artifact creation see
 (8.4).
 
+
+Artifacts vs Nazgul
+-------------------
 Artifacts greatly resist Nazguls, which cause most other weapons to break more
 or less instantly. So even if an artifact weapon you find seems not very
 appealing in particular you might want to keep it just for slaying Nazgul.
@@ -7005,9 +7031,9 @@ appealing in particular you might want to keep it just for slaying Nazgul.
 Note: 'The Stormbringer' is not a real artifact but it will show the same
 resilience as true artifacts and random artifacts vs Nazgul.
 
-Some artifacts can be 'A'ctivated for a special effect. This will be shown
-in the list of its powers that you get when *identifying* it.
 
+Bonus from wearing similarly named artifacts
+--------------------------------------------
 If you wear/wield multiple artifacts of similar name, you will receive a luck
 bonus (see (5.8), 'LUCK', for details about luck). For example if you equip
     The Whip of Gothmog    (which happens to be a true artifact)
@@ -7022,9 +7048,6 @@ Artifacts of any type cannot be enchanted by any means, nor harmed by elemental
 attacks of any type. Also they have a high chance to resist disenchantment
 effects. (If the player actually resists disenchantment already then they are
 completely safe.)
-
-Artifact ammunition never breaks or (in case of boomerangs) falls down to the
-floor instead of returning. Artifact weapons are harder to get disarmed.
 
 
 Artifact resets
