@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 4. March 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 9. March 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -102,7 +102,7 @@ Contents
     (5.8)   Special abilities of items
     (5.9)   What does item xxx do exactly?
     (5.9a)  Activatable items
-    (5.9b)  Artifacts
+    (5.9b)  Artifacts and artifact resets
     (5.10)  Destruction of items by elemental attacks
     (5.11)  Monster attack mechanism, Armour Class, damage caps
     (5.12)  Monster attack types and brands
@@ -6947,8 +6947,8 @@ Elemental rings: Breath the ring element and temporary resistance to it.
 Teleportation rings: Explode for teleportation.
 
 
-(5.9b) Artifacts
-----------------
+(5.9b) Artifacts and artifact resets
+------------------------------------
 Some items are 'named', those possess especially great magic powers and are
 also called 'Artifacts'.
 Different from other items artifacts will pseudo-ID as 'special' (given
@@ -7025,6 +7025,23 @@ completely safe.)
 
 Artifact ammunition never breaks or (in case of boomerangs) falls down to the
 floor instead of returning. Artifact weapons are harder to get disarmed.
+
+
+Artifact resets
+---------------
+Depending on the server settings, an 'artifact reset' occurs usually every
+three months, starting on 1st january.
+This reset will erase all true artifacts players carry, and therefore make all
+of them findable again, since there can only exist one of each true artifact at
+a time. So the main purpose is to prevent characters from hoarding true arts
+indefinitely.
+Also, art resets can cause a sort of art rush (like gold rush but with true
+artifacts), because everyone will be in a race to find the low-level yet useful
+ones which have a relatively high drop chance.
+You do not need to sell all your true artifacts before the reset occurs,
+because characters will automatically get paid the full value of the artifacts,
+which is even more than you'd get in shops (because charisma and shop keeper
+race factors in in stores, reducing the price you get).
 
 
 
