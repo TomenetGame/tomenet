@@ -5861,8 +5861,10 @@ Hold Life       This will provide some protection against experience drain;
 Further, there are several high resistances:
 --------------------------------------------
 (Poison         was described above, at the end of the basic resistances.)
-Water           Water resistance is rare. Water attacks can stun and confuse
-                you if you don't resist them and usually do a lot of damage.
+Water           Water resistance is rare (an *ID*ed item will say
+                'it provides resistance to unleashed water').
+                Water attacks can stun and confuse you if you don't resist
+                them and usually do a lot of damage.
                 Resistance will cut damage to 1/3.
                 If you're a mimicking an aquatic monster the damage will be
                 further cut down to 1/4.
