@@ -13189,6 +13189,7 @@ The differences between RPG ruleset and normal servers are as follows:
   -Quests usually require you to find fewer specimen.
   -Temporary luck bonus from deeds is somewhat longer.
   -Usually, scheduled artifact resets happen less frequently (if at all).
+   (See (5.9b) for more information about artifact resets.)
   -Halloween event allows players up to 40 instead of 35,
    and the Great Pumpkin spawns on floors up to level 49 instead of 39.
   -Stealing from stores is possible right away instead of requiring a certain
