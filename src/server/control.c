@@ -115,7 +115,7 @@ static int Packet_println(sockbuf_t *s, cptr fmt, ...) {
 /* GW connection handler */
 void SGWHit(int read_fd, int arg) {
 	int i, sock, bytes;
-	gw_connection_t *gw_conn;
+	gw_connection_t *gw_conn = NULL;
 	char buf[MSG_LEN];
 
 	/* Check if it's a new client */
@@ -125,6 +125,7 @@ void SGWHit(int read_fd, int arg) {
 			
 		if (sock == -1) {
 			s_printf("Failed to accept GW port connection (errno=%d)\n", errno);
+			return;
 		}
 
 		/* Check if we have room for it */
@@ -164,28 +165,27 @@ void SGWHit(int read_fd, int arg) {
 		
 		/* The connection has either been accepted or not, we're done */
 		return;
-	} else {
-		/* Find the matching connection */
-		for (i = 0; i < MAX_GW_CONNS; i++) {
-			gw_conn = &gw_conns[i];
+	}
+
+	/* Find the matching connection */
+	for (i = 0; i < MAX_GW_CONNS; i++) {
+		gw_connection_t *gw_conn2 = &gw_conns[i];
 			
-			if (gw_conn->state == CONN_CONNECTED) {
-				if (gw_conn->sock == read_fd) {
-					break;
-				}
-			}
-			
-			gw_conn = NULL;
-		}
-		
-		if (!gw_conn) {
-			s_printf("No GW connection found for socket number %d\n", read_fd);
+		if (gw_conn2->state == CONN_CONNECTED && gw_conn2->sock == read_fd) {
+			gw_conn = gw_conn2;
+			break;
 		}
 	}
-	
+
+	if (!gw_conn) {
+		s_printf("No GW connection found for socket number %d\n", read_fd);
+		DgramClose(read_fd);
+		return;
+	}
+
 	/* Read the message */
 	bytes = DgramReceiveAny(read_fd, gw_conn->r.buf + gw_conn->r.len, gw_conn->r.size - gw_conn->r.len);
-	
+
 	/* Check for errors or our TCP connection closing */
 	if (bytes <= 0)
 	{
@@ -206,6 +206,8 @@ void SGWHit(int read_fd, int arg) {
 		{
 			/* Clear the error condition for the contact socket */
 			GetSocketError(read_fd);
+
+			s_printf("Failed to read from GW client!\n");
 		}
 		return;
 	}
@@ -371,11 +373,13 @@ void SGWTimeout() {
 	now = time(NULL);
 	
 	/* Go through all gateway connections */
-	for (i = 0; i < gw_conns_num; i++) {
+	for (i = 0; i < MAX_GW_CONNS; i++) {
 		gw_conn = &gw_conns[i];
 		if (gw_conn->state == CONN_CONNECTED) {
 			/* Check for timeout */
 			if (gw_conn->last_activity + GW_CONN_TIMEOUT < now) {
+				s_printf("GW client timeout\n");
+
 				/* Close the connection */
 				gw_conn->state = CONN_FREE;
 				Sockbuf_cleanup(&gw_conn->r);

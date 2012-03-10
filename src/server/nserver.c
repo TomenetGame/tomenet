@@ -952,10 +952,12 @@ void setup_contact_socket(void)
 		s_printf("Couldn't create server gateway port\n");
 		return;
 	}
-	if (SetSocketNonBlocking(Socket, 1) == -1)
+#if 0
+	if (SetSocketNonBlocking(SGWSocket, 1) == -1)
 	{
 		plog("Can't make GW socket non-blocking");
 	}
+#endif
 
 	/* Install the new gateway socket */
 	install_input(SGWHit, SGWSocket, 0);
