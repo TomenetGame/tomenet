@@ -2905,7 +2905,7 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "\377GYou have regained %d skill points.", gain);
 
 				/* in case we changed mimicry skill */
-				do_mimic_change(Ind, 0, TRUE);
+				if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
 
 				/* Update all skills */
 				calc_techniques(Ind);
