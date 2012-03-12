@@ -6220,7 +6220,7 @@ void do_slash_cmd(int Ind, char *message)
 						}
 					}
 				}
-				s_printf("done.");
+				s_printf("done (chown %d, chcol %d)\n.", k, tk);
 				msg_format(Ind, "Houses that had their ownership changed: %d. Colour-mode changed: %d", k, tk);
 				return;
 			}
