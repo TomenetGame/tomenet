@@ -57,11 +57,14 @@ ENTPOTION = add_spell
         ["mana_max"] = 	15,
         ["fail"] = 	20,
         ["spell"] = 	function()
-        		set_food(Ind, PY_FOOD_MAX - 1)
-                        msg_print(Ind, "The Ent's Potion fills your stomach.")
-                        if player.spell_project > 0 then
-                                fire_ball(Ind, GF_SATHUNGER_PLAYER, 0, 1, player.spell_project, "")
-                        end
+				--if player.suscep_life == false then
+				if player.prace ~= RACE_VAMPIRE then
+					set_food(Ind, PY_FOOD_MAX - 1)
+					msg_print(Ind, "The Ent's Potion fills your stomach.")
+				end
+				if player.spell_project > 0 then
+					fire_ball(Ind, GF_SATHUNGER_PLAYER, 0, 1, player.spell_project, "")
+				end
         		if get_level(Ind, ENTPOTION, 50) >= 5 then
                         	set_afraid(Ind, 0)
 	                        if player.spell_project > 0 then
