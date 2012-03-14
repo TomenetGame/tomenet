@@ -897,8 +897,8 @@ void setup_contact_socket(void)
 	{
 		plog("Can't make contact socket non-blocking");
 	}
-#ifndef WINDOWS
-	/* HACK - Make the socket close-on-exec - mikaelh */
+#ifdef FD_CLOEXEC
+	/* Make the socket close-on-exec if possible - mikaelh */
 	if (fcntl(Socket, F_SETFD, FD_CLOEXEC) == -1)
 	{
 		plog("Can't make contact socket close-on-exec");
@@ -932,6 +932,13 @@ void setup_contact_socket(void)
 		s_printf("Couldn't create console socket\n");
 		return;
 	}
+#ifdef FD_CLOEXEC
+	/* Make the socket close-on-exec if possible - mikaelh */
+	if (fcntl(Socket, F_SETFD, FD_CLOEXEC) == -1)
+	{
+		plog("Can't make console socket close-on-exec");
+	}
+#endif
 	if (SocketLinger(ConsoleSocket) == -1)
 	{
 		plog("Couldn't set SO_LINGER on the console socket");
@@ -952,6 +959,13 @@ void setup_contact_socket(void)
 		s_printf("Couldn't create server gateway port\n");
 		return;
 	}
+#ifdef FD_CLOEXEC
+	/* Make the socket close-on-exec if possible - mikaelh */
+	if (fcntl(SGWSocket, F_SETFD, FD_CLOEXEC) == -1)
+	{
+		plog("Can't make contact socket close-on-exec");
+	}
+#endif
 #if 0
 	if (SetSocketNonBlocking(SGWSocket, 1) == -1)
 	{
