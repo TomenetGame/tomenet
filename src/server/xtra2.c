@@ -5946,6 +5946,92 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 	Destroy_connection(p_ptr->conn, buf);
 }
 
+static void inven_death_damage(int Ind, int verbose) {
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr;
+	char o_name[ONAME_LEN];
+	int shuffle[INVEN_PACK];
+	int inventory_loss = 0;
+	int i, j;
+
+	for (i = 0; i < INVEN_PACK; i++) shuffle[i] = i;
+	intshuffle(shuffle, INVEN_PACK);
+
+	/* Destroy some items randomly */
+	for (i = 0; i < INVEN_PACK; i++) {
+		j = shuffle[i];
+		o_ptr = &p_ptr->inventory[j];
+		if (!o_ptr->k_idx) continue;
+
+		if (magik(DEATH_PACK_ITEM_LOST)) {
+			object_desc(Ind, o_name, o_ptr, TRUE, 3);
+			s_printf("item_lost: %s (slot %d)\n", o_name, j);
+
+			if (verbose) {
+				/* Message */
+				msg_format(Ind, "\376\377oYour %s %s destroyed!", o_name,
+				                ((o_ptr->number > 1) ? "were" : "was"));
+			}
+
+			if (true_artifact_p(o_ptr)) {
+				/* set the artifact as unfound */
+				handle_art_d(o_ptr->name1);
+			}
+
+			inven_item_increase(Ind, j, -(o_ptr->number));
+			inven_item_optimize(Ind, j);
+			inventory_loss++;
+
+			if (inventory_loss >= 4) {
+				break;
+			}
+		}
+	}
+}
+
+static void equip_death_damage(int Ind, int verbose) {
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr;
+	char o_name[ONAME_LEN];
+	int shuffle[INVEN_TOTAL];
+	int equipment_loss = 0;
+	int i, j;
+
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) shuffle[i] = i;
+	intshuffle(shuffle + INVEN_WIELD, INVEN_EQ);
+
+	/* Destroy some items randomly */
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
+		j = shuffle[i];
+		o_ptr = &p_ptr->inventory[j];
+		if (!o_ptr->k_idx) continue;
+
+		if (magik(DEATH_EQ_ITEM_LOST)) {
+			object_desc(Ind, o_name, o_ptr, TRUE, 3);
+			s_printf("item_lost: %s (slot %d)\n", o_name, j);
+
+			if (verbose) {
+				/* Message */
+				msg_format(Ind, "\376\377oYour %s %s destroyed!", o_name,
+				                ((o_ptr->number > 1) ? "were" : "was"));
+			}
+
+			if (true_artifact_p(o_ptr)) {
+				/* set the artifact as unfound */
+				handle_art_d(o_ptr->name1);
+			}
+
+			inven_item_increase(Ind, j, -(o_ptr->number));
+			inven_item_optimize(Ind, j);
+			equipment_loss++;
+
+			if (equipment_loss >= 1) {
+				break;
+			}
+		}
+	}
+}
+
 /*
  * Handle the death of a player and drop their stuff.
  */
@@ -6308,6 +6394,14 @@ void player_death(int Ind)
 	}
 
 	/* Drop/lose items -------------------------------------------------- */
+
+#ifdef DEATH_PACK_ITEM_LOST
+	inven_death_damage(Ind, FALSE);
+#endif
+#ifdef DEATH_EQ_ITEM_LOST
+	equip_death_damage(Ind, FALSE);
+#endif
+
 	/* Setup the sorter */
 	ang_sort_comp = ang_sort_comp_value;
 	ang_sort_swap = ang_sort_swap_value;
@@ -6344,18 +6438,24 @@ void player_death(int Ind)
 			}
 		}
 
+#if 0
+		/* Replaced by equip_death_damage() - mikaelh */
 #ifdef DEATH_PACK_ITEM_LOST
 		if ((real_pos < INVEN_PACK) && magik(DEATH_PACK_ITEM_LOST) && (inventory_loss < 4)) {
 			inventory_loss++;
 			item_lost = TRUE;
 		}
 #endif
+#endif
 
+#if 0
+		/* Replaced by inven_death_damage() - mikaelh */
 #ifdef DEATH_EQ_ITEM_LOST
 		if ((real_pos > INVEN_PACK) && magik(DEATH_EQ_ITEM_LOST) && (equipment_loss < 1)) {
 			item_lost = TRUE;
 			equipment_loss++;
 		}
+#endif
 #endif
 
 		if (!is_admin(p_ptr) && !p_ptr->inval && (p_ptr->max_plv >= cfg.newbies_cannot_drop) &&

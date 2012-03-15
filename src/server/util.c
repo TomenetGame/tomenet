@@ -5407,3 +5407,17 @@ void set_dungeon_bonus(int id, bool reset) {
 		dungeon_bonus[id] = 0;
 }
 #endif
+
+/*
+ * Shuffle an array of integers using the Fisher-Yates algorithm.
+ */
+void intshuffle(int *array, int size) {
+	int i, j, tmp;
+
+	for (i = size - 1; i > 0; i--) {
+		j = rand_int(i + 1);
+		tmp = array[i];
+		array[i] = array[j];
+		array[j] = tmp;
+	}
+}

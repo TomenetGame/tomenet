@@ -1698,6 +1698,8 @@ extern void reindex_dungeons();
 extern void set_dungeon_bonus(int id, bool reset);
 #endif
 
+extern void intshuffle(int *array, int size);
+
 /* xtra2.c */
 
 #ifdef ARCADE_SERVER
