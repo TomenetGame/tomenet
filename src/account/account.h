@@ -1,3 +1,4 @@
+#include <stdint.h>
 
 /* account flags */
 #define ACC_TRIAL	0x00000001	/* Account is awaiting validation */
@@ -18,23 +19,18 @@
 #define ACC_DELD	0x00008000	/* Delete account/members */
 #define ACC_WARN_REST	0x80000000	/* Received a one-time warning about resting */
 
-/*
- * new account struct - pass in player_type will be removed
- * this will provide a better account management system
- */
+#define u32b uint32_t
+#define s32b int32_t
+
 struct account{
-#if 0
-	/* sorry evileye, I needed it to have this run -jir- */
-	u_int32_t id;	/* account id */
-	u_int16_t flags;	/* account flags */
-#else
-	unsigned int id;	/* account id */
-	unsigned int flags;	/* account flags */
-#endif	/* 0 */
-	char name[30];	/* login */
-	char pass[20];	/* some crypts are not 13 */
-	/* new additions - C. Blue */
-	time_t acc_laston;	/* last time this account logged on (for expiry check) */
-	signed int cheeze;	/* value in gold of cheezed goods or money */
-	signed int cheeze_self; /* value in gold of cheezed goods or money to own characters */
+	u32b id;        /* account id */
+	u32b flags;     /* account flags */
+	char name[30];  /* login */
+	char pass[20];  /* some crypts are not 13 */
+	time_t acc_laston;      /* last time this account logged on (for expiry check) */
+	s32b cheeze;    /* value in gold of cheezed goods or money */
+	s32b cheeze_self; /* value in gold of cheezed goods or money to own characters */
+	char deed_event;        /* receive a deed for a global event participation? */
+	char deed_achievement;  /* receive a deed for a (currently PvP) achievement? */
+	s32b guild_id;  /* auto-rejoin its guild after a char perma-died */
 };
