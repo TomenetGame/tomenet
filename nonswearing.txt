@@ -71,3 +71,5 @@ stfut
 watch
 water
 what
+glove
+gauntlet
