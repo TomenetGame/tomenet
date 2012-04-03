@@ -1252,6 +1252,9 @@ void peruse_file(void)
 
 		/* allow chatting, as it's now also possible within stores */
 		if (k == ':') cmd_message();
+		/* and very handy for *ID*ing: inscribe this item */
+		if (k == '{') cmd_inscribe();
+		if (k == '}') cmd_uninscribe();
 
 		/* Exit on escape */
 		if (k == ESCAPE || k == KTRL('X')) break;
