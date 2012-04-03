@@ -1250,6 +1250,9 @@ void peruse_file(void)
 		/* Take a screenshot */
 		if (k == KTRL('T')) xhtml_screenshot("screenshot????");
 
+		/* allow chatting, as it's now also possible within stores */
+		if (k == ':') cmd_message();
+
 		/* Exit on escape */
 		if (k == ESCAPE || k == KTRL('X')) break;
 
