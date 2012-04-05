@@ -2719,10 +2719,10 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet) {
 			case '<': lcopy[i] = 'c'; break;
 			case '!': lcopy[i] = 'i'; break;
 			case '|': lcopy[i] = 'i'; break;
-			case '(': lcopy[i] = 'i'; break;
-			case ')': lcopy[i] = 'i'; break;
-			case '/': lcopy[i] = 'i'; break;
-			case '\\': lcopy[i] = 'i'; break;
+//			case '(': lcopy[i] = 'c'; break;
+//			case ')': lcopy[i] = 'i'; break;
+//			case '/': lcopy[i] = 'i'; break;
+//			case '\\': lcopy[i] = 'i'; break;
 			case '$': lcopy[i] = 's'; break;
 			case '+': lcopy[i] = 't'; break;
 			case '1': lcopy[i] = 'i'; break;
