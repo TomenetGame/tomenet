@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 9. March 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 9. April 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10728,7 +10728,7 @@ Wyvern                  speedy; can fly; passes most terrains;
                         immune to poison; susceptible to 'good'
 
 Multi-hued Hound        resists fire/cold/lightning/acid/poison and gets a
-(Code 512)              random immunity of those five on polymorphing;
+(Code 513)              random immunity of those five on polymorphing;
                         can't be confused or paralyzed;
                         can breathe the five elements mentioned above
 
