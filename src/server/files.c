@@ -2090,21 +2090,20 @@ static errr predict_score(int Ind, int line)
 	/* See where the entry would be placed */
 #ifndef NEW_HISCORE
 	j = highscore_where(&the_score, &move_up, &move_down);
-
-	/* Hack -- Display the top fifteen scores */
-	if (j < (SCORES_SHOWN - 1))  /* 10 */
-	{
+	/* Hack -- Display the top n scores */
+	if (is_admin(p_ptr))
+		display_scores_aux(Ind, line, -1, NULL);
+	else if (j < (SCORES_SHOWN - 1))
 		display_scores_aux(Ind, line, j, &the_score);
-	}
-
 	/* Display some "useful" scores */
 	else
-	{
 		display_scores_aux(Ind, line, SCORES_SHOWN - 1, &the_score);  /* -1, NULL */
-	}
 #else
 	j = highscore_where(&the_score, &erased_slot);
-	display_scores_aux(Ind, line, j, erased_slot, &the_score);
+	if (is_admin(p_ptr))
+		display_scores_aux(Ind, line, -1, -1, NULL);
+	else
+		display_scores_aux(Ind, line, j, erased_slot, &the_score);
 #endif
 
 
