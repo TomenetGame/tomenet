@@ -6052,7 +6052,10 @@ void player_death(int Ind)
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	char buf[1024], o_name[ONAME_LEN], m_name_extra[MNAME_LEN], msg_layout = 'a';
-	int i, inventory_loss = 0, equipment_loss = 0, k, j, tries = 0;
+	int i, k, j, tries = 0;
+#if 0
+	int inventory_loss = 0, equipment_loss = 0;
+#endif
 //	int inven_sort_map[INVEN_TOTAL];
 	//wilderness_type *wild;
 	bool hell = TRUE, secure = FALSE, ge_secure = FALSE, pvp = ((p_ptr->mode & MODE_PVP) != 0);
