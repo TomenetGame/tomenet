@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 9. April 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 1. May 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -147,6 +147,7 @@ Contents
     (7.3)   Surviving critical situations
     (7.4)   Spoiler files
     (7.5)   Monster tactics
+    (7.6)   Town/dungeon related hints
 (8) Miscellanous
     (8.1)   'The Art Not To Die'
     (8.2)   Character dumps
@@ -4214,8 +4215,8 @@ who is wealthy and in urgent need of your items.
 See (5.7) for more information about ID, *ID* and shops!
 
 
-Towns
------
+Towns & Town Dungeons
+---------------------
 Here is a list of towns and their corresponding local dungeons:
 NOTE: Minimum level requirements for entering might be disabled, based on
       the server's settings.
@@ -4242,11 +4243,15 @@ the slowdown won't bother you but come in handy. For example if you enter
 Mordor you will notice a slowdown to to approx. 1/2 standard time.
 See (4.14) for more information about the in-game time system.
 
+Some advice regarding towns and town dungeons can be found at (7.6).
+
 
 Dungeons
 --------
-Also, there are several dungeons that aren't bound to a town. Here's a list:
-(The staircase colour in-game indicates the dungeon type, compare (4.3).)
+This paragraph is about dungeons that don't belong to any town.
+For dungeons that belong to specific towns, see the paragraph 'Towns' above.
+
+The staircase colour of a dungeon indicates the dungeon type, compare (4.3).
 
 'Depth/Level' describe a dungeon's starting level and final level. Depth is
 actually just a different way for expressing a dungeon floor level, so they're
@@ -12146,7 +12151,7 @@ Beginners (level 1)
 
 Low level character (up to 15)
 ------------------------------
-+ Several Rations of Food, Some Flasks of Oil
++ Several Rations of Food or Scrolls of Satisfy Hunger, some Flasks of Oil
 + Some Potions of Heroism
 + Some Potions of Cure Serious Wounds / Critical Wounds
   Note that Potions of Cure Critical Wounds also remove certain effects like
@@ -12297,6 +12302,9 @@ Low level character (up to 15)
   will become less powerful if used together with a shield, and some weapons
   cannot be used at all in conjunction with a shield. A fighter should have
   approx. 30..45 AC or more.
++ Buy a fire resistance ring as soon as possible because many monsters can use
+  fire spells early on. Also get an acid resistance amulet maybe, since acid
+  damage is especially nasty to your inventory and equipment.
 
 
 Medium level character (up to 25)
@@ -12715,6 +12723,35 @@ If a monster is low on HP or scared it might try to use escape spells and if
 it's low on HP or stunned it might emphasize heal spells (the chance to
 successfully cast those is also negatively affected by stun same as all other
 spells - compare (4.12)).
+
+
+
+(7.6) Town/dungeon related hints
+--------------------------------
+-Before going as deep as 1000 ft (ie dungeon level 20) or deeper, make sure
+ that you have 'free action' because many monsters will be able to try and
+ paralyze you.
+
+-For Mordor make sure you have the four base resistances and also free action.
+ You might also want to get nexus resistance as soon as possible because nexus
+ attacks can swap your six character attributes randomly.
+
+-For Paths of the Dead you should also have nether resistance and 'hold life'
+ because many undead monsters have nether-based attacks or can drain your
+ experience points.
+
+-When going even deeper the next resistance you want is probably chaos, since
+ it can deal excessive damage and potentially deadly side effects (experience
+ drain, hallucination and confusion) all at once. After that maybe comes
+ disenchantment resistance to protect your equipment, or sound resistance to
+ avoid getting knocked out by certain attacks such as sound, and especially
+ water and plasma (hound packs of those types can knock you out quickly).
+
+-In Gondolin mindcrafters and archers may spawn. You should enter the local
+ inn if you want to go AFK so you don't get killed by their ranged attacks.
+
+-Minas Anor, Lothlorien and especially Khazad-dum can spawn swordmasters or
+ even grand swordmasters, which can disarm you and deal heavy damage. Beware.
 
 
 
