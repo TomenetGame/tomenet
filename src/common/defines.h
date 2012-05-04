@@ -7044,7 +7044,8 @@ extern int PlayerUID;
 	No undead/nonliving material beings; no Invisible Stalker/Unmaker/Death Orb. */
 /*	!(r_info[ridx].flags3 & (RF3_UNDEAD | RF3_NONLIVING)) && !(r_info[ridx].d_char == 'O')) || \ */
 #define mimic_shaman(ridx)	\
-	((((r_info[ridx].flags3 & (RF3_ANIMAL | RF3_DRAGON | RF3_GIANT | RF3_DRAGONRIDER)) || \
+	((ridx == 0) || \
+	(((r_info[ridx].flags3 & (RF3_ANIMAL | RF3_DRAGON | RF3_GIANT | RF3_DRAGONRIDER)) || \
 	(r_info[ridx].d_char == 'H') || (r_info[ridx].d_char == 'T')) && \
  	!(r_info[ridx].flags3 & (RF3_UNDEAD | RF3_NONLIVING))) || \
 	(r_info[ridx].d_char == 'G') || mimic_shaman_E(ridx) || (r_info[ridx].d_char == 'X') || \
@@ -7053,7 +7054,8 @@ extern int PlayerUID;
 	((r_info[ridx].d_char == 'E') && !(ridx == 514 || ridx == 815 || ridx == 975))
 /*	Druid: Selected Animals and animal-similar creatures. */
 #define mimic_druid(ridx, plv)	\
-	((plv >= 5 && (ridx == 160 || ridx == 198)) || \
+	((ridx == 0) || \
+	(plv >= 5 && (ridx == 160 || ridx == 198)) || \
 	(plv >= 10 && (ridx == 191 || ridx == 154)) || \
 	(plv >= 15 && (ridx == 279 || ridx == 343)) || \
 	(plv >= 20 && (ridx == 414 || ridx == 335 || ridx == 898 || ridx == 963)) || \
@@ -7061,7 +7063,7 @@ extern int PlayerUID;
 	(plv >= 30 && (ridx == 440 || ridx == 641 || ridx == 482)) || \
 	(plv >= 35 && (ridx == 614 || ridx == 726 || ridx == 964)) || \
 	(plv >= 40 && (ridx == 688 || ridx == 640 || ridx == 740)) || \
-	(plv >= 45 && (ridx == 723 || ridx == 704)) || /* || ridx == 716)) || \ */ \
+	(plv >= 45 && (ridx == 723 || ridx == 704)) || /* || ridx == 716 || \ */ \
 	(plv >= 50 && (ridx == 705 || ridx == 778 || ridx == 775)) || /* 782 */ \
 	(plv >= 55 && (ridx == 1131)) || \
 	(plv >= 60 && (ridx == 1127)))
@@ -7070,11 +7072,13 @@ extern int PlayerUID;
 	    1127 firebird, 739 ethereal hound? */
 /* for vampires, who learn to transform into a vampire bat and back for transportation - C. Blue */
 #define mimic_vampire(ridx, plv)	\
-	(plv >= 20 && ridx == 391)
+	((ridx == 0) || \
+	(plv >= 20 && ridx == 391))
 //	add vampiric mist at higher level or something
 
 #define mimic_hatchling(ridx)	\
-	((r_info[ridx].flags3 & (RF3_DRAGON))
+	((ridx == 0) || \
+	(r_info[ridx].flags3 & RF3_DRAGON))
 
 
 /* for global_event - C. Blue */

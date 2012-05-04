@@ -6525,16 +6525,16 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			}
 			case SV_RING_POLYMORPH:
 			{
+				if(!(item == INVEN_LEFT || item == INVEN_RIGHT)){
+					msg_print(Ind, "You must be wearing the ring!");
+					return;
+				}
+
 				if (!get_skill(p_ptr, SKILL_MIMIC) ||
 				    (p_ptr->pclass == CLASS_DRUID) ||
 				    (p_ptr->prace == RACE_VAMPIRE) ||
 				    (p_ptr->pclass == CLASS_SHAMAN && !mimic_shaman(o_ptr->pval))) {
 					msg_print(Ind, "The ring starts to glow brightly, then fades again");
-					return;
-				}
-
-				if(!(item == INVEN_LEFT || item == INVEN_RIGHT)){
-					msg_print(Ind, "You must be wearing the ring!");
 					return;
 				}
 
