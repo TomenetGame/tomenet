@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 1. May 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 12. May 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -3267,7 +3267,7 @@ F12 use a magic device on the closest target        \e)*t/1-        @/1
 -   Cast phase door.                     \e)m@11\r@Phase Door\r    -none-
 0   Cast manathrust at nearest target \e)*tm@11\r@Manathrust\r-    -none-
 
-This low level istari might be armed with a sling to support his yet weak
+This low level istar might be armed with a sling to support his yet weak
 magic, so the F1 macro makes sense. Assuming that he uses the numpad keys for
 movement, the keys +, - and 0 were used to allow quick access to his basic
 spells. - and 0 use his startup book 'Beginner Cantrips' while the macro on
@@ -7323,7 +7323,7 @@ SHRIEK          Not a real spell but a physical action, some monsters can emit
                 well be reason enough to teleport out instantly.
 TRAPS           Again not a spell but nasty nevertheless. The monster casts a
                 3x3 'circle' of traps around you, watch where you step.
-UNMAGIC         This can be extremely nasty for Istari. Unmagic cancels nearly
+UNMAGIC         This can be extremely nasty for istari. Unmagic cancels nearly
                 all kind of magic effects your character is currently under,
                 such as speed from a speed potion and even Disruption Shield.
                 This won't affect classes much such as warriors and archers but
@@ -7659,14 +7659,14 @@ experience points permanently. Here are some details about that process:
 --------------------------
 Runes are magical symbols used to summon and manipulate the raw elemental
 forces which sustain the world of life. They are the motivating force behind
-the traditional systems of magic in TomeNET. The Istari's spell-scroll, for
+the traditional systems of magic in TomeNET. The istari spell-scrolls, for
 example, are composed of a series of complicated runes which both protect the
 mage from immediate harm, and create the desired effect: from fireballs to
 magical satiation.
 
 Runemasters are less methodical in their approach to magic. Having learned
 to summon elemental forces without the aid of the traditional precautions,
-limitations and potential inefficiencies of the complex Istari spell system,
+limitations and potential inefficiencies of the complex istari spell system,
 Runemasters deal directly with the 'pure' substance of magic, and are limited
 only by their wits, their strength and their skill.
 
@@ -9822,7 +9822,7 @@ vary. For example a warrior cannot learn magic spells.
     to destroy the evil that lurks within, and if treasure just happens to
     fall into their packs, well, so much more to the glory of their church!
     They are very good with magical devices, preferring to call them
-    instruments of their god, but are not as good as Istari in their use.
+    instruments of their god, but are not as good as istari in their use.
     Priests also have excellent saving throws due to divine intervention.
     Priests make decent fighters, preferring blunt weapons over edged ones.
     Wisdom is the priest's primary stat.
@@ -10992,8 +10992,8 @@ Schools give certain permanent boni and abilities to the player, when trained
 to a certain extent. The boni are listed below each school.
 
 
-Istari schools:
----------------
+Istar schools:
+--------------
 Mana
     Manathrust      Casts a powerful mana bolt.
                     Required skill level for first spell level: 1.
