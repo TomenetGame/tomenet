@@ -3001,6 +3001,8 @@ to their real functionality. They are:
   I for using a mimic's 'transform-into-specific' power.
     Example:  I191
     This will become  \e)@m3\rc191\r  (transform into a Grizzly Bear).
+    Clients of versions greater than 4.4.8c also support entering a monster
+    name instead of its code, example:  I@Fruit bat\
   F for employing a fighting technique
     Example:  Fa
     (Use fighting technique 'a)', which usually is 'sprint'.)
