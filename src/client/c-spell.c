@@ -531,6 +531,12 @@ void do_mimic()
 
 		/* input is a string? */
 		if (atoi(out_val) == 0 && !strchr(out_val, '0')) {
+			/* hack for quick'n'dirty macros */
+			if (out_val[0] == '@') {
+				for (j = 1; out_val[j]; j++) out_val[j - 1] = out_val[j];
+				out_val[j - 1] = '\0';
+			}
+
 			if (monster_list_idx == 0) {
 				c_msg_print("Cannot specify monster by name: File lib/game/r_info.txt not found!");
 				return;
