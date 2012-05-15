@@ -3685,6 +3685,12 @@ void interact_macros(void)
 							}
 							mimic_transform = mimic_transform_by_name = FALSE;
 						}
+						break;
+					default:
+						if (mimic_transform && ((*bptr) < '0' || (*bptr) > '9')) {
+							*b2ptr++ = '\\'; *b2ptr++ = 'r';
+							mimic_transform = FALSE;
+						}
 					}
 
 					switch (*bptr) {
