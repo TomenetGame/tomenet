@@ -3515,6 +3515,7 @@ static void init_stuff(void)
 #if !defined(USE_LOGFONT) || defined(USE_GRAPHICS) || defined(USE_SOUND)
 	validate_dir(ANGBAND_DIR_XTRA);	/* Sounds & Graphics */
 #endif
+	validate_dir(ANGBAND_DIR_GAME);
 
 #ifndef USE_LOGFONT
 	// Build the "font" path

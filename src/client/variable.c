@@ -152,6 +152,7 @@ cptr ANGBAND_DIR_SCPT;
 cptr ANGBAND_DIR_TEXT;
 cptr ANGBAND_DIR_USER;
 cptr ANGBAND_DIR_XTRA;
+cptr ANGBAND_DIR_GAME;
 
 bool disable_numlock;
 bool use_graphics;
@@ -324,3 +325,7 @@ generic_term_info term_prefs[10] = {
 /* Special input requests (PKT_REQUEST_...) - C. Blue */
 bool request_pending = FALSE;
 bool request_abort = FALSE;
+
+/* For polymorphing by monster name */
+char monster_list_name[MAX_R_IDX][40];
+int monster_list_code[MAX_R_IDX], monster_list_idx = 0;

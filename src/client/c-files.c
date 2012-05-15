@@ -683,6 +683,7 @@ void init_file_paths(char *path)
         string_free(ANGBAND_DIR_TEXT);
         string_free(ANGBAND_DIR_USER);
         string_free(ANGBAND_DIR_XTRA);
+        string_free(ANGBAND_DIR_GAME);
 
 
         /*** Prepare the "path" ***/
@@ -704,6 +705,7 @@ void init_file_paths(char *path)
         ANGBAND_DIR_TEXT = string_make("");
         ANGBAND_DIR_USER = string_make("");
         ANGBAND_DIR_XTRA = string_make("");
+        ANGBAND_DIR_GAME = string_make("");
 
 
 #else /* VM */
@@ -726,6 +728,10 @@ void init_file_paths(char *path)
         /* Build a path name */
         strcpy(tail, "xtra");
         ANGBAND_DIR_XTRA = string_make(path);
+
+        /* Build a path name */
+        strcpy(tail, "game");
+        ANGBAND_DIR_GAME = string_make(path);
 
 #endif /* VM */
 

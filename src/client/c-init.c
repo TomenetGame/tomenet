@@ -158,6 +158,7 @@ static void init_stuff(void)
 	validate_dir(ANGBAND_DIR_SCPT);
 	validate_dir(ANGBAND_DIR_TEXT);
 	validate_dir(ANGBAND_DIR_USER);
+	validate_dir(ANGBAND_DIR_GAME);
 }
 
 
@@ -320,6 +321,47 @@ void initialize_player_ins_files(void) {
 		load_auto_inscriptions(buf);
 	}
 }
+
+
+/* Init monster list for polymorph-by-name */
+static void init_monster_list() {
+	char buf[1024], *p1, *p2;
+	FILE *fff;
+
+	/* actually use local r_info.txt - a novum */
+	path_build(buf, 1024, ANGBAND_DIR_GAME, "r_info.txt");
+	fff = my_fopen(buf, "r");
+	if (fff == NULL) {
+		//plog("Error: Your r_info.txt file is missing.");
+		return;
+	}
+
+	while (0 == my_fgets(fff, buf, 1024)) {
+		/* strip $/%..$/! conditions */
+		while (buf[0] == '$' || buf[0] == '%') {
+			p1 = strchr(buf, '$');
+			p2 = strchr(buf, '!');
+			if (!p1 && !p2) continue;
+			if (!p1) p1 = p2;
+			else if (p2 && p2 < p1) p1 = p2;
+			strcpy(buf, p1 + 1);
+		}
+
+		if (strlen(buf) < 3 || buf[0] != 'N') continue;
+
+		p1 = buf + 2; /* monster code */
+		p2 = strchr(p1, ':'); /* 1 before monster name */
+		if (!p2) continue; /* paranoia (broken file) */
+
+		monster_list_code[monster_list_idx] = atoi(p1);
+		strcpy(monster_list_name[monster_list_idx], p2 + 1);
+		monster_list_idx++;
+
+		/* outdated client? */
+		if (monster_list_idx == MAX_R_IDX) break;
+	}
+}
+
 
 
 /*
@@ -623,7 +665,7 @@ void client_init(char *argv1, bool skip)
 	sockbuf_t ibuf;
 	unsigned magic = 12345;
 	unsigned char reply_to, status;
-	int login_port;
+	//int login_port;
 	int bytes, retries;
 	char host_name[80];
 	u16b version = MY_VERSION;
@@ -643,6 +685,9 @@ void client_init(char *argv1, bool skip)
 
 	/* Initialize sound */
 	init_sound();
+
+	/* Init monster list from local r_info.txt file */
+	init_monster_list();
 
 	GetLocalHostName(host_name, 80);
 
@@ -758,7 +803,7 @@ void client_init(char *argv1, bool skip)
 		Packet_scanf(&ibuf, "%c%c%d%d", &reply_to, &status, &temp, &char_creation_flags);
 
 		/* Hack -- set the login port correctly */
-		login_port = (int) temp;
+		//login_port = (int) temp;
 
 		/* Hack - Receive server version - mikaelh */
 		if (char_creation_flags & 0x02)

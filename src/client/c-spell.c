@@ -514,7 +514,7 @@ static int get_mimic_spell(int *sn)
 void do_mimic()
 {
 	int spell, j, dir;
-	char out_val[6];
+	char out_val[40];
 	bool uses_dir = FALSE;
 
 	/* Ask for the spell */
@@ -524,11 +524,37 @@ void do_mimic()
 	   Btw, 30000, the more logical one, doesnt work, dont ask me why */
 	if (spell == 2) {
 		strcpy(out_val,"");
-		get_string("Which form (0 for player) ? ", out_val, 4);
+		get_string("Which form (name or number; 0 for player) ? ", out_val, 40);
+
+		/* empty input? */
 		if (strlen(out_val) == 0) return;
-		j = atoi(out_val);
-		if ((j < 0) || (j > 2767)) return;
-		spell = 20000 + j;
+
+		/* input is a string? */
+		if (atoi(out_val) == 0 && !strchr(out_val, '0')) {
+			if (monster_list_idx == 0) {
+				c_msg_print("Cannot specify monster by name: File lib/game/r_info.txt not found!");
+				return;
+			}
+
+			for (j = 0; j < monster_list_idx; j++) {
+				if (streq(monster_list_name[j], out_val)) {
+					spell = 20000 + monster_list_code[j];
+					break;
+				}
+			}
+			if (j == monster_list_idx) {
+				c_msg_print("Form not found. Make sure of correct case sensitivity");
+				c_msg_print(" and that your file lib/game/r_info.txt is up to date.");
+				return;
+			}
+		}
+
+		/* input is a number */
+		else {
+			j = atoi(out_val);
+			if ((j < 0) || (j > 2767)) return;
+			spell = 20000 + j;
+		}
 	}
 
 	/* Spell requires direction? */
@@ -634,7 +660,7 @@ s32b get_school_spell(cptr do_what, int *item_book)
 	char out_val[160];
 	char buf2[40];
 	object_type *o_ptr;
-	int tmp;
+	//int tmp;
 	int sval, pval;
 
 	hack_force_spell = -1;
@@ -820,7 +846,7 @@ s32b get_school_spell(cptr do_what, int *item_book)
 	/* Abort if needed */
 	if (!flag) return -1;
 
-	tmp = spell;
+	//tmp = spell;
 	*item_book = item;
 	return(spell);
 }

@@ -215,6 +215,7 @@ extern cptr ANGBAND_DIR_TEXT;
 extern cptr ANGBAND_DIR_USER;
 extern cptr ANGBAND_DIR_XTRA;
 extern cptr ANGBAND_DIR_SCPT;
+extern cptr ANGBAND_DIR_GAME;
 
 extern bool disable_numlock;
 extern bool use_graphics;
@@ -811,3 +812,6 @@ extern errr init_sound_sdl(int argc, char **argv);
 //z-files.h:
 //extern bool my_fexists(const char *fname);
 #endif
+
+extern char monster_list_name[MAX_R_IDX][40];
+extern int monster_list_code[MAX_R_IDX], monster_list_idx;
