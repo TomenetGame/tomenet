@@ -3649,7 +3649,7 @@ void interact_macros(void)
 
 		/* Enter a 'quick & dirty' macro */
 		else if (i == 'q') {
-			bool call_by_name = FALSE, mimic_transform = FALSE;
+			bool call_by_name = FALSE, mimic_transform = FALSE, mimic_transform_by_name = FALSE;
 
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Enter a new 'quick & dirty' macro");
@@ -3659,7 +3659,7 @@ void interact_macros(void)
 
 			/* Get an encoded action */
 			if (!askfor_aux(buf, 159, 0)) continue;
-			
+
 			/* Fix it up quick and dirty: Ability code short-cutting */
 			buf2[0] = '\\'; //note: should in theory be ')e\',
 			buf2[1] = 'e'; //      but doesn't work due to prompt behaviour 
@@ -3675,53 +3675,71 @@ void interact_macros(void)
 					} else {
 						*b2ptr++ = *bptr++;
 					}
-				} else switch (*bptr) {
-				case 'P': /* use innate mimic power */
-					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '3'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
-					bptr++;	break;
-				case 'I': /* use innate mimic power: transform into specific */
-					mimic_transform = TRUE;
-					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '3'; *b2ptr++ = '\\'; *b2ptr++ = 'r'; *b2ptr++ = 'c';
-					bptr++;	break;
-				case 'F': /* employ fighting technique */
-					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '5'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
-					bptr++;	break;
-				case 'S': /* employ shooting technique */
-					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '6'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
-					bptr++;	break;
-				case 'T': /* set a trap */
-					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '0'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
-					bptr++;	break;
-				case 'M': /* cast a spell */
-					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '1'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
-					bptr++;	break;
-				case 'R': /* draw a rune */
+				} else {
+					/* service: mimic-transformation automatically adds the required '\r' at the end */
+					switch (*bptr) {
+					case 'P': case 'I': case 'F': case 'S': case 'T': case 'M': case 'R': case 's':
+						if (mimic_transform) {
+							if (!mimic_transform_by_name) {
+								*b2ptr++ = '\\'; *b2ptr++ = 'r';
+							}
+							mimic_transform = mimic_transform_by_name = FALSE;
+						}
+					}
+
+					switch (*bptr) {
+					case 'P': /* use innate mimic power */
+						*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '3'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
+						bptr++;	break;
+					case 'I': /* use innate mimic power: transform into specific */
+						mimic_transform = TRUE;
+						if (*(bptr + 1) == '@') mimic_transform_by_name = TRUE;
+						*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '3'; *b2ptr++ = '\\'; *b2ptr++ = 'r'; *b2ptr++ = 'c';
+						bptr++;	break;
+					case 'F': /* employ fighting technique */
+						*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '5'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
+						bptr++;	break;
+					case 'S': /* employ shooting technique */
+						*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '6'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
+						bptr++;	break;
+					case 'T': /* set a trap */
+						*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '0'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
+						bptr++;	break;
+					case 'M': /* cast a spell */
+						*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '1'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
+						bptr++;	break;
+					case 'R': /* draw a rune */
 #ifndef ENABLE_RCRAFT
-					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '2'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
+						*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '2'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
 #else
-					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '8'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
+						*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '8'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
 #endif
-					bptr++;	break;
-				case 's': /* change stance */
-					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '3'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
-					bptr++;	break;
+						bptr++;	break;
+					case 's': /* change stance */
+						*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '3'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
+						bptr++;	break;
 #if 0 /* disabled, to allow @q */
-				case '*': /* set a target */
-					*b2ptr++ = '*'; *b2ptr++ = 't';
-					bptr++;	break;
+					case '*': /* set a target */
+						*b2ptr++ = '*'; *b2ptr++ = 't';
+						bptr++;	break;
 #endif
-				case '@': /* start 'call-by-name' mode, reading the spell/item name next */
-					call_by_name = TRUE;
-					*b2ptr++ = '@';
-					bptr++;	break;
-				default:
-					*b2ptr++ = *bptr++;
+					case '@': /* start 'call-by-name' mode, reading the spell/item name next */
+						call_by_name = TRUE;
+						*b2ptr++ = '@';
+						bptr++;	break;
+					default:
+						*b2ptr++ = *bptr++;
+					}
 				}
 			}
+
 			/* service: mimic-transformation automatically adds the required '\r' at the end */
 			if (mimic_transform) {
-				*b2ptr++ = '\\'; *b2ptr++ = 'r';
+				if (!mimic_transform_by_name) {
+					*b2ptr++ = '\\'; *b2ptr++ = 'r';
+				}
 			}
+
 			/* terminate anyway */
 			*b2ptr = '\0';
 
