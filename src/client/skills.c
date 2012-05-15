@@ -756,7 +756,7 @@ static void do_trap(int item_kit)
  */
 static void do_rune() {
 	int basic_rune, mod_rune;
-	object_type *o_ptr;
+	//object_type *o_ptr;
 
         //Ask for a basic rune
 	item_tester_tval = TV_RUNE1;
@@ -767,7 +767,7 @@ static void do_rune() {
 		return;
 	}
 
-	o_ptr = &inventory[basic_rune];
+	//o_ptr = &inventory[basic_rune];
 
 	//Ask for a modifier rune
 	item_tester_tval = TV_RUNE2;

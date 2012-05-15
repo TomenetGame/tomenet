@@ -241,7 +241,8 @@ bool get_item_hook_find_obj(int *item, bool inven_first)
 bool (*get_item_extra_hook)(int *cp, bool inven_first);
 bool c_get_item(int *cp, cptr pmt, int mode)
 {
-	char	n1, n2, which = ' ';
+	//char	n1, n2;
+	char which = ' ';
 
 	int	k, i1, i2, e1, e2, ver;
 	bool	done;
@@ -252,7 +253,7 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 
 	bool	equip = FALSE;
 	bool	inven = FALSE;
-	bool	floor = FALSE;
+	//bool	floor = FALSE;
 	bool	extra = FALSE;
 	bool	inven_first = FALSE;
 	bool	special_req = FALSE;
@@ -274,7 +275,7 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 
 	if (mode & (USE_EQUIP)) equip = TRUE;
 	if (mode & (USE_INVEN)) inven = TRUE;
-	if (mode & (USE_FLOOR)) floor = TRUE;
+	//if (mode & (USE_FLOOR)) floor = TRUE;
 	if (mode & (USE_EXTRA)) extra = TRUE;
 	if (mode & (INVEN_FIRST)) inven_first = TRUE;
 	if (mode & (SPECIAL_REQ)) special_req = TRUE;
@@ -381,8 +382,8 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 		if (!command_wrk)
 		{
 			/* Extract the legal requests */
-			n1 = I2A(i1);
-			n2 = I2A(i2);
+			//n1 = I2A(i1);
+			//n2 = I2A(i2);
 
 			/* Redraw if needed */
 			if (command_see) show_inven();
@@ -392,8 +393,8 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 		else
 		{
 			/* Extract the legal requests */
-			n1 = I2A(e1 - INVEN_WIELD);
-			n2 = I2A(e2 - INVEN_WIELD);
+			//n1 = I2A(e1 - INVEN_WIELD);
+			//n2 = I2A(e2 - INVEN_WIELD);
 
 			/* Redraw if needed */
 			if (command_see) show_equip();

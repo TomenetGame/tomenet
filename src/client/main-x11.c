@@ -1475,9 +1475,8 @@ static errr CheckEvent(bool wait)
 	term_data *td = NULL;
 	infowin *iwin = NULL;
 
-	int flag = 0;
-
-	int x, y, data;
+	//int flag = 0;
+	//int x, y, data;
 
 
 	/* Do not wait unless requested */
@@ -1655,22 +1654,22 @@ static errr CheckEvent(bool wait)
 		case ButtonPress:
 		{
 			/* Set flag, then fall through */
-			flag = 1;
+			//flag = 1;
 		}
 
 		/* A Button Release (or ButtonPress) Event */
 		case ButtonRelease:
 		{
 			/* Which button is involved */
-			if      (xev->xbutton.button == Button1) data = 1;
+			/* if      (xev->xbutton.button == Button1) data = 1;
 			else if (xev->xbutton.button == Button2) data = 2;
 			else if (xev->xbutton.button == Button3) data = 3;
 			else if (xev->xbutton.button == Button4) data = 4;
-			else if (xev->xbutton.button == Button5) data = 5;
+			else if (xev->xbutton.button == Button5) data = 5; */
 
 			/* Where is the mouse */
-			x = xev->xbutton.x;
-			y = xev->xbutton.y;
+			//x = xev->xbutton.x;
+			//y = xev->xbutton.y;
 
 			/* XXX Handle */
 
@@ -1681,15 +1680,15 @@ static errr CheckEvent(bool wait)
 		case EnterNotify:
 		{
 			/* Note the Enter, Fall into 'Leave' */
-			flag = 1;
+			//flag = 1;
 		}
 
 		/* A Leave (or Enter) Event */
 		case LeaveNotify:
 		{
 			/* Where is the mouse */
-			x = xev->xcrossing.x;
-			y = xev->xcrossing.y;
+			//x = xev->xcrossing.x;
+			//y = xev->xcrossing.y;
 
 			/* XXX Handle */
 
@@ -1700,8 +1699,8 @@ static errr CheckEvent(bool wait)
 		case MotionNotify:
 		{
 			/* Where is the mouse */
-			x = xev->xmotion.x;
-			y = xev->xmotion.y;
+			//x = xev->xmotion.x;
+			//y = xev->xmotion.y;
 
 			/* XXX Handle */
 
@@ -1719,8 +1718,8 @@ static errr CheckEvent(bool wait)
 		case KeyPress:
 		{
 			/* Save the mouse location */
-			x = xev->xkey.x;
-			y = xev->xkey.y;
+			//x = xev->xkey.x;
+			//y = xev->xkey.y;
 
 			/* Hack -- use "old" term */
 			Term_activate(&old_td->t);
@@ -1764,14 +1763,14 @@ static errr CheckEvent(bool wait)
 		/* A Move AND/OR Resize Event */
 		case ConfigureNotify:
 		{
-			int x1, y1, w1, h1;
+			//int x1, y1, w1, h1;
 			int cols, rows, wid, hgt;
 
 			/* Save the Old information */
-			x1 = Infowin->x;
+			/* x1 = Infowin->x;
 			y1 = Infowin->y;
 			w1 = Infowin->w;
-			h1 = Infowin->h;
+			h1 = Infowin->h; */
 
 			/* Save the new Window Parms */
 			Infowin->x = xev->xconfigure.x;

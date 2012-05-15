@@ -820,12 +820,14 @@ unsigned char Net_login(){
  */
 int Net_start(int sex, int race, int class)
 {
-	int	i, n;
+	int	i;
+	//int n;
 	int		type,
 			result;
 
 	Sockbuf_clear(&wbuf);
-	n = Packet_printf(&wbuf, "%c", PKT_PLAY);
+	//n = 
+	Packet_printf(&wbuf, "%c", PKT_PLAY);
 
         if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0))
 		Packet_printf(&wbuf, "%hd%hd%hd%hd%hd%hd", sex, race, class, trait, audio_sfx, audio_music);
