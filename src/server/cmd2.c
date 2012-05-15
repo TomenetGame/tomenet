@@ -371,7 +371,7 @@ static bool between_effect(int Ind, cave_type *c_ptr)
 
 	by = cs_ptr->sc.between.fy;
 	bx = cs_ptr->sc.between.fx;
-	
+
 	/* (HACK) sanity check to cover cut-off vaults with missing void gate end-points! - C. Blue */
 	if (bx < 1 || by < 1 || bx >= l_ptr->wid - 1 || by >= l_ptr->hgt - 1) {
 		msg_print(Ind, "The gate seems broken.");
@@ -389,6 +389,10 @@ static bool between_effect(int Ind, cave_type *c_ptr)
 
 		take_hit(Ind, distance(by, bx, p_ptr->py, p_ptr->px) / (10 * reduc), "going Between", 0);
 	}
+
+#ifdef USE_SOUND_2010
+	sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND, TRUE);
+#endif
 
 	swap_position(Ind, by, bx);
 
