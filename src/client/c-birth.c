@@ -781,7 +781,7 @@ static void choose_stat_order(void)
  * TODO: remove hard-coded things. */
 static void choose_mode(void)
 {
-	char        c='\0';
+	char c = '\0';
 	bool hazard = FALSE;
 
 	put_str("n) Normal", 16, 2);
@@ -790,12 +790,14 @@ static void choose_mode(void)
 	c_put_str(TERM_SLATE, "('Unworldly' - One life only. The traditional rogue-like way)", 17, 14);
 	put_str("e) Everlasting", 18, 2);
 	c_put_str(TERM_SLATE, "(You may resurrect infinite times, but cannot enter highscore)", 18, 17);
+#if 0
 	put_str("h) Hard", 19, 2);
 	c_put_str(TERM_SLATE, "('Purgatorial' - like normal, with nasty additional penalties)", 19, 10);
-	put_str("H) Hellish", 20, 2);
-	c_put_str(TERM_SLATE, "(Combination of Hard + No Ghost)", 20, 13);
-	put_str("p) PvP", 21, 2);
-	c_put_str(TERM_SLATE, "(Can't beat the game, instead special 'player vs player' rules apply)", 21, 9);
+#endif
+	put_str("H) Hellish", 20 - 1, 2);
+	c_put_str(TERM_SLATE, "(Combination of Hard + No Ghost)", 20 - 1, 13);
+	put_str("p) PvP", 21 - 1, 2);
+	c_put_str(TERM_SLATE, "(Can't beat the game, instead special 'player vs player' rules apply)", 21 - 1, 9);
 
 	while (1)
 	{
@@ -820,12 +822,14 @@ static void choose_mode(void)
 			c_put_str(TERM_L_BLUE, "No Ghost", 9, 15);
 			break;
 		}
+#if 0
 		else if (c == 'h')
 		{
 			sex += (MODE_HARD);
 			c_put_str(TERM_L_BLUE, "Hard", 9, 15);
 			break;
 		}
+#endif
 		else if (c == 'H')
 		{
 			sex += (MODE_NO_GHOST + MODE_HARD);
@@ -844,7 +848,7 @@ static void choose_mode(void)
 		}
 		else if (c == '*')
 		{
-			switch (rand_int(5))
+			switch (rand_int(5 - 1))
 			{
 				case 0:
 					c = 'n';
@@ -855,13 +859,15 @@ static void choose_mode(void)
 				case 2:
 					c = 'g';
 					break;
+#if 0
 				case 3:
 					c = 'h';
 					break;
-				case 4:
+#endif
+				case 4 - 1:
 					c = 'H';
 					break;
-				case 5:
+				case 5 - 1:
 					c = 'e';
 					break;
 			}

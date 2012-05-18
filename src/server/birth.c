@@ -2619,6 +2619,15 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	}
 #endif
 
+	/* no more stand-alone 'hard mode' */
+	if ((p_ptr->mode & MODE_HARD) &&
+		!(p_ptr->mode & MODE_NO_GHOST)) {
+			p_ptr->mode &= ~MODE_HARD;
+			/* note- cannot msg_print() to player at this point yet, actually */
+			msg_print(Ind, "Hard mode is no longer supported - choose hellish mode instead.");
+			msg_print(Ind, "Your character has automatically been converted to normal mode.");
+	}
+
 	/* fix potential exploits */
 	if (p_ptr->mode & MODE_EVERLASTING) p_ptr->mode &= ~(MODE_HARD | MODE_NO_GHOST);
 	if (p_ptr->mode & MODE_PVP) p_ptr->mode &= ~(MODE_EVERLASTING | MODE_HARD | MODE_NO_GHOST | MODE_FRUIT_BAT);

@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. May 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 18. May 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -2047,7 +2047,7 @@ that gives you one more bpr i.e. 3 bpr and just discard your starting weapon.
 
 
 Now you can choose a difficulty level you wish to play on. Options are
-n) Normal  g) no Ghost  h) Hard  H) Hellish e) Everlasting
+n) Normal  g) no Ghost  H) Hellish  e) Everlasting
 It is recommended that you choose either n) to play a normal character or g)
 to play a normal character without a ghost.
 You can also choose e), that will give your character an infinite amount of
@@ -2080,17 +2080,17 @@ killed Sauron and Morgoth yet and team up with him, because those two won't
 Since it was often asked: Non-everlasting and everlasting players can revive
 each other without problems.
 
-Mode: 'Unworldly' (no-ghost) and 'Hellish' (no-ghost + hard)
-------------------------------------------------------------
+Mode: 'Unworldly' (no-ghost)
+----------------------------
 Unworldly characters are like normal characters, but they have only one life.
-Unworldly as well as hellish characters (who are a combination of 'no-ghost'
-and 'hard') will be completely annihilated and deleted on death.
+So if they die they cannot revive but are completely erased (no ghost will be
+created.)
+Note: This is the traditional rogue-like gaming mode.
 
-Mode: 'Hard' (like 'Normal' but with additional penalties) and 'Hellish':
--------------------------------------------------------------------------
-Hard characters and hellish characters get certain penalties in gameplay.
-These are:
--losing -1 to all stats
+Mode: 'Hellish' (extra hard no-ghost)
+-------------------------------------
+These are unworldly characters with extra penalties:
+-1 point malus on each of the 6 character attributes
 -healing is reduced by 25%
 -AC is reduced by 50%
 -ESP only works within radius of 20 squares
@@ -2103,8 +2103,8 @@ This is a special restricted mode that has nothing to do with normal gameplay.
 If you're new to the game, it's absolutely not recommended to choose this.
 More information about 'PvP' mode is given in (6.13).
 
-Hard / Unworldly characters will receive 25% bonus on their high score.
-Hellish (Hard + Unworldly) characters receive 50% bonus on their high score.
+Unworldly characters will receive 25% bonus on their high score.
+Hellish characters receive 50% bonus on their high score.
 
 
 Last you can choose a body modification. It's strongly recommended for
@@ -2333,7 +2333,6 @@ Character names in chat lines have different colours to indicate their status:
 
 White           Normal player.
 Light blue      Everlasting player.
-Slate (grey)    Hard-mode player.
 Dark grey       No-ghost / hellish player.
 Violet          Player character is king / queen.
 Dark blue       Player is admin.
@@ -4531,10 +4530,9 @@ These feelings are as follows:
                                         will to destroy.
                                         Players who die on this level will be
                                         completely extinguished and not even
-                                        their ghost will survive! Everlasting,
-                                        normal and hard-mode players will die
-                                        the same way as unworldly and hellish
-                                        ones!
+                                        their ghost will survive! Everlasting
+                                        and normal players will die the same
+                                        way as unworldly and hellish ones!
 
   "You don't sense a magic barrier here..." ->   This message only occurs in
                                         Ironman or no-recall dungeons/towers.
