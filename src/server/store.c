@@ -2702,6 +2702,11 @@ void store_stole(int Ind, int item)
 		msg_print(Ind, "\"Bastard Thief! Get out of my shop!!!\"");
 		msg_print_near(Ind, "You hear loud shouting..");
 		msg_format_near(Ind, "an angry shopkeeper kicks %s out of the shop!", p_ptr->name);
+
+#ifdef USE_SOUND_2010
+		sound(Ind, "bash_door_hold", NULL, SFX_TYPE_COMMAND, TRUE);
+#endif
+
 #if 0
 		/* increase/set player's blacklist timer */
 		if (p_ptr->tim_blacklist < 10000000)	/* 10 million turns is LONG ENOUGH */
@@ -2923,6 +2928,10 @@ s_printf("Stealing: %s (%d) fail. %s (chance %d%%0 (%d) %d,%d,%d).\n", p_ptr->na
 		msg_print(Ind, "\377rNow you'll be on the black list of merchants for a while..");
 		msg_print_near(Ind, "You hear loud shouting..");
 		msg_format_near(Ind, "an angry shopkeeper kicks %s out of the store!", p_ptr->name);
+
+#ifdef USE_SOUND_2010
+		sound(Ind, "bash_door_hold", NULL, SFX_TYPE_COMMAND, TRUE);
+#endif
 
 		/* Reset insults */
 		st_ptr->insult_cur = 0;
