@@ -5257,6 +5257,143 @@ errr options_dump(cptr fname)
 }
 
 
+/* Attempt to find sound+music pack 7z files in the client's root folder
+   and to install them properly. - C. Blue
+   Notes: Uses the GUI version of 7z, 7zG. Reason is that a password prompt
+          might be required. That's why non-X11 (ie command-line clients)
+          are currently not supported. */
+static void do_cmd_options_install_audio_packs(void) {
+	FILE *fff;
+	char path[1024], c, ch;
+	bool sound_pack = TRUE, music_pack = TRUE;
+	bool sound_already = (audio_sfx > 2), music_already = (audio_music > 0);
+
+	/* Clear screen */
+	Term_clear();
+	Term_putstr(0, 0, -1, TERM_WHITE, "Trying to install sound pack and music pack from 7z files...");
+	Term_fresh();
+
+	/* test for availability of unarchiver */
+#ifdef WINDOWS
+
+#else /* assume posix */
+ #if 0	/* command-line 7z */
+	system("7z > tmp.7z");
+ #else	/* GUI 7z (for password prompts) */
+ 	fff = fopen("tmp", "w");
+ 	fclose(fff);
+	system("7zG a tmp.7z tmp");
+    remove("tmp");
+ #endif
+    if (!(fff = fopen("tmp.7z", "r"))) { /* paranoia? */
+		Term_putstr(0, 1, -1, TERM_RED, "7-zip GUI not found ('7zG'). Install it first. (Package name is 'p7zip'.)");
+		Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
+		inkey();
+		return;
+    } else if (fgetc(fff) == EOF) { /* normal */
+		Term_putstr(0, 1, -1, TERM_RED, "7-zip GUI not found ('7zG'). Install it first. (Package name is 'p7zip'.)");
+	    fclose(fff);
+		Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
+		inkey();
+		return;
+    }
+    fclose(fff);
+    remove("tmp.7z");
+	Term_putstr(0, 1, -1, TERM_WHITE, "Unarchiver (7zG) found.");
+	Term_fresh();
+#endif
+
+	/* test for existance of sound pack file */
+    if (!(fff = fopen("TomeNET-soundpack.7z", "r"))) sound_pack = FALSE;
+    else fclose(fff);
+
+	/* test for existance of music pack file */
+    if (!(fff = fopen("TomeNET-musicpack.7z", "r"))) music_pack = FALSE;
+    else fclose(fff);
+
+	if (!sound_pack && !music_pack) {
+		Term_putstr(0, 3, -1, TERM_ORANGE, "Neither file 'TomeNET-soundpack.7z' nor 'TomeNET-musicpack.7z' were");
+		Term_putstr(0, 4, -1, TERM_ORANGE, "found in your TomeNET folder. Aborting audio pack installation.");
+	}
+
+	/* verify if we'd be overwriting stuff */
+	if (!sound_pack) {
+		Term_putstr(0, 3, -1, TERM_SLATE, "(File 'TomeNET-soundpack.7z' not found, skipping.)");
+	}
+	if (sound_pack && sound_already) {
+		Term_putstr(0, 3, -1, TERM_YELLOW, "It seems a sound pack is already installed.");
+		Term_putstr(0, 4, -1, TERM_YELLOW, "Do you want to extract 'TomeNET-soundpack.7z' and overwrite it? (y/n)");
+		while (TRUE) {
+			c = inkey();
+			if (c == 'n') {
+				sound_pack = FALSE;
+				break;
+			}
+			if (c == 'y') break;
+		}
+	}
+
+	/* install sound pack */
+	if (sound_pack) {
+#ifdef WINDOWS
+
+#else
+		Term_putstr(0, 3, -1, TERM_WHITE, "Installing sound pack...                   ");
+		Term_putstr(0, 4, -1, TERM_WHITE, "                                                                            ");
+		Term_fresh();
+		system("7zG x TomeNET-soundpack.7z");
+		path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
+		//system(format("mv sound %s", path));
+		system(format("cp --recursive -f sound/* %s/", path));
+		system("rm -rf sound");
+#endif
+		Term_putstr(0, 3, -1, TERM_L_GREEN, "Sound pack has been installed.             ");
+		Term_putstr(0, 4, -1, TERM_L_GREEN, "YOU NEED TO RESTART TomeNET FOR THIS TO TAKE EFFECT.                        ");
+	}
+
+	/* verify if we'd be overwriting stuff */
+	if (!music_pack) {
+		Term_putstr(0, 6, -1, TERM_SLATE, "(File 'TomeNET-musicpack.7z' not found, skipping.)");
+	}
+	if (music_pack && music_already) {
+		Term_putstr(0, 6, -1, TERM_YELLOW, "It seems a music pack is already installed.");
+		Term_putstr(0, 7, -1, TERM_YELLOW, "Do you want to extract 'TomeNET-musicpack.7z' and overwrite it? (y/n)");
+		while (TRUE) {
+			c = inkey();
+			if (c == 'n') {
+				music_pack = FALSE;
+				break;
+			}
+			if (c == 'y') break;
+		}
+	}
+
+	/* install music pack */
+	if (music_pack) {
+#ifdef WINDOWS
+
+#else
+		Term_putstr(0, 6, -1, TERM_WHITE, "Installing music pack...                   ");
+		Term_putstr(0, 7, -1, TERM_WHITE, "                                                                            ");
+		Term_fresh();
+		system("7zG x TomeNET-musicpack.7z");
+		path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
+		//system(format("mv music %s", path));
+		system(format("cp --recursive -f music/* %s/", path));
+		system("rm -rf music");
+#endif
+		Term_putstr(0, 6, -1, TERM_L_GREEN, "Music pack has been installed.             ");
+		Term_putstr(0, 7, -1, TERM_L_GREEN, "YOU NEED TO RESTART TomeNET FOR THIS TO TAKE EFFECT.                        ");
+	}
+
+	Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
+	Term_fresh();
+	/* inkey() will react to client timeout after long extraction time, terminating
+	   near-instantly with hardly a chance to see the green 'installed' messages. */
+	Term_inkey(&ch, TRUE, TRUE);
+	//inkey();
+}
+
 /*
  * Set or unset various options.
  *
@@ -5288,15 +5425,18 @@ void do_cmd_options(void)
 		Term_putstr(5,  5, -1, TERM_WHITE, "(\377y2\377w) User Interface Options 2");
 		Term_putstr(5,  6, -1, TERM_WHITE, "(\377y3\377w) Game-Play Options 1");
 		Term_putstr(5,  7, -1, TERM_WHITE, "(\377y4\377w) Game-Play Options 2");
+		Term_putstr(5,  8, -1, TERM_WHITE, "(\377yw\377w) Window Flags");
 
-		Term_putstr(5,  9, -1, TERM_WHITE, "(\377yw\377w) Window Flags");
+		Term_putstr(5, 10, -1, TERM_WHITE, "(\377ys\377w) Save Options");
+		Term_putstr(5, 11, -1, TERM_WHITE, "(\377yl\377w) Load Options from pref file");
 
-		Term_putstr(5, 11, -1, TERM_WHITE, "(\377yA\377w) Account Options");
-
-		Term_putstr(5, 13, -1, TERM_WHITE, "(\377yv\377w) Check Server Options");
-
-		Term_putstr(5, 15, -1, TERM_WHITE, "(\377ys\377w) Save Options");
-		Term_putstr(5, 16, -1, TERM_WHITE, "(\377yl\377w) Load Options from pref file");
+		Term_putstr(5, 13, -1, TERM_WHITE, "(\377yA\377w) Account Options");
+		Term_putstr(5, 14, -1, TERM_WHITE, "(\377yv\377w) Check Server Options");
+#ifndef WINDOWS /* not yet implemented */
+#ifdef USE_X11 /* rely on GUI for 'password' popup */
+		Term_putstr(5, 16, -1, TERM_WHITE, "(\377yI\377w) Install sound/music pack from file");
+#endif
+#endif
 
 		/* Prompt */
 		c_prt(TERM_L_GREEN, "Command: ", 18, 0);
@@ -5365,7 +5505,7 @@ void do_cmd_options(void)
 			/* Process the given filename */
 			(void)process_pref_file(tmp);
 		}
-		
+
 		/* Account options */
 		else if (k == 'A')
 		{
@@ -5378,6 +5518,14 @@ void do_cmd_options(void)
 			/* Spawn */
 			do_cmd_options_win();
 		}
+
+#ifndef WINDOWS /* not yet implemented */
+#ifdef USE_X11 /* rely on GUI for 'password' popup */
+		else if (k == 'I') {
+			do_cmd_options_install_audio_packs();
+		}
+#endif
+#endif
 
 		/* Unknown option */
 		else
