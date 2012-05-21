@@ -772,6 +772,7 @@ extern int stricmp(cptr a, cptr b);
 #ifdef WINDOWS
 /* main-win.c */
 /* extern int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, ...); */
+extern void change_font(int s);
 #endif
 
 #ifdef ENABLE_RCRAFT

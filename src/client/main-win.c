@@ -3398,6 +3398,11 @@ static void hook_quit(cptr str)
 		}
 	}
 
+	/* Save the preferences.
+	   Note: Moved this here before destroying terms, to save Font choice - C. Blue */
+	/* Note: This takes time with anti-virus on */
+	save_prefs();
+
 	/* Sub-Windows */
 	for (i = MAX_TERM_DATA - 1; i >= 1; i--)
 	{
@@ -3426,10 +3431,6 @@ static void hook_quit(cptr str)
 	if (data[0].graf_want) string_free(data[0].graf_want);
 	if (data[0].w) DestroyWindow(data[0].w);
 	data[0].w = 0;
-
-	/* Save the preferences */
-	/* Note: This takes time with anti-virus on */
-	save_prefs();
 
 	/* Nuke each term */
 	for (i = ANGBAND_TERM_MAX - 1; i >= 0; i--)
@@ -3922,6 +3923,79 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 	return (0);
 }
 
+
+/* EXPERIMENTAL // allow user to change main window font live - C. Blue
+   So far only uses 1 parm ('s') to switch between hardcoded choices:
+   -1 - cycle
+    0 - normal
+    1 - big
+    2 - bigger
+    3 - huge */
+void change_font(int s) {
+	/* use main window font for measuring */
+	char tmp[128] = "";
+	if (data[0].font_file) strcpy(tmp, data[0].font_file);
+	else strcpy(tmp, DEFAULT_FONTNAME);
+
+	/* cycle? */
+	if (s == -1) {
+		if (strstr(tmp, "8X13")) s = 1;
+		else if (strstr(tmp, "10X14")) s = 2;
+		else if (strstr(tmp, "12X18")) s = 3;
+		else if (strstr(tmp, "16X24")) s = 0;
+	}
+
+	/* Force the font */
+	switch (s) {
+	case 0:
+		/* change main window font */
+		term_force_font(&data[0], "8X13.FON");
+		/* Change sub windows too */
+		term_force_font(&data[1], "8X13.FON");
+		term_force_font(&data[2], "8X13.FON");
+		term_force_font(&data[3], "5X8.FON");
+		term_force_font(&data[4], "6X10.FON");
+		term_force_font(&data[5], "5X8.FON");
+		term_force_font(&data[6], "5X8.FON");
+		term_force_font(&data[7], "5X8.FON");
+		break;
+	case 1:
+		/* change main window font */
+		term_force_font(&data[0], "10X14X.FON");//or 9X15 maybe
+		/* Change sub windows too */
+		term_force_font(&data[1], "9X15.FON");
+		term_force_font(&data[2], "9X15.FON");
+		term_force_font(&data[3], "6X10.FON");
+		term_force_font(&data[4], "8X13.FON");
+		term_force_font(&data[5], "6X10.FON");
+		term_force_font(&data[6], "6X10.FON");
+		term_force_font(&data[7], "6X10.FON");
+		break;
+	case 2:
+		/* change main window font */
+		term_force_font(&data[0], "12X18X.FON");
+		/* Change sub windows too */
+		term_force_font(&data[1], "12X18X.FON");
+		term_force_font(&data[2], "12X18X.FON");
+		term_force_font(&data[3], "8X13.FON");
+		term_force_font(&data[4], "9X15.FON");
+		term_force_font(&data[5], "8X13.FON");
+		term_force_font(&data[6], "8X13.FON");
+		term_force_font(&data[7], "8X13.FON");
+		break;
+	case 3:
+		/* change main window font */
+		term_force_font(&data[0], "16X24X.FON");
+		/* Change sub windows too */
+		term_force_font(&data[1], "16X24X.FON");
+		term_force_font(&data[2], "16X24X.FON");
+		term_force_font(&data[3], "9X15.FON");
+		term_force_font(&data[4], "12X18X.FON");
+		term_force_font(&data[5], "9X15.FON");
+		term_force_font(&data[6], "9X15.FON");
+		term_force_font(&data[7], "9X15.FON");
+		break;
+	}
+}
+
 #endif /* _Windows */
-
-

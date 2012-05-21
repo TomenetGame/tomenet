@@ -5563,15 +5563,18 @@ void do_cmd_options(void)
 		Term_putstr(5, 10, -1, TERM_WHITE, "(\377ys\377w) Save Options");
 		Term_putstr(5, 11, -1, TERM_WHITE, "(\377yl\377w) Load Options from pref file");
 
-		Term_putstr(5, 13, -1, TERM_WHITE, "(\377yA\377w) Account Options");
-		Term_putstr(5, 14, -1, TERM_WHITE, "(\377yv\377w) Check Server Options");
+#ifdef WINDOWS
+		Term_putstr(5, 14, -1, TERM_WHITE, "(\377Uf\377w) Change font size (tap to cycle)");
+#endif
+		Term_putstr(5, 15, -1, TERM_WHITE, "(\377UA\377w) Account Options");
+		Term_putstr(5, 16, -1, TERM_WHITE, "(\377Uv\377w) Check Server Options");
 //#ifndef WINDOWS /* not yet implemented */
 #if defined(USE_X11) || defined(WINDOWS) /* rely on GUI for 'password' popup */
-		Term_putstr(5, 16, -1, TERM_WHITE, "(\377yI\377w) Install sound/music pack from file");
+		Term_putstr(5, 18, -1, TERM_WHITE, "(\377UI\377w) Install sound/music pack from file");
 #endif
 
 		/* Prompt */
-		c_prt(TERM_L_GREEN, "Command: ", 18, 0);
+		c_prt(TERM_L_GREEN, "Command: ", 20, 0);
 
 		/* Get command */
 		k = inkey();
@@ -5605,10 +5608,10 @@ void do_cmd_options(void)
 		else if (k == 's')
 		{
 			/* Prompt */
-			Term_putstr(0, 18, -1, TERM_L_GREEN, "Command: Save an option file");
+			Term_putstr(0, 20, -1, TERM_L_GREEN, "Command: Save an option file");
 
 			/* Get a filename, handle ESCAPE */
-			Term_putstr(0, 19, -1, TERM_YELLOW, "File: ");
+			Term_putstr(0, 21, -1, TERM_YELLOW, "File: ");
 
 			/* Default filename */
 			sprintf(tmp, "user.prf");
@@ -5623,10 +5626,10 @@ void do_cmd_options(void)
 		else if (k == 'l')
 		{
 			/* Prompt */
-			Term_putstr(0, 18, -1, TERM_L_GREEN, "Command: Load a user pref file");
+			Term_putstr(0, 20, -1, TERM_L_GREEN, "Command: Load a user pref file");
 
 			/* Get a filename, handle ESCAPE */
-			Term_putstr(0, 19, -1, TERM_YELLOW, "File: ");
+			Term_putstr(0, 21, -1, TERM_YELLOW, "File: ");
 
 			/* Default filename */
 			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
@@ -5650,6 +5653,12 @@ void do_cmd_options(void)
 			/* Spawn */
 			do_cmd_options_win();
 		}
+
+#ifdef WINDOWS
+		else if (k == 'f') {
+			change_font(-1);
+		}
+#endif
 
 //#ifndef WINDOWS /* not yet implemented */
 #if defined(USE_X11) || defined(WINDOWS) /* rely on GUI for 'password' popup */
