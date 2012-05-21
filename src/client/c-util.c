@@ -13,6 +13,58 @@
 #define MACRO_WIZARD_SMART_TARGET
 
 
+
+#ifdef SET_UID
+# ifndef HAS_USLEEP
+/*
+ * For those systems that don't have "usleep()" but need it.
+ *
+ * Fake "usleep()" function grabbed from the inl netrek server -cba
+ */
+int usleep(huge microSeconds) {
+	struct timeval		Timer;
+	int			nfds = 0;
+
+#ifdef FD_SET
+	fd_set		*no_fds = NULL;
+#else
+	int			*no_fds = NULL;
+#endif
+
+	/* Was: int readfds, writefds, exceptfds; */
+	/* Was: readfds = writefds = exceptfds = 0; */
+
+
+	/* Paranoia -- No excessive sleeping */
+	if (microSeconds > 4000000L) core("Illegal usleep() call");
+
+
+	/* Wait for it */
+	Timer.tv_sec = (microSeconds / 1000000L);
+	Timer.tv_usec = (microSeconds % 1000000L);
+
+	/* Wait for it */
+	if (select(nfds, no_fds, no_fds, no_fds, &Timer) < 0) {
+		/* Hack -- ignore interrupts */
+		if (errno != EINTR) return -1;
+	}
+
+	/* Success */
+	return 0;
+}
+# endif /* HAS_USLEEP */
+#endif /* SET_UID */
+
+#ifdef WIN32
+int usleep(long microSeconds)
+{
+	Sleep(microSeconds / 1000); /* meassured in milliseconds not microseconds*/
+	return(0);
+}
+#endif /* WIN32 */
+
+
+
 static int MACRO_WAIT = 96;
 
 static void ascii_to_text(char *buf, cptr str);
@@ -5262,9 +5314,27 @@ errr options_dump(cptr fname)
    Notes: Uses the GUI version of 7z, 7zG. Reason is that a password prompt
           might be required. That's why non-X11 (ie command-line clients)
           are currently not supported. */
+
+#ifdef WINDOWS
+ #include <winreg.h>	/* remote control of installed 7-zip via registry approach */
+ #include <process.h>	/* use spawn() instead of normal system() (WINE bug/Win inconsistency even maybe) */
+ #define MAX_KEY_LENGTH 255
+ #define MAX_VALUE_NAME 16383
+#endif
+
 static void do_cmd_options_install_audio_packs(void) {
 	FILE *fff;
 	char path[1024], c, ch;
+
+#ifdef WINDOWS /* use windows registry to locate 7-zip */
+	HKEY hTestKey;
+	char path_7z[1024], path_7z_quoted[1024];
+	LPBYTE path_7z_p = (LPBYTE)path_7z;
+	int path_7z_size = 1023;
+	LPDWORD path_7z_size_p = (LPDWORD)&path_7z_size;
+	unsigned long path_7z_type = REG_SZ;
+#endif
+
 	bool sound_pack = TRUE, music_pack = TRUE;
 	bool sound_already = (audio_sfx > 2), music_already = (audio_music > 0);
 
@@ -5272,11 +5342,63 @@ static void do_cmd_options_install_audio_packs(void) {
 	Term_clear();
 	Term_putstr(0, 0, -1, TERM_WHITE, "Trying to install sound pack and music pack from 7z files...");
 	Term_fresh();
+	if (quiet_mode) {
+		Term_putstr(0, 1, -1, TERM_RED, "Client is running in 'quiet mode'. Cannot install audio packs!");
+		Term_putstr(0, 2, -1, TERM_RED, "(Restart TomeNET client with 'Sound=1' and without '-q'.)");
+		Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
+		inkey();
+		return;
+	}
 
 	/* test for availability of unarchiver */
-#ifdef WINDOWS
+#if defined(WINDOWS)
+	/* check registry for 7zip (note that for example WinRAR could cause problems with 7z files) */
+	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("Software\\7-Zip\\"), 0, KEY_READ, &hTestKey) == ERROR_SUCCESS) {
+		if (RegQueryValueEx(hTestKey, "Path", NULL, &path_7z_type, path_7z_p, path_7z_size_p) == ERROR_SUCCESS) {
+			path_7z[path_7z_size] = '\0';
+		} else {
+			// odd case
+			RegCloseKey(hTestKey);
+			Term_putstr(0, 1, -1, TERM_RED, "7-zip not properly installed. Please reinstall it. (www.7-zip.org)");
+			Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
+			inkey();
+			return;
+		}
+	} else {
+		Term_putstr(0, 1, -1, TERM_RED, "7-zip not found. Install it first. (www.7-zip.org)");
+		Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
+		inkey();
+		return;
+	}
+	RegCloseKey(hTestKey);
+	/* enclose full path in quotes, to handle possible spaces */
+	strcpy(path_7z_quoted, "\"");
+	strcat(path_7z_quoted, path_7z);
+	strcat(path_7z_quoted, "\\7zG.exe\"");
+	strcat(path_7z, "\\7zG.exe");
 
-#else /* assume posix */
+	/* do the same tests once more as for posix clients */
+ 	fff = fopen("tmp", "w");
+ 	fprintf(fff, "mh");
+ 	fclose(fff);
+
+	_spawnl(_P_WAIT, path_7z, path_7z_quoted, "a", "tmp.7z", "tmp", NULL); /* supposed to work on WINE, yet crashes if not exit(0)ing next oO */
+	remove("tmp");
+
+    if (!(fff = fopen("tmp.7z", "r"))) { /* paranoia? */
+		Term_putstr(0, 1, -1, TERM_RED, "7-zip wasn't installed properly. Please reinstall it. (www.7-zip.org)");
+		Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
+		inkey();
+		return;
+    } else if (fgetc(fff) == EOF) { /* normal */
+		Term_putstr(0, 1, -1, TERM_RED, "7-zip wasn't installed properly. Please reinstall it. (www.7-zip.org)");
+	    fclose(fff);
+		Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
+		inkey();
+		return;
+    }
+	Term_putstr(0, 1, -1, TERM_WHITE, "Unarchiver 7-Zip (7zG.exe) found.");
+#elif defined(USE_X11) /* assume posix */
  #if 0	/* command-line 7z */
 	system("7z > tmp.7z");
  #else	/* GUI 7z (for password prompts) */
@@ -5297,11 +5419,11 @@ static void do_cmd_options_install_audio_packs(void) {
 		inkey();
 		return;
     }
+	Term_putstr(0, 1, -1, TERM_WHITE, "Unarchiver (7zG) found.");
+#endif
+	Term_fresh();
     fclose(fff);
     remove("tmp.7z");
-	Term_putstr(0, 1, -1, TERM_WHITE, "Unarchiver (7zG) found.");
-	Term_fresh();
-#endif
 
 	/* test for existance of sound pack file */
     if (!(fff = fopen("TomeNET-soundpack.7z", "r"))) sound_pack = FALSE;
@@ -5314,6 +5436,9 @@ static void do_cmd_options_install_audio_packs(void) {
 	if (!sound_pack && !music_pack) {
 		Term_putstr(0, 3, -1, TERM_ORANGE, "Neither file 'TomeNET-soundpack.7z' nor 'TomeNET-musicpack.7z' were");
 		Term_putstr(0, 4, -1, TERM_ORANGE, "found in your TomeNET folder. Aborting audio pack installation.");
+		Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
+		inkey();
+		return;
 	}
 
 	/* verify if we'd be overwriting stuff */
@@ -5335,12 +5460,16 @@ static void do_cmd_options_install_audio_packs(void) {
 
 	/* install sound pack */
 	if (sound_pack) {
-#ifdef WINDOWS
-
-#else
 		Term_putstr(0, 3, -1, TERM_WHITE, "Installing sound pack...                   ");
 		Term_putstr(0, 4, -1, TERM_WHITE, "                                                                            ");
 		Term_fresh();
+		Term_flush();
+#if defined(WINDOWS)
+		_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", "TomeNET-soundpack.7z", NULL);
+		path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
+		system(format("xcopy /I /E /Q /Y /H sound %s", path));
+		system("rmdir /S /Q sound");
+#elif defined(USE_X11)
 		system("7zG x TomeNET-soundpack.7z");
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
 		//system(format("mv sound %s", path));
@@ -5370,12 +5499,16 @@ static void do_cmd_options_install_audio_packs(void) {
 
 	/* install music pack */
 	if (music_pack) {
-#ifdef WINDOWS
-
-#else
 		Term_putstr(0, 6, -1, TERM_WHITE, "Installing music pack...                   ");
 		Term_putstr(0, 7, -1, TERM_WHITE, "                                                                            ");
 		Term_fresh();
+		Term_flush();
+#if defined(WINDOWS)
+		_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", "TomeNET-musicpack.7z", NULL);
+		path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
+		system(format("xcopy /I /E /Q /Y /H music %s", path));
+		system("rmdir /S /Q music");
+#elif defined(USE_X11)
 		system("7zG x TomeNET-musicpack.7z");
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
 		//system(format("mv music %s", path));
@@ -5432,10 +5565,9 @@ void do_cmd_options(void)
 
 		Term_putstr(5, 13, -1, TERM_WHITE, "(\377yA\377w) Account Options");
 		Term_putstr(5, 14, -1, TERM_WHITE, "(\377yv\377w) Check Server Options");
-#ifndef WINDOWS /* not yet implemented */
-#ifdef USE_X11 /* rely on GUI for 'password' popup */
+//#ifndef WINDOWS /* not yet implemented */
+#if defined(USE_X11) || defined(WINDOWS) /* rely on GUI for 'password' popup */
 		Term_putstr(5, 16, -1, TERM_WHITE, "(\377yI\377w) Install sound/music pack from file");
-#endif
 #endif
 
 		/* Prompt */
@@ -5519,12 +5651,11 @@ void do_cmd_options(void)
 			do_cmd_options_win();
 		}
 
-#ifndef WINDOWS /* not yet implemented */
-#ifdef USE_X11 /* rely on GUI for 'password' popup */
+//#ifndef WINDOWS /* not yet implemented */
+#if defined(USE_X11) || defined(WINDOWS) /* rely on GUI for 'password' popup */
 		else if (k == 'I') {
 			do_cmd_options_install_audio_packs();
 		}
-#endif
 #endif
 
 		/* Unknown option */
@@ -5844,62 +5975,6 @@ void my_memfrob(void *s, int n)
 }
 
 
-
-#ifdef SET_UID
-
-# ifndef HAS_USLEEP
-
-/*
- * For those systems that don't have "usleep()" but need it.
- *
- * Fake "usleep()" function grabbed from the inl netrek server -cba
- */
-int usleep(huge microSeconds)
-{
-	struct timeval		Timer;
-
-	int			nfds = 0;
-
-#ifdef FD_SET
-	fd_set		*no_fds = NULL;
-#else
-	int			*no_fds = NULL;
-#endif
-
-	/* Was: int readfds, writefds, exceptfds; */
-	/* Was: readfds = writefds = exceptfds = 0; */
-
-
-	/* Paranoia -- No excessive sleeping */
-	if (microSeconds > 4000000L) core("Illegal usleep() call");
-
-
-	/* Wait for it */
-	Timer.tv_sec = (microSeconds / 1000000L);
-	Timer.tv_usec = (microSeconds % 1000000L);
-
-	/* Wait for it */
-	if (select(nfds, no_fds, no_fds, no_fds, &Timer) < 0)
-	{
-		/* Hack -- ignore interrupts */
-		if (errno != EINTR) return -1;
-	}
-
-	/* Success */
-	return 0;
-}
-
-# endif /* HAS_USLEEP */
-
-#endif /* SET_UID */
-
-#ifdef WIN32
-int usleep(long microSeconds)
-{
-	Sleep(microSeconds / 1000); /* meassured in milliseconds not microseconds*/
-	return(0);
-}
-#endif /* WIN32 */
 
 /*
  * Check if the server version fills the requirements.
