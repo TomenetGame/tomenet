@@ -10205,7 +10205,9 @@ DEX, given for both, lightest possible weapon and startup weapon:
 
 Class           STR     DEX     Light weapon    Startup weapon
 ------------------------------------------------------------------------
-Warrior         18/30   all     3               1-2 (depends on weapon)
+Warrior         18      10      2               1
+                18/10   all     2               1
+                18/30   all     3               1-2 (depends on weapon)
                 18/50   all     3               2
                 18/50   18/10   4               2
                 18/70..110  *   3-4             3 (depends on weapon)
