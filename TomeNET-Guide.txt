@@ -6415,6 +6415,8 @@ INVIS   ('It makes you invisible.')
         qualify or affect your invisibility in any way, but is purely for an
         extra stealth bonus. Invisibility is binary: Either you are invisible
         or you are not. Also see '(5.16) Invisibility'.
+BLOWS   ('It affects your attack speed.')
+        This item adds EA (extra attacks) to your number of blows per round.
 
 
 
