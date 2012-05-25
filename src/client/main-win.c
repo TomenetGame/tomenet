@@ -3377,7 +3377,7 @@ static void hook_quit(cptr str)
 
 	/* Copied from quit_hook in c-init.c - mikaelh */
 
-	if(message_num() && get_check("Save chatlog?")){
+	if(message_num() && (save_chat || get_check("Save chatlog?"))){
 		FILE *fp;
 		char buf[80];
 		time_t ct = time(NULL);
@@ -3390,7 +3390,7 @@ static void hook_quit(cptr str)
 		strcat(buf, ".txt");
 
 		i=message_num();
-		get_string("Filename:", buf, 80);
+		if (!save_chat) get_string("Filename:", buf, 80);
 		fp=my_fopen(buf, "w");
 		if(fp!=(FILE*)NULL){
 			dump_messages_aux(fp, i, 1, FALSE);
@@ -3820,8 +3820,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					puts("  -u                 disable client-side automatic lua updates");
 					puts("  -k                 don't disable numlock on client startup");
 					puts("  -m                 skip motd (message of the day) on login");
+					puts("  -v                 save chat log on exit instead of asking");
 #else
-					plog(format("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
+					plog(format("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
 					    longVersion,
 					    "Usage  : tomenet [options] [servername]",
 					    "Example: tomenet -lMorgoth MorgyPass -p18348 europe.tomenet.net",
@@ -3835,7 +3836,8 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					    "  -w                 disable client-side weather effects",
 					    "  -u                 disable client-side automatic lua updates",
 					    "  -k                 don't disable numlock on client startup",
-					    "  -m                 skip motd (message of the day) on login"));
+					    "  -m                 skip motd (message of the day) on login",
+					    "  -v                 save chat log on exit, don't prompt"));
 #endif
 					quit(NULL);
 					break;
@@ -3867,6 +3869,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					break;
 				case 'm':
 					skip_motd = TRUE;
+					break;
+				case 'v':
+					save_chat = TRUE;
 					break;
 			}
 		}

@@ -548,7 +548,7 @@ static void quit_hook(cptr s)
 	/* Display the quit reason */
 	if (s && *s) display_message(s, "Quitting");
 
-	if(message_num() && get_check("Save chatlog?")){
+	if(message_num() && (save_chat || get_check("Save chatlog?"))){
 		FILE *fp;
 		char buf[80];
 		int i;
@@ -562,7 +562,7 @@ static void quit_hook(cptr s)
 		strcat(buf, ".txt");
 
 		i=message_num();
-		get_string("Filename:", buf, 80);
+		if (!save_chat) get_string("Filename:", buf, 80);
 		/* maybe one day we'll get a Mac client */
 		FILE_TYPE(FILE_TYPE_TEXT);
 		fp=my_fopen(buf, "w");

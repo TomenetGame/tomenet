@@ -660,6 +660,10 @@ int main(int argc, char **argv)
 			skip_motd = TRUE;
 			break;
 
+		case 'v':
+			save_chat = TRUE;
+			break;
+
 		default:
 			modus = -1;
 			i = argc;
@@ -689,6 +693,7 @@ int main(int argc, char **argv)
 		puts("  -w                 disable client-side weather effects");
 		puts("  -u                 disable client-side automatic lua updates");
 		puts("  -m                 skip motd (message of the day) on login");
+		puts("  -v                 save chat log on exit, don't prompt");
 
 #ifdef USE_SOUND_2010
 #if 0 //we don't have 'modules' for everything, yet :-p only sound_modules for now - C. Blue

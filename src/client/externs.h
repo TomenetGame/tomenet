@@ -224,6 +224,7 @@ extern bool quiet_mode;
 extern bool noweather_mode;
 extern bool no_lua_updates;
 extern bool skip_motd;
+extern bool save_chat;
 
 
 extern client_opts c_cfg;
