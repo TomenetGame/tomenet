@@ -3398,31 +3398,34 @@ static void hook_quit(cptr str)
 		}
 	}
 
-	/* Save the preferences.
-	   Note: Moved this here before destroying terms, to save Font choice - C. Blue */
-	/* Note: This takes time with anti-virus on */
-	save_prefs();
-
+	/* Hack - Save the window positions before destroying them - mikaelh */
+	/* Main window */
+	GetWindowRect(data[0].w, &rc);
+	data[0].pos_x = rc.left;
+	data[0].pos_y = rc.top;
 	/* Sub-Windows */
-	for (i = MAX_TERM_DATA - 1; i >= 1; i--)
-	{
-		/* Hack - Save the window positions before destroying them - mikaelh */
+	for (i = MAX_TERM_DATA - 1; i >= 1; i--) {
 		GetWindowRect(data[i].w, &rc);
 		data[i].pos_x = rc.left;
 		data[i].pos_y = rc.top;
+	}
 
+	/* Save the preferences.
+	   Note: Moved this here before destroying terms, to save Font choice
+	         which can be modified with new '=f' option - C. Blue */
+	/* Note: This takes time with anti-virus on */
+	save_prefs();
+
+	/* Destroy the windows */
+	/* Sub-Windows */
+	for (i = MAX_TERM_DATA - 1; i >= 1; i--) {
 		term_force_font(&data[i], NULL);
 		if (data[i].font_want) string_free(data[i].font_want);
 		if (data[i].graf_want) string_free(data[i].graf_want);
 		if (data[i].w) DestroyWindow(data[i].w);
 		data[i].w = 0;
 	}
-
-	/* Hack - Save the window positions before destroying them - mikaelh */
-	GetWindowRect(data[0].w, &rc);
-	data[0].pos_x = rc.left;
-	data[0].pos_y = rc.top;
-
+	/* Main window */
 #ifdef USE_GRAPHICS
 	term_force_graf(&data[0], NULL);
 #endif
@@ -3956,11 +3959,11 @@ void change_font(int s) {
 		/* change main window font */
 		term_force_font(&data[0], "8X13.FON");
 		/* Change sub windows too */
-		term_force_font(&data[1], "8X13.FON");
-		term_force_font(&data[2], "8X13.FON");
-		term_force_font(&data[3], "5X8.FON");
-		term_force_font(&data[4], "6X10.FON");
-		term_force_font(&data[5], "5X8.FON");
+		term_force_font(&data[1], "8X13.FON"); //msg
+		term_force_font(&data[2], "8X13.FON"); //inv
+		term_force_font(&data[3], "5X8.FON"); //char
+		term_force_font(&data[4], "6X10.FON"); //chat
+		term_force_font(&data[5], "6X10.FON"); //eq (5x8)
 		term_force_font(&data[6], "5X8.FON");
 		term_force_font(&data[7], "5X8.FON");
 		break;
@@ -3980,8 +3983,8 @@ void change_font(int s) {
 		/* change main window font */
 		term_force_font(&data[0], "12X18X.FON");
 		/* Change sub windows too */
-		term_force_font(&data[1], "12X18X.FON");
-		term_force_font(&data[2], "12X18X.FON");
+		term_force_font(&data[1], "9X15.FON");
+		term_force_font(&data[2], "9X15.FON");
 		term_force_font(&data[3], "8X13.FON");
 		term_force_font(&data[4], "9X15.FON");
 		term_force_font(&data[5], "8X13.FON");
@@ -3992,8 +3995,8 @@ void change_font(int s) {
 		/* change main window font */
 		term_force_font(&data[0], "16X24X.FON");
 		/* Change sub windows too */
-		term_force_font(&data[1], "16X24X.FON");
-		term_force_font(&data[2], "16X24X.FON");
+		term_force_font(&data[1], "12X18X.FON");
+		term_force_font(&data[2], "12X18X.FON");
 		term_force_font(&data[3], "9X15.FON");
 		term_force_font(&data[4], "12X18X.FON");
 		term_force_font(&data[5], "9X15.FON");
