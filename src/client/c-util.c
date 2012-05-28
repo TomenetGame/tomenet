@@ -4469,6 +4469,7 @@ void interact_macros(void)
 					if (strstr(buf2, "*t")) {
 						clear_from(10);
 						Term_putstr(10, 11, -1, TERM_GREEN, "Please choose the targetting method:");
+						Term_putstr(10, 12, -1, TERM_GREEN, "(Hint: Also inscribe your ammo '!=' for auto-pickup!)");
 						Term_putstr(10, 14, -1, TERM_L_GREEN, "a) Target closest monster if such exists,");
 						Term_putstr(10, 15, -1, TERM_L_GREEN, "   otherwise cancel the action. (Recommended)");
 						Term_putstr(10, 17, -1, TERM_L_GREEN, "b) Target closest monster if such exists,");
