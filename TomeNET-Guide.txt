@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 18. May 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 29. May 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10204,6 +10204,9 @@ Here is a table, showing you some bpr numbers you can expect your newly
 created character to have, depending on certain combinations of class, STR,
 DEX, given for both, lightest possible weapon and startup weapon:
 (Don't forget that some classes can dual-wield, adding an extra +1 bpr on top!)
+
+Note: 'Light' weapon may refer to as low as 3.0 lbs (varies depending on STR
+      and DEX - any weapon that weighs at most 3.0 lbs will definitely work).
 
 Class           STR     DEX     Light weapon    Startup weapon
 ------------------------------------------------------------------------
