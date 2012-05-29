@@ -3965,23 +3965,28 @@ void interact_macros(void)
 					Term_putstr(10, 21, -1, TERM_L_GREEN, "j) Set up a monster trap");
 					Term_putstr(10, 22, -1, TERM_L_GREEN, "k) Use a magic device");
 
-					switch (choice = inkey()) {
-					case ESCAPE:
-					case 'p':
-					case '\010': /* backspace */
-						i = -1; /* leave */
-						continue;;
-					case KTRL('T'):
-						/* Take a screenshot */
-						xhtml_screenshot("screenshot????");
-						continue;
+					while (TRUE) {
+						switch (choice = inkey()) {
+						case ESCAPE:
+						case 'p':
+						case '\010': /* backspace */
+							i = -1; /* leave */
+							break;
+						case KTRL('T'):
+							/* Take a screenshot */
+							xhtml_screenshot("screenshot????");
+							continue;
+						default:
+							/* invalid action -> exit wizard */
+							if ((choice < 'a' || choice > 'k') && choice != 'D' && choice != 'E') {
+//								i = -1;
+								continue;
+							}
+						}
+						break;
 					}
-
-					/* invalid action -> exit wizard */
-					if ((choice < 'a' || choice > 'k') && choice != 'D' && choice != 'E') {
-						i = -1;
-						continue;
-					}
+					/* exit? */
+					if (i == -1) continue;
 
 					/* advance to next step */
 					i++;
@@ -4084,7 +4089,7 @@ void interact_macros(void)
 							case ESCAPE:
 							case '\010': /* backspace */
 								i = -1; /* leave */
-								continue;;
+								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
 								xhtml_screenshot("screenshot????");
@@ -4093,7 +4098,8 @@ void interact_macros(void)
 							default:
                                                                 /* invalid action -> exit wizard */
 								if (choice < 'a' || choice > 'a' + RCRAFT_MAX_ELEMENTS - 1) {
-									i = -1;
+									j--;
+//									i = -1;
 									continue;
 								}
 
@@ -4147,23 +4153,28 @@ void interact_macros(void)
 							Term_putstr(15, 15 + i, -1, TERM_L_GREEN, tmpbuf);
 						}
 
-						switch (choice = inkey()) {
-						case ESCAPE:
-						case 'p':
-						case '\010': /* backspace */
-							i = -1; /* leave */
-							continue;;
-						case KTRL('T'):
-							/* Take a screenshot */
-							xhtml_screenshot("screenshot????");
-							continue;
+						while (TRUE) {
+							switch (choice = inkey()) {
+							case ESCAPE:
+							case 'p':
+							case '\010': /* backspace */
+								i = -1; /* leave */
+								break;
+							case KTRL('T'):
+								/* Take a screenshot */
+								xhtml_screenshot("screenshot????");
+								continue;
+							default:
+								/* invalid action -> exit wizard */
+								if (choice < 'a' || choice > 'h') {
+//									i = -1;
+									continue;
+								}
+							}
+							break;
 						}
-
-						/* invalid action -> exit wizard */
-						if (choice < 'a' || choice > 'h') {
-							i = -1;
-							continue;
-						}
+						/* exit? */
+						if (i == -1) continue;
 
 						/* build macro part: 'a'..'h' */
 						strcat(buf, format("%c", choice));
@@ -4187,23 +4198,28 @@ void interact_macros(void)
 							Term_putstr(15, 15 + i, -1, TERM_L_GREEN, tmpbuf);
 						}
 
-						switch (choice = inkey()) {
-						case ESCAPE:
-						case 'p':
-						case '\010': /* backspace */
-							i = -1; /* leave */
-							continue;;
-						case KTRL('T'):
-							/* Take a screenshot */
-							xhtml_screenshot("screenshot????");
-							continue;
+						while (TRUE) {
+							switch (choice = inkey()) {
+							case ESCAPE:
+							case 'p':
+							case '\010': /* backspace */
+								i = -1; /* leave */
+								break;
+							case KTRL('T'):
+								/* Take a screenshot */
+								xhtml_screenshot("screenshot????");
+								continue;
+							default:
+								/* invalid action -> exit wizard */
+								if (choice < 'a' || choice > 'h') {
+//									i = -1;
+									continue;
+								}
+							}
+							break;
 						}
-
-						/* invalid action -> exit wizard */
-						if (choice < 'a' || choice > 'h') {
-							i = -1;
-							continue;
-						}
+						/* exit? */
+						if (i == -1) continue;
 
 						/* build macro part: 'a'..'h' */
 						strcat(buf, format("%c", choice));
@@ -4267,23 +4283,28 @@ void interact_macros(void)
 						Term_putstr(15, 17, -1, TERM_L_GREEN, "e) an activatable item that doesn't require a target");
 						Term_putstr(15, 18, -1, TERM_L_GREEN, "f) an activatable item that requires a target");
 
-						switch (choice = inkey()) {
-						case ESCAPE:
-						case 'p':
-						case '\010': /* backspace */
-							i = -1; /* leave */
-							continue;;
-						case KTRL('T'):
-							/* Take a screenshot */
-							xhtml_screenshot("screenshot????");
-							continue;
+						while (TRUE) {
+							switch (choice = inkey()) {
+							case ESCAPE:
+							case 'p':
+							case '\010': /* backspace */
+								i = -1; /* leave */
+								break;
+							case KTRL('T'):
+								/* Take a screenshot */
+								xhtml_screenshot("screenshot????");
+								continue;
+							default:
+								/* invalid action -> exit wizard */
+								if (choice < 'a' || choice > 'f') {
+//									i = -1;
+									continue;
+								}
+							}
+							break;
 						}
-
-						/* invalid action -> exit wizard */
-						if (choice < 'a' || choice > 'f') {
-							i = -1;
-							continue;
-						}
+						/* exit? */
+						if (i == -1) continue;
 
 						/* build macro part */
 						j = 0; /* hack: != 1 means 'undirectional' device */
@@ -4469,19 +4490,36 @@ void interact_macros(void)
 					if (strstr(buf2, "*t")) {
 						clear_from(10);
 						Term_putstr(10, 11, -1, TERM_GREEN, "Please choose the targetting method:");
-						Term_putstr(10, 12, -1, TERM_GREEN, "(Hint: Also inscribe your ammo '!=' for auto-pickup!)");
+						Term_putstr(10, 12, -1, TERM_GREEN, "(\377UHINT: \377gAlso inscribe your ammo '!=' for auto-pickup!)");
 						Term_putstr(10, 14, -1, TERM_L_GREEN, "a) Target closest monster if such exists,");
 						Term_putstr(10, 15, -1, TERM_L_GREEN, "   otherwise cancel the action. (Recommended)");
 						Term_putstr(10, 17, -1, TERM_L_GREEN, "b) Target closest monster if such exists,");
 						Term_putstr(10, 18, -1, TERM_L_GREEN, "   otherwise prompt for direction.");
 						Term_putstr(10, 20, -1, TERM_L_GREEN, "c) Target closest monster if such exists,");
 						Term_putstr(10, 21, -1, TERM_L_GREEN, "   otherwise target own grid.");
-						switch (choice = inkey()) {
-						case 'a': case 'b': case 'c': break;
-						default:
-							i = -1; /* leave */
-							continue;
+
+						while (TRUE) {
+							switch (choice = inkey()) {
+							case ESCAPE:
+							case 'p':
+							case '\010': /* backspace */
+								i = -1; /* leave */
+								break;
+							case KTRL('T'):
+								/* Take a screenshot */
+								xhtml_screenshot("screenshot????");
+								continue;
+							default:
+								/* invalid action -> exit wizard */
+								if (choice < 'a' || choice > 'c') {
+//									i = -1;
+									continue;
+								}
+							}
+							break;
 						}
+						/* exit? */
+						if (i == -1) continue;
 
 						if (choice != 'c') {
 							strcpy(buf, "\\e)*t");
@@ -4510,39 +4548,48 @@ void interact_macros(void)
 					Term_putstr(10, 14, -1, TERM_GREEN, "Good examples are the F-keys, F1 to F12.");
 					Term_putstr(10, 15, -1, TERM_GREEN, "The keys ESC and '%' are NOT allowed to be used.");
 					Term_putstr(5, 17, -1, TERM_L_GREEN, "Press the key to bind the macro to:");
-					Term_gotoxy(45, 17);
 
-					/* Get a macro trigger */
-					get_macro_trigger(buf);
+					while (TRUE) {
+						/* Get a macro trigger */
+						Term_putstr(45, 17, -1, TERM_WHITE, "  ");
+						Term_gotoxy(45, 17);
+						get_macro_trigger(buf);
 
-					/* choose proper macro type, and bind it to key */
-					if (!strcmp(buf, format("%c", KTRL('T')))) {
-						/* Take a screenshot */
-						xhtml_screenshot("screenshot????");
-						continue;
-					} else if (!strcmp(buf, "\e") || !strcmp(buf, "%")) {
-						c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
-						i = -1; /* leave */
-						continue;
-					} else {
-						/* Automatically choose usually best fitting macro type,
-						   depending on chosen trigger key! */
-						//[normal macros: F-keys (only keys that aren't used for any text input)]
-						//command macros: / * a..w (all keys that are used in important standard prompts)
-						//hybrid macros: all others, maybe even also normal-macro-keys
-						if (!strcmp(buf, "/") || !strcmp(buf, "*") || (*buf >= 'a' && *buf <= 'w')) {
-							/* make it a command macro */
-							/* Link the macro */
-							macro_add(buf, macro__buf, TRUE, FALSE);
-							/* Message */
-							c_msg_print("Created a new command macro.");
-						} else {
-							/* make it a hybrid macro */
-							/* Link the macro */
-							macro_add(buf, macro__buf, FALSE, TRUE);
-							/* Message */
-							c_msg_print("Created a new hybrid macro.");
+						/* choose proper macro type, and bind it to key */
+						if (!strcmp(buf, format("%c", KTRL('T')))) {
+							/* Take a screenshot */
+							xhtml_screenshot("screenshot????");
+							continue;
+						} else if (!strcmp(buf, "\e") || !strcmp(buf, "%")) {
+							c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
+							if (!strcmp(buf, "\e")) {
+								i = -1; /* leave */
+								break;
+							}
+							continue;
 						}
+						break;
+					}
+					/* exit? */
+					if (i == -1) continue;
+
+					/* Automatically choose usually best fitting macro type,
+					   depending on chosen trigger key! */
+					//[normal macros: F-keys (only keys that aren't used for any text input)]
+					//command macros: / * a..w (all keys that are used in important standard prompts)
+					//hybrid macros: all others, maybe even also normal-macro-keys
+					if (!strcmp(buf, "/") || !strcmp(buf, "*") || (*buf >= 'a' && *buf <= 'w')) {
+						/* make it a command macro */
+						/* Link the macro */
+						macro_add(buf, macro__buf, TRUE, FALSE);
+						/* Message */
+						c_msg_print("Created a new command macro.");
+					} else {
+						/* make it a hybrid macro */
+						/* Link the macro */
+						macro_add(buf, macro__buf, FALSE, TRUE);
+						/* Message */
+						c_msg_print("Created a new hybrid macro.");
 					}
 
 					/* this was the final step, we're done */
