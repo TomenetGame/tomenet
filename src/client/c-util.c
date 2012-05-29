@@ -3337,37 +3337,40 @@ void interact_macros(void)
 		Term_putstr(0, 0, -1, TERM_L_GREEN, "Interact with Macros");
 
 
+		/* Selections */
+		l = 2;
+		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377yz\377B) Invoke macro wizard         *** Recommended ***");
+		Term_putstr(5, l++, -1, TERM_WHITE, "(\377ys\377w) Save macros to a pref file");
+		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yl\377w) Load macros from a pref file");
+		l++;
+		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yd\377w) Delete a macro from a key   (restores a key's normal behaviour)");
+		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yt\377w) Test a key for an existing macro");
+		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yi\377w) List all currently defined macros");
+		l++;
+		Term_putstr(5, l++, -1, TERM_SLATE, "(\377ua\377s) Enter a new macro action manually. Afterwards..");
+		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uh\377s) ..create a hybrid macro     (usually preferable over command/normal)");
+		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uc\377s) ..create a command macro    (eg for using / and * key)");
+		Term_putstr(5, l++, -1, TERM_SLATE, "(\377un\377s) ..create a normal macro     (persists everywhere, even in chat)");
+//		Term_putstr(5, l++, -1, TERM_SLATE, "(\377u4\377s) Create a identity macro  (erases a macro)");
+		Term_putstr(5, l++, -1, TERM_SLATE, "(\377ue\377s) Create an empty macro       (completely disables a key)");
+//		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uq\377s/\377yQ\377w) Enter and create a 'quick & dirty' macro / set preferences"),
+		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uq\377s) Enter and create a 'quick & dirty' macro"),
+//		Term_putstr(5, l++, -1, TERM_SLATE, "(\377r\377w/\377yR\377w) Record a macro / set preferences");
+		Term_putstr(5, l++, -1, TERM_SLATE, "(\377ur\377s) Record a macro");
+		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uW\377s) Wipe all macros and (\377uw\377s) reload default macro files (use together!)");
+		l++;
+
 		/* Describe that action */
-		Term_putstr(0, 21, -1, TERM_L_GREEN, "Current action (if any) shown below:");
+		Term_putstr(0, l + 3, -1, TERM_L_GREEN, "Current action (if any) shown below:");
 
 		/* Analyze the current action */
 		ascii_to_text(buf, macro__buf);
 
 		/* Display the current action */
-		Term_putstr(0, 23, -1, TERM_WHITE, buf);
-
-		/* Selections */
-		l = 2;
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yz\377w) Invoke macro wizard         ***Recommended***");
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yl\377w) Load macros from a pref file");
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377ys\377w) Save macros to a pref file");
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377ua\377w) Enter a new macro action");
-		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uc\377s) Create a command macro      (eg for using / and * key)");
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377uh\377w) Create a hybrid macro       (recommended for most cases)");
-		Term_putstr(5, l++, -1, TERM_SLATE, "(\377un\377s) Create a normal macro       (persists everywhere)");
-//		Term_putstr(5, l++, -1, TERM_SLATE, "(\377u4\377s) Create a identity macro  (erases a macro)");
-		Term_putstr(5, l++, -1, TERM_SLATE, "(\377ud\377s) Delete a macro from a key");
-		Term_putstr(5, l++, -1, TERM_SLATE, "(\377ue\377s) Create an empty macro       (completely disables a key)");
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377ut\377w) Test a key for an existing macro and its type");
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377ui\377w) List all macros");
-//		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uq\377s/\377yQ\377w) Enter and create a 'quick & dirty' macro / set preferences"),
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377uq\377w) Enter and create a 'quick & dirty' macro"),
-//		Term_putstr(5, l++, -1, TERM_WHITE, "(\377r\377w/\377yR\377w) Record a macro / set preferences");
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377ur\377w) Record a macro");
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377uW\377w) Wipe all macros and (\377uw\377w) reload default macro files (use together!)");
+		Term_putstr(0, l + 4, -1, TERM_WHITE, buf);
 
 		/* Prompt */
-		Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: ");
+		Term_putstr(0, l, -1, TERM_L_GREEN, "Command: ");
 
 		/* Get a key */
 		i = inkey();
@@ -3384,10 +3387,10 @@ void interact_macros(void)
 		/* Load a pref file */
 		else if (i == 'l') {
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Load a user pref file");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Load a user pref file");
 
 			/* Get a filename, handle ESCAPE */
-			Term_putstr(0, 19, -1, TERM_WHITE, "File: ");
+			Term_putstr(0, l + 1, -1, TERM_WHITE, "File: ");
 
 			/* Default filename */
 //			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
@@ -3407,10 +3410,10 @@ void interact_macros(void)
 		/* Save a 'macro' file */
 		else if (i == 's') {
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Save a macro file");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Save a macro file");
 
 			/* Get a filename, handle ESCAPE */
-			Term_putstr(0, 19, -1, TERM_WHITE, "File: ");
+			Term_putstr(0, l + 1, -1, TERM_WHITE, "File: ");
 
 			/* Default filename */
 //			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
@@ -3427,10 +3430,10 @@ void interact_macros(void)
 		/* Enter a new action */
 		else if (i == 'a') {
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Enter a new action");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Enter a new action");
 
 			/* Go to the correct location */
-			Term_gotoxy(0, 23);
+			Term_gotoxy(0, l + 4);
 
 			/* Get an encoded action */
 			if (!askfor_aux(buf, 159, 0)) continue;
@@ -3442,14 +3445,14 @@ void interact_macros(void)
 		/* Create a command macro */
 		else if (i == 'c') {
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Create a command macro");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Create a command macro");
 
 			/* Prompt */
-			Term_putstr(0, 19, -1, TERM_WHITE, "Trigger: ");
+			Term_putstr(0, l + 1, -1, TERM_WHITE, "Trigger: ");
 
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
-			
+
 			/* Some keys aren't allowed to prevent the user 
 			   from locking himself out accidentally */
 			if (!strcmp(buf, "\e") || !strcmp(buf, "%")) {
@@ -3465,10 +3468,10 @@ void interact_macros(void)
 		/* Create a hybrid macro */
 		else if (i == 'h') {
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Create a hybrid macro");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Create a hybrid macro");
 
 			/* Prompt */
-			Term_putstr(0, 19, -1, TERM_WHITE, "Trigger: ");
+			Term_putstr(0, l + 1, -1, TERM_WHITE, "Trigger: ");
 
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
@@ -3488,10 +3491,10 @@ void interact_macros(void)
 		/* Create a normal macro */
 		else if (i == 'n') {
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Create a normal macro");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Create a normal macro");
 
 			/* Prompt */
-			Term_putstr(0, 19, -1, TERM_WHITE, "Trigger: ");
+			Term_putstr(0, l + 1, -1, TERM_WHITE, "Trigger: ");
 
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
@@ -3512,10 +3515,10 @@ void interact_macros(void)
 		/* Create an identity macro */
 		else if (i == 'd') {
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Create an identity macro");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Create an identity macro");
 
 			/* Prompt */
-			Term_putstr(0, 19, -1, TERM_WHITE, "Trigger: ");
+			Term_putstr(0, l + 1, -1, TERM_WHITE, "Trigger: ");
 
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
@@ -3530,10 +3533,10 @@ void interact_macros(void)
 		/* Delete a macro */
 		else if (i == 'd') {
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Delete a macro");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Delete a macro");
 
 			/* Prompt */
-			Term_putstr(0, 19, -1, TERM_WHITE, "Trigger: ");
+			Term_putstr(0, l + 1, -1, TERM_WHITE, "Trigger: ");
 
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
@@ -3549,10 +3552,10 @@ void interact_macros(void)
 		/* Create an empty macro */
 		else if (i == 'e') {
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Create an empty macro");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Create an empty macro");
 
 			/* Prompt */
-			Term_putstr(0, 19, -1, TERM_WHITE, "Trigger: ");
+			Term_putstr(0, l + 1, -1, TERM_WHITE, "Trigger: ");
 
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
@@ -3572,10 +3575,10 @@ void interact_macros(void)
 		/* Query a macro */
 		else if (i == 't') {
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Test key for a macro");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Test key for a macro");
 
 			/* Prompt */
-			Term_putstr(0, 19, -1, TERM_WHITE, "Trigger: ");
+			Term_putstr(0, l + 1, -1, TERM_WHITE, "Trigger: ");
 
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
@@ -3612,7 +3615,7 @@ void interact_macros(void)
 		/* List all macros */
 		else if (i == 'i') {
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: List all macros");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: List all macros");
 
 			/* Re-using 'i' here shouldn't matter anymore */
 			for (i = 0; i < macro__num; i++) {
@@ -3704,10 +3707,10 @@ void interact_macros(void)
 			bool call_by_name = FALSE, mimic_transform = FALSE, mimic_transform_by_name = FALSE;
 
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Enter a new 'quick & dirty' macro");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Enter a new 'quick & dirty' macro");
 
 			/* Go to the correct location */
-			Term_gotoxy(0, 23);
+			Term_gotoxy(0, l + 4);
 
 			/* Get an encoded action */
 			if (!askfor_aux(buf, 159, 0)) continue;
@@ -3802,13 +3805,13 @@ void interact_macros(void)
 			*b2ptr = '\0';
 
 			/* Display the current action */
-        		Term_putstr(0, 23, -1, TERM_WHITE, buf2);
+        		Term_putstr(0, l + 4, -1, TERM_WHITE, buf2);
 
 			/* Extract an action */
 			text_to_ascii(macro__buf, buf2);
 
 			/* Prompt */
-			Term_putstr(0, 19, -1, TERM_WHITE, "Trigger: ");
+			Term_putstr(0, l + 1, -1, TERM_WHITE, "Trigger: ");
 
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
@@ -3842,7 +3845,7 @@ void interact_macros(void)
 		/* Configure 'quick & dirty' macro functionality */
 		else if (i == 'Q') {
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Configure 'quick & dirty' macro functionality");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Configure 'quick & dirty' macro functionality");
 			
 			/* TODO:
 			   config auto-prefix '\e)' */
@@ -3851,7 +3854,7 @@ void interact_macros(void)
 		/* Start recording a macro */
 		else if (i == 'r') {
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Record a macro");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Record a macro");
 
 			/* Clear screen */
 			Term_clear();
@@ -3864,9 +3867,9 @@ void interact_macros(void)
 			Term_putstr(5, 13, -1, TERM_WHITE, "To stop the recording process, just press '%' key to enter the macro");
 			Term_putstr(5, 14, -1, TERM_WHITE, "menu again. You'll then be able to create a normal, command or hybrid");
 			Term_putstr(4, 15, -1, TERM_WHITE, "macro from the whole recorded action by choosing the usual menu points");
-			Term_putstr(16, 16, -1, TERM_WHITE, "for the different macro types: 4), 5) or 6).");
+			Term_putstr(16, 16, -1, TERM_WHITE, "for the different macro types: h), c) or n).");
 			Term_putstr(19, 20, -1, TERM_L_RED, ">>>Press any key to start recording<<<");
-			
+
 			/* Wait for confirming keypress to finally start recording */
 			inkey();
 
@@ -3892,7 +3895,7 @@ void interact_macros(void)
 		else if (i == 'R')
 		{
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Configure macro recording functionality");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Configure macro recording functionality");
 
 			/* TODO: implement */
 		}
@@ -3900,7 +3903,7 @@ void interact_macros(void)
 		else  if (i == 'W')
 		{
 			/* Wipe all macros */
-			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Wipe all macros");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Wipe all macros");
 
 			for (i = 0; i < macro__num; i++) {
 				string_free(macro__pat[i]);
@@ -3921,7 +3924,7 @@ void interact_macros(void)
 		else if (i == 'w')
 		{
 			/* Reload default macro files */
-			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Reload default macro files");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Reload default macro files");
 
 			initialize_main_pref_files();
 			initialize_player_pref_files();
@@ -3929,7 +3932,7 @@ void interact_macros(void)
 
 		else if (i == 'z') {
 			/* Invoke wizard to create a macro step-by-step as easy as possible  */
-			Term_putstr(0, 17, -1, TERM_L_GREEN, "Command: Invoke macro wizard");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Invoke macro wizard");
 
 			/* Clear screen */
 			Term_clear();
@@ -4614,7 +4617,7 @@ void interact_macros(void)
 	Flush_queue();
 
 	inkey_interact_macros = FALSE;
-	
+
 	/* in case we entered this menu from recording a macro,
 	   we might have to update the '*recording*' status line */
 	if (were_recording) Send_redraw(0);
