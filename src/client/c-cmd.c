@@ -828,6 +828,7 @@ void cmd_inven(void)
 
 	ch = inkey();
 	if (ch == KTRL('T')) xhtml_screenshot("screenshot????");
+	/* allow pasting item into chat */
 	else if (ch >= 'A' && ch < 'A' + INVEN_PACK) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
 		c = ch - 'A';
 
@@ -871,6 +872,7 @@ void cmd_equip(void)
 
 	ch = inkey();
 	if (ch == KTRL('T')) xhtml_screenshot("screenshot????");
+	/* allow pasting item into chat */
 	else if (ch >= 'A' && ch < 'A' + (INVEN_TOTAL - INVEN_WIELD)) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
 		c = ch - 'A';
 		if (inventory[INVEN_WIELD + c].tval) {
@@ -1610,7 +1612,9 @@ void cmd_message(void)
 	/* _hacky_: A note INCLUDES the sender name, the brackets, spaces/newlines? Ouch. - C. Blue
 	   Note: the -8 are additional world server tax (8 chars are used for world server line prefix etc.) */
 	char buf[MSG_LEN - strlen(cname) - 5 - 3 - 8];
+	char tmp[MSG_LEN], c = 'B';
 	int i;
+	int j;
 
 	/* Wipe the whole buffer to stop valgrind from complaining about the color code conversion - mikaelh */
 	C_WIPE(buf, sizeof(buf), char);
@@ -1636,7 +1640,28 @@ void cmd_message(void)
 
 		/* Convert {'s into \377's */
 		for (i = 0; i < sizeof(buf); i++) {
-			if (buf[i] == '{') buf[i] = '\377';
+			if (buf[i] == '{') {
+				buf[i] = '\377';
+
+				/* remember last colour; for item pasting below */
+				c = buf[i + 1];
+			}
+		}
+
+		/* Allow to paste items in chat via shortcut symbol - C. Blue */
+		for (i = 0; i < sizeof(buf); i++) {
+			if (buf[i] == '\\' &&
+			  buf[i + 1] == '\\' &&
+			  ((buf[i + 2] >= 'a' && buf[i + 2] < 'a' + INVEN_PACK) ||
+			  (buf[i + 2] >= 'A' && buf[i + 2] < 'A' + (INVEN_TOTAL - INVEN_WIELD)))) {
+				if (buf[i + 2] >= 'a') j = buf[i + 2] - 'a';
+				else j = (buf[i + 2] - 'A') + INVEN_WIELD;
+				strcpy(tmp, &buf[i + 3]);
+				strcpy(&buf[i], "\377s");
+				strcat(buf, inventory_name[j]);
+				strcat(buf, format("\377%c", c));
+				strncat(buf, tmp, sizeof(buf) - strlen(buf));
+			}
 		}
 
 		/* Handle messages to '%' (self) in the client - mikaelh */
