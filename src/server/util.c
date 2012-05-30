@@ -1808,14 +1808,13 @@ void msg_print(int Ind, cptr msg_raw)
 					if (msg[msg_scan + 1] != '\377') {
 						msg_minibuf[0] = msg[msg_scan];
 						msg_scan++;
-						msg_minibuf[1] = msg[msg_scan];
 
 						/* needed for new '{-' feature in multi-line messages: resolve it to actual colour */
 						if (msg[msg_scan] == '-')
-							colour_code = prev_colour_code;
+							colour_code = msg_minibuf[1] = prev_colour_code;
 						else {
 							prev_colour_code = colour_code;
-							colour_code = msg[msg_scan];
+							colour_code = msg_minibuf[1] = msg[msg_scan];
 						}
 
 						msg_scan++;
