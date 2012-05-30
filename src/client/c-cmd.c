@@ -1612,7 +1612,7 @@ void cmd_message(void)
 	/* _hacky_: A note INCLUDES the sender name, the brackets, spaces/newlines? Ouch. - C. Blue
 	   Note: the -8 are additional world server tax (8 chars are used for world server line prefix etc.) */
 	char buf[MSG_LEN - strlen(cname) - 5 - 3 - 8];
-	char tmp[MSG_LEN], c = 'B';
+	char tmp[MSG_LEN];//, c = 'B';
 	int i;
 	int j;
 
@@ -1644,7 +1644,7 @@ void cmd_message(void)
 				buf[i] = '\377';
 
 				/* remember last colour; for item pasting below */
-				c = buf[i + 1];
+//				c = buf[i + 1];
 			}
 		}
 
@@ -1659,7 +1659,8 @@ void cmd_message(void)
 				strcpy(tmp, &buf[i + 3]);
 				strcpy(&buf[i], "\377s");
 				strcat(buf, inventory_name[j]);
-				strcat(buf, format("\377%c", c));
+//				strcat(buf, format("\377%c", c));
+				strcat(buf, "\377-");
 				strncat(buf, tmp, sizeof(buf) - strlen(buf));
 			}
 		}
