@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 29. May 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 30. May 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -9993,22 +9993,21 @@ vary. For example a warrior cannot learn magic spells.
     details on dual-wielding.)
 
 - Druid
-    Druids are able to call upon the mystical powers of nature and very good
-    at it. Their wisdom is of primary importance to determine their mana and
-    success chances when casting spells.
+    Druids are able to call upon the mystical powers of nature. Their wisdom
+    is of primary importance to determine their mana and success chances when
+    casting spells.
     Druids fight using Martial Arts, which is the only melee skill they are
     able to train, as well as a variety of magic spells.
-    Druids can shapechange into several animal forms without having to fight
-    or kill them in order to learn those forms. Instead they learn one or more
-    new forms automatically every five character levels.
-    Druids are able to always use their full equipment, even while transformed;
-    because of this, going with a 'fruit bat' body modification in character
-    creation would be especially ineffective for druids.
+    Druids can shapechange into several forms (mostly animals) without having
+    to fight or kill them in order to learn those forms. Instead they learn
+    one or more new forms automatically every five character levels.
+    Druids are able to always use their full equipment, even while transformed
+    into a monster that usually cannot wield certain items. Because of this,
+    going with a 'fruit bat' body modification in character creation would be
+    especially ineffective for druids.
     Despising the use of weapons they aren't as superb at close combat as
     warriors, but their Martial Arts training will make up for that and allow
     them quite a respectable performance.
-    A specialty of druids is that they are still able to wear their full
-    equipment even if their appearent shape is not human but of an animal.
     Druids learn how to quickly pass through thick forest at level 10 --
     note though that they can already do this at level 5 by simply polymorphing
     into an animal ('m' key), since all animals can pass forest easily.
