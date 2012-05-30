@@ -1706,7 +1706,7 @@ void msg_print(int Ind, cptr msg_raw)
 	char msg_buf[line_len + 2 + 2 * 80]; /* buffer for 1 line. + 2 bytes for colour code (+2*80 bytes for colour codeeeezz) */
 	char msg_minibuf[3]; /* temp buffer for adding characters */
 	int text_len, msg_scan = 0, space_scan, tab_spacer = 0, tmp;
-	char colour_code = 0;
+	char colour_code = 0, prev_colour_code = 0;
 	bool no_colour_code = FALSE;
 	bool first_character = TRUE;
 //	bool is_chat = ((msg_raw != NULL) && (strlen(msg_raw) > 2) && (msg_raw[2] == '['));
@@ -1809,7 +1809,15 @@ void msg_print(int Ind, cptr msg_raw)
 						msg_minibuf[0] = msg[msg_scan];
 						msg_scan++;
 						msg_minibuf[1] = msg[msg_scan];
-						colour_code = msg[msg_scan];
+
+						/* needed for new '{-' feature in multi-line messages: resolve it to actual colour */
+						if (msg[msg_scan] == '-')
+							colour_code = prev_colour_code;
+						else {
+							prev_colour_code = colour_code;
+							colour_code = msg[msg_scan];
+						}
+
 						msg_scan++;
 						msg_minibuf[2] = '\0';
 						strcat(msg_buf, msg_minibuf);
