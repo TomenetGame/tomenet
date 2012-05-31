@@ -777,6 +777,7 @@ extern void wipeout_needless_objects(void);
 extern bool highscore_reset(int Ind);
 extern bool highscore_remove(int Ind, int slot);
 extern bool highscore_file_convert(int Ind);
+extern void show_motd2(int from);
 
 /* generate.c */
 extern void place_up_stairs(worldpos *wpos, int y, int x); 

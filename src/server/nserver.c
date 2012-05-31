@@ -9323,6 +9323,9 @@ static int Receive_special_line(int ind)
 			if (is_admin(Players[player]) || cfg.public_rfe)
 				do_cmd_view_rfe(player, "tomenet.rfe", line);
 			break;
+		case SPECIAL_FILE_MOTD2:
+			show_motd2(player);
+			break;
 		/*
 		 * Hack -- those special files actually use do_cmd_check_other
 		 * XXX redesign it
