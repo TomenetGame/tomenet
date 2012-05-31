@@ -1684,14 +1684,14 @@ void cmd_check_misc(void)
 		i = inkey();
 		choice = 0;
 		switch(i) {
-			case '1':
+			case '3':
 				/* Send it */
 				cmd_uniques();
 				break;
-			case '2':
+			case '1':
 				cmd_artifacts();
 				break;
-			case '3':
+			case '2':
 				get_com("What kind of monsters? (ESC for all):", &choice);
 				if (choice <= ESCAPE) choice = 0;
 				Send_special_line(SPECIAL_FILE_MONSTER, choice);
