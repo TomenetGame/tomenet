@@ -1952,8 +1952,11 @@ errr Term_putstr(int x, int y, int n, byte a, char *s)
 	int b;
 	int count = 0;
 
+#if 0 //server side
 	/* remember old colour, for new {- feature - C. Blue */
-	byte prev_a = a;
+	byte prev_a = a, first_a = a;
+	bool first_colour_code_set = TRUE;
+#endif
 
 	/* Move first */
 	if ((res = Term_gotoxy(x, y)) != 0) return (res);
@@ -1980,13 +1983,18 @@ errr Term_putstr(int x, int y, int n, byte a, char *s)
 			Term_addch(a, '{');
 			ptr++;
 		} else {
+#if 0 //server side
 			if (*ptr == '-') {
 				/* restore previous colour */
 				a = prev_a;
 				ptr++;
-			} else if ((b = color_char_to_attr(*ptr)) != -1) {
+			} else
+#endif
+			if ((b = color_char_to_attr(*ptr)) != -1) {
+#if 0 //server side
 				/* remember old colour */
 				prev_a = a;
+#endif
 
 				/* Change the attr */
 				a = b;
