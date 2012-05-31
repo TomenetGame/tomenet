@@ -1499,10 +1499,13 @@ static void show_motd2(void)
 
 static void artifact_lore(void) {
 	char s[15 + 1], tmp[80];
-	int c, i, j, n, selected, selected_list = 0;
+	int c, i, j, n, selected, selected_list;
+
+	Term_save();
+
+  while (TRUE) {
 
 	s[0] = '\0';
-	Term_save();
 	Term_clear();
 	Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Artifact Lore ***");
 	Term_putstr(2,  2, -1, TERM_WHITE, "Enter (partial) artifact name to refine the search:");
@@ -1515,7 +1518,7 @@ static void artifact_lore(void) {
 		/* display top 15 of all matching artifacts */
 		clear_from(6);
 		n = 0;
-		selected = 0;
+		selected = selected_list = 0;
 		for (i = 1; i < MAX_A_IDX && n < 15; i++) {
 			/* create upper-case working copy */
 			strcpy(tmp, artifact_list_name[i]);
@@ -1564,6 +1567,7 @@ static void artifact_lore(void) {
 
 	Term_putstr(26,  23, -1, TERM_WHITE, "-- press any key to exit --");
 	inkey();
+  }
 
 	Term_load();
 }
@@ -1572,8 +1576,11 @@ static void monster_lore(void) {
 	char s[15 + 1], tmp[80];
 	int c, i, j, n, selected, selected_list = 0;
 
-	s[0] = '\0';
 	Term_save();
+
+  while (TRUE) {
+
+	s[0] = '\0';
 	Term_clear();
 	Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Monster Lore ***");
 	Term_putstr(2,  2, -1, TERM_WHITE, "Enter (partial) monster name to refine the search:");
@@ -1635,6 +1642,7 @@ static void monster_lore(void) {
 
 	Term_putstr(26,  23, -1, TERM_WHITE, "-- press any key to exit --");
 	inkey();
+  }
 
 	Term_load();
 }
