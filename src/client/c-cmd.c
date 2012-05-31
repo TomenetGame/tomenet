@@ -1499,7 +1499,7 @@ static void show_motd2(void)
 
 static void artifact_lore(void) {
 	char s[15 + 1], tmp[80];
-	int c, i, j, n, selected;
+	int c, i, j, n, selected, selected_list = 0;
 
 	s[0] = '\0';
 	Term_save();
@@ -1522,7 +1522,10 @@ static void artifact_lore(void) {
 			for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
 
 			if (strstr(tmp, s)) {
-				if (n == 0) selected = artifact_list_code[i];
+				if (n == 0) {
+					selected = artifact_list_code[i];
+					selected_list = i;
+				}
 				Term_putstr(5, 6 + n, -1, n == 0 ? TERM_YELLOW : TERM_UMBER, artifact_list_name[i]);
 				n++;
 			}
@@ -1557,7 +1560,7 @@ static void artifact_lore(void) {
 
 	/* display lore! */
 	clear_from(6);
-	artifact_lore_aux(selected);
+	artifact_lore_aux(selected, selected_list);
 
 	Term_putstr(26,  23, -1, TERM_WHITE, "-- press any key to exit --");
 	inkey();

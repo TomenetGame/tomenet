@@ -423,7 +423,7 @@ extern void initialize_player_ins_files(void);
 extern void client_init(char *argv1, bool skip);
 extern s32b char_creation_flags;
 extern void monster_lore_aux(int ridx);
-extern void artifact_lore_aux(int aidx);
+extern void artifact_lore_aux(int aidx, int alidx);
 
 /* c-inven.c */
 extern s16b index_to_label(int i);
@@ -822,3 +822,6 @@ extern int monster_list_code[MAX_R_IDX], monster_list_idx;
 
 extern char artifact_list_name[MAX_A_IDX][80];
 extern int artifact_list_code[MAX_A_IDX], artifact_list_idx;
+
+extern char kind_list_name[MAX_K_IDX][80];
+extern int kind_list_tval[MAX_K_IDX], kind_list_sval[MAX_K_IDX], kind_list_idx;

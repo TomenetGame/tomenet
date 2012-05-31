@@ -427,10 +427,92 @@ void monster_lore_aux(int ridx) {
 	my_fclose(fff);
 }
 
-/* Init artifact list for displaying artifact lore - C. Blue */
-static void init_artifact_list() {
+/* Init kind list for displaying artifact lore with full item names - C. Blue */
+static void init_kind_list() {
 	char buf[1024], *p1, *p2;
 	FILE *fff;
+
+	/* actually use local k_info.txt - a novum */
+	path_build(buf, 1024, ANGBAND_DIR_GAME, "k_info.txt");
+	fff = my_fopen(buf, "r");
+	if (fff == NULL) {
+		//plog("Error: Your k_info.txt file is missing.");
+		return;
+	}
+
+	while (0 == my_fgets(fff, buf, 1024)) {
+		/* strip $/%..$/! conditions */
+		while (buf[0] == '$' || buf[0] == '%') {
+			p1 = strchr(buf, '$');
+			p2 = strchr(buf, '!');
+			if (!p1 && !p2) continue;
+			if (!p1) p1 = p2;
+			else if (p2 && p2 < p1) p1 = p2;
+			strcpy(buf, p1 + 1);
+		}
+
+		if (strlen(buf) < 3 || buf[0] != 'N') continue;
+
+		p1 = buf + 2; /* kind code */
+		p2 = strchr(p1, ':'); /* 1 before kind name */
+		if (!p2) continue; /* paranoia (broken file) */
+		p2++;
+
+		/* hack - skip item 0, because it doesn't have tval/sval */
+		if (atoi(p1) == 0) continue;
+
+		/* strip '& ' and '~' */
+		strcpy(kind_list_name[kind_list_idx], "");
+		while (*p2) {
+			if (*p2 == '~') {
+				p2++;
+				continue;
+			}
+			if (*p2 == '&') {
+				p2 += 2;
+				continue;
+			}
+			strcat(kind_list_name[kind_list_idx], format("%c", *p2));
+			p2++;
+		}
+
+		/* fetch I line for tval/sval */
+		while (0 == my_fgets(fff, buf, 1024)) {
+			/* strip $/%..$/! conditions */
+			while (buf[0] == '$' || buf[0] == '%') {
+				p1 = strchr(buf, '$');
+				p2 = strchr(buf, '!');
+				if (!p1 && !p2) continue;
+				if (!p1) p1 = p2;
+				else if (p2 && p2 < p1) p1 = p2;
+				strcpy(buf, p1 + 1);
+			}
+
+			if (strlen(buf) < 3 || buf[0] != 'I') continue;
+
+			p1 = buf + 2; /* tval */
+			p2 = strchr(p1, ':') + 1; /* sval */
+			if (!p2) continue; /* paranoia (broken file) */
+
+			kind_list_tval[kind_list_idx] = atoi(p1);
+			kind_list_sval[kind_list_idx] = atoi(p2);
+			break;
+		}
+
+		kind_list_idx++;
+
+		/* outdated client? */
+		if (kind_list_idx == MAX_K_IDX) break;
+	}
+
+	my_fclose(fff);
+}
+
+/* Init artifact list for displaying artifact lore - C. Blue */
+static void init_artifact_list() {
+	char buf[1024], *p1, *p2, art_name[80];
+	FILE *fff;
+	int tval = 0, sval = 0, i;
 
 	/* actually use local r_info.txt - a novum */
 	path_build(buf, 1024, ANGBAND_DIR_GAME, "a_info.txt");
@@ -458,7 +540,41 @@ static void init_artifact_list() {
 		if (!p2) continue; /* paranoia (broken file) */
 
 		artifact_list_code[artifact_list_idx] = atoi(p1);
-		strcpy(artifact_list_name[artifact_list_idx], p2 + 1);
+		strcpy(artifact_list_name[artifact_list_idx], "");
+		strcpy(art_name, p2 + 1);
+
+		/* fetch tval,sval and lookup type name in k_info */
+		while (0 == my_fgets(fff, buf, 1024)) {
+			/* strip $/%..$/! conditions */
+			while (buf[0] == '$' || buf[0] == '%') {
+				p1 = strchr(buf, '$');
+				p2 = strchr(buf, '!');
+				if (!p1 && !p2) continue;
+				if (!p1) p1 = p2;
+				else if (p2 && p2 < p1) p1 = p2;
+				strcpy(buf, p1 + 1);
+			}
+
+			if (strlen(buf) < 3 || buf[0] != 'I') continue;
+
+			p1 = buf + 2; /* tval */
+			p2 = strchr(p1, ':') + 1; /* sval */
+			tval = atoi(p1);
+			sval = atoi(p2);
+			break;
+		}
+		/* lookup type name */
+		for (i = 0; i < MAX_K_IDX; i++) {
+			if (kind_list_tval[i] == tval &&
+				kind_list_sval[i] == sval) {
+				strcpy(artifact_list_name[artifact_list_idx], "The ");
+				strcat(artifact_list_name[artifact_list_idx], kind_list_name[i]);
+				strcat(artifact_list_name[artifact_list_idx], " ");
+				break;
+			}
+		}
+		/* complete the artifact name */
+		strcat(artifact_list_name[artifact_list_idx], art_name);
 		artifact_list_idx++;
 
 		/* outdated client? */
@@ -467,7 +583,7 @@ static void init_artifact_list() {
 
 	my_fclose(fff);
 }
-void artifact_lore_aux(int aidx) {
+void artifact_lore_aux(int aidx, int alidx) {
 	char buf[1024], *p1, *p2;
 	FILE *fff;
 	int l = 0;
@@ -502,7 +618,8 @@ void artifact_lore_aux(int aidx) {
 		/* print info */
 
 		/* name */
-		Term_putstr(5, 6, -1, TERM_YELLOW, p2 + 1);
+		//Term_putstr(5, 6, -1, TERM_YELLOW, p2 + 1);
+		Term_putstr(5, 6, -1, TERM_YELLOW, artifact_list_name[alidx]);
 
 		/* fetch diz */
 		while (0 == my_fgets(fff, buf, 1024)) {
@@ -856,6 +973,8 @@ void client_init(char *argv1, bool skip)
 
 	/* Init monster list from local (client-side) r_info.txt file */
 	init_monster_list();
+	/* Init kind list from local (client-side) k_info.txt file */
+	init_kind_list();
 	/* Init artifact list from local (client-side) a_info.txt file */
 	init_artifact_list();
 
