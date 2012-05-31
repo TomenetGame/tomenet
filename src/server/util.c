@@ -1706,7 +1706,7 @@ void msg_print(int Ind, cptr msg_raw)
 	char msg_buf[line_len + 2 + 2 * 80]; /* buffer for 1 line. + 2 bytes for colour code (+2*80 bytes for colour codeeeezz) */
 	char msg_minibuf[3]; /* temp buffer for adding characters */
 	int text_len, msg_scan = 0, space_scan, tab_spacer = 0, tmp;
-	char colour_code = 'w', c_code;
+	char colour_code = 'w';
 	bool no_colour_code = FALSE;
 	bool first_character = TRUE;
 //	bool is_chat = ((msg_raw != NULL) && (strlen(msg_raw) > 2) && (msg_raw[2] == '['));
