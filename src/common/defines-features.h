@@ -79,6 +79,9 @@
 /* Shorten party/guild name to (P) and (G) in party-/guild-chat for less clutter? */
 #define GROUP_CHAT_NOCLUTTER
 
+/* Load 'D:' tags from a_info.txt file and display them on examining - C. Blue */
+#define ART_DIZ
+
 
 
 /* --------------------- Server-type dependant features -------------------- */
@@ -97,8 +100,6 @@
 #endif
 
 #ifdef TEST_SERVER
- #define ART_DIZ		/* Load 'D:' tags from a_info.txt file and display them on examining - C. Blue */
-
  #define ENABLE_ASSASSINATE	/* experimental fighting technique for rogues - devalues Backstabbing too much probably */
 
  #ifdef MAX_CLOUDS

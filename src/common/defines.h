@@ -5524,7 +5524,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
         ((T)->name1 ? TRUE : FALSE)
 
 #define true_artifact_p(T) \
-        (artifact_p(T) && (T)->name1 != ART_RANDART ? TRUE : FALSE)
+        (artifact_p(T) && ((T)->name1 != ART_RANDART))
 
 /* artifacts that can occur multiple times legally */
 #define multiple_artifact_p(T) \

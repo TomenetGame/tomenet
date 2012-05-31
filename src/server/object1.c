@@ -3841,6 +3841,12 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		fprintf(fff, "%s\n", o_name);
 	}
 
+#ifdef ART_DIZ
+	if (true_artifact_p(o_ptr)) {
+		fprintf(fff, "%s", a_text + a_info[o_ptr->name1].text);
+	}
+#endif
+
 	/* in case we just *ID* it because an admin inspected it */
 	if (!(o_ptr->ident & ID_MENTAL) && is_admin(p_ptr)) fprintf(fff, "\377y(This item has not been *identified* yet.)\n");
 

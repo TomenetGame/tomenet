@@ -2791,6 +2791,9 @@ errr init_a_info_txt(FILE *fp, char *buf)
 	int i;
 
 	char *s, *t;
+#ifdef ART_DIZ
+	char tmp[MAX_CHARS];
+#endif
 
 	/* Not ready yet */
 	bool okay = FALSE;
@@ -2906,14 +2909,15 @@ errr init_a_info_txt(FILE *fp, char *buf)
 		if (!a_ptr) return (3);
 
 
-
 		/* Process 'D' for "Description" */
-		if (buf[0] == 'D')
-		{
+		if (buf[0] == 'D') {
 #ifdef ART_DIZ
-#if 1	// Hope they'll be handled in client-side someday
 			/* Acquire the text */
 			s = buf + 2;
+
+			strcpy(tmp, " \377u");
+			strcat(tmp, s);
+			strcat(tmp, "\n");
 
 			/* Hack -- Verify space */
 			if (a_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
@@ -2921,12 +2925,11 @@ errr init_a_info_txt(FILE *fp, char *buf)
 			/* Advance and Save the text index */
 			if (!a_ptr->text) a_ptr->text = ++a_head->text_size;
 
-			/* Append chars to the name */
-			strcpy(a_text + a_head->text_size, s);
+			/* Append chars to the text */
+			strcpy(a_text + a_head->text_size, tmp);
 
 			/* Advance the index */
-			a_head->text_size += strlen(s);
-#endif
+			a_head->text_size += strlen(tmp);
 #endif
 			/* Next... */
 			continue;
