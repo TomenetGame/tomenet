@@ -1519,7 +1519,25 @@ static void artifact_lore(void) {
 		clear_from(6);
 		n = 0;
 		selected = selected_list = 0;
+
+		/* hack: direct match always takes top position */
+		if (s[0]) for (i = 1; i < MAX_A_IDX; i++) {
+			/* create upper-case working copy */
+			strcpy(tmp, artifact_list_name[i]);
+			for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
+
+			if (!strcmp(tmp, s)) {
+				selected = artifact_list_code[i];
+				selected_list = i;
+				Term_putstr(5, 6, -1, TERM_YELLOW, artifact_list_name[i]);
+				n++;
+			}
+		}
+
 		for (i = 1; i < MAX_A_IDX && n < 15; i++) {
+			/* direct match above already? */
+			if (i == selected_list) continue;
+
 			/* create upper-case working copy */
 			strcpy(tmp, artifact_list_name[i]);
 			for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
@@ -1574,7 +1592,7 @@ static void artifact_lore(void) {
 
 static void monster_lore(void) {
 	char s[15 + 1], tmp[80];
-	int c, i, j, n, selected, selected_list = 0;
+	int c, i, j, n, selected, selected_list;
 
 	Term_save();
 
@@ -1587,14 +1605,32 @@ static void monster_lore(void) {
 	Term_putstr(2,  3, -1, TERM_WHITE, "Press RETURN to display lore about the first monster.");
 
 	while (TRUE) {
-		Term_putstr(54,  2, -1, TERM_WHITE, "                                ");
-		Term_putstr(54,  2, -1, TERM_L_GREEN, s);
+		Term_putstr(53,  2, -1, TERM_WHITE, "                                ");
+		Term_putstr(53,  2, -1, TERM_L_GREEN, s);
 
 		/* display top 15 of all matching monsters */
 		clear_from(6);
 		n = 0;
-		selected = 0;
+		selected = selected_list = 0;
+
+		/* hack: direct match always takes top position */
+		if (s[0]) for (i = 1; i < MAX_R_IDX; i++) {
+			/* create upper-case working copy */
+			strcpy(tmp, monster_list_name[i]);
+			for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
+
+			if (!strcmp(tmp, s)) {
+				selected = monster_list_code[i];
+				selected_list = i;
+				Term_putstr(5, 6, -1, TERM_YELLOW, monster_list_name[i]);
+				n++;
+			}
+		}
+
 		for (i = 1; i < MAX_R_IDX && n < 15; i++) {
+			/* direct match above already? */
+			if (i == selected_list) continue;
+
 			/* create upper-case working copy */
 			strcpy(tmp, monster_list_name[i]);
 			for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
@@ -1614,7 +1650,7 @@ static void monster_lore(void) {
 
 		/* backspace */
 		if (c == '\010' || c == 0x7F) {
-			if (strlen(s) > 0) s[strlen(s) - 1] = '\0';
+			if (strlen(s)) s[strlen(s) - 1] = '\0';
 			continue;
 		}
 		/* return */
