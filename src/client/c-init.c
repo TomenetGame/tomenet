@@ -361,6 +361,8 @@ static void init_monster_list() {
 		/* outdated client? */
 		if (monster_list_idx == MAX_R_IDX) break;
 	}
+
+	my_fclose(fff);
 }
 void monster_lore_aux(int ridx) {
 	char buf[1024], *p1, *p2;
@@ -421,6 +423,8 @@ void monster_lore_aux(int ridx) {
 
 		break;
 	}
+
+	my_fclose(fff);
 }
 
 /* Init artifact list for displaying artifact lore - C. Blue */
@@ -460,6 +464,8 @@ static void init_artifact_list() {
 		/* outdated client? */
 		if (artifact_list_idx == MAX_A_IDX) break;
 	}
+
+	my_fclose(fff);
 }
 void artifact_lore_aux(int aidx) {
 	char buf[1024], *p1, *p2;
@@ -520,6 +526,8 @@ void artifact_lore_aux(int aidx) {
 
 		break;
 	}
+
+	my_fclose(fff);
 }
 
 
