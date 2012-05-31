@@ -2592,8 +2592,11 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				}
 			}
 
-			if (ident)
-				msg_print(Ind, "Your backpack makes a clattering noise.");
+			//if (ident)
+			msg_print(Ind, "Your backpack makes a clattering noise.");
+#ifdef USE_SOUND_2010
+			sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 
 			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
