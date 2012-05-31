@@ -327,6 +327,10 @@ generic_term_info term_prefs[10] = {
 bool request_pending = FALSE;
 bool request_abort = FALSE;
 
-/* For polymorphing by monster name */
+/* For polymorphing by monster name
+   and also for monster lore */
 char monster_list_name[MAX_R_IDX][40];
 int monster_list_code[MAX_R_IDX], monster_list_idx = 0;
+/* For artifact lore */
+char artifact_list_name[MAX_A_IDX][80];
+int artifact_list_code[MAX_A_IDX], artifact_list_idx = 0;

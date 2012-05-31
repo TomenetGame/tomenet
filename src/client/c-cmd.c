@@ -1488,6 +1488,151 @@ void cmd_help(void)
 	peruse_file();
 }
 
+static void show_motd2(void)
+{
+	/* Set the hook */
+	special_line_type = SPECIAL_FILE_MOTD2;
+
+	/* Call the file perusal */
+	peruse_file();
+}
+
+static void artifact_lore(void) {
+	char s[15 + 1], tmp[80];
+	int c, i, j, n, selected;
+
+	s[0] = '\0';
+	Term_save();
+	Term_clear();
+	Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Artifact Lore ***");
+	Term_putstr(2,  2, -1, TERM_WHITE, "Enter (partial) artifact name to refine the search:");
+	Term_putstr(2,  3, -1, TERM_WHITE, "Press RETURN to display lore about the first artifact.");
+
+	while (TRUE) {
+		Term_putstr(54,  2, -1, TERM_WHITE, "                                ");
+		Term_putstr(54,  2, -1, TERM_L_GREEN, s);
+
+		/* display top 15 of all matching artifacts */
+		clear_from(6);
+		n = 0;
+		selected = 0;
+		for (i = 1; i < MAX_A_IDX && n < 15; i++) {
+			/* create upper-case working copy */
+			strcpy(tmp, artifact_list_name[i]);
+			for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
+
+			if (strstr(tmp, s)) {
+				if (n == 0) selected = artifact_list_code[i];
+				Term_putstr(5, 6 + n, -1, n == 0 ? TERM_YELLOW : TERM_UMBER, artifact_list_name[i]);
+				n++;
+			}
+		}
+
+		Term_putstr(28,  23, -1, TERM_WHITE, "-- press ESC to exit --");
+		c = inkey();
+
+		/* backspace */
+		if (c == '\010' || c == 0x7F) {
+			if (strlen(s) > 0) s[strlen(s) - 1] = '\0';
+			continue;
+		}
+		/* return */
+		if (c == '\n' || c == '\r') break;
+		/* escape */
+		if (c == ESCAPE) break;
+		/* illegal char */
+		if (c < 32 || c > 127) continue;
+		/* name too long? */
+		if (strlen(s) >= 20) continue;
+		/* build name */
+		c = toupper(c);
+		strcat(s, format("%c", c));
+	}
+
+	/* exit? */
+	if (c == ESCAPE) {
+		Term_load();
+		return;
+	}
+
+	/* display lore! */
+	clear_from(6);
+	artifact_lore_aux(selected);
+
+	Term_putstr(26,  23, -1, TERM_WHITE, "-- press any key to exit --");
+	inkey();
+
+	Term_load();
+}
+
+static void monster_lore(void) {
+	char s[15 + 1], tmp[80];
+	int c, i, j, n, selected;
+
+	s[0] = '\0';
+	Term_save();
+	Term_clear();
+	Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Monster Lore ***");
+	Term_putstr(2,  2, -1, TERM_WHITE, "Enter (partial) monster name to refine the search:");
+	Term_putstr(2,  3, -1, TERM_WHITE, "Press RETURN to display lore about the first monster.");
+
+	while (TRUE) {
+		Term_putstr(54,  2, -1, TERM_WHITE, "                                ");
+		Term_putstr(54,  2, -1, TERM_L_GREEN, s);
+
+		/* display top 15 of all matching monsters */
+		clear_from(6);
+		n = 0;
+		selected = 0;
+		for (i = 1; i < MAX_R_IDX && n < 15; i++) {
+			/* create upper-case working copy */
+			strcpy(tmp, monster_list_name[i]);
+			for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
+
+			if (strstr(tmp, s)) {
+				if (n == 0) selected = monster_list_code[i];
+				Term_putstr(5, 6 + n, -1, n == 0 ? TERM_YELLOW : TERM_UMBER, monster_list_name[i]);
+				n++;
+			}
+		}
+
+		Term_putstr(28,  23, -1, TERM_WHITE, "-- press ESC to exit --");
+		c = inkey();
+
+		/* backspace */
+		if (c == '\010' || c == 0x7F) {
+			if (strlen(s) > 0) s[strlen(s) - 1] = '\0';
+			continue;
+		}
+		/* return */
+		if (c == '\n' || c == '\r') break;
+		/* escape */
+		if (c == ESCAPE) break;
+		/* illegal char */
+		if (c < 32 || c > 127) continue;
+		/* name too long? */
+		if (strlen(s) >= 20) continue;
+		/* build name */
+		c = toupper(c);
+		strcat(s, format("%c", c));
+	}
+
+	/* exit? */
+	if (c == ESCAPE) {
+		Term_load();
+		return;
+	}
+
+	/* display lore! */
+	clear_from(6);
+	monster_lore_aux(selected);
+
+	Term_putstr(26,  23, -1, TERM_WHITE, "-- press any key to exit --");
+	inkey();
+
+	Term_load();
+}
+
 
 /*
  * NOTE: the usage of Send_special_line is quite a hack;
@@ -1495,41 +1640,44 @@ void cmd_help(void)
  */
 void cmd_check_misc(void)
 {
-	char i=0, choice;
-	int second = 11;
+	char i = 0, choice;
+	int second = 10;
 
 	Term_save();
 	Term_clear();
 //	Term_putstr(0,  0, -1, TERM_BLUE, "Display current knowledge");
 
-	Term_putstr(5,  2, -1, TERM_WHITE, "(\377y1\377w) Unique monsters");
-	Term_putstr(5,  3, -1, TERM_WHITE, "(\377y2\377w) Artifacts");
-	Term_putstr(5,  4, -1, TERM_WHITE, "(\377y3\377w) Monsters");
-	Term_putstr(5,  5, -1, TERM_WHITE, "(\377y4\377w) Objects");
-	Term_putstr(5,  6, -1, TERM_WHITE, "(\377y5\377w) Traps");
-	Term_putstr(5,  7, -1, TERM_WHITE, "(\377y6\377w) Houses");
-	Term_putstr(5,  8, -1, TERM_WHITE, "(\377y7\377w) Recall depths and Towns");
-	Term_putstr(5,  9, -1, TERM_WHITE, "(\377y8\377w) Wilderness Map");
+	Term_putstr( 5,  3, -1, TERM_WHITE, "(\377y1\377w) Artifacts");
+	Term_putstr( 5,  4, -1, TERM_WHITE, "(\377y2\377w) Monsters");
+	Term_putstr( 5,  5, -1, TERM_WHITE, "(\377y3\377w) Unique monsters");
+	Term_putstr( 5,  6, -1, TERM_WHITE, "(\377y4\377w) Objects");
+	Term_putstr( 5,  7, -1, TERM_WHITE, "(\377y5\377w) Traps");
+	Term_putstr(40,  3, -1, TERM_WHITE, "(\377y6\377w) Artifact lore");
+	Term_putstr(40,  4, -1, TERM_WHITE, "(\377y7\377w) Monster lore");
+	Term_putstr(40,  5, -1, TERM_WHITE, "(\377y8\377w) Recall depths and towns");
+	Term_putstr(40,  6, -1, TERM_WHITE, "(\377y9\377w) Houses");
+	Term_putstr(40,  7, -1, TERM_WHITE, "(\377y0\377w) Wilderness map");
 
-	Term_putstr(5, second + 0, -1, TERM_WHITE, "(\377ya\377w) Players online");
-	Term_putstr(5, second + 1, -1, TERM_WHITE, "(\377yb\377w) Other players' equipments");
-	Term_putstr(5, second + 2, -1, TERM_WHITE, "(\377yc\377w) Score list");
-	Term_putstr(5, second + 3, -1, TERM_WHITE, "(\377yd\377w) Server settings");
-	Term_putstr(5, second + 4, -1, TERM_WHITE, "(\377ye\377w) Opinions (if available)");
-	Term_putstr(5, second + 5, -1, TERM_WHITE, "(\377yf\377w) News (login message)");
-	Term_putstr(5, second + 6, -1, TERM_WHITE, "(\377yg\377w) Message history");
-	Term_putstr(5, second + 7, -1, TERM_WHITE, "(\377yh\377w) Chat history");
-	Term_putstr(5, second + 8, -1, TERM_WHITE, "(\377yl\377w) Lag-o-meter");
-	Term_putstr(5, second + 9, -1, TERM_WHITE, "(\377y?\377w) Help");
+	Term_putstr( 5, second + 0, -1, TERM_WHITE, "(\377ya\377w) Players online");
+	Term_putstr( 5, second + 1, -1, TERM_WHITE, "(\377yb\377w) Other players' equipments");
+	Term_putstr( 5, second + 2, -1, TERM_WHITE, "(\377yc\377w) Score list");
+	Term_putstr( 5, second + 3, -1, TERM_WHITE, "(\377yd\377w) Server settings");
+	Term_putstr( 5, second + 4, -1, TERM_WHITE, "(\377ye\377w) Opinions (if available)");
+	Term_putstr(40, second + 0, -1, TERM_WHITE, "(\377yf\377w) News (Message of the day)");
+	Term_putstr(40, second + 1, -1, TERM_WHITE, "(\377yg\377w) Intro screen");
+	Term_putstr(40, second + 2, -1, TERM_WHITE, "(\377yh\377w) Message history");
+	Term_putstr(40, second + 3, -1, TERM_WHITE, "(\377yi\377w) Chat history");
+	Term_putstr(40, second + 4, -1, TERM_WHITE, "(\377yl\377w) Lag-o-meter");
+	Term_putstr( 5, 17, -1, TERM_WHITE, "(\377y?\377w) Help");
 
 	Term_putstr(0, 22, -1, TERM_BLUE, "Command: ");
 
-	while(i!=ESCAPE){
+	while (i != ESCAPE) {
 		Term_putstr(0,  0, -1, TERM_BLUE, "Display current knowledge");
 
-		i=inkey();
+		i = inkey();
 		choice = 0;
-		switch(i){
+		switch(i) {
 			case '1':
 				/* Send it */
 				cmd_uniques();
@@ -1550,14 +1698,20 @@ void cmd_check_misc(void)
 			case '5':
 				Send_special_line(SPECIAL_FILE_TRAP, 0);
 				break;
-			case '6':
+			case '9':
 				Send_special_line(SPECIAL_FILE_HOUSE, 0);
 				break;
-			case '7':
+			case '8':
 				Send_special_line(SPECIAL_FILE_RECALL, 0);
 				break;
-			case '8':
+			case '0':
 				cmd_map(1);
+				break;
+			case '6':
+				artifact_lore();
+				break;
+			case '7':
+				monster_lore();
 				break;
 			case 'a':
 				cmd_players();
@@ -1582,13 +1736,16 @@ void cmd_check_misc(void)
 				show_motd(0);
 				break;
 			case 'g':
+				show_motd2();
+				break;
+			case 'h':
 				do_cmd_messages();
+				break;
+			case 'i':
+				do_cmd_messages_chatonly();
 				break;
 			case 'l':
 				cmd_lagometer();
-				break;
-			case 'h':
-				do_cmd_messages_chatonly();
 				break;
 			case '?':
 				cmd_help();

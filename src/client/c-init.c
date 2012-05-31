@@ -323,7 +323,8 @@ void initialize_player_ins_files(void) {
 }
 
 
-/* Init monster list for polymorph-by-name */
+/* Init monster list for polymorph-by-name
+   and also for displaying monster lore - C. Blue */
 static void init_monster_list() {
 	char buf[1024], *p1, *p2;
 	FILE *fff;
@@ -359,6 +360,165 @@ static void init_monster_list() {
 
 		/* outdated client? */
 		if (monster_list_idx == MAX_R_IDX) break;
+	}
+}
+void monster_lore_aux(int ridx) {
+	char buf[1024], *p1, *p2;
+	FILE *fff;
+	int l = 0;
+
+	/* actually use local r_info.txt - a novum */
+	path_build(buf, 1024, ANGBAND_DIR_GAME, "r_info.txt");
+	fff = my_fopen(buf, "r");
+	if (fff == NULL) {
+		//plog("Error: Your r_info.txt file is missing.");
+		return;
+	}
+
+	while (0 == my_fgets(fff, buf, 1024)) {
+		/* strip $/%..$/! conditions */
+		while (buf[0] == '$' || buf[0] == '%') {
+			p1 = strchr(buf, '$');
+			p2 = strchr(buf, '!');
+			if (!p1 && !p2) continue;
+			if (!p1) p1 = p2;
+			else if (p2 && p2 < p1) p1 = p2;
+			strcpy(buf, p1 + 1);
+		}
+
+		if (strlen(buf) < 3 || buf[0] != 'N') continue;
+
+		p1 = buf + 2; /* monster code */
+		p2 = strchr(p1, ':'); /* 1 before monster name */
+		if (!p2) continue; /* paranoia (broken file) */
+
+		if (atoi(p1) != ridx) continue;
+
+		/* print info */
+
+		/* name */
+		Term_putstr(5, 6, -1, TERM_YELLOW, p2 + 1);
+
+		/* fetch diz */
+		while (0 == my_fgets(fff, buf, 1024)) {
+			/* strip $/%..$/! conditions */
+			while (buf[0] == '$' || buf[0] == '%') {
+				p1 = strchr(buf, '$');
+				p2 = strchr(buf, '!');
+				if (!p1 && !p2) continue;
+				if (!p1) p1 = p2;
+				else if (p2 && p2 < p1) p1 = p2;
+				strcpy(buf, p1 + 1);
+			}
+
+			if (strlen(buf) < 3) continue;
+			if (buf[0] == 'N') break;
+			if (buf[0] != 'D') continue;
+
+			p1 = buf + 2; /* monster diz line */
+			Term_putstr(1, 8 + (l++), -1, TERM_UMBER, p1);
+		}
+
+		break;
+	}
+}
+
+/* Init artifact list for displaying artifact lore - C. Blue */
+static void init_artifact_list() {
+	char buf[1024], *p1, *p2;
+	FILE *fff;
+
+	/* actually use local r_info.txt - a novum */
+	path_build(buf, 1024, ANGBAND_DIR_GAME, "a_info.txt");
+	fff = my_fopen(buf, "r");
+	if (fff == NULL) {
+		//plog("Error: Your a_info.txt file is missing.");
+		return;
+	}
+
+	while (0 == my_fgets(fff, buf, 1024)) {
+		/* strip $/%..$/! conditions */
+		while (buf[0] == '$' || buf[0] == '%') {
+			p1 = strchr(buf, '$');
+			p2 = strchr(buf, '!');
+			if (!p1 && !p2) continue;
+			if (!p1) p1 = p2;
+			else if (p2 && p2 < p1) p1 = p2;
+			strcpy(buf, p1 + 1);
+		}
+
+		if (strlen(buf) < 3 || buf[0] != 'N') continue;
+
+		p1 = buf + 2; /* artifact code */
+		p2 = strchr(p1, ':'); /* 1 before artifact name */
+		if (!p2) continue; /* paranoia (broken file) */
+
+		artifact_list_code[artifact_list_idx] = atoi(p1);
+		strcpy(artifact_list_name[artifact_list_idx], p2 + 1);
+		artifact_list_idx++;
+
+		/* outdated client? */
+		if (artifact_list_idx == MAX_A_IDX) break;
+	}
+}
+void artifact_lore_aux(int aidx) {
+	char buf[1024], *p1, *p2;
+	FILE *fff;
+	int l = 0;
+
+	/* actually use local a_info.txt - a novum */
+	path_build(buf, 1024, ANGBAND_DIR_GAME, "a_info.txt");
+	fff = my_fopen(buf, "r");
+	if (fff == NULL) {
+		//plog("Error: Your a_info.txt file is missing.");
+		return;
+	}
+
+	while (0 == my_fgets(fff, buf, 1024)) {
+		/* strip $/%..$/! conditions */
+		while (buf[0] == '$' || buf[0] == '%') {
+			p1 = strchr(buf, '$');
+			p2 = strchr(buf, '!');
+			if (!p1 && !p2) continue;
+			if (!p1) p1 = p2;
+			else if (p2 && p2 < p1) p1 = p2;
+			strcpy(buf, p1 + 1);
+		}
+
+		if (strlen(buf) < 3 || buf[0] != 'N') continue;
+
+		p1 = buf + 2; /* artifact code */
+		p2 = strchr(p1, ':'); /* 1 before artifact name */
+		if (!p2) continue; /* paranoia (broken file) */
+
+		if (atoi(p1) != aidx) continue;
+
+		/* print info */
+
+		/* name */
+		Term_putstr(5, 6, -1, TERM_YELLOW, p2 + 1);
+
+		/* fetch diz */
+		while (0 == my_fgets(fff, buf, 1024)) {
+			/* strip $/%..$/! conditions */
+			while (buf[0] == '$' || buf[0] == '%') {
+				p1 = strchr(buf, '$');
+				p2 = strchr(buf, '!');
+				if (!p1 && !p2) continue;
+				if (!p1) p1 = p2;
+				else if (p2 && p2 < p1) p1 = p2;
+				strcpy(buf, p1 + 1);
+			}
+
+			if (strlen(buf) < 3) continue;
+			if (buf[0] == 'N') break;
+			if (buf[0] != 'D') continue;
+
+			p1 = buf + 2; /* artifact diz line */
+			Term_putstr(1, 8 + (l++), -1, TERM_UMBER, p1);
+		}
+
+		break;
 	}
 }
 
@@ -686,8 +846,10 @@ void client_init(char *argv1, bool skip)
 	/* Initialize sound */
 	init_sound();
 
-	/* Init monster list from local r_info.txt file */
+	/* Init monster list from local (client-side) r_info.txt file */
 	init_monster_list();
+	/* Init artifact list from local (client-side) a_info.txt file */
+	init_artifact_list();
 
 	GetLocalHostName(host_name, 80);
 
