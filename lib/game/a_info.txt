@@ -2158,7 +2158,7 @@ W:40:20:300:88400
 P:0:5d7:31:27:0
 F:STR | SLAY_ANIMAL | SUST_STR | RES_SHARDS | RES_NEXUS | FEATHER | 
 F:HIDE_TYPE | SHOW_MODS | ACTIVATE | DRAIN_HP
-D:Used by the orcs in their battle at Dragor Bragollach against the elves, this 
+D:Used by the orcs in their battle at Dragor Bragollach against the elves, this
 D:axe has a bloodthirst for nature. 
 
 
@@ -2884,8 +2884,8 @@ W:65:40:400:100000
 P:60:2d5:-8:0:0
 F:RES_MANA | NO_MAGIC |
 F:RES_ACID | IM_ELEC | RES_DISEN
-D:Made of this rare black ore this mighty armour has an extraordinarily hard surface.
-D:It also seems to absorb any form of energy.
+D:Made of this rare black ore this mighty armour has an extraordinarily hard
+D:surface. It also seems to absorb any form of energy.
 
 
 # The Silver Bolt of Thunder
