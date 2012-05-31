@@ -817,7 +817,7 @@ extern errr init_sound_sdl(int argc, char **argv);
 //extern bool my_fexists(const char *fname);
 #endif
 
-extern char monster_list_name[MAX_R_IDX][40], monster_list_symbol[MAX_R_IDX][2];
+extern char monster_list_name[MAX_R_IDX][80], monster_list_symbol[MAX_R_IDX][2];
 extern int monster_list_code[MAX_R_IDX], monster_list_idx;
 
 extern char artifact_list_name[MAX_A_IDX][80];
