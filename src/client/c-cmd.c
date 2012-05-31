@@ -1570,7 +1570,7 @@ static void artifact_lore(void) {
 
 static void monster_lore(void) {
 	char s[15 + 1], tmp[80];
-	int c, i, j, n, selected;
+	int c, i, j, n, selected, selected_list = 0;
 
 	s[0] = '\0';
 	Term_save();
@@ -1593,7 +1593,10 @@ static void monster_lore(void) {
 			for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
 
 			if (strstr(tmp, s)) {
-				if (n == 0) selected = monster_list_code[i];
+				if (n == 0) {
+					selected = monster_list_code[i];
+					selected_list = i;
+				}
 				Term_putstr(5, 6 + n, -1, n == 0 ? TERM_YELLOW : TERM_UMBER, monster_list_name[i]);
 				n++;
 			}
@@ -1628,7 +1631,7 @@ static void monster_lore(void) {
 
 	/* display lore! */
 	clear_from(6);
-	monster_lore_aux(selected);
+	monster_lore_aux(selected, selected_list);
 
 	Term_putstr(26,  23, -1, TERM_WHITE, "-- press any key to exit --");
 	inkey();

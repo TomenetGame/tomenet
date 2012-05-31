@@ -329,7 +329,7 @@ bool request_abort = FALSE;
 
 /* For polymorphing by monster name
    and also for monster lore */
-char monster_list_name[MAX_R_IDX][40];
+char monster_list_name[MAX_R_IDX][40], monster_list_symbol[MAX_R_IDX][2];
 int monster_list_code[MAX_R_IDX], monster_list_idx = 0;
 /* For artifact lore */
 char artifact_list_name[MAX_A_IDX][80];

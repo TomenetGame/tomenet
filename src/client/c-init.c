@@ -356,6 +356,30 @@ static void init_monster_list() {
 
 		monster_list_code[monster_list_idx] = atoi(p1);
 		strcpy(monster_list_name[monster_list_idx], p2 + 1);
+
+		/* fetch symbol (and colour) */
+		while (0 == my_fgets(fff, buf, 1024)) {
+			/* strip $/%..$/! conditions */
+			while (buf[0] == '$' || buf[0] == '%') {
+				p1 = strchr(buf, '$');
+				p2 = strchr(buf, '!');
+				if (!p1 && !p2) continue;
+				if (!p1) p1 = p2;
+				else if (p2 && p2 < p1) p1 = p2;
+				strcpy(buf, p1 + 1);
+			}
+
+			if (strlen(buf) < 5 || buf[0] != 'G') continue;
+
+			p1 = buf + 2; /* monster symbol */
+			p2 = strchr(p1, ':'); /* 1 before monster colour */
+			break;
+		}
+		buf[3] = '\0';
+		buf[5] = '\0';
+		strcpy(monster_list_symbol[monster_list_idx], p2 + 1);
+		strcat(monster_list_symbol[monster_list_idx], p1);
+
 		monster_list_idx++;
 
 		/* outdated client? */
@@ -364,7 +388,7 @@ static void init_monster_list() {
 
 	my_fclose(fff);
 }
-void monster_lore_aux(int ridx) {
+void monster_lore_aux(int ridx, int rlidx) {
 	char buf[1024], *p1, *p2;
 	FILE *fff;
 	int l = 0;
@@ -399,7 +423,11 @@ void monster_lore_aux(int ridx) {
 		/* print info */
 
 		/* name */
-		Term_putstr(5, 6, -1, TERM_YELLOW, p2 + 1);
+		//Term_putstr(5, 6, -1, TERM_YELLOW, p2 + 1);
+		Term_putstr(5, 6, -1, TERM_YELLOW, format("%s (\377%c%c\377y)",
+			monster_list_name[rlidx],
+			monster_list_symbol[rlidx][0],
+			monster_list_symbol[rlidx][1]));
 
 		/* fetch diz */
 		while (0 == my_fgets(fff, buf, 1024)) {
