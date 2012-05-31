@@ -1706,11 +1706,15 @@ void msg_print(int Ind, cptr msg_raw)
 	char msg_buf[line_len + 2 + 2 * 80]; /* buffer for 1 line. + 2 bytes for colour code (+2*80 bytes for colour codeeeezz) */
 	char msg_minibuf[3]; /* temp buffer for adding characters */
 	int text_len, msg_scan = 0, space_scan, tab_spacer = 0, tmp;
-	char colour_code = 0, prev_colour_code = 0;
+	char colour_code = 'w', c_code;
 	bool no_colour_code = FALSE;
 	bool first_character = TRUE;
 //	bool is_chat = ((msg_raw != NULL) && (strlen(msg_raw) > 2) && (msg_raw[2] == '['));
 	bool client_ctrlo = FALSE, client_chat = FALSE, client_all = FALSE;
+
+	/* for {- feature */
+	char prev_colour_code = 'w', first_colour_code = 'w';
+	bool first_colour_code_set = FALSE;
 
 	/* backward msg window width hack for windows clients (non-x11 clients rather) */
 	if (!is_newer_than(&Players[Ind]->version, 4, 4, 5, 3, 0, 0) && !strcmp(Players[Ind]->realname, "PLAYER")) line_len = 72;
@@ -1804,19 +1808,24 @@ void msg_print(int Ind, cptr msg_raw)
 						msg_scan++;
 						continue;
 					}
+
 					/* Capture double \377 which stand for a normal { char instead of a colour code: */
 					if (msg[msg_scan + 1] != '\377') {
 						msg_minibuf[0] = msg[msg_scan];
 						msg_scan++;
 
-						/* needed for new '{-' feature in multi-line messages: resolve it to actual colour */
-						if (msg[msg_scan] == '-')
-							colour_code = msg_minibuf[1] = prev_colour_code;
-						else {
-							prev_colour_code = colour_code;
-							colour_code = msg_minibuf[1] = msg[msg_scan];
+						/* needed for new '\377-' feature in multi-line messages: resolve it to actual colour */
+						if (msg[msg_scan] == '-') {
+							msg[msg_scan] = colour_code = first_colour_code; //prev_colour_code
+						} else {
+							prev_colour_code = colour_code = msg[msg_scan];
+							if (!first_colour_code_set) {
+								first_colour_code_set = TRUE;
+								first_colour_code = colour_code;
+							}
 						}
 
+           				msg_minibuf[1] = colour_code;
 						msg_scan++;
 						msg_minibuf[2] = '\0';
 						strcat(msg_buf, msg_minibuf);
@@ -1871,6 +1880,13 @@ void msg_print(int Ind, cptr msg_raw)
 					}
 				}
 
+				/* remember first actual chat colour (guild chat changes colour a few times for [..] brackets and name)
+				   for {- etc feature */
+				if (msg[msg_scan] == ']' &&
+				    ((msg[msg_scan + 1] == ' ' && msg[msg_scan + 2] == '\377') ||
+				    msg[msg_scan + 1] == '\377'))
+					first_colour_code_set = FALSE;
+
 				/* Process text.. */
 				first_character = FALSE;
 				msg_minibuf[0] = msg[msg_scan];
@@ -1878,6 +1894,7 @@ void msg_print(int Ind, cptr msg_raw)
 				strcat(msg_buf, msg_minibuf);
 				msg_scan++;
 				text_len++;
+
 				/* Avoid cutting words in two */
 				if ((text_len == line_len) && (msg[msg_scan] != '\0') &&
 				    ((msg[msg_scan - 1] >= 'A' && msg[msg_scan - 1] <= 'Z') ||
