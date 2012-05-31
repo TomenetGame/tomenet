@@ -1147,6 +1147,7 @@ Pseudo-ID   If a player keeps an unidentified item for a longer time he might
             'feel' if the item is average, good, cursed or special. The item
             will automatically receive a 'pseudo-id inscription' then.
             Pseudo-id intensity and speed depend on the 'Combat' skill.
+            It does not matter whether the player is acting, afk or idle.
             See (5.7) for more information about identification.
 PvP         Player vs player. Describes the act of player characters fighting
             each other. If you want to fight other players to death, create a
