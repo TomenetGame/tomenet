@@ -8105,6 +8105,13 @@ void season_change(int s, bool force) {
 
 	/* redraw map for all players */
 	for (x = 1; x <= NumPlayers; x++) Players[x]->redraw |= PR_MAP;
+
+	/* make all clouds terminate soon, to account for changed climate situation */
+	for (x = 0; x < MAX_CLOUDS; x++) {
+		/* does cloud exist? */
+		if (cloud_dur[x]) /* also affects 'dur = -1' clouds */
+			cloud_dur[x] = 5 + rand_int(10); /* terminate in 5..15 seconds */
+	}
 }
 
 /* Update players' client-side weather. - C. Blue
