@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 30. May 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 1. June 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -6418,6 +6418,10 @@ INVIS   ('It makes you invisible.')
         or you are not. Also see '(5.16) Invisibility'.
 BLOWS   ('It affects your attack speed.')
         This item adds EA (extra attacks) to your number of blows per round.
+'of Plenty' wands and staves.
+        These have more charges than usual, and will also gain more charges
+        from recharging than their normal counterparts. (See (5.22) about
+        recharging.)
 
 
 
