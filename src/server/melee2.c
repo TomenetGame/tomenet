@@ -1754,7 +1754,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 //	byte		spell[96], num = 0;
 	u32b		f4, f5, f6, f7, f0;
 	monster_type	*m_ptr = &m_list[m_idx];
-        monster_race    *r_ptr = race_inf(m_ptr);
+	monster_race    *r_ptr = race_inf(m_ptr);
 	//object_type *o_ptr = &p_ptr->inventory[INVEN_WIELD];
 	char		m_name[MNAME_LEN];
 	char		m_poss[MNAME_LEN];
@@ -1793,6 +1793,12 @@ bool make_attack_spell(int Ind, int m_idx) {
 	int ox = m_ptr->fx;
 	/* Space/Time Anchor */
 //	bool st_anchor = check_st_anchor(&m_ptr->wpos, oy, ox);
+
+#ifdef SAURON_ANTI_GLYPH
+	bool summon_test = FALSE;
+	monster_race *base_r_ptr = &r_info[m_ptr->r_idx];
+#endif
+
 	wpos = &m_ptr->wpos;
 
 
@@ -1987,9 +1993,19 @@ bool make_attack_spell(int Ind, int m_idx) {
 				f6 & (RF6_SUMMON_MASK) || f0 & (RF0_SUMMON_MASK)) &&
 	*/
 //	if (rad > 3 ||
+#ifdef SAURON_ANTI_GLYPH
+	if (m_ptr->r_idx == 860 && summon) {
+		summon_test = summon_possible(wpos, ys, xs);
+		if (!summon_test) {
+			base_r_ptr->freq_spell = base_r_ptr->freq_innate = 75;
+			if (!m_ptr->extra) s_printf("SAURON: boost (glyph summon).\n");
+			m_ptr->extra = 5; /* stay boosted for 5 turns at least */
+		}
+	}
+#endif
 	if (rad > INDIRECT_SUMMONING_RADIUS || magik(SUPPRESS_SUMMON_RATE) ||
 		(summon && !stupid &&
-		!(summon_possible(wpos, ys, xs))))	// <= we can omit this now?
+		!summon_test))
 	{
 		/* Remove summoning spells */
 		f4 &= ~(RF4_SUMMON_MASK);
@@ -6515,6 +6531,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 	/* If the monster can't see the player */ 
 	inv = player_invis(Ind, m_ptr, m_ptr->cdis);
 
+#ifdef SAURON_ANTI_GLYPH
+	if (m_ptr->r_idx == 860 && m_ptr->extra) m_ptr->extra--;
+#endif
 
 	/* Handle "sleep" */
 	if (m_ptr->csleep) {
@@ -7369,11 +7388,13 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			/* Special power boost for Sauron if he gets hindered by glyphs */
 			else if (m_ptr->r_idx == 860 && base_r_ptr->freq_innate != 75) {
 				base_r_ptr->freq_spell = base_r_ptr->freq_innate = 75;
-				s_printf("SAURON: boost casting.\n");
+				s_printf("SAURON: boost (glyph move).\n");
 			}
-		} else if (do_move && m_ptr->r_idx == 860 && base_r_ptr->freq_innate != 50) {
+		} else if (do_move && m_ptr->r_idx == 860 &&
+		    !m_ptr->extra && /* avoid oscillating too quickly from glyphs-prevent-summoning boost */
+		    base_r_ptr->freq_innate != 50) {
 			base_r_ptr->freq_spell = base_r_ptr->freq_innate = 50; /* hardcoded :| */
-			s_printf("SAURON: normal casting.\n");
+			s_printf("SAURON: normal.\n");
 		}
 #else
 		}
@@ -8688,8 +8709,8 @@ static void process_monster_golem(int Ind, int m_idx)
 
 		/* Get the destination */
 		ny = oy + ddy[d];
-		nx = ox + ddx[d];			
-		
+		nx = ox + ddx[d];
+
 		/* Access that cave grid */
 		c_ptr = &zcave[ny][nx];
 
@@ -9438,12 +9459,12 @@ void process_monsters(void)
 			    p_ptr->antimagic >= 40) {
 				if (!(r_info[m_ptr->r_idx].flags7 & RF7_AI_ANNOY)) {
 					r_info[m_ptr->r_idx].flags7 |= RF7_AI_ANNOY;
-					s_printf("SAURON: add annoy.\n");
+					s_printf("SAURON: add ai_annoy.\n");
 				}
 			} else {
 				if (r_info[m_ptr->r_idx].flags7 & RF7_AI_ANNOY) {
 					r_info[m_ptr->r_idx].flags7 &= ~RF7_AI_ANNOY;
-					s_printf("SAURON: no annoy.\n");
+					s_printf("SAURON: no ai_annoy.\n");
 				}
 			}
 		}

@@ -1015,7 +1015,7 @@ struct monster_type
    byte taunted;		/* has this monster been taunted (melee technique)? */
 
    bool no_esp_phase;		/* for WEIRD_MIND esp flickering */
-   int extra;			/* extra flag for debugging/testing purpose; also used for target dummy's "snowiness" now */
+   int extra;			/* extra flag for debugging/testing purpose; also used for target dummy's "snowiness" now; new: also for Sauron boosting */
 
 #ifdef MONSTER_ASTAR
     int astar_idx;		/* index in available A* arrays. A* is expensive, so we only provide a couple of instances for a few monsters to use */
