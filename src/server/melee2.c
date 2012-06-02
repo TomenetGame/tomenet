@@ -7347,7 +7347,8 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 
 		/* Hack -- check for Glyph of Warding */
-		if (do_move && (c_ptr->feat == FEAT_GLYPH)) {
+		if (do_move && (c_ptr->feat == FEAT_GLYPH) &&
+		    !(r_ptr->flags1 & RF1_NEVER_MOVE)) {
 			/* Assume no move allowed */
 			do_move = FALSE;
 
@@ -7421,7 +7422,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 				/* found not a player? */
 				if (cd_ptr->m_idx >= 0) continue;
-				
+
 				pd_ptr = Players[-(cd_ptr->m_idx)];
 
 				/* get him if allowed */
