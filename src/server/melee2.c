@@ -7348,7 +7348,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 		/* Hack -- check for Glyph of Warding */
 		if (do_move && (c_ptr->feat == FEAT_GLYPH) &&
-		    !(r_ptr->flags1 & RF1_NEVER_MOVE) && !(r_ptr->flags1 & RF1_NEVER_MOVE)) {
+		    !((r_ptr->flags1 & RF1_NEVER_MOVE) && (r_ptr->flags1 & RF1_NEVER_MOVE))) {
 			/* Assume no move allowed */
 			do_move = FALSE;
 
