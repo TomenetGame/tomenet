@@ -11447,11 +11447,15 @@ void regenerate_cave(struct worldpos *wpos)
 {
 	cave_type **zcave;
 
+	int i;
+	player_type *p_ptr;
+
 	/* world surface only, to keep it simple */
 	if (wpos->wz) return;
 	/* paranoia */
 	if (!(zcave = getcave(wpos))) return;
 
+#if 0 /* kills all house walls and doors on allocated town area levels! */
 	/* Build the town */
 	if (istown(wpos)) {
 		/* Make a town */
@@ -11461,6 +11465,32 @@ void regenerate_cave(struct worldpos *wpos)
 	else if (!wpos->wz) {
 		wilderness_gen(wpos);
 	}
+#else /* what a pain */
+	/* mad hack:
+	   remove players from level, regenerate it completely, bring players back */
+	for (i = 1; i < NumPlayers; i++) {
+		p_ptr = Players[i];
+		if (inarea(&p_ptr->wpos, wpos)) p_ptr->wpos.wz = 9999;
+	}
+
+	dealloc_dungeon_level(wpos);
+	alloc_dungeon_level(wpos);
+	generate_cave(wpos, NULL);
+
+	for (i = 1; i < NumPlayers; i++) {
+		p_ptr = Players[i];
+		if (p_ptr->wpos.wz == 9999) p_ptr->wpos.wz = 0;
+	}
+
+	/* regrab zcave, _rarely_ crash otherwise:
+	   happened in actual cases when the 2nd season switch occurred after
+	   server startup in the fashion summer->autumn->winter. Haven't tested
+	   it much more. */
+	if (!(zcave = getcave(wpos))) {
+		s_printf("REGENERATE_CAVE FAILED TO REGRAB ZCAVE!\n");
+		return;
+	}
+#endif
 
 	/* Change features depending on season,
 	   and change lighting depending on daytime */
