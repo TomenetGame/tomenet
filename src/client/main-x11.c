@@ -27,6 +27,11 @@
 
 
 /*
+ * OPTION: Allow the use of a "Mirror Window", if supported
+ */
+#define GRAPHIC_MIRROR
+
+/*
  * OPTION: Allow the use of a "Recall Window", if supported
  */
 #define GRAPHIC_RECALL
@@ -35,11 +40,6 @@
  * OPTION: Allow the use of a "Choice Window", if supported
  */
 #define GRAPHIC_CHOICE
-
-/*
- * OPTION: Allow the use of a "Mirror Window", if supported
- */
-#define GRAPHIC_MIRROR
 
 /* More options: Enable windows 5..8 (term-4..term-7) - C. Blue */
 #define GRAPHIC_TERM_4
@@ -2011,7 +2011,8 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	/* Hack -- extract key buffer size */
 	num = (fixed ? 1024 : 16);
 
-	if (!strcmp(name, "Screen")) {
+//	if (!strcmp(name, "Screen")) {
+	if (!strcmp(name, ang_term_name[0])) {
 #if 0 /* must remain 80x24! (also, it's always visible) */
 		n = getenv("TOMENET_X11_WID_SCREEN");
 		if (n) win_cols = atoi(n);
@@ -2456,7 +2457,8 @@ errr init_x11(void) {
 	/* paranoia; use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_SCREEN;
 	/* Initialize the screen */
-	term_data_init(0, &screen, TRUE, "TomeNET", fnt_name);
+//	term_data_init(0, &screen, TRUE, "TomeNET", fnt_name);
+	term_data_init(0, &screen, TRUE, ang_term_name[0], fnt_name);
 	term_screen = Term;
 	ang_term[0]=Term;
 }
@@ -2639,3 +2641,136 @@ void turn_off_numlock_X11(void) {
 #endif
 
 
+#if 1 /* CHANGE_FONTS_X11 */
+/* EXPERIMENTAL // allow user to change main window font live - C. Blue
+   So far only uses 1 parm ('s') to switch between hardcoded choices:
+   -1 - cycle
+    0 - normal
+    1 - big
+    2 - bigger
+    3 - huge */
+static void term_force_font(int t, char fnt_name[80]);
+void change_font(int s) {
+	/* use main window font for measuring */
+	char tmp[128] = "";
+	if (term_prefs[0].font) strcpy(tmp, term_prefs[0].font);
+	else strcpy(tmp, DEFAULT_X11_FONT);
+
+	/* cycle? */
+	if (s == -1) {
+		if (strstr(tmp, "8x13")) s = 1;
+		else if (strstr(tmp, "9x15")) s = 0;
+		else if (strstr(tmp, "12x18")) s = 3;
+		else if (strstr(tmp, "16x24")) s = 0;
+	}
+
+	/* Force the font */
+	switch (s) {
+	case 0:
+		/* change main window font */
+		term_force_font(0, "8x13");
+#if 0
+		/* Change sub windows too */
+		term_force_font(1, "8x13"); //msg
+		term_force_font(2, "8x13"); //inv
+		term_force_font(3, "5x8"); //char
+		term_force_font(4, "6x10"); //chat
+		term_force_font(5, "6x10"); //eq (5x8)
+		term_force_font(6, "5x8");
+		term_force_font(7, "5x8");
+#endif
+		break;
+	case 1:
+		/* change main window font */
+		term_force_font(0, "9x15");//was 10x14x
+#if 0
+		/* Change sub windows too */
+		term_force_font(1, "9x15");
+		term_force_font(2, "9x15");
+		term_force_font(3, "6x10");
+		term_force_font(4, "8x13");
+		term_force_font(5, "6x10");
+		term_force_font(6, "6x10");
+		term_force_font(7, "6x10");
+#endif
+		break;
+	case 2:
+		/* change main window font */
+		term_force_font(0, "12x18x");
+		/* Change sub windows too */
+		term_force_font(1, "9x15");
+		term_force_font(2, "9x15");
+		term_force_font(3, "8x13");
+		term_force_font(4, "9x15");
+		term_force_font(5, "8x13");
+		term_force_font(6, "8x13");
+		term_force_font(7, "8x13");
+		break;
+	case 3:
+		/* change main window font */
+		term_force_font(0, "16x24x");
+		/* Change sub windows too */
+		term_force_font(1, "12x18x");
+		term_force_font(2, "12x18x");
+		term_force_font(3, "9x15");
+		term_force_font(4, "12x18x");
+		term_force_font(5, "9x15");
+		term_force_font(6, "9x15");
+		term_force_font(7, "9x15");
+		break;
+	}
+}
+static void term_force_font(int t, char fnt_name[80]) {
+	term_data *td;
+	term *tr;
+
+printf("t = %d, atn = %s\n", t, ang_term_name[t]);
+
+	switch (t) {
+	case 0: td = &screen; break;
+#if 0
+	case 1: td = &mirror; break;
+	case 2: td = &recall; break;
+	case 3: td = &choice; break;
+	case 4: td = &term_4; break;
+	case 5: td = &term_5; break;
+	case 6: td = &term_6; break;
+	case 7: td = &term_7; break;
+#endif
+	}
+	tr = &td->t;
+
+#if 1
+//	term_nuke(tr);
+	term_nuke(ang_term[t]);
+
+	switch (t) {
+	case 0:
+		term_data_init(t, &screen, TRUE, ang_term_name[t], fnt_name);
+		term_screen = Term;
+		break;
+ #if 0
+	case 1: term_data_init(t, &mirror, FALSE, ang_term_name[t], fnt_name); break;
+	case 2: term_data_init(t, &recall, FALSE, ang_term_name[t], fnt_name); break;
+	case 3: term_data_init(t, &choice, FALSE, ang_term_name[t], fnt_name); break;
+	case 4: term_data_init(t, &term_4, FALSE, ang_term_name[t], fnt_name); break;
+	case 5: term_data_init(t, &term_5, FALSE, ang_term_name[t], fnt_name); break;
+	case 6: term_data_init(t, &term_6, FALSE, ang_term_name[t], fnt_name); break;
+	case 7: term_data_init(t, &term_7, FALSE, ang_term_name[t], fnt_name); break;
+ #endif
+	}
+    ang_term[t] = Term;
+#endif
+
+#if 0
+//Infowin_set_size(wid+2, hgt+2, td->fnt->wid, td->fnt->hgt, fixed);
+
+	Infofnt_set(td->fnt);
+	Infofnt_init_data(fnt_name);
+
+	tr->data = td;
+//	Term_activate(tr);
+#endif
+
+}
+#endif
