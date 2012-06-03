@@ -2660,10 +2660,15 @@ void change_font(int s) {
 
 	/* cycle? */
 	if (s == -1) {
+#if 1
 		if (strstr(tmp, "8x13")) s = 1;
 		else if (strstr(tmp, "9x15")) s = 0;
-		else if (strstr(tmp, "12x18")) s = 3;
-		else if (strstr(tmp, "16x24")) s = 0;
+#else
+		if (strstr(tmp, "8x13") || strstr(tmp, "lucidasanstypewriter-8")) s = 1;
+		else if (strstr(tmp, "lucidasanstypewriter-10")) s = 2;
+#endif
+		else if (strstr(tmp, "lucidasanstypewriter-12")) s = 3;
+		else if (strstr(tmp, "lucidasanstypewriter-18")) s = 0;
 	}
 
 	/* Force the font */
@@ -2671,6 +2676,7 @@ void change_font(int s) {
 	case 0:
 		/* change main window font */
 		term_force_font(0, "8x13");
+//		term_force_font(0, "lucidasanstypewriter-8");
 		/* Change sub windows too */
 		term_force_font(1, "8x13"); //msg
 		term_force_font(2, "8x13"); //inv
@@ -2683,6 +2689,7 @@ void change_font(int s) {
 	case 1:
 		/* change main window font */
 		term_force_font(0, "9x15");//was 10x14x
+//		term_force_font(0, "lucidasanstypewriter-10");
 		/* Change sub windows too */
 		term_force_font(1, "9x15");
 		term_force_font(2, "9x15");
@@ -2694,7 +2701,7 @@ void change_font(int s) {
 		break;
 	case 2:
 		/* change main window font */
-		term_force_font(0, "12x18x");
+		term_force_font(0, "lucidasanstypewriter-12");
 		/* Change sub windows too */
 		term_force_font(1, "9x15");
 		term_force_font(2, "9x15");
@@ -2706,12 +2713,12 @@ void change_font(int s) {
 		break;
 	case 3:
 		/* change main window font */
-		term_force_font(0, "16x24x");
+		term_force_font(0, "lucidasanstypewriter-18");
 		/* Change sub windows too */
-		term_force_font(1, "12x18x");
-		term_force_font(2, "12x18x");
+		term_force_font(1, "lucidasanstypewriter-12");
+		term_force_font(2, "lucidasanstypewriter-12");
 		term_force_font(3, "9x15");
-		term_force_font(4, "12x18x");
+		term_force_font(4, "lucidasanstypewriter-12");
 		term_force_font(5, "9x15");
 		term_force_font(6, "9x15");
 		term_force_font(7, "9x15");
@@ -2724,7 +2731,6 @@ static void term_force_font(int t, char fnt_name[80]) {
 
 	switch (t) {
 	case 0: td = &screen; break;
-#if 1
 	case 1: td = &mirror; break;
 	case 2: td = &recall; break;
 	case 3: td = &choice; break;
@@ -2732,7 +2738,6 @@ static void term_force_font(int t, char fnt_name[80]) {
 	case 5: td = &term_5; break;
 	case 6: td = &term_6; break;
 	case 7: td = &term_7; break;
-#endif
 	}
 
 	/* non-visible window has no fnt-> .. */
