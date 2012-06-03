@@ -733,6 +733,9 @@ void init_file_paths(char *path)
         strcpy(tail, "game");
         ANGBAND_DIR_GAME = string_make(path);
 
+		/* terminate lib path again at it's actual location of the 'lib' folder */
+		strcpy(tail, ""); /* -> this is ANGBAND_DIR */
+
 #endif /* VM */
 
 

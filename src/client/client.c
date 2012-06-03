@@ -343,10 +343,12 @@ static bool read_mangrc(cptr filename)
 				read_mangrc_aux(6, buf);
 			if (!strncmp(buf, "Term-7window", 12))
 				read_mangrc_aux(7, buf);
+#if 0 /* keep n/a for now, not really needed */
 			if (!strncmp(buf, "Term-8window", 12))
 				read_mangrc_aux(8, buf);
 			if (!strncmp(buf, "Term-9window", 12))
 				read_mangrc_aux(9, buf);
+#endif
 
 			/*** Everything else is ignored ***/
 		}
@@ -450,7 +452,11 @@ bool write_mangrc(void) {
 
 		fputs(format("#meta\t\t%s\n", ""), config2);//keep using internal defaults
 		fputs(format("#server\t\t%s\n", svname), config2);
+#if 0 /* let's keep empty in case newbie accidentally went to RPG server first and then uncomments this entry */
 		fputs(format("#port\t\t%d\n", cfg_game_port), config2);
+#else
+		fputs(format("#port\t\t%s\n", ""), config2);
+#endif
 		fputs("\n", config2);
 
 		fputs(format("fps\t\t%d\n", cfg_client_fps), config2);//or maybe just write '100'?
@@ -495,8 +501,10 @@ bool write_mangrc(void) {
 		write_mangrc_aux(5, "Term-5window", config2);
 		write_mangrc_aux(6, "Term-6window", config2);
 		write_mangrc_aux(7, "Term-7window", config2);
+#if 0 /* keep n/a for now, not really needed */
 		write_mangrc_aux(8, "Term-8window", config2);
 		write_mangrc_aux(9, "Term-9window", config2);
+#endif
 
 		fclose(config2);
 
