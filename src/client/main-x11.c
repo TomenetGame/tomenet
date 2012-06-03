@@ -2669,7 +2669,7 @@ void change_font(int s) {
 	case 0:
 		/* change main window font */
 		term_force_font(0, "8x13");
-#if 0
+#if 1
 		/* Change sub windows too */
 		term_force_font(1, "8x13"); //msg
 		term_force_font(2, "8x13"); //inv
@@ -2683,7 +2683,7 @@ void change_font(int s) {
 	case 1:
 		/* change main window font */
 		term_force_font(0, "9x15");//was 10x14x
-#if 0
+#if 1
 		/* Change sub windows too */
 		term_force_font(1, "9x15");
 		term_force_font(2, "9x15");
@@ -2722,11 +2722,11 @@ void change_font(int s) {
 }
 static void term_force_font(int t, char fnt_name[80]) {
 	int rows, cols, wid, hgt;
-	term_data *td;
+	term_data *td = &screen;
 
 	switch (t) {
 	case 0: td = &screen; break;
-#if 0
+#if 1
 	case 1: td = &mirror; break;
 	case 2: td = &recall; break;
 	case 3: td = &choice; break;
@@ -2737,6 +2737,8 @@ static void term_force_font(int t, char fnt_name[80]) {
 #endif
 	}
 
+	/* non-visible window has no fnt-> .. */
+	if (!term_prefs[t].visible) return;
 
 	/* Detemine "proper" number of rows/cols */
 	cols = ((Infowin->w - 2) / td->fnt->wid);
@@ -2748,14 +2750,9 @@ static void term_force_font(int t, char fnt_name[80]) {
 	if (cols < 1) cols = 1;
 	if (rows < 1) rows = 1;
 
-
-	/* atomic font change */
+	/* font change */
 	Infofnt_set(td->fnt);
 	Infofnt_init_data(fnt_name);
-
-
-//	XResizeWindow(Metadpy->dpy, Infowin->win, w, h);
-
 
 	/* Desired size of "outer" window */
 	wid = cols * td->fnt->wid;
@@ -2769,7 +2766,7 @@ printf("resize! iw (%d) -> wid+2 (%d)\n", Infowin->w, wid + 2);
 		Infowin_set(td->inner);
 		Infowin_resize(wid, hgt);
 	}
-
-
+	XFlush(Metadpy->dpy);
+//	XSync(Metadpy->dpy, FALSE);
 }
 #endif
