@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 1. June 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 2. June 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -565,6 +565,11 @@ CTRL+N  Toggles audio. (Shortcut for master toggle in the mixer settings).
         through lines you previously typed (also see CTRL+P).
 Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
 (Compare troubleshooting section (8.6), problem 21.)
+
+^       Allows to enter a CTRL character as command.
+\       Enter a command, bypassing the client's key map.
+        Also allows to enter ^ next to enter a CTRL character as command.
+
 
 There are also some commands that can be entered with ':' like a chat line.
 They all start with a slash '/' hence they're called slash commands:
@@ -1523,15 +1528,13 @@ To configure which windows are visible and what font they use, edit the file
 .tomenetrc which you also must move from tomenet folder into your home folder
 for it to become active! (Or specify alternative location via -f command-line
 option, see below.)
-About setting font sizes, some possible fonts are:
-4x6, 5x7, 5x8, 6x9, 6x10, 6x12, 7x13, 7x14, 8x13, 9x15, 10x20, 12x24,
-depending on your system.
 
-Note: If x,y positioning of windows doesn't work on your system, you can use
-other means such as KDE's native window positioning (right-click the windows
-and modify the "special window settings" or "special application settings") or
-the tool Devilspie (should be in your default repository) if you're on Gnome
-or Xfce or anything else.
+Note: If the game client's positioning of windows doesn't work on your system,
+you can use other means such as KDE's native window positioning (right-click
+the windows and modify the "special window settings" or "special application
+settings") or the tool Devilspie (should be in your default repository) if
+you're on Gnome or Xfce or anything else. 'gdevilspie' may also be available,
+which is a graphical version of devilspie.
 
 
 Alternatively to using the .tomenetrc file for window configuration, you can
@@ -1550,6 +1553,8 @@ Use the 'export' command to set them, eg:
         export TOMENET_X11_HGT_TERM_4=24
 TOMENET_X11_FONT sets one font globally for all windows. It's overridden by
 the window-specific font variables listed above though.
+Depending on your system, some possible fonts are usually:
+4x6, 5x7, 5x8, 6x9, 6x10, 6x12, 7x13, 7x14, 8x13, 9x15, 10x20, 12x24.
 
 
 Last but not least, you may use the following command-line options:
