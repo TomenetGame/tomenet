@@ -5616,6 +5616,10 @@ void do_cmd_options(void)
 
 #ifdef WINDOWS
 		Term_putstr(5, 14, -1, TERM_WHITE, "(\377Uf\377w) Change font size (tap to cycle)");
+#else
+#if 1 /* CHANGE_FONTS_X11 */
+		Term_putstr(5, 14, -1, TERM_WHITE, "(\377Uf\377w) Change font size (tap to cycle)");
+#endif
 #endif
 		Term_putstr(5, 15, -1, TERM_WHITE, "(\377UA\377w) Account Options");
 		Term_putstr(5, 16, -1, TERM_WHITE, "(\377Uv\377w) Check Server Options");
@@ -5709,6 +5713,12 @@ void do_cmd_options(void)
 		else if (k == 'f') {
 			change_font(-1);
 		}
+#else
+#if 1 /* CHANGE_FONTS_X11 */
+		else if (k == 'f') {
+			change_font(-1);
+		}
+#endif
 #endif
 
 //#ifndef WINDOWS /* not yet implemented */
