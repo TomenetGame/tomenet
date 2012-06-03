@@ -14,28 +14,48 @@
 static char mangrc_filename[100] = "";
 
 /* linux clients: load subwindow prefs from .tomenetrc - C. Blue */
-static void read_mangrc_aux(generic_term_info *term_pref, cptr sec_name) {
+static void read_mangrc_aux(int t, cptr sec_name) {
 	char *val, *val2;
 
+	/* strip leading tabs and leading spaces */
+	val = strchr(sec_name, '\t');
+	val2 = strchr(sec_name, ' ');
+	if (!val && !val2) return; /* paranoia: bad config file */
+	if (val && val2) {
+		if (val2 < val) val = val2;
+	} else if (!val) val = val2;
+	val2 = val;
+	while (*val == ' ' || *val == '\t') val++;
+	strcpy(val2, val);
+	/* strip trailing linefeeds */
+	while (val2[strlen(val2) - 1] == '\n' || val2[strlen(val2) - 1] == '\r') val2[strlen(val2) - 1] = '\0';
+
+	if ((val = strstr(sec_name, "_Title")))
+		strcpy(ang_term_name[t], val + 6);
+
 	if ((val = strstr(sec_name, "_Visible")))
-		term_pref->visible = (atoi(val + 8) != 0);
+		term_prefs[t].visible = (atoi(val + 8) != 0);
 
 	if ((val = strstr(sec_name, "_X")))
-		term_pref->x = atoi(val + 2);
+		term_prefs[t].x = atoi(val + 2);
 	if ((val = strstr(sec_name, "_Y")))
-		term_pref->y = atoi(val + 2);
+		term_prefs[t].y = atoi(val + 2);
 
 	if ((val = strstr(sec_name, "_Columns")))
-		term_pref->columns = atoi(val + 8);
+		term_prefs[t].columns = atoi(val + 8);
 	if ((val = strstr(sec_name, "_Lines")))
-		term_pref->lines = atoi(val + 6);
+		term_prefs[t].lines = atoi(val + 6);
 
 	if ((val = strstr(sec_name, "_Font"))) {
+#if 0 /* without tab/space stripping */
 		while (val[0] && (val[0] < '0' || val[0] > '9')) val++;
 		val2 = val;
 		while (val2[0] && ((val2[0] >= '0' && val2[0] <= '9') || val2[0] == 'x')) val2++;
 		val2[0] = 0;
-		strcpy(term_pref->font, val);
+		strcpy(term_prefs[t].font, val);
+#else /* also allow font names consisting of letters! */
+		strcpy(term_prefs[t].font, val + 5);
+#endif
 	}
 }
 static bool read_mangrc(cptr filename)
@@ -308,25 +328,25 @@ static bool read_mangrc(cptr filename)
 
 ///LINUX_TERM_CFG
 			if (!strncmp(buf, "Mainwindow", 10))
-				read_mangrc_aux(&term_prefs[0], buf);
+				read_mangrc_aux(0, buf);
 			if (!strncmp(buf, "Mirrorwindow", 12))
-				read_mangrc_aux(&term_prefs[1], buf);
+				read_mangrc_aux(1, buf);
 			if (!strncmp(buf, "Recallwindow", 12))
-				read_mangrc_aux(&term_prefs[2], buf);
+				read_mangrc_aux(2, buf);
 			if (!strncmp(buf, "Choicewindow", 12))
-				read_mangrc_aux(&term_prefs[3], buf);
+				read_mangrc_aux(3, buf);
 			if (!strncmp(buf, "Term-4window", 12))
-				read_mangrc_aux(&term_prefs[4], buf);
+				read_mangrc_aux(4, buf);
 			if (!strncmp(buf, "Term-5window", 12))
-				read_mangrc_aux(&term_prefs[5], buf);
+				read_mangrc_aux(5, buf);
 			if (!strncmp(buf, "Term-6window", 12))
-				read_mangrc_aux(&term_prefs[6], buf);
+				read_mangrc_aux(6, buf);
 			if (!strncmp(buf, "Term-7window", 12))
-				read_mangrc_aux(&term_prefs[7], buf);
+				read_mangrc_aux(7, buf);
 			if (!strncmp(buf, "Term-8window", 12))
-				read_mangrc_aux(&term_prefs[8], buf);
+				read_mangrc_aux(8, buf);
 			if (!strncmp(buf, "Term-9window", 12))
-				read_mangrc_aux(&term_prefs[9], buf);
+				read_mangrc_aux(9, buf);
 
 			/*** Everything else is ignored ***/
 		}
@@ -336,15 +356,16 @@ static bool read_mangrc(cptr filename)
 }
 
 /* linux clients: save subwindow prefs to .tomenetrc - C. Blue */
-static void write_mangrc_aux(generic_term_info *term_pref, cptr sec_name, FILE *cfg_file) {
-	fputs(format("%s_Visible\t%c\n", sec_name, term_pref->visible ? '1' : '0'), cfg_file);
-	if (term_pref->x != -32000) /* don't save windows in minimized state */
-		fputs(format("%s_X\t\t%d\n", sec_name, term_pref->x), cfg_file);
-	if (term_pref->y != -32000) /* don't save windows in minimized state */
-		fputs(format("%s_Y\t\t%d\n", sec_name, term_pref->y), cfg_file);
-	fputs(format("%s_Columns\t%d\n", sec_name, term_pref->columns), cfg_file);
-	fputs(format("%s_Lines\t%d\n", sec_name, term_pref->lines), cfg_file);
-	fputs(format("%s_Font\t%s\n", sec_name, term_pref->font), cfg_file);
+static void write_mangrc_aux(int t, cptr sec_name, FILE *cfg_file) {
+	fputs(format("%s_Title\t%s\n", sec_name, ang_term_name[t]), cfg_file);
+	fputs(format("%s_Visible\t%c\n", sec_name, term_prefs[t].visible ? '1' : '0'), cfg_file);
+	if (term_prefs[t].x != -32000) /* don't save windows in minimized state */
+		fputs(format("%s_X\t\t%d\n", sec_name, term_prefs[t].x), cfg_file);
+	if (term_prefs[t].y != -32000) /* don't save windows in minimized state */
+		fputs(format("%s_Y\t\t%d\n", sec_name, term_prefs[t].y), cfg_file);
+	fputs(format("%s_Columns\t%d\n", sec_name, term_prefs[t].columns), cfg_file);
+	fputs(format("%s_Lines\t%d\n", sec_name, term_prefs[t].lines), cfg_file);
+	fputs(format("%s_Font\t%s\n", sec_name, term_prefs[t].font), cfg_file);
 	fputs("\n", cfg_file);
 }
 /* linux clients: save some prefs to .tomenetrc - C. Blue */
@@ -466,16 +487,16 @@ bool write_mangrc(void) {
 //#endif
 
 ///LINUX_TERM_CFG
-		write_mangrc_aux(&term_prefs[0], "Mainwindow", config2);
-		write_mangrc_aux(&term_prefs[1], "Mirrorwindow", config2);
-		write_mangrc_aux(&term_prefs[2], "Recallwindow", config2);
-		write_mangrc_aux(&term_prefs[3], "Choicewindow", config2);
-		write_mangrc_aux(&term_prefs[4], "Term-4window", config2);
-		write_mangrc_aux(&term_prefs[5], "Term-5window", config2);
-		write_mangrc_aux(&term_prefs[6], "Term-6window", config2);
-		write_mangrc_aux(&term_prefs[7], "Term-7window", config2);
-		write_mangrc_aux(&term_prefs[8], "Term-8window", config2);
-		write_mangrc_aux(&term_prefs[9], "Term-9window", config2);
+		write_mangrc_aux(0, "Mainwindow", config2);
+		write_mangrc_aux(1, "Mirrorwindow", config2);
+		write_mangrc_aux(2, "Recallwindow", config2);
+		write_mangrc_aux(3, "Choicewindow", config2);
+		write_mangrc_aux(4, "Term-4window", config2);
+		write_mangrc_aux(5, "Term-5window", config2);
+		write_mangrc_aux(6, "Term-6window", config2);
+		write_mangrc_aux(7, "Term-7window", config2);
+		write_mangrc_aux(8, "Term-8window", config2);
+		write_mangrc_aux(9, "Term-9window", config2);
 
 		fclose(config2);
 

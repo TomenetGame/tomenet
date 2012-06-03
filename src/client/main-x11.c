@@ -2072,7 +2072,8 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	/* Create a top-window (border 5) */
 	MAKE(td->outer, infowin);
 	Infowin_set(td->outer);
-	Infowin_init_top(topx, topy, wid + 2, hgt + 2, 1, Metadpy->fg, Metadpy->bg);
+/* was wid +2, hgt + 2 -> resulted in too big a window by +1 in each dimension! Fine now hopefully: */
+	Infowin_init_top(topx, topy, wid + 1, hgt + 1, 1, Metadpy->fg, Metadpy->bg);
 	Infowin_set_mask(StructureNotifyMask | KeyPressMask);
 	Infowin_set_name(name);
 	Infowin_set_class_hint(name);
@@ -2446,14 +2447,14 @@ errr init_x11(void) {
 
 
 { /* Main window is always visible */
-	fnt_name = term_prefs[0].font;
 	/* Check environment for "screen" font */
-	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT_SCREEN");
+	fnt_name = getenv("TOMENET_X11_FONT_SCREEN");
 	/* Check environment for "base" font */
 	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-	/* No environment variables, use the default */
+	/* Use loaded (from config file) or predefined default font */
+	if (!fnt_name) fnt_name = term_prefs[0].font;
+	/* paranoia; use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_SCREEN;
-
 	/* Initialize the screen */
 	term_data_init(0, &screen, TRUE, "TomeNET", fnt_name);
 	term_screen = Term;
@@ -2476,12 +2477,13 @@ errr init_x11(void) {
 
 #ifdef GRAPHIC_MIRROR
 if (term_prefs[1].visible) {
-	fnt_name = term_prefs[1].font;
 	/* Check environment for "mirror" font */
-	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT_MIRROR");
+	fnt_name = getenv("TOMENET_X11_FONT_MIRROR");
 	/* Check environment for "base" font */
 	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-	/* No environment variables, use the default */
+	/* Use loaded (from config file) or predefined default font */
+	if (!fnt_name) fnt_name = term_prefs[1].font;
+	/* paranoia; use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_MIRROR;
 
 	/* Initialize the recall window */
@@ -2494,12 +2496,13 @@ if (term_prefs[1].visible) {
 
 #ifdef GRAPHIC_RECALL
 if (term_prefs[2].visible) {
-	fnt_name = term_prefs[2].font;
 	/* Check environment for "recall" font */
-	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT_RECALL");
+	fnt_name = getenv("TOMENET_X11_FONT_RECALL");
 	/* Check environment for "base" font */
 	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-	/* No environment variables, use the default */
+	/* Use loaded (from config file) or predefined default font */
+	if (!fnt_name) fnt_name = term_prefs[2].font;
+	/* paranoia; use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_RECALL;
 
 	/* Initialize the recall window */
@@ -2512,12 +2515,13 @@ if (term_prefs[2].visible) {
 
 #ifdef GRAPHIC_CHOICE
 if (term_prefs[3].visible) {
-	fnt_name = term_prefs[3].font;
 	/* Check environment for "choice" font */
-	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT_CHOICE");
+	fnt_name = getenv("TOMENET_X11_FONT_CHOICE");
 	/* Check environment for "base" font */
 	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-	/* No environment variables, use the default */
+	/* Use loaded (from config file) or predefined default font */
+	if (!fnt_name) fnt_name = term_prefs[3].font;
+	/* paranoia; use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_CHOICE;
 
 	/* Initialize the choice window */
@@ -2529,12 +2533,13 @@ if (term_prefs[3].visible) {
 
 #ifdef GRAPHIC_TERM_4
 if (term_prefs[4].visible) {
-	fnt_name = term_prefs[4].font;
-	/* Check environment for "choice" font */
-	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT_TERM_4");
+	/* Check environment for "term4" font */
+	fnt_name = getenv("TOMENET_X11_FONT_TERM_4");
 	/* Check environment for "base" font */
 	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-	/* No environment variables, use the default */
+	/* Use loaded (from config file) or predefined default font */
+	if (!fnt_name) fnt_name = term_prefs[4].font;
+	/* paranoia; use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_4;
 
 	/* Initialize the choice window */
@@ -2547,12 +2552,13 @@ if (term_prefs[4].visible) {
 
 #ifdef GRAPHIC_TERM_5
 if (term_prefs[5].visible) {
-	fnt_name = term_prefs[5].font;
-	/* Check environment for "choice" font */
-	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT_TERM_5");
+	/* Check environment for "term5" font */
+	fnt_name = getenv("TOMENET_X11_FONT_TERM_5");
 	/* Check environment for "base" font */
 	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-	/* No environment variables, use the default */
+	/* Use loaded (from config file) or predefined default font */
+	if (!fnt_name) fnt_name = term_prefs[5].font;
+	/* paranoia; use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_5;
 
 	/* Initialize the choice window */
@@ -2565,12 +2571,13 @@ if (term_prefs[5].visible) {
 
 #ifdef GRAPHIC_TERM_6
 if (term_prefs[6].visible) {
-	fnt_name = term_prefs[6].font;
-	/* Check environment for "choice" font */
-	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT_TERM_6");
+	/* Check environment for "term6" font */
+	fnt_name = getenv("TOMENET_X11_FONT_TERM_6");
 	/* Check environment for "base" font */
 	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-	/* No environment variables, use the default */
+	/* Use loaded (from config file) or predefined default font */
+	if (!fnt_name) fnt_name = term_prefs[6].font;
+	/* paranoia; use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_6;
 
 	/* Initialize the choice window */
@@ -2583,12 +2590,13 @@ if (term_prefs[6].visible) {
 
 #ifdef GRAPHIC_TERM_7
 if (term_prefs[7].visible) {
-	fnt_name = term_prefs[7].font;
-	/* Check environment for "choice" font */
-	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT_TERM_7");
+	/* Check environment for "term7" font */
+	fnt_name = getenv("TOMENET_X11_FONT_TERM_7");
 	/* Check environment for "base" font */
 	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-	/* No environment variables, use the default */
+	/* Use loaded (from config file) or predefined default font */
+	if (!fnt_name) fnt_name = term_prefs[7].font;
+	/* paranoia; use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_7;
 
 	/* Initialize the choice window */
