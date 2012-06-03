@@ -2458,7 +2458,9 @@ errr init_x11(void) {
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_SCREEN;
 	/* Initialize the screen */
 //	term_data_init(0, &screen, TRUE, "TomeNET", fnt_name);
-	term_data_init(0, &screen, TRUE, ang_term_name[0], fnt_name);
+//	term_data_init(0, &screen, TRUE, ang_term_name[0], fnt_name);
+	/* allow resizing, for font changes */
+	term_data_init(0, &screen, FALSE, ang_term_name[0], fnt_name);
 	term_screen = Term;
 	ang_term[0]=Term;
 }
@@ -2669,7 +2671,6 @@ void change_font(int s) {
 	case 0:
 		/* change main window font */
 		term_force_font(0, "8x13");
-#if 1
 		/* Change sub windows too */
 		term_force_font(1, "8x13"); //msg
 		term_force_font(2, "8x13"); //inv
@@ -2678,12 +2679,10 @@ void change_font(int s) {
 		term_force_font(5, "6x10"); //eq (5x8)
 		term_force_font(6, "5x8");
 		term_force_font(7, "5x8");
-#endif
 		break;
 	case 1:
 		/* change main window font */
 		term_force_font(0, "9x15");//was 10x14x
-#if 1
 		/* Change sub windows too */
 		term_force_font(1, "9x15");
 		term_force_font(2, "9x15");
@@ -2692,7 +2691,6 @@ void change_font(int s) {
 		term_force_font(5, "6x10");
 		term_force_font(6, "6x10");
 		term_force_font(7, "6x10");
-#endif
 		break;
 	case 2:
 		/* change main window font */
@@ -2760,13 +2758,11 @@ static void term_force_font(int t, char fnt_name[80]) {
 	Infowin_set(td->outer);
 	/* Resize the windows if any "change" is needed */
 	if ((Infowin->w != wid + 2) || (Infowin->h != hgt + 2)) {
-printf("resize! iw (%d) -> wid+2 (%d)\n", Infowin->w, wid + 2);
 		Infowin_set(td->outer);
 		Infowin_resize(wid + 2, hgt + 2);
 		Infowin_set(td->inner);
 		Infowin_resize(wid, hgt);
 	}
 	XFlush(Metadpy->dpy);
-//	XSync(Metadpy->dpy, FALSE);
 }
 #endif
