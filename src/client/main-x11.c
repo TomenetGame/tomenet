@@ -2796,10 +2796,11 @@ void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name
 	term_data *td = term_idx_to_term_data(term_idx);
 	infowin *iwin;
 	Window xid, tmp_win;
-#if 0
 	unsigned int wu, hu, bu, du;
+#if 0
 	XWindowAttributes xwa;
 #endif
+	int x_rel, y_rel;
 
 	/* non-visible window has no window info .. */
 	if (!term_prefs[term_idx].visible) {
@@ -2818,18 +2819,19 @@ void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name
 	*r = ((iwin->h - 2) / td->fnt->hgt);
 
 #if 0
-	/* Check For Error XXX Extract some ACTUAL data from 'xid' */
-	XGetGeometry(Metadpy->dpy, xid, &tmp_win, x, y, &wu, &hu, &bu, &du);
-	*w = (int)wu;
-	*h = (int)hu;
-
 	/* Check Error XXX Extract some more ACTUAL data */
 	XGetWindowAttributes(Metadpy->dpy, xid, &xwa);
 	*x = xwa.x;
 	*y = xwa.y;
 #endif
 
-#if 1
+	/* Check For Error XXX Extract some ACTUAL data from 'xid' */
+	XGetGeometry(Metadpy->dpy, xid, &tmp_win, &x_rel, &y_rel, &wu, &hu, &bu, &du);
+//	*w = (int)wu;
+//	*h = (int)hu;
+
 	XTranslateCoordinates(Metadpy->dpy, xid, Metadpy->root, 0, 0, x, y, &tmp_win);
-#endif
+	/* correct window position to account for X11 border/title bar sizes */
+	*x -= x_rel;
+	*y -= y_rel;
 }
