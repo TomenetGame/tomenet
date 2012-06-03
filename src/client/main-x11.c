@@ -2653,7 +2653,7 @@ static void term_force_font(int t, char fnt_name[80]);
 void change_font(int s) {
 	/* use main window font for measuring */
 	char tmp[128] = "";
-	if (term_prefs[0].font) strcpy(tmp, term_prefs[0].font);
+	if (screen.fnt->name) strcpy(tmp, screen.fnt->name);
 	else strcpy(tmp, DEFAULT_X11_FONT);
 
 	/* cycle? */
@@ -2721,10 +2721,8 @@ void change_font(int s) {
 	}
 }
 static void term_force_font(int t, char fnt_name[80]) {
+	int rows, cols, wid, hgt;
 	term_data *td;
-	term *tr;
-
-printf("t = %d, atn = %s\n", t, ang_term_name[t]);
 
 	switch (t) {
 	case 0: td = &screen; break;
@@ -2738,39 +2736,40 @@ printf("t = %d, atn = %s\n", t, ang_term_name[t]);
 	case 7: td = &term_7; break;
 #endif
 	}
-	tr = &td->t;
 
-#if 1
-//	term_nuke(tr);
-	term_nuke(ang_term[t]);
 
-	switch (t) {
-	case 0:
-		term_data_init(t, &screen, TRUE, ang_term_name[t], fnt_name);
-		term_screen = Term;
-		break;
- #if 0
-	case 1: term_data_init(t, &mirror, FALSE, ang_term_name[t], fnt_name); break;
-	case 2: term_data_init(t, &recall, FALSE, ang_term_name[t], fnt_name); break;
-	case 3: term_data_init(t, &choice, FALSE, ang_term_name[t], fnt_name); break;
-	case 4: term_data_init(t, &term_4, FALSE, ang_term_name[t], fnt_name); break;
-	case 5: term_data_init(t, &term_5, FALSE, ang_term_name[t], fnt_name); break;
-	case 6: term_data_init(t, &term_6, FALSE, ang_term_name[t], fnt_name); break;
-	case 7: term_data_init(t, &term_7, FALSE, ang_term_name[t], fnt_name); break;
- #endif
-	}
-    ang_term[t] = Term;
-#endif
+	/* Detemine "proper" number of rows/cols */
+	cols = ((Infowin->w - 2) / td->fnt->wid);
+	rows = ((Infowin->h - 2) / td->fnt->hgt);
+	/* Hack -- do not allow resize of main screen */
+	if (td == &screen) cols = 80;
+	if (td == &screen) rows = 24;
+	/* Hack -- minimal size */
+	if (cols < 1) cols = 1;
+	if (rows < 1) rows = 1;
 
-#if 0
-//Infowin_set_size(wid+2, hgt+2, td->fnt->wid, td->fnt->hgt, fixed);
 
+	/* atomic font change */
 	Infofnt_set(td->fnt);
 	Infofnt_init_data(fnt_name);
 
-	tr->data = td;
-//	Term_activate(tr);
-#endif
+
+//	XResizeWindow(Metadpy->dpy, Infowin->win, w, h);
+
+
+	/* Desired size of "outer" window */
+	wid = cols * td->fnt->wid;
+	hgt = rows * td->fnt->hgt;
+	Infowin_set(td->outer);
+	/* Resize the windows if any "change" is needed */
+	if ((Infowin->w != wid + 2) || (Infowin->h != hgt + 2)) {
+printf("resize! iw (%d) -> wid+2 (%d)\n", Infowin->w, wid + 2);
+		Infowin_set(td->outer);
+		Infowin_resize(wid + 2, hgt + 2);
+		Infowin_set(td->inner);
+		Infowin_resize(wid, hgt);
+	}
+
 
 }
 #endif
