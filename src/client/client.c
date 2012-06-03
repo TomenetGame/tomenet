@@ -30,8 +30,10 @@ static void read_mangrc_aux(int t, cptr sec_name) {
 	/* strip trailing linefeeds */
 	while (val2[strlen(val2) - 1] == '\n' || val2[strlen(val2) - 1] == '\r') val2[strlen(val2) - 1] = '\0';
 
-	if ((val = strstr(sec_name, "_Title")))
-		strcpy(ang_term_name[t], val + 6);
+	if (t != 0) { /* exempt main window */
+		if ((val = strstr(sec_name, "_Title")))
+			strcpy(ang_term_name[t], val + 6);
+	}
 
 	if ((val = strstr(sec_name, "_Visible")))
 		term_prefs[t].visible = (atoi(val + 8) != 0);
@@ -41,10 +43,12 @@ static void read_mangrc_aux(int t, cptr sec_name) {
 	if ((val = strstr(sec_name, "_Y")))
 		term_prefs[t].y = atoi(val + 2);
 
-	if ((val = strstr(sec_name, "_Columns")))
-		term_prefs[t].columns = atoi(val + 8);
-	if ((val = strstr(sec_name, "_Lines")))
-		term_prefs[t].lines = atoi(val + 6);
+	if (t != 0) {
+		if ((val = strstr(sec_name, "_Columns")))
+			term_prefs[t].columns = atoi(val + 8);
+		if ((val = strstr(sec_name, "_Lines")))
+			term_prefs[t].lines = atoi(val + 6);
+	}
 
 	if ((val = strstr(sec_name, "_Font"))) {
 #if 0 /* without tab/space stripping */
@@ -359,15 +363,22 @@ static bool read_mangrc(cptr filename)
 
 /* linux clients: save subwindow prefs to .tomenetrc - C. Blue */
 static void write_mangrc_aux(int t, cptr sec_name, FILE *cfg_file) {
-	fputs(format("%s_Title\t%s\n", sec_name, ang_term_name[t]), cfg_file);
-	fputs(format("%s_Visible\t%c\n", sec_name, term_prefs[t].visible ? '1' : '0'), cfg_file);
+	if (t != 0) {
+		fputs(format("%s_Title\t%s\n", sec_name, ang_term_name[t]), cfg_file);
+		fputs(format("%s_Visible\t%c\n", sec_name, term_prefs[t].visible ? '1' : '0'), cfg_file);
+	}
 	if (term_prefs[t].x != -32000) /* don't save windows in minimized state */
 		fputs(format("%s_X\t\t%d\n", sec_name, term_prefs[t].x), cfg_file);
 	if (term_prefs[t].y != -32000) /* don't save windows in minimized state */
 		fputs(format("%s_Y\t\t%d\n", sec_name, term_prefs[t].y), cfg_file);
-	fputs(format("%s_Columns\t%d\n", sec_name, term_prefs[t].columns), cfg_file);
-	fputs(format("%s_Lines\t%d\n", sec_name, term_prefs[t].lines), cfg_file);
-	fputs(format("%s_Font\t%s\n", sec_name, term_prefs[t].font), cfg_file);
+	if (t != 0) {
+		fputs(format("%s_Columns\t%d\n", sec_name, term_prefs[t].columns), cfg_file);
+		fputs(format("%s_Lines\t%d\n", sec_name, term_prefs[t].lines), cfg_file);
+		fputs(format("%s_Font\t%s\n", sec_name, term_prefs[t].font), cfg_file);
+	} else {
+		/* one more tab, or formatting looks bad ;) */
+		fputs(format("%s_Font\t\t%s\n", sec_name, term_prefs[t].font), cfg_file);
+	}
 	fputs("\n", cfg_file);
 }
 /* linux clients: save some prefs to .tomenetrc - C. Blue */

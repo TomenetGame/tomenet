@@ -711,8 +711,7 @@ static void save_prefs_aux(term_data *td, cptr sec_name)
 	char buf[32];
 
 	/* Visible (Sub-windows) */
-	if (td != &data[0])
-	{
+	if (td != &data[0]) {
 		strcpy(buf, td->visible ? "1" : "0");
 		WritePrivateProfileString(sec_name, "Visible", buf, ini_file);
 	}
@@ -739,13 +738,15 @@ static void save_prefs_aux(term_data *td, cptr sec_name)
 		WritePrivateProfileString(sec_name, "Graf", td->graf_file, ini_file);
 	}
 
-	/* Current size (x) */
-	wsprintf(buf, "%d", td->cols);
-	WritePrivateProfileString(sec_name, "Columns", buf, ini_file);
+	if (td != &data[0]) {
+		/* Current size (x) */
+		wsprintf(buf, "%d", td->cols);
+		WritePrivateProfileString(sec_name, "Columns", buf, ini_file);
 
-	/* Current size (y) */
-	wsprintf(buf, "%d", td->rows);
-	WritePrivateProfileString(sec_name, "Rows", buf, ini_file);
+		/* Current size (y) */
+		wsprintf(buf, "%d", td->rows);
+		WritePrivateProfileString(sec_name, "Rows", buf, ini_file);
+	}
 
 	/* Current position (x) */
 	if (td->pos_x != -32000) { /* don't save windows in minimized state */
@@ -828,8 +829,7 @@ static void load_prefs_aux(term_data *td, cptr sec_name)
 	int i = 0;
 
 	/* Visibility (Sub-window) */
-	if (td != &data[0])
-	{
+	if (td != &data[0]) {
 		/* Extract visibility */
 		td->visible = (GetPrivateProfileInt(sec_name, "Visible", td->visible, ini_file) != 0);
 	}
@@ -851,9 +851,11 @@ static void load_prefs_aux(term_data *td, cptr sec_name)
 	td->graf_want = string_make(extract_file_name(tmp));
 #endif
 
-	/* Window size */
-	td->cols = GetPrivateProfileInt(sec_name, "Columns", td->cols, ini_file);
-	td->rows = GetPrivateProfileInt(sec_name, "Rows", td->rows, ini_file);
+	if (td != &data[0]) {
+		/* Window size */
+		td->cols = GetPrivateProfileInt(sec_name, "Columns", td->cols, ini_file);
+		td->rows = GetPrivateProfileInt(sec_name, "Rows", td->rows, ini_file);
+	}
 
 	/* Window position */
 	td->pos_x = GetPrivateProfileInt(sec_name, "PositionX", td->pos_x, ini_file);
@@ -861,8 +863,10 @@ static void load_prefs_aux(term_data *td, cptr sec_name)
 
 	/* Window title */
 	i = GetPrivateProfileInt(sec_name, "WindowNumber", i, ini_file);
-	GetPrivateProfileString(sec_name, "WindowTitle", ang_term_name[i], tmp, 127, ini_file);
-	strcpy(ang_term_name[i], string_make(tmp));
+	if (i != 0) { /* exempt main window */
+		GetPrivateProfileString(sec_name, "WindowTitle", ang_term_name[i], tmp, 127, ini_file);
+		strcpy(ang_term_name[i], string_make(tmp));
+	}
 }
 
 
