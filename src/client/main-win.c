@@ -685,7 +685,8 @@ static void term_getsize(term_data *td)
 	rc.bottom = rc.top + td->client_hgt;
 
 	/* Adjust */
-	AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+//	AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+	AdjustWindowRectEx(&rc, td->dwStyle, FALSE, td->dwExStyle);
 
 	/* Total size */
 	td->size_wid = rc.right - rc.left;
@@ -2892,7 +2893,8 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 			rc.bottom = rc.top + 2 * td->font_hgt + td->size_oh1 + td->size_oh2 + 1;
 
 			/* Adjust */
-			AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+//			AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+			AdjustWindowRectEx(&rc, td->dwStyle, FALSE, td->dwExStyle);
 
 			/* Save minimum size */
 			lpmmi->ptMinTrackSize.x = rc.right - rc.left;
@@ -2908,7 +2910,8 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 			rc.bottom += (td->font_hgt - 1);
 
 			/* Adjust */
-			AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+//			AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+			AdjustWindowRectEx(&rc, td->dwStyle, FALSE, td->dwExStyle);
 
 			/* Save maximum size */
 			lpmmi->ptMaxSize.x      = rc.right - rc.left;
@@ -3135,7 +3138,8 @@ LRESULT FAR PASCAL _export AngbandListProc(HWND hWnd, UINT uMsg,
 			rc.bottom = rc.top + 2 * td->font_hgt + td->size_oh1 + td->size_oh2;
 
 			/* Adjust */
-			AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+//			AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+			AdjustWindowRectEx(&rc, td->dwStyle, FALSE, td->dwExStyle);
 
 			/* Save the minimum size */
 			lpmmi->ptMinTrackSize.x = rc.right - rc.left;
@@ -3151,7 +3155,8 @@ LRESULT FAR PASCAL _export AngbandListProc(HWND hWnd, UINT uMsg,
 			rc.bottom += (td->font_hgt - 1);
 
 			/* Adjust */
-			AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+//			AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+			AdjustWindowRectEx(&rc, td->dwStyle, FALSE, td->dwExStyle);
 
 			/* Save maximum size */
 			lpmmi->ptMaxSize.x      = rc.right - rc.left;
