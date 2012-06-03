@@ -17,7 +17,7 @@
 #name		Gandalf
 
 ## - Meta server providing a list of game servers
-##   leave commented out to use internal default
+##   leave commented out to use default (meta.tomenet.net)
 #meta		meta.tomenet.net
 
 ## - Server and port you wish to connect to;
@@ -76,7 +76,7 @@ audioBuffer		1024
 audioMaster		1
 audioMusic		1
 audioSound		1
-audioWeather		1
+audioWeather	1
 
 ## - Mixer values for various things (0..100)
 audioVolumeMaster	100
@@ -92,62 +92,69 @@ audioVolumeWeather	100
 ##   4x6, 5x7, 5x8, 6x9, 6x10, 6x12, 7x13, 7x14, 8x13, 9x15, 10x20, 12x24.
 
 ## 'TomeNET' main window
-Mainwindow_X		0
-Mainwindow_Y		0
-Mainwindow_Font		8x13
+Mainwindow_X			0
+Mainwindow_Y			0
+Mainwindow_Font			8x13
 
 ## 'Msg/Chat' mirrow window
+Mirrorwindow_Title		Msg/Chat
 Mirrorwindow_Visible	1
-Mirrorwindow_X		0
-Mirrorwindow_Y		0
+Mirrorwindow_X			0
+Mirrorwindow_Y			0
 Mirrorwindow_Columns	80
-Mirrorwindow_Lines	24
-Mirrorwindow_Font	6x10
+Mirrorwindow_Lines		24
+Mirrorwindow_Font		6x10
 
 ## 'Inventory' recall window
+Recallwindow_Title		Inventory
 Recallwindow_Visible	1
-Recallwindow_X		0
-Recallwindow_Y		0
+Recallwindow_X			0
+Recallwindow_Y			0
 Recallwindow_Columns	80
-Recallwindow_Lines	24
-Recallwindow_Font	6x10
+Recallwindow_Lines		24
+Recallwindow_Font		6x10
 
 ## 'Character' choice window
+Choicewindow_Title		Character
 Choicewindow_Visible	1
-Choicewindow_X		0
-Choicewindow_Y		0
+Choicewindow_X			0
+Choicewindow_Y			0
 Choicewindow_Columns	80
-Choicewindow_Lines	24
-Choicewindow_Font	5x8
+Choicewindow_Lines		24
+Choicewindow_Font		5x8
 
 ## 'Chat' term-4
+Term-4window_Title		Chat
 Term-4window_Visible	1
-Term-4window_X		0
-Term-4window_Y		0
+Term-4window_X			0
+Term-4window_Y			0
 Term-4window_Columns	80
-Term-4window_Lines	24
-Term-4window_Font	6x10
+Term-4window_Lines		24
+Term-4window_Font		6x10
 
 ## 'Equipment' term-5
+Term-5window_Title		Equipment
 Term-5window_Visible	1
-Term-5window_X		0
-Term-5window_Y		0
+Term-5window_X			0
+Term-5window_Y			0
 Term-5window_Columns	80
-Term-5window_Lines	14
-Term-5window_Font	5x8
+Term-5window_Lines		14
+Term-5window_Font		5x8
 
 ## unnamed, term-6
+Term-6window_Title		Term-6
 Term-6window_Visible	0
-Term-6window_X		0
-Term-6window_Y		0
+Term-6window_X			0
+Term-6window_Y			0
 Term-6window_Columns	80
-Term-6window_Lines	24
-Term-6window_Font	5x8
+Term-6window_Lines		24
+Term-6window_Font		5x8
 
 ## unnamed, term-7
+Term-7window_Title		Term-7
 Term-7window_Visible	0
-Term-7window_X		0
-Term-7window_Y		0
+Term-7window_X			0
+Term-7window_Y			0
 Term-7window_Columns	80
-Term-7window_Lines	24
-Term-7window_Font	5x8
+Term-7window_Lines		24
+Term-7window_Font		5x8
