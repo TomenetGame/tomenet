@@ -19,7 +19,7 @@ extern void turn_off_numlock_X11(void);
 #if 1 /* CHANGE_FONTS_X11 */
 extern void change_font(int s);
 #endif
-extern void x11win_getinfo(int term_idx, int *x, int *y, int *w, int *h, char *fnt_name);
+extern void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name);
 #endif
 
 #ifdef USE_XAW

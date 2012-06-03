@@ -2392,6 +2392,24 @@ static XImage *ResizeImage(Display *disp, XImage *Im,
 #endif /* USE_GRAPHICS */
 
 
+static term_data* term_idx_to_term_data(int term_idx) {
+	term_data *td = &screen;
+
+	switch (term_idx) {
+	case 0: td = &screen; break;
+	case 1: td = &mirror; break;
+	case 2: td = &recall; break;
+	case 3: td = &choice; break;
+	case 4: td = &term_4; break;
+	case 5: td = &term_5; break;
+	case 6: td = &term_6; break;
+	case 7: td = &term_7; break;
+	}
+
+	return (td);
+}
+
+
 /*
  * Initialization function for an "X11" module to Angband
  */
@@ -2619,6 +2637,17 @@ if (term_prefs[7].visible) {
 	Infowin_set(screen.outer);
 	Infowin_raise();
 
+
+	/* restore window coordinates from .tomenetrc */
+	for (i = 0; i <= 7; i++) { /* MAX_TERM_DATA should be defined for X11 too.. */
+		if (!term_prefs[i].visible) continue;
+		XMoveWindow(Metadpy->dpy,
+		    term_idx_to_term_data(i)->outer->win,
+		    term_prefs[i].x,
+		    term_prefs[i].y);
+	}
+
+
 	/* Success */
 	return (0);
 }
@@ -2727,18 +2756,7 @@ void change_font(int s) {
 }
 static void term_force_font(int term_idx, char fnt_name[80]) {
 	int rows, cols, wid, hgt;
-	term_data *td = &screen;
-
-	switch (term_idx) {
-	case 0: td = &screen; break;
-	case 1: td = &mirror; break;
-	case 2: td = &recall; break;
-	case 3: td = &choice; break;
-	case 4: td = &term_4; break;
-	case 5: td = &term_5; break;
-	case 6: td = &term_6; break;
-	case 7: td = &term_7; break;
-	}
+	term_data *td = term_idx_to_term_data(term_idx);
 
 	/* non-visible window has no fnt-> .. */
 	if (!term_prefs[term_idx].visible) return;
@@ -2772,43 +2790,36 @@ static void term_force_font(int term_idx, char fnt_name[80]) {
 }
 #endif
 
-/* For saving window positions and sizes on quitting */
-void x11win_getinfo(int term_idx, int *x, int *y, int *w, int *h, char *fnt_name) {
-	term_data *td = &screen;
+/* For saving window positions and sizes on quitting:
+   Returns x,y,cols,rows,font name. */
+void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name) {
+	term_data *td = term_idx_to_term_data(term_idx);
 	infowin *iwin;
 	Window xid, tmp_win;
+#if 0
 	unsigned int wu, hu, bu, du;
-
 	XWindowAttributes xwa;
-
+#endif
 
 	/* non-visible window has no window info .. */
 	if (!term_prefs[term_idx].visible) {
-		*x = *y = *w = *h = 0;
+		*x = *y = *c = *r = 0;
 		return;
-	}
-
-
-	switch (term_idx) {
-	case 0: td = &screen; break;
-	case 1: td = &mirror; break;
-	case 2: td = &recall; break;
-	case 3: td = &choice; break;
-	case 4: td = &term_4; break;
-	case 5: td = &term_5; break;
-	case 6: td = &term_6; break;
-	case 7: td = &term_7; break;
 	}
 
 	strcpy(fnt_name, td->fnt->name);
 
 	iwin = td->outer;
-	Infowin_set(iwin); /* shouldn't be needed? */
+	Infowin_set(iwin);
 	xid = iwin->win;
 
+	/* Detemine number of rows/cols */
+	*c = ((iwin->w - 2) / td->fnt->wid);
+	*r = ((iwin->h - 2) / td->fnt->hgt);
+
+#if 0
 	/* Check For Error XXX Extract some ACTUAL data from 'xid' */
 	XGetGeometry(Metadpy->dpy, xid, &tmp_win, x, y, &wu, &hu, &bu, &du);
-
 	*w = (int)wu;
 	*h = (int)hu;
 
@@ -2816,4 +2827,9 @@ void x11win_getinfo(int term_idx, int *x, int *y, int *w, int *h, char *fnt_name
 	XGetWindowAttributes(Metadpy->dpy, xid, &xwa);
 	*x = xwa.x;
 	*y = xwa.y;
+#endif
+
+#if 1
+	XTranslateCoordinates(Metadpy->dpy, xid, Metadpy->root, 0, 0, x, y, &tmp_win);
+#endif
 }

@@ -393,11 +393,10 @@ static void write_mangrc_aux(int t, cptr sec_name, FILE *cfg_file) {
 /* linux clients: save one line of subwindow prefs to .tomenetrc - C. Blue */
 static void write_mangrc_aux_line(int t, cptr sec_name, char *buf_org) {
 	char buf[1024], *ter_name = buf_org + strlen(sec_name), font_name[1024];
-	int x, y, w, h;
+	int x, y, c, r;
 
-	x11win_getinfo(t, &x, &y, &w, &h, font_name);
-	if (!w) return; /* invisible window? */
-	printf("sec_name %s, line %s, term %d: x %d, y %d, w %d, h %d, font %s.\n", sec_name, buf, t, x, y, w, h, font_name);
+	x11win_getinfo(t, &x, &y, &c, &r, font_name);
+	if (!c) return; /* invisible window? */
 
 	if (!strncmp(ter_name, "_Title", 6)) {
 		if (t != 0)
@@ -415,10 +414,10 @@ static void write_mangrc_aux_line(int t, cptr sec_name, char *buf_org) {
 //			sprintf(buf, "%s_Y\t\t%d\n", sec_name, term_prefs[t].y);
 	} else if (!strncmp(ter_name, "_Columns", 8)) {
 		if (t != 0)
-			sprintf(buf, "%s_Columns\t%d\n", sec_name, term_prefs[t].columns);
+			sprintf(buf, "%s_Columns\t%d\n", sec_name, c);
 	} else if (!strncmp(ter_name, "_Lines", 6)) {
 		if (t != 0)
-			sprintf(buf, "%s_Lines\t%d\n", sec_name, term_prefs[t].lines);
+			sprintf(buf, "%s_Lines\t%d\n", sec_name, r);
 	} else if (!strncmp(ter_name, "_Font", 5)) {
 		if (t != 0)
 			sprintf(buf, "%s_Font\t%s\n", sec_name, font_name);
