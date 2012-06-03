@@ -2651,7 +2651,7 @@ void turn_off_numlock_X11(void) {
     1 - big
     2 - bigger
     3 - huge */
-static void term_force_font(int t, char fnt_name[80]);
+static void term_force_font(int term_idx, char fnt_name[80]);
 void change_font(int s) {
 	/* use main window font for measuring */
 	char tmp[128] = "";
@@ -2725,11 +2725,11 @@ void change_font(int s) {
 		break;
 	}
 }
-static void term_force_font(int t, char fnt_name[80]) {
+static void term_force_font(int term_idx, char fnt_name[80]) {
 	int rows, cols, wid, hgt;
 	term_data *td = &screen;
 
-	switch (t) {
+	switch (term_idx) {
 	case 0: td = &screen; break;
 	case 1: td = &mirror; break;
 	case 2: td = &recall; break;
@@ -2741,7 +2741,7 @@ static void term_force_font(int t, char fnt_name[80]) {
 	}
 
 	/* non-visible window has no fnt-> .. */
-	if (!term_prefs[t].visible) return;
+	if (!term_prefs[term_idx].visible) return;
 
 	/* Detemine "proper" number of rows/cols */
 	cols = ((Infowin->w - 2) / td->fnt->wid);
@@ -2771,3 +2771,49 @@ static void term_force_font(int t, char fnt_name[80]) {
 	XFlush(Metadpy->dpy);
 }
 #endif
+
+/* For saving window positions and sizes on quitting */
+void x11win_getinfo(int term_idx, int *x, int *y, int *w, int *h, char *fnt_name) {
+	term_data *td = &screen;
+	infowin *iwin;
+	Window xid, tmp_win;
+	unsigned int wu, hu, bu, du;
+
+	XWindowAttributes xwa;
+
+
+	/* non-visible window has no window info .. */
+	if (!term_prefs[term_idx].visible) {
+		*x = *y = *w = *h = 0;
+		return;
+	}
+
+
+	switch (term_idx) {
+	case 0: td = &screen; break;
+	case 1: td = &mirror; break;
+	case 2: td = &recall; break;
+	case 3: td = &choice; break;
+	case 4: td = &term_4; break;
+	case 5: td = &term_5; break;
+	case 6: td = &term_6; break;
+	case 7: td = &term_7; break;
+	}
+
+	strcpy(fnt_name, td->fnt->name);
+
+	iwin = td->outer;
+	Infowin_set(iwin); /* shouldn't be needed? */
+	xid = iwin->win;
+
+	/* Check For Error XXX Extract some ACTUAL data from 'xid' */
+	XGetGeometry(Metadpy->dpy, xid, &tmp_win, x, y, &wu, &hu, &bu, &du);
+
+	*w = (int)wu;
+	*h = (int)hu;
+
+	/* Check Error XXX Extract some more ACTUAL data */
+	XGetWindowAttributes(Metadpy->dpy, xid, &xwa);
+	*x = xwa.x;
+	*y = xwa.y;
+}

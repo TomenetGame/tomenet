@@ -363,24 +363,73 @@ static bool read_mangrc(cptr filename)
 
 /* linux clients: save subwindow prefs to .tomenetrc - C. Blue */
 static void write_mangrc_aux(int t, cptr sec_name, FILE *cfg_file) {
+	int x, y, w, h;
+	char font_name[1024];
+
+	x11win_getinfo(t, &x, &y, &w, &h, font_name);
+	printf("term %d: x %d, y %d, fnt %s.\n", t, x, y, font_name);
+
 	if (t != 0) {
 		fputs(format("%s_Title\t%s\n", sec_name, ang_term_name[t]), cfg_file);
 		fputs(format("%s_Visible\t%c\n", sec_name, term_prefs[t].visible ? '1' : '0'), cfg_file);
 	}
 	if (term_prefs[t].x != -32000) /* don't save windows in minimized state */
-		fputs(format("%s_X\t\t%d\n", sec_name, term_prefs[t].x), cfg_file);
+		fputs(format("%s_X\t\t%d\n", sec_name, x), cfg_file);
+//		fputs(format("%s_X\t\t%d\n", sec_name, term_prefs[t].x), cfg_file);
 	if (term_prefs[t].y != -32000) /* don't save windows in minimized state */
-		fputs(format("%s_Y\t\t%d\n", sec_name, term_prefs[t].y), cfg_file);
+		fputs(format("%s_Y\t\t%d\n", sec_name, y), cfg_file);
+//		fputs(format("%s_Y\t\t%d\n", sec_name, term_prefs[t].y), cfg_file);
 	if (t != 0) {
 		fputs(format("%s_Columns\t%d\n", sec_name, term_prefs[t].columns), cfg_file);
 		fputs(format("%s_Lines\t%d\n", sec_name, term_prefs[t].lines), cfg_file);
-		fputs(format("%s_Font\t%s\n", sec_name, term_prefs[t].font), cfg_file);
+		fputs(format("%s_Font\t%s\n", sec_name, font_name), cfg_file);
 	} else {
 		/* one more tab, or formatting looks bad ;) */
-		fputs(format("%s_Font\t\t%s\n", sec_name, term_prefs[t].font), cfg_file);
+		fputs(format("%s_Font\t\t%s\n", sec_name, font_name), cfg_file);
 	}
 	fputs("\n", cfg_file);
 }
+#ifdef USE_X11
+/* linux clients: save one line of subwindow prefs to .tomenetrc - C. Blue */
+static void write_mangrc_aux_line(int t, cptr sec_name, char *buf_org) {
+	char buf[1024], *ter_name = buf_org + strlen(sec_name), font_name[1024];
+	int x, y, w, h;
+
+	x11win_getinfo(t, &x, &y, &w, &h, font_name);
+	if (!w) return; /* invisible window? */
+	printf("sec_name %s, line %s, term %d: x %d, y %d, w %d, h %d, font %s.\n", sec_name, buf, t, x, y, w, h, font_name);
+
+	if (!strncmp(ter_name, "_Title", 6)) {
+		if (t != 0)
+			sprintf(buf, "%s_Title\t%s\n", sec_name, ang_term_name[t]);
+	} else if (!strncmp(ter_name, "_Visible", 8)) {
+		if (t != 0)
+			sprintf(buf, "%s_Visible\t%c\n", sec_name, term_prefs[t].visible ? '1' : '0');
+	} else if (!strncmp(ter_name, "_X", 2)) {
+		if (term_prefs[t].x != -32000) /* don't save windows in minimized state */
+			sprintf(buf, "%s_X\t\t%d\n", sec_name, x);
+//			sprintf(buf, "%s_X\t\t%d\n", sec_name, term_prefs[t].x);
+	} else if (!strncmp(ter_name, "_Y", 2)) {
+		if (term_prefs[t].y != -32000) /* don't save windows in minimized state */
+			sprintf(buf, "%s_Y\t\t%d\n", sec_name, y);
+//			sprintf(buf, "%s_Y\t\t%d\n", sec_name, term_prefs[t].y);
+	} else if (!strncmp(ter_name, "_Columns", 8)) {
+		if (t != 0)
+			sprintf(buf, "%s_Columns\t%d\n", sec_name, term_prefs[t].columns);
+	} else if (!strncmp(ter_name, "_Lines", 6)) {
+		if (t != 0)
+			sprintf(buf, "%s_Lines\t%d\n", sec_name, term_prefs[t].lines);
+	} else if (!strncmp(ter_name, "_Font", 5)) {
+		if (t != 0)
+			sprintf(buf, "%s_Font\t%s\n", sec_name, font_name);
+		else
+			/* one more tab, or formatting looks bad ;) */
+			sprintf(buf, "%s_Font\t\t%s\n", sec_name, font_name);
+	}
+
+	strcpy(buf_org, buf);
+}
+#endif
 /* linux clients: save some prefs to .tomenetrc - C. Blue */
 bool write_mangrc(void) {
 	char config_name2[100];
@@ -431,6 +480,33 @@ bool write_mangrc(void) {
 				strcat(buf, format("%d\n", cfg_audio_weather_volume));
 			}
 #endif
+
+#ifdef USE_X11
+			/* new: save window positions/sizes/visibility (and possibly fonts) */
+			if (!strncmp(buf, "Mainwindow", 10))
+				write_mangrc_aux_line(0, "Mainwindow", buf);
+			else if (!strncmp(buf, "Mirrorwindow", 12))
+				write_mangrc_aux_line(1, "Mirrorwindow", buf);
+			else if (!strncmp(buf, "Recallwindow", 12))
+				write_mangrc_aux_line(2, "Recallwindow", buf);
+			else if (!strncmp(buf, "Choicewindow", 12))
+				write_mangrc_aux_line(3, "Choicewindow", buf);
+			else if (!strncmp(buf, "Term-4window", 12))
+				write_mangrc_aux_line(4, "Term-4window", buf);
+			else if (!strncmp(buf, "Term-5window", 12))
+				write_mangrc_aux_line(5, "Term-5window", buf);
+			else if (!strncmp(buf, "Term-6window", 12))
+				write_mangrc_aux_line(6, "Term-6window", buf);
+			else if (!strncmp(buf, "Term-7window", 12))
+				write_mangrc_aux_line(7, "Term-7window", buf);
+#if 0 /* keep n/a for now, not really needed */
+			else if (!strncmp(buf, "Term-8window", 12))
+				write_mangrc_aux_line(8, "Term-8window", buf);
+			else if (!strncmp(buf, "Term-9window", 12))
+				write_mangrc_aux_line(9, "Term-9window", buf);
+#endif
+#endif /* USE_X11 */
+
 
 			/*** Everything else is ignored ***/
 

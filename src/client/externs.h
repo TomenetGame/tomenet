@@ -16,6 +16,10 @@ extern errr init_x11(void);
 #if 0
 extern void turn_off_numlock_X11(void);
 #endif
+#if 1 /* CHANGE_FONTS_X11 */
+extern void change_font(int s);
+#endif
+extern void x11win_getinfo(int term_idx, int *x, int *y, int *w, int *h, char *fnt_name);
 #endif
 
 #ifdef USE_XAW
@@ -776,10 +780,6 @@ extern int stricmp(cptr a, cptr b);
 /* main-win.c */
 /* extern int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, ...); */
 extern void change_font(int s);
-#else
-#if 1 /* CHANGE_FONTS_X11 */
-extern void change_font(int s);
-#endif
 #endif
 
 #ifdef ENABLE_RCRAFT
