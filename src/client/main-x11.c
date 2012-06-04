@@ -2073,12 +2073,11 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	/* Create a top-window (border 5) */
 	MAKE(td->outer, infowin);
 	Infowin_set(td->outer);
-/* was wid +2, hgt + 2 -> resulted in too big a window by +1 in each dimension! Fine now hopefully: */
-	Infowin_init_top(topx, topy, wid + 1, hgt + 1, 1, Metadpy->fg, Metadpy->bg);
+	Infowin_init_top(topx, topy, wid + 2, hgt + 2, 1, Metadpy->fg, Metadpy->bg);
 	Infowin_set_mask(StructureNotifyMask | KeyPressMask);
 	Infowin_set_name(name);
 	Infowin_set_class_hint(name);
-	Infowin_set_size(wid+2, hgt+2, td->fnt->wid, td->fnt->hgt, fixed);
+	Infowin_set_size(wid + 2, hgt + 2, td->fnt->wid, td->fnt->hgt, fixed);
 	Infowin_map();
 
 	/* Create a sub-window for playing field */
@@ -2382,7 +2381,7 @@ static XImage *ResizeImage(Display *disp, XImage *Im,
 		{
 			Ty += *dy1;
 			(*py2)++;
-		}      
+		}
 	}
 
 	return Tmp;
