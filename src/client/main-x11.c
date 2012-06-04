@@ -2679,6 +2679,8 @@ void turn_off_numlock_X11(void) {
     1 - big
     2 - bigger
     3 - huge */
+/* only offer 2 cycling stages? */
+#define REDUCED_FONT_CHOICE
 static void term_force_font(int term_idx, char fnt_name[80]);
 void change_font(int s) {
 	/* use main window font for measuring */
@@ -2688,7 +2690,7 @@ void change_font(int s) {
 
 	/* cycle? */
 	if (s == -1) {
-#if 1
+#ifdef REDUCED_FONT_CHOICE
 		if (strstr(tmp, "8x13")) s = 1;
 		else if (strstr(tmp, "9x15")) s = 0;
 #else
@@ -2703,8 +2705,11 @@ void change_font(int s) {
 	switch (s) {
 	case 0:
 		/* change main window font */
+#ifdef REDUCED_FONT_CHOICE
 		term_force_font(0, "8x13");
-//		term_force_font(0, "lucidasanstypewriter-8");
+#else
+		term_force_font(0, "lucidasanstypewriter-8");
+#endif
 		/* Change sub windows too */
 		term_force_font(1, "8x13"); //msg
 		term_force_font(2, "8x13"); //inv
@@ -2716,8 +2721,11 @@ void change_font(int s) {
 		break;
 	case 1:
 		/* change main window font */
+#ifdef REDUCED_FONT_CHOICE
 		term_force_font(0, "9x15");//was 10x14x
-//		term_force_font(0, "lucidasanstypewriter-10");
+#else
+		term_force_font(0, "lucidasanstypewriter-10");
+#endif
 		/* Change sub windows too */
 		term_force_font(1, "9x15");
 		term_force_font(2, "9x15");
