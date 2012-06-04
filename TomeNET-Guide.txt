@@ -4984,6 +4984,8 @@ Kill quest
     The time will continue to run out even while you're not logged on.
     If you fulfil the kill quest you received, you will be rewarded with a
     good or great item, depending on the difficulty (monster level) and chance.
+    The item does not depend on your race, class, skills or luck in any way,
+    it's completely random.
     If you fail to complete your quest, the quest will be dropped and you can
     just get a new one if you want to. There is no penalty.
 
