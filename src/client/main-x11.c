@@ -930,7 +930,10 @@ static errr Infofnt_init_data(cptr name)
 	info = XLoadQueryFont(Metadpy->dpy, name);
 
 	/* The load failed, try to recover */
-	if (!info) return (-1);
+	if (!info) {
+		fprintf(stderr, "Font not found: %s\n", name);
+		return (-1);
+	}
 
 
 	/*** Init the font ***/
@@ -2006,7 +2009,9 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	/* Prepare the standard font */
 	MAKE(td->fnt, infofnt);
 	Infofnt_set(td->fnt);
-	Infofnt_init_data(font);
+	if (Infofnt_init_data(font) == -1) {
+		fprintf(stderr, "Failed to load a font!\n");
+	}
 
 	/* Hack -- extract key buffer size */
 	num = (fixed ? 1024 : 16);
