@@ -31,8 +31,10 @@ static void read_mangrc_aux(int t, cptr sec_name) {
 	while (val2[strlen(val2) - 1] == '\n' || val2[strlen(val2) - 1] == '\r') val2[strlen(val2) - 1] = '\0';
 
 	if (t != 0) { /* exempt main window */
-		if ((val = strstr(sec_name, "_Title")))
-			strcpy(ang_term_name[t], val + 6);
+		if ((val = strstr(sec_name, "_Title"))) {
+			strncpy(ang_term_name[t], val + 6, sizeof(ang_term_name[t]));
+			ang_term_name[t][sizeof(ang_term_name[t]) - 1] = '\0';
+		}
 	}
 
 	if ((val = strstr(sec_name, "_Visible")))
@@ -56,9 +58,11 @@ static void read_mangrc_aux(int t, cptr sec_name) {
 		val2 = val;
 		while (val2[0] && ((val2[0] >= '0' && val2[0] <= '9') || val2[0] == 'x')) val2++;
 		val2[0] = 0;
-		strcpy(term_prefs[t].font, val);
+		strncpy(term_prefs[t].font, val, sizeof(term_prefs[t].font));
+		term_prefs[t].font[sizeof(term_prefs[t].font) - 1] = '\0';
 #else /* also allow font names consisting of letters! */
-		strcpy(term_prefs[t].font, val + 5);
+		strncpy(term_prefs[t].font, val + 5, sizeof(term_prefs[t].font));
+		term_prefs[t].font[sizeof(term_prefs[t].font) - 1] = '\0';
 #endif
 	}
 }
