@@ -2681,7 +2681,7 @@ void turn_off_numlock_X11(void) {
     3 - huge */
 /* only offer 2 cycling stages? */
 #define REDUCED_FONT_CHOICE
-static void term_force_font(int term_idx, char fnt_name[80]);
+static void term_force_font(int term_idx, char fnt_name[256]);
 void change_font(int s) {
 	/* use main window font for measuring */
 	char tmp[128] = "";
@@ -2761,7 +2761,7 @@ void change_font(int s) {
 		break;
 	}
 }
-static void term_force_font(int term_idx, char fnt_name[80]) {
+static void term_force_font(int term_idx, char fnt_name[256]) {
 	int rows, cols, wid, hgt;
 	term_data *td = term_idx_to_term_data(term_idx);
 
