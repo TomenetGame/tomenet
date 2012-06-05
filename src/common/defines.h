@@ -1294,7 +1294,7 @@
 #define MAX_STACK_SIZE			100
 
 /* Different items stacking may at most pile up to this many items (0 = no limit) */
-#define MAX_ITEMS_STACKING		5
+//#define MAX_ITEMS_STACKING		10
 
 
 

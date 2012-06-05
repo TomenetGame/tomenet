@@ -39,13 +39,9 @@
 void excise_object_idx(int o_idx)
 {
 	object_type *j_ptr, *o_ptr;
-
 	u16b this_o_idx, next_o_idx = 0;
-
 	u16b prev_o_idx = 0;
-	
 	int i;
-
 
 	/* Object */
 	j_ptr = &o_list[o_idx];
@@ -118,8 +114,8 @@ void excise_object_idx(int o_idx)
 
 		/* Somewhere out of this world */
 		if (!in_bounds2(&j_ptr->wpos, y, x)) return;
-		
-		c_ptr=&zcave[y][x];
+
+		c_ptr = &zcave[y][x];
 
 		/* Scan all objects in the grid */
 		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
@@ -158,11 +154,18 @@ void excise_object_idx(int o_idx)
 				/* Done */
 				break;
 			}
+#ifdef MAX_ITEMS_STACKING
+			else {
+				/* decrement it's stack position index */
+				if (o_ptr->stack_pos) o_ptr->stack_pos--;
+if (o_ptr) s_printf("DEBUG_MIS_2: stack_pos %d\n", o_ptr->stack_pos);
+			}
+#endif
 
 			/* Save prev_o_idx */
 			prev_o_idx = this_o_idx;
 		}
-		
+
 	        /* Fix visibility of item pile - C. Blue
 		   If object was visible to a player, then the top object of that pile becomes visible now! */
 		if (c_ptr->o_idx) /* any object left at all? */
@@ -2926,7 +2929,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 
 			/* Require identical charges */
 			if (o_ptr->pval != j_ptr->pval) return (FALSE);
-			
+
 			if (o_ptr->name2 != j_ptr->name2) return (FALSE);
 			if (o_ptr->name2b != j_ptr->name2b) return (FALSE);
 
@@ -2948,7 +2951,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 
 			/* this is only for rods... the_sandman */
 			if (o_ptr->pval == 0 && j_ptr->pval != 0) return (FALSE); //lol :)
-			
+
 			if (o_ptr->name2 != j_ptr->name2) return (FALSE);
 			if (o_ptr->name2b != j_ptr->name2b) return (FALSE);
 
@@ -3701,7 +3704,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 		/* ok */
 		ok_ego[ok_num++] = e_tval[tval][i];
 	}
-	
+
 	if (!ok_num) {
 		/* Fix memory leak - mikaelh */
 		C_FREE(ok_ego, e_tval_size[tval], int);
@@ -4451,7 +4454,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 
 					/* Super-charge the ring */
 					while (rand_int(100) < 50) o_ptr->bpval++;
-					
+
 					/* Limit */
 					if (o_ptr->bpval > 15) o_ptr->bpval = 15;
 
@@ -5379,7 +5382,7 @@ for (i = 0; i < 25; i++) {
 	} else {
 		/* Ammo amount is increased in place_object */
 		if (object_value_real(0, o_ptr) >= depth + 150) break;
-	}	
+	}
     } /* verygreat-loop end */
 
 	if (verygreat) {
@@ -6018,7 +6021,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 
 	/* Paranoia -- check bounds */
 	if (!in_bounds(y, x)) return;
-	
+
 	/* Hack - No l00t in Valinor */
 	if (getlevel(wpos) == 200) return;
 
@@ -6074,7 +6077,6 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	/* Generate a special object, or a normal object */
 	else if ((rand_int(prob) != 0) || !make_artifact_special(wpos, &forge, resf))
 	{
-	
 		/* Check global variable, if some base types are forbidden */
 		do {
 			tries++;
@@ -6134,15 +6136,15 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 			if ((resf & RESF_NOHIDSM) && (k_info[k_idx].tval == TV_DRAG_ARMOR) &&
 			    !sv_dsm_low(k_info[k_idx].sval) && !sv_dsm_mid(k_info[k_idx].sval))
 				continue;
-			
+
 			if ((resf & RESF_LOWVALUE) && (k_info[k_idx].cost > 35000)) continue;
 			if ((resf & RESF_MIDVALUE) && (k_info[k_idx].cost > 50000)) continue;
 			if ((resf & RESF_NOHIVALUE) && (k_info[k_idx].cost > 100000)) continue;
-			
+
 			if ((resf & RESF_NOTRUEART) && (k_info[k_idx].flags3 & TR3_INSTA_ART)) continue;
 
 			if (!(resf & RESF_WINNER) && k_info[k_idx].flags5 & TR5_WINNERS_ONLY) continue;
-			
+
 			if ((k_info[k_idx].flags5 & TR5_FORCE_DEPTH) && getlevel(wpos) < k_info[k_idx].level) continue;
 
 			/* Allow all other items here - mikaelh */
@@ -6303,11 +6305,11 @@ void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool 
 			if ((resf & RESF_NOHIDSM) && (k_info[k_idx].tval == TV_DRAG_ARMOR) &&
 			    !sv_dsm_low(k_info[k_idx].sval) && !sv_dsm_mid(k_info[k_idx].sval))
 				continue;
-			
+
 			if ((resf & RESF_LOWVALUE) && (k_info[k_idx].cost > 35000)) continue;
 			if ((resf & RESF_MIDVALUE) && (k_info[k_idx].cost > 50000)) continue;
 			if ((resf & RESF_NOHIVALUE) && (k_info[k_idx].cost > 100000)) continue;
-			
+
 			if ((resf & RESF_NOTRUEART) && (k_info[k_idx].flags3 & TR3_INSTA_ART)) continue;
 
 			if (!(resf & RESF_WINNER) && k_info[k_idx].flags5 & TR5_WINNERS_ONLY) continue;
@@ -6718,7 +6720,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			    (k_info[k_idx].tval == TV_DRAG_ARMOR) &&
 			    !sv_dsm_low(k_info[k_idx].sval) && !sv_dsm_mid(k_info[k_idx].sval))
 				continue;
-				
+
 			break;
 		} while (tries < 100); /* need more tries here than in place_object() because of additional weight limit check */
 
@@ -6810,7 +6812,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			case EGO_OFTHEMAGI: continue;
 			}
 		}
-		
+
 		/* analyze class (so far nothing is done here, but everything is determined by skills instead) */
 		switch (p_ptr->pclass) {
 		case CLASS_WARRIOR:
@@ -7232,8 +7234,44 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		if (c_ptr->o_idx &&
 		    MAX_ITEMS_STACKING != 0 &&
 		    o_list[c_ptr->o_idx].stack_pos >= MAX_ITEMS_STACKING - 1) {
-			if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1); /* just paranoia here */
-			return (-1);
+s_printf("DEBUG_MISb: stack_pos %d\n", o_list[c_ptr->o_idx].stack_pos);
+			/* unique monster drops get priority and 'crash' all previous objects.
+			   This should be preferable over just deleting the top object, if the
+			   unique monster drops multiple objects, which is true in most cases. */
+ #if 0 /* rough way */
+			//TODO: better handling of unique loot: pick one normal item and destroy it, to make room for one unique boss item.
+			if (o_ptr->note_utag &&
+			    o_list[c_ptr->o_idx].note_utag == 0) { /* hold back a bit if we'd have to destroy other unique loot;
+								    note: this ignores cases of unique loot below a normal item though. */
+				delete_object(wpos, ny, nx, TRUE);
+			}
+			/* can't drop! */
+			else
+ #else /* more refined way */
+			/* if we drop unique monster loot, look for a normal item and destroy it to make room */
+			do_kill = TRUE;
+			if (o_ptr->note_utag) {
+				/* scan pile from top to bottom */
+				for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx) {
+					/* found a non-unique-loot item? */
+					if (!o_list[this_o_idx].note_utag) {
+						/* erase it */
+						delete_object_idx(this_o_idx, TRUE);
+						/* done */
+						do_kill = FALSE;
+						break;
+					}
+					/* Acquire next object */
+					next_o_idx = o_list[this_o_idx].next_o_idx;
+				}
+			}
+			if (do_kill)
+ #endif
+			{
+				if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1); /* just paranoia here */
+				return (-1);
+			}
+s_printf("DEBUG_MISa: stack_pos %d\n", o_list[c_ptr->o_idx].stack_pos);
 		}
 #endif
 
@@ -7293,6 +7331,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			else
 #endif
 				o_ptr->stack_pos = 0; /* first object on this grid */
+s_printf("DEBUG_MIS: stack_pos %d\n", o_ptr->stack_pos);
 
 			/* Place */
 //			c_ptr = &zcave[ny][nx];
