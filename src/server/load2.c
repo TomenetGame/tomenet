@@ -553,6 +553,10 @@ static void rd_item(object_type *o_ptr)
 	} else o_ptr->note_utag = 0;
 
 	rd_u16b(&o_ptr->next_o_idx);
+	if (!older_than(4, 4, 22)) {
+		rd_byte(&tmpbyte);
+		o_ptr->stack_pos = tmpbyte;
+	}
 	rd_u16b(&o_ptr->held_m_idx);
 
 /* hack: mistrust cloaks were removed, and existing ones become aman cloaks */
@@ -565,7 +569,7 @@ if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC && !o_ptr->name1) o_ptr
 	/* Obtain k_idx from tval/sval instead :) */
 	if (o_ptr->k_idx)	/* zero is cipher :) */
 		o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
-	
+
 #ifdef SEAL_INVALID_OBJECTS
 	/* Object does no longer exist? (for example now commented out, in k_info)
 	   - turn it into a 'seal' instead of deleting it! - C. Blue */

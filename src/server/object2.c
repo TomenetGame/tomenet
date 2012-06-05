@@ -7226,6 +7226,18 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		/* Crush anything under us (for artifacts) */
 		if (flag == 3) delete_object(wpos, ny, nx, TRUE);
 
+
+#ifdef MAX_ITEMS_STACKING
+		/* limit max stack size */
+		if (c_ptr->o_idx &&
+		    MAX_ITEMS_STACKING != 0 &&
+		    o_list[c_ptr->o_idx].stack_pos >= MAX_ITEMS_STACKING - 1) {
+			if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1); /* just paranoia here */
+			return (-1);
+		}
+#endif
+
+
 		/* Make a new object */
 		o_idx = o_pop();
 
@@ -7273,17 +7285,14 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			/* No monster */
 			o_ptr->held_m_idx = 0;
 
-			/* ToDo maybe: limit max stack size (by something like o_ptr->stack_pos) */
-#if 0 /* under construction; MAX_ITEMS_STACKING */
-			if (o_list[c_ptr->o_idx]->stack_pos >= MAX_ITEMS_STACKING) {
-				if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1); /* just paranoia here */
-				return (-1);
-			}
-			o_ptr->stack_pos = o_list[c_ptr->o_idx]->stack_pos + 1;
-#endif
-
 			/* Build a stack */
 			o_ptr->next_o_idx = c_ptr->o_idx;
+#ifdef MAX_ITEMS_STACKING
+			if (c_ptr->o_idx && MAX_ITEMS_STACKING != 0)
+				o_ptr->stack_pos = o_list[c_ptr->o_idx].stack_pos + 1;
+			else
+#endif
+				o_ptr->stack_pos = 0; /* first object on this grid */
 
 			/* Place */
 //			c_ptr = &zcave[ny][nx];

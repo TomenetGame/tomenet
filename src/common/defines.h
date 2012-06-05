@@ -85,7 +85,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	4
-#define SF_VERSION_PATCH	21
+#define SF_VERSION_PATCH	22
 #define SF_VERSION_EXTRA	0
 
 
@@ -1293,8 +1293,8 @@
  */
 #define MAX_STACK_SIZE			100
 
-/* Different items stacking may at most pile up to this many items */
-#define MAX_ITEMS_STACKING		7
+/* Different items stacking may at most pile up to this many items (0 = no limit) */
+#define MAX_ITEMS_STACKING		5
 
 
 
