@@ -158,7 +158,6 @@ void excise_object_idx(int o_idx)
 			else {
 				/* decrement it's stack position index */
 				if (o_ptr->stack_pos) o_ptr->stack_pos--;
-if (o_ptr) s_printf("DEBUG_MIS_2: stack_pos %d\n", o_ptr->stack_pos);
 			}
 #endif
 
@@ -7234,7 +7233,6 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		if (c_ptr->o_idx &&
 		    MAX_ITEMS_STACKING != 0 &&
 		    o_list[c_ptr->o_idx].stack_pos >= MAX_ITEMS_STACKING - 1) {
-s_printf("DEBUG_MISb: stack_pos %d\n", o_list[c_ptr->o_idx].stack_pos);
 			/* unique monster drops get priority and 'crash' all previous objects.
 			   This should be preferable over just deleting the top object, if the
 			   unique monster drops multiple objects, which is true in most cases. */
@@ -7271,7 +7269,6 @@ s_printf("DEBUG_MISb: stack_pos %d\n", o_list[c_ptr->o_idx].stack_pos);
 				if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1); /* just paranoia here */
 				return (-1);
 			}
-s_printf("DEBUG_MISa: stack_pos %d\n", o_list[c_ptr->o_idx].stack_pos);
 		}
 #endif
 
@@ -7331,7 +7328,6 @@ s_printf("DEBUG_MISa: stack_pos %d\n", o_list[c_ptr->o_idx].stack_pos);
 			else
 #endif
 				o_ptr->stack_pos = 0; /* first object on this grid */
-s_printf("DEBUG_MIS: stack_pos %d\n", o_ptr->stack_pos);
 
 			/* Place */
 //			c_ptr = &zcave[ny][nx];
