@@ -3698,7 +3698,8 @@ bool recharge_aux(int Ind, int item, int num)
 		if (rand_int(i) == 0)
 		{
 			/* Hack -- backfire */
-			msg_print(Ind, "The recharge backfires, draining the rod further!");
+			//msg_print(Ind, "The recharge backfires, draining the rod further!");
+			msg_print(Ind, "There is a static discharge.");
 
 			/* Hack -- decharge the rod */
 			if (o_ptr->pval < 10000) o_ptr->pval = (o_ptr->pval + 100) * 2;
@@ -3736,23 +3737,27 @@ bool recharge_aux(int Ind, int item, int num)
 		/* Back-fire XXX XXX XXX */
 		if (rand_int(i) == 0)
 		{
-			/* Dangerous Hack -- Destroy the item */
-			msg_print(Ind, "There is a bright flash of light.");
+			/* a chance to just discharge it instead of destroying it */
+			if (!rand_int(2)) {
+				msg_print(Ind, "There is a static discharge.");
+				o_ptr->pval = 0;
+				o_ptr->ident |= ID_EMPTY;
+			} else {
+				/* Dangerous Hack -- Destroy the item */
+				msg_print(Ind, "There is a bright flash of light.");
 
-			/* Reduce and describe inventory */
-			if (item >= 0)
-			{
-				inven_item_increase(Ind, item, -999);
-				inven_item_describe(Ind, item);
-				inven_item_optimize(Ind, item);
-			}
-
-			/* Reduce and describe floor item */
-			else
-			{
-				floor_item_increase(0 - item, -999);
-				floor_item_describe(0 - item);
-				floor_item_optimize(0 - item);
+				/* Reduce and describe inventory */
+				if (item >= 0) {
+					inven_item_increase(Ind, item, -999);
+					inven_item_describe(Ind, item);
+					inven_item_optimize(Ind, item);
+				}
+				/* Reduce and describe floor item */
+				else {
+					floor_item_increase(0 - item, -999);
+					floor_item_describe(0 - item);
+					floor_item_optimize(0 - item);
+				}
 			}
 		}
 
