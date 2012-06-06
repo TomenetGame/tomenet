@@ -25,7 +25,7 @@ bool bypass_inscrption = FALSE;
  * Note that taking off an item when "full" will cause that item
  * to fall to the ground.
  */
-void inven_takeoff(int Ind, int item, int amt)
+void inven_takeoff(int Ind, int item, int amt, bool called_from_wield)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -200,6 +200,9 @@ void inven_takeoff(int Ind, int item, int amt)
 	else
 		object_desc(Ind, o_name, o_ptr, TRUE, 3);
 	msg_format(Ind, "%^s %s (%c).", act, o_name, index_to_label(posn));
+
+	if (!called_from_wield && p_ptr->prace == RACE_HOBBIT && o_ptr->tval == TV_BOOTS)
+		msg_print(Ind, "\377gYou feel more dextrous now, being barefeet.");
 
 	/* Delete (part of) it */
 	inven_item_increase(Ind, item, -amt);
@@ -711,7 +714,7 @@ void do_takeoff_impossible(int Ind)
 			if (f3 & TR3_PERMA_CURSE) continue;
 
 			/* Ahah TAKE IT OFF ! */
-			inven_takeoff(Ind, k, 255);
+			inven_takeoff(Ind, k, 255, FALSE);
 		}
 	}
 	bypass_inscrption = FALSE;
@@ -737,7 +740,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots)
 	bool slot2 = (p_ptr->inventory[INVEN_ARM].k_idx != 0);
 	bool alt = ((alt_slots & 0x2) != 0);
 
-	bool ma_warning_weapon = FALSE, ma_warning_shield = FALSE;
+	bool ma_warning_weapon = FALSE, ma_warning_shield = FALSE, hobbit_warning = FALSE;
 
 	object_type tmp_obj;
 	object_type *o_ptr;
@@ -788,7 +791,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots)
 
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-	
+
 	/* check whether the item to wield is fit for dual-wielding */
 	if ((o_ptr->weight <= 999) && /* <- no hard-coded weight limit for now */
 	    !(f4 & (TR4_MUST2H | TR4_SHOULD2H))) item_fits_dual = TRUE;
@@ -888,7 +891,7 @@ return;
 			msg_print(Ind, "Hmmm, the second item you're wielding seems to be cursed.");
 			return;
 		}
-		inven_takeoff(Ind, INVEN_ARM, 255);
+		inven_takeoff(Ind, INVEN_ARM, 255, TRUE);
 #endif
 	}
 	if ((f4 & TR4_SHOULD2H) &&
@@ -982,7 +985,7 @@ return;
 
 	/* Get a copy of the object to wield */
 	tmp_obj = *o_ptr;
-	
+
 	if(slot == INVEN_AMMO) num = o_ptr->number; 
 	tmp_obj.number = num;
 
@@ -996,6 +999,13 @@ return;
 		floor_item_increase(0 - item, -num);
 		floor_item_optimize(0 - item);
 	}
+
+
+	/* for Hobbits wearing boots -> give message */
+	if (p_ptr->prace == RACE_HOBBIT &&
+	    o_ptr->tval == TV_BOOTS && !p_ptr->inventory[slot].k_idx)
+		hobbit_warning = TRUE;
+
 
 	/* Access the wield slot */
 	o_ptr = &(p_ptr->inventory[slot]);
@@ -1012,13 +1022,13 @@ return;
 
 #if 0
 	/* Take off the "entire" item if one is there */
-	if (p_ptr->inventory[slot].k_idx) inven_takeoff(Ind, slot, 255);
+	if (p_ptr->inventory[slot].k_idx) inven_takeoff(Ind, slot, 255, TRUE);
 #else	// 0
 	/* Take off existing item */
 	if (slot != INVEN_AMMO) {
 		if (o_ptr->k_idx) {
 			/* Take off existing item */
-			(void)inven_takeoff(Ind, slot, 255);
+			(void)inven_takeoff(Ind, slot, 255, TRUE);
 		}
 	} else {
 		if (o_ptr->k_idx) {
@@ -1027,7 +1037,7 @@ return;
 			   However, this doesn't work for cursed items or artefacts. - C. Blue */
 			if (!object_similar(Ind, o_ptr, &tmp_obj, 0x1)) {
 				/* Take off existing item */
-				(void)inven_takeoff(Ind, slot, 255);
+				(void)inven_takeoff(Ind, slot, 255, TRUE);
 			} else {
 				// tmp_obj.number += o_ptr->number;
 				object_absorb(Ind, &tmp_obj, o_ptr);
@@ -1132,6 +1142,8 @@ return;
 		s_printf("warning_ma_shield: %s\n", p_ptr->name);
 	}
 
+	if (hobbit_warning) msg_print(Ind, "\377yYou feel somewhat less dextrous than when barefeet.");
+
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 
@@ -1214,7 +1226,7 @@ void do_cmd_takeoff(int Ind, int item, int amt)
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
 	/* Take off the item */
-	inven_takeoff(Ind, item, amt);
+	inven_takeoff(Ind, item, amt, FALSE);
 }
 
 

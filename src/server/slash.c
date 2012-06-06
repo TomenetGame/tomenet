@@ -935,7 +935,7 @@ void do_slash_cmd(int Ind, char *message)
 					(check_guard_inscription(o_ptr->note, 'T')) ||
 					(cursed_p(o_ptr))) continue;
 
-				inven_takeoff(Ind, i, 255);
+				inven_takeoff(Ind, i, 255, FALSE);
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 			}
 			return;

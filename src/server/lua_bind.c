@@ -910,7 +910,7 @@ void lua_fix_equip_slots(int Ind) {
 				continue;
 
 			bypass_inscrption = TRUE;
-			inven_takeoff(Ind, i, 255);
+			inven_takeoff(Ind, i, 255, FALSE);
 	}
 	bypass_inscrption = FALSE;
 
@@ -1040,7 +1040,7 @@ void lua_takeoff_costumes(int Ind) {
 
 	if ((p_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p_ptr->inventory[INVEN_BODY].sval == SV_COSTUME)) {
 		bypass_inscrption = TRUE;
-		inven_takeoff(Ind, INVEN_BODY, 255);
+		inven_takeoff(Ind, INVEN_BODY, 255, FALSE);
 		bypass_inscrption = FALSE;
 		msg_print(Ind, "It's not that time of the year anymore.");
 	}

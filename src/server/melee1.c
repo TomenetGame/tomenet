@@ -407,7 +407,7 @@ static bool do_seduce(int Ind, int m_idx)
 					m_name, o_name);
 
 			bypass_inscrption = TRUE;
-			inven_takeoff(Ind, j, 255);
+			inven_takeoff(Ind, j, 255, FALSE);
 			break;
 		}
 
@@ -2151,7 +2151,7 @@ bool make_attack_melee(int Ind, int m_idx)
 //							msg_format(Ind, "\377r%^s disarms you!", m_name);
 							bypass_inscrption = TRUE;
 							if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && magik(98)) {
-								inven_takeoff(Ind, slot, 1);
+								inven_takeoff(Ind, slot, 1, FALSE);
 								s_printf("%s EFFECT: Disarmed (takeoff) %s.\n", showtime(), p_ptr->name);
 							} else {
 								inven_drop(Ind, slot, 1);
@@ -2171,7 +2171,7 @@ bool make_attack_melee(int Ind, int m_idx)
 							bypass_inscrption = TRUE;
 							o_ptr = &p_ptr->inventory[INVEN_WIELD];
 							if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && magik(98)) {
-								inven_takeoff(Ind, INVEN_WIELD, 1);
+								inven_takeoff(Ind, INVEN_WIELD, 1, FALSE);
 								s_printf("%s EFFECT: Disarmed (dual, takeoff) %s.\n", showtime(), p_ptr->name);
 							} else {
 								inven_drop(Ind, INVEN_WIELD, 1);
@@ -2179,7 +2179,7 @@ bool make_attack_melee(int Ind, int m_idx)
 							}
 							o_ptr = &p_ptr->inventory[INVEN_ARM];
 							if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && magik(98)) {
-								inven_takeoff(Ind, INVEN_ARM, 1);
+								inven_takeoff(Ind, INVEN_ARM, 1, FALSE);
 								s_printf("%s EFFECT: Disarmed (dual, takeoff) %s.\n", showtime(), p_ptr->name);
 							} else {
 								inven_drop(Ind, INVEN_ARM, 1);
