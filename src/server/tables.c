@@ -49,6 +49,17 @@ s16b ddy_ddd[9] =
 { 1, -1, 0, 0, 1, 1, -1, -1, 0 };
 
 
+/* extra stuff for place_rubble() -  C. Blue */
+/* Global arrays for cycling through directions, starting at bottom left, clockwise */
+s16b ddx_cyc[8] =
+{ -1, 0, 1, 1, 1, 0, -1, -1};
+s16b ddy_cyc[8] =
+{ -1, -1, -1, 0, 1, 1, 1, 0};
+/* and for inverting directions of above array ((x+4)%8) */
+s16b ddi_cyc[8] =
+{ 4, 5, 6, 7, 0, 1, 2, 3};
+
+
 /*
  * Global array for converting numbers to uppercase hecidecimal digit
  * This array can also be used to convert a number to an octal digit

@@ -507,6 +507,52 @@ static int next_to_walls(struct worldpos *wpos, int y, int x)
 }
 
 
+/* For new place_rubble() that can place a double-rubble - C. Blue
+   Returns: dir of hallway wall or 0 if not in hallway or if in
+            a corner of a hallway (ie in any spot that doesn't
+            feature exactly 3 wall grids in a row, rest floor grids. */
+static int along_hallway(cave_type **zcave, int x, int y) {
+	int pos, d, x1, y1, walls;
+
+	/* Assume 4 possible directions of hallway walls:
+	   horizontally below us, vertically right of us, horizontally above us, vertically left of us. */
+	for (pos = 0; pos <= 7; pos += 2) {
+		/* test for 3 wall grids + 5 floor grids */
+		walls = 0;
+
+		/* begin with 3 walls */
+		for (d = 0; d <= 2; d++) {
+			/* Extract the location */
+			x1 = x + ddx_cyc[(pos + d) % 8];
+			y1 = y + ddy_cyc[(pos + d) % 8];
+
+			/* Require non-floor */
+			if (cave_floor_bold(zcave, y1, x1)) continue;
+			if (zcave[y1][x1].feat == FEAT_RUBBLE) continue; /* exempt actual rubble */
+			walls++;
+		}
+		/* test for '3 walls grids' already failed? */
+		if (walls != 3) continue;
+
+		/* test for 5 floor grids now */
+		for (d = 3; d <= 7; d++) {
+			/* Extract the location */
+			x1 = x + ddx_cyc[(pos + d) % 8];
+			y1 = y + ddy_cyc[(pos + d) % 8];
+
+			/* Require floor */
+			if (cave_floor_bold(zcave, y1, x1)) continue;
+			if (zcave[y1][x1].feat == FEAT_RUBBLE) continue; /* exempt actual rubble */
+			walls++;
+		}
+		/* failed to find 5 floor grids? */
+		if (walls != 3) continue;
+
+		/* success */
+		return (pos + 1);
+	}
+	return 0;
+}
 
 /*
  * Convert existing terrain type to rubble
@@ -515,11 +561,32 @@ static void place_rubble(struct worldpos *wpos, int y, int x)
 {
 	cave_type **zcave;
 	cave_type *c_ptr;
-	if(!(zcave=getcave(wpos))) return;
-	c_ptr=&zcave[y][x];
+	int dir;
+	if(!(zcave = getcave(wpos))) return;
+	c_ptr = &zcave[y][x];
 
 	/* Create rubble */
 	c_ptr->feat = FEAT_RUBBLE;
+
+	/* new: if it's inside a hallway, have a chance for a second rubble
+	        to be generated to completely block the way.
+	   Note: currently does not affect dungeon-specific rubble tiles (Mines of Moria). */
+	if (!rand_int(4)) return;
+	if (!(c_ptr->info & (CAVE_ROOM | CAVE_ICKY))
+	    && (dir = along_hallway(zcave, x, y))) {
+		/* place another rubble in the opposite dir */
+		x = x + ddx_cyc[ddi_cyc[dir]];
+		y = y + ddy_cyc[ddi_cyc[dir]];
+		/* check that potential new rubble grid also passes the hallway test,
+		   and therefore is located at the opposite wall of our hallway */
+		if (ddi_cyc[dir] == along_hallway(zcave, x, y)) {
+			/* double check that it's *clean* floor */
+			if (cave_naked_bold(zcave, y, x)) {
+				/* place a second rubble pile */
+				zcave[y][x].feat = FEAT_RUBBLE;
+			}
+		}
+	}
 }
 
 /*
