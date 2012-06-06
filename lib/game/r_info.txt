@@ -19310,8 +19310,8 @@ S:1_IN_5
 S:BA_NETH | HEAL | TELE_TO
 #S:BA_NETH | HEAL | TPORT | TELE_LEVEL | TELE_TO
 D:Bound to guard the nether realm that no mortal would set foot in it,
-D:The smooth polished-looking green skin of this tall humanoid creature
-D:is hard as adamantine, its four arms end in plasma blades glowing blueish,
+D:The metallic green skin of this tall humanoid creature is hard as
+D:adamantine, its four arms end in blades covered by blueish plasma discharges
 D:while three widely opened green and lidless eyes seem to surveye everything.
 
 N:1069:Gorm
@@ -19918,11 +19918,11 @@ S:1_IN_4
 S:BA_NETH | HEAL | TELE_TO | BA_MANA
 #S:BA_NETH | HEAL | TPORT | TELE_LEVEL | TELE_TO | BA_MANA
 D:Guarding the border between outer dimensions and the mundane cosmos
-D:this being has a clear mission. His patience seems to be infinite,
-D:and its appearance doesn't reveal if this creature actually lives or not.
-D:Its powers seem to be great enough to even hold back gods who were banished,
-D:and while his assignment probably lasts a cosmos' lifetime, his paycheck
-D:remains unknown.
+D:this being has a clear mission. Its patience seems to be infinite,
+D:and its appearance doesn't reveal if this creature is actually alive
+D:or some sort of construct or non-living avatar. Its powers seem to be
+D:great enough to even hold back banished gods, and while its assignment
+D:probably lasts a cosmos' lifetime, its paycheck remains remains unknown.
 
 
 #Shores of Valinor - C. Blue
