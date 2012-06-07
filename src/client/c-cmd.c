@@ -1498,7 +1498,7 @@ static void show_motd2(void)
 }
 
 static void artifact_lore(void) {
-	char s[15 + 1], tmp[80];
+	char s[20 + 1], tmp[80];
 	int c, i, j, n, selected, selected_list;
 
 	Term_save();
@@ -1516,7 +1516,7 @@ static void artifact_lore(void) {
 		Term_putstr(54,  2, -1, TERM_L_GREEN, s);
 
 		/* display top 15 of all matching artifacts */
-		clear_from(6);
+		clear_from(5);
 		n = 0;
 		selected = selected_list = 0;
 
@@ -1529,8 +1529,9 @@ static void artifact_lore(void) {
 			if (!strcmp(tmp, s)) {
 				selected = artifact_list_code[i];
 				selected_list = i;
-				Term_putstr(5, 6, -1, TERM_YELLOW, artifact_list_name[i]);
+				Term_putstr(5, 5, -1, TERM_YELLOW, artifact_list_name[i]);
 				n++;
+				break;
 			}
 		}
 
@@ -1547,7 +1548,7 @@ static void artifact_lore(void) {
 					selected = artifact_list_code[i];
 					selected_list = i;
 				}
-				Term_putstr(5, 6 + n, -1, n == 0 ? TERM_YELLOW : TERM_UMBER, artifact_list_name[i]);
+				Term_putstr(5, 5 + n, -1, n == 0 ? TERM_YELLOW : TERM_UMBER, artifact_list_name[i]);
 				n++;
 			}
 		}
@@ -1580,7 +1581,7 @@ static void artifact_lore(void) {
 	}
 
 	/* display lore! */
-	clear_from(6);
+	clear_from(5);
 	artifact_lore_aux(selected, selected_list);
 
 	Term_putstr(26,  23, -1, TERM_WHITE, "-- press any key to exit --");
@@ -1591,8 +1592,9 @@ static void artifact_lore(void) {
 }
 
 static void monster_lore(void) {
-	char s[15 + 1], tmp[80];
+	char s[20 + 1], tmp[80];
 	int c, i, j, n, selected, selected_list;
+	bool show_lore = TRUE;
 
 	Term_save();
 
@@ -1609,7 +1611,7 @@ static void monster_lore(void) {
 		Term_putstr(53,  2, -1, TERM_L_GREEN, s);
 
 		/* display top 15 of all matching monsters */
-		clear_from(6);
+		clear_from(5);
 		n = 0;
 		selected = selected_list = 0;
 
@@ -1622,8 +1624,9 @@ static void monster_lore(void) {
 			if (!strcmp(tmp, s)) {
 				selected = monster_list_code[i];
 				selected_list = i;
-				Term_putstr(5, 6, -1, TERM_YELLOW, monster_list_name[i]);
+				Term_putstr(5, 5, -1, TERM_YELLOW, monster_list_name[i]);
 				n++;
+				break;
 			}
 		}
 
@@ -1640,7 +1643,7 @@ static void monster_lore(void) {
 					selected = monster_list_code[i];
 					selected_list = i;
 				}
-				Term_putstr(5, 6 + n, -1, n == 0 ? TERM_YELLOW : TERM_UMBER, monster_list_name[i]);
+				Term_putstr(5, 5 + n, -1, n == 0 ? TERM_YELLOW : TERM_UMBER, monster_list_name[i]);
 				n++;
 			}
 		}
@@ -1653,6 +1656,8 @@ static void monster_lore(void) {
 			if (strlen(s)) s[strlen(s) - 1] = '\0';
 			continue;
 		}
+		/* Mustn't start on a SPACE */
+		if (c == ' ' && !strlen(s)) continue;
 		/* return */
 		if (c == '\n' || c == '\r') break;
 		/* escape */
@@ -1672,12 +1677,27 @@ static void monster_lore(void) {
 		return;
 	}
 
-	/* display lore! */
-	clear_from(6);
-	monster_lore_aux(selected, selected_list);
+	/* display lore (default) or stats */
+	while (TRUE) {
+		clear_from(5);
+		if (show_lore) {
+			monster_lore_aux(selected, selected_list);
+			Term_putstr(19,  23, -1, TERM_WHITE, "-- press ESC to exit, SPACE for stats --");
+		} else {
+			monster_stats_aux(selected, selected_list);
+			Term_putstr(19,  23, -1, TERM_WHITE, "-- press ESC to exit, SPACE for lore --");
+		}
 
-	Term_putstr(26,  23, -1, TERM_WHITE, "-- press any key to exit --");
-	inkey();
+		while (TRUE) {
+			c = inkey();
+			if (c == '\e') break;
+			if (c == ' ') {
+				show_lore = !show_lore;
+				break;
+			}
+		}
+		if (c == '\e') break;
+	}
   }
 
 	Term_load();

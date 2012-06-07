@@ -427,6 +427,7 @@ extern void initialize_player_ins_files(void);
 extern void client_init(char *argv1, bool skip);
 extern s32b char_creation_flags;
 extern void monster_lore_aux(int ridx, int rlidx);
+extern void monster_stats_aux(int ridx, int rlidx);
 extern void artifact_lore_aux(int aidx, int alidx);
 
 /* c-inven.c */
