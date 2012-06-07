@@ -2570,7 +2570,7 @@ Nothing here that truly heals/buffs people (those bonus are to self only). They 
 */
                 { 1,  3, 3,  1,  0, 2 }, //boosted int/wisdom/dex
                 3, 20, 3, 0,  5, 1, 15, 5,
-		11, 380,//too low == bad since you need the quest mobs
+		11, 400,//too low == bad since you need the quest mobs
 		255, 250,
                 72,  16, 150, 55,
                 66,  8, 130, 40,
