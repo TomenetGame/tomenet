@@ -205,7 +205,7 @@ compile the game under '(2.1) Installing TomeNET'.
    STR (and DEX) determine your number of attacks per round. 18/30 in STR is
    enough to get 3 attacks per round with very light weapons, regardless of
    how you modify your DEX. To get the 3 blows per round (bpr) you'll need to
-   sell your heavy sword and buy a light weapon (3.0 lbs or less) like dagger
+   sell your heavy sword and buy a light weapon (3.0 lb or less) like dagger
    or whip. That is more efficient than 1 or 2 bpr with your original sword!
    Later on when your character becomes more powerful you can switch back to
    heavier weaponry.
@@ -5603,9 +5603,9 @@ Wearing armour which is too bulky gives you this message:
 "The weight of your armour strains your spellcasting."
 That means your mana will be (severely) reduced from the bulkiness of your
 armour. To counter this effect, train your 'Combat' skill.
-To cast freely, you may wear 15.0 to 30.0 lbs of armour (depending on your
+To cast freely, you may wear 15.0 to 30.0 lb of armour (depending on your
 class and hence the type of magic you utilize) plus your combat skill (in
-0.3 lbs). Here is a table illustrating the values:
+0.3 lb). Here is a table illustrating the values:
 
 Adventurer    21.0 lb
 Warrior       -
@@ -5622,7 +5622,7 @@ Runemaster    23.0 lb
 Mindcrafter   26.0 lb (and will get penalty for head gear heavier than 4.0 lb)
 
 So 50 points in 'Combat' would allow a paladin to wear 30.0 + 15.0 =
-45.0 lbs of armour parts without receiving mana penalty from being encumbered.
+45.0 lb of armour parts without receiving mana penalty from being encumbered.
 In general, praying is the easiest-to-use form of magic, and weaving spells
 the most difficult one.
 Your total armour weight is the sum of the weight of any armour pieces worn
@@ -5636,11 +5636,11 @@ Wearing armour which is too heavy for you will reduce your to-hit bonus and
 speed bonus from 'Sneakiness' skill.
 You will receieve a warning message, telling you:
 "The weight of your armour encumbers your movement."
-To move freely, you may wear 10.0 lbs of armoury plus a strength-factor plus
+To move freely, you may wear 10.0 lb of armoury plus a strength-factor plus
 6 * your combat skill. Strength factor is 0.6 * str_hold (see table above to
 find your str_hold). So the top weight limit is
 
-10.0 + 0.6 * 50 (combat) + 0.6 * 100 (str_hold) = 100.0 lbs.
+10.0 + 0.6 * 50 (combat) + 0.6 * 100 (str_hold) = 100.0 lb.
 
 
 Some special abilities depend on armour weight too. Those are..
@@ -5655,7 +5655,7 @@ If the armour becomes too heavy to perform those, a message will appear:
 "The weight of your armour strains your flexibility and awareness."
 
 This 'rogueish weight limit' (the skills are mostly used by rogues) is:
-20.0 + (Combat skill * 6 / 50) lbs, ie max 26.0 lbs.
+20.0 + (Combat skill * 6 / 50) lb, ie max 26.0 lb.
 
 IMPORTANT: If you get the above flexibility warning message, that means your
            secondary weapon is NOT APPLIED AT ALL!
@@ -8397,7 +8397,7 @@ table  with example values for certain scenarios.
 -----------------------------------
 Your digging power is calculated as follows:
 An equipped item that provides (+X) to digging will add 20*X.
-If you have a digging tool equipped, its weight is added (eg 25.0 lbs -> +25).
+If you have a digging tool equipped, its weight is added (eg 25.0 lb -> +25).
 If the digging tool is enchanted to hit or to damage, those values are added.
 The power value so far is now multiplied by a value between 1 and 2, depending
 on your 'Digging' skill (see (6.2)). If the skill is 0, the multiplier is 1, if
@@ -10103,7 +10103,7 @@ vary. For example a warrior cannot learn magic spells.
     Aside from intelligence as primary spell-casting stat they will also want
     decent strength for engaging in close combat.
     They don't lack stealth and are adept at wearing decent armour, except that
-    putting on too heavy head gear (above 4.0 lbs) might negatively impact
+    putting on too heavy head gear (above 4.0 lb) might negatively impact
     their amount of psychic energy.
     Mindcrafters will learn to resist sanity-draining effects a bit at level
     10, and somewhat better even at level 20.
@@ -10216,8 +10216,8 @@ created character to have, depending on certain combinations of class, STR,
 DEX, given for both, lightest possible weapon and startup weapon:
 (Don't forget that some classes can dual-wield, adding an extra +1 bpr on top!)
 
-Note: 'Light' weapon may refer to as low as 3.0 lbs (varies depending on STR
-      and DEX - any weapon that weighs at most 3.0 lbs will definitely work).
+Note: 'Light' weapon may refer to as low as 3.0 lb (varies depending on STR
+      and DEX - any weapon that weighs at most 3.0 lb will definitely work).
 
 Class           STR     DEX     Light weapon    Startup weapon
 ------------------------------------------------------------------------
