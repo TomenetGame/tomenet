@@ -876,7 +876,7 @@ void browse_school_spell(int item, int book, int pval)
 
 	/* Build a prompt (accept all spells) */
 	if (num)
-		strnfmt(out_val, 78, "(Spells %c-%c, ESC=exit) cast which spell? ",
+		strnfmt(out_val, 78, "(Spells %c-%c, ESC=exit) which spell? ",
 	    	    I2A(0), I2A(num - 1));
 	else
 		strnfmt(out_val, 78, "No spells available - ESC=exit");
