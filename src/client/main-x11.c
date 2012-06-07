@@ -2833,8 +2833,8 @@ void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name
 #if 0
 	/* Check Error XXX Extract some more ACTUAL data */
 	XGetWindowAttributes(Metadpy->dpy, xid, &xwa);
-	*x = xwa.x;
-	*y = xwa.y;
+	x_rel = xwa.x;
+	y_rel = xwa.y;
 #endif
 
 	/* Check For Error XXX Extract some ACTUAL data from 'xid' */
