@@ -2291,6 +2291,18 @@ static int artifact_flag_rating_weapon(object_type *o_ptr) {
 		total += (slay * ((o_ptr->dd * (o_ptr->ds + 1)) + 30)) / 35;
 	}
 
+	/* for randart Dark Swords */
+	if (f4 & TR4_ANTIMAGIC_50) {
+		/* more AM is valuable for compensating +hit,+dam. */
+		slay = 15; /* abuse 'slay' */
+		if (f4 & TR4_ANTIMAGIC_30) slay += 30;
+		if (f4 & TR4_ANTIMAGIC_20) slay += 20;
+		if (f4 & TR4_ANTIMAGIC_10) slay += 10;
+		/* 10 base, 20x, +0, +6  , +16  , +30  , +48  , +70   */
+		/* 15 base, 20x, +0, +9.5, +22.5, +37.5, +57.5, +81.5 */
+		total += (20 * slay * slay) - 3000;
+	}
+
 
 	if (f4 & TR4_CLONE) total >>= 1;
 
