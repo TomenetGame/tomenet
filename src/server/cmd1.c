@@ -169,7 +169,7 @@ s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_cri
 
 	/* Extract critical maneuver potential (interesting term..) */
 	/* The larger the weapon the more difficult to quickly strike
-	the critical spot. Cap weight influence at 100+ lbs */
+	the critical spot. Cap weight influence at 100+ lb */
 	w = weight;
 	if (w > 100) w = 10;
 	else w = 110 - w;

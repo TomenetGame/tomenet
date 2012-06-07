@@ -5346,7 +5346,7 @@ void calc_boni(int Ind)
 	/* examples: 200.0: -4, 300.0: -13, 400.0: -32 */
 	i = armour_weight(p_ptr) / 100;
 	i = (i * i * i) / 2000;
-	if (i > 50) i = 50; /* reached at 470.0 lbs */
+	if (i > 50) i = 50; /* reached at 470.0 lb */
 	p_ptr->to_h_ranged -= i;
 #endif
 #if 1
@@ -5354,7 +5354,7 @@ void calc_boni(int Ind)
 	/* examples: 10.0: 0, 20.0: -4, 30.0: -13, 40.0: -32, 47.0: -50 cap */
 	i = armour_weight(p_ptr) / 10;
 	i = (i * i * i) / 2000;
-	if (i > 50) i = 50; /* reached at 470.0 lbs */
+	if (i > 50) i = 50; /* reached at 470.0 lb */
 	p_ptr->to_h_ranged -= i;
 #endif
 #if 0 /* or.. other possibility (somewhat older): */
