@@ -1561,6 +1561,8 @@ static void artifact_lore(void) {
 			if (strlen(s) > 0) s[strlen(s) - 1] = '\0';
 			continue;
 		}
+		/* Mustn't start on a SPACE */
+		if (c == ' ' && !strlen(s)) continue;
 		/* return */
 		if (c == '\n' || c == '\r') break;
 		/* escape */
