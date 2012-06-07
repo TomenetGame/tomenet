@@ -1555,6 +1555,11 @@ static void artifact_lore(void) {
 
 		Term_putstr(28,  23, -1, TERM_WHITE, "-- press ESC to exit --");
 		c = inkey();
+		/* specialty: allow chatting from within here */
+                if (c == ':') {
+            		cmd_message();
+            		continue;
+            	}
 
 		/* backspace */
 		if (c == '\010' || c == 0x7F) {
@@ -1586,8 +1591,14 @@ static void artifact_lore(void) {
 	clear_from(5);
 	artifact_lore_aux(selected, selected_list);
 
-	Term_putstr(26,  23, -1, TERM_WHITE, "-- press any key to exit --");
-	inkey();
+	Term_putstr(28,  23, -1, TERM_WHITE, "-- press ESC to exit --");
+	while (TRUE) {
+		c = inkey();
+		/* specialty: allow chatting from within here */
+                if (c == ':') cmd_message();
+		if (c == '\e') break;
+	}
+	if (c == '\e') break;
   }
 
 	Term_load();
@@ -1652,6 +1663,11 @@ static void monster_lore(void) {
 
 		Term_putstr(28,  23, -1, TERM_WHITE, "-- press ESC to exit --");
 		c = inkey();
+		/* specialty: allow chatting from within here */
+                if (c == ':') {
+            		cmd_message();
+            		continue;
+            	}
 
 		/* backspace */
 		if (c == '\010' || c == 0x7F) {
@@ -1692,6 +1708,8 @@ static void monster_lore(void) {
 
 		while (TRUE) {
 			c = inkey();
+			/* specialty: allow chatting from within here */
+	                if (c == ':') cmd_message();
 			if (c == '\e') break;
 			if (c == ' ') {
 				show_lore = !show_lore;
