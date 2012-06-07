@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 2. June 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 7. June 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -9741,7 +9741,7 @@ Dark-Elf     0  +2  +1  +3  +1  -6      10      150%    80ft
              7   3   6   4   6  10  15  15
 Vampire     +2   0  -3  -1   0  -6      11      220%   150ft
             -2   3  20   2  13  -4  10 -10
-Maia        +2  +3  +3  +1  +1  +2      11      380%   100ft
+Maia        +2  +3  +3  +1  +1  +2      11      400%   100ft
              3  20   3   0   5   1  15   5
 
 
