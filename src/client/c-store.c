@@ -22,7 +22,7 @@ void display_store_action()
 		if (!c_store.actions[i]) continue;
 
 		c_put_str(c_store.action_attr[i], c_store.action_name[i],
-				21 + (i / 2), 17 + (30 * (i % 2)));
+				21 + (i / 2), 20 + (30 * (i % 2)));
 	}
 }
 
@@ -797,6 +797,7 @@ void display_store(void)
 		clear_from(21);
 
 		/* Prompt */
+#if 0
 		prt("You may: ", 21, 0);
 
 		/* Basic commands */
@@ -804,7 +805,15 @@ void display_store(void)
 
 		/* Browse if necessary */
 		if (store.stock_num > 12) prt(" SPACE) Next page", 23, 0);
+#else /* new: also show 1..4 for jumping directly to a page */
+		prt("ESC)   Exit store", 21, 0);
+		if (store.stock_num > 12) {
+			prt("SPACE) Next page", 22, 0);
+			prt(format("1-%d)   Go to page", (store.stock_num - 1) / 12 + 1), 23, 0);
+		}
+#endif
 
+#if 0
 		/* Home commands */
 		if (store_num == 7 && FALSE) {
 			prt(" g) Get an item.", 22, 30);
@@ -813,7 +822,9 @@ void display_store(void)
 			prt(" x) eXamine an item.", 22, 60);
 		}
 		/* Shop commands XXX XXX XXX */
-		else display_store_action();
+		else
+#endif
+			display_store_action();
 
 		/* Hack - Get rid of the cursor - mikaelh */
 		Term->scr->cx = Term->wid;
@@ -882,10 +893,14 @@ void display_store_special(void) {
 		clear_from(21);
 
 		/* Prompt */
+#if 0 /* keep consistent with display_store() */
 		prt("You may: ", 21, 0);
 
 		/* Basic commands */
 		prt(" ESC) Exit.", 22, 0);
+#else
+		prt("ESC)   Exit store", 21, 0);
+#endif
 
 #if 0
 		/* Browse if necessary */
