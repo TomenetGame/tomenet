@@ -3931,6 +3931,20 @@ void interact_macros(void)
 		}
 
 		else if (i == 'z') {
+#define mw_quaff 'a'
+#define mw_read 'b'
+#define mw_fire 'c'
+#define mw_schoolnt 'd'
+#define mw_mimicnt 'D'
+#define mw_schoolt 'e'
+#define mw_mimict 'E'
+#define mw_mimicidx 'f'
+#define mw_poly 'g'
+#define mw_rune 'h'
+#define mw_fight 'i'
+#define mw_shoot 'j'
+#define mw_trap 'k'
+#define mw_device 'l'
 			/* Invoke wizard to create a macro step-by-step as easy as possible  */
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Invoke macro wizard");
 
@@ -3938,35 +3952,36 @@ void interact_macros(void)
 			Term_clear();
 
 			/* Describe */
-			Term_putstr(29, 1, -1, TERM_L_UMBER, "*** Macro Wizard ***");
-			Term_putstr(25, 22, -1, TERM_L_UMBER, "[Press ESC to exit anytime]");
-			Term_putstr(19, 9, -1, TERM_L_UMBER, "----------------------------------------");
+			Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
+			//Term_putstr(25, 22, -1, TERM_L_UMBER, "[Press ESC to exit anytime]");
+			Term_putstr(1, 6, -1, TERM_L_DARK, "Don't forget to save your macros with 's' when you are back in the macro menu!");
+			Term_putstr(19, 8, -1, TERM_L_UMBER, "----------------------------------------");
 
 			/* Initialize wizard state: First state */
 			i = choice = 0;
 
 			while (i != -1) {
-				Term_putstr(12, 3, -1, i == 0 ? TERM_L_GREEN : TERM_SLATE, "Step 1:  Choose an action for the macro to perform.");
-				Term_putstr(12, 4, -1, i == 1 ? TERM_L_GREEN : TERM_SLATE, "Step 2:  If required, choose item, spell, and target method.");
-				Term_putstr(12, 5, -1, i == 2 ? TERM_L_GREEN : TERM_SLATE, "Step 3:  Choose the key you want to bind the macro to.");
-				Term_putstr(1, 7, -1, TERM_L_DARK, "Don't forget to save your macros with 's' when you are back in the macro menu!");
+				Term_putstr(12, 2, -1, i == 0 ? TERM_L_GREEN : TERM_SLATE, "Step 1:  Choose an action for the macro to perform.");
+				Term_putstr(12, 3, -1, i == 1 ? TERM_L_GREEN : TERM_SLATE, "Step 2:  If required, choose item, spell, and target method.");
+				Term_putstr(12, 4, -1, i == 2 ? TERM_L_GREEN : TERM_SLATE, "Step 3:  Choose the key you want to bind the macro to.");
 
 				clear_from(10);
 
 				switch (i) {
 				case 0:
-					Term_putstr(5, 11, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
-					Term_putstr(10, 12, -1, TERM_L_GREEN, "a) Drink a potion");
-					Term_putstr(10, 13, -1, TERM_L_GREEN, "b) Read a scroll");
-					Term_putstr(10, 14, -1, TERM_L_GREEN, "c) Fire ranged weapon at closest enemy");
-					Term_putstr(10, 15, -1, TERM_L_GREEN, "d)/D) Cast school/mimic spell without a target (or target manually)");
-					Term_putstr(10, 16, -1, TERM_L_GREEN, "e)/E) Cast school/mimic spell that uses a target (attack spell)");
-					Term_putstr(10, 17, -1, TERM_L_GREEN, "f) Use a fighting technique (most melee classes)");
-					Term_putstr(10, 18, -1, TERM_L_GREEN, "g) Use a shooting technique (archers and rangers)");
-					Term_putstr(10, 19, -1, TERM_L_GREEN, "h) Polymorph into a certain monster (mimicry users)");
-					Term_putstr(10, 20, -1, TERM_L_GREEN, "i) Draw runes to cast a runespell");
-					Term_putstr(10, 21, -1, TERM_L_GREEN, "j) Set up a monster trap");
-					Term_putstr(10, 22, -1, TERM_L_GREEN, "k) Use a magic device");
+					Term_putstr( 5, 10, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
+					Term_putstr(10, 11, -1, TERM_L_GREEN, "a) Drink a potion");
+					Term_putstr(10, 12, -1, TERM_L_GREEN, "b) Read a scroll");
+					Term_putstr(10, 13, -1, TERM_L_GREEN, "c) Fire ranged weapon at closest enemy");
+					Term_putstr(10, 14, -1, TERM_L_GREEN, "d)/D) Cast school/mimic spell without a target (or target manually)");
+					Term_putstr(10, 15, -1, TERM_L_GREEN, "e)/E) Cast school/mimic spell that uses a target (attack spell)");
+					Term_putstr(10, 16, -1, TERM_L_GREEN, "f) Cast a mimic spell by number (both targetted or not targetted)");
+					Term_putstr(10, 17, -1, TERM_L_GREEN, "g) Polymorph into a certain monster (mimicry users)");
+					Term_putstr(10, 18, -1, TERM_L_GREEN, "h) Draw runes to cast a runespell");
+					Term_putstr(10, 19, -1, TERM_L_GREEN, "i) Use a fighting technique (most melee classes)");
+					Term_putstr(10, 20, -1, TERM_L_GREEN, "j) Use a shooting technique (archers and rangers)");
+					Term_putstr(10, 21, -1, TERM_L_GREEN, "k) Set up a monster trap");
+					Term_putstr(10, 22, -1, TERM_L_GREEN, "l) Use a magic device");
 
 					while (TRUE) {
 						switch (choice = inkey()) {
@@ -3981,7 +3996,7 @@ void interact_macros(void)
 							continue;
 						default:
 							/* invalid action -> exit wizard */
-							if ((choice < 'a' || choice > 'k') && choice != 'D' && choice != 'E') {
+							if ((choice < 'a' || choice > 'l') && choice != 'D' && choice != 'E') {
 //								i = -1;
 								continue;
 							}
@@ -3996,91 +4011,99 @@ void interact_macros(void)
 					break;
 				case 1:
 					switch (choice) {
-					case 'a':
-						Term_putstr(5, 11, -1, TERM_GREEN, "Please enter a distinctive part of the potion's name or inscription");
-						Term_putstr(5, 12, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
-						Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GCritical Wounds");
-						Term_putstr(5, 14, -1, TERM_GREEN, "if you want to quaff a 'Potion of Cure Critical Wounds'.");
-						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter partial potion name or inscription:");
+					case mw_quaff:
+						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the potion's name or inscription");
+						Term_putstr(5, 11, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
+						Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GCritical Wounds");
+						Term_putstr(5, 13, -1, TERM_GREEN, "if you want to quaff a 'Potion of Cure Critical Wounds'.");
+						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial potion name or inscription:");
 						break;
-					case 'b':
-						Term_putstr(5, 11, -1, TERM_GREEN, "Please enter a distinctive part of the scroll's name or inscription");
-						Term_putstr(5, 12, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
-						Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GPhase Door");
-						Term_putstr(5, 14, -1, TERM_GREEN, "if you want to read a 'Scroll of Phase Door'.");
-						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter partial scroll name or inscription:");
+					case mw_read:
+						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the scroll's name or inscription");
+						Term_putstr(5, 11, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
+						Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GPhase Door");
+						Term_putstr(5, 13, -1, TERM_GREEN, "if you want to read a 'Scroll of Phase Door'.");
+						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial scroll name or inscription:");
 						break;
-					case 'd':
-						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact spell name and pay attention");
-						Term_putstr(10, 12, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
-						Term_putstr(10, 13, -1, TERM_GREEN, "or another example:     \377GPhase Door");
-						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
-						Term_putstr(15, 17, -1, TERM_L_GREEN, "Enter exact spell name:");
+					case mw_schoolnt:
+						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact spell name and pay attention");
+						Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
+						Term_putstr(10, 12, -1, TERM_GREEN, "or another example:     \377GPhase Door");
+						Term_putstr(10, 13, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
+						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact spell name:");
 						break;
-					case 'D':
-						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact spell name and pay attention");
-						Term_putstr(10, 12, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
-						Term_putstr(10, 13, -1, TERM_GREEN, "or another example:     \377GBlink");
-						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
-						Term_putstr(15, 17, -1, TERM_L_GREEN, "Enter exact spell name:");
+					case mw_mimicnt:
+						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact spell name and pay attention");
+						Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
+						Term_putstr(10, 12, -1, TERM_GREEN, "or another example:     \377GBlink");
+						Term_putstr(10, 13, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
+						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact spell name:");
 						break;
-					case 'e':
-						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact spell name and pay attention");
-						Term_putstr(10, 12, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
-						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GManathrust");
-						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
-						Term_putstr(15, 17, -1, TERM_L_GREEN, "Enter exact spell name:");
+					case mw_schoolt:
+						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact spell name and pay attention");
+						Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
+						Term_putstr(10, 12, -1, TERM_GREEN, "For example, enter:     \377GManathrust");
+						Term_putstr(10, 13, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
+						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact spell name:");
 						break;
-					case 'E':
-						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact spell name and pay attention");
-						Term_putstr(10, 12, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
-						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GMagic Missile");
-						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
-						Term_putstr(15, 17, -1, TERM_L_GREEN, "Enter exact spell name:");
+					case mw_mimict:
+						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact spell name and pay attention");
+						Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
+						Term_putstr(10, 12, -1, TERM_GREEN, "For example, enter:     \377GMagic Missile");
+						Term_putstr(10, 13, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
+						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact spell name:");
 						break;
-					case 'f':
-						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact technique name and pay attention");
-						Term_putstr(10, 12, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
-						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GSprint");
-						Term_putstr(10, 14, -1, TERM_GREEN, "You must have learned a technique before you can use it!");
-						Term_putstr(15, 17, -1, TERM_L_GREEN, "Enter exact technique name:");
+					case mw_mimicidx:
+						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter a spell number, starting from 1, which");
+						Term_putstr(10, 11, -1, TERM_GREEN, "is the first spell after the 3 basic polymorph powers");
+						Term_putstr(10, 12, -1, TERM_GREEN, "which always occupy spell slots a)-c).");
+						Term_putstr(10, 13, -1, TERM_GREEN, "So \377G1\377g = spell d), \377G2\377g = e), \377G3\377g = f), \377G4\377g = g) etc.");
+						Term_putstr(10, 14, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
+						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter spell index number:");
 						break;
-					case 'g':
-						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact technique name and pay attention");
-						Term_putstr(10, 12, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
-						Term_putstr(10, 13, -1, TERM_GREEN, "For example, enter:     \377GFlare missile");
-						Term_putstr(10, 14, -1, TERM_GREEN, "You must have learned a technique before you can use it!");
-						Term_putstr(15, 17, -1, TERM_L_GREEN, "Enter exact technique name:");
+					case mw_fight:
+						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact technique name and pay attention");
+						Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
+						Term_putstr(10, 12, -1, TERM_GREEN, "For example, enter:     \377GSprint");
+						Term_putstr(10, 13, -1, TERM_GREEN, "You must have learned a technique before you can use it!");
+						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact technique name:");
 						break;
-					case 'h':
-						Term_putstr(10, 11, -1, TERM_GREEN, "Please enter the exact monster name OR its code. (You can find");
-						Term_putstr(10, 12, -1, TERM_GREEN, "codes you have already learned by pressing  \377s~ 3  \377gin the game");
-						Term_putstr(10, 13, -1, TERM_GREEN, "or by pressing  \377s:  \377gto chat and then typing the command:  \377s/mon");
-						Term_putstr(10, 14, -1, TERM_GREEN, "The first number on the left, in parentheses, is what you need.)");
-						Term_putstr(10, 15, -1, TERM_GREEN, "For example, enter  \377GFruit bat\377g  or just  \377G37  \377gto transform into one.");
-						Term_putstr(10, 16, -1, TERM_GREEN, "You must have learned a form before you can use it!");
-						Term_putstr(15, 18, -1, TERM_L_GREEN, "Enter exact monster code:");
+					case mw_shoot:
+						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact technique name and pay attention");
+						Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
+						Term_putstr(10, 12, -1, TERM_GREEN, "For example, enter:     \377GFlare missile");
+						Term_putstr(10, 13, -1, TERM_GREEN, "You must have learned a technique before you can use it!");
+						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact technique name:");
 						break;
-					case 'i':
+					case mw_poly:
+						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact monster name OR its code. (You can find");
+						Term_putstr(10, 11, -1, TERM_GREEN, "codes you have already learned by pressing  \377s~ 3  \377gin the game");
+						Term_putstr(10, 12, -1, TERM_GREEN, "or by pressing  \377s:  \377gto chat and then typing the command:  \377s/mon");
+						Term_putstr(10, 13, -1, TERM_GREEN, "The first number on the left, in parentheses, is what you need.)");
+						Term_putstr(10, 14, -1, TERM_GREEN, "For example, enter  \377GFruit bat\377g  or just  \377G37  \377gto transform into one.");
+						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a form before you can use it!");
+						Term_putstr(15, 17, -1, TERM_L_GREEN, "Enter exact monster code:");
+						break;
+					case mw_rune:
 						strcpy(buf2, "");
 						strcpy(buf, "");
 						flags = 0;
 
 						/* ---------- Draw up to three runes ---------- */
 
-						Term_putstr(10, 11, -1, TERM_GREEN, "Please choose the runes you want to draw, up to a maximum of three.");
-						Term_putstr(10, 12, -1, TERM_GREEN, "If you want to draw less runes, press \377sENTER\377g key when done.");
+						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose the runes you want to draw, up to a maximum of three.");
+						Term_putstr(10, 11, -1, TERM_GREEN, "If you want to draw less runes, press \377sENTER\377g key when done.");
 
 						i = 0;
 						for (j = 0; j < 3; j++) {
 							if (i == -1 || i == -2) continue; //invalid action -OR- drawing less than 3 runes
 
 							clear_from(14);
-							Term_putstr(10, 14, -1, TERM_GREEN, format("Runes chosen so far: \377s%s", buf2));
+							Term_putstr(10, 13, -1, TERM_GREEN, format("Runes chosen so far: \377s%s", buf2));
 							for (i = 0; i < RCRAFT_MAX_ELEMENTS; i++) {
 								/* Don't draw a rune twice */
 								if (flags & r_elements[i].self) continue;
-								Term_putstr(15 + (i / 6) * 15, 16 + i % 6, -1,
+								Term_putstr(15 + (i / 6) * 15, 15 + i % 6, -1,
 								    TERM_L_GREEN,
 								    format("%c) \377%c%s", 'a' + i, runecraft_colourize(flags | r_elements[i].self, 0), r_elements[i].title));
 							}
@@ -4126,10 +4149,10 @@ void interact_macros(void)
 						/* ---------- Select imperative ---------- */
 
 						clear_from(10);
-						Term_putstr(10, 11, -1, TERM_GREEN, "Please choose the rune imperative,");
-						Term_putstr(10, 12, -1, TERM_GREEN, "ie how powerful you want to try and make the spell.");
+						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose the rune imperative,");
+						Term_putstr(10, 11, -1, TERM_GREEN, "ie how powerful you want to try and make the spell.");
 
-						Term_putstr(15, 14, -1, TERM_L_GREEN, "Name            ( Lvl, Dam%, Cost%, Fail%  )");
+						Term_putstr(15, 13, -1, TERM_L_GREEN, "Name            ( Lvl, Dam%, Cost%, Fail%  )");
 
 						for (i = 0; i < RCRAFT_MAX_IMPERATIVES; i++) {
 							char tmpbuf[80];
@@ -4153,7 +4176,7 @@ void interact_macros(void)
 								    r_imperatives[i].fail >= 0 ? "+" : "" , r_imperatives[i].fail);
 							}
 
-							Term_putstr(15, 15 + i, -1, TERM_L_GREEN, tmpbuf);
+							Term_putstr(15, 14 + i, -1, TERM_L_GREEN, tmpbuf);
 						}
 
 						while (TRUE) {
@@ -4185,10 +4208,10 @@ void interact_macros(void)
 						/* ---------- Select method ---------- */
 
 						clear_from(10);
-						Term_putstr(10, 11, -1, TERM_GREEN, "Please choose the rune method,");
-						Term_putstr(10, 12, -1, TERM_GREEN, "ie the shape you want to manifest the spell in.");
+						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose the rune method,");
+						Term_putstr(10, 11, -1, TERM_GREEN, "ie the shape you want to manifest the spell in.");
 
-						Term_putstr(15, 14, -1, TERM_L_GREEN, "Name         (  Lvl, Cost%  )");
+						Term_putstr(15, 13, -1, TERM_L_GREEN, "Name         (  Lvl, Cost%  )");
 
 						for (i = 0; i < RCRAFT_MAX_TYPES; i++) {
 							char tmpbuf[80];
@@ -4198,7 +4221,7 @@ void interact_macros(void)
 							    runespell_types[i].title,
 							    runespell_types[i].cost >= 0 ? "+" : "-", ABS(runespell_types[i].cost),
 							    runespell_types[i].pen * 10);
-							Term_putstr(15, 15 + i, -1, TERM_L_GREEN, tmpbuf);
+							Term_putstr(15, 14 + i, -1, TERM_L_GREEN, tmpbuf);
 						}
 
 						while (TRUE) {
@@ -4233,19 +4256,19 @@ void interact_macros(void)
 							strcat(buf, "*t");
 
 						/* hack before we exit: remember menu choice 'runespell' */
-						choice = 'i';
+						choice = mw_rune;
 						i = 1;
 						break;
-					case 'j':
+					case mw_trap:
 						/* ---------- Enter trap kit name ---------- */
-						Term_putstr(5, 11, -1, TERM_GREEN, "Please enter a distinctive part of the trap kit name or inscription");
-						Term_putstr(5, 12, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
-						Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GCatapult");
-						Term_putstr(5, 14, -1, TERM_GREEN, "if you want to use a 'Catapult Trap Set'.");
-						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter partial trap kit name or inscription:");
+						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the trap kit name or inscription");
+						Term_putstr(5, 11, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
+						Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GCatapult");
+						Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use a 'Catapult Trap Set'.");
+						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial trap kit name or inscription:");
 
 						/* Get an item name */
-						Term_gotoxy(50, 17);
+						Term_gotoxy(50, 16);
 						strcpy(buf, "");
 						if (!askfor_aux(buf, 159, 0)) {
 							i = -1;
@@ -4255,16 +4278,16 @@ void interact_macros(void)
 
 						/* ---------- Enter ammo/load name ---------- */
 						clear_from(10);
-						Term_putstr(5, 11, -1, TERM_GREEN, "Please enter a distinctive part of the item name or inscription you");
-						Term_putstr(5, 12, -1, TERM_GREEN, "want to load the trap kit with, and pay attention to upper-case");
-						Term_putstr(5, 13, -1, TERM_GREEN, "and lower-case letters!");
-						Term_putstr(5, 14, -1, TERM_GREEN, "For example, enter:     \377GPebbl     \377gif you want");
-						Term_putstr(5, 15, -1, TERM_GREEN, "to load a catapult trap kit with 'Rounded Pebbles'.");
-						Term_putstr(5, 16, -1, TERM_GREEN, "If you want to choose ammo manually, just press the \377GRETURN\377g key.");
-						Term_putstr(5, 18, -1, TERM_L_GREEN, "Enter partial ammo/load name or inscription:");
+						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the item name or inscription you");
+						Term_putstr(5, 11, -1, TERM_GREEN, "want to load the trap kit with, and pay attention to upper-case");
+						Term_putstr(5, 12, -1, TERM_GREEN, "and lower-case letters!");
+						Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GPebbl     \377gif you want");
+						Term_putstr(5, 14, -1, TERM_GREEN, "to load a catapult trap kit with 'Rounded Pebbles'.");
+						Term_putstr(5, 15, -1, TERM_GREEN, "If you want to choose ammo manually, just press the \377GRETURN\377g key.");
+						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter partial ammo/load name or inscription:");
 
 						/* Get an item name */
-						Term_gotoxy(50, 18);
+						Term_gotoxy(50, 17);
 						strcpy(buf2, "");
 						if (!askfor_aux(buf2, 159, 0)) {
 							i = -1;
@@ -4277,14 +4300,14 @@ void interact_macros(void)
 						strcat(buf, "@");
 						strcat(buf, buf2);
 						break;
-					case 'k':
-						Term_putstr(10, 11, -1, TERM_GREEN, "Please choose the type of magic device you want to use:");
-						Term_putstr(15, 13, -1, TERM_L_GREEN, "a) a wand");
-						Term_putstr(15, 14, -1, TERM_L_GREEN, "b) a staff");
-						Term_putstr(15, 15, -1, TERM_L_GREEN, "c) a rod that doesn't require a target");
-						Term_putstr(15, 16, -1, TERM_L_GREEN, "d) a rod that requires a target");
-						Term_putstr(15, 17, -1, TERM_L_GREEN, "e) an activatable item that doesn't require a target");
-						Term_putstr(15, 18, -1, TERM_L_GREEN, "f) an activatable item that requires a target");
+					case mw_device:
+						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose the type of magic device you want to use:");
+						Term_putstr(15, 12, -1, TERM_L_GREEN, "a) a wand");
+						Term_putstr(15, 13, -1, TERM_L_GREEN, "b) a staff");
+						Term_putstr(15, 14, -1, TERM_L_GREEN, "c) a rod that doesn't require a target");
+						Term_putstr(15, 15, -1, TERM_L_GREEN, "d) a rod that requires a target");
+						Term_putstr(15, 16, -1, TERM_L_GREEN, "e) an activatable item that doesn't require a target");
+						Term_putstr(15, 17, -1, TERM_L_GREEN, "f) an activatable item that requires a target");
 
 						while (TRUE) {
 							switch (choice = inkey()) {
@@ -4334,42 +4357,61 @@ void interact_macros(void)
 						/* ---------- Enter device name ---------- */
 
 						clear_from(10);
-						Term_putstr(5, 11, -1, TERM_GREEN, "Please enter a distinctive part of the magic device's name or");
-						Term_putstr(5, 12, -1, TERM_GREEN, "inscription and pay attention to upper-case and lower-case letters!");
+						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the magic device's name or");
+						Term_putstr(5, 11, -1, TERM_GREEN, "inscription and pay attention to upper-case and lower-case letters!");
 						switch (choice) {
-						case 'a': Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GMagic Mis");
-							Term_putstr(5, 14, -1, TERM_GREEN, "if you want to use a 'Wand of Magic Missiles'.");
+						case 'a': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GMagic Mis");
+							Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use a 'Wand of Magic Missiles'.");
 							break;
-						case 'b': Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GTelep");
-							Term_putstr(5, 14, -1, TERM_GREEN, "if you want to use a 'Staff of Teleportation'.");
+						case 'b': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GTelep");
+							Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use a 'Staff of Teleportation'.");
 							break;
-						case 'c': Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GTrap Loc");
-							Term_putstr(5, 14, -1, TERM_GREEN, "if you want to use a 'Rod of Trap Location'.");
+						case 'c': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GTrap Loc");
+							Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use a 'Rod of Trap Location'.");
 							break;
-						case 'd': Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GLightn");
-							Term_putstr(5, 14, -1, TERM_GREEN, "if you want to use a 'Rod of Lightning Bolts'.");
+						case 'd': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GLightn");
+							Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use a 'Rod of Lightning Bolts'.");
 							break;
-						case 'e': Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GFrostweav");
-							Term_putstr(5, 14, -1, TERM_GREEN, "if you want to use a 'Cloak of Frostweaving'.");
+						case 'e': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GFrostweav");
+							Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use a 'Cloak of Frostweaving'.");
 							break;
-						case 'f': Term_putstr(5, 13, -1, TERM_GREEN, "For example, enter:     \377GSerpen");
-							Term_putstr(5, 14, -1, TERM_GREEN, "if you want to use an 'Amulet of the Serpents'.");
+						case 'f': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GSerpen");
+							Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use an 'Amulet of the Serpents'.");
 							break;
 						}
-						Term_putstr(5, 17, -1, TERM_L_GREEN, "Enter partial device name or inscription:");
+						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial device name or inscription:");
 
 						/* hack before we exit: remember menu choice 'magic device' */
-						choice = 'k';
+						choice = mw_device;
 
 						break;
 					}
 
-					/* no need for inputting an item/spell to use with the macro? */
-					if (choice != 'c' && choice != 'i' && choice != 'j') {
-						if (choice == 'h') Term_gotoxy(47, 18);
-						else Term_gotoxy(47, 17);
+					/* mw_mimicidx is special: it requires a number (1..n) */
+					if (choice == mw_mimicidx) {
+						while (TRUE) {
+							/* Get power slot */
+							Term_gotoxy(47, 16);
+							strcpy(buf, "");
+							if (!askfor_aux(buf, 159, 0)) {
+								i = -1;
+								break;
+							}
+							/* not a number/invalid? retry (we have slots d)..z)) */
+							if (atoi(buf) < 1 || atoi(buf) > 26 - 3) continue;
 
-						/* Get an item name */
+							/* ok (1..23) - translate into spell slot */
+							strcpy(buf, format("%c", 'c' + atoi(buf)));
+							break;
+						}
+						if (i == -1) continue;
+					}
+					/* no need for inputting an item/spell to use with the macro? */
+					else if (choice != mw_fire && choice != mw_rune && choice != mw_trap) {
+						if (choice == mw_poly) Term_gotoxy(47, 17);
+						else Term_gotoxy(47, 16);
+
+						/* Get an item/spell name */
 						strcpy(buf, "");
 						if (!askfor_aux(buf, 159, 0)) {
 							i = -1;
@@ -4380,32 +4422,32 @@ void interact_macros(void)
 					}
 
 					/* generate the full macro action; magic device macros are already pre-made */
-					if (choice != 'k') {
+					if (choice != mw_device) {
 						buf2[0] = '\\'; //note: should in theory be ')e\',
 						buf2[1] = 'e'; //      but doesn't work due to prompt behaviour
 						buf2[2] = ')'; //      (\e will then get ignored)
 					}
 
 					switch (choice) {
-					case 'a':
+					case mw_quaff:
 						buf2[3] = 'q';
 						buf2[4] = '@';
 						strcpy(buf2 + 5, buf);
 						break;
-					case 'b':
+					case mw_read:
 						buf2[3] = 'r';
 						buf2[4] = '@';
 						strcpy(buf2 + 5, buf);
 						break;
-					case 'c':
+					case mw_fire:
 						if (c_cfg.rogue_like_commands) buf2[3] = 't';
 						else buf2[3] = 'f';
 						buf2[4] = '*';
 						buf2[5] = 't';
 						buf2[6] = 0;
 						break;
-					case 'd':
-					case 'e':
+					case mw_schoolnt:
+					case mw_schoolt:
 						buf2[3] = 'm';
 						buf2[4] = '@';
 						buf2[5] = '1';
@@ -4414,13 +4456,13 @@ void interact_macros(void)
 						buf2[8] = 'r';
 						buf2[9] = '@';
 						strcpy(buf2 + 10, buf);
-						if (choice == 'e') {
+						if (choice == mw_schoolt) {
 							strcpy(buf, "*t");
 							strcat(buf2, buf);
 						}
 						break;
-					case 'D':
-					case 'E':
+					case mw_mimicnt:
+					case mw_mimict:
 						buf2[3] = 'm';
 						buf2[4] = '@';
 						buf2[5] = '3';
@@ -4428,12 +4470,25 @@ void interact_macros(void)
 						buf2[7] = 'r';
 						buf2[8] = '@';
 						strcpy(buf2 + 9, buf);
-						if (choice == 'E') {
+						if (choice == mw_mimict) {
 							strcpy(buf, "*t");
 							strcat(buf2, buf);
 						}
 						break;
-					case 'f':
+					case mw_mimicidx:
+						buf2[3] = '*';
+						buf2[4] = 't';
+						buf2[5] = 'm';
+						buf2[6] = '@';
+						buf2[7] = '3';
+						buf2[8] = '\\';
+						buf2[9] = 'r';
+						strcpy(buf2 + 10, buf);
+						/* note: targetting method '-' is the only option here,
+						   for safety reasons (if spell doesn't take a target!) */
+						strcat(buf2, "-");
+						break;
+					case mw_fight:
 						buf2[3] = 'm';
 						buf2[4] = '@';
 						buf2[5] = '5';
@@ -4442,7 +4497,7 @@ void interact_macros(void)
 						buf2[8] = '@';
 						strcpy(buf2 + 9, buf);
 						break;
-					case 'g':
+					case mw_shoot:
 						buf2[3] = 'm';
 						buf2[4] = '@';
 						buf2[5] = '6';
@@ -4451,7 +4506,7 @@ void interact_macros(void)
 						buf2[8] = '@';
 						strcpy(buf2 + 9, buf);
 						break;
-					case 'h':
+					case mw_poly:
 						buf2[3] = 'm';
 						buf2[4] = '@';
 						buf2[5] = '3';
@@ -4460,7 +4515,7 @@ void interact_macros(void)
 						buf2[8] = 'c';
 						strcpy(buf2 + 9, buf);
 						break;
-					case 'i':
+					case mw_rune:
 						buf2[3] = 'm';
 						buf2[4] = '@';
 						buf2[5] = '1';
@@ -4469,7 +4524,7 @@ void interact_macros(void)
 						buf2[8] = 'r';
 						strcpy(buf2 + 9, buf);
 						break;
-					case 'j':
+					case mw_trap:
 						buf2[3] = 'm';
 						buf2[4] = '@';
 						buf2[5] = '1';
@@ -4479,7 +4534,7 @@ void interact_macros(void)
 						buf2[9] = '@';
 						strcpy(buf2 + 10, buf);
 						break;
-					case 'k':
+					case mw_device:
 						/* hack: magiv device uses direction? */
 						if (j == 1) strcat(buf, "*t");
 
@@ -4490,16 +4545,16 @@ void interact_macros(void)
 					/* Convert the targetting method from XXX*t to *tXXX- ? */
 #ifdef MACRO_WIZARD_SMART_TARGET
 					/* ask about replacing '*t' vs '-' (4.4.6) vs '+' (4.4.6b) */
-					if (strstr(buf2, "*t")) {
+					if (strstr(buf2, "*t") && choice != mw_mimicidx) {
 						clear_from(10);
-						Term_putstr(10, 11, -1, TERM_GREEN, "Please choose the targetting method:");
-						Term_putstr(10, 12, -1, TERM_GREEN, "(\377UHINT: \377gAlso inscribe your ammo '!=' for auto-pickup!)");
-						Term_putstr(10, 14, -1, TERM_L_GREEN, "a) Target closest monster if such exists,");
-						Term_putstr(10, 15, -1, TERM_L_GREEN, "   otherwise cancel the action. (Recommended)");
-						Term_putstr(10, 17, -1, TERM_L_GREEN, "b) Target closest monster if such exists,");
-						Term_putstr(10, 18, -1, TERM_L_GREEN, "   otherwise prompt for direction.");
-						Term_putstr(10, 20, -1, TERM_L_GREEN, "c) Target closest monster if such exists,");
-						Term_putstr(10, 21, -1, TERM_L_GREEN, "   otherwise target own grid.");
+						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose the targetting method:");
+						Term_putstr(10, 11, -1, TERM_GREEN, "(\377UHINT: \377gAlso inscribe your ammo '!=' for auto-pickup!)");
+						Term_putstr(10, 13, -1, TERM_L_GREEN, "a) Target closest monster if such exists,");
+						Term_putstr(10, 14, -1, TERM_L_GREEN, "   otherwise cancel the action. (Recommended)");
+						Term_putstr(10, 16, -1, TERM_L_GREEN, "b) Target closest monster if such exists,");
+						Term_putstr(10, 17, -1, TERM_L_GREEN, "   otherwise prompt for direction.");
+						Term_putstr(10, 19, -1, TERM_L_GREEN, "c) Target closest monster if such exists,");
+						Term_putstr(10, 20, -1, TERM_L_GREEN, "   otherwise target own grid.");
 
 						while (TRUE) {
 							switch (choice = inkey()) {
@@ -4545,17 +4600,17 @@ void interact_macros(void)
 					i++;
 					break;
 				case 2:
-					Term_putstr(10, 11, -1, TERM_GREEN, "In this final step, press the key you would like");
-					Term_putstr(10, 12, -1, TERM_GREEN, "to bind the macro to.");
-					Term_putstr(10, 13, -1, TERM_GREEN, "You should use keys that have no other purpose!");
-					Term_putstr(10, 14, -1, TERM_GREEN, "Good examples are the F-keys, F1 to F12.");
-					Term_putstr(10, 15, -1, TERM_GREEN, "The keys ESC and '%' are NOT allowed to be used.");
-					Term_putstr(5, 17, -1, TERM_L_GREEN, "Press the key to bind the macro to:");
+					Term_putstr(10, 10, -1, TERM_GREEN, "In this final step, press the key you would like");
+					Term_putstr(10, 11, -1, TERM_GREEN, "to bind the macro to.");
+					Term_putstr(10, 12, -1, TERM_GREEN, "You should use keys that have no other purpose!");
+					Term_putstr(10, 13, -1, TERM_GREEN, "Good examples are the F-keys, F1 to F12.");
+					Term_putstr(10, 14, -1, TERM_GREEN, "The keys ESC and '%' are NOT allowed to be used.");
+					Term_putstr(5, 16, -1, TERM_L_GREEN, "Press the key to bind the macro to:");
 
 					while (TRUE) {
 						/* Get a macro trigger */
-						Term_putstr(45, 17, -1, TERM_WHITE, "  ");
-						Term_gotoxy(45, 17);
+						Term_putstr(45, 16, -1, TERM_WHITE, "  ");
+						Term_gotoxy(45, 16);
 						get_macro_trigger(buf);
 
 						/* choose proper macro type, and bind it to key */
