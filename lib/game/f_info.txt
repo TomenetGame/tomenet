@@ -56,7 +56,7 @@ F:FLOOR | NOTICE | REMEMBER | CAN_RUN | DOOR
 # 0x05 --> broken door
 
 N:5:broken door
-G:':U
+G:':u
 F:FLOOR | NOTICE | REMEMBER | CAN_RUN | DOOR
 
 # 0x06 --> up stairs (perm)
