@@ -3102,7 +3102,7 @@ void do_cmd_locate(int Ind, int dir)
 
 	/* Prepare to ask which way to look */
 	sprintf(out_val,
-	        "Map sector [%d,%d], which is%s your sector.  Direction?",
+	        "Map sector [%d,%d], which is%s your sector.  Direction (or ESC)?",
 	        y2, x2, tmp_val);
 
 	msg_print(Ind, out_val);
