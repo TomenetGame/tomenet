@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 7. June 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 9. June 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -8936,7 +8936,9 @@ Note that not every skill is available to every profession (class).
                                 reduces the chance of a boomerang to break or
                                 to fall to the ground instead of returning.
                                 Artifact boomerangs never break or fall down.
-<< For more information about learning spells, see (6.8) >>
+<< For more information about learning spells, see (6.8)
+   Most spells will increase in power in one way or the other when you increase
+   their school skill. >>
 +Magic                          Improves your spellcasting abilities and
                                 increases your mana capacity.
                                 Lets you pseudo-id magic items, potions and
@@ -9132,7 +9134,8 @@ Note that not every skill is available to every profession (class).
                                 running away in fear, exposing his back to you.
                                 Also works when you are cloaked (only once per
                                 monster though, so re-cloaking won't help) or
-                                shadow running.
+                                shadow running. Increasing this skill increases
+                                the damage your backstab attacks deal.
                                 Backstabbing requires sword-type weapons!
                                 If you dual-wield, you will also dual-backstab
                                 if the moster is either asleep, or you perform
