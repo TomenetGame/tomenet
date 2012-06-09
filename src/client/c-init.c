@@ -430,10 +430,11 @@ void monster_lore_aux(int ridx, int rlidx) {
 
 		/* name */
 		//Term_putstr(5, 5, -1, TERM_YELLOW, p2 + 1);
-		Term_putstr(5, 5, -1, TERM_YELLOW, format("%s (\377%c%c\377y)",
+		Term_putstr(5, 5, -1, TERM_YELLOW, format("%s (\377%c%c\377y, %d)",
 			monster_list_name[rlidx],
 			monster_list_symbol[rlidx][0],
-			monster_list_symbol[rlidx][1]));
+			monster_list_symbol[rlidx][1],
+			ridx));
 
 		/* fetch diz */
 		while (0 == my_fgets(fff, buf, 1024)) {
@@ -505,10 +506,11 @@ void monster_stats_aux(int ridx, int rlidx) {
 
 		/* name */
 		//Term_putstr(5, 5, -1, TERM_YELLOW, p2 + 1);
-		Term_putstr(5, 5, -1, TERM_YELLOW, format("%s (\377%c%c\377y)",
+		Term_putstr(5, 5, -1, TERM_YELLOW, format("%s (\377%c%c\377y, %d)",
 			monster_list_name[rlidx],
 			monster_list_symbol[rlidx][0],
-			monster_list_symbol[rlidx][1]));
+			monster_list_symbol[rlidx][1],
+			ridx));
 
 		/* fetch stats: I/W/E/O/B/F/S lines */
 		while (0 == my_fgets(fff, buf, 1024)) {

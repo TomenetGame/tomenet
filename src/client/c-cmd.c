@@ -1656,7 +1656,7 @@ static void monster_lore(void) {
 					selected = monster_list_code[i];
 					selected_list = i;
 				}
-				Term_putstr(5, 5 + n, -1, n == 0 ? TERM_YELLOW : TERM_UMBER, monster_list_name[i]);
+				Term_putstr(5, 5 + n, -1, n == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
 				n++;
 			}
 		}
