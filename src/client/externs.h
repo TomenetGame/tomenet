@@ -426,8 +426,8 @@ extern void initialize_player_pref_files(void);
 extern void initialize_player_ins_files(void);
 extern void client_init(char *argv1, bool skip);
 extern s32b char_creation_flags;
-extern void monster_lore_aux(int ridx, int rlidx);
-extern void monster_stats_aux(int ridx, int rlidx);
+extern void monster_lore_aux(int ridx, int rlidx, char paste_lines[17][MSG_LEN]);
+extern void monster_stats_aux(int ridx, int rlidx, char paste_lines[17][MSG_LEN]);
 extern void artifact_lore_aux(int aidx, int alidx);
 
 /* c-inven.c */
@@ -491,6 +491,7 @@ extern int page_sound_idx, rain1_sound_idx, rain2_sound_idx, snow1_sound_idx, sn
 extern errr options_dump(cptr fname);
 extern bool parse_macro;
 extern int macro_missing_item;
+extern void Send_paste_msg(char *msg);
 
 /* c-spell.c */
 /*extern void show_browse(int book); */

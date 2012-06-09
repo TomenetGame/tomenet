@@ -392,10 +392,10 @@ static void init_monster_list() {
 
 	my_fclose(fff);
 }
-void monster_lore_aux(int ridx, int rlidx) {
+void monster_lore_aux(int ridx, int rlidx, char paste_lines[17][MSG_LEN]) {
 	char buf[1024], *p1, *p2;
 	FILE *fff;
-	int l = 0;
+	int l = 0, pl = -1;
 
 	/* actually use local r_info.txt - a novum */
 	path_build(buf, 1024, ANGBAND_DIR_GAME, "r_info.txt");
@@ -430,11 +430,12 @@ void monster_lore_aux(int ridx, int rlidx) {
 
 		/* name */
 		//Term_putstr(5, 5, -1, TERM_YELLOW, p2 + 1);
-		Term_putstr(5, 5, -1, TERM_YELLOW, format("%s (\377%c%c\377y, %d)",
+		strcpy(paste_lines[++pl], format("\377y%s (\377%c%c\377y, %d)",
 			monster_list_name[rlidx],
 			monster_list_symbol[rlidx][0],
 			monster_list_symbol[rlidx][1],
 			ridx));
+		Term_putstr(5, 5, -1, TERM_YELLOW, paste_lines[pl] + 2); /* no need for \377y */
 
 		/* fetch diz */
 		while (0 == my_fgets(fff, buf, 1024)) {
@@ -455,6 +456,8 @@ void monster_lore_aux(int ridx, int rlidx) {
 			if (buf[0] != 'D') continue;
 
 			p1 = buf + 2; /* monster diz line */
+			strcpy(paste_lines[++pl], "\377u");
+			strcat(paste_lines[pl], p1);
 			Term_putstr(1, 7 + (l++), -1, TERM_UMBER, p1);
 		}
 
@@ -463,10 +466,11 @@ void monster_lore_aux(int ridx, int rlidx) {
 
 	my_fclose(fff);
 }
-void monster_stats_aux(int ridx, int rlidx) {
+void monster_stats_aux(int ridx, int rlidx, char paste_lines[17][MSG_LEN]) {
 	char buf[1024], *p1, *p2, info[80], info_tmp[80];
 	FILE *fff;
-	int l = 0, info_val;
+	int l = 0, info_val, pl = -1;
+	int pf_col_cnt = 0; /* combine multiple [3] flag lines into one */
 	/* for multiple definitions via $..$/!: */
 	bool got_W_line = FALSE; /* usually only W: lines are affected, right? */
 	int got_B_lines = 0; /* just for a header */
@@ -506,11 +510,12 @@ void monster_stats_aux(int ridx, int rlidx) {
 
 		/* name */
 		//Term_putstr(5, 5, -1, TERM_YELLOW, p2 + 1);
-		Term_putstr(5, 5, -1, TERM_YELLOW, format("%s (\377%c%c\377y, %d)",
+		strcpy(paste_lines[++pl], format("\377y%s (\377%c%c\377y, %d)",
 			monster_list_name[rlidx],
 			monster_list_symbol[rlidx][0],
 			monster_list_symbol[rlidx][1],
 			ridx));
+		Term_putstr(5, 5, -1, TERM_YELLOW, paste_lines[pl] + 2); /* no need for \377y */
 
 		/* fetch stats: I/W/E/O/B/F/S lines */
 		while (0 == my_fgets(fff, buf, 1024)) {
@@ -571,6 +576,8 @@ void monster_stats_aux(int ridx, int rlidx) {
 					strcat(info, info_tmp);
 				}
 			    /* all done, display: */
+				strcpy(paste_lines[++pl], "\377u");
+				strcat(paste_lines[pl], info);
 				Term_putstr(1, 7 + (l++), -1, TERM_UMBER, info);
 				break;
 			case 'W': /* depth, rarity, weight, exp */
@@ -610,6 +617,8 @@ void monster_stats_aux(int ridx, int rlidx) {
 				sprintf(info_tmp, "XP: %d.", atoi(p1));
 				strcat(info, info_tmp);
 			    /* all done, display: */
+				strcpy(paste_lines[++pl], "\377u");
+				strcat(paste_lines[pl], info);
 				Term_putstr(1, 7 + (l++), -1, TERM_UMBER, info);
 				break;
 			case 'E': /* weapons, torso, arms, fingers, head, legs */
@@ -663,6 +672,8 @@ void monster_stats_aux(int ridx, int rlidx) {
 			    /* all done, display: */
 				if (!info_val) strcat(info, "None");
 				strcat(info, ".");
+				strcpy(paste_lines[++pl], "\377u");
+				strcat(paste_lines[pl], info);
 				Term_putstr(1, 7 + (l++), -1, TERM_UMBER, info);
 				break;
 			case 'O': /* treasure, combat, magic, tool */
@@ -703,10 +714,15 @@ void monster_stats_aux(int ridx, int rlidx) {
 			    /* all done, display: */
 				if (!info_val) strcat(info, "Nothing (or junk/miscellaneous items)");
 				strcat(info, ".");
+				strcpy(paste_lines[++pl], "\377u");
+				strcat(paste_lines[pl], info);
 				Term_putstr(1, 7 + (l++), -1, TERM_UMBER, info);
 				break;
 			case 'B': /* attack method, attack effect, attack damage */
-				if (!got_B_lines) Term_putstr(1, 7 + (l++), -1, TERM_UMBER, "Melee attacks (see guide for explanation):");
+				if (!got_B_lines) {
+					Term_putstr(1, 7 + (l++), -1, TERM_UMBER, "Melee attacks (see guide for explanation):");
+					strcpy(paste_lines[++pl], "\377uAttacks: ");
+				}
 				got_B_lines++;
 				strcat(info, p1);
 #if 0
@@ -715,6 +731,8 @@ void monster_stats_aux(int ridx, int rlidx) {
 				else
 					Term_putstr(2 + 30, 7 + (l++), -1, TERM_UMBER, info);
 #endif
+				strcat(paste_lines[pl], "  ");
+				strcat(paste_lines[pl], info);
 				Term_putstr(2 + (got_B_lines - 1) * 19, 7 + l, -1, TERM_UMBER, info);
 				break;
 			case 'F': /* flags */
@@ -727,6 +745,7 @@ void monster_stats_aux(int ridx, int rlidx) {
 					l++;
 #endif
 					Term_putstr(1, 7 + l, -1, TERM_UMBER, "Flags:");
+					strcpy(paste_lines[++pl], "\377uFlags: ");
 					f_col = 8;
 					got_F_lines = TRUE;
 				}
@@ -749,6 +768,7 @@ void monster_stats_aux(int ridx, int rlidx) {
 				while (p1) {
 					/* add complete flag line */
 					if (strlen(p1) + f_col < 80) {
+						strcat(paste_lines[pl], p1);
 						Term_putstr(f_col, 7 + l, -1, TERM_UMBER, p1);
 						f_col += strlen(p1);
 
@@ -761,6 +781,12 @@ void monster_stats_aux(int ridx, int rlidx) {
 						if (!(p2 = strchr(p1, ' '))) {
 							/* start next line */
 							l++;
+							if (++pf_col_cnt == 3) {
+								pf_col_cnt = 0;
+								pl++;
+								strcpy(paste_lines[pl], "\377u");
+							}
+							strcat(paste_lines[pl], p1);
 							Term_putstr(2, 7 + l, -1, TERM_UMBER, p1);
 							f_col = 2 + strlen(p1);
 
@@ -773,6 +799,12 @@ void monster_stats_aux(int ridx, int rlidx) {
 							if (p2 - p1 + f_col >= 80) {
 								/* start next line */
 								l++;
+								if (++pf_col_cnt == 3) {
+									pf_col_cnt = 0;
+									pl++;
+									strcpy(paste_lines[pl], "\377u");
+								}
+								strcat(paste_lines[pl], p1);
 								Term_putstr(2, 7 + l, -1, TERM_UMBER, p1);
 								f_col = 2 + strlen(p1);
 
@@ -783,6 +815,7 @@ void monster_stats_aux(int ridx, int rlidx) {
 							else {
 								strcpy(info_tmp, p1);
 								info_tmp[p2 - p1 + 1] = '\0';
+								strcat(paste_lines[pl], info_tmp);
 								Term_putstr(f_col, 7 + l, -1, TERM_UMBER, info_tmp);
 								f_col += strlen(info_tmp);
 								p1 = p2 + 1;
@@ -815,6 +848,7 @@ void monster_stats_aux(int ridx, int rlidx) {
 					/* evaluate spell frequency right away - assume 'S:1_IN_...' exact format */
 					info_val = atoi(info + 5);
 					sprintf(info_tmp, "Abilities (~1 in %d turns): ", info_val);
+					sprintf(paste_lines[++pl], "\377uAbilities (1 in %d): ", info_val);
 					Term_putstr(1, 7 + l, -1, TERM_UMBER, info_tmp);
 					f_col = 1 + strlen(info_tmp);
 
@@ -828,6 +862,7 @@ void monster_stats_aux(int ridx, int rlidx) {
 				while (p1) {
 					/* add complete flag line */
 					if (strlen(p1) + f_col < 80) {
+						strcat(paste_lines[pl], p1);
 						Term_putstr(f_col, 7 + l, -1, TERM_UMBER, p1);
 						f_col += strlen(p1);
 
@@ -840,6 +875,12 @@ void monster_stats_aux(int ridx, int rlidx) {
 						if (!(p2 = strchr(p1, ' '))) {
 							/* start next line */
 							l++;
+							if (++pf_col_cnt == 3) {
+								pf_col_cnt = 0;
+								pl++;
+								strcpy(paste_lines[pl], "\377u");
+							}
+							strcat(paste_lines[pl], p1);
 							Term_putstr(2, 7 + l, -1, TERM_UMBER, p1);
 							f_col = 2 + strlen(p1);
 
@@ -852,6 +893,12 @@ void monster_stats_aux(int ridx, int rlidx) {
 							if (p2 - p1 + f_col >= 80) {
 								/* start next line */
 								l++;
+								if (++pf_col_cnt == 3) {
+									pf_col_cnt = 0;
+									pl++;
+									strcpy(paste_lines[pl], "\377u");
+								}
+								strcat(paste_lines[pl], p1);
 								Term_putstr(2, 7 + l, -1, TERM_UMBER, p1);
 								f_col = 2 + strlen(p1);
 
@@ -862,6 +909,7 @@ void monster_stats_aux(int ridx, int rlidx) {
 							else {
 								strcpy(info_tmp, p1);
 								info_tmp[p2 - p1 + 1] = '\0';
+								strcat(paste_lines[pl], info_tmp);
 								Term_putstr(f_col, 7 + l, -1, TERM_UMBER, info_tmp);
 								f_col += strlen(info_tmp);
 								p1 = p2 + 1;

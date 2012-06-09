@@ -6389,3 +6389,26 @@ void toggle_audio(void) {
 	set_mixing();
 }
 #endif
+
+/* For pasting monster lore into chat, also usable for item-pasting. - C. Blue
+   Important feature: Replaces first ':' by '::' if sending to normal chat. */
+void Send_paste_msg(char *msg) {
+	/* replace first : by :: in case we're going for normal chat mode */
+	char buf[MSG_LEN], *c;
+
+	if (chat_mode == CHAT_MODE_PARTY)
+		Send_msg(format("!:%s", msg));
+	else if (chat_mode == CHAT_MODE_LEVEL)
+		Send_msg(format("#:%s", msg));
+	else if (chat_mode == CHAT_MODE_GUILD)
+		Send_msg(format("$:%s", msg));
+	else {
+		strcpy(buf, msg);
+		if ((c = strchr(msg, ':')) &&
+		    *(c + 1) != ':') {
+			buf[c - msg + 1] = ':';
+			strcpy(&buf[c - msg + 2], c + 1);
+		}
+		Send_msg(format("%s", buf));
+	}
+}

@@ -329,7 +329,7 @@ static void store_chat(void)
 {
 	int		i, item;
 
-	char	out_val[MSG_LEN];
+	char	out_val[MSG_LEN], buf[MSG_LEN];
 	char	store_color;
 	char	store_char;
 	char	price[16];
@@ -393,14 +393,9 @@ static void store_chat(void)
 	}
 
 	/* Tell the server */
-	if (chat_mode == CHAT_MODE_PARTY)
-		Send_msg(format("!:\377s%s:%s", where, out_val));
-	else if (chat_mode == CHAT_MODE_LEVEL)
-		Send_msg(format("#:\377s%s:%s", where, out_val));
-	else if (chat_mode == CHAT_MODE_GUILD)
-		Send_msg(format("$:\377s%s:%s", where, out_val));
-	else
-		Send_msg(format("\377s%s::%s", where, out_val));
+	snprintf(buf, MSG_LEN - 1, "\377s%s:%s", where, out_val);
+	buf[MSG_LEN - 1] = 0;
+	Send_paste_msg(buf);
 }
 
 static void store_sell(void)

@@ -815,6 +815,7 @@ void cmd_inven(void)
 {
 	char ch; /* props to 'potato' and the korean team from sarang.net for the idea - C. Blue */
 	int c;
+	char buf[MSG_LEN];
 
 
 	/* First, erase our current location */
@@ -833,14 +834,9 @@ void cmd_inven(void)
 		c = ch - 'A';
 
 		if (inventory[c].tval) {
-			if (chat_mode == CHAT_MODE_PARTY)
-				Send_msg(format("!:\377s%s", inventory_name[c]));
-			else if (chat_mode == CHAT_MODE_LEVEL)
-				Send_msg(format("#:\377s%s", inventory_name[c]));
-			else if (chat_mode == CHAT_MODE_GUILD)
-				Send_msg(format("$:\377s%s", inventory_name[c]));
-			else
-				Send_msg(format("\377s%s", inventory_name[c]));
+			snprintf(buf, MSG_LEN - 1, "\377s%s", inventory_name[c]);
+                        buf[MSG_LEN - 1] = 0;
+                        Send_paste_msg(buf);
 		}
 	}
 
@@ -856,6 +852,7 @@ void cmd_equip(void)
 {
 	char ch; /* props to 'potato' and the korean team from sarang.net for the idea - C. Blue */
 	int c;
+	char buf[MSG_LEN];
 
 
 	Term_save();
@@ -876,14 +873,9 @@ void cmd_equip(void)
 	else if (ch >= 'A' && ch < 'A' + (INVEN_TOTAL - INVEN_WIELD)) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
 		c = ch - 'A';
 		if (inventory[INVEN_WIELD + c].tval) {
-			if (chat_mode == CHAT_MODE_PARTY)
-				Send_msg(format("!:\377s%s", inventory_name[INVEN_WIELD + c]));
-			else if (chat_mode == CHAT_MODE_LEVEL)
-				Send_msg(format("#:\377s%s", inventory_name[INVEN_WIELD + c]));
-			else if (chat_mode == CHAT_MODE_GUILD)
-				Send_msg(format("$:\377s%s", inventory_name[INVEN_WIELD + c]));
-			else
-				Send_msg(format("\377s%s", inventory_name[INVEN_WIELD + c]));
+			snprintf(buf, MSG_LEN - 1, "\377s%s", inventory_name[INVEN_WIELD + c]);
+			buf[MSG_LEN - 1] = 0;
+			Send_paste_msg(buf);
 		}
 	}
 
@@ -1609,6 +1601,9 @@ static void monster_lore(void) {
 	int c, i, j, n, selected, selected_list;
 	bool show_lore = TRUE;
 
+	/* for pasting lore to chat */
+	char paste_lines[17][MSG_LEN];
+
 	Term_save();
 
   while (TRUE) {
@@ -1698,12 +1693,13 @@ static void monster_lore(void) {
 	/* display lore (default) or stats */
 	while (TRUE) {
 		clear_from(5);
+		for (i = 0; i < 17; i++) paste_lines[i][0] = '\0';
 		if (show_lore) {
-			monster_lore_aux(selected, selected_list);
-			Term_putstr(19,  23, -1, TERM_WHITE, "-- press ESC to exit, SPACE for stats --");
+			monster_lore_aux(selected, selected_list, paste_lines);
+			Term_putstr(11,  23, -1, TERM_WHITE, "-- press ESC to exit, SPACE for stats, c to chat-paste --");
 		} else {
-			monster_stats_aux(selected, selected_list);
-			Term_putstr(19,  23, -1, TERM_WHITE, "-- press ESC to exit, SPACE for lore --");
+			monster_stats_aux(selected, selected_list, paste_lines);
+			Term_putstr(11,  23, -1, TERM_WHITE, "-- press ESC to exit, SPACE for lore, c to chat-paste --");
 		}
 
 		while (TRUE) {
@@ -1714,6 +1710,17 @@ static void monster_lore(void) {
 			if (c == ' ') {
 				show_lore = !show_lore;
 				break;
+			}
+			if (c == 'c') {
+				/* paste currently displayed monster information into chat:
+				   scan line #5 for title, lines 7..22 for info. */
+				for (i = 0; i < 17; i++) {
+					if (!paste_lines[i][0]) break;
+					//if (i == 6 || i == 12) usleep(10000000);
+					if (paste_lines[i][strlen(paste_lines[i]) - 1] == ' ')
+						paste_lines[i][strlen(paste_lines[i]) - 1] = '\0';
+					Send_paste_msg(paste_lines[i]);
+				}
 			}
 		}
 		if (c == '\e') break;
