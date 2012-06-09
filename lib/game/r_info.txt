@@ -19309,7 +19309,7 @@ F:KILL_ITEM | EMPTY_MIND | COLD_BLOOD | BASH_DOOR | BLUEBAND | NO_CUT
 S:1_IN_5
 S:BA_NETH | HEAL | TELE_TO
 #S:BA_NETH | HEAL | TPORT | TELE_LEVEL | TELE_TO
-D:Bound to guard the nether realm that no mortal would set foot in it,
+D:Bound to guard the nether realm that no mortal would set foot in it.
 D:The metallic green skin of this tall humanoid creature is hard as
 D:adamantine, its four arms end in blades covered by blueish plasma discharges
 D:while three widely opened green and lidless eyes seem to surveye everything.
