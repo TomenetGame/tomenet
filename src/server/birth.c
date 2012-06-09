@@ -2067,6 +2067,10 @@ static void player_setup(int Ind, bool new)
 				s_printf("Out-of-House-blinked %s at wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
 			}
 		}
+
+	        /* blink by 1 if standing on a shop grid (in town) */
+	        if (zcave[p_ptr->py][p_ptr->px].feat == FEAT_SHOP)
+		        teleport_player_force(Ind, 1);
 	}
 
 	if (new) {
@@ -2502,7 +2506,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		s_printf("(%s) ACC1:Player %s has flags %d\n", showtime(), accname, c_acc->flags);
 		KILL(c_acc, struct account);
 	}
-	
+
 	/* handle banned player 1/2 */
 	if (acc_banned) {
 		msg_print(Ind, "\377R*** Your account is temporarily suspended ***");
