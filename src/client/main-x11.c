@@ -2646,10 +2646,12 @@ if (term_prefs[7].visible) {
 	/* restore window coordinates from .tomenetrc */
 	for (i = 0; i <= 7; i++) { /* MAX_TERM_DATA should be defined for X11 too.. */
 		if (!term_prefs[i].visible) continue;
-		XMoveWindow(Metadpy->dpy,
-		    term_idx_to_term_data(i)->outer->win,
-		    term_prefs[i].x,
-		    term_prefs[i].y);
+		if (term_prefs[i].x != -32000 && term_prefs[i].y != -32000) {
+			XMoveWindow(Metadpy->dpy,
+			    term_idx_to_term_data(i)->outer->win,
+			    term_prefs[i].x,
+			    term_prefs[i].y);
+		}
 	}
 
 
