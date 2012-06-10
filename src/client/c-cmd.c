@@ -1555,7 +1555,10 @@ static void artifact_lore(void) {
 		/* Mustn't start on a SPACE */
 		if (c == ' ' && !strlen(s)) continue;
 		/* return */
-		if (c == '\n' || c == '\r') break;
+		if (c == '\n' || c == '\r') {
+			if (!selected_list) continue;
+			break;
+		}
 		/* escape */
 		if (c == ESCAPE) break;
 		/* illegal char */
@@ -1691,7 +1694,10 @@ static void monster_lore(void) {
 		/* Mustn't start on a SPACE */
 		if (c == ' ' && !strlen(s)) continue;
 		/* return */
-		if (c == '\n' || c == '\r') break;
+		if (c == '\n' || c == '\r') {
+			if (!selected_list) continue;
+			break;
+		}
 		/* escape */
 		if (c == ESCAPE) break;
 		/* illegal char */
