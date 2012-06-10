@@ -392,7 +392,7 @@ static void init_monster_list() {
 
 	my_fclose(fff);
 }
-void monster_lore_aux(int ridx, int rlidx, char paste_lines[17][MSG_LEN]) {
+void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 	char buf[1024], *p1, *p2;
 	FILE *fff;
 	int l = 0, pl = -1, cl = strlen(cname);
@@ -460,6 +460,8 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[17][MSG_LEN]) {
 			if (buf[0] != 'D') continue;
 
 			p1 = buf + 2; /* monster diz line */
+			/* strip trailing spaces */
+			while (p1[strlen(p1) - 1] == ' ') p1[strlen(p1) - 1] = '\0';
 			Term_putstr(1, 7 + (l++), -1, TERM_UMBER, p1);
 
 			/* add to chat-paste buffer. */
@@ -508,7 +510,7 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[17][MSG_LEN]) {
 
 	my_fclose(fff);
 }
-void monster_stats_aux(int ridx, int rlidx, char paste_lines[17][MSG_LEN]) {
+void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 	char buf[1024], *p1, *p2, info[80], info_tmp[80];
 	FILE *fff;
 	int l = 0, info_val, pl = -1;
@@ -1152,10 +1154,15 @@ static void init_artifact_list() {
 
 	my_fclose(fff);
 }
-void artifact_lore_aux(int aidx, int alidx) {
+void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 	char buf[1024], *p1, *p2;
 	FILE *fff;
 	int l = 0;
+
+	int pl = -1, cl = strlen(cname);
+	int pl_len = 80 - 3 - cl - 2; /* 80 - 3 - namelen = chars available per chat line; 3 for brackets+space, 2 for colour code */
+	int chars_per_pline = ((int)MSG_LEN / pl_len) * pl_len; /* chars usable in a paste_lines[] */
+	char tmp[MSG_LEN];
 
 	/* actually use local a_info.txt - a novum */
 	path_build(buf, 1024, ANGBAND_DIR_GAME, "a_info.txt");
@@ -1190,9 +1197,12 @@ void artifact_lore_aux(int aidx, int alidx) {
 
 		/* name */
 		//Term_putstr(5, 5, -1, TERM_YELLOW, p2 + 1);
-		Term_putstr(5, 5, -1, TERM_YELLOW, artifact_list_name[alidx]);
+		strcpy(paste_lines[++pl], format("\377y%s",
+			artifact_list_name[alidx]));
+		Term_putstr(5, 5, -1, TERM_YELLOW, paste_lines[pl] + 2); /* no need for \377y */
 
 		/* fetch diz */
+		strcpy(paste_lines[++pl], "\377u");
 		while (0 == my_fgets(fff, buf, 1024)) {
 			/* strip $/%..$/! conditions */
 			p1 = p2 = buf; /* dummy, != NULL */
@@ -1211,7 +1221,49 @@ void artifact_lore_aux(int aidx, int alidx) {
 			if (buf[0] != 'D') continue;
 
 			p1 = buf + 2; /* artifact diz line */
+			/* strip trailing spaces */
+			while (p1[strlen(p1) - 1] == ' ') p1[strlen(p1) - 1] = '\0';
 			Term_putstr(1, 7 + (l++), -1, TERM_UMBER, p1);
+
+			/* add to chat-paste buffer. */
+			while (p1) {
+				/* diz line fits in pasteline? */
+				if (strlen(paste_lines[pl]) + strlen(p1) <= chars_per_pline) {
+					strcat(paste_lines[pl], p1);
+					strcat(paste_lines[pl], " ");
+					break;
+				} else {
+					/* diz line cannot be split? */
+					if (!(p2 = strchr(p1, ' '))) {
+						/* next pasteline */
+						strcpy(paste_lines[++pl], "\377u");
+						strcat(paste_lines[pl], p1);
+						strcat(paste_lines[pl], " ");
+						break;
+					}
+					/* diz line can be split? */
+					else {
+						strcpy(tmp, p1);
+						tmp[p2 - p1] = '\0';
+						/* split part is too big? */
+						if (strlen(paste_lines[pl]) + strlen(tmp) > chars_per_pline) {
+							/* next pasteline */
+							strcpy(paste_lines[++pl], "\377u");
+							strcat(paste_lines[pl], p1);
+							strcat(paste_lines[pl], " ");
+							break;
+						}
+						/* append split part */
+						else {
+							strcat(paste_lines[pl], tmp);
+							strcat(paste_lines[pl], " ");
+							p1 = p2 + 1;
+
+							/* go on */
+						}
+					}
+				}
+			}
 		}
 
 		break;

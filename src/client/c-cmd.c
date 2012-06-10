@@ -1493,17 +1493,20 @@ static void artifact_lore(void) {
 	char s[20 + 1], tmp[80];
 	int c, i, j, n, selected, selected_list;
 
+	/* for pasting lore to chat */
+	char paste_lines[18][MSG_LEN];
+
 	Term_save();
 
   while (TRUE) {
 
 	s[0] = '\0';
 	Term_clear();
-	Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Artifact Lore ***");
 	Term_putstr(2,  2, -1, TERM_WHITE, "Enter (partial) artifact name to refine the search:");
 	Term_putstr(2,  3, -1, TERM_WHITE, "Press RETURN to display lore about the first artifact.");
 
 	while (TRUE) {
+		Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Artifact Lore ***");
 		Term_putstr(54,  2, -1, TERM_WHITE, "                                ");
 		Term_putstr(54,  2, -1, TERM_L_GREEN, s);
 
@@ -1581,16 +1584,31 @@ static void artifact_lore(void) {
 
 	/* display lore! */
 	clear_from(5);
-	artifact_lore_aux(selected, selected_list);
+	for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
+	artifact_lore_aux(selected, selected_list, paste_lines);
 
-	Term_putstr(28,  23, -1, TERM_WHITE, "-- press ESC to exit --");
+	Term_putstr(20,  23, -1, TERM_WHITE, "-- press ESC to exit, c to chat-paste --");
 	while (TRUE) {
 		c = inkey();
 		/* specialty: allow chatting from within here */
-                if (c == ':') cmd_message();
+                if (c == ':') {
+            		cmd_message();
+			Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Artifact Lore ***");
+            	}
 		if (c == '\e') break;
+		if (c == 'c') {
+			/* paste currently displayed artifact information into chat:
+			   scan line #5 for title, lines 7..22 for info. */
+			for (i = 0; i < 18; i++) {
+				if (!paste_lines[i][0]) break;
+				//if (i == 6 || i == 12) usleep(10000000);
+				if (paste_lines[i][strlen(paste_lines[i]) - 1] == ' ')
+					paste_lines[i][strlen(paste_lines[i]) - 1] = '\0';
+				Send_paste_msg(paste_lines[i]);
+			}
+		}
 	}
-	if (c == '\e') break;
+	//if (c == '\e') break;
   }
 
 	Term_load();
@@ -1602,19 +1620,19 @@ static void monster_lore(void) {
 	bool show_lore = TRUE;
 
 	/* for pasting lore to chat */
-	char paste_lines[17][MSG_LEN];
+	char paste_lines[18][MSG_LEN];
 
 	Term_save();
 
-  while (TRUE) {
+    while (TRUE) {
 
 	s[0] = '\0';
 	Term_clear();
-	Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Monster Lore ***");
 	Term_putstr(2,  2, -1, TERM_WHITE, "Enter (partial) monster name to refine the search:");
 	Term_putstr(2,  3, -1, TERM_WHITE, "Press RETURN to display lore about the first monster.");
 
 	while (TRUE) {
+		Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Monster Lore ***");
 		Term_putstr(53,  2, -1, TERM_WHITE, "                                ");
 		Term_putstr(53,  2, -1, TERM_L_GREEN, s);
 
@@ -1693,7 +1711,7 @@ static void monster_lore(void) {
 	/* display lore (default) or stats */
 	while (TRUE) {
 		clear_from(5);
-		for (i = 0; i < 17; i++) paste_lines[i][0] = '\0';
+		for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
 		if (show_lore) {
 			monster_lore_aux(selected, selected_list, paste_lines);
 			Term_putstr(11,  23, -1, TERM_WHITE, "-- press ESC to exit, SPACE for stats, c to chat-paste --");
@@ -1705,7 +1723,10 @@ static void monster_lore(void) {
 		while (TRUE) {
 			c = inkey();
 			/* specialty: allow chatting from within here */
-	                if (c == ':') cmd_message();
+	                if (c == ':') {
+	            		cmd_message();
+				Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Monster Lore ***");
+	            	}
 			if (c == '\e') break;
 			if (c == ' ') {
 				show_lore = !show_lore;
@@ -1714,7 +1735,7 @@ static void monster_lore(void) {
 			if (c == 'c') {
 				/* paste currently displayed monster information into chat:
 				   scan line #5 for title, lines 7..22 for info. */
-				for (i = 0; i < 17; i++) {
+				for (i = 0; i < 18; i++) {
 					if (!paste_lines[i][0]) break;
 					//if (i == 6 || i == 12) usleep(10000000);
 					if (paste_lines[i][strlen(paste_lines[i]) - 1] == ' ')
@@ -1725,7 +1746,7 @@ static void monster_lore(void) {
 		}
 		if (c == '\e') break;
 	}
-  }
+    }
 
 	Term_load();
 }
