@@ -20,6 +20,7 @@
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <X11/keysymdef.h>
+#include <X11/Xatom.h>
 #if 0
 #include <X11/extensions/XTest.h> /* for turn_off_numlock() */
 #endif
@@ -2812,7 +2813,14 @@ void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name
 #if 0
 	XWindowAttributes xwa;
 #endif
+	Atom property;
+	Atom type_return;
+	int format_return;
+	unsigned long nitems_return;
+	unsigned long bytes_after_return;
+	unsigned char *data;
 	int x_rel, y_rel;
+	char got_frame_extents = FALSE;
 
 	/* non-visible window has no window info .. */
 	if (!term_prefs[term_idx].visible) {
@@ -2830,19 +2838,45 @@ void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name
 	*c = ((iwin->w - 2) / td->fnt->wid);
 	*r = ((iwin->h - 2) / td->fnt->hgt);
 
+	property = XInternAtom(Metadpy->dpy, "_NET_FRAME_EXTENTS", True);
+
+	/* Try to use _NET_FRAME_EXTENTS to get the window borders */
+	if (property != None && XGetWindowProperty(Metadpy->dpy, xid, property,
+	    0, LONG_MAX, False, XA_CARDINAL, &type_return, &format_return,
+	    &nitems_return, &bytes_after_return, &data) == Success) {
+		if ((type_return == XA_CARDINAL) && (format_return == 32) && (nitems_return == 4) && (data)) {
+			unsigned long *ldata = (unsigned long *)data;
+			got_frame_extents = TRUE;
+			/* _NET_FRAME_EXTENTS format is left, right, top, bottom */
+			x_rel = ldata[0];
+			y_rel = ldata[2];
+//			printf("FRAME_EXTENTS: x_rel = %d, y_rel = %d\n", x_rel, y_rel);
+		}
+	}
+
 #if 0
 	/* Check Error XXX Extract some more ACTUAL data */
 	XGetWindowAttributes(Metadpy->dpy, xid, &xwa);
-	x_rel = xwa.x;
-	y_rel = xwa.y;
+//	x_rel = xwa.x;
+//	y_rel = xwa.y;
+	printf("XGetWindowAttributes: x = %d, y = %d, width = %d, height = %d\n", (int)xwa.x, (int)xwa.y, (int)xwa.width, (int)xwa.height);
 #endif
 
-	/* Check For Error XXX Extract some ACTUAL data from 'xid' */
-	XGetGeometry(Metadpy->dpy, xid, &tmp_win, &x_rel, &y_rel, &wu, &hu, &bu, &du);
-//	*w = (int)wu;
-//	*h = (int)hu;
+	if (!got_frame_extents) {
+		/* Check For Error XXX Extract some ACTUAL data from 'xid' */
+		if (XGetGeometry(Metadpy->dpy, xid, &tmp_win, &x_rel, &y_rel, &wu, &hu, &bu, &du)) {
+//			*w = (int)wu;
+//			*h = (int)hu;
+			printf("XGetGeometry: x = %d, y = %d\n", x_rel, y_rel);
+		} else {
+			x_rel = 0;
+			y_rel = 0;
+		}
+	}
 
 	XTranslateCoordinates(Metadpy->dpy, xid, Metadpy->root, 0, 0, x, y, &tmp_win);
+//	printf("XTranslateCoordinates: x = %d, y = %d\n", *x, *y);
+
 	/* correct window position to account for X11 border/title bar sizes */
 	*x -= x_rel;
 	*y -= y_rel;
