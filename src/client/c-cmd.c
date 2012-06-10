@@ -1515,7 +1515,7 @@ static void artifact_lore(void) {
 			if (!strcmp(tmp, s)) {
 				selected = artifact_list_code[i];
 				selected_list = i;
-				Term_putstr(5, 5, -1, TERM_YELLOW, artifact_list_name[i]);
+				Term_putstr(5, 5, -1, TERM_L_UMBER, artifact_list_name[i]);
 				n++;
 				break;
 			}
@@ -1632,16 +1632,26 @@ static void monster_lore(void) {
 		n = 0;
 		selected = selected_list = 0;
 
-		/* hack: direct match always takes top position */
+		/* hack 1: direct match always takes top position
+		   hack 2: match at beginning of name takes precedence */
 		if (s[0]) for (i = 1; i < MAX_R_IDX; i++) {
 			/* create upper-case working copy */
 			strcpy(tmp, monster_list_name[i]);
 			for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
 
+			/* exact match? */
 			if (!strcmp(tmp, s)) {
 				selected = monster_list_code[i];
 				selected_list = i;
-				Term_putstr(5, 5, -1, TERM_YELLOW, monster_list_name[i]);
+				Term_putstr(5, 5, -1, TERM_YELLOW, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
+				n++;
+				break;
+			}
+			/* beginning of line match? */
+			else if (!strncmp(tmp, s, strlen(s))) {
+				selected = monster_list_code[i];
+				selected_list = i;
+				Term_putstr(5, 5, -1, TERM_YELLOW, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
 				n++;
 				break;
 			}
