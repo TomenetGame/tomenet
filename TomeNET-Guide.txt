@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 9. June 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 10. June 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -13528,6 +13528,11 @@ SOLUTION:   This can have several reasons. On disconnection a message box will
                     Can happen if you lag out or if packet loss occurs.
             "receive error in play"
                     Can happen if you lag out or if packet loss occurs.
+            "can't read on socket"
+                    Can happen if your connection gets disrupted or overloaded.
+                    May especially happen on not-so-great connections if you
+                    die and the server tries to send a large bunch of death
+                    dump information to your client.
 
 PROBLEM 08: I am disconnected from the server with an error message, this
             happens before I can even start playing.
