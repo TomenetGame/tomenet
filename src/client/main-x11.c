@@ -2852,6 +2852,8 @@ void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name
 			y_rel = ldata[2];
 //			printf("FRAME_EXTENTS: x_rel = %d, y_rel = %d\n", x_rel, y_rel);
 		}
+
+		if (data) XFree(data);
 	}
 
 #if 0
