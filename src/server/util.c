@@ -3733,9 +3733,9 @@ void toggle_afk(int Ind, char *msg)
 			msg_format(Ind, "AFK mode is turned \377GOFF\377w. (%s\377w)", p_ptr->afk_msg);
 		if (!p_ptr->admin_dm) {
 			if (strlen(p_ptr->afk_msg) == 0)
-				snprintf(afk, sizeof(afk), "\374\377%c%s has returned from AFK.", COLOUR_AFK, p_ptr->name);
+				snprintf(afk, sizeof(afk), "\377%c%s has returned from AFK.", COLOUR_AFK, p_ptr->name);
 			else
-				snprintf(afk, sizeof(afk), "\374\377%c%s has returned from AFK. (%s\377%c)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg, COLOUR_AFK);
+				snprintf(afk, sizeof(afk), "\377%c%s has returned from AFK. (%s\377%c)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg, COLOUR_AFK);
 		}
 		p_ptr->afk = FALSE;
 
@@ -3759,15 +3759,15 @@ void toggle_afk(int Ind, char *msg)
 			msg_format(Ind, "AFK mode is turned \377rON\377w. (%s\377w)", p_ptr->afk_msg);
 		if (!p_ptr->admin_dm) {
 			if (strlen(p_ptr->afk_msg) == 0)
-				snprintf(afk, sizeof(afk), "\374\377%c%s seems to be AFK now.", COLOUR_AFK, p_ptr->name);
+				snprintf(afk, sizeof(afk), "\377%c%s seems to be AFK now.", COLOUR_AFK, p_ptr->name);
 			else
-				snprintf(afk, sizeof(afk), "\374\377%c%s seems to be AFK now. (%s\377%c)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg, COLOUR_AFK);
+				snprintf(afk, sizeof(afk), "\377%c%s seems to be AFK now. (%s\377%c)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg, COLOUR_AFK);
 		}
 		p_ptr->afk = TRUE;
 
 		/* actually a hint for newbie rogues couldn't hurt */
 		if (p_ptr->tim_blacklist)
-			msg_print(Ind, "\377yNote: Your blacklist timer won't decrease while AFK.");
+			msg_print(Ind, "\376\377yNote: Your blacklist timer won't decrease while AFK.");
 
 		/* still too many starvations, so give a warning - C. Blue */
 		if (p_ptr->food < PY_FOOD_ALERT) {
