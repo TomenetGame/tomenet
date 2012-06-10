@@ -1926,6 +1926,10 @@ void msg_print(int Ind, cptr msg_raw)
 				    (msg[msg_scan] >= 'a' && msg[msg_scan] <= 'z') ||
 				    /* (maybe too much) for pasting items to chat, (+1) or (-2,0) : */
 				    (msg[msg_scan] == '+' || msg[msg_scan] == '-') ||
+				    /* interpunction at the end of a sentence */
+				    msg[msg_scan] == '.' || msg[msg_scan] == ',' ||
+				    msg[msg_scan] == ';' || msg[msg_scan] == ':' ||
+				    msg[msg_scan] == '!' || msg[msg_scan] == '?' ||
 				    (msg[msg_scan] == '\377'))) {
 					space_scan = msg_scan;
 					do {
