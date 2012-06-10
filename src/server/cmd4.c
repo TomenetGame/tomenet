@@ -2498,11 +2498,8 @@ void show_motd2(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	int k;
-
-	FILE *fff;
-
-	int	total = 0;
 	bool shown = FALSE;
+	FILE *fff;
 
 	/* Open a new file */
 	fff = my_fopen(p_ptr->infofile, "wb");
@@ -2513,17 +2510,12 @@ void show_motd2(int Ind)
 	/* Let the player scroll through the info */
 	p_ptr->special_file_type = TRUE;
 
-	fprintf(fff, "\377s======== Message of the Day ========\n");
-
 	/* Scan the lines */
 	for (k = 0; k < MAX_ADMINNOTES; k++) {
-		if (strcmp(admin_note[k], ""))
-			fprintf(fff, "\377sMotD: %s\n", admin_note[k]);
-
-		total++;
+		if (!strcmp(admin_note[k], "")) continue;
+		fprintf(fff, "\377sMotD: %s\n", admin_note[k]);
 		shown = TRUE;
 	}
-
 	fprintf(fff, "\n");
 
 	if (!shown) fprintf(fff, "No message of the day has been set.\n");
