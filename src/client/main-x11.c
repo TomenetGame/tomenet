@@ -2856,7 +2856,7 @@ void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name
 	XGetWindowAttributes(Metadpy->dpy, xid, &xwa);
 //	x_rel = xwa.x;
 //	y_rel = xwa.y;
-	printf("XGetWindowAttributes: x = %d, y = %d, width = %d, height = %d\n", (int)xwa.x, (int)xwa.y, (int)xwa.width, (int)xwa.height);
+//	printf("XGetWindowAttributes: x = %d, y = %d, width = %d, height = %d\n", (int)xwa.x, (int)xwa.y, (int)xwa.width, (int)xwa.height);
 #endif
 
 	if (!got_frame_extents) {
@@ -2864,7 +2864,7 @@ void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name
 		if (XGetGeometry(Metadpy->dpy, xid, &tmp_win, &x_rel, &y_rel, &wu, &hu, &bu, &du)) {
 //			*w = (int)wu;
 //			*h = (int)hu;
-			printf("XGetGeometry: x = %d, y = %d\n", x_rel, y_rel);
+//			printf("XGetGeometry: x = %d, y = %d\n", x_rel, y_rel);
 		} else {
 			x_rel = 0;
 			y_rel = 0;
