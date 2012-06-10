@@ -367,6 +367,7 @@ static bool read_mangrc(cptr filename)
 	return (skip);
 }
 
+#ifdef USE_X11
 /* linux clients: save subwindow prefs to .tomenetrc - C. Blue */
 static void write_mangrc_aux(int t, cptr sec_name, FILE *cfg_file) {
 	int x, y, w, h;
@@ -395,7 +396,7 @@ static void write_mangrc_aux(int t, cptr sec_name, FILE *cfg_file) {
 	}
 	fputs("\n", cfg_file);
 }
-#ifdef USE_X11
+
 /* linux clients: save one line of subwindow prefs to .tomenetrc - C. Blue */
 static void write_mangrc_aux_line(int t, cptr sec_name, char *buf_org) {
 	char buf[1024], *ter_name = buf_org + strlen(sec_name), font_name[1024];
@@ -584,6 +585,7 @@ bool write_mangrc(void) {
 		fputs("\n", config2);
 //#endif
 
+#ifdef USE_X11
 ///LINUX_TERM_CFG
 		write_mangrc_aux(0, "Mainwindow", config2);
 		write_mangrc_aux(1, "Mirrorwindow", config2);
@@ -596,6 +598,7 @@ bool write_mangrc(void) {
 #if 0 /* keep n/a for now, not really needed */
 		write_mangrc_aux(8, "Term-8window", config2);
 		write_mangrc_aux(9, "Term-9window", config2);
+#endif
 #endif
 
 		fclose(config2);
