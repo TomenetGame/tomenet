@@ -1543,7 +1543,7 @@ static void artifact_lore(void) {
 					selected = artifact_list_code[i];
 					selected_list = i;
 				}
-				Term_putstr(5, 5 + n, -1, n == 0 ? TERM_YELLOW : TERM_UMBER, artifact_list_name[i]);
+				Term_putstr(5, 5 + n, -1, n == 0 ? TERM_L_UMBER : TERM_UMBER, artifact_list_name[i]);
 				n++;
 			}
 		}

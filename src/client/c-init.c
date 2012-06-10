@@ -781,7 +781,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 			case 'B': /* attack method, attack effect, attack damage */
 				if (!got_B_lines) {
 					Term_putstr(1, 7 + (l++), -1, TERM_UMBER, "Melee attacks (see guide for explanation):");
-					strcpy(paste_lines[++pl], "\377U");
+					strcpy(paste_lines[++pl], "\377u");//different colour maybe?
 				}
 				got_B_lines++;
 				strcat(info, p1);
@@ -793,7 +793,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 #endif
 				strcat(paste_lines[pl], info);
 				strcat(paste_lines[pl], " ");
-				Term_putstr(2 + (got_B_lines - 1) * 19, 7 + l, -1, TERM_L_UMBER, info);
+				Term_putstr(2 + (got_B_lines - 1) * 19, 7 + l, -1, TERM_UMBER, info);//different colour maybe?
 				break;
 			case 'F': /* flags */
 				if (!got_F_lines) {
@@ -908,7 +908,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 					/* evaluate spell frequency right away - assume 'S:1_IN_...' exact format */
 					info_val = atoi(info + 5);
 					sprintf(info_tmp, "Abilities (~1 in %d turns): ", info_val);
-					sprintf(paste_lines[++pl], "\377uAbilities (1 in %d): \377U", info_val);
+					sprintf(paste_lines[++pl], "\377uAbilities (1 in %d): \377u", info_val);//different colour maybe?
 					Term_putstr(1, 7 + l, -1, TERM_UMBER, info_tmp);
 					f_col = 1 + strlen(info_tmp);
 
@@ -923,7 +923,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 					/* add complete flag line */
 					if (strlen(p1) + f_col < 80) {
 						strcat(paste_lines[pl], p1);
-						Term_putstr(f_col, 7 + l, -1, TERM_L_UMBER, p1);
+						Term_putstr(f_col, 7 + l, -1, TERM_UMBER, p1);//different colour maybe?
 						f_col += strlen(p1);
 
 						/* done */
@@ -938,10 +938,10 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 							if (++pf_col_cnt == 3) {
 								pf_col_cnt = 0;
 								pl++;
-								strcpy(paste_lines[pl], "\377U");
+								strcpy(paste_lines[pl], "\377u");//different colour maybe?
 							}
 							strcat(paste_lines[pl], p1);
-							Term_putstr(2, 7 + l, -1, TERM_L_UMBER, p1);
+							Term_putstr(2, 7 + l, -1, TERM_UMBER, p1);
 							f_col = 2 + strlen(p1);
 
 							/* done */
@@ -956,10 +956,10 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 								if (++pf_col_cnt == 3) {
 									pf_col_cnt = 0;
 									pl++;
-									strcpy(paste_lines[pl], "\377U");
+									strcpy(paste_lines[pl], "\377u");//different colour maybe?
 								}
 								strcat(paste_lines[pl], p1);
-								Term_putstr(2, 7 + l, -1, TERM_L_UMBER, p1);
+								Term_putstr(2, 7 + l, -1, TERM_UMBER, p1);
 								f_col = 2 + strlen(p1);
 
 								/* done */
@@ -970,7 +970,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 								strcpy(info_tmp, p1);
 								info_tmp[p2 - p1 + 1] = '\0';
 								strcat(paste_lines[pl], info_tmp);
-								Term_putstr(f_col, 7 + l, -1, TERM_L_UMBER, info_tmp);
+								Term_putstr(f_col, 7 + l, -1, TERM_UMBER, info_tmp);//different colour maybe?
 								f_col += strlen(info_tmp);
 								p1 = p2 + 1;
 
@@ -1197,9 +1197,9 @@ void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 
 		/* name */
 		//Term_putstr(5, 5, -1, TERM_YELLOW, p2 + 1);
-		strcpy(paste_lines[++pl], format("\377y%s",
+		strcpy(paste_lines[++pl], format("\377U%s",
 			artifact_list_name[alidx]));
-		Term_putstr(5, 5, -1, TERM_YELLOW, paste_lines[pl] + 2); /* no need for \377y */
+		Term_putstr(5, 5, -1, TERM_L_UMBER, paste_lines[pl] + 2); /* no need for \377y */
 
 		/* fetch diz */
 		strcpy(paste_lines[++pl], "\377u");
