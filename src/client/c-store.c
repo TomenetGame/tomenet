@@ -118,7 +118,7 @@ void display_inventory(void)
 	for (i = k; i < 13; i++) prt("", i + 6, 0);
 
 	/* Assume "no current page" */
-	put_str("        ", 5, 20);
+	put_str("             ", 5, 20);
 
 	/* Visual reminder of "more items" */
 	if (store.stock_num > 12)
