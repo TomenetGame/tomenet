@@ -120,22 +120,22 @@ HEXORCISM = add_spell
 	["am"] =	75,
 	["level"] = 	11,
 	["mana"] = 	15,
-	["mana_max"] = 	100,
+	["mana_max"] = 	50,
 	["fail"] = 	30,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
 		local type
 		if get_level(Ind, HEXORCISM, 50) < 20 then
-		    dispel_undead(Ind, 10 + get_level(Ind, HEXORCISM, 200))
+		    dispel_undead(Ind, 10 + get_level(Ind, HEXORCISM, 400))
 		elseif get_level(Ind, HEXORCISM, 50) < 30 then
-		    dispel_undead(Ind, 10 + get_level(Ind, HEXORCISM, 200))
-		    dispel_demons(Ind, 10 + get_level(Ind, HEXORCISM, 200))
+		    dispel_undead(Ind, 10 + get_level(Ind, HEXORCISM, 400))
+		    dispel_demons(Ind, 10 + get_level(Ind, HEXORCISM, 400))
 		else
-		    dispel_evil(Ind, 10 + get_level(Ind, HEXORCISM, 200))
+		    dispel_evil(Ind, 10 + get_level(Ind, HEXORCISM, 400))
 		end
 	end,
 	["info"] = 	function()
-		return "dam "..(10 + get_level(Ind, HEXORCISM, 200))
+		return "dam "..(10 + get_level(Ind, HEXORCISM, 400))
 	end,
 	["desc"] =	{
 			"Dispels nearby undead",

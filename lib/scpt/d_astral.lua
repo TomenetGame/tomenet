@@ -18,7 +18,12 @@ end
 
 
 function get_veng_power(Ind)
-	return (get_astral_lev(Ind)*get_astral_lev(Ind) / 5);
+	local l = get_astral_lev(Ind)
+	if (l > 50) then
+        	return (500)
+	else
+        	return ((l * l) / 5)
+        end
 end
 --orb of draining (main nuke for priests) go from 20 + (0 .. 475)
 --fireflash (main nuke for mages) go from 20 + (0 .. 500)
@@ -185,7 +190,7 @@ VENGEANCE = add_spell
 	["spell_power"] = 0,
 	["level"] = 	30,
 	["mana"] = 	50,
-	["mana_max"] =  50,
+	["mana_max"] =  100,
 	["fail"] = 	-98,
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
