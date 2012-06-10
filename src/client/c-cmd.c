@@ -1480,15 +1480,6 @@ void cmd_help(void)
 	peruse_file();
 }
 
-static void show_motd2(void)
-{
-	/* Set the hook */
-	special_line_type = SPECIAL_FILE_MOTD2;
-
-	/* Call the file perusal */
-	peruse_file();
-}
-
 static void artifact_lore(void) {
 	char s[20 + 1], tmp[80];
 	int c, i, j, n, selected, selected_list;
@@ -1854,7 +1845,7 @@ void cmd_check_misc(void)
 				show_motd(0);
 				break;
 			case 'g':
-				show_motd2();
+				Send_special_line(SPECIAL_FILE_MOTD2, 0);
 				break;
 			case 'h':
 				do_cmd_messages();
