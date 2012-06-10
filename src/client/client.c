@@ -26,7 +26,9 @@ static void read_mangrc_aux(int t, cptr sec_name) {
 	} else if (!val) val = val2;
 	val2 = val;
 	while (*val == ' ' || *val == '\t') val++;
-	strcpy(val2, val);
+	//strcpy(val2, val);
+	/* strcpy may not work if the strings overlap */
+	memmove(val2, val, strlen(val) + 1);
 	/* strip trailing linefeeds */
 	while (val2[strlen(val2) - 1] == '\n' || val2[strlen(val2) - 1] == '\r') val2[strlen(val2) - 1] = '\0';
 
