@@ -5768,7 +5768,8 @@ void do_cmd_options(void)
 		else if (k == 'f') {
 			change_font(-1);
 		}
-#else
+#endif
+#ifdef USE_X11
 #if 1 /* CHANGE_FONTS_X11 */
 		else if (k == 'f') {
 			change_font(-1);

@@ -2672,11 +2672,6 @@ void turn_off_numlock_X11(void) {
 #endif
 
 
-/* SHUT: main-x11.c */
-
-#endif
-
-
 #if 1 /* CHANGE_FONTS_X11 */
 /* EXPERIMENTAL // allow user to change main window font live - C. Blue
    So far only uses 1 parm ('s') to switch between hardcoded choices:
@@ -2852,6 +2847,8 @@ void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name
 			y_rel = ldata[2];
 //			printf("FRAME_EXTENTS: x_rel = %d, y_rel = %d\n", x_rel, y_rel);
 		}
+
+		if (data) XFree(data);
 	}
 
 #if 0
@@ -2881,3 +2878,8 @@ void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name
 	*x -= x_rel;
 	*y -= y_rel;
 }
+
+
+/* SHUT: main-x11.c */
+
+#endif
