@@ -5181,9 +5181,9 @@ if (cfg.unikill_format) {
 	if (is_Sauron) p_ptr->r_killed[819] = 1;
 
 	/* Dungeon bosses often drop a dungeon-set true artifact (for now 1 in 3 chance) */
-	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN) && !rand_int(3)) {
+	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
 		dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
-		if ((a_idx = d_info[d_ptr->type].final_artifact)) {
+		if ((a_idx = d_info[d_ptr->type].final_artifact) && !rand_int(3)) {
 			s_printf("preparing FINAL_ARTIFACT %d", a_idx);
 			a_ptr = &a_info[a_idx];
 			qq_ptr = &forge;
@@ -5230,6 +5230,24 @@ if (cfg.unikill_format) {
 				drop_near(qq_ptr, -1, wpos, y, x);
 				s_printf("..dropped.\n");
 			} else  s_printf("..failed.\n");
+		} else if ((I_kind = d_info[d_ptr->type].final_object)) {
+			s_printf("preparing FINAL_OBJECT %d", I_kind);
+			qq_ptr = &forge;
+			object_wipe(qq_ptr);
+			/* Create the object */
+			invcopy(qq_ptr, I_kind + 1); /* weirdness, why is it actually 1 too low? */
+
+			/* Complete generation, especially level requirements check */
+			apply_magic(wpos, qq_ptr, -2, FALSE, TRUE, FALSE, FALSE, TRUE);
+
+			/* Drop the objectt from heaven */
+#ifdef PRE_OWN_DROP_CHOSEN
+			qq_ptr->level = 0;
+			qq_ptr->owner = p_ptr->id;
+			qq_ptr->mode = p_ptr->mode;
+#endif
+			drop_near(qq_ptr, -1, wpos, y, x);
+			s_printf("..dropped.\n");
 		}
 	}
 
@@ -5526,10 +5544,10 @@ if (cfg.unikill_format) {
 			 * won't benefit too much?	- Jir - */
 			if (strstr((r_name + r_ptr->name),"T'ron, the Rebel Dragonrider")) {
 				a_idx = ART_TRON;
-				chance = 75;
+				chance = 40;
 			} else if (strstr((r_name + r_ptr->name),"Mardra, rider of the Gold Loranth")) {
 				a_idx = ART_MARDA;
-				chance = 75;
+				chance = 55;
 			} else if (strstr((r_name + r_ptr->name),"Saruman of Many Colours")) {
 				a_idx = ART_ELENDIL;
 				chance = 30;
