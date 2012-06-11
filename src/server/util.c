@@ -3158,7 +3158,7 @@ static void player_talk_aux(int Ind, char *message)
 		bool smiley = FALSE;
 		/* if another colon followed this one then
 		   it was not meant to be a control char */
-		switch(colon[1]){
+		switch (colon[1]) {
 		/* accept these chars for smileys, but only if the colon is either first in the line or stands after a SPACE,
 		   otherwise it is to expect that someone tried to write to party/privmsg */
 		case '(':	case ')':
@@ -3168,12 +3168,12 @@ static void player_talk_aux(int Ind, char *message)
 		case '\\':	case '|':
 		case 'p': case 'P': case 'o': case 'O':
 			if (message == colon || colon[-1] == ' ' || colon[-1] == '>' || /* >:) -> evil smiley */
-			    ((message == colon - 1) && (colon[-1] != '!') && (colon[-1] != '#') && (colon[-1] != '%') && (colon[-1] != '$'))) /* <- party names must be at least 2 chars then */
+			    ((message == colon - 1) && (colon[-1] != '!') && (colon[-1] != '#') && (colon[-1] != '%') && (colon[-1] != '$') && (colon[-1] != '+'))) /* <- party names must be at least 2 chars then */
 				colon = NULL; /* the check is mostly important for '(' */
 			break;
 		case '-':
 			if (message == colon || colon[-1] == ' ' || colon[-1] == '>' || /* here especially important: '-' often is for numbers/recall depth */
-			    ((message == colon - 1) && (colon[-1] != '!') && (colon[-1] != '#') && (colon[-1] != '%') && (colon[-1] != '$'))) /* <- party names must be at least 2 chars then */
+			    ((message == colon - 1) && (colon[-1] != '!') && (colon[-1] != '#') && (colon[-1] != '%') && (colon[-1] != '$') && (colon[-1] != '+'))) /* <- party names must be at least 2 chars then */
 				if (!strchr("123456789", *(colon + 2))) colon = NULL;
 			break;
 		case '/':
@@ -3196,7 +3196,7 @@ static void player_talk_aux(int Ind, char *message)
 
 			/* new hack: ..but only if the previous two chars aren't  !:  (party chat),
 			   and if it's appearently meant to be a smiley. */
-			if ((colon - message == 1) && (colon[-1]=='!' || colon[-1]=='#' || colon[-1]=='%' || colon[-1]=='$'))
+			if ((colon - message == 1) && (colon[-1]=='!' || colon[-1]=='#' || colon[-1]=='%' || colon[-1]=='$' || colon[-1]=='+'))
 			switch (*(colon + 2)) {
 			case '(': case ')':
 			case '[': case ']':
@@ -3205,7 +3205,7 @@ static void player_talk_aux(int Ind, char *message)
 			case '-': case '|':
 			case 'p': case 'P': case 'o': case 'O': case 'D':
 			smiley = TRUE; break; }
-			
+
 			/* check for smiley at end of the line */
 			if ((message + strlen(message) - colon >= 3) &&
 			    (message + strlen(message) - colon <= 4)) // == 3 for 2-letter-smileys only.
