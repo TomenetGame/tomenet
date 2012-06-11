@@ -14504,32 +14504,34 @@ D:unshakeably that he is unbeatable and laughs as he weaves his awesome
 D:spells. 
 
 #taken out since we already have him as 'Sauron' - thanks, Virus
-#N:819:The Necromancer of Dol Guldur
-#G:p:v
-#I:130:82d100:60:100:10
-#W:75:3:1900:40000
-#E:1:1:1:2:1:1
-#O:0:0:100:0
-#B:HIT:UN_BONUS:6d8
-#B:HIT:UN_POWER:6d8
-#B:HIT:BLIND:6d8
-#B:HIT:CONFUSE:6d8
-#F:UNIQUE | MALE | CAN_SPEAK | POWERFUL | RES_TELE | 
-#F:FORCE_SLEEP | FORCE_MAXHP | SMART | DROP_CORPSE | DROP_SKELETON | 
-#F:ONLY_ITEM | DROP_1D2 | DROP_GREAT | DROP_GOOD | SPECIAL_GENE | 
-#F:INVISIBLE | OPEN_DOOR | BASH_DOOR | 
-#F:EVIL | IM_FIRE | IM_COLD | 
-#F:RES_ELEC | NO_CONF | NO_SLEEP | BASEANGBAND
-#F:AI_ANNOY
-#S:1_IN_2 | 
-#S:CURSE | TELE_TO | BA_FIRE | DRAIN_MANA | HOLD |
-#S:TRAPS | BA_WATE | BO_PLAS | BA_NETH |
-#S:BA_MANA | BA_DARK | S_HI_UNDEAD | BA_CHAO | RAISE_DEAD
+#revived him as "Shadow" instead of "Necromancer", since we need a dungeon boss.
+# for that reason, hard-coded now: defeating Sauron will also kill-credit this one!
+N:819:The Shadow of Dol Guldur
+G:p:v
+I:130:82d100:60:100:10
+W:75:3:1900:40000
+E:1:1:1:2:1:1
+O:0:0:100:0
+B:HIT:UN_BONUS:6d8
+B:HIT:UN_POWER:6d8
+B:HIT:BLIND:6d8
+B:HIT:CONFUSE:6d8
+F:UNIQUE | MALE | CAN_SPEAK | POWERFUL | RES_TELE | 
+F:FORCE_SLEEP | FORCE_MAXHP | SMART | DROP_CORPSE | DROP_SKELETON | 
+F:ONLY_ITEM | DROP_1D2 | DROP_GREAT | DROP_GOOD | SPECIAL_GENE | 
+F:INVISIBLE | OPEN_DOOR | BASH_DOOR | 
+F:EVIL | IM_FIRE | IM_COLD | 
+F:RES_ELEC | NO_CONF | NO_SLEEP | BASEANGBAND
+F:AI_ANNOY
+S:1_IN_2 | 
+S:CURSE | TELE_TO | BA_FIRE | DRAIN_MANA | HOLD |
+S:TRAPS | BA_WATE | BO_PLAS | BA_NETH |
+S:BA_MANA | BA_DARK | S_HI_UNDEAD | BA_CHAO | RAISE_DEAD
 #S:HAND_DOOM | 
-#D:The dark master of the terrible fortress of southern Mirkwood.  It is 
-#D:rumoured that this is in fact none other than Sauron in disguise: 
-#D:although if this is so, he has yet to reveal his full power - and perhaps 
-#D:will not do so while his deception lasts, in the hope of keeping it going. 
+D:The dark master of the terrible fortress of southern Mirkwood.  It is 
+D:rumoured that this is in fact none other than Sauron in disguise: 
+D:although if this is so, he has yet to reveal his full power - and perhaps 
+D:will not do so while his deception lasts, in the hope of keeping it going. 
 
 N:820:Lessa, rider of the Gold Ramoth
 G:D:y
@@ -15755,8 +15757,8 @@ B:HIT:FIRE:6d12
 B:CRUSH:HURT:5d12
 B:TOUCH:UN_POWER
 F:UNIQUE | MALE | SPECIAL_GENE | IM_POIS | 
-F:FORCE_SLEEP | FORCE_MAXHP | KILL_WALL | 
-F:ESCORT | ESCORTS | DROP_CORPSE |  
+F:FORCE_SLEEP | FORCE_MAXHP | KILL_WALL | DROP_CORPSE |
+#F:ESCORT | ESCORTS | not anymore, since he's dungeon boss now (again..uhh)
 F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD | DROP_CHOSEN | 
 F:OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | 
 F:EVIL | DEMON | IM_FIRE | 

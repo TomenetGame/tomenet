@@ -4683,7 +4683,8 @@ void monster_death(int Ind, int m_idx)
 
 	monster_type *m_ptr = &m_list[m_idx];
         monster_race *r_ptr = race_inf(m_ptr);
-        bool is_Morgoth = (strcmp(r_name_get(m_ptr), "Morgoth, Lord of Darkness") == 0);
+        bool is_Morgoth = (m_ptr->r_idx == 862);//(strcmp(r_name_get(m_ptr), "Morgoth, Lord of Darkness") == 0);
+        bool is_Sauron = (m_ptr->r_idx == 860);
 	int credit_idx = r_ptr->dup_idx ? r_ptr->dup_idx : m_ptr->r_idx;
 	bool visible = (p_ptr->mon_vis[m_idx] || (r_ptr->flags1 & RF1_UNIQUE));
 
@@ -4715,8 +4716,7 @@ void monster_death(int Ind, int m_idx)
 #ifdef RPG_SERVER
 	/* Pet death. Update and inform the owner -the_sandman */
 	if (m_ptr->pet) {
-		for (i = NumPlayers; i > 0; i--)
-		{	
+		for (i = NumPlayers; i > 0; i--) {
 			if (m_ptr->owner == Players[i]->id) {
 				msg_format(i, "\374\377R%s has killed your pet!", Players[Ind]->name);
 				msg_format(Ind, "\374\377RYou have killed %s's pet!", Players[i]->name);
@@ -4747,10 +4747,10 @@ void monster_death(int Ind, int m_idx)
 		msg_broadcast_format(0, "\376\377S** %s has defeated %s! **", p_ptr->name, m_name);
 		s_printf("EVENT_RESULT: %s (%d) has defeated %s.\n", p_ptr->name, p_ptr->lev, m_name);
 	}
- 
+
 	/* get monster name for damage deal description */
 	monster_desc(Ind, m_name, m_idx, 0x00);
-	
+
 	process_hooks(HOOK_MONSTER_DEATH, "d", Ind);
 
 	if (season_halloween) {
@@ -5175,6 +5175,64 @@ if (cfg.unikill_format) {
 		}
 	}
 
+	/* If player killed Sauron, also mark the Shadow (formerly Necromancer) of Dol Guldur as killed!
+	   This is required since we now need a dungeon boss for Dol Guldur again =)
+	   So always kill the Shadow first, if you want his loot. - C. Blue */
+	if (is_Sauron) p_ptr->r_killed[819] = 1;
+
+	/* Dungeon bosses often drop a dungeon-set true artifact (for now 1 in 3 chance) */
+	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN) && !rand_int(3)) {
+		dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
+		if ((a_idx = d_info[d_ptr->type].final_artifact)) {
+			s_printf("preparing FINAL_ARTIFACT %d", a_idx);
+			a_ptr = &a_info[a_idx];
+			qq_ptr = &forge;
+			object_wipe(qq_ptr);
+			I_kind = lookup_kind(a_ptr->tval, a_ptr->sval);
+			/* Create the artifact */
+			invcopy(qq_ptr, I_kind);
+			qq_ptr->name1 = a_idx;
+
+			if (!(make_resf(p_ptr) & RESF_NOTRUEART) || winner_artifact_p(qq_ptr)) {
+				/* Extract the fields */
+				qq_ptr->pval = a_ptr->pval;
+				qq_ptr->ac = a_ptr->ac;
+				qq_ptr->dd = a_ptr->dd;
+				qq_ptr->ds = a_ptr->ds;
+				qq_ptr->to_a = a_ptr->to_a;
+				qq_ptr->to_h = a_ptr->to_h;
+				qq_ptr->to_d = a_ptr->to_d;
+				qq_ptr->weight = a_ptr->weight;
+				qq_ptr->note = local_quark;
+				qq_ptr->note_utag = strlen(quark_str(local_quark));
+
+				handle_art_inum(a_idx);
+
+				/* Hack -- acquire "cursed" flag */
+				if (a_ptr->flags3 & (TR3_CURSED)) qq_ptr->ident |= (ID_CURSED);
+
+				/* Complete generation, especially level requirements check */
+				apply_magic(wpos, qq_ptr, -2, FALSE, TRUE, FALSE, FALSE, TRUE);
+
+				/* Little sanity hack for level requirements
+				   of the Ring of Phasing - would be 92 otherwise */
+				if (a_idx == 203) {
+					qq_ptr->level = (60 + rand_int(6));
+					qq_ptr->marked2 = ITEM_REMOVAL_NEVER;
+				}
+
+				/* Drop the artifact from heaven */
+#ifdef PRE_OWN_DROP_CHOSEN
+				qq_ptr->level = 0;
+				qq_ptr->owner = p_ptr->id;
+				qq_ptr->mode = p_ptr->mode;
+#endif
+				drop_near(qq_ptr, -1, wpos, y, x);
+				s_printf("..dropped.\n");
+			} else  s_printf("..failed.\n");
+		}
+	}
+
 	if (r_ptr->flags1 & (RF1_DROP_CHOSEN)) {
 		/* Mega-Hack -- drop "winner" treasures */
 		if (is_Morgoth && !pvp) {
@@ -5250,14 +5308,14 @@ if (cfg.unikill_format) {
 	                            		msg_print(i, "\374\377GYou learn the Royal Titan's Fist technique.");
 				                msg_print(i, "\374\377GYou learn the Royal Phoenix Claw technique.");
 		                        }
-					
+
 					if (q_ptr->lev >= 50 && q_ptr->pclass == CLASS_ROGUE) {
 						msg_print(i, "\374\377GYou learn the royal fighting technique 'Shadow Run'");
 						calc_techniques(i);
 						Send_skill_info(i, SKILL_TECHNIQUE, TRUE);
 					}
 				}
-			}	
+			}
 
 			/* Paranoia (if a ghost killed Morgoth) ;) - C. Blue */
 		    if (num) {
@@ -5306,7 +5364,7 @@ if (cfg.unikill_format) {
 						do_cmd_suicide(i);
 				}
 			}
-			
+
 			FREE(m_ptr->r_ptr, monster_race);
 			return;
 		} else if (strstr((r_name + r_ptr->name),"Smeagol")) {
@@ -5568,7 +5626,7 @@ if (cfg.unikill_format) {
 					qq_ptr->note_utag = strlen(quark_str(local_quark));
 
 //					random_artifact_resistance(qq_ptr);
-					a_info[a_idx].cur_num++;
+					handle_art_inum(a_idx);
 
 					/* Hack -- acquire "cursed" flag */
 					if (a_ptr->flags3 & (TR3_CURSED)) qq_ptr->ident |= (ID_CURSED);
@@ -5691,7 +5749,7 @@ if (cfg.unikill_format) {
 			/* Mega-Hack -- Actually create the amulet of Grom */
 			apply_magic(wpos, qq_ptr, -2, TRUE, TRUE, TRUE, FALSE, TRUE);
 
-			a_info[a_idx].cur_num++;
+			handle_art_inum(a_idx);
 			/* Drop the artifact from heaven */
 #ifdef PRE_OWN_DROP_CHOSEN
 			qq_ptr->level = 0;
@@ -9751,7 +9809,7 @@ bool master_level(int Ind, char * parms)
 	int i;
 	/* get the player pointer */
 	player_type *p_ptr = Players[Ind];
-	
+
 	if (!is_admin(p_ptr)) return FALSE;
 
 	switch (parms[0]) {
@@ -9761,7 +9819,9 @@ bool master_level(int Ind, char * parms)
 			struct worldpos twpos;
 			wpcopy(&twpos,&p_ptr->wpos);
 			unstatic_level(&twpos);
-       			msg_print(Ind, "The level has been unstaticed.");
+       			/* additionally unstale it, simply by poofing it completely. - C. Blue */
+       			if (getcave(&twpos)) dealloc_dungeon_level(&twpos);
+       			msg_format(Ind, "The level %s has been unstaticed.", wpos_format(Ind, &twpos));
 			break;
 		}
 
@@ -9771,7 +9831,7 @@ bool master_level(int Ind, char * parms)
 			/* Increase the number of players on the dungeon 
 			 * masters level by one. */
 			new_players_on_depth(&p_ptr->wpos,1,TRUE);
-			msg_print(Ind, "The level has been staticed.");
+			msg_format(Ind, "The level %s has been staticed.", wpos_format(Ind, &p_ptr->wpos));
 			break;
 		}
 		/* add dungeon stairs here */
@@ -9902,7 +9962,7 @@ bool master_level_specific(int Ind, struct worldpos *wpos, char * parms)
 {
 	/* get the player pointer */
 	player_type *p_ptr = Players[Ind];
-	
+
 //	if (strcmp(p_ptr->name, cfg_dungeon_master)) return FALSE;
 	if (!is_admin(p_ptr)) return FALSE;
 
@@ -9912,7 +9972,9 @@ bool master_level_specific(int Ind, struct worldpos *wpos, char * parms)
 		case 'u':
 		{
 			unstatic_level(wpos);
-//       			msg_format(Ind, "The level (%d,%d) %dft has been unstaticed.", wpos->wx, wpos->wy, wpos->wz*50);
+       			/* additionally unstale it, simply by poofing it completely. - C. Blue */
+       			dealloc_dungeon_level(wpos);
+//     			msg_format(Ind, "The level (%d,%d) %dft has been unstaticed.", wpos->wx, wpos->wy, wpos->wz * 50);
        			msg_format(Ind, "The level %s has been unstaticed.", wpos_format(Ind, wpos));
 			break;
 		}

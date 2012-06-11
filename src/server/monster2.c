@@ -988,11 +988,12 @@ errr get_mon_num_prep(int dun_type, char *reject_monsters)
 			/* Access the "r_idx" of the chosen monster */
 			r_idx = entry->index;
 
+			/* for more efficiency: no dungeon bosses, done now in level-generation routine - C. Blue */
+			if (r_info[r_idx].flags0 & RF0_FINAL_GUARDIAN) continue;
+
 			/* Check the monster rejection array provided */
 			if (reject_monsters && reject_monsters[entry->index])
-			{
 				continue;
-			}
 
 			/* Accept monsters which pass the restriction, if any */
 			if ((*hook)(r_idx) && (*hook2)(r_idx))
@@ -1021,11 +1022,12 @@ errr get_mon_num_prep(int dun_type, char *reject_monsters)
 			/* Access the "r_idx" of the chosen monster */
 			r_idx = entry->index;
 
+			/* for more efficiency: no dungeon bosses, done now in level-generation routine - C. Blue */
+			if (r_info[r_idx].flags0 & RF0_FINAL_GUARDIAN) continue;
+
 			/* Check the monster rejection array provided */
 			if (reject_monsters && reject_monsters[entry->index])
-			{
 				continue;
-			}
 
 			/* Accept monsters which pass the restriction, if any */
 			if ((!hook || (*hook)(r_idx)) && (!hook2 || (*hook2)(r_idx)))
@@ -2766,18 +2768,20 @@ static int get_prison_monster(void) {
  * XXX XXX XXX Actually, do something similar for artifacts, to simplify
  * the "preserve" mode, and to make the "what artifacts" flag more useful.
  */
-	/* lots of hard-coded stuff in here -C. Blue */
+/* lots of hard-coded stuff in here -C. Blue */
 bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, int clo, int clone_summoning)
 {
-	int                     i, Ind, j, m_idx, dlev;
-	bool			already_on_level = FALSE;
-	cave_type               *c_ptr;
-	dun_level *l_ptr = getfloor(wpos);
-	monster_type    *m_ptr;
-	monster_race    *r_ptr = &r_info[r_idx];
+	int		i, Ind, j, m_idx, dlev;
+	bool		already_on_level = FALSE;
+	cave_type	*c_ptr;
+	dun_level	*l_ptr = getfloor(wpos);
+	monster_type	*m_ptr;
+	monster_race	*r_ptr = &r_info[r_idx];
 	player_type	*p_ptr;
-
-	char buf[MNAME_LEN];
+	char		buf[MNAME_LEN];
+	/* for final guardians, finally! - C. Blue */
+	struct dungeon_type *d_ptr = getdungeon(wpos);
+	dungeon_info_type *dinfo_ptr = d_ptr ? &d_info[d_ptr->type] : NULL;
 
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return (FALSE);
@@ -2888,8 +2892,17 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	}
 
 	if (!(summon_override_checks & SO_BOSS_MONSTERS)) {
-		/* Wight-King of the Barrow-downs might not occur anywhere except in Barrow-downs */
-		if ((r_idx == 971) && ((wpos->wx != cfg.town_x) || (wpos->wy != cfg.town_y))) return (FALSE);
+		/* Dungeon boss? */
+		if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN) && d_ptr) {
+			/* wrong monster, or not at the bottom of the dungeon? */
+			if (r_idx != dinfo_ptr->final_guardian ||
+			    d_ptr->maxdepth != ABS(wpos->wz)) {
+				s_printf("rejected FINAL_GUARDIAN %d\n", r_idx);
+				return FALSE;
+			}
+			/* generating the boss is ok. go on. */
+			s_printf("allowed FINAL_GUARDIAN %d\n", r_idx);
+		}
 
 		/* Hellraiser may not occur right on the 1st floor of the Nether Realm */
 		if ((r_idx == 1067) && (dlev < (166 + 1))) return (FALSE);
@@ -3627,9 +3640,9 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 #if 0	/* unused - mikaelh */
 	/* Specific filter - should be made more useful */
 	/* Ok, I'll see to that later	- Jir - */
-	
+
 	struct dungeon_type *d_ptr = getdungeon(wpos);
-	
+
 	if(d_ptr && (d_ptr->r_char[0] || d_ptr->nr_char[0])){
 		int i, j = 0;
 		monster_race *r_ptr;
@@ -3766,7 +3779,7 @@ bool alloc_monster(struct worldpos *wpos, int dis, int slp)
 		/* Pick a location */
 		y = rand_int(getlevel(wpos) ? MAX_HGT : MAX_HGT);
 		x = rand_int(getlevel(wpos) ? MAX_WID : MAX_WID);
-		
+
 		/* Require "naked" floor grid */
 		if (!cave_naked_bold(zcave, y, x)) continue;
 
@@ -3801,6 +3814,67 @@ bool alloc_monster(struct worldpos *wpos, int dis, int slp)
 	if (place_monster(wpos, y, x, slp, TRUE)) return (TRUE);
 
 	/* Nope */
+	return (FALSE);
+}
+
+/* Used for dungeon bosses, aka FINAL_GUARDIAN - C. Blue */
+bool alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp)
+{
+	int y, x, i, d, min_dis = 999, org_dis = dis;
+	int tries = 0;
+	player_type *p_ptr;
+	cave_type **zcave;
+	if (!(zcave = getcave(wpos))) return (FALSE);
+	dun_level *l_ptr = getfloor(wpos);
+
+	/* Find a legal, distant, unoccupied, space */
+	while (tries < 1100) /* try especially hard to succeed */
+	{
+		/* Increase the counter */
+		tries++;
+
+		/* Pick a location */
+		y = rand_int(l_ptr->hgt);
+		x = rand_int(l_ptr->wid);
+
+		/* Require "naked" floor grid */
+		if (!cave_naked_bold(zcave, y, x)) continue;
+
+		/* Accept far away grids */
+		for (i = 1; i < NumPlayers + 1; i++)
+		{
+			p_ptr = Players[i];
+
+			/* Skip him if he's not playing */
+			if (p_ptr->conn == NOT_CONNECTED)
+				continue;
+
+			/* Skip him if he's not on this depth */
+			if(!inarea(wpos, &p_ptr->wpos))
+				continue;
+
+			if ((d = distance(y, x, p_ptr->py, p_ptr->px)) < min_dis)
+				min_dis = d;
+		}
+
+		if (min_dis >= dis) break;
+
+		/* try especially hard to succeed */
+		if (!(tries % 100)) dis -= org_dis / 10;
+	}
+
+	/* Abort */
+	if (tries >= 1100) {
+		/* fun stuff. it STILL fails here "relatively" often.. -_- */
+		s_printf("allocate_monster_specific() failed for r_idx %d on %s.\n", r_idx, wpos_format(0, wpos));
+		return (FALSE);
+	}
+
+	/* Attempt to place the monster, allow groups */
+        if (place_monster_aux(wpos, y, x, r_idx, slp, TRUE, FALSE, 0)) return (TRUE);
+
+	/* Nope */
+	s_printf("allocate_monster_specific()->place_monster_aux() failed for r_idx %d on %s.\n", r_idx, wpos_format(0, wpos));
 	return (FALSE);
 }
 

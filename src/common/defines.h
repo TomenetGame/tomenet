@@ -4887,6 +4887,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF0_ASTAR		0x00000008	/* monster uses A* pathfinding (use with care, might strain CPU) */
 #define RF0_NO_ESCORT			0x00000010	/* monster will never occur in groups, like escorts or nests/pits */
 #define RF0_NO_NEST			0x00000020	/* monster will never occur in groups, like escorts or nests/pits */
+#define RF0_FINAL_GUARDIAN		0x00000040	/* monster is defined as FINAL_GUARDIAN_ in d_info.txt */
 
 #define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT | RF0_NO_NEST)
 

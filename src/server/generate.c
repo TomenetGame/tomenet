@@ -9586,6 +9586,20 @@ if (!nether_bottom) {
 		}
 	}
 
+	/* Possibly create dungeon boss aka FINAL_GUARDIAN.
+	   Rarity 1 in r_info.txt for those bosses now means:
+	   1 in <rarity> chance to generate the boss. - C. Blue */
+	if ((k = d_info[d_ptr->type].final_guardian)
+	    && d_ptr->maxdepth == ABS(wpos->wz)
+	    && !rand_int(r_info[k].rarity)) {
+		s_printf("Attempting to generate FINAL_GUARDIAN %d (1 in %d)\n", k, r_info[k].rarity);
+		alloc_monster_specific(wpos, k, 20, TRUE);
+#if 0
+		/* debug: break here? */
+		cave_set_quietly = FALSE;
+		return;
+#endif
+	}
 
 	/* Basic "amount" */
 	k = (dun_lev / 3);

@@ -9219,10 +9219,12 @@ void process_monsters(void)
 					//Dungeon boss or special unique? (can't override Sauron or Nazgul)
 					else if (p_ptr->music_monster != 43 && p_ptr->music_monster != 42) {
 						//Dungeon boss?
+#if 0
+						//Wight-King
 						if (m_ptr->r_idx == 971) {
-							//Wight-King
+#endif
+						if (r_ptr->flags0 & RF0_FINAL_GUARDIAN)
 							Send_music(pl, (p_ptr->music_monster = 41));
-						}
 						//Special Unique (non-respawning)? Can't override dungeon boss..
 						else if (r_ptr->level >= 98 && p_ptr->music_monster != 41) {
 							//Any of em

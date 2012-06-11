@@ -6183,6 +6183,9 @@ errr init_d_info_txt(FILE *fp, char *buf)
 					/* Extract a "Artifact Guardian" */
 					d_ptr->final_guardian = monst;
 
+					/* automatically mark it as such, no need for doing that in r_info.txt */
+					r_info[monst].flags0 |= RF0_FINAL_GUARDIAN;
+
 					/* Start at next entry */
 					s = t;
 
