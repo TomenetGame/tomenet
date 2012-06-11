@@ -6370,6 +6370,24 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "house #%d, mode %d, owner-mode %d, colour %d.", h_idx, h_ptr->dna->mode, j, h_ptr->colour);
 				return;
 			}
+			else if (prefix(message, "/debugmd")) {//debug p_ptr->max_depth[]
+				int p;
+				if (tk < 1) {
+					msg_print(Ind, "\377oUsage: /debugmd <player name>");
+					return;
+				}
+				p = name_lookup_loose(Ind, token[1], FALSE);
+				if (!p) return;
+				msg_format(Ind, "max_depth[] for player '%s':", Players[p]->name);
+				for (i = 0; i < MAX_D_IDX; i++) {
+					msg_format(Ind, "  %d,%d %s    %d",
+					    Players[p]->max_depth_wx[i],
+					    Players[p]->max_depth_wy[i],
+					    Players[p]->max_depth_tower[i] ? "t" : "D",
+					    Players[p]->max_depth[i]);
+				}
+				return;
+			}
 		}
 	}
 
