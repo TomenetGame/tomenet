@@ -3319,6 +3319,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	int		drain_left = MAX_VAMPIRIC_DRAIN;
 	bool		drainable = TRUE;
 	bool		mon_slept;
+	char		uniq = 'w';
 
 
 	struct worldpos	*wpos = &p_ptr->wpos;
@@ -3350,9 +3351,14 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		drainable = FALSE;
 
 	nolite = !((c_ptr->info & (CAVE_LITE | CAVE_GLOW)) ||
-		(r_ptr->flags4 & RF4_BR_DARK) ||
-		(r_ptr->flags6 & RF6_DARKNESS));
+	    (r_ptr->flags4 & RF4_BR_DARK) ||
+	    (r_ptr->flags6 & RF6_DARKNESS));
 	nolite2 = nolite && !(r_ptr->flags9 & RF9_HAS_LITE);
+
+	/* is it a unique we already got kill credit for? */
+	if ((r_ptr->flags1 & RF1_UNIQUE) &&
+	    p_ptr->r_killed[m_ptr->r_idx] == 1)
+		uniq = 'D';
 
 	/* Disturb the player */
 	disturb(Ind, 0, 0);
@@ -3680,7 +3686,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				} else {
 					if (ma_ptr->effect)
 						stun_effect = (ma_ptr->effect/2) + randint(ma_ptr->effect/2);
-	
+
 					sprintf(hit_desc, ma_ptr->desc, m_name);
 //					msg_format(Ind, ma_ptr->desc, m_name);
 				}
@@ -3941,14 +3947,14 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				if (r_ptr->flags1 & RF1_UNIQUE)
 /*				msg_format(Ind, "You %s twist the neck of the sleeping %s for \377e%d \377wdamage.", nolite ? "*CRUELLY*" : "cruelly", r_name_get(m_ptr), k);
 				else msg_format(Ind, "You %s twist the neck of the sleeping %s for \377p%d \377wdamage.", nolite ? "*CRUELLY*" : "cruelly", r_name_get(m_ptr), k);
-*/				msg_format(Ind, "You twist the neck of the sleeping %s for \377e%d \377wdamage.", r_name_get(m_ptr), k);
-				else msg_format(Ind, "You twist the neck of the sleeping %s for \377p%d \377wdamage.", r_name_get(m_ptr), k);
+*/				msg_format(Ind, "\377%cYou twist the neck of the sleeping %s for \377e%d \377%cdamage.", uniq, r_name_get(m_ptr), k, uniq);
+				else msg_format(Ind, "\377%cYou twist the neck of the sleeping %s for \377p%d \377%cdamage.", uniq, r_name_get(m_ptr), k, uniq);
 			   } else {
 				if (r_ptr->flags1 & RF1_UNIQUE)
 /*				msg_format(Ind, "You %s stab the helpless, sleeping %s for \377e%d \377wdamage.", nolite ? "*CRUELLY*" : "cruelly", r_name_get(m_ptr), k);
 				else msg_format(Ind, "You %s stab the helpless, sleeping %s for \377p%d \377wdamage.", nolite ? "*CRUELLY*" : "cruelly", r_name_get(m_ptr), k);
-*/				msg_format(Ind, "You stab the helpless, sleeping %s for \377e%d \377wdamage.", r_name_get(m_ptr), k);
-				else msg_format(Ind, "You stab the helpless, sleeping %s for \377p%d \377wdamage.", r_name_get(m_ptr), k);
+*/				msg_format(Ind, "\377%cYou stab the helpless, sleeping %s for \377e%d \377%cdamage.", uniq, r_name_get(m_ptr), k, uniq);
+				else msg_format(Ind, "\377%cYou stab the helpless, sleeping %s for \377p%d \377%cdamage.", uniq, r_name_get(m_ptr), k, uniq);
 			   }
 			}
 			else if (stab_fleeing) {
@@ -3957,22 +3963,22 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				if (r_ptr->flags1 & RF1_UNIQUE)
 /*				msg_format(Ind, "You landed a %s hit on the fleeing %s's back for \377e%d \377wdamage.", nolite2 ? "terrible" : "bitter", r_name_get(m_ptr), k);
 				else msg_format(Ind, "You landed a %s hit on the fleeing %s's back for \377g%d \377wdamage.", nolite2 ? "terrible" : "bitter", r_name_get(m_ptr), k);
-*/				msg_format(Ind, "You strike the back of %s for \377e%d \377wdamage.", r_name_get(m_ptr), k);
-				else msg_format(Ind, "You strike the back of %s for \377p%d \377wdamage.", r_name_get(m_ptr), k);
+*/				msg_format(Ind, "\377%cYou strike the back of %s for \377e%d \377%cdamage.", uniq, r_name_get(m_ptr), k, uniq);
+				else msg_format(Ind, "\377%cYou strike the back of %s for \377p%d \377%cdamage.", uniq, r_name_get(m_ptr), k, uniq);
 			   } else {
 				if (r_ptr->flags1 & RF1_UNIQUE)
 /*				msg_format(Ind, "You %s the fleeing %s for \377e%d \377wdamage.", nolite2 ? "*backstab*" : "backstab", r_name_get(m_ptr), k);
 				else msg_format(Ind, "You %s the fleeing %s for \377g%d \377wdamage.", nolite2 ? "*backstab*" : "backstab", r_name_get(m_ptr), k);
-*/				msg_format(Ind, "You backstab the fleeing %s for \377e%d \377wdamage.", r_name_get(m_ptr), k);
-				else msg_format(Ind, "You backstab the fleeing %s for \377p%d \377wdamage.", r_name_get(m_ptr), k);
+*/				msg_format(Ind, "\377%cYou backstab the fleeing %s for \377e%d \377%cdamage.", uniq, r_name_get(m_ptr), k, uniq);
+				else msg_format(Ind, "\377%cYou backstab the fleeing %s for \377p%d \377%cdamage.", uniq, r_name_get(m_ptr), k, uniq);
 			   }
 			}
 //			else if ((r_ptr->flags1 & RF1_UNIQUE) && (!martial)) msg_format(Ind, "You hit %s for \377p%d \377wdamage.", m_name, k);
 //			else if (!martial) msg_format(Ind, "You hit %s for \377g%d \377wdamage.", m_name, k);
 			else {
-				if (r_ptr->flags1 & RF1_UNIQUE)
-				msg_format(Ind, "%s for \377e%d \377wdamage.", hit_desc, k);
-				else msg_format(Ind, "%s for \377g%d \377wdamage.", hit_desc, k);
+				if (r_ptr->flags1 & RF1_UNIQUE)//darker
+				msg_format(Ind, "\377%c%s for \377e%d \377%cdamage.", uniq, hit_desc, k, uniq);
+				else msg_format(Ind, "\377%c%s for \377g%d \377%cdamage.", uniq, hit_desc, k, uniq);
 			}
 //less spam for now - C. Blue   if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
