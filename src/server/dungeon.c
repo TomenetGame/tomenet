@@ -7471,7 +7471,6 @@ void timed_shutdown(int k) {
 	s_printf("AUTOSHUTREC: %d minute(s).\n", k);
 }
 
-#ifdef SEPARATE_RECALL_DEPTHS
 int recall_depth_idx(struct worldpos *wpos, player_type *p_ptr) {
 	int j;
 	if (!wpos->wx && !wpos->wy) return (-1);
@@ -7498,4 +7497,3 @@ int get_recall_depth(struct worldpos *wpos, player_type *p_ptr) {
 	if (i == -1) return 0;
 	return p_ptr->max_depth[i];
 }
-#endif
