@@ -2210,6 +2210,7 @@ struct player_type
 	bool auto_untag;
 	bool newbie_hints;
 	bool censor_swearing;
+	bool warn_unique_credit;
 
 	s16b max_panel_rows;
 	s16b max_panel_cols;
@@ -2229,7 +2230,7 @@ struct player_type
 
 	/* Overlay layer used for detection */
 	cave_view_type ovl_info[24][80];	/* Hard-coded 80x24 display */
-	
+
 	s32b mimic_seed;	/* seed for random mimic immunities etc. */
 
 	char died_from[MAX_CHARS];	/* What off-ed him */
@@ -3138,7 +3139,7 @@ typedef struct client_opts client_opts;
 struct client_opts
 {
 	bool rogue_like_commands;
-	bool quick_messages;
+	bool warn_unique_credit;//quick_messages;
 	bool other_query_flag;
 	bool carry_query_flag;
 	bool use_old_target;

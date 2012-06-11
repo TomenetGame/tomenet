@@ -2334,6 +2334,7 @@ static void sync_options(int Ind, bool *options)
 		else if (!tmp) msg_print(Ind, "\374\377yEnabling newbie hints requires you to exit and log in again.");
 	}
 #endif
+	p_ptr->warn_unique_credit = options[1];
 	p_ptr->use_old_target = options[4];
 	p_ptr->always_pickup = options[5];
 	p_ptr->stack_force_notes = options[8];

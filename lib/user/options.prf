@@ -5,7 +5,7 @@
 # Also remember that not all options are used.
 
 X:rogue_like_commands
-Y:quick_messages
+X:warn_unique_credit
 X:other_query_flag
 #X:carry_query_flag
 Y:newbie_hints

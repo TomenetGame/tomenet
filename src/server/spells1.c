@@ -7875,9 +7875,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (!quiet && seen) {
 				if (note) {
 					if (!quiet_dam) {
-						if (r_ptr->flags1 & RF1_UNIQUE)
-							msg_format(Ind, "%^s%s and takes \377e%d \377wdamage.", m_name, note, dam);
-						else
+						if (r_ptr->flags1 & RF1_UNIQUE) {
+							if (p_ptr->r_killed[m_ptr->r_idx] == 1) {
+								msg_format(Ind, "\377D%^s%s and takes \377e%d \377Ddamage.", m_name, note, dam);
+								if (p_ptr->warn_unique_credit) Send_beep(Ind);
+							} else
+								msg_format(Ind, "%^s%s and takes \377e%d \377wdamage.", m_name, note, dam);
+						} else
 							msg_format(Ind, "%^s%s and takes \377g%d \377wdamage.", m_name, note, dam);
 					} else {
 						msg_format(Ind, "%^s%s.", m_name, note);

@@ -2007,6 +2007,7 @@ bool get_check(cptr prompt)
 	/* Prompt for it */
 	prt(buf, 0, 0);
 
+#if 0
 	/* Get an acceptable answer */
 	while (TRUE)
 	{
@@ -2016,6 +2017,10 @@ bool get_check(cptr prompt)
 		if (strchr("YyNn", i)) break;
 		bell();
 	}
+#else
+	/* c_cfg.quick_messages now always on */
+	i = inkey();
+#endif
 
 	/* Erase the prompt */
 	prt("", 0, 0);
@@ -2027,11 +2032,11 @@ bool get_check(cptr prompt)
 	if(!c_quit)
 		Flush_queue();
 
-	/* Normal negation */
-	if ((i != 'Y') && (i != 'y')) return (FALSE);
+	/* More normal */
+	if ((i == 'Y') || (i == 'y')) return (TRUE);
 
 	/* Success */
-	return (TRUE);
+	return (FALSE);
 }
 
 

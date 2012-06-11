@@ -5022,11 +5022,18 @@ bool mon_hit_trap(int m_idx)
 					/* No death */
 					else {
 						if (who > 0 && p_ptr->mon_vis[m_idx]) {
-//						if (p_ptr->mon_vis[m_idx]) {
-							if (r_ptr->flags1 & RF1_UNIQUE)
-								msg_format(who, "%^s sets off a missile trap for \377e%d \377wdamage.", m_name, dam);
-							else
+#if 0 /* redundant with message_pain() below -> double message */
+							if (r_ptr->flags1 & RF1_UNIQUE) {
+								if (Players[who]->r_killed[m_ptr->r_idx] == 1) {
+									msg_format(who, "\377D%^s sets off a missile trap for \377e%d \377Ddamage.", m_name, dam);
+									if (Players[who]->warn_unique_credit) Send_beep(who);
+								} else
+									msg_format(who, "%^s sets off a missile trap for \377e%d \377wdamage.", m_name, dam);
+							} else
 								msg_format(who, "%^s sets off a missile trap for \377g%d \377wdamage.", m_name, dam);
+#else
+							msg_format(who, "%^s sets off a missile trap.", m_name);
+#endif
 
 							message_pain(who, m_idx, dam);
 

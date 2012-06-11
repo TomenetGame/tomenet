@@ -152,7 +152,7 @@ extern s16b m_max;
 extern s16b o_top;
 extern s16b m_top;
 extern bool rogue_like_commands;
-extern bool quick_messages;
+extern bool warn_unique_credit;//quick_messages;
 extern bool other_query_flag;
 extern bool carry_query_flag;
 extern bool always_pickup;

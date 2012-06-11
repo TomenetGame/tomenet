@@ -518,8 +518,13 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.rogue_like_commands,	FALSE,	1,	0, 0, TRUE,
 	"rogue_like_commands",		"Rogue-like commands" },
 
+#if 0
 	{ &c_cfg.quick_messages,	FALSE,	1,	0, 1, TRUE,
 	"quick_messages",		"Activate quick messages (skill etc)" },
+#else
+	{ &c_cfg.warn_unique_credit,	FALSE,	1,	0, 1, TRUE,
+	"warn_unique_credit",		"Beep on attacking a unique you already killed" },
+#endif
 
 	{ &c_cfg.other_query_flag,	FALSE,	2,	0, 2, TRUE,
 	"other_query_flag",		"Prompt for various information (mimic polymorph)" },
@@ -566,7 +571,7 @@ option_type option_info[OPT_MAX] =
 	"use_color",			"Use color if possible (slow)" },
 
 	{ &c_cfg.ring_bell,		TRUE,	1,	0, 15, TRUE,
-	"ring_bell",			"Audible bell on misc warnings and errors" },
+	"ring_bell",			"Beep on misc warnings and errors" },
 
 
 
