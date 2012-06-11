@@ -2666,13 +2666,16 @@ static void do_recall(int Ind, bool bypass)
 			d_ptr = w_ptr->tower;
 
 #ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
-		if (d_ptr && d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev) {
-			msg_print(Ind,"\377rAs you attempt to recall, you are gripped by an uncontrollable fear.");
-			msg_print(Ind, "A tension leaves the air around you...");
-			p_ptr->redraw |= (PR_DEPTH);
-			if (!is_admin(p_ptr)) {
-				set_afraid(Ind, 10 + (d_ptr->baselevel - p_ptr->max_dlv));
-				return;
+		if (d_ptr){
+			if ((d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev) ||
+			    (!d_ptr->type && d_ptr->baselevel <= (p_ptr->lev * 3) / 2 + 7)) {
+				msg_print(Ind,"\377rAs you attempt to recall, you are gripped by an uncontrollable fear.");
+				msg_print(Ind, "A tension leaves the air around you...");
+				p_ptr->redraw |= (PR_DEPTH);
+				if (!is_admin(p_ptr)) {
+					set_afraid(Ind, 10);// + (d_ptr->baselevel - p_ptr->max_dlv));
+					return;
+				}
 			}
 		}
 #endif
@@ -2680,7 +2683,7 @@ static void do_recall(int Ind, bool bypass)
         if (d_ptr && (d_ptr->type == 6) && !p_ptr->total_winner) {
             msg_print(Ind,"\377rAs you attempt to ascend, you are gripped by an uncontrollable fear.");
             if (!is_admin(p_ptr)) {
-                set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
+                set_afraid(Ind, 10);//+(d_ptr->baselevel-p_ptr->max_dlv));
                 return;
             }
         }
@@ -2771,17 +2774,24 @@ static void do_recall(int Ind, bool bypass)
 		/* Messages */
 		if (p_ptr->recall_pos.wz < 0 && w_ptr->flags & WILD_F_DOWN) {
 			dungeon_type *d_ptr = wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx].dungeon;
+#ifdef SEPARATE_RECALL_DEPTHS
+			int d = -get_recall_depth(&p_ptr->recall_pos, p_ptr);
+#endif
 
 			/* check character/dungeon limits */
-			if (p_ptr->max_dlv < w_ptr->dungeon->baselevel - p_ptr->recall_pos.wz)
-				p_ptr->recall_pos.wz = w_ptr->dungeon->baselevel - p_ptr->max_dlv - 1;
 			if (-p_ptr->recall_pos.wz > w_ptr->dungeon->maxdepth)
 				p_ptr->recall_pos.wz = 0 - w_ptr->dungeon->maxdepth;
 			if (p_ptr->inval && -p_ptr->recall_pos.wz > 10)
 				p_ptr->recall_pos.wz = -10;
-
+#ifdef SEPARATE_RECALL_DEPTHS
+			if (d > p_ptr->recall_pos.wz) p_ptr->recall_pos.wz = d;
+			if ( /* ??? */
+#else
+			if (p_ptr->max_dlv < w_ptr->dungeon->baselevel - p_ptr->recall_pos.wz)
+				p_ptr->recall_pos.wz = w_ptr->dungeon->baselevel - p_ptr->max_dlv - 1;
 			//if(d_ptr->baselevel-p_ptr->max_dlv>2){
-			if ((!d_ptr->type && d_ptr->baselevel - p_ptr->max_dlv > 2) ||
+			if ((!d_ptr->type && d_ptr->baselevel - p_ptr->max_dlv > 2) || /* ??? */
+#endif
 			    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev) ||
 			    (d_ptr->flags1 & (DF1_NO_RECALL | DF1_NO_UP | DF1_FORCE_DOWN)) ||
 #ifdef RPG_SERVER /* Prevent recalling into NO_DEATH dungeons */
@@ -2812,17 +2822,24 @@ static void do_recall(int Ind, bool bypass)
 		}
 		else if (p_ptr->recall_pos.wz > 0 && w_ptr->flags & WILD_F_UP) {
 			dungeon_type *d_ptr=wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx].tower;
+#ifdef SEPARATE_RECALL_DEPTHS
+			int d = get_recall_depth(&p_ptr->recall_pos, p_ptr);
+#endif
 
 			/* check character/tower limits */
-			if (p_ptr->max_dlv < w_ptr->tower->baselevel + p_ptr->recall_pos.wz + 1)
-				p_ptr->recall_pos.wz = 0 - w_ptr->tower->baselevel + p_ptr->max_dlv + 1;
 			if (p_ptr->recall_pos.wz > w_ptr->tower->maxdepth)
 				p_ptr->recall_pos.wz = w_ptr->tower->maxdepth;
 			if (p_ptr->inval && -p_ptr->recall_pos.wz > 10)
 				p_ptr->recall_pos.wz = 10;
-
+#ifdef SEPARATE_RECALL_DEPTHS
+			if (d < p_ptr->recall_pos.wz) p_ptr->recall_pos.wz = d;
+			if ( /* ??? */
+#else
+			if (p_ptr->max_dlv < w_ptr->tower->baselevel + p_ptr->recall_pos.wz + 1)
+				p_ptr->recall_pos.wz = 0 - w_ptr->tower->baselevel + p_ptr->max_dlv + 1;
 			//if(d_ptr->baselevel-p_ptr->max_dlv>2){
-			if ((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
+			if ((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) || /* ??? */
+#endif
 			    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev) ||
 			    (d_ptr->flags1 & (DF1_NO_RECALL | DF1_NO_UP | DF1_FORCE_DOWN)) ||
 #ifdef RPG_SERVER /* Prevent recalling into NO_DEATH towers */
@@ -5146,7 +5163,7 @@ int find_player(s32b id)
 		if (Players[i]->conn == NOT_CONNECTED) return 0;
 		if (p_ptr->id == id) return i;
 	}
-	
+
 	/* assume none */
 	return 0;
 }
@@ -5172,7 +5189,7 @@ static void process_player_change_wpos(int Ind)
 	cave_type **zcave;
 	//worldpos twpos;
 	dun_level *l_ptr;
-	int d, j, x, y, startx = 0, starty = 0, m_idx, my, mx, tries, emergency_x, emergency_y;
+	int d, j, x, y, startx = 0, starty = 0, m_idx, my, mx, tries, emergency_x, emergency_y, dlv = getlevel(wpos);
 
 #ifdef ENABLE_RCRAFT
 	/* remove all rune traps of this player */
@@ -5221,9 +5238,14 @@ static void process_player_change_wpos(int Ind)
 		change_mind(Ind, FALSE);
 
 	/* Check "maximum depth" to make sure it's still correct */
-	if (wpos->wz != 0)
-	if ((!p_ptr->ghost) && (getlevel(wpos) > p_ptr->max_dlv))
-		p_ptr->max_dlv = getlevel(wpos);
+	if (wpos->wz != 0 && !p_ptr->ghost) {
+		if (dlv > p_ptr->max_dlv) p_ptr->max_dlv = dlv;
+
+#ifdef SEPARATE_RECALL_DEPTHS
+		j = recall_depth_idx(wpos, p_ptr);
+		if (ABS(wpos->wz) > p_ptr->max_depth[j]) p_ptr->max_depth[j] = ABS(wpos->wz);
+#endif
+	}
 
 	/* Make sure the server doesn't think the player is in a store */
 	if (p_ptr->store_num != -1) {
@@ -7448,3 +7470,32 @@ void timed_shutdown(int k) {
 
 	s_printf("AUTOSHUTREC: %d minute(s).\n", k);
 }
+
+#ifdef SEPARATE_RECALL_DEPTHS
+int recall_depth_idx(struct worldpos *wpos, player_type *p_ptr) {
+	int j;
+	if (!wpos->wx && !wpos->wy) return (-1);
+
+	for (j = 0; j < MAX_D_IDX * 2; j++) {
+		/* it's a dungeon that's new to us - add it! */
+		if (!p_ptr->max_depth_wx[j]) {
+			p_ptr->max_depth_wx[j] = wpos->wx;
+			p_ptr->max_depth_wy[j] = wpos->wy;
+			p_ptr->max_depth_tower[j] = (wpos->wz > 0);
+			return j;
+		}
+		/* check dungeons we've already been to */
+		if (p_ptr->max_depth_wx[j] == wpos->wx &&
+		    p_ptr->max_depth_wy[j] == wpos->wy &&
+		    p_ptr->max_depth_tower[j] == (wpos->wz > 0))
+			return j;
+	}
+	s_printf("WARNING! TOO MANY DUNGEONS!\n");
+	return (-1);
+}
+int get_recall_depth(struct worldpos *wpos, player_type *p_ptr) {
+	int i = recall_depth_idx(wpos, p_ptr);
+	if (i == -1) return 0;
+	return p_ptr->max_depth[i];
+}
+#endif

@@ -110,7 +110,11 @@ void do_cmd_go_up(int Ind)
 		}
 #if 1	/* no need for this anymore - C. Blue */
 	// argh there is.. people exploit the hell out of every possibility they see. - C. Blue
+#ifdef SEPARATE_RECALL_DEPTHS
+		else if ((get_recall_depth(&twpos, p_ptr) + 5 <= ABS(twpos.wz)) && (twpos.wz != 0)) /* player may return to town though! */
+#else
 		else if ((p_ptr->max_dlv + 5 <= getlevel(&twpos)) && (twpos.wz != 0)) /* player may return to town though! */
+#endif
 		{
 			/* anti Ghost-dive */
 			msg_print(Ind, "A mysterious force prevents you from going up.");
@@ -175,12 +179,13 @@ void do_cmd_go_up(int Ind)
 		dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].tower;
 #ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
 		//if(d_ptr->baselevel-p_ptr->max_dlv>2){
-		if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 10) ||
-			(d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev))
+//		if ((!d_ptr->type && d_ptr->baselevel - p_ptr->max_dlv > 10) ||
+		if ((!d_ptr->type && d_ptr->baselevel <= (p_ptr->lev * 3) / 2 + 7) ||
+		    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev))
 		{
 			msg_print(Ind,"\377rAs you attempt to ascend, you are gripped by an uncontrollable fear.");
 			if (!is_admin(p_ptr)) {
-				set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
+				set_afraid(Ind, 10);//+(d_ptr->baselevel-p_ptr->max_dlv));
 				return;
 			}
 		}
@@ -190,7 +195,7 @@ void do_cmd_go_up(int Ind)
 		{
 			msg_print(Ind,"\377rAs you attempt to ascend, you are gripped by an uncontrollable fear.");
 			if (!is_admin(p_ptr)) {
-				set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
+				set_afraid(Ind, 10);//+(d_ptr->baselevel-p_ptr->max_dlv));
 				return;
 			}
 		}
@@ -431,7 +436,7 @@ void do_cmd_go_down(int Ind)
 	/* Make sure he hasn't just changed depth */
 	if (p_ptr->new_level_flag)
 		return;
-	
+
 	/* Can we move ? */
 	if (r_ptr->flags1 & RF1_NEVER_MOVE)
 	{
@@ -488,7 +493,7 @@ void do_cmd_go_down(int Ind)
 
 		/* Check interference */
 		if (interfere(Ind, 20)) return; /* between gate interference chance */
-		
+
 		if (between_effect(Ind, c_ptr)) return;
 		/* not jumped? strange.. */
 	}
@@ -510,7 +515,11 @@ void do_cmd_go_down(int Ind)
 		}
 #if 1	// no need for this anymore - C. Blue
 	// argh there is.. people exploit the hell out of every possibility they see. - C. Blue
+#ifdef SEPARATE_RECALL_DEPTHS
+		else if ((get_recall_depth(&twpos, p_ptr) + 5 <= ABS(twpos.wz)) && (twpos.wz != 0)) /* player may return to town though! */
+#else
 		else if ((p_ptr->max_dlv + 5 <= getlevel(&twpos)) && (twpos.wz != 0)) /* player may return to town though! */
+#endif
 		{
 			/* anti Ghost-dive */
 			msg_print(Ind, "A mysterious force prevents you from going down.");
@@ -529,7 +538,7 @@ void do_cmd_go_down(int Ind)
 			if (!is_admin(p_ptr)) return;
 		}
 	}
-	
+
 	/* Verify maximum depth */
 	if(wpos->wz < 0 && wild_info[wpos->wy][wpos->wx].dungeon->maxdepth == -wpos->wz)
 	{
@@ -583,12 +592,13 @@ void do_cmd_go_down(int Ind)
 		//if(d_ptr->baselevel-p_ptr->max_dlv>2){
 		//if(d_ptr->baselevel-p_ptr->max_dlv>2 ||
 		//		d_info[d_ptr->type].min_plev > p_ptr->lev)
-		if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 10) ||
-			(d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev))
+//		if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 10) ||
+		if ((!d_ptr->type && d_ptr->baselevel <= (p_ptr->lev * 3) / 2 + 7) ||
+		    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev))
 		{
 			msg_print(Ind,"\377rAs you attempt to descend, you are gripped by an uncontrollable fear.");
 			if (!is_admin(p_ptr)) {
-				set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
+				set_afraid(Ind, 10);//+(d_ptr->baselevel-p_ptr->max_dlv));
 				return;
 			}
 		}
@@ -598,7 +608,7 @@ void do_cmd_go_down(int Ind)
 		{
 			msg_print(Ind,"\377rAs you attempt to descend, you are gripped by an uncontrollable fear.");
 			if (!is_admin(p_ptr)) {
-				set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
+				set_afraid(Ind, 10);//+(d_ptr->baselevel-p_ptr->max_dlv));
 				return;
 			}
 		}

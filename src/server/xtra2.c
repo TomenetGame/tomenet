@@ -9173,8 +9173,14 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
 	/* default to the players maximum depth */
 	p_ptr->recall_pos.wx = p_ptr->wpos.wx;
 	p_ptr->recall_pos.wy = p_ptr->wpos.wy;
+#ifdef SEPARATE_RECALL_DEPTHS
+	p_ptr->recall_pos.wz = (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags &
+			WILD_F_DOWN) ? 0 - get_recall_depth(&p_ptr->wpos, p_ptr) : get_recall_depth(&p_ptr->wpos, p_ptr);
+#else
 	p_ptr->recall_pos.wz = (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags &
 			WILD_F_DOWN) ? 0 - p_ptr->max_dlv : p_ptr->max_dlv;
+#endif
+
 #if 0
 	p_ptr->recall_pos.wz = (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags &
 			WILD_F_DOWN) ? 0 - p_ptr->max_dlv :

@@ -10260,7 +10260,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			dam = 0;
 			if (p_ptr->afk) break;
 			if (!p_ptr->word_recall) {
+#ifdef SEPARATE_RECALL_DEPTHS
+				p_ptr->recall_pos.wz = get_recall_depth(&p_ptr->wpos, p_ptr);
+#else
 				p_ptr->recall_pos.wz = p_ptr->max_dlv;
+#endif
 				p_ptr->word_recall = dam;
 				if (fuzzy) msg_print(Ind, "You feel unstable!");
 				else msg_format(Ind, "%^s recalls you!", killer);

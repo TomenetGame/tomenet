@@ -2334,10 +2334,12 @@ static void sync_options(int Ind, bool *options)
 		else if (!tmp) msg_print(Ind, "\374\377yEnabling newbie hints requires you to exit and log in again.");
 	}
 #endif
-	if (is_older_than(&p_ptr->version, 4, 4, 8, 7, 0, 0)) /* which effectively means >= 4.4.9 */
+
+	if (is_older_than(&p_ptr->version, 4, 4, 8, 7, 0, 0)) /* which effectively means < 4.4.9 */
 		p_ptr->warn_unique_credit = FALSE;
 	else
 		p_ptr->warn_unique_credit = options[1];
+
 	p_ptr->use_old_target = options[4];
 	p_ptr->always_pickup = options[5];
 	p_ptr->stack_force_notes = options[8];

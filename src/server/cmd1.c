@@ -3360,7 +3360,6 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	    p_ptr->r_killed[m_ptr->r_idx] == 1) {
 		uniq = 'D';
 		if (p_ptr->warn_unique_credit) uniq_bell = TRUE;
-		s_printf("WUC: %d\n", uniq_bell);
 	}
 
 	/* Disturb the player */

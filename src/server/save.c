@@ -661,6 +661,12 @@ static void wr_extra(int Ind)
 	/* Max Player and Dungeon Levels */
 	wr_s16b(p_ptr->max_plv);
 	wr_s16b(p_ptr->max_dlv);
+        for (i = 0; i < MAX_D_IDX * 2; i++) {
+                wr_byte(p_ptr->max_depth[i]);
+                wr_byte(p_ptr->max_depth_wx[i]);
+                wr_byte(p_ptr->max_depth_wy[i]);
+                wr_byte(p_ptr->max_depth_tower[i] ? 1 : 0);
+        }
 
 	/* Player location */
 	wr_s16b(p_ptr->py);

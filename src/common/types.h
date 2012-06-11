@@ -2917,6 +2917,10 @@ struct player_type
 
 	/* For things like 'Officer' status to add others etc */
 	u32b party_flags, guild_flags;
+
+	/* SEPARATE_RECALL_DEPTHS */
+	byte max_depth[MAX_D_IDX * 2], max_depth_wx[MAX_D_IDX * 2], max_depth_wy[MAX_D_IDX * 2]; /* x2 to account for possible wilderness dungeons */
+	bool max_depth_tower[MAX_D_IDX * 2];
 };
 
 /* For Monk martial arts */

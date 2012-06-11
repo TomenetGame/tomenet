@@ -1439,6 +1439,22 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 
 	rd_s16b(&p_ptr->max_plv);
 	rd_s16b(&p_ptr->max_dlv);
+        if (!older_than(4, 4, 23)) {
+		for (i = 0; i < MAX_D_IDX * 2; i++) {
+			rd_byte(&tmp8u);
+			p_ptr->max_depth[i] = tmp8u;
+			rd_byte(&tmp8u);
+			p_ptr->max_depth_wx[i] = tmp8u;
+			rd_byte(&tmp8u);
+			p_ptr->max_depth_wy[i] = tmp8u;
+			rd_byte(&tmp8u);
+			p_ptr->max_depth_tower[i] = (tmp8u != 0);
+		}
+        } else { /* >.>; could also leave it out ie at zero.. */
+		for (i = 0; i < MAX_D_IDX * 2; i++)
+			p_ptr->max_depth[i] = p_ptr->max_dlv;
+        }
+
 
 	rd_s16b(&p_ptr->py);
 	rd_s16b(&p_ptr->px);

@@ -2535,7 +2535,6 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		clockin(Ind, 1);	/* Set player level */
 		clockin(Ind, 2);	/* Set player party */
 		if (p_ptr->quest_id){
-			int i;
 			for (i = 0; i < 20; i++){
 				if (quests[i].active && quests[i].id == p_ptr->quest_id) break;
 			}
@@ -2753,6 +2752,10 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		/* permanent invulnerability */
 		p_ptr->total_winner = TRUE;
 		p_ptr->max_dlv = 200;
+#ifdef SEPARATE_RECALL_DEPTHS
+		for (i = 0; i < MAX_D_IDX * 2; i++)
+			p_ptr->max_depth[i] = 200;
+#endif
 	}
 	/* Hack -- outfit the player */
 	else {

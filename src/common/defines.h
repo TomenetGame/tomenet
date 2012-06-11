@@ -85,7 +85,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	4
-#define SF_VERSION_PATCH	22
+#define SF_VERSION_PATCH	23
 #define SF_VERSION_EXTRA	0
 
 
@@ -599,6 +599,13 @@
 
 /* upper limit of dodging chance.       [90] */
 #define DODGE_MAX_CHANCE        80
+
+
+/* New, added for the implementation of FINAL_GUARDIAN (finally) - C. Blue
+   Does the player have to actually explore a dungeon to get his recall depth set for it?
+   (If not then he can just get his recall depth from another dungeon and use it here.)
+   NOTE: Make sure 0,0 holds no 'normal' dungeon (only special-sector highlander etc). */
+#define SEPARATE_RECALL_DEPTHS
 
 
 /* Dungeons have minimum player level requirements to enter? */
