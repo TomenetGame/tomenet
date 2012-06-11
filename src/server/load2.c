@@ -1450,9 +1450,9 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 			rd_byte(&tmp8u);
 			p_ptr->max_depth_tower[i] = (tmp8u != 0);
 		}
-        } else { /* >.>; could also leave it out ie at zero.. */
+        } else { /* >.> using max_dlv would result in a crazy _bonus_ for all deeper dungeons */
 		for (i = 0; i < MAX_D_IDX * 2; i++)
-			p_ptr->max_depth[i] = p_ptr->max_dlv;
+			p_ptr->max_depth[i] = 0;//p_ptr->max_dlv;
         }
 
 
