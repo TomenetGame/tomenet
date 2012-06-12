@@ -1515,6 +1515,10 @@ void do_cmd_knowledge_dungeons(int Ind)
 
 	FILE *fff;
 
+#ifdef SEPARATE_RECALL_DEPTHS
+	struct worldpos wpos;
+#endif
+
 	/* Paranoia */
 	// if (!letter) return;
 
@@ -1554,46 +1558,61 @@ void do_cmd_knowledge_dungeons(int Ind)
 
 	fprintf(fff,"\n");
 
-	for (y = 0; y < MAX_WILD_Y; y++)
-	{
-		for (x = 0; x < MAX_WILD_X; x++)
-		{
+	for (y = 0; y < MAX_WILD_Y; y++) {
+		for (x = 0; x < MAX_WILD_X; x++) {
 			if (!((p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] &
-						(1 << ((x + y * MAX_WILD_X) % 8))) || admin))
+			    (1 << ((x + y * MAX_WILD_X) % 8))) || admin))
 				continue;
 
-			if ((d_ptr = wild_info[y][x].tower))
-			{
+			if ((d_ptr = wild_info[y][x].tower)) {
 				i = d_ptr->type;
 				if (!strcmp(d_info[i].name + d_name, "The Shores of Valinor") && !admin) continue;
-				fprintf(fff, " (%3d, %3d) %-30s", x, y,
-						d_info[i].name + d_name);
-				if (admin)
-#if 0
-					fprintf(fff, "  Lev: %3d~%3d  Req: %3d  type: %3d",
-							d_info[i].mindepth, d_info[i].maxdepth,
-							d_info[i].min_plev, i);
-#else	// 0
-					fprintf(fff, "  Lev: %3d~%3d  Req: %3d  type: %3d",
+				fprintf(fff, " \377u(%2d,%2d)\377w %-30s", x, y, d_info[i].name + d_name);
+				if (admin) {
+#ifndef SEPARATE_RECALL_DEPTHS
+					fprintf(fff, "  Lev: %3d-%3d  Req: %3d  type: %3d",
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 //							d_info[i].mindepth, d_info[i].mindepth + d_info[i].maxdepth - 1,
 							d_info[i].min_plev, i);
-#endif	// 0
-
+#else
+					wpos.wx = x;
+					wpos.wy = y;
+					wpos.wz = 1;
+					fprintf(fff, "  L %3d-%3d  R %3d  t %3d  Max %6dft",
+							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+							d_info[i].min_plev, i, 50 * get_recall_depth(&wpos, p_ptr));
+				} else {
+					wpos.wx = x; wpos.wy = y; wpos.wz = 1;
+					fprintf(fff, "  \377sLev\377w %3d - %3d\377s,  Recall depth \377w%6dft",
+							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+							50 * get_recall_depth(&wpos, p_ptr));
+#endif
+				}
 				fprintf(fff,"\n");
 			}
-			if ((d_ptr = wild_info[y][x].dungeon))
-			{
+			if ((d_ptr = wild_info[y][x].dungeon)) {
 				i = d_ptr->type;
 				if (!strcmp(d_info[i].name + d_name, "The Shores of Valinor") && !admin) continue;
-				fprintf(fff, " (%3d, %3d) %-30s", x, y,
-						d_info[i].name + d_name);
-				if (admin)
-					fprintf(fff, "  Lev: %3d~%3d  Req: %3d  type: %3d",
+				fprintf(fff, " \377u(%2d,%2d)\377w %-30s", x, y, d_info[i].name + d_name);
+				if (admin) {
+#ifndef SEPARATE_RECALL_DEPTHS
+					fprintf(fff, "  Lev: %3d-%3d  Req: %3d  type: %3d",
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 //							d_info[i].mindepth, d_info[i].mindepth + d_info[i].maxdepth - 1,
 							d_info[i].min_plev, i);
-
+#else
+					wpos.wx = x;
+					wpos.wy = y;
+					wpos.wz = -1;
+					fprintf(fff, "  L %3d-%3d  R %3d  t %3d  Max %6dft",
+							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+							d_info[i].min_plev, i, -50 * get_recall_depth(&wpos, p_ptr));
+				} else {
+					fprintf(fff, "  \377sLev\377w %3d - %3d\377s,  Recall depth \377w%6dft",
+							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+							-50 * get_recall_depth(&wpos, p_ptr));
+#endif
+				}
 				fprintf(fff,"\n");
 			}
 		}

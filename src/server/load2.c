@@ -1450,26 +1450,32 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 			rd_byte(&tmp8u);
 			p_ptr->max_depth_tower[i] = (tmp8u != 0);
 		}
-        } else { /* >.> using max_dlv would result in a crazy _bonus_ for all deeper dungeons */
+        } else {
 #if 0
+		 /* >.> using max_dlv would result in a crazy _bonus_ for all deeper dungeons */
 		for (i = 0; i < MAX_D_IDX * 2; i++)
 			p_ptr->max_depth[i] = 0;//p_ptr->max_dlv;
 #else
+		/* attempt a fair translation */
 		struct worldpos wpos;
 		int x, y;
 		dungeon_type *d_ptr;
 
 		for (x = 0; x < 64; x++) for (y = 0; y < 64; y++) {
-                        wpos.wx = x; wpos.wy = y; wpos.wz = 0;
+                        wpos.wx = x; wpos.wy = y;
 			if ((d_ptr = wild_info[y][x].tower)) {
 				wpos.wz = 1;
 				j = recall_depth_idx(&wpos, p_ptr);
-				p_ptr->max_depth[j] = p_ptr->max_dlv - d_ptr->baselevel + 1;
+				i = p_ptr->max_dlv - d_ptr->baselevel + 1;
+				if (i > d_ptr->maxdepth) i = d_ptr->maxdepth;
+				p_ptr->max_depth[j] = i;
 			}
-			else if ((d_ptr = wild_info[y][x].dungeon)) {
+			if ((d_ptr = wild_info[y][x].dungeon)) {
 				wpos.wz = -1;
 				j = recall_depth_idx(&wpos, p_ptr);
-				p_ptr->max_depth[j] = p_ptr->max_dlv - d_ptr->baselevel + 1;
+				i = p_ptr->max_dlv - d_ptr->baselevel + 1;
+				if (i > d_ptr->maxdepth) i = d_ptr->maxdepth;
+				p_ptr->max_depth[j] = i;
 			}
 		}
 #endif
@@ -1623,7 +1629,7 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 
 	/* Future use */
 	strip_bytes(43);
-	
+
 	/* Toggle for possible automatic save-game updates
 	   (done via script login-hook, eg custom.lua) - C. Blue */
 	rd_byte(&p_ptr->updated_savegame);
@@ -2727,10 +2733,10 @@ errr rd_server_savefile()
 	rd_s32b(&player_id);
 
 	rd_s32b(&turn);
-	
+
 	if (!s_older_than(4, 3, 18)) rd_notes();
 	if (!s_older_than(4, 3, 6)) rd_bbs();
-	
+
 	if (!s_older_than(4, 3, 13)) rd_byte(&season);
 	if (!s_older_than(4, 3, 14)) rd_byte(&weather_frequency);
 
