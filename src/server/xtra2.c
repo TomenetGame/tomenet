@@ -5533,6 +5533,97 @@ if (cfg.unikill_format) {
 #endif
 
 			drop_near(qq_ptr, -1, wpos, y, x);
+		/* Hack - the Dragonriders give some firestone */
+		} else if (r_ptr->flags3 & RF3_DRAGONRIDER) {
+			/* Get local object */
+			qq_ptr = &forge;
+
+			/* Prepare to make some Firestone */
+			if (magik(70)) invcopy(qq_ptr, lookup_kind(TV_FIRESTONE, SV_FIRESTONE));
+			else invcopy(qq_ptr, lookup_kind(TV_FIRESTONE, SV_FIRE_SMALL));
+			qq_ptr->number = (byte)rand_range(1,12);
+
+			/* Drop it in the dungeon */
+			drop_near(qq_ptr, -1, wpos, y, x);
+		/* PernAngband additions */
+		/* Mega^2-hack -- destroying the Stormbringer gives it us! */
+		} else if (strstr((r_name + r_ptr->name),"Stormbringer")) {
+			/* Get local object */
+			qq_ptr = &forge;
+
+			/* Prepare to make the Stormbringer */
+			invcopy(qq_ptr, lookup_kind(TV_SWORD, SV_BLADE_OF_CHAOS));
+
+			/* Megahack -- specify the ego */
+	    		qq_ptr->name2 = EGO_STORMBRINGER;
+
+			/* Piece together a 32-bit random seed */
+			qq_ptr->name3 = rand_int(0xFFFF) << 16;
+			qq_ptr->name3 += rand_int(0xFFFF);
+
+			apply_magic(wpos, qq_ptr, -1, FALSE, FALSE, FALSE, FALSE, FALSE);
+			qq_ptr->level = 0;
+
+			qq_ptr->ident |= ID_CURSED;
+
+			/* hack for a good result */
+			qq_ptr->to_h = 17 + rand_int(14);
+			qq_ptr->to_d = 17 + rand_int(14);
+
+			/* Drop it in the dungeon */
+			drop_near(qq_ptr, -1, wpos, y, x);
+#if 0 /* currently no such book */
+	        /* Raal's Tomes of Destruction drop a Raal's Tome of Destruction */
+//	        else if ((strstr((r_name + r_ptr->name),"Raal's Tome of Destruction")) && (rand_int(100) < 20))
+        	} else if ((strstr((r_name + r_ptr->name),"Raal's Tome of Destruction")) && (magik(1))) {
+			/* Get local object */
+			qq_ptr = &forge;
+
+            		/* Prepare to make a Raal's Tome of Destruction */
+//                	invcopy(qq_ptr, lookup_kind(TV_MAGIC_BOOK, 8));
+			/* Make a Tome of the Hellflame (Udun) */
+	                invcopy(qq_ptr, lookup_kind(TV_BOOK, 11));
+
+			/* Drop it in the dungeon */
+            		drop_near(qq_ptr, -1, wpos, y, x);
+		/* dungeon boss, but drops multiple items */
+#endif
+		} else if (strstr((r_name + r_ptr->name), "Zu-Aon, The Cosmic Border Guard")) {
+#if 0
+			for (i = 1; i <= NumPlayers; i++) {
+				if (inarea(&Players[i]->wpos, &p_ptr->wpos)
+				    && !is_admin(Players[i]))
+					l_printf("%s \\{U%s made it through Nether Realm.\n", showdate(), Players[i]->name);
+			}
+#endif
+
+			/* Get local object */
+			qq_ptr = &forge;
+			object_wipe(qq_ptr);
+			/* Drop Scroll Of Artifact Creation if Ring Of Phasing already exists */
+			invcopy(qq_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ARTIFACT_CREATION));
+			qq_ptr->number = 1; /*(a_info[a_idx].cur_num == 0)?1:2;*/
+			qq_ptr->note = local_quark;
+			qq_ptr->note_utag = strlen(quark_str(local_quark));
+			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
+			/* Drop it in the dungeon */
+			drop_near(qq_ptr, -1, wpos, y, x);
+
+			/* Prepare a second reward */
+			object_wipe(qq_ptr);
+			/* Drop Potions Of Learning along with loot */
+			invcopy(qq_ptr, lookup_kind(TV_POTION2, SV_POTION2_LEARNING));
+			qq_ptr->number = (a_info[203].cur_num == 0)?1:2;
+			qq_ptr->note = local_quark;
+			qq_ptr->note_utag = strlen(quark_str(local_quark));
+			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
+			/* Drop it in the dungeon */
+#ifdef PRE_OWN_DROP_CHOSEN
+			qq_ptr->level = 0;
+			qq_ptr->owner = p_ptr->id;
+			qq_ptr->mode = p_ptr->mode;
+#endif
+			drop_near(qq_ptr, -1, wpos, y, x);
 		} else if (!pvp) {
 			a_idx = 0;
 			chance = 0;
@@ -5547,9 +5638,6 @@ if (cfg.unikill_format) {
 			} else if (strstr((r_name + r_ptr->name), "Hagen, son of Alberich")) { /* not in the game */
 				a_idx = ART_NIMLOTH;
 				chance = 66;
-			} else if (strstr((r_name + r_ptr->name), "Muar, the Balrog")) { /* not in the game */
-				a_idx = ART_CALRIS;
-				chance = 60;
 			} else if (strstr((r_name + r_ptr->name), "Gothmog, the High Captain of Balrogs")) {
 				a_idx = ART_GOTHMOG;
 				chance = 80;
@@ -5560,43 +5648,16 @@ if (cfg.unikill_format) {
 			} else if (strstr((r_name + r_ptr->name), "Kronos, Lord of the Titans")) {
 				a_idx = ART_KRONOS;
 				chance = 80;
-			/* dungeon boss, but drops multiple items */
-			} else if (strstr((r_name + r_ptr->name), "Zu-Aon, The Cosmic Border Guard")) {
-#if 0
-				for (i = 1; i <= NumPlayers; i++) {
-					if (inarea(&Players[i]->wpos, &p_ptr->wpos)
-					    && !is_admin(Players[i]))
-						l_printf("%s \\{U%s made it through Nether Realm.\n", showdate(), Players[i]->name);
-				}
-#endif
+			/* Wyrms have a chance of dropping The Amulet of Grom, the Wyrm Hunter: -C. Blue */
+			} else if ((r_ptr->flags3 & RF3_DRAGON) & !pvp)	{
+				a_idx = ART_AMUGROM;
+				chance = 101;
 
-				/* Get local object */
-				qq_ptr = &forge;
-				object_wipe(qq_ptr);
-				/* Drop Scroll Of Artifact Creation if Ring Of Phasing already exists */
-				invcopy(qq_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ARTIFACT_CREATION));
-				qq_ptr->number = 1; /*(a_info[a_idx].cur_num == 0)?1:2;*/
-				qq_ptr->note = local_quark;
-				qq_ptr->note_utag = strlen(quark_str(local_quark));
-				apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
-				/* Drop it in the dungeon */
-				drop_near(qq_ptr, -1, wpos, y, x);
-
-				/* Prepare a second reward */
-				object_wipe(qq_ptr);
-				/* Drop Potions Of Learning along with loot */
-				invcopy(qq_ptr, lookup_kind(TV_POTION2, SV_POTION2_LEARNING));
-				qq_ptr->number = (a_info[203].cur_num == 0)?1:2;
-				qq_ptr->note = local_quark;
-				qq_ptr->note_utag = strlen(quark_str(local_quark));
-				apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
-				/* Drop it in the dungeon */
-#ifdef PRE_OWN_DROP_CHOSEN
-				qq_ptr->level = 0;
-				qq_ptr->owner = p_ptr->id;
-				qq_ptr->mode = p_ptr->mode;
-#endif
-				drop_near(qq_ptr, -1, wpos, y, x);
+				/* only powerful wyrms may have a chance of dropping it */
+				if (m_ptr->maxhp < 3500) a_idx = 0;/* Dracolisk/Dracolich have 3500, Wyrms start at 4000 */
+				else if ((m_ptr->maxhp < 6000) && rand_int(80)) a_idx = 0;/* strong wyrms at 6000+ */
+				else if ((m_ptr->maxhp >= 6000) && (m_ptr->maxhp < 10000) && rand_int(60)) a_idx = 0;
+				else if ((m_ptr->maxhp >= 10000) && rand_int(40)) a_idx = 0;/* gwop ^^ */
 			}
 
 #ifdef SEMI_PROMISED_ARTS_MODIFIER
@@ -5659,113 +5720,6 @@ if (cfg.unikill_format) {
 		}
 	}
 
-	/* Hack - the Dragonriders give some firestone */
-	else if (r_ptr->flags3 & RF3_DRAGONRIDER)
-	{
-		/* Get local object */
-		qq_ptr = &forge;
-
-		/* Prepare to make some Firestone */
-		if (magik(70)) invcopy(qq_ptr, lookup_kind(TV_FIRESTONE, SV_FIRESTONE));
-		else invcopy(qq_ptr, lookup_kind(TV_FIRESTONE, SV_FIRE_SMALL));
-		qq_ptr->number = (byte)rand_range(1,12);
-
-		/* Drop it in the dungeon */
-		drop_near(qq_ptr, -1, wpos, y, x);
-	}
-
-	/* PernAngband additions */
-	/* Mega^2-hack -- destroying the Stormbringer gives it us! */
-	else if (strstr((r_name + r_ptr->name),"Stormbringer"))
-	{
-		/* Get local object */
-		qq_ptr = &forge;
-
-		/* Prepare to make the Stormbringer */
-		invcopy(qq_ptr, lookup_kind(TV_SWORD, SV_BLADE_OF_CHAOS));
-
-		/* Megahack -- specify the ego */
-		qq_ptr->name2 = EGO_STORMBRINGER;
-
-		/* Piece together a 32-bit random seed */
-		qq_ptr->name3 = rand_int(0xFFFF) << 16;
-		qq_ptr->name3 += rand_int(0xFFFF);
-
-		apply_magic(wpos, qq_ptr, -1, FALSE, FALSE, FALSE, FALSE, FALSE);
-		qq_ptr->level = 0;
-
-		qq_ptr->ident |= ID_CURSED;
-
-		/* hack for a good result */
-		qq_ptr->to_h = 17 + rand_int(14);
-		qq_ptr->to_d = 17 + rand_int(14);
-
-		/* Drop it in the dungeon */
-		drop_near(qq_ptr, -1, wpos, y, x);
-	}
-        /* Raal's Tomes of Destruction drop a Raal's Tome of Destruction */
-//        else if ((strstr((r_name + r_ptr->name),"Raal's Tome of Destruction")) && (rand_int(100) < 20))
-        else if ((strstr((r_name + r_ptr->name),"Raal's Tome of Destruction")) && (magik(1)))
-	{
-		/* Get local object */
-		qq_ptr = &forge;
-
-                /* Prepare to make a Raal's Tome of Destruction */
-//                invcopy(qq_ptr, lookup_kind(TV_MAGIC_BOOK, 8));
-		/* Make a Tome of the Hellflame (Udun) */
-                invcopy(qq_ptr, lookup_kind(TV_BOOK, 11));
-
-		/* Drop it in the dungeon */
-                drop_near(qq_ptr, -1, wpos, y, x);
-	}
-
-	/* Wyrms have a chance of dropping The Amulet of Grom, the Wyrm Hunter: -C. Blue */
-	else if ((r_ptr->flags3 & RF3_DRAGON) & !pvp)
-	{
-		bool pfft = TRUE;
-		a_idx = ART_AMUGROM;
-		a_ptr = &a_info[a_idx];
-
-		/* don't allow duplicates */
-		if (a_ptr->cur_num) pfft = FALSE;
-		/* only powerful wyrms may have a chance of dropping it */
-		if (m_ptr->maxhp < 3500) pfft = FALSE;/* Dracolisk/Dracolich have 3500, Wyrms start at 4000 */
-		else if ((m_ptr->maxhp < 6000) && rand_int(80)) pfft = FALSE;/* strong wyrms at 6000+ */
-		else if ((m_ptr->maxhp >= 6000) && (m_ptr->maxhp < 10000) && rand_int(60)) pfft = FALSE;
-		else if ((m_ptr->maxhp >= 10000) && rand_int(40)) pfft = FALSE;/* gwop ^^ */
-#if 1
-		if (pfft && !cfg.arts_disabled) {
-			a_idx = ART_AMUGROM;
-			a_ptr = &a_info[a_idx];
-            		chance = 0;
-                        I_kind = 0;
-
-			/* Get local object */
-			qq_ptr = &forge;
-			/* Wipe the object */
-			object_wipe(qq_ptr);
-
-			/* Acquire the "kind" index */
-			I_kind = lookup_kind(a_ptr->tval, a_ptr->sval);
-			/* Create the artifact */
-			invcopy(qq_ptr, I_kind);
-			/* Save the name */
-			qq_ptr->name1 = a_idx;
-
-			/* Mega-Hack -- Actually create the amulet of Grom */
-			apply_magic(wpos, qq_ptr, -2, TRUE, TRUE, TRUE, FALSE, TRUE);
-
-			handle_art_inum(a_idx);
-			/* Drop the artifact from heaven */
-#ifdef PRE_OWN_DROP_CHOSEN
-			qq_ptr->level = 0;
-			qq_ptr->owner = p_ptr->id;
-			qq_ptr->mode = p_ptr->mode;
-#endif
-			drop_near(qq_ptr, -1, wpos, y, x);
-		}
-#endif
-	}
 
 
 //        if((!force_coin)&&(randint(100)<50)) place_corpse(m_ptr);
