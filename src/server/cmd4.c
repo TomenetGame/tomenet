@@ -1634,13 +1634,15 @@ void do_cmd_knowledge_dungeons(int Ind)
 		    (1 << ((x + y * MAX_WILD_X) % 8))) || admin)
 		{
 			/* Describe the town locations */
-			fprintf(fff, " (%3d, %3d) : %-15s", x, y,
-					town_profile[town[i].type].name);
 			if (admin)
-				fprintf(fff, "  Lev: %d", town[i].baselevel);
+				fprintf(fff, " \377u(%2d,%2d)\377w %-30s  Lev: %3d", x, y,
+				    town_profile[town[i].type].name, town[i].baselevel);
+			else
+				fprintf(fff, " \377u(%2d,%2d)\377w %-30s", x, y,
+				    town_profile[town[i].type].name);
 
 			if (p_ptr->town_x == x && p_ptr->town_y == y)
-				fprintf(fff, "  (default recall point)");
+				fprintf(fff, "  \377U(default recall point)");
 
 			fprintf(fff,"\n");
 		}
