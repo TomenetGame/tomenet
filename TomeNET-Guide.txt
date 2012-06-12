@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 10. June 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 12. June 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10238,6 +10238,7 @@ Priest          18/50   10      3               2
 
 Rogue           15      18/10   2               2
                 18/10   18/50   3               3
+                18/20   18/10   3               3
 
 Mimic           similar to priest, also:
                 18/30   18/10   3               2
