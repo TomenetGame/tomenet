@@ -2337,10 +2337,8 @@ static void sync_options(int Ind, bool *options)
 
 	if (is_older_than(&p_ptr->version, 4, 4, 8, 7, 0, 0)) /* which effectively means < 4.4.9 */ {
 		p_ptr->warn_unique_credit = FALSE;
-s_printf("WUC: '%s' false\n", p_ptr->name);
 	} else {
 		p_ptr->warn_unique_credit = options[1];
-s_printf("WUC: '%s' true\n", p_ptr->name);
 	}
 
 	p_ptr->use_old_target = options[4];
