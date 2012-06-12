@@ -7625,7 +7625,8 @@ D:It is a very unstable, strange pulsing mound of flesh.
 N:481:Shelob, Spider of Darkness
 G:S:D
 I:120:35d100:30:120:80
-W:55:3:1400:27000
+#W:55:3:1400:27000 for FINAL_GUARDIAN:
+W:55:2:1400:27000
 E:0:1:0:2:1:8
 O:20:30:40:0
 B:CLAW:POISON:5d6
@@ -14511,7 +14512,8 @@ D:spells.
 N:819:The Shadow of Dol Guldur
 G:p:v
 I:130:82d100:60:100:10
-W:75:3:1900:40000
+#W:75:3:1900:40000 for FINAL_GUARDIAN:
+W:75:1:1900:40000
 E:1:1:1:2:1:1
 O:0:0:100:0
 B:HIT:UN_BONUS:6d8
@@ -15751,7 +15753,8 @@ N:872:The Balrog of Moria
 G:U:v
 I:130:30d100:20:100:40
 #level should be at least 50 (lesser balrog is 49) and up to 80 maybe.
-W:50:3:13000:30000
+W:50:3:13000:30000 for FINAL_GUARDIAN:
+W:50:1:13000:30000
 E:1:1:1:2:1:1
 O:0:50:50:0
 B:HIT:FIRE:6d12
@@ -18698,7 +18701,8 @@ D:pike in its hands.
 N:1035:Golgarach, the Living Rock
 G:#:W
 I:120:50d30:20:100:40
-W:45:2:0:1500
+#W:45:2:0:1500 for FINAL_GUARDIAN:
+W:45:1:0:1500
 E:0:0:0:0:0:0
 O:60:0:40:0
 B:HIT:HURT:4d6
