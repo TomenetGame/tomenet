@@ -2881,8 +2881,12 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 			/* No live spawns after initial spawn allowed */
 			if (!cave_set_quietly) return(FALSE);
 
+#if 0 /* FINAL_GUARDIAN now */
 			/* Special hack - level is empty except for Zu-Aon */
 			r_idx = 1097;
+#else
+			if (r_idx != 1097) return (FALSE);
+#endif
 		}
 
 		/* Valinor - No monster spawn, except for.. */
@@ -2914,8 +2918,10 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 		if (((r_idx == 1068) || (r_idx == 1080) || (r_idx == 1083) || (r_idx == 1084)) &&
 		    (dlev < 166)) return (FALSE);
 
+#if 0 /* FINAL_GUARDIAN now */
 		/* Zu-Aon guards the bottom of the Nether Realm now */
 		if ((r_idx == 1097) && (dlev != (166 + 30))) return (FALSE);
+#endif
 
 		/* Nether Guard isn't a unique but there's only 1 guard per level */
 		if (r_idx == 1068) {
