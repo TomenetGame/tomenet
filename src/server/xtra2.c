@@ -5201,8 +5201,6 @@ if (cfg.unikill_format) {
 				qq_ptr->to_h = a_ptr->to_h;
 				qq_ptr->to_d = a_ptr->to_d;
 				qq_ptr->weight = a_ptr->weight;
-				qq_ptr->note = local_quark;
-				qq_ptr->note_utag = strlen(quark_str(local_quark));
 
 				handle_art_inum(a_idx);
 
@@ -5211,6 +5209,9 @@ if (cfg.unikill_format) {
 
 				/* Complete generation, especially level requirements check */
 				apply_magic(wpos, qq_ptr, -2, FALSE, TRUE, FALSE, FALSE, TRUE);
+
+				qq_ptr->note = local_quark;
+				qq_ptr->note_utag = strlen(quark_str(local_quark));
 
 				/* Little sanity hack for level requirements
 				   of the Ring of Phasing - would be 92 otherwise */
@@ -5237,6 +5238,9 @@ if (cfg.unikill_format) {
 
 			/* Complete generation, especially level requirements check */
 			apply_magic(wpos, qq_ptr, -2, FALSE, TRUE, FALSE, FALSE, TRUE);
+
+			qq_ptr->note = local_quark;
+			qq_ptr->note_utag = strlen(quark_str(local_quark));
 
 			/* Drop the objectt from heaven */
 #ifdef PRE_OWN_DROP_CHOSEN
@@ -5648,6 +5652,13 @@ if (cfg.unikill_format) {
 			} else if (strstr((r_name + r_ptr->name), "Kronos, Lord of the Titans")) {
 				a_idx = ART_KRONOS;
 				chance = 80;
+			/* GWoP might drop Razorback */
+			} else if (m_ptr->r_idx == 847) { /* Great Wyrm of Power */
+				if (!rand_int(5)) {
+					/* todo: compare drop chance to bladeturner somehow.. */
+					a_idx = ART_RAZORBACK;
+					chance = 1;
+				}
 			/* Wyrms have a chance of dropping The Amulet of Grom, the Wyrm Hunter: -C. Blue */
 			} else if ((r_ptr->flags3 & RF3_DRAGON)) {
 				a_idx = ART_AMUGROM;
@@ -5660,7 +5671,10 @@ if (cfg.unikill_format) {
 			}
 
 #ifdef SEMI_PROMISED_ARTS_MODIFIER
-			if (chance < 101) chance = chance * SEMI_PROMISED_ARTS_MODIFIER / 100;
+			if (chance < 100 / SEMI_PROMISED_ARTS_MODIFIER) /* never turn into zero */
+				chance = 1;
+			else if (chance < 101) /* 101 = always drops */
+				chance = chance * SEMI_PROMISED_ARTS_MODIFIER / 100;
 #endif
 
 //			if ((a_idx > 0) && ((randint(99)<chance) || (wizard)))
