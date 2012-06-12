@@ -2932,7 +2932,7 @@ cptr item_activation(object_type *o_ptr)
 		{
 			return "heal and cure black breath every 200 turns";
 		}
-		case ART_MARDA:
+		case ART_MARDRA:
 		{
 			return "summon a dragonrider every 1000 turns";
 		}

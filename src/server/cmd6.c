@@ -6149,7 +6149,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			}
 
 #if 0	// needing pet code
-			case ART_MARDA:
+			case ART_MARDRA:
 			{
 				if (randint(3) == 1)
 				{

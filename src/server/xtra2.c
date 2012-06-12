@@ -74,9 +74,7 @@
 /*
  * Modifier of semi-promised artifact drops, in percent.
  * It can happen that the quickest player will gather most of those
- * artifact; this can be used to defuse it somewhat.
- * C. Blue: Better leave this commented out, otherwise _granted_
- * drops won't be granted anymore.
+ * artifact; this can be used to defuse it somewhat. Won't affect '101%' chances.
  */
 // #define SEMI_PROMISED_ARTS_MODIFIER	50
 
@@ -5540,34 +5538,30 @@ if (cfg.unikill_format) {
 			chance = 0;
 			I_kind = 0;
 
-			/* chances should be reduced, so that the quickest
-			 * won't benefit too much?	- Jir - */
-			if (strstr((r_name + r_ptr->name),"T'ron, the Rebel Dragonrider")) {
-				a_idx = ART_TRON;
-				chance = 40;
-			} else if (strstr((r_name + r_ptr->name),"Mardra, rider of the Gold Loranth")) {
-				a_idx = ART_MARDA;
+			if (strstr((r_name + r_ptr->name)," Mardra, rider of the Gold Loranth")) {
+				a_idx = ART_MARDRA;
 				chance = 55;
-			} else if (strstr((r_name + r_ptr->name),"Saruman of Many Colours")) {
+			} else if (strstr((r_name + r_ptr->name), "Saruman of Many Colours")) {
 				a_idx = ART_ELENDIL;
 				chance = 30;
-			} else if (strstr((r_name + r_ptr->name),"Hagen, son of Alberich")) { /* not in the game */
+			} else if (strstr((r_name + r_ptr->name), "Hagen, son of Alberich")) { /* not in the game */
 				a_idx = ART_NIMLOTH;
 				chance = 66;
-			} else if (strstr((r_name + r_ptr->name),"Muar, the Balrog")) { /* not in the game */
+			} else if (strstr((r_name + r_ptr->name), "Muar, the Balrog")) { /* not in the game */
 				a_idx = ART_CALRIS;
 				chance = 60;
-			} else if (strstr((r_name + r_ptr->name),"Gothmog, the High Captain of Balrogs")) {
+			} else if (strstr((r_name + r_ptr->name), "Gothmog, the High Captain of Balrogs")) {
 				a_idx = ART_GOTHMOG;
 				chance = 80;
-			} else if (strstr((r_name + r_ptr->name),"Eol, the Dark Elf")) {
+			} else if (strstr((r_name + r_ptr->name), "Eol, the Dark Elf")) {
 				if (magik(25)) a_idx = ART_ANGUIREL;
 				else a_idx = ART_EOL;
 				chance = 65;
-			} else if (strstr((r_name + r_ptr->name),"Kronos, Lord of the Titans")) {
+			} else if (strstr((r_name + r_ptr->name), "Kronos, Lord of the Titans")) {
 				a_idx = ART_KRONOS;
 				chance = 80;
-			} else if (strstr((r_name + r_ptr->name),"Zu-Aon, The Cosmic Border Guard")) {
+			/* dungeon boss, but drops multiple items */
+			} else if (strstr((r_name + r_ptr->name), "Zu-Aon, The Cosmic Border Guard")) {
 #if 0
 				for (i = 1; i <= NumPlayers; i++) {
 					if (inarea(&Players[i]->wpos, &p_ptr->wpos)
@@ -5603,17 +5597,11 @@ if (cfg.unikill_format) {
 				qq_ptr->mode = p_ptr->mode;
 #endif
 				drop_near(qq_ptr, -1, wpos, y, x);
-
-				if (a_info[a_idx].cur_num == 0) {
-					/* Generate Ring Of Phasing -w00t ;) */
-					a_idx = 203;
-					chance = 100;
-				}
-		}
+			}
 
 #ifdef SEMI_PROMISED_ARTS_MODIFIER
-			chance = chance * SEMI_PROMISED_ARTS_MODIFIER / 100;
-#endif	// SEMI_PROMISED_ARTS_MODIFIER
+			if (chance < 101) chance = chance * SEMI_PROMISED_ARTS_MODIFIER / 100;
+#endif
 
 //			if ((a_idx > 0) && ((randint(99)<chance) || (wizard)))
 			if ((a_idx > 0) && magik(chance) && !cfg.arts_disabled &&

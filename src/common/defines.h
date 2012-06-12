@@ -1840,7 +1840,7 @@
 #define ART_CASPANION           25
 
 /* DragonRider flying suit */
-#define ART_MARDA               26
+#define ART_MARDRA              26
 #define ART_TRON                27
 
 /* Soft Armour */
