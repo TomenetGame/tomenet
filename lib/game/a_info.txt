@@ -262,9 +262,10 @@ N:16:'Razorback'
 I:38:6:0
 W:75:9:400:2000000
 P:40:2d4:-4:0:30
-F:FREE_ACT | IM_ELEC | IM_ACID | RES_FEAR | 
-F:IM_FIRE | IM_COLD | RES_POIS | RES_LITE | RES_DARK | 
-F:LITE1 | SEE_INVIS | ESP_DRAGON | ACTIVATE
+F:IM_ELEC | IM_ACID | IM_FIRE | IM_COLD | RES_POIS |
+F:RES_FEAR | RES_LITE | SH_ELEC | BRAND_ELEC |
+F:LITE1 | ESP_DRAGON | ACTIVATE
+#F:FREE_ACT | RES_DARK | SEE_INVIS
 #F:SPECIAL_GENE
 D:A massive suit of heavy dragon scales deeply saturated with many colors.  
 D:It throbs with angry energies, and you feel the raw elemental might of  
