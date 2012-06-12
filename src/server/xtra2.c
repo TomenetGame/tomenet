@@ -5652,13 +5652,6 @@ if (cfg.unikill_format) {
 			} else if (strstr((r_name + r_ptr->name), "Kronos, Lord of the Titans")) {
 				a_idx = ART_KRONOS;
 				chance = 80;
-			/* GWoP might drop Razorback */
-			} else if (m_ptr->r_idx == 847) { /* Great Wyrm of Power */
-				if (!rand_int(5)) {
-					/* todo: compare drop chance to bladeturner somehow.. */
-					a_idx = ART_RAZORBACK;
-					chance = 1;
-				}
 			/* Wyrms have a chance of dropping The Amulet of Grom, the Wyrm Hunter: -C. Blue */
 			} else if ((r_ptr->flags3 & RF3_DRAGON)) {
 				a_idx = ART_AMUGROM;
