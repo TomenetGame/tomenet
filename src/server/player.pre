@@ -537,6 +537,7 @@ struct player_type
 	bool taciturn_messages;
 	bool last_words;
 	/* bool speak_unique; */
+	bool warn_unique_credit;
 
 	s16b max_panel_rows;
 	s16b max_panel_cols;
