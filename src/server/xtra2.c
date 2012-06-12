@@ -5649,15 +5649,14 @@ if (cfg.unikill_format) {
 				a_idx = ART_KRONOS;
 				chance = 80;
 			/* Wyrms have a chance of dropping The Amulet of Grom, the Wyrm Hunter: -C. Blue */
-			} else if ((r_ptr->flags3 & RF3_DRAGON) & !pvp)	{
+			} else if ((r_ptr->flags3 & RF3_DRAGON)) {
 				a_idx = ART_AMUGROM;
 				chance = 101;
 
 				/* only powerful wyrms may have a chance of dropping it */
-				if (m_ptr->maxhp < 3500) a_idx = 0;/* Dracolisk/Dracolich have 3500, Wyrms start at 4000 */
-				else if ((m_ptr->maxhp < 6000) && rand_int(80)) a_idx = 0;/* strong wyrms at 6000+ */
+				if ((m_ptr->maxhp < 6000) && rand_int(100)) a_idx = 0;/* strong wyrms at 6000+ */
 				else if ((m_ptr->maxhp >= 6000) && (m_ptr->maxhp < 10000) && rand_int(60)) a_idx = 0;
-				else if ((m_ptr->maxhp >= 10000) && rand_int(40)) a_idx = 0;/* gwop ^^ */
+				else if ((m_ptr->maxhp >= 10000) && rand_int(20)) a_idx = 0;/* gwop ^^ */
 			}
 
 #ifdef SEMI_PROMISED_ARTS_MODIFIER
@@ -5689,8 +5688,10 @@ if (cfg.unikill_format) {
 					qq_ptr->to_h = a_ptr->to_h;
 					qq_ptr->to_d = a_ptr->to_d;
 					qq_ptr->weight = a_ptr->weight;
-					qq_ptr->note = local_quark;
-					qq_ptr->note_utag = strlen(quark_str(local_quark));
+					if (local_quark) {
+						qq_ptr->note = local_quark;
+						qq_ptr->note_utag = strlen(quark_str(local_quark));
+					}
 
 //					random_artifact_resistance(qq_ptr);
 					handle_art_inum(a_idx);

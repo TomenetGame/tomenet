@@ -2953,8 +2953,7 @@ W:40:40:3:125000
 F:HIDE_TYPE | INSTA_ART | ACTIVATE | SPECIAL_GENE |
 F:RES_FIRE | RES_COLD | RES_ACID | RES_ELEC | RES_POIS | 
 F:ESP_DRAGON | SLAY_DRAGON
-D:The amulet of Grom, the Wyrm Hunter. It's not known what happened
-D:to him.
+D:The amulet of Grom, the Wyrm Hunter. His whereabouts are unknown.
 
 
 # The Set of Cesti 'Wrath-Verge'
