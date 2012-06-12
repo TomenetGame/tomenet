@@ -157,7 +157,8 @@ W:70:30:2:150000
 P:0:1d1:6:6:0
 F:STR | INT | WIS | DEX | CON | CHR | SPEED | HIDE_TYPE | LUCK |
 F:ACTIVATE | FREE_ACT | SEE_INVIS | ESP_EVIL
-F:SUST_STR | SUST_CON | SUST_WIS | SUST_CHR | SPECIAL_GENE |
+F:SUST_STR | SUST_CON | SUST_WIS | SUST_CHR
+#F: | SPECIAL_GENE |
 F:IM_FIRE | RES_NETHER | RES_FEAR | REGEN | 
 F:INSTA_ART
 F:REGEN_MANA
@@ -439,7 +440,8 @@ N:28:'Thalkettoth'
 I:36:11:3
 W:7:3:60:35000
 P:11:1d1:-1:0:25
-F:DEX | SPEED | HIDE_TYPE | SPECIAL_GENE |
+F:DEX | SPEED | HIDE_TYPE
+#F: | SPECIAL_GENE |
 F:RES_ACID | RES_SHARDS
 D:A tunic and skirt sewn with thick, overlapping scales of hardened 
 D:leather whose wearer moves with agility and assurance.
@@ -733,8 +735,9 @@ I:35:6:2
 W:30:20:5:90000
 P:6:0d0:0:0:25
 F:INT | WIS | CHR | HIDE_TYPE | SPEED | STEALTH | INVIS | LUCK |
-F:RES_ACID | RES_FIRE | RES_COLD | SPECIAL_GENE | ACTIVATE
+F:RES_ACID | RES_FIRE | RES_COLD | ACTIVATE
 F:REGEN_MANA | RES_LITE | RES_DARK
+#F:| SPECIAL_GENE 
 D:The opaque midnight folds, inset with a multitude of tiny diamonds, of 
 D:this cloak swirl around you and you feel a hint, a fragment of the 
 D:knowledge and power to restore that lay in Luthien, the most beautiful 
@@ -782,8 +785,8 @@ N:53:'Cammithrim'
 I:31:1:3
 W:10:3:5:30000
 P:1:1d1:5:5:10
-F:DEX | CHR | FREE_ACT | RES_LITE | SUST_CON | LITE1 | ACTIVATE |
-F:SPECIAL_GENE | REGEN
+F:DEX | CHR | FREE_ACT | RES_LITE | SUST_CON | LITE1 | ACTIVATE | REGEN
+#F:SPECIAL_GENE
 D:These gloves glow so brightly as to light the way for their owner and cast 
 D:magical bolts with great frequency.
 
@@ -1013,12 +1016,11 @@ I:23:16:4
 W:20:45:150:130000
 P:0:3d6:20:14:0
 F:STR | DEX | CON | SUST_CON | SUST_STR
-F:REGEN | FREE_ACT | SEE_INVIS |
+F:REGEN | FREE_ACT | SEE_INVIS | RES_COLD | BRAND_COLD |
 F:RES_CHAOS | RES_NETHER | HOLD_LIFE | RES_FEAR |
-F:RES_COLD | SPECIAL_GENE |
 F:SLAY_DEMON | SLAY_EVIL | SLAY_DRAGON | SLAY_UNDEAD |
-F:BRAND_COLD |
 F:SLOW_DIGEST | SHOW_MODS | HIDE_TYPE | BLESSED
+#F:SPECIAL_GENE |
 D:The beautiful sword of Thingol with a hilt of gold and silver inlay, 
 D:glistening icily enough to freeze the hearts of demons. You feel supple 
 D:and lightfooted as you hold it.
@@ -1032,7 +1034,8 @@ W:14:20:150:50000
 P:0:2d6:10:15:0
 F:SEARCH | HIDE_TYPE | BLESSED | SLAY_DEMON | 
 F:SLAY_EVIL | BRAND_FIRE | SLAY_ORC | IM_FIRE | RES_LITE | LITE1 | 
-F:SLOW_DIGEST | SHOW_MODS | ESP_EVIL | SPECIAL_GENE
+F:SLOW_DIGEST | SHOW_MODS | ESP_EVIL
+#F: | SPECIAL_GENE
 D:This fiery, shining blade earned its sobriquet "Foe-Hammer" from dying orcs 
 D:who dared to come near hidden Gondolin.
 
@@ -1176,7 +1179,8 @@ P:0:2d8:20:20:5
 F:STR | DEX | HIDE_TYPE | RES_FEAR | FREE_ACT | BLESSED | LUCK |
 F:SLAY_EVIL | BRAND_FIRE | SLAY_TROLL | SLAY_ORC | FREE_ACT | 
 F:RES_FIRE | SUST_DEX | SEE_INVIS | ACTIVATE | SHOW_MODS | LITE1 |
-F:RES_DISEN | SPECIAL_GENE | ESP_GOOD | RES_CHAOS
+F:RES_DISEN | ESP_GOOD | RES_CHAOS
+#F:SPECIAL_GENE | 
 D:The famed "Flame of the West", the sword that was broken and is forged 
 D:again.  It glows with the essence of fire, its wearer is mighty in combat, 
 D:and no creature of Sauron can withstand it.  It will never be stained or 
@@ -3079,7 +3083,7 @@ D:A sacred artifact to defend life rather than to threaten it.
 
 N:244:'Spirit Shard'
 I:40:40:10
-W:70:60:3:150000
+W:70:40:3:150000
 # Maybe activate for invis and special_gene from Tselakus..
 # hm it would be too common and easy if Tselakus drops it.
 F:HIDE_TYPE | INSTA_ART | SEE_INVIS | CURSED | TY_CURSE
