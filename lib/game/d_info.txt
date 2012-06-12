@@ -285,7 +285,7 @@ M:ORC | R_CHAR_k | R_CHAR_o | R_CHAR_O
 
 # Erebor
 # levels 60-72
-# Glaurung guards the Nauglamir
+# Glaurung (715) guards the Nauglamir -> Smaug (697)
 N:20:Erebor
 D:Ere:a tunnel leading into depths of the Lonely Mountain.
 W:50:61:35:0:20:140
@@ -293,7 +293,7 @@ L:88:1000:1:0:1:0:0:0:0:0
 A:97:900:87:100:56:0:0:0:0:0:57:97
 O:40:40:40:40
 F:BIG | LAVA_RIVER | CAVERN | FORCE_DOWN | NO_STREAMERS
-F:CAVE | DOUBLE | FINAL_GUARDIAN_715 | FINAL_ARTIFACT_6
+F:CAVE | DOUBLE | FINAL_GUARDIAN_697 | FINAL_ARTIFACT_6
 F:FILL_METHOD_2
 #R:10:0
 R:60:1
