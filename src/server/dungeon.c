@@ -7477,7 +7477,7 @@ int recall_depth_idx(struct worldpos *wpos, player_type *p_ptr) {
 
 	for (j = 0; j < MAX_D_IDX * 2; j++) {
 		/* it's a dungeon that's new to us - add it! */
-		if (!p_ptr->max_depth_wx[j]) {
+		if (!p_ptr->max_depth_wx[j] && !p_ptr->max_depth_wy[j]) {
 			p_ptr->max_depth_wx[j] = wpos->wx;
 			p_ptr->max_depth_wy[j] = wpos->wy;
 			p_ptr->max_depth_tower[j] = (wpos->wz > 0);

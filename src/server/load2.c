@@ -1451,11 +1451,12 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 			p_ptr->max_depth_tower[i] = (tmp8u != 0);
 		}
         } else {
-#if 0
-		 /* >.> using max_dlv would result in a crazy _bonus_ for all deeper dungeons */
-		for (i = 0; i < MAX_D_IDX * 2; i++)
-			p_ptr->max_depth[i] = 0;//p_ptr->max_dlv;
-#else
+		for (i = 0; i < MAX_D_IDX * 2; i++) {
+			p_ptr->max_depth_wx[i] = 0;
+			p_ptr->max_depth_wy[i] = 0;
+			p_ptr->max_depth[i] = 0;
+		}
+
 		/* attempt a fair translation */
 		struct worldpos wpos;
 		int x, y;
@@ -1478,7 +1479,6 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 				p_ptr->max_depth[j] = i;
 			}
 		}
-#endif
         }
 
 
