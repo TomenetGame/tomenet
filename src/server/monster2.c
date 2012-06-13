@@ -2805,6 +2805,13 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 		*/
 		if (zcave[y][x].info & CAVE_PROT) return (FALSE);
 		if (f_info[zcave[y][x].feat].flags1 & FF1_PROTECTED) return (FALSE);
+
+#ifdef IRONDEEPDIVE_STATIC_TOWNS
+		/* hack: use for static deep dive dungeon towns too */
+		if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y &&
+		    (dlev == 40 || dlev == 80))
+			return (FALSE);
+#endif
 	}
 
 	if (!(summon_override_checks & SO_GRID_EMPTY)) {
