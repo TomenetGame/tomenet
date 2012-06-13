@@ -1502,6 +1502,8 @@ void do_cmd_check_player_equip(int Ind, int line)
 /*
  * List recall depths
  */
+/* Allow non-admins to see starting/max level of dungeons? */
+//#define SHOW_DLVL_TO_NONADMIN
 void do_cmd_knowledge_dungeons(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
@@ -1574,9 +1576,11 @@ void do_cmd_knowledge_dungeons(int Ind)
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 //							d_info[i].mindepth, d_info[i].mindepth + d_info[i].maxdepth - 1,
 							d_info[i].min_plev, i);
+ #ifdef SHOW_DLVL_TO_NONADMIN
 				} else {
 					fprintf(fff, "  \377sLev\377w %3d - %3d\377s",
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1);
+ #endif
 				}
 #else
 				wpos.wx = x; wpos.wy = y; wpos.wz = 1;
@@ -1585,9 +1589,14 @@ void do_cmd_knowledge_dungeons(int Ind)
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 							d_info[i].min_plev, i, 50 * get_recall_depth(&wpos, p_ptr));
 				} else {
+ #ifdef SHOW_DLVL_TO_NONADMIN
 					fprintf(fff, "  \377sLev\377w %3d - %3d\377s,  Recall depth \377w%6dft",
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 							50 * get_recall_depth(&wpos, p_ptr));
+ #else
+					fprintf(fff, "  \377sRecall depth \377w%6dft",
+							50 * get_recall_depth(&wpos, p_ptr));
+ #endif
 				}
 #endif
 				fprintf(fff,"\n");
@@ -1602,9 +1611,11 @@ void do_cmd_knowledge_dungeons(int Ind)
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 //							d_info[i].mindepth, d_info[i].mindepth + d_info[i].maxdepth - 1,
 							d_info[i].min_plev, i);
+ #ifdef SHOW_DLVL_TO_NONADMIN
 				} else {
 					fprintf(fff, "  \377sLev\377w %3d - %3d\377s",
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1);
+ #endif
 				}
 #else
 				wpos.wx = x; wpos.wy = y; wpos.wz = -1;
@@ -1613,9 +1624,14 @@ void do_cmd_knowledge_dungeons(int Ind)
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 							d_info[i].min_plev, i, -50 * get_recall_depth(&wpos, p_ptr));
 				} else {
+ #ifdef SHOW_DLVL_TO_NONADMIN
 					fprintf(fff, "  \377sLev\377w %3d - %3d\377s,  Recall depth \377w%6dft",
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 							-50 * get_recall_depth(&wpos, p_ptr));
+ #else
+					fprintf(fff, "  \377sRecall depth \377w%6dft",
+							-50 * get_recall_depth(&wpos, p_ptr));
+ #endif
 				}
 #endif
 				fprintf(fff,"\n");
