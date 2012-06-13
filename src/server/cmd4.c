@@ -1533,30 +1533,18 @@ void do_cmd_knowledge_dungeons(int Ind)
 	/* Let the player scroll through the info */
 	p_ptr->special_file_type = TRUE;
 
-	fprintf(fff, "\377r======== Dungeon(s) ========\n\n");
+	fprintf(fff, "\377r======== Dungeon(s) ========\n");
 
-#if 0
-	if (p_ptr->depth_in_feet) fprintf(fff, "The deepest point you've reached: -%d ft\n", p_ptr->max_dlv * 50);
-	else fprintf(fff, "The deepest point you've reached: Lev -%d\n", p_ptr->max_dlv);
+#ifndef SEPARATE_RECALL_DEPTHS
+	fprintf(fff, "\n\377DThe deepest/highest point you've ever reached: \377s%d \377Dft (Lv \377s%d\377D)\n", p_ptr->max_dlv * 50, p_ptr->max_dlv);
 #else
-	fprintf(fff, "\377DThe deepest/highest point you've ever reached: \377s%d \377Dft (Lv \377s%d\377D)\n", p_ptr->max_dlv * 50, p_ptr->max_dlv);
+	fprintf(fff, "\377D(The deepest/highest point you've ever reached: \377s%d \377Dft (Lv \377s%d\377D))\n\n", p_ptr->max_dlv * 50, p_ptr->max_dlv);
+ #ifndef SHOW_DLVL_TO_NONADMIN
+	fprintf(fff, "\377sLocation  Dungeon/Tower Name              Your current maximum recall depth\n");
+ #else
+	fprintf(fff, "\377sLocation  Dungeon/Tower Name                Level        Your max recall depth\n");
+ #endif
 #endif
-
-#if 0
-	/* Scan all dungeons */
-	for (y = 1; y < max_d_idx; y++)
-	{
-		/* The dungeon has a valid recall depth set */
-		if (max_dlv[y])
-		{
-			/* Describe the recall depth */
-			fprintf(fff, "       %c%s: Level %d (%d')\n",
-				(p_ptr->recall_dungeon == y) ? '*' : ' ',
-				d_name + d_info[y].name,
-				max_dlv[y], 50 * (max_dlv[y]));
-		}
-	}
-#endif	// 0
 
 	fprintf(fff,"\n");
 
@@ -1569,7 +1557,7 @@ void do_cmd_knowledge_dungeons(int Ind)
 			if ((d_ptr = wild_info[y][x].tower)) {
 				i = d_ptr->type;
 				if (!strcmp(d_info[i].name + d_name, "The Shores of Valinor") && !admin) continue;
-				fprintf(fff, " \377u(%2d,%2d)\377w %-30s", x, y, d_info[i].name + d_name);
+				fprintf(fff, " \377u(%2d,%2d)  \377w%-30s", x, y, d_info[i].name + d_name);
 #ifndef SEPARATE_RECALL_DEPTHS
 				if (admin) {
 					fprintf(fff, "  Lev: %3d-%3d  Req: %3d  type: %3d",
@@ -1585,17 +1573,31 @@ void do_cmd_knowledge_dungeons(int Ind)
 #else
 				wpos.wx = x; wpos.wy = y; wpos.wz = 1;
 				if (admin) {
-					fprintf(fff, "  L %3d-%3d  R %3d  t %3d  Max %6dft",
-							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
-							d_info[i].min_plev, i, 50 * get_recall_depth(&wpos, p_ptr));
+					if (p_ptr->depth_in_feet)
+						fprintf(fff, "  L %3d-%3d  R %3d  t %3d  Max %6dft",
+								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+								d_info[i].min_plev, i, 50 * get_recall_depth(&wpos, p_ptr));
+					else
+						fprintf(fff, "  L %3d-%3d  R %3d  t %3d  Max Lv%4d",
+								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+								d_info[i].min_plev, i, get_recall_depth(&wpos, p_ptr));
 				} else {
  #ifdef SHOW_DLVL_TO_NONADMIN
-					fprintf(fff, "  \377sLev\377w %3d - %3d\377s,  Recall depth \377w%6dft",
-							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
-							50 * get_recall_depth(&wpos, p_ptr));
+					if (p_ptr->depth_in_feet)
+						fprintf(fff, "  %3d - %3d          %6dft",
+								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+								50 * get_recall_depth(&wpos, p_ptr));
+					else
+						fprintf(fff, "  %3d - %3d          Lv%4d",
+								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+								get_recall_depth(&wpos, p_ptr));
  #else
-					fprintf(fff, "  \377sMax recall depth: \377w%6dft",
-							50 * get_recall_depth(&wpos, p_ptr));
+					if (p_ptr->depth_in_feet)
+						fprintf(fff, "  %6dft",
+								50 * get_recall_depth(&wpos, p_ptr));
+					else
+						fprintf(fff, "  Lv%4d",
+								get_recall_depth(&wpos, p_ptr));
  #endif
 				}
 #endif
@@ -1604,7 +1606,7 @@ void do_cmd_knowledge_dungeons(int Ind)
 			if ((d_ptr = wild_info[y][x].dungeon)) {
 				i = d_ptr->type;
 				if (!strcmp(d_info[i].name + d_name, "The Shores of Valinor") && !admin) continue;
-				fprintf(fff, " \377u(%2d,%2d)\377w %-30s", x, y, d_info[i].name + d_name);
+				fprintf(fff, " \377u(%2d,%2d)  \377w%-30s", x, y, d_info[i].name + d_name);
 #ifndef SEPARATE_RECALL_DEPTHS
 				if (admin) {
 					fprintf(fff, "  Lev: %3d-%3d  Req: %3d  type: %3d",
@@ -1613,24 +1615,38 @@ void do_cmd_knowledge_dungeons(int Ind)
 							d_info[i].min_plev, i);
  #ifdef SHOW_DLVL_TO_NONADMIN
 				} else {
-					fprintf(fff, "  \377sLev\377w %3d - %3d\377s",
+					fprintf(fff, "  \377sLev\377w %3d - %3d",
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1);
  #endif
 				}
 #else
 				wpos.wx = x; wpos.wy = y; wpos.wz = -1;
 				if (admin) {
-					fprintf(fff, "  L %3d-%3d  R %3d  t %3d  Max %6dft",
-							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
-							d_info[i].min_plev, i, -50 * get_recall_depth(&wpos, p_ptr));
+					if (p_ptr->depth_in_feet)
+						fprintf(fff, "  L %3d-%3d  R %3d  t %3d  Max %6dft",
+								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+								d_info[i].min_plev, i, (p_ptr->depth_in_feet ? -50 : -1) * get_recall_depth(&wpos, p_ptr));
+					else
+						fprintf(fff, "  L %3d-%3d  R %3d  t %3d  Max Lv%4d",
+								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+								d_info[i].min_plev, i, (p_ptr->depth_in_feet ? -50 : -1) * get_recall_depth(&wpos, p_ptr));
 				} else {
  #ifdef SHOW_DLVL_TO_NONADMIN
-					fprintf(fff, "  \377sLev\377w %3d - %3d\377s,  Recall depth \377w%6dft",
-							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
-							-50 * get_recall_depth(&wpos, p_ptr));
+					if (p_ptr->depth_in_feet)
+						fprintf(fff, "  %3d - %3d          %6dft",
+								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+								-50 * get_recall_depth(&wpos, p_ptr));
+					else
+						fprintf(fff, "  %3d - %3d          Lv%4dft",
+								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+								-get_recall_depth(&wpos, p_ptr));
  #else
-					fprintf(fff, "  \377sMax recall depth: \377w%6dft",
-							-50 * get_recall_depth(&wpos, p_ptr));
+					if (p_ptr->depth_in_feet)
+						fprintf(fff, "  %6dft",
+								-50 * get_recall_depth(&wpos, p_ptr));
+					else
+						fprintf(fff, "  Lv%4d",
+								-get_recall_depth(&wpos, p_ptr));
  #endif
 				}
 #endif
