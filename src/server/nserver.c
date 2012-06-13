@@ -4785,6 +4785,7 @@ int Send_depth(int ind, struct worldpos *wpos)
 	int colour, colour2, colour_sector = TERM_L_GREEN, colour2_sector = TERM_L_GREEN, Ind2;
 	cave_type **zcave;
 	bool no_tele = FALSE;
+	int dlev = getlevel(wpos);
 	if ((zcave = getcave(&p_ptr->wpos))) no_tele = (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) != 0;
 
 	/* XXX this kinda thing should be done *before* calling Send_*
@@ -4807,15 +4808,27 @@ int Send_depth(int ind, struct worldpos *wpos)
 	}
 
 	/* Hack for Valinor */
-	if (getlevel(wpos) == 200) {
+	if (dlev == 200) {
 		ville = TRUE;
 		desc = "Valinor";
 	}
 	/* Hack for PvP Arena */
-	if (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z) {
+	else if (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z) {
 		ville = TRUE;
 		desc = "Arena";
 	}
+#ifdef IRONDEEPDIVE_STATIC_TOWNS
+	/* Hack for Ironman Deep Dive Challenge static dungeons */
+	else if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y) {
+		if (dlev == 40) {
+			ville = TRUE;
+			desc = "Menegroth";
+		} else if (dlev == 80) {
+			ville = TRUE;
+			desc = "Nargothrond";
+		}
+	}
+#endif
 
 	if ((Ind2 = get_esp_link(ind, LINKF_MISC, &p_ptr2))) {
 		connp2 = Conn[p_ptr2->conn];
@@ -4832,9 +4845,9 @@ int Send_depth(int ind, struct worldpos *wpos)
 			/* in a town? ignore town level */
 			else if (ville) colour2 = TERM_WHITE;
 			/* way too low to get good exp? */
-			else if (getlevel(wpos) < det_exp_level(p_ptr2->lev) - 5) colour2 = TERM_L_DARK;
+			else if (dlev < det_exp_level(p_ptr2->lev) - 5) colour2 = TERM_L_DARK;
 			/* too low to get 100% exp? */
-			else if (getlevel(wpos) < det_exp_level(p_ptr2->lev)) colour2 = TERM_YELLOW;
+			else if (dlev < det_exp_level(p_ptr2->lev)) colour2 = TERM_YELLOW;
 			/* normal exp depth or deeper (default) */
 			else colour2 = TERM_WHITE;
 		} else {
@@ -4862,9 +4875,9 @@ int Send_depth(int ind, struct worldpos *wpos)
 		/* in a town? ignore town level */
 		else if (ville) colour = TERM_WHITE;
 		/* way too low to get good exp? */
-		else if (getlevel(wpos) < det_exp_level(p_ptr->lev) - 5) colour = TERM_L_DARK;
+		else if (dlev < det_exp_level(p_ptr->lev) - 5) colour = TERM_L_DARK;
 		/* too low to get 100% exp? */
-		else if (getlevel(wpos) < det_exp_level(p_ptr->lev)) colour = TERM_YELLOW;
+		else if (dlev < det_exp_level(p_ptr->lev)) colour = TERM_YELLOW;
 		/* normal exp depth or deeper (default) */
 		else colour = TERM_WHITE;
 	} else {
@@ -4893,7 +4906,7 @@ int Send_depth_hack(int ind, struct worldpos *wpos, bool town, cptr desc)
 	cave_type **zcave;
 	bool no_tele = FALSE;
 	if ((zcave = getcave(&p_ptr->wpos))) no_tele = (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) != 0;
-	
+
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
 		errno = 0;
@@ -4948,7 +4961,7 @@ int Send_depth_hack(int ind, struct worldpos *wpos, bool town, cptr desc)
 	} else {
 		colour = p_ptr->word_recall;
 	}
-	
+
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 6, 0, 0)) {
 		if (no_tele) {
 			Send_cut(ind, 0); /* hack: clear the field shared between cut and depth */
