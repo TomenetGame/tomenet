@@ -5181,7 +5181,8 @@ if (cfg.unikill_format) {
 	/* Dungeon bosses often drop a dungeon-set true artifact (for now 1 in 3 chance) */
 	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
 		dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
-		if ((a_idx = d_info[d_ptr->type].final_artifact) && !rand_int(3)) {
+		if ((a_idx = d_info[d_ptr->type].final_artifact) && !rand_int(3)
+		    && !cfg.arts_disabled && a_info[a_idx].cur_num == 0) {
 			s_printf("preparing FINAL_ARTIFACT %d", a_idx);
 			a_ptr = &a_info[a_idx];
 			qq_ptr = &forge;
