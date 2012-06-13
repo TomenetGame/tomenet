@@ -9051,6 +9051,10 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 			if (d_ptr->flags2 & DF2_TOWNS_IRONRECALL) town = TRUE;
 		}
 	}
+#ifdef IRONDEEPDIVE_STATIC_TOWNS
+	if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y &&
+	    (dun_lev == 40 || dun_lev == 80)) town = TRUE;
+#endif
 	/* Generate town? */
 	if (dun_lev > 2 && (town ||
 	    ((d_ptr->flags2 & DF2_TOWNS_FIX) && !(dun_lev %
@@ -10590,7 +10594,7 @@ static void town_gen_hack(struct worldpos *wpos)
 #endif
 	int rooms[max_rooms];
 
-	cave_type **zcave;
+	cave_type **zcave, *c_ptr;
 	if (!(zcave = getcave(wpos))) return;
 
 
@@ -10607,20 +10611,65 @@ static void town_gen_hack(struct worldpos *wpos)
 #endif
 
 
+#ifdef IRONDEEPDIVE_STATIC_TOWNS
+	/* predefined town layout instead of generating randomly? */
+	if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y &&
+	    ((k = getlevel(wpos)) == 40 || k == 80)) {
+		/* Kurzel suggested to use the cities of Menegroth and Nargothrond, seems good */
+
+		/* 2000ft - generate Menegroth */
+		if (k == 40) {
+			/* overlay town */
+			x = y = 0;
+			process_dungeon_file("t_menegroth.txt", wpos, &y, &x, MAX_HGT, MAX_WID, TRUE);
+
+			/* prepare basic floor */
+			for (y = 1; y < MAX_HGT - 1; y++) {
+				for (x = 1; x < MAX_WID - 1; x++) {
+					c_ptr = &zcave[y][x];
+					if (c_ptr->feat) continue;
+
+					c_ptr->feat = FEAT_DIRT;
+					if (!rand_int(5)) c_ptr->feat = FEAT_GRASS;
+				}
+			}
+		}
+
+		/* 4000ft - generate Nargothrond */
+		else if (k == 80) {
+			/* overlay town */
+			x = y = 0;
+			process_dungeon_file("t_nargothrond.txt", wpos, &y, &x, MAX_HGT, MAX_WID, TRUE);
+
+			/* prepare basic floor */
+			for (y = 1; y < MAX_HGT - 1; y++) {
+				for (x = 1; x < MAX_WID - 1; x++) {
+					c_ptr = &zcave[y][x];
+					if (c_ptr->feat) continue;
+
+					c_ptr->feat = FEAT_FLOOR;
+					if (rand_int(4)) c_ptr->feat = FEAT_GRASS;
+				}
+			}
+		}
+
+		/* Hack -- use the "complex" RNG -- and we're done here! */
+		Rand_quick = FALSE;
+		return;
+	}
+#endif
+
+
 	/* Hack -- Start with basic floors */
 	for (y = 1; y < MAX_HGT - 1; y++) {
 		for (x = 1; x < MAX_WID - 1; x++) {
-			cave_type *c_ptr = &zcave[y][x];
+			c_ptr = &zcave[y][x];
 
 			/* Clear all features, set to "empty floor" */
 			c_ptr->feat = FEAT_DIRT;
 
-			if (rand_int(100) < 75) {
-				c_ptr->feat = FEAT_GRASS;
-			}
-			else if (rand_int(100) < 15) {
-				c_ptr->feat = FEAT_TREE; /* gotta add FEAT_BUSH without screwing up the rng seed */
-			}
+			if (rand_int(4)) c_ptr->feat = FEAT_GRASS;
+			else if (rand_int(100) < 15) c_ptr->feat = FEAT_TREE; /* gotta add FEAT_BUSH without screwing up the rng seed */
 		}
 	}
 

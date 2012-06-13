@@ -27,3 +27,6 @@
 /* Permanent event "Ironman Deep Dive Challenge": */
 #define WPOS_IRONDEEPDIVE_X	63
 #define WPOS_IRONDEEPDIVE_Y	63
+
+/* Add static (and safe) towns to "Ironman Deep Dive Challenge"? (2k, 4k) */
+#define IRONDEEPDIVE_STATIC_TOWNS
