@@ -1449,6 +1449,11 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 			p_ptr->max_depth_wy[i] = tmp8u;
 			rd_byte(&tmp8u);
 			p_ptr->max_depth_tower[i] = (tmp8u != 0);
+			/* hack: fix for chars that logged in before this was completed properly */
+			if (p_ptr->max_depth[i] > 200) {
+				p_ptr->dummy_option_8 = TRUE;
+				s_printf("fixing max_depth[] for '%s'\n", p_ptr->name);
+			}
 		}
 	}
 	/* else branch is in rd_savefile_new_aux() since we need wild_map[] array */
@@ -2354,10 +2359,13 @@ static errr rd_savefile_new_aux(int Ind)
 	}
 
 	/* continued 'else' branch from rd_extra(), now that we have wild_map[] array */
-        if (older_than(4, 4, 23)) {
+        if (older_than(4, 4, 23) || p_ptr->dummy_option_8) {
 		struct worldpos wpos;
 		int j, x, y;
 		dungeon_type *d_ptr;
+
+		/* in case we're here by a fix-hack */
+		p_ptr->dummy_option_8 = FALSE;
 
 		/* hack - Sauron vs Shadow of Dol Guldur - just for consistency */
 		if (p_ptr->r_killed[860] == 1) p_ptr->r_killed[819] = 1;
