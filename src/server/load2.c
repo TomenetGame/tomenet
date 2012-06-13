@@ -2355,6 +2355,14 @@ static errr rd_savefile_new_aux(int Ind)
 
 	/* continued 'else' branch from rd_extra(), now that we have wild_map[] array */
         if (older_than(4, 4, 23)) {
+		struct worldpos wpos;
+		int j, x, y;
+		dungeon_type *d_ptr;
+
+		/* hack - Sauron vs Shadow of Dol Guldur - just for consistency */
+		if (p_ptr->r_killed[860] == 1) p_ptr->r_killed[819] = 1;
+
+		/* wipe (paranoia, should already be zeroed) */
 		for (i = 0; i < MAX_D_IDX * 2; i++) {
 			p_ptr->max_depth_wx[i] = 0;
 			p_ptr->max_depth_wy[i] = 0;
@@ -2362,10 +2370,6 @@ static errr rd_savefile_new_aux(int Ind)
 		}
 
 		/* attempt a fair translation */
-		struct worldpos wpos;
-		int j, x, y;
-		dungeon_type *d_ptr;
-
 		for (x = 0; x < 64; x++) for (y = 0; y < 64; y++) {
                         wpos.wx = x; wpos.wy = y;
 
