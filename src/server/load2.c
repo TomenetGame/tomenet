@@ -1450,37 +1450,8 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 			rd_byte(&tmp8u);
 			p_ptr->max_depth_tower[i] = (tmp8u != 0);
 		}
-        } else {
-		for (i = 0; i < MAX_D_IDX * 2; i++) {
-			p_ptr->max_depth_wx[i] = 0;
-			p_ptr->max_depth_wy[i] = 0;
-			p_ptr->max_depth[i] = 0;
-		}
-
-		/* attempt a fair translation */
-		struct worldpos wpos;
-		int x, y;
-		dungeon_type *d_ptr;
-
-		for (x = 0; x < 64; x++) for (y = 0; y < 64; y++) {
-                        wpos.wx = x; wpos.wy = y;
-			if ((d_ptr = wild_info[y][x].tower)) {
-				wpos.wz = 1;
-				j = recall_depth_idx(&wpos, p_ptr);
-				i = p_ptr->max_dlv - d_ptr->baselevel + 1;
-				if (i > d_ptr->maxdepth) i = d_ptr->maxdepth;
-				p_ptr->max_depth[j] = i;
-			}
-			if ((d_ptr = wild_info[y][x].dungeon)) {
-				wpos.wz = -1;
-				j = recall_depth_idx(&wpos, p_ptr);
-				i = p_ptr->max_dlv - d_ptr->baselevel + 1;
-				if (i > d_ptr->maxdepth) i = d_ptr->maxdepth;
-				p_ptr->max_depth[j] = i;
-			}
-		}
-        }
-
+	}
+	/* else branch is in rd_savefile_new_aux() since we need wild_map[] array */
 
 	rd_s16b(&p_ptr->py);
 	rd_s16b(&p_ptr->px);
@@ -2381,6 +2352,45 @@ static errr rd_savefile_new_aux(int Ind)
 			rd_byte(&p_ptr->wild_map[i]);
 		}
 	}
+
+	/* continued 'else' branch from rd_extra(), now that we have wild_map[] array */
+        if (older_than(4, 4, 23)) {
+		for (i = 0; i < MAX_D_IDX * 2; i++) {
+			p_ptr->max_depth_wx[i] = 0;
+			p_ptr->max_depth_wy[i] = 0;
+			p_ptr->max_depth[i] = 0;
+		}
+
+		/* attempt a fair translation */
+		struct worldpos wpos;
+		int j, x, y;
+		dungeon_type *d_ptr;
+
+		for (x = 0; x < 64; x++) for (y = 0; y < 64; y++) {
+                        wpos.wx = x; wpos.wy = y;
+
+			/* skip if player has never visited this dungeon's worldmap sector even! */
+			if (!(p_ptr->wild_map[wild_idx(&wpos) / 8] & (1 << (wild_idx(&wpos) % 8)))) continue;
+
+			/* translate */
+			if ((d_ptr = wild_info[y][x].tower)) {
+				wpos.wz = 1;
+				j = recall_depth_idx(&wpos, p_ptr);
+				i = p_ptr->max_dlv - d_ptr->baselevel + 1;
+				if (i > d_ptr->maxdepth) i = d_ptr->maxdepth;
+				p_ptr->max_depth[j] = i;
+			}
+			if ((d_ptr = wild_info[y][x].dungeon)) {
+				wpos.wz = -1;
+				j = recall_depth_idx(&wpos, p_ptr);
+				i = p_ptr->max_dlv - d_ptr->baselevel + 1;
+				if (i > d_ptr->maxdepth) i = d_ptr->maxdepth;
+				p_ptr->max_depth[j] = i;
+			}
+		}
+        }
+
+
 	/* read player guild membership */
 	rd_byte(&p_ptr->guild);
 	rd_u16b(&p_ptr->quest_id);
