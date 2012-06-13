@@ -10627,6 +10627,10 @@ static void town_gen_hack(struct worldpos *wpos)
 			for (y = 1; y < MAX_HGT - 1; y++) {
 				for (x = 1; x < MAX_WID - 1; x++) {
 					c_ptr = &zcave[y][x];
+					/* hack: fix staircase direction to match the dungeon type */
+					if (c_ptr->feat == FEAT_MORE && wpos->wz > 0) c_ptr->feat = FEAT_LESS;
+
+					/* convert remaining empty grids to floor */
 					if (c_ptr->feat) continue;
 
 					c_ptr->feat = FEAT_DIRT;
@@ -10645,6 +10649,11 @@ static void town_gen_hack(struct worldpos *wpos)
 			for (y = 1; y < MAX_HGT - 1; y++) {
 				for (x = 1; x < MAX_WID - 1; x++) {
 					c_ptr = &zcave[y][x];
+
+					/* hack: fix staircase direction to match the dungeon type */
+					if (c_ptr->feat == FEAT_MORE && wpos->wz > 0) c_ptr->feat = FEAT_LESS;
+
+					/* convert remaining empty grids to floor */
 					if (c_ptr->feat) continue;
 
 					c_ptr->feat = FEAT_FLOOR;
