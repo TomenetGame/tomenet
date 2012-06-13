@@ -1594,7 +1594,7 @@ void do_cmd_knowledge_dungeons(int Ind)
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 							50 * get_recall_depth(&wpos, p_ptr));
  #else
-					fprintf(fff, "  \377sRecall depth \377w%6dft",
+					fprintf(fff, "  \377sMax recall depth: \377w%6dft",
 							50 * get_recall_depth(&wpos, p_ptr));
  #endif
 				}
@@ -1629,7 +1629,7 @@ void do_cmd_knowledge_dungeons(int Ind)
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 							-50 * get_recall_depth(&wpos, p_ptr));
  #else
-					fprintf(fff, "  \377sRecall depth \377w%6dft",
+					fprintf(fff, "  \377sMax recall depth: \377w%6dft",
 							-50 * get_recall_depth(&wpos, p_ptr));
  #endif
 				}
