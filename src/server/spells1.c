@@ -1087,23 +1087,27 @@ void teleport_player_level(int Ind, bool force) {
 	wpcopy(&new_depth, wpos);
 
 	/* sometimes go down */
-	if(can_go_down(wpos, 0x1) && ((!can_go_up(wpos, 0x1) || (rand_int(100) < 50)) ||
-		(wpos->wz<0 && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON)))
+	if ((can_go_down(wpos, 0x1) &&
+	    ((!can_go_up(wpos, 0x1) || (rand_int(100) < 50)) ||
+	     (wpos->wz < 0 && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON)))
+	    || (force && can_go_down_simple(wpos)))
 	{
 		new_depth.wz--;
 		msg = "You sink through the floor.";
 		p_ptr->new_level_method = (new_depth.wz || (istown(&new_depth)) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND);
-	}	
+	}
 	/* else go up */
-	else if(can_go_up(wpos, 0x1) && !(wpos->wz>0 && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON))
+	else if ((can_go_up(wpos, 0x1) &&
+	    !(wpos->wz > 0 && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON))
+	    || (force && can_go_up_simple(wpos)))
 	{
 		new_depth.wz++;
 		msg = "You rise up through the ceiling.";
 		p_ptr->new_level_method = (new_depth.wz || (istown(&new_depth)) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND);
 	}
-	
+
 	/* If in the wilderness, teleport to a random neighboring level */
-	else if(wpos->wz == 0 && new_depth.wz == 0) {
+	else if (wpos->wz == 0 && new_depth.wz == 0) {
 		w_ptr = &wild_info[wpos->wy][wpos->wx];
 		/* get a valid neighbor */
 		wpcopy(&new_depth, wpos);
@@ -1128,7 +1132,7 @@ void teleport_player_level(int Ind, bool force) {
 					if(new_depth.wx > 0)
 						new_depth.wx--;
 					msg = "A gust of wind blows you west.";
-					break;		
+					break;
 			}
 		}
 		while (inarea(wpos, &new_depth));
@@ -1140,8 +1144,7 @@ void teleport_player_level(int Ind, bool force) {
 		if(!p_ptr->ghost)
 			p_ptr->wild_map[(new_depth.wx + new_depth.wy * MAX_WILD_X) / 8] |=
 				(1 << ((new_depth.wx + new_depth.wy * MAX_WILD_X) % 8));
-	}
-	else{
+	} else {
 		msg_print(Ind, "The scroll seemed to fail");
 		return;
 	}
