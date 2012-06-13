@@ -1450,10 +1450,7 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 			rd_byte(&tmp8u);
 			p_ptr->max_depth_tower[i] = (tmp8u != 0);
 			/* hack: fix for chars that logged in before this was completed properly */
-			if (p_ptr->max_depth[i] > 200) {
-				p_ptr->dummy_option_8 = TRUE;
-				s_printf("fixing max_depth[] for '%s'\n", p_ptr->name);
-			}
+			if (p_ptr->max_depth[i] > 200) p_ptr->dummy_option_8 = TRUE;
 		}
 	}
 	/* else branch is in rd_savefile_new_aux() since we need wild_map[] array */
@@ -2365,7 +2362,10 @@ static errr rd_savefile_new_aux(int Ind)
 		dungeon_type *d_ptr;
 
 		/* in case we're here by a fix-hack */
-		p_ptr->dummy_option_8 = FALSE;
+		if (p_ptr->dummy_option_8) {
+			s_printf("fixing max_depth[] for '%s'\n", p_ptr->name);
+			p_ptr->dummy_option_8 = FALSE;
+		}
 
 		/* hack - Sauron vs Shadow of Dol Guldur - just for consistency */
 		if (p_ptr->r_killed[860] == 1) p_ptr->r_killed[819] = 1;
