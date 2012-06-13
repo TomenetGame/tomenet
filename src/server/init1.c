@@ -7453,7 +7453,16 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 
 			/* use the plasma generator wilderness */
 //			if (((!dun_level) || (!letter[idx].defined)) && (idx == ' ')) continue;
+#if 1 /* use this! (see explanation below) */
 			if (((!wpos->wz) || (!letter[idx].defined)) && (idx == ' ')) continue;
+#else
+			/* also allow separate floor pre-generation in dungeons (for dungeon towns).
+			   However, this means that templates using the 'default floor' feat "F: :..."
+			   will no longer work properly, since that feat would get ignored.
+			   This concerns arenas. So instead, generate floor _after_ loading a
+			   template, and check for c_ptr->feat==0 to do so. - C. Blue */
+			if (idx == ' ') continue;
+#endif
 
 			/* Clear some info */
 			c_ptr->info = 0;
@@ -8239,7 +8248,7 @@ static cptr process_dungeon_file_expr(char **sp, char *fp)
 
 			/* Town destroyed */
 			else if (prefix(b+1, "TOWN_DESTROY"))
-                        {                               
+                        {
 				strnfmt(pref_tmp_value, 8, "%d", town_info[atoi(b + 13)].destroyed);
 				v = pref_tmp_value;
 			}
