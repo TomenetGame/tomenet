@@ -3262,6 +3262,7 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	}
 #endif
 
+	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) s_printf("FINAL_GUARDIAN %d spawned\n", r_idx);
 
 	/* Success */
 	/* Report some very interesting monster creating: */
