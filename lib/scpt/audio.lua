@@ -244,12 +244,12 @@ audio_bgm = {
 
     "town_generic",
     "town_dungeon",
-
     "Bree",
     "Gondolin",
     "MinasAnor",
     "Lothlorien",
     "Khazaddum",
+
     "Valinor",
 
     "wilderness_generic_day",
@@ -298,6 +298,13 @@ audio_bgm = {
 
     "event_Highlander_deathmatch",
     "event_AreanaMonsterChallenge",
+
+    "town_generic_night",
+    "Bree_night",
+    "Gondolin_night",
+    "MinasAnor_night",
+    "Lothlorien_night",
+    "Khazaddum_night",
 }
 function get_music_name(idx)
     if audio_bgm[idx + 1] == nil then return "" end

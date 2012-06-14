@@ -1411,22 +1411,12 @@ void handle_music(int Ind) {
 				if (town[i].x == tpos.wx && town[i].y == tpos.wy) {
 					switch (town[i].type) {
 					default:
-#if 0 /* normal */
-					case 0: tmus = 1; break; //default town
-					case 1: tmus = 3; break; //Bree
-#endif
-#if 0 /* Bree and 'default town' swap music for a change ! */
-					case 0: tmus = 3; break; //default town
-					case 1: tmus = 1; break; //Bree
-#endif
-#if 1 /* Bree uses 'default town' music during night */
-					case 0: tmus = 1; break; //default town
-					case 1: if (night_surface) tmus = 1; else tmus = 3; break; //Bree
-#endif
-					case 2: tmus = 4; break;
-					case 3: tmus = 5; break;
-					case 4: tmus = 6; break;
-					case 5: tmus = 7; break;
+					case 0: if (night_surface) tmus = 49; else tmus = 1; break; //default town
+					case 1: if (night_surface) tmus = 50; else tmus = 3; break; //Bree
+					case 2: if (night_surface) tmus = 51; else tmus = 4; break; //Gondo
+					case 3: if (night_surface) tmus = 52; else tmus = 5; break; //Minas
+					case 4: if (night_surface) tmus = 53; else tmus = 6; break; //Loth
+					case 5: if (night_surface) tmus = 54; else tmus = 7; break; //Khaz
 					}
 				}
 
