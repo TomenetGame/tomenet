@@ -9286,8 +9286,8 @@ void telekinesis_aux(int Ind, int item)
 		return;
 	}
 
-	if (compat_pmode(Ind, Ind2)) {
-		msg_format(Ind, "You cannot contact %s beings!", compat_pmode(Ind, Ind2));
+	if (compat_pmode(Ind, Ind2, FALSE)) {
+		msg_format(Ind, "You cannot contact %s beings!", compat_pmode(Ind, Ind2, FALSE));
 		return;
 	}
 

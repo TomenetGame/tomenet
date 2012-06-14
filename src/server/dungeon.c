@@ -2604,7 +2604,7 @@ void recall_player(int Ind, char *message){
 	/* cancel any user recalls */
 	p_ptr->word_recall = 0;
 
-	/* Did we really make it through all (99?) floors of the ironman challenge dungeon? */
+	/* Did we really make it through all floors of the ironman challenge dungeon? */
 	if (old_wpos.wx == WPOS_IRONDEEPDIVE_X &&
 	    old_wpos.wy == WPOS_IRONDEEPDIVE_Y &&
 	    old_wpos.wz != 0
@@ -2622,6 +2622,11 @@ void recall_player(int Ind, char *message){
 			sprintf(deep_dive_name[i], "%s the %s %s (%d)", p_ptr->name, get_prace(p_ptr), class_info[p_ptr->pclass].title, p_ptr->max_plv);
 			break;
 		}
+
+#ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
+		/* need to leave party, since we might be teamed up with incompatible char mode players! */
+		party_leave(Ind);
+#endif
 
 		msg_broadcast_format(0, "\374\377L***\377a%s made it through the Ironman Deep Dive challenge!\377L***", p_ptr->name);
 		l_printf("%s \\{U%s (%d) made it through the Ironman Deep Dive challenge\n", showdate(), p_ptr->name, p_ptr->lev);

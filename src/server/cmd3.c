@@ -1996,8 +1996,8 @@ void do_cmd_steal(int Ind, int dir)
 	q_ptr = Players[0 - c_ptr->m_idx];
 
 	/* No transactions from different mode */
-	if (compat_pmode(Ind, 0 - c_ptr->m_idx)) {
-		msg_format(Ind, "You cannot steal from %s players.", compat_pmode(Ind, 0 - c_ptr->m_idx));
+	if (compat_pmode(Ind, 0 - c_ptr->m_idx, FALSE)) {
+		msg_format(Ind, "You cannot steal from %s players.", compat_pmode(Ind, 0 - c_ptr->m_idx, FALSE));
 		return;
 	}
 

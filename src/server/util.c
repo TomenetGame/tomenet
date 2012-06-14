@@ -4984,13 +4984,14 @@ void my_memfrob(void *s, int n)
 }
 
 /* compare player mode compatibility - C. Blue
-   Note: returns NULL if compatible. */
-#define IRONDEEPDIVE_ALLOW_INCOMPAT
-cptr compat_pmode(int Ind1, int Ind2) {
+   Note: returns NULL if compatible.
+   strict: Ignore IRONDEEPDIVE_ALLOW_INCOMPAT. */
+cptr compat_pmode(int Ind1, int Ind2, bool strict) {
 #ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
 	/* EXPERIMENTAL */
 	player_type *p1_ptr = Players[Ind1], *p2_ptr = Players[Ind2];
-	if ((p1_ptr->wpos.wz && p1_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p1_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y) &&
+	if (!strict &&
+	    (p1_ptr->wpos.wz && p1_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p1_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y) &&
 	    (p2_ptr->wpos.wz && p2_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p2_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y))
 		return NULL;
 #endif

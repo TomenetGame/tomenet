@@ -1644,7 +1644,7 @@ extern bool is_older_than(version_type *version, int major, int minor, int patch
 extern bool is_same_as(version_type *version, int major, int minor, int patch, int extra, int branch, int build);
 extern void my_memfrob(void *s, int n);
 
-extern cptr compat_pmode(int Ind1, int Ind2);
+extern cptr compat_pmode(int Ind1, int Ind2, bool strict);
 extern cptr compat_pomode(int Ind, object_type *o_ptr);
 extern cptr compat_omode(object_type *o1_ptr, object_type *o2_ptr);
 

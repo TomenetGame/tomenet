@@ -2667,7 +2667,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				if (k == Ind) continue;
 				if (is_admin(q_ptr)) continue; /* admins are invisible and have high levels */
 				/* No transfer between everlasting and non-everlasting? */
-				if (compat_pmode(Ind, k)) continue;
+				if (compat_pmode(Ind, k, FALSE)) continue;
 
 //				if (!inarea(wpos, &q_ptr->wpos)) continue;
 

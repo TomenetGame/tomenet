@@ -601,6 +601,12 @@
 #define DODGE_MAX_CHANCE        80
 
 
+/* EXPERIMENTAL:
+  Allow incompatible char modes (everlasting vs non-everlasting) to interact
+   (form party, trade items) while inside the Ironman Deep Dive Challenge? */
+#define IRONDEEPDIVE_ALLOW_INCOMPAT
+
+
 /* New, added for the implementation of FINAL_GUARDIAN (finally) - C. Blue
    Does the player have to actually explore a dungeon to get his recall depth set for it?
    (If not then he can just get his recall depth from another dungeon and use it here.)

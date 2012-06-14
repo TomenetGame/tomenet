@@ -1078,8 +1078,8 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args){
 				msg_print(Ind, "Target player isn't logged on.");
 				return(FALSE);
 			}
-			if (compat_pmode(Ind, i)) {
-				msg_format(Ind, "You cannot transfer houses to %s players!", compat_pmode(Ind, i));
+			if (compat_pmode(Ind, i, TRUE)) {
+				msg_format(Ind, "You cannot transfer houses to %s players!", compat_pmode(Ind, i, TRUE));
 				return(FALSE);
 			}
 			if (Players[i]->inval) {

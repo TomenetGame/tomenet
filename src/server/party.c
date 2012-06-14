@@ -1078,8 +1078,8 @@ int guild_add(int adder, cptr name) {
 	}
 
 	/* Everlasting and other chars cannot be in the same guild */
-	if (compat_pmode(adder, Ind)) {
-		msg_format(adder, "\377yYou cannot add %s characters to this guild.", compat_pmode(adder, Ind));
+	if (compat_pmode(adder, Ind, TRUE)) {
+		msg_format(adder, "\377yYou cannot add %s characters to this guild.", compat_pmode(adder, Ind, TRUE));
 		return FALSE;
 	}
 
@@ -1221,8 +1221,8 @@ int party_add(int adder, cptr name)
 	}
 
 	/* Everlasting and other chars cannot be in the same party */
-	if (compat_pmode(adder, Ind)) {
-		msg_format(adder, "\377yYou cannot form a party with %s characters.", compat_pmode(adder, Ind));
+	if (compat_pmode(adder, Ind, FALSE)) {
+		msg_format(adder, "\377yYou cannot form a party with %s characters.", compat_pmode(adder, Ind, FALSE));
 		return FALSE;
 	}
 
