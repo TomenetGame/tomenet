@@ -6259,6 +6259,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				dam = (m_ptr->hp * dam) / 100;
 
 			if (typ == GF_OLD_DRAIN) p_ptr->ret_dam = dam;
+			else p_ptr->ret_dam = 0; /* paranoia */
 
 			if ((r_ptr->flags3 & RF3_UNDEAD) ||
 //				(r_ptr->flags3 & RF3_DEMON) ||
