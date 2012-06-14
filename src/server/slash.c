@@ -1454,6 +1454,8 @@ void do_slash_cmd(int Ind, char *message)
 			switch (tk) {
 			case 1:
 				/* depth in feet */
+				p_ptr->recall_pos.wx = p_ptr->wpos.wx;
+				p_ptr->recall_pos.wy = p_ptr->wpos.wy;
 				p_ptr->recall_pos.wz = k / (p_ptr->depth_in_feet ? 50 : 1);
 				break;
 			case 2:

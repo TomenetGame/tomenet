@@ -2694,14 +2694,14 @@ static void do_recall(int Ind, bool bypass)
 			}
 		}
 #endif
-        /* Nether Realm only for Kings/Queens (currently paranoia, since NR is NO_RECALL_INTO) */
-        if (d_ptr && (d_ptr->type == 6) && !p_ptr->total_winner) {
-            msg_print(Ind,"\377rAs you attempt to ascend, you are gripped by an uncontrollable fear.");
-            if (!is_admin(p_ptr)) {
-                set_afraid(Ind, 10);//+(d_ptr->baselevel-p_ptr->max_dlv));
-                return;
-            }
-        }
+	        /* Nether Realm only for Kings/Queens (currently paranoia, since NR is NO_RECALL_INTO) */
+    		if (d_ptr && (d_ptr->type == 6) && !p_ptr->total_winner) {
+    	    		msg_print(Ind,"\377rAs you attempt to ascend, you are gripped by an uncontrollable fear.");
+	        	if (!is_admin(p_ptr)) {
+    		        	set_afraid(Ind, 10);//+(d_ptr->baselevel-p_ptr->max_dlv));
+	    	                return;
+	                }
+	        }
 	}
 
 	/* Determine the level */
@@ -2825,6 +2825,8 @@ static void do_recall(int Ind, bool bypass)
 			{
 				if (!is_admin(p_ptr))
 					p_ptr->recall_pos.wz = 0;
+				else
+					msg_print(Ind, "You feel yourself yanked toward nowhere...");
 			}
 
 			if (p_ptr->recall_pos.wz >= 0) {
@@ -2836,7 +2838,7 @@ static void do_recall(int Ind, bool bypass)
 			}
 		}
 		else if (p_ptr->recall_pos.wz > 0 && w_ptr->flags & WILD_F_UP) {
-			dungeon_type *d_ptr=wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx].tower;
+			dungeon_type *d_ptr = wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx].tower;
 #ifdef SEPARATE_RECALL_DEPTHS
 			int d = get_recall_depth(&p_ptr->recall_pos, p_ptr);
 #endif
@@ -2873,6 +2875,8 @@ static void do_recall(int Ind, bool bypass)
 			{
 				if (!is_admin(p_ptr))
 					p_ptr->recall_pos.wz = 0;
+				else
+					msg_print(Ind, "You feel yourself yanked toward nowhere...");
 			}
 
 			if (p_ptr->recall_pos.wz <= 0) {
