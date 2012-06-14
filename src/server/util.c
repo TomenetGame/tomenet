@@ -4985,7 +4985,16 @@ void my_memfrob(void *s, int n)
 
 /* compare player mode compatibility - C. Blue
    Note: returns NULL if compatible. */
+#define IRONDEEPDIVE_ALLOW_INCOMPAT
 cptr compat_pmode(int Ind1, int Ind2) {
+#ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
+	/* EXPERIMENTAL */
+	player_type *p1_ptr = Players[Ind1], *p2_ptr = Players[Ind2];
+	if ((p1_ptr->wpos.wz && p1_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p1_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y) &&
+	    (p2_ptr->wpos.wz && p2_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p2_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y))
+		return NULL;
+#endif
+
 	if (Players[Ind1]->mode & MODE_PVP) {
 		if (!(Players[Ind2]->mode & MODE_PVP)) {
 			return "non-pvp";
@@ -5005,6 +5014,14 @@ cptr compat_pmode(int Ind1, int Ind2) {
 /* compare object and player mode compatibility - C. Blue
    Note: returns NULL if compatible. */
 cptr compat_pomode(int Ind, object_type *o_ptr) {
+#ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
+	/* EXPERIMENTAL */
+	player_type *p_ptr = Players[Ind];
+	if ((p_ptr->wpos.wz && p_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y) &&
+	    (o_ptr->wpos.wz && o_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && o_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y))
+		return NULL;
+#endif
+
 	if (!o_ptr->owner || is_admin(Players[Ind])) return NULL; /* always compatible */
 	if (Players[Ind]->mode & MODE_PVP) {
 		if (!(o_ptr->mode & MODE_PVP)) {
@@ -5033,6 +5050,13 @@ cptr compat_pomode(int Ind, object_type *o_ptr) {
 /* compare two objects' mode compatibility for stacking/absorbing - C. Blue
    Note: returns NULL if compatible. */
 cptr compat_omode(object_type *o1_ptr, object_type *o2_ptr) {
+#ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
+	/* EXPERIMENTAL */
+	if ((o1_ptr->wpos.wz && o1_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && o1_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y) &&
+	    (o2_ptr->wpos.wz && o2_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && o2_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y))
+		return NULL;
+#endif
+
 	/* ownership given for both items? */
 	if (!o1_ptr->owner) {
 		if (!o2_ptr->owner) return NULL; /* always compatible */
