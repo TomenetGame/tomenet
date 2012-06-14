@@ -6260,17 +6260,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 			p_ptr->ret_dam = dam;
 
-			/* the_sandman: return 15% of the damage to player. This is special
-			   since (we're not using the upto 35% rule because for the spell 
-			   (drain cloud) it will be too much) we aim for balance 
-			   HACK: the priest_spell variable is defined above. 
-			*/
-			if (priest_spell || typ == GF_OLD_DRAIN) { //Runespell lifesteal fix - Kurzel
-				p_ptr->chp += (dam * 15) / 100;
-				if (p_ptr->chp > p_ptr->mhp) p_ptr->chp = p_ptr->mhp;
-				p_ptr->ret_dam = 0;
-			}
-
 			if ((r_ptr->flags3 & RF3_UNDEAD) ||
 //				(r_ptr->flags3 & RF3_DEMON) ||
 				(r_ptr->flags3 & RF3_NONLIVING) ||
@@ -6300,6 +6289,16 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				obvious = FALSE;
 				dam = 0;
 				quiet_dam = TRUE;
+				p_ptr->ret_dam = 0;
+			}
+
+			/* the_sandman: return 15% of the damage to player. This is special
+			   since (we're not using the upto 35% rule because for the spell 
+			   (drain cloud) it will be too much) we aim for balance 
+			   HACK: the priest_spell variable is defined above. 
+			*/
+			if (priest_spell || typ == GF_OLD_DRAIN) { //Runespell lifesteal fix - Kurzel
+				if (dam) hp_player_quiet((dam * 15) / 100);
 				p_ptr->ret_dam = 0;
 			}
 
