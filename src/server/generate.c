@@ -9053,7 +9053,12 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 	}
 #ifdef IRONDEEPDIVE_STATIC_TOWNS
 	if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y &&
-	    (dun_lev == 40 || dun_lev == 80)) town = TRUE;
+	    (dun_lev == 40 || dun_lev == 80)) {
+		town = TRUE;
+ #ifdef IRONDEEPDIVE_STATIC_TOWN_WITHDRAWAL
+		dun->l_ptr->flags1 |= LF1_IRON_RECALL;
+ #endif
+	}
 #endif
 	/* Generate town? */
 #if 0 /* towns become rarer the deeper we go? */

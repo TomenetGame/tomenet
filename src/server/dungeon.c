@@ -2610,7 +2610,11 @@ void recall_player(int Ind, char *message){
 	    old_wpos.wz != 0
 	    && !is_admin(p_ptr)) {
 		int i, j;
-
+#ifdef IRONDEEPDIVE_STATIC_TOWN_WITHDRAWAL
+		bool success = TRUE;
+		if (getlevel(&old_wpos) == 40 || getlevel(&old_wpos) == 80) success = FALSE;
+		if (success)
+#endif
 		for (i = 0; i < 20; i++) {
 			if (deep_dive_level[i] == -1) continue;
 			for (j = 20 - 1; j > i; j--) {
@@ -2628,8 +2632,14 @@ void recall_player(int Ind, char *message){
 		party_leave(Ind);
 #endif
 
+#ifdef IRONDEEPDIVE_STATIC_TOWN_WITHDRAWAL
+		if (success) {
+#endif
 		msg_broadcast_format(0, "\374\377L***\377a%s made it through the Ironman Deep Dive challenge!\377L***", p_ptr->name);
 		l_printf("%s \\{U%s (%d) made it through the Ironman Deep Dive challenge\n", showdate(), p_ptr->name, p_ptr->lev);
+#ifdef IRONDEEPDIVE_STATIC_TOWN_WITHDRAWAL
+		} else msg_broadcast_format(0, "\374\377s%s withdrew from the Ironman Deep Dive challenge.", p_ptr->name);
+#endif
 	}
 }
 
