@@ -9056,11 +9056,29 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 	    (dun_lev == 40 || dun_lev == 80)) town = TRUE;
 #endif
 	/* Generate town? */
+#if 0 /* towns become rarer the deeper we go? */
 	if (dun_lev > 2 && (town ||
 	    ((d_ptr->flags2 & DF2_TOWNS_FIX) && !(dun_lev %
 	    (dun_lev <= 30 ? 10 : (dun_lev <= 60 ? 15 : 20)))) ||
 	    ((d_ptr->flags2 & DF2_TOWNS_RND) && magik(
 	    (dun_lev <= 30 ? 10 : (dun_lev <= 60 ? 7 : 5)))) )) {
+#else /* towns have high probability around n*1000ft floors, otherwise rare (for IRONDEEPDIVE) \
+	 Also: No towns at Morgy depth or beyond. */
+	k = 0;
+	if (dun_lev > 2 && (town || (dun_lev < 100 && (
+	    ((d_ptr->flags2 & DF2_TOWNS_FIX) && !(dun_lev % 20)) ||
+	    ((d_ptr->flags2 & DF2_TOWNS_RND) &&
+ #if 0 /* for generic dungeons maybe */
+	     magik(30 / (ABS(((dun_lev + 10) % 20) - 10) + 1))
+ #else /* deep dive specifically: no towns before 900 ft or around the static towns at 2k and 4k */
+	     magik(k = 25 / ( /* 35 -> 82.6% chance per -450..+500ft interval; 30 -> 78.8%; 25 -> 70.5%; 20 -> 62.3%; 15 -> 40.5%, 10 -> 35.4%, 5 -> 14.2% */
+	     (dun_lev >= 18 && (dun_lev < 40 - 5 || dun_lev > 40 + 5) && (dun_lev < 80 - 5 || dun_lev > 80 + 5)) ?
+	     ABS(((dun_lev + 10) % 20) - 10) + 1 : 999
+	     ))
+ #endif
+	    ))))) {
+		if (k) s_printf("Generated random dungeon town at %d%% chance.\n", k);
+#endif
 		bool lit = rand_int(3) == 0;
 		/* prepare level: max size and permanent walls */
 		dun->l_ptr->wid = MAX_WID;
