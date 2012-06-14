@@ -5584,6 +5584,7 @@ static void do_cmd_options_install_audio_packs(void) {
 		system("7zG x TomeNET-soundpack.7z");
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
 		//system(format("mv sound %s", path));
+		mkdir(path, 0777); /* in case someone deleted his whole sound folder */
 		system(format("cp --recursive -f sound/* %s/", path));
 		system("rm -rf sound");
 #endif
@@ -5623,6 +5624,7 @@ static void do_cmd_options_install_audio_packs(void) {
 		system("7zG x TomeNET-musicpack.7z");
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
 		//system(format("mv music %s", path));
+		mkdir(path, 0777); /* in case someone deleted his whole music folder */
 		system(format("cp --recursive -f music/* %s/", path));
 		system("rm -rf music");
 #endif
