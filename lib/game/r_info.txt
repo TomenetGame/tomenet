@@ -12290,8 +12290,8 @@ D:a stone wall down.
 N:720:Barbazu
 G:U:G
 I:120:120d10:25:90:40
-W:55:2:0:3000
-#W:55:2:0:2000
+#W:55:2:0:3000
+W:55:2:0:2000
 E:1:1:1:2:1:1
 O:20:40:20:20
 B:HIT:HURT:4d10
@@ -17590,17 +17590,19 @@ D:over elements of matter.
 N:980:Ar-Pharazon the Golden
 G:p:y
 I:130:50d100:30:45:255
-W:55:1:0:2500
+#W:55:1:0:2500  changed to high exp! (for FINAL_GUARDIAN especially)
+W:55:1:0:25000
 E:1:1:1:2:1:1
 O:20:70:10:0
 B:HIT:HURT:8d12
 B:HIT:HURT:8d12
 B:HIT:HURT:8d12
 B:HIT:HURT:8d12
-F:FORCE_SLEEP | FORCE_MAXHP | UNIQUE | CAN_SPEAK | SPECIAL_GENE | 
+F:FORCE_SLEEP | FORCE_MAXHP | UNIQUE | CAN_SPEAK | SPECIAL_GENE | HAS_LITE |
 F:ONLY_ITEM | DROP_1D2 | DROP_2D2 | DROP_GOOD | DROP_SKELETON | DROP_CORPSE | 
 F:SMART | TAKE_ITEM | OPEN_DOOR | BASH_DOOR | MOVE_BODY | BASEANGBAND | 
-F:HAS_LITE
+#added flying+drop_great for being FINAL_GUARDIAN in submerged ruins
+F:CAN_FLY | DROP_GREAT
 S:1_IN_6 |
 S:HEAL | HASTE | TELE_AWAY | S_MONSTERS | S_KIN
 D:Last and proudest king of ancient Numenor. Corrupted by power and 
