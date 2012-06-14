@@ -5987,41 +5987,33 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 					if (20 <= p_ptr->csp) {
 						/* Use some mana */
 						p_ptr->csp -= 20;
+
+						/* Confusing. */
+						if (rand_int(5) == 0) (void)set_confused(Ind, p_ptr->confused + randint(5));
 					}
 
 					/* Over-exert the player */
 					else {
-						int oops = 20 - p_ptr->csp;
-
 						/* No mana left */
 						p_ptr->csp = 0;
 						p_ptr->csp_frac = 0;
 
 						/* Message */
-						msg_print(Ind, "You are too weak to control the stone!");
-
-						/* Hack -- Bypass free action */
-						(void)set_paralyzed(Ind, p_ptr->paralyzed +
-											randint(5 * oops + 1));
+						msg_print(Ind, "You don't have enough mana to control the stone!");
 
 						/* Confusing. */
-						(void)set_confused(Ind, p_ptr->confused +
-										   randint(5 * oops + 1));
+						(void)set_confused(Ind, p_ptr->confused + 5 + randint(5));
 					}
 
 					/* Redraw mana */
 					p_ptr->redraw |= (PR_MANA);
 				}
 
+				/* Exercise a little care... */
+				//if (rand_int(20) == 0) take_hit(Ind, damroll(4, 10), "perilous secrets", 0); else
 				take_hit(Ind, damroll(1, 12), "perilous secrets", 0);
 
-				/* Confusing. */
-				if (rand_int(5) == 0) (void)set_confused(Ind, p_ptr->confused +
-						randint(10));
-
-				/* Exercise a little care... */
-				if (rand_int(20) == 0) take_hit(Ind, damroll(4, 10), "perilous secrets", 0);
-				o_ptr->timeout = 1;
+				o_ptr->timeout = 10;
 				break;
 			}
 

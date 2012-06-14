@@ -2914,7 +2914,7 @@ cptr item_activation(object_type *o_ptr)
 		}
 		case ART_STONE_LORE:
 		{
-			return "perilous identify every turn";
+			return "perilous identify every 10 turns (drains 20 mp)";
 		}
 		case ART_DOR: case ART_GORLIM:
 		{
