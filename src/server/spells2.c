@@ -6375,6 +6375,12 @@ bool drain_life(int Ind, int dir, int dam)
 	return(project_hook(Ind, GF_OLD_DRAIN, dir, dam, flg, ""));
 }
 
+bool annihilate(int Ind, int dir, int dam)
+{
+	int flg = PROJECT_STOP | PROJECT_KILL;
+	return(project_hook(Ind, GF_ANNIHILATION, dir, dam, flg, ""));
+}
+
 bool wall_to_mud(int Ind, int dir)
 {
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;

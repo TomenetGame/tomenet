@@ -3936,10 +3936,8 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 
 		case SV_WAND_ANNIHILATION:
 		{
-			if(drain_life(Ind, dir, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 15))) {
+			if (annihilate(Ind, dir, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 15))) {
 				ident = TRUE;
-				hp_player(Ind, p_ptr->ret_dam / 4);
-				p_ptr->ret_dam = 0;
 			}
 			break;
 		}

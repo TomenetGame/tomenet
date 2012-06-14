@@ -2146,6 +2146,11 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				}
 			}
 		}
+		/* for GF_OLD_DRAIN */
+		if (p_ptr->ret_dam) {
+			hp_player(Ind, p_ptr->ret_dam);
+			p_ptr->ret_dam = 0;
+		}
 	}
 	
 	if (p_ptr->csp > cost)

@@ -1429,6 +1429,7 @@ extern bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool lite_line(int Ind, int dir, int dam);
 extern bool drain_life(int Ind, int dir, int dam);
+extern bool annihilate(int Ind, int dir, int dam);
 extern bool wall_to_mud(int Ind, int dir);
 extern bool destroy_door(int Ind, int dir);
 extern bool disarm_trap(int Ind, int dir);

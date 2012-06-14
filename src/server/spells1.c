@@ -4795,7 +4795,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	int priest_spell = 0;
 	/* the_sandman: the priest spell? (0 or 1) */
-	if (dam == 9999) {
+	if (dam == 9999 && typ == GF_OLD_DRAIN) {
 		priest_spell = 1;
 		dam = 2;	// the real damage
 	}
@@ -6249,7 +6249,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		case GF_ANNIHILATION:
 		{
 			if (seen) obvious = TRUE;
-			
+
 			/* Prevent internal overflow (int) - allow up to 35% leech */
 			if (m_ptr->hp > 9362)
 				dam = (m_ptr->hp / 100) * dam;
@@ -6258,7 +6258,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			else
 				dam = (m_ptr->hp * dam) / 100;
 
-			p_ptr->ret_dam = dam;
+			if (typ == GF_OLD_DRAIN) p_ptr->ret_dam = dam;
 
 			if ((r_ptr->flags3 & RF3_UNDEAD) ||
 //				(r_ptr->flags3 & RF3_DEMON) ||
@@ -6297,8 +6297,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			   (drain cloud) it will be too much) we aim for balance 
 			   HACK: the priest_spell variable is defined above. 
 			*/
-			if (priest_spell || typ == GF_OLD_DRAIN) { //Runespell lifesteal fix - Kurzel
-				if (dam) hp_player_quiet((dam * 15) / 100);
+			if (priest_spell) {
+				if (dam) hp_player_quiet(Ind, (dam * 15) / 100, TRUE);
 				p_ptr->ret_dam = 0;
 			}
 

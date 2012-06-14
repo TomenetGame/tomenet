@@ -4225,7 +4225,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr)
 			rad = 2;
 			break;
 		case SV_WAND_ANNIHILATION:
-			typ = GF_OLD_DRAIN;
+			typ = GF_ANNIHILATION;
 //			dam = 300; //lol
 // Ooops, no p_ptr :(
 //			dam = 15 + get_skill_scale(p_ptr, SKILL_TRAPPING, 15);
