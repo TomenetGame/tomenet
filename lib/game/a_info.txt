@@ -1700,8 +1700,8 @@ I:21:3:4
 W:30:105:140:80000
 P:0:2d11:10:16:15
 F:INT | WIS | CHR | HIDE_TYPE | SEARCH | SPECIAL_GENE |
-F:SLAY_EVIL | BRAND_FIRE | SLAY_TROLL | SLAY_ORC |
-F:HOLD_LIFE | RES_FIRE | RES_NETHER | SEE_INVIS | ACTIVATE | SHOW_MODS
+F:SLAY_EVIL | BRAND_FIRE | SLAY_TROLL | SLAY_ORC | ACTIVATE | SHOW_MODS
+F:HOLD_LIFE | RES_FIRE | RES_SHARDS | RES_NETHER | SEE_INVIS
 D:A staff tall and sturdy, with rough-hewn runes that invoke the element of 
 D:Earth, and which strikes down all creatures who live in the shadow of 
 D:mountains.
@@ -2100,9 +2100,9 @@ D:is perfect against the terrible powers of Morgoth.
 # The Soft Leather Armour of the Sandworm
 
 N:153:of the Sandworm
-I:36:4:5
-W:30:3:80:65000
-P:30:0d0:0:0:20
+I:36:4:4
+W:30:3:80:85000
+P:6:0d0:0:0:35
 F:IM_POISON | RES_ELEC | RES_FIRE | RES_ACID | SPECIAL_GENE
 F:TUNNEL | STR | STEALTH | INFRA | ESP_ANIMAL | HIDE_TYPE
 D:This powerful piece of armour was made using the remains of 
