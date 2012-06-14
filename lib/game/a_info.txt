@@ -1701,7 +1701,7 @@ W:30:105:140:80000
 P:0:2d11:10:16:15
 F:INT | WIS | CHR | HIDE_TYPE | SEARCH | SPECIAL_GENE |
 F:SLAY_EVIL | BRAND_FIRE | SLAY_TROLL | SLAY_ORC | ACTIVATE | SHOW_MODS
-F:HOLD_LIFE | RES_FIRE | RES_SHARDS | RES_NETHER | SEE_INVIS
+F:HOLD_LIFE | RES_FIRE | RES_SHARDS | RES_NETHER | SEE_INVIS | ESP_EVIL
 D:A staff tall and sturdy, with rough-hewn runes that invoke the element of 
 D:Earth, and which strikes down all creatures who live in the shadow of 
 D:mountains.
