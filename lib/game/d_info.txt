@@ -149,7 +149,8 @@ M:RES_NETH | R_CHAR_G | R_CHAR_W | R_CHAR_U | R_CHAR_x | R_CHAR_N
 N:7:Submerged Ruins
 D:Num:a submerged way to the lost land of Numenor.
 #W:35:51:15:0:14:160
-W:35:42:15:0:14:160
+#W:35:42:15:0:14:160 for Ar-Pharazon level consistency again:
+W:35:51:15:0:14:160
 #L:84:950:187:50:1:0:0:0:0:0  changed to deep water, for druids
 L:187:1000:84:0:1:0:0:0:0:0
 A:187:900:84:90:56:10:0:0:0:0:57:187
