@@ -26,8 +26,11 @@
     (200 - t_info[t_idx].probability) / 100)
 
 /* Maximum level a character may have reached so far to still be eligible
-   to enter the Ironman Deep Dive Challenge */
-#define IRONDEEPDIVE_MAXLEV 12
+   to enter the Ironman Deep Dive Challenge. Two main possiblities:
+   a) [12] for far-away from town
+   b)  [1] for adjacent to town
+   c)  [0] same as [1], it's a hack that means 'level 1 AND 0 max_exp'. <- RECOMMENDED */
+#define IRONDEEPDIVE_MAXLEV 0
 
 
 /*
@@ -207,7 +210,8 @@ void do_cmd_go_up(int Ind)
 	}
 
 	if (p_ptr->wpos.wz == 0 && p_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y) {
-		if (p_ptr->max_plv > IRONDEEPDIVE_MAXLEV) {
+		if (p_ptr->max_plv > IRONDEEPDIVE_MAXLEV &&
+		    (IRONDEEPDIVE_MAXLEV || p_ptr->max_exp)) {
 			msg_format(Ind, "\377DYou may not enter once you exceeded character level %d!", IRONDEEPDIVE_MAXLEV);
 			if (!is_admin(p_ptr)) return;
 		}
@@ -621,7 +625,8 @@ void do_cmd_go_down(int Ind)
 	}
 
 	if (p_ptr->wpos.wz == 0 && p_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y) {
-		if (p_ptr->max_plv > IRONDEEPDIVE_MAXLEV) {
+		if (p_ptr->max_plv > IRONDEEPDIVE_MAXLEV &&
+		    (IRONDEEPDIVE_MAXLEV || p_ptr->max_exp)) {
 			msg_format(Ind, "\377DYou may not enter once you exceeded character level %d!", IRONDEEPDIVE_MAXLEV);
 			if (!is_admin(p_ptr)) return;
 		}
