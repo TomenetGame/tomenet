@@ -2807,7 +2807,9 @@ static void do_recall(int Ind, bool bypass)
 			//if(d_ptr->baselevel-p_ptr->max_dlv>2){
 			if ((!d_ptr->type && d_ptr->baselevel - p_ptr->max_dlv > 2) || /* ??? */
 #endif
+#ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
 			    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev) ||
+#endif
 			    (d_ptr->flags1 & (DF1_NO_RECALL | DF1_NO_UP | DF1_FORCE_DOWN)) ||
 #ifdef RPG_SERVER /* Prevent recalling into NO_DEATH dungeons */
 			    (d_ptr->flags2 & (DF2_NO_DEATH)) ||
@@ -2823,8 +2825,6 @@ static void do_recall(int Ind, bool bypass)
 			{
 				if (!is_admin(p_ptr))
 					p_ptr->recall_pos.wz = 0;
-				else
-					msg_print(Ind, "You feel yourself yanked toward nowhere...");
 			}
 
 			if (p_ptr->recall_pos.wz >= 0) {
@@ -2844,7 +2844,7 @@ static void do_recall(int Ind, bool bypass)
 			/* check character/tower limits */
 			if (p_ptr->recall_pos.wz > w_ptr->tower->maxdepth)
 				p_ptr->recall_pos.wz = w_ptr->tower->maxdepth;
-			if (p_ptr->inval && -p_ptr->recall_pos.wz > 10)
+			if (p_ptr->inval && p_ptr->recall_pos.wz > 10)
 				p_ptr->recall_pos.wz = 10;
 #ifdef SEPARATE_RECALL_DEPTHS
 			if (d < p_ptr->recall_pos.wz) p_ptr->recall_pos.wz = d;
@@ -2855,7 +2855,9 @@ static void do_recall(int Ind, bool bypass)
 			//if(d_ptr->baselevel-p_ptr->max_dlv>2){
 			if ((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) || /* ??? */
 #endif
+#ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
 			    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev) ||
+#endif
 			    (d_ptr->flags1 & (DF1_NO_RECALL | DF1_NO_UP | DF1_FORCE_DOWN)) ||
 #ifdef RPG_SERVER /* Prevent recalling into NO_DEATH towers */
 			    (d_ptr->flags2 & (DF2_NO_DEATH)) ||
@@ -2871,8 +2873,6 @@ static void do_recall(int Ind, bool bypass)
 			{
 				if (!is_admin(p_ptr))
 					p_ptr->recall_pos.wz = 0;
-				else
-					msg_print(Ind, "You feel yourself yanked toward nowhere...");
 			}
 
 			if (p_ptr->recall_pos.wz <= 0) {
