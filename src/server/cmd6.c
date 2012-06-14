@@ -5472,6 +5472,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			case ART_OLORIN:
 			{
 				probing(Ind);
+				detection(Ind, DEFAULT_RADIUS * 2);
 				o_ptr->timeout = 20;
 				break;
 			}

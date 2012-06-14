@@ -2732,7 +2732,8 @@ cptr item_activation(object_type *o_ptr)
 		}
 		case ART_OLORIN:
 		{
-			return "probing, detection and full id every 1000 turns";
+//			return "probing, detection and full id every 1000 turns";
+			return "probing and detection every 20 turns";
 		}
 		case ART_EONWE:
 		{
