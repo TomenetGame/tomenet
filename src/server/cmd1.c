@@ -2357,7 +2357,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 	bool		drain_msg = TRUE;
 	int		drain_result = 0, drain_heal = 0, drain_frac;
 	int		drain_left = MAX_VAMPIRIC_DRAIN;
-	bool		drainable = TRUE;
+	bool		drainable = TRUE, backstab_feed = FALSE;
 //	bool		py_slept;
 	bool		no_pk;
 
@@ -2959,6 +2959,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 
 			/* Messages */
 			if (backstab) {
+				backstab_feed = TRUE;
 				backstab = FALSE;
 			   if (martial) {
 				msg_format(Ind, "You twist the neck of %s for \377L%d \377wdamage.", q_name, k);
@@ -2996,7 +2997,24 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			if (!c_ptr->m_idx) break;
 
 			/* Check for death */
-			if (q_ptr->death) break;
+			if (q_ptr->death) {
+				/* Vampires feed off the life force! (if any) */
+				// mimic forms for vampires/bats: 432, 520, 521, 623, 989
+				if (p_ptr->prace == RACE_VAMPIRE && drainable) {
+					int feed = q_ptr->mhp + 100;
+//					feed = (4 - (300 / feed)) * 1000;//1000..4000
+					feed = (6 - (300 / feed)) * 100;//300..600
+					if (backstab_feed) feed *= 2;
+					if (q_ptr->prace == RACE_VAMPIRE) feed /= 3;
+					/* Never get gorged */
+					feed += p_ptr->food;
+					if (feed >= PY_FOOD_MAX) feed = PY_FOOD_MAX - 1;
+					set_food(Ind, feed);
+				}
+
+				/* end of our fight */
+				break;
+			}
 
 			py_touch_zap_player(Ind, -c_ptr->m_idx);
 
@@ -3335,7 +3353,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	bool		drain_msg = TRUE;
 	int		drain_result = 0, drain_heal = 0;
 	int		drain_left = MAX_VAMPIRIC_DRAIN;
-	bool		drainable = TRUE;
+	bool		drainable = TRUE, backstab_feed = FALSE;
 	bool		mon_slept, uniq_bell = FALSE;
 	char		uniq = 'w';
 
@@ -3977,6 +3995,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 			/* DEG Updated hit message to include damage */
 			if (backstab) {
+				backstab_feed = TRUE;
 				backstab = FALSE;
 			   if (martial) {
 				if (r_ptr->flags1 & RF1_UNIQUE) {
@@ -4048,6 +4067,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 					feed = (6 - (300 / feed)) * 100;//300..600
 					if (r_ptr->flags3 & RF3_DEMON) feed /= 2;
 					if (r_ptr->d_char == 'A') feed /= 3;
+					if (backstab_feed) feed *= 2;
 					/* Never get gorged */
 					feed += p_ptr->food;
 					if (feed >= PY_FOOD_MAX) feed = PY_FOOD_MAX - 1;
