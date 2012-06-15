@@ -9037,11 +9037,13 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 		    (wpos->wz > 0 && wild_info[wpos->wy][wpos->wx].tower->maxdepth == wpos->wz))
 			dun->l_ptr->flags1 |= LF1_IRON_RECALL;
 		/* IRONMAN allows recalling sometimes, if IRONFIX or IRONRND */
-		else if (d_ptr && (dun_lev >= 20) && /* was 30 */
+		else if (d_ptr && (dun_lev >= 20) && ( /* was 30 */
+		    (!p_ptr->dummy_option_8 &&
 		    (((d_ptr->flags2 & DF2_IRONRND1) && magik(20)) ||
 		    ((d_ptr->flags2 & DF2_IRONRND2) && magik(12)) ||
 		    ((d_ptr->flags2 & DF2_IRONRND3) && magik(8)) ||
-		    ((d_ptr->flags2 & DF2_IRONRND4) && magik(5)) ||
+		    ((d_ptr->flags2 & DF2_IRONRND4) && magik(5))))
+		     ||
 		    ((d_ptr->flags2 & DF2_IRONFIX1) && !(wpos->wz % 5)) ||
 		    ((d_ptr->flags2 & DF2_IRONFIX2) && !(wpos->wz % 10))||
 		    ((d_ptr->flags2 & DF2_IRONFIX3) && !(wpos->wz % 15)) ||
@@ -9072,7 +9074,7 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 	k = 0;
 	if (dun_lev > 2 && (town || (dun_lev < 100 && (
 	    ((d_ptr->flags2 & DF2_TOWNS_FIX) && !(dun_lev % 20)) ||
-	    ((d_ptr->flags2 & DF2_TOWNS_RND) &&
+	    (!p_ptr->dummy_option_8 && (d_ptr->flags2 & DF2_TOWNS_RND) &&
  #if 0 /* for generic dungeons maybe */
 	     magik(30 / (ABS(((dun_lev + 10) % 20) - 10) + 1))
  #else /* deep dive specifically: no towns before 900 ft or around the static towns at 2k and 4k */
