@@ -2584,12 +2584,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				q_ptr->mode = p_ptr->mode;
 				(void)inven_carry(Ind, q_ptr);
 
-				/* hack: prevent s32b overflow */
-				if (!(2000000000 - (bottles * 10) < p_ptr->au)) {
-					/* This trap is polite */
-					p_ptr->au += bottles * 10;
-					p_ptr->redraw |= (PR_GOLD);
-				}
+				/* This trap is polite */
+				gain_au(Ind, bottles * 10, TRUE);
 			}
 
 			//if (ident)

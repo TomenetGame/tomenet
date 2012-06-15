@@ -3741,11 +3741,8 @@ void store_confirm(int Ind)
 		return;
 	}
 
-	/* hack: prevent s32b overflow */
-	if (2000000000 - o_ptr->pval < p_ptr->au) {
-		msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
-		return;
-	}
+	/* Get some money */
+	if (!gain_au(Ind, price, FALSE)) return;
 
 	/* Trash the saved variables */
 	p_ptr->current_selling = -1;
@@ -3759,9 +3756,6 @@ void store_confirm(int Ind)
 
 	/* Be happy */
 	/*decrease_insults();*/
-
-	/* Get some money */
-	p_ptr->au += price;
 
 	/* Update the display */
 	store_prt_gold(Ind);
@@ -5386,7 +5380,10 @@ void home_purchase(int Ind, int item, int amt)
 					object_value_real(0, o_ptr), o_ptr->discount, o_name);
  #endif
 			/* Highlander Tournament: Don't allow transactions before it begins */
-			if (!p_ptr->max_exp) gain_exp(Ind, 1);
+			if (!p_ptr->max_exp) {
+				msg_print(Ind, "You gain a tiny bit of experience from trading a used item.");
+				gain_exp(Ind, 1);
+			}
 		}
 #endif  // CHEEZELOG_LEVEL
 

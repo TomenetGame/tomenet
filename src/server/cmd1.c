@@ -1382,13 +1382,9 @@ void carry(int Ind, int pickup, int confirm)
 			msg_format(Ind, "You cannot take money of %s players.", compat_pomode(Ind, o_ptr));
 			return;
 		}
-		
-		/* hack: prevent s32b overflow O_o (might happen to
-		   'Illusionate' party at one point in the future? Dunno) */
-		if (2000000000 - o_ptr->pval < p_ptr->au) {
-			msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
-			return;
-		}
+
+		/* Collect the gold */
+		if (!gain_au(Ind, o_ptr->pval, FALSE)) return;
 
 		/* Message */
 		msg_format(Ind, "You have found %ld gold pieces worth of %s.",
@@ -1401,12 +1397,6 @@ void carry(int Ind, int pickup, int confirm)
 /* #if DEBUG_LEVEL > 3 */
 		if (o_ptr->pval >= 10000)
 			s_printf("Gold found (%ld by %s at %d,%d,%d).\n", o_ptr->pval, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
-
-		/* Collect the gold */
-		p_ptr->au += o_ptr->pval;
-
-		/* Redraw gold */
-		p_ptr->redraw |= (PR_GOLD);
 
 		/* Window stuff */
 		p_ptr->window |= (PW_PLAYER);
@@ -1447,7 +1437,10 @@ void carry(int Ind, int pickup, int confirm)
 						o_ptr->pval);
  #endif
 				/* Highlander Tournament: Don't allow transactions before it begins */
-				if (!p_ptr->max_exp) gain_exp(Ind, 1);
+				if (!p_ptr->max_exp) {
+					msg_print(Ind, "You gain a tiny bit of experience from exchanging money.");
+					gain_exp(Ind, 1);
+				}
 			}
 		}
 #endif	// CHEEZELOG_LEVEL
@@ -1990,7 +1983,10 @@ if (is_weapon(o_ptr->tval) && !(k_info[o_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_
  #endif
 
 					/* Highlander Tournament: Don't allow transactions before it begins */
-					if (!p_ptr->max_exp) gain_exp(Ind, 1);
+					if (!p_ptr->max_exp) {
+						msg_print(Ind, "You gain a tiny bit of experience from trading an item.");
+						gain_exp(Ind, 1);
+					}
 				}
 #endif	// CHEEZELOG_LEVEL
 
@@ -5713,7 +5709,7 @@ void move_player(int Ind, int dir, int do_pickup)
 //					int i = (p_ptr->lev > 4) ? 100 + (p_ptr->lev * p_ptr->lev * p_ptr->lev) / 5 : 100;
 					int i = 300 + (p_ptr->lev * p_ptr->lev * p_ptr->lev) / 2; /* buffed it greatly, yet still sensible */
 					msg_format(Ind, "The temple priest gives you %ld gold pieces for your revival!", i);
-					p_ptr->au += i;
+					gain_au(Ind, i, FALSE);
 				}
 			}
 			else msg_print(Ind, "\377rThe temple priest turns you away!");

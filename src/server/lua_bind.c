@@ -621,7 +621,7 @@ void lua_strip_true_arts_from_present_player(int Ind, int mode) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 	int i, total_number = 0;
-	bool reimbursed = FALSE;
+	bool reimbursed = FALSE, gold_overflow = FALSE;
 	s32b cost;
 
 	for (i = 0; i < INVEN_TOTAL; i++) {
@@ -646,14 +646,8 @@ void lua_strip_true_arts_from_present_player(int Ind, int mode) {
 			cost = a_info[o_ptr->name1].cost;
 			if (cost > 0) {
 //				if (cost > 500000) cost = 500000; //not required, it's still fair
-				/* hack: prevent s32b overflow */
-				if (2000000000 - cost < p_ptr->au) {
-					msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
-				} else {
-					p_ptr->au += cost;
-					p_ptr->redraw |= (PR_GOLD);
-					reimbursed = TRUE;
-				}
+				if (gain_au(Ind, cost, gold_overflow)) reimbursed = TRUE;
+				else gold_overflow = TRUE;
 			}
 
 			if (mode == 0) handle_art_d(o_ptr->name1);

@@ -1916,14 +1916,7 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 
 		/* Special handling for gold */
 		if (o_list[item].tval == TV_GOLD) {
-			/* hack: prevent s32b overflow */
-			if (2000000000 - o_ptr->pval < p_ptr->au) {
-				msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
-			} else
-			/* Collect the gold */
-			p_ptr->au += o_list[item].pval;
-
-			p_ptr->redraw |= (PR_GOLD);
+			gain_au(Ind, o_ptr->pval, FALSE);
 			p_ptr->window |= (PW_PLAYER);
 		} else {
 			object_copy(o_ptr, &o_list[item]);
@@ -2106,14 +2099,8 @@ void do_cmd_steal(int Ind, int dir)
 			if (amt) {
 				/* Move from target to thief */
 				q_ptr->au -= amt;
-				/* hack: prevent s32b overflow */
-				if (2000000000 - amt < p_ptr->au) {
-					msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
-				} else
-				p_ptr->au += amt;
-
+				gain_au(Ind, amt, FALSE);
 				/* Redraw */
-				p_ptr->redraw |= (PR_GOLD);
 				q_ptr->redraw |= (PR_GOLD);
 
 				/* Tell thief */

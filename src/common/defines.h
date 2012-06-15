@@ -606,13 +606,16 @@
    (form party, trade items) while inside the Ironman Deep Dive Challenge? */
 #define IRONDEEPDIVE_ALLOW_INCOMPAT
 
+/* Maximum amount of gold that can be farmed from townies before you get 1 XP
+   from it. This is an anti-cheeze for Highlander Tournament and Ironman Deep
+   Dive Challenge. (0 = no limit) [500] */
+#define EVENT_TOWNIE_GOLD_LIMIT 500
 
 /* New, added for the implementation of FINAL_GUARDIAN (finally) - C. Blue
    Does the player have to actually explore a dungeon to get his recall depth set for it?
    (If not then he can just get his recall depth from another dungeon and use it here.)
    NOTE: Make sure 0,0 holds no 'normal' dungeon (only special-sector highlander etc). */
 #define SEPARATE_RECALL_DEPTHS
-
 
 /* Dungeons have minimum player level requirements to enter? */
 //#define OBEY_DUNGEON_LEVEL_REQUIREMENTS

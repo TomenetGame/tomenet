@@ -9395,7 +9395,10 @@ if (is_weapon(q_ptr->tval) && !(k_info[q_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_
 		s_printf("(Tele) Item transaction from %s(%d) to %s(%d):\n  %s\n", p_ptr->name, p_ptr->lev, Players[Ind2]->name, Players[Ind2]->lev, o_name);
 
 		/* Highlander Tournament: Don't allow transactions before it begins */
-		if (!p2_ptr->max_exp) gain_exp(Ind2, 1);
+		if (!p2_ptr->max_exp) {
+			msg_print(Ind2, "You gain a tiny bit of experience from receiving an item via telekinesis.");
+			gain_exp(Ind2, 1);
+		}
 
 		/* Remove dangerous inscriptions - mikaelh */
 		if (q_ptr->note && p2_ptr->clear_inscr) {

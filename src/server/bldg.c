@@ -229,9 +229,7 @@ static void arena_comm(int cmd)
 				prt("",10,0);
 				prt("", 11, 0);
 
-				/* hack: prevent s32b overflow */
-				if (!(2000000000 - 10000 < p_ptr->au)) p_ptr->au += 10000;
-				else msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
+				gain_au(Ind, 10000, FALSE);
 
 				msg_print("Press the space bar to continue");
 				msg_print(NULL);
@@ -815,15 +813,10 @@ static void share_gold(void)
 
 	i = (p_ptr->lev * 2) * 10;
 
-	/* hack: prevent s32b overflow */
-	if (2000000000 - i < p_ptr->au) {
-		msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
-		return;
-	}
+	if (!gain_au(Ind, i, FALSE)) return;
 
 	msg_format("You collect %d gold pieces", i);
 	msg_print(NULL);
-	p_ptr->au += i;
 }
 
 
@@ -1410,15 +1403,10 @@ static void sell_corpses(void)
 		if (o_ptr->pval2 == bounties[i][0]) {
 			value = bounties[i][1] + boost*(r_info[o_ptr->pval2].level);
 
-			/* hack: prevent s32b overflow */
-			if (2000000000 - value < p_ptr->au) {
-				msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
-				return;
-			}
+			if (!gain_au(Ind, value, FALSE)) return;
 
 			msg_format("Sold for %ld gold pieces.", value);
 			msg_print(NULL);
-			p_ptr->au += value;
 
 			/* Increase the number of collected bounties */
 			total_bounties++;
@@ -2060,19 +2048,15 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			req = get_quantity("How much would you like to get? ", price);
 			if (req > 100000) req = 100000;
 
-			/* hack: prevent s32b overflow */
-			if (2000000000 - req < p_ptr->au) {
-				msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
-				break;;
-			}
 			if (2000000000 - req < p_ptr->loan) {
 				msg_format(Ind, "\377yYou cannot have a greater loan than 2 billion worth of gold!");
 				break;
 			}
 
+			if (!gain_au(Ind, req, FALSE)) break;
+
 			p_ptr->loan += req;
-			p_ptr->au += req;
-			if (p_ptr->au > PY_MAX_GOLD) p_ptr->au = PY_MAX_GOLD;
+			//? if (p_ptr->au > PY_MAX_GOLD) p_ptr->au = PY_MAX_GOLD;
 			p_ptr->loan_time += req;
 
 			msg_format(Ind, "You receive %i gold pieces", req);

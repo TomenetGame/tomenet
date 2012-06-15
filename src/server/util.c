@@ -5570,3 +5570,33 @@ char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type) {
 	/* really just "Wilderness" */
 	return (d_name + d_info[type].name);
 }
+
+/* Add gold to the player's gold, for easier handling. - C. Blue
+   Returns FALSE if we already own 2E9 Au. */
+bool gain_au(int Ind, u32b amt, bool quiet) {
+	player_type *p_ptr = Players[Ind];
+
+	/* hack: prevent s32b overflow */
+        if (2000000000 - amt < p_ptr->au) {
+                if (!quiet) msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
+                return FALSE;
+        } else {
+	        /* Collect the gold */
+                p_ptr->au += amt;
+        }
+
+#ifdef EVENT_TOWNIE_GOLD_LIMIT
+	/* if EVENT_TOWNIE_GOLD_LIMIT is 0 then nothing happens */
+        if (p_ptr->gold_picked_up < EVENT_TOWNIE_GOLD_LIMIT) {
+                p_ptr->gold_picked_up += (amt > EVENT_TOWNIE_GOLD_LIMIT) ? EVENT_TOWNIE_GOLD_LIMIT : amt;
+                if (p_ptr->gold_picked_up >= EVENT_TOWNIE_GOLD_LIMIT
+            	    && !p_ptr->max_exp) {
+			msg_print(Ind, "You gain a tiny bit of experience from collecting cash.");
+            		gain_exp(Ind, 1);
+            	}
+        }
+#endif
+
+        p_ptr->redraw |= (PR_GOLD);
+        return TRUE;
+}

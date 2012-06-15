@@ -6209,14 +6209,9 @@ void do_cmd_purchase_house(int Ind, int dir)
 		if (dna->owner) {
 			if (access_door(Ind, dna, FALSE) || admin_p(Ind)) {
 				if(p_ptr->dna == dna->creator){
-					/* hack: prevent s32b overflow */
-					if (2000000000 - (price / 2) < p_ptr->au) {
-						msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
-						return;
-					}
+					if (!gain_au(Ind, price / 2, FALSE)) return;
+
 					/* sell house */
-					p_ptr->au += price / 2;
-					p_ptr->redraw |= PR_GOLD;
 					msg_format(Ind, "You sell your house for %ld gold.", price / 2);
 					p_ptr->houses_owned--;
 

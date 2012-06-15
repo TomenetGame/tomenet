@@ -2072,7 +2072,7 @@ static void do_lottery(int Ind, object_type *o_ptr)
 		msg_format(Ind, "\374\377%cYou won the %d%s prize!", COLOUR_CHAT, k, p);
 
 		gold = i;
-		
+
 		/* Invert it again for following calcs (#else branch below) */
 		k = LOTTERY_MAX_PRIZE + 1 - k;
 		i_drop *= 2;
@@ -2108,11 +2108,6 @@ static void do_lottery(int Ind, object_type *o_ptr)
 
 			gold -= drop;
 		}
-
-		//					p_ptr->au += i;
-
-		/* Redraw gold */
-		p_ptr->redraw |= (PR_GOLD);
 
 		/* Window stuff */
 		p_ptr->window |= (PW_PLAYER);
@@ -2222,23 +2217,18 @@ void do_cmd_read_scroll(int Ind, int item)
 		u32b value = ps_get_cheque_value(o_ptr);
 
 		/* hack: prevent s32b overflow */
-		if (2000000000 - value < p_ptr->au) {
-			msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
-			return;
-		}
+		if (!gain_au(Ind, value, FALSE)) return;
 
 		break_cloaking(Ind, 4);
 		break_shadow_running(Ind);
 		stop_precision(Ind);
 		stop_shooting_till_kill(Ind);
 
-		p_ptr->au += value;
 		msg_format(Ind, "\375\377sYou acquire \377y%d\377s gold pieces.", value);
 s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? quark_str(o_ptr->note) : "");
 
 
 		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-		p_ptr->redraw |= (PR_GOLD);
 		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 		if (item >= 0) { /* Destroy scroll in the pack */

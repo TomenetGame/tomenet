@@ -1599,9 +1599,11 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 		}
 	}
 
+        if (!older_than(4, 4, 24)) rd_u32b(&p_ptr->gold_picked_up);
+        else strip_bytes(4);
 
 	/* Future use */
-	strip_bytes(43);
+	strip_bytes(39);
 
 	/* Toggle for possible automatic save-game updates
 	   (done via script login-hook, eg custom.lua) - C. Blue */

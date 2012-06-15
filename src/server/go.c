@@ -1570,13 +1570,8 @@ static void go_engine_move_result(int move_result) {
 		if (wager) {
 			/* double return */
 			wager *= 2;
-			if (2000000000 - wager < p_ptr->au)
-				msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
-			else {
-				p_ptr->au += wager;
-				p_ptr->redraw |= PR_GOLD;
-				Send_gold(Ind, p_ptr->au, p_ptr->balance);
-			}
+			gain_au(Ind, wager, FALSE);
+			Send_gold(Ind, p_ptr->au, p_ptr->balance);
 		}
 
 		game_over = TRUE;

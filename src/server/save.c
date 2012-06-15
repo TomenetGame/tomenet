@@ -769,8 +769,10 @@ static void wr_extra(int Ind)
 	wr_u16b(tmp16u);
 	for (i = 0; i < tmp16u; i++) wr_s16b(p_ptr->r_killed[i]);
 
+	wr_u32b(p_ptr->gold_picked_up);
+
 	/* Future use */
-	for (i = 0; i < 43; i++) wr_byte(0);
+	for (i = 0; i < 39; i++) wr_byte(0);
 
         /* Toggle for possible automatic save-game updates
            (done via script login-hook, eg custom.lua) - C. Blue */

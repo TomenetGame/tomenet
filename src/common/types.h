@@ -2923,6 +2923,8 @@ struct player_type
 	/* SEPARATE_RECALL_DEPTHS */
 	byte max_depth[MAX_D_IDX * 2], max_depth_wx[MAX_D_IDX * 2], max_depth_wy[MAX_D_IDX * 2]; /* x2 to account for possible wilderness dungeons */
 	bool max_depth_tower[MAX_D_IDX * 2];
+
+	u32b gold_picked_up; /* for EVENT_TOWNIE_GOLD_LIMIT */
 };
 
 /* For Monk martial arts */
