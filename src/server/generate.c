@@ -11376,10 +11376,12 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
 		d_ptr->maxdepth = d_info[type].maxdepth - d_ptr->baselevel + 1; 
 		d_ptr->flags1 = d_info[type].flags1 | flags1;
 		d_ptr->flags2 = d_info[type].flags2 | flags2 | DF2_RANDOM;
+		d_ptr->flags3 = d_info[type].flags3 | flags3;
 	} else {
 		d_ptr->baselevel = baselevel;
 		d_ptr->flags1 = flags1;
 		d_ptr->flags2 = flags2;
+		d_ptr->flags3 = flags3;
 		d_ptr->maxdepth = maxdep;
 	}
 

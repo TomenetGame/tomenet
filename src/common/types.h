@@ -188,6 +188,7 @@ struct dungeon_type
 	/* maybe contains info about if tower/dungeon/building etc */
 	u32b flags1;		/* dungeon flags */
 	u32b flags2;		/* DF2 flags */
+	u32b flags3;		/* DF3 flags */
 
 	byte maxdepth;		/* max height/depth */
 	char r_char[10];	/* races allowed */
@@ -2988,6 +2989,7 @@ struct dungeon_info_type
 
 	u32b flags1;                    /* Flags 1 */
 	u32b flags2;                    /* Flags 1 */
+	u32b flags3;                    /* Flags 1 */
 
 	byte rule_percents[100];        /* Flat rule percents */
 	rule_type rules[5];             /* Monster generation rules */

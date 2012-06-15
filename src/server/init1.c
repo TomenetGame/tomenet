@@ -5625,6 +5625,16 @@ static errr grab_one_dungeon_flag(dungeon_info_type *d_ptr, cptr what)
 		}
 	}
 
+	/* Scan flags3 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, d_info_flags3[i]))
+		{
+			d_ptr->flags3 |= (1L << i);
+			return (0);
+		}
+	}
+
 	/* Oops */
 	s_printf("Unknown dungeon type flag '%s'.\n", what);
 

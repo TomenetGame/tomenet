@@ -4302,12 +4302,14 @@ void do_slash_cmd(int Ind, char *message)
 						if (type) {
 							d_ptr->flags1 = d_info[type].flags1;
 							d_ptr->flags2 = d_info[type].flags2 | DF2_RANDOM;
+							d_ptr->flags3 = d_info[type].flags3;
 							d_ptr->baselevel = d_info[type].mindepth;
 							d_ptr->maxdepth = d_info[type].maxdepth - d_ptr->baselevel + 1;
 						} else {
 #if 0 /* don't touch custom dungeons, that might have flags such as ironman or no-entry etc! their flags would get zero'ed here! */
 							d_ptr->flags1 = d_info[type].flags1;
 							d_ptr->flags2 = d_info[type].flags2;
+							d_ptr->flags3 = d_info[type].flags3;
 #else
 							continue;
 #endif
@@ -4351,12 +4353,14 @@ void do_slash_cmd(int Ind, char *message)
 						if (type) {
 							d_ptr->flags1 = d_info[type].flags1;
 							d_ptr->flags2 = d_info[type].flags2 | DF2_RANDOM;
+							d_ptr->flags3 = d_info[type].flags3;
 							d_ptr->baselevel = d_info[type].mindepth;
 							d_ptr->maxdepth = d_info[type].maxdepth - d_ptr->baselevel + 1;
 						} else {
 #if 0 /* don't touch custom dungeons, that might have flags such as ironman or no-entry etc! their flags would get zero'ed here! */
 							d_ptr->flags1 = d_info[type].flags1;
 							d_ptr->flags2 = d_info[type].flags2;
+							d_ptr->flags3 = d_info[type].flags3;
 #else
 							continue;
 #endif
