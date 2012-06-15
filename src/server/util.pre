@@ -480,3 +480,5 @@ extern void init_swearing(void);
 extern u16b dungeon_visit_frequency[128];
 extern int dungeon_bonus[128];
 #endif
+
+bool censor_swearing;

@@ -2122,3 +2122,5 @@ extern u16b dungeon_visit_frequency[MAX_D_IDX * 2];
 extern bool dungeon_tower[MAX_D_IDX * 2], dungeon_visit_check[MAX_D_IDX * 2];
 extern int dungeon_bonus[MAX_D_IDX * 2];
 #endif
+
+bool censor_swearing;

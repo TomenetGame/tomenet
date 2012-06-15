@@ -2635,6 +2635,7 @@ s_printf("DUAL_MODE: Player %s toggles %s.\n", p_ptr->name, p_ptr->dual_mode ? "
 	return;
 }
 
+#ifdef CENSOR_SWEARING
 /* similar to strstr(), but catches char repetitions and swap-arounds.
    TODO: current implementation is pretty naive, need to use more effective algo when less lazy. */
 #define GET_MOST_DELAYED_MATCH /* must be enabled */
@@ -2980,6 +2981,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet) {
 	}
 	return(level);
 }
+
 static int censor(char *line) {
 	int i, j, cc[MSG_LEN], offset;
 	char lcopy[MSG_LEN], lcopy2[MSG_LEN], tmp[MSG_LEN];
@@ -3084,6 +3086,7 @@ static int censor(char *line) {
 	if (j > i) return j;
 	return i;
 }
+#endif
 
 /*
  * A message prefixed by a player name is sent only to that player.
@@ -3732,7 +3735,10 @@ static void player_talk_aux(int Ind, char *message)
 
 /* Check for swear words, censor + punish */
 int handle_censor(char *message) {
-	return censor(message);
+#ifdef CENSOR_SWEARING
+	if (censor_swearing) return censor(message);
+#endif
+	return 0;
 }
 void handle_punish(int Ind, int level) {
 	switch (level) {

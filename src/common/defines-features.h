@@ -22,6 +22,12 @@
 #define DUNGEON_VISIT_BONUS	/* Experimental: Dungeons rarely visited give exp bonus - C. Blue */
 //#define DUNGEON_VISIT_BONUS_DEPTHRANGE /* not yet implemented: enhance DUNGEON_VISIT_BONUS algorithm further (but seems inefficient atm) */
 
+/* Filter swearwords (depends on client-side option too) and put offenders to jail?
+   (Filer initialised from swearing.txt (vs nonswearing.txt) and init_swear_set().)
+   NOTE: Censoring can still be disabled (and reenabled) on the fly via
+         'censor_swearing' lua variable.*/
+#define CENSOR_SWEARING
+
 #define ENABLE_RUNEMASTER	/* enable runemaster class */
 #define ENABLE_RCRAFT		/* New runecraft class - relsiet (toggles new alternative code for ENABLE_RUNEMASTER) */
 
