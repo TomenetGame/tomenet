@@ -7840,6 +7840,15 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			int xx = atoi(zz[1]);
 			new_level_rand_y(wpos, yy);
 			new_level_rand_x(wpos, xx);
+
+			/* for dungeon towns in ironman dungeons - C. Blue */
+			if (wpos->wz) {
+				new_level_down_y(wpos, yy);
+				new_level_down_x(wpos, xx);
+				new_level_up_y(wpos, yy);
+				new_level_up_x(wpos, xx);
+			}
+
 #if 0
 			new_level_down_y(wpos, yy);
 			new_level_down_x(wpos, xx);

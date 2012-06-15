@@ -1,4 +1,4 @@
-# Arena #1 for Highlander Tournament, by C. Blue
+# Nargothrond, as dungeon town in the Ironman dungeon, by C. Blue. Thanks to Kurzel for suggesting it.
 
 %:t_pref.txt
 
