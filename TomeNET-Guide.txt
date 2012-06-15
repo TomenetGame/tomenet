@@ -8712,7 +8712,8 @@ Note that not every skill is available to every profession (class).
     +Weaponmastery              Improves your Fighting ability.
                                 Slightly increases melee to-dam and to-hit for
                                 armed combat. Increases your chance to score
-                                critical hits in armed combat.
+                                critical hits in armed combat (Note: The skill
+                                'Critical-Strike' has much more effect.)
                                 If your server has parrying enabled,
                                 Weaponmastery will also increase your parry
                                 chance a good deal (see (6.11) for details).
