@@ -2782,9 +2782,10 @@ void new_rd_wild()
 				rd_u16b(&d_ptr->baselevel);
 				rd_u32b(&d_ptr->flags1);
 				rd_u32b(&d_ptr->flags2);
+				if (!s_older_than(4, 4, 24)) rd_u32b(&d_ptr->flags3);
 				rd_byte(&d_ptr->maxdepth);
 #if 0
-				for(i=0;i<10;i++){
+				for (i = 0; i < 10; i++) {
 					rd_byte((byte*)&d_ptr->r_char[i]);
 					rd_byte((byte*)&d_ptr->nr_char[i]);
 				}
@@ -2807,7 +2808,7 @@ void new_rd_wild()
 				}
 				wptr->dungeon=d_ptr;
 			}
-			if(wptr->flags & WILD_F_UP){
+			if (wptr->flags & WILD_F_UP) {
 				MAKE(d_ptr, struct dungeon_type);
 				rd_byte(&wptr->dn_x);
 				rd_byte(&wptr->dn_y);
@@ -2825,9 +2826,10 @@ void new_rd_wild()
 				rd_u16b(&d_ptr->baselevel);
 				rd_u32b(&d_ptr->flags1);
 				rd_u32b(&d_ptr->flags2);
+				if (!s_older_than(4, 4, 24)) rd_u32b(&d_ptr->flags3);
 				rd_byte(&d_ptr->maxdepth);
 #if 0
-				for(i=0;i<10;i++){
+				for (i = 0; i < 10; i++) {
 					rd_byte((byte*)&d_ptr->r_char[i]);
 					rd_byte((byte*)&d_ptr->nr_char[i]);
 				}

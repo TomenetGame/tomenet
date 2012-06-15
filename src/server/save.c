@@ -2041,6 +2041,7 @@ static void new_wr_wild(){
 				wr_u16b(w_ptr->dungeon->baselevel);
 				wr_u32b(w_ptr->dungeon->flags1);
 				wr_u32b(w_ptr->dungeon->flags2);
+				wr_u32b(w_ptr->dungeon->flags3);
 				wr_byte(w_ptr->dungeon->maxdepth);
 				for(i = 0; i < 10; i++) {
 #if 0	/* unused - mikaelh */
@@ -2065,6 +2066,7 @@ static void new_wr_wild(){
 				wr_u16b(w_ptr->tower->baselevel);
 				wr_u32b(w_ptr->tower->flags1);
 				wr_u32b(w_ptr->tower->flags2);
+				wr_u32b(w_ptr->tower->flags3);
 				wr_byte(w_ptr->tower->maxdepth);
 				for (i = 0; i < 10; i++){
 #if 0	/* unused - mikaelh */

@@ -11313,7 +11313,7 @@ void rem_dungeon(struct worldpos *wpos, bool tower){
 }
 
 /* 'type' refers to t_info[] */
-void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, int flags2, bool tower, int type)
+void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, u32b flags2, u32b flags3, bool tower, int type)
 {
 #ifdef RPG_SERVER
 	bool found_town = FALSE;
@@ -11515,11 +11515,11 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 				}
 				type = town[retval].type;
 #if 0
-				add_dungeon(wpos, town_profile[type].dun_base, town_profile[type].dun_max, 0, DF2_RANDOM, town_profile[type].tower, 0);
+				add_dungeon(wpos, town_profile[type].dun_base, town_profile[type].dun_max, 0x0, DF2_RANDOM, 0x0, town_profile[type].tower, 0);
 #else	/* 0 */
 				for (i = 0; i < 2; i++) {
 					if (town_profile[type].dungeons[i])
-						add_dungeon(wpos, 0, 0, 0, 0, FALSE, town_profile[type].dungeons[i]);
+						add_dungeon(wpos, 0, 0, 0x0, 0x0, 0x0, FALSE, town_profile[type].dungeons[i]);
 				}
 #endif	/* 0 */
 			}

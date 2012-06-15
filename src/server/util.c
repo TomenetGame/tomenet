@@ -5475,7 +5475,8 @@ void intshuffle(int *array, int size) {
 	}
 }
 
-/* for all the dungeons/towers that are special, yet use the type 0 dungeon template */
+/* for all the dungeons/towers that are special, yet use the type 0 dungeon template - C. Blue
+   todo: actually create own types for these. would also make DF3_JAIL_DUNGEON obsolete. */
 char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type) {
 	static char *jail = "Jail Dungeon";
 	static char *pvp_arena = "PvP Arena";
@@ -5503,10 +5504,13 @@ char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type) {
 	    tower == (WPOS_IRONDEEPDIVE_Z > 0))
 		return irondeepdive;
 
-	if (d_ptr &&
-	    d_ptr->baselevel == 30 && d_ptr->maxdepth == 30 &&
+	if (d_ptr && (
+	    /* ughhh */
+	    (d_ptr->baselevel == 30 && d_ptr->maxdepth == 30 &&
 	    (d_ptr->flags1 & DF1_FORGET) &&
 	    (d_ptr->flags2 & DF2_IRON))
+	    /* yay */
+	    || (d_ptr->flags3 & DF3_JAIL_DUNGEON) ))
 		return jail;
 
 	/* really just "Wilderness" */

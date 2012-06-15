@@ -794,7 +794,7 @@ extern void arcade_wipe(worldpos *wpos);
 extern bool room_alloc(worldpos *wpos, int x, int y, bool crowded, int by0, int bx0, int *xx, int *yy);
 extern bool dungeon_aux(int r_idx);
 extern bool quest_aux(int r_idx);
-extern void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, int flags2, bool tower, int type);
+extern void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, u32b flags2, u32b flags3, bool tower, int type);
 extern void rem_dungeon(struct worldpos *wpos, bool tower);
 extern void alloc_dungeon_level(struct worldpos *wpos);
 extern void dealloc_dungeon_level(struct worldpos *wpos);

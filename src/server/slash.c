@@ -2592,7 +2592,7 @@ void do_slash_cmd(int Ind, char *message)
 			apos.wx = 0; apos.wy = 0; apos.wz = 0;
 			if (!wild_info[apos.wy][apos.wx].tower) {
 				add_dungeon(&apos, 1, 1, DF1_NO_RECALL | DF1_SMALLEST,
-				    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK, TRUE, 0);
+				    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK, 0x0, TRUE, 0);
 				fresh_arena = TRUE;
 			}
 			apos.wz = 1;
@@ -6402,6 +6402,33 @@ void do_slash_cmd(int Ind, char *message)
 				fix_max_depth(Players[p]);
 
 				msg_format(Ind, "max_depth[] fixed for '%s':", Players[p]->name);
+				return;
+			}
+			else if (prefix(message, "/fixjaildun")) {//adds DF3_JAIL_DUNGEON flag to a dungeon if on a jail grid
+				worldpos *tpos = &p_ptr->wpos;
+				cave_type **zcave, *c_ptr;
+				wilderness_type *wild = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
+				struct dungeon_type *d_ptr;
+
+				if (!(zcave = getcave(tpos))) {
+					msg_print(Ind, "Fatal: Couldn't acquire zcave!");
+					return;
+				}
+				c_ptr = &zcave[p_ptr->py][p_ptr->px];
+				if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE) {
+					msg_print(Ind, "Error: Not standing on a staircase grid.");
+					return;
+				}
+				if (!(c_ptr->info & CAVE_JAIL)) {
+					msg_print(Ind, "Error: Not standing on a CAVE_JAIL grid.");
+					return;
+				}
+
+				if (c_ptr->feat == FEAT_LESS) d_ptr = wild->tower;
+				else d_ptr = wild->dungeon;
+
+				d_ptr->flags3 |= DF3_JAIL_DUNGEON;
+				msg_print(Ind, "DF3_JAIL_DUNGEON added.");
 				return;
 			}
 		}

@@ -9813,7 +9813,7 @@ bool master_level(int Ind, char * parms)
 		case 'D':
 		{
 			cave_type **zcave;
-			u32b f1 = 0x0, f2 = 0x0;
+			u32b f1 = 0x0, f2 = 0x0, f3 = 0x0;
 			if(!parms[1] || !parms[2] || p_ptr->wpos.wz) return FALSE;
 			if(istown(&p_ptr->wpos)){
 				msg_print(Ind,"Even you may not create dungeons in the town!");
@@ -9843,21 +9843,23 @@ bool master_level(int Ind, char * parms)
 			/* create tower or dungeon */
 			if(parms[3] == 't' && !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_UP)){
 				printf("tower: flags %x,%x\n", f1, f2);
-				add_dungeon(&p_ptr->wpos, parms[1], parms[2], f1, f2, TRUE, 0);
-				new_level_down_y(&p_ptr->wpos, p_ptr->py);
-				new_level_down_x(&p_ptr->wpos, p_ptr->px);
 				if((zcave = getcave(&p_ptr->wpos))) {
 					zcave[p_ptr->py][p_ptr->px].feat = FEAT_LESS;
+					if (zcave[p_ptr->py][p_ptr->px].info & CAVE_JAIL) f3 |= DF3_JAIL_DUNGEON;
 				}
+				add_dungeon(&p_ptr->wpos, parms[1], parms[2], f1, f2, f3, TRUE, 0);
+				new_level_down_y(&p_ptr->wpos, p_ptr->py);
+				new_level_down_x(&p_ptr->wpos, p_ptr->px);
 			}
 			if(parms[3] == 'd' && !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_DOWN)){
 				printf("dungeon: flags %x,%x\n", f1, f2);
-				add_dungeon(&p_ptr->wpos, parms[1], parms[2], f1, f2, FALSE, 0);
-				new_level_up_y(&p_ptr->wpos, p_ptr->py);
-				new_level_up_x(&p_ptr->wpos, p_ptr->px);
 				if((zcave = getcave(&p_ptr->wpos))) {
 					zcave[p_ptr->py][p_ptr->px].feat = FEAT_MORE;
+					if (zcave[p_ptr->py][p_ptr->px].info & CAVE_JAIL) f3 |= DF3_JAIL_DUNGEON;
 				}
+				add_dungeon(&p_ptr->wpos, parms[1], parms[2], f1, f2, f3, FALSE, 0);
+				new_level_up_y(&p_ptr->wpos, p_ptr->py);
+				new_level_up_x(&p_ptr->wpos, p_ptr->px);
 			}
 			break;
 		}

@@ -1332,6 +1332,7 @@ struct dungeon_type
 	u16b baselevel;		/* base level (1 - 50ft etc). */
 	u32b flags1;		/* dungeon flags */
 	u32b flags2;		/* DF2 flags */
+	u32b flags3;		/* DF3 flags */
 	byte maxdepth;		/* max height/depth */
 #if 0
 	rule_type rules[5];	/* Monster generation rules */

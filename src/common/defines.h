@@ -85,7 +85,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	4
-#define SF_VERSION_PATCH	23
+#define SF_VERSION_PATCH	24
 #define SF_VERSION_EXTRA	0
 
 
@@ -5351,6 +5351,9 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 
 #define DF2_NO_ENTRY_MASK       (DF2_NO_ENTRY_STAIR | DF2_NO_ENTRY_WOR | DF2_NO_ENTRY_PROB | DF2_NO_ENTRY_FLOAT)
 #define DF2_NO_EXIT_MASK        (DF2_NO_EXIT_STAIR | DF2_NO_EXIT_WOR | DF2_NO_EXIT_PROB | DF2_NO_EXIT_FLOAT)
+
+/* moar flags */
+#define DF3_JAIL_DUNGEON	0x1000000L	/* purpose is just to display the name "Jail Dungeon" in dungeon list */
 
 
 /* level flags for dun_level */
