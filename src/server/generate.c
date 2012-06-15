@@ -11156,6 +11156,11 @@ void dealloc_dungeon_level(struct worldpos *wpos)
 	char o_name[ONAME_LEN];
 	cave_type *c_ptr;
 	dun_level *l_ptr = getfloor(wpos);
+
+	/* master-level-unstaticing as done in slash command /treset
+	   will already call dealloc_dungeon_level, so -> NULL pointer. */
+	if (!(zcave = getcave(wpos))) return;
+
 #if DEBUG_LEVEL > 1
 	s_printf("deallocating %s\n", wpos_format(0, wpos));
 #endif
@@ -11193,7 +11198,6 @@ void dealloc_dungeon_level(struct worldpos *wpos)
 		}
 	}
 
-	zcave = getcave(wpos);
 	for (i = 0; i < MAX_HGT; i++) {
 		/* Erase all special feature stuff - mikaelh */
 		for (j = 0; j < MAX_WID; j++) {
