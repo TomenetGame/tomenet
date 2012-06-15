@@ -2357,10 +2357,6 @@ static errr rd_savefile_new_aux(int Ind)
 
 	/* continued 'else' branch from rd_extra(), now that we have wild_map[] array */
         if (older_than(4, 4, 23) || p_ptr->dummy_option_8) {
-		struct worldpos wpos;
-		int j, x, y;
-		dungeon_type *d_ptr;
-
 		/* in case we're here by a fix-hack */
 		if (p_ptr->dummy_option_8) {
 			s_printf("fixing max_depth[] for '%s'\n", p_ptr->name);
@@ -2370,71 +2366,29 @@ static errr rd_savefile_new_aux(int Ind)
 		/* hack - Sauron vs Shadow of Dol Guldur - just for consistency */
 		if (p_ptr->r_killed[860] == 1) p_ptr->r_killed[819] = 1;
 
-		if (is_admin(p_ptr)) {
-			/* admins may always recall anywhere (compare birth.c) */
-			for (i = 0; i < MAX_D_IDX * 2; i++)
-				p_ptr->max_depth[i] = 200;
-		} else {
-			/* wipe (paranoia, should already be zeroed) */
-			for (i = 0; i < MAX_D_IDX * 2; i++) {
-				p_ptr->max_depth_wx[i] = 0;
-				p_ptr->max_depth_wy[i] = 0;
-				p_ptr->max_depth[i] = 0;
-			}
-
-			/* attempt a fair translation */
-			for (x = 0; x < 64; x++) for (y = 0; y < 64; y++) {
-    	                    wpos.wx = x; wpos.wy = y;
-
-				/* skip if player has never visited this dungeon's worldmap sector even! */
-				if (!(p_ptr->wild_map[wild_idx(&wpos) / 8] & (1 << (wild_idx(&wpos) % 8)))) continue;
-
-				/* translate */
-				if ((d_ptr = wild_info[y][x].tower)) {
-					wpos.wz = 1;
-					j = recall_depth_idx(&wpos, p_ptr);
-					i = p_ptr->max_dlv - d_ptr->baselevel + 1;
-					if (i > d_ptr->maxdepth) i = d_ptr->maxdepth;
-					p_ptr->max_depth[j] = i;
-				}
-				if ((d_ptr = wild_info[y][x].dungeon)) {
-					wpos.wz = -1;
-					j = recall_depth_idx(&wpos, p_ptr);
-					i = p_ptr->max_dlv - d_ptr->baselevel + 1;
-					if (i > d_ptr->maxdepth) i = d_ptr->maxdepth;
-					p_ptr->max_depth[j] = i;
-				}
-			}
-		}
-        }
-
+		/* init his max_depth[] array */
+		fix_max_depth(p_ptr);
+	}
 
 	/* read player guild membership */
 	rd_byte(&p_ptr->guild);
 	rd_u16b(&p_ptr->quest_id);
         rd_s16b(&p_ptr->quest_num);
 
-        if (!older_than(4, 0, 1))
-        {
+        if (!older_than(4, 0, 1)) {
                 rd_byte(&p_ptr->spell_project);
-        }
-        else
-        {
+        } else {
                 p_ptr->spell_project = 0;
         }
 
         /* Special powers */
-        if (!older_than(4, 0, 2))
-        {
+        if (!older_than(4, 0, 2)) {
                 rd_s16b(&p_ptr->power_num);
 
-                for (i = 0; i < MAX_POWERS; i++)
-                {
+                for (i = 0; i < MAX_POWERS; i++) {
                         rd_s16b(&p_ptr->powers[i]);
                 }
-        }
-        else
-        {
+        } else {
                 p_ptr->power_num = 0;
         }
 
@@ -2991,6 +2945,45 @@ void save_guildhalls(struct worldpos *wpos){
 			data.fp=gfp;
 			fill_house(&houses[i], FILL_GUILD, (void*)&data);
 			fclose(gfp);
+		}
+	}
+}
+
+/* fix max_depth[] array for a character, which is usually done
+   when converting an outdated savegame. - C. Blue */
+void fix_max_depth(player_type *p_ptr) {
+	struct worldpos wpos;
+	int i, j, x, y;
+	dungeon_type *d_ptr;
+
+	/* wipe (paranoia, should already be zeroed) */
+	for (i = 0; i < MAX_D_IDX * 2; i++) {
+		p_ptr->max_depth_wx[i] = 0;
+		p_ptr->max_depth_wy[i] = 0;
+		p_ptr->max_depth[i] = 0;
+	}
+	/* attempt a fair translation */
+	for (x = 0; x < 64; x++) for (y = 0; y < 64; y++) {
+                wpos.wx = x; wpos.wy = y;
+
+		/* skip if player has never visited this dungeon's worldmap sector even! */
+		if (!is_admin(p_ptr) &&
+		    !(p_ptr->wild_map[wild_idx(&wpos) / 8] & (1 << (wild_idx(&wpos) % 8)))) continue;
+
+		/* translate */
+		if ((d_ptr = wild_info[y][x].tower)) {
+			wpos.wz = 1;
+			j = recall_depth_idx(&wpos, p_ptr);
+			i = p_ptr->max_dlv - d_ptr->baselevel + 1;
+			if (i > d_ptr->maxdepth) i = d_ptr->maxdepth;
+			p_ptr->max_depth[j] = i;
+		}
+		if ((d_ptr = wild_info[y][x].dungeon)) {
+			wpos.wz = -1;
+			j = recall_depth_idx(&wpos, p_ptr);
+			i = p_ptr->max_dlv - d_ptr->baselevel + 1;
+			if (i > d_ptr->maxdepth) i = d_ptr->maxdepth;
+			p_ptr->max_depth[j] = i;
 		}
 	}
 }

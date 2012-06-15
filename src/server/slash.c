@@ -6390,6 +6390,20 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				return;
 			}
+			else if (prefix(message, "/fixmd")) {//debug p_ptr->max_depth[]
+				int p;
+				if (tk < 1) {
+					msg_print(Ind, "\377oUsage: /fixmd <player name>");
+					return;
+				}
+				p = name_lookup_loose(Ind, token[1], FALSE);
+				if (!p) return;
+
+				fix_max_depth(Players[p]);
+
+				msg_format(Ind, "max_depth[] fixed for '%s':", Players[p]->name);
+				return;
+			}
 		}
 	}
 

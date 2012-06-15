@@ -870,6 +870,7 @@ extern void save_guildhalls(struct worldpos *wpos);
 extern errr rd_savefile_new(int Ind);
 extern errr rd_server_savefile(void);
 extern bool wearable_p(object_type *o_ptr);
+extern void fix_max_depth(player_type *p_ptr);
 
 /* melee1.c */
 /* melee2.c */
