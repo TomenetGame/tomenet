@@ -1051,7 +1051,46 @@ static cptr d_info_flags2[] =
 	"DELETED"	/* not likely */
 };
 
-#endif	// 0
+static cptr d_info_flags3[] =
+{
+	"JAIL_DUNGEON",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+};
+
+#endif	// 1
 
 /* Vault flags */
 static cptr v_info_flags1[] =
