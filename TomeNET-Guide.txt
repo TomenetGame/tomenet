@@ -5036,25 +5036,34 @@ events:
 
 Ironman Deep Dive Challenge
     There is exactly one designated huge ironman dungeon (or tower) on each
-    server, normal one and rpg server, which is 99 levels in size and does not
-    allow recalling in between.
-    This means, it's extremely likely that you will die before making it
-    through all 99 floors and become able to recall back out.
-    This dungeon serves as a challenge of how far you can make it before death!
+    server, normal one and rpg server, which is 127 levels in size and does not
+    allow recalling in between, except for two 'dungeon towns' which will
+    always occur at dungeon level 40 and 80 respectively. If you recall at such
+    a town it calls as withdrawing from the challenge and you won't make it on
+    the leaderboard that can be viewed at the mayor's office in Bree.
+
+    Since you cannot recall out aside from these two towns, except if you reach
+    the 127th floor of the dungeon, it is extremely likely that you will die
+    before making it through all those floors. So this dungeon serves as a
+    challenge of how far you can make it before death!
     The level reached will be recorded in the mayor's office in Bree ('n' key
     inside the office, to view the records).
-    To provide some support, this dungeon will have 'town levels' occur at
-    random, meaning that the whole level is actually not a normal dungeon level
-    but a wild town. Monsters may still spawn on it though and may even attack
-    you while you're shopping, so take care!
-    Since you cannot recall out before reaching the 99th floor, in case you
-    need to leave you'll just have to log out inside of the dungeon. For this,
-    keep in mind that your character will, as usually when logging out outside
-    of towns, stay in the game for about 30 more seconds during which it could
-    be killed if you log out in an unsafe place.
 
-    Note: The Deep Dive dungeon requires your character to be at most level 12
-    in order to be eligible to enter.
+    To provide some more support, this dungeon will have additional 'town
+    levels' occur at random. Monsters may still spawn on these levels though
+    and may even attack you while you're shopping, so take care!
+    The two guaranteed towns at level 40 and 80 are spawn-free, however.
+    Since you cannot recall out before reaching the 127th floor, in case you
+    need to go offline you'll just have to log out inside of the dungeon.
+    Keep in mind that your character will stay in the game for about 30 more
+    seconds during which it could be killed if in an unsafe place.
+
+    NOTE: The Deep Dive dungeon requires your character to have zero experience
+    points in order to be eligible to enter. Picking a lock or taking an item
+    or money of another player will give you 1 experience point, so avoid it.
+    Eating a food ration can also give you 1 experience point if it went bad.
+    Killing townspeople in Bree however will not give you any experience.
+    Stay clean!
 
 
 
