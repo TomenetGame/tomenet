@@ -1728,8 +1728,14 @@ bool askfor_aux(char *buf, int len, char mode)
 	}
 
 	/* Handle the additional chat modes */
+#if 0
 	/* Slash commands and self-chat are exceptions */
 	if ((mode & ASKFOR_CHATTING) && chat_mode != CHAT_MODE_NORMAL && buf[0] != '/' && !(buf[0] == '%' && buf[1] == ':'))
+#else
+	/* Slash commands and aimed chat (with *: prefix) are exceptions */
+	if ((mode & ASKFOR_CHATTING) && chat_mode != CHAT_MODE_NORMAL && buf[0] != '/' &&
+	    (buf[1] != ':' || (buf[0] != '%' && buf[0] != '!' && buf[0] != '$' && buf[0] != '#' && buf[0] != '+')))
+#endif
 	{
 		for (i = k; i >= 0; i--)
 			buf[i + 2] = buf[i];
