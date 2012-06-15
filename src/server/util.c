@@ -3148,6 +3148,49 @@ static void player_talk_aux(int Ind, char *message)
 	else if (strlen(message) >= 2 && message[0] == '-' && message[1] == ':')
 		message += 2;
 
+
+
+	/* hack: preparse for private chat target, and if found
+	   then strip chat mode prefixes to switch to private chat mode - C. Blue */
+	/* Form a search string if we found a colon */
+	if (strlen(message) > 4 && message[1] == ':' && message[2] != ':' &&
+	    (message[0] == '!' || message[0] == '#' || message[0] == '$')
+	    && (colon = strchr(message + 3, ':'))) {
+		/* Copy everything up to the colon to the search string */
+		strncpy(search, message + 2, colon - message - 2);
+		search[colon - message - 2] = '\0';
+		/* Acquire length of search string */
+		len = strlen(search);
+		/* Look for a recipient who matches the search string */
+		if (len) {
+			struct rplist *w_player;
+			/* NAME_LOOKUP_LOOSE DESPERATELY NEEDS WORK */
+			target = name_lookup_loose_quiet(Ind, search, TRUE);
+
+			if (target) {
+				/* strip leading chat mode prefix,
+				   pretend that it's a private message instead */
+				message += 2;
+			}
+#ifdef TOMENET_WORLDS
+			else if (cfg.worldd_privchat) {
+				w_player = world_find_player(search, 0);
+				if (w_player) {
+					/* strip leading chat mode prefix,
+					   pretend that it's a private message instead */
+					message += 2;
+				}
+			}
+#endif
+		}
+
+		/* erase our traces */
+		search[0] = '\0';
+		len = 0;
+        }
+
+
+
 	colon = strchr(message, ':');
 
 	/* Ignore "smileys" or URL */
@@ -3184,7 +3227,7 @@ static void player_talk_aux(int Ind, char *message)
 			break;
 		case ':':
 			/* remove the 1st colon found, .. */
-			
+
 			/* always if there's no chat-target in front of the double-colon: */
 			if (message == colon || colon[-1] == ' ') {
 				i = (int) (colon - message);
@@ -3315,6 +3358,8 @@ static void player_talk_aux(int Ind, char *message)
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		Players[i]->talk = 0;
 	}
+
+
 
 	/* Special function '!:' at beginning of message sends to own party - sorry for hack, C. Blue */
 //	if ((strlen(message) >= 1) && (message[0] == ':') && (!colon) && (p_ptr->party))
