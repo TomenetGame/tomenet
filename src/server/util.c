@@ -5506,7 +5506,7 @@ char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type) {
 	if (d_ptr &&
 	    d_ptr->baselevel == 30 && d_ptr->maxdepth == 30 &&
 	    (d_ptr->flags1 & DF1_FORGET) &&
-	    (d_ptr->flags1 & DF2_IRON))
+	    (d_ptr->flags2 & DF2_IRON))
 		return jail;
 
 	/* really just "Wilderness" */
