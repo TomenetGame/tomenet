@@ -2370,34 +2370,40 @@ static errr rd_savefile_new_aux(int Ind)
 		/* hack - Sauron vs Shadow of Dol Guldur - just for consistency */
 		if (p_ptr->r_killed[860] == 1) p_ptr->r_killed[819] = 1;
 
-		/* wipe (paranoia, should already be zeroed) */
-		for (i = 0; i < MAX_D_IDX * 2; i++) {
-			p_ptr->max_depth_wx[i] = 0;
-			p_ptr->max_depth_wy[i] = 0;
-			p_ptr->max_depth[i] = 0;
-		}
-
-		/* attempt a fair translation */
-		for (x = 0; x < 64; x++) for (y = 0; y < 64; y++) {
-                        wpos.wx = x; wpos.wy = y;
-
-			/* skip if player has never visited this dungeon's worldmap sector even! */
-			if (!(p_ptr->wild_map[wild_idx(&wpos) / 8] & (1 << (wild_idx(&wpos) % 8)))) continue;
-
-			/* translate */
-			if ((d_ptr = wild_info[y][x].tower)) {
-				wpos.wz = 1;
-				j = recall_depth_idx(&wpos, p_ptr);
-				i = p_ptr->max_dlv - d_ptr->baselevel + 1;
-				if (i > d_ptr->maxdepth) i = d_ptr->maxdepth;
-				p_ptr->max_depth[j] = i;
+		if (is_admin(p_ptr)) {
+			/* admins may always recall anywhere (compare birth.c) */
+			for (i = 0; i < MAX_D_IDX * 2; i++)
+				p_ptr->max_depth[i] = 200;
+		} else {
+			/* wipe (paranoia, should already be zeroed) */
+			for (i = 0; i < MAX_D_IDX * 2; i++) {
+				p_ptr->max_depth_wx[i] = 0;
+				p_ptr->max_depth_wy[i] = 0;
+				p_ptr->max_depth[i] = 0;
 			}
-			if ((d_ptr = wild_info[y][x].dungeon)) {
-				wpos.wz = -1;
-				j = recall_depth_idx(&wpos, p_ptr);
-				i = p_ptr->max_dlv - d_ptr->baselevel + 1;
-				if (i > d_ptr->maxdepth) i = d_ptr->maxdepth;
-				p_ptr->max_depth[j] = i;
+
+			/* attempt a fair translation */
+			for (x = 0; x < 64; x++) for (y = 0; y < 64; y++) {
+    	                    wpos.wx = x; wpos.wy = y;
+
+				/* skip if player has never visited this dungeon's worldmap sector even! */
+				if (!(p_ptr->wild_map[wild_idx(&wpos) / 8] & (1 << (wild_idx(&wpos) % 8)))) continue;
+
+				/* translate */
+				if ((d_ptr = wild_info[y][x].tower)) {
+					wpos.wz = 1;
+					j = recall_depth_idx(&wpos, p_ptr);
+					i = p_ptr->max_dlv - d_ptr->baselevel + 1;
+					if (i > d_ptr->maxdepth) i = d_ptr->maxdepth;
+					p_ptr->max_depth[j] = i;
+				}
+				if ((d_ptr = wild_info[y][x].dungeon)) {
+					wpos.wz = -1;
+					j = recall_depth_idx(&wpos, p_ptr);
+					i = p_ptr->max_dlv - d_ptr->baselevel + 1;
+					if (i > d_ptr->maxdepth) i = d_ptr->maxdepth;
+					p_ptr->max_depth[j] = i;
+				}
 			}
 		}
         }
