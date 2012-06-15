@@ -7452,7 +7452,7 @@ a certain chance to break the curse. This can often be cheaper than buying a
 This is an especially commonly used trick for getting rid of Morgul weapons.
 Just pick the stat that is already higher. Example:
 A Dagger of Morgul (-33,-15) -> You'd enchant its damage to +0 or higher,
-since it requires you to buy less scrolls (15) than going for to-hit (33).
+since it requires you to buy less scrolls (15+) than going for to-hit (33+).
 
 
 
