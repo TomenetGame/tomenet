@@ -4,6 +4,7 @@
 -- Special features:
 	--reset true artifacts every n months (must be one of 1,2,3,4,6)
 	art_reset_freq = 6
+	censor_swearing = 0
 
 -- Helper variables
 	cur_month = -1
