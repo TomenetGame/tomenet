@@ -5057,6 +5057,8 @@ Ironman Deep Dive Challenge
     need to go offline you'll just have to log out inside of the dungeon.
     Keep in mind that your character will stay in the game for about 30 more
     seconds during which it could be killed if in an unsafe place.
+    It is NOT possible to generate a random dungeon town by logging out and
+    back in later after the level has been reset.
 
     NOTE: The Deep Dive dungeon requires your character to have zero experience
     points in order to be eligible to enter. Picking a lock or taking an item
