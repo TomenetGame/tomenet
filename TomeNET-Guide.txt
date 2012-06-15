@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. June 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 15. June 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -6507,6 +6507,13 @@ Magic ammunition (Magic Arrows, Magic Bolts, Magic Shots).
 Silver ammunition       *Slays* undead.
 Ethereal ammunition     Magically returns after being fired, has a small chance
                         to fade away instead though.
+
+Blasted armour          Armour that has the prefix "blasted" has much less +AC
+                        bonus than usual, in most cases the +AC value is deeply
+                        in the negative numbers.
+                        However, other than bad +AC the armour is not cursed or
+                        impared in any way, and may still be usable, especially
+                        if you use scrolls of enchant armour to 'repair' it.
 
 Dragonrider Coat                Resists heat & cold.
 Serpent Scale Mail              Resists acid.
