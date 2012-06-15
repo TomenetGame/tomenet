@@ -19,6 +19,12 @@
 /* Nice: minimum level of a player to be able to become infected by Black Breath by another player */
 #define BB_INFECT_MINLEV 25
 
+/* Better hits of one override worse hits of the other,
+   instead of completely stacking for silly amounts.
+   Note: Backstab and vorpal currently always stack. */
+#define CRIT_VS_BACKSTAB
+//#define CRIT_VS_VORPAL
+
 
 /* Anti-(nothing)-hack, following Tony Zeigler's (Ravyn) suggestion */
 bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x, int y)
@@ -2324,7 +2330,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 {
 	player_type *p_ptr = Players[Ind];
 	int num = 0, bonus, chance, slot;
-	int k, k2, bs_multiplier;
+	int k, k2, k3, bs_multiplier;
 	long int kl;
 	player_type *q_ptr;
 	object_type *o_ptr = NULL;
@@ -2750,7 +2756,11 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				}
 
 				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
-				k = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE, 0);
+				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE, 0);
+#ifdef CRIT_VS_BACKSTAB
+				if (!backstab && !stab_fleeing)
+#endif
+				k = k3;
 
 				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
@@ -2864,10 +2874,11 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				with light weapons, which have low dice. So for gain
 				we need the full damage including all to-dam boni */
 				k2 = k; /* remember damage before crit */
+				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor), calc_crit_obj(Ind, o_ptr));
 #ifdef CRIT_VS_BACKSTAB
 				if (!backstab && !stab_fleeing)
 #endif
-				k = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor), calc_crit_obj(Ind, o_ptr));
+				k = k3;
 
 			/* handle bare fists/bat/ghost */
 			} else {
@@ -2894,6 +2905,12 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				kl = k * (100 + bs_multiplier);
 				kl /= (dual_stab ? 150 : 100);
 				kl += q_ptr->chp / (dual_stab ? 30 : 20);
+#ifdef CRIT_VS_BACKSTAB
+				if (k3 > kl) {
+					backstab = stab_fleeing = FALSE;
+					k = k3;
+				} else
+#endif
 				k = kl;
 #ifdef CRIT_VS_VORPAL
 				kl = k2 * (100 + bs_multiplier);
@@ -3283,13 +3300,11 @@ static void py_attack_player(int Ind, int y, int x, bool old)
  * Note: old == TRUE if not auto-retaliating actually
  *       (important for dual-backstab treatment) - C. Blue
  */
-//#define CRIT_VS_VORPAL
-#define CRIT_VS_BACKSTAB
 static void py_attack_mon(int Ind, int y, int x, bool old)
 {
 	player_type	*p_ptr = Players[Ind];
 	int		num = 0, bonus, chance, slot, owner_Ind = 0, sfx = 0;
-	int		k, k2, bs_multiplier;
+	int		k, k2, k3, bs_multiplier;
 	long int	kl;
 	object_type	*o_ptr = NULL;
 	bool		do_quake = FALSE;
@@ -3695,7 +3710,11 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
 				k2 = k; /* remember damage before crit */
-				k = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE, 0);
+				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE, 0);
+#ifdef CRIT_VS_BACKSTAB
+				if (!backstab && !stab_fleeing)
+#endif
+				k = k3;
 
 				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d + p_ptr->to_d_melee) < m_ptr->hp)) {
 					msg_format(Ind, "%^s moans in agony!", m_name);
@@ -3884,10 +3903,11 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				with light weapons, which have low dice. So for gain
 				we need the full damage including all to-dam boni */
 				k2 = k; /* remember damage before crit */
+				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor), calc_crit_obj(Ind, o_ptr));
 #ifdef CRIT_VS_BACKSTAB
 				if (!backstab && !stab_fleeing)
 #endif
-				k = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor), calc_crit_obj(Ind, o_ptr));
+				k = k3;
 
 			/* handle bare fists/bat/ghost */
 			} else {
@@ -3911,10 +3931,18 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			/* Note that the multiplier is after all the damage calc is done! So may need tweaking! */
 			if (backstab || stab_fleeing) {
 				bs_multiplier = get_skill_scale(p_ptr, SKILL_BACKSTAB, 350 + rand_int(101));
+
 				kl = k * (100 + bs_multiplier);
 				kl /= (dual_stab ? 150 : 100);
 				kl += m_ptr->hp / (dual_stab ? 30 : 20);
+#ifdef CRIT_VS_BACKSTAB
+				if (k3 > kl) {
+					backstab = stab_fleeing = FALSE;
+					k = k3;
+				} else
+#endif
 				k = kl;
+
 #ifdef CRIT_VS_VORPAL
 				kl = k2 * (100 + bs_multiplier);
 				kl /= (dual_stab ? 150 : 100);
