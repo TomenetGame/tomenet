@@ -89,7 +89,8 @@ I:1000:0
 
 N:11:Backstabbing
 D:Ability to backstab sleeping and fleeing monsters.
-D:*** REQUIRES SWORD-TYPE WEAPONS ***
+D:*** REQUIRES SWORD-TYPE WEAPONS OR MARTIAL ARTS***
+#D:*** REQUIRES SWORD-TYPE WEAPONS ***
 #D:Much more effective in the dark
 I:1000:0
 

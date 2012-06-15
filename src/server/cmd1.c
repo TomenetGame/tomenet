@@ -2361,7 +2361,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 //	bool		py_slept;
 	bool		no_pk;
 
-	monster_race *pr_ptr = &r_info[p_ptr->body_monster];
+	monster_race *pr_ptr = &r_info[p_ptr->body_monster], *qr_ptr;
 	bool apply_monster_effects = TRUE;
 	int i, monster_effects, sfx = 0;
 	u32b monster_effect[6], monster_effect_chosen;
@@ -2375,6 +2375,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 	q_ptr = Players[0 - c_ptr->m_idx];
+	qr_ptr = &r_info[q_ptr->body_monster];
 //	py_slept = (q_ptr->sleep != 0);
 //	py_slept = q_ptr->afk; /* :D - unused though (also, AFK status can't be toggled for this anyway */
 	no_pk = ((zcave[p_ptr->py][p_ptr->px].info & CAVE_NOPK) ||
@@ -2550,7 +2551,9 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 		o_ptr = &p_ptr->inventory[slot];
 
 		/* Manage backstabbing and 'flee-stabbing' */
-		if (stab_skill && (o_ptr->tval == TV_SWORD)) { /* Need TV_SWORD type weapon to backstab */
+		if (stab_skill && /* Need TV_SWORD type weapon or martial arts to backstab */
+		    (o_ptr->tval == TV_SWORD ||
+		    (martial && (!q_ptr->body_monster || (qr_ptr->body_parts[BODY_HEAD] && qr_ptr->body_parts[BODY_TORSO]))))) {
 			if (sleep_stab || cloaked_stab || shadow_stab) { /* Note: Cloaked backstab takes precedence over backstabbing a fleeing monster */
 				backstab = TRUE;
 //				q_ptr->backstabbed = 1;
@@ -3557,7 +3560,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		o_ptr = &p_ptr->inventory[slot];
 
 		/* Manage backstabbing and 'flee-stabbing' */
-		if (stab_skill && (o_ptr->tval == TV_SWORD)) { /* Need TV_SWORD type weapon to backstab */
+		if (stab_skill && /* Need TV_SWORD type weapon or martial arts to backstab */
+		    (o_ptr->tval == TV_SWORD ||
+		    (martial && r_ptr->body_parts[BODY_HEAD] && r_ptr->body_parts[BODY_TORSO]))) {
 			if (sleep_stab || cloaked_stab || shadow_stab) { /* Note: Cloaked backstab takes precedence over backstabbing a fleeing monster */
 				backstab = TRUE;
 				m_ptr->backstabbed = 1;

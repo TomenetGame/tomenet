@@ -9155,7 +9155,10 @@ Note that not every skill is available to every profession (class).
                                 monster though, so re-cloaking won't help) or
                                 shadow running. Increasing this skill increases
                                 the damage your backstab attacks deal.
-                                Backstabbing requires sword-type weapons!
+                                Backstabbing requires sword-type weapons or
+                                martial arts skill, in which case it transforms
+                                into neck-twisting. That means your target must
+                                possess a neck, read: A head and a torso.
                                 If you dual-wield, you will also dual-backstab
                                 if the moster is either asleep, or you perform
                                 the attack from cloaking mode or shadow run.
