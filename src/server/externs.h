@@ -1659,6 +1659,7 @@ extern void strip_control_codes(char *ss, char *s);
 extern cptr flags_str(u32b flags);
 extern int handle_censor(char *message);
 extern void handle_punish(int Ind, int level);
+extern char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type);
 
 /* xtra1.c */
 extern void cnv_stat(int val, char *out_val);

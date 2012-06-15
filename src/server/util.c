@@ -4354,7 +4354,7 @@ char *wpos_format(int Ind, worldpos *wpos)
 			return (format("%dft of (%d,%d)", wpos->wz * 50, wpos->wx, wpos->wy));
 		} else
 			if (!ville)
-				return (format("%dft %s", wpos->wz * 50, d_info[d].name + d_name));
+				return (format("%dft %s", wpos->wz * 50, get_dun_name(wpos->wx, wpos->wy, (wpos->wz > 0), d_ptr, 0)));
 			else
 				return (format("%s", desc));
 	} else {
@@ -4362,7 +4362,7 @@ char *wpos_format(int Ind, worldpos *wpos)
 			return (format("Lv %d of (%d,%d)", wpos->wz, wpos->wx, wpos->wy));
 		} else
 			if (!ville)
-				return (format("Lv %d %s", wpos->wz, d_info[d].name + d_name));
+				return (format("Lv %d %s", wpos->wz, get_dun_name(wpos->wx, wpos->wy, (wpos->wz > 0), d_ptr, 0)));
 			else
 				return (format("%s", desc));
 	}
@@ -5473,4 +5473,42 @@ void intshuffle(int *array, int size) {
 		array[i] = array[j];
 		array[j] = tmp;
 	}
+}
+
+/* for all the dungeons/towers that are special, yet use the type 0 dungeon template */
+char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type) {
+	static char *jail = "Jail Dungeon";
+	static char *pvp_arena = "PvP Arena";
+	static char *highlander = "Highlands";
+	static char *irondeepdive = "Ironman Deep Dive Challenge";
+
+	if (d_ptr) type = d_ptr->type;
+
+	/* normal dungeon */
+	if (type) return (d_name + d_info[type].name);
+
+	/* special type 0 (yet) dungeons */
+	if (x == WPOS_PVPARENA_X &&
+	    y == WPOS_PVPARENA_Y &&
+	    tower == (WPOS_PVPARENA_Z > 0))
+		return pvp_arena;
+
+	if (x == WPOS_HIGHLANDER_DUN_X &&
+	    y == WPOS_HIGHLANDER_DUN_Y &&
+	    tower == (WPOS_HIGHLANDER_DUN_Z > 0))
+		return highlander;
+
+	if (x == WPOS_IRONDEEPDIVE_X &&
+	    y == WPOS_IRONDEEPDIVE_Y &&
+	    tower == (WPOS_IRONDEEPDIVE_Z > 0))
+		return irondeepdive;
+
+	if (d_ptr &&
+	    d_ptr->baselevel == 30 && d_ptr->maxdepth == 30 &&
+	    (d_ptr->flags1 & DF1_FORGET) &&
+	    (d_ptr->flags1 & DF2_IRON))
+		return jail;
+
+	/* really just "Wilderness" */
+	return (d_name + d_info[type].name);
 }
