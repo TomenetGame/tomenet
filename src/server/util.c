@@ -5505,12 +5505,15 @@ char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type) {
 		return irondeepdive;
 
 	if (d_ptr && (
+#if 0 /* obsolete fortunately (/fixjaildun) */
 	    /* ughhh */
 	    (d_ptr->baselevel == 30 && d_ptr->maxdepth == 30 &&
 	    (d_ptr->flags1 & DF1_FORGET) &&
 	    (d_ptr->flags2 & DF2_IRON))
+	    ||
+#endif
 	    /* yay */
-	    || (d_ptr->flags3 & DF3_JAIL_DUNGEON) ))
+	    (d_ptr->flags3 & DF3_JAIL_DUNGEON) ))
 		return jail;
 
 	/* really just "Wilderness" */

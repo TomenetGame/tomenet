@@ -2475,7 +2475,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
  						if(!(h_ptr->flags & HF_NOFLOOR))
 							c_ptr->feat = FEAT_FLOOR;
 						if(h_ptr->flags & HF_JAIL){
-							c_ptr->info |= CAVE_STCK;
+							c_ptr->info |= (CAVE_STCK | CAVE_JAIL);
 						}
  						c_ptr->info |= (CAVE_ICKY | CAVE_ROOM);
 
@@ -2630,7 +2630,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 							c_ptr->feat = FEAT_FLOOR;
 							c_ptr->info |= (CAVE_ROOM | CAVE_ICKY);
 						if(h_ptr->flags & HF_JAIL){
-							c_ptr->info |= CAVE_STCK;
+							c_ptr->info |= (CAVE_STCK | CAVE_JAIL);
 						}
 						break;
 					}
