@@ -6451,7 +6451,7 @@ void do_slash_cmd(int Ind, char *message)
 				if (c_ptr->feat == FEAT_LESS) d_ptr = wild->tower;
 				else d_ptr = wild->dungeon;
 
-				d_ptr->flags3 |= DF3_JAIL_DUNGEON;
+				d_ptr->flags3 = DF3_JAIL_DUNGEON;
 				msg_print(Ind, "DF3_JAIL_DUNGEON added.");
 				return;
 			}

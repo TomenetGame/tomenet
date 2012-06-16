@@ -8899,7 +8899,9 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	int build_special_store = 0; /* 0 = don't build a dungeon store,
 					1 = build deep dungeon store,
 					2 = build low-level dungeon store,
-					3 = build ironman supply store - C. Blue */
+					3 = build ironman supply store
+					4 = build specific ironman supply store: hidden library
+				    - C. Blue */
 
 	bool destroyed = FALSE;
 	bool empty_level = FALSE, dark_empty = TRUE;
@@ -9823,30 +9825,50 @@ for(mx = 1; mx < 131; mx++) {
 	/* Nether Realm has an overriding shop creation routing. */
 	if (!nether_level) {
 		bool store_failed = FALSE; /* avoid checking for a different type of store if one already failed, warping probabilities around */
+#if 0 /* obsolete via DF3_NO_MISC_STORES */
+		bool challenge_dungeon =
+		    ((wpos->wx == WPOS_HIGHLANDER_DUN_X && wpos->wy == WPOS_HIGHLANDER_DUN_Y && wpos->wz * WPOS_HIGHLANDER_DUN_Z > 0) ||
+		    (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y && wpos->wz * WPOS_IRONDEEPDIVE_Z > 0));
+#endif
 
-		/* check for building deep store (Rare & expensive stores) */
-		if ((!dungeon_store_timer) && (dun_lev >= 60) && (dun_lev != 100)) build_special_store = 1;
-		/* if failed, check for building low-level store (Herbalist) */
-		if ((!build_special_store) &&
-		    (!dungeon_store2_timer) && (dun_lev >= 10) && (dun_lev <= 30)) build_special_store = 2;
+		/* Check for building deep store (Rare & expensive stores) */
+		if ((!dungeon_store_timer) && (dun_lev >= 60) && (dun_lev != 100))
+			build_special_store = 1;
+
+		/* Not for special dungeons (easy csw/resattr): */
+//		if ((!challenge_dungeon && !(d_ptr->flags3 & DF3_NO_MISC_STORES)) ||
+		if (!(d_ptr->flags3 & DF3_NO_SIMPLE_STORES)) {
+			/* Check for building low-level store (Herbalist) */
+			if ((!build_special_store) &&
+			    (!dungeon_store2_timer) && (dun_lev >= 10) && (dun_lev <= 30))
+				build_special_store = 2;
+
+			/* Build one of several misc stores for basic items of certain type */
 #ifdef TEST_SERVER
-		if (!store_failed && (!build_special_store) && (dun_lev >= 13)) {
-			if (!rand_int(3)) build_special_store = 3;
-			else store_failed = TRUE;
-		}
+			if (!store_failed && (!build_special_store) && (dun_lev >= 13)) {
+				if (!rand_int(5)) build_special_store = 3;
+				else store_failed = TRUE;
+			}
 #else
  #ifdef RPG_SERVER
-		/* Build one of several misc stores for basic items of certain type */
-		if (!store_failed && (!build_special_store) && (d_ptr->flags2 & DF2_IRON) && (dun_lev >= 13)) {
-//		    ((dun_lev + rand_int(3) - 1) % 5 == 0)) build_special_store = 3;
-			if (!rand_int(3)) build_special_store = 3;
-			else store_failed = TRUE;
-		}
+			if (!store_failed && (!build_special_store) && (d_ptr->flags2 & DF2_IRON) && (dun_lev >= 13)) {
+//			    ((dun_lev + rand_int(3) - 1) % 5 == 0)) build_special_store = 3;
+				if (!rand_int(5)) build_special_store = 3;
+				else store_failed = TRUE;
+			}
  #endif
 #endif
+		}
+
 		/* Build one of several misc stores for basic items of certain type, like on RPG server above */
 		if (!store_failed && (!build_special_store) && (d_ptr->flags2 & DF2_MISC_STORES) && (dun_lev >= 13)) {
-		    if (!rand_int(3)) build_special_store = 3;
+		    if (!rand_int(5)) build_special_store = 3;
+		    else store_failed = TRUE;
+		}
+
+		/* Build hidden library if desired (good for challenge dungeons actually) */
+		if (!store_failed && (!build_special_store) && (d_ptr->flags3 & DF3_HIDDENLIB) && (dun_lev >= 10)) {
+		    if (!rand_int(5)) build_special_store = 4;
 		    else store_failed = TRUE;
 		}
 
@@ -9862,7 +9884,7 @@ for(mx = 1; mx < 131; mx++) {
 	} else if (((dun_lev - 166) % 5 != 0) || (dun_lev == 166 + 30)) return;
 	/* Try to create a dungeon store */
 	if ((rand_int(1000) < cfg.dungeon_shop_chance) ||
-	    nether_level || (build_special_store == 3)) {
+	    nether_level || (build_special_store == 3 || build_special_store == 4)) {
 		/* Try hard to place one */
 		for (i = 0; i < 300; i++) {
 			y = rand_int(dun->l_ptr->hgt-4)+2;
@@ -10001,18 +10023,20 @@ for(mx = 1; mx < 131; mx++) {
 									cs_ptr->sc.omni = STORE_HERBALIST;
 								} else if (build_special_store == 3) {
 									//Add specialist stores? - the_sandman
-									switch (randint(10)) {
+									switch (rand_int(7)) {
 /*									case 1: cs_ptr->sc.omni = STORE_SPEC_AXE;break;
 									case 2: cs_ptr->sc.omni = STORE_SPEC_BLUNT;break;
 									case 3: cs_ptr->sc.omni = STORE_SPEC_POLE;break;
 									case 4: cs_ptr->sc.omni = STORE_SPEC_SWORD;break;*/
-									case 1: case 2: cs_ptr->sc.omni = STORE_SPEC_CLOSECOMBAT;break;
-									case 3: cs_ptr->sc.omni = STORE_SPEC_POTION;break;
-									case 4: cs_ptr->sc.omni = STORE_SPEC_SCROLL;break;
-									case 5: cs_ptr->sc.omni = STORE_SPEC_ARCHER;break;
-									case 6: cs_ptr->sc.omni = STORE_HIDDENLIBRARY;break;
+									case 0: cs_ptr->sc.omni = STORE_HIDDENLIBRARY; break;
+									case 1: case 2: cs_ptr->sc.omni = STORE_SPEC_CLOSECOMBAT; break;
+									case 3: cs_ptr->sc.omni = STORE_SPEC_POTION; break;
+									case 4: cs_ptr->sc.omni = STORE_SPEC_SCROLL; break;
+									case 5: cs_ptr->sc.omni = STORE_SPEC_ARCHER; break;
 									default: cs_ptr->sc.omni = STORE_STRADER; break;
 									}
+								} else if (build_special_store == 4) {
+									cs_ptr->sc.omni = STORE_HIDDENLIBRARY;
 								}
 							} else {
 								cs_ptr->sc.omni = STORE_BTSUPPLY;

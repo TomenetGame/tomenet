@@ -2455,18 +2455,17 @@ static void cmd_master_aux_level(void)
 			 * FIXME: flags are u32b while buf[] is char!
 			 * This *REALLY* should be rewritten	- Jir -
 			 */
-			if(get_check("Random dungeon (default)?")) buf[5] |= 0x02;//DF2_RANDOM
-			if(get_check("Hellish?")) buf[5] |= 0x04;//DF2_HELL
-			if(get_check("Not mappable?"))
-			{
+			if (get_check("Random dungeon (default)?")) buf[5] |= 0x02;//DF2_RANDOM
+			if (get_check("Hellish?")) buf[5] |= 0x04;//DF2_HELL
+			if (get_check("Not mappable?")) {
 				buf[4] |= 0x02;//DF1_FORGET
 				buf[5] |= 0x08;//DF2_NO_MAGIC_MAP
 			}
-			if(get_check("Ironman?")) {
+			if (get_check("Ironman?")) {
 				buf[5] |= 0x10;//DF2_IRON
 				i = 0;
-				if(get_check("Recallable from, before reaching its end?")) {
-					if(get_check("Random recall depth intervals (y) or fixed ones (n) ?")) buf[6] |= 0x08;
+				if (get_check("Recallable from, before reaching its end?")) {
+					if (get_check("Random recall depth intervals (y) or fixed ones (n) ?")) buf[6] |= 0x08;
 					i = c_get_quantity("Frequency (random)? (1=often..4=rare): ", 4);
 					switch (i) {
 					case 1: buf[6] |= 0x10; break;//DF2_IRONRNDn / DF2_IRONFIXn
@@ -2476,7 +2475,7 @@ static void cmd_master_aux_level(void)
 					}
 					i = 1; // hack for towns below
 				}
-				if(get_check("Generate towns inbetween?")) {
+				if (get_check("Generate towns inbetween?")) {
 					if (i == 1 && get_check("Generate towns when premature recall is allowed?")) {
 						buf[5] |= 0x20;//DF2_TOWNS_IRONRECALL
 					} else if (get_check("Generate towns randomly (y) or in fixed intervals (n) ?")) {
@@ -2484,7 +2483,12 @@ static void cmd_master_aux_level(void)
 					} else buf[5] |= 0x80;//DF2_TOWNS_FIX
 				}
 			}
-			if(get_check("Generate misc lesser stores (RPG rules style)?")) buf[6] |= 0x04;//DF2_MISC_STORES
+			if (get_check("Disallow generation of simple stores (misc iron + low level)?")) {
+				buf[4] |= 0x08;//DF3_NO_SIMPLE_STORES
+				if (get_check("Generate at least the hidden library?")) buf[4] |= 0x04;//DF3_HIDDENLIB
+			} else if (get_check("Generate misc iron stores (RPG rules style)?")) {
+				buf[6] |= 0x04;//DF2_MISC_STORES
+			} else if (get_check("Generate at least the hidden library?")) buf[4] |= 0x04;//DF3_HIDDENLIB
 			buf[7] = '\0';
 			Send_master(MASTER_LEVEL, buf);
 		}

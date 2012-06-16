@@ -5356,7 +5356,9 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define DF2_NO_EXIT_MASK        (DF2_NO_EXIT_STAIR | DF2_NO_EXIT_WOR | DF2_NO_EXIT_PROB | DF2_NO_EXIT_FLOAT)
 
 /* moar flags */
-#define DF3_JAIL_DUNGEON	0x1000000L	/* purpose is just to display the name "Jail Dungeon" in dungeon list */
+#define DF3_JAIL_DUNGEON	0x00000001L	/* purpose is just to display the name "Jail Dungeon" in dungeon list */
+#define DF3_HIDDENLIB		0x00000002L	/* allow generation of 'Hidden Library' dungeon store (for ironman deep dive challenge) (overrides DF3_NO_SIMPLE_STORES) */
+#define DF3_NO_SIMPLE_STORES	0x00000004L	/* disallow generation misc ironman helper stores and of low-level dungeon stores (herbalist) */
 
 
 /* level flags for dun_level */

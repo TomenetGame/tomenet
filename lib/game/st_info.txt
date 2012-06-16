@@ -1071,10 +1071,12 @@ G:9:r
 F:DEPEND_LEVEL
 #more fireproof stuff:
 F:GREAT
-W:24
+#W:24
+W:48
 
 N:66:Player Store Template
 A:0:0:0:2:3:0
+#note: stealing is usually turned off for pstores anyway
 F:VHARD_STEAL
 
 
