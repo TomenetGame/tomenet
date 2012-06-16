@@ -1340,6 +1340,7 @@ struct dungeon_type
 	char r_char[10];	/* races allowed */
 	char nr_char[10];	/* races prevented */
 #endif	/* 0 */
+	int store_timer;	/* control frequency of dungeon store generation (for misc iron stores mostly) */
 	struct dun_level *level;	/* array of dungeon levels */
 };
 
