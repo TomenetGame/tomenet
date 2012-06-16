@@ -120,6 +120,7 @@ Contents
     (5.21b) Digging - Common example values
     (5.21c) Digging - Further information
     (5.22)  Recharging
+    (5.23)  Monster loot types
 (6) Character details
     (6.1)   Attributes
     (6.2)   Skills, opposed skills
@@ -8546,6 +8547,40 @@ The power determines both, the chance of succeeding in recharging the item and
 the degree of recharging done to the item.
 Note: Staves 'of plenty' will receive about twice as many charges from
       recharging, so look out for those.
+
+
+
+(5.23) Monster loot types
+-------------------------
+Different monsters drop different types of loot. For example mages will usually
+drop more potions and scrolls, while fighters tend to drop more weapons and
+armour.
+
+There are four loot classes for monsters:
+
+ -Combat:
+  Weapons, armour (except boots), shields, ammunition.
+
+ -Treasure:
+  Chests, rings, amulets, dragon scale mails, crowns.
+
+ -Magic:
+  Mage staves, wands, staves, rods, runes, potions, scrolls, books, parchments.
+
+ -Tools:
+  Boots, cloaks, diggers, light sources, flints, food, flasks, trap kits,
+  spikes, climbing sets, picklocks, money belts, devices of theft prevention,
+  tarpaulins, mummy wrappings.
+
+And a 'hidden' 5th class:
+
+ -Junk (rest chance, not covered by the above four categories):
+  Skeletons/bones, bottles, shards of pottery, broken sticks, firestones,
+  golem parts.
+
+Example: 'Green naga'.
+A Green naga has 25% chance of dropping 'Combat' loot and 65% chance of
+dropping 'Tools' loot. The remaining 10% chance translates to 'Junk' drops.
 
 
 
