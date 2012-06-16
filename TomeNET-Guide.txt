@@ -4969,6 +4969,18 @@ events. While some events might be run by server admins or even fellow players
 and depend on their mood and spare time, other events are created by the game
 independent of admin intervention.
 
+Some events will require you to have zero experience in order to participate.
+The maximum experience your character ever accumulated counts for this, so
+make sure you don't gain even 1 point of experience before the event starts!
+The following actions may reward 1 XP without you noticing:
+  -Eating a bad food ration.
+  -Picking a lock.
+  -Transferring items or money from another player to you.
+  -Picking up/earning more than 500 gold pieces.
+Killing townspeople in Bree however will not give you any experience.
+Stay clean!
+
+
 Here is a list of currently implemented automatic quests and events:
 
 
@@ -5062,11 +5074,7 @@ Ironman Deep Dive Challenge
     back in later after the level has been reset.
 
     NOTE: The Deep Dive dungeon requires your character to have zero experience
-    points in order to be eligible to enter. Picking a lock or taking an item
-    or money of another player will give you 1 experience point, so avoid it.
-    Eating a food ration can also give you 1 experience point if it went bad.
-    Killing townspeople in Bree however will not give you any experience.
-    Stay clean!
+    points in order to be eligible to enter.
 
 
 
