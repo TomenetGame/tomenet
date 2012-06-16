@@ -3078,9 +3078,9 @@ void do_slash_cmd(int Ind, char *message)
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE);
-			if (!j || !p_ptr->play_vis[j]) return;
+			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
 			for (i = 1; i <= 9; i++) {
-				if (i == 5) continue;
+//				if (i == 5) continue;
 				if (zcave[p_ptr->py + ddy[i]][p_ptr->px + ddx[i]].m_idx == -j) break;
 			}
 			if (i == 10) {
@@ -3091,8 +3091,13 @@ void do_slash_cmd(int Ind, char *message)
 #ifdef USE_SOUND_2010
 			sound_near_site(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "hit_whip", "hit", SFX_TYPE_COMMAND, TRUE);
 #endif
-			msg_format(j, "\377o%s slaps you!", p_ptr->name);
-			msg_format_near(j, "\377y%s slaps %s!", p_ptr->name, Players[j]->name);
+			if (Ind != j) {
+				msg_format(j, "\377o%s slaps you!", p_ptr->name);
+				msg_format_near(j, "\377y%s slaps %s!", p_ptr->name, Players[j]->name);
+			} else {
+				msg_print(j, "\377oYou slap yourself.");
+				msg_format_near(j, "\377y%s slapss %s.", p_ptr->male ? "himself" : "herself");
+			}
 			return;
 		}
 		else if (prefix(message, "/pat")) { /* Counterpart to /slap :-p */
@@ -3105,10 +3110,10 @@ void do_slash_cmd(int Ind, char *message)
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE);
-			if (!j || !p_ptr->play_vis[j]) return;
+			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
 
 			for (i = 1; i <= 9; i++) {
-				if (i == 5) continue;
+//				if (i == 5) continue;
 				if (zcave[p_ptr->py + ddy[i]][p_ptr->px + ddx[i]].m_idx == -j) break;
 			}
 			if (i == 10) {
@@ -3116,8 +3121,13 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 
-			msg_format(j, "\377o%s pats you.", p_ptr->name);
-			msg_format_near(j, "\377y%s pats %s.", p_ptr->name, Players[j]->name);
+			if (Ind != j) {
+				msg_format(j, "\377o%s pats you.", p_ptr->name);
+				msg_format_near(j, "\377y%s pats %s.", p_ptr->name, Players[j]->name);
+			} else {
+				msg_print(j, "\377oYou pat yourself.");
+				msg_format_near(j, "\377y%s pats %s.", p_ptr->male ? "himself" : "herself");
+			}
 			return;
 		}
 		else if (prefix(message, "/hug")) { /* Counterpart to /slap :-p */
@@ -3130,10 +3140,10 @@ void do_slash_cmd(int Ind, char *message)
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE);
-			if (!j || !p_ptr->play_vis[j]) return;
+			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
 
 			for (i = 1; i <= 9; i++) {
-				if (i == 5) continue;
+//				if (i == 5) continue;
 				if (zcave[p_ptr->py + ddy[i]][p_ptr->px + ddx[i]].m_idx == -j) break;
 			}
 			if (i == 10) {
@@ -3141,8 +3151,13 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 
-			msg_format(j, "\377o%s hugs you.", p_ptr->name);
-			msg_format_near(j, "\377y%s hugs %s.", p_ptr->name, Players[j]->name);
+			if (Ind != j) {
+				msg_format(j, "\377o%s hugs you.", p_ptr->name);
+				msg_format_near(j, "\377y%s hugs %s.", p_ptr->name, Players[j]->name);
+			} else {
+				msg_print(j, "\377oYou hug yourself.");
+				msg_format_near(j, "\377y%s hugs %s.", p_ptr->male ? "himself" : "herself");
+			}
 			return;
 		}
 		else if (prefix(message, "/poke")) {
@@ -3155,10 +3170,10 @@ void do_slash_cmd(int Ind, char *message)
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE);
-			if (!j || !p_ptr->play_vis[j]) return;
+			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
 
 			for (i = 1; i <= 9; i++) {
-				if (i == 5) continue;
+//				if (i == 5) continue;
 				if (zcave[p_ptr->py + ddy[i]][p_ptr->px + ddx[i]].m_idx == -j) break;
 			}
 			if (i == 10) {
@@ -3166,8 +3181,13 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 
-			msg_format(j, "\377o%s pokes you.", p_ptr->name);
-			msg_format_near(j, "\377y%s pokes %s.", p_ptr->name, Players[j]->name);
+			if (Ind != j) {
+				msg_format(j, "\377o%s pokes you.", p_ptr->name);
+				msg_format_near(j, "\377y%s pokes %s.", p_ptr->name, Players[j]->name);
+			} else {
+				msg_print(j, "\377oYou poke yourself.");
+				msg_format_near(j, "\377y%s pokes %s.", p_ptr->male ? "himself" : "herself");
+			}
 			return;
 		}
 		else if (prefix(message, "/guild_adder")) {
