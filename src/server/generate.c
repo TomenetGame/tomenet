@@ -9844,6 +9844,7 @@ for(mx = 1; mx < 131; mx++) {
 				build_special_store = 2;
 
 			/* Build one of several misc stores for basic items of certain type */
+			//todo: maybe use the new d_ptr->store_timer for randomly generated stores
 #ifdef TEST_SERVER
 			if (!store_failed && (!build_special_store) && (dun_lev >= 13)) {
 				if (!rand_int(5)) build_special_store = 3;

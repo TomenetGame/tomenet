@@ -6931,18 +6931,19 @@ static void process_global_event(int ge_id) {
 				s_printf("EVENT_LAYOUT: Generating arena %d at %d,%d,%d\n", ge->extra[4], wpos.wx, wpos.wy, wpos.wz);
 				process_dungeon_file(format("t_arena%d.txt", ge->extra[4]), &wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
 			}
-			
+
 			/* actually create temporary Highlander dungeon! */
 			if (!wild_info[wpos.wy][wpos.wx].dungeon) {
 				/* add staircase downwards into the dungeon? */
 				if (!ge->extra[5]) {
 					s_printf("EVENT_LAYOUT: Adding dungeon (no entry).\n");
 					add_dungeon(&wpos, 1, 50, DF1_NO_RECALL, DF2_IRON |
-					    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK, 0x0, FALSE, 0);
+					    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK, DF3_NO_SIMPLE_STORES, FALSE, 0);
 				} else {
 					s_printf("EVENT_LAYOUT: Adding dungeon (entry ok).\n");
 					add_dungeon(&wpos, 1, 50, DF1_NO_RECALL, DF2_IRON |
-					    DF2_NO_ENTRY_WOR | DF2_NO_ENTRY_PROB | DF2_NO_ENTRY_FLOAT | DF2_NO_EXIT_MASK, 0x0, FALSE, 0);
+					    DF2_NO_ENTRY_WOR | DF2_NO_ENTRY_PROB | DF2_NO_ENTRY_FLOAT |
+					    DF2_NO_EXIT_MASK, DF3_NO_SIMPLE_STORES, FALSE, 0);
 
 					/* place staircase on an empty accessible grid */
 					do {
