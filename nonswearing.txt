@@ -76,3 +76,8 @@ water
 what
 glove
 gauntlet
+shita
+shite
+shitu
+shito
+shiti
