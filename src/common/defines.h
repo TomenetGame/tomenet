@@ -560,10 +560,10 @@
 #define MAX_KING_PARTY_LEVEL_DIFF 11
 
 /* Max amount of swear words */
-#define MAX_SWEAR 50
+#define MAX_SWEAR 100
 
 /* Max amount of legal words that override swear words */
-#define MAX_NONSWEAR 100
+#define MAX_NONSWEAR 200
 
 /* only imprison within town area? Otherwise it can be exploited for world travel. */
 #define JAIL_TOWN_AREA
