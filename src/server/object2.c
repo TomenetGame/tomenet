@@ -3604,6 +3604,8 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf)
 			/* hack: track the ale of khazad, for informational purpose about spawn rate */
 			if (o_ptr->name1 == ART_DWARVEN_ALE)
 				s_printf("ARTIFACT: 'Pint of Ale of the Khazad' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+			if (o_ptr->name1 == ART_BILBO)
+				s_printf("ARTIFACT: 'Picklock of Bilbo Baggins' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
 
 			/* Success */
 			return (TRUE);
