@@ -3096,7 +3096,7 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format_near(j, "\377y%s slaps %s!", p_ptr->name, Players[j]->name);
 			} else {
 				msg_print(j, "\377oYou slap yourself.");
-				msg_format_near(j, "\377y%s slapss %s.", p_ptr->male ? "himself" : "herself");
+				msg_format_near(j, "\377y%s slapss %s.", p_ptr->name, p_ptr->male ? "himself" : "herself");
 			}
 			return;
 		}
@@ -3126,7 +3126,7 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format_near(j, "\377y%s pats %s.", p_ptr->name, Players[j]->name);
 			} else {
 				msg_print(j, "\377oYou pat yourself.");
-				msg_format_near(j, "\377y%s pats %s.", p_ptr->male ? "himself" : "herself");
+				msg_format_near(j, "\377y%s pats %s.", p_ptr->name, p_ptr->male ? "himself" : "herself");
 			}
 			return;
 		}
@@ -3156,7 +3156,7 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format_near(j, "\377y%s hugs %s.", p_ptr->name, Players[j]->name);
 			} else {
 				msg_print(j, "\377oYou hug yourself.");
-				msg_format_near(j, "\377y%s hugs %s.", p_ptr->male ? "himself" : "herself");
+				msg_format_near(j, "\377y%s hugs %s.", p_ptr->name, p_ptr->male ? "himself" : "herself");
 			}
 			return;
 		}
@@ -3186,7 +3186,7 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format_near(j, "\377y%s pokes %s.", p_ptr->name, Players[j]->name);
 			} else {
 				msg_print(j, "\377oYou poke yourself.");
-				msg_format_near(j, "\377y%s pokes %s.", p_ptr->male ? "himself" : "herself");
+				msg_format_near(j, "\377y%s pokes %s.", p_ptr->name, p_ptr->male ? "himself" : "herself");
 			}
 			return;
 		}
