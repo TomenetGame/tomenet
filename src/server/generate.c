@@ -9867,8 +9867,8 @@ for(mx = 1; mx < 131; mx++) {
 		}
 
 		/* Build hidden library if desired (good for challenge dungeons actually) */
-		if (!store_failed && (!build_special_store) && (d_ptr->flags3 & DF3_HIDDENLIB) && (dun_lev >= 10)) {
-		    if (!rand_int(5)) build_special_store = 4;
+		if (!store_failed && (!build_special_store) && (d_ptr->flags3 & DF3_HIDDENLIB) && (dun_lev >= 8)) {
+		    if (!rand_int(7)) build_special_store = 4;
 		    else store_failed = TRUE;
 		}
 
