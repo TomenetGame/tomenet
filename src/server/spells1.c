@@ -1790,7 +1790,12 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool
 
 	/* Hurt the player */
 	p_ptr->exp -= damage;
-	if (mode) p_ptr->max_exp -= damage;;
+	if (mode && p_ptr->max_exp) {
+		p_ptr->max_exp -= damage;
+		/* don't reduce max_exp to zero, in case someone insane
+		   tries to cheeze events requiring 0 exp this way ;) */
+		if (p_ptr->max_exp < 1) p_ptr->max_exp = 1;
+	}
 
 	check_experience(Ind);
 
