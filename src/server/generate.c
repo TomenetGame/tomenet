@@ -9079,7 +9079,8 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 	     magik(30 / (ABS(((dun_lev + 10) % 20) - 10) + 1))
  #else /* deep dive specifically: no towns before 900 ft or around the static towns at 2k and 4k */
 	     magik(k = 25 / ( /* 35 -> 82.6% chance per -450..+500ft interval; 30 -> 78.8%; 25 -> 70.5%; 20 -> 62.3%; 15 -> 40.5%, 10 -> 35.4%, 5 -> 14.2% */
-	     (dun_lev >= 18 && (dun_lev < 40 - 5 || dun_lev > 40 + 5) && (dun_lev < 80 - 5 || dun_lev > 80 + 5)) ?
+	    		    /* 900..1500ft: 35 -> %; 30 ->70.8%; 25 -> 62.7%; 20 -> %; 15 -> %, 10 -> %, 5 -> % */
+	     (dun_lev >= 18 && (dun_lev <= 40 - 10 || dun_lev > 40 + 10) && (dun_lev <= 80 - 10 || dun_lev > 80 + 10)) ?
 	     ABS(((dun_lev + 10) % 20) - 10) + 1 : 999
 	     ))
  #endif
