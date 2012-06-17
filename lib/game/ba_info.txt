@@ -81,7 +81,7 @@ N:12:Play dice slots
 C:0:0:0
 I:16:0:d:4
 
-N:13:Game rules
+N:13:* Game rules *
 C:0:0:0
 I:13:0:r:0
 
