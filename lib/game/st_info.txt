@@ -1383,6 +1383,8 @@ W:36
 F:HARD_STEAL
 
 N:76:Black Market
+# --- EXTRA: normal BM doesn't have this: more *Identify* scrolls for dungeon stores ---
+T:30:70:13
 #potion of Speed
 T:100:71:29
 T:100:71:29
