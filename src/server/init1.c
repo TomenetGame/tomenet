@@ -2831,7 +2831,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 
 	char *s, *t;
 #ifdef ART_DIZ
-	char tmp[MAX_CHARS];
+	char tmp[MSG_LEN];
 #endif
 
 	/* Not ready yet */
