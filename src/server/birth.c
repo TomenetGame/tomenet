@@ -2074,6 +2074,9 @@ static void player_setup(int Ind, bool new)
 	        /* blink by 1 if standing on a shop grid (in town) */
 	        if (zcave[p_ptr->py][p_ptr->px].feat == FEAT_SHOP)
 		        teleport_player_force(Ind, 1);
+	} else if (isdungeontown(wpos)) {
+		/* make whole dungeon town visible like a 'normal town at night' */
+		player_dungeontown(Ind);
 	}
 
 	if (new) {
@@ -2186,12 +2189,27 @@ static void player_setup(int Ind, bool new)
 	/* Set the player's "panel" information */
 	l_ptr = getfloor(wpos);
 	if (l_ptr) {
-		/* Hack -- tricky formula, but needed */
-		p_ptr->max_panel_rows = ((l_ptr->hgt + SCREEN_HGT / 2) / SCREEN_HGT) * 2 - 2;
-		p_ptr->max_panel_cols = ((l_ptr->wid + SCREEN_WID / 2) / SCREEN_WID ) * 2 - 2;
+#if 0
+		/* hack: dungeon towns are fully memorized (aka revealed) */
+		if (isdungeontown(wpos)) {
+	                p_ptr->max_panel_rows = (MAX_HGT / SCREEN_HGT) * 2 - 2;
+    		        p_ptr->max_panel_cols = (MAX_WID / SCREEN_WID) * 2 - 2;
 
-		p_ptr->cur_hgt = l_ptr->hgt;
-		p_ptr->cur_wid = l_ptr->wid;
+	                p_ptr->cur_hgt = MAX_HGT;
+        		p_ptr->cur_wid = MAX_WID;
+
+			player_dungeontown(Ind);
+        	} else {
+#endif
+			/* Hack -- tricky formula, but needed */
+			p_ptr->max_panel_rows = ((l_ptr->hgt + SCREEN_HGT / 2) / SCREEN_HGT) * 2 - 2;
+			p_ptr->max_panel_cols = ((l_ptr->wid + SCREEN_WID / 2) / SCREEN_WID ) * 2 - 2;
+
+			p_ptr->cur_hgt = l_ptr->hgt;
+			p_ptr->cur_wid = l_ptr->wid;
+#if 0
+		}
+#endif
 	} else {
 		p_ptr->max_panel_rows = (MAX_HGT / SCREEN_HGT) * 2 - 2;
 		p_ptr->max_panel_cols = (MAX_WID / SCREEN_WID) * 2 - 2;
