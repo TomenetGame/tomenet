@@ -13,8 +13,8 @@ For all the games, you can bet up to 1000*level AU per game, except for
 players below level 10 who can bet up to 100*level AU.
 
 
-==============================================================================
-1. 'In Between'
+\{D==============================================================================
+\{U1. 'In Between'
 
 Three 10-faced dice are used for this game. Two black, one red.
 
@@ -28,8 +28,8 @@ if two black dice are 2 and 9, and you rolled 1, you lose.
 if two black dice are 2 and 9, and you rolled 2, you lose.
 
 
-==============================================================================
-2. 'Craps'
+\{D==============================================================================
+\{U2. 'Craps'
 
 Two 6-faced (cube) dice are used for this game.
 
@@ -51,8 +51,10 @@ eg.
 [5, 6](11) {you lose with the first roll}
 
 
-==============================================================================
-3. 'Go challenge'
+\{D==============================================================================
+\{U3. 'Go challenge'
+
+(Nice read: http://users.eniinternet.com/bradleym/America.html)
 
 You will play the ~3000 year old asian strategy game of Go, also often
 dubbed 'the divine game', on a 9x9 board against an opponent that gets
@@ -127,9 +129,6 @@ Strategy:
 -Usually Go is played on a 19x19 board, which allows for a huge amount of
  strategy. Smaller boards are used for non-serious games, 9x9 somewhat common,
  whereby the games become purely tactical and lack much of the 19x19 strategy.
-
-Nice read ;)
-http://users.eniinternet.com/bradleym/America.html
 
 
 Enjoy!
