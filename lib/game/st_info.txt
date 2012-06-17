@@ -475,7 +475,8 @@ W:0
 
 N:15:Casino
 F:SPECIAL
-A:13:66:9:10:11:12
+#A:13:66:9:10:11:12 Spin the wheel / Dice slots aren't implemented atm
+A:13:66:9:10:0:0
 O:17:17:17:17:17:17
 G:+:y
 W:0
