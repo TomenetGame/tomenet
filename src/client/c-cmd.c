@@ -1504,10 +1504,10 @@ static void artifact_lore(void) {
 		/* display top 15 of all matching artifacts */
 		clear_from(5);
 		n = 0;
-		selected = selected_list = 0;
+		selected = selected_list = -1;
 
 		/* hack: direct match always takes top position */
-		if (s[0]) for (i = 1; i < MAX_A_IDX; i++) {
+		if (s[0]) for (i = 0; i < MAX_A_IDX; i++) {
 			/* create upper-case working copy */
 			strcpy(tmp, artifact_list_name[i]);
 			for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
@@ -1521,7 +1521,7 @@ static void artifact_lore(void) {
 			}
 		}
 
-		for (i = 1; i < MAX_A_IDX && n < 15; i++) {
+		for (i = 0; i < MAX_A_IDX && n < 15; i++) {
 			/* direct match above already? */
 			if (i == selected_list) continue;
 
@@ -1556,7 +1556,7 @@ static void artifact_lore(void) {
 		if (c == ' ' && !strlen(s)) continue;
 		/* return */
 		if (c == '\n' || c == '\r') {
-			if (!selected_list) continue;
+			if (selected_list == -1) continue;
 			break;
 		}
 		/* escape */
@@ -1633,7 +1633,7 @@ static void monster_lore(void) {
 		/* display top 15 of all matching monsters */
 		clear_from(5);
 		n = 0;
-		selected = selected_list = 0;
+		selected = selected_list = -1;
 
 		/* hack 1: direct match always takes top position
 		   hack 2: match at beginning of name takes precedence */
@@ -1695,7 +1695,7 @@ static void monster_lore(void) {
 		if (c == ' ' && !strlen(s)) continue;
 		/* return */
 		if (c == '\n' || c == '\r') {
-			if (!selected_list) continue;
+			if (selected_list == -1) continue;
 			break;
 		}
 		/* escape */
