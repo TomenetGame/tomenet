@@ -608,8 +608,8 @@
 
 /* Maximum amount of gold that can be farmed from townies before you get 1 XP
    from it. This is an anti-cheeze for Highlander Tournament and Ironman Deep
-   Dive Challenge. (0 = no limit) [500] */
-#define EVENT_TOWNIE_GOLD_LIMIT 501
+   Dive Challenge. (-1 = no limit) [300] */
+#define EVENT_TOWNIE_GOLD_LIMIT 300
 
 /* New, added for the implementation of FINAL_GUARDIAN (finally) - C. Blue
    Does the player have to actually explore a dungeon to get his recall depth set for it?
