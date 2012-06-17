@@ -77,6 +77,8 @@
 #include <winuser.h>
 
 #define MNU_SUPPORT
+/* but do we actually create a menu? */
+//#define MNU_USE
 /* #define USE_GRAPHICS */
 
 #ifdef JP
@@ -685,7 +687,10 @@ static void term_getsize(term_data *td)
 	rc.bottom = rc.top + td->client_hgt;
 
 	/* Adjust */
-//	AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+#ifdef MNU_USE
+	if (td == &data[0]) AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+	else
+#endif
 	AdjustWindowRectEx(&rc, td->dwStyle, FALSE, td->dwExStyle);
 
 	/* Total size */
@@ -2313,7 +2318,7 @@ static void init_windows(void)
 	/* Windows */
 	for (i = 1; i < MAX_TERM_DATA; i++)
 	{
-		data[i].dwStyle = (WS_OVERLAPPED | WS_THICKFRAME | WS_SYSMENU);
+		data[i].dwStyle = (WS_OVERLAPPED | WS_THICKFRAME | WS_SYSMENU | WS_CAPTION);
 		data[i].dwExStyle = (WS_EX_TOOLWINDOW);
 	}
 
@@ -2893,7 +2898,10 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 			rc.bottom = rc.top + 2 * td->font_hgt + td->size_oh1 + td->size_oh2 + 1;
 
 			/* Adjust */
-//			AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+#ifdef MNU_USE
+			if (td == &data[0]) AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+			else
+#endif
 			AdjustWindowRectEx(&rc, td->dwStyle, FALSE, td->dwExStyle);
 
 			/* Save minimum size */
@@ -2910,7 +2918,10 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 			rc.bottom += (td->font_hgt - 1);
 
 			/* Adjust */
-//			AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+#ifdef MNU_USE
+			if (td == &data[0]) AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+			else
+#endif
 			AdjustWindowRectEx(&rc, td->dwStyle, FALSE, td->dwExStyle);
 
 			/* Save maximum size */
@@ -3138,7 +3149,10 @@ LRESULT FAR PASCAL _export AngbandListProc(HWND hWnd, UINT uMsg,
 			rc.bottom = rc.top + 2 * td->font_hgt + td->size_oh1 + td->size_oh2;
 
 			/* Adjust */
-//			AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+#ifdef MNU_USE
+			if (td == &data[0]) AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+			else
+#endif
 			AdjustWindowRectEx(&rc, td->dwStyle, FALSE, td->dwExStyle);
 
 			/* Save the minimum size */
@@ -3155,7 +3169,10 @@ LRESULT FAR PASCAL _export AngbandListProc(HWND hWnd, UINT uMsg,
 			rc.bottom += (td->font_hgt - 1);
 
 			/* Adjust */
-//			AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+#ifdef MNU_USE
+			if (td == &data[0]) AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+			else
+#endif
 			AdjustWindowRectEx(&rc, td->dwStyle, FALSE, td->dwExStyle);
 
 			/* Save maximum size */
