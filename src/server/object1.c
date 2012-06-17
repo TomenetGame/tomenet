@@ -3763,7 +3763,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
 	FILE *fff;
 	char buf[1024], o_name[ONAME_LEN];
-	char *ca_ptr = "";
+	char *ca_ptr = "", a = artifact_p(o_ptr) ? 'U' : 'w';
 	char buf_tmp[90];
 	int buf_tmp_i, buf_tmp_n;
 
@@ -3836,10 +3836,10 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	if (strlen(o_name) > 79) {
 		strncpy(buf_tmp, o_name, 79);
 		buf_tmp[79] = 0;
-		fprintf(fff, "%s\n", buf_tmp);
-		fprintf(fff, "%s\n", o_name + 79);
+		fprintf(fff, "\377%c%s\n", a, buf_tmp);
+		fprintf(fff, "\377%c%s\377w\n", a, o_name + 79);
 	} else {
-		fprintf(fff, "%s\n", o_name);
+		fprintf(fff, "\377%c%s\377w\n", a, o_name);
 	}
 
 #ifdef ART_DIZ
@@ -3861,16 +3861,16 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
 	switch(o_ptr->tval){
 	case TV_BLUNT:
-		fprintf(fff, "It's a%s blunt weapon.\n", ca_ptr); break;
+		fprintf(fff, "\377%cIt's a%s blunt weapon.\377w\n", a, ca_ptr); break;
 	case TV_POLEARM:
-		fprintf(fff, "It's a%s polearm.\n", ca_ptr); break;
+		fprintf(fff, "\377%cIt's a%s polearm.\377w\n", a, ca_ptr); break;
 	case TV_SWORD:
-		fprintf(fff, "It's a%s sword-type weapon.\n", ca_ptr); break;
+		fprintf(fff, "\377%cIt's a%s sword-type weapon.\377w\n", a, ca_ptr); break;
 	case TV_AXE:
-		fprintf(fff, "It's a%s axe-type weapon.\n", ca_ptr); break;
+		fprintf(fff, "\377%cIt's a%s axe-type weapon.\377w\n", a, ca_ptr); break;
 	default:
 		if (artifact_p(o_ptr))
-			fprintf(fff, "It's a%s.\n", ca_ptr);
+			fprintf(fff, "\377%cIt's a%s.\377w\n", a, ca_ptr);
 		break;
 	}
 
