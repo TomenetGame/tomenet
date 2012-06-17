@@ -7750,6 +7750,10 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 						int store = letter[idx].special;
 						// if (store > 8) store = 8;
 
+						/* hack for dungeon stores: add +70 for basic town stores */
+						if (wpos->wz && store >= STORE_GENERAL && store <= STORE_RUNE)
+							store += STORE_GENERAL_DUN;
+
 						cs_ptr->sc.omni = store;
 
 #if 0	// not here
