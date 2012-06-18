@@ -2816,6 +2816,9 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 #else
 		if (isdungeontown(wpos)) return FALSE;
 #endif
+		/* Keep Ironman Deep Dive Challenge entrance sector clean too */
+		if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y && !wpos->wz)
+			return FALSE;
 	}
 
 	if (!(summon_override_checks & SO_GRID_EMPTY)) {
