@@ -6582,7 +6582,7 @@ extern int PlayerUID;
 #define level_speed(wpos) ((wpos)->wz ? level_speeds[getlevel(wpos)] * 5 : level_speeds[0] * 5)
 #else /* NR = +20%..+37% slower than dlvl 127 (200 level_speed base) */
 #define level_speed(wpos) \
-	((wpos)->wz ? (getlevel(wpos) <= 127 ? \
+	((wpos)->wz && !isdungeontown(wpos) ? (getlevel(wpos) <= 127 ? \
 	    level_speeds[getlevel(wpos)] * 5 : \
 	    (level_speeds[getlevel(wpos)] * (getlevel(wpos) + 60)) / 37) \
 	: level_speeds[0] * 5)
