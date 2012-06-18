@@ -160,8 +160,8 @@ server_opts cfg =
 	/* s32b */
 	201,		// preserve_death_level
 	300,50000,	// unique_respawn_time, unique_max_respawn_time
-	6,		// level_unstatic_chance,
-	
+	3,		// level_unstatic_chance,
+
 	8,		// min_unstatic_level
 	-1,18348,18349,18400,	// retire_timer, game_port, console_port, gw_port
 
@@ -172,7 +172,7 @@ server_opts cfg =
 	25, 150,	// anti_scum, dun_unusual,
 	32,32,		// town_x, town_y
 	0, 		// town_base, 
-	
+
 	1,		//dun_base
 	127, 200,	// dun_max, store_turns
 	/* char */
