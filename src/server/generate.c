@@ -8880,6 +8880,47 @@ static void fill_level(worldpos *wpos, bool use_floor, byte smooth)
 }
 
 
+/* check if there's an allocated floor within 1000ft interval that has a dungeon town.
+   Interval center points are same as peak chance points for random town generation,
+   ie 1k, 2k, 3k.. - C. Blue */
+static bool no_nearby_dungeontown(struct worldpos *wpos) {
+	int i, max;
+	struct worldpos tpos;
+	struct dungeon_type *d_ptr = getdungeon(wpos);
+
+	tpos.wx = wpos->wx;
+	tpos.wy = wpos->wy;
+	max = 19; /* check +0..+19 ie 20 floors */
+
+	/* tower */
+	if (wpos->wz > 0) {
+		tpos.wz = ((wpos->wz + 9) / 20) * 20 - 9;
+		/* forbid too shallow towns anyway (paranoia if called without checking first) */
+		if (tpos.wz <= 0) return TRUE;
+		/* stay in bounds */
+		if (d_ptr->maxdepth < tpos.wz + max) max = d_ptr->maxdepth - tpos.wz;
+
+		for (i = 0; i <= max; i++) {
+			if (isdungeontown(&tpos)) return FALSE;
+			tpos.wz++;
+		}
+	}
+	/* dungeon */
+	else {
+		tpos.wz = ((wpos->wz - 9) / 20) * 20 + 9;
+		/* forbid too shallow towns anyway (paranoia if called without checking first) */
+		if (tpos.wz >= 0) return TRUE;
+		/* stay in bounds */
+		if (d_ptr->maxdepth < -tpos.wz + max) max = d_ptr->maxdepth + tpos.wz;
+
+		for (i = 0; i <= max; i++) {
+			if (isdungeontown(&tpos)) return FALSE;
+			tpos.wz--;
+		}
+	}
+	return TRUE;
+}
+
 /*
  * Generate a new dungeon level
  *
@@ -9086,6 +9127,8 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 	     ABS(((dun_lev + 10) % 20) - 10) + 1 : 999
 	     ))
  #endif
+	    /* and new: no 2 towns within the same 1000ft interval (anti-cheeze, as if..) */
+	    && no_nearby_dungeontown(wpos)
 	    ))))) {
 		if (k) s_printf("Generated random dungeon town at %d%% chance.\n", k);
 #endif
