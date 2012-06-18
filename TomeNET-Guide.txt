@@ -5070,15 +5070,21 @@ Ironman Deep Dive Challenge
     Random towns cannot spawn before dungeon level 18 and not after dungeon
     level 99. They remain static for only 5 minutes after logging.
     All other floors will remain static for at most 10 minutes.
+    Also, starting at dungeon level 8, a hidden library may appear randomly
+    (that's a book store with a red '9' for entrance), allowing you to purchase
+    magic spells you might be missing.
 
     Since you cannot recall out before reaching the 127th floor, in case you
     need to go offline you'll just have to log out inside the dungeon.
     Keep in mind that your character will stay in the game for about 30 more
     seconds during which it could be killed if in an unsafe place.
-    Dungeon towns in general are free of any monster spawns. 
+    Dungeon towns in general are free of any monster spawns.
 
     NOTE: The Deep Dive dungeon requires your character to have zero experience
     points in order to be eligible to enter.
+
+    NOTE: Mimicry users gain +1 extra kill credit on each kill, effectively
+    learning forms twice as fast.
 
 
 
