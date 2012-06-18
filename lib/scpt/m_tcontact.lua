@@ -107,7 +107,7 @@ MHASTE = add_spell
 	["level"] =     20,
 	["mana"] =      10,
 	["mana_max"] =  30,
-	["fail"] =      15,
+	["fail"] =      1,
 	["spell"] =     function()
 			local spd
 			spd = get_level(Ind, MHASTE, 25)
