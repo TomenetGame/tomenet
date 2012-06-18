@@ -5068,7 +5068,8 @@ Ironman Deep Dive Challenge
     In each 1000ft interval (-450..+500) around the peak points of 1k,2k,3k,4k
     there can be only one (random) town at a time.
     Random towns cannot spawn before dungeon level 18 and not after dungeon
-    level 99.
+    level 99. They remain static for only 5 minutes after logging.
+    All other floors will remain static for at most 10 minutes.
 
     Since you cannot recall out before reaching the 127th floor, in case you
     need to go offline you'll just have to log out inside the dungeon.
