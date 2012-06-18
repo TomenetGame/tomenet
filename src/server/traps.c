@@ -2585,7 +2585,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				(void)inven_carry(Ind, q_ptr);
 
 				/* This trap is polite */
-				gain_au(Ind, bottles * 10, TRUE);
+				gain_au(Ind, bottles * 10, TRUE, FALSE);
 			}
 
 			//if (ident)

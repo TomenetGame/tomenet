@@ -3742,7 +3742,7 @@ void store_confirm(int Ind)
 	}
 
 	/* Get some money */
-	if (!gain_au(Ind, price, FALSE)) return;
+	if (!gain_au(Ind, price, FALSE, FALSE)) return;
 
 	/* Trash the saved variables */
 	p_ptr->current_selling = -1;

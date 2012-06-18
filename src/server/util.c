@@ -5573,7 +5573,7 @@ char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type) {
 
 /* Add gold to the player's gold, for easier handling. - C. Blue
    Returns FALSE if we already own 2E9 Au. */
-bool gain_au(int Ind, u32b amt, bool quiet) {
+bool gain_au(int Ind, u32b amt, bool quiet, bool exempt) {
 	player_type *p_ptr = Players[Ind];
 
 	/* hack: prevent s32b overflow */
@@ -5583,8 +5583,10 @@ bool gain_au(int Ind, u32b amt, bool quiet) {
         } else {
 	        /* Collect the gold */
                 p_ptr->au += amt;
+	        p_ptr->redraw |= (PR_GOLD);
         }
 
+	if (exempt) return TRUE;
 #ifdef EVENT_TOWNIE_GOLD_LIMIT
 	/* if EVENT_TOWNIE_GOLD_LIMIT is 0 then nothing happens */
         if (p_ptr->gold_picked_up <= EVENT_TOWNIE_GOLD_LIMIT) {
@@ -5596,7 +5598,5 @@ bool gain_au(int Ind, u32b amt, bool quiet) {
             	}
         }
 #endif
-
-        p_ptr->redraw |= (PR_GOLD);
         return TRUE;
 }

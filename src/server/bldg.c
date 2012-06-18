@@ -229,7 +229,7 @@ static void arena_comm(int cmd)
 				prt("",10,0);
 				prt("", 11, 0);
 
-				gain_au(Ind, 10000, FALSE);
+				gain_au(Ind, 10000, FALSE, FALSE);
 
 				msg_print("Press the space bar to continue");
 				msg_print(NULL);
@@ -813,7 +813,7 @@ static void share_gold(void)
 
 	i = (p_ptr->lev * 2) * 10;
 
-	if (!gain_au(Ind, i, FALSE)) return;
+	if (!gain_au(Ind, i, FALSE, FALSE)) return;
 
 	msg_format("You collect %d gold pieces", i);
 	msg_print(NULL);
@@ -1403,7 +1403,7 @@ static void sell_corpses(void)
 		if (o_ptr->pval2 == bounties[i][0]) {
 			value = bounties[i][1] + boost*(r_info[o_ptr->pval2].level);
 
-			if (!gain_au(Ind, value, FALSE)) return;
+			if (!gain_au(Ind, value, FALSE, FALSE)) return;
 
 			msg_format("Sold for %ld gold pieces.", value);
 			msg_print(NULL);
@@ -2053,7 +2053,7 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 				break;
 			}
 
-			if (!gain_au(Ind, req, FALSE)) break;
+			if (!gain_au(Ind, req, FALSE, FALSE)) break;
 
 			p_ptr->loan += req;
 			//? if (p_ptr->au > PY_MAX_GOLD) p_ptr->au = PY_MAX_GOLD;

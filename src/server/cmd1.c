@@ -1384,7 +1384,7 @@ void carry(int Ind, int pickup, int confirm)
 		}
 
 		/* Collect the gold */
-		if (!gain_au(Ind, o_ptr->pval, FALSE)) return;
+		if (!gain_au(Ind, o_ptr->pval, FALSE, p_ptr->id == o_ptr->owner)) return;
 
 		/* Message */
 		msg_format(Ind, "You have found %ld gold pieces worth of %s.",
@@ -5709,7 +5709,7 @@ void move_player(int Ind, int dir, int do_pickup)
 //					int i = (p_ptr->lev > 4) ? 100 + (p_ptr->lev * p_ptr->lev * p_ptr->lev) / 5 : 100;
 					int i = 300 + (p_ptr->lev * p_ptr->lev * p_ptr->lev) / 2; /* buffed it greatly, yet still sensible */
 					msg_format(Ind, "The temple priest gives you %ld gold pieces for your revival!", i);
-					gain_au(Ind, i, FALSE);
+					gain_au(Ind, i, FALSE, FALSE);
 				}
 			}
 			else msg_print(Ind, "\377rThe temple priest turns you away!");
