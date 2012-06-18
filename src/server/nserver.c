@@ -93,22 +93,8 @@
 #include <errno.h>
 
 
-#ifdef WINDOWS
-# define EWOULDBLOCK WSAEWOULDBLOCK
-#endif
-
-#define MAX_SELECT_FD			1023
-/* #define MAX_RELIABLE_DATA_PACKET_SIZE	1024 */
-#define MAX_RELIABLE_DATA_PACKET_SIZE	512
-
-#define MAX_MOTD_CHUNK			512
-#define MAX_MOTD_SIZE			(30*1024)
-#define MAX_MOTD_LOOPS			120
-
-
 /* hack to prevent the floor tile bug on windows xp and windows 2003 machines */
 #define FLOORTILEBUG_WORKAROUND
-
 
 /* Message to send to client when kicking him out due to starvation while being idle */
 //#define STARVING_AUTOKICK_MSG "starving auto-kick"
