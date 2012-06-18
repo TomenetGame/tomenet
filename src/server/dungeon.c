@@ -4511,9 +4511,19 @@ static void do_unstat(struct worldpos *wpos)
 	if (!num_on_depth)
 //			&& stale_level(wpos))
 	{
+		j = cfg.level_unstatic_chance * getlevel(wpos) * 60;
+
+		/* limit static time in Ironman Deep Dive Challenge a lot */
+		if (wpos->wx == WPOS_IRONDEEPDIVE_X &&
+		    wpos->wy == WPOS_IRONDEEPDIVE_Y &&
+		    wpos->wz * WPOS_IRONDEEPDIVE_Z > 0) {
+			if (isdungeontown(wpos)) j = 5;
+			else if (j > 10) j = 10; // j = 0 -> immediately unstatice!
+		}
+
 		/* makes levels between 50ft and min_unstatic_level unstatic on player saving/quiting game/leaving level DEG */
-		if ((( getlevel(wpos) < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level)) ||
-		    stale_level(wpos, cfg.level_unstatic_chance * getlevel(wpos) * 60))
+		if (((getlevel(wpos) < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level)) ||
+		    stale_level(wpos, j))
 			new_players_on_depth(wpos,0,FALSE);
 	}
 #if 0
