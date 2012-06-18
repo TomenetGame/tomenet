@@ -3464,13 +3464,11 @@ void do_quit(int ind, bool tellclient)
 	player_type *p_ptr = NULL;
 	connection_t * connp = Conn[ind];
 
-	if (connp->id != -1) 
-	{
+	if (connp->id != -1) {
 		player = GetInd[connp->id];
 		p_ptr=Players[player];
 	}
-	if (!tellclient)
-	{
+	if (!tellclient) {
 		/* Close the socket */
 		close(connp->w.sock);
 
@@ -3482,8 +3480,7 @@ void do_quit(int ind, bool tellclient)
 	}
 
 	/* If we are close to the center of town, exit quickly. */
-	if(connp->id==-1 || istownarea(&p_ptr->wpos, 2))
-	{
+	if (connp->id==-1 || istownarea(&p_ptr->wpos, 2) || isdungeontown(&p_ptr->wpos)) {
 		Destroy_connection(ind, "client quit");
 	}
 	// Otherwise wait for the timeout
