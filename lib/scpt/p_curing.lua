@@ -25,9 +25,17 @@ end
 
 function get_exp_loss()
 	local pow
-	pow = 40 * (100 - get_level(Ind, HRESURRECT, 46)) / 100
-	if pow < 33 then
-		pow = 33
+	--ENABLE_INSTANT_RES?
+	if 1==0 then
+		pow = (36 * (735 - (5 * get_level(Ind, HRESURRECT)))) / 735
+		if pow < 30 then
+			pow = 30
+		end
+	else
+		pow = (41 * (120 - get_level(Ind, HRESURRECT))) / 120
+		if pow < 33 then
+			pow = 33
+		end
 	end
 	return pow
 end
@@ -241,7 +249,7 @@ HRESURRECT = add_spell
 	    		end,
         ["desc"] =      {
                         "Resurrects another player's ghost back to life.",
-			"The higher the skill, the less experience he will lose, down to 33%.",
+			"The higher the skill, the less experience he will lose.",
 		}
 }
 
