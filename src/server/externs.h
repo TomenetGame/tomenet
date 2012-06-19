@@ -1660,7 +1660,7 @@ extern cptr flags_str(u32b flags);
 extern int handle_censor(char *message);
 extern void handle_punish(int Ind, int level);
 extern char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type);
-extern bool gain_au(int Ind, u32b amt, bool quiet);
+extern bool gain_au(int Ind, u32b amt, bool quiet, bool exempt);
 
 /* xtra1.c */
 extern void cnv_stat(int val, char *out_val);

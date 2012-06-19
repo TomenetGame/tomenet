@@ -1998,7 +1998,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		summon_test = summon_possible(wpos, ys, xs);
 		if (!summon_test) {
 			base_r_ptr->freq_spell = base_r_ptr->freq_innate = 75;
-			if (!m_ptr->extra) s_printf("SAURON: boost (glyph summon).\n");
+			if (!m_ptr->extra) s_printf("SAURON: boost (glyph/nospace summon).\n");
 			m_ptr->extra = 5; /* stay boosted for 5 turns at least */
 		}
 	}

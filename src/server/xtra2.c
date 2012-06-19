@@ -5041,6 +5041,12 @@ void monster_death(int Ind, int m_idx)
 		int before = p_ptr->r_killed[credit_idx];
 		i = get_skill_scale(p_ptr, SKILL_MIMIC, 100);
 
+		/* get +1 bonus credit in Ironman Deep Dive Challenge */
+		if (wpos->wx == WPOS_IRONDEEPDIVE_X &&
+		    wpos->wy == WPOS_IRONDEEPDIVE_Y &&
+		    wpos->wz * WPOS_IRONDEEPDIVE_Z > 0)
+			p_ptr->r_killed[credit_idx]++;
+
 #ifdef RPG_SERVER
 		/* There is a 1 in (m_ptr->level - kill count)^2 chance of learning form straight away 
 		 * to make it easier (at least statistically) getting forms in the iron server. Plus,

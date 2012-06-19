@@ -2,6 +2,19 @@
 #define	__Netserver_h
 
 
+#ifdef WINDOWS
+# define EWOULDBLOCK WSAEWOULDBLOCK
+#endif
+
+#define MAX_SELECT_FD                   1023
+/* #define MAX_RELIABLE_DATA_PACKET_SIZE        1024 */
+#define MAX_RELIABLE_DATA_PACKET_SIZE   512
+
+#define MAX_MOTD_CHUNK                  512
+#define MAX_MOTD_SIZE                   (30*1024)
+#define MAX_MOTD_LOOPS                  120
+
+
 #define NOT_CONNECTED		(-1)
 
 #define CONN_FREE		0x00
@@ -75,6 +88,7 @@ typedef struct {
 	client_setup_t	Client_setup;
 
 	int		audio_sfx, audio_mus;
+//	char		q_static[MAX_RELIABLE_DATA_PACKET_SIZE]; /* for paralysation */
 } connection_t;
 
 static void Contact(int fd, int arg);

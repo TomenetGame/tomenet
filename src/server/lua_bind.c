@@ -646,7 +646,7 @@ void lua_strip_true_arts_from_present_player(int Ind, int mode) {
 			cost = a_info[o_ptr->name1].cost;
 			if (cost > 0) {
 //				if (cost > 500000) cost = 500000; //not required, it's still fair
-				if (gain_au(Ind, cost, gold_overflow)) reimbursed = TRUE;
+				if (gain_au(Ind, cost, gold_overflow, FALSE)) reimbursed = TRUE;
 				else gold_overflow = TRUE;
 			}
 

@@ -2217,7 +2217,7 @@ void do_cmd_read_scroll(int Ind, int item)
 		u32b value = ps_get_cheque_value(o_ptr);
 
 		/* hack: prevent s32b overflow */
-		if (!gain_au(Ind, value, FALSE)) return;
+		if (!gain_au(Ind, value, FALSE, FALSE)) return;
 
 		break_cloaking(Ind, 4);
 		break_shadow_running(Ind);

@@ -1570,7 +1570,7 @@ static void go_engine_move_result(int move_result) {
 		if (wager) {
 			/* double return */
 			wager *= 2;
-			gain_au(Ind, wager, FALSE);
+			gain_au(Ind, wager, FALSE, FALSE);
 			Send_gold(Ind, p_ptr->au, p_ptr->balance);
 		}
 

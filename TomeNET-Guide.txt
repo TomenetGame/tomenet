@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 15. June 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 18. June 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -5063,18 +5063,28 @@ Ironman Deep Dive Challenge
     inside the office, to view the records).
 
     To provide some more support, this dungeon will have additional 'town
-    levels' occur at random. Monsters may still spawn on these levels though
-    and may even attack you while you're shopping, so take care!
-    The two guaranteed towns at level 40 and 80 are spawn-free, however.
+    levels' occur at random. It is NOT possible to generate a random dungeon
+    town by logging out and back in later after the level has been reset.
+    In each 1000ft interval (-450..+500) around the peak points of 1k,2k,3k,4k
+    there can be only one (random) town at a time.
+    Random towns cannot spawn before dungeon level 18 and not after dungeon
+    level 99. They remain static for only 5 minutes after logging.
+    All other floors will remain static for at most 10 minutes.
+    Also, starting at dungeon level 8, a hidden library may appear randomly
+    (that's a book store with a red '9' for entrance), allowing you to purchase
+    magic spells you might be missing.
+
     Since you cannot recall out before reaching the 127th floor, in case you
-    need to go offline you'll just have to log out inside of the dungeon.
+    need to go offline you'll just have to log out inside the dungeon.
     Keep in mind that your character will stay in the game for about 30 more
     seconds during which it could be killed if in an unsafe place.
-    It is NOT possible to generate a random dungeon town by logging out and
-    back in later after the level has been reset.
+    Dungeon towns in general are free of any monster spawns.
 
     NOTE: The Deep Dive dungeon requires your character to have zero experience
     points in order to be eligible to enter.
+
+    NOTE: Mimicry users gain +1 extra kill credit on each kill, effectively
+    learning forms twice as fast.
 
 
 
