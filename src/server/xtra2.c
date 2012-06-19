@@ -6440,9 +6440,12 @@ void player_death(int Ind)
 			p_ptr->chp = p_ptr->mhp;
 			p_ptr->chp_frac = 0;
 			
-			/* Lose items (but not equipment) */
+			/* Lose inventory and equipment items as per normal death */
 #ifdef DEATH_PACK_ITEM_LOST
 			inven_death_damage(Ind, TRUE);
+#endif
+#ifdef DEATH_EQ_ITEM_LOST
+			equip_death_damage(Ind, TRUE);
 #endif
 
 			/* Extract the cost */
