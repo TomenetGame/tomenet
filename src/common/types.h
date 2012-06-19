@@ -2926,6 +2926,9 @@ struct player_type
 	bool max_depth_tower[MAX_D_IDX * 2];
 
 	u32b gold_picked_up; /* for EVENT_TOWNIE_GOLD_LIMIT */
+
+	/* Instant resurrection */
+	bool insta_res;
 };
 
 /* For Monk martial arts */

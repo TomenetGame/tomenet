@@ -876,6 +876,11 @@ static void wr_extra(int Ind)
 	/* For things like 'Officer' status to add others etc */
 	wr_u32b(p_ptr->party_flags);
 	wr_u32b(p_ptr->guild_flags);
+
+#if 0 /* TODO: waiting on Kurzel's runecraft modifications */
+	/* Instant resurrection toggle */
+	wr_byte(p_ptr->insta_res);
+#endif
 }
 
 /*

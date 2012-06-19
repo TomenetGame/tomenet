@@ -1781,6 +1781,12 @@ if (p_ptr->updated_savegame == 0) {
 		rd_u32b(&p_ptr->guild_flags);
 	}
 
+#if 0 /* TODO: waiting on Kurzel's runecraft modifications */
+	if (!older_than(4, 4, 24)) {
+		rd_byte(&p_ptr->insta_res);
+	}
+#endif
+
 	/* Success */
 	return FALSE;
 }
