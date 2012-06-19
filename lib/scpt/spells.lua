@@ -175,10 +175,7 @@ pern_dofile(Ind, "m_tcontact.lua")
 pern_dofile(Ind, "m_mintrusion.lua")
 __lua_M_LAST = __tmp_spells_num - 1
 
--- Only on RPG server
-if (def_hack("TEMP0", nil)) then
 pern_dofile(Ind, "d_astral.lua")
-end
 
 -- Create the crystal of mana (1-4)
 school_book[0] = {
@@ -277,13 +274,10 @@ school_book[17] = {
 	FOCUSSHOT, HERBALTEA, QUICKFEET, EXTRASTATS, HEALINGCLOUD, 
 }
 
--- Only on RPG server
-if (def_hack("TEMP0", nil)) then
 -- Divine Race Tome
 school_book[18] = {
 	POWERBOLT, POWERBEAM, POWERBALL, RELOCATION, VENGEANCE, EMPOWERMENT, INTENSIFY, POWERCLOUD, GATEWAY
 }
-end
 
 if (def_hack("TEST_SERVER", nil)) then
 school_book[19] = {MBASH, MDISARM, MBLINK, MTELEPORT, MTELETOWARDS, MFEEDBACK, MPYROKINESIS, MCRYOKINESIS, MTELEAWAY, MTELEKINESIS, MSHIELD, MFUSION,}
