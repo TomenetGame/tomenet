@@ -26,7 +26,16 @@
  *
  * cf. GHOST_FADING in dungeon.c
  */
+#ifdef ENABLE_INSTANT_RES
+#define GHOST_XP_LOST	35
+#else
 #define GHOST_XP_LOST	40
+#endif
+
+/*
+ * What % of exp points will be lost on instant resurrection?
+ */
+#define INSTANT_RES_XP_LOST	50
 
 /*
  * Chance of an item teleporting away when player dies, in percent. [10]
@@ -6373,6 +6382,129 @@ void player_death(int Ind)
 		p_ptr->soft_deaths++;
 		return;
 	}
+
+#ifdef ENABLE_INSTANT_RES
+	if (p_ptr->insta_res) {
+		char instant_res_possible = TRUE;
+		int dlvl = getlevel(&p_ptr->wpos);
+		int instant_res_cost = dlvl * dlvl * 10 + 10;
+
+		/* Only everlasters */
+		if (!(p_ptr->mode & MODE_EVERLASTING)) {
+			instant_res_possible = FALSE;
+		}
+
+		/* Not on NO_GHOST levels */
+		if (hell) {
+			instant_res_possible = FALSE;
+		}
+
+		/* Not on suicides */
+		if (!p_ptr->alive) {
+			instant_res_possible = FALSE;
+		}
+
+		/* Not in Nether Realm */
+		if (dlvl >= 166) {
+			instant_res_possible = FALSE;
+		}
+
+		/* Check that the player has enough money */
+		if (instant_res_cost > p_ptr->au + p_ptr->balance) {
+			instant_res_possible = FALSE;
+		}
+
+		if (instant_res_possible) {
+			int loss_factor, reduce;
+
+			/* Cure him from various maladies */
+			if (p_ptr->image) (void)set_image(Ind, 0);
+			if (p_ptr->blind) (void)set_blind(Ind, 0);
+			if (p_ptr->paralyzed) (void)set_paralyzed(Ind, 0);
+			if (p_ptr->confused) (void)set_confused(Ind, 0);
+			if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
+			if (p_ptr->stun) (void)set_stun(Ind, 0);
+			if (p_ptr->cut) (void)set_cut(Ind, 0, 0);
+			(void)set_food(Ind, PY_FOOD_FULL - 1);
+
+			/* Remove the death flag */
+			p_ptr->death = FALSE;
+
+			/* Give him his hit points back */
+			p_ptr->chp = p_ptr->mhp;
+			p_ptr->chp_frac = 0;
+			
+			/* Lose items (but not equipment) */
+#ifdef DEATH_PACK_ITEM_LOST
+			inven_death_damage(Ind, TRUE);
+#endif
+
+			/* Extract the cost */
+			p_ptr->au -= instant_res_cost;
+			if (p_ptr->au < 0) {
+				p_ptr->balance += p_ptr->au;
+				p_ptr->au = 0;
+			}
+
+			p_ptr->safe_sane = TRUE;
+
+			/* Lose some experience */
+			loss_factor = INSTANT_RES_XP_LOST;
+			reduce = p_ptr->max_exp;
+			reduce = reduce > 99999 ?
+			reduce / 100 * loss_factor : reduce * loss_factor / 100;
+			p_ptr->max_exp -= reduce;
+
+			reduce = p_ptr->exp;
+			reduce = reduce > 99999 ?
+			reduce / 100 * loss_factor : reduce * loss_factor / 100;
+			p_ptr->exp -= reduce;
+	
+			check_experience(Ind);
+
+			/* update stats */
+			p_ptr->update |= PU_SANITY;
+			update_stuff(Ind);
+			p_ptr->safe_sane = FALSE;
+
+			p_ptr->recall_pos.wx = p_ptr->town_x;
+			p_ptr->recall_pos.wy = p_ptr->town_y;
+			p_ptr->recall_pos.wz = 0;
+			p_ptr->new_level_method = LEVEL_OUTSIDE_RAND; /* TODO: Implement recall to temple */
+			recall_player(Ind, "");
+
+			/* Tell him what happened */
+			msg_print(Ind, "\377oYou were defeated, but the priests have saved you.");
+			msg_format(Ind, "\377oThey have requested a fee of %d gold pieces.", instant_res_cost);
+
+			/* Play the death sound */
+			if (p_ptr->male) sound(Ind, "death_male", "death", SFX_TYPE_MISC, TRUE);
+			else sound(Ind, "death_female", "death", SFX_TYPE_MISC, TRUE);
+
+			/* Log it */
+			s_printf("INSTA_RES: %s (%d) was defeated by %s for %d damage at %d, %d, %d.\n", p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+
+			/* Message to other players */
+			if (cfg.unikill_format)
+			snprintf(buf, sizeof(buf), "\374\377D%s %s (%d) was defeated by %s.", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
+			else
+			snprintf(buf, sizeof(buf), "\374\377D%s (%d) was defeated by %s.", p_ptr->name, p_ptr->lev, p_ptr->died_from);
+
+			msg_broadcast(Ind, buf);
+#ifdef TOMENET_WORLDS
+			if (cfg.worldd_pdeath && world_broadcast) world_msg(buf);
+#endif
+
+			/* Redraw */
+			p_ptr->redraw |= (PR_BASIC);
+			/* Update */
+			p_ptr->update |= (PU_BONUS);
+
+			p_ptr->soft_deaths++;
+			return;
+		}
+	}
+#endif
 
 	/* Players of level cfg.nodrop [5] will die a no-ghost death.
 	   This should clarify the situation for newbies and avoid them

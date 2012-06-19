@@ -2144,6 +2144,23 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 				msg_print(Ind, "\377oThis feature requires at least client 4.4.6b");
 #endif
 			break;
+		case BACT_INSTANT_RES:
+#ifdef ENABLE_INSTANT_RES
+			if (p_ptr->mode & MODE_EVERLASTING) {
+				if (p_ptr->insta_res) {
+					p_ptr->insta_res = FALSE;
+					msg_print(Ind, "\377rInstant resurrection disabled");
+				} else {
+					p_ptr->insta_res = TRUE;
+					msg_print(Ind, "\377GInstant resurrection enabled");
+				}
+			} else {
+				msg_print(Ind, "\377oInstant resurrection is only available to everlasting players");
+			}
+#else
+			msg_print(Ind, "\377oInstant resurrection has not been enabled on this server");
+#endif
+			break;
 		default:
 #if 0
 			if (process_hooks_ret(HOOK_BUILDING_ACTION, "d", "(d)", bact)) {
