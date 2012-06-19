@@ -2887,6 +2887,8 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				/* (should this also cancelled by nazgul?(for now not)) */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 
+				k3 = k;
+
 				/* Vampiric drain */
 				if ((magik(vampiric_melee)) && drainable)
 					drain_result = q_ptr->chp;
@@ -3935,6 +3937,8 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				/* Apply the player damage boni */
 				/* (should this also cancelled by nazgul?(for now not)) */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
+
+				k3 = k;
 
 				/* Vampiric drain */
 				if ((magik(vampiric_melee)) && drainable)

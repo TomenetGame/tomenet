@@ -4384,7 +4384,7 @@ char *wpos_format(int Ind, worldpos *wpos)
 	int i = Ind, d = 0, n;
 	cptr desc = "";
 	bool ville = istown(wpos) && !isdungeontown(wpos);
-	dungeon_type *d_ptr;
+	dungeon_type *d_ptr = NULL;
 
 	/* Hack for Valinor originally */
 	if (i < 0) i = -i;
