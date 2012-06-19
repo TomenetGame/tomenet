@@ -251,14 +251,9 @@ void set_server_features()
 
 	/* Misc flags */
 
-#ifdef ENABLE_MAIA
-	lua_dostring(L, "TEMP0 = 1");
-	sflags_TEMP |= 0x00000001;
-#else
+//	sflags_TEMP |= 0x00000001;
 	lua_dostring(L, "TEMP0 = 0");
-#endif
 	lua_settop(L, oldtop);
-
 //	sflags_TEMP |= 0x00000002;
 	lua_dostring(L, "TEMP1 = 0");
 	lua_settop(L, oldtop);
