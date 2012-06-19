@@ -3161,7 +3161,8 @@ static bool process_player_end_aux(int Ind)
 	else if (!p_ptr->ghost && !(p_ptr->afk && p_ptr->food >= PY_FOOD_ALERT) && !p_ptr->admin_dm &&
 	    /* Don't starve in town (but recover from being gorged) - C. Blue */
 //	    (!istown(&p_ptr->wpos) || p_ptr->food >= PY_FOOD_MAX))
-	    (!istown(&p_ptr->wpos) || p_ptr->food >= PY_FOOD_FULL)) /* allow to digest some to not get gorged in upcoming fights quickly - C. Blue */
+	    (!(istown(&p_ptr->wpos) || isdungeontown(&p_ptr->wpos))
+	    || p_ptr->food >= PY_FOOD_FULL)) /* allow to digest some to not get gorged in upcoming fights quickly - C. Blue */
 	{
 		/* Digest normally */
 		if (p_ptr->food < PY_FOOD_MAX) {
@@ -3386,7 +3387,7 @@ static bool process_player_end_aux(int Ind)
 	/* Temporary Mimicry from a Ring of Polymorphing */
 	if (p_ptr->tim_mimic) {
 		/* hack - on hold while in town */
-		if (!istown(&p_ptr->wpos))
+		if (!istown(&p_ptr->wpos) && !isdungeontown(&p_ptr->wpos))
 			/* decrease time left of being polymorphed */
 			(void)set_mimic(Ind, p_ptr->tim_mimic - 1, p_ptr->tim_mimic_what);
 	}
@@ -3931,7 +3932,7 @@ static bool process_player_end_aux(int Ind)
 //	if (p_ptr->drain_exp && magik(p_ptr->wpos.wz != 0 ? 50 : 0) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
 //	if (p_ptr->drain_exp && magik(p_ptr->wpos.wz != 0 ? 50 : (istown(&p_ptr->wpos) ? 0 : 25)) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
 	/* changing above line to use istownarea() so you can sort your houses without drain */
-	if (p_ptr->drain_exp && magik(p_ptr->wpos.wz != 0 ? 50 : (istownarea(&p_ptr->wpos, 2) ? 0 : 25)) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
+	if (p_ptr->drain_exp && magik(p_ptr->wpos.wz != 0 ? 50 : (istownarea(&p_ptr->wpos, 2) || isdungeontown(&p_ptr->wpos) ? 0 : 25)) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
 //		take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L, "Draining", TRUE, FALSE, FALSE);
 		/* Moltor is right, exp drain was too weak for up to quite high levels. Need to make a new formula.. */
 	{
@@ -3969,7 +3970,7 @@ static bool process_player_end_aux(int Ind)
 	/* Now implemented here too ;) - C. Blue */
 	/* let's say TY_CURSE lowers stats (occurs often) */
 	if (p_ptr->ty_curse &&
-	    (rand_int(p_ptr->wpos.wz != 0 ? 100 : (istown(&p_ptr->wpos) ? 0 : 300)) == 1) &&
+	    (rand_int(p_ptr->wpos.wz != 0 ? 100 : (istown(&p_ptr->wpos) || isdungeontown(&p_ptr->wpos) ? 0 : 300)) == 1) &&
 	    (get_skill(p_ptr, SKILL_HSUPPORT) < 50) && magik(100 - p_ptr->antimagic)) {
 		msg_print(Ind, "An ancient foul curse shakes your body!");
 #if 0
@@ -3983,7 +3984,7 @@ static bool process_player_end_aux(int Ind)
 #endif
 	}
 	/* and DG_CURSE randomly summons a monster (non-unique) */
-	if (p_ptr->dg_curse && (rand_int(200) == 0) && !istown(&p_ptr->wpos) &&
+	if (p_ptr->dg_curse && (rand_int(200) == 0) && !istown(&p_ptr->wpos) && !isdungeontown(&p_ptr->wpos) &&
 	    (get_skill(p_ptr, SKILL_HSUPPORT) < 50) && magik(100 - p_ptr->antimagic)) {
 		msg_print(Ind, "An ancient morgothian curse calls out!");
 		summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev + 20, 100, 0, 0, 0);

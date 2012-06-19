@@ -6600,14 +6600,8 @@ extern int PlayerUID;
 /* NOTE: not all the towns should be on the surface, should they? */
 #define isdungeontown(wpos) \
 	(((wpos)->wz != 0) && (getfloor(wpos) != NULL) && (getfloor(wpos)->flags1 & LF1_DUNGEON_TOWN))
-#if 1 /* the default. important exceptions for dungeon towns have already been taken care of. */
 #define istown(wpos) \
 	((!(wpos)->wz && wild_info[(wpos)->wy][(wpos)->wx].type == WILD_TOWN))
-#else /* consequences not checked at all, so would be highly experimental - currently not used */
-#define istown(wpos) \
-	((!(wpos)->wz && wild_info[(wpos)->wy][(wpos)->wx].type == WILD_TOWN) \
-	|| isdungeontown(wpos))
-#endif
 #define istownarea(wpos, rad) \
 	(istown(wpos) || ((wpos)->wz == 0 && wild_info[(wpos)->wy][(wpos)->wx].radius <= rad))
 
