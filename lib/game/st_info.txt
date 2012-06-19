@@ -839,7 +839,6 @@ G:5:w
 F:RANDOM | MEDIUM_LEVEL | DEPEND_LEVEL | BUY67 | HARD_STEAL
 W:12
 
-
 N:53:Potion Store
 T:100:71:256
 T:100:72:256
@@ -848,8 +847,7 @@ O:30:31:32:33:30:33
 G:5:B
 W:12
 F:BUY67 | RANDOM | MEDIUM_LEVEL | DEPEND_LEVEL | NO_DISCOUNT2 | PRICE2
-F:NO_STEAL
-#F:PRICE1 | HARD_STEAL
+F:PRICE1 | HARD_STEAL
 
 N:54:Recaller
 I:100:Word of Recall
@@ -1080,6 +1078,17 @@ N:66:Player Store Template
 A:0:0:0:2:3:0
 #note: stealing is usually turned off for pstores anyway
 F:VHARD_STEAL
+
+#ariant of potion store, for ironman deep dive challenge
+N:67:Potion Store
+T:100:71:256
+T:100:72:256
+A:0:0:1:2:3:0
+O:30:31:32:33:30:33
+G:5:B
+W:24
+F:BUY67 | RANDOM | MEDIUM_LEVEL | DEPEND_LEVEL | NO_DISCOUNT2 | PRICE2
+F:HARD_STEAL
 
 
 ##################################################################################################
@@ -1421,14 +1430,13 @@ T:5:71:37
 #mummy wrapping
 T:5:12:7
 I:50:Blood Bond
-A:30:0:1:2:3:4
+A:30:0:1:2:3:0
 #O:38:39:40:41:42:
 O:39:40:41:39:40:41
 G:7:D
-F:ALL_ITEM | MEDIUM_LEVEL | PRICE4 | NO_STEAL
-#F:HARD_STEAL
-#W:24
-W:36
+F:ALL_ITEM | MEDIUM_LEVEL | PRICE4 | HARD_STEAL
+#W:36
+W:48
 
 N:77:Home
 A:62:0:54:55:3:0

@@ -16,8 +16,8 @@ F:k:74:3:0:0:0:0:0:35
 # Casino
 F:c:74:3:0:0:0:0:0:15
 
-# Potion Store
-F:o:74:3:0:0:0:0:0:53
+# Potion Store #2
+F:o:74:3:0:0:0:0:0:67
 
 # Expensive Black Market --- would need reenabling in the source code first for non-surface locations
 #F:v:74:3:0:0:0:0:0:48
