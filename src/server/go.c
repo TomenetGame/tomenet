@@ -44,6 +44,8 @@
    The normal engine will be swapped silently with this one
    if mirror Go is detected after a specific number of turns: */
 #define ANTI_MIRROR	"pachi"
+/* If above is defined: Invoke countermeasures at which # of mirrorred moves? (Full moves.) [6] */
+#define ANTI_MIRROR_THRESHOLD	6
 
 /* # of buffer lines for GTP responses: 9 lines,2 coordinate lines, +1, +1 for msg hack.
    Could probably be reduced now that we have board_line..[] helper vars. */
@@ -61,8 +63,13 @@
 /* Maximum rank: At this rank you'll have to play a game as white too! */
 #define TOP_RANK	7
 
-/* Time limits for the player (and CPU) in seconds  [25] */
+/* Time limits for the player (and CPU) in seconds. [30]
+   Should be *ABOVE 20*, since some AI players will require 20s per move */
 #define GO_TIME_PY		30
+
+/* Only play random moves instead of engine-generated ones up to this move number
+   in the game. (Half moves.) [35] */
+#define RND_MOVE_THRESHOLD	35
 
 
 /* Error handling constants */
@@ -917,7 +924,7 @@ int go_engine_move_human(int Ind, char *py_move) {
 			if ((last_cpu_move[0] == 'i' - last_black_move[0] + 'a') &&
 			    (last_cpu_move[1] == '9' - last_black_move[1] + '1')) {
 				mirror_count++;
-				if (mirror_count == 6) enable_anti_mirror();
+				if (mirror_count == ANTI_MIRROR_THRESHOLD) enable_anti_mirror();
 			} else mirror_count = 0;
 #endif
 		} else {
@@ -929,7 +936,7 @@ int go_engine_move_human(int Ind, char *py_move) {
 			if ((last_cpu_move[0] == 'i' - last_white_move[0] + 'a') &&
 			    (last_cpu_move[1] == '9' - last_white_move[1] + '1')) {
 				mirror_count++;
-				if (mirror_count == 6) enable_anti_mirror();
+				if (mirror_count == ANTI_MIRROR_THRESHOLD) enable_anti_mirror();
 			} else mirror_count = 0;
 #endif
 		}
@@ -1039,7 +1046,7 @@ static void go_engine_move_CPU() {
 
 	/* replace CPU moves by random moves to simulate lower strength.
 	   NOTE: Free grid doesn't necessarily mean LEGAL grid! */
-	if (move_count <= 35 && (random_move = magik(random_move_prob))) {
+	if (move_count <= RND_MOVE_THRESHOLD && (random_move = magik(random_move_prob))) {
 		/* Try to find a free grid randomly */
 		while (tries != 0) {
 			tries--;
@@ -2232,10 +2239,11 @@ static void enable_anti_mirror(void) {
 	s_printf("GO_MIRROR: Attempting to start anti-Mirror-Go engine...");
 
 
-
 	s_printf("failure.\n");
 	return;
 
+
+	//set its timelimit to GO_TIME_PY - 2, ie max viably possible.
 
 
 	anti_mirror_active = TRUE;
