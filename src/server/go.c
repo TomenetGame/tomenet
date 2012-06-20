@@ -1086,7 +1086,7 @@ static void go_engine_move_CPU() {
 			cpu_move[3] = '1' + y;
 //			Send_store_special_str(Ind, 6, GO_BOARD_X + 3, TERM_YELLOW, cpu_move);
 			sprintf(tmp, "just played %s", cpu_move + 2);
-			Send_store_special_str(Ind, 6, GO_BOARD_X - 2, TERM_YELLOW, tmp);
+			Send_store_special_str(Ind, 6, GO_BOARD_X - 1, TERM_YELLOW, tmp);
 #ifdef GO_DEBUGLOG
 			s_printf("GO_RND: %s\n", cpu_rnd_move + 11);
 #endif
@@ -1113,7 +1113,7 @@ static void go_engine_move_CPU() {
 			cpu_move[3] = '1' + y;
 //			Send_store_special_str(Ind, 6, GO_BOARD_X + 3, TERM_YELLOW, cpu_move);
 			sprintf(tmp, "just played %s", cpu_move + 2);
-			Send_store_special_str(Ind, 6, GO_BOARD_X - 2, TERM_YELLOW, tmp);
+			Send_store_special_str(Ind, 6, GO_BOARD_X - 1, TERM_YELLOW, tmp);
 #ifdef GO_DEBUGLOG
 			s_printf("GO_RND: %s\n", cpu_rnd_move + 11);
 #endif
@@ -1275,7 +1275,7 @@ static int verify_move_CPU(void) {
 		cpu_move[6] = 0;
 //		Send_store_special_str(Ind, 6, GO_BOARD_X + 3, TERM_YELLOW, cpu_move);
 		sprintf(tmp, "just played %s", cpu_move + 2);
-		Send_store_special_str(Ind, 6, GO_BOARD_X - 2, TERM_YELLOW, tmp);
+		Send_store_special_str(Ind, 6, GO_BOARD_X - 1, TERM_YELLOW, tmp);
 #endif
 		pass_count = 0;
 
