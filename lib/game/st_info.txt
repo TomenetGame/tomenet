@@ -843,7 +843,6 @@ W:12
 
 N:53:Potion Store
 T:100:71:256
-T:100:72:256
 A:0:0:1:2:3:4
 O:30:31:32:33:30:33
 G:5:B
@@ -1084,7 +1083,6 @@ F:VHARD_STEAL
 #ariant of potion store, for ironman deep dive challenge
 N:67:Potion Store
 T:100:71:256
-T:100:72:256
 A:0:0:1:2:3:0
 O:30:31:32:33:30:33
 G:5:B
