@@ -40,6 +40,11 @@
 /* Use 'fuego' engine? */
 //#define ENGINE_FUEGO
 
+/* Anti Mirror-Go engine?
+   The normal engine will be swapped silently with this one
+   if mirror Go is detected after a specific number of turns: */
+#define ANTI_MIRROR	"pachi"
+
 /* # of buffer lines for GTP responses: 9 lines,2 coordinate lines, +1, +1 for msg hack.
    Could probably be reduced now that we have board_line..[] helper vars. */
 #define MAX_GTP_LINES (9+2+1+1)
@@ -99,6 +104,7 @@ static void go_engine_move_result(int move_result);
 static void go_challenge_cleanup(bool server_shutdown);
 static void go_engine_board(void);
 static bool go_err(int engine_status, int game_status, char *name);
+static void enable_anti_mirror(void);
 
 /* Handle game initialization and colour assignment */
 static bool CPU_has_white, game_over = TRUE, scoring = FALSE;
@@ -130,8 +136,15 @@ static char last_black_move[3], last_white_move[3], game_result[10];
 
 /* Helper vars to update the board visuals between turns */
 static char board_line_old[10][10], board_line[10][10];//set by receiving 'showboard' response
-static int random_move_prob;
+static int random_move_prob, move_count;
 static bool random_move = FALSE;
+
+#ifdef ANTI_MIRROR
+/* To detect Mirror-Go and replace AI by special anti-Mirror-Go engine silently */
+static char last_cpu_move[3];
+static int mirror_count;
+static bool anti_mirror_active;
+#endif
 
 /* Gameplay configuration */
 static int wager_lvl[9] = {
@@ -818,12 +831,20 @@ void go_challenge_start(int Ind) {
 	last_move_was_pass = FALSE;
 	game_over = scoring = FALSE;
 	waiting_for_board_update = FALSE;
+	move_count = 0; /* to determine when to stop playing random moves really */
 
 	/* Init misc control elements */
 	received_board_visuals = FALSE;
 	strcpy(last_black_move, "");
 	strcpy(last_white_move, "");
 	strcpy(game_result, "");
+
+#ifdef ANTI_MIRROR
+	/* Init anti-Mirror-Go elements */
+	anti_mirror_active = FALSE;
+	mirror_count = 0;
+	last_cpu_move[0] = 0;
+#endif
 
 	/* 'Start the clock' aka the game */
 	s_printf("GO_INIT: GAME START '%s' (%d)\n", p_ptr->name, p_ptr->go_level);
@@ -893,13 +914,29 @@ int go_engine_move_human(int Ind, char *py_move) {
 			if (last_black_move[0] == 'j') last_black_move[0] = 'i';
 			last_black_move[1] = py_move[1];
 			last_black_move[2] = 0;
+#ifdef ANTI_MIRROR
+			if ((last_cpu_move[0] == 'i' - last_black_move[0] + 'a') &&
+			    (last_cpu_move[1] == '9' - last_black_move[1] + '1')) {
+				mirror_count++;
+				if (mirror_count == 7) enable_anti_mirror();
+			}
+#endif
 		} else {
 			last_white_move[0] = tolower(py_move[0]);
 			if (last_white_move[0] == 'j') last_white_move[0] = 'i';
 			last_white_move[1] = py_move[1];
 			last_white_move[2] = 0;
+#ifdef ANTI_MIRROR
+			if ((last_cpu_move[0] == 'i' - last_white_move[0] + 'a') &&
+			    (last_cpu_move[1] == '9' - last_white_move[1] + '1')) {
+				mirror_count++;
+				if (mirror_count == 7) enable_anti_mirror();
+			}
+#endif
 		}
 		go_engine_next_action = NACT_MOVE_CPU;
+		move_count++;
+		s_printf("GO_MOVE #%d\n", move_count);
 		return 0;
 	} else if (!strcmp(py_move, "p") ||
 	    !strcmp(py_move, "")) { /* Pass */
@@ -910,6 +947,8 @@ int go_engine_move_human(int Ind, char *py_move) {
 		last_move_was_pass = TRUE;
 		if (CPU_has_white) strcpy(last_black_move, "");
 		else strcpy(last_white_move, "");
+		move_count++;
+		s_printf("GO_MOVE #%d\n", move_count);
 		return 0;
 	} else if (!strcmp(py_move, "r") ||
 	    !strcmp(py_move, "\e")) { /* Resign */
@@ -988,7 +1027,7 @@ void go_challenge_cancel(int Ind) {
 
 static void go_engine_move_CPU() {
 	int Ind;
-	int tries = 1000, x = -1, y = -1, liberties;
+	int tries = 5000, x = -1, y = -1, liberties;
 	char cpu_rnd_move[14], coord[2], cpu_move[7] = {32, 32, 0, 0, 32, 32, 0};
 
 	if (go_err(DOWN, DOWN, "go_engine_move_CPU")) return;
@@ -1003,7 +1042,7 @@ static void go_engine_move_CPU() {
 
 	/* replace CPU moves by random moves to simulate lower strength.
 	   NOTE: Free grid doesn't necessarily mean LEGAL grid! */
-	if ((random_move = magik(random_move_prob))) {
+	if (move_count <= 35 && (random_move = magik(random_move_prob))) {
 		/* Try to find a free grid randomly */
 		while (tries != 0) {
 			tries--;
@@ -1048,6 +1087,11 @@ static void go_engine_move_CPU() {
 			last_white_move[0] = 'a' + x;
 			last_white_move[1] = '1' + y;
 			last_white_move[2] = 0;
+#ifdef ANTI_MIRROR
+			strcpy(last_cpu_move, last_white_move);
+#endif
+			move_count++;
+			s_printf("GO_MOVE #%d\n", move_count);
 		}
 	} else {
 		if (!random_move) writeToPipe("genmove black");
@@ -1069,6 +1113,11 @@ static void go_engine_move_CPU() {
 			last_black_move[0] = 'a' + x;
 			last_black_move[1] = '1' + y;
 			last_black_move[2] = 0;
+#ifdef ANTI_MIRROR
+			strcpy(last_cpu_move, last_black_move);
+#endif
+			move_count++;
+			s_printf("GO_MOVE #%d\n", move_count);
 		}
 	}
 
@@ -1197,6 +1246,9 @@ static int verify_move_CPU(void) {
 
 		if (CPU_has_white) strcpy(last_white_move, "");
 		else strcpy(last_black_move, "");
+
+		move_count++;
+		s_printf("GO_MOVE #%d\n", move_count);
 	}
 	/* CPU plays a normal move */
 	else if (strlen(pipe_buf[MAX_GTP_LINES - 1]) == 4 &&
@@ -1222,12 +1274,20 @@ static int verify_move_CPU(void) {
 			if (last_white_move[0] == 'j') last_white_move[0] = 'i';
 			last_white_move[1] = cpu_move[3];
 			last_white_move[2] = 0;
+#ifdef ANTI_MIRROR
+			strcpy(last_cpu_move, last_white_move);
+#endif
 		} else {
 			last_black_move[0] = tolower(cpu_move[2]);
 			if (last_black_move[0] == 'j') last_black_move[0] = 'i';
 			last_black_move[1] = cpu_move[3];
 			last_black_move[2] = 0;
+#ifdef ANTI_MIRROR
+			strcpy(last_cpu_move, last_black_move);
+#endif
 		}
+		move_count++;
+		s_printf("GO_MOVE #%d\n", move_count);
 	}
 
 #ifdef ENGINE_GNUGO
@@ -2172,6 +2232,22 @@ static bool go_err(int engine_status, int game_status, char *name) {
 		}
 	}
 	return FALSE;
+}
+
+/* Silently switch Go engine for special anti-Mirror-Go engine */
+static void enable_anti_mirror(void) {
+	s_printf("GO_MIRROR: Attempting to start anti-Mirror-Go engine...");
+
+
+
+	s_printf("failure.");
+	return;
+
+
+
+	anti_mirror_active = TRUE;
+	s_printf("success.");
+	return;
 }
 
 #endif /* ENABLE_GO_GAME */
