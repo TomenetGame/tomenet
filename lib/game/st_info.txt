@@ -358,7 +358,8 @@ T:5:71:37
 #mummy wrapping
 T:5:12:7
 I:50:Blood Bond
-A:30:0:1:2:3:4
+#A:30:0:1:2:3:4
+A:0:0:1:2:3:4
 #O:38:39:40:41:42:
 O:39:40:41:39:40:41
 G:7:D
@@ -875,7 +876,8 @@ W:24
 
 N:56:Merchants Guild
 #A:0:0:56:57:58:0
-A:60:61:56:57:58:0
+#A:60:61:56:57:58:0
+A:60:61:0:0:0:0
 O:68:68:68:68:68:68
 G:+:u
 W:0
@@ -1089,6 +1091,18 @@ G:5:B
 W:24
 F:BUY67 | RANDOM | MEDIUM_LEVEL | DEPEND_LEVEL | NO_DISCOUNT2 | PRICE2
 F:HARD_STEAL
+
+#or 'The Bridge Inn' maybe
+N:68:The Forsaken Inn
+I:100:& Ration~ of Food
+I:100:& Hard Biscuit~
+I:100:& Strip~ of Venison
+I:100:& Pint~ of Fine Wine
+I:100:& Pint~ of Fine Ale
+A:2:4:5:6:7:16
+O:69:69:69:69:69:69
+G:+:u
+W:8
 
 
 ##################################################################################################
@@ -1430,7 +1444,8 @@ T:5:71:37
 #mummy wrapping
 T:5:12:7
 I:50:Blood Bond
-A:30:0:1:2:3:0
+#A:30:0:1:2:3:0
+A:0:0:1:2:3:0
 #O:38:39:40:41:42:
 O:39:40:41:39:40:41
 G:7:D
