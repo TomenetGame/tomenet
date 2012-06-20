@@ -1678,6 +1678,7 @@ static void go_engine_move_result(int move_result) {
 		go_engine_move_CPU();
 	} else {
 		Send_request_str(Ind, RID_GO_MOVE, "Enter your move: ", "");
+		Send_store_special_str(Ind, 1, 1, TERM_WHITE, ">Type coordinates to place a stone, eg \"d5\". Hit ENTER to pass/ESC to resign.<");
 	}
 #endif
 }
@@ -1876,7 +1877,10 @@ static int test_for_response() {
 			if (CPU_to_move) {
 				go_engine_move_CPU();
 			} else {
-				if (Ind) Send_request_str(Ind, RID_GO_MOVE, "Enter your move: ", "");
+				if (Ind) {
+					Send_request_str(Ind, RID_GO_MOVE, "Enter your move: ", "");
+					Send_store_special_str(Ind, 1, 1, TERM_WHITE, ">Type coordinates to place a stone, eg \"d5\". Hit ENTER to pass/ESC to resign.<");
+				}
 			}
 	    } else {
 
