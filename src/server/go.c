@@ -161,6 +161,7 @@ static int wager_lvl[9] = {
 
 /* Start engine, create & connect pipes, on server startup usually */
 int go_engine_init(void) {
+	int n;
 	char *gocmd = NULL;
 
 	s_printf("GO_INIT: ---INIT---\n");
@@ -210,16 +211,16 @@ int go_engine_init(void) {
 		/* Start a new session to prevent Ctrl-C in the terminal from killing the child */
 		setsid();
 
-/*	"Options:\n"
-	"  -config file execute GTP commands from file before\n"
-	"               starting main command loop\n"
-	"  -help        display this help and exit\n"
-	"  -maxgames n  make clear_board fail after n invocations\n"
-	"  -nobook      don't automatically load opening book\n"
-	"  -nohandicap  don't support handicap commands\n"
-	"  -quiet       don't print debug messages\n"
-	"  -size        initial (and fixed) board size\n"
-	"  -srand       set random seed (-1:none, 0:time(0))\n";*/
+/*		"Options:\n"
+		"  -config file execute GTP commands from file before\n"
+	        "               starting main command loop\n"
+	        "  -help        display this help and exit\n"
+	        "  -maxgames n  make clear_board fail after n invocations\n"
+	        "  -nobook      don't automatically load opening book\n"
+	        "  -nohandicap  don't support handicap commands\n"
+	        "  -quiet       don't print debug messages\n"
+	        "  -size        initial (and fixed) board size\n"
+	        "  -srand       set random seed (-1:none, 0:time(0))\n";*/
 
 #ifdef ENGINE_FUEGO
 		execlp("./go/fuego", "fuego", NULL);
@@ -244,8 +245,7 @@ int go_engine_init(void) {
 		exit(4);
 	}
 
-    { /* We're parent */
-	int n;
+	/* We're parent */
 
 	/* Clear the pipe_buf[] array */
 	pipe_buf_current_line = 0;
@@ -349,7 +349,6 @@ int go_engine_init(void) {
 	go_engine_processing = 0;
 
 	/* ready for games */
-    } /* Parent thread */
 
 	return 0;
 }
