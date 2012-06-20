@@ -9147,6 +9147,7 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 		/* add the town */
 		s_printf("DF2_TOWNS_: Adding a town at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
 		dun->l_ptr->flags1 |= LF1_DUNGEON_TOWN | LF1_NO_DESTROY;
+ 		dun->l_ptr->flags1 &= ~(LF1_NO_MAP | LF1_NO_MAGIC_MAP);
 		town_gen_hack(wpos);
 		return;
 	}
