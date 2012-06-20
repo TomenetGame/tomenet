@@ -918,8 +918,8 @@ int go_engine_move_human(int Ind, char *py_move) {
 			if ((last_cpu_move[0] == 'i' - last_black_move[0] + 'a') &&
 			    (last_cpu_move[1] == '9' - last_black_move[1] + '1')) {
 				mirror_count++;
-				if (mirror_count == 7) enable_anti_mirror();
-			}
+				if (mirror_count == 6) enable_anti_mirror();
+			} else mirror_count = 0;
 #endif
 		} else {
 			last_white_move[0] = tolower(py_move[0]);
@@ -930,8 +930,8 @@ int go_engine_move_human(int Ind, char *py_move) {
 			if ((last_cpu_move[0] == 'i' - last_white_move[0] + 'a') &&
 			    (last_cpu_move[1] == '9' - last_white_move[1] + '1')) {
 				mirror_count++;
-				if (mirror_count == 7) enable_anti_mirror();
-			}
+				if (mirror_count == 6) enable_anti_mirror();
+			} else mirror_count = 0;
 #endif
 		}
 		go_engine_next_action = NACT_MOVE_CPU;
@@ -2240,13 +2240,13 @@ static void enable_anti_mirror(void) {
 
 
 
-	s_printf("failure.");
+	s_printf("failure.\n");
 	return;
 
 
 
 	anti_mirror_active = TRUE;
-	s_printf("success.");
+	s_printf("success.\n");
 	return;
 }
 
