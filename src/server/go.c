@@ -92,7 +92,7 @@ bool go_engine_up;		/* Go engine is online? */
 int go_engine_processing = 0;	/* Go engine is expected to deliver replies to commands? */
 bool go_game_up;		/* A game of Go is actually being played right now? */
 u32b go_engine_player_id;	/* Player ID of the player who plays a game of Go right now. */
-static char avatar_name[40];
+static char avatar_name[40], tmp[20];
 
 /* Private control variable to determine what to do next
    after go_engine_processing reaches 0 again: */
@@ -144,7 +144,6 @@ static char last_black_move[3], last_white_move[3], game_result[10];
 /* Helper vars to update the board visuals between turns */
 static char board_line_old[10][10], board_line[10][10];//set by receiving 'showboard' response
 static int random_move_prob, move_count;
-static bool random_move = FALSE;
 
 #ifdef ANTI_MIRROR
 /* To detect Mirror-Go and replace AI by special anti-Mirror-Go engine silently */
@@ -800,7 +799,7 @@ void go_challenge_start(int Ind) {
 		go_challenge_cleanup(FALSE);
 		return;
 	}
-	Send_store_special_str(Ind, 4, GO_BOARD_X + 6 - (strlen(avatar_name) + 1) / 2, TERM_YELLOW, avatar_name);
+	Send_store_special_str(Ind, 5, GO_BOARD_X + 6 - (strlen(avatar_name) + 1) / 2, TERM_YELLOW, avatar_name);
 
 #ifdef ENGINE_FUEGO
 	/* think while opponent is thinking? */
@@ -875,7 +874,7 @@ void go_challenge_start(int Ind) {
 #endif
 
 	/* Initiate human player input loop */
-	Send_store_special_str(Ind, 1, 0, TERM_YELLOW, "Type coordinates to place a stone, eg 'd5'; ENTER to pass; ESC to resign");
+	Send_store_special_str(Ind, 1, 1, TERM_WHITE, ">Type coordinates to place a stone, eg \"d5\". Hit ENTER to pass/ESC to resign.<");
 	if (CPU_has_white) Send_request_str(Ind, RID_GO_MOVE, "Enter your move: ", "");
 	else go_engine_move_CPU();
 }
@@ -1032,6 +1031,7 @@ void go_challenge_cancel(int Ind) {
 static void go_engine_move_CPU() {
 	int Ind;
 	int tries = 5000, x = -1, y = -1, liberties;
+	bool random_move = FALSE;
 	char cpu_rnd_move[14], coord[2], cpu_move[7] = {32, 32, 0, 0, 32, 32, 0};
 
 	if (go_err(DOWN, DOWN, "go_engine_move_CPU")) return;
@@ -1084,7 +1084,9 @@ static void go_engine_move_CPU() {
 
 			cpu_move[2] = 'A' + x;
 			cpu_move[3] = '1' + y;
-			Send_store_special_str(Ind, 6, GO_BOARD_X + 3, TERM_YELLOW, cpu_move);
+//			Send_store_special_str(Ind, 6, GO_BOARD_X + 3, TERM_YELLOW, cpu_move);
+			sprintf(tmp, "just played %s", cpu_move + 2);
+			Send_store_special_str(Ind, 6, GO_BOARD_X - 2, TERM_YELLOW, tmp);
 #ifdef GO_DEBUGLOG
 			s_printf("GO_RND: %s\n", cpu_rnd_move + 11);
 #endif
@@ -1109,7 +1111,9 @@ static void go_engine_move_CPU() {
 
 			cpu_move[2] = 'A' + x;
 			cpu_move[3] = '1' + y;
-			Send_store_special_str(Ind, 6, GO_BOARD_X + 3, TERM_YELLOW, cpu_move);
+//			Send_store_special_str(Ind, 6, GO_BOARD_X + 3, TERM_YELLOW, cpu_move);
+			sprintf(tmp, "just played %s", cpu_move + 2);
+			Send_store_special_str(Ind, 6, GO_BOARD_X - 2, TERM_YELLOW, tmp);
 #ifdef GO_DEBUGLOG
 			s_printf("GO_RND: %s\n", cpu_rnd_move + 11);
 #endif
@@ -1243,7 +1247,8 @@ static int verify_move_CPU(void) {
 #ifdef GO_DEBUGPRINT
 		printf("CPU passed.\n");
 #endif
-		Send_store_special_str(Ind, 6, GO_BOARD_X + 3, TERM_YELLOW, "'pass'");
+//		Send_store_special_str(Ind, 6, GO_BOARD_X + 3, TERM_YELLOW, "'pass'");
+		Send_store_special_str(Ind, 6, GO_BOARD_X + 3, TERM_YELLOW, "passed");
 		pass_count++;
 
 		if (CPU_has_white) strcpy(last_white_move, "");
@@ -1260,13 +1265,17 @@ static int verify_move_CPU(void) {
 		cpu_move[0] = cpu_move[2];
 		cpu_move[1] = cpu_move[3];
 		cpu_move[2] = 0;
-		Send_store_special_str(Ind, 6, GO_BOARD_X + 5, TERM_YELLOW, cpu_move);
+//		Send_store_special_str(Ind, 6, GO_BOARD_X + 5, TERM_YELLOW, cpu_move);
+		sprintf(tmp, "just played %s", cpu_move + 2);
+		Send_store_special_str(Ind, 6, GO_BOARD_X, TERM_YELLOW, tmp);
 #else
 		strcpy(cpu_move, pipe_buf[MAX_GTP_LINES - 1]);
 		cpu_move[0] = cpu_move[1] = ' ';
 		cpu_move[4] = cpu_move[5] = ' ';
 		cpu_move[6] = 0;
-		Send_store_special_str(Ind, 6, GO_BOARD_X + 3, TERM_YELLOW, cpu_move);
+//		Send_store_special_str(Ind, 6, GO_BOARD_X + 3, TERM_YELLOW, cpu_move);
+		sprintf(tmp, "just played %s", cpu_move + 2);
+		Send_store_special_str(Ind, 6, GO_BOARD_X - 2, TERM_YELLOW, tmp);
 #endif
 		pass_count = 0;
 
@@ -1353,7 +1362,12 @@ static void go_engine_move_result(int move_result) {
 	p_ptr = Players[Ind];
 
 	switch (move_result) {
-	case 0: break;
+	case 0: /* player's move was valid */
+		if (CPU_to_move) {
+			/* clear previous cpu move display */
+			Send_store_special_str(Ind, 6, GO_BOARD_X - 2, TERM_YELLOW, "              ");
+		}
+		break;
 	case 1: invalid_move = TRUE; break;
 	case 2:
 #ifdef ENGINE_FUEGO
