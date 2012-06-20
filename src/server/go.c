@@ -935,7 +935,6 @@ int go_engine_move_human(int Ind, char *py_move) {
 		}
 		go_engine_next_action = NACT_MOVE_CPU;
 		move_count++;
-		s_printf("GO_MOVE #%d\n", move_count);
 		return 0;
 	} else if (!strcmp(py_move, "p") ||
 	    !strcmp(py_move, "")) { /* Pass */
@@ -947,7 +946,6 @@ int go_engine_move_human(int Ind, char *py_move) {
 		if (CPU_has_white) strcpy(last_black_move, "");
 		else strcpy(last_white_move, "");
 		move_count++;
-		s_printf("GO_MOVE #%d\n", move_count);
 		return 0;
 	} else if (!strcmp(py_move, "r") ||
 	    !strcmp(py_move, "\e")) { /* Resign */
@@ -1090,7 +1088,6 @@ static void go_engine_move_CPU() {
 			strcpy(last_cpu_move, last_white_move);
 #endif
 			move_count++;
-			s_printf("GO_MOVE #%d\n", move_count);
 		}
 	} else {
 		if (!random_move) writeToPipe("genmove black");
@@ -1116,7 +1113,6 @@ static void go_engine_move_CPU() {
 			strcpy(last_cpu_move, last_black_move);
 #endif
 			move_count++;
-			s_printf("GO_MOVE #%d\n", move_count);
 		}
 	}
 
@@ -1247,7 +1243,6 @@ static int verify_move_CPU(void) {
 		else strcpy(last_black_move, "");
 
 		move_count++;
-		s_printf("GO_MOVE #%d\n", move_count);
 	}
 	/* CPU plays a normal move */
 	else if (strlen(pipe_buf[MAX_GTP_LINES - 1]) == 4 &&
@@ -1286,7 +1281,6 @@ static int verify_move_CPU(void) {
 #endif
 		}
 		move_count++;
-		s_printf("GO_MOVE #%d\n", move_count);
 	}
 
 #ifdef ENGINE_GNUGO
