@@ -6650,12 +6650,13 @@ Aggravate Monsters
                 range (a constant defaulting to 20, so aggrav. radius is ~40).
                 Hastes all monsters in your line of sight (same as SHRIEK
                 spell or traps of aggravation or the "/scream" command).
-Word of Recall  Use it to quickly travel from the town to a dungeon or tower,
-                it can also be used to travel between towns or on the worldmap
+Word of Recall  Use it to quickly travel from the town or the wilderness into a
+                dungeon or tower within your current sector.
+                It can also be used to travel between towns or on the worldmap
                 in general. See "(0.3) Important Inscriptions" for more info
                 about Word of Recall! ("Word-of-Recall", "WoR")
                 If you read another Word of Recall while you're still waiting
-                for one to kick in, the effect will be cancelled!
+                for one to kick in, the effect will be cancelled again!
                 That way you can change your mind, for example if you suddenly
                 spot a monster you want to kill just after you read a WoR.
                 Word-of-Recall scrolls can be exchanged between an everlasting
