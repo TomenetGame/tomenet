@@ -9,21 +9,31 @@
  *
  * At the time of creation I decided on Fuego for the engine, which is free,
  * open source, and placed #2 in 9x9 tournament at Kanazawa 2010 Computer Go
- * Olympiad (the #1 program wasn't free). Might switch to GnuGo though.
+ * Olympiad (the #1 program wasn't free).
  *
  * Another option might be GnuGo. Although somewhat weaker (might change, there
  * is also a Monte-Carlo version out now) it allows scaling via a '--level'
- * parameter.
+ * parameter. Actually I switched to GnuGo shortly after releasing the Go
+ * feature on the TomeNET server because of the comfortable --level parameter.
  *
  * Other very strong bots that aren't open source are Zen, MoGo, Erica,
  * Valkyrie, CrazyStone and Aya. Unfortunately bot tournament results say quite
- * little about a bot's strength, because the hardware that must be use is not
+ * little about a bot's strength, because the hardware to use is not
  * standardized! So one bot might win while running on a large cluster, while
  * another bot comes in 2nd on a simple Quadcore..
  *
- * For rules, I decided on those used at Beijing Mindsport Olympics:
- * Chinese rules (easy for bots and beginners alike) and +1 point for white if
- * white is the first player to pass (to counter Mirror-Go somewhat).
+ * Update: To counter Mirror-Go somewhat I changed the rules to those used at
+ *         Beijing Mindsport Olympics, which are chinese rules (easy for bots
+ *         and beginners alike) and +1 point for white if white is the first
+ *         player to pass (to counter Mirror-Go somewhat).
+ *
+ * Update: At least the newer GnuGo builds ignore
+ *         'time_settings' parameter (the hell?), which causes problems with
+ *         enable_anti_mirror() for some unknown reason. Also, GnuGo delivers a
+ *         move initiated by 'genmove' even if the board was meanwhile cleared
+ *         so it can mess up the next game starting afterwards if timing is
+ *         a bit tight (ie next game is started quickly).
+ *         A bit tired of changing engines but might have to go back to Fuego.
  *
  *                                                     - C. Blue -
  */
@@ -144,7 +154,9 @@ static struct tm* tmend;
 /* Game record: Keep track of moves and passes (for undo-handling too) */
 static int pass_count, current_komi;
 static bool last_move_was_pass = FALSE, CPU_to_move, CPU_now_to_move;
+#ifdef ENGINE_GNUGO
 static FILE *sgf;
+#endif
 static char last_black_move[3], last_white_move[3], game_result[10];
 
 /* Helper vars to update the board visuals between turns */
