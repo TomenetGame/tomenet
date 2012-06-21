@@ -927,30 +927,13 @@ int go_engine_move_human(int Ind, char *py_move) {
 			if (last_black_move[0] == 'j') last_black_move[0] = 'i';
 			last_black_move[1] = py_move[1];
 			last_black_move[2] = 0;
-#ifdef ANTI_MIRROR
-			if ((last_cpu_move[0] == 'i' - last_black_move[0] + 'a') &&
-			    (last_cpu_move[1] == '9' - last_black_move[1] + '1')) {
-				mirror_count++;
-				if (mirror_count == ANTI_MIRROR_THRESHOLD) enable_anti_mirror();
-			} else if (last_black_move[0] != 'e' || last_black_move[1] != '5')
-				mirror_count = 0;
-#endif
 		} else {
 			last_white_move[0] = tolower(py_move[0]);
 			if (last_white_move[0] == 'j') last_white_move[0] = 'i';
 			last_white_move[1] = py_move[1];
 			last_white_move[2] = 0;
-#ifdef ANTI_MIRROR
-			if ((last_cpu_move[0] == 'i' - last_white_move[0] + 'a') &&
-			    (last_cpu_move[1] == '9' - last_white_move[1] + '1')) {
-				mirror_count++;
-				if (mirror_count == ANTI_MIRROR_THRESHOLD) enable_anti_mirror();
-			} else if (last_white_move[0] != 'e' || last_white_move[1] != '5')
-				mirror_count = 0;
-#endif
 		}
 		go_engine_next_action = NACT_MOVE_CPU;
-		move_count++;
 		return 0;
 	} else if (!strcmp(py_move, "p") ||
 	    !strcmp(py_move, "")) { /* Pass */
@@ -964,7 +947,6 @@ int go_engine_move_human(int Ind, char *py_move) {
 		last_move_was_pass = TRUE;
 		if (CPU_has_white) strcpy(last_black_move, "");
 		else strcpy(last_white_move, "");
-		move_count++;
 		return 0;
 	} else if (!strcmp(py_move, "r") ||
 	    !strcmp(py_move, "\e")) { /* Resign */
@@ -1110,16 +1092,6 @@ static void go_engine_move_CPU() {
 			last_white_move[0] = 'a' + x;
 			last_white_move[1] = '1' + y;
 			last_white_move[2] = 0;
-			move_count++;
-
-#ifdef ANTI_MIRROR /* a bit far-fetched: if CPU accidentally mirrors the player's moves, still make player responsible ;) */
-			strcpy(last_cpu_move, last_white_move);
-			if ((last_cpu_move[0] == 'i' - last_black_move[0] + 'a') &&
-			    (last_cpu_move[1] == '9' - last_black_move[1] + '1')) {
-				mirror_count++;
-				if (mirror_count == ANTI_MIRROR_THRESHOLD) enable_anti_mirror();
-			}
-#endif
 		}
 	} else {
 		if (!random_move) writeToPipe("genmove black");
@@ -1143,17 +1115,19 @@ static void go_engine_move_CPU() {
 			last_black_move[0] = 'a' + x;
 			last_black_move[1] = '1' + y;
 			last_black_move[2] = 0;
-			move_count++;
-
-#ifdef ANTI_MIRROR /* a bit far-fetched: if CPU accidentally mirrors the player's moves, still make player responsible ;) */
-			strcpy(last_cpu_move, last_black_move);
-			if ((last_cpu_move[0] == 'i' - last_white_move[0] + 'a') &&
-			    (last_cpu_move[1] == '9' - last_white_move[1] + '1')) {
-				mirror_count++;
-				if (mirror_count == ANTI_MIRROR_THRESHOLD) enable_anti_mirror();
-			}
-#endif
 		}
+	}
+
+	if (random_move) {
+#ifdef ANTI_MIRROR /* a bit far-fetched: if CPU accidentally mirrors the player's moves, still make player responsible ;) */
+		if (strlen(last_white_move) == 2 && strlen(last_black_move) == 2 &&
+		    (last_white_move[0] == 'i' - last_black_move[0] + 'a') &&
+		    (last_white_move[1] == '9' - last_black_move[1] + '1')) {
+			mirror_count++;
+			if (mirror_count == ANTI_MIRROR_THRESHOLD) enable_anti_mirror();
+		}
+#endif
+		move_count++;
 	}
 
 	go_engine_next_action = NACT_MOVE_PLAYER;
@@ -1192,6 +1166,8 @@ static int verify_move_human(void) {
 //		Send_request_str(Ind, RID_GO_MOVE, "Invalid move. Try again: ", "");
 		return 1; //invalid move
 	}
+
+	move_count++;
 
 #ifdef ENGINE_GNUGO
 	if (sgf) {
@@ -1238,6 +1214,30 @@ static int verify_move_human(void) {
 	sprintf(clock, "%02d", player_timeleft_sec);
 	Send_store_special_str(Ind, GO_BOARD_Y + 1, GO_BOARD_X - 8, TERM_SLATE, clock);
 	CPU_now_to_move = TRUE;
+
+#ifdef ANTI_MIRROR
+	if (CPU_has_white) {
+		if (strlen(last_white_move) == 2 && strlen(last_black_move) == 2) {
+			if ((last_white_move[0] == 'i' - last_black_move[0] + 'a') &&
+			    (last_white_move[1] == '9' - last_black_move[1] + '1')) {
+				mirror_count++;
+				if (mirror_count == ANTI_MIRROR_THRESHOLD) enable_anti_mirror();
+			} else if (last_black_move[0] != 'e' || last_black_move[1] != '5') {
+				mirror_count = 0;
+			}
+		}
+	} else {
+		if (strlen(last_black_move) == 2 && strlen(last_white_move) == 2) {
+			if ((last_black_move[0] == 'i' - last_white_move[0] + 'a') &&
+			    (last_black_move[1] == '9' - last_white_move[1] + '1')) {
+				mirror_count++;
+				if (mirror_count == ANTI_MIRROR_THRESHOLD) enable_anti_mirror();
+			} else if (last_white_move[0] != 'e' || last_white_move[1] != '5') {
+				mirror_count = 0;
+			}
+		}
+	}
+#endif
 
 	/* display board after player's move */
 	writeToPipe("showboard");
@@ -1322,16 +1322,30 @@ static int verify_move_CPU(void) {
 			if (last_white_move[0] == 'j') last_white_move[0] = 'i';
 			last_white_move[1] = cpu_move[3];
 			last_white_move[2] = 0;
-#ifdef ANTI_MIRROR
+
+#ifdef ANTI_MIRROR /* a bit far-fetched: if CPU accidentally mirrors the player's moves, still make player responsible ;) */
 			strcpy(last_cpu_move, last_white_move);
+			if (strlen(last_black_move) == 2 &&
+			    (last_cpu_move[0] == 'i' - last_black_move[0] + 'a') &&
+			    (last_cpu_move[1] == '9' - last_black_move[1] + '1')) {
+				mirror_count++;
+				if (mirror_count == ANTI_MIRROR_THRESHOLD) enable_anti_mirror();
+			}
 #endif
 		} else {
 			last_black_move[0] = tolower(cpu_move[2]);
 			if (last_black_move[0] == 'j') last_black_move[0] = 'i';
 			last_black_move[1] = cpu_move[3];
 			last_black_move[2] = 0;
-#ifdef ANTI_MIRROR
+
+#ifdef ANTI_MIRROR /* a bit far-fetched: if CPU accidentally mirrors the player's moves, still make player responsible ;) */
 			strcpy(last_cpu_move, last_black_move);
+			if (strlen(last_white_move) == 2 &&
+			    (last_cpu_move[0] == 'i' - last_white_move[0] + 'a') &&
+			    (last_cpu_move[1] == '9' - last_white_move[1] + '1')) {
+				mirror_count++;
+				if (mirror_count == ANTI_MIRROR_THRESHOLD) enable_anti_mirror();
+			}
 #endif
 		}
 		move_count++;
@@ -2305,6 +2319,10 @@ static void enable_anti_mirror(void) {
 	s_printf("failure (not defined).\n");
 	return;
 #else
+ #if 1 /* gnugo faulty: ignores time_settings */
+	s_printf("failure (todo).\n");
+	return;
+ #endif
 
 	/* keep using current engine, just set it to max level: */
 	if (!strlen(ANTI_MIRROR)) {
