@@ -7685,12 +7685,12 @@ extern int PlayerUID;
 
 
 /* macro for debugging Doppelgaenger @s */
-#define cave_midx_debug(wpos, cy, cx, midx) { \
+#define cave_midx_debug(wpos_, cy, cx, midx) { \
     if (midx < 0) { \
         if (-(midx) > NumPlayers) { s_printf("MIDX_DEBUG: out of range (%d of %d) (%s:%d)\n", -(midx), NumPlayers, __FILE__, __LINE__); } \
-        if (wpos->wx != Players[-(midx)]->wpos.wx) { s_printf("MIDX_DEBUG: wrong wpos wx (%d : %d) (%s:%d)\n", wpos->wx, Players[-(midx)]->wpos.wx, __FILE__, __LINE__); } \
-        if (wpos->wy != Players[-(midx)]->wpos.wy) { s_printf("MIDX_DEBUG: wrong wpos wy (%d : %d) (%s:%d)\n", wpos->wy, Players[-(midx)]->wpos.wy, __FILE__, __LINE__); } \
-        if (wpos->wz != Players[-(midx)]->wpos.wz) { s_printf("MIDX_DEBUG: wrong wpos wz (%d : %d) (%s:%d)\n", wpos->wz, Players[-(midx)]->wpos.wz, __FILE__, __LINE__); } \
+        if ((wpos_)->wx != Players[-(midx)]->wpos.wx) { s_printf("MIDX_DEBUG: wrong wpos wx (%d : %d) (%s:%d)\n", (wpos_)->wx, Players[-(midx)]->wpos.wx, __FILE__, __LINE__); } \
+        if ((wpos_)->wy != Players[-(midx)]->wpos.wy) { s_printf("MIDX_DEBUG: wrong wpos wy (%d : %d) (%s:%d)\n", (wpos_)->wy, Players[-(midx)]->wpos.wy, __FILE__, __LINE__); } \
+        if ((wpos_)->wz != Players[-(midx)]->wpos.wz) { s_printf("MIDX_DEBUG: wrong wpos wz (%d : %d) (%s:%d)\n", (wpos_)->wz, Players[-(midx)]->wpos.wz, __FILE__, __LINE__); } \
         if (Players[-(midx)]->py == cy) { \
             if (Players[-(midx)]->px != cx) { s_printf("MIDX_DEBUG: wrong x (%d : %d) (%s:%d)\n", cx, Players[-(midx)]->px, __FILE__, __LINE__); } \
         } else { \
