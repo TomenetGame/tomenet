@@ -20,6 +20,11 @@
  * little about a bot's strength, because the hardware that must be use is not
  * standardized! So one bot might win while running on a large cluster, while
  * another bot comes in 2nd on a simple Quadcore..
+ *
+ * For rules, I decided on those used at Beijing Mindsport Olympics:
+ * Chinese rules (easy for bots and beginners alike) and +1 point for white if
+ * white is the first player to pass (to counter Mirror-Go somewhat).
+ *
  *                                                     - C. Blue -
  */
 
@@ -42,8 +47,9 @@
 
 /* Anti Mirror-Go engine?
    The normal engine will be swapped silently with this one
-   if mirror Go is detected after a specific number of turns: */
-#define ANTI_MIRROR	"pachi"
+   if mirror Go is detected after a specific number of turns:
+   (empty string just means 'current engine, switched to max level') */
+#define ANTI_MIRROR	""
 /* If above is defined: Invoke countermeasures at which # of mirrorred moves? (Full moves.) [6] */
 #define ANTI_MIRROR_THRESHOLD	6
 
@@ -92,7 +98,7 @@ bool go_engine_up;		/* Go engine is online? */
 int go_engine_processing = 0;	/* Go engine is expected to deliver replies to commands? */
 bool go_game_up;		/* A game of Go is actually being played right now? */
 u32b go_engine_player_id;	/* Player ID of the player who plays a game of Go right now. */
-static char avatar_name[40], tmp[20];
+static char avatar_name[40];
 
 /* Private control variable to determine what to do next
    after go_engine_processing reaches 0 again: */
@@ -136,7 +142,7 @@ static time_t tstart, tend;
 static struct tm* tmstart;
 static struct tm* tmend;
 /* Game record: Keep track of moves and passes (for undo-handling too) */
-static int pass_count;
+static int pass_count, current_komi;
 static bool last_move_was_pass = FALSE, CPU_to_move, CPU_now_to_move;
 static FILE *sgf;
 static char last_black_move[3], last_white_move[3], game_result[10];
@@ -237,6 +243,7 @@ int go_engine_init(void) {
 		    "--capture-all-dead", \
 		    "--monte-carlo", "--komi", "0", NULL);
 		// --cache-size <megs>
+		// --japanese-rules
 #endif
 
 		/* We were unable to execute the engine? Game over! */
@@ -320,18 +327,18 @@ int go_engine_init(void) {
 	writeToPipe("go_param_rules ko_rule pos_superko");
 	wait_for_response();
 
-#if 0 /* get more clue before using maybe^^ */
- #if 1
+ #if 0 /* get more clue before using maybe^^ */
+  #if 1
 	/* more playouts = stronger? or obsolete?: */
 	writeToPipe("uct_param_player max_games=32000");
 	wait_for_response();
- #endif
- #if 0
+  #endif
+  #if 0
 	/* not already covered by max_games and max_memory? */
 	writeToPipe("uct_param_search max_nodes=3750000");//seems max at 300MB RAM?
 	wait_for_response();
+  #endif
  #endif
-#endif
 
 	/* slight improvements? (might be obsolete meanwhile): */
 	writeToPipe("uct_param_search virtual_loss 1");
@@ -837,6 +844,7 @@ void go_challenge_start(int Ind) {
 	game_over = scoring = FALSE;
 	waiting_for_board_update = FALSE;
 	move_count = 0; /* to determine when to stop playing random moves really */
+	current_komi = 0;
 
 	/* Init misc control elements */
 	received_board_visuals = FALSE;
@@ -945,7 +953,10 @@ int go_engine_move_human(int Ind, char *py_move) {
 	} else if (!strcmp(py_move, "p") ||
 	    !strcmp(py_move, "")) { /* Pass */
 		if (CPU_has_white) writeToPipe("play black pass");
-		else writeToPipe("play white pass");
+		else {
+			writeToPipe("play white pass");
+			current_komi = 1;
+		}
 		go_engine_next_action = NACT_MOVE_CPU;
 		pass_count++;
 		last_move_was_pass = TRUE;
@@ -1032,7 +1043,7 @@ static void go_engine_move_CPU() {
 	int Ind;
 	int tries = 5000, x = -1, y = -1, liberties;
 	bool random_move = FALSE;
-	char cpu_rnd_move[14], coord[2], cpu_move[7] = {32, 32, 0, 0, 32, 32, 0};
+	char tmp[20], cpu_rnd_move[14], coord[2], cpu_move[7] = {32, 32, 0, 0, 32, 32, 0};
 
 	if (go_err(DOWN, DOWN, "go_engine_move_CPU")) return;
 
@@ -1046,7 +1057,11 @@ static void go_engine_move_CPU() {
 
 	/* replace CPU moves by random moves to simulate lower strength.
 	   NOTE: Free grid doesn't necessarily mean LEGAL grid! */
-	if (move_count <= RND_MOVE_THRESHOLD && (random_move = magik(random_move_prob))) {
+	if (move_count <= RND_MOVE_THRESHOLD &&
+#if 0 /* hm, maybe reduces use of rnd moves too much, keeping this 0'ed for now */
+	    move_count > 1 + 2 * ANTI_MIRROR_THRESHOLD && /* <- let's not rnd until we're sure opp isn't mirrorring and could branch out to punish */
+#endif
+	    (random_move = magik(random_move_prob))) {
 		/* Try to find a free grid randomly */
 		while (tries != 0) {
 			tries--;
@@ -1216,7 +1231,7 @@ static int verify_move_human(void) {
    to a CPU move. Evaluates result and further proceeding from that. */
 static int verify_move_CPU(void) {
 	int Ind;
-	char cpu_move[80], clock[6];
+	char cpu_move[80], clock[6], tmp[20];
 
 	/* Player still with us? */
 	if (!(Ind = lookup_player_ind(go_engine_player_id))) {
@@ -1251,7 +1266,10 @@ static int verify_move_CPU(void) {
 		Send_store_special_str(Ind, 6, GO_BOARD_X + 3, TERM_YELLOW, "passed");
 		pass_count++;
 
-		if (CPU_has_white) strcpy(last_white_move, "");
+		if (CPU_has_white) {
+			strcpy(last_white_move, "");
+			current_komi = 1;
+		}
 		else strcpy(last_black_move, "");
 
 		move_count++;
@@ -1323,11 +1341,17 @@ static int verify_move_CPU(void) {
 
 	/* Test for game over by double-passe */
 	if (pass_count == 2) {
+		char buf[5];
 #ifdef GO_DEBUGPRINT
 		printf("Both players passed consecutively, so the game ends.\n");
 #endif
 		/* determine score */
 		scoring = TRUE;
+
+		/* add +1 pt for w if w passed first */
+		sprintf(buf, "komi %d", current_komi);
+		writeToPipe(buf);
+
 		writeToPipe("final_score");
 		return 0;
 	}
@@ -2254,19 +2278,35 @@ static bool go_err(int engine_status, int game_status, char *name) {
 
 /* Silently switch Go engine for special anti-Mirror-Go engine */
 static void enable_anti_mirror(void) {
+	char tmp[40];
+
 	s_printf("GO_MIRROR: Attempting to start anti-Mirror-Go engine...");
-
-
-	s_printf("failure.\n");
+#ifndef ANTI_MIRROR
+	s_printf("failure (not defined).\n");
 	return;
+#else
 
+	/* keep using current engine, just set it to max level: */
+	if (!strlen(ANTI_MIRROR)) {
+		s_printf("max-current...");
 
-	//set its timelimit to GO_TIME_PY - 2, ie max viably possible.
-
+#ifdef ENGINE_FUEGO
+		writeToPipe("uct_max_memory 300000000");
+		sprintf(tmp, "go_param timelimit %d", GO_TIME_PY - 2);
+		writeToPipe(tmp);
+#endif
+#ifdef ENGINE_GNUGO
+		writeToPipe("level 10");
+		random_move_prob = 0;
+		sprintf(tmp, "time_settings 0 %d 1", GO_TIME_PY - 2);
+		writeToPipe(tmp);
+#endif
+	}
 
 	anti_mirror_active = TRUE;
 	s_printf("success.\n");
 	return;
+#endif
 }
 
 #endif /* ENABLE_GO_GAME */

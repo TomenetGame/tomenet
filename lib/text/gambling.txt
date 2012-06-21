@@ -89,11 +89,17 @@ Ko rule ('Eternity'): Repetition of a board position is forbidden. If you
 want to 'capture back' (common application of the Ko rule), you will have
 to play elsewhere first to change the board layout.
 
-Pass: If a player wishes to skip his right of making a move, he may pass.
+Pass: If a player wishes to skip his turn (usually pointless except at the
+end of the game) he may pass instead of playing a stone.
 
-End of the game: A player may resign the game.
-Also, if both players pass consecutively, the game ends and the territory
-of each player on the board is counted to determine who wins.
+End of the game:
+-A player may lose on time if his clock runs out before he made a move.
+-A player may resign the game if he feels he's too far behind.
+-If a player feels there are no more good moves left to play, he passes.
+ Now if both players pass consecutively then the game ends and the territory
+ of each player on the board is counted to determine who wins.
+ (If white passes first, he gets +1 point added to his final score. This sort
+ of makes up for black's advantage of playing the first move in the game.)
 
 Examples on a 5x5 board (o = stone, . = free grid):
 
