@@ -932,7 +932,8 @@ int go_engine_move_human(int Ind, char *py_move) {
 			    (last_cpu_move[1] == '9' - last_black_move[1] + '1')) {
 				mirror_count++;
 				if (mirror_count == ANTI_MIRROR_THRESHOLD) enable_anti_mirror();
-			} else mirror_count = 0;
+			} else if (last_black_move[0] != 'e' || last_black_move[1] != '5')
+				mirror_count = 0;
 #endif
 		} else {
 			last_white_move[0] = tolower(py_move[0]);
@@ -944,7 +945,8 @@ int go_engine_move_human(int Ind, char *py_move) {
 			    (last_cpu_move[1] == '9' - last_white_move[1] + '1')) {
 				mirror_count++;
 				if (mirror_count == ANTI_MIRROR_THRESHOLD) enable_anti_mirror();
-			} else mirror_count = 0;
+			} else if (last_white_move[0] != 'e' || last_white_move[1] != '5')
+				mirror_count = 0;
 #endif
 		}
 		go_engine_next_action = NACT_MOVE_CPU;
@@ -1108,10 +1110,16 @@ static void go_engine_move_CPU() {
 			last_white_move[0] = 'a' + x;
 			last_white_move[1] = '1' + y;
 			last_white_move[2] = 0;
-#ifdef ANTI_MIRROR
-			strcpy(last_cpu_move, last_white_move);
-#endif
 			move_count++;
+
+#ifdef ANTI_MIRROR /* a bit far-fetched: if CPU accidentally mirrors the player's moves, still make player responsible ;) */
+			strcpy(last_cpu_move, last_white_move);
+			if ((last_cpu_move[0] == 'i' - last_black_move[0] + 'a') &&
+			    (last_cpu_move[1] == '9' - last_black_move[1] + '1')) {
+				mirror_count++;
+				if (mirror_count == ANTI_MIRROR_THRESHOLD) enable_anti_mirror();
+			}
+#endif
 		}
 	} else {
 		if (!random_move) writeToPipe("genmove black");
@@ -1135,10 +1143,16 @@ static void go_engine_move_CPU() {
 			last_black_move[0] = 'a' + x;
 			last_black_move[1] = '1' + y;
 			last_black_move[2] = 0;
-#ifdef ANTI_MIRROR
-			strcpy(last_cpu_move, last_black_move);
-#endif
 			move_count++;
+
+#ifdef ANTI_MIRROR /* a bit far-fetched: if CPU accidentally mirrors the player's moves, still make player responsible ;) */
+			strcpy(last_cpu_move, last_black_move);
+			if ((last_cpu_move[0] == 'i' - last_white_move[0] + 'a') &&
+			    (last_cpu_move[1] == '9' - last_white_move[1] + '1')) {
+				mirror_count++;
+				if (mirror_count == ANTI_MIRROR_THRESHOLD) enable_anti_mirror();
+			}
+#endif
 		}
 	}
 
