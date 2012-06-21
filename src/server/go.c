@@ -1389,7 +1389,7 @@ static void go_engine_move_result(int move_result) {
 	case 0: /* player's move was valid */
 		if (CPU_to_move) {
 			/* clear previous cpu move display */
-			Send_store_special_str(Ind, 6, GO_BOARD_X - 2, TERM_YELLOW, "              ");
+			Send_store_special_str(Ind, 6, GO_BOARD_X - 1, TERM_YELLOW, "              ");
 		}
 		break;
 	case 1: invalid_move = TRUE; break;
