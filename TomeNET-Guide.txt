@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 18. June 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 21. June 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10972,6 +10972,10 @@ Further forms:
 --------------
 Note: All of these actually occur in packs (although some of them might also
 appear on their own) making them even easier to attain, except for 'Tengu'.
+Small kobold     1  Actually very weak, but it has poison resistance. This way
+(or other kobolds)  this form may help you to kill Rotting corpses (see below)
+                    which have poisonous melee attacks. ;)
+                    Not really useful other than that.
 Novice mage      2  Sort of weak but has 'blink' spell (aka phase door) and
                     more.
 Novice ranger    4  Can pass trees easily. Gives an extra shot with ranged
@@ -10990,6 +10994,9 @@ Phantom warrior  8  Useful only for shamans because it has no limbs:
 Tengu           10  High HP, good AC, can blink/teleport and more, resists fear
                     and fire, can fly. A secret tip for form hunters!
                     (Does not occur in packs unlike the other monsters listed.)
+Master yeek     12  Although everyone knows that Yeek = weak, this particular
+                    kind of Yeek can cast some interesting magic spells.
+                    And as a plus it's actually immune to acid.
 Ogre            13  This form can cross thick woods and mountain terrain.
                     Note that Ogres also count as giants which means that
                     shamans can use this form too.
@@ -11003,6 +11010,14 @@ Ogrillon        16  Very high HP for its level, good melee damage.
                     (This monster occurs somewhat more rarely than the others.)
 Uruk            16  Good HP, good melee damage, good AC, +1 extra shot, poison
                     immunity.
+Umber hulk      16  Shamans can use full equipment in this form, others cannot.
+                    It's not really strong but it destroys walls just by moving
+                    into them, allowing you to tunnel easily without any
+                    digging tool.
+                    Also it is immune to poison, paralysis and confusion, you
+                    won't bleed if you get cut, and its melee attacks may have
+                    a slight confusion-effect (which can make fighting it a bit
+                    dangerous sometimes).
 Forest troll    17  High HP, good AC, can pass trees, gives 'HP regeneration'.
 Elite uruk      20  Good HP, very high melee damage, good AC, +1 extra shot,
                     poison immunity.
