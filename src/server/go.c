@@ -1203,11 +1203,17 @@ static int verify_move_human(void) {
 
 	/* Test for game over by double-passe */
 	if (pass_count == 2) {
+		char buf[10];
 #ifdef GO_DEBUGPRINT
 		printf("Both players passed consecutively, so the game ends.\n");
 #endif
 		/* determine score */
 		scoring = TRUE;
+
+		/* add +1 pt for w if w passed first */
+		sprintf(buf, "komi %d", current_komi);
+		writeToPipe(buf);
+
 		writeToPipe("final_score");
 		return 0;
 	} else if (!last_move_was_pass) pass_count = 0;
@@ -1341,7 +1347,7 @@ static int verify_move_CPU(void) {
 
 	/* Test for game over by double-passe */
 	if (pass_count == 2) {
-		char buf[5];
+		char buf[10];
 #ifdef GO_DEBUGPRINT
 		printf("Both players passed consecutively, so the game ends.\n");
 #endif
