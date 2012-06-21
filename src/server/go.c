@@ -2280,7 +2280,7 @@ static bool go_err(int engine_status, int game_status, char *name) {
 static void enable_anti_mirror(void) {
 	char tmp[40];
 
-	s_printf("GO_MIRROR: Attempting to start anti-Mirror-Go engine...");
+	s_printf("GO_MIRROR: Attempting to start anti-Mirror-Go engine: ");
 #ifndef ANTI_MIRROR
 	s_printf("failure (not defined).\n");
 	return;
@@ -2288,7 +2288,7 @@ static void enable_anti_mirror(void) {
 
 	/* keep using current engine, just set it to max level: */
 	if (!strlen(ANTI_MIRROR)) {
-		s_printf("max-current...");
+		s_printf("max-current...\n");
 
 #ifdef ENGINE_FUEGO
 		writeToPipe("uct_max_memory 300000000");
@@ -2304,7 +2304,7 @@ static void enable_anti_mirror(void) {
 	}
 
 	anti_mirror_active = TRUE;
-	s_printf("success.\n");
+	s_printf("GO_MIRROR: ...success.\n");
 	return;
 #endif
 }
