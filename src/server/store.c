@@ -6361,14 +6361,14 @@ static void player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 			/* Access existing mass-cheque in the house */
 			if (h_ptr->flags & HF_TRAD) {
 				cheque_ptr = &h_ptr->stock[p_ptr->ps_mcheque_x];
-s_printf("PLAYER_STORE_HANDLE: mass, trad, owner %s (%d), %s, value %d, buyer %s)\n",
+s_printf("PLAYER_STORE_HANDLE: mass-add, trad, owner %s (%d), %s, value %d, buyer %s)\n",
     owner_name, h_ptr->dna->owner, o0_name, value, p_ptr->name);
 			} else {
 				/* ALL houses are currently rectangular, so this check seems obsolete.. */
 				if (h_ptr->flags & HF_RECT) {
 					c_ptr = &zcave[p_ptr->ps_mcheque_y][p_ptr->ps_mcheque_x];
 					cheque_ptr = &o_list[c_ptr->o_idx];
-s_printf("PLAYER_STORE_HANDLE: mass, mang, owner %s (%d), %s, value %d, buyer %s)\n",
+s_printf("PLAYER_STORE_HANDLE: mass-add, mang, owner %s (%d), %s, value %d, buyer %s)\n",
     owner_name, h_ptr->dna->owner, o0_name, value, p_ptr->name);
 				}
 			}
@@ -6454,7 +6454,7 @@ s_printf("PLAYER_STORE_HANDLE: new mass, mang, owner %s (%d), %s, value %d, buye
 		if (h_ptr->flags & HF_TRAD) {
 			/* For list house, overwriting is enough */
 			object_copy(ho_ptr, cheque_ptr);
-s_printf("PLAYER_STORE_HANDLE: full, trad, owner %s (%d), %s, value %d, buyer %s)\n",
+s_printf("PLAYER_STORE_HANDLE: complete, trad, owner %s (%d), %s, value %d, buyer %s)\n",
     owner_name, h_ptr->dna->owner, o0_name, value, p_ptr->name);
 		} else {
 			if (h_ptr->flags & HF_RECT) {
