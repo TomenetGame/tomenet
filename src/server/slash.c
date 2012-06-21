@@ -4953,7 +4953,7 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "Phased that player.");
 				return;
 			}
-			/* Blink a player */
+			/* Teleport a player */
 			else if (prefix(message, "/tport")) {
 				int p;
 				if (tk < 1) {
@@ -4963,6 +4963,70 @@ void do_slash_cmd(int Ind, char *message)
 				p = name_lookup_loose(Ind, token[1], FALSE);
 				if (!p) return;
 				teleport_player_force(p, 100);
+				msg_print(Ind, "Teleported that player.");
+				return;
+			}
+			/* Teleport a player to */
+			else if (prefix(message, "/tpto")) {
+				int p, x, y, ox, oy;
+				player_type *q_ptr;
+				cave_type **zcave;
+
+				if (tk < 3) {
+					msg_print(Ind, "\377oUsage: /tpto <x> <y> <player name>");
+					return;
+				}
+
+				x = atoi(token[1]);
+				y = atoi(token[2]);
+				p = name_lookup_loose(Ind, token[3], FALSE);
+				if (!p) return;
+
+				q_ptr = Players[p];
+				if (!in_bounds4(getfloor(&q_ptr->wpos), y, x)) {
+					msg_print(Ind, "Error: Location not in_bounds.");
+					return;
+				}
+				if (!(zcave = getcave(&q_ptr->wpos))) {
+					msg_print(Ind, "Error: Cannot getcave().");
+					return;
+				}
+
+			        /* Save the old location */
+			        oy = q_ptr->py;
+			        ox = q_ptr->px;
+
+			        /* Move the player */
+			        q_ptr->py = y;
+			        q_ptr->px = x;
+
+			        /* The player isn't here anymore */
+			        zcave[oy][ox].m_idx = 0;
+
+			        /* The player is now here */
+			        zcave[y][x].m_idx = 0 - p;
+			        cave_midx_debug(&q_ptr->wpos, y, x, -p);
+
+			        /* Redraw the old spot */
+			        everyone_lite_spot(&q_ptr->wpos, oy, ox);
+
+			        /* Redraw the new spot */
+			        everyone_lite_spot(&q_ptr->wpos, p_ptr->py, p_ptr->px);
+
+			        /* Check for new panel (redraw map) */
+			        verify_panel(p);
+
+			        /* Update stuff */
+			        q_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+
+		                /* Update the monsters */
+	                        q_ptr->update |= (PU_DISTANCE);
+
+                                /* Window stuff */
+                                q_ptr->window |= (PW_OVERHEAD);
+
+                                handle_stuff(p);
+
 				msg_print(Ind, "Teleported that player.");
 				return;
 			}
