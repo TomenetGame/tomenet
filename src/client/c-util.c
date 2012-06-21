@@ -4695,7 +4695,7 @@ void auto_inscriptions(void)
 	int i, cur_line = 0;
 	bool redraw = TRUE, quit = FALSE;
 
-	char tmp[160], buf[1024];
+	char tmp[160], buf[1024], *buf_ptr;
 	char match_buf[80], tag_buf[40];
 
 	char fff[1024];
@@ -4807,7 +4807,15 @@ void auto_inscriptions(void)
 			strcpy(buf, auto_inscription_match[cur_line]);
 			/* Get a new matching string */
 			if (!askfor_aux(buf, 40, 0)) continue;
-			strcpy(auto_inscription_match[cur_line], buf);
+			/* hack: remove leading/trailing wild cards since they are obsolete.
+			   Especially trailing ones currently make it not work. */
+			buf_ptr = buf;
+			while (*buf_ptr == '?') buf_ptr++;
+			while (*(buf_ptr + strlen(buf_ptr) - 1) == '?') *(buf_ptr + strlen(buf_ptr) - 1) = '\0';
+			Term_putstr(9, cur_line + 1, -1, TERM_L_GREEN, "                                         ");
+			Term_putstr(9, cur_line + 1, -1, TERM_WHITE, buf_ptr);
+			/* ok */
+			strcpy(auto_inscription_match[cur_line], buf_ptr);
 
 			/* Clear previous tag string */
 			Term_putstr(55, cur_line + 1, -1, TERM_L_GREEN, "                    ");
