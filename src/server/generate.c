@@ -8969,6 +8969,9 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	   to avoid insta(ghost)kill if a player recalls into that pit - C. Blue */
 	bool tiny_level = FALSE;
 	bool town = FALSE; /* for ironman */
+#ifdef IRONDEEPDIVE_STATIC_TOWNS
+	bool town_static = FALSE;
+#endif
 	bool fountains_of_blood = FALSE; /* for vampires */
 
 
@@ -9096,11 +9099,15 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 			if (d_ptr->flags2 & DF2_TOWNS_IRONRECALL) town = TRUE;
 		}
 	}
-#ifdef IRONDEEPDIVE_STATIC_TOWNS
+#ifdef IRONDEEPDIVE_FIXED_TOWNS
 	if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y &&
+	    wpos->wz * WPOS_IRONDEEPDIVE_Z > 0 &&
 	    (dun_lev == 40 || dun_lev == 80)) {
 		town = TRUE;
- #ifdef IRONDEEPDIVE_STATIC_TOWN_WITHDRAWAL
+ #ifdef IRONDEEPDIVE_STATIC_TOWNS
+		town_static = TRUE;
+ #endif
+ #ifdef IRONDEEPDIVE_FIXED_TOWN_WITHDRAWAL
 		dun->l_ptr->flags1 |= LF1_IRON_RECALL;
  #endif
 	}
@@ -9149,6 +9156,17 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 		dun->l_ptr->flags1 |= LF1_DUNGEON_TOWN | LF1_NO_DESTROY;
  		dun->l_ptr->flags1 &= ~(LF1_NO_MAP | LF1_NO_MAGIC_MAP);
 		town_gen_hack(wpos);
+
+#ifdef IRONDEEPDIVE_STATIC_TOWNS
+		if (town_static) {
+			/* reattach objects and monsters */
+			setup_objects();
+ #if 0 /* currently there are no spawns in dungeon towns */
+			setup_monsters();
+ #endif
+		}
+#endif
+
 		return;
 	}
 
@@ -10708,9 +10726,10 @@ static void town_gen_hack(struct worldpos *wpos)
 #endif
 
 
-#ifdef IRONDEEPDIVE_STATIC_TOWNS
+#ifdef IRONDEEPDIVE_FIXED_TOWNS
 	/* predefined town layout instead of generating randomly? */
 	if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y &&
+	    wpos->wz * WPOS_IRONDEEPDIVE_Z > 0 &&
 	    ((k = getlevel(wpos)) == 40 || k == 80)) {
 		/* Kurzel suggested to use the cities of Menegroth and Nargothrond, seems good */
 
@@ -11241,15 +11260,27 @@ void dealloc_dungeon_level(struct worldpos *wpos)
 		l_ptr->fake_town_num = 0;
 	}
 
-	/* Delete any monsters on that level */
-	/* Hack -- don't wipe wilderness monsters */
-	if (wpos->wz) {
+	/* Delete any monsters/objects on that level */
+	/* Hack -- don't wipe wilderness monsters/objects
+	   (especially important for preserving items in town inns). */
+	if (wpos->wz
+#ifdef IRONDEEPDIVE_FIXED_TOWNS
+ #ifdef IRONDEEPDIVE_STATIC_TOWNS
+	    && !(wpos->wx == WPOS_IRONDEEPDIVE_X &&
+	    wpos->wy == WPOS_IRONDEEPDIVE_Y &&
+	    wpos->wz * WPOS_IRONDEEPDIVE_Z > 0 &&
+	    ((i = getlevel(wpos)) == 40 || i == 80))
+ #endif
+#endif
+	     ) {
 		wipe_m_list(wpos);
-
-		/* Delete any objects on that level */
-		/* Hack -- don't wipe wilderness objects */
 		wipe_o_list(wpos);
 	} else {
+#ifdef IRONDEEPDIVE_FIXED_TOWNS
+ #ifdef IRONDEEPDIVE_STATIC_TOWNS
+		if (!wpos->wz)
+ #endif
+#endif
 		save_guildhalls(wpos);	/* has to be done here */
 
 		/* remove 'deposited' true artefacts from wilderness */

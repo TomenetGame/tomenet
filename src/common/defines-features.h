@@ -13,11 +13,13 @@
 /* --------------------------------------------------------------------------*/
 /* Features that are allowed in all build types, ie server-type independant: */
 
-/* Add static (and safe) towns to "Ironman Deep Dive Challenge"? (2k, 4k) */
-#define IRONDEEPDIVE_STATIC_TOWNS
-/* Allow to withdraw prematurely in static Ironman Deep Dive Challenge towns.
+/* Add fixed (and safe) towns to "Ironman Deep Dive Challenge"? (at depths 2k and 4k) */
+#define IRONDEEPDIVE_FIXED_TOWNS
+/* Allow to withdraw prematurely in fixed Ironman Deep Dive Challenge towns.
    (No entry to the leaderboard this way of course.) */
-#define IRONDEEPDIVE_STATIC_TOWN_WITHDRAWAL
+#define IRONDEEPDIVE_FIXED_TOWN_WITHDRAWAL
+/* Fixed towns in "Ironman Deep Dive Challenge" are also static regarding objects and monsters? */
+//#define IRONDEEPDIVE_STATIC_TOWNS
 
 #define DUNGEON_VISIT_BONUS	/* Experimental: Dungeons rarely visited give exp bonus - C. Blue */
 //#define DUNGEON_VISIT_BONUS_DEPTHRANGE /* not yet implemented: enhance DUNGEON_VISIT_BONUS algorithm further (but seems inefficient atm) */

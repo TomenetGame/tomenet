@@ -2807,9 +2807,10 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 		if (f_info[zcave[y][x].feat].flags1 & FF1_PROTECTED) return (FALSE);
 
 #if 0 /* instead: no spawns in any dungeon town! */
- #ifdef IRONDEEPDIVE_STATIC_TOWNS
+ #ifdef IRONDEEPDIVE_FIXED_TOWNS
 		/* hack: use for static deep dive dungeon towns too */
 		if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y &&
+		    wpos->wz * WPOS_IRONDEEPDIVE_Z > 0 &&
 		    (dlev == 40 || dlev == 80))
 			return (FALSE);
  #endif
