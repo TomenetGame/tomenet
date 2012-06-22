@@ -844,6 +844,7 @@ void display_store(void)
 
 	/* We are no longer "shopping" */
 	shopping = FALSE;
+	store.stock_num = 0;
 
 	/* Flush any events that happened */
 	Flush_queue();
@@ -928,6 +929,7 @@ void display_store_special(void) {
 
 	/* We are no longer "shopping" */
 	shopping = FALSE;
+	store.stock_num = 0;
 
 	/* Flush any events that happened */
 	Flush_queue();
