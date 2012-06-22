@@ -9898,11 +9898,14 @@ vary. For example a warrior cannot learn magic spells.
 - Istar (elvish word for Mage)
     Istari use intelligence primarily, determining how much mana they have
     to cast spells and how low their failure rate is.
-    They are the all-around best magicians, having the most powerful spells.
-    A high-level Istar can be very powerful, but getting there can be a
-    difficult journey. On the downside, they are the worst fighters, being
-    unable to use any weapon but a Mage Staff comfortably, and still unable
-    to be anything even remotely approaching effective with it.
+    They are the all-around best magicians, having both devastating and highly
+    useful supportive spells (at least for their own benefit) of very wide
+    variety.
+    On the downside, they are the worst fighters, being unable to use any
+    weapon but a Mage Staff comfortably, and until they learn how to
+    effectively use the 'Disruption Shield' spell they are very vulnerable.
+    A high-level istar can be very powerful, but getting there can be a
+    difficult journey.
 
     Hint: An istar has very few hit points compared to other classes, making
     survival difficult in the beginning. That's why this class is not
@@ -10203,6 +10206,10 @@ vary. For example a warrior cannot learn magic spells.
     able to conceal their presence telepathically vs all other classes.
     Also they are able to resist malicious mind-affecting effects better than
     other classes, for example such as forgetfulness or psionic attacks.
+    Mindcrafters learn to judge their own sanity much more accurately as they
+    level up, getting a more detailed sanity display at level 10, 20 and 40
+    (same as other characters get when they actually train 'Health' skill to
+    10, 20 or 40).
 
     Hint: Mindcrafters have a powerful ranged attack spell they can use very
     early on, Psionic Blast. Look for it in the book store right away.
