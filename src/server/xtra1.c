@@ -232,6 +232,11 @@ static void prt_sanity(int Ind)
 	int ratio;
 	ratio = p_ptr->msane ? (p_ptr->csane * 100) / p_ptr->msane : 100;
 
+	/* Mindcrafters get better sanity display for free by levelling up */
+	if (p_ptr->pclass == CLASS_MINDCRAFTER &&
+	    p_ptr->lev >= skill)
+		skill = p_ptr->lev;
+
 	/* Vague */
 	if (ratio < 0)
 	{
