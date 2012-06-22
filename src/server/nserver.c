@@ -2770,15 +2770,19 @@ static int Handle_login(int ind)
 	/* automatically re-add him to the guild of his last character? */
 	namebuf1[0] = '\0'; //abuse namebuf1
 	if ((i = acc_get_guild(p_ptr->accountname))) {
+#if 1
 		if (p_ptr->newly_created) {
+#else /* add char if it's level 1 */
+		if (p_ptr->lev == 1) {
+#endif
 			/* within time limit [20 minutes]? */
 			time_t now = time(&now);
 #if 0 /* add char if it's within 20 min */
-			if (now - lookup_player_laston(p_ptr->id) <= 60 * 20 /* always true, since char was newly created! gotta use acc_laston or just ignore */
-#else /* add char if it's level 1 */
-			if (p_ptr->lev == 1
+			if (now - lookup_player_laston(p_ptr->id) <= 60 * 20 && /* always true, since char was newly created! gotta use acc_laston or just ignore */
+#else
+			if (
 #endif
-			    && guilds[i].members) { /* guild still exists? (TODO: could be a different guild by now :-p) */
+			    guilds[i].members) { /* guild still exists? (TODO: could be a different guild by now :-p) */
 				/* auto-re-add him to the guild */
 				if (guild_auto_add(NumPlayers, i, namebuf1)) {
 					/* also restore his 'adder' status if he was one */
