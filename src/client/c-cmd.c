@@ -1942,7 +1942,16 @@ void cmd_message(void)
 				else j = (buf[i + 2] - 'A') + INVEN_WIELD;
 				strcpy(tmp, &buf[i + 3]);
 				strcpy(&buf[i], "\377s");
-				strcat(buf, inventory_name[j]);
+
+                    		/* if item inscriptions contains a colon we might need
+                    		   another colon to prevent confusing it with a private message */
+                    		strcat(buf, inventory_name[j]);
+                    		if (strchr(inventory_name[j], ':')) {
+					buf[strchr(inventory_name[j], ':') - inventory_name[j] + strlen(buf) - strlen(inventory_name[j]) + 1] = '\0';
+                            		if (strchr(buf, ':') == &buf[strlen(buf) - 1])
+                                		strcat(buf, ":");
+                                	strcat(buf, strchr(inventory_name[j], ':') + 1);
+				}
 
 				if (tmp[0]) {
                 			/* if someone just spams \\ shortcuts, at least add spaces */
