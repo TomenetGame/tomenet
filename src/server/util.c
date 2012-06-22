@@ -3202,6 +3202,10 @@ static void player_talk_aux(int Ind, char *message)
 	    textual :  - otherwise : stays control char */
 	if (colon) {
 		bool smiley = FALSE;
+		/* no double-colon '::' smileys inside possible item inscriptions */
+		char *bracer = strchr(message, '{');
+		bool maybe_inside_inscription = bracer != NULL && bracer < colon;
+
 		/* if another colon followed this one then
 		   it was not meant to be a control char */
 		switch (colon[1]) {
@@ -3250,7 +3254,7 @@ static void player_talk_aux(int Ind, char *message)
 			case '<': case '>':
 			case '-': case '|':
 			case 'p': case 'P': case 'o': case 'O': case 'D':
-			smiley = TRUE; break; }
+			smiley = !maybe_inside_inscription; break; }
 
 			/* check for smiley at end of the line */
 			if ((message + strlen(message) - colon >= 3) &&
@@ -3264,7 +3268,7 @@ static void player_talk_aux(int Ind, char *message)
 			case '-': case '/':
 			case '\\': case '|':
 			case 'p': case 'P': case 'o': case 'O': case 'D':
-			smiley = TRUE; break; }
+			smiley = !maybe_inside_inscription; break; }
 
 			if (smiley) break;
 
