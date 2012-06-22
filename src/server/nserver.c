@@ -2773,7 +2773,11 @@ static int Handle_login(int ind)
 		if (p_ptr->newly_created) {
 			/* within time limit [20 minutes]? */
 			time_t now = time(&now);
+#if 0 /* add char if it's within 20 min */
 			if (now - lookup_player_laston(p_ptr->id) <= 60 * 20 /* always true, since char was newly created! gotta use acc_laston or just ignore */
+#else /* add char if it's level 1 */
+			if (p_ptr->lev == 1
+#endif
 			    && guilds[i].members) { /* guild still exists? (TODO: could be a different guild by now :-p) */
 				/* auto-re-add him to the guild */
 				if (guild_auto_add(NumPlayers, i, namebuf1)) {

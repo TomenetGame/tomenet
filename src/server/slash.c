@@ -3296,8 +3296,8 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "\377w    adders     : %s", *flags & GFLG_ALLOW_ADDERS ? "\377GYES" : "\377rno");
 				msg_print(Ind,  "\377W        Allows players designated via /guild_adder command to add others.");
 				msg_format(Ind, "\377w    autoreadd  : %s", *flags & GFLG_AUTO_READD ? "\377GYES" : "\377rno");
-				msg_print(Ind,  "\377W        If a guild mate ghost-dies the next char he logs on with within");
-				msg_print(Ind,  "\377W        20 minutes is automatically added to the guild again.");
+				msg_print(Ind,  "\377W        If a guild mate ghost-dies the next character he logs on with");
+				msg_print(Ind,  "\377W        is automatically added to the guild again if it is level 1.");
 				msg_format(Ind, "\377w    minlev     : \377%c%d", guild->minlev <= 1 ? 'w' : (guild->minlev <= 10 ? 'G' : (guild->minlev < 20 ? 'g' :
 				    (guild->minlev < 30 ? 'y' : (guild->minlev < 40 ? 'o' : (guild->minlev <= 50 ? 'r' : 'v'))))), guild->minlev);
 				msg_print(Ind,  "\377W        Minimum character level required to get added to the guild.");
