@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 21. June 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 22. June 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -627,8 +627,10 @@ They all start with a slash '/' hence they're called slash commands:
             Also see /tag and /untag.
 /dis b      DESTROYS items like '/dis a' does, but skips identified ego items.
             It also skips exploding ammo, although it isn't really an ego item.
-/dr         Wields all items in your inventory that are: not cursed,
- (/dress)   not {worthless}, not {terrible}, known to you.
+/dr [tag]   Without tag it equips all items in your inventory that are: not
+(/dress)    cursed, not {worthless}, not {terrible}, known to you.
+            With tag it just equips all items that contain that tag in their
+            name or inscription somewhere (even if they are cursed).
 /bed        Opposite of /dress.
  (/naked)
 (The /empty function is currently disabled)

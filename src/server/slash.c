@@ -945,7 +945,7 @@ void do_slash_cmd(int Ind, char *message)
 		else if ((prefix(message, "/dress")) ||
 				prefix(message, "/dr"))
 		{
-			object_type		*o_ptr;
+			object_type *o_ptr;
 			bool gauche = FALSE;
 
 			/* Paralyzed? */
@@ -953,41 +953,40 @@ void do_slash_cmd(int Ind, char *message)
 
 			disturb(Ind, 1, 0);
 
-			for (i=INVEN_WIELD;i<INVEN_TOTAL;i++)
-			{
+			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 				if (!item_tester_hook_wear(Ind, i)) continue;
 
 				o_ptr = &(p_ptr->inventory[i]);
 				if (o_ptr->tval) continue;
 
-				for(j = 0; j < INVEN_PACK; j++)
-				{
+				for(j = 0; j < INVEN_PACK; j++) {
 					o_ptr = &(p_ptr->inventory[j]);
 					if (!o_ptr->k_idx) break;
 
-					/* skip unsuitable inscriptions */
-					if (o_ptr->note &&
-							(!strcmp(quark_str(o_ptr->note), "cursed") ||
-							 !strcmp(quark_str(o_ptr->note), "terrible") ||
-							 !strcmp(quark_str(o_ptr->note), "worthless") ||
-							 check_guard_inscription(o_ptr->note, 'w')) )continue;
-
-					if (!object_known_p(Ind, o_ptr)) continue;
-					if (cursed_p(o_ptr)) continue;
-
-					/* Already used? */
-					if (!tk && wield_slot(Ind, o_ptr) != i) continue;
-
 					/* Limit to items with specified strings, if any */
-					if (tk && (!o_ptr->note ||
-								!strstr(quark_str(o_ptr->note), token[1])))
-						continue;
+					if (tk) {
+						if (!o_ptr->note || !strstr(quark_str(o_ptr->note), token[1]))
+							continue;
+					} else {
+						/* skip unsuitable inscriptions */
+						if (o_ptr->note &&
+						    (!strcmp(quark_str(o_ptr->note), "cursed") ||
+						    !strcmp(quark_str(o_ptr->note), "terrible") ||
+						    !strcmp(quark_str(o_ptr->note), "worthless") ||
+						    check_guard_inscription(o_ptr->note, 'w')))
+						        continue;
+
+						if (!object_known_p(Ind, o_ptr)) continue;
+						if (cursed_p(o_ptr)) continue;
+					}
+
+					/* legal item? */
+					if (wield_slot(Ind, o_ptr) != i) continue;
 
 					do_cmd_wield(Ind, j, 0x0);
 
 					/* MEGAHACK -- tweak to handle rings right */
-					if (o_ptr->tval == TV_RING && !gauche)
-					{
+					if (o_ptr->tval == TV_RING && !gauche) {
 						i -= 2;
 						gauche = TRUE;
 					}
