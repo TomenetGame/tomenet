@@ -1989,11 +1989,13 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 		return;
 	}
 
-	/* Must be have something to dig with */
+	/* Must be have something to dig with, or power gets halved */
 	if (!p_ptr->inventory[INVEN_TOOL].k_idx ||
 	    (p_ptr->inventory[INVEN_TOOL].tval != TV_DIGGING))
 		power >>= 1;
 
+	/* have at least 1 digging power so you can dig through rubble/organic stuff */
+	if (!power) power = 1;
 
 	/* Get a direction to tunnel, or Abort */
 	if (dir) {
@@ -2207,7 +2209,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 #endif
 				}
 			}
-			
+
 			else if (c_ptr->feat == FEAT_TREE) {
 				/* mow down the vegetation */
 				if (((power > wood_power ? power : wood_power) > rand_int(400)) && twall(Ind, y, x)) { /* 400 */

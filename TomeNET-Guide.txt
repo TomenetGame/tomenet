@@ -8450,6 +8450,10 @@ Ranging from +0 at 3 over +10 at 18/10, +50 at 18/110 up to +100 at 18/***.
 
 If you don't have a digging tool equipped, your total digging power is halved.
 
+If your resulting final digging power is zero, then it is set to 1, so you
+always have at least a tiny chance of digging through the weaker materials
+that have a +0 difficulty (see table below).
+
 To successfully dig through certain features, your digging power must be
 greater than the result of a random number roll "random(0..x-1) + y":
 ---------------------------------------------------------------------
@@ -8462,8 +8466,8 @@ Sandwalls   250 +  5
 Magma       400 + 10
 Quartz      800 + 20
 Granite    1600 + 40
-The +y is a fixed value that gets added to the random roll of (1..x), the sum
-of this is what you have to overcome with your digging power value.
+The +y is a fixed value that gets added to the random roll of (0..x-1), the
+sum of this is what you have to overcome with your digging power value.
 For example you cannot successfully tunnel through quartz if you don't
 have at least 21 digging power, since you have to overcome the +20.
 
@@ -8479,6 +8483,8 @@ be 1 in 800 in that case.
 Some example values, assuming 0.000 'Digging' skill
 and unenchanted (ie (+0,+0)) digging tools:
 -------------------------------------------
+-You always have a chance to remove rubble and organic material, even without
+ a digging tool. Might take quite a while if your strength is low though.
 -You cannot tunnel through granite wall without a digging tool if your STRength
  is below 18/180.
 -You cannot tunnel through quartz without a digging tool if your STRength is
@@ -8506,6 +8512,8 @@ Tunnelling into walls that are actually secret doors will be treated as if
 you were 'searching' instead of tunnelling. You cannot find secret doors in
 permanent (aka non-tunneable) walls this way though, such as mountains.
 Tunnelling into known doors will just try to open them instead.
+If a door is stuck, you will want to 'B'ash it instead of tunnelling, since
+you cannot just open stuck doors the normal way.
 
 Tunnelling might reveal special floor features, items or gold (walls that are
 displayed as a '*' symbol will reveal cash worth of gems or precious metal, but
