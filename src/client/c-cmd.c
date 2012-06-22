@@ -1897,17 +1897,18 @@ void cmd_message(void)
 	char tmp[MSG_LEN];//, c = 'B';
 	int i;
 	int j;
+	/* for store-item pasting: */
+	char where[17], item[MSG_LEN];
+	bool store_item = FALSE;
 
 	/* Wipe the whole buffer to stop valgrind from complaining about the color code conversion - mikaelh */
 	C_WIPE(buf, sizeof(buf), char);
 
 	inkey_msg = TRUE;
 
-	if (get_string("Message: ", buf, sizeof(buf) - 1))
-	{
+	if (get_string("Message: ", buf, sizeof(buf) - 1)) {
 		/* hack - screenshot - mikaelh */
-		if (prefix(buf, "/shot") || prefix(buf, "/screenshot"))
-		{
+		if (prefix(buf, "/shot") || prefix(buf, "/screenshot")) {
 			char *space = strchr(buf, ' ');
 			if (space && space[1]) {
 				/* Use given parameter as filename */
@@ -1932,18 +1933,58 @@ void cmd_message(void)
 
 		/* Allow to paste items in chat via shortcut symbol - C. Blue */
 		for (i = 0; i < sizeof(buf); i++) {
+			/* paste inven/equip item:  \\<slot>  */
 			if (buf[i] == '\\' &&
-			  buf[i + 1] == '\\' &&
-			  ((buf[i + 2] >= 'a' && buf[i + 2] < 'a' + INVEN_PACK) ||
-			  (buf[i + 2] >= 'A' && buf[i + 2] < 'A' + (INVEN_TOTAL - INVEN_WIELD)))) {
+			    buf[i + 1] == '\\' &&
+			    ((buf[i + 2] >= 'a' && buf[i + 2] < 'a' + INVEN_PACK) ||
+			    (buf[i + 2] >= 'A' && buf[i + 2] < 'A' + (INVEN_TOTAL - INVEN_WIELD)))) {
 				if (buf[i + 2] >= 'a') j = buf[i + 2] - 'a';
 				else j = (buf[i + 2] - 'A') + INVEN_WIELD;
 				strcpy(tmp, &buf[i + 3]);
 				strcpy(&buf[i], "\377s");
 				strcat(buf, inventory_name[j]);
-//				strcat(buf, format("\377%c", c));
-				strcat(buf, "\377-");
-				strncat(buf, tmp, sizeof(buf) - strlen(buf));
+
+				if (tmp[0]) {
+                			/* if someone just spams \\ shortcuts, at least add spaces */
+                    			if (tmp[0] == '\\') strcat(buf, " ");
+
+					strcat(buf, "\377-");
+					strncat(buf, tmp, sizeof(buf) - strlen(buf));
+				}
+			}
+			/* paste store item:  \\\<slot>  */
+			else if (buf[i] == '\\' && buf[i + 1] == '\\' && buf[i + 2] == '\\' &&
+			    buf[i + 3] >= 'a' && buf[i + 3] < 'a' + store.stock_num
+			    && buf[i + 3] <= 'l') {
+				j = buf[i + 3] - 'a' + store_top;
+                    		strcpy(tmp, &buf[i + 4]);
+
+				/* add store location/symbol, only once per chat message */
+                                if (!store_item) {
+                            		store_paste_where(where);
+                            		store_item = TRUE;
+                            		strcpy(&buf[i], where);
+
+                            		/* need double-colon to prevent confusing it with a private message? */
+                            		if (strchr(buf, ':') >= &buf[i + strlen(where) - 1])
+                                		strcat(buf, ":");
+
+                                	strcat(buf, " ");
+                            	} else strcpy(&buf[i], "\377s");
+
+				/* add actual item */
+                    		store_paste_item(item, j);
+                    		strcat(buf, item);
+
+                    		/* any more string to append? */
+                    		if (tmp[0]) {
+                			/* if someone just spams \\\ shortcuts, at least add spaces */
+                    			if (tmp[0] == '\\') strcat(buf, " ");
+
+                        		strcat(buf, "\377-");
+	                		strncat(buf, tmp, sizeof(buf) - strlen(buf));
+				}
+                                buf[MSG_LEN - 1] = 0;
 			}
 		}
 

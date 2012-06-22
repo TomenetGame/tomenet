@@ -519,6 +519,9 @@ extern void display_store_special(void);
 extern void c_store_prt_gold(void);
 extern void display_store_action(void);
 extern void do_redraw_store(void);
+extern void store_paste_where(char *where);
+extern void store_paste_item(char *out_val, int item);
+extern int store_top;
 
 /* c-xtra1.c */
 extern void prt_stat(int stat, int max, int cur, int cur_base);

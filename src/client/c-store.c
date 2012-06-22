@@ -6,7 +6,7 @@
 #include "angband.h"
 
 bool leave_store;
-static int store_top;
+int store_top = 0;
 
 
 
@@ -325,52 +325,17 @@ static void store_purchase(void)
 	Send_store_purchase(item, amt);
 }
 
-static void store_chat(void)
-{
-	int		i, item;
-
-	char	out_val[MSG_LEN], buf[MSG_LEN];
-	char	store_color;
-	char	store_char;
+/* helper functions for store_chat(), also to be used for
+   pasting store items in the middle of a chat line similar to
+   new '\\x' feature for inven/equip-pasting. - C. Blue */
+void store_paste_where(char *where) {
+	snprintf(where, 17, "\377s(%d,%d) \377%c%c\377s:",
+	    p_ptr->wpos.wx, p_ptr->wpos.wy,
+	    color_attr_to_char(c_store.store_attr),
+	    c_store.store_char);
+}
+void store_paste_item(char *out_val, int item) {
 	char	price[16];
-	char	where[16];
-
-
-	/* Empty? */
-	if (store.stock_num <= 0)
-	{
-		if (store_num == 7) c_msg_print("Your home is empty.");
-		else c_msg_print("I am currently out of stock.");
-		return;
-	}
-
-
-	/* Find the number of objects on this and following pages */
-	i = (store.stock_num - store_top);
-
-	/* And then restrict it to the current page */
-	if (i > 12) i = 12;
-
-	/* Prompt */
-	if (store_num == 7)
-	{
-		sprintf(out_val, "Which item? ");
-	}
-	else
-	{
-		sprintf(out_val, "Which item? ");
-	}
-
-	/* Get the item number to be pasted */
-	if (!get_stock(&item, out_val, 0, i - 1)) return;
-
-	/* Get the actual index */
-	item = item + store_top;
-
-	/* Hack -- Get the shop symbol */
-	store_color = color_attr_to_char(c_store.store_attr);
-	store_char = c_store.store_char;
-	snprintf(where, 16, "(%d,%d) \377%c%c\377s", p_ptr->wpos.wx, p_ptr->wpos.wy, store_color, store_char);
 
 	/* Get shop price if any */
 	/* Home doesn't price items */
@@ -389,11 +354,49 @@ static void store_chat(void)
 		else
 			snprintf(price, 16, "%d", store_prices[item]);
 
-		sprintf(out_val, " %s (%s Au)", store_names[item], price);
+		sprintf(out_val, "%s (%s Au)", store_names[item], price);
+	}
+}
+
+static void store_chat(void)
+{
+	int	i, item;
+
+	char	out_val[MSG_LEN], buf[MSG_LEN];
+	char	where[17];
+
+
+	/* Empty? */
+	if (store.stock_num <= 0) {
+		if (store_num == 7) c_msg_print("Your home is empty.");
+		else c_msg_print("I am currently out of stock.");
+		return;
 	}
 
+
+	/* Find the number of objects on this and following pages */
+	i = (store.stock_num - store_top);
+
+	/* And then restrict it to the current page */
+	if (i > 12) i = 12;
+
+	/* Prompt */
+	if (store_num == 7)
+		sprintf(out_val, "Which item? ");
+	else
+		sprintf(out_val, "Which item? ");
+
+	/* Get the item number to be pasted */
+	if (!get_stock(&item, out_val, 0, i - 1)) return;
+
+	/* Get the actual index */
+	item = item + store_top;
+
+	store_paste_where(where);
+	store_paste_item(out_val, item);
+
 	/* Tell the server */
-	snprintf(buf, MSG_LEN - 1, "\377s%s:%s", where, out_val);
+	snprintf(buf, MSG_LEN - 1, "%s %s", where, out_val);
 	buf[MSG_LEN - 1] = 0;
 	Send_paste_msg(buf);
 }
