@@ -836,6 +836,14 @@ void cmd_inven(void)
 		if (inventory[c].tval) {
 			snprintf(buf, MSG_LEN - 1, "\377s%s", inventory_name[c]);
                         buf[MSG_LEN - 1] = 0;
+                        /* if item inscriptions contains a colon we might need
+                           another colon to prevent confusing it with a private message */
+                        if (strchr(inventory_name[c], ':')) {
+                                buf[strchr(inventory_name[c], ':') - inventory_name[c] + strlen(buf) - strlen(inventory_name[c]) + 1] = '\0';
+	                        if (strchr(buf, ':') == &buf[strlen(buf) - 1])
+	        	                strcat(buf, ":");
+                	        strcat(buf, strchr(inventory_name[c], ':') + 1);
+                        }
                         Send_paste_msg(buf);
 		}
 	}
@@ -875,6 +883,15 @@ void cmd_equip(void)
 		if (inventory[INVEN_WIELD + c].tval) {
 			snprintf(buf, MSG_LEN - 1, "\377s%s", inventory_name[INVEN_WIELD + c]);
 			buf[MSG_LEN - 1] = 0;
+                        /* if item inscriptions contains a colon we might need
+                           another colon to prevent confusing it with a private message */
+                        if (strchr(inventory_name[INVEN_WIELD + c], ':')) {
+                                buf[strchr(inventory_name[INVEN_WIELD + c], ':') - inventory_name[INVEN_WIELD + c]
+                        	    + strlen(buf) - strlen(inventory_name[INVEN_WIELD + c]) + 1] = '\0';
+	                        if (strchr(buf, ':') == &buf[strlen(buf) - 1])
+			                strcat(buf, ":");
+                	        strcat(buf, strchr(inventory_name[INVEN_WIELD + c], ':') + 1);
+                        }
 			Send_paste_msg(buf);
 		}
 	}
