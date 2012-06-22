@@ -2537,7 +2537,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 			}
 
 			/* Spider Webs */
-			else if (c_ptr->feat >= FEAT_WEB) {
+			else if (c_ptr->feat == FEAT_WEB) {
 				/* Tunnel - hack: swords/axes help similarly as for trees/bushes/ivy */
 				if ((((power > wood_power) ? power : wood_power) > rand_int(100)) && twall(Ind, y, x)) {
 					msg_print(Ind, "You have cleared the web.");
