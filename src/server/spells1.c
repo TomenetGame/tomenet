@@ -10347,7 +10347,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 #endif
 				/* Give feedback to the healer so he knows when he may stop - C. Blue */
-				if (p_ptr->csane == p_ptr->msane) msg_format_near(Ind, "%s appears to be in full command of his mental faculties.", p_ptr->name);
+				if (p_ptr->csane == p_ptr->msane) msg_format_near(Ind, "%s appears to be in full command of %s mental faculties.", p_ptr->name, p_ptr->male ? "his" : "her");
 			}
 			break;
 		case GF_SOULCURE_PLAYER:
