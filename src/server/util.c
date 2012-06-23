@@ -5664,7 +5664,7 @@ bool backup_estate(void) {
     			fclose(fp);
     		}
     		if ((fp = fopen(buf, "a+")) == NULL) {
-	    		s_printf("  error: cannot open file %s.\nfailed.\n", buf);
+	    		s_printf("  error: cannot open file '%s'.\nfailed.\n", buf);
     			return FALSE;
     		} else if (newly_created) {
     			newly_created = FALSE;
@@ -5728,4 +5728,75 @@ bool backup_estate(void) {
 
 	s_printf("done.\n");
 	return TRUE;
+}
+
+/* get back the backed-up real estate from files */
+void restore_estate(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	FILE *fp, *fp_tmp;
+	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], version[MAX_CHARS];
+	int i;
+	u32b au;
+	object_type *o_ptr;
+
+	s_printf("Restoring real estate for %s...\n", p_ptr->name);
+
+	/* create folder lib/save/estate if not existing */
+        path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
+
+	/* build path name and try to create/append to player's backup file */
+	path_build(buf, MAX_PATH_LENGTH, buf2, p_ptr->basename);
+	if ((fp = fopen(buf, "r")) == NULL) {
+		s_printf("  error: No file '%s' available to request from.\nfailed.\n", buf);
+		msg_print(Ind, "No goods or money available to request.");
+		return;
+	}
+
+	/* Try to read version string */
+	if (fgets(version, MAX_CHARS, fp) == NULL) {
+		s_printf("  error: Nothing left.\nfailed.\n");
+		msg_print(Ind, "No goods or money left to request.");
+		fclose(fp);
+		return;
+	}
+	version[strlen(version) - 1] = '\0';
+	s_printf("  reading a version '%s' estate file.\n", version);
+
+	/* open temporary file for writing the stuff the player left over */
+	strcpy(buf2, buf);
+	strcat(buf2, ".$$$");
+	if ((fp_tmp = fopen(buf2, "w")) == NULL) {
+    		s_printf("  error: cannot open temporary file '%s'.\nfailed.\n", buf2);
+    		msg_print(Ind, "An error occurred, please contact an administrator.");
+    		fclose(fp);
+		return;
+	}
+
+	/* relay to temporary file */
+	fprintf(fp_tmp, "%s\n", version);
+
+#if 0
+	/* scan file for either house price (AU:) or object (OB:) */
+
+	/* get house price from backup file */
+	fscanf(fp, "AU:%d\n", au);
+
+	/* give gold to player if it doesn't overflow,
+	   otherwise relay rest to temporary file, swap and exit */
+	gain_au(Ind, au);
+
+	/* scan house contents and add them to his backup file */
+	/* get object from backup file */
+	fscanf(fp, "OB:");
+	fread(o_ptr, sizeof(*o_ptr), 1, fp);
+
+	/* give item to player if he has space left,
+	   otherwise relay rest to temporary file, swap and exit */
+	inven_carry(Ind, o_ptr);
+#endif
+
+	/* done for now */
+	fclose(fp_tmp);
+	fclose(fp);
+	s_printf("done.\n");
 }
