@@ -2512,6 +2512,7 @@ D:particular Palantir.
 
 
 # The Ring of Phasing
+#NOTE: If dropped as FINAL_ARTIFACT it MUST have rarity 0.
 
 N:203:of Phasing
 I:45:55:15
@@ -3260,11 +3261,8 @@ D:To uncover truths and stay focussed, this hat sharpens the wearer's mind,
 D:allowing him to discover new ideas.
 
 
-# Artifacts for the nether realm viability project - C. Blue
-
-# +++note+++ currently not findable due to set RESF_NOTRUEART from total_winner status! +++
-# ^has been fixed; however, still restricted from being created in create_reward() (seems fair though).
 # The Heavy Mithril Scale Armour 'Mirror of Glory'
+
 N:260:'Mirror of Glory'
 I:37:26:5
 W:97:25:300:200000
