@@ -6378,8 +6378,13 @@ void dungeon(void)
 }
 
 void set_runlevel(int val) {
-	static bool meta=TRUE;
+	static bool meta = TRUE;
+
 	switch(val) {
+		case -1:
+			/* terminate: return a value that lets a script know that
+			   it must not restart us. */
+			cfg.runlevel = -1;
 		case 0:
 			shutdown_server();
 		case 1:
@@ -6394,7 +6399,7 @@ void set_runlevel(int val) {
 		case 3:
 			/* Hide from the meta - server socket still open */
 			Report_to_meta(META_DIE);
-			meta=FALSE;
+			meta = FALSE;
 			msg_broadcast(0, "\377rServer will close soon.");
 			break;
 		case 4:
@@ -6408,7 +6413,7 @@ void set_runlevel(int val) {
 			break;
 		case 1024:
 			Report_to_meta(META_DIE);
-			meta=FALSE;
+			meta = FALSE;
 			break;
 			/* Hack -- character edit (possessor) mode */
 		case 2043:
@@ -6430,12 +6435,12 @@ void set_runlevel(int val) {
 			if (cfg.runlevel != 6)
 				msg_broadcast(0, "\377GServer shutdown cancelled.");
 			Report_to_meta(META_START);
-			meta=TRUE;
+			meta = TRUE;
 			val = 6;
 			break;
 	}
 	time(&cfg.closetime);
-	cfg.runlevel=val;
+	cfg.runlevel = val;
 }
 
 /*
@@ -6645,7 +6650,10 @@ void shutdown_server(void) {
 		if (!save_player(1)) Destroy_connection(p_ptr->conn, "Server shutdown (save failed)");
 
 		/* Successful save */
-		Destroy_connection(p_ptr->conn, "Server has been updated, please login again."); /* was "Server shutdown (save succeeded)" */
+		if (cfg.runlevel == -1)
+			Destroy_connection(p_ptr->conn, "Server is undergoing maintenance and may take a little while to restart.");
+		else
+			Destroy_connection(p_ptr->conn, "Server has been updated, please login again."); /* was "Server shutdown (save succeeded)" */
 	}
 
 	/* Save the server state */
@@ -6659,7 +6667,10 @@ void shutdown_server(void) {
 	go_engine_terminate();
 #endif
 
-	quit("Server state saved");
+	if (cfg.runlevel == -1)
+		quit("Terminating");
+	else
+		quit("Server state saved");
 }
 
 void pack_overflow(int Ind) {

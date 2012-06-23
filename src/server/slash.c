@@ -6518,6 +6518,13 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "DF3_JAIL_DUNGEON added.");
 				return;
 			}
+			if (prefix(message, "/terminate")) {
+				set_runlevel(-1);
+
+				/* paranoia - set_runlevel() will call exit() */
+				time(&cfg.closetime);
+				return;
+			}
 		}
 	}
 

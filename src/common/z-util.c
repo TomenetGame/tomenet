@@ -211,13 +211,11 @@ void quit(cptr str)
 	char buf[1024];
 
 	/* Save exit string */
-	if (str)
-	{
+	if (str) {
 		strncpy(buf, str, 1024);
 		buf[1023] = '\0';
-	}
-	else
-		strcpy(buf, "");
+	} else
+		buf[0] = '\0';
 
 	/* Attempt to use the aux function */
 	if (quit_aux) (*quit_aux)(str ? buf : NULL);
@@ -233,7 +231,11 @@ void quit(cptr str)
 	plog("Quitting!");
 
 	/* Failure */
-	(void)(exit(-1));
+	if (!strcmp(str, "Terminating")) {
+		(void)(exit(-2));
+	} else {
+		(void)(exit(-1));
+	}
 }
 
 
