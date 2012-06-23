@@ -5604,3 +5604,69 @@ bool gain_au(int Ind, u32b amt, bool quiet, bool exempt) {
 #endif
         return TRUE;
 }
+
+/* backup all house prices and contents for all players to lib/save/estate/ */
+bool backup_estate(void) {
+	FILE *fp;
+	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], savefile[NAME_LEN], c;
+	cptr name;
+	int i, j, k;
+	u32b au;
+	house_type *h_ptr;
+	struct dna_type *dna;
+	struct worldpos *wpos;
+
+	s_printf("Backing up all real estate...\n");
+
+	/* create folder lib/save/estate if not existing */
+        path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
+
+	/* scan all houses */
+        for (i = 0; i < num_houses; i++) {
+                h_ptr = &houses[i];
+                if (!h_ptr->dna->owner) continue;
+
+                wpos = &h_ptr->wpos;
+                dna = h_ptr->dna;
+		/* assume worst possible charisma (3) */
+		au = dna->price / 100 * adj_chr_gold[0];
+		if (au < 100) au = 100;
+		//h_ptr->dy,dx
+
+		name = lookup_player_name(h_ptr->dna->owner);
+		if (!name) {
+			s_printf("  warning: house %d's owner %d doesn't have a name.\n", i, h_ptr->dna->owner);
+			continue;
+		}
+
+		/* create backup file if required, or append to it */
+		/* create actual filename from character name (same as used for sf_delete or process_player_name) */
+		k = 0;
+	        for (j = 0; name[j]; j++) {
+	                c = name[j];
+        	        /* Accept some letters */
+	                if (isalpha(c) || isdigit(c)) savefile[k++] = c;
+    	        	/* Convert space, dot, and underscore to underscore */
+	                else if (strchr(":!?\\/()\"@. _", c)) savefile[k++] = '_';
+    		}
+    		savefile[k] = '\0';
+		/* build path name and try to create/append to player's backup file */
+    		path_build(buf, MAX_PATH_LENGTH, buf2, savefile);
+    		if ((fp = fopen(buf, "a+")) == NULL) {
+	    		s_printf("  error: cannot open file %s.\nfailed.\n", buf);
+    			return FALSE;
+    		}
+
+		/* add house price to his backup file */
+		fprintf(fp, "AU:%d\n", au);
+
+		/* scan house contents and add them to his backup file */
+		
+
+		/* done with this particular house */
+		fclose(fp);
+	}
+
+	s_printf("done.\n");
+	return TRUE;
+}

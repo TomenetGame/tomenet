@@ -6527,6 +6527,17 @@ void do_slash_cmd(int Ind, char *message)
 				time(&cfg.closetime);
 				return;
 			}
+			/* back up all house prices and items/gold inside houses for all
+			   characters to lib/save/estate/ and invoke /terminate right
+			   afterwards if the parameter "term" is given. */
+			if (prefix(message, "/backup_estate")) {
+				if (!backup_estate()) return;
+
+				/* terminate the server? */
+				if (tk && !strcmp(token[1], "term"))
+					set_runlevel(-1);
+				return;
+			}
 		}
 	}
 
