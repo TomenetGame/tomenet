@@ -6541,7 +6541,12 @@ void do_slash_cmd(int Ind, char *message)
 			   characters to lib/save/estate/ and invoke /terminate right
 			   afterwards if the parameter "term" is given. */
 			if (prefix(message, "/backup_estate")) {
-				if (!backup_estate()) return;
+				msg_print(Ind, "Backing up all real estate...");
+				if (!backup_estate()) {
+					msg_print(Ind, "...failed.");
+					return;
+				}
+				msg_print(Ind, "...done.");
 
 				/* terminate the server? */
 				if (tk && !strcmp(token[1], "term"))
