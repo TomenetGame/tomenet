@@ -622,6 +622,9 @@ static bool wild_monst_aux_ice(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
+	/* no aquatic life here */
+	if (r_ptr->flags7 & RF7_AQUATIC) return FALSE;
+
 	/* no cold-susceptible monsters */
 	if (r_ptr->flags3 & RF3_SUSCEP_COLD) return FALSE;
 
@@ -1873,8 +1876,8 @@ static void init_terrain(terrain_type *t_ptr, int radius)
 		case WILD_ICE:
 		{
 			t_ptr->ice = 1000;
-			t_ptr->mountain = rand_int(1);
-			t_ptr->hotspot = rand_int(2);
+			t_ptr->mountain = rand_int(5);
+			t_ptr->hotspot = rand_int(4) + 2;
 			t_ptr->monst_lev = 30 + (radius / 2); break;
 			break;
 		}
@@ -1959,6 +1962,8 @@ static unsigned char terrain_spot(terrain_type * terrain)
 	u32b tmp_seed;
 
 	if (rand_int(1000) < terrain->grass) feat = FEAT_GRASS;
+	if (rand_int(1000) < terrain->sand) feat = FEAT_SAND;
+	if (rand_int(1000) < terrain->ice) feat = magik(90) ? FEAT_SNOW : (magik(75) ? FEAT_ICE : FEAT_ICE_WALL);
 #if 1
 	if (rand_int(1000) < terrain->tree) {
 		/* actually it's cool that whether it's a grown tree or a small bush
@@ -1972,13 +1977,11 @@ static unsigned char terrain_spot(terrain_type * terrain)
 #else
 	if (rand_int(1000) < terrain->tree) feat = FEAT_TREE;
 #endif
-	if (rand_int(1000) < terrain->deadtree) feat = FEAT_DEAD_TREE;
 	if (rand_int(1000) < terrain->water) feat = FEAT_DEEP_WATER;
 	if (rand_int(1000) < terrain->mud) feat = FEAT_MUD;
 	if (rand_int(1000) < terrain->mountain) feat = FEAT_MOUNTAIN;
 	if (rand_int(1000) < terrain->lava) feat = magik(30) ? FEAT_DEEP_LAVA : FEAT_SHAL_LAVA;
-	if (rand_int(1000) < terrain->sand) feat = FEAT_SAND;
-	if (rand_int(1000) < terrain->ice) feat = magik(95) ? FEAT_SNOW : (magik(80) ? FEAT_ICE : FEAT_ICE_WALL);
+	if (rand_int(1000) < terrain->deadtree) feat = FEAT_DEAD_TREE;
 
 	return(feat);
 }
@@ -2090,6 +2093,34 @@ static void wild_add_hotspot(struct worldpos *wpos)
 				hot_terrain.type = WILD_SWAMP;
 				init_terrain(&hot_terrain, w_ptr->radius);
 				hot_terrain.mud = rand_int(150) + 700;
+			}
+			break;
+
+		case WILD_DESERT:
+			/* sometimes an oasis */
+			if (rand_int(100) < 80) {
+				hot_terrain.tree = 1000;
+				hot_terrain.water = rand_int(100) + 900;
+			}
+			/* otherwise some dried out trees */
+			else {
+#if 1 /* prevent FEAT_DIRT base? */
+				hot_terrain.sand = 1000;
+#endif
+				hot_terrain.deadtree = rand_int(200) + 200;
+			}
+			break;
+
+		case WILD_ICE:
+			/* sometimes a pond */
+			if (rand_int(100) < 30) {
+				hot_terrain.water = 1000;
+			}
+			/* otherwise some dead trees and mountains */
+			else {
+				hot_terrain.deadtree = rand_int(100) + 150;
+				hot_terrain.mountain = rand_int(300) + 250;
+				hot_terrain.ice = 1000;
 			}
 			break;
 
@@ -3757,8 +3788,22 @@ void wpos_apply_season_daytime(worldpos *wpos, cave_type **zcave) {
 	int x, y;
 	cave_type *c_ptr;
 
+	/* hack - abuse for WILD_ICE */
+	if (wild_info[wpos->wy][wpos->wx].type == WILD_ICE) {
+		/* Turn all water into ice */
+		if (!wpos->wz)
+			for (y = 1; y < MAX_HGT - 1; y++)
+			for (x = 1; x < MAX_WID - 1; x++) {
+				c_ptr = &zcave[y][x];
+				if (c_ptr->feat == FEAT_SHAL_WATER ||
+				    c_ptr->feat == FEAT_TAINTED_WATER ||
+				    c_ptr->feat == FEAT_DEEP_WATER) {
+					c_ptr->feat = FEAT_ICE;
+				}
+			}
+	}
 	/* apply season-specific FEAT-manipulation */
-	if (season == SEASON_WINTER) {
+	else if (season == SEASON_WINTER) {
 		/* Turn some water into ice */
 		if (!wpos->wz)
 			for (y = 1; y < MAX_HGT - 1; y++)
