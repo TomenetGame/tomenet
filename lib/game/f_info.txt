@@ -595,7 +595,7 @@ F:DONT_NOTICE_RUNNING
 D:0:Ohhh, it is dark and deep.
 
 N:88:dirt
-G:.:U
+G:.:u
 F:FLOOR | SUPPORT_LIGHT | CAN_RUN
 F:DONT_NOTICE_RUNNING
 
@@ -631,7 +631,7 @@ G:.:s
 F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN
 
 N:94:mud
-G:.:u
+G:~:u
 F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT
 
 N:95:ice wall
