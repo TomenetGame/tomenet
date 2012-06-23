@@ -6852,7 +6852,7 @@ Amulet of Anti-Teleportation    If worn it will suppress all attemps to
                                 Any word-of-recall that is cast while
                                 teleportation is supressed will be suspended
                                 and then immediately kick in as soon as the
-                                amulet is taken off. This allows some
+                                amulet is taken off. This allows for some
                                 interesting tactics..
 
 
