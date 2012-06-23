@@ -1034,14 +1034,15 @@ static bool player_allowed(char *name){
 }
 
 /* blacklist of special nicknames unavailable to players (monster names, "Insanity",..) - C. Blue */
-static bool forbidden_name(char *name){
+static bool forbidden_name(char *name) {
 	FILE *sfp;
 	char buffer[80];
-	bool success=FALSE;
+	bool success = FALSE;
 	/* Hack -- allow 'guest' account */
 	/* if (!strcmp("Guest", name)) return FALSE; */
 
-	/* Note: Character names always start upper-case, so some of these aren't really needed. (Paranoia) */
+	/* Note: Character names always start upper-case, so some of these
+	   aren't really needed on most file systems (semi-paranoia). */
 	/* Hardcode some critically important ones */
 	if (!strcmp("server", name)) return TRUE; /* server save file is stored in same folder as player save files */
 	if (strstr(name, "guild") && strstr(name, ".data")) return TRUE; /* moved guild hall save files to save folder, from data folder */
@@ -1049,6 +1050,7 @@ static bool forbidden_name(char *name){
 	    name[4] >= '0' && name[4] <= '9') return TRUE; /* backup save file folders, save00..saveNN */
 	if (!strcmp("tomenet.acc", name)) return TRUE; /* just in case someone copies it over into save folder */
 	if (!strcmp("Insanity", name)) return TRUE;
+	if (!strcmp("estate", name)) return TRUE; /* for new 'estate' folder that backs up houses. */
 #ifdef ENABLE_MAIA
 	if (!strcmp("Indecisiveness", name)) return TRUE;
 #endif
@@ -1056,14 +1058,14 @@ static bool forbidden_name(char *name){
 	if (!strcmp("tBot", name)) return TRUE; /* Sandman's internal chat bot */
 	if (!strcmp("8ball", name)) return TRUE; /* Sandman's internal chat bot */
 
-	sfp=fopen("badnames.txt", "r");
-	if(sfp==(FILE*)NULL)
+	sfp = fopen("badnames.txt", "r");
+	if (sfp == (FILE*) NULL)
 		return FALSE;
-	else{
-		while(fgets(buffer, 80, sfp)){
+	else {
+		while (fgets(buffer, 80, sfp)) {
 			/* allow for \n */
-			if((strlen(name)+1)!=strlen(buffer)) continue;
-			if(!strncmp(buffer,name, strlen(name))){
+			if ((strlen(name) + 1) != strlen(buffer)) continue;
+			if (!strncmp(buffer,name, strlen(name))) {
 				success=TRUE;
 				break;
 			}
