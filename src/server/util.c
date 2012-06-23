@@ -5611,10 +5611,14 @@ bool backup_estate(void) {
 	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], savefile[NAME_LEN], c;
 	cptr name;
 	int i, j, k;
+	int sy, sx, ey,ex , x, y;
+        cave_type **zcave, *c_ptr;
+        bool allocated;
 	u32b au;
 	house_type *h_ptr;
 	struct dna_type *dna;
 	struct worldpos *wpos;
+	object_type *o_ptr;
 
 	s_printf("Backing up all real estate...\n");
 
@@ -5661,7 +5665,52 @@ bool backup_estate(void) {
 		fprintf(fp, "AU:%d\n", au);
 
 		/* scan house contents and add them to his backup file */
-		
+		/* traditional house? */
+		if (h_ptr->flags & HF_TRAD) {
+			for (j = 0; j < h_ptr->stock_num; j++) {
+                    		o_ptr = &h_ptr->stock[j];
+                    		/* add object to backup file */
+                    		fprintf(fp, "OB:");
+				fwrite(o_ptr, sizeof(*o_ptr), 1, fp);
+                        }
+                }
+                /* mang-style house? */
+                else {
+        		/* allocate sector of the house to access objects */
+			if (!(zcave = getcave(wpos))) {
+				alloc_dungeon_level(wpos);
+				wilderness_gen(wpos);
+				if (!(zcave = getcave(wpos))) {
+					s_printf("  error: cannot getcave(%d,%d,%d).\nfailed.\n", wpos->wx, wpos->wy, wpos->wz);
+					fclose(fp);
+					return FALSE;
+				}
+				allocated = TRUE;
+			} else allocated = FALSE;
+
+		        if (h_ptr->flags & HF_RECT) {
+		                sy = h_ptr->y + 1;
+		                sx = h_ptr->x + 1;
+		                ey = h_ptr->y + h_ptr->coords.rect.height - 1;
+		                ex = h_ptr->x + h_ptr->coords.rect.width - 1;
+		                for (y = sy; y < ey; y++) {
+		                        for (x = sx; x < ex; x++) {
+    						c_ptr = &zcave[y][x];
+		                                if (c_ptr->o_idx) {
+		                        		o_ptr = &o_list[c_ptr->o_idx];
+		                        		/* add object to backup file */
+		                        		fprintf(fp, "OB:");
+			    				fwrite(o_ptr, sizeof(*o_ptr), 1, fp);
+		                                }
+					}
+				}
+			} else {
+				/* Polygonal house */
+				//fill_house(h_ptr, FILL_CLEAR, NULL);
+			}
+
+			if (allocated) dealloc_dungeon_level(wpos);
+                }
 
 		/* done with this particular house */
 		fclose(fp);
