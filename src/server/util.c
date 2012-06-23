@@ -5606,6 +5606,7 @@ bool gain_au(int Ind, u32b amt, bool quiet, bool exempt) {
 }
 
 /* backup all house prices and contents for all players to lib/save/estate/ */
+#define ESTATE_BACKUP_VERSION "v1"
 bool backup_estate(void) {
 	FILE *fp;
 	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], savefile[NAME_LEN], c;
@@ -5613,7 +5614,7 @@ bool backup_estate(void) {
 	int i, j, k;
 	int sy, sx, ey,ex , x, y;
         cave_type **zcave, *c_ptr;
-        bool allocated;
+        bool newly_created, allocated;
 	u32b au;
 	house_type *h_ptr;
 	struct dna_type *dna;
@@ -5656,9 +5657,18 @@ bool backup_estate(void) {
     		savefile[k] = '\0';
 		/* build path name and try to create/append to player's backup file */
     		path_build(buf, MAX_PATH_LENGTH, buf2, savefile);
+    		if ((fp = fopen(buf, "r")) == NULL)
+    			newly_created = TRUE;
+    		else {
+    			newly_created = FALSE;
+    			fclose(fp);
+    		}
     		if ((fp = fopen(buf, "a+")) == NULL) {
 	    		s_printf("  error: cannot open file %s.\nfailed.\n", buf);
     			return FALSE;
+    		} else if (newly_created) {
+    			newly_created = FALSE;
+    			fprintf(fp, "%s\n", ESTATE_BACKUP_VERSION);
     		}
 
 		/* add house price to his backup file */
