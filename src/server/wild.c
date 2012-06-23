@@ -561,7 +561,7 @@ static bool wild_monst_aux_denseforest(int r_idx)
 static bool wild_monst_aux_wasteland(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
-	
+
 	if (r_ptr->flags8 & RF8_WILD_WASTE)
 		return TRUE;
 	else
@@ -588,6 +588,8 @@ static bool wild_monst_aux_desert(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
+	if (r_ptr->flags8 & RF8_WILD_DESERT) return TRUE;
+
 	/* borrow from wasteland monsters */
 //	if (r_ptr->flags8 & RF8_WILD_WASTE) return TRUE;
 
@@ -606,6 +608,8 @@ static bool wild_monst_aux_desert(int r_idx)
 static bool wild_monst_aux_ice(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
+
+	if (r_ptr->flags8 & RF8_WILD_ICE) return TRUE;
 
 	/* no aquatic life here */
 	if (r_ptr->flags7 & RF7_AQUATIC) return FALSE;

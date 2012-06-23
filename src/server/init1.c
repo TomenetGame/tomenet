@@ -463,8 +463,8 @@ static cptr r_info_flags8[] =
 	"BASEANGBAND",
 	"BLUEBAND",
 	"NO_AUTORET",
-	"XXX8X19",
-	"XXX8X20",
+	"WILD_DESERT",
+	"WILD_ICE",
 	"XXX8X21",
 	"XXX8X22",
 	"XXX8X23",
@@ -536,7 +536,7 @@ static cptr r_info_flags0[] =
 	"ASTAR",//4
 	"NO_ESCORT",
 	"NO_NEST",
-	"X00000040",
+	"FINAL_GUARDIAN", /* should not be used in r_info, since it's set implicitely from d_info */
 	"X00000080",//8
 	"X00000100",
 	"X00000200",

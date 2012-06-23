@@ -4832,12 +4832,8 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF8_ANGBAND		0x00010000
 #define RF8_BLUEBAND		0x00020000	/* C. Blue's bestiary */
 #define RF8_NO_AUTORET		0x00040000	/* don't auto-retaliate against this monster */
-/*
-#define RF8_EVENT_HALLOWEEN	0x00040000
-#define RF8_EVENTN_HALLOWEEN	0x00080000
-#define RF8_EVENT_XMAS			0x00100000
-#define RF8_EVENTN_XMAS			0x00200000
-*/
+#define RF8_WILD_DESERT		0x00080000
+#define RF8_WILD_ICE			0x00100000
 //FREE FLAGS HOLE
 #define RF8_GENO_PERSIST	0x08000000	/* Don't automatically genocide/compact this monster */
 #define RF8_GENO_NO_THIN		0x10000000	/* Don't genocide this monster when thinning out surface spawns */
@@ -4848,7 +4844,8 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF8_WILD_TOO_MASK \
 	( RF8_WILD_TOWN | RF8_WILD_EASY | RF8_WILD_SHORE | \
 	  RF8_WILD_OCEAN | RF8_WILD_WASTE | RF8_WILD_WOOD | RF8_WILD_VOLCANO | \
-	  RF8_WILD_MOUNTAIN | RF8_WILD_GRASS | RF8_WILD_SWAMP)
+	  RF8_WILD_MOUNTAIN | RF8_WILD_GRASS | RF8_WILD_SWAMP | \
+	  RF8_WILD_DESERT | RF8_WILD_ICE)
 
 #define RF8_WILD_EASY_MASK \
         ( RF8_WILD_TOWN | RF8_WILD_SHORE | \
