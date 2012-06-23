@@ -22,6 +22,12 @@
 #include "angband.h"
 
 
+/* Use a simple kind of bleeding just to indicate dangerous terrain ahead,
+   was just used ad interim. If this gets enabled, it will in turn disable
+   the bleed_with_neighbors() effect, so keep this commented out. - C. Blue */
+//#define SIMPLE_WARNING_BLEED
+
+
 /* This function takes the players x,y level world coordinate and uses it to
  calculate p_ptr->dun_depth.  The levels are stored in a series of "rings"
  radiating out from the town, as shown below.  This storage mechanisim was 
@@ -72,6 +78,7 @@ int world_index(int world_x, int world_y)
 	return idx;
 }
 
+#ifdef SIMPLE_WARNING_BLEED
 static void bleed_warn_feat(int wild_type, cave_type *c_ptr) {
 	switch (wild_type) {
 	case WILD_SWAMP: c_ptr->feat = FEAT_BUSH; break;
@@ -83,29 +90,7 @@ static void bleed_warn_feat(int wild_type, cave_type *c_ptr) {
 	case WILD_VOLCANO: c_ptr->feat = FEAT_SHAL_LAVA; break;
 	}
 }
-
-#if 0 /* not used? - mikaelh */
-/* returns the neighbor index, valid or invalid. */
-static int neighbor_index(struct worldpos *wpos, char dir)
-{
-	int cur_x, cur_y, neigh_idx;
-
-	cur_x = wpos->wx;
-	cur_y = wpos->wy;
-
-	switch (dir) {
-		case DIR_NORTH: neigh_idx = world_index(cur_x, cur_y + 1); break;
-		case DIR_EAST:  neigh_idx = world_index(cur_x + 1, cur_y); break;
-		case DIR_SOUTH: neigh_idx = world_index(cur_x, cur_y - 1); break;
-		case DIR_WEST:  neigh_idx = world_index(cur_x - 1, cur_y); break;
-		/* invalid */
-		default: neigh_idx = 1;
-	}
-	return neigh_idx;
-}
-#endif // 0
-
-
+#endif
 
 /* Initialize the wild_info coordinates and radius. Uses a recursive fill algorithm.
    This may seem a bit out of place, but I think it is too complex to go in init2.c.
@@ -2148,9 +2133,6 @@ static void wild_add_hotspot(struct worldpos *wpos)
 	if (add_dwelling) wild_add_dwelling(wpos, x_cen, y_cen );
 }
 
-#ifdef NEW_DUNGEON
-#else
-
 /* helper function to wild_gen_bleedmap */
 static void wild_gen_bleedmap_aux(int *bleedmap, int span, char dir)
 {
@@ -2202,7 +2184,7 @@ static void wild_gen_bleedmap(int *bleedmap, char dir, int start, int end)
 	/* initialize the "top" and "bottom" */
 	if (start < 0) bleedmap[0] = rand_int(((dir%2) ? 70 : 25));
 	else bleedmap[0] = start;
-	if (end < 0) bleedmap[256] = rand_int(((dir%2) ? 70 : 25));	
+	if (end < 0) bleedmap[256] = rand_int(((dir%2) ? 70 : 25));
 	else {
 		bound = (dir%2) ? MAX_HGT-3 : MAX_WID-3;
 		for (c = bound; c <= 256; c++) bleedmap[c] = end;
@@ -2241,60 +2223,67 @@ static void wild_gen_bleedmap(int *bleedmap, char dir, int start, int end)
 
 /* this function "bleeds" the terrain type of bleed_from to the side of bleed_to
    specified by dir.
-   
+
    First, a bleedmap array is initialized using a simple fractal algorithm.
    This map specifies the magnitude of the bleed at each point along the edge.
    After this, the two structures bleed_begin and bleed_end are initialized.
-   
+
    After this structure is initialized, for each point along the bleed edge,
    up until the bleedmap[point] edge of the bleed, the terrain is set to
    that of bleed_from.
-   
+
    We should hack this to add interesting features near the bleed edge.
    Such as ponds near shoreline to make it more interesting and
    groves of trees near the edges of forest.
 */
 
-static void wild_bleed_level(int bleed_to, int bleed_from, char dir, int start, int end)
+static void wild_bleed_level(int bleed_to_x, int bleed_to_y, int bleed_from_x, int bleed_from_y, char dir, int start, int end)
 {
-	int x, y, c;
-	int bleedmap[256+1], bleed_begin[MAX_WID], bleed_end[MAX_WID];
+	int x, y;
+	int bleedmap[256 + 1], bleed_begin[MAX_WID], bleed_end[MAX_WID];
 	terrain_type terrain;
+	cave_type *c_ptr, **zcave_bleed_to = getcave(&((struct worldpos) {bleed_to_x, bleed_to_y, 0}));
+
+	/* paranoia */
+	if (!zcave_bleed_to) {
+		s_printf("getcave() failed in wild_bleed_level\n");
+		return;
+	}
 
 	/* sanity check */
-	if (wild_info[bleed_from].type == wild_info[bleed_to].type) return;
+	if (wild_info[bleed_from_y][bleed_from_x].type == wild_info[bleed_to_y][bleed_to_x].type) return;
 
 	/* initiliaze the terrain type */
-	terrain.type = wild_info[bleed_from].type;
+	terrain.type = wild_info[bleed_from_y][bleed_from_x].type;
 
 	/* determine the terrain components */
-	init_terrain(&terrain,-1);
+	init_terrain(&terrain, -1);
 
-	/* generate the bleedmap */	
+	/* generate the bleedmap */
 	wild_gen_bleedmap(bleedmap, dir, start, end);
 
 	/* initialize the bleedruns */
 	switch (dir) {
 		case DIR_EAST:
-			for (y = 1; y < MAX_HGT-1; y++) {
+			for (y = 1; y < MAX_HGT - 1; y++) {
 				bleed_begin[y] = MAX_WID - bleedmap[y];
 				bleed_end[y] = MAX_WID - 1;
 			}
 			break;
 		case DIR_WEST:
-			for (y = 1; y < MAX_HGT-1; y++) {
+			for (y = 1; y < MAX_HGT - 1; y++) {
 				bleed_begin[y] = 1;
 				bleed_end[y] = bleedmap[y];
 			}
 			break;
 		case DIR_NORTH:
-			for (x = 1; x < MAX_WID-1; x++) {
+			for (x = 1; x < MAX_WID - 1; x++) {
 				bleed_begin[x] = 1;
 				bleed_end[x] = bleedmap[x];
 			}
 			break;
 		case DIR_SOUTH:
-			for (x = 1; x < MAX_WID-1; x++) {
+			for (x = 1; x < MAX_WID - 1; x++) {
 				bleed_begin[x] = MAX_HGT - bleedmap[x];
 				bleed_end[x] = MAX_HGT - 1;
 			}
@@ -2302,72 +2291,74 @@ static void wild_bleed_level(int bleed_to, int bleed_from, char dir, int start, 
 	}
 
 	if ((dir == DIR_EAST) || (dir == DIR_WEST)) {
-		for (y = 1; y < MAX_HGT-1; y++) {
+		for (y = 1; y < MAX_HGT - 1; y++) {
 			for (x = bleed_begin[y]; x < bleed_end[y]; x++) {
-				cave_type *c_ptr = &cave[bleed_to][y][x];
+				c_ptr = &zcave_bleed_to[y][x];
 				c_ptr->feat = terrain_spot(&terrain);
 			}
 		}
 	} else {
-		for (x = 1; x < MAX_WID-1; x++) {
+		for (x = 1; x < MAX_WID - 1; x++) {
 			for (y = bleed_begin[x]; y < bleed_end[x]; y++) {
-				cave_type *c_ptr = &cave[bleed_to][y][x];
+				c_ptr = &zcave_bleed_to[y][x];
 				c_ptr->feat = terrain_spot(&terrain);
 			}
 		}
 	}
 }
-#endif /* NEW_DUNGEON */
 
 /* determines whether or not to bleed from a given depth in a given direction.
    useful for initial determination, as well as shared bleed points.
-*/   
-#if 0
+*/
 static bool should_we_bleed(struct worldpos *wpos, char dir)
 {
-#if 0
-	int neigh_idx = 0, tmp;
+	int neigh_x = 0, neigh_y = 0, tmp;
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
+	struct worldpos neighbor;
 
 	/* get our neighbors index */
-	neigh_idx = neighbor_index(wpos, dir);
+	switch (dir) {
+	case DIR_NORTH:
+		neigh_x = wpos->wx;
+		neigh_y = wpos->wy + 1;
+		break;
+	case DIR_EAST:
+		neigh_x = wpos->wx + 1;
+		neigh_y = wpos->wy;
+		break;
+	case DIR_SOUTH:
+		neigh_x = wpos->wx;
+		neigh_y = wpos->wy - 1;
+		break;
+	case DIR_WEST:
+		neigh_x = wpos->wx - 1;
+		neigh_y = wpos->wy;
+		break;
+	}
 
 	/* determine whether to bleed or not */
 	/* if a valid location */
-	if ((neigh_idx > -MAX_WILD) && (neigh_idx < 0)) {
-		/* make sure the level type is defined */
-		wild_info[neigh_idx].type = determine_wilderness_type(neigh_idx);
+	if (!in_bounds_wild(neigh_y, neigh_x)) return FALSE;
 
-		/* check if our neighbor is of a different type */
-#ifdef NEW_DUNGEON
-		if (w_ptr->type != wild_info[neigh_idx].type)
-#else
-		if (wild_info[Depth].type != wild_info[neigh_idx].type)
-#endif
-		{
-			/* determine whether to bleed or not */
-#ifdef NEW_DUNGEON
-			Rand_value = seed_town + (getlevel(wpos) + neigh_idx) * (93754);
-#else
-			Rand_value = seed_town + (Depth + neigh_idx) * (93754);
-#endif
-			tmp = rand_int(2);
-#ifdef NEW_DUNGEON
-			if (tmp && (getlevel(wpos) < neigh_idx)) return TRUE;
-			else if (!tmp && (getlevel(wpos) > neigh_idx)) return TRUE;
-#else
-			if (tmp && (Depth < neigh_idx)) return TRUE;
-			else if (!tmp && (Depth > neigh_idx)) return TRUE;
-#endif
-			else return FALSE;
-		}
+	/* make sure the level type is defined */
+	neighbor.wx = neigh_x;
+	neighbor.wy = neigh_y;
+	neighbor.wz = 0;
+	wild_info[neigh_y][neigh_x].type = determine_wilderness_type(&neighbor);
+
+	/* check if our neighbor is of a different type */
+	if (w_ptr->type != wild_info[neigh_y][neigh_x].type) {
+		/* determine whether to bleed or not */
+		Rand_value = seed_town + (getlevel(wpos) + getlevel(&neighbor)) * (93754);
+		tmp = rand_int(2);
+
+		if (tmp && (getlevel(wpos) < getlevel(&neighbor))) return TRUE;
+		else if (!tmp && (getlevel(wpos) > getlevel(&neighbor))) return TRUE;
 		else return FALSE;
 	}
-	else return FALSE;
-#endif /*if 0 - evil - temp */
+
 	return(FALSE);
 }
-#endif // 0
 
 
 /* to determine whether we bleed into our neighbor or whether our neighbor
@@ -2381,29 +2372,55 @@ static bool should_we_bleed(struct worldpos *wpos, char dir)
 */
 static void bleed_with_neighbors(struct worldpos *wpos)
 {
-#if 0 /* evileye - temp */
-	int c, d, neigh_idx[4], tmp, side[2], start, end, opposite;
+	int c, d, tmp, side[2], start, end, opposite;
 	bool do_bleed[4], bleed_zero[4];
 	int share_point[4][2]; 
 	int old_seed = Rand_value;
 	bool rand_old = Rand_quick;
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
+	struct worldpos neighbor, neighbor_tmp;
+	neighbor.wz = neighbor_tmp.wz = 0;
 
 	/* Hack -- Use the "simple" RNG */
 	Rand_quick = TRUE;
 
-	/* get our neighbors indices */
-	for (c = 0; c < 4; c++) neigh_idx[c] = neighbor_index(Depth,c);
-
 	/* for each neighbor, determine whether to bleed or not */
-	for (c = 0; c < 4; c++) do_bleed[c] = should_we_bleed(Depth,c);
+	for (c = 0; c < 4; c++) do_bleed[c] = should_we_bleed(wpos ,c);
 
 	/* calculate the bleed_zero values */
 	for (c = 0; c < 4; c++) {
-		tmp = c-1; if (tmp < 0) tmp = 3;
+		tmp = c - 1; if (tmp < 0) tmp = 3;
 
-		if ((neigh_idx[tmp] > -MAX_WILD) && (neigh_idx[tmp] < 0) && (neigh_idx[c] > -MAX_WILD) && (neigh_idx[c] < 0)) {
-			if (wild_info[neigh_idx[tmp]].type == wild_info[neigh_idx[c]].type) {
+		/* get our neighbors index */
+		switch (c) {
+		case DIR_NORTH:
+			neighbor.wx = wpos->wx;
+			neighbor.wy = wpos->wy + 1;
+			neighbor_tmp.wx = wpos->wx - 1;
+			neighbor_tmp.wy = wpos->wy;
+			break;
+		case DIR_EAST:
+			neighbor.wx = wpos->wx + 1;
+			neighbor.wy = wpos->wy;
+			neighbor_tmp.wx = wpos->wx;
+			neighbor_tmp.wy = wpos->wy + 1;
+			break;
+		case DIR_SOUTH:
+			neighbor.wx = wpos->wx;
+			neighbor.wy = wpos->wy - 1;
+			neighbor_tmp.wx = wpos->wx + 1;
+			neighbor_tmp.wy = wpos->wy;
+			break;
+		case DIR_WEST:
+			neighbor.wx = wpos->wx - 1;
+			neighbor.wy = wpos->wy;
+			neighbor_tmp.wx = wpos->wx;
+			neighbor_tmp.wy = wpos->wy - 1;
+			break;
+		}
+
+		if (in_bounds_wild(neighbor.wy, neighbor.wx) && in_bounds_wild(neighbor_tmp.wy, neighbor_tmp.wx)) {
+			if (wild_info[neighbor_tmp.wy][neighbor_tmp.wx].type == wild_info[neighbor.wy][neighbor.wx].type) {
 				/* calculate special case bleed zero values. */
 
 				if (do_bleed[c]) {
@@ -2411,14 +2428,14 @@ static void bleed_with_neighbors(struct worldpos *wpos)
 					opposite = tmp - 2; if (opposite < 0) opposite += 4;
 
 					/* if the other one is bleeding towards us */
-					if (should_we_bleed(neigh_idx[tmp], opposite)) bleed_zero[c] = TRUE;
+					if (should_we_bleed(&neighbor_tmp, opposite)) bleed_zero[c] = TRUE;
 					else bleed_zero[c] = FALSE;
 				} else if (do_bleed[tmp]) {
 					/* get the opposite direction from c */
 					opposite = c - 2; if (opposite < 0) opposite += 4;
 
 					/* if the other one is bleeding towards us */
-					if (should_we_bleed(neigh_idx[c], opposite)) bleed_zero[c] = TRUE;
+					if (should_we_bleed(&neighbor, opposite)) bleed_zero[c] = TRUE;
 					else bleed_zero[c] = FALSE;
 				}
 
@@ -2439,15 +2456,35 @@ static void bleed_with_neighbors(struct worldpos *wpos)
 		if (do_bleed[c]) {
 			/* for the left and right sides */
 			for (d = 0; d <= 1; d++) {
+				/* get our neighbors index */
+				switch (side[d]) {
+				case DIR_NORTH:
+					neighbor.wx = wpos->wx;
+					neighbor.wy = wpos->wy + 1;
+					break;
+				case DIR_EAST:
+					neighbor.wx = wpos->wx + 1;
+					neighbor.wy = wpos->wy;
+					break;
+				case DIR_SOUTH:
+					neighbor.wx = wpos->wx;
+					neighbor.wy = wpos->wy - 1;
+					break;
+				case DIR_WEST:
+					neighbor.wx = wpos->wx - 1;
+					neighbor.wy = wpos->wy;
+					break;
+				}
+
 				/* if we have a valid neighbor */
-				if ((neigh_idx[side[d]] < 0) && (neigh_idx[side[d]] > -MAX_WILD)) {
+				if (in_bounds_wild(neighbor.wy, neighbor.wx)) {
 					/* if our neighbor is bleeding in a simmilar way */
-					if (should_we_bleed(neigh_idx[side[d]],c)) {
+					if (should_we_bleed(&neighbor, c)) {
 						/* are we a simmilar type of terrain */
-						if (wild_info[neigh_idx[side[d]]].type == w_ptr->type) {
+						if (wild_info[neighbor.wy][neighbor.wx].type == w_ptr->type) {
 							/* share a point */
 							/* seed the number generator */
-							Rand_value = seed_town + (Depth + neigh_idx[side[d]]) * (89791);
+							Rand_value = seed_town + (getlevel(wpos) + getlevel(&neighbor)) * (89791);
 							share_point[c][d] = rand_int(((c%2) ? 70 : 25));
 						}
 						else share_point[c][d] = 0;
@@ -2474,10 +2511,38 @@ static void bleed_with_neighbors(struct worldpos *wpos)
 			else if (share_point[c][1]) end = share_point[c][1];
 			else end = 0;
 
+			/* get our neighbors index */
+			switch (c) {
+			case DIR_NORTH:
+				neighbor.wx = wpos->wx;
+				neighbor.wy = wpos->wy + 1;
+				neighbor_tmp.wx = wpos->wx - 1;
+				neighbor_tmp.wy = wpos->wy;
+				break;
+			case DIR_EAST:
+				neighbor.wx = wpos->wx + 1;
+				neighbor.wy = wpos->wy;
+				neighbor_tmp.wx = wpos->wx;
+				neighbor_tmp.wy = wpos->wy + 1;
+				break;
+			case DIR_SOUTH:
+				neighbor.wx = wpos->wx;
+				neighbor.wy = wpos->wy - 1;
+				neighbor_tmp.wx = wpos->wx + 1;
+				neighbor_tmp.wy = wpos->wy;
+				break;
+			case DIR_WEST:
+				neighbor.wx = wpos->wx - 1;
+				neighbor.wy = wpos->wy;
+				neighbor_tmp.wx = wpos->wx;
+				neighbor_tmp.wy = wpos->wy - 1;
+				break;
+			}
+
 			if (c < 2) {
-				wild_bleed_level(Depth, neigh_idx[c], c, start, end);
+				wild_bleed_level(wpos->wx, wpos->wy, neighbor.wx, neighbor.wy, c, start, end);
 			} else {
-				wild_bleed_level(Depth, neigh_idx[c], c, end, start);
+				wild_bleed_level(wpos->wx, wpos->wy, neighbor.wx, neighbor.wy, c, end, start);
 			}
 		}
 	}
@@ -2485,7 +2550,6 @@ static void bleed_with_neighbors(struct worldpos *wpos)
 	/* hack -- restore the random number generator */
 	Rand_value = old_seed;
 	Rand_quick = rand_old;
-#endif /* if 0 - temp */
 }
 
 static void flood(char *buf, int x, int y, int w, int h) {
@@ -2893,9 +2957,11 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 		}
 	}
 
+#ifndef SIMPLE_WARNING_BLEED
 	/* to make the borders between wilderness levels more seamless, "bleed"
 	   the levels together */
 	bleed_with_neighbors(wpos);
+#endif
 
 	/* hack -- reseed, just to make sure everything stays consistent. */
 	Rand_value = seed_town + (wpos->wx+wpos->wy*MAX_WILD_X) * 287 + 490836;
@@ -2982,7 +3048,9 @@ void wilderness_gen(struct worldpos *wpos)
 	int i, y, x;
 	cave_type *c_ptr;
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
+#ifdef SIMPLE_WARNING_BLEED
 	wilderness_type *w_ptr2;
+#endif
 	cave_type **zcave;
 	struct dungeon_type *d_ptr = NULL;
 	if(!(zcave = getcave(wpos))) return;
@@ -3116,7 +3184,7 @@ void wilderness_gen(struct worldpos *wpos)
 		}
 	}
 
-
+#ifdef SIMPLE_WARNING_BLEED /* use the real bleed stuff again instead of bleed_warn_feat() silliness */
 	/* Indicate certain adjacent wilderness terrain types, so players
 	   won't suddenly get stuck in lava or mountains - C. Blue */
 	for (x = 1; x < MAX_WID - 1; x++) {
@@ -3155,6 +3223,7 @@ void wilderness_gen(struct worldpos *wpos)
 			bleed_warn_feat(w_ptr2->type, c_ptr);
 		}
 	}
+#endif
 
 	/* Set if we have generated the level before (unused now though, that
 	   whether or not to respawn objects and monsters is decided by distinct
