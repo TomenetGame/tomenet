@@ -771,8 +771,15 @@ static void wr_extra(int Ind)
 
 	wr_u32b(p_ptr->gold_picked_up);
 
+#if 0 /* INSTARES */
+	wr_byte(p_ptr->insta_res);
+
+	/* Future use */
+	for (i = 0; i < 38; i++) wr_byte(0);
+#else
 	/* Future use */
 	for (i = 0; i < 39; i++) wr_byte(0);
+#endif
 
         /* Toggle for possible automatic save-game updates
            (done via script login-hook, eg custom.lua) - C. Blue */

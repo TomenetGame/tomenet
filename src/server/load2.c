@@ -1602,8 +1602,16 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
         if (!older_than(4, 4, 24)) rd_u32b(&p_ptr->gold_picked_up);
         else strip_bytes(4);
 
+#if 0 /* INSTARES */
+        if (!older_than(4, 4, 24)) rd_byte(&p_ptr->insta_res);
+        else strip_bytes(1);
+
+	/* Future use */
+	strip_bytes(38);
+#else
 	/* Future use */
 	strip_bytes(39);
+#endif
 
 	/* Toggle for possible automatic save-game updates
 	   (done via script login-hook, eg custom.lua) - C. Blue */
