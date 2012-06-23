@@ -5730,14 +5730,33 @@ bool backup_estate(void) {
 	return TRUE;
 }
 
+/* helper function for restore_estate():
+   copy all remaining data from our save file to the temporary file
+   and turn the temporary file into the new save file. */
+void relay_estate(char *buf, char *buf2, FILE *fp, FILE *fp_tmp) {
+	char c;
+
+	/* relay the remaining data, if any */
+	while ((c = fgetc(fp)) != EOF) fputc(c, fp_tmp);
+
+	/* done */
+	fclose(fp);
+	fclose(fp_tmp);
+
+	/* erase old save file, make temporary file the new save file */
+	remove(buf);
+	rename(buf2, buf);
+}
+
 /* get back the backed-up real estate from files */
 void restore_estate(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	FILE *fp, *fp_tmp;
 	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], version[MAX_CHARS];
-	int i;
-	u32b au;
-	object_type *o_ptr;
+	char data[4];
+	unsigned long au;
+	object_type forge, *o_ptr = &forge;
+	bool gained_anything = FALSE;
 
 	s_printf("Restoring real estate for %s...\n", p_ptr->name);
 
@@ -5747,15 +5766,16 @@ void restore_estate(int Ind) {
 	/* build path name and try to create/append to player's backup file */
 	path_build(buf, MAX_PATH_LENGTH, buf2, p_ptr->basename);
 	if ((fp = fopen(buf, "r")) == NULL) {
-		s_printf("  error: No file '%s' available to request from.\nfailed.\n", buf);
-		msg_print(Ind, "No goods or money available to request.");
+		s_printf("  error: No file '%s' exists to request from.\nfailed.\n", buf);
+		msg_print(Ind, "\377yNo goods or money stored to request.");
 		return;
 	}
+	s_printf("  opened file '%s'.\n", buf);
 
 	/* Try to read version string */
 	if (fgets(version, MAX_CHARS, fp) == NULL) {
-		s_printf("  error: Nothing left.\nfailed.\n");
-		msg_print(Ind, "No goods or money left to request.");
+		s_printf("  error: File is empty.\nfailed.\n");
+		msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
 		fclose(fp);
 		return;
 	}
@@ -5767,7 +5787,7 @@ void restore_estate(int Ind) {
 	strcat(buf2, ".$$$");
 	if ((fp_tmp = fopen(buf2, "w")) == NULL) {
     		s_printf("  error: cannot open temporary file '%s'.\nfailed.\n", buf2);
-    		msg_print(Ind, "An error occurred, please contact an administrator.");
+    		msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
     		fclose(fp);
 		return;
 	}
@@ -5775,28 +5795,91 @@ void restore_estate(int Ind) {
 	/* relay to temporary file */
 	fprintf(fp_tmp, "%s\n", version);
 
-#if 0
-	/* scan file for either house price (AU:) or object (OB:) */
+	msg_print(Ind, "\377yChecking for money and items from estate stored for you...");
+	while (TRUE) {
+		/* scan file for either house price (AU:) or object (OB:) */
+		if (!fread(data, sizeof(char), 3, fp)) {
+			if (!gained_anything) {
+				s_printf("  nothing to request.\ndone.\n");
+				msg_print(Ind, "\377yNo goods or money left to request.");
+			} else {
+				s_printf("done.\n");
+				msg_print(Ind, "\377yYou received everything that was stored for you.");
+			}
+			relay_estate(buf, buf2, fp, fp_tmp);
+			return;
+		}
+		data[3] = '\0';
 
-	/* get house price from backup file */
-	fscanf(fp, "AU:%d\n", au);
+		/* get house price from backup file */
+		if (!strcmp(data, "AU:")) {
+			if (fscanf(fp, "%lu\n", &au) == EOF) {
+				s_printf("  error: Corrupted AU: line.\n");
+				msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
+				relay_estate(buf, buf2, fp, fp_tmp);
+				return;
+			}
 
-	/* give gold to player if it doesn't overflow,
-	   otherwise relay rest to temporary file, swap and exit */
-	gain_au(Ind, au);
+			/* give gold to player if it doesn't overflow,
+			   otherwise relay rest to temporary file, swap and exit */
+			if (!gain_au(Ind, au, FALSE, FALSE)) {
+				msg_print(Ind, "\377yDrop/deposite some gold to be able to receive more gold.");
 
-	/* scan house contents and add them to his backup file */
-	/* get object from backup file */
-	fscanf(fp, "OB:");
-	fread(o_ptr, sizeof(*o_ptr), 1, fp);
+				/* write failed gold gain back into new buffer file */
+				fprintf(fp_tmp, "AU:%lu\n", au);
 
-	/* give item to player if he has space left,
-	   otherwise relay rest to temporary file, swap and exit */
-	inven_carry(Ind, o_ptr);
+				relay_estate(buf, buf2, fp, fp_tmp);
+				return;
+			}
+			gained_anything = TRUE;
+			s_printf("  gained %d Au.\n", au);
+			msg_format(Ind, "You have received %d gold pieces.", au);
+			continue;
+		}
+		/* get object from backup file */
+		else if (!strcmp(data, "OB:")) {
+			fread(o_ptr, sizeof(*o_ptr), 1, fp);
+
+			/* is it a pile of gold? */
+			if (o_ptr->tval == TV_GOLD) {
+				/* give gold to player if it doesn't overflow,
+				   otherwise relay rest to temporary file, swap and exit */
+				au = o_ptr->pval;
+				if (!gain_au(Ind, au, FALSE, FALSE)) {
+					msg_print(Ind, "\377yDrop/deposite some gold to be able to receive more gold.");
+
+					/* write failed gold gain back into new buffer file */
+#if 0 /* just use fake 'AU:' entry? */
+					fprintf(fp_tmp, "AU:%d\n", au);
+#else /* use original format, ie 'object_type' */
+					fprintf(fp_tmp, "OB:");
+        				fwrite(o_ptr, sizeof(*o_ptr), 1, fp_tmp);
 #endif
 
-	/* done for now */
-	fclose(fp_tmp);
-	fclose(fp);
-	s_printf("done.\n");
+					relay_estate(buf, buf2, fp, fp_tmp);
+					return;
+				}
+				gained_anything = TRUE;
+				s_printf("  gained %d Au.\n", au);
+				msg_format(Ind, "You have received %d gold pieces.", au);
+				continue;
+			}
+
+			/* give item to player if he has space left,
+			   otherwise relay rest to temporary file, swap and exit */
+			if (!inven_carry_okay(Ind, o_ptr)) {
+				msg_print(Ind, "\377yYour inventory is full, make some space to receive more items.");
+
+				/* write failed item back into new buffer file */
+				fprintf(fp_tmp, "OB:");
+    				fwrite(o_ptr, sizeof(*o_ptr), 1, fp_tmp);
+
+				relay_estate(buf, buf2, fp, fp_tmp);
+				return;
+			}
+			gained_anything = TRUE;
+			inven_item_describe(Ind, inven_carry(Ind, o_ptr));
+			continue;
+		}
+	}
 }

@@ -969,3 +969,4 @@ int dungeon_bonus[MAX_D_IDX * 2];
 #endif
 
 bool censor_swearing = TRUE;
+bool allow_requesting_estate = FALSE;

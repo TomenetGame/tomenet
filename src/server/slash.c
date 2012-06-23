@@ -3401,6 +3401,11 @@ void do_slash_cmd(int Ind, char *message)
 		}
 		/* request back real estate that was previously backed up via /backup_estate */
 		else if (prefix(message, "/request_estate") || prefix(message, "/request")) {
+			if (!allow_requesting_estate) {
+				msg_print(Ind, "This command is currently not available.");
+				return;
+			}
+
 			restore_estate(Ind);
 			return;
 		}
