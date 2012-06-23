@@ -6162,7 +6162,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 	cave_type *c_ptr = NULL;
 	struct dna_type *dna;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Ghosts cannot buy houses */
 	if ((p_ptr->ghost) && !is_admin(p_ptr)) {
@@ -6210,7 +6210,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 		/* Check for already-owned house */
 		if (dna->owner) {
 			if (access_door(Ind, dna, FALSE) || admin_p(Ind)) {
-				if(p_ptr->dna == dna->creator){
+				if (p_ptr->dna == dna->creator) {
 					if (!gain_au(Ind, price / 2, FALSE, FALSE)) return;
 
 					/* sell house */
@@ -6234,8 +6234,10 @@ void do_cmd_purchase_house(int Ind, int dir)
 
 				/* Erase house contents */
 				for (i = 0; i < num_houses; i++)
-					if (houses[i].dx == x && houses[i].dy == y && inarea(&houses[i].wpos, &p_ptr->wpos))
+					if (houses[i].dx == x && houses[i].dy == y && inarea(&houses[i].wpos, &p_ptr->wpos)) {
 						kill_house_contents(&houses[i]);
+						break;
+					}
 
 				/* take note of door colour change */
 				c_ptr->feat = FEAT_HOME; /* make sure door is closed, in case it was open when we sold it */
@@ -6249,7 +6251,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 			msg_print(Ind,"You do not have enough gold!");
 			return;
 		}
-		if(cfg.houses_per_player && (p_ptr->houses_owned >= ((p_ptr->lev > 50 ? 50 : p_ptr->lev) / cfg.houses_per_player)) && !is_admin(p_ptr)) {
+		if (cfg.houses_per_player && (p_ptr->houses_owned >= ((p_ptr->lev > 50 ? 50 : p_ptr->lev) / cfg.houses_per_player)) && !is_admin(p_ptr)) {
 			if ((int)(p_ptr->lev / cfg.houses_per_player) == 0)
 			msg_format(Ind, "You need to be at least level %d to buy a house!", cfg.houses_per_player);
 			else
@@ -6268,8 +6270,10 @@ void do_cmd_purchase_house(int Ind, int dir)
 
 		/* Erase house contents */
 		for (i = 0; i < num_houses; i++)
-			if (houses[i].dx == x && houses[i].dy == y && inarea(&houses[i].wpos, &p_ptr->wpos))
+			if (houses[i].dx == x && houses[i].dy == y && inarea(&houses[i].wpos, &p_ptr->wpos)) {
 				kill_house_contents(&houses[i]);
+				break;
+			}
 
 		/* Redraw */
 		p_ptr->redraw |= (PR_GOLD);

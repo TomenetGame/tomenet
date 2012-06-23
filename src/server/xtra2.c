@@ -5855,6 +5855,18 @@ void kill_house_contents(house_type *h_ptr){
 	h_ptr->colour = 0;
 	fill_house(h_ptr, FILL_UNPAINT, NULL);
 #endif
+
+        /* hack: reset size/price of extendable (trad) houses */
+        if ((h_ptr->flags & HF_TRAD)) {
+                int area = (h_ptr->coords.rect.width - 2) * (h_ptr->coords.rect.height - 2);
+        	h_ptr->stock_size = (area >= STORE_INVEN_MAX) ? STORE_INVEN_MAX : area;
+
+        	/* note: trad houses currently can't have sizes > 30 (compare wild.c),
+        	   so it's sufficient to add term for medium houses + term for small houses,
+        	   ignoring the term for large houses. */
+                h_ptr->dna->price = area*area*33
+            	    + area * (900 + rand_int(200));
+        }
 }
 
 void kill_houses(int id, byte type){
