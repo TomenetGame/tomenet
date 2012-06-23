@@ -3606,6 +3606,8 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf)
 				s_printf("ARTIFACT: 'Pint of Ale of the Khazad' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
 			if (o_ptr->name1 == ART_BILBO)
 				s_printf("ARTIFACT: 'Picklock of Bilbo Baggins' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+			if (o_ptr->name1 == ART_MIRROROFGLORY)
+				s_printf("ARTIFACT: 'Mirror of Glory' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
 
 			/* Success */
 			return (TRUE);
@@ -6042,7 +6044,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	/* Hack - No l00t in Valinor */
 	if (getlevel(wpos) == 200) return;
 
-#ifdef RPG_SERVER /* no objects are generated in Training Tower */                                        
+#ifdef RPG_SERVER /* no objects are generated in Training Tower */
 	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0 && cave_set_quietly) return;
 #endif
 
@@ -8508,7 +8510,7 @@ u32b make_resf(player_type *p_ptr) {
 	if (!cfg.winners_find_randarts) f |= ~RESF_NOTRUEART; /* monsters killed by [fallen] winners can drop no true arts but randarts only instead? */
 	if (p_ptr->total_winner ||
 	    (p_ptr->once_winner && p_ptr->lev >= 50 && cfg.fallenkings_etiquette))
-		f |= RESF_LIFE; /* allowed to find +LIFE artifacts */
+		f |= RESF_LIFE; /* allowed to find +LIFE artifacts; hack: and WINNERS_ONLY artifacts too */
 
 	/* special mode handling */
 	if (p_ptr->mode & MODE_PVP) f |= RESF_NOTRUEART; /* PvP mode chars can't use true arts, since true arts are for kinging! */
