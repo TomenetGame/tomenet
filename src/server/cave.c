@@ -4099,19 +4099,21 @@ static void wild_display_map(int Ind)
 			
 			switch (type)
 			{
-				case WILD_LAKE: tc = '~'; ta=TERM_BLUE; break;
-				case WILD_GRASSLAND: tc = '.'; ta= TERM_GREEN; break;
+				case WILD_LAKE: tc = '~'; ta = TERM_BLUE; break;
+				case WILD_GRASSLAND: tc = '.'; ta = TERM_GREEN; break;
 				case WILD_FOREST: tc = '*'; ta = TERM_GREEN; break;
 				case WILD_SWAMP:  tc = '%'; ta = TERM_VIOLET; break;
 				case WILD_DENSEFOREST: tc = '*'; ta = TERM_L_DARK; break;
-				case WILD_WASTELAND: tc = '.'; ta=TERM_UMBER; break;
+				case WILD_WASTELAND: tc = '.'; ta = TERM_UMBER; break;
 				case WILD_TOWN: tc = 'T'; ta = TERM_YELLOW; break;
 				case WILD_CLONE: tc = 'C'; ta = TERM_RED; break;
 				case WILD_MOUNTAIN: tc = '^'; ta = TERM_L_DARK; break;
 				case WILD_VOLCANO: tc = '^'; ta = TERM_RED; break;
 				case WILD_RIVER: tc = '~'; ta = TERM_L_BLUE; break;
-				case WILD_COAST: tc = ','; ta = TERM_YELLOW; break;
+				case WILD_COAST: tc = ','; ta = TERM_L_UMBER; break;//TERM_YELLOW
 				case WILD_OCEAN: tc = '%'; ta = TERM_BLUE; break;
+				case WILD_DESERT: tc = '.'; ta = TERM_YELLOW; break;
+				case WILD_ICE: tc = '.'; ta = TERM_WHITE; break;
 				case -1: tc = ' '; ta = TERM_DARK; break;
 				default: tc = 'O'; ta = TERM_YELLOW; break;
 			} 

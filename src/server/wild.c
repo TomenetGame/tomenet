@@ -241,10 +241,18 @@ void wild_bulldoze()
 	int x,y;
 
 	/* inefficient? thats an understatement */
-	for(y=0;y<MAX_WILD_Y;y++){
-		for(x=0;x<MAX_WILD_X;x++){
-			struct wilderness_type *w_ptr=&wild_info[y][x];
-			if(w_ptr->radius<=2 && (w_ptr->type==WILD_WASTELAND || w_ptr->type==WILD_DENSEFOREST || w_ptr->type==WILD_OCEAN || w_ptr->type==WILD_RIVER || w_ptr->type==WILD_VOLCANO || w_ptr->type==WILD_MOUNTAIN)){
+	for(y = 0; y < MAX_WILD_Y; y++){
+		for(x = 0; x < MAX_WILD_X; x++){
+			struct wilderness_type *w_ptr = &wild_info[y][x];
+			if (w_ptr->radius <= 2 &&
+			    (w_ptr->type == WILD_WASTELAND ||
+			    w_ptr->type == WILD_DESERT ||
+			    w_ptr->type == WILD_ICE ||
+			    w_ptr->type == WILD_DENSEFOREST ||
+			    w_ptr->type == WILD_OCEAN ||
+			    w_ptr->type == WILD_RIVER ||
+			    w_ptr->type == WILD_VOLCANO ||
+			    w_ptr->type == WILD_MOUNTAIN)) {
 				wild_info[y][x].type = WILD_GRASSLAND;
 			}
 		}
@@ -588,6 +596,45 @@ static bool wild_monst_aux_wasteland(int r_idx)
 
 }
 
+/*
+ * Helper function for wild_add_monster
+ */
+static bool wild_monst_aux_desert(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* borrow from wasteland monsters */
+//	if (r_ptr->flags8 & RF8_WILD_WASTE) return TRUE;
+
+	/* no aquatic life here */
+	if (r_ptr->flags7 & RF7_AQUATIC) return FALSE;
+
+	/* monsters that don't mind dry environment */
+	if (strchr("acsuwBCFIJKRS", r_ptr->d_char)) return TRUE;
+
+	return FALSE;
+}
+
+/*
+ * Helper function for wild_add_monster
+ */
+static bool wild_monst_aux_ice(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* no cold-susceptible monsters */
+	if (r_ptr->flags3 & RF3_SUSCEP_COLD) return FALSE;
+
+	/* monsters that don't mind cold environment */
+	if (r_ptr->flags3 & RF3_IM_COLD) return TRUE;
+	if (r_ptr->flags9 & RF9_RES_COLD) return TRUE;
+
+	/* borrow from wasteland monsters */
+//	if (r_ptr->flags8 & RF8_WILD_WASTE) return TRUE;
+
+	return FALSE;
+}
+
 #if 0 /* looks like these aren't used - mikaelh */
 static bool wild_monst_aux_ocean(int r_idx)
 {
@@ -631,8 +678,10 @@ void set_mon_num_hook_wild(struct worldpos *wpos)
 		case WILD_SWAMP: get_mon_num_hook = wild_monst_aux_swamp; break;
 		case WILD_DENSEFOREST: get_mon_num_hook = wild_monst_aux_denseforest; break;
 		case WILD_WASTELAND: get_mon_num_hook = wild_monst_aux_wasteland; break;
+		case WILD_DESERT: get_mon_num_hook = wild_monst_aux_desert; break;
+		case WILD_ICE: get_mon_num_hook = wild_monst_aux_ice; break;
 		case WILD_TOWN: get_mon_num_hook = wild_monst_aux_town; break;
-		default: get_mon_num_hook = dungeon_aux;	
+		default: get_mon_num_hook = dungeon_aux;
 	}
 }
 
@@ -1676,6 +1725,8 @@ int determine_wilderness_type(struct worldpos *wpos)
 	pleasing.
 	*/
 	if ((rand_int(100) <  101) && (w_ptr->type != WILD_CLONE)) w_ptr->type = WILD_CLONE;
+	else if (rand_int(100) < 1) w_ptr->type = WILD_ICE;
+	else if (rand_int(100) < 1) w_ptr->type = WILD_DESERT;
 	else if (rand_int(100) < 3) w_ptr->type = WILD_WASTELAND;
 	else if (rand_int(100) < 5) w_ptr->type = WILD_DENSEFOREST;
 	else if (rand_int(100) < 40) w_ptr->type = WILD_FOREST;
@@ -1722,6 +1773,12 @@ int determine_wilderness_type(struct worldpos *wpos)
 				/* no wastelands next to town */
 				case WILD_WASTELAND :
 					w_ptr->type = WILD_GRASSLAND; break;
+				/* no deserts next to town */
+				case WILD_DESERT :
+					w_ptr->type = WILD_GRASSLAND; break;
+				/* no ice next to town */
+				case WILD_ICE :
+					w_ptr->type = WILD_GRASSLAND; break;
 				/* dense forest is rarly next to town */
 				case WILD_DENSEFOREST :
 					if (rand_int(100) < 80) w_ptr->type = WILD_GRASSLAND; break;
@@ -1748,13 +1805,18 @@ typedef struct terrain_type terrain_type;
 struct terrain_type
 {
 	int type;
+
 	int grass;
 	int mud;
 	int water;
 	int tree;
+
 	int deadtree;
 	int mountain;
 	int lava;
+	int sand;
+
+	int ice;
 	int dwelling;
 	int hotspot;
 	int monst_lev;
@@ -1764,17 +1826,14 @@ struct terrain_type
 /* determines terrain composition. seperated from gen_wilderness_aux for bleed functions.*/
 static void init_terrain(terrain_type *t_ptr, int radius)
 {
-	/* not many terrain types have dead trees */
-	t_ptr->deadtree = t_ptr->mud = t_ptr->mountain = t_ptr->lava = 0;
+	/* init all at zero */
+	*t_ptr = (terrain_type) {t_ptr->type,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0};
 
 	switch (t_ptr->type) {
 		/* wasteland */
 		case WILD_VOLCANO:
 		{
 			t_ptr->grass = rand_int(100);
-			t_ptr->tree = 0;
-			t_ptr->water = 0;
-			t_ptr->dwelling = 0;
 			t_ptr->deadtree = rand_int(4);
 			t_ptr->mountain = rand_int(100)+450;
 			t_ptr->lava = rand_int(150)+800;
@@ -1786,10 +1845,9 @@ static void init_terrain(terrain_type *t_ptr, int radius)
 		{
 			t_ptr->grass = rand_int(100);
 			t_ptr->tree = rand_int(5);
-			t_ptr->water = 0;
-			t_ptr->dwelling = 0;
 			t_ptr->deadtree = rand_int(4);
 			t_ptr->mountain = rand_int(100)+850;
+			t_ptr->sand = rand_int(1);
 			t_ptr->lava = rand_int(150)+200;
 			t_ptr->hotspot = rand_int(15) + 4;
 			t_ptr->monst_lev = 20 + (radius / 2); break;
@@ -1798,12 +1856,26 @@ static void init_terrain(terrain_type *t_ptr, int radius)
 		case WILD_WASTELAND:
 		{
 			t_ptr->grass = rand_int(100);
-			t_ptr->tree = 0;
-			t_ptr->water = 0;
-			t_ptr->dwelling = 0;
+			t_ptr->sand = rand_int(2);
 			t_ptr->deadtree = rand_int(4);
 			t_ptr->hotspot = rand_int(15) + 4;
 			t_ptr->monst_lev = 20 + (radius / 2); break;
+			break;
+		}
+		case WILD_DESERT:
+		{
+			t_ptr->sand = rand_int(10) + 990;
+			t_ptr->mountain = rand_int(1);
+			t_ptr->hotspot = rand_int(2);
+			t_ptr->monst_lev = 30 + (radius / 2); break;
+			break;
+		}
+		case WILD_ICE:
+		{
+			t_ptr->ice = 1000;
+			t_ptr->mountain = rand_int(1);
+			t_ptr->hotspot = rand_int(2);
+			t_ptr->monst_lev = 30 + (radius / 2); break;
 			break;
 		}
 		/*  dense forest */
@@ -1904,7 +1976,9 @@ static unsigned char terrain_spot(terrain_type * terrain)
 	if (rand_int(1000) < terrain->water) feat = FEAT_DEEP_WATER;
 	if (rand_int(1000) < terrain->mud) feat = FEAT_MUD;
 	if (rand_int(1000) < terrain->mountain) feat = FEAT_MOUNTAIN;
-	if (rand_int(1000) < terrain->lava) feat = magik(30)?FEAT_DEEP_LAVA:FEAT_SHAL_LAVA;
+	if (rand_int(1000) < terrain->lava) feat = magik(30) ? FEAT_DEEP_LAVA : FEAT_SHAL_LAVA;
+	if (rand_int(1000) < terrain->sand) feat = FEAT_SAND;
+	if (rand_int(1000) < terrain->ice) feat = magik(95) ? FEAT_SNOW : (magik(80) ? FEAT_ICE : FEAT_ICE_WALL);
 
 	return(feat);
 }
@@ -2269,7 +2343,7 @@ static bool should_we_bleed(struct worldpos *wpos, char dir)
    bleeds into us, we seed the random number generator with our combined
    depth.  If the resulting number is 0, we bleed into the greater (negative
    wise) level.  Other wise we bleed into the lesser (negative wise) level.
-   
+
    I added in shared points.... turning this function into something extremly
    gross. This will be extremly anoying to get working. I wish I had a simpler
    way of doing this.
@@ -2314,9 +2388,9 @@ static void bleed_with_neighbors(struct worldpos *wpos)
 
 					/* if the other one is bleeding towards us */
 					if (should_we_bleed(neigh_idx[c], opposite)) bleed_zero[c] = TRUE;
-					else bleed_zero[c] = FALSE;				
+					else bleed_zero[c] = FALSE;
 				}
-				
+
 				else bleed_zero[c] = FALSE;
 			}
 			else bleed_zero[c] = TRUE;
@@ -2355,8 +2429,8 @@ static void bleed_with_neighbors(struct worldpos *wpos)
 			share_point[c][0] = 0; 
 			share_point[c][1] = 0;
 		}
-	}	
-	
+	}
+
 	/* do the bleeds */
 	for (c = 0; c < 4; c++) {
 		tmp = c+1; if (tmp > 3) tmp = 0;
@@ -3061,17 +3135,25 @@ void wilderness_gen(struct worldpos *wpos)
 }
 
 
-#define MAXISLAND 5	/* maximum island size */
+#define MAXISLAND 5	/* maximum 'generic' terrain type island size */
+#define SEADENSITY 96	/* land/sea ratio */
+
 #define MAXMOUNT 3	/* maximum mountain range size */
 #define MAXWOOD 3	/* maximum forest size */
 #define MAXWASTE 3	/* maximum wasteland size */
 #define MAXLAKE 3	/* maximum lake size */
-#define SEADENSITY 96	/* land/sea ratio */
+#define MAXISLANDS 4	/* maximum water-related island size */
+#define MAXDESERT 5	/* maximum desert size */
+#define MAXICE 5	/* maximum desert size */
+
+#define RIVERS 512	/* rivers (don't have a MAX size limiter) */
 #define ROCKY 256	/* mountains */
 #define WOODY 256	/* trees */
 #define WASTE 512	/* wasteland */
-#define RIVERS 512	/* rivers */
 #define LAKES 512	/* lakes */
+#define ISLANDS 512	/* water-related islands */
+#define DESERT 1024	/* desert */
+#define ICE 3072	/* ice */
 
 static void island(int y, int x, unsigned char type, unsigned char fill, int size) {
 	int ranval;
@@ -3166,16 +3248,42 @@ static void addwaste() {
 	}
 }
 
+static void adddesert() {
+	int i, p;
+	int x, y;
+	p = (MAX_WILD_Y * MAX_WILD_X) / DESERT;
+	for(i = 0; i < p; i++){
+		do{
+			x = rand_int(MAX_WILD_X - 1);
+			y = rand_int(MAX_WILD_Y - 1);
+		}while(wild_info[y][x].type != WILD_GRASSLAND);
+		island(y, x, WILD_DESERT, WILD_GRASSLAND, rand_int((1<<MAXDESERT) - 1));
+	}
+}
+
+static void addice() {
+	int i, p;
+	int x, y;
+	p = (MAX_WILD_Y * MAX_WILD_X) / ICE;
+	for(i = 0; i < p; i++){
+		do{
+			x = rand_int(MAX_WILD_X - 1);
+			y = rand_int(MAX_WILD_Y - 1);
+		}while(wild_info[y][x].type != WILD_GRASSLAND);
+		island(y, x, WILD_ICE, WILD_GRASSLAND, rand_int((1<<MAXICE) - 1));
+	}
+}
+
 static void addislands() {
 	int i, p;
 	int x, y;
-	p = (MAX_WILD_Y * MAX_WILD_X) / 512;
+	p = (MAX_WILD_Y * MAX_WILD_X) / ISLANDS;
 	for(i = 0; i < p; i++){
 		do{
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
 		}while(wild_info[y][x].type != WILD_OCEANBED1);
-		island(y, x, WILD_GRASSLAND, WILD_OCEANBED1, rand_int((1<<4) - 1));
+		island(y, x, WILD_GRASSLAND, WILD_OCEANBED1, rand_int((1<<MAXISLANDS) - 1));
 	}
 }
 
@@ -3308,6 +3416,9 @@ void genwild() {
 	addforest();
 	addlakes();
 	addwaste();
+	adddesert();
+	addice();
+
 	/* Restore random generator */
 	Rand_quick=rand_old;
 	Rand_value = old_seed;

@@ -1690,9 +1690,10 @@
 #define FEAT_QUEST3             0x4D
 #define FEAT_QUEST4             0x4E
 
-/* Features 0x4F - 0x53 -- unused */
+/* Features 0x4F - 0x52 -- unused */
 
 /* Additional terrains */
+#define FEAT_SNOW               0x53
 #define FEAT_SHAL_WATER         0x54
 #define FEAT_DEEP_LAVA          0x55
 #define FEAT_SHAL_LAVA          0x56
@@ -5177,6 +5178,8 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define		WILD_MOUNTAIN		14
 #define		WILD_DENSEFOREST	15
 #define		WILD_OCEANBED2		16 /* temporary */
+#define		WILD_DESERT		17 /* new, similar to WILD_WASTELAND probably */
+#define		WILD_ICE		18 /* new, polar style */
 #define		WILD_SWAMP		20
 
 /* different buildings */
