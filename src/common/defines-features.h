@@ -115,8 +115,10 @@
 #endif
 
 #ifdef TEST_SERVER
-/* Enable the instant resurrection feature */
- #define ENABLE_INSTANT_RES
+ #define WILDERNESS_NEW_TERRAINS	/* New wilderness types DESERT and ICE. ***WARNING***: Will require erasing the current 'server' savefile! */
+
+
+ #define ENABLE_INSTANT_RES	/* Enable the instant resurrection feature */
 
  #define ENABLE_ASSASSINATE	/* experimental fighting technique for rogues - devalues Backstabbing too much probably */
 

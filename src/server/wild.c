@@ -23,7 +23,9 @@
 
 
 /* HACK: Disable new terrain types DESERT/WILD and other rng-affecting stuff? */
-#define __DISABLE_NEW
+#ifndef WILDERNESS_NEW_TERRAINS
+ #define __DISABLE_NEW
+#endif
 
 
 /* Use a simple kind of bleeding just to indicate dangerous terrain ahead,
