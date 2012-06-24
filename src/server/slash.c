@@ -628,7 +628,7 @@ void do_slash_cmd(int Ind, char *message)
 				if (((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr)) ||
 				    like_artifact_p(o_ptr))
 					resist = TRUE;
-#if 0 /* too easy! */		
+#if 0 /* too easy! */
 				/* Hack -- filter by value */
 				if (k && (!object_known_p(Ind, o_ptr) ||
 				    object_value_real(Ind, o_ptr) > k))
@@ -636,7 +636,10 @@ void do_slash_cmd(int Ind, char *message)
 #endif
 
 				/* Avoid being somewhat spammy, since arts can't be destroyed */
-				if (artifact_p(o_ptr)) continue;
+				if (like_artifact_p(o_ptr)) continue;
+
+				/* guild keys cannot be destroyed */
+				if (o_ptr->tval == TV_KEY) continue;
 
 				do_cmd_destroy(Ind, i, o_ptr->number);
 				if (!resist) i--;
@@ -1041,8 +1044,9 @@ void do_slash_cmd(int Ind, char *message)
 					extract_energy[p_ptr->pspeed] / 10,
 					extract_energy[p_ptr->pspeed]
 					- (extract_energy[p_ptr->pspeed] / 10) * 10);
-
+			
 			if (get_skill(p_ptr, SKILL_DODGE)) use_ability_blade(Ind);
+			//if (get_skill(p_ptr, SKILL_DODGE) || p_ptr->tim_dodge) use_ability_blade(Ind); //Kurzel!!
 
 #if 0 /* this is already displayed to the left */
 			/* Insanity warning (better message needed!) */
@@ -1238,7 +1242,6 @@ void do_slash_cmd(int Ind, char *message)
 					(RUNE_DMG*RADVANCE_COST*RCLOUD_BASE));
 
 				lev = get_skill(p_ptr, SKILL_RUNEMASTERY);
-
 #ifdef ALTERNATE_DMG
 				if (lev >= RBARRIER) msg_print(Ind, "\377BYou are able to cast with your full potential");
 #endif
@@ -1252,8 +1255,58 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "\377BFailure rate: 0.1%");
 #endif
 				lev = p_ptr->lev; //restore ^^"
-			}
+			}		
+#else //New Runemastery - Kurzel
+				/* New Runemaster /ex info */
+				if (p_ptr->rcraft_empower) msg_print(Ind, "\377WYour flux projections are empowered to \377Rplasma\377W.");
+				if (p_ptr->rcraft_upkeep) {
+					msg_format(Ind, "\377WYour total upkeep is: \377o%d%%", p_ptr->rcraft_upkeep);
+					if (p_ptr->runetraps) msg_format(Ind, "\377WYou are sustaining \377o%d \377Wrune traps.", p_ptr->runetraps);
+					if (p_ptr->rcraft_dig) msg_print(Ind, "\377WYour ability to \377stunnel \377Wis enhanced.");
+					if (p_ptr->rcraft_regen) msg_print(Ind, "\377WYour \377Gregeneration \377Wis enhanced.");
+					if (p_ptr->rcraft_brand) { 
+						msg_print(Ind, "\377WYou are branded with:");
+						if (p_ptr->rcraft_brand == BRAND_CONF) msg_print(Ind, "\377UConfusion");
+						if (p_ptr->rcraft_brand == BRAND_VORP) msg_print(Ind, "\377DAnnihilation");
+					}
+					if (p_ptr->rcraft_attune) { 
+						msg_print(Ind, "\377WYour armament is attuned with:");
+						if ((p_ptr->rcraft_attune & R_ACID) == R_ACID) msg_print(Ind, "\377sAcid");
+						if ((p_ptr->rcraft_attune & R_ELEC) == R_ELEC) msg_print(Ind, "\377bElectricity");
+						if ((p_ptr->rcraft_attune & R_FIRE) == R_FIRE) msg_print(Ind, "\377rFire");
+						if ((p_ptr->rcraft_attune & R_COLD) == R_COLD) msg_print(Ind, "\377wCold");
+						if ((p_ptr->rcraft_attune & R_POIS) == R_POIS) msg_print(Ind, "\377gPoison");
+					}
+					if (p_ptr->rcraft_repel) { 
+						msg_print(Ind, "\377WYour raiment is imbued with:");
+						if ((p_ptr->rcraft_repel & R_ACID) == R_ACID) msg_print(Ind, "\377sAcid");
+						if ((p_ptr->rcraft_repel & R_ELEC) == R_ELEC) msg_print(Ind, "\377bElectricity");
+						if ((p_ptr->rcraft_repel & R_FIRE) == R_FIRE) msg_print(Ind, "\377rFire");
+						if ((p_ptr->rcraft_repel & R_COLD) == R_COLD) msg_print(Ind, "\377wCold");
+						if ((p_ptr->rcraft_repel & R_POIS) == R_POIS) msg_print(Ind, "\377gPoison");
+					}
+					if (p_ptr->rcraft_upkeep_flags) {
+						if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_DO) msg_print(Ind, "\377WYou are floating in a bubble of pressure."); //Feather Fall
+						if ((p_ptr->rcraft_upkeep_flags & RUPK_MIN_FA) || (p_ptr->rcraft_upkeep_flags & RUPK_MIN_CU) 
+						|| (p_ptr->rcraft_upkeep_flags & RUPK_MIN_CO) || (p_ptr->rcraft_upkeep_flags & RUPK_MIN_HL))
+							msg_print(Ind, "\377WYou are sealing:");
+						if (p_ptr->rcraft_upkeep_flags & RUPK_MIN_FA) msg_print(Ind, "\377rParalysis");
+						if (p_ptr->rcraft_upkeep_flags & RUPK_MIN_CU) msg_print(Ind, "\377uCuts");
+						if (p_ptr->rcraft_upkeep_flags & RUPK_MIN_CO) msg_print(Ind, "\377UConfusion");
+						if (p_ptr->rcraft_upkeep_flags & RUPK_MIN_HL) msg_print(Ind, "\377DLife-Draining Attacks");
+						if ((p_ptr->rcraft_upkeep_flags & RUPK_MAJ_NE) || (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_TR) 
+						//|| (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_DO) || (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_ST))
+						|| (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_ST))
+							msg_print(Ind, "\377WYou are boosting:");
+						if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_NE) msg_print(Ind, "\377RNecromancy");
+						if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_TR) msg_print(Ind, "\377BTraumaturgy");
+						if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_ST) msg_print(Ind, "\377DStealth");
+						//if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_DO) msg_print(Ind, "\377bDodging");
+						
+					}
+				}
 #endif //ENABLE_RCRAFT
+
 			/* display PvP kills */
 			if (p_ptr->kills) msg_format(Ind, "\377rYou have defeated %d opponents.", p_ptr->kills);
 
@@ -6539,7 +6592,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			/* back up all house prices and items/gold inside houses for all
 			   characters to lib/save/estate/ and invoke /terminate right
-			   afterwards if the parameter "term" is given. */
+			   afterwards if the parameter "term" is given. - C. Blue */
 			if (prefix(message, "/backup_estate")) {
 				msg_print(Ind, "Backing up all real estate...");
 				if (!backup_estate()) {
@@ -6552,6 +6605,40 @@ void do_slash_cmd(int Ind, char *message)
 				if (tk && !strcmp(token[1], "term"))
 					set_runlevel(-1);
 				return;
+			}
+			/* backup all account<-character relations from 'server' savefile,
+			   so it could be deleted without everyone having to remember their
+			   char names because they get confronted with 'empty' character lists.
+			   -> To be used with /backup_estate mechanism. - C. Blue */
+			else if (prefix(message, "/backup_acclists")) {
+#if 0
+				if (!lookup_player_name(p_ptr->id)) { /* paranoia: if the 'server' file was just deleted then there can be no names */
+		    		        time_t ttime;
+			                /* Add backed-up entry again */
+			                add_player_name(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, time(&ttime));
+			        }
+
+
+
+
+				int *id_list, i, n;
+				struct account *l_acc;
+				msg_format(Ind, "Looking up account %s.", message3);
+				l_acc = Admin_GetAccount(message3);
+				if (l_acc) {
+					n = player_id_list(&id_list, l_acc->id);
+					for(i = 0; i < n; i++) {
+//unused huh					u16b ptype = lookup_player_type(id_list[i]);
+						/* do not change protocol here */
+						tmpm = lookup_player_mode(id_list[i]);
+						lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), id_list[i]);
+					}
+					if (n) C_KILL(id_list, n, int);
+					KILL(l_acc, struct account);
+				}
+				msg_print(Ind, "Backed up all account<-character relations.");
+				return;
+#endif
 			}
 		}
 	}
