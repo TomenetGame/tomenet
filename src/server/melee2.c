@@ -1993,14 +1993,12 @@ bool make_attack_spell(int Ind, int m_idx) {
 				f6 & (RF6_SUMMON_MASK) || f0 & (RF0_SUMMON_MASK)) &&
 	*/
 //	if (rad > 3 ||
+	summon_test = summon_possible(wpos, ys, xs);
 #ifdef SAURON_ANTI_GLYPH
-	if (m_ptr->r_idx == 860 && summon) {
-		summon_test = summon_possible(wpos, ys, xs);
-		if (!summon_test) {
-			base_r_ptr->freq_spell = base_r_ptr->freq_innate = 75;
-			if (!m_ptr->extra) s_printf("SAURON: boost (glyph/nospace summon).\n");
-			m_ptr->extra = 5; /* stay boosted for 5 turns at least */
-		}
+	if (m_ptr->r_idx == 860 && summon && !summon_test && m_ptr->hp < m_ptr->maxhp) {
+		base_r_ptr->freq_spell = base_r_ptr->freq_innate = 75;
+		if (!m_ptr->extra) s_printf("SAURON: boost (glyph/nospace summon).\n");
+		m_ptr->extra = 5; /* stay boosted for 5 turns at least */
 	}
 #endif
 	if (rad > INDIRECT_SUMMONING_RADIUS || magik(SUPPRESS_SUMMON_RATE) ||
