@@ -5895,7 +5895,8 @@ void restore_estate(int Ind) {
 			strcpy(data_note, "");
 			fscanf(fp, "%s\n", data_note);
 			if (!data_note[0]) {
-				s_printf("  error: Corrupted note line.\n");
+			        object_desc(Ind, o_name, o_ptr, TRUE, 3);
+				s_printf("  error: Corrupted note line (item '%s').\n", o_name);
 				msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
 				relay_estate(buf, buf2, fp, fp_tmp);
 				return;
