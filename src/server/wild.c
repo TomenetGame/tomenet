@@ -22,16 +22,22 @@
 #include "angband.h"
 
 
+/* Use a simple kind of bleeding just to indicate dangerous terrain ahead,
+   was just used ad interim. If this gets enabled, it will in turn disable
+   the bleed_with_neighbors() effect, so keep this commented out.
+   WARNING: If this gets disabled, the houses built on ocean grids may
+   change in rare cases. So if you disable this, also regenerate the world
+   map from scratch so it's clean. - C. Blue */
+#define SIMPLE_WARNING_BLEED
+
+/* Don't bleed involving towns because that can look a bit weird sometimes. */
+//#define BLEED_AVOID_TOWNAREA
+
+
 /* HACK: Disable new terrain types DESERT/WILD and other rng-affecting stuff? */
 #ifndef WILDERNESS_NEW_TERRAINS
  #define __DISABLE_NEW
 #endif
-
-
-/* Use a simple kind of bleeding just to indicate dangerous terrain ahead,
-   was just used ad interim. If this gets enabled, it will in turn disable
-   the bleed_with_neighbors() effect, so keep this commented out. - C. Blue */
-//#define SIMPLE_WARNING_BLEED
 
 
 /* This function takes the players x,y level world coordinate and uses it to
@@ -2402,6 +2408,10 @@ static void bleed_with_neighbors(struct worldpos *wpos)
 	struct worldpos neighbor, neighbor_tmp;
 	neighbor.wz = neighbor_tmp.wz = 0;
 
+#ifdef BLEED_AVOID_TOWNAREA
+	if (istownarea(wpos, 3)) return; //maybe 2?
+#endif
+
 	/* Hack -- Use the "simple" RNG */
 	Rand_quick = TRUE;
 
@@ -2439,6 +2449,10 @@ static void bleed_with_neighbors(struct worldpos *wpos)
 			neighbor_tmp.wy = wpos->wy - 1;
 			break;
 		}
+
+#ifdef BLEED_AVOID_TOWNAREA
+		if (istownarea(&neighbor, 3)) return; //maybe 2?
+#endif
 
 		if (in_bounds_wild(neighbor.wy, neighbor.wx) && in_bounds_wild(neighbor_tmp.wy, neighbor_tmp.wx)) {
 			if (wild_info[neighbor_tmp.wy][neighbor_tmp.wx].type == wild_info[neighbor.wy][neighbor.wx].type) {
