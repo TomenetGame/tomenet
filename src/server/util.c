@@ -5719,8 +5719,10 @@ bool backup_estate(void) {
 		                        		fprintf(fp, "OB:");
 			    				fwrite(o_ptr, sizeof(*o_ptr), 1, fp);
 			    				/* store inscription too! */
-			    				if (o_ptr->note) fputs(format("%s\n", quark_str(o_ptr->note)), fp);
-			    				else fputs("\377\n", fp);
+			    				if (o_ptr->note)
+			    					fprintf(fp, "%d\n%s\n", strlen(quark_str(o_ptr->note)), quark_str(o_ptr->note));
+			    				else
+			    					fprintf(fp, "%d\n%s\n", -1, "DUMMY");
 		                                }
 					}
 				}
@@ -5766,6 +5768,7 @@ void restore_estate(int Ind) {
 	char data[4], data_note[MSG_LEN];//MAX_OLEN?
 	char o_name[ONAME_LEN];
 	unsigned long au;
+	int data_len;
 	object_type forge, *o_ptr = &forge;
 	bool gained_anything = FALSE;
 
@@ -5892,15 +5895,16 @@ void restore_estate(int Ind) {
 			}
 			/* also read inscription */
 			o_ptr->note = 0;
-			if (!fgets(data_note, MSG_LEN, fp)) {
+			data_len = -2;
+			fscanf(fp, "%d\n%s\n", data_len, data_note);
+			if (data_len == -2) {
 			        object_desc(Ind, o_name, o_ptr, TRUE, 3);
 				s_printf("  error: Corrupted note line (item '%s').\n", o_name);
 				msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
 				relay_estate(buf, buf2, fp, fp_tmp);
 				return;
 			}
-			data_note[strlen(data_note) - 1] = '\0';
-			if (data_note[0] != '\377') o_ptr->note = quark_add(data_note);
+			if (data_len != -1) o_ptr->note = quark_add(data_note);
 
 			gained_anything = TRUE;
 			inven_carry(Ind, o_ptr);
