@@ -680,8 +680,13 @@ int guild_create(int Ind, cptr name){
 		return FALSE;
 	}
 	/* This could probably be improved. */
-	if (p_ptr->au < 2000000) {
-		msg_print(Ind, "\377yYou need 2,000,000 gold pieces to start a guild.");
+	if (p_ptr->au < GUILD_PRICE) {
+		if (GUILD_PRICE >= 1000000)
+			msg_format(Ind, "\377yYou need %d,000,000 gold pieces to start a guild.", GUILD_PRICE / 1000000);
+		else if (GUILD_PRICE >= 1000)
+			msg_format(Ind, "\377yYou need %d,000 gold pieces to start a guild.", GUILD_PRICE / 1000);
+		else
+			msg_format(Ind, "\377yYou need %d gold pieces to start a guild.", GUILD_PRICE);
 		return FALSE;
 	}
 	/* Prevent abuse */
@@ -733,8 +738,8 @@ int guild_create(int Ind, cptr name){
 	msg_broadcast(0, temp);
 	msg_print(Ind, "\374\377Gou can adjust guild options with the '/guild_cfg' command.");
 
-	p_ptr->au -= 2000000;
-	p_ptr->redraw|=PR_GOLD;
+	p_ptr->au -= GUILD_PRICE;
+	p_ptr->redraw |= PR_GOLD;
 
 	/* make the guild key */
 	invcopy(o_ptr, lookup_kind(TV_KEY, 2));
