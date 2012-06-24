@@ -5719,9 +5719,8 @@ bool backup_estate(void) {
 		                        		fprintf(fp, "OB:");
 			    				fwrite(o_ptr, sizeof(*o_ptr), 1, fp);
 			    				/* store inscription too! */
-			    				if (o_ptr->note) fprintf(fp, quark_str(o_ptr->note));
-			    				else fprintf(fp, "\377");
-			    				fprintf(fp, "\n");
+			    				if (o_ptr->note) fprintf(fp, "%s\n", quark_str(o_ptr->note));
+			    				else fprintf(fp, "%s", "\377\n");
 		                                }
 					}
 				}
@@ -5897,7 +5896,8 @@ void restore_estate(int Ind) {
 				relay_estate(buf, buf2, fp, fp_tmp);
 				return;
 			}
-			data_note[strlen(data_note) - 1] = '\0';
+			//if (data_note[strlen(data_note) - 1] == '\n')
+			data_note[strlen(data_note) - 1] = '\0';//paranoia? inconsistent with version string
 			if (data_note[0] != '\377') o_ptr->note = quark_add(data_note);
 
 			gained_anything = TRUE;
