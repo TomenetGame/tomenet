@@ -5890,7 +5890,7 @@ void restore_estate(int Ind) {
 			}
 			/* also read inscription */
 			o_ptr->note = 0;
-			if (fscanf(fp, "%s\n", &data_note) == EOF) {
+			if (fscanf(fp, "%s\n", data_note) == EOF) {
 				s_printf("  error: Corrupted note line.\n");
 				msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
 				relay_estate(buf, buf2, fp, fp_tmp);
