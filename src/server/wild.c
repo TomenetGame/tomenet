@@ -22,6 +22,10 @@
 #include "angband.h"
 
 
+/* HACK: Disable new terrain types DESERT/WILD and other rng-affecting stuff? */
+#define __DISABLE_NEW
+
+
 /* Use a simple kind of bleeding just to indicate dangerous terrain ahead,
    was just used ad interim. If this gets enabled, it will in turn disable
    the bleed_with_neighbors() effect, so keep this commented out. - C. Blue */
@@ -1839,7 +1843,9 @@ static void init_terrain(terrain_type *t_ptr, int radius)
 			t_ptr->tree = rand_int(5);
 			t_ptr->deadtree = rand_int(4);
 			t_ptr->mountain = rand_int(100)+850;
+#ifndef __DISABLE_NEW
 			t_ptr->sand = rand_int(1);
+#endif
 			t_ptr->lava = rand_int(150)+200;
 			t_ptr->hotspot = rand_int(15) + 4;
 			t_ptr->monst_lev = 20 + (radius / 2); break;
@@ -1848,7 +1854,9 @@ static void init_terrain(terrain_type *t_ptr, int radius)
 		case WILD_WASTELAND:
 		{
 			t_ptr->grass = rand_int(100);
+#ifndef __DISABLE_NEW
 			t_ptr->sand = rand_int(2);
+#endif
 			t_ptr->deadtree = rand_int(4);
 			t_ptr->hotspot = rand_int(15) + 4;
 			t_ptr->monst_lev = 20 + (radius / 2); break;
@@ -1951,8 +1959,10 @@ static unsigned char terrain_spot(terrain_type * terrain)
 	u32b tmp_seed;
 
 	if (rand_int(1000) < terrain->grass) feat = FEAT_GRASS;
+#ifndef __DISABLE_NEW
 	if (rand_int(1000) < terrain->sand) feat = FEAT_SAND;
 	if (rand_int(1000) < terrain->ice) feat = magik(90) ? FEAT_SNOW : (magik(75) ? FEAT_ICE : FEAT_ICE_WALL);
+#endif
 #if 1
 	if (rand_int(1000) < terrain->tree) {
 		/* actually it's cool that whether it's a grown tree or a small bush
@@ -1966,11 +1976,16 @@ static unsigned char terrain_spot(terrain_type * terrain)
 #else
 	if (rand_int(1000) < terrain->tree) feat = FEAT_TREE;
 #endif
+#ifdef __DISABLE_NEW
+	if (rand_int(1000) < terrain->deadtree) feat = FEAT_DEAD_TREE;
+#endif
 	if (rand_int(1000) < terrain->water) feat = FEAT_DEEP_WATER;
 	if (rand_int(1000) < terrain->mud) feat = FEAT_MUD;
 	if (rand_int(1000) < terrain->mountain) feat = FEAT_MOUNTAIN;
 	if (rand_int(1000) < terrain->lava) feat = magik(30) ? FEAT_DEEP_LAVA : FEAT_SHAL_LAVA;
+#ifndef __DISABLE_NEW
 	if (rand_int(1000) < terrain->deadtree) feat = FEAT_DEAD_TREE;
+#endif
 
 	return(feat);
 }
