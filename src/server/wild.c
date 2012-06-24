@@ -28,7 +28,7 @@
    WARNING: If this gets disabled, the houses built on ocean grids may
    change in rare cases. So if you disable this, also regenerate the world
    map from scratch so it's clean. - C. Blue */
-#define SIMPLE_WARNING_BLEED
+#define SIMPLE_BLEED
 
 /* Don't bleed involving towns because that can look a bit weird sometimes. */
 //#define BLEED_AVOID_TOWNAREA
@@ -90,7 +90,7 @@ int world_index(int world_x, int world_y)
 	return idx;
 }
 
-#ifdef SIMPLE_WARNING_BLEED
+#ifdef SIMPLE_BLEED
 static void bleed_warn_feat(int wild_type, cave_type *c_ptr) {
 	switch (wild_type) {
 	case WILD_SWAMP: c_ptr->feat = FEAT_BUSH; break;
@@ -2992,7 +2992,7 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 		}
 	}
 
-#ifndef SIMPLE_WARNING_BLEED
+#ifndef SIMPLE_BLEED
 	/* to make the borders between wilderness levels more seamless, "bleed"
 	   the levels together */
 	bleed_with_neighbors(wpos);
@@ -3083,7 +3083,7 @@ void wilderness_gen(struct worldpos *wpos)
 	int i, y, x;
 	cave_type *c_ptr;
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
-#ifdef SIMPLE_WARNING_BLEED
+#ifdef SIMPLE_BLEED
 	wilderness_type *w_ptr2;
 #endif
 	cave_type **zcave;
@@ -3219,7 +3219,7 @@ void wilderness_gen(struct worldpos *wpos)
 		}
 	}
 
-#ifdef SIMPLE_WARNING_BLEED /* use the real bleed stuff again instead of bleed_warn_feat() silliness */
+#ifdef SIMPLE_BLEED /* use the real bleed stuff again instead of bleed_warn_feat() silliness */
 	/* Indicate certain adjacent wilderness terrain types, so players
 	   won't suddenly get stuck in lava or mountains - C. Blue */
 	for (x = 1; x < MAX_WID - 1; x++) {
