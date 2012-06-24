@@ -5685,6 +5685,10 @@ bool backup_estate(void) {
                     		/* add object to backup file */
                     		fprintf(fp, "OB:");
 				fwrite(o_ptr, sizeof(*o_ptr), 1, fp);
+    				/* store inscription too! */
+    				if (o_ptr->note) fprintf(fp, quark_str(o_ptr->note));
+    				else fprintf(fp, "\377");
+    				fprintf(fp, "\n");
                         }
                 }
                 /* mang-style house? */
@@ -5714,6 +5718,10 @@ bool backup_estate(void) {
 		                        		/* add object to backup file */
 		                        		fprintf(fp, "OB:");
 			    				fwrite(o_ptr, sizeof(*o_ptr), 1, fp);
+			    				/* store inscription too! */
+			    				if (o_ptr->note) fprintf(fp, quark_str(o_ptr->note));
+			    				else fprintf(fp, "\377");
+			    				fprintf(fp, "\n");
 		                                }
 					}
 				}
@@ -5756,7 +5764,7 @@ void restore_estate(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	FILE *fp, *fp_tmp;
 	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], version[MAX_CHARS];
-	char data[4];
+	char data[4], data_note[MSG_LEN];//MAX_OLEN?
 	unsigned long au;
 	object_type forge, *o_ptr = &forge;
 	bool gained_anything = FALSE;
@@ -5880,6 +5888,17 @@ void restore_estate(int Ind) {
 				relay_estate(buf, buf2, fp, fp_tmp);
 				return;
 			}
+			/* also read inscription */
+			o_ptr->note = 0;
+			if (fscanf(fp, "%s\n", &data_note) == EOF) {
+				s_printf("  error: Corrupted note line.\n");
+				msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
+				relay_estate(buf, buf2, fp, fp_tmp);
+				return;
+			}
+			data_note[strlen(data_note) - 1] = '\0';
+			if (data_note[0] != '\377') o_ptr->note = quark_add(data_note);
+
 			gained_anything = TRUE;
 			inven_item_describe(Ind, inven_carry(Ind, o_ptr));
 			continue;
