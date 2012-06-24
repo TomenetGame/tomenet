@@ -5896,8 +5896,6 @@ void restore_estate(int Ind) {
 				relay_estate(buf, buf2, fp, fp_tmp);
 				return;
 			}
-			//if (data_note[strlen(data_note) - 1] == '\n')
-			data_note[strlen(data_note) - 1] = '\0';//paranoia? inconsistent with version string
 			if (data_note[0] != '\377') o_ptr->note = quark_add(data_note);
 
 			gained_anything = TRUE;
