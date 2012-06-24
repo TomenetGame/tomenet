@@ -2173,7 +2173,67 @@ static void player_setup(int Ind, bool new)
 	p_ptr->ps_mcheque_x = p_ptr->ps_mcheque_y = -1;
 #endif
 
-	/* Set up the Runecraft extra p_ptr variables */
+	/* New Runecraft Feature Variables - Kurzel */
+	p_ptr->shoot_till_kill_rcraft = 0;
+	p_ptr->rcraft_augment = -1;
+	
+	p_ptr->rcraft_project = 0;
+	p_ptr->rcraft_xtra_a = -1;
+	p_ptr->rcraft_xtra_b = -1;
+	p_ptr->tim_rcraft_xtra = 0;
+	
+	p_ptr->tim_rcraft_help = 0;
+	p_ptr->tim_rcraft_help_type = 0;
+	p_ptr->tim_rcraft_help_projection = 0;
+	p_ptr->tim_rcraft_help_damage = 0;
+	
+	p_ptr->rcraft_upkeep = 0;
+	p_ptr->rcraft_attune = 0;
+	p_ptr->rcraft_repel = 0;
+	p_ptr->rcraft_brand = 0;
+	
+	p_ptr->tim_brand_acid = 0;
+	p_ptr->tim_brand_elec = 0;
+	p_ptr->tim_brand_fire = 0;
+	p_ptr->tim_brand_cold = 0;
+	p_ptr->tim_brand_pois = 0;
+	p_ptr->tim_brand_vorp = 0;
+	p_ptr->tim_brand_conf = 0;
+	
+	p_ptr->tim_aura_acid = 0;
+	p_ptr->tim_aura_elec = 0;
+	p_ptr->tim_aura_fire = 0;
+	p_ptr->tim_aura_cold = 0;
+	
+	p_ptr->rcraft_dig = 0;
+	p_ptr->rcraft_upkeep_flags = 0;
+	
+	p_ptr->tim_necro = 0;
+	p_ptr->tim_necro_pow = 0;
+	//p_ptr->tim_dodge = 0;
+	//p_ptr->tim_dodge_pow = 0;
+	p_ptr->tim_stealth = 0;
+	p_ptr->tim_stealth_pow = 0;
+	
+	p_ptr->tim_brand_ex = 0;
+	p_ptr->tim_brand_ex_projection = 0;
+	p_ptr->tim_brand_ex_damage = 0;
+	p_ptr->tim_aura_ex = 0;
+	p_ptr->tim_aura_ex_projection = 0;
+	p_ptr->tim_aura_ex_damage = 0;
+	
+	p_ptr->rcraft_empower = 0;
+	p_ptr->rcraft_regen = 0;
+	
+	p_ptr->protacid = 0;
+	p_ptr->protelec = 0;
+	p_ptr->protfire = 0;
+	p_ptr->protcold = 0;
+	p_ptr->protpois = 0;
+	
+	p_ptr->tim_elemshield = 0;
+	p_ptr->tim_elemshield_type = 0;
+	
 	p_ptr->memory.x = 0;
 	p_ptr->memory.y = 0;
 	p_ptr->memory.wpos.wx = 0;
@@ -2233,6 +2293,12 @@ static void player_setup(int Ind, bool new)
 	if (p_ptr->party && parties[p_ptr->party].members == 0) {
 		/* Reset to neutral */
 		p_ptr->party = 0;
+	}
+
+	/* Make sure his guild still exists */
+	if (p_ptr->guild && guilds[p_ptr->guild].members == 0 && !strlen(guilds[p_ptr->guild].name)) {
+		/* Reset to neutral */
+		p_ptr->guild = 0;
 	}
 
 	/* Tell the server to redraw the player's display */
