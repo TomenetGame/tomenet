@@ -3282,6 +3282,9 @@ static void player_talk_aux(int Ind, char *message)
 			/* if colon is last char in the line, it's not a priv/party msg. */
 #if 0 /* disabled this 'feature', might be more convenient - C. Blue */
 			colon = NULL;
+#else
+			if (colon[-1]!='!' && colon[-1]!='#' && colon[-1]!='%' && colon[-1]!='$' && colon[-1]!='+')
+				colon = NULL;
 #endif
 			break;
 		}
