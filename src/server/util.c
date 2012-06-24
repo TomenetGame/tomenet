@@ -5678,7 +5678,7 @@ bool backup_estate(void) {
 			for (j = 0; j < MAX_GUILDS; j++)
 				if (guilds[j].master == h_ptr->dna->owner) {
 					fprintf(fp, "AU:%d\n", GUILD_PRICE);
-					s_printf("  guild master.\n");
+					s_printf("  guild master: '%s'.\n", name);
 					break;
 				}
     		}
