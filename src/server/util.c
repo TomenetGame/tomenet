@@ -5765,6 +5765,7 @@ void restore_estate(int Ind) {
 	FILE *fp, *fp_tmp;
 	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], version[MAX_CHARS];
 	char data[4], data_note[MSG_LEN];//MAX_OLEN?
+	char o_name[ONAME_LEN];
 	unsigned long au;
 	object_type forge, *o_ptr = &forge;
 	bool gained_anything = FALSE;
@@ -5844,7 +5845,7 @@ void restore_estate(int Ind) {
 			}
 			gained_anything = TRUE;
 			s_printf("  gained %d Au.\n", au);
-			msg_format(Ind, "You have received %d gold pieces.", au);
+			msg_format(Ind, "You receive %d gold pieces.", au);
 			continue;
 		}
 		/* get object from backup file */
@@ -5872,7 +5873,7 @@ void restore_estate(int Ind) {
 				}
 				gained_anything = TRUE;
 				s_printf("  gained %d Au.\n", au);
-				msg_format(Ind, "You have received %d gold pieces.", au);
+				msg_format(Ind, "You receive %d gold pieces.", au);
 				continue;
 			}
 
@@ -5900,7 +5901,10 @@ void restore_estate(int Ind) {
 			if (data_note[0] != '\377') o_ptr->note = quark_add(data_note);
 
 			gained_anything = TRUE;
-			inven_item_describe(Ind, inven_carry(Ind, o_ptr));
+			inven_carry(Ind, o_ptr);
+		        object_desc(Ind, o_name, o_ptr, TRUE, 3);
+		        msg_format(Ind, "You receive %s.", o_name);
+			s_printf("  gained %s.\n", o_name);
 			continue;
 		}
 	}
