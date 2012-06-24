@@ -5892,7 +5892,7 @@ void restore_estate(int Ind) {
 			}
 			/* also read inscription */
 			o_ptr->note = 0;
-			if (!fgets(data_note, fp)) {
+			if (!fgets(data_note, MSG_LEN, fp)) {
 			        object_desc(Ind, o_name, o_ptr, TRUE, 3);
 				s_printf("  error: Corrupted note line (item '%s').\n", o_name);
 				msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
