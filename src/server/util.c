@@ -5685,10 +5685,11 @@ bool backup_estate(void) {
                     		/* add object to backup file */
                     		fprintf(fp, "OB:");
 				fwrite(o_ptr, sizeof(*o_ptr), 1, fp);
-    				/* store inscription too! */
-    				if (o_ptr->note) fprintf(fp, quark_str(o_ptr->note));
-    				else fprintf(fp, "\377");
-    				fprintf(fp, "\n");
+				/* store inscription too! */
+				if (o_ptr->note)
+					fprintf(fp, "%d\n%s\n", strlen(quark_str(o_ptr->note)), quark_str(o_ptr->note));
+				else
+					fprintf(fp, "%d\n%s\n", -1, "DUMMY");
                         }
                 }
                 /* mang-style house? */
