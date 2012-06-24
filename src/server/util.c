@@ -5824,7 +5824,7 @@ void restore_estate(int Ind) {
 
 		/* get house price from backup file */
 		if (!strcmp(data, "AU:")) {
-			if (fscanf(fp, "%lu\n", &au) == EOF) {
+			if (fscanf(fp, "%lu\n", &au) != 1) {
 				s_printf("  error: Corrupted AU: line.\n");
 				msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
 				relay_estate(buf, buf2, fp, fp_tmp);
@@ -5890,7 +5890,7 @@ void restore_estate(int Ind) {
 			}
 			/* also read inscription */
 			o_ptr->note = 0;
-			if (fscanf(fp, "%s\n", data_note) == EOF) {
+			if (fscanf(fp, "%s\n", data_note) != 1) {
 				s_printf("  error: Corrupted note line.\n");
 				msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
 				relay_estate(buf, buf2, fp, fp_tmp);
