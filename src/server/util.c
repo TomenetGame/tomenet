@@ -5720,10 +5720,11 @@ bool backup_estate(void) {
 		                        		fprintf(fp, "OB:");
 			    				fwrite(o_ptr, sizeof(*o_ptr), 1, fp);
 			    				/* store inscription too! */
-			    				if (o_ptr->note)
-			    					fprintf(fp, "%d\n%s\n", strlen(quark_str(o_ptr->note)), quark_str(o_ptr->note));
-			    				else
-			    					fprintf(fp, "%d\n%s\n", -1, "DUMMY");
+			    				if (o_ptr->note) {
+			    					fprintf(fp, "%d\n%", strlen(quark_str(o_ptr->note)));
+			    					fwrite(quark_str(o_ptr->note), sizeof(char), strlen(quark_str(o_ptr->note)), fp);
+			    				} else
+			    					fprintf(fp, "%d\n%", -1);
 		                                }
 					}
 				}
@@ -5897,7 +5898,8 @@ void restore_estate(int Ind) {
 			/* also read inscription */
 			o_ptr->note = 0;
 			data_len = -2;
-			fscanf(fp, "%d\n%s\n", &data_len, data_note);
+			data_note[0] = '\0';
+			fscanf(fp, "%d\n", &data_len);
 			if (data_len == -2) {
 			        object_desc(Ind, o_name, o_ptr, TRUE, 3);
 				s_printf("  error: Corrupted note line (item '%s').\n", o_name);
@@ -5905,7 +5907,10 @@ void restore_estate(int Ind) {
 				relay_estate(buf, buf2, fp, fp_tmp);
 				return;
 			}
-			if (data_len != -1) o_ptr->note = quark_add(data_note);
+			if (data_len != -1) {
+				fread(data_note, sizeof(char), data_len, fp);
+				o_ptr->note = quark_add(data_note);
+			}
 
 			gained_anything = TRUE;
 			inven_carry(Ind, o_ptr);
