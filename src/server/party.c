@@ -3655,6 +3655,7 @@ void backup_acclists(void) {
 		}
 	}
 
+	s_printf("done.");
 	fclose(fp);
 }
 
@@ -3690,6 +3691,8 @@ void restore_acclists(void) {
 		    &ptr->quest, &ptr->race, &ptr->class, &ptr->mode);
 #endif
 
+		s_printf("  '%s', id %d, acc %d, lev %d, race %d, class %d, mode %d.\n", ptr->name, ptr->id, ptr->account, ptr->level, ptr->race, ptr->class, ptr->mode);
+
 		if (!lookup_player_name(ptr->id)) { /* paranoia: if the 'server' file was just deleted then there can be no names */
 			time_t ttime;
 			/* Add backed-up entry again */
@@ -3697,5 +3700,6 @@ void restore_acclists(void) {
 		}
 	}
 
+	s_printf("done.");
 	fclose(fp);
 }
