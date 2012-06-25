@@ -3678,6 +3678,7 @@ void restore_acclists(void) {
 	while (!feof(fp)) {
 		fscanf(fp, "%d", &name_len);
 		fread(name_forge, sizeof(char), name_len, fp);
+		name_forge[name_len] = '\0';
 		fscanf(fp, "%lu%d%u%c%hu%c%hd%c%c%c",
 		    &ptr->laston, &ptr->id, &ptr->account,
 		    &ptr->level, &ptr->party, &ptr->guild,
