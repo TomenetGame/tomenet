@@ -3621,7 +3621,7 @@ void backup_acclists(void) {
 			if ((c_acc = GetAccountID(ptr->account, FALSE))) {
 				/* back him up */
 #ifdef AUCTION_SYSTEM
-				fprintf(fp, "\"%s\"\n%lu%d%u%c%hu%c%hd%c%c%c%ld%ld",
+				fprintf(fp, "\"%s\"\n%lu%d%u%c%hu%c%hd%c%c%c%d%d",
 				    ptr->name, ptr->laston, ptr->id, ptr->account,
 				    ptr->level, ptr->party, ptr->guild,
 				    ptr->quest, ptr->race, ptr->class, ptr->mode,
@@ -3678,7 +3678,7 @@ void restore_acclists(void) {
 
 	while (!feof(fp)) {
 #ifdef AUCTION_SYSTEM
-		fscanf(fp, "\"%s\"\n%lu%d%u%c%hu%c%hd%c%c%c%ld%ld",
+		fscanf(fp, "\"%s\"\n%lu%d%u%c%hu%c%hd%c%c%c%d%d",
 		    name_forge, &ptr->laston, &ptr->id, &ptr->account,
 		    &ptr->level, &ptr->party, &ptr->guild,
 		    &ptr->quest, &ptr->race, &ptr->class, &ptr->mode,
