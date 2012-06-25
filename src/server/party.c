@@ -3679,13 +3679,13 @@ void restore_acclists(void) {
 	while (!feof(fp)) {
 #ifdef AUCTION_SYSTEM
 		fscanf(fp, "\"%s\"\n%lu%d%u%d%d%d%d%d%d%d%lu%lu",
-		    ptr->name, &ptr->laston, &ptr->id, &ptr->account,
+		    name_forge, &ptr->laston, &ptr->id, &ptr->account,
 		    &ptr->level, &ptr->party, &ptr->guild,
 		    &ptr->quest, &ptr->race, &ptr->class, &ptr->mode,
 		    &ptr->au, &ptr->balance);
 #else
 		fscanf(fp, "\"%s\"\n%lu%d%u%d%d%d%d%d%d%d",
-		    ptr->name, &ptr->laston, &ptr->id, &ptr->account,
+		    name_forge, &ptr->laston, &ptr->id, &ptr->account,
 		    &ptr->level, &ptr->party, &ptr->guild,
 		    &ptr->quest, &ptr->race, &ptr->class, &ptr->mode);
 #endif
