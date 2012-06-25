@@ -3627,7 +3627,7 @@ void backup_acclists(void) {
 				    ptr->quest, ptr->race, ptr->class, ptr->mode,
 				    ptr->au, ptr->balance);
 #else
-				fprintf(fp, "\"%s\"\n%lu%lu%lu%d%d%d%d%d%d%d",
+				fprintf(fp, "\"%s\"\n%lu%d%ld%d%d%d%d%d%d%d",
 				    ptr->name, ptr->laston, ptr->id, ptr->account,
     				    ptr->level, ptr->party, ptr->guild,
 				    ptr->quest, ptr->race, ptr->class, ptr->mode);
