@@ -23,16 +23,20 @@
 
 
 /* Use a simple kind of bleeding just to indicate dangerous terrain ahead,
-   was just used ad interim. If this gets enabled, it will in turn disable
-   the bleed_with_neighbors() effect, so keep this commented out.
-   WARNING: If this gets disabled, the houses built on ocean grids may
-   change in rare cases. So if you disable this, also regenerate the world
-   map from scratch so it's clean. - C. Blue */
-#define SIMPLE_BLEED
+   was just used ad interim. */
+//#define SIMPLE_BLEED
 
-/* Don't bleed involving towns because that can look a bit weird sometimes. */
-//#define BLEED_AVOID_TOWNAREA
+/* Bleed with neighbours? (The main bleeding function).
+   WARNING: If this gets changed, the houses built on ocean grids may
+   change in rare cases. So if you toggle this, also regenerate the world
+   map from scratch so it's clean. */
+#ifdef WILDERNESS_NEW_TERRAINS
+ #define BLEED_WITH_NEIGHBOURS
+#endif
 
+/* For BLEED_WITH_NEIGHBOURS:
+   Don't bleed involving towns because that can look a bit weird sometimes. */
+#define BLEED_AVOID_TOWN
 
 /* HACK: Disable new terrain types DESERT/WILD and other rng-affecting stuff? */
 #ifndef WILDERNESS_NEW_TERRAINS
@@ -2408,8 +2412,8 @@ static void bleed_with_neighbors(struct worldpos *wpos)
 	struct worldpos neighbor, neighbor_tmp;
 	neighbor.wz = neighbor_tmp.wz = 0;
 
-#ifdef BLEED_AVOID_TOWNAREA
-	if (istownarea(wpos, 3)) return; //maybe 2?
+#ifdef BLEED_AVOID_TOWN
+	if (istownarea(wpos, 1)) return;
 #endif
 
 	/* Hack -- Use the "simple" RNG */
@@ -2450,8 +2454,8 @@ static void bleed_with_neighbors(struct worldpos *wpos)
 			break;
 		}
 
-#ifdef BLEED_AVOID_TOWNAREA
-		if (istownarea(&neighbor, 3)) return; //maybe 2?
+#ifdef BLEED_AVOID_TOWN
+		if (istownarea(&neighbor, 1)) return;
 #endif
 
 		if (in_bounds_wild(neighbor.wy, neighbor.wx) && in_bounds_wild(neighbor_tmp.wy, neighbor_tmp.wx)) {
@@ -2992,7 +2996,7 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 		}
 	}
 
-#ifndef SIMPLE_BLEED
+#ifdef BLEED_WITH_NEIGHBOURS
 	/* to make the borders between wilderness levels more seamless, "bleed"
 	   the levels together */
 	bleed_with_neighbors(wpos);
