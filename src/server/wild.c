@@ -2164,6 +2164,7 @@ static void wild_add_hotspot(struct worldpos *wpos)
 	if (add_dwelling) wild_add_dwelling(wpos, x_cen, y_cen );
 }
 
+#ifdef BLEED_WITH_NEIGHBOURS
 /* helper function to wild_gen_bleedmap */
 static void wild_gen_bleedmap_aux(int *bleedmap, int span, char dir)
 {
@@ -2391,7 +2392,6 @@ static bool should_we_bleed(struct worldpos *wpos, char dir)
 	return(FALSE);
 }
 
-
 /* to determine whether we bleed into our neighbor or whether our neighbor
    bleeds into us, we seed the random number generator with our combined
    depth.  If the resulting number is 0, we bleed into the greater (negative
@@ -2590,6 +2590,7 @@ static void bleed_with_neighbors(struct worldpos *wpos)
 	Rand_value = old_seed;
 	Rand_quick = rand_old;
 }
+#endif
 
 static void flood(char *buf, int x, int y, int w, int h) {
 	if (x>=0 && x<w && y>=0 && y<h && buf[x+y*w] == 0) {
