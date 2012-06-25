@@ -2282,6 +2282,9 @@ static void wild_bleed_level(int bleed_to_x, int bleed_to_y, int bleed_from_x, i
 	int bleedmap[256 + 1], bleed_begin[MAX_WID], bleed_end[MAX_WID];
 	terrain_type terrain;
 	cave_type *c_ptr, **zcave_bleed_to = getcave(&((struct worldpos) {bleed_to_x, bleed_to_y, 0}));
+#ifdef BLEED_ENHANCED_TOWN
+	int type = -1, i;
+#endif
 
 #ifdef BLEED_AVOID_TOWN
 //	if (istownarea(&neighbor, 1)) return;
@@ -2289,7 +2292,6 @@ static void wild_bleed_level(int bleed_to_x, int bleed_to_y, int bleed_from_x, i
 #endif
 #ifdef BLEED_ENHANCED_TOWN
 	if (istown(&((struct worldpos) {bleed_from_x, bleed_from_y, 0}))) {
-		int type = -1, i;
 		for (i = 0; i < numtowns; i++) {
 			if (town[i].x == bleed_from_x && town[i].y == bleed_from_y) {
 				type = town[i].type;
@@ -2324,11 +2326,19 @@ static void wild_bleed_level(int bleed_to_x, int bleed_to_y, int bleed_from_x, i
 	/* paranoia */
 	if (!zcave_bleed_to) {
 		s_printf("getcave() failed in wild_bleed_level\n");
+#ifdef BLEED_ENHANCED_TOWN
+		if (type != -1) wild_info[bleed_from_y][bleed_from_x].type = WILD_TOWN;
+#endif
 		return;
 	}
 
 	/* sanity check */
-	if (wild_info[bleed_from_y][bleed_from_x].type == wild_info[bleed_to_y][bleed_to_x].type) return;
+	if (wild_info[bleed_from_y][bleed_from_x].type == wild_info[bleed_to_y][bleed_to_x].type) {
+#ifdef BLEED_ENHANCED_TOWN
+		if (type != -1) wild_info[bleed_from_y][bleed_from_x].type = WILD_TOWN;
+#endif
+		return;
+	}
 
 	/* initiliaze the terrain type */
 	terrain.type = wild_info[bleed_from_y][bleed_from_x].type;
@@ -2382,6 +2392,10 @@ static void wild_bleed_level(int bleed_to_x, int bleed_to_y, int bleed_from_x, i
 			}
 		}
 	}
+
+#ifdef BLEED_ENHANCED_TOWN
+	if (type != -1) wild_info[bleed_from_y][bleed_from_x].type = WILD_TOWN;
+#endif
 }
 
 /* determines whether or not to bleed from a given depth in a given direction.
