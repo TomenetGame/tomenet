@@ -1848,10 +1848,17 @@ static void init_terrain(terrain_type *t_ptr, int radius)
 		/* wasteland */
 		case WILD_VOLCANO:
 		{
+#ifndef __DISABLE_NEW
+			t_ptr->grass = rand_int(10);
+			t_ptr->deadtree = rand_int(4);
+			t_ptr->mountain = rand_int(100)+650;
+			t_ptr->lava = rand_int(150)+400;
+#else
 			t_ptr->grass = rand_int(100);
 			t_ptr->deadtree = rand_int(4);
 			t_ptr->mountain = rand_int(100)+450;
 			t_ptr->lava = rand_int(150)+800;
+#endif
 			t_ptr->hotspot = rand_int(15) + 4;
 			t_ptr->monst_lev = 20 + (radius / 2); break;
 			break;
@@ -1861,11 +1868,14 @@ static void init_terrain(terrain_type *t_ptr, int radius)
 			t_ptr->grass = rand_int(100);
 			t_ptr->tree = rand_int(5);
 			t_ptr->deadtree = rand_int(4);
-			t_ptr->mountain = rand_int(100)+850;
 #ifndef __DISABLE_NEW
+			t_ptr->mountain = rand_int(100)+700;
 			t_ptr->sand = rand_int(1);
-#endif
+			t_ptr->lava = rand_int(10);
+#else
+			t_ptr->mountain = rand_int(100)+850;
 			t_ptr->lava = rand_int(150)+200;
+#endif
 			t_ptr->hotspot = rand_int(15) + 4;
 			t_ptr->monst_lev = 20 + (radius / 2); break;
 			break;
@@ -2316,7 +2326,7 @@ static void wild_bleed_level(int bleed_to_x, int bleed_to_y, int bleed_from_x, i
 			//if (wild_info[bleed_to_y][bleed_to_x].type != WILD_OCEAN) return;
 			break;
 		case 5:
-			wild_info[bleed_from_y][bleed_from_x].type = WILD_MOUNTAIN;
+			wild_info[bleed_from_y][bleed_from_x].type = WILD_VOLCANO;
 			//if (wild_info[bleed_to_y][bleed_to_x].type != WILD_OCEAN) return;
 			break;
 		}
