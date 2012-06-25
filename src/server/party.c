@@ -3676,13 +3676,13 @@ void restore_acclists(void) {
 
 	while (!feof(fp)) {
 #ifdef AUCTION_SYSTEM
-		fscanf(fp, "\"%s\"\n%lu%lu%lu%d%d%d%d%d%d%d%lu%lu",
+		fscanf(fp, "\"%s\"\n%lu%d%u%d%d%d%d%d%d%d%lu%lu",
 		    &ptr.name, &ptr.laston, &ptr.id, &ptr.account,
 		    &ptr.level, &ptr.party, &ptr.guild,
 		    &ptr.quest, &ptr.race, &ptr.class, &ptr.mode,
 		    &ptr.au, &ptr.balance);
 #else
-		fscanf(fp, "\"%s\"\n%lu%lu%lu%d%d%d%d%d%d%d",
+		fscanf(fp, "\"%s\"\n%lu%ld%u%d%d%d%d%d%d%d",
 		    &ptr.name, &ptr.laston, &ptr.id, &ptr.account,
 		    &ptr.level, &ptr.party, &ptr.guild,
 		    &ptr.quest, &ptr.race, &ptr.class, &ptr.mode);
@@ -3691,7 +3691,7 @@ void restore_acclists(void) {
 		if (!lookup_player_name(ptr.id)) { /* paranoia: if the 'server' file was just deleted then there can be no names */
 			time_t ttime;
 			/* Add backed-up entry again */
-			add_player_name(ptr.name, ptr.id, ptr.account, ptr.prace, ptr.pclass, ptr.mode, 1, 0, 0, 0, time(&ttime));
+			add_player_name(ptr.name, ptr.id, ptr.account, ptr.race, ptr.class, ptr.mode, 1, 0, 0, 0, time(&ttime));
 		}
 	}
 
