@@ -13,7 +13,6 @@
 /* #define NOTYET 	*//* only for testing and working atm */
 
 #include "angband.h"
-#include "party.h"
 
 /* how many chars someone may enter (formerly used for /bbs, was an ugly hack) */
 #define MAX_SLASH_LINE_LEN	MSG_LEN
@@ -6612,112 +6611,13 @@ void do_slash_cmd(int Ind, char *message)
 			   char names because they get confronted with 'empty' character lists.
 			   -> To be used with /backup_estate mechanism. - C. Blue */
 			else if (prefix(message, "/backup_acclists")) {
-				FILE *fp;
-				char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH];
-			        hash_entry *ptr;
-			        int del;
-			        struct account *c_acc;
-
-			        s_printf("Backing up all accounts...\n");
-			        /* create folder lib/save/estate if not existing */
-			        path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
-			        path_build(buf, MAX_PATH_LENGTH, buf2, "_accounts_");
-		                if ((fp = fopen(buf, "w")) == NULL) {
-        		                s_printf("  error: cannot open file '%s'.\nfailed.\n", buf);
-	                	        return;
-                		}
-	                        /* begin with a version tag */
-                                fprintf(fp, "%s\n", "v1");
-
-			        /* Search in each array slot */
-			        for (i = 0; i < NUM_HASH_ENTRIES; i++) {
-			                /* Acquire pointer to this chain */
-			                ptr = hash_table[i];
-
-			                /* Check all entries in this chain */
-					while (ptr) {
-						/* Check this name */
-						if ((c_acc = GetAccountID(ptr->account, FALSE))) {
-						        /* back him up */
-#ifdef AUCTION_SYSTEM
-						        fprintf(fp, "\"%s\"\n%lu%lu%lu%d%d%d%d%d%d%d%lu%lu",
-							    ptr->name, ptr->laston, ptr->id, ptr->account,
-						    	    ptr->level, ptr->party, ptr->guild,
-						    	    ptr->quest, ptr->race, ptr->clas, ptr->mode,
-						    	    ptr->au, ptr->balance);
-#else
-						        fprintf(fp, "\"%s\"\n%lu%lu%lu%d%d%d%d%d%d%d",
-							    ptr->name, ptr->laston, ptr->id, ptr->account,
-						    	    ptr->level, ptr->party, ptr->guild,
-						    	    ptr->quest, ptr->race, ptr->clas, ptr->mode);
-#endif
-
-							/* cleanup (?) */
-							KILL(c_acc, struct account);
-						} else {
-							s_printf("Lost player: %s\n", ptr->name);
-							msg_format(Ind, "Lost player: %s", ptr->name);
-#if 0 /* del might not always be initialized! */
-							del = ptr->id;
-						}
-
-						/* Next entry in chain */
-						ptr = ptr->next;
-						delete_player_id(del);
-#else /* isn't it supposed to be this way instead?: */
-							del = ptr->id;
-							delete_player_id(del);
-						}
-
-						/* Next entry in chain */
-						ptr = ptr->next;
-#endif
-					}
-                                }
-
-				fclose(fp);
+				backup_acclists();
 				msg_print(Ind, "Backed up all account<-character relations.");
 				return;
 			}
 			/* restore all account<-character relations saved by /backup_acclists */
 			else if (prefix(message, "/restore_acclists")) {
-				FILE *fp;
-				char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], tmp[MAX_CHARS];
-			        hash_entry ptr;
-
-			        s_printf("Restoring accounts...\n");
-
-			        path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
-			        path_build(buf, MAX_PATH_LENGTH, buf2, "_accounts_");
-		                if ((fp = fopen(buf, "r")) == NULL) {
-        		                s_printf("  error: cannot open file '%s'.\nfailed.\n", buf);
-	                	        return;
-                		}
-	                        /* begin with a version tag */
-                                fscanf(fp, "%s\n", tmp);
-
-				while (!feof(fp)) {
-#ifdef AUCTION_SYSTEM
-				        fscanf(fp, "\"%s\"\n%lu%lu%lu%d%d%d%d%d%d%d%lu%lu",
-					    ptr->name, ptr->laston, ptr->id, ptr->account,
-				    	    ptr->level, ptr->party, ptr->guild,
-				    	    ptr->quest, ptr->race, ptr->clas, ptr->mode,
-				    	    ptr->au, ptr->balance);
-#else
-				        fscanf(fp, "\"%s\"\n%lu%lu%lu%d%d%d%d%d%d%d",
-					    ptr->name, ptr->laston, ptr->id, ptr->account,
-				    	    ptr->level, ptr->party, ptr->guild,
-				    	    ptr->quest, ptr->race, ptr->clas, ptr->mode);
-#endif
-
-					if (!lookup_player_name(ptr->id)) { /* paranoia: if the 'server' file was just deleted then there can be no names */
-			    		        time_t ttime;
-				                /* Add backed-up entry again */
-				                add_player_name(ptr->name, ptr->id, ptr->account, ptr->prace, ptr->pclass, ptr->mode, 1, 0, 0, 0, time(&ttime));
-					}
-                                }
-
-				fclose(fp);
+				restore_acclists();
 				msg_print(Ind, "Restored all account<-character relations.");
 				return;
 			}

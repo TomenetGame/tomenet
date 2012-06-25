@@ -3591,3 +3591,109 @@ int lookup_player_ind(u32b id) {
 		if (Players[n]->id == id) return n;
 	return 0;
 }
+
+void backup_acclists(void) {
+	FILE *fp;
+	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH];
+	hash_entry *ptr;
+	int del, i;
+	struct account *c_acc;
+
+	s_printf("Backing up all accounts...\n");
+	/* create folder lib/save/estate if not existing */
+	path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
+	path_build(buf, MAX_PATH_LENGTH, buf2, "_accounts_");
+	if ((fp = fopen(buf, "w")) == NULL) {
+		s_printf("  error: cannot open file '%s'.\nfailed.\n", buf);
+		return;
+	}
+	/* begin with a version tag */
+	fprintf(fp, "%s\n", "v1");
+
+	/* Search in each array slot */
+	for (i = 0; i < NUM_HASH_ENTRIES; i++) {
+		/* Acquire pointer to this chain */
+		ptr = hash_table[i];
+
+		/* Check all entries in this chain */
+		while (ptr) {
+			/* Check this name */
+			if ((c_acc = GetAccountID(ptr->account, FALSE))) {
+				/* back him up */
+#ifdef AUCTION_SYSTEM
+				fprintf(fp, "\"%s\"\n%lu%lu%lu%d%d%d%d%d%d%d%lu%lu",
+				    ptr->name, ptr->laston, ptr->id, ptr->account,
+				    ptr->level, ptr->party, ptr->guild,
+				    ptr->quest, ptr->race, ptr->class, ptr->mode,
+				    ptr->au, ptr->balance);
+#else
+				fprintf(fp, "\"%s\"\n%lu%lu%lu%d%d%d%d%d%d%d",
+				    ptr->name, ptr->laston, ptr->id, ptr->account,
+    				    ptr->level, ptr->party, ptr->guild,
+				    ptr->quest, ptr->race, ptr->class, ptr->mode);
+#endif
+
+				/* cleanup (?) */
+				KILL(c_acc, struct account);
+			} else {
+				s_printf("Lost player: %s\n", ptr->name);
+#if 0 /* del might not always be initialized! */
+				del = ptr->id;
+			}
+
+			/* Next entry in chain */
+			ptr = ptr->next;
+			delete_player_id(del);
+#else /* isn't it supposed to be this way instead?: */
+				del = ptr->id;
+				delete_player_id(del);
+			}
+
+			/* Next entry in chain */
+			ptr = ptr->next;
+#endif
+		}
+	}
+
+	fclose(fp);
+}
+
+void restore_acclists(void) {
+	FILE *fp;
+	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], tmp[MAX_CHARS];
+	hash_entry ptr;
+
+	s_printf("Restoring accounts...\n");
+
+	path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
+	path_build(buf, MAX_PATH_LENGTH, buf2, "_accounts_");
+	if ((fp = fopen(buf, "r")) == NULL) {
+		s_printf("  error: cannot open file '%s'.\nfailed.\n", buf);
+		return;
+	}
+	/* begin with a version tag */
+	fscanf(fp, "%s\n", tmp);
+
+	while (!feof(fp)) {
+#ifdef AUCTION_SYSTEM
+		fscanf(fp, "\"%s\"\n%lu%lu%lu%d%d%d%d%d%d%d%lu%lu",
+		    ptr->name, ptr->laston, ptr->id, ptr->account,
+		    ptr->level, ptr->party, ptr->guild,
+		    ptr->quest, ptr->race, ptr->class, ptr->mode,
+		    ptr->au, ptr->balance);
+#else
+		fscanf(fp, "\"%s\"\n%lu%lu%lu%d%d%d%d%d%d%d",
+		    ptr->name, ptr->laston, ptr->id, ptr->account,
+		    ptr->level, ptr->party, ptr->guild,
+		    ptr->quest, ptr->race, ptr->class, ptr->mode);
+#endif
+
+		if (!lookup_player_name(ptr->id)) { /* paranoia: if the 'server' file was just deleted then there can be no names */
+			time_t ttime;
+			/* Add backed-up entry again */
+			add_player_name(ptr->name, ptr->id, ptr->account, ptr->prace, ptr->pclass, ptr->mode, 1, 0, 0, 0, time(&ttime));
+		}
+	}
+
+	fclose(fp);
+}
