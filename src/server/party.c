@@ -3695,13 +3695,14 @@ void restore_acclists(void) {
 		fread(ptr, sizeof(hash_entry), 1, fp);
 #endif
 
-		s_printf(" (%d) '%s', id %d, acc %d, lev %d, race %d, class %d, mode %d.\n", x, ptr->name, ptr->id, ptr->account, ptr->level, ptr->race, ptr->class, ptr->mode);
+		//s_printf(" '%s', id %d, acc %d, lev %d, race %d, class %d, mode %d.\n", ptr->name, ptr->id, ptr->account, ptr->level, ptr->race, ptr->class, ptr->mode);
 
 		if (!lookup_player_name(ptr->id)) { /* paranoia: if the 'server' file was just deleted then there can be no names */
 			time_t ttime;
+			//s_printf("  adding: '%s' (id %d, acc %d)\n", ptr->name, ptr->id, ptr->account);
 			/* Add backed-up entry again */
 			add_player_name(ptr->name, ptr->id, ptr->account, ptr->race, ptr->class, ptr->mode, 1, 0, 0, 0, time(&ttime));
-		}
+		} else s_printf("  already exists: '%s' (id %d, acc %d)\n", ptr->name, ptr->id, ptr->account);
 	}
 
 	s_printf("done.\n");
