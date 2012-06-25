@@ -20,6 +20,7 @@ Spells are created on the fly with an mkey interface as a combination of element
 
 //#define ENABLE_AUGMENTS //Modify runespell parameters based on included elements.
 //#define CONSUME_RUNES //Allow self-spells to 'cost' additional runes, ie. for 'socketing'.
+#define RCRAFT_WEAKEST_LINK //Spells take the lowest skill level of all utilized runes, rather than the average.
 
 #define ENABLE_BLIND_CASTING //Blinding increases fail chance instead of preventing the cast. (Assume runes 'glow' here, no 'no_lite(Ind)' check as with books.)
 //#define ENABLE_CONFUSED_CASTING //Consusion increases fail chance instead of preventing the cast.
@@ -95,10 +96,19 @@ byte rspell_skill(u32b Ind, byte element[], byte elements) {
 	player_type *p_ptr = Players[Ind];
 	u16b skill = 0;
 	byte i;
+#ifndef RCRAFT_WEAKEST_LINK //calculate an average
 	for (i = 0; i < elements; i++) {
 		skill += get_skill(p_ptr, r_elements[element[i]].skill);
 	}
 	skill /= elements;
+#else //take the lowest value
+    u16b skill_compare;
+    skill = skill - 1; //overflow to largest u16b value
+    for (i = 0; i < elements; i++) {
+        skill_compare = get_skill(p_ptr, r_elements[element[i]].skill);
+        if (skill_compare < skill) skill = skill_compare;
+    }
+#endif
 	return (byte)skill;
 }
 
