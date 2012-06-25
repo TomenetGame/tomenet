@@ -5918,6 +5918,7 @@ void restore_estate(int Ind) {
 			}
 			if (data_len != -1) {
 				fread(data_note, sizeof(char), data_len, fp);
+				data_note[data_len] = '\0';
 				o_ptr->note = quark_add(data_note);
 			}
 
