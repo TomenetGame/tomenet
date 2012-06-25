@@ -3620,7 +3620,7 @@ void backup_acclists(void) {
 			/* Check this name */
 			if ((c_acc = GetAccountID(ptr->account, FALSE))) {
 				/* back him up */
-				fprintf(fp, "%d", strlen(ptr->name));
+				fprintf(fp, "%d\n", strlen(ptr->name));
 				fwrite(ptr->name, sizeof(char), strlen(ptr->name), fp);
 				fprintf(fp, "%lu%d%u%c%hu%c%hd%c%c%c",
 				    ptr->laston, ptr->id, ptr->account,
@@ -3652,7 +3652,7 @@ void backup_acclists(void) {
 		}
 	}
 
-	s_printf("done.");
+	s_printf("done.\n");
 	fclose(fp);
 }
 
@@ -3662,7 +3662,7 @@ void restore_acclists(void) {
 	char name_forge[MAX_CHARS];
 	hash_entry forge, *ptr = &forge;
 	forge.name = name_forge;
-	int name_len;
+	int name_len, x;
 
 	s_printf("Restoring accounts...\n");
 
@@ -3676,10 +3676,10 @@ void restore_acclists(void) {
 	fscanf(fp, "%s\n", tmp);
 
 	while (!feof(fp)) {
-		fscanf(fp, "%d", &name_len);
+		fscanf(fp, "%d\n", &name_len);
 		fread(name_forge, sizeof(char), name_len, fp);
 		name_forge[name_len] = '\0';
-		fscanf(fp, "%lu%d%u%c%hu%c%hd%c%c%c",
+		x = fscanf(fp, "%lu%d%u%c%hu%c%hd%c%c%c",
 		    &ptr->laston, &ptr->id, &ptr->account,
 		    &ptr->level, &ptr->party, &ptr->guild,
 		    &ptr->quest, &ptr->race, &ptr->class, &ptr->mode);
@@ -3687,7 +3687,7 @@ void restore_acclists(void) {
 		fscanf(fp, "%d%d", &ptr->au, &ptr->balance);
 #endif
 
-		s_printf("  '%s', id %d, acc %d, lev %d, race %d, class %d, mode %d.\n", ptr->name, ptr->id, ptr->account, ptr->level, ptr->race, ptr->class, ptr->mode);
+		s_printf(" (%d) '%s', id %d, acc %d, lev %d, race %d, class %d, mode %d.\n", x, ptr->name, ptr->id, ptr->account, ptr->level, ptr->race, ptr->class, ptr->mode);
 
 		if (!lookup_player_name(ptr->id)) { /* paranoia: if the 'server' file was just deleted then there can be no names */
 			time_t ttime;
@@ -3696,6 +3696,6 @@ void restore_acclists(void) {
 		}
 	}
 
-	s_printf("done.");
+	s_printf("done.\n");
 	fclose(fp);
 }
