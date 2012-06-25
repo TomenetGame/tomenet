@@ -3661,7 +3661,9 @@ void backup_acclists(void) {
 void restore_acclists(void) {
 	FILE *fp;
 	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], tmp[MAX_CHARS];
-	hash_entry ptr;
+	char name_forge[MAX_CHARS];
+	hash_entry forge, *ptr = &forge;
+	forge.name = name_forge;
 
 	s_printf("Restoring accounts...\n");
 
@@ -3677,21 +3679,21 @@ void restore_acclists(void) {
 	while (!feof(fp)) {
 #ifdef AUCTION_SYSTEM
 		fscanf(fp, "\"%s\"\n%lu%d%u%d%d%d%d%d%d%d%lu%lu",
-		    ptr.name, &ptr.laston, &ptr.id, &ptr.account,
-		    &ptr.level, &ptr.party, &ptr.guild,
-		    &ptr.quest, &ptr.race, &ptr.class, &ptr.mode,
-		    &ptr.au, &ptr.balance);
+		    ptr->name, &ptr->laston, &ptr->id, &ptr->account,
+		    &ptr->level, &ptr->party, &ptr->guild,
+		    &ptr->quest, &ptr->race, &ptr->class, &ptr->mode,
+		    &ptr->au, &ptr->balance);
 #else
 		fscanf(fp, "\"%s\"\n%lu%d%u%d%d%d%d%d%d%d",
-		    ptr.name, &ptr.laston, &ptr.id, &ptr.account,
-		    &ptr.level, &ptr.party, &ptr.guild,
-		    &ptr.quest, &ptr.race, &ptr.class, &ptr.mode);
+		    ptr->name, &ptr->laston, &ptr->id, &ptr->account,
+		    &ptr->level, &ptr->party, &ptr->guild,
+		    &ptr->quest, &ptr->race, &ptr->class, &ptr->mode);
 #endif
 
-		if (!lookup_player_name(ptr.id)) { /* paranoia: if the 'server' file was just deleted then there can be no names */
+		if (!lookup_player_name(ptr->id)) { /* paranoia: if the 'server' file was just deleted then there can be no names */
 			time_t ttime;
 			/* Add backed-up entry again */
-			add_player_name(ptr.name, ptr.id, ptr.account, ptr.race, ptr.class, ptr.mode, 1, 0, 0, 0, time(&ttime));
+			add_player_name(ptr->name, ptr->id, ptr->account, ptr->race, ptr->class, ptr->mode, 1, 0, 0, 0, time(&ttime));
 		}
 	}
 
