@@ -3622,12 +3622,16 @@ void backup_acclists(void) {
 				/* back him up */
 				fprintf(fp, "%d\n", strlen(ptr->name));
 				fwrite(ptr->name, sizeof(char), strlen(ptr->name), fp);
+#if 0
 				fprintf(fp, "%lu%d%u%c%hu%c%hd%c%c%c",
 				    ptr->laston, ptr->id, ptr->account,
     				    ptr->level, ptr->party, ptr->guild,
 				    ptr->quest, ptr->race, ptr->class, ptr->mode);
 #ifdef AUCTION_SYSTEM
 				fprintf(fp, "%d%d", ptr->au, ptr->balance);
+#endif
+#else
+				fwrite(ptr, sizeof(hash_entry), 1, fp);
 #endif
 
 				/* cleanup (?) */
@@ -3679,12 +3683,16 @@ void restore_acclists(void) {
 		fscanf(fp, "%d\n", &name_len);
 		fread(name_forge, sizeof(char), name_len, fp);
 		name_forge[name_len] = '\0';
+#if 0
 		x = fscanf(fp, "%lu%d%u%c%hu%c%hd%c%c%c",
 		    &ptr->laston, &ptr->id, &ptr->account,
 		    &ptr->level, &ptr->party, &ptr->guild,
 		    &ptr->quest, &ptr->race, &ptr->class, &ptr->mode);
 #ifdef AUCTION_SYSTEM
 		fscanf(fp, "%d%d", &ptr->au, &ptr->balance);
+#endif
+#else
+		fread(ptr, sizeof(hash_entry), 1, fp);
 #endif
 
 		s_printf(" (%d) '%s', id %d, acc %d, lev %d, race %d, class %d, mode %d.\n", x, ptr->name, ptr->id, ptr->account, ptr->level, ptr->race, ptr->class, ptr->mode);
