@@ -13,6 +13,7 @@
 /* #define NOTYET 	*//* only for testing and working atm */
 
 #include "angband.h"
+#include "party.h"
 
 /* how many chars someone may enter (formerly used for /bbs, was an ugly hack) */
 #define MAX_SLASH_LINE_LEN	MSG_LEN
@@ -6623,7 +6624,7 @@ void do_slash_cmd(int Ind, char *message)
 			        path_build(buf, MAX_PATH_LENGTH, buf2, "_accounts_");
 		                if ((fp = fopen(buf, "w")) == NULL) {
         		                s_printf("  error: cannot open file '%s'.\nfailed.\n", buf);
-	                	        return FALSE;
+	                	        return;
                 		}
 	                        /* begin with a version tag */
                                 fprintf(fp, "%s\n", "v1");
@@ -6690,7 +6691,7 @@ void do_slash_cmd(int Ind, char *message)
 			        path_build(buf, MAX_PATH_LENGTH, buf2, "_accounts_");
 		                if ((fp = fopen(buf, "r")) == NULL) {
         		                s_printf("  error: cannot open file '%s'.\nfailed.\n", buf);
-	                	        return FALSE;
+	                	        return;
                 		}
 	                        /* begin with a version tag */
                                 fscanf(fp, "%s\n", tmp);
