@@ -5758,7 +5758,7 @@ bool backup_estate(void) {
    copy all remaining data from our save file to the temporary file
    and turn the temporary file into the new save file. */
 void relay_estate(char *buf, char *buf2, FILE *fp, FILE *fp_tmp) {
-	char c;
+	int c;
 
 	/* relay the remaining data, if any */
 	while ((c = fgetc(fp)) != EOF) fputc(c, fp_tmp);
