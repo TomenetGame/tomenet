@@ -27,9 +27,7 @@
 //#define SIMPLE_BLEED
 
 /* Bleed with neighbours? (The main bleeding function).
-   WARNING: If this gets changed, the houses built on ocean grids may
-   change in rare cases. So if you toggle this, also regenerate the world
-   map from scratch so it's clean. */
+   WARNING: Toggling this feature can change house locations. */
 #ifdef WILDERNESS_NEW_TERRAINS
  #define BLEED_WITH_NEIGHBOURS
 #endif
@@ -37,11 +35,13 @@
 /* For BLEED_WITH_NEIGHBOURS:
    Don't bleed involving/from towns because that can look a bit weird
    sometimes, eg if Khazad-dum bleeds grassland into adjacent volcanos.
+   WARNING: Toggling this feature can change house locations.
    ** Sort of deprecated - use BLEED_ENHANCED_TOWN below instead. - C. Blue */
 //#define BLEED_AVOID_TOWN
 
 /* For BLEED_WITH_NEIGHBOURS:
-   Bleed correct town terrain into town-adjacent sectors (hard-coded though). */
+   Bleed correct town terrain into town-adjacent sectors (hard-coded though).
+   WARNING: Toggling this feature can change house locations. */
 #define BLEED_ENHANCED_TOWN
 
 
