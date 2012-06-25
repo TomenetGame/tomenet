@@ -2276,6 +2276,11 @@ static void wild_bleed_level(int bleed_to_x, int bleed_to_y, int bleed_from_x, i
 	terrain_type terrain;
 	cave_type *c_ptr, **zcave_bleed_to = getcave(&((struct worldpos) {bleed_to_x, bleed_to_y, 0}));
 
+#ifdef BLEED_AVOID_TOWN
+//	if (istownarea(&neighbor, 1)) return;
+	if (istown(&((struct worldpos) {bleed_from_x, bleed_from_y, 0}))) return;
+#endif
+
 	/* paranoia */
 	if (!zcave_bleed_to) {
 		s_printf("getcave() failed in wild_bleed_level\n");
@@ -2412,10 +2417,6 @@ static void bleed_with_neighbors(struct worldpos *wpos)
 	struct worldpos neighbor, neighbor_tmp;
 	neighbor.wz = neighbor_tmp.wz = 0;
 
-#ifdef BLEED_AVOID_TOWN
-	if (istownarea(wpos, 1)) return;
-#endif
-
 	/* Hack -- Use the "simple" RNG */
 	Rand_quick = TRUE;
 
@@ -2453,10 +2454,6 @@ static void bleed_with_neighbors(struct worldpos *wpos)
 			neighbor_tmp.wy = wpos->wy - 1;
 			break;
 		}
-
-#ifdef BLEED_AVOID_TOWN
-		if (istownarea(&neighbor, 1)) return;
-#endif
 
 		if (in_bounds_wild(neighbor.wy, neighbor.wx) && in_bounds_wild(neighbor_tmp.wy, neighbor_tmp.wx)) {
 			if (wild_info[neighbor_tmp.wy][neighbor_tmp.wx].type == wild_info[neighbor.wy][neighbor.wx].type) {
