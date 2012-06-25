@@ -5778,7 +5778,7 @@ void restore_estate(int Ind) {
 	FILE *fp, *fp_tmp;
 	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], version[MAX_CHARS];
 	char data[4], data_note[MSG_LEN];//MAX_OLEN?
-	char o_name[ONAME_LEN];
+	char o_name[MSG_LEN];
 	unsigned long au;
 	int data_len;
 	object_type forge, *o_ptr = &forge;
