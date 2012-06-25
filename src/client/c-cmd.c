@@ -1951,7 +1951,8 @@ void cmd_message(void)
 		/* Allow to paste items in chat via shortcut symbol - C. Blue */
 		for (i = 0; i < strlen(buf); i++) {
 			/* paste inven/equip item:  \\<slot>  */
-			if (buf[i] == '\\' &&
+			if ((i == 0 || buf[i - 1] != '\\') && /* don't confuse with '\\\' store pasting */
+			    buf[i] == '\\' &&
 			    buf[i + 1] == '\\' &&
 			    ((buf[i + 2] >= 'a' && buf[i + 2] < 'a' + INVEN_PACK) ||
 			    (buf[i + 2] >= 'A' && buf[i + 2] < 'A' + (INVEN_TOTAL - INVEN_WIELD)))) {
@@ -1990,15 +1991,11 @@ void cmd_message(void)
 				}
 			}
 			/* paste store item:  \\\<slot>  */
-			else if (buf[i] == '\\' && buf[i + 1] == '\\' && buf[i + 2] == '\\') {
-				if (buf[i + 3] >= 'a' && buf[i + 3] <= 'l') {
-					j = buf[i + 3] - 'a' + store_top;
-    	                		store_paste_item(item, j);
-                        		store_paste_where(where);
-    	                	} else {
-    	                		/* hack: discard (see below) */
-    	                		buf[i + 3] = 'a' + store.stock_num;
-    	                	}
+			else if (buf[i] == '\\' && buf[i + 1] == '\\' && buf[i + 2] == '\\' &&
+			    buf[i + 3] >= 'a' && buf[i + 3] <= 'l') {
+				j = buf[i + 3] - 'a' + store_top;
+    	                	store_paste_item(item, j);
+                        	store_paste_where(where);
 
 				/* just discard if we're not in a shop */
 				if (buf[i + 3] < 'a' + store.stock_num &&
