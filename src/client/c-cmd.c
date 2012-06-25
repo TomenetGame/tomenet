@@ -1875,10 +1875,10 @@ void cmd_check_misc(void)
 				peruse_file();
 				break;
 			case 'f':
-				show_motd(0);
+				Send_special_line(SPECIAL_FILE_MOTD2, 0);
 				break;
 			case 'g':
-				Send_special_line(SPECIAL_FILE_MOTD2, 0);
+				show_motd(0);
 				break;
 			case 'h':
 				do_cmd_messages();
