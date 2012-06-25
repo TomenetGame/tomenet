@@ -1084,3 +1084,8 @@ int swear_get_level(int i) { return swear[i].level; }
 
 void nonswear_set(int i, char *word) { strcpy(nonswear[i], word); }
 char *nonswear_get(int i) { return nonswear[i]; }
+
+void lua_fix_max_depth(int Ind) {
+	player_type *p_ptr = Players[Ind];
+        fix_max_depth(p_ptr);
+}
