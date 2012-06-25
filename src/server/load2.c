@@ -3064,4 +3064,6 @@ void fix_max_depth(player_type *p_ptr) {
 			p_ptr->max_depth[j] = i;
 		}
 	}
+
+	s_printf("max_depth[] has been fixed/reset for '%s'.\n", p_ptr->name);
 }
