@@ -3666,7 +3666,7 @@ void restore_acclists(void) {
 	char name_forge[MAX_CHARS];
 	hash_entry forge, *ptr = &forge;
 	forge.name = name_forge;
-	int name_len, x;
+	int name_len;
 
 	s_printf("Restoring accounts...\n");
 
@@ -3684,7 +3684,7 @@ void restore_acclists(void) {
 		fread(name_forge, sizeof(char), name_len, fp);
 		name_forge[name_len] = '\0';
 #if 0
-		x = fscanf(fp, "%lu%d%u%c%hu%c%hd%c%c%c",
+		fscanf(fp, "%lu%d%u%c%hu%c%hd%c%c%c",
 		    &ptr->laston, &ptr->id, &ptr->account,
 		    &ptr->level, &ptr->party, &ptr->guild,
 		    &ptr->quest, &ptr->race, &ptr->class, &ptr->mode);
@@ -3693,6 +3693,7 @@ void restore_acclists(void) {
 #endif
 #else
 		fread(ptr, sizeof(hash_entry), 1, fp);
+		ptr->name = NULL;//just to be clean
 #endif
 
 		//s_printf(" '%s', id %d, acc %d, lev %d, race %d, class %d, mode %d.\n", ptr->name, ptr->id, ptr->account, ptr->level, ptr->race, ptr->class, ptr->mode);
@@ -3701,8 +3702,8 @@ void restore_acclists(void) {
 			time_t ttime;
 			//s_printf("  adding: '%s' (id %d, acc %d)\n", ptr->name, ptr->id, ptr->account);
 			/* Add backed-up entry again */
-			add_player_name(ptr->name, ptr->id, ptr->account, ptr->race, ptr->class, ptr->mode, 1, 0, 0, 0, time(&ttime));
-		} else s_printf("  already exists: '%s' (id %d, acc %d)\n", ptr->name, ptr->id, ptr->account);
+			add_player_name(name_forge, ptr->id, ptr->account, ptr->race, ptr->class, ptr->mode, 1, 0, 0, 0, time(&ttime));
+		} else s_printf("  already exists: '%s' (id %d, acc %d)\n", name_forge, ptr->id, ptr->account);
 	}
 
 	s_printf("done.\n");
