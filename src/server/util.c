@@ -5693,7 +5693,7 @@ bool backup_estate(void) {
                     		o_ptr = &h_ptr->stock[j];
                     		/* add object to backup file */
                     		fprintf(fp, "OB:");
-				fwrite(o_ptr, sizeof(*o_ptr), 1, fp);
+				fwrite(o_ptr, sizeof(object_type), 1, fp);
 				/* store inscription too! */
 				if (o_ptr->note) {
     					fprintf(fp, "%d\n", strlen(quark_str(o_ptr->note)));
@@ -5728,7 +5728,7 @@ bool backup_estate(void) {
 		                        		o_ptr = &o_list[c_ptr->o_idx];
 		                        		/* add object to backup file */
 		                        		fprintf(fp, "OB:");
-			    				fwrite(o_ptr, sizeof(*o_ptr), 1, fp);
+			    				fwrite(o_ptr, sizeof(object_type), 1, fp);
 			    				/* store inscription too! */
 			    				if (o_ptr->note) {
 			    					fprintf(fp, "%d\n", strlen(quark_str(o_ptr->note)));
@@ -5866,7 +5866,7 @@ void restore_estate(int Ind) {
 		}
 		/* get object from backup file */
 		else if (!strcmp(data, "OB:")) {
-			fread(o_ptr, sizeof(*o_ptr), 1, fp);
+			fread(o_ptr, sizeof(object_type), 1, fp);
 
 			/* is it a pile of gold? */
 			if (o_ptr->tval == TV_GOLD) {
@@ -5881,7 +5881,7 @@ void restore_estate(int Ind) {
 					fprintf(fp_tmp, "AU:%d\n", au);
 #else /* use original format, ie 'object_type' */
 					fprintf(fp_tmp, "OB:");
-        				fwrite(o_ptr, sizeof(*o_ptr), 1, fp_tmp);
+        				fwrite(o_ptr, sizeof(object_type), 1, fp_tmp);
 #endif
 
 					relay_estate(buf, buf2, fp, fp_tmp);
@@ -5900,7 +5900,7 @@ void restore_estate(int Ind) {
 
 				/* write failed item back into new buffer file */
 				fprintf(fp_tmp, "OB:");
-    				fwrite(o_ptr, sizeof(*o_ptr), 1, fp_tmp);
+    				fwrite(o_ptr, sizeof(object_type), 1, fp_tmp);
 
 				relay_estate(buf, buf2, fp, fp_tmp);
 				return;
