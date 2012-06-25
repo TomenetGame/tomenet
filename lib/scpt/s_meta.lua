@@ -30,7 +30,11 @@ PROJECT_SPELLS = add_spell
         ["fail"] = 	-99,
         ["stat"] =      A_INT,
         ["spell"] = 	function()
-                        if player.spell_project == 0 then
+			if player.rcraft_project ~= 0 then
+				player.rcraft_project = 0
+				msg_print(Ind, "You stop synchronizing your spells.")
+                        end
+			if player.spell_project == 0 then
                                 player.spell_project = 1 + get_level(Ind, PROJECT_SPELLS, 6, 0)
                                 msg_print(Ind, "Your utility spells will now affect players in a radius of "..(player.spell_project)..".")
                         else

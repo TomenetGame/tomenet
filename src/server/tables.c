@@ -1717,6 +1717,13 @@ player_race race_info[MAX_RACE] =
                                 '+', 0,
                                 '%', 110,
                         },
+#ifdef ENABLE_RCRAFT
+			{
+				SKILL_RUNEMASTERY,
+				'+', 0,
+				'%', 110, /*10% 'Spell-Power' Type Bonus for Gnomes for "Rune Alacrity" skill - Nimble Gnomes! (fits 3rd Lore) at suggestion from C.Blue - Kurzel*/
+			},
+#endif
                         {
                                 SKILL_DIG,
                                 '+', 1000,
@@ -2219,6 +2226,28 @@ player_race race_info[MAX_RACE] =
                                 '+', 0,
                                 '%', 110,
                         },
+#ifdef ENABLE_RCRAFT
+			{ 
+				SKILL_R_ACIDWATE,
+				'+', 0,
+				'%', 110,
+			},
+			{
+				SKILL_R_ELECEART,
+				'+', 0,
+				'%', 110,
+			},
+			{
+				SKILL_R_FIRECHAO,
+				'+', 0,
+				'%', 110,
+			},
+			{
+				SKILL_R_COLDNETH,
+				'+', 0,
+				'%', 110,
+			},
+#endif
                         {
                                 SKILL_CLIMB,
                                 '+', 0,
@@ -2358,6 +2387,18 @@ player_race race_info[MAX_RACE] =
                                 '+', 0,
                                 '%', 0,
                         },
+#ifdef ENABLE_RCRAFT
+			{
+				SKILL_R_COLDNETH,
+				'+', 0,
+				'%', 110,
+			},
+			{
+				SKILL_R_POISNEXU,
+				'+', 0,
+				'%', 110,
+			},
+#endif
                         {
                                 SKILL_MIMIC, /* polymorph to vampire bat and maybe vampiric mist */
                                 '+', 1000,
@@ -4286,24 +4327,29 @@ player_class class_info[MAX_CLASS] =
 			},
 #else
 			{
+				SKILL_RUNEMASTERY,
+				'+', 0,
+				'+', 350,
+			},
+			{
 				SKILL_R_ACIDWATE,
 				'+', 0,
-				'+', 450,
+				'+', 500,
 			},
 			{
 				SKILL_R_ELECEART,
 				'+', 0,
-				'+', 450,
+				'+', 500,
 			},
 			{
 				SKILL_R_FIRECHAO,
 				'+', 0,
-				'+', 450,
+				'+', 500,
 			},
 			{
 				SKILL_R_COLDNETH,
 				'+', 0,
-				'+', 450,
+				'+', 500,
 			},
 			{
 				SKILL_R_POISNEXU,
@@ -4313,20 +4359,8 @@ player_class class_info[MAX_CLASS] =
 			{
 				SKILL_R_FORCTIME,
 				'+', 0,
-				'+', 300,
+				'+', 500,
 			},
-   /*
-			{
-				SKILL_R_NETHTIME,
-				'+', 0,
-				'+', 400,
-			},
-			{
-				SKILL_R_MINDNEXU,
-				'+', 0,
-				'+', 405,
-			},
-   */
 #endif
                         {
                                 SKILL_MIMIC,
@@ -5072,48 +5106,41 @@ player_class class_info[MAX_CLASS] =
 				'+', 1500,
 			},
 #else
+			{
+				SKILL_RUNEMASTERY,
+				'+', 1000,
+				'+', 400,
+			},
 			{ 
 				SKILL_R_ACIDWATE,
+				'+', 0,
 				'+', 1000,
-				'+', 800,
 			},
 			{
 				SKILL_R_ELECEART,
+				'+', 0,
 				'+', 1000,
-				'+', 800,
 			},
 			{
 				SKILL_R_FIRECHAO,
+				'+', 0,
 				'+', 1000,
-				'+', 800,
 			},
 			{
 				SKILL_R_COLDNETH,
+				'+', 0,
 				'+', 1000,
-				'+', 800,
 			},
 			{
 				SKILL_R_POISNEXU,
 				'+', 0,
-				'+', 900,
+				'+', 1000,
 			},
 			{
 				SKILL_R_FORCTIME,
 				'+', 0,
-				'+', 500,
+				'+', 1000,
 			},
-   /*
-			{
-				SKILL_R_NETHTIME,
-				'+', 0,
-				'+', 590, //84
-			},
-			{
-				SKILL_R_MINDNEXU,
-				'+', 0,
-				'+', 605, //81
-			},
-   */
 #endif
                         /* Necromancy tree */
                         {

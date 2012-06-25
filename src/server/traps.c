@@ -3487,14 +3487,14 @@ bool set_rune_trap_okay(int Ind) {
 	/* Only set traps on clean floor grids */
 	/* TODO: allow to set traps on poisoned floor */
 	if (!cave_clean_bold(zcave, p_ptr->py, p_ptr->px) ||
-	    c_ptr->special) {
+	    c_ptr->special || c_ptr->feat == FEAT_GLYPH) {
 		msg_print(Ind, "You cannot set a trap on this.");
 		return FALSE;
 	}
 
 	/* Can we sustain one more rune trap? */
-	if (p_ptr->runetraps == RUNETRAP_UPKEEP) {
-		msg_print(Ind, "You cannot sustain another rune trap!");
+	if (p_ptr->rcraft_upkeep + (100 / UPKEEP_TRAP) > 100) {
+		msg_print(Ind, "\377oYou cannot sustain another rune trap!");
 		return FALSE;
 	}
 
@@ -3537,6 +3537,7 @@ void set_rune_trap_aux(int Ind, int typ, int mod, int lev)
 	p_ptr->runetrap_x[p_ptr->runetraps] = px;
 	p_ptr->runetrap_y[p_ptr->runetraps] = py;
 	p_ptr->runetraps++;
+	p_ptr->rcraft_upkeep += (100 / UPKEEP_TRAP); //Kurzel
 	calc_mana(Ind);
 
 	cs_ptr->sc.runetrap.typ = typ;
@@ -3550,6 +3551,7 @@ void set_rune_trap_aux(int Ind, int typ, int mod, int lev)
 	/* Actually set the trap */
 	cave_set_feat_live(&p_ptr->wpos, py, px, FEAT_RUNE_TRAP);
 }
+
 #endif
 
 /*
@@ -5249,7 +5251,7 @@ bool mon_hit_rune_trap(int m_idx)
 
 	int dam = 0, trapping;
 
-	int i, who = PROJECTOR_MON_TRAP, s_av;
+	int i, who = PROJECTOR_MON_TRAP, skill;
 	int typ = GF_FIRE, rad = 1;
 	cave_type *c_ptr;
 	cave_type **zcave;
@@ -5354,7 +5356,7 @@ bool mon_hit_rune_trap(int m_idx)
 #ifdef USE_SOUND_2010
 		/* sound only if we can see the trap detonate */
 		if (los(&m_ptr->wpos, p_ptr->py, p_ptr->px, my, mx)) {
-			if (cs_ptr->sc.runetrap.typ != RUNETRAP_DETO)
+			if (r_projections[cs_ptr->sc.runetrap.typ].gf_type != GF_DETONATION)
 				sound(who, "ball", NULL, SFX_TYPE_MISC, FALSE);
 			else
 				sound(who, "detonation", NULL, SFX_TYPE_MISC, FALSE);
@@ -5365,61 +5367,14 @@ bool mon_hit_rune_trap(int m_idx)
 	}
 
 	/* Actually activate the trap */
-	s_av = cs_ptr->sc.runetrap.lev; //For rget_level() - Kurzel
-	switch (cs_ptr->sc.runetrap.typ) {
-	case RUNETRAP_DETO:
-		typ = GF_DETONATION;
-		rad = 2 + r_imperatives[cs_ptr->sc.runetrap.mod].radius;
-		dam = rget_level(400 + randint(50));
-		break;
-	case RUNETRAP_ACID:
-		typ = GF_ACID;
-		rad = 2 + r_imperatives[cs_ptr->sc.runetrap.mod].radius;
-		dam = rget_level(400 + randint(50));
-		break;
-	case RUNETRAP_ELEC:
-		typ = GF_ELEC;
-		rad = 2 + r_imperatives[cs_ptr->sc.runetrap.mod].radius;
-		dam = rget_level(400 + randint(50));
-		break;
-	case RUNETRAP_FIRE:
-		typ = GF_FIRE;
-		rad = 2 + r_imperatives[cs_ptr->sc.runetrap.mod].radius;
-		dam = rget_level(400 + randint(50));
-		break;
-	case RUNETRAP_COLD:
-		typ = GF_COLD;
-		rad = 2 + r_imperatives[cs_ptr->sc.runetrap.mod].radius;
-		dam = rget_level(400 + randint(50));
-		break;
-	default:
-		s_printf("oops! nonexisting rune trap(typ: %d)!\n", cs_ptr->sc.runetrap.typ);
-	}
-
-	if (dam > S_DAM_MAX) dam = S_DAM_MAX;
+	skill = cs_ptr->sc.runetrap.lev; //Use 'skill' for the rget_level() macro. - Kurzel
+	
+	typ = r_projections[cs_ptr->sc.runetrap.typ].gf_type;
+	rad = 2 + r_imperatives[cs_ptr->sc.runetrap.mod].radius;
+	//Hacky quick 'ball' damage calc - Kurzel
+	dam = r_projections[cs_ptr->sc.runetrap.typ].weight * rget_level(25) * rget_level(25) / W_MAX_DIR;
+	dam = dam * r_imperatives[cs_ptr->sc.runetrap.mod].damage / 10;
 	if (dam < 1) dam = 1;
-	dam = (dam * (r_imperatives[cs_ptr->sc.runetrap.mod].dam != 0 ? r_imperatives[cs_ptr->sc.runetrap.mod].dam : randint(15) + 5)) / 10;
-	//dam = (dam * d_multiplier) / 10;
-	//Use runespell damage calculation, hardcoded RT_types? (see common\tables.c) - Kurzel
-		switch (cs_ptr->sc.runetrap.typ) {
-	case RUNETRAP_DETO:
-		dam = (dam * 16) / 10;
-		break;
-	case RUNETRAP_ACID:
-		dam = (dam * 11) / 10;
-		break;
-	case RUNETRAP_ELEC:
-		dam = (dam * 11) / 10;
-		break;
-	case RUNETRAP_FIRE:
-		dam = (dam * 11) / 10;
-		break;
-	case RUNETRAP_COLD:
-		dam = (dam * 11) / 10;
-		break;
-	default:
-		s_printf("oops! nonexisting rune trap(typ: %d)!\n", cs_ptr->sc.runetrap.typ);
-	}
 
 	/* trap is gone */
 	i = cs_ptr->sc.runetrap.feat;

@@ -1,1511 +1,3326 @@
-/* Purpose: New runemaster class functionality */
-/* runecraft.c */
+/* $Id$ */
+/* File: runecraft.c */
+
+/* Purpose: New Runecraft Spell System */
+
 /* by Relsiet/Andy Dubbeld (andy@foisdin.com) */
-/* additions by Kurzel (kurzel.tomenet@gmail.com) */
-/*
-New runemastery class/spell system
-
-Spells are created on the fly with an mkey interface as a combination of up to three rune elements, a modifier and a spell type.
-
-The spell characteristics (damage, radius and duration, fail-rate, cost, etc) of a spell are decided by the average of the caster's skill level in their rune skills, and are further modified by the 'successfulness' of a given cast (or how near/far you were to failing).
-
-Spells can always be attempted, but penalties are applied for failing cast an attempted spell, and difficulty increases when the caster is impaired (Missing a rune, blind, confused, stunned, not enough mp, etc).
-
-This makes runemastery quite versatile, but also quite risky.
-
-Primary stats are Int and Dex.
-
-A high level rune-master (lv 50) should only have a few runes skilled > 40.
-*/
+/* maintained by Kurzel (kurzel.tomenet@gmail.com) */
 
 #include "angband.h"
 
+/*
+Spells are created on the fly with an mkey interface as a combination of elements, an imperative and a type.
+*/
 #ifdef ENABLE_RCRAFT
+//#define LIMIT_NON_RUNEMASTERS //2-rune maximum for adventurers. Disabled for now, as earlier extravagant utility access has been removed.
 
-/* Limit adventurers so they cannot utilize 3-runes-spells?
-   Reason is that one rune school might give them ~ 15 utility spells,
-   which is about 3x as much as they'd get from any other spell school. */
-#define LIMIT_NON_RUNEMASTERS
+#define ENABLE_GROUP_SPELLS //Allow new runemasters to accept 'rune charges' for combination spells.
+//#define ENABLE_RUNE_GOLEMS //Allow the runespells pertaining to rune golems!
+//#define ENABLE_RUNE_CURSES //Allow the runespells pertaining to rune curses!
 
+//#define ENABLE_AUGMENTS //Modify runespell parameters based on included elements.
+//#define CONSUME_RUNES //Allow self-spells to 'cost' additional runes, ie. for 'socketing'.
 
-byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative, bool retaliate);
-s16b rspell_time(u32b Ind, byte imperative);
-bool is_attack(u32b s_flags);
-u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration, s16b cost, u32b type, s16b diff, byte imper, u32b type_flags, u16b s_av, s16b mali);
-u32b rspell_type(u32b flags);
-s16b rspell_diff(u32b Ind, byte imperative, s16b s_cost, u16b s_av, u32b s_type, u32b s_flags, s16b * mali);
-u16b rspell_skill(u32b Ind, u32b s_flags);
-u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cost, u32b s_type, char * attacker, byte imperative, u32b s_flags);
-byte rspell_penalty(u32b Ind, u16b pow);
-u16b rspell_dam(u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_flags, u16b s_av, byte imperative);
-s16b rspell_cost(u32b Ind, u16b s_type, u32b s_flags, u16b s_av, byte imperative);
-byte rspell_check(u32b Ind, s16b * mali, u32b s_flags);
-byte meth_to_id(u32b s_meth);
-byte runes_in_flag(byte runes[], u32b flags);
-byte rune_value(byte runes[]);
-int b_compare (const void * a, const void * b); //Byte comparison for qsort
+#define ENABLE_BLIND_CASTING //Blinding increases fail chance instead of preventing the cast. (Assume runes 'glow' here, no 'no_lite(Ind)' check as with books.)
+//#define ENABLE_CONFUSED_CASTING //Consusion increases fail chance instead of preventing the cast.
+#define ENABLE_SHELL_PROJECTIONS //AM shell stops only self-spells with this enabled. (Assume runes 'emit' the magic, not the caster.)
 
-s16b rspell_time(u32b Ind, byte imperative)
-{
-	player_type * p_ptr = Players[Ind];
-	
-	int cast_time = r_imperatives[imperative].time;
+#define ENABLE_LIFE_CASTING //Allows casting with HP if not enough MP.
+#define SAFE_RETALIATION //Disable retaliation/FTK when casting with HP.
 
-	return (level_speed(&p_ptr->wpos) * cast_time) / 10;
-}
+#define FEEDBACK_MESSAGE //Gives the caster a feedback message if penalized.
 
-byte runes_in_flag(byte runes[], u32b flags)
-{
-	if ((flags & R_ACID) == R_ACID) { runes[0] = 1; } else { runes[0] = 0; }
-	if ((flags & R_ELEC) == R_ELEC) { runes[1] = 1; } else { runes[1] = 0; }
-	if ((flags & R_FIRE) == R_FIRE) { runes[2] = 1; } else { runes[2] = 0; }
-	if ((flags & R_COLD) == R_COLD) { runes[3] = 1; } else { runes[3] = 0; }
-	if ((flags & R_POIS) == R_POIS) { runes[4] = 1; } else { runes[4] = 0; }
-	if ((flags & R_FORC) == R_FORC) { runes[5] = 1; } else { runes[5] = 0; }
-	if ((flags & R_WATE) == R_WATE) { runes[6] = 1; } else { runes[6] = 0; }
-	if ((flags & R_EART) == R_EART) { runes[7] = 1; } else { runes[7] = 0; }
-	if ((flags & R_CHAO) == R_CHAO) { runes[8] = 1; } else { runes[8] = 0; }
-	if ((flags & R_NETH) == R_NETH) { runes[9] = 1; } else { runes[9] = 0; }
-	if ((flags & R_NEXU) == R_NEXU) { runes[10] = 1; } else { runes[10] = 0; }
-	if ((flags & R_TIME) == R_TIME) { runes[11] = 1; } else { runes[11] = 0; }
+//#define RCRAFT_DEBUG //Enables debugging messages for the server.
 
-	/*
-	if ((flags & R_FIRE) == R_FIRE) { runes[0] = 1; } else { runes[0] = 0; }
-	if ((flags & R_COLD) == R_COLD) { runes[1] = 1; } else { runes[1] = 0; }
-	if ((flags & R_ACID) == R_ACID) { runes[2] = 1; } else { runes[2] = 0; }
-	if ((flags & R_WATE) == R_WATE) { runes[3] = 1; } else { runes[3] = 0; }
-	if ((flags & R_ELEC) == R_ELEC) { runes[4] = 1; } else { runes[4] = 0; }
-	if ((flags & R_EART) == R_EART) { runes[5] = 1; } else { runes[5] = 0; }
-	if ((flags & R_POIS) == R_POIS) { runes[6] = 1; } else { runes[6] = 0; }
-	if ((flags & R_WIND) == R_WIND) { runes[7] = 1; } else { runes[7] = 0; }
-	if ((flags & R_MANA) == R_MANA) { runes[8] = 1; } else { runes[8] = 0; }
-	if ((flags & R_CHAO) == R_CHAO) { runes[9] = 1; } else { runes[9] = 0; }
-	if ((flags & R_FORC) == R_FORC) { runes[10] = 1; } else { runes[10] = 0; }
-	if ((flags & R_GRAV) == R_GRAV) { runes[11] = 1; } else { runes[11] = 0; }
-	if ((flags & R_NETH) == R_NETH) { runes[12] = 1; } else { runes[12] = 0; }
-	if ((flags & R_TIME) == R_TIME) { runes[13] = 1; } else { runes[13] = 0; }
-	if ((flags & R_MIND) == R_MIND) { runes[14] = 1; } else { runes[14] = 0; }
-	if ((flags & R_NEXU) == R_NEXU) { runes[15] = 1; } else { runes[15] = 0; }
- */
-	return 0;
-}
+/* Decode Runespell */
+byte flags_to_elements(byte element[], u16b e_flags);
+byte flags_to_imperative(u16b m_flags);
+byte flags_to_type(u16b m_flags);
+/* Validation Parameters */
+byte rspell_skill(u32b Ind, byte element[], byte elements);
+byte rspell_level(byte element[], byte elements, byte imperative, byte type);
+s16b rspell_diff(byte skill, byte level);
+s16b rspell_energy(u32b Ind, byte element[], byte elements, byte imperative, byte type);
+#ifdef ENABLE_GROUP_SPELLS
+bool is_group_spell(s16b rune[], u16b e_flags1, u16b e_flags2, byte elements);
+#endif
+byte rspell_cost(u32b Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte level);
+s16b rspell_inventory(u32b Ind, byte element[], byte elements, u16b *mali);
+byte rspell_fail(u32b Ind, byte element[], byte elements, byte imperative, byte type, s16b diff, u16b mali);
+/* Decode Projection */
+byte flags_to_projection(u16b flags);
+/* Remaining Parameters */
+u32b rspell_damage(u32b Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte projection);
+void rspell_penalty(s16b margin, byte *p_flags);
+byte rspell_radius(u32b Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte level);
+byte rspell_duration(u32b Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte level);
+/* Penalty Function */
+void rspell_do_penalty(u32b Ind, u32b gf_type, u32b damage, byte cost, byte p_flags, s16b link);
+/* Additional Functions */
+#ifdef CONSUME_RUNES
+bool rspell_socket(u32b Ind, byte rune);
+#endif
+/* Main Function */
+byte execute_rspell(u32b Ind, byte dir, u16b e_flags1, u16b e_flags2, u16b m_flags, bool retaliate);
 
-byte rune_value(byte runes[])
-{
-	byte i,count;
-	count=0;
-	for(i=0;i<RCRAFT_MAX_ELEMENTS;i++)
-		if (runes[i])
-			count+=r_elements[i].cost;
-	return count;
-}
-
-/* rspell_check
-
-Checks if the runespells are in the player's possession
-
-Each missing rune is worth 20% extra to the fail counter, plus an additional 10 if there are any.
-
-It should be possible to cast a runespell without runes in situations of dire need, but too risky to attempt otherwise.
-*/
-byte rspell_check(u32b Ind, s16b * mali, u32b s_flags)
-{
-	player_type * p_ptr = Players[Ind];
-	s16b i, k, j;
-	object_type	*o_ptr;
-	s16b p_runes[RCRAFT_MAX_ELEMENTS];
-	s16b p_rc = 0;
-	byte runes[RCRAFT_MAX_ELEMENTS];
-	
-	for (j = 0; j < INVEN_TOTAL; j++)
-	{
-		if (j >= INVEN_PACK)
-			continue;
-		
-		o_ptr = &p_ptr->inventory[j];
-
-		if (o_ptr->tval == TV_RUNE2)
-		{
-			p_runes[p_rc] = o_ptr->sval;
-			p_rc++;
+byte flags_to_elements(byte element[], u16b e_flags) {
+	byte elements = 0;
+	byte i;
+	for (i = 0; i < RCRAFT_MAX_ELEMENTS; i++) {
+		if ((e_flags & r_elements[i].flag) == r_elements[i].flag) {
+			element[elements] = i;
+			elements++;
 		}
 	}
-	
-	runes_in_flag(runes,s_flags);
-	/* Type check */
-	for(i=0;i<RCRAFT_MAX_ELEMENTS;i++)
-	{
-		if (runes[i]==1)
-		{
-			k=0;
-			for (j = 0; j < p_rc; j++)
-				if (p_runes[j] == r_elements[i].id)
-					k = 1;
-			if (!k)
-				*mali += 10;
-		}
+	return elements;
+}
+
+byte flags_to_imperative(u16b m_flags) {
+	byte i;
+	for (i = 0; i < RCRAFT_MAX_IMPERATIVES; i++) {
+		if ((m_flags & r_imperatives[i].flag) == r_imperatives[i].flag) return i;
 	}
-
-	if (!*mali)
-		return 1;
-	return 0;
+	return -1;
 }
 
-
-/* meth_to_id()
-Converts from the method flags to a method index.
-To rectify a design mistake.
-*/
-byte meth_to_id(u32b s_meth)
-{
-	int m = 0;
-	if (s_meth & R_MELE) m = 0;
-	else if (s_meth & R_SELF) m = 1;
-	else if (s_meth & R_BOLT) m = 2;
-	else if (s_meth & R_BEAM) m = 3;
-
-	else if (s_meth & R_BALL) m = 4;
-	else if (s_meth & R_WAVE) m = 5;
-	else if (s_meth & R_CLOU) m = 6;
-	else if (s_meth & R_STOR) m = 7;
-		
-	return m;
+byte flags_to_type(u16b m_flags) {
+	byte i;
+	for (i = 0; i < RCRAFT_MAX_TYPES; i++) {
+		if ((m_flags & r_types[i].flag) == r_types[i].flag) return i;
+	}
+	return -1;
 }
 
-
-/*
-	rspell_cost
-
-	Determines mp cost of a given spell
-	
-	Cost should be determined by a few criteria:
-	
-	1. Number of runes in a spell (complexity) + (spell effect level + type level) / 2 + modifier level
-	2. Level of the spell effect--
-	3. Average skill level of player
-	4. Cost multipliers (effect, method & imperative)
-
-	Currently cost = (#1 + 30) * skill_level / 50 * #4
-*/
-s16b rspell_cost (u32b Ind, u16b s_type, u32b s_flags, u16b s_av, byte imperative)
-{
+byte rspell_skill(u32b Ind, byte element[], byte elements) {
 	player_type *p_ptr = Players[Ind];
-	byte m = meth_to_id(s_flags);
-	byte runes[RCRAFT_MAX_ELEMENTS];
-	byte value = 0;	
-	byte penalty = 0;
-	s16b cost = 0;
-	
-	int type_level = runespell_types[m].cost;
-	int mod_level = r_imperatives[imperative].level;
-	int effect_level = runespell_list[s_type].level;
-	int total_level = type_level + effect_level + mod_level;
-	
-	runes_in_flag(runes,s_flags);
-	value = rune_value(runes);
-	
-	byte t_pen = 0; byte s_pen = 0; byte d_pen = 0;
-	
-	if (!s_av) s_av = 1;
-	
-	cost = rget_level(30 + (type_level)/2 + mod_level);
-	
-	t_pen = runespell_types[m].pen;
-	s_pen = runespell_list[s_type].pen;
-	d_pen = r_imperatives[imperative].cost ? r_imperatives[imperative].cost : randint(15)+5;
-	
-	if (cost > S_COST_MAX)
-		cost = S_COST_MAX;
-	
-	cost = (cost * t_pen) / 10;
-	cost = (cost * s_pen) / 10;
-	cost = (cost * d_pen) / 10;
-	
-	/* Alternative to these just increasing fail rates: */
-	if (no_lite(Ind) || p_ptr->blind) penalty += 20;
-	if (p_ptr->confused) penalty += 20;
-	if (p_ptr->stun > 50) penalty += 20;
-	else if (p_ptr->stun) penalty += 10;
-	
-	cost = cost+((cost*penalty)/100); //Costs can increase up to 60% if everything is going wrong.
-	
-	if (cost < total_level)
-		cost = total_level;
-	
-	return cost;
+	u16b skill = 0;
+	byte i;
+	for (i = 0; i < elements; i++) {
+		skill += get_skill(p_ptr, r_elements[element[i]].skill);
+	}
+	skill /= elements;
+	return (byte)skill;
 }
 
-u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_flags, u16b s_av, byte imperative)
-/*
-	Determines the damage, radius and duration of a given spell
+byte rspell_level(byte element[], byte elements, byte imperative, byte type) {
+	u16b level = 0;
+	byte i;
+	for (i = 0; i < elements; i++) {
+		level += r_elements[element[i]].level;
+	}
+	level += r_imperatives[imperative].level;
+	level += r_types[type].level;
+	/* Normalize */
+	switch (elements) {
+		case 1:
+		level = level * (50 - RSPELL_MIN_LVL_1) / RSPELL_MAX_LVL_1 + RSPELL_MIN_LVL_1;
+		break;
+		case 2:
+		level = level * (50 - RSPELL_MIN_LVL_2) / RSPELL_MAX_LVL_2 + RSPELL_MIN_LVL_2;
+		break;
+		case 3:
+		level = level * (50 - RSPELL_MIN_LVL_3) / RSPELL_MAX_LVL_3 + RSPELL_MIN_LVL_3;
+	}
+	return (byte)level;
+}
 
-	Should follow a similar curve to mage-spells.
-*/
-{
-	u16b e_level = runespell_list[s_type].level;
-	byte runes[RCRAFT_MAX_ELEMENTS];
-	runes_in_flag(runes, s_flags);
-	int damage = 1;
-	int base_radius = runespell_list[s_type].radius;
+s16b rspell_diff(byte skill, byte level) {
+	s16b diff = skill - level;
+	if (diff > S_DIFF_MAX) return S_DIFF_MAX;
+	else return diff;
+}
+
+s16b rspell_energy(u32b Ind, byte element[], byte elements, byte imperative, byte type) {
+	player_type * p_ptr = Players[Ind];
+	s16b energy = level_speed(&p_ptr->wpos) / (1 + (S_ENERGY_CPR * get_skill(p_ptr, SKILL_RUNEMASTERY) / 50)); //steps at 50 / S_ENERGY_CPR
+	//s16b energy = level_speed(&p_ptr->wpos) * 50 / (50 + S_ENERGY_CPR * get_skill(p_ptr, SKILL_RUNEMASTERY));
 	
-	int r = *radius;
-	int dur = *duration;
-	
-	u16b d_multiplier = runespell_list[s_type].dam;
-	u16b t_multiplier = r_imperatives[imperative].duration;
-	s16b r_mod = r_imperatives[imperative].radius;
-	
-	if (r_mod == 5)
-		r_mod = randint(3) - 2;
-	
-	if (s_av < e_level + 1)
-		s_av = e_level + 1; //Give a minimum of damage
-	
-	if ((s_flags & R_BOLT) == R_BOLT)
-	{
-		damage = damroll(3 + rget_level(45), 1 + rget_level(20));
+#ifdef ENABLE_AUGMENTS
+	if (p_ptr->rcraft_augment == -1) {
+		byte i;
+		for (i = 0; i < elements; i++) {
+			if (r_elements[element[i]].energy > 10) energy = energy * (10 + (r_elements[element[i]].energy - 10) / elements) / 10;
+			else energy = energy * (10 - (10 - r_elements[element[i]].energy) / elements) / 10;
+		}
 	}
-	else if ((s_flags & R_BEAM) == R_BEAM)
-	{
-		//damage = damroll(3 + rget_level(40), 1 + rget_level(20));
-		damage = damroll(3 + rget_level(40), 1 + rget_level(30));
+	else energy = energy * r_elements[p_ptr->rcraft_augment].energy / 10;
+#endif
+	
+	energy = energy * r_imperatives[imperative].energy / 10;
+	energy = energy * r_types[type].energy / 10;
+	return energy;
+}
+
+#ifdef ENABLE_GROUP_SPELLS
+bool is_group_spell(s16b rune[], u16b e_flags1, u16b e_flags2, byte elements) {	
+	byte temp_array[1];
+	u16b temp_flag;
+	/* Clear the flag array for up to 2 runes */
+	byte i;
+	for (i = 0; i < RSPELL_MAX_ELEMENTS - 1; i++) {
+		rune[i] = -1;
 	}
-	else if ((s_flags & R_SELF) == R_SELF)
-	{
-		damage = randint(20) + rget_level(136);
-		//dur = randint(50) + rget_level(75);
-		//dur = randint(25) + rget_level(75);
-		dur = 5 + randint(10) + rget_level(40);
+	/* Hack -- Search for the rune(s) to combine - Kurzel */
+	switch (elements) {
+		case 2:
+		if ((e_flags1 & R_TIME) == R_TIME) {
+			temp_flag = e_flags1 - R_TIME;
+			if (temp_flag == R_POIS || temp_flag == R_NEXU || temp_flag == R_FORC) return FALSE;
+			flags_to_elements(temp_array, temp_flag);
+			rune[0] = temp_array[0];
+			return TRUE;
+		}
+		else return FALSE;
+		case 3:
+		//Is R_TIME in the leading pair?
+		if ((e_flags1 & R_TIME) == R_TIME) {
+			temp_flag = e_flags1 - R_TIME;
+			if (temp_flag == R_POIS || temp_flag == R_NEXU || temp_flag == R_FORC) return FALSE;
+			flags_to_elements(temp_array, temp_flag);
+			rune[0] = temp_array[0];
+		}
+		else return FALSE;
+		//Is R_TIME *also* in the trailing pair?
+		if ((e_flags2 & R_TIME) == R_TIME) {
+			temp_flag = e_flags2 - R_TIME;
+			if (temp_flag == R_POIS || temp_flag == R_NEXU || temp_flag == R_FORC) return FALSE;
+			flags_to_elements(temp_array, temp_flag);
+			rune[1] = temp_array[0];
+		}
+		else { //otherwise, time was the first rune
+			temp_flag = e_flags2 - r_elements[rune[0]].flag;
+			if (temp_flag == R_POIS || temp_flag == R_NEXU || temp_flag == R_FORC) return FALSE;
+			flags_to_elements(temp_array, temp_flag);
+			rune[1] = temp_array[0];
+		}
+		return TRUE;
+		default:
+		return FALSE;
 	}
-	else if ((s_flags & R_BALL) == R_BALL)
-	{
-		damage = rget_level(400 + randint(50));
-		r = rget_level(base_radius);
+}	
+#endif
+
+byte rspell_cost(u32b Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte level) {
+//unused?	player_type * p_ptr = Players[Ind];
+	u16b cost = ((level + skill) / (2 * S_COST_DIV));
+	//cost = cost * 50 / (50 + S_ENERGY_CPR * get_skill(p_ptr, SKILL_RUNEMASTERY));
+	
+#ifdef ENABLE_AUGMENTS
+	if (p_ptr->rcraft_augment == -1) {
+		byte i;
+		for (i = 0; i < elements; i++) {
+			if (r_elements[element[i]].cost > 10) cost = cost * (10 + (r_elements[element[i]].cost - 10) / elements) / 10;
+			else cost = cost * (10 - (10 - r_elements[element[i]].cost) / elements) / 10;
+		}
 	}
-	else if ((s_flags & R_CLOU) == R_CLOU)
-	{
-		r = rget_level(base_radius);
-		dur = 2 + randint(3) + rget_level(10);
+	else cost = cost * r_elements[p_ptr->rcraft_augment].cost / 10;
+#endif
+	
+	cost = cost * r_imperatives[imperative].cost / 10;
+	cost = cost * r_types[type].cost / 10;
+	
+	/* Hard limit */
+	if (cost < S_COST_MIN) cost = S_COST_MIN;
+	if (cost > S_COST_MAX) cost = S_COST_MAX;
+	
+	return (byte)cost;
+}
+
+s16b rspell_inventory(u32b Ind, byte element[], byte elements, u16b *mali) {
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr;
+	
+	/* Predetermine the rune to break; remain negative if not found - Kurzel*/
+	s16b link = -randint(elements);
+	
+	/* Reduce the mali for each rune found */
+	byte i,j;
+	for (i = 0; i < INVEN_TOTAL; i++) {
+		if (i >= INVEN_PACK) continue;		
+		o_ptr = &p_ptr->inventory[i];
+		if ((o_ptr->tval == TV_RUNE2) && (o_ptr->level || o_ptr->owner == p_ptr->id)) {
+			for (j = 0; j < elements; j++) { 
+				if (o_ptr->sval == element[j]) {
+					*mali -= S_FAIL_RUNE;
+					/* Store the inventory location of a predetermined rune */
+					if (-link == j + 1) link = i;
+				}
+			}
+		}
+	}
+	
+	return link;
+}
+
+byte rspell_fail(u32b Ind, byte element[], byte elements, byte imperative, byte type, s16b diff, u16b mali) {
+	player_type *p_ptr = Players[Ind];
+
+	/* Set the base failure rate; currently 50% at equal skill to level such that the range is [5,95] over 30 levels - Kurzel */
+	s16b fail = 3 * (S_DIFF_MAX - diff) + 5;
+
+#ifdef ENABLE_AUGMENTS
+	if (p_ptr->rcraft_augment == -1) {
+		byte i;
+		for (i = 0; i < elements; i++) {
+			fail += r_elements[element[i]].fail / elements;
+		}
+	}
+	else fail += r_elements[p_ptr->rcraft_augment].fail;
+#endif
+	
+	fail += r_imperatives[imperative].fail;
+	fail += r_types[type].fail;
+
+	fail += mali; //Place before stat modifier; casters of great ability can reduce the penalty for casting while hindered. - Kurzel
+	
+	/* Reduce failure rate by STAT adjustment */
+	fail -= 3 * ((adj_mag_stat[p_ptr->stat_ind[A_INT]] * 65 + adj_mag_stat[p_ptr->stat_ind[A_DEX]] * 35) / 100 - 1);
+	
+	/* Extract the minimum failure rate */
+        s16b minfail = (adj_mag_fail[p_ptr->stat_ind[A_INT]] * 65 + adj_mag_fail[p_ptr->stat_ind[A_DEX]] * 35) / 100;
+
+	/* Minimum failure rate */
+	if (fail < minfail) fail = minfail;
+	
+	/* Always a 5 percent chance of working */
+	if (fail > 95) fail = 95;
+	
+	return (byte)fail;
+}
+
+byte flags_to_projection(u16b flags) {
+	byte i;
+	for (i = 0; i < RCRAFT_MAX_PROJECTIONS; i++) {
+		if (flags == r_projections[i].flags) {
+			if (r_projections[i].gf_type == GF_WONDER) //Wonder hack - Kurzel
+				while (r_projections[i].gf_type == GF_WONDER) { i = randint(RCRAFT_MAX_PROJECTIONS) - 1; }
+			return i;
+		}
+	}
+	return -1;
+}
+
+u32b rspell_damage(u32b Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte projection) {
+	player_type * p_ptr = Players[Ind];
+	u32b damage = 0, damage_dice, weight_hi, weight_lo, influence;
+	switch (r_projections[projection].gf_class) {
+		case DT_DIRECT: {
+		weight_hi = W_MAX_DIR;
+		weight_lo = W_MIN_DIR;
+		influence = W_INF_DIR;
 		
-		/* Damage should be proportional to radius and duration. */
-		//damage = randint(4) + rget_level(80 - (*radius + *duration) / 2);
-		//damage = randint(2) + 2 + rget_level(50) * (10 + rget_level(50)) / 30;
-		damage = randint(2) + 2 + rget_level(40) * (10 + rget_level(40)) / 30;
-	}
- 	else if ((s_flags & R_WAVE) == R_WAVE)
-	{
-		/* Wave uses duration, instead of radius. */
-		dur = rget_level(15) / 3;
+		damage = weight_hi * ((10 - influence) + (influence * (r_projections[projection].weight - weight_lo) / (weight_hi - weight_lo))) / 10 + weight_lo;
+		byte skill_rune = get_skill(p_ptr, SKILL_RUNEMASTERY);
+		damage = damage * (10 + 2 * (S_ENERGY_CPR * skill_rune / 50)) / (1 + (S_ENERGY_CPR * skill_rune / 50)) / 10; //steps at 50 / S_ENERGY_CPR
+		damage_dice = damage;
 		
-		/* Damage should be proportional to radius and duration. */
-		//damage = randint(4) + rget_level(90 - (*radius + *duration) / 2);
-		//damage = randint(2) + 2 + rget_level(50) * (10 + rget_level(50)) / 20;
-		damage = randint(2) + 2 + rget_level(40) * (10 + rget_level(40)) / 20;
-	}
-	else if ((s_flags & R_STOR) == R_STOR)
-	{
-		//damage = e_level + 3 + rget_level(100);
-		r = rget_level(base_radius);
-		dur = 2 + randint(3) + rget_level(15);
+#ifdef ENABLE_AUGMENTS
+		if (p_ptr->rcraft_augment == -1) {
+			byte i;
+			for (i = 0; i < elements; i++) {
+				if (r_elements[element[i]].damage > 10) damage = damage * (10 + (r_elements[element[i]].damage - 10) / elements) / 10;
+				else damage = damage * (10 - (10 - r_elements[element[i]].damage) / elements) / 10;
+			}
+		}
+		else damage = damage * r_elements[p_ptr->rcraft_augment].damage / 10;
+#endif
 		
-		/* Damage should be proportional to radius and duration. (and interval) */
-		//damage = randint(4) + rget_level(40 - (*radius + *duration) / 2);
-		//damage = randint(2) + 2 + rget_level(50) * (10 + rget_level(50)) / 50;
-		damage = randint(2) + 2 + rget_level(40) * (10 + rget_level(40)) / 50;
-	}
-	else //R_MELE
-	{
-		//damage = damroll(3 + rget_level(50), 5 + rget_level(20));
-		//Damage reduced to allow for multiple 'blows' with skill level - Kurzel
-		damage = damroll(3 + rget_level(50), 5 + rget_level(20)) / 2;
+		damage = damage * r_imperatives[imperative].damage / 10;
+		damage = damage * r_types[type].damage / 10;
+		
+		switch (r_types[type].flag) {
+			case T_MELE:
+				damage = damroll(2 + rget_level(damage_dice * 28 / weight_hi), 2 + rget_level(damage * 28 / weight_hi)) ;
+				break;
+			case T_SELF:
+				damage = damage * rget_level(25) * rget_level(25) / weight_hi;
+				break;
+			case T_BOLT:
+				damage = damroll(3 + rget_level(damage_dice * 37 / weight_hi), 1 + rget_level(damage * 19 / weight_hi));
+				break;
+			case T_BEAM:
+				damage = damroll(3 + rget_level(damage_dice * 37 / weight_hi), 1 + rget_level(damage * 19 / weight_hi));
+				break;
+			case T_BALL:
+				damage = damage * rget_level(25) * rget_level(25) / weight_hi;
+				if (damage < 5) damage = 5;
+				break;
+			case T_WAVE:
+				//damage = damage * (10 + 2 * (S_ENERGY_CPR * skill_rune / 50)) / 10; //Shall we fix dot damage decrease?
+				damage = damage * rget_level(25) * rget_level(25) / 3 / weight_hi;
+				if (damage < 3) damage = 3;
+				break;
+			case T_CLOU:
+				damage = damage * (10 + 2 * (S_ENERGY_CPR * skill_rune / 50)) / 10; //Shall we fix dot damage decrease?
+				damage = damage * rget_level(25) * rget_level(25) / 5 / weight_hi;
+				break;
+			case T_STOR:
+				damage = damage * (10 + 2 * (S_ENERGY_CPR * skill_rune / 50)) / 10; //Shall we fix dot damage decrease?
+				damage = damage * rget_level(25) * rget_level(25) / 5 / weight_hi;
+				break;
+		}
+		break; }
+		
+		case DT_INDIRECT: {
+		weight_hi = W_MAX_IND;
+		weight_lo = W_MIN_IND;
+		influence = W_INF_IND;
+		
+		damage = weight_hi * ((10 - influence) + (influence * (r_projections[projection].weight - weight_lo) / (weight_hi - weight_lo))) / 10 + weight_lo;
+		byte skill_rune = get_skill(p_ptr, SKILL_RUNEMASTERY);
+		damage = damage * (10 + 2 * (S_ENERGY_CPR * skill_rune / 50)) / (1 + (S_ENERGY_CPR * skill_rune / 50)) / 10; //steps at 50 / S_ENERGY_CPR
+		damage_dice = damage;
+		
+#ifdef ENABLE_AUGMENTS
+		if (p_ptr->rcraft_augment == -1) {
+			byte i;
+			for (i = 0; i < elements; i++) {
+				if (r_elements[element[i]].damage > 10) damage = damage * (10 + (r_elements[element[i]].damage - 10) / elements) / 10;
+				else damage = damage * (10 - (10 - r_elements[element[i]].damage) / elements) / 10;
+			}
+		}
+		else damage = damage * r_elements[p_ptr->rcraft_augment].damage / 10;
+#endif
+		
+		damage = damage * r_imperatives[imperative].damage / 10;
+		damage = damage * r_types[type].damage / 10;
+		
+		switch (r_types[type].flag) {
+			case T_MELE:
+				damage = damroll(2 + rget_level(damage_dice * 3 / weight_hi), 2 + rget_level(damage * 3 / weight_hi)) ;
+				break;
+			case T_SELF:
+				damage = damage * rget_level(5) * rget_level(5) / weight_hi;
+				break;
+			case T_BOLT:
+				damage = damroll(3 + rget_level(damage_dice * 2 / weight_hi), 1 + rget_level(damage * 4 / weight_hi));
+				break;
+			case T_BEAM:
+				damage = damroll(3 + rget_level(damage_dice * 2 / weight_hi), 1 + rget_level(damage * 4 / weight_hi));
+				break;
+			case T_BALL:
+				damage = damage * rget_level(5) * rget_level(5) / weight_hi;
+				if (damage < 5) damage = 5;
+				break;
+			case T_WAVE:
+				//damage = damage * (10 + 2 * (S_ENERGY_CPR * skill_rune / 50)) / 10; //Shall we fix dot damage decrease?
+				damage = damage * rget_level(5) * rget_level(5) / 3 / weight_hi;
+				if (damage < 3) damage = 3;
+				break;
+			case T_CLOU:
+				damage = damage * (10 + 2 * (S_ENERGY_CPR * skill_rune / 50)) / 10; //Shall we fix dot damage decrease?
+				damage = damage * rget_level(5) * rget_level(5) / 5 / weight_hi;
+				break;
+			case T_STOR:
+				damage = damage * (10 + 2 * (S_ENERGY_CPR * skill_rune / 50)) / 10; //Shall we fix dot damage decrease?
+				damage = damage * rget_level(5) * rget_level(5) / 5 / weight_hi;
+				break;
+		}
+		break; }
+		
+		case DT_EFFECT: {
+		weight_hi = W_MAX_DIR;
+		weight_lo = W_MIN_DIR;
+		influence = W_INF_DIR;
+		
+		damage = weight_hi * ((10 - influence) + (influence * (r_projections[projection].weight - weight_lo) / (weight_hi - weight_lo))) / 10 + weight_lo;
+		byte skill_rune = get_skill(p_ptr, SKILL_RUNEMASTERY);
+		damage = damage * (10 + 2 * (S_ENERGY_CPR * skill_rune / 50)) / (1 + (S_ENERGY_CPR * skill_rune / 50)) / 10; //steps at 50 / S_ENERGY_CPR
+		damage_dice = damage;
+		
+#ifdef ENABLE_AUGMENTS
+		if (p_ptr->rcraft_augment == -1) {
+			byte i;
+			for (i = 0; i < elements; i++) {
+				if (r_elements[element[i]].damage > 10) damage = damage * (10 + (r_elements[element[i]].damage - 10) / elements) / 10;
+				else damage = damage * (10 - (10 - r_elements[element[i]].damage) / elements) / 10;
+			}
+		}
+		else damage = damage * r_elements[p_ptr->rcraft_augment].damage / 10;
+#endif
+		
+		damage = damage * r_imperatives[imperative].damage / 10;
+		damage = damage * r_types[type].damage / 10;
+		
+		switch (r_types[type].flag) {
+			case T_MELE:
+				damage = damroll(2 + rget_level(damage_dice * 28 / weight_hi), 2 + rget_level(damage * 28 / weight_hi)) ;
+				break;
+			case T_SELF:
+				damage = damage * rget_level(25) * rget_level(25) / weight_hi;
+				break;
+			case T_BOLT:
+				damage = damroll(3 + rget_level(damage_dice * 37 / weight_hi), 1 + rget_level(damage * 19 / weight_hi));
+				break;
+			case T_BEAM:
+				damage = damroll(3 + rget_level(damage_dice * 37 / weight_hi), 1 + rget_level(damage * 19 / weight_hi));
+				break;
+			case T_BALL:
+				damage = damage * rget_level(25) * rget_level(25) / weight_hi;
+				if (damage < 5) damage = 5;
+				break;
+			case T_WAVE:
+				//damage = damage * (10 + 2 * (S_ENERGY_CPR * skill_rune / 50)) / 10; //Shall we fix dot damage decrease?
+				damage = damage * rget_level(25) * rget_level(25) / 3 / weight_hi;
+				if (damage < 3) damage = 3;
+				break;
+			case T_CLOU:
+				damage = damage * (10 + 2 * (S_ENERGY_CPR * skill_rune / 50)) / 10; //Shall we fix dot damage decrease?
+				damage = damage * rget_level(25) * rget_level(25) / 5 / weight_hi;
+				break;
+			case T_STOR:
+				damage = damage * (10 + 2 * (S_ENERGY_CPR * skill_rune / 50)) / 10; //Shall we fix dot damage decrease?
+				damage = damage * rget_level(25) * rget_level(25) / 5 / weight_hi;
+				break;
+		}
+		break; }
+		
+		case DT_HACK: {
+		damage = r_projections[projection].weight;
+		break; }
 	}
 	
-	if (r < 1 || r > 5)
-	{
-		r = 1;
-	}
-	
-	if ((s_flags & R_WAVE) == R_WAVE) //Waves are cheaper standing clouds, with a slight boost to radius.
-	{
-		//duration IS radius only for the new wave, don't boost! - Kurzel
-		//r += 1;
-		//r = (r < 2 ? 2 : r);
-		dur += 1;
-	}
-	else if ((s_flags & R_BALL) == R_BALL)
-	{
-		r += 1;
-	}
-	
-	if (damage > S_DAM_MAX)
-	{
-		damage = S_DAM_MAX;
-	}
-	
-	if (damage < 1)
-	{
-		damage = 1;
-	}
-	
-	damage = (damage * (r_imperatives[imperative].dam != 0 ? r_imperatives[imperative].dam : randint(15)+5)) / 10;
-	damage = (damage * d_multiplier) / 10;
-	dur = (dur * t_multiplier) / 10;
-	
-	if (r_mod >= 0 || (r_mod < 0 && r > (0 - r_mod)))
-	{
-		r = r + r_mod;
-	}
-	else
-	{
-		r = 1;
-	}
-	
-	if (r > 5)
-	{
-		r = 5;
-	}
-	
-	if (dur > 260 || dur < 5)
-	{
-		dur = 5;
-	}
-	
-	*duration = dur;
-	*radius = r;
+	/* Hard limit */
+	if (damage < 1) damage = 1;
 	
 	return damage;
 }
 
-
-/* rspell_penalty
-
-Generates a penalty, or a number of them based on the severity of the offense.
-
-Penalties generated by low fail rates are less severe; trying a spell with a fail rate above 30 can be fatal, occasionally.
-
-The chances of something bad happening increase for every 20% of failure. (i.e. it rolls more than once, depending on severity)
-
-Returns a byte of penalty flags.
-
-#define RPEN_MIN_RN 0x01 //Rune destruction
-#define RPEN_MIN_SP 0x02 //Spell points
-#define RPEN_MIN_HP 0x04 //Health points
-#define RPEN_MIN_ST 0x08 //Stat drain
-
-#define RPEN_MAJ_SN 0x10 //Sanity drain
-#define RPEN_MAJ_BK 0x20 //Spell backlash
-#define RPEN_MAJ_BB 0x40 //Black breath
-#define RPEN_MAJ_DT 0x80 //Death?
-
-No longer deal serious penalties when a rune can be broken instead. - Kurzel
-*/
-byte rspell_penalty(u32b Ind, u16b pow)
-{
-	player_type *p_ptr = Players[Ind];
-	u16b roll = 0;
-	u16b penalties = 1;
-	u16b threshold = 60;
-	u16b i = 0;
-	u16b check = 0;
-	byte penalty_flag = 0;
-	
-	if (pow > threshold)
-	{
-		penalties += ((pow - threshold) / 20);
+void rspell_penalty(s16b margin, byte *p_flags) {
+	if (margin > 0) {
+		*p_flags |= RPEN_MIN_RN;
 	}
-	
-	for(i=0; i<penalties; i++)
-	{
-		roll = randint(pow);
-		
-		check = randint(100);
-		if (check > (10 + p_ptr->luck))
-		{
-			if (roll > 320)
-			{
-				penalty_flag |= RPEN_MAJ_DT;
-				penalty_flag |= RPEN_MIN_RN;
-				break;
-			}
-			else if (roll > 270)
-			{
-				penalty_flag |= RPEN_MAJ_BB;
-				penalty_flag |= RPEN_MIN_RN;
-				break;
-			}
-			else if (roll > 220)
-			{
-				penalty_flag |= RPEN_MAJ_BK;
-				penalty_flag |= RPEN_MIN_RN;
-				break;
-			}
-			else if (roll > 160)
-			{
-				penalty_flag |= RPEN_MAJ_SN;
-				penalty_flag |= RPEN_MIN_RN;
-				break;
-			}
-			else if (roll > 110)
-			{
-				penalty_flag |= RPEN_MIN_ST;
-				penalty_flag |= RPEN_MIN_RN;
-				break;
-			}
-			else if (roll > 80)
-			{
-				penalty_flag |= RPEN_MIN_HP;
-				break;
-			}
-			else if (roll > 50)
-			{
-				penalty_flag |= RPEN_MIN_SP;
-				break;
-			}
-			else if (roll > 25)
-			{
-				penalty_flag |= RPEN_MIN_RN;
-				break;
-			}
+	else {
+		byte roll = randint(-margin);
+		if (roll > 90) {
+			*p_flags |= RPEN_MIN_RN;
+			*p_flags |= RPEN_MAJ_DT;
+		}
+		else if (roll > 80) {
+			*p_flags |= RPEN_MIN_RN;
+			*p_flags |= RPEN_MAJ_HP;
+		}
+		else if (roll > 60) {
+			*p_flags |= RPEN_MIN_ST;
+			*p_flags |= RPEN_MAJ_ST;
+		}
+		else if (roll > 30) {
+			*p_flags |= RPEN_MIN_RN;
+			*p_flags |= RPEN_MAJ_SN;
+		}
+		else if (roll > 25) {
+			*p_flags |= RPEN_MIN_RN;
+			*p_flags |= RPEN_MIN_ST;
+		}
+		else if (roll > 20) {
+			*p_flags |= RPEN_MIN_HP;
+		}
+		else if (roll > 15) {
+			*p_flags |= RPEN_MIN_SP;
+		}
+		else if (roll > 5) {
+			*p_flags |= RPEN_MIN_RN;
 		}
 	}
-	return penalty_flag;
+	return;
 }
 
+byte rspell_radius(u32b Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte level) {
+//unused?	player_type * p_ptr = Players[Ind];
+	s16b radius = 0;
+	
+#ifdef ENABLE_AUGMENTS
+	if (!(p_ptr->rcraft_augment == -1)) radius += r_elements[p_ptr->rcraft_augment].radius; //Toggle - Kurzel
+#endif
+	
+	radius += r_imperatives[imperative].radius;
+	radius += r_types[type].radius;
+	switch (r_types[type].flag) {
+		case T_SELF:
+		radius += (skill - level) / (50 / 5);
+		if (radius > S_RADIUS_MAX) radius = S_RADIUS_MAX;
+		if (radius < S_RADIUS_MIN) radius = S_RADIUS_MIN;
+		break;
+		case T_BALL:
+		radius += (skill - level) / (50 / 5);
+		if (radius > S_RADIUS_MAX) radius = S_RADIUS_MAX;
+		if (radius < S_RADIUS_MIN) radius = S_RADIUS_MIN;
+		break;
+		case T_CLOU:
+		radius += (skill - level) / (50 / 4);
+		if (radius > S_RADIUS_MAX - 1) radius = S_RADIUS_MAX - 1;
+		if (radius < S_RADIUS_MIN) radius = S_RADIUS_MIN;
+		break;
+		case T_STOR:
+		radius += (skill - level) / (50 / 3);
+		if (radius > S_RADIUS_MAX - 2) radius = S_RADIUS_MAX - 2;
+		if (radius < S_RADIUS_MIN) radius = S_RADIUS_MIN;
+		break;
+		default:
+		radius = 0;
+	}
+	return (byte)radius;
+}
 
-/* rspell_do_penalty
-Executes the penalties worked out in rspell_penalty()
+byte rspell_duration(u32b Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte level) {
+//unused?	player_type *p_ptr = Players[Ind];
+	s16b duration = 0;
+	switch (r_types[type].flag) {
+		case T_SELF:
+		duration = 4 + randint(10) + rget_level(40);
+		break;
+		case T_CLOU:
+		duration = 6 + randint(4) + rget_level(10);
+		break;
+		case T_WAVE:
+		duration = 4 + rget_level(10) / 3;
+		break;
+		case T_STOR:
+		duration = 6 + randint(4) + rget_level(15);
+		break;
+	}
+	
+#ifdef ENABLE_AUGMENTS
+	if (p_ptr->rcraft_augment == -1) {
+		byte i;
+		for (i = 0; i < elements; i++) {
+			if (r_elements[element[i]].duration > 10) duration = duration * (10 + (r_elements[element[i]].duration - 10) / elements) / 10;
+			else duration = duration * (10 - (10 - r_elements[element[i]].duration) / elements) / 10;
+		}
+	}
+	else duration = duration * r_elements[p_ptr->rcraft_augment].duration / 10;
+#endif	
 
-Destroys runes, inflicts damage and other negative effects on player Ind.
-No longer deal serious penalties when a rune can be broken instead. - Kurzel
+	duration = duration * r_imperatives[imperative].duration / 10;
+	duration = duration * r_types[type].duration / 10;
+	
+	/* Hard limit */
+	if (duration > S_DURATION_MAX) duration = S_DURATION_MAX;
+	if (duration < S_DURATION_MIN) duration = S_DURATION_MIN;
+	
+	return (byte)duration;
+}
 
-*/
-u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cost, u32b s_type, char * attacker, byte imperative, u32b s_flags)
-{
+void rspell_do_penalty(u32b Ind, u32b gf_type, u32b damage, byte cost, byte p_flags, s16b link) {
 	player_type *p_ptr = Players[Ind];
-	int mod_luck = p_ptr->luck+10; //Player's current luck as a positive value between 0 and 50
-	u16b d = 0;
+	/* Roll for effects */
+	byte chance = randint(20);
 	
-	byte runes[RCRAFT_MAX_ELEMENTS];
-	runes_in_flag(runes,s_flags);
-	
-	if (duration<5)
-		duration = 5;
-	
-	if (damage<10)
-		damage = 10;
-	
+	/* Remain 0 if 'unprotected' */
 	int amt = 0;
 
-	/* Destroy a random rune of those used in the rune spell */
-	if (type & RPEN_MIN_RN) {
-		int i, n;
-		object_type *o_ptr;
-		char o_name[ONAME_LEN];
-		int rune_in_inventory[3];
-		int runes_in_inventory = 0;
-		bool rune_in_inventory_poofs[3] = {FALSE, FALSE, FALSE};
+	if (p_flags & RPEN_MIN_RN) {
+		/* Did we have a rune to destroy? */
+		if (link >= 0) {
+			/* Destroy the linked rune */
+			amt = 1;
+			char o_name[ONAME_LEN];
+			object_type *o_ptr;
+			o_ptr = &p_ptr->inventory[link];
+			object_desc(Ind, o_name, o_ptr, FALSE, 3);
+			msg_format(Ind, "\377o%sour %s (%c) %s destroyed!",
+				((o_ptr->number > 1) ? ((amt == o_ptr->number) ? "All of y" :
+				(amt > 1 ? "Some of y" : "One of y")) : "Y"),
+				o_name, index_to_label(link), ((amt > 1) ? "were" : "was"));
 
-		/* prepare management arrays for up to 3 runes */
-		for (i = 0; i < RCRAFT_MAX_ELEMENTS; i++) {
-			if (runes[i] == 0) continue;
-
-			/* scan inventory for physical presence of runes we used */
-			for (n = 0; n < INVEN_PACK; n++) {
-				/* Get the item in that slot */
-				o_ptr = &p_ptr->inventory[n];
-
-				/* Found a rune that is used in this rune spell? */
-				if (o_ptr->k_idx && o_ptr->tval == TV_RUNE2
-				    && o_ptr->sval == i) {
-					/* remember in which inven slot we found at least 1 rune of this type */
-					rune_in_inventory[runes_in_inventory] = n;
-					runes_in_inventory++;
-
-					/* hack: Terminate inven search for this rune */
-					n = INVEN_PACK;
-				}
-			}
-		}
-
-		/* If we didn't use any physical runes, take some HP */
-		if (runes_in_inventory == 0) type |= RPEN_MIN_HP;
-		else {
-			/* determine amount of runes to break (1..3) */
-			amt = rand_int(runes_in_inventory) + 1;
-			switch (runes_in_inventory) {
-			case 1: rune_in_inventory_poofs[0] = TRUE; break;
-			case 2:
-				if (amt == 1) rune_in_inventory_poofs[rand_int(2)] = TRUE;
-				else rune_in_inventory_poofs[0] = rune_in_inventory_poofs[1] = TRUE;
-				break;
-			case 3:
-				if (amt == 1) rune_in_inventory_poofs[rand_int(3)] = TRUE;
-				else {
-					rune_in_inventory_poofs[0] = TRUE;
-					rune_in_inventory_poofs[1] = TRUE;
-					rune_in_inventory_poofs[2] = TRUE;
-					if (amt == 2) rune_in_inventory_poofs[rand_int(3)] = FALSE;
-				}
-			}
-
-			/* Test up to 3 rune types for breaking */
-			for (i = 0; i < runes_in_inventory; i++) {
-				if (!rune_in_inventory_poofs[i]) continue;
-
-				/* break one of a type */
-				o_ptr = &p_ptr->inventory[rune_in_inventory[i]];
-				object_desc(Ind, o_name, o_ptr, FALSE, 3);
-				msg_format(Ind, "\376\377o%sour %s (%c) %s destroyed!",
-				    ((o_ptr->number > 1) ? ((amt == o_ptr->number) ? "All of y" :
-				    (amt > 1 ? "Some of y" : "One of y")) : "Y"),
-				    o_name, index_to_label(rune_in_inventory[i]), ((amt > 1) ? "were" : "was"));
-
-				/* Erase a rune from inventory */
-				inven_item_increase(Ind, rune_in_inventory[i], -1);
-			}
+			/* Erase a rune from inventory */
+			inven_item_increase(Ind, link, -1);
 
 			/* Clean up inventory */
-			for (n = 0; n < runes_in_inventory; n++)
-				for (i = 0; i < INVEN_PACK; i++)
-					if (inven_item_optimize(Ind, i)) break;
+			inven_item_optimize(Ind, link);
 		}
+		else p_flags |= RPEN_MIN_HP;
 	}
 
-	if (type & RPEN_MIN_SP)
-	{
-		msg_print(Ind, "\377rYou feel a little drained.");
-		d = randint(20)+1;
-		if (d == 20)
-		{
-			//set_paralyzed(Ind, 2);
-			set_paralyzed(Ind, 1); //A single turn may still be too long!
-		}
-		else if (d >= 17)
-		{
-			set_stun(Ind, duration/5);
-		}
-		else if (d >= 15)
-		{
-			set_slow(Ind, duration/4);
-		}
+	if (p_flags & RPEN_MIN_SP) {
+		msg_print(Ind, "\377rYou feel drained.");
 		
-		if (p_ptr->csp>(cost*2))
-		{
-			p_ptr->csp -= (cost*2);
-		}
-		else
-		{
+		/* Status Effect */
+		if (chance == 20 && !p_ptr->free_act) set_paralyzed(Ind, 2);
+		else if (chance >= 15) set_stun(Ind, 10);
+		else if (chance >= 10) set_slow(Ind, 10);
+		
+		/* SP Hit */
+		if (p_ptr->csp > cost) p_ptr->csp -= (randint(cost));
+		else {
+			take_hit(Ind, cost - p_ptr->csp, "magical exhaustion", 0);
 			p_ptr->csp = 0;
-			type |= RPEN_MIN_HP;
-		}
+			p_flags |= RPEN_MIN_HP;
+		}	
 	}
 		
-	if (type & RPEN_MIN_HP)
-	{
+	if (p_flags & RPEN_MIN_HP) {
+		msg_print(Ind, "\377rThe runespell lashes out at you!");
 		
-		d = randint(100);
-		if (d > 93 && !p_ptr->resist_pois)
-		{
-			msg_print(Ind, "\377rThe runespell lashes out at you!");
-			if(duration/3 < 10)
-				duration = 30;
-			set_poisoned(Ind, duration/3, Ind);
-		}
-		else if (d > 83 && !p_ptr->resist_blind && !p_ptr->resist_lite)
-		{
-			msg_print(Ind, "\377rThe runespell lashes out at you!");
-			set_blind(Ind, damage/3);
-		}
-		else if (d > 73)
-		{
-			msg_print(Ind, "\377rThe runespell lashes out at you!");
-			set_cut(Ind, damage/3, Ind);
-		}
-		else
-		{
-			//int hit = (p_ptr->mhp*(randint(15)+1)/100);
-			//msg_format(Ind, "\377rThe runespell hits you for \377u%i \377rdamage!", hit);
-			//take_hit(Ind, hit, "a malformed invocation", 0); //match GF_type for damage here? - Kurzel
-			project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage/5, s_type, PROJECT_KILL | PROJECT_NORF, "");
-			//static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ, int rad, int flg, char *attacker)
-		}
+		/* Status Effect */
+		if (chance == 20 && !p_ptr->resist_blind && !p_ptr->resist_lite) set_blind(Ind, 10);
+		else if (chance > 15 && !p_ptr->resist_pois) set_poisoned(Ind, 10, Ind);
+		else if (chance > 10) set_cut(Ind, 10, Ind);
 		
-		p_ptr->redraw |= PR_HP;
+		/* HP Hit */
+		/* Hack -- Decode gf_type */
+		if (gf_type > HACK_GF_FACTOR) {
+			u32b gf_main = gf_type % HACK_GF_FACTOR;
+			u32b gf_off = gf_type / HACK_GF_FACTOR;
+			u32b damage_main = damage % HACK_DAM_FACTOR;
+			u32b damage_off = damage / HACK_DAM_FACTOR;
+			if (gf_main != GF_AWAY_ALL) project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage_main / 5 + 1, gf_main, PROJECT_KILL | PROJECT_NORF | PROJECT_JUMP, "");
+			if (gf_off != GF_AWAY_ALL) project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage_off / 5 + 1, gf_off, PROJECT_KILL | PROJECT_NORF | PROJECT_JUMP, "");
+		}
+		else if (gf_type != GF_AWAY_ALL) project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage / 5 + 1, gf_type, PROJECT_KILL | PROJECT_NORF | PROJECT_JUMP, "");
 	}
 		
-	if (type & RPEN_MIN_ST)
-	{
-		d = 1;
-		u16b mode = 0; u16b stat = 0;
+	if (p_flags & RPEN_MIN_ST) {
+		msg_print(Ind, "\377rYou feel less potent.");
+
+		/* ST Hit */
+		byte mode = 0;
+		if ((chance == 20) && (amt == 0)) mode = STAT_DEC_NORMAL;
+		else mode = STAT_DEC_TEMPORARY;
+		do_dec_stat(Ind, randint(6) - 1, mode);
+	}
+	
+	if ((p_flags & RPEN_MAJ_SN) && (amt == 0)) {
+		msg_print(Ind, "\377rYou feel less sane!");
+
+		/* Status Effect(s) */
+		if (chance == 20) set_image(Ind, 10);
+		if (chance > 15 && !p_ptr->resist_fear) set_afraid(Ind, 10);
+		if (chance > 10 && !p_ptr->resist_conf) set_confused(Ind, 10);
 		
-		if (randint(40) > 2)
-			mode = STAT_DEC_TEMPORARY;
-		//else
-		else if (amt == 0)
-			mode = STAT_DEC_PERMANENT;
+		/* SN Hit */
+		take_sanity_hit(Ind, damroll(1, p_ptr->msane / 10 / chance + 1), "a malformed invocation");
+	}
+	
+	if ((p_flags & RPEN_MAJ_ST) && (amt == 0)) {
+		msg_format(Ind, "\377rThe invocation ruins you!");
 		
-		switch(randint(12+mod_luck))
-		{
-			case 1:
-			case 2:
-				stat = A_INT;
-				break;
-			case 3:
-			case 4:
-				stat = A_CON;
-				break;
-			case 5:
-			case 6:
-				stat = A_WIS;
-				break;
-			case 7:
-			case 8:
-				stat = A_CHR;
-				break;
-			case 9:
-			case 10:
-				stat = A_STR;
-				break;
-			case 11:
-			case 12:
-				stat = A_DEX;
-				break;
-			default:
-				d = 0;
-				break;
-		}
-		
-		if (d)
-		{
-			msg_print(Ind, "\377rYou feel a little less potent.");
-			do_dec_stat(Ind, stat, mode);
+		/* Ruination */
+		byte i;
+		for (i = 0; i < 6; i++) {
+			(void)dec_stat(Ind, i, 25, STAT_DEC_NORMAL);
 		}
 	}
-	/* Hurt sanity. With luck it may only confuse, scare or cause hallucinations. Should be less dangerous at low levels. */
-	//if (type & RPEN_MAJ_SN)
-	if ((type & RPEN_MAJ_SN) && (amt == 0))
-	{
-		msg_print(Ind, "\377rYou feel a little less sane!");
-		//d = damroll(1,(p_ptr->lev*(55/mod_luck)));
-		d = damroll(1,(p_ptr->lev*(25/mod_luck))); //Reduced to avoid 1 shot vegetation at high levels! ;) - Kurzel
-		if (d<= 3)
-		{
-			set_image(Ind, duration/5);
-		}
-		else if (d <= 6)
-		{
-			set_afraid(Ind, duration/5);
-		}
-		else if (d <= 9)
-		{
-			set_confused(Ind, duration/5);
-		}
-		else
-		{
-			take_sanity_hit(Ind, damroll(1,d), "a malformed invocation");
-		}
-	}
+	
+	if ((p_flags & RPEN_MAJ_HP) && (amt == 0)) {
+		msg_format(Ind, "\377rYour grasp on the invocation slips!");
 		
-	if ((type & RPEN_MAJ_BK || type & RPEN_MAJ_BB) && (amt == 0))
-	{
-		//msg_format(Ind, "\377rYour grasp on the invocation slips! It hits you for \377u%i \377rdamage!", damage);
-		//take_hit(Ind, damage, "a malformed invocation", 0); //match GF_type for damage here? - Kurzel
-		project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage, s_type, PROJECT_KILL | PROJECT_NORF, "");
+		/* HP Hit */
+		/* Hack -- Decode gf_type */
+		if (gf_type > HACK_GF_FACTOR) {
+			u32b gf_main = gf_type % HACK_GF_FACTOR;
+			u32b gf_off = gf_type / HACK_GF_FACTOR;
+			u32b damage_main = damage % HACK_DAM_FACTOR;
+			u32b damage_off = damage / HACK_DAM_FACTOR;
+			if (gf_main != GF_AWAY_ALL) project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage_main / 2 + 1, gf_main, PROJECT_KILL | PROJECT_NORF | PROJECT_JUMP, "");
+			if (gf_off != GF_AWAY_ALL) project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage_off / 2 + 1, gf_off, PROJECT_KILL | PROJECT_NORF | PROJECT_JUMP, "");
+		}
+		else if (gf_type != GF_AWAY_ALL) project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage / 2 + 1, gf_type, PROJECT_KILL | PROJECT_NORF | PROJECT_JUMP, "");
 	}
-	/*
-	if ((type & RPEN_MAJ_DT) && (amt == 0)) //Disabled for now. - Kurzel
-	{
-		msg_format(Ind, "\377rYou lose control of the invocation! It hits you for \377u%i \377rdamage!", damage);
-		take_hit(Ind, damage*10, "a malformed invocation", 0);
+	
+	if ((p_flags & RPEN_MAJ_DT) && (amt == 0)) {
+		msg_format(Ind, "\377rYou lose control of the invocation!");
+		
+		/* Effect */
+		set_paralyzed(Ind, 1);
+		
+		/* HP Hit */
+		/* Hack -- Decode gf_type */
+		if (gf_type > HACK_GF_FACTOR) {
+			u32b gf_main = gf_type % HACK_GF_FACTOR;
+			u32b gf_off = gf_type / HACK_GF_FACTOR;
+			u32b damage_main = damage % HACK_DAM_FACTOR;
+			u32b damage_off = damage / HACK_DAM_FACTOR;
+			if (gf_main != GF_AWAY_ALL) project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage_main, gf_main, PROJECT_KILL | PROJECT_NORF | PROJECT_JUMP, "");
+			if (gf_off != GF_AWAY_ALL) project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage_off, gf_off, PROJECT_KILL | PROJECT_NORF | PROJECT_JUMP, "");
+		}
+		else if (gf_type != GF_AWAY_ALL) project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage, gf_type, PROJECT_KILL | PROJECT_NORF | PROJECT_JUMP, "");
 	}
-	*/
+
+	/* Update the Player */
 	p_ptr->redraw |= PR_HP;
 	p_ptr->redraw |= PR_MANA;
 	p_ptr->redraw |= PR_SPEED;
 	p_ptr->redraw |= PR_SANITY;
-	
 	handle_stuff(Ind);
 	
-	return 0;
+	return;
 }
 
-int b_compare (const void * a, const void * b)
-{
-	return ( *(byte*)b - *(byte*)a );
-}
-
-/* rspell_skill
-
-Calculates a skill average value for the requested runes.
-
-Uses a series of formulas created by Kurzel.
-
-Assumes a max of 3 runes in a spell. Needs to be adjusted if this ever changes.
-Also assumes that the rune skill flags are in order, starting with FIRECOLD.
-*/
-u16b rspell_skill(u32b Ind, u32b s_type)
-{
+#ifdef CONSUME_RUNES
+bool rspell_socket(u32b Ind, byte rune) {
 	player_type *p_ptr = Players[Ind];
-	u16b s = 0; u16b i; u16b skill = 0; u16b value = 0;
-	s16b a=0,b=0,c=0;
-	
-	byte rune_c = 0;
-	byte skill_c = 0;
-	byte skills[RCRAFT_MAX_ELEMENTS/2] = {0,0,0,0,0,0};
-	byte runes[3] = {0,0,0};
-	
-	byte s_runes[RCRAFT_MAX_ELEMENTS];
-	runes_in_flag(s_runes, s_type);
-	
-	for (i=0; i<RCRAFT_MAX_ELEMENTS; i++)
-	{
-		if (s_runes[i]==1)
-		{
-			skill = r_elements[i].skill;
-			value = get_skill(p_ptr, skill);
-			//Ugh. We need an index from 0-7. FIRECOLD through MINDNEXU is 96-103
-			//skills[skill - SKILL_R_FIRECOLD] = 1;
-			skills[skill - SKILL_R_ACIDWATE] = 1;
-			//ACIDWATE through FORCTIME is 96-101.
-			if (rune_c > 2)
-			{
-				break;
-			}
-			
-			runes[rune_c++] = value;
-		}
-	}
-	
-	for (i=0; i<RCRAFT_MAX_ELEMENTS/2; i++)
-	{
-		if (skills[i]==1)
-		{
-			skill_c++;
-		}
-	}
-	
-	if (rune_c == 1 || (rune_c == 2 && runes[0] == runes[1]) || (rune_c == 3 && (runes[0] == runes[1] && runes[1] == runes[2])))
-	{
-		return runes[0];
-	}
-	
-	qsort(runes, 3, sizeof(byte), b_compare);
-	
-	switch (skill_c)
-	{
-		case 2:
-			if (rune_c == 2)
-			{
-				a = 50 * R_CAP / 100;
+	object_type *o_ptr;
+	byte i;
+	for (i = 0; i < INVEN_TOTAL; i++) {
+		if (i >= INVEN_PACK) continue;		
+		o_ptr = &p_ptr->inventory[i];
+		if ((o_ptr->tval == TV_RUNE2)) { // && (o_ptr->level || o_ptr->owner == p_ptr->id)
+			if (o_ptr->sval == rune) {
+				byte amt = 1; //Always socket one?
+				char o_name[ONAME_LEN];
+				object_type *o_ptr;
+				o_ptr = &p_ptr->inventory[i];
+				object_desc(Ind, o_name, o_ptr, FALSE, 3);
+				msg_format(Ind, "\377y%sour %s (%c) %s consumed!",
+					((o_ptr->number > 1) ? ((amt == o_ptr->number) ? "All of y" :
+					(amt > 1 ? "Some of y" : "One of y")) : "Y"),
+					o_name, index_to_label(i), ((amt > 1) ? "were" : "was"));
+
+				/* Erase a rune from inventory */
+				inven_item_increase(Ind, i, -1);
+
+				/* Clean up inventory */
+				inven_item_optimize(Ind, i);
 				
-				s = ((a*runes[0])+((100-a)*runes[1])) / 100;
-			}
-			else if (rune_c == 3)
-			{
-				if (runes[1] == runes[2])
-				{
-					a = 33 * R_CAP / 100;
-				}
-				else // if (runes[0] == runes[1])
-				{
-					a = 66 * R_CAP / 100;
-				}
-				
-				s = ((a*runes[0])+((100-a)*runes[1])) / 100;
-			}
-			break;
-		
-		case 3:
-			a = 33 * R_CAP / 100;
-			b = 33;
-			c = 100 - a - b;
-			
-			s = (a*runes[0] + b*runes[1] + c*runes[2]) / 100;
-			break;
-		
-		default:
-			s = runes[0];
-			break;
-	}
-	
-	return s;
-}
-
-/* rspell_diff
-Calculates the difficulty of a runespell
-
-takes the player index, imperative index, skill average, spell-effect index, and a pointer to the mali count
-
-returns an int between 0 and 95
-*/
-s16b rspell_diff(u32b Ind, byte imperative, s16b s_cost, u16b s_av, u32b s_type, u32b s_flags, s16b * mali)
-{
-	player_type *p_ptr = Players[Ind];
-	
-	s16b fail = 0;
-	s16b penalty = *mali;
-	u16b minfail = 0;
-	u16b statbonus = 0;
-	bool chaotic = (r_imperatives[imperative].id == 7 ? 1 : 0);
-	int m = meth_to_id(s_flags);
-	int e_level = runespell_list[s_type].level + runespell_types[m].cost + r_imperatives[imperative].level + 10;
-	int adj_level = e_level - s_av;
-	
-	if (p_ptr->confused || p_ptr->stun || p_ptr->cut)
-	{
-		if (*mali > 0)
-		{
-			msg_print(Ind, "\377yYou struggle to remember the rune-forms.");
-		}
-		else
-		{
-			msg_print(Ind, "\377yYou struggle to recite the rune-forms.");
-		}
-	}
-	else if (*mali > 0)
-	{
-		msg_print(Ind, "\377yYou recite the rune-forms from memory.");
-	}
-	
-	statbonus += adj_mag_stat[p_ptr->stat_ind[A_INT]]*65/100;
-	statbonus += adj_mag_stat[p_ptr->stat_ind[A_DEX]]*35/100;
-	
-	minfail += adj_mag_fail[p_ptr->stat_ind[A_INT]]*65/100;
-	minfail += adj_mag_fail[p_ptr->stat_ind[A_DEX]]*35/100;
-	
-	penalty += (p_ptr->csp < s_cost ? (2*(s_cost - p_ptr->csp)) : 0);
-	penalty += (p_ptr->rune_num_of_buffs ? p_ptr->rune_num_of_buffs * 5 + 3 : 0);
-	penalty += (p_ptr->csp == 0 ? 5 : 0);
-	penalty += (p_ptr->confused ? 10 : 0);
-	penalty += (p_ptr->stun > 50 ? 5 : 0);
-	penalty += (p_ptr->stun ? 5 : 0);
-	
-	fail = (adj_level > 0 ? adj_level * 3 : adj_level);
-	
-	fail -= statbonus;
-	
-	fail += penalty;
-	fail += (chaotic ? randint(20) : r_imperatives[imperative].fail);
-	fail += runespell_list[s_type].fail;
-	
-	if (fail > 95) fail = 95;
-	
-	/* Bonus for >50 players. */
-	fail -= (p_ptr->lev > 50 ? (p_ptr->lev - 50) / 2 : 0);
-	
-	if (fail < minfail) fail = minfail;
-	if (fail > 95) fail = 95;
-	
-	*mali = penalty;
-	return fail;
-}
-
-/* rspell_type
-
-Selects a spell based on the rspell_selector[] array 
-*/
-u32b rspell_type (u32b flags)
-{
-	u16b i;
-	
-	for (i = 0; i<MAX_RSPELL_SEL; i++)
-	{
-		if (rspell_selector[i].flags)
-		{
-			if ((rspell_selector[i].flags & flags) == rspell_selector[i].flags)
-			{
-				return rspell_selector[i].type;
+				return TRUE;
 			}
 		}
 	}
-	return RT_NONE;
+	return FALSE;
 }
+#endif
 
-u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration, s16b cost, u32b type, s16b difficulty, byte imper, u32b type_flags, u16b s_av, s16b mali)
-/* Now that we have some numbers and figures to work with, cast the spell. MP is deducted here, and negative spell effects/failure stuff happens here. */
-{
-	u16b m;
-//	u16b y, x;
-	u16b k;
-	u16b fail_chance = 0;
-	s16b margin = 0;
-	s16b modifier = 100;
-	s16b cost_m = 0;
-	int success = 0;
-//	int t = 0;
-	int brand_type = 0;
-	int glyph_type = 0; //Kurzel
-//	int d = 0;
-	char * description = NULL;
-	char * begin = NULL;
-	fail_chance = randint(100);
+byte execute_rspell(u32b Ind, byte dir, u16b e_flags1, u16b e_flags2, u16b m_flags, bool retaliate) {
 	player_type * p_ptr = Players[Ind];
-	//u16b gf_type = runespell_list[type].gf_type;
-	u32b gf_type = runespell_list[type].gf_type; //Hack -- More info to pass! - Kurzel
-	u32b gf_explode = runespell_list[type].gf_explode;
-	u32b gf_original = gf_type; //For lite susceptability check - Kurzel
-	s16b e_level = runespell_list[type].level;
-	m = meth_to_id(type_flags);
-	e_level += runespell_types[m].cost;
-	e_level += r_imperatives[imper].level;
 	
-	int modifier_value = r_imperatives[imper].dam;
-	modifier_value = (modifier_value == 0 ? randint(11) + 4 : modifier_value);
+	/* Toggle AFK */
+	un_afk_idle(Ind);
 	
-	s16b speed_max = modifier_value; //6 - 15
-	s16b speed = 0;
-	speed = damage / 13;
-	speed = (speed > speed_max ? speed_max : speed);
-	speed = (speed < 2 ? 2 : speed);	
+	/* Paranoia; toggle states that require inactivity */
+	break_cloaking(Ind, 5);
+	break_shadow_running(Ind);
+	stop_precision(Ind);
 	
-	s16b shield_max = modifier_value * 3;//18 - 45
-	s16b shield = 0;
-	shield = damage / 20;
-	shield = shield > shield_max ? shield_max : shield;
-	shield = shield < 5 ? 5 : shield;
+	/* Assume we fail and exit FTK */
+	p_ptr->shooting_till_kill = FALSE;
 	
-	s16b spell_duration = duration;
-	s16b spell_damage = 0;
+	/* Decode the Elements */
+	u16b e_flags = 0; e_flags |= e_flags1; e_flags |= e_flags2;
+	byte element[RSPELL_MAX_ELEMENTS];
+	byte elements = flags_to_elements(element, e_flags);
 	
-	int level = s_av - e_level;
-	int teleport_level = (level > 5 ? level : 5);
+	/** Validate Spell **/
 	
-	cave_type **zcave; //For glyph removal function of "disperse"
-	if (!(zcave = getcave(&p_ptr->wpos))) return 0;
+#ifdef LIMIT_NON_RUNEMASTERS
+	if (elements > 2 && p_ptr->pclass != CLASS_RUNEMASTER) {
+		msg_print(Ind, "\377rYou are not adept enough to combine more than two elements.");
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
+		return 0;
+	}
+#endif
 
-	/* pre-check rune trap conditions */
-	if (type_flags & R_SELF) switch (type) {
-		case RT_DETONATION_ACID:
-		case RT_DETONATION_WATER:
-		case RT_DETONATION_ELEC:
-		case RT_DETONATION_SHARDS:
-		case RT_DETONATION_COLD:
-		case RT_DETONATION_NETHER:
-		case RT_DETONATION_POISON:
-		case RT_DETONATION_NEXUS:
-		case RT_DETONATION_FORCE:
-		case RT_DETONATION_TIME:
-		case RT_ACID_TIME:
-		case RT_ELEC_TIME:
-		case RT_FIRE_TIME:
-		case RT_COLD_TIME:
-			if (!set_rune_trap_okay(Ind)) return 0;
-	}
+	byte skill = rspell_skill(Ind, element, elements);
 
+	/* Decode the Imperative and Type */
+	byte imperative = flags_to_imperative(m_flags);
+	byte type = flags_to_type(m_flags);
+	
+#ifdef RCRAFT_DEBUG
+s_printf("RCRAFT_DEBUG: Runespell attempted... \n");
+byte ii;
+for (ii = 0; ii < elements; ii++) {
+s_printf("Rune %d: %s\n", ii, r_elements[element[ii]].name);
+}
+s_printf("Imperative: %s\n", r_imperatives[imperative].name);
+s_printf("Type: %s\n", r_types[type].name);
+#endif
 
-
-	margin = fail_chance - difficulty;
-	if (margin > -30) //For small failure values cast the spell
-	{
-		success = 1;
+	byte level = rspell_level(element, elements, imperative, type);
+	
+	/* Force a sane level range for spell access */
+	s16b diff = rspell_diff(skill, level);
+	if (diff < -S_DIFF_MAX) {
+		msg_print(Ind, "\377rYou are not skillful enough to combine these elements.");
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
+		return 0;
 	}
 	
-	if (p_ptr->csp < cost)
-	{
-		begin = "\377rExhausted\377s, you";
+	/* Handle '+' targetting mode */
+	if (dir == 11) {
+		get_aim_dir(Ind);
+		p_ptr->current_rcraft = 1;
+		p_ptr->current_rcraft_e_flags1 = e_flags1;
+		p_ptr->current_rcraft_e_flags2 = e_flags2;
+		p_ptr->current_rcraft_m_flags = m_flags;
+		return 1;
 	}
-	else
-	{
-		begin = "\377sYou";
-	}
+	p_ptr->current_rcraft = -1;
 	
-	modifier = 100 + margin/6;
+	s16b energy = rspell_energy(Ind, element, elements, imperative, type);
 	
-	if (margin < -80)
-	{
-		description = " \377rfail \377sto";
-		modifier = 100;
-	}
-	else if (margin < -30)
-	{
-		description = " fail to";
-		modifier = 100;
-	}
-	else if (margin < 0) //changed from -10 to 0 to avoid 'blank' (no effect/dmg) projections - Kurzel
-	{
-		description = " barely manage to";
-	}
-	else if (margin < 10)
-	{
-		description = " clumsily";
-	}
-	else if (margin < 60)
-	{
-		description = "";
-	}
-	else if (margin < 80)
-	{
-		description = " effectively";
-	}
-	else
-	{
-		description = " elegantly";
-	}
-
-	/*
-	if ((type_flags & R_SELF) && 
-		(((type == RT_MAGIC_CIRCLE) && !allow_terraforming(&p_ptr->wpos, FEAT_GLYPH)) ||
-		((type == RT_MAGIC_WARD) && !allow_terraforming(&p_ptr->wpos, FEAT_GLYPH)) ||
-		((type == RT_WALLS || type == RT_EARTHQUAKE) && !allow_terraforming(&p_ptr->wpos, FEAT_WALL_EXTRA))))
-	{
-		description = " decide not to";
-		success = 0;
-	}
-	*/
-	if (modifier > 1)
-	{
-		modifier = modifier + (margin / 10);
-		
-		damage = (damage * modifier) / 100;
-		duration = (duration * modifier) / 100;
-		speed = (speed * modifier) / 100;
-		speed_max = (speed_max * modifier) / 100;
-		shield = (shield * modifier) / 100;
-		
-		cost_m = 100 - modifier;
-		cost += (cost * cost_m) / 100;
-		if (cost < 1)
-		{
-			cost = 1;
-		}
-	}
-	
-	/* Hack -- Choose a new GF_type for 'GF_WONDER' and 'GF_BASE' effects - Kurzel */
-	switch (gf_type) {
-		case GF_WONDER: gf_type = runespell_list[randint(RT_MAX)].gf_type; break;
-		case GF_BASE: gf_type = randint(4) + 1; //Uberhack -- GF_blah aren't even in order!
-	}
-	switch (gf_explode) {
-		case GF_WONDER: gf_explode = runespell_list[randint(RT_MAX)].gf_type; break;
-		case GF_BASE: gf_explode = randint(4) + 1; //Uberhack -- GF_blah aren't even in order!
-	}
-	
-	/* Hack -- Reduce Drain/Annihilation Damage by Type - Kurzel */
-	if (gf_type == GF_ANNIHILATION || gf_type == GF_OLD_DRAIN) {
-		if ((type_flags & R_MELE) || (type_flags & R_BOLT) || (type_flags & R_BEAM) || (type_flags & R_BALL)) {
-			damage /= 10;
-		}
-		else if ((type_flags & R_WAVE) || (type_flags & R_CLOU) || (type_flags & R_STOR)) {
-			damage /= 2;
-		}
-	}
-	
-	/* Hack -- Encode the exploding typ_explode, and imperative - Kurzel */
-	if (gf_explode != 0) {
-		gf_type = gf_type + 1000*gf_explode;
-		gf_type = gf_type + 1000000*(r_imperatives[imper].radius+3); //hard-coded 3 (max-radius mod?)
-		//Note that 'augments' don't effect explosions! (eg. radius)
-	}
-	
-	if (type_flags & R_SELF)
-	{
-		/* Handle self spells here */
-		switch (type)
-		{
-			//Rune-traps
-			case RT_DETONATION_ACID:
-			case RT_DETONATION_WATER:
-			case RT_DETONATION_ELEC:
-			case RT_DETONATION_SHARDS:
-			case RT_DETONATION_COLD:
-			case RT_DETONATION_NETHER:
-			case RT_DETONATION_POISON:
-			case RT_DETONATION_NEXUS:
-			case RT_DETONATION_FORCE:
-			case RT_DETONATION_TIME:
-				msg_format(Ind, "%s%s draw a sigil of warding.", begin, description);
-				if (success)
-				{
-					set_rune_trap_aux(Ind, RUNETRAP_DETO, imper, s_av);
-				}
-				break;
-				
-			case RT_ACID_TIME:
-			case RT_ELEC_TIME:
-			case RT_FIRE_TIME:
-			case RT_COLD_TIME:
-				msg_format(Ind, "%s%s draw a sigil of warding.", begin, description);
-				if (success)
-				{
-					if (type == RT_ACID_TIME) glyph_type = RUNETRAP_ACID;
-					if (type == RT_ELEC_TIME) glyph_type = RUNETRAP_ELEC;
-					if (type == RT_FIRE_TIME) glyph_type = RUNETRAP_FIRE;
-					if (type == RT_COLD_TIME) glyph_type = RUNETRAP_COLD;
-					set_rune_trap_aux(Ind, glyph_type, imper, s_av);
-				}
-				break;
-				
-			case RT_UNBREATH:
-			//case RT_FLY:
-				msg_format(Ind, "%s%s summon %s ethereal wings.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					set_tim_fly(Ind, duration*3); //Increased duration for usefulness. - Kurzel
-				}
-				break;
+	/* Handle FTK targetting mode */
+	if (p_ptr->shoot_till_kill) {
+		p_ptr->shoot_till_kill_rcraft = FALSE;
+		/* If the spell targets and is instant */
+		if ((r_types[type].flag == T_BOLT) || (r_types[type].flag == T_BEAM) || (r_types[type].flag == T_BALL)) {
+			/* If a new spell, update FTK */
+			if (p_ptr->FTK_e_flags1 != e_flags1 || p_ptr->FTK_e_flags2 != e_flags2 || p_ptr->FTK_m_flags != m_flags) {
+				p_ptr->FTK_e_flags1 = e_flags1;
+				p_ptr->FTK_e_flags2 = e_flags2;
+				p_ptr->FTK_m_flags = m_flags;
+				p_ptr->FTK_energy = energy;
+			}
 			
-			//New weapon branding spells; Basic elements and 'vorpal'. - Kurzel
-			//Normal only right now, could also add the exploding ammo brands? eg. thunder - Kurzel
-			case RT_POWER:		
-			case RT_HI_ACID:
-			case RT_HI_ELEC:
-			case RT_HI_FIRE:
-			case RT_HI_COLD:
-			case RT_NUKE:
-				msg_format(Ind, "%s%s cast a %s rune of branding.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					if (type==RT_POWER) brand_type = BRAND_SHARP;
-					//if (type==RT_WATER) brand_type = BRAND_CONF;
-					if (type==RT_HI_ACID) brand_type = BRAND_ACID;
-					if (type==RT_HI_ELEC) brand_type = BRAND_ELEC;
-					if (type==RT_HI_FIRE) brand_type = BRAND_FIRE;
-					if (type==RT_HI_COLD) brand_type = BRAND_COLD;
-					if (type==RT_NUKE) brand_type = BRAND_POIS;
-					//Experimental - Only Melee! - Kurzel
-					set_brand(Ind, duration, brand_type, 0);
-					//set_bow_brand(Ind, duration, brand_type, damage);
-					
-					//set_brand(Ind, duration, brand_type, damage);
-					//set_bow_brand(Ind, duration, brand_type, damage);
-				}
-				break;
-				
-			case RT_WAVE_CHAOS:
-			case RT_WAVE_NETHER:
-			case RT_WAVE_POISON:
-			case RT_WAVE: //pass_water flag -> bubble? - Kurzel
-			//case RT_FLY:
-				//msg_format(Ind, "%s%s summon %s ethereal wings.", begin, description, r_imperatives[imper].name);
-				msg_format(Ind, "%s%s summon %s ethereal air.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					set_tim_fly(Ind, duration);
-				}
-				break;
+			/* Cancel if we've lost our target */
+			if (dir != 5 || !target_okay(Ind))
+				return 0;
 			
-			/*
-			case RT_PSI_ESP:
-				msg_format(Ind, "%s%s cast a %s rune of extra-sensory perception.", begin, description, r_imperatives[imper].name);
-				if (success) set_tim_esp(Ind, duration);
-				break;
-			*/
-			case RT_GLYPH_LITE_ACID:
-			case RT_GLYPH_LITE_COLD:
-			case RT_GLYPH_LITE_POISON:
-			case RT_GLYPH_DARK_ACID:
-			case RT_GLYPH_DARK_FIRE:
-			case RT_GLYPH_DARK_POISON:
-			//case RT_MAGIC_WARD:
-				msg_format(Ind, "%s%s draw a sigil of protection.", begin, description);
-				if (success)
-				{
-					warding_glyph(Ind);
+			/* Cancel if we're going to automatically wake new monsters */
+#ifndef PY_PROJ_ON_WALL
+			if (!projectable_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE))
+#else
+			if (!projectable_wall_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE))
+#endif
+				return 0;
+
+			/* Continue casting if everything up to this point was a success */
+			p_ptr->shooting_till_kill = TRUE;
+			p_ptr->shoot_till_kill_rcraft = TRUE;
+		}
+	}
+	
+	/** Validate Caster **/
+	
+	/* Examine Status */
+	u16b penalty = 0;
+	
+#ifdef FEEDBACK_MESSAGE
+	/* Prepare a feedback message */
+	char * msg_1 = NULL;
+	char * msg_2 = NULL;
+	char * msg_3 = NULL;
+#endif
+
+	/* Blind */
+	if (p_ptr->blind) {
+#ifdef ENABLE_BLIND_CASTING
+		penalty += 10;
+ #ifdef FEEDBACK_MESSAGE
+		msg_2 = " struggle to";
+ #endif
+#else
+		msg_print(Ind, "You cannot see!");
+		p_ptr->energy -= energy;
+		return 0;
+#endif
+	}
+	
+	/* Confused */
+	if (p_ptr->confused) {
+#ifdef	ENABLE_CONFUSED_CASTING
+		penalty += 10;
+ #ifdef FEEDBACK_MESSAGE
+		msg_2 = " struggle to";
+ #endif
+#else
+		msg_print(Ind, "You are too confused!");
+		p_ptr->energy -= energy;
+		return 0;
+#endif
+	}
+	
+	/* AM-Shell */
+	if (p_ptr->anti_magic) {
+#ifdef ENABLE_SHELL_PROJECTIONS
+		if (r_types[type].flag != T_SELF) {
+			msg_format(Ind, "\377%cYour anti-magic shell absorbs the spell.", COLOUR_AM_OWN);
+			p_ptr->energy -= energy;
+			return 0;
+		}
+#else
+		msg_format(Ind, "\377%cYour anti-magic shell absorbs the spell.", COLOUR_AM_OWN);
+		p_ptr->energy -= energy;
+		return 0;
+#endif
+	}
+	
+	/* AM-Field */
+	if (check_antimagic(Ind, 100)) {
+		p_ptr->energy -= energy;
+		return 0;
+	}
+	
+	/* Interception */
+	if ((r_types[type].flag != T_MELE) && (interfere(Ind, cfg.spell_interfere))) {
+		p_ptr->energy -= energy;
+		return 0;
+	}
+	
+	/* Examine Inventory */
+	u16b mali = S_FAIL_RUNE * elements;
+	s16b link = rspell_inventory(Ind, element, elements, &mali);
+	
+	/* Is it a R_NEXU or R_TIME shifted spell? */
+	if (elements > 2 && (e_flags1 & R_NEXU)) {
+		if (((e_flags - R_NEXU) != (R_ACID | R_ELEC)) && ((e_flags - R_NEXU) != (R_FIRE | R_COLD))) {
+			switch (e_flags1 - R_NEXU) {
+				case R_ACID: {
+					e_flags1 = e_flags - (R_ACID | R_NEXU) + R_ELEC;
+					e_flags2 = R_ELEC;
+					e_flags = e_flags1;
+					elements = flags_to_elements(element, e_flags);
+				break; }
+				case R_ELEC: {
+					e_flags1 = e_flags - (R_ELEC | R_NEXU) + R_ACID;
+					e_flags2 = R_ACID;
+					e_flags = e_flags1;
+					elements = flags_to_elements(element, e_flags);
+				break; }
+				case R_FIRE: {
+					e_flags1 = e_flags - (R_FIRE | R_NEXU) + R_COLD;
+					e_flags2 = R_COLD;
+					e_flags = e_flags1;
+					elements = flags_to_elements(element, e_flags);
+				break; }
+				case R_COLD: {
+					e_flags1 = e_flags - (R_COLD | R_NEXU) + R_FIRE;
+					e_flags2 = R_FIRE;
+					e_flags = e_flags1;
+					elements = flags_to_elements(element, e_flags);
+				break; }
+			}
+		}
+	}
+	
+#ifdef ENABLE_GROUP_SPELLS
+	s16b rune[RSPELL_MAX_ELEMENTS - 1];
+	if (is_group_spell(rune, e_flags1, e_flags2, elements)) {
+#ifdef RCRAFT_DEBUG
+s_printf("RCRAFT_DEBUG: -is group spell- rune[0]: %d rune[1]: %d.\n", rune[0], rune[1]);
+#endif
+		byte runecharges = elements - 1;
+		
+		/* Reset the elements */
+		e_flags = 0; e_flags1 = 0; e_flags2 = 0;
+		
+		if (p_ptr->tim_rcraft_xtra) {
+			if (p_ptr->rcraft_xtra_a >= 0 && p_ptr->rcraft_xtra_a < RCRAFT_MAX_ELEMENTS) {
+				/* Encode the first rune */
+				e_flags1 |= r_elements[p_ptr->rcraft_xtra_a].flag;
+				runecharges++;
+				if (p_ptr->rcraft_xtra_b >= 0 && p_ptr->rcraft_xtra_b < RCRAFT_MAX_ELEMENTS) {
+					/* Encode the second rune */
+					e_flags1 |= r_elements[p_ptr->rcraft_xtra_b].flag;
+					e_flags2 |= r_elements[p_ptr->rcraft_xtra_b].flag;
+					runecharges++;
+					/* Encode the third rune; check for overlap */
+					if (rune[0] >= 0 && rune[0] < RCRAFT_MAX_ELEMENTS) {
+						if ((r_elements[rune[0]].flag & e_flags1) == r_elements[rune[0]].flag) {
+							runecharges--;
+							if (rune[1] >= 0 && rune[1] < RCRAFT_MAX_ELEMENTS) {
+								if ((r_elements[rune[1]].flag & e_flags1) == r_elements[rune[1]].flag) runecharges--;
+								else e_flags2 |= r_elements[rune[1]].flag;
+							}
+						}
+						else e_flags2 |= r_elements[rune[0]].flag;
+					}
 				}
-				break;
-				
-			case RT_STARLIGHT_ACID:
-			case RT_STARLIGHT_WATER:
-			case RT_STARLIGHT_FIRE:
-			case RT_STARLIGHT_CHAOS:
-			case RT_STARLIGHT_COLD:
-			case RT_STARLIGHT_NETHER:
-			case RT_STARLIGHT_POISON:
-			case RT_STARLIGHT_NEXUS:
-			case RT_STARLIGHT_FORCE:
-			case RT_STARLIGHT_TIME:
-			//case RT_MAGIC_CIRCLE:
-				//msg_format(Ind, "%s%s surround yourself with protective sigils.", begin, description);
-				msg_format(Ind, "%s%s summon a luminous circle of protection.", begin, description);
-				if (success)
-				{
-					//lite_area(Ind, 10, radius + 3);
-					lite_area(Ind, 10, radius + 1);//for better matching of reduced GF_MAKE_GLYPH radius below
-					lite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-					//fire_ball(Ind, GF_MAKE_GLYPH, 0, 1, radius / 2 + 1, ""); //Divide radius by 2 (max at rad 3-4?) - Kurzel
-					fire_ball(Ind, GF_MAKE_GLYPH, 0, 1, 1, ""); //Anything above radius 1 is too easy
-				/*
-					for(x = 0; x<3;x++)
-					{
-						for(y = 0; y<3;y++)
-						{
-							cave_set_feat_live(&p_ptr->wpos, (p_ptr->py + y - 1), (p_ptr->px + x - 1), FEAT_GLYPH);
+				else {
+					/* Encode the second rune; check for overlap */
+					if (rune[0] >= 0 && rune[0] < RCRAFT_MAX_ELEMENTS) {
+						if ((r_elements[rune[0]].flag & e_flags1) == r_elements[rune[0]].flag) {
+							runecharges--;
+							if (rune[1] >= 0 && rune[1] < RCRAFT_MAX_ELEMENTS) {
+								if ((r_elements[rune[1]].flag & e_flags1) == r_elements[rune[1]].flag) runecharges--;
+								else {
+									e_flags1 |= r_elements[rune[1]].flag;
+									e_flags2 |= r_elements[rune[1]].flag;
+								}
+							}
+						}
+						else {
+							e_flags1 |= r_elements[rune[0]].flag;
+							e_flags2 |= r_elements[rune[0]].flag;
+							/* Encode the third rune; check for overlap */
+							if (rune[1] >= 0 && rune[1] < RCRAFT_MAX_ELEMENTS) {
+								if ((r_elements[rune[1]].flag & e_flags1) == r_elements[rune[1]].flag) runecharges--;
+								else e_flags2 |= r_elements[rune[1]].flag;
+							}
 						}
 					}
-				*/
-//done in cave_set_feat_live() now:	p_ptr->redraw |= PR_MAP;
 				}
-				/*
-				else if (!istown(&p_ptr->wpos))
-				{
-					warding_glyph(Ind); //Failing this spell will probably kill the player: help them out with one glyph
-				}
-				*/
-				break;
-			/*
-			case RT_WALLS:
-				msg_format(Ind, "%s%s summon walls.", begin, description);
-			
-				if (success)
-				{
-					fire_ball(Ind, GF_STONE_WALL, 0, 1, 1, ""); //maybe copy this for GF_MAGIC_GLYPH (above) or time+base trap glyphs
-				}
-				break;
-			
-			case RT_VISION:
-				msg_format(Ind, "%s%s summon %s magical vision.", begin, description, r_imperatives[imper].name);
-			
-				if (success)
-				{
-					map_area(Ind);
-				}
-				break;
-			*/
-			case RT_WATER_NEXUS:
-			case RT_SHARDS:
-			//case RT_MYSTIC_SHIELD:
-				//msg_format(Ind, "%s%s summon %s mystic protection.", begin, description, r_imperatives[imper].name);
-				msg_format(Ind, "%s%s summon %s quaking.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					//earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15);
-					earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 5+radius); //Small size? - Kurzel
-					//(void)set_shield(Ind, duration, shield, SHIELD_NONE, 0, 0);
-				}
-				break;
-			/*	
-			case RT_INFERNO: //change this? match rocket to this? - Kurzel
-				msg_format(Ind, "%s%s summon %s great quaking.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					//maybe do an earthquake brand or detonation glyph? - Kurzel (p_ptr->impact) 
-					earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10+radius); //Large size? - Kurzel
-				}
-				break;
-				
-			case RT_DETECT_TRAP:
-				msg_format(Ind, "%s%s cast a %s rune of trap detection.", begin, description, r_imperatives[imper].name);
-			
-				if (success)
-				{
-					detect_trap(Ind, 36);
-				}
-				break;
-			*/
-			case RT_DISARM_ACID:
-			case RT_DISARM_COLD:
-			//case RT_STASIS_DISARM:
-				msg_format(Ind, "%s%s cast a %s rune of trap destruction.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					destroy_doors_touch(Ind, radius);
-				}
-				break;
-				
-			case RT_ANNIHILATION:
-				//Ranges from 2 to 22 bonus points
-				speed = speed * 15 / 10;
-				msg_format(Ind, "%s%s summon a %s otherworldly bloodlust.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					set_tim_trauma(Ind, duration, speed);
-				}
-				break;
+			}
+			/* Dispel the charges */
+			set_tim_rcraft_xtra(Ind, 0);
+		}
+		else {
+			if (rune[0] >= 0 && rune[0] < RCRAFT_MAX_ELEMENTS) e_flags1 |= r_elements[rune[0]].flag;
+			if (rune[1] >= 0 && rune[1] < RCRAFT_MAX_ELEMENTS) {
+				e_flags1 |= r_elements[rune[1]].flag;
+				e_flags2 |= r_elements[rune[1]].flag;
+			}
+		}
+		
+		/* Sanity check */
+		if (runecharges > RSPELL_MAX_ELEMENTS) {
+			msg_print(Ind, "\377rYou cannot combine so many elements.");
+			p_ptr->energy -= energy;
+			return 0;
+		}
+		
+		/* Decode the Elements */
+		e_flags |= e_flags1; e_flags |= e_flags2;
+		elements = flags_to_elements(element, e_flags);
 
-			case RT_TIME:
-				msg_format(Ind, "%s%s cast a %s rune of quickening.", begin, description, r_imperatives[imper].name);
-				
-				if (success)
-				{
-					set_fast(Ind, duration, speed_max); //Ranges from 6 to 15
-				}
-				break;
+#ifdef RCRAFT_DEBUG
+s_printf("RCRAFT_DEBUG: Group Runespell attempted... \n");
+byte ii;
+for (ii = 0; ii < elements; ii++) {
+s_printf("Rune %d: %s\n", ii, r_elements[element[ii]].name);
+}
+#endif
 
-			case RT_STASIS_ACID:
-			case RT_STASIS_WATER:
-			case RT_STASIS_ELEC:
-			case RT_STASIS_SHARDS:
-			case RT_STASIS_FIRE:
-			case RT_STASIS_CHAOS:
-			case RT_STASIS_POISON:
-			case RT_STASIS_NEXUS:
-			case RT_STASIS_FORCE:
-			case RT_STASIS_TIME:
-			//case RT_SATIATION:
-				msg_format(Ind, "%s%s cast a %s rune of satiation.", begin, description, r_imperatives[imper].name);
-				
-				if (success)
-				{
-					//if (!p_ptr->suscep_life)
-					if (p_ptr->prace != RACE_VAMPIRE)
-						set_food(Ind, PY_FOOD_MAX - 1);
-				}
-				break;
+	}
+#endif
+	
+	byte cost = 0;
+	if (r_imperatives[imperative].flag != I_CHAO) cost = rspell_cost(Ind, element, elements, imperative, type, skill, level);
+	else cost = rspell_cost(Ind, element, elements, randint(RCRAFT_MAX_IMPERATIVES) - 1, type, skill, level);
+	
+	/* Not enough MP */
+	if (p_ptr->csp < cost) {
+#ifdef ENABLE_LIFE_CASTING
+ #ifdef SAFE_RETALIATION
+		if (retaliate) return 2;
+ #endif
+		penalty += (cost - p_ptr->csp);
+ #ifdef FEEDBACK_MESSAGE
+		msg_1 = "\377rExhausted\377s, you";
+ #endif
+#else
+		msg_print(Ind, "You do not have enough mana.");
+		p_ptr->energy -= energy;
+		return 0;
+#endif
+	}
+	else {
+#ifdef FEEDBACK_MESSAGE
+		msg_1 = "\377sYou";
+#endif
+	}
+	
+	/** Attempt the Runespell **/
+	
+	/* Stunned */
+	if (p_ptr->stun > 50) {
+		penalty += 25;
+#ifdef FEEDBACK_MESSAGE
+		msg_2 = " struggle to";
+#endif
+	}
+	else if (p_ptr->stun) {
+		penalty += 15;
+#ifdef FEEDBACK_MESSAGE
+		msg_2 = " struggle to";
+#endif
+	}
 
-			case RT_WONDER_RESIST:
-				spell_duration = duration / 2;
-				msg_format(Ind, "%s%s summon %s elemental protection.", begin, description, r_imperatives[imper].name);
-				
-				if (success)
-				{
-					set_oppose_acid(Ind, spell_duration);
-					set_oppose_elec(Ind, spell_duration);
-					set_oppose_fire(Ind, spell_duration);
-					set_oppose_cold(Ind, spell_duration);
-					set_oppose_pois(Ind, spell_duration);
-				}
-				break;
-				
-			case RT_ACID_ELEC_TIME:
-			case RT_ACID_ELEC_NEXUS:
-			case RT_ACID_ELEC:
-				msg_format(Ind, "%s%s cast a %s rune of gestalt resistance.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					set_oppose_acid(Ind, spell_duration);
-					set_oppose_elec(Ind, spell_duration);
-				}
-				break;
-				
-			case RT_ACID_FIRE_TIME:	
-			case RT_ACID_FIRE:
-				msg_format(Ind, "%s%s cast a %s rune of gestalt resistance.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					set_oppose_acid(Ind, spell_duration);
-					set_oppose_fire(Ind, spell_duration);
-				}
-				break;
-				
-			case RT_ACID_COLD_TIME:	
-			case RT_ACID_COLD:
-				msg_format(Ind, "%s%s cast a %s rune of gestalt resistance.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					set_oppose_acid(Ind, spell_duration);
-					set_oppose_cold(Ind, spell_duration);
-				}
-				break;
-				
-			case RT_ACID_POISON_TIME:
-			case RT_ACID_POISON:
-				msg_format(Ind, "%s%s cast a %s rune of gestalt resistance.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					set_oppose_acid(Ind, spell_duration);
-					set_oppose_pois(Ind, spell_duration);
-				}
-				break;
-				
-			case RT_PLASMA_ACID:
-			case RT_PLASMA_WATER:
-			case RT_PLASMA_NETHER:
-			case RT_PLASMA_POISON:
-			case RT_PLASMA_TIME:
-			case RT_PLASMA:
-				msg_format(Ind, "%s%s cast a %s rune of gestalt resistance.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					set_oppose_elec(Ind, spell_duration);
-					set_oppose_fire(Ind, spell_duration);
-				}
-				break;
-				
-			case RT_ELEC_COLD_TIME:	
-			case RT_ELEC_COLD:
-				msg_format(Ind, "%s%s cast a %s rune of gestalt resistance.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					set_oppose_elec(Ind, spell_duration);
-					set_oppose_cold(Ind, spell_duration);
-				}
-				break;
-				
-			case RT_ELEC_POISON_TIME:	
-			case RT_ELEC_POISON:
-				msg_format(Ind, "%s%s cast a %s rune of gestalt resistance.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					set_oppose_elec(Ind, spell_duration);
-					set_oppose_pois(Ind, spell_duration);
-				}
-				break;
-				
-			case RT_FIRE_POISON_TIME:	
-			case RT_FIRE_POISON:
-				msg_format(Ind, "%s%s cast a %s rune of gestalt resistance.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					set_oppose_fire(Ind, spell_duration);
-					set_oppose_pois(Ind, spell_duration);
-				}
-				break;
-				
-			case RT_COLD_POISON_TIME:
-			case RT_COLD_POISON:
-				msg_format(Ind, "%s%s cast a %s rune of gestalt resistance.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					set_oppose_cold(Ind, spell_duration);
-					set_oppose_pois(Ind, spell_duration);
-				}
-				break;
+#ifdef FEEDBACK_MESSAGE
+	if (mali > 0) msg_3 = " draw the rune-forms from memory.";
+	else msg_3 = " trace the rune-forms.";
+#endif
+
+	mali += penalty;
+	
+#ifdef FEEDBACK_MESSAGE
+	/* Resolve the Feedback Message */
+	if (mali) msg_format(Ind, "%s%s%s", msg_1, msg_2, msg_3);
+#endif	
+	
+	byte fail = 0;
+	if (r_imperatives[imperative].flag != I_CHAO) fail = rspell_fail(Ind, element, elements, imperative, type, diff, mali);
+	else fail = rspell_fail(Ind, element, elements, randint(RCRAFT_MAX_IMPERATIVES) - 1, type, diff, mali);
+	
+	/* Choose the Projection Combinations */
+	byte projection = flags_to_projection(e_flags1);
+	byte explosion = -1;
+	if (elements > 2) explosion = flags_to_projection(e_flags2);
+	
+	//Hack - Flux -> Plasma
+	if (p_ptr->rcraft_empower && projection == 34) projection = RCRAFT_MAX_PROJECTIONS;
+	if (p_ptr->rcraft_empower && explosion == 34) explosion = RCRAFT_MAX_PROJECTIONS;
+
+	u32b damage = 0;
+	u32b damage_off = 0;
+	if (r_imperatives[imperative].flag != I_CHAO) {
+		damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection);
+		if (elements > 2) damage_off = rspell_damage(Ind, element, elements, imperative, 5, skill, explosion); //use T_BALL aka '5' - Kurzel
+	}
+	else {
+		damage = rspell_damage(Ind, element, elements, randint(RCRAFT_MAX_IMPERATIVES) - 1, type, skill, projection);
+		if (elements > 2) damage_off = rspell_damage(Ind, element, elements, randint(RCRAFT_MAX_IMPERATIVES) - 1, 5, skill, explosion); //use T_BALL aka '5' - Kurzel
+	}
+	
+	/* Calculate the remaining parameters */
+	byte radius = 0;
+	byte duration = 0;
+	if (r_imperatives[imperative].flag != I_CHAO) {
+		radius = rspell_radius(Ind, element, elements, imperative, type, skill, level);
+		duration = rspell_duration(Ind, element, elements, imperative, type, skill, level);
+	}
+	else { //If 'Chaotic' imperative, choose randomly from each imperative modifier, except energy, which would mess with FTK.
+		radius = rspell_radius(Ind, element, elements, randint(RCRAFT_MAX_IMPERATIVES) - 1, type, skill, level);
+		duration = rspell_duration(Ind, element, elements, randint(RCRAFT_MAX_IMPERATIVES) - 1, type, skill, level);
+	}
+	
+	/** Cast the Runespell **/
+	
+	/* Determine quality of the cast and penalty; preserve hard fail at 0 - Kurzel */
+	char * msg_q = NULL;
+	byte p_flags = 0;
+	s16b margin = randint(100) - fail;
+	if (margin < -50) {
+		msg_q = "\377rfail \377sto";
+		rspell_penalty(margin, &p_flags);
+	}
+	else if (margin < 1) { //fail if margin is 0 or less
+		msg_q = "fail to";
+		rspell_penalty(margin, &p_flags);
+	}
+	else if (margin < 10) { 
+		msg_q = "clumsily";
+		//rspell_penalty(margin, &p_flags);
+		damage = damage * 9 / 10 + 1;
+		if (elements > 2) damage_off = damage_off * 9 / 10;
+	}
+	else if (margin < 30) {
+		msg_q = "casually";
+	}
+	else if (margin < 50) {
+		msg_q = "effectively";
+		damage = damage * 11 / 10;
+		if (elements > 2) damage_off = damage_off * 11 / 10;
+	}
+	else {
+		msg_q = "elegantly";
+		damage = damage * 12 / 10;
+		if (elements > 2) damage_off = damage_off * 12 / 10;
+	}
+	
+#ifdef RCRAFT_DEBUG
+s_printf("RCRAFT_DEBUG: Runespell parameters: \n");
+s_printf("Skill:    %d\n", skill);
+s_printf("Level:    %d\n", level);
+s_printf("Diff:     %d\n", diff);
+s_printf("Energy:   %d\n", energy);
+s_printf("Cost:     %d\n", cost);
+s_printf("Fail:     %d\n", fail);
+s_printf("Margin:   %d\n", margin);
+s_printf("Damage:   %d\n", damage);
+s_printf("DamageOf: %d\n", damage_off);
+s_printf("Radius:   %d\n", radius);
+s_printf("Duration: %d\n", duration);
+#endif
+
+	/* Resolve the Effect */
+	u32b gf_type = r_projections[projection].gf_type;
+	u32b gf_main = gf_type; //remember the main projection for quickness later
+	
+	/* Hack -- Encode an exploding projection */
+	if (elements > 2) {
+		gf_type += HACK_GF_FACTOR * r_projections[explosion].gf_type;
+		gf_type += HACK_TYPE_FACTOR * r_types[type].flag;
+		damage += HACK_DAM_FACTOR * damage_off;
+	}
+
+	switch (r_types[type].flag) {
+		case T_MELE: {
+		int px = p_ptr->px;
+		int py = p_ptr->py;
+		int tx, ty;
+		
+		/* Hack -- Limit range to 1 */
+		if (dir == 5 && target_okay(Ind)) {
+			tx = p_ptr->target_col;
+			ty = p_ptr->target_row;
 			
-			case RT_COLD_NEXUS:
-			case RT_FIRE:
-				msg_format(Ind, "%s%s cast a %s rune of fire resistance.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
+			/* .. for targetting use */
+			if (tx - px > 1) tx = px + 1;
+			if (px - tx > 1) tx = px - 1;
+			if (ty - py > 1) ty = py + 1;
+			if (py - ty > 1) ty = py - 1;
+
+			msg_format(Ind, "You %s summon %s %s %s of %s%s.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, elements > 2 ? r_projections[explosion].adj : "", r_projections[projection].name);
+		}
+		else {
+			/* .. for directional use */
+			tx = px + ddx[dir];
+			ty = py + ddy[dir];
+
+			if (dir == 5) msg_format(Ind, "You %s summon %s %s %s of undirected %s%s.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, elements > 2 ? r_projections[explosion].adj : "", r_projections[projection].name);
+			else msg_format(Ind, "You %s summon %s %s %s of directed %s%s.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, elements > 2 ? r_projections[explosion].adj : "", r_projections[projection].name);
+		}
+		
+		if (margin > 0) {
+			/* Emulate a fire_ball() call, so we can hack our (tx, ty) values in without modifying p_ptr->target_col/row - C. Blue */
+#ifdef USE_SOUND_2010
+			if (gf_main == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_COMMAND, FALSE);
+			else if (gf_main == GF_DETONATION) sound(Ind, "detonation", NULL, SFX_TYPE_COMMAND, FALSE);
+			else if (gf_main == GF_STONE_WALL) sound(Ind, "stone_wall", NULL, SFX_TYPE_COMMAND, FALSE);
+			else sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, TRUE);
+#endif
+			sprintf(p_ptr->attacker, " %s summons %s %s %s of %s%s for", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, elements > 2 ? r_projections[explosion].adj : "", r_projections[projection].name);
+			project(0 - Ind, 0, &p_ptr->wpos, ty, tx, damage, gf_type, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, p_ptr->attacker);
+		}
+		break; }
+		case T_BOLT: {
+			msg_format(Ind, "You %s summon %s %s %s of %s%s.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, elements > 2 ? r_projections[explosion].adj : "", r_projections[projection].name);
+			if ((gf_main == GF_KILL_WALL) || (gf_main == GF_EARTHQUAKE)) {
+				int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+				if (margin > 0) {
+					sprintf(p_ptr->attacker, " %s summons %s %s %s of %s%s for", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, elements > 2 ? r_projections[explosion].adj : "", r_projections[projection].name);
+					project_hook(Ind, gf_type, dir, damage, flg, "");
+				}
+			}
+			else {
+				if (margin > 0) {
+					sprintf(p_ptr->attacker, " %s summons %s %s %s of %s%s for", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, elements > 2 ? r_projections[explosion].adj : "", r_projections[projection].name);
+					fire_bolt(Ind, gf_type, dir, damage, p_ptr->attacker);
+				}
+			}
+		break; }
+		case T_BEAM: {
+			msg_format(Ind, "You %s summon %s %s %s of %s%s.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, elements > 2 ? r_projections[explosion].adj : "", r_projections[projection].name);
+			if ((gf_main == GF_KILL_WALL) || (gf_main == GF_EARTHQUAKE)) {
+				int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+				if (margin > 0) {
+					sprintf(p_ptr->attacker, " %s summons %s %s %s of %s%s for", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, elements > 2 ? r_projections[explosion].adj : "", r_projections[projection].name);
+					project_hook(Ind, gf_type, dir, damage, flg, "");
+				}
+			}
+			else {
+				if (margin > 0) {
+					sprintf(p_ptr->attacker, " %s summons %s %s %s of %s%s for", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, elements > 2 ? r_projections[explosion].adj : "", r_projections[projection].name);
+					if (gf_main == GF_LITE || gf_main == GF_DARK || gf_main == GF_ACID_DISARM || gf_main == GF_ELEC_DISARM || gf_main == GF_FIRE_DISARM || gf_main == GF_COLD_DISARM || gf_main == GF_EARTHQUAKE) {
+						fire_grid_beam(Ind, gf_type, dir, damage, p_ptr->attacker);
+					}
+					else {
+						fire_beam(Ind, gf_type, dir, damage, p_ptr->attacker);
+					}
+				}
+			}
+		break; }
+		case T_BALL: {
+			msg_format(Ind, "You %s summon %s %s %s of %s%s.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, elements > 2 ? r_projections[explosion].adj : "", r_projections[projection].name);
+			if (margin > 0) {
+				sprintf(p_ptr->attacker, " %s summons %s %s %s of %s%s for", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, elements > 2 ? r_projections[explosion].adj : "", r_projections[projection].name);
+				fire_ball(Ind, gf_type, dir, damage, radius, p_ptr->attacker);
+			}
+		break; }
+		case T_WAVE: {
+			msg_format(Ind, "You %s summon %s %s %s of %s%s.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, elements > 2 ? r_projections[explosion].adj : "", r_projections[projection].name);
+			if (margin > 0) {
+				sprintf(p_ptr->attacker, " %s summons %s %s %s of %s%s for", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, elements > 2 ? r_projections[explosion].adj : "", r_projections[projection].name);
+				fire_wave(Ind, gf_type, 0, damage, 0, duration, 2, EFF_WAVE, p_ptr->attacker);
+			}
+		break; }
+		case T_CLOU: {
+			msg_format(Ind, "You %s summon %s %s %s of %s%s.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, elements > 2 ? r_projections[explosion].adj : "", r_projections[projection].name);
+			if (margin > 0) {
+				sprintf(p_ptr->attacker, " %s summons %s %s %s of %s%s for", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, elements > 2 ? r_projections[explosion].adj : "", r_projections[projection].name);
+				fire_cloud(Ind, gf_type, dir, damage, radius, duration, 9, p_ptr->attacker);
+			}
+		break; }
+		case T_STOR: {
+			msg_format(Ind, "You %s summon %s %s %s of %s%s.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, elements > 2 ? r_projections[explosion].adj : "", r_projections[projection].name);
+			if (margin > 0) {
+				sprintf(p_ptr->attacker, " %s summons %s %s %s of %s%s for", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, elements > 2 ? r_projections[explosion].adj : "", r_projections[projection].name);
+				fire_wave(Ind, gf_type, 0, damage, radius, duration, 10, EFF_STORM, p_ptr->attacker);
+			}
+		break; }
+		case T_SELF: {
+		//Epic list of self spells here? Any undefined goes to a backlash penalty. - Kurzel
+		switch (e_flags1) {
+			/** 1-rune Self-Spells **/
+			
+			case (R_ACID): {
+			msg_format(Ind, "You %s draw %s %s rune of acid resistance.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+			if (margin > 0) {
+				set_oppose_acid(Ind, duration);
+			}
+			break; }
+#ifdef ENABLE_AUGMENTS
+			case (R_WATE): {
+			if (p_ptr->rcraft_augment != 1) {
+				msg_format(Ind, "You augment your spells with transmutation.");
+				p_ptr->rcraft_augment = 1;
+			}
+			else {
+				msg_format(Ind, "You stop augmenting your spells.");
+				p_ptr->rcraft_augment = -1;
+			}
+			p_flags = 0;
+			cost = 0;
+			break; }
+#endif	
+			case (R_ELEC): {
+			msg_format(Ind, "You %s draw %s %s rune of electricity resistance.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+			if (margin > 0) {
+				set_oppose_elec(Ind, duration);
+			}
+			break; }
+#ifdef ENABLE_AUGMENTS
+			case (R_EART): {
+			if (p_ptr->rcraft_augment != 3) {
+				msg_format(Ind, "You augment your spells with conjuration.");
+				p_ptr->rcraft_augment = 3;
+			}
+			else {
+				msg_format(Ind, "You stop augmenting your spells.");
+				p_ptr->rcraft_augment = -1;
+			}
+			p_flags = 0;
+			cost = 0;
+			break; }
+#endif
+			case (R_FIRE): {
+			msg_format(Ind, "You %s draw %s %s rune of fire resistance.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+			if (margin > 0) {
+				set_oppose_fire(Ind, duration);
+			}
+			break; }
+#ifdef ENABLE_AUGMENTS
+			case (R_CHAO): {
+			if (p_ptr->rcraft_augment != 5) {
+				msg_format(Ind, "You augment your spells with evocation.");
+				p_ptr->rcraft_augment = 5;
+			}
+			else {
+				msg_format(Ind, "You stop augmenting your spells.");
+				p_ptr->rcraft_augment = -1;
+			}
+			p_flags = 0;
+			cost = 0;
+			break; }
+#endif
+			case (R_COLD): {
+			msg_format(Ind, "You %s draw %s %s rune of cold resistance.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+			if (margin > 0) {
+				set_oppose_cold(Ind, duration);
+			}
+			break; }
+#ifdef ENABLE_AUGMENTS
+			case (R_NETH): {
+			if (p_ptr->rcraft_augment != 7) {
+				msg_format(Ind, "You augment your spells with abjuration.");
+				p_ptr->rcraft_augment = 7;
+			}
+			else {
+				msg_format(Ind, "You stop augmenting your spells.");
+				p_ptr->rcraft_augment = -1;
+			}
+			p_flags = 0;
+			cost = 0;
+			break; }
+#endif
+			case (R_POIS): {
+			msg_format(Ind, "You %s draw %s %s rune of poison resistance.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+			if (margin > 0) {
+				set_oppose_pois(Ind, duration);
+			}
+			break; }
+#ifdef ENABLE_AUGMENTS	
+			case (R_NEXU): {
+			if (p_ptr->rcraft_augment != 9) {
+				msg_format(Ind, "You augment your spells with illusion.");
+				p_ptr->rcraft_augment = 9;
+			}
+			else {
+				msg_format(Ind, "You stop augmenting your spells.");
+				p_ptr->rcraft_augment = -1;
+			}
+			p_flags = 0;
+			cost = 0;
+			break; }
+#endif
+#ifdef ENABLE_AUGMENTS		
+			case (R_FORC): {
+			if (p_ptr->rcraft_augment != 10) {
+				msg_format(Ind, "You augment your spells with compulsion.");
+				p_ptr->rcraft_augment = 10;
+			}
+			else {
+				msg_format(Ind, "You stop augmenting your spells.");
+				p_ptr->rcraft_augment = -1;
+			}
+			p_flags = 0;
+			cost = 0;	
+			break; }
+#endif
+			case (R_TIME): { 
+			if (p_ptr->spell_project) { // Don't allow both projection types. - Kurzel
+				p_ptr->spell_project = 0;
+				msg_format(Ind, "Your utility spells will now only affect yourself.");
+			}
+			if (p_ptr->rcraft_project) {
+				msg_format(Ind, "You stop synchronizing your spells.");
+				p_ptr->rcraft_project = 0;
+				p_ptr->redraw |= PR_EXTRA;
+			}
+			else {
+				msg_format(Ind, "You synchronize your spells with players in a radius of %d.", radius);
+					p_ptr->rcraft_project = radius;
+					p_ptr->redraw |= PR_EXTRA;
+			}
+			p_flags = 0;
+			cost = 0;
+			break; }
+			
+			/** R_ACID **/
+
+			case (R_ACID | R_WATE): {
+			msg_format(Ind, "You %s conjure %s %s matrix of spell energy.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+			type = 6; //T_CLOU
+			duration = rspell_duration(Ind, element, elements, imperative, type, skill, level);
+			switch (e_flags - (R_ACID | R_WATE)) {
+				case 0: {
+				if (margin > 0) {
+					damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection);
+					set_tim_rcraft_help(Ind, duration, type, projection, damage);
+				}
+				break; }
+				
+				default: {
+				if (margin > 0) {
+					projection = flags_to_projection(e_flags - R_WATE);
+					damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection);
+					set_tim_rcraft_help(Ind, duration, type, projection, damage);
+				}
+				break; }
+			}
+			break; }
+			
+			case (R_ACID | R_ELEC): {
+			switch (e_flags - (R_ACID | R_ELEC)) {
+				case R_FIRE: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_elec(Ind, duration);
 					set_oppose_fire(Ind, duration);
 				}
-				break;
+				break; }
 				
-			case RT_FIRE_NEXUS:
-			case RT_COLD:
-				msg_format(Ind, "%s%s cast a %s rune of cold resistance.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
+				case R_COLD: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_elec(Ind, duration);
 					set_oppose_cold(Ind, duration);
 				}
-				break;
-			
-			case RT_ELEC_NEXUS:
-			case RT_ACID:
-				msg_format(Ind, "%s%s cast a %s rune of acid resistance.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
+				break; }
+				
+				case R_POIS: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
 					set_oppose_acid(Ind, duration);
-				}
-				break;
-			
-			case RT_ACID_NEXUS:
-			case RT_ELEC:
-				msg_format(Ind, "%s%s cast a %s rune of electrical resistance.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
 					set_oppose_elec(Ind, duration);
-				}
-				break;
-			
-			case RT_POISON:
-				msg_format(Ind, "%s%s cast a %s rune of poison resistance.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
 					set_oppose_pois(Ind, duration);
 				}
-				break;
+				break; }
+				
+				case R_FORC: {
+				byte upkeep_rune[5];
+				cost = 0;
+				if (p_ptr->rcraft_attune == (R_ACID | R_ELEC)) {
+					msg_format(Ind, "\377WYour armament is no longer attuned.");
+					/* De-attune */
+					p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					p_ptr->rcraft_attune = 0;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* De-attune */
+						if (p_ptr->rcraft_attune) p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+						/* Can we sustain two more attunes? */
+						if (p_ptr->rcraft_upkeep + (2 * UPKEEP_ATTUNE) > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Attune */
+						msg_format(Ind, "You %s attune your armament.", msg_q);
+						set_tim_brand_acid(Ind, 1);
+						set_tim_brand_elec(Ind, 1);
+						p_ptr->rcraft_attune = (R_ACID | R_ELEC);
+						p_ptr->rcraft_upkeep += flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					}
+					else msg_format(Ind, "You %s attune your armament.", msg_q);
+				}
+				calc_mana(Ind);
+				calc_boni(Ind);
+				break; }
+				
+				case R_NEXU: {
+				msg_format(Ind, "You %s project twin %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_elec(Ind, duration);
+					fire_ball(Ind, GF_RESACID_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+					fire_ball(Ind, GF_RESELEC_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+				}
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s draw twin %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_elec(Ind, duration);
+				}
+				break; }
+			}
+			break; }
+			
+			case (R_ACID | R_EART): {
+			switch (e_flags - (R_ACID | R_EART)) {
+				case 0: {
+				msg_format(Ind, "You %s corrode yourself.", msg_q);
+				if (margin > 0) p_flags |= RPEN_MAJ_HP;
+				break; }
+				
+				case R_COLD: {
+				msg_format(Ind, "You %s corrode and shatter yourself.", msg_q);
+				if (margin > 0) p_flags |= RPEN_MAJ_HP;
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s invoke %s %s malicious runespell.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) p_flags |= RPEN_MAJ_HP;
+				break; }
+			}
+			break; }
 
-			case RT_DISENCHANT_ACID:
-			case RT_DISENCHANT_WATER:
-			case RT_DISENCHANT_ELEC:
-			case RT_DISENCHANT_SHARDS:
-			case RT_DISENCHANT_COLD:
-			case RT_DISENCHANT_FORCE:
-			case RT_DISENCHANT_TIME:
-			case RT_DISENCHANT:
-				msg_format(Ind, "%s%s banish the magical energies.", begin, description);
-				if (success)
+			case (R_ACID | R_FIRE): {
+			switch (e_flags - (R_ACID | R_FIRE)) {
+				case R_ELEC: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_elec(Ind, duration);
+					set_oppose_fire(Ind, duration);
+				}
+				break; }
+				
+				case R_COLD: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_fire(Ind, duration);
+					set_oppose_cold(Ind, duration);
+				}
+				break; }
+				
+				case R_POIS: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_fire(Ind, duration);
+					set_oppose_pois(Ind, duration);
+				}
+				break; }
+				
+				case R_FORC: {
+				byte upkeep_rune[5];
+				cost = 0;
+				if (p_ptr->rcraft_attune == (R_ACID | R_FIRE)) {
+					msg_format(Ind, "\377WYour armament is no longer attuned.");
+					/* De-attune */
+					p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					p_ptr->rcraft_attune = 0;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* De-attune */
+						if (p_ptr->rcraft_attune) p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+						/* Can we sustain two more attunes? */
+						if (p_ptr->rcraft_upkeep + (2 * UPKEEP_ATTUNE) > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Attune */
+						msg_format(Ind, "You %s attune your armament.", msg_q);
+						set_tim_brand_acid(Ind, 1);
+						set_tim_brand_fire(Ind, 1);
+						p_ptr->rcraft_attune = (R_ACID | R_FIRE);
+						p_ptr->rcraft_upkeep += flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					}
+					else msg_format(Ind, "You %s attune your armament.", msg_q);
+				}
+				calc_mana(Ind);
+				calc_boni(Ind);
+				break; }
+				
+				case R_NEXU: {
+				msg_format(Ind, "You %s project twin %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_fire(Ind, duration);
+					fire_ball(Ind, GF_RESACID_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+					fire_ball(Ind, GF_RESFIRE_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+				}
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s draw twin %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_fire(Ind, duration);
+				}
+				break; }
+			}
+			break; }
+
+			case (R_ACID | R_CHAO): {
+			switch (e_flags - (R_ACID | R_CHAO)) {
+				case 0: {
+				if (p_ptr->rcraft_brand == BRAND_CONF) {
+					msg_format(Ind, "\377WYou are no longer branded.");
+					p_ptr->rcraft_upkeep -= UPKEEP_BRAND;
+					p_ptr->rcraft_brand = 0;
+					p_flags = 0;
+					cost = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* De-attune */
+						if (p_ptr->rcraft_brand) p_ptr->rcraft_upkeep -= UPKEEP_BRAND;
+						/* Can we sustain a brand? */
+						if (p_ptr->rcraft_upkeep + UPKEEP_BRAND > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Attune */
+						msg_format(Ind, "You %s brand yourself.", msg_q);
+						set_tim_brand_conf(Ind, 1);
+						p_ptr->rcraft_brand = BRAND_CONF;
+						p_ptr->rcraft_upkeep += UPKEEP_BRAND;
+					}
+					else msg_format(Ind, "You %s brand yourself.", msg_q);
+				}
+				calc_mana(Ind);
+				break; }
+				
+				default: {
+				projection = flags_to_projection(e_flags - R_CHAO);
+				damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection) / 10 + 1; //Severely reduced damage (per burst) - Kurzel
+				msg_format(Ind, "You %s empower your defenses with %s %s.", msg_q, r_imperatives[imperative].name, r_projections[projection].name);
+				if (margin > 0) set_tim_aura_ex(Ind, duration, projection, damage);
+				break; }
+			}
+			break; }
+
+			case (R_ACID | R_COLD): {
+			switch (e_flags - (R_ACID | R_COLD)) {
+				case R_ELEC: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_elec(Ind, duration);
+					set_oppose_cold(Ind, duration);
+				}
+				break; }
+				
+				case R_FIRE: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_fire(Ind, duration);
+					set_oppose_cold(Ind, duration);
+				}
+				break; }
+				
+				case R_POIS: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_cold(Ind, duration);
+					set_oppose_pois(Ind, duration);
+				}
+				break; }
+				
+				case R_FORC: {
+				byte upkeep_rune[5];
+				cost = 0;
+				if (p_ptr->rcraft_attune == (R_ACID | R_COLD)) {
+					msg_format(Ind, "\377WYour armament is no longer attuned.");
+					/* De-attune */
+					p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					p_ptr->rcraft_attune = 0;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* De-attune */
+						if (p_ptr->rcraft_attune) p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+						/* Can we sustain two more attunes? */
+						if (p_ptr->rcraft_upkeep + (2 * UPKEEP_ATTUNE) > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Attune */
+						msg_format(Ind, "You %s attune your armament.", msg_q);
+						set_tim_brand_acid(Ind, 1);
+						set_tim_brand_cold(Ind, 1);
+						p_ptr->rcraft_attune = (R_ACID | R_COLD);
+						p_ptr->rcraft_upkeep += flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					}
+					else msg_format(Ind, "You %s attune your armament.", msg_q);
+				}
+				calc_mana(Ind);
+				calc_boni(Ind);
+				break; }
+				
+				case R_NEXU: {
+				msg_format(Ind, "You %s project twin %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_cold(Ind, duration);
+					fire_ball(Ind, GF_RESACID_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+					fire_ball(Ind, GF_RESCOLD_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+				}
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s draw twin %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_cold(Ind, duration);
+				}
+				break; }
+			}
+			break; }
+			
+			case (R_ACID | R_NETH): {
+			switch (e_flags - (R_ACID | R_NETH)) {
+				case 0: {
+				if (p_ptr->rcraft_brand == BRAND_VORP) {
+					msg_format(Ind, "\377WYou are no longer branded.");
+					p_ptr->rcraft_upkeep -= UPKEEP_BRAND;
+					p_ptr->rcraft_brand = 0;
+					p_flags = 0;
+					cost = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* De-attune */
+						if (p_ptr->rcraft_brand) p_ptr->rcraft_upkeep -= UPKEEP_BRAND;
+						/* Can we sustain a brand? */
+						if (p_ptr->rcraft_upkeep + UPKEEP_BRAND > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Attune */
+						msg_format(Ind, "You %s brand yourself.", msg_q);
+						set_tim_brand_vorp(Ind, 1);
+						p_ptr->rcraft_brand = BRAND_VORP;
+						p_ptr->rcraft_upkeep += UPKEEP_BRAND;
+					}
+					else msg_format(Ind, "You %s brand yourself.", msg_q);
+				}
+				calc_mana(Ind);
+				calc_boni(Ind);
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s draw %s %s explosive rune.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) {
+					projection = flags_to_projection(e_flags - R_NETH);
+					if (set_rune_trap_okay(Ind)) set_rune_trap_aux(Ind, projection, imperative, skill);
+				}
+				cost = 0;
+				break; }
+			}
+			break; }
+			
+			case (R_ACID | R_POIS): {
+			switch (e_flags - (R_ACID | R_POIS)) {
+				case R_ELEC: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_elec(Ind, duration);
+					set_oppose_pois(Ind, duration);
+				}
+				break; }
+				
+				case R_FIRE: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_fire(Ind, duration);
+					set_oppose_pois(Ind, duration);
+				}
+				break; }
+				
+				case R_COLD: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_cold(Ind, duration);
+					set_oppose_pois(Ind, duration);
+				}
+				break; }
+				
+				case R_FORC: {
+				byte upkeep_rune[5];
+				cost = 0;
+				if (p_ptr->rcraft_attune == (R_ACID | R_POIS)) {
+					msg_format(Ind, "\377WYour armament is no longer attuned.");
+					/* De-attune */
+					p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					p_ptr->rcraft_attune = 0;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* De-attune */
+						if (p_ptr->rcraft_attune) p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+						/* Can we sustain two more attunes? */
+						if (p_ptr->rcraft_upkeep + (2 * UPKEEP_ATTUNE) > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Attune */
+						msg_format(Ind, "You %s attune your armament.", msg_q);
+						set_tim_brand_acid(Ind, 1);
+						set_tim_brand_pois(Ind, 1);
+						p_ptr->rcraft_attune = (R_ACID | R_POIS);
+						p_ptr->rcraft_upkeep += flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					}
+					else msg_format(Ind, "You %s attune your armament.", msg_q);
+				}
+				calc_mana(Ind);
+				calc_boni(Ind);
+				break; }
+				
+				case R_NEXU: {
+				msg_format(Ind, "You %s project twin %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_pois(Ind, duration);
+					fire_ball(Ind, GF_RESACID_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+					fire_ball(Ind, GF_RESPOIS_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+				}
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s draw twin %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_pois(Ind, duration);
+				}
+				break; }
+			}
+			break; }
+			
+			case (R_ACID | R_NEXU): {
+			switch (e_flags - (R_ACID | R_NEXU)) {
+				case 0: {
+				msg_format(Ind, "You %s project %s %s rune of resistance.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_elec(Ind, duration);
+					fire_ball(Ind, GF_RESELEC_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+				}
+				break; }
+				
+				case R_ELEC: {
+				cost = 0;
+				if (p_ptr->rcraft_repel & R_ELEC) {
+					/* De-repel */
+					p_ptr->rcraft_upkeep -= UPKEEP_REPEL;
+					p_ptr->rcraft_repel -= R_ELEC;
+					if (p_ptr->rcraft_repel == 0) msg_format(Ind, "\377WYour raiment is no longer imbued.");
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* Can we sustain a repel? */
+						if (p_ptr->rcraft_upkeep + UPKEEP_REPEL > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Repel */
+						msg_format(Ind, "You %s imbue your raiment.", msg_q);
+						set_oppose_elec(Ind, 1);
+						set_tim_aura_acid(Ind, 1);
+						p_ptr->rcraft_repel |= R_ELEC;
+						p_ptr->rcraft_upkeep += UPKEEP_REPEL;
+					}
+					else msg_format(Ind, "You %s imbue your raiment.", msg_q);
+				}
+				calc_mana(Ind);
+				break; }
+
+				default: {
+				//Do nothing, these are all reverting spells. - Kurzel
+				break; }
+			}
+			break; }
+			
+			case (R_ACID | R_FORC): {
+			switch (e_flags - (R_ACID | R_FORC)) {
+				case 0: {
+				byte upkeep_rune[5];
+				cost = 0;
+				if (p_ptr->rcraft_attune == R_ACID) {
+					msg_format(Ind, "\377WYour armament is no longer attuned.");
+					/* De-attune */
+					p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					p_ptr->rcraft_attune = 0;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* De-attune */
+						if (p_ptr->rcraft_attune) p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+						/* Can we sustain one more attune? */
+						if (p_ptr->rcraft_upkeep + UPKEEP_ATTUNE > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Attune */
+						msg_format(Ind, "You %s attune your armament.", msg_q);
+						set_tim_brand_acid(Ind, 1);
+						p_ptr->rcraft_attune = R_ACID;
+						p_ptr->rcraft_upkeep += flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					}
+					else msg_format(Ind, "You %s attune your armament.", msg_q);
+				}
+				calc_mana(Ind);
+				calc_boni(Ind);
+				break; }
+				
+				default: {
+				projection = flags_to_projection(e_flags - R_FORC);
+				damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection) / 10 + 1; //Severely reduced damage (per burst) - Kurzel
+				msg_format(Ind, "You %s empower your attacks with %s %s.", msg_q, r_imperatives[imperative].name, r_projections[projection].name);
+				if (margin > 0) set_tim_brand_ex(Ind, duration, projection, damage); 
+				break; }
+			}
+			break; }
+			
+			case (R_ACID | R_TIME): {
+			switch (e_flags - (R_ACID | R_TIME)) {
+				default: {
+				//Do nothing, these are all combining spells. - Kurzel
+				break; }
+			}
+			break; }
+			
+			/** R_WATE **/
+			
+			case (R_WATE | R_ELEC): {
+			switch (e_flags - (R_WATE | R_ELEC)) {
+				case 0: {
+				msg_format(Ind, "You %s discharge yourself.", msg_q);
+				if (margin > 0) p_flags |= RPEN_MAJ_HP;
+				break; }
+				
+				case R_FIRE: {
+				msg_format(Ind, "You %s discharge and evaporate yourself.", msg_q);
+				if (margin > 0) p_flags |= RPEN_MAJ_HP;
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s invoke %s %s malicious runespell.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) p_flags |= RPEN_MAJ_HP;
+				break; }
+			}
+			break; }
+			
+			case (R_WATE | R_EART): {
+			switch (e_flags - (R_WATE | R_EART)) {
+				case 0: {
+				cost = 0;
+				if (p_ptr->rcraft_dig) {
+					msg_format(Ind, "\377WYour ability to tunnel returns to normal.");
+					/* Remove upkeep */
+					p_ptr->rcraft_upkeep -= UPKEEP_HI;
+					p_ptr->rcraft_dig = 0;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* Remove upkeep */
+						if (p_ptr->rcraft_dig) p_ptr->rcraft_upkeep -= UPKEEP_HI;
+						/* Can we sustain? */
+						if (p_ptr->rcraft_upkeep + UPKEEP_HI > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Add upkeep */
+						msg_format(Ind, "You %s improve your ability to tunnel.", msg_q);
+						p_ptr->rcraft_dig = rget_level(5) + 5;
+						p_ptr->rcraft_upkeep += UPKEEP_HI;
+					}
+					else msg_format(Ind, "You %s improve your ability to tunnel.", msg_q);
+				}
+				calc_mana(Ind);
+				calc_boni(Ind);
+				break; }
+				
+#ifdef ENABLE_RUNE_GOLEMS
+//Golem stuff here! - Kurzel
+#endif
+				
+				default: { //General backlash for mal effects; default for all unassigned effects. - Kurzel
+				msg_format(Ind, "You %s invoke %s %s sealed runespell.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) p_flags |= RPEN_MAJ_HP;
+				break; }
+			}
+			break; }
+			
+			case (R_WATE | R_FIRE): {
+			switch (e_flags - (R_WATE | R_FIRE)) {
+				case 0: {
+				msg_format(Ind, "You %s evaporate yourself.", msg_q);
+				if (margin > 0) p_flags |= RPEN_MAJ_HP;
+				break; }
+				
+				case R_ELEC: {
+				msg_format(Ind, "You %s discharge and evaporate yourself.", msg_q);
+				if (margin > 0) p_flags |= RPEN_MAJ_HP;
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s invoke %s %s malicious runespell.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) p_flags |= RPEN_MAJ_HP;
+				break; }
+			}
+			break; }
+			
+			case (R_WATE | R_CHAO): {
+			switch (e_flags - (R_WATE | R_CHAO)) {
+				case 0: {
+				msg_format(Ind, "You %s polymorph yourself.", msg_q);
+				if (margin > 0) p_flags |= RPEN_MAJ_HP;
+				break; }
+			
+				default: {
+				msg_format(Ind, "You %s invoke %s %s malicious runespell.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) p_flags |= RPEN_MAJ_HP;
+				break; }
+			}
+			break; }
+			
+			case (R_WATE | R_COLD): {
+			switch (e_flags - (R_WATE | R_COLD)) {
+				case 0: {
+				msg_format(Ind, "You %s draw %s %s explosive rune.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) if (set_rune_trap_okay(Ind)) set_rune_trap_aux(Ind, projection, imperative, skill);
+				cost = 0;
+				break; }
+
+				default: {
+				msg_format(Ind, "You %s draw %s %s explosive rune.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) {
+					projection = flags_to_projection(e_flags - R_WATE);
+					if (set_rune_trap_okay(Ind)) set_rune_trap_aux(Ind, projection, imperative, skill);
+				}
+				cost = 0;
+				break; }
+			}
+			break; }
+			
+			case (R_WATE | R_NETH): {
+			switch (e_flags - (R_WATE | R_NETH)) {
+				case 0: {
+				if (p_ptr->csp < cost || p_ptr->suscep_life) {
+					msg_format(Ind, "You cannot heal yourself like this!");
+					break;
+				}
+				else {
+					msg_format(Ind, "You %s channel %s healing.", msg_q, r_imperatives[imperative].name);
+					if (margin > 0) {
+						damage = rget_level(400) * r_imperatives[imperative].damage;
+						if (damage > 400) damage = 400;
+						if (damage < 1) damage = 1;
+						hp_player(Ind, damage);
+					}
+				}
+				break; }
+			
+				default: {
+				msg_format(Ind, "You %s invoke %s %s malicious runespell.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) p_flags |= RPEN_MAJ_HP;
+				break; }
+			}
+			break; }
+			
+			case (R_WATE | R_POIS): {
+			switch (e_flags - (R_WATE | R_POIS)) {
+				case 0: {
+				cost = 0;
+				if (p_ptr->rcraft_upkeep_flags & RUPK_MIN_FA) {
+					msg_format(Ind, "\377WYou stop sealing the effects of paralysis.");
+					/* Remove upkeep */
+					p_ptr->rcraft_upkeep -= UPKEEP_MIN;
+					p_ptr->rcraft_upkeep_flags -= RUPK_MIN_FA;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* Can we sustain? */
+						if (p_ptr->rcraft_upkeep + UPKEEP_MIN > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Add upkeep */
+						msg_format(Ind, "You %s seal the effects of paralysis.", msg_q);
+						p_ptr->rcraft_upkeep_flags |= RUPK_MIN_FA;
+						p_ptr->rcraft_upkeep += UPKEEP_MIN;
+					}
+					else msg_format(Ind, "You %s seal the effects of paralysis.", msg_q);
+				}
+				calc_mana(Ind);
+				break; }
+			
+				default: {
+				msg_format(Ind, "You %s draw %s %s explosive rune.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) {
+					projection = flags_to_projection(e_flags - R_POIS);
+					if (set_rune_trap_okay(Ind)) set_rune_trap_aux(Ind, projection, imperative, skill);
+				}
+				cost = 0;
+				break; }
+			}
+			break; }
+			
+			case (R_WATE | R_NEXU): {
+			switch (e_flags - (R_WATE | R_NEXU)) {
+				case 0: {
+				if (margin > 0)
 				{
+					if (target_okay(Ind) && !(distance(p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col) > MAX_RANGE)) {
+						msg_format(Ind, "You %s teleport forward.", msg_q);
+						teleport_player_to(Ind, p_ptr->target_row, p_ptr->target_col);
+					}
+					else msg_print(Ind, "\377oYou have no valid target!");	
+				}
+				else msg_format(Ind, "You %s teleport forward.", msg_q);
+				break; }
+
+				default: {
+				projection = flags_to_projection(e_flags - R_NEXU);
+				damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection) / 10 + 1; //Severely reduced damage (per burst) - Kurzel
+				msg_format(Ind, "You %s empower your defenses with %s %s.", msg_q, r_imperatives[imperative].name, r_projections[projection].name);
+				if (margin > 0) set_tim_aura_ex(Ind, duration, projection, damage);
+				break; }
+			}
+			break; }
+			
+			case (R_WATE | R_FORC): {
+			switch (e_flags - (R_WATE | R_FORC)) {
+				case 0: {
+				cost = 0;
+				if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_DO) {
+					msg_format(Ind, "\377WYou release the pressure around you.");
+					/* Remove upkeep */
+					p_ptr->rcraft_upkeep -= UPKEEP_MIN;
+					//p_ptr->rcraft_upkeep -= UPKEEP_MAJ;
+					p_ptr->rcraft_upkeep_flags -= RUPK_MAJ_DO;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* Can we sustain? */
+						if (p_ptr->rcraft_upkeep + UPKEEP_MAJ > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Add upkeep */
+						msg_format(Ind, "You %s float in a bubble of pressure.", msg_q);
+						//set_tim_dodge(Ind, 1, (rget_level(20) + 5) * 2); //High dodge bonus! - Kurzel!!
+						p_ptr->rcraft_upkeep_flags |= RUPK_MAJ_DO;
+						p_ptr->rcraft_upkeep += UPKEEP_MIN;
+						//p_ptr->rcraft_upkeep += UPKEEP_MAJ;
+					}
+					else msg_format(Ind, "You %s focus on your reaction time.", msg_q);
+				}
+				calc_mana(Ind);
+				break; }
+				
+				default: {
+				projection = flags_to_projection(e_flags - R_FORC);
+				damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection) / 10 + 1; //Severely reduced damage (per burst) - Kurzel
+				msg_format(Ind, "You %s empower your attacks with %s %s.", msg_q, r_imperatives[imperative].name, r_projections[projection].name);
+				if (margin > 0) set_tim_brand_ex(Ind, duration, projection, damage); 
+				break; }
+			}
+			break; }
+			
+			case (R_WATE | R_TIME): {
+			switch (e_flags - (R_WATE | R_TIME)) {
+				default: {
+				//Do nothing, these are all combining spells. - Kurzel
+				break; }
+			}
+			break; }
+			
+			/** R_ELEC **/
+			
+			case (R_ELEC | R_EART): {
+			msg_format(Ind, "You %s conjure %s %s matrix of spell energy.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+			type = 2; //T_BOLT
+			duration = rspell_duration(Ind, element, elements, imperative, 6, skill, level);//Duration as T_CLOU
+			switch (e_flags - (R_ELEC | R_EART)) {
+				case 0: {
+				if (margin > 0) {
+					damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection) / 2 + 1;//T_CLOU damage / 2
+					set_tim_rcraft_help(Ind, duration, type, projection, damage);
+				}
+				break; }
+				
+				default: {
+				if (margin > 0) {
+					projection = flags_to_projection(e_flags - R_EART);
+					if (p_ptr->rcraft_empower && projection == 34) projection = RCRAFT_MAX_PROJECTIONS;//Hack - Flux -> Plasma
+					damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection) / 2 + 1;//T_CLOU damage / 2
+					set_tim_rcraft_help(Ind, duration, type, projection, damage);
+				}
+				break; }
+			}
+			break; }
+			
+			case (R_ELEC | R_FIRE): {
+			switch (e_flags - (R_ELEC | R_FIRE)) {
+				case R_ACID: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_elec(Ind, duration);
+					set_oppose_fire(Ind, duration);
+				}
+				break; }
+				
+				case R_WATE: {
+				msg_format(Ind, "You %s discharge and evaporate yourself.", msg_q);
+				if (margin > 0) p_flags |= RPEN_MAJ_HP;
+				break; }
+				
+				case R_EART: {
+				if (margin > 0) {
+					damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection) / 2 + 1;//T_CLOU damage / 2
+					set_tim_rcraft_help(Ind, duration, type, projection, damage);
+				}
+				break; }
+				
+				case R_CHAO: {
+				msg_format(Ind, "You %s draw %s %s explosive rune.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) {
+					if (set_rune_trap_okay(Ind)) set_rune_trap_aux(Ind, projection, imperative, skill);
+				}
+				cost = 0;
+				break; }
+				
+				case R_COLD: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_elec(Ind, duration);
+					set_oppose_fire(Ind, duration);
+					set_oppose_cold(Ind, duration);
+				}
+				break; }
+				
+				
+				
+				case R_POIS: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_elec(Ind, duration);
+					set_oppose_fire(Ind, duration);
+					set_oppose_pois(Ind, duration);
+				}
+				break; }
+				
+				case R_FORC: {
+				byte upkeep_rune[5];
+				cost = 0;
+				if (p_ptr->rcraft_attune == (R_ELEC | R_FIRE)) {
+					msg_format(Ind, "\377WYour armament is no longer attuned.");
+					/* De-attune */
+					p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					p_ptr->rcraft_attune = 0;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* De-attune */
+						if (p_ptr->rcraft_attune) p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+						/* Can we sustain two more attunes? */
+						if (p_ptr->rcraft_upkeep + (2 * UPKEEP_ATTUNE) > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Attune */
+						msg_format(Ind, "You %s attune your armament.", msg_q);
+						set_tim_brand_elec(Ind, 1);
+						set_tim_brand_fire(Ind, 1);
+						p_ptr->rcraft_attune = (R_ELEC | R_FIRE);
+						p_ptr->rcraft_upkeep += flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					}
+					else msg_format(Ind, "You %s attune your armament.", msg_q);
+				}
+				calc_mana(Ind);
+				calc_boni(Ind);
+				break; }
+				
+				case R_NEXU: {
+				msg_format(Ind, "You %s project twin %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_elec(Ind, duration);
+					set_oppose_fire(Ind, duration);
+					fire_ball(Ind, GF_RESELEC_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+					fire_ball(Ind, GF_RESFIRE_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+				}
+				break; }
+				
+				case R_TIME: {
+				cost = 0;
+				p_flags = 0;
+				if (p_ptr->rcraft_empower) {
+					msg_format(Ind, "\377WYour flux projections are no longer empowered.");
+					p_ptr->rcraft_empower = 0;
+				}
+				else {
+					msg_format(Ind, "\377WYour flux projections are empowered to \377Rplasma\377W.");
+					p_ptr->rcraft_empower = 1;
+				}
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s draw twin %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_elec(Ind, duration);
+					set_oppose_fire(Ind, duration);
+				}
+				break; }
+			}
+			break; }
+			
+			case (R_ELEC | R_CHAO): {
+			switch (e_flags - (R_ELEC | R_CHAO)) {
+				case 0: {
+				msg_format(Ind, "You %s call %s light.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					lite_area(Ind, damage, radius);
+					lite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+				}
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s draw %s %s explosive rune.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) {
+					projection = flags_to_projection(e_flags - R_CHAO);
+					if (p_ptr->rcraft_empower && projection == 34) projection = RCRAFT_MAX_PROJECTIONS;//Hack - Flux -> Plasma
+					if (set_rune_trap_okay(Ind)) set_rune_trap_aux(Ind, projection, imperative, skill);
+				}
+				cost = 0;
+				break; }
+			}
+			break; }
+			
+			case (R_ELEC | R_COLD): {
+			switch (e_flags - (R_ELEC | R_COLD)) {
+				case R_ACID: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_elec(Ind, duration);
+					set_oppose_cold(Ind, duration);
+				}
+				break; }
+				
+				case R_FIRE: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_elec(Ind, duration);
+					set_oppose_fire(Ind, duration);
+					set_oppose_cold(Ind, duration);
+				}
+				break; }
+				
+				case R_POIS: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_elec(Ind, duration);
+					set_oppose_cold(Ind, duration);
+					set_oppose_pois(Ind, duration);
+				}
+				break; }
+				
+				case R_FORC: {
+				byte upkeep_rune[5];
+				cost = 0;
+				if (p_ptr->rcraft_attune == (R_ELEC | R_COLD)) {
+					msg_format(Ind, "\377WYour armament is no longer attuned.");
+					/* De-attune */
+					p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					p_ptr->rcraft_attune = 0;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* De-attune */
+						if (p_ptr->rcraft_attune) p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+						/* Can we sustain two more attunes? */
+						if (p_ptr->rcraft_upkeep + (2 * UPKEEP_ATTUNE) > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Attune */
+						msg_format(Ind, "You %s attune your armament.", msg_q);
+						set_tim_brand_elec(Ind, 1);
+						set_tim_brand_cold(Ind, 1);
+						p_ptr->rcraft_attune = (R_ELEC | R_COLD);
+						p_ptr->rcraft_upkeep += flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					}
+					else msg_format(Ind, "You %s attune your armament.", msg_q);
+				}
+				calc_mana(Ind);
+				calc_boni(Ind);
+				break; }
+				
+				case R_NEXU: {
+				msg_format(Ind, "You %s project twin %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_elec(Ind, duration);
+					set_oppose_cold(Ind, duration);
+					fire_ball(Ind, GF_RESELEC_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+					fire_ball(Ind, GF_RESCOLD_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+				}
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s draw twin %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_elec(Ind, duration);
+					set_oppose_cold(Ind, duration);
+				}
+				break; }
+			}
+			break; }
+			
+			case (R_ELEC | R_NETH): {
+			switch (e_flags - (R_ELEC | R_NETH)) {
+				case 0: {
+				msg_format(Ind, "You %s call %s darkness.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					unlite_area(Ind, damage, radius);
+					unlite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+				}
+				break; }
+				
+				default: {
+				projection = flags_to_projection(e_flags - R_NETH);
+				if (p_ptr->rcraft_empower && projection == 34) projection = RCRAFT_MAX_PROJECTIONS;//Hack - Flux -> Plasma
+				damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection) / 10 + 1; //Severely reduced damage (per burst) - Kurzel
+				msg_format(Ind, "You %s empower your defenses with %s %s.", msg_q, r_imperatives[imperative].name, r_projections[projection].name);
+				if (margin > 0) set_tim_aura_ex(Ind, duration, projection, damage);
+				break; }
+			}
+			break; }
+			
+			case (R_ELEC | R_POIS): {
+			switch (e_flags - (R_ELEC | R_POIS)) {
+				case R_ACID: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_elec(Ind, duration);
+					set_oppose_pois(Ind, duration);
+				}
+				break; }
+				
+				case R_FIRE: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_elec(Ind, duration);
+					set_oppose_fire(Ind, duration);
+					set_oppose_pois(Ind, duration);
+				}
+				break; }
+				
+				case R_COLD: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_elec(Ind, duration);
+					set_oppose_cold(Ind, duration);
+					set_oppose_pois(Ind, duration);
+				}
+				break; }
+				
+				case R_FORC: {
+				byte upkeep_rune[5];
+				cost = 0;
+				if (p_ptr->rcraft_attune == (R_ELEC | R_POIS)) {
+					msg_format(Ind, "\377WYour armament is no longer attuned.");
+					/* De-attune */
+					p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					p_ptr->rcraft_attune = 0;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* De-attune */
+						if (p_ptr->rcraft_attune) p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+						/* Can we sustain two more attunes? */
+						if (p_ptr->rcraft_upkeep + (2 * UPKEEP_ATTUNE) > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Attune */
+						msg_format(Ind, "You %s attune your armament.", msg_q);
+						set_tim_brand_elec(Ind, 1);
+						set_tim_brand_pois(Ind, 1);
+						p_ptr->rcraft_attune = (R_ELEC | R_POIS);
+						p_ptr->rcraft_upkeep += flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					}
+					else msg_format(Ind, "You %s attune your armament.", msg_q);
+				}
+				calc_mana(Ind);
+				calc_boni(Ind);
+				break; }
+				
+				case R_NEXU: {
+				msg_format(Ind, "You %s project twin %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_elec(Ind, duration);
+					set_oppose_pois(Ind, duration);
+					fire_ball(Ind, GF_RESELEC_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+					fire_ball(Ind, GF_RESPOIS_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+				}
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s draw twin %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_elec(Ind, duration);
+					set_oppose_pois(Ind, duration);
+				}
+				break; }
+			}
+			break; }
+			
+			case (R_ELEC | R_NEXU): {
+			switch (e_flags - (R_ELEC | R_NEXU)) {
+				case 0: {
+				msg_format(Ind, "You %s project %s %s rune of resistance.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					fire_ball(Ind, GF_RESACID_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+				}
+				break; }
+				
+				case R_ACID: {
+				cost = 0;
+				if (p_ptr->rcraft_repel & R_ACID) {
+					/* De-repel */
+					p_ptr->rcraft_upkeep -= UPKEEP_REPEL;
+					p_ptr->rcraft_repel -= R_ACID;
+					if (p_ptr->rcraft_repel == 0) msg_format(Ind, "\377WYour raiment is no longer imbued.");
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* Can we sustain a repel? */
+						if (p_ptr->rcraft_upkeep + UPKEEP_REPEL > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Repel */
+						msg_format(Ind, "You %s imbue your raiment.", msg_q);
+						set_oppose_acid(Ind, 1);
+						set_tim_aura_elec(Ind, 1);
+						p_ptr->rcraft_repel |= R_ACID;
+						p_ptr->rcraft_upkeep += UPKEEP_REPEL;
+					}
+					else msg_format(Ind, "You %s imbue your raiment.", msg_q);
+				}
+				calc_mana(Ind);
+				break; }
+
+				default: {
+				//Do nothing, these are all reverting spells. - Kurzel
+				break; }
+			}
+			break; }
+			
+			case (R_ELEC | R_FORC): {
+			switch (e_flags - (R_ELEC | R_FORC)) {
+				case 0: {
+				byte upkeep_rune[5];
+				cost = 0;
+				if (p_ptr->rcraft_attune == R_ELEC) {
+					msg_format(Ind, "\377WYour armament is no longer attuned.");
+					/* De-attune */
+					p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					p_ptr->rcraft_attune = 0;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* De-attune */
+						if (p_ptr->rcraft_attune) p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+						/* Can we sustain one more attune? */
+						if (p_ptr->rcraft_upkeep + UPKEEP_ATTUNE > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Attune */
+						msg_format(Ind, "You %s attune your armament.", msg_q);
+						set_tim_brand_elec(Ind, 1);
+						p_ptr->rcraft_attune = R_ELEC;
+						p_ptr->rcraft_upkeep += flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					}
+					else msg_format(Ind, "You %s attune your armament.", msg_q);
+				}
+				calc_mana(Ind);
+				calc_boni(Ind);
+				break; }
+				
+				default: {
+				projection = flags_to_projection(e_flags - R_FORC);
+				if (p_ptr->rcraft_empower && projection == 34) projection = RCRAFT_MAX_PROJECTIONS;//Hack - Flux -> Plasma
+				damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection) / 10 + 1; //Severely reduced damage (per burst) - Kurzel
+				msg_format(Ind, "You %s empower your attacks with %s %s.", msg_q, r_imperatives[imperative].name, r_projections[projection].name);
+				if (margin > 0) set_tim_brand_ex(Ind, duration, projection, damage); 
+				break; }
+			}
+			break; }
+			
+			case (R_ELEC | R_TIME): {
+			switch (e_flags - (R_ELEC | R_TIME)) {
+				default: {
+				//Do nothing, these are all combining spells. - Kurzel
+				break; }
+			}
+			break; }
+			
+			/** R_EART **/
+			
+			case (R_EART | R_FIRE): {
+			switch (e_flags - (R_EART | R_FIRE)) {
+				case 0: {
+				msg_format(Ind, "You %s draw %s %s explosive rune.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) if (set_rune_trap_okay(Ind)) set_rune_trap_aux(Ind, projection, imperative, skill);
+				cost = 0;
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s draw %s %s explosive rune.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) {
+					projection = flags_to_projection(e_flags - R_EART);
+					if (set_rune_trap_okay(Ind)) set_rune_trap_aux(Ind, projection, imperative, skill);
+				}
+				cost = 0;
+				break; }
+			}
+			break; }
+			
+			case (R_EART | R_CHAO): {
+			switch (e_flags - (R_EART | R_CHAO)) {
+				case 0: {
+				msg_format(Ind, "You %s invoke %s %s earthquake.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 5+radius);
+				break; }
+			
+				default: {
+				msg_format(Ind, "You %s invoke %s %s malicious runespell.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) p_flags |= RPEN_MAJ_HP;
+				break; }
+			}
+			break; }
+			
+			case (R_EART | R_COLD): {
+			switch (e_flags - (R_EART | R_COLD)) {
+				case 0: {
+				msg_format(Ind, "You %s shatter yourself.", msg_q);
+				if (margin > 0) p_flags |= RPEN_MAJ_HP;
+				break; }
+				
+				case R_ACID: {
+				msg_format(Ind, "You %s corrode and shatter yourself.", msg_q);
+				if (margin > 0) p_flags |= RPEN_MAJ_HP;
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s invoke %s %s malicious runespell.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) p_flags |= RPEN_MAJ_HP;
+				break; }
+			}
+			break; }
+			
+			case (R_EART | R_NETH): {
+			switch (e_flags - (R_EART | R_COLD)) {
+				case 0: {
+				msg_format(Ind, "You %s doom yourself.", msg_q);//doom instead of genocide, since we do nothing
+				if (margin > 0) {
+					msg_format(Ind, "You feel a doom upon you...");//Don't genocide the player? ^^' - Kurzel
+				}
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s invoke %s %s malicious runespell.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) p_flags |= RPEN_MAJ_HP;
+				break; }
+			}
+			break; }
+			
+			case (R_EART | R_POIS): {
+			switch (e_flags - (R_EART | R_POIS)) {
+				case 0: {
+				cost = 0;
+				if (p_ptr->rcraft_upkeep_flags & RUPK_MIN_CU) {
+					msg_format(Ind, "\377WYou stop sealing the effects of cuts.");
+					/* Remove upkeep */
+					p_ptr->rcraft_upkeep -= UPKEEP_MIN;
+					p_ptr->rcraft_upkeep_flags -= RUPK_MIN_CU;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* Can we sustain? */
+						if (p_ptr->rcraft_upkeep + UPKEEP_MIN > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Add upkeep */
+						msg_format(Ind, "You %s seal the effects of cuts.", msg_q);
+						p_ptr->rcraft_upkeep_flags |= RUPK_MIN_CU;
+						p_ptr->rcraft_upkeep += UPKEEP_MIN;
+					}
+					else msg_format(Ind, "You %s seal the effects of cuts.", msg_q);
+				}
+				calc_mana(Ind);
+				calc_boni(Ind);
+				break; }
+			
+				default: {
+				msg_format(Ind, "You %s draw %s %s explosive rune.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) {
+					projection = flags_to_projection(e_flags - R_POIS);
+					if (set_rune_trap_okay(Ind)) set_rune_trap_aux(Ind, projection, imperative, skill);
+				}
+				cost = 0;
+				break; }
+			}
+			break; }
+			
+			case (R_EART | R_NEXU): {
+			switch (e_flags - (R_EART | R_NEXU)) {
+				case 0: {
+				msg_format(Ind, "You %s compel monsters to return.", msg_q);
+				if (margin > 0) project_hack(Ind, GF_TELE_TO, 0, " summons"); 
+				break; }
+				
+				default: {
+				projection = flags_to_projection(e_flags - R_NEXU);
+				damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection) / 10 + 1; //Severely reduced damage (per burst) - Kurzel
+				msg_format(Ind, "You %s empower your defenses with %s %s.", msg_q, r_imperatives[imperative].name, r_projections[projection].name);
+				if (margin > 0) set_tim_aura_ex(Ind, duration, projection, damage);
+				break; }
+			}
+			break; }
+			
+			case (R_EART | R_FORC): {
+			switch (e_flags - (R_EART | R_FORC)) {
+				case 0: {
+				cost = 0;
+				if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_ST) {
+					msg_format(Ind, "\377WYou release your presence.");
+					/* Remove upkeep */
+					p_ptr->rcraft_upkeep -= UPKEEP_MAJ;
+					p_ptr->rcraft_upkeep_flags -= RUPK_MAJ_ST;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* Can we sustain? */
+						if (p_ptr->rcraft_upkeep + UPKEEP_MAJ > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Add upkeep */
+						msg_format(Ind, "You %s restrain your presence.", msg_q);
+						set_tim_stealth(Ind, 1, (rget_level(20) + 5) / 2); //Low stealth bonus! - Kurzel
+						p_ptr->rcraft_upkeep_flags |= RUPK_MAJ_ST;
+						p_ptr->rcraft_upkeep += UPKEEP_MAJ;
+					}
+					else msg_format(Ind, "You %s restrain your presence.", msg_q);
+				}
+				calc_mana(Ind);
+				break; }
+				
+				default: {
+				projection = flags_to_projection(e_flags - R_FORC);
+				damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection) / 10 + 1; //Severely reduced damage (per burst) - Kurzel
+				msg_format(Ind, "You %s empower your attacks with %s %s.", msg_q, r_imperatives[imperative].name, r_projections[projection].name);
+				if (margin > 0) set_tim_brand_ex(Ind, duration, projection, damage); 
+				break; }
+			}
+			break; }
+			
+			case (R_EART | R_TIME): {
+			switch (e_flags - (R_EART | R_TIME)) {
+				default: {
+				//Do nothing, these are all combining spells. - Kurzel
+				break; }
+			}
+			break; }
+			
+			/** R_FIRE **/
+			
+			case (R_FIRE | R_CHAO): {
+			switch (e_flags - (R_FIRE | R_CHAO)) {
+				case 0: {
+				cost = 0;
+				if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_NE) {
+					msg_format(Ind, "\377WYou no longer attract souls of the dying.");
+					/* Remove upkeep */
+					p_ptr->rcraft_upkeep -= UPKEEP_MAJ;
+					p_ptr->rcraft_upkeep_flags -= RUPK_MAJ_NE;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* Can we sustain? */
+						if (p_ptr->rcraft_upkeep + UPKEEP_MAJ > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Add upkeep */
+						msg_format(Ind, "You %s attract souls of the dying.", msg_q);
+						set_tim_necro(Ind, 1, (rget_level(20) + 5) * 1000);
+						p_ptr->rcraft_upkeep_flags |= RUPK_MAJ_NE;
+						p_ptr->rcraft_upkeep += UPKEEP_MAJ;
+					}
+					else msg_format(Ind, "You %s attract souls of the dying.", msg_q);
+				}
+				calc_mana(Ind);
+				calc_boni(Ind);
+				break; }
+				
+				default: {
+				/* Hack -- Increase Cost */
+				cost *= 3; //Triple cost for LoS spells, enough? - Kurzel
+				if (cost < S_COST_MIN) cost = S_COST_MIN;
+				if (cost > S_COST_MAX) cost = S_COST_MAX;
+				
+				projection = flags_to_projection(e_flags - R_CHAO);
+				if (p_ptr->rcraft_empower && projection == 34) projection = RCRAFT_MAX_PROJECTIONS;//Hack - Flux -> Plasma
+				msg_format(Ind, "You %s fill the air with %s %s!", msg_q, r_imperatives[imperative].name, r_projections[projection].name);
+				if (margin > 0) {
+					damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection) / 2 + 1;
+					project_hack(Ind, r_projections[projection].gf_type, damage, p_ptr->attacker);
+				}
+				break; }
+			}
+			break; }
+			
+			case (R_FIRE | R_COLD): {
+			switch (e_flags - (R_FIRE | R_COLD)) {
+				case R_ACID: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_fire(Ind, duration);
+					set_oppose_cold(Ind, duration);
+				}
+				break; }
+				
+				case R_ELEC: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_elec(Ind, duration);
+					set_oppose_fire(Ind, duration);
+					set_oppose_cold(Ind, duration);
+				}
+				break; }
+				
+				case R_POIS: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_fire(Ind, duration);
+					set_oppose_cold(Ind, duration);
+					set_oppose_pois(Ind, duration);
+				}
+				break; }
+				
+				case R_FORC: {
+				byte upkeep_rune[5];
+				cost = 0;
+				if (p_ptr->rcraft_attune == (R_FIRE | R_COLD)) {
+					msg_format(Ind, "\377WYour armament is no longer attuned.");
+					/* De-attune */
+					p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					p_ptr->rcraft_attune = 0;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* De-attune */
+						if (p_ptr->rcraft_attune) p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+						/* Can we sustain two more attunes? */
+						if (p_ptr->rcraft_upkeep + (2 * UPKEEP_ATTUNE) > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Attune */
+						msg_format(Ind, "You %s attune your armament.", msg_q);
+						set_tim_brand_fire(Ind, 1);
+						set_tim_brand_cold(Ind, 1);
+						p_ptr->rcraft_attune = (R_FIRE | R_COLD);
+						p_ptr->rcraft_upkeep += flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					}
+					else msg_format(Ind, "You %s attune your armament.", msg_q);
+				}
+				calc_mana(Ind);
+				calc_boni(Ind);
+				break; }
+				
+				case R_NEXU: {
+				msg_format(Ind, "You %s project twin %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_fire(Ind, duration);
+					set_oppose_cold(Ind, duration);
+					fire_ball(Ind, GF_RESFIRE_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+					fire_ball(Ind, GF_RESCOLD_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+				}
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s draw twin %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_fire(Ind, duration);
+					set_oppose_cold(Ind, duration);
+				}
+				break; }
+			}
+			break; }
+			
+			case (R_FIRE | R_NETH): {
+			switch (e_flags - (R_FIRE | R_NETH)) {
+				case 0: {
+				msg_format(Ind, "You %s fill yourself with lifefire.", msg_q);
+				if (margin > 0) {
+					if (!p_ptr->suscep_life) { //SV_POTION_LOSE_MEMORIES - Kurzel
+						if ((!p_ptr->hold_life) && (p_ptr->exp > 0)) {
+							msg_print(Ind, "\377GYou feel your memories fade.");
+							lose_exp(Ind, p_ptr->exp / 4);
+						}
+						break;
+					}
+					else restore_level(Ind); //SV_POTION_RESTORE_EXP - Kurzel
+				}
+				break; }
+				
+				default: {
+				projection = flags_to_projection(e_flags - R_NETH);
+				if (p_ptr->rcraft_empower && projection == 34) projection = RCRAFT_MAX_PROJECTIONS;//Hack - Flux -> Plasma
+				damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection) / 10 + 1; //Severely reduced damage (per burst) - Kurzel
+				msg_format(Ind, "You %s empower your defenses with %s %s.", msg_q, r_imperatives[imperative].name, r_projections[projection].name);
+				if (margin > 0) set_tim_aura_ex(Ind, duration, projection, damage);
+				break; }
+			}
+			break; }
+			
+			case (R_FIRE | R_POIS): {
+			switch (e_flags - (R_FIRE | R_POIS)) {
+				case R_ACID: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_fire(Ind, duration);
+					set_oppose_pois(Ind, duration);
+				}
+				break; }
+				
+				case R_ELEC: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_elec(Ind, duration);
+					set_oppose_fire(Ind, duration);
+					set_oppose_pois(Ind, duration);
+				}
+				break; }
+				
+				case R_COLD: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_fire(Ind, duration);
+					set_oppose_cold(Ind, duration);
+					set_oppose_pois(Ind, duration);
+				}
+				break; }
+				
+				case R_FORC: {
+				byte upkeep_rune[5];
+				cost = 0;
+				if (p_ptr->rcraft_attune == (R_FIRE | R_POIS)) {
+					msg_format(Ind, "\377WYour armament is no longer attuned.");
+					/* De-attune */
+					p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					p_ptr->rcraft_attune = 0;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* De-attune */
+						if (p_ptr->rcraft_attune) p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+						/* Can we sustain two more attunes? */
+						if (p_ptr->rcraft_upkeep + (2 * UPKEEP_ATTUNE) > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Attune */
+						msg_format(Ind, "You %s attune your armament.", msg_q);
+						set_tim_brand_fire(Ind, 1);
+						set_tim_brand_pois(Ind, 1);
+						set_oppose_fire(Ind, 1);
+						set_oppose_pois(Ind, 1);
+						p_ptr->rcraft_attune = (R_FIRE | R_POIS);
+						p_ptr->rcraft_upkeep += flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					}
+					else msg_format(Ind, "You %s attune your armament.", msg_q);
+				}
+				calc_mana(Ind);
+				calc_boni(Ind);
+				break; }
+				
+				case R_NEXU: {
+				msg_format(Ind, "You %s project twin %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_fire(Ind, duration);
+					set_oppose_pois(Ind, duration);
+					fire_ball(Ind, GF_RESFIRE_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+					fire_ball(Ind, GF_RESPOIS_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+				}
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s draw twin %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_fire(Ind, duration);
+					set_oppose_pois(Ind, duration);
+				}
+				break; }
+			}
+			break; }
+			
+			case (R_FIRE | R_NEXU): {
+			switch (e_flags - (R_FIRE | R_NEXU)) {
+				case 0: {
+				msg_format(Ind, "You %s project %s %s rune of resistance.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_cold(Ind, duration);
+					fire_ball(Ind, GF_RESCOLD_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+				}
+				break; }
+				
+				case R_COLD: {
+				cost = 0;
+				if (p_ptr->rcraft_repel & R_COLD) {
+					/* De-repel */
+					p_ptr->rcraft_upkeep -= UPKEEP_REPEL;
+					p_ptr->rcraft_repel -= R_COLD;
+					if (p_ptr->rcraft_repel == 0) msg_format(Ind, "\377WYour raiment is no longer imbued.");
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* Can we sustain a repel? */
+						if (p_ptr->rcraft_upkeep + UPKEEP_REPEL > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Repel */
+						msg_format(Ind, "You %s imbue your raiment.", msg_q);
+						set_oppose_cold(Ind, 1);
+						set_tim_aura_fire(Ind, 1);
+						p_ptr->rcraft_repel |= R_COLD;
+						p_ptr->rcraft_upkeep += UPKEEP_REPEL;
+					}
+					else msg_format(Ind, "You %s imbue your raiment.", msg_q);
+				}
+				calc_mana(Ind);
+				break; }
+
+				default: {
+				//Do nothing, these are all reverting spells. - Kurzel
+				break; }
+			}
+			break; }
+			
+			case (R_FIRE | R_FORC): {
+			switch (e_flags - (R_FIRE | R_FORC)) {
+				case 0: {
+				byte upkeep_rune[5];
+				cost = 0;
+				if (p_ptr->rcraft_attune == R_FIRE) {
+					msg_format(Ind, "\377WYour armament is no longer attuned.");
+					/* De-attune */
+					p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					p_ptr->rcraft_attune = 0;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* De-attune */
+						if (p_ptr->rcraft_attune) p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+						/* Can we sustain one more attune? */
+						if (p_ptr->rcraft_upkeep + UPKEEP_ATTUNE > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Attune */
+						msg_format(Ind, "You %s attune your armament.", msg_q);
+						set_tim_brand_fire(Ind, 1);
+						p_ptr->rcraft_attune = R_FIRE;
+						p_ptr->rcraft_upkeep += flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					}
+					else msg_format(Ind, "You %s attune your armament.", msg_q);
+				}
+				calc_mana(Ind);
+				calc_boni(Ind);
+				break; }
+				
+				default: {
+				projection = flags_to_projection(e_flags - R_FORC);
+				if (p_ptr->rcraft_empower && projection == 34) projection = RCRAFT_MAX_PROJECTIONS;//Hack - Flux -> Plasma
+				damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection) / 10 + 1; //Severely reduced damage (per burst) - Kurzel
+				msg_format(Ind, "You %s empower your attacks with %s %s.", msg_q, r_imperatives[imperative].name, r_projections[projection].name);
+				if (margin > 0) set_tim_brand_ex(Ind, duration, projection, damage); 
+				break; }
+			}
+			break; }
+			
+			case (R_FIRE | R_TIME): {
+			switch (e_flags - (R_FIRE | R_TIME)) {
+				default: {
+				//Do nothing, these are all combining spells. - Kurzel
+				break; }
+			}
+			break; }
+			
+			/** R_CHAO **/
+			
+			case (R_CHAO | R_COLD): {
+			switch (e_flags - (R_CHAO | R_COLD)) {
+				case 0: { //perhaps add beneficial effects too..? - Kurzel
+				msg_format(Ind, "You %s fill yourself with wonder.", msg_q);
+				if (margin > 0) p_flags |= RPEN_MAJ_HP;
+				break; }
+				
+				default: {
+				projection = flags_to_projection(e_flags - R_CHAO);
+				damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection) / 10 + 1; //Severely reduced damage (per burst) - Kurzel
+				msg_format(Ind, "You %s empower your defenses with %s %s.", msg_q, r_imperatives[imperative].name, r_projections[projection].name);
+				if (margin > 0) set_tim_aura_ex(Ind, duration, projection, damage);
+				break; }
+			}
+			break; }
+			
+			case (R_CHAO | R_NETH): {
+			switch (e_flags - (R_CHAO | R_NETH)) {
+				case 0: {
+				msg_format(Ind, "You %s dispel lingering enchantments.", msg_q);
+				if (margin > 0) remove_curse(Ind);
+				break; }
+			
+#ifdef ENABLE_RUNE_CURSES
+//Curse stuff here! - Kurzel
+#endif
+			
+				default: { //General backlash for mal effects; default for all unassigned effects. - Kurzel
+				msg_format(Ind, "You %s invoke %s %s sealed runespell.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) p_flags |= RPEN_MAJ_HP;
+				break; }
+			}
+			break; }
+			
+			case (R_CHAO | R_POIS): {
+			switch (e_flags - (R_CHAO | R_POIS)) {
+				case 0: {
+				cost = 0;
+				if (p_ptr->rcraft_upkeep_flags & RUPK_MIN_CO) {
+					msg_format(Ind, "\377WYou stop sealing the effects of confusion.");
+					/* Remove upkeep */
+					p_ptr->rcraft_upkeep -= UPKEEP_MIN;
+					p_ptr->rcraft_upkeep_flags -= RUPK_MIN_CO;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* Can we sustain? */
+						if (p_ptr->rcraft_upkeep + UPKEEP_MIN > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Add upkeep */
+						msg_format(Ind, "You %s seal the effects of confusion.", msg_q);
+						p_ptr->rcraft_upkeep_flags |= RUPK_MIN_CO;
+						p_ptr->rcraft_upkeep += UPKEEP_MIN;
+					}
+					else msg_format(Ind, "You %s seal the effects of confusion.", msg_q);
+				}
+				calc_mana(Ind);
+				calc_boni(Ind);
+				break; }
+			
+				default: {
+				msg_format(Ind, "You %s draw %s %s explosive rune.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) {
+					projection = flags_to_projection(e_flags - R_POIS);
+					if (set_rune_trap_okay(Ind)) set_rune_trap_aux(Ind, projection, imperative, skill);
+				}
+				cost = 0;
+				break; }
+			}
+			break; }
+			
+			case (R_CHAO | R_NEXU): {
+			switch (e_flags - (R_CHAO | R_NEXU)) {
+				case R_ACID: {
+					msg_format(Ind, "You %s draw %s %s rune of protection.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+					if (margin > 0) {
+						set_protacid(Ind, duration);
+					}
+				break; }
+				
+				case R_ELEC: {
+					msg_format(Ind, "You %s draw %s %s rune of protection.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+					if (margin > 0) {
+						set_protelec(Ind, duration);
+					}
+				break; }
+				
+				case R_FIRE: {
+					msg_format(Ind, "You %s draw %s %s rune of protection.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+					if (margin > 0) {
+						set_protfire(Ind, duration);
+					}
+				break; }
+				
+				case R_COLD: {
+					msg_format(Ind, "You %s draw %s %s rune of protection.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+					if (margin > 0) {
+						set_protcold(Ind, duration);
+					}
+				break; }
+				
+				case R_POIS: {
+					msg_format(Ind, "You %s draw %s %s rune of protection.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+					if (margin > 0) {
+						set_protpois(Ind, duration);
+					}
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s restore yourself to order.", msg_q);
+				if (margin > 0) { //Sync this list with self-knowledge / unmagic!? / reset_tim_flags() - Kurzel!!
 					//Speed
 					set_fast(Ind, 0, 0);
 					//Resist
@@ -1515,887 +3330,787 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					set_oppose_cold(Ind, 0);
 					set_oppose_pois(Ind, 0);
 					//Brand
-					set_brand(Ind, 0, 0, 0);
-					set_bow_brand(Ind, 0, 0, 0); //Disabled for now... - Kurzel
+					set_tim_brand_acid(Ind, 0);
+					set_tim_brand_elec(Ind, 0);
+					set_tim_brand_fire(Ind, 0);
+					set_tim_brand_cold(Ind, 0);
+					set_tim_brand_pois(Ind, 0);
+					set_tim_brand_conf(Ind, 0);
+					set_tim_brand_vorp(Ind, 0);
+					//Aura
+					set_tim_aura_acid(Ind, 0);
+					set_tim_aura_elec(Ind, 0);
+					set_tim_aura_fire(Ind, 0);
+					set_tim_aura_cold(Ind, 0);
 					//Shield
-					(void)set_shield(Ind, 0, 0, SHIELD_NONE, 0, 0);
-					//Misc
-					set_tim_fly(Ind, 0);
-					set_tim_ffall(Ind, 0);
-					set_tim_esp(Ind, 0);
-					set_blessed(Ind,0);
-					set_st_anchor(Ind, 0);
 					set_tim_deflect(Ind,0);
-					set_adrenaline(Ind, 0);
+					set_shield(Ind, 0, 0, SHIELD_NONE, SHIELD_NONE, 0);
+					set_tim_elemshield(Ind, 0, 0);
+					//Anchor
+					set_st_anchor(Ind, 0);
 					
-					/* Removed Stealth Buff */
-					/*
-					if (p_ptr->rune_stealth)
-					{
-						p_ptr->rune_stealth = 0;
-						p_ptr->rune_num_of_buffs--;
-						
-						p_ptr->redraw |= PR_SKILLS;
-					}
-					*/
+					//Misc
+					set_tim_manashield(Ind, 0);
 					
 					/* Remove glyph */
-					if (zcave[p_ptr->py][p_ptr->px].feat == FEAT_GLYPH)
-						cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_FLOOR);
-					
-					/*Clear teleport memory location */
-					p_ptr->memory.wpos.wx = 0;
-					p_ptr->memory.wpos.wy = 0;
-					p_ptr->memory.wpos.wz = 0;
-					p_ptr->memory.x = 0;
-					p_ptr->memory.y = 0;
-				
+					//if (zcave[p_ptr->py][p_ptr->px].feat == FEAT_GLYPH)
+						//cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_FLOOR);
 				}
-				break;
+				break; }
+			}
+			break; }
 			
-			case RT_TELEPORT_NEXUS:
-			case RT_TELEPORT_ELEC:
-			case RT_DIG_TELEPORT: //teleport distance based on imperative? - Kurzel
-			//case RT_TELEPORT:
-				msg_format(Ind, "%s%s teleport.", begin, description);
-				if (success)
-				{
-					if (inarea(&p_ptr->memory.wpos, &p_ptr->wpos))
-					{
-						teleport_player_to(Ind, p_ptr->memory.y, p_ptr->memory.x);
-						p_ptr->memory.wpos.wx = 0;
-						p_ptr->memory.wpos.wy = 0;
-						p_ptr->memory.wpos.wz = 0;
-						p_ptr->memory.x = 0;
-						p_ptr->memory.y = 0;
+			case (R_CHAO | R_FORC): {
+			switch (e_flags - (R_CHAO | R_FORC)) {
+				case 0: {
+					msg_format(Ind, "You %s summon %s %s shield of entropy.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+					if (margin > 0) {
+						set_tim_deflect(Ind, duration);
+						set_shield(Ind, duration, rget_level(20) * r_imperatives[imperative].damage / 10, SHIELD_NONE, SHIELD_NONE, 0);
 					}
-					else 
-					{
-						//teleport_player(Ind, ((100 + teleport_level * 100) / 5), FALSE);
-						teleport_player(Ind, ((30*(radius+1) + teleport_level * 30*(radius+1)) / 5), FALSE);
-					}
-					if (type == RT_TELEPORT_ELEC) fire_ball(Ind, GF_ELEC, 5, damage, radius, p_ptr->attacker);
-					if (type == RT_TELEPORT_NEXUS) fire_ball(Ind, GF_NEXUS, 5, damage, radius, p_ptr->attacker);
-				}
-				break;
+				break; }
 				
-			case RT_INERTIA: //location or targetting bug here - Kurzel
-			//case RT_TELEPORT_TO:
-				msg_format(Ind, "%s%s teleport forward.", begin, description);
-				if (success)
-				{
-				
-					if (p_ptr->target_col == 0 && p_ptr->target_row == 0)
-						break;
-						//teleport_player(Ind, ((100 + teleport_level * 100) / 5), FALSE);
-					else
-				
-						teleport_player_to(Ind, p_ptr->target_row, p_ptr->target_col);
-				}
-				break;
-
-			#if 1
-			case RT_DIG_FIRE_TIME:
-			case RT_DIG_FIRE:
-			//case RT_TELEPORT_LEVEL:
-				msg_format(Ind, "%s%s melt a shaft of rock.", begin, description);
-				if (success)
-				{
-					//teleport_player_level(Ind, FALSE); //This should go down only? - Kurzel
-					/* Backlash and Stun (Mal Effect) - Kurzel */
-					project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage/5, GF_FIRE, PROJECT_KILL | PROJECT_NORF, "");
-					set_stun(Ind, duration/5);
-					
-					if (randint(100)<=1) //A small amount of unreliability
-						//teleport_player_level(Ind, FALSE)
-						;
-					/*
-					if (modifier != 130)
-					{
-						msg_format(Ind, "You are hit by debris for \377u%i \377wdamage", (p_ptr->mhp*(0-(modifier-115))/100));
-						take_hit(Ind, (p_ptr->mhp*(0-(modifier-115))/100), "level teleportation", 0); //Hit for up to 60% of health, depending on inverse sucessfullness
-					}
-					*/
-				}
-				break;
-			#endif
-
-			case RT_GRAVITY_ACID:
-			case RT_GRAVITY_WATER:
-			case RT_GRAVITY_ELEC:
-			case RT_GRAVITY_SHARDS:
-			case RT_GRAVITY_FIRE:
-			case RT_GRAVITY_CHAOS:
-			case RT_GRAVITY_COLD:
-			case RT_GRAVITY_NETHER:
-			case RT_GRAVITY_POISON:
-			case RT_GRAVITY_NEXUS:
-				msg_format(Ind, "%s%s compel monsters to return.", begin, description);
-				if (success)
-				{
-					project_hack(Ind, GF_TELE_TO, 0, " summons"); 
-				}
-				break;
-
-			case RT_DIG_MEMORY:
-				msg_format(Ind, "%s%s memorise your position.", begin, description);
-				
-				if (success)
-				{
-					wpcopy(&p_ptr->memory.wpos, &p_ptr->wpos);
-					p_ptr->memory.x = p_ptr->px;
-					p_ptr->memory.y = p_ptr->py;
-				}
-				break;
-			/*
-			case RT_RECALL:
-				msg_format(Ind, "%s%s recall yourself.", begin, description);
-				
-				if (success)
-				{
-					set_recall_timer(Ind, damroll(1,100)); 
-				}
-				break;
-			*/
+				default: {
+				projection = flags_to_projection(e_flags - R_FORC);
+				damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection) / 10 + 1; //Severely reduced damage (per burst) - Kurzel
+				msg_format(Ind, "You %s empower your attacks with %s %s.", msg_q, r_imperatives[imperative].name, r_projections[projection].name);
+				if (margin > 0) set_tim_brand_ex(Ind, duration, projection, damage); 
+				break; }
+			}
+			break; }
 			
-			case RT_WATERPOISON_CHAOS:
-			case RT_WATERPOISON_NETHER:
-			case RT_WATERPOISON_TIME:
-			case RT_WATERPOISON:
-				msg_format(Ind, "%s%s saturate the area with miasma.", begin, description);
-				if (success)
-				{
-					do_vermin_control(Ind);
-				}
-				break;
-				
-			case RT_ICEPOISON_CHAOS:
-			case RT_ICEPOISON_NETHER:
-			case RT_ICEPOISON_TIME:
-			case RT_ICEPOISON:
-				msg_format(Ind, "%s%s conjure a bitter tea.", begin, description);
-				if (success)
-				{
-					set_poisoned(Ind, 0, 0);
-				}
-				break;
-				
-			case RT_MISSILE_ACID:
-			case RT_MISSILE_FIRE:
-			case RT_MISSILE_CHAOS:
-			case RT_MISSILE_COLD:
-			case RT_MISSILE_NETHER:
-			case RT_MISSILE_POISON:
-			case RT_MISSILE:
-				msg_format(Ind, "%s%s summon %s ethereal armor.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					shield = shield * 6 / 10; //60% of the +AC given by the equivalent Mystic Shield
-					//set_shield(Ind, duration, shield, SHIELD_FIRE, SHIELD_FIRE, 0);
-					set_shield(Ind, duration, shield, SHIELD_NONE, SHIELD_NONE, 0);
-				}
-				break;
-			/*
-			case RT_DETECTION_BLIND:
-				//msg_format(Ind, "%s%s cast a rune of detection.", begin, description);
-				//msg_format(Ind, "%s%s cast a rune of treasure detection.", begin, description);
-				if (success) 
-				{
-					detect_treasure(Ind, DEFAULT_RADIUS * 2)
-					
-					if (level>40)
-					{
-						detection(Ind, DEFAULT_RADIUS * 2);
-					}
-					else
-					{
-						detect_creatures(Ind);
-					}
-					
-				}
-				break;
-			case RT_DETECT_STAIR:
-				msg_format(Ind, "%s%s cast a rune of exit detection.", begin, description);
-				
-				if (success)
-				{
-					detect_sdoor(Ind, 36);
-				}
-				break;
+			case (R_CHAO | R_TIME): {
+			switch (e_flags - (R_CHAO | R_TIME)) {
+				default: {
+				//Do nothing, these are all combining spells. - Kurzel
+				break; }
+			}
+			break; }
 			
-			case RT_SEE_INVISIBLE:
-				msg_format(Ind, "%s%s cast a %s rune of see invisible.", begin, description, r_imperatives[imper].name);
-				
-				if (success)
-				{
-					set_tim_invis(Ind, duration);
-					
-					if (level > 15)
-					{
-						detect_treasure(Ind, DEFAULT_RADIUS*2);
+			/** R_COLD **/
+			
+			case (R_COLD | R_NETH): {
+			switch (e_flags - (R_COLD | R_NETH)) {
+				case 0: {
+				cost = 0;
+				if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_TR) {
+					msg_format(Ind, "\377WYou no longer revel in the anguish of your foes.");
+					/* Remove upkeep */
+					p_ptr->rcraft_upkeep -= UPKEEP_MAJ;
+					p_ptr->rcraft_upkeep_flags -= RUPK_MAJ_TR;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* Can we sustain? */
+						if (p_ptr->rcraft_upkeep + UPKEEP_MAJ > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Add upkeep */
+						msg_format(Ind, "You %s revel in the anguish of your foes.", msg_q);
+						set_tim_trauma(Ind, 1, (rget_level(20) + 5) * 1000);
+						p_ptr->rcraft_upkeep_flags |= RUPK_MAJ_TR;
+						p_ptr->rcraft_upkeep += UPKEEP_MAJ;
 					}
+					else msg_format(Ind, "You %s revel in the anguish of your foes.", msg_q);
 				}
-				break;
-			*/		
-
-			//case RT_HI_NEXUS: //Change this to another effect? Alter Reality?
-			case RT_DIG_NEXUS:
-			case RT_NEXUS: //same as nexus backlash/ normal effects? - Kurzel
-				msg_format(Ind, "%s%s wrap yourself in nexus.", begin, description);
-				if (success)
-				{
-					switch(randint(10))
-					{
-						case 1: teleport_player(Ind, (10 + (teleport_level * 10) / 50), FALSE); break;
-						case 2: set_recall_timer(Ind, damroll(1,100)); break;
-						case 3: project_hack(Ind, GF_TELE_TO, 0, " summons"); break;
-						#if 0
-						case 4: //teleport_player_level(Ind, FALSE); break;
-						#endif
-						case 5: teleport_player_to(Ind, p_ptr->target_col, p_ptr->target_row); break;
-						default: teleport_player(Ind, (100 + (teleport_level * 100) / 5), FALSE); break;
+				calc_mana(Ind);
+				calc_boni(Ind);
+				break; }
+				
+				default: {
+				/* Hack -- Increase Cost */
+				cost *= 3; //Triple cost for LoS spells, enough? - Kurzel
+				if (cost < S_COST_MIN) cost = S_COST_MIN;
+				if (cost > S_COST_MAX) cost = S_COST_MAX;
+				
+				projection = flags_to_projection(e_flags - R_NETH);
+				msg_format(Ind, "You %s fill the air with %s %s!", msg_q, r_imperatives[imperative].name, r_projections[projection].name);
+				if (margin > 0) {
+					damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection) / 2 + 1;
+					project_hack(Ind, r_projections[projection].gf_type, damage, p_ptr->attacker);
 					}
-				}
-				break;
-				
-			case RT_WATER:
-			//case RT_WIND_BLINK:
-				msg_format(Ind, "%s%s cast a %s rune of dimension door.", begin, description, r_imperatives[imper].name);
-				//msg_format(Ind, "%s%s blink.", begin, description);
-				if (success)
-				{
-					teleport_player(Ind, (10*radius + (teleport_level * 10*radius) / 50), FALSE);
-				}
-				break;
-				
-			//case RT_HI_PLASMA: //Change this to another effect?
-			case RT_LIGHT:
-				msg_format(Ind, "%s%s summon light.", begin, description);
-			
-				if (success)
-				{
-					lite_area(Ind, 10, radius + 1);
-					lite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-				}
-				
-				break;
-
-			case RT_BRILLIANCE_ELEC:
-			case RT_BRILLIANCE_COLD:
-			case RT_BRILLIANCE_SHARDS:
-				msg_format(Ind, "%s%s summon bright light.", begin, description);
-				if (success)
-				{
-					lite_area(Ind, 10, radius + 2);
-					lite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-					for (k = 0; k < 8; k++) lite_line(Ind, ddd[k], damroll(6, 8));
-					if (p_ptr->suscep_lite) take_hit(Ind, damroll((p_ptr->resist_lite ? 10: 30), 3), "a rune of brilliance", 0);
-					if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
-				}
-				
-				break;
-
-			//case RT_HI_ICE: //Change this to another effect?
-			case RT_SHADOW:
-				msg_format(Ind, "%s%s summon %s shadows.", begin, description, r_imperatives[imper].name);
-			
-				if (success)
-				{
-					unlite_area(Ind, 10, radius + 1);
-					unlite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-				}
-				
-				break;
-				
-			case RT_HELL_FIRE:
-				msg_format(Ind, "%s%s summon %s ethereal flames.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					set_shield(Ind, duration, shield, SHIELD_FIRE, SHIELD_FIRE, 0);
-				}
-				break;
-			
-			case RT_ICE_ELEC:
-			case RT_ICE_SHARDS:
-			case RT_ICE_CHAOS:
-			case RT_ICE_POISON:
-			case RT_ICE_TIME:
-			case RT_ICE:
-				msg_format(Ind, "%s%s summon %s ethereal ice.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					set_shield(Ind, duration, shield, SHIELD_FEAR, SHIELD_FEAR, 0); //should be cold - Kurzel
-				}
-				break;
-				
-			case RT_THUNDER_ACID:
-			case RT_THUNDER_CHAOS:
-			case RT_THUNDER_COLD:
-			case RT_THUNDER_NETHER:
-			case RT_THUNDER_POISON:	
-			case RT_THUNDER:
-				msg_format(Ind, "%s%s summon %s ethereal thunder.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					set_shield(Ind, duration, shield, SHIELD_ELEC, SHIELD_ELEC, 0);
-					//set_bow_brand(Ind, duration, BRAND_BALL_SOUND, damage); //Experimental - Kurzel
-					//set_tim_thunder(Ind, 10+randint(10)+rget_level(25), 5+rget_level(10), 10+rget_level(25));
-				}
-				break;
-				
-			case RT_DARKNESS_ACID:
-			case RT_DARKNESS_FIRE:
-			case RT_DARKNESS_SHARDS:
-				msg_format(Ind, "%s%s summon %s darkness.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					unlite_area(Ind, 10, radius + 2);
-					unlite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-					set_invis(Ind, duration, damage);
-				}
-				break;
-			
-			/*
-				msg_format(Ind, "%s%s cast a %s rune of stealth.", begin, description, r_imperatives[imper].name);
-				//This should be changed to a timed spell...
-				// Unset 
-				if (success)
-				{
-					unlite_area(Ind, 10, 2);
-					unlite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-					
-					if (p_ptr->rune_stealth)
-					{
-						printf("Set %s's stealth buff to %i\n",p_ptr->name,0);
-						p_ptr->rune_stealth = 0;
-						p_ptr->rune_num_of_buffs = p_ptr->rune_num_of_buffs - 1;
-						msg_print(Ind, "You feel less stealthy.");
-					}
-					// Set
-					else
-					{
-						speed /= 2; //Stealth ranges from 1-11
+				break; }
+			}
+			break; }
 						
-						printf("Set %s's stealth buff to %i\n", p_ptr->name, speed);
-						p_ptr->rune_stealth = speed;
-						p_ptr->rune_num_of_buffs = p_ptr->rune_num_of_buffs + 1;
-						
-						msg_print(Ind, "You feel more stealthy.");
+			case (R_COLD | R_POIS): {
+			switch (e_flags - (R_COLD | R_POIS)) {
+				case R_ACID: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_acid(Ind, duration);
+					set_oppose_cold(Ind, duration);
+					set_oppose_pois(Ind, duration);
+				}
+				break; }
+				
+				case R_ELEC: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_elec(Ind, duration);
+					set_oppose_cold(Ind, duration);
+					set_oppose_pois(Ind, duration);
+				}
+				break; }
+				
+				case R_FIRE: {
+				msg_format(Ind, "You %s draw triad %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_fire(Ind, duration);
+					set_oppose_cold(Ind, duration);
+					set_oppose_pois(Ind, duration);
+				}
+				break; }
+				
+				case R_FORC: {
+				byte upkeep_rune[5];
+				cost = 0;
+				if (p_ptr->rcraft_attune == (R_COLD | R_POIS)) {
+					msg_format(Ind, "\377WYour armament is no longer attuned.");
+					/* De-attune */
+					p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					p_ptr->rcraft_attune = 0;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* De-attune */
+						if (p_ptr->rcraft_attune) p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+						/* Can we sustain two more attunes? */
+						if (p_ptr->rcraft_upkeep + (2 * UPKEEP_ATTUNE) > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Attune */
+						msg_format(Ind, "You %s attune your armament.", msg_q);
+						set_tim_brand_cold(Ind, 1);
+						set_tim_brand_pois(Ind, 1);
+						p_ptr->rcraft_attune = (R_COLD | R_POIS);
+						p_ptr->rcraft_upkeep += flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
 					}
-					
-					p_ptr->redraw |= PR_SKILLS;
-					handle_stuff(Ind);
+					else msg_format(Ind, "You %s attune your armament.", msg_q);
 				}
-			*/
-				break;
-
-			case RT_FORCE:
-				spell_duration = duration;
-				/*
-				spell_duration = (spell_duration < 5 ? 5 : spell_duration);
-				spell_duration = (spell_duration > 20 && (type == RT_MISSILE || type == RT_MANA) ? 20 : spell_duration);
-				spell_duration = (spell_duration > 60 ? 60 : spell_duration);
-				*/
-				msg_format(Ind, "%s%s summon %s ethereal vectors.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					set_tim_deflect(Ind, spell_duration);
+				calc_mana(Ind);
+				calc_boni(Ind);
+				break; }
+				
+				case R_NEXU: {
+				msg_format(Ind, "You %s project twin %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_cold(Ind, duration);
+					set_oppose_pois(Ind, duration);
+					fire_ball(Ind, GF_RESCOLD_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+					fire_ball(Ind, GF_RESPOIS_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
 				}
-				break;
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s draw twin %s runes of resistance.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_cold(Ind, duration);
+					set_oppose_pois(Ind, duration);
+				}
+				break; }
+			}
+			break; }
 			
-			case RT_MANA_ACID:
-			case RT_MANA_WATER:
-			case RT_MANA_ELEC:
-			case RT_MANA_SHARDS:
-			case RT_MANA_FIRE:
-			case RT_MANA_FORCE:
-			case RT_MANA_TIME:
-			case RT_MANA:
-				msg_format(Ind, "%s%s cast a %s rune of recharging.", begin, description, r_imperatives[imper].name);
-				//msg_format(Ind, "%s%s cast a %s rune of mana resistance.", begin, description, r_imperatives[imper].name);
-				if (success)
-				{
-					recharge(Ind, 50); //Formula for this in the future.
-					//set_oppose_mana(Ind, duration); //Let's not do this, res_mana is rare! - Kurzel
+			case (R_COLD | R_NEXU): {
+			switch (e_flags - (R_COLD | R_NEXU)) {
+				case 0: {
+				msg_format(Ind, "You %s project %s %s rune of resistance.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_fire(Ind, duration);
+					fire_ball(Ind, GF_RESFIRE_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
 				}
-				break;
+				break; }
 				
-			case RT_SLEEP:
-			//case RT_ANCHOR:
-				msg_format(Ind, "%s%s constrict the space-time continuum.", begin, description);
-				if (success)
-				{
-					set_st_anchor(Ind, duration);
+				case R_FIRE: {
+				cost = 0;
+				if (p_ptr->rcraft_repel & R_FIRE) {
+					/* De-repel */
+					p_ptr->rcraft_upkeep -= UPKEEP_REPEL;
+					p_ptr->rcraft_repel -= R_FIRE;
+					if (p_ptr->rcraft_repel == 0) msg_format(Ind, "\377WYour raiment is no longer imbued.");
+					p_flags = 0;
 				}
-				break;
-			/*
-			case RT_FURY:
-				msg_format(Ind, "%s%s summon fury.", begin, description);
-				
-				if (success)
-				{
-					//set_fury(Ind, duration);
-				}
-				break;
-			*/
-			case RT_DRAIN_ACID:
-			case RT_DRAIN_WATER:
-			case RT_DRAIN_ELEC:
-			case RT_DRAIN_SHARDS:
-			case RT_DRAIN_FIRE:
-			case RT_DRAIN_CHAOS:
-			case RT_DRAIN_COLD:
-			case RT_DRAIN_NETHER:
-			case RT_DRAIN_FORCE:
-			case RT_DRAIN_TIME:
-			//case RT_BESERK:
-				msg_format(Ind, "%s%s cast a %s rune of beserking.", begin, description, r_imperatives[imper].name);
-				
-				if (success)
-				{
-					if (duration > 40)
-					{
-						duration = 40;
+				else {
+					if (margin > 0) {
+						/* Can we sustain a repel? */
+						if (p_ptr->rcraft_upkeep + UPKEEP_REPEL > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Repel */
+						msg_format(Ind, "You %s imbue your raiment.", msg_q);
+						set_oppose_fire(Ind, 1);
+						set_tim_aura_cold(Ind, 1);
+						p_ptr->rcraft_repel |= R_FIRE;
+						p_ptr->rcraft_upkeep += UPKEEP_REPEL;
 					}
-					set_adrenaline(Ind, duration); //Is this +spd or not? - Kurzel
+					else msg_format(Ind, "You %s imbue your raiment.", msg_q);
 				}
-				break;
-				
-			case RT_DIG:
-			//case RT_HEALING:
-				spell_damage = damage;
-				if (p_ptr->csp < cost)
-					spell_damage = spell_damage - (spell_damage * ((cost - p_ptr->csp) * 20) / 100);
-				
-				if (spell_damage <= 0 || p_ptr->suscep_life)
-				{
-					msg_format(Ind, "You fail to channel healing.");
-					break;
+				calc_mana(Ind);
+				break; }
+
+				default: {
+				//Do nothing, these are all reverting spells. - Kurzel
+				break; }
+			}
+			break; }
+			
+			case (R_COLD | R_FORC): {
+			switch (e_flags - (R_COLD | R_FORC)) {
+				case 0: {
+				byte upkeep_rune[5];
+				cost = 0;
+				if (p_ptr->rcraft_attune == R_COLD) {
+					msg_format(Ind, "\377WYour armament is no longer attuned.");
+					/* De-attune */
+					p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					p_ptr->rcraft_attune = 0;
+					p_flags = 0;
 				}
-				
-				msg_format(Ind, "%s%s channel %s healing.", begin, description, r_imperatives[imper].name);
-				if (success) hp_player(Ind, spell_damage);
-				break;
-				
-			case RT_CLONE: //anti-healing, for undead - Kurzel
-				spell_damage = damage;
-				if (p_ptr->csp < cost)
-					spell_damage = spell_damage - (spell_damage * ((cost - p_ptr->csp) * 20) / 100);
-				
-				if (spell_damage <= 0 || !p_ptr->suscep_life)
-				{
-					msg_format(Ind, "You fail to channel unlife.");
-					break;
-				}
-				
-				msg_format(Ind, "%s%s channel %s unlife.", begin, description, r_imperatives[imper].name);
-				if (success) hp_player(Ind, spell_damage);
-				break;
-			
-			//Mal Effects, refer to general backlash...
-			case RT_CONFUSION:
-			case RT_BLINDNESS:
-			case RT_STUN:
-			case RT_SLOW:
-			case RT_POLYMORPH:
-			case RT_ELEC_WATER:
-			case RT_CHAOS: //Maybe change chaos/nether? (Nexus->self just gives the effect, no dmg) - Kurzel
-			case RT_NETHER:
-			//case RT_DISINTEGRATE: //Needs to be something useful? -.-
-
-			default: //General backlash for mal effects; default for all unassigned effects. - Kurzel
-				msg_format(Ind, "%s%s runespell turns upon your self.", begin, description);
-				if (success)
-				{
-					gf_type = gf_type % 1000; //Paranoia; Don't blast the player with a HACK type (no explosion effect either, perhaps to be added later). - Kurzel
-					project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage/5, gf_type, PROJECT_KILL | PROJECT_NORF, "");
-				}
-				break;
-		}
-	}
-	else
-	{	
-		if (type_flags & R_STOR)
-		{
-			sprintf(p_ptr->attacker, " fills the air with %s for", runespell_list[type].title);
-			msg_format(Ind, "%s%s fill the air with %s %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
-			if (success) { //project_hack(Ind, gf_type, damage, p_ptr->attacker);
-			
-			/* Hack -- Encode the typ_effect for explosion */
-			if (gf_explode != 0) gf_type = gf_type + 10000000*EFF_STORM;
-			
-			fire_wave(Ind, gf_type, 0, damage, radius, duration, 10, EFF_STORM, p_ptr->attacker);
-			}
-		}
-		else if (type_flags & R_WAVE)
-		{
-			sprintf(p_ptr->attacker, " summons a wave of %s for", runespell_list[type].title);
-			msg_format(Ind, "%s%s summon a %s wave of %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
-			if (success) { //fire_wave(Ind, gf_type, 0, damage, radius, duration, 10, EFF_LAST, p_ptr->attacker);
-			
-			/* Hack -- Encode the typ_effect for explosion */
-			if (gf_explode != 0) gf_type = gf_type + 10000000*EFF_WAVE;
-			
-			fire_wave(Ind, gf_type, 0, damage, 0, duration, 2, EFF_WAVE, p_ptr->attacker);
-			}
-		}
-		if (type_flags & R_MELE)
-		{
-			int px = p_ptr->px;
-			int py = p_ptr->py;
-			int tx, ty;
-
-			/* Limit to distance 1 */
-			if (dir == 5 && target_okay(Ind)) {
-				tx = p_ptr->target_col;
-				ty = p_ptr->target_row;
-
-				/* .. for targetting use */
-				if (tx - px > 1) tx = px + 1;
-				if (px - tx > 1) tx = px - 1;
-				if (ty - py > 1) ty = py + 1;
-				if (py - ty > 1) ty = py - 1;
-
-				msg_format(Ind, "%s%s summon a %s burst of %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title, tx, ty);
-			} else {
-				/* .. for directional use */
-				tx = px + ddx[dir];
-				ty = py + ddy[dir];
-
-				if (dir == 5) msg_format(Ind, "%s%s summon a %s burst of undirected %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
-				else msg_format(Ind, "%s%s summon a %s burst of %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
-			}
-
-			if (success) {
-				//fire_wave(Ind, gf_type, 0, (damage - damage/4), 1, 1, 1, EFF_STORM, p_ptr->attacker);
-				//fire_bolt(Ind, gf_type, dir, damage, p_ptr->attacker);
-				//fire_ball(Ind, gf_type, dir, damage, 0, p_ptr->attacker);
-
-				/* Emulate a fire_ball() call, so we can hack our (tx, ty) values in without modifying p_ptr->target_col/row - C. Blue */
-#ifdef USE_SOUND_2010
-				if (gf_type == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_COMMAND, FALSE);
-				else if (gf_type == GF_DETONATION) sound(Ind, "detonation", NULL, SFX_TYPE_COMMAND, FALSE);
-				else if (gf_type == GF_STONE_WALL) sound(Ind, "stone_wall", NULL, SFX_TYPE_COMMAND, FALSE);
-				else sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, TRUE);
-#endif
-				sprintf(p_ptr->attacker, " summons a burst of %s for", runespell_list[type].title);
-				project(0 - Ind, 0, &p_ptr->wpos, ty, tx, damage, gf_type, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, p_ptr->attacker);
-			}
-		}
-		else if ((type_flags & R_BALL))
-		{
-			sprintf(p_ptr->attacker, " summons a ball of %s for", runespell_list[type].title);
-			msg_format(Ind, "%s%s summon a %s ball of %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
-			
-			if (success)
-			{
-				fire_ball(Ind, gf_type, dir, damage, radius, p_ptr->attacker);
-			}
-		}
-		else if (type_flags & R_CLOU)
-		{
-			sprintf(p_ptr->attacker, " summons a cloud of %s for", runespell_list[type].title);
-			msg_format(Ind, "%s%s summon a %s cloud of %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
-			
-			if (success)
-			{		
-				/* Hack -- Encode the typ_effect for explosion */
-				if (gf_explode != 0) gf_type = gf_type + 10000000*EFF_LAST; //Minor Hack -- This is 'unused' / not related to cloud type.
-			
-				fire_cloud(Ind, gf_type, dir, damage, radius, duration, 9, p_ptr->attacker);
-			}
-		}
-		else if (type_flags & R_BOLT || type_flags & R_BEAM)
-		{
-			if (type==RT_DIG || type==RT_DIG_FIRE || type==RT_DIG_TELEPORT || type==RT_DIG_MEMORY || type==RT_DIG_FIRE_TIME || type==RT_DIG_NEXUS) //Regular bolt and beam will stop before the wall
-			{
-				int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
-				
-				if (success)
-				{
-					//project_hook(Ind, GF_KILL_WALL, dir, 20 + randint(30), flg, "");
-					project_hook(Ind, gf_type, dir, 20 + randint(30), flg, "");
-				}
-				
-				msg_format(Ind, "%s%s cast a rune of wall destruction.", begin, description);
-			}
-			else
-			{
-				if (type_flags & R_BOLT)
-				{
-					sprintf(p_ptr->attacker, " summons a bolt of %s for", runespell_list[type].title);
-					msg_format(Ind, "%s%s summon a %s bolt of %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
-					
-					if (success)
-					{
-						fire_bolt(Ind, gf_type, dir, damage, p_ptr->attacker);
+				else {
+					if (margin > 0) {
+						/* De-attune */
+						if (p_ptr->rcraft_attune) p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+						/* Can we sustain one more attune? */
+						if (p_ptr->rcraft_upkeep + UPKEEP_ATTUNE > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Attune */
+						msg_format(Ind, "You %s attune your armament.", msg_q);
+						set_tim_brand_cold(Ind, 1);
+						p_ptr->rcraft_attune = R_COLD;
+						p_ptr->rcraft_upkeep += flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
 					}
+					else msg_format(Ind, "You %s attune your armament.", msg_q);
 				}
-				else
-				{
-					sprintf(p_ptr->attacker, " summons a beam of %s for", runespell_list[type].title);
-					msg_format(Ind, "%s%s summon a %s beam of %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
-					
-					if (success)
-					{
-						if (gf_type == GF_LITE || gf_type == GF_DARK || gf_type == GF_CORRODE || gf_type == GF_SHATTER) 
-							fire_grid_beam(Ind, gf_type, dir, damage, p_ptr->attacker);
-						else 
-							fire_beam(Ind, gf_type, dir, damage, p_ptr->attacker);
-					}
-				}
+				calc_mana(Ind);
+				calc_boni(Ind);
+				break; }
+				
+				default: {
+				projection = flags_to_projection(e_flags - R_FORC);
+				damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection) / 10 + 1; //Severely reduced damage (per burst) - Kurzel
+				msg_format(Ind, "You %s empower your attacks with %s %s.", msg_q, r_imperatives[imperative].name, r_projections[projection].name);
+				if (margin > 0) set_tim_brand_ex(Ind, duration, projection, damage); 
+				break; }
 			}
+			break; }
+			
+			case (R_COLD | R_TIME): {
+			switch (e_flags - (R_COLD | R_TIME)) {
+				default: {
+				//Do nothing, these are all combining spells. - Kurzel
+				break; }
+			}
+			break; }
+			
+			/** R_NETH **/
+			
+			case (R_NETH | R_POIS): {
+			switch (e_flags - (R_NETH | R_POIS)) {
+				case 0: {
+				cost = 0;
+				if (p_ptr->rcraft_upkeep_flags & RUPK_MIN_HL) {
+					msg_format(Ind, "\377WYou stop sealing the effects of life-draining attacks.");
+					/* Remove upkeep */
+					p_ptr->rcraft_upkeep -= UPKEEP_MIN;
+					p_ptr->rcraft_upkeep_flags -= RUPK_MIN_HL;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* Can we sustain? */
+						if (p_ptr->rcraft_upkeep + UPKEEP_MIN > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Add upkeep */
+						msg_format(Ind, "You %s seal the effects of life-draining attacks.", msg_q);
+						p_ptr->rcraft_upkeep_flags |= RUPK_MIN_HL;
+						p_ptr->rcraft_upkeep += UPKEEP_MIN;
+					}
+					else msg_format(Ind, "You %s seal the effects of life-draining attacks.", msg_q);
+				}
+				calc_mana(Ind);
+				calc_boni(Ind);
+				break; }
+			
+				default: {
+				msg_format(Ind, "You %s draw %s %s explosive rune.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) {
+					projection = flags_to_projection(e_flags - R_POIS);
+					if (set_rune_trap_okay(Ind)) set_rune_trap_aux(Ind, projection, imperative, skill);
+				}
+				cost = 0;
+				break; }
+			}
+			break; }
+			
+			case (R_NETH | R_NEXU): {
+			switch (e_flags - (R_NETH | R_NEXU)) {
+				case R_ACID: {
+				msg_format(Ind, "You %s conjure %s %s shield of elemental negation.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) set_tim_elemshield(Ind, duration, 0);
+				break; }
+				
+				case R_ELEC: {
+				msg_format(Ind, "You %s conjure %s %s shield of elemental negation.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) set_tim_elemshield(Ind, duration, 1);
+				break; }
+				
+				case R_FIRE: {
+				msg_format(Ind, "You %s conjure %s %s shield of elemental negation.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) set_tim_elemshield(Ind, duration, 2);
+				break; }
+				
+				case R_COLD: {
+				msg_format(Ind, "You %s conjure %s %s shield of elemental negation.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) set_tim_elemshield(Ind, duration, 3);
+				break; }
+				
+				case R_POIS: {
+				msg_format(Ind, "You %s conjure %s %s shield of elemental negation.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) set_tim_elemshield(Ind, duration, 4);
+				break; }
+				
+				default: {
+					msg_format(Ind, "You %s invoke %s %s rune of recharging.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+					if (margin > 0) recharge(Ind, rget_level(50) * r_imperatives[imperative].damage / 10);
+				break; }
+			}
+			break; }
+			
+			case (R_NETH | R_FORC): {
+			switch (e_flags - (R_NETH | R_FORC)) {
+				case 0: {
+					msg_format(Ind, "You %s summon %s %s cloak of invisibility.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+					if (margin > 0) set_invis(Ind, duration, damage);
+				break; }
+				
+				default: {
+				projection = flags_to_projection(e_flags - R_FORC);
+				damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection) / 10 + 1; //Severely reduced damage (per burst) - Kurzel
+				msg_format(Ind, "You %s empower your attacks with %s %s.", msg_q, r_imperatives[imperative].name, r_projections[projection].name);
+				if (margin > 0) set_tim_brand_ex(Ind, duration, projection, damage); 
+				break; }
+			}
+			break; }
+			
+			case (R_NETH | R_TIME): {
+			switch (e_flags - (R_NETH | R_TIME)) {
+				default: {
+				//Do nothing, these are all combining spells. - Kurzel
+				break; }
+			}
+			break; }
+			
+			/** R_POIS **/
+			
+			case (R_POIS | R_NEXU): {
+			switch (e_flags - (R_POIS | R_NEXU)) {
+				case 0: {
+				msg_format(Ind, "You %s project %s %s rune of resistance.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) {
+					set_oppose_pois(Ind, duration);
+					fire_ball(Ind, GF_RESPOIS_PLAYER, 5, duration * 2, radius, p_ptr->attacker);
+				}
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s conjure %s %s matrix of spell energy.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) {
+					duration = rspell_duration(Ind, element, elements, imperative, 6, skill, level);//Duration as T_CLOU
+					projection = flags_to_projection(e_flags - R_NEXU);
+					damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection) / 10 + 1;
+					set_tim_rcraft_help(Ind, duration, RCRAFT_MAX_TYPES, projection, damage); //Hack -- T_LoS
+				}
+				break; }
+			}
+			break; }
+			
+			case (R_POIS | R_FORC): {
+			switch (e_flags - (R_POIS | R_FORC)) {
+				case 0: {
+				byte upkeep_rune[5];
+				cost = 0;
+				if (p_ptr->rcraft_attune == R_POIS) {
+					msg_format(Ind, "\377WYour armament is no longer attuned.");
+					/* De-attune */
+					p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					p_ptr->rcraft_attune = 0;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* De-attune */
+						if (p_ptr->rcraft_attune) p_ptr->rcraft_upkeep -= flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+						/* Can we sustain one more attune? */
+						if (p_ptr->rcraft_upkeep + UPKEEP_ATTUNE > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Attune */
+						msg_format(Ind, "You %s attune your armament.", msg_q);
+						set_tim_brand_pois(Ind, 1);
+						set_oppose_pois(Ind, 1);
+						p_ptr->rcraft_attune = R_POIS;
+						p_ptr->rcraft_upkeep += flags_to_elements(upkeep_rune, p_ptr->rcraft_attune) * UPKEEP_ATTUNE;
+					}
+					else msg_format(Ind, "You %s attune your armament.", msg_q);
+				}
+				calc_mana(Ind);
+				calc_boni(Ind);
+				break; }
+				
+				default: {
+				projection = flags_to_projection(e_flags - R_FORC);
+				damage = rspell_damage(Ind, element, elements, imperative, type, skill, projection) / 10 + 1; //Severely reduced damage (per burst) - Kurzel
+				msg_format(Ind, "You %s empower your attacks with %s %s.", msg_q, r_imperatives[imperative].name, r_projections[projection].name);
+				if (margin > 0) set_tim_brand_ex(Ind, duration, projection, damage); 
+				break; }
+			}
+			break; }
+			
+			case (R_POIS | R_TIME): {
+			switch (e_flags - (R_POIS | R_TIME)) {
+				case 0: {
+				cost = 0;
+				if (p_ptr->rcraft_regen) {
+					msg_format(Ind, "\377WYour ability to regenerate returns to normal.");
+					/* Remove upkeep */
+					p_ptr->rcraft_upkeep -= UPKEEP_HI;
+					p_ptr->rcraft_regen = 0;
+					p_flags = 0;
+				}
+				else {
+					if (margin > 0) {
+						/* Remove upkeep */
+						if (p_ptr->rcraft_regen) p_ptr->rcraft_upkeep -= UPKEEP_HI;
+						/* Can we sustain? */
+						if (p_ptr->rcraft_upkeep + UPKEEP_HI > 100) {
+							msg_print(Ind, "\377oYou cannot sustain this runespell!");
+							break;
+						}
+						/* Add upkeep */
+						msg_format(Ind, "You %s improve your ability to regenerate.", msg_q);
+						set_tim_regen(Ind, duration, rget_level(300 * r_imperatives[imperative].damage));
+						p_ptr->rcraft_regen = 1; //toggle
+						p_ptr->rcraft_upkeep += UPKEEP_HI;
+					}
+					else msg_format(Ind, "You %s improve your ability to regenerate.", msg_q);
+				}
+				calc_mana(Ind);
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s draw %s %s explosive rune.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) {
+					projection = flags_to_projection(e_flags - R_TIME);
+					if (set_rune_trap_okay(Ind)) set_rune_trap_aux(Ind, projection, imperative, skill);
+				}
+				cost = 0;
+				break; }
+			}
+			break; }
+			
+			/** R_NEXU **/
+			
+			case (R_NEXU | R_FORC): {
+			switch (e_flags - (R_NEXU | R_FORC)) {
+				case R_ACID: {
+				msg_format(Ind, "You %s invoke %s elemental teleportation.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					type = 0;
+					duration = rspell_duration(Ind, element, elements, imperative, 5, skill, level);//duration T_WAVE
+					//fire_wave(Ind, GF_ACID, 0, damage / 5, 0, duration, 2, EFF_WAVE, p_ptr->attacker);
+					if (p_ptr->memory_feat[type]) {
+						if (inarea(&p_ptr->memory_port[type].wpos, &p_ptr->wpos)) {
+							swap_position(Ind, p_ptr->memory_port[type].y, p_ptr->memory_port[type].x); //paranoia
+							/* Restore the feature of the previous existing portal */
+							cave_set_feat_live(&p_ptr->wpos, p_ptr->memory_port[type].y, p_ptr->memory_port[type].x, p_ptr->memory_feat[type]);
+							/* Upkeep */
+							p_ptr->rcraft_upkeep -= UPKEEP_PORT;
+							/* Reset Values */
+							p_ptr->memory_feat[type] = 0;
+							wpcopy(&p_ptr->memory_port[type].wpos, &p_ptr->wpos);
+							p_ptr->memory_port[type].x = p_ptr->px;
+							p_ptr->memory_port[type].y = p_ptr->py;
+						}
+						else teleport_player(Ind, 10 * (radius) + rget_level(10 * radius), FALSE);
+					}
+					else teleport_player(Ind, 10 * (radius) + rget_level(10 * radius), FALSE);
+				}
+				break; }
+				
+				case R_ELEC: {
+				msg_format(Ind, "You %s invoke %s elemental teleportation.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					type = 1;
+					duration = rspell_duration(Ind, element, elements, imperative, 5, skill, level);//duration T_WAVE
+					//fire_wave(Ind, GF_ELEC, 0, damage / 5, 0, duration, 2, EFF_WAVE, p_ptr->attacker);
+					if (p_ptr->memory_feat[type]) {
+						if (inarea(&p_ptr->memory_port[type].wpos, &p_ptr->wpos)) {
+							swap_position(Ind, p_ptr->memory_port[type].y, p_ptr->memory_port[type].x); //paranoia
+							/* Restore the feature of the previous existing portal */
+							cave_set_feat_live(&p_ptr->wpos, p_ptr->memory_port[type].y, p_ptr->memory_port[type].x, p_ptr->memory_feat[type]);
+							/* Upkeep */
+							p_ptr->rcraft_upkeep -= UPKEEP_PORT;
+							/* Reset Values */
+							p_ptr->memory_feat[type] = 0;
+							wpcopy(&p_ptr->memory_port[type].wpos, &p_ptr->wpos);
+							p_ptr->memory_port[type].x = p_ptr->px;
+							p_ptr->memory_port[type].y = p_ptr->py;
+						}
+						else teleport_player(Ind, 10 * (radius) + rget_level(10 * radius), FALSE);
+					}
+					else teleport_player(Ind, 10 * (radius) + rget_level(10 * radius), FALSE);
+				}
+				break; }
+				
+				case R_FIRE: {
+				msg_format(Ind, "You %s invoke %s elemental teleportation.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					type = 2;
+					duration = rspell_duration(Ind, element, elements, imperative, 5, skill, level);//duration T_WAVE
+					//fire_wave(Ind, GF_FIRE, 0, damage / 5, 0, duration, 2, EFF_WAVE, p_ptr->attacker);
+					if (p_ptr->memory_feat[type]) {
+						if (inarea(&p_ptr->memory_port[type].wpos, &p_ptr->wpos)) {
+							swap_position(Ind, p_ptr->memory_port[type].y, p_ptr->memory_port[type].x); //paranoia
+							/* Restore the feature of the previous existing portal */
+							cave_set_feat_live(&p_ptr->wpos, p_ptr->memory_port[type].y, p_ptr->memory_port[type].x, p_ptr->memory_feat[type]);
+							/* Upkeep */
+							p_ptr->rcraft_upkeep -= UPKEEP_PORT;
+							/* Reset Values */
+							p_ptr->memory_feat[type] = 0;
+							wpcopy(&p_ptr->memory_port[type].wpos, &p_ptr->wpos);
+							p_ptr->memory_port[type].x = p_ptr->px;
+							p_ptr->memory_port[type].y = p_ptr->py;
+						}
+						else teleport_player(Ind, 10 * (radius) + rget_level(10 * radius), FALSE);
+					}
+					else teleport_player(Ind, 10 * (radius) + rget_level(10 * radius), FALSE);
+				}
+				break; }
+				
+				case R_COLD: {
+				msg_format(Ind, "You %s invoke %s elemental teleportation.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					type = 3;
+					duration = rspell_duration(Ind, element, elements, imperative, 5, skill, level);//duration T_WAVE
+					//fire_wave(Ind, GF_COLD, 0, damage / 5, 0, duration, 2, EFF_WAVE, p_ptr->attacker);
+					if (p_ptr->memory_feat[type]) {
+						if (inarea(&p_ptr->memory_port[type].wpos, &p_ptr->wpos)) {
+							swap_position(Ind, p_ptr->memory_port[type].y, p_ptr->memory_port[type].x); //paranoia
+							/* Restore the feature of the previous existing portal */
+							cave_set_feat_live(&p_ptr->wpos, p_ptr->memory_port[type].y, p_ptr->memory_port[type].x, p_ptr->memory_feat[type]);
+							/* Upkeep */
+							p_ptr->rcraft_upkeep -= UPKEEP_PORT;
+							/* Reset Values */
+							p_ptr->memory_feat[type] = 0;
+							wpcopy(&p_ptr->memory_port[type].wpos, &p_ptr->wpos);
+							p_ptr->memory_port[type].x = p_ptr->px;
+							p_ptr->memory_port[type].y = p_ptr->py;
+						}
+						else teleport_player(Ind, 10 * (radius) + rget_level(10 * radius), FALSE);
+					}
+					else teleport_player(Ind, 10 * (radius) + rget_level(10 * radius), FALSE);
+				}
+				break; }
+				
+				case R_POIS: {
+				msg_format(Ind, "You %s invoke %s elemental teleportation.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					type = 4;
+					duration = rspell_duration(Ind, element, elements, imperative, 5, skill, level);//duration T_WAVE
+					//fire_wave(Ind, GF_POIS, 0, damage / 5, 0, duration, 2, EFF_WAVE, p_ptr->attacker);
+					if (p_ptr->memory_feat[type]) {
+						if (inarea(&p_ptr->memory_port[type].wpos, &p_ptr->wpos)) {
+							swap_position(Ind, p_ptr->memory_port[type].y, p_ptr->memory_port[type].x); //paranoia
+							/* Restore the feature of the previous existing portal */
+							cave_set_feat_live(&p_ptr->wpos, p_ptr->memory_port[type].y, p_ptr->memory_port[type].x, p_ptr->memory_feat[type]);
+							/* Upkeep */
+							p_ptr->rcraft_upkeep -= UPKEEP_PORT;
+							/* Reset Values */
+							p_ptr->memory_feat[type] = 0;
+							wpcopy(&p_ptr->memory_port[type].wpos, &p_ptr->wpos);
+							p_ptr->memory_port[type].x = p_ptr->px;
+							p_ptr->memory_port[type].y = p_ptr->py;
+						}
+						else teleport_player(Ind, 10 * (radius) + rget_level(10 * radius), FALSE);
+					}
+					else teleport_player(Ind, 10 * (radius) + rget_level(10 * radius), FALSE);
+				}
+				break; }
+				
+				case R_TIME: {
+				msg_format(Ind, "You %s draw a glyph of warding.", msg_q);
+				if (margin > 0) warding_glyph(Ind);
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s invoke %s teleportation.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) teleport_player(Ind, 10 * (radius) + rget_level(10 * radius), FALSE);
+				break; }
+			}
+			break; }
+			
+			case (R_NEXU | R_TIME): {
+			switch (e_flags - (R_NEXU | R_TIME)) {
+				case 0: {
+				msg_format(Ind, "You %s invoke %s %s space-time anchor.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) set_st_anchor(Ind, duration);
+				break; }
+				
+				case R_ACID: {
+				cost = 0;
+				msg_format(Ind, "You %s memorize this location.", msg_q);
+				if (margin > 0) if (set_rune_port_okay(Ind, 0)) set_rune_port_aux(Ind, 0);
+				break; }
+				
+				case R_ELEC: {
+				cost = 0;
+				msg_format(Ind, "You %s memorize this location.", msg_q);
+				if (margin > 0) if (set_rune_port_okay(Ind, 1)) set_rune_port_aux(Ind, 1);
+				break; }
+				
+				case R_FIRE: {
+				cost = 0;
+				msg_format(Ind, "You %s memorize this location.", msg_q);
+				if (margin > 0) if (set_rune_port_okay(Ind, 2)) set_rune_port_aux(Ind, 2);
+				break; }
+				
+				case R_COLD: {
+				cost = 0;
+				msg_format(Ind, "You %s memorize this location.", msg_q);
+				if (margin > 0) if (set_rune_port_okay(Ind, 3)) set_rune_port_aux(Ind, 3);
+				break; }
+				
+				case R_POIS: {
+				cost = 0;
+				msg_format(Ind, "You %s memorize this location.", msg_q);
+				if (margin > 0) if (set_rune_port_okay(Ind, 4)) set_rune_port_aux(Ind, 4);
+				break; }
+				
+				case R_FORC: {
+				msg_format(Ind, "You %s draw a glyph of warding.", msg_q);
+				if (margin > 0) warding_glyph(Ind);
+				break; }
+				
+				case R_WATE:
+				case R_EART:
+				case R_CHAO:
+				case R_NETH: {
+				msg_format(Ind, "You %s cast a circle of protection.", msg_q);
+				if (margin > 0) fire_ball(Ind, GF_MAKE_GLYPH, 0, 1, 1, "");
+				break; }
+			}
+			break; }
+			
+			/** R_FORC **/
+			
+			case (R_FORC | R_TIME): {
+			switch (e_flags - (R_FORC | R_TIME)) {
+				case 0: {
+				msg_format(Ind, "You %s invoke %s haste.", msg_q, r_imperatives[imperative].name);
+				if (margin > 0) {
+					damage = rget_level(10) * r_imperatives[imperative].damage / 10;
+					if (damage < 1) damage = 1;
+					if (damage > 10) damage = 10;
+					set_fast(Ind, duration, damage);
+				}
+				break; }
+				
+				case R_NEXU: {
+				msg_format(Ind, "You %s draw a glyph of warding.", msg_q);
+				if (margin > 0) warding_glyph(Ind);
+				break; }
+				
+				default: {
+				msg_format(Ind, "You %s draw %s %s explosive rune.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+				if (margin > 0) {
+					projection = flags_to_projection(e_flags - R_TIME);
+					if (set_rune_trap_okay(Ind)) set_rune_trap_aux(Ind, projection, imperative, skill);
+				}
+				cost = 0;
+				break; }
+			}
+			break; }
+			
+			/** Default **/
+			
+			default: { //General backlash for mal effects; default for all unassigned effects. - Kurzel
+			msg_format(Ind, "You %s invoke %s %s sealed runespell.", msg_q, imperative == 4 ? "an" : "a", r_imperatives[imperative].name);
+			if (margin > 0) p_flags |= RPEN_MAJ_HP;
+			break; }
+		break; }
 		}
+
 		/* for GF_OLD_DRAIN */
-		if (p_ptr->ret_dam) {
-			hp_player(Ind, p_ptr->ret_dam);
-			p_ptr->ret_dam = 0;
-		}
+                if (p_ptr->ret_dam) {
+                        hp_player(Ind, p_ptr->ret_dam);
+                        p_ptr->ret_dam = 0;
+                }
 	}
 	
-	if (p_ptr->csp > cost)
-	{
-		p_ptr->csp -= cost;
+	/** Miscellaneous Effects **/
+
+#ifdef RCRAFT_DEBUG
+s_printf("RCRAFT_DEBUG: %d\n", p_ptr->rcraft_upkeep);
+#endif
+	
+#ifdef ENABLE_GROUP_SPELLS
+	/* Attempt to create new rune charges */
+	int damage_gf_rcraft_player = -1;
+	if (margin > 0 && p_ptr->rcraft_project) {
+#ifdef RCRAFT_DEBUG
+s_printf("RCRAFT_DEBUG: rune[0]: %d rune[1]: %d.\n", rune[0], rune[1]);
+#endif
+		if (rune[0] >= 0 && rune[0] < RCRAFT_MAX_ELEMENTS
+		 && rune[1] >= 0 && rune[1] < RCRAFT_MAX_ELEMENTS) { 
+			damage_gf_rcraft_player = (rune[1] + 1) * 100 + rune[0];
+			fire_ball(Ind, GF_RCRAFT_PLAYER, 5, damage_gf_rcraft_player, p_ptr->rcraft_project, p_ptr->attacker);
+		}
+		else if (rune[0] >= 0 && rune[0] < RCRAFT_MAX_ELEMENTS) {
+			damage_gf_rcraft_player = rune[0];
+			fire_ball(Ind, GF_RCRAFT_PLAYER, 5, damage_gf_rcraft_player, p_ptr->rcraft_project, p_ptr->attacker);
+		}
 	}
-	else
-	{
+#endif
+	
+	/* Lite Susceptability Check */
+	if ((margin > 0) && (gf_main == GF_LITE)) {
+		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 4 + randint(10));
+		if (p_ptr->suscep_lite && !p_ptr->resist_lite) project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, (damage % HACK_DAM_FACTOR) / 5 + 1, GF_LITE, PROJECT_KILL | PROJECT_NORF, "");
+		p_ptr->shooting_till_kill = FALSE;
+	}
+	
+	/** Expend Resources **/
+	
+	/* Penalty */
+	if (p_flags) {
+		rspell_do_penalty(Ind, gf_type, damage, cost, p_flags, link);
+		p_ptr->shooting_till_kill = FALSE;
+	}
+	
+	/* Mana */
+	calc_mana(Ind);
+	if (p_ptr->csp > cost) p_ptr->csp -= cost;
+	else {
 		/* The damage is implied by the "Exhausted, ..." message, so not explicitly stated. */
 		take_hit(Ind, (cost-p_ptr->csp), "magical exhaustion", 0);
 		p_ptr->csp = 0;
+		p_ptr->shooting_till_kill = FALSE;
 	}
-	
-	gf_type = gf_type % 1000; //Paranoia; Don't blast the player with a HACK type (no explosion effect either, perhaps to be added later). - Kurzel
-	
-	//Lite Susceptability Check, could have better placement? - Kurzel
-	if (success && gf_original==GF_LITE) {
-		//if (p_ptr->suscep_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(20, 3), "a rune of light", 0);
-		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
-		if (p_ptr->suscep_lite && !p_ptr->resist_lite) project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage/5, gf_type, PROJECT_KILL | PROJECT_NORF, "");
-	}
-	
 	p_ptr->redraw |= PR_MANA;
 	
-	if (margin < 0)
-	{
-		difficulty = (difficulty+mali>0 ? difficulty+mali : 0);
-		difficulty = (difficulty-margin>0 ? difficulty-margin : 0);
-		rspell_do_penalty(Ind, rspell_penalty(Ind, difficulty), damage, duration, cost, gf_type, "",  imper, type_flags);
-	}
-	
-	if (p_ptr->shooty_till_kill)
-	{
-		p_ptr->shooting_till_kill = TRUE;
-		p_ptr->shooty_till_kill = FALSE;
-	}
-	
-	return 0;
-}
-
-bool is_attack(u32b s_flags)
-{
-	return (!(s_flags & R_MELE) && !(s_flags & R_SELF) && !(s_flags & R_CLOU) && !(s_flags & R_WAVE) && !(s_flags & R_STOR));
-}
-
-byte execute_rspell (u32b Ind, byte dir, u32b s_flags, byte imperative, bool retaliate)
-{
-	player_type * p_ptr = Players[Ind];
-	
-	u32b s_type = rspell_type(s_flags);
-	s16b s_cost = 0; u16b s_dam = 0;  s16b s_diff = 0; s16b s_time = 0;
-	u16b s_av = 0; u16b augment_level = 0;
-	
-	u16b radius = 0; u16b duration = 0;
-	s16b mali = 0;
-	s_av = rspell_skill(Ind, s_flags);
-	
-	s_cost = rspell_cost(Ind, s_type, s_flags, s_av, imperative);
-	s_dam = rspell_dam(Ind, &radius, &duration, s_type, s_flags, s_av, imperative);
-	s_diff = rspell_diff(Ind, imperative, s_cost, s_av, s_type, s_flags, &mali);
-	
-	s_time = rspell_time(Ind, imperative);
-
-
-	/* Handle '+' targetting mode */
-	if (dir == 11) {
-		get_aim_dir(Ind);
-		p_ptr->current_rcraft = 1;
-		p_ptr->current_rcraft_flags = s_flags;
-		p_ptr->current_rcraft_imp = imperative;
-		return 0;
-	}
-	p_ptr->current_rcraft = -1;
-
-
-	/* R_MELE reduces s_time for multiple 'blows', experimental - Kurzel */
-#if 1
-	if (s_flags & R_MELE) { 
-		if (s_av >= 15) s_time = s_time / (s_av / 15); //Up to 3.3 bpr!
-	}
-#endif
-	
-	if (!rspell_check(Ind, &mali, s_flags))
-	{
-		mali += 5; //+15% fail for first missing rune, +10% per additional rune
-	}
-	
-	/* Augment the runespell if augment level requirement is met - Kurzel */
-	u32b s_augment = runespell_list[s_type].self;
-	int i;
-	if (s_augment != 0) {
-		augment_level = rspell_skill(Ind, s_augment);
-		for (i=0;i<RCRAFT_MAX_ELEMENTS;i++) {
-			if (s_augment == r_augments[i].rune) {
-				//Check the level requirement for a single rune.
-				if(augment_level >= r_augments[i].level) {
-					s_cost = s_cost * (((r_augments[i].cost)-10 > 0) ? (r_augments[i].cost-10)*(100-augment_level)/50+10 : (r_augments[i].cost-10)*augment_level/50+10) / 10;
-					mali = mali + (((r_augments[i].fail) > 0) ? r_augments[i].fail*(100-augment_level)/50 : r_augments[i].fail*augment_level/50);
-					s_dam = s_dam * (((r_augments[i].dam)-10 < 0) ? (r_augments[i].dam-10)*(100-augment_level)/50+10 : (r_augments[i].dam-10)*augment_level/50+10) / 10;
-					s_time = s_time * (((r_augments[i].time)-10 > 0) ? (r_augments[i].time-10)*(100-augment_level)/50+10 : (r_augments[i].time-10)*augment_level/50+10) / 10;
-					radius = radius + (((r_augments[i].radius) > 0) ? r_augments[i].radius*(100-augment_level)/50 : r_augments[i].radius*augment_level/50);
-					duration = duration * (((r_augments[i].duration)-10 < 0) ? (r_augments[i].duration-10)*(100-augment_level)/50+10 : (r_augments[i].duration-10)*augment_level/50+10) / 10;
-				}
-				break;
-			}
-		}
-	}
-
-	/* Time to cast can be varied by the active spell modifier. */
-	if (p_ptr->energy < s_time)
-	{
-		return 0;
-	}
-
-	if (s_av<=0)
-	{
-		msg_print(Ind, "\377rYou don't know these runes.");
-		p_ptr->energy -= s_time;
-		return 0;
-	}
-	
-	/* Forbid casting 15 levels above skill level - Kurzel */
-	s16b type_level = 0;
-	int j = 0;
-	for (j=0;j<RCRAFT_MAX_TYPES;j++) {
-		if((s_flags & runespell_types[j].type) == runespell_types[j].type) {
-			type_level = runespell_types[j].cost;
-			break;
-		}
-	}
-	if (s_av<=runespell_list[s_type].level+r_imperatives[imperative].level+type_level-15)
-	{
-		msg_print(Ind, "\377rYou don't dare invoke such a dangerous spell.");
-		p_ptr->energy -= s_time;
-		return 0;
-	}
-	
-	if (s_type == RT_NONE)
-	{
-		msg_print(Ind, "\377rThis is not a runespell.");
-		p_ptr->energy -= s_time;
-		return 0;
-	}
-
-#ifdef LIMIT_NON_RUNEMASTERS
-	{
-		int runes = 0, bit;
-		for (bit = 8; bit < 32; bit++)
-			if (s_flags & (1 << bit)) runes++;
-		if (runes > 2 && p_ptr->pclass != CLASS_RUNEMASTER) {
-			msg_print(Ind, "\377rYou are not adept enough to draw more than two runes.");
-			p_ptr->energy -= s_time;
-			return 0;
-		}
-	}
-#endif
-
-	/* Probably paranoia, since rune-able classes should have none of these (except ftk) */
-	break_cloaking(Ind, 5);
-	break_shadow_running(Ind);
-	stop_precision(Ind);
-//	stop_shooting_till_kill(Ind);
-
-	/* (S)he is no longer afk */
-	un_afk_idle(Ind);
-
-	/* AM checks for runes assume that not the person is emitting the magic, but the runes are! */
-	if (check_antimagic(Ind, 100))
-	{
-		p_ptr->energy -= s_time;
-		return 0;
-	}
-	if (p_ptr->anti_magic && (s_flags & R_SELF)) {
-		msg_format(Ind, "\377%cYour anti-magic shell absorbs the spell.", COLOUR_AM_OWN);
-		p_ptr->energy -= s_time;
-		return 0;
-	}
-
-	/* school spell casting interference chance used for this */
-	if (interfere(Ind, cfg.spell_interfere)) {
-		p_ptr->energy -= s_time;
-		return 0;
-	}
-
-	if (p_ptr->shoot_till_kill)
-	{
-		if (is_attack(s_flags))
-		{
-			/* Set future FTK attack type, if we're trying something new */
-			if (p_ptr->shoot_till_kill_rune_spell != s_flags || p_ptr->shoot_till_kill_rune_modifier != imperative)
-			{
-				p_ptr->shoot_till_kill_rune_spell = s_flags;
-				p_ptr->shoot_till_kill_rune_modifier = imperative;
-			}
-			
-			if (p_ptr->shooting_till_kill)
-			{
-				p_ptr->shooting_till_kill = FALSE;
-				
-				/* Cancel if we've lost our target */
-				if (dir != 5 || !target_okay(Ind))
-					return 0;
-				
-				/* Cancel if we're going to automatically wake new monsters */
-#ifndef PY_PROJ_ON_WALL
-				if (!projectable_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE))
-#else
-				if (!projectable_wall_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE))
-#endif
-					return 0;
-				
-				/* Cancel if we're going to exhaust ourselves */
-				if (s_cost > p_ptr->csp)
-					return 2;
-				
-				/* Cancel if we're being stupid */
-				if (s_diff > 60)
-					return 0;
-
-				/* Continue casting after a successful cast */
-				p_ptr->shooty_till_kill = TRUE;
-			}
-		}
-		else p_ptr->shooty_till_kill = FALSE; /* Required for 'burst' which isn't FTK-able */
-	}
-	
-	//No 'dangerous' retaliation! - Kurzel
-	if (retaliate)
-	{
-		/* Cancel if we're going to exhaust ourselves */
-		if (s_cost > p_ptr->csp)
-			return 2;
-	}
-		
-	p_ptr->energy -= s_time;
-	cast_runespell(Ind, dir, s_dam, radius, duration, s_cost, s_type, s_diff, imperative, s_flags, s_av, mali);
-	
-	if (r_imperatives[imperative].id == 7) //Chaotic type
-	{
-		if (randint(100)==50)
-		{
-			msg_print(Ind, "\377sYour invocation is particularly flashy.");
-			//project_hack(Ind, GF_TELE_TO, 0, " summons"); /*Use wonder instead? - Kurzel */
-		}
-	}
+	/* Energy */
+	p_ptr->energy -= energy;
 	
 	return 1;
 }
@@ -2418,44 +4133,19 @@ void rune_trap_backlash(int Ind)
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 	if(!(cs_ptr = GetCS(c_ptr, CS_RUNE_TRAP))) return;
 	
-	
-	int s_av = cs_ptr->sc.runetrap.lev; //For rget_level() - Kurzel
-	
-	switch (cs_ptr->sc.runetrap.typ) {
-	case RUNETRAP_DETO:
-		typ = GF_DETONATION;
-		rad = 2+r_imperatives[cs_ptr->sc.runetrap.mod].radius;
-		dam = rget_level(400 + randint(50));
-		break;
-	case RUNETRAP_ACID:
-		typ = GF_ACID;
-		rad = 2+r_imperatives[cs_ptr->sc.runetrap.mod].radius;
-		dam = rget_level(400 + randint(50));
-		break;
-	case RUNETRAP_ELEC:
-		typ = GF_ELEC;
-		rad = 2+r_imperatives[cs_ptr->sc.runetrap.mod].radius;
-		dam = rget_level(400 + randint(50));
-		break;
-	case RUNETRAP_FIRE:
-		typ = GF_FIRE;
-		rad = 2+r_imperatives[cs_ptr->sc.runetrap.mod].radius;
-		dam = rget_level(400 + randint(50));
-		break;
-	case RUNETRAP_COLD:
-		typ = GF_COLD;
-		rad = 2+r_imperatives[cs_ptr->sc.runetrap.mod].radius;
-		dam = rget_level(400 + randint(50));
-		break;
-	default:
-		s_printf("oops! nonexisting rune trap(typ: %d)!\n", cs_ptr->sc.runetrap.typ);
-	}
+	int skill = cs_ptr->sc.runetrap.lev; //Use 'skill' for the rget_level() macro. - Kurzel
 
+	typ = r_projections[cs_ptr->sc.runetrap.typ].gf_type;
+	rad = 2 + r_imperatives[cs_ptr->sc.runetrap.mod].radius;
+	//Hacky quick 'ball' damage calc - Kurzel
+	dam = r_projections[cs_ptr->sc.runetrap.typ].weight * rget_level(25) * rget_level(25) / W_MAX_DIR;
+	dam = dam * r_imperatives[cs_ptr->sc.runetrap.mod].damage / 10;
+	if (dam < 1) dam = 1;
+	
 	remove_rune_trap_upkeep(0, cs_ptr->sc.runetrap.id, p_ptr->px, p_ptr->py);
 
-
 #ifdef USE_SOUND_2010
-	if (cs_ptr->sc.runetrap.typ != RUNETRAP_DETO) {
+	if (typ != GF_DETONATION) {
 		sound(Ind, "ball", NULL, SFX_TYPE_MISC, FALSE);
 	} else {
 		sound(Ind, "detonation", NULL, SFX_TYPE_MISC, FALSE);
@@ -2470,39 +4160,9 @@ void rune_trap_backlash(int Ind)
 	/* Trapping skill influences damage - C. Blue */
 	//dam *= (5 + cs_ptr->sc.runetrap.mod); dam /= 10;
 	//dam *= (50 + cs_ptr->sc.runetrap.lev); dam /= 100;
-	if (dam > S_DAM_MAX)
-	{
-		dam = S_DAM_MAX;
-	}
-	if (dam < 1)
-	{
-		dam = 1;
-	}
-	dam = (dam * (r_imperatives[cs_ptr->sc.runetrap.mod].dam != 0 ? r_imperatives[cs_ptr->sc.runetrap.mod].dam : randint(15)+5)) / 10;
-	//dam = (dam * d_multiplier) / 10;
-	//Use runespell damage calculation, hardcoded types? (see tables.c) - Kurzel
-		switch (cs_ptr->sc.runetrap.typ) {
-	case RUNETRAP_DETO:
-		dam = (dam * 16) / 10;
-		break;
-	case RUNETRAP_ACID:
-		dam = (dam * 11) / 10;
-		break;
-	case RUNETRAP_ELEC:
-		dam = (dam * 11) / 10;
-		break;
-	case RUNETRAP_FIRE:
-		dam = (dam * 11) / 10;
-		break;
-	case RUNETRAP_COLD:
-		dam = (dam * 11) / 10;
-		break;
-	default:
-		s_printf("oops! nonexisting rune trap(typ: %d)!\n", cs_ptr->sc.runetrap.typ);
-	}
 	
 	//Use minor backlash calculation. - Kurzel
-	dam = dam / 10;
+	dam = dam / 5;
 
 	project(PROJECTOR_RUNE, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, typ, PROJECT_KILL | PROJECT_NORF, "");
 }
@@ -2528,6 +4188,7 @@ void remove_rune_trap_upkeep(int Ind, s32b id, int x, int y) {
 
 	/* erase all traps of a player? (when leaving/changing wpos) */
 	if (x == -1) {
+		p_ptr->rcraft_upkeep -= p_ptr->runetraps * (100 / UPKEEP_TRAP);
 		p_ptr->runetraps = 0;
 		calc_mana(Ind);
 		return;
@@ -2541,11 +4202,80 @@ void remove_rune_trap_upkeep(int Ind, s32b id, int x, int y) {
 				p_ptr->runetrap_y[i] = p_ptr->runetrap_y[i + 1];
 			}
 			p_ptr->runetrap_x[i] = p_ptr->runetrap_y[i] = 0;
+			p_ptr->rcraft_upkeep -=  100 / UPKEEP_TRAP;
 			p_ptr->runetraps--;
 			break;
 		}
 	}
 	calc_mana(Ind);
+}
+
+/* Check if setting a rune portal is possible - Kurzel */
+bool set_rune_port_okay(int Ind, byte type) {
+	player_type *p_ptr = Players[Ind];
+
+	cave_type *c_ptr;
+	cave_type **zcave;
+
+	zcave = getcave(&p_ptr->wpos);
+	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+
+	if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) ||
+	    (c_ptr->info & CAVE_PROT)) {
+		msg_print(Ind, "You cannot set rune portals on this special floor.");
+		return FALSE;
+	}
+
+	/* Only set traps on clean floor grids */
+	/* TODO: allow to set traps on poisoned floor */
+	if (!cave_clean_bold(zcave, p_ptr->py, p_ptr->px) ||
+	    c_ptr->special || c_ptr->feat == FEAT_RUNE_PORT || istown(&p_ptr->wpos)) { //don't override existing portals - Kurzel
+		msg_print(Ind, "You cannot set a portal here.");
+		return FALSE;
+	}
+	
+	/* Can we sustain one more rune portal? */
+	if (!p_ptr->memory_feat[type] && p_ptr->rcraft_upkeep + UPKEEP_PORT > 100) {
+		msg_print(Ind, "\377oYou cannot sustain another rune portal!");
+		return FALSE;
+	}
+
+	/* looks ok */
+	return TRUE;
+}
+
+void set_rune_port_aux(int Ind, byte type) {
+	player_type *p_ptr = Players[Ind];
+	int py = p_ptr->py, px = p_ptr->px;
+
+	cave_type *c_ptr;
+	cave_type **zcave;
+
+	zcave = getcave(&p_ptr->wpos);
+	c_ptr = &zcave[py][px];
+
+	/* Handle existing portals */
+	byte j;
+	for (j = 0; j < 5; j++) {
+		if (p_ptr->memory_feat[j] && j == type) {
+			/* Restore the feature of the previous existing portal */
+			cave_set_feat_live(&p_ptr->wpos_old, p_ptr->memory_port[j].y, p_ptr->memory_port[j].x, p_ptr->memory_feat[j]);
+			p_ptr->rcraft_upkeep -= UPKEEP_PORT;
+		}
+	}
+
+	/* Store the portal info */
+	p_ptr->memory_feat[type] = c_ptr->feat;
+	wpcopy(&p_ptr->memory_port[type].wpos, &p_ptr->wpos);
+	p_ptr->memory_port[type].x = px;
+	p_ptr->memory_port[type].y = py;
+	
+	/* Upkeep */
+	p_ptr->rcraft_upkeep += UPKEEP_PORT;
+	calc_mana(Ind);
+	
+	/* Set the Portal */
+	cave_set_feat_live(&p_ptr->wpos, py, px, FEAT_RUNE_PORT);
 }
 
 #endif

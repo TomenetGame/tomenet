@@ -399,25 +399,33 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		if (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) f1 |= (TR1_BRAND_COLD | TR1_BRAND_FIRE);
 		/* Temporary weapon branding */
 		if ((p_ptr->inventory[INVEN_WIELD].k_idx || 
-		    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) && /* dual-wield */
-		    p_ptr->brand) {
-			switch (p_ptr->brand_t) {
-			case BRAND_ELEC:
-				f1 |= TR1_BRAND_ELEC;
-				break;
-			case BRAND_COLD:
-				f1 |= TR1_BRAND_COLD;
-				break;
-			case BRAND_FIRE:
-				f1 |= TR1_BRAND_FIRE;
-				break;
-			case BRAND_ACID:
-				f1 |= TR1_BRAND_ACID;
-				break;
-			case BRAND_POIS:
-				f1 |= TR1_BRAND_POIS;
-				break;
+		    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD))) {
+			if (p_ptr->brand) {
+				switch (p_ptr->brand_t) {
+				case BRAND_ELEC:
+					f1 |= TR1_BRAND_ELEC;
+					break;
+				case BRAND_COLD:
+					f1 |= TR1_BRAND_COLD;
+					break;
+				case BRAND_FIRE:
+					f1 |= TR1_BRAND_FIRE;
+					break;
+				case BRAND_ACID:
+					f1 |= TR1_BRAND_ACID;
+					break;
+				case BRAND_POIS:
+					f1 |= TR1_BRAND_POIS;
+					break;
+				}
 			}
+			//Runemaster Elemental Brands - Kurzel
+			if (p_ptr->tim_brand_acid) f1 |= TR1_BRAND_ACID; 
+			if (p_ptr->tim_brand_elec) f1 |= TR1_BRAND_ELEC;
+			if (p_ptr->tim_brand_fire) f1 |= TR1_BRAND_FIRE;
+			if (p_ptr->tim_brand_cold) f1 |= TR1_BRAND_COLD;
+			if (p_ptr->tim_brand_pois) f1 |= TR1_BRAND_POIS;
+			//if (p_ptr->tim_brand_vorp) f5 |= TR5_VORPAL; //Was deemed too complex / conflicting with criticals / poorly attributed? - Kurzel!!
 		}
 	}
 
@@ -3218,6 +3226,19 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				}
 			}
 
+			/* Confusion attack via Brand - Kurzel */
+			if (p_ptr->tim_brand_conf && (randint(3) == 1)) {
+				/* Confuse the monster */
+				if (q_ptr->resist_conf) {
+					msg_format(Ind, "%^s is unaffected.", q_name);
+				} else if (rand_int(100) < q_ptr->lev) {
+					msg_format(Ind, "%^s resists the effect.", q_name);
+				} else {
+					msg_format(Ind, "%^s appears confused.", q_name);
+					set_confused(0 - c_ptr->m_idx, q_ptr->confused + 3 + rand_int(2 + get_skill_scale(p_ptr, SKILL_COMBAT, 10)));
+				}
+			}
+
 			/* Stunning attack */
 			if (p_ptr->stunning) {
 				/* Cancel heavy hands */
@@ -3257,6 +3278,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				leech /= 10;
 				hp_player_quiet(Ind, rand_int(leech), TRUE);
 			}
+			
 		}
 
 		/* Player misses */
@@ -4201,6 +4223,65 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				}
 			}
 
+			/* Runie Confusion Brand - Kurzel */
+			if ((p_ptr->rcraft_brand == BRAND_CONF) && (randint(6) == 1)) {
+			/* Confuse the monster */
+				if (r_ptr->flags3 & RF3_NO_CONF) {
+#ifdef OLD_MONSTER_LORE
+					if (p_ptr->mon_vis[c_ptr->m_idx]) r_ptr->r_flags3 |= RF3_NO_CONF;
+#endif
+					msg_format(Ind, "%^s is unaffected.", m_name);
+				} else if (rand_int(100) < r_ptr->level) {
+					msg_format(Ind, "%^s resists the effect.", m_name);
+				} else {
+					msg_format(Ind, "%^s appears confused.", m_name);
+					m_ptr->confused += 10 + rand_int(p_ptr->lev) / 5 + rand_int(get_skill_scale(p_ptr, SKILL_COMBAT, 5));
+				}
+			}
+			
+			/* Runie Annihilation Brand (phasing out the vorpal/sharp effect?) - Kurzel!! */
+			if ((p_ptr->rcraft_brand == BRAND_VORP) && (randint(6) == 1)) {
+				/* Annihilate the monster -- fixed 5% value! */
+				byte hp_cut = 5;
+				/* Prevent internal overflow (int) - allow up to 35% leech */
+				if (m_ptr->hp > 9362)
+					hp_cut = (m_ptr->hp / 100) * hp_cut;
+				else if (m_ptr->hp > 936)
+					hp_cut = ((m_ptr->hp / 10) * hp_cut) / 10;
+				else
+					hp_cut = (m_ptr->hp * hp_cut) / 100;
+
+				if ((r_ptr->flags3 & RF3_UNDEAD) ||
+	//				(r_ptr->flags3 & RF3_DEMON) ||
+					(r_ptr->flags3 & RF3_NONLIVING) ||
+					(r_ptr->flags1 & RF1_UNIQUE) ||
+					(strchr("Egv", r_ptr->d_char)))
+				{
+	#ifdef OLD_MONSTER_LORE
+					if (r_ptr->flags3 & RF3_UNDEAD)
+					{
+						if (seen) r_ptr->r_flags3 |= RF3_UNDEAD;
+					}
+	//				if (r_ptr->flags3 & RF3_DEMON)
+	//				{
+	//					if (seen) r_ptr->r_flags3 |= RF3_DEMON;
+	//				}
+					if (r_ptr->flags3 & RF3_NONLIVING)
+					{
+						if (seen) r_ptr->r_flags3 |= RF3_NONLIVING;
+					}
+					if (r_ptr->flags1 & RF1_UNIQUE)
+					{
+						if (seen) r_ptr->r_flags1 |= RF1_UNIQUE;
+					}
+	#endif
+
+					msg_format(Ind, "%^s is unaffected.", m_name);
+					hp_cut = 0;
+				}
+				m_ptr->hp -= hp_cut;//Kurzel!!
+			}
+			
 			/* Confusion attack */
 			if ((p_ptr->confusing) || (chaos_effect == 3)) {
 				/* Cancel glowing hands */
@@ -4316,6 +4397,14 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				leech /= 10;
 				hp_player_quiet(Ind, rand_int(leech), TRUE);
 			}
+			
+#if 0
+			//Runemaster Explosive Brands - 1/bpr% chance (only ~1 per turn) - Kurzel
+			if (p_ptr->tim_brand_ex && randint(p_ptr->num_blow) == 1) {
+				msg_format(Ind, "The runes about your hands explode with %s!", r_projections[p_ptr->tim_brand_ex_projection].name);
+				project(0 - Ind, 1, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->tim_brand_ex_damage, r_projections[p_ptr->tim_brand_ex_projection].gf_type, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+			}
+#endif
 		}
 
 		/* Player misses */
@@ -4570,7 +4659,7 @@ void py_touch_zap_player(int Ind, int Ind2)
 	player_type *q_ptr = Players[Ind2], *p_ptr = Players[Ind];
 	int aura_damage = 0;
 
-	if (q_ptr->sh_fire) {
+	if (q_ptr->sh_fire || q_ptr->tim_aura_fire) {
 		if (!(p_ptr->immune_fire)) {
 			aura_damage = damroll(2, 6);
 			if (p_ptr->oppose_fire) aura_damage = (aura_damage + 2) / 3;
@@ -4582,7 +4671,7 @@ void py_touch_zap_player(int Ind, int Ind2)
 			handle_stuff(Ind);
 		}
 	}
-	if (q_ptr->sh_cold) {
+	if (q_ptr->sh_cold || q_ptr->tim_aura_cold) {
 		if (!(p_ptr->immune_cold)) {
 			aura_damage = damroll(2, 6);
 			if (p_ptr->oppose_cold) aura_damage = (aura_damage + 2) / 3;
@@ -4594,7 +4683,7 @@ void py_touch_zap_player(int Ind, int Ind2)
 			handle_stuff(Ind);
 		}
 	}
-	if (q_ptr->sh_elec) {
+	if (q_ptr->sh_elec || q_ptr->tim_aura_elec) {
 		if (!(p_ptr->immune_elec)) {
 			aura_damage = damroll(2, 6);
 			if (p_ptr->oppose_elec) aura_damage = (aura_damage + 2) / 3;
@@ -4606,6 +4695,20 @@ void py_touch_zap_player(int Ind, int Ind2)
 			handle_stuff(Ind);
 		}
 	}
+#if 0
+	if (q_ptr->tim_aura_acid) {
+		if (!(p_ptr->immune_acid)) {
+			aura_damage = damroll(2, 6);
+			if (p_ptr->oppose_acid) aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->resist_acid) aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->suscep_acid) aura_damage = aura_damage * 2;
+
+			msg_format(Ind, "You are melted by acid for \377w%d\377w damage!", aura_damage);
+			take_hit(Ind, aura_damage, "an acid aura", Ind2);
+			handle_stuff(Ind);
+		}
+	}
+#endif
 }
 
 
@@ -6764,6 +6867,11 @@ void run_step(int Ind, int dir)
 int apply_dodge_chance(int Ind, int attack_level) {
 	int plev = Players[Ind]->lev;
 	int skill = get_skill(Players[Ind], SKILL_DODGE);
+	
+	//Dodge boost spell - Kurzel
+	int max_dodge_skill = ((plev + 2) < (SKILL_MAX / 1000)) ? (plev + 2) : 50;
+	if (Players[Ind]->tim_dodge) skill += (skill < (max_dodge_skill - Players[Ind]->tim_dodge_pow)) ? Players[Ind]->tim_dodge_pow : (max_dodge_skill - skill);
+	
 	int dodge = Players[Ind]->dodge_level;
 	int chance;
 

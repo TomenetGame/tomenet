@@ -1,4 +1,5 @@
 /* $Id$ */
+/* File: c-spell.c */
 /* Client-side spell stuff */
 
 #include "angband.h"
@@ -1410,277 +1411,246 @@ void do_ranged_technique()
   Send_activate_skill(MKEY_RANGED, 0, technique, 0, 0, 0);
 }
 
-
 #ifdef ENABLE_RCRAFT
 
-static int b_compare (const void * a, const void * b)
-{
-	return ( *(byte*)b - *(byte*)a );
-}
+/** Duplicate Code (static) -- /server/runecraft.c  - Kurzel **/
 
-static byte runes_in_flag(byte runes[], u32b flags)
-{
-	if ((flags & R_ACID) == R_ACID) { runes[0] = 1; } else { runes[0] = 0; }
-	if ((flags & R_ELEC) == R_ELEC) { runes[1] = 1; } else { runes[1] = 0; }
-	if ((flags & R_FIRE) == R_FIRE) { runes[2] = 1; } else { runes[2] = 0; }
-	if ((flags & R_COLD) == R_COLD) { runes[3] = 1; } else { runes[3] = 0; }
-	if ((flags & R_POIS) == R_POIS) { runes[4] = 1; } else { runes[4] = 0; }
-	if ((flags & R_FORC) == R_FORC) { runes[5] = 1; } else { runes[5] = 0; }
-	if ((flags & R_WATE) == R_WATE) { runes[6] = 1; } else { runes[6] = 0; }
-	if ((flags & R_EART) == R_EART) { runes[7] = 1; } else { runes[7] = 0; }
-	if ((flags & R_CHAO) == R_CHAO) { runes[8] = 1; } else { runes[8] = 0; }
-	if ((flags & R_NETH) == R_NETH) { runes[9] = 1; } else { runes[9] = 0; }
-	if ((flags & R_NEXU) == R_NEXU) { runes[10] = 1; } else { runes[10] = 0; }
-	if ((flags & R_TIME) == R_TIME) { runes[11] = 1; } else { runes[11] = 0; }
-	
-	return 0;
-}
-
-/* rspell_type
-
-Selects a spell based on the rspell_selector[] array 
-*/
-static u32b rspell_type (u32b flags)
-{
-	u16b i;
-	
-	for (i = 0; i<MAX_RSPELL_SEL; i++)
-	{
-		if (rspell_selector[i].flags)
-		{
-			if ((rspell_selector[i].flags & flags) == rspell_selector[i].flags)
-			{
-				return rspell_selector[i].type;
-			}
+static byte flags_to_elements(byte element[], u16b e_flags) {
+	byte elements = 0;
+	byte i;
+	for (i = 0; i < RCRAFT_MAX_ELEMENTS; i++) {
+		if ((e_flags & r_elements[i].flag) == r_elements[i].flag) {
+			element[elements] = i;
+			elements++;
 		}
 	}
-	return RT_NONE;
+	return elements;
 }
 
-/* rspell_skill (for client level comparison in color selector) - Kurzel
-
-Calculates a skill average value for the requested runes.
-
-Uses a series of formulas created by Kurzel.
-
-Assumes a max of 3 runes in a spell. Needs to be adjusted if this ever changes.
-Also assumes that the rune skill flags are in order, starting with FIRECOLD.
-*/
-static u16b rspell_skill_client(u32b s_type) //u16b rspell_skill_client(u32b s_flags);
-{
-	u16b s = 0; u16b i; u16b skill = 0; u16b value = 0;
-	s16b a=0,b=0,c=0;
-	
-	byte rune_c = 0;
-	byte skill_c = 0;
-	byte skills[RCRAFT_MAX_ELEMENTS/2] = {0,0,0,0,0,0};
-	byte runes[3] = {0,0,0};
-	
-	byte s_runes[RCRAFT_MAX_ELEMENTS];
-	runes_in_flag(s_runes, s_type);
-	
-	for (i=0; i<RCRAFT_MAX_ELEMENTS; i++)
-	{
-		if (s_runes[i]==1)
-		{
-			skill = r_elements[i].skill;
-			value = get_skill(skill);
-			//Ugh. We need an index from 0-7. FIRECOLD through MINDNEXU is 96-103
-			//skills[skill - SKILL_R_FIRECOLD] = 1;
-			skills[skill - SKILL_R_ACIDWATE] = 1;
-			//ACIDWATE through FORCTIME is 96-101.
-			if (rune_c > 2)
-			{
-				break;
-			}
-			
-			runes[rune_c++] = value;
-		}
+static byte flags_to_imperative(u16b m_flags) {
+	byte i;
+	for (i = 0; i < RCRAFT_MAX_IMPERATIVES; i++) {
+		if ((m_flags & r_imperatives[i].flag) == r_imperatives[i].flag) return i;
 	}
-	
-	for (i=0; i<RCRAFT_MAX_ELEMENTS/2; i++)
-	{
-		if (skills[i]==1)
-		{
-			skill_c++;
-		}
+	return -1;
+}
+
+static byte flags_to_type(u16b m_flags) {
+	byte i;
+	for (i = 0; i < RCRAFT_MAX_TYPES; i++) {
+		if ((m_flags & r_types[i].flag) == r_types[i].flag) return i;
 	}
-	
-	if (rune_c == 1 || (rune_c == 2 && runes[0] == runes[1]) || (rune_c == 3 && (runes[0] == runes[1] && runes[1] == runes[2])))
-	{
-		return runes[0];
+	return -1;
+}
+
+static byte rspell_skill(byte element[], byte elements) {
+	u16b skill = 0;
+	byte i;
+	for (i = 0; i < elements; i++) {
+		skill += get_skill(r_elements[element[i]].skill);
 	}
-	
-	qsort(runes, 3, sizeof(byte), b_compare);
-	
-	switch (skill_c)
-	{
+	skill /= elements;
+	return (byte)skill;
+}
+
+static byte rspell_level(byte element[], byte elements, byte imperative, byte type) {
+	u16b level = 0;
+	byte i;
+	for (i = 0; i < elements; i++) {
+		level += r_elements[element[i]].level;
+	}
+	level += r_imperatives[imperative].level;
+	level += r_types[type].level;
+	/* Normalize */
+	switch (elements) {
+		case 1:
+		level = level * (50 - RSPELL_MIN_LVL_1) / RSPELL_MAX_LVL_1 + RSPELL_MIN_LVL_1;
+		break;
 		case 2:
-			if (rune_c == 2)
-			{
-				a = 50 * R_CAP / 100;
-				
-				s = ((a*runes[0])+((100-a)*runes[1])) / 100;
-			}
-			else if (rune_c == 3)
-			{
-				if (runes[1] == runes[2])
-				{
-					a = 33 * R_CAP / 100;
-				}
-				else // if (runes[0] == runes[1])
-				{
-					a = 66 * R_CAP / 100;
-				}
-				
-				s = ((a*runes[0])+((100-a)*runes[1])) / 100;
-			}
-			break;
-		
+		level = level * (50 - RSPELL_MIN_LVL_2) / RSPELL_MAX_LVL_2 + RSPELL_MIN_LVL_2;
+		break;
 		case 3:
-			a = 33 * R_CAP / 100;
-			b = 33;
-			c = 100 - a - b;
-			
-			s = (a*runes[0] + b*runes[1] + c*runes[2]) / 100;
-			break;
-		
-		default:
-			s = runes[0];
-			break;
+		level = level * (50 - RSPELL_MIN_LVL_3) / RSPELL_MAX_LVL_3 + RSPELL_MIN_LVL_3;
 	}
+	return (byte)level;
+}
+
+static s16b rspell_diff(byte skill, byte level) {
+	s16b diff = skill - level;
+	if (diff > S_DIFF_MAX) return S_DIFF_MAX;
+	else return diff;
+}
+
+static byte rspell_fail(byte element[], byte elements, byte imperative, byte type, s16b diff, byte mali) {
+
+	/* Set the base failure rate; currently 50% at equal skill to level such that the range is [5,95] over 30 levels - Kurzel */
+	s16b fail = 3 * (S_DIFF_MAX - diff) + 5;
+
+	if (p_ptr->rcraft_augment == -1) {
+		byte i;
+		for (i = 0; i < elements; i++) {
+			fail += r_elements[element[i]].fail / elements;
+		}
+	}
+	else fail += r_elements[p_ptr->rcraft_augment].fail;
+	fail += r_imperatives[imperative].fail;
+	fail += r_types[type].fail;
+
+	fail += mali; //Place before stat modifier; casters of great ability can reduce the penalty for casting while hindered. - Kurzel
 	
-	return s;
+	/* Reduce failure rate by STAT adjustment */
+	fail -= 3 * ((adj_mag_stat[p_ptr->stat_ind[A_INT]] * 65 + adj_mag_stat[p_ptr->stat_ind[A_DEX]] * 35) / 100 - 1);
+	
+	/* Extract the minimum failure rate */
+        s16b minfail = (adj_mag_fail[p_ptr->stat_ind[A_INT]] * 65 + adj_mag_fail[p_ptr->stat_ind[A_DEX]] * 35) / 100;
+
+	/* Minimum failure rate */
+	if (fail < minfail) fail = minfail;
+	
+	/* Always a 5 percent chance of working */
+	if (fail > 95) fail = 95;
+	
+	return fail;
 }
 
-/* Color-selector Code - Kurzel.
-   Return colour that indicates difficulty of a rune spell depending on
-   the choice of certain runes, imperative (via level_mod), method (via level_mod). */
-char runecraft_colourize(u32b flags, int level_mod) {
-	s32b s_av = 0;
-	s32b e_level = 0;
+/** End Duplicate Code **/
 
-	e_level = runespell_list[rspell_type(flags)].level + level_mod;
-	s_av = rspell_skill_client(flags);
+char rcraft_threat_color(u16b e_flags, u16b m_flags) {
 
-	/* catch if we don't know the runes and hence can't cast this spell at all */
-	if (s_av <= 0) return 'D';
+	/* Decode elements */
+	byte element[RSPELL_MAX_ELEMENTS];
+	byte elements = flags_to_elements(element, e_flags);
 
-	if (e_level < (s_av - 10)) return 'B';
-	else if (e_level < s_av) return 'w';
-	else if (e_level < (s_av +  5)) return 'y';
-	else if (e_level < (s_av + 15)) return 'o';
-	else return 'D';
+	/* Decode modifiers */
+	byte imperative = flags_to_imperative(m_flags);
+	byte type = flags_to_type(m_flags);
+	
+	/* Hack -- If unselected, use 'neutral' modifiers: moderate/self - Kurzel */
+	if (imperative == -1) imperative = 1;
+	if (type == -1) type = 1;
+	
+	s16b diff = rspell_diff(rspell_skill(element, elements), rspell_level(element, elements, imperative, type));
+	byte fail = rspell_fail(element, elements, imperative, type, diff, 0); //Assume mali/penalties are 0 - Kurzel
+
+	/* We force a sane level range for spell access, so illustrate this - Kurzel */
+	if (diff < -S_DIFF_MAX) return 'D';
+
+	/* Return a colour; based on rspell_penalty() - Kurzel */
+	if (fail > 60) return 'r';
+	else if (fail > 30) return 'o';
+	else if (fail > 15) return 'y';
+	else if (fail > 5) return 'w';
+	else if (fail == 0) return 'B';
+
+	return 'v'; /* shouldn't happen */
 }
 
-static void print_runes(u32b flags)
-{
-	int col = 10, j = 2, i;
+static void rcraft_print_elements(u16b e_flags) {
+	int col = 13, j = 2, i;
 	char tmpbuf[80];
 	
-	/* Title the list */
-	prt("", 1, col); put_str("Element,       Rune", 1, col);
+	/* Print the header */
+	prt("", 1, col);
+	put_str("Element", 1, col);
 
+	/* Print the list */
 	for (i = 0; i < RCRAFT_MAX_ELEMENTS; i++) {
-		if ((flags & r_elements[i].self) != r_elements[i].self) {
-			sprintf(tmpbuf, "%c) \377%c%-11s\377w '%s'",
-			    'a' + i,
-			    runecraft_colourize(flags | r_elements[i].self, 0),
-			    r_elements[i].title,
-			    r_elements[i].e_syl);
+		if ((e_flags & r_elements[i].flag) != r_elements[i].flag) {
+			/* Fill a line */
+			sprintf(tmpbuf, "%c) \377%c%-11s",
+				'a' + i,
+				rcraft_threat_color(e_flags | r_elements[i].flag, I_MODE | T_SELF),
+				r_elements[i].name);		
+			/* Print the line */
 			prt("", j, col);
 			put_str(tmpbuf, j++, col);
 		}
 	}
 
-	prt("", j++, col);
-	put_str("Select the maximum of three runes, or press \"Return\" when done.", j++, col);
-
+	/* Print an instruction */
+	sprintf(tmpbuf, "Select up to a maximum of three elements.");
+	prt("", j, col);
+	put_str(tmpbuf, j++, col);
+	
 	/* Clear the bottom line */
-	prt("", j++, col);
+	prt("", j, col);
 }
 
-static void print_rune_imperatives(u32b flags)
-{
-	int col = 10, j = 2, i;
+static void rcraft_print_imperatives(u16b e_flags, u16b m_flags) {
+	int col = 13, j = 2, i;
 	char tmpbuf[80];
 
-	/* Title the list */
+	/* Print the header */
 	prt("", 1, col);
-	put_str("Name            ( Lvl, Dam%, Cost%, Fail% )", 1, col);
+	put_str("Imperative    (Level, Damage, Cost, Fail)", 1, col);
 
+	/* Fill the list */
 	for (i = 0; i < RCRAFT_MAX_IMPERATIVES; i++) {
-
-		/* catch 'chaotic' (only one that has dam or cost of zero) */
-		if (!r_imperatives[i].cost) {
-			sprintf(tmpbuf, "%c) \377%c%-10s\377w   (  %s%d, ???%%,  ???%%,  +??%% )",
-			    'a' + i,
-			    runecraft_colourize(flags, r_imperatives[i].level),
-			    r_imperatives[i].name,
-			    r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level);
-		} else {
-			/* normal imperatives */
-			sprintf(tmpbuf, "%c) \377%c%-10s\377w   (  %s%d, %3d%%,  %3d%%,  %s%2d%% )",
-			    'a' + i,
-			    runecraft_colourize(flags, r_imperatives[i].level),
-			    r_imperatives[i].name,
-			    r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level,
-			    r_imperatives[i].dam * 10,
-			    r_imperatives[i].cost * 10,
-			    r_imperatives[i].fail >= 0 ? "+" : "" , r_imperatives[i].fail);
+		/* Fill a line */
+		if (r_imperatives[i].flag == I_CHAO) { //Hack -- Chaotic displays ??? - Kurzel
+			sprintf(tmpbuf, "%c) \377%c%-10s\377w (   %s%d,   ???%%, ???%%, ???%%)",
+				'a' + i,
+				rcraft_threat_color(e_flags, m_flags | r_imperatives[i].flag),
+				r_imperatives[i].name,
+				r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level);
 		}
-
+		else {
+			sprintf(tmpbuf, "%c) \377%c%-10s\377w (   %s%d,   %s%d%%, %s%d%%, %s%d%%)",
+				'a' + i,
+				rcraft_threat_color(e_flags, m_flags | r_imperatives[i].flag),
+				r_imperatives[i].name,
+				r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level,
+				r_imperatives[i].damage >= 10 ? "" : " ", r_imperatives[i].damage * 10,
+				r_imperatives[i].cost >= 10 ? "" : " ", r_imperatives[i].cost * 10,
+				ABS(r_imperatives[i].fail) >= 10 ? (r_imperatives[i].fail >= 0 ? "+" : "") : (r_imperatives[i].fail >= 0 ? " +" : " "), r_imperatives[i].fail);
+		}
+		/* Print the line */
 		prt("", j, col);
 		put_str(tmpbuf, j++, col);
 	}
-
+	
 	/* Clear the bottom line */
-	prt("", j++, col);
+	prt("", j, col);
 }
 
-static void print_rune_methods(u32b flags, byte *imper)
-{
-	int col = 10, j = 2, i;
+static void rcraft_print_types(u16b e_flags, u16b m_flags) {
+	int col = 13, j = 2, i;
 	char tmpbuf[80];
 
-	/* Title the list */
+	/* Print the header */
 	prt("", 1, col);
-	put_str("Name         (  Lvl,  Cost%  )", 1, col);
-
+	put_str("Type          (Level, Cost)", 1, col);
+	
+	/* Print the list */
 	for (i = 0; i < RCRAFT_MAX_TYPES; i++) {
-		sprintf(tmpbuf, "%c) \377%c%-7s\377w   (  %s%d,   %3d%%  )",
-		    'a' + i,
-		    runecraft_colourize(flags, r_imperatives[(*imper)].level + runespell_types[i].cost),
-		    runespell_types[i].title,
-		    runespell_types[i].cost >= 0 ? "+" : "-", ABS(runespell_types[i].cost),
-		    runespell_types[i].pen * 10);
+		/* Fill a line */
+		sprintf(tmpbuf, "%c) \377%c%-10s\377w (   %s%d, %s%d%%)",
+			'a' + i,
+			rcraft_threat_color(e_flags, m_flags | r_types[i].flag),
+			r_types[i].name,
+			r_types[i].level >= 0 ? "+" : "", r_types[i].level,
+			r_types[i].cost >= 10 ? "" : " ", r_types[i].cost * 10);
+		/* Print the line */
 		prt("", j, col);
 		put_str(tmpbuf, j++, col);
 	}
-
+	
 	/* Clear the bottom line */
-	prt("", j++, col);
+	prt("", j, col);
 }
 
-static int get_rune_type(u32b s_flags, u32b *sn)
-{
-	int		i = 0; int num = 16;
-	bool		flag, redraw;
-	char		choice;
-	char		out_val[160];
+static bool rcraft_get_element(u16b e_flags, u16b *tempflag) {
+	int i = 0;
+	bool done = FALSE, redraw = FALSE;
+	char choice;
+	char out_val[160];
 
 	/* Assume cancelled */
-	(*sn) = 17;
+	*tempflag = RCRAFT_MAX_ELEMENTS + 1;
 
-	/* Nothing chosen yet */
-	flag = FALSE;
-
-	/* No redraw yet */
-	redraw = FALSE;
-
-	/* Build a prompt (accept all techniques) */
-	if (num)
-		strnfmt(out_val, 78, "(Runes %c-%c, *=List, ESC=exit, ENTER=done) Which runes? ", I2A(0), I2A(num-1));
+	/* Build a prompt */
+	if (RCRAFT_MAX_ELEMENTS)
+		strnfmt(out_val, 78, "(Runes %c-%c, *=List, ESC=exit, ENTER=done) Which runes? ", I2A(0), I2A(RCRAFT_MAX_ELEMENTS - 1));
 	else
 		strnfmt(out_val, 78, "No elements available - ESC=exit");
 
@@ -1693,12 +1663,13 @@ static int get_rune_type(u32b s_flags, u32b *sn)
 		Term_save();
 
 		/* Display a list of techniques */
-		print_runes(s_flags);
+		rcraft_print_elements(e_flags);
 	}
 
 	/* Get a technique from the user */
-	while (!flag && get_com(out_val, &choice))
+	while (!done && get_com(out_val, &choice))
 	{
+
 		/* Request redraw */
 		if ((choice == ' ') || (choice == '*') || (choice == '?'))
 		{
@@ -1712,7 +1683,7 @@ static int get_rune_type(u32b s_flags, u32b *sn)
 				Term_save();
 
 				/* Display a list of techniques */
-				print_runes(s_flags);
+				rcraft_print_elements(e_flags);
 			}
 
 			/* Hide the list */
@@ -1745,19 +1716,19 @@ static int get_rune_type(u32b s_flags, u32b *sn)
 			return FALSE;
 		}
 
-	       	/* extract request */
-		i = (islower(choice) ? A2I(choice) : 17);
+	       	/* Extract choice */
+		i = (islower(choice) ? A2I(choice) : (RCRAFT_MAX_ELEMENTS + 1));
 	      	if (i < 0) return FALSE;
 
-		/* Totally Illegal */
-		if (i>num)
+		/* Totally illegal */
+		if (i > RCRAFT_MAX_ELEMENTS)
 		{
 			bell();
 			continue;
 		}
 
 		/* Stop the loop */
-		flag = TRUE;
+		done = TRUE;
 	}
 
 	/* Restore the screen */
@@ -1771,14 +1742,12 @@ static int get_rune_type(u32b s_flags, u32b *sn)
 
 
 	/* Abort if needed */
-	if (!flag) return (FALSE);
+	if (!done) return (FALSE);
 
 	/* Save the choice */
-	if(i >= 0 && i < num)
-		(*sn) = r_elements[i].self;
-	else
-	{
-		*sn = 0;
+	if(i >= 0 && i < RCRAFT_MAX_ELEMENTS) *tempflag = r_elements[i].flag;
+	else {
+		*tempflag = 0;
 		return FALSE;
 	}
 
@@ -1786,30 +1755,18 @@ static int get_rune_type(u32b s_flags, u32b *sn)
 	return (TRUE);
 }
 
-static int get_rune_imperative(u32b s_flags, byte *sn)
-{
-	int		i, num = RCRAFT_MAX_IMPERATIVES;
-	bool		flag, redraw;
-	char		choice;
-	char		out_val[160];
-	byte            corresp[RCRAFT_MAX_IMPERATIVES];
-
-	for (i = 0; i < RCRAFT_MAX_IMPERATIVES; i++)
-		corresp[i] = r_imperatives[i].id;
+static bool rcraft_get_imperative(u16b e_flags, u16b m_flags, u16b *tempflag) {
+	int i = 0;
+	bool done = FALSE, redraw = FALSE;
+	char choice;
+	char out_val[160];
 
 	/* Assume cancelled */
-	(*sn) = num + 1;
-
-	/* Nothing chosen yet */
-	flag = FALSE;
-
-	/* No redraw yet */
-	redraw = FALSE;
+	*tempflag = RCRAFT_MAX_IMPERATIVES + 1;
 
 	/* Build a prompt (accept all techniques) */
-	if (num)
-		strnfmt(out_val, 78, "(Spell-power %c-%c, *=List, ESC=exit) What kind of effect? ",
-		    I2A(0), I2A(num-1));
+	if (RCRAFT_MAX_IMPERATIVES)
+		strnfmt(out_val, 78, "(Spell-power %c-%c, *=List, ESC=exit) Which imperative? ", I2A(0), I2A(RCRAFT_MAX_IMPERATIVES - 1));
 	else
 		strnfmt(out_val, 78, "No options available - ESC=exit");
 
@@ -1822,11 +1779,11 @@ static int get_rune_imperative(u32b s_flags, byte *sn)
 		Term_save();
 
 		/* Display a list of techniques */
-		print_rune_imperatives(s_flags);
+		rcraft_print_imperatives(e_flags, m_flags);
 	}
 
 	/* Get a technique from the user */
-	while (!flag && get_com(out_val, &choice))
+	while (!done && get_com(out_val, &choice))
 	{
 		/* Request redraw */
 		if ((choice == ' ') || (choice == '*') || (choice == '?'))
@@ -1841,7 +1798,7 @@ static int get_rune_imperative(u32b s_flags, byte *sn)
 				Term_save();
 
 				/* Display a list of techniques */
-				print_rune_imperatives(s_flags);
+				rcraft_print_imperatives(e_flags, m_flags);
 			}
 
 			/* Hide the list */
@@ -1861,19 +1818,19 @@ static int get_rune_imperative(u32b s_flags, byte *sn)
 			continue;
 		}
 
-	       	/* extract request */
-		i = (islower(choice) ? A2I(choice) : -1);
-	      	if (i >= num) i = num+1;
+	       	/* Extract choice */
+		i = (islower(choice) ? A2I(choice) : (RCRAFT_MAX_IMPERATIVES + 1));
+	      	if (i < 0) return FALSE;
 
-		/* Totally Illegal */
-		if (i>num)
+		/* Totally illegal */
+		if (i > RCRAFT_MAX_IMPERATIVES)
 		{
 			bell();
 			continue;
 		}
 
 		/* Stop the loop */
-		flag = TRUE;
+		done = TRUE;
 	}
 
 	/* Restore the screen */
@@ -1887,47 +1844,31 @@ static int get_rune_imperative(u32b s_flags, byte *sn)
 
 
 	/* Abort if needed */
-	if (!flag) return (FALSE);
+	if (!done) return (FALSE);
 
 	/* Save the choice */
-	if (i >= 0 && i <= num)
-	{
-		(*sn) = corresp[i];
-	}
-	else
+	if (i >= 0 && i < RCRAFT_MAX_IMPERATIVES) *tempflag = r_imperatives[i].flag;
+	else {
+		*tempflag = 0;
 		return FALSE;
+	}
 
 	/* Success */
 	return (TRUE);
 }
 
-static int get_rune_method(u32b s_flags, u32b *sn, byte *imperative, u16b *method)
-{
-	int		i, num = RCRAFT_MAX_TYPES;
-	bool		flag, redraw;
-	char		choice;
-	char		out_val[160];
-	byte            corresp[RCRAFT_MAX_TYPES];
-	
-	//Pass imperative - Kurzel
-	byte imper = (*imperative);
-
-	for (i = 0; i < RCRAFT_MAX_TYPES; i++)
-		corresp[i] = runespell_types[i].type;
+static bool rcraft_get_type(u16b e_flags, u16b m_flags, u16b *tempflag) {
+	int i = 0;
+	bool done = FALSE, redraw = FALSE;
+	char choice;
+	char out_val[160];
 
 	/* Assume cancelled */
-	(*sn) = num + 1;
-
-	/* Nothing chosen yet */
-	flag = FALSE;
-
-	/* No redraw yet */
-	redraw = FALSE;
+	*tempflag = RCRAFT_MAX_TYPES + 1;
 
 	/* Build a prompt (accept all techniques) */
-	if (num)
-		strnfmt(out_val, 78, "(Spell-types %c-%c, *=List, ESC=exit) Which spell type? ",
-		    I2A(0), I2A(num-1));
+	if (RCRAFT_MAX_TYPES)
+		strnfmt(out_val, 78, "(Spell-types %c-%c, *=List, ESC=exit) Which type? ", I2A(0), I2A(RCRAFT_MAX_TYPES - 1));
 	else
 		strnfmt(out_val, 78, "No methods available - ESC=exit");
 
@@ -1940,11 +1881,11 @@ static int get_rune_method(u32b s_flags, u32b *sn, byte *imperative, u16b *metho
 		Term_save();
 
 		/* Display a list of techniques */
-		print_rune_methods(s_flags, &imper);
+		rcraft_print_types(e_flags, m_flags);
 	}
 
 	/* Get a technique from the user */
-	while (!flag && get_com(out_val, &choice))
+	while (!done && get_com(out_val, &choice))
 	{
 		/* Request redraw */
 		if ((choice == ' ') || (choice == '*') || (choice == '?'))
@@ -1959,7 +1900,7 @@ static int get_rune_method(u32b s_flags, u32b *sn, byte *imperative, u16b *metho
 				Term_save();
 
 				/* Display a list of techniques */
-				print_rune_methods(s_flags, &imper);
+				rcraft_print_types(e_flags, m_flags);
 			}
 
 			/* Hide the list */
@@ -1979,19 +1920,19 @@ static int get_rune_method(u32b s_flags, u32b *sn, byte *imperative, u16b *metho
 			continue;
 		}
 
-	       	/* extract request */
-		i = (islower(choice) ? A2I(choice) : -1);
-	      	if (i >= num) i = num+1;
+	       	/* Extract choice */
+		i = (islower(choice) ? A2I(choice) : (RCRAFT_MAX_TYPES + 1));
+	      	if (i < 0) return FALSE;
 
-		/* Totally Illegal */
-		if (i > num)
+		/* Totally illegal */
+		if (i > RCRAFT_MAX_TYPES)
 		{
 			bell();
 			continue;
 		}
 
 		/* Stop the loop */
-		flag = TRUE;
+		done = TRUE;
 	}
 
 	/* Restore the screen */
@@ -2005,56 +1946,62 @@ static int get_rune_method(u32b s_flags, u32b *sn, byte *imperative, u16b *metho
 
 
 	/* Abort if needed */
-	if (!flag) return (FALSE);
+	if (!done) return (FALSE);
 
 	/* Save the choice */
-	if (i >= 0 && i <= num)
-	{
-		(*sn) = corresp[i];
-		(*method) = i;
-	}
-	else
+	if (i >= 0 && i < RCRAFT_MAX_TYPES) *tempflag = r_types[i].flag;
+	else {
+		*tempflag = 0;
 		return FALSE;
+	}
+	
 	/* Success */
 	return (TRUE);
 }
 
-void do_runespell()
-{
+void do_runespell() {
 	Term_load();
-	u32b s_flags = 0; u16b method = 0; byte imperative = 0; int dir = 0;
-	u32b flag = 0; int i = 0;
-	int part1 = 0; int part2 = 0;
+	u16b e_flags = 0, e_flags1 = 0, e_flags2 = 0, m_flags = 0, tempflag = 0;
+	int dir = 0;
 
-	for(i = 0; i<3; i++)
-	{
-		if(get_rune_type(s_flags,&flag))
-		{
-			s_flags |= flag;
-			flag = 0;
+	/* Request the Elements */
+	byte i;
+
+	for(i = 0; i < RSPELL_MAX_ELEMENTS; i++) {
+		if(rcraft_get_element(e_flags, &tempflag)) {
+			e_flags |= tempflag;
+			/* Encode Runes */
+			switch (i) {
+				case 0:
+				e_flags1 |= tempflag;
+				break;
+				case 1:
+				e_flags1 |= tempflag;
+				e_flags2 |= tempflag;
+				break;
+				case 2:
+				e_flags2 |= tempflag;
+				break;
+			}
 		}
-		else
-			break;
+		else break;
 	}
-	if(!s_flags) { Term_load(); return; } //Didn't set anything, user is trying to cancel
+	if(!e_flags) { Term_load(); return; }
+	
+	/* Request the Modifiers */
+	if(rcraft_get_imperative(e_flags, m_flags, &tempflag)) m_flags |= tempflag;
+	else { Term_load(); return; }
+	if(rcraft_get_type(e_flags, m_flags, &tempflag)) m_flags |= tempflag;
+	else { Term_load(); return; }
 
-	if(!get_rune_imperative(s_flags, &imperative)){ Term_load(); return; }
-
-	if(!get_rune_method(s_flags, &flag, &imperative, &method)) { Term_load(); return; }
-	else
-		s_flags |= flag;
-
-	if(s_flags == 0) { Term_load(); return; } //Empty spell
-
-	if(method != 1 && method != 5 && method != 7)
+	/* Request the Direction */
+	if (((m_flags & T_SELF) != T_SELF)
+	 && ((m_flags & T_WAVE) != T_WAVE)
+	 && ((m_flags & T_STOR) != T_STOR))
 		if (!get_dir(&dir)) return;
 
 	Term_load();
-
-	/* Split the long into two ints */
-	part1 = s_flags / 10000;
-	part2 = s_flags % 10000;
-	Send_activate_skill(MKEY_RCRAFT, part1, part2, dir, (int)imperative, 0);
+	Send_activate_skill(MKEY_RCRAFT, (int)(-32768 + e_flags1), (int)(-32768 + e_flags2), (int)dir, (int)(-32768 + m_flags), 0);
 }
 
 #endif

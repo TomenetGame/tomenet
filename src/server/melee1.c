@@ -914,6 +914,48 @@ bool make_attack_melee(int Ind, int m_idx)
 				    ((get_skill(p_ptr, SKILL_HDEFENSE) >= 50) && (r_ptr->flags3 & RF3_EVIL) &&
 					(p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev)))
 #else
+ #if 0
+				/* Runemaster Elemental Protections (Also give priority to ks) - Kurzel*/
+				switch (effect) {
+					case RBE_ACID: {
+					if (p_ptr->protacid
+					&& (((p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) || /* extra usefulness added (mostly for low levels): */
+					    ((p_ptr->lev < rlev) && (p_ptr->lev + 10 >= rlev) && (rand_int(24) > 12 + rlev - p_ptr->lev)))) {
+						msg_format(Ind, "%^s is repelled.", m_name);
+						continue; }
+					break; }
+					case RBE_ELEC: {
+					if (p_ptr->protelec
+					&& (((p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) || /* extra usefulness added (mostly for low levels): */
+					    ((p_ptr->lev < rlev) && (p_ptr->lev + 10 >= rlev) && (rand_int(24) > 12 + rlev - p_ptr->lev)))) {
+						msg_format(Ind, "%^s is repelled.", m_name);
+						continue; }
+					break; }
+					case RBE_FIRE: {
+					if (p_ptr->protfire
+					&& (((p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) || /* extra usefulness added (mostly for low levels): */
+					    ((p_ptr->lev < rlev) && (p_ptr->lev + 10 >= rlev) && (rand_int(24) > 12 + rlev - p_ptr->lev)))) {
+						msg_format(Ind, "%^s is repelled.", m_name);
+						continue; }
+					break; }
+					case RBE_COLD: {
+					if (p_ptr->protcold
+					&& (((p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) || /* extra usefulness added (mostly for low levels): */
+					    ((p_ptr->lev < rlev) && (p_ptr->lev + 10 >= rlev) && (rand_int(24) > 12 + rlev - p_ptr->lev)))) {
+						msg_format(Ind, "%^s is repelled.", m_name);
+						continue; }
+					break; }
+					case RBE_DISEASE:
+					case RBE_POISON: {
+					if (p_ptr->protpois
+					&& (((p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) || /* extra usefulness added (mostly for low levels): */
+					    ((p_ptr->lev < rlev) && (p_ptr->lev + 10 >= rlev) && (rand_int(24) > 12 + rlev - p_ptr->lev)))) {
+						msg_format(Ind, "%^s is repelled.", m_name);
+						continue; }
+					break; }
+				}
+ #endif
+
 				prot = FALSE;
 				if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 30) && (r_ptr->flags3 & RF3_UNDEAD)) {
 					if ((p_ptr->lev * 2 >= rlev) && (rand_int(100) + p_ptr->lev > 50 + rlev))
@@ -2325,7 +2367,7 @@ bool make_attack_melee(int Ind, int m_idx)
 				 * Apply item auras
 				 */
 				/* Immolation / fire aura */
-				if (p_ptr->sh_fire && alive) {
+				if ((p_ptr->sh_fire || p_ptr->tim_aura_fire) && alive) {
 					if (!(r_ptr->flags3 & RF3_IM_FIRE)) {
 						player_aura_dam = damroll(2,6);
 						if (r_ptr->flags9 & RF9_RES_FIRE) player_aura_dam /= 3;
@@ -2344,7 +2386,7 @@ bool make_attack_melee(int Ind, int m_idx)
 #endif
 				}
 				/* Electricity / lightning aura */
-				if (p_ptr->sh_elec && alive) {
+				if ((p_ptr->sh_elec || p_ptr->tim_aura_elec) && alive) {
 					if (!(r_ptr->flags3 & RF3_IM_ELEC)) {
 						player_aura_dam = damroll(2,6);
 						if (r_ptr->flags9 & RF9_RES_ELEC) player_aura_dam /= 3;
@@ -2363,7 +2405,7 @@ bool make_attack_melee(int Ind, int m_idx)
 #endif
                                 }
 				/* Frostweaving / cold aura */
-				if (p_ptr->sh_cold && alive) {
+				if ((p_ptr->sh_cold || p_ptr->tim_aura_cold) && alive) {
 					if (!(r_ptr->flags3 & RF3_IM_COLD)) {
 						player_aura_dam = damroll(2,6);
 						if (r_ptr->flags9 & RF9_RES_COLD) player_aura_dam /= 3;
@@ -2381,6 +2423,35 @@ bool make_attack_melee(int Ind, int m_idx)
 					}
 #endif
 				}
+#if 0
+				/* Dissolving / acid aura - Kurzel */
+				if (p_ptr->tim_aura_acid && alive) {
+					if (!(r_ptr->flags3 & RF3_IM_ACID)) {
+						player_aura_dam = damroll(2,6);
+						if (r_ptr->flags9 & RF9_RES_ACID) player_aura_dam /= 3;
+						if (r_ptr->flags9 & RF9_SUSCEP_ACID) player_aura_dam *= 2;
+						msg_format(Ind, "%^s is enveloped in acid for %d damage!", m_name, player_aura_dam);
+						if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
+						    " dissolves")) {
+							blinked = FALSE;
+							alive = FALSE;
+						}
+					}
+#ifdef OLD_MONSTER_LORE
+					else {
+						if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags3 |= RF3_IM_ACID;
+					}
+#endif
+				}
+#endif
+
+#if 0
+				//Runemaster Explosive Shield - 50% chance - correct placement? - Kurzel
+				if (p_ptr->tim_aura_ex && randint(2) == 1 && alive) {
+					msg_format(Ind, "The runes about your body explode with %s!", r_projections[p_ptr->tim_aura_ex_projection].name);
+					project(0 - Ind, 1, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->tim_aura_ex_damage, r_projections[p_ptr->tim_aura_ex_projection].gf_type, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+				}
+#endif
 
 				/*
 				 *Apply the 'shield auras'

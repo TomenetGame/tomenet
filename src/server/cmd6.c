@@ -7226,7 +7226,7 @@ bool unmagic(int Ind)
 	 */
 	if (p_ptr->invuln) return FALSE;
 
-	if (
+	if ( //Kurzel!! - Unmagic all runie stuff?
 		set_adrenaline(Ind, 0) |
 		set_biofeedback(Ind, 0) |
 		set_tim_esp(Ind, 0) |

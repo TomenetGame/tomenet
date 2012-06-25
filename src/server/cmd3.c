@@ -1109,6 +1109,7 @@ return;
 	/* Give additional warning messages if item prevents a certain ability */
 	if (o_ptr->tval == TV_SHIELD) {
 		if (get_skill(p_ptr, SKILL_DODGE))
+		//if (get_skill(p_ptr, SKILL_DODGE) || p_ptr->tim_dodge) //Kurzel!!
 			msg_print(Ind, "\377yYou cannot dodge attacks while wielding a shield.");
 		if (get_skill(p_ptr, SKILL_MARTIAL_ARTS))
 			msg_print(Ind, "\377yYou cannot use special martial art styles with a shield.");

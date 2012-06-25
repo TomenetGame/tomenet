@@ -2079,6 +2079,72 @@ struct player_type
 
 	struct worldpos wpos;
 
+	/* New Runecraft Feature Variables - Kurzel */
+	s16b rcraft_augment;	/* Toggle -- Augment */
+	byte rcraft_project;	/* XOR Toggle (with istari project) */
+	s16b rcraft_xtra_a;	/* Charge -- First Rune */
+	s16b rcraft_xtra_b;	/* Charge -- Second Rune */
+	u16b tim_rcraft_xtra;	/* Timed -- Rune charges */
+
+	u16b tim_rcraft_help;	/* Timed -- Helper Timer */
+	byte tim_rcraft_help_type;
+	byte tim_rcraft_help_projection;
+	u32b tim_rcraft_help_damage;
+
+	byte rcraft_upkeep;	/* SP% Upkeep */
+	u16b rcraft_attune;
+	u16b rcraft_repel;
+	byte rcraft_brand;
+
+	u16b tim_brand_acid;
+	u16b tim_brand_elec;
+	u16b tim_brand_fire;
+	u16b tim_brand_cold;
+	u16b tim_brand_pois;
+	u16b tim_brand_vorp;
+	u16b tim_brand_conf;
+
+//	u16b tim_aura_acid;
+	u16b tim_aura_elec;
+	u16b tim_aura_fire;
+	u16b tim_aura_cold;
+
+	byte rcraft_dig;		/* PVAL+ */
+	byte rcraft_upkeep_flags;	/* 8 Flags */
+
+	u16b tim_necro;		/* Timed -- Necromancy */
+	u16b tim_necro_pow;
+	u16b tim_dodge;		/* Timed -- Dodging */
+	u16b tim_dodge_pow;
+	u16b tim_stealth;	/* Timed -- Stealth */
+	u16b tim_stealth_pow;
+
+#if 0
+	u16b tim_brand_ex;		/* Timed -- Explosive Brand/Aura */
+	byte tim_brand_ex_projection;
+	u32b tim_brand_ex_damage;
+	u16b tim_aura_ex;
+	byte tim_aura_ex_projection;
+	u32b tim_aura_ex_damage;
+#endif
+
+	u16b rcraft_empower;
+	u16b rcraft_regen;
+
+#if 0
+	u16b protacid;	/* Timed -- Protection */
+	u16b protelec;
+	u16b protfire;
+	u16b protcold;
+	u16b protpois;
+#endif
+
+	u16b tim_elemshield;	/* Timed -- Elemental Disruption Shield */
+	byte tim_elemshield_type;
+
+	struct worldspot memory_port[5];	/* Runemaster Memory Portal Locations */
+	byte memory_feat[5];			/* Byte to restore the original feat */
+
 	struct worldspot memory; /* Runemaster's remembered teleportation spot */
 	u16b tim_deflect;	/* Timed -- Deflection */
 	u16b tim_trauma;	/* Timed -- Traumaturgy */
@@ -2295,10 +2361,11 @@ struct player_type
 	s16b current_fire;
 	s16b current_throw;
 	s16b current_book;
-#ifdef ENABLE_RCRAFT
+#ifdef ENABLE_RCRAFT // Kurzel
 	s16b current_rcraft;
-	u32b current_rcraft_flags;
-	byte current_rcraft_imp;
+	u16b current_rcraft_e_flags1;
+	u16b current_rcraft_e_flags2;
+	u16b current_rcraft_m_flags;
 #endif
 	s16b current_selling;
 	s16b current_sell_amt;
@@ -2804,10 +2871,13 @@ struct player_type
 	bool shadow_running;
 	bool dual_mode; /* for dual-wield: TRUE = dual-mode, FALSE = main-hand-mode */
 
-#ifdef ENABLE_RCRAFT
+#ifdef ENABLE_RCRAFT //Kurzel
 	/* Last attack spell cast for ftk mode */
-	u32b shoot_till_kill_rune_spell;
-	byte shoot_till_kill_rune_modifier;
+	bool shoot_till_kill_rcraft;
+	u16b FTK_e_flags1;
+	u16b FTK_e_flags2;
+	u16b FTK_m_flags;
+	u16b FTK_energy;
 
 	/* New variables to keep track of new temporary debuffs on players */
 	int temporary_speed_dur, temporary_speed;
@@ -2815,7 +2885,7 @@ struct player_type
 	int temporary_to_l_dur, temporary_to_l;
 
 	/* Runecraft traps, draining MP as (uncontrollable!) upkeep each */
-	s16b runetraps, runetrap_x[RUNETRAP_UPKEEP], runetrap_y[RUNETRAP_UPKEEP];
+	s16b runetraps, runetrap_x[UPKEEP_TRAP], runetrap_y[UPKEEP_TRAP];
 	s16b msp_freely, msp_normal, runetrap_drain_life;
 #endif
 #if (defined(ENABLE_RCRAFT) || defined(DUNGEON_VISIT_BONUS))
@@ -3366,80 +3436,58 @@ struct global_event_type
 
 #ifdef ENABLE_RCRAFT
 
-typedef struct r_type r_type;
-/* Method list: bolt/beam/etc */
-struct r_type
-{
-	byte id;
-	u32b type; /* Flag */
-	char * title;
-	s16b cost; /* Extra levels required to cast */
-	byte pen; /* MP multiplier */
-};
-
 typedef struct r_element r_element;
-/* Element list */
 struct r_element
 {
-	byte id;
-	char * title; /* Description */
-	char * e_syl; /* Magical description (to remove?) */
-	byte cost; /* Base cost for use, used to calculate mp/damage/fail rates */
-	u16b skill; /* The skill pair which governs it */
-	u32b self; /* Its flag */
-};
-
-typedef struct r_spell r_spell;
-/* Spell list */
-struct r_spell
-{
-	int id;
-	char * title;
-	s16b dam; /* Damage multipler */
-	s16b pen; /* MP multiplier */
-	s16b level; /* Minimum level to cast */
-	s16b fail; /* Fail rate multiplier */
-	s16b radius; /* Radius at 50 before multipliers: linear scale */
-	u32b gf_type; /* Projection type */
-	u32b gf_explode; /* Exploding projection type - Kurzel */
-	u32b self; /* Augment rune type - Kurzel */
-};
-
-typedef struct r_imper r_imper;
-/* Spell potencies */
-struct r_imper
-{
-	int id;
+	u16b flag;
 	char * name;
-	s16b level; //Level +/-
-	s16b cost; //Cost multiplier
-	s16b fail; //Fail multiplier
-	s16b dam; //Damage multipler
-	s16b time; //Time to cast
-	s16b radius; //Radius +/-
-	s16b duration; //Duration multiplier
+	u16b skill;
+	s16b level;
+	s16b energy;
+	s16b cost;
+	s16b fail;
+	s16b damage;
+	s16b radius;
+	s16b duration;
 };
 
-typedef struct r_augment r_augment;
-/* Spell augmentations */
-struct r_augment
+typedef struct r_imperative r_imperative;
+struct r_imperative
 {
-	u32b rune; //Rune flag
-	s16b level; //Level required
-	s16b cost; //Cost multiplier
-	s16b fail; //Fail multiplier
-	s16b dam; //Damage multipler
-	s16b time; //Time to cast
-	s16b radius; //Radius +/-
-	s16b duration; //Duration multiplier
+	u16b flag;
+	char * name;
+	s16b level;
+	s16b energy;
+	s16b cost;
+	s16b fail;
+	s16b damage;
+	s16b radius;
+	s16b duration;
 };
 
-typedef struct rspell_sel rspell_sel;
-/* Spell selectors */
-struct rspell_sel
+typedef struct r_type r_type;
+struct r_type
 {
-	long flags;
-	int type;
+	u16b flag;
+	char * name;
+	s16b level;
+	s16b energy;
+	s16b cost;
+	s16b fail;
+	s16b damage;
+	s16b radius;
+	s16b duration;
+};
+
+typedef struct r_projection r_projection;
+struct r_projection
+{
+	u16b flags;
+	int gf_type;
+	int gf_class;
+	int weight;
+	char * adj;
+	char * name;
 };
 
 #endif /* ENABLE_RCRAFT */

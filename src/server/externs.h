@@ -1261,6 +1261,9 @@ extern void account_change_password(int Ind, char *old_pass, char *new_pass);
 
 extern int lookup_player_ind(u32b id);
 
+extern void backup_acclists(void);
+extern void restore_acclists(void);
+
 /* printout.c */
 extern int s_print_only_to_file(int which);
 extern int s_setup(char *str);
@@ -1745,10 +1748,6 @@ extern bool set_fast(int Ind, int v, int p);
 extern bool set_slow(int Ind, int v);
 extern bool set_tim_thunder(int Ind, int v, int p1, int p2);
 extern bool set_tim_regen(int Ind, int v, int p);
-#ifdef ENABLE_RCRAFT
-extern bool set_tim_trauma(int Ind, int v, int p);
-extern bool set_tim_deflect(int Ind, int v);
-#endif
 extern bool set_tim_ffall(int Ind, int v);
 extern bool set_tim_fly(int Ind, int v);
 extern bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2);
@@ -1989,6 +1988,7 @@ char *swear_get_word(int i);
 int swear_get_level(int i);
 void nonswear_set(int i, char *word);
 char *nonswear_get(int i);
+extern void lua_fix_max_depth(int Ind);
 
 
 #ifdef ENABLE_GO_GAME
@@ -2080,21 +2080,54 @@ extern int shutdown_recall_timer, shutdown_recall_state;
 /* runes.c */
 extern void cast_rune_spell(int, int);
 extern void cast_rune_spell_header(int Ind, int a, int b);
-#else
+#else //Kurzel
 /* runecraft.c */
-extern byte execute_rspell(u32b, byte, u32b, byte, bool);
 extern void rune_trap_backlash(int Ind);
 extern void remove_rune_trap_upkeep(int Ind, s32b id, int x, int y);
-extern s16b rspell_time(u32b Ind, byte imperative);
+extern bool set_rune_port_okay(int Ind, byte type);
+extern void set_rune_port_aux(int Ind, byte type);
+extern byte execute_rspell(u32b Ind, byte dir, u16b e_flags1, u16b e_flags2, u16b m_flags, bool retaliate);
 /* spells1.c */
 extern bool rune_backlash(int Ind, int typ, int dam);
 /* tables.c */
 extern r_element r_elements[RCRAFT_MAX_ELEMENTS];
-extern r_augment r_augments[RCRAFT_MAX_ELEMENTS];
-extern r_imper r_imperatives[RCRAFT_MAX_IMPERATIVES];
-extern r_type runespell_types[RCRAFT_MAX_TYPES];
-extern r_spell runespell_list[RT_MAX];
-extern rspell_sel rspell_selector[MAX_RSPELL_SEL];
+extern r_imperative r_imperatives[RCRAFT_MAX_IMPERATIVES];
+extern r_type r_types[RCRAFT_MAX_TYPES];
+extern r_projection r_projections[RCRAFT_MAX_PROJECTIONS];
+/* xtra2.c */
+extern bool set_tim_trauma(int Ind, int v, int p);
+extern bool set_tim_necro(int Ind, int v, int p);
+//extern bool set_tim_dodge(int Ind, int v, int p);
+extern bool set_tim_stealth(int Ind, int v, int p);
+
+extern bool set_tim_deflect(int Ind, int v);
+
+extern bool set_tim_rcraft_xtra(int Ind, int v);
+extern bool set_tim_rcraft_help(int Ind, byte duration, byte type, byte projection, u32b damage);
+
+extern bool set_tim_brand_acid(int Ind, int v);
+extern bool set_tim_brand_elec(int Ind, int v);
+extern bool set_tim_brand_fire(int Ind, int v);
+extern bool set_tim_brand_cold(int Ind, int v);
+extern bool set_tim_brand_pois(int Ind, int v);
+extern bool set_tim_brand_vorp(int Ind, int v);
+extern bool set_tim_brand_conf(int Ind, int v);
+
+extern bool set_tim_brand_ex(int Ind, int v, byte projection, u32b damage);
+extern bool set_tim_aura_ex(int Ind, int v, byte projection, u32b damage);
+
+extern bool set_tim_aura_acid(int Ind, int v);
+extern bool set_tim_aura_elec(int Ind, int v);
+extern bool set_tim_aura_fire(int Ind, int v);
+extern bool set_tim_aura_cold(int Ind, int v);
+
+extern bool set_protacid(int Ind, int v);
+extern bool set_protelec(int Ind, int v);
+extern bool set_protfire(int Ind, int v);
+extern bool set_protcold(int Ind, int v);
+extern bool set_protpois(int Ind, int v);
+
+extern bool set_tim_elemshield(int Ind, int v, byte type);
 #endif
 
 #ifdef MONSTER_ASTAR

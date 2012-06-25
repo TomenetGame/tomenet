@@ -234,6 +234,9 @@ bool set_tim_regen(int Ind, int v, int p)
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+	
+	/* Hack -- Runemaster upkeep */
+	if (p_ptr->rcraft_regen) v = 1;
 
 	/* Open */
 	if (v) {
@@ -280,10 +283,13 @@ bool set_tim_trauma(int Ind, int v, int p)
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 	
+	/* Hack -- Runemaster upkeep */
+	if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_TR) v = 1;
+	
 	/* Open */
 	if (v) {
 		if (!p_ptr->tim_trauma) {
-			msg_print(Ind, "You feel an unnatural desire for death and destruction.");
+			msg_print(Ind, "You feel an unnatural desire for destruction!");
 			notice = TRUE;
 		}
 	}
@@ -291,7 +297,7 @@ bool set_tim_trauma(int Ind, int v, int p)
 	/* Shut */
 	else {
 		if (p_ptr->tim_trauma) {
-			msg_print(Ind, "Your blood-lust fades.");
+			msg_print(Ind, "Your desire for destruction fades.");
 			notice = TRUE;
 		}
 	}
@@ -299,6 +305,139 @@ bool set_tim_trauma(int Ind, int v, int p)
 	/* Use the value */
 	p_ptr->tim_trauma = v;
 	p_ptr->tim_trauma_pow = p;
+	
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+bool set_tim_necro(int Ind, int v, int p) {
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+	
+	/* Hack -- Runemaster upkeep */
+	if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_NE) v = 1;
+	
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_necro) {
+			msg_print(Ind, "You feel an unnatural desire for death!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_necro) {
+			msg_print(Ind, "Your desire for death fades.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_necro = v;
+	p_ptr->tim_necro_pow = p;
+	
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+// bool set_tim_dodge(int Ind, int v, int p) { //Kurzel!!
+	// player_type *p_ptr = Players[Ind];
+	// bool notice = FALSE;
+
+	// /* Hack -- Force good values */
+	// v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+	
+	// /* Hack -- Runemaster upkeep */
+	// if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_DO) v = 1;
+	
+	// /* Open */
+	// if (v) {
+		// if (!p_ptr->tim_dodge) {
+			// msg_print(Ind, "Your pulse quickens!");
+			// notice = TRUE;
+			// calc_boni(Ind);
+		// }
+	// }
+
+	// /* Shut */
+	// else {
+		// if (p_ptr->tim_dodge) {
+			// msg_print(Ind, "Your pulse returns to normal.");
+			// notice = TRUE;
+			// calc_boni(Ind);
+		// }
+	// }
+
+	// /* Use the value */
+	// p_ptr->tim_dodge = v;
+	// p_ptr->tim_dodge_pow = p;
+	
+	// /* Nothing to notice */
+	// if (!notice) return (FALSE);
+
+	// /* Disturb */
+	// if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	// /* Handle stuff */
+	// handle_stuff(Ind);
+
+	// /* Result */
+	// return (TRUE);
+// }
+
+bool set_tim_stealth(int Ind, int v, int p) {
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+	
+	/* Hack -- Runemaster upkeep */
+	if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_ST) v = 1;
+	
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_stealth) {
+			msg_print(Ind, "Your presence is diminished.");
+			notice = TRUE;
+			calc_boni(Ind);
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_stealth) {
+			msg_print(Ind, "Your presence returns to normal.");
+			notice = TRUE;
+			calc_boni(Ind);
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_stealth = v;
+	p_ptr->tim_stealth_pow = p;
 	
 	/* Nothing to notice */
 	if (!notice) return (FALSE);
@@ -750,7 +889,7 @@ bool set_brand(int Ind, int v, int t, int p)
 		    case BRAND_CONF:
 		      msg_format(Ind, "%s glow%s many colors!", weapons, dual);
 		      break;
-		    case BRAND_SHARP:
+		    case BRAND_VORP:
 		      //msg_format(Ind, "%s sharpen%s!", weapons, dual);
 		      msg_format(Ind, "%s take%s on a vorpal glow!", weapons, dual);
 		      break;
@@ -836,7 +975,7 @@ bool set_bow_brand(int Ind, int v, int t, int p)
 		    case BRAND_CONF:
 		      msg_print(Ind, "\377oYour ammo glows many colors !");
 		      break;
-		    case BRAND_SHARP:
+		    case BRAND_VORP:
 		      msg_print(Ind, "\377oYour ammo sharpens !");
 		      break;
                     case BRAND_BALL_SOUND:
@@ -1375,6 +1514,9 @@ bool set_confused(int Ind, int v)
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
+	/* Hack -- Runecraft effect seal - Kurzel */
+	if (p_ptr->rcraft_upkeep_flags & RUPK_MIN_CO) v = 0;
+	
 	if (get_skill(p_ptr, SKILL_MIND) >= 30) v /= 2;
 
 	/* Open */
@@ -1827,57 +1969,6 @@ bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2)
 	/* Result */
 	return (TRUE);
 }
-
-#ifdef ENABLE_RCRAFT
-/*
- * Set "p_ptr->tim_deflect", notice observable changes
- */
-bool set_tim_deflect(int Ind, int v)
-{
-	player_type *p_ptr = Players[Ind];
-
-	bool notice = FALSE;
-
-	/* Hack -- Force good values */
-	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
-
-	/* Open */
-	if (v) {
-		if (!p_ptr->tim_deflect) {
-			msg_print(Ind, "A deflective shield forms around your body!");
-			notice = TRUE;
-		}
-	}
-
-	/* Shut */
-	else {
-		if (p_ptr->tim_deflect) {
-			msg_print(Ind, "Your deflective shield crumbles away.");
-			notice = TRUE;
-		}
-	}
-
-
-	/* Use the value */
-	p_ptr->tim_deflect = v;
-
-	/* Nothing to notice */
-	if (!notice) return (FALSE);
-
-	/* Disturb */
-	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
-
-	/* Recalculate boni */
-	p_ptr->update |= (PU_BONUS);
-
-	/* Handle stuff */
-	handle_stuff(Ind);
-
-	/* Result */
-	return (TRUE);
-}
-#endif
-
 
 /*
  * Set "p_ptr->blessed", notice observable changes
@@ -2531,6 +2622,9 @@ bool set_oppose_acid(int Ind, int v)
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+	
+	/* Hack -- Runemaster upkeep */
+	if (p_ptr->rcraft_repel & R_ACID) v = 1;
 
 	/* Open */
 	if (v) {
@@ -2576,6 +2670,9 @@ bool set_oppose_elec(int Ind, int v)
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+	
+	/* Hack -- Runemaster upkeep */
+	if (p_ptr->rcraft_repel & R_ELEC) v = 1;
 
 	/* Open */
 	if (v) {
@@ -2621,6 +2718,9 @@ bool set_oppose_fire(int Ind, int v)
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+	
+	/* Hack -- Runemaster upkeep */
+	if (p_ptr->rcraft_repel & R_FIRE) v = 1;
 
 	/* Open */
 	if (v) {
@@ -2666,6 +2766,9 @@ bool set_oppose_cold(int Ind, int v)
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+	
+	/* Hack -- Runemaster upkeep */
+	if (p_ptr->rcraft_repel & R_COLD) v = 1;
 
 	/* Open */
 	if (v) {
@@ -3242,7 +3345,1018 @@ bool do_divine_xtra_res_time_mana(int Ind, int v) {
 }
 #endif
 
+#ifdef ENABLE_RCRAFT //Kurzel
+
+bool set_tim_rcraft_xtra(int Ind, int v) {
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_rcraft_xtra) {
+			if (p_ptr->rcraft_xtra_a >= 0 && p_ptr->rcraft_xtra_a < RCRAFT_MAX_ELEMENTS 
+			 && p_ptr->rcraft_xtra_b >= 0 && p_ptr->rcraft_xtra_b < RCRAFT_MAX_ELEMENTS) {
+				msg_format(Ind, "You are charged with %s and %s!", r_elements[p_ptr->rcraft_xtra_a].name, r_elements[p_ptr->rcraft_xtra_b].name);
+				msg_format_near(Ind, "%s is charged with %s and %s!", p_ptr->name, r_elements[p_ptr->rcraft_xtra_a].name, r_elements[p_ptr->rcraft_xtra_b].name);
+			}
+			else if (p_ptr->rcraft_xtra_a >= 0 && p_ptr->rcraft_xtra_a < RCRAFT_MAX_ELEMENTS) {
+				msg_format(Ind, "You are charged with %s!", r_elements[p_ptr->rcraft_xtra_a].name);
+				msg_format_near(Ind, "%s is charged with %s!", p_ptr->name, r_elements[p_ptr->rcraft_xtra_a].name);
+			}
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_rcraft_xtra) {
+			msg_format_near(Ind, "%s is no longer charged with runes.", p_ptr->name);
+			msg_print(Ind, "The rune charges have expired.");
+			notice = TRUE;
+			p_ptr->rcraft_xtra_a = -1;
+			p_ptr->rcraft_xtra_b = -1;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_rcraft_xtra = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+bool set_tim_rcraft_help(int Ind, byte duration, byte type, byte projection, u32b damage) {
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	duration = (duration > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (duration < 0) ? 0 : duration;
+
+	/* Open */
+	if (duration) {
+		if (!p_ptr->tim_rcraft_help || p_ptr->tim_rcraft_help_type != type || p_ptr->tim_rcraft_help_projection != projection) {
+			if (type < RCRAFT_MAX_TYPES) {
+				switch (r_types[type].flag) {
+					case T_BOLT: {
+						msg_format(Ind, "The air around you charges with %s!", r_projections[projection].name);
+					break; }
+					case T_CLOU: {
+						msg_format(Ind, "The air around you roils with %s!", r_projections[projection].name);
+					break; }
+				}
+			}
+			else { //Hack: Extra 'types'; ie LoS. - Kurzel
+				msg_format(Ind, "The air around you gusts with %s!", r_projections[projection].name);
+			}
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_rcraft_help) {
+			msg_print(Ind, "The matrix of spell energy dissipates.");
+			notice = TRUE;
+			type = 0;
+			projection = 0;
+			damage = 0;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_rcraft_help = duration;
+	p_ptr->tim_rcraft_help_type = type;
+	p_ptr->tim_rcraft_help_projection = projection;
+	p_ptr->tim_rcraft_help_damage = damage;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+bool set_protacid(int Ind, int v) {
+#if 0
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->protacid) {
+			msg_print(Ind, "You feel safe from acid!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->protacid) {
+			msg_print(Ind, "You no longer feel safe from acid.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->protacid = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+#else
+	return FALSE;
+#endif
+}
+
+bool set_protelec(int Ind, int v) {
+#if 0
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->protelec) {
+			msg_print(Ind, "You feel safe from elec!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->protelec) {
+			msg_print(Ind, "You no longer feel safe from elec.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->protelec = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+#else
+	return FALSE;
+#endif
+}
+
+bool set_protfire(int Ind, int v) {
+#if 0
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->protfire) {
+			msg_print(Ind, "You feel safe from fire!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->protfire) {
+			msg_print(Ind, "You no longer feel safe from fire.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->protfire = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+#else
+	return FALSE;
+#endif
+}
+
+bool set_protcold(int Ind, int v) {
+#if 0
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->protcold) {
+			msg_print(Ind, "You feel safe from cold!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->protcold) {
+			msg_print(Ind, "You no longer feel safe from cold.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->protcold = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+#else
+	return FALSE;
+#endif
+}
+
+bool set_protpois(int Ind, int v) {
+#if 0
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->protpois) {
+			msg_print(Ind, "You feel safe from poison!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->protpois) {
+			msg_print(Ind, "You no longer feel safe from poison.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->protpois = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+#else
+	return FALSE;
+#endif
+}
+
+bool set_tim_elemshield(int Ind, int v, byte type)
+{
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_elemshield || p_ptr->tim_elemshield_type != type) {
+			if (type == 0) msg_print(Ind, "\377sA grey shimmering shield forms around your body!");
+			if (type == 1) msg_print(Ind, "\377bA blue shimmering shield forms around your body!");
+			if (type == 2) msg_print(Ind, "\377rA red shimmering shield forms around your body!");
+			if (type == 3) msg_print(Ind, "\377wA white shimmering shield forms around your body!");
+			if (type == 4) msg_print(Ind, "\377gA green shimmering shield forms around your body!");
+			notice = TRUE;
+		} else if (p_ptr->tim_elemshield > 20 && v <= 20) {
+			if (type == 0) msg_print(Ind, "\377sThe elemental shield starts to flicker and fade...");
+			if (type == 1) msg_print(Ind, "\377bThe elemental shield starts to flicker and fade...");
+			if (type == 2) msg_print(Ind, "\377rThe elemental shield starts to flicker and fade...");
+			if (type == 3) msg_print(Ind, "\377wThe elemental shield starts to flicker and fade...");
+			if (type == 4) msg_print(Ind, "\377gThe elemental shield starts to flicker and fade...");
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_elemshield) {
+			if (p_ptr->tim_elemshield_type == 0) msg_print(Ind, "\377sThe elemental shield fades away.");
+			if (p_ptr->tim_elemshield_type == 1) msg_print(Ind, "\377bThe elemental shield fades away.");
+			if (p_ptr->tim_elemshield_type == 2) msg_print(Ind, "\377rThe elemental shield fades away.");
+			if (p_ptr->tim_elemshield_type == 3) msg_print(Ind, "\377wThe elemental shield fades away.");
+			if (p_ptr->tim_elemshield_type == 4) msg_print(Ind, "\377gThe elemental shield fades away.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_elemshield = v;
+	p_ptr->tim_elemshield_type = type;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Recalculate boni */
+	p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA);
+
+	/* update so everyone sees the colour animation */
+	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+#endif
+
+bool set_tim_brand_acid(int Ind, int v) {
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Hack -- Runemaster upkeep */
+	if ((p_ptr->rcraft_attune & R_ACID) == R_ACID) v = 1;
+	
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_brand_acid) {
+			msg_print(Ind, "You are branded with acid!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_brand_acid) {
+			msg_print(Ind, "\377WYou are no longer branded with \377sacid\377W.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_brand_acid = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+bool set_tim_brand_elec(int Ind, int v) {
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+	
+	/* Hack -- Runemaster upkeep */
+	if ((p_ptr->rcraft_attune & R_ELEC) == R_ELEC) v = 1;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_brand_elec) {
+			msg_print(Ind, "You are branded with electricity!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_brand_elec) {
+			msg_print(Ind, "\377WYou are no longer branded with \377belectricity\377W.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_brand_elec = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+bool set_tim_brand_fire(int Ind, int v) {
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Hack -- Runemaster upkeep */
+	if ((p_ptr->rcraft_attune & R_FIRE) == R_FIRE) v = 1;
+	
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_brand_fire) {
+			msg_print(Ind, "You are branded with fire!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_brand_fire) {
+			msg_print(Ind, "\377WYou are no longer branded with \377rfire\377W.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_brand_fire = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+bool set_tim_brand_cold(int Ind, int v) {
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Hack -- Runemaster upkeep */
+	if ((p_ptr->rcraft_attune & R_COLD) == R_COLD) v = 1;
+	
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_brand_cold) {
+			msg_print(Ind, "You are branded with cold!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_brand_cold) {
+			msg_print(Ind, "\377WYou are no longer branded with \377wcold\377W.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_brand_cold = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+bool set_tim_brand_pois(int Ind, int v) {
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Hack -- Runemaster upkeep */
+	if ((p_ptr->rcraft_attune & R_POIS) == R_POIS) v = 1;
+	
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_brand_pois) {
+			msg_print(Ind, "You are branded with poison!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_brand_pois) {
+			msg_print(Ind, "\377WYou are no longer branded with \377gpoison\377W.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_brand_pois = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+bool set_tim_brand_conf(int Ind, int v) {
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+	
+	/* Hack -- Runemaster upkeep */
+	if (p_ptr->rcraft_brand == BRAND_CONF) v = 1;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_brand_conf) {
+			msg_print(Ind, "You are branded with confusion!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_brand_conf) {
+			msg_print(Ind, "\377WYou are no longer branded with \377Uconfusion\377W.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_brand_conf = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+bool set_tim_brand_vorp(int Ind, int v) {
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Hack -- Runemaster upkeep */
+	if (p_ptr->rcraft_brand == BRAND_VORP) v = 1;
+	
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_brand_vorp) {
+			msg_print(Ind, "You are branded with annihilation!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_brand_vorp) {
+			msg_print(Ind, "\377WYou are no longer branded with \377Dannihilation\377W.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_brand_vorp = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+bool set_tim_brand_ex(int Ind, int v, byte projection, u32b damage) {
+#if 0
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_brand_ex) {
+			msg_format(Ind, "Explosive runes swirl about your hands!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_brand_ex) {
+			msg_print(Ind, "\377WThe runes about your hands dissipate.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_brand_ex = v;
+	p_ptr->tim_brand_ex_projection = projection;
+	p_ptr->tim_brand_ex_damage = damage;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+#else
+	return FALSE;
+#endif
+}
+
+bool set_tim_aura_ex(int Ind, int v, byte projection, u32b damage) {
+#if 0
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_aura_ex) {
+			msg_format(Ind, "Explosive runes swirl about your body!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_aura_ex) {
+			msg_print(Ind, "\377WThe runes about your body dissipate.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_aura_ex = v;
+	p_ptr->tim_aura_ex_projection = projection;
+	p_ptr->tim_aura_ex_damage = damage;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+#else
+	return FALSE;
+#endif
+}
+
+bool set_tim_aura_acid(int Ind, int v) {
+#if 0
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+	
+	/* Hack -- Runemaster upkeep */
+	if (p_ptr->rcraft_repel & R_ELEC) v = 1;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_aura_acid) {
+			msg_print(Ind, "You are sheathed with an aura of acid!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_aura_acid) {
+			msg_print(Ind, "\377WYou are no longer sheathed with \377sacid\377W.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_aura_acid = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+#else
+	return FALSE;
+#endif
+}
+
+bool set_tim_aura_elec(int Ind, int v) {
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+	
+	/* Hack -- Runemaster upkeep */
+	if (p_ptr->rcraft_repel & R_ACID) v = 1;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_aura_elec) {
+			msg_print(Ind, "You are sheathed with an aura of electricity!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_aura_elec) {
+			msg_print(Ind, "\377WYou are no longer sheathed with \377belectricity\377W.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_aura_elec = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+bool set_tim_aura_fire(int Ind, int v) {
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+	
+	/* Hack -- Runemaster upkeep */
+	if (p_ptr->rcraft_repel & R_COLD) v = 1;
+	
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_aura_fire) {
+			msg_print(Ind, "You are sheathed with an aura of fire!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_aura_fire) {
+			msg_print(Ind, "\377WYou are no longer sheathed with \377rfire\377W.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_aura_fire = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+bool set_tim_aura_cold(int Ind, int v) {
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Hack -- Runemaster upkeep */
+	if (p_ptr->rcraft_repel & R_FIRE) v = 1;
+	
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_aura_cold) {
+			msg_print(Ind, "You are sheathed with an aura of cold!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_aura_cold) {
+			msg_print(Ind, "\377WYou are no longer sheathed with \377wcold\377W.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_aura_cold = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
 #ifdef ENABLE_RCRAFT
+/*
+ * Set "p_ptr->tim_deflect", notice observable changes
+ */
+bool set_tim_deflect(int Ind, int v)
+{
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_deflect) {
+			msg_print(Ind, "A deflective shield forms around your body!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_deflect) {
+			msg_print(Ind, "Your deflective shield crumbles away.");
+			notice = TRUE;
+		}
+	}
+
+
+	/* Use the value */
+	p_ptr->tim_deflect = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Recalculate boni */
+	p_ptr->update |= (PU_BONUS);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
 bool do_life_bonus(int Ind, int v, int p) {
         player_type *p_ptr = Players[Ind];
 	return do_life_bonus_aux(Ind, v, p + p_ptr->temporary_to_l);
@@ -3376,6 +4490,7 @@ bool do_temporary_antimagic(int Ind, int v) {
 }
 
 #endif //ENABLE_RCRAFT
+
 /*
  * Set "p_ptr->sh_fire/cold/elec", notice observable changes
  */
@@ -3789,6 +4904,11 @@ void shape_Maia_skills(int Ind) {
 		do_Maia_skill(Ind, SKILL_AURA_FEAR, 30);
 		do_Maia_skill(Ind, SKILL_AURA_SHIVER, 30);
 		do_Maia_skill(Ind, SKILL_AURA_DEATH, 30);
+#ifdef ENABLE_RCRAFT
+		/* Yay for (new-style) Runies! - Kurzel */
+		do_Maia_skill(Ind, SKILL_R_FIRECHAO, 15);
+		do_Maia_skill(Ind, SKILL_R_COLDNETH, 15);
+#endif
 		break;
 
 	case TRAIT_ENLIGHTENED:
@@ -3808,6 +4928,10 @@ void shape_Maia_skills(int Ind) {
 		do_Maia_skill(Ind, SKILL_SWORD, 13);
 		do_Maia_skill(Ind, SKILL_BLUNT, 13);
 		do_Maia_skill(Ind, SKILL_POLEARM, 13);
+#ifdef ENABLE_RCRAFT
+		/* Yay for (new-style) Runies! - Kurzel */
+		do_Maia_skill(Ind, SKILL_R_FORCTIME, 20);
+#endif
 		break;
 	default: ;
 	}
@@ -7663,10 +8787,8 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		m_ptr->charmedignore = 0;
 	}
 
-	/* Trauma boost spell */
-	if (p_ptr->tim_trauma) {
-		skill_trauma += (skill_trauma < (SKILL_MAX - (p_ptr->tim_trauma_pow * 1000)) ? (p_ptr->tim_trauma_pow * 1000) : SKILL_MAX - skill_trauma);
-	}
+	/* Trauma boost spell - Kurzel */
+	if (p_ptr->tim_trauma) skill_trauma += (skill_trauma < (SKILL_MAX - (p_ptr->tim_trauma_pow * 1000)) ? (p_ptr->tim_trauma_pow * 1000) : SKILL_MAX - skill_trauma);
 	scale_trauma = (((skill_trauma) * 20) / SKILL_MAX);
 
 	/* Redraw (later) if needed */
@@ -7892,7 +9014,7 @@ for(i=1; i < 5; i++) {
 		 * Necromancy skill regenerates you
 		 * Cannot drain an undead or nonliving monster
 		 */
-		if (get_skill(p_ptr, SKILL_NECROMANCY) &&
+		if ((get_skill(p_ptr, SKILL_NECROMANCY) || p_ptr->tim_necro_pow) &&
 			(!(r_ptr->flags3 & RF3_UNDEAD)) &&
 			(!(r_ptr->flags3 & RF3_NONLIVING)) &&
 			target_able(Ind, m_idx) && !p_ptr->ghost) /* Target must be in LoS */
@@ -7901,8 +9023,15 @@ for(i=1; i < 5; i++) {
 				get_skill_scale(p_ptr, SKILL_NECROMANCY, 100)) / 100 +
 				get_skill(p_ptr, SKILL_NECROMANCY); */
 			long gain, gain_sp, skill; /* let's make it more complicated - gain HP and SP now - C. Blue */
+			
 			skill = get_skill_scale(p_ptr, SKILL_NECROMANCY, 50);
 			gain = get_skill_scale(p_ptr, SKILL_NECROMANCY, 100);
+			/* Necro boost spell - Kurzel */
+			if (p_ptr->tim_necro) {
+				skill += (skill < (SKILL_MAX - (p_ptr->tim_necro_pow * 1000)) ? (p_ptr->tim_necro_pow * 1000) : SKILL_MAX - skill);
+				gain += (gain < (SKILL_MAX - (p_ptr->tim_necro_pow * 500)) ? (p_ptr->tim_necro_pow * 500) : SKILL_MAX - gain);
+			}
+			
 			gain = (m_ptr->level > gain ? gain : m_ptr->level);
 			gain_sp = gain;
 

@@ -882,7 +882,7 @@ struct player_type
 	s16b csane;                   /* Cur sanity */
 	u16b csane_frac;              /* Cur sanity frac */
 
-
+	byte rcraft_project;            /* Runecraft version - Kurzel */
 	byte spell_project;             /* Do the spells(some) affect nearby party members ? */
 	s16b dodge_level;
 	s32b tim_blacklist;
@@ -1060,3 +1060,5 @@ extern player_trait trait_info[MAX_TRAIT];
 
 extern void do_mimic_change(int Ind, int r_idx, bool force);
 extern void shape_Maia_skills(int Ind);
+
+extern void lua_fix_max_depth(int Ind);

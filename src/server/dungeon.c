@@ -789,9 +789,9 @@ static void process_effects(void)
 
 #ifdef ANIMATE_EFFECTS
  #ifdef FREQUENT_EFFECT_ANIMATION
-		/* Hack -- Decode extra runespell info for color. - Kurzel */
+		/* Hack -- Decode gf_type (for color). - Kurzel */
 		u32b typ_original = e_ptr->type;
-		e_ptr->type = e_ptr->type % 1000;
+		e_ptr->type = e_ptr->type % HACK_GF_FACTOR;
 		
 		/* hack: animate the effect! Note that this is independant of the effect interval,
 		   as opposed to the other animation code below. - C. Blue */
@@ -804,7 +804,7 @@ static void process_effects(void)
 			}
 			
 		/* Hack -- Restore runespell info. - Kurzel */
-		e_ptr->type = typ_original;			
+		e_ptr->type = typ_original;
  #endif
 #endif
 
@@ -886,9 +886,9 @@ static void process_effects(void)
 					
 #ifdef ANIMATE_EFFECTS
  #ifndef FREQUENT_EFFECT_ANIMATION
-					/* Hack -- Decode extra runespell info for color. - Kurzel */
+					/* Hack -- Decode gf_type (for color). - Kurzel */
 					u32b typ_original = e_ptr->type;
-					e_ptr->type = e_ptr->type % 1000;
+					e_ptr->type = e_ptr->type % HACK_GF_FACTOR;
 					
 					/* C. Blue - hack: animate effects inbetween
 					   ie allow random changes in spell_color().
@@ -897,7 +897,7 @@ static void process_effects(void)
 					    everyone_lite_spot(wpos, j, i);
 			
 					/* Hack -- Restore runespell info. - Kurzel */
-					e_ptr->type = typ_original;	
+					e_ptr->type = typ_original;
  #endif
 #endif
 				} else {
@@ -1743,97 +1743,117 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 				return TRUE;
 			}
 			break;
-#ifdef ENABLE_RCRAFT
-		/*
-			Auto-retaliation format:
-			@Oa through to @Og
-			(@O defaults to @Oa)
-			@Oc casts a basic (cheap) bolt spell of the type that it is on.
-			@Ob casts a self spell
-			The letters correspond to the mkey spell selector
-		*/
-		case TV_RUNE2:
-#if 0
+#ifdef ENABLE_RCRAFT 
+		case TV_RUNE2: {
+			/* Runemaster retaliation. Perhaps add town retaliation in the future? - Kurzel */
+			/* Format @O<abc><a-h><a-h> */
 			if (o_ptr->sval >= 0 && o_ptr->sval <= RCRAFT_MAX_ELEMENTS) {
-				if (choice < 0 || choice >= 8) choice = 0;
-				execute_rspell(Ind, 5, r_elements[o_ptr->sval].self | runespell_types[choice].type, 1, 1);
-				//execute_rspell(Ind, 5, NULL, 0, r_elements[o_ptr->sval].self | R_BOLT, 0, 1); //choice sometimes has wrong value
-				return TRUE;
-			}
-			break;
-#else
-			/* New runemaster retaliation. - Kurzel */
-			/* Search for up to 2 more runes with the same inscription as the first found. */
-			if (o_ptr->sval >= 0 && o_ptr->sval <= RCRAFT_MAX_ELEMENTS) {
-				int i, runes = 0;
-				int rune_type = 0;
-				u32b rune_flags = 0;
-				int imperative = 0;
-				int type = 0;
-
-				if (*inscription != '\0') {
-					imperative = *inscription;
-					inscription++;
-					choice = imperative - 'a';
-					if (choice < 0 || choice > RCRAFT_MAX_IMPERATIVES) choice = 0;
-				}
-
-				if (*inscription != '\0') {
-					type = *inscription;
-					rune_type = *inscription - 'a';
-					if (rune_type < 0 || rune_type > RCRAFT_MAX_TYPES) rune_type = 0;
-				}
-
-				/* Pick the next rune with {@O} inscription */
-				for (i = item; i < INVEN_TOTAL && runes < 3; i++) {
+				u16b e_flags1 = 0, e_flags2 = 0, m_flags = 0, e_flags1_default = r_elements[o_ptr->sval].flag;
+				//int place_char = 0; unused?
+				int i_char = 0, t_char = 0, i_char_t = 0, t_char_t = 0;
+				byte place = 0, imperative = 0, type = 0, success = 0;
+				
+				/* Pick runes a b c with {@O} inscription */
+				byte i, runes = 0;
+				for (i = item; i < INVEN_TOTAL && runes < RSPELL_MAX_ELEMENTS; i++) {
 					o_ptr = &p_ptr->inventory[i];
 					if (o_ptr->tval != TV_RUNE2) continue;
-
+					/* Get the inscription */
 					inscription = quark_str(o_ptr->note);
-
-					/* check for a valid inscription */
+					/* Valid? */
 					if (inscription == NULL) continue;
-
-					/* scan the inscription for @O */
+					/* Parse the inscription for @O */
 					while (*inscription != '\0') {
 						if (*inscription == '@') {
 							inscription++;
-
-							/* a valid @O has been located */
-							if (*inscription == 'O' || *inscription == 'Q') {
-								int type2 = 0;
-								int imperative2 = 0;
+							if (*inscription == 'O') {
 								inscription++;
-
-								if (*inscription != '\0') {
-									imperative2 = *inscription;
-									inscription++;
+								switch (runes) {
+									case 0: { //rune 'a'
+									if (*inscription != '\0') {
+										place = *inscription;
+										inscription++;
+										if (place != 'a') continue;
+										/* Record the element of the 'a' rune */
+										e_flags1 |= r_elements[o_ptr->sval].flag;
+										runes++;
+										/* Record the imperative of the 'a' rune */
+										if (*inscription != '\0') {
+											i_char = *inscription;
+											inscription++;
+											imperative = *inscription - 'a';
+											if (imperative < 0 || imperative > RCRAFT_MAX_IMPERATIVES) imperative = 1;
+											m_flags |= r_imperatives[imperative].flag;
+										}
+										/* Record the type of the 'a' rune */
+										if (*inscription != '\0') {
+											t_char = *inscription;
+											type = *inscription - 'a';
+											if (type < 0 || type > RCRAFT_MAX_TYPES) type = 1;
+											m_flags |= r_types[type].flag;
+											success = 1; //We have at least a defined single-rune spell!
+										}
+									}
+									break; }
+									case 1: { //rune 'b'
+									if (*inscription != '\0') {
+										place = *inscription;
+										inscription++;
+										if (place != 'b') continue;
+										/* Test for the same imperative and type */
+										if (*inscription != '\0') {
+											i_char_t = *inscription;
+											inscription++;
+										}
+										if (*inscription != '\0') {
+											t_char_t = *inscription;
+										}
+										/* Skip this item in case it isn't the same */
+										if (i_char != i_char_t || t_char != t_char_t) continue;
+										/* Record the element of the 'b' rune */
+										e_flags1 |= r_elements[o_ptr->sval].flag;
+										e_flags2 |= r_elements[o_ptr->sval].flag;
+										runes++;
+									}
+									break; }
+									case 2: { //rune 'c'
+									if (*inscription != '\0') {
+										place = *inscription;
+										inscription++;
+										if (place != 'c') continue;
+										/* Test for the same imperative and type */
+										if (*inscription != '\0') {
+											i_char_t = *inscription;
+											inscription++;
+										}
+										if (*inscription != '\0') {
+											t_char_t = *inscription;
+										}
+										/* Skip this item in case it isn't the same */
+										if (i_char != i_char_t || t_char != t_char_t) continue;
+										/* Record the element of the 'c' rune */
+										e_flags2 |= r_elements[o_ptr->sval].flag;
+										runes++;
+									}
+									break; }
 								}
-
-								if (*inscription != '\0') {
-									type2 = *inscription;
-								}
-
-								/* Skip this item in case it isn't the same */
-								if (imperative != imperative2 || type != type2) break;
-								
-								/* Use this rune element */
-								rune_flags |= r_elements[o_ptr->sval].self;
-								runes++;
-								
-								break;
 							}
 						}
 						inscription++;
 					}
 				}
-				if (execute_rspell(Ind, 5, rune_flags | runespell_types[rune_type].type, choice, 1) == 2
-				    && fallback)
-					return (p_ptr->fail_no_melee);
+				
+				/* Default */
+				if (!success) {
+					e_flags1 = e_flags1_default;
+					e_flags2 = 0;
+					m_flags = I_MINI | T_MELE;
+				}
+				
+				if (execute_rspell(Ind, 5, e_flags1, e_flags2, m_flags, 1) == 2) return (p_ptr->fail_no_melee);
 				return TRUE;
 			}
-			break;
-#endif
+			break; }
 #endif
 		/* not likely :) */
 	}
@@ -3627,11 +3647,7 @@ static bool process_player_end_aux(int Ind)
 	/* Timed regen */
 	if (p_ptr->tim_regen)
 		(void)set_tim_regen(Ind, p_ptr->tim_regen - 1, p_ptr->tim_regen_pow);
-#ifdef ENABLE_RCRAFT
-	/* Trauma boost */
-	if (p_ptr->tim_trauma)
-		(void)set_tim_trauma(Ind, p_ptr->tim_trauma - 1, p_ptr->tim_trauma_pow);
-#endif
+
 	/* Thunderstorm */
 	if (p_ptr->tim_thunder) {
                 int dam = damroll(p_ptr->tim_thunder_p1, p_ptr->tim_thunder_p2);
@@ -3675,11 +3691,150 @@ static bool process_player_end_aux(int Ind)
 		(void)set_tim_thunder(Ind, p_ptr->tim_thunder - 1, p_ptr->tim_thunder_p1, p_ptr->tim_thunder_p2);
         }
 
+	/* Skill boosts */
+	if (p_ptr->tim_trauma)
+		(void)set_tim_trauma(Ind, p_ptr->tim_trauma - 1, p_ptr->tim_trauma_pow);
+		
+	if (p_ptr->tim_necro)
+		(void)set_tim_necro(Ind, p_ptr->tim_necro - 1, p_ptr->tim_necro_pow);
+		
+	//if (p_ptr->tim_dodge)
+	//	(void)set_tim_dodge(Ind, p_ptr->tim_dodge - 1, p_ptr->tim_dodge_pow);
+		
+	if (p_ptr->tim_stealth)
+		(void)set_tim_stealth(Ind, p_ptr->tim_stealth - 1, p_ptr->tim_stealth_pow);
+		
+#ifdef ENABLE_RCRAFT //Kurzel
+	/* Combination Spells */
+	if (p_ptr->tim_rcraft_xtra)
+		(void)set_tim_rcraft_xtra(Ind, p_ptr->tim_rcraft_xtra - 1);
+		
+	/* Helper Buff */
+	if (p_ptr->tim_rcraft_help) {
+		int i, tries = 600;
+		monster_type *m_ptr = NULL;
+
+		while (tries) {
+			/* Access the monster */
+			m_ptr = &m_list[i = rand_range(1, m_max - 1)];
+
+			tries--;
+
+			/* Ignore "dead" monsters */
+			if (!m_ptr->r_idx) continue;
+
+			/* pfft. not even our level */
+			if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
+			
+			/* Cant see ? cant hit */
+			if (!los(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)) continue;
+			if (distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) > 15) continue;
+
+			/* Do not hurt friends! */
+			/* if (is_friend(m_ptr) >= 0) continue; */
+			break;
+		}
+
+		if (tries) {
+			char m_name[MNAME_LEN];
+			monster_desc(Ind, m_name, i, 0);
+			if (p_ptr->tim_rcraft_help_type < RCRAFT_MAX_TYPES) {
+				int temp_tx = p_ptr->target_col;
+				int temp_ty = p_ptr->target_row;
+				int temp_who = p_ptr->target_who;
+				p_ptr->target_who = i;
+				switch (r_types[p_ptr->tim_rcraft_help_type].flag) {
+					case T_BOLT: {
+					msg_format(Ind, "A bolt of %s strikes %s.", r_projections[p_ptr->tim_rcraft_help_projection].name, m_name);
+					fire_bolt(Ind, r_projections[p_ptr->tim_rcraft_help_projection].gf_type, 5, p_ptr->tim_rcraft_help_damage, p_ptr->attacker);
+					//project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->tim_rcraft_help_damage, r_projections[p_ptr->tim_rcraft_help_projection].gf_type, PROJECT_KILL | PROJECT_ITEM, "");
+					break; }
+					case T_CLOU: {
+					msg_format(Ind, "A cloud of %s roils about %s.", r_projections[p_ptr->tim_rcraft_help_projection].name, m_name);
+					fire_cloud(Ind, r_projections[p_ptr->tim_rcraft_help_projection].gf_type, 5, p_ptr->tim_rcraft_help_damage, 1, 10, 9, p_ptr->attacker);
+					break; }
+				}
+				p_ptr->target_col = temp_tx;
+				p_ptr->target_row = temp_ty;
+				p_ptr->target_who = temp_who;
+			}
+			else { //Kurzel
+				msg_format(Ind, "The air is filled with %s!", r_projections[p_ptr->tim_rcraft_help_projection].name);
+				project_hack(Ind, r_projections[p_ptr->tim_rcraft_help_projection].gf_type, p_ptr->tim_rcraft_help_damage, p_ptr->attacker);
+			}
+		}
+
+		(void)set_tim_rcraft_help(Ind, p_ptr->tim_rcraft_help - 1, p_ptr->tim_rcraft_help_type, p_ptr->tim_rcraft_help_projection, p_ptr->tim_rcraft_help_damage);
+        }
+
+#if 0
+	/* Brand Explode */
+	if (p_ptr->tim_brand_ex)
+		(void)set_tim_brand_ex(Ind, p_ptr->tim_brand_ex - 1, p_ptr->tim_brand_ex_projection, p_ptr->tim_brand_ex_damage);
+
+	/* Aura Explode */
+	if (p_ptr->tim_aura_ex)
+		(void)set_tim_aura_ex(Ind, p_ptr->tim_aura_ex - 1, p_ptr->tim_aura_ex_projection, p_ptr->tim_aura_ex_damage);
+
+	/* Protection from Acid */
+	if (p_ptr->protacid)
+		(void)set_protacid(Ind, p_ptr->protacid - 1);
+
+	/* Protection from Electricity */
+	if (p_ptr->protelec)
+		(void)set_protelec(Ind, p_ptr->protelec - 1);
+
+	/* Protection from Fire */
+	if (p_ptr->protfire)
+		(void)set_protfire(Ind, p_ptr->protfire - 1);
+
+	/* Protection from Cold */
+	if (p_ptr->protcold)
+		(void)set_protcold(Ind, p_ptr->protcold - 1);
+
+	/* Protection from Pois */
+	if (p_ptr->protpois)
+		(void)set_protpois(Ind, p_ptr->protpois - 1);
+#endif
+
+	/* Elemental Shield */
+	if (p_ptr->tim_elemshield)
+		set_tim_elemshield(Ind, p_ptr->tim_elemshield - 1, p_ptr->tim_elemshield_type);
+#endif
+
+	/* Brand Acid */
+	if (p_ptr->tim_brand_acid)
+		(void)set_tim_brand_acid(Ind, p_ptr->tim_brand_acid - 1);
+		
+	/* Brand Electricity */
+	if (p_ptr->tim_brand_elec)
+		(void)set_tim_brand_elec(Ind, p_ptr->tim_brand_elec - 1);
+		
+	/* Brand Fire */
+	if (p_ptr->tim_brand_fire)
+		(void)set_tim_brand_fire(Ind, p_ptr->tim_brand_fire - 1);
+		
+	/* Brand Cold */
+	if (p_ptr->tim_brand_cold)
+		(void)set_tim_brand_cold(Ind, p_ptr->tim_brand_cold - 1);
+		
+	/* Brand Poison */
+	if (p_ptr->tim_brand_pois)
+		(void)set_tim_brand_pois(Ind, p_ptr->tim_brand_pois - 1);
+		
+	/* Brand Vorpal */
+	if (p_ptr->tim_brand_vorp)
+		(void)set_tim_brand_vorp(Ind, p_ptr->tim_brand_vorp - 1);
+
+	/* Brand Confusion */
+	if (p_ptr->tim_brand_conf)
+		(void)set_tim_brand_conf(Ind, p_ptr->tim_brand_conf - 1);
+
 	/* Oppose Acid */
 	if (p_ptr->oppose_acid)
 		(void)set_oppose_acid(Ind, p_ptr->oppose_acid - 1);
 
-	/* Oppose Lightning */
+	/* Oppose Electricity */
 	if (p_ptr->oppose_elec)
 		(void)set_oppose_elec(Ind, p_ptr->oppose_elec - 1);
 
@@ -3694,6 +3849,24 @@ static bool process_player_end_aux(int Ind)
 	/* Oppose Poison */
 	if (p_ptr->oppose_pois)
 		(void)set_oppose_pois(Ind, p_ptr->oppose_pois - 1);
+
+#if 0
+	/* Aura Acid */
+	if (p_ptr->tim_aura_acid)
+		(void)set_tim_aura_acid(Ind, p_ptr->tim_aura_acid - 1);
+#endif
+
+	/* Aura Electricity */
+	if (p_ptr->tim_aura_elec)
+		(void)set_tim_aura_elec(Ind, p_ptr->tim_aura_elec - 1);
+		
+	/* Aura Fire */
+	if (p_ptr->tim_aura_fire)
+		(void)set_tim_aura_fire(Ind, p_ptr->tim_aura_fire - 1);
+		
+	/* Aura Cold */
+	if (p_ptr->tim_aura_cold)
+		(void)set_tim_aura_cold(Ind, p_ptr->tim_aura_cold - 1);
 
 	/*** Poison and Stun and Cut ***/
 
@@ -4332,9 +4505,9 @@ static void process_player_end(int Ind)
 		if (p_ptr->shooting_till_kill) {
 			if (target_okay(Ind)) {
 				/* spells always require 1 turn: */
-				if (p_ptr->shoot_till_kill_spell) ;
-				/* note: currently doesn't take into account R_MELE bpr feature, which reduces energy: */
-				else if (p_ptr->shoot_till_kill_rune_spell) energy = rspell_time(Ind, p_ptr->shoot_till_kill_rune_modifier);
+				if (p_ptr->shoot_till_kill_spell);
+				/* runespells excepted */
+				else if (p_ptr->shoot_till_kill_rcraft) energy = p_ptr->FTK_energy;
 				/* shooting with ranged weapon: */
 				else energy = energy / p_ptr->num_fire;
 			} else {
@@ -4363,8 +4536,8 @@ static void process_player_end(int Ind)
 						if (!p_ptr->shooting_till_kill) p_ptr->shoot_till_kill_spell = 0;
 					}
 #ifdef ENABLE_RCRAFT
-					else if (p_ptr->shoot_till_kill_rune_spell) {
-						execute_rspell(Ind, 5, p_ptr->shoot_till_kill_rune_spell, p_ptr->shoot_till_kill_rune_modifier, 0);
+					else if (p_ptr->shoot_till_kill_rcraft) {
+						(void)execute_rspell(Ind, 5, p_ptr->FTK_e_flags1, p_ptr->FTK_e_flags2, p_ptr->FTK_m_flags, 1);
 					}
 #endif
 					else {
@@ -5222,9 +5395,10 @@ static void process_player_change_wpos(int Ind)
 	int d, j, x, y, startx = 0, starty = 0, m_idx, my, mx, tries, emergency_x, emergency_y, dlv = getlevel(wpos);
 
 #ifdef ENABLE_RCRAFT
+	/* remove all terrain modifications */
+	cave_type *c_ptr;
 	/* remove all rune traps of this player */
 	if (p_ptr->runetraps) {
-		cave_type *c_ptr;
 		struct c_special *cs_ptr;
 		if ((zcave = getcave(&p_ptr->wpos_old))) {
 			for (j = 0; j < p_ptr->runetraps; j++) {
@@ -5239,6 +5413,24 @@ static void process_player_change_wpos(int Ind)
 		}
 		remove_rune_trap_upkeep(Ind, 0, -1, -1);
 	}
+	/* remove all rune portals of this player */
+	for (j = 0; j < 5; j++) {
+		if (p_ptr->memory_feat[j]) {
+			if ((zcave = getcave(&p_ptr->wpos_old))) {
+				c_ptr = &zcave[p_ptr->memory_port[j].y][p_ptr->memory_port[j].x];
+				if (c_ptr->feat != FEAT_RUNE_PORT) continue; /* paranoia */
+			}
+			cave_set_feat_live(&p_ptr->wpos_old, p_ptr->memory_port[j].y, p_ptr->memory_port[j].x, p_ptr->memory_feat[j]);
+			p_ptr->memory_feat[j] = 0;
+			p_ptr->memory_port[j].wpos.wx = 0;
+			p_ptr->memory_port[j].wpos.wy = 0;
+			p_ptr->memory_port[j].wpos.wz = 0;
+			p_ptr->memory_port[j].x = 0;
+			p_ptr->memory_port[j].y = 0;
+			p_ptr->rcraft_upkeep -= UPKEEP_PORT;
+		}
+	}
+	calc_mana(Ind);
 #endif
 
 	/* Decide whether we stayed long enough on the previous

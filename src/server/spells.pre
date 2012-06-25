@@ -160,24 +160,39 @@ typedef unsigned int u32b;
 #define GF_SILENCE	160
 #define GF_CHARMIGNORE	161
 
-#define GF_ACID_ELEC		170 /* for new runemasters */
-#define GF_ACID_FIRE 171
-#define GF_ACID_COLD 172
-#define GF_ACID_POISON 173
-//#define GF_PLASMA 174 //GF_ELEC_FIRE
-#define GF_DIG_FIRE 174
-#define GF_ELEC_COLD 175
-#define GF_ELEC_POISON 176
-//#define GF_NULL 177 //GF_FIRE_COLD
-#define GF_FIRE_POISON 178
-#define GF_COLD_POISON 179
-#define GF_SHATTER 180
-#define GF_CORRODE 181
-#define GF_GENOCIDE 182
-#define GF_WONDER 183
-#define GF_ANNIHILATION 184
-//#define GF_ 185
-#define GF_BASE 186
+#define GF_ACID_ELEC		170 /* Runemasters - Kurzel */
+#define GF_ACID_FIRE		171
+#define GF_ACID_COLD		172
+#define GF_ACID_POISON		173
+#define GF_ELEC_FIRE		174
+#define GF_ELEC_COLD		175
+#define GF_ELEC_POISON		176
+#define GF_FIRE_COLD		177
+#define GF_FIRE_POISON		178
+#define GF_COLD_POISON		179
+
+#define GF_ACID_DISARM		180
+#define GF_ELEC_DISARM		181
+#define GF_FIRE_DISARM		182
+#define GF_COLD_DISARM		183
+
+#define GF_HI_ACID		184
+#define GF_HI_ELEC		185
+#define GF_HI_FIRE		186
+#define GF_HI_COLD		187
+#define GF_HI_POISON		188
+
+#define GF_THUNDER		189
+
+#define GF_GENOCIDE		190
+#define GF_WONDER		191
+#define GF_ANNIHILATION		192
+#define GF_DIG_FIRE		193
+#define GF_AFFLICT		194
+
+#define GF_LIFE_FIRE		196 /* New slay-living rune spells, lifefire has backlash (like a negative GF_OLD_DRAIN) - Kurzel */ 
+#define GF_BLIGHT		197
+#define GF_STOP         	198
 
 /* special 'projector' types, used in project(). */
 #define PROJECTOR_UNUSUAL	-1000
@@ -211,7 +226,7 @@ typedef unsigned int u32b;
 #define BRAND_POIS          4
 #define BRAND_MANA          5
 #define BRAND_CONF          6
-#define BRAND_SHARP         7
+#define BRAND_VORP          7
 #define BRAND_BALL_FIRE     8
 #define BRAND_BALL_COLD     9
 #define BRAND_BALL_ELEC     10

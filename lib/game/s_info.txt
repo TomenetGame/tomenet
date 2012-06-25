@@ -440,6 +440,13 @@ $ENABLE_RCRAFT!A:12:Draw a rune
 $ENABLE_RCRAFT!I:1000:104
 $ENABLE_RCRAFT!F:MKEY_HARDCODE
 
+$ENABLE_RCRAFT$N:76:Rune Alacrity
+$ENABLE_RCRAFT$D:Ability to draw runes efficiently.
+$ENABLE_RCRAFT$D:Increases the casting speed of rune spells.
+$ENABLE_RCRAFT$A:18:Draw a rune
+$ENABLE_RCRAFT$I:1000:104
+$ENABLE_RCRAFT$F:MKEY_HARDCODE
+
 $ENABLE_MAIA$N:77:Astral Knowledge
 $ENABLE_MAIA$D:Access to the astral spells
 $ENABLE_MAIA$A:11:Cast a spell
@@ -682,12 +689,21 @@ $ENABLE_MCRAFT$f:Psycho-Power:Magic%10
 $ENABLE_MCRAFT$f:Thought Contact:Magic%10
 $ENABLE_MCRAFT$f:Mental Intrusion:Magic%10
 
-$ENABLE_RCRAFT$f:Acid and Water:Magic%15
-$ENABLE_RCRAFT$f:Electricity and Earth:Magic%15
-$ENABLE_RCRAFT$f:Fire and Chaos:Magic%15
-$ENABLE_RCRAFT$f:Cold and Nether:Magic%15
-$ENABLE_RCRAFT$f:Poison and Nexus:Magic%15
-$ENABLE_RCRAFT$f:Force and Time:Magic%15
+$ENABLE_RCRAFT$f:Rune Alacrity:Magic%20
+
+$ENABLE_RCRAFT$f:Acid and Water:Magic%10
+$ENABLE_RCRAFT$f:Electricity and Earth:Magic%10
+$ENABLE_RCRAFT$f:Fire and Chaos:Magic%10
+$ENABLE_RCRAFT$f:Cold and Nether:Magic%10
+$ENABLE_RCRAFT$f:Poison and Nexus:Magic%10
+$ENABLE_RCRAFT$f:Force and Time:Magic%10
+
+$ENABLE_RCRAFT$f:Acid and Water:Rune Alacrity%15
+$ENABLE_RCRAFT$f:Electricity and Earth:Rune Alacrity%15
+$ENABLE_RCRAFT$f:Fire and Chaos:Rune Alacrity%15
+$ENABLE_RCRAFT$f:Cold and Nether:Rune Alacrity%15
+$ENABLE_RCRAFT$f:Poison and Nexus:Rune Alacrity%15
+$ENABLE_RCRAFT$f:Force and Time:Rune Alacrity%15
 
 f:Stealth:Sneakiness%15
 f:Disarming:Sneakiness%10
@@ -795,12 +811,13 @@ $ENABLE_MCRAFT$T:Mindcraft Schools:Psycho-Power
 $ENABLE_MCRAFT$T:Mindcraft Schools:Thought Contact
 $ENABLE_MCRAFT$T:Mindcraft Schools:Mental Intrusion
 
-$ENABLE_RCRAFT$T:Runecraft:Acid and Water
-$ENABLE_RCRAFT$T:Runecraft:Electricity and Earth
-$ENABLE_RCRAFT$T:Runecraft:Fire and Chaos
-$ENABLE_RCRAFT$T:Runecraft:Cold and Nether
-$ENABLE_RCRAFT$T:Runecraft:Poison and Nexus
-$ENABLE_RCRAFT$T:Runecraft:Force and Time
+$ENABLE_RCRAFT$T:Runecraft:Rune Alacrity
+$ENABLE_RCRAFT$T:Rune Alacrity:Acid and Water
+$ENABLE_RCRAFT$T:Rune Alacrity:Electricity and Earth
+$ENABLE_RCRAFT$T:Rune Alacrity:Fire and Chaos
+$ENABLE_RCRAFT$T:Rune Alacrity:Cold and Nether
+$ENABLE_RCRAFT$T:Rune Alacrity:Poison and Nexus
+$ENABLE_RCRAFT$T:Rune Alacrity:Force and Time
 
 #T:Main:Spirituality
 #T:Spirituality:Prayer

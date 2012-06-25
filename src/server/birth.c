@@ -2199,8 +2199,10 @@ static void player_setup(int Ind, bool new)
 	p_ptr->tim_brand_pois = 0;
 	p_ptr->tim_brand_vorp = 0;
 	p_ptr->tim_brand_conf = 0;
-	
+
+#if 0
 	p_ptr->tim_aura_acid = 0;
+#endif
 	p_ptr->tim_aura_elec = 0;
 	p_ptr->tim_aura_fire = 0;
 	p_ptr->tim_aura_cold = 0;
@@ -2214,23 +2216,27 @@ static void player_setup(int Ind, bool new)
 	//p_ptr->tim_dodge_pow = 0;
 	p_ptr->tim_stealth = 0;
 	p_ptr->tim_stealth_pow = 0;
-	
+
+#if 0
 	p_ptr->tim_brand_ex = 0;
 	p_ptr->tim_brand_ex_projection = 0;
 	p_ptr->tim_brand_ex_damage = 0;
 	p_ptr->tim_aura_ex = 0;
 	p_ptr->tim_aura_ex_projection = 0;
 	p_ptr->tim_aura_ex_damage = 0;
-	
+#endif
+
 	p_ptr->rcraft_empower = 0;
 	p_ptr->rcraft_regen = 0;
-	
+
+#if 0
 	p_ptr->protacid = 0;
 	p_ptr->protelec = 0;
 	p_ptr->protfire = 0;
 	p_ptr->protcold = 0;
 	p_ptr->protpois = 0;
-	
+#endif
+
 	p_ptr->tim_elemshield = 0;
 	p_ptr->tim_elemshield_type = 0;
 	

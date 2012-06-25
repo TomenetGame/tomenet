@@ -1101,6 +1101,10 @@ N:230:rune trap
 G:;:B
 F:FLOOR
 
+N:231:rune portal
+G:+:B
+F:FLOOR
+
 # generic scheme (all lines are unique except
 # where it's mentioned otherwise) - C. Blue
 # N:<number>:<name>

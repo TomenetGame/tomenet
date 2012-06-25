@@ -167,7 +167,7 @@ void show_building(int Ind, store_type *s_ptr)
 
 #if 0
 
-/* reset timed flags */
+/* reset timed flags - Kurzel!! */
 static void reset_tim_flags()
 {
 	p_ptr->fast = 0;            /* Timed -- Fast */

@@ -1255,8 +1255,6 @@ void self_knowledge(int Ind) {
 	}
 #endif
 
-
-
 	if (p_ptr->blind) fprintf(fff, "You cannot see.\n");
 	if (p_ptr->confused) fprintf(fff, "You are confused.\n");
 	if (p_ptr->afraid) fprintf(fff, "You are terrified.\n");
@@ -1384,6 +1382,10 @@ void self_knowledge(int Ind) {
 #if 1
 	if (p_ptr->reflect) fprintf(fff, "You reflect arrows and bolts.\n");
 	if (p_ptr->no_cut) fprintf(fff, "You cannot be cut.\n");
+	
+	//Kurzel!! - Self knowledge all the extra rune spell buffs here??
+	if (p_ptr->rcraft_upkeep_flags & RUPK_MIN_CO) fprintf(fff, "You cannot be confused.\n"); //Runemaster status-seals (only one needed?) - Kurzel!!
+	
 	if (p_ptr->reduce_insanity > 0) {
 		fprintf(fff, "Your mind is somewhat resistant against insanity.\n");
 	}
@@ -1396,9 +1398,13 @@ void self_knowledge(int Ind) {
 	if (p_ptr->suscep_good) fprintf(fff, "You are susceptible to evil-vanquishing effects.\n");
 	if (p_ptr->suscep_evil) fprintf(fff, "You are susceptible to good-vanquishing effects.\n");
 	if (p_ptr->suscep_life) fprintf(fff, "You are susceptible to undead-vanquishing effects.\n");
-	if (p_ptr->sh_fire) fprintf(fff, "You are surrounded with a fiery aura.\n");
-	if (p_ptr->sh_elec) fprintf(fff, "You are surrounded with electricity.\n");
-	if (p_ptr->sh_cold) fprintf(fff, "You are surrounded with a freezing aura.\n");
+	//Runemaster auras - Kurzel
+	if (p_ptr->sh_fire || p_ptr->tim_aura_fire) fprintf(fff, "You are surrounded with a fiery aura.\n");
+	if (p_ptr->sh_elec || p_ptr->tim_aura_elec) fprintf(fff, "You are surrounded with electricity.\n");
+	if (p_ptr->sh_cold || p_ptr->tim_aura_cold) fprintf(fff, "You are surrounded with a freezing aura.\n");
+#if 0
+	if (p_ptr->tim_aura_acid) fprintf(fff, "You are surrounded with acid.\n"); 
+#endif
 
 	if (p_ptr->resist_continuum) fprintf(fff, "The space-time continuum cannot be disrupted near you.\n");
 	if (p_ptr->anti_tele) fprintf(fff, "You are surrounded by an anti-teleportation field.\n");
@@ -5083,7 +5089,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 #endif
 
 			/* Skip the epicenter */
-			if (!dx && !dy) continue;
+			if ((!dx && !dy) && r) continue; //Runemaster / GF_EARTHQUAKE hack, allow a per-tile 'quake' - Kurzel
 
 			/* Skip most grids */
 			if (rand_int(100) < 85) continue;
@@ -5832,8 +5838,8 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 
 	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
-	/* WRAITHFORM reduces damage/effect! */
-	if (p_ptr->tim_wraith) dam /= 2;
+	/* WRAITHFORM reduces damage/effect! when not hacking runecraft combination spells - Kurzel */
+	if (p_ptr->tim_wraith && !p_ptr->rcraft_project) dam /= 2;
 
 	/* Use the given direction */
 	tx = p_ptr->px + 99 * ddx[dir];
@@ -5873,7 +5879,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 		    (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
 		    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
-		    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
+		    (typ != GF_OLD_POLY) && (typ != GF_RCRAFT_PLAYER)) /* Non-hostile players may polymorph each other */
 			sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, TRUE);
 	}
 #endif

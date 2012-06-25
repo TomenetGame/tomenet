@@ -1602,16 +1602,14 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
         if (!older_than(4, 4, 24)) rd_u32b(&p_ptr->gold_picked_up);
         else strip_bytes(4);
 
-#if 0 /* INSTARES */
-        if (!older_than(4, 4, 24)) rd_byte(&p_ptr->insta_res);
+        if (!older_than(4, 4, 24)) {
+		rd_byte(&tmp8u);
+		p_ptr->insta_res = tmp8u;
+    	}
         else strip_bytes(1);
 
 	/* Future use */
 	strip_bytes(38);
-#else
-	/* Future use */
-	strip_bytes(39);
-#endif
 
 	/* Toggle for possible automatic save-game updates
 	   (done via script login-hook, eg custom.lua) - C. Blue */
@@ -1789,11 +1787,73 @@ if (p_ptr->updated_savegame == 0) {
 		rd_u32b(&p_ptr->guild_flags);
 	}
 
-#if 0 /* TODO: waiting on Kurzel's runecraft modifications */
-	if (!older_than(4, 4, 24)) {
-		rd_byte(&p_ptr->insta_res);
-	}
+	/* New Runecraft Feature Variables - Kurzel */
+	if (!older_than(4, 4, 25)) {
+		rd_s16b(&p_ptr->rcraft_augment);
+
+		rd_byte(&p_ptr->rcraft_project);
+		rd_s16b(&p_ptr->rcraft_xtra_a);
+		rd_s16b(&p_ptr->rcraft_xtra_b);
+		rd_u16b(&p_ptr->tim_rcraft_xtra);
+
+		rd_u16b(&p_ptr->tim_rcraft_help);
+		rd_byte(&p_ptr->tim_rcraft_help_type);
+		rd_byte(&p_ptr->tim_rcraft_help_projection);
+		rd_u32b(&p_ptr->tim_rcraft_help_damage);
+
+		rd_byte(&p_ptr->rcraft_upkeep);
+		rd_u16b(&p_ptr->rcraft_attune);
+		rd_u16b(&p_ptr->rcraft_repel);
+		rd_byte(&p_ptr->rcraft_brand);
+
+		rd_u16b(&p_ptr->tim_brand_acid);
+		rd_u16b(&p_ptr->tim_brand_elec);
+		rd_u16b(&p_ptr->tim_brand_fire);
+		rd_u16b(&p_ptr->tim_brand_cold);
+		rd_u16b(&p_ptr->tim_brand_pois);
+		rd_u16b(&p_ptr->tim_brand_vorp);
+		rd_u16b(&p_ptr->tim_brand_conf);
+
+#if 0
+		rd_u16b(&p_ptr->tim_aura_acid);
 #endif
+		rd_u16b(&p_ptr->tim_aura_elec);
+		rd_u16b(&p_ptr->tim_aura_fire);
+		rd_u16b(&p_ptr->tim_aura_cold);
+
+		rd_byte(&p_ptr->rcraft_dig);
+		rd_byte(&p_ptr->rcraft_upkeep_flags);
+
+		rd_u16b(&p_ptr->tim_necro);
+		rd_u16b(&p_ptr->tim_necro_pow);
+		//rd_u16b(&p_ptr->tim_dodge);
+		//rd_u16b(&p_ptr->tim_dodge_pow);
+		rd_u16b(&p_ptr->tim_stealth);
+		rd_u16b(&p_ptr->tim_stealth_pow);
+
+#if 0
+		rd_u16b(&p_ptr->tim_brand_ex);
+		rd_byte(&p_ptr->tim_brand_ex_projection);
+		rd_u32b(&p_ptr->tim_brand_ex_damage);
+		rd_u16b(&p_ptr->tim_aura_ex);
+		rd_byte(&p_ptr->tim_aura_ex_projection);
+		rd_u32b(&p_ptr->tim_aura_ex_damage);
+#endif
+
+		rd_u16b(&p_ptr->rcraft_empower);
+		rd_u16b(&p_ptr->rcraft_regen);
+
+#if 0
+		rd_u16b(&p_ptr->protacid);
+		rd_u16b(&p_ptr->protelec);
+		rd_u16b(&p_ptr->protfire);
+		rd_u16b(&p_ptr->protcold);
+		rd_u16b(&p_ptr->protpois);
+#endif
+
+		rd_u16b(&p_ptr->tim_elemshield);
+		rd_byte(&p_ptr->tim_elemshield_type);
+	}
 
 	/* Success */
 	return FALSE;

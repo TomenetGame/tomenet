@@ -3319,8 +3319,6 @@ void interact_macros(void)
 
 	bool were_recording = FALSE;
 
-	u32b flags;
-
 
 	/* Save screen */
 	Term_save();
@@ -4098,9 +4096,10 @@ void interact_macros(void)
 					case mw_rune:
 						strcpy(buf2, "");
 						strcpy(buf, "");
-						flags = 0;
+						u16b e_flags = 0;
+						u16b m_flags = 0;
 
-						/* ---------- Draw up to three runes ---------- */
+						/* ---------- Draw up to three runes ---------- */ //Kurzel
 
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose the runes you want to draw, up to a maximum of three.");
 						Term_putstr(10, 11, -1, TERM_GREEN, "If you want to draw less runes, press \377sENTER\377g key when done.");
@@ -4113,10 +4112,10 @@ void interact_macros(void)
 							Term_putstr(10, 13, -1, TERM_GREEN, format("Runes chosen so far: \377s%s", buf2));
 							for (i = 0; i < RCRAFT_MAX_ELEMENTS; i++) {
 								/* Don't draw a rune twice */
-								if (flags & r_elements[i].self) continue;
+								if (e_flags & r_elements[i].flag) continue;
 								Term_putstr(15 + (i / 6) * 15, 15 + i % 6, -1,
 								    TERM_L_GREEN,
-								    format("%c) \377%c%s", 'a' + i, runecraft_colourize(flags | r_elements[i].self, 0), r_elements[i].title));
+								    format("%c) \377%c%s", 'a' + i, rcraft_threat_color(e_flags | r_elements[i].flag, m_flags), r_elements[i].name));
 							}
 
 							switch (choice = inkey()) {
@@ -4141,14 +4140,14 @@ void interact_macros(void)
 								}
 
 								/* don't add duplicate rune */
-								if (flags & r_elements[choice - 'a'].self) {
+								if (e_flags & r_elements[choice - 'a'].flag) {
 									j--;
 									continue;
 								}
 
 								/* add this rune.. */
-								flags |= r_elements[choice - 'a'].self;
-								strcat(buf2, r_elements[choice - 'a'].title);
+								e_flags |= r_elements[choice - 'a'].flag;
+								strcat(buf2, r_elements[choice - 'a'].name);
 								strcat(buf2, " ");
 							}
 
@@ -4163,28 +4162,26 @@ void interact_macros(void)
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose the rune imperative,");
 						Term_putstr(10, 11, -1, TERM_GREEN, "ie how powerful you want to try and make the spell.");
 
-						Term_putstr(15, 13, -1, TERM_L_GREEN, "Name            ( Lvl, Dam%, Cost%, Fail%  )");
+						Term_putstr(15, 13, -1, TERM_L_GREEN, "Imperative    (Level, Damage, Cost, Fail)");
 
+						char tmpbuf[80];
 						for (i = 0; i < RCRAFT_MAX_IMPERATIVES; i++) {
-							char tmpbuf[80];
-
-							/* catch 'chaotic' (only one that has dam or cost of zero) */
-							if (!r_imperatives[i].cost) {
-								sprintf(tmpbuf, "%c) \377%c%-10s\377G   (  %s%d, ???%%,  ???%%,  +??%%  )",
-								    'a' + i,
-								    runecraft_colourize(flags, r_imperatives[i].level),
-								    r_imperatives[i].name,
-								    r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level);
-							} else {
-							/* normal imperatives */
-								sprintf(tmpbuf, "%c) \377%c%-10s\377G   (  %s%d, %3d%%,  %3d%%,  %s%2d%%  )",
-								    'a' + i,
-								    runecraft_colourize(flags, r_imperatives[i].level),
-								    r_imperatives[i].name,
-								    r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level,
-								    r_imperatives[i].dam * 10,
-								    r_imperatives[i].cost * 10,
-								    r_imperatives[i].fail >= 0 ? "+" : "" , r_imperatives[i].fail);
+							if (r_imperatives[i].flag == I_CHAO) { //Hack -- Chaotic displays ??? - Kurzel (duplicate code here from c-spell.c)
+								sprintf(tmpbuf, "%c) \377%c%-10s\377G (   %s%d,   ???%%, ???%%, ???%%)",
+									'a' + i,
+									rcraft_threat_color(e_flags, m_flags | r_imperatives[i].flag),
+									r_imperatives[i].name,
+									r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level);
+							}
+							else {
+								sprintf(tmpbuf, "%c) \377%c%-10s\377G (   %s%d,   %s%d%%, %s%d%%, %s%d%%)",
+									'a' + i,
+									rcraft_threat_color(e_flags, m_flags | r_imperatives[i].flag),
+									r_imperatives[i].name,
+									r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level,
+									r_imperatives[i].damage >= 10 ? "" : " ", r_imperatives[i].damage * 10,
+									r_imperatives[i].cost >= 10 ? "" : " ", r_imperatives[i].cost * 10,
+									ABS(r_imperatives[i].fail) >= 10 ? (r_imperatives[i].fail >= 0 ? "+" : "") : (r_imperatives[i].fail >= 0 ? " +" : " "), r_imperatives[i].fail);
 							}
 
 							Term_putstr(15, 14 + i, -1, TERM_L_GREEN, tmpbuf);
@@ -4212,6 +4209,9 @@ void interact_macros(void)
 						}
 						/* exit? */
 						if (i == -1) continue;
+
+						/* Store the imperative - Kurzel */
+						m_flags |= r_imperatives[choice - 'a'].flag;
 
 						/* build macro part: 'a'..'h' */
 						strcat(buf, format("%c", choice));
@@ -4222,16 +4222,17 @@ void interact_macros(void)
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose the rune method,");
 						Term_putstr(10, 11, -1, TERM_GREEN, "ie the shape you want to manifest the spell in.");
 
-						Term_putstr(15, 13, -1, TERM_L_GREEN, "Name         (  Lvl, Cost%  )");
+						Term_putstr(15, 13, -1, TERM_L_GREEN, "Type          (Level, Cost)");
 
+						//char tmpbuf[80];
 						for (i = 0; i < RCRAFT_MAX_TYPES; i++) {
-							char tmpbuf[80];
-							sprintf(tmpbuf, "%c) \377%c%-7s\377G   (  %s%2d,  %3d%%  )",
-							    'a' + i,
-							    runecraft_colourize(flags, r_imperatives[choice - 'a'].level + runespell_types[i].cost),
-							    runespell_types[i].title,
-							    runespell_types[i].cost >= 0 ? "+" : "-", ABS(runespell_types[i].cost),
-							    runespell_types[i].pen * 10);
+							sprintf(tmpbuf, "%c) \377%c%-10s\377G (   %s%d, %s%d%%)",
+								'a' + i,
+								rcraft_threat_color(e_flags, m_flags | r_types[i].flag),
+								r_types[i].name,
+								r_types[i].level >= 0 ? "+" : "", r_types[i].level,
+								r_types[i].cost >= 10 ? "" : " ", r_types[i].cost * 10);
+
 							Term_putstr(15, 14 + i, -1, TERM_L_GREEN, tmpbuf);
 						}
 
@@ -4258,12 +4259,17 @@ void interact_macros(void)
 						/* exit? */
 						if (i == -1) continue;
 
+						/* Store the type - Kurzel */
+						m_flags |= r_types[choice - 'a'].flag;
+
 						/* build macro part: 'a'..'h' */
 						strcat(buf, format("%c", choice));
 
 						/* ---------- Determine if a direction is needed (hard-coded) ---------- */
 
-						if (choice - 'a' != 1 && choice - 'a' != 5 && choice - 'a' != 7)
+						if (((m_flags & T_SELF) != T_SELF)
+						 && ((m_flags & T_WAVE) != T_WAVE)
+						 && ((m_flags & T_STOR) != T_STOR))
 							strcat(buf, "*t");
 
 						/* hack before we exit: remember menu choice 'runespell' */

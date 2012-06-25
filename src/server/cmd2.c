@@ -3768,7 +3768,7 @@ static void do_arrow_brand_effect(int Ind, int y, int x)
 		case BRAND_BALL_SOUND:
 			project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_SOUND, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
 			break;
-		case BRAND_SHARP:
+		case BRAND_VORP:
 			/* Nothing here */
 			break;
 		case BRAND_CONF:
@@ -4517,7 +4517,7 @@ void do_cmd_fire(int Ind, int dir)
 			if (zcave[y][x].m_idx < 0) {
 				if (cfg.use_pk_rules == PK_RULES_NEVER) {
 					/* Stop looking */
-					if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BRAND_SHARP)) break;
+					if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BRAND_VORP)) break;
 				} else {
 
 					cave_type *c_ptr = &zcave[y][x];
@@ -4715,7 +4715,7 @@ void do_cmd_fire(int Ind, int dir)
 									do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 
 								/* Stop looking */
-								if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BRAND_SHARP) || boomerang) break;
+								if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BRAND_VORP) || boomerang) break;
 							}
 						}
 
@@ -4968,7 +4968,7 @@ void do_cmd_fire(int Ind, int dir)
 						do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 
 					/* Stop looking */
-					if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BRAND_SHARP) || boomerang) break;
+					if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BRAND_VORP) || boomerang) break;
 				}
 			}
 
@@ -6554,10 +6554,12 @@ void stop_shooting_till_kill(int Ind) {
 	Players[Ind]->shoot_till_kill_spell = 0;
 
 #ifdef ENABLE_RCRAFT
-//	if (Players[Ind]->shoot_till_kill_rune_spell) {
-		Players[Ind]->shoot_till_kill_rune_spell = 0;
-		Players[Ind]->shoot_till_kill_rune_modifier = 0;
-//	}
+	if (Players[Ind]->shoot_till_kill_rcraft) {
+		Players[Ind]->FTK_e_flags1 = 0;
+		Players[Ind]->FTK_e_flags2 = 0;
+		Players[Ind]->FTK_m_flags = 0;
+		Players[Ind]->FTK_energy = 0;
+	}
 #endif
 }
 
