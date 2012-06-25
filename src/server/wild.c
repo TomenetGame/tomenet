@@ -35,8 +35,15 @@
 #endif
 
 /* For BLEED_WITH_NEIGHBOURS:
-   Don't bleed involving towns because that can look a bit weird sometimes. */
-#define BLEED_AVOID_TOWN
+   Don't bleed involving/from towns because that can look a bit weird
+   sometimes, eg if Khazad-dum bleeds grassland into adjacent volcanos.
+   ** Sort of deprecated - use BLEED_ENHANCED_TOWN below instead. - C. Blue */
+//#define BLEED_AVOID_TOWN
+
+/* For BLEED_WITH_NEIGHBOURS:
+   Bleed correct town terrain into town-adjacent sectors (hard-coded though). */
+#define BLEED_ENHANCED_TOWN
+
 
 /* HACK: Disable new terrain types DESERT/WILD and other rng-affecting stuff? */
 #ifndef WILDERNESS_NEW_TERRAINS
@@ -2279,6 +2286,39 @@ static void wild_bleed_level(int bleed_to_x, int bleed_to_y, int bleed_from_x, i
 #ifdef BLEED_AVOID_TOWN
 //	if (istownarea(&neighbor, 1)) return;
 	if (istown(&((struct worldpos) {bleed_from_x, bleed_from_y, 0}))) return;
+#endif
+#ifdef BLEED_ENHANCED_TOWN
+	if (istown(&((struct worldpos) {bleed_from_x, bleed_from_y, 0}))) {
+		int type = -1, i;
+		for (i = 0; i < numtowns; i++) {
+			if (town[i].x == bleed_from_x && town[i].y == bleed_from_y) {
+				type = town[i].type;
+				break;
+			}
+		}
+		switch (type) {
+		case 1:
+			wild_info[bleed_from_y][bleed_from_x].type = WILD_GRASSLAND;
+			//if (wild_info[bleed_to_y][bleed_to_x].type != WILD_OCEAN) return;
+			break;
+		case 2:
+			wild_info[bleed_from_y][bleed_from_x].type = WILD_GRASSLAND;
+			//if (wild_info[bleed_to_y][bleed_to_x].type != WILD_OCEAN) return;
+			break;
+		case 3:
+			wild_info[bleed_from_y][bleed_from_x].type = WILD_MOUNTAIN;
+			//if (wild_info[bleed_to_y][bleed_to_x].type != WILD_OCEAN) return;
+			break;
+		case 4:
+			wild_info[bleed_from_y][bleed_from_x].type = WILD_OCEAN;
+			//if (wild_info[bleed_to_y][bleed_to_x].type != WILD_OCEAN) return;
+			break;
+		case 5:
+			wild_info[bleed_from_y][bleed_from_x].type = WILD_MOUNTAIN;
+			//if (wild_info[bleed_to_y][bleed_to_x].type != WILD_OCEAN) return;
+			break;
+		}
+	}
 #endif
 
 	/* paranoia */
