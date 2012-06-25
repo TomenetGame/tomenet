@@ -5660,13 +5660,13 @@ bool backup_estate(void) {
     		savefile[k] = '\0';
 		/* build path name and try to create/append to player's backup file */
     		path_build(buf, MAX_PATH_LENGTH, buf2, savefile);
-    		if ((fp = fopen(buf, "r")) == NULL)
+    		if ((fp = fopen(buf, "rb")) == NULL)
     			newly_created = TRUE;
     		else {
     			newly_created = FALSE;
     			fclose(fp);
     		}
-    		if ((fp = fopen(buf, "a+")) == NULL) {
+    		if ((fp = fopen(buf, "ab")) == NULL) {
 	    		s_printf("  error: cannot open file '%s'.\nfailed.\n", buf);
     			return FALSE;
     		} else if (newly_created) {
@@ -5791,7 +5791,7 @@ void restore_estate(int Ind) {
 
 	/* build path name and try to create/append to player's backup file */
 	path_build(buf, MAX_PATH_LENGTH, buf2, p_ptr->basename);
-	if ((fp = fopen(buf, "r")) == NULL) {
+	if ((fp = fopen(buf, "rb")) == NULL) {
 		s_printf("  error: No file '%s' exists to request from.\nfailed.\n", buf);
 		msg_print(Ind, "\377yNo goods or money stored to request.");
 		return;
@@ -5811,7 +5811,7 @@ void restore_estate(int Ind) {
 	/* open temporary file for writing the stuff the player left over */
 	strcpy(buf2, buf);
 	strcat(buf2, ".$$$");
-	if ((fp_tmp = fopen(buf2, "w")) == NULL) {
+	if ((fp_tmp = fopen(buf2, "wb")) == NULL) {
     		s_printf("  error: cannot open temporary file '%s'.\nfailed.\n", buf2);
     		msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
     		fclose(fp);

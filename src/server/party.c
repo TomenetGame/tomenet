@@ -3603,7 +3603,7 @@ void backup_acclists(void) {
 	/* create folder lib/save/estate if not existing */
 	path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
 	path_build(buf, MAX_PATH_LENGTH, buf2, "_accounts_");
-	if ((fp = fopen(buf, "w")) == NULL) {
+	if ((fp = fopen(buf, "wb")) == NULL) {
 		s_printf("  error: cannot open file '%s'.\nfailed.\n", buf);
 		return;
 	}
@@ -3672,7 +3672,7 @@ void restore_acclists(void) {
 
 	path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
 	path_build(buf, MAX_PATH_LENGTH, buf2, "_accounts_");
-	if ((fp = fopen(buf, "r")) == NULL) {
+	if ((fp = fopen(buf, "rb")) == NULL) {
 		s_printf("  error: cannot open file '%s'.\nfailed.\n", buf);
 		return;
 	}
