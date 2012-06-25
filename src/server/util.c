@@ -5928,6 +5928,11 @@ void restore_estate(int Ind) {
 		        msg_format(Ind, "You receive %s.", o_name);
 			s_printf("  gained %s.\n", o_name);
 			continue;
+		} else {
+			s_printf("  invalid data '%s'.\n", data);
+			msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
+			relay_estate(buf, buf2, fp, fp_tmp);
+			return;
 		}
 	}
 }
