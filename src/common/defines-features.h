@@ -102,6 +102,10 @@
 /* --------------------- Server-type dependant features -------------------- */
 
 #ifdef RPG_SERVER
+ #define WILDERNESS_NEW_TERRAINS	/* New wilderness types DESERT and ICE. ***WARNING***: Will require erasing the current 'server' savefile! */
+
+ #define ENABLE_INSTANT_RES	/* Enable the instant resurrection feature */
+
  #define BONE_AND_TREASURE_CHAMBERS	/* New experimental room types: Generate pits of bones or treasure - C. Blue */
 
  #define MUCHO_RUMOURS		/* print a rumour on day changes and unique kills (the_sandman) */
@@ -116,7 +120,6 @@
 
 #ifdef TEST_SERVER
  #define WILDERNESS_NEW_TERRAINS	/* New wilderness types DESERT and ICE. ***WARNING***: Will require erasing the current 'server' savefile! */
-
 
  #define ENABLE_INSTANT_RES	/* Enable the instant resurrection feature */
 
