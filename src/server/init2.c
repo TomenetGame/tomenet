@@ -3186,6 +3186,10 @@ static void set_server_option(char * option, char * value)
 	{
 		cfg.worldd_plist = str_to_boolean(value);
 	}
+	else if (!strcmp(option,"WORLDD_IRCCHAT"))
+	{
+		cfg.worldd_ircchat = str_to_boolean(value);
+	}
 	else printf("Error : unrecognized tomenet.cfg option %s\n", option);
 }
 
