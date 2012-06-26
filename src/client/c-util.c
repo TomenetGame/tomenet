@@ -4115,7 +4115,7 @@ void interact_macros(void)
 								if (e_flags & r_elements[i].flag) continue;
 								Term_putstr(15 + (i / 6) * 15, 15 + i % 6, -1,
 								    TERM_L_GREEN,
-								    format("%c) \377%c%s", 'a' + i, rcraft_threat_color(e_flags | r_elements[i].flag, m_flags), r_elements[i].name));
+								    format("%c) \377%c%s", 'a' + i, rcraft_threat_color(e_flags | r_elements[i].flag, (I_MODE | T_SELF)), r_elements[i].name));
 							}
 
 							switch (choice = inkey()) {
