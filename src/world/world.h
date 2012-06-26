@@ -40,7 +40,6 @@
 #define WPF_LACCOUNT	0x0400
 #define WPF_PMSG	0x0800	/* private message - P */
 #define WPF_SINFO	0x1000
-#define WPF_IRCCHAT	0x2000	/* chat message directed to a particular server (irc-relay) - S */
 
 /* World message flags */
 #define WMF_LVLUP	0x01

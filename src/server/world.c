@@ -183,6 +183,20 @@ void world_comm(int fd, int arg){
 			case WP_RESTART:
 				set_runlevel(0);
 				break;
+			case WP_IRCCHAT:
+				/* TEMPORARY chat broadcast method */
+				/* strip special chat codes \374/5/6 before testing prefix() */
+				p = wpk->d.chat.ctxt;
+				if (*p == '\374') p++;
+				else if (*p == '\375') p++;
+				if (*p == '\376') p++;
+				if (cfg.worldd_ircchat) {
+					for (i = 1; i <= NumPlayers; i++) {
+						if (Players[i]->conn == NOT_CONNECTED) continue;
+						msg_print(i, wpk->d.chat.ctxt);
+					}
+				}
+				break;
 			default:
 				s_printf("unknown packet from world: %d\n", wpk->type);
 		}
