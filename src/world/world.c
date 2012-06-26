@@ -212,7 +212,7 @@ void wproto(struct client *ccl){
 						p++;
 					}
 //					snprintf(msg, MSG_LEN, "\377o[\377%c%d\377o] %s", (ccl->authed>0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt);
-					snprintf(msg, MSG_LEN, "%s%s\377%c[IRC]\377w %s%c",
+					snprintf(msg, MSG_LEN, "%s%s\377%c(IRC)\377w %s%c",
 					    client_all ? "\374" : (client_chat ? "\375" : ""),
 					    client_ctrlo ? "\376" : "",
 					    (ccl->authed>0 ? 'g' : 'r'), p, '\0');
@@ -326,7 +326,10 @@ void relay(struct wpacket *wpk, struct client *talker){
 					}
 				}
 			}
-			
+
+			/* Specialty: Abuse chat.id for determining destination server. */
+			if (wpk->type == WP_IRCCHAT && wpk->d.chat.id != ccl->authed) continue;
+
 			send(ccl->fd, wpk, sizeof(struct wpacket), 0); 
 
 			/* Temporary stderr output */
