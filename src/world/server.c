@@ -87,6 +87,9 @@ void loadservers(){
 				case 'C':
 					slist[i].rflags |= WPF_CHAT;
 					break;
+				case 'S':
+					slist[i].rflags |= WPF_IRCCHAT;
+					break;
 				case 'N':
 					slist[i].rflags |= WPF_NPLAYER;
 					break;

@@ -193,6 +193,34 @@ void wproto(struct client *ccl){
 					relay(wpk, ccl);
 				}
 				break;
+			/* Integrate server-directed chat */
+			case WP_IRCCHAT:
+                                /* only relay all for now */
+				if(ccl->authed && ((ccl->authed>0) || secure.chat)){
+					char msg[MSG_LEN], *p = wpk->d.chat.ctxt;
+					/* strip chat codes and reinsert them at the beginning */
+					if (*p == '\374') {
+						client_all = 1;
+						p++;
+					}
+					else if (*p == '\375') {
+						client_chat = 1;
+						p++;
+					}
+					if (*p == '\376') {
+						client_ctrlo = 1;
+						p++;
+					}
+//					snprintf(msg, MSG_LEN, "\377o[\377%c%d\377o] %s", (ccl->authed>0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt);
+					snprintf(msg, MSG_LEN, "%s%s\377%c[IRC]\377w %s%c",
+					    client_all ? "\374" : (client_chat ? "\375" : ""),
+					    client_ctrlo ? "\376" : "",
+					    (ccl->authed>0 ? 'g' : 'r'), p, '\0');
+//					msg[MSG_LEN - 1] = '\0';
+					strncpy(wpk->d.chat.ctxt, msg, MSG_LEN);
+					relay(wpk, ccl);
+				}
+				break;
 			case WP_PMSG:
 				/* MUST be authed for private messages */
 				if(ccl->authed>0){
