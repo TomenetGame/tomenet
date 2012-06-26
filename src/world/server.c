@@ -120,6 +120,9 @@ void loadservers(){
 				case 'q':
 					slist[i].mflags |= WMF_PLEAVE;
 					break;
+				case 'S':
+					slist[i].rflags |= WPF_IRCCHAT;
+					break;
 			}
 		}
 
