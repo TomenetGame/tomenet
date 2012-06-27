@@ -1057,6 +1057,8 @@ static bool forbidden_name(char *name) {
 	/* Hardcode some not so important ones */
 	if (!strcmp("tBot", name)) return TRUE; /* Sandman's internal chat bot */
 	if (!strcmp("8ball", name)) return TRUE; /* Sandman's internal chat bot */
+	/* For logging chat relayed from IRC */
+	if (!strcmp("IRC", name)) return TRUE;
 
 	sfp = fopen("badnames.txt", "r");
 	if (sfp == (FILE*) NULL)

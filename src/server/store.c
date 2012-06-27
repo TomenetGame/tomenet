@@ -6391,6 +6391,11 @@ s_printf("PLAYER_STORE_HANDLE: mass-add, mang, owner %s (%d), %s, value %d, buye
 				cheque_ptr = &h_ptr->stock[i];
 s_printf("PLAYER_STORE_HANDLE: new mass, trad, owner %s (%d), %s, value %d, buyer %s)\n",
     owner_name, h_ptr->dna->owner, o0_name, value, p_ptr->name);
+
+				/* Update mass-cheque coordinates from 'create one' to
+				   're-use it' for subsequent purchases by this same
+				   buyer while he stays in this store. */
+				p_ptr->ps_mcheque_x = i;
 			} else {
 				/* ALL houses are currently rectangular, so this check seems obsolete.. */
 				if (h_ptr->flags & HF_RECT) {
@@ -6422,6 +6427,12 @@ s_printf("PLAYER_STORE_HANDLE: new mass, trad, owner %s (%d), %s, value %d, buye
 					cheque_ptr = &o_list[c_ptr->o_idx];
 s_printf("PLAYER_STORE_HANDLE: new mass, mang, owner %s (%d), %s, value %d, buyer %s)\n",
     owner_name, h_ptr->dna->owner, o0_name, value, p_ptr->name);
+
+					/* Update mass-cheque coordinates from 'create one' to
+					   're-use it' for subsequent purchases by this same
+					   buyer while he stays in this store. */
+					p_ptr->ps_mcheque_x = x;
+					p_ptr->ps_mcheque_y = y;
 				}
 			}
 		}

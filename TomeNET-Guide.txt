@@ -7028,7 +7028,7 @@ The 'The' indicates that this item is one of a kind, aka an artifact.
 
 To find out all about the magic powers of an artifact it needs to be
 *identified*, for example by a 'Scroll of *Identify*' or in one of the *ID*
-shops that occur in every town, which will usually cost around 2000..3000 gold.
+shops that occur in most towns, which will usually cost around 2000..3000 gold.
 
 Some artifacts can be 'A'ctivated for a special effect. This will be shown
 in the list of its powers that you get when *identifying* it.
@@ -7047,7 +7047,7 @@ their defined value even if they have not been *identified*.
 
 True Artifacts are unique. If an artifact is owned by a player, noone else can
 find it anymore until it's lost (for example if the player dies) or sold to a
-shop, or if the player drops it on the ground and leaves it behind.
+shop, or if the player drops it to the floor and leaves it behind.
 Depending on a server's configuration artifacts that are sold to shops usually
 stay a while in the shop and can be bought by other players before they finally
 disappear from the stock.
