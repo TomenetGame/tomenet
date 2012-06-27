@@ -30,6 +30,8 @@
    WARNING: Toggling this feature can change house locations. */
 #ifdef WILDERNESS_NEW_TERRAINS
  #define BLEED_WITH_NEIGHBOURS
+#else
+ #define SIMPLE_BLEED
 #endif
 
 /* For BLEED_WITH_NEIGHBOURS:
