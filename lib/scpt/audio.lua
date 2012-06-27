@@ -112,6 +112,7 @@ audio_sfx = {
     "item_tool",
     "item_tool_digger",
 
+    "item_book",
     "item_scroll",
     "item_bottle",
     "item_potion",
