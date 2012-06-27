@@ -95,7 +95,7 @@ bool world_check_ignore(int Ind, uint32_t id, int16_t server){
 }
 
 void world_comm(int fd, int arg){
-	static char buffer[1024];
+	static char buffer[1024], msg[MSG_LEN], *msg_ptr, *msg_ptr2;
 	char cbuf[sizeof(struct wpacket)], *p;
 	static short bpos=0;
 	static short blen=0;
@@ -145,6 +145,15 @@ void world_comm(int fd, int arg){
 							msg_print(i, wpk->d.chat.ctxt);
 						}
 					}
+
+					/* log */
+					strcpy(msg, "");
+					msg_ptr = wpk->d.chat.ctxt;
+					/* strip \374,\375,\376 */
+					while (*msg_ptr > 127 && *msg_ptr < '\377') msg_ptr++;
+					msg_ptr += 8 + 2;
+					strcat(msg, msg_ptr);
+					s_printf("%s\n", msg);
 				}
 				break;
 			case WP_PMSG:
@@ -162,6 +171,14 @@ void world_comm(int fd, int arg){
 			case WP_MESSAGE:
 				/* A raw message - no data */
 				msg_broadcast_format(0, "%s", wpk->d.smsg.stxt);
+
+				/* log */
+				strcpy(msg, "");
+				msg_ptr = wpk->d.chat.ctxt;
+				/* strip \374,\375,\376 */
+				while (*msg_ptr > 127 && *msg_ptr < '\377') msg_ptr++;
+				strcat(msg, msg_ptr);
+				s_printf("%s\n", msg);
 				break;
 			case WP_NPLAYER:
 			case WP_QPLAYER:
@@ -195,6 +212,20 @@ void world_comm(int fd, int arg){
 						if (Players[i]->conn == NOT_CONNECTED) continue;
 						msg_print(i, wpk->d.chat.ctxt);
 					}
+
+					/* log */
+					strcpy(msg, "[IRC]");
+					msg_ptr = wpk->d.chat.ctxt;
+					/* strip \374,\375,\376 */
+					while (*msg_ptr > 127 && *msg_ptr < '\377') msg_ptr++;
+					msg_ptr += 10;
+					strcat(msg, msg_ptr);
+					/* strip next colour code */
+					msg_ptr = strchr(msg, '\377');
+					msg_ptr2 = strchr(msg_ptr, '\377') + 2;
+					strcpy(msg_ptr, msg_ptr2);
+					/* done */
+					s_printf("%s\n", msg);
 				}
 				break;
 			default:
