@@ -1530,7 +1530,7 @@ extern void process_auctions();
 extern char *auction_format_time();
 extern bool auction_mode_check(int Ind, int auction_id);
 extern void auction_player_joined(int Ind);
-extern void auction_player_death(s32b Ind);
+extern void auction_player_death(s32b id);
 extern void auction_print_error(int Ind, int error);
 extern int auction_set(int Ind, int slot, cptr starting_price_string, cptr buyout_price_string, cptr duration_string);
 extern int auction_start(int Ind);
@@ -2086,7 +2086,7 @@ extern void rune_trap_backlash(int Ind);
 extern void remove_rune_trap_upkeep(int Ind, s32b id, int x, int y);
 extern bool set_rune_port_okay(int Ind, byte type);
 extern void set_rune_port_aux(int Ind, byte type);
-extern byte execute_rspell(u32b Ind, byte dir, u16b e_flags1, u16b e_flags2, u16b m_flags, bool retaliate);
+extern byte execute_rspell(int Ind, byte dir, u16b e_flags1, u16b e_flags2, u16b m_flags, bool retaliate);
 /* spells1.c */
 extern bool rune_backlash(int Ind, int typ, int dam);
 /* tables.c */

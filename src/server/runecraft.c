@@ -38,31 +38,31 @@ byte flags_to_elements(byte element[], u16b e_flags);
 byte flags_to_imperative(u16b m_flags);
 byte flags_to_type(u16b m_flags);
 /* Validation Parameters */
-byte rspell_skill(u32b Ind, byte element[], byte elements);
+byte rspell_skill(int Ind, byte element[], byte elements);
 byte rspell_level(byte element[], byte elements, byte imperative, byte type);
 s16b rspell_diff(byte skill, byte level);
-s16b rspell_energy(u32b Ind, byte element[], byte elements, byte imperative, byte type);
+s16b rspell_energy(int Ind, byte element[], byte elements, byte imperative, byte type);
 #ifdef ENABLE_GROUP_SPELLS
 bool is_group_spell(s16b rune[], u16b e_flags1, u16b e_flags2, byte elements);
 #endif
-byte rspell_cost(u32b Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte level);
-s16b rspell_inventory(u32b Ind, byte element[], byte elements, u16b *mali);
-byte rspell_fail(u32b Ind, byte element[], byte elements, byte imperative, byte type, s16b diff, u16b mali);
+byte rspell_cost(int Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte level);
+s16b rspell_inventory(int Ind, byte element[], byte elements, u16b *mali);
+byte rspell_fail(int Ind, byte element[], byte elements, byte imperative, byte type, s16b diff, u16b mali);
 /* Decode Projection */
 byte flags_to_projection(u16b flags);
 /* Remaining Parameters */
-u32b rspell_damage(u32b Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte projection);
+u32b rspell_damage(int Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte projection);
 void rspell_penalty(s16b margin, byte *p_flags);
-byte rspell_radius(u32b Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte level);
-byte rspell_duration(u32b Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte level);
+byte rspell_radius(int Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte level);
+byte rspell_duration(int Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte level);
 /* Penalty Function */
-void rspell_do_penalty(u32b Ind, u32b gf_type, u32b damage, byte cost, byte p_flags, s16b link);
+void rspell_do_penalty(int Ind, u32b gf_type, u32b damage, byte cost, byte p_flags, s16b link);
 /* Additional Functions */
 #ifdef CONSUME_RUNES
-bool rspell_socket(u32b Ind, byte rune);
+bool rspell_socket(int Ind, byte rune);
 #endif
 /* Main Function */
-byte execute_rspell(u32b Ind, byte dir, u16b e_flags1, u16b e_flags2, u16b m_flags, bool retaliate);
+byte execute_rspell(int Ind, byte dir, u16b e_flags1, u16b e_flags2, u16b m_flags, bool retaliate);
 
 byte flags_to_elements(byte element[], u16b e_flags) {
 	byte elements = 0;
@@ -92,7 +92,7 @@ byte flags_to_type(u16b m_flags) {
 	return -1;
 }
 
-byte rspell_skill(u32b Ind, byte element[], byte elements) {
+byte rspell_skill(int Ind, byte element[], byte elements) {
 	player_type *p_ptr = Players[Ind];
 	u16b skill = 0;
 	byte i;
@@ -140,7 +140,7 @@ s16b rspell_diff(byte skill, byte level) {
 	else return diff;
 }
 
-s16b rspell_energy(u32b Ind, byte element[], byte elements, byte imperative, byte type) {
+s16b rspell_energy(int Ind, byte element[], byte elements, byte imperative, byte type) {
 	player_type * p_ptr = Players[Ind];
 	s16b energy = level_speed(&p_ptr->wpos) / (1 + (S_ENERGY_CPR * get_skill(p_ptr, SKILL_RUNEMASTERY) / 50)); //steps at 50 / S_ENERGY_CPR
 	//s16b energy = level_speed(&p_ptr->wpos) * 50 / (50 + S_ENERGY_CPR * get_skill(p_ptr, SKILL_RUNEMASTERY));
@@ -210,7 +210,7 @@ bool is_group_spell(s16b rune[], u16b e_flags1, u16b e_flags2, byte elements) {
 }	
 #endif
 
-byte rspell_cost(u32b Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte level) {
+byte rspell_cost(int Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte level) {
 //unused?	player_type * p_ptr = Players[Ind];
 	u16b cost = ((level + skill) / (2 * S_COST_DIV));
 	//cost = cost * 50 / (50 + S_ENERGY_CPR * get_skill(p_ptr, SKILL_RUNEMASTERY));
@@ -236,7 +236,7 @@ byte rspell_cost(u32b Ind, byte element[], byte elements, byte imperative, byte 
 	return (byte)cost;
 }
 
-s16b rspell_inventory(u32b Ind, byte element[], byte elements, u16b *mali) {
+s16b rspell_inventory(int Ind, byte element[], byte elements, u16b *mali) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 	
@@ -262,7 +262,7 @@ s16b rspell_inventory(u32b Ind, byte element[], byte elements, u16b *mali) {
 	return link;
 }
 
-byte rspell_fail(u32b Ind, byte element[], byte elements, byte imperative, byte type, s16b diff, u16b mali) {
+byte rspell_fail(int Ind, byte element[], byte elements, byte imperative, byte type, s16b diff, u16b mali) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Set the base failure rate; currently 50% at equal skill to level such that the range is [5,95] over 30 levels - Kurzel */
@@ -310,7 +310,7 @@ byte flags_to_projection(u16b flags) {
 	return -1;
 }
 
-u32b rspell_damage(u32b Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte projection) {
+u32b rspell_damage(int Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte projection) {
 	player_type * p_ptr = Players[Ind];
 	u32b damage = 0, damage_dice, weight_hi, weight_lo, influence;
 	switch (r_projections[projection].gf_class) {
@@ -535,7 +535,7 @@ void rspell_penalty(s16b margin, byte *p_flags) {
 	return;
 }
 
-byte rspell_radius(u32b Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte level) {
+byte rspell_radius(int Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte level) {
 //unused?	player_type * p_ptr = Players[Ind];
 	s16b radius = 0;
 	
@@ -572,7 +572,7 @@ byte rspell_radius(u32b Ind, byte element[], byte elements, byte imperative, byt
 	return (byte)radius;
 }
 
-byte rspell_duration(u32b Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte level) {
+byte rspell_duration(int Ind, byte element[], byte elements, byte imperative, byte type, byte skill, byte level) {
 //unused?	player_type *p_ptr = Players[Ind];
 	s16b duration = 0;
 	switch (r_types[type].flag) {
@@ -611,7 +611,7 @@ byte rspell_duration(u32b Ind, byte element[], byte elements, byte imperative, b
 	return (byte)duration;
 }
 
-void rspell_do_penalty(u32b Ind, u32b gf_type, u32b damage, byte cost, byte p_flags, s16b link) {
+void rspell_do_penalty(int Ind, u32b gf_type, u32b damage, byte cost, byte p_flags, s16b link) {
 	player_type *p_ptr = Players[Ind];
 	/* Roll for effects */
 	byte chance = randint(20);
@@ -758,7 +758,7 @@ void rspell_do_penalty(u32b Ind, u32b gf_type, u32b damage, byte cost, byte p_fl
 }
 
 #ifdef CONSUME_RUNES
-bool rspell_socket(u32b Ind, byte rune) {
+bool rspell_socket(int Ind, byte rune) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 	byte i;
@@ -791,8 +791,8 @@ bool rspell_socket(u32b Ind, byte rune) {
 }
 #endif
 
-byte execute_rspell(u32b Ind, byte dir, u16b e_flags1, u16b e_flags2, u16b m_flags, bool retaliate) {
-	player_type * p_ptr = Players[Ind];
+byte execute_rspell(int Ind, byte dir, u16b e_flags1, u16b e_flags2, u16b m_flags, bool retaliate) {
+	player_type *p_ptr = Players[Ind];
 	
 	/* Toggle AFK */
 	un_afk_idle(Ind);
