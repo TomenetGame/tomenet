@@ -4599,6 +4599,9 @@ void do_cmd_fire(int Ind, int dir)
 								if (magik(apply_block_chance(q_ptr, q_ptr->shield_deflect + 15))) { /* boost for PvP! */
 									if (visible) msg_format(Ind, "\377%c%s blocks %s!", COLOUR_BLOCK_PLY, p_name, o_name);
 									msg_format(0 - c_ptr->m_idx, "\377%cYou block %s's attack!", COLOUR_BLOCK_GOOD, p_ptr->name);
+#ifdef USE_SOUND_2010
+					                                if (sfx == 0) sound(Ind, "block_shield_projectile", NULL, SFX_TYPE_ATTACK, FALSE);
+#endif
 									continue;
 								}
 							}
@@ -4609,6 +4612,9 @@ void do_cmd_fire(int Ind, int dir)
 								if (magik(apply_parry_chance(q_ptr, q_ptr->weapon_parry + 5))) { /* boost for PvP! */
 									msg_format(0 - c_ptr->m_idx, "\377%cYou parry %s's attack!", COLOUR_PARRY_GOOD, p_ptr->name);
 									if (visible) msg_format(Ind, "\377%c%s parries %s!", COLOUR_PARRY_PLY, p_name, o_name);
+#ifdef USE_SOUND_2010
+					                                if (sfx == 0) sound(Ind, "parry_weapon", "parry", SFX_TYPE_ATTACK, FALSE);
+#endif
 									continue;
 								}
 							}
