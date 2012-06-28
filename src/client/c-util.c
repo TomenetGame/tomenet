@@ -4181,8 +4181,8 @@ void interact_macros(void)
 									r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level,
 									r_imperatives[i].damage >= 10 ? "" : " ", r_imperatives[i].damage * 10,
 									r_imperatives[i].cost >= 10 ? "" : " ", r_imperatives[i].cost * 10,
-									ABS(r_imperatives[i].fail) >= 10 ? (r_imperatives[i].fail >= 0 ? "+" : "") : (r_imperatives[i].fail >= 0 ? " +" : " "), r_imperatives[i].fail),
-									r_imperatives[i].duration >= 10 ? "" : " ", r_imperatives[i].duration * 10;
+									ABS(r_imperatives[i].fail) >= 10 ? (r_imperatives[i].fail >= 0 ? "+" : "") : (r_imperatives[i].fail >= 0 ? " +" : " "), r_imperatives[i].fail,
+									r_imperatives[i].duration >= 10 ? "" : " ", r_imperatives[i].duration * 10);
 							}
 
 							Term_putstr(15, 14 + i, -1, TERM_L_GREEN, tmpbuf);

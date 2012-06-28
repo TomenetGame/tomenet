@@ -1602,8 +1602,8 @@ static void rcraft_print_imperatives(u16b e_flags, u16b m_flags) {
 				r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level,
 				r_imperatives[i].damage >= 10 ? "" : " ", r_imperatives[i].damage * 10,
 				r_imperatives[i].cost >= 10 ? "" : " ", r_imperatives[i].cost * 10,
-				ABS(r_imperatives[i].fail) >= 10 ? (r_imperatives[i].fail >= 0 ? "+" : "") : (r_imperatives[i].fail >= 0 ? " +" : " "), r_imperatives[i].fail),
-				r_imperatives[i].duration >= 10 ? "" : " ", r_imperatives[i].duration * 10;
+				ABS(r_imperatives[i].fail) >= 10 ? (r_imperatives[i].fail >= 0 ? "+" : "") : (r_imperatives[i].fail >= 0 ? " +" : " "), r_imperatives[i].fail,
+				r_imperatives[i].duration >= 10 ? "" : " ", r_imperatives[i].duration * 10);
 		}
 		/* Print the line */
 		prt("", j, col);
