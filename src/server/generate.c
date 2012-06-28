@@ -9100,9 +9100,7 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 		}
 	}
 #ifdef IRONDEEPDIVE_FIXED_TOWNS
-	if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y &&
-	    wpos->wz * WPOS_IRONDEEPDIVE_Z > 0 &&
-	    (dun_lev == 40 || dun_lev == 80)) {
+	if (is_fixed_irondeepdive_town(wpos, dun_lev)) {
 		town = TRUE;
  #ifdef IRONDEEPDIVE_STATIC_TOWNS
 		town_static = TRUE;
@@ -9127,7 +9125,7 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 	    (!p_ptr->dummy_option_8 && (d_ptr->flags2 & DF2_TOWNS_RND) &&
  #if 0 /* for generic dungeons maybe */
 	     magik(30 / (ABS(((dun_lev + 10) % 20) - 10) + 1))
- #else /* deep dive specifically: no towns before 900 ft or around the static towns at 2k and 4k */
+ #else /* irondeepdive specifically: no towns before 900 ft or around the static towns at 2k and 4k */
 	     magik(k = 25 / ( /* 35 -> 82.6% chance per -450..+500ft interval; 30 -> 78.8%; 25 -> 70.5%; 20 -> 62.3%; 15 -> 40.5%, 10 -> 35.4%, 5 -> 14.2% */
 	    		    /* 900..1500ft: 35 -> %; 30 ->70.8%; 25 -> 62.7%; 20 -> %; 15 -> %, 10 -> %, 5 -> % */
 	     (dun_lev >= 18 && (dun_lev <= 40 - 10 || dun_lev > 40 + 10) && (dun_lev <= 80 - 10 || dun_lev > 80 + 10)) ?
@@ -10728,9 +10726,8 @@ static void town_gen_hack(struct worldpos *wpos)
 
 #ifdef IRONDEEPDIVE_FIXED_TOWNS
 	/* predefined town layout instead of generating randomly? */
-	if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y &&
-	    wpos->wz * WPOS_IRONDEEPDIVE_Z > 0 &&
-	    ((k = getlevel(wpos)) == 40 || k == 80)) {
+	k = getlevel(wpos);
+	if (is_fixed_irondeepdive_town(wpos, k)) {
 		/* Kurzel suggested to use the cities of Menegroth and Nargothrond, seems good */
 
 		/* 2000ft - generate Menegroth */
@@ -11266,10 +11263,7 @@ void dealloc_dungeon_level(struct worldpos *wpos)
 	if (wpos->wz
 #ifdef IRONDEEPDIVE_FIXED_TOWNS
  #ifdef IRONDEEPDIVE_STATIC_TOWNS
-	    && !(wpos->wx == WPOS_IRONDEEPDIVE_X &&
-	    wpos->wy == WPOS_IRONDEEPDIVE_Y &&
-	    wpos->wz * WPOS_IRONDEEPDIVE_Z > 0 &&
-	    ((i = getlevel(wpos)) == 40 || i == 80))
+	    && !is_fixed_irondeepdive_town(wpos, getlevel(wpos))
  #endif
 #endif
 	     ) {

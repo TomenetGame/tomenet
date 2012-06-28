@@ -2809,10 +2809,7 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 #if 0 /* instead: no spawns in any dungeon town! */
  #ifdef IRONDEEPDIVE_FIXED_TOWNS
 		/* hack: use for static deep dive dungeon towns too */
-		if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y &&
-		    wpos->wz * WPOS_IRONDEEPDIVE_Z > 0 &&
-		    (dlev == 40 || dlev == 80))
-			return (FALSE);
+		if (is_fixed_irondeepdive_town(wpos, dlev)) return (FALSE);
  #endif
 #else
 		if (isdungeontown(wpos)) return FALSE;

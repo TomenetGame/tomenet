@@ -5040,8 +5040,8 @@ cptr compat_pmode(int Ind1, int Ind2, bool strict) {
 	/* EXPERIMENTAL */
 	player_type *p1_ptr = Players[Ind1], *p2_ptr = Players[Ind2];
 	if (!strict &&
-	    (p1_ptr->wpos.wz && p1_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p1_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y) &&
-	    (p2_ptr->wpos.wz && p2_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p2_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y))
+	    in_irondeepdive(&p1_ptr->wpos) &&
+	    in_irondeepdive(&p2_ptr->wpos))
 		return NULL;
 #endif
 
@@ -5067,8 +5067,8 @@ cptr compat_pomode(int Ind, object_type *o_ptr) {
 #ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
 	/* EXPERIMENTAL */
 	player_type *p_ptr = Players[Ind];
-	if ((p_ptr->wpos.wz && p_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y) &&
-	    (o_ptr->wpos.wz && o_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && o_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y))
+	if (in_irondeepdive(&p_ptr->wpos) &&
+	    in_irondeepdive(&o_ptr->wpos))
 		return NULL;
 #endif
 
@@ -5102,8 +5102,8 @@ cptr compat_pomode(int Ind, object_type *o_ptr) {
 cptr compat_omode(object_type *o1_ptr, object_type *o2_ptr) {
 #ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
 	/* EXPERIMENTAL */
-	if ((o1_ptr->wpos.wz && o1_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && o1_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y) &&
-	    (o2_ptr->wpos.wz && o2_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && o2_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y))
+	if ((in_irondeepdive(&o1_ptr->wpos)) &&
+	    in_irondeepdive(&o2_ptr->wpos))
 		return NULL;
 #endif
 

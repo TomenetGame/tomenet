@@ -7316,7 +7316,7 @@ void player_death(int Ind)
 
 	if (p_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X &&
 	    p_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y &&
-	    p_ptr->wpos.wz != 0
+	    p_ptr->wpos.wz * WPOS_IRONDEEPDIVE_Z > 0
 	    && !is_admin(p_ptr)) {
 		for (i = 0; i < 20; i++) {
 			if (deep_dive_level[i] >= ABS(p_ptr->wpos.wz) || deep_dive_level[i] == -1) continue;

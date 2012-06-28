@@ -4833,8 +4833,7 @@ int Send_depth(int ind, struct worldpos *wpos)
 	}
 #ifdef IRONDEEPDIVE_FIXED_TOWNS
 	/* Hack for Ironman Deep Dive Challenge static dungeons */
-	else if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y
-	    && wpos->wz * WPOS_IRONDEEPDIVE_Z > 0) {
+	else if (is_fixed_irondeepdive_town(wpos, dlev)) {
 		if (dlev == 40) {
 			ville = TRUE;
 			desc = "Menegroth";
