@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 22. June 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 28. June 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.8c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -363,7 +363,12 @@ g       g       pick up an item from the floor. You have to stand on the item
                 the number pad while numlock is turned off. Gold is always
                 picked up automatically.
 C       C       see a character overview.
-L, M    W, M    look around/display the map (use direction keys with L).
+L       W       look around your current sector/floor (use direction keys).
+M       M       display either the world map if you're not in a town or in a
+                dungeon, otherwise display a minimap of the town or of your
+                currentl dungeon level.
+                If you want to see the world map while you're in town or in
+                the dungeon, press ~ and choose "Wilderness map" there.
 s       s       search adjacent fields, objects or walls for hidden traps or
                 doors.
 S       #       enter 'search mode'. You will search your adjacent fields once
@@ -3856,6 +3861,10 @@ While in a town, you can invoke a map that shows the staircases upwards
 and downwards by pressing SHIFT+'M' (ie capital M).
 If you leave a town and explore the wilderness, M will bring up a map showing
 you towns and areas that you have explored so far.
+If you are in a dungeon, M will bring up a minimap of your dungeon level
+instead.
+If you want to look at the world map while in town or in a dungeon, press '~'
+key and choose "Wilderness map".
 
 Before you enter a dungeon, make sure that you have equipped a light source!
 Note the bright dots around you, these are lightened fields within the
@@ -4102,18 +4111,20 @@ damage.
 
 Terrain features on the world map:
 ----------------------------------
-Lakes-          are displayed as blue '~' fields on the world map.
-Grassland-      green '.'
-Forest-         green '*'
-Swamps-         violet '%'
-Dense forests-  dark grey '*'       - danger of getting stuck (*)
-Wasteland-      umber (bronze) '.'
-Towns-          yellow 'T'
-Mountains-      dark grey '^'       - danger of getting stuck (**)
-Volcanos-       red '^'             - danger of getting stuck (**)
-Rivers-         light blue '~'
-Coast areas-    yellow ','
-Oceans-         blue '%' fields.    - might be hard to traverse (***)
+Towns           yellow 'T'
+Grassland       green '.'
+Forest          green '*'
+Dense forests   dark grey '*'       - danger of getting stuck (*)
+Swamps          violet '%'
+Lakes           are displayed as blue '~' fields on the world map.
+Rivers          light blue '~'
+Coast areas     yellow ','
+Oceans          blue '%' fields.    - might be hard to traverse (***)
+Wasteland       umber (bronze) '.'
+Mountains       dark grey '^'       - danger of getting stuck (**)
+Volcanos        red '^'             - danger of getting stuck (**)
+Deserts         yellolw '.'
+Icy waste       white '.'
 
 (*) You could get stuck in the trees if you enter such a sector;
     a digging tool or just using a sword or axe will allow you to hack down
@@ -4658,7 +4669,9 @@ If you press 'M' in a dungeon, tower or a town, you'll see the complete 4 x 4
 sectors. If you invoke the map while you're in the wilderness outside of towns,
 you will see a part of the 64 x 64 world map, centered around your current
 world map sector, displaying towns (yellow T), the sea (blue %), mountains (^)
-and other information.
+and other information (compare (4.4)).
+If you want to see the world map while in town or in a dungeon, press ~ key and
+choose "Wilderness map".
 
 In the main window around the very bottom left corner you will see two numbers
 separated by a komma, these tell you your current world map sector.
