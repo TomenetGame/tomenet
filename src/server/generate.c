@@ -9891,7 +9891,7 @@ for(mx = 1; mx < 131; mx++) {
 			build_special_store = 1;
 
 		/* Not for special dungeons (easy csw/resattr): */
-//		if ((!challenge_dungeon && !(d_ptr->flags3 & DF3_NO_MISC_STORES)) ||
+//		if ((!challenge_dungeon && !(d_ptr->flags3 & DF3_NO_SIMPLE_STORES)) ||
 		if (!(d_ptr->flags3 & DF3_NO_SIMPLE_STORES)) {
 			/* Check for building low-level store (Herbalist) */
 			if ((!build_special_store) &&
