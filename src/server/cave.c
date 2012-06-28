@@ -4061,11 +4061,11 @@ void display_map(int Ind, int *cy, int *cx)
 }
 
 
-static void wild_display_map(int Ind)
+static void wild_display_map(int Ind, char mode)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int x,y,type;
+	int x, y, type;
 
 	byte ta;
 	char tc;
@@ -4079,7 +4079,7 @@ static void wild_display_map(int Ind)
 	bool old_view_special_lite;
 	bool old_view_granite_lite;
 	struct worldpos twpos;
-	twpos.wz=0;
+	twpos.wz = 0;
 
 	/* Save lighting effects */
 	old_view_special_lite = p_ptr->view_special_lite;
@@ -4094,28 +4094,52 @@ static void wild_display_map(int Ind)
 	memset(ma, TERM_WHITE, sizeof(ma));
 	memset(mc, ' ', sizeof(mc));
 
+
+	/* Modify location */
+	if ((mode & ~0x1) == 0x0) {
+		p_ptr->tmp_x = p_ptr->wpos.wx;
+		p_ptr->tmp_y = p_ptr->wpos.wy;
+	}
+	if (mode & 0x2) p_ptr->tmp_y -= 9;//10..11*2
+	if (mode & 0x4) p_ptr->tmp_x += 9;//31..32*2
+	if (mode & 0x8) p_ptr->tmp_y += 9;//10..11*2
+	if (mode & 0x10) p_ptr->tmp_x -= 9;//31..32*2
+#if 0
+	/* limit */
+	if (p_ptr->tmp_x < 0) p_ptr->tmp_x = 0;
+	if (p_ptr->tmp_y < 0) p_ptr->tmp_y = 0;
+	if (p_ptr->tmp_x >= MAX_WILD_X) p_ptr->tmp_x = MAX_WILD_X - 1;
+	if (p_ptr->tmp_y >= MAX_WILD_Y) p_ptr->tmp_y = MAX_WILD_Y - 1;
+#else
+	/* limit, align so that the map fills out the screen,
+	   instead of always centering the '@-sector'. */
+	if (p_ptr->tmp_x < (MAP_WID-1)/2) p_ptr->tmp_x = (MAP_WID-1)/2;
+	if (p_ptr->tmp_y < (MAP_HGT-1)/2) p_ptr->tmp_y = (MAP_HGT-1)/2;
+	if (p_ptr->tmp_x >= MAX_WILD_X - (MAP_WID-1)/2) p_ptr->tmp_x = MAX_WILD_X - 1 - (MAP_WID-1)/2;//+1 to catch 0.5 rounding!
+	if (p_ptr->tmp_y >= MAX_WILD_Y - (MAP_HGT-1)/2) p_ptr->tmp_y = MAX_WILD_Y - 1 - (MAP_HGT-1)/2;//+1 to catch 0.5 rounding!
+#endif
+
+
 	/* for each row */
-	for (y = 0; y < MAP_HGT+2; y++)
-	{
+	for (y = 0; y < MAP_HGT+2; y++) {
 		/* for each column */
-		for (x = 0; x < MAP_WID+2; x++)
-		{
+		for (x = 0; x < MAP_WID+2; x++) {
 			/* Location */
-			twpos.wy = p_ptr->wpos.wy + (MAP_HGT+2)/2 - y;
-			twpos.wx = p_ptr->wpos.wx - (MAP_WID+2)/2 + x;
+			twpos.wy = p_ptr->tmp_y + (MAP_HGT+2)/2 - y;
+			twpos.wx = p_ptr->tmp_x - (MAP_WID+2)/2 + x;
+
 			if (twpos.wy >= 0 && twpos.wy < MAX_WILD_Y && twpos.wx >=0 && twpos.wx < MAX_WILD_X)
 				type = determine_wilderness_type(&twpos);
 			/* if off the map, set to unknown type */
 			else type = -1;
-			
+
 			/* if the player hasnt been here, dont show him the terrain */
 			/* Hack -- serverchez has knowledge of the full world */
 			if (!p_ptr->admin_dm)
 			if (!(p_ptr->wild_map[wild_idx(&twpos) / 8] & (1 << (wild_idx(&twpos) % 8)))) type = -1;
 			/* hack --  the town is always known */
-			
-			switch (type)
-			{
+
+			switch (type) {
 				case WILD_LAKE: tc = '~'; ta = TERM_BLUE; break;
 				case WILD_GRASSLAND: tc = '.'; ta = TERM_GREEN; break;
 				case WILD_FOREST: tc = '*'; ta = TERM_GREEN; break;
@@ -4133,14 +4157,22 @@ static void wild_display_map(int Ind)
 				case WILD_ICE: tc = '.'; ta = TERM_WHITE; break;
 				case -1: tc = ' '; ta = TERM_DARK; break;
 				default: tc = 'O'; ta = TERM_YELLOW; break;
-			} 
-			
-			/* put the @ in the center */
-			if ((y == (MAP_HGT+2)/2) && (x == (MAP_WID+2)/2))
-			{
-				tc = '@'; ta = TERM_WHITE; 
 			}
-			
+
+#if 0
+			/* put the @ in the center */
+			if ((y == (MAP_HGT+2)/2) && (x == (MAP_WID+2)/2)) {
+				tc = '@';
+				ta = TERM_WHITE;
+			}
+#else
+			/* since map is navigatable, only put @ if we are there */
+			if (twpos.wx == p_ptr->wpos.wx && twpos.wy == p_ptr->wpos.wy) {
+				tc = '@';
+				ta = TERM_WHITE;
+			}
+#endif
+
 			/* Save the char */
 			mc[y][x] = tc;
 
@@ -4165,15 +4197,21 @@ static void wild_display_map(int Ind)
 
 
 	/* Display each map line in order */
-	for (y = 0; y < MAP_HGT+2; ++y)
-	{
+	for (y = 0; y < MAP_HGT+2; ++y) {
 		/* Clear the screen buffer */
 		memset(sa, 0, sizeof(sa));
 		memset(sc, 0, sizeof(sc));
 
+		/* Allow for creation of an empty border
+		   (or maybe instructions on how to navigate)
+		   to eg the left and right side of the map */
+		for (x = 0; x < 80; ++x) {
+			sc[x] = ' ';
+			sa[x] = TERM_WHITE;
+		}
+
 		/* Display the line */
-		for (x = 0; x < MAP_WID+2; ++x)
-		{
+		for (x = 0; x < MAP_WID+2; ++x) {
 			ta = ma[y][x];
 			tc = mc[y][x];
 
@@ -4181,8 +4219,13 @@ static void wild_display_map(int Ind)
 			if (!use_color) ta = TERM_WHITE;
 
 			/* Put the character into the screen buffer */
+#if 0
 			sa[x] = ta;
 			sc[x] = tc;
+#else /* add a symmetrical 'border' to the left and right side of the map */
+			sa[x + (80 - MAP_WID - 2) / 2 - 1] = ta;
+			sc[x + (80 - MAP_WID - 2) / 2 - 1] = tc;
+#endif
 		}
 
 		/* Send that line of info */
@@ -4212,12 +4255,12 @@ void do_cmd_view_map(int Ind, char mode) {
 	/* is player in a town or dungeon? */
 	/* only off floor ATM */
 	if ((Players[Ind]->wpos.wz != 0 || (istown(&Players[Ind]->wpos)))
-	    && !mode)
+	    && !(mode & 0x1))
 		display_map(Ind, &cy, &cx);
 	/* do wilderness map */
 	/* pfft, fix me pls, Evileye ;) */
 	/* pfft. fixed */
-	else wild_display_map(Ind);
+	else wild_display_map(Ind, mode);
 	/*else display_map(Ind, &cy, &cx); */
 }
 

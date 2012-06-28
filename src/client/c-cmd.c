@@ -646,7 +646,7 @@ void cmd_stay(void)
 
 void cmd_map(char mode)
 {
-	char ch;
+	char ch, dir = 0;
 
 	/* Hack -- if the screen is already icky, ignore this command */
 	if (screen_icky && !mode) return;
@@ -654,31 +654,65 @@ void cmd_map(char mode)
 	/* Save the screen */
 	Term_save();
 
-	/* Send the request */
-	Send_map(mode);
+	while (TRUE) {
+		/* Send the request */
+		Send_map(mode + dir);
 
-	/* Reset the line counter */
-	last_line_info = 0;
+		/* Reset the line counter */
+		last_line_info = 0;
 
-	/* Wait until we get the whole thing */
-	while (last_line_info < 23)
-	{
-		/* Hack - Get rid of the cursor - mikaelh */
-		Term->scr->cx = Term->wid;
-		Term->scr->cu = 1;
+		while (TRUE) {
+			/* Wait until we get the whole thing */
+			if (last_line_info == 23) {
+				/* Hack - Get rid of the cursor - mikaelh */
+				Term->scr->cx = Term->wid;
+				Term->scr->cu = 1;
+			}
 
-		/* Wait for net input, or a key */
-		ch = inkey();
+			/* Wait for net input, or a key */
+			ch = inkey();
 
-		/* Take a screenshot */
-		if (ch == KTRL('T'))
-		{
-			xhtml_screenshot("screenshot????");
+			/* Take a screenshot */
+			if (ch == KTRL('T')) xhtml_screenshot("screenshot????");
+			/* locate map (normal / rogue-like keys) */
+			else if (ch == '2' || ch == 'j') {
+				dir = 0x2;
+				break;
+			} else if (ch == '6' || ch == 'l') {
+				dir = 0x4;
+				break;
+			} else if (ch == '8' || ch == 'k') {
+				dir = 0x8;
+				break;
+			} else if (ch == '4' || ch == 'h') {
+				dir = 0x10;
+				break;
+			} else if (ch == '1' || ch == 'b') {
+				dir = 0x2 | 0x10;
+				break;
+			} else if (ch == '3' || ch == 'n') {
+				dir = 0x2 | 0x4;
+				break;
+			} else if (ch == '9' || ch == 'u') {
+				dir = 0x8 | 0x10;
+				break;
+			} else if (ch == '7' || ch == 'y') {
+				dir = 0x8 | 0x4;
+				break;
+			} else if (ch == '5' || ch == ' ') {
+				dir = 0;
+				break;
+			}
+			/* user abort? */
+			else if (ch == ESCAPE) break;
+
+			continue;
 		}
+		/* user abort? */
+		if (ch == ESCAPE) break;
 
-		/* Check for user abort */
-		else if (ch == ESCAPE)
-			break;
+		/* re-retrieve map */
+		continue;
 	}
 
 	/* Reload the screen */

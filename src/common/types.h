@@ -2999,6 +2999,9 @@ struct player_type
 
 	/* Instant resurrection */
 	bool insta_res;
+
+	/* temporary xtra stuff, can be used by whatever */
+	s16b tmp_x, tmp_y;
 };
 
 /* For Monk martial arts */
