@@ -91,7 +91,7 @@ MBOOST = add_spell
 			"Boosts your willpower to unleash hidden potential,",
 --			"improving both your performance and resilience",
 			"improving your performance and resilience to various effects",
-			"at level 23 it will also allow you to attack slightly faster.",
+			"at level 25 it will also allow you to attack slightly faster.",
 			"***Automatically projecting***",
 -- what it infact does: tohit, res.fear, %res.conf, %res.para, %res.slow, +1 ea (later)
 	}

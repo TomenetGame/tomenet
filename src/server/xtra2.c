@@ -3117,7 +3117,11 @@ bool set_mindboost(int Ind, int p, int v)
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
-	/* set EA */
+
+	/* Redraw the Blows/Round if any */
+	if (v && p_ptr->mindboost_power != p) p_ptr->update |= PU_BONUS;
+
+	/* set boni/EA */
 	p_ptr->mindboost_power = p;
 
 	/* Open */
