@@ -2625,9 +2625,7 @@ void recall_player(int Ind, char *message){
 	p_ptr->word_recall = 0;
 
 	/* Did we really make it through all floors of the ironman challenge dungeon? */
-	if (old_wpos.wx == WPOS_IRONDEEPDIVE_X &&
-	    old_wpos.wy == WPOS_IRONDEEPDIVE_Y &&
-	    old_wpos.wz * WPOS_IRONDEEPDIVE_Z > 0
+	if (in_irondeepdive(&old_wpos)
 	    && !is_admin(p_ptr)) {
 		int i, j;
 #ifdef IRONDEEPDIVE_FIXED_TOWN_WITHDRAWAL
@@ -4688,9 +4686,7 @@ static void do_unstat(struct worldpos *wpos)
 		j = cfg.level_unstatic_chance * getlevel(wpos) * 60;
 
 		/* limit static time in Ironman Deep Dive Challenge a lot */
-		if (wpos->wx == WPOS_IRONDEEPDIVE_X &&
-		    wpos->wy == WPOS_IRONDEEPDIVE_Y &&
-		    wpos->wz * WPOS_IRONDEEPDIVE_Z > 0) {
+		if (in_irondeepdive(wpos)) {
 			if (isdungeontown(wpos)) j = 5;
 			else if (j > 10) j = 10; // j = 0 -> immediately unstatice!
 		}

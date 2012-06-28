@@ -9885,11 +9885,6 @@ for(mx = 1; mx < 131; mx++) {
 	/* Nether Realm has an overriding shop creation routing. */
 	if (!nether_level) {
 		bool store_failed = FALSE; /* avoid checking for a different type of store if one already failed, warping probabilities around */
-#if 0 /* obsolete via DF3_NO_MISC_STORES */
-		bool challenge_dungeon =
-		    ((wpos->wx == WPOS_HIGHLANDER_DUN_X && wpos->wy == WPOS_HIGHLANDER_DUN_Y && wpos->wz * WPOS_HIGHLANDER_DUN_Z > 0) ||
-		    (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y && wpos->wz * WPOS_IRONDEEPDIVE_Z > 0));
-#endif
 
 		/* Check for building deep store (Rare & expensive stores) */
 		if ((!dungeon_store_timer) && (dun_lev >= 60) && (dun_lev != 100))

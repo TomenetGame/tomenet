@@ -6170,9 +6170,7 @@ void monster_death(int Ind, int m_idx)
 		i = get_skill_scale(p_ptr, SKILL_MIMIC, 100);
 
 		/* get +1 bonus credit in Ironman Deep Dive Challenge */
-		if (wpos->wx == WPOS_IRONDEEPDIVE_X &&
-		    wpos->wy == WPOS_IRONDEEPDIVE_Y &&
-		    wpos->wz * WPOS_IRONDEEPDIVE_Z > 0)
+		if (in_irondeepdive(wpos))
 			p_ptr->r_killed[credit_idx]++;
 
 #ifdef RPG_SERVER
@@ -7314,9 +7312,7 @@ void player_death(int Ind)
 
 	if (d_ptr && (d_ptr->flags2 & DF2_NO_DEATH)) secure = TRUE;
 
-	if (p_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X &&
-	    p_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y &&
-	    p_ptr->wpos.wz * WPOS_IRONDEEPDIVE_Z > 0
+	if (in_irondeepdive(&p_ptr->wpos)
 	    && !is_admin(p_ptr)) {
 		for (i = 0; i < 20; i++) {
 			if (deep_dive_level[i] >= ABS(p_ptr->wpos.wz) || deep_dive_level[i] == -1) continue;

@@ -7653,14 +7653,12 @@ extern int PlayerUID;
  //#define HOUSE_PAINTING_HIDE_MUSEUM
 #endif
 
-/* Is given wpos-pointer one of the two fixed towns, Menegroth or Nargothrond
-   at dlvl 40 and 80 respectively, in the Ironman Deep Dive Challenge dungeon? */
-#define is_fixed_irondeepdive_town(wpos, dlev) \
-	((wpos)->wx == WPOS_IRONDEEPDIVE_X && \
-        (wpos)->wy == WPOS_IRONDEEPDIVE_Y && \
-        (wpos)->wz * WPOS_IRONDEEPDIVE_Z > 0 && \
-        ((dlev) == 40 || (dlev) == 80))
-
 /* quickly check if a given wpos is within certain special dungeons */
 #define in_irondeepdive(wpos) \
 	((wpos)->wx == WPOS_IRONDEEPDIVE_X && (wpos)->wy == WPOS_IRONDEEPDIVE_Y && (wpos)->wz * WPOS_IRONDEEPDIVE_Z > 0)
+
+/* Is given wpos-pointer one of the two fixed towns, Menegroth or Nargothrond
+   at dlvl 40 and 80 respectively, in the Ironman Deep Dive Challenge dungeon? */
+#define is_fixed_irondeepdive_town(wpos, dlev) \
+	(in_irondeepdive(wpos) && \
+        ((dlev) == 40 || (dlev) == 80))
