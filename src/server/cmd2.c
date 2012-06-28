@@ -216,7 +216,8 @@ void do_cmd_go_up(int Ind)
 		}
 		if (p_ptr->max_plv > IRONDEEPDIVE_MAXLEV &&
 		    (IRONDEEPDIVE_MAXLEV || p_ptr->max_exp)) {
-			msg_format(Ind, "\377DYou may not enter once you exceeded character level %d!", IRONDEEPDIVE_MAXLEV);
+			if (IRONDEEPDIVE_MAXLEV) msg_format(Ind, "\377DYou may not enter once you exceeded character level %d!", IRONDEEPDIVE_MAXLEV);
+			else msg_print(Ind, "\377DYou may not enter once you gained any experience!");
 			if (!is_admin(p_ptr)) return;
 		}
 	}
@@ -635,7 +636,8 @@ void do_cmd_go_down(int Ind)
 		}
 		if (p_ptr->max_plv > IRONDEEPDIVE_MAXLEV &&
 		    (IRONDEEPDIVE_MAXLEV || p_ptr->max_exp)) {
-			msg_format(Ind, "\377DYou may not enter once you exceeded character level %d!", IRONDEEPDIVE_MAXLEV);
+			if (IRONDEEPDIVE_MAXLEV) msg_format(Ind, "\377DYou may not enter once you exceeded character level %d!", IRONDEEPDIVE_MAXLEV);
+			else msg_print(Ind, "\377DYou may not enter once you gained any experience!");
 			if (!is_admin(p_ptr)) return;
 		}
 	}
