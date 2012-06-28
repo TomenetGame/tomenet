@@ -3994,7 +3994,7 @@ void display_map(int Ind, int *cy, int *cx)
 						num=(p_ptr->chp * 95) / (p_ptr->mhp * 10);
 						tc = '0' + num;
 					}
-				}                       
+				}
 			}
 /* duplicate code end */
 			/* Save "best" */
@@ -4029,10 +4029,18 @@ void display_map(int Ind, int *cy, int *cx)
 	/* Display each map line in order */
 	for (y = 0; y < MAP_HGT+2; ++y) {
 		/* Clear the screen buffer */
+#if 0
 		memset(sa, 0, sizeof(sa));
 		memset(sc, 0, sizeof(sc));
+#else
+		/* Allow for creation of an empty border
+		   (or maybe instructions on how to navigate)
+		   to eg the left and right side of the map */
+		memset(sa, TERM_WHITE, sizeof(sa));
+		memset(sc, ' ', sizeof(sc));
+#endif
 
-		/* Display the line */
+     		/* Display the line */
 		for (x = 0; x < MAP_WID+2; ++x) {
 			ta = ma[y][x];
 			tc = mc[y][x];
@@ -4040,9 +4048,14 @@ void display_map(int Ind, int *cy, int *cx)
 			/* Hack -- fake monochrome */
 			if (!use_color) ta = TERM_WHITE;
 
+#if 0
 			/* Put the character into the screen buffer */
 			sa[x] = ta;
 			sc[x] = tc;
+#else /* add a symmetrical 'border' to the left and right side of the map */
+			sa[x + (80 - MAP_WID - 2) / 2] = ta;
+			sc[x + (80 - MAP_WID - 2) / 2] = tc;
+#endif
 		}
 
 		/* Send that line of info */
@@ -4113,10 +4126,10 @@ static void wild_display_map(int Ind, char mode)
 #else
 	/* limit, align so that the map fills out the screen,
 	   instead of always centering the '@-sector'. */
-	if (p_ptr->tmp_x < (MAP_WID-1)/2) p_ptr->tmp_x = (MAP_WID-1)/2;
-	if (p_ptr->tmp_y < (MAP_HGT-1)/2) p_ptr->tmp_y = (MAP_HGT-1)/2;
-	if (p_ptr->tmp_x >= MAX_WILD_X - (MAP_WID-1)/2) p_ptr->tmp_x = MAX_WILD_X - 1 - (MAP_WID-1)/2;//+1 to catch 0.5 rounding!
-	if (p_ptr->tmp_y >= MAX_WILD_Y - (MAP_HGT-1)/2) p_ptr->tmp_y = MAX_WILD_Y - 1 - (MAP_HGT-1)/2;//+1 to catch 0.5 rounding!
+	if (p_ptr->tmp_x < (MAP_WID + 1) / 2) p_ptr->tmp_x = (MAP_WID + 1) / 2;
+	if (p_ptr->tmp_y < (MAP_HGT - 1) / 2) p_ptr->tmp_y = (MAP_HGT - 1) / 2;
+	if (p_ptr->tmp_x >= MAX_WILD_X - (MAP_WID - 1) / 2) p_ptr->tmp_x = MAX_WILD_X - (MAP_WID - 1) / 2 - 1;
+	if (p_ptr->tmp_y >= MAX_WILD_Y - (MAP_HGT + 0) / 2) p_ptr->tmp_y = MAX_WILD_Y - (MAP_HGT + 0) / 2 - 1;
 #endif
 
 
@@ -4199,16 +4212,16 @@ static void wild_display_map(int Ind, char mode)
 	/* Display each map line in order */
 	for (y = 0; y < MAP_HGT+2; ++y) {
 		/* Clear the screen buffer */
+#if 0
 		memset(sa, 0, sizeof(sa));
 		memset(sc, 0, sizeof(sc));
-
+#else
 		/* Allow for creation of an empty border
 		   (or maybe instructions on how to navigate)
 		   to eg the left and right side of the map */
-		for (x = 0; x < 80; ++x) {
-			sc[x] = ' ';
-			sa[x] = TERM_WHITE;
-		}
+		memset(sa, TERM_WHITE, sizeof(sa));
+		memset(sc, ' ', sizeof(sc));
+#endif
 
 		/* Display the line */
 		for (x = 0; x < MAP_WID+2; ++x) {
@@ -4250,7 +4263,7 @@ void do_cmd_view_map(int Ind, char mode) {
 	int cy, cx;
 
 	/* Display the map */
-	
+
 	/* if not in town or the dungeon, do normal map */
 	/* is player in a town or dungeon? */
 	/* only off floor ATM */
