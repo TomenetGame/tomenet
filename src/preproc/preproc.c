@@ -30,6 +30,9 @@ int main(int argc, char *argv[]) {
 	char seq[7] = {'1', '=', '/', '0', '/', '/', 0};
 	int cpp_opts;
 
+	char *cptr, *in_comment = NULL, *out_comment = NULL, *prev_in_comment;
+	int in_comment_block = 0;
+
 
 	/* check command-line arguments */
 
@@ -163,6 +166,45 @@ int main(int argc, char *argv[]) {
 
 	/* read a line */
 	while (fgets(line_mod, 320 + 2, f_in)) {
+		/* preprocessor directives that were hidden _inside_ comments
+		   because silly tolua will choke on them */
+		prev_in_comment = line_mod;
+		do {
+			if (out_comment) in_comment = out_comment = NULL;
+
+			if (!in_comment) {
+				if (in_comment_block) in_comment = line_mod;
+				else {
+					in_comment = strstr(prev_in_comment, "/*");
+					if (in_comment) prev_in_comment = in_comment + 2;
+				}
+			}
+			if (in_comment) {
+				if (in_comment_block) out_comment = strstr(line_mod, "*/");
+				else out_comment = strstr(in_comment, "*/");
+
+				while ((cptr = strstr(in_comment, "#"))) {
+					if (!out_comment || cptr < out_comment) {
+						*cptr = ' ';
+					} else break;
+				}
+
+				if (out_comment) in_comment_block = 0;
+			}
+		} while (in_comment && out_comment);
+		if (in_comment) in_comment_block = 1;
+
+		/* aaand also strip comments that are adjacent, silyl tolua */
+		if ((cptr = strstr(line_mod, "*//*"))) {
+			cptr[0] = ' ';
+			cptr[1] = ' ';
+			cptr[2] = ' ';
+			cptr[3] = ' ';
+		}
+
+		/* on to the actual work.. */
+
+
 		/* strip prefixed marker sequence again and write line to output file */
 		if (line_mod[0] == seq[0] &&
 		    line_mod[1] == seq[1] &&
