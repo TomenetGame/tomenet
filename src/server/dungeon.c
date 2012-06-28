@@ -6222,10 +6222,16 @@ void dungeon(void)
 #endif
 			for (i = NumPlayers; i > 0 ;i--) {
 				if (Players[i]->conn == NOT_CONNECTED) continue;
+
 				/* Ignore admins that are loged in */
 				if (admin_p(i)) continue;
+
+				/* Ignore chars in fixed irondeepdive towns */
+				if (is_fixed_irondeepdive_town(&Players[i]->wpos, getlevel(&Players[i]->wpos))) continue;
+
 				/* Ignore characters that are afk and not in a dungeon/tower */
 //				if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
+
 				/* Ignore characters that are not in a dungeon/tower */
 				if (Players[i]->wpos.wz == 0) {
 					/* Don't interrupt events though */
@@ -6246,8 +6252,13 @@ void dungeon(void)
 				if (admin_p(i)) continue;
 				/* count players */
 				n++;
+
 				/* Ignore characters that are afk and not in a dungeon/tower */
 //				if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
+
+				/* Ignore chars in fixed irondeepdive towns */
+				if (is_fixed_irondeepdive_town(&Players[i]->wpos, getlevel(&Players[i]->wpos))) continue;
+
 				/* Ignore characters that are not in a dungeon/tower */
 				if (Players[i]->wpos.wz == 0) {
 					/* Don't interrupt events though */
@@ -6271,6 +6282,10 @@ void dungeon(void)
 
 				/* Ignore characters that are afk and not in a dungeon/tower */
 //				if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
+
+				/* Ignore chars in fixed irondeepdive towns */
+				if (is_fixed_irondeepdive_town(&Players[i]->wpos, getlevel(&Players[i]->wpos))) continue;
+
 				/* Ignore characters that are not in a dungeon/tower */
 				if (Players[i]->wpos.wz == 0) {
 					/* Don't interrupt events though */
@@ -6301,17 +6316,24 @@ void dungeon(void)
 			int n = 0;
 			for (i = NumPlayers; i > 0 ;i--) {
 				if (Players[i]->conn == NOT_CONNECTED) continue;
+
 				/* Ignore admins that are loged in */
 				if (admin_p(i)) continue;
+
 				/* Ignore perma-afk players! */
 				//if (Players[i]->afk && 
 				if (is_inactive(i) >= 30 * 20) /* 20 minutes idle? */
 					continue;
+
 				/* count players */
 				n++;
 
 				/* Ignore characters that are afk and not in a dungeon/tower */
 //				if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
+
+				/* Ignore chars in fixed irondeepdive towns */
+				if (is_fixed_irondeepdive_town(&Players[i]->wpos, getlevel(&Players[i]->wpos))) continue;
+
 				/* Ignore characters that are not in a dungeon/tower */
 				if (Players[i]->wpos.wz == 0) {
 					/* Don't interrupt events though */
