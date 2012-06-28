@@ -113,8 +113,8 @@ Contents
     (5.17)  How abilities, resistances and boni stack
     (5.18)  Monster auras
     (5.19)  Experience-draining items
-    (5.20)  Runes & Runemastery
-    (5.20a) Runemastery Tables
+    (5.20)  Runes & Runemastery (BETA)
+    (5.20a) Runemastery Tables (BETA)
     (5.21)  Digging
     (5.21a) Digging - Exact calculation
     (5.21b) Digging - Common example values
@@ -7725,7 +7725,7 @@ experience points permanently. Here are some details about that process:
 
 
 
-(5.20) Runes & Runemastery
+(5.20) Runes & Runemastery (BETA)
 --------------------------
 Runes are magical symbols used to summon and manipulate the raw elemental
 forces which sustain the world of life. They are the motivating force behind
@@ -7744,7 +7744,7 @@ This approach is not necessarily a safe one. Inexperienced Runemasters risk
 losing control of their spells, which can result in broken runes, physical
 damage, sickness, madness or even death. (See Penalties & Backlash below.)
 
-These risks are compounded when the Runemaster is confused, stunned, low on
+These risks are compounded when the Runemaster is blinded, stunned, low on
 magical stamina or simply attempting a particularly dangerous spell. While
 an Istar is always prevented from casting outside of his or her ability,
 Runemasters may continue making spell attempts with increased risks (drawing
@@ -7780,43 +7780,53 @@ Rune-spells are made up of three components:
     2. A spell-modifier (minimized, brief, etc.)
     3. A spell-type (bolt, ball, self, etc.)
 
-Each component has different associated costs; some of these can be viewed in
+Each component has different associated parameters- these can be viewed in
 the menu. When selecting runes, press return once you are finished, or enter
 the maximum of three runes and continue to the modifier selection. The menu
-will prompt for a direction if it is required after you're done. Note that
-only true Runemasters will be able to draw the full amount of three runes,
-while other classes that train in rune skills can draw up to a maximum of two
-runes.
+will prompt for a direction if it is required after you're done.
 
 Each component has an associated level modifier, contributing to the overall
-average level of skill needed to cast or even attempt to cast a rune-spell.
-While selecting components with the m-key menu or the macro wizard, the color
-of each component can give you an estimate of the skill level needed for a
-particular spell. Keep in mind that it is impossible to attempt a rune-spell
-15 levels or higher above your effective average skill level, and that
-combining runes corresponding to skills that vary widely in level will result
-in a reduced average. Most rune combinations use the maximum level of the
-runes involved (see Trait Rules, below).
+level of skill needed to cast or even attempt to cast a rune-spell. For 
+reference, here is a list of base element levels, which are added and 
+normalized when taken in combination (higher is more difficult):
 
-You can discover new spell combinations and exceptions to many patterns by
-experimenting. Utilizing the color ratings of the m-key menu and macro wizard
-and keeping the physical runes required for a combination are often enough for
-safety, although having more resists can protect against backlash. Here is an
-approximation of the color system, assuming runes in inventory (add 5-10% fail
-for each missing rune):
-Blue   ->  Comfortable (10+ skill levels above)
-White  ->  Safe with Runes (Appropriate level)
-Yellow ->  Risky with Runes (1-5 skill levels below)
-Orange ->  Dangerous with Runes (6-14 skill levels below)
+Acid         ->   5
+Water        ->  15
+Electricity  ->   5
+Earth        ->  15
+Fire         ->   5
+Chaos        ->  35
+Cold         ->   5
+Nether       ->  30
+Poison       ->  10
+Nexus        ->  25
+Force        ->  20
+Time         ->  40
+
+While selecting components with the m-key menu or the macro wizard, the color
+of each component can give you an estimate of the level and fail rate for a
+particular spell. Keep in mind that it is impossible to attempt a rune-spell
+15 levels or higher above your effective skill level, and that your effective
+level is the lowest skill level of all utilized rune elements.
+
+Here is an explanation of the color system; remember to add 10% fail per 
+missing rune while judging the safety of a particular rune-spell (stun/blind
+status conditions may add up to 40% more fail):
+
+Blue   ->  Mastered (Requires high INT and DEX to achieve 0% fail)
+White  ->  Safe with Runes (Low fail rate, rarely penalized)
+Yellow ->  Acceptable with Runes (Medium fail rate, light penalty)
+Orange ->  Dangerous without Runes (High fail rate, medium penalty)
+Red    ->  Suicidal without Runes (Highest fail rate, harsh penalty)
 Slate  ->  Impossible (15+ skill levels below, or no skill)
 
 
 Penalties & Backlash:
 ---------------------
-Should your average skill level be much lower than the level of the specified
+Should your skill level be much lower than the level of the specified
 rune-spell, or if a number of penalties have accrued- by casting while
-stunned, confused, from memory (no physical runes), or without enough
-MP, the risk of suffering backlash and other negative effects increases. In
+stunned, blinded, from memory (no physical runes), or without enough MP,
+the risk of suffering backlash and other negative effects increases. In
 addition to an increased chance of outright failure of the rune-spell, high
 penalty levels also increase the danger of backlash effects. For this reason,
 experienced Runemasters will often try to minimize these penalties; having
@@ -7830,95 +7840,58 @@ one's own rune-spells can be an important factor for survival in critical
 situations.
 
 
-Gestalt, Null, Exploding Spells:
---------------------------------
+Gestalt, Exploding Spells:
+--------------------------
 Runemastery is often a chaotic and unstable approach to magic, and many of
 the spells weaved by Runemasters combine elements in unlikely ways, with
 flashy and varied results. Gestalt spells combine the basic elements of
 acid, electricity, fire, cold, and even poison, to create an effect with
 the properties of each that contributes. Examples include combining cold
 and acid to produce an element with both properties, 'rime', or combining
-electricity and fire to produce 'plasma', a higher level exceptional gestalt
-with an added stunning effect.
-
-Following similar trait rules, combining fire and cold results in a
-nullified spell, the opposing elements counteracting and consuming one
-another. It may be practical for aspiring runemasters to learn the
-properties associated with each element, and their relationships in
-combination, to aid in the discovery of new rune-spells.
+electricity and fire to produce 'flux', which can be later augmented with
+time, becoming 'plasma'.
 
 Exploding runespells encompass a powerful subcategory of the art, in which a
 projection such as a bolt, beam, ball, and even waves, clouds and storms
 strike the area around their targets with addition elemental damage. Instant
-effects (bolt, beam, ball) always explode and additionally explode when
-colliding with terrain, while timed effects (waves, clouds, storms) have a
-chance to explode each tick. Timed effects also explode in unique manners;
-a cloud explosion acts much like an instant effect when triggered, while
-waves have an increased radius with less damage, and storms have a reduced
-radius with more damage.
+effects (bolt, beam, ball) have a 1 in 2 chance to explode, while timed
+effects (waves, clouds, storms) have a chance to explode each tick. The
+order in which elements are combined determine the primary projection and 
+explosion in 3-rune spells. Experiment to get a feel for what best suits the
+situation.
+
+Multiplayer Spells:
+-------------------
+Experienced runemasters skilled in manipulating 'time' runes can cast group 
+spells, charging party members with 'rune charges' which alter the effects of 
+certain 'combining' rune-spells. To begin, a runemaster must use the 'time' 
+self spell to synchronize their spells, otherwise they will not project nor 
+recieve rune charges. Upon casting a combining spell, the runemaster will 
+project up to two rune charges to nearby party members, which last for a 
+brief duration or until expended. A charged runemaster casting a combining 
+spell will recieve the benefits of the rune charges on a single cast, while 
+reciprocally producing new rune charges for nearby party members.
+
+An example: Runie A and Runie B both have synchronized their spells by casting 
+minimized-time-self spells. Standing nearby Runie B, Runie A casts a fire/time 
+spell, granting Runie B a 'fire' rune charge. Runie B then casts an acid/time 
+spell, which resolves as an acid/fire spell due to the 'fire' rune charge. If 
+Runie A was still within projection range, she would also recieve an 'acid' 
+rune charge.
+
+It is highly recommended to pre-plan spells when synchronizing with party 
+members, to avoid undesirable results.
 
 
-Rune Schools, Families, Augments:
----------------------------------
-A runemaster's choice of skills is a strong defining characteristic of the
-class; other classes training runemastery will never venture into the subtle
-realm of 3-rune spells and augmentation effects. Much like an Istar augments
-spells with spell-power, a true Runemaster will augment many spells with
-powers and effects drawn from choice schools, such as the evocation 'school'
-of fire and chaos. (See Table of Augments, below)
-
-Spell families are formed in 3-rune combinations that share the same effect,
-as well as common contributing runes. All single school 3-rune spells (spells
-that combine the two elements of a skill school, plus a third) form groups
-called families. A family of spells shares a common projection element and
-self spell, but recieves the benefit of any augment the runemaster can provide
-through choice of a third element. This results in a number of similar spells,
-with variable modifications based on the runemaster's skill with the third,
-augmenting, element.
-
-Augments require a minimum skill level in the rune with which the rune-spell
-takes as an augment. Additionally, not all augments appear in every family of
-spells, precisely because those elements are already in use within the spell
-to be augmented. Augments may also appear outside of families, such as is
-common with the time element in combination, resulting in family-like traits
-among many rune-spells (See Regarding Element Traits, Below). Augments scale
-linearly with rune skill level, and grant from 0% of their benefit and 200%
-of their drawback to 100% of each at skill level 50.
-
-
-Trait Rules:
-------------
-Fundamental rune elements [a-h] follow rules in combining with other elements.
-With the exception of single-school 2-rune spells (eg. acid/water, one skill)
-rune-spells generally follow the rules as outlined below.
-
-'Base' rune elements of acid, electricity, fire, and cold combine with each
-other in gestalt fashion and flavor other more powerful elements when combined.
-
-'Water' and 'Earth' are considered classical elements, combining with high
-elements to produce powerful attacks, and low elements for utility spells.
-
-'Chaos' and 'Nether' are elements of power, maintaining a high level of
-influence in combination. They average their level with combining elements.
-
-'Poison' as a gestalt will add a status ailment to a projected spell with a
-burst of dehabilitating gas (sleep, confusion, stun).
-
-'Nexus' works like an inverting element, changing weaker elements it is
-combined with into their polar opposites, eg. fire->cold and water->earth.
-
-'Force' in combination is always a minimum of level 20 (the minimum level of a
-stunning effect), with the exception of light and dark, level 5 combinations
-with chaos and nether, respectively.
-
-'Time' based spells assume the lower level of the other runes, despite
-including a high level rune itself. Time projections are often augmented with
-time.
-
-Although some rune combinations are an exception to these rules, all families
-of rune-spells abide by strict patterns that dictate their powers and effects.
-Minor exceptions abound however, due to the nature of the combining elements;
-the trinity of plasma, ice and thunder often make example of this.
+Rune Alacrity:
+--------------
+A runemaster may additionally focus their efforts into casting spells most 
+elegantly and quickly, improving their base casting speed by up to 2 cpr. 
+Much like accomplished Istari who focus in spell-power, Rune Alacrity yields
+a net increase to overall rune-spell damage of 40% at cap, with increased 
+casting speed at level 25 and 50. Note that individual spell damage for 
+instantaneous spell effects will drop with casting speed, but timed effects
+will remain at full damage.
 
 
 Macros & Spell Construction:
@@ -7949,42 +7922,42 @@ Here is a single-rune element example, using fire (one-rune, code 'c'):
 Which is a minimized fire bolt, a projection targetting a single opponent.
 
 A fire ball spell looks like this:
-    \e)*tm@18\rc\rae-  (fire--minimized--ball)
+    \e)*tm@18\re\rae-  (fire--minimized--ball)
 
 To increase the radius of the ball, adjust the modifier to something that
 sounds bigger (also increasing the level, difficulty and cost):
 
 A moderate fire ball:
-    \e)*tm@18\rc\rbe-  (fire--moderate--ball)
+    \e)*tm@18\re\rbe-  (fire--moderate--ball)
 
 Or an expanded fire ball:
-    \e)*tm@18\rc\rge-  (fire--expanded--ball)
+    \e)*tm@18\re\rge-  (fire--expanded--ball)
 
 
 'Self' Spells with 'Fire':
-    \e)m@18\rc\rab     (fire--minimized--self)
+    \e)m@18\re\rab     (fire--minimized--self)
 
 Which is a minimized resist fire spell, a self-spell affecting the caster.
 
 A lengthened resist fire spell:
-    \e)m@18\rc\rgb     (fire--lengthened--self)
+    \e)m@18\re\rgb     (fire--lengthened--self)
 
 In the same way that you can increase or decrease a fire ball's radius, you can
 increase or decrease the duration of any timed spell by selecting 'lengthened'
 or 'brief'. Other modifiers may adjust the duration to a lesser extent.
 
 A brief resist fire spell:
-    \e)m@18\rc\rfb     (fire--brief--self)
+    \e)m@18\re\rfb     (fire--brief--self)
 
 
 Occasionally, more complex spells such as 'teleport to' or 'stone-to-mud'
 require a special macro that deviates from the examples above.
 
 Teleport-to requires that you set a target before casting:
-    \e)*tm@18\rkl\rab  (force/time--minimized--self)
+    \e)*tm@18\rbj\rab  (water/nexus--minimized--self)
 
 Stone-to-Mud, a projection with no *t...- (manual target):
-    \e)m@18\rbh\rac    (water/earth--minimized--bolt)
+    \e)m@18\rbd\rac    (water/earth--minimized--bolt)
 
 Advanced runemasters may wish to create macro sets which construct spells
 on the fly, swap macro sets containing preset rune-spells, or set up
@@ -7999,45 +7972,42 @@ specifics in the m-key menu before you create a new macro.
 
 Auto-retaliation & burst type:
 ------------------------------
-The 'burst' spell type is also called 'melee' spell. It is only usable on
+The 'burst' spell type is also called a 'melee' spell. It is only usable on
 adjacent targets, a lashing-out of magical power at an opponent in melee range.
 It is technically a ball spell with a range and radius of a single tile.
 It is cheaper than a regular bolt, cannot be deflected, and usually does
 more damage. It may be difficult to use manually but it is very useful for
-auto-retaliation.
-As a runemaster gains levels, melee spells take less and less time to cast,
-and function similar to other melee weapons, with multiple blows (in this case,
-casts) per round. Note that melee spells affect the ground tile on which it is
-targetted, possibly resulting in damaged items or other terrain features.
+auto-retaliation. Note that 'burst' spells take half the time to cast (2 cpr).
 
-If you inscribe @O[a-h][a-h] on a rune, you will automatically retaliate with
-a spell of the selected modifier and type, or the rune element inscribed. For
-example, if you set the inscription to @Oaa on a rune of fire, the 'burst'
-spell type will be selected, with a 'minimized' spell modifier. This will
-result in retaliation with a minimized fire melee rune-spell.
+If you inscribe @O[a-c][a-h][a-h] on a rune, you will retaliate with a spell
+of the selected runes in the order [abc] (up to three), modifier and type. For
+example, if you set the inscription to @Oaaa on a rune of fire, the 'burst' 
+spell type will be selected, with a 'minimized' spell modifier, and 'fire' will
+be the first element selected. This will result in retaliation with a minimized
+fire melee rune-spell. Inscribing @Obaa on another rune in addition to the fire 
+rune will add the second rune to the 'minimized' 'burst' retaliation as though 
+you chose fire, then the second rune in the wizard or m-key selectors.
 
 Inscribing multiple rune types with identical inscriptions will result with a
 retaliation spell that combines the elements of the inscribed runes. This takes
-the first rune found in your inventory with an @O[a-h][a-h] inscription, and
-checks for other runes with the same @O[a-h][a-h] inscription format.
+the first rune found in your inventory with an @O[a-c][a-h][a-h] inscription, 
+and checks for other runes with the same @O[a-c][a-h][a-h] inscription format.
 For example, an inventory like so, resulting in a moderate wave of ice:
-    a) 1 'Gelum' Rune of Cold {+,1} {@Obf}
-    b) 1 'Ostes' Rune of Earth {+,1} {@Oaa}
-    c) 1 'Mio' Rune of Water {+,1} {@Obf}
-Note that the earth rune in slot b) is skipped, as @Oaa does not match @Obf,
-which is the first inscription of a rune found in the runemaster's inventory.
+    a) 1 'Gelum' Rune of Cold {+,1} {@Oabf}
+    b) 1 'Ostes' Rune of Earth {+,1} {@Oaaa}
+    c) 1 'Mio' Rune of Water {+,1} {@Obbf}
+Note that the earth rune in slot b) is skipped, as 'aa' does not match 'bf',
+which is the first spell constructor found in the runemaster's inventory.
 
-Note that although you can set any spell for retailation, some spells will be
+Although you can set any spell for retailation, some spells will be
 disabled, such as blink or teleport. Other spells that affect an area over time
 such as 'cloud' and 'storm' spells, and many self-spells with timed durations,
-make poor choices for auto-retaliation.
-
-You can omit the type parameter and just inscribe @O[a-h], which will use a
-'burst' spell as default. For example @Ob for a moderate burst.
+make poor choices for auto-retaliation. Retaliation defaults to a burst if 
+inscribed incorrectly.
 
 
-Rune traps:
------------
+Rune traps & upkeep:
+--------------------
 Certain type 'self' spells will result in placing a 'rune trap'. That is an
 explosive charge of rune energy placed on the floor that will detonate when
 a monster runs across.
@@ -8051,9 +8021,17 @@ Rune traps will remain drawing power from the rune master and thereby limiting
 the amount of concurrent rune traps he may set: Each rune trap taxes his amount
 of maximum mana, so when his mana pool capacity reaches zero that means he has
 set as many rune traps as possible at most.
+
 When a rune trap detonates its upkeep tax will be lifted from the mana pool.
 When a runemaster leaves the current level all rune traps will vanish and the
 upkeep tax be cancelled completely.
+
+Additionally, certain other self-spells may require upkeep. Casting these 
+'upkeep' spells toggles the benefit for the runemaster and the trade-off of a
+reduced mana pool. Certain upkeep spells may be incompatible, as stated in 
+their descriptions in the guide.
+
+Use the /ex command if you need to track rune traps or upkeep.
 
 
 Quickstart Guide:
@@ -8097,31 +8075,111 @@ to be more efficient than spells that you 'barely manage to', or 'clumsily'
 cast. (Note that this is not possible at skill level 1, where everything is
 dangerous.)
 
-If you choose the 'chaotic' modifier, the resulting damage, cost and duration
-will be increased or decreased by a random amount. This can result in very high
-damage spells at low cost. However, this spell modifier sometimes has negative
-side effects: use it with care.
 
-If you are a full caster (at least 3 schools), be sure to macro a glyph spell
-and carry mana potions. If you are a hybrid-melee, you will have less
-(especially so for 1 school Runemasters) versatility, but may still have access
-to additional utility through your school selection. Be sure to experiment with
-2-rune and 3-rune spells outside your school(s) at higher levels, because you
-will still be able to access lower-level utility.
-
-
-(5.20a) Runemastery Tables
+(5.20a) Runemastery Tables (BETA)
 --------------------------
-Runemastery covers a breadth of spells and effects, covered in the tables below.
+Runemastery covers a breadth of spells and effects, shown in the tables below.
 
-Key
----
-Names shortened in the table:
-Electricity  -> Elec
-Disintegrate -> Disi
-Acid/Elec/Fire/Cold/Poison -> Base (Any base/poison rune fits here)
 
-* - Duplicate Spell (Accessable through multiple combinations)
+Single Elements
+---------------
+A comprehensive listing of every single-rune projectable element.
+
+-------------------------------------------------------------------------------
+Rune   |        | Projection     | Description
+-------------------------------------------------------------------------------
+Acid   |        | Acid           | Acid damage.
+Water  |        | Water          | Water damage.
+Elec   |        | Lightning      | Lightning damage.
+Earth  |        | Shards         | Shard damage.
+Fire   |        | Fire           | Fire damage.
+Chaos  |        | Chaos          | Chaos damage. Polymorphs.
+Cold   |        | Frost          | Frost damage.
+Nether |        | Nether         | Nether damage.
+Poison |        | Gas            | Poison damage.
+Nexus  |        | Nexus          | Nexus damage.
+Force  |        | Force          | Force damage. Stuns.
+Time   |        | Time           | Time damage. Drains energy.
+
+
+2-Rune Elements
+---------------
+A comprehensive listing of every 2-rune combination projectable element.
+
+** Note that 3-rune spells combine these on the fly (see 5.20 -- Gestalts,
+Exploding Spells for more info) and that the order of runes in a pair is
+unimportant; the order of pairs in a 3-rune spell determines which element is
+primary and which is secondary, experiment to find what suits you best.
+
+-------------------------------------------------------------------------------
+Rune   | Rune   | Projection     | Description
+-------------------------------------------------------------------------------
+Acid   | Water  | Dissolution    | Unresistable.
+Acid   | Elec   | Ions           | Acid and lightning damage.
+Acid   | Earth  | Corrosion      | Destroys doors and traps. Acid damage.
+Acid   | Fire   | Bile           | Acid and fire damage.
+Acid   | Chaos  | Perplexity     | Confusion damage. Confuses.
+Acid   | Cold   | Rime           | Acid and frost damage.
+Acid   | Nether | Annihilation   | Cuts the target's current hp by a percent.
+Acid   | Poison | Venom          | Acid and poison damage. Confuses.
+Acid   | Nexus  | Lightning      | Warps acid to generate electricity.
+Acid   | Force  | Ablation       | Acid damage. Critical damage if stunned.
+Acid   | Time   | Acid/Combine   | Combines acid. Defaults to acid damage.
+Water  | Elec   | Discharge      | Destroys doors and traps. Lightning damage.
+Water  | Earth  | Erosion        | Stone-to-mud. Destroys walls and doors.
+Water  | Fire   | Evaporation    | Destroys doors and traps. Fire damage.
+Water  | Chaos  | Polymorphing   | Attempts to polymorph the target.
+Water  | Cold   | Ice            | Cold and shard damage. Stuns.
+Water  | Nether | Duplicating    | Attempts to clone the target.
+Water  | Poison | Sleep          | Attempts to paralyze the target.
+Water  | Nexus  | Calling        | Tele-to. Returns the target to the caster.
+Water  | Force  | Pressure       | Water damage. Stuns.
+Water  | Time   | Water/Combine  | Combines water. Defaults to water damage.
+Elec   | Earth  | Thunder        | Lightning/light/sound damage. Blinds. Stuns.
+Elec   | Fire   | Flux           | Lightning and fire damage. May be improved.
+Elec   | Chaos  | Light          | Light damage. Blinds. Illuminates.
+Elec   | Cold   | Static         | Lightning and cold damage.
+Elec   | Nether | Darkness       | Darkness damage. Blinds. Darkens.
+Elec   | Poison | Jolting        | Lightning and poison damage. Stuns.
+Elec   | Nexus  | Acid           | Warps electricity to generate acid.
+Elec   | Force  | Zapping        | Lightning damage. Critical damage if stunned.
+Elec   | Time   | Elec/Combine   | Combines elec. Defaults to lightning damage.
+Earth  | Fire   | Detonations    | Fire/shard/sound damage. Destroys terrain.
+Earth  | Chaos  | Turmoil        | Quakes affected tiles. *Dangerous*
+Earth  | Cold   | Shattering     | Destroys doors and traps. Frost damage.
+Earth  | Nether | Ruination      | Wracks the target. May reduce stats and AC.
+Earth  | Poison | Concussion     | Stuns.
+Earth  | Nexus  | Gravity        | Gravity damage. Slows. Stuns. Phases.
+Earth  | Force  | Sound          | Sound damage. Stuns.
+Earth  | Time   | Shards/Combine | Combines earth. Defaults to shard damage.
+Fire   | Chaos  | Hellfire       | Fire damage. Slays good.
+Fire   | Cold   | Whitefire      | Fire and cold damage.
+Fire   | Nether | Lifefire       | Fire damage. Slays living. Backlash drain.
+Fire   | Poison | Ash            | Fire and poison damage. Blinds.
+Fire   | Nexus  | Frost          | Warps fire to generate cold.
+Fire   | Force  | Incineration   | Fire damage. Critical damage if stunned.
+Fire   | Time   | Fire/Combine   | Combines fire. Defaults to fire damage.
+Chaos  | Cold   | Wonder         | Produces a random runespell projection.
+Chaos  | Nether | Disenchantment | Disenchantment damage.
+Chaos  | Poison | Confusion      | Confuses.
+Chaos  | Nexus  | Order          | Unresistable.
+Chaos  | Force  | Entropy        | Impact damage. Stuns.
+Chaos  | Time   | Chaos/Combine  | Combines chaos. Defaults to chaos damage.
+Cold   | Nether | Blight         | Cold damage. Slays living.
+Cold   | Poison | Frostbite      | Cold and poison damage. Slows.
+Cold   | Nexus  | Fire           | Warps cold to generate fire.
+Cold   | Force  | Incineration   | Frost damage. Critical damage if stunned.
+Cold   | Time   | Cold/Combine   | Combines cold. Defaults to frost damage.
+Nether | Poison | Miasma         | Drains the target's current hp by a percent.
+Nether | Nexus  | Mana           | Mana damage.
+Nether | Force  | Disintegration | Disintegration damage. Destroys terrain.
+Nether | Time   | Nether/Combine | Combines nether. Defaults to nether damage.
+Poison | Nexus  | Unbreath       | Poison damage. Slays living.
+Poison | Time   | Stop           | Cuts energy.
+Nexus  | Force  | Teleportation  | Attempts to teleport the target.
+Nexus  | Time   | Stasis         | Attempts to hold the target.
+Force  | Time   | Inertia        | Inertia damage. Slows.
+
 
 Imperatives
 -----------
@@ -8133,13 +8191,13 @@ denoted by **.
 -------------------------------------------------------------------------------
 Mod | Name       | Cost | Fail | Damage | Casting Time | Radius | Duration
 -------------------------------------------------------------------------------
- -1 | Minimized  |  50% | -10% |   60%  |     100%     |   -1   |    50%
+ -5 | Minimized  |  60% | -10% |   60%  |     100%     |   -1   |    80%
   0 | Moderate   | 100% | + 0% |  100%  |     100%     |   +0   |   100%
-  1 | Maximized  | 150% | +15% |  150%  |     100%     |   +1   |   130%
-  2 | Compressed | 150% | -10% |  130%  |     100%     |   -2   |    80%
-  2 | Expanded   | 130% | + 0% |  100%  |     100%     |   +2   |   130%
-  3 | Brief      | 130% | +10% |   60%  |      50%     |   +0   |    50%
-  3 | Lengthened | 150% | + 5% |   60%  |     100%     |   +0   |   160%
+  5 | Maximized  | 150% | +10% |  150%  |     100%     |   +1   |   130%
+ -1 | Compressed | 100% | - 5% |  130%  |     100%     |   -2   |    80%
+ +1 | Expanded   | 130% | + 5% |  100%  |     100%     |   +2   |   130% 
+ +3 | Brief      | 100% | - 5% |   80%  |      50%     |   +0   |    60%
+ -3 | Lengthened | 130% | + 5% |   60%  |     100%     |   +0   |   150%
   0 | Chaotic    |  **  |  **  |   **   |     100%     |   **   |    **%
         
 
@@ -8152,291 +8210,121 @@ level, but may be limited by projection elements.
 -------------------------------------------------------------------------------
 Level Modifier | Name  | Description
 -------------------------------------------------------------------------------
-       -3      | Melee | Quick burst attack at melee retaliation range.
+        0      | Melee | Quick burst attack at melee retaliation range.
         0      | Self  | Affects the caster or creates some special effect.
-        1      | Bolt  | Hits a single target in line of effect.
+        0      | Bolt  | Hits a single target in line of effect.
         2      | Beam  | Hits every target in line of effect. May be deflected.
-        3      | Ball  | Explodes about a single target in line of effect.
-        4      | Wave  | Radiates outward from the caster. Hits rapidly.
-        5      | Cloud | Damages an area of effect over time around the target.
-        7      | Storm | Creates a damaging area that moves with the caster.
+        4      | Ball  | Explodes about a single target in line of effect.
+        1      | Wave  | Radiates outward from the caster. Hits rapidly.
+        3      | Cloud | Damages an area of effect over time around the target.
+        5      | Storm | Creates a damaging area that moves with the caster.
 
 
-Effects
--------
-A comprehensive effect listing of every unique runespell. Duplicate spells not 
-listed here are the products of rune combinations with one or more elements that
-oppose each other, including:
+(5.20b) Runemastery Self-spell Tables
+-------------------------------------
+Self spells are usually beneficial to the caster, but may also have unusual or 
+harmful effects. Below is a comprehensive listing of self-spells. Spells 
+without a description will result in backlash of the combination's projection 
+elements. Spells listed as XOR will toggle off all others of the same type. 
+Note that 1 and 2-rune self spells do not rely on the order of runes to 
+determine the effect.
 
-Electricity/Water
-Fire/Cold
-Acid/Earth
-Water/Earth
-Nether/Time
-
-Other overlapping effects are the product of the rune 'nexus', or the inclusion
-of chaos+nether, which creates the nexus element. Remember that rune order is
-irrelevant, eg. fire+chaos is the same as chaos+fire.
-
-Sorted by Level, Family, # of Runes
--------------------------------------------------------------------------------
-Lvl | Projection | Explosions | Self-spell | Rune 1 | Rune 2 | Rune 3 | Augment
--------------------------------------------------------------------------------
-  5 | Acid       |            | Resist     | Acid   |        |        |        
-  5 | Lightning  |            | Resist     | Elec   |        |        |        
-  5 | Fire       |            | Resist     | Fire   |        |        |        
-  5 | Frost      |            | Resist     | Cold   |        |        |        
-  5 | Gas        |            | Resist     | Poison |        |        |        
-  5 | Gestalt    |            | Resist(x2) | Acid   | Elec   |        |        
-  5 | Gestalt    | Time       | Resist(x2) | Acid   | Elec   | Time   | Time   
-  5 | Gestalt    |            | Resist(x2) | Acid   | Fire   |        |        
-  5 | Gestalt    | Time       | Resist(x2) | Acid   | Fire   | Time   | Time   
-  5 | Gestalt    |            | Resist(x2) | Acid   | Cold   |        |        
-  5 | Gestalt    | Time       | Resist(x2) | Acid   | Cold   | Time   | Time   
-  5 | Gestalt    | Blindness  | Resist(x2) | Acid   | Poison |        |        
-  5 | Gestalt    | Blindness  | Resist(x2) | Acid   | Poison | Time   | Time   
-  5 | Acid       | Time       | Rune Trap  | Acid   | Time   |        | Time   
-  5 | Gestalt    |            | Resist(x2) | Elec   | Cold   |        |        
-  5 | Gestalt    | Time       | Resist(x2) | Elec   | Cold   | Time   | Time   
-  5 | Gestalt    | Stun       | Resist(x2) | Elec   | Poison |        |        
-  5 | Gestalt    | Stun       | Resist(x2) | Elec   | Poison | Time   | Time   
-  5 | Lightning  | Time       | Rune Trap  | Elec   | Time   |        | Time   
-  5 | Gestalt    | Sleep      | Resist(x2) | Fire   | Poison |        |        
-  5 | Gestalt    | Sleep      | Resist(x2) | Fire   | Poison | Time   | Time   
-  5 | Fire       | Time       | Rune Trap  | Fire   | Time   |        | Time   
-  5 | Gestalt    | Slow       | Resist(x2) | Cold   | Poison |        |        
-  5 | Gestalt    | Slow       | Resist(x2) | Cold   | Poison | Time   | Time   
-  5 | Frost      | Time       | Rune Trap  | Cold   | Time   |        | Time   
-  5 | Slow       |            |            | Poison | Time   |        |        
-  5 | Light      |            | Light      | Chaos  | Force  |        |        
-  5 | Darkness   |            | Darkness   | Nether | Force  |        |        
-  5 | Elements   |            | Resistance | Base   | Base   | Base   |        
--------------------------------------------------------------------------------
- 10 | Lightning  |            | Resist     | Acid   | Nexus  |        | Nexus  
- 10 | Lightning  | Water      |            | Elec   | Water  |        | Elec   
- 10 | Acid       |            | Resist     | Elec   | Nexus  |        | Nexus  
- 10 | Frost      |            | Resist     | Fire   | Nexus  |        | Nexus  
- 10 | Fire       |            | Resist     | Cold   | Nexus  |        | Nexus  
- 10 | Blindness  |            |            | Nether | Poison |        | Nexus  
--------------------------------------------------------------------------------
- 15 | Water      |            | Phase Door | Water  |        |        |        
- 15 | Water      |            | Phase Door | Earth  | Nexus  |        | Nexus  
- 15 | Shards     |            | Earthquake | Earth  |        |        |        
- 15 | Shards     |            | Earthquake | Water  | Nexus  |        | Nexus  
- 15 | Nexus      |            |            | Nexus  |        |        |        
-*15 | Nexus      |            |            | Chaos  | Nether |        |        
- 15 | Lightning  | Lightning  | Brand      | Elec   | Earth  |        | Elec   
- 15 | Unbreath   |            | Fly        | Poison | Nexus  |        |        
- 15 | Corrosion  |            | Disarm     | Acid   | Earth  |        |        
- 15 | Dig (Fire) |            | Dig Floor  | Fire   | Earth  |        |        
- 15 | Shattering |            | Disarm     | Earth  | Cold   |        |        
- 15 | Gestalt    |            | VerminCtrl | Poison | Water  |        |        
- 15 | Gestalt    |            | VerminCtrl | Poison | Water  | Time   | Time   
- 15 | Gestalt    |            | CurePoison | Poison | Earth  |        |        
- 15 | Gestalt    |            | CurePoison | Poison | Earth  | Time   | Time   
- 15 | Dig        |            | Heal       | Water  | Earth  |        |        
- 15 | Dig        |            | Teleport   | Water  | Time   |        | Time   
- 15 | Dig        |            | Memory     | Earth  | Time   |        | Time   
- 15 | Sleep      |            | Anchor     | Nexus  | Time   |        |        
- 15 | Rockets    |            |            | Fire   | Poison | Earth  |        
- 15 | Dig (Fire) |            | Dig Floor  | Fire   | Earth  | Time   | Time   
- 15 | Corrosion  |            | Disarm     | Acid   | Earth  | Time   | Time   
- 15 | Shattering |            | Disarm     | Cold   | Earth  | Time   | Time   
- 15 | Gestalt    |            | Resist(x2) | Acid   | Elec   | Nexus  |        
- 15 | Nexus      | Dig        | Dig Floor  | Water  | Earth  | Nexus  |        
--------------------------------------------------------------------------------
- 20 | Force      |            | Deflection | Force  |        |        |        
- 20 | Plasma     |            | Resist(x2) | Elec   | Fire   |        |        
- 20 | Plasma     |            | Resist(x2) | Elec   | Fire   | Acid   | Acid   
- 20 | Plasma     | Water      | Resist(x2) | Elec   | Fire   | Water  | Water  
- 20 | Plasma     | Light      | Resist(x2) | Elec   | Fire   | Force  | Force  
- 20 | Plasma     | Darkness   | Resist(x2) | Elec   | Fire   | Nether | Nether 
- 20 | Plasma     | Sleep      | Resist(x2) | Elec   | Fire   | Poison | Poison 
- 20 | Plasma     | Time       | Resist(x2) | Elec   | Fire   | Time   | Time   
- 20 | Darkness   | Acid       | Obscurity  | Acid   | Nether |        |        
- 20 | Acid       | Acid       | Brand      | Acid   | Force  |        | Acid   
- 20 | Light      | Lightning  | Light      | Elec   | Chaos  |        |        
- 20 | Teleport   | Lightning  | Zap Tele   | Elec   | Nether |        |        
- 20 | Sound      |            | Sparkle    | Elec   | Force  |        |        
- 20 | Sound      |            | Sparkle    | Elec   | Acid   | Force  | Acid   
- 20 | Sound      |            | Sparkle    | Elec   | Cold   | Force  | Cold   
- 20 | Sound      | Stun       | Sparkle    | Elec   | Poison | Force  | Poison 
- 20 | Sound      | Confusion  | Sparkle    | Elec   | Force  | Chaos  | Chaos  
- 20 | Sound      | Nether     | Sparkle    | Elec   | Force  | Nether | Nether 
- 20 | Darkness   | Fire       | Obscurity  | Fire   | Nether |        |        
- 20 | Fire       | Fire       | Brand      | Fire   | Force  |        | Fire   
- 20 | Ice        |            | Frostweave | Cold   | Water  |        |        
- 20 | Ice        |            | Frostweave | Cold   | Water  | Elec   | Elec   
- 20 | Ice        | Slow       | Frostweave | Cold   | Water  | Poison | Poison 
- 20 | Ice        | Shards     | Frostweave | Cold   | Water  | Earth  | Earth  
- 20 | Ice        | Force      | Frostweave | Cold   | Water  | Force  | Force  
- 20 | Ice        | Light      | Frostweave | Cold   | Water  | Chaos  | Chaos  
- 20 | Ice        | Time       | Frostweave | Cold   | Water  | Time   | Time   
- 20 | Light      | Frost      | Light      | Cold   | Chaos  |        |        
- 20 | Frost      | Frost      | Brand      | Cold   | Force  |        | Cold   
- 20 | Confusion  |            |            | Poison | Chaos  |        |        
- 20 | Stun       |            |            | Poison | Force  |        |        
- 20 | Water      |            | Levitation | Force  | Water  |        |        
- 20 | Water      |            | Levitation | Force  | Water  | Poison | Poison 
- 20 | Water      |            | Levitation | Force  | Water  | Chaos  | Chaos  
- 20 | Water      |            | Levitation | Force  | Water  | Nether | Nether 
- 20 | Missile    |            | Deflection | Force  | Earth  |        |        
- 20 | Missile    | Acid       | Deflection | Force  | Earth  | Acid   |        
- 20 | Missile    | Fire       | Deflection | Force  | Earth  | Fire   |        
- 20 | Missile    | Frost      | Deflection | Force  | Earth  | Cold   |        
- 20 | Missile    | Gas        | Deflection | Force  | Earth  | Poison |        
- 20 | Teleport   | Nexus      | Warp Tele  | Nexus  | Force  |        |        
- 20 | Chaos      | Elements   |            | Chaos  | Base   | Base   |        
- 20 | Acid       | Wonder     |            | Acid   | Chaos  | Time   | Time   
- 20 | Lightning  | Wonder     |            | Elec   | Chaos  | Time   | Time   
- 20 | Frost      | Wonder     |            | Cold   | Chaos  | Time   | Time   
- 20 | Poison     | Wonder     |            | Poison | Chaos  | Time   | Time   
- 20 | Gestalt    | Force      |            | Acid   | Fire   | Force  |        
- 20 | Gestalt    | Force      |            | Acid   | Cold   | Force  |        
- 20 | Gestalt    | Blind      |            | Acid   | Poison | Force  |        
- 20 | Gestalt    | Sleep      |            | Fire   | Poison | Force  |        
- 20 | Gestalt    | Slow       |            | Cold   | Poison | Force  |        
--------------------------------------------------------------------------------
- 25 | Polymorph  |            |            | Water  | Chaos  |        |        
- 25 | Clone      |            | Harm       | Water  | Nether |        |        
- 25 | Inferno    |            |            | Earth  | Chaos  |        |        
- 25 | Light      | Shards     | Light      | Cold   | Chaos  | Earth  |        
- 25 | Darkness   | Shards     | Obscurity  | Acid   | Nether | Earth  |        
-*25 | Darkness   | Shards     | Obscurity  | Fire   | Nether | Earth  |        
- 25 | Water      | Wonder     |            | Water  | Chaos  | Time   | Time   
- 25 | Shards     | Wonder     |            | Earth  | Chaos  | Time   | Time   
- 25 | Gestalt    | Confusion  | VerminCtrl | Water  | Poison | Chaos  | Chaos  
- 25 | Gestalt    | Confusion  | CurePoison | Earth  | Poison | Chaos  | Chaos  
- 25 | Gestalt    | Darkness   | VerminCtrl | Water  | Poison | Nether | Nether 
- 25 | Gestalt    | Darkness   | CurePoison | Earth  | Poison | Nether | Nether 
- 25 | Gestalt    | Nether     |            | Acid   | Elec   | Nether |        
- 25 | Gestalt    | Nether     |            | Acid   | Fire   | Nether |        
- 25 | Gestalt    | Blind      |            | Acid   | Poison | Nether |        
- 25 | Gestalt    | Stun       |            | Elec   | Poison | Nether |        
- 25 | Gestalt    | Sleep      |            | Fire   | Poison | Nether |        
--------------------------------------------------------------------------------
- 30 | Power      |            | Brand      | Acid   | Water  |        |        
- 30 | Annihilate |            | Trauma     | Cold   | Nether |        |        
- 30 | Inertia    |            | Tele-to    | Force  | Time   |        |        
- 30 | Disenchant |            | Dispel     | Nexus  | Chaos  |        |        
- 30 | Disenchant |            | Dispel     | Nexus  | Chaos  | Acid   | Acid   
- 30 | Disenchant |            | Dispel     | Nexus  | Chaos  | Elec   | Elec   
- 30 | Disenchant |            | Dispel     | Nexus  | Chaos  | Cold   | Cold   
- 30 | Disenchant |            | Dispel     | Nexus  | Chaos  | Water  | Water  
- 30 | Disenchant |            | Dispel     | Nexus  | Chaos  | Earth  | Earth  
- 30 | Disenchant |            | Dispel     | Nexus  | Chaos  | Force  | Force  
- 30 | Disenchant |            | Dispel     | Nexus  | Chaos  | Time   | Time   
- 30 | Mana       |            | Recharge   | Nexus  | Nether |        |        
- 30 | Mana       |            | Recharge   | Nexus  | Nether | Acid   | Acid   
- 30 | Mana       |            | Recharge   | Nexus  | Nether | Elec   | Elec   
- 30 | Mana       |            | Recharge   | Nexus  | Nether | Fire   | Fire   
- 30 | Mana       |            | Recharge   | Nexus  | Nether | Water  | Water  
- 30 | Mana       |            | Recharge   | Nexus  | Nether | Earth  | Earth  
- 30 | Mana       |            | Recharge   | Nexus  | Nether | Force  | Force  
- 30 | Mana       |            | Recharge   | Nexus  | Nether | Time   | Time   
- 30 | Light      | Acid       | Glyph      | Force  | Chaos  | Acid   |        
- 30 | Light      | Frost      | Glyph      | Force  | Chaos  | Cold   |        
- 30 | Light      | Nuke       | Glyph      | Force  | Chaos  | Poison |        
- 30 | Darkness   | Acid       | Glyph      | Force  | Nether | Acid   |        
- 30 | Darkness   | Fire       | Glyph      | Force  | Nether | Fire   |        
- 30 | Darkness   | Fear       | Glyph      | Force  | Nether | Poison |        
- 30 | Missile    | Chaos      | Deflection | Force  | Earth  | Chaos  |        
- 30 | Missile    | Nether     | Deflection | Force  | Earth  | Nether |        
- 30 | Nexus      | Nexus      |            | Nexus  | Chaos  | Nether | Nexus  
--------------------------------------------------------------------------------
- 35 | Chaos      |            |            | Chaos  |        |        |        
- 35 | Nether     |            |            | Nether |        |        |        
- 35 | Hellfire   |            | Scorch     | Fire   | Chaos  |        |        
- 35 | Nuke       | Gas        | Brand      | Acid   | Chaos  |        |        
- 35 | Wonder     |            |            | Chaos  | Time   |        |        
- 35 | Time       | Annihilate |            | Nether | Time   |        |        
- 35 | Light      | Light      | Circle     | Elec   | Earth  | Acid   | Acid   
- 35 | Light      | Light      | Circle     | Elec   | Earth  | Fire   | Fire   
- 35 | Light      | Light      | Circle     | Elec   | Earth  | Cold   | Cold   
- 35 | Light      | Light      | Circle     | Elec   | Earth  | Poison | Poison 
- 35 | Light      | Light      | Circle     | Elec   | Earth  | Water  | Water  
- 35 | Light      | Light      | Circle     | Elec   | Earth  | Nexus  | Nexus  
- 35 | Light      | Light      | Circle     | Elec   | Earth  | Force  | Force  
- 35 | Light      | Light      | Circle     | Elec   | Earth  | Chaos  | Chaos  
- 35 | Light      | Light      | Circle     | Elec   | Earth  | Nether | Nether 
- 35 | Light      | Light      | Circle     | Elec   | Earth  | Time   | Time   
- 35 | Stasis     |            | Satiation  | Cold   | Nether | Acid   | Acid   
- 35 | Stasis     |            | Satiation  | Cold   | Nether | Elec   | Elec   
- 35 | Stasis     |            | Satiation  | Cold   | Nether | Fire   | Fire   
- 35 | Stasis     |            | Satiation  | Cold   | Nether | Poison | Poison 
- 35 | Stasis     |            | Satiation  | Cold   | Nether | Water  | Water  
- 35 | Stasis     |            | Satiation  | Cold   | Nether | Earth  | Earth  
- 35 | Stasis     |            | Satiation  | Cold   | Nether | Nexus  | Nexus  
- 35 | Stasis     |            | Satiation  | Cold   | Nether | Force  | Force  
- 35 | Stasis     |            | Satiation  | Cold   | Nether | Chaos  | Chaos  
- 35 | Stasis     |            | Satiation  | Cold   | Nether | Time   | Time   
- 35 | Drain      |            | Berserk    | Poison | Nexus  | Acid   | Acid   
- 35 | Drain      |            | Berserk    | Poison | Nexus  | Elec   | Elec   
- 35 | Drain      |            | Berserk    | Poison | Nexus  | Fire   | Fire   
- 35 | Drain      |            | Berserk    | Poison | Nexus  | Cold   | Cold   
- 35 | Drain      |            | Berserk    | Poison | Nexus  | Water  | Water  
- 35 | Drain      |            | Berserk    | Poison | Nexus  | Earth  | Earth  
- 35 | Drain      |            | Berserk    | Poison | Nexus  | Chaos  | Chaos  
- 35 | Drain      |            | Berserk    | Poison | Nexus  | Nether | Nether 
- 35 | Drain      |            | Berserk    | Poison | Nexus  | Force  | Force  
- 35 | Drain      |            | Berserk    | Poison | Nexus  | Time   | Time   
- 35 | Gravity    |            | Summoning  | Force  | Time   | Acid   | Acid   
- 35 | Gravity    |            | Summoning  | Force  | Time   | Elec   | Elec   
- 35 | Gravity    |            | Summoning  | Force  | Time   | Fire   | Fire   
- 35 | Gravity    |            | Summoning  | Force  | Time   | Cold   | Cold   
- 35 | Gravity    |            | Summoning  | Force  | Time   | Poison | Poison 
- 35 | Gravity    |            | Summoning  | Force  | Time   | Water  | Water  
- 35 | Gravity    |            | Summoning  | Force  | Time   | Earth  | Earth  
- 35 | Gravity    |            | Summoning  | Force  | Time   | Nexus  | Nexus  
- 35 | Gravity    |            | Summoning  | Force  | Time   | Chaos  | Chaos  
- 35 | Gravity    |            | Summoning  | Force  | Time   | Nether | Nether 
--------------------------------------------------------------------------------
- 40 | Time       |            | Haste Self | Time   |        |        |        
- 40 | Disi       |            |            | Acid   | Water  | Elec   | Elec   
- 40 | Disi       |            |            | Acid   | Water  | Fire   | Fire   
- 40 | Disi       |            |            | Acid   | Water  | Cold   | Cold   
- 40 | Disi       |            |            | Acid   | Water  | Poison | Poison 
- 40 | Disi       |            |            | Acid   | Water  | Earth  | Earth  
- 40 | Disi       |            |            | Acid   | Water  | Nexus  | Nexus  
- 40 | Disi       |            |            | Acid   | Water  | Force  | Force  
- 40 | Disi       |            |            | Acid   | Water  | Chaos  | Chaos  
- 40 | Disi       |            |            | Acid   | Water  | Nether | Nether 
- 40 | Disi       |            |            | Acid   | Water  | Time   | Time   
- 40 | Detonation |            | Rune Trap  | Fire   | Chaos  | Acid   | Acid   
- 40 | Detonation |            | Rune Trap  | Fire   | Chaos  | Elec   | Elec   
- 40 | Detonation |            | Rune Trap  | Fire   | Chaos  | Cold   | Cold   
- 40 | Detonation |            | Rune Trap  | Fire   | Chaos  | Poison | Poison 
- 40 | Detonation |            | Rune Trap  | Fire   | Chaos  | Water  | Water  
- 40 | Detonation |            | Rune Trap  | Fire   | Chaos  | Earth  | Earth  
- 40 | Detonation |            | Rune Trap  | Fire   | Chaos  | Nexus  | Nexus  
- 40 | Detonation |            | Rune Trap  | Fire   | Chaos  | Force  | Force  
- 40 | Detonation |            | Rune Trap  | Fire   | Chaos  | Nether | Nether 
- 40 | Detonation |            | Rune Trap  | Fire   | Chaos  | Time   | Time   
- 40 | Meteor     |            |            | Water  | Earth  | Force  | Force  
--------------------------------------------------------------------------------
-
-
-Augment Effects
----------------
-A comprehensive effect listing of every augment. Augments increase towards the 
-listed benefit linearly with skill level in the associated rune school, from a
-minimum 200% of the drawback and 0% of the benefit at level 0. 
+NOTE: 3-rune spells are in BETA and thus not listed at this time.
 
 -------------------------------------------------------------------------------
-Lvl | Rune ID | Description
+Rune A | Rune B | Rune C | Description
 -------------------------------------------------------------------------------
-  1 | Acid    | 30% duration increase
-  1 | Elec    | 30% cost reduction
-  1 | Fire    | 20% damage/cost increase
-  1 | Cold    | 10% failure reduction
-  1 | Poison  | 20% energy decrease
- 15 | Force   | +2 radius increase
- 15 | Water   | 20% energy/damage decrease, 5% failure decrease
- 15 | Earth   | 10% damage/cost increase, 10% duration increase
- 25 | Chaos   | 40% damage/cost increase, 20% failure increase
- 25 | Nether  | 40% damage/cost increase, -2 radius decrease
- 25 | Nexus   | +4 radius increase, 40% duration decrease
- 30 | Time    | 40% energy/damage decrease, 20% duration increase
+Acid   |        |        | Temporary acid resistance.
+Water  |        |        | 
+Elec   |        |        | Temporary electricity resistance.
+Earth  |        |        | 
+Fire   |        |        | Temporary fire resistance.
+Chaos  |        |        | 
+Cold   |        |        | Temporary cold resistance.
+Nether |        |        | 
+Poison |        |        | Temporary poison resistance.
+Nexus  |        |        | 
+Force  |        |        | 
+Time   |        |        | Toggles synchronization-projection mode.
+
+Acid   | Water  |        | Summons clouds on random targets in range. Timed.
+Acid   | Elec   |        | Temporary acid and electricity resistance.
+Acid   | Earth  |        | Malicious effect. Corrodes the caster.
+Acid   | Fire   |        | Temporary acid and fire resistance.
+Acid   | Chaos  |        | Confusion brand. Upkeep.
+Acid   | Cold   |        | Temporary acid and cold resistance.
+Acid   | Nether |        | Annihilation brand. Upkeep.
+Acid   | Poison |        | Temporary acid and poison resistance.
+Acid   | Nexus  |        | Temporary electricity resistance. Projected.
+Acid   | Force  |        | Permanent acid resistance and brand. XOR Upkeep.
+Acid   | Time   |        | Prepare an acid rune charge. Sync-projected.
+
+Water  | Elec   |        | Malicious effect. Discharges the caster.
+Water  | Earth  |        | Improves tunneling. Upkeep.
+Water  | Fire   |        | Malicious effect. Evaporates the caster.
+Water  | Chaos  |        | Malicious effect. Polymorphs the caster.
+Water  | Cold   |        | Places an ice trap.
+Water  | Nether |        | Heals the caster. Fails if exhausted or undead.
+Water  | Poison |        | 
+Water  | Nexus  |        | Teleport forward. Requires a target.
+Water  | Force  |        | Feather falling. Upkeep.
+Water  | Time   |        | Prepare a water rune charge. Sync-projected.
+
+Elec   | Earth  |        | Fires bolts at random targets in range. Timed.
+Elec   | Fire   |        | Temporary electricity and fire resistance.
+Elec   | Chaos  |        | Calls light.
+Elec   | Cold   |        | Temporary electricity and cold resistance.
+Elec   | Nether |        | Calls darkness.
+Elec   | Poison |        | Temporary electricity and poison resistance.
+Elec   | Nexus  |        | Temporary acid resistance. Projected.
+Elec   | Force  |        | Permanent elec resistance and brand. XOR Upkeep.
+Elec   | Time   |        | Prepare an electricity rune charge. Sync-projected.
+
+Earth  | Fire   |        | Places a detonations trap.
+Earth  | Chaos  |        | Causes an earthquake centered on the caster.
+Earth  | Cold   |        | Malicious effect. Shatters the caster.
+Earth  | Nether |        | Malicious effect. Ruins the caster.
+Earth  | Poison |        | 
+Earth  | Nexus  |        | Line of sight tele-to. Requires a target. 
+Earth  | Force  |        | Increases effective stealth. Upkeep.
+Earth  | Time   |        | Prepare an earth rune charge. Sync-projected.
+
+Fire   | Chaos  |        | Increases effective necromancy. Upkeep.
+Fire   | Cold   |        | Temporary fire and cold resistance.
+Fire   | Nether |        | Malicious effect. Drains xp from the caster.
+Fire   | Poison |        | Temporary fire and poison resistance.
+Fire   | Nexus  |        | Temporary cold resistance. Projected.
+Fire   | Force  |        | Permanent fire resistance and brand. XOR Upkeep.
+Fire   | Time   |        | Prepare a fire rune charge. Sync-projected.
+
+Chaos  | Cold   |        | Malicious effect. Random effect.
+Chaos  | Nether |        | Remove curse. Targets the caster.
+Chaos  | Poison |        | 
+Chaos  | Nexus  |        | Dispel magic. Targets the caster.
+Chaos  | Force  |        | Temporary reflection and bonus to AC (up to +15).
+Chaos  | Time   |        | Prepare a chaos rune charge. Sync-projected.
+
+Cold   | Nether |        | Increases effective traumaturgy. Upkeep.
+Cold   | Poison |        | Temporary cold and poison resistance.
+Cold   | Nexus  |        | Temporary fire resistance. Projected.
+Cold   | Force  |        | Permanent cold resistance and brand. XOR Upkeep.
+Cold   | Time   |        | Prepare a cold rune charge. Sync-projected.
+
+Nether | Poison |        | 
+Nether | Nexus  |        | Recharge. Targets a single held item.
+Nether | Force  |        | Temporary invisibility.
+Nether | Time   |        | Prepare a nether rune charge. Sync-projected.
+
+Poison | Nexus  |        | Temporary poison resistance. Projected.
+Poison | Force  |        | Permanent poison resistance and brand. XOR Upkeep.
+Poison | Time   |        | Increased regeneration. Upkeep.
+
+Nexus  | Force  |        | Teleportation. Phase door if the radius is small.
+Nexus  | Time   |        | Temporary anti-teleportation.
+
+Force  | Time   |        | Temporary speed (up to +10).
+
+-----
 
 
 
@@ -9080,9 +8968,10 @@ Note that not every skill is available to every profession (class).
         .Thought Contact        Learn mindcrafter spells of tought contact.
         .Mental Intrusion       Learn mindcrafter spells of mental intrusion.
     +Runecraft                  Determines how skillful you are in handling
-        .Acid and Water         specific magical symbols or Runes.
-        .Lightning and Earth    For more info about runes, see
-        .Fire and Chaos         '(5.20) Runes & Runemastery'.
+        +Rune Alacrity          specific magical symbols or Runes.
+        .Acid and Water         For more info about runes, see
+        .Lightning and Earth    '(5.20) Runes & Runemastery'.
+        .Fire and Chaos         
         .Cold and Nether
         .Poison and Nexus
         .Force and Time
