@@ -1533,6 +1533,7 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 //		case TV_ARROW: item = ""; break;
 //		case TV_BOLT: item = ""; break;
 		/* other items */
+//		case TV_BOOK: item = "book"; break;
 		case TV_SCROLL: case TV_PARCHMENT:
 			item = "scroll"; break;
 /*		case TV_BOTTLE: item = "potion"; break;
