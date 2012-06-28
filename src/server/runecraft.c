@@ -163,7 +163,7 @@ s16b rspell_energy(int Ind, byte element[], byte elements, byte imperative, byte
 
 #ifdef ENABLE_GROUP_SPELLS
 bool is_group_spell(s16b rune[], u16b e_flags1, u16b e_flags2, byte elements) {	
-	byte temp_array[1];
+	byte temp_array[RCRAFT_MAX_ELEMENTS];
 	u16b temp_flag;
 	/* Clear the flag array for up to 2 runes */
 	byte i;
@@ -807,7 +807,7 @@ byte execute_rspell(int Ind, byte dir, u16b e_flags1, u16b e_flags2, u16b m_flag
 	
 	/* Decode the Elements */
 	u16b e_flags = 0; e_flags |= e_flags1; e_flags |= e_flags2;
-	byte element[RSPELL_MAX_ELEMENTS];
+	byte element[RCRAFT_MAX_ELEMENTS];
 	byte elements = flags_to_elements(element, e_flags);
 	
 	/** Validate Spell **/
@@ -1531,7 +1531,7 @@ s_printf("Duration: %d\n", duration);
 				break; }
 				
 				case R_FORC: {
-				byte upkeep_rune[5];
+				byte upkeep_rune[RCRAFT_MAX_ELEMENTS];
 				cost = 0;
 				if (p_ptr->rcraft_attune == (R_ACID | R_ELEC)) {
 					msg_format(Ind, "\377WYour armament is no longer attuned.");
@@ -1631,7 +1631,7 @@ s_printf("Duration: %d\n", duration);
 				break; }
 				
 				case R_FORC: {
-				byte upkeep_rune[5];
+				byte upkeep_rune[RCRAFT_MAX_ELEMENTS];
 				cost = 0;
 				if (p_ptr->rcraft_attune == (R_ACID | R_FIRE)) {
 					msg_format(Ind, "\377WYour armament is no longer attuned.");
@@ -1751,7 +1751,7 @@ s_printf("Duration: %d\n", duration);
 				break; }
 				
 				case R_FORC: {
-				byte upkeep_rune[5];
+				byte upkeep_rune[RCRAFT_MAX_ELEMENTS];
 				cost = 0;
 				if (p_ptr->rcraft_attune == (R_ACID | R_COLD)) {
 					msg_format(Ind, "\377WYour armament is no longer attuned.");
@@ -1874,7 +1874,7 @@ s_printf("Duration: %d\n", duration);
 				break; }
 				
 				case R_FORC: {
-				byte upkeep_rune[5];
+				byte upkeep_rune[RCRAFT_MAX_ELEMENTS];
 				cost = 0;
 				if (p_ptr->rcraft_attune == (R_ACID | R_POIS)) {
 					msg_format(Ind, "\377WYour armament is no longer attuned.");
@@ -1972,7 +1972,7 @@ s_printf("Duration: %d\n", duration);
 			case (R_ACID | R_FORC): {
 			switch (e_flags - (R_ACID | R_FORC)) {
 				case 0: {
-				byte upkeep_rune[5];
+				byte upkeep_rune[RCRAFT_MAX_ELEMENTS];
 				cost = 0;
 				if (p_ptr->rcraft_attune == R_ACID) {
 					msg_format(Ind, "\377WYour armament is no longer attuned.");
@@ -2346,7 +2346,7 @@ s_printf("Duration: %d\n", duration);
 				break; }
 				
 				case R_FORC: {
-				byte upkeep_rune[5];
+				byte upkeep_rune[RCRAFT_MAX_ELEMENTS];
 				cost = 0;
 				if (p_ptr->rcraft_attune == (R_ELEC | R_FIRE)) {
 					msg_format(Ind, "\377WYour armament is no longer attuned.");
@@ -2462,7 +2462,7 @@ s_printf("Duration: %d\n", duration);
 				break; }
 				
 				case R_FORC: {
-				byte upkeep_rune[5];
+				byte upkeep_rune[RCRAFT_MAX_ELEMENTS];
 				cost = 0;
 				if (p_ptr->rcraft_attune == (R_ELEC | R_COLD)) {
 					msg_format(Ind, "\377WYour armament is no longer attuned.");
@@ -2563,7 +2563,7 @@ s_printf("Duration: %d\n", duration);
 				break; }
 				
 				case R_FORC: {
-				byte upkeep_rune[5];
+				byte upkeep_rune[RCRAFT_MAX_ELEMENTS];
 				cost = 0;
 				if (p_ptr->rcraft_attune == (R_ELEC | R_POIS)) {
 					msg_format(Ind, "\377WYour armament is no longer attuned.");
@@ -2661,7 +2661,7 @@ s_printf("Duration: %d\n", duration);
 			case (R_ELEC | R_FORC): {
 			switch (e_flags - (R_ELEC | R_FORC)) {
 				case 0: {
-				byte upkeep_rune[5];
+				byte upkeep_rune[RCRAFT_MAX_ELEMENTS];
 				cost = 0;
 				if (p_ptr->rcraft_attune == R_ELEC) {
 					msg_format(Ind, "\377WYour armament is no longer attuned.");
@@ -2960,7 +2960,7 @@ s_printf("Duration: %d\n", duration);
 				break; }
 				
 				case R_FORC: {
-				byte upkeep_rune[5];
+				byte upkeep_rune[RCRAFT_MAX_ELEMENTS];
 				cost = 0;
 				if (p_ptr->rcraft_attune == (R_FIRE | R_COLD)) {
 					msg_format(Ind, "\377WYour armament is no longer attuned.");
@@ -3016,14 +3016,14 @@ s_printf("Duration: %d\n", duration);
 				case 0: {
 				msg_format(Ind, "You %s fill yourself with lifefire.", msg_q);
 				if (margin > 0) {
-					if (!p_ptr->suscep_life) { //SV_POTION_LOSE_MEMORIES - Kurzel
-						if ((!p_ptr->hold_life) && (p_ptr->exp > 0)) {
+					//if (!p_ptr->suscep_life) { //SV_POTION_LOSE_MEMORIES - Kurzel
+						//if ((!p_ptr->hold_life) && (p_ptr->exp > 0)) {
 							msg_print(Ind, "\377GYou feel your memories fade.");
 							lose_exp(Ind, p_ptr->exp / 4);
-						}
-						break;
-					}
-					else restore_level(Ind); //SV_POTION_RESTORE_EXP - Kurzel
+						//}
+						//break;
+					//}
+					//else restore_level(Ind); //SV_POTION_RESTORE_EXP - Kurzel
 				}
 				break; }
 				
@@ -3067,7 +3067,7 @@ s_printf("Duration: %d\n", duration);
 				break; }
 				
 				case R_FORC: {
-				byte upkeep_rune[5];
+				byte upkeep_rune[RCRAFT_MAX_ELEMENTS];
 				cost = 0;
 				if (p_ptr->rcraft_attune == (R_FIRE | R_POIS)) {
 					msg_format(Ind, "\377WYour armament is no longer attuned.");
@@ -3167,7 +3167,7 @@ s_printf("Duration: %d\n", duration);
 			case (R_FIRE | R_FORC): {
 			switch (e_flags - (R_FIRE | R_FORC)) {
 				case 0: {
-				byte upkeep_rune[5];
+				byte upkeep_rune[RCRAFT_MAX_ELEMENTS];
 				cost = 0;
 				if (p_ptr->rcraft_attune == R_FIRE) {
 					msg_format(Ind, "\377WYour armament is no longer attuned.");
@@ -3475,7 +3475,7 @@ s_printf("Duration: %d\n", duration);
 				break; }
 				
 				case R_FORC: {
-				byte upkeep_rune[5];
+				byte upkeep_rune[RCRAFT_MAX_ELEMENTS];
 				cost = 0;
 				if (p_ptr->rcraft_attune == (R_COLD | R_POIS)) {
 					msg_format(Ind, "\377WYour armament is no longer attuned.");
@@ -3573,7 +3573,7 @@ s_printf("Duration: %d\n", duration);
 			case (R_COLD | R_FORC): {
 			switch (e_flags - (R_COLD | R_FORC)) {
 				case 0: {
-				byte upkeep_rune[5];
+				byte upkeep_rune[RCRAFT_MAX_ELEMENTS];
 				cost = 0;
 				if (p_ptr->rcraft_attune == R_COLD) {
 					msg_format(Ind, "\377WYour armament is no longer attuned.");
@@ -3747,7 +3747,7 @@ s_printf("Duration: %d\n", duration);
 			case (R_POIS | R_FORC): {
 			switch (e_flags - (R_POIS | R_FORC)) {
 				case 0: {
-				byte upkeep_rune[5];
+				byte upkeep_rune[RCRAFT_MAX_ELEMENTS];
 				cost = 0;
 				if (p_ptr->rcraft_attune == R_POIS) {
 					msg_format(Ind, "\377WYour armament is no longer attuned.");

@@ -1582,27 +1582,28 @@ static void rcraft_print_imperatives(u16b e_flags, u16b m_flags) {
 
 	/* Print the header */
 	prt("", 1, col);
-	put_str("Imperative    (Level, Damage, Cost, Fail)", 1, col);
+	put_str("Imperative    (Level, Damage, Cost, Fail, Duration)", 1, col);
 
 	/* Fill the list */
 	for (i = 0; i < RCRAFT_MAX_IMPERATIVES; i++) {
 		/* Fill a line */
 		if (r_imperatives[i].flag == I_CHAO) { //Hack -- Chaotic displays ??? - Kurzel
-			sprintf(tmpbuf, "%c) \377%c%-10s\377w (   %s%d,   ???%%, ???%%, ???%%)",
+			sprintf(tmpbuf, "%c) \377%c%-10s\377w (   %s%d,   ???%%, ???%%, ???%%,     ???%%)",
 				'a' + i,
 				rcraft_threat_color(e_flags, m_flags | r_imperatives[i].flag),
 				r_imperatives[i].name,
 				r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level);
 		}
 		else {
-			sprintf(tmpbuf, "%c) \377%c%-10s\377w (   %s%d,   %s%d%%, %s%d%%, %s%d%%)",
+			sprintf(tmpbuf, "%c) \377%c%-10s\377w (   %s%d,   %s%d%%, %s%d%%, %s%d%%,     %s%d%%)",
 				'a' + i,
 				rcraft_threat_color(e_flags, m_flags | r_imperatives[i].flag),
 				r_imperatives[i].name,
 				r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level,
 				r_imperatives[i].damage >= 10 ? "" : " ", r_imperatives[i].damage * 10,
 				r_imperatives[i].cost >= 10 ? "" : " ", r_imperatives[i].cost * 10,
-				ABS(r_imperatives[i].fail) >= 10 ? (r_imperatives[i].fail >= 0 ? "+" : "") : (r_imperatives[i].fail >= 0 ? " +" : " "), r_imperatives[i].fail);
+				ABS(r_imperatives[i].fail) >= 10 ? (r_imperatives[i].fail >= 0 ? "+" : "") : (r_imperatives[i].fail >= 0 ? " +" : " "), r_imperatives[i].fail),
+				r_imperatives[i].duration >= 10 ? "" : " ", r_imperatives[i].duration * 10;
 		}
 		/* Print the line */
 		prt("", j, col);

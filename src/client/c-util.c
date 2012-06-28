@@ -4162,26 +4162,27 @@ void interact_macros(void)
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose the rune imperative,");
 						Term_putstr(10, 11, -1, TERM_GREEN, "ie how powerful you want to try and make the spell.");
 
-						Term_putstr(15, 13, -1, TERM_L_GREEN, "Imperative    (Level, Damage, Cost, Fail)");
+						Term_putstr(15, 13, -1, TERM_L_GREEN, "Imperative    (Level, Damage, Cost, Fail, Duration)");
 
 						char tmpbuf[80];
 						for (i = 0; i < RCRAFT_MAX_IMPERATIVES; i++) {
 							if (r_imperatives[i].flag == I_CHAO) { //Hack -- Chaotic displays ??? - Kurzel (duplicate code here from c-spell.c)
-								sprintf(tmpbuf, "%c) \377%c%-10s\377G (   %s%d,   ???%%, ???%%, ???%%)",
+								sprintf(tmpbuf, "%c) \377%c%-10s\377G (   %s%d,   ???%%, ???%%, ???%%,     ???%%)",
 									'a' + i,
 									rcraft_threat_color(e_flags, m_flags | r_imperatives[i].flag),
 									r_imperatives[i].name,
 									r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level);
 							}
 							else {
-								sprintf(tmpbuf, "%c) \377%c%-10s\377G (   %s%d,   %s%d%%, %s%d%%, %s%d%%)",
+								sprintf(tmpbuf, "%c) \377%c%-10s\377G (   %s%d,   %s%d%%, %s%d%%, %s%d%%,     %s%d%%)",
 									'a' + i,
 									rcraft_threat_color(e_flags, m_flags | r_imperatives[i].flag),
 									r_imperatives[i].name,
 									r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level,
 									r_imperatives[i].damage >= 10 ? "" : " ", r_imperatives[i].damage * 10,
 									r_imperatives[i].cost >= 10 ? "" : " ", r_imperatives[i].cost * 10,
-									ABS(r_imperatives[i].fail) >= 10 ? (r_imperatives[i].fail >= 0 ? "+" : "") : (r_imperatives[i].fail >= 0 ? " +" : " "), r_imperatives[i].fail);
+									ABS(r_imperatives[i].fail) >= 10 ? (r_imperatives[i].fail >= 0 ? "+" : "") : (r_imperatives[i].fail >= 0 ? " +" : " "), r_imperatives[i].fail),
+									r_imperatives[i].duration >= 10 ? "" : " ", r_imperatives[i].duration * 10;
 							}
 
 							Term_putstr(15, 14 + i, -1, TERM_L_GREEN, tmpbuf);
