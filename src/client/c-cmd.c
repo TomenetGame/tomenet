@@ -1533,7 +1533,8 @@ void cmd_help(void)
 
 static void artifact_lore(void) {
 	char s[20 + 1], tmp[80];
-	int c, i, j, n, selected, selected_list;
+	int c, i, j, n, selected, selected_list, list_idx[15];
+	int selected_line = 0;
 
 	/* for pasting lore to chat */
 	char paste_lines[18][MSG_LEN];
@@ -1566,7 +1567,8 @@ static void artifact_lore(void) {
 			if (!strcmp(tmp, s)) {
 				selected = artifact_list_code[i];
 				selected_list = i;
-				Term_putstr(5, 5, -1, TERM_L_UMBER, artifact_list_name[i]);
+				Term_putstr(5, 5, -1, selected_line == 0 ? TERM_L_UMBER : TERM_UMBER, artifact_list_name[i]);
+				list_idx[0] = i;
 				n++;
 				break;
 			}
@@ -1582,12 +1584,19 @@ static void artifact_lore(void) {
 
 			if (strstr(tmp, s)) {
 				if (n == 0) {
-					selected = artifact_list_code[i];
 					selected_list = i;
+					selected = artifact_list_code[i];
 				}
-				Term_putstr(5, 5 + n, -1, n == 0 ? TERM_L_UMBER : TERM_UMBER, artifact_list_name[i]);
+				Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_L_UMBER : TERM_UMBER, artifact_list_name[i]);
+				list_idx[n] = i;
 				n++;
 			}
+		}
+
+		/* choice outside of the list? snap back */
+		if (selected_line >= n) {
+			selected_line = n - 1;
+			Term_putstr(5, 5 + selected_line, -1, TERM_L_UMBER, artifact_list_name[list_idx[selected_line]]);
 		}
 
 		Term_putstr(28,  23, -1, TERM_WHITE, "-- press ESC to exit --");
@@ -1598,6 +1607,15 @@ static void artifact_lore(void) {
             		continue;
             	}
 
+		/* navigate in the list (up/down) */
+		if (c == '8' || c == 'k') {
+			if (selected_line > 0) selected_line--;
+			continue;
+		}
+		if (c == '2' || c == 'j') {
+			if (selected_line < 15 - 1) selected_line++;
+			continue;
+		}
 		/* backspace */
 		if (c == '\010' || c == 0x7F) {
 			if (strlen(s) > 0) s[strlen(s) - 1] = '\0';
@@ -1628,7 +1646,10 @@ static void artifact_lore(void) {
 	}
 
 	/* display lore! */
-	clear_from(5);
+	selected_list = list_idx[selected_line];
+	selected = artifact_list_code[selected_list];
+	clear_from(4);
+	Term_putstr(5, 5, -1, TERM_L_UMBER, artifact_list_name[selected_list]);
 	for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
 	artifact_lore_aux(selected, selected_list, paste_lines);
 
@@ -1661,9 +1682,9 @@ static void artifact_lore(void) {
 
 static void monster_lore(void) {
 	char s[20 + 1], tmp[80];
-	int c, i, j, n, selected, selected_list;
+	int c, i, j, n, selected, selected_list, list_idx[15];
 	bool show_lore = TRUE;
-
+	int selected_line = 0;
 	/* for pasting lore to chat */
 	char paste_lines[18][MSG_LEN];
 
@@ -1697,7 +1718,8 @@ static void monster_lore(void) {
 			if (!strcmp(tmp, s)) {
 				selected = monster_list_code[i];
 				selected_list = i;
-				Term_putstr(5, 5, -1, TERM_YELLOW, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
+				Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
+				list_idx[0] = i;
 				n++;
 				break;
 			}
@@ -1705,7 +1727,8 @@ static void monster_lore(void) {
 			else if (!strncmp(tmp, s, strlen(s))) {
 				selected = monster_list_code[i];
 				selected_list = i;
-				Term_putstr(5, 5, -1, TERM_YELLOW, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
+				Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
+				list_idx[0] = i;
 				n++;
 				break;
 			}
@@ -1724,9 +1747,17 @@ static void monster_lore(void) {
 					selected = monster_list_code[i];
 					selected_list = i;
 				}
-				Term_putstr(5, 5 + n, -1, n == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
+				Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
+				list_idx[n] = i;
 				n++;
 			}
+		}
+
+		/* choice outside of the list? snap back */
+		if (selected_line >= n) {
+			selected_line = n - 1;
+			Term_putstr(5, 5 + selected_line, -1, TERM_YELLOW, format("(%4d)  %s",
+			    monster_list_code[list_idx[selected_line]], monster_list_name[list_idx[selected_line]]));
 		}
 
 		Term_putstr(28,  23, -1, TERM_WHITE, "-- press ESC to exit --");
@@ -1737,6 +1768,15 @@ static void monster_lore(void) {
             		continue;
             	}
 
+		/* navigate in the list (up/down) */
+		if (c == '8' || c == 'k') {
+			if (selected_line > 0) selected_line--;
+			continue;
+		}
+		if (c == '2' || c == 'j') {
+			if (selected_line < 15 - 1) selected_line++;
+			continue;
+		}
 		/* backspace */
 		if (c == '\010' || c == 0x7F) {
 			if (strlen(s)) s[strlen(s) - 1] = '\0';
@@ -1767,8 +1807,11 @@ static void monster_lore(void) {
 	}
 
 	/* display lore (default) or stats */
+	selected_list = list_idx[selected_line];
+	selected = monster_list_code[selected_list];
 	while (TRUE) {
-		clear_from(5);
+		clear_from(4);
+		Term_putstr(5, 5, -1, TERM_YELLOW, format("(%4d)  %s", monster_list_code[selected_list], monster_list_name[selected_list]));
 		for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
 		if (show_lore) {
 			monster_lore_aux(selected, selected_list, paste_lines);
