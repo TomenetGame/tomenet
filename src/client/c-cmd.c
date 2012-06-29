@@ -1541,9 +1541,8 @@ static void artifact_lore(void) {
 
 	Term_save();
 
-  while (TRUE) {
-
-	s[0] = '\0';
+    s[0] = '\0';
+    while (TRUE) {
 	Term_clear();
 	Term_putstr(2,  2, -1, TERM_WHITE, "Enter (partial) artifact name to refine the search:");
 	Term_putstr(2,  3, -1, TERM_WHITE, "Press RETURN to display lore about the selected artifact.");
@@ -1601,7 +1600,13 @@ static void artifact_lore(void) {
 		}
 
 		Term_putstr(28,  23, -1, TERM_WHITE, "-- press ESC to exit --");
+		/* hack: place cursor at pseudo input prompt */
+	        Term->scr->cx = 54 + strlen(s);
+	        Term->scr->cy = 2;
+	        Term->scr->cu = 1;
+
 		c = inkey();
+
 		/* specialty: allow chatting from within here */
                 if (c == ':') {
             		cmd_message();
@@ -1656,11 +1661,14 @@ static void artifact_lore(void) {
 
 		if (show_lore) {
 			artifact_lore_aux(selected, selected_list, paste_lines);
-			Term_putstr(11,  23, -1, TERM_WHITE, "-- press ESC to exit, SPACE for stats, c to chat-paste --");
+			Term_putstr(6,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for stats, c to chat-paste --");
 		} else {
 			artifact_stats_aux(selected, selected_list, paste_lines);
-			Term_putstr(11,  23, -1, TERM_WHITE, "-- press ESC to exit, SPACE for lore, c to chat-paste --");
+			Term_putstr(6,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for lore, c to chat-paste --");
 		}
+		/* hack: hide cursor */
+	        Term->scr->cx = Term->wid;
+	        Term->scr->cu = 1;
 
 		while (TRUE) {
 			c = inkey();
@@ -1669,7 +1677,7 @@ static void artifact_lore(void) {
 	            		cmd_message();
 				Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Artifact Lore ***");
 	            	}
-			if (c == '\e') break;
+			if (c == '\e' || c == '\b') break;
 			if (c == ' ') {
 				show_lore = !show_lore;
 				break;
@@ -1686,7 +1694,13 @@ static void artifact_lore(void) {
 				}
 			}
 		}
-		if (c == '\e') break;
+		/* ESC = go back and erase search term */
+		if (c == '\e') {
+			s[0] = '\0';
+			break;
+		}
+		/* Backspace = go back but keep search term */
+		if (c == '\b') break;
 	}
   }
 
@@ -1703,9 +1717,8 @@ static void monster_lore(void) {
 
 	Term_save();
 
+    s[0] = '\0';
     while (TRUE) {
-
-	s[0] = '\0';
 	Term_clear();
 	Term_putstr(2,  2, -1, TERM_WHITE, "Enter (partial) monster name to refine the search:");
 	Term_putstr(2,  3, -1, TERM_WHITE, "Press RETURN to display lore about the selected monster.");
@@ -1775,7 +1788,13 @@ static void monster_lore(void) {
 		}
 
 		Term_putstr(28,  23, -1, TERM_WHITE, "-- press ESC to exit --");
+		/* hack: place cursor at pseudo input prompt */
+	        Term->scr->cx = 53 + strlen(s);
+	        Term->scr->cy = 2;
+	        Term->scr->cu = 1;
+
 		c = inkey();
+
 		/* specialty: allow chatting from within here */
                 if (c == ':') {
             		cmd_message();
@@ -1830,11 +1849,14 @@ static void monster_lore(void) {
 
 		if (show_lore) {
 			monster_lore_aux(selected, selected_list, paste_lines);
-			Term_putstr(11,  23, -1, TERM_WHITE, "-- press ESC to exit, SPACE for stats, c to chat-paste --");
+			Term_putstr(6,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for stats, c to chat-paste --");
 		} else {
 			monster_stats_aux(selected, selected_list, paste_lines);
-			Term_putstr(11,  23, -1, TERM_WHITE, "-- press ESC to exit, SPACE for lore, c to chat-paste --");
+			Term_putstr(6,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for lore, c to chat-paste --");
 		}
+		/* hack: hide cursor */
+	        Term->scr->cx = Term->wid;
+	        Term->scr->cu = 1;
 
 		while (TRUE) {
 			c = inkey();
@@ -1843,7 +1865,7 @@ static void monster_lore(void) {
 	            		cmd_message();
 				Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Monster Lore ***");
 	            	}
-			if (c == '\e') break;
+			if (c == '\e' || c == '\b') break;
 			if (c == ' ') {
 				show_lore = !show_lore;
 				break;
@@ -1860,7 +1882,13 @@ static void monster_lore(void) {
 				}
 			}
 		}
-		if (c == '\e') break;
+		/* ESC = go back and erase search term */
+		if (c == '\e') {
+			s[0] = '\0';
+			break;
+		}
+		/* Backspace = go back but keep search term */
+		if (c == '\b') break;
 	}
     }
 
