@@ -1195,7 +1195,7 @@ void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 		//Term_putstr(5, 5, -1, TERM_YELLOW, p2 + 1);
 		strcpy(paste_lines[++pl], format("\377U%s",
 			artifact_list_name[alidx]));
-		Term_putstr(5, 5, -1, TERM_L_UMBER, paste_lines[pl] + 2); /* no need for \377y */
+		Term_putstr(5, 5, -1, TERM_L_UMBER, paste_lines[pl] + 2); /* no need for \377U */
 
 		/* fetch diz */
 		strcpy(paste_lines[++pl], "\377u");
@@ -1276,8 +1276,8 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 	bool got_W_line = FALSE; /* usually only W: lines are affected, right? */
 	bool got_F_lines = FALSE, got_P_line = FALSE;
 	int f_col = 0; /* used for F flags */
-	const char a_key = 'u', a_val = 's', a_atk = 's'; /* 'Speed:', 'Normal', 4xmelee */
-	const char ta_key = TERM_UMBER, ta_val = TERM_SLATE, ta_atk = TERM_SLATE; /* 'Speed:', 'Normal', 4xmelee */
+	const char a_key = 'u', a_val = 's'; /* 'Speed:', 'Normal' */
+	const char ta_key = TERM_UMBER, ta_val = TERM_SLATE; /* 'Speed:', 'Normal' */
 
 	int tval, v_ac, v_acx, v_hit, v_dam;
 	char v_ddice[10];
@@ -1315,12 +1315,13 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 		/* print info */
 
 		/* name */
-		//Term_putstr(5, 5, -1, TERM_YELLOW, p2 + 1);
-		strcpy(paste_lines[++pl], format("\377y%s",
+		//Term_putstr(5, 5, -1, TERM_L_UMBER, p2 + 1);
+		strcpy(paste_lines[++pl], format("\377U%s",
 			artifact_list_name[alidx]));
-		Term_putstr(5, 5, -1, TERM_YELLOW, paste_lines[pl] + 2); /* no need for \377y */
+		Term_putstr(5, 5, -1, TERM_L_UMBER, paste_lines[pl] + 2); /* no need for \377U */
 
 		/* fetch stats: I/W/E/O/B/F/S lines */
+		tval = 0;
 		while (0 == my_fgets(fff, buf, 1024)) {
 			/* strip $/%..$/! conditions */
 			p1 = p2 = buf; /* dummy, != NULL */
