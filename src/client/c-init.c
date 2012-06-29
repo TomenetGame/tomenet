@@ -1267,6 +1267,292 @@ void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 
 	my_fclose(fff);
 }
+void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
+	char buf[1024], *p1, *p2, info[MSG_LEN], info_tmp[MSG_LEN];
+	FILE *fff;
+	int l = 0, info_val, pl = -1;
+	int pf_col_cnt = 0; /* combine multiple [3] flag lines into one */
+	/* for multiple definitions via $..$/!: */
+	bool got_W_line = FALSE; /* usually only W: lines are affected, right? */
+	bool got_F_lines = FALSE, got_P_line = FALSE;
+	int f_col = 0; /* used for F flags */
+	const char a_key = 'u', a_val = 's', a_atk = 's'; /* 'Speed:', 'Normal', 4xmelee */
+	const char ta_key = TERM_UMBER, ta_val = TERM_SLATE, ta_atk = TERM_SLATE; /* 'Speed:', 'Normal', 4xmelee */
+
+	int tval, v_ac, v_acx, v_hit, v_dam;
+	char v_ddice[10];
+	bool empty;
+
+	/* actually use local a_info.txt - a novum */
+	path_build(buf, 1024, ANGBAND_DIR_GAME, "a_info.txt");
+	fff = my_fopen(buf, "r");
+	if (fff == NULL) {
+		//plog("Error: Your a_info.txt file is missing.");
+		return;
+	}
+
+	while (0 == my_fgets(fff, buf, 1024)) {
+		/* strip $/%..$/! conditions */
+		p1 = p2 = buf; /* dummy, != NULL */
+		while (buf[0] == '$' || buf[0] == '%') {
+			p1 = strchr(buf + 1, '$');
+			p2 = strchr(buf + 1, '!');
+			if (!p1 && !p2) break;
+			if (!p1) p1 = p2;
+			else if (p2 && p2 < p1) p1 = p2;
+			strcpy(buf, p1 + 1);
+		}
+		if (!p1 && !p2) continue;
+
+		if (strlen(buf) < 3 || buf[0] != 'N') continue;
+
+		p1 = buf + 2; /* artifact code */
+		p2 = strchr(p1, ':'); /* 1 before artifact name */
+		if (!p2) continue; /* paranoia (broken file) */
+
+		if (atoi(p1) != aidx) continue;
+
+		/* print info */
+
+		/* name */
+		//Term_putstr(5, 5, -1, TERM_YELLOW, p2 + 1);
+		strcpy(paste_lines[++pl], format("\377y%s",
+			artifact_list_name[alidx]));
+		Term_putstr(5, 5, -1, TERM_YELLOW, paste_lines[pl] + 2); /* no need for \377y */
+
+		/* fetch stats: I/W/E/O/B/F/S lines */
+		while (0 == my_fgets(fff, buf, 1024)) {
+			/* strip $/%..$/! conditions */
+			p1 = p2 = buf; /* dummy, != NULL */
+			while (buf[0] == '$' || buf[0] == '%') {
+				p1 = strchr(buf + 1, '$');
+				p2 = strchr(buf + 1, '!');
+				if (!p1 && !p2) break;
+				if (!p1) p1 = p2;
+				else if (p2 && p2 < p1) p1 = p2;
+				strcpy(buf, p1 + 1);
+			}
+			if (!p1 && !p2) continue;
+
+			/* line invalid (too short) */
+			if (strlen(buf) < 3) continue;
+
+			/* end of this artifact (aka beginning of next artifact) */
+			if (buf[0] == 'N') break;
+
+			p1 = buf + 2; /* line of artifact data, beginning of actual data */
+			info[0] = '\0'; /* prepare empty info line */
+			info_tmp[0] = '\0';
+
+			switch(buf[0]) {
+			case 'I': /* tval, sval, pval */
+			    /* tval */
+				p2 = strchr(p1, ':') + 1;
+				/* remember for choosing which stats to actually display later */
+				tval = atoi(p1);
+				p1 = p2;
+			    /* sval */
+				p2 = strchr(p1, ':') + 1;
+				p1 = p2;
+			    /* pval */
+				info_val = atoi(p1);
+				sprintf(info_tmp, "Magical bonus: \377%c(%s%d)\377%c.", a_val, info_val < 0 ? "" : "+", info_val, a_key);
+				strcpy(info, info_tmp);
+			    /* all done, display: */
+				strcpy(paste_lines[++pl], format("\377%c", a_key));
+				strcat(paste_lines[pl], info);
+				Term_putstr(1, 7 + (l++), -1, ta_key, info);
+				break;
+			case 'W': /* depth, rarity, weight, price */
+				/* only process 1st definition we find (for $..$/! stuff): */
+				if (got_W_line) continue;
+				got_W_line = TRUE;
+			    /* depth */
+				p2 = strchr(p1, ':') + 1;
+				p1 = p2;
+			    /* rarity */
+				p2 = strchr(p1, ':') + 1;
+				p1 = p2;
+			    /* weight */
+				p2 = strchr(p1, ':') + 1;
+				sprintf(info_tmp, "Weight: \377%c%d lb\377%c, ", a_val, atoi(p1) / 10, a_key);
+				strcpy(info, info_tmp);
+				p1 = p2;
+			    /* price */
+				strcpy(info_tmp, format("Value: \377%c%d Au\377%c.", a_val, atoi(p1), a_key));
+				strcat(info, info_tmp);
+			    /* all done, display: */
+				strcpy(paste_lines[++pl], format("\377%c", a_key));
+				strcat(paste_lines[pl], info);
+				Term_putstr(1, 7 + (l++), -1, ta_key, info);
+				break;
+			case 'P': /* ac, dam, +hit, +dam, +ac */
+				/* only process 1st definition we find (for $..$/! stuff): */
+				if (got_P_line) continue;
+				got_P_line = TRUE;
+			    /* ac */
+				p2 = strchr(p1, ':') + 1;
+				v_ac = atoi(p1);
+				strcpy(info, info_tmp);
+				p1 = p2;
+			    /* damage dice */
+				p2 = strchr(p1, ':') + 1;
+				memset(v_ddice, 0, 10);
+				strncpy(v_ddice, p1, p2 - p1 - 1);
+				p1 = p2;
+			    /* +hit */
+				p2 = strchr(p1, ':') + 1;
+				v_hit = atoi(p1);
+				p1 = p2;
+			    /* +dam */
+				p2 = strchr(p1, ':') + 1;
+				v_dam = atoi(p1);
+				p1 = p2;
+			    /* +ac */
+				v_acx = atoi(p1);
+			    /* all done, select */
+				empty = TRUE;
+				if (is_armour(tval)) {
+					empty = FALSE;
+					sprintf(info_tmp, "AC: \377%c[%d,%s%d]\377%c", a_val, v_ac, v_acx < 0 ? "" : "+", v_acx, a_key);
+					strcpy(info, info_tmp);
+					if (v_hit && v_dam) {
+						strcpy(info_tmp, format(", To-hit/to-dam: \377%c(%s%d,%s%d)\377%c",
+						    a_val, v_hit < 0 ? "" : "+", v_hit, v_dam < 0 ? "" : "+", v_dam, a_key));
+						strcat(info, info_tmp);
+					} else if (v_hit < 0) {
+						strcpy(info_tmp, format(", Bulkiness affecting to-hit: \377%c(%d)\377%c",
+						    a_val, v_hit, a_key));
+						strcat(info, info_tmp);
+					}
+				} else if (is_weapon(tval)) {
+					empty = FALSE;
+				        sprintf(info_tmp, "Damage dice: \377%c%s\377%c, To-hit/to-dam: \377%c(%s%d,%s%d)\377%c",
+					    a_val, v_ddice, a_key,
+					    a_val, v_hit < 0 ? "" : "+", v_hit, v_dam < 0 ? "" : "+", v_dam, a_key);
+					strcpy(info, info_tmp);
+					if (v_acx) {
+						strcpy(info_tmp, format(", AC bonus: \377%c[%s%d]\377%c",
+						    a_val, v_acx < 0 ? "" : "+", v_acx, a_key));
+						strcat(info, info_tmp);
+					}
+				} else {
+					strcpy(info_tmp, "");
+					strcpy(info, "");
+					if (v_hit || v_dam) {
+						strcpy(info_tmp, format("To-hit/to-dam: \377%c(%s%d,%s%d)\377%c",
+						    a_val, v_hit < 0 ? "" : "+", v_hit, v_dam < 0 ? "" : "+", v_dam, a_key));
+						strcat(info, info_tmp);
+						empty = FALSE;
+					}
+					if (v_acx) {
+						strcpy(info_tmp, format("%sAC bonus: \377%c[%s%d]\377%c",
+						    empty ? "" : ", ",
+						    a_val, v_acx < 0 ? "" : "+", v_acx, a_key));
+						strcat(info, info_tmp);
+						empty = FALSE;
+					}
+				}
+			    /* display: */
+				if (!empty) {
+					strcat(info, ".");
+					strcpy(paste_lines[++pl], format("\377%c", a_key));
+					strcat(paste_lines[pl], info);
+					Term_putstr(1, 7 + (l++), -1, ta_key, info);
+				}
+				break;
+			case 'F': /* flags */
+				if (!got_F_lines) {
+					Term_putstr(1, 7 + l, -1, ta_key, "Flags:");
+					strcpy(paste_lines[++pl], format("\377%cFlags: \377%c", a_key, a_val));
+					f_col = 8;
+					got_F_lines = TRUE;
+				}
+
+				/* strip spaces, convert | to space */
+				p1--;
+				while (*(++p1)) {
+					switch (*p1) {
+					case ' ': continue;
+					case '|': *p1 = ' ';
+					default: strcat(info, format("%c", *p1));
+					}
+				}
+				/* add a pseudo '|' (ie a space) at the end
+				   (for when two lines are merged -> the space would be missing) */
+				if (info[strlen(info) - 1] != ' ') strcat(info, " ");
+
+				/* add flags to existing line */
+				p1 = info;
+				while (p1) {
+					/* add complete flag line */
+					if (strlen(p1) + f_col < 80) {
+						strcat(paste_lines[pl], p1);
+						Term_putstr(f_col, 7 + l, -1, ta_val, p1);
+						f_col += strlen(p1);
+
+						/* done */
+						break;
+					}
+					/* try to split up the line */
+					else {
+						/* can't split up F line? */
+						if (!(p2 = strchr(p1, ' '))) {
+							/* start next line */
+							l++;
+							if (++pf_col_cnt == 3) {
+								pf_col_cnt = 0;
+								pl++;
+								strcpy(paste_lines[pl], format("\377%c", a_val));
+							}
+							strcat(paste_lines[pl], p1);
+							Term_putstr(2, 7 + l, -1, ta_val, p1);
+							f_col = 2 + strlen(p1);
+
+							/* done */
+							break;
+						}
+						/* add partial flag line */
+						else {
+							/* split part too large to fit into this line? */
+							if (p2 - p1 + f_col >= 80) {
+								/* start next line */
+								l++;
+								if (++pf_col_cnt == 3) {
+									pf_col_cnt = 0;
+									pl++;
+									strcpy(paste_lines[pl], format("\377%c", a_val));
+								}
+								strcat(paste_lines[pl], p1);
+								Term_putstr(2, 7 + l, -1, ta_val, p1);
+								f_col = 2 + strlen(p1);
+
+								/* done */
+								break;
+							}
+							/* append split part */
+							else {
+								strcpy(info_tmp, p1);
+								info_tmp[p2 - p1 + 1] = '\0';
+								strcat(paste_lines[pl], info_tmp);
+								Term_putstr(f_col, 7 + l, -1, ta_val, info_tmp);
+								f_col += strlen(info_tmp);
+								p1 = p2 + 1;
+
+								/* go on */
+							}
+						}
+					}
+				}
+				break;
+			}
+		}
+
+		break;
+	}
+
+	my_fclose(fff);
+}
 
 
 

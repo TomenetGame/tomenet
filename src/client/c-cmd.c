@@ -1534,8 +1534,8 @@ void cmd_help(void)
 static void artifact_lore(void) {
 	char s[20 + 1], tmp[80];
 	int c, i, j, n, selected, selected_list, list_idx[15];
+	bool show_lore = TRUE;
 	int selected_line = 0;
-
 	/* for pasting lore to chat */
 	char paste_lines[18][MSG_LEN];
 
@@ -1546,7 +1546,7 @@ static void artifact_lore(void) {
 	s[0] = '\0';
 	Term_clear();
 	Term_putstr(2,  2, -1, TERM_WHITE, "Enter (partial) artifact name to refine the search:");
-	Term_putstr(2,  3, -1, TERM_WHITE, "Press RETURN to display lore about the first artifact.");
+	Term_putstr(2,  3, -1, TERM_WHITE, "Press RETURN to display lore about the selected artifact.");
 
 	while (TRUE) {
 		Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Artifact Lore ***");
@@ -1648,33 +1648,45 @@ static void artifact_lore(void) {
 	/* display lore! */
 	selected_list = list_idx[selected_line];
 	selected = artifact_list_code[selected_list];
-	clear_from(4);
-	Term_putstr(5, 5, -1, TERM_L_UMBER, artifact_list_name[selected_list]);
-	for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
-	artifact_lore_aux(selected, selected_list, paste_lines);
-
-	Term_putstr(20,  23, -1, TERM_WHITE, "-- press ESC to exit, c to chat-paste --");
 	while (TRUE) {
-		c = inkey();
-		/* specialty: allow chatting from within here */
-                if (c == ':') {
-            		cmd_message();
-			Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Artifact Lore ***");
-            	}
-		if (c == '\e') break;
-		if (c == 'c') {
-			/* paste currently displayed artifact information into chat:
-			   scan line #5 for title, lines 7..22 for info. */
-			for (i = 0; i < 18; i++) {
-				if (!paste_lines[i][0]) break;
-				//if (i == 6 || i == 12) usleep(10000000);
-				if (paste_lines[i][strlen(paste_lines[i]) - 1] == ' ')
-					paste_lines[i][strlen(paste_lines[i]) - 1] = '\0';
-				Send_paste_msg(paste_lines[i]);
+		clear_from(4);
+		Term_putstr(5, 5, -1, TERM_L_UMBER, artifact_list_name[selected_list]);
+		for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
+
+		if (show_lore) {
+			artifact_lore_aux(selected, selected_list, paste_lines);
+			Term_putstr(11,  23, -1, TERM_WHITE, "-- press ESC to exit, SPACE for stats, c to chat-paste --");
+		} else {
+			artifact_stats_aux(selected, selected_list, paste_lines);
+			Term_putstr(11,  23, -1, TERM_WHITE, "-- press ESC to exit, SPACE for lore, c to chat-paste --");
+		}
+
+		while (TRUE) {
+			c = inkey();
+			/* specialty: allow chatting from within here */
+	                if (c == ':') {
+	            		cmd_message();
+				Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Artifact Lore ***");
+	            	}
+			if (c == '\e') break;
+			if (c == ' ') {
+				show_lore = !show_lore;
+				break;
+			}
+			if (c == 'c') {
+				/* paste currently displayed artifact information into chat:
+				   scan line #5 for title, lines 7..22 for info. */
+				for (i = 0; i < 18; i++) {
+					if (!paste_lines[i][0]) break;
+					//if (i == 6 || i == 12) usleep(10000000);
+					if (paste_lines[i][strlen(paste_lines[i]) - 1] == ' ')
+						paste_lines[i][strlen(paste_lines[i]) - 1] = '\0';
+					Send_paste_msg(paste_lines[i]);
+				}
 			}
 		}
+		if (c == '\e') break;
 	}
-	//if (c == '\e') break;
   }
 
 	Term_load();
@@ -1695,7 +1707,7 @@ static void monster_lore(void) {
 	s[0] = '\0';
 	Term_clear();
 	Term_putstr(2,  2, -1, TERM_WHITE, "Enter (partial) monster name to refine the search:");
-	Term_putstr(2,  3, -1, TERM_WHITE, "Press RETURN to display lore about the first monster.");
+	Term_putstr(2,  3, -1, TERM_WHITE, "Press RETURN to display lore about the selected monster.");
 
 	while (TRUE) {
 		Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Monster Lore ***");
@@ -1813,6 +1825,7 @@ static void monster_lore(void) {
 		clear_from(4);
 		Term_putstr(5, 5, -1, TERM_YELLOW, format("(%4d)  %s", monster_list_code[selected_list], monster_list_name[selected_list]));
 		for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
+
 		if (show_lore) {
 			monster_lore_aux(selected, selected_list, paste_lines);
 			Term_putstr(11,  23, -1, TERM_WHITE, "-- press ESC to exit, SPACE for stats, c to chat-paste --");
