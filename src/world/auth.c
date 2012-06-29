@@ -27,10 +27,10 @@ void initrand(){
 /* Send authentication request to game server */
 void initauth(struct client *ccl){
 	struct wpacket spk;
-	int x, len=sizeof(struct wpacket);
+	int len=sizeof(struct wpacket);
 	spk.type=WP_AUTH;
 	rpgen(spk.d.auth.pass);
-	x=send(ccl->fd, &spk, len, 0);
+	send(ccl->fd, &spk, len, 0);
 }
 
 /* Generate a random password */

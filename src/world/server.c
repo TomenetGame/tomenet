@@ -69,7 +69,7 @@ void loadservers(){
 	fp = fopen("servers", "r");
 	if(fp == (FILE*)NULL) return;
 	do {
-                fscanf(fp, "%s%s%s\n", &slist[i].name, &slist[i].pass, flags);
+                fscanf(fp, "%s%s%s\n", slist[i].name, slist[i].pass, flags);
 
 		/* Normalize server name lengths to 15 characters: */
 		while (strlen(slist[i].name) < 15) strcat(slist[i].name, " ");
@@ -104,6 +104,9 @@ void loadservers(){
 					break;
 				case 'l':
 					slist[i].mflags |= WMF_LVLUP;
+					break;
+				case 'h':
+					slist[i].mflags |= WMF_HILVLUP;
 					break;
 				case 'u':
 					slist[i].mflags |= WMF_UNIDEATH;
