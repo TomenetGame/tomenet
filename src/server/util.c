@@ -1939,17 +1939,19 @@ void msg_print(int Ind, cptr msg_raw)
 						(msg[space_scan - 1] >= '0' && msg[space_scan - 1] <= '9') ||
 						(msg[space_scan - 1] >= 'a' && msg[space_scan - 1] <= 'z') ||
 #if 0
-						(msg[space_scan - 1] == '(' || msg[space_scan - 1] == ')') ||
-						(msg[space_scan - 1] == '[' || msg[space_scan - 1] == ']') ||
-						(msg[space_scan - 1] == '{' || msg[space_scan - 1] == '}') ||
+						msg[space_scan - 1] == '(' || msg[space_scan - 1] == ')' ||
+						msg[space_scan - 1] == '[' || msg[space_scan - 1] == ']' ||
+						msg[space_scan - 1] == '{' || msg[space_scan - 1] == '}' ||
 #else
-						(msg[space_scan - 1] == '(') ||
-						(msg[space_scan - 1] == '[') ||
-						(msg[space_scan - 1] == '{') ||
+						msg[space_scan - 1] == '(' ||
+						msg[space_scan - 1] == '[' ||
+						msg[space_scan - 1] == '{' ||
 #endif
 						/* (maybe too much) for pasting items to chat, (+1) or (-2,0) : */
-						(msg[space_scan - 1] == '+' || msg[space_scan - 1] == '-') ||
-						(msg[space_scan - 1] == '\377')) &&
+						msg[space_scan - 1] == '+' || msg[space_scan - 1] == '-' ||
+						/* pasting flags to chat ("SLAY_EVIL") */
+						msg[space_scan - 1] == '_' ||
+						msg[space_scan] == '\377') &&
 						space_scan > 0);
 
 					/* Simply cut words that are very long - mikaelh */
