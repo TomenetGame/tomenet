@@ -593,7 +593,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				p2 = strchr(p1, ':') + 1;
 				info_val = atoi(p1) - 110;
 				if (info_val != 0)
-					sprintf(info_tmp, "\377%cSpeed: \377%c%s%d\377%c, ", a_key, a_val, info_val < 0 ? "Slow -" : "Fast +", info_val, a_key);
+					sprintf(info_tmp, "\377%cSpeed: \377%c%s%d\377%c, ", a_key, a_val, info_val < 0 ? "Slow " : "Fast +", info_val, a_key);
 				else
 					sprintf(info_tmp, "\377%cSpeed: \377%cNormal\377%c, ", a_key, a_val, a_key);
 				strcat(info, info_tmp);
