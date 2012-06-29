@@ -435,7 +435,8 @@ int get_message_type(char *msg) {
 		return (WMF_PWIN | WMF_UNIDEATH);
 	} else if (strstr(msg, " is henceforth known as ")) {
 		return WMF_PWIN;
-	} else if (strstr(msg, " has attained level ") && atoi(msg + 20) >= 30) {
+	} else if (strstr(msg, " has attained level ") &&
+	    atoi(strstr(msg, " has attained level ") + 20) >= 30) {
 		return (WMF_HILVLUP | WMF_LVLUP);
 	} else if (strstr(msg, " has attained level ")) {
 		return WMF_LVLUP;
