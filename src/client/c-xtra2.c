@@ -148,7 +148,7 @@ void do_cmd_messages(void)
 		}
 
 		/* Horizontal scroll */
-		if (k == '4' || k == '<')
+		if (k == '4' || k == '<' || k == 'h')
 		{
 			/* Scroll left */
 			q = (q >= 40) ? (q - 40) : 0;
@@ -158,7 +158,7 @@ void do_cmd_messages(void)
 		}
 
 		/* Horizontal scroll */
-		if (k == '6' || k == '>')
+		if (k == '6' || k == '>' || k == 'l')
 		{
 			/* Scroll right */
 			q = q + 40;
@@ -213,7 +213,7 @@ void do_cmd_messages(void)
 		}
 
 		/* Recall 1 older message */
-		if ((k == '8') || (k == '\b') || k=='k')
+		if ((k == '8') || (k == '\b') || k == 'k')
 		{
 			/* Go newer if legal */
 			if (i + 1 < n) i += 1;
@@ -234,7 +234,7 @@ void do_cmd_messages(void)
 		}
 
 		/* Recall 20 newer messages */
-		if ((k == 'n') || (k == KTRL('N')) || k==' ')
+		if ((k == 'n') || (k == KTRL('N')) || k == ' ')
 		{
 			/* Go newer (if able) */
 			i = (i >= 20) ? (i - 20) : 0;
@@ -248,7 +248,7 @@ void do_cmd_messages(void)
 		}
 
 		/* Recall 1 newer messages */
-		if (k == '2' || k=='j' || (k == '\n') || (k == '\r'))
+		if (k == '2' || k == 'j' || (k == '\n') || (k == '\r'))
 		{
 			/* Go newer (if able) */
 			i = (i >= 1) ? (i - 1) : 0;
@@ -404,7 +404,7 @@ void do_cmd_messages_chatonly(void)
 		}
 
 		/* Horizontal scroll */
-		if (k == '4' || k == '<')
+		if (k == '4' || k == '<' || k == 'h')
 		{
 			/* Scroll left */
 			q = (q >= 40) ? (q - 40) : 0;
@@ -414,7 +414,7 @@ void do_cmd_messages_chatonly(void)
 		}
 
 		/* Horizontal scroll */
-		if (k == '6' || k == '>')
+		if (k == '6' || k == '>' || k == 'l')
 		{
 			/* Scroll right */
 			q = q + 40;
@@ -468,7 +468,7 @@ void do_cmd_messages_chatonly(void)
 		}
 
 		/* Recall 1 older message */
-		if ((k == '8') || (k == '\b') || k=='k')
+		if ((k == '8') || (k == '\b') || k == 'k')
 		{
 			/* Go newer if legal */
 			if (i + 1 < n) i += 1;
@@ -490,7 +490,7 @@ void do_cmd_messages_chatonly(void)
 		}
 
 		/* Recall 20 newer messages */
-		if ((k == 'n') || (k == KTRL('N')) || k==' ')
+		if ((k == 'n') || (k == KTRL('N')) || k == ' ')
 		{
 			/* Go newer (if able) */
 			i = (i >= 20) ? (i - 20) : 0;
@@ -504,7 +504,7 @@ void do_cmd_messages_chatonly(void)
 		}
 
 		/* Recall 1 newer messages */
-		if (k == '2' || k=='j' || (k == '\n') || (k == '\r'))
+		if (k == '2' || k == 'j' || (k == '\n') || (k == '\r'))
 		{
 			/* Go newer (if able) */
 			i = (i >= 1) ? (i - 1) : 0;

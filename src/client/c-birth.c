@@ -635,7 +635,7 @@ static bool choose_stat_order(void)
 
 			c = inkey();
 			crb = cp_ptr->c_adj[j] + rp_ptr->r_adj[j];
-			if (c == '-' || c == '4') {
+			if (c == '-' || c == '4' || c == 'h') {
 				if (stat_order[j] > 10-2 &&
 				    /* exception: allow going below 3 if we initially were below 3 too */
 				    (stat_order[j] > 10 || stat_order[j]+crb > 3)) {
@@ -659,7 +659,7 @@ static bool choose_stat_order(void)
 					}
 				}
 			}
-			if (c == '+' || c == '6') {
+			if (c == '+' || c == '6' || c == 'l') {
 				if (stat_order[j] < 17) {
 					if (stat_order[j] < 12 && k >= 1) {
 						/* intermediate */
@@ -681,9 +681,9 @@ static bool choose_stat_order(void)
 					}
 				}
 			}
-			if (c == '\r' || c == '2') j = (j+1) % 6;
-			if (c == '8') j = (j+5) % 6;
-			if (c == '\r' || c == '2' || c == '8') {
+			if (c == '\r' || c == '2' || c == 'j') j = (j+1) % 6;
+			if (c == '8' || c == 'k') j = (j+5) % 6;
+			if (c == '\r' || c == '2' || c == '8' || c == 'j' || c == 'k') {
 				switch (j) {
 				case 0:	c_put_str(TERM_L_UMBER, "Strength -    ", 3, 30);
 					c_put_str(TERM_YELLOW, "  How quickly you can strike.                  ", 4, 30);
