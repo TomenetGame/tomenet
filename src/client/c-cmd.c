@@ -1614,12 +1614,18 @@ static void artifact_lore(void) {
             	}
 
 		/* navigate in the list (up/down) */
-		if (c == '8' || c == 'k') {
-			if (selected_line > 0) selected_line--;
+		if (c == '8') { //rl:'k'
+			if (n > 0) {
+				if (selected_line > 0) selected_line--;
+				else selected_line = n - 1;
+			}
 			continue;
 		}
-		if (c == '2' || c == 'j') {
-			if (selected_line < 15 - 1) selected_line++;
+		if (c == '2') { //rl:'j'
+			if (n > 0) {
+				if (selected_line < n - 1) selected_line++;
+				else selected_line = 0;
+			}
 			continue;
 		}
 		/* backspace */
@@ -1802,12 +1808,18 @@ static void monster_lore(void) {
             	}
 
 		/* navigate in the list (up/down) */
-		if (c == '8' || c == 'k') {
-			if (selected_line > 0) selected_line--;
+		if (c == '8') { //rl:'k'
+			if (n > 0) {
+				if (selected_line > 0) selected_line--;
+				else selected_line = n - 1;
+			}
 			continue;
 		}
-		if (c == '2' || c == 'j') {
-			if (selected_line < 15 - 1) selected_line++;
+		if (c == '2') { //rl:'j'
+			if (n > 0) {
+				if (selected_line < n - 1) selected_line++;
+				else selected_line = 0;
+			}
 			continue;
 		}
 		/* backspace */

@@ -1369,7 +1369,8 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 				p1 = p2;
 			    /* pval */
 				info_val = atoi(p1);
-				sprintf(info_tmp, "Magical bonus: \377%c(%s%d)\377%c.", a_val, info_val < 0 ? "" : "+", info_val, a_key);
+				if (info_val == 0) break;
+				sprintf(info_tmp, "Magical bonus (to stats and/or abilities): \377%c(%s%d)\377%c.", a_val, info_val < 0 ? "" : "+", info_val, a_key);
 				strcpy(info, info_tmp);
 			    /* all done, display: */
 				strcpy(paste_lines[++pl], format("\377%c", a_key));
