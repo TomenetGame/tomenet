@@ -519,6 +519,9 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 	bool got_W_line = FALSE; /* usually only W: lines are affected, right? */
 	int got_B_lines = 0; /* just for a header */
 	bool got_F_lines = FALSE, got_S_lines = FALSE;
+#if 0
+	bool set_F_colon = FALSE, set_S_colon = FALSE;
+#endif
 	int f_col = 0; /* used for both, F flags and S flags */
 	const char a_key = 'u', a_val = 's', a_atk = 's'; /* 'Speed:', 'Normal', 4xmelee */
 	const char ta_key = TERM_UMBER, ta_val = TERM_SLATE, ta_atk = TERM_SLATE; /* 'Speed:', 'Normal', 4xmelee */
@@ -884,6 +887,15 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				}
 				break;
 			case 'S': /* 1st: spell frequency; 2nd..x: spells */
+#if 0
+				/* add a colon at the end of the FLAGS list */
+				if (got_F_lines && !set_F_colon) {
+					Term_putstr(f_col - 1, 7 + l, -1, ta_key, ".");
+					sprintf(&paste_lines[pl][strlen(paste_lines[pl]) - 1], "\377%c.", a_key);
+					set_F_colon = TRUE;
+				}
+#endif
+
 				/* strip spaces, convert | to space */
 				p1--;
 				while (*(++p1)) {
