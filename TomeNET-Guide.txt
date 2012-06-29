@@ -8971,7 +8971,7 @@ Note that not every skill is available to every profession (class).
         +Rune Alacrity          specific magical symbols or Runes.
         .Acid and Water         For more info about runes, see
         .Lightning and Earth    '(5.20) Runes & Runemastery'.
-        .Fire and Chaos         
+        .Fire and Chaos
         .Cold and Nether
         .Poison and Nexus
         .Force and Time
