@@ -1518,16 +1518,12 @@ static byte rspell_fail(byte element[], byte elements, byte imperative, byte typ
 char rcraft_threat_color(u16b e_flags, u16b m_flags) {
 
 	/* Decode elements */
-	byte element[RSPELL_MAX_ELEMENTS];
+	byte element[RCRAFT_MAX_ELEMENTS];
 	byte elements = flags_to_elements(element, e_flags);
 
 	/* Decode modifiers */
 	byte imperative = flags_to_imperative(m_flags);
 	byte type = flags_to_type(m_flags);
-	
-	/* Hack -- If unselected, use 'neutral' modifiers: moderate/self - Kurzel */
-	if (imperative == -1) imperative = 1;
-	if (type == -1) type = 1;
 	
 	s16b diff = rspell_diff(rspell_skill(element, elements), rspell_level(element, elements, imperative, type));
 	byte fail = rspell_fail(element, elements, imperative, type, diff, 0); //Assume mali/penalties are 0 - Kurzel
@@ -1542,7 +1538,7 @@ char rcraft_threat_color(u16b e_flags, u16b m_flags) {
 	else if (fail > 5) return 'w';
 	else if (fail == 0) return 'B';
 
-	return 'v'; /* shouldn't happen */
+	return 'B'; /* happens if fail < 0, which occurs for rune skills at ~1.000 */
 }
 
 static void rcraft_print_elements(u16b e_flags) {
