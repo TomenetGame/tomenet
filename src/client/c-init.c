@@ -669,7 +669,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				strcat(info_tmp, format("XP: \377%c%d\377%c.", a_val, atoi(p1), a_key));
 				strcat(info, format("XP: \377%c%d\377%c.", a_val, atoi(p1), a_key));
 			    /* all done, display: */
-				strcpy(paste_lines[++pl], "\377u");
+				sprintf(paste_lines[++pl], "\377%c", a_key);
 				strcat(paste_lines[pl], info_tmp);
 				Term_putstr(1, 7 + (l++), -1, ta_key, info);
 				break;
@@ -725,14 +725,14 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 			    /* all done, display: */
 				if (!info_val) strcat(info_tmp, "None");
 				strcat(info_tmp, ".");
-				sprintf(paste_lines[++pl], "\377uLimbs (mimicry): \377%c", a_val);
+				sprintf(paste_lines[++pl], "\377%cLimbs (mimicry): \377%c", a_key, a_val);
 				strcat(paste_lines[pl], info_tmp);
 				strcat(info, info_tmp);
 				Term_putstr(1, 7 + (l++), -1, ta_key, info);
 				break;
 			case 'O': /* treasure, combat, magic, tool */
 				strcpy(info, "Usual drops: ");
-				strcpy(info_tmp, "\377uDrops: ");
+				sprintf(info_tmp, "\377%cDrops: ", a_key);
 				info_val = 0;
 			    /* treasure */
 				p2 = strchr(p1, ':') + 1;
@@ -1375,7 +1375,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 				p1 = p2;
 			    /* weight */
 				p2 = strchr(p1, ':') + 1;
-				sprintf(info_tmp, "Weight: \377%c%d lb\377%c, ", a_val, atoi(p1) / 10, a_key);
+				sprintf(info_tmp, "Weight: \377%c%d.%d lb\377%c, ", a_val, atoi(p1) / 10, atoi(p1) % 10, a_key);
 				strcpy(info, info_tmp);
 				p1 = p2;
 			    /* price */
