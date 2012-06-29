@@ -1596,7 +1596,8 @@ static void artifact_lore(void) {
 		/* choice outside of the list? snap back */
 		if (selected_line >= n) {
 			selected_line = n - 1;
-			Term_putstr(5, 5 + selected_line, -1, TERM_L_UMBER, artifact_list_name[list_idx[selected_line]]);
+			if (selected_line < 0) selected_line = 0;
+			else Term_putstr(5, 5 + selected_line, -1, TERM_L_UMBER, artifact_list_name[list_idx[selected_line]]);
 		}
 
 		Term_putstr(28,  23, -1, TERM_WHITE, "-- press ESC to exit --");
@@ -1768,7 +1769,8 @@ static void monster_lore(void) {
 		/* choice outside of the list? snap back */
 		if (selected_line >= n) {
 			selected_line = n - 1;
-			Term_putstr(5, 5 + selected_line, -1, TERM_YELLOW, format("(%4d)  %s",
+			if (selected_line < 0) selected_line = 0;
+			else Term_putstr(5, 5 + selected_line, -1, TERM_YELLOW, format("(%4d)  %s",
 			    monster_list_code[list_idx[selected_line]], monster_list_name[list_idx[selected_line]]));
 		}
 
