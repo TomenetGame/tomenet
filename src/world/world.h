@@ -46,10 +46,10 @@
 #define WMF_LVLUP	0x01
 #define WMF_UNIDEATH	0x02
 #define WMF_PWIN	0x04
+#define WMF_HILVLUP	0x08
 #define WMF_PDEATH	0x10
 #define WMF_PJOIN	0x20
 #define WMF_PLEAVE	0x40
-#define WMF_HILVLUP	0x80
 
 /* now we are going to be the server which authenticates
  * the players. Once they are logged in, they will receive

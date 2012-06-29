@@ -419,7 +419,13 @@ void remclient(struct list *dlp){
 
 int get_message_type(char *msg) {
 	/* skip to the real message */
-	msg = strchr(msg, ' ') + 1;
+	msg = strchr(msg, ' ');
+	/* catch usages of get_message_type() in debug places where msg might be empty */
+	if (!msg) {
+		fprintf(stderr, "Illegal get_message_type() call\n");
+		return 0;
+	}
+	msg++;
 
 	if (strstr(msg, " has left the game.")) {
 		return WMF_PLEAVE;
