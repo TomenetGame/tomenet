@@ -1535,10 +1535,9 @@ char rcraft_threat_color(u16b e_flags, u16b m_flags) {
 	if (fail > 60) return 'r';
 	else if (fail > 30) return 'o';
 	else if (fail > 15) return 'y';
-	else if (fail > 5) return 'w';
-	else if (fail == 0) return 'B';
-
-	return 'B'; /* happens if fail < 0, which occurs for rune skills at ~1.000 */
+	else if (fail > 0) return 'w';
+	/* fail == 0: */
+	return 'B';
 }
 
 static void rcraft_print_elements(u16b e_flags) {
