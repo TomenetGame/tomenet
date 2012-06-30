@@ -3565,7 +3565,10 @@ int Receive_weather(void)
 	weather_wind = ww;
 	weather_gen_speed = wg;
 	weather_intensity = wi;
-	weather_speed = ws;
+	/* for mix of rain/snow in same sector:
+	   keep old rain/snow particles at their remembered speed */
+	if (weather_type % 10 == 2) weather_speed_snow = ws;
+	else if (weather_type % 10 == 1) weather_speed_rain = ws;
 
 #ifdef USE_SOUND_2010
 	/* Play overlay sound (if enabled) */
