@@ -5251,7 +5251,8 @@ bool can_use_verbose(int Ind, object_type *o_ptr)
 	}
 
 	/* Hack -- convert if available */
-	if (p_ptr->lev >= o_ptr->level && !p_ptr->admin_dm) {
+	if ((p_ptr->lev >= o_ptr->level || in_irondeepdive(&p_ptr->wpos))
+	    && !p_ptr->admin_dm) {
 		o_ptr->owner = p_ptr->id;
 		return (TRUE);
 	} else {
@@ -5264,6 +5265,9 @@ bool can_use_verbose(int Ind, object_type *o_ptr)
 		msg_print(Ind, "You must be the owner in order to use it.");
 		return(FALSE);
 	}
+
+	/* we are the new owner */
+	o_ptr->owner = p_ptr->id;
 
 	/* the_sandman: let's turn this off? Party trading is horrible with this one. Plus we
 	 * already only allow 1 char each account. */
