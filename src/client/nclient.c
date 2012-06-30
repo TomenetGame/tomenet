@@ -3585,7 +3585,9 @@ int Receive_weather(void)
 #endif
 
 	/* hack: insta-erase all weather */
-	if (weather_type == -1) {
+	if (weather_type == -1 ||
+	    /* same for pregenerate command, it must include the "-1" effect: */
+	    (weather_type % 10000) / 10 != 0) {
 		/* if view panel was updated anyway, no need to restore */
 		if (!weather_panel_changed) {
 			/* restore tiles on display that were overwritten by weather */
@@ -3608,7 +3610,7 @@ int Receive_weather(void)
 
 		/* terminate weather */
 		weather_elements = 0;
-		weather_type = 0;
+		if (weather_type == -1) weather_type = 0;
 	}
 
 	return 1;
