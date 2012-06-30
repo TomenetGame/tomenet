@@ -6739,17 +6739,26 @@ void play_game(bool new_game, bool new_wilderness, bool new_flavours) {
 		turn = 1;
 	} else {
 		if (new_wilderness) {
+			int i;
+
 			s_printf("Resetting wilderness..\n");
 
 			/* Hack -- seed for town layout */
 			seed_town = rand_int(0x10000000);
 
 			/* erase all house information and re-init, consistent with init_other() */
-			s_printf("  ..erasing houses..\n");
+			s_printf("  ..erasing old info..\n");
+
 			C_KILL(houses, house_alloc, house_type);
 		        house_alloc = 1024;
 			C_MAKE(houses, house_alloc, house_type);
 	                num_houses = 0;
+
+			if (town) {
+			        for (i = 0; i < numtowns; i++) dealloc_stores(i);
+    				C_KILL(town, numtowns, struct town_type);
+    			}
+	                numtowns = 0;
 
 			/*** Init the wild_info array... for more information see wilderness.c ***/
 			init_wild_info();
