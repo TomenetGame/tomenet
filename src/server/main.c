@@ -141,7 +141,7 @@ static void post_init_lua(void) {
  */
 int main(int argc, char *argv[])
 {
-	bool new_game = FALSE;
+	bool new_game = FALSE, new_wilderness = FALSE, new_flavours = FALSE;
 	bool config_specified = FALSE;
 	char buf[1024];
 	int catch_signals = TRUE;
@@ -232,35 +232,37 @@ int main(int argc, char *argv[])
 		/* Analyze option */
 		switch (argv[0][1])
 		{
-			case 'c':
-			case 'C':
+			case 'c': case 'C':
 			ANGBAND_DIR_USER = &argv[0][2];
 			break;
 
 #ifndef VERIFY_SAVEFILE
-			case 'd':
-			case 'D':
+			case 'd': case 'D':
 			ANGBAND_DIR_SAVE = &argv[0][2];
 			break;
 #endif
 
-			case 'i':
-			case 'I':
+			case 'i': case 'I':
 			ANGBAND_DIR_TEXT = &argv[0][2];
 			break;
 
-			case 'r':
-			case 'R':
+			case 'r': case 'R':
 			new_game = TRUE;
 			break;
 
-			case 'Z':
-			case 'z':
+			case 'w': case 'W':
+			new_wilderness = TRUE;
+			break;
+
+			case 'f': case 'F':
+			new_flavours = TRUE;
+			break;
+
+			case 'z': case 'Z':
 			catch_signals = FALSE;
 			break;
 
-			case 'm':
-			case 'M':
+			case 'm': case 'M':
 			MANGBAND_CFG = &argv[0][2];
 			config_specified = TRUE;
 			break;
@@ -272,12 +274,14 @@ int main(int argc, char *argv[])
 			/* Note -- the Term is NOT initialized */
 			puts(longVersion);
 			puts("Usage: tomenet.server [options]");
-			puts("  -r	 Reset the server");
-			puts("  -z       Don't catch signals");
-			puts("  -c<path> Look for pref files in the directory <path>");
-			puts("  -d<path> Look for save files in the directory <path>");
-			puts("  -i<path> Look for info files in the directory <path>");
-			puts("  -m<file> Specify configuration <file>");
+			puts("  -r        Reset the server (implies -w and -f)");
+			puts("  -w        Reset the server partially: New wilderness");
+			puts("  -f        Reset the server partially: New flavours");
+			puts("  -z        Don't catch signals");
+			puts("  -c<path>  Look for pref files in the directory <path>");
+			puts("  -d<path>  Look for save files in the directory <path>");
+			puts("  -i<path>  Look for info files in the directory <path>");
+			puts("  -m<file>  Specify configuration <file>");
 
 			/* Actually abort the process */
 			quit(NULL);
@@ -324,7 +328,7 @@ int main(int argc, char *argv[])
 
 
 	/* Play the game */
-	play_game(new_game);
+	play_game(new_game, new_wilderness, new_flavours);
 
 	/* Quit */
 	quit(NULL);

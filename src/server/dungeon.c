@@ -6659,7 +6659,7 @@ void set_runlevel(int val) {
  * If the "new_game" parameter is true, then, after loading the
  * server-specific savefiles, we will start anew.
  */
-void play_game(bool new_game) {
+void play_game(bool new_game, bool new_wilderness, bool new_flavours) {
 	int h = 0, m = 0, s = 0, dwd = 0, dd = 0, dm = 0, dy = 0;
 	time_t now;
 	struct tm *tmp;
@@ -6737,6 +6737,46 @@ void play_game(bool new_game) {
 
 		/* Hack -- enter the world */
 		turn = 1;
+	} else {
+		if (new_wilderness) {
+			s_printf("Resetting wilderness..\n");
+
+			/* Hack -- seed for town layout */
+			seed_town = rand_int(0x10000000);
+
+			/* erase all house information and re-init, consistent with init_other() */
+			s_printf("  ..erasing houses..\n");
+			C_KILL(houses, house_alloc, house_type);
+		        house_alloc = 1024;
+			C_MAKE(houses, house_alloc, house_type);
+	                num_houses = 0;
+
+			/*** Init the wild_info array... for more information see wilderness.c ***/
+			init_wild_info();
+
+			/* Ignore the dungeon */
+			server_dungeon = FALSE;
+
+			/* Generate the wilderness */
+			s_printf("  ..generating wilderness..\n");
+			genwild();
+
+			/* Generate the towns */
+			s_printf("  ..spawning towns..\n");
+			wild_spawn_towns();
+
+			/* Discard old dungeon index info */
+			s_printf("  ..reindexing dungeons..\n");
+			reindex_dungeons();
+
+			s_printf("..done.\n");
+		}
+		if (new_flavours) {
+			s_printf("Resetting flavours.\n");
+
+			/* Hack -- seed for flavors */
+			seed_flavor = rand_int(0x10000000);
+		}
 	}
 
 	/* Initialize wilderness 'level' */
