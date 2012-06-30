@@ -747,6 +747,14 @@ extern bool stale_level(struct worldpos *wpos, int grace);
 extern int recall_depth_idx(struct worldpos *wpos, player_type *p_ptr);
 extern int get_recall_depth(struct worldpos *wpos, player_type *p_ptr);
 
+#ifdef CLIENT_SIDE_WEATHER
+ #ifndef CLIENT_WEATHER_GLOBAL
+  /* for use in slash.c */
+extern void cloud_create(int i, int sx, int sy, int dx, int dy);
+extern void local_weather_update(void);
+ #endif
+#endif
+
 /* files.c */
 extern int highscore_send(char *buffer, int max);
 extern int houses_send(char *buffer, int max);

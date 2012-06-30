@@ -6621,6 +6621,34 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "Restored all account<-character relations.");
 				return;
 			}
+#ifdef CLIENT_SIDE_WEATHER
+ #ifndef CLIENT_WEATHER_GLOBAL
+			/* weather: generate a cloud at current worldmap sector */
+			else if (prefix(message, "/mkcloud")) {
+				if (clouds == MAX_CLOUDS) {
+					msg_print(Ind, "Error: Cloud number already at maximum.");
+					return;
+				}
+				for (i = 0; i < MAX_CLOUDS; i++)
+					if (!cloud_dur[i]) break;
+				if (i == MAX_CLOUDS) {
+					msg_print(Ind, "Error: Cloud array already full.");
+					return;
+				}
+
+        	                //around our current worldmap sector
+        	                cloud_create(i,
+        	            	    p_ptr->wpos.wx * MAX_WID - rand_int(cloud_dsum[i] / 4), p_ptr->wpos.wy * MAX_HGT,
+    	        	    	    p_ptr->wpos.wx * MAX_WID + rand_int(cloud_dsum[i] / 4), p_ptr->wpos.wy * MAX_HGT);
+
+			        /* update players' local client-side weather if required */
+				local_weather_update();
+
+			        msg_print(Ind, "Cloud has been created around this worldmap sector.");
+			        return;
+			}
+ #endif
+#endif
 		}
 	}
 

@@ -7282,7 +7282,6 @@ static void wild_weather_init() {
    -1..-100: shrinking (incrementing, until reaching -1 or critically low radius
 */
 static void process_wild_weather() {
-	wilderness_type *w_ptr;
 	int i;
 
 	/* process clouds forming, dissolving
@@ -7307,55 +7306,25 @@ static void process_wild_weather() {
 
 		/* create cloud? limit value depends on season */
 		else if (clouds < max_clouds_seasonal) {
-			/* we have one more cloud now */
-			clouds++;
-			/* create cloud by setting it's life time */
-			cloud_dur[i] = 30 + rand_int(600); /* seconds */
-			/* decide on initial size (largest ie horizontal diameter) */
-			cloud_dsum[i] = MAX_WID + rand_int(MAX_WID * 5);
 #ifdef TEST_SERVER /* hack: fixed location for easier live testing? */
 			//around Bree
-			cloud_x1[i] = 32 * MAX_WID - rand_int(cloud_dsum[i] / 4);
-			cloud_y1[i] = 32 * MAX_HGT;
-			cloud_x2[i] = 32 * MAX_WID + rand_int(cloud_dsum[i] / 4);
-			cloud_y2[i] = 32 * MAX_HGT;
+			cloud_create(i,
+			    32 * MAX_WID - rand_int(cloud_dsum[i] / 4), 32 * MAX_HGT,
+			    32 * MAX_WID + rand_int(cloud_dsum[i] / 4), 32 * MAX_HGT);
 			cloud_state[i] = 1;
 #else
-			/* decide on starting x, y world _grid_ coords (!) */
-			cloud_x1[i] = rand_int(MAX_WILD_X * MAX_WID - cloud_dsum[i] / 4);
-			cloud_y1[i] = rand_int(MAX_WILD_Y * MAX_HGT);
-			cloud_x2[i] = rand_int(MAX_WILD_X * MAX_WID + cloud_dsum[i] / 4);
-			cloud_y2[i] = rand_int(MAX_WILD_Y * MAX_HGT);
-			/* decide on growing/shrinking/constant cloud state */
-			cloud_state[i] = rand_int(2) ? 1 : (rand_int(2) ? rand_int(100) : -rand_int(100));
+			/* create cloud at random starting x, y world _grid_ coords (!) */
+			cloud_create(i,
+			    rand_int(MAX_WILD_X * MAX_WID - cloud_dsum[i] / 4),
+			    rand_int(MAX_WILD_Y * MAX_HGT),
+			    rand_int(MAX_WILD_X * MAX_WID + cloud_dsum[i] / 4),
+			    rand_int(MAX_WILD_Y * MAX_HGT));
 #endif
-			/* decide on initial movement */
-			cloud_set_movement(i);
-			/* add this cloud to its initial wild sector(s) */
-			cloud_move(i, TRUE);
 		}
 	}
 
 	/* update players' local client-side weather if required */
-	for (i = 1; i <= NumPlayers; i++) {
-		w_ptr = &wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx];
-		/* Skip non-connected players */
-		if (Players[i]->conn == NOT_CONNECTED) continue;
-		/* Skip players not on world surface - player_weather() actually checks this too though */
-		if (Players[i]->wpos.wz) continue;
-		/* no change in local situation? nothing to do then */
-		if (!w_ptr->weather_updated) continue;
-		/* update player's local weather */
-#ifdef TEST_SERVER /* DEBUG */
-#if 0
-s_printf("updating weather for player %d.\n", i);
-#endif
-#endif
-		player_weather(i, FALSE, TRUE, FALSE);
-	}
-	/* reclear 'weather_updated' flag after all players have been updated */
-	for (i = 1; i <= NumPlayers; i++)
-		wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_updated = FALSE;
+	local_weather_update();
 }
 
 /* Change a cloud's movement.
@@ -7562,7 +7531,17 @@ static void cloud_move(int i, bool newly_created) {
 				}
 #endif
 				/* define weather situation accordingly */
-				w_ptr->weather_type = (season == SEASON_WINTER ? 2 : 1);
+				switch (w_ptr->type) {
+				case WILD_ICE:
+					w_ptr->weather_type = 2; /* always snow in icy waste */
+					break;
+				case WILD_DESERT:
+					w_ptr->weather_type = 1; /* never snow in desert */
+					break;
+				default:
+					/* depends on season */
+					w_ptr->weather_type = (season == SEASON_WINTER ? 2 : 1);
+				}
 #ifdef TEST_SERVER
 //s_printf("weather_type debug: wt=%d, x,y=%d,%d.\n", w_ptr->weather_type, x, y);
 #if 0
@@ -7632,6 +7611,52 @@ if (NumPlayers && Players[NumPlayers]->wpos.wx == x && Players[NumPlayers]->wpos
 	}
 }
 
+/* Create a new cloud with given index and start/destination coords.
+   This does not check whether there will be too many clouds! */
+void cloud_create(int i, int sx, int sy, int dx, int dy) {
+	/* we have one more cloud now */
+	clouds++;
+	/* create cloud by setting it's life time */
+	cloud_dur[i] = 30 + rand_int(600); /* seconds */
+	/* decide on initial size (largest ie horizontal diameter) */
+	cloud_dsum[i] = MAX_WID + rand_int(MAX_WID * 5);
+	/* set location/destination */
+	cloud_x1[i] = sx;
+	cloud_y1[i] = sy;
+	cloud_x2[i] = dx;
+	cloud_y2[i] = dy;
+	/* decide on growing/shrinking/constant cloud state */
+	cloud_state[i] = rand_int(2) ? 1 : (rand_int(2) ? rand_int(100) : -rand_int(100));
+	/* decide on initial movement */
+	cloud_set_movement(i);
+	/* add this cloud to its initial wild sector(s) */
+	cloud_move(i, TRUE);
+}
+
+/* update players' local client-side weather if required */
+void local_weather_update(void) {
+	int i;
+
+	/* update players' local client-side weather if required */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Skip non-connected players */
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		/* Skip players not on world surface - player_weather() actually checks this too though */
+		if (Players[i]->wpos.wz) continue;
+		/* no change in local situation? nothing to do then */
+		if (!wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_updated) continue;
+		/* update player's local weather */
+#ifdef TEST_SERVER /* DEBUG */
+#if 0
+s_printf("updating weather for player %d.\n", i);
+#endif
+#endif
+		player_weather(i, FALSE, TRUE, FALSE);
+	}
+	/* reclear 'weather_updated' flag after all players have been updated */
+	for (i = 1; i <= NumPlayers; i++)
+		wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_updated = FALSE;
+}
  #endif /* !CLIENT_WEATHER_GLOBAL */
 #endif /* CLIENT_SIDE_WEATHER */
 
