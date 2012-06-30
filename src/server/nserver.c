@@ -1044,21 +1044,22 @@ static bool forbidden_name(char *name) {
 	/* Note: Character names always start upper-case, so some of these
 	   aren't really needed on most file systems (semi-paranoia). */
 	/* Hardcode some critically important ones */
-	if (!strcmp("server", name)) return TRUE; /* server save file is stored in same folder as player save files */
+	if (!strcmp(name, "server")) return TRUE; /* server save file is stored in same folder as player save files */
+	if (!strncmp(name, "server", 6) && name[6] >= '0' && name[6] <= '9') return TRUE; /* prepare for multiple partial server save files */
 	if (strstr(name, "guild") && strstr(name, ".data")) return TRUE; /* moved guild hall save files to save folder, from data folder */
 	if (strlen(name) >= 5 && name[0] == 's' && name[1] == 'a' && name[2] == 'v' && name[3] == 'e' &&
 	    name[4] >= '0' && name[4] <= '9') return TRUE; /* backup save file folders, save00..saveNN */
-	if (!strcmp("tomenet.acc", name)) return TRUE; /* just in case someone copies it over into save folder */
-	if (!strcmp("Insanity", name)) return TRUE;
-	if (!strcmp("estate", name)) return TRUE; /* for new 'estate' folder that backs up houses. */
+	if (!strcmp(name, "tomenet.acc")) return TRUE; /* just in case someone copies it over into save folder */
+	if (!strcmp(name, "Insanity")) return TRUE;
+	if (!strcmp(name, "estate")) return TRUE; /* for new 'estate' folder that backs up houses. */
 #ifdef ENABLE_MAIA
-	if (!strcmp("Indecisiveness", name)) return TRUE;
+	if (!strcmp(name, "Indecisiveness")) return TRUE;
 #endif
 	/* Hardcode some not so important ones */
-	if (!strcmp("tBot", name)) return TRUE; /* Sandman's internal chat bot */
-	if (!strcmp("8ball", name)) return TRUE; /* Sandman's internal chat bot */
+	if (!strcmp(name, "tBot")) return TRUE; /* Sandman's internal chat bot */
+	if (!strcmp(name, "8ball")) return TRUE; /* Sandman's internal chat bot */
 	/* For logging chat relayed from IRC */
-	if (!strcmp("IRC", name)) return TRUE;
+	if (!strcmp(name, "IRC")) return TRUE;
 
 	sfp = fopen("badnames.txt", "r");
 	if (sfp == (FILE*) NULL)
