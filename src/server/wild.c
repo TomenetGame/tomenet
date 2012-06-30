@@ -3975,7 +3975,9 @@ void wpos_apply_season_daytime(worldpos *wpos, cave_type **zcave) {
 			}
 	}
 	/* apply season-specific FEAT-manipulation */
-	else if (season == SEASON_WINTER) {
+	else if (season == SEASON_WINTER
+	    && wild_info[wpos->wy][wpos->wx].type != WILD_DESERT
+	    && wild_info[wpos->wy][wpos->wx].type != WILD_VOLCANO) {
 		/* Turn some water into ice */
 		if (!wpos->wz)
 			for (y = 1; y < MAX_HGT - 1; y++)
