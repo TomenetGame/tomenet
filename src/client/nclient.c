@@ -3567,8 +3567,10 @@ int Receive_weather(void)
 	weather_intensity = wi;
 	/* for mix of rain/snow in same sector:
 	   keep old rain/snow particles at their remembered speed */
-	if (weather_type % 10 == 2) weather_speed_snow = ws;
-	else if (weather_type % 10 == 1) weather_speed_rain = ws;
+	if (weather_type != -1) {
+		if (weather_type % 10 == 2) weather_speed_snow = ws;
+		else if (weather_type % 10 == 1) weather_speed_rain = ws;
+	}
 
 #ifdef USE_SOUND_2010
 	/* Play overlay sound (if enabled) */
@@ -4882,12 +4884,14 @@ void do_ping()
 	/* handle audio output -- avoid easy oscillating */
 	if (weather_particles_seen >= 7) {
 		weather_sound_change = 0;
-		if (weather_type % 10 == 1) { //rain
-			if (weather_wind >= 1 && weather_wind <= 2) sound_weather(rain2_sound_idx);
-			else sound_weather(rain1_sound_idx);
-		} else if (weather_type % 10 == 2) { //snow
-			if (weather_wind >= 1 && weather_wind <= 4) sound_weather(snow2_sound_idx);
-			else sound_weather(snow1_sound_idx);
+		if (weather_type != -1) {
+			if (weather_type % 10 == 1) { //rain
+				if (weather_wind >= 1 && weather_wind <= 2) sound_weather(rain2_sound_idx);
+				else sound_weather(rain1_sound_idx);
+			} else if (weather_type % 10 == 2) { //snow
+				if (weather_wind >= 1 && weather_wind <= 4) sound_weather(snow2_sound_idx);
+				else sound_weather(snow1_sound_idx);
+			}
 		}
 	} else if (weather_particles_seen <= 4) {
 		weather_sound_change++;
