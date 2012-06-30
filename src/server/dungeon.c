@@ -7614,6 +7614,22 @@ if (NumPlayers && Players[NumPlayers]->wpos.wx == x && Players[NumPlayers]->wpos
 /* Create a new cloud with given index and start/destination coords.
    This does not check whether there will be too many clouds! */
 void cloud_create(int i, int sx, int sy, int dx, int dy) {
+	/* hack: not many clouds over deserts */
+	int wx, wy, x, y;
+	wx = sx / MAX_WID;
+	wy = sy / MAX_HGT;
+	for (x = wx - 2; x <= wx + 2; x++) {
+		for (y = wy - 2; y <= wy + 2; y++) {
+			if (in_bounds_wild(wy, wx) &&
+			    wild_info[wy][wx].type == WILD_DESERT)
+				if (rand_int(10)) return;
+
+				/* leave loops */
+				x = wx + 3;
+				break;
+		}
+	}
+
 	/* we have one more cloud now */
 	clouds++;
 	/* create cloud by setting it's life time */
