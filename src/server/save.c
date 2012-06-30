@@ -2262,26 +2262,19 @@ static bool save_server_aux(char *name)
 
 
 /*
- * Load the server info (artifacts created and uniques killed)
- * from a special savefile.
+ * Load the whole server info from one special savefile.
  */
-bool load_server_info(void)
-{
+static bool load_server_info_classic(void) {
 	int fd = -1;
-
 	byte vvv[4];
-
 	errr err = 0;
-
 	cptr what = "generic";
-
 	char buf[1024];
 
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, "server");
 
 	/* XXX XXX XXX Fix this */
-	if (!file_exist(buf))
-	{
+	if (!file_exist(buf)) {
 		/* Give message */
 		s_printf("Server savefile does not exist\n");
 
@@ -2290,8 +2283,7 @@ bool load_server_info(void)
 	}
 
 	/* Okay */
-	if (!err)
-	{
+	if (!err) {
 		/* Open the savefile */
 		fd = fd_open(buf, O_RDONLY);
 
@@ -2303,8 +2295,7 @@ bool load_server_info(void)
 	}
 
 	/* Process file */
-	if (!err)
-	{
+	if (!err) {
 		/* Read the first four bytes */
 		if (fd_read(fd, (char*)(vvv), 4)) err = -1;
 
@@ -2316,8 +2307,7 @@ bool load_server_info(void)
 	}
 
 	/* Process file */
-	if (!err)
-	{
+	if (!err) {
 		/* Extract version */
 		sf_major = vvv[0];
 		sf_minor = vvv[1];
@@ -2343,13 +2333,11 @@ bool load_server_info(void)
 	}
 
 	/* Okay */
-	if (!err)
-	{
+	if (!err) {
 		/* Give a conversion warning */
 		if ((version_major != sf_major) ||
-				(version_minor != sf_minor) ||
-				(version_patch != sf_patch))
-		{
+		    (version_minor != sf_minor) ||
+		    (version_patch != sf_patch)) {
 			/* Message */
 			printf("Converted a %d.%d.%d savefile.\n",
 					sf_major, sf_minor, sf_patch);
@@ -2368,6 +2356,34 @@ bool load_server_info(void)
 	return (FALSE);
 }
 
+/* Load the complete server info, either
+ *   -from one giant 'server' save file (old way) or
+ *   -from multiple partial 'server0'..'serverN' save files (new):
+ *	server0		wilderness, dungeons, towns, houses
+ *	server1		item flavours
+ *	server2		parties, guilds, bbs
+ */
+bool load_server_info(void) {
+	char buf[1024];
+
+	/* check for existance of old huge server save file */
+	path_build(buf, 1024, ANGBAND_DIR_SAVE, "server");
+	if (file_exist(buf)) {
+		s_printf("Found classic 'server' savefile\n");
+		return load_server_info_classic();
+	}
+
+	/* check for existance of partial server save files */
+
+	//TODO
+
+
+	/* regenerate server savefile */
+	s_printf("Server savefile does not exist\n");
+
+	/* Allow this */
+	return (TRUE);
+}
 
 /*
  * Save the server state to a "server" savefile.
