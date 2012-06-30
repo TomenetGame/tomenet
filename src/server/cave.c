@@ -8235,7 +8235,7 @@ void player_weather(int Ind, bool entered_level, bool weather_changed, bool pane
 	    FALSE, TRUE); /* no virtual cloud if weather is global */
 
 #else /* send his worldmap sector's specific weather situation */
-	w = ((entered_level) ? ((wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_type) ? 200 : -1) : 0);
+	w = ((entered_level) ? ((wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_type) ? 200 : -1) : 0); /* pre-generate 20 (n * 10 = 200) particles? */
  #if 0 /* buggy? */
 	Send_weather(Ind,
 	    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_type + w
@@ -8243,11 +8243,11 @@ void player_weather(int Ind, bool entered_level, bool weather_changed, bool pane
 	Send_weather(Ind,
 	    ((w == -1) ? -1 : (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_type + w))
  #endif
-	    + ((weather_changed && (w != -1)) ? 10000 : 0)
+	    + ((weather_changed && (w != -1)) ? 10000 : 0) /* sync panel? */
  #if 0 /* glitchy? paranoia maybe */
 	    + (weather && panel_redraw ? 20000 : 0),
  #else
-	    + ((weather && panel_redraw && (w != -1)) ? 20000 : 0),
+	    + ((weather && panel_redraw && (w != -1)) ? 20000 : 0), /* insta-refresh? */
  #endif
 	    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_wind,
 	    WEATHER_GEN_TICKS,
