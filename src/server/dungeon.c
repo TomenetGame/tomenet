@@ -6799,6 +6799,25 @@ void play_game(bool new_game, bool new_wilderness, bool new_flavours) {
 				}
 			}
 
+			/* free old objects (worldmap/houses/monster inventory) */
+		        for (i = 0; i < o_max; i++) {
+		                /* Skip dead objects */
+		                if (!o_list[i].k_idx) continue;
+		            	if (true_artifact_p(&o_list[i])) handle_art_d(o_list[i].name1);
+		        }
+		        C_KILL(o_list, MAX_O_IDX, object_type);
+		        C_MAKE(o_list, MAX_O_IDX, object_type);
+		        o_max = 1;
+		        o_nxt = 1;
+		        o_top = 0;
+
+			/* free old monsters */
+		        C_KILL(m_list, MAX_M_IDX, monster_type);
+		        C_MAKE(m_list, MAX_M_IDX, monster_type);
+		        m_max = 1;
+		        m_nxt = 1;
+		        m_top = 0;
+
 			/*** Init the wild_info array... for more information see wilderness.c ***/
 			init_wild_info();
 
