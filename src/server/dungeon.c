@@ -6730,6 +6730,10 @@ void play_game(bool new_game, bool new_wilderness, bool new_flavours) {
 		/* Generate the towns */
 		wild_spawn_towns();
 
+		/* Create dungeon index info */
+		s_printf("Indexing dungeons..\n");
+		reindex_dungeons();
+
 		/* Hack -- force town surrounding types
 		 * This really shouldn't be here; just a makeshift and to be
 		 * replaced by multiple-town generator */
