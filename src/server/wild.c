@@ -1289,7 +1289,17 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 #else
 	/* find the dimensions of the house */
 	/* chance of being a "large" house */
+#ifdef __DISABLE_HOUSEBOOST
 	if (!rand_int(2)) {
+#else
+	/* more *huge* houses (villas) on the outskirts */
+	if (w_ptr->radius == 3 && rand_int(2)) {
+		house_xlen = rand_int(5) + rand_int(5) + 19;
+		house_ylen = rand_int(3) + rand_int(3) + 10;
+	}
+	/* more "large" houses (and potentially villas) in any case */
+	else if (rand_int(w_ptr->radius == 3 ? 5 : 2)) {
+#endif
 		house_xlen = rand_int(10) + rand_int(rand_int(10)) + 9;
 		house_ylen = rand_int(5) + rand_int(rand_int(5)) + 6;
 	}
@@ -1315,10 +1325,18 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	area = (house_xlen-2) * (house_ylen-2);
 
 	/* find the dimensions of the "lawn" the house is built on */
+#ifdef __DISABLE_HOUSEBOOST
+	if (area < 45) {
+#else
 	if (area < 30) {
+#endif
 		plot_xlen = house_xlen;
 		plot_ylen = house_ylen;
+#ifdef __DISABLE_HOUSEBOOST
 	} else if (area < 60) {
+#else
+	} else if (area < 80) {
+#endif
 		plot_xlen = house_xlen + (area/15)*2;
 		plot_ylen = house_ylen + (area/25)*2;
 		//plot_xlen = house_xlen + (area/10)*2;
@@ -1331,7 +1349,11 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	}
 
 	/* Hack -- sometimes large buildings get moats */
+#ifdef __DISABLE_HOUSEBOOST
 	if ((area >= 70) && (!rand_int(16))) has_moat = 1;
+#else
+	if (area >= 80 && !rand_int(9)) has_moat = 1;
+#endif
 	if ((area >= 80) && (!rand_int(6))) has_moat = 1;
 	if ((area >= 100) && (!rand_int(2))) has_moat = 1;
 	if ((area >= 130) && (rand_int(4) < 3)) has_moat = 1;
@@ -1356,6 +1378,11 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	if (rand_int(100) < 60) type = WILD_LOG_CABIN;
 	else if (rand_int(100) < 8) type = WILD_PERM_HOME;
 	else type = WILD_ROCK_HOME;
+
+#ifndef __DISABLE_HOUSEBOOST
+	/* also, no giant log cabins */
+	if (area >= 50 && type == WILD_LOG_CABIN) type = WILD_ROCK_HOME;
+#endif
 
 	/* hack -- add extra "for sale" homes near the town */
 	if (w_ptr->radius == 1) {
@@ -1389,7 +1416,9 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 #endif
 #ifndef __DISABLE_HOUSEBOOST
  #ifndef DEVEL_TOWN_COMPATIBILITY
-	if (w_ptr->radius == 3 && rand_int(100) < 80) type = WILD_TOWN_HOME;
+	if ((w_ptr->radius == 3 && rand_int(100) < 80)
+	    || has_moat) /* no log cabins or rock homes with moats... */
+		type = WILD_TOWN_HOME;
  #endif
 #endif
 
@@ -3114,7 +3143,7 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 	if (w_ptr->radius == 3) terrain.dwelling *= 3;
  #else
 	if (w_ptr->radius == 1) terrain.dwelling *= 160;
-	if (w_ptr->radius == 2) terrain.dwelling *= 120;
+	if (w_ptr->radius == 2) terrain.dwelling *= 130;
 	if (w_ptr->radius == 3) terrain.dwelling *= 50;
  #endif
 #endif
