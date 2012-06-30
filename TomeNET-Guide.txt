@@ -5098,11 +5098,15 @@ Ironman Deep Dive Challenge
     seconds during which it could be killed if in an unsafe place.
     Dungeon towns in general are free of any monster spawns.
 
+    Mimicry users gain +1 extra kill credit on each kill, effectively
+    learning forms twice as fast.
+    Everlasting and non-everlasting characters can team up and trade items
+    while they are inside the ironman deep dive dungeon.
+    Level requirements on items are not in effect while inside the ironman deep
+    dive challenge either.
+
     NOTE: The Deep Dive dungeon requires your character to have zero experience
     points in order to be eligible to enter.
-
-    NOTE: Mimicry users gain +1 extra kill credit on each kill, effectively
-    learning forms twice as fast.
 
 
 
