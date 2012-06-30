@@ -7085,9 +7085,9 @@ static void process_firework_creation() {
 }
 
 
-/* Update all affected (ie on worldmap surface) players' client-side weather.
-   NOTE: Called on opportuniy of _global_ weather undergoing any change. */
 #if defined CLIENT_SIDE_WEATHER && defined CLIENT_WEATHER_GLOBAL
+/* Update all affected (ie on worldmap surface) players' client-side weather.
+   NOTE: Called on opportunity of _global_ weather undergoing any change. */
 static void players_weather() {
 	int i;
 
