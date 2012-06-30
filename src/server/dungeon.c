@@ -6739,7 +6739,9 @@ void play_game(bool new_game, bool new_wilderness, bool new_flavours) {
 		turn = 1;
 	} else {
 		if (new_wilderness) {
-			int i;
+			int i, x, y;
+			wilderness_type *w_ptr;
+			struct dungeon_type *d_ptr;
 
 			s_printf("Resetting wilderness..\n");
 
@@ -6749,16 +6751,49 @@ void play_game(bool new_game, bool new_wilderness, bool new_flavours) {
 			/* erase all house information and re-init, consistent with init_other() */
 			s_printf("  ..erasing old info..\n");
 
+			/* free old houses[] info */
+			for (i = 0; i < num_houses; i++) {
+				KILL(houses[i].dna, struct dna_type);
+				if (!(houses[i].flags & HF_RECT))
+					C_KILL(houses[i].coords.poly, MAXCOORD, char);
+#ifndef USE_MANG_HOUSE_ONLY
+				C_KILL(houses[i].stock, houses[i].stock_size, object_type);
+#endif
+			}
 			C_KILL(houses, house_alloc, house_type);
 		        house_alloc = 1024;
 			C_MAKE(houses, house_alloc, house_type);
 	                num_houses = 0;
 
+			/* free old town[] and town[]->store info */
 			if (town) {
 			        for (i = 0; i < numtowns; i++) dealloc_stores(i);
     				C_KILL(town, numtowns, struct town_type);
     			}
 	                numtowns = 0;
+
+			/* free old dungeon/tower info */
+		        for(y=0;y<MAX_WILD_Y;y++){
+		                for(x=0;x<MAX_WILD_X;x++){
+		            		w_ptr = &wild_info[y][x];
+		                        if(w_ptr->flags & WILD_F_DOWN){
+		                    		d_ptr = w_ptr->dungeon;
+        	        	                for (i = 0; i < d_ptr->maxdepth; i++) {
+	        	                                C_KILL(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
+        	            		        }
+				                C_KILL(d_ptr->level, d_ptr->maxdepth, struct dun_level);
+						KILL(d_ptr, struct dungeon_type);
+				        }
+		                        if(w_ptr->flags & WILD_F_UP){
+		                    		d_ptr = w_ptr->tower;
+        	        	                for (i = 0; i < d_ptr->maxdepth; i++) {
+	        	                                C_KILL(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
+        	            		        }
+				                C_KILL(d_ptr->level, d_ptr->maxdepth, struct dun_level);
+						KILL(d_ptr, struct dungeon_type);
+				        }
+				}
+			}
 
 			/*** Init the wild_info array... for more information see wilderness.c ***/
 			init_wild_info();
