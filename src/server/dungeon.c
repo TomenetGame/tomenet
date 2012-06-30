@@ -7569,8 +7569,8 @@ if (NumPlayers && Players[NumPlayers]->wpos.wx == x && Players[NumPlayers]->wpos
 				else w_ptr->weather_wind_vertical = 0;
 #endif
 
-				w_ptr->weather_intensity = (season == SEASON_WINTER) ? 5 : 8;
-				w_ptr->weather_speed = (season == SEASON_WINTER) ? 3 * WEATHER_GEN_TICKS : 1 * WEATHER_GEN_TICKS;
+				w_ptr->weather_intensity = (w_ptr->weather_type == 2) ? 5 : 8;
+				w_ptr->weather_speed = (w_ptr->weather_type == 2) ? 3 * WEATHER_GEN_TICKS : 1 * WEATHER_GEN_TICKS;
 				break;
 			}
 		}
