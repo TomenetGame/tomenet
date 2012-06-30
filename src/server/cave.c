@@ -2375,7 +2375,7 @@ static int manipulate_cave_color(cave_type *c_ptr, worldpos *wpos, int x, int y,
 		switch (season) {
 		case SEASON_WINTER:
 			/* Replace green trees and grass by white =-} - using live information of original finnish winter */
-			if (w_ptr->type != WILD_VOLCANO && w_ptr->type != WILD_DESERT) {
+			if (w_ptr->type != WILD_VOLCANO && (w_ptr->type != WILD_DESERT || c_ptr->feat == FEAT_GRASS)) {
 				/* Sometimes display a feat still as green, sometimes brown. */
 				switch (c_ptr->feat) {
 				case FEAT_DIRT:
@@ -2418,7 +2418,7 @@ static int manipulate_cave_color(cave_type *c_ptr, worldpos *wpos, int x, int y,
 			break;
 		case SEASON_SPRING:
 			/* More saplings and all green goodness in spring time, yay */
-			if (w_ptr->type != WILD_VOLCANO && w_ptr->type != WILD_DESERT) {
+			if (w_ptr->type != WILD_DESERT || c_ptr->feat == FEAT_GRASS) {
 				switch (c_ptr->feat) {
 				case FEAT_GRASS:
 					switch (Rand_div(7)) {
@@ -2446,7 +2446,7 @@ static int manipulate_cave_color(cave_type *c_ptr, worldpos *wpos, int x, int y,
 			break;
 		case SEASON_SUMMER:
 			/* Mostly grown trees, some bushes, all saturated green, some light green and yellow/light umber */
-			if (w_ptr->type != WILD_VOLCANO && w_ptr->type != WILD_DESERT) {
+			if (w_ptr->type != WILD_DESERT || c_ptr->feat == FEAT_GRASS) {
 				switch (c_ptr->feat) {
 				case FEAT_GRASS:
 					switch (Rand_div(6)) {
@@ -2478,7 +2478,7 @@ static int manipulate_cave_color(cave_type *c_ptr, worldpos *wpos, int x, int y,
 			break;
 		case SEASON_AUTUMN:
 			/* Rarely saplings, very colourful trees, turning to other tones than green */
-			if (w_ptr->type != WILD_VOLCANO && w_ptr->type != WILD_DESERT) {
+			if (w_ptr->type != WILD_DESERT || c_ptr->feat == FEAT_GRASS) {
 				switch (c_ptr->feat) {
 				case FEAT_GRASS:
 					switch (Rand_div(7)) {
