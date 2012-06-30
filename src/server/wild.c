@@ -46,10 +46,14 @@
    WARNING: Toggling this feature can change house locations. */
 #define BLEED_ENHANCED_TOWN
 
-
 /* HACK: Disable new terrain types DESERT/WILD and other rng-affecting stuff? */
 #ifndef WILDERNESS_NEW_TERRAINS
  #define __DISABLE_NEW
+#endif
+
+/* HACK: Disable house shortage counter measures? */
+#ifndef WILDERNESS_NEW_TERRAINS
+ #define __DISABLE_HOUSEBOOST
 #endif
 
 
@@ -1290,14 +1294,23 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 		house_ylen = rand_int(5) + rand_int(rand_int(5)) + 6;
 	}
 	/* chance of being a "small" house */
+#ifdef __DISABLE_HOUSEBOOST
 	else if (!rand_int(2)) {
+#else
+	else if (!rand_int(10)) {
+#endif
 		house_xlen = rand_int(4) + 3;
 		house_ylen = rand_int(2) + 3;
 	}
 	/* a "normal" house */
 	else {
+#ifdef __DISABLE_HOUSEBOOST
 		house_xlen = rand_int(10) + 3;
 		house_ylen = rand_int(5) + 3;
+#else
+		house_xlen = rand_int(7) + 6;
+		house_ylen = rand_int(4) + 4;
+#endif
 	}
 	area = (house_xlen-2) * (house_ylen-2);
 
@@ -1322,8 +1335,8 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	if ((area >= 80) && (!rand_int(6))) has_moat = 1;
 	if ((area >= 100) && (!rand_int(2))) has_moat = 1;
 	if ((area >= 130) && (rand_int(4) < 3)) has_moat = 1;
-	if (has_moat) plot_xlen += 8; 
-	if (has_moat) plot_ylen += 8; 
+	if (has_moat) plot_xlen += 8;
+	if (has_moat) plot_ylen += 8;
 #endif
 
 	/* Determine the plot's boundaries */
@@ -1348,21 +1361,38 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	if (w_ptr->radius == 1) {
 		/* hack -- not many log cabins near town */
 		if (type == WILD_LOG_CABIN) {
+#ifdef __DISABLE_HOUSEBOOST
 			if (rand_int(100) < 80) type = WILD_ROCK_HOME;
+#else
+			if (rand_int(100) < 90) type = WILD_ROCK_HOME;
+#endif
 		}
 #ifdef DEVEL_TOWN_COMPATIBILITY
 		if (rand_int(100) < 40) type = WILD_TOWN_HOME;
 #else
+ #ifdef __DISABLE_HOUSEBOOST
 		if (rand_int(100) < 90) type = WILD_TOWN_HOME;
+ #else
+		if (rand_int(100) < 95) type = WILD_TOWN_HOME;
+ #endif
 #endif
 	}
 	if (w_ptr->radius == 2)
 #ifdef DEVEL_TOWN_COMPATIBILITY
 		if (rand_int(100) < 10) type = WILD_TOWN_HOME;
 #else
+ #ifdef __DISABLE_HOUSEBOOST
 		if (rand_int(100) < 80) type = WILD_TOWN_HOME;
+ #else
+		if (rand_int(100) < 90) type = WILD_TOWN_HOME;
+ #endif
 #endif
-	
+#ifndef __DISABLE_HOUSEBOOST
+ #ifndef DEVEL_TOWN_COMPATIBILITY
+	if (w_ptr->radius == 3 && rand_int(100) < 80) type = WILD_TOWN_HOME;
+ #endif
+#endif
+
 	switch (type) {
 		case WILD_LOG_CABIN:
 			wall_feature = FEAT_LOGS;
@@ -3078,9 +3108,15 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 	if (w_ptr->radius == 2) terrain.dwelling *= 9;
 	if (w_ptr->radius == 3) terrain.dwelling *= 3;
 #else
+ #ifdef __DISABLE_HOUSEBOOST
 	if (w_ptr->radius == 1) terrain.dwelling *= 100;
 	if (w_ptr->radius == 2) terrain.dwelling *= 20;
 	if (w_ptr->radius == 3) terrain.dwelling *= 3;
+ #else
+	if (w_ptr->radius == 1) terrain.dwelling *= 160;
+	if (w_ptr->radius == 2) terrain.dwelling *= 120;
+	if (w_ptr->radius == 3) terrain.dwelling *= 50;
+ #endif
 #endif
 
 //	wild_add_uhouses(wpos);
