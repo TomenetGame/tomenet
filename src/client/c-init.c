@@ -1756,7 +1756,7 @@ static void quit_hook(cptr s)
 
 	if(message_num() && (save_chat || get_check("Save chatlog?"))){
 		FILE *fp;
-		char buf[80];
+		char buf[80], buf2[1024];
 		int i;
 		time_t ct = time(NULL);
 		struct tm* ctl = localtime(&ct);
@@ -1771,9 +1771,10 @@ static void quit_hook(cptr s)
 		if (!save_chat) get_string("Filename:", buf, 80);
 		/* maybe one day we'll get a Mac client */
 		FILE_TYPE(FILE_TYPE_TEXT);
-		fp=my_fopen(buf, "w");
+		path_build(buf2, 1024, ANGBAND_DIR_USER, buf);
+		fp=my_fopen(buf2, "w");
 		if(fp!=(FILE*)NULL){
-			dump_messages_aux(fp, i, 1, FALSE);
+			dump_messages_aux(fp, i, 1, TRUE);//FALSE
 			fclose(fp);
 		}
 	}
