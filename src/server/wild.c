@@ -3396,22 +3396,23 @@ void wilderness_gen(struct worldpos *wpos)
 #define MAXISLAND 5	/* maximum 'generic' terrain type island size */
 #define SEADENSITY 96	/* land/sea ratio */
 
-#define MAXMOUNT 5	/* maximum mountain range size */
-#define MAXWOOD 6	/* maximum forest size */
+#define MAXMOUNT 4	/* maximum mountain range size */
+#define MAXWOOD 5	/* maximum forest size */
 #define MAXWASTE 4	/* maximum wasteland size */
 #define MAXLAKE 3	/* maximum lake size */
 #define MAXISLANDS 4	/* maximum water-related island size */
-#define MAXDESERT 5	/* maximum desert size */
-#define MAXICE 5	/* maximum desert size */
+#define MAXDESERT 6	/* maximum desert size (very rare, hence big) */
+#define MAXICE 6	/* maximum desert size (very rare, hence big) */
 
+//proportional inverse = amount
 #define RIVERS 512	/* rivers (don't have a MAX size limiter) */
-#define ROCKY 256	/* mountains */
+#define ROCKY 512	/* mountains */
 #define WOODY 256	/* trees */
-#define WASTE 512	/* wasteland */
+#define WASTE 1024	/* wasteland */
 #define LAKES 512	/* lakes */
 #define ISLANDS 512	/* water-related islands */
-#define DESERT 1024	/* desert */
-#define ICE 3072	/* ice */
+#define DESERT 2048	/* desert */
+#define ICE 3172	/* ice */
 
 static void island(int y, int x, unsigned char type, unsigned char fill, int size) {
 	int ranval;
