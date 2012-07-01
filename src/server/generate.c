@@ -10358,8 +10358,6 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 
 	/* House */
 	if (n == STORE_HOUSE) {
-		int price;
-
 #ifdef USE_MANG_HOUSE
 		if (!trad) {
 			for (y = y1 + 1; y < y2; y++) {
@@ -10380,13 +10378,8 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 		if (!flat) {
 			/* Setup some "house info" */
 			size = (x2 - x1 - 1) * (y2 - y1 - 1);
-			/*price *= 20 * price; -APD- price is now proportional to size*/
-			price = size * 20;
-			price *= 80 + randint(40);
 
-			/* Remember price */
 			MAKE(houses[num_houses].dna, struct dna_type);
-			houses[num_houses].dna->price = price;
 			houses[num_houses].x=x1;
 			houses[num_houses].y=y1;
 			houses[num_houses].flags=HF_RECT|HF_STOCK;
@@ -10394,6 +10387,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 			houses[num_houses].coords.rect.width=x2-x1+1;
 			houses[num_houses].coords.rect.height=y2-y1+1;
 			wpcopy(&houses[num_houses].wpos, wpos);
+			houses[num_houses].dna->price = house_price(&houses[num_houses]);
 		}
 		/* Hack -- apartment house */
 		else {
@@ -10419,12 +10413,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 			}
 
 			/* Setup some "house info" */
-			/* XXX slightly 'bad bargain' */
 			size = ((x2 - x1) / 2 - 1) * ((y2 - y1) / 2 - 1);
-			/*price *= 20 * price; -APD- price is now proportional to size*/
-			price = size * 20;
-			price *= 80 + randint(40);
-
 
 			for (i = 0; i < 4; i++) {
 #if 1
@@ -10437,7 +10426,6 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 
 				/* Remember price */
 				MAKE(houses[num_houses].dna, struct dna_type);
-				houses[num_houses].dna->price = price;
 				houses[num_houses].x = x;
 				houses[num_houses].y = y;
 				houses[num_houses].flags = HF_RECT | HF_STOCK | HF_APART;
@@ -10445,6 +10433,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 				houses[num_houses].coords.rect.width = (x2 - x1) / 2 + 1;
 				houses[num_houses].coords.rect.height = (y2 - y1) / 2 + 1;
 				wpcopy(&houses[num_houses].wpos, wpos);
+				houses[num_houses].dna->price = house_price(&houses[num_houses]);
 
 				/* MEGAHACK -- add doors here and return */
 

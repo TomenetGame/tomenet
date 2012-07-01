@@ -6990,8 +6990,7 @@ void kill_house_contents(house_type *h_ptr){
         	/* note: trad houses currently can't have sizes > 30 (compare wild.c),
         	   so it's sufficient to add term for medium houses + term for small houses,
         	   ignoring the term for large houses. */
-                h_ptr->dna->price = area*area*33
-            	    + area * (900 + rand_int(200));
+                h_ptr->dna->price = house_price(h_ptr);
         }
 }
 

@@ -1232,7 +1232,7 @@ static bool dwelling_check_entrance(worldpos *wpos, int y, int x)
 		c_ptr = &zcave[y + tdy[i]][x + tdx[i]];
 
 		/* Inside a house */
-		if (c_ptr->info & CAVE_ICKY) continue;			
+		if (c_ptr->info & CAVE_ICKY) continue;
 
 		/* Wall blocking the door */
 		if (f_info[c_ptr->feat].flags1 & FF1_WALL) continue;
@@ -1260,7 +1260,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	int	h_x1,h_y1,h_x2,h_y2, p_x1,p_y1,p_x2,p_y2,
 		plot_xlen, plot_ylen, house_xlen, house_ylen,
 		door_x, door_y, drawbridge_x[3], drawbridge_y[3],
-		tmp, type, area, price, num_door_attempts;
+		tmp, type, area, num_door_attempts;
 	int size;
 	char wall_feature = 0, door_feature = 0;
 	char has_moat = 0;
@@ -1293,12 +1293,12 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	if (!rand_int(2)) {
 #else
 	/* more *huge* houses (villas) on the outskirts */
-	if (w_ptr->radius == 3 && rand_int(2)) {
+	if (w_ptr->radius == 3 && rand_int(3)) {
 		house_xlen = rand_int(5) + rand_int(5) + 19;
 		house_ylen = rand_int(3) + rand_int(3) + 10;
 	}
-	/* more "large" houses (and potentially villas) in any case */
-	else if (rand_int(w_ptr->radius == 3 ? 5 : 2)) {
+	/* less "large" houses (to leave room for *huge* houses) in radius 3 */
+	else if (!rand_int(w_ptr->radius == 3 ? 4 : 2)) {
 #endif
 		house_xlen = rand_int(10) + rand_int(rand_int(10)) + 9;
 		house_ylen = rand_int(5) + rand_int(rand_int(5)) + 6;
@@ -1307,7 +1307,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 #ifdef __DISABLE_HOUSEBOOST
 	else if (!rand_int(2)) {
 #else
-	else if (!rand_int(10)) {
+	else if (!rand_int(w_ptr->radius == 1 ? 8 : 12)) {
 #endif
 		house_xlen = rand_int(4) + 3;
 		house_ylen = rand_int(2) + 3;
@@ -1334,9 +1334,6 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 		plot_ylen = house_ylen;
 #ifdef __DISABLE_HOUSEBOOST
 	} else if (area < 60) {
-#else
-	} else if (area < 80) {
-#endif
 		plot_xlen = house_xlen + (area/15)*2;
 		plot_ylen = house_ylen + (area/25)*2;
 		//plot_xlen = house_xlen + (area/10)*2;
@@ -1347,6 +1344,17 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 		plot_ylen = house_ylen + (area/14)*2;
 		trad = FALSE;
 	}
+#else /* less lawn */
+	} else if (area < 100) {
+		plot_xlen = house_xlen + (area/20);
+		plot_ylen = house_ylen + (area/30);
+		trad = FALSE;
+	} else {
+		plot_xlen = house_xlen + (area/20) + 5;
+		plot_ylen = house_ylen + (area/30) + 4;
+		trad = FALSE;
+	}
+#endif
 
 	/* Hack -- sometimes large buildings get moats */
 #ifdef __DISABLE_HOUSEBOOST
@@ -1444,34 +1452,15 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 
 			/* doors are locked 60% of the time */
 			if (rand_int(100) < 60) door_feature = FEAT_DOOR_HEAD + rand_int(7);
-			else door_feature = FEAT_DOOR_HEAD;			
+			else door_feature = FEAT_DOOR_HEAD;
 			break;
 		case WILD_TOWN_HOME:
 //			wall_feature = FEAT_PERM_EXTRA;
 			wall_feature = FEAT_WALL_HOUSE;
 			door_feature = FEAT_HOME;
 
-#ifdef DEVEL_TOWN_COMPATIBILITY
-			/* Setup some "house info" */
-			price = (h_x2 - h_x1 - 1) * (h_y2 - h_y1 - 1);
-			price *= 15;
-			price *= 80 + randint(40);
-#else
-			// This is the dominant term for large houses
-			if (area > 40) price = (area-40)*(area-40)*(area-40)*3;
-			else price = 0;
-			//price = area*area*area*area/190;
-			// This is the dominant term for medium houses
-			price += area*area*33;
-			// This is the dominant term for small houses
-			price += area * (900 + rand_int(200)); 
-#endif
-
-			/* Remember price */
-
 			/* hack -- setup next possibile house addition */
 			MAKE(houses[num_houses].dna, struct dna_type);
-			houses[num_houses].dna->price = price;
 			houses[num_houses].x = h_x1;
 			houses[num_houses].y = h_y1;
 			houses[num_houses].flags = HF_RECT|HF_STOCK;
@@ -1480,6 +1469,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 			houses[num_houses].coords.rect.width = h_x2-h_x1+1;
 			houses[num_houses].coords.rect.height = h_y2-h_y1+1;
 			wpcopy(&houses[num_houses].wpos, wpos);
+			houses[num_houses].dna->price = house_price(&houses[num_houses]);
 			break;
 	}
 
@@ -3144,7 +3134,7 @@ static void wilderness_gen_hack(struct worldpos *wpos)
  #else
 	if (w_ptr->radius == 1) terrain.dwelling *= 160;
 	if (w_ptr->radius == 2) terrain.dwelling *= 130;
-	if (w_ptr->radius == 3) terrain.dwelling *= 50;
+	if (w_ptr->radius == 3) terrain.dwelling *= 40;
  #endif
 #endif
 
@@ -4060,4 +4050,52 @@ void wpos_apply_season_daytime(worldpos *wpos, cave_type **zcave) {
 		if (IS_DAY) world_surface_day(wpos);
 		else world_surface_night(wpos);
 	}
+}
+
+/* returns buying price of a house */
+u32b house_price(house_type *h_ptr) {
+	s32b price;
+	int area = 0;
+
+	/* 'area' us used for both, HF_RECT and HF_NONE (poly) houses */
+	if (h_ptr->flags & HF_RECT)
+		area = (h_ptr->coords.rect.width - 2) * (h_ptr->coords.rect.height - 2);
+#if 0 /* TODO (only for house-creation-houses) */
+	else {
+		..curr->cvert
+		area =
+	}
+
+	/* currently unused since this is only for house-creation houses,
+	   and those would require implementing non-HF_RECT area (see code above) first */
+	if (h_ptr->flags & HF_SELFBUILT)
+		return area * area * 400;
+#endif
+
+#ifdef DEVEL_TOWN_COMPATIBILITY /* old */
+	/* Setup some "house info" */
+	price = (area * area);
+	price *= 15;
+	price *= 80 + randint(40);
+#else
+ #ifdef __DISABLE_HOUSEBOOST
+	// This is the dominant term for large houses
+	if (area > 40) price = (area - 40) * (area - 40) * (area - 40) * 3;
+	else price = 0;
+	// This is the dominant term for medium houses
+	price += area * area * 33;
+	// This is the dominant term for small houses
+	price += area * (900 + rand_int(200));
+ #else
+	// This is the dominant term for large houses
+	if (area > 40) price = (area - 40) * (area - 40) * (area - 40) * 3;
+	else price = 0;
+	// This is the dominant term for medium houses
+	price += area * area * 33;
+	// This is the dominant term for small houses
+	price += area * (900 + rand_int(200));
+ #endif
+#endif
+
+	return price;
 }
