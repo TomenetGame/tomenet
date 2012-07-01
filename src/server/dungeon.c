@@ -4687,8 +4687,8 @@ static void do_unstat(struct worldpos *wpos)
 
 		/* limit static time in Ironman Deep Dive Challenge a lot */
 		if (in_irondeepdive(wpos)) {
-			if (isdungeontown(wpos)) j = 5;
-			else if (j > 10) j = 10; // j = 0 -> immediately unstatice!
+			if (isdungeontown(wpos)) j = 300;
+			else if (j > 10) j = 600; // j = 0 -> immediately unstatice!
 		}
 
 		/* makes levels between 50ft and min_unstatic_level unstatic on player saving/quiting game/leaving level DEG */

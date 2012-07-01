@@ -1838,7 +1838,7 @@ void do_cmd_check_server_settings(int Ind)
 		fprintf(fff, "When saving in dungeon, the floor is kept for %dx(level) minutes.\n", k);
 
 	if ((k=cfg.min_unstatic_level) > 0) 
-		fprintf(fff, "Shallow dungeon(till %d) will never be saved. Save in town!\n", k);
+		fprintf(fff, "Shallow dungeon (before level %d) will never be static. Save in town!\n", k);
 
 	if ((k=cfg.preserve_death_level) < 201)
 		fprintf(fff, "Site of death under level %d will be static, allowing others to loot it.\n", k);
