@@ -2915,9 +2915,10 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet) {
 			/* check for swear-word-preceding non-duplicate alpha char */
 			if (cc[pos] > 0 &&
 			    l1 >= 'a' && l1 <= 'z' &&
-			    l1 != l0) {
+			    (l1 != l0 || strlen(swear[i].word) <= 3)) {
 				/* special treatment for swear words of <= 3 chars length: */
 				if (strlen(swear[i].word) <= 3) {
+#if 0 /* softened this up, see below */
 					/* if there's UP TO 2 other chars before it or exactly 1 non-duplicate char, it's exempt.
 					   (for more leading chars, nonswear has to be used.) */
 					if (cc[pos] == 1 && l1 >= 'a' && l1 <= 'z' && l1 != l0) continue;
@@ -2938,6 +2939,20 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet) {
 					}
 					/* if there's no char before it but 2 other chars after it or 1 non-dup after it, it's exempt. */
 					//TODO maybe - or just use nonswear for that
+#else
+					/* if there's at least 2 other chars before it, which aren't both duplicates, or
+					   if there's exactly 1 non-duplicate char before it, it's exempt. */
+					if (cc[pos] == 1 && l1 >= 'a' && l1 <= 'z' && l1 != l0) continue;
+					if (cc[pos] >= 2) {
+						if (l1 >= 'a' && l1 <= 'z' && l2 >= 'a' && l2 <= 'z' &&
+						    (l0 != l1 || l0 != l2 || l1 != l2)) continue;
+						/* also test for only 1 leading alpha char */
+						if ((l2 < 'a' || l2 > 'z') &&
+						    l1 >= 'a' && l1 <= 'z' && l1 != l0) continue;
+					}
+					/* if there's no char before it but 2 other chars after it or 1 non-dup after it, it's exempt. */
+					//TODO maybe - or just use nonswear for that
+#endif
 				}
 
 				/* check that the swear word occurance was originally non-continuous, ie separated by space etc.
