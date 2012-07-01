@@ -3420,7 +3420,7 @@ static void hook_quit(cptr str)
 		path_build(buf2, 1024, ANGBAND_DIR_USER, buf);
 		fp=my_fopen(buf2, "w");
 		if(fp!=(FILE*)NULL){
-			dump_messages_aux(fp, i, 1, TRUE);//FALSE
+			dump_messages_aux(fp, i, 1, FALSE);//FALSE
 			fclose(fp);
 		}
 	}

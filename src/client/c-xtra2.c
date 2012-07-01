@@ -714,7 +714,7 @@ errr dump_messages(cptr name, int lines, int mode)
 		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG, server_name, what);
 
 	/* Do it */
-	dump_messages_aux(fff, lines, mode, TRUE);//FALSE
+	dump_messages_aux(fff, lines, mode, FALSE);//FALSE
 
 	fprintf(fff, "\n\n");
 
