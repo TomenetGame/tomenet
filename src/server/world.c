@@ -95,7 +95,7 @@ bool world_check_ignore(int Ind, uint32_t id, int16_t server){
 }
 
 void world_comm(int fd, int arg){
-	static char buffer[1024], msg[MSG_LEN], *msg_ptr, *wmsg_ptr;
+	static char buffer[1024], msg[MSG_LEN], *msg_ptr, *wmsg_ptr, *wmsg_ptr2;
 	char cbuf[sizeof(struct wpacket)], *p;
 	static short bpos=0;
 	static short blen=0;
@@ -156,6 +156,21 @@ void world_comm(int fd, int arg){
 					wmsg_ptr = strchr(wmsg_ptr, '\377') + 2;
 					msg_ptr = strchr(msg, '\377');
 					strcpy(msg_ptr, wmsg_ptr);
+					/* strip next colour code */
+					wmsg_ptr = strchr(wmsg_ptr, '\377') + 2;
+					msg_ptr = strchr(msg, '\377');
+					strcpy(msg_ptr, wmsg_ptr);
+					/* strip next colour code if at the beginning of the actual message line */
+					if (*(wmsg_ptr + 1) == '\377') {
+						strcpy(msg_ptr + 1, wmsg_ptr + 3);
+						/* strip next colour code if existing  */
+						if ((wmsg_ptr = strchr(wmsg_ptr + 3, '\377'))
+						    /* not in /me though: ']' check */
+						    && (wmsg_ptr2 = strchr(wpk->d.chat.ctxt + 9, ']')) && wmsg_ptr2 < wmsg_ptr) {
+							msg_ptr = strchr(msg + 1, '\377');
+							strcpy(msg_ptr, wmsg_ptr + 2);
+						}
+					}
 					s_printf("%s\n", msg);
 #endif
 				}
@@ -175,6 +190,7 @@ void world_comm(int fd, int arg){
 			case WP_MESSAGE:
 				/* A raw message - no data */
 				msg_broadcast_format(0, "%s", wpk->d.smsg.stxt);
+
 #if 1
 				/* log */
 				wmsg_ptr = wpk->d.smsg.stxt;
