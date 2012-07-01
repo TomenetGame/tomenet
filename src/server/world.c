@@ -95,7 +95,7 @@ bool world_check_ignore(int Ind, uint32_t id, int16_t server){
 }
 
 void world_comm(int fd, int arg){
-	static char buffer[1024], msg[MSG_LEN], *msg_ptr, *msg_ptr2;
+	static char buffer[1024], msg[MSG_LEN], *msg_ptr, *wmsg_ptr;
 	char cbuf[sizeof(struct wpacket)], *p;
 	static short bpos=0;
 	static short blen=0;
@@ -146,14 +146,18 @@ void world_comm(int fd, int arg){
 						}
 					}
 
+#if 1
 					/* log */
-					strcpy(msg, "");
-					msg_ptr = wpk->d.chat.ctxt;
+					wmsg_ptr = wpk->d.chat.ctxt;
 					/* strip \374,\375,\376 */
-					while (*msg_ptr > 127 && *msg_ptr < '\377') msg_ptr++;
-					msg_ptr += 8 + 2;
-					strcat(msg, msg_ptr);
+					while (*wmsg_ptr >= '\374' && *wmsg_ptr < '\377') wmsg_ptr++;
+					strcpy(msg, wmsg_ptr);
+					/* strip next colour code */
+					wmsg_ptr = strchr(wmsg_ptr, '\377') + 2;
+					msg_ptr = strchr(msg, '\377');
+					strcpy(msg_ptr, wmsg_ptr);
 					s_printf("%s\n", msg);
+#endif
 				}
 				break;
 			case WP_PMSG:
@@ -171,14 +175,25 @@ void world_comm(int fd, int arg){
 			case WP_MESSAGE:
 				/* A raw message - no data */
 				msg_broadcast_format(0, "%s", wpk->d.smsg.stxt);
-
+#if 1
 				/* log */
-				strcpy(msg, "");
-				msg_ptr = wpk->d.chat.ctxt;
+				wmsg_ptr = wpk->d.smsg.stxt;
 				/* strip \374,\375,\376 */
-				while (*msg_ptr > 127 && *msg_ptr < '\377') msg_ptr++;
-				strcat(msg, msg_ptr);
+				while (*wmsg_ptr >= '\374' && *wmsg_ptr < '\377') wmsg_ptr++;
+				strcpy(msg, wmsg_ptr);
+				/* strip next colour code */
+				wmsg_ptr = strchr(wmsg_ptr, '\377') + 2;
+				msg_ptr = strchr(msg, '\377');
+				strcpy(msg_ptr, wmsg_ptr);
+				/* strip next colour code */
+				wmsg_ptr = strchr(wmsg_ptr, '\377') + 2;
+				msg_ptr = strchr(msg, '\377');
+				strcpy(msg_ptr, wmsg_ptr);
+				/* strip next colour code if at the beginning of the actual message line */
+				if (*(wmsg_ptr + 1) == '\377')
+					strcpy(msg_ptr + 1, wmsg_ptr + 3);
 				s_printf("%s\n", msg);
+#endif
 				break;
 			case WP_NPLAYER:
 			case WP_QPLAYER:
@@ -207,19 +222,21 @@ void world_comm(int fd, int arg){
 						msg_print(i, wpk->d.chat.ctxt);
 					}
 
+#if 1
 					/* log */
 					strcpy(msg, "[IRC]");
-					msg_ptr = wpk->d.chat.ctxt;
+					wmsg_ptr = wpk->d.chat.ctxt;
 					/* strip \374,\375,\376 */
-					while (*msg_ptr > 127 && *msg_ptr < '\377') msg_ptr++;
-					msg_ptr += 10;
-					strcat(msg, msg_ptr);
+					while (*wmsg_ptr >= '\374' && *wmsg_ptr < '\377') wmsg_ptr++;
+					wmsg_ptr += 10;
+					strcat(msg, wmsg_ptr);
 					/* strip next colour code */
+					wmsg_ptr = strchr(wmsg_ptr, '\377') + 2;
 					msg_ptr = strchr(msg, '\377');
-					msg_ptr2 = strchr(msg_ptr, '\377') + 2;
-					strcpy(msg_ptr, msg_ptr2);
+					strcpy(msg_ptr, wmsg_ptr);
 					/* done */
 					s_printf("%s\n", msg);
+#endif
 				}
 				break;
 			default:
