@@ -1326,9 +1326,9 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 
 	/* find the dimensions of the "lawn" the house is built on */
 #ifdef __DISABLE_HOUSEBOOST
-	if (area < 45) {
-#else
 	if (area < 30) {
+#else
+	if (area < 45) {
 #endif
 		plot_xlen = house_xlen;
 		plot_ylen = house_ylen;
