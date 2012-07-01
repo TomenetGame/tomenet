@@ -5691,6 +5691,8 @@ bool backup_estate(void) {
     			newly_created = FALSE;
     			/* begin with a version tag */
     			fprintf(fp, "%s\n", ESTATE_BACKUP_VERSION);
+
+#if 0 /* guild info is no longer tied to map reset! */
     			/* add 2M Au if he's a guild master, since guilds will be erased if the server
     			   savefile gets deleted (which is the sole purpose of calling this function..) */
 			for (j = 0; j < MAX_GUILDS; j++)
@@ -5699,6 +5701,7 @@ bool backup_estate(void) {
 					s_printf("  guild master: '%s'.\n", name);
 					break;
 				}
+#endif
     		}
 
 		/* add house price to his backup file */
