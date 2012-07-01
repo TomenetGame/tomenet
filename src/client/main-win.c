@@ -3417,7 +3417,7 @@ static void hook_quit(cptr str)
 
 		i=message_num();
 		if (!save_chat) get_string("Filename:", buf, 80);
-		path_build(buf2, 1024, ANGBAND_DIR_USER, buf)
+		path_build(buf2, 1024, ANGBAND_DIR_USER, buf);
 		fp=my_fopen(buf2, "w");
 		if(fp!=(FILE*)NULL){
 			dump_messages_aux(fp, i, 1, TRUE);//FALSE
