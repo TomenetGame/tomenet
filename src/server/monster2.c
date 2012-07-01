@@ -3964,7 +3964,8 @@ static bool summon_specific_okay(int r_idx)
 				(r_ptr->flags1 & RF1_UNIQUE));
 			break;
 		case SUMMON_UNIQUE:
-			okay = (r_ptr->flags1 & RF1_UNIQUE);
+			okay = ((r_ptr->flags1 & RF1_UNIQUE) &&
+				!(r_ptr->flags0 & RF0_FINAL_GUARDIAN));
 			break;
 
 		/* PernA-addition
@@ -4100,7 +4101,9 @@ static bool summon_specific_okay(int r_idx)
 			okay = (r_ptr->level >= 60);
 			break;
 		case SUMMON_HI_UNIQUE:
-			okay = ((r_ptr->flags1 & RF1_UNIQUE) && (r_ptr->level >= 60));
+			okay = ((r_ptr->flags1 & RF1_UNIQUE)
+				&& !(r_ptr->flags0 & RF0_FINAL_GUARDIAN)
+				&& (r_ptr->level >= 60));
 			break;
 	}
 
