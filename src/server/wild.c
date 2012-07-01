@@ -3411,8 +3411,8 @@ void wilderness_gen(struct worldpos *wpos)
 #define WASTE 1024	/* wasteland */
 #define LAKES 512	/* lakes */
 #define ISLANDS 512	/* water-related islands */
-#define DESERT 2048	/* desert */
-#define ICE 3172	/* ice */
+#define DESERT 1536	/* desert */
+#define ICE 2404	/* ice */
 
 static void island(int y, int x, unsigned char type, unsigned char fill, int size) {
 	int ranval;
