@@ -7695,6 +7695,15 @@ A:15/2
 P:0:2d4:0:0:0
 F:SHOW_MODS
 
+#N:1034:& Wooden Shield~
+#G:):u
+#I:34:13:0
+#W:10:0:65:70
+#A:14/1
+##$USE_NEW_SHIELDS$P:13:1d2:0:0:0
+#$USE_NEW_SHIELDS$P:17:1d2:0:0:0
+#$USE_NEW_SHIELDS!P:3:1d2:0:0:0
+
 
 #N:(No.):(name)
 #G:(appearence):(colour)
