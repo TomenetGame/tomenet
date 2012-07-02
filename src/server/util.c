@@ -1396,11 +1396,11 @@ void handle_music(int Ind) {
 		/* play town music also in its surrounding area of houses, if we're coming from the town? */
 		if (istownarea(&p_ptr->wpos, 2)) {
 			worldpos tpos = {0, 0, 0};
-			int x, y, tmus = 0;
+			int x, y, tmus = 0, tmus_inverse = 0;
 
 			for (x = p_ptr->wpos.wx - 2; x <= p_ptr->wpos.wx + 2; x++) {
 				for (y = p_ptr->wpos.wy - 2; y <= p_ptr->wpos.wy + 2; y++) {
-					if (x < 0 || x > 63 || y < 0 || y > 63) continue;
+					if (!in_bounds_wild(y, x)) continue;
 					tpos.wx = x; tpos.wy = y;
 					if (istown(&tpos)) break;
 				}
@@ -1411,12 +1411,36 @@ void handle_music(int Ind) {
 				if (town[i].x == tpos.wx && town[i].y == tpos.wy) {
 					switch (town[i].type) {
 					default:
-					case 0: if (night_surface) tmus = 49; else tmus = 1; break; //default town
-					case 1: if (night_surface) tmus = 50; else tmus = 3; break; //Bree
-					case 2: if (night_surface) tmus = 51; else tmus = 4; break; //Gondo
-					case 3: if (night_surface) tmus = 52; else tmus = 5; break; //Minas
-					case 4: if (night_surface) tmus = 53; else tmus = 6; break; //Loth
-					case 5: if (night_surface) tmus = 54; else tmus = 7; break; //Khaz
+					case 0: if (night_surface) {
+							tmus = 49; tmus_inverse = 1;
+						} else {
+							tmus = 1; tmus_inverse = 49;
+						} break; //default town
+					case 1: if (night_surface) {
+							tmus = 50; tmus_inverse = 3;
+						} else {
+							tmus = 3; tmus_inverse = 50;
+						} break; //Bree
+					case 2: if (night_surface) {
+							tmus = 51; tmus_inverse = 4;
+						} else {
+							tmus = 4; tmus_inverse = 51;
+						} break; //Gondo
+					case 3: if (night_surface) {
+							tmus = 52; tmus_inverse = 5;
+						} else {
+							tmus = 5; tmus_inverse = 52;
+						} break; //Minas
+					case 4: if (night_surface) {
+							tmus = 53; tmus_inverse = 6;
+						} else {
+							tmus = 6; tmus_inverse = 53;
+						} break; //Loth
+					case 5: if (night_surface) {
+							tmus = 54; tmus_inverse = 7;
+						} else {
+							tmus = 7; tmus_inverse = 54;
+						} break; //Khaz
 					}
 				}
 
@@ -1424,7 +1448,9 @@ void handle_music(int Ind) {
 			   we only switch to town music when we enter the town.
 			   If we're coming from the town, however, we keep the
 			   music while being in its surrounding area of houses. */
-			if (istown(&p_ptr->wpos) || p_ptr->music_current == tmus)
+			if (istown(&p_ptr->wpos) || p_ptr->music_current == tmus
+			    /* don't switch from town area music to wild music on day/night change: */
+			    || p_ptr->music_current == tmus_inverse)
 				Send_music(Ind, tmus);
 			else if (night_surface) Send_music(Ind, 10);
 			else Send_music(Ind, 9);
