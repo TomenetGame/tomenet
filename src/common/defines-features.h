@@ -102,7 +102,7 @@
 /* --------------------- Server-type dependant features -------------------- */
 
 #ifdef RPG_SERVER
- #define WILDERNESS_NEW_TERRAINS	/* New wilderness types DESERT and ICE. ***WARNING***: Will require erasing the current 'server' savefile! */
+ #define WILDERNESS_NEW_FEATURES	/* Use new 4.4.9 wilderness features? WARNING: Changes wilderness and houses */
 
  #define ENABLE_INSTANT_RES	/* Enable the instant resurrection feature */
 
@@ -119,7 +119,7 @@
 #endif
 
 #ifdef TEST_SERVER
- #define WILDERNESS_NEW_TERRAINS	/* New wilderness types DESERT and ICE. ***WARNING***: Will require erasing the current 'server' savefile! */
+ #define WILDERNESS_NEW_FEATURES	/* Use new 4.4.9 wilderness features? WARNING: Changes wilderness and houses */
 
  #define ENABLE_INSTANT_RES	/* Enable the instant resurrection feature */
 

@@ -22,15 +22,13 @@
 #include "angband.h"
 
 
-/* Use a simple kind of bleeding just to indicate dangerous terrain ahead,
-   was just used ad interim. */
-//#define SIMPLE_BLEED
-
-/* Bleed with neighbours? (The main bleeding function).
-   WARNING: Toggling this feature can change house locations. */
-#ifdef WILDERNESS_NEW_TERRAINS
+#ifdef WILDERNESS_NEW_FEATURES
+ /* Bleed with neighbours? (The main bleeding function).
+    WARNING: Toggling this feature can change house locations. */
  #define BLEED_WITH_NEIGHBOURS
 #else
+ /* Use a simple kind of bleeding just to indicate dangerous terrain ahead,
+    was just used ad interim. */
  #define SIMPLE_BLEED
 #endif
 
@@ -47,12 +45,12 @@
 #define BLEED_ENHANCED_TOWN
 
 /* HACK: Disable new terrain types DESERT/WILD and other rng-affecting stuff? */
-#ifndef WILDERNESS_NEW_TERRAINS
+#ifndef WILDERNESS_NEW_FEATURES
  #define __DISABLE_NEW
 #endif
 
 /* HACK: Disable house shortage counter measures? */
-#ifndef WILDERNESS_NEW_TERRAINS
+#ifndef WILDERNESS_NEW_FEATURES
  #define __DISABLE_HOUSEBOOST
 #endif
 
