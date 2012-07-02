@@ -3446,6 +3446,9 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 		/* Skip "empty" artifacts */
 		if (!a_ptr->name) continue;
 
+		/* Hack: "Disabled" */
+		if (a_ptr->rarity == 255) continue;
+
 		/* Cannot make an artifact twice */
 		if (a_ptr->cur_num) continue;
 
@@ -3548,6 +3551,9 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf)
 
 			/* Skip "empty" items */
 			if (!a_ptr->name) continue;
+
+			/* Hack: "Disabled" */
+			if (a_ptr->rarity == 255) continue;
 
 			/* Cannot make an artifact twice */
 			if (a_ptr->cur_num) continue;

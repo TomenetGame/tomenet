@@ -1802,7 +1802,7 @@ D:shoot bolts that blaze with flame unquenchable.
 
 N:127:of Gandalf
 I:6:1:12
-W:127:220:20:9000000
+W:127:255:20:9000000
 P:0:1d1:-19:-19:0
 F:INT | CHR | WIS | MANA | ACTIVATE | HIDE_TYPE
 #SPELL | 
@@ -2018,7 +2018,7 @@ D:An arrow that was created to rid the world of demons.
 
 N:147:of Eru Iluvatar
 I:23:17:10
-W:127:220:140:9000000
+W:127:255:140:9000000
 P:0:5d6:21:26:50
 F:LIFE | CON | CHR | LUCK | HIDE_TYPE
 F:SUST_STR | SUST_INT | SUST_WIS | SUST_DEX | SUST_CON | SUST_CHR |
@@ -2070,7 +2070,7 @@ D:the torture of the wraithworld awaits those who dare.
 
 N:151:of the Elves
 I:18:2:0
-W:127:220:4:100000
+W:127:255:4:100000
 P:0:5d5:5:6:0
 F:BRAND_COLD | BRAND_FIRE | BRAND_ELEC | BRAND_ACID | BRAND_POIS |
 F:SLAY_DRAGON | SLAY_GIANT | SLAY_TROLL | KILL_UNDEAD | SLAY_ORC |
@@ -2085,7 +2085,7 @@ D:against those foes who are already dead.
 
 N:152:of the Elves
 I:19:24:5
-W:127:220:130:8000000
+W:127:255:130:8000000
 P:0:0d0:36:28:0
 F:SEE_INVIS | SLOW_DIGEST | FREE_ACT | SPEED | DEX | CON | FLY | LUCK
 F:XTRA_MIGHT | XTRA_SHOTS | IM_ELEC | REFLECT | INVIS | STEALTH |
