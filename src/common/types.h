@@ -136,86 +136,6 @@ struct cavespot
 	s16b y;
 };
 
-#if 0
-/*
- * Following are rough sketches for versions(maybe v5) to come.	- Jir -
- */
-/* TODO: tweak it in a way so that one wilderness field can contain
- * more than one dungeons/towers/rooms (eg.quest, arena..)
- *
- * probably, wild_info will contain array of pointers instead of
- * 'cave', 'tower' and 'dungeon', and then functions like getcave will
- * look up for a proper 'dungeon'.
- *
- * wpos={32,32,-20,2} => wild_info[32][32].dungeons[2].level[19]
- *
- * dungeons[] contains the info whether it's tower/dungeon or whatever,
- * and maybe dungeons[0] always is the surface.
- *
- * To tell which dungeon is which, we should use 'id' maybe.
- */
-struct worldpos
-{
-	s16b wx;	/* west to east */
-	s16b wy;	/* south to north */
-	s16b wz;	/* deep to sky */
-	s16b ww;	/* 4th dimention! actually it's index to the dungeons */
-};
-
-struct wilderness_type
-{
-	u16b radius; /* the distance from the town */
-	u16b type;   /* what kind of terrain we are in */
-
-	u32b flags; /* various */
-	struct dungeon_type *dungeons;
-	s32b own;	/* King owning the wild */
-
-	/* for sector-by-sector (instead of global) client-side weather,
-	   we have more distinct possibilities easily now: */
-	int weather_type; /* stop(-1), none(0), rain(1), snow(2) */
-	int weather_wind; /* none(0), west(odd), east(even) - the higher the stronger */
-	int weather_intensity; /* [0] modify amount of elements cast in parallel */
-	int weather_speed; /* 'vertical wind', makes sense for snowflakes only: how fast they drop */
-};
-
-typedef struct dungeon_type dungeon_type;
-struct dungeon_type
-{
-	u16b id;		/* dungeon id */
-	u16b baselevel;		/* base level (1 - 50ft etc). */
-
-	/* maybe contains info about if tower/dungeon/building etc */
-	u32b flags1;		/* dungeon flags */
-	u32b flags2;		/* DF2 flags */
-	u32b flags3;		/* DF3 flags */
-
-	byte maxdepth;		/* max height/depth */
-	char r_char[10];	/* races allowed */
-	char nr_char[10];	/* races prevented */
-	struct dun_level *level;	/* array of dungeon levels */
-	byte ud_y, ud_x		/* location of entrance */
-};
-
-
-/*
- * No work is done yet for this.
- * Probably, we should use not 'getlevel' but actual 'wz'
- * to determine the max depth a player can recall to.
- *
- * XXX some dungeons/towers can be added afterwards;
- * we should either allocate bigger array in advance, or make it
- * reallocatable.
- */
-typedef struct recall_depth recall_depth;
-
-struct recall_depth
-{
-	u16b id;	/* dungeon id (see dungeon_type) */
-	s16b depth;	/* max recall-depth */
-}
-#endif	/* 0 */
-
 
 /*
  * "Themed" objects.
@@ -1372,7 +1292,7 @@ struct wilderness_type
 {
 	u16b radius;	/* the distance from the town */
 	u16b type;	/* what kind of terrain we are in */
-	byte town_idx;	/* Which town resides exactly in this sector? */
+	signed char town_idx;	/* Which town resides exactly in this sector? */
 
 	u32b flags;	/* various */
 	struct dungeon_type *tower;
