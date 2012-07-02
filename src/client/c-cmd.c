@@ -1557,13 +1557,26 @@ static void artifact_lore(void) {
 		n = 0;
 		selected = selected_list = -1;
 
-		/* hack: direct match always takes top position */
+		/* hack 1: exact match always takes top position
+		   hack 2: match at beginning of name takes precedence */
 		if (s[0]) for (i = 0; i < MAX_A_IDX; i++) {
 			/* create upper-case working copy */
 			strcpy(tmp, artifact_list_name[i]);
 			for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
 
-			if (!strcmp(tmp, s)) {
+			/* exact match? exact match without 'The ' at the beginning maybe? */
+			if (!strcmp(tmp, s) ||
+			    (tmp[0] == 'T' && tmp[1] == 'H' && tmp[2] == 'E' && tmp[3] == ' ' && !strcmp(tmp + 4, s))) {
+				selected = artifact_list_code[i];
+				selected_list = i;
+				Term_putstr(5, 5, -1, selected_line == 0 ? TERM_L_UMBER : TERM_UMBER, artifact_list_name[i]);
+				list_idx[0] = i;
+				n++;
+				break;
+			}
+			/* beginning of line match? without the 'The ' at the beginning maybe? */
+			else if (!strncmp(tmp, s, strlen(s)) ||
+			    (tmp[0] == 'T' && tmp[1] == 'H' && tmp[2] == 'E' && tmp[3] == ' ' && !strncmp(tmp + 4, s, strlen(s)))) {
 				selected = artifact_list_code[i];
 				selected_list = i;
 				Term_putstr(5, 5, -1, selected_line == 0 ? TERM_L_UMBER : TERM_UMBER, artifact_list_name[i]);
