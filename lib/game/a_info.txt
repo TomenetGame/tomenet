@@ -1890,43 +1890,43 @@ F:BRAND_ACID | BRAND_ELEC | BRAND_FIRE | BRAND_COLD | BRAND_POIS
 D:A bolt imbued with the powers of the elements.  
 
 
-# The Harp of Master Robinton
-
-N:137:of Master Robinton
-I:14:6:3
-W:60:10:20:130000
-P:0:3d4:0:0:0
-F:CHR | SPEED | WIS | SEE_INVIS | RES_SOUND | ACTIVATE | STEALTH | LUCK | HIDE_TYPE
-F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | ESP_DRAGONRIDER | ESP_UNIQUE |
-D:This harp that once belonged to Master Robinton makes those who use 
-D:it seem more beautiful.  It is also said that those who have 
-D:used it found themselves walking faster, as if to an unheard beat.  
-
-
-# The Drum of Piemur
-
-N:138:of Piemur
-I:14:5:2
-W:40:10:15:90000
-P:0:3d4:0:0:0
-F:CHR | SPEED | WIS | SEE_INVIS | RES_SOUND | ACTIVATE | STEALTH | LUCK |
-F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | HIDE_TYPE
-D:Piemur's drum is much like the harp of Master Robinton. It protects 
-D:its wearer in many ways; by making him less noticable and shielding 
-D:them from the elements. The beat of this drum also sounds a call to
-D:action that increases the wearer's speed. 
+## The Harp of Master Robinton
+#
+#N:137:of Master Robinton
+#I:14:6:3
+#W:60:10:20:130000
+#P:0:3d4:0:0:0
+#F:CHR | SPEED | WIS | SEE_INVIS | RES_SOUND | ACTIVATE | STEALTH | LUCK | HIDE_TYPE
+#F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | ESP_DRAGONRIDER | ESP_UNIQUE |
+#D:This harp that once belonged to Master Robinton makes those who use 
+#D:it seem more beautiful.  It is also said that those who have 
+#D:used it found themselves walking faster, as if to an unheard beat.  
 
 
-# The Flute of Menolly
+## The Drum of Piemur
+#
+#N:138:of Piemur
+#I:14:5:2
+#W:40:10:15:90000
+#P:0:3d4:0:0:0
+#F:CHR | SPEED | WIS | SEE_INVIS | RES_SOUND | ACTIVATE | STEALTH | LUCK |
+#F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | HIDE_TYPE
+#D:Piemur's drum is much like the harp of Master Robinton. It protects 
+#D:its wearer in many ways; by making him less noticable and shielding 
+#D:them from the elements. The beat of this drum also sounds a call to
+#D:action that increases the wearer's speed. 
 
-N:139:of Menolly
-I:14:1:1
-W:20:10:10:60000
-P:0:3d4:0:0:0
-F:CHR | SPEED | WIS | RES_SOUND | ACTIVATE | STEALTH | LUCK | HIDE_TYPE
-F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | ESP_DRAGONRIDER
-D:A pretty flute that makes those who play it beautiful, wise and 
-D:fast. 
+
+## The Flute of Menolly
+#
+#N:139:of Menolly
+#I:14:1:1
+#W:20:10:10:60000
+#P:0:3d4:0:0:0
+#F:CHR | SPEED | WIS | RES_SOUND | ACTIVATE | STEALTH | LUCK | HIDE_TYPE
+#F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | ESP_DRAGONRIDER
+#D:A pretty flute that makes those who play it beautiful, wise and 
+#D:fast. 
 
 
 # The Dwarven Pick of Erebor
@@ -1942,53 +1942,53 @@ F:STR | TUNNEL | SUST_STR | HIDE_TYPE | LITE1 | ACTIVATE | CLIMB |
 D:A pick that provides a magical light to see by while tunneling.  
 
 
-# The Drum of the Druedain
-
-N:141:of the Druedain
-I:14:5:4
-W:19:10:15:20000
-P:0:3d4:0:0:0
-F:ACTIVATE | STEALTH | SEARCH | INFRA | RES_POIS | RES_DARK | HIDE_TYPE
-D:The fabled Drum of the Druedain that will protect those who play it 
-D:from darkness and poison attacks.  It also aids in the seeing of 
-D:warm blooded creatures.  
-
-
-# The Horn of Rohan
-
-N:142:of Rohan
-I:14:7:2
-W:14:10:15:10000
-P:0:3d4:0:0:0
-F:ACTIVATE | CHR | WIS | ESP_DRAGON
-D:A horn carved from the bones of the Dragon of Ered-Mithrin, this 
-D:heirloom of the House of Eorl bestows to its user the gifts of 
-D:courage and command.
+## The Drum of the Druedain
+#
+#N:141:of the Druedain
+#I:14:5:4
+#W:19:10:15:20000
+#P:0:3d4:0:0:0
+#F:ACTIVATE | STEALTH | SEARCH | INFRA | RES_POIS | RES_DARK | HIDE_TYPE
+#D:The fabled Drum of the Druedain that will protect those who play it 
+#D:from darkness and poison attacks.  It also aids in the seeing of 
+#D:warm blooded creatures.  
 
 
-# The Horn of Helm
+## The Horn of Rohan
+#
+#N:142:of Rohan
+#I:14:7:2
+#W:14:10:15:10000
+#P:0:3d4:0:0:0
+#F:ACTIVATE | CHR | WIS | ESP_DRAGON
+#D:A horn carved from the bones of the Dragon of Ered-Mithrin, this 
+#D:heirloom of the House of Eorl bestows to its user the gifts of 
+#D:courage and command.
 
-N:143:of Helm
-I:14:7:2
-W:16:10:15:35000
-P:0:3d4:0:0:0
-F:ACTIVATE | STR | CON | IM_COLD | RES_NETHER | RES_FEAR
-D:Heedless of cold, fearless of darkness -- besiegers fled at the wind 
-D:of the solitary coming of King Helm Hammerhand, proclaimed by a single 
-D:horn-blast in the dead of winter.
+
+## The Horn of Helm
+#
+#N:143:of Helm
+#I:14:7:2
+#W:16:10:15:35000
+#P:0:3d4:0:0:0
+#F:ACTIVATE | STR | CON | IM_COLD | RES_NETHER | RES_FEAR
+#D:Heedless of cold, fearless of darkness -- besiegers fled at the wind 
+#D:of the solitary coming of King Helm Hammerhand, proclaimed by a single 
+#D:horn-blast in the dead of winter.
 
 
-# The Horn of Boromir
-
-N:144:of Boromir
-I:14:7:3
-W:18:10:15:18000
-P:0:3d4:0:0:0
-F:ACTIVATE | STR | CON | RES_FEAR | RES_FIRE | AGGRAVATE
-D:Boromir's horn gives courage and endurance to the wearer, provided he does 
-D:not wish to travel in secrecy: for it must always sound when its wielder 
-D:sets forth on a journey. "Loud and clear it sounds in the valleys of the 
-D:hills... and then let all the foes of Gondor flee!"
+## The Horn of Boromir
+#
+#N:144:of Boromir
+#I:14:7:3
+#W:18:10:15:18000
+#P:0:3d4:0:0:0
+#F:ACTIVATE | STR | CON | RES_FEAR | RES_FIRE | AGGRAVATE
+#D:Boromir's horn gives courage and endurance to the wearer, provided he does 
+#D:not wish to travel in secrecy: for it must always sound when its wielder 
+#D:sets forth on a journey. "Loud and clear it sounds in the valleys of the 
+#D:hills... and then let all the foes of Gondor flee!"
 
 
 # The black axe of Gothmog, which slew Fingon
