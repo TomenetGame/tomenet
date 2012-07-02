@@ -3512,7 +3512,7 @@ void do_quit(int ind, bool tellclient)
 	}
 
 	/* If we are close to the center of town, exit quickly. */
-	if (connp->id==-1 || istownarea(&p_ptr->wpos, 2) || isdungeontown(&p_ptr->wpos)) {
+	if (connp->id==-1 || istownarea(&p_ptr->wpos, MAX_TOWNAREA) || isdungeontown(&p_ptr->wpos)) {
 		Destroy_connection(ind, "client quit");
 	}
 	// Otherwise wait for the timeout

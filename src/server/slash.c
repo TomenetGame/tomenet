@@ -6329,14 +6329,14 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/debug-wild")) {
 //				cptr wf = flags_str(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags);
 				msg_format(Ind, "wild_info[%d][%d]:", p_ptr->wpos.wy, p_ptr->wpos.wx);
-				msg_format(Ind, "  terrain: %d", wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type);
+				msg_format(Ind, "  terrain:   %d", wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type);
 //				msg_format(Ind, "  flags:   %s (%d)", wf, wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags);
 //				free(wf);
-				msg_format(Ind, "  flags:   %d", wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags);
-				msg_format(Ind, "  tower:   %d", wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower != NULL ? 1 : 0);
-				msg_format(Ind, "  dungeon: %d", wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon != NULL ? 1 : 0);
-				msg_format(Ind, "  town:    %d", wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].town_idx);
-				msg_format(Ind, "  townrad: %d", wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius);
+				msg_format(Ind, "  flags:     %d", wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags);
+				msg_format(Ind, "  tower:     %d", wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower != NULL ? 1 : 0);
+				msg_format(Ind, "  dungeon:   %d", wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon != NULL ? 1 : 0);
+				msg_format(Ind, "  town_idx:  %d", wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].town_idx);
+				msg_format(Ind, "  townrad:   %d", wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius);
 				return;
 			}
 			else if (prefix(message, "/fix-wildflock")) {

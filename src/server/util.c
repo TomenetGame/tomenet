@@ -1311,7 +1311,7 @@ void sound_near_monster(int m_idx, cptr name, cptr alternative, int type) {
 void handle_music(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	dun_level *l_ptr = NULL;
-	int i = -1;
+	int i = -1, tmus = 0, tmus_inverse = 0;
 	cave_type **zcave = getcave(&p_ptr->wpos);
 
 #ifdef ARCADE_SERVER
@@ -1394,55 +1394,27 @@ void handle_music(int Ind) {
 	/* on world surface */
 	if (p_ptr->wpos.wz == 0) {
 		/* play town music also in its surrounding area of houses, if we're coming from the town? */
-		if (istownarea(&p_ptr->wpos, 2)) {
-			worldpos tpos = {0, 0, 0};
-			int x, y, tmus = 0, tmus_inverse = 0;
+		if (istownarea(&p_ptr->wpos, MAX_TOWNAREA)) {
+			i = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].town_idx;
 
-			for (x = p_ptr->wpos.wx - 2; x <= p_ptr->wpos.wx + 2; x++) {
-				for (y = p_ptr->wpos.wy - 2; y <= p_ptr->wpos.wy + 2; y++) {
-					if (!in_bounds_wild(y, x)) continue;
-					tpos.wx = x; tpos.wy = y;
-					if (istown(&tpos)) break;
-				}
-				if (istown(&tpos)) break;
+			if (night_surface) switch (town[i].type) {
+			default:
+			case 0: tmus = 49; tmus_inverse = 1; break; //default town
+			case 1: tmus = 50; tmus_inverse = 3; break; //Bree
+			case 2: tmus = 51; tmus_inverse = 4; break; //Gondo
+			case 3: tmus = 52; tmus_inverse = 5; break; //Minas
+			case 4:	tmus = 53; tmus_inverse = 6; break; //Loth
+			case 5: tmus = 54; tmus_inverse = 7; break; //Khaz
 			}
-
-			for (i = 0; i < numtowns; i++)
-				if (town[i].x == tpos.wx && town[i].y == tpos.wy) {
-					switch (town[i].type) {
-					default:
-					case 0: if (night_surface) {
-							tmus = 49; tmus_inverse = 1;
-						} else {
-							tmus = 1; tmus_inverse = 49;
-						} break; //default town
-					case 1: if (night_surface) {
-							tmus = 50; tmus_inverse = 3;
-						} else {
-							tmus = 3; tmus_inverse = 50;
-						} break; //Bree
-					case 2: if (night_surface) {
-							tmus = 51; tmus_inverse = 4;
-						} else {
-							tmus = 4; tmus_inverse = 51;
-						} break; //Gondo
-					case 3: if (night_surface) {
-							tmus = 52; tmus_inverse = 5;
-						} else {
-							tmus = 5; tmus_inverse = 52;
-						} break; //Minas
-					case 4: if (night_surface) {
-							tmus = 53; tmus_inverse = 6;
-						} else {
-							tmus = 6; tmus_inverse = 53;
-						} break; //Loth
-					case 5: if (night_surface) {
-							tmus = 54; tmus_inverse = 7;
-						} else {
-							tmus = 7; tmus_inverse = 54;
-						} break; //Khaz
-					}
-				}
+			else switch (town[i].type) {
+			default:
+			case 0: tmus = 1; tmus_inverse = 49; break; //default town
+			case 1: tmus = 3; tmus_inverse = 50; break; //Bree
+			case 2: tmus = 4; tmus_inverse = 51; break; //Gondo
+			case 3: tmus = 5; tmus_inverse = 52; break; //Minas
+			case 4: tmus = 6; tmus_inverse = 53; break; //Loth
+			case 5: tmus = 7; tmus_inverse = 54; break; //Khaz
+			}
 
 			/* now the specialty: If we're coming from elsewhere,
 			   we only switch to town music when we enter the town.

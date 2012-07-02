@@ -474,6 +474,10 @@
 #define MAX_DEPTH_OBJ   128 /* must be <= 128 */
 #define MAX_DEPTH	255 /* should be <= 255? (Valinor at 200 is deepest level) */
 
+/* The 'generally acknowledged' max radius for a town's housing zone.
+   This is not so much used to create wilderness than to check stuff - don't touch! */
+#define MAX_TOWNAREA	3
+
 /*
  * Maximum size of the "lite" array (see "cave.c")
  * Note that the "lite radius" will NEVER exceed 5, and even if the "lite"

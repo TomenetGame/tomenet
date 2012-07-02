@@ -5451,7 +5451,7 @@ void wipe_spell(struct worldpos *wpos, int cy, int cx, int r)
 	cave_type **zcave;
 	if(!(zcave = getcave(wpos))) return;
 	/* Don't hurt town or surrounding areas */
-	if(istownarea(wpos, 2)) return;
+	if(istownarea(wpos, MAX_TOWNAREA)) return;
 
 	/* Paranoia -- Dnforce maximum range */
 	if (r > 12) r = 12;
@@ -6772,7 +6772,7 @@ void house_creation(int Ind, bool floor, bool jail)
 		msg_print(Ind, "\376\377yYou must build on the world surface.");
 		return;
 	}
-	if (istownarea(wpos, 2)) {
+	if (istownarea(wpos, MAX_TOWNAREA)) {
 		msg_print(Ind, "\376\377yYou cannot build within a town area.");
 		if (!is_admin(p_ptr)) return;
 	}

@@ -2964,6 +2964,7 @@ void rd_towns()
 		rd_u16b(&town[i].type);
 		wild_info[town[i].y][town[i].x].type = WILD_TOWN;
 		wild_info[town[i].y][town[i].x].radius = town[i].baselevel;
+		wild_info[town[i].y][town[i].x].town_idx = i;
 		twpos.wx=town[i].x;
 		twpos.wy=town[i].y;
 		alloc_stores(i);

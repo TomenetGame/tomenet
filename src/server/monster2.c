@@ -2851,10 +2851,9 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	/* override protection for monsters spawning inside houses, to generate
 	   monster 'invaders' and/or monster 'owners' in wild houses? */
 	if (!(summon_override_checks & SO_HOUSE)) {
-		if (istownarea(wpos, 9) && (zcave[y][x].info & CAVE_ICKY)) {
+		if (istownarea(wpos, MAX_TOWNAREA) && (zcave[y][x].info & CAVE_ICKY)) {
 			/* exception: spawn certain vermin in prisons :) */
-			if (istownarea(wpos, 4) && (zcave[y][x].info & CAVE_STCK))
-				r_idx = get_prison_monster();
+			if (zcave[y][x].info & CAVE_STCK) r_idx = get_prison_monster();
 			else return(FALSE);
 		}
 	}

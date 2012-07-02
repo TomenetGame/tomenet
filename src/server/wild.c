@@ -140,6 +140,8 @@ static int towndist(int wx, int wy) {
 
 void init_wild_info_aux(int x, int y) {
 	wild_info[y][x].radius = towndist(x, y);
+	wild_info[y][x].town_idx = wild_gettown(x, y);
+
 	if (y + 1 < MAX_WILD_Y) {
 		if (!(wild_info[y + 1][x].radius))
 			init_wild_info_aux(x, y + 1);
@@ -190,6 +192,7 @@ void addtown(int y, int x, int base, u16b flags, int type)
 	town[numtowns].num_stores = max_st_idx;
 	town[numtowns].type = type;
 	wild_info[y][x].type = WILD_TOWN;
+	wild_info[y][x].town_idx = numtowns;
 	wild_info[y][x].radius = base;
 	alloc_stores(numtowns);
 	/* Initialize the stores */
@@ -242,6 +245,7 @@ void deltown(int Ind)
 //	wild_info[wpos->wy][wpos->wx].type = WILD_OCEAN;
 	wild_info[wpos->wy][wpos->wx].type = WILD_UNDEFINED; /* re-generate */
 	wild_info[wpos->wy][wpos->wx].radius = towndist(wpos->wy, wpos->wx);
+	wild_info[wpos->wy][wpos->wx].town_idx = wild_gettown(wpos->wx, wpos->wy);
 	wilderness_gen(wpos);
 
 	/* Shrink the town array */
@@ -258,7 +262,7 @@ void wild_bulldoze()
 	for(y = 0; y < MAX_WILD_Y; y++){
 		for(x = 0; x < MAX_WILD_X; x++){
 			struct wilderness_type *w_ptr = &wild_info[y][x];
-			if (w_ptr->radius <= 2 &&
+			if (w_ptr->radius <= MAX_TOWNAREA &&
 			    (w_ptr->type == WILD_WASTELAND ||
 			    w_ptr->type == WILD_DESERT ||
 			    w_ptr->type == WILD_ICE ||
@@ -1281,13 +1285,16 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	/* Hack -- Induce consistant wilderness */
 	/* Rand_value = seed_town + (Depth * 600) + (w_ptr->dwellings * 200);*/
 
+
+	/* find the dimensions of the house -
+	   depends on its placement within MAX_TOWNAREA */
+
 #ifdef DEVEL_TOWN_COMPATIBILITY
 	house_xlen = rand_int(10) + 3;
 	house_ylen = rand_int(5) + 3;
 	plot_xlen = house_xlen;
 	plot_ylen = house_ylen;
 #else
-	/* find the dimensions of the house */
 	/* chance of being a "large" house */
 #ifdef __DISABLE_HOUSEBOOST
 	if (!rand_int(2)) {
@@ -4099,4 +4106,32 @@ u32b house_price(house_type *h_ptr) {
 #endif
 
 	return price;
+}
+
+/* Returns town if we're within a town area of radius MAX_TOWNAREA (housing!).
+   NOTE: This function assumes that towns have a minimum distance of 6,
+   even diagonally! */
+int wild_gettown(int x, int y) {
+        int i;
+
+    	if (wild_info[y][x].type == WILD_TOWN) {
+	        for (i = 0; i < numtowns; i++)
+    	        	if (town[i].x == x && town[i].y == y) return i;
+
+	    	/* paranoia - shouldn't be possible */
+	    	return -1;
+	}
+
+        if (wild_info[y][x].radius > MAX_TOWNAREA) return -1;
+
+        for (i = 0; i < numtowns; i++) {
+                if (town[i].x >= x - 3 &&
+            	    town[i].x <= x + 3 &&
+            	    town[i].y >= y - 3 &&
+            	    town[i].y <= y + 3)
+            		return i;
+        }
+
+	/* paranoia - shouldn't be possible */
+        return -1;
 }

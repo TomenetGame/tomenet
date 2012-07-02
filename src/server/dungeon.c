@@ -1192,7 +1192,7 @@ void player_day(int Ind) {
 	for (y = 0; y < MAX_HGT; y++)
 	for (x = 0; x < MAX_WID; x++) {
 		/* Hack -- Memorize lit grids if allowed */
-		if (istownarea(&p_ptr->wpos, 2)
+		if (istownarea(&p_ptr->wpos, MAX_TOWNAREA)
 		    && (p_ptr->view_perma_grids)) {
 			p_ptr->cave_flag[y][x] |= CAVE_MARK;
 		}
@@ -1231,7 +1231,7 @@ void player_night(int Ind) {
 			/* Forget the grid */ 
 			p_ptr->cave_flag[y][x] &= ~CAVE_MARK;
 		/* Always remember interesting features in town areas */
-		} else if (istownarea(&p_ptr->wpos, 2)
+		} else if (istownarea(&p_ptr->wpos, MAX_TOWNAREA)
 		    && (p_ptr->view_perma_grids)) {
 			p_ptr->cave_flag[y][x] |= CAVE_MARK;
 		}
@@ -1569,7 +1569,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 
 	/* Is it variant @Ot for town-only auto-retaliation? - C. Blue */
 	if (*inscription == 't') {
-		if (!istownarea(&p_ptr->wpos, 2)) return FALSE;
+		if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
 		inscription++;
 	}
 
@@ -4103,7 +4103,7 @@ static bool process_player_end_aux(int Ind)
 //	if (p_ptr->drain_exp && magik(p_ptr->wpos.wz != 0 ? 50 : 0) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
 //	if (p_ptr->drain_exp && magik(p_ptr->wpos.wz != 0 ? 50 : (istown(&p_ptr->wpos) ? 0 : 25)) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
 	/* changing above line to use istownarea() so you can sort your houses without drain */
-	if (p_ptr->drain_exp && magik(p_ptr->wpos.wz != 0 ? 50 : (istownarea(&p_ptr->wpos, 2) || isdungeontown(&p_ptr->wpos) ? 0 : 25)) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
+	if (p_ptr->drain_exp && magik(p_ptr->wpos.wz != 0 ? 50 : (istownarea(&p_ptr->wpos, MAX_TOWNAREA) || isdungeontown(&p_ptr->wpos) ? 0 : 25)) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
 //		take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L, "Draining", TRUE, FALSE, FALSE);
 		/* Moltor is right, exp drain was too weak for up to quite high levels. Need to make a new formula.. */
 	{
@@ -5550,7 +5550,7 @@ static void process_player_change_wpos(int Ind)
 	else p_ptr->dlev_id = 0;
 
 	/* Memorize the town and all wilderness levels close to town */
-	if (istownarea(wpos, 2)) {
+	if (istownarea(wpos, MAX_TOWNAREA)) {
 		p_ptr->max_panel_rows = (MAX_HGT / SCREEN_HGT) * 2 - 2;
 		p_ptr->max_panel_cols = (MAX_WID / SCREEN_WID) * 2 - 2;
 

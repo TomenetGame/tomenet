@@ -6771,7 +6771,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 	//Let's not allow mobs that can fire missiles to multiply..
 	if((r_ptr->flags7 & RF7_MULTIPLY) && (!(r_ptr->flags5 & RF5_MISSILE)) &&
 	    (!istown(wpos) && (m_ptr->wpos.wz != 0 ||
-	     wild_info[m_ptr->wpos.wy][m_ptr->wpos.wx].radius > 2) ) &&
+	     wild_info[m_ptr->wpos.wy][m_ptr->wpos.wx].radius >= MAX_TOWNAREA) ) &&
 	    (num_repro < MAX_REPRO))
 #if REPRO_RATE
 		if (magik(REPRO_RATE))
