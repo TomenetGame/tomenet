@@ -1115,7 +1115,7 @@ static void init_artifact_list() {
 
 		p1 = buf + 2; /* artifact code */
 		p2 = strchr(p1, ':'); /* 1 before artifact name */
-		if (!p2) continue; /* paranoia (broken file) */
+		if (!p2 || strlen(p2 + 1) <= 1) continue; /* !p2: paranoia (broken file); strlen: #201 template */
 
 		artifact_list_code[artifact_list_idx] = atoi(p1);
 		strcpy(artifact_list_name[artifact_list_idx], "");
