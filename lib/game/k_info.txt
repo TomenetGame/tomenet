@@ -1059,7 +1059,7 @@ P:16:1d4:-2:0:0
 # This shield does not belong here
 
 N:122:& Shield~ of Deflection
-G:[:G
+G:):G
 I:34:10:0
 W:70:0:100:10000
 A:70/3
@@ -3368,7 +3368,7 @@ P:8:1d3:0:0:10
 F:IGNORE_ACID | IGNORE_WATER
 
 N:414:& Dragon Shield~
-G:[:r
+G:):r
 I:34:6:0
 W:70:0:100:7000
 A:80/4
@@ -7296,7 +7296,7 @@ P:0:1d6:0:0:0
 F:SHOW_MODS | SLAY_ANIMAL
 
 N:986:& Mithril Ancile~
-G:[:B
+G:):B
 I:34:11:0
 W:95:0:120:20000
 A:95/20
@@ -7305,7 +7305,7 @@ $USE_NEW_SHIELDS!P:16:1d1:0:0:10
 F:IGNORE_ACID | IGNORE_WATER | WINNERS_ONLY | FORCE_DEPTH
 
 N:987:& Adamantite Aegis~
-G:[:v
+G:):v
 I:34:12:0
 W:110:0:160:25000
 A:110/24
@@ -7664,7 +7664,7 @@ F:FOUNTAIN
 
 # The Smokin' Boots of Moltor, the Dwarven Archer
 N:1030:& Smokin' Boots~
-G:):r
+G:]:r
 I:30:9:0
 W:24:30:30:50000
 P:3:0d0:0:0:-5
