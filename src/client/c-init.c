@@ -1088,6 +1088,7 @@ static void init_artifact_list() {
 	char buf[1024], *p1, *p2, art_name[MSG_LEN];
 	FILE *fff;
 	int tval = 0, sval = 0, i;
+	bool discard;
 
 	/* actually use local r_info.txt - a novum */
 	path_build(buf, 1024, ANGBAND_DIR_GAME, "a_info.txt");
@@ -1119,6 +1120,7 @@ static void init_artifact_list() {
 		artifact_list_code[artifact_list_idx] = atoi(p1);
 		strcpy(artifact_list_name[artifact_list_idx], "");
 		strcpy(art_name, p2 + 1);
+		discard = FALSE;
 
 		/* fetch tval,sval and lookup type name in k_info */
 		while (0 == my_fgets(fff, buf, 1024)) {
@@ -1134,14 +1136,24 @@ static void init_artifact_list() {
 			}
 			if (!p1 && !p2) continue;
 
-			if (strlen(buf) < 3 || buf[0] != 'I') continue;
-
-			p1 = buf + 2; /* tval */
-			p2 = strchr(p1, ':') + 1; /* sval */
-			tval = atoi(p1);
-			sval = atoi(p2);
-			break;
+			if (strlen(buf) < 3 || (buf[0] != 'I' && buf[0] != 'W')) continue;
+			if (buf[0] == 'I') {
+				p1 = buf + 2; /* tval */
+				p2 = strchr(p1, ':') + 1; /* sval */
+				tval = atoi(p1);
+				sval = atoi(p2);
+				continue;
+			} else { /* 'W' -- scan rarity */
+				p1 = buf + 2;
+				p2 = strchr(p1, ':') + 1;
+				/* check for 'disabled' hack */
+				if (atoi(p2) == 255) discard = TRUE;
+				break;
+			}
 		}
+		/* flashy-thingy us? */
+		if (discard) continue;
+
 		/* lookup type name */
 		for (i = 0; i < MAX_K_IDX; i++) {
 			if (kind_list_tval[i] == tval &&
@@ -1388,6 +1400,9 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 				p1 = p2;
 			    /* rarity */
 				p2 = strchr(p1, ':') + 1;
+				/* hack, 255 counts as diabled */
+				if (atoi(p1) == 255) sprintf(info_tmp, "This artifact is unfindable. ");
+				strcpy(info, info_tmp);
 				p1 = p2;
 			    /* weight */
 				p2 = strchr(p1, ':') + 1;
@@ -1498,6 +1513,20 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 				   (for when two lines are merged -> the space would be missing) */
 				if (info[strlen(info) - 1] != ' ') strcat(info, " ");
 
+				/* different colour for certain special flags, to stand out */
+				if ((p2 = strstr(info, "SPECIAL_GENE"))) {
+					strcpy(info_tmp, info);
+					sprintf(info_tmp + (p2 - info), "\377ySPECIAL_GENE\377%c", a_val);
+					strcat(info_tmp, p2 + 12);
+					strcpy(info, info_tmp);
+				}
+				if ((p2 = strstr(info, "WINNERS_ONLY"))) {
+					strcpy(info_tmp, info);
+					sprintf(info_tmp + (p2 - info), "\377vWINNERS_ONLY\377%c", a_val);
+					strcat(info_tmp, p2 + 12);
+					strcpy(info, info_tmp);
+				}
+
 				/* add flags to existing line */
 				p1 = info;
 				while (p1) {
@@ -1506,6 +1535,8 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 						strcat(paste_lines[pl], p1);
 						Term_putstr(f_col, 7 + l, -1, ta_val, p1);
 						f_col += strlen(p1);
+						if (strstr(p1, "SPECIAL_GENE")) f_col -= 4;
+						if (strstr(p1, "WINNERS_ONLY")) f_col -= 4;
 
 						/* done */
 						break;
@@ -1524,6 +1555,8 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 							strcat(paste_lines[pl], p1);
 							Term_putstr(2, 7 + l, -1, ta_val, p1);
 							f_col = 2 + strlen(p1);
+							if (strstr(p1, "SPECIAL_GENE")) f_col -= 4;
+							if (strstr(p1, "WINNERS_ONLY")) f_col -= 4;
 
 							/* done */
 							break;
@@ -1542,6 +1575,8 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 								strcat(paste_lines[pl], p1);
 								Term_putstr(2, 7 + l, -1, ta_val, p1);
 								f_col = 2 + strlen(p1);
+								if (strstr(p1, "SPECIAL_GENE")) f_col -= 4;
+								if (strstr(p1, "WINNERS_ONLY")) f_col -= 4;
 
 								/* done */
 								break;
@@ -1553,6 +1588,8 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 								strcat(paste_lines[pl], info_tmp);
 								Term_putstr(f_col, 7 + l, -1, ta_val, info_tmp);
 								f_col += strlen(info_tmp);
+								if (strstr(info_tmp, "SPECIAL_GENE")) f_col -= 4;
+								if (strstr(info_tmp, "WINNERS_ONLY")) f_col -= 4;
 								p1 = p2 + 1;
 
 								/* go on */
