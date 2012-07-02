@@ -1526,6 +1526,13 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 					strcat(info_tmp, p2 + 12);
 					strcpy(info, info_tmp);
 				}
+				/* Strip HIDE_TYPE, basically every artifact has this */
+				if ((p2 = strstr(info, "HIDE_TYPE"))) {
+					strcpy(info_tmp, info);
+					info_tmp[(p2 - info) - 1] = '\0';
+					strcat(info_tmp, p2 + 9);
+					strcpy(info, info_tmp);
+				}
 
 				/* add flags to existing line */
 				p1 = info;
