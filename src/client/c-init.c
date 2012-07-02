@@ -1383,6 +1383,8 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 				got_W_line = TRUE;
 			    /* depth */
 				p2 = strchr(p1, ':') + 1;
+				sprintf(info_tmp, "Found around depth: \377%c%d\377%c, ", a_val, atoi(p1), a_key);
+				strcpy(info, info_tmp);
 				p1 = p2;
 			    /* rarity */
 				p2 = strchr(p1, ':') + 1;
@@ -1390,10 +1392,10 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 			    /* weight */
 				p2 = strchr(p1, ':') + 1;
 				sprintf(info_tmp, "Weight: \377%c%d.%d lb\377%c, ", a_val, atoi(p1) / 10, atoi(p1) % 10, a_key);
-				strcpy(info, info_tmp);
+				strcat(info, info_tmp);
 				p1 = p2;
 			    /* price */
-				strcpy(info_tmp, format("Value: \377%c%d Au\377%c.", a_val, atoi(p1), a_key));
+				sprintf(info_tmp, "Value: \377%c%d Au\377%c.", a_val, atoi(p1), a_key);
 				strcat(info, info_tmp);
 			    /* all done, display: */
 				strcpy(paste_lines[++pl], format("\377%c", a_key));
@@ -1441,7 +1443,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 					}
 				} else if (is_weapon(tval)) {
 					empty = FALSE;
-				        sprintf(info_tmp, "Damage dice: \377%c%s\377%c, To-hit/to-dam: \377%c(%s%d,%s%d)\377%c",
+				        sprintf(info_tmp, "Damage dice: \377%c(%s)\377%c, To-hit/to-dam: \377%c(%s%d,%s%d)\377%c",
 					    a_val, v_ddice, a_key,
 					    a_val, v_hit < 0 ? "" : "+", v_hit, v_dam < 0 ? "" : "+", v_dam, a_key);
 					strcpy(info, info_tmp);
