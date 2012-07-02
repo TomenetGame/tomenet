@@ -1895,62 +1895,68 @@ void msg_print(int Ind, cptr msg_raw)
 				text_len++;
 
 				/* Avoid cutting words in two */
-				if ((text_len == line_len) && (msg[msg_scan] != '\0') &&
-				    ((msg[msg_scan - 1] >= 'A' && msg[msg_scan - 1] <= 'Z') ||
-				    (msg[msg_scan - 1] >= '0' && msg[msg_scan - 1] <= '9') ||
-#if 0
-				    (msg[msg_scan - 1] == '(' || msg[msg_scan - 1] == ')') ||
-				    (msg[msg_scan - 1] == '[' || msg[msg_scan - 1] == ']') ||
-				    (msg[msg_scan - 1] == '{' || msg[msg_scan - 1] == '}') ||
-#else
-				    (msg[msg_scan - 1] == '(') ||
-				    (msg[msg_scan - 1] == '[') ||
-				    (msg[msg_scan - 1] == '{') ||
-#endif
+				if ((text_len == line_len) && (msg[msg_scan] != '\0')
+				    && (
+
+				    (msg[msg_scan - 1] >= 'A' && msg[msg_scan - 1] <= 'Z') ||
 				    (msg[msg_scan - 1] >= 'a' && msg[msg_scan - 1] <= 'z') ||
-				    /* (maybe too much) for pasting items to chat, (+1) or (-2,0) : */
-				    (msg[msg_scan - 1] == '+' || msg[msg_scan - 1] == '-') ||
-				    (msg[msg_scan - 1] == '\377')) &&
-				    ((msg[msg_scan] >= 'A' && msg[msg_scan] <= 'Z') ||
+				    (msg[msg_scan - 1] >= '0' && msg[msg_scan - 1] <= '9') ||
+				    msg[msg_scan - 1] == '(' ||
+				    msg[msg_scan - 1] == '[' ||
+				    msg[msg_scan - 1] == '{' ||
 #if 0
-				    (msg[msg_scan] == '(' || msg[msg_scan] == ')') ||
-				    (msg[msg_scan] == '[' || msg[msg_scan] == ']') ||
-				    (msg[msg_scan] == '{' || msg[msg_scan] == '}') ||
-#else
-				    (msg[msg_scan] == ')') ||
-				    (msg[msg_scan] == ']') ||
-				    (msg[msg_scan] == '}') ||
+				    msg[msg_scan - 1] == ')' ||
+				    msg[msg_scan - 1] == ']' ||
+				    msg[msg_scan - 1] == '}' ||
 #endif
-				    (msg[msg_scan] >= '0' && msg[msg_scan] <= '9') ||
-				    (msg[msg_scan] >= 'a' && msg[msg_scan] <= 'z') ||
 				    /* (maybe too much) for pasting items to chat, (+1) or (-2,0) : */
-				    (msg[msg_scan] == '+' || msg[msg_scan] == '-') ||
+				    msg[msg_scan - 1] == '+' || msg[msg_scan - 1] == '-' ||
+				    /* Don't break colour codes */
+				    msg[msg_scan - 1] == '\377'
+
+				    ) && (
+
+				    (msg[msg_scan] >= 'A' && msg[msg_scan] <= 'Z') ||
+				    (msg[msg_scan] >= 'a' && msg[msg_scan] <= 'z') ||
+				    (msg[msg_scan] >= '0' && msg[msg_scan] <= '9') ||
+#if 0
+				    msg[msg_scan] == '(' ||
+				    msg[msg_scan] == '[' ||
+				    msg[msg_scan] == '{' ||
+#endif
+				    msg[msg_scan] == ')' ||
+				    msg[msg_scan] == ']' ||
+				    msg[msg_scan] == '}' ||
+				    /* (maybe too much) for pasting items to chat, (+1) or (-2,0) : */
+				    msg[msg_scan] == '+' || msg[msg_scan] == '-' ||
 				    /* interpunction at the end of a sentence */
 				    msg[msg_scan] == '.' || msg[msg_scan] == ',' ||
 				    msg[msg_scan] == ';' || msg[msg_scan] == ':' ||
 				    msg[msg_scan] == '!' || msg[msg_scan] == '?' ||
-				    (msg[msg_scan] == '\377'))) {
+				    /* Don't break colour codes */
+				    msg[msg_scan] == '\377'
+
+				    )) {
 					space_scan = msg_scan;
 					do {
 						space_scan--;
 					} while (((msg[space_scan - 1] >= 'A' && msg[space_scan - 1] <= 'Z') ||
-						(msg[space_scan - 1] >= '0' && msg[space_scan - 1] <= '9') ||
 						(msg[space_scan - 1] >= 'a' && msg[space_scan - 1] <= 'z') ||
+						(msg[space_scan - 1] >= '0' && msg[space_scan - 1] <= '9') ||
 #if 0
-						msg[space_scan - 1] == '(' || msg[space_scan - 1] == ')' ||
-						msg[space_scan - 1] == '[' || msg[space_scan - 1] == ']' ||
-						msg[space_scan - 1] == '{' || msg[space_scan - 1] == '}' ||
-#else
+						msg[space_scan - 1] == ')' ||
+						msg[space_scan - 1] == ']' ||
+						msg[space_scan - 1] == '}' ||
+#endif
 						msg[space_scan - 1] == '(' ||
 						msg[space_scan - 1] == '[' ||
 						msg[space_scan - 1] == '{' ||
-#endif
 						/* (maybe too much) for pasting items to chat, (+1) or (-2,0) : */
 						msg[space_scan - 1] == '+' || msg[space_scan - 1] == '-' ||
 						/* pasting flags to chat ("SLAY_EVIL") */
 						msg[space_scan - 1] == '_' ||
-						msg[space_scan] == '\377') &&
-						space_scan > 0);
+						msg[space_scan - 1] == '\377'
+						) && space_scan > 0);
 
 					/* Simply cut words that are very long - mikaelh */
 					if (msg_scan - space_scan > 36) {
