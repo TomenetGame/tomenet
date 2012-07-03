@@ -3936,7 +3936,7 @@ void do_cmd_fire(int Ind, int dir)
 	int path_num = 0;
 #endif
 	
-	char brand_msg[80] = { '\0' };
+	char brand_msg[MAX_CHARS] = { '\0' };
 
         bool            drain_msg = TRUE;
         int             drain_result = 0, drain_heal = 0;
