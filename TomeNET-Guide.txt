@@ -6779,7 +6779,7 @@ Remove Curse    Breaks lesser curses on items, allowing you to unwear or
 *Remove Curse*  Breaks heavy curses. Note that curses (including heavy ones)
                 on weapons or armours can also be broken by enchanting one of
                 their boni some points above +0.
-Recharging      Recharges a magical rod/wand/staff.
+Recharging      Recharges a magical rod/wand/staff (see (5.22)).
 Rune of Protection  Creates a warding glyph on the floor that stops monsters
                     from crossing the field or summoning on it.
 Protection from evil    Repels evil creatures that try to attack you.
@@ -7709,7 +7709,7 @@ other. For example you only need one item that provides fire resistance. If
 you equip two such items you won't get better resistance than with just one
 item. You cannot get "double resistance" from two items' permanent resistances.
 This rule applies to all resistances and abilities that don't use a bonus
-number to indicate their effectiveness, like faster mana recharging or hit
+number to indicate their effectiveness, like faster mana replenishing or hit
 point regeneration, telepathic powers, slow digestion, etc.
 
 However, there is a way to further increase your resistances temporarily:
@@ -8544,9 +8544,11 @@ fully depleted ie have zero charges left.
 
 If unlucky, recharging may result in a failure. Even when recharging at highest
 magic spell level there is still a very slim chance for a failure to occur.
-While a failed recharge may drain rods even further, wands and staves may even
-blow up completely. So only recharge those when they are already fully depleted
-to minimize that risk.
+While a failed recharge may drain rods even further, wands and staves may
+either just get their charges depletes or they may even blow up completely,
+depending on your (bad) luck.
+So only recharge those when they are already fully depleted to minimize that
+risk.
 
 Means of recharging:
 -Scrolls            (60 power)
