@@ -11863,7 +11863,7 @@ bool master_player(int Ind, char *parms){
 			censor_length = 0;
 			msg_broadcast_format(0, buf);
 #ifdef TOMENET_WORLDS
-			if (cfg.worldd_broadcast) world_msg(buf);
+			if (cfg.worldd_broadcast) world_chat(0, buf);
 #endif
 			break;
 		case 'r':	/* FULL ACCOUNT SCAN + RM */
