@@ -1493,8 +1493,7 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 		}
 	}
 	/* Hack */
-	if ((f4 & TR4_CURSE_NO_DROP) || (f3 & TR3_AUTO_CURSE))
-		return 0;
+	if (f3 & TR3_AUTO_CURSE) return 0;
 
 	/* Bad items don't sell. Good items with some bad modifiers DO sell ((*defenders*)). -C. Blue */
 	switch (o_ptr->tval) {
@@ -2332,9 +2331,8 @@ s64b artifact_value_real(int Ind, object_type *o_ptr)
 		/* Randarts */
 		if (o_ptr->name1 == ART_RANDART) {
 			a_ptr = randart_make(o_ptr);
-			if ((a_ptr->flags4 & TR4_CURSE_NO_DROP) || (a_ptr->flags3 & TR3_AUTO_CURSE)) {
-				value = 0;
-			} else {
+			if (a_ptr->flags3 & TR3_AUTO_CURSE) return (0L);
+			else {
 				/* start with base item kind price (k_info) */
 				value = object_value_base(0, o_ptr);
 				/* randarts get a base value boost */
@@ -2354,7 +2352,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr)
 			value = a_ptr->cost;
 
 			/* Let true arts' prices be totally determined in a_info.txt */
-			return(value);
+			return (value);
 		}
 
 		/* Hack -- "worthless" artifacts */
@@ -2363,10 +2361,6 @@ s64b artifact_value_real(int Ind, object_type *o_ptr)
 		/* Hack -- Use the artifact cost instead */
 //		value = a_ptr->cost;
 	}
-
-	/* Hack */
-	if ((f4 & TR4_CURSE_NO_DROP) || (f3 & TR3_AUTO_CURSE))
-		return 0;
 
 	/* Bad items don't sell. Good items with some bad modifiers DO sell ((*defenders*)). -C. Blue */
 	switch (o_ptr->tval) {

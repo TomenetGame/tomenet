@@ -4546,15 +4546,15 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 			fprintf(fff, "\377DIt is heavily cursed.\n");
 		else
 			fprintf(fff, "\377DIt is cursed.\n");
+
+		if (f3 & (TR3_TY_CURSE))
+			fprintf(fff, "\377DIt carries an ancient foul curse.\n");
+
+		if (f4 & (TR4_DG_CURSE))
+			fprintf(fff, "\377DIt carries an ancient morgothian curse.\n");
+		if (f4 & (TR4_CURSE_NO_DROP))
+			fprintf(fff, "\377DIt cannot be dropped while cursed.\n");
 	}
-
-	if (f3 & (TR3_TY_CURSE))
-		fprintf(fff, "\377DIt carries an ancient foul curse.\n");
-
-	if (f4 & (TR4_DG_CURSE))
-		fprintf(fff, "\377DIt carries an ancient morgothian curse.\n");
-	if (f4 & (TR4_CURSE_NO_DROP))
-		fprintf(fff, "\377DIt cannot be dropped while cursed.\n");
 	if (f3 & (TR3_AUTO_CURSE))
 		fprintf(fff, "\377DIt can re-curse itself.\n");
 

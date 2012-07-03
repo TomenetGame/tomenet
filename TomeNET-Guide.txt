@@ -7138,6 +7138,9 @@ map sectors or dungeon floors that are left without any players on them, and up
 to many hours in case someone ghost-died on a dungeon level, which can render
 the dungeon level 'static' for that time to allow others to retrieve the loot).
 
+Note that some cursed true artifacts can be sold to stores after you removed
+the curse.
+
 
 Random Artifacts
 ----------------
@@ -7156,6 +7159,9 @@ markets.
 The advantage of creating an artifact is that the player can determine the base
 item type he wants to use. For more information about artifact creation see
 (8.4).
+
+Note that randarts that don't auto-curse themselves can be sold after you
+removed the curse (except if the base item type is already worthless).
 
 
 Artifacts vs Nazgul
