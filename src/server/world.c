@@ -136,44 +136,49 @@ void world_comm(int fd, int arg){
 				if (*p == '\374') p++;
 				else if (*p == '\375') p++;
 				if (*p == '\376') p++;
-				if (cfg.worldd_pubchat || (cfg.worldd_broadcast && prefix(p, "\377r[\377"))) { /* Filter incoming public chat and broadcasts here now - mikaelh */
-					for(i=1; i<=NumPlayers; i++){
-						if(Players[i]->conn!=NOT_CONNECTED){
-							/* lame method just now */
-							if(world_check_ignore(i, wpk->d.chat.id, wpk->serverid))
-									continue;
-							msg_print(i, wpk->d.chat.ctxt);
-						}
+
+#if 0 /* see #else below */
+				if (!(cfg.worldd_pubchat || (cfg.worldd_broadcast && prefix(p, "\377r[\377"))))
+					break; /* Filter incoming public chat and broadcasts here now - mikaelh */
+#else /* Consistency: Let world's 'server' flags decide about filtering our incoming messages */
+#endif
+
+				for(i=1; i<=NumPlayers; i++){
+					if(Players[i]->conn!=NOT_CONNECTED){
+						/* lame method just now */
+						if(world_check_ignore(i, wpk->d.chat.id, wpk->serverid))
+							continue;
+						msg_print(i, wpk->d.chat.ctxt);
 					}
+				}
 
 #if 1
-					/* log */
-					wmsg_ptr = wpk->d.chat.ctxt;
-					/* strip \374,\375,\376 */
-					while (*wmsg_ptr >= '\374' && *wmsg_ptr < '\377') wmsg_ptr++;
-					strcpy(msg, wmsg_ptr);
-					/* strip next colour code */
-					wmsg_ptr = strchr(wmsg_ptr, '\377') + 2;
-					msg_ptr = strchr(msg, '\377');
-					strcpy(msg_ptr, wmsg_ptr);
-					/* strip next colour code */
-					wmsg_ptr = strchr(wmsg_ptr, '\377') + 2;
-					msg_ptr = strchr(msg, '\377');
-					strcpy(msg_ptr, wmsg_ptr);
-					/* strip next colour code if at the beginning of the actual message line */
-					if (*(wmsg_ptr + 1) == '\377') {
-						strcpy(msg_ptr + 1, wmsg_ptr + 3);
-						/* strip next colour code if existing  */
-						if ((wmsg_ptr = strchr(wmsg_ptr + 3, '\377'))
-						    /* not in /me though: ']' check */
-						    && (wmsg_ptr2 = strchr(wpk->d.chat.ctxt + 9, ']')) && wmsg_ptr2 < wmsg_ptr) {
-							msg_ptr = strchr(msg + 1, '\377');
-							strcpy(msg_ptr, wmsg_ptr + 2);
-						}
+				/* log */
+				wmsg_ptr = wpk->d.chat.ctxt;
+				/* strip \374,\375,\376 */
+				while (*wmsg_ptr >= '\374' && *wmsg_ptr < '\377') wmsg_ptr++;
+				strcpy(msg, wmsg_ptr);
+				/* strip next colour code */
+				wmsg_ptr = strchr(wmsg_ptr, '\377') + 2;
+				msg_ptr = strchr(msg, '\377');
+				strcpy(msg_ptr, wmsg_ptr);
+				/* strip next colour code */
+				wmsg_ptr = strchr(wmsg_ptr, '\377') + 2;
+				msg_ptr = strchr(msg, '\377');
+				strcpy(msg_ptr, wmsg_ptr);
+				/* strip next colour code if at the beginning of the actual message line */
+				if (*(wmsg_ptr + 1) == '\377') {
+					strcpy(msg_ptr + 1, wmsg_ptr + 3);
+					/* strip next colour code if existing  */
+					if ((wmsg_ptr = strchr(wmsg_ptr + 3, '\377'))
+					    /* not in /me though: ']' check */
+					    && (wmsg_ptr2 = strchr(wpk->d.chat.ctxt + 9, ']')) && wmsg_ptr2 < wmsg_ptr) {
+						msg_ptr = strchr(msg + 1, '\377');
+						strcpy(msg_ptr, wmsg_ptr + 2);
 					}
-					s_printf("%s\n", msg);
-#endif
 				}
+				s_printf("%s\n", msg);
+#endif
 				break;
 			case WP_PMSG:
 				/* private message from afar -authed */
@@ -232,28 +237,30 @@ void world_comm(int fd, int arg){
 				set_runlevel(0);
 				break;
 			case WP_IRCCHAT:
-				if (cfg.worldd_ircchat) {
-					for (i = 1; i <= NumPlayers; i++) {
-						if (Players[i]->conn == NOT_CONNECTED) continue;
-						msg_print(i, wpk->d.chat.ctxt);
-					}
+#if 0 /* 0ed for consistency: Let world's 'server' flags decide about filtering our incoming messages */
+				if (!cfg.worldd_ircchat) break;
+#endif
+
+				for (i = 1; i <= NumPlayers; i++) {
+					if (Players[i]->conn == NOT_CONNECTED) continue;
+					msg_print(i, wpk->d.chat.ctxt);
+				}
 
 #if 1
-					/* log */
-					strcpy(msg, "[IRC]");
-					wmsg_ptr = wpk->d.chat.ctxt;
-					/* strip \374,\375,\376 */
-					while (*wmsg_ptr >= '\374' && *wmsg_ptr < '\377') wmsg_ptr++;
-					wmsg_ptr += 10;
-					strcat(msg, wmsg_ptr);
-					/* strip next colour code */
-					wmsg_ptr = strchr(wmsg_ptr, '\377') + 2;
-					msg_ptr = strchr(msg, '\377');
-					strcpy(msg_ptr, wmsg_ptr);
-					/* done */
-					s_printf("%s\n", msg);
+				/* log */
+				strcpy(msg, "[IRC]");
+				wmsg_ptr = wpk->d.chat.ctxt;
+				/* strip \374,\375,\376 */
+				while (*wmsg_ptr >= '\374' && *wmsg_ptr < '\377') wmsg_ptr++;
+				wmsg_ptr += 10;
+				strcat(msg, wmsg_ptr);
+				/* strip next colour code */
+				wmsg_ptr = strchr(wmsg_ptr, '\377') + 2;
+				msg_ptr = strchr(msg, '\377');
+				strcpy(msg_ptr, wmsg_ptr);
+				/* done */
+				s_printf("%s\n", msg);
 #endif
-				}
 				break;
 			default:
 				s_printf("unknown packet from world: %d\n", wpk->type);
