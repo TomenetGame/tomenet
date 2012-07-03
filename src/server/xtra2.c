@@ -7325,12 +7325,21 @@ void player_death(int Ind)
 			break;
 		}
 
-		if (i < 5)
-			msg_broadcast_format(0, "\374\377a%s reached floor %d in the Ironman Deep Dive challenge, placing %d%s!",
+		if (i < 5) {
+			sprintf(buf, "\374\377a%s reached floor %d in the Ironman Deep Dive challenge, placing %d%s!",
 			    p_ptr->name, ABS(p_ptr->wpos.wz), i + 1, i == 0 ? "st" : (i == 1 ? "nd" : (i == 2 ? "rd" : "th")));
-		else
-			msg_broadcast_format(0, "\374\377a%s reached floor %d in the Ironman Deep Dive challenge!",
+			msg_broadcast_format(0, buf);
+#ifdef TOMENET_WORLDS
+			if (cfg.worldd_events && world_broadcast) world_msg(buf);
+#endif
+		} else {
+			sprintf(buf, "\374\377a%s reached floor %d in the Ironman Deep Dive challenge!",
 			    p_ptr->name, ABS(p_ptr->wpos.wz));
+			msg_broadcast_format(0, buf);
+#ifdef TOMENET_WORLDS
+			if (cfg.worldd_events && world_broadcast) world_msg(buf);
+#endif
+		}
 		l_printf("%s \\{s%s (%d) reached floor %d in the Ironman Deep Dive challenge\n", showdate(), p_ptr->name, p_ptr->lev, ABS(p_ptr->wpos.wz));
 	}
 
@@ -11789,6 +11798,7 @@ bool master_player(int Ind, char *parms){
 	int i;
 	struct account *d_acc;
 	int *id_list, n;
+	char buf[MSG_LEN];
 
 	if (!is_admin(p_ptr))
 	{
@@ -11837,7 +11847,6 @@ bool master_player(int Ind, char *parms){
 		case 'S':	/* Static a regular */
 			stat_player(&parms[1], TRUE);
 			break;
-			
 		case 'U':	/* Unstatic him */
 			stat_player(&parms[1], FALSE);
 			break;
@@ -11850,10 +11859,12 @@ bool master_player(int Ind, char *parms){
 			break;
 		case 'B':
 			/* This could be fun - be wise dungeon master */
+			sprintf(buf, "\375\377r[\377%c%s\377r] \377%c%s", 'b', p_ptr->name, COLOUR_CHAT, &parms[1]); /* admin colour 'b' */
+			censor_length = 0;
+			msg_broadcast_format(0, buf);
 #ifdef TOMENET_WORLDS
-			if (cfg.worldd_pubchat) world_msg(&parms[1]);
+			if (cfg.worldd_broadcast) world_msg(buf);
 #endif
-			msg_broadcast(0, &parms[1]);
 			break;
 		case 'r':	/* FULL ACCOUNT SCAN + RM */
 			/* Delete a player from the database/savefile */
