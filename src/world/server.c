@@ -126,6 +126,9 @@ void loadservers(){
 				case 'S':
 					slist[i].rflags |= WPF_IRCCHAT;
 					break;
+				case 'e':
+					slist[i].mflags |= WMF_EVENTS;
+					break;
 			}
 		}
 

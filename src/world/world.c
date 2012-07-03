@@ -455,6 +455,11 @@ int get_message_type(char *msg) {
 		   strstr(msg, " has retired to ") ||
 		   strstr(msg, " bids farewell to this plane")) {
 		return WMF_PDEATH;
+	} else if ((!strncmp(msg, "\374\377a>>", 5) && strstr(msg, " wins ")) /* global events */
+	    || (!strncmp(msg, "\374\377a", 3) && strstr(msg, " reached floor ")) /* ironman deep dive challenge */
+	    || (!strncmp(msg, "\374\377L***\377a", 8) && strstr(msg, " made it through ")) /* ironman deep dive challenge - win */
+	    ) {
+		return WMF_EVENTS;
 	}
 
 	return 0;

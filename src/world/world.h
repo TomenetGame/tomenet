@@ -50,6 +50,7 @@
 #define WMF_PDEATH	0x10
 #define WMF_PJOIN	0x20
 #define WMF_PLEAVE	0x40
+#define WMF_EVENTS	0x80
 
 /* now we are going to be the server which authenticates
  * the players. Once they are logged in, they will receive
