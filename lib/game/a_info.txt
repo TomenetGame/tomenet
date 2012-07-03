@@ -3027,7 +3027,7 @@ W:60:70:300:120000
 P:0:5d8:20:30:0
 F:STR | WIS | HIDE_TYPE | RES_FEAR | FREE_ACT | SEE_INVIS | SHOW_MODS |
 F:SLAY_EVIL | KILL_UNDEAD | KILL_DEMON | SLAY_TROLL | SLAY_ORC | 
-F:LITE3 | IM_FIRE | BLESSED
+F:BRAND_FIRE | LITE3 | IM_FIRE | BLESSED
 D:This radiating and perfectly shaped weapon was brought down to earth on the
 D:southern hemisphere by a mighty guardian of the skies.
 
