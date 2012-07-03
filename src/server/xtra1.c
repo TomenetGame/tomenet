@@ -6913,7 +6913,7 @@ static void process_global_event(int ge_id) {
 	cave_type **zcave, *c_ptr;
 	int xstart = 0, ystart = 0; /* for arena generation */
 	long elapsed, elapsed_turns; /* amounts of seconds elapsed since the event was started (created) */
-	char m_name[MNAME_LEN];
+	char m_name[MNAME_LEN], buf[MSG_LEN];
 	int m_idx, tries = 0;
 	time_t now;
 
@@ -7280,41 +7280,47 @@ static void process_global_event(int ge_id) {
 			break;
 		case 6: /* we have a winner! */
 			j = ge->extra[3];
-			if (j <= NumPlayers) { /* Make sure the winner didn't die in the 1 turn that just passed! */
-			    p_ptr = Players[j];
-			    if (!p_ptr->wpos.wx && !p_ptr->wpos.wy) { /* ok then.. */
-				msg_broadcast_format(0, "\374\377a>>%s wins %s!<<", p_ptr->name, ge->title);
-				if (!p_ptr->max_exp) gain_exp(j, 1); /* may only take part in one tournament per char */
-
-				/* don't create a actual reward here, but just a signed deed that can be turned in (at mayor's office)! */
-				k = lookup_kind(TV_PARCHMENT, SV_DEED_HIGHLANDER);
-				invcopy(o_ptr, k);
-				o_ptr->number = 1;
-				object_aware(j, o_ptr);
-				object_known(o_ptr);
-				o_ptr->discount = 0;
-				o_ptr->level = 0;
-				o_ptr->ident |= ID_MENTAL;
-				o_ptr->note = quark_add("Tournament reward");
-				inven_carry(j, o_ptr);
-
-				s_printf("%s EVENT_WON: %s wins %d (%s)\n", showtime(), p_ptr->name, ge_id+1, ge->title);
-				l_printf("%s \\{s%s has won %s\n", showdate(), p_ptr->name, ge->title);
-
-				/* avoid him dying */
-				set_poisoned(j, 0, 0);
-				set_cut(j, 0, 0);
-				set_food(j, PY_FOOD_FULL);
-				hp_player_quiet(j, 5000, TRUE);
-
-				ge->state[0] = 7;
-				ge->state[1] = elapsed;
-			    } else {
+			if (j > NumPlayers) { /* Make sure the winner didn't die in the 1 turn that just passed! */
 				ge->state[0] = 255; /* no winner, d'oh */
-			    }
-			} else {
-				ge->state[0] = 255; /* no winner, d'oh */
+				break;
 			}
+
+			p_ptr = Players[j];
+			if (p_ptr->wpos.wx || p_ptr->wpos.wy) { /* not ok.. */
+				ge->state[0] = 255; /* no winner, d'oh */
+				break;
+			}
+
+			sprintf(buf, "\374\377a>>%s wins %s!<<", p_ptr->name, ge->title);
+			msg_broadcast_format(0, buf);
+#ifdef TOMENET_WORLDS
+                        if (cfg.worldd_events) world_msg(buf);
+#endif
+			if (!p_ptr->max_exp) gain_exp(j, 1); /* may only take part in one tournament per char */
+
+			/* don't create a actual reward here, but just a signed deed that can be turned in (at mayor's office)! */
+			k = lookup_kind(TV_PARCHMENT, SV_DEED_HIGHLANDER);
+			invcopy(o_ptr, k);
+			o_ptr->number = 1;
+			object_aware(j, o_ptr);
+			object_known(o_ptr);
+			o_ptr->discount = 0;
+			o_ptr->level = 0;
+			o_ptr->ident |= ID_MENTAL;
+			o_ptr->note = quark_add("Tournament reward");
+			inven_carry(j, o_ptr);
+
+			s_printf("%s EVENT_WON: %s wins %d (%s)\n", showtime(), p_ptr->name, ge_id+1, ge->title);
+			l_printf("%s \\{s%s has won %s\n", showdate(), p_ptr->name, ge->title);
+
+			/* avoid him dying */
+			set_poisoned(j, 0, 0);
+			set_cut(j, 0, 0);
+			set_food(j, PY_FOOD_FULL);
+			hp_player_quiet(j, 5000, TRUE);
+
+			ge->state[0] = 7;
+			ge->state[1] = elapsed;
 			break;
 		case 7: /* chill out for a few seconds (or get killed -- but now there aren't monster spawns anymore) */
 			if (elapsed - ge->state[1] >= 5) ge->state[0] = 255;
