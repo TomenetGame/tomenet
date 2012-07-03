@@ -3706,6 +3706,7 @@ static void player_talk_aux(int Ind, char *message)
 		censor_length = strlen(message + 4 + mycolor) + 1;
 	}
 
+#if 0
  #if 0
 	if (((broadcast && cfg.worldd_broadcast) || (!broadcast && cfg.worldd_pubchat))
 	    && !(len && (target != 0) && !cfg.worldd_privchat)) /* privchat = to party or to person */
@@ -3714,6 +3715,11 @@ static void player_talk_aux(int Ind, char *message)
 		/* Incoming chat is now filtered instead of outgoing which allows IRC relay to get public chat messages from worldd - mikaelh */
 		world_chat(p_ptr->id, tmessage);	/* no ignores... */
  #endif
+#else /* Remove current redundancy. Make worldd_pubchat decide if we broadcast all our chat out there or not. */
+	if (((broadcast && cfg.worldd_broadcast) || (!broadcast && cfg.worldd_pubchat))
+	    && !(len && target != 0 && !cfg.worldd_privchat)) /* exempt privchat, which is covered above */
+		world_chat(p_ptr->id, tmessage);	/* no ignores... */
+#endif
 
 	for(i = 1; i <= NumPlayers; i++){
 		q_ptr = Players[i];
