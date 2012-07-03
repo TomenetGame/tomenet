@@ -4803,6 +4803,8 @@ int Send_depth(int ind, struct worldpos *wpos)
 	int dlev = getlevel(wpos);
 	if ((zcave = getcave(&p_ptr->wpos))) no_tele = (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) != 0;
 
+	if (Players[ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+
 	/* XXX this kinda thing should be done *before* calling Send_*
 	 * in general, of course..	- Jir - */
 	if (ville) {
@@ -4845,7 +4847,7 @@ int Send_depth(int ind, struct worldpos *wpos)
 	}
 #endif
 
-	if ((Ind2 = get_esp_link(ind, LINKF_MISC, &p_ptr2))) {
+	if ((Ind2 = get_esp_link(ind, LINKF_VIEW, &p_ptr2))) {
 		connp2 = Conn[p_ptr2->conn];
 
 		if (is_newer_than(&p_ptr2->version, 4, 4, 1, 5, 0, 0)) {
@@ -4929,7 +4931,8 @@ int Send_depth_hack(int ind, struct worldpos *wpos, bool town, cptr desc)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if ((Ind2 = get_esp_link(ind, LINKF_MISC, &p_ptr2))) {
+	if (Players[ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	if ((Ind2 = get_esp_link(ind, LINKF_VIEW, &p_ptr2))) {
 		connp2 = Conn[p_ptr2->conn];
 
 		if (is_newer_than(&p_ptr2->version, 4, 4, 1, 5, 0, 0)) {
