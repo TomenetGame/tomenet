@@ -3719,7 +3719,7 @@ static void player_talk_aux(int Ind, char *message)
 	/* in case privchat wasn't handled above (because it's disabled),
 	   exempt it here so we only process real chat/broadcasts */
 	if (!(!cfg.worldd_privchat && len && target != 0)) {
-		if (((broadcast && cfg.worldd_broadcast) {
+		if (broadcast && cfg.worldd_broadcast) {
 			world_chat(0, tmessage); /* can't ignore */
 		} else if (!broadcast && cfg.worldd_pubchat) {
 			world_chat(p_ptr->id, tmessage);
