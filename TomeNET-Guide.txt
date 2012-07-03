@@ -323,8 +323,14 @@ SHIFT+<direction key>
 
 i       i       display your inventory. You can then press SHIFT + inventory
                 slot letter to paste that item name into chat.
+                You can also type \\<slot letter> shortcut in chat to paste an
+                item right into some text you are writing, eg "\\a" for the
+                item in your inventory slot 'a)'.
 e       e       display your equipment. You can then press SHIFT + equipment
                 slot letter to paste that item name into chat.
+                You can also type \\<capital slot letter> shortcut in chat to
+                paste an item right into some text you are writing, eg "\\A"
+                for the item in your equipment slot 'a)'.
 I       I       inspects an item, showing its special abilities in case it
                 has some. To examine an item you must either have bought it
                 from a shop or *identified* it. Mages can learn *ID* spell
@@ -374,6 +380,7 @@ M       M       display either the world map if you're not in a town or in a
                 currentl dungeon level.
                 If you want to see the world map while you're in town or in
                 the dungeon, press ~ and choose "Wilderness map" there.
+                You can scroll around the map via directional keys.
 s       s       search adjacent fields, objects or walls for hidden traps or
                 doors.
 S       #       enter 'search mode'. You will search your adjacent fields once
@@ -415,6 +422,9 @@ c       c       close something.
 c   while in a store:
                 Paste an item name, its price and the store symbol into chat,
                 in case you want to tell other players about it.
+                You can also type \\\<slot letter> shortcut in chat to paste an
+                item right into some text you are writing, eg "\\\a" for the
+                first item on the store page you are currently looking at.
 d       d       drop an item.
 $       $       drop some gold. You can use 'k' and 'm' for thousands or
                 millions, example: 3k -> drops 3000. 2m -> drops 2000000.
@@ -1205,9 +1215,25 @@ Stair-GoI   Stair-globe of invulnerability. This describes the magical
             receive a temporary buff of +100 AC and high chance to deflect any
             projections (bolts/balls/breaths/curses..) that hit him.
 True Art    See 'Art' at the top of this section.
-Unique      A monster that is named and exists only once (although it can
+Unique      A monster that is named and exists only once. Although it can
             respawn for another player who hasn't defeated it yet, each player
-            will receive loot only once from it).
+            will receive loot only once from it. So if you engage a unique
+            monster while playing together with a team mate, check if you have
+            already killed it and if so let your team mate inflict the killing
+            blow, so he will get the kill credited and the monster will drop
+            loot accordingly.
+            To verify whether you have already killed a unique, you may..
+            -check the unique monster list in '~' menu.
+            -'l'ook at the monster, the name will be shown in dark grey if you
+             already got kill credit for it.
+            -watch the damage messages when you attack it, they will be shown
+             in dark grey if you already killed it.
+            -turn on the option 'unique_kill_credit' in '=' menu: It will beep
+             if you hit a unique monster that you have already killed.
+            It is good etiquette that you don't touch the (inscribed) loot a
+            unique monster drops if it wasn't you who killed it in the end.
+            That's precisely because every player can only get kill credit for
+            each unique monster once.
             Uniques often have large escorts.
             Unique monsters will randomly respawn for winners, ie Kings,
             Queens, Emperors and Empresses. That means: The game will "forget"
@@ -1493,6 +1519,7 @@ Last but not least, you may use the following command-line options:
 -u                      disables automatic LUA script updating
 -k                      don't disable numlock on client startup
 -m                      skip motd (message of the day) on login
+-v                      automatically save chat log on exit
 
 
 Linux (using pre-compiled binary):
@@ -1590,6 +1617,7 @@ Last but not least, you may use the following command-line options:
 -w                      disables weather effects
 -u                      disables automatic LUA script updating
 -m                      skip motd (message of the day) on login
+-v                      automatically save chat log on exit
 
 Full command-line example:
         ./tomenet -p19348 -lGandalf geheim -NGandalf 85.118.45.235
@@ -4188,6 +4216,7 @@ Despite the hazards of higher level towns, towns in general act as a safe zone,
 preventing PK attacks and stop your character's food consumption, meaning that
 you cannot die by starvation while in town. Towns also put experience drain on
 hold, which is important for players wearing Nazgul Rings Of Power for example.
+Dungeon towns behave like normal towns in these regards.
 
 
 (4.5a) Shops
@@ -4339,6 +4368,8 @@ The official main server usually has one or several 'ironman' dungeons
 explorers.
 Such custom dungeons appear as 'Wilderness' in the "Recall depths and Towns"
 list, and usually have no minimum required character level to enter.
+There may also be certain special dungeons, related to events or jails, that
+show up under according names in the list.
 
 (*) Nether Realm details:
 -To enter the Nether Realm a player must carry the 'King'/'Queen' title,
@@ -4970,7 +5001,8 @@ Experience drain ('Drains your life force')
     however, that you are not hit by another life draining effect that lowers
     your experience further below the level threshold, or the experience drain
     will kick in again.
-    Experience drain is on hold while you are in town areas.
+    Experience drain is on hold while you are in town areas, this includes
+    dungeon towns.
     All the rings of power that are dropped by Nazgul drain experience (and
     turn you invisible).
 
@@ -5144,13 +5176,14 @@ Ironman Deep Dive Challenge
     The level reached will be recorded in the mayor's office in Bree ('n' key
     inside the office, to view the records).
 
-    To provide some more support, this dungeon will have additional 'town
-    levels' occur at random. It is NOT possible to generate a random dungeon
-    town by logging out and back in later after the level has been reset.
+    To provide some more support, this dungeon will have additional 'dungeon
+    town levels' occur at random. It is NOT possible to generate a random
+    dungeon town by logging out and back in later after the level has been
+    reset. Monsters cannot spawn in dungeon towns.
     In each 1000ft interval (-450..+500) around the peak points of 1k,2k,3k,4k
     there can be only one (random) town at a time.
     Random towns cannot spawn before dungeon level 18 and not after dungeon
-    level 99. They remain static for only 5 minutes after logging.
+    level 99. They remain static for only 5 minutes after logging out or dying.
     All other floors will remain static for at most 10 minutes.
     Also, starting at dungeon level 8, a hidden library may appear randomly
     (that's a book store with a red '9' for entrance), allowing you to purchase
@@ -6882,8 +6915,7 @@ Drain Life      Wand: Drains 10..20% life from your target, giving you 50% of
                 the drained life force.
                 Rod: Drains 15..30% life from your target, giving you 33% of
                 the drained life force.
-Annihilation    Wand only: Drains 15..30% life from your target, giving you 25%
-                of the drained life force.
+Annihilation    Wand only: Drains 15..30% life from your target.
 Magi            Restores your intelligence and 500 mana points.
 Power           Dispels nearby monsters.
 Holiness        Dispels nearby evil. Also protects you from evil for a while.
@@ -7739,15 +7771,12 @@ In fact, they add up / stack. Those are:
 -Extra might (concerning ranged weapons)
 -Drain mana ('Drains your magic'. Note that 'mana regeneration' (also called
  mana-charging) does NOT stack. So it can cancel out the effect of only ONE
- item that drains mana, not of any more.)
- See (4.11a) for more information.
+ item that drains mana, not of any more). See (4.11a) for more information.
 -Drain hit points ('Drains your health'. note that 'regeneration' does NOT
  stack, so it can cancel out the effect of only ONE item that drains hit
  points, not of any more. However, the 'Health' skill is able to further
- increase your regeneration rate.)
- See (4.11a) for more information.
--Drain experience ('Drains your life force'.
- See (4.11a) for more information.
+ increase your regeneration rate). See (4.11a) for more information.
+-Drain experience ('Drains your life force'). See (4.11a) for more information.
 -Extra light radius
 
 
@@ -9180,11 +9209,16 @@ Note that not every skill is available to every profession (class).
                                 However, if an item is offered at reduced
                                 price, it'll be easier to steal it!
                                 It's more difficult to steal from certain
-                                stores, and impossible to steal from expensive
+                                stores, eg stores that are found in the dungeon
+                                or that don't belong to the basic town stores
+                                (numbered 1-9, including the rune repository).
+                                It is even impossible to steal from expensive
                                 black market (the one located somewhat hidden
                                 in Minas Anor), secret black market (the one
                                 you can only find in dungeons), rare footwear
-                                shop and rare jewelry shop (both in dungeons).
+                                shop and rare jewelry shop (both in dungeons),
+                                or from a dungeon town's temple, potion store
+                                or black market.
                                 It's a good idea to wear as many +DEX items
                                 as possible while trying to steal from a shop,
                                 since DEX is the main factor besides the skill.
@@ -9217,6 +9251,8 @@ Note that not every skill is available to every profession (class).
                                 they will provide a great damage boost.
                                 Note: Weapon weight or whether it's 1-h, 1 1/2h
                                 or 2h weapon does not matter for backstabbing.
+                                Vampires will feed especially much from
+                                backstabbing a sleeping opponent to death.
     .Dodging                    Ability to evade attacks. In order to get any
                                 benefits from doding skill at all, your armour
                                 mustn't be too heavy. If it is, you will get a
@@ -12113,8 +12149,6 @@ The techniques are as follows:
         create sling ammunition from it.
         The quality mainly depends on your archery skill and somewhat on your
         ranged mastery skill, but is still somewhat random.
-        A random discount will be applied to the crafted ammo (can be 100% too
-        which makes the ammo unsellable to stores).
         If you want to create larger stacks of the same type of ammunition,
         collect a large stack of materials and use the skill on that stack
         (the total weight of that inventory slot determines the stack size).
