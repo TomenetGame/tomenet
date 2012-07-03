@@ -4866,26 +4866,25 @@ int Send_depth(int ind, struct worldpos *wpos)
 		colour = p_ptr->word_recall;
 	}
 
-	if (is_newer_than(&p_ptr->version, 4, 4, 1, 6, 0, 0)) {
-		if (no_tele) {
-			Send_cut(ind, 0); /* hack: clear the field shared between cut and depth */
-			colour_sector = TERM_L_DARK;
-		}
-		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc);
-	} else {
-		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, desc);
+	if (is_newer_than(&p_ptr->version, 4, 4, 1, 6, 0, 0) && no_tele) {
+		Send_cut(ind, 0); /* hack: clear the field shared between cut and depth */
+		colour_sector = TERM_L_DARK;
 	}
 
 	if ((Ind2 = get_esp_link(ind, LINKF_VIEW, &p_ptr2))) {
 		connp2 = Conn[p_ptr2->conn];
 		if (is_newer_than(&p_ptr2->version, 4, 4, 1, 6, 0, 0)) {
-			if (no_tele) {
-				Send_cut(Ind2, 0); /* hack: clear the field shared between cut and depth */
-			}
+			if (no_tele) Send_cut(Ind2, 0); /* hack: clear the field shared between cut and depth */
 			Packet_printf(&connp2->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc);
 		} else {
 			Packet_printf(&connp2->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, desc);
 		}
+	}
+
+	if (is_newer_than(&p_ptr->version, 4, 4, 1, 6, 0, 0)) {
+		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc);
+	} else {
+		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, desc);
 	}
 }
 
