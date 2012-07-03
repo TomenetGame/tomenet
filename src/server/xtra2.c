@@ -8393,7 +8393,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
     
     hmm, haven't gotten aroudn to doing this yet...
     
-    exploss tells by how much % the GHOST_XP_LOSS is reduced (C. Blue).
+    loss_reduction tells by how much % the GHOST_XP_LOST is reduced (C. Blue).
  */
 void resurrect_player(int Ind, int loss_reduction) {
 	player_type *p_ptr = Players[Ind];
