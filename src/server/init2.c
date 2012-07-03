@@ -3186,9 +3186,15 @@ static void set_server_option(char * option, char * value)
 	{
 		cfg.worldd_plist = str_to_boolean(value);
 	}
+#if 0 /* disabled since it's a receive-flag. that's done by 'servers' flags */
 	else if (!strcmp(option,"WORLDD_IRCCHAT"))
 	{
 		cfg.worldd_ircchat = str_to_boolean(value);
+	}
+#endif
+	else if (!strcmp(option,"WORLDD_EVENTS"))
+	{
+		cfg.worldd_events = str_to_boolean(value);
 	}
 	else printf("Error : unrecognized tomenet.cfg option %s\n", option);
 }

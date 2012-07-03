@@ -3135,7 +3135,7 @@ struct server_opts
 	s16b bonus_calc_type;		/* The way hit points are calculated (0 = traditional, 1 = modern) */
 	s16b charmode_trading_restrictions; /* how restricted is trading between everlating and non-everlasting players */
 	s16b item_awareness;	/* How easily the player becomes aware of unknown items (id scroll/shop/..)-C. Blue */
-	bool worldd_pubchat, worldd_privchat, worldd_broadcast, worldd_lvlup, worldd_unideath, worldd_pwin, worldd_pdeath, worldd_pjoin, worldd_pleave, worldd_plist, worldd_ircchat;
+	bool worldd_pubchat, worldd_privchat, worldd_broadcast, worldd_lvlup, worldd_unideath, worldd_pwin, worldd_pdeath, worldd_pjoin, worldd_pleave, worldd_plist, worldd_events;//worldd_ircchat;
 };
 
 /* Client option struct */
