@@ -1447,7 +1447,9 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 					empty = FALSE;
 					sprintf(info_tmp, "AC: \377%c[%d,%s%d]\377%c", a_val, v_ac, v_acx < 0 ? "" : "+", v_acx, a_key);
 					strcpy(info, info_tmp);
-					if (v_hit && v_dam) {
+					if (v_dam) { /* in theory v_hit && v_dam, but this also covers (+0,+n)
+					                (which currently doesn't exist though).
+							ACTUALLY it should test for SHOW_MODS flag instead of hit/dam. ;) */
 						strcpy(info_tmp, format(", To-hit/to-dam: \377%c(%s%d,%s%d)\377%c",
 						    a_val, v_hit < 0 ? "" : "+", v_hit, v_dam < 0 ? "" : "+", v_dam, a_key));
 						strcat(info, info_tmp);
@@ -1526,11 +1528,24 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 					strcat(info_tmp, p2 + 12);
 					strcpy(info, info_tmp);
 				}
-				/* Strip HIDE_TYPE, basically every artifact has this */
+
+				/* Strip flags that are useless to know */
 				if ((p2 = strstr(info, "HIDE_TYPE"))) {
 					strcpy(info_tmp, info);
-					info_tmp[(p2 - info) - 1] = '\0';
-					strcat(info_tmp, p2 + 9);
+					info_tmp[(p2 - info)] = '\0';
+					strcat(info_tmp, p2 + 10);
+					strcpy(info, info_tmp);
+				}
+				if ((p2 = strstr(info, "SHOW_MODS"))) {
+					strcpy(info_tmp, info);
+					info_tmp[(p2 - info)] = '\0';
+					strcat(info_tmp, p2 + 10);
+					strcpy(info, info_tmp);
+				}
+				if ((p2 = strstr(info, "INSTA_ART"))) {
+					strcpy(info_tmp, info);
+					info_tmp[(p2 - info)] = '\0';
+					strcat(info_tmp, p2 + 10);
 					strcpy(info, info_tmp);
 				}
 
