@@ -1305,6 +1305,7 @@ with other players and developers via the following media:
       client.
 -Voice chat via mumble, get it from http://mumble.sourceforge.net/.
       IP is 'europe.tomenet.net', port is '23348', password is 'tomenet'.
+      For details see "(2.4) Installing voice chat".
 
 
 
