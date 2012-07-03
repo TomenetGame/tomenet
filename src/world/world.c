@@ -29,7 +29,7 @@ void wproto(struct client *ccl);
 void addclient(int fd);
 void remclient(struct list *dlp);
 struct list *remlist(struct list **head, struct list *dlp);
-int get_message_type(char *msg);
+uint32_t get_message_type(char *msg);
 
 struct list *clist=NULL;	/* struct client */
 
@@ -417,7 +417,7 @@ void remclient(struct list *dlp){
 	close(ccl->fd);
 }
 
-int get_message_type(char *msg) {
+uint32_t get_message_type(char *msg) {
 	/* skip to the real message */
 	msg = strchr(msg, ' ');
 	/* catch usages of get_message_type() in debug places where msg might be empty */
@@ -455,9 +455,9 @@ int get_message_type(char *msg) {
 		   strstr(msg, " has retired to ") ||
 		   strstr(msg, " bids farewell to this plane")) {
 		return WMF_PDEATH;
-	} else if ((!strncmp(msg, "\374\377a>>", 5) && strstr(msg, " wins ")) /* global events */
-	    || (!strncmp(msg, "\374\377a", 3) && strstr(msg, " reached floor ")) /* ironman deep dive challenge */
-	    || (!strncmp(msg, "\374\377L***\377a", 8) && strstr(msg, " made it through ")) /* ironman deep dive challenge - win */
+	} else if ((strstr(msg, "\374\377a>>") && strstr(msg, " wins ")) /* global events */
+	    || (strstr(msg, "\374\377a") && strstr(msg, " reached floor ")) /* ironman deep dive challenge */
+	    || (strstr(msg, "\374\377L***\377a") && strstr(msg, " made it through ")) /* ironman deep dive challenge - win */
 	    ) {
 		return WMF_EVENTS;
 	}

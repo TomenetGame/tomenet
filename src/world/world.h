@@ -63,8 +63,8 @@
 struct serverinfo{
 	char name[20];		/* server world name */
 	char pass[20];		/* server plaintext password */
-	int32_t rflags;		/* relay flags for packets sent to server */
-	int32_t mflags;		/* messages flags */
+	uint32_t rflags;	/* relay flags for packets sent to server */
+	uint32_t mflags;	/* messages flags */
 };
 
 /* Single linked list - its not like we are sorting it */
