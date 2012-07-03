@@ -23,10 +23,11 @@ function get_healing_power2()
         return pow
 end
 
+-- Keep consistent with GHOST_XP_LOST
 function get_exp_loss()
 	local pow
 	--ENABLE_INSTANT_RES?
-	if 1==0 then
+	if (def_hack("TEMP0", nil) == 1) then
 		pow = (36 * (735 - (5 * get_level(Ind, HRESURRECT)))) / 735
 		if pow < 30 then
 			pow = 30

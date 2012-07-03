@@ -251,27 +251,38 @@ void set_server_features()
 
 	/* Misc flags */
 
-//	sflags_TEMP |= 0x00000001;
+#ifdef ENABLE_INSTANT_RES
+	sflags_TEMP |= 0x00000001;
+	lua_dostring(L, "TEMP0 = 1");
+#else
 	lua_dostring(L, "TEMP0 = 0");
+#endif
 	lua_settop(L, oldtop);
+
 //	sflags_TEMP |= 0x00000002;
 	lua_dostring(L, "TEMP1 = 0");
 	lua_settop(L, oldtop);
+
 //	sflags_TEMP |= 0x00000004;
 	lua_dostring(L, "TEMP2 = 0");
 	lua_settop(L, oldtop);
+
 //	sflags_TEMP |= 0x00000008;
 	lua_dostring(L, "TEMP3 = 0");
 	lua_settop(L, oldtop);
+
 //	sflags_TEMP |= 0x00000010;
 	lua_dostring(L, "TEMP4 = 0");
 	lua_settop(L, oldtop);
+
 //	sflags_TEMP |= 0x00000020;
 	lua_dostring(L, "TEMP5 = 0");
 	lua_settop(L, oldtop);
+
 //	sflags_TEMP |= 0x00000040;
 	lua_dostring(L, "TEMP6 = 0");
 	lua_settop(L, oldtop);
+
 //	sflags_TEMP |= 0x00000080;
 	lua_dostring(L, "TEMP7 = 0");
 	lua_settop(L, oldtop);
