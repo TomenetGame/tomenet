@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 2. July 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 3. July 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.9 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -33,14 +33,15 @@ Contents
     (0.3)   Important inscriptions
     (0.3a)  The auto-inscription feature
     (0.4)   Typical slang/abbreviations
-    (0.5)   Rumours, missing features, technical warnings (READ!)
+    (0.5)   Some hints and warnings (READ!)
 (1) Introduction
     (1.1)   What is TomeNET? (Where can I get the latest sources?)
+    (1.1a)  Where do I get in contact?
     (1.2)   What is a rogue-like game?
-    (1.3)   Where do I find more information about rogue-like games?
-    (1.4)   Goal and progress of TomeNET players
-    (1.5)   Morgoth and his Nazgul
-    (1.6)   How to encounter the final boss: Morgoth, Lord of Darkness
+    (1.2a)  Where do I find more information about rogue-like games?
+    (1.3)   Goal and progress of TomeNET players
+    (1.3a)  Morgoth and his Nazgul
+    (1.3b)  How to encounter the final boss: Morgoth, Lord of Darkness
 (2) Installation & setup
     (2.1)   Installing TomeNET
     (2.1a)  Installing sound and music packs
@@ -438,6 +439,7 @@ U       O       use undead powers (use this if you died and became a ghost).
                 Using these will drain your experience. If you ran out of
                 experience points, your ghost fades away (= you character will
                 be completely erased).
+                NOTE: Undead powers are currently not available.
 CTRL+S          spike a door (using iron spikes, the door will be jammed).
 p       p       Concentrate on opening your mind for telekinesis.
                 You need to open your mind in order to receive items from
@@ -1132,7 +1134,7 @@ mlevel, rlevel
             Some formulas used by the game use mlev, some use rlev.
             (Note: This is similar to klevel vs olevel for items.)
 Morgy       Morgoth, Lord of Darkness. Final boss enemy in TomeNET.
-            See (1.5) for details.
+            See (1.3) for details.
 Nest        Originally also just called 'pits', nests only differ from pits in
             the monsters in them being strewn around in a randomly mixed manner
             while pits contain 'organized' rings and circles of monsters.
@@ -1219,52 +1221,54 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
 
 
 
-(0.5) Rumours, missing features, technical warnings (READ!)
------------------------------------------------------------
--Do not trust your wireless network regarding lag spikes when you don't want
- them to happen, if you don't have some high quality wifi equipment running.
- Most devices that ISPs hand to you for free are pretty mediocre, so plug in
- your trusted ethernet cable and be fine.
--To report a bug, use /bug command in game. It allows you to type a line of
- text to explain the bug or problem you encountered. You can use the /bug
+(0.5) Some hints and warnings (READ!)
+-------------------------------------
+-To report a bug use the /bug command in the game. It allows you to type a line
+ of text to explain the bug or problem you encountered. You can use the /bug
  command multiple times if one line is not sufficient for the amount of text
  you want to write.
  Alternatively, you can use the bug report section of the official forum at
  www.tomenet.net.
  Please DO NOT write bugs in chat in the game.
+
+-If you have a suggestion, use the /rfe command instead. It's used the same way
+ as the /bug command (see above).
+ Alternatively, use the forum at www.tomenet.net.
+
 -Starting at version 4.4.5, TomeNET supports audio, that is, sound effects and
  background music. To find out more, read (2.1a).
+
 -Usually characters expire (that means they are automatically deleted!)
- after 180 days of inactivity.
+ after 180 days of inactivity. Empty accounts (ie accounts that don't hold any
+ characters) usually expire after 60 days.
+
 -Items on the ground (especially in towns) often disappear automatically after
  a while. So don't use the town or the wilderniss to 'store' loot.
  If you don't own any houses, you can use public houses that are accessible to
  everyone. Risk is of course that someone takes your items.
+
 -If you press CTRL+X to save&exit the game, you should do that in a safe town.
  Dungeons might change while you are logged off, and the next time you log on
  you might find yourself stuck inside a wall, where the previous dungeon had a
  wide room.
  Another problem is that if you don't leave in a town, your character will
- stay for another 25 seconds in the game before it finally disappears from the
- dungeon! If monsters were around, you might get killed easily during those
- 25 seconds.
+ stay for another 20-30 seconds in the game before it finally disappears from
+ the dungeon! If monsters were around, you might get killed easily during that
+ time.
+
 -The items you find don't depend on your race or class but on monster level
  and depth and luck.
+
 -Don't drop artifacts inside houses if the server doesn't allow artifacts to
  be dropped inside player houses, or you will simply lose the artifact!
+
 -Items on the floor within a house don't form piles! If you drop too many
  items and space in the house runs out the dropped item may just disappear!
+
 -The massive iron crown of Morgoth must not be worn by non-Kings/Queens!
--Undead powers (for players' ghosts) are not available at the moment.
--Some shops' features have not yet been implemented.
--Stealing from monsters is not possible.
--'LEVELS' and 'ULTIMATE' flag on unique items currently don't do anything.
--When you've spend some time in town or on a dungeon floor, your depth number
- in the bottom right corner will turn light-blue. This means that you will get
- a special feeling on the next dungeon floor you enter, displayed in yellow.
- That feeling will tell you about the threat of that particular floor, so you
- may consider leaving it again if it sounds too nasty. See (4.8) for details.
--The official web forum is located at http://www.tomenet.net/.
+ Wearing it otherwise will kill you in a mighty blast.
+
+-Some special shops' features may currently not be available.
 
 
 
@@ -1285,6 +1289,22 @@ quite different games that are maintained by different persons/teams.
 
 If you want to download the source code, you can get it from www.tomenet.net in
 the download section.
+
+
+(1.1a) Where do I get in contact?
+---------------------------------
+Apart from downloading the game client and playing, you can also get in contact
+with other players and developers via the following media:
+
+-The forum at http://www.tomenet.net/.
+-IRC: Channel #tomenet on server irc.worldirc.org (port 6667)
+      (For help on Internet Relay Chat visit www.irchelp.org).
+      The channels #tomenet-chat, #tomenet-chat-rpg and #tomenet-chat-arcade
+      relay chat from and to the main/rpg/arcade server, allowing you to read
+      what's going on in-game, and to chat with players simply with any IRC
+      client.
+-Voice chat via mumble, get it from http://mumble.sourceforge.net/.
+      IP is 'europe.tomenet.net', port is '23348', password is 'tomenet'.
 
 
 
@@ -1311,23 +1331,17 @@ similar graphics and game engine are called rogue-likes.
 Other well-known rogue-likes are Nethack, Larn, Moria, Angband.
 
 
-
-(1.3) Where do I find more information about rogue-like games?
+(1.2a) Where do I find more information about rogue-like games?
 --------------------------------------------------------------
 Links:
     http://www.thangorodrim.net/
     http://yarns.felis7.civ.pl/
 Newsgroups:
     rec.games.roguelike.*
-IRC:
-    - Channel #tomenet on server irc.worldirc.org (port 6667) for
-      TomeNET discussion. Development team often meets there.
-    - Channel #angband for general rogue-like discussion.
-    (For help on Internet Relay Chat visit www.irchelp.org )
 
 
 
-(1.4) Goal and progress of TomeNET players
+(1.3) Goal and progress of TomeNET players
 ------------------------------------------
 The final goal that a brave adventurer could possible seek in TomeNET is to
 become King respectively Queen. To acquire this he or she must destroy the
@@ -1351,9 +1365,8 @@ to '<charname>-victory-screenshot.xhtml'.
 (You can view xhtml files in most webbrowsers.)
 
 
-
-(1.5) Morgoth and his Nazgul
-----------------------------
+(1.3a) Morgoth and his Nazgul
+-----------------------------
 Morgoth, Lord of Darkness commands nine Ring Wraiths, called 'Nazgul'.
 These corrupted souls of former ring-wearers are named..
 Uvatha the Horseman, Adunaphel the Quiet, Akhorahil the Blind,
@@ -1415,9 +1428,8 @@ also always heavily cursed, cannot be dropped while cursed, and can re-curse
 themselves (5.14).
 
 
-
-(1.6) How to encounter the final boss: Morgoth, Lord of Darkness
-----------------------------------------------------------------
+(1.3b) How to encounter the final boss: Morgoth, Lord of Darkness
+-----------------------------------------------------------------
 -Morgoth is found only at dungeon level 100 or deeper.
 -He won't show up until you killed Sauron, The Sorceror (who usually appears
  at dungeon level 99).
@@ -1436,7 +1448,7 @@ themselves (5.14).
  challenges him, he will have 30000+2*20000 = 70000 HP and 30+2*6 = 42 speed.
 -There are no obstacles that can hold Morgoth back for long.
 
-See (1.5) for more information about Morgoth.
+See (1.3a) for more information about Morgoth.
 
 There are rumours of even more powerful beings than the Lord Of Darkness.
 Kings and Queens who seek new challenges shall try to enter the Nether Realm,
@@ -7169,7 +7181,7 @@ Artifacts vs Nazgul
 Artifacts greatly resist Nazguls, which cause most other weapons to break more
 or less instantly. So even if an artifact weapon you find seems not very
 appealing in particular you might want to keep it just for slaying Nazgul.
-(See (1.5) for more information about Nazgul.)
+(See (1.3a) for more information about Nazgul.)
 
 Note: 'The Stormbringer' is not a real artifact but it will show the same
 resilience as true artifacts and random artifacts vs Nazgul.
@@ -12696,7 +12708,7 @@ The most powerful representant of each class:
  so try to get a worse artifact which you can solely (ab)use for fighting
  Nazgul. Some people are rumoured to defeat Nazgul with nothing but their
  ability to read, although they aren't even remotely magically talented..
- (Compare (1.5).)
+ (Compare (1.3a).)
 
 -Unique 'P's are often very dangerous, some say the most dangerous next to
  Morgoth himself is Nodens, Lord of the Great Abyss.
