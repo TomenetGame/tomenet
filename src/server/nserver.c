@@ -4797,7 +4797,7 @@ int Send_depth(int ind, struct worldpos *wpos)
 	player_type *p_ptr = Players[ind], *p_ptr2 = NULL;
 	bool ville = istown(wpos) && !isdungeontown(wpos); /* -> print name (TRUE) or a depth value (FALSE)? */
 	cptr desc = "";
-	int colour, colour2, colour_sector = TERM_L_GREEN, colour2_sector = TERM_L_GREEN, Ind2;
+	int colour, colour_sector = TERM_L_GREEN, Ind2;
 	cave_type **zcave;
 	bool no_tele = FALSE;
 	int dlev = getlevel(wpos);
@@ -4847,41 +4847,6 @@ int Send_depth(int ind, struct worldpos *wpos)
 	}
 #endif
 
-	if ((Ind2 = get_esp_link(ind, LINKF_VIEW, &p_ptr2))) {
-		connp2 = Conn[p_ptr2->conn];
-
-		if (is_newer_than(&p_ptr2->version, 4, 4, 1, 5, 0, 0)) {
-			/* pending recall? */
-			if (p_ptr2->word_recall) colour2 = TERM_ORANGE;
-			/* use as indicator for pvp_prevent_tele, actually */
-			else if ((p_ptr2->mode & MODE_PVP) && p_ptr2->pvp_prevent_tele) colour2 = TERM_RED;
-#ifndef RPG_SERVER
-			/* able to get extra level feeling on next floor? */
-			else if (TURNS_FOR_EXTRA_FEELING && (p_ptr2->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)) colour2 = TERM_L_BLUE;
-#endif
-			/* in a town? ignore town level */
-			else if (ville) colour2 = TERM_WHITE;
-			/* way too low to get good exp? */
-			else if (dlev < det_exp_level(p_ptr2->lev) - 5) colour2 = TERM_L_DARK;
-			/* too low to get 100% exp? */
-			else if (dlev < det_exp_level(p_ptr2->lev)) colour2 = TERM_YELLOW;
-			/* normal exp depth or deeper (default) */
-			else colour2 = TERM_WHITE;
-		} else {
-			colour2 = p_ptr2->word_recall;
-		}
-
-		if (is_newer_than(&p_ptr2->version, 4, 4, 1, 6, 0, 0)) {
-			if (no_tele) {
-				Send_cut(Ind2, 0); /* hack: clear the field shared between cut and depth */
-				colour2_sector = TERM_L_DARK;
-			}
-			Packet_printf(&connp2->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour2, colour2_sector, desc);
-		} else {
-			Packet_printf(&connp2->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour2, desc);
-		}
-	}
-
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 5, 0, 0)) {
 		/* pending recall? */
 		if (p_ptr->word_recall) colour = TERM_ORANGE;
@@ -4909,6 +4874,18 @@ int Send_depth(int ind, struct worldpos *wpos)
 		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc);
 	} else {
 		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, desc);
+	}
+
+	if ((Ind2 = get_esp_link(ind, LINKF_VIEW, &p_ptr2))) {
+		connp2 = Conn[p_ptr2->conn];
+		if (is_newer_than(&p_ptr2->version, 4, 4, 1, 6, 0, 0)) {
+			if (no_tele) {
+				Send_cut(Ind2, 0); /* hack: clear the field shared between cut and depth */
+			}
+			Packet_printf(&connp2->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc);
+		} else {
+			Packet_printf(&connp2->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, desc);
+		}
 	}
 }
 
