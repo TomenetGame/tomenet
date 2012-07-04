@@ -7266,7 +7266,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				{
 					/* The door is open */
 					did_open_door = TRUE;
-
+#ifdef USE_SOUND_2010
+					sound_near_site(ny, nx, wpos, 0, "open_door", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 					/* Do not bash the door */
 					may_bash = FALSE;
 				}
@@ -7290,7 +7292,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 					{
 						/* Unlock the door */
 						c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
-
+#ifdef USE_SOUND_2010
+						sound_near_site(ny, nx, wpos, 0, "open_pick", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 						/* Do not bash the door */
 						may_bash = FALSE;
 					}
