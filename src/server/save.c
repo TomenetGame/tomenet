@@ -2369,7 +2369,7 @@ bool load_server_info(void) {
 	/* check for existance of old huge server save file */
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, "server");
 	if (file_exist(buf)) {
-		s_printf("Found classic 'server' savefile\n");
+//		s_printf("Found classic 'server' savefile\n");
 		return load_server_info_classic();
 	}
 
