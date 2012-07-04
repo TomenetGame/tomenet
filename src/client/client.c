@@ -374,7 +374,7 @@ static void write_mangrc_aux(int t, cptr sec_name, FILE *cfg_file) {
 	char font_name[1024];
 
 	x11win_getinfo(t, &x, &y, &w, &h, font_name);
-	printf("term %d: x %d, y %d, fnt %s.\n", t, x, y, font_name);
+//	printf("term %d: x %d, y %d, fnt %s.\n", t, x, y, font_name);
 
 	if (t != 0) {
 		fputs(format("%s_Title\t%s\n", sec_name, ang_term_name[t]), cfg_file);
