@@ -5811,7 +5811,7 @@ void monster_death(int Ind, int m_idx)
 	int	number = 0;
 	int	total = 0;
 
-	char buf[160], m_name[MAX_CHARS];
+	char buf[160], m_name[MAX_CHARS], o_name[ONAME_LEN];
 	cptr titlebuf;
 
 	cave_type *c_ptr;
@@ -6347,6 +6347,9 @@ if (cfg.unikill_format) {
 				qq_ptr->to_d = a_ptr->to_d;
 				qq_ptr->weight = a_ptr->weight;
 
+			    	object_desc(Ind, o_name, qq_ptr, TRUE, 3);
+				s_printf(" '%s'", o_name);
+
 				handle_art_inum(a_idx);
 
 				/* Hack -- acquire "cursed" flag */
@@ -6383,6 +6386,9 @@ if (cfg.unikill_format) {
 
 			/* Complete generation, especially level requirements check */
 			apply_magic(wpos, qq_ptr, -2, FALSE, TRUE, FALSE, FALSE, TRUE);
+
+		    	object_desc(Ind, o_name, qq_ptr, TRUE, 3);
+			s_printf(" '%s'", o_name);
 
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
@@ -6841,6 +6847,10 @@ if (cfg.unikill_format) {
 					qq_ptr->to_h = a_ptr->to_h;
 					qq_ptr->to_d = a_ptr->to_d;
 					qq_ptr->weight = a_ptr->weight;
+
+				    	object_desc(Ind, o_name, qq_ptr, TRUE, 3);
+					s_printf("DROP_CHOSEN: '%s'\n", o_name);
+
 					if (local_quark) {
 						qq_ptr->note = local_quark;
 						qq_ptr->note_utag = strlen(quark_str(local_quark));
