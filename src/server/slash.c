@@ -1592,7 +1592,7 @@ void do_slash_cmd(int Ind, char *message)
 			u16b r, num;
 			int lev;
 			u16b flags=(QUEST_MONSTER|QUEST_RANDOM);
-	
+
 			if (tk && !strcmp(token[1], "reset")) {
 				int qn;
 				if (!admin) return;
@@ -1644,64 +1644,6 @@ void do_slash_cmd(int Ind, char *message)
 				lev = Players[j]->lev;
 			}
 			if (prepare_quest(Ind, j, flags, &lev, &r, &num))
-#if 0 /* done in prepare_quest */
-			if (Players[j]->quest_id) {
-				for (i = 0; i < 20; i++) {
-					if (quests[i].id == Players[j]->quest_id) {
-						if (j == Ind)
-							msg_format(Ind, "\377oYour quest to kill \377y%d \377g%s \377ois not complete.%s", p_ptr->quest_num, r_name+r_info[quests[i].type].name, quests[i].flags&QUEST_GUILD?" (guild)":"");
-						return;
-					}
-				}
-			}
-
-			/* don't start too early -C. Blue */
- #ifndef RPG_SERVER
-			if (Players[j]->lev < 5) {
-				msg_print(Ind, "\377oYou need to be level 5 or higher to receive a quest!");
- #else /* for ironman there's no harm in allowing early quests */
-			if (Players[j]->lev < 3) {
-				msg_print(Ind, "\377oYou need to be level 3 or higher to receive a quest!");
- #endif
-				return;
-			}
-			
-			/* plev 1..50 -> mlev 1..100 (!) */
-			if (lev <= 50) lev += (lev * lev) / 83;
-			else lev = 80 + rand_int(20);
-
-			get_mon_num_hook = quest_aux;
-			get_mon_num_prep(0, NULL);
-			i = 2 + randint(5);
-
-			do {
-				r = get_mon_num(lev, lev);
-
-				/* Hack: If (non-)FRIENDS variant exists, use the first one (usually the non-FRIENDS one) */
-				if (r_info[r].dup_idx) r = r_info[r].dup_idx;
-
-				k++;
-				if (k > 1000) {
-					lev--;
-					k = lev * 5;
-//					k = lev * 9;
-//					k = 900;
-                                }
-			} while (((lev-5) > r_info[r].level) || 
-				    (r_info[r].flags1 & RF1_UNIQUE) || 
-				    (r_info[r].flags7 & RF7_MULTIPLY) || 
-				    !(r_info[r].level > 2)); /* no Training Tower quests */
- #ifndef RPG_SERVER
-			if (r_info[r].flags1 & RF1_FRIENDS) i = i + 11 + randint(7);
- #else /* very hard in the beginning in ironman dungeons */
-			if (lev < 40) {
-				if (r_info[r].flags1 & RF1_FRIENDS) i = i * 2;
-				else i = (i + 1) / 2;
-			} else {
-				if (r_info[r].flags1 & RF1_FRIENDS) i = i + 11 + randint(7);
-			}
- #endif
-#endif /* if 0 */
 			add_quest(Ind, j, r, num, flags);
 			return;
 		}
