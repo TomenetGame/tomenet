@@ -1536,7 +1536,7 @@ void carry(int Ind, int pickup, int confirm)
 					o_ptr->mode = p_ptr->mode;
 				}
 			/* Game pieces are free to be used */
-			} else if ((o_ptr->tval == TV_SKELETON) && (o_ptr->sval >= 9)) {
+			} else if (o_ptr->tval == TV_GAME) {
 				if (o_ptr->level <= p_ptr->lev) {
 //					o_ptr->owner = p_ptr->id;
 					o_ptr->mode = p_ptr->mode;

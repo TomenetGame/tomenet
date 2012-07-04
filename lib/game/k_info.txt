@@ -3605,8 +3605,6 @@ F:FOUNTAIN
 #W:36:100:5:10000
 #A:36/3
 
-### Numbers 444-464 unused ###
-###446-464 are unused now. the_sandman
 
 #the_sandman - adding magic bolts and magic shots
 
@@ -3626,6 +3624,48 @@ W:10:0:2:100
 A:15/2:30/2
 P:0:1d3:0:0:0
 F:SHOW_MODS | NO_ENCHANT
+
+
+### Numbers 446-459 unused ###
+
+
+##### Additional skeletons #####
+
+N:460:& Halfling Skeleton~
+G:~:w
+I:1:9:0
+W:5:0:40:0
+A:5/1
+P:0:1d2:0:0:0
+
+N:461:& Orc Skeleton~
+G:~:w
+I:1:10:0
+W:5:0:60:0
+A:5/1
+P:0:1d2:0:0:0
+
+N:462:& Yeek Skeleton~
+G:~:w
+I:1:11:0
+W:5:0:30:0
+A:5/1
+P:0:1d2:0:0:0
+
+N:463:& Goblin Skeleton~
+G:~:w
+I:1:12:0
+W:5:0:50:0
+A:5/1
+P:0:1d2:0:0:0
+
+N:464:& Draconian Skeleton~
+G:~:w
+I:1:13:0
+W:5:0:70:0
+A:5/1
+P:0:1d2:0:0:0
+
 
 N:465:& Silver Arrow~
 G:{:W
@@ -6828,7 +6868,7 @@ F:FULL_NAME | EASY_KNOW | IGNORE_WATER
 
 N:926:& Heavy Ball~
 G:*:u
-I:1:9:0
+I:13:1:0
 W:120:0:2000:0
 A:127/255
 P:0:1d1:0:0:0
@@ -6871,98 +6911,98 @@ F:INSTA_ART
 # More stuff to play with ;) - C. Blue
 N:936:& White piece~
 G:*:w
-I:1:10:0
+I:13:2:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
 
 N:937:& Black piece~
 G:*:D
-I:1:11:0
+I:13:3:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
 
 N:938:& White Pawn~
 G:-:w
-I:1:12:0
+I:13:4:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
 
 N:939:& White King~
 G:+:w
-I:1:13:0
+I:13:5:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
 
 N:940:& White Queen~
 G:*:w
-I:1:14:0
+I:13:6:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
 
 N:941:& White Rook~
 G:#:w
-I:1:15:0
+I:13:7:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
 
 N:942:& White Knight~
 G:?:w
-I:1:16:0
+I:13:8:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
 
 N:943:& White Bishop~
 G:|:w
-I:1:17:0
+I:13:9:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
 
 N:944:& Black Pawn~
 G:-:D
-I:1:18:0
+I:13:10:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
 
 N:945:& Black King~
 G:+:D
-I:1:19:0
+I:13:11:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
 
 N:946:& Black Queen~
 G:*:D
-I:1:20:0
+I:13:12:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
 
 N:947:& Black Rook~
 G:#:D
-I:1:21:0
+I:13:13:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
 
 N:948:& Black Knight~
 G:?:D
-I:1:22:0
+I:13:14:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
 
 N:949:& Black Bishop~
 G:|:D
-I:1:23:0
+I:13:15:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0

@@ -1544,6 +1544,7 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 /*		case TV_SPIKE: item = ""; break;
 		case TV_CHEST: item = ""; break;
 		case TV_JUNK: item = ""; break;
+		case TV_GAME: item = ""; break;
 		case TV_TRAPKIT: item = ""; break;
 		case TV_STAFF: item = ""; break;
 		case TV_WAND: item = ""; break;

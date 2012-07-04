@@ -456,6 +456,7 @@ static bool object_easy_know(int i)
 		/* Simple items */
 		case TV_FLASK:
 		case TV_JUNK:
+		case TV_GAME:
 		case TV_BOTTLE:
 		case TV_SKELETON:
 		case TV_SPIKE:
@@ -512,6 +513,7 @@ static byte default_tval_to_attr(int tval)
 		case TV_SKELETON:
 		case TV_BOTTLE:
 		case TV_JUNK:
+		case TV_GAME:
 		{
 			return (TERM_WHITE);
 		}
@@ -1405,6 +1407,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_SKELETON:
 		case TV_BOTTLE:
 		case TV_JUNK:
+		case TV_GAME:
 		case TV_SPIKE:
 		case TV_KEY:
 		case TV_FLASK:
