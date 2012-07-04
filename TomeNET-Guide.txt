@@ -3221,6 +3221,7 @@ then enter 'l' to load a macro file, and specifying its filename,
 which is depending on your operating system:
 
 linux_fighter.prf    or    windows_fighter.prf
+(On Mac OS X use linux_fighter.prf.)
 
 If you plan on using it for a longer time, immediately save it again
 with the filename being identical to your character name, example: Killer.prf
@@ -3287,6 +3288,7 @@ then enter 'l' to load a macro file, and specifying its filename,
 which is depending on your operating system:
 
 linux_caster.prf    or    windows_caster.prf
+(On Mac OS X use linux_caster.prf.)
 
 If you plan on using it for a longer time, immediately save it again
 with the filename being identical to your character name, example: Killer.prf
