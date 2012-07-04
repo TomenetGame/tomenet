@@ -5090,7 +5090,7 @@ The following actions may reward 1 XP without you noticing:
   -Eating a bad food ration.
   -Picking a lock.
   -Transferring items or money from another player to you.
-  -Picking up/earning more than 500 gold pieces.
+  -Picking up/earning more than 300 gold pieces.
 Killing townspeople in Bree however will not give you any experience.
 Stay clean!
 
@@ -5204,9 +5204,10 @@ Ironman Deep Dive Challenge
 
     NOTE: The Deep Dive dungeon requires your character to have zero experience
     points in order to be eligible to enter.
-    To fulfil that requirement you may not collect more than 300 gold or pick
-    up any items or money of other players. Also, if you eat a ration of food
-    and you are unlucky enough that it's gone bad you will get 1 xp for that.
+    To fulfil that requirement you may not collect more than 300 Au (gold
+    pieces) or pick up any items or money of other players. Also, if you eat a
+    ration of food and you are unlucky enough that it's gone bad you will get
+    1 xp for that.
     Monsters cannot spawn in the wilderness sector of the dungeon, so you can
     just idle at the entrance, waiting for team mates.
 
