@@ -380,10 +380,10 @@ static void write_mangrc_aux(int t, cptr sec_name, FILE *cfg_file) {
 		fputs(format("%s_Title\t%s\n", sec_name, ang_term_name[t]), cfg_file);
 		fputs(format("%s_Visible\t%c\n", sec_name, term_prefs[t].visible ? '1' : '0'), cfg_file);
 	}
-	if (term_prefs[t].x != -32000) /* don't save windows in minimized state */
+	if (x != -32000) /* don't save windows in minimized state */
 		fputs(format("%s_X\t\t%d\n", sec_name, x), cfg_file);
 //		fputs(format("%s_X\t\t%d\n", sec_name, term_prefs[t].x), cfg_file);
-	if (term_prefs[t].y != -32000) /* don't save windows in minimized state */
+	if (y != -32000) /* don't save windows in minimized state */
 		fputs(format("%s_Y\t\t%d\n", sec_name, y), cfg_file);
 //		fputs(format("%s_Y\t\t%d\n", sec_name, term_prefs[t].y), cfg_file);
 	if (t != 0) {
@@ -412,11 +412,11 @@ static void write_mangrc_aux_line(int t, cptr sec_name, char *buf_org) {
 		if (t != 0)
 			sprintf(buf, "%s_Visible\t%c\n", sec_name, term_prefs[t].visible ? '1' : '0');
 	} else if (!strncmp(ter_name, "_X", 2)) {
-		if (term_prefs[t].x != -32000) /* don't save windows in minimized state */
+		if (x != -32000) /* don't save windows in minimized state */
 			sprintf(buf, "%s_X\t\t%d\n", sec_name, x);
 //			sprintf(buf, "%s_X\t\t%d\n", sec_name, term_prefs[t].x);
 	} else if (!strncmp(ter_name, "_Y", 2)) {
-		if (term_prefs[t].y != -32000) /* don't save windows in minimized state */
+		if (y != -32000) /* don't save windows in minimized state */
 			sprintf(buf, "%s_Y\t\t%d\n", sec_name, y);
 //			sprintf(buf, "%s_Y\t\t%d\n", sec_name, term_prefs[t].y);
 	} else if (!strncmp(ter_name, "_Columns", 8)) {
