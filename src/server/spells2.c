@@ -1959,7 +1959,7 @@ bool detect_monsters_xxx(int Ind, u32b match_flag)
 	else
 	{
 		/* Describe result */
-		msg_format(Ind, "You sense the absence of %s.", desc_monsters);
+//		msg_format(Ind, "You sense the absence of %s.", desc_monsters);
 	}
 
 	/* Result */
@@ -2034,6 +2034,9 @@ bool detect_invisible(int Ind)
 		/* Skip disconnected players */
 		if (q_ptr->conn == NOT_CONNECTED) continue;
 
+		/* Skip oneself */
+		if (i == Ind) continue;
+
 		/* Skip visible players */
 		if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 
@@ -2076,8 +2079,8 @@ bool detect_invisible(int Ind)
 		update_players();
 #endif
 	} else {
-		msg_print(Ind, "You sense the absence of invisible creatures.");
-		msg_print(Ind, NULL);
+//		msg_print(Ind, "You sense the absence of invisible creatures.");
+//		msg_print(Ind, NULL);
 	}
 
 	/* Result */
@@ -2157,8 +2160,8 @@ bool detect_evil(int Ind)
 	}
     else
     {
-        msg_print(Ind, "You sense the absence of evil.");
-        msg_print(Ind, NULL);
+//        msg_print(Ind, "You sense the absence of evil.");
+//        msg_print(Ind, NULL);
     }
 
 	/* Result */
@@ -2289,8 +2292,8 @@ bool detect_creatures(int Ind)
 	}
 	else
 	{
-		msg_print(Ind, "You sense the absence of creatures.");
-		msg_print(Ind, NULL);
+//		msg_print(Ind, "You sense the absence of creatures.");
+//		msg_print(Ind, NULL);
 	}
 
 	/* Result */
