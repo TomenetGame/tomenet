@@ -8689,7 +8689,7 @@ bool prepare_quest(int Ind, int j, u16b flags, int *level, u16b *type, u16b *num
 
 	/* don't start too early -C. Blue */
 #ifndef RPG_SERVER
-	if (Players[j]->lev < 5) {
+	if (Players[j]->lev < 5 && !in_irondeepdive(&Players[j]->wpos)) {
 		msg_print(Ind, "\377oYou need to be level 5 or higher to receive a quest!");
 #else /* for ironman there's no harm in allowing early quests */
 	if (Players[j]->lev < 3) {

@@ -5188,6 +5188,8 @@ Ironman Deep Dive Challenge
     Also, starting at dungeon level 8, a hidden library may appear randomly
     (that's a book store with a red '9' for entrance), allowing you to purchase
     magic spells you might be missing.
+    Inside the challenge dungeon you can acquire a kill quest via /quest
+    command at level 1 already, instead of the usual minimum level of 5.
 
     Since you cannot recall out before reaching the 127th floor, in case you
     need to go offline you'll just have to log out inside the dungeon.
