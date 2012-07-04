@@ -1952,7 +1952,7 @@ static void init_terrain(terrain_type *t_ptr, int radius)
 			t_ptr->sand = rand_int(10) + 990;
 			t_ptr->mountain = rand_int(1);
 			t_ptr->hotspot = rand_int(2);
-			t_ptr->monst_lev = 30 + (radius / 2); break;
+			t_ptr->monst_lev = 10 + (radius / 2); break;
 			break;
 		}
 		case WILD_ICE:
@@ -1960,7 +1960,7 @@ static void init_terrain(terrain_type *t_ptr, int radius)
 			t_ptr->ice = 1000;
 			t_ptr->mountain = rand_int(5);
 			t_ptr->hotspot = rand_int(4) + 2;
-			t_ptr->monst_lev = 30 + (radius / 2); break;
+			t_ptr->monst_lev = 20 + (radius / 2); break;
 			break;
 		}
 		/*  dense forest */
