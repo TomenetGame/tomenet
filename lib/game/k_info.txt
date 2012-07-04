@@ -6624,20 +6624,21 @@ G:`:B
 I:12:2:3
 W:10:0:2:500
 A:10/3
-F:HIDE_TYPE | DISARM
+F:HIDE_TYPE | DISARM | EASY_KNOW
 
 N:904:& Money Belt~
 G:`:B
 I:12:3:0
 W:10:0:10:1000
 A:10/3
-F:IGNORE_WATER
+F:IGNORE_WATER | EASY_KNOW
 
 N:905:& Device~ of Theft Prevention
 G:`:B
 I:12:4:0
 W:35:0:12:30000
 A:35/20
+F:EASY_KNOW
 
 N:906:& Tarpaulin~
 G:`:D
@@ -6645,6 +6646,7 @@ G:`:D
 I:12:5:0
 W:15:0:60:1000
 A:15/5
+F:EASY_KNOW
 
 # Parchment to help dead beginners
 N:907:The Book of the Dead [Press 'r' to read]
@@ -6727,7 +6729,7 @@ G:`:D
 I:12:7:-2
 W:10:0:5:100
 A:10/2
-F:CHR
+F:CHR | EASY_KNOW
 
 # The Sea-blue Silk Cape 'Ocean Soul'
 N:917:& Sea-blue Silk Cape~
