@@ -7277,7 +7277,7 @@ void player_death(int Ind)
 		/* handle the secret_dungeon_master option */
 		if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master)) {
 #ifdef TOMENET_WORLDS
-			if (cfg.worldd_pdeath && world_broadcast) world_msg(buf);
+			if (cfg.worldd_pdeath) world_msg(buf);
 #endif
 			msg_broadcast(Ind, buf);
 		}
@@ -7330,14 +7330,14 @@ void player_death(int Ind)
 			    p_ptr->name, ABS(p_ptr->wpos.wz), i + 1, i == 0 ? "st" : (i == 1 ? "nd" : (i == 2 ? "rd" : "th")));
 			msg_broadcast_format(0, buf);
 #ifdef TOMENET_WORLDS
-			if (cfg.worldd_events && world_broadcast) world_msg(buf);
+			if (cfg.worldd_events) world_msg(buf);
 #endif
 		} else {
 			sprintf(buf, "\374\377a%s reached floor %d in the Ironman Deep Dive challenge!",
 			    p_ptr->name, ABS(p_ptr->wpos.wz));
 			msg_broadcast_format(0, buf);
 #ifdef TOMENET_WORLDS
-			if (cfg.worldd_events && world_broadcast) world_msg(buf);
+			if (cfg.worldd_events) world_msg(buf);
 #endif
 		}
 		l_printf("%s \\{s%s (%d) reached floor %d in the Ironman Deep Dive challenge\n", showdate(), p_ptr->name, p_ptr->lev, ABS(p_ptr->wpos.wz));
@@ -7649,7 +7649,7 @@ void player_death(int Ind)
 
 			msg_broadcast(Ind, buf);
 #ifdef TOMENET_WORLDS
-			if (cfg.worldd_pdeath && world_broadcast) world_msg(buf);
+			if (cfg.worldd_pdeath) world_msg(buf);
 #endif
 
 			/* Redraw */

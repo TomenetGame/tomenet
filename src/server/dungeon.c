@@ -2561,6 +2561,7 @@ void recall_player(int Ind, char *message){
 	struct player_type *p_ptr;
 	cave_type **zcave;
 	struct worldpos old_wpos;
+	char buf[MAX_CHARS_WIDE];
 
 	p_ptr = Players[Ind];
 
@@ -2653,10 +2654,20 @@ void recall_player(int Ind, char *message){
 #ifdef IRONDEEPDIVE_FIXED_TOWN_WITHDRAWAL
 		if (success) {
 #endif
-		msg_broadcast_format(0, "\374\377L***\377a%s made it through the Ironman Deep Dive challenge!\377L***", p_ptr->name);
+		sprintf(buf, "\374\377L***\377a%s made it through the Ironman Deep Dive challenge!\377L***", p_ptr->name);
+		msg_broadcast(0, buf);
 		l_printf("%s \\{U%s (%d) made it through the Ironman Deep Dive challenge\n", showdate(), p_ptr->name, p_ptr->lev);
+#ifdef TOMENET_WORLDS
+                if (cfg.worldd_events) world_msg(buf);
+#endif
 #ifdef IRONDEEPDIVE_FIXED_TOWN_WITHDRAWAL
-		} else msg_broadcast_format(0, "\374\377s%s withdrew from the Ironman Deep Dive challenge.", p_ptr->name);
+		} else {
+			sprintf(buf, "\374\377s%s withdrew from the Ironman Deep Dive challenge.", p_ptr->name);
+			msg_broadcast(0, buf);
+#ifdef TOMENET_WORLDS
+	                if (cfg.worldd_events) world_msg(buf);
+#endif
+		}
 #endif
 	}
 }
