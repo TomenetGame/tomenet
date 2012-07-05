@@ -7637,7 +7637,7 @@ void player_death(int Ind)
 			p_ptr->recall_pos.wx = p_ptr->town_x;
 			p_ptr->recall_pos.wy = p_ptr->town_y;
 			p_ptr->recall_pos.wz = 0;
-			p_ptr->new_level_method = LEVEL_OUTSIDE_RAND; /* TODO: Implement recall to temple */
+			p_ptr->new_level_method = LEVEL_TO_TEMPLE;
 			recall_player(Ind, "");
 
 			/* Tell him what happened */

@@ -899,6 +899,7 @@
 #define LEVEL_RECALL_UP 	7
 #define LEVEL_RECALL_DOWN 	8
 #define LEVEL_PROB_TRAVEL	9
+#define LEVEL_TO_TEMPLE		10
 
 /*
  * Pkill flags

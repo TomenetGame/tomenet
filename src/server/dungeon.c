@@ -5655,6 +5655,33 @@ static void process_player_change_wpos(int Ind)
 			starty = emergency_y;
 		}
 		break;
+	case LEVEL_TO_TEMPLE:
+		/* Try to find a temple */
+		for (y = 0; y < MAX_HGT; y++) {
+			for (x = 0; x < MAX_WID; x++) {
+				c_ptr = &zcave[y][x];
+				if (c_ptr->feat == FEAT_SHOP) {
+					struct c_special *cs_ptr = GetCS(c_ptr, CS_SHOP);
+					if (cs_ptr) {
+						int which = cs_ptr->sc.omni;
+						if (which == STORE_TEMPLE) {
+							/* Found a temple */
+							startx = x;
+							starty = y;
+							break;
+						}
+					}
+				}
+			}
+			if (startx) break;
+		}
+
+		if (!startx) {
+			/* Random coordinates in case there's no temple */
+			starty = level_rand_y(wpos);
+			startx = level_rand_x(wpos);
+		}
+		break;
 	}
 
 	/* Highlander Tournament hack: pseudo-teleport the player
