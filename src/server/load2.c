@@ -1204,9 +1204,13 @@ static void rd_house(int n)
 #ifndef USE_MANG_HOUSE_ONLY
 	rd_s16b(&house_ptr->stock_num);
 	rd_s16b(&house_ptr->stock_size);
+	if (house_ptr->stock_size > STORE_INVEN_MAX) house_ptr->stock_size = STORE_INVEN_MAX;
 	C_MAKE(house_ptr->stock, house_ptr->stock_size, object_type);
-	for (i = 0; i < house_ptr->stock_num; i++)
-		rd_item(&house_ptr->stock[i]);
+	for (i = 0; i < house_ptr->stock_num; i++) {
+		if (i < STORE_INVEN_MAX)
+			rd_item(&house_ptr->stock[i]);
+	}
+	if (house_ptr->stock_num > STORE_INVEN_MAX) house_ptr->stock_num = STORE_INVEN_MAX;
 #endif	/* USE_MANG_HOUSE_ONLY */
 }
 
