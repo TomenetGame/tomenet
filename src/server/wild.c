@@ -1370,13 +1370,13 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 #else
  #if 0/* actually made moats less likely again due to new cfg.castles_per_player */
 	if (area >= 80 && !rand_int(9)) has_moat = 1;
-	if ((area >= 80) && (!rand_int(6))) has_moat = 1;
-	if ((area >= 100) && (!rand_int(2))) has_moat = 1;
-	if ((area >= 130) && (rand_int(4) < 3)) has_moat = 1;
+	if (area >= 80 && !rand_int(6)) has_moat = 1;
+	if (area >= 100 && !rand_int(2)) has_moat = 1;
+	if (area >= 130 && rand_int(4) < 3) has_moat = 1;
  #else
-	if ((area >= 100) && (!rand_int(3))) has_moat = 1;
-	if ((area >= 140) && (rand_int(2)) has_moat = 1;
-	if ((area >= 180)) has_moat = 1;
+	if (area >= 100 && !rand_int(3)) has_moat = 1;
+	if (area >= 140 && rand_int(2)) has_moat = 1;
+	if (area >= 180) has_moat = 1;
  #endif
 #endif
 	if (has_moat) plot_xlen += 8;
@@ -3698,12 +3698,13 @@ void genwild(bool dry_Bree) {
 	/* Check that Bree is surrounded by pretty dry terrain */
 	if (dry_Bree) {
 		bool watery = FALSE;
-		for (i = cfg.town_x - MAX_TOWNAREA; i <= cfg.town_x + MAX_TOWNAREA; i++) {
-			for (j = cfg.town_y - MAX_TOWNAREA; j <= cfg.town_y + MAX_TOWNAREA; j++) {
+		int tol = 0;
+		for (i = cfg.town_x - MAX_TOWNAREA - tol; i <= cfg.town_x + MAX_TOWNAREA + tol; i++) {
+			for (j = cfg.town_y - MAX_TOWNAREA - tol; j <= cfg.town_y + MAX_TOWNAREA + tol; j++) {
 				/* use a radius, not a square */
 				//if (distance(j, i, 32, 32) > MAX_TOWNAREA) continue;
 				//if (wild_info[j][i].radius > MAX_TOWNAREA) continue;
-				if (abs(i - cfg.town_x) + abs(j - cfg.town_y) > MAX_TOWNAREA) continue;
+				if (abs(i - cfg.town_x) + abs(j - cfg.town_y) > MAX_TOWNAREA + tol) continue;
 
 				switch (wild_info[j][i].type) {
 #if 0
