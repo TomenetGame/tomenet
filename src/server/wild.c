@@ -348,7 +348,7 @@ void wild_spawn_towns()
 		/* Don't build them too near to towns
 		 * (otherwise entrance can be within a house) */
 		for (j = 0; j < 5; j++) {
-			if (distance(y, x, town[j].y, town[j].x) < 3) {
+			if (distance(y, x, town[j].y, town[j].x) <= MAX_TOWNAREA) {
 				retry = TRUE;
 				break;
 			}
@@ -1364,12 +1364,23 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	/* Hack -- sometimes large buildings get moats */
 #ifdef __DISABLE_HOUSEBOOST
 	if ((area >= 70) && (!rand_int(16))) has_moat = 1;
-#else
-	if (area >= 80 && !rand_int(9)) has_moat = 1;
-#endif
 	if ((area >= 80) && (!rand_int(6))) has_moat = 1;
 	if ((area >= 100) && (!rand_int(2))) has_moat = 1;
 	if ((area >= 130) && (rand_int(4) < 3)) has_moat = 1;
+#else
+ #if 0/* actually made moats less likely again due to new cfg.castles_per_player - this will also save building space */
+	if (area >= 80 && !rand_int(9)) has_moat = 1;
+	if (area >= 80 && !rand_int(6)) has_moat = 1;
+	if (area >= 100 && !rand_int(2)) has_moat = 1;
+	if (area >= 130 && rand_int(4) < 3) has_moat = 1;
+ #else
+//	if (area >= 100 && !rand_int(15)) has_moat = 1;
+//	else if (area >= 140 && !rand_int(9)) has_moat = 1;
+//	else if (area >= 180 && !rand_int(4)) has_moat = 1;
+//	else if (area >= 200 && !rand_int(2)) has_moat = 1;
+	if (area >= 220 && rand_int(3)) has_moat = 1;
+ #endif
+#endif
 	if (has_moat) plot_xlen += 8;
 	if (has_moat) plot_ylen += 8;
 #endif
@@ -1391,11 +1402,6 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	if (rand_int(100) < 60) type = WILD_LOG_CABIN;
 	else if (rand_int(100) < 8) type = WILD_PERM_HOME;
 	else type = WILD_ROCK_HOME;
-
-#ifndef __DISABLE_HOUSEBOOST
-	/* also, no giant log cabins */
-	if (area >= 50 && type == WILD_LOG_CABIN) type = WILD_ROCK_HOME;
-#endif
 
 	/* hack -- add extra "for sale" homes near the town */
 	if (w_ptr->radius == 1) {
@@ -1432,7 +1438,15 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	if ((w_ptr->radius == 3 && rand_int(100) < 80)
 	    || has_moat) /* no log cabins or rock homes with moats... */
 		type = WILD_TOWN_HOME;
+
+	/* also, no giant log cabins or rock homes (near towns) */
+	if (type == WILD_LOG_CABIN && area >= 50) type = WILD_ROCK_HOME;
+	if (type == WILD_ROCK_HOME && area >= 80 && w_ptr->radius <= 3) type = WILD_TOWN_HOME;
  #endif
+#endif
+
+#ifdef TEST_SERVER
+if (has_moat) s_printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> has_moat %d,%d\n", wpos->wx, wpos->wy);
 #endif
 
 	switch (type) {
@@ -3157,9 +3171,7 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 	/* add wilderness dwellings */
 	/* hack -- the number of dwellings is proportional to their chance of existing */
 	while (terrain.dwelling > 0) {
-		if (rand_int(1000) < terrain.dwelling) {
-			wild_add_dwelling(wpos, -1, -1);
-		}
+		if (rand_int(1000) < terrain.dwelling) wild_add_dwelling(wpos, -1, -1);
 		terrain.dwelling -= 50;
 	}
 
@@ -3259,7 +3271,6 @@ void wilderness_gen(struct worldpos *wpos)
 		/* Illuminate and memorize the walls 
 		c_ptr->info |= (CAVE_GLOW);*/
 	}
-
 
 	/* Hack -- Build some wilderness (from memory) */
 	wilderness_gen_hack(wpos);
@@ -3628,10 +3639,12 @@ static void addrivers() {
 }
 
 
-void genwild() {
+void genwild(bool dry_Bree) {
 	int j,i;
 	bool rand_old = Rand_quick;
-	u32b old_seed = Rand_value;	
+	u32b old_seed = Rand_value;
+
+    while (TRUE) {
 
 	Rand_quick=TRUE;
 	Rand_value = seed_town;
@@ -3682,6 +3695,51 @@ void genwild() {
 	addwaste();
 	adddesert();
 	addice();
+
+
+	/* Check that Bree is surrounded by pretty dry terrain */
+	if (dry_Bree) {
+		bool watery = FALSE;
+		int tol = 0;
+		for (i = cfg.town_x - MAX_TOWNAREA - tol; i <= cfg.town_x + MAX_TOWNAREA + tol; i++) {
+			for (j = cfg.town_y - MAX_TOWNAREA - tol; j <= cfg.town_y + MAX_TOWNAREA + tol; j++) {
+				/* use a radius, not a square */
+				//if (distance(j, i, 32, 32) > MAX_TOWNAREA) continue;
+				//if (wild_info[j][i].radius > MAX_TOWNAREA) continue;
+				if (abs(i - cfg.town_x) + abs(j - cfg.town_y) > MAX_TOWNAREA + tol) continue;
+
+				switch (wild_info[j][i].type) {
+#if 0
+				case WILD_OCEANBED1: case WILD_OCEANBED2:
+				case WILD_COAST:
+				case WILD_SHORE1: case WILD_SHORE2:
+
+				case WILD_DENSEFOREST:
+				case WILD_SWAMP:
+				case WILD_VOLCANO:
+				case WILD_MOUNTAIN:
+#endif
+				case WILD_OCEAN:
+				case WILD_RIVER:
+				case WILD_LAKE:
+					watery = TRUE;
+					break;
+				}
+			}
+		}
+		if (!watery) break;
+	} else break;
+
+	/* Change wilderness generation seed */
+        seed_town = rand_int(0x10000000);
+	/* Kill Bree */
+	for (i = 0; i < numtowns; i++) dealloc_stores(i);
+    	C_KILL(town, numtowns, struct town_type);
+        numtowns = 0;
+	/* Re-init the wild_info array and try again */
+	init_wild_info();
+    }
+
 
 	/* Restore random generator */
 	Rand_quick=rand_old;
@@ -3815,7 +3873,7 @@ void wild_add_new_dungeons() {
 			/* Don't build them too near to towns
 			 * (otherwise entrance can be within a house) */
 			for (j = 1; j < 6; j++) {
-				if (distance(y, x, town[j].y, town[j].x) < 3) {
+				if (distance(y, x, town[j].y, town[j].x) <= MAX_TOWNAREA) {
 					retry = TRUE;
 					break;
 				}
