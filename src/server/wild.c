@@ -3730,8 +3730,13 @@ void genwild(bool dry_Bree) {
 		if (!watery) break;
 	} else break;
 
-	/* Re-init the wild_info array and try again */
+	/* Change wilderness generation seed */
         seed_town = rand_int(0x10000000);
+	/* Kill Bree */
+	for (i = 0; i < numtowns; i++) dealloc_stores(i);
+    	C_KILL(town, numtowns, struct town_type);
+        numtowns = 0;
+	/* Re-init the wild_info array and try again */
 	init_wild_info();
     }
 
