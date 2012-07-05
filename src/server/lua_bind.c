@@ -1049,6 +1049,11 @@ bool lua_is_unique(int r_idx) {
 
 /* Return if a certain race/class combo could in theory learn a monster form if mimicry was high enough */
 bool lua_mimic_eligible(int Ind, int r_idx) {
+	/* also filter out unattainable (in theory) forms */
+	if (r_info[r_idx].rarity == 255) return FALSE;
+	if ((r_info[r_idx].flags1 & RF1_UNIQUE)) return FALSE;
+	if (!mon_allowed_chance(&r_info[r_idx])) return FALSE;
+
 	if (Players[Ind]->prace == RACE_VAMPIRE) {
 		return (mimic_vampire(r_idx, Players[Ind]->lev));
 	}
@@ -1058,11 +1063,6 @@ bool lua_mimic_eligible(int Ind, int r_idx) {
 	} else if (Players[Ind]->pclass == CLASS_DRUID) {
 		return (mimic_druid(r_idx, Players[Ind]->lev));
 	}
-
-	/* also filter out unattainable (in theory) forms */
-	if (r_info[r_idx].rarity == 255) return FALSE;
-	if ((r_info[r_idx].flags1 & RF1_UNIQUE)) return FALSE;
-	if (!mon_allowed_chance(&r_info[r_idx])) return FALSE;
 
 	return TRUE;
 }
