@@ -1975,6 +1975,8 @@ void msg_print(int Ind, cptr msg_raw)
 		    client_chat ? "\375" : (client_all ? "\374" : ""),
 		    client_ctrlo ? "\376" : "",
 		    msg_buf));
+		/* hack: avoid trailing space in the next sub-line */
+		if (msg[msg_scan] == ' ') msg_scan++;
 	}
 
 	if (msg == NULL) Send_message(Ind, msg);
