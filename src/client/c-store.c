@@ -127,7 +127,10 @@ void display_inventory(void)
 		prt("-more-", k + 6, 3);
 
 		/* Indicate the "current page" */
-		put_str(format("(Page %d of %d)", store_top / 12 + 1, store.stock_num == 0 ? 1 : (store.stock_num + 11) / 12), 5, 20);
+		put_str(format("(Page %d of %d)%s%s",
+		    store_top / 12 + 1, store.stock_num == 0 ? 1 : (store.stock_num + 11) / 12,
+		    store_top / 12 + 1 >= 10 ? "" : " ", (store.stock_num + 11) / 12 >= 10 ? "" : " "),
+		    5, 20);
 	}
 
 	/* Hack - Get rid of the cursor - mikaelh */
@@ -605,7 +608,13 @@ static void store_process_command(int cmd)
 			}
 			break;
 
-		/* go to page 1/2/3/4 */
+		/* go to page n */
+		case '0': i++;
+		case '9': i++;
+		case '8': i++;
+		case '7': i++;
+		case '6': i++;
+		case '5': i++;
 		case '4': i++;
 		case '3': i++;
 		case '2': i++;
@@ -803,11 +812,11 @@ void display_store(void)
 
 		/* Browse if necessary */
 		if (store.stock_num > 12) prt(" SPACE) Next page", 23, 0);
-#else /* new: also show 1..4 for jumping directly to a page */
+#else /* new: also show 1..n for jumping directly to a page */
 		prt("ESC)   Exit store", 21, 0);
 		if (store.stock_num > 12) {
 			prt("SPACE) Next page", 22, 0);
-			prt(format("1-%d)   Go to page", (store.stock_num - 1) / 12 + 1), 23, 0);
+			prt(format("1-%d)%s  Go to page", (store.stock_num - 1) / 12 + 1, (store.stock_num - 1) / 12 + 1 >= 10 ? "" : " "), 23, 0);
 		}
 #endif
 
