@@ -141,7 +141,7 @@ static void post_init_lua(void) {
  */
 int main(int argc, char *argv[])
 {
-	bool new_game = FALSE, new_wilderness = FALSE, new_flavours = FALSE;
+	bool new_game = FALSE, new_wilderness = FALSE, new_flavours = FALSE, new_houses = FALSE;
 	bool config_specified = FALSE;
 	char buf[1024];
 	int catch_signals = TRUE;
@@ -258,6 +258,10 @@ int main(int argc, char *argv[])
 			new_flavours = TRUE;
 			break;
 
+			case 'h': case 'H':
+			new_houses = TRUE;
+			break;
+
 			case 'z': case 'Z':
 			catch_signals = FALSE;
 			break;
@@ -277,6 +281,7 @@ int main(int argc, char *argv[])
 			puts("  -r        Reset the server (implies -w and -f)");
 			puts("  -w        Reset the server partially: New wilderness");
 			puts("  -f        Reset the server partially: New flavours");
+			puts("  -h        Reinitialize houses");
 			puts("  -z        Don't catch signals");
 			puts("  -c<path>  Look for pref files in the directory <path>");
 			puts("  -d<path>  Look for save files in the directory <path>");
@@ -328,7 +333,7 @@ int main(int argc, char *argv[])
 
 
 	/* Play the game */
-	play_game(new_game, new_wilderness, new_flavours);
+	play_game(new_game, new_wilderness, new_flavours, new_houses);
 
 	/* Quit */
 	quit(NULL);

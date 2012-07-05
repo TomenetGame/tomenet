@@ -713,7 +713,7 @@ extern bool InitNewConsole(int write_fd);
 extern void recall_player(int Ind, char *message);
 extern int find_player(s32b id);
 extern int find_player_name(char *name);
-extern void play_game(bool new_game, bool new_wilderness, bool new_flavours);
+extern void play_game(bool new_game, bool new_wilderness, bool new_flavours, bool new_houses);
 extern void shutdown_server(void);
 extern void dungeon(void);
 extern void pack_overflow(int Ind);

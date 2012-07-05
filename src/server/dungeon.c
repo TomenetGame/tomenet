@@ -6652,7 +6652,7 @@ void set_runlevel(int val) {
  * If the "new_game" parameter is true, then, after loading the
  * server-specific savefiles, we will start anew.
  */
-void play_game(bool new_game, bool new_wilderness, bool new_flavours) {
+void play_game(bool new_game, bool new_wilderness, bool new_flavours, bool new_houses) {
 	int h = 0, m = 0, s = 0, dwd = 0, dd = 0, dm = 0, dy = 0;
 	time_t now;
 	struct tm *tmp;
@@ -6836,6 +6836,25 @@ void play_game(bool new_game, bool new_wilderness, bool new_flavours) {
 
 			/* Hack -- seed for flavors */
 			seed_flavor = rand_int(0x10000000);
+		}
+		if (new_houses) {
+			int i;
+
+			s_printf("Resetting houses.\n");
+
+			/* free old houses[] info */
+			for (i = 0; i < num_houses; i++) {
+				KILL(houses[i].dna, struct dna_type);
+				if (!(houses[i].flags & HF_RECT))
+					C_KILL(houses[i].coords.poly, MAXCOORD, char);
+#ifndef USE_MANG_HOUSE_ONLY
+				C_KILL(houses[i].stock, houses[i].stock_size, object_type);
+#endif
+			}
+			C_KILL(houses, house_alloc, house_type);
+		        house_alloc = 1024;
+			C_MAKE(houses, house_alloc, house_type);
+	                num_houses = 0;
 		}
 	}
 
