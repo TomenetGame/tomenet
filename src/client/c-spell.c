@@ -1524,7 +1524,8 @@ char rcraft_threat_color(u16b e_flags, u16b m_flags) {
 	/* Decode modifiers */
 	byte imperative = flags_to_imperative(m_flags);
 	byte type = flags_to_type(m_flags);
-	
+
+	if (type == 255) type = 1; /* assume T_SELF if no type given */
 	s16b diff = rspell_diff(rspell_skill(element, elements), rspell_level(element, elements, imperative, type));
 	byte fail = rspell_fail(element, elements, imperative, type, diff, 0); //Assume mali/penalties are 0 - Kurzel
 
@@ -1585,14 +1586,14 @@ static void rcraft_print_imperatives(u16b e_flags, u16b m_flags) {
 		if (r_imperatives[i].flag == I_CHAO) { //Hack -- Chaotic displays ??? - Kurzel
 			sprintf(tmpbuf, "%c) \377%c%-10s\377w (   %s%d,   ???%%, ???%%, ???%%,     ???%%)",
 				'a' + i,
-				rcraft_threat_color(e_flags, m_flags | r_imperatives[i].flag),
+				rcraft_threat_color(e_flags, m_flags | r_imperatives[i].flag | T_SELF),
 				r_imperatives[i].name,
 				r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level);
 		}
 		else {
 			sprintf(tmpbuf, "%c) \377%c%-10s\377w (   %s%d,   %s%d%%, %s%d%%, %s%d%%,     %s%d%%)",
 				'a' + i,
-				rcraft_threat_color(e_flags, m_flags | r_imperatives[i].flag),
+				rcraft_threat_color(e_flags, m_flags | r_imperatives[i].flag | T_SELF),
 				r_imperatives[i].name,
 				r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level,
 				r_imperatives[i].damage >= 10 ? "" : " ", r_imperatives[i].damage * 10,
