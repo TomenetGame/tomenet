@@ -4256,17 +4256,62 @@ void do_slash_cmd(int Ind, char *message)
 				else msg_print(Ind, "artifact generation is currently allowed");
 				return;
 			}
-#if 0 /* until it's needed again */
-			else if (prefix(message, "/swap-towns")){
-				/* C. Blue's mad debug code to swap Minas Anor
-				   and Khazad-Dum on the worldmap :) */
-				struct town_type tmptown;
-				tmptown.x = town[2].x;
-				tmptown.y = town[2].y;
-				town[2].x = town[4].x;
-				town[2].y = town[4].y;
-				town[4].x = tmptown.x;
-				town[4].y = tmptown.y;
+#if 0 //not implemented
+			/* C. Blue's mad debug code to swap Minas Anor and Khazad-Dum on the worldmap :) */
+			else if (prefix(message, "/swap-towns")) {
+				int a = tk, b = atoi(token[2]);
+				int x, y;
+				struct worldpos wpos1, wpos2;
+
+				if (tk < 2) {
+					msg_print(Ind, "Usage: /swap-towns <town1> <town2>");
+					return;
+				}
+				if (a < 0 || a >= numtowns || b < 0 || b >= numtowns) {
+					msg_format(Ind, "Town numbers may range from 0 to %d.", numtowns - 1);
+					return;
+				}
+
+				wpos1.wx = town[a].x;
+				wpos1.wy = town[a].y;
+				wpos1.wz = 0;
+				wpos2.wx = town[b].x;
+				wpos2.wy = town[b].y;
+				wpos2.wz = 0;
+
+#if 0
+				for (x = wpos1.wx - wild_info[wpos1.wy][wpos1.wx].radius;
+				    x <= wpos1.wx + wild_info[wpos1.wy][wpos1.wx].radius; x++)
+				for (y = wpos1.wy - wild_info[wpos1.wy][wpos1.wx].radius;
+				    y <= wpos1.wy + wild_info[wpos1.wy][wpos1.wx].radius; y++)
+					if (in_bounds_wild(y, x) && (towndist(x, y) <= abs(wpos1.wx - x) + abs(wpos1.wy - y))) {
+						wild_info[wpos1.wy][wpos1.wx].radius = towndist(wpos1.wy, wpos1.wx);
+						wild_info[wpos1.wy][wpos1.wx].town_idx = wild_gettown(wpos1.wx, wpos1.wy);
+					}
+#endif
+
+				wild_info[wpos1.wy][wpos1.wx].type = WILD_UNDEFINED; /* re-generate */
+				wild_info[wpos1.wy][wpos1.wx].radius = towndist(wpos1.wy, wpos1.wx);
+				wild_info[wpos1.wy][wpos1.wx].town_idx = wild_gettown(wpos1.wx, wpos1.wy);
+
+				wild_info[wpos2.wy][wpos2.wx].type = WILD_UNDEFINED; /* re-generate */
+				wild_info[wpos2.wy][wpos2.wx].radius = towndist(wpos2.wy, wpos2.wx);
+				wild_info[wpos2.wy][wpos2.wx].town_idx = wild_gettown(wpos2.wx, wpos2.wy);
+
+//				wilderness_gen(&wpos1);
+//				wilderness_gen(&wpos2);
+
+			        town[numtowns].x = x;
+			        town[numtowns].y = y;
+			        town[numtowns].baselevel = base;
+			        town[numtowns].flags = flags;
+			        town[numtowns].type = type;
+			        wild_info[y][x].type = WILD_TOWN;
+			        wild_info[y][x].town_idx = numtowns;
+			        wild_info[y][x].radius = base;
+
+				addtown(y1, x1, town_profile[b + 1].dun_base, 0, b + 1);
+				addtown(y2, x2, town_profile[a + 1].dun_base, 0, a + 1);
 				return;
 			}
 #endif
