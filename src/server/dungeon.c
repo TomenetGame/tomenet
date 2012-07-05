@@ -7900,7 +7900,7 @@ int recall_depth_idx(struct worldpos *wpos, player_type *p_ptr) {
 		    p_ptr->max_depth_tower[j] == (wpos->wz > 0))
 			return j;
 	}
-	s_printf("WARNING! TOO MANY DUNGEONS!\n");
+	s_printf("p_ptr->max_depth[]: TOO MANY DUNGEONS!\n");
 	return (-1);
 }
 int get_recall_depth(struct worldpos *wpos, player_type *p_ptr) {
