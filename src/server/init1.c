@@ -1332,6 +1332,12 @@ static bool invalid_server_conditions(char *buf)
 		if (streq(m, "ARCADE_SERVER") && negation) invalid = TRUE;
 #endif
 
+#ifndef TEST_SERVER
+		if (streq(m, "TEST_SERVER") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "TEST_SERVER") && negation) invalid = TRUE;
+#endif
+
 		/* special flags that can occur additionally to server types */
 //#ifndef HALLOWEEN
 if (!season_halloween) {
@@ -1407,6 +1413,7 @@ if (!season_newyearseve) {
 		if (strcmp(m, "MAIN_SERVER") &&
 		    strcmp(m, "RPG_SERVER") &&
 		    strcmp(m, "ARCADE_SERVER") &&
+		    strcmp(m, "TEST_SERVER") &&
 		    strcmp(m, "HALLOWEEN") &&
 		    strcmp(m, "WINTER_SEASON") &&
 		    strcmp(m, "NEW_YEARS_EVE") &&
