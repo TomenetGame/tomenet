@@ -713,7 +713,7 @@ extern bool InitNewConsole(int write_fd);
 extern void recall_player(int Ind, char *message);
 extern int find_player(s32b id);
 extern int find_player_name(char *name);
-extern void play_game(bool new_game, bool new_wilderness, bool new_flavours, bool new_houses);
+extern void play_game(bool new_game, bool dry_Bree, bool new_wilderness, bool new_flavours, bool new_houses);
 extern void shutdown_server(void);
 extern void dungeon(void);
 extern void pack_overflow(int Ind);
@@ -834,7 +834,7 @@ extern bool reveal_wilderness_around_player(int Ind, int y, int x, int h, int w)
 extern void wild_add_new_dungeons(void);
 
 extern void initwild(void);
-extern void genwild(void);
+extern void genwild(bool dry_Bree);
 extern void wild_spawn_towns(void);
 extern void init_wild_info_aux(int x, int y);
 

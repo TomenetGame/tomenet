@@ -348,7 +348,7 @@ void wild_spawn_towns()
 		/* Don't build them too near to towns
 		 * (otherwise entrance can be within a house) */
 		for (j = 0; j < 5; j++) {
-			if (distance(y, x, town[j].y, town[j].x) < 3) {
+			if (distance(y, x, town[j].y, town[j].x) <= MAX_TOWNAREA) {
 				retry = TRUE;
 				break;
 			}
@@ -1364,12 +1364,21 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	/* Hack -- sometimes large buildings get moats */
 #ifdef __DISABLE_HOUSEBOOST
 	if ((area >= 70) && (!rand_int(16))) has_moat = 1;
-#else
-	if (area >= 80 && !rand_int(9)) has_moat = 1;
-#endif
 	if ((area >= 80) && (!rand_int(6))) has_moat = 1;
 	if ((area >= 100) && (!rand_int(2))) has_moat = 1;
 	if ((area >= 130) && (rand_int(4) < 3)) has_moat = 1;
+#else
+ #if 0/* actually made moats less likely again due to new cfg.castles_per_player */
+	if (area >= 80 && !rand_int(9)) has_moat = 1;
+	if ((area >= 80) && (!rand_int(6))) has_moat = 1;
+	if ((area >= 100) && (!rand_int(2))) has_moat = 1;
+	if ((area >= 130) && (rand_int(4) < 3)) has_moat = 1;
+ #else
+	if ((area >= 100) && (!rand_int(3))) has_moat = 1;
+	if ((area >= 140) && (rand_int(2)) has_moat = 1;
+	if ((area >= 180)) has_moat = 1;
+ #endif
+#endif
 	if (has_moat) plot_xlen += 8;
 	if (has_moat) plot_ylen += 8;
 #endif
@@ -3628,10 +3637,12 @@ static void addrivers() {
 }
 
 
-void genwild() {
+void genwild(bool dry_Bree) {
 	int j,i;
 	bool rand_old = Rand_quick;
-	u32b old_seed = Rand_value;	
+	u32b old_seed = Rand_value;
+
+    while (TRUE) {
 
 	Rand_quick=TRUE;
 	Rand_value = seed_town;
@@ -3682,6 +3693,45 @@ void genwild() {
 	addwaste();
 	adddesert();
 	addice();
+
+
+	/* Check that Bree is surrounded by pretty dry terrain */
+	if (dry_Bree) {
+		bool watery = FALSE;
+		for (i = cfg.town_x - MAX_TOWNAREA; i <= cfg.town_x + MAX_TOWNAREA; i++) {
+			for (j = cfg.town_y - MAX_TOWNAREA; j <= cfg.town_y + MAX_TOWNAREA; j++) {
+				/* use a radius, not a square */
+				//if (distance(j, i, 32, 32) > MAX_TOWNAREA) continue;
+				//if (wild_info[j][i].radius > MAX_TOWNAREA) continue;
+				if (abs(i - cfg.town_x) + abs(j - cfg.town_y) > MAX_TOWNAREA) continue;
+
+				switch (wild_info[j][i].type) {
+#if 0
+				case WILD_OCEANBED1: case WILD_OCEANBED2:
+				case WILD_COAST:
+				case WILD_SHORE1: case WILD_SHORE2:
+				case WILD_LAKE:
+				case WILD_RIVER:
+
+				case WILD_DENSEFOREST:
+				case WILD_SWAMP:
+				case WILD_VOLCANO:
+				case WILD_MOUNTAIN:
+#endif
+				case WILD_OCEAN:
+					watery = TRUE;
+					break;
+				}
+			}
+		}
+		if (!watery) break;
+	} else break;
+
+	/* Re-init the wild_info array and try again */
+        seed_town = rand_int(0x10000000);
+	init_wild_info();
+    }
+
 
 	/* Restore random generator */
 	Rand_quick=rand_old;
@@ -3815,7 +3865,7 @@ void wild_add_new_dungeons() {
 			/* Don't build them too near to towns
 			 * (otherwise entrance can be within a house) */
 			for (j = 1; j < 6; j++) {
-				if (distance(y, x, town[j].y, town[j].x) < 3) {
+				if (distance(y, x, town[j].y, town[j].x) <= MAX_TOWNAREA) {
 					retry = TRUE;
 					break;
 				}
