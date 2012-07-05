@@ -1133,6 +1133,7 @@ static void rd_house(int n)
 	int i;
 	house_type *house_ptr = &houses[n];
 	cave_type **zcave;
+	object_type dump;
 
 	rd_byte(&house_ptr->x);
 	rd_byte(&house_ptr->y);
@@ -1207,8 +1208,8 @@ static void rd_house(int n)
 	if (house_ptr->stock_size > STORE_INVEN_MAX) house_ptr->stock_size = STORE_INVEN_MAX;
 	C_MAKE(house_ptr->stock, house_ptr->stock_size, object_type);
 	for (i = 0; i < house_ptr->stock_num; i++) {
-		if (i < STORE_INVEN_MAX)
-			rd_item(&house_ptr->stock[i]);
+		if (i < STORE_INVEN_MAX) rd_item(&house_ptr->stock[i]);
+		else rd_item(&dump);
 	}
 	if (house_ptr->stock_num > STORE_INVEN_MAX) house_ptr->stock_num = STORE_INVEN_MAX;
 #endif	/* USE_MANG_HOUSE_ONLY */
