@@ -1474,7 +1474,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 			houses[num_houses].coords.rect.width = h_x2-h_x1+1;
 			houses[num_houses].coords.rect.height = h_y2-h_y1+1;
 			wpcopy(&houses[num_houses].wpos, wpos);
-			houses[num_houses].dna->price = house_price(&houses[num_houses]);
+			houses[num_houses].dna->price = initial_house_price(&houses[num_houses]);
 			break;
 	}
 
@@ -4058,8 +4058,22 @@ void wpos_apply_season_daytime(worldpos *wpos, cave_type **zcave) {
 	}
 }
 
+/* returns price for a house of a certain area */
+s32b house_price_area(int area, bool random) {
+	s32b price = 0;
+
+	// This is the dominant term for large houses
+	if (area > 40) price = (area - 40) * (area - 40) * (area - 40) * 3;
+	// This is the dominant term for medium houses
+	price += area * area * 33;
+	// This is the dominant term for small houses
+	price += area * (950 + (random ? rand_int(100) : 100));
+
+	return price;
+}
+
 /* returns buying price of a house */
-u32b house_price(house_type *h_ptr) {
+s32b initial_house_price(house_type *h_ptr) {
 	s32b price;
 	int area = 0;
 
@@ -4093,13 +4107,7 @@ u32b house_price(house_type *h_ptr) {
 	// This is the dominant term for small houses
 	price += area * (900 + rand_int(200));
  #else
-	// This is the dominant term for large houses
-	if (area > 40) price = (area - 40) * (area - 40) * (area - 40) * 3;
-	else price = 0;
-	// This is the dominant term for medium houses
-	price += area * area * 33;
-	// This is the dominant term for small houses
-	price += area * (900 + rand_int(200));
+	price = house_price_area(area, TRUE);
  #endif
 #endif
 

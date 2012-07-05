@@ -10387,7 +10387,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 			houses[num_houses].coords.rect.width=x2-x1+1;
 			houses[num_houses].coords.rect.height=y2-y1+1;
 			wpcopy(&houses[num_houses].wpos, wpos);
-			houses[num_houses].dna->price = house_price(&houses[num_houses]);
+			houses[num_houses].dna->price = initial_house_price(&houses[num_houses]);
 		}
 		/* Hack -- apartment house */
 		else {
@@ -10433,7 +10433,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 				houses[num_houses].coords.rect.width = (x2 - x1) / 2 + 1;
 				houses[num_houses].coords.rect.height = (y2 - y1) / 2 + 1;
 				wpcopy(&houses[num_houses].wpos, wpos);
-				houses[num_houses].dna->price = house_price(&houses[num_houses]);
+				houses[num_houses].dna->price = initial_house_price(&houses[num_houses]);
 
 				/* MEGAHACK -- add doors here and return */
 

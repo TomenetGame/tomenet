@@ -5494,7 +5494,7 @@ void home_extend(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 //	int st = p_ptr->store_num;
-	int	h_idx, cost = 0;
+	int h_idx, cost = 0;
 	house_type *h_ptr;
 
 	/* This should never happen */
@@ -5511,7 +5511,15 @@ void home_extend(int Ind)
 		return;
 	}
 
-	cost = h_ptr->dna->price * 2 / (h_ptr->stock_size + 1);
+#if 0 /* can go inconsistent pretty quickly (between different initial house sizes) */
+	cost = (h_ptr->dna->price * 2) / (h_ptr->stock_size + 1);
+#else
+	cost = house_price_area(h_ptr->stock_size + 1, FALSE) - h_ptr->dna->price;
+	/* paranoia, in case a list house really has its initial_house_price()'s
+	   random() price factor big enough to not get compensated by the first-time
+	   extension's value (shouldn't happen): */
+	if (cost < 1000) cost = 1000;
+#endif
 
 	if (p_ptr->au < cost) {
 		msg_print(Ind, "You couldn't afford it..");
