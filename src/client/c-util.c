@@ -4169,14 +4169,14 @@ void interact_macros(void)
 							if (r_imperatives[i].flag == I_CHAO) { //Hack -- Chaotic displays ??? - Kurzel (duplicate code here from c-spell.c)
 								sprintf(tmpbuf, "%c) \377%c%-10s\377G (   %s%d,   ???%%, ???%%, ???%%,     ???%%)",
 									'a' + i,
-									rcraft_threat_color(e_flags, m_flags | r_imperatives[i].flag),
+									rcraft_threat_color(e_flags, m_flags | r_imperatives[i].flag | T_SELF),
 									r_imperatives[i].name,
 									r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level);
 							}
 							else {
 								sprintf(tmpbuf, "%c) \377%c%-10s\377G (   %s%d,   %s%d%%, %s%d%%, %s%d%%,     %s%d%%)",
 									'a' + i,
-									rcraft_threat_color(e_flags, m_flags | r_imperatives[i].flag),
+									rcraft_threat_color(e_flags, m_flags | r_imperatives[i].flag | T_SELF),
 									r_imperatives[i].name,
 									r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level,
 									r_imperatives[i].damage >= 10 ? "" : " ", r_imperatives[i].damage * 10,
