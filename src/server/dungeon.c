@@ -6840,7 +6840,7 @@ void play_game(bool new_game, bool new_wilderness, bool new_flavours, bool new_h
 		if (new_houses) {
 			int i;
 
-			s_printf("Resetting houses.\n");
+			s_printf("Reinitializing houses.\n");
 
 			/* free old houses[] info */
 			for (i = 0; i < num_houses; i++) {
