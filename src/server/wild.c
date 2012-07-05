@@ -1374,9 +1374,11 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	if (area >= 100 && !rand_int(2)) has_moat = 1;
 	if (area >= 130 && rand_int(4) < 3) has_moat = 1;
  #else
-	if (area >= 100 && !rand_int(10)) has_moat = 1;
-	else if (area >= 140 && !rand_int(7)) has_moat = 1;
-	else if (area >= 180 && !rand_int(4)) has_moat = 1;
+//	if (area >= 100 && !rand_int(15)) has_moat = 1;
+//	else if (area >= 140 && !rand_int(9)) has_moat = 1;
+//	else if (area >= 180 && !rand_int(4)) has_moat = 1;
+//	else if (area >= 200 && !rand_int(2)) has_moat = 1;
+	if (area >= 220 && rand_int(3)) has_moat = 1;
  #endif
 #endif
 	if (has_moat) plot_xlen += 8;
@@ -1441,6 +1443,10 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	if (type == WILD_LOG_CABIN && area >= 50) type = WILD_ROCK_HOME;
 	if (type == WILD_ROCK_HOME && area >= 80 && w_ptr->radius <= 3) type = WILD_TOWN_HOME;
  #endif
+#endif
+
+#ifdef TEST_SERVER
+if (has_moat) s_printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> has_moat %d,%d\n", wpos->wx, wpos->wy);
 #endif
 
 	switch (type) {
@@ -3165,9 +3171,7 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 	/* add wilderness dwellings */
 	/* hack -- the number of dwellings is proportional to their chance of existing */
 	while (terrain.dwelling > 0) {
-		if (rand_int(1000) < terrain.dwelling) {
-			wild_add_dwelling(wpos, -1, -1);
-		}
+		if (rand_int(1000) < terrain.dwelling) wild_add_dwelling(wpos, -1, -1);
 		terrain.dwelling -= 50;
 	}
 
@@ -3267,7 +3271,6 @@ void wilderness_gen(struct worldpos *wpos)
 		/* Illuminate and memorize the walls 
 		c_ptr->info |= (CAVE_GLOW);*/
 	}
-
 
 	/* Hack -- Build some wilderness (from memory) */
 	wilderness_gen_hack(wpos);
