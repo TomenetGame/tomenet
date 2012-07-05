@@ -1368,15 +1368,15 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	if ((area >= 100) && (!rand_int(2))) has_moat = 1;
 	if ((area >= 130) && (rand_int(4) < 3)) has_moat = 1;
 #else
- #if 0/* actually made moats less likely again due to new cfg.castles_per_player */
+ #if 0/* actually made moats less likely again due to new cfg.castles_per_player - this will also save building space */
 	if (area >= 80 && !rand_int(9)) has_moat = 1;
 	if (area >= 80 && !rand_int(6)) has_moat = 1;
 	if (area >= 100 && !rand_int(2)) has_moat = 1;
 	if (area >= 130 && rand_int(4) < 3) has_moat = 1;
  #else
-	if (area >= 100 && !rand_int(3)) has_moat = 1;
-	if (area >= 140 && rand_int(2)) has_moat = 1;
-	if (area >= 180) has_moat = 1;
+	if (area >= 100 && !rand_int(10)) has_moat = 1;
+	else if (area >= 140 && !rand_int(7)) has_moat = 1;
+	else if (area >= 180 && !rand_int(4)) has_moat = 1;
  #endif
 #endif
 	if (has_moat) plot_xlen += 8;
@@ -1400,11 +1400,6 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	if (rand_int(100) < 60) type = WILD_LOG_CABIN;
 	else if (rand_int(100) < 8) type = WILD_PERM_HOME;
 	else type = WILD_ROCK_HOME;
-
-#ifndef __DISABLE_HOUSEBOOST
-	/* also, no giant log cabins */
-	if (area >= 50 && type == WILD_LOG_CABIN) type = WILD_ROCK_HOME;
-#endif
 
 	/* hack -- add extra "for sale" homes near the town */
 	if (w_ptr->radius == 1) {
@@ -1441,6 +1436,10 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	if ((w_ptr->radius == 3 && rand_int(100) < 80)
 	    || has_moat) /* no log cabins or rock homes with moats... */
 		type = WILD_TOWN_HOME;
+
+	/* also, no giant log cabins or rock homes (near towns) */
+	if (type == WILD_LOG_CABIN && area >= 50) type = WILD_ROCK_HOME;
+	if (type == WILD_ROCK_HOME && area >= 80 && w_ptr->radius <= 3) type = WILD_TOWN_HOME;
  #endif
 #endif
 
