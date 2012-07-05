@@ -1105,13 +1105,18 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 				msg_print(Ind, "There is no transferrable house there.");
 				return FALSE;
 			}
-			if ((houses[h_idx].flags & HF_MOAT) &&
-			    cfg.castles_per_player && (Players[i]->castles_owned >= cfg.castles_per_player))  {
-				if (cfg.castles_per_player == 1)
-					msg_format(Ind, "That player already owns a castle!");
-				else
-					msg_format(Ind, "That player already owns %d castles!", cfg.castles_per_player);
-				return FALSE;
+			if (houses[h_idx].flags & HF_MOAT) {
+				if (cfg.castles_for_kings && !Players[i]->total_winner) {
+					msg_print(Ind, "That player is neither king nor queen, neither emperor nor empress!");
+					return FALSE;
+				}
+				if (cfg.castles_per_player && (Players[i]->castles_owned >= cfg.castles_per_player))  {
+					if (cfg.castles_per_player == 1)
+						msg_format(Ind, "That player already owns a castle!");
+					else
+						msg_format(Ind, "That player already owns %d castles!", cfg.castles_per_player);
+					return FALSE;
+				}
 			}
 
 			/* Finally change the owner */
@@ -6288,13 +6293,18 @@ void do_cmd_purchase_house(int Ind, int dir)
 				msg_format(Ind, "At your level, you cannot own more than %d houses!", (int)((p_ptr->lev > 50 ? 50 : p_ptr->lev) / cfg.houses_per_player));
 			return;
 		}
-		if ((houses[h_idx].flags & HF_MOAT) &&
-		    cfg.castles_per_player && (p_ptr->castles_owned >= cfg.castles_per_player))  {
-			if (cfg.castles_per_player == 1)
-				msg_format(Ind, "You cannot own more than 1 castle!");
-			else
-				msg_format(Ind, "You cannot own more than %d castles!", cfg.castles_per_player);
-			return;
+		if (houses[h_idx].flags & HF_MOAT) {
+			if (cfg.castles_for_kings && !p_ptr->total_winner) {
+				msg_print(Ind, "You must be king or queen, emperor or empress, to buy a castle!");
+				return;
+			}
+			if (cfg.castles_per_player && (p_ptr->castles_owned >= cfg.castles_per_player))  {
+				if (cfg.castles_per_player == 1)
+					msg_format(Ind, "You cannot own more than 1 castle!");
+				else
+					msg_format(Ind, "You cannot own more than %d castles!", cfg.castles_per_player);
+				return;
+			}
 		}
 		msg_format(Ind, "You buy the house for %ld gold.", price);
 		p_ptr->au -= price;

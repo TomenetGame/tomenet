@@ -1813,18 +1813,32 @@ void do_cmd_check_server_settings(int Ind)
 		fprintf(fff, "Players with ghosts can be resurrected up to %d times until their soul\n will escape and their bodies will be permanently destroyed.\n", cfg.lifes);
 	if (cfg.houses_per_player) {
 		fprintf(fff, "Players may own up to level/%d houses (caps at level 50) at once", cfg.houses_per_player);
-		if (cfg.castles_per_player == 1)
-			fprintf(fff, "\n of which one may be a castle (house with moat).\n");
-		else if (cfg.castles_per_player)
-			fprintf(fff, "\n of which %d may be a castles (houses with moat).\n", cfg.castles_per_player);
-		else fprintf(fff, ".\n");
+		if (cfg.castles_per_player == 1) {
+			fprintf(fff, "\n of which one may be a castle (house with moat)");
+			if (cfg.castles_for_kings) fprintf(fff, "\n provided the player is a king, queen, emperor or empress.\n");
+			else fprintf(fff, ".\n");
+		} else if (cfg.castles_per_player) {
+			fprintf(fff, "\n of which %d may be a castles (houses with moat)", cfg.castles_per_player);
+			if (cfg.castles_for_kings) fprintf(fff, "\n provided the player is a king, queen, emperor or empress.\n");
+			else fprintf(fff, ".\n");
+		} else {
+			if (cfg.castles_for_kings) fprintf(fff, "\n or castles if the player is a king, queen, emperor or empress.\n");
+			else fprintf(fff, ".\n");
+		}
 	} else {
 		fprintf(fff, "Players may own as many houses as they like");
-		if (cfg.castles_per_player == 1)
-			fprintf(fff, "\n of which one may be a castle (house with moat).\n");
-		else if (cfg.castles_per_player)
-			fprintf(fff, "\n of which %d may be a castles (houses with moat).\n", cfg.castles_per_player);
-		else fprintf(fff, ".\n");
+		if (cfg.castles_per_player == 1) {
+			fprintf(fff, "\n of which one may be a castle (house with moat)");
+			if (cfg.castles_for_kings) fprintf(fff, "\n provided the player is a king, queen, emperor or empress.\n");
+			else fprintf(fff, ".\n");
+		} else if (cfg.castles_per_player) {
+			fprintf(fff, "\n of which %d may be a castles (houses with moat)", cfg.castles_per_player);
+			if (cfg.castles_for_kings) fprintf(fff, "\n provided the player is a king, queen, emperor or empress.\n");
+			else fprintf(fff, ".\n");
+		} else {
+			if (cfg.castles_for_kings) fprintf(fff, "\n or castles if the player is a king, queen, emperor or empress.\n");
+			else fprintf(fff, ".\n");
+		}
 	}
 
 	fprintf(fff,"\n");

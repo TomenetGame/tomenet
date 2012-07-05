@@ -153,6 +153,7 @@ struct server_opts
 	int lifes;
 	int houses_per_player;
 	int castles_per_player;
+	bool castles_for_kings;
 	bool maximize;
 	bool kings_etiquette;
 	bool fallenkings_etiquette;
