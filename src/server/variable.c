@@ -194,7 +194,7 @@ server_opts cfg =
 	100, 999, 5,		// dungeon_shop_chance (*10), dungeon_shop_type (999=random), dungeon_shop_timeout
 
 	FALSE,		// mage_hp_bonus
-	7,FALSE,0,5,	// door_bump_open, no_ghost, lifes (0 = infinite), maxhouses = 50/_houses_per_player_,
+	7,FALSE,0,7,1,	// door_bump_open, no_ghost, lifes (0 = infinite), maxhouses = 50/_houses_per_player_, castles_per_player
 	TRUE,TRUE,TRUE,	// maximize, kings_etiquette, fallenkings_etiquette
 
 	FALSE,FALSE,	// public_rfe, auto_purge

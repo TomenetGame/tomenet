@@ -1612,9 +1612,12 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 		p_ptr->insta_res = tmp8u;
     	}
         else strip_bytes(1);
+        if (!older_than(4, 4, 25)) rd_byte(&p_ptr->castles_owned);
+        else strip_bytes(1);
+
 
 	/* Future use */
-	strip_bytes(38);
+	strip_bytes(37);
 
 	/* Toggle for possible automatic save-game updates
 	   (done via script login-hook, eg custom.lua) - C. Blue */

@@ -773,8 +773,10 @@ static void wr_extra(int Ind)
 
 	wr_byte(p_ptr->insta_res);
 
+	wr_byte(p_ptr->castles_owned);
+
 	/* Future use */
-	for (i = 0; i < 38; i++) wr_byte(0);
+	for (i = 0; i < 37; i++) wr_byte(0);
 
         /* Toggle for possible automatic save-game updates
            (done via script login-hook, eg custom.lua) - C. Blue */

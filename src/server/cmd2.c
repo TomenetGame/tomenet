@@ -1060,10 +1060,10 @@ static bool chmod_door(int Ind, struct dna_type *dna, char *args){
 }
 
 /* Door change ownership */
-static bool chown_door(int Ind, struct dna_type *dna, char *args){
+static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 	player_type *p_ptr=Players[Ind];
 	int newowner=-1;
-	int i;
+	int i, h_idx;
 
 	/* to prevent house amount cheeze (houses_owned)
 	   let's just say house ownership can't be transferred.
@@ -1098,6 +1098,20 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args){
 				else
 					msg_print(Ind, "At his current level, that player cannot own more houses!");
 				return (FALSE);
+			}
+			h_idx = pick_house(&p_ptr->wpos, y, x);
+			/* paranoia */
+			if (h_idx == -1) {
+				msg_print(Ind, "There is no transferrable house there.");
+				return FALSE;
+			}
+			if ((houses[h_idx].flags & HF_MOAT) &&
+			    cfg.castles_per_player && (Players[i]->castles_owned >= cfg.castles_per_player))  {
+				if (cfg.castles_per_player == 1)
+					msg_format(Ind, "That player already owns a castle!");
+				else
+					msg_format(Ind, "That player already owns %d castles!", cfg.castles_per_player);
+				return FALSE;
 			}
 
 			/* Finally change the owner */
@@ -1138,6 +1152,10 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args){
 
 					Players[i]->houses_owned++;
 					p_ptr->houses_owned--;
+					if (houses[h_idx].flags & HF_MOAT) {
+						Players[i]->castles_owned++;
+						p_ptr->castles_owned--;
+					}
 					return(TRUE);
 				}
 			}
@@ -6122,7 +6140,7 @@ void house_admin(int Ind, int dir, char *args){
 				if (access_door(Ind, dna, FALSE) || admin_p(Ind)) {
 					switch (args[0]) {
 						case 'O':
-							success=chown_door(Ind, dna, args);
+							success=chown_door(Ind, dna, args, x, y);
 							break;
 						case 'M':
 							success=chmod_door(Ind, dna, args);
@@ -6158,7 +6176,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos=&p_ptr->wpos;
 
-	int y, x, i;
+	int y, x, h_idx;
 	int factor;
 //	int64_t price; /* I'm hoping this will be 64 bits.  I dont know if it will be portable. */
 //	s64b price;
@@ -6204,6 +6222,14 @@ void do_cmd_purchase_house(int Ind, int dir)
 		}
 
 		dna = cs_ptr->sc.ptr;
+
+		h_idx = pick_house(&p_ptr->wpos, y, x);
+		/* paranoia */
+		if (h_idx == -1) {
+			msg_print(Ind, "That's not a house to buy/sell!");
+			return;
+		}
+
 		/* Take player's CHR into account */
 		factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
 
@@ -6221,6 +6247,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 					/* sell house */
 					msg_format(Ind, "You sell your house for %ld gold.", price / 2);
 					p_ptr->houses_owned--;
+					if (houses[h_idx].flags & HF_MOAT) p_ptr->castles_owned--;
 
 					/* make sure we don't get stuck by selling it while inside - C. Blue */
 					if (zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY)
@@ -6238,11 +6265,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 				dna->a_flags = ACF_NONE;
 
 				/* Erase house contents */
-				for (i = 0; i < num_houses; i++)
-					if (houses[i].dx == x && houses[i].dy == y && inarea(&houses[i].wpos, &p_ptr->wpos)) {
-						kill_house_contents(&houses[i]);
-						break;
-					}
+				kill_house_contents(&houses[h_idx]);
 
 				/* take note of door colour change */
 				c_ptr->feat = FEAT_HOME; /* make sure door is closed, in case it was open when we sold it */
@@ -6258,14 +6281,25 @@ void do_cmd_purchase_house(int Ind, int dir)
 		}
 		if (cfg.houses_per_player && (p_ptr->houses_owned >= ((p_ptr->lev > 50 ? 50 : p_ptr->lev) / cfg.houses_per_player)) && !is_admin(p_ptr)) {
 			if ((int)(p_ptr->lev / cfg.houses_per_player) == 0)
-			msg_format(Ind, "You need to be at least level %d to buy a house!", cfg.houses_per_player);
+				msg_format(Ind, "You need to be at least level %d to buy a house!", cfg.houses_per_player);
+			else if ((int)(p_ptr->lev / cfg.houses_per_player) == 1)
+				msg_print(Ind, "At your level, you cannot own more than 1 house!");
 			else
-			msg_format(Ind, "At your level, you cannot own more than %d houses at once!", (int)((p_ptr->lev > 50 ? 50 : p_ptr->lev) / cfg.houses_per_player));
+				msg_format(Ind, "At your level, you cannot own more than %d houses!", (int)((p_ptr->lev > 50 ? 50 : p_ptr->lev) / cfg.houses_per_player));
+			return;
+		}
+		if ((houses[h_idx].flags & HF_MOAT) &&
+		    cfg.castles_per_player && (p_ptr->castles_owned >= cfg.castles_per_player))  {
+			if (cfg.castles_per_player == 1)
+				msg_format(Ind, "You cannot own more than 1 castle!");
+			else
+				msg_format(Ind, "You cannot own more than %d castles!", cfg.castles_per_player);
 			return;
 		}
 		msg_format(Ind, "You buy the house for %ld gold.", price);
 		p_ptr->au -= price;
 		p_ptr->houses_owned++;
+		if (houses[h_idx].flags & HF_MOAT) p_ptr->castles_owned++;
 		dna->creator = p_ptr->dna;
 		dna->mode = p_ptr->mode;
 		dna->owner = p_ptr->id;
@@ -6274,11 +6308,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 		dna->min_level = 1;
 
 		/* Erase house contents */
-		for (i = 0; i < num_houses; i++)
-			if (houses[i].dx == x && houses[i].dy == y && inarea(&houses[i].wpos, &p_ptr->wpos)) {
-				kill_house_contents(&houses[i]);
-				break;
-			}
+		kill_house_contents(&houses[h_idx]);
 
 		/* Redraw */
 		p_ptr->redraw |= (PR_GOLD);

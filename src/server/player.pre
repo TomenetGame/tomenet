@@ -387,6 +387,7 @@ struct player_type
 	s16b fruit_bat;		/* Are we a fruit bat */
 	byte lives;		/* number of times we have ressurected */
 	byte houses_owned;	/* number of simultaneously owned houses */
+	byte castles_owned;	/* number of castles owned */
 
 	byte prace;		/* Race index */
 	byte pclass;		/* Class index */

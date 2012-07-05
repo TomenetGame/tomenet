@@ -1911,6 +1911,7 @@ struct player_type
 	s16b fruit_bat;		/* Are we a fruit bat */
 	byte lives;         /* number of times we have ressurected */
 	byte houses_owned;	/* number of simultaneously owned houses */
+	byte castles_owned;	/* number of owned castles */
 
 	byte prace;			/* Race index */
 	byte pclass;		/* Class index */
@@ -3116,6 +3117,7 @@ struct server_opts
 	int lifes;		/* number of times a ghost player can be resurrected */
 	int houses_per_player;	/* number of houses a player is allowed to own at once;
 				    it's: max_houses = (player_level / houses_per_player). */
+	int castles_per_player; /* absolute # of castles a character may own (0 for infinite) */
 	bool maximize;
 	bool kings_etiquette;
 	bool fallenkings_etiquette;
