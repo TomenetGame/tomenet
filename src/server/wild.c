@@ -3711,8 +3711,6 @@ void genwild(bool dry_Bree) {
 				case WILD_OCEANBED1: case WILD_OCEANBED2:
 				case WILD_COAST:
 				case WILD_SHORE1: case WILD_SHORE2:
-				case WILD_LAKE:
-				case WILD_RIVER:
 
 				case WILD_DENSEFOREST:
 				case WILD_SWAMP:
@@ -3720,6 +3718,8 @@ void genwild(bool dry_Bree) {
 				case WILD_MOUNTAIN:
 #endif
 				case WILD_OCEAN:
+				case WILD_RIVER:
+				case WILD_LAKE:
 					watery = TRUE;
 					break;
 				}
