@@ -482,7 +482,7 @@ bool item_tester_hook_wear(int Ind, int slot) {
 
 	if (p_ptr->body_monster &&
 	    (p_ptr->pclass != CLASS_DRUID) &&
-	    ((p_ptr->pclass != CLASS_SHAMAN) || !strchr("EG", r_ptr->d_char)) &&
+	    ((p_ptr->pclass != CLASS_SHAMAN) || !strchr("EGX", r_ptr->d_char)) &&
 	    (p_ptr->prace != RACE_VAMPIRE)
 	    ) {
 		switch(slot) {
