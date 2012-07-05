@@ -1463,14 +1463,14 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 		/* log for debugging */
 		s_printf("CAST_SCHOOL_SPELL_ERROR: TV_BOOK != %d\n", o_ptr->tval);
 
-		msg_print(Ind, "Ahah dont try to hack your client please :) :: tval");
+		//msg_print(Ind, "Ahah dont try to hack your client please :) :: tval");
 		return;
 	} else if (o_ptr->sval == SV_SPELLBOOK) {
 		if (o_ptr->pval != spell) {
 			/* log for debugging */
 			s_printf("CAST_SCHOOL_SPELL_ERROR: SV_SPELLBOOK - %d != %d\n", o_ptr->pval, spell);
 
-			msg_print(Ind, "Ahah dont try to hack your client please :) :: sval 255");
+			//msg_print(Ind, "Ahah dont try to hack your client please :) :: sval 255");
 			return;
 		}
 	} else {
@@ -1479,7 +1479,7 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 				/* log for debugging */
 				s_printf("CAST_SCHOOL_SPELL_ERROR: MY_VERSION < - %d, %d\n", o_ptr->sval, spell);
 
-				msg_print(Ind, "Ahah dont try to hack your client please :) :: sval != 255");
+				//msg_print(Ind, "Ahah dont try to hack your client please :) :: sval != 255");
 				return;
 			}
 		} else {
@@ -1487,7 +1487,7 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 				/* log for debugging */
 				s_printf("CAST_SCHOOL_SPELL_ERROR: MY_VERSION >= - %d, %d, %d\n", book, o_ptr->sval, spell);
 
-				msg_print(Ind, "Ahah dont try to hack your client please :) :: sval != 255");
+				//msg_print(Ind, "Ahah dont try to hack your client please :) :: sval != 255");
 				return;
 			}
 		}
