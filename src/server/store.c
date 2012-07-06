@@ -4486,8 +4486,10 @@ void store_exec_command(int Ind, int action, int item, int item2, int amt, int g
 
 	/* Is the action legal? */
 	//if (!store_attest_command(p_ptr->store_num, action)) return;
-	if (!store_attest_command(p_ptr->store_num, ba_info[action].action))
+	if (!store_attest_command(p_ptr->store_num, ba_info[action].action)) {
+		s_printf("ILLEGAL_STORE_COMMAND: '%s' uses action %d in store %d\n", p_ptr->name, action, p_ptr->store_num);
 		return;
+	}
 
 #if 0	/* Sanity checks - not possible since item could be
 	   either from player or from store inventory - C. Blue */
