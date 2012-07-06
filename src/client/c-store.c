@@ -625,6 +625,7 @@ static void store_process_command(int cmd)
 			} else c_msg_format("Page %d is empty.", i + 1);
 			break;
 
+#if 0 /* replaced by st_info actions */
 		/* Get (purchase) */
 		case 'g':
 		case 'p':
@@ -649,6 +650,7 @@ static void store_process_command(int cmd)
 			store_examine();
 			break;
 		}
+#endif
 
 		/* Paste on Chat */
 		case 'c':
