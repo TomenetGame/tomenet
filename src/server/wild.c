@@ -1319,8 +1319,8 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	int size;
 #ifndef __DISABLE_HOUSEBOOST
 	int xx, yy, door_dir = 0;
-#endif
 	bool hinders_door = FALSE;
+#endif
 	char wall_feature = 0, door_feature = 0;
 	char has_moat = 0;
 	cave_type *c_ptr;
