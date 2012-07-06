@@ -6859,6 +6859,7 @@ void play_game(bool new_game, bool dry_Bree, bool new_wilderness, bool new_flavo
 			s_printf("..done.\n");
 		}
 		if (new_flavours) {
+			/* use with lua_forget_flavours() */
 			s_printf("Resetting flavours.\n");
 
 			/* Hack -- seed for flavors */

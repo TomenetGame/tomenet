@@ -1092,3 +1092,14 @@ void lua_fix_max_depth(int Ind) {
 	player_type *p_ptr = Players[Ind];
         fix_max_depth(p_ptr);
 }
+
+/* for use with flavour reset by '-f' */
+void lua_forget_flavours(int Ind) {
+	int i;
+        for (i = 0; i < MAX_K_IDX; i++) {
+                Players[Ind]->obj_aware[i] = FALSE;
+                Players[Ind]->obj_tried[i] = FALSE;
+                Players[Ind]->obj_felt[i] = FALSE;
+                Players[Ind]->obj_felt_heavy[i] = FALSE;
+        }
+}
