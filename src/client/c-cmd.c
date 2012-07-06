@@ -1594,7 +1594,7 @@ static void artifact_lore(void) {
 			strcpy(tmp, artifact_list_name[i]);
 			for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
 
-			if (strstr(tmp, s)) {
+			if (artifact_list_code[i] && strstr(tmp, s)) {
 				if (n == 0) {
 					selected_list = i;
 					selected = artifact_list_code[i];
@@ -1787,7 +1787,7 @@ static void monster_lore(void) {
 			strcpy(tmp, monster_list_name[i]);
 			for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
 
-			if (strstr(tmp, s)) {
+			if (monster_list_code[i] && strstr(tmp, s)) {
 				if (n == 0) {
 					selected = monster_list_code[i];
 					selected_list = i;

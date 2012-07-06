@@ -327,6 +327,7 @@ void initialize_player_ins_files(void) {
    and also for displaying monster lore - C. Blue */
 static void init_monster_list() {
 	char buf[1024], *p1, *p2;
+	int v1 = 0, v2 = 0, v3 = 0;
 	FILE *fff;
 
 	/* actually use local r_info.txt - a novum */
@@ -350,7 +351,16 @@ static void init_monster_list() {
 		}
 		if (!p1 && !p2) continue;
 
-		if (strlen(buf) < 3 || buf[0] != 'N') continue;
+		if (strlen(buf) < 3) continue;
+		if (buf[0] == 'V' && buf[1] == ':') {
+			sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3);
+			continue;
+		}
+		if (buf[0] != 'N') continue;
+		if (v1 < 3 || (v1 == 3 && (v2 < 4 || (v2 == 4 && v3 < 1)))) {
+			//plog("Error: Your r_info.txt file is outdated.");
+			return;
+		}
 
 		p1 = buf + 2; /* monster code */
 		p2 = strchr(p1, ':'); /* 1 before monster name */
@@ -1001,6 +1011,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 /* Init kind list for displaying artifact lore with full item names - C. Blue */
 static void init_kind_list() {
 	char buf[1024], *p1, *p2;
+	int v1 = 0, v2 = 0, v3 = 0;
 	FILE *fff;
 
 	/* actually use local k_info.txt - a novum */
@@ -1024,7 +1035,16 @@ static void init_kind_list() {
 		}
 		if (!p1 && !p2) continue;
 
-		if (strlen(buf) < 3 || buf[0] != 'N') continue;
+		if (strlen(buf) < 3) continue;
+		if (buf[0] == 'V' && buf[1] == ':') {
+			sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3);
+			continue;
+		}
+		if (buf[0] != 'N') continue;
+		if (v1 < 4 || (v1 == 4 && (v2 < 0 || (v2 == 0 && v3 < 1)))) {
+			//plog("Error: Your k_info.txt file is outdated.");
+			return;
+		}
 
 		p1 = buf + 2; /* kind code */
 		p2 = strchr(p1, ':'); /* 1 before kind name */
@@ -1087,7 +1107,7 @@ static void init_kind_list() {
 static void init_artifact_list() {
 	char buf[1024], *p1, *p2, art_name[MSG_LEN];
 	FILE *fff;
-	int tval = 0, sval = 0, i;
+	int tval = 0, sval = 0, i, v1 = 0, v2 = 0, v3 = 0;
 	bool discard;
 
 	/* actually use local r_info.txt - a novum */
@@ -1110,8 +1130,16 @@ static void init_artifact_list() {
 			strcpy(buf, p1 + 1);
 		}
 		if (!p1 && !p2) continue;
-
-		if (strlen(buf) < 3 || buf[0] != 'N') continue;
+		if (strlen(buf) < 3) continue;
+		if (buf[0] == 'V' && buf[1] == ':') {
+			sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3);
+			continue;
+		}
+		if (buf[0] != 'N') continue;
+		if (v1 < 3 || (v1 == 3 && (v2 < 4 || (v2 == 4 && v3 < 1)))) {
+			//plog("Error: Your a_info.txt file is outdated.");
+			return;
+		}
 
 		p1 = buf + 2; /* artifact code */
 		p2 = strchr(p1, ':'); /* 1 before artifact name */
