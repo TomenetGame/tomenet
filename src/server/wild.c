@@ -1223,6 +1223,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 
 /* check if a location is suitable for placing a door	- Jir - */
 /* TODO: check for houses built *after* door creation */
+#ifdef __DISABLED_HOUSEBOOST
 static bool dwelling_check_entrance(worldpos *wpos, int y, int x)
 {
 	int i;
@@ -1250,6 +1251,58 @@ static bool dwelling_check_entrance(worldpos *wpos, int y, int x)
 	/* Assume failure */
 	return (FALSE);
 }
+#else
+static bool dwelling_check_entrance(worldpos *wpos, int y, int x, int dir) {
+	int i;
+	cave_type *c_ptr;
+	cave_type **zcave;
+	if (!(zcave = getcave(wpos))) return FALSE;
+
+	switch (dir) {
+	/* corners: 5 adjacent grids to check */
+	case 0: case 2: case 4: case 6:
+		for (i = -2; i <= 2; i++) {
+    		        c_ptr = &zcave[y + ddy_cyc[(dir + i) % 8]][x + ddx_cyc[(dir + i) % 8]];
+
+			/* Inside a house */
+			if (c_ptr->info & CAVE_ICKY) continue;
+
+			/* Wall blocking the door */
+			if (f_info[c_ptr->feat].flags1 & FF1_WALL) continue;
+
+			/* Nasty terrain covering the door */
+			if (c_ptr->feat == FEAT_DEEP_WATER || c_ptr->feat == FEAT_DEEP_LAVA)
+				continue;
+
+			/* Found a neat entrance */
+			return TRUE;
+		}
+		break;
+	/* sides: 3 adjacent grids to check */
+	case 1: case 3: case 5: case 7:
+		for (i = -1; i <= 1; i++) {
+    		        c_ptr = &zcave[y + ddy_cyc[(dir + i) % 8]][x + ddx_cyc[(dir + i) % 8]];
+
+			/* Inside a house */
+			if (c_ptr->info & CAVE_ICKY) continue;
+
+			/* Wall blocking the door */
+			if (f_info[c_ptr->feat].flags1 & FF1_WALL) continue;
+
+			/* Nasty terrain covering the door */
+			if (c_ptr->feat == FEAT_DEEP_WATER || c_ptr->feat == FEAT_DEEP_LAVA)
+				continue;
+
+			/* Found a neat entrance */
+			return TRUE;
+		}
+		break;
+	}
+
+	/* Assume failure */
+	return FALSE;
+}
+#endif
 
 /* adds a building to the wilderness. if the coordinate is not given,
    find it randomly.
@@ -1263,7 +1316,10 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 		plot_xlen, plot_ylen, house_xlen, house_ylen,
 		door_x, door_y, drawbridge_x[3], drawbridge_y[3],
 		tmp, type, area, num_door_attempts;
-	int size, xx, yy;
+	int size;
+#ifndef __DISABLED_HOUSEBOOST
+	int xx, yy, door_dir = 0;
+#endif
 	bool hinders_door = FALSE;
 	char wall_feature = 0, door_feature = 0;
 	char has_moat = 0;
@@ -1565,6 +1621,12 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 					drawbridge_x[0] = door_x; drawbridge_x[1] = door_x;
 					drawbridge_x[2] = door_x;
 				}
+#ifndef __DISABLED_HOUSEBOOST
+				/* door directly on a corner? */
+				if (door_x == h_x1) door_dir = 6;
+				else if (door_x == h_x2) door_dir = 4;
+				else door_dir = 5;
+#endif
 				break;
 			/* Top side */
 			case DIR_NORTH:
@@ -1576,6 +1638,12 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 					drawbridge_x[0] = door_x; drawbridge_x[1] = door_x;
 					drawbridge_x[2] = door_x;
 				}
+#ifndef __DISABLED_HOUSEBOOST
+				/* door directly on a corner? */
+				if (door_x == h_x1) door_dir = 0;
+				else if (door_x == h_x2) door_dir = 2;
+				else door_dir = 1;
+#endif
 				break;
 			/* Right side */
 			case DIR_EAST:
@@ -1587,8 +1655,13 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 					drawbridge_x[0] = h_x2+1; drawbridge_x[1] = h_x2+2;
 					drawbridge_x[2] = h_x2+3;
 				}
+#ifndef __DISABLED_HOUSEBOOST
+				/* door directly on a corner? */
+				if (door_y == h_y1) door_dir = 2;
+				else if (door_y == h_y2) door_dir = 4;
+				else door_dir = 3;
+#endif
 				break;
-
 			/* Left side */
 			default:
 				door_y = rand_range(h_y1, h_y2);
@@ -1599,7 +1672,13 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 					drawbridge_x[0] = h_x1-1; drawbridge_x[1] = h_x1-2;
 					drawbridge_x[2] = h_x1-3;
 				}
-			break;
+#ifndef __DISABLED_HOUSEBOOST
+				/* door directly on a corner? */
+				if (door_y == h_y1) door_dir = 0;
+				else if (door_y == h_y2) door_dir = 6;
+				else door_dir = 7;
+#endif
+				break;
 		}
 
 #ifdef __DISABLE_HOUSEBOOST
@@ -1607,11 +1686,10 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	} while (dwelling_check_entrance(wpos, door_y, door_x) && num_door_attempts < 30);
 #else
 		/* Break on success */
-		if (dwelling_check_entrance(wpos, door_y, door_x)) break;
+		if (dwelling_check_entrance(wpos, door_y, door_x, door_dir)) break;
 
 		num_door_attempts++;
-	} while (num_door_attempts < 1);
-if (num_door_attempts == 1) s_printf("*********************** exceeded num_door_attempts (%d)\n", num_houses);
+	} while (num_door_attempts < 20);
 #endif
 
 	/* Build a rectangular building */
