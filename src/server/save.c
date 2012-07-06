@@ -924,7 +924,7 @@ static void wr_extra(int Ind)
 	wr_u16b(p_ptr->tim_stealth);
 	wr_u16b(p_ptr->tim_stealth_pow);
 
-#if 0
+#if 1
 	wr_u16b(p_ptr->tim_brand_ex);
 	wr_byte(p_ptr->tim_brand_ex_projection);
 	wr_u32b(p_ptr->tim_brand_ex_damage);

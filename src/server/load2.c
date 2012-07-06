@@ -1839,13 +1839,15 @@ if (p_ptr->updated_savegame == 0) {
 		rd_u16b(&p_ptr->tim_stealth);
 		rd_u16b(&p_ptr->tim_stealth_pow);
 
-#if 0
-		rd_u16b(&p_ptr->tim_brand_ex);
-		rd_byte(&p_ptr->tim_brand_ex_projection);
-		rd_u32b(&p_ptr->tim_brand_ex_damage);
-		rd_u16b(&p_ptr->tim_aura_ex);
-		rd_byte(&p_ptr->tim_aura_ex_projection);
-		rd_u32b(&p_ptr->tim_aura_ex_damage);
+#if 1
+		if (!older_than(4, 4, 26)) {
+			rd_u16b(&p_ptr->tim_brand_ex);
+			rd_byte(&p_ptr->tim_brand_ex_projection);
+			rd_u32b(&p_ptr->tim_brand_ex_damage);
+			rd_u16b(&p_ptr->tim_aura_ex);
+			rd_byte(&p_ptr->tim_aura_ex_projection);
+			rd_u32b(&p_ptr->tim_aura_ex_damage);
+		}
 #endif
 
 		rd_u16b(&p_ptr->rcraft_empower);

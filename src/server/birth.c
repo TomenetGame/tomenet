@@ -2217,7 +2217,7 @@ static void player_setup(int Ind, bool new)
 	p_ptr->tim_stealth = 0;
 	p_ptr->tim_stealth_pow = 0;
 
-#if 0
+#if 1
 	p_ptr->tim_brand_ex = 0;
 	p_ptr->tim_brand_ex_projection = 0;
 	p_ptr->tim_brand_ex_damage = 0;

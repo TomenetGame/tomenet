@@ -2445,7 +2445,7 @@ bool make_attack_melee(int Ind, int m_idx)
 				}
 #endif
 
-#if 0
+#if 1
 				//Runemaster Explosive Shield - 50% chance - correct placement? - Kurzel
 				if (p_ptr->tim_aura_ex && randint(2) == 1 && alive) {
 					msg_format(Ind, "The runes about your body explode with %s!", r_projections[p_ptr->tim_aura_ex_projection].name);

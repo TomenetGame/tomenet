@@ -4045,7 +4045,7 @@ bool set_tim_brand_vorp(int Ind, int v) {
 }
 
 bool set_tim_brand_ex(int Ind, int v, byte projection, u32b damage) {
-#if 0
+#if 1
 	player_type *p_ptr = Players[Ind];
 
 	bool notice = FALSE;
@@ -4091,7 +4091,7 @@ bool set_tim_brand_ex(int Ind, int v, byte projection, u32b damage) {
 }
 
 bool set_tim_aura_ex(int Ind, int v, byte projection, u32b damage) {
-#if 0
+#if 1
 	player_type *p_ptr = Players[Ind];
 
 	bool notice = FALSE;

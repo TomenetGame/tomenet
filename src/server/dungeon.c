@@ -3776,7 +3776,7 @@ static bool process_player_end_aux(int Ind)
 		(void)set_tim_rcraft_help(Ind, p_ptr->tim_rcraft_help - 1, p_ptr->tim_rcraft_help_type, p_ptr->tim_rcraft_help_projection, p_ptr->tim_rcraft_help_damage);
         }
 
-#if 0
+#if 1
 	/* Brand Explode */
 	if (p_ptr->tim_brand_ex)
 		(void)set_tim_brand_ex(Ind, p_ptr->tim_brand_ex - 1, p_ptr->tim_brand_ex_projection, p_ptr->tim_brand_ex_damage);
@@ -3784,7 +3784,8 @@ static bool process_player_end_aux(int Ind)
 	/* Aura Explode */
 	if (p_ptr->tim_aura_ex)
 		(void)set_tim_aura_ex(Ind, p_ptr->tim_aura_ex - 1, p_ptr->tim_aura_ex_projection, p_ptr->tim_aura_ex_damage);
-
+#endif
+#if 0
 	/* Protection from Acid */
 	if (p_ptr->protacid)
 		(void)set_protacid(Ind, p_ptr->protacid - 1);

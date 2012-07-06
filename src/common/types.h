@@ -2040,7 +2040,7 @@ struct player_type
 	u16b tim_stealth;	/* Timed -- Stealth */
 	u16b tim_stealth_pow;
 
-#if 0
+#if 1
 	u16b tim_brand_ex;		/* Timed -- Explosive Brand/Aura */
 	byte tim_brand_ex_projection;
 	u32b tim_brand_ex_damage;
