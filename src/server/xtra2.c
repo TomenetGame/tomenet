@@ -7578,6 +7578,11 @@ void player_death(int Ind)
 			instant_res_possible = FALSE;
 		}
 
+		/* Divine wrath is meant to kill people */
+		if (streq(p_ptr->died_from, "divine wrath")) {
+			instant_res_possible = FALSE;
+		}
+
 		if (instant_res_possible) {
 			int loss_factor, reduce;
 
