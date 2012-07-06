@@ -1103,3 +1103,39 @@ void lua_forget_flavours(int Ind) {
                 Players[Ind]->obj_felt_heavy[i] = FALSE;
         }
 }
+
+/* for resetting all party information */
+void lua_forget_parties(void) {
+	int i, j;
+	for (i = 1; i <= NumPlayers; i++)
+		Players[i]->party = 0;
+	for (i = 0; i < MAX_PARTIES; i++) {
+		parties[i].name[0] = '\0';
+	        parties[i].owner[0] = '\0';
+	        parties[i].members = 0;
+	        parties[i].created = 0;
+	        parties[i].mode = 0;
+	        parties[i].flags = 0x0;
+	        for (j = 0; j < BBS_LINES; j++)
+    			pbbs_line[i][j][0] = '\0';
+	}
+}
+
+/* for resetting all guild information
+   --note: guild halls/save files? */
+void lua_forget_guilds(void) {
+	int i, j;
+	for (i = 1; i <= NumPlayers; i++)
+		Players[i]->guild = 0;
+	for (i = 0; i < MAX_GUILDS; i++) {
+		guilds[i].name[0] = '\0';
+		guilds[i].master = 0;
+		guilds[i].members = 0;
+		guilds[i].flags = 0x0;
+		guilds[i].minlev = 0;
+                for (j = 0; j < 5; j++)
+                        guilds[i].adder[j][0] = '\0';
+	        for (j = 0; j < BBS_LINES; j++)
+    			gbbs_line[i][j][0] = '\0';
+	}
+}

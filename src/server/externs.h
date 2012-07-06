@@ -2001,6 +2001,8 @@ void nonswear_set(int i, char *word);
 char *nonswear_get(int i);
 extern void lua_fix_max_depth(int Ind);
 extern void lua_forget_flavours(int Ind);
+extern void lua_forget_parties(void);
+extern void lua_forget_guilds(void);
 
 
 #ifdef ENABLE_GO_GAME
