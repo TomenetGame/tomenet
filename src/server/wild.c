@@ -1223,7 +1223,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 
 /* check if a location is suitable for placing a door	- Jir - */
 /* TODO: check for houses built *after* door creation */
-#ifdef __DISABLED_HOUSEBOOST
+#ifdef __DISABLE_HOUSEBOOST
 static bool dwelling_check_entrance(worldpos *wpos, int y, int x)
 {
 	int i;
@@ -1317,7 +1317,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 		door_x, door_y, drawbridge_x[3], drawbridge_y[3],
 		tmp, type, area, num_door_attempts;
 	int size;
-#ifndef __DISABLED_HOUSEBOOST
+#ifndef __DISABLE_HOUSEBOOST
 	int xx, yy, door_dir = 0;
 #endif
 	bool hinders_door = FALSE;
@@ -1621,7 +1621,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 					drawbridge_x[0] = door_x; drawbridge_x[1] = door_x;
 					drawbridge_x[2] = door_x;
 				}
-#ifndef __DISABLED_HOUSEBOOST
+#ifndef __DISABLE_HOUSEBOOST
 				/* door directly on a corner? */
 				if (door_x == h_x1) door_dir = 6;
 				else if (door_x == h_x2) door_dir = 4;
@@ -1638,7 +1638,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 					drawbridge_x[0] = door_x; drawbridge_x[1] = door_x;
 					drawbridge_x[2] = door_x;
 				}
-#ifndef __DISABLED_HOUSEBOOST
+#ifndef __DISABLE_HOUSEBOOST
 				/* door directly on a corner? */
 				if (door_x == h_x1) door_dir = 0;
 				else if (door_x == h_x2) door_dir = 2;
@@ -1655,7 +1655,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 					drawbridge_x[0] = h_x2+1; drawbridge_x[1] = h_x2+2;
 					drawbridge_x[2] = h_x2+3;
 				}
-#ifndef __DISABLED_HOUSEBOOST
+#ifndef __DISABLE_HOUSEBOOST
 				/* door directly on a corner? */
 				if (door_y == h_y1) door_dir = 2;
 				else if (door_y == h_y2) door_dir = 4;
@@ -1672,7 +1672,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 					drawbridge_x[0] = h_x1-1; drawbridge_x[1] = h_x1-2;
 					drawbridge_x[2] = h_x1-3;
 				}
-#ifndef __DISABLED_HOUSEBOOST
+#ifndef __DISABLE_HOUSEBOOST
 				/* door directly on a corner? */
 				if (door_y == h_y1) door_dir = 0;
 				else if (door_y == h_y2) door_dir = 6;
