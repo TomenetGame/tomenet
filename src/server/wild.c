@@ -1263,7 +1263,8 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 		plot_xlen, plot_ylen, house_xlen, house_ylen,
 		door_x, door_y, drawbridge_x[3], drawbridge_y[3],
 		tmp, type, area, num_door_attempts;
-	int size;
+	int size, xx, yy;
+	bool hinders_door = FALSE;
 	char wall_feature = 0, door_feature = 0;
 	char has_moat = 0;
 	cave_type *c_ptr;
@@ -1434,7 +1435,6 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
  #endif
 #endif
 #ifndef __DISABLE_HOUSEBOOST
- #ifndef DEVEL_TOWN_COMPATIBILITY
 	if ((w_ptr->radius == 3 && rand_int(100) < 80)
 	    || has_moat) /* no log cabins or rock homes with moats... */
 		type = WILD_TOWN_HOME;
@@ -1442,11 +1442,61 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	/* also, no giant log cabins or rock homes (near towns) */
 	if (type == WILD_LOG_CABIN && area >= 50) type = WILD_ROCK_HOME;
 	if (type == WILD_ROCK_HOME && area >= 80 && w_ptr->radius <= 3) type = WILD_TOWN_HOME;
- #endif
 #endif
 
-#ifdef TEST_SERVER
-if (has_moat) s_printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> has_moat %d,%d\n", wpos->wx, wpos->wy);
+#ifndef __DISABLE_HOUSEBOOST
+	/* Make sure our building isn't placed so that its walls block a
+	   house door of another house that has previously been generated.
+	   What could still happen is that a door is within a 'backalley'
+	   that isn't actually accessible without phasing. - C. Blue */
+	/* Determine the building's boundaries */
+	for (xx = h_x1; xx <= h_x2; xx++) {
+		if (zcave[h_y1 - 1][xx].feat == FEAT_HOME ||
+		    zcave[h_y1 - 1][xx].feat == FEAT_DOOR_HEAD) {
+			/* reduce house height accordingly */
+			h_y1++;
+			hinders_door = TRUE;
+			break;
+		}
+	}
+	for (xx = h_x1; xx <= h_x2; xx++) {
+		if (zcave[h_y2 + 1][xx].feat == FEAT_HOME ||
+		    zcave[h_y2 + 1][xx].feat == FEAT_DOOR_HEAD) {
+			/* reduce house height accordingly */
+			h_y2--;
+			hinders_door = TRUE;
+			break;
+		}
+	}
+	for (yy = h_y1; yy <= h_y2; yy++) {
+		if (zcave[yy][h_x1 - 1].feat == FEAT_HOME ||
+		    zcave[yy][h_x1 - 1].feat == FEAT_DOOR_HEAD) {
+			/* reduce house height accordingly */
+			h_x1++;
+			hinders_door = TRUE;
+			break;
+		}
+	}
+	for (yy = h_y1; yy <= h_y2; yy++) {
+		if (zcave[yy][h_x2 + 1].feat == FEAT_HOME ||
+		    zcave[yy][h_x2 + 1].feat == FEAT_DOOR_HEAD) {
+			/* reduce house height accordingly */
+			h_x2--;
+			hinders_door = TRUE;
+			break;
+		}
+	}
+
+	/* Recalculate house parameters? */
+	if (hinders_door) {
+		/* has house become too small now (smaller than 3x3)? -> abort */
+		if (h_x2 - h_x1 < 2 || h_y2 - h_y1 < 2) return;
+
+		area = (h_x2 - h_x1 - 1) * (h_y2 - h_y1 - 1);
+
+		x = (h_x1 + h_x2) / 2;
+		y = (h_y1 + h_y2) / 2;
+	}
 #endif
 
 	switch (type) {
@@ -1533,9 +1583,9 @@ if (has_moat) s_printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> has_moat %d,%d\n", wpo
 				door_x = h_x2;
 				if (has_moat) {
 					drawbridge_y[0] = door_y; drawbridge_y[1] = door_y;
-					drawbridge_y[2] = door_y; 
+					drawbridge_y[2] = door_y;
 					drawbridge_x[0] = h_x2+1; drawbridge_x[1] = h_x2+2;
-					drawbridge_x[2] = h_x2+3; 
+					drawbridge_x[2] = h_x2+3;
 				}
 				break;
 
@@ -1551,13 +1601,18 @@ if (has_moat) s_printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> has_moat %d,%d\n", wpo
 				}
 			break;
 		}
-		/* Access the grid */
-		c_ptr = &zcave[door_y][door_x];
+
+#ifdef __DISABLE_HOUSEBOOST
 		num_door_attempts++;
-	}
-	//while ((c_ptr->feat == FEAT_DEEP_WATER) && (num_door_attempts < 30));
-	while ((dwelling_check_entrance(wpos, door_y, door_x)) &&
-	    (num_door_attempts < 30));
+	} while (dwelling_check_entrance(wpos, door_y, door_x) && num_door_attempts < 30);
+#else
+		/* Break on success */
+		if (dwelling_check_entrance(wpos, door_y, door_x)) break;
+
+		num_door_attempts++;
+	} while (num_door_attempts < 1);
+if (num_door_attempts == 1) s_printf("*********************** exceeded num_door_attempts (%d)\n", num_houses);
+#endif
 
 	/* Build a rectangular building */
 	for (y = h_y1; y <= h_y2; y++) {
