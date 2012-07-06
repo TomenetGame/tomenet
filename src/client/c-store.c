@@ -622,9 +622,13 @@ static void store_process_command(int cmd)
 			if (store.stock_num > 12 * i) {
 				store_top = 12 * i;
 				display_inventory();
-			} else c_msg_format("Page %d is empty.", i + 1);
+			}
+#if 0 /* suppress message, in case STORE_INVEN_MAX doesn't actually support all 10 pages. It'd look silyl. */
+			else c_msg_format("Page %d is empty.", i + 1);
+#endif
 			break;
 
+#if 0 /* replaced by st_info actions */
 		/* Get (purchase) */
 		case 'g':
 		case 'p':
@@ -649,6 +653,7 @@ static void store_process_command(int cmd)
 			store_examine();
 			break;
 		}
+#endif
 
 		/* Paste on Chat */
 		case 'c':
