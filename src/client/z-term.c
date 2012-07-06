@@ -2448,6 +2448,11 @@ errr Term_keypress_aux(key_queue *keys, int k)
  */
 errr Term_keypress(int k)
 {
+	/* Hack: Win client (at least) initializes AngbandWndProc() before the
+	         actual Term stuff, client may crash if a key is pressed *very*
+	         early (which can happen easily on very slow PCs). - C. Blue */
+	if (!Term) return 0;
+
 	/* Add it to the queue */
 	return Term_keypress_aux(Term->keys, k);
 }
