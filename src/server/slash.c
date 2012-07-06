@@ -1108,7 +1108,7 @@ void do_slash_cmd(int Ind, char *message)
 #if 1 /* just use item_tester_hook_wear() to prevent duplicate stuff.. */
 			if (p_ptr->body_monster &&
 			    p_ptr->pclass != CLASS_DRUID && p_ptr->prace != RACE_VAMPIRE &&
-			    (p_ptr->pclass != CLASS_SHAMAN || !strchr("EG", r_info[p_ptr->body_monster].d_char))) {
+			    (p_ptr->pclass != CLASS_SHAMAN || !mimic_shaman_fulleq(r_info[p_ptr->body_monster].d_char))) {
 				msg_print(Ind, "In your current form...");
 				if (item_tester_hook_wear(Ind, INVEN_WIELD)) msg_print(Ind, "  you are able to wield a weapon.");
 				else msg_print(Ind, "  you cannot wield weapons.");

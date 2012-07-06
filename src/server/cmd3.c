@@ -482,7 +482,7 @@ bool item_tester_hook_wear(int Ind, int slot) {
 
 	if (p_ptr->body_monster &&
 	    (p_ptr->pclass != CLASS_DRUID) &&
-	    ((p_ptr->pclass != CLASS_SHAMAN) || !strchr("EGX", r_ptr->d_char)) &&
+	    ((p_ptr->pclass != CLASS_SHAMAN) || !mimic_shaman_fulleq(r_ptr->d_char)) &&
 	    (p_ptr->prace != RACE_VAMPIRE)
 	    ) {
 		switch(slot) {
@@ -572,13 +572,13 @@ bool item_tester_hook_wear(int Ind, int slot) {
 #if 0
 	if (p_ptr->body_monster &&
 	    ((p_ptr->pclass != CLASS_DRUID) || p_ptr->fruit_bat) &&
-	    ((p_ptr->pclass != CLASS_SHAMAN) || !strchr("EG", r_ptr->d_char)) &&
+	    ((p_ptr->pclass != CLASS_SHAMAN) || !mimic_shaman_fulleq(r_ptr->d_char)) &&
 	    ((p_ptr->prace != RACE_VAMPIRE) || p_ptr->fruit_bat)
 	    )
 #else
 	if (p_ptr->body_monster &&
 	    (p_ptr->pclass != CLASS_DRUID) &&
-	    ((p_ptr->pclass != CLASS_SHAMAN) || !strchr("EG", r_ptr->d_char)) &&
+	    ((p_ptr->pclass != CLASS_SHAMAN) || !mimic_shaman_fulleq(r_ptr->d_char)) &&
 	    (p_ptr->prace != RACE_VAMPIRE)
 	    )
 #endif
@@ -637,7 +637,7 @@ bool item_tester_hook_wear(int Ind, int slot) {
 	else if (p_ptr->fruit_bat && (
 	    !p_ptr->body_monster ||
 	    p_ptr->pclass == CLASS_DRUID ||
-	    (p_ptr->pclass == CLASS_SHAMAN && !strchr("EG", r_ptr->d_char)) ||
+	    (p_ptr->pclass == CLASS_SHAMAN && !mimic_shaman_fulleq(r_ptr->d_char)) ||
 	    p_ptr->prace != RACE_VAMPIRE
 	    ))
 #endif

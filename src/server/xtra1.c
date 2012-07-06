@@ -4879,7 +4879,7 @@ void calc_boni(int Ind)
 						need to hardcode it here to balance
 						'Spectral tyrannosaur' form especially.
 						(weap, tors, arms, finger, head, leg) */
-		else if ((p_ptr->pclass == CLASS_SHAMAN) && strchr("EG", r_ptr->d_char))
+		else if ((p_ptr->pclass == CLASS_SHAMAN) && mimic_shaman_fulleq(r_ptr->d_char))
 			body = 1 + 3 + 2 + 1; /* they can wear all items even in these 000000 forms! */
 		else /* normal mimicry */
 			body = (r_ptr->body_parts[BODY_HEAD] ? 1 : 0)

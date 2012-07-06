@@ -7088,6 +7088,7 @@ extern int PlayerUID;
 	(r_info[ridx].d_char == 'g'))
 #define mimic_shaman_E(ridx)	\
 	((r_info[ridx].d_char == 'E') && !(ridx == 514 || ridx == 815 || ridx == 975))
+#define mimic_shaman_fulleq(c)	(strchr("EG", c))
 /*	Druid: Selected Animals and animal-similar creatures. */
 #define mimic_druid(ridx, plv)	\
 	((ridx == 0) || \
