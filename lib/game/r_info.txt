@@ -19304,9 +19304,11 @@ F:KILL_ITEM | COLD_BLOOD | BASH_DOOR | BLUEBAND
 S:1_IN_3
 S:BR_DISI | BR_MANA | BR_CHAO | SHRIEK | BA_MANA | 
 S:S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON
-D:A remotely humanoid, golem-like creature awakened on the hell forge, the
-D:powers of hell were bestowed upon it to call forth the ultimate terror in
-D:case it detects any intruder.
+D:A remotely humanoid creature with four arms ending in claws and a demonic
+D:head with its facial features unchanging, making it seem much like a golem.
+D:Awakened on the hell forge, the body is gleaming in tones of dark red as
+D:heated iron. Imbued by corrupt magic to call forth ultimate terror, its
+D:gaze will sap your life forces and make you lose all grip on sanity.
 
 #Nether Realm only
 N:1068:Nether Guard
@@ -19670,10 +19672,10 @@ F:NO_CONF | NO_SLEEP | NO_STUN | NO_CUT | NO_FEAR | RES_MANA |
 F:BLUEBAND | REGENERATE | KILL_WALL
 S:1_IN_8 |
 S:UNMAGIC | HOLD
-D:An artificial bird completely made of hardened iron, kept in the air
-D:by magical forces. It's a drone to scout intruders, not a weapon to
-D:destroy them. This animated enormously massive piece of metal is nearly
-D:impossible to destroy.
+D:An artificial bird completely made of hardened iron, kept in the air by
+D:magical forces. Rather than a weapon it is a drone to scout intruders
+D:and render their powers useless, making it an easy prey. This animated,
+D:enormously massive piece of metal is nearly impossible to destroy.
 
 #Nether Realm only
 N:1084:Force vortex
@@ -19709,7 +19711,7 @@ F:DROP_1D2 | DROP_3D2 | DROP_GOOD | BLUEBAND | NO_CUT | REGENERATE |
 F:NO_CONF | NO_SLEEP | CAN_FLY | POWERFUL | COLD_BLOOD | ATTR_ANY |
 S:1_IN_1
 S:ROCKET
-D:This golem beholder is the perfect sentry and won't let anything come close.
+D:This golem beholder is a perfect sentry and won't let anything come close.
 D:White mouldy flesh covered by metal plating holds a black lidless eye,
 D:slowly turning around and around forever.
 
@@ -19919,7 +19921,6 @@ F:WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
 D:The nightmare on Elmstreet. But it is just someone costumed for Halloween festival!
 
 
-
 #More monsters:
 
 #Nether Realm only
@@ -19946,7 +19947,7 @@ D:this being has a clear mission. Its patience seems to be infinite,
 D:and its appearance doesn't reveal if this creature is actually alive
 D:or some sort of construct or non-living avatar. Its powers seem to be
 D:great enough to even hold back banished gods, and while its assignment
-D:probably lasts a cosmos' lifetime, its paycheck remains remains unknown.
+D:probably lasts a cosmos' lifetime, its paycheck remains unknown.
 
 
 #Shores of Valinor - C. Blue
@@ -19979,9 +19980,8 @@ F:NEVER_MOVE | CAN_FLY | DROP_CORPSE |
 F:IM_ELEC | RES_COLD | NO_FEAR | NO_SLEEP | NO_CONF | BLUEBAND
 S:1_IN_3
 S:BO_ELEC
-D:A disembodied eye, floating a few feet above the ground,
-D:lightning cracking around the metallic surface.
-D:The tearless retina tracing everything you do.
+D:A disembodied eye, floating a few feet above the ground, lightning cracking
+D:around the metallic surface, the tearless retina tracing everything you do.
 
 
 # Shores of Valinor again - C. Blue
