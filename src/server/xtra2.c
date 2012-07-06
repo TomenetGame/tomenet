@@ -7578,6 +7578,11 @@ void player_death(int Ind)
 			instant_res_possible = FALSE;
 		}
 
+		/* Divine wrath is meant to kill people */
+		if (streq(p_ptr->died_from, "divine wrath")) {
+			instant_res_possible = FALSE;
+		}
+
 		if (instant_res_possible) {
 			int loss_factor, reduce;
 
@@ -7661,6 +7666,31 @@ void player_death(int Ind)
 #ifdef TOMENET_WORLDS
 			if (cfg.worldd_pdeath) world_msg(buf);
 #endif
+
+			/* Add to legends log if he was a winner */
+			if (p_ptr->total_winner && !is_admin(p_ptr))
+				l_printf("%s \\{r%s (%d) was defeated and instantly resurrected\n", showdate(), p_ptr->name, p_ptr->lev);
+
+
+#if 0
+			/* Unown land */
+			if (p_ptr->total_winner) {
+#ifdef NEW_DUNGEON
+/* FIXME */
+/*
+				msg_broadcast_format(Ind, "%d(%d) and %d(%d) are no more owned.", p_ptr->own1, p_ptr->own2, p_ptr->own1 * 50, p_ptr->own2 * 50);
+				wild_info[p_ptr->own1].own = wild_info[p_ptr->own2].own = 0;
+*/
+#else
+				msg_broadcast_format(Ind, "%d(%d) and %d(%d) are no more owned.", p_ptr->own1, p_ptr->own2, p_ptr->own1 * 50, p_ptr->own2 * 50);
+				wild_info[p_ptr->own1].own = wild_info[p_ptr->own2].own = 0;
+#endif
+			}
+#endif
+
+			/* Hmm... Shouldn't this be after the death message so we can get a nice message for retiring winners? - mikaelh */
+			/* No longer a winner */
+			p_ptr->total_winner = FALSE;
 
 			/* Redraw */
 			p_ptr->redraw |= (PR_BASIC);
