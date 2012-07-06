@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 3. July 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 6. July 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.9 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -11009,8 +11009,6 @@ Battle-scarred veteran
                  1  They can improve your initial HP (hit points) and AC
                     (armour class) fairly well.
                     They both have slightly erratic movement though.
-Agent of the black market
-                 1  This form is able to cross mountain terrain.
 
 Further forms:
 --------------
