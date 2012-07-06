@@ -646,6 +646,7 @@ void wipe_m_list(struct worldpos *wpos) {
 void thin_surface_spawns() {
 	int i;
 	player_type *p_ptr;
+	cave_type **zcave;
 
 	/* Delete all the monsters, except for dummies and santa,
 	   because those are usually in town, and this function is called periodically for towns. */
@@ -656,16 +657,12 @@ void thin_surface_spawns() {
 //		if ((m_ptr->wpos.wz != 0) || !magik(20)) continue; //high towns end up pretty empty, even if a player idles for hours
 		if ((m_ptr->wpos.wz != 0) || !magik(10)) continue; //<testing>
 
-#if 0
 		/* Skip monsters that are 'trapped' in houses */
-//		& CAVE_ICKY
-/*	cave_type **zcave;
-	if (!(zcave = getcave(wpos))) return;
-*/
-#else
+		if (!(zcave = getcave(&m_ptr->wpos))) continue;
+		if (zcave[m_ptr->fy][m_ptr->fx].info & CAVE_ICKY) continue;
+
 		/* Skip golems/pets */
 		if (m_ptr->pet || m_ptr->owner) continue;
-#endif
 
 		/* special ones aren't to be touched */
 		if (r_info[m_ptr->r_idx].flags8 & RF8_GENO_NO_THIN) continue;
