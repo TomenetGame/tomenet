@@ -3564,13 +3564,14 @@ void wilderness_gen(struct worldpos *wpos)
 #define ICE 2404	/* ice */
 
 static bool island_aux(int y, int x, unsigned char type, unsigned char fill, int size, int size_org) {
-	bool added_decently = FALSE;
+	bool added_decently = TRUE;
 	int ranval;
 
 	if (y < 0 || x < 0 || y >= MAX_WILD_Y || x >= MAX_WILD_Y) return (size_org - size >= 2);
 	if (wild_info[y][x].type != fill) return (size_org - size >= 2);
 	ranval = rand_int(15);
 	if (size) {
+		added_decently = FALSE;
 		if (ranval&1) added_decently = added_decently || island_aux(y, x - 1, type, fill, size - 1, size_org);
 		if (ranval&2) added_decently = added_decently || island_aux(y, x + 1, type, fill, size - 1, size_org);
 		if (ranval&4) added_decently = added_decently || island_aux(y - 1, x, type, fill, size - 1, size_org);
