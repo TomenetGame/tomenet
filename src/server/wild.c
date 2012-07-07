@@ -3904,14 +3904,15 @@ void genwild(bool all_terrains, bool dry_Bree) {
 
 	/* Check that Bree is surrounded by pretty dry terrain */
 	if (dry_Bree) {
-		int tol = 0;
+		int tol = 0, dist;
 		dry = TRUE;
 		for (i = cfg.town_x - MAX_TOWNAREA - tol; i <= cfg.town_x + MAX_TOWNAREA + tol; i++) {
 			for (j = cfg.town_y - MAX_TOWNAREA - tol; j <= cfg.town_y + MAX_TOWNAREA + tol; j++) {
 				/* use a radius, not a square */
 				//if (distance(j, i, 32, 32) > MAX_TOWNAREA) continue;
 				//if (wild_info[j][i].radius > MAX_TOWNAREA) continue;
-				if (abs(i - cfg.town_x) + abs(j - cfg.town_y) > MAX_TOWNAREA + tol) continue;
+				dist = abs(i - cfg.town_x) + abs(j - cfg.town_y);
+				if (dist > MAX_TOWNAREA + tol) continue;
 
 				switch (wild_info[j][i].type) {
 #if 0
@@ -3925,6 +3926,8 @@ void genwild(bool all_terrains, bool dry_Bree) {
 				case WILD_SWAMP:
 				case WILD_VOLCANO:
 				case WILD_MOUNTAIN:
+					if (dist <= 1) dry = FALSE;
+					break;
 
 				/* the mainly annoying terrains: */
 				case WILD_OCEAN:
