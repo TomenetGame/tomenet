@@ -3546,13 +3546,13 @@ void wilderness_gen(struct worldpos *wpos)
 #define MAXISLAND 5	/* maximum 'generic' terrain type island size */
 #define SEADENSITY 96	/* land/sea ratio */
 
-#define MAXMOUNT 3	/* maximum mountain range size */
-#define MAXWOOD 3	/* maximum forest size */
-#define MAXWASTE 3	/* maximum wasteland size */
+#define MAXMOUNT 4	/* maximum mountain range size */
+#define MAXWOOD 4	/* maximum forest size */
+#define MAXWASTE 4	/* maximum wasteland size */
 #define MAXLAKE 3	/* maximum lake size */
 #define MAXISLANDS 4	/* maximum water-related island size */
-#define MAXDESERT 5	/* maximum desert size (very rare, hence big) */
-#define MAXICE 5	/* maximum desert size (very rare, hence big) */
+#define MAXDESERT 6	/* maximum desert size (very rare, hence big) */
+#define MAXICE 6	/* maximum desert size (very rare, hence big) */
 
 //proportional inverse = amount
 #define RIVERS 512	/* rivers (don't have a MAX size limiter) */
