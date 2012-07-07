@@ -3929,6 +3929,10 @@ void genwild(bool all_terrains, bool dry_Bree) {
 					if (dist <= 1) dry = FALSE;
 					break;
 
+				case WILD_DESERT:
+				case WILD_ICE:
+					/* fall through */
+
 				/* the mainly annoying terrains: */
 				case WILD_OCEAN:
 				case WILD_RIVER:
