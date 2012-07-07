@@ -5626,6 +5626,9 @@ int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cpt
 		return 0;
 	}
 
+	/* don't segfault old clients which use STORE_INVEN_MAX = 48 */
+	if (pos >= 48 && is_older_than(&Players[ind]->version, 4, 4, 9, 0, 0, 0)) return 0;
+
 	/* Hack -- send pval only if it's School book */
 	if (tval != TV_BOOK) pval = 0;
 
@@ -5663,6 +5666,9 @@ int Send_store_wide(int ind, char pos, byte attr, int wgt, int number, int price
 			ind, connp->state, connp->id));
 		return 0;
 	}
+
+	/* don't segfault old clients which use STORE_INVEN_MAX = 48 */
+	if (pos >= 48 && is_older_than(&Players[ind]->version, 4, 4, 9, 0, 0, 0)) return 0;
 
 	/* Hack -- send pval only if it's School book */
 	if (tval != TV_BOOK) pval = 0;
