@@ -5916,8 +5916,15 @@ void restore_estate(int Ind) {
 			/* also read inscription */
 			o_ptr->note = 0;
 			data_len = -2;
+#if 0 /* scanf() sucks a bit */
 			data_note[0] = '\0';
-			fscanf(fp, "%d\n", &data_len);
+			fscanf(fp, "%d[^\n]", &data_len);
+			fread(data_note, 1, 1, fp); //strip the \n that fscanf had to miss
+#else
+			fgets(data_note, 4, fp);
+			data_len = atoi(data_note);
+			data_note[0] = '\0';
+#endif
 			if (data_len == -2) {
 			        object_desc(Ind, o_name, o_ptr, TRUE, 3);
 				s_printf("  error: Corrupted note line (item '%s').\n", o_name);
