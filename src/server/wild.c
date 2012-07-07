@@ -3593,7 +3593,7 @@ static bool island(int y, int x, unsigned char type, unsigned char fill, int siz
 	int size_org = size;
 
 	/* hack: smally planned islands are always decently done */
-	if (size_org <= 3) size_org = 64;
+	if (size_org <= 1<<6) size_org = 64;
 
 	return island_aux(y, x, type, fill, size, size_org);
 }
@@ -3683,7 +3683,7 @@ static bool adddesert() {
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
 		}while(wild_info[y][x].type != WILD_GRASSLAND);
-		if (island(y, x, WILD_DESERT, WILD_GRASSLAND, rand_int((1<<MAXDESERT) - 1))) added = TRUE;
+		if (island(y, x, WILD_DESERT, WILD_GRASSLAND, (1<<(MAXDESERT-2)) + rand_int((1<<(MAXDESERT-2))*3) - 1)) added = TRUE;
 	}
 	return added;
 }
@@ -3698,7 +3698,7 @@ static bool addice() {
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
 		}while(wild_info[y][x].type != WILD_GRASSLAND);
-		if (island(y, x, WILD_ICE, WILD_GRASSLAND, rand_int((1<<MAXICE) - 1))) added = TRUE;
+		if (island(y, x, WILD_ICE, WILD_GRASSLAND, (1<<(MAXICE-2)) + rand_int((1<<(MAXICE-2))*3) - 1)) added = TRUE;
 	}
 	return added;
 }
