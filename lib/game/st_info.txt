@@ -186,10 +186,7 @@ I:100:Neutralize Poison
 #Scroll of Life
 T:100:70:56
 T:100:70:56
-A:0:0:1:2:3:4
-# When insta-res is introduced...
-# ENABLE_INSTANT_RES
-#A:67:0:1:2:3:4
+A:67:0:1:2:3:4
 O:26:27:28:29:26:43
 G:4:g
 W:36
