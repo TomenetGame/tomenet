@@ -1104,6 +1104,13 @@ void lua_forget_flavours(int Ind) {
         }
 }
 
+/* for use with '-w' wilderness creation */
+void lua_forget_map(int Ind) {
+	int i;
+        for (i = 0; i < MAX_WILD_X * MAX_WILD_Y; i++)
+		Players[Ind]->wild_map[i] = 0;
+}
+
 /* for resetting all party information */
 void lua_forget_parties(void) {
 	int i, j;

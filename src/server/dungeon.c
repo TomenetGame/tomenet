@@ -6763,6 +6763,7 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool new_wildern
 		/* Hack -- enter the world */
 		turn = 1;
 	} else {
+		/* use with lua_forget_map() */
 		if (new_wilderness) {
 			int i, x, y;
 			wilderness_type *w_ptr;
