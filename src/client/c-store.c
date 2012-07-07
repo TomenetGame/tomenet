@@ -710,7 +710,8 @@ void do_redraw_store(void)
 
 	if (shopping) {
 		/* hack: Display changed capacity if we just extended the house */
-		if (store_num == STORE_HOME || store_num == STORE_HOME_DUN) {
+		if ((store_num == STORE_HOME || store_num == STORE_HOME_DUN)
+		    && c_store.max_cost) {
 			char buf[1024];
 			sprintf(buf, "%s (Capacity: %ld)", c_store.store_name, (long)(c_store.max_cost));
 			prt(buf, 3, 50);
@@ -742,7 +743,10 @@ void display_store(void)
 		put_str(buf, 3, 10);
 
 		/* Show the store name (usually blank for houses) and -hack- max_cost is the capacity */
-		sprintf(buf, "%s (Capacity: %ld)", c_store.store_name, (long)(c_store.max_cost));
+		if (c_store.max_cost)
+			sprintf(buf, "%s (Capacity: %ld)", c_store.store_name, (long)(c_store.max_cost));
+		else
+			sprintf(buf, "%s", c_store.store_name);
 		prt(buf, 3, 50);
 
 		/* Label the item descriptions */
