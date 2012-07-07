@@ -5117,6 +5117,7 @@ void do_slash_cmd(int Ind, char *message)
 					q_ptr->recall_pos.wz = p_ptr->wpos.wz;
 					q_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 					recall_player(p, "\377yA magical gust of wind lifts you up and carries you away!");
+					process_player_change_wpos(p);
 				}
 
 				teleport_player_to_force(p, p_ptr->py, p_ptr->px);
@@ -6353,7 +6354,7 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/vars")) {
 				msg_format(Ind, "season (0..3): %d.", season);
 				msg_format(Ind, "season_halloween: %d, season_xmas: %d, season_newyearseve: %d.", season_halloween, season_xmas, season_newyearseve);
-				msg_format(Ind, "sector weather: %d, sector_wind: %d.", wild_info[p_ptr->py][p_ptr->px].weather_type, wild_info[p_ptr->py][p_ptr->px].weather_wind);
+				msg_format(Ind, "sector weather: %d, sector_wind: %d.", wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_type, wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_wind);
 				msg_format(Ind, "server time: %s", showtime());
 				msg_format(Ind, "lua-seen current date: %d-%d-%d", exec_lua(0, "return cur_year"), exec_lua(0, "return cur_month"), exec_lua(0, "return cur_day"));
 				return;

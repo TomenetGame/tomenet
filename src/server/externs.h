@@ -710,6 +710,7 @@ extern void NewConsole(int fd, int arg);
 extern bool InitNewConsole(int write_fd);
 
 /* dungeon.c */
+extern void process_player_change_wpos(int Ind);
 extern void recall_player(int Ind, char *message);
 extern int find_player(s32b id);
 extern int find_player_name(char *name);

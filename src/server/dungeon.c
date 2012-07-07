@@ -5375,7 +5375,7 @@ int find_player_name(char *name)
 	return 0;
 }
 
-static void process_player_change_wpos(int Ind)
+void process_player_change_wpos(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	worldpos *wpos = &p_ptr->wpos;
