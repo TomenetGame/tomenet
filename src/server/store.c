@@ -5644,7 +5644,8 @@ static void display_trad_house(int Ind, house_type *h_ptr)
 		if (owner[strlen(owner) - 1] == 's') strcat(owner, "' House");
 		else strcat(owner, "'s House");
 
-		Send_store_info(Ind, p_ptr->store_num, owner, "", h_ptr->stock_num, h_ptr->stock_size, TERM_L_UMBER, '+');
+		/* Don't display capacity, since with long owner names it could be too wide */
+		Send_store_info(Ind, p_ptr->store_num, owner, "", h_ptr->stock_num, 0, TERM_L_UMBER, '+');
 	}
 
 	/* Display the current gold */
