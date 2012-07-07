@@ -709,6 +709,12 @@ void do_redraw_store(void)
 	redraw_store = FALSE;
 
 	if (shopping) {
+		/* hack: Display changed capacity if we just extended the house */
+		if (store_num == STORE_HOME || store_num == STORE_HOME_DUN) {
+			char buf[1024];
+			sprintf(buf, "%s (Capacity: %ld)", c_store.store_name, (long)(c_store.max_cost));
+			prt(buf, 3, 50);
+		}
 		display_inventory();
 	}
 }
