@@ -3794,11 +3794,12 @@ void genwild(bool all_terrains, bool dry_Bree) {
 	int j,i;
 	bool rand_old = Rand_quick;
 	u32b old_seed = Rand_value;
-	bool watery = FALSE, got_everything = TRUE;
+	bool watery = FALSE, got_everything;
+
+	Rand_quick = TRUE;
 
     while (TRUE) {
-
-	Rand_quick=TRUE;
+	got_everything = TRUE;
 	Rand_value = seed_town;
 
 	island(cfg.town_y, cfg.town_x,WILD_GRASSLAND, WILD_UNDEFINED,5);
