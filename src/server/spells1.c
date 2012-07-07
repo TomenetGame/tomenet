@@ -1055,6 +1055,27 @@ void teleport_player_to(int Ind, int ny, int nx)
 	sound(Ind, "monster_blink", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 }
+void teleport_player_to_force(int Ind, int ny, int nx)
+{
+	bool anti_tele, death;
+	player_type *p_ptr = Players[Ind];
+
+	/* Turn off anti-tele */
+	anti_tele = p_ptr->anti_tele;
+	/* set death flag as hack to escape no-tele vault grids */
+	death = p_ptr->death;
+
+	/* hacks */
+	p_ptr->anti_tele = FALSE; /* actually already covered by p_ptr->death below */
+	p_ptr->death = TRUE;
+
+	teleport_player_to(Ind, ny, nx);
+
+	/* Restore anti-tele */
+	p_ptr->anti_tele = anti_tele;
+	/* restore death flag */
+	p_ptr->death = death;
+}
 
 
 

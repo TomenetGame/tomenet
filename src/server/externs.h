@@ -1316,6 +1316,7 @@ extern bool teleport_away(int m_idx, int dis);
 extern bool teleport_player(int Ind, int dis, bool ignore_pvp);
 extern void teleport_player_force(int Ind, int dis);
 extern void teleport_player_to(int Ind, int ny, int nx);
+extern void teleport_player_to_force(int Ind, int ny, int nx);
 extern void teleport_player_level(int Ind, bool force);
 extern bool bypass_invuln;
 extern bool bypass_inscrption;

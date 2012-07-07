@@ -4997,7 +4997,10 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				p = name_lookup_loose(Ind, token[1], FALSE);
-				if (!p) return;
+				if (!p) {
+					msg_print(Ind, "Player not found.");
+					return;
+				}
 				teleport_player_force(p, 10);
 				msg_print(Ind, "Phased that player.");
 				return;
@@ -5010,26 +5013,32 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				p = name_lookup_loose(Ind, token[1], FALSE);
-				if (!p) return;
+				if (!p) {
+					msg_print(Ind, "Player not found.");
+					return;
+				}
 				teleport_player_force(p, 100);
 				msg_print(Ind, "Teleported that player.");
 				return;
 			}
-			/* Teleport a player to */
-			else if (prefix(message, "/tpto")) {
+			/* Teleport a player to a target */
+			else if (prefix(message, "/tptar")) {
 				int p, x, y, ox, oy;
 				player_type *q_ptr;
 				cave_type **zcave;
 
 				if (tk < 3) {
-					msg_print(Ind, "\377oUsage: /tpto <x> <y> <player name>");
+					msg_print(Ind, "\377oUsage: /tptar <x> <y> <player name>");
 					return;
 				}
 
 				x = atoi(token[1]);
 				y = atoi(token[2]);
 				p = name_lookup_loose(Ind, token[3], FALSE);
-				if (!p) return;
+				if (!p) {
+					msg_print(Ind, "Player not found.");
+					return;
+				}
 
 				q_ptr = Players[p];
 				if (!in_bounds4(getfloor(&q_ptr->wpos), y, x)) {
@@ -5075,6 +5084,42 @@ void do_slash_cmd(int Ind, char *message)
                                 q_ptr->window |= (PW_OVERHEAD);
 
                                 handle_stuff(p);
+
+				msg_print(Ind, "Teleported that player.");
+				return;
+			}
+			/* Teleport a player to us - even if in different world sector */
+			else if (prefix(message, "/tpto")) {
+				int p;
+				player_type *q_ptr;
+				cave_type **zcave;
+
+				if (tk < 1) {
+					msg_print(Ind, "\377oUsage: /tpto <player name>");
+					return;
+				}
+
+				p = name_lookup_loose(Ind, token[1], FALSE);
+				if (!p) {
+					msg_print(Ind, "Player not found.");
+					return;
+				}
+
+				q_ptr = Players[p];
+				if (!(zcave = getcave(&q_ptr->wpos))) {
+					msg_print(Ind, "Error: Cannot getcave().");
+					return;
+				}
+
+				if (!inarea(&q_ptr->wpos, &p_ptr->wpos)) {
+					q_ptr->recall_pos.wx = p_ptr->wpos.wx;
+					q_ptr->recall_pos.wy = p_ptr->wpos.wy;
+					q_ptr->recall_pos.wz = p_ptr->wpos.wz;
+					q_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+					recall_player(p, "\377yA magical gust of wind lifts you up and carries you away!");
+				}
+
+				teleport_player_to_force(p, p_ptr->py, p_ptr->px);
 
 				msg_print(Ind, "Teleported that player.");
 				return;
