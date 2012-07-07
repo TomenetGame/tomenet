@@ -5821,6 +5821,10 @@ void restore_estate(int Ind) {
 	char o_name[MSG_LEN];
 	unsigned long au;
 	int data_len;
+#if 0
+	u16b note_tmp;
+	char note_utag_tmp;
+#endif
 	object_type forge, *o_ptr = &forge;
 	bool gained_anything = FALSE;
 
@@ -5913,9 +5917,13 @@ void restore_estate(int Ind) {
 		        if (!seal_or_unseal_object(o_ptr)) continue;
 #endif
 
+#if 0
 			/* Roughly check whether its inscription is no longer valid */
+			note_tmp = o_ptr->note;
+			note_utag_tmp = o_ptr->note_utag;
 			if (o_ptr->note && !quark_str(o_ptr->note)) o_ptr->note = 0;
 			o_ptr->note_utag = 0;
+#endif
 
 			/* is it a pile of gold? */
 			if (o_ptr->tval == TV_GOLD) {
@@ -5942,18 +5950,6 @@ void restore_estate(int Ind) {
 				continue;
 			}
 
-			/* give item to player if he has space left,
-			   otherwise relay rest to temporary file, swap and exit */
-			if (!inven_carry_okay(Ind, o_ptr)) {
-				msg_print(Ind, "\377yYour inventory is full, make some space to receive more items.");
-
-				/* write failed item back into new buffer file */
-				fprintf(fp_tmp, "OB:");
-    				fwrite(o_ptr, sizeof(object_type), 1, fp_tmp);
-
-				relay_estate(buf, buf2, fp, fp_tmp);
-				return;
-			}
 			/* also read inscription */
 			o_ptr->note = 0;
 			data_len = -2;
@@ -5970,6 +5966,32 @@ void restore_estate(int Ind) {
 				fread(data_note, sizeof(char), data_len, fp);
 				data_note[data_len] = '\0';
 				o_ptr->note = quark_add(data_note);
+			}
+
+			/* give item to player if he has space left,
+			   otherwise relay rest to temporary file, swap and exit */
+			if (!inven_carry_okay(Ind, o_ptr)) {
+				msg_print(Ind, "\377yYour inventory is full, make some space to receive more items.");
+
+#if 0
+				/* restore possibly dropped (outdated) inscription */
+				o_ptr->note = note_tmp;
+				o_ptr->note_utag = note_utag_tmp;
+#endif
+
+				/* write failed item back into new buffer file */
+				fprintf(fp_tmp, "OB:");
+				fwrite(o_ptr, sizeof(object_type), 1, fp_tmp);
+
+				/* ..and its inscription */
+				if (o_ptr->note) {
+					fprintf(fp_tmp, "%d\n", strlen(quark_str(o_ptr->note)));
+					fwrite(quark_str(o_ptr->note), sizeof(char), strlen(quark_str(o_ptr->note)), fp_tmp);
+				} else
+					fprintf(fp_tmp, "%d\n", -1);
+
+				relay_estate(buf, buf2, fp, fp_tmp);
+				return;
 			}
 
 			gained_anything = TRUE;
