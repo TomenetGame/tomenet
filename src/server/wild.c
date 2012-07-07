@@ -3804,6 +3804,29 @@ static bool addrivers() {
 	return added;
 }
 
+/* remove coastlines that aren't adjacent to any sort of sea terrain - C. Blue */
+static void fix_coasts() {
+	int x, y, d;
+	bool sea;
+
+	for(x = 0; x < MAX_WILD_X; x++)
+	for(y = 0; y < MAX_WILD_Y; y++) {
+		if (wild_info[y][x].type != WILD_COAST) continue;
+
+		sea = FALSE;
+		for (d = 0; d < 8; d++) {
+			switch (wild_info[y + ddy_cyc[d]][x + ddx_cyc[d]].type) {
+			case WILD_OCEAN:
+			case WILD_OCEANBED1: case WILD_OCEANBED2:
+			case WILD_SHORE1: case WILD_SHORE2:
+				sea = TRUE;
+				break;
+			}
+		}
+		/* if this coast doesn't make sense, reset it to default fill type grassland */
+		if (!sea) wild_info[y][x].type = WILD_GRASSLAND;
+	}
+}
 
 void genwild(bool all_terrains, bool dry_Bree) {
 	int j,i;
@@ -3857,6 +3880,8 @@ void genwild(bool all_terrains, bool dry_Bree) {
 			}
 		}
 	}
+
+	fix_coasts();
 
 	if (all_terrains) {
 		got_everything = got_everything && addhills();
