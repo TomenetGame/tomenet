@@ -3572,10 +3572,10 @@ static bool island_aux(int y, int x, unsigned char type, unsigned char fill, int
 	ranval = rand_int(15);
 	if (size) {
 		added_decently = FALSE;
-		if (ranval&1) added_decently = added_decently || island_aux(y, x - 1, type, fill, size - 1, size_org);
-		if (ranval&2) added_decently = added_decently || island_aux(y, x + 1, type, fill, size - 1, size_org);
-		if (ranval&4) added_decently = added_decently || island_aux(y - 1, x, type, fill, size - 1, size_org);
-		if (ranval&8) added_decently = added_decently || island_aux(y + 1, x, type, fill, size - 1, size_org);
+		if (ranval&1) added_decently = island_aux(y, x - 1, type, fill, size - 1, size_org) || added_decently;
+		if (ranval&2) added_decently = island_aux(y, x + 1, type, fill, size - 1, size_org) || added_decently;
+		if (ranval&4) added_decently = island_aux(y - 1, x, type, fill, size - 1, size_org) || added_decently;
+		if (ranval&8) added_decently = island_aux(y + 1, x, type, fill, size - 1, size_org) || added_decently;
 	}
 	if ((rand_int(7) == 0)) {
 		switch(type){
@@ -3592,11 +3592,13 @@ static bool island_aux(int y, int x, unsigned char type, unsigned char fill, int
 }
 static bool island(int y, int x, unsigned char type, unsigned char fill, int size) {
 	int size_org = size;
+	bool added_decently;
 
 	/* hack: smally planned islands are always decently done */
-	if (size_org <= 1<<6) size_org = 64;
+	if (size_org <= 1<<6) size_org = 9999;
 
-	return island_aux(y, x, type, fill, size, size_org);
+	added_decently = island_aux(y, x, type, fill, size, size_org);
+	return added_decently;
 }
 
 static void makeland() {
@@ -3684,7 +3686,8 @@ static bool adddesert() {
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
 		}while(wild_info[y][x].type != WILD_GRASSLAND);
-		if (island(y, x, WILD_DESERT, WILD_GRASSLAND, (1<<(MAXDESERT-2)) + rand_int((1<<(MAXDESERT-2))*3) - 1)) added = TRUE;
+//		if (island(y, x, WILD_DESERT, WILD_GRASSLAND, (1<<(MAXDESERT-2)) + rand_int((1<<(MAXDESERT-2))*3) - 1)) added = TRUE;
+		if (island(y, x, WILD_DESERT, WILD_GRASSLAND, rand_int((1<<MAXDESERT) - 1))) added = TRUE;
 	}
 	return added;
 }
@@ -3699,7 +3702,8 @@ static bool addice() {
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
 		}while(wild_info[y][x].type != WILD_GRASSLAND);
-		if (island(y, x, WILD_ICE, WILD_GRASSLAND, (1<<(MAXICE-2)) + rand_int((1<<(MAXICE-2))*3) - 1)) added = TRUE;
+//		if (island(y, x, WILD_ICE, WILD_GRASSLAND, (1<<(MAXICE-2)) + rand_int((1<<(MAXICE-2))*3) - 1)) added = TRUE;
+		if (island(y, x, WILD_ICE, WILD_GRASSLAND, rand_int((1<<MAXICE) - 1))) added = TRUE;
 	}
 	return added;
 }
@@ -3811,7 +3815,6 @@ void genwild(bool all_terrains, bool dry_Bree) {
 
     while (TRUE) {
 	got_everything = TRUE;
-	dry = TRUE;
 
 	Rand_value = seed_town;
 
@@ -3876,6 +3879,7 @@ void genwild(bool all_terrains, bool dry_Bree) {
 	/* Check that Bree is surrounded by pretty dry terrain */
 	if (dry_Bree) {
 		int tol = 0;
+		dry = TRUE;
 		for (i = cfg.town_x - MAX_TOWNAREA - tol; i <= cfg.town_x + MAX_TOWNAREA + tol; i++) {
 			for (j = cfg.town_y - MAX_TOWNAREA - tol; j <= cfg.town_y + MAX_TOWNAREA + tol; j++) {
 				/* use a radius, not a square */
