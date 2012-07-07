@@ -4250,7 +4250,7 @@ void wpos_apply_season_daytime(worldpos *wpos, cave_type **zcave) {
 }
 
 /* returns price for a house of a certain area */
-s32b house_price_area(int area, bool random) {
+s32b house_price_area(int area, bool has_moat, bool random) {
 	s32b price = 0;
 
 	// This is the dominant term for large houses
@@ -4259,6 +4259,9 @@ s32b house_price_area(int area, bool random) {
 	price += area * area * 33;
 	// This is the dominant term for small houses
 	price += area * (950 + (random ? rand_int(100) : 100));
+
+	/* Castles cost more */
+	if (has_moat) price = (price * 5) / 4;
 
 	return price;
 }
@@ -4298,7 +4301,7 @@ s32b initial_house_price(house_type *h_ptr) {
 	// This is the dominant term for small houses
 	price += area * (900 + rand_int(200));
  #else
-	price = house_price_area(area, TRUE);
+	price = house_price_area(area, (h_ptr->flags & HF_MOAT), TRUE);
  #endif
 #endif
 

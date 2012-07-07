@@ -5516,7 +5516,7 @@ void home_extend(int Ind)
 #if 0 /* can go inconsistent pretty quickly (between different initial house sizes) */
 	cost = (h_ptr->dna->price * 2) / (h_ptr->stock_size + 1);
 #else
-	cost = house_price_area(h_ptr->stock_size + 1, FALSE) - h_ptr->dna->price;
+	cost = house_price_area(h_ptr->stock_size + 1, (h_ptr->flags & HF_MOAT), FALSE) - h_ptr->dna->price;
 	/* paranoia, in case a list house really has its initial_house_price()'s
 	   random() price factor big enough to not get compensated by the first-time
 	   extension's value (shouldn't happen): */

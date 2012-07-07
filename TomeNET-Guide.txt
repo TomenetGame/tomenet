@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 6. July 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 7. July 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.9 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -8287,6 +8287,7 @@ Nether | Poison | Miasma         | Drains the target's current hp by a percent.
 Nether | Nexus  | Mana           | Mana damage.
 Nether | Force  | Disintegration | Disintegration damage. Destroys terrain.
 Nether | Time   | Nether/Combine | Combines nether. Defaults to nether damage.
+Poison | Force  | Toxins         | Gas damage. Critical damage if stunned.
 Poison | Nexus  | Unbreath       | Poison damage. Slays living.
 Poison | Time   | Stop           | Cuts energy.
 Nexus  | Force  | Teleportation  | Attempts to teleport the target.
@@ -8340,9 +8341,9 @@ harmful effects. Below is a comprehensive listing of self-spells. Spells
 without a description will result in backlash of the combination's projection 
 elements. Spells listed as XOR will toggle off all others of the same type. 
 Note that 1 and 2-rune self spells do not rely on the order of runes to 
-determine the effect.
-
-NOTE: 3-rune spells are in BETA and thus not listed at this time.
+determine the effect, while 3-rune self spells rely on the order of pairs to 
+determine the effect, the same as projections (see above). Note that some 
+combinations of runes may produce the same effect without regard to order.
 
 -------------------------------------------------------------------------------
 Rune A | Rune B | Rune C | Description
@@ -8437,7 +8438,731 @@ Nexus  | Time   |        | Temporary anti-teleportation.
 
 Force  | Time   |        | Temporary speed (up to +10).
 
------
+Acid   | Water  | Elec   | Ion clouds. XOR Timed.
+Acid   | Water  | Earth  | Corrosion clouds. XOR Timed.
+Acid   | Water  | Fire   | Bile clouds. XOR Timed.
+Acid   | Water  | Chaos  | Perplexity clouds. XOR Timed.
+Acid   | Water  | Cold   | Rime clouds. XOR Timed.
+Acid   | Water  | Nether | Annihilation clouds. XOR Timed.
+Acid   | Water  | Poison | Venom clouds. XOR Timed.
+Acid   | Water  | Nexus  | Lightning clouds. XOR Timed.
+Acid   | Water  | Force  | Ablation clouds. XOR Timed.
+Acid   | Water  | Time   | Acid clouds. XOR Timed.
+
+Acid   | Elec   | Water  | Temporary acid and electricity resistance.
+Acid   | Elec   | Earth  | Temporary acid and electricity resistance.
+Acid   | Elec   | Fire   | Temporary acid/elec/fire resistance.
+Acid   | Elec   | Chaos  | Temporary acid and electricity resistance.
+Acid   | Elec   | Cold   | Temporary acid/elec/cold resistance.
+Acid   | Elec   | Nether | Temporary acid and electricity resistance.
+Acid   | Elec   | Poison | Temporary acid/elec/poison resistance.
+Acid   | Elec   | Nexus  | Temporary acid/elec resistance. Projected.
+Acid   | Elec   | Force  | XOR Upkeep acid/elec resistance and brands.
+Acid   | Elec   | Time   | Temporary acid and electricity resistance.
+
+Acid   | Earth  | Water  | Backlash.
+Acid   | Earth  | Elec   | Backlash.
+Acid   | Earth  | Fire   | Backlash.
+Acid   | Earth  | Chaos  | Backlash.
+Acid   | Earth  | Cold   | Malicious. Corrodes and shatters the caster.
+Acid   | Earth  | Nether | Backlash.
+Acid   | Earth  | Poison | Backlash.
+Acid   | Earth  | Nexus  | Backlash.
+Acid   | Earth  | Force  | Backlash.
+Acid   | Earth  | Time   | Backlash.
+
+Acid   | Fire   | Water  | Temporary acid and fire resistance.
+Acid   | Fire   | Elec   | Temporary acid/elec/fire resistance.
+Acid   | Fire   | Earth  | Temporary acid and fire resistance.
+Acid   | Fire   | Chaos  | Temporary acid and fire resistance.
+Acid   | Fire   | Cold   | Temporary acid/fire/cold resistance.
+Acid   | Fire   | Nether | Temporary acid and fire resistance.
+Acid   | Fire   | Poison | Temporary acid/fire/poison resistance.
+Acid   | Fire   | Nexus  | Temporary acid/fire resistance. Projected.
+Acid   | Fire   | Force  | XOR Upkeep acid/fire resistance and brands.
+Acid   | Fire   | Time   | Temporary acid and fire resistance.
+
+Acid   | Chaos  | Water  | Dissolution exploding aura. XOR Timed.
+Acid   | Chaos  | Elec   | Ion exploding aura. XOR Timed.
+Acid   | Chaos  | Earth  | Corrosion exploding aura. XOR Timed.
+Acid   | Chaos  | Fire   | Bile exploding aura. XOR Timed.
+Acid   | Chaos  | Cold   | Rime exploding aura. XOR Timed.
+Acid   | Chaos  | Nether | Annihilation exploding aura. XOR Timed.
+Acid   | Chaos  | Poison | Venom exploding aura. XOR Timed.
+Acid   | Chaos  | Nexus  | Lightning exploding aura. XOR Timed.
+Acid   | Chaos  | Force  | Ablation exploding aura. XOR Timed.
+Acid   | Chaos  | Time   | Acid exploding aura. XOR Timed.
+
+Acid   | Cold   | Water  | Temporary acid and cold resistance.
+Acid   | Cold   | Elec   | Temporary acid/elec/cold resistance.
+Acid   | Cold   | Earth  | Malicious. Corrodes and shatters the caster.
+Acid   | Cold   | Fire   | Temporary acid and cold resistance.
+Acid   | Cold   | Chaos  | Temporary acid/cold/cold resistance.
+Acid   | Cold   | Nether | Temporary acid and cold resistance.
+Acid   | Cold   | Poison | Temporary acid/cold/poison resistance.
+Acid   | Cold   | Nexus  | Temporary acid/cold resistance. Projected.
+Acid   | Cold   | Force  | XOR Upkeep acid/cold resistance and brands.
+Acid   | Cold   | Time   | Temporary acid and cold resistance.
+
+Acid   | Nether | Water  | Dissolution trap. Upkeep.
+Acid   | Nether | Elec   | Ion trap. Upkeep.
+Acid   | Nether | Earth  | Corrosion trap. Upkeep.
+Acid   | Nether | Fire   | Bile trap. Upkeep.
+Acid   | Nether | Chaos  | Perplexity trap. Upkeep.
+Acid   | Nether | Cold   | Rime trap. Upkeep.
+Acid   | Nether | Poison | Venom trap. Upkeep.
+Acid   | Nether | Nexus  | Lightning trap. Upkeep.
+Acid   | Nether | Force  | Ablation trap. Upkeep.
+Acid   | Nether | Time   | Acid trap. Upkeep.
+
+Acid   | Poison | Water  | Temporary acid and poison resistance.
+Acid   | Poison | Elec   | Temporary acid/elec/poison resistance.
+Acid   | Poison | Earth  | Temporary acid and poison resistance.
+Acid   | Poison | Fire   | Temporary acid/fire/poison resistance.
+Acid   | Poison | Chaos  | Temporary acid and poison resistance.
+Acid   | Poison | Cold   | Temporary acid/cold/poison resistance.
+Acid   | Poison | Nether | Temporary acid and poison resistance.
+Acid   | Poison | Nexus  | Temporary acid/poison resistance. Projected.
+Acid   | Poison | Force  | XOR Upkeep acid/poison resistance and brands.
+Acid   | Poison | Time   | Temporary acid and poison resistance.
+
+Acid   | Nexus  | Water  | Malicious effect. Discharges the caster.
+Acid   | Nexus  | Elec   | Temporary elec resist and acid aura. Upkeep.
+Acid   | Nexus  | Earth  | Fires bolts at random targets in range. Timed.
+Acid   | Nexus  | Fire   | Temporary electricity and fire resistance.
+Acid   | Nexus  | Chaos  | Calls light.
+Acid   | Nexus  | Cold   | Temporary electricity and cold resistance.
+Acid   | Nexus  | Nether | Calls darkness.
+Acid   | Nexus  | Poison | Temporary electricity and poison resistance.
+Acid   | Nexus  | Force  | Permanent elec resistance and brand. XOR Upkeep.
+Acid   | Nexus  | Time   | Prepare an electricity rune charge. Sync-projected.
+
+Acid   | Force  | Water  | Dissolution exploding brand. XOR Timed.
+Acid   | Force  | Elec   | Ion exploding brand. XOR Timed.
+Acid   | Force  | Earth  | Corrosion exploding brand. XOR Timed.
+Acid   | Force  | Fire   | Bile exploding brand. XOR Timed.
+Acid   | Force  | Chaos  | Perplexity exploding brand. XOR Timed.
+Acid   | Force  | Cold   | Rime exploding brand. XOR Timed.
+Acid   | Force  | Nether | Annihilation exploding brand. XOR Timed.
+Acid   | Force  | Poison | Venom exploding brand. XOR Timed.
+Acid   | Force  | Nexus  | Lightning exploding brand. XOR Timed.
+Acid   | Force  | Time   | Acid exploding brand. XOR Timed.
+
+Acid   | Time   | Water  | Prepare acid/water rune charges. Sync-projected.
+Acid   | Time   | Elec   | Prepare acid/elec rune charges. Sync-projected.
+Acid   | Time   | Earth  | Prepare acid/earth rune charges. Sync-projected.
+Acid   | Time   | Fire   | Prepare acid/fire rune charges. Sync-projected.
+Acid   | Time   | Chaos  | Prepare acid/chaos rune charges. Sync-projected.
+Acid   | Time   | Cold   | Prepare acid/cold rune charges. Sync-projected.
+Acid   | Time   | Nether | Prepare acid/nether rune charges. Sync-projected.
+Acid   | Time   | Poison | 
+Acid   | Time   | Nexus  | 
+Acid   | Time   | Force  | 
+
+Water  | Elec   | Acid   | Backlash.
+Water  | Elec   | Earth  | Backlash.
+Water  | Elec   | Fire   | Malicious. Discharges and evaporates the caster.
+Water  | Elec   | Chaos  | Backlash.
+Water  | Elec   | Cold   | Backlash.
+Water  | Elec   | Nether | Backlash.
+Water  | Elec   | Poison | Backlash.
+Water  | Elec   | Nexus  | Backlash.
+Water  | Elec   | Force  | Backlash.
+Water  | Elec   | Time   | Backlash.
+
+Water  | Earth  | Acid   | 
+Water  | Earth  | Elec   | 
+Water  | Earth  | Fire   | 
+Water  | Earth  | Chaos  | 
+Water  | Earth  | Cold   | 
+Water  | Earth  | Nether | 
+Water  | Earth  | Poison | 
+Water  | Earth  | Nexus  | 
+Water  | Earth  | Force  | 
+Water  | Earth  | Time   | 
+
+Water  | Fire   | Acid   | Backlash.
+Water  | Fire   | Elec   | Malicious. Discharges and evaporates the caster.
+Water  | Fire   | Earth  | Backlash.
+Water  | Fire   | Chaos  | Backlash.
+Water  | Fire   | Cold   | Backlash.
+Water  | Fire   | Nether | Backlash.
+Water  | Fire   | Poison | Backlash.
+Water  | Fire   | Nexus  | Backlash.
+Water  | Fire   | Force  | Backlash.
+Water  | Fire   | Time   | Backlash.
+
+Water  | Chaos  | Acid   | Backlash.
+Water  | Chaos  | Elec   | Backlash.
+Water  | Chaos  | Earth  | Backlash.
+Water  | Chaos  | Fire   | Backlash.
+Water  | Chaos  | Cold   | Backlash.
+Water  | Chaos  | Nether | Backlash.
+Water  | Chaos  | Poison | Backlash.
+Water  | Chaos  | Nexus  | Backlash.
+Water  | Chaos  | Force  | Backlash.
+Water  | Chaos  | Time   | Backlash.
+
+Water  | Cold   | Acid   | Rime trap. Upkeep.
+Water  | Cold   | Elec   | Static trap. Upkeep.
+Water  | Cold   | Earth  | Shattering trap. Upkeep.
+Water  | Cold   | Fire   | Whitefire trap. Upkeep.
+Water  | Cold   | Chaos  | Wonder trap. Upkeep.
+Water  | Cold   | Nether | Blight trap. Upkeep.
+Water  | Cold   | Poison | Frostbite trap. Upkeep.
+Water  | Cold   | Nexus  | Fire trap. Upkeep.
+Water  | Cold   | Force  | Snapping trap. Upkeep.
+Water  | Cold   | Time   | Frost trap. Upkeep.
+
+Water  | Nether | Acid   | Backlash.
+Water  | Nether | Elec   | Backlash.
+Water  | Nether | Earth  | Backlash.
+Water  | Nether | Fire   | Backlash.
+Water  | Nether | Chaos  | Backlash.
+Water  | Nether | Cold   | Backlash.
+Water  | Nether | Poison | Backlash.
+Water  | Nether | Nexus  | Backlash.
+Water  | Nether | Force  | Backlash.
+Water  | Nether | Time   | Backlash.
+
+Water  | Poison | Acid   | Dissolution trap. Upkeep.
+Water  | Poison | Elec   | Discharge trap. Upkeep.
+Water  | Poison | Earth  | Erosion trap. Upkeep.
+Water  | Poison | Fire   | Evaporation trap. Upkeep.
+Water  | Poison | Chaos  | Polymorph trap. Upkeep.
+Water  | Poison | Cold   | Ice trap. Upkeep.
+Water  | Poison | Nether | Duplicating trap. Upkeep.
+Water  | Poison | Nexus  | Calling trap. Upkeep.
+Water  | Poison | Force  | Pressure trap. Upkeep.
+Water  | Poison | Time   | Water trap. Upkeep.
+
+Water  | Nexus  | Acid   | Dissolution exploding aura. XOR Timed.
+Water  | Nexus  | Elec   | Discharge exploding aura. XOR Timed.
+Water  | Nexus  | Earth  | Erosion exploding aura. XOR Timed.
+Water  | Nexus  | Fire   | Evaporation exploding aura. XOR Timed.
+Water  | Nexus  | Chaos  | Polymorphing exploding aura. XOR Timed.
+Water  | Nexus  | Cold   | Ice exploding aura. XOR Timed.
+Water  | Nexus  | Nether | Duplicating exploding aura. XOR Timed.
+Water  | Nexus  | Poison | Sleep exploding aura. XOR Timed.
+Water  | Nexus  | Force  | Pressure exploding aura. XOR Timed.
+Water  | Nexus  | Time   | Water exploding aura. XOR Timed.
+
+Water  | Force  | Acid   | Dissolution exploding brand. XOR Timed.
+Water  | Force  | Elec   | Dischrage exploding brand. XOR Timed.
+Water  | Force  | Earth  | Erosion exploding brand. XOR Timed.
+Water  | Force  | Fire   | Evaporation exploding brand. XOR Timed.
+Water  | Force  | Chaos  | Polymorphing exploding brand. XOR Timed.
+Water  | Force  | Cold   | Ice exploding brand. XOR Timed.
+Water  | Force  | Nether | Duplicating exploding brand. XOR Timed.
+Water  | Force  | Poison | Sleep exploding brand. XOR Timed.
+Water  | Force  | Nexus  | Calling exploding brand. XOR Timed.
+Water  | Force  | Time   | Water exploding brand. XOR Timed.
+
+Water  | Time   | Acid   | Prepare water/acid rune charges. Sync-projected.
+Water  | Time   | Elec   | Prepare water/elec rune charges. Sync-projected.
+Water  | Time   | Earth  | Prepare water/earth rune charges. Sync-projected.
+Water  | Time   | Fire   | Prepare water/fire rune charges. Sync-projected.
+Water  | Time   | Chaos  | Prepare water/chaos rune charges. Sync-projected.
+Water  | Time   | Cold   | Prepare water/cold rune charges. Sync-projected.
+Water  | Time   | Nether | Prepare water/nether rune charges. Sync-projected.
+Water  | Time   | Poison | 
+Water  | Time   | Nexus  | 
+Water  | Time   | Force  | 
+
+Elec   | Earth  | Acid   | Ion bolts. XOR Timed.
+Elec   | Earth  | Water  | Discharge bolts. XOR Timed.
+Elec   | Earth  | Fire   | Flux bolts. XOR Timed.
+Elec   | Earth  | Chaos  | Light bolts. XOR Timed.
+Elec   | Earth  | Cold   | Static bolts. XOR Timed.
+Elec   | Earth  | Nether | Darkness bolts. XOR Timed.
+Elec   | Earth  | Poison | Jolting bolts. XOR Timed.
+Elec   | Earth  | Nexus  | Acid bolts. XOR Timed.
+Elec   | Earth  | Force  | Zapping bolts. XOR Timed.
+Elec   | Earth  | Time   | Lightning bolts. XOR Timed.
+
+Elec   | Fire   | Acid   | Temporary acid/elec/fire resistance.
+Elec   | Fire   | Water  | Malicious. Discharges and evaporates the caster.
+Elec   | Fire   | Earth  | Temporary electricity and fire resistance.
+Elec   | Fire   | Chaos  | Temporary electricity and fire resistance.
+Elec   | Fire   | Cold   | Temporary elec/fire/cold resistance.
+Elec   | Fire   | Nether | Temporary electricity and fire resistance.
+Elec   | Fire   | Poison | Temporary elec/fire/poison resistance.
+Elec   | Fire   | Nexus  | Temporary elec/fire resistance. Projected.
+Elec   | Fire   | Force  | XOR Upkeep elec/fire resistance and brands.
+Elec   | Fire   | Time   | Temporary electricity and fire resistance.
+
+Elec   | Chaos  | Acid   | Ion trap. Upkeep.
+Elec   | Chaos  | Water  | Discharge trap. Upkeep.
+Elec   | Chaos  | Earth  | Thunder trap. Upkeep.
+Elec   | Chaos  | Fire   | Flux trap. Upkeep.
+Elec   | Chaos  | Cold   | Static trap. Upkeep.
+Elec   | Chaos  | Nether | Darkness trap. Upkeep.
+Elec   | Chaos  | Poison | Jolting trap. Upkeep.
+Elec   | Chaos  | Nexus  | Acid trap. Upkeep.
+Elec   | Chaos  | Force  | Zapping trap. Upkeep.
+Elec   | Chaos  | Time   | Lightning trap. Upkeep.
+
+Elec   | Cold   | Acid   | Temporary acid/elec/cold resistance.
+Elec   | Cold   | Water  | Temporary electricity and cold resistance.
+Elec   | Cold   | Earth  | Temporary electricity and cold resistance.
+Elec   | Cold   | Fire   | Temporary elec/fire/cold resistance.
+Elec   | Cold   | Chaos  | Temporary electricity and cold resistance.
+Elec   | Cold   | Nether | Temporary electricity and cold resistance.
+Elec   | Cold   | Poison | Temporary elec/cold/poison resistance.
+Elec   | Cold   | Nexus  | Temporary elec/cold resistance. Projected.
+Elec   | Cold   | Force  | XOR Upkeep elec/cold resistance and brands.
+Elec   | Cold   | Time   | Temporary electricity and cold resistance.
+
+Elec   | Nether | Acid   | Ion exploding aura. XOR Timed.
+Elec   | Nether | Water  | Discharge exploding aura. XOR Timed.
+Elec   | Nether | Earth  | Thunder exploding aura. XOR Timed.
+Elec   | Nether | Fire   | Flux exploding aura. XOR Timed.
+Elec   | Nether | Chaos  | Light exploding aura. XOR Timed.
+Elec   | Nether | Cold   | Static exploding aura. XOR Timed.
+Elec   | Nether | Poison | Jolting exploding aura. XOR Timed.
+Elec   | Nether | Nexus  | Acid exploding aura. XOR Timed.
+Elec   | Nether | Force  | Zapping exploding aura. XOR Timed.
+Elec   | Nether | Time   | Lightning exploding aura. XOR Timed.
+
+Elec   | Poison | Acid   | Temporary acid/elec/poison resistance.
+Elec   | Poison | Water  | Temporary electricity and poison resistance.
+Elec   | Poison | Earth  | Temporary electricity and poison resistance.
+Elec   | Poison | Fire   | Temporary elec/fire/poison resistance.
+Elec   | Poison | Chaos  | Temporary electricity and poison resistance.
+Elec   | Poison | Cold   | Temporary elec/cold/poison resistance.
+Elec   | Poison | Nether | Temporary electricity and poison resistance.
+Elec   | Poison | Nexus  | Temporary elec/poison resistance. Projected.
+Elec   | Poison | Force  | XOR Upkeep elec/poison resistance and brands.
+Elec   | Poison | Time   | Temporary electricity and poison resistance.
+
+Elec   | Nexus  | Acid   | Temporary acid resist and elec aura. Upkeep.
+Elec   | Nexus  | Water  | Summons clouds on random targets in range. Timed.
+Elec   | Nexus  | Earth  | Malicious effect. Corrodes the caster.
+Elec   | Nexus  | Fire   | Temporary acid and fire resistance.
+Elec   | Nexus  | Chaos  | Confusion brand. Upkeep.
+Elec   | Nexus  | Cold   | Temporary acid and cold resistance.
+Elec   | Nexus  | Nether | Annihilation brand. Upkeep.
+Elec   | Nexus  | Poison | Temporary acid and poison resistance.
+Elec   | Nexus  | Force  | Permanent acid resistance and brand. XOR Upkeep.
+Elec   | Nexus  | Time   | Prepare an acid rune charge. Sync-projected.
+
+Elec   | Force  | Acid   | Ion exploding brand. XOR Timed.
+Elec   | Force  | Water  | Discharge exploding brand. XOR Timed.
+Elec   | Force  | Earth  | Thunder exploding brand. XOR Timed.
+Elec   | Force  | Fire   | Flux exploding brand. XOR Timed.
+Elec   | Force  | Chaos  | Light exploding brand. XOR Timed.
+Elec   | Force  | Cold   | Static exploding brand. XOR Timed.
+Elec   | Force  | Nether | Darkness exploding brand. XOR Timed.
+Elec   | Force  | Poison | Jolting exploding brand. XOR Timed.
+Elec   | Force  | Nexus  | Acid exploding brand. XOR Timed.
+Elec   | Force  | Time   | Lightning exploding brand. XOR Timed.
+
+Elec   | Time   | Acid   | Prepare elec/acid rune charges. Sync-projected.
+Elec   | Time   | Water  | Prepare elec/water rune charges. Sync-projected.
+Elec   | Time   | Earth  | Prepare elec/earth rune charges. Sync-projected.
+Elec   | Time   | Fire   | Prepare elec/fire rune charges. Sync-projected.
+Elec   | Time   | Chaos  | Prepare elec/chaos rune charges. Sync-projected.
+Elec   | Time   | Cold   | Prepare elec/cold rune charges. Sync-projected.
+Elec   | Time   | Nether | Prepare elec/nether rune charges. Sync-projected.
+Elec   | Time   | Poison | 
+Elec   | Time   | Nexus  | 
+Elec   | Time   | Force  | 
+
+Earth  | Fire   | Acid   | Bile trap. Upkeep.
+Earth  | Fire   | Water  | Evaporation trap. Upkeep.
+Earth  | Fire   | Elec   | Flux trap. Upkeep.
+Earth  | Fire   | Chaos  | Hellfire trap. Upkeep.
+Earth  | Fire   | Cold   | Whitefire trap. Upkeep.
+Earth  | Fire   | Nether | Lifefire trap. Upkeep.
+Earth  | Fire   | Poison | Ash trap. Upkeep.
+Earth  | Fire   | Nexus  | Cold trap. Upkeep.
+Earth  | Fire   | Force  | Incineration trap. Upkeep.
+Earth  | Fire   | Time   | Fire trap. Upkeep.
+
+Earth  | Chaos  | Acid   | Backlash.
+Earth  | Chaos  | Water  | Backlash.
+Earth  | Chaos  | Elec   | Backlash.
+Earth  | Chaos  | Fire   | Backlash.
+Earth  | Chaos  | Cold   | Backlash.
+Earth  | Chaos  | Nether | Backlash.
+Earth  | Chaos  | Poison | Backlash.
+Earth  | Chaos  | Nexus  | Backlash.
+Earth  | Chaos  | Force  | Backlash.
+Earth  | Chaos  | Time   | Backlash.
+
+Earth  | Cold   | Acid   | Malicious. Corrodes and shatters the caster.
+Earth  | Cold   | Water  | Backlash.
+Earth  | Cold   | Elec   | Backlash.
+Earth  | Cold   | Fire   | Backlash.
+Earth  | Cold   | Chaos  | Backlash.
+Earth  | Cold   | Nether | Backlash.
+Earth  | Cold   | Poison | Backlash.
+Earth  | Cold   | Nexus  | Backlash.
+Earth  | Cold   | Force  | Backlash.
+Earth  | Cold   | Time   | Backlash.
+
+Earth  | Nether | Acid   | Backlash.
+Earth  | Nether | Water  | Backlash.
+Earth  | Nether | Elec   | Backlash.
+Earth  | Nether | Fire   | Backlash.
+Earth  | Nether | Chaos  | Backlash.
+Earth  | Nether | Cold   | Backlash.
+Earth  | Nether | Poison | Backlash.
+Earth  | Nether | Nexus  | Backlash.
+Earth  | Nether | Force  | Backlash.
+Earth  | Nether | Time   | Backlash.
+
+Earth  | Poison | Acid   | Corrosion trap. Upkeep.
+Earth  | Poison | Water  | Erosion trap. Upkeep.
+Earth  | Poison | Elec   | Thunder trap. Upkeep.
+Earth  | Poison | Fire   | Detonations trap. Upkeep.
+Earth  | Poison | Chaos  | Turmoil trap. Upkeep.
+Earth  | Poison | Cold   | Shattering trap. Upkeep.
+Earth  | Poison | Nether | Ruination trap. Upkeep.
+Earth  | Poison | Nexus  | Gravity trap. Upkeep.
+Earth  | Poison | Force  | Sound trap. Upkeep.
+Earth  | Poison | Time   | Shards trap. Upkeep.
+
+Earth  | Nexus  | Acid   | Corrosion exploding aura. XOR Timed.
+Earth  | Nexus  | Water  | Erosion exploding aura. XOR Timed.
+Earth  | Nexus  | Elec   | Thunder exploding aura. XOR Timed.
+Earth  | Nexus  | Fire   | Detonations exploding aura. XOR Timed.
+Earth  | Nexus  | Chaos  | Turmoil exploding aura. XOR Timed.
+Earth  | Nexus  | Cold   | Shattering exploding aura. XOR Timed.
+Earth  | Nexus  | Nether | Ruination exploding aura. XOR Timed.
+Earth  | Nexus  | Poison | Stun exploding aura. XOR Timed.
+Earth  | Nexus  | Force  | Sound exploding aura. XOR Timed.
+Earth  | Nexus  | Time   | Shards exploding aura. XOR Timed.
+
+Earth  | Force  | Acid   | Corrosion exploding brand. XOR Timed.
+Earth  | Force  | Water  | Erosion exploding brand. XOR Timed.
+Earth  | Force  | Elec   | Thunder exploding brand. XOR Timed.
+Earth  | Force  | Fire   | Detonations exploding brand. XOR Timed.
+Earth  | Force  | Chaos  | Turmoil exploding brand. XOR Timed.
+Earth  | Force  | Cold   | Shattering exploding brand. XOR Timed.
+Earth  | Force  | Nether | Ruination exploding brand. XOR Timed.
+Earth  | Force  | Poison | Stun exploding brand. XOR Timed.
+Earth  | Force  | Nexus  | Sound exploding brand. XOR Timed.
+Earth  | Force  | Time   | Shards exploding brand. XOR Timed.
+
+Earth  | Time   | Acid   | Prepare earth/acid rune charges. Sync-projected.
+Earth  | Time   | Water  | Prepare earth/water rune charges. Sync-projected.
+Earth  | Time   | Elec   | Prepare earth/elec rune charges. Sync-projected.
+Earth  | Time   | Fire   | Prepare earth/fire rune charges. Sync-projected.
+Earth  | Time   | Chaos  | Prepare earth/chaos rune charges. Sync-projected.
+Earth  | Time   | Cold   | Prepare earth/cold rune charges. Sync-projected.
+Earth  | Time   | Nether | Prepare earth/nether rune charges. Sync-projected.
+Earth  | Time   | Poison | 
+Earth  | Time   | Nexus  | 
+Earth  | Time   | Force  | 
+
+Fire   | Chaos  | Acid   | Hits all monsters in sight with bile.
+Fire   | Chaos  | Water  | Hits all monsters in sight with evaporation.
+Fire   | Chaos  | Elec   | Hits all monsters in sight with flux.
+Fire   | Chaos  | Earth  | Hits all monsters in sight with detonations.
+Fire   | Chaos  | Cold   | Hits all monsters in sight with whitefire.
+Fire   | Chaos  | Nether | Hits all monsters in sight with lifefire.
+Fire   | Chaos  | Poison | Hits all monsters in sight with ash.
+Fire   | Chaos  | Nexus  | Hits all monsters in sight with frost.
+Fire   | Chaos  | Force  | Hits all monsters in sight with incineration.
+Fire   | Chaos  | Time   | Hits all monsters in sight with fire.
+
+Fire   | Cold   | Acid   | Temporary acid/fire/cold resistance.
+Fire   | Cold   | Water  | Temporary fire and cold resistance.
+Fire   | Cold   | Elec   | Temporary elec/fire/cold resistance.
+Fire   | Cold   | Earth  | Temporary fire and cold resistance.
+Fire   | Cold   | Chaos  | Temporary fire and cold resistance.
+Fire   | Cold   | Nether | Temporary fire and cold resistance.
+Fire   | Cold   | Poison | Temporary fire/cold/poison resistance.
+Fire   | Cold   | Nexus  | Temporary fire and cold resistance. Projected.
+Fire   | Cold   | Force  | XOR Upkeep fire/cold resistance and brands.
+Fire   | Cold   | Time   | Temporary fire and cold resistance.
+
+Fire   | Nether | Acid   | Bile exploding aura. XOR Timed.
+Fire   | Nether | Water  | Evaporation exploding aura. XOR Timed.
+Fire   | Nether | Elec   | Flux exploding aura. XOR Timed.
+Fire   | Nether | Earth  | Detonations exploding aura. XOR Timed.
+Fire   | Nether | Chaos  | Hellfire exploding aura. XOR Timed.
+Fire   | Nether | Cold   | Whitefire exploding aura. XOR Timed.
+Fire   | Nether | Poison | Ash exploding aura. XOR Timed.
+Fire   | Nether | Nexus  | Cold exploding aura. XOR Timed.
+Fire   | Nether | Force  | Incineration exploding aura. XOR Timed.
+Fire   | Nether | Time   | Fire exploding aura. XOR Timed.
+
+Fire   | Poison | Acid   | Temporary acid/fire/poison resistance.
+Fire   | Poison | Water  | Temporary fire and poison resistance.
+Fire   | Poison | Elec   | Temporary elec/fire/poison resistance.
+Fire   | Poison | Earth  | Temporary fire and poison resistance.
+Fire   | Poison | Chaos  | Temporary fire and poison resistance.
+Fire   | Poison | Cold   | Temporary fire/cold/poison resistance.
+Fire   | Poison | Nether | Temporary fire and poison resistance.
+Fire   | Poison | Nexus  | Temporary fire and poison resistance. Projected.
+Fire   | Poison | Force  | XOR Upkeep fire/poison resistance and brands.
+Fire   | Poison | Time   | Temporary fire and poison resistance.
+
+Fire   | Nexus  | Acid   | Temporary acid and cold resistance.
+Fire   | Nexus  | Water  | Ice trap. Upkeep.
+Fire   | Nexus  | Elec   | Temporary elec and cold resistance.
+Fire   | Nexus  | Earth  | Malicious effect. Shatters the caster.
+Fire   | Nexus  | Chaos  | Malicious. Wonderous backlash.
+Fire   | Nexus  | Cold   | Temporary cold resist and fire aura. Upkeep.
+Fire   | Nexus  | Nether | Increases effective traumaturgy. Upkeep.
+Fire   | Nexus  | Poison | Temporary cold and poison resistance.
+Fire   | Nexus  | Force  | Permanent cold resistance and brand. XOR Upkeep.
+Fire   | Nexus  | Time   | Prepare a cold rune charge. Sync-projected.
+
+Fire   | Force  | Acid   | Bile exploding brand. XOR Timed.
+Fire   | Force  | Water  | Evaporation exploding brand. XOR Timed.
+Fire   | Force  | Elec   | Flux exploding brand. XOR Timed.
+Fire   | Force  | Earth  | Detonations exploding brand. XOR Timed.
+Fire   | Force  | Chaos  | Hellfire exploding brand. XOR Timed.
+Fire   | Force  | Cold   | Whitefire exploding brand. XOR Timed.
+Fire   | Force  | Nether | Lifefire exploding brand. XOR Timed.
+Fire   | Force  | Poison | Ash exploding brand. XOR Timed.
+Fire   | Force  | Nexus  | Frost exploding brand. XOR Timed.
+Fire   | Force  | Time   | Fire exploding brand. XOR Timed.
+
+Fire   | Time   | Acid   | Prepare fire/acid rune charges. Sync-projected.
+Fire   | Time   | Water  | Prepare fire/water rune charges. Sync-projected.
+Fire   | Time   | Elec   | Prepare fire/elec rune charges. Sync-projected.
+Fire   | Time   | Earth  | Prepare fire/earth rune charges. Sync-projected.
+Fire   | Time   | Chaos  | Prepare fire/chaos rune charges. Sync-projected.
+Fire   | Time   | Cold   | Prepare fire/cold rune charges. Sync-projected.
+Fire   | Time   | Nether | Prepare fire/nether rune charges. Sync-projected.
+Fire   | Time   | Poison | 
+Fire   | Time   | Nexus  | 
+Fire   | Time   | Force  | 
+
+Chaos  | Cold   | Acid   | Rime exploding aura. XOR Timed.
+Chaos  | Cold   | Water  | Ice exploding aura. XOR Timed.
+Chaos  | Cold   | Elec   | Static exploding aura. XOR Timed.
+Chaos  | Cold   | Earth  | Shattering exploding aura. XOR Timed.
+Chaos  | Cold   | Fire   | Whitefire exploding aura. XOR Timed.
+Chaos  | Cold   | Nether | Blight exploding aura. XOR Timed.
+Chaos  | Cold   | Poison | Frostbite exploding aura. XOR Timed.
+Chaos  | Cold   | Nexus  | Fire exploding aura. XOR Timed.
+Chaos  | Cold   | Force  | Snapping exploding aura. XOR Timed.
+Chaos  | Cold   | Time   | Frost exploding aura. XOR Timed.
+
+Chaos  | Nether | Acid   | 
+Chaos  | Nether | Water  | 
+Chaos  | Nether | Elec   | 
+Chaos  | Nether | Earth  | 
+Chaos  | Nether | Fire   | 
+Chaos  | Nether | Cold   | 
+Chaos  | Nether | Poison | 
+Chaos  | Nether | Nexus  | 
+Chaos  | Nether | Force  | 
+Chaos  | Nether | Time   | 
+
+Chaos  | Poison | Acid   | Perplexity trap. Upkeep.
+Chaos  | Poison | Water  | Polymorphing trap. Upkeep.
+Chaos  | Poison | Elec   | Light trap. Upkeep.
+Chaos  | Poison | Earth  | Turmoil trap. Upkeep.
+Chaos  | Poison | Fire   | Hellfire trap. Upkeep.
+Chaos  | Poison | Cold   | Wonder trap. Upkeep.
+Chaos  | Poison | Nether | Disenchantment trap. Upkeep.
+Chaos  | Poison | Nexus  | Order trap. Upkeep.
+Chaos  | Poison | Force  | Entropy trap. Upkeep.
+Chaos  | Poison | Time   | Chaos trap. Upkeep.
+
+Chaos  | Nexus  | Acid   | Protection from acid. Repels attackers. Timed.
+Chaos  | Nexus  | Water  | Dispel magic.
+Chaos  | Nexus  | Elec   | Protection from elec. Repels attackers. Timed.
+Chaos  | Nexus  | Earth  | Dispel magic.
+Chaos  | Nexus  | Fire   | Protection from fire. Repels attackers. Timed.
+Chaos  | Nexus  | Cold   | Protection from cold. Repels attackers. Timed.
+Chaos  | Nexus  | Nether | Dispel magic.
+Chaos  | Nexus  | Poison | Protection from poison. Repels attackers. Timed.
+Chaos  | Nexus  | Force  | Dispel magic.
+Chaos  | Nexus  | Time   | Dispel magic.
+
+Chaos  | Force  | Acid   | Perplexity exploding brand. XOR Timed.
+Chaos  | Force  | Water  | Polymorphing exploding brand. XOR Timed.
+Chaos  | Force  | Elec   | Light exploding brand. XOR Timed.
+Chaos  | Force  | Earth  | Turmoil exploding brand. XOR Timed.
+Chaos  | Force  | Fire   | Hellfire exploding brand. XOR Timed.
+Chaos  | Force  | Cold   | Wonder exploding brand. XOR Timed.
+Chaos  | Force  | Nether | Disenchantment exploding brand. XOR Timed.
+Chaos  | Force  | Poison | Confusion exploding brand. XOR Timed.
+Chaos  | Force  | Nexus  | Order exploding brand. XOR Timed.
+Chaos  | Force  | Time   | Chaos exploding brand. XOR Timed.
+
+Chaos  | Time   | Acid   | Prepare chaos/acid rune charges. Sync-projected.
+Chaos  | Time   | Water  | Prepare chaos/water rune charges. Sync-projected.
+Chaos  | Time   | Elec   | Prepare chaos/elec rune charges. Sync-projected.
+Chaos  | Time   | Earth  | Prepare chaos/earth rune charges. Sync-projected.
+Chaos  | Time   | Fire   | Prepare chaos/fire rune charges. Sync-projected.
+Chaos  | Time   | Cold   | Prepare chaos/cold rune charges. Sync-projected.
+Chaos  | Time   | Nether | Prepare chaos/nether rune charges. Sync-projected.
+Chaos  | Time   | Poison | 
+Chaos  | Time   | Nexus  | 
+Chaos  | Time   | Force  | 
+
+Cold   | Nether | Acid   | Hits all enemies in sight with rime.
+Cold   | Nether | Water  | Hits all enemies in sight with ice.
+Cold   | Nether | Elec   | Hits all enemies in sight with static.
+Cold   | Nether | Earth  | Hits all enemies in sight with shattering.
+Cold   | Nether | Fire   | Hits all enemies in sight with whitefire.
+Cold   | Nether | Chaos  | Hits all enemies in sight with wonder.
+Cold   | Nether | Poison | Hits all enemies in sight with frostbite.
+Cold   | Nether | Nexus  | Hits all enemies in sight with fire.
+Cold   | Nether | Force  | Hits all enemies in sight with snapping.
+Cold   | Nether | Time   | Hits all enemies in sight with frost.
+
+Cold   | Poison | Acid   | Temporary acid/cold/poison resistance.
+Cold   | Poison | Water  | Temporary cold and poison resistance.
+Cold   | Poison | Elec   | Temporary elec/cold/poison resistance.
+Cold   | Poison | Earth  | Temporary cold and poison resistance.
+Cold   | Poison | Fire   | Temporary fire/cold/poison resistance.
+Cold   | Poison | Chaos  | Temporary cold and poison resistance.
+Cold   | Poison | Nether | Temporary cold and poison resistance.
+Cold   | Poison | Nexus  | Temporary cold/poison resistance. Projected.
+Cold   | Poison | Force  | XOR Upkeep cold/poison resistance and brands.
+Cold   | Poison | Time   | Temporary cold and poison resistance.
+
+Cold   | Nexus  | Acid   | Temporary fire and acid resistance.
+Cold   | Nexus  | Water  | Malicious effect. Evaporates the caster.
+Cold   | Nexus  | Elec   | Temporary fire and elec resistance.
+Cold   | Nexus  | Earth  | Detonations trap. Upkeep.
+Cold   | Nexus  | Fire   | Temporary fire resist and cold aura. Upkeep.
+Cold   | Nexus  | Chaos  | Increases effective necromancy. Upkeep.
+Cold   | Nexus  | Nether | Malicious effect. Drains xp from the caster.
+Cold   | Nexus  | Poison | Temporary fire and poison resistance.
+Cold   | Nexus  | Force  | Permanent fire resistance and brand. XOR Upkeep.
+Cold   | Nexus  | Time   | Prepare a fire rune charge. Sync-projected.
+
+Cold   | Force  | Acid   | Rime exploding brand. XOR Timed.
+Cold   | Force  | Water  | Ice exploding brand. XOR Timed.
+Cold   | Force  | Elec   | Static exploding brand. XOR Timed.
+Cold   | Force  | Earth  | Shattering exploding brand. XOR Timed.
+Cold   | Force  | Fire   | Whitefire exploding brand. XOR Timed.
+Cold   | Force  | Chaos  | Wonder exploding brand. XOR Timed.
+Cold   | Force  | Nether | Blight exploding brand. XOR Timed.
+Cold   | Force  | Poison | Frostbite exploding brand. XOR Timed.
+Cold   | Force  | Nexus  | Fire exploding brand. XOR Timed.
+Cold   | Force  | Time   | Frost exploding brand. XOR Timed.
+
+Cold   | Time   | Acid   | Prepare cold/acid rune charges. Sync-projected.
+Cold   | Time   | Water  | Prepare cold/water rune charges. Sync-projected.
+Cold   | Time   | Elec   | Prepare cold/elec rune charges. Sync-projected.
+Cold   | Time   | Earth  | Prepare cold/earth rune charges. Sync-projected.
+Cold   | Time   | Fire   | Prepare cold/fire rune charges. Sync-projected.
+Cold   | Time   | Chaos  | Prepare cold/chaos rune charges. Sync-projected.
+Cold   | Time   | Nether | Prepare cold/nether rune charges. Sync-projected.
+Cold   | Time   | Poison | 
+Cold   | Time   | Nexus  | 
+Cold   | Time   | Force  | 
+
+Nether | Poison | Acid   | Annihilation trap. Upkeep.
+Nether | Poison | Water  | Duplication trap. Upkeep.
+Nether | Poison | Elec   | Darkness trap. Upkeep.
+Nether | Poison | Earth  | Ruination trap. Upkeep.
+Nether | Poison | Fire   | Lifefire trap. Upkeep.
+Nether | Poison | Chaos  | Disenchantment trap. Upkeep.
+Nether | Poison | Cold   | Blight trap. Upkeep.
+Nether | Poison | Nexus  | Mana trap. Upkeep.
+Nether | Poison | Force  | Disintegration trap. Upkeep.
+Nether | Poison | Time   | Nether trap. Upkeep.
+
+Nether | Nexus  | Acid   | Elemental disruption shield. Stops acid.
+Nether | Nexus  | Water  | Recharge.
+Nether | Nexus  | Elec   | Elemental disruption shield. Stops electricity.
+Nether | Nexus  | Earth  | Recharge.
+Nether | Nexus  | Fire   | Elemental disruption shield. Stops fire.
+Nether | Nexus  | Chaos  | Recharge.
+Nether | Nexus  | Cold   | Elemental disruption shield. Stops cold.
+Nether | Nexus  | Poison | Elemental disruption shield. Stops poison.
+Nether | Nexus  | Force  | Recharge.
+Nether | Nexus  | Time   | Recharge.
+
+Nether | Force  | Acid   | Annihilation exploding brand. XOR Timed.
+Nether | Force  | Water  | Duplication exploding brand. XOR Timed.
+Nether | Force  | Elec   | Darkness exploding brand. XOR Timed.
+Nether | Force  | Earth  | Ruination exploding brand. XOR Timed.
+Nether | Force  | Fire   | Lifefire exploding brand. XOR Timed.
+Nether | Force  | Chaos  | Disenchantment exploding brand. XOR Timed.
+Nether | Force  | Cold   | Blight exploding brand. XOR Timed.
+Nether | Force  | Poison | Miasma exploding brand. XOR Timed.
+Nether | Force  | Nexus  | Mana exploding brand. XOR Timed.
+Nether | Force  | Time   | Nether exploding brand. XOR Timed.
+
+Nether | Time   | Acid   | Prepare nether/acid rune charges. Sync-projected.
+Nether | Time   | Water  | Prepare nether/water rune charges. Sync-projected.
+Nether | Time   | Elec   | Prepare nether/elec rune charges. Sync-projected.
+Nether | Time   | Earth  | Prepare nether/earth rune charges. Sync-projected.
+Nether | Time   | Fire   | Prepare nether/fire rune charges. Sync-projected.
+Nether | Time   | Chaos  | Prepare nether/chaos rune charges. Sync-projected.
+Nether | Time   | Cold   | Prepare nether/cold rune charges. Sync-projected.
+Nether | Time   | Poison | 
+Nether | Time   | Nexus  | 
+Nether | Time   | Force  | 
+
+Poison | Nexus  | Acid   | Venom gale. Hits enemies in sight. XOR Timed.
+Poison | Nexus  | Water  | Sleep gale. Hits enemies in sight. XOR Timed.
+Poison | Nexus  | Elec   | Jolting gale. Hits enemies in sight. XOR Timed.
+Poison | Nexus  | Earth  | Stun gale. Hits enemies in sight. XOR Timed.
+Poison | Nexus  | Fire   | Ash gale. Hits enemies in sight. XOR Timed.
+Poison | Nexus  | Chaos  | Confusion gale. Hits enemies in sight. XOR Timed.
+Poison | Nexus  | Cold   | Frostbite gale. Hits enemies in sight. XOR Timed.
+Poison | Nexus  | Nether | Miasma gale. Hits enemies in sight. XOR Timed.
+Poison | Nexus  | Force  | Toxins gale. Hits enemies in sight. XOR Timed.
+Poison | Nexus  | Time   | Stop gale. Hits enemies in sight. XOR Timed.
+
+Poison | Force  | Acid   | Venom exploding brand. XOR Timed.
+Poison | Force  | Water  | Sleep exploding brand. XOR Timed.
+Poison | Force  | Elec   | Jolting exploding brand. XOR Timed.
+Poison | Force  | Earth  | Stun exploding brand. XOR Timed.
+Poison | Force  | Fire   | Ash exploding brand. XOR Timed.
+Poison | Force  | Chaos  | Confusion exploding brand. XOR Timed.
+Poison | Force  | Cold   | Frostbite exploding brand. XOR Timed.
+Poison | Force  | Nether | Miasma exploding brand. XOR Timed.
+Poison | Force  | Nexus  | Unbreath exploding brand. XOR Timed.
+Poison | Force  | Time   | Stop exploding brand. XOR Timed.
+
+Poison | Time   | Acid   | Venom trap. Upkeep.
+Poison | Time   | Water  | Sleep trap. Upkeep.
+Poison | Time   | Elec   | Jolting trap. Upkeep.
+Poison | Time   | Earth  | Stun trap. Upkeep.
+Poison | Time   | Fire   | Ash trap. Upkeep.
+Poison | Time   | Chaos  | Confusion trap. Upkeep.
+Poison | Time   | Cold   | Frostbite trap. Upkeep.
+Poison | Time   | Nether | Miasma trap. Upkeep.
+Poison | Time   | Nexus  | Unbreath trap. Upkeep.
+Poison | Time   | Force  | Toxins trap. Upkeep.
+
+Nexus  | Force  | Acid   | Acid teleport. Uses a portal if able.
+Nexus  | Force  | Water  | Teleportation.
+Nexus  | Force  | Elec   | Lightning teleport. Uses a portal if able.
+Nexus  | Force  | Earth  | Teleportation.
+Nexus  | Force  | Fire   | Fire teleport. Uses a portal if able.
+Nexus  | Force  | Chaos  | Teleportation.
+Nexus  | Force  | Cold   | Frost teleport. Uses a portal if able.
+Nexus  | Force  | Nether | Teleportation.
+Nexus  | Force  | Poison | Gas teleport. Uses a portal if able.
+Nexus  | Force  | Time   | Glyph of warding.
+
+Nexus  | Time   | Acid   | Memory portal. Linked to acid teleport. Upkeep.
+Nexus  | Time   | Water  | Circle of protection. Draws multiple glyphs.
+Nexus  | Time   | Elec   | Memory portal. Linked to acid teleport. Upkeep.
+Nexus  | Time   | Earth  | Circle of protection. Draws multiple glyphs.
+Nexus  | Time   | Fire   | Memory portal. Linked to acid teleport. Upkeep.
+Nexus  | Time   | Chaos  | Circle of protection. Draws multiple glyphs.
+Nexus  | Time   | Cold   | Memory portal. Linked to acid teleport. Upkeep.
+Nexus  | Time   | Nether | Circle of protection. Draws multiple glyphs.
+Nexus  | Time   | Poison | Memory portal. Linked to acid teleport. Upkeep.
+Nexus  | Time   | Force  | Glyph of warding.
+
+Force  | Time   | Acid   | Ablation trap. Upkeep.
+Force  | Time   | Water  | Pressure trap. Upkeep.
+Force  | Time   | Elec   | Zapping trap. Upkeep.
+Force  | Time   | Earth  | Sound trap. Upkeep.
+Force  | Time   | Fire   | Incineration trap. Upkeep.
+Force  | Time   | Chaos  | Order trap. Upkeep.
+Force  | Time   | Cold   | Snapping trap. Upkeep.
+Force  | Time   | Nether | Disintegration trap. Upkeep.
+Force  | Time   | Poison | Toxins trap. Upkeep.
+Force  | Time   | Nexus  | Glyph of warding.
 
 
 
@@ -10991,9 +11716,9 @@ Firebird                speedy and tough; can fly and passes most terrains;
 
 (6.7c) Useful low-level humanoid forms for weapon-using mimics
 --------------------------------------------------------------
-Mimics who use weapons have less choices for forms than martial arts users who
-do not need to rely on humanoid forms and can just utilize easy-to-get forms
-such as fruit bat, wild cat, crow or spiders right away for great effect.
+Mimics who use weapons have less choices for forms than martial artists who do
+not need to rely on humanoid forms and can just utilize easy-to-get forms such
+as fruit bat, wild cat, spiders, birds or hounds right away to great effect.
 
 To use weapons however, the form must be humanoid or very close to it, which
 rules out animal forms. To make form-hunting a bit easier in the beginning here
