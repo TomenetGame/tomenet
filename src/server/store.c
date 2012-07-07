@@ -3555,7 +3555,7 @@ void store_sell(int Ind, int item, int amt)
 	}
 
 	/* Museum */
-//	if (p_ptr->store_num == 57)
+//	if (p_ptr->store_num == STORE_MATHOM_HOUSE)
 	if (st_info[p_ptr->store_num].flags1 & SF1_MUSEUM) {
 #if 0
 		/* Describe the transaction */
