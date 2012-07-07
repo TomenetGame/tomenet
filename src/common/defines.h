@@ -2414,7 +2414,7 @@
 
 /* unused */
 #define is_realm_book(o_ptr) \
-	(89 <= o_ptr->tval && o_ptr->tval <= 95)
+	(89 <= (o_ptr)->tval && (o_ptr)->tval <= 95)
 
 /* special items */
 #define TV_SPECIAL	127
