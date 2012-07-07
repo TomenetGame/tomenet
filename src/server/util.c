@@ -5913,6 +5913,10 @@ void restore_estate(int Ind) {
 		        if (!seal_or_unseal_object(o_ptr)) continue;
 #endif
 
+			/* Roughly check whether its inscription is no longer valid */
+			if (o_ptr->note && !quark_str(o_ptr->note)) o_ptr->note = 0;
+			o_ptr->note_utag = 0;
+
 			/* is it a pile of gold? */
 			if (o_ptr->tval == TV_GOLD) {
 				/* give gold to player if it doesn't overflow,
