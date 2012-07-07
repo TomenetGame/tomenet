@@ -37,8 +37,8 @@
 /* MAJOR/MINOR/PATCH version should be 0-15. */
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		4
-#define VERSION_PATCH		8
-#define VERSION_EXTRA		6
+#define VERSION_PATCH		9
+#define VERSION_EXTRA		0
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -48,8 +48,8 @@
    with a 'T' marker which is visible only to admins.*/
 #define VERSION_MAJOR_LATEST	4
 #define VERSION_MINOR_LATEST	4
-#define VERSION_PATCH_LATEST	8
-#define VERSION_EXTRA_LATEST	6
+#define VERSION_PATCH_LATEST	9
+#define VERSION_EXTRA_LATEST	0
 #define VERSION_BRANCH_LATEST	0
 #define VERSION_BUILD_LATEST	0
 
@@ -57,7 +57,7 @@
 #define VERSION_MAJOR_OUTDATED	4
 #define VERSION_MINOR_OUTDATED	4
 #define VERSION_PATCH_OUTDATED	8
-#define VERSION_EXTRA_OUTDATED	1
+#define VERSION_EXTRA_OUTDATED	6
 #define VERSION_BRANCH_OUTDATED	0
 #define VERSION_BUILD_OUTDATED	0
 
@@ -68,7 +68,7 @@
 
 /* Client-side only: Client release version tag
    (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG "c"
+#define CLIENT_VERSION_TAG ""
 
 /* Minimum client version required to be allowed to log in */
 #define MIN_VERSION_MAJOR	4
@@ -965,7 +965,7 @@
 /* Total number of owners per store (see "store.c", etc) */
 #define MAX_STORE_OWNERS	6	/* Max size for st_ptr->owners[] */
 
-#define STORE_INVEN_MAX	48		/* Max number of discrete objs in inven [48] */
+#define STORE_INVEN_MAX	120		/* Max number of discrete objs in inven [48] */
 #define STORE_CHOICES	56 /*34*/	/* Number of items to choose stock from */
 #define STORE_OBJ_LEVEL	5		/* Magic Level for normal stores */
 #define STORE_TURNOVER_DIV 3		/* Normal shop turnover, per day (stock_size / this = randint(amount of items to turnover)) */
