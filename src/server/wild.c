@@ -291,8 +291,9 @@ void wild_spawn_towns()
 	for (i = 1 + 1; i < 6; i++) {
 		retry = FALSE;
 
-		y = rand_int(MAX_WILD_Y);
-		x = rand_int(MAX_WILD_X);
+		/* avoid towns at the border of the world map (also: no housing space there!) */
+		y = 2 + rand_int(MAX_WILD_Y - 4);
+		x = 2 + rand_int(MAX_WILD_X - 4);
 
 		/* check wilderness type so that Bree is in forest and
 		 * Minas Anor in mountain etc */
