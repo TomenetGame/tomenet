@@ -3563,10 +3563,10 @@ void wilderness_gen(struct worldpos *wpos)
 #define DESERT 1536	/* desert */
 #define ICE 2404	/* ice */
 
-static void island(int y, int x, unsigned char type, unsigned char fill, int size) {
+static bool island(int y, int x, unsigned char type, unsigned char fill, int size) {
 	int ranval;
-	if(y < 0 || x < 0 || y >= MAX_WILD_Y || x >= MAX_WILD_Y) return;
-	if(wild_info[y][x].type != fill) return;
+	if(y < 0 || x < 0 || y >= MAX_WILD_Y || x >= MAX_WILD_Y) return FALSE;
+	if(wild_info[y][x].type != fill) return FALSE;
 	ranval = rand_int(15);
 	if(size){
 		if(ranval&1) island(y,x-1,type,fill,size-1);
@@ -3585,6 +3585,7 @@ static void island(int y, int x, unsigned char type, unsigned char fill, int siz
 		}
 	}
 	wild_info[y][x].type = type;
+	return TRUE;
 }
 
 static void makeland() {
@@ -3617,7 +3618,8 @@ static unsigned short makecoast(unsigned char edge, unsigned char new, unsigned 
 	return(0);
 }
 
-static void addhills() {
+static bool addhills() {
+	bool added = FALSE;
 	int i, p;
 	int x, y;
 	p=(MAX_WILD_Y * MAX_WILD_X) / ROCKY;
@@ -3626,11 +3628,13 @@ static void addhills() {
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
 		}while(wild_info[y][x].type != WILD_GRASSLAND);
-		island(y, x, WILD_MOUNTAIN, WILD_GRASSLAND, rand_int((1<<MAXMOUNT) - 1));
+		if (island(y, x, WILD_MOUNTAIN, WILD_GRASSLAND, rand_int((1<<MAXMOUNT) - 1))) added = TRUE;
 	}
+	return added;
 }
 
-static void addlakes() {
+static bool addlakes() {
+	bool added = FALSE;
 	int i, p;
 	int x, y;
 	p = (MAX_WILD_Y * MAX_WILD_X) / LAKES;
@@ -3639,11 +3643,13 @@ static void addlakes() {
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
 		}while(wild_info[y][x].type != WILD_GRASSLAND);
-		island(y, x, WILD_LAKE, WILD_GRASSLAND, rand_int((1<<MAXLAKE) - 1));
+		if (island(y, x, WILD_LAKE, WILD_GRASSLAND, rand_int((1<<MAXLAKE) - 1))) added = TRUE;
 	}
+	return added;
 }
 
-static void addwaste() {
+static bool addwaste() {
+	bool added = FALSE;
 	int i, p;
 	int x, y;
 	p = (MAX_WILD_Y * MAX_WILD_X) / WASTE;
@@ -3652,11 +3658,13 @@ static void addwaste() {
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
 		}while(wild_info[y][x].type != WILD_GRASSLAND);
-		island(y, x, WILD_WASTELAND, WILD_GRASSLAND, rand_int((1<<MAXWASTE) - 1));
+		if (island(y, x, WILD_WASTELAND, WILD_GRASSLAND, rand_int((1<<MAXWASTE) - 1))) added = TRUE;
 	}
+	return added;
 }
 
-static void adddesert() {
+static bool adddesert() {
+	bool added = FALSE;
 	int i, p;
 	int x, y;
 	p = (MAX_WILD_Y * MAX_WILD_X) / DESERT;
@@ -3665,11 +3673,13 @@ static void adddesert() {
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
 		}while(wild_info[y][x].type != WILD_GRASSLAND);
-		island(y, x, WILD_DESERT, WILD_GRASSLAND, rand_int((1<<MAXDESERT) - 1));
+		if (island(y, x, WILD_DESERT, WILD_GRASSLAND, rand_int((1<<MAXDESERT) - 1))) added = TRUE;
 	}
+	return added;
 }
 
-static void addice() {
+static bool addice() {
+	bool added = FALSE;
 	int i, p;
 	int x, y;
 	p = (MAX_WILD_Y * MAX_WILD_X) / ICE;
@@ -3678,11 +3688,13 @@ static void addice() {
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
 		}while(wild_info[y][x].type != WILD_GRASSLAND);
-		island(y, x, WILD_ICE, WILD_GRASSLAND, rand_int((1<<MAXICE) - 1));
+		if (island(y, x, WILD_ICE, WILD_GRASSLAND, rand_int((1<<MAXICE) - 1))) added = TRUE;
 	}
+	return added;
 }
 
-static void addislands() {
+static bool addislands() {
+	bool added = FALSE;
 	int i, p;
 	int x, y;
 	p = (MAX_WILD_Y * MAX_WILD_X) / ISLANDS;
@@ -3691,11 +3703,13 @@ static void addislands() {
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
 		}while(wild_info[y][x].type != WILD_OCEANBED1);
-		island(y, x, WILD_GRASSLAND, WILD_OCEANBED1, rand_int((1<<MAXISLANDS) - 1));
+		if (island(y, x, WILD_GRASSLAND, WILD_OCEANBED1, rand_int((1<<MAXISLANDS) - 1))) added = TRUE;
 	}
+	return added;
 }
 
-static void addforest() {
+static bool addforest() {
+	bool added = FALSE;
 	int i, p;
 	int x, y;
 	int size;
@@ -3706,10 +3720,11 @@ static void addforest() {
 			y = rand_int(MAX_WILD_Y - 1);
 		}while(wild_info[y][x].type != WILD_GRASSLAND);
 		size = rand_int((1<<MAXWOOD) - 1);
-		island(y, x, WILD_FOREST, WILD_GRASSLAND, size);
+		if (island(y, x, WILD_FOREST, WILD_GRASSLAND, size)) added = TRUE;
 		if(size > 3)
-			island(y, x, WILD_DENSEFOREST, WILD_FOREST, size - 3);
+			if (island(y, x, WILD_DENSEFOREST, WILD_FOREST, size - 3)) added = TRUE;
 	}
+	return added;
 }
 
 static int mvx[] = {0, 1, 1, 1, 0, -1, -1, -1};
@@ -3758,7 +3773,8 @@ static void river(int y, int x) {
 	}
 }
 
-static void addrivers() {
+static bool addrivers() {
+	bool added = FALSE;
 	int i,p;
 	int x,y;
 	p=(MAX_WILD_Y*MAX_WILD_X)/RIVERS;
@@ -3768,14 +3784,17 @@ static void addrivers() {
 			y=rand_int(MAX_WILD_Y-1);
 		}while(wild_info[y][x].type!=WILD_MOUNTAIN);
 		river(y,x);
+		added = TRUE;
 	}
+	return added;
 }
 
 
-void genwild(bool dry_Bree) {
+void genwild(bool all_terrains, bool dry_Bree) {
 	int j,i;
 	bool rand_old = Rand_quick;
 	u32b old_seed = Rand_value;
+	bool watery = FALSE, got_everything = TRUE;
 
     while (TRUE) {
 
@@ -3821,18 +3840,27 @@ void genwild(bool dry_Bree) {
 			}
 		}
 	}
-	addhills();
-	addrivers();
-	addforest();
-	addlakes();
-	addwaste();
-	adddesert();
-	addice();
 
+	if (all_terrains) {
+		got_everything = got_everything && addhills();
+		got_everything = got_everything && addrivers();
+		got_everything = got_everything && addforest();
+		got_everything = got_everything && addlakes();
+		got_everything = got_everything && addwaste();
+		got_everything = got_everything && adddesert();
+		got_everything = got_everything && addice();
+	} else {
+		addhills();
+		addrivers();
+		addforest();
+		addlakes();
+		addwaste();
+		adddesert();
+		addice();
+	}
 
 	/* Check that Bree is surrounded by pretty dry terrain */
 	if (dry_Bree) {
-		bool watery = FALSE;
 		int tol = 0;
 		for (i = cfg.town_x - MAX_TOWNAREA - tol; i <= cfg.town_x + MAX_TOWNAREA + tol; i++) {
 			for (j = cfg.town_y - MAX_TOWNAREA - tol; j <= cfg.town_y + MAX_TOWNAREA + tol; j++) {
@@ -3860,8 +3888,10 @@ void genwild(bool dry_Bree) {
 				}
 			}
 		}
-		if (!watery) break;
-	} else break;
+		got_everything = got_everything && !watery;
+	}
+
+	if (got_everything) break;
 
 	/* Change wilderness generation seed */
         seed_town = rand_int(0x10000000);

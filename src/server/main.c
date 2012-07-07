@@ -141,7 +141,7 @@ static void post_init_lua(void) {
  */
 int main(int argc, char *argv[])
 {
-	bool new_game = FALSE, dry_Bree = FALSE, new_wilderness = FALSE, new_flavours = FALSE, new_houses = FALSE;
+	bool new_game = FALSE, all_terrains = FALSE, dry_Bree = FALSE, new_wilderness = FALSE, new_flavours = FALSE, new_houses = FALSE;
 	bool config_specified = FALSE;
 	char buf[1024];
 	int catch_signals = TRUE;
@@ -232,45 +232,49 @@ int main(int argc, char *argv[])
 		/* Analyze option */
 		switch (argv[0][1])
 		{
-			case 'c': case 'C':
+			case 'c':
 			ANGBAND_DIR_USER = &argv[0][2];
 			break;
 
 #ifndef VERIFY_SAVEFILE
-			case 'd': case 'D':
+			case 'd':
 			ANGBAND_DIR_SAVE = &argv[0][2];
 			break;
 #endif
 
-			case 'i': case 'I':
+			case 'i':
 			ANGBAND_DIR_TEXT = &argv[0][2];
 			break;
 
-			case 'r': case 'R':
+			case 'r':
 			new_game = TRUE;
 			break;
 
-			case 'b': case 'B':
+			case 'b':
 			dry_Bree = TRUE;
 			break;
 
-			case 'w': case 'W':
+			case 'a':
+			all_terrains = TRUE;
+			break;
+
+			case 'w':
 			new_wilderness = TRUE;
 			break;
 
-			case 'f': case 'F':
+			case 'f':
 			new_flavours = TRUE;
 			break;
 
-			case 'h': case 'H':
+			case 'h':
 			new_houses = TRUE;
 			break;
 
-			case 'z': case 'Z':
+			case 'z':
 			catch_signals = FALSE;
 			break;
 
-			case 'm': case 'M':
+			case 'm':
 			MANGBAND_CFG = &argv[0][2];
 			config_specified = TRUE;
 			break;
@@ -285,8 +289,9 @@ int main(int argc, char *argv[])
 			puts("  -r        Reset the server (implies -w and -f)");
 			puts("  -w        Reset the server partially: New wilderness");
 			puts("  -f        Reset the server partially: New flavours");
-			puts("  -h        Reinitialize houses");
+			puts("  -a        (On server creation!) Ensure that all terrain types are created");
 			puts("  -b        (On server creation!) Don't allow watery wilderness around Bree");
+			puts("  -h        Reinitialize houses");
 			puts("  -z        Don't catch signals");
 			puts("  -c<path>  Look for pref files in the directory <path>");
 			puts("  -d<path>  Look for save files in the directory <path>");
@@ -338,7 +343,7 @@ int main(int argc, char *argv[])
 
 
 	/* Play the game */
-	play_game(new_game, dry_Bree, new_wilderness, new_flavours, new_houses);
+	play_game(new_game, all_terrains, dry_Bree, new_wilderness, new_flavours, new_houses);
 
 	/* Quit */
 	quit(NULL);
