@@ -3917,12 +3917,15 @@ void genwild(bool all_terrains, bool dry_Bree) {
 				case WILD_OCEANBED1: case WILD_OCEANBED2:
 				case WILD_COAST:
 				case WILD_SHORE1: case WILD_SHORE2:
-
+#endif
+				/* hack: turn 'dry bree' rather into 'clean bree' */
+				case WILD_FOREST:
 				case WILD_DENSEFOREST:
 				case WILD_SWAMP:
 				case WILD_VOLCANO:
 				case WILD_MOUNTAIN:
-#endif
+
+				/* the mainly annoying terrains: */
 				case WILD_OCEAN:
 				case WILD_RIVER:
 				case WILD_LAKE:
