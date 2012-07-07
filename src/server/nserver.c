@@ -5785,6 +5785,13 @@ int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int pur
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 #endif
 
+	/* don't segfault old clients which use STORE_INVEN_MAX = 48 */
+	if (is_older_than(&Players[ind]->version, 4, 4, 9, 0, 0, 0)) {
+		if (items > 48) items = 48;
+		if ((num == STORE_HOME || num == STORE_HOME_DUN)
+		    && purse > 48) purse = 48;
+	}
+
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
 		errno = 0;
