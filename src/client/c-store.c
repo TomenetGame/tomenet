@@ -46,8 +46,7 @@ static void display_entry(int pos)
         prt(out_val, i+6, 0);
 
         /* Describe an item in the home */
-        if (store_num == 7)
-        {
+        if (store_num == STORE_HOME || store_num == STORE_HOME_DUN) {
                 maxwid = 75;
 
                 /* Leave room for weights, if necessary -DRS- */
@@ -68,8 +67,7 @@ static void display_entry(int pos)
                 }
         }
 
-        else
-        {
+        else {
                 /* Must leave room for the "price" */
                 maxwid = 65;
 
@@ -208,7 +206,8 @@ static void store_examine(void)
 	/* Empty? */
 	if (store.stock_num <= 0)
 	{
-		if (store_num == 7) c_msg_print("Your home is empty.");
+		if (store_num == STORE_HOME || store_num == STORE_HOME_DUN)
+			c_msg_print("Your home is empty.");
 		else c_msg_print("I am currently out of stock.");
 		return;
 	}
@@ -220,14 +219,10 @@ static void store_examine(void)
 	if (i > 12) i = 12;
 
 	/* Prompt */
-	if (store_num == 7)
-	{
+	if (store_num == STORE_HOME || store_num == STORE_HOME_DUN)
 		sprintf(out_val, "Which item do you want to examine? ");
-	}
 	else
-	{
 		sprintf(out_val, "Which item do you want to examine? ");
-	}
 
 	/* Get the item number to be bought */
 	if (!get_stock(&item, out_val, 0, i-1)) return;
@@ -259,7 +254,8 @@ static void store_purchase(void)
         /* Empty? */
         if (store.stock_num <= 0)
         {
-                if (store_num == 7) c_msg_print("Your home is empty.");
+                if (store_num == STORE_HOME || store_num == STORE_HOME_DUN)
+            		c_msg_print("Your home is empty.");
                 else c_msg_print("I am currently out of stock.");
                 return;
         }
@@ -272,14 +268,10 @@ static void store_purchase(void)
         if (i > 12) i = 12;
 
         /* Prompt */
-        if (store_num == 7)
-        {
+        if (store_num == STORE_HOME || store_num == STORE_HOME_DUN)
                 sprintf(out_val, "Which item do you want to take? ");
-        }
         else
-        {
                 sprintf(out_val, "Which item are you interested in? ");
-        }
 
         /* Get the item number to be bought */
         if (!get_stock(&item, out_val, 0, i-1)) return;
@@ -302,7 +294,7 @@ static void store_purchase(void)
         /* Find out how many the player wants */
         if (o_ptr->number > 1) {
                 /* Hack -- note cost of "fixed" items */
-                if (store_num != 7) {
+                if (store_num != STORE_HOME || store_num == STORE_HOME_DUN) {
                         c_msg_print(format("That costs %ld gold per item.", (long)(store_prices[item])));
 
 			if (store_prices[item] > 0) amt_afford = p_ptr->au / store_prices[item];
@@ -342,7 +334,7 @@ void store_paste_item(char *out_val, int item) {
 
 	/* Get shop price if any */
 	/* Home doesn't price items */
-	if (store_num == 7) {
+	if (store_num == STORE_HOME || store_num == STORE_HOME_DUN) {
 		sprintf(out_val, " %s", store_names[item]);
 	/* Player stores with '@S-' inscription neither (museum mode) */
 	} else if (store_prices[item] < 0) {
@@ -371,7 +363,8 @@ static void store_chat(void)
 
 	/* Empty? */
 	if (store.stock_num <= 0) {
-		if (store_num == 7) c_msg_print("Your home is empty.");
+		if (store_num == STORE_HOME || store_num == STORE_HOME_DUN)
+			c_msg_print("Your home is empty.");
 		else c_msg_print("I am currently out of stock.");
 		return;
 	}
@@ -384,7 +377,7 @@ static void store_chat(void)
 	if (i > 12) i = 12;
 
 	/* Prompt */
-	if (store_num == 7)
+	if (store_num == STORE_HOME || store_num == STORE_HOME_DUN)
 		sprintf(out_val, "Which item? ");
 	else
 		sprintf(out_val, "Which item? ");
@@ -408,26 +401,15 @@ static void store_sell(void)
 {
 	int item, amt;
 
-	if (store_num == 7)
-	{
+	if (store_num == STORE_HOME || store_num == STORE_HOME_DUN) {
 		if (!c_get_item(&item, "Drop what? ", (USE_EQUIP | USE_INVEN)))
-		{
 			return;
-		}
-	}
-	else if (store_num == 57)
-	{
+	} else if (store_num == STORE_MATHOM_HOUSE) {
 		if (!c_get_item(&item, "Donate what? ", (USE_EQUIP | USE_INVEN)))
-		{
 			return;
-		}
-	}
-	else
-	{
+	} else {
 		if (!c_get_item(&item, "Sell what? ", (USE_EQUIP | USE_INVEN)))
-		{
 			return;
-		}
 	}
 
 	/* Get an amount */
@@ -437,7 +419,7 @@ static void store_sell(void)
 	} else amt = 1;
 
 	/* Hack -- verify for Museum(Mathom house) */
-	if (store_num == 57)
+	if (store_num == STORE_MATHOM_HOUSE)
 	{
 		char out_val[160];
 
@@ -485,7 +467,8 @@ static void store_do_command(int num)
 		/* Empty? */
 		if (store.stock_num <= 0)
 		{
-			if (store_num == 7) c_msg_print("Your home is empty.");
+			if (store_num == STORE_HOME || store_num == STORE_HOME_DUN)
+				c_msg_print("Your home is empty.");
 			else c_msg_print("I am currently out of stock.");
 			return;
 		}
@@ -707,7 +690,7 @@ void c_store_prt_gold(void)
 	prt(out_val, 19, 68);
 
 	/* Hack -- show balance (if not 0) */
-	if (store_num == 56 && p_ptr->balance)
+	if (store_num == STORE_MERCHANTS_GUILD && p_ptr->balance)
 	{
 		prt("Your balance  : ", 20, 53);
 
@@ -747,13 +730,13 @@ void display_store(void)
 	store_top = 0;
 
 	/* The "Home" is special */
-	if (store_num == 7) {
+	if (store_num == STORE_HOME || store_num == STORE_HOME_DUN) {
 		/* Put the owner name (usually "Your House/Home") */
 		sprintf(buf, "%s", c_store.owner_name);
 		put_str(buf, 3, 10);
 
-		/* Show the store name (usually blank for houses) */
-		sprintf(buf, "%s", c_store.store_name);
+		/* Show the store name (usually blank for houses) and -hack- max_cost is the capacity */
+		sprintf(buf, "%s (Capacity: %ld)", c_store.store_name, (long)(c_store.max_cost));
 		prt(buf, 3, 50);
 
 		/* Label the item descriptions */
@@ -827,7 +810,7 @@ void display_store(void)
 
 #if 0
 		/* Home commands */
-		if (store_num == 7 && FALSE) {
+		if ((store_num == STORE_HOME || store_num == STORE_HOME_DUN) && FALSE) {
 			prt(" g) Get an item.", 22, 30);
 			prt(" d) Drop an item.", 23, 30);
 
