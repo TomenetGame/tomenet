@@ -5907,6 +5907,11 @@ void restore_estate(int Ind) {
 		/* get object from backup file */
 		else if (!strcmp(data, "OB:")) {
 			fread(o_ptr, sizeof(object_type), 1, fp);
+			/* Update item's kind-index in case k_info.txt has been modified */
+			o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
+#ifdef SEAL_INVALID_OBJECTS
+		        if (!seal_or_unseal_object(o_ptr)) continue;
+#endif
 
 			/* is it a pile of gold? */
 			if (o_ptr->tval == TV_GOLD) {

@@ -571,39 +571,7 @@ if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC && !o_ptr->name1) o_ptr
 		o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 
 #ifdef SEAL_INVALID_OBJECTS
-	/* Object does no longer exist? (for example now commented out, in k_info)
-	   - turn it into a 'seal' instead of deleting it! - C. Blue */
-	if (!o_ptr->k_idx) {
-		/* Object does no longer exist? Delete it! */
-		if (!o_ptr->tval && !o_ptr->sval) return;
-
-		s_printf("SEALING: %d, %d\n", o_ptr->tval, o_ptr->sval);
-		o_ptr->tval2 = o_ptr->tval;
-		o_ptr->sval2 = o_ptr->sval;
-		o_ptr->note = quark_add(format("%d-%d", o_ptr->tval2, o_ptr->sval2));
-		o_ptr->tval = TV_SPECIAL;
-		o_ptr->sval = SV_SEAL;
-		o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
-		/* In case someone is silly and removes seals while leaving the definition enabled: */
-		if (!o_ptr->k_idx) return;
-//		s_printf("sealed to %d, %d\n", o_ptr->tval, o_ptr->sval);
-	} else if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_SEAL) {
-		/* Object didn't exist to begin with? Delete it! */
-		if (!o_ptr->tval2 && !o_ptr->sval2) {
-			o_ptr->tval = o_ptr->sval = o_ptr->k_idx = 0;
-			return;
-		}
-
-		/* Try to restore the original item from the seal */
-		if (lookup_kind(o_ptr->tval2, o_ptr->sval2)) {
-			o_ptr->tval = o_ptr->tval2;
-			o_ptr->sval = o_ptr->sval2;
-			o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
-			o_ptr->note = 0;
-			o_ptr->note_utag = 0;
-			s_printf("UNSEALING: %d, %d\n", o_ptr->tval, o_ptr->sval);
-		}
-	}
+	if (!seal_or_unseal_object(o_ptr)) return;
 #else
 	/* Object does no longer exist? Delete it! */
 	if (!o_ptr->k_idx) {
@@ -3078,3 +3046,51 @@ void fix_max_depth(player_type *p_ptr) {
 
 	s_printf("max_depth[] has been fixed/reset for '%s'.\n", p_ptr->name);
 }
+
+#ifdef SEAL_INVALID_OBJECTS
+static void seal_object(object_type *o_ptr) {
+	s_printf("SEALING: %d, %d\n", o_ptr->tval, o_ptr->sval);
+	o_ptr->tval2 = o_ptr->tval;
+	o_ptr->sval2 = o_ptr->sval;
+	o_ptr->note = quark_add(format("%d-%d", o_ptr->tval2, o_ptr->sval2));
+	o_ptr->tval = TV_SPECIAL;
+	o_ptr->sval = SV_SEAL;
+	o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
+}
+static void unseal_object(object_type *o_ptr) {
+	o_ptr->tval = o_ptr->tval2;
+	o_ptr->sval = o_ptr->sval2;
+	o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
+	o_ptr->note = 0;
+	o_ptr->note_utag = 0;
+	s_printf("UNSEALING: %d, %d\n", o_ptr->tval, o_ptr->sval);
+}
+/* Seal or unseal an object as required,
+   or return FALSE if object no longer exists - C. Blue */
+bool seal_or_unseal_object(object_type *o_ptr) {
+	/* Object does no longer exist? (for example now commented out, in k_info)
+	   - turn it into a 'seal' instead of deleting it! */
+	if (!o_ptr->k_idx) {
+		/* Object does no longer exist? Delete it! */
+		if (!o_ptr->tval && !o_ptr->sval) return FALSE;
+
+		seal_object(o_ptr);
+
+		/* In case someone is silly and removes seals while leaving the definition enabled: */
+		if (!o_ptr->k_idx) return FALSE;
+//		s_printf("sealed to %d, %d\n", o_ptr->tval, o_ptr->sval);
+	} else if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_SEAL) {
+		/* Object didn't exist to begin with? Delete it! */
+		if (!o_ptr->tval2 && !o_ptr->sval2) {
+			o_ptr->tval = o_ptr->sval = o_ptr->k_idx = 0;
+			return FALSE;
+		}
+
+		/* Try to restore the original item from the seal */
+		if (lookup_kind(o_ptr->tval2, o_ptr->sval2)) unseal_object(o_ptr);
+	}
+
+	/* success, aka object still exists */
+	return TRUE;
+}
+#endif
