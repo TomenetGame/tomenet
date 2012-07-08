@@ -6235,16 +6235,23 @@ void do_cmd_purchase_house(int Ind, int dir)
 			return;
 		}
 
+
+#if 0
 		/* Take player's CHR into account */
 		factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
-
 		/* Let's simply omit the fractions	- Jir - */
 		price = dna->price / 100 * factor;
 		if (price < 100) price = 100;
 //		price = dna->price * factor / 100;
+#endif
+		/* Take player's CHR into account somewhat */
+		factor = (100 + adj_chr_gold[p_ptr->stat_ind[A_CHR]]) / 2;
 
 		/* Check for already-owned house */
 		if (dna->owner) {
+			price = dna->price / factor * 100;
+			if (price < 100) price = 100;
+
 			if (access_door(Ind, dna, FALSE) || admin_p(Ind)) {
 				if (p_ptr->dna == dna->creator) {
 					if (!gain_au(Ind, price / 2, FALSE, FALSE)) return;
@@ -6280,6 +6287,11 @@ void do_cmd_purchase_house(int Ind, int dir)
 			msg_print(Ind,"That house does not belong to you!");
 			return;
 		}
+
+		/* we are buying */
+		price = dna->price / 100 * factor;
+		if (price < 100) price = 100;
+
 		if (price>p_ptr->au) {
 			msg_print(Ind,"You do not have enough gold!");
 			return;
