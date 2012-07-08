@@ -789,6 +789,7 @@ static void do_rune() {
  */
 void do_activate_skill(int x_idx, int item)
 {
+	char out_val[160];
 	int dir=0;
 	s32b spell=0L;
 	if (s_info[x_idx].flags1 & SKF1_MKEY_HARDCODE)
@@ -836,21 +837,19 @@ void do_activate_skill(int x_idx, int item)
 
 		/* Ask for a direction? */
 		dir = -1;
-		if (exec_lua(0, format("return pre_exec_spell_dir(%d)", spell)))
-			if (!get_dir(&dir))
-				return;
+		sprintf(out_val, "return pre_exec_spell_dir(%d)", spell);
+		if (exec_lua(0, out_val))
+			if (!get_dir(&dir)) return;
 
                 /* Ask for something? */
-                if (exec_lua(0, format("return pre_exec_spell_extra(%d)", spell)))
-                {
+                sprintf(out_val, "return pre_exec_spell_extra(%d)", spell);
+                if (exec_lua(0, out_val))
                         aux = exec_lua(0, "return __pre_exec_extra");
-                }
 
                 /* Ask for an item? */
-                if (exec_lua(0, format("return pre_exec_spell_item(%d)", spell)))
-                {
+                sprintf(out_val, "return pre_exec_spell_item(%d)", spell);
+                if (exec_lua(0, out_val))
                         item_obj = exec_lua(0, "return __pre_exec_item");
-                }
 
 		/* Send it */
 		Send_activate_skill(MKEY_SCHOOL, item, spell, dir, item_obj, aux);

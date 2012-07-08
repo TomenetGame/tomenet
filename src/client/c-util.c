@@ -5456,7 +5456,7 @@ errr options_dump(cptr fname)
 
 static void do_cmd_options_install_audio_packs(void) {
 	FILE *fff;
-	char path[1024], c, ch;
+	char path[1024], c, ch, out_val[1024];
 
 #ifdef WINDOWS /* use windows registry to locate 7-zip */
 	HKEY hTestKey;
@@ -5599,14 +5599,16 @@ static void do_cmd_options_install_audio_packs(void) {
 #if defined(WINDOWS)
 		_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", "TomeNET-soundpack.7z", NULL);
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
-		system(format("xcopy /I /E /Q /Y /H sound %s", path));
+		sprintf(out_val, "xcopy /I /E /Q /Y /H sound %s", path);
+		system(out_val);
 		system("rmdir /S /Q sound");
 #elif defined(USE_X11)
 		system("7zG x TomeNET-soundpack.7z");
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
 		//system(format("mv sound %s", path));
 		mkdir(path, 0777); /* in case someone deleted his whole sound folder */
-		system(format("cp --recursive -f sound/* %s/", path));
+		sprintf(out_val, "cp --recursive -f sound/* %s/", path);
+		system(out_val);
 		system("rm -rf sound");
 #endif
 		Term_putstr(0, 3, -1, TERM_L_GREEN, "Sound pack has been installed.             ");
@@ -5639,14 +5641,16 @@ static void do_cmd_options_install_audio_packs(void) {
 #if defined(WINDOWS)
 		_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", "TomeNET-musicpack.7z", NULL);
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
-		system(format("xcopy /I /E /Q /Y /H music %s", path));
+		sprintf(out_val, "xcopy /I /E /Q /Y /H music %s", path);
+		system(out_val);
 		system("rmdir /S /Q music");
 #elif defined(USE_X11)
 		system("7zG x TomeNET-musicpack.7z");
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
 		//system(format("mv music %s", path));
 		mkdir(path, 0777); /* in case someone deleted his whole music folder */
-		system(format("cp --recursive -f music/* %s/", path));
+		sprintf(out_val, "cp --recursive -f music/* %s/", path);
+		system(out_val);
 		system("rm -rf music");
 #endif
 		Term_putstr(0, 6, -1, TERM_L_GREEN, "Music pack has been installed.             ");

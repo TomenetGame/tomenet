@@ -423,6 +423,7 @@ void reinit_lua()
 void open_lua()
 {
 	int i, max;
+	char out_val[160];
 
 	if (open_lua_done) return;
 
@@ -437,17 +438,17 @@ void open_lua()
 	/* Finish up schools */
 	max = exec_lua(0, "return __schools_num");
 	init_schools(max);
-	for (i = 0; i < max; i++)
-	{
-		exec_lua(0, format("finish_school(%d)", i));
+	for (i = 0; i < max; i++) {
+		sprintf(out_val, "finish_school(%d)", i);
+		exec_lua(0, out_val);
 	}
 
 	/* Finish up the spells */
 	max = exec_lua(0, "return __tmp_spells_num");
 	init_spells(max);
-	for (i = 0; i < max; i++)
-	{
-		exec_lua(0, format("finish_spell(%d)", i));
+	for (i = 0; i < max; i++) {
+		sprintf(out_val, "finish_spell(%d)", i);
+		exec_lua(0, out_val);
 	}
 
 	open_lua_done = TRUE;

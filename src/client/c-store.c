@@ -303,10 +303,13 @@ static void store_purchase(void)
 			/* Get a quantity */
 			if (o_ptr->number <= amt_afford)
 				amt = c_get_quantity(NULL, o_ptr->number);
-			else if (amt_afford > 1)
-				amt = c_get_quantity(format("Quantity (1-\377y%d\377w, any letter = all): ", amt_afford), amt_afford);
-			else
-				amt = c_get_quantity("Quantity (\377y1\377w): ", 1);
+			else if (amt_afford > 1) {
+				sprintf(out_val, "Quantity (1-\377y%d\377w, any letter = all): ", amt_afford);
+				amt = c_get_quantity(out_val, amt_afford);
+			} else {
+				sprintf(out_val, "Quantity (\377y1\377w): ");
+				amt = c_get_quantity(out_val, 1);
+			}
 		} else {
 			/* Get a quantity */
 			amt = c_get_quantity(NULL, o_ptr->number);

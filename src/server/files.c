@@ -1227,7 +1227,7 @@ int houses_send(char *buffer, int max) {
 	house_type *h_ptr;
 	struct dna_type *dna;
 	char buf[1024];
-	int price;
+	s32b price;
 	cptr owner, wpos;
 
 	for (i = 0; i < num_houses; i++) {

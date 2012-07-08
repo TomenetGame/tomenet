@@ -253,6 +253,7 @@ static bool sound_sdl_init(bool no_cache) {
 	char buffer[2048];
 	FILE *fff;
 	int i;
+	char out_val[160];
 
 	bool events_loaded_semaphore;
 
@@ -318,7 +319,8 @@ static bool sound_sdl_init(bool no_cache) {
 
 		/* Make sure this is a valid event name */
 		for (event = SOUND_MAX_2010 - 1; event >= 0; event--) {
-			lua_name = string_exec_lua(0, format("return get_sound_name(%d)", event));
+			sprintf(out_val, "return get_sound_name(%d)", event);
+			lua_name = string_exec_lua(0, out_val);
 			if (!strlen(lua_name)) continue;
 			if (strcmp(cfg_name, lua_name) == 0) break;
 		}
@@ -447,7 +449,8 @@ static bool sound_sdl_init(bool no_cache) {
 
 		/* Make sure this is a valid event name */
 		for (event = MUSIC_MAX - 1; event >= 0; event--) {
-			lua_name = string_exec_lua(0, format("return get_music_name(%d)", event));
+			sprintf(out_val, "return get_music_name(%d)", event);
+			lua_name = string_exec_lua(0, out_val);
 			if (!strlen(lua_name)) continue;
 			if (strcmp(cfg_name, lua_name) == 0) break;
 		}
