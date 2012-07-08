@@ -453,7 +453,8 @@ uint32_t get_message_type(char *msg) {
 		   strstr(msg, " was vaporized by ") ||
 		   strstr(msg, " committed suicide.") ||
 		   strstr(msg, " has retired to ") ||
-		   strstr(msg, " bids farewell to this plane")) {
+		   strstr(msg, " bids farewell to this plane") ||
+		   strstr(msg, " was defeated by ")) {
 		return WMF_PDEATH;
 	} else if ((!strncmp(msg, "\377a>>", 4) && strstr(msg, " wins ")) /* global events */
 	    || (strstr(msg, " reached floor ")) /* ironman deep dive challenge - death */
