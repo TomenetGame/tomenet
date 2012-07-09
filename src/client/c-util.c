@@ -333,6 +333,7 @@ static void sync_sleep(int milliseconds)
 				/* Forget key presses */
 				Term->keys->head = 0;
 				Term->keys->tail = 0;
+				Term->keys->length = 0;
 
 				if (Term->keys_old) {
 					/* Destroy the old queue */

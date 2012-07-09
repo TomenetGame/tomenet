@@ -2318,7 +2318,7 @@ errr Term_flush(void)
 	Term_xtra(TERM_XTRA_FLUSH, 0);
 
 	/* Forget all keypresses */
-	Term->keys->head = Term->keys->tail = 0;
+	Term->keys->head = Term->keys->tail = Term->keys->length = 0;
 
 	/* Success */
 	return (0);
