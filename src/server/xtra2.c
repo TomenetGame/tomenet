@@ -11688,6 +11688,7 @@ bool imprison(int Ind, u16b time, char *reason) {
 	struct worldpos old_wpos;
 
 	if (!jails_enabled) {
+		p_ptr->tim_susp = 0;
 		s_printf("IMPRISON: %s DISABLED.\n", p_ptr->name);
 		return FALSE;
 	}
@@ -11707,12 +11708,6 @@ bool imprison(int Ind, u16b time, char *reason) {
 		return (TRUE);
 	}
 
-	if (p_ptr->tim_jail) {
-		p_ptr->tim_jail += time;
-		s_printf("TIM_JAIL.\n");
-		return (TRUE);
-	}
-
 #ifdef JAIL_TOWN_AREA /* only imprison when within town area? */
 	if (!istownarea(&p_ptr->wpos, 3)) {
 		p_ptr->tim_susp += time;
@@ -11720,6 +11715,12 @@ bool imprison(int Ind, u16b time, char *reason) {
 		return (TRUE);
 	}
 #endif
+
+	if (p_ptr->tim_jail) {
+		p_ptr->tim_jail += time;
+		s_printf("TIM_JAIL.\n");
+		return (TRUE);
+	}
 
 	/* get appropriate prison house */
 	for (i = 0; i < num_houses; i++) {
@@ -11740,11 +11741,13 @@ bool imprison(int Ind, u16b time, char *reason) {
 	}
 #ifndef FIND_CLOSEST_JAIL
 	if (i == num_houses) {
+		p_ptr->tim_susp = 0;
 		s_printf("FAILED.\n");
 		return (FALSE);
 	}
 #else
 	if (picked == -1) {
+		p_ptr->tim_susp = 0;
 		s_printf("FAILED.\n");
 		return (FALSE);
 	}
