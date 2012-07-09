@@ -11687,6 +11687,11 @@ bool imprison(int Ind, u16b time, char *reason) {
 	cave_type **zcave, **nzcave;
 	struct worldpos old_wpos;
 
+	if (!jails_enabled) {
+		s_printf("IMPRISON: %s DISABLED.\n", p_ptr->name);
+		return FALSE;
+	}
+
 	if (!(zcave = getcave(&p_ptr->wpos))) return (FALSE);
 
 	s_printf("IMPRISON: %s ", p_ptr->name);

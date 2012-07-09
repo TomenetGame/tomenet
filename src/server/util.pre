@@ -487,4 +487,5 @@ extern int dungeon_bonus[128];
 #endif
 
 bool censor_swearing;
+bool jails_enabled;
 bool allow_requesting_estate;

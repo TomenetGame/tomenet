@@ -2180,4 +2180,5 @@ extern int dungeon_bonus[MAX_D_IDX * 2];
 #endif
 
 extern bool censor_swearing;
+extern bool jails_enabled;
 extern bool allow_requesting_estate;
