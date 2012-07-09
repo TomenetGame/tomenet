@@ -11709,7 +11709,7 @@ bool imprison(int Ind, u16b time, char *reason) {
 	}
 
 #ifdef JAIL_TOWN_AREA /* only imprison when within town area? */
-	if (!istownarea(&p_ptr->wpos, 3)) {
+	if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA)) {
 		p_ptr->tim_susp += time;
 		s_printf("NO_TOWN.\n");
 		return (TRUE);

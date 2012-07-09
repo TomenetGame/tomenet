@@ -5927,7 +5927,11 @@ void process_player_change_wpos(int Ind)
 	}
 
 	/* Hack -- jail her/him */
-	if (!p_ptr->wpos.wz && p_ptr->tim_susp)
+	if (!p_ptr->wpos.wz && p_ptr->tim_susp
+#ifdef JAIL_TOWN_AREA
+	    && istownarea(&p_ptr->wpos, MAX_TOWNAREA)
+#endif
+	    )
 		imprison(Ind, 0, "old crimes");
 
 	/* daylight problems for vampires */
