@@ -5498,10 +5498,37 @@ static void do_cmd_options_install_audio_packs(void) {
 			return;
 		}
 	} else {
-		Term_putstr(0, 1, -1, TERM_RED, "7-zip not found. Install it first. (www.7-zip.org)");
-		Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
-		inkey();
-		return;
+		if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("SOFTWARE\\7-Zip\\"), 0, KEY_READ | 0x0200, &hTestKey) == ERROR_SUCCESS) {//KEY_WOW64_32KEY (0x0200)
+			if (RegQueryValueEx(hTestKey, "Path", NULL, &path_7z_type, path_7z_p, path_7z_size_p) == ERROR_SUCCESS) {
+				path_7z[path_7z_size] = '\0';
+			} else {
+				// odd case
+				RegCloseKey(hTestKey);
+				Term_putstr(0, 1, -1, TERM_RED, "7-zip not properly installed. Please reinstall it. (www.7-zip.org)");
+				Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
+				inkey();
+				return;
+			}
+		} else {
+			/* This case should work on 64-bit Windows (w/ 32-bit client) */
+			if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("SOFTWARE\\7-Zip\\"), 0, KEY_READ | 0x0100, &hTestKey) == ERROR_SUCCESS) {//KEY_WOW64_64KEY (0x0100)
+				if (RegQueryValueEx(hTestKey, "Path", NULL, &path_7z_type, path_7z_p, path_7z_size_p) == ERROR_SUCCESS) {
+					path_7z[path_7z_size] = '\0';
+				} else {
+					// odd case
+					RegCloseKey(hTestKey);
+					Term_putstr(0, 1, -1, TERM_RED, "7-zip not properly installed. Please reinstall it. (www.7-zip.org)");
+					Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
+					inkey();
+					return;
+				}
+			} else {
+				Term_putstr(0, 1, -1, TERM_RED, "7-zip not found. Please install it first: www.7-zip.org");
+				Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
+				inkey();
+				return;
+			}
+		}
 	}
 	RegCloseKey(hTestKey);
 	/* enclose full path in quotes, to handle possible spaces */
