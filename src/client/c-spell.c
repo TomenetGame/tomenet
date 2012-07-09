@@ -515,7 +515,7 @@ static int get_mimic_spell(int *sn)
 void do_mimic()
 {
 	int spell, j, dir;
-	char out_val[40];
+	char out_val[41];
 	bool uses_dir = FALSE;
 
 	/* Ask for the spell */
@@ -524,8 +524,9 @@ void do_mimic()
 	/* later on maybe this can moved to server side, then no need for '20000 hack'.
 	   Btw, 30000, the more logical one, doesnt work, dont ask me why */
 	if (spell == 2) {
-		strcpy(out_val,"");
+		out_val[0] = '\0';
 		get_string("Which form (name or number; 0 for player) ? ", out_val, 40);
+		out_val[40] = '\0';
 
 		/* empty input? */
 		if (strlen(out_val) == 0) return;
