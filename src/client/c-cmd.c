@@ -1427,7 +1427,7 @@ void cmd_character(void)
 {
 	char ch = 0;
         int hist = 0, done = 0;
-        char tmp[100];
+        char tmp[80];
 
 	/* Save screen */
 	Term_save();
@@ -1453,8 +1453,8 @@ void cmd_character(void)
 		/* Dump */
 		if ((ch == 'f') || (ch == 'F'))
 		{
-			strnfmt(tmp, 160, "%s.txt", cname);
-			if (get_string("Filename(you can post it to http://angband.oook.cz/): ", tmp, 80))
+			strnfmt(tmp, 79, "%s.txt", cname);
+			if (get_string("Filename(you can post it to http://angband.oook.cz/): ", tmp, 79))
 			{
 				if (tmp[0] && (tmp[0] != ' '))
 				{
@@ -2493,7 +2493,7 @@ static void cmd_house_chown(int dir)
 				buf[0]='O';
 				buf[1]=i;
 				buf[2]=0;
-				if(get_string("Enter new name:",&buf[2],78))
+				if(get_string("Enter new name:",&buf[2],77))
 					Send_admin_house(dir,buf);
 				return;
 			case ESCAPE:
@@ -2801,7 +2801,7 @@ static void cmd_master_aux_generate_vault(void)
 		else if (i == '2')
 		{
 			buf[1] = 'n';
-			get_string("Enter vault name: ", &buf[2], 79);
+			get_string("Enter vault name: ", &buf[2], 77);
 			if(!buf[2]) redo_hack = 1;
 		}
 

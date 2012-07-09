@@ -272,8 +272,8 @@ void do_cmd_messages(void)
 		if ((k == 'f') || (k == 'F'))
 		{
 			char tmp[80];
-			strnfmt(tmp, 160, "%s-msg.txt", cname);
-			if (get_string("Filename: ", tmp, 80))
+			strnfmt(tmp, 79, "%s-msg.txt", cname);
+			if (get_string("Filename: ", tmp, 79))
 			{
 				if (tmp[0] && (tmp[0] != ' '))
 				{
@@ -528,8 +528,8 @@ void do_cmd_messages_chatonly(void)
 		if ((k == 'f') || (k == 'F'))
 		{
 			char tmp[80];
-			strnfmt(tmp, 160, "%s-chat.txt", cname);
-			if (get_string("Filename: ", tmp, 80))
+			strnfmt(tmp, 79, "%s-chat.txt", cname);
+			if (get_string("Filename: ", tmp, 79))
 			{
 				if (tmp[0] && (tmp[0] != ' '))
 				{

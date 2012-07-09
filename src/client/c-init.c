@@ -1857,7 +1857,7 @@ static void quit_hook(cptr s)
 		strcat(buf, ".txt");
 
 		i=message_num();
-		if (!save_chat) get_string("Filename:", buf, 80);
+		if (!save_chat) get_string("Filename:", buf, 79);
 		/* maybe one day we'll get a Mac client */
 		FILE_TYPE(FILE_TYPE_TEXT);
 		path_build(buf2, 1024, ANGBAND_DIR_USER, buf);

@@ -3416,7 +3416,7 @@ static void hook_quit(cptr str)
 		strcat(buf, ".txt");
 
 		i=message_num();
-		if (!save_chat) get_string("Filename:", buf, 80);
+		if (!save_chat) get_string("Filename:", buf, 79);
 		path_build(buf2, 1024, ANGBAND_DIR_USER, buf);
 		fp=my_fopen(buf2, "w");
 		if(fp!=(FILE*)NULL){
