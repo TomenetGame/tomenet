@@ -1014,6 +1014,8 @@ struct player_type
 
 	int vampiric_melee;
 	int vampiric_ranged;
+
+	bool insta_res;
 };
 
 extern bool imprison(int Ind, int time, char *reason);
