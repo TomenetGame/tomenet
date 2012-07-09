@@ -7385,7 +7385,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 			/* Break the ward - Michael (because he embodies the Glyph power sort of),
 			   Morgoth and certain Nether Realm monsters may insta-break them. */
-			if (randint(BREAK_GLYPH) < r_ptr->level || r_ptr->level == 98 || r_ptr->level >= 100) {
+			if (randint(BREAK_GLYPH) < r_ptr->level || r_ptr->level >= 98) { // || r_ptr->level == 98 || r_ptr->level >= 100) {
 				/* Describe observable breakage */
 				/* Prolly FIXME */
 				msg_print_near_site(ny, nx, wpos, 0, TRUE, "The rune of protection is broken!");
