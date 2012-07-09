@@ -2343,7 +2343,7 @@ static void Term_copy_queue_buf(char *dest, key_queue *keys) {
 		memcpy(dest, &keys->queue[keys->tail], keys->head - keys->tail);
 #endif
 	}
-	else
+	else if (keys->head < keys->tail)
 	{
 #if 0
 		int i, j;
