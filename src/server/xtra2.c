@@ -7697,7 +7697,7 @@ void player_death(int Ind)
 			/* Update */
 			p_ptr->update |= (PU_BONUS);
 
-			p_ptr->soft_deaths++;
+			p_ptr->deaths++;
 			return;
 		}
 	}
