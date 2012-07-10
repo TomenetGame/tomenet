@@ -1091,6 +1091,10 @@ static void init_kind_list() {
 
 			kind_list_tval[kind_list_idx] = atoi(p1);
 			kind_list_sval[kind_list_idx] = atoi(p2);
+
+			/* complete certain names that are treated in a special way */
+			if (kind_list_tval[kind_list_idx] == TV_TRAPKIT)
+				strcat(kind_list_name[kind_list_idx], " Trap Set");
 			break;
 		}
 
