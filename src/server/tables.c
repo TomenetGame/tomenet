@@ -5730,7 +5730,8 @@ cptr player_title[MAX_CLASS][11][4] =
 		{"Overseer", "Overseer", "Overseer", "Overseer", },
 		{"Guard Captain", "Guard Captain", "Guard Captain", "Guard Captain", },
 		//removed 'Ranger' and added 'Ranger Champion'
-		{"Ranger", "Ranger", "Ranger", "Ranger", },
+		{"Supervisor", "Supervisor", "Supervisor", "Supervisor", },
+		//{"Ranger", "Ranger", "Ranger", "Ranger", },
 	        {"High Ranger", "High Ranger", "High Ranger", "High Ranger", },
 //	        {"Ranger Champion", "Ranger Champion", },
                 {"Ranger Chieftain", "Ranger Chieftain", "Ranger Chief", "Ranger Chief", }, /* to check: Isn't it Chief Ranger rather? */
@@ -5857,34 +5858,32 @@ cptr player_title_special[MAX_CLASS][5][4] =
 		{"Ascended", "Ascended", "Ascended", "Ascended", },
 		{"Demi", "Demi", "Demi", "Demi", }, //Pope? :)
 		{"Holy Diver", "Holy Diver", "Holy Diver", "Holy Diver", }, //w00t!
-//		{"Soul Healer", "Soul Healer",},
 	},
 
 	/* Rogues */
 	{
 //		{"Grand Assassin", "Grand Assassin", },
-		{"Death's Master", "Death's Mistress", "Dth.Master", "Dth.Mistress", },
 //		{"Master Assassin", "Master Assassin", },
-		{"Legendary Assassin", "Legendary Assassin", "Lgd.Assassin", "Lgd.Assassin", },
-		{"Mythical Assassin", "Mythical Assassin", "Myt.Assassin", "Myt.Assassin", },
+//commented out: first master, then hand = wrong order ^^	{"Death's Master", "Death's Mistress", "Dth.Master", "Dth.Mistress", },
+		{"Phantom", "Phantom", "Phantom", "Phantom" },
+//		{"Legendary Assassin", "Legendary Assassin", "Lgd.Assassin", "Lgd.Assassin", },
+		{"Myth", "Myth", "Myth", "Myth", },
+		{"Terror", "Terror", "Terror", "Terror" },
+//		{"Mythical Assassin", "Mythical Assassin", "Myt.Assassin", "Myt.Assassin", },
 		{"Death's Hand", "Death's Hand", "Death's Hand", "Death's Hand", },
 		{"Death Fate", "Death Fate", "Death Fate", "Death Fate", },
-#if 0 /* yeah it's fitting, but let's not make the game JOKEBAND anyways */
-		{"RNG", "RNG", }, //LOL! Perfect, do you not think so? :) -adam 
-#else
-    // inserted "Death's Hand" above.
-#endif
+/* yeah it's fitting, but let's not make the game JOKEBAND anyway */
+//		{"RNG", "RNG", }, //LOL! Perfect, do you not think so? :) -adam 
         },
 
 	/* Mimic */
 	{
-//		{"Mimic", "Mimic", },
 		{"Faker", "Fakeress", "Faker", "Fakeress", },
+		{"Doppelganger", "Doppelganger", "Doppelganger", "Doppelganger", },
 		{"Transformer", "Transformer", "Transformer", "Transformer", },
 		{"Replicator", "Replicatress", "Replicator", "Replicatress", },
-		{"Master Replicator", "Master Replicatress", "M-Replicator", "M-Replicatrs", },
-//		{"Ultimate Replicator", "Ultimate Replicatress", },
-<		{"Unlimited", "Unlimited", "Unlimited", "Unlimited", },
+//		{"Master Replicator", "Master Replicatress", "M-Replicator", "M-Replicatrs", },
+		{"Unlimited", "Unlimited", "Unlimited", "Unlimited", },
 	},
 
 	/* Archer */
@@ -5910,8 +5909,9 @@ cptr player_title_special[MAX_CLASS][5][4] =
         /* Ranger */
 	{
                 {"Elite Ranger", "Elite Ranger", "Elite Ranger", "Elite Ranger", },
-		{"Ranger Supervisor", "Ranger Supervisor", "Ranger Svis.", "Ranger Svis.", },
+//		{"Ranger Supervisor", "Ranger Supervisor", "Ranger Svis.", "Ranger Svis.", },
 		{"Ranger Commander", "Ranger Commander", "Ranger Cmdr.", "Ranger Cmdr.", },
+		{"Legend", "Legend", "Legend", "Legend", },
 		{"Champion of Law", "Champion of Law", "Champ of Law", "Champ of Law", },
 		{"Lord of Law", "Lady of Law", "Lord of Law", "Lady of Law", },
         },
