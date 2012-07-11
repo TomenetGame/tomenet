@@ -2625,6 +2625,34 @@ T:35:0:255
 R:100
 F:IGNORE_ACID | IGNORE_FIRE | SH_FIRE | RES_FIRE | IGNORE_WATER | ACTIVATE
 
+# Robes of the Magi
+N:224:of the Magi
+X:A:30:16
+W:10:1:10:3000
+C:0:0:0:3
+T:36:2:2
+R:100
+F:INT | SUST_INT | HIDE_TYPE
+
+# Frocks of piety
+N:225:of Piety
+X:A:30:16
+W:10:1:10:3000
+C:0:0:0:3
+T:36:20:20
+T:36:23:23
+R:100
+F:WIS | SUST_WIS | HIDE_TYPE
+
+# Martial Arts Gowns and Frocks
+N:226:Martial Arts
+X:B:30:16
+W:10:1:7:3000
+C:0:0:10:3
+T:36:20:20
+T:36:22:23
+R:100
+F:DEX | SUST_DEX | HIDE_TYPE
 
 
 
