@@ -5884,7 +5884,7 @@ cptr player_title_special[MAX_CLASS][5][4] =
 		{"Replicator", "Replicatress", "Replicator", "Replicatress", },
 		{"Master Replicator", "Master Replicatress", "M-Replicator", "M-Replicatrs", },
 //		{"Ultimate Replicator", "Ultimate Replicatress", },
-		{"Unlimited", "Unlimited", "Unlimited", "Unlimited", },
+<		{"Unlimited", "Unlimited", "Unlimited", "Unlimited", },
 	},
 
 	/* Archer */
@@ -5952,12 +5952,11 @@ cptr player_title_special[MAX_CLASS][5][4] =
         },
         /* Mindcrafter */
         {
-                {"ESP Controller", "ESP Controller", "ESP Contrlr.", "ESP Contrlr.", },
-                {"ESP Controller", "ESP Controller", "ESP Contrlr.", "ESP Contrlr.", },
-                {"ESP Controller", "ESP Controller", "ESP Contrlr.", "ESP Contrlr.", },
-                {"ESP Controller", "ESP Controller", "ESP Contrlr.", "ESP Contrlr.", },
-                {"ESP Controller", "ESP Controller", "ESP Contrlr.", "ESP Contrlr.", },
-//                {"ESP Controller", "ESP Controlless", "ESP Contrlr.", "ESP Contrls.", },
+                {"Master Manipulator", "Master Manipulatress", "M.Manipultr.", "M.Manipultr.", },
+                {"Master Controller", "Master Controller", "M.Controllr.", "M.Controllr.", },
+                {"Alterator", "Alteratress", "Alterator", "Alteratress", },
+                {"Reality Shifter", "Reality Shifter", "Real.Shifter", "Real.Shifter", },
+                {"Truth", "Truth", "Truth", "Truth", },
         },
 };
 
