@@ -1258,6 +1258,11 @@ void do_slash_cmd(int Ind, char *message)
 			}		
 #else //New Runemastery - Kurzel
 				/* New Runemaster /ex info */
+#ifdef EVENT_TOWNIE_GOLD_LIMIT
+				if (!p_ptr->max_exp && EVENT_TOWNIE_GOLD_LIMIT != -1)
+					msg_format(Ind, "You may still collect \377y%d Au\377w before gaining 1 experience point.",
+					    EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up);
+#endif
 				if (p_ptr->rcraft_empower) msg_print(Ind, "\377WYour flux projections are empowered to \377Rplasma\377W.");
 				if (p_ptr->rcraft_upkeep) {
 					msg_format(Ind, "\377WYour total upkeep is: \377o%d%%", p_ptr->rcraft_upkeep);
