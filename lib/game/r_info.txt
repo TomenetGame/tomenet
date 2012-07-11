@@ -19675,7 +19675,7 @@ S:1_IN_8 |
 S:UNMAGIC | HOLD
 D:An artificial bird completely made of hardened iron, kept in the air by
 D:magical forces. Rather than a weapon it is a drone to scout intruders
-D:and render their powers useless, making it an easy prey. This animated,
+D:and render their powers useless, making them easy prey. This animated,
 D:enormously massive piece of metal is nearly impossible to destroy.
 
 #Nether Realm only
