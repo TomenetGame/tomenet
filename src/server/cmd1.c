@@ -1366,6 +1366,8 @@ void carry(int Ind, int pickup, int confirm)
 
 	/* Pick up gold */
 	if (o_ptr->tval == TV_GOLD) {
+		s32b amount = o_ptr->pval;
+
 		/* Disturb */
 		disturb(Ind, 0, 0);
 
@@ -1391,20 +1393,29 @@ void carry(int Ind, int pickup, int confirm)
 			return;
 		}
 
+#ifdef EVENT_TOWNIE_GOLD_LIMIT
+		/* If we are still below the limit but this gold pile would exceed it
+		   then only pick up as much of it as is allowed! - C. Blue */
+		if (!p_ptr->max_exp && EVENT_TOWNIE_GOLD_LIMIT != -1 &&
+		    !o_ptr->owner &&
+		    p_ptr->gold_picked_up < EVENT_TOWNIE_GOLD_LIMIT && amount > EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up)
+			amount = EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up;
+#endif
+
 		/* Collect the gold */
-		if (!gain_au(Ind, o_ptr->pval, FALSE, p_ptr->id == o_ptr->owner)) return;
+		if (!gain_au(Ind, amount, FALSE, p_ptr->id == o_ptr->owner)) return;
 
 		/* Message */
 		msg_format(Ind, "You have found %ld gold pieces worth of %s.",
-			   (long int)o_ptr->pval, o_name);
+			   (long int)amount, o_name);
 
 #ifdef USE_SOUND_2010
 		sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
 /* #if DEBUG_LEVEL > 3 */
-		if (o_ptr->pval >= 10000)
-			s_printf("Gold found (%ld by %s at %d,%d,%d).\n", o_ptr->pval, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+		if (amount >= 10000)
+			s_printf("Gold found (%ld by %s at %d,%d,%d).\n", amount, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
 		/* Window stuff */
 		p_ptr->window |= (PW_PLAYER);
@@ -1419,22 +1430,22 @@ void carry(int Ind, int pickup, int confirm)
  #if 0
 				if ((lev > p_ptr->lev + 7) && (p_ptr->lev < 40) && (name)) {
 					s_printf("%s -CHEEZY- Money transaction: %ldau from %s(%d) to %s(%d) at (%d,%d,%d)\n",
-							showtime(), o_ptr->pval, name ? name : "(Dead player)", lev,
+							showtime(), amount, name ? name : "(Dead player)", lev,
 							p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 					c_printf("%s GOLD %s(%d,%s) %s(%d,%s) %ld\n",
 							showtime(), name ? name : "(---)", lev, acc_name,
-							p_ptr->name, p_ptr->lev, p_ptr->accountname, o_ptr->pval);
+							p_ptr->name, p_ptr->lev, p_ptr->accountname, amount);
 				} else {
 					s_printf("%s Money transaction: %ldau from %s(%d) to %s(%d) at (%d,%d,%d)\n",
-							showtime(), o_ptr->pval, name ? name : "(Dead player)", lev,
+							showtime(), amount, name ? name : "(Dead player)", lev,
 							p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 					c_printf("%s gold %s(%d,%s) %s(%d,%s) %ld\n",
 							showtime(), name ? name : "(---)", lev, acc_name,
-							p_ptr->name, p_ptr->lev, p_ptr->accountname, o_ptr->pval);
+							p_ptr->name, p_ptr->lev, p_ptr->accountname, amount);
 				}
  #else
 				s_printf("%s Money transaction: %ldau from %s(%d) to %s(%d%s) at (%d,%d,%d)\n",
-						showtime(), o_ptr->pval, name ? name : "(Dead player)", lev,
+						showtime(), amount, name ? name : "(Dead player)", lev,
 						p_ptr->name, p_ptr->lev,
 						p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
 						p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
@@ -1442,7 +1453,7 @@ void carry(int Ind, int pickup, int confirm)
 						showtime(), name ? name : "(---)", lev, acc_name,
 						p_ptr->name, p_ptr->lev, p_ptr->accountname,
 						p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
-						o_ptr->pval);
+						amount);
  #endif
 				/* Highlander Tournament: Don't allow transactions before it begins */
 				if (!p_ptr->max_exp) {
@@ -1454,10 +1465,13 @@ void carry(int Ind, int pickup, int confirm)
 #endif	// CHEEZELOG_LEVEL
 
 
-
 		/* Delete gold */
-//		delete_object(wpos, p_ptr->py, p_ptr->px);
-		delete_object_idx(c_ptr->o_idx, FALSE);
+		if (amount == o_ptr->pval) {
+			//delete_object(wpos, p_ptr->py, p_ptr->px);
+			delete_object_idx(c_ptr->o_idx, FALSE);
+		}
+		/* Reduce gold */
+		else o_ptr->pval -= amount;
 
 		/* Hack -- tell the player of the next object on the pile */
 		whats_under_your_feet(Ind);
