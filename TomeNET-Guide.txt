@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 7. July 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 11. July 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.9 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -706,6 +706,10 @@ They all start with a slash '/' hence they're called slash commands:
             - pvp kills;
             - the in-game time and date, and whether it is day or night.
               (Note: If you want to know the server real-life time, use /time.)
+            - how much more gold you may pick up before your character will
+              automatically receive 1 experience point (to limit the amount
+              of cash you can pick up before participating in certain events,
+              such as Highlander Tournament or Ironman Deep Dive Challenge).
 /fe         Repeat the level feeling. See (4.8) for more information.
  (/feeling)
 /fill       fill an 'Empty Bottle' in your inventory with the water from a
@@ -5093,6 +5097,7 @@ The following actions may reward 1 XP without you noticing:
   -Picking a lock.
   -Transferring items or money from another player to you.
   -Picking up/earning more than 300 gold pieces.
+   Use the /ex command to see how much more gold you may pick up
 Killing townspeople in Bree however will not give you any experience.
 Stay clean!
 
@@ -5212,6 +5217,8 @@ Ironman Deep Dive Challenge
     pieces) or pick up any items or money of other players. Also, if you eat a
     ration of food and you are unlucky enough that it's gone bad you will get
     1 xp for that.
+    Use the /ex command to see how much more gold you may pick up.
+
     Monsters cannot spawn in the wilderness sector of the dungeon, so you can
     just idle at the entrance, waiting for team mates.
 
