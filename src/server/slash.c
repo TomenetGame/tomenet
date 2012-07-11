@@ -2130,7 +2130,8 @@ void do_slash_cmd(int Ind, char *message)
 			int notes = 0;
 			for (i = 0; i < MAX_NOTES; i++) {
 				/* search for pending notes of this player */
-				if (!strcmp(priv_note_sender[i], p_ptr->name)) {
+				if (!strcmp(priv_note_sender[i], p_ptr->name) ||
+				    !strcmp(priv_note_sender[i], p_ptr->accountname)) {
 					/* found a matching note */
 					notes++;
 				}
@@ -2139,7 +2140,8 @@ void do_slash_cmd(int Ind, char *message)
 			else msg_print(Ind, "\377oYou didn't write any pending notes.");
 			for (i = 0; i < MAX_NOTES; i++) {
 				/* search for pending notes of this player */
-				if (!strcmp(priv_note_sender[i], p_ptr->name)) {
+				if (!strcmp(priv_note_sender[i], p_ptr->name) ||
+				    !strcmp(priv_note_sender[i], p_ptr->accountname)) {
 					/* found a matching note */
 					msg_format(Ind, "\377oTo %s: %s", priv_note_target[i], priv_note[i]);
 				}
@@ -2232,7 +2234,8 @@ void do_slash_cmd(int Ind, char *message)
 			if (!colon && !strcmp(tname, "*")) { /* Delete all pending notes to all players */
 				for (i = 0; i < MAX_NOTES; i++) {
 					/* search for pending notes of this player */
-					if (!strcmp(priv_note_sender[i], p_ptr->name)) {
+					if (!strcmp(priv_note_sender[i], p_ptr->name) ||
+					    !strcmp(priv_note_sender[i], p_ptr->accountname)) {
 						notes++;
 						strcpy(priv_note_sender[i], "");
 						strcpy(priv_note_target[i], "");
@@ -2247,7 +2250,8 @@ void do_slash_cmd(int Ind, char *message)
 			if (!colon) { /* Delete all pending notes to a specified player */
 				for (i = 0; i < MAX_NOTES; i++) {
 					/* search for pending notes of this player to the specified player */
-					if (!strcmp(priv_note_sender[i], p_ptr->name) &&
+					if ((!strcmp(priv_note_sender[i], p_ptr->name) ||
+					    !strcmp(priv_note_sender[i], p_ptr->accountname)) &&
 					    !strcmp(priv_note_target[i], tname)) {
 						/* found a matching note */
 						notes++;
@@ -2272,7 +2276,8 @@ void do_slash_cmd(int Ind, char *message)
 
 			/* Check whether player has his notes quota exceeded */
 			for (i = 0; i < MAX_NOTES; i++) {
-				if (!strcmp(priv_note_sender[i], p_ptr->name)) notes++;
+				if (!strcmp(priv_note_sender[i], p_ptr->name) ||
+				    !strcmp(priv_note_sender[i], p_ptr->accountname)) notes++;
 			}
 			if ((notes >= 4) && !is_admin(p_ptr)) {
 				msg_print(Ind, "\377oYou have already reached the maximum of 4 pending notes per player.");
@@ -2301,7 +2306,7 @@ void do_slash_cmd(int Ind, char *message)
 //				return; //so double-msg him just to be safe he sees it
 			}
 
-			strcpy(priv_note_sender[found_note], p_ptr->name);
+			strcpy(priv_note_sender[found_note], p_ptr->accountname);
 			strcpy(priv_note_target[found_note], tname);
 			strcpy(priv_note[found_note], message2 + j + 1);
 			msg_format(Ind, "\377yNote for account '%s' has been stored.", priv_note_target[found_note]);
