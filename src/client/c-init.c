@@ -347,7 +347,8 @@ static void init_monster_list() {
 			if (!p1 && !p2) break;
 			if (!p1) p1 = p2;
 			else if (p2 && p2 < p1) p1 = p2;
-			strcpy(buf, p1 + 1);
+//			strcpy(buf, p1 + 1); // overlapping strings
+			memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
 		}
 		if (!p1 && !p2) continue;
 
@@ -1031,7 +1032,8 @@ static void init_kind_list() {
 			if (!p1 && !p2) break;
 			if (!p1) p1 = p2;
 			else if (p2 && p2 < p1) p1 = p2;
-			strcpy(buf, p1 + 1);
+//			strcpy(buf, p1 + 1); // overlapping strings
+			memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
 		}
 		if (!p1 && !p2) continue;
 
@@ -1079,7 +1081,8 @@ static void init_kind_list() {
 				if (!p1 && !p2) break;
 				if (!p1) p1 = p2;
 				else if (p2 && p2 < p1) p1 = p2;
-				strcpy(buf, p1 + 1);
+//				strcpy(buf, p1 + 1); // overlapping strings
+				memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
 			}
 			if (!p1 && !p2) continue;
 
