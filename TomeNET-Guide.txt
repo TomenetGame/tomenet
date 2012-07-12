@@ -11316,6 +11316,9 @@ F: flag list
                 more than 1 immunity, one will be picked randomly, the
                 remaining ones will turn into resistances. Potions of
                 self-knowledge are helpful here.
+                Note that you can set the desired immunity in 'm' menu ->
+                'Use innate power' -> 'Set preferred immunity'. It will be
+                picked if the form you polymorph into can provide it.
     PASS_WALL   Will allow the mimic to pass walls like a ghost.
                 These immaterial forms also drain the hit points of their
                 user.

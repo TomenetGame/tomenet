@@ -67,6 +67,9 @@ static void print_mimic_spells()
 	prt("", j, col);
 	put_str("c) Polymorph Self into..", j++, col);
 
+	prt("", j, col);
+	put_str("d) Set preferred immunity", j++, col);
+
 	/* Dump the spells */
 	for (i = 0; i < 32; i++)
 	{
@@ -319,7 +322,7 @@ void show_browse(object_type *o_ptr)
 
 static int get_mimic_spell(int *sn)
 {
-	int		i, num = 3; /* 3 polymorph self spells */
+	int		i, num = 3 + 1; /* 3 polymorph self spells + set immunity */
 	bool		flag, redraw;
 	char		choice;
 	char		out_val[160];
@@ -334,6 +337,8 @@ static int get_mimic_spell(int *sn)
 	corresp[1] = 1;
 	/* Init the Polymorph into.. <#> power */
 	corresp[2] = 2;
+	/* Init the Set-Immunity power */
+	corresp[3] = 3;
 
 	/* Check for "okay" spells */
 	for (i = 0; i < 32; i++)
@@ -341,7 +346,7 @@ static int get_mimic_spell(int *sn)
 		/* Look for "okay" spells */
 		if (p_ptr->innate_spells[0] & (1L << i))
 		{
-		  corresp[num] = i + 3;
+		  corresp[num] = i + 4;
 		  num++;
 		}
 	}
@@ -350,7 +355,7 @@ static int get_mimic_spell(int *sn)
 		/* Look for "okay" spells */
 		if (p_ptr->innate_spells[1] & (1L << i))
 		{
-		  corresp[num] = i + 32 + 3;
+		  corresp[num] = i + 32 + 4;
 		  num++;
 		}
 	}
@@ -359,7 +364,7 @@ static int get_mimic_spell(int *sn)
 		/* Look for "okay" spells */
 		if (p_ptr->innate_spells[2] & (1L << i))
 		{
-		  corresp[num] = i + 64 + 3;
+		  corresp[num] = i + 64 + 4;
 		  num++;
 		}
 	}
@@ -441,18 +446,18 @@ static int get_mimic_spell(int *sn)
 			/* Find the power it is related to */
 			for (i = 0; i < num; i++) {
 				c = corresp[i];
-				if (c >= 64 + 3) {
-					if (!strcmp(buf, monster_spells6[c - 64 - 3].name)) {
+				if (c >= 64 + 4) {
+					if (!strcmp(buf, monster_spells6[c - 64 - 4].name)) {
 						flag = TRUE;
 						break;
 					}
-				} else if (c >= 32 + 3) {
-					if (!strcmp(buf, monster_spells5[c - 32 - 3].name)) {
+				} else if (c >= 32 + 4) {
+					if (!strcmp(buf, monster_spells5[c - 32 - 4].name)) {
 						flag = TRUE;
 						break;
 					}
-				} else if (c >= 3) { /* checkin for >=3 is paranoia */
-					if (!strcmp(buf, monster_spells4[c - 3].name)) {
+				} else if (c >= 4) { /* checkin for >=4 is paranoia */
+					if (!strcmp(buf, monster_spells4[c - 4].name)) {
 						flag = TRUE;
 						break;
 					}
@@ -509,14 +514,54 @@ static int get_mimic_spell(int *sn)
 }
 
 
+static void print_immunities()
+{
+	int col, j = 2;
+
+	/* Print column */
+	col = 15;
+
+	/* Title the list */
+	prt("", 1, col);
+	put_str("Immunity", 1, col + 5);
+
+
+	prt("", j, col);
+	put_str("a) Check (view current preference, don't set it)", j++, col);
+
+	prt("", j, col);
+	put_str("b) None (pick randomly each time)", j++, col);
+
+	prt("", j, col);
+	put_str("c) Lightning", j++, col);
+
+	prt("", j, col);
+	put_str("d) Frost", j++, col);
+
+	prt("", j, col);
+	put_str("e) Acid", j++, col);
+
+	prt("", j, col);
+	put_str("f) Fire", j++, col);
+
+	prt("", j, col);
+	put_str("g) Poison", j++, col);
+
+	prt("", j, col);
+	put_str("h) Water", j++, col);
+}
+
+
 /*
  * Mimic
  */
 void do_mimic()
 {
-	int spell, j, dir;
+	int spell, j, dir, c = 0;
 	char out_val[41];
 	bool uses_dir = FALSE;
+	bool redraw = FALSE;
+	char choice;
 
 	/* Ask for the spell */
 	if (!get_mimic_spell(&spell)) return;
@@ -565,13 +610,106 @@ void do_mimic()
 		}
 	}
 
+	else if (spell == 3) {
+		if (!is_newer_than(&server_version, 4, 4, 9, 1, 0, 0)) {
+			c_msg_print("Server version too old - this feature is not available.");
+			return;
+		}
+
+		if (c_cfg.always_show_lists) {
+			/* Show list */
+			redraw = TRUE;
+
+			/* Save the screen */
+			Term_save();
+
+			/* Display a list of spells */
+			print_immunities();
+		}
+
+		/* Get a spell from the user */
+		while (get_com("(Immunities a-f, *=List, @=Name, ESC=exit) Prefer which immunity? ", &choice)) {
+			/* Request redraw */
+			if ((choice == ' ') || (choice == '*') || (choice == '?')) {
+				/* Show the list */
+				if (!redraw) {
+					/* Show list */
+					redraw = TRUE;
+
+					/* Save the screen */
+					Term_save();
+
+					/* Display a list of spells */
+					print_immunities();
+				}
+
+				/* Hide the list */
+				else {
+					/* Hide list */
+					redraw = FALSE;
+
+					/* Restore the screen */
+					Term_load();
+
+					/* Flush any events */
+					Flush_queue();
+				}
+
+				/* Ask again */
+				continue;
+			} else if (choice == '@') {
+				char buf[80];
+				strcpy(buf, ""); 
+				if (!get_string("Immunity? ", buf, 49)) {
+					if (redraw) {
+						Term_load();
+						Flush_queue();
+					}
+					return;
+				}
+				buf[49] = 0;
+
+				/* Find the power it is related to */
+				if (!strcmp(buf, "Check")) c = 1;
+				else if (!strcmp(buf, "None")) c = 2;
+				else if (!strcmp(buf, "Lightning")) c = 3;
+				else if (!strcmp(buf, "Frost")) c = 4;
+				else if (!strcmp(buf, "Acid")) c = 5;
+				else if (!strcmp(buf, "Fire")) c = 6;
+				else if (!strcmp(buf, "Poison")) c = 7;
+				else if (!strcmp(buf, "Water")) c = 8;
+				if (c) break;
+			} else if (choice >= 'a' && choice <= 'h') {
+				/* extract request */
+				c = A2I(choice) + 1;
+				break;
+			}
+
+			/* illegal input */
+			bell();
+			continue;
+		}
+
+		/* Restore the screen */
+		if (redraw) {
+			Term_load();
+
+			/* Flush any events */
+			Flush_queue();
+		}
+
+		if (c) Send_activate_skill(MKEY_MIMICRY, 0, 20000, c, 0, 0);
+		return;
+	}
+
 	/* Spell requires direction? */
-	else if (spell > 2 && is_newer_than(&server_version, 4, 4, 5, 10, 0, 0)) {
-		j = spell - 3;
+	else if (spell > 3 && is_newer_than(&server_version, 4, 4, 5, 10, 0, 0)) {
+		j = spell - 4;
 		if (j < 32) uses_dir = monster_spells4[j].uses_dir;
 		else if (j < 64) uses_dir = monster_spells5[j - 32].uses_dir;
 		else uses_dir = monster_spells6[j - 64].uses_dir;
 
+		if (!is_newer_than(&server_version, 4, 4, 9, 1, 0, 0)) spell--;
 		if (uses_dir) {
 			if (get_dir(&dir))
 				Send_activate_skill(MKEY_MIMICRY, 0, spell, dir, 0, 0);

@@ -2222,6 +2222,7 @@ struct player_type
 	cave_view_type ovl_info[24][80];	/* Hard-coded 80x24 display */
 
 	s32b mimic_seed;	/* seed for random mimic immunities etc. */
+	char mimic_immunity;	/* preferred immunity when mimicking (overrides mimic_seed) */
 
 	char died_from[MAX_CHARS];	/* What off-ed him */
 	char really_died_from[MAX_CHARS];	/* What off-ed him */

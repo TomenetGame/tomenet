@@ -38,7 +38,7 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		4
 #define VERSION_PATCH		9
-#define VERSION_EXTRA		1
+#define VERSION_EXTRA		2
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -68,7 +68,7 @@
 
 /* Client-side only: Client release version tag
    (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG "a"
+#define CLIENT_VERSION_TAG "b"
 
 /* Minimum client version required to be allowed to log in */
 #define MIN_VERSION_MAJOR	4
@@ -85,7 +85,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	4
-#define SF_VERSION_PATCH	26
+#define SF_VERSION_PATCH	27
 #define SF_VERSION_EXTRA	0
 
 

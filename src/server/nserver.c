@@ -7350,6 +7350,67 @@ static int Receive_activate_skill(int ind)
 		switch (mkey) {
 		case MKEY_MIMICRY:
 			if (get_skill(p_ptr, SKILL_MIMIC)) {
+				if (spell == 20000 && dir) {
+					switch (dir) {
+					case 1:
+						switch (p_ptr->mimic_immunity) {
+						case 0:
+							msg_print(player, "Currently you don't have any preferred form immunity.");
+							break;
+						case 1:
+							msg_print(player, "Your current immunity preference is lightning.");
+							break;
+						case 2:
+							msg_print(player, "Your current immunity preference is frost.");
+							break;
+						case 3:
+							msg_print(player, "Your current immunity preference is acid.");
+							break;
+						case 4:
+							msg_print(player, "Your current immunity preference is fire.");
+							break;
+						case 5:
+							msg_print(player, "Your current immunity preference is poison.");
+							break;
+						case 6:
+							msg_print(player, "Your current immunity preference is water.");
+							break;
+						}
+						break;
+					case 2:
+						p_ptr->mimic_immunity = 0;
+						msg_print(player, "You no longer have any preferred form immunity.");
+						break;
+					case 3:
+						p_ptr->mimic_immunity = 1;
+						msg_print(player, "Preferred form immunity is now lightning.");
+						break;
+					case 4:
+						p_ptr->mimic_immunity = 2;
+						msg_print(player, "Preferred form immunity is now frost.");
+						break;
+					case 5:
+						p_ptr->mimic_immunity = 3;
+						msg_print(player, "Preferred form immunity is now acid.");
+						break;
+					case 6:
+						p_ptr->mimic_immunity = 4;
+						msg_print(player, "Preferred form immunity is now fire.");
+						break;
+					case 7:
+						p_ptr->mimic_immunity = 5;
+						msg_print(player, "Preferred form immunity is now poison.");
+						break;
+					case 8:
+						p_ptr->mimic_immunity = 6;
+						msg_print(player, "Preferred form immunity is now water.");
+						break;
+					default:
+						msg_print(player, "That immunity does not exist.");
+						break;
+					}
+					return 2;
+				}
 				do_cmd_mimic(player, spell, dir);
 			}
 			break;

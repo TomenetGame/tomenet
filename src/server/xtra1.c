@@ -2021,7 +2021,7 @@ static void calc_body_bonus(int Ind)
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 
-	int n, d, immunities = 0, immunity[7], immrand[3]; //, toac = 0, body = 0;
+	int n, d, immunities = 0, immunity[7], immrand;
 	int i, j;
 	bool wepless = FALSE;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
@@ -2032,7 +2032,7 @@ static void calc_body_bonus(int Ind)
 
 	immunity[1] = 0; immunity[2] = 0; immunity[3] = 0;
 	immunity[4] = 0; immunity[5] = 0; immunity[6] = 0;
-	immrand[1] = 0; immrand[2] = 0;
+	immrand = 0;
 
 	/* Prepare lower-case'd name for worry-free testing */
 	strcpy(mname, r_name + r_ptr->name);
@@ -2539,7 +2539,7 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	}
 
 	/* gain not more than 1 immunities at the same time from a form */
-	if (immunities < 2) {
+	if (immunities == 1) {
 		if (r_ptr->flags3 & RF3_IM_ACID) p_ptr->immune_acid = TRUE;
 		if (r_ptr->flags3 & RF3_IM_ELEC) p_ptr->immune_elec = TRUE;
 		if (r_ptr->flags3 & RF3_IM_FIRE) p_ptr->immune_fire = TRUE;
@@ -2547,17 +2547,35 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 		if (r_ptr->flags3 & RF3_IM_POIS) p_ptr->immune_poison = TRUE;
 		if (r_ptr->flags9 & RF9_IM_WATER) p_ptr->immune_water = TRUE;
 	} else {
-		immrand[1] = 1 + rand_int(immunities);
-		immrand[2] = immrand[1]; /* now only get 1 immunity from form */
-/*		immrand[2] = 1 + rand_int(immunities - 1);
-		if (!(immrand[2] < immrand[1])) immrand[2]++;
-*/
-		if ((immunity[immrand[1]] == 1) || (immunity[immrand[2]] == 1)) p_ptr->immune_acid = TRUE;
-		if ((immunity[immrand[1]] == 2) || (immunity[immrand[2]] == 2)) p_ptr->immune_elec = TRUE;
-		if ((immunity[immrand[1]] == 3) || (immunity[immrand[2]] == 3)) p_ptr->immune_fire = TRUE;
-		if ((immunity[immrand[1]] == 4) || (immunity[immrand[2]] == 4)) p_ptr->immune_cold = TRUE;
-		if ((immunity[immrand[1]] == 5) || (immunity[immrand[2]] == 5)) p_ptr->immune_poison = TRUE;
-		if ((immunity[immrand[1]] == 6) || (immunity[immrand[2]] == 6)) p_ptr->immune_water = TRUE;
+		immrand = 1 + rand_int(immunities);
+
+		switch (p_ptr->mimic_immunity) {
+		case 1:
+			if (r_ptr->flags3 & RF3_IM_ELEC) immunity[immrand] = 2;
+			break;
+		case 2:
+			if (r_ptr->flags3 & RF3_IM_COLD) immunity[immrand] = 4;
+			break;
+		case 3:
+			if (r_ptr->flags3 & RF3_IM_ACID) immunity[immrand] = 1;
+			break;
+		case 4:
+			if (r_ptr->flags3 & RF3_IM_FIRE) immunity[immrand] = 3;
+			break;
+		case 5:
+			if (r_ptr->flags3 & RF3_IM_POIS) immunity[immrand] = 5;
+			break;
+		case 6:
+			if (r_ptr->flags9 & RF9_IM_WATER) immunity[immrand] = 6;
+			break;
+		}
+
+		if (immunity[immrand] == 1) p_ptr->immune_acid = TRUE;
+		if (immunity[immrand] == 2) p_ptr->immune_elec = TRUE;
+		if (immunity[immrand] == 3) p_ptr->immune_fire = TRUE;
+		if (immunity[immrand] == 4) p_ptr->immune_cold = TRUE;
+		if (immunity[immrand] == 5) p_ptr->immune_poison = TRUE;
+		if (immunity[immrand] == 6) p_ptr->immune_water = TRUE;
 	}
 
 	if (r_ptr->flags9 & RF9_RES_LITE) p_ptr->resist_lite = TRUE;

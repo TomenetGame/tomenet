@@ -1623,6 +1623,10 @@ if (p_ptr->updated_savegame == 0) {
 	/*rd_u32b(&seed_flavor);
 	  rd_u32b(&seed_town);*/
         if (!older_than(4, 0, 5)) rd_s32b(&p_ptr->mimic_seed);
+        if (!older_than(4, 4, 27)) {
+        	rd_byte(&tmp8u);
+		p_ptr->mimic_immunity = tmp8u;
+    	}
 
 	if (!older_than(4, 0, 6)) rd_s16b(&p_ptr->martyr_timeout);
 	else p_ptr->martyr_timeout = 0;

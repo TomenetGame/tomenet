@@ -4420,7 +4420,7 @@ void interact_macros(void)
 							if (atoi(buf) < 1 || atoi(buf) > 26 - 3) continue;
 
 							/* ok (1..23) - translate into spell slot */
-							strcpy(buf, format("%c", 'c' + atoi(buf)));
+							strcpy(buf, format("%c", 'd' + atoi(buf)));
 							break;
 						}
 						if (i == -1) continue;
