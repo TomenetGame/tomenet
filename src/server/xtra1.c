@@ -3764,18 +3764,7 @@ void calc_boni(int Ind)
 			/* Affect life capacity */
 			if (f1 & (TR1_LIFE)) {
 				if ((o_ptr->name1 != ART_RANDART) ||
-#if 0
-				    p_ptr->total_winner ||
- #if 0 /* changed, didn't seem to make that much sense? - C. Blue */
-				    (p_ptr->once_winner && cfg.fallenkings_etiquette && p_ptr->lev >= 50) ||
-				    (p_ptr->lev >= o_ptr->level)) {
- #else /* a bit different, hopefully doing better, also catching badly mutated +life arts after randart.c changes! */
-				    (p_ptr->once_winner && cfg.fallenkings_etiquette)) {
- #endif
-#else /* guarantee consistency */
-//				    make_resf(p_ptr) & RESF_LIFE) {
-				    p_ptr->total_winner) {
-#endif
+				    (make_resf(p_ptr) & RESF_LIFE)) {
 					p_ptr->to_l += o_ptr->bpval;
 				}
 			}

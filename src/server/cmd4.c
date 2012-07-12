@@ -1802,7 +1802,7 @@ void do_cmd_check_server_settings(int Ind)
 
 		case PK_RULES_TRAD:
 		default:
-			fprintf(fff, "You can attack/rob other players(but not recommended).\n");
+			fprintf(fff, "You can attack/rob other players (NOT recommended!).\n");
 			break;
 	}
 
@@ -1910,16 +1910,76 @@ void do_cmd_check_server_settings(int Ind)
 	else if (k == 0)
 		fprintf(fff, "The game ends the moment you beat the final foe, Morgoth.\n");
 
-	if (k !=0)
-	{
+	if (k !=0) {
+		player_type p_dummy;
+		u32b resf_all, resf_win, resf_owin, resf_howin;
+		bool found = FALSE;
+
+		if ((k=cfg.unique_respawn_time))
+			fprintf(fff, "After winning the game, unique monsters will resurrect randomly.(%d)\n", k);
+
 		if (cfg.kings_etiquette)
-			fprintf(fff, "The winner is not allowed to carry/use static artifacts(save Grond/Crown).\n");
+			fprintf(fff, "The winner is not allowed to carry/use static artifacts (save Grond/Crown).\n");
 
 		if (cfg.fallenkings_etiquette)
 			fprintf(fff, "Fallen winners are not allowed to carry/use static artifacts.\n");
 
-		if ((k=cfg.unique_respawn_time))
-			fprintf(fff, "After winning the game, unique monsters will resurrect randomly.(%d)\n", k);
+		p_dummy.lev = 1;
+		p_dummy.total_winner = p_dummy.once_winner = TRUE;
+		resf_win = make_resf(&p_dummy);
+
+		p_dummy.total_winner = FALSE;
+		resf_owin = make_resf(&p_dummy);
+
+		p_dummy.lev = 50;
+		resf_howin = make_resf(&p_dummy);
+
+		p_dummy.once_winner = FALSE;
+		resf_all = make_resf(&p_dummy);
+
+		fprintf(fff, "WINNERS_ONLY items are findable by: ");
+		if (resf_all & RESF_WINNER) {
+			fprintf(fff, "Everyone");
+			found = TRUE;
+		} else {
+			if (resf_win & RESF_WINNER) {
+				fprintf(fff, "Winners");
+				found = TRUE;
+			}
+			if (resf_owin & RESF_WINNER) {
+				if (found) fprintf(fff, ", ");
+				fprintf(fff, "Fallen Winners");
+				found = TRUE;
+			} else if (resf_howin & RESF_WINNER) {
+				if (found) fprintf(fff, ", ");
+				fprintf(fff, "Fallen Winners of level 50+");
+				found = TRUE;
+			}
+		}
+		if (found) fprintf(fff, ".\n");
+		else fprintf(fff, "Noone.\n");
+
+		fprintf(fff, "+LIFE randarts are findable/usable by: ");
+		if (resf_all & RESF_LIFE) {
+			fprintf(fff, "Everyone");
+			found = TRUE;
+		} else {
+			if (resf_win & RESF_LIFE) {
+				fprintf(fff, "Winners");
+				found = TRUE;
+			}
+			if (resf_owin & RESF_LIFE) {
+				if (found) fprintf(fff, ", ");
+				fprintf(fff, "Fallen Winners");
+				found = TRUE;
+			} else if (resf_howin & RESF_LIFE) {
+				if (found) fprintf(fff, ", ");
+				fprintf(fff, "Fallen Winners of level 50+");
+				found = TRUE;
+			}
+		}
+		if (found) fprintf(fff, ".\n");
+		else fprintf(fff, "Noone.\n");
 	}
 
 	fprintf(fff,"\n");

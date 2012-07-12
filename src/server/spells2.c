@@ -3083,6 +3083,7 @@ bool create_artifact_aux(int Ind, int item) {
 	int tries = 0;
 	char o_name[ONAME_LEN];
 	s32b old_owner;/* anti-cheeze :) */
+	u32b resf = make_resf(p_ptr);
 
 	/* Get the item (in the pack) */
 	if (item >= 0) o_ptr = &p_ptr->inventory[item];
@@ -3148,7 +3149,7 @@ bool create_artifact_aux(int Ind, int item) {
 
 		/* If the resulting randart is allowed, leave the loop */
 		a_ptr = randart_make(o_ptr);
-		if ((make_resf(p_ptr) & RESF_LIFE) || !(a_ptr->flags1 & TR1_LIFE)) break;
+		if ((resf & RESF_LIFE) || !(a_ptr->flags1 & TR1_LIFE)) break;
 	}
 
 	/* apply magic (which resets owner) and manually restore ownership again afterwards;

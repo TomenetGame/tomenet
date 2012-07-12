@@ -1358,12 +1358,6 @@ void carry(int Ind, int pickup, int confirm)
 	object_desc(0, o_name_real, o_ptr, TRUE, 3);
 
 
-/* log the encounters of players with special heavy armour, just for informative purpose */
-//if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) s_printf("FOUND_WINNERS_ONLY: %s (%d) %s\n", p_ptr->name, p_ptr->wpos.wz, o_name_real);
-
-	/* moved the object_felt_p() code downwards */
-
-
 	/* Pick up gold */
 	if (o_ptr->tval == TV_GOLD) {
 		s32b amount = o_ptr->pval;
@@ -1615,8 +1609,7 @@ void carry(int Ind, int pickup, int confirm)
 
 		}
 #endif
-		if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) && !p_ptr->once_winner
-		    && !p_ptr->total_winner) { /* <- added this just for testing when admin char sets .total_winner=1 */
+		if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) && !p_ptr->once_winner) {
 			msg_print(Ind, "Only royalties are powerful enough to pick up that item!");
 			if (!is_admin(p_ptr)) return;
 		}

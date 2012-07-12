@@ -10648,8 +10648,7 @@ void telekinesis_aux(int Ind, int item)
 		}
 	}
 #endif
-	if ((k_info[q_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) && !p_ptr->once_winner
-	    && !p_ptr->total_winner) { /* <- added this just for testing when admin char sets .total_winner=1 */
+	if ((k_info[q_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) && !p_ptr->once_winner) {
 		msg_print(Ind, "Only royalties are powerful enough to receive that item!");
 		if (!is_admin(p_ptr)) return;
 	}

@@ -3491,11 +3491,7 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 		if (resf & RESF_NOTRUEART) {
 			/* add exception for WINNERS_ONLY true arts
 			   (this is required for non DROP_CHOSEN/SPECIAL_GENE winner arts): */
-#if 0 /* basic way */
 			if (!((a_ptr->flags5 & TR5_WINNERS_ONLY) && (resf & RESF_WINNER)))
-#else /* restrict to level 50+ in case of _fallen_ winners */
-			if (!((a_ptr->flags5 & TR5_WINNERS_ONLY) && (resf & RESF_LIFE)))
-#endif
 				return (FALSE); /* Don't replace them with randarts! */
 		}
 
@@ -3587,11 +3583,7 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf)
 			if (resf & RESF_NOTRUEART) {
 				/* add exception for WINNERS_ONLY true arts
 				   (this is required for non DROP_CHOSEN/SPECIAL_GENE winner arts): */
-#if 0 /* basic way */
 				if (!((a_ptr->flags5 & TR5_WINNERS_ONLY) && (resf & RESF_WINNER)))
-#else /* restrict to level 50+ in case of _fallen_ winners */
-				if (!((a_ptr->flags5 & TR5_WINNERS_ONLY) && (resf & RESF_LIFE)))
-#endif
 					return (FALSE); /* Don't replace them with randarts! */
 			}
 
@@ -8495,25 +8487,30 @@ u32b make_resf(player_type *p_ptr) {
 	u32b f = RESF_NONE;
 	if (p_ptr == NULL) return(f);
 
-	/* winner type handling */
+	/* winner handling */
+	if (p_ptr->total_winner) {
+		f |= RESF_WINNER; /* allow generation of WINNERS_ONLY items */
+		f |= RESF_LIFE; /* allowed to find +LIFE artifacts; hack: and WINNERS_ONLY artifacts too */
+		if (cfg.kings_etiquette) f |= RESF_NOTRUEART; /* player is currently a winner? Then don't find true arts! */
+	}
+
+	/* fallen winner handling */
 	if (p_ptr->once_winner) {
 		if (cfg.fallenkings_etiquette) {
 			f |= RESF_NOTRUEART; /* player is a fallen winner? Then don't find true arts! */
-			/* since fallen kings are already kinda punished by their status, cut them some slack here: */
-			f |= RESF_WINNER; /* allow generation of WINNERS_ONLY items, if player won once but can't get true arts */
+			/* since fallen kings are already kinda punished by their status, cut them some slack here?: */
+			if (p_ptr->lev >= 50) {
+//				f |= RESF_WINNER; /* allow generation of WINNERS_ONLY items, if player won once but can't get true arts */
+				f |= RESF_LIFE; /* allowed to find +LIFE artifacts; hack: and WINNERS_ONLY artifacts too */
+			}
 		}
 	}
-	if (p_ptr->total_winner) {
-		f |= RESF_WINNER; /* allow generation of WINNERS_ONLY items */
-		if (cfg.kings_etiquette) f |= RESF_NOTRUEART; /* player is currently a winner? Then don't find true arts! */
-	}
-	if (!cfg.winners_find_randarts) f |= ~RESF_NOTRUEART; /* monsters killed by [fallen] winners can drop no true arts but randarts only instead? */
-	if (p_ptr->total_winner ||
-	    (p_ptr->once_winner && p_ptr->lev >= 50 && cfg.fallenkings_etiquette))
-		f |= RESF_LIFE; /* allowed to find +LIFE artifacts; hack: and WINNERS_ONLY artifacts too */
+
+	/* anyone who cannot use true arts can still _find_ them? (should usually be disabled) */
+	if (!cfg.winners_find_randarts) f &= ~RESF_NOTRUEART; /* monsters killed by [fallen] winners can drop no true arts but randarts only instead? */
 
 	/* special mode handling */
-	if (p_ptr->mode & MODE_PVP) f |= RESF_NOTRUEART; /* PvP mode chars can't use true arts, since true arts are for kinging! */
+	if (p_ptr->mode & MODE_PVP) f |= RESF_NOTRUEART; /* PvP mode chars can't find true arts, since true arts are for kinging! */
 
 	return (f);
 }
