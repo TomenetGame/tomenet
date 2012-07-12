@@ -390,7 +390,8 @@ static void init_monster_list() {
 				if (!p1 && !p2) break;
 				if (!p1) p1 = p2;
 				else if (p2 && p2 < p1) p1 = p2;
-				strcpy(buf, p1 + 1);
+				//strcpy(buf, p1 + 1); // overlapping strings
+				memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
 			}
 			if (!p1 && !p2) continue;
 
@@ -445,7 +446,8 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 			if (!p1 && !p2) break;
 			if (!p1) p1 = p2;
 			else if (p2 && p2 < p1) p1 = p2;
-			strcpy(buf, p1 + 1);
+			//strcpy(buf, p1 + 1); // overlapping strings
+			memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
 		}
 		if (!p1 && !p2) continue;
 
@@ -479,7 +481,8 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				if (!p1 && !p2) break;
 				if (!p1) p1 = p2;
 				else if (p2 && p2 < p1) p1 = p2;
-				strcpy(buf, p1 + 1);
+				//strcpy(buf, p1 + 1); // overlapping strings
+				memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
 			}
 			if (!p1 && !p2) continue;
 
@@ -571,7 +574,8 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 			if (!p1 && !p2) break;
 			if (!p1) p1 = p2;
 			else if (p2 && p2 < p1) p1 = p2;
-			strcpy(buf, p1 + 1);
+			//strcpy(buf, p1 + 1); // overlapping strings
+			memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
 		}
 		if (!p1 && !p2) continue;
 
@@ -604,7 +608,8 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				if (!p1 && !p2) break;
 				if (!p1) p1 = p2;
 				else if (p2 && p2 < p1) p1 = p2;
-				strcpy(buf, p1 + 1);
+				//strcpy(buf, p1 + 1); // overlapping strings
+				memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
 			}
 			if (!p1 && !p2) continue;
 
@@ -1151,7 +1156,8 @@ static void init_artifact_list() {
 			if (!p1 && !p2) break;
 			if (!p1) p1 = p2;
 			else if (p2 && p2 < p1) p1 = p2;
-			strcpy(buf, p1 + 1);
+			//strcpy(buf, p1 + 1); // overlapping strings
+			memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
 		}
 		if (!p1 && !p2) continue;
 		if (strlen(buf) < 3) continue;
@@ -1184,7 +1190,8 @@ static void init_artifact_list() {
 				if (!p1 && !p2) break;
 				if (!p1) p1 = p2;
 				else if (p2 && p2 < p1) p1 = p2;
-				strcpy(buf, p1 + 1);
+				//strcpy(buf, p1 + 1); // overlapping strings
+				memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
 			}
 			if (!p1 && !p2) continue;
 
@@ -1254,6 +1261,8 @@ void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 			if (!p1) p1 = p2;
 			else if (p2 && p2 < p1) p1 = p2;
 			strcpy(buf, p1 + 1);
+			//strcpy(buf, p1 + 1); // overlapping strings
+			memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
 		}
 		if (!p1 && !p2) continue;
 
@@ -1284,7 +1293,8 @@ void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 				if (!p1 && !p2) break;
 				if (!p1) p1 = p2;
 				else if (p2 && p2 < p1) p1 = p2;
-				strcpy(buf, p1 + 1);
+				//strcpy(buf, p1 + 1); // overlapping strings
+				memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
 			}
 			if (!p1 && !p2) continue;
 
@@ -1376,7 +1386,8 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 			if (!p1 && !p2) break;
 			if (!p1) p1 = p2;
 			else if (p2 && p2 < p1) p1 = p2;
-			strcpy(buf, p1 + 1);
+			//strcpy(buf, p1 + 1); // overlapping strings
+			memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
 		}
 		if (!p1 && !p2) continue;
 
@@ -1407,7 +1418,8 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 				if (!p1 && !p2) break;
 				if (!p1) p1 = p2;
 				else if (p2 && p2 < p1) p1 = p2;
-				strcpy(buf, p1 + 1);
+				//strcpy(buf, p1 + 1); // overlapping strings
+				memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
 			}
 			if (!p1 && !p2) continue;
 
