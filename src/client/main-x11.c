@@ -1329,6 +1329,7 @@ static errr Infowin_set_size(int w, int h, int r_w, int r_h, bool fixed)
 	XSetWMNormalHints(Metadpy->dpy, Infowin->win, sh);
 
 	/* Success */
+	free(sh);
 	return 0;
 }
 
@@ -1355,6 +1356,7 @@ static errr Infowin_set_class_hint(cptr name)
 
 	XSetClassHint(Metadpy->dpy, Infowin->win, ch);
 
+	free(ch);
 	return (0);
 }
 
