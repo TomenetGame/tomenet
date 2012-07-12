@@ -378,8 +378,8 @@ void do_slash_cmd(int Ind, char *message)
 		return;
 	}
 	/* Oops conflict; took 'never duplicate' principal */
-	else if (prefix(message, "/cough") ||
-			prefix(message, "/cou"))
+	else if (prefix(message, "/cough"))
+//	/count	    || prefix(message, "/cou"))
 	{
 		break_cloaking(Ind, 4);
 		msg_format_near(Ind, "\377%c%^s coughs noisily.", COLOUR_CHAT, p_ptr->name);
