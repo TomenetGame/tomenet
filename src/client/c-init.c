@@ -329,6 +329,7 @@ static void init_monster_list() {
 	char buf[1024], *p1, *p2;
 	int v1 = 0, v2 = 0, v3 = 0;
 	FILE *fff;
+	bool discard = FALSE;
 
 	/* actually use local r_info.txt - a novum */
 	path_build(buf, 1024, ANGBAND_DIR_GAME, "r_info.txt");
@@ -357,11 +358,20 @@ static void init_monster_list() {
 			sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3);
 			continue;
 		}
-		if (buf[0] != 'N') continue;
+		if (buf[0] != 'N' && buf[0] != 'F') continue;
 		if (v1 < 3 || (v1 == 3 && (v2 < 4 || (v2 == 4 && v3 < 1)))) {
 			//plog("Error: Your r_info.txt file is outdated.");
 			return;
 		}
+		if (buf[0] == 'N') {
+			if (discard) {
+				/* flashy-thingy tiem */
+				monster_list_idx--;
+
+				discard = FALSE;
+			}
+		}
+		if (buf[0] == 'F' && strstr(buf, "JOKEANGBAND")) discard = TRUE;
 
 		p1 = buf + 2; /* monster code */
 		p2 = strchr(p1, ':'); /* 1 before monster name */
@@ -384,6 +394,8 @@ static void init_monster_list() {
 			}
 			if (!p1 && !p2) continue;
 
+			if (buf[0] == 'F' && strstr(buf, "JOKEANGBAND")) discard = TRUE;
+
 			if (strlen(buf) < 5 || buf[0] != 'G') continue;
 
 			p1 = buf + 2; /* monster symbol */
@@ -399,6 +411,11 @@ static void init_monster_list() {
 
 		/* outdated client? */
 		if (monster_list_idx == MAX_R_IDX) break;
+	}
+
+	if (discard) {
+		/* flashy-thingy tiem */
+		monster_list_idx--;
 	}
 
 	my_fclose(fff);

@@ -4295,7 +4295,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				}
 				m_ptr->hp -= hp_cut;//Kurzel!!
 			}
-			
+
 			/* Confusion attack */
 			if ((p_ptr->confusing) || (chaos_effect == 3)) {
 				/* Cancel glowing hands */
@@ -4319,53 +4319,60 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			}
 
 			else if (chaos_effect == 4) {
-				if (teleport_away(c_ptr->m_idx, 50)) {
-					msg_format(Ind, "%^s disappears!", m_name);
-					num = p_ptr->num_blow + 1; /* Can't hit it anymore! */
-				}
-//				no_extra = TRUE;
+				if (!(r_ptr->flags9 & RF9_IM_TELE) &&
+	                            !(r_ptr->flags3 & RF3_RES_TELE) &&
+    	    	                    !(r_ptr->flags1 & RF1_UNIQUE)) {
+    	    	                	if (m_ptr->level > randint(100)) {
+						if (teleport_away(c_ptr->m_idx, 50)) {
+							msg_format(Ind, "%^s disappears!", m_name);
+							num = p_ptr->num_blow + 1; /* Can't hit it anymore! */
+						}
+					} else msg_format(Ind, "%^s resists the effect.", m_name);
+//					no_extra = TRUE;
+				} else msg_format(Ind, "%^s is unaffected.", m_name);
 			}
 
 /*			else if ((chaos_effect == 5) && cave_floor_bold(zcave,y,x)
 					&& (randint(90) > m_ptr->level))*/
-			else if ((chaos_effect == 5) && (randint(150) > m_ptr->level)) {
+			else if (chaos_effect == 5) {
 				if (!((r_ptr->flags1 & RF1_UNIQUE) ||
 				    (r_ptr->flags4 & RF4_BR_CHAO) ||
+				    (r_ptr->flags9 & RF9_IM_TELE) ||
 				    (r_ptr->flags9 & RF9_RES_CHAOS) ))
-//						|| (m_ptr->mflag & MFLAG_QUEST)))
+//					|| (m_ptr->mflag & MFLAG_QUEST)))
 				{
-					int tmp = poly_r_idx(m_ptr->r_idx);
+					if (randint(150) > m_ptr->level) {
+						int tmp = poly_r_idx(m_ptr->r_idx);
 
-					/* Pick a "new" monster race */
+						/* Pick a "new" monster race */
 
-					/* Handle polymorph */
-					if (tmp != m_ptr->r_idx) {
-						msg_format(Ind, "%^s changes!", m_name);
+						/* Handle polymorph */
+						if (tmp != m_ptr->r_idx) {
+							msg_format(Ind, "%^s changes!", m_name);
 
-						/* Create a new monster (no groups) */
-						(void)place_monster_aux(wpos, y, x, tmp, FALSE, FALSE, m_ptr->clone, m_ptr->clone_summoning);
+							/* Create a new monster (no groups) */
+							(void)place_monster_aux(wpos, y, x, tmp, FALSE, FALSE, m_ptr->clone, m_ptr->clone_summoning);
 
-						/* "Kill" the "old" monster */
-						delete_monster_idx(c_ptr->m_idx, TRUE);
+							/* "Kill" the "old" monster */
+							delete_monster_idx(c_ptr->m_idx, TRUE);
 
-						/* XXX XXX XXX Hack -- Assume success */
+							/* XXX XXX XXX Hack -- Assume success */
 
-						/* Hack -- Get new monster */
-						m_ptr = &m_list[c_ptr->m_idx];
+							/* Hack -- Get new monster */
+							m_ptr = &m_list[c_ptr->m_idx];
 
-						/* Oops, we need a different name... */
-						monster_desc(Ind, m_name, c_ptr->m_idx, 0);
+							/* Oops, we need a different name... */
+							monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 
-						/* Hack -- Get new race */
-						r_ptr = race_inf(m_ptr);
+							/* Hack -- Get new race */
+							r_ptr = race_inf(m_ptr);
 
-						fear = FALSE;
+							fear = FALSE;
+						}
 					}
-				}
-				else
-					msg_format(Ind, "%^s is unaffected.", m_name);
+					else msg_format(Ind, "%^s resists the effect.", m_name);
+				} else msg_format(Ind, "%^s is unaffected.", m_name);
 			}
-
 
 			/* Stunning attack */
 			if (p_ptr->stunning) {
@@ -4411,7 +4418,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				leech /= 10;
 				hp_player_quiet(Ind, rand_int(leech), TRUE);
 			}
-			
+
 #if 0
 			//Runemaster Explosive Brands - 1/bpr% chance (only ~1 per turn) - Kurzel
 			if (p_ptr->tim_brand_ex && randint(p_ptr->num_blow) == 1) {
