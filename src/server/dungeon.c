@@ -5545,8 +5545,8 @@ void process_player_change_wpos(int Ind)
 
 	/* Memorize the town and all wilderness levels close to town */
 	if (istownarea(wpos, MAX_TOWNAREA)) {
-		p_ptr->max_panel_rows = (MAX_HGT / p_ptr->screen_hgt) * 2 - 2;
-		p_ptr->max_panel_cols = (MAX_WID / p_ptr->screen_wid) * 2 - 2;
+		p_ptr->max_panel_rows = MAX_PANEL_ROWS;
+		p_ptr->max_panel_cols = MAX_PANEL_COLS;
 
 		p_ptr->cur_hgt = MAX_HGT;
 		p_ptr->cur_wid = MAX_WID;
@@ -5564,11 +5564,11 @@ void process_player_change_wpos(int Ind)
 	} else if (wpos->wz) {
 #if 1
 		/* Hack -- tricky formula, but needed */
-		p_ptr->max_panel_rows = ((l_ptr->hgt + p_ptr->screen_hgt / 2) / p_ptr->screen_hgt) * 2 - 2;
-		p_ptr->max_panel_cols = ((l_ptr->wid + p_ptr->screen_wid / 2) / p_ptr->screen_wid) * 2 - 2;
+		p_ptr->max_panel_rows = MAX_PANEL_ROWS_L;
+		p_ptr->max_panel_cols = MAX_PANEL_COLS_L;
 #else
-		p_ptr->max_panel_rows = (MAX_HGT / p_ptr->screen_hgt) * 2 - 2;
-		p_ptr->max_panel_cols = (MAX_WID / p_ptr->screen_wid) * 2 - 2;
+		p_ptr->max_panel_rows = MAX_PANEL_ROWS;
+		p_ptr->max_panel_cols = MAX_PANEL_COLS;
 #endif	// 0
 
 		p_ptr->cur_hgt = l_ptr->hgt;
@@ -5581,8 +5581,8 @@ void process_player_change_wpos(int Ind)
 		show_floor_feeling(Ind, FALSE);
 #endif
 	} else {
-		p_ptr->max_panel_rows = (MAX_HGT / p_ptr->screen_hgt) * 2 - 2;
-		p_ptr->max_panel_cols = (MAX_WID / p_ptr->screen_wid) * 2 - 2;
+		p_ptr->max_panel_rows = MAX_PANEL_ROWS;
+		p_ptr->max_panel_cols = MAX_PANEL_COLS;
 
 		p_ptr->cur_hgt = MAX_HGT;
 		p_ptr->cur_wid = MAX_WID;

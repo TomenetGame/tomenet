@@ -327,6 +327,19 @@
  #define RATIO (MAX_HGT / SCREEN_HGT)
 #endif
 
+/* for consistent setting of max_panel_rows/cols: */
+#ifndef TEST_SERVER /* old -> rounding issues */
+ #define MAX_PANEL_ROWS_L	(((l_ptr->hgt + p_ptr->screen_hgt / 2) / p_ptr->screen_hgt) * 2 - 2)
+ #define MAX_PANEL_COLS_L	(((l_ptr->wid + p_ptr->screen_wid / 2) / p_ptr->screen_wid) * 2 - 2)
+ #define MAX_PANEL_ROWS		((MAX_HGT / p_ptr->screen_hgt) * 2 - 2)
+ #define MAX_PANEL_COLS		((MAX_WID / p_ptr->screen_wid) * 2 - 2)
+#else /* allow larger main screen than 80x24 - C. Blue */
+ #define MAX_PANEL_ROWS_L	((int)((l_ptr->hgt + p_ptr->screen_hgt / 2 - 1) / (p_ptr->screen_hgt / 2)) - 2)
+ #define MAX_PANEL_COLS_L	((int)((l_ptr->wid + p_ptr->screen_wid / 2 - 1) / (p_ptr->screen_wid / 2)) - 2)
+ #define MAX_PANEL_ROWS		((int)((MAX_HGT + p_ptr->screen_hgt / 2 - 1) / (p_ptr->screen_hgt / 2)) - 2)
+ #define MAX_PANEL_COLS		((int)((MAX_WID + p_ptr->screen_wid / 2 - 1) / (p_ptr->screen_wid / 2)) - 2)
+#endif
+
 /*
  * Hack -- This is used to make sure that every player that has a structure
  * dedicated to them is actually connected
