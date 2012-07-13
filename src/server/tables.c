@@ -5910,10 +5910,11 @@ cptr player_title_special[MAX_CLASS][5][4] =
 	{
                 {"Elite Ranger", "Elite Ranger", "Elite Ranger", "Elite Ranger", },
 //		{"Ranger Supervisor", "Ranger Supervisor", "Ranger Svis.", "Ranger Svis.", },
-		{"Ranger Commander", "Ranger Commander", "Ranger Cmdr.", "Ranger Cmdr.", },
-		{"Legend", "Legend", "Legend", "Legend", },
 		{"Champion of Law", "Champion of Law", "Champ of Law", "Champ of Law", },
 		{"Lord of Law", "Lady of Law", "Lord of Law", "Lady of Law", },
+//		{"Ranger Commander", "Ranger Commander", "Ranger Cmdr.", "Ranger Cmdr.", },
+		{"Legend", "Legend", "Legend", "Legend", },
+		{"Justice", "Justice", "Justice", "Justice", },
         },
 
 	/* Adventurer */
