@@ -5102,13 +5102,15 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			/* Teleport a player to us - even if in different world sector */
-			else if (prefix(message, "/tpto")) {
+			else if (prefix(message, "/tpto") ||
+			/* Teleport us to a player - even if in different world sector */
+			    prefix(message, "/tpat")) {
 				int p;
 				player_type *q_ptr;
 				cave_type **zcave;
 
 				if (tk < 1) {
-					msg_print(Ind, "\377oUsage: /tpto <player name>");
+					msg_print(Ind, "\377oUsage: /tpXX <player name>");
 					return;
 				}
 
@@ -5124,18 +5126,33 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 
-				if (!inarea(&q_ptr->wpos, &p_ptr->wpos)) {
-					q_ptr->recall_pos.wx = p_ptr->wpos.wx;
-					q_ptr->recall_pos.wy = p_ptr->wpos.wy;
-					q_ptr->recall_pos.wz = p_ptr->wpos.wz;
-					q_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
-					recall_player(p, "\377yA magical gust of wind lifts you up and carries you away!");
-					process_player_change_wpos(p);
+				if (prefix(message, "/tpto")) {
+					if (!inarea(&q_ptr->wpos, &p_ptr->wpos)) {
+						q_ptr->recall_pos.wx = p_ptr->wpos.wx;
+						q_ptr->recall_pos.wy = p_ptr->wpos.wy;
+						q_ptr->recall_pos.wz = p_ptr->wpos.wz;
+						q_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+						recall_player(p, "\377yA magical gust of wind lifts you up and carries you away!");
+						process_player_change_wpos(p);
+					}
+
+					teleport_player_to_force(p, p_ptr->py, p_ptr->px);
+
+					msg_print(Ind, "Teleported that player.");
+				} else {
+					if (!inarea(&q_ptr->wpos, &p_ptr->wpos)) {
+						p_ptr->recall_pos.wx = q_ptr->wpos.wx;
+						p_ptr->recall_pos.wy = q_ptr->wpos.wy;
+						p_ptr->recall_pos.wz = q_ptr->wpos.wz;
+						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+						recall_player(Ind, "\377yA magical gust of wind lifts you up and carries you away!");
+						process_player_change_wpos(Ind);
+					}
+
+					teleport_player_to_force(Ind, q_ptr->py, q_ptr->px);
+
+					msg_print(Ind, "Teleported to that player.");
 				}
-
-				teleport_player_to_force(p, p_ptr->py, p_ptr->px);
-
-				msg_print(Ind, "Teleported that player.");
 				return;
 			}
 			/* STRIP ALL TRUE ARTIFACTS FROM ALL PLAYERS (!) */
