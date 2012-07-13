@@ -309,11 +309,11 @@
 #define SCREEN_PAD_LEFT		13
 #define SCREEN_PAD_RIGHT	1
 #define SCREEN_PAD_TOP		1
-#define SCREEN_PAD_BOTTOM	2
+#define SCREEN_PAD_BOTTOM	1
 
 /* Maximum possible main window size */
 #define MAX_WINDOW_WID	(MAX_SCREEN_WID + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
-#define MAX_WINDOW_HGT	(MAX_SCREEN_WID + SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM)
+#define MAX_WINDOW_HGT	(MAX_SCREEN_HGT + SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM)
 
 /*
  * Maximum dungeon height in grids, must be a multiple of SCREEN_HGT,
@@ -1582,40 +1582,44 @@
 #define COL_INFO		0	/* "xxxxxxxxxxxx" */
 #endif	/* if 1 */
 
-#define ROW_CUT			22
+/* begin of 'bottom-aligned' status info, for large map size support - C. Blue */
+
+#define ROW_CUT			(22 + screen_hgt - SCREEN_HGT)
 #define COL_CUT			0	/* <cut> */
 
-#define ROW_STUN		23
+#define ROW_STUN		(23 + screen_hgt - SCREEN_HGT)
 #define COL_STUN		38	/* <stun> */
 
-#define ROW_HUNGRY		23
+#define ROW_HUNGRY		(23 + screen_hgt - SCREEN_HGT)
 #define COL_HUNGRY		0	/* "Weak" / "Hungry" / "Full" / "Gorged" */
 
-#define ROW_BLIND		23
+#define ROW_BLIND		(23 + screen_hgt - SCREEN_HGT)
 #define COL_BLIND		7	/* "Blind" */
 
-#define ROW_CONFUSED	23
-#define COL_CONFUSED	13	/* "Confused" */
+#define ROW_CONFUSED		(23 + screen_hgt - SCREEN_HGT)
+#define COL_CONFUSED		13	/* "Confused" */
 
-#define ROW_AFRAID		23
+#define ROW_AFRAID		(23 + screen_hgt - SCREEN_HGT)
 #define COL_AFRAID		22	/* "Afraid" */
 
-#define ROW_POISONED	23
-#define COL_POISONED	29	/* "Poisoned" */
+#define ROW_POISONED		(23 + screen_hgt - SCREEN_HGT)
+#define COL_POISONED		29	/* "Poisoned" */
 
-#define ROW_STATE		23
+#define ROW_STATE		(23 + screen_hgt - SCREEN_HGT)
 #define COL_STATE		38	/* <state> */
 
-#define ROW_SPEED		23
+#define ROW_SPEED		(23 + screen_hgt - SCREEN_HGT)
 #define COL_SPEED		50	/* "Slow (-NN)" or "Fast (+NN)" */
 
-#define ROW_STUDY		23
+#define ROW_STUDY		(23 + screen_hgt - SCREEN_HGT)
 #define COL_STUDY		62	/* "Study" */
-#define ROW_BPR			23
+#define ROW_BPR			(23 + screen_hgt - SCREEN_HGT)
 #define COL_BPR			61	/* Blows/Round */
 
-#define ROW_DEPTH		23
+#define ROW_DEPTH		(23 + screen_hgt - SCREEN_HGT)
 #define COL_DEPTH		69	/* "Lev NNN" / "NNNN ft" */
+
+/* non-bottom-aligned stuff again */
 
 #define ROW_XYPOS		21
 #define COL_XYPOS		0

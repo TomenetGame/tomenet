@@ -3849,19 +3849,22 @@ static int Receive_play(int ind)
 				Destroy_connection(ind, "Misread dimensions");
 				return -1;
 			}
-
+s_printf("hgt %d\n", connp->Client_setup.screen_hgt);
 			/* fix (temporary) limits */
 			if (connp->Client_setup.screen_wid > MAX_SCREEN_WID) connp->Client_setup.screen_wid = MAX_SCREEN_WID;
 			if (connp->Client_setup.screen_wid < MIN_SCREEN_WID) connp->Client_setup.screen_wid = MIN_SCREEN_WID;
 			if (connp->Client_setup.screen_hgt > MAX_SCREEN_HGT) connp->Client_setup.screen_hgt = MAX_SCREEN_HGT;
 			if (connp->Client_setup.screen_hgt < MIN_SCREEN_HGT) connp->Client_setup.screen_hgt = MIN_SCREEN_HGT;
+s_printf("hgt2 %d\n", connp->Client_setup.screen_hgt);
 #ifndef TEST_SERVER
 			connp->Client_setup.screen_wid = SCREEN_WID;
 			connp->Client_setup.screen_hgt = SCREEN_HGT;
 #endif
+s_printf("hgt3 %d\n", connp->Client_setup.screen_hgt);
 		} else {
 			connp->Client_setup.screen_wid = SCREEN_WID;
 			connp->Client_setup.screen_hgt = SCREEN_HGT;
+s_printf("hgt23 %d\n", connp->Client_setup.screen_hgt);
 		}
 
 		/* Read the "unknown" char/attrs */
