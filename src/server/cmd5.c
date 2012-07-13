@@ -1248,7 +1248,7 @@ void do_mimic_change(int Ind, int r_idx, bool force)
 void do_cmd_mimic(int Ind, int spell, int dir)
 {
 	player_type *p_ptr = Players[Ind];
-	int j, k;
+	int j, k, offset = 3; /* offset: 3 polymorph powers */
 	bool using_free_mimic = FALSE;
 	bool admin = is_admin(p_ptr);
 
@@ -1263,7 +1263,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 
 	/* No anti-magic fields around ? */
 	/* Innate powers aren't hindered */
-	if ((!spell || spell - 4 >= 32) && check_antimagic(Ind, 100)) { /* -4 -> 3 polymorph powers + imm pref */
+	if ((!spell || spell - offset >= 32) && check_antimagic(Ind, 100)) {
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		return;
 	}
@@ -1426,7 +1426,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 		/* (S)he is no longer afk */
 		un_afk_idle(Ind);
 
-		do_mimic_power(Ind, spell - 4, dir);
+		do_mimic_power(Ind, spell - offset, dir);
 	}
 }
 

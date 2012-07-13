@@ -705,11 +705,11 @@ void do_mimic()
 	/* Spell requires direction? */
 	else if (spell > 3 && is_newer_than(&server_version, 4, 4, 5, 10, 0, 0)) {
 		j = spell - 4;
+		spell--; //easy backward compatibility, spell == 3 has already been taken care of by 20000 hack
 		if (j < 32) uses_dir = monster_spells4[j].uses_dir;
 		else if (j < 64) uses_dir = monster_spells5[j - 32].uses_dir;
 		else uses_dir = monster_spells6[j - 64].uses_dir;
 
-		if (!is_newer_than(&server_version, 4, 4, 9, 1, 0, 0)) spell--;
 		if (uses_dir) {
 			if (get_dir(&dir))
 				Send_activate_skill(MKEY_MIMICRY, 0, spell, dir, 0, 0);
