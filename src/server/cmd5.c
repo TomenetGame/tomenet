@@ -1255,7 +1255,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 	/* should it..? */
 //	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
 //(changed it to no_tele)	if(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) return;
-	
+
 	if (!get_skill(p_ptr, SKILL_MIMIC)) {
 		msg_print(Ind, "You are too solid.");
 		return;
@@ -1263,19 +1263,18 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 
 	/* No anti-magic fields around ? */
 	/* Innate powers aren't hindered */
-	if ((!spell || spell - 3 >= 32) && check_antimagic(Ind, 100)) { /* -3 -> 3 polymorph powers */
+	if ((!spell || spell - 4 >= 32) && check_antimagic(Ind, 100)) { /* -4 -> 3 polymorph powers + imm pref */
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		return;
 	}
-	if (spell == 0 || spell == 1){
+	if (spell == 0 || spell == 1) {
 		j = p_ptr->body_monster;
 		k = 0;
 
 		while (TRUE){
 			j++;
 			k++;
-			if (k > MAX_R_IDX)
-			{
+			if (k > MAX_R_IDX) {
 //				j = 0;
 				msg_print(Ind, "You don't know any forms!");
 				return;
@@ -1314,7 +1313,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 			/* Don't accidentally poly into a form that suppresses polymorphing,
 			   to do so you need to use 'Polymorph into...' */
 			if (r_info[j].flags7 & RF7_DISBELIEVE) continue;
-			
+
 			if (spell == 1) { /* check for extremities matching? */
 				if ((p_ptr->inventory[INVEN_HEAD].tval || p_ptr->inventory[INVEN_NECK].tval)
 				    && !r_info[j].body_parts[BODY_HEAD]) continue;
@@ -1349,8 +1348,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 
 		do_mimic_change(Ind, j, FALSE);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
-	}
-	else if (spell > (20000 - 1)){ /* hack: 20000 masks poly into.. */
+	} else if (spell >= 20000) { /* hack: 20000 masks poly into.. */
 		k = p_ptr->body_monster;
 		//j = get_quantity("Which form (0 for player form)?", 0);
 		j = spell - 20000;
@@ -1376,28 +1374,23 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 			msg_print(Ind, "You cannot use that form!");
 		}
 	    } else {
-		if ((j > MAX_R_IDX) || (j < 0))
-		{
+		if ((j > MAX_R_IDX) || (j < 0)) {
 			msg_print(Ind, "That form does not exist in the realm!");
 			return;
-		}
-		else if (k == j){
+		} else if (k == j) {
 			msg_print(Ind, "You are already using that form!");
 			return;
-		}
-		else if (r_info[j].flags1 & RF1_UNIQUE){
+		} else if (r_info[j].flags1 & RF1_UNIQUE){
 			msg_print(Ind, "That form is unique!");
 			return;
-		}
-		else if (j && p_ptr->r_killed[j] < 1 && !admin) {
+		} else if (j && p_ptr->r_killed[j] < 1 && !admin) {
 			if (!p_ptr->free_mimic) {
 				msg_print(Ind, "You have no experience with that form at all!");
 				return;
 			} else {
 				using_free_mimic = TRUE;
 			}
-		}
-		else if (p_ptr->r_killed[j] < r_info[j].level && !admin) {
+		} else if (p_ptr->r_killed[j] < r_info[j].level && !admin) {
 			if (!p_ptr->free_mimic) {
 				msg_print(Ind, "You have not yet learned that form!");
 				return;
@@ -1406,20 +1399,18 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 			}
 		}
 
-		if (strlen(r_info[j].name + r_name) <= 1){	/* <- ??? */
+		if (strlen(r_info[j].name + r_name) <= 1) {	/* <- ??? */
 			msg_print(Ind, "You cannot use that form!");
 			return;
 		}
 //		if (!r_info[j].level && !mon_allowed(&r_info[j])){	/* <- ? */
-		else if (!mon_allowed_chance(&r_info[j])){	/* ! - C. Blue */
+		else if (!mon_allowed_chance(&r_info[j])) {	/* ! - C. Blue */
 			msg_print(Ind, "You cannot use that form!");
 			return;
-		}
-		else if ((j != 0) && ((p_ptr->pclass == CLASS_SHAMAN) && !mimic_shaman(j))){
+		} else if ((j != 0) && ((p_ptr->pclass == CLASS_SHAMAN) && !mimic_shaman(j))) {
 			msg_print(Ind, "You cannot use that form!");
 			return;
-		}
-		else if (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100)){
+		} else if (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100)) {
 			msg_print(Ind, "You are not powerful enough to change into that form!");
 			return;
 		}
@@ -1435,7 +1426,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 		/* (S)he is no longer afk */
 		un_afk_idle(Ind);
 
-		do_mimic_power(Ind, spell - 3, dir);
+		do_mimic_power(Ind, spell - 4, dir);
 	}
 }
 
