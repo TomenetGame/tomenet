@@ -172,6 +172,44 @@ byte level_rand_y(struct worldpos *wpos)
 	return (wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].rn_y : wild->dungeon->level[ABS(wpos->wz) - 1].rn_y);
 }
 
+static int get_staircase_colour(dungeon_type *d_ptr, byte *c) {
+	/* override colour from easiest to worst */
+	if (d_ptr->flags2 & DF2_NO_RECALL_INTO) {
+		*c = TERM_YELLOW;
+		return 1;
+	}
+	if (d_ptr->flags1 & DF1_NO_UP) {
+		*c = TERM_ORANGE;
+		return 2;
+	}
+	if (d_ptr->flags1 & DF1_NO_RECALL) {
+		*c = TERM_RED;
+		return 3;
+	}
+	if (d_ptr->flags1 & DF1_FORCE_DOWN) {
+		*c = TERM_L_RED;
+		return 4;
+	}
+	if (d_ptr->flags2 & DF2_HELL) {
+		*c = TERM_FIRE;
+		return 5;
+	}
+	if (d_ptr->flags2 & DF2_IRON) {
+		*c = TERM_L_DARK;
+		return 6;
+	}
+
+	/* joker overrides the king ;) */
+	if (d_ptr->flags2 & DF2_NO_DEATH) {
+		*c = TERM_GREEN;
+		return -1;
+	}
+
+	/* normal */
+	*c = TERM_WHITE;
+	return 0;
+}
+
 /* mode: 1 stairs, 2 wor, 3 probtravel, 4 ghostfloating */
 bool can_go_up(struct worldpos *wpos, byte mode)
 {
@@ -3049,7 +3087,6 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		/* Give staircases different colours depending on dungeon flags -C. Blue :) */
 		if ((c_ptr->feat == FEAT_MORE) || (c_ptr->feat == FEAT_WAY_MORE) ||
 		    (c_ptr->feat == FEAT_WAY_LESS) || (c_ptr->feat == FEAT_LESS)) {
-		    int type;
 		    struct dungeon_type *d_ptr;
 		    worldpos *tpos = &p_ptr->wpos;
 		    wilderness_type *wild=&wild_info[tpos->wy][tpos->wx];
@@ -3064,17 +3101,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		    if (!d_ptr) {
 			    (*ap) = TERM_SLATE;
 		    } else {
-			    type = d_ptr->type;
 			    /* override colour from easiest to worst */
-			    (*ap) = TERM_WHITE;
-			    if (d_ptr->flags2 & DF2_NO_RECALL_INTO) (*ap) = TERM_YELLOW;
-			    if (d_ptr->flags1 & DF1_NO_UP) (*ap) = TERM_ORANGE;
-			    if (d_ptr->flags1 & DF1_NO_RECALL) (*ap) = TERM_RED;
-			    if (d_ptr->flags1 & DF1_FORCE_DOWN) (*ap) = TERM_L_RED;
-			    if (d_ptr->flags2 & DF2_HELL) (*ap) = TERM_FIRE;
-			    if (d_ptr->flags2 & DF2_IRON) (*ap) = TERM_L_DARK;
-			    /* joker overrides the king ;) */
-			    if (d_ptr->flags2 & DF2_NO_DEATH) (*ap) = TERM_GREEN;
+			    get_staircase_colour(d_ptr, ap);
 		    }
 		}
 #endif
@@ -4074,6 +4102,7 @@ void display_map(int Ind, int *cy, int *cx)
 }
 
 
+#define WILDMAP_SHOWS_STAIRS
 static void wild_display_map(int Ind, char mode)
 {
 	player_type *p_ptr = Players[Ind];
@@ -4093,6 +4122,11 @@ static void wild_display_map(int Ind, char mode)
 	bool old_view_granite_lite;
 	struct worldpos twpos;
 	twpos.wz = 0;
+
+	byte c_dun, c_tow;
+	int c_dun_diff, c_tow_diff;
+	bool admin = is_admin(p_ptr);
+
 
 	/* Save lighting effects */
 	old_view_special_lite = p_ptr->view_special_lite;
@@ -4171,6 +4205,29 @@ static void wild_display_map(int Ind, char mode)
 				case -1: tc = ' '; ta = TERM_DARK; break;
 				default: tc = 'O'; ta = TERM_YELLOW; break;
 			}
+#ifdef WILDMAP_SHOWS_STAIRS
+			if (type != -1) {
+				dungeon_type *dun = wild_info[twpos.wy][twpos.wx].dungeon, *tow = wild_info[twpos.wy][twpos.wx].tower;
+				if (dun && !strcmp(d_info[dun->type].name + d_name, "The Shores of Valinor") && !admin) dun = NULL;
+				if (tow && !strcmp(d_info[tow->type].name + d_name, "The Shores of Valinor") && !admin) tow = NULL;
+				if (dun) {
+					if (tow) {
+						tc = 'X';
+						c_dun_diff = get_staircase_colour(dun, &c_dun);
+						c_tow_diff = get_staircase_colour(tow, &c_tow);
+						if (c_dun == c_tow) ta = c_dun;
+						else if (c_dun_diff > c_tow_diff) ta = c_dun;
+						else ta = c_tow;
+					} else {
+						tc = '>';
+						get_staircase_colour(dun, &ta);
+					}
+				} else if (tow) {
+					tc = '<';
+					get_staircase_colour(tow, &ta);
+				}
+			}
+#endif
 
 #if 0
 			/* put the @ in the center */
