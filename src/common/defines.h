@@ -299,19 +299,19 @@
 #define SCREEN_HGT	22
 #define SCREEN_WID	66
 
-/* New for 4.4.9b+: Minimum and maximum screen size - C. Blue */
+/* New for BIG_MAP feature: Minimum and maximum screen size - C. Blue */
 #define MIN_SCREEN_WID	66
 #define MIN_SCREEN_HGT	22
 #define MAX_SCREEN_WID	66
 #define MAX_SCREEN_HGT	44
 
-/* Padding of on-screen map, because of chat line, status bars, etc */
+/* (BIG_MAP) Padding of on-screen map, because of chat line, status bars, etc */
 #define SCREEN_PAD_LEFT		13
 #define SCREEN_PAD_RIGHT	1
 #define SCREEN_PAD_TOP		1
 #define SCREEN_PAD_BOTTOM	1
 
-/* Maximum possible main window size */
+/* (BIG_MAP) Maximum possible main window size */
 #define MAX_WINDOW_WID	(MAX_SCREEN_WID + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
 #define MAX_WINDOW_HGT	(MAX_SCREEN_HGT + SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM)
 
@@ -335,7 +335,7 @@
 #endif
 
 /* for consistent setting of max_panel_rows/cols: */
-#ifndef TEST_SERVER /* old -> rounding issues */
+#ifndef BIG_MAP /* old -> rounding issues */
  #define MAX_PANEL_ROWS_L	(((l_ptr->hgt + p_ptr->screen_hgt / 2) / p_ptr->screen_hgt) * 2 - 2)
  #define MAX_PANEL_COLS_L	(((l_ptr->wid + p_ptr->screen_wid / 2) / p_ptr->screen_wid) * 2 - 2)
  #define MAX_PANEL_ROWS		((MAX_HGT / p_ptr->screen_hgt) * 2 - 2)

@@ -105,6 +105,8 @@
 /* --------------------- Server-type dependant features -------------------- */
 
 #ifdef RPG_SERVER
+ #define BIG_MAP		/* Allow a larger main window with a map bigger than 66x22 - C. Blue */
+
  #define BONE_AND_TREASURE_CHAMBERS	/* New experimental room types: Generate pits of bones or treasure - C. Blue */
 
  #define MUCHO_RUMOURS		/* print a rumour on day changes and unique kills (the_sandman) */
@@ -118,6 +120,8 @@
 #endif
 
 #ifdef TEST_SERVER
+ #define BIG_MAP		/* Allow a larger main window with a map bigger than 66x22 - C. Blue */
+
  #define ENABLE_ASSASSINATE	/* experimental fighting technique for rogues - devalues Backstabbing too much probably */
 
  #ifdef MAX_CLOUDS
