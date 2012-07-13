@@ -3432,7 +3432,7 @@ player_class class_info[MAX_CLASS] =
                  TERM_L_WHITE, //confusing
 //		 TERM_ORANGE, <- more confusing since they're supposed to use a monster form
 		{ 1, 0, 0, 1, 1, -4},
-		{21+100, 0, 0, 19+100, 0, 0},
+		{19+100, 0, 0, 10+100, 0, 0},//21,19
 		25, 35, 28, 1, 18, 18, 60, 46,
 	         9, 10, 10, 0,  0,  0, 40, 30,
 		6, 30,//3, 40,//4, 25
@@ -3902,7 +3902,7 @@ player_class class_info[MAX_CLASS] =
                 "Ranger",
                 TERM_L_UMBER,
 		{ 2, 2, -1, 1, 2, 0},
-		{21+100, 0+100, 0, 19+100, 0, 0},
+		{19+100, 0+100, 0, 10+100, 0, 0},//21,19
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
@@ -4124,7 +4124,7 @@ player_class class_info[MAX_CLASS] =
                 "Adventurer",
                 TERM_VIOLET,
 		{ 0, 0, 0, 0, 0, 0},
-		{20, 0, 0, 10, 0, 0},
+		{19, 0, 0, 10, 0, 0},//20,10
 		30, 20, 20, 3,  15, 15, 50, 50,
 		10, 10,  10, 0,  5,  5,  25, 25,//..,0,0,25,25
 		6, 25, //3,  0,//5,0,
