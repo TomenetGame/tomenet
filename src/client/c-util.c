@@ -4064,10 +4064,10 @@ void interact_macros(void)
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact spell name:");
 						break;
 					case mw_mimicidx:
-						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter a spell number, starting from 1, which");
-						Term_putstr(10, 11, -1, TERM_GREEN, "is the first spell after the 3 basic polymorph powers");
-						Term_putstr(10, 12, -1, TERM_GREEN, "which always occupy spell slots a)-c).");
-						Term_putstr(10, 13, -1, TERM_GREEN, "So \377G1\377g = spell d), \377G2\377g = e), \377G3\377g = f), \377G4\377g = g) etc.");
+						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter a spell number, starting from 1, which is");
+						Term_putstr(10, 11, -1, TERM_GREEN, "the first spell after the 3 basic powers and immunity");
+						Term_putstr(10, 12, -1, TERM_GREEN, "preference setting, which always occupy spell slots a)-d).");
+						Term_putstr(10, 13, -1, TERM_GREEN, "So \377G1\377g = spell e), \377G2\377g = f), \377G3\377g = g), \377G4\377g = h) etc.");
 						Term_putstr(10, 14, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter spell index number:");
 						break;
