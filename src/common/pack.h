@@ -151,7 +151,8 @@
 #define PKT_BPR			129 /* BpR display replaces Study display */
 
 #define PKT_SANITY		130
-//XXX 131-149
+#define PKT_SCREEN_DIM		131	/* client's screen dimensions */
+//XXX 132-149
 
 /* Packet types 150- are hacks */
 #define PKT_FLUSH		150

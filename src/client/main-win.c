@@ -857,10 +857,12 @@ static void load_prefs_aux(term_data *td, cptr sec_name)
 	td->graf_want = string_make(extract_file_name(tmp));
 #endif
 
-	if (td != &data[0]) {
-		/* Window size */
-		td->cols = GetPrivateProfileInt(sec_name, "Columns", td->cols, ini_file);
-		td->rows = GetPrivateProfileInt(sec_name, "Rows", td->rows, ini_file);
+	/* Window size */
+	td->cols = GetPrivateProfileInt(sec_name, "Columns", td->cols, ini_file);
+	td->rows = GetPrivateProfileInt(sec_name, "Rows", td->rows, ini_file);
+	if (td = &data[0]) {
+		screen_wid = td->cols - 14;
+		screen_hgt = td->rows - 2;
 	}
 
 	/* Window position */

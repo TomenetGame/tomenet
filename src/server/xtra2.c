@@ -9422,11 +9422,11 @@ void panel_bounds(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	p_ptr->panel_row_min = p_ptr->panel_row * (SCREEN_HGT / 2);
-	p_ptr->panel_row_max = p_ptr->panel_row_min + SCREEN_HGT - 1;
+	p_ptr->panel_row_min = p_ptr->panel_row * (p_ptr->screen_hgt / 2);
+	p_ptr->panel_row_max = p_ptr->panel_row_min + p_ptr->screen_hgt - 1;
 	p_ptr->panel_row_prt = p_ptr->panel_row_min - 1;
-	p_ptr->panel_col_min = p_ptr->panel_col * (SCREEN_WID / 2);
-	p_ptr->panel_col_max = p_ptr->panel_col_min + SCREEN_WID - 1;
+	p_ptr->panel_col_min = p_ptr->panel_col * (p_ptr->screen_wid / 2);
+	p_ptr->panel_col_max = p_ptr->panel_col_min + p_ptr->screen_wid - 1;
 	p_ptr->panel_col_prt = p_ptr->panel_col_min - 13;
 }
 
@@ -9452,14 +9452,14 @@ void verify_panel(int Ind)
 
 	/* Scroll screen when 2 grids from top/bottom edge */
 	if ((y < p_ptr->panel_row_min + SCROLL_MARGIN_ROW) || (y > p_ptr->panel_row_max - SCROLL_MARGIN_ROW)) {
-		prow = ((y - SCREEN_HGT / 4) / (SCREEN_HGT / 2));
+		prow = ((y - p_ptr->screen_hgt / 4) / (p_ptr->screen_hgt / 2));
 		if (prow > p_ptr->max_panel_rows) prow = p_ptr->max_panel_rows;
 		else if (prow < 0) prow = 0;
 	}
 
 	/* Scroll screen when 4 grids from left/right edge */
 	if ((x < p_ptr->panel_col_min + SCROLL_MARGIN_COL) || (x > p_ptr->panel_col_max - SCROLL_MARGIN_COL)) {
-		pcol = ((x - SCREEN_WID / 4) / (SCREEN_WID / 2));
+		pcol = ((x - p_ptr->screen_wid / 4) / (p_ptr->screen_wid / 2));
 		if (pcol > p_ptr->max_panel_cols) pcol = p_ptr->max_panel_cols;
 		else if (pcol < 0) pcol = 0;
 	}

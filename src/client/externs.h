@@ -677,6 +677,7 @@ extern int Send_guild(s16b command, cptr buf);
 extern int Send_purchase_house(int dir);
 extern int Send_suicide(void);
 extern int Send_options(void);
+extern int Send_screen_dimensions(void);
 extern int Send_master(s16b command, cptr buf);
 extern int Send_clear_buffer(void);
 extern int Send_clear_actions(void);
@@ -835,3 +836,5 @@ extern int artifact_list_code[MAX_A_IDX], artifact_list_idx;
 
 extern char kind_list_name[MAX_K_IDX][80];
 extern int kind_list_tval[MAX_K_IDX], kind_list_sval[MAX_K_IDX], kind_list_idx;
+
+extern int screen_wid, screen_hgt;

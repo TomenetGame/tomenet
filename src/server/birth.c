@@ -2258,8 +2258,8 @@ static void player_setup(int Ind, bool new)
 #if 0
 		/* hack: dungeon towns are fully memorized (aka revealed) */
 		if (isdungeontown(wpos)) {
-	                p_ptr->max_panel_rows = (MAX_HGT / SCREEN_HGT) * 2 - 2;
-    		        p_ptr->max_panel_cols = (MAX_WID / SCREEN_WID) * 2 - 2;
+	                p_ptr->max_panel_rows = (MAX_HGT / p_ptr->screen_hgt) * 2 - 2;
+    		        p_ptr->max_panel_cols = (MAX_WID / p_ptr->screen_wid) * 2 - 2;
 
 	                p_ptr->cur_hgt = MAX_HGT;
         		p_ptr->cur_wid = MAX_WID;
@@ -2268,8 +2268,8 @@ static void player_setup(int Ind, bool new)
         	} else {
 #endif
 			/* Hack -- tricky formula, but needed */
-			p_ptr->max_panel_rows = ((l_ptr->hgt + SCREEN_HGT / 2) / SCREEN_HGT) * 2 - 2;
-			p_ptr->max_panel_cols = ((l_ptr->wid + SCREEN_WID / 2) / SCREEN_WID ) * 2 - 2;
+			p_ptr->max_panel_rows = ((l_ptr->hgt + p_ptr->screen_hgt / 2) / p_ptr->screen_hgt) * 2 - 2;
+			p_ptr->max_panel_cols = ((l_ptr->wid + p_ptr->screen_wid / 2) / p_ptr->screen_wid) * 2 - 2;
 
 			p_ptr->cur_hgt = l_ptr->hgt;
 			p_ptr->cur_wid = l_ptr->wid;
@@ -2277,18 +2277,18 @@ static void player_setup(int Ind, bool new)
 		}
 #endif
 	} else {
-		p_ptr->max_panel_rows = (MAX_HGT / SCREEN_HGT) * 2 - 2;
-		p_ptr->max_panel_cols = (MAX_WID / SCREEN_WID) * 2 - 2;
+		p_ptr->max_panel_rows = (MAX_HGT / p_ptr->screen_hgt) * 2 - 2;
+		p_ptr->max_panel_cols = (MAX_WID / p_ptr->screen_wid) * 2 - 2;
 
 		p_ptr->cur_hgt = MAX_HGT;
 		p_ptr->cur_wid = MAX_WID;
 	}
 
-	p_ptr->panel_row = ((p_ptr->py - SCREEN_HGT / 4) / (SCREEN_HGT / 2));
+	p_ptr->panel_row = ((p_ptr->py - p_ptr->screen_hgt / 4) / (p_ptr->screen_hgt / 2));
 	if (p_ptr->panel_row > p_ptr->max_panel_rows) p_ptr->panel_row = p_ptr->max_panel_rows;
 	else if (p_ptr->panel_row < 0) p_ptr->panel_row = 0;
 
-	p_ptr->panel_col = ((p_ptr->px - SCREEN_WID / 4) / (SCREEN_WID / 2));
+	p_ptr->panel_col = ((p_ptr->px - p_ptr->screen_wid / 4) / (p_ptr->screen_wid / 2));
 	if (p_ptr->panel_col > p_ptr->max_panel_cols) p_ptr->panel_col = p_ptr->max_panel_cols;
 	else if (p_ptr->panel_col < 0) p_ptr->panel_col = 0;
 
@@ -2539,12 +2539,22 @@ void disable_specific_warnings(player_type *p_ptr) {
  * Note that we may be called with "junk" leftover in the various
  * fields, so we must be sure to clear them first.
  */
-bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int class, int trait, int sex, int stat_order[6])
+bool player_birth(int Ind, int conn, connection_t *connp)
 {
 	player_type *p_ptr;
 	int i;
 	struct account *c_acc;
 	bool acc_banned = FALSE;
+
+	cptr accname = connp->nick, name = connp->c_name;
+	int race = connp->race, class = connp->class, trait = connp->trait, sex = connp->sex;
+	int stat_order[6];
+	stat_order[0] = connp->stat_order[0];
+	stat_order[1] = connp->stat_order[1];
+	stat_order[2] = connp->stat_order[2];
+	stat_order[3] = connp->stat_order[3];
+	stat_order[4] = connp->stat_order[4];
+	stat_order[5] = connp->stat_order[5];
 
 	/* To find out which characters crash the server */
 	s_printf("Trying to log in with character %s...\n", name);
@@ -2577,6 +2587,10 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 
 	/* Clear old information */
 	player_wipe(Ind);
+
+        /* Receive info found in PKT_SCREEN_DIM otherwise */
+        p_ptr->screen_wid = connp->Client_setup.screen_wid;
+        p_ptr->screen_hgt = connp->Client_setup.screen_hgt;
 
 	/* Copy his name and connection info */
 	strcpy(p_ptr->name, name);
@@ -2655,6 +2669,10 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 
 	/* Hack -- rewipe the player info if load failed */
 	player_wipe(Ind);
+
+        /* Receive info found in PKT_SCREEN_DIM otherwise */
+        p_ptr->screen_wid = connp->Client_setup.screen_wid;
+        p_ptr->screen_hgt = connp->Client_setup.screen_hgt;
 
 	/* Copy his name and connection info */
 	strcpy(p_ptr->name, name);

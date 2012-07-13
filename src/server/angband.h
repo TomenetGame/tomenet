@@ -48,6 +48,7 @@
  */
 #include "../common/defines.h"
 #include "../common/types.h"
+#include "netconn.h"
 #include "externs.h"
 
 

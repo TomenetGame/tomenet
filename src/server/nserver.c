@@ -339,6 +339,7 @@ static void Init_receive(void)
 	playing_receive[PKT_HOUSE]		= Receive_admin_house;
 
 	playing_receive[PKT_AUTOPHASE]		= Receive_autophase;
+	playing_receive[PKT_SCREEN_DIM]		= Receive_screen_dimensions;
 
 	playing_receive[PKT_CLEAR_BUFFER]	= Receive_clear_buffer;
 	playing_receive[PKT_CLEAR_ACTIONS]	= Receive_clear_actions;
@@ -2475,8 +2476,7 @@ static int Handle_login(int ind)
 	}
 #endif
 
-	if (!player_birth(NumPlayers + 1, connp->nick, connp->c_name, ind, connp->race, connp->class, connp->trait, connp->sex, connp->stat_order))
-	{
+	if (!player_birth(NumPlayers + 1, ind, connp)) {
 		/* Failed, connection destroyed */
 		Destroy_connection(ind, "not login");
 		return -1;
@@ -3840,6 +3840,28 @@ static int Receive_play(int ind)
 				Destroy_connection(ind, "Misread options");
 				return -1;
 			}
+		}
+
+		/* Read screen dimensions */
+		if (is_newer_than(&connp->version, 4, 4, 9, 1, 0, 1)) {
+			n = Packet_scanf(&connp->r, "%d%d", &connp->Client_setup.screen_wid, &connp->Client_setup.screen_hgt);
+			if (n <= 0) {
+				Destroy_connection(ind, "Misread dimensions");
+				return -1;
+			}
+
+			/* fix (temporary) limits */
+			if (connp->Client_setup.screen_wid > SCREEN_WID) connp->Client_setup.screen_wid = SCREEN_WID;
+			if (connp->Client_setup.screen_wid < SCREEN_WID) connp->Client_setup.screen_wid = SCREEN_WID;
+			if (connp->Client_setup.screen_hgt > SCREEN_HGT * 2) connp->Client_setup.screen_wid = SCREEN_HGT * 2;
+			if (connp->Client_setup.screen_hgt < SCREEN_HGT) connp->Client_setup.screen_wid = SCREEN_HGT;
+#ifndef TEST_SERVER
+			connp->Client_setup.screen_wid = SCREEN_WID;
+			connp->Client_setup.screen_hgt = SCREEN_HGT;
+#endif
+		} else {
+			connp->Client_setup.screen_wid = SCREEN_WID;//66
+			connp->Client_setup.screen_hgt = SCREEN_HGT;//22
 		}
 
 		/* Read the "unknown" char/attrs */
@@ -9465,6 +9487,56 @@ static int Receive_options(int ind)
 
 		/* Sync named options */
 		sync_options(player, options);
+	}
+
+	return 1;
+}
+
+static int Receive_screen_dimensions(int ind)
+{
+	connection_t *connp = Conn[ind];
+	player_type *p_ptr = NULL;
+	int player = -1, n;
+	char ch;
+
+	if (connp->id != -1) {
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+	} else {
+		player = 0;
+		p_ptr = NULL;
+	}
+
+	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	if (player) {
+		n = Packet_scanf(&connp->r, "%d%d", &p_ptr->screen_wid, &p_ptr->screen_hgt);
+		if (n <= 0) {
+			Destroy_connection(ind, "read error");
+			return n;
+		}
+
+		/* fix (temporary) limits */
+		if (p_ptr->screen_wid > SCREEN_WID) p_ptr->screen_wid = SCREEN_WID;
+		if (p_ptr->screen_wid < SCREEN_WID) p_ptr->screen_wid = SCREEN_WID;
+		if (p_ptr->screen_hgt > SCREEN_HGT * 2) p_ptr->screen_wid = SCREEN_HGT * 2;
+		if (p_ptr->screen_hgt < SCREEN_HGT) p_ptr->screen_wid = SCREEN_HGT;
+
+		/* Heavy redraw (just to make sure) */
+
+		p_ptr->redraw |= PR_MAP | PR_EXTRA | PR_BASIC | PR_HISTORY | PR_VARIOUS | PR_STATE | PR_PLUSSES;
+		if (is_older_than(&p_ptr->version, 4, 4, 8, 5, 0, 0)) p_ptr->redraw |= PR_STUDY;
+
+#ifdef ORIG_SKILL_EVIL	/* not to be defined */
+		p_ptr->update |= (PU_LITE | PU_TORCH | PU_DISTANCE | PU_SKILL_INFO | PU_SKILL_MOD);
+#else
+		p_ptr->update |= (PU_LITE | PU_TORCH | PU_DISTANCE );
+#endif
+		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP | PU_SANITY);
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 	}
 
 	return 1;

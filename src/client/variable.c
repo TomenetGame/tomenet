@@ -338,3 +338,5 @@ int artifact_list_code[MAX_A_IDX], artifact_list_idx = 0;
 /* For artifact lore */
 char kind_list_name[MAX_K_IDX][80];
 int kind_list_tval[MAX_K_IDX], kind_list_sval[MAX_K_IDX], kind_list_idx = 0;
+
+int screen_wid = SCREEN_WID, screen_hgt = SCREEN_HGT;

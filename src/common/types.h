@@ -1087,6 +1087,9 @@ struct client_setup_t
 {
 	bool options[OPT_MAX];
 
+	s16b screen_wid;
+	s16b screen_hgt;
+
 	byte u_attr[TV_MAX];
 	char u_char[TV_MAX];
 
@@ -2214,6 +2217,9 @@ struct player_type
 	s16b panel_row_prt;
 	s16b panel_row_old;
 	s16b panel_col_old;
+
+	s16b screen_wid;
+	s16b screen_hgt;
 
 	/* What he should be seeing */
 	cave_view_type scr_info[24][80];	/* Hard-coded 80x24 display */

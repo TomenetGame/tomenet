@@ -845,6 +845,11 @@ int Net_start(int sex, int race, int class)
 		Packet_printf(&wbuf, "%c", Client_setup.options[i]);
 	}
 
+	/* Send screen dimensions */
+	if (is_newer_than(&server_version, 4, 4, 9, 1, 0, 1)) {
+		Packet_printf(&wbuf, "%d%d", screen_wid, screen_hgt);
+	}
+
 #ifndef BREAK_GRAPHICS
 	/* Send the "unknown" redefinitions */
 	for (i = 0; i < TV_MAX; i++)
@@ -4606,6 +4611,17 @@ int Send_options(void)
 	for (i = 0; i < OPT_MAX; i++)
 	{
 		Packet_printf(&wbuf, "%c", Client_setup.options[i]);
+	}
+
+	return 1;
+}
+
+int Send_screen_dimensions(void)
+{
+	int n;
+
+	if ((n = Packet_printf(&wbuf, "%c%d%d", PKT_SCREEN_DIM, screen_wid, screen_hgt)) <= 0) {
+		return n;
 	}
 
 	return 1;

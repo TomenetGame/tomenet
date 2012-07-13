@@ -13,8 +13,6 @@
  * Automatically generated "variable" declarations
  */
 
-/* #include "netserver.h" */
-
 #ifdef TOMENET_WORLDS
 extern void world_comm(int fd, int arg);
 extern int WorldSocket;
@@ -450,7 +448,7 @@ extern int mon_hit_proj_id, mon_hit_proj_id2;
  */
 
 /* birth.c */
-extern bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int class, int trait, int sex, int stat_order[]);
+extern bool player_birth(int Ind, int conn, connection_t *connp);
 extern bool confirm_admin(int Ind);
 extern void server_birth(void);
 extern void admin_outfit(int Ind, int realm);

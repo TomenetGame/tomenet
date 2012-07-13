@@ -554,6 +554,9 @@ struct player_type
 	s16b panel_row_old;
 	s16b panel_col_old;
 
+	s16b screen_wid;
+	s16b screen_hgt;
+
 	const char *died_from;	/* What off-ed him */
 	const char *really_died_from;	/* What off-ed him */
 	const char *died_from_list; /* what goes on the high score list */
