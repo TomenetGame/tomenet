@@ -57,6 +57,7 @@ Contents
     (3.3)   Behaviour, chat messages and chat modes
     (3.4)   Start-up equipment & how to use it
     (3.4a)  Item basics
+    (3.4b)  Items that are always tradable
     (3.5)   Preparing the first time for fighting enemies
     (3.6)   Creating basic macros & inscribing items (IMPORTANT)
     (3.7)   Creating macros for ranged attacks & abilities (spells)
@@ -2145,6 +2146,8 @@ killed Sauron and Morgoth yet and team up with him, because those two won't
 (re)spawn for the everlasting player.
 Since it was often asked: Non-everlasting and everlasting players can revive
 each other without problems.
+Everlasting characters can additionally use the 'Instant Resurrection' feature
+offered by town temples, see (4.5a).
 
 Mode: 'Unworldly' (no-ghost)
 ----------------------------
@@ -2622,6 +2625,19 @@ a Pick of Digging {+,9} (+5,+9) (+1) (+3)
     further increases the digging ability, in the same way the (+1) does.
     So overall you can just view it as if it was a Pick (+4) (1 plus 3).
 (See (5.21) for details about digging.)
+
+
+(3.4b) Items that are always tradable
+-------------------------------------
+Certain items can always be traded, no matter the item level or owner mode (ie
+everlasting vs non-everlasting vs pvp). They will in turn receive a 100% value
+discount on trading. Those items are:
+
+-Any kind of food
+-Scrolls of Satisfy Hunger
+-Scrolls of Word of Recall
+-Amulets of the Highlands
+-Game pieces (eg chess, heavy ball)
 
 
 
@@ -3609,6 +3625,8 @@ can usually be resurrected only 2 times, so a normal player has 3 lives
 before permanently biting it.
 Unworldly/hellish characters don't have a ghost and are completely destroyed
 if they die.
+Everlasting characters may also use the 'Instant Resurrection' feature offered
+by town temples, see (4.5a), which will avoid turning into a ghost.
 
 If a player ultimatively dies on a dungeon or tower floor, ie he didn't turn
 into a resurrectable ghost but got completely erased, then that particular
