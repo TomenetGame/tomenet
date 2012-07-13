@@ -3640,7 +3640,7 @@ int do_cmd_run(int Ind, int dir)
 //		if (p_ptr->energy >= level_speed(&p_ptr->wpos)) /* otherwise auto-retaliation will never allow running */
 		{
 			/* Hack -- Set the run counter */
-			p_ptr->running = 1000;
+			p_ptr->running = 20000; //enough to cross the world horizontally (was 1000)
 
 			/* First step */
 			run_step(Ind, dir);
