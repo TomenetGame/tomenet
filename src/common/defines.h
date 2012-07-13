@@ -30,6 +30,9 @@
  * game will work if you try to use 44 lines to show the dungeon.
  *
  * You have been warned.
+ *
+ * Edit: Added arbitrary screen sizes; for now just implemented up to 44 map
+ *       lines aka 46 main window lines. (v4.4.9.1.0.2) - C. Blue
  */
 
 
@@ -290,23 +293,27 @@
 #define META_UPDATE	0x04
 
 
-/*
- * Number of grids used to display the dungeon (vertically).
- * Must be a multiple of 11, probably hard-coded to 22.
- */
+/* Traditional hard-coded number of grids used to display the dungeon,
+   had to be multiples of 11 and 33 respectively.
+   Only kept now for setting default values - C. Blue */
 #define SCREEN_HGT	22
-
-/*
- * Number of grids used to display the dungeon (horizontally).
- * Must be a multiple of 33, probably hard-coded to 66.
- */
 #define SCREEN_WID	66
 
-/* Minimum and maximum screen size (temporarily) - C. Blue */
+/* New for 4.4.9b+: Minimum and maximum screen size - C. Blue */
 #define MIN_SCREEN_WID	66
 #define MIN_SCREEN_HGT	22
 #define MAX_SCREEN_WID	66
 #define MAX_SCREEN_HGT	44
+
+/* Padding of on-screen map, because of chat line, status bars, etc */
+#define SCREEN_PAD_LEFT		13
+#define SCREEN_PAD_RIGHT	1
+#define SCREEN_PAD_TOP		1
+#define SCREEN_PAD_BOTTOM	2
+
+/* Maximum possible main window size */
+#define MAX_WINDOW_WID	(MAX_SCREEN_WID + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
+#define MAX_WINDOW_HGT	(MAX_SCREEN_WID + SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM)
 
 /*
  * Maximum dungeon height in grids, must be a multiple of SCREEN_HGT,

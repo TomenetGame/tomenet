@@ -674,8 +674,8 @@ static void term_getsize(term_data *td)
 	if (td->rows < 1) td->rows = 1;
 
 	/* Paranoia */
-	if (td->cols > (14+MAX_SCREEN_WID)) td->cols = (14+MAX_SCREEN_WID);
-	if (td->rows > (2+MAX_SCREEN_HGT)) td->rows = (2+MAX_SCREEN_HGT);
+	if (td->cols > (MAX_WINDOW_WID)) td->cols = (MAX_WINDOW_WID);
+	if (td->rows > (MAX_WINDOW_HGT)) td->rows = (MAX_WINDOW_HGT);
 
 	/* Window sizes */
 	td->client_wid = td->cols * td->font_wid + td->size_ow1 + td->size_ow2;
@@ -861,8 +861,8 @@ static void load_prefs_aux(term_data *td, cptr sec_name)
 	td->cols = GetPrivateProfileInt(sec_name, "Columns", td->cols, ini_file);
 	td->rows = GetPrivateProfileInt(sec_name, "Rows", td->rows, ini_file);
 	if (td = &data[0]) {
-		screen_wid = td->cols - 14;
-		screen_hgt = td->rows - 2;
+		screen_wid = td->cols - (MAX_WINDOW_WID - MAX_SCREEN_WID);
+		screen_hgt = td->rows - (MAX_WINDOW_HGT - MAX_SCREEN_HGT);
 	}
 
 	/* Window position */
@@ -2910,8 +2910,8 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 
 			/* Maximum window size */
 			rc.left = rc.top = 0;
-			rc.right = rc.left + (14+MAX_SCREEN_WID) * td->font_wid + td->size_ow1 + td->size_ow2;
-			rc.bottom = rc.top + (2+MAX_SCREEN_HGT) * td->font_hgt + td->size_oh1 + td->size_oh2;
+			rc.right = rc.left + (MAX_WINDOW_WID) * td->font_wid + td->size_ow1 + td->size_ow2;
+			rc.bottom = rc.top + (MAX_WINDOW_HGT) * td->font_hgt + td->size_oh1 + td->size_oh2;
 
 			/* Paranoia */
 			rc.right  += (td->font_wid - 1);
@@ -3161,8 +3161,8 @@ LRESULT FAR PASCAL _export AngbandListProc(HWND hWnd, UINT uMsg,
 
 			/* Maximum window size */
 			rc.left = rc.top = 0;
-			rc.right = rc.left + (14+MAX_SCREEN_WID) * td->font_wid + td->size_ow1 + td->size_ow2;
-			rc.bottom = rc.top + (2+MAX_SCREEN_HGT) * td->font_hgt + td->size_oh1 + td->size_oh2;
+			rc.right = rc.left + (MAX_WINDOW_WID) * td->font_wid + td->size_ow1 + td->size_ow2;
+			rc.bottom = rc.top + (MAX_WINDOW_HGT) * td->font_hgt + td->size_oh1 + td->size_oh2;
 
 			/* Paranoia */
 			rc.right += (td->font_wid - 1);

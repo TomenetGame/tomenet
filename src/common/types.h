@@ -2222,10 +2222,10 @@ struct player_type
 	s16b screen_hgt;
 
 	/* What he should be seeing */
-	cave_view_type scr_info[24][80];	/* Hard-coded 80x24 display */
+	cave_view_type scr_info[MAX_WINDOW_HGT][MAX_WINDOW_WID]; /* Hard-coded Y*X display */
 
 	/* Overlay layer used for detection */
-	cave_view_type ovl_info[24][80];	/* Hard-coded 80x24 display */
+	cave_view_type ovl_info[MAX_WINDOW_HGT][MAX_WINDOW_WID]; /* Hard-coded Y*X display */
 
 	s32b mimic_seed;	/* seed for random mimic immunities etc. */
 	char mimic_immunity;	/* preferred immunity when mimicking (overrides mimic_seed) */

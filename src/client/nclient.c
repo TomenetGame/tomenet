@@ -38,8 +38,8 @@
 
 
 /* for weather - keep in sync with c-xtra1.c, do_weather()! */
-#define PANEL_X	13
-#define PANEL_Y	1
+#define PANEL_X	(SCREEN_PAD_LEFT)
+#define PANEL_Y	(SCREEN_PAD_TOP)
 
 
 extern void flicker(void);
@@ -1980,8 +1980,8 @@ int Receive_char(void)
 	}
 
 	/* remember map_info in client-side buffer */
-	if (x >= PANEL_X && x < PANEL_X + SCREEN_WID &&
-	    y >= PANEL_Y && y < PANEL_Y + SCREEN_HGT) {
+	if (x >= PANEL_X && x < PANEL_X + screen_wid &&
+	    y >= PANEL_Y && y < PANEL_Y + screen_hgt) {
 		panel_map_a[x - PANEL_X][y - PANEL_Y] = a;
 		panel_map_c[x - PANEL_X][y - PANEL_Y] = c;
 	}
@@ -2563,8 +2563,8 @@ int Receive_line_info(void)
 			/* Don't draw anything if "char" is zero */
 			if (c && draw) {
 				/* remember map_info in client-side buffer */
-				if (x + i >= PANEL_X && x + i < PANEL_X + SCREEN_WID &&
-				    y >= PANEL_Y && y < PANEL_Y + SCREEN_HGT) {
+				if (x + i >= PANEL_X && x + i < PANEL_X + screen_wid &&
+				    y >= PANEL_Y && y < PANEL_Y + screen_hgt) {
 					panel_map_a[x + i - PANEL_X][y - PANEL_Y] = a;
 					panel_map_c[x + i - PANEL_X][y - PANEL_Y] = c;
 				}
@@ -3600,9 +3600,9 @@ int Receive_weather(void)
 			for (i = 0; i < weather_elements; i++) {
 				/* only for elements within visible panel screen area */
 				if (weather_element_x[i] >= weather_panel_x &&
-				    weather_element_x[i] < weather_panel_x + SCREEN_WID &&
+				    weather_element_x[i] < weather_panel_x + screen_wid &&
 			    	    weather_element_y[i] >= weather_panel_y &&
-			            weather_element_y[i] < weather_panel_y + SCREEN_HGT) {
+			            weather_element_y[i] < weather_panel_y + screen_hgt) {
 					/* restore original grid content */
 	                                Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
         	                            PANEL_Y + weather_element_y[i] - weather_panel_y,

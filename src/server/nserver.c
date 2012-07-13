@@ -3853,8 +3853,8 @@ static int Receive_play(int ind)
 			/* fix (temporary) limits */
 			if (connp->Client_setup.screen_wid > MAX_SCREEN_WID) connp->Client_setup.screen_wid = MAX_SCREEN_WID;
 			if (connp->Client_setup.screen_wid < MIN_SCREEN_WID) connp->Client_setup.screen_wid = MIN_SCREEN_WID;
-			if (connp->Client_setup.screen_hgt > MAX_SCREEN_HGT) connp->Client_setup.screen_wid = MAX_SCREEN_HGT;
-			if (connp->Client_setup.screen_hgt < MIN_SCREEN_HGT) connp->Client_setup.screen_wid = MIN_SCREEN_HGT;
+			if (connp->Client_setup.screen_hgt > MAX_SCREEN_HGT) connp->Client_setup.screen_hgt = MAX_SCREEN_HGT;
+			if (connp->Client_setup.screen_hgt < MIN_SCREEN_HGT) connp->Client_setup.screen_hgt = MIN_SCREEN_HGT;
 #ifndef TEST_SERVER
 			connp->Client_setup.screen_wid = SCREEN_WID;
 			connp->Client_setup.screen_hgt = SCREEN_HGT;
@@ -9522,8 +9522,8 @@ static int Receive_screen_dimensions(int ind)
 		/* fix (temporary) limits */
 		if (p_ptr->screen_wid > MAX_SCREEN_WID) p_ptr->screen_wid = MAX_SCREEN_WID;
 		if (p_ptr->screen_wid < MIN_SCREEN_WID) p_ptr->screen_wid = MIN_SCREEN_WID;
-		if (p_ptr->screen_hgt > MAX_SCREEN_HGT) p_ptr->screen_wid = MAX_SCREEN_HGT;
-		if (p_ptr->screen_hgt < MIN_SCREEN_HGT) p_ptr->screen_wid = MIN_SCREEN_HGT;
+		if (p_ptr->screen_hgt > MAX_SCREEN_HGT) p_ptr->screen_hgt = MAX_SCREEN_HGT;
+		if (p_ptr->screen_hgt < MIN_SCREEN_HGT) p_ptr->screen_hgt = MIN_SCREEN_HGT;
 #ifndef TEST_SERVER
                 p_ptr->screen_wid = SCREEN_WID;
                 p_ptr->screen_hgt = SCREEN_HGT;

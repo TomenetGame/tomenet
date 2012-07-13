@@ -49,11 +49,11 @@ static void read_mangrc_aux(int t, cptr sec_name) {
 
 	if ((val = strstr(sec_name, "_Columns"))) {
 		term_prefs[t].columns = atoi(val + 8);
-	        if (t == 0) screen_wid = term_prefs[0].columns - 14;
+	        if (t == 0) screen_wid = term_prefs[0].columns - (MAX_WINDOW_WID - MAX_SCREEN_WID);
 	}
 	if ((val = strstr(sec_name, "_Lines"))) {
 		term_prefs[t].lines = atoi(val + 6);
-                if (t == 0) screen_hgt = term_prefs[0].lines - 2;
+                if (t == 0) screen_hgt = term_prefs[0].lines - (MAX_WINDOW_HGT - MAX_SCREEN_HGT);
         }
 
 	if ((val = strstr(sec_name, "_Font"))) {

@@ -230,8 +230,8 @@ int weather_element_x[1024], weather_element_y[1024], weather_element_ydest[1024
 int weather_panel_x, weather_panel_y; /* part of the map we're viewing on screen, top left corner */
 bool weather_panel_changed; /* view got updated anyway by switching panel? */
 /* a client-side map_info buffer of current view panel (for weather) */
-byte panel_map_a[SCREEN_WID][SCREEN_HGT];
-char panel_map_c[SCREEN_WID][SCREEN_HGT];
+byte panel_map_a[MAX_SCREEN_WID][MAX_SCREEN_HGT];
+char panel_map_c[MAX_SCREEN_WID][MAX_SCREEN_HGT];
 /* is weather on current worldmap sector part of an elliptical cloud?: */
 int cloud_x1[10], cloud_y1[10], cloud_x2[10], cloud_y2[10], cloud_dsum[10];
 int cloud_xm100[10], cloud_ym100[10]; /* cloud movement in 1/100 grid per s */

@@ -2311,8 +2311,8 @@ void window_stuff(void)
  * Note: keep following defines in sync with nclient.c, beginning of file.
  * do_weather() is called by do_ping() which is called every frame. */
 #define SKY_ALTITUDE	20 /* assumed 'pseudo-isometric' cloud altitude */
-#define PANEL_X		13 /* physical top-left screen position of view panel */
-#define PANEL_Y		1 /* physical top-left screen position of view panel */
+#define PANEL_X		(SCREEN_PAD_LEFT) /* physical top-left screen position of view panel */
+#define PANEL_Y		(SCREEN_PAD_TOP) /* physical top-left screen position of view panel */
 void do_weather() {
 	int i, j, intensity;
 	static int weather_gen_ticks = 0, weather_ticks10 = 0;
@@ -2351,9 +2351,9 @@ void do_weather() {
 		for (i = 0; i < weather_elements; i++) {
 			/* only for elements within visible panel screen area */
 			if (weather_element_x[i] >= weather_panel_x &&
-			    weather_element_x[i] < weather_panel_x + SCREEN_WID &&
+			    weather_element_x[i] < weather_panel_x + screen_wid &&
 			    weather_element_y[i] >= weather_panel_y &&
-			    weather_element_y[i] < weather_panel_y + SCREEN_HGT) {
+			    weather_element_y[i] < weather_panel_y + screen_hgt) {
 				if (weather_element_type[i] == 1) {
 					/* display raindrop */
 					Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
@@ -2533,9 +2533,9 @@ void do_weather() {
 		    (weather_element_type[i] == 2 && !weather_speed_snow_ticks))) {
 			/* only for elements within visible panel screen area */
 			if (weather_element_x[i] >= weather_panel_x &&
-			    weather_element_x[i] < weather_panel_x + SCREEN_WID &&
+			    weather_element_x[i] < weather_panel_x + screen_wid &&
 			    weather_element_y[i] >= weather_panel_y &&
-			    weather_element_y[i] < weather_panel_y + SCREEN_HGT) {
+			    weather_element_y[i] < weather_panel_y + screen_hgt) {
 				/* restore original grid content */
 				Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
 				    PANEL_Y + weather_element_y[i] - weather_panel_y,
@@ -2570,9 +2570,9 @@ void do_weather() {
 			}
 			/* only for elements within visible panel screen area */
 			else if (weather_element_x[i] >= weather_panel_x &&
-			    weather_element_x[i] < weather_panel_x + SCREEN_WID &&
+			    weather_element_x[i] < weather_panel_x + screen_wid &&
 			    weather_element_y[i] >= weather_panel_y &&
-			    weather_element_y[i] < weather_panel_y + SCREEN_HGT) {
+			    weather_element_y[i] < weather_panel_y + screen_hgt) {
 				/* display raindrop */
 				Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
 				    PANEL_Y + weather_element_y[i] - weather_panel_y,
@@ -2609,9 +2609,9 @@ void do_weather() {
 			}
 			/* only for elements within visible panel screen area */
 			else if (weather_element_x[i] >= weather_panel_x &&
-			    weather_element_x[i] < weather_panel_x + SCREEN_WID &&
+			    weather_element_x[i] < weather_panel_x + screen_wid &&
 			    weather_element_y[i] >= weather_panel_y &&
-			    weather_element_y[i] < weather_panel_y + SCREEN_HGT) {
+			    weather_element_y[i] < weather_panel_y + screen_hgt) {
 				/* display snowflake */
 				Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
 				    PANEL_Y + weather_element_y[i] - weather_panel_y,
