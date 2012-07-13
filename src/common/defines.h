@@ -302,6 +302,11 @@
  */
 #define SCREEN_WID	66
 
+/* Minimum and maximum screen size (temporarily) - C. Blue */
+#define MIN_SCREEN_WID	66
+#define MIN_SCREEN_HGT	22
+#define MAX_SCREEN_WID	66
+#define MAX_SCREEN_HGT	44
 
 /*
  * Maximum dungeon height in grids, must be a multiple of SCREEN_HGT,

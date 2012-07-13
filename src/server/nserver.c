@@ -3851,17 +3851,17 @@ static int Receive_play(int ind)
 			}
 
 			/* fix (temporary) limits */
-			if (connp->Client_setup.screen_wid > SCREEN_WID) connp->Client_setup.screen_wid = SCREEN_WID;
-			if (connp->Client_setup.screen_wid < SCREEN_WID) connp->Client_setup.screen_wid = SCREEN_WID;
-			if (connp->Client_setup.screen_hgt > SCREEN_HGT * 2) connp->Client_setup.screen_wid = SCREEN_HGT * 2;
-			if (connp->Client_setup.screen_hgt < SCREEN_HGT) connp->Client_setup.screen_wid = SCREEN_HGT;
+			if (connp->Client_setup.screen_wid > MAX_SCREEN_WID) connp->Client_setup.screen_wid = MAX_SCREEN_WID;
+			if (connp->Client_setup.screen_wid < MIN_SCREEN_WID) connp->Client_setup.screen_wid = MIN_SCREEN_WID;
+			if (connp->Client_setup.screen_hgt > MAX_SCREEN_HGT) connp->Client_setup.screen_wid = MAX_SCREEN_HGT;
+			if (connp->Client_setup.screen_hgt < MIN_SCREEN_HGT) connp->Client_setup.screen_wid = MIN_SCREEN_HGT;
 #ifndef TEST_SERVER
 			connp->Client_setup.screen_wid = SCREEN_WID;
 			connp->Client_setup.screen_hgt = SCREEN_HGT;
 #endif
 		} else {
-			connp->Client_setup.screen_wid = SCREEN_WID;//66
-			connp->Client_setup.screen_hgt = SCREEN_HGT;//22
+			connp->Client_setup.screen_wid = SCREEN_WID;
+			connp->Client_setup.screen_hgt = SCREEN_HGT;
 		}
 
 		/* Read the "unknown" char/attrs */

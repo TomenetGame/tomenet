@@ -1788,9 +1788,11 @@ static errr CheckEvent(bool wait)
 			cols = ((Infowin->w - 2) / td->fnt->wid);
 			rows = ((Infowin->h - 2) / td->fnt->hgt);
 
+#if 0
 			/* Hack -- do not allow resize of main screen */
 			if (td == &screen) cols = 80;
 			if (td == &screen) rows = 24;
+#endif
 
 			/* Hack -- minimal size */
 			if (cols < 1) cols = 1;
@@ -1998,7 +2000,7 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	term *t = &td->t;
 
 	int wid, hgt, num;
-	int win_cols, win_lines; /* 80, 24 default */
+	int win_cols = 80, win_lines = 24; /* 80, 24 default */
 	cptr n;
 	int topx, topy; /* 0, 0 default */
 
@@ -2021,12 +2023,12 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 
 //	if (!strcmp(name, "Screen")) {
 	if (!strcmp(name, ang_term_name[0])) {
-#if 0 /* must remain 80x24! (also, it's always visible) */
+#if 1
 		n = getenv("TOMENET_X11_WID_SCREEN");
 		if (n) win_cols = atoi(n);
 		n = getenv("TOMENET_X11_HGT_SCREEN");
 		if (n) win_lines = atoi(n);
-#else
+#else /* must remain 80x24! (also, it's always visible) */
 		win_cols = 80;
 		win_lines = 24;
 #endif
@@ -2776,9 +2778,13 @@ static void term_force_font(int term_idx, char fnt_name[256]) {
 	/* Detemine "proper" number of rows/cols */
 	cols = ((Infowin->w - 2) / td->fnt->wid);
 	rows = ((Infowin->h - 2) / td->fnt->hgt);
+
+#if 0
 	/* Hack -- do not allow resize of main screen */
 	if (td == &screen) cols = 80;
 	if (td == &screen) rows = 24;
+#endif
+
 	/* Hack -- minimal size */
 	if (cols < 1) cols = 1;
 	if (rows < 1) rows = 1;
