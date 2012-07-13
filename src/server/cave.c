@@ -4206,7 +4206,7 @@ static void wild_display_map(int Ind, char mode)
 				default: tc = 'O'; ta = TERM_YELLOW; break;
 			}
 #ifdef WILDMAP_SHOWS_STAIRS
-			if (type != -1) {
+			if (type != -1 && type != WILD_TOWN) {
 				dungeon_type *dun = wild_info[twpos.wy][twpos.wx].dungeon, *tow = wild_info[twpos.wy][twpos.wx].tower;
 				if (dun && !strcmp(d_info[dun->type].name + d_name, "The Shores of Valinor") && !admin) dun = NULL;
 				if (tow && !strcmp(d_info[tow->type].name + d_name, "The Shores of Valinor") && !admin) tow = NULL;
