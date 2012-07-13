@@ -9520,10 +9520,14 @@ static int Receive_screen_dimensions(int ind)
 		}
 
 		/* fix (temporary) limits */
-		if (p_ptr->screen_wid > SCREEN_WID) p_ptr->screen_wid = SCREEN_WID;
-		if (p_ptr->screen_wid < SCREEN_WID) p_ptr->screen_wid = SCREEN_WID;
-		if (p_ptr->screen_hgt > SCREEN_HGT * 2) p_ptr->screen_wid = SCREEN_HGT * 2;
-		if (p_ptr->screen_hgt < SCREEN_HGT) p_ptr->screen_wid = SCREEN_HGT;
+		if (p_ptr->screen_wid > MAX_SCREEN_WID) p_ptr->screen_wid = MAX_SCREEN_WID;
+		if (p_ptr->screen_wid < MIN_SCREEN_WID) p_ptr->screen_wid = MIN_SCREEN_WID;
+		if (p_ptr->screen_hgt > MAX_SCREEN_HGT) p_ptr->screen_wid = MAX_SCREEN_HGT;
+		if (p_ptr->screen_hgt < MIN_SCREEN_HGT) p_ptr->screen_wid = MIN_SCREEN_HGT;
+#ifndef TEST_SERVER
+                p_ptr->screen_wid = SCREEN_WID;
+                p_ptr->screen_hgt = SCREEN_HGT;
+#endif
 
 		/* Heavy redraw (just to make sure) */
 
