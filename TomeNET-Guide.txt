@@ -3672,7 +3672,7 @@ very deep dungeon levels which he hadn't visited yet when he was still alive.
 So 'Ghost-Diving' (means: simply continuing playing as a ghost) is somewhat
 limited there.
 
-That will bring you back to life at the cost of experience (40% usually).
+That will bring you back to life at the cost of experience (35% usually).
 There are 3 ways to be revived:
 -the ghost can visit a temple (green '4' in town). The temple priest will also
  give him some money. The temple priest will turn the ghost away without
@@ -4233,8 +4233,28 @@ The 1..9 are standard shops, namely..
 2       Armoury         Offers various basic armour. Rarely excellent pieces.
 3       Weapon Shop     Offers various basic weapons. Rarely excellent pieces.
 4       Temple          Player ghosts will be revived here, and receive some
-                        money. The temple sells weapons for priests, scrolls
-                        and potions.
+                        money. The temple also sells weapons for priests,
+                        and a selection of scrolls and potions.
+                        The temple priest will also attempt to cure, heal or
+                        feed you if you enter the temple in bad condition.
+                        Since 4.4.9 the temple also offers you to toggle
+                        'Instant Resurrection', a new feature that is only
+                        available for everlasting players and will immediately
+                        resurrect a player at the temple when he dies, removing
+                        the need to wait for some higher level player to come
+                        and rescue him. In turn, the experience penalty will be
+                        50% instead of the usual 35%. However, the player will
+                        need to have enough cash to pay an instant resurrection
+                        fee when he dies, which is:
+                        Dungeonlevel * dungeonlevel * 10 + 10 gold pieces.
+                        The money is automatically deducted from the purse or
+                        the bank account as required. If the player does not
+                        have enough money in total then resurrection will fail
+                        and the player will remain a ghost in the dungeon as
+                        usual when not using instant resurrection.
+                        Instant resurrection does not work in no-ghost dungeons
+                        (ie ironman or hellish) and dungeon levels (ie floors
+                        where Morgoth is) or in the Nether Realm.
 5       Alchemist       Sells various scrolls and potions.
 6       Magic Shop      Sells wands, staves, rings and amulets.
 7       Black Market    Sells many different items, mostly very good ones.
@@ -12209,10 +12229,10 @@ Holy Curing
                     Required skill level for first spell level: 21.
     Resurrection    Resurrect another player's ghost. The resurrected player
                     will lose less experience the higher the spell level is.
-                    Exp loss is usually 40% if revived in the temple or via
+                    Exp loss is usually 35% if revived in the temple or via
                     life scroll.
-                    Resurrection prayer exp loss goes down from 40% and caps
-                    at 33%.
+                    Resurrection prayer exp loss goes down from 35% and caps
+                    at 30%.
                     Required skill level for first spell level: 30.
     Soul Curing     Cures Black Breath (See 1.5 for more information about
                     Black Breath).                             (auto-project)
