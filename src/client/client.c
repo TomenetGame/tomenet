@@ -407,6 +407,9 @@ static void write_mangrc_aux_line(int t, cptr sec_name, char *buf_org) {
 	x11win_getinfo(t, &x, &y, &c, &r, font_name);
 	if (!c) return; /* invisible window? */
 
+	/* no line that gets modified? then keep original! */
+	strcpy(buf, buf_org);
+
 	if (!strncmp(ter_name, "_Title", 6)) {
 		if (t != 0)
 			sprintf(buf, "%s_Title\t%s\n", sec_name, ang_term_name[t]);
