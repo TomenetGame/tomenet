@@ -6788,6 +6788,12 @@ void do_slash_cmd(int Ind, char *message)
 			}
  #endif
 #endif
+			/* transport admin to Valinor */
+			else if (prefix(message, "/tovalinor")) {
+				msg_print(Ind, "Initiating passage to Valinor.");
+                                p_ptr->auto_transport = AT_VALINOR;
+			        return;
+			}
 		}
 	}
 
