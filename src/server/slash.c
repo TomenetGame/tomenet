@@ -6743,6 +6743,11 @@ void do_slash_cmd(int Ind, char *message)
 #ifdef CLIENT_SIDE_WEATHER
  #ifndef CLIENT_WEATHER_GLOBAL
 			/* weather: generate a cloud at current worldmap sector */
+			/* NOTE: there might be a bug where weather_updated is not TRUE'd for
+			   the player's wilderness sector when using /mkcloud, which might also
+			   be a bug in normal cloud creation. The player will then need to leave
+			   and reenter his sector for the cloud to take effect.
+			   This bug might not exist anymore though, if observed, notify me. - C. Blue */
 			else if (prefix(message, "/mkcloud")) {
 				if (clouds == MAX_CLOUDS) {
 					msg_print(Ind, "Error: Cloud number already at maximum.");

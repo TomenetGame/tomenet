@@ -51,6 +51,7 @@ static void wild_weather_init(void);
 static void process_wild_weather(void);
 static void cloud_set_movement(int i);
 static void cloud_move(int i, bool newly_created);
+static void cloud_erase(int i);
  #else
 
 static void process_weather_control(void);
@@ -7448,6 +7449,7 @@ static void process_wild_weather() {
 				cloud_dur[i]--;
 				/* if cloud dissolves, keep track */
 				if (!cloud_dur[i]) {
+					cloud_erase(i);
 					clouds--;
 					/* take a break for this second ;) */
 					continue;
@@ -7618,7 +7620,7 @@ static void cloud_move(int i, bool newly_created) {
 			}
 			/* free space in cloud array? means we could add another cloud if we want */
 			else if (w_ptr->cloud_idx[j] == -1) can_become_affected = TRUE;
-			else final_cloud_in_sector = FALSE;
+			else if (w_ptr->cloud_idx[j] != -1) final_cloud_in_sector = FALSE;
 		}
 		if (!was_affected) final_cloud_in_sector = FALSE;
 
@@ -7764,6 +7766,73 @@ if (NumPlayers && Players[NumPlayers]->wpos.wx == x && Players[NumPlayers]->wpos
 	}
 }
 
+static void cloud_erase(int i) {
+	wilderness_type *w_ptr;
+	int x, y, xs, ys, xd, yd, j;
+	bool was_affected;
+	int was_affected_idx = 0; /* slaying compiler warning */
+	bool final_cloud_in_sector;
+
+/* imprint new situation on wild sectors locally --------------------------- */
+
+	/* check all worldmap sectors affected by this cloud
+	   and modify local weather situation accordingly if needed */
+	/* NOTE regarding hardcoding: These calcs depend on cloud creation algo a lot */
+	xs = (cloud_x1[i] - (cloud_dsum[i] - (cloud_x2[i] - cloud_x1[i])) / 2) / MAX_WID;
+	xd = (cloud_x2[i] + (cloud_dsum[i] - (cloud_x2[i] - cloud_x1[i])) / 2) / MAX_WID;
+	ys = (cloud_y1[i] - ((cloud_dsum[i] * 87) / 200)) / MAX_HGT; /* (sin 60 deg) */
+	yd = (cloud_y1[i] + ((cloud_dsum[i] * 87) / 200)) / MAX_HGT;
+	/* traverse all wild sectors that could maybe be affected or
+	   have been affected by this cloud, very roughly calculated
+	   (just a rectangle mask), fine check is done inside. */
+	for (x = xs; x < xd; x++)
+	for (y = ys; y < yd; y++) {
+		/* skip sectors out of array bounds */
+		if (x < 0 || x >= MAX_WILD_X || y < 0 || y >= MAX_WILD_Y) continue;
+
+		w_ptr = &wild_info[y][x];
+
+		was_affected = FALSE;
+		final_cloud_in_sector = TRUE; /* assume this cloud is the only one keeping the weather up here */
+
+		/* was the sector affected before erasing? */
+		for (j = 0; j < 10; j++) {
+			/* cloud occurs in this sector? so sector was already affected */
+			if (w_ptr->cloud_idx[j] == i) {
+				was_affected = TRUE;
+				was_affected_idx = j;
+			}
+			else if (w_ptr->cloud_idx[j] != -1) final_cloud_in_sector = FALSE;
+		}
+		if (!was_affected) final_cloud_in_sector = FALSE;
+
+		if (was_affected) {
+			/* erase cloud locally */
+			w_ptr->cloud_idx[was_affected_idx] = -1;
+			w_ptr->cloud_x1[was_affected_idx] = -9999; /* hack for client: client sees this as 'disabled' */
+#if 0
+			/* meta data for Send_weather() */
+			if (!w_ptr->cloud_updated[was_affected_idx]) {
+				w_ptr->cloud_updated[was_affected_idx] = TRUE;
+				w_ptr->clouds_to_update++;
+			}
+#endif
+
+			/* if this was the last cloud in this sector,
+			   define (stop) weather situation accordingly */
+			if (final_cloud_in_sector) {
+				w_ptr->weather_type = 0; /* make weather 'run out slowly' */
+			}
+
+			/* so, did this sector actually 'change' after all? */
+			//sector_changed -> TRUE
+			/* if the local situation did actually change,
+			   mark as updated for re-sending it to all players on it */
+			w_ptr->weather_updated = TRUE;
+		}
+	}
+}
+
 /* Create a new cloud with given index and start/destination coords.
    This does not check whether there will be too many clouds! */
 void cloud_create(int i, int sx, int sy, int dx, int dy) {
@@ -7771,14 +7840,14 @@ void cloud_create(int i, int sx, int sy, int dx, int dy) {
 	int wx, wy, x, y;
 	wx = sx / MAX_WID;
 	wy = sy / MAX_HGT;
-	for (x = wx - 2; x <= wx + 2; x++) {
-		for (y = wy - 2; y <= wy + 2; y++) {
+	for (x = wx - 1; x <= wx + 1; x++) {
+		for (y = wy - 1; y <= wy + 1; y++) {
 			if (in_bounds_wild(wy, wx) &&
 			    wild_info[wy][wx].type == WILD_DESERT)
 				if (rand_int(10)) return;
 
 				/* leave loops */
-				x = wx + 3;
+				x = wx + 42;
 				break;
 		}
 	}
@@ -7801,6 +7870,7 @@ void cloud_create(int i, int sx, int sy, int dx, int dy) {
 	/* add this cloud to its initial wild sector(s) */
 	cloud_move(i, TRUE);
 }
+
 
 /* update players' local client-side weather if required */
 void local_weather_update(void) {
