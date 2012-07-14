@@ -6778,11 +6778,10 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 
-				/* dissolve */
-				cloud_dur[w_ptr->cloud_idx[i]] = 0;
-				clouds--;
+				/* near-dissolve */
+				cloud_dur[w_ptr->cloud_idx[i]] = 1;
 
-			        msg_format(Ind, "A cloud (%d) touching this worldmap sector has been removed.", w_ptr->cloud_idx[i]);
+			        msg_format(Ind, "A cloud (%d) touching this worldmap sector has been drained.", w_ptr->cloud_idx[i]);
 
 			        /* update players' local client-side weather if required */
 				local_weather_update();
