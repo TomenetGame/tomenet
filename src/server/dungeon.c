@@ -52,6 +52,11 @@ static void process_wild_weather(void);
 static void cloud_set_movement(int i);
 static void cloud_move(int i, bool newly_created);
 static void cloud_erase(int i);
+ /* cdsum*87/200 : sin 60 deg */
+#define CLOUD_XS(cx1, cy1, cx2, cy2, cdsum) ((cx1 - (cdsum - (cx2 - cx1)) / 2) / MAX_WID)
+#define CLOUD_YS(cx1, cy1, cx2, cy2, cdsum) ((cy1 - ((cdsum * 87) / 200)) / MAX_HGT)
+#define CLOUD_XD(cx1, cy1, cx2, cy2, cdsum) ((cx2 + (cdsum - (cx2 - cx1)) / 2) / MAX_WID)
+#define CLOUD_YD(cx1, cy1, cx2, cy2, cdsum) ((cy2 + ((cdsum * 87) / 200)) / MAX_HGT)
  #else
 
 static void process_weather_control(void);
@@ -7428,6 +7433,18 @@ static void wild_weather_init() {
 	}
 }
 
+    /* DEBUGGING NOTES - C. Blue
+       There might be a bug where weather_updated is not TRUE'd for
+       the player's wilderness sector when using /mkcloud, which might also
+       be a bug in normal cloud creation. The player will then need to leave
+       and reenter his sector for the cloud to take effect.
+       Further bug info: In cloud_erase() the same cloud of a found cloud_idx
+       (here in /rmcloud) will not be found to be 'touching this sector'.
+       FURTHER: Seems inconsistent use of cloud_x1/x2/y1/y2:
+       cloud_create() uses them as start+destination, cloud_move/erase use
+       them as box-defining points for finding the cloud's covering area. oO */
+
+
 /* Manange and control weather separately for each worldmap sector,
    assumed that client-side weather is used, depending on clouds.
    NOTE: Called once per second. */
@@ -7449,6 +7466,7 @@ static void process_wild_weather() {
 				cloud_dur[i]--;
 				/* if cloud dissolves, keep track */
 				if (!cloud_dur[i]) {
+//s_printf("erasing %d\n", i);//TEST_SERVER
 					cloud_erase(i);
 					clouds--;
 					/* take a break for this second ;) */
@@ -7463,16 +7481,12 @@ static void process_wild_weather() {
 		else if (clouds < max_clouds_seasonal) {
 #ifdef TEST_SERVER /* hack: fixed location for easier live testing? */
 			//around Bree
-			cloud_create(i,
-			    32 * MAX_WID - rand_int(cloud_dsum[i] / 4), 32 * MAX_HGT,
-			    32 * MAX_WID + rand_int(cloud_dsum[i] / 4), 32 * MAX_HGT);
+			cloud_create(i, 32 * MAX_HGT, 32 * MAX_WID);
 			cloud_state[i] = 1;
 #else
 			/* create cloud at random starting x, y world _grid_ coords (!) */
 			cloud_create(i,
-			    rand_int(MAX_WILD_X * MAX_WID - cloud_dsum[i] / 4),
-			    rand_int(MAX_WILD_Y * MAX_HGT),
-			    rand_int(MAX_WILD_X * MAX_WID + cloud_dsum[i] / 4),
+			    rand_int(MAX_WILD_X * MAX_WID),
 			    rand_int(MAX_WILD_Y * MAX_HGT));
 #endif
 		}
@@ -7589,17 +7603,17 @@ static void cloud_move(int i, bool newly_created) {
 	/* check all worldmap sectors affected by this cloud
 	   and modify local weather situation accordingly if needed */
 	/* NOTE regarding hardcoding: These calcs depend on cloud creation algo a lot */
-	txm = (cloud_x1[i] + (cloud_x2[i] - cloud_x1[i]) / 2) / MAX_WID;
+	txm = (cloud_x1[i] + (cloud_x2[i] - cloud_x1[i]) / 2) / MAX_WID; /* central wpos of this cloud */
 	tym = cloud_y1[i] / MAX_HGT;
-	xs = (cloud_x1[i] - (cloud_dsum[i] - (cloud_x2[i] - cloud_x1[i])) / 2) / MAX_WID;
-	xd = (cloud_x2[i] + (cloud_dsum[i] - (cloud_x2[i] - cloud_x1[i])) / 2) / MAX_WID;
-	ys = (cloud_y1[i] - ((cloud_dsum[i] * 87) / 200)) / MAX_HGT; /* (sin 60 deg) */
-	yd = (cloud_y1[i] + ((cloud_dsum[i] * 87) / 200)) / MAX_HGT;
+	xs = CLOUD_XS(cloud_x1[i], cloud_y1[i], cloud_x2[i], cloud_y2[i], cloud_dsum[i]);
+	xd = CLOUD_XD(cloud_x1[i], cloud_y1[i], cloud_x2[i], cloud_y2[i], cloud_dsum[i]);
+	ys = CLOUD_YS(cloud_x1[i], cloud_y1[i], cloud_x2[i], cloud_y2[i], cloud_dsum[i]);
+	yd = CLOUD_YD(cloud_x1[i], cloud_y1[i], cloud_x2[i], cloud_y2[i], cloud_dsum[i]);
 	/* traverse all wild sectors that could maybe be affected or
 	   have been affected by this cloud, very roughly calculated
 	   (just a rectangle mask), fine check is done inside. */
-	for (x = xs + xs_add_prev; x < xd + xd_add_prev; x++)
-	for (y = ys + ys_add_prev; y < yd + yd_add_prev; y++) {
+	for (x = xs + xs_add_prev; x <= xd + xd_add_prev; x++)
+	for (y = ys + ys_add_prev; y <= yd + yd_add_prev; y++) {
 		/* skip sectors out of array bounds */
 		if (x < 0 || x >= MAX_WILD_X || y < 0 || y >= MAX_WILD_Y) continue;
 
@@ -7636,10 +7650,10 @@ static void cloud_move(int i, bool newly_created) {
 		/* is the sector affected now after moving? */
 		/* calculate coordinates for deciding test case */
 		/* NOTE regarding hardcoding: These calcs depend on cloud creation algo a lot */
-		if (x < txm) tgx = (x + 1) * MAX_WID - 1;
-		else if (x > txm) tgx = x * MAX_WID;
-		else tgx = cloud_x1[i] + (cloud_x2[i] - cloud_x1[i]) / 2;
-		if (y < tym) tgy = (y + 1) * MAX_HGT - 1;
+		if (x < txm) tgx = (x + 1) * MAX_WID - 1; /* x: left edge of current sector */
+		else if (x > txm) tgx = x * MAX_WID; /* x: right edge of current sector */
+		else tgx = cloud_x1[i] + (cloud_x2[i] - cloud_x1[i]) / 2; /* x: center point of current cloud */
+		if (y < tym) tgy = (y + 1) * MAX_HGT - 1; /* analogous to x above */
 		else if (y > tym) tgy = y * MAX_HGT;
 		else tgy = cloud_y1[i];
 		/* test whether cloud touches the sector (taken from distance()) */
@@ -7778,19 +7792,20 @@ static void cloud_erase(int i) {
 	/* check all worldmap sectors affected by this cloud
 	   and modify local weather situation accordingly if needed */
 	/* NOTE regarding hardcoding: These calcs depend on cloud creation algo a lot */
-	xs = (cloud_x1[i] - (cloud_dsum[i] - (cloud_x2[i] - cloud_x1[i])) / 2) / MAX_WID;
-	xd = (cloud_x2[i] + (cloud_dsum[i] - (cloud_x2[i] - cloud_x1[i])) / 2) / MAX_WID;
-	ys = (cloud_y1[i] - ((cloud_dsum[i] * 87) / 200)) / MAX_HGT; /* (sin 60 deg) */
-	yd = (cloud_y1[i] + ((cloud_dsum[i] * 87) / 200)) / MAX_HGT;
+	xs = CLOUD_XS(cloud_x1[i], cloud_y1[i], cloud_x2[i], cloud_y2[i], cloud_dsum[i]);
+	xd = CLOUD_XD(cloud_x1[i], cloud_y1[i], cloud_x2[i], cloud_y2[i], cloud_dsum[i]);
+	ys = CLOUD_YS(cloud_x1[i], cloud_y1[i], cloud_x2[i], cloud_y2[i], cloud_dsum[i]);
+	yd = CLOUD_YD(cloud_x1[i], cloud_y1[i], cloud_x2[i], cloud_y2[i], cloud_dsum[i]);
 	/* traverse all wild sectors that could maybe be affected or
 	   have been affected by this cloud, very roughly calculated
 	   (just a rectangle mask), fine check is done inside. */
-	for (x = xs; x < xd; x++)
-	for (y = ys; y < yd; y++) {
+	for (x = xs; x <= xd; x++)
+	for (y = ys; y <= yd; y++) {
 		/* skip sectors out of array bounds */
 		if (x < 0 || x >= MAX_WILD_X || y < 0 || y >= MAX_WILD_Y) continue;
 
 		w_ptr = &wild_info[y][x];
+//if (Players[1] && Players[1]->wpos.wx == x && Players[1]->wpos.wy == y) s_printf("p1 here\n");
 
 		was_affected = FALSE;
 		final_cloud_in_sector = TRUE; /* assume this cloud is the only one keeping the weather up here */
@@ -7833,21 +7848,35 @@ static void cloud_erase(int i) {
 	}
 }
 
-/* Create a new cloud with given index and start/destination coords.
+/* Create a new cloud with given index and worldmap _grid_ coords of its center
    This does not check whether there will be too many clouds! */
-void cloud_create(int i, int sx, int sy, int dx, int dy) {
+void cloud_create(int i, int cx, int cy) {
+	/* cloud dimensions: */
+	int sx, sy, dx, dy, dsum;
+	/* worldmap coords: */
+	int x, y, xs, xd, ys, yd;
+
+	/* decide on initial size (largest ie horizontal diameter) */
+	dsum = MAX_WID + rand_int(MAX_WID * 5);
+	sx = cx - dsum / 4;
+	sy = cy;
+	dx = cx + dsum / 4;
+	dy = cy;
+
+	xs = CLOUD_XS(sx, sy, dx, dy, dsum);
+	xd = CLOUD_XD(sx, sy, dx, dy, dsum);
+	ys = CLOUD_YS(sx, sy, dx, dy, dsum);
+	yd = CLOUD_YD(sx, sy, dx, dy, dsum);
+
 	/* hack: not many clouds over deserts */
-	int wx, wy, x, y;
-	wx = sx / MAX_WID;
-	wy = sy / MAX_HGT;
-	for (x = wx - 1; x <= wx + 1; x++) {
-		for (y = wy - 1; y <= wy + 1; y++) {
-			if (in_bounds_wild(wy, wx) &&
-			    wild_info[wy][wx].type == WILD_DESERT)
+	for (x = xs - 1; x <= xd + 1; x++) {
+		for (y = ys - 1; y <= yd + 1; y++) {
+			if (in_bounds_wild(y, x) &&
+			    wild_info[y][x].type == WILD_DESERT)
 				if (rand_int(10)) return;
 
 				/* leave loops */
-				x = wx + 42;
+				x = 9999;
 				break;
 		}
 	}
@@ -7856,8 +7885,8 @@ void cloud_create(int i, int sx, int sy, int dx, int dy) {
 	clouds++;
 	/* create cloud by setting it's life time */
 	cloud_dur[i] = 30 + rand_int(600); /* seconds */
-	/* decide on initial size (largest ie horizontal diameter) */
-	cloud_dsum[i] = MAX_WID + rand_int(MAX_WID * 5);
+	/* set horizontal diameter */
+	cloud_dsum[i] = dsum;
 	/* set location/destination */
 	cloud_x1[i] = sx;
 	cloud_y1[i] = sy;

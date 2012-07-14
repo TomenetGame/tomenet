@@ -749,7 +749,7 @@ extern int get_recall_depth(struct worldpos *wpos, player_type *p_ptr);
 #ifdef CLIENT_SIDE_WEATHER
  #ifndef CLIENT_WEATHER_GLOBAL
   /* for use in slash.c */
-extern void cloud_create(int i, int sx, int sy, int dx, int dy);
+extern void cloud_create(int i, int cx, int cy);
 extern void local_weather_update(void);
  #endif
 #endif
