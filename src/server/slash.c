@@ -6763,7 +6763,7 @@ void do_slash_cmd(int Ind, char *message)
 			        /* update players' local client-side weather if required */
 				local_weather_update();
 
-			        msg_print(Ind, "Cloud has been created around this worldmap sector.");
+			        msg_format(Ind, "Cloud (%d) has been created around this worldmap sector.", i);
 			        return;
 			}
 			/* weather: remove a cloud at current worldmap sector */
@@ -6782,10 +6782,11 @@ void do_slash_cmd(int Ind, char *message)
 				cloud_dur[w_ptr->cloud_idx[i]] = 0;
 				clouds--;
 
+			        msg_format(Ind, "A cloud (%d) touching this worldmap sector has been removed.", w_ptr->cloud_idx[i]);
+
 			        /* update players' local client-side weather if required */
 				local_weather_update();
 
-			        msg_print(Ind, "A cloud touching this worldmap sector has been removed.");
 			        return;
 			}
  #endif
