@@ -6766,6 +6766,26 @@ void do_slash_cmd(int Ind, char *message)
 			        msg_print(Ind, "Cloud has been created around this worldmap sector.");
 			        return;
 			}
+			/* weather: remove a cloud at current worldmap sector */
+			else if (prefix(message, "/rmcloud")) {
+				wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
+				for (i = 0; i < 10; i++)
+		                        if (w_ptr->cloud_idx[i] == -1) continue;
+				if (i == 10) {
+					msg_print(Ind, "Error: No cloud found here.");
+					return;
+				}
+
+				/* dissolve */
+				cloud_dur[i] = 0;
+				clouds--;
+
+			        /* update players' local client-side weather if required */
+				local_weather_update();
+
+			        msg_print(Ind, "A cloud touching this worldmap sector has been removed.");
+			        return;
+			}
  #endif
 #endif
 		}
