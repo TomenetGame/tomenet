@@ -4336,25 +4336,81 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				return;
 			}
-			else if (prefix(message, "/debug-stair")){
-				/* C. Blue's mad debug code to fix
-				   stairs [for entering Mount Doom].. */
+			/* manually reposition dungeon/tower stairs - C. Blue */
+			else if (prefix(message, "/move-stair")){
 				int scx, scy;
 				worldpos *tpos = &p_ptr->wpos;
 				cave_type **zcave = getcave(tpos);
 				if (!(zcave = getcave(tpos))) return;
+				
+				if (!tk) {
+					msg_print(Ind, "Usage: /move-stair dun|tow");
+				}
+				
 				for (scx = 0; scx < MAX_WID; scx++) {
 					for (scy = 0;scy < MAX_HGT; scy++) {
-						if (zcave[scy][scx].feat == FEAT_MORE) {
-							zcave[scy][scx].feat = FEAT_FLOOR;
-							zcave[p_ptr->py][p_ptr->px].feat = FEAT_MORE;
-							new_level_up_y(tpos, p_ptr->py);
-							new_level_up_x(tpos, p_ptr->px);
-							return;
+						if (zcave[scy][scx].feat == FEAT_MORE && !strcmp(token[1], "dun")) {
+							if (wild_info[tpos->wy][tpos->wx].dungeon) {
+								zcave[scy][scx].feat = FEAT_FLOOR;
+								new_level_up_y(tpos, p_ptr->py);
+								new_level_up_x(tpos, p_ptr->px);
+								zcave[p_ptr->py][p_ptr->px].feat = FEAT_MORE;
+								return;
+							}
+						}
+						if (zcave[scy][scx].feat == FEAT_LESS && !strcmp(token[1], "tow")) {
+							if (wild_info[tpos->wy][tpos->wx].tower) {
+								zcave[scy][scx].feat = FEAT_FLOOR;
+								new_level_down_y(tpos, p_ptr->py);
+								new_level_down_x(tpos, p_ptr->px);
+								zcave[p_ptr->py][p_ptr->px].feat = FEAT_LESS;
+								return;
+							}
 						}
 					}
 				}
 				msg_print(Ind, "No staircase downwards found.");
+				return;
+			}
+			/* catch problematic stair coords everywhere */
+			else if (prefix(message, "/debug-stairs")) {
+				int wx, wy, x, y, xo, yo;
+				struct worldpos tpos;
+				tpos.wz = 0;
+				for (wx = 0; wx < MAX_WILD_X; wx++) {
+					for (wy = 0; wy < MAX_WILD_Y; wy++) {
+						tpos.wx = wx;
+						tpos.wy = wy;
+						if (wild_info[wy][wx].dungeon) {
+							xo = wild_info[wy][wx].up_x;
+							yo = wild_info[wy][wx].up_y;
+							if (xo < 2 || xo >= MAX_WID - 2) {
+								x = 2 + rand_int(MAX_WID - 4);
+								new_level_up_x(&tpos, x);
+								msg_format(Ind, "Changed '>' x in (%d,%d) from %d to %d.", wx, wy, xo, x);
+							}
+							if (yo < 2 || yo >= MAX_HGT - 2) {
+								y = 2 + rand_int(MAX_HGT - 4);
+								new_level_up_y(&tpos, y);
+								msg_format(Ind, "Changed '>' y in (%d,%d) from %d to %d.", wx, wy, yo, y);
+							}
+						}
+						if (wild_info[wy][wx].tower) {
+							xo = wild_info[wy][wx].dn_x;
+							yo = wild_info[wy][wx].dn_y;
+							if (xo < 2 || xo >= MAX_WID - 2) {
+								x = 2 + rand_int(MAX_WID - 4);
+								new_level_down_x(&tpos, x);
+								msg_format(Ind, "Changed '<' x in (%d,%d) from %d to %d.", wx, wy, xo, x);
+							}
+							if (yo < 2 || yo >= MAX_HGT - 2) {
+								y = 2 + rand_int(MAX_HGT - 4);
+								new_level_down_y(&tpos, y);
+								msg_format(Ind, "Changed '<' y in (%d,%d) from %d to %d.", wx, wy, yo, y);
+							}
+						}
+					}
+				}
 				return;
 			}
 			else if (prefix(message, "/update-dun")){
