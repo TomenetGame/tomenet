@@ -369,11 +369,11 @@ void wild_spawn_towns()
 
 		/* 0 or MAX_{HGT,WID}-1 are bad places for stairs - mikaelh */
 		if (d_info[i].flags1 & DF1_TOWER) {
-			new_level_down_y(&wpos, 1+rand_int(MAX_HGT-2));
-			new_level_down_x(&wpos, 1+rand_int(MAX_WID-2));
+			new_level_down_y(&wpos, 2 + rand_int(MAX_HGT - 4));
+			new_level_down_x(&wpos, 2 + rand_int(MAX_WID - 4));
 		} else {
-			new_level_up_y(&wpos, 1+rand_int(MAX_HGT-2));
-			new_level_up_x(&wpos, 1+rand_int(MAX_WID-2));
+			new_level_up_y(&wpos, 2 + rand_int(MAX_HGT - 4));
+			new_level_up_x(&wpos, 2 + rand_int(MAX_WID - 4));
 		}
 #if 0
 		if((zcave=getcave(&p_ptr->wpos))){
@@ -4116,11 +4116,11 @@ void wild_add_new_dungeons() {
 
 		/* 0 or MAX_{HGT,WID}-1 are bad places for stairs - mikaelh */
 		if (d_info[i].flags1 & DF1_TOWER) {
-			new_level_down_y(&wpos, 1+rand_int(MAX_HGT-2));
-			new_level_down_x(&wpos, 1+rand_int(MAX_WID-2));
+			new_level_down_y(&wpos, 2 + rand_int(MAX_HGT - 4));
+			new_level_down_x(&wpos, 2 + rand_int(MAX_WID - 4));
 		} else {
-			new_level_up_y(&wpos, 1+rand_int(MAX_HGT-2));
-			new_level_up_x(&wpos, 1+rand_int(MAX_WID-2));
+			new_level_up_y(&wpos, 2 + rand_int(MAX_HGT - 4));
+			new_level_up_x(&wpos, 2 + rand_int(MAX_WID - 4));
 		}
 #if 0
 		if ((zcave=getcave(&p_ptr->wpos))) {
