@@ -6769,8 +6769,10 @@ void do_slash_cmd(int Ind, char *message)
 			/* weather: remove a cloud at current worldmap sector */
 			else if (prefix(message, "/rmcloud")) {
 				wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
-				for (i = 0; i < 10; i++)
+				for (i = 0; i < 10; i++) {
 		                        if (w_ptr->cloud_idx[i] == -1) continue;
+		                	break;
+		                }
 				if (i == 10) {
 					msg_print(Ind, "Error: No cloud found here.");
 					return;
