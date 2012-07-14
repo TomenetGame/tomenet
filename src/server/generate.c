@@ -1079,8 +1079,8 @@ static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls)
 			for (j = 0; !flag && j <= 3000; j++)
 			{
 				/* Pick a random grid */
-				y = rand_int(dun->l_ptr->hgt - 1);
-				x = rand_int(dun->l_ptr->wid - 1);
+				y = 1 + rand_int(dun->l_ptr->hgt - 2);
+				x = 1 + rand_int(dun->l_ptr->wid - 2);
 
 				/* Require "naked" floor grid */
 				if (!cave_naked_bold(zcave, y, x)) continue;
@@ -1122,8 +1122,8 @@ static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls)
 
 	/* note: if we reach 10000 tries now, we just accept the grid anyway! */
 	do {
-		starty = rand_int(dun->l_ptr->hgt - 3) + 1;
-		startx = rand_int(dun->l_ptr->wid - 3) + 1;
+		starty = rand_int(dun->l_ptr->hgt - 2) + 1;
+		startx = rand_int(dun->l_ptr->wid - 2) + 1;
 	} while (!cave_floor_bold(zcave, starty, startx) && (++tries < 10000));
 
 	c_ptr = &zcave[starty][startx];
