@@ -6779,7 +6779,7 @@ void do_slash_cmd(int Ind, char *message)
 				}
 
 				/* dissolve */
-				cloud_dur[i] = 0;
+				cloud_dur[w_ptr->cloud_idx[i]] = 0;
 				clouds--;
 
 			        /* update players' local client-side weather if required */
