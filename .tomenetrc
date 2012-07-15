@@ -94,6 +94,8 @@ audioVolumeWeather	100
 ## 'TomeNET' main window
 Mainwindow_X			0
 Mainwindow_Y			0
+Mainwindow_Columns		80
+Mainwindow_Lines		24
 Mainwindow_Font			8x13
 
 ## 'Msg/Chat' mirrow window

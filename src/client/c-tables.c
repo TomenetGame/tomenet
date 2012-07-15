@@ -662,9 +662,8 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.auto_untag,		FALSE,	3,	1, 14, TRUE,
 	"auto_untag",			"Remove unique monster inscription on pick-up" },
 
-	{ &c_cfg.smart_cheat,		FALSE,	2,	1, 15, FALSE,
-	"smart_cheat",			"(obsolete) Monsters exploit players weaknesses" },
-
+	{ &c_cfg.big_map,		FALSE,	2,	1, 15, TRUE,
+	"big_map",			"Double size of the map shown in the main window" },//smart_cheat
 
 
 	{ &c_cfg.view_reduce_lite,	FALSE,	3,	1, 16, TRUE,	/* (44) */

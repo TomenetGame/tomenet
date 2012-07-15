@@ -1711,6 +1711,10 @@ static void Input_loop(void)
 		return;
 	}
 
+        /* In case we loaded .prf files that modified our screen dimensions,
+           we have to resend them. - C. Blue */
+        Send_screen_dimensions();
+
 	for (;;)
 	{
 		/* Send out a keepalive packet if need be */

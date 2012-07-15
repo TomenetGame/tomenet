@@ -3203,7 +3203,7 @@ struct client_opts
 	bool page_on_privmsg;
 	bool page_on_afk_privmsg;
 	bool auto_untag;//smart_learn;
-	bool smart_cheat;
+	bool big_map;//smart_cheat;
 
 	bool view_reduce_lite;
 	bool view_reduce_view;
