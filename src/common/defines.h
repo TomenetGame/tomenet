@@ -1729,6 +1729,9 @@
 #define FEAT_QUEST3             0x4D
 #define FEAT_QUEST4             0x4E
 
+/* Permanent clear wall to fill up unused map areas (new for better visuals, especially w/ BIG_MAP) */
+#define FEAT_PERM_FILL		0x4F
+
 /* Features 0x4F - 0x52 -- unused */
 
 /* Additional terrains */

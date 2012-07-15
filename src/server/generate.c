@@ -8952,7 +8952,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	monster_type *m_ptr;
 	bool morgoth_inside = FALSE;
 
-	cave_type *cr_ptr, *csbm_ptr;
+	cave_type *cr_ptr, *csbm_ptr, *c_ptr;
 	struct c_special *cs_ptr;
 
 	dun_data dun_body;
@@ -9143,7 +9143,7 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 		dun->l_ptr->hgt = MAX_HGT;
 		for (y = 0; y < MAX_HGT; y++) {
 			for (x = 0; x < MAX_WID; x++) {
-				cave_type *c_ptr = &zcave[y][x];
+				c_ptr = &zcave[y][x];
 				c_ptr->feat = FEAT_HIGH_MOUNT_SOLID;
 				if (lit) c_ptr->info |= CAVE_GLOW;
 			}
@@ -9233,8 +9233,13 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 	 * Hope run-length do a good job :) */
 	for (y = 0; y < MAX_HGT; y++) {
 		for (x = 0; x < MAX_WID; x++) {
-			cave_type *c_ptr = &zcave[y][x];
+			c_ptr = &zcave[y][x];
 
+#ifdef BIG_MAP
+			/* new visuals - also for non-big map mode actually possible */
+			if (x >= dun->l_ptr->wid || y >= dun->l_ptr->hgt) c_ptr->feat = FEAT_PERM_FILL;
+			else
+#endif
 			/* Create granite wall */
 			c_ptr->feat = FEAT_PERM_SOLID;
 
@@ -9247,7 +9252,7 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 	/* Hack -- then curve with basic granite */
 	for (y = 1; y < dun->l_ptr->hgt - 1; y++) {
 		for (x = 1; x < dun->l_ptr->wid - 1; x++) {
-			cave_type *c_ptr = &zcave[y][x];
+			c_ptr = &zcave[y][x];
 
 			/* Create granite wall */
 			c_ptr->feat = empty_level ? FEAT_FLOOR :
@@ -9266,7 +9271,7 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 	if (permaze) {
 		for (y = 1; y < dun->l_ptr->hgt - 1; y++) {
 			for (x = 1; x < dun->l_ptr->wid - 1; x++) {
-				cave_type *c_ptr = &zcave[y][x];
+				c_ptr = &zcave[y][x];
 
 				/* Create permawall */
 				c_ptr->feat = FEAT_PERM_INNER;
@@ -9408,36 +9413,16 @@ if (!nether_bottom) {
 #if 1
 	/* XXX the walls here should 'mimic' the surroundings,
 	 * however I omitted it to spare 522 c_special	- Jir */
-	/* Special boundary walls -- Top */
+	/* Special boundary walls -- Top + bottom */
 	for (x = 0; x < dun->l_ptr->wid; x++) {
-		cave_type *c_ptr = &zcave[0][x];
-
 		/* Clear previous contents, add "solid" perma-wall */
-		c_ptr->feat = FEAT_PERM_SOLID;
+		zcave[0][x].feat = FEAT_PERM_SOLID;
+		zcave[dun->l_ptr->hgt-1][x].feat = FEAT_PERM_SOLID;
 	}
-
-	/* Special boundary walls -- Bottom */
-	for (x = 0; x < dun->l_ptr->wid; x++) {
-		cave_type *c_ptr = &zcave[dun->l_ptr->hgt-1][x];
-
-		/* Clear previous contents, add "solid" perma-wall */
-		c_ptr->feat = FEAT_PERM_SOLID;
-	}
-
-	/* Special boundary walls -- Left */
+	/* Special boundary walls -- Left + right */
 	for (y = 0; y < dun->l_ptr->hgt; y++) {
-		cave_type *c_ptr = &zcave[y][0];
-
-		/* Clear previous contents, add "solid" perma-wall */
-		c_ptr->feat = FEAT_PERM_SOLID;
-	}
-
-	/* Special boundary walls -- Right */
-	for (y = 0; y < dun->l_ptr->hgt; y++) {
-		cave_type *c_ptr = &zcave[y][dun->l_ptr->wid-1];
-
-		/* Clear previous contents, add "solid" perma-wall */
-		c_ptr->feat = FEAT_PERM_SOLID;
+		zcave[y][0].feat = FEAT_PERM_SOLID;
+		zcave[y][dun->l_ptr->wid-1].feat = FEAT_PERM_SOLID;
 	}
 #endif	/* 0 */
 
@@ -9948,6 +9933,7 @@ for(mx = 1; mx < 131; mx++) {
 			csbm_ptr = &zcave[y][x];
 			/* Must be in a wall, must not be in perma wall. Outside of vaults. */
 			if ((csbm_ptr->feat != FEAT_PERM_SOLID) &&
+			    (csbm_ptr->feat != FEAT_PERM_FILL) &&
 			    (csbm_ptr->feat != FEAT_PERM_INNER) &&
 			    (csbm_ptr->feat != FEAT_PERM_EXTRA) &&
 			    (csbm_ptr->feat != FEAT_PERM_OUTER) &&
@@ -9986,6 +9972,7 @@ for(mx = 1; mx < 131; mx++) {
 					}
 					cr_ptr = &zcave[y1][x1];
 					if ((cr_ptr->feat != FEAT_PERM_SOLID) &&
+					    (cr_ptr->feat != FEAT_PERM_FILL) &&
 					    (cr_ptr->feat != FEAT_PERM_INNER) &&
 					    (cr_ptr->feat != FEAT_PERM_EXTRA) &&
 					    (cr_ptr->feat != FEAT_PERM_OUTER) &&

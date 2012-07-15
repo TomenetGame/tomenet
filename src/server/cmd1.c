@@ -4998,6 +4998,7 @@ bool player_can_enter(int Ind, byte feature)
 	/* Dungeon Master pass through everything (cept array boundary :) */
 	if (p_ptr->admin_dm &&
 	    feature != FEAT_PERM_SOLID &&
+	    feature != FEAT_PERM_FILL &&
 	    feature != FEAT_HIGH_MOUNT_SOLID &&
 	    feature != FEAT_GLIT_WATER)
 //	if (p_ptr->admin_dm && !(f_info[feature].flags1 & FF1_BOUNDARY))
@@ -6474,6 +6475,7 @@ static bool run_test(int Ind)
 				case FEAT_PERM_INNER:
 				case FEAT_PERM_OUTER:
 				case FEAT_PERM_SOLID:
+				case FEAT_PERM_FILL:
 				case FEAT_PERM_CLEAR:
 				{
 					/* Ignore */
