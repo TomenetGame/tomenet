@@ -4130,19 +4130,19 @@ static void wild_display_map(int Ind, char mode)
 	int c_dun_diff, c_tow_diff;
 	bool admin = is_admin(p_ptr);
 
-	if (MAX_WINDOW_WID > MAX_WILD_X + 2) {//+ 2 for border
-		offset_x = (MAX_WINDOW_WID - MAX_WILD_X) / 2 - 1;//-1 for border
+	if (CL_WINDOW_WID > MAX_WILD_X + 2) {//+ 2 for border
+		offset_x = (CL_WINDOW_WID - MAX_WILD_X) / 2 - 1;//-1 for border
 		max_wx = MAX_WILD_X + 2;
 	} else {
 		offset_x = 0;
-		max_wx = MAX_WINDOW_WID;
+		max_wx = CL_WINDOW_WID;
 	}
-	if (MAX_WINDOW_HGT > MAX_WILD_Y + 2) {//+ 2 for border
-		offset_y = (MAX_WINDOW_HGT - MAX_WILD_Y) / 2 - 1;//-1 for border
+	if (CL_WINDOW_HGT > MAX_WILD_Y + 2) {//+ 2 for border
+		offset_y = (CL_WINDOW_HGT - MAX_WILD_Y) / 2 - 1;//-1 for border
 		max_wy = MAX_WILD_Y + 2;
 	} else {
 		offset_y = 0;
-		max_wy = MAX_WINDOW_HGT;
+		max_wy = CL_WINDOW_HGT;
 	}
 
 

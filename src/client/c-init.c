@@ -2172,7 +2172,7 @@ void client_init(char *argv1, bool skip)
 	if (BIG_MAP_fallback) {
 		screen_wid = SCREEN_WID;
 		screen_hgt = SCREEN_HGT;
-		resize_main_window(WINDOW_WID, WINDOW_HGT);
+		resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
 	}
 
 	/* Check for failure */
