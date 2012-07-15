@@ -7309,12 +7309,6 @@ void player_death(int Ind)
 
 	/* very very rare case, but this can happen(eg. starvation) */
 	if (p_ptr->store_num != -1) {
-#ifdef PLAYER_STORES
-		if (p_ptr->store_num <= -2) {
-			/* unlock the fake store again which we had occupied */
-			fake_store_visited[-2 - p_ptr->store_num] = 0;
-		}
-#endif
 		handle_store_leave(Ind);
 		Send_store_kick(Ind);
 	}

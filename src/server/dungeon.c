@@ -5469,12 +5469,6 @@ void process_player_change_wpos(int Ind)
 
 	/* Make sure the server doesn't think the player is in a store */
 	if (p_ptr->store_num != -1) {
-#ifdef PLAYER_STORES
-		if (p_ptr->store_num <= -2) {
-			/* unlock the fake store again which we had occupied */
-			fake_store_visited[-2 - p_ptr->store_num] = 0;
-		}
-#endif
 		handle_store_leave(Ind);
 		Send_store_kick(Ind);
 	}

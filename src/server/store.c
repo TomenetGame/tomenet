@@ -4440,10 +4440,9 @@ void store_kick(int Ind, bool say)
 	Send_store_kick(Ind);
 
 #ifdef PLAYER_STORES
-	if (i <= -2) {
-		/* unlock the fake store again which we had occupied */
-		fake_store_visited[-2 - i] = 0;
-	} else
+        /* Player stores aren't entered such as normal stores,
+           instead, the customer just stays in front of it. */
+	if (i > -2)
 #endif
 	teleport_player_force(Ind, 1);
 }
@@ -6520,9 +6519,12 @@ void handle_store_leave(int Ind) {
 	/* hack: non-town stores (ie dungeon, but could also be wild) */
 	if (i == -1) i = gettown_dun(Ind);
 #ifdef PLAYER_STORES
-	if (p_ptr->store_num <= -2) /* it's a player's private store! */
+	if (p_ptr->store_num <= -2) { /* it's a player's private store! */
 		st_ptr = &fake_store[-2 - p_ptr->store_num];
-	else
+
+                /* unlock the fake store again which we had occupied */
+                fake_store_visited[-2 - p_ptr->store_num] = 0;
+	} else
 #endif
 	st_ptr = &town[i].townstore[p_ptr->store_num];
 

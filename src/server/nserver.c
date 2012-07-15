@@ -8917,10 +8917,7 @@ static int Receive_store_leave(int ind)
 #ifdef PLAYER_STORES
 		/* Player stores aren't entered such as normal stores,
 		   instead, the customer just stays in front of it. */
-		if (p_ptr->store_num <= -2) {
-			/* unlock the fake store again which we had occupied */
-			fake_store_visited[-2 - p_ptr->store_num] = 0;
-		} else
+		if (p_ptr->store_num > -2)
 #endif
 		/* Hack -- don't stand in the way */
 		teleport_player_force(player, 1);

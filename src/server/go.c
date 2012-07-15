@@ -1014,20 +1014,6 @@ void go_engine_clocks(void) {
 }
 
 void go_challenge_cancel(void) {
-#if 0 /* done by handle_store_leave() */
-void go_challenge_cancel(int Ind) {
-	int Ind_go;
-
-	/* Go player still online? */
-	if (!(Ind_go = lookup_player_ind(go_engine_player_id))) {
-		go_challenge_cleanup(FALSE);
-		return;
-	}
-
-	/* Go player isn't the player who left the store? (paranoia) */
-	if (Ind_go != Ind) return;
-#endif
-
 	go_challenge_cleanup(FALSE);
 }
 
