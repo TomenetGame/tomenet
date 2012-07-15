@@ -6480,21 +6480,29 @@ void Send_paste_msg(char *msg) {
 /* Check if certain options have an immediate effect when toggled,
    for switching BIG_MAP feature on/off live. - C. Blue */
 void check_immediate_options(int i, bool yes, bool playing) {
-	if (playing) return;//debug
-
 	if (option_info[i].o_var == &c_cfg.big_map
             && is_newer_than(&server_version, 4, 4, 9, 1, 0, 1)) {
 		if (!yes && screen_hgt != SCREEN_HGT) {
 	        	screen_hgt = SCREEN_HGT;
     		        resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
 	                /* too early, connection not ready yet? (otherwise done in Input_loop()) */
-    		        if (playing) Send_screen_dimensions();
+    		        if (playing) {
+				if (screen_icky) Term_switch(0);
+				Term_clear(); /* get rid of map tiles where now status bars go instead */
+				if (screen_icky) Term_switch(0);
+				Send_screen_dimensions();
+    		    	}
 		}
 		if (yes && screen_hgt <= SCREEN_HGT) {
                         screen_hgt = SCREEN_HGT * 2;
                         resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
 	                /* too early, connection not ready yet? (otherwise done in Input_loop()) */
-    		        if (playing) Send_screen_dimensions();
+    		        if (playing) {
+				if (screen_icky) Term_switch(0);
+				Term_clear(); /* paranoia ;) */
+				if (screen_icky) Term_switch(0);
+				Send_screen_dimensions();
+    		    	}
 		}
 	}
 }

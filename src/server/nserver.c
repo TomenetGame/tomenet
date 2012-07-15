@@ -9517,6 +9517,7 @@ static int Receive_screen_dimensions(int ind)
 			return n;
 		}
 
+
 		/* fix limits */
 #ifdef BIG_MAP
 		if (p_ptr->screen_wid > MAX_SCREEN_WID) p_ptr->screen_wid = MAX_SCREEN_WID;
@@ -9530,6 +9531,34 @@ static int Receive_screen_dimensions(int ind)
 
 		connp->Client_setup.screen_wid = p_ptr->screen_wid;
 		connp->Client_setup.screen_hgt = p_ptr->screen_hgt;
+
+
+	        /* Recalculate panel */
+
+	        if (p_ptr->wpos.wz) {
+			dun_level *l_ptr = getfloor(&p_ptr->wpos);
+	                p_ptr->max_panel_rows = MAX_PANEL_ROWS_L;
+	                p_ptr->max_panel_cols = MAX_PANEL_COLS_L;
+
+	        } else {
+	                p_ptr->max_panel_rows = MAX_PANEL_ROWS;
+                        p_ptr->max_panel_cols = MAX_PANEL_COLS;
+                }
+#ifdef BIG_MAP
+                if (p_ptr->max_panel_rows < 0) p_ptr->max_panel_rows = 0;
+                if (p_ptr->max_panel_cols < 0) p_ptr->max_panel_cols = 0;
+#endif
+
+	        p_ptr->panel_row = ((p_ptr->py - p_ptr->screen_hgt / 4) / (p_ptr->screen_hgt / 2));
+	        if (p_ptr->panel_row > p_ptr->max_panel_rows) p_ptr->panel_row = p_ptr->max_panel_rows;
+	        else if (p_ptr->panel_row < 0) p_ptr->panel_row = 0;
+
+	        p_ptr->panel_col = ((p_ptr->px - p_ptr->screen_wid / 4) / (p_ptr->screen_wid / 2));
+	        if (p_ptr->panel_col > p_ptr->max_panel_cols) p_ptr->panel_col = p_ptr->max_panel_cols;
+	        else if (p_ptr->panel_col < 0) p_ptr->panel_col = 0;
+
+                panel_bounds(player);
+
 
 		/* Heavy redraw (just to make sure) */
 
