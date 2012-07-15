@@ -2893,6 +2893,9 @@ void resize_main_window(int cols, int rows) {
 	int wid, hgt;
 	term_data *td = term_idx_to_term_data(0);
 
+	term_prefs[0].columns = cols; //screen_wid + (MAX_WINDOW_WID - MAX_SCREEN_WID);
+        term_prefs[0].lines = rows; //screen_hgt + (MAX_WINDOW_HGT - MAX_SCREEN_HGT);
+
         wid = cols * td->fnt->wid;
         hgt = rows * td->fnt->hgt;
         Infowin_set(td->outer);

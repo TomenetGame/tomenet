@@ -752,6 +752,10 @@ static void save_prefs_aux(term_data *td, cptr sec_name)
 		/* Current size (y) */
 		wsprintf(buf, "%d", td->rows);
 		WritePrivateProfileString(sec_name, "Rows", buf, ini_file);
+	} else {
+		/* Current size (y) - only change to double-screen if we're not already in some kind of enlarged screen */
+		wsprintf(buf, "%d", (MAX_WINDOW_HGT - MAX_SCREEN_HGT) + (c_cfg.big_map ? (screen_hgt <= SCREEN_HGT ? SCREEN_HGT * 2 : screen_hgt) : SCREEN_HGT));
+		WritePrivateProfileString(sec_name, "Rows", buf, ini_file);
 	}
 
 	/* Current position (x) */

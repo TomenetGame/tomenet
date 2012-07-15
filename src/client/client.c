@@ -395,6 +395,8 @@ static void write_mangrc_aux(int t, cptr sec_name, FILE *cfg_file) {
 	} else {
 		/* one more tab, or formatting looks bad ;) */
 		fputs(format("%s_Font\t\t%s\n", sec_name, font_name), cfg_file);
+		/* only change to double-screen if we're not already in some kind of enlarged screen */
+		fputs(format("%s_Lines\t%d\n", sec_name, (MAX_WINDOW_HGT - MAX_SCREEN_HGT) + (c_cfg.big_map ? (screen_hgt <= SCREEN_HGT ? SCREEN_HGT * 2 : screen_hgt) : SCREEN_HGT)), cfg_file);
 	}
 	fputs("\n", cfg_file);
 }
@@ -430,6 +432,9 @@ static void write_mangrc_aux_line(int t, cptr sec_name, char *buf_org) {
 	} else if (!strncmp(ter_name, "_Lines", 6)) {
 		if (t != 0)
 			sprintf(buf, "%s_Lines\t%d\n", sec_name, r);
+		else
+			/* only change to double-screen if we're not already in some kind of enlarged screen */
+			sprintf(buf, "%s_Lines\t%d\n", sec_name, (MAX_WINDOW_HGT - MAX_SCREEN_HGT) + (c_cfg.big_map ? (screen_hgt <= SCREEN_HGT ? SCREEN_HGT * 2 : screen_hgt) : SCREEN_HGT));
 	} else if (!strncmp(ter_name, "_Font", 5)) {
 		if (t != 0)
 			sprintf(buf, "%s_Font\t%s\n", sec_name, font_name);
