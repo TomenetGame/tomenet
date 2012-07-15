@@ -7822,13 +7822,15 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				/* Acquire the monster name */
 				monster_desc(Ind, m_name, m_idx, 0x04);
 
+				store_exit(0 - c_ptr->m_idx);
+
 				q_ptr->py = oy;
 				q_ptr->px = ox;
 
 				/* Update the old monster */
 				update_player(0 - c_ptr->m_idx);
 				msg_format(0 - c_ptr->m_idx, "\377o%^s switches place with you!", m_name);
-				
+
 				stop_precision(0 - c_ptr->m_idx);
 				stop_shooting_till_kill(0 - c_ptr->m_idx);
 			}

@@ -11778,6 +11778,8 @@ bool imprison(int Ind, u16b time, char *reason) {
 #endif
 	}
 
+	store_exit(Ind);
+
 	zcave[p_ptr->py][p_ptr->px].m_idx = 0;
 	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 	forget_lite(Ind);

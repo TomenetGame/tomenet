@@ -2081,13 +2081,13 @@ static void player_setup(int Ind, bool new)
 
 	if (new) {
 #if 0
-		p_ptr->py=level_down_y(wpos);
-		p_ptr->px=level_down_x(wpos);
+		p_ptr->py = level_down_y(wpos);
+		p_ptr->px = level_down_x(wpos);
 #else	// 0
-		y=level_rand_y(wpos);
-		x=level_rand_x(wpos);
-		p_ptr->py=y;
-		p_ptr->px=x;
+		y = level_rand_y(wpos);
+		x = level_rand_x(wpos);
+		p_ptr->py = y;
+		p_ptr->px = x;
 
 #endif	// 0
 	}

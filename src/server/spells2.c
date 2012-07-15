@@ -5105,6 +5105,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 			if (c_ptr->m_idx < 0) {
 				Ind = 0 - c_ptr->m_idx;
 				p_ptr = Players[Ind];
+				store_exit(Ind);
 
 				sn = 0;
 
@@ -6077,6 +6078,8 @@ void swap_position(int Ind, int lty, int ltx){
 	wpos = &p_ptr->wpos;
 	if (!(zcave = getcave(wpos))) return;
 
+	store_exit(Ind);
+
 	c_ptr = &zcave[lty][ltx];
 
 	/* Keep track of the old location */
@@ -6130,6 +6133,8 @@ void swap_position(int Ind, int lty, int ltx){
 
 		/* Shift them if they are real */
 		if (q_ptr) {
+			store_exit(Ind2);
+
 			q_ptr->py = ty;
 			q_ptr->px = tx;
 			#ifdef ARCADE_SERVER

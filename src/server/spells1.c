@@ -849,6 +849,8 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp)
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 
+	store_exit(Ind);
+
 	/* Save the old location */
 	oy = p_ptr->py;
 	ox = p_ptr->px;
@@ -1014,6 +1016,8 @@ void teleport_player_to(int Ind, int ny, int nx)
 			dis++;
 		}
 	}
+
+	store_exit(Ind);
 
 	/* Save the old location */
 	oy = p_ptr->py;

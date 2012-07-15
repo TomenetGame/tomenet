@@ -1524,6 +1524,7 @@ extern void store_shuffle(store_type *st_ptr);
 extern void store_maint(store_type *st_ptr);
 extern void store_init(store_type *st_ptr);
 extern void store_kick(int Ind, bool say);
+extern void store_exit(int Ind);
 extern void store_stole(int Ind, int item);
 
 extern void do_cmd_trad_house(int Ind);

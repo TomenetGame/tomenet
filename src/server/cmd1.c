@@ -3465,6 +3465,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		/* Move the monster */
 		m_ptr->fy = ny;
 		m_ptr->fx = nx;
+		store_exit(Ind);
 		p_ptr->py = oy;
 		p_ptr->px = ox;
 
@@ -4908,6 +4909,7 @@ void do_prob_travel(int Ind, int dir)
       ox = p_ptr->px;
 
       /* Move the player */
+      store_exit(Ind);
       p_ptr->py = y;
       p_ptr->px = x;
 
@@ -5235,6 +5237,8 @@ void move_player(int Ind, int dir, int do_pickup)
 				return;
 			}
 
+			store_exit(Ind);
+
 			/* find his new location */
 			if (y <= 0) {
 				/* new player location */
@@ -5382,6 +5386,8 @@ void move_player(int Ind, int dir, int do_pickup)
 			    ((p_ptr->tim_wraith && q_ptr->tim_wraith) || (!p_ptr->tim_wraith && !q_ptr->tim_wraith)))
 			    || blocks_important_feat || q_ptr->admin_dm)
 			{
+				store_exit(Ind);
+				store_exit(Ind2);
 
 				c_ptr->m_idx = 0 - Ind;
 				zcave[p_ptr->py][p_ptr->px].m_idx = 0 - Ind2;
@@ -5524,6 +5530,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			oldx = p_ptr->px;
 			oldy = p_ptr->py;
 			/* update player location */
+			store_exit(Ind);
 			p_ptr->px = m_list[c_ptr->m_idx].fx;
 			p_ptr->py = m_list[c_ptr->m_idx].fy;
 			if (old_grid_sunlit != new_grid_sunlit) calc_boni(Ind);
@@ -5723,6 +5730,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		ox = p_ptr->px;
 
 		/* Move the player */
+		store_exit(Ind);
 		p_ptr->py = y;
 		p_ptr->px = x;
 		if (old_grid_sunlit != new_grid_sunlit) calc_boni(Ind);

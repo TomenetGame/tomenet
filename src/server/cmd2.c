@@ -6483,6 +6483,9 @@ return;
 #ifndef ENABLE_CLOAKING
 	return;
 #endif
+	/* Don't allow cloaking while inside a store */
+	if (p_ptr->store_num != -1) return;
+
         if (p_ptr->pclass != CLASS_ROGUE) return;
 
     if (!p_ptr->cloaked) {

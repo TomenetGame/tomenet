@@ -4428,7 +4428,7 @@ void store_init(store_type *st_ptr)
 		invwipe(&st_ptr->stock[k]);
 }
 
-		
+/* Assumes we ARE in a store. Get kicked out of it and teleported. */
 void store_kick(int Ind, bool say)
 {
 	int i = Players[Ind]->store_num; /* (handle_store_leave() erases p_ptr->store_num) */
@@ -4445,6 +4445,14 @@ void store_kick(int Ind, bool say)
 	if (i > -2)
 #endif
 	teleport_player_force(Ind, 1);
+}
+/* Just silently exits store in case we are in one.
+   No teleportation needed because we're only called if player wants to move anyway. */
+void store_exit(int Ind) {
+	if (Players[Ind]->store_num == -1) return;
+
+        handle_store_leave(Ind);
+        Send_store_kick(Ind);
 }
 
 void store_exec_command(int Ind, int action, int item, int item2, int amt, int gold)
