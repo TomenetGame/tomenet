@@ -2329,6 +2329,9 @@ errr Term_flush(void)
  * Copy keys from key queue to buffer dest.
  */
 static void Term_copy_queue_buf(char *dest, key_queue *keys) {
+	/* Nothing needs to be done if empty */
+	if (keys->length == 0) return;
+	
 	/* Check if the queue has wrapped */
 	if (keys->head > keys->tail)
 	{
@@ -2343,7 +2346,7 @@ static void Term_copy_queue_buf(char *dest, key_queue *keys) {
 		memcpy(dest, &keys->queue[keys->tail], keys->head - keys->tail);
 #endif
 	}
-	else if (keys->head < keys->tail)
+	else
 	{
 #if 0
 		int i, j;
