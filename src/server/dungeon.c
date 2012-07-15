@@ -2393,16 +2393,18 @@ static void process_player_begin(int Ind)
 		l_ptr = getfloor(&p_ptr->wpos);
 		/* Get rid of annoying level flags */
 		l_ptr->flags1 &= ~(LF1_NO_MAP | LF1_NO_MAGIC_MAP);
-		for (y = 0; y < MAX_HGT; y++) {
+		for (y = 0; y < MAX_HGT / 3; y++) {
 			for (x = 0; x < MAX_WID; x++) {
-				if (zcave[y][x].feat == FEAT_PERM_SOLID) zcave[y][x].feat = FEAT_HIGH_MOUNT_SOLID;
+				zcave[y][x].feat = FEAT_HIGH_MOUNT_SOLID;
+				zcave[y + MAX_HGT / 3][x].feat = FEAT_GLIT_WATER;
+				zcave[y + (MAX_HGT * 2) / 3][x].feat = FEAT_GLIT_WATER;
 			}
 		}
 		/* Wipe any monsters/objects */
 		wipe_o_list_safely(&p_ptr->wpos);
 		wipe_m_list(&p_ptr->wpos);
 		/* Regenerate the level from fixed layout */
-		process_dungeon_file("t_valinor.txt", &p_ptr->wpos, &ystart, &xstart, 21, 67, TRUE);
+		process_dungeon_file("t_valinor.txt", &p_ptr->wpos, &ystart, &xstart, 21, 66, TRUE);
 		for (x = 0; x <= 65; x++) zcave[21][x].feat = FEAT_GLIT_WATER;
 		zcave[20][0].feat = FEAT_GLIT_WATER;
 		zcave[20][65].feat = FEAT_GLIT_WATER;
