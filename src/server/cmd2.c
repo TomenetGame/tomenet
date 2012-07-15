@@ -2913,7 +2913,7 @@ void do_cmd_disarm(int Ind, int dir)
 				msg_print(Ind, "You set off the rune trap!");
 
 				/* Move the player onto the trap */
-				if (dir != 5) move_player(Ind, dir, FALSE); /* moving doesn't 100% imply setting it off */
+				if (dir != 5) move_player(Ind, dir, FALSE, NULL); /* moving doesn't 100% imply setting it off */
 				rune_trap_backlash(Ind); /* but we can allow this weakness, assuming that you are less likely to get hit if you stand besides the trap instead of right on it */
 				break_cloaking(Ind, 0);
 				more = FALSE;
@@ -3061,7 +3061,7 @@ void do_cmd_disarm(int Ind, int dir)
 				if (dir != 5 &&
 				    !(c_ptr->feat >= FEAT_DOOR_HEAD &&
 				    c_ptr->feat <= FEAT_DOOR_TAIL))
-					move_player(Ind, dir, FALSE);
+					move_player(Ind, dir, FALSE, NULL);
 				else
 					everyone_lite_spot(wpos, y, x);
 			}
@@ -3085,7 +3085,7 @@ void do_cmd_disarm(int Ind, int dir)
 				msg_format(Ind, "You set off the %s!", name);
 
 				/* Move the player onto the trap */
-				if (dir != 5) move_player(Ind, dir, FALSE); /* moving doesn't 100% imply setting it off */
+				if (dir != 5) move_player(Ind, dir, FALSE, NULL); /* moving doesn't 100% imply setting it off */
 				else hit_trap(Ind); /* but we can allow this weakness, assuming that you are less likely to get hit if you stand besides the trap instead of right on it */
 				break_cloaking(Ind, 0);
 				break_shadow_running(Ind);
@@ -3307,7 +3307,7 @@ void do_cmd_bash(int Ind, int dir)
 				everyone_lite_spot(wpos, y, x);
 
 				/* Hack -- Fall through the door */
-				move_player(Ind, dir, FALSE);
+				move_player(Ind, dir, FALSE, NULL);
 
 				/* Update some things */
 				p_ptr->update |= (PU_VIEW | PU_LITE);
@@ -3552,7 +3552,7 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 			}
 		}
 		/* Actually move the character */
-		move_player(Ind, dir, pickup);
+		move_player(Ind, dir, pickup, NULL);
 		p_ptr->warning_autoret_ok = 0;
 
 		/* Take a turn */
@@ -3639,15 +3639,22 @@ int do_cmd_run(int Ind, int dir)
 		if (p_ptr->energy >= (level_speed(&p_ptr->wpos) * (real_speed + 1)) / real_speed)
 //		if (p_ptr->energy >= level_speed(&p_ptr->wpos)) /* otherwise auto-retaliation will never allow running */
 		{
+			char consume_full_energy;
+
 			/* Hack -- Set the run counter */
 			p_ptr->running = 20000; //enough to cross the world horizontally (was 1000)
 
 			/* First step */
-			run_step(Ind, dir);
+			run_step(Ind, dir, &consume_full_energy);
 
-			/* Reset the player's energy so he can't sprint several spaces
-			 * in the first round of running.  */
-			p_ptr->energy = level_speed(&p_ptr->wpos);
+			if (consume_full_energy) {
+				/* Consume the normal full amount of energy in case we have e.g. attacked a monster */
+				p_ptr->energy -= level_speed(&p_ptr->wpos);
+			} else {
+				/* Reset the player's energy so he can't sprint several spaces
+				 * in the first round of running.  */
+				p_ptr->energy = level_speed(&p_ptr->wpos);
+			}
 			return 2;
 		}
 		/* If we don't have enough energy to run and monsters aren't around,
