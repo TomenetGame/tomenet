@@ -20,6 +20,7 @@ extern void turn_off_numlock_X11(void);
 extern void change_font(int s);
 #endif
 extern void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name);
+extern void resize_main_window(int cols, int rows);
 #endif
 
 #ifdef USE_XAW
@@ -788,6 +789,7 @@ extern int stricmp(cptr a, cptr b);
 /* main-win.c */
 /* extern int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, ...); */
 extern void change_font(int s);
+extern void resize_main_window(int cols, int rows);
 #endif
 
 #ifdef ENABLE_RCRAFT //Kurzel

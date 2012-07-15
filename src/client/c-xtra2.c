@@ -84,7 +84,7 @@ void do_cmd_messages(void)
 
 
 		/* Dump up to 20 lines of messages */
-		for (j = 0; (j < 20) && (i + j + s < n); j++)
+		for (j = 0; (j < 20 + HGT_PLUS) && (i + j + s < n); j++)
 		{
 			byte a = TERM_WHITE;
 
@@ -103,7 +103,7 @@ void do_cmd_messages(void)
 
 			if (r)
 			{
-				Term_putstr(t < 72 ? t : 72, 21-j+1-k, -1, a, format(" (x%d)", r + 1));
+				Term_putstr(t < 72 ? t : 72, 21 + HGT_PLUS-j+1-k, -1, a, format(" (x%d)", r + 1));
 				r = 0;
 			}
 
@@ -114,7 +114,7 @@ void do_cmd_messages(void)
 			if (shower[0] && strstr(msg, shower)) a = TERM_YELLOW;
 
 			/* Dump the messages, bottom to top */
-			Term_putstr(0, 21-j, -1, a, (char*)msg);
+			Term_putstr(0, 21 + HGT_PLUS-j, -1, a, (char*)msg);
 			t = strlen(msg);
 		}
 
@@ -123,7 +123,7 @@ void do_cmd_messages(void)
 					i, i+j-1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
-		prt("[Press 'p' for older, 'n' for newer, 'f' for filedump, ..., or ESCAPE]", 23, 0);
+		prt("[Press 'p' for older, 'n' for newer, 'f' for filedump, ..., or ESCAPE]", 23 + HGT_PLUS, 0);
 
 		/* Get a command */
 		k = inkey();
@@ -138,7 +138,7 @@ void do_cmd_messages(void)
 		if (k == '#')
 		{
 			char tmp[80];
-			prt(format("Goto Line(max %d): ", n), 23, 0);
+			prt(format("Goto Line(max %d): ", n), 23 + HGT_PLUS, 0);
 			strcpy(tmp, "0");
 			if (askfor_aux(tmp, 80, 0))
 			{
@@ -171,7 +171,7 @@ void do_cmd_messages(void)
 		if (k == '=')
 		{
 			/* Prompt */
-			prt("Show: ", 23, 0);
+			prt("Show: ", 23 + HGT_PLUS, 0);
 
 			/* Get a "shower" string, or continue */
 			if (!askfor_aux(shower, 80, 0)) continue;
@@ -187,7 +187,7 @@ void do_cmd_messages(void)
 			int z;
 
 			/* Prompt */
-			prt("Find: ", 23, 0);
+			prt("Find: ", 23 + HGT_PLUS, 0);
 
 			/* Get a "finder" string, or continue */
 			if (!askfor_aux(finder, 80, 0)) continue;
@@ -230,14 +230,14 @@ void do_cmd_messages(void)
 		if ((k == 'p') || (k == KTRL('P')) || (k == 'b') || k == KTRL('U'))
 		{
 			/* Go older if legal */
-			if (i + 20 < n) i += 20;
+			if (i + 20 + HGT_PLUS < n) i += 20 + HGT_PLUS;
 		}
 
 		/* Recall 20 newer messages */
 		if ((k == 'n') || (k == KTRL('N')) || k == ' ')
 		{
 			/* Go newer (if able) */
-			i = (i >= 20) ? (i - 20) : 0;
+			i = (i >= 20 + HGT_PLUS) ? (i - 20 + HGT_PLUS) : 0;
 		}
 
 		/* Recall 10 newer messages */
@@ -258,7 +258,7 @@ void do_cmd_messages(void)
 		if (k == 'g')
 		{
 			/* Go oldest */
-			i = n - 20;
+			i = n - (20 + HGT_PLUS);
 		}
 
 		/* Recall the newest messages */
@@ -358,7 +358,7 @@ void do_cmd_messages_chatonly(void)
 		/* Use last element in message_chat as  message_num() */
 		n = nn;
 		/* Dump up to 20 lines of messages */
-		for (j = 0; (j < 20) && (i + j < n); j++)
+		for (j = 0; (j < 20 + HGT_PLUS) && (i + j < n); j++)
 		{
 			byte a = TERM_WHITE;
 			cptr msg = message_chat[nn - 1 - (i+j)]; /* because of inverted traversal direction, see further above */
@@ -371,7 +371,7 @@ void do_cmd_messages_chatonly(void)
 			if (shower[0] && strstr(msg, shower)) a = TERM_YELLOW;
 
 			/* Dump the messages, bottom to top */
-			Term_putstr(0, 21-j, -1, a, (char*)msg);
+			Term_putstr(0, 21 + HGT_PLUS-j, -1, a, (char*)msg);
 		}
 
 		/* Display header XXX XXX XXX */
@@ -379,7 +379,7 @@ void do_cmd_messages_chatonly(void)
 					i, i+j-1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
-		prt("[Press 'p' for older, 'n' for newer, 'f' for filedump, ..., or ESCAPE]", 23, 0);
+		prt("[Press 'p' for older, 'n' for newer, 'f' for filedump, ..., or ESCAPE]", 23 + HGT_PLUS, 0);
 
 		/* Get a command */
 		k = inkey();
@@ -394,7 +394,7 @@ void do_cmd_messages_chatonly(void)
 		if (k == '#')
 		{
 			char tmp[80];
-			prt(format("Goto Line(max %d): ", n), 23, 0);
+			prt(format("Goto Line(max %d): ", n), 23 + HGT_PLUS, 0);
 			strcpy(tmp, "0");
 			if (askfor_aux(tmp, 80, 0))
 			{
@@ -427,7 +427,7 @@ void do_cmd_messages_chatonly(void)
 		if (k == '=')
 		{
 			/* Prompt */
-			prt("Show: ", 23, 0);
+			prt("Show: ", 23 + HGT_PLUS, 0);
 
 			/* Get a "shower" string, or continue */
 			if (!askfor_aux(shower, 80, 0)) continue;
@@ -442,7 +442,7 @@ void do_cmd_messages_chatonly(void)
 			int z;
 
 			/* Prompt */
-			prt("Find: ", 23, 0);
+			prt("Find: ", 23 + HGT_PLUS, 0);
 
 			/* Get a "finder" string, or continue */
 			if (!askfor_aux(finder, 80, 0)) continue;
@@ -486,14 +486,14 @@ void do_cmd_messages_chatonly(void)
 				k == KTRL('U'))
 		{
 			/* Go older if legal */
-			if (i + 20 < n) i += 20;
+			if (i + 20 + HGT_PLUS < n) i += 20 + HGT_PLUS;
 		}
 
 		/* Recall 20 newer messages */
 		if ((k == 'n') || (k == KTRL('N')) || k == ' ')
 		{
 			/* Go newer (if able) */
-			i = (i >= 20) ? (i - 20) : 0;
+			i = (i >= 20 + HGT_PLUS) ? (i - (20 + HGT_PLUS)) : 0;
 		}
 
 		/* Recall 10 newer messages */
@@ -514,7 +514,7 @@ void do_cmd_messages_chatonly(void)
 		if (k == 'g')
 		{
 			/* Go oldest */
-			i = n - 20;
+			i = n - (20 + HGT_PLUS);
 		}
 
 		/* Recall the newest messages */

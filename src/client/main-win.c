@@ -4033,4 +4033,13 @@ void change_font(int s) {
 	}
 }
 
+void resize_main_window(int cols, int rows) {
+	term_data *td = &data[0];
+
+        td->cols = cols;
+        td->rows = rows;
+        term_getsize(td);
+        term_window_resize(td);
+}
+
 #endif /* _Windows */

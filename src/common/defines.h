@@ -315,6 +315,10 @@
 #define MAX_WINDOW_WID	(MAX_SCREEN_WID + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
 #define MAX_WINDOW_HGT	(MAX_SCREEN_HGT + SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM)
 
+/* For resizing the main window while client runs */
+#define WINDOW_WID	(screen_wid + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
+#define WINDOW_HGT	(screen_hgt + SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM)
+
 /*
  * Maximum dungeon height in grids, must be a multiple of SCREEN_HGT,
  * probably hard-coded to SCREEN_HGT * 3.
@@ -345,7 +349,13 @@
  #define MAX_PANEL_COLS_L	((int)((l_ptr->wid + p_ptr->screen_wid / 2 - 1) / (p_ptr->screen_wid / 2)) - 2)
  #define MAX_PANEL_ROWS		((int)((MAX_HGT + p_ptr->screen_hgt / 2 - 1) / (p_ptr->screen_hgt / 2)) - 2)
  #define MAX_PANEL_COLS		((int)((MAX_WID + p_ptr->screen_wid / 2 - 1) / (p_ptr->screen_wid / 2)) - 2)
+
 #endif
+
+/* For client-side BIG_MAP handling */
+#define HGT_PLUS	(screen_hgt - SCREEN_HGT)
+#define WID_PLUS	(screen_wid - SCREEN_WID)
+
 
 /*
  * Hack -- This is used to make sure that every player that has a structure
@@ -1584,39 +1594,39 @@
 
 /* begin of 'bottom-aligned' status info, for large map size support - C. Blue */
 
-#define ROW_CUT			(22 + screen_hgt - SCREEN_HGT)
+#define ROW_CUT			(22 + HGT_PLUS)
 #define COL_CUT			0	/* <cut> */
 
-#define ROW_STUN		(23 + screen_hgt - SCREEN_HGT)
+#define ROW_STUN		(23 + HGT_PLUS)
 #define COL_STUN		38	/* <stun> */
 
-#define ROW_HUNGRY		(23 + screen_hgt - SCREEN_HGT)
+#define ROW_HUNGRY		(23 + HGT_PLUS)
 #define COL_HUNGRY		0	/* "Weak" / "Hungry" / "Full" / "Gorged" */
 
-#define ROW_BLIND		(23 + screen_hgt - SCREEN_HGT)
+#define ROW_BLIND		(23 + HGT_PLUS)
 #define COL_BLIND		7	/* "Blind" */
 
-#define ROW_CONFUSED		(23 + screen_hgt - SCREEN_HGT)
+#define ROW_CONFUSED		(23 + HGT_PLUS)
 #define COL_CONFUSED		13	/* "Confused" */
 
-#define ROW_AFRAID		(23 + screen_hgt - SCREEN_HGT)
+#define ROW_AFRAID		(23 + HGT_PLUS)
 #define COL_AFRAID		22	/* "Afraid" */
 
-#define ROW_POISONED		(23 + screen_hgt - SCREEN_HGT)
+#define ROW_POISONED		(23 + HGT_PLUS)
 #define COL_POISONED		29	/* "Poisoned" */
 
-#define ROW_STATE		(23 + screen_hgt - SCREEN_HGT)
+#define ROW_STATE		(23 + HGT_PLUS)
 #define COL_STATE		38	/* <state> */
 
-#define ROW_SPEED		(23 + screen_hgt - SCREEN_HGT)
+#define ROW_SPEED		(23 + HGT_PLUS)
 #define COL_SPEED		50	/* "Slow (-NN)" or "Fast (+NN)" */
 
-#define ROW_STUDY		(23 + screen_hgt - SCREEN_HGT)
+#define ROW_STUDY		(23 + HGT_PLUS)
 #define COL_STUDY		62	/* "Study" */
-#define ROW_BPR			(23 + screen_hgt - SCREEN_HGT)
+#define ROW_BPR			(23 + HGT_PLUS)
 #define COL_BPR			61	/* Blows/Round */
 
-#define ROW_DEPTH		(23 + screen_hgt - SCREEN_HGT)
+#define ROW_DEPTH		(23 + HGT_PLUS)
 #define COL_DEPTH		69	/* "Lev NNN" / "NNNN ft" */
 
 /* non-bottom-aligned stuff again */

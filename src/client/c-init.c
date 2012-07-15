@@ -2002,6 +2002,7 @@ void client_init(char *argv1, bool skip)
 	char host_name[80];
 	u16b version = MY_VERSION;
         s32b temp;
+        bool BIG_MAP_fallback = FALSE;
 
 	/* Set the "plog hook" */
 	if (!plog_aux) plog_aux = plog_hook;
@@ -2142,16 +2143,17 @@ void client_init(char *argv1, bool skip)
 		//login_port = (int) temp;
 
 		/* Hack - Receive server version - mikaelh */
-		if (char_creation_flags & 0x02)
-		{
+		if (char_creation_flags & 0x02) {
 			Packet_scanf(&ibuf, "%d%d%d%d%d%d", &server_version.major, &server_version.minor,
 			    &server_version.patch, &server_version.extra, &server_version.branch, &server_version.build);
 
 			/* Remove the flag */
 			char_creation_flags ^= 0x02;
-		}
-		else
-		{
+
+			/* Reset BIG_MAP screen if the server doesn't support it */
+			if (!is_newer_than(&server_version, 4, 4, 9, 1, 0, 1))
+				if (screen_wid != SCREEN_WID || screen_hgt != SCREEN_HGT) BIG_MAP_fallback = TRUE;
+		} else {
 			/* Assume that the server is old */
 			server_version.major = VERSION_MAJOR;
 			server_version.minor = VERSION_MINOR;
@@ -2159,9 +2161,18 @@ void client_init(char *argv1, bool skip)
 			server_version.extra = 0;
 			server_version.branch = 0;
 			server_version.build = 0;
+
+			/* Assume server doesn't support BIG_MAP screen */
+			if (screen_wid != SCREEN_WID || screen_hgt != SCREEN_HGT) BIG_MAP_fallback = TRUE;
 		}
 
 		break;
+	}
+
+	if (BIG_MAP_fallback) {
+		screen_wid = SCREEN_WID;
+		screen_hgt = SCREEN_HGT;
+		resize_main_window(WINDOW_WID, WINDOW_HGT);
 	}
 
 	/* Check for failure */
