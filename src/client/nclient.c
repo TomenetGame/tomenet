@@ -2992,8 +2992,8 @@ int Receive_special_line(void)
 	   sure that the first real line will be placed at physical line 1
 	   instead of 2, ie starting the whole page one line up higher.
 	   (That will simply look a bit better than touching the bottom status line.) */
-	if (line == 21) {
-		special_page_size = 21;
+	if (line == 21 + HGT_PLUS) {
+		special_page_size = 21 + HGT_PLUS;
 		return 1;
 	}
 
@@ -3008,15 +3008,15 @@ int Receive_special_line(void)
 			/* indicate EOF by different status line colour */
 			if (cur_line + special_page_size >= max_line)
 				c_prt(TERM_ORANGE, format("[Press Return, Space, -, b, or ESC to exit.] (%d-%d/%d)",
-				    cur_line + 1, max_line , max_line), 23, 0);
+				    cur_line + 1, max_line , max_line), 23 + HGT_PLUS, 0);
 			else
 				c_prt(TERM_L_WHITE, format("[Press Return, Space, -, b, or ESC to exit.] (%d-%d/%d)",
-				    cur_line + 1, cur_line + special_page_size, max_line), 23, 0);
+				    cur_line + 1, cur_line + special_page_size, max_line), 23 + HGT_PLUS, 0);
 		}
 	}
 
 	/* Recognize 'odd_line' type pages, aka 21 lines instead of just 20 - C. Blue */
-	if (line == 20) special_page_size = 21;
+	if (line == 20 + HGT_PLUS) special_page_size = 21 + HGT_PLUS;
 
 	/* Also adjust our current starting line to the possibly updated max_line in case
 	   max_line got smaller for some reason (for example when viewing equipment).
@@ -3040,7 +3040,7 @@ int Receive_special_line(void)
 		if (line == -1) phys_line = 0;
 		/* Normal line */
 		else {
-			phys_line = line + (special_page_size == 21 ? 1 : 2);
+			phys_line = line + (special_page_size == 21 + HGT_PLUS ? 1 : 2);
 
 			/* Keep in sync: If peruse_file() displays a title, it must be line + 2.
 			   Else line + 1 to save some space for 21-lines (odd_line) feature. */

@@ -546,7 +546,7 @@ void display_player(int Ind)
  */
 static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color, bool odd_line)
 {
-	int lines_per_page = 20;
+	int lines_per_page = 20 + HGT_PLUS;
 	int i, k = 0;
 	/* Number of "real" lines passed by */
 	s32b next = 0;
@@ -583,7 +583,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 		if (odd_line) {
 			lines_per_page = 21;
 			/* hack: prepare client so it can choose a somewhat nicer page layout */
-			Send_special_line(Ind, 0, 21, 0, "");
+			Send_special_line(Ind, 0, 21 + HGT_PLUS, 0, "");
 		}
 	}
 

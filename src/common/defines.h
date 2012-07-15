@@ -315,9 +315,11 @@
 #define MAX_WINDOW_WID	(MAX_SCREEN_WID + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
 #define MAX_WINDOW_HGT	(MAX_SCREEN_HGT + SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM)
 
+#ifdef CLIENT_SIDE
 /* For resizing the main window while client runs */
-#define WINDOW_WID	(screen_wid + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
-#define WINDOW_HGT	(screen_hgt + SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM)
+ #define WINDOW_WID	(screen_wid + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
+ #define WINDOW_HGT	(screen_hgt + SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM)
+#endif
 
 /*
  * Maximum dungeon height in grids, must be a multiple of SCREEN_HGT,
@@ -352,9 +354,15 @@
 
 #endif
 
-/* For client-side BIG_MAP handling */
-#define HGT_PLUS	(screen_hgt - SCREEN_HGT)
-#define WID_PLUS	(screen_wid - SCREEN_WID)
+#ifdef CLIENT_SIDE
+ /* For client-side BIG_MAP handling */
+ #define HGT_PLUS	(screen_hgt - SCREEN_HGT)
+ #define WID_PLUS	(screen_wid - SCREEN_WID)
+#else
+ /* For handling client functions depending on BIG_MAP */
+ #define HGT_PLUS	(Players[Ind]->screen_hgt - SCREEN_HGT)
+ #define WID_PLUS	(Players[Ind]->screen_wid - SCREEN_WID)
+#endif
 
 
 /*

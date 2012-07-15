@@ -1156,7 +1156,7 @@ void peruse_file(void)
 
 	/* Initialize */
 	cur_line = 0;
-	special_page_size = 20; /* assume 'non-odd_line' aka normal page size (vs 21) */
+	special_page_size = 20 + HGT_PLUS; /* assume 'non-odd_line' aka normal page size (vs 21) */
 
 	/* Save the old screen */
 	Term_save();
@@ -1189,10 +1189,10 @@ void peruse_file(void)
 		/* indicate EOF by different status line colour */
 		if (cur_line + special_page_size >= max_line)
 			c_prt(TERM_ORANGE, format("[Press Return, Space, -, b, or ESC to exit.] (%d-%d/%d)",
-			    cur_line + 1, max_line , max_line), 23, 0);
+			    cur_line + 1, max_line , max_line), 23 + HGT_PLUS, 0);
 		else
 			c_prt(TERM_L_WHITE, format("[Press Return, Space, -, b, or ESC to exit.] (%d-%d/%d)",
-			    cur_line + 1, cur_line + special_page_size, max_line), 23, 0);
+			    cur_line + 1, cur_line + special_page_size, max_line), 23 + HGT_PLUS, 0);
 		/* Get a keypress -
 		   hack: update max_line to its real value as soon as possible */
 		if (!max_line) inkey_max_line = TRUE;
@@ -1203,7 +1203,7 @@ void peruse_file(void)
 		/* Hack -- go to a specific line */
 		if (k == '#') {
 			char tmp[80];
-			prt(format("Goto Line(max %d): ", max_line), 23, 0);
+			prt(format("Goto Line(max %d): ", max_line), 23 + HGT_PLUS, 0);
 			strcpy(tmp, "0");
 			if (askfor_aux(tmp, 10, 0)) cur_line = atoi(tmp);
 		}
@@ -1287,7 +1287,7 @@ void peruse_file(void)
 
 	/* No longer using file perusal */
 	special_line_type = 0;
-	
+
 	/* Forget the length of this file, since the next file
 	   we peruse might be completely different */
 	max_line = 0;
