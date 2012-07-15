@@ -4108,12 +4108,15 @@ static void wild_display_map(int Ind, char mode)
 	player_type *p_ptr = Players[Ind];
 
 	int x, y, type;
+	int offset_x, max_wx;
+	int offset_y, max_wy;
 
 	byte ta;
 	char tc;
 
-	byte ma[MAP_HGT + 2][MAP_WID + 2];
-	char mc[MAP_HGT + 2][MAP_WID + 2];
+	/* map is displayed "full-screen" ie we can use all of the main window */
+	byte ma[MAX_WINDOW_HGT][MAX_WINDOW_WID];
+	char mc[MAX_WINDOW_HGT][MAX_WINDOW_WID];
 
 	byte sa[80];
 	char sc[80];
@@ -4126,6 +4129,21 @@ static void wild_display_map(int Ind, char mode)
 	byte c_dun, c_tow;
 	int c_dun_diff, c_tow_diff;
 	bool admin = is_admin(p_ptr);
+
+	if (MAX_WINDOW_WID > MAX_WILD_X + 2) {//+ 2 for border
+		offset_x = (MAX_WINDOW_WID - MAX_WILD_X) / 2 - 1;//-1 for border
+		max_wx = MAX_WILD_X + 2;
+	} else {
+		offset_x = 0;
+		max_wx = MAX_WINDOW_WID;
+	}
+	if (MAX_WINDOW_HGT > MAX_WILD_Y + 2) {//+ 2 for border
+		offset_y = (MAX_WINDOW_HGT - MAX_WILD_Y) / 2 - 1;//-1 for border
+		max_wy = MAX_WILD_Y + 2;
+	} else {
+		offset_y = 0;
+		max_wy = MAX_WINDOW_HGT;
+	}
 
 
 	/* Save lighting effects */
@@ -4160,20 +4178,20 @@ static void wild_display_map(int Ind, char mode)
 #else
 	/* limit, align so that the map fills out the screen,
 	   instead of always centering the '@-sector'. */
-	if (p_ptr->tmp_x < (MAP_WID + 1) / 2) p_ptr->tmp_x = (MAP_WID + 1) / 2;
-	if (p_ptr->tmp_y < (MAP_HGT - 1) / 2) p_ptr->tmp_y = (MAP_HGT - 1) / 2;
-	if (p_ptr->tmp_x >= MAX_WILD_X - (MAP_WID - 1) / 2) p_ptr->tmp_x = MAX_WILD_X - (MAP_WID - 1) / 2 - 1;
-	if (p_ptr->tmp_y >= MAX_WILD_Y - (MAP_HGT + 0) / 2) p_ptr->tmp_y = MAX_WILD_Y - (MAP_HGT + 0) / 2 - 1;
+	if (p_ptr->tmp_x < (max_wx + 0) / 2 - 1) p_ptr->tmp_x = (max_wx + 0) / 2 - 1;
+	if (p_ptr->tmp_y < (max_wy - 0) / 2 - 2) p_ptr->tmp_y = (max_wy - 0) / 2 - 2;
+	if (p_ptr->tmp_x > MAX_WILD_X - (max_wx - 0) / 2 + 1) p_ptr->tmp_x = MAX_WILD_X - (max_wx - 0) / 2 + 1;
+	if (p_ptr->tmp_y > MAX_WILD_Y - (max_wy + 0) / 2 - 0) p_ptr->tmp_y = MAX_WILD_Y - (max_wy + 0) / 2 - 0;
 #endif
 
 
 	/* for each row */
-	for (y = 0; y < MAP_HGT+2; y++) {
+	for (y = 0; y < max_wy; y++) {
 		/* for each column */
-		for (x = 0; x < MAP_WID+2; x++) {
+		for (x = 0; x < max_wx; x++) {
 			/* Location */
-			twpos.wy = p_ptr->tmp_y + (MAP_HGT+2)/2 - y;
-			twpos.wx = p_ptr->tmp_x - (MAP_WID+2)/2 + x;
+			twpos.wy = p_ptr->tmp_y + (max_wy)/2 - y;
+			twpos.wx = p_ptr->tmp_x - (max_wx)/2 + x;
 
 			if (twpos.wy >= 0 && twpos.wy < MAX_WILD_Y && twpos.wx >=0 && twpos.wx < MAX_WILD_X)
 				type = determine_wilderness_type(&twpos);
@@ -4253,21 +4271,21 @@ static void wild_display_map(int Ind, char mode)
 
 
 	/* Corners */
-	x = MAP_WID + 1;
-	y = MAP_HGT + 1;
+	x = max_wx - 1;
+	y = max_wy - 1;
 
 	/* Draw the corners */
 	mc[0][0] = mc[0][x] = mc[y][0] = mc[y][x] = '+';
 
 	/* Draw the horizontal edges */
-	for (x = 1; x <= MAP_WID; x++) mc[0][x] = mc[y][x] = '-';
+	for (x = 1; x < max_wx; x++) mc[0][x] = mc[y][x] = '-';
 
 	/* Draw the vertical edges */
-	for (y = 1; y <= MAP_HGT; y++) mc[y][0] = mc[y][x] = '|';
+	for (y = 1; y < max_wy; y++) mc[y][0] = mc[y][x] = '|';
 
 
 	/* Display each map line in order */
-	for (y = 0; y < MAP_HGT+2; ++y) {
+	for (y = 0; y < max_wy; ++y) {
 		/* Clear the screen buffer */
 #if 0
 		memset(sa, 0, sizeof(sa));
@@ -4281,7 +4299,7 @@ static void wild_display_map(int Ind, char mode)
 #endif
 
 		/* Display the line */
-		for (x = 0; x < MAP_WID+2; ++x) {
+		for (x = 0; x < max_wx; ++x) {
 			ta = ma[y][x];
 			tc = mc[y][x];
 
@@ -4293,8 +4311,8 @@ static void wild_display_map(int Ind, char mode)
 			sa[x] = ta;
 			sc[x] = tc;
 #else /* add a symmetrical 'border' to the left and right side of the map */
-			sa[x + (80 - MAP_WID - 2) / 2 - 1] = ta;
-			sc[x + (80 - MAP_WID - 2) / 2 - 1] = tc;
+			sa[x + offset_x] = ta;
+			sc[x + offset_x] = tc;
 #endif
 		}
 

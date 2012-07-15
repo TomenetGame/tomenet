@@ -663,7 +663,7 @@ void cmd_map(char mode)
 
 		while (TRUE) {
 			/* Wait until we get the whole thing */
-			if (last_line_info == 23) {
+			if (last_line_info == 23 + HGT_PLUS) {
 				/* Hack - Get rid of the cursor - mikaelh */
 				Term->scr->cx = Term->wid;
 				Term->scr->cu = 1;
