@@ -1202,7 +1202,7 @@ static void display_equip(void)
 		o_ptr = &inventory[i];
 
 		/* Start with an empty "index" */
-		tmp_val[0] = tmp_val[1] = tmp_val[2] = ' ';
+		strcpy(tmp_val, "   ");
 
 		/* Is this item acceptable? */
 		if (item_tester_okay(o_ptr))
