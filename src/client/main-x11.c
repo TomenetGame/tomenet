@@ -2892,21 +2892,25 @@ void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name
 void resize_main_window(int cols, int rows) {
 	int wid, hgt;
 	term_data *td = term_idx_to_term_data(0);
+        term *t = ang_term[0]; //&screen
 
 	term_prefs[0].columns = cols; //screen_wid + (MAX_WINDOW_WID - MAX_SCREEN_WID);
         term_prefs[0].lines = rows; //screen_hgt + (MAX_WINDOW_HGT - MAX_SCREEN_HGT);
 
         wid = cols * td->fnt->wid;
         hgt = rows * td->fnt->hgt;
-        Infowin_set(td->outer);
+
         /* Resize the windows if any "change" is needed */
+        Infowin_set(td->outer);
         if ((Infowin->w != wid + 2) || (Infowin->h != hgt + 2)) {
                 Infowin_set(td->outer);
                 Infowin_resize(wid + 2, hgt + 2);
                 Infowin_set(td->inner);
                 Infowin_resize(wid, hgt);
+
+	        Term_activate(t);
+	        Term_resize(cols, rows);
         }
-        XFlush(Metadpy->dpy);
 }
 
 

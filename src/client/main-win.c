@@ -4039,11 +4039,14 @@ void change_font(int s) {
 
 void resize_main_window(int cols, int rows) {
 	term_data *td = &data[0];
+	term *t = &td->t;
 
         td->cols = cols;
         td->rows = rows;
         term_getsize(td);
         term_window_resize(td);
+	Term_activate(t);
+        Term_resize(td->cols, td->rows);
 }
 
 #endif /* _Windows */

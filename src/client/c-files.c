@@ -1022,18 +1022,7 @@ errr process_pref_file_aux(char *buf)
                         {
                                 (*option_info[i].o_var) = FALSE;
 				Client_setup.options[i] = FALSE;
-
-#if 0 /* doesn't work */
-				/* react immediately */
-				if (option_info[i].o_var == &c_cfg.big_map
-				    && is_newer_than(&server_version, 4, 4, 9, 1, 0, 1)
-				    && screen_hgt != SCREEN_HGT) {
-					screen_hgt = SCREEN_HGT;
-					resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
-					//too early, connection not ready:	Send_screen_dimensions();
-				}
-#endif
-
+				check_immediate_options(i, FALSE, FALSE);
                                 return (0);
                         }
                 }
@@ -1050,24 +1039,7 @@ errr process_pref_file_aux(char *buf)
                         {
                                 (*option_info[i].o_var) = TRUE;
 				Client_setup.options[i] = TRUE;
-
-#if 0 /* doesn't work */
-				/* react immediately */
-				if (option_info[i].o_var == &c_cfg.big_map
-				    && is_newer_than(&server_version, 4, 4, 9, 1, 0, 1)
-				    && screen_hgt <= SCREEN_HGT) {
-					screen_hgt = SCREEN_HGT * 2;
-					resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
-					//too early, connection not ready:	Send_screen_dimensions();
- #if 0
-					Term_putstr(20, 20, -1, TERM_FIRE, "pft");
-					Term_putstr(40, 40, -1, TERM_HALF, "wooo");
-					usleep(2000000);
-					plog("mh");
- #endif
-				}
-#endif
-
+				check_immediate_options(i, TRUE, FALSE);
                                 return (0);
                         }
                 }

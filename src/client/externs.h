@@ -494,6 +494,7 @@ extern errr options_dump(cptr fname);
 extern bool parse_macro;
 extern int macro_missing_item;
 extern void Send_paste_msg(char *msg);
+extern void check_immediate_options(int i, bool yes, bool playing);
 
 /* c-spell.c */
 /*extern void show_browse(int book); */

@@ -4907,7 +4907,7 @@ static void do_cmd_options_aux(int page, cptr info)
 	while (TRUE)
 	{
 		/* Prompt XXX XXX XXX */
-		sprintf(buf, "%s (RET to advance, y/n to set, ESC to accept) ", info);
+		sprintf(buf, "%s (RET to advance, y/n to set, t to toggle, ESC to accept)", info);
 		prt(buf, 0, 0);
 
 		/* Display the options */
@@ -4977,6 +4977,7 @@ static void do_cmd_options_aux(int page, cptr info)
 			{
 				(*option_info[opt[k]].o_var) = TRUE;
 				Client_setup.options[opt[k]] = TRUE;
+				check_immediate_options(opt[k], TRUE, TRUE);
 				k = (k + 1) % n;
 				break;
 			}
@@ -4988,6 +4989,7 @@ static void do_cmd_options_aux(int page, cptr info)
 			{
 				(*option_info[opt[k]].o_var) = FALSE;
 				Client_setup.options[opt[k]] = FALSE;
+				check_immediate_options(opt[k], FALSE, TRUE);
 				k = (k + 1) % n;
 				break;
 			}
@@ -5000,6 +5002,7 @@ static void do_cmd_options_aux(int page, cptr info)
 				bool tmp = 1 - (*option_info[opt[k]].o_var);
 				(*option_info[opt[k]].o_var) = tmp;
 				Client_setup.options[opt[k]] = tmp;
+				check_immediate_options(opt[k], tmp, TRUE);
 				k = (k + 1) % n;
 				break;
 			}
@@ -6471,5 +6474,27 @@ void Send_paste_msg(char *msg) {
 			strcpy(&buf[c - msg + 2], c + 1);
 		}
 		Send_msg(format("%s", buf));
+	}
+}
+
+/* Check if certain options have an immediate effect when toggled,
+   for switching BIG_MAP feature on/off live. - C. Blue */
+void check_immediate_options(int i, bool yes, bool playing) {
+	if (playing) return;//debug
+
+	if (option_info[i].o_var == &c_cfg.big_map
+            && is_newer_than(&server_version, 4, 4, 9, 1, 0, 1)) {
+		if (!yes && screen_hgt != SCREEN_HGT) {
+	        	screen_hgt = SCREEN_HGT;
+    		        resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
+	                /* too early, connection not ready yet? (otherwise done in Input_loop()) */
+    		        if (playing) Send_screen_dimensions();
+		}
+		if (yes && screen_hgt <= SCREEN_HGT) {
+                        screen_hgt = SCREEN_HGT * 2;
+                        resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
+	                /* too early, connection not ready yet? (otherwise done in Input_loop()) */
+    		        if (playing) Send_screen_dimensions();
+		}
 	}
 }
