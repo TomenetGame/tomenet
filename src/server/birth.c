@@ -2239,7 +2239,7 @@ static void player_setup(int Ind, bool new)
 
 	p_ptr->tim_elemshield = 0;
 	p_ptr->tim_elemshield_type = 0;
-	
+
 	p_ptr->memory.x = 0;
 	p_ptr->memory.y = 0;
 	p_ptr->memory.wpos.wx = 0;
@@ -2283,6 +2283,11 @@ static void player_setup(int Ind, bool new)
 		p_ptr->cur_hgt = MAX_HGT;
 		p_ptr->cur_wid = MAX_WID;
 	}
+
+#ifdef BIG_MAP
+	if (p_ptr->max_panel_rows < 0) p_ptr->max_panel_rows = 0;
+	if (p_ptr->max_panel_cols < 0) p_ptr->max_panel_cols = 0;
+#endif
 
 	p_ptr->panel_row = ((p_ptr->py - p_ptr->screen_hgt / 4) / (p_ptr->screen_hgt / 2));
 	if (p_ptr->panel_row > p_ptr->max_panel_rows) p_ptr->panel_row = p_ptr->max_panel_rows;

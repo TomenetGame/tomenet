@@ -5594,6 +5594,11 @@ void process_player_change_wpos(int Ind)
 		p_ptr->cur_wid = MAX_WID;
 	}
 
+#ifdef BIG_MAP
+        if (p_ptr->max_panel_rows < 0) p_ptr->max_panel_rows = 0;
+        if (p_ptr->max_panel_cols < 0) p_ptr->max_panel_cols = 0;
+#endif
+
 #if (defined(ENABLE_RCRAFT) || defined(DUNGEON_VISIT_BONUS))
 	wpcopy(&p_ptr->wpos_old, &p_ptr->wpos);
 #endif
