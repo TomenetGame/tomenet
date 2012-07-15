@@ -9528,6 +9528,9 @@ static int Receive_screen_dimensions(int ind)
                 p_ptr->screen_hgt = SCREEN_HGT;
 #endif
 
+		connp->Client_setup.screen_wid = p_ptr->screen_wid;
+		connp->Client_setup.screen_hgt = p_ptr->screen_hgt;
+
 		/* Heavy redraw (just to make sure) */
 
 		p_ptr->redraw |= PR_MAP | PR_EXTRA | PR_BASIC | PR_HISTORY | PR_VARIOUS | PR_STATE | PR_PLUSSES;
