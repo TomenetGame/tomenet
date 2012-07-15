@@ -5137,7 +5137,7 @@ bool player_can_enter(int Ind, byte feature)
     -APD-
  */
 
-void move_player(int Ind, int dir, int do_pickup)
+void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy)
 {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos, nwpos, old_wpos;
@@ -5159,6 +5159,8 @@ void move_player(int Ind, int dir, int do_pickup)
 
 	if (!(zcave = getcave(wpos))) return;
 
+	/* We haven't done anything that would consume full turn energy by default */
+	if (consume_full_energy) *consume_full_energy = FALSE;
 
 	/* (S)He's no longer AFK, lol */
 	un_afk_idle(Ind);
@@ -5352,6 +5354,9 @@ void move_player(int Ind, int dir, int do_pickup)
 		/* Check for an attack */
 		if (cfg.use_pk_rules != PK_RULES_NEVER &&
 		    check_hostile(Ind, Ind2)) {
+			/* Full energy must always be consumed when attacking */
+			if (consume_full_energy) *consume_full_energy = TRUE;
+
 			py_attack(Ind, y, x, TRUE);
 			return;
 		}
@@ -5551,6 +5556,10 @@ void move_player(int Ind, int dir, int do_pickup)
 				disturb(Ind, 0, 0); /* stop running first */
 				return;
 			}
+
+			/* Full energy must always be consumed when attacking */
+			if (consume_full_energy) *consume_full_energy = TRUE;
+
 			py_attack(Ind, y, x, TRUE);
 		}
 
@@ -6826,10 +6835,13 @@ static bool run_test(int Ind)
 /*
  * Take one step along the current "run" path
  */
-void run_step(int Ind, int dir)
+void run_step(int Ind, int dir, char *consume_full_energy)
 {
 	player_type *p_ptr = Players[Ind];
 	int prev_dir;
+
+	/* We haven't done anything that would consume full turn energy by default */
+	*consume_full_energy = FALSE;
 
 	/* slower 'running' movement over certain terrain */
 	int real_speed = cfg.running_speed;
@@ -6880,7 +6892,7 @@ void run_step(int Ind, int dir)
 	if (--(p_ptr->running) <= 0) return;
 
 	/* Move the player, using the "pickup" flag */
-	move_player(Ind, p_ptr->find_current, p_ptr->always_pickup);
+	move_player(Ind, p_ptr->find_current, p_ptr->always_pickup, consume_full_energy);
 }
 
 /* 

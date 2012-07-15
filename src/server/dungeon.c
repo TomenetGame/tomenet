@@ -4592,8 +4592,14 @@ static void process_player_end(int Ind)
 	/* ('Handle running' from above was originally at this place) */
 	/* Handle running -- 5 times the speed of walking */
 	while (p_ptr->running && p_ptr->energy >= (level_speed(&p_ptr->wpos) * (real_speed + 1))/real_speed) {
-		run_step(Ind, 0);
-		p_ptr->energy -= level_speed(&p_ptr->wpos) / real_speed;
+		char consume_full_energy;
+		run_step(Ind, 0, &consume_full_energy);
+		if (consume_full_energy) {
+			/* Consume a full turn of energy in case we have e.g. attacked a monster */
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+		} else {
+			p_ptr->energy -= level_speed(&p_ptr->wpos) / real_speed;
+		}
 	}
 
 
