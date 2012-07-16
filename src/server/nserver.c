@@ -3586,40 +3586,44 @@ static int Receive_login(int ind){
 			int *id_list, i;
 			byte tmpm;
 			char colour_sequence[3];
-			s32b sflg3 = 0, sflg2 = 0, sflg1 = 0, sflg0 = 0; /* server flags to tell the client more about us - just informational purpose */
+			/* server flags to tell the client more about us - just informational purpose: */
+			u32b sflags3 = 0x0, sflags2 = 0x0, sflags1 = 0x0, sflags0 = 0x0;
 			/* flag array 0: server type flags
-			   flag array 1: client mode (special screen layout for showing party stats maybe (TODO//unused))
-			   flag array 2: temporary testing flags for experimental features
+			   flag array 1: features offered by server/client mode (special screen layout for showing party stats maybe (TODO//unused))
+			   flag array 2: temporary lua testing flags for experimental features
 			   flag array 3: unused
 			*/
 
 			/* Set server type flags */
 #ifdef RPG_SERVER
-			sflg0 |= SFLG_RPG;
-			if (l_acc->flags & ACC_ADMIN) sflg0 |= SFLG_RPG_ADMIN; /* Allow multiple chars per account for admins! */
+			sflags0 |= SFLG0_RPG;
+			if (l_acc->flags & ACC_ADMIN) sflags0 |= SFLG0_RPG_ADMIN; /* Allow multiple chars per account for admins! */
 #endif
 #ifdef FUN_SERVER
-			sflg0 |= SFLG_FUN;
+			sflags0 |= SFLG0_FUN;
 #endif
 #ifdef PARTY_SERVER
-			sflg0 |= SFLG_PARTY;
+			sflags0 |= SFLG0_PARTY;
 #endif
 #ifdef ARCADE_SERVER
-			sflg0 |= SFLG_ARCADE;
+			sflags0 |= SFLG0_ARCADE;
 #endif
 #ifdef TEST_SERVER
-			sflg0 |= SFLG_TEST;
+			sflags0 |= SFLG0_TEST;
 #endif
 
-			/* Set client mode flags */
+			/* Set available-feature / client mode flags */
+#ifdef BIG_MAP
+			sflags1 |= SFLG1_BIG_MAP;
+#endif
 
 			/* Set temporary flags */
-			sflg2 = sflags_TEMP;
+			sflags2 = sflags_TEMP;
 
 			/* Set XXX flags */
 
 			/* Send all flags! */
-			Packet_printf(&connp->c, "%c%d%d%d%d", PKT_SERVERDETAILS, sflg3, sflg2, sflg1, sflg0);
+			Packet_printf(&connp->c, "%c%d%d%d%d", PKT_SERVERDETAILS, sflags3, sflags2, sflags1, sflags0);
 
 			connp->password_verified = TRUE;
 			free(connp->pass);

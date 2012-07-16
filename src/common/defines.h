@@ -134,13 +134,17 @@
 
 
 /* Main server flags */
-#define SFLG_NORMAL	0x00
-#define SFLG_RPG	0x01
-#define SFLG_FUN	0x02
-#define SFLG_PARTY	0x04
-#define SFLG_ARCADE	0x08
-#define SFLG_TEST	0x10
-#define SFLG_RPG_ADMIN	0x20
+#define SFLG0_NORMAL	0x00000000
+#define SFLG0_RPG	0x00000001
+#define SFLG0_FUN	0x00000002
+#define SFLG0_PARTY	0x00000004
+#define SFLG0_ARCADE	0x00000008
+#define SFLG0_TEST	0x00000010
+#define SFLG0_RPG_ADMIN	0x00000020
+
+#define SFLG1_NORMAL	0x00000000
+#define SFLG1_PARTY	0x00000001
+#define SFLG1_BIG_MAP	0x00000002
 
 
 
@@ -6235,7 +6239,7 @@ extern int PlayerUID;
 #define BRAND_BALL_ACID     11
 #define BRAND_BALL_SOUND    12
 
-/* e */
+/* Client modes (e) */
 #define CLIENT_NORMAL		0x0000
 #define CLIENT_PARTY		0x0001
 

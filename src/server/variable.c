@@ -220,7 +220,7 @@ struct swear_info swear[MAX_SWEAR];
 char nonswear[MAX_NONSWEAR][NAME_LEN];
 
 /* Temporary server feature flags (for LUA files) */
-s32b sflags_TEMP = 0x00000000;
+u32b sflags_TEMP = 0x0;
 
 /*
  * Software options (set via the '=' command).  See "tables.c"

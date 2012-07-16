@@ -102,6 +102,7 @@
 #define WILDERNESS_NEW_FEATURES	/* Use new 4.4.9 wilderness features? WARNING: Changes wilderness and houses */
 
 
+
 /* --------------------- Server-type dependant features -------------------- */
 
 #ifdef RPG_SERVER

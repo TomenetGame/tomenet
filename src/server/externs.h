@@ -288,7 +288,7 @@ extern u32b old_id[MAX_ID];
 extern swear_info swear[MAX_SWEAR];
 extern char nonswear[MAX_NONSWEAR][NAME_LEN];
 extern struct ip_ban *banlist;
-extern s32b sflags_TEMP;
+extern u32b sflags_TEMP;
 extern player_type **Players;
 extern party_type parties[MAX_PARTIES];
 extern guild_type guilds[MAX_GUILDS];

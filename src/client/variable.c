@@ -170,6 +170,7 @@ bool save_chat = FALSE;
 
 client_opts c_cfg;
 
+u32b sflags3 = 0x0, sflags2 = 0x0, sflags1 = 0x0, sflags0 = 0x0;
 byte client_mode = CLIENT_NORMAL;
 
 u32b cfg_game_port = 18348;
@@ -251,7 +252,7 @@ bool s_TEST = FALSE;
 bool s_RPG_ADMIN = FALSE;
 
 /* Server temporary feature flags */
-s32b sflags_TEMP = 0x00000000;
+u32b sflags_TEMP = 0x0;
 
 /* Auto-inscriptions */
 char auto_inscription_match[MAX_AUTO_INSCRIPTIONS][40];

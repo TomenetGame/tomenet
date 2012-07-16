@@ -234,6 +234,7 @@ extern bool save_chat;
 
 extern client_opts c_cfg;
 
+extern u32b sflags3, sflags2, sflags1, sflags0;
 extern byte client_mode;
 
 extern u32b cfg_game_port;
@@ -288,7 +289,7 @@ extern bool s_TEST;
 extern bool s_RPG_ADMIN;
 
 /* Server's temporary features flags */
-extern s32b sflags_TEMP;
+extern u32b sflags_TEMP;
 
 /* Auto-inscriptions */
 extern char auto_inscription_match[MAX_AUTO_INSCRIPTIONS][40];

@@ -343,24 +343,23 @@ void Receive_login(void)
 	}
 
 	/* Read server detail flags for informational purpose - C. Blue */
-	s32b sflag3, sflag2, sflag1, sflag0;
-	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &sflag3, &sflag2, &sflag1, &sflag0)) <= 0) {
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &sflags3, &sflags2, &sflags1, &sflags0)) <= 0) {
 		return;
 	}
 
 	/* Set server type flags */
-	if (sflag0 & SFLG_RPG) s_RPG = TRUE;
-	if (sflag0 & SFLG_FUN) s_FUN = TRUE;
-	if (sflag0 & SFLG_PARTY) s_PARTY = TRUE;
-	if (sflag0 & SFLG_ARCADE) s_ARCADE = TRUE;
-	if (sflag0 & SFLG_TEST) s_TEST = TRUE;
-	if (sflag0 & SFLG_RPG_ADMIN) s_RPG_ADMIN = TRUE;
+	if (sflags0 & SFLG0_RPG) s_RPG = TRUE;
+	if (sflags0 & SFLG0_FUN) s_FUN = TRUE;
+	if (sflags0 & SFLG0_PARTY) s_PARTY = TRUE;
+	if (sflags0 & SFLG0_ARCADE) s_ARCADE = TRUE;
+	if (sflags0 & SFLG0_TEST) s_TEST = TRUE;
+	if (sflags0 & SFLG0_RPG_ADMIN) s_RPG_ADMIN = TRUE;
 
 	/* Set client mode */
-	client_mode = sflag1;
+	if (sflags1 & SFLG1_PARTY) client_mode = CLIENT_PARTY;
 
 	/* Set temporary features */
-	sflags_TEMP = sflag2;
+	sflags_TEMP = sflags2;
 
 	/* Set XXX */
 
