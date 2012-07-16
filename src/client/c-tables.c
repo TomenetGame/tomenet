@@ -663,7 +663,7 @@ option_type option_info[OPT_MAX] =
 	"auto_untag",			"Remove unique monster inscription on pick-up" },
 
 	{ &c_cfg.big_map,		FALSE,	2,	1, 15, TRUE,
-	"big_map",			"Double size of the map shown in the main window" },//smart_cheat
+	"big_map",			"Double height of the map shown in the main window" },//smart_cheat
 
 
 	{ &c_cfg.view_reduce_lite,	FALSE,	3,	1, 16, TRUE,	/* (44) */
@@ -690,16 +690,11 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.player_list2,		FALSE,	4,	1, 23, TRUE,
 	"player_list2",			"Compacts the player list in @ screen even more" },//fresh_before
 
-	{ &c_cfg.fresh_after,		FALSE,	1,	1, 24, FALSE,
-	"fresh_after",			"(obsolete) Flush output after every command" },
+	{ &c_cfg.fresh_after,           FALSE,  1,      1, 24, FALSE,
+	"fresh_after",                  "(obsolete) Flush output after every command" },
 
-#if 0
-	{ &c_cfg.fresh_message,		FALSE,	1,	1, 25, FALSE,
-	"fresh_message",		"(obsolete) Flush output after every message" },
-#else
 	{ &c_cfg.censor_swearing,	TRUE,	4,	1, 25, TRUE,
-	"censor_swearing",		"Censor certain swear words in public messages" },
-#endif
+	"censor_swearing",		"Censor certain swear words in public messages" },//fresh_message
 
 	{ &c_cfg.safe_macros,		TRUE,	3,	1, 26, TRUE, /* was compress_savefile (broken&obsolete); use Term_flush() to clear macro execution */
 	"safe_macros",			"Abort macro execution if an action fails" },
