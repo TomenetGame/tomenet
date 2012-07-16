@@ -9520,6 +9520,9 @@ static int Receive_screen_dimensions(int ind)
 			Destroy_connection(ind, "read error");
 			return n;
 		}
+#ifndef BIG_MAP
+		return 1;
+#endif
 
 
 		/* fix limits */

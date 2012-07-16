@@ -6481,7 +6481,7 @@ void Send_paste_msg(char *msg) {
    for switching BIG_MAP feature on/off live. - C. Blue */
 void check_immediate_options(int i, bool yes, bool playing) {
 	if (option_info[i].o_var == &c_cfg.big_map
-            && is_newer_than(&server_version, 4, 4, 9, 1, 0, 1)
+            && is_newer_than(&server_version, 4, 4, 9, 1, 0, 1) /* redundant */
             && (sflags1 & SFLG1_BIG_MAP)) {
 		if (!yes && screen_hgt != SCREEN_HGT) {
 	        	screen_hgt = SCREEN_HGT;
