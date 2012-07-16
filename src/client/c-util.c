@@ -6495,7 +6495,7 @@ void check_immediate_options(int i, bool yes, bool playing) {
     		    	}
 		}
 		if (yes && screen_hgt <= SCREEN_HGT) {
-                        screen_hgt = SCREEN_HGT * 2;
+                        screen_hgt = MAX_SCREEN_HGT;
                         resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
 	                /* too early, connection not ready yet? (otherwise done in Input_loop()) */
     		        if (playing) {

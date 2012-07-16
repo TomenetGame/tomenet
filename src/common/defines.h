@@ -304,16 +304,18 @@
 #define SCREEN_WID	66
 
 /* New for BIG_MAP feature: Minimum and maximum screen size - C. Blue */
-#define MIN_SCREEN_WID	66
-#define MIN_SCREEN_HGT	22
-#define MAX_SCREEN_WID	66
-#define MAX_SCREEN_HGT	44
+#define MIN_SCREEN_WID	SCREEN_WID
+#define MIN_SCREEN_HGT	SCREEN_HGT
+#define MAX_SCREEN_WID	SCREEN_WID
+#define MAX_SCREEN_HGT	(SCREEN_HGT * 2)
 
 /* (BIG_MAP) Padding of on-screen map, because of chat line, status bars, etc */
 #define SCREEN_PAD_LEFT		13
 #define SCREEN_PAD_RIGHT	1
 #define SCREEN_PAD_TOP		1
 #define SCREEN_PAD_BOTTOM	1
+#define SCREEN_PAD_X		(SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
+#define SCREEN_PAD_Y		(SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM)
 
 /* (BIG_MAP) Maximum possible main window size */
 #define MAX_WINDOW_WID	(MAX_SCREEN_WID + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
