@@ -366,7 +366,6 @@
   #define TRADPANEL_COL_MIN	(p_ptr->panel_col_min)
   #define TRADPANEL_COL_MAX	(p_ptr->panel_col_max)
  #endif
-}
 #else /* allow larger main screen than 80x24 - C. Blue */
  #define MAX_PANEL_ROWS_L	((int)((l_ptr->hgt + p_ptr->screen_hgt / 2 - 1) / (p_ptr->screen_hgt / 2)) - 2)
  #define MAX_PANEL_COLS_L	((int)((l_ptr->wid + p_ptr->screen_wid / 2 - 1) / (p_ptr->screen_wid / 2)) - 2)
