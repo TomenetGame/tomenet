@@ -2894,8 +2894,8 @@ void resize_main_window(int cols, int rows) {
 	term_data *td = term_idx_to_term_data(0);
         term *t = ang_term[0]; //&screen
 
-	term_prefs[0].columns = cols; //screen_wid + (MAX_WINDOW_WID - MAX_SCREEN_WID);
-        term_prefs[0].lines = rows; //screen_hgt + (MAX_WINDOW_HGT - MAX_SCREEN_HGT);
+	term_prefs[0].columns = cols; //screen_wid + (SCREEN_PAD_X);
+        term_prefs[0].lines = rows; //screen_hgt + (SCREEN_PAD_Y);
 
         wid = cols * td->fnt->wid;
         hgt = rows * td->fnt->hgt;
