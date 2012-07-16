@@ -2205,18 +2205,19 @@ struct player_type
 	bool censor_swearing;
 	bool warn_unique_credit;
 
-	s16b max_panel_rows;
-	s16b max_panel_cols;
-	s16b panel_row;
-	s16b panel_col;
-	s16b panel_row_min;
-	s16b panel_row_max;
-	s16b panel_col_min;
-	s16b panel_col_max;
-	s16b panel_col_prt;	/* What panel this guy's on */
-	s16b panel_row_prt;
-	s16b panel_row_old;
-	s16b panel_col_old;
+	s16b max_panel_rows, max_panel_cols;
+	s16b panel_row, panel_col;
+	s16b panel_row_min, panel_col_max;
+	s16b panel_col_min, panel_row_max;
+	s16b panel_row_prt, panel_col_prt;	/* What panel this guy's on */
+	s16b panel_row_old, panel_col_old;
+#if 0
+	/* panel values assumed we'd use SCREEN_WID x SCREEN_HGT panels (and maybe for [x,y] location display) */
+	s16b max_tradpanel_rows, max_tradpanel_cols;
+	s16b tradpanel_row, tradpanel_col;
+	s16b tradpanel_row_min, tradpanel_col_min;
+	s16b tradpanel_row_max, tradpanel_col_max;
+#endif
 
 	s16b screen_wid;
 	s16b screen_hgt;

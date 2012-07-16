@@ -6733,10 +6733,10 @@ void map_area(int Ind)
 	if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC_MAP)) return;
 
 	/* Pick an area to map */
-	y1 = p_ptr->panel_row_min - randint(10);
-	y2 = p_ptr->panel_row_max + randint(10);
-	x1 = p_ptr->panel_col_min - randint(20);
-	x2 = p_ptr->panel_col_max + randint(20);
+	y1 = TRADPANEL_ROW_MIN - randint(10);
+	y2 = TRADPANEL_ROW_MAX + randint(10);
+	x1 = TRADPANEL_COL_MIN - randint(20);
+	x2 = TRADPANEL_COL_MAX + randint(20);
 
 	/* Speed -- shrink to fit legal bounds */
 	if (y1 < 1) y1 = 1;

@@ -9424,6 +9424,14 @@ void panel_bounds(int Ind)
 	p_ptr->panel_col_min = p_ptr->panel_col * (p_ptr->screen_wid / 2);
 	p_ptr->panel_col_max = p_ptr->panel_col_min + p_ptr->screen_wid - 1;
 	p_ptr->panel_col_prt = p_ptr->panel_col_min - SCREEN_PAD_LEFT;
+
+#if 0
+	/* for stuff such as magic mapping that relies on traditional panel size */
+	p_ptr->tradpanel_row_min = p_ptr->tradpanel_row * (SCREEN_HGT / 2);
+	p_ptr->tradpanel_row_max = p_ptr->tradpanel_row_min + SCREEN_HGT - 1;
+	p_ptr->tradpanel_col_min = p_ptr->tradpanel_col * (SCREEN_WID / 2);
+	p_ptr->tradpanel_col_max = p_ptr->tradpanel_col_min + SCREEN_WID - 1;
+#endif
 }
 
 

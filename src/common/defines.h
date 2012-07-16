@@ -354,12 +354,42 @@
  #define MAX_PANEL_COLS_L	(((l_ptr->wid + p_ptr->screen_wid / 2) / p_ptr->screen_wid) * 2 - 2)
  #define MAX_PANEL_ROWS		((MAX_HGT / p_ptr->screen_hgt) * 2 - 2)
  #define MAX_PANEL_COLS		((MAX_WID / p_ptr->screen_wid) * 2 - 2)
+
+ #if 0
+  /* stuff that depends on normal-sized panels, for various effects such as magic mapping */
+  #define MAX_TRADPANEL_ROWS_L	(((l_ptr->hgt + SCREEN_HGT / 2) / SCREEN_HGT) * 2 - 2)
+  #define MAX_TRADPANEL_COLS_L	(((l_ptr->wid + SCREEN_WID / 2) / SCREEN_WID) * 2 - 2)
+  #define MAX_TRADPANEL_ROWS	((MAX_HGT / SCREEN_HGT) * 2 - 2)
+  #define MAX_TRADPANEL_COLS	((MAX_WID / SCREEN_WID) * 2 - 2)
+  #define TRADPANEL_ROW_MIN	(p_ptr->panel_row_min)
+  #define TRADPANEL_ROW_MAX	(p_ptr->panel_row_max)
+  #define TRADPANEL_COL_MIN	(p_ptr->panel_col_min)
+  #define TRADPANEL_COL_MAX	(p_ptr->panel_col_max)
+ #endif
+}
 #else /* allow larger main screen than 80x24 - C. Blue */
  #define MAX_PANEL_ROWS_L	((int)((l_ptr->hgt + p_ptr->screen_hgt / 2 - 1) / (p_ptr->screen_hgt / 2)) - 2)
  #define MAX_PANEL_COLS_L	((int)((l_ptr->wid + p_ptr->screen_wid / 2 - 1) / (p_ptr->screen_wid / 2)) - 2)
  #define MAX_PANEL_ROWS		((int)((MAX_HGT + p_ptr->screen_hgt / 2 - 1) / (p_ptr->screen_hgt / 2)) - 2)
  #define MAX_PANEL_COLS		((int)((MAX_WID + p_ptr->screen_wid / 2 - 1) / (p_ptr->screen_wid / 2)) - 2)
 
+ #if 0
+  /* default panel variables used for various effects such as magic mapping */
+  #define MAX_TRADPANEL_ROWS_L	(((l_ptr->hgt + SCREEN_HGT / 2) / SCREEN_HGT) * 2 - 2)
+  #define MAX_TRADPANEL_COLS_L	(((l_ptr->wid + SCREEN_WID / 2) / SCREEN_WID) * 2 - 2)
+  #define MAX_TRADPANEL_ROWS	((MAX_HGT / SCREEN_HGT) * 2 - 2)
+  #define MAX_TRADPANEL_COLS	((MAX_WID / SCREEN_WID) * 2 - 2)
+  /* use traditional panel sizes and map around the one we'd be within (better) */
+  #define TRADPANEL_ROW_MIN	(p_ptr->tradpanel_row_min)
+  #define TRADPANEL_ROW_MAX	(p_ptr->tradpanel_row_max)
+  #define TRADPANEL_COL_MIN	(p_ptr->tradpanel_col_min)
+  #define TRADPANEL_COL_MAX	(p_ptr->tradpanel_col_max)
+ #else /* centers magic mapping on current huge panel (quick and easy) */
+  #define TRADPANEL_ROW_MIN	(p_ptr->panel_row_min + p_ptr->screen_hgt / 2 - SCREEN_HGT / 2)
+  #define TRADPANEL_ROW_MAX	(p_ptr->panel_row_max - p_ptr->screen_hgt / 2 + SCREEN_HGT / 2)
+  #define TRADPANEL_COL_MIN	(p_ptr->panel_col_min + p_ptr->screen_wid / 2 - SCREEN_WID / 2)
+  #define TRADPANEL_COL_MAX	(p_ptr->panel_col_max - p_ptr->screen_wid / 2 + SCREEN_WID / 2)
+ #endif
 #endif
 
 #ifdef CLIENT_SIDE
