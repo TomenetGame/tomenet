@@ -100,8 +100,10 @@
  * XXX They should be client-side numerical options.	- Jir -
  */
 #ifndef ARCADE_SERVER
-	#define	SCROLL_MARGIN_ROW	(p_ptr->wide_scroll_margin ? 5 : 2) /* 5:2 */
-	#define	SCROLL_MARGIN_COL	(p_ptr->wide_scroll_margin ? 12 : 4) /* 16:4 */
+	#define	SCROLL_MARGIN_ROW	(p_ptr->screen_hgt >= 26 ? \
+					(p_ptr->wide_scroll_margin ? p_ptr->screen_hgt / 5 : p_ptr->screen_hgt / 13) : \
+					(p_ptr->wide_scroll_margin ? 5 : 2))
+	#define	SCROLL_MARGIN_COL	(p_ptr->wide_scroll_margin ? p_ptr->screen_wid / 5 : p_ptr->screen_wid / 13)
 #else
 	#define SCROLL_MARGIN_ROW 8
 	#define SCROLL_MARGIN_COL 20
