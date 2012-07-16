@@ -2155,8 +2155,8 @@ void client_init(char *argv1, bool skip)
 			char_creation_flags ^= 0x02;
 
 			/* Reset BIG_MAP screen if the server doesn't support it */
-			if (!is_newer_than(&server_version, 4, 4, 9, 1, 0, 1) ||
-			    !(sflags1 & SFLG1_BIG_MAP))
+			if (!is_newer_than(&server_version, 4, 4, 9, 1, 0, 1))
+			    //|| !(sflags1 & SFLG1_BIG_MAP)) -- sflags are not yet initialised!
 				if (screen_wid != SCREEN_WID || screen_hgt != SCREEN_HGT) BIG_MAP_fallback = TRUE;
 		} else {
 			/* Assume that the server is old */

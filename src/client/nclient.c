@@ -357,6 +357,13 @@ void Receive_login(void)
 
 	/* Set client mode */
 	if (sflags1 & SFLG1_PARTY) client_mode = CLIENT_PARTY;
+	if (!(sflags1 & SFLG1_BIG_MAP) &&
+            (screen_wid != SCREEN_WID || screen_hgt != SCREEN_HGT)) {
+		/* BIG_MAP_fallback sort of */
+                screen_wid = SCREEN_WID;
+                screen_hgt = SCREEN_HGT;
+                resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
+        }
 
 	/* Set temporary features */
 	sflags_TEMP = sflags2;
