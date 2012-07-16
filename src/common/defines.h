@@ -361,11 +361,11 @@
   #define MAX_TRADPANEL_COLS_L	(((l_ptr->wid + SCREEN_WID / 2) / SCREEN_WID) * 2 - 2)
   #define MAX_TRADPANEL_ROWS	((MAX_HGT / SCREEN_HGT) * 2 - 2)
   #define MAX_TRADPANEL_COLS	((MAX_WID / SCREEN_WID) * 2 - 2)
-  #define TRADPANEL_ROW_MIN	(p_ptr->panel_row_min)
-  #define TRADPANEL_ROW_MAX	(p_ptr->panel_row_max)
-  #define TRADPANEL_COL_MIN	(p_ptr->panel_col_min)
-  #define TRADPANEL_COL_MAX	(p_ptr->panel_col_max)
  #endif
+ #define TRADPANEL_ROW_MIN	(p_ptr->panel_row_min)
+ #define TRADPANEL_ROW_MAX	(p_ptr->panel_row_max)
+ #define TRADPANEL_COL_MIN	(p_ptr->panel_col_min)
+ #define TRADPANEL_COL_MAX	(p_ptr->panel_col_max)
 #else /* allow larger main screen than 80x24 - C. Blue */
  #define MAX_PANEL_ROWS_L	((int)((l_ptr->hgt + p_ptr->screen_hgt / 2 - 1) / (p_ptr->screen_hgt / 2)) - 2)
  #define MAX_PANEL_COLS_L	((int)((l_ptr->wid + p_ptr->screen_wid / 2 - 1) / (p_ptr->screen_wid / 2)) - 2)
