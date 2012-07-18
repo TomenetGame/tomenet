@@ -20627,7 +20627,7 @@ F:BASH_DOOR | FORCE_MAXHP | FORCE_SLEEP | DROP_CORPSE | NO_FEAR
 F:MORTAL | ANIMAL | WILD_TOO | WILD_WOOD | RAND_25 | IMPRESSED
 F:CAN_FLY | WILD_ONLY | WILD_WOOD | WILD_GRASS | DROP_SKELETON | HAS_EGG
 F:GENO_NO_THIN | IM_TELE | BLUEBAND | NO_DEATH | NO_TARGET | NO_AUTORET
-D:A black and white spotted bear that doesn't seem overly agressive.
+D:A grey-brown bird with orange-red breast feathers.
 
 
 # N: serial number : monster name
