@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 13. July 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 20. July 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.9b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -2033,6 +2033,27 @@ Instructions to join the TomeNET Mumble server for voice chatting:
 
 That's it. To change to a certain chat channel, simply double-click it.
 You can only hear people in the same chat channel (or in a parent channel).
+
+
+Troubleshooting Mumble:
+-----------------------
+PROBLEM:  You could connect fine, but after reinstalling Mumble you cannot
+          connect anymore.
+SOLUTION: Go to "Settings" -> "Certificate Wizard", create a new certificate.
+
+PROBLEM:  You get a message "the remote host closed the connection".
+SOLUTION: Can be caused by some firewalls interacting with mumble's quality of
+          service optimizations. You can disable QOS in mumble:
+          Windows/Linux:
+           -click "Configure" -> "Settings".
+           -look down to the bottom left corner and activate "Advanced".
+           -click on "Network" on the left side panel.
+           -deactivate/uncheck "Use Quality of Service".
+          OS X:
+           -in the top menu bar click "Mumble" -> "Preferences".
+           -look up to the top right corner and activate "Advanced".
+           -click on "Network" tab.
+           -deactivate/uncheck "Use Quality of Service".
 
 
 
@@ -6245,6 +6266,8 @@ Rocket          Rockets combine fire, shard & sound effects and can also damage
                 Shard resistance will prevent cuts, sound resistance will
                 prevent getting stunned.
                 (Rockets are treated internally like breathing.)
+Detonation      Same as rocket.
+Inferno         Same as detonation, except it does not destroy walls.
 
 
 Immunities
