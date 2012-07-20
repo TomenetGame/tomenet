@@ -521,13 +521,48 @@ static void store_do_command(int num)
 static void store_process_command(int cmd)
 {
 	int i;
-	for (i = 0; i < 6; i++)
-	{
+	for (i = 0; i < 6; i++) {
 		if (!c_store.actions[i]) continue;
-		if (c_store.letter[i] == cmd)
-		{
+		if (c_store.letter[i] == cmd) {
 			store_do_command(i);
 			return;
+		}
+	}
+
+	/* hack: translate p/s into d/g and vice versa, for extra comfort */
+	for (i = 0; i < 6; i++) {
+		if (!c_store.actions[i]) continue;
+		switch (c_store.letter[i]) {
+		case 'p':
+			if (cmd == 'g') {
+				store_do_command(i);
+				return;
+			}
+			break;
+		case 's':
+			if (cmd == 'd') {
+				store_do_command(i);
+				return;
+			}
+			break;
+		case 'g':
+			if (cmd == 'p') {
+				store_do_command(i);
+				return;
+			}
+			break;
+		case 'd':
+			if (cmd == 's') {
+				store_do_command(i);
+				return;
+			}
+			break;
+		case 'x':
+			if (cmd == 'I' || cmd == 'l') {
+				store_do_command(i);
+				return;
+			}
+			break;
 		}
 	}
 
@@ -613,33 +648,6 @@ static void store_process_command(int cmd)
 			else c_msg_format("Page %d is empty.", i + 1);
 #endif
 			break;
-
-#if 0 /* replaced by st_info actions */
-		/* Get (purchase) */
-		case 'g':
-		case 'p':
-		case 'm':
-		{
-			store_purchase();
-			break;
-		}
-
-		/* Drop (Sell) */
-		case 'd':
-		case 's':
-		{
-			store_sell();
-			break;
-		}
-
-		/* eXamine */
-		case 'x':
-		case 'l':
-		{
-			store_examine();
-			break;
-		}
-#endif
 
 		/* Paste on Chat */
 		case 'c':
