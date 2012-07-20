@@ -3239,7 +3239,7 @@ void store_purchase(int Ind, int item, int amt)
 	/* Find out how many the player wants */
 	if (o_ptr->number > 1) {
 		/* Hack -- note cost of "fixed" items */
-		if ((p_ptr->store_num != 7) && (o_ptr->ident & ID_FIXED))
+		if ((p_ptr->store_num != STORE_HOME) && (o_ptr->ident & ID_FIXED))
 		{
 			msg_format("That costs %ld gold per item.", (long int)(best));
 		}
@@ -3253,7 +3253,7 @@ void store_purchase(int Ind, int item, int amt)
 #endif
 
 	/* Attempt to buy it */
-	if (p_ptr->store_num != 7) {
+	if (p_ptr->store_num != STORE_HOME) {
 		/* For now, I'm assuming everything's price is "fixed" */
 		/* Fixed price, quick buy */
 #if 0
@@ -3529,7 +3529,7 @@ void store_sell(int Ind, int item, int amt)
 	object_desc(Ind, o_name, &sold_obj, TRUE, 3);
 
 	/* Remove any inscription for stores */
-	if (p_ptr->store_num != 7) {
+	if (p_ptr->store_num != STORE_HOME) {
 		sold_obj.note = 0;
 		sold_obj.note_utag = 0;
 	}
@@ -3580,7 +3580,7 @@ void store_sell(int Ind, int item, int amt)
 	}
 
 	/* Real store */
-	if (p_ptr->store_num != 7)
+	if (p_ptr->store_num != STORE_HOME)
 	{
 		/* Describe the transaction */
 		msg_format(Ind, "Selling %s (%c).", o_name, index_to_label(item));
@@ -3979,7 +3979,7 @@ void do_cmd_store(int Ind)
 		return;
 	}
 #if 0	/* it have changed */
-	else if (which > 7) {	/* XXX It'll change */
+	else if (which > STORE_HOME) {	/* XXX It'll change */
 		msg_print(Ind, "A placard reads: Closed for inventory.");
 		return;
 	}
@@ -4462,7 +4462,7 @@ void store_exec_command(int Ind, int action, int item, int item2, int amt, int g
 	int i;
 
 	/* MEGAHACK -- accept house extension command */
-	if (p_ptr->store_num == 7) {
+	if (p_ptr->store_num == STORE_HOME) {
 		if (ba_info[action].action == BACT_EXTEND_HOUSE) home_extend(Ind);
 		return;
 	}
@@ -5058,7 +5058,7 @@ void home_sell(int Ind, int item, int amt)
 	house_type		*h_ptr;
 
 	/* This should never happen */
-	if (p_ptr->store_num != 7) {
+	if (p_ptr->store_num != STORE_HOME) {
 		msg_print(Ind,"You left the house!");
 		return;
 	}
@@ -5250,7 +5250,7 @@ void home_purchase(int Ind, int item, int amt)
 	}
 
 	/* This should never happen */
-	if (p_ptr->store_num != 7) return;
+	if (p_ptr->store_num != STORE_HOME) return;
 
 	h_idx = pick_house(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 	if (h_idx == -1) return;
@@ -5450,7 +5450,7 @@ void home_examine(int Ind, int item)
 	house_type *h_ptr;
 
 	/* This should never happen */
-	if (p_ptr->store_num != 7) return;
+	if (p_ptr->store_num != STORE_HOME) return;
 
 	h_idx = pick_house(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 	if (h_idx == -1) return;
@@ -5505,7 +5505,7 @@ void home_extend(int Ind)
 	house_type *h_ptr;
 
 	/* This should never happen */
-	if (p_ptr->store_num != 7) return;
+	if (p_ptr->store_num != STORE_HOME) return;
 
 	h_idx = pick_house(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 	if (h_idx == -1) return;
@@ -5559,7 +5559,7 @@ static void display_house_entry(int Ind, int pos, house_type *h_ptr)
 //	int maxwid = 75;
 
 	/* This should never happen */
-	if (p_ptr->store_num != 7) return;
+	if (p_ptr->store_num != STORE_HOME) return;
 
 
 	/* Get the item */
@@ -5614,7 +5614,7 @@ static void display_house_inventory(int Ind, house_type *h_ptr)
 	int k;
 
 	/* This should never happen */
-	if (p_ptr->store_num != 7) return;
+	if (p_ptr->store_num != STORE_HOME) return;
 
 	/* Display the next 48 items */
 	for (k = 0; k < STORE_INVEN_MAX; k++) {
@@ -5635,7 +5635,7 @@ static void display_trad_house(int Ind, house_type *h_ptr)
 	player_type *p_ptr = Players[Ind];
 
 	/* This should never happen */
-	if (p_ptr->store_num != 7) return;
+	if (p_ptr->store_num != STORE_HOME) return;
 
 	/* Send the house info */
 	/* our own house */
@@ -5662,7 +5662,7 @@ static void display_trad_house(int Ind, house_type *h_ptr)
 	/* Hack -- Send the store actions info */
 	/* XXX it's dirty hack -- the aim is to avoid
 	 * hard-coded stuffs in the client */
-	show_building(Ind, &town[0].townstore[7]);
+	show_building(Ind, &town[0].townstore[STORE_HOME]);
 }
 
 /* Enter a house, and interact with it.	- Jir - */
@@ -6197,7 +6197,7 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 	}
 
 	/* HACK: Save fake store number.
-	   NOTE: Client currently can handle negative store_num, since it only tests for == 7. */
+	   NOTE: Client currently can handle negative store_num, since it only tests for == STORE_HOME. */
 	p_ptr->store_num = - 2 - fsidx;
 	p_ptr->ps_house_x = x;
 	p_ptr->ps_house_y = y;
