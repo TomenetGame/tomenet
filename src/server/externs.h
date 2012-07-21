@@ -1826,7 +1826,11 @@ extern bool target_able(int Ind, int m_idx);
 extern bool target_okay(int Ind);
 extern s16b target_pick(int Ind, int y1, int x1, int dy, int dx);
 extern bool target_set(int Ind, int dir);
-extern bool target_set_friendly(int Ind, int dir, ...);
+#if 0
+ extern bool target_set_friendly(int Ind, int dir, ...);
+#else
+ extern bool target_set_friendly(int Ind, int dir);
+#endif
 extern bool get_aim_dir(int Ind/*, int *dp*/);
 extern bool get_item(int Ind);
 extern bool do_scroll_life(int Ind);

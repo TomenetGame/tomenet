@@ -10258,6 +10258,9 @@ bool target_set(int Ind, int dir)
 	return (TRUE);
 }
 
+
+#if 0 /* not functional atm, replaced by target-closest strategy */
+
 /* targets the most wounded teammate. should be useful for stuff like
  * heal other and teleport macros. -ADA-
  *
@@ -10393,6 +10396,118 @@ bool target_set_friendly(int Ind, int dir, ...)
 	/* Success */
 	return (TRUE);
 }
+
+#else
+
+/* targets closest player */
+bool target_set_friendly(int Ind, int dir)
+{
+	player_type *p_ptr = Players[Ind], *q_ptr;
+	struct worldpos *wpos = &p_ptr->wpos;
+	cave_type **zcave;
+	int		i, m, idx;
+	int		y;
+	int		x;
+	char	out_val[160];
+	cave_type	*c_ptr;
+
+	if (!(zcave = getcave(wpos))) return(FALSE);
+
+	x = p_ptr->px;
+	y = p_ptr->py;
+
+	/* Go ahead and turn off target mode */
+	p_ptr->target_who = 0;
+
+	/* Turn off health tracking */
+	health_track(Ind, 0);
+
+
+	/* Reset "target" array */
+	p_ptr->target_n = 0;
+
+	for (i = 1; i <= NumPlayers; i++) {
+		q_ptr = Players[i];
+
+		/* Don't target yourself */
+		if (i == Ind) continue;
+
+		/* Skip unconnected players */
+		if (q_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Ignore players we aren't friends with */
+		if (check_hostile(Ind, i)) continue;
+
+		/* if we are in party, only help members */
+		if (p_ptr->party && (!player_in_party(p_ptr->party, i))) continue;
+
+		/* Ignore "unreasonable" players */
+		if (!target_able(Ind, 0 - i)) continue;
+
+		/* Save the player index */
+		p_ptr->target_x[p_ptr->target_n] = q_ptr->px;
+		p_ptr->target_y[p_ptr->target_n] = q_ptr->py;
+		p_ptr->target_idx[p_ptr->target_n] = i;
+		p_ptr->target_n++;
+	}
+
+#if 1
+	/* Set the sort hooks */
+	ang_sort_comp = ang_sort_comp_distance;
+	ang_sort_swap = ang_sort_swap_distance;
+
+	/* Sort the positions */
+	wounded_player_target_sort(Ind, p_ptr->target_x, p_ptr->target_y, p_ptr->target_idx, p_ptr->target_n);
+#else //TODO
+	/* Set the sort hooks */
+	ang_sort_comp = ang_sort_comp_distance;
+	ang_sort_swap = ang_sort_swap_distance;
+
+	/* Sort the positions */
+	ang_sort(Ind, p_ptr->target_x, p_ptr->target_y, p_ptr->target_n);
+#endif
+
+	m = 0;
+
+	/* handle player target.... */
+	if (p_ptr->target_n) {
+		y = p_ptr->target_y[m];
+		x = p_ptr->target_x[m];
+		idx = p_ptr->target_idx[m];
+
+		c_ptr = &zcave[y][x];
+
+		/* Hack -- Track that player */
+		health_track(Ind, 0 - idx);
+
+		/* Hack -- handle stuff */
+		handle_stuff(Ind);
+
+		/* Describe */
+		snprintf(out_val, sizeof(out_val), "%s targetted.", Players[idx]->name);
+
+		/* Tell the client about it */
+		Send_target_info(Ind, x - p_ptr->panel_col_prt, y - p_ptr->panel_row_prt, out_val);
+	}
+
+	/* Remember current index */
+	p_ptr->look_index = m;
+
+	p_ptr->target_who = 0 - p_ptr->target_idx[m];
+	p_ptr->target_col = p_ptr->target_x[m];
+	p_ptr->target_row = p_ptr->target_y[m];
+
+	/* Failure */
+	if (!p_ptr->target_who) return (FALSE);
+
+	/* Clear target info */
+	p_ptr->target_n = 0;
+
+	/* Success */
+	return (TRUE);
+}
+
+#endif
 
 
 

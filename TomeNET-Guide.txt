@@ -596,6 +596,8 @@ Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
 *       Initiates targetting a monster, hostile player or location
         (used in macros).
 (       Initiates targetting a friendly player (used in macros).
+        (Currently targets the most hurt player who is in your party, or the
+        most hurt player in general if you aren't in a party.)
 
 There are also some commands that can be entered with ':' like a chat line.
 They all start with a slash '/' hence they're called slash commands:
