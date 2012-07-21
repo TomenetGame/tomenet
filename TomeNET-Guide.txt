@@ -592,7 +592,10 @@ Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
 ^       Allows to enter a CTRL character as command.
 \       Enter a command, bypassing the client's key map.
         Also allows to enter ^ next to enter a CTRL character as command.
-
+)       Clears the command buffer of pending key presses (used in macros).
+*       Initiates targetting a monster, hostile player or location
+        (used in macros).
+(       Initiates targetting a friendly player (used in macros).
 
 There are also some commands that can be entered with ':' like a chat line.
 They all start with a slash '/' hence they're called slash commands:
