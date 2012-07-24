@@ -5570,9 +5570,10 @@ for details about how wearing armour affects your ranged weapon accuracy.
 (5.2a)  Fire-till-kill mode
 ----------------------------
 Accessible via 'm' key, you can switch 'fire-till-kill' mode on or off.
-While enabled, your character will keep firing a ranged weapon once you
-initiated the first shot until the target either dies or direct firing at it
-becomes impossible/obstructed for any reason.
+While enabled, your character will keep firing a ranged weapon (ie a weapon in
+your 'shooter' equipment slot) once you initiated the first shot until the
+target either dies or direct firing at it becomes impossible/obstructed for any
+reason.
 The main use besides making ranged weapon usage more relaxed is that you are
 able to single out enemies you want to kill of big monster packs such as
 escorts.
@@ -5592,6 +5593,9 @@ chance for the selected spell is over 60%.
 To manually stop fire-till-kill without moving or performing any other action,
 just press the SPACE key. Note that SPACE also stops all other kinds of
 repeatable actions such as searching or tunnelling.
+
+Fire-till-kill does not work with any other type of attacks besides those
+mentioned above.
 
 
 
