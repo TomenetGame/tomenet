@@ -3686,6 +3686,11 @@ void calc_boni(int Ind)
 			/* trim leading "of " */
 			} else if (tmp_name[0] == 'o' && tmp_name[1] == 'f' && tmp_name[2] == ' ')
 				tmp_name_ptr += 3;
+#if 1
+			/* maybe: strip 'the' too */
+			if (tmp_name_ptr[0] == 't' && tmp_name_ptr[1] == 'h' && tmp_name_ptr[2] == 'e' && tmp_name_ptr[3] == ' ')
+				tmp_name_ptr += 4;
+#endif
 			/* compare */
 			for (j = 0; j < i - INVEN_WIELD; j++)
 				if (!strcmp(equipment_set_name[j], tmp_name_ptr)) {
@@ -3695,6 +3700,8 @@ void calc_boni(int Ind)
 			if (j == i - INVEN_WIELD) {
 				strcpy(equipment_set_name[j], tmp_name_ptr);
 				equipment_set_amount[j] = 1;
+				/* enable (use -1 since true arts don't use randart codes) */
+				equipment_set[j] = -1;
 			}
 		}
 #endif

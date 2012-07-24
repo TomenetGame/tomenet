@@ -7313,10 +7313,11 @@ bonus (see (5.8), 'LUCK', for details about luck). For example if you equip
     The Whip of Gothmog    (which happens to be a true artifact)
 and also
     The Hard Leather Armor 'Gothmog'    (which is actually a random artifact)
-You'd get a small luck bonus. The more artifacts of similar name you equip the
-greater the luck bonus will be.
+You'd get a small luck bonus, or 'set bonus'. The more artifacts of similar
+name you equip the greater the luck bonus will be.
 The exact luck boni for those 'artifact sets' starting at two items are:
 4, 9, 16, 25, 36, 40 (cap). So it's basically the amount of artifacts squared.
+Different sets don't stack, only the biggest set counts.
 
 Artifacts of any type cannot be enchanted by any means, nor harmed by elemental
 attacks of any type. Also they have a high chance to resist disenchantment
