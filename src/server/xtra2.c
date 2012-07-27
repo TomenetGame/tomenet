@@ -7554,6 +7554,21 @@ void player_death(int Ind)
 			instant_res_possible = FALSE;
 		}
 
+		/* If already a ghost, get destroyed */
+		if (p_ptr->ghost) {
+			instant_res_possible = FALSE;
+		}
+
+		/* Insanity is a no-ghost death */
+		if (streq(p_ptr->died_from, "Insanity")) {
+			instant_res_possible = FALSE;
+		}
+
+		/* Maia initiation failure is final */
+		if (streq(p_ptr->died_from, "Indecisiveness")) {
+			instant_res_possible = FALSE;
+		}
+
 		/* Not on NO_GHOST levels */
 		if (hell) {
 			instant_res_possible = FALSE;
