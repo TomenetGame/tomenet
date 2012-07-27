@@ -7597,6 +7597,24 @@ void player_death(int Ind)
 		if (instant_res_possible) {
 			int loss_factor, reduce;
 
+			/* Log it */
+			s_printf("INSTA_RES: %s (%d) was defeated by %s for %d damage at %d, %d, %d.\n", p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+
+			/* Message to other players */
+			if (cfg.unikill_format)
+				snprintf(buf, sizeof(buf), "\374\377D%s %s (%d) was defeated by %s.", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
+			else
+				snprintf(buf, sizeof(buf), "\374\377D%s (%d) was defeated by %s.", p_ptr->name, p_ptr->lev, p_ptr->died_from);
+
+			msg_broadcast(Ind, buf);
+#ifdef TOMENET_WORLDS
+			if (cfg.worldd_pdeath) world_msg(buf);
+#endif
+
+			/* Add to legends log if he was a winner */
+			if (p_ptr->total_winner && !is_admin(p_ptr))
+				l_printf("%s \\{r%s (%d) was defeated and instantly resurrected\n", showdate(), p_ptr->name, p_ptr->lev);
+
 			/* Cure him from various maladies */
 			if (p_ptr->image) (void)set_image(Ind, 0);
 			if (p_ptr->blind) (void)set_blind(Ind, 0);
@@ -7613,7 +7631,7 @@ void player_death(int Ind)
 			/* Give him his hit points back */
 			p_ptr->chp = p_ptr->mhp;
 			p_ptr->chp_frac = 0;
-			
+
 			/* Lose inventory and equipment items as per normal death */
 #ifdef DEATH_PACK_ITEM_LOST
 			inven_death_damage(Ind, TRUE);
@@ -7642,7 +7660,7 @@ void player_death(int Ind)
 			reduce = reduce > 99999 ?
 			reduce / 100 * loss_factor : reduce * loss_factor / 100;
 			p_ptr->exp -= reduce;
-	
+
 			check_experience(Ind);
 
 			/* update stats */
@@ -7664,23 +7682,6 @@ void player_death(int Ind)
 			if (p_ptr->male) sound(Ind, "death_male", "death", SFX_TYPE_MISC, TRUE);
 			else sound(Ind, "death_female", "death", SFX_TYPE_MISC, TRUE);
 
-			/* Log it */
-			s_printf("INSTA_RES: %s (%d) was defeated by %s for %d damage at %d, %d, %d.\n", p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
-
-			/* Message to other players */
-			if (cfg.unikill_format)
-			snprintf(buf, sizeof(buf), "\374\377D%s %s (%d) was defeated by %s.", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
-			else
-			snprintf(buf, sizeof(buf), "\374\377D%s (%d) was defeated by %s.", p_ptr->name, p_ptr->lev, p_ptr->died_from);
-
-			msg_broadcast(Ind, buf);
-#ifdef TOMENET_WORLDS
-			if (cfg.worldd_pdeath) world_msg(buf);
-#endif
-
-			/* Add to legends log if he was a winner */
-			if (p_ptr->total_winner && !is_admin(p_ptr))
-				l_printf("%s \\{r%s (%d) was defeated and instantly resurrected\n", showdate(), p_ptr->name, p_ptr->lev);
 
 
 #if 0
