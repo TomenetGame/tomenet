@@ -1333,12 +1333,11 @@ Apart from downloading the game client and playing, you can also get in contact
 with other players and developers via the following media:
 
 -The forum at http://www.tomenet.net/.
--IRC: Channel #tomenet on server irc.worldirc.org (port 6667)
+-IRC: Channel #tomenet on server irc.freenode.net (port 6667)
       (For help on Internet Relay Chat visit www.irchelp.org).
-      The channels #tomenet-chat, #tomenet-chat-rpg and #tomenet-chat-arcade
-      relay chat from and to the main/rpg/arcade server, allowing you to read
-      what's going on in-game, and to chat with players simply with any IRC
-      client.
+      The channels #tomenet, #tomenet.rpg and #tomenet.arcade relay chat from
+      and to the main/rpg/arcade server, allowing you to read what's going on
+      in-game, and to chat with players simply with any IRC client.
 -Voice chat via mumble, get it from http://mumble.sourceforge.net/.
       IP is 'europe.tomenet.net', port is '23348', password is 'tomenet'.
       For details see "(2.4) Installing voice chat".
