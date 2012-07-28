@@ -10737,8 +10737,8 @@ vary. For example a warrior cannot learn magic spells.
     very light 1-handed weapons such as daggers or whips which you dual-wield
     (which requires light armour). This should last you until you find some
     heavy armour and shield in the dungeon.
-    Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm) or Martial
-    Arts if you don't want to use weapons and always keep it maximized.
+    Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm), or Martial
+    Arts if you don't want to use weapons, and always keep it maximized.
 
 - Istar (elvish word for Mage)
     Istari use intelligence primarily, determining how much mana they have
@@ -10863,8 +10863,8 @@ vary. For example a warrior cannot learn magic spells.
     'Rings of Polymorphing' for you from forms he or she no longer uses.
     As for all shape-shifters going with fruit bat body modification is not
     recommended, since it will restrict your equipment even if you polymorph.
-    Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm) or Martial
-    Arts if you don't want to use weapons and always keep it maximized.
+    Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm), or Martial
+    Arts if you don't want to use weapons, and always keep it maximized.
 
 - Archer
     Archers aren't good at fighting, but can deliever extremely high damage
@@ -10902,8 +10902,8 @@ vary. For example a warrior cannot learn magic spells.
     Also make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, they are great for catching annoying monsters
     that try to keep their distance from you. (See (6.12) for details.)
-    Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm) or Martial
-    Arts if you don't want to use weapons and always keep it maximized.
+    Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm), or Martial
+    Arts if you don't want to use weapons, and always keep it maximized.
 
 - Ranger
     Second only to adventurers regarding versatility rangers excel at a lot of
@@ -11059,8 +11059,8 @@ vary. For example a warrior cannot learn magic spells.
     Hint: Mindcrafters have a powerful ranged attack spell they can use very
     early on, Psionic Blast. Look for it in the book store right away.
     Also get the spell 'Autokinesis I' early on, which is like phase door.
-    Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm) or Martial
-    Arts if you don't want to use weapons and always keep it maximized.
+    Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm), or Martial
+    Arts if you don't want to use weapons, and always keep it maximized.
 
 
 If you raise in levels, you will get new titles. These are displayed between
