@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 20. July 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 1. August 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.9b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -45,8 +45,9 @@ Contents
 (2) Installation & setup
     (2.1)   Installing TomeNET
     (2.1a)  Installing sound and music packs
-    (2.1b)  Editing sound and music configuration
-    (2.1c)  "Promoting" TomeNET on Steam ;)
+    (2.1b)  Audio controls and config options
+    (2.1c)  Editing sound and music configuration
+    (2.1d)  "Promoting" TomeNET on Steam ;)
     (2.2)   Starting TomeNET and getting to play on an internet server
     (2.3)   Client options
     (2.4)   Installing voice chat
@@ -1720,8 +1721,48 @@ home folder, same as Linux.
 Starting with version 4.4.5, TomeNET features a new SDL-based audio system,
 which provides sound effects and background music.
 
-To make use of it, all you have to do is install a sound pack and/or a music
-pack to your TomeNET/lib/xtra/ folder. Read on for instructions how to do that.
+To make use of it, all you have to do is download (www.tomenet.net) and install
+a sound pack and/or a music pack. Read on for instructions how to do that:
+
+
+Automatic audio pack installation
+---------------------------------
+Starting with client version 4.4.9, there is an automatic installer for sound
+and music pack:
+
+-WINDOWS/OSX:
+ Make sure you have 7zip installed. It's a free, powerful multi-platform
+ archiving tool (fit to replace WinRAR, WinZip etc).
+ Get it from www.7-zip.org.
+
+ LINUX:
+ Make sure you have 7zip installed. The package name is p7zip.
+ Note that some Linux distributions (Ubuntu) have another package called
+ p7zip-full and the package p7zip is lacking certain parts. In that case
+ install p7zip-full.
+
+-Download the files 'TomeNET-soundpack.7z' and/or 'TomeNET-musicpack.7z' and
+ put them into your TomeNET folder. The automatic installation only recognizes
+ these two file names. If you download audio packs that are named differently,
+ simply rename them before attempting to auto-install them.
+
+-Launch the game, press '=' to enter the configuration menu, and press 'I' to
+ invoke the auto-installer.
+
+-After it's done it should tell you to restart your client. (You might also
+ get disconnected automatically, if the auto-installation takes a while. That
+ is fine.) Just restart the game and press CTRL+U to look at the audio mixer.
+ It should tell you that sound and/or music pack have been installed.
+
+In case you want to install the packs manually instead of using auto-install,
+read on.
+
+
+Manual audio pack installation
+-------------------------
+Instead of automatic installation explained above you can also just manually
+unpack audio packs to your TomeNET/lib/xtra/ folder. Make sure the game isn't
+running while you do.
 
 Note: Some people have reported that the program 'WinRAR' seems to cause
       problems in some cases, not being able to handle zip files correctly.
@@ -1731,7 +1772,6 @@ Note: Some people have reported that the program 'WinRAR' seems to cause
 
 You can get the official sound pack on http://www.tomenet.net/ in the download
 section, and also look for player-made sound or music packs in the forum!
-
 
 On Microsoft Windows, the easiest way to do this after you downloaded a sound
 or music zip file is to:
@@ -1762,7 +1802,6 @@ or music zip file is to:
    editor) says 'Sound=1' which it should by default if you haven't modified it
    earlier.
 
-
 Alternative instructions (Linux/Mac OS X/in general):
 -----------------------------------------------------
 After you downloaded a sound pack or a music pack, extract it to your lib/xtra/
@@ -1778,8 +1817,8 @@ Also verify  that your config file ("TomeNET.ini" on MS Windows, ".tomenetrc"
 in your home folder on Linux or Mac OS X) has 'Sound' set to '1'.
 
 
-General audio controls:
------------------------
+(2.1b) Audio controls and config options
+----------------------------------------
 You can control mixer settings with CTRL+U key (or use CTRL+C to toggle music
 and CTRL+N to toggle the master mixer on/off).
 
@@ -1797,8 +1836,8 @@ If you want to use your own sound and music, and create audio packs for other
 players, read (2.1b) below.
 
 
-(2.1b) Editing sound and music configuration
---------------------------------------------
+(2.1c) Manually editing sound and music configuration
+-----------------------------------------------------
 You can easily replace or disable certain sound effects or music, or even
 create your own sound and music packs.
 
@@ -1822,7 +1861,7 @@ Note: Do not modify the file audio.lua, it has nothing to do with editing your
       be automatically restored next time you log on to the server.
 
 
-(2.1c) "Promoting" TomeNET on Steam ;)
+(2.1d) "Promoting" TomeNET on Steam ;)
 --------------------------------------
 In Steam's "Games" menu choose "Add a non-Steam game to my library".
 Browse for the TomeNET.exe file and check it.
