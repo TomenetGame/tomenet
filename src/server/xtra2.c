@@ -8831,12 +8831,14 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 
 //	int dun_level2 = getlevel(&p_ptr->wpos);
 	dungeon_type *dt_ptr2 = getdungeon(&p_ptr->wpos);
+#if 0
 	int dun_type2;
 	dungeon_info_type *d_ptr2 = NULL;
 	if (p_ptr->wpos.wz) {
 	        dun_type2 = dt_ptr2->type;
 	        d_ptr2 = &d_info[dun_type2];
 	}
+#endif
 
 	p_ptr->test_count++;
 	p_ptr->test_dam += dam;
@@ -8884,7 +8886,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 
 	/* Some monsters are immune to death */
 	if (r_ptr->flags7 & RF7_NO_DEATH) return FALSE;
-	
+
 	/* Wake it up */
 	m_ptr->csleep = 0;
 
@@ -8900,36 +8902,37 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		cave_set_feat(&m_ptr->wpos, m_ptr->fy, m_ptr->fx, 172); /* drop "blood"? */
 		if(m_ptr->hp < -1000) {
 
-		object_type forge, *o_ptr;
-		o_ptr = &forge;
-int i, head, arm, leg, part, ok;
-head = arm = leg = part = 0;
-for(i=1; i < 5; i++) {
-		ok = 0;
-		while(ok == 0) {
-			ok = 1;
-			part = randint(4);
-			if(part == 1 && head == 1)
-			ok = 0;
-			if(part == 2 && arm == 2)
-			ok = 0;
-			if(part == 4 && leg == 2)
-			ok = 0;
-		}
-		if(part == 1)
-		head++;
-		if(part == 2)
-		arm++;
-		if(part == 4)
-		leg++;
-		invcopy(o_ptr, lookup_kind(TV_SKELETON, part));
-		object_known(o_ptr);
-		o_ptr->owner = p_ptr->id;
-		o_ptr->mode = p_ptr->mode;
-		o_ptr->level = 1;
-		o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
-		(void)drop_near(o_ptr, 0, &m_ptr->wpos, m_ptr->fy, m_ptr->fx);
-		}
+			object_type forge, *o_ptr;
+			o_ptr = &forge;
+
+			int i, head, arm, leg, part, ok;
+			head = arm = leg = part = 0;
+			for(i=1; i < 5; i++) {
+			        ok = 0;
+				while(ok == 0) {
+					ok = 1;
+					part = randint(4);
+					if(part == 1 && head == 1)
+						ok = 0;
+					if(part == 2 && arm == 2)
+						ok = 0;
+					if(part == 4 && leg == 2)
+						ok = 0;
+				}
+				if(part == 1)
+					head++;
+				if(part == 2)
+					arm++;
+				if(part == 4)
+					leg++;
+				invcopy(o_ptr, lookup_kind(TV_SKELETON, part));
+				object_known(o_ptr);
+				o_ptr->owner = p_ptr->id;
+				o_ptr->mode = p_ptr->mode;
+				o_ptr->level = 1;
+				o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
+				(void)drop_near(o_ptr, 0, &m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+			}
 		}
 #endif
 
@@ -8955,20 +8958,25 @@ for(i=1; i < 5; i++) {
 
 		if (p_ptr->wpos.wz) {
 			int factor = 100;
-			if (d_ptr2->flags1 & DF1_NO_UP)		factor += 5;
-			if (d_ptr2->flags2 & DF2_NO_RECALL_INTO)factor += 5;
-			if (d_ptr2->flags1 & DF1_NO_RECALL)	factor += 10;
-			if (d_ptr2->flags1 & DF1_FORCE_DOWN)	factor += 10;
-			if (d_ptr2->flags2 & DF2_IRON)		factor += 15;
-			if (d_ptr2->flags2 & DF2_HELL)		factor += 10;
-			if (d_ptr2->flags2 & DF2_NO_DEATH)	factor -= 50;
+			if (dt_ptr2->flags1 & DF1_NO_UP)		factor += 5;
+			if (dt_ptr2->flags2 & DF2_NO_RECALL_INTO)	factor += 5;
+			if (dt_ptr2->flags1 & DF1_NO_RECALL)		factor += 10;
+			if (dt_ptr2->flags1 & DF1_FORCE_DOWN)		factor += 10;
+			if (dt_ptr2->flags2 & DF2_IRON)			factor += 15;
+			if (dt_ptr2->flags2 & DF2_HELL)			factor += 10;
+			if (dt_ptr2->flags2 & DF2_NO_DEATH)		factor -= 50;
+
+			if (dt_ptr2->flags3 & DF3_EXP_5)		factor += 5;
+			if (dt_ptr2->flags3 & DF3_EXP_10)		factor += 10;
+			if (dt_ptr2->flags3 & DF3_EXP_20)		factor += 20;
 
 #ifdef DUNGEON_VISIT_BONUS
-			switch (dungeon_bonus[dt_ptr2->id]) {
-			case 3: factor += 20; break;
-			case 2: factor += 13; break;
-			case 1: factor += 7; break;
-			}
+			if (!(dt_ptr2->flags3 & DF3_NO_DUNGEON_BONUS))
+				switch (dungeon_bonus[dt_ptr2->id]) {
+				case 3: factor += 20; break;
+				case 2: factor += 13; break;
+				case 1: factor += 7; break;
+				}
 #endif
 
 			tmp_exp = (tmp_exp * factor) / 100;
