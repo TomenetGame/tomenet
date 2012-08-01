@@ -4104,6 +4104,8 @@ Force down    yes     (char)    at bottom only  downwards   downwards     +10%
 Ironman       yes     yes       at bottom only  downwards   no            +15%
 Hellish       yes     yes       yes             yes         yes           +10%
 
+(Note: Staircase directions - ie upwards/downwards - are inverted for towers.)
+
 
 (4.3a) The jail
 ---------------
