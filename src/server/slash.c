@@ -6700,6 +6700,34 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "DF3_JAIL_DUNGEON added.");
 				return;
 			}
+			else if (prefix(message, "/fixidddun")) {//adds DF3_NO_DUNGEON_BONUS to ironman deep dive challenge dungeon
+				worldpos *tpos = &p_ptr->wpos;
+				cave_type **zcave, *c_ptr;
+				wilderness_type *wild = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
+				struct dungeon_type *d_ptr;
+
+				if (!(zcave = getcave(tpos))) {
+					msg_print(Ind, "Fatal: Couldn't acquire zcave!");
+					return;
+				}
+				c_ptr = &zcave[p_ptr->py][p_ptr->px];
+				if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE) {
+					msg_print(Ind, "Error: Not standing on a staircase grid.");
+					return;
+				}
+				if (p_ptr->wpos.wx != WPOS_IRONDEEPDIVE_X || p_ptr->wpos.wy != WPOS_IRONDEEPDIVE_Y ||
+		        	    (c_ptr->feat == FEAT_LESS ? (WPOS_IRONDEEPDIVE_Z > 0) : (WPOS_IRONDEEPDIVE_Z < 0))) {
+					msg_print(Ind, "Error: Not standing on IRONDEEDIVE staircase.");
+					return;
+				}
+
+				if (c_ptr->feat == FEAT_LESS) d_ptr = wild->tower;
+				else d_ptr = wild->dungeon;
+
+				d_ptr->flags3 |= DF3_NO_DUNGEON_BONUS;
+				msg_print(Ind, "DF3_NO_DUNGEON_BONUS added.");
+				return;
+			}
 			if (prefix(message, "/terminate")) {
 				/* same as /shutdown 0, except server will return -2 instead of -1.
 				   can be used by scripts to initiate maintenance downtime etc. */
