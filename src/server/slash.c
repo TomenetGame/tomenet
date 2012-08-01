@@ -6716,7 +6716,7 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				if (p_ptr->wpos.wx != WPOS_IRONDEEPDIVE_X || p_ptr->wpos.wy != WPOS_IRONDEEPDIVE_Y ||
-		        	    (c_ptr->feat == FEAT_LESS ? (WPOS_IRONDEEPDIVE_Z > 0) : (WPOS_IRONDEEPDIVE_Z < 0))) {
+		        	    !(c_ptr->feat == FEAT_LESS ? (WPOS_IRONDEEPDIVE_Z > 0) : (WPOS_IRONDEEPDIVE_Z < 0))) {
 					msg_print(Ind, "Error: Not standing on IRONDEEDIVE staircase.");
 					return;
 				}
