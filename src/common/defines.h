@@ -5475,6 +5475,11 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define DF3_JAIL_DUNGEON	0x00000001L	/* purpose is just to display the name "Jail Dungeon" in dungeon list */
 #define DF3_HIDDENLIB		0x00000002L	/* allow generation of 'Hidden Library' dungeon store (for ironman deep dive challenge) (overrides DF3_NO_SIMPLE_STORES) */
 #define DF3_NO_SIMPLE_STORES	0x00000004L	/* disallow generation misc ironman helper stores and of low-level dungeon stores (herbalist) */
+#define DF3_NO_DUNGEON_BONUS	0x00000008L	/* This dungeon never yields bonus experience from dungeon_bonus[] (rare exploration) */
+#define DF3_EXP_5		0x00000010L	/* Add +5% bonus to experience gains while inside this dungeon */
+#define DF3_EXP_10		0x00000020L	/* Add +10% bonus to experience gains while inside this dungeon */
+#define DF3_EXP_20		0x00000040L	/* Add +20% bonus to experience gains while inside this dungeon */
+
 
 
 /* level flags for dun_level */

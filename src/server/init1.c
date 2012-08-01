@@ -1022,8 +1022,8 @@ static cptr d_info_flags2[] =
 	"NO_RECALL_INTO",
 //	"NO_MAP",	/* will be annexed to DF1_FORGET */
 	"NO_MAGIC_MAP",
-	"XXX1",
-	"XXX1",
+	"MISC_STORES",
+	"TOWNS_IRONRECALL",
 	"NO_DEATH",	/* 0x00000080L */
 	"IRONFIX1",
 	"IRONFIX2",
@@ -1043,8 +1043,8 @@ static cptr d_info_flags2[] =
 	"NO_EXIT_FLOAT",
 	"NO_STAIRS_UP",
 	"NO_STAIRS_DOWN",
-	"",
-	"",
+	"TOWNS_FIX",
+	"TOWNS_RND",
 	"ADJUST_LEVEL_1_2",
 	"NO_SHAFT",
 	"ADJUST_LEVEL_PLAYER",
@@ -1053,13 +1053,13 @@ static cptr d_info_flags2[] =
 
 static cptr d_info_flags3[] =
 {
-	"JAIL_DUNGEON",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
+	"JAIL_DUNGEON",		/* not specified directly */
+	"HIDDENLIB",
+	"NO_SIMPLE_STORES",
+	"NO_DUNGEON_BONUS",
+	"EXP_5",
+	"EXP_10",
+	"EXP_20",
 	"",
 
 	"",

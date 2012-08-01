@@ -4577,7 +4577,8 @@ bool show_floor_feeling(int Ind, bool dungeon_feeling)
 	}
 
 #ifdef DUNGEON_VISIT_BONUS
-	if (dungeon_feeling && d_ptr && dungeon_bonus[d_ptr->id]) {
+	if (dungeon_feeling && d_ptr && dungeon_bonus[d_ptr->id]
+	    && !(d_ptr->flags3 & DF3_NO_DUNGEON_BONUS)) {
 		felt = TRUE;
 		switch (dungeon_bonus[d_ptr->id]) {
 		case 3: msg_print(Ind, "\377UThis place has not been explored in ages."); break;
