@@ -11450,6 +11450,9 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
 		d_ptr->flags3 = flags3;
 		d_ptr->maxdepth = maxdep;
 	}
+	if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y &&
+	    (tower ? (WPOS_IRONDEEPDIVE_Z > 0) : (WPOS_IRONDEEPDIVE_Z < 0)))
+		d_ptr->flags3 |= DF3_NO_DUNGEON_BONUS;
 
 #ifdef RPG_SERVER /* Make towers/dungeons harder - C. Blue */
 	/* If this dungeon was originally intended to be 'real' ironman,
