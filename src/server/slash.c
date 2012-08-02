@@ -4413,6 +4413,31 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				return;
 			}
+			else if (prefix(message, "/debug-dun")){
+				struct dungeon_type *d_ptr;
+				worldpos *tpos = &p_ptr->wpos;
+				wilderness_type *wild = &wild_info[tpos->wy][tpos->wx];
+				cave_type **zcave, *c_ptr;
+
+				if (!(zcave = getcave(tpos))) {
+					msg_print(Ind, "Fatal: Couldn't acquire zcave!");
+					return;
+				}
+				c_ptr = &zcave[p_ptr->py][p_ptr->px];
+				if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE) {
+					msg_print(Ind, "Error: Not standing on a staircase grid.");
+					return;
+				}
+
+				if (c_ptr->feat == FEAT_LESS) d_ptr = wild->tower;
+				else d_ptr = wild->dungeon;
+
+				msg_print(Ind, "Dungeon stats:");
+				msg_format(Ind, "  type %d, baselevel %d, maxdepth %d (endlevel %d)", d_ptr->type, d_ptr->baselevel, d_ptr->maxdepth, d_ptr->baselevel + d_ptr->maxdepth - 1);
+				msg_format(Ind, "  flags1 %08x, flags2 %08x, flags3 %08x", d_ptr->flags1, d_ptr->flags2, d_ptr->flags3);
+
+				return;
+			}
 			else if (prefix(message, "/update-dun")){
 				/* Reloads dungeon flags from d_info.txt, updating existing
 				   dungeons. Note that you have to call this after you made changes
@@ -6726,8 +6751,8 @@ void do_slash_cmd(int Ind, char *message)
 				if (c_ptr->feat == FEAT_LESS) d_ptr = wild->tower;
 				else d_ptr = wild->dungeon;
 
-				d_ptr->flags3 |= DF3_NO_DUNGEON_BONUS;
-				msg_print(Ind, "DF3_NO_DUNGEON_BONUS added.");
+				d_ptr->flags3 |= DF3_NO_DUNGEON_BONUS | DF3_EXP_20;
+				msg_print(Ind, "DF3_NO_DUNGEON_BONUS | DF3_EXP_20 added.");
 				return;
 			}
 			if (prefix(message, "/terminate")) {
