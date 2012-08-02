@@ -6612,7 +6612,9 @@ void do_slash_cmd(int Ind, char *message)
 					    (dungeon_bonus[i] == 0) ? 'w' : ((dungeon_bonus[i] == 1) ? 'y' : ((dungeon_bonus[i] == 2) ? 'o' : 'r')),
 					    dungeon_bonus[i],
 					    (i % 2) == 0 ? 'W' : 'U',
-					    d_name + d_info[dungeon_tower[i] ? wild_info[dungeon_y[i]][dungeon_x[i]].tower->type : wild_info[dungeon_y[i]][dungeon_x[i]].dungeon->type].name
+					    get_dun_name(dungeon_x[i], dungeon_y[i], dungeon_tower[i],
+						getdungeon(&((struct worldpos){dungeon_x[i], dungeon_y[i], dungeon_tower[i] ? 1 : -1})), 0)
+//					    d_name + d_info[dungeon_tower[i] ? wild_info[dungeon_y[i]][dungeon_x[i]].tower->type : wild_info[dungeon_y[i]][dungeon_x[i]].dungeon->type].name
 					    );
 				}
 				return;
