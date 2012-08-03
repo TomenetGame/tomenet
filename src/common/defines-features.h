@@ -47,7 +47,7 @@
 #define NEW_TOMES		/* customizable spellbooks */
 
 #define CLIENT_SIDE_WEATHER	/* server uses Send_weather() instead of displaying own weather animation */
-#define MAX_CLOUDS 2000
+#define MAX_CLOUDS 1000
 
 #define EXTRA_LEVEL_FEELINGS	/* enable extra level feelings, remotely angband-style, warning about dangers */
 #define M_EGO_NEW_FLICKER	/* ego monsters flicker between base r_ptr and ego colour */
