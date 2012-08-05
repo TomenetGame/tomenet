@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 1. August 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 6. August 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.9b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -14039,7 +14039,7 @@ Weapons
         Hit point bonus (+LIFE)   (*)
 Weapons, boomerangs
         Elemental (acid/elec/fire/cold/poison) brands
-        Increased damage dice
+        Increased damage dice/dice sides
         All SLAY mods (also have a chance to add the corresponding ESP)
         All KILL (*SLAY*) mods (will also add the corresponding ESP)
         See invisible
@@ -14073,8 +14073,8 @@ Ammunition
                             nexus, time, gravity, stone-to-mud, teleport away,
                             scare monster, nuke, stun, disintegration,
                             hell fire.
-        Extra +hit and +dam bonus
-        +1 Extra damage side or dice
+        Extra +hit and +dam bonus, this caps at +12 hit and +6 dam.
+        +1 Extra damage die sides and/or dice (eg 3d4 could go up to 4d5).
 Boots
         Feather falling (levitation)
         Flying
