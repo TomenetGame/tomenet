@@ -14074,7 +14074,7 @@ Ammunition
                             scare monster, nuke, stun, disintegration,
                             hell fire.
         Extra +hit and +dam bonus, this caps at +12 hit and +6 dam.
-        +1 Extra damage die sides and/or dice (eg 3d4 could go up to 4d5).
+        Either +1 extra damage die sides or +1 extra damage dice.
 Boots
         Feather falling (levitation)
         Flying
