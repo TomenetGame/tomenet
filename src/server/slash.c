@@ -6841,6 +6841,17 @@ void do_slash_cmd(int Ind, char *message)
 
 			        return;
 			}
+			/* weather: list all clouds at current worldmap sector */
+			else if (prefix(message, "/lscloud")) {
+				wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
+				msg_print(Ind, "Local wild_info cloud array:");
+				for (i = 0; i < 10; i++) {
+		                        if (w_ptr->cloud_idx[i] == -1) continue;
+					msg_format(Ind, "  cloud_idx[%02d] = %d", i, w_ptr->cloud_idx[i]);
+		                }
+				msg_print(Ind, "Done.");
+			        return;
+			}
  #endif
 #endif
 			/* transport admin to Valinor */
