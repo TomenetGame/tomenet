@@ -227,7 +227,7 @@ s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_cri
 /* accepts Ind <=0 */
 s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, char *brand_msg, bool thrown)
 {
-	int mult = FACTOR_MULT;
+	int mult = FACTOR_MULT, bonus = 0;
 	monster_race *r_ptr = race_inf(m_ptr);
 	u32b f1, f2, f3, f4, f5, esp;
 	player_type *p_ptr = NULL;
@@ -566,6 +566,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_ANIMAL;*/
 
 				if (mult < FACTOR_HURT) mult = FACTOR_HURT;
+				if (bonus < FLAT_HURT_BONUS) bonus = FLAT_HURT_BONUS;
 			}
 
 			/* Slay Evil */
@@ -576,6 +577,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			    ) && (r_ptr->flags3 & RF3_EVIL)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_EVIL;*/
 				if (mult < FACTOR_HURT) mult = FACTOR_HURT;
+				if (bonus < FLAT_HURT_BONUS) bonus = FLAT_HURT_BONUS;
 			}
 
 			/* Slay Undead */
@@ -583,6 +585,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			    (r_ptr->flags3 & RF3_UNDEAD)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_UNDEAD;*/
 				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
 			}
 
 			/* Slay Demon */
@@ -590,6 +593,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			    (r_ptr->flags3 & RF3_DEMON)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DEMON;*/
 				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
 			}
 
 			/* Slay Orc */
@@ -597,6 +601,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			    (r_ptr->flags3 & RF3_ORC)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_ORC;*/
 				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
 			}
 
 			/* Slay Troll */
@@ -604,6 +609,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			    (r_ptr->flags3 & RF3_TROLL)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_TROLL;*/
 				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
 			}
 
 			/* Slay Giant */
@@ -611,6 +617,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			    (r_ptr->flags3 & RF3_GIANT)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_GIANT;*/
 				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
 			}
 
 			/* Slay Dragon  */
@@ -618,6 +625,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			    (r_ptr->flags3 & RF3_DRAGON)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DRAGON;*/
 				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
 			}
 
 			/* Execute Dragon */
@@ -625,6 +633,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			    (r_ptr->flags3 & RF3_DRAGON)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DRAGON;*/
 				if (mult < FACTOR_KILL) mult = FACTOR_KILL;
+				if (bonus < FLAT_KILL_BONUS) bonus = FLAT_KILL_BONUS;
 			}
 
 			/* Execute Undead */
@@ -632,6 +641,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			    (r_ptr->flags3 & RF3_UNDEAD)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_UNDEAD;*/
 				if (mult < FACTOR_KILL) mult = FACTOR_KILL;
+				if (bonus < FLAT_KILL_BONUS) bonus = FLAT_KILL_BONUS;
 			}
 
 			/* Execute Undead */
@@ -639,6 +649,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			    (r_ptr->flags3 & RF3_DEMON)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DEMON;*/
 				if (mult < FACTOR_KILL) mult = FACTOR_KILL;
+				if (bonus < FLAT_KILL_BONUS) bonus = FLAT_KILL_BONUS;
 			}
 
 
@@ -654,11 +665,15 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 					if (m_ptr->ml) r_ptr->r_flags9 |= (RF9_SUSCEP_ACID);
 #endif
 					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 				} else if (r_ptr->flags9 & RF9_RES_ACID) {
 					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 				/* Otherwise, take the damage */
-				else if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+				else {
+					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+				}
 			}
 
 			/* Brand (Elec) */
@@ -673,11 +688,15 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 					if (m_ptr->ml) r_ptr->r_flags9 |= (RF9_SUSCEP_ELEC);
 #endif
 					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 				} else if (r_ptr->flags9 & RF9_RES_ELEC) {
 				    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 				/* Otherwise, take the damage */
-				else if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+				else {
+					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+				}
 			}
 
 			/* Brand (Fire) */
@@ -692,11 +711,15 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 					if (m_ptr->ml) r_ptr->r_flags3 |= (RF3_SUSCEP_FIRE);
 #endif
 					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 				} else if (r_ptr->flags9 & RF9_RES_FIRE) {
 				    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 				/* Otherwise, take the damage */
-				else if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+				else {
+					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+				}
 			}
 
 			/* Brand (Cold) */
@@ -711,12 +734,16 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 					if (m_ptr->ml) r_ptr->r_flags3 |= (RF3_SUSCEP_COLD);
 #endif
 					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 				}
 				else if (r_ptr->flags9 & RF9_RES_COLD) {
 				    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 				/* Otherwise, take the damage */
-				else if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+				else {
+					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+				}
 			}
 
 
@@ -733,11 +760,15 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 #endif
 					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
 //					if (magik(95)) *special |= SPEC_POIS;
+					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 				} else if (r_ptr->flags9 & RF9_RES_POIS) {
 				    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 				/* Otherwise, take the damage */
-				else if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+				else {
+					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+				}
 			}
 
 			break;
@@ -754,19 +785,19 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 
 	/* If the object was thrown, reduce brand effect by 75%
 	   to avoid insane damage. */
-	if (thrown) return ((tdam * (((mult - FACTOR_MULT) * 10L) / 4 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));
+	if (thrown) return ((tdam * (((mult - FACTOR_MULT) * 10L) / 4 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
 
 	/* Ranged weapons get less benefit from brands */
 	if (is_ammo(o_ptr->tval))
-		return ((tdam * (((mult - FACTOR_MULT) * 20L) / 5 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));
+		return ((tdam * (((mult - FACTOR_MULT) * 20L) / 5 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
 //		return ((tdam * mult) / FACTOR_MULT);
 
 	/* Martial Arts styles get less benefit from brands */
 	if (!o_ptr->k_idx)
-		return ((tdam * (((mult - FACTOR_MULT) * 10L) / 3 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));
+		return ((bonus * 2) / 3 + ((tdam * (((mult - FACTOR_MULT) * 10L) / 3 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT)));
 
 	/* Return the total damage */
-	return ((tdam * mult) / FACTOR_MULT);
+	return (bonus + ((tdam * mult) / FACTOR_MULT));
 }
 
 /*
@@ -777,7 +808,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
  */
 s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_ptr, char *brand_msg, bool thrown)
 {
-	int mult = FACTOR_MULT;
+	int mult = FACTOR_MULT, bonus = 0;
 	u32b f1, f2, f3, f4, f5, esp;
 	player_type *p_ptr = Players[Ind];
 	object_type *e_ptr;
@@ -1063,6 +1094,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 				else
 				{
 					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 				}
 			}
 
@@ -1082,6 +1114,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 				else
 				{
 					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 				}
 			}
 
@@ -1101,6 +1134,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 				else
 				{
 					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 				}
 			}
 
@@ -1120,6 +1154,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 				else
 				{
 					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 				}
 			}
 
@@ -1137,6 +1172,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 				/* Otherwise, take the damage */
 				{
 					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 				}
 			}
 			break;
@@ -1145,18 +1181,18 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 
 	/* If the object was thrown, reduce brand effect by 75%
 	   to avoid insane damage. */
-	if (thrown) return ((tdam * (((mult - FACTOR_MULT) * 10L) / 4 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));
+	if (thrown) return ((tdam * (((mult - FACTOR_MULT) * 10L) / 4 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
 
 	/* Ranged weapons get less benefit from brands */
 	if (is_ammo(o_ptr->tval))
-		return ((tdam * (((mult - FACTOR_MULT) * 20L) / 5 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));
+		return ((tdam * (((mult - FACTOR_MULT) * 20L) / 5 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
 
 	/* Martial Arts styles get less benefit from brands */
 	if (!o_ptr->k_idx)
-		return ((tdam * (((mult - FACTOR_MULT) * 10L) / 3 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));
+		return ((bonus * 2) / 3 + ((tdam * (((mult - FACTOR_MULT) * 10L) / 3 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT)));
 
 	/* Return the total damage */
-	return ((tdam * mult) / FACTOR_MULT);
+	return (bonus + ((tdam * mult) / FACTOR_MULT));
 }
 
 /*

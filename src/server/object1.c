@@ -3115,43 +3115,39 @@ cptr item_activation(object_type *o_ptr)
 	return NULL;
 }
 
+
 /*
  * Display the damage done with a multiplier
  */
 //void output_dam(object_type *o_ptr, int mult, int mult2, cptr against, cptr against2, bool *first)
-static void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, cptr against, cptr against2)
+static void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, int bonus, int bonus2, cptr against, cptr against2)
 {
 	player_type *p_ptr = Players[Ind];
 	int dam;
 
 	dam = ((o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5L * mult) / FACTOR_MULT;
-	dam += (o_ptr->to_d + p_ptr->to_d + p_ptr->to_d_melee) * 10;
+	dam += (o_ptr->to_d + p_ptr->to_d + p_ptr->to_d_melee + bonus) * 10;
 	dam *= p_ptr->num_blow;
-	if (dam > 0)
-	{
+	if (dam > 0) {
 		if (dam % 10)
 			fprintf(fff, "    %d.%d", dam / 10, dam % 10);
 		else
 			fprintf(fff, "    %d", dam / 10);
-	}
-	else
+	} else
 		fprintf(fff, "    0");
 	fprintf(fff, " against %s", against);
 
-	if (mult2)
-	{
+	if (mult2) {
 		fprintf(fff, "\n");
 		dam = ((o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5L * mult2) / FACTOR_MULT;
-		dam += (o_ptr->to_d + p_ptr->to_d + p_ptr->to_d_melee) * 10;
+		dam += (o_ptr->to_d + p_ptr->to_d + p_ptr->to_d_melee + bonus2) * 10;
 		dam *= p_ptr->num_blow;
-		if (dam > 0)
-		{
+		if (dam > 0) {
 			if (dam % 10)
 				fprintf(fff, "    %d.%d", dam / 10, dam % 10);
 			else
 				fprintf(fff, "    %d", dam / 10);
-		}
-		else
+		} else
 			fprintf(fff, "    0");
 		fprintf(fff, " against %s", against2);
 	}
@@ -3160,8 +3156,6 @@ static void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mul
 
 
 /* XXX this ignores the chance of extra dmg via 'critical hit' */
-/* the following stuff is a really bad hack, because the player's real in-game values
-   will be modified. TODO: definitely change this to an independant calculation - C. Blue */
 static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 {
 	player_type *p_ptr = Players[Ind];
@@ -3208,25 +3202,25 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 //	if (p_ptr->heavy_wield) fprintf(fff, "\377rThis weapon is currently too heavy for you to use effectively:\377w\n");
 	fprintf(fff, "\377sUsing it you would have \377W%d\377s blow%s and do an average damage per round of:\n", p_ptr->num_blow, (p_ptr->num_blow > 1) ? "s" : "");
 
-	if (f1 & TR1_SLAY_ANIMAL) output_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, "animals", NULL);
-	if (f1 & TR1_SLAY_EVIL) output_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, "evil creatures", NULL);
-	if (f1 & TR1_SLAY_ORC) output_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, "orcs", NULL);
-	if (f1 & TR1_SLAY_TROLL) output_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, "trolls", NULL);
-	if (f1 & TR1_SLAY_GIANT) output_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, "giants", NULL);
-	if (f1 & TR1_KILL_DRAGON) output_dam(Ind, fff, o_ptr, FACTOR_KILL, 0, "dragons", NULL);
-	else if (f1 & TR1_SLAY_DRAGON) output_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, "dragons", NULL);
-	if (f1 & TR1_KILL_UNDEAD) output_dam(Ind, fff, o_ptr, FACTOR_KILL, 0, "undeads", NULL);
-	else if (f1 & TR1_SLAY_UNDEAD) output_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, "undeads", NULL);
-	if (f1 & TR1_KILL_DEMON) output_dam(Ind, fff, o_ptr, FACTOR_KILL, 0, "demons", NULL);
-	else if (f1 & TR1_SLAY_DEMON) output_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, "demons", NULL);
+	if (f1 & TR1_SLAY_ANIMAL) output_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, FLAT_HURT_BONUS, 0, "animals", NULL);
+	if (f1 & TR1_SLAY_EVIL) output_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, FLAT_HURT_BONUS, 0, "evil creatures", NULL);
+	if (f1 & TR1_SLAY_ORC) output_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "orcs", NULL);
+	if (f1 & TR1_SLAY_TROLL) output_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "trolls", NULL);
+	if (f1 & TR1_SLAY_GIANT) output_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "giants", NULL);
+	if (f1 & TR1_KILL_DRAGON) output_dam(Ind, fff, o_ptr, FACTOR_KILL, 0, FLAT_KILL_BONUS, 0, "dragons", NULL);
+	else if (f1 & TR1_SLAY_DRAGON) output_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "dragons", NULL);
+	if (f1 & TR1_KILL_UNDEAD) output_dam(Ind, fff, o_ptr, FACTOR_KILL, 0, FLAT_KILL_BONUS, 0, "undeads", NULL);
+	else if (f1 & TR1_SLAY_UNDEAD) output_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "undeads", NULL);
+	if (f1 & TR1_KILL_DEMON) output_dam(Ind, fff, o_ptr, FACTOR_KILL, 0, FLAT_KILL_BONUS, 0, "demons", NULL);
+	else if (f1 & TR1_SLAY_DEMON) output_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "demons", NULL);
 
-	if (f1 & TR1_BRAND_FIRE) output_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non fire resistant creatures", "fire susceptible creatures");
-	if (f1 & TR1_BRAND_COLD) output_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non cold resistant creatures", "cold susceptible creatures");
-	if (f1 & TR1_BRAND_ELEC) output_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non lightning resistant creatures", "lightning susceptible creatures");
-	if (f1 & TR1_BRAND_ACID) output_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non acid resistant creatures", "acid susceptible creatures");
-	if (f1 & TR1_BRAND_POIS) output_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non poison resistant creatures", "poison susceptible creatures");
+	if (f1 & TR1_BRAND_FIRE) output_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non fire resistant creatures", "fire susceptible creatures");
+	if (f1 & TR1_BRAND_COLD) output_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non cold resistant creatures", "cold susceptible creatures");
+	if (f1 & TR1_BRAND_ELEC) output_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non lightning resistant creatures", "lightning susceptible creatures");
+	if (f1 & TR1_BRAND_ACID) output_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non acid resistant creatures", "acid susceptible creatures");
+	if (f1 & TR1_BRAND_POIS) output_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non poison resistant creatures", "poison susceptible creatures");
 
-	output_dam(Ind, fff, o_ptr, FACTOR_MULT, 0, (first) ? "all monsters" : "other monsters", NULL);
+	output_dam(Ind, fff, o_ptr, FACTOR_MULT, 0, 0, 0, (first) ? "all monsters" : "other monsters", NULL);
 
 	fprintf(fff, "\n");
 
@@ -3234,6 +3228,104 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 	object_copy(&p_ptr->inventory[INVEN_ARM], old_ptr2);
 	/* get our weapon back */
 	object_copy(&p_ptr->inventory[INVEN_WIELD], old_ptr);
+	calc_boni(Ind);
+
+	/* restore timed effects that might have been changed from the weapon switching - C. Blue */
+	p_ptr->tim_wraith = tim_wraith;
+
+	suppress_message = FALSE;
+}
+
+static void output_boomerang_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, int bonus, int bonus2, cptr against, cptr against2)
+{
+	player_type *p_ptr = Players[Ind];
+	int dam;
+
+	dam = ((o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5L * mult) / FACTOR_MULT;
+	dam += (o_ptr->to_d + p_ptr->to_d_ranged + bonus) * 10;
+	if (dam > 0) {
+		if (dam % 10)
+			fprintf(fff, "    %d.%d", dam / 10, dam % 10);
+		else
+			fprintf(fff, "    %d", dam / 10);
+	} else
+		fprintf(fff, "    0");
+	fprintf(fff, " against %s", against);
+
+	if (mult2) {
+		fprintf(fff, "\n");
+		dam = ((o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5L * mult2) / FACTOR_MULT;
+		dam += (o_ptr->to_d + p_ptr->to_d_ranged + bonus2) * 10;
+		if (dam > 0) {
+			if (dam % 10)
+				fprintf(fff, "    %d.%d", dam / 10, dam % 10);
+			else
+				fprintf(fff, "    %d", dam / 10);
+		} else
+			fprintf(fff, "    0");
+		fprintf(fff, " against %s", against2);
+	}
+	fprintf(fff, "\n");
+}
+
+static void display_boomerang_damage(int Ind, object_type *o_ptr, FILE *fff)
+{
+	player_type *p_ptr = Players[Ind];
+	object_type forge, *old_ptr = &forge;
+	u32b f1, f2, f3, f4, f5, esp;
+	bool first = TRUE;
+
+	/* save timed effects that might be changed on weapon switching - C. Blue */
+	long tim_wraith = p_ptr->tim_wraith;
+
+	/* Extract the flags */
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+	/* this stuff doesn't take into account dual-wield or shield(lessness) directly,
+	   but the player actually has to take care of unequipping/reequipping his
+	   secondary weapon slot before calling this accordingly to the results he wants
+	   to get! We can just take care of forced cases which are..
+	   - unequipping a shield or secondary weapon if weapon is MUST2H here.
+	   - unequipping a secondary weapon if weapon is weapon is SHOULD2H - C. Blue */
+
+	/* Ok now the hackish stuff, we replace the current weapon with this one */
+	/* XXX this hack can be even worse under TomeNET, dunno :p */
+	object_copy(old_ptr, &p_ptr->inventory[INVEN_BOW]);
+	object_copy(&p_ptr->inventory[INVEN_BOW], o_ptr);
+
+	/* Hack -- hush the messages up */
+	suppress_message = TRUE;
+	calc_boni(Ind);
+
+	fprintf(fff, "\n");
+//	/* give weight warning, so player won't buy something he can't use. (todo: for shields and bows too) */
+//	if (p_ptr->heavy_wield) fprintf(fff, "\377rThis weapon is currently too heavy for you to use effectively:\377w\n");
+	fprintf(fff, "\377sUsing it you would do an average damage per round of:\n");
+
+	if (f1 & TR1_SLAY_ANIMAL) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, FLAT_HURT_BONUS, 0, "animals", NULL);
+	if (f1 & TR1_SLAY_EVIL) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, FLAT_HURT_BONUS, 0, "evil creatures", NULL);
+	if (f1 & TR1_SLAY_ORC) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "orcs", NULL);
+	if (f1 & TR1_SLAY_TROLL) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "trolls", NULL);
+	if (f1 & TR1_SLAY_GIANT) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "giants", NULL);
+	if (f1 & TR1_KILL_DRAGON) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_KILL, 0, FLAT_KILL_BONUS, 0, "dragons", NULL);
+	else if (f1 & TR1_SLAY_DRAGON) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "dragons", NULL);
+	if (f1 & TR1_KILL_UNDEAD) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_KILL, 0, FLAT_KILL_BONUS, 0, "undeads", NULL);
+	else if (f1 & TR1_SLAY_UNDEAD) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "undeads", NULL);
+	if (f1 & TR1_KILL_DEMON) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_KILL, 0, FLAT_KILL_BONUS, 0, "demons", NULL);
+	else if (f1 & TR1_SLAY_DEMON) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "demons", NULL);
+
+	if (f1 & TR1_BRAND_FIRE) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non fire resistant creatures", "fire susceptible creatures");
+	if (f1 & TR1_BRAND_COLD) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non cold resistant creatures", "cold susceptible creatures");
+	if (f1 & TR1_BRAND_ELEC) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non lightning resistant creatures", "lightning susceptible creatures");
+	if (f1 & TR1_BRAND_ACID) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non acid resistant creatures", "acid susceptible creatures");
+	if (f1 & TR1_BRAND_POIS) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non poison resistant creatures", "poison susceptible creatures");
+
+	output_boomerang_dam(Ind, fff, o_ptr, FACTOR_MULT, 0, 0, 0, (first) ? "all monsters" : "other monsters", NULL);
+
+	fprintf(fff, "\n");
+
+	/* get our weapon back */
+	object_copy(&p_ptr->inventory[INVEN_BOW], old_ptr);
 	calc_boni(Ind);
 
 	/* restore timed effects that might have been changed from the weapon switching - C. Blue */
@@ -3251,7 +3343,7 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 	player_type *p_ptr = Players[Ind];
 	long dam;
 	object_type *b_ptr = &p_ptr->inventory[INVEN_BOW];
-	int tmul = get_shooter_mult(o_ptr);
+	int tmul = get_shooter_mult(b_ptr);
 	tmul += p_ptr->xtra_might;
 
 	dam = (o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5;
@@ -3357,6 +3449,75 @@ static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff)
 
 	/* get our ammo back */
 	object_copy(&p_ptr->inventory[INVEN_AMMO], old_ptr);
+	calc_boni(Ind);
+
+	/* restore timed effects that might have been changed from the weapon switching - C. Blue */
+	p_ptr->tim_wraith = tim_wraith;
+
+	suppress_message = FALSE;
+}
+
+static void display_shooter_damage(int Ind, object_type *o_ptr, FILE *fff)
+{
+	player_type *p_ptr = Players[Ind];
+	u32b f1, f2, f3, f4, f5, esp;
+	object_type forge, *old_ptr = &forge, *oa_ptr = &p_ptr->inventory[INVEN_AMMO];
+	bool first = TRUE;
+	// int i;
+
+	/* save timed effects that might be changed on ammo switching - C. Blue */
+	long tim_wraith = p_ptr->tim_wraith;
+
+	/* swap hack */
+	object_copy(old_ptr, &p_ptr->inventory[INVEN_BOW]);
+	object_copy(&p_ptr->inventory[INVEN_BOW], o_ptr);
+
+	/* Hack -- hush the messages up */
+	suppress_message = TRUE;
+	calc_boni(Ind);
+
+	/* Extract the flags */
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+	fprintf(fff, "\nUsing it with your current ammunition you would do an avarage damage per shot of:\n");
+	if (f1 & TR1_SLAY_ANIMAL) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_HURT, 0, "animals", NULL);
+	if (f1 & TR1_SLAY_EVIL) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_HURT, 0, "evil creatures", NULL);
+	if (f1 & TR1_SLAY_ORC) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_SLAY, 0, "orcs", NULL);
+	if (f1 & TR1_SLAY_TROLL) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_SLAY, 0, "trolls", NULL);
+	if (f1 & TR1_SLAY_GIANT) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_SLAY, 0, "giants", NULL);
+	if (f1 & TR1_KILL_DRAGON) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_KILL, 0, "dragons", NULL);
+	else if (f1 & TR1_SLAY_DRAGON) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_SLAY, 0, "dragons", NULL);
+	if (f1 & TR1_KILL_UNDEAD) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_KILL, 0, "undeads", NULL);
+	else if (f1 & TR1_SLAY_UNDEAD) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_SLAY, 0, "undeads", NULL);
+	if (f1 & TR1_KILL_DEMON) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_KILL, 0, "demons", NULL);
+	else if (f1 & TR1_SLAY_DEMON) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_SLAY, 0, "demons", NULL);
+
+	if (f1 & TR1_BRAND_FIRE) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non fire resistant creatures", "fire susceptible creatures");
+	if (f1 & TR1_BRAND_COLD) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non cold resistant creatures", "cold susceptible creatures");
+	if (f1 & TR1_BRAND_ELEC) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non lightning resistant creatures", "lightning susceptible creatures");
+	if (f1 & TR1_BRAND_ACID) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non acid resistant creatures", "acid susceptible creatures");
+	if (f1 & TR1_BRAND_POIS) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non poison resistant creatures", "poison susceptible creatures");
+
+	output_ammo_dam(Ind, fff, oa_ptr, FACTOR_MULT, 0, (first) ? "all monsters" : "other monsters", NULL);
+	fprintf(fff, "\n");
+
+#if 0
+	if (oa_ptr->pval2) {
+		roff("The explosion will be ");
+		i = 0;
+		while (gf_names[i].gf != -1)
+		{
+			if (gf_names[i].gf == oa_ptr->pval2)
+				break;
+			i++;
+		}
+		c_roff(TERM_L_GREEN, (gf_names[i].gf != -1) ? gf_names[i].name : "something weird");
+		roff(".");
+	}
+#endif	// 0
+
+	/* get our ammo back */
+	object_copy(&p_ptr->inventory[INVEN_BOW], old_ptr);
 	calc_boni(Ind);
 
 	/* restore timed effects that might have been changed from the weapon switching - C. Blue */
@@ -4645,6 +4806,14 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	/* Damage display for weapons */
 	if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
 		display_weapon_damage(Ind, o_ptr, fff);
+
+	/* Damage display for ranged weapons */
+	if (wield_slot(Ind, o_ptr) == INVEN_BOW) {
+		if (o_ptr->tval == TV_BOW)
+			display_shooter_damage(Ind, o_ptr, fff);
+		else
+			display_boomerang_damage(Ind, o_ptr, fff);
+	}
 
 	/* Breakage/Damage display for ammo */
 	if (wield_slot(Ind, o_ptr) == INVEN_AMMO) {

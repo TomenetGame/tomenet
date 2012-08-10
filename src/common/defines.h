@@ -807,8 +807,13 @@
  #define FACTOR_BRAND_RES 15
  #define FACTOR_BRAND 20
  #define FACTOR_BRAND_SUSC 40
- 
 #endif
+/* Apply flat brand/slay +todam bonus too (for low-dice weapons)? - C. Blue */
+#define FLAT_HURT_BONUS		3
+#define FLAT_BRAND_BONUS	5	/* same for susceptible monsters, none for resisting monsters */
+#define FLAT_SLAY_BONUS		5
+#define FLAT_KILL_BONUS		5
+
 
 /* Approximate cap of a monster's average raw melee damage output per turn
    (before AC of the target is even incorporated)	[700] */
