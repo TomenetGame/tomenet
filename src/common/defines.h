@@ -306,7 +306,11 @@
 /* New for BIG_MAP feature: Minimum and maximum screen size - C. Blue */
 #define MIN_SCREEN_WID	SCREEN_WID
 #define MIN_SCREEN_HGT	SCREEN_HGT
-#define MAX_SCREEN_WID	SCREEN_WID
+#ifndef ARCADE_SERVER
+ #define MAX_SCREEN_WID	SCREEN_WID
+#else
+ #define MAX_SCREEN_WID SCREEN_WID * 3
+#endif
 #define MAX_SCREEN_HGT	(SCREEN_HGT * 2)
 
 /* (BIG_MAP) Padding of on-screen map, because of chat line, status bars, etc */
@@ -329,6 +333,10 @@
  /* For handling client functions depending on BIG_MAP */
  #define CL_WINDOW_WID	(Players[Ind]->screen_wid + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
  #define CL_WINDOW_HGT	(Players[Ind]->screen_hgt + SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM)
+#endif
+#ifdef ARCADE_SERVER
+ /* Note @ Moltor: This is == MAX_WID + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT */
+ #define CL_WINDOW_WID 212
 #endif
 
 /*
