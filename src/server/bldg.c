@@ -928,14 +928,21 @@ static void town_history(void)
 /*
  * compare_weapon_aux2 -KMW-
  */
-static void compare_weapon_aux2(object_type *o_ptr, int numblows, int r, int c, int mult, char attr[80], u32b f1, u32b f2, u32b f3, byte color)
+static void compare_weapon_aux2(object_type *o_ptr, int numblows, int r, int c, int mult, int bonus, char attr[80], u32b f1, u32b f2, u32b f3, byte color)
 {
 	char tmp_str[80];
 
 	c_put_str(color,attr,r,c);
-	strnfmt(tmp_str, 80, "Attack: %d-%d damage",
-	        numblows * (((o_ptr->dd * mult) / FACTOR_MULT) + o_ptr->to_d),
-	        numblows * (((o_ptr->ds * o_ptr->dd * mult) / FACTOR_MULT) + o_ptr->to_d));
+
+	if (o_ptr->tval == TV_BOW || is_ammo(o_ptr->tval))
+		strnfmt(tmp_str, 80, "Attack: %d-%d damage",
+		    numblows * (((o_ptr->dd * mult) / FACTOR_MULT) + o_ptr->to_d),
+	    	    numblows * (((o_ptr->ds * o_ptr->dd * mult) / FACTOR_MULT) + o_ptr->to_d));
+	else
+		strnfmt(tmp_str, 80, "Attack: %d-%d damage",
+		    numblows * (((o_ptr->dd * mult) / FACTOR_MULT) + o_ptr->to_d + bonus),
+	    	    numblows * (((o_ptr->ds * o_ptr->dd * mult) / FACTOR_MULT) + o_ptr->to_d + bonus));
+
 	put_str(tmp_str,r,c+8);
 	r++;
 }
@@ -952,67 +959,67 @@ static void compare_weapon_aux1(object_type *o_ptr, int col, int r)
 
 
 	if (f1 & (TR1_SLAY_ANIMAL)) {
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_HURT, "Animals:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_HURT, FLAT_HURT_BONUS, "Animals:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
 	if (f1 & (TR1_SLAY_ORC)) {
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, "Orcs:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, FLAT_SLAY_BONUS, "Orcs:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
 	if (f1 & (TR1_SLAY_TROLL)) {
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, "Trolls:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, FLAT_SLAY_BONUS, "Trolls:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
 	if (f1 & (TR1_SLAY_GIANT)) {
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, "Giants:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, FLAT_SLAY_BONUS, "Giants:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
 	if (f1 & (TR1_SLAY_EVIL)) {
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_HURT, "Evil:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_HURT, FLAT_HURT_BONUS, "Evil:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
 	if (f1 & (TR1_KILL_UNDEAD)) {
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_KILL, "Undead:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_KILL, FLAT_KILL_BONUS, "Undead:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
 	else if (f1 & (TR1_SLAY_UNDEAD)) {
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, "Undead:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, FLAT_SLAY_BONUS, "Undead:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
 	if (f1 & (TR1_KILL_DEMON)) {
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_KILL, "Demons:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_KILL, FLAT_KILL_BONUS, "Demons:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
 	else if (f1 & (TR1_SLAY_DEMON)) {
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, "Demons:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, FLAT_SLAY_BONUS, "Demons:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
 	if (f1 & (TR1_KILL_DRAGON)) {
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_KILL, "Dragons:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_KILL, FLAT_KILL_BONUS, "Dragons:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
 	else if (f1 & (TR1_SLAY_DRAGON)) {
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, "Dragons:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, FLAT_SLAY_BONUS, "Dragons:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
 	if (f1 & (TR1_BRAND_ACID)) {
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, "Acid:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, FLAT_BRAND_BONUS, "Acid:",
 		                    f1, f2, f3, TERM_RED);
 	}
 	if (f1 & (TR1_BRAND_ELEC)) {
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, "Elec:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, FLAT_BRAND_BONUS, "Elec:",
 		                    f1, f2, f3, TERM_RED);
 	}
 	if (f1 & (TR1_BRAND_FIRE)) {
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, "Fire:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, FLAT_BRAND_BONUS, "Fire:",
 		                    f1, f2, f3, TERM_RED);
 	}
 	if (f1 & (TR1_BRAND_COLD)) {
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, "Cold:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, FLAT_BRAND_BONUS, "Cold:",
 		                    f1, f2, f3, TERM_RED);
 	}
 	if (f1 & (TR1_BRAND_POIS)) {
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, "Poison:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, FLAT_BRAND_BONUS, "Poison:",
 		                    f1, f2, f3, TERM_RED);
 	}
 }
