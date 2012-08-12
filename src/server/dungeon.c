@@ -7508,6 +7508,14 @@ static void process_wild_weather() {
    clients via buffered direction & duration.)
    New note: Negative values should probably work too (inverse direction). */
 static void cloud_set_movement(int i) {
+{ /* hack: Try to fix the eternal rain bug:
+     Disable cloud movement for now - C. Blue */
+       cloud_xm100[i] = 0;
+       cloud_ym100[i] = 0;
+       cloud_mdur[i] = 300;
+       return;
+}
+
 #ifdef TEST_SERVER /* hack: fixed location for easier live testing? */
  #if 0
 	cloud_xm100[i] = 100;
