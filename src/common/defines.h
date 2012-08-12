@@ -334,10 +334,6 @@
  #define CL_WINDOW_WID	(Players[Ind]->screen_wid + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT)
  #define CL_WINDOW_HGT	(Players[Ind]->screen_hgt + SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM)
 #endif
-#ifdef ARCADE_SERVER
- /* Note @ Moltor: This is == MAX_WID + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT */
- #define CL_WINDOW_WID 212
-#endif
 
 /*
  * Maximum dungeon height in grids, must be a multiple of SCREEN_HGT,
