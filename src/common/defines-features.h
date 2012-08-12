@@ -137,6 +137,10 @@
  #define OPTIMIZED_ANIMATIONS	/* testing */
 #endif
 
+#ifdef ARCADE_SERVER
+ #define BIG_MAP		/* Allow a larger main window with a map bigger than 66x22 - C. Blue */
+#endif
+
 
 
 /* ------------------------ Client-side only features -----------------------*/
