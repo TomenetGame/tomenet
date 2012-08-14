@@ -1751,8 +1751,8 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 			break;
 #ifdef ENABLE_RCRAFT 
 		case TV_RUNE2: {
-			/* Runemaster retaliation. Perhaps add town retaliation in the future? - Kurzel */
-			/* Format @O<abc><a-h><a-h> */
+			/* Runemaster retaliation - Kurzel */
+			/* Format @O<t?><abc><a-h><a-h> */
 			if (o_ptr->sval >= 0 && o_ptr->sval <= RCRAFT_MAX_ELEMENTS) {
 				u16b e_flags1 = 0, e_flags2 = 0, m_flags = 0, e_flags1_default = r_elements[o_ptr->sval].flag;
 				//int place_char = 0; unused?
@@ -1774,6 +1774,13 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 							inscription++;
 							if (*inscription == 'O') {
 								inscription++;
+								
+								/* Skip the 't' for '@Ot' */
+								if (*inscription == 't') {
+									if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA)) continue;
+									inscription++;
+								}
+								
 								switch (runes) {
 									case 0: { //rune 'a'
 									if (*inscription != '\0') {
@@ -1786,8 +1793,8 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 										/* Record the imperative of the 'a' rune */
 										if (*inscription != '\0') {
 											i_char = *inscription;
-											inscription++;
 											imperative = *inscription - 'a';
+											inscription++;
 											if (imperative < 0 || imperative > RCRAFT_MAX_IMPERATIVES) imperative = 1;
 											m_flags |= r_imperatives[imperative].flag;
 										}
