@@ -1336,8 +1336,14 @@ static void Contact(int fd, int arg)
 		/* Hack: Clients > 4.4.8.1.0.0 also send their binary type
 		   (OS they were compiled for), useful for MinGW weirdness
 		   in the future, like the LUA crash bug - C. Blue */
-		version_ext.os = version_ext.build / 1000;
-		version_ext.build %= 1000;
+		if (is_older_than(&version_ext, 4, 4, 9, 2, 0, 0)) {
+			version_ext.os = version_ext.build / 1000;
+			version_ext.build %= 1000;
+		} else {
+			/* Use millions as of 4.4.9.2 (449b) - mikaelh */
+			version_ext.os = version_ext.build / 1000000;
+			version_ext.build %= 1000000;
+		}
 	}
 	else
 	{
