@@ -799,7 +799,7 @@ bool do_dec_stat(int Ind, int stat, int mode)
 	}
 
 	/* Sustain */
-	if (sust)
+	if (sust || safe_area(Ind))
 	{
 		/* Message */
 		msg_format(Ind, "You feel %s for a moment, but the feeling passes.",
@@ -832,7 +832,7 @@ bool do_dec_stat_time(int Ind, int stat, int mode, int sust_chance, int reductio
 	player_type *p_ptr = Players[Ind];
 
 	bool sust = FALSE;
-	
+
 	/* Access the "sustain" */
 	switch (stat)
 	{
@@ -843,12 +843,11 @@ bool do_dec_stat_time(int Ind, int stat, int mode, int sust_chance, int reductio
 		case A_CON: if (p_ptr->sustain_con) sust = TRUE; break;
 		case A_CHR: if (p_ptr->sustain_chr) sust = TRUE; break;
 	}
-	
+
 	if (p_ptr->stat_cur[stat] <= 3) return(FALSE);
 
 	/* Sustain */
-	if (sust && magik(sust_chance))
-	{
+	if ((sust && magik(sust_chance)) || safe_area(Ind)) {
 		/* Message */
 		msg_format(Ind, "You don't feel as %s as you used to be, but the feeling passes",
 		           desc_stat_neg2[stat]);
@@ -862,7 +861,7 @@ bool do_dec_stat_time(int Ind, int stat, int mode, int sust_chance, int reductio
 
 	/* Attempt to reduce the stat */
 	switch (reduction_mode) {
-	case 0: 
+	case 0:
 		if (dec_stat(Ind, stat, 10, mode))
 		{
 			/* Notice effect */
