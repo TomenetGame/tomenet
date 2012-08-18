@@ -1327,11 +1327,11 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 	/* add blank lines for more aesthetic browsing */
 if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 	if (is_newer_than(&p_ptr->version, 4, 4, 7, 0, 0, 0))
-		lines = ((21 - (lines % 21)) % 21);
+		lines = (((21 + HGT_PLUS) - (lines % (21 + HGT_PLUS))) % (21 + HGT_PLUS));
 	else
-		lines = ((20 - (lines % 20)) % 20);
+		lines = (((20 + HGT_PLUS) - (lines % (20 + HGT_PLUS))) % (20 + HGT_PLUS));
 } else {//#else
-	lines = ((20 - (lines % 20)) % 20);
+	lines = (((20 + HGT_PLUS) - (lines % (20 + HGT_PLUS))) % (20 + HGT_PLUS));
 }//#endif
 	for (k = 1; k <= lines; k++) fprintf(fff, "\n");
 
