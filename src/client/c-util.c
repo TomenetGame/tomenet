@@ -4885,7 +4885,7 @@ static void do_cmd_options_aux(int page, cptr info)
 
 	int		opt[24];
 
-	char	buf[80];
+	char	buf[81];
 
 
 	/* Lookup the options */
