@@ -4907,7 +4907,7 @@ static void do_cmd_options_aux(int page, cptr info)
 	while (TRUE)
 	{
 		/* Prompt XXX XXX XXX */
-		sprintf(buf, "%s (RET to advance, y/n to set, t to toggle, ESC to accept)", info);
+		sprintf(buf, "%s (RET advances, y/n sets, t toggles, ESC accepts)", info);
 		prt(buf, 0, 0);
 
 		/* Display the options */
