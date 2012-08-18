@@ -6408,6 +6408,9 @@ void dungeon(void)
 					/* Don't remove loot from ghosts waiting for res */
 					if (admin_p(i) || Players[i]->ghost) continue;
 
+					/* Don't free people from the Ironman Deep Dive Challenge */
+					if (in_irondeepdive(&Players[i]->wpos)) continue;
+
 					if (Players[i]->wpos.wz) {
 						Players[i]->recall_pos.wx = Players[i]->wpos.wx;
 						Players[i]->recall_pos.wy = Players[i]->wpos.wy;
