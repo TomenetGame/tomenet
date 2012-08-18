@@ -2093,6 +2093,7 @@ bool make_attack_melee(int Ind, int m_idx)
 								}
 
 								msg_format(Ind, "You're not as %s as you used to be...", act);
+								if (safe_area(Ind)) break;
 
 								p_ptr->stat_cur[stat] = (p_ptr->stat_cur[stat] * 3) / 4;
 								if (p_ptr->stat_cur[stat] < 3) p_ptr->stat_cur[stat] = 3;
@@ -2103,6 +2104,7 @@ bool make_attack_melee(int Ind, int m_idx)
 						case 10:
 							{
 								msg_print(Ind, "You're not as powerful as you used to be...");
+								if (safe_area(Ind)) break;
 
 								for (k = 0; k < 6; k++)
 								{
@@ -2166,7 +2168,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					}
 
 					msg_format(Ind, "\377o%^s tries to disarm you.", m_name);
-					
+					if (safe_area(Ind)) break;
+
 					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 					/* object itself prevents getting separated? */
