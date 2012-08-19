@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 6. August 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 19. August 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.9b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -12740,7 +12740,8 @@ Here you can..
     The guild creator will receive a 'Guild Key' which designates him as the
     guild master. In case the guild master dies, another guild member may
     fetch the key to become the new guild master.
-    (Currently guilds look cool and have a dedicated guild chat.)
+    (Apart from the dedicated guild chat, guilds currently don't do anything
+    except looking cool.)
 
     The following slash commands are available to manage your guild, only the
     guild master may use them:
