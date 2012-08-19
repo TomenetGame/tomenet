@@ -878,6 +878,7 @@ or shorter: /tym [rs]
             Also, it can only be used ONCE per level, so make sure you get your
             skill point distribution right on the second attempt.
 /version    Displays the server version.
+ (/ver)
 
 
 
