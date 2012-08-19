@@ -237,7 +237,7 @@ void do_cmd_messages(void)
 		if ((k == 'n') || (k == KTRL('N')) || k == ' ')
 		{
 			/* Go newer (if able) */
-			i = (i >= 20 + HGT_PLUS) ? (i - 20 + HGT_PLUS) : 0;
+			i = (i >= 20 + HGT_PLUS) ? (i - (20 + HGT_PLUS)) : 0;
 		}
 
 		/* Recall 10 newer messages */
