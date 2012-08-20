@@ -4016,8 +4016,8 @@ void change_font(int s) {
 		/* change main window font */
 		term_force_font(&data[0], "10X14X.FON");//or 9X15 maybe
 		/* Change sub windows too */
-		term_force_font(&data[1], "9X15.FON");
-		term_force_font(&data[2], "9X15.FON");
+		term_force_font(&data[1], "8X13.FON");//was 9x15
+		term_force_font(&data[2], "8X13.FON");//was 9x15
 		term_force_font(&data[3], "6X10.FON");
 		term_force_font(&data[4], "8X13.FON");
 		term_force_font(&data[5], "6X10.FON");
