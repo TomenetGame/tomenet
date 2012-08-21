@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 19. August 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 21. August 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.9b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -322,6 +322,9 @@ SHIFT+<direction key>
         usually indicates whether it is on or off.)
         You can also run by pressing the dot '.' followed by a direction key.
 
+;       ;       The 'walk' command, it allows you to walk one step. This is not
+                really needed for anything usually, since you can just press
+                the directional keys given above instead for walking.
 
 i       i       display your inventory. You can then press SHIFT + inventory
                 slot letter to paste that item name into chat.
