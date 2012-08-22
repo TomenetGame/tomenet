@@ -257,7 +257,7 @@ MSHIELD = add_spell {
 	["fail"] = 	0,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			set_kinetic_shield(Ind, randint(25) + 3 * get_level(Ind, HPROTEVIL, 50))
+			set_kinetic_shield(Ind, randint(25) + 3 * get_level(Ind, MSHIELD, 50))
 			end,
 	["info"] = 	function()
 			return "dur "..1 + (get_level(Ind, MSHIELD, 50) * 3)..".."..25 + (3 * get_level(Ind, MSHIELD, 50))
