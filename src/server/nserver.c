@@ -655,7 +655,7 @@ bool Report_to_meta(int flag)
 	Check_evilmeta();
 
 	/* kill it or update it */
-	if (metapid) {
+	if (metapid > 0) {
 #ifndef WINDOWS
 		kill(metapid, (flag & META_DIE ? SIGTERM : SIGUSR1));
 #endif
@@ -674,6 +674,22 @@ void Start_evilmeta(void)
 #ifdef EVIL_METACLIENT
 #ifndef WINDOWS
 	if (cfg.report_to_meta && !metapid) {
+#ifdef ARCADE_SERVER /* made this one top priority since using RPG_SERVER as an "ARCADE-addon" might be desired :) */
+		char *cmd = "./evilmeta.arcade";
+#else
+#ifdef RPG_SERVER
+		char *cmd = "./evilmeta.rpg";
+#else
+		char *cmd = "./evilmeta";
+#endif
+#endif
+
+		if (access(cmd, X_OK) < 0) {
+			s_printf("Metaserver reporting failed: cannot execute %s\n", cmd);
+			metapid = -1;
+			return;
+		}
+
 		metapid = fork();
 		if (metapid == -1) {
 			/* didnt work.. we should die */
@@ -681,15 +697,6 @@ void Start_evilmeta(void)
 			exit(-5);
 		}
 		if (metapid == 0) {
-#ifdef ARCADE_SERVER /* made this one top priority since using RPG_SERVER as an "ARCADE-addon" might be desired :) */
-			char *cmd = "./evilmeta.arcade";
-#else
-#ifdef RPG_SERVER
-			char *cmd = "./evilmeta.rpg";
-#else
-			char *cmd = "./evilmeta";
-#endif
-#endif
 			char *args[] = {cmd, NULL};
 
 			/* We are the meta client */
@@ -701,8 +708,9 @@ void Start_evilmeta(void)
 			exit(-20);
 		}
 	}
+#else
+	s_printf("Metaserver reporting has not been implemented for Windows.");
 #endif /* WINDOWS */
-	/* TODO */
 	metapid = 1;
 #endif
 }
