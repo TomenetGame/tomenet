@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 21. August 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 22. August 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.9b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1769,7 +1769,7 @@ unpack audio packs to your TomeNET/lib/xtra/ folder. Make sure the game isn't
 running while you do.
 
 Note: Some people have reported that the program 'WinRAR' seems to cause
-      problems in some cases, not being able to handle zip files correctly.
+      problems in some cases, giving them "file corrupted" errors.
       A powerful free and open source program that is guaranteed to work is
       '7zip' (a sourceforge project at the time of writing) downloadable at:
       http://www.7-zip.org/
@@ -14871,10 +14871,25 @@ PROBLEM 32: When trying to extract a music or sound pack to my xtra folder in
             work correctly.
 SOLUTION:   See (2.1a) for details on how to install audio packs. Also note
             that some people have reported that the program 'WinRAR' seems to
-            cause problems in some cases, not being able to handle zip files
-            correctly. A powerful free and open source program that is
-            guaranteed to work is '7zip' (a sourceforge project at the time
-            of writing) downloadable at:  http://www.7-zip.org/
+            cause problems in some cases, giving them "file corrupted" errors.
+            A powerful free and open source program that is guaranteed to work
+            is '7zip' (a sourceforge project at the time of writing)
+            downloadable at:  http://www.7-zip.org/
+
+PROBLEM 33: On OSX when entering the game (right after picking a character) in
+            big_map mode with already large (46 lines) main window, the window
+            will suddenly become small (24 lines) again.
+            As of the time of writing this, the exact cause is still unknown.
+            A workaround is to perform the following steps:
+            -turn off big_map mode and save the '=' options
+            -exit client with CTRL+X (so it will save the main window height)
+            -log on again, turn on big_map mode, save the '=' options.
+            -from now on, always exit the game via the window close button in
+             the window's titlebar, never via CTRL+X. That way, your .tomenetrc
+             config file is never overwritten and hence your client will always
+             start with only 24 lines, switching back to correct big_map mode
+             only when you actually log in with a character, thus circumventing
+             the bug.
 
 
 
