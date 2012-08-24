@@ -3091,6 +3091,7 @@ void do_cmd_locate(int Ind, int dir)
 		sprintf(tmp_val, "%s%s of",
 		        ((y2 < y1) ? " North" : (y2 > y1) ? " South" : ""),
 		        ((x2 < x1) ? " West" : (x2 > x1) ? " East" : ""));
+		trad_val[0] = 0;
 	}
 
 	/* Prepare to ask which way to look */
