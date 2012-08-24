@@ -2262,19 +2262,19 @@ static void player_setup(int Ind, bool new)
 		/* Hack -- tricky formula, but needed */
 		p_ptr->max_panel_rows = MAX_PANEL_ROWS_L;
 		p_ptr->max_panel_cols = MAX_PANEL_COLS_L;
-#if 0
+
 		p_ptr->max_tradpanel_rows = MAX_TRADPANEL_ROWS_L;
 		p_ptr->max_tradpanel_cols = MAX_TRADPANEL_COLS_L;
-#endif
+
 		p_ptr->cur_hgt = l_ptr->hgt;
 		p_ptr->cur_wid = l_ptr->wid;
 	} else {
 		p_ptr->max_panel_rows = MAX_PANEL_ROWS;
 		p_ptr->max_panel_cols = MAX_PANEL_COLS;
-#if 0
+
 		p_ptr->max_tradpanel_rows = MAX_TRADPANEL_ROWS;
 		p_ptr->max_tradpanel_cols = MAX_TRADPANEL_COLS;
-#endif
+
 		p_ptr->cur_hgt = MAX_HGT;
 		p_ptr->cur_wid = MAX_WID;
 	}
@@ -2284,24 +2284,7 @@ static void player_setup(int Ind, bool new)
 	if (p_ptr->max_panel_cols < 0) p_ptr->max_panel_cols = 0;
 #endif
 
-	p_ptr->panel_row = ((p_ptr->py - p_ptr->screen_hgt / 4) / (p_ptr->screen_hgt / 2));
-	if (p_ptr->panel_row > p_ptr->max_panel_rows) p_ptr->panel_row = p_ptr->max_panel_rows;
-	else if (p_ptr->panel_row < 0) p_ptr->panel_row = 0;
-
-	p_ptr->panel_col = ((p_ptr->px - p_ptr->screen_wid / 4) / (p_ptr->screen_wid / 2));
-	if (p_ptr->panel_col > p_ptr->max_panel_cols) p_ptr->panel_col = p_ptr->max_panel_cols;
-	else if (p_ptr->panel_col < 0) p_ptr->panel_col = 0;
-#if 0
-	p_ptr->tradpanel_row = ((p_ptr->py - SCREEN_HGT / 4) / (SCREEN_HGT / 2));
-	if (p_ptr->tradpanel_row > p_ptr->max_tradpanel_rows) p_ptr->tradpanel_row = p_ptr->max_tradpanel_rows;
-	else if (p_ptr->tradpanel_row < 0) p_ptr->tradpanel_row = 0;
-
-	p_ptr->tradpanel_col = ((p_ptr->px - SCREEN_WID / 4) / (SCREEN_WID / 2));
-	if (p_ptr->tradpanel_col > p_ptr->max_tradpanel_cols) p_ptr->tradpanel_col = p_ptr->max_tradpanel_cols;
-	else if (p_ptr->tradpanel_col < 0) p_ptr->tradpanel_col = 0;
-#endif
-	/* Set the rest of the panel information */
-	panel_bounds(Ind);
+	panel_calculate(Ind);
 
 	/* Make sure his party still exists */
 	if (p_ptr->party && parties[p_ptr->party].members == 0) {

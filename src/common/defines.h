@@ -361,13 +361,12 @@
  #define MAX_PANEL_ROWS		((MAX_HGT / p_ptr->screen_hgt) * 2 - 2)
  #define MAX_PANEL_COLS		((MAX_WID / p_ptr->screen_wid) * 2 - 2)
 
- #if 0
-  /* stuff that depends on normal-sized panels, for various effects such as magic mapping */
-  #define MAX_TRADPANEL_ROWS_L	(((l_ptr->hgt + SCREEN_HGT / 2) / SCREEN_HGT) * 2 - 2)
-  #define MAX_TRADPANEL_COLS_L	(((l_ptr->wid + SCREEN_WID / 2) / SCREEN_WID) * 2 - 2)
-  #define MAX_TRADPANEL_ROWS	((MAX_HGT / SCREEN_HGT) * 2 - 2)
-  #define MAX_TRADPANEL_COLS	((MAX_WID / SCREEN_WID) * 2 - 2)
- #endif
+ /* stuff that depends on normal-sized panels, for various effects such as magic mapping */
+ #define MAX_TRADPANEL_ROWS_L	MAX_PANEL_ROWS_L
+ #define MAX_TRADPANEL_COLS_L	MAX_PANEL_COLS_L
+ #define MAX_TRADPANEL_ROWS	MAX_PANEL_ROWS
+ #define MAX_TRADPANEL_COLS	MAX_PANEL_COLS
+
  #define TRADPANEL_ROW_MIN	(p_ptr->panel_row_min)
  #define TRADPANEL_ROW_MAX	(p_ptr->panel_row_max)
  #define TRADPANEL_COL_MIN	(p_ptr->panel_col_min)
@@ -378,18 +377,20 @@
  #define MAX_PANEL_ROWS		((int)((MAX_HGT + p_ptr->screen_hgt / 2 - 1) / (p_ptr->screen_hgt / 2)) - 2)
  #define MAX_PANEL_COLS		((int)((MAX_WID + p_ptr->screen_wid / 2 - 1) / (p_ptr->screen_wid / 2)) - 2)
 
- #if 0
-  /* default panel variables used for various effects such as magic mapping */
-  #define MAX_TRADPANEL_ROWS_L	(((l_ptr->hgt + SCREEN_HGT / 2) / SCREEN_HGT) * 2 - 2)
-  #define MAX_TRADPANEL_COLS_L	(((l_ptr->wid + SCREEN_WID / 2) / SCREEN_WID) * 2 - 2)
-  #define MAX_TRADPANEL_ROWS	((MAX_HGT / SCREEN_HGT) * 2 - 2)
-  #define MAX_TRADPANEL_COLS	((MAX_WID / SCREEN_WID) * 2 - 2)
+ /* 'traditional' panel variables used for various effects such as magic mapping (working on 66x22) */
+ #define MAX_TRADPANEL_ROWS_L	(((l_ptr->hgt + SCREEN_HGT / 2) / SCREEN_HGT) * 2 - 2)
+ #define MAX_TRADPANEL_COLS_L	(((l_ptr->wid + SCREEN_WID / 2) / SCREEN_WID) * 2 - 2)
+ #define MAX_TRADPANEL_ROWS	((MAX_HGT / SCREEN_HGT) * 2 - 2)
+ #define MAX_TRADPANEL_COLS	((MAX_WID / SCREEN_WID) * 2 - 2)
+
+ #if 1
   /* use traditional panel sizes and map around the one we'd be within (better) */
   #define TRADPANEL_ROW_MIN	(p_ptr->tradpanel_row_min)
   #define TRADPANEL_ROW_MAX	(p_ptr->tradpanel_row_max)
   #define TRADPANEL_COL_MIN	(p_ptr->tradpanel_col_min)
   #define TRADPANEL_COL_MAX	(p_ptr->tradpanel_col_max)
  #else /* centers magic mapping on current huge panel (quick and easy) */
+  /* this causes a problem when player is close to an edge of a level! */
   #define TRADPANEL_ROW_MIN	(p_ptr->panel_row_min + p_ptr->screen_hgt / 2 - SCREEN_HGT / 2)
   #define TRADPANEL_ROW_MAX	(p_ptr->panel_row_max - p_ptr->screen_hgt / 2 + SCREEN_HGT / 2)
   #define TRADPANEL_COL_MIN	(p_ptr->panel_col_min + p_ptr->screen_wid / 2 - SCREEN_WID / 2)

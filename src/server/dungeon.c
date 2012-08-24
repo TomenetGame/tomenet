@@ -5563,6 +5563,9 @@ void process_player_change_wpos(int Ind)
 		p_ptr->max_panel_rows = MAX_PANEL_ROWS;
 		p_ptr->max_panel_cols = MAX_PANEL_COLS;
 
+		p_ptr->max_tradpanel_rows = MAX_TRADPANEL_ROWS;
+		p_ptr->max_tradpanel_cols = MAX_TRADPANEL_COLS;
+
 		p_ptr->cur_hgt = MAX_HGT;
 		p_ptr->cur_wid = MAX_WID;
 
@@ -5577,14 +5580,12 @@ void process_player_change_wpos(int Ind)
 			p_ptr->redraw |= PR_DEPTH;
 		}
 	} else if (wpos->wz) {
-#if 1
 		/* Hack -- tricky formula, but needed */
 		p_ptr->max_panel_rows = MAX_PANEL_ROWS_L;
 		p_ptr->max_panel_cols = MAX_PANEL_COLS_L;
-#else
-		p_ptr->max_panel_rows = MAX_PANEL_ROWS;
-		p_ptr->max_panel_cols = MAX_PANEL_COLS;
-#endif	// 0
+
+		p_ptr->max_tradpanel_rows = MAX_TRADPANEL_ROWS_L;
+		p_ptr->max_tradpanel_cols = MAX_TRADPANEL_COLS_L;
 
 		p_ptr->cur_hgt = l_ptr->hgt;
 		p_ptr->cur_wid = l_ptr->wid;
@@ -5598,6 +5599,9 @@ void process_player_change_wpos(int Ind)
 	} else {
 		p_ptr->max_panel_rows = MAX_PANEL_ROWS;
 		p_ptr->max_panel_cols = MAX_PANEL_COLS;
+
+		p_ptr->max_tradpanel_rows = MAX_TRADPANEL_ROWS;
+		p_ptr->max_tradpanel_cols = MAX_TRADPANEL_COLS;
 
 		p_ptr->cur_hgt = MAX_HGT;
 		p_ptr->cur_wid = MAX_WID;
@@ -5863,14 +5867,7 @@ void process_player_change_wpos(int Ind)
 	}
 #endif
 
-	/* Recalculate panel */
-	p_ptr->panel_row = ((p_ptr->py - p_ptr->screen_hgt / 4) / (p_ptr->screen_hgt / 2));
-	if (p_ptr->panel_row > p_ptr->max_panel_rows) p_ptr->panel_row = p_ptr->max_panel_rows;
-	else if (p_ptr->panel_row < 0) p_ptr->panel_row = 0;
-
-	p_ptr->panel_col = ((p_ptr->px - p_ptr->screen_wid / 4) / (p_ptr->screen_wid / 2));
-	if (p_ptr->panel_col > p_ptr->max_panel_cols) p_ptr->panel_col = p_ptr->max_panel_cols;
-	else if (p_ptr->panel_col < 0) p_ptr->panel_col = 0;
+	panel_calculate(Ind);
 
 	/* Hack -- remove tracked monster */
 	health_track(Ind, 0);
@@ -5878,7 +5875,6 @@ void process_player_change_wpos(int Ind)
 	p_ptr->redraw |= (PR_MAP);
 	p_ptr->redraw |= (PR_DEPTH);
 
-	panel_bounds(Ind);
 	forget_view(Ind);
 	forget_lite(Ind);
 	/* original order: update_view first, then update_lite.  - C. Blue

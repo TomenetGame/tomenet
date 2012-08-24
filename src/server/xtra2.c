@@ -100,13 +100,17 @@
  * XXX They should be client-side numerical options.	- Jir -
  */
 #ifndef ARCADE_SERVER
+	#define TRAD_SCROLL_MARGIN_ROW	(p_ptr->wide_scroll_margin ? 5 : 2)
 	#define	SCROLL_MARGIN_ROW	(p_ptr->screen_hgt >= 26 ? \
 					(p_ptr->wide_scroll_margin ? p_ptr->screen_hgt / 5 : p_ptr->screen_hgt / 13) : \
-					(p_ptr->wide_scroll_margin ? 5 : 2))
+					TRAD_SCROLL_MARGIN_ROW)
 	#define	SCROLL_MARGIN_COL	(p_ptr->wide_scroll_margin ? p_ptr->screen_wid / 5 : p_ptr->screen_wid / 13)
+	#define TRAD_SCROLL_MARGIN_COL	SCROLL_MARGIN_COL
 #else
 	#define SCROLL_MARGIN_ROW 8
 	#define SCROLL_MARGIN_COL 20
+	#define TRAD_SCROLL_MARGIN_ROW	SCROLL_MARGIN_ROW
+	#define TRAD_SCROLL_MARGIN_COL	SCROLL_MARGIN_COL
 #endif
 
 /* Pre-set owner for DROP_CHOSEN items, so you can't cheeze them to someone else
@@ -9432,7 +9436,37 @@ case SV_GOLEM_ADAM:
 	return (FALSE);
 }
 
+/* Initialises the panel, when newly entering a level */
+void panel_calculate(Ind) {
+	player_type *p_ptr = Players[Ind];
 
+        p_ptr->panel_row = ((p_ptr->py - p_ptr->screen_hgt / 4) / (p_ptr->screen_hgt / 2));
+        if (p_ptr->panel_row > p_ptr->max_panel_rows) p_ptr->panel_row = p_ptr->max_panel_rows;
+        else if (p_ptr->panel_row < 0) p_ptr->panel_row = 0;
+
+        p_ptr->panel_col = ((p_ptr->px - p_ptr->screen_wid / 4) / (p_ptr->screen_wid / 2));
+        if (p_ptr->panel_col > p_ptr->max_panel_cols) p_ptr->panel_col = p_ptr->max_panel_cols;
+        else if (p_ptr->panel_col < 0) p_ptr->panel_col = 0;
+
+	panel_bounds(Ind);
+
+	tradpanel_calculate(Ind);
+}
+/* for functions of fixed size of effect that therefore require the
+   'traditional' panel dimensions, such as Magic Mapping: */
+void tradpanel_calculate(Ind) {
+	player_type *p_ptr = Players[Ind];
+
+	p_ptr->tradpanel_row = ((p_ptr->py - SCREEN_HGT / 4) / (SCREEN_HGT / 2));
+	if (p_ptr->tradpanel_row > p_ptr->max_tradpanel_rows) p_ptr->tradpanel_row = p_ptr->max_tradpanel_rows;
+	else if (p_ptr->tradpanel_row < 0) p_ptr->tradpanel_row = 0;
+
+	p_ptr->tradpanel_col = ((p_ptr->px - SCREEN_WID / 4) / (SCREEN_WID / 2));
+	if (p_ptr->tradpanel_col > p_ptr->max_tradpanel_cols) p_ptr->tradpanel_col = p_ptr->max_tradpanel_cols;
+	else if (p_ptr->tradpanel_col < 0) p_ptr->tradpanel_col = 0;
+
+	tradpanel_bounds(Ind);
+}
 
 /*
  * Calculates current boundaries
@@ -9448,14 +9482,16 @@ void panel_bounds(int Ind)
 	p_ptr->panel_col_min = p_ptr->panel_col * (p_ptr->screen_wid / 2);
 	p_ptr->panel_col_max = p_ptr->panel_col_min + p_ptr->screen_wid - 1;
 	p_ptr->panel_col_prt = p_ptr->panel_col_min - SCREEN_PAD_LEFT;
+}
+void tradpanel_bounds(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
 
-#if 0
 	/* for stuff such as magic mapping that relies on traditional panel size */
 	p_ptr->tradpanel_row_min = p_ptr->tradpanel_row * (SCREEN_HGT / 2);
 	p_ptr->tradpanel_row_max = p_ptr->tradpanel_row_min + SCREEN_HGT - 1;
 	p_ptr->tradpanel_col_min = p_ptr->tradpanel_col * (SCREEN_WID / 2);
 	p_ptr->tradpanel_col_max = p_ptr->tradpanel_col_min + SCREEN_WID - 1;
-#endif
 }
 
 
@@ -9477,6 +9513,11 @@ void verify_panel(int Ind)
 
 	int prow = p_ptr->panel_row;
 	int pcol = p_ptr->panel_col;
+
+
+	/* Also update (virtual) traditional panel */
+	verify_tradpanel(Ind);
+
 
 	/* Scroll screen when 2 grids from top/bottom edge */
 	if ((y < p_ptr->panel_row_min + SCROLL_MARGIN_ROW) || (y > p_ptr->panel_row_max - SCROLL_MARGIN_ROW)) {
@@ -9516,6 +9557,59 @@ void verify_panel(int Ind)
 
 	/* Window stuff */
 	p_ptr->window |= (PW_OVERHEAD);
+}
+void verify_tradpanel(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int y = p_ptr->py;
+	int x = p_ptr->px;
+
+	int prow = p_ptr->tradpanel_row;
+	int pcol = p_ptr->tradpanel_col;
+
+	/* Scroll screen when 2 grids from top/bottom edge */
+	if ((y < p_ptr->tradpanel_row_min + TRAD_SCROLL_MARGIN_ROW) || (y > p_ptr->tradpanel_row_max - TRAD_SCROLL_MARGIN_ROW)) {
+		prow = ((y - SCREEN_HGT / 4) / (SCREEN_HGT / 2));
+		if (prow > p_ptr->max_tradpanel_rows) prow = p_ptr->max_tradpanel_rows;
+		else if (prow < 0) prow = 0;
+	}
+
+	/* Scroll screen when 4 grids from left/right edge */
+	if ((x < p_ptr->tradpanel_col_min + TRAD_SCROLL_MARGIN_COL) || (x > p_ptr->tradpanel_col_max - TRAD_SCROLL_MARGIN_COL)) {
+		pcol = ((x - SCREEN_WID / 4) / (SCREEN_WID / 2));
+		if (pcol > p_ptr->max_tradpanel_cols) pcol = p_ptr->max_tradpanel_cols;
+		else if (pcol < 0) pcol = 0;
+	}
+
+	/* Check for "no change" */
+	if ((prow == p_ptr->tradpanel_row) && (pcol == p_ptr->tradpanel_col)) return;
+
+#if 0 /* only in 'real' verify_panel() */
+	/* Hack -- optional disturb on "panel change" */
+	if (p_ptr->disturb_panel) disturb(Ind, 0, 0);
+#endif
+
+	/* Save the new panel info */
+	p_ptr->tradpanel_row = prow;
+	p_ptr->tradpanel_col = pcol;
+
+	/* Recalculate the boundaries */
+	tradpanel_bounds(Ind);
+
+#if 0 /* only in 'real' verify_panel() */
+	/* client-side weather stuff */
+	p_ptr->panel_changed = TRUE;
+
+	/* Update stuff */
+	p_ptr->update |= (PU_MONSTERS);
+
+	/* Redraw map */
+	p_ptr->redraw |= (PR_MAP);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD);
+#endif
 }
 
 

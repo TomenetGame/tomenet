@@ -3025,6 +3025,7 @@ void do_cmd_locate(int Ind, int dir)
 	int	pcol = p_ptr->panel_col;
 	char	tmp_val[MAX_CHARS];
 	char	out_val[MAX_CHARS_WIDE];
+	char trad_val[23];
 
 
 	/* No direction, recenter */
@@ -3077,12 +3078,16 @@ void do_cmd_locate(int Ind, int dir)
 	else if (x2 < 0) x2 = 0;
 
 	/* Describe the location */
-	if ((y2 == y1) && (x2 == x1))
-	{
+	if ((y2 == y1) && (x2 == x1)) {
 		tmp_val[0] = '\0';
-	}
-	else
-	{
+
+		/* For BIG_MAP users, also display the traditional sector they are located in,
+		   to make communication about dungeon entrances etc easier. */
+		if (p_ptr->screen_wid == SCREEN_WID && p_ptr->screen_hgt == SCREEN_HGT)
+			trad_val[0] = 0;
+		else
+			sprintf(trad_val, ", traditionally [%d,%d]", p_ptr->tradpanel_row, p_ptr->tradpanel_col);
+	} else {
 		sprintf(tmp_val, "%s%s of",
 		        ((y2 < y1) ? " North" : (y2 > y1) ? " South" : ""),
 		        ((x2 < x1) ? " West" : (x2 > x1) ? " East" : ""));
@@ -3090,8 +3095,8 @@ void do_cmd_locate(int Ind, int dir)
 
 	/* Prepare to ask which way to look */
 	sprintf(out_val,
-	        "Map sector [%d,%d], which is%s your sector.  Direction (or ESC)?",
-	        y2, x2, tmp_val);
+    	    "Map sector [%d,%d], which is%s your sector%s. Direction (or ESC)?",
+    	    y2, x2, tmp_val, trad_val);
 
 	msg_print(Ind, out_val);
 

@@ -2211,7 +2211,7 @@ struct player_type
 	s16b panel_col_min, panel_row_max;
 	s16b panel_row_prt, panel_col_prt;	/* What panel this guy's on */
 	s16b panel_row_old, panel_col_old;
-#if 0
+#if 1	/* used for functions that still need to use the 'traditional' panel size of 66x22, eg magic mapping */
 	/* panel values assumed we'd use SCREEN_WID x SCREEN_HGT panels (and maybe for [x,y] location display) */
 	s16b max_tradpanel_rows, max_tradpanel_cols;
 	s16b tradpanel_row, tradpanel_col;
