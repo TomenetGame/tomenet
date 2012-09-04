@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 22. August 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 4. September 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.9b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -465,7 +465,7 @@ p       p       Concentrate on opening your mind for telekinesis.
                 Certain spells of the mindcrafter class might also require
                 players in the same party to open their minds in order to work
                 or to affect them as intended.
-h               buy/sell a house or change house parameters. See (4.10).
+h               sell/buy a house or change house parameters. See (4.10).
 P       O       party screen. Form/disband/modify a party with other players
                 here. In a party you will share experience points if you are
                 within 7 character levels to each other and on the same
