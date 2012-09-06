@@ -20654,7 +20654,7 @@ F:BLUEBAND | EMPTY_MIND
 #S:1_IN_3 |
 S:1_IN_2 |
 S:BR_NETH
-D:A whirling maelstrom of force that will unleash powerful impact on you.
+D:A whirling anomaly of nether mists that will drain your life force.
 
 
 
