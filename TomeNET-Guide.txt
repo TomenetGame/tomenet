@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 4. September 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 6. September 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.9b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -7106,6 +7106,12 @@ Amulet of Anti-Teleportation    If worn it will suppress all attemps to
                                 and then immediately kick in as soon as the
                                 amulet is taken off. This allows for some
                                 interesting tactics..
+Rings of Lordly Protection      Resist poison, disenchantment, life drain and
+                                give free action (immunity to paralysis).
+Elemental rings (flames, frost, acid, lightning)
+                    Provide the according resistance and can be activated for
+                    temporary resistance too, thereby temporarily giving you
+                    "double resistance" (see (5.17) for details).
 
 
 Misc
