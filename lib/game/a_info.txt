@@ -3266,7 +3266,7 @@ D:allowing him to discover new ideas.
 N:260:'Mirror of Glory'
 I:37:26:5
 W:97:25:300:200000
-P:65:4d4:-3:0:20
+P:65:4d4:-3:0:35
 F:WINNERS_ONLY | REGEN | IM_ACID | IM_FIRE | RES_ELEC | STR | CON | CHR
 D:An armor of thick gleaming scales forged from finest Mithril, without a
 D:single dent in it. Powerful engraved runes ornate arm and leg protectors.
