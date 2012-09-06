@@ -465,7 +465,7 @@ static cptr r_info_flags8[] =
 	"NO_AUTORET",
 	"WILD_DESERT",
 	"WILD_ICE",
-	"XXX8X21",
+	"NETHER_REALM",
 	"XXX8X22",
 	"XXX8X23",
 	"XXX8X24",

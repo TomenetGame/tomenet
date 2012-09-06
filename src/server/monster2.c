@@ -2916,15 +2916,15 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 			s_printf("allowed FINAL_GUARDIAN %d\n", r_idx);
 		}
 
+		/* Couple of Nether Realm-only monsters hardcoded here */
+		if ((r_ptr->flags8 & RF8_NETHER_REALM) && (dlev < 166))
+			return (FALSE);
+
 		/* Hellraiser may not occur right on the 1st floor of the Nether Realm */
 		if ((r_idx == 1067) && (dlev < (166 + 1))) return (FALSE);
 
 		/* Dor may not occur on 'easier' (lol) NR levels */
 		if ((r_idx == 1085) && (dlev < (166 + 9))) return (FALSE);
-
-		/* Couple of Nether Realm-only monsters hardcoded here */
-		if (((r_idx == 1068) || (r_idx == 1080) || (r_idx == 1083) || (r_idx == 1084)) &&
-		    (dlev < 166)) return (FALSE);
 
 #if 0 /* FINAL_GUARDIAN now */
 		/* Zu-Aon guards the bottom of the Nether Realm now */
