@@ -2658,7 +2658,8 @@ bool make_attack_melee(int Ind, int m_idx)
 	if (p_ptr->max_plv <= 2 && p_ptr->warning_wield_combat == 0 &&
 	    p_ptr->inventory[INVEN_WIELD].k_idx == 0 &&
 	    p_ptr->inventory[INVEN_ARM].k_idx == 0 &&
-	    p_ptr->inventory[INVEN_BOW].k_idx == 0) {
+	    p_ptr->inventory[INVEN_BOW].k_idx == 0
+	    && !get_skill(p_ptr, SKILL_MARTIAL_ARTS)) {
 		p_ptr->warning_wield_combat = 1;
 		msg_print(Ind, "\374\377RWARNING: You aren't wielding a weapon! Press \377yw\377R to equip one!");
 	}
