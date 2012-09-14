@@ -6633,6 +6633,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 		strcpy(ge->description[6], " completely real to you though, and you can even use and consume items!");
 //		strcpy(ge->description[7], " (Note: Some creatures might be beyond the wizards' abilities.)");
 		strcpy(ge->description[7], format(" (Example: '/evsign %d black orc vet' gets you a veteran archer!)", n+1));
+		strcpy(ge->description[8], "");
 		ge->end_turn = ge->start_turn + cfg.fps * 60 * 30 ; /* 30 minutes max. duration, insta-start */
 #if 0
 		switch(rand_int(2)) { /* Determine terrain type! */
