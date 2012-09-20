@@ -1791,20 +1791,20 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 				/* XXX XXX XXX Mega-Hack */
 
-				/* Hack -- "Cutlass-es" and "Torch-es" and theoretically "Topaz-es" */
-				if ((k == 's') || (k == 'h') || (k == 'z')) *t++ = 'e';
+				/* Hack -- "Torch-es" and theoretically "Topaz-es" */
+				if ((k == 'h') || (k == 'z')) *t++ = 'e';
 
 				/* Hack -- Finally, staffs become staves.
 				   Note: Might require fix for future word additions ;) */
-				if (k == 'f') {
+				else if (k == 'f') {
 					if (k2 == 'f') t -= 2;
 					else t--;
 					*t++ = 'v';
 					*t++ = 'e';
 				}
 
-				/* Hack -- ""Cod/ex -> Cod/ices" */
-				if (k == 'x') {
+				/* Hack -- "Cod/ex -> Cod/ices" */
+				else if (k == 'x') {
 					if (k2 == 'e') {
 						t -= 2;
 						*t++ = 'i';
@@ -1814,6 +1814,18 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 					    /* and "Suffix" -> "Suffixes", theoretically.. >_> */
 					    *t++ = 'e';
 					}
+				}
+
+				/* Hack -- "Aeg/is -> Aeg/ides" */
+				else if (k == 's') {
+					if (k2 == 'i') {
+						t -= 2;
+						*t++ = 'i';
+						*t++ = 'd';
+						*t++ = 'e';
+					}
+					/* Cutlass-es */
+					else *t++ = 'e';
 				}
 
 				/* Add an 's' */
