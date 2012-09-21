@@ -54,7 +54,7 @@
 #define VERSION_PATCH_LATEST	9
 #define VERSION_EXTRA_LATEST	2
 #define VERSION_BRANCH_LATEST	0
-#define VERSION_BUILD_LATEST	1
+#define VERSION_BUILD_LATEST	0
 
 /* maximum MAJOR/MINOR/PATCH version that counts as 'outdated' (should be 0-15). */
 #define VERSION_MAJOR_OUTDATED	4
