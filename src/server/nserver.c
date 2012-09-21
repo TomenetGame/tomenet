@@ -3627,11 +3627,13 @@ static int Receive_login(int ind){
 #ifdef TEST_SERVER
 			sflags0 |= SFLG0_TEST;
 #endif
-#ifdef DED_IDDC_CHAR
+#ifndef RPG_SERVER	/* not implemented for RPG SERVER atm */
+ #ifdef DED_IDDC_CHAR
 			sflags0 |= SFLG0_DED_IDDC;
-#endif
-#ifdef DED_PVP_CHAR
+ #endif
+ #ifdef DED_PVP_CHAR
 			sflags0 |= SFLG0_DED_PVP;
+ #endif
 #endif
 			/* Set available-feature / client mode flags */
 #ifdef BIG_MAP
