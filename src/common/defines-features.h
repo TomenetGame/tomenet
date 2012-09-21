@@ -13,6 +13,11 @@
 /* --------------------------------------------------------------------------*/
 /* Features that are allowed in all build types, ie server-type independant: */
 
+/* Add an extra character slot dedicated to Ironman Deep Dive Challenge */
+#define DED_IDDC_CHAR
+/* Add an extra character slot dedicated to PvP mode */
+#define DED_PVP_CHAR
+
 /* Add fixed (and safe) towns to "Ironman Deep Dive Challenge"? (at depths 2k and 4k) */
 #define IRONDEEPDIVE_FIXED_TOWNS
 /* Allow to withdraw prematurely in fixed Ironman Deep Dive Challenge towns.
@@ -121,9 +126,6 @@
 #endif
 
 #ifdef TEST_SERVER
- #define DED_IDDC_CHAR
- #define DED_PVP_CHAR
-
  #define ENABLE_ASSASSINATE	/* experimental fighting technique for rogues - devalues Backstabbing too much probably */
 
  #ifdef MAX_CLOUDS
