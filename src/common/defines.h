@@ -41,7 +41,7 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		4
 #define VERSION_PATCH		9
-#define VERSION_EXTRA		2
+#define VERSION_EXTRA		3
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -141,6 +141,8 @@
 #define SFLG0_ARCADE	0x00000008
 #define SFLG0_TEST	0x00000010
 #define SFLG0_RPG_ADMIN	0x00000020
+#define SFLG0_DED_IDDC	0x00000040
+#define SFLG0_DED_PVP	0x00000080
 
 #define SFLG1_NORMAL	0x00000000
 #define SFLG1_PARTY	0x00000001
@@ -6300,6 +6302,8 @@ extern int PlayerUID;
 #define MODE_PVP		0x10
 
 #define MODE_FRUIT_BAT		0x20
+#define MODE_DED_IDDC		0x40	/* Dedicated extra character slot for Ironman Deep Dive Challenge */
+#define MODE_DED_PVP		0x80	/* Dedicated extra character slot for PvP-mode */
 
 #define MODE_MASK       (MODE_HARD | MODE_NO_GHOST | MODE_EVERLASTING | MODE_PVP)       /* real character modes */
 

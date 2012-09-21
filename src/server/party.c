@@ -464,32 +464,60 @@ static char *t_crypt(char *inbuf, cptr salt){
 #endif
 }
 
-int check_account(char *accname, char *c_name){
+int check_account(char *accname, char *c_name) {
 	struct account *l_acc;
 	u32b id, a_id;
 	u32b flags;
 	hash_entry *ptr;
-	int i;
+	int i, success = 1;
 
 	if ((l_acc = GetAccount(accname, NULL, FALSE))) {
-#ifdef RPG_SERVER /* Allow only up to 1 character per account! */
 		int *id_list, chars;
+		int max_cpa = MAX_CHARS_PER_ACCOUNT, max_cpa_plus = 0;
                 chars = player_id_list(&id_list, l_acc->id);
+#ifdef RPG_SERVER /* Allow only up to 1 character per account! */
 		/* If this account DOES have characters, but the chosen character name is
 		   NOT equal to the first character of this account, don't allow it!
 		   (To restrict players to only 1 character per account! - C. Blue) */
-//s_printf("chars = %d\n", chars);
- #if 0
-		if ((chars > 0) && strcmp(c_name, lookup_player_name(id_list[0]))) {
- #else /* allow multiple chars for admins, even on RPG server */
+		/* allow multiple chars for admins, even on RPG server */
 		if ((chars > 0) && strcmp(c_name, lookup_player_name(id_list[0])) && !(l_acc->flags & ACC_ADMIN)) {
- #endif
-//s_printf("return FALSE\n");
 			if (chars) C_KILL(id_list, chars, int);
 			return(-1);
 		}
-		if (chars) C_KILL(id_list, chars, int);
+#else
+ #ifdef DED_IDDC_CHAR
+		max_cpa_plus++;
+ #endif
+ #ifdef DED_PVP_CHAR
+		max_cpa_plus++;
+ #endif
+		if (chars >= max_cpa + max_cpa_plus) {
+			for (i = 0; i < chars; i++)
+				if (!strcmp(c_name, lookup_player_name(id_list[i]))) break;
+			/* We're out of free character slots: Char creation failed! */
+			if (i == chars) {
+				if (chars) C_KILL(id_list, chars, int);
+				return(-3);
+			}
+		} else if (chars >= max_cpa) {
+			bool ded_iddc = FALSE, ded_pvp = FALSE;
+			for (i = 0; i < chars; i++) {
+				int m = lookup_player_mode(id_list[i]);
+				if (m & MODE_DED_IDDC) ded_iddc = TRUE;
+				if (m & MODE_DED_PVP) ded_pvp = TRUE;
+			}
+			/* paranoia (maybe if slot # gets changed again in the future) */
+			if (ded_iddc && ded_pvp) {
+				/* out of character slots */
+				if (chars) C_KILL(id_list, chars, int);
+				return(-3);
+			}
+			if (ded_iddc) success = -4; /* set char mode to MODE_DED_PVP */
+			if (ded_pvp) success = -5; /* set char mode to MODE_DED_IDDC */
+			else success = -6; /* char mode can be either, make it depend on user choice */
+		}
 #endif
+		if (chars) C_KILL(id_list, chars, int);
 
 		a_id = l_acc->id;
 		flags = l_acc->flags;
@@ -501,7 +529,7 @@ int check_account(char *accname, char *c_name){
 				if (Players[i]->account == a_id && !(flags & ACC_MULTI) && strcmp(c_name, Players[i]->name))
 					return(-2);
 			}
-			return(1);
+			return(success);
 		}
 	}
 	return(0);
@@ -3346,6 +3374,13 @@ int player_id_list(int **list, u32b account)
 	int i, j, len = 0, k = 0, tmp;
 	hash_entry *ptr;
 	int *llist;
+	int max_cpa = MAX_CHARS_PER_ACCOUNT;
+#ifdef DED_IDDC_CHAR
+	max_cpa++;
+#endif
+#ifdef DED_PVP_CHAR
+	max_cpa++;
+#endif
 
 	/* Count up the number of valid entries */
 	for (i = 0; i < NUM_HASH_ENTRIES; i++)
@@ -3406,7 +3441,7 @@ int player_id_list(int **list, u32b account)
 
 	/* Limit number of characters per account - C. Blue */
 	/* This screwed up saving players in save.c, check that account is not 0 - mikaelh */
-	if (len > MAX_CHARS_PER_ACCOUNT && account) len = MAX_CHARS_PER_ACCOUNT;
+	if (len > max_cpa && account) len = max_cpa;
 
 	return len;
 }

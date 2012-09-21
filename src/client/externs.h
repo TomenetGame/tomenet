@@ -287,6 +287,7 @@ extern bool s_PARTY;
 extern bool s_ARCADE;
 extern bool s_TEST;
 extern bool s_RPG_ADMIN;
+extern bool s_DED_IDDC, s_DED_PVP;
 
 /* Server's temporary features flags */
 extern u32b sflags_TEMP;

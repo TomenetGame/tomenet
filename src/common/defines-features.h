@@ -121,6 +121,9 @@
 #endif
 
 #ifdef TEST_SERVER
+ #define DED_IDDC_CHAR
+ #define DED_PVP_CHAR
+
  #define ENABLE_ASSASSINATE	/* experimental fighting technique for rogues - devalues Backstabbing too much probably */
 
  #ifdef MAX_CLOUDS

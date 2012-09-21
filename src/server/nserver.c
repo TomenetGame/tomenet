@@ -3625,7 +3625,12 @@ static int Receive_login(int ind){
 #ifdef TEST_SERVER
 			sflags0 |= SFLG0_TEST;
 #endif
-
+#ifdef DED_IDDC_CHAR
+			sflags0 |= SFLG0_DED_IDDC;
+#endif
+#ifdef DED_PVP_CHAR
+			sflags0 |= SFLG0_DED_PVP;
+#endif
 			/* Set available-feature / client mode flags */
 #ifdef BIG_MAP
 			sflags1 |= SFLG1_BIG_MAP;
@@ -3653,9 +3658,16 @@ static int Receive_login(int ind){
 				else if (tmpm & MODE_NO_GHOST) strcpy(colour_sequence, "\377D");
 				else if (tmpm & MODE_HARD) strcpy(colour_sequence, "\377s");
 				else strcpy(colour_sequence, "\377W");
-				Packet_printf(&connp->c, "%c%s%s%hd%hd%hd", PKT_LOGIN, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype&0xff , ptype>>8);
+
+				if (is_newer_than(&connp->version, 4, 4, 9, 2, 0, 0))
+					Packet_printf(&connp->c, "%c%hd%s%s%hd%hd%hd", PKT_LOGIN, tmpm, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype&0xff , ptype>>8);
+				else
+					Packet_printf(&connp->c, "%c%s%s%hd%hd%hd", PKT_LOGIN, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype&0xff , ptype>>8);
 			}
-			Packet_printf(&connp->c, "%c%s%s%hd%hd%hd", PKT_LOGIN, "", "", 0, 0, 0);
+			if (is_newer_than(&connp->version, 4, 4, 9, 2, 0, 0))
+				Packet_printf(&connp->c, "%c%hd%s%s%hd%hd%hd", PKT_LOGIN, 0, "", "", 0, 0, 0);
+			else
+				Packet_printf(&connp->c, "%c%s%s%hd%hd%hd", PKT_LOGIN, "", "", 0, 0, 0);
 			if (n) C_KILL(id_list, n, int);
 			KILL(l_acc, struct account);
 		}
@@ -3688,34 +3700,12 @@ static int Receive_login(int ind){
 		   on reason - evileye */
 		check_account_reason = check_account(connp->nick, choice);
 		switch (check_account_reason) {
-		case 1: // OK
-			/* Check that no one else is creating a char with the same name - mikaelh */
-			for (i = 0; i < max_connections; i++) {
-				connp2 = Conn[i];
-				if (!connp2 || connp2->state == CONN_FREE) continue;
-				if (connp2->c_name && !strcasecmp(connp2->c_name, choice) &&
-				    strcasecmp(connp2->nick, connp->nick)) { /* check that it's a different account, too */
-					/* Fail login */
-					Destroy_connection(ind, "Character name already in use.");
-					s_printf("(Prevented simultaneous creation of same character.)\n");
-					return(-1);
-				}
-			}
-
-			/* Validate names/resume in proper place */
-			if(Check_names(choice, connp->real, connp->host, connp->addr, TRUE)){
-/* connp->real is _always_ 'PLAYER' - connp->nick is the account name, choice the c_name */
-				/* fail login here */
-				Destroy_connection(ind, "Security violation");
-				return(-1);
-			}
-			Packet_printf(&connp->c, "%c", lookup_player_id(choice) ? SUCCESS : E_NEED_INFO);
-			connp->c_name=strdup(choice);
-			break;
 		case 0: //NOT OK
 			/* fail login here */
 			Destroy_connection(ind, "Name already in use by another player.");
 			return(-1);
+		case 1:	//OK
+			break;
 		case -1: //NOT OK: Max 1 char (RPG)
 			/* fail login here */
 			Destroy_connection(ind, "Only one character per account is allowed.");
@@ -3724,7 +3714,46 @@ static int Receive_login(int ind){
 			/* fail login here */
 			Destroy_connection(ind, "Multiple logins on the same account aren't allowed.");
 			return(-1);
+		case -3: /* Out of character slots! */
+			Destroy_connection(ind, "Character amount limit reached.");
+			return(-1);
+		case -4: /* Force creation of MODE_DED_PVP character */
+			connp->sex |= MODE_DED_PVP;
+			break;
+		case -5: /* Force creation of MODE_DED_IDDC or MODE_DED_PVP character */
+			connp->sex |= MODE_DED_IDDC;
+			break;
+		case -6:
+			/*hack: marker for both possibilities. We will decide when we see the user's actual choice later. */
+			connp->sex |= MODE_DED_PVP | MODE_DED_IDDC;
+			break;
+		default:
+			Destroy_connection(ind, "unknown error");
+			return -1;
 		}
+
+		/* Check that no one else is creating a char with the same name - mikaelh */
+		for (i = 0; i < max_connections; i++) {
+			connp2 = Conn[i];
+			if (!connp2 || connp2->state == CONN_FREE) continue;
+			if (connp2->c_name && !strcasecmp(connp2->c_name, choice) &&
+			    strcasecmp(connp2->nick, connp->nick)) { /* check that it's a different account, too */
+				/* Fail login */
+				Destroy_connection(ind, "Character name already in use.");
+				s_printf("(Prevented simultaneous creation of same character.)\n");
+				return(-1);
+			}
+		}
+
+		/* Validate names/resume in proper place */
+		if (Check_names(choice, connp->real, connp->host, connp->addr, TRUE)) {
+/* connp->real is _always_ 'PLAYER' - connp->nick is the account name, choice the c_name */
+			/* fail login here */
+			Destroy_connection(ind, "Security violation");
+			return(-1);
+		}
+		Packet_printf(&connp->c, "%c", lookup_player_id(choice) ? SUCCESS : E_NEED_INFO);
+		connp->c_name=strdup(choice);
 	} else {
 		/* fail login due to missing password */
 		s_printf("EXPLOIT: Missing password of player %s.\n", connp->nick);
@@ -3802,6 +3831,25 @@ static int Receive_play(int ind)
 			}
 		}
 
+		/* hacks for dedicated characters */
+		if ((connp->sex & MODE_DED_PVP) &&
+		    (connp->sex & MODE_DED_IDDC)) { //allow both, depending on what the user wants:
+			if (sex & MODE_PVP) {
+				sex &= ~(MODE_EVERLASTING | MODE_NO_GHOST | MODE_HARD | MODE_DED_IDDC);
+				sex |= MODE_DED_PVP;
+			} else {
+				sex &= ~MODE_DED_PVP;
+				sex |= MODE_DED_IDDC;
+			}
+		}
+		else if (connp->sex & MODE_DED_PVP) {
+			sex &= ~(MODE_EVERLASTING | MODE_NO_GHOST | MODE_HARD | MODE_DED_IDDC);
+			sex |= MODE_DED_PVP | MODE_PVP;
+		}
+		else if (connp->sex & MODE_DED_IDDC) {
+			sex &= ~(MODE_PVP | MODE_DED_PVP);
+			sex |= MODE_DED_IDDC;
+		}
 		/* Set his character info */
 		connp->sex = sex;
 		connp->race = race;

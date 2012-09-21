@@ -250,6 +250,7 @@ bool s_PARTY = FALSE;
 bool s_ARCADE = FALSE;
 bool s_TEST = FALSE;
 bool s_RPG_ADMIN = FALSE;
+bool s_DED_IDDC = FALSE, s_DED_PVP = FALSE;
 
 /* Server temporary feature flags */
 u32b sflags_TEMP = 0x0;
