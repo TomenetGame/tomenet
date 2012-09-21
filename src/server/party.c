@@ -470,11 +470,15 @@ int check_account(char *accname, char *c_name) {
 	u32b flags;
 	hash_entry *ptr;
 	int i, success = 1;
+#ifndef RPG_SERVER
 	bool ded_iddc, ded_pvp;
+#endif
 
 	if ((l_acc = GetAccount(accname, NULL, FALSE))) {
 		int *id_list, chars;
+#ifndef RPG_SERVER
 		int max_cpa = MAX_CHARS_PER_ACCOUNT, max_cpa_plus = 0, plus_free = 2;
+#endif
                 chars = player_id_list(&id_list, l_acc->id);
 #ifdef RPG_SERVER /* Allow only up to 1 character per account! */
 		/* If this account DOES have characters, but the chosen character name is
