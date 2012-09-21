@@ -470,10 +470,11 @@ int check_account(char *accname, char *c_name) {
 	u32b flags;
 	hash_entry *ptr;
 	int i, success = 1;
+	bool ded_iddc, ded_pvp;
 
 	if ((l_acc = GetAccount(accname, NULL, FALSE))) {
 		int *id_list, chars;
-		int max_cpa = MAX_CHARS_PER_ACCOUNT, max_cpa_plus = 0;
+		int max_cpa = MAX_CHARS_PER_ACCOUNT, max_cpa_plus = 0, plus_free = 2;
                 chars = player_id_list(&id_list, l_acc->id);
 #ifdef RPG_SERVER /* Allow only up to 1 character per account! */
 		/* If this account DOES have characters, but the chosen character name is
@@ -491,6 +492,29 @@ int check_account(char *accname, char *c_name) {
  #ifdef DED_PVP_CHAR
 		max_cpa_plus++;
  #endif
+
+		ded_iddc = FALSE;
+		ded_pvp = FALSE;
+		for (i = 0; i < chars; i++) {
+			int m = lookup_player_mode(id_list[i]);
+			if (m & MODE_DED_IDDC) {
+				ded_iddc = TRUE;
+				plus_free--;
+			}
+			if (m & MODE_DED_PVP) {
+				ded_pvp = TRUE;
+				plus_free--;
+			}
+			/* paranoia */
+			if (plus_free < 0) {
+				s_printf("debug error: plus_free is %d\n", plus_free);
+				plus_free = 0;
+			}
+		}
+		//s_printf("plus_free=%d, ded_iddc=%d, ded_pvp=%d\n", plus_free, ded_iddc, ded_pvp);
+		//s_printf("chars=%d, max_cpa=%d, max_cpa_plus=%d\n", chars, max_cpa, max_cpa_plus);
+
+		/* no more free chars */
 		if (chars >= max_cpa + max_cpa_plus) {
 			for (i = 0; i < chars; i++)
 				if (!strcmp(c_name, lookup_player_name(id_list[i]))) break;
@@ -499,13 +523,8 @@ int check_account(char *accname, char *c_name) {
 				if (chars) C_KILL(id_list, chars, int);
 				return(-3);
 			}
-		} else if (chars >= max_cpa) {
-			bool ded_iddc = FALSE, ded_pvp = FALSE;
-			for (i = 0; i < chars; i++) {
-				int m = lookup_player_mode(id_list[i]);
-				if (m & MODE_DED_IDDC) ded_iddc = TRUE;
-				if (m & MODE_DED_PVP) ded_pvp = TRUE;
-			}
+		/* only exclusive char slots left */
+		} else if (chars >= max_cpa + max_cpa_plus - plus_free) {
 			/* paranoia (maybe if slot # gets changed again in the future) */
 			if (ded_iddc && ded_pvp) {
 				/* out of character slots */
@@ -513,8 +532,15 @@ int check_account(char *accname, char *c_name) {
 				return(-3);
 			}
 			if (ded_iddc) success = -4; /* set char mode to MODE_DED_PVP */
-			if (ded_pvp) success = -5; /* set char mode to MODE_DED_IDDC */
+			else if (ded_pvp) success = -5; /* set char mode to MODE_DED_IDDC */
 			else success = -6; /* char mode can be either, make it depend on user choice */
+		}
+		/* at least one non-exclusive slot free */
+		else {
+			if (!ded_iddc) {
+				if (!ded_pvp) success = -7; /* allow willing creation of any exlusive slot */
+				else success = -8; /* allow willing creating of iddc-exclusive slot */
+			} else if (!ded_pvp) success = -9; /* allow willing creating of pvp-exclusive slot */
 		}
 #endif
 		if (chars) C_KILL(id_list, chars, int);

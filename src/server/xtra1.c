@@ -1059,10 +1059,10 @@ static void calc_sanity(int Ind)
 			if (!p_ptr->safe_sane) {
 	                        /* Hack -- Note death */
 	                        msg_print(Ind, "\377vYou turn into an unthinking vegetable.");
-				(void)strcpy(p_ptr->died_from, "Insanity");
-				(void)strcpy(p_ptr->really_died_from, "Insanity");
+				(void)strcpy(p_ptr->died_from, "insanity");
+				(void)strcpy(p_ptr->really_died_from, "insanity");
 		                if (!p_ptr->ghost) {
-			                strcpy(p_ptr->died_from_list, "Insanity");
+			                strcpy(p_ptr->died_from_list, "insanity");
 			                p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
 					/* Hack to remember total winning */
 		                        if (p_ptr->total_winner) strcat(p_ptr->died_from_list, "\001");
@@ -6755,6 +6755,14 @@ void global_event_signup(int Ind, int n, cptr parm) {
 	/* check individual event restrictions against player */
 	switch (ge->getype) {
 	case GE_HIGHLANDER:	/* Highlander Tournament */
+		if (p_ptr->mode & MODE_DED_IDDC) {
+			msg_print(Ind, "\377ySorry, as a dedicated ironman deep diver you may not participate.");
+			if (!is_admin(p_ptr)) return;
+		}
+		if (p_ptr->mode & MODE_PVP) {
+			msg_print(Ind, "\377ySorry, PvP characters may not participate.");
+			if (!is_admin(p_ptr)) return;
+		}
 		if (p_ptr->max_exp > 0 || p_ptr->max_plv > 1) {
 			msg_print(Ind, "\377ySorry, only newly created characters may sign up for this event.");
 			if (!is_admin(p_ptr)) return;

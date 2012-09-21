@@ -1747,10 +1747,10 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 		   of death, use died_from_list.  To preserve the original
 		   depth, use died_from_depth. */
 
-		(void)strcpy(p_ptr->died_from, "Insanity");
+		(void)strcpy(p_ptr->died_from, "insanity");
 		(void)strcpy(p_ptr->really_died_from, hit_from);
 		if (!p_ptr->ghost) {
-			strcpy(p_ptr->died_from_list, "Insanity");
+			strcpy(p_ptr->died_from_list, "insanity");
 			p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
 			/* Hack to remember total winning */
 			if (p_ptr->total_winner) strcat(p_ptr->died_from_list, "\001");

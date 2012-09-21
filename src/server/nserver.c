@@ -1059,11 +1059,13 @@ static bool forbidden_name(char *name) {
 	if (strlen(name) >= 5 && name[0] == 's' && name[1] == 'a' && name[2] == 'v' && name[3] == 'e' &&
 	    name[4] >= '0' && name[4] <= '9') return TRUE; /* backup save file folders, save00..saveNN */
 	if (!strcmp(name, "tomenet.acc")) return TRUE; /* just in case someone copies it over into save folder */
-	if (!strcmp(name, "Insanity")) return TRUE;
+	if (!strcmp(name, "insanity")) return TRUE;
 	if (!strcmp(name, "estate")) return TRUE; /* for new 'estate' folder that backs up houses. */
+	if (!strcmp(name, "divine wrath")) return TRUE;
 #ifdef ENABLE_MAIA
-	if (!strcmp(name, "Indecisiveness")) return TRUE;
+	if (!strcmp(name, "indecisiveness")) return TRUE;
 #endif
+	if (!strcmp(name, "indetermination")) return TRUE;
 	/* Hardcode some not so important ones */
 	if (!strcmp(name, "tBot")) return TRUE; /* Sandman's internal chat bot */
 	if (!strcmp(name, "8ball")) return TRUE; /* Sandman's internal chat bot */
@@ -3699,6 +3701,7 @@ static int Receive_login(int ind){
 		/* i realise it should return different value depending
 		   on reason - evileye */
 		check_account_reason = check_account(connp->nick, choice);
+		//s_printf("success = %d\n", check_account_reason);
 		switch (check_account_reason) {
 		case 0: //NOT OK
 			/* fail login here */
@@ -3718,14 +3721,23 @@ static int Receive_login(int ind){
 			Destroy_connection(ind, "Character amount limit reached.");
 			return(-1);
 		case -4: /* Force creation of MODE_DED_PVP character */
-			connp->sex |= MODE_DED_PVP;
+			connp->sex = MODE_DED_PVP;
 			break;
 		case -5: /* Force creation of MODE_DED_IDDC or MODE_DED_PVP character */
-			connp->sex |= MODE_DED_IDDC;
+			connp->sex = MODE_DED_IDDC;
 			break;
 		case -6:
 			/*hack: marker for both possibilities. We will decide when we see the user's actual choice later. */
-			connp->sex |= MODE_DED_PVP | MODE_DED_IDDC;
+			connp->sex = MODE_DED_PVP | MODE_DED_IDDC;
+			break;
+		case -7: /* like 1, and allow non-forced creation of slot-exclusive chars */
+			connp->sex = MODE_DED_PVP_OK | MODE_DED_IDDC_OK;
+			break;
+		case -8: /* like 1, and allow non-forced creation of iddc-slot-exclusive char */
+			connp->sex = MODE_DED_IDDC_OK;
+			break;
+		case -9: /* like 1, and allow non-forced creation of pvp-slot-exclusive char */
+			connp->sex = MODE_DED_PVP_OK;
 			break;
 		default:
 			Destroy_connection(ind, "unknown error");
@@ -3831,7 +3843,7 @@ static int Receive_play(int ind)
 			}
 		}
 
-		/* hacks for dedicated characters */
+		/* hacks for forcibly dedicated characters */
 		if ((connp->sex & MODE_DED_PVP) &&
 		    (connp->sex & MODE_DED_IDDC)) { //allow both, depending on what the user wants:
 			if (sex & MODE_PVP) {
@@ -3850,6 +3862,19 @@ static int Receive_play(int ind)
 			sex &= ~(MODE_PVP | MODE_DED_PVP);
 			sex |= MODE_DED_IDDC;
 		}
+
+		/* hack for willingly dedicated characters */
+		if (!(connp->sex & (MODE_DED_PVP | MODE_DED_IDDC))) {//not forced..
+			if (sex & MODE_DED_PVP) { //..but wants to be dedicated pvp. Check if that's not allowed.
+				if (!(connp->sex & MODE_DED_PVP_OK)) sex &= ~MODE_DED_PVP;
+				if (!(sex & MODE_PVP)) sex &= ~MODE_DED_PVP;
+			}
+			if (sex & MODE_DED_IDDC) { //..but wants to be dedicated iddc. Check if that's not allowed.
+				if (!(connp->sex & MODE_DED_IDDC_OK)) sex &= ~MODE_DED_IDDC;
+				if (sex & MODE_PVP) sex &= ~MODE_DED_IDDC;
+			}
+		}
+
 		/* Set his character info */
 		connp->sex = sex;
 		connp->race = race;

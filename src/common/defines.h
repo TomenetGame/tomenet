@@ -6302,8 +6302,13 @@ extern int PlayerUID;
 #define MODE_PVP		0x10
 
 #define MODE_FRUIT_BAT		0x20
+
 #define MODE_DED_IDDC		0x40	/* Dedicated extra character slot for Ironman Deep Dive Challenge */
 #define MODE_DED_PVP		0x80	/* Dedicated extra character slot for PvP-mode */
+
+/* NOTE: modes are bytes, but 'connp->sex' is int, so this is ok for just that purpose */
+#define MODE_DED_IDDC_OK	0x100	/* Temporary control flag during char creation */
+#define MODE_DED_PVP_OK		0x200	/* Temporary control flag during char creation */
 
 #define MODE_MASK       (MODE_HARD | MODE_NO_GHOST | MODE_EVERLASTING | MODE_PVP)       /* real character modes */
 

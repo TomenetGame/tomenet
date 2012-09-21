@@ -961,6 +961,9 @@ void get_char_name(void)
  */
 void get_char_info(void)
 {
+	bool ded = sex & (MODE_DED_PVP | MODE_DED_IDDC);
+	sex &= ~(MODE_DED_PVP | MODE_DED_IDDC);
+
 	/* Title everything */
 	put_str("Sex         :", 4, 1);
 #ifndef CLASS_BEFORE_RACE
@@ -1058,6 +1061,12 @@ cstats:
 
 	/* Clear */
 	clear_from(20);
+
+	/* Hack: Apply slot-exclusive mode on user demand */
+	if (ded) {
+		if (sex & MODE_PVP) sex |= MODE_DED_PVP;
+		else sex |= MODE_DED_IDDC;
+	}
 }
 
 static bool enter_server_name(void)

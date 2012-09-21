@@ -2755,13 +2755,22 @@ static void do_recall(int Ind, bool bypass)
 		d_ptr = getdungeon(&p_ptr->wpos);
 
 		/* Messages */
-		if ((((d_ptr->flags2 & DF2_IRON || d_ptr->flags1 & DF1_FORCE_DOWN) && d_ptr->maxdepth > ABS(p_ptr->wpos.wz)) ||
-		    (d_ptr->flags1 & DF1_NO_RECALL)) && !(getfloor(&p_ptr->wpos)->flags1 & LF1_IRON_RECALL)) {
-			msg_print(Ind, "You feel yourself being pulled toward the surface!");
-			if (!is_admin(p_ptr)) {
-				recall_ok = FALSE;
-				/* Redraw the depth(colour) */
-				p_ptr->redraw |= (PR_DEPTH);
+		if (((d_ptr->flags2 & DF2_IRON || d_ptr->flags1 & DF1_FORCE_DOWN) && d_ptr->maxdepth > ABS(p_ptr->wpos.wz)) ||
+		    (d_ptr->flags1 & DF1_NO_RECALL)) {
+			if (!(getfloor(&p_ptr->wpos)->flags1 & LF1_IRON_RECALL)) {
+				msg_print(Ind, "You feel yourself being pulled toward the surface!");
+				if (!is_admin(p_ptr)) {
+					recall_ok = FALSE;
+					/* Redraw the depth(colour) */
+					p_ptr->redraw |= (PR_DEPTH);
+				}
+			} else if ((p_ptr->mode & MODE_DED_IDDC) && in_irondeepdive(&p_ptr->wpos)) {
+				msg_print(Ind, "You have dedicated yourself to the Ironman Deep Dive Challenge!");
+				if (!is_admin(p_ptr)) {
+					recall_ok = FALSE;
+					/* Redraw the depth(colour) */
+					p_ptr->redraw |= (PR_DEPTH);
+				}
 			}
 		}
 		if (recall_ok) {

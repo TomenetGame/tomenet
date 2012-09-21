@@ -331,7 +331,7 @@ void Receive_login(void)
 	int i = 0, max_cpa = MAX_CHARS_PER_ACCOUNT, max_cpa_plus = 0, mode = 0;
 	char names[max_cpa + 1][MAX_CHARS], colour_sequence[3];
 	char tmp[MAX_CHARS + 3];	/* like we'll need it... */
-	bool ded_pvp = FALSE, ded_iddc = FALSE;
+	bool ded_pvp = FALSE, ded_iddc = FALSE, ded_pvp_shown, ded_iddc_shown;
 
 	static char c_name[MAX_CHARS];
 	s16b c_race, c_class, level;
@@ -417,45 +417,49 @@ void Receive_login(void)
 		strcpy(names[i], c_name);
 		sprintf(tmp, "%c) %s%s the level %d %s %s", 'a' + i, colour_sequence, c_name, level, race_info[c_race].title, class_info[c_class].title);
 		if (mode & MODE_DED_PVP) {
-			strcat(tmp, " (PvP slot)");
+			strcat(tmp, "  (PvP slot)");
 			ded_pvp = TRUE;
 		}
 		if (mode & MODE_DED_IDDC) {
-			strcat(tmp, " (IDDC slot)");
+			strcat(tmp, "  (IDDC slot)");
 			ded_iddc = TRUE;
 		}
 
-		c_put_str(TERM_WHITE, tmp, 5 + i, 11);
+		c_put_str(TERM_WHITE, tmp, 4 + i, 11);
 		i++;
 	}
 
+	ded_pvp_shown = ded_pvp;
+	ded_iddc_shown = ded_iddc;
 	for (n = max_cpa - i; n > 0; n--) {
 		if (max_cpa_plus == 2) {
-			if (!ded_pvp) {
-				c_put_str(TERM_SLATE, "<free PvP-exclusive slot>", 5 + i + n - 1, 11);
-				ded_pvp = TRUE;
+			if (!ded_pvp_shown) {
+				c_put_str(TERM_SLATE, "<free PvP-exclusive slot>", 4 + i + n - 1, 11);
+				ded_pvp_shown = TRUE;
 				continue;
 			}
-			if (!ded_iddc) {
-				c_put_str(TERM_SLATE, "<free IDDC-exclusive slot>", 5 + i + n - 1, 11);
-				ded_iddc = TRUE;
+			if (!ded_iddc_shown) {
+				c_put_str(TERM_SLATE, "<free IDDC-exclusive slot>", 4 + i + n - 1, 11);
+				ded_iddc_shown = TRUE;
 				continue;
 			}
 		}
-		c_put_str(TERM_SLATE, "<free slot>", 5 + i + n - 1, 11);
+		c_put_str(TERM_SLATE, "<free slot>", 4 + i + n - 1, 11);
 	}
 	if (i < max_cpa) {
-		c_put_str(CHARSCREEN_COLOUR, "N) Create a new character", 6 + max_cpa, 8);
+		c_put_str(CHARSCREEN_COLOUR, "N) Create a new character", 5 + max_cpa, 8);
+		if (!ded_pvp || !ded_iddc)
+			c_put_str(CHARSCREEN_COLOUR, "E) Create a new slot-exclusive character", 6 + max_cpa, 8);
 	} else {
-		c_put_str(CHARSCREEN_COLOUR, format("(Maximum of %d character reached.", max_cpa), 6 + max_cpa, 8);
-		c_put_str(CHARSCREEN_COLOUR, " Get rid of one (suicide) before creating another.)", 7 + max_cpa, 8);
+		c_put_str(CHARSCREEN_COLOUR, format("(Maximum of %d character reached.", max_cpa), 5 + max_cpa, 8);
+		c_put_str(CHARSCREEN_COLOUR, " Get rid of one (suicide) before creating another.)", 6 + max_cpa, 8);
 	}
 	c_put_str(CHARSCREEN_COLOUR, "Q) Quit the game", 11 + max_cpa, 8);
-	while ((ch < 'a' || ch >= 'a' + i) && (ch != 'N' || i > (max_cpa - 1))) {
+	while ((ch < 'a' || ch >= 'a' + i) && ((ch != 'N' && ch != 'E') || i > (max_cpa - 1))) {
 		ch = inkey();
 		if (ch == 'Q') quit(NULL);
 	}
-	if (ch == 'N') {
+	if (ch == 'N' || ch == 'E') {
 		if (!strlen(cname)) strcpy(c_name, nick);
 		else strcpy(c_name, cname);
 
@@ -470,6 +474,8 @@ void Receive_login(void)
 
 		/* Capitalize the name */
 		c_name[0] = toupper(c_name[0]);
+
+		if (ch == 'E') sex |= MODE_DED_PVP | MODE_DED_IDDC;
 	}
 	else strcpy(c_name, names[ch - 'a']);
 	Term_clear();
