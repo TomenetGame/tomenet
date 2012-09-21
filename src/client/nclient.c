@@ -406,7 +406,10 @@ void Receive_login(void)
 				    but just use the '*' marker attached at server side
 				    for visual distinguishing in this character list. */
 	/* Receive list of characters ('zero'-terminated) */
-	while ((n = Packet_scanf(&rbuf, "%c%hd%s%s%hd%hd%hd", &ch, &mode, colour_sequence, c_name, &level, &c_race, &c_class)) > 0) {
+	while ((is_newer_than(&server_version, 4, 4, 9, 2, 0, 0) ?
+	    (n = Packet_scanf(&rbuf, "%c%hd%s%s%hd%hd%hd", &ch, &mode, colour_sequence, c_name, &level, &c_race, &c_class)) :
+	    (n = Packet_scanf(&rbuf, "%c%s%s%hd%hd%hd", &ch, colour_sequence, c_name, &level, &c_race, &c_class)))
+	    > 0) {
 //	while ((n = Packet_scanf(&rbuf, "%c%s%s%hd%hd%hd", &ch, colour_sequence, c_name, &level, &c_race, &c_class)) > 0) {
 		/* End of character list is designated by a 'zero' character */
 		if (!strlen(c_name)) break;
@@ -448,7 +451,7 @@ void Receive_login(void)
 	}
 	if (i < max_cpa) {
 		c_put_str(CHARSCREEN_COLOUR, "N) Create a new character", 5 + max_cpa, 8);
-		if (!ded_pvp || !ded_iddc)
+		if ((!ded_pvp || !ded_iddc) && max_cpa_plus)
 			c_put_str(CHARSCREEN_COLOUR, "E) Create a new slot-exclusive character", 6 + max_cpa, 8);
 	} else {
 		c_put_str(CHARSCREEN_COLOUR, format("(Maximum of %d character reached.", max_cpa), 5 + max_cpa, 8);
