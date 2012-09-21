@@ -7161,27 +7161,33 @@ void process_timers() {
 				summon_override_checks = SO_ALL;
 				//866 elite uruk, 563 young red dragon
 //				place_monster_aux(&wpos, y, x, 866, FALSE, FALSE, 100, 0);
-				place_monster_one(&wpos, y, x, 866, FALSE, FALSE, FALSE, 100, 0);
+//				place_monster_one(&wpos, y, x, 866, FALSE, FALSE, FALSE, 100, 0);
+				place_monster_one(&wpos, y, x, 249, FALSE, FALSE, FALSE, 100, 0);//vlasta
 				x = (2 * 10) - 3;
 				//487 storm giant
 //				place_monster_aux(&wpos, y, x, 487, FALSE, FALSE, 100, 0);
-				place_monster_one(&wpos, y, x, 563, FALSE, FALSE, FALSE, 100, 0);
+//				place_monster_one(&wpos, y, x, 563, FALSE, FALSE, FALSE, 100, 0);
+				place_monster_one(&wpos, y, x, 866, FALSE, FALSE, FALSE, 100, 0);//elite o
 				x = (3 * 10) - 3;
 				//609 baron of hell
 //				place_monster_aux(&wpos, y, x, 590, FALSE, FALSE, 100, 0);
-				place_monster_one(&wpos, y, x, 487, FALSE, FALSE, FALSE, 100, 0);
+//				place_monster_one(&wpos, y, x, 487, FALSE, FALSE, FALSE, 100, 0);
+				place_monster_one(&wpos, y, x, 321, FALSE, FALSE, FALSE, 100, 0);//stone P
 				x = (4 * 10) - 3;
 				//590 mature gold d
 //				place_monster_aux(&wpos, y, x, 720, FALSE, FALSE, 100, 0);
-				place_monster_one(&wpos, y, x, 720, FALSE, FALSE, FALSE, 100, 0);
+//				place_monster_one(&wpos, y, x, 720, FALSE, FALSE, FALSE, 100, 0);
+				place_monster_one(&wpos, y, x, 563, FALSE, FALSE, FALSE, 100, 0);//young red d
 				x = (5 * 10) - 3;
 				//995 marilith, 558 colossus
 //				place_monster_aux(&wpos, y, x, 558, FALSE, FALSE, 100, 0);
-				place_monster_one(&wpos, y, x, 558, FALSE, FALSE, FALSE, 100, 0);
+//				place_monster_one(&wpos, y, x, 558, FALSE, FALSE, FALSE, 100, 0);
+				place_monster_one(&wpos, y, x, 194, FALSE, FALSE, FALSE, 100, 0);//tengu
 				x = (6 * 10) - 3;
 				//602 bronze D, 720 barbazu
 //				place_monster_aux(&wpos, y, x, 609, FALSE, FALSE, 100, 0);
-				place_monster_one(&wpos, y, x, 609, FALSE, FALSE, FALSE, 100, 0);
+//				place_monster_one(&wpos, y, x, 609, FALSE, FALSE, FALSE, 100, 0);
+				place_monster_one(&wpos, y, x, 417, FALSE, FALSE, FALSE, 100, 0);//angel
 				summon_override_checks = SO_NONE;
 				timer_pvparena3++; /* start releasing cycle */
 				return;
@@ -7193,7 +7199,8 @@ void process_timers() {
 					//613 hellhound is too tough, 963 aranea im_pois, 986 3-h hydra, 249 vlasta
 					//440 5-h hydra, 387 4-h hydra, 341 chimaera, 301 2-h hydra, 325 gold dfly
 //					place_monster_aux(&wpos, y, x, 963, FALSE, FALSE, 100, 0);
-					place_monster_one(&wpos, y, x, i % 3 ? i % 2 ? 341 : 325 : 301, FALSE, FALSE, FALSE, 100, 0);
+					//place_monster_one(&wpos, y, x, i % 3 ? i % 2 ? 341 : 325 : 301, FALSE, FALSE, FALSE, 100, 0);
+					place_monster_one(&wpos, y, x, i % 3 ? i % 2 ? 295 : 325 : 275, FALSE, FALSE, FALSE, 100, 0);//sphinx,gold dfly,tarantula
 					everyone_lite_spot(&wpos, y, x);
 				}
 				summon_override_checks = SO_NONE;
