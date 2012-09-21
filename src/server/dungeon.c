@@ -7162,17 +7162,17 @@ void process_timers() {
 				//866 elite uruk, 563 young red dragon
 //				place_monster_aux(&wpos, y, x, 866, FALSE, FALSE, 100, 0);
 //				place_monster_one(&wpos, y, x, 866, FALSE, FALSE, FALSE, 100, 0);
-				place_monster_one(&wpos, y, x, 249, FALSE, FALSE, FALSE, 100, 0);//vlasta
+				place_monster_one(&wpos, y, x, 102, FALSE, FALSE, FALSE, 100, 0);//large k
 				x = (2 * 10) - 3;
 				//487 storm giant
 //				place_monster_aux(&wpos, y, x, 487, FALSE, FALSE, 100, 0);
 //				place_monster_one(&wpos, y, x, 563, FALSE, FALSE, FALSE, 100, 0);
-				place_monster_one(&wpos, y, x, 866, FALSE, FALSE, FALSE, 100, 0);//elite o
+				place_monster_one(&wpos, y, x, 249, FALSE, FALSE, FALSE, 100, 0);//light Z(271) //vlasta(249)
 				x = (3 * 10) - 3;
 				//609 baron of hell
 //				place_monster_aux(&wpos, y, x, 590, FALSE, FALSE, 100, 0);
 //				place_monster_one(&wpos, y, x, 487, FALSE, FALSE, FALSE, 100, 0);
-				place_monster_one(&wpos, y, x, 321, FALSE, FALSE, FALSE, 100, 0);//stone P
+				place_monster_one(&wpos, y, x, 866, FALSE, FALSE, FALSE, 100, 0);//elite o
 				x = (4 * 10) - 3;
 				//590 mature gold d
 //				place_monster_aux(&wpos, y, x, 720, FALSE, FALSE, 100, 0);
@@ -7187,7 +7187,7 @@ void process_timers() {
 				//602 bronze D, 720 barbazu
 //				place_monster_aux(&wpos, y, x, 609, FALSE, FALSE, 100, 0);
 //				place_monster_one(&wpos, y, x, 609, FALSE, FALSE, FALSE, 100, 0);
-				place_monster_one(&wpos, y, x, 417, FALSE, FALSE, FALSE, 100, 0);//angel
+				place_monster_one(&wpos, y, x, 321, FALSE, FALSE, FALSE, 100, 0);//stone P
 				summon_override_checks = SO_NONE;
 				timer_pvparena3++; /* start releasing cycle */
 				return;
