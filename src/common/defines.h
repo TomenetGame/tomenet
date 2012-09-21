@@ -52,7 +52,7 @@
 #define VERSION_MAJOR_LATEST	4
 #define VERSION_MINOR_LATEST	4
 #define VERSION_PATCH_LATEST	9
-#define VERSION_EXTRA_LATEST	2
+#define VERSION_EXTRA_LATEST	3
 #define VERSION_BRANCH_LATEST	0
 #define VERSION_BUILD_LATEST	0
 
@@ -60,7 +60,7 @@
 #define VERSION_MAJOR_OUTDATED	4
 #define VERSION_MINOR_OUTDATED	4
 #define VERSION_PATCH_OUTDATED	9
-#define VERSION_EXTRA_OUTDATED	1
+#define VERSION_EXTRA_OUTDATED	2
 #define VERSION_BRANCH_OUTDATED	0
 #define VERSION_BUILD_OUTDATED	0
 
@@ -71,7 +71,7 @@
 
 /* Client-side only: Client release version tag
    (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG "b"
+#define CLIENT_VERSION_TAG "c"
 
 /* Minimum client version required to be allowed to log in */
 #define MIN_VERSION_MAJOR	4
