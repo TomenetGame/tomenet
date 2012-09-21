@@ -7770,11 +7770,12 @@ void player_death(int Ind)
 
 	/* Drop/lose items -------------------------------------------------- */
 
+	/* Don't "lose" items on suicide (they all poof anyway, except for true arts possibly) */
 #ifdef DEATH_PACK_ITEM_LOST
-	inven_death_damage(Ind, FALSE);
+	if (p_ptr->alive) inven_death_damage(Ind, FALSE);
 #endif
 #ifdef DEATH_EQ_ITEM_LOST
-	equip_death_damage(Ind, FALSE);
+	if (p_ptr->alive) equip_death_damage(Ind, FALSE);
 #endif
 
 	/* Setup the sorter */
@@ -7812,26 +7813,6 @@ void player_death(int Ind)
 				continue;
 			}
 		}
-
-#if 0
-		/* Replaced by equip_death_damage() - mikaelh */
-#ifdef DEATH_PACK_ITEM_LOST
-		if ((real_pos < INVEN_PACK) && magik(DEATH_PACK_ITEM_LOST) && (inventory_loss < 4)) {
-			inventory_loss++;
-			item_lost = TRUE;
-		}
-#endif
-#endif
-
-#if 0
-		/* Replaced by inven_death_damage() - mikaelh */
-#ifdef DEATH_EQ_ITEM_LOST
-		if ((real_pos > INVEN_PACK) && magik(DEATH_EQ_ITEM_LOST) && (equipment_loss < 1)) {
-			item_lost = TRUE;
-			equipment_loss++;
-		}
-#endif
-#endif
 
 		if (!is_admin(p_ptr) && !p_ptr->inval && (p_ptr->max_plv >= cfg.newbies_cannot_drop) &&
 		    /* Don't drop Morgoth's crown */
