@@ -41,9 +41,9 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		4
 #define VERSION_PATCH		9
-#define VERSION_EXTRA		2
+#define VERSION_EXTRA		3
 #define VERSION_BRANCH		0
-#define VERSION_BUILD		1
+#define VERSION_BUILD		0
 
 /* MAJOR/MINOR/PATCH version that counts as 'latest' (should be 0-15).
    If a player is online with a version > this && <= current version (VERSION_)
@@ -52,7 +52,7 @@
 #define VERSION_MAJOR_LATEST	4
 #define VERSION_MINOR_LATEST	4
 #define VERSION_PATCH_LATEST	9
-#define VERSION_EXTRA_LATEST	2
+#define VERSION_EXTRA_LATEST	3
 #define VERSION_BRANCH_LATEST	0
 #define VERSION_BUILD_LATEST	0
 
