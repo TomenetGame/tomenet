@@ -702,6 +702,10 @@
    (form party, trade items) while inside the Ironman Deep Dive Challenge? */
 #define IRONDEEPDIVE_ALLOW_INCOMPAT
 
+/* Show character icon with coloured '@' or 'b' in top score table
+   of the Ironman Deep Dive Challenge? */
+#define IDDC_HISCORE_SHOWS_ICON
+
 /* Maximum amount of gold that can be farmed from townies before you get 1 XP
    from it. This is an anti-cheeze for Highlander Tournament and Ironman Deep
    Dive Challenge. (-1 = no limit) [300] */

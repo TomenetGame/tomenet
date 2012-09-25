@@ -2657,7 +2657,11 @@ void recall_player(int Ind, char *message){
 			}
 			deep_dive_level[i] = -1;
 			//strcpy(deep_dive_name[i], p_ptr->name);
-			sprintf(deep_dive_name[i], "%s the %s %s (%d)", p_ptr->name, get_prace(p_ptr), class_info[p_ptr->pclass].title, p_ptr->max_plv);
+#ifdef IDDC_HISCORE_SHOWS_ICON
+			sprintf(deep_dive_name[i], "%s, %s %s (\\{%c%c\\{s/%d),", p_ptr->name, get_prace(p_ptr), class_info[p_ptr->pclass].title, color_attr_to_char(p_ptr->cp_ptr->color), p_ptr->fruit_bat ? 'b' : '@', p_ptr->max_plv);
+#else
+			sprintf(deep_dive_name[i], "%s, %s %s (%d),", p_ptr->name, get_prace(p_ptr), class_info[p_ptr->pclass].title, p_ptr->max_plv);
+#endif
 			break;
 		}
 
