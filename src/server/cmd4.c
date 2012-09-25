@@ -44,6 +44,13 @@
 /* Allow to inspect light source and ammo quiver too while target wears mummy wrapping? */
 #define WRAPPING_NEW
 
+/* Indicate that a character is in/for Ironman Deep Dive Challenge
+   by displaying him in grey colour in @ list (if otherwise in neutral, ie white, colour)? */
+#define IDDC_CHAR_COLOUR_INDICATOR
+/* Indicate that a character is in/for Ironman Deep Dive Challenge
+   by displaying his position in @ list to everyone? */
+//#define IDDC_CHAR_POSITION_INDICATOR
+
 
 /*
  * Check the status of "artifacts"
@@ -454,6 +461,11 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 	cptr p = "";
 	char info_chars[4];
 	bool text_pk = FALSE, text_silent = FALSE, text_afk = FALSE, text_ignoring_chat = FALSE, text_allow_dm_chat = FALSE;
+	bool iddc = in_irondeepdive(&q_ptr->wpos) || (q_ptr->mode & MODE_DED_IDDC);
+
+#ifdef IDDC_CHAR_COLOUR_INDICATOR
+	if (iddc && attr == 'w') attr = 's';
+#endif
 
 	/* Prepare title at this point already */
 	p = get_ptitle(q_ptr, FALSE);
@@ -722,7 +734,11 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	fprintf(fff, " %s", class_info[q_ptr->pclass].title);
 
 	/* location */
-	if (attr == 'G' || attr == 'B' || admin) {
+	if (attr == 'G' || attr == 'B' || admin
+#ifdef IDDC_CHAR_POSITION_INDICATOR
+	    || iddc
+#endif
+	    ) {
 		// BAD HACK: just replacing 'Ind' by number constants..
   #if 0 /* 'The Sacred Land of Mountains' <- too long for this ultra compact scheme! */
 		if (admin) fprintf(fff, ", %s", wpos_format(1, &q_ptr->wpos));
@@ -1086,6 +1102,7 @@ void do_cmd_check_players(int Ind, int line)
 
 	bool admin = is_admin(p_ptr);
 	char flag_str[10];
+	bool iddc;
 
 	/* Temporary file */
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
@@ -1110,6 +1127,8 @@ void do_cmd_check_players(int Ind, int line)
 		if (q_ptr->admin_dm &&
 		   (cfg.secret_dungeon_master) && !admin) continue;
 
+		iddc = in_irondeepdive(&q_ptr->wpos) || (q_ptr->mode & MODE_DED_IDDC);
+
 if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
  if (compaction != 2) { //#ifndef COMPACT_ALT
 		/*** Determine color ***/
@@ -1121,6 +1140,9 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 		else if (p_ptr->party && p_ptr->party == q_ptr->party) attr = 'B';
 		/* Print hostile players in red */
 		else if (check_hostile(Ind, k)) attr = 'r';
+#ifdef IDDC_CHAR_COLOUR_INDICATOR
+		if (attr == 'w' && iddc) attr = 's';
+#endif
 
 		/* Print a message */
 		do_write_others_attributes(Ind, fff, q_ptr, attr, is_admin(p_ptr));
@@ -1143,7 +1165,11 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 			fprintf(fff, "%s", wpos_format(-Ind, &q_ptr->wpos));
 		}
 		/* Print extra info if these people are in the same party or if viewer is DM */
-		else if ((p_ptr->party == q_ptr->party && p_ptr->party) || Ind == k || admin) {
+		else if ((p_ptr->party == q_ptr->party && p_ptr->party) || Ind == k || admin
+#ifdef IDDC_CHAR_POSITION_INDICATOR
+		    || iddc
+#endif
+		    ) {
   #if 1
 			if (admin) fprintf(fff, "%s [%d,%d] (%s)", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col, q_ptr->hostname); else
   #endif
@@ -1175,6 +1201,9 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 		else if (p_ptr->party && p_ptr->party == q_ptr->party) attr = 'B';
 		/* Print hostile players in red */
 		else if (check_hostile(Ind, k)) attr = 'r';
+#ifdef IDDC_CHAR_COLOUR_INDICATOR
+		if (attr == 'w' && iddc) attr = 's';
+#endif
 
 		/* Print a message */
 		do_write_others_attributes(Ind, fff, q_ptr, attr, is_admin(p_ptr));
@@ -1204,7 +1233,11 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 			fprintf(fff, "%s", wpos_format(-Ind, &q_ptr->wpos));
 		}
 		/* Print extra info if these people are in the same party or if viewer is DM */
-		else if ((p_ptr->party == q_ptr->party && p_ptr->party) || Ind == k || admin) {
+		else if ((p_ptr->party == q_ptr->party && p_ptr->party) || Ind == k || admin
+#ifdef IDDC_CHAR_POSITION_INDICATOR
+		    || iddc
+#endif
+		    ) {
 			if (admin) fprintf(fff, "%s [%d,%d]", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col); else
 			fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
 
@@ -1236,6 +1269,9 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 		else if (p_ptr->party && p_ptr->party == q_ptr->party) attr = 'B';
 		/* Print hostile players in red */
 		else if (check_hostile(Ind, k)) attr = 'r';
+#ifdef IDDC_CHAR_COLOUR_INDICATOR
+		if (attr == 'w' && iddc) attr = 's';
+#endif
 
 		do_write_others_attributes(Ind, fff, q_ptr, attr, is_admin(p_ptr));
 		fprintf(fff, "\n");
@@ -1251,6 +1287,9 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 		else if (p_ptr->party && p_ptr->party == q_ptr->party) attr = 'B';
 		/* Print hostile players in red */
 		else if (check_hostile(Ind, k)) attr = 'r';
+#ifdef IDDC_CHAR_COLOUR_INDICATOR
+		if (attr == 'w' && iddc) attr = 's';
+#endif
 
 		/* Output color byte */
 		fprintf(fff, "\377%c", attr);
@@ -1294,7 +1333,11 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 		}
 		/* Print extra info if these people are in the same party */
 		/* Hack -- always show extra info to dungeon master */
-		else if ((p_ptr->party == q_ptr->party && p_ptr->party) || Ind == k || admin) {
+		else if ((p_ptr->party == q_ptr->party && p_ptr->party) || Ind == k || admin
+#ifdef IDDC_CHAR_POSITION_INDICATOR
+		    || iddc
+#endif
+		    ) {
 			if (admin) fprintf(fff, "%s", wpos_format(Ind, &q_ptr->wpos));
 			else fprintf(fff, "%s", wpos_format(-Ind, &q_ptr->wpos));
 
