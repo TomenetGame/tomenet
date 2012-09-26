@@ -1869,6 +1869,7 @@ typedef struct player_type player_type;
 struct player_type
 {
 	int conn;			/* Connection number */
+	int Ind;			/* Self-reference */
 	char name[MAX_CHARS];		/* Nickname */
 	char basename[MAX_CHARS];	/* == Charactername (Nickname)? */
 	char realname[MAX_CHARS];	/* Userid (local machine's user name, default is 'PLAYER') */

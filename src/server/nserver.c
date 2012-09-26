@@ -1760,6 +1760,8 @@ static void Delete_player(int Ind)
 	if (Conn[Players[NumPlayers]->conn]->id != -1)
 		GetInd[Conn[Players[NumPlayers]->conn]->id] = NumPlayers;
 
+	Players[Ind]->Ind = Ind;
+
 	/* Recalculate player-player visibility */
 	update_players();
 
@@ -2498,6 +2500,7 @@ static int Handle_login(int ind)
 		return -1;
 	}
 	p_ptr = Players[NumPlayers + 1];
+	p_ptr->Ind = NumPlayers + 1;
 	strcpy(p_ptr->realname, connp->real);
 	strncpy(p_ptr->hostname, connp->host, 25); /* cap ridiculously long hostnames - C. Blue */
 	strcpy(p_ptr->accountname, connp->nick);

@@ -464,7 +464,10 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 	bool iddc = in_irondeepdive(&q_ptr->wpos) || (q_ptr->mode & MODE_DED_IDDC);
 	char attr_p[3];
 
-	if (attr == 'w' && !Players[Ind]->total_winner && ABS(q_ptr->lev - Players[Ind]->lev) <= MAX_PARTY_LEVEL_DIFF)
+	if (attr == 'w' &&
+	    ((Players[Ind]->total_winner && q_ptr->total_winner && ABS(q_ptr->lev - Players[Ind]->lev) <= MAX_KING_PARTY_LEVEL_DIFF) ||
+	    ABS(q_ptr->lev - Players[Ind]->lev) <= MAX_PARTY_LEVEL_DIFF) &&
+	    !compat_pmode(Ind, q_ptr->Ind, FALSE))
 		strcpy(attr_p, "\377B");
 	else	strcpy(attr_p, "");
 
@@ -493,7 +496,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	}
 	else fprintf(fff, "\377%c", attr);
 
-	fprintf(fff, "%s, L%s%d \377%c", q_ptr->name, attr_p, q_ptr->lev, attr);
+	fprintf(fff, "%s, %sL%d \377%c", q_ptr->name, attr_p, q_ptr->lev, attr);
 
 	fprintf(fff, "%s %s", get_prace(q_ptr),  p);
 
@@ -613,9 +616,9 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	else fprintf(fff, "\377%c", attr);
 
   #ifdef COMPACT_GENDER
-	fprintf(fff, "%s,\377%c %c.L%s%d\377%c ", q_ptr->name, attr, q_ptr->male ? 'm' : 'f', attr_p, q_ptr->lev, attr);
+	fprintf(fff, "%s,\377%c %c.%sL%d\377%c ", q_ptr->name, attr, q_ptr->male ? 'm' : 'f', attr_p, q_ptr->lev, attr);
   #else
-	fprintf(fff, "%s, L%s%d\377%c %s ", q_ptr->name, attr_p, q_ptr->lev, attr, q_ptr->male ? "Male" : "Female");
+	fprintf(fff, "%s, %sL%d\377%c %s ", q_ptr->name, attr_p, q_ptr->lev, attr, q_ptr->male ? "Male" : "Female");
   #endif
 
 	fprintf(fff, "%s %s", get_prace(q_ptr),  p);
@@ -730,9 +733,9 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	else fprintf(fff, "\377%c", attr);
 
   #ifdef COMPACT_GENDER
-	fprintf(fff, "%s,\377%c %c.L%s%d\377%c ", q_ptr->name, attr, q_ptr->male ? 'm' : 'f', attr_p, q_ptr->lev, attr);
+	fprintf(fff, "%s,\377%c %c.%sL%d\377%c ", q_ptr->name, attr, q_ptr->male ? 'm' : 'f', attr_p, q_ptr->lev, attr);
   #else
-	fprintf(fff, "%s, L%s%d\377%c ", q_ptr->name, attr_p, q_ptr->lev, attr);
+	fprintf(fff, "%s, %sL%d\377%c ", q_ptr->name, attr_p, q_ptr->lev, attr);
   #endif
 
 	fprintf(fff, "%s", get_prace(q_ptr));
@@ -1077,7 +1080,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 		break;
 	}
 
-	fprintf(fff, "Lv %s%d\377U", attr_p, q_ptr->lev);
+	fprintf(fff, "%sLv %d\377U", attr_p, q_ptr->lev);
 //		q_ptr->fruit_bat == 1 ? "Batty " : "", /* only for true battys, not polymorphed ones */
 
 	if (q_ptr->guild)
