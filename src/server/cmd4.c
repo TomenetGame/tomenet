@@ -462,6 +462,11 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 	char info_chars[4];
 	bool text_pk = FALSE, text_silent = FALSE, text_afk = FALSE, text_ignoring_chat = FALSE, text_allow_dm_chat = FALSE;
 	bool iddc = in_irondeepdive(&q_ptr->wpos) || (q_ptr->mode & MODE_DED_IDDC);
+	char attr_p[3];
+
+	if (attr == 'w' && !Players[Ind]->total_winner && ABS(q_ptr->lev - Players[Ind]->lev) <= MAX_PARTY_LEVEL_DIFF)
+		strcpy(attr_p, "\377B");
+	else	strcpy(attr_p, "");
 
 #ifdef IDDC_CHAR_COLOUR_INDICATOR
 	if (iddc && attr == 'w') attr = 's';
@@ -488,7 +493,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	}
 	else fprintf(fff, "\377%c", attr);
 
-	fprintf(fff, "%s,\377%c L%d ", q_ptr->name, attr, q_ptr->lev);
+	fprintf(fff, "%s, L%s%d \377%c", q_ptr->name, attr_p, q_ptr->lev, attr);
 
 	fprintf(fff, "%s %s", get_prace(q_ptr),  p);
 
@@ -608,12 +613,12 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	else fprintf(fff, "\377%c", attr);
 
   #ifdef COMPACT_GENDER
-	fprintf(fff, "%s,\377%c %c.L%d ", q_ptr->name, attr, q_ptr->male ? 'm' : 'f', q_ptr->lev);
+	fprintf(fff, "%s,\377%c %c.L%s%d\377%c ", q_ptr->name, attr, q_ptr->male ? 'm' : 'f', attr_p, q_ptr->lev, attr);
   #else
-	fprintf(fff, "%s,\377%c L%d %s ", q_ptr->name, attr, q_ptr->lev, q_ptr->male ? "Male" : "Female");
+	fprintf(fff, "%s, L%s%d\377%c %s ", q_ptr->name, attr_p, q_ptr->lev, attr, q_ptr->male ? "Male" : "Female");
   #endif
 
-	fprintf(fff, "%s %s", get_prace(q_ptr),  p); 
+	fprintf(fff, "%s %s", get_prace(q_ptr),  p);
 
 	/* PK */
 	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
@@ -725,9 +730,9 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	else fprintf(fff, "\377%c", attr);
 
   #ifdef COMPACT_GENDER
-	fprintf(fff, "%s,\377%c %c.L%d ", q_ptr->name, attr, q_ptr->male ? 'm' : 'f', q_ptr->lev);
+	fprintf(fff, "%s,\377%c %c.L%s%d\377%c ", q_ptr->name, attr, q_ptr->male ? 'm' : 'f', attr_p, q_ptr->lev, attr);
   #else
-	fprintf(fff, "%s,\377%c L%d ", q_ptr->name, attr, q_ptr->lev);
+	fprintf(fff, "%s, L%s%d\377%c ", q_ptr->name, attr_p, q_ptr->lev, attr);
   #endif
 
 	fprintf(fff, "%s", get_prace(q_ptr));
@@ -923,7 +928,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	case 3: fprintf(fff, "Highlander "); break; //Judge for Highlander games
 	default: fprintf(fff, "%s ", race_info[q_ptr->prace].title); break;
 	}
-	
+
 	switch (modify_number) {
 	case 1: fprintf(fff, "Cheezer "); break;
 	case 2: fprintf(fff, "Slacker "); break;
@@ -1072,7 +1077,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 		break;
 	}
 
-	fprintf(fff, "Lv %d", q_ptr->lev);
+	fprintf(fff, "Lv %s%d\377U", attr_p, q_ptr->lev);
 //		q_ptr->fruit_bat == 1 ? "Batty " : "", /* only for true battys, not polymorphed ones */
 
 	if (q_ptr->guild)
