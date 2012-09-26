@@ -1075,6 +1075,7 @@ NOTE: In addition to this user-defined client-side auto-inscription list, there
 Art         Artifact. Those can be 'Static arfifacts' from the a_info.txt
             file, also called 'True Arts'. Or they may be 'Randomly generated
             artifacts' also called 'Randarts'.
+            In game you can press  ~ 6  to search for any static artifact.
             (See (7.4) for more info about spoiler files.)
             Winners who beat Morgoth, Lord of Darkness will usually not
             be able to use static artifacts, but rely on randarts instead.
@@ -1140,22 +1141,22 @@ mlevel, rlevel
             and therefore be higher than you'd expect. This happens when you
             meet the monster on a floor that is far deeper than the level the
             monster usually starts to occur on.
-            r-level is the base monster level, which is given for each monster
-            in r_info.txt. It describes the minimum floor level a monster is
-            usually found on (although 'out-of-depth' occurances may be
-            possible).
-            Example: According to r_infot.txt, Ancient Red Dragons have a base
-            level of 41. That means you'll usually start seeing them on dungeon
-            floors of level 41 (2050 ft) and deeper, although there's always a
-            slim chance that you meet a monster earlier than its base level
-            (called OoD encounter). Now that means that Ancient Red Dragons
-            have an r-level of 41. However, if you meet an Ancient Red Dragon
-            on a much deeper dungeon floor, say 2400 ft, which would be the
+            r-level is the base monster level, which you can see in game if you
+            press  ~ 7  and search for a particular monster.
+            It describes the minimum floor level a monster is usually found on
+            (although 'out-of-depth' occurances may be possible).
+            Example: According to ~7, Ancient Red Dragons have a base level of
+            41. That means you'll usually start seeing them on dungeon floors
+            of level 41 (2050 ft) and deeper, although there's always a slim
+            chance that you meet a monster earlier than its base level (called
+            OoD encounter). So we know now that the r-level of Ancient Red
+            Dragons is 41. However, if you meet an Ancient Red Dragon on a
+            much deeper dungeon floor, say 2400 ft, which would be the
             equivalent to level 48, when you look at the dragon you'll see it
             says level 42 instead of the expected 41. This means the dragon's
             level was actually slightly boosted because the dungeon floor's
             level was that much higher than the dragon's. So while the rlev
-            of this dragon is still 41, his real level, the mlev, is 42.
+            of this dragon is still 41, its real level, the mlev, is 42.
             Some formulas used by the game use mlev, some use rlev.
             (Note: This is similar to klevel vs olevel for items.)
 Morgy       Morgoth, Lord of Darkness. Final boss enemy in TomeNET.
@@ -1169,7 +1170,7 @@ Nest        Originally also just called 'pits', nests only differ from pits in
 olevel      see klevel.
 OoD         Out-of-depth. Means a monster or an item encounter that happened at
             a surprisingly shallow level, opposed to the base level for that
-            monster (given in r_info.txt) or item (given in k_info.txt) where
+            monster (shown in ~7) or item (given in k_info.txt) where
             you would usually start expecting to find it.
             Vaults often containing OoD monsters and items, increasing threat
             and reward for the brave.
@@ -1199,8 +1200,9 @@ PvP         Player vs player. Describes the act of player characters fighting
             creation process, much like 'everlasting mode' or 'normal mode'.
             For more information about pvp mode, see (6.13).
 Randart     Randomly generated artifact. As opposed to 'Truearts' which are
-            also called 'Static arts' from the file a_info.txt. See 'Art'
-            at the top of this section for more information.
+            also called 'Static arts' from the file a_info.txt (you can search
+            static arts by pressing  ~ 6  in game). See 'Art' at the top of
+            this section for more information.
             See (5.9b) for more information about artifacts.
 Res         Resistance.
 Room        The dungeon contains many rooms connected by passages. Some of the
@@ -7316,6 +7318,7 @@ True artifacts
 --------------
 True artifacts are predefined in the a_info.txt file and will always sell for
 their defined value even if they have not been *identified*.
+You can search a list of all true artifacts in game, by pressing  ~ 6 .
 
 True Artifacts are unique. If an artifact is owned by a player, noone else can
 find it anymore until it's lost (for example if the player dies) or sold to a
@@ -9969,9 +9972,8 @@ Note that not every skill is available to every profession (class).
                                 You also inherit the monsters abilities,
                                 weaknesses and resistances!
                                 See section (6.7) for more info.
-                                To find out details about a monster form
-                                look into the file r_info.txt in your
-                                tomenet/lib/game directory!
+                                To find out details about a monster form,
+                                press  ~ 7  in game or consult a spoiler file.
                                 (See (7.4) for more info about spoiler files.)
     .Magic-device               Ability to use magic devices (wands,rods,etc.)
                                 without failing. Also increases their power.
@@ -11321,15 +11323,15 @@ If a mimic wields a weapon while using a form which usually cannot use weapons
 the number of blows per round will be set to 1 (regardless of extra attacks).
 (This only really applies to druids, shamans or perma-cursed weapons (5.14)).
 
-To find out the special abilities of a monster form, consult the file
-/lib/game/r_info.txt in your tomenet directory, and look up the monster.
-(See (7.4) for more info about spoiler files.)
+To find out the special abilities of a monster form, press  ~ 7  in game or
+consult a spoiler file. (See (7.4) for more info about spoiler files.)
 It's abilities will transform to the mimic's body as follows.
 
 
-Form aspects derived from r_info.txt monster definitions file
-(you find this file in TomeNET/lib/game/ folder, view it in any text editor):
------------------------------------------------------------------------------
+Form aspects as specified in  ~ 7  monster lore:
+(Make sure to keep your r_info.txt spoiler file up to date, as the lore
+displayed via ~7 is derived from it.)
+-----------------------------------------------------------------------
 W: depth : rarity : corpse weight : experience for kill
   depth:
     The depth is also the basic level of these monsters. It tells you how
@@ -11430,7 +11432,7 @@ B: attack method : attack effect : damage
        (Effects only work with melee attacks!)
     b) The player uses a weapon but the monster doesn't have an
        equipment slot for melee weapons, because it has no arms or is
-       immaterial - see the E:... line of that monster in r_info.txt).
+       immaterial.
 
     Melee to-damage bonus also depends on the monster form:
     The monster damage dice for each attack are multiplied and the products
@@ -11539,8 +11541,8 @@ so you might want to create macros for them.
 
 
 Further, certain races get additional fixed abilities
-(even if they are not explicitely mentioned in r_info.txt):
------------------------------------------------------------
+(even if they are not explicitely mentioned in ~7):
+-----------------------------------------------------
 Bats            Feather falling (levitation).
 Elves           Resist light.
 Dark-Elves      Resist darkness.
@@ -11564,7 +11566,7 @@ All evil creatures
                 Becomes susceptible to certain 'good' or 'holy' effects.
 All undead creatures
                 Resist darkness, blindness, poison (usually immunity, depends
-                on r_info flags);
+                on ~7 flags);
                 can't bleed (no_cut), infra-vision +1, insanity attacks are
                 reduced by a little bit.
                 Becomes susceptible to 'life', which concerns some healing or
@@ -11574,11 +11576,11 @@ All undead creatures
                 Take 2x damage from holy orbs or holy fire and suffer
                 from many 'good' effects/spells (even more so than demons).
 All greater demons (capital 'U')
-                Resist poison (usually immunity, depends on r_info flags).
+                Resist poison (usually immunity, depends on ~7 flags).
                 Take 2x damage from holy orbs or holy fire and suffer
                 from a couple of 'good' effects/spells (similar to undead).
 All non-living creatures
-                Resist poison (usually even immune, depends on r_info flags)
+                Resist poison (usually even immune, depends on ~7 flags)
                 and fear; insanity attacks are reduced somewhat.
 All vampires and vampiric monsters (vampire bats and others)
                 Vampires are susceptible to light.
@@ -11588,7 +11590,7 @@ All vampires and vampiric monsters (vampire bats and others)
                 (half their attacks are hits, the other half is biting).
                 For details see '(5.15) Vampirism'.
 All angels      Resist light, blindness and poison (usually immunity, see
-                r_info flags), resist fear, resist confusion, see invisible,
+                ~7 flags), resist fear, resist confusion, see invisible,
                 strong resistance to insanity-inducing attacks.
                 Note: 'Fallen Angel' doesn't get light/confusion resistances.
 
@@ -13588,19 +13590,20 @@ The most powerful representant of each class:
 -(Grand) Master thieves, very fast and stealthy they steal your possessions!
 
 -Unique enemies. If you see a monster blinking in different colours, before
- trying to kill it you should examine the text file "r_info.txt" located in
- the lib\game directory to find out if it is a certain unique enemy. Then look
- up his abilities and make sure you are prepared to fight him.
- If possible, consult fellow players for their opinions.
- (See (7.4) for more info about spoiler files.)
+ trying to kill it you should consult other players or 'l'ook at the monster,
+ to find out whether it is an unique monster. If so, then you should examine
+ it by pressing  ~ 7  in game to look up its abilities and make sure you are
+ prepared to fight him. If possible, consult fellow players for their opinions.
+ (You can also check r_info.txt, see (7.4) for more info about spoiler files.)
 
 -If you see an enemy that you don't know anything about and that could pose a
  threat (especially if it's inside a vault!), STAY AWAY and consult either an
- experienced player or look into the file r_info.txt in your tomenet/lib/game
- directory to find out what the opponent is capable of. The safest (and most
- boring and least rewarding) way to play is to avoid vaults! Vaults can
- contain an enemy against whom you don't have the slightest chance of
- winning. Vaults however can also contain great treasure!
+ experienced player or look it up by pressing  ~ 7  to find out what the
+ opponent is capable of.
+ The safest (and most boring and least rewarding) way to play is to avoid
+ vaults! Vaults can contain an enemy against whom you don't have the slightest
+ chance of winning. Vaults however can also contain great treasure!
+ (See (4.6) for more information about vaults.)
 
 -The most powerful monsters of the demon realm, the dragonkind and the
  heavenly planes, namely Star-spawns of Cthulu, Great Wyrms of Power,
@@ -13718,10 +13721,12 @@ In the folder tomenet/lib/game you find several data files containing
 various information about all monsters, items and other features of TomeNET.
 These files are named X_info.txt and can be read via a normal text editor.
 The most important files are:
+a_info.txt  contains all artifacts.
+            (You can also access this information in-game by pressing ~6 .)
 r_info.txt  contains all monsters.
+            (You can also access this information in-game by pressing ~7 .)
 k_info.txt  contains all base item types.
 e_info.txt  contains all ego item types.
-a_info.txt  contains all artifacts.
 All files contain a block of information, either at the beginning or at the
 very end, which explains the meaning of each discrete info-line.
 
