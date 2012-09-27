@@ -2153,9 +2153,10 @@ void do_cmd_steal(int Ind, int dir)
 				inven_item_optimize(0 - c_ptr->m_idx, item);
 
 				/* Tell thief what he got */
+				object_desc(0, o_name, &forge, TRUE, 3);
+				s_printf("StealingPvP: %s steals item %s from %s (chance %d%%).\n", p_ptr->name, o_name, q_ptr->name, success);
 				object_desc(Ind, o_name, &forge, TRUE, 3);
 				msg_format(Ind, "You stole %s.", o_name);
-				s_printf("StealingPvP: %s steals item %s from %s (chance %d%%).\n", p_ptr->name, o_name, q_ptr->name, success);
 			}
 
 			/* Easier to notice heavier objects */
