@@ -580,7 +580,9 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 		/* use first line in the file as stationary title */
 		use_title = TRUE;
 
-		if (odd_line) {
+		if (odd_line
+//		     && (21 + HGT_PLUS) % 3 == 0 /* Don't use odd_line mode if big_map mode would screw it up a bit */
+		    ) {
 			lines_per_page = 21 + HGT_PLUS;
 			/* hack: prepare client so it can choose a somewhat nicer page layout */
 			Send_special_line(Ind, 0, 21 + HGT_PLUS, 0, "");
