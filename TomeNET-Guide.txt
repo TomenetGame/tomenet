@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 28. September 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 30. September 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.9c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10618,8 +10618,9 @@ Warrior is strongly recommended.
 - Vampire
     These powerful undead creatues move out in the night to hunt living prey
     and suck its blood to sustain themselves. Vampires resist darkness, but
-    are susceptible to light. They fear the sun light and any other kind of
-    blessed light source, since it burns them, draining their hit points.
+    are susceptible to light and certain purifying and anti-evil effects.
+    They fear the sun light and any other kind of blessed light source, since
+    it burns them, draining their hit points.
     They don't actually need a light source, since they are able to determine
     their close surroundings even in complete darkness. This ability grows
     when the vampire rises in character-levels.
