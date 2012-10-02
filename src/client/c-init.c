@@ -739,8 +739,8 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 			    /* fingers */
 				p2 = strchr(p1, ':') + 1;
 				if (atoi(p1)) {
-					if (info_val) strcat(info_tmp, format("\377%c, \377%cfingers", a_key, a_val));
-					else strcat(info_tmp, "Fingers");
+					if (info_val) strcat(info_tmp, format("\377%c, \377%cring%s", a_key, a_val, atoi(p1) == 1 ? "" : "s"));
+					else strcat(info_tmp, format("Ring%s", atoi(p1) == 1 ? "" : "s"));
 					info_val = 1;
 				}
 				p1 = p2;
@@ -754,8 +754,8 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				p1 = p2;
 			    /* legs */
 				if (atoi(p1)) {
-					if (info_val) strcat(info_tmp, format("\377%c, \377%clegs", a_key, a_val));
-					else strcat(info_tmp, "Legs");
+					if (info_val) strcat(info_tmp, format("\377%c, \377%cleg%s", a_key, a_val, atoi(p1) == 1 ? "" : "s"));
+					else strcat(info_tmp, format("Leg%s", atoi(p1) == 1 ? "" : "s"));
 					info_val = 1;
 				}
 			    /* all done, display: */
