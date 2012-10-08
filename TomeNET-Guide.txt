@@ -4335,9 +4335,11 @@ The 1..9 are standard shops, namely..
                         resurrect a player at the temple when he dies, removing
                         the need to wait for some higher level player to come
                         and rescue him. In turn, the experience penalty will be
-                        50% instead of the usual 35%. However, the player will
-                        need to have enough cash to pay an instant resurrection
-                        fee when he dies, which is:
+                        50% instead of the usual 35%. Insta-res also keeps all
+                        your items except for the usual chance to lose a few of
+                        them on death, which is the same as on normal deaths.
+                        However, the player will need to have enough cash to
+                        pay an instant resurrection fee when he dies, which is:
                         Dungeonlevel * dungeonlevel * 10 + 10 gold pieces.
                         The money is automatically deducted from the purse or
                         the bank account as required. If the player does not
