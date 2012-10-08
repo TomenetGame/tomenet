@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 30. September 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 8. October 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.9c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1092,6 +1092,8 @@ Cheeze      Questionable action, not quite cheating but close to it.
             This can be transferring items to a store character (mule)
             or exploiting weaknesses in the game design instead of
             reporting them to the forum.
+DEW         Dark-elven warlock. A very deadly monster that comes in packs and
+            shoots high-damage mana bolts, glass cannon style.
 Dive        A trip into the dungeon, usually quite deep compared to the
             diver's character level.
 DSM         Dragon Scale Mail. Legendary pieces of armour.
@@ -2757,7 +2759,7 @@ inventory slot).
 However, TomeNET is multiplayer and real-time. This means you don't have
 enough time to look at your inventory and search the correct letters for items
 which you might need *this instance* to avoid certain death. Often situations
-get hectic, for example if all of a sudden a dark-elven warlock comes around
+get hectic, for example if all of a sudden dark-elven warlocks come around
 the corner while you are engaging a pack of wolves, then you need kind of a
 panic button that quickly transports you out of trouble.
 
@@ -13566,7 +13568,7 @@ Some monsters that people often get killed by are:
 
 -Dark-Elven Warlocks. These belong to the few monsters that can cast mana
  bolts, which inflict very high damage. Even worse, DEW (Dark-Elven Warlocks)
- can appear in packs. Beware!
+ appear in packs. Beware!
 
 -Will o' the wisps are very hard to spot and catch, their curses are
  devastating.
