@@ -2738,7 +2738,7 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 #define CENSOR_PH_TO_F			/* (slightly picky) convert ph to f ?*/
 #define REDUCE_DUPLICATE_H		/* (slightly picky) reduce multiple h to just one? */
 #define REDUCE_H_CONSONANT		/* (slightly picky) drop h before consonants? */
-static int censor_aux(char *buf, char *lcopy, int *c, bool leet) {
+static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce) {
 	int i, j, k, offset, cc[MSG_LEN], pos, eff_len;
 	char line[MSG_LEN];
 	char *word, l0, l1, l2, l3;
@@ -2866,14 +2866,19 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet) {
 			continue;
 		}
 
-		switch (lcopy[j]) {
+		/* reduce any char repetition and re-check for swear words */
+		if (max_reduce) {
+			if (lcopy[j + 1] == lcopy[j]) {
+				j++;
+				continue;
+			}
+		} else switch (lcopy[j]) {
 		case 'a': case 'e': case 'i': case 'o': case 'u': case 'y':
 			if (lcopy[j + 1] == lcopy[j] &&
 			    lcopy[j + 2] == lcopy[j]) {
 				j++;
 				continue;
 			}
-			break;
 		default:
 			if (lcopy[j + 1] == lcopy[j] &&
 			    lcopy[j + 2] == lcopy[j] &&
@@ -3008,8 +3013,9 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet) {
 }
 
 static int censor(char *line) {
-	int i, j, cc[MSG_LEN], offset;
-	char lcopy[MSG_LEN], lcopy2[MSG_LEN], tmp[MSG_LEN];
+	int i, j, im, jm, cc[MSG_LEN], offset;
+	char lcopy[MSG_LEN], lcopy2[MSG_LEN];
+	char tmp1[MSG_LEN], tmp2[MSG_LEN], tmp3[MSG_LEN], tmp4[MSG_LEN];
 	char *word;
 
 	strcpy(lcopy, line);
@@ -3098,17 +3104,35 @@ static int censor(char *line) {
 				lcopy2[(word - lcopy) + j] = 'Z';
 		}
 	}
+
+	/* perform 2x2 more 'parallel' tests  */
+	strcpy(tmp1, line);
+	strcpy(tmp2, line);
+	strcpy(tmp3, line);
+	strcpy(tmp4, line);
 	strcpy(lcopy, lcopy2);
+	i = censor_aux(tmp1, lcopy, cc, FALSE, FALSE); /* continue with normal check */
+	strcpy(lcopy, lcopy2);
+	j = censor_aux(tmp2, lcopy, cc, TRUE, FALSE); /* continue with leet speek check */
+	strcpy(lcopy, lcopy2);
+	im = censor_aux(tmp3, lcopy, cc, FALSE, TRUE); /* continue with normal check */
+	strcpy(lcopy, lcopy2);
+	jm = censor_aux(tmp4, lcopy, cc, TRUE, TRUE); /* continue with leet speek check */
 
-	/* perform two more 'parallel' tests  */
-	strcpy(tmp, line);
-	i = censor_aux(line, lcopy, cc, FALSE); /* continue with normal check  */
-	j = censor_aux(tmp, lcopy2, cc, TRUE); /* continue with leet speek check */
 	/* combine all censored characters */
-	for (offset = 0; tmp[offset]; offset++)
-		if (tmp[offset] == '*') line[offset] = '*';
+	for (offset = 0; tmp1[offset]; offset++)
+		if (tmp1[offset] == '*') line[offset] = '*';
+	for (offset = 0; tmp2[offset]; offset++)
+		if (tmp2[offset] == '*') line[offset] = '*';
+	for (offset = 0; tmp3[offset]; offset++)
+		if (tmp3[offset] == '*') line[offset] = '*';
+	for (offset = 0; tmp4[offset]; offset++)
+		if (tmp4[offset] == '*') line[offset] = '*';
 
-	if (j > i) return j;
+	/* return 'worst' result */
+	if (j > i) i = j;
+	if (im > i) i = im;
+	if (jm > i) i = jm;
 	return i;
 }
 #endif
