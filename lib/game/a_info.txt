@@ -3290,7 +3290,8 @@ N:262:'Ars Numenis'
 I:21:22:6
 W:50:20:380:100000
 P:0:6d7:20:25:0
-F:SHOW_MODS | STR | KILL_DEMON | ESP_DEMON | BLESSED | SLAY_EVIL
+F:SHOW_MODS | STR | KILL_DEMON | ESP_DEMON | BLESSED | SLAY_EVIL | LITE1
+F:HOLD_LIFE | SLAY_UNDEAD
 D:This hammer carries divine will to purge the unclean.
 
 
