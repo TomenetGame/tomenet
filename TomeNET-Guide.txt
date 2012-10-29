@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 8. October 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 29. October 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.9c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -5349,6 +5349,43 @@ Ironman Deep Dive Challenge
 
     Monsters cannot spawn in the wilderness sector of the dungeon, so you can
     just idle at the entrance, waiting for team mates.
+
+
+Seasonal events
+---------------
+At certain times of the year, some seasonal events will occur for a couple of
+days each. The exact time of the day when they start can vary depending on your
+time zone, even a date difference of +/-1 day is possible for that reason:
+
+Halloween
+    Running from 30th October to the end of 1st November.
+    The server will recall all players (20 minutes ahead warning will be
+    displayed) and restart. After that, Halloween is live and costumes can be
+    found and stored costumes can be worn again.
+    Townspeople will actually give experience (!) but also have a fear-causing
+    'touch' attack. They can't really harm you, though.
+    Randomly, the Great Pumpkin will appear on dungeon levels, either with low
+    or medium or high amount of hit points, depending on the location.
+    The event is aiming at intermediate-level characters. The pumpkin always
+    spawns shallower than dungeon level 40. Players who are too high level
+    (above 35 on main, above 40 on RPG) will not be able to hunt him, for the
+    others he will still be tough and might require teamwork.
+    The Great Pumpkin does not cause any damage but still has a few annoying
+    spells at its disposal. It is level 127 and therefore can drop any item in
+    the game, and usually drops very good. Please share fairly. ;)
+    When a player defeats the Great Pumpkin, everyone will get a message about
+    it. The Great Pumpkin will start randomly respawning again some time later.
+    Also it will stay night on the world's surface until Halloween ends.
+
+Christmas
+    Running from 24th December to 25th December.
+    During christmas, costumes can be worn again and you might even find Santa
+    Claus costumes. Also, Santa Claus will spawn and drops great stuff when you
+    uh.. kill him. :)
+
+New year's eve
+    Running from 31st December to 1st January.
+    Fireworks will be launched into the sky of the town of Bree.
 
 
 
