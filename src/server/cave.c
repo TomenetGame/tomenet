@@ -3266,7 +3266,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			else c = '@';
 #else
 			if ((p2_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p2_ptr->inventory[INVEN_BODY].sval == SV_COSTUME)) {
-				c = r_info[p_ptr->inventory[INVEN_BODY].bpval].d_char;
+				c = r_info[p2_ptr->inventory[INVEN_BODY].bpval].d_char;
 			}
 			else if (p2_ptr->body_monster) c = r_info[p2_ptr->body_monster].d_char;
 			else if (p2_ptr->fruit_bat) c = 'b';
