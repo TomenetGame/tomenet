@@ -11219,10 +11219,10 @@ Rogue       +2  +1  -2  +3  +1  -1       +5      +15%       5
             15  10  10   0  10  10  40  40
 Mimic       +1   0   0  +1  +1  -4       +6      +30%       5
             25  35  28   1  18  18  60  46              good     good
-             9  10  10   0   0   0  40  30
+             9  10  10   0   0   0  40  25
 Archer      +1   0  +2  +3  +1  -1       +5      +10%       3
-            30  32  28   2  20  24  56  82              fair     fair
-             8  10  10   0   0   0  30  55
+            30  32  28   2  20  24  56  72              fair     fair
+             8  10  10   0   0   0  30  50
 Paladin     +3  -3  +1   0  +2  +2       +8      +30%       5
             10  21  54   1  16  13  60  40              good     superb
              2   4  10   0   2   0  35  10
@@ -11243,7 +11243,7 @@ Runemaster  +1  +2  -3  +3  -3  -3       +5      +20%       4
              0  11  10   0   5   3  20  20
 Mindcrafter +2  +2   0   0   0  +1       +6      +25%       5
             30  30  36   3  35  14  55  45              good     fair
-             0   5   5   0   3   3  26  18
+             0   5   5   0   3   3  26  25
 
 
 For melee characters, it's especially vital to know how many blows per round
