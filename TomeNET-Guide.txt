@@ -5382,8 +5382,8 @@ Christmas
     The server will recall all players (20 minutes ahead warning will be
     displayed) and restart, after which the event is live.
     During christmas, costumes can be worn again and you might even find Santa
-    Claus costumes. Also, Santa Claus will spawn and drops great stuff when you
-    uh.. kill him. :)
+    Claus costumes. Also, Santa Claus will spawn in town and drops great stuff
+    when you uh.. kill him. :)
 
 New year's eve
     Running from 31st December to 1st January.
