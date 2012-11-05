@@ -13623,6 +13623,13 @@ Some monsters that people often get killed by are:
  so powerful that it can knockout its enemies with ease. Defeating it,
  however, will make it usable to its defeater!
 
+-Dracolichs and Spectral Tyrannosaurs. They have high hit points and are able
+ to breathe nether, which means their damage will be maxed out.
+ A dark/light green blinking D is actually a Death Drake, and although it can
+ also breathe nether it is much less dangeours than a Dracolich because of its
+ low hit points. Dracolichs and especially Spectral Tyrannosaurs can occur on
+ fairly low levels (usually 55 and 46) which makes them a very nasty surprise.
+
 The most powerful representant of each class:
 -Ranger chieftains are tough opponents who can nail you on the spot and
  use magic attacks as well as summon.
