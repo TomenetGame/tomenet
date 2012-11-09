@@ -3068,8 +3068,10 @@ int Receive_special_line(void)
 		}
 	}
 
+#if 1 /* this on-the-fly recognition is probably only needed if the marker '21 lines' package is late to arrive? */
 	/* Recognize 'odd_line' type pages, aka 21 lines instead of just 20 - C. Blue */
 	if (line == 20 + HGT_PLUS) special_page_size = 21 + HGT_PLUS;
+#endif
 
 	/* Also adjust our current starting line to the possibly updated max_line in case
 	   max_line got smaller for some reason (for example when viewing equipment).

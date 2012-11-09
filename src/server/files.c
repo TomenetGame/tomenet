@@ -544,7 +544,7 @@ void display_player(int Ind)
  *                        If TRUE -> 21 lines available! Added this for
  *                        @-screen w/ COMPACT_PLAYERLIST - C. Blue
  */
-static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color, bool odd_line)
+static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color, bool odd_line)//, bool div4_line)
 {
 	int lines_per_page = 20 + HGT_PLUS;
 	int i, k = 0;
@@ -581,13 +581,28 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 		use_title = TRUE;
 
 		if (odd_line
-//		     && (21 + HGT_PLUS) % 3 == 0 /* Don't use odd_line mode if big_map mode would screw it up a bit */
+		     && (21 + HGT_PLUS) % 3 == 0 /* Don't use odd_line mode if big_map mode would screw it up a bit */
 		    ) {
 			lines_per_page = 21 + HGT_PLUS;
 			/* hack: prepare client so it can choose a somewhat nicer page layout */
 			Send_special_line(Ind, 0, 21 + HGT_PLUS, 0, "");
 		}
 	}
+
+#if 0 //future stuff; also rename odd_line to div3_line accordingly..
+	/* lines per page divisable by 4 (aka 40 lines per page) feature,
+	   which only happens in BIG_MAP mode, requires client 4.4.9.4 */
+	if (is_newer_than(&Players[Ind]->version, 4, 4, 9, 3, 0, 0)) {
+		/* use first line in the file as stationary title */
+		use_title = TRUE;
+
+		if (div4_line) {
+			lines_per_page = 20 + HGT_PLUS - ((20 + HGT_PLUS) % 4);
+			/* hack: prepare client so it can choose a somewhat nicer page layout */
+			Send_special_line(Ind, 0, 22 + HGT_PLUS, 0, "");
+		}
+	}
+#endif
 
 	/* Wipe finder */
 	strcpy(finder, "");

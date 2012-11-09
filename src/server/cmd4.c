@@ -1111,6 +1111,7 @@ void do_cmd_check_players(int Ind, int line)
 	bool admin = is_admin(p_ptr);
 	char flag_str[10];
 	bool iddc;
+	bool big_map = (p_ptr->screen_hgt != SCREEN_HGT); //BIG_MAP is currently turned on for this player?
 
 	/* Temporary file */
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
@@ -1285,7 +1286,7 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 		fprintf(fff, "\n");
 
 		lines += 2;
- } else { //#else
+ } else { //#else (compaction == 0, ie 4 lines per entry)
 		/*** Determine color ***/
 		/* Print self in green */
 		if (Ind == k) attr = 'G';
@@ -1364,6 +1365,14 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 			fprintf(fff, "\n     \377u(%s\377u)\n", q_ptr->afk_msg);
 
 		lines += 4;
+
+		/* hack for BIG_MAP: Screen has 42 lines for @-list, but with 4 lines
+		   per entry it cuts the last entry on each page in half. Fill in 2
+		   dummy lines to prevent that, for better visuals: */
+		if (big_map && lines == 40) {
+			fprintf(fff, "\n\n");
+			lines += 2;
+		}
  } //#endif
 } //#endif
 	}
@@ -1376,7 +1385,8 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 #endif
 
 	/* add blank lines for more aesthetic browsing */
-if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
+if ((compaction == 1 || compaction == 2) /*#ifdef COMPACT_PLAYERLIST*/
+    && !big_map) {
 	if (is_newer_than(&p_ptr->version, 4, 4, 7, 0, 0, 0))
 		lines = (((21 + HGT_PLUS) - (lines % (21 + HGT_PLUS))) % (21 + HGT_PLUS));
 	else
@@ -1390,7 +1400,8 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 	my_fclose(fff);
 
 	/* Display the file contents */
-if (compaction == 1 || compaction == 2) {//#ifdef COMPACT_PLAYERLIST
+if ((compaction == 1 || compaction == 2) /*#ifdef COMPACT_PLAYERLIST*/
+    && !big_map) {
 	show_file(Ind, file_name, "Players Online", line, 0, TRUE);
 } else {//#else
 	show_file(Ind, file_name, "Players Online", line, 0, FALSE);
