@@ -4091,7 +4091,8 @@ void interact_macros(void)
 						Term_putstr(10, 12, -1, TERM_GREEN, "or by pressing  \377s:  \377gto chat and then typing the command:  \377s/mon");
 						Term_putstr(10, 13, -1, TERM_GREEN, "The first number on the left, in parentheses, is what you need.)");
 						Term_putstr(10, 14, -1, TERM_GREEN, "For example, enter  \377GFruit bat\377g  or just  \377G37  \377gto transform into one.");
-						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a form before you can use it!");
+						Term_putstr(10, 15, -1, TERM_GREEN, "To return to your normal form, use  \377GPlayer\377g  or its code  \377G0\377g  .");
+//						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a form before you can use it!");
 						Term_putstr(1, 17, -1, TERM_L_GREEN, "Enter exact monster name/code or leave blank:");
 						break;
 					case mw_rune:
