@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 29. October 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 9. November 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.9c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -7177,6 +7177,11 @@ Elemental rings (flames, frost, acid, lightning)
                     Provide the according resistance and can be activated for
                     temporary resistance too, thereby temporarily giving you
                     "double resistance" (see (5.17) for details).
+Amulet of the Moon      Gives infra-vision, the power to see invisible, and it
+                        can be activated to sleep monsters nearby.
+                        It also improves your +hit and +dam boni.
+Amulet of Terken        Gives the power to see invisible, free action, and
+                        improves your searching (usually by quite a lot).
 
 
 Misc
