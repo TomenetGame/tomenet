@@ -285,8 +285,41 @@ static bool sound_sdl_init(bool no_cache) {
 
 	/* Handle errors */
 	if (!fff) {
+#if 0
 		plog_fmt("Failed to open sound config (%s):\n    %s", path, strerror(errno));
 		return FALSE;
+#else /* try to use simple default file */
+		FILE *fff2;
+		char path2[2048];
+
+		path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "sound.cfg.default");
+		fff = my_fopen(path, "r");
+		if (!fff) {
+			plog_fmt("Failed to open default sound config (%s):\n    %s", path, strerror(errno));
+			return FALSE;
+		}
+
+		path_build(path2, sizeof(path2), ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
+		fff2 = my_fopen(path2, "w");
+		if (!fff2) {
+			plog_fmt("Failed to write sound config (%s):\n    %s", path2, strerror(errno));
+			return FALSE;
+		}
+
+		while (my_fgets(fff, buffer, sizeof(buffer)) == 0)
+			fprintf(fff2, "%s\n", buffer);
+
+		my_fclose(fff2);
+		my_fclose(fff);
+
+		/* Try again */
+		path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
+		fff = my_fopen(path, "r");
+		if (!fff) {
+			plog_fmt("Failed to open sound config (%s):\n    %s", path, strerror(errno));
+			return FALSE;
+		}
+#endif
 	}
 
 #ifdef DEBUG_SOUND
@@ -415,8 +448,41 @@ static bool sound_sdl_init(bool no_cache) {
 
 	/* Handle errors */
 	if (!fff) {
+#if 0
 		plog_fmt("Failed to open music config (%s):\n    %s", path, strerror(errno));
 		return FALSE;
+#else /* try to use simple default file */
+		FILE *fff2;
+		char path2[2048];
+
+		path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "music.cfg.default");
+		fff = my_fopen(path, "r");
+		if (!fff) {
+			plog_fmt("Failed to open default music config (%s):\n    %s", path, strerror(errno));
+			return FALSE;
+		}
+
+		path_build(path2, sizeof(path2), ANGBAND_DIR_XTRA_MUSIC, "music.cfg");
+		fff2 = my_fopen(path2, "w");
+		if (!fff2) {
+			plog_fmt("Failed to write music config (%s):\n    %s", path2, strerror(errno));
+			return FALSE;
+		}
+
+		while (my_fgets(fff, buffer, sizeof(buffer)) == 0)
+			fprintf(fff2, "%s\n", buffer);
+
+		my_fclose(fff2);
+		my_fclose(fff);
+
+		/* Try again */
+		path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "music.cfg");
+		fff = my_fopen(path, "r");
+		if (!fff) {
+			plog_fmt("Failed to open music config (%s):\n    %s", path, strerror(errno));
+			return FALSE;
+		}
+#endif
 	}
 
 #ifdef DEBUG_SOUND
