@@ -11091,6 +11091,8 @@ vary. For example a warrior cannot learn magic spells.
     Also make sure to create a macro for your fighting technique 'Sprint' when
     you learn it, which you do pretty early on. It is great for catching
     annoying monsters that try to keep their distance from you. (See (6.12).)
+    As martial artists, druids do not require any armour early on in the game,
+    it could even lower their AC instead of improving it.
     Always keep your Martial Arts skill maximized.
 
 - Shaman
