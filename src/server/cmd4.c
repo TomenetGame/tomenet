@@ -251,7 +251,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "Artifacts Seen", line, 0, FALSE);
+	show_file(Ind, file_name, "Artifacts Seen", line, 0, FALSE, FALSE);
 
 	/* Remove the file */
 	fd_kill(file_name);
@@ -408,7 +408,7 @@ void do_cmd_check_uniques(int Ind, int line)
 					fprintf(fff, "\377%c", attr);
 					sprintf(buf, "(%.14s)", q_ptr->name);
 					fprintf(fff, "  %-16.16s", buf);
-					
+
 					/* after 4 entries per line go to next line */
 					j++;
 					full = FALSE;
@@ -449,7 +449,7 @@ void do_cmd_check_uniques(int Ind, int line)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "Unique Monster List", line, 0, FALSE);
+	show_file(Ind, file_name, "Unique Monster List", line, 0, FALSE, FALSE);
 
 	/* Remove the file */
 	fd_kill(file_name);
@@ -1369,7 +1369,8 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 		/* hack for BIG_MAP: Screen has 42 lines for @-list, but with 4 lines
 		   per entry it cuts the last entry on each page in half. Fill in 2
 		   dummy lines to prevent that, for better visuals: */
-		if (big_map && lines == 40) {
+		if (is_older_than(&p_ptr->version, 4, 4, 9, 4, 0, 0) && /* newer clients know div4_line */
+		    big_map && lines == 40) {
 			fprintf(fff, "\n\n");
 			lines += 2;
 		}
@@ -1384,14 +1385,17 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 	}
 #endif
 
-	/* add blank lines for more aesthetic browsing */
+	/* add blank lines for more aesthetic browsing -- TODO: Make this a flag of show_file() instead */
 if ((compaction == 1 || compaction == 2) /*#ifdef COMPACT_PLAYERLIST*/
     && !big_map) {
 	if (is_newer_than(&p_ptr->version, 4, 4, 7, 0, 0, 0))
 		lines = (((21 + HGT_PLUS) - (lines % (21 + HGT_PLUS))) % (21 + HGT_PLUS));
 	else
 		lines = (((20 + HGT_PLUS) - (lines % (20 + HGT_PLUS))) % (20 + HGT_PLUS));
-} else {//#else
+} else if (compaction == 0 && big_map && is_newer_than(&p_ptr->version, 4, 4, 9, 3, 0, 0)) {//#else
+	int div4l = 21 + HGT_PLUS - ((21 + HGT_PLUS) % 4);
+	lines = (div4l - (lines % div4l)) % div4l;
+} else {
 	lines = (((20 + HGT_PLUS) - (lines % (20 + HGT_PLUS))) % (20 + HGT_PLUS));
 }//#endif
 	for (k = 1; k <= lines; k++) fprintf(fff, "\n");
@@ -1402,9 +1406,11 @@ if ((compaction == 1 || compaction == 2) /*#ifdef COMPACT_PLAYERLIST*/
 	/* Display the file contents */
 if ((compaction == 1 || compaction == 2) /*#ifdef COMPACT_PLAYERLIST*/
     && !big_map) {
-	show_file(Ind, file_name, "Players Online", line, 0, TRUE);
-} else {//#else
-	show_file(Ind, file_name, "Players Online", line, 0, FALSE);
+	show_file(Ind, file_name, "Players Online", line, 0, TRUE, FALSE); //expand to divisable by 3 # of lines (which means +1)
+} else if (big_map && compaction == 0) {//#else
+	show_file(Ind, file_name, "Players Online", line, 0, FALSE, TRUE); //reduce to divisable by 4 # of lines (which means -2)
+} else {
+	show_file(Ind, file_name, "Players Online", line, 0, FALSE, FALSE);
 }//#endif
 
 	/* Remove the file */
@@ -1554,7 +1560,7 @@ void do_cmd_check_player_equip(int Ind, int line)
        my_fclose(fff);
 
        /* Display the file contents */
-       show_file(Ind, file_name, "Equipment of Inspectable Players", line, 0, FALSE);
+       show_file(Ind, file_name, "Equipment of Inspectable Players", line, 0, FALSE, FALSE);
 
        /* Remove the file */
        fd_kill(file_name);
@@ -2888,10 +2894,10 @@ void do_cmd_check_other(int Ind, s32b line)
 
 	/* Display the file contents */
 	if (p_ptr->cur_file_title[0])
-		show_file(Ind, p_ptr->cur_file, p_ptr->cur_file_title, line, 0, FALSE);
+		show_file(Ind, p_ptr->cur_file, p_ptr->cur_file_title, line, 0, FALSE, FALSE);
 	else
-		show_file(Ind, p_ptr->cur_file, "Information", line, 0, FALSE);
-//	show_file(Ind, p_ptr->cur_file, "Extra Info", line, color, FALSE);
+		show_file(Ind, p_ptr->cur_file, "Information", line, 0, FALSE, FALSE);
+//	show_file(Ind, p_ptr->cur_file, "Extra Info", line, color, FALSE, FALSE);
 
 #if 0
 	/* Remove the file */
@@ -2939,7 +2945,7 @@ void do_cmd_check_other(int Ind, s32b line)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "Extra Info", line, 0, FALSE);
+	show_file(Ind, file_name, "Extra Info", line, 0, FALSE, FALSE);
 
 	/* Remove the file */
 	fd_kill(file_name);

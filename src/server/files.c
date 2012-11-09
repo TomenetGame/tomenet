@@ -543,8 +543,9 @@ void display_player(int Ind)
  * Added 'odd_line' flag: Usually FALSE -> 20 lines available per 'page'.
  *                        If TRUE -> 21 lines available! Added this for
  *                        @-screen w/ COMPACT_PLAYERLIST - C. Blue
+ *             *changed it to 'div3_line', for cleaner addition of more of this type.
  */
-static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color, bool odd_line)//, bool div4_line)
+static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color, bool div3_line, bool div4_line)
 {
 	int lines_per_page = 20 + HGT_PLUS;
 	int i, k = 0;
@@ -580,16 +581,13 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 		/* use first line in the file as stationary title */
 		use_title = TRUE;
 
-		if (odd_line
-		     && (21 + HGT_PLUS) % 3 == 0 /* Don't use odd_line mode if big_map mode would screw it up a bit */
-		    ) {
-			lines_per_page = 21 + HGT_PLUS;
-			/* hack: prepare client so it can choose a somewhat nicer page layout */
+		if (div3_line) {
+			lines_per_page = 21 + HGT_PLUS - ((21 + HGT_PLUS) % 3);
+			/* hack: tell client we'd like a mod3 # of lines per page */
 			Send_special_line(Ind, 0, 21 + HGT_PLUS, 0, "");
 		}
 	}
 
-#if 0 //future stuff; also rename odd_line to div3_line accordingly..
 	/* lines per page divisable by 4 (aka 40 lines per page) feature,
 	   which only happens in BIG_MAP mode, requires client 4.4.9.4 */
 	if (is_newer_than(&Players[Ind]->version, 4, 4, 9, 3, 0, 0)) {
@@ -597,12 +595,11 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 		use_title = TRUE;
 
 		if (div4_line) {
-			lines_per_page = 20 + HGT_PLUS - ((20 + HGT_PLUS) % 4);
-			/* hack: prepare client so it can choose a somewhat nicer page layout */
+			lines_per_page = 21 + HGT_PLUS - ((21 + HGT_PLUS) % 4);
+			/* hack: tell client we'd like a mod4 # of lines per page */
 			Send_special_line(Ind, 0, 22 + HGT_PLUS, 0, "");
 		}
 	}
-#endif
 
 	/* Wipe finder */
 	strcpy(finder, "");
@@ -815,7 +812,7 @@ void do_cmd_help(int Ind, int line)
 	cptr name = "tomenet.hlp";
 
 	/* Peruse the main help file */
-	(void)do_cmd_help_aux(Ind, name, NULL, line, FALSE, FALSE);
+	(void)do_cmd_help_aux(Ind, name, NULL, line, FALSE, FALSE, FALSE);
 }
 
 
@@ -828,10 +825,10 @@ void do_cmd_help(int Ind, int line)
  * XXX XXX XXX Use this function for commands such as the
  * "examine object" command.
  */
-errr show_file(int Ind, cptr name, cptr what, s32b line, int color, bool odd_line)
+errr show_file(int Ind, cptr name, cptr what, s32b line, int color, bool div3_line, bool div4_line)
 {
 	/* Peruse the requested file */
-	(void)do_cmd_help_aux(Ind, name, what, line, color, odd_line);
+	(void)do_cmd_help_aux(Ind, name, what, line, color, div3_line, div4_line);
 
 	/* Success */
 	return (0);
@@ -1912,7 +1909,7 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "High Scores", line, 0, FALSE);
+	show_file(Ind, file_name, "High Scores", line, 0, FALSE, FALSE);
 
 	/* Remove the file */
 	fd_kill(file_name);

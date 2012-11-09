@@ -3046,7 +3046,11 @@ int Receive_special_line(void)
 	   instead of 2, ie starting the whole page one line up higher.
 	   (That will simply look a bit better than touching the bottom status line.) */
 	if (line == 21 + HGT_PLUS) {
-		special_page_size = 21 + HGT_PLUS;
+		special_page_size = 21 + HGT_PLUS - ((21 + HGT_PLUS) % 3);
+		return 1;
+	}
+	if (line == 22 + HGT_PLUS) {
+		special_page_size = 21 + HGT_PLUS - ((21 + HGT_PLUS) % 4);
 		return 1;
 	}
 
@@ -3069,7 +3073,7 @@ int Receive_special_line(void)
 	}
 
 #if 1 /* this on-the-fly recognition is probably only needed if the marker '21 lines' package is late to arrive? */
-	/* Recognize 'odd_line' type pages, aka 21 lines instead of just 20 - C. Blue */
+	/* Recognize div3_line (formerly odd_line) type pages, aka 21 lines instead of just 20 - C. Blue */
 	if (line == 20 + HGT_PLUS) special_page_size = 21 + HGT_PLUS;
 #endif
 
@@ -3095,7 +3099,9 @@ int Receive_special_line(void)
 		if (line == -1) phys_line = 0;
 		/* Normal line */
 		else {
-			phys_line = line + (special_page_size == 21 + HGT_PLUS ? 1 : 2);
+			phys_line = line +
+			    (special_page_size == 21 + HGT_PLUS ? 1 : 2) + /* 1 extra usable line for 21-lines mode? */
+			    (special_page_size < 20 + HGT_PLUS ? 1 : 0); /* only 40 lines on 42-lines BIG_MAP? -> slighly improved visuals ;) */
 
 			/* Keep in sync: If peruse_file() displays a title, it must be line + 2.
 			   Else line + 1 to save some space for 21-lines (odd_line) feature. */
