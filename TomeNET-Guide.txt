@@ -281,6 +281,9 @@ compile the game under '(2.1) Installing TomeNET'.
  is still awaiting account validation by an admin.
  Also, if a grey '(O)' is in front of a player name, it means that player is
  using an outdated client. It's very important to keep your client up to date!
+ If another player's character level is displayed in light blue colour, that
+ means he is within sensible level range of you to form a party! Press SHIFT+P
+ for party menu. One of you has to create the party and add the other one.
 -Note that your character's "speed" may change. Speed is the factor telling you
  how fast your character can move, fight or perform any other kind of action.
  If your character's speed gets increased (for example by drinking a potion of
@@ -504,6 +507,10 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
         Also, if a grey '(O)' is in front of a player name, it means that
         player is using an outdated client. It's very important to keep your
         client up to date! (Same command as ~a)
+        If another player's character level is displayed in light blue colour,
+        that means he is within sensible level range of you to form a party!
+        Press SHIFT+P for party menu. One of you has to create the party and
+        add the other one.
 %       edit your macros.
 &       edit your auto-inscriptions.
 =       edit your preferences.
@@ -2296,7 +2303,9 @@ allows you to move diagonally too, which is very important.
 
 You can wear/wield items with 'w' (weapons, armour, light source..)
 You can pickup items with 'g'. Drop items with 'd'. Destroy items with 'k'.
-You can see a list of players who are currently online with '@' key.
+You can see a list of players who are currently online with '@' key. Other
+ players eligible to form a party with you have their level displayed in light
+ blue colour in this list. Press SHIFT+P to invoke the party menu.
 You can chat with other players (say hello ^^) with ':' key.
 
 The top right window will give an overview of your character attributes and
