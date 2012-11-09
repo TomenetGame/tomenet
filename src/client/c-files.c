@@ -1158,7 +1158,7 @@ void peruse_file(void)
 
 	/* Initialize */
 	cur_line = 0;
-	special_page_size = 20 + HGT_PLUS; /* assume 'non-odd_line' aka normal page size (vs 21) */
+	special_page_size = 20 + HGT_PLUS; /* assume 'non-odd_line' aka normal page size (vs 21 or --2) */
 
 	/* Save the old screen */
 	Term_save();
@@ -1180,7 +1180,7 @@ void peruse_file(void)
 
 		/* Show a general "title" */
 #if 0 /* Don't just print the version as a title, better keep the line free in \
-         that case - ideal for the new 21-lines feature (odd_line). \
+         that case - ideal for the new 21-lines feature (odd_line / div-3 lines). \
          This should be kept in sync with Receive_special_line() in nclient.c! */
 //		prt(format("[%s]", shortVersion), 0, 0);
 		prt(format("[TomeNET %d.%d.%d%s]",

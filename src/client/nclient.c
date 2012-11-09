@@ -3041,16 +3041,10 @@ int Receive_special_line(void)
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c%I", &ch, &max, &line, &attr, buf)) <= 0) return n;
 	}
 
-	/* Hack - just 'prepare' for a 21-lines page. What this does is making
-	   sure that the first real line will be placed at physical line 1
-	   instead of 2, ie starting the whole page one line up higher.
-	   (That will simply look a bit better than touching the bottom status line.) */
-	if (line == 21 + HGT_PLUS) {
-		special_page_size = 21 + HGT_PLUS - ((21 + HGT_PLUS) % 3);
-		return 1;
-	}
-	if (line == 22 + HGT_PLUS) {
-		special_page_size = 21 + HGT_PLUS - ((21 + HGT_PLUS) % 4);
+	/* Hack - prepare for a special sized page (# of lines divisable by n) */
+	if (line >= 21 + HGT_PLUS) {
+		//21 -> % 1, 22 -> %2, 23 -> %3..
+		special_page_size = 21 + HGT_PLUS - ((21 + HGT_PLUS) % (line - (20 + HGT_PLUS)));
 		return 1;
 	}
 
@@ -3073,7 +3067,7 @@ int Receive_special_line(void)
 	}
 
 #if 1 /* this on-the-fly recognition is probably only needed if the marker '21 lines' package is late to arrive? */
-	/* Recognize div3_line (formerly odd_line) type pages, aka 21 lines instead of just 20 - C. Blue */
+	/* Recognize a +1 extra line setup (usually divisable by 3 -> 21 instead of 20) - C. Blue */
 	if (line == 20 + HGT_PLUS) special_page_size = 21 + HGT_PLUS;
 #endif
 

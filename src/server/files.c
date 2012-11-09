@@ -544,8 +544,9 @@ void display_player(int Ind)
  *                        If TRUE -> 21 lines available! Added this for
  *                        @-screen w/ COMPACT_PLAYERLIST - C. Blue
  *             *changed it to 'div3_line', for cleaner addition of more of this type.
+ *             *changed it to 'divl' to be most flexible.
  */
-static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color, bool div3_line, bool div4_line)
+static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color, int divl)
 {
 	int lines_per_page = 20 + HGT_PLUS;
 	int i, k = 0;
@@ -576,28 +577,23 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 	/* Stationary title bar, derived from 1st line of the file or from 'what' parm. */
 	bool use_title = FALSE;
 
-	/* 21-lines-per-page feature requires client 4.4.7.1 aka 4.4.7a */
 	if (is_newer_than(&Players[Ind]->version, 4, 4, 7, 0, 0, 0)) {
 		/* use first line in the file as stationary title */
 		use_title = TRUE;
 
-		if (div3_line) {
-			lines_per_page = 21 + HGT_PLUS - ((21 + HGT_PLUS) % 3);
-			/* hack: tell client we'd like a mod3 # of lines per page */
-			Send_special_line(Ind, 0, 21 + HGT_PLUS, 0, "");
-		}
-	}
-
-	/* lines per page divisable by 4 (aka 40 lines per page) feature,
-	   which only happens in BIG_MAP mode, requires client 4.4.9.4 */
-	if (is_newer_than(&Players[Ind]->version, 4, 4, 9, 3, 0, 0)) {
-		/* use first line in the file as stationary title */
-		use_title = TRUE;
-
-		if (div4_line) {
-			lines_per_page = 21 + HGT_PLUS - ((21 + HGT_PLUS) % 4);
-			/* hack: tell client we'd like a mod4 # of lines per page */
-			Send_special_line(Ind, 0, 22 + HGT_PLUS, 0, "");
+		if (divl) {
+			if (is_older_than(&Players[Ind]->version, 4, 4, 9, 4, 0, 0)) {
+				/* 21-lines-per-page feature requires client 4.4.7.1 aka 4.4.7a */
+				if (divl == 3) {
+					lines_per_page = 21 + HGT_PLUS - ((21 + HGT_PLUS) % 3);
+					/* hack: tell client we'd like a mod3 # of lines per page */
+					Send_special_line(Ind, 0, 21 + HGT_PLUS, 0, "");
+				}
+			} else {
+				lines_per_page = 21 + HGT_PLUS - ((21 + HGT_PLUS) % divl);
+				/* hack: tell client we'd like a mod4 # of lines per page */
+				Send_special_line(Ind, 0, 20 + divl + HGT_PLUS, 0, "");
+			}
 		}
 	}
 
@@ -812,7 +808,7 @@ void do_cmd_help(int Ind, int line)
 	cptr name = "tomenet.hlp";
 
 	/* Peruse the main help file */
-	(void)do_cmd_help_aux(Ind, name, NULL, line, FALSE, FALSE, FALSE);
+	(void)do_cmd_help_aux(Ind, name, NULL, line, FALSE, 0);
 }
 
 
@@ -825,10 +821,10 @@ void do_cmd_help(int Ind, int line)
  * XXX XXX XXX Use this function for commands such as the
  * "examine object" command.
  */
-errr show_file(int Ind, cptr name, cptr what, s32b line, int color, bool div3_line, bool div4_line)
+errr show_file(int Ind, cptr name, cptr what, s32b line, int color, int divl)
 {
 	/* Peruse the requested file */
-	(void)do_cmd_help_aux(Ind, name, what, line, color, div3_line, div4_line);
+	(void)do_cmd_help_aux(Ind, name, what, line, color, divl);
 
 	/* Success */
 	return (0);
@@ -1909,7 +1905,7 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "High Scores", line, 0, FALSE, FALSE);
+	show_file(Ind, file_name, "High Scores", line, 0, 5);
 
 	/* Remove the file */
 	fd_kill(file_name);

@@ -251,7 +251,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "Artifacts Seen", line, 0, FALSE, FALSE);
+	show_file(Ind, file_name, "Artifacts Seen", line, 0, 0);
 
 	/* Remove the file */
 	fd_kill(file_name);
@@ -449,7 +449,7 @@ void do_cmd_check_uniques(int Ind, int line)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "Unique Monster List", line, 0, FALSE, FALSE);
+	show_file(Ind, file_name, "Unique Monster List", line, 0, 0);
 
 	/* Remove the file */
 	fd_kill(file_name);
@@ -1406,11 +1406,11 @@ if ((compaction == 1 || compaction == 2) /*#ifdef COMPACT_PLAYERLIST*/
 	/* Display the file contents */
 if ((compaction == 1 || compaction == 2) /*#ifdef COMPACT_PLAYERLIST*/
     && !big_map) {
-	show_file(Ind, file_name, "Players Online", line, 0, TRUE, FALSE); //expand to divisable by 3 # of lines (which means +1)
+	show_file(Ind, file_name, "Players Online", line, 0, 3); //expand to divisable by 3 # of lines (which means +1)
 } else if (big_map && compaction == 0) {//#else
-	show_file(Ind, file_name, "Players Online", line, 0, FALSE, TRUE); //reduce to divisable by 4 # of lines (which means -2)
+	show_file(Ind, file_name, "Players Online", line, 0, 4); //reduce to divisable by 4 # of lines (which means -2)
 } else {
-	show_file(Ind, file_name, "Players Online", line, 0, FALSE, FALSE);
+	show_file(Ind, file_name, "Players Online", line, 0, 0);
 }//#endif
 
 	/* Remove the file */
@@ -1560,7 +1560,7 @@ void do_cmd_check_player_equip(int Ind, int line)
        my_fclose(fff);
 
        /* Display the file contents */
-       show_file(Ind, file_name, "Equipment of Inspectable Players", line, 0, FALSE, FALSE);
+       show_file(Ind, file_name, "Equipment of Inspectable Players", line, 0, 0);
 
        /* Remove the file */
        fd_kill(file_name);
@@ -2894,10 +2894,10 @@ void do_cmd_check_other(int Ind, s32b line)
 
 	/* Display the file contents */
 	if (p_ptr->cur_file_title[0])
-		show_file(Ind, p_ptr->cur_file, p_ptr->cur_file_title, line, 0, FALSE, FALSE);
+		show_file(Ind, p_ptr->cur_file, p_ptr->cur_file_title, line, 0, 0);
 	else
-		show_file(Ind, p_ptr->cur_file, "Information", line, 0, FALSE, FALSE);
-//	show_file(Ind, p_ptr->cur_file, "Extra Info", line, color, FALSE, FALSE);
+		show_file(Ind, p_ptr->cur_file, "Information", line, 0, 0);
+//	show_file(Ind, p_ptr->cur_file, "Extra Info", line, color, 0);
 
 #if 0
 	/* Remove the file */
@@ -2945,7 +2945,7 @@ void do_cmd_check_other(int Ind, s32b line)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "Extra Info", line, 0, FALSE, FALSE);
+	show_file(Ind, file_name, "Extra Info", line, 0, 0);
 
 	/* Remove the file */
 	fd_kill(file_name);
