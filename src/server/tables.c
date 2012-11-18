@@ -2903,8 +2903,8 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_TRAUMATURGY,
-                                '+', 0,
-                                '+', 1000,
+                                '%', 0,
+                                '%', 0,
                         },
                         {
                                 SKILL_AURA_FEAR,
@@ -3672,8 +3672,8 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_TRAUMATURGY,
-                                '+', 0,
-                                '+', 1000,
+                                '%', 0,
+                                '%', 0,
                         },
                         {
                                 SKILL_AURA_FEAR,
@@ -5440,11 +5440,11 @@ player_trait trait_info[MAX_TRAIT] = {
 		0,
 	},
 	{
-		"Enlightened",
+		"Enlightened",	/* note: directly assigned live; must be N/A on char creation time */
 		0,
 	},
 	{
-		"Corrupted",
+		"Corrupted",	/* note: directly assigned live; must be N/A on char creation time */
 		0,
 	},
 	{
