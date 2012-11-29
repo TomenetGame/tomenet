@@ -1385,6 +1385,7 @@ int cmd_target_friendly(void)
 void cmd_look(void)
 {
 	bool done = FALSE;
+	bool position = FALSE;
 	int d;
 	char ch;
 
@@ -1411,11 +1412,25 @@ void cmd_look(void)
 				xhtml_screenshot("screenshot????");
 				break;
 			}
+			case 'p':
+				/* Toggle manual ground-targetting */
+				position = !position;
+
+				/* Tell the server to reset ground-target */
+				Send_look(128 + 0);
+				break;
+			case 'l':
+				/* actually look at the ground-targetted grid */
+				if (position) Send_look(128 + 5);
+				break;
 			default:
 			{
 				d = keymap_dirs[ch & 0x7F];
 				if (!d) bell();
-				else Send_look(d);
+				else {
+					if (position) Send_look(128 + d); /* do manual ground-targetting */
+					else Send_look(d); /* do normal looking */
+				}
 				break;
 			}
 		}

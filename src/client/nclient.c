@@ -4327,9 +4327,10 @@ int Send_look(int dir)
 {
 	int	n;
 
-	if ((n = Packet_printf(&wbuf, "%c%c", PKT_LOOK, dir)) <= 0)
-	{
-		return n;
+	if (is_newer_than(&server_version, 4, 4, 9, 3, 0, 0)) {
+		if ((n = Packet_printf(&wbuf, "%c%hd", PKT_LOOK, dir)) <= 0) return n;
+	} else {
+		if ((n = Packet_printf(&wbuf, "%c%c", PKT_LOOK, dir)) <= 0) return n;
 	}
 
 	return 1;

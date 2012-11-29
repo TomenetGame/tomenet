@@ -10261,12 +10261,15 @@ bool target_set(int Ind, int dir)
 			p_ptr->target_col = p_ptr->px;
 			p_ptr->target_row = p_ptr->py;
 		} else {
-			p_ptr->target_row += ddy[dir - 128];
-			p_ptr->target_col += ddx[dir - 128];
+			y = p_ptr->target_row + ddy[dir - 128];
+			x = p_ptr->target_col + ddx[dir - 128];
+			if (!in_bounds(y, x)) return FALSE; /* paranoia (won't harm, but seems weird) */
+			p_ptr->target_row = y;
+			p_ptr->target_col = x;
 		}
 
 		/* Info */
-		strcpy(out_val, "[<dir>, q] ");
+		strcpy(out_val, "[<dir>, t, q] ");
 
 		/* Tell the client */
 		Send_target_info(Ind, p_ptr->target_col - p_ptr->panel_col_prt, p_ptr->target_row - p_ptr->panel_row_prt, out_val);

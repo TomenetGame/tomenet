@@ -2771,6 +2771,7 @@ void do_cmd_look(int Ind, int dir) {
 
 	char o_name[ONAME_LEN];
 	char out_val[ONAME_LEN], tmp_val[ONAME_LEN];
+
 	if(!(zcave = getcave(wpos))) return;
 
 	/* Blind */
@@ -2796,10 +2797,10 @@ void do_cmd_look(int Ind, int dir) {
 			for (x = p_ptr->panel_col_min; x <= p_ptr->panel_col_max; x++) {
 				/* Require line of sight, unless "look" is "expanded" */
 				if (!player_has_los_bold(Ind, y, x)) continue;
-	
+
 				/* Require interesting contents */
 				if (!do_cmd_look_accept(Ind, y, x)) continue;
-	
+
 				/* Save the location */
 				p_ptr->target_x[p_ptr->target_n] = x;
 				p_ptr->target_y[p_ptr->target_n] = y;
@@ -2815,12 +2816,12 @@ void do_cmd_look(int Ind, int dir) {
 			msg_print(Ind, "You see nothing special.");
 			return;
 		}
-	
-	
+
+
 		/* Set the sort hooks */
 		ang_sort_comp = ang_sort_comp_distance;
 		ang_sort_swap = ang_sort_swap_distance;
-	
+
 		/* Sort the positions */
 		ang_sort(Ind, p_ptr->target_x, p_ptr->target_y, p_ptr->target_n);
 
@@ -2831,6 +2832,41 @@ void do_cmd_look(int Ind, int dir) {
 			if (c_ptr->m_idx != 0)
 				p_ptr->target_idx[i] = c_ptr->m_idx;
 			else p_ptr->target_idx[i] = 0;
+		}
+
+        } else if (dir >= 128) {
+		/* Initialize if needed */
+		if (dir == 128) {
+			x = p_ptr->target_col = p_ptr->px;
+			y = p_ptr->target_row = p_ptr->py;
+		} else {
+			x = p_ptr->target_col + ddx[dir - 128];
+			y = p_ptr->target_row + ddy[dir - 128];
+
+			if ((!player_has_los_bold(Ind, y, x) && !is_admin(p_ptr))
+			    || !in_bounds(y, x)) {
+				return;
+			}
+
+			p_ptr->target_col = x;
+			p_ptr->target_row = y;
+		}
+
+		/* Check for confirmation to actually look at this grid */
+		if (dir == 128 + 5) {
+			p_ptr->look_index = 0;
+			p_ptr->target_x[0] = p_ptr->target_col;
+			p_ptr->target_y[0] = p_ptr->target_row;
+		}
+		/* Just manually ground-targetting - do not spam look-info for each single grid */
+		else {
+			/* Info */
+			strcpy(out_val, "[<dir>, l, q] ");
+
+			/* Tell the client */
+			Send_target_info(Ind, x - p_ptr->panel_col_prt, y - p_ptr->panel_row_prt, out_val);
+
+			return;
 		}
 	}
 

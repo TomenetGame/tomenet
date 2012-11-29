@@ -266,7 +266,7 @@ static void Init_receive(void)
 //	login_receive[PKT_ACK]			= Receive_ack;
 	login_receive[PKT_VERIFY]		= Receive_discard;
 	login_receive[PKT_LOGIN]		= Receive_login;
-	
+
 //	playing_receive[PKT_ACK]		= Receive_ack;
 	playing_receive[PKT_VERIFY]		= Receive_discard;
 	playing_receive[PKT_QUIT]		= Receive_quit;
@@ -7395,8 +7395,8 @@ static int Receive_look(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-	char ch, dir;
-	int n, player = -1;
+	char ch;
+	int n, player = -1, dir;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
@@ -7404,13 +7404,20 @@ static int Receive_look(int ind)
 		p_ptr = Players[player];
 	}
 
-	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0) {
-		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+	if (is_older_than(&p_ptr->version, 4, 4, 9, 4, 0, 0)) {
+		if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0) {
+			if (n == -1) Destroy_connection(ind, "read error");
+			return n;
+		}
+	} else { /* for 'p' feature (manual ground-targetting) */
+		if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &dir)) <= 0) {
+			if (n == -1) Destroy_connection(ind, "read error");
+			return n;
+		}
 	}
 
 	/* Sanity check */
-	if (bad_dir(dir)) return 1;
+	if (bad_dir(dir) && bad_dir2(dir)) return 1;
 
 	if (connp->id != -1) {
 		do_cmd_look(player, dir);
