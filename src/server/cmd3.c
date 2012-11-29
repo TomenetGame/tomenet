@@ -2841,12 +2841,11 @@ void do_cmd_look(int Ind, int dir) {
 			y = p_ptr->target_row = p_ptr->py;
 		} else {
 			x = p_ptr->target_col + ddx[dir - 128];
+			if (!player_has_los_bold(Ind, p_ptr->target_row, x) && !is_admin(p_ptr)) x = p_ptr->target_col;
 			y = p_ptr->target_row + ddy[dir - 128];
+			if (!player_has_los_bold(Ind, y, p_ptr->target_col) && !is_admin(p_ptr)) y = p_ptr->target_row;
 
-			if ((!player_has_los_bold(Ind, y, x) && !is_admin(p_ptr))
-			    || !in_bounds(y, x)) {
-				return;
-			}
+			if (!in_bounds(y, x)) return;
 
 			p_ptr->target_col = x;
 			p_ptr->target_row = y;
