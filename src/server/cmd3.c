@@ -2813,7 +2813,7 @@ void do_cmd_look(int Ind, int dir) {
 
 		/* Paranoia */
 		if (!p_ptr->target_n) {
-			msg_print(Ind, "You see nothing special.");
+			msg_print(Ind, "You see nothing special. [<dir>, p, q]");
 			return;
 		}
 
@@ -2860,7 +2860,7 @@ void do_cmd_look(int Ind, int dir) {
 		/* Just manually ground-targetting - do not spam look-info for each single grid */
 		else {
 			/* Info */
-			strcpy(out_val, "[<dir>, l, q] ");
+			strcpy(out_val, "[<dir>, l, p, q] ");
 
 			/* Tell the client */
 			Send_target_info(Ind, x - p_ptr->panel_col_prt, y - p_ptr->panel_row_prt, out_val);
@@ -3040,7 +3040,7 @@ void do_cmd_look(int Ind, int dir) {
 	}
 
 	/* Append a little info */
-	strcat(out_val, " [<dir>, q]");
+	strcat(out_val, " [<dir>, p, q]");
 
 	/* Tell the client */
 	Send_target_info(Ind, x - p_ptr->panel_col_prt, y - p_ptr->panel_row_prt, out_val);
