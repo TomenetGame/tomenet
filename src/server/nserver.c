@@ -7412,7 +7412,8 @@ static int Receive_look(int ind)
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	char ch;
-	int n, player = -1, dir;
+	s16b dir;
+	int n, player = -1;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
