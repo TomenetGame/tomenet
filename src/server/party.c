@@ -474,6 +474,27 @@ int check_account(char *accname, char *c_name) {
 	bool ded_iddc, ded_pvp;
 #endif
 
+	/* Make sure noone creates a character of the same name as another player's accountname!
+	   This is important for new feat of messaging to an account instead of character name. - C. Blue */
+	struct account *l2_acc;
+	char c2_name[MAX_CHARS];
+	strcpy(c2_name, c_name);
+//	c2_name[0] = toupper(c2_name[0]);
+	l_acc = GetAccount(accname, NULL, FALSE);
+	l2_acc = GetAccount(c2_name, NULL, FALSE);
+	if (l_acc && l2_acc && l_acc->id != l2_acc->id) {
+		/* However, since ppl might have already created such characters, only apply this
+		   rule for newly created characters, to avoid someone being unable to login on
+		   an already existing character that unfortunately violates this rule :/ */
+		int *id_list, chars;
+                chars = player_id_list(&id_list, l_acc->id);
+		for (i = 0; i < chars; i++)
+			if (!strcmp(c_name, lookup_player_name(id_list[i]))) break;
+                if (i == chars)
+            		return 0; /* 'name already in use' */
+	} else if (!l_acc && l2_acc)
+		return 0; /* we don't even have an account yet? 'name already in use' for sure */
+
 	if ((l_acc = GetAccount(accname, NULL, FALSE))) {
 		int *id_list, chars;
 #ifndef RPG_SERVER

@@ -4079,7 +4079,7 @@ int name_lookup_loose(int Ind, cptr name, u16b party)
 			    && strcasecmp(p_ptr->accountname, "faith")
 			    && strcasecmp(p_ptr->accountname, "mikaelh")
 			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
-			
+
 			/* Check name */
 			if (!strncasecmp(q_ptr->name, name, len)) {
 				/* Set target if not set already */
@@ -4092,6 +4092,46 @@ int name_lookup_loose(int Ind, cptr name, u16b party)
 
 				/* Check for exact match */
 				if (len == (int)strlen(q_ptr->name)) {
+					/* Never a problem */
+					target = i;
+					problem = "";
+
+					/* Finished looking */
+					break;
+				}
+			}
+		}
+
+		/* Then check accounts */
+		for (i = 1; i <= NumPlayers; i++) {
+			/* Check this one */
+			q_ptr = Players[i];
+
+			/* Skip if disconnected */
+			if (q_ptr->conn == NOT_CONNECTED) continue;
+
+			/* let admins chat */
+			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr)
+			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
+			    && strcasecmp(p_ptr->accountname, "kurzel")
+			    && strcasecmp(p_ptr->accountname, "moltor")
+			    && strcasecmp(p_ptr->accountname, "the_sandman")
+			    && strcasecmp(p_ptr->accountname, "faith")
+			    && strcasecmp(p_ptr->accountname, "mikaelh")
+			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
+
+			/* Check name */
+			if (!strncasecmp(q_ptr->accountname, name, len)) {
+				/* Set target if not set already */
+				if (!target) {
+					target = i;
+				} else {
+					/* Matching too many people */
+					problem = "players";
+				}
+
+				/* Check for exact match */
+				if (len == (int)strlen(q_ptr->accountname)) {
 					/* Never a problem */
 					target = i;
 					problem = "";
@@ -4206,7 +4246,7 @@ int name_lookup_loose_quiet(int Ind, cptr name, u16b party)
 			    && strcasecmp(p_ptr->accountname, "faith")
 			    && strcasecmp(p_ptr->accountname, "mikaelh")
 			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
-			
+
 			/* Check name */
 			if (!strncasecmp(q_ptr->name, name, len)) {
 				/* Set target if not set already */
@@ -4219,6 +4259,46 @@ int name_lookup_loose_quiet(int Ind, cptr name, u16b party)
 
 				/* Check for exact match */
 				if (len == (int)strlen(q_ptr->name)) {
+					/* Never a problem */
+					target = i;
+					problem = "";
+
+					/* Finished looking */
+					break;
+				}
+			}
+		}
+
+		/* Then check accounts */
+		for (i = 1; i <= NumPlayers; i++) {
+			/* Check this one */
+			q_ptr = Players[i];
+
+			/* Skip if disconnected */
+			if (q_ptr->conn == NOT_CONNECTED) continue;
+
+			/* let admins chat */
+			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr)
+			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
+			    && strcasecmp(p_ptr->accountname, "kurzel")
+			    && strcasecmp(p_ptr->accountname, "moltor")
+			    && strcasecmp(p_ptr->accountname, "the_sandman")
+			    && strcasecmp(p_ptr->accountname, "faith")
+			    && strcasecmp(p_ptr->accountname, "mikaelh")
+			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
+
+			/* Check name */
+			if (!strncasecmp(q_ptr->accountname, name, len)) {
+				/* Set target if not set already */
+				if (!target) {
+					target = i;
+				} else {
+					/* Matching too many people */
+					problem = "players";
+				}
+
+				/* Check for exact match */
+				if (len == (int)strlen(q_ptr->accountname)) {
 					/* Never a problem */
 					target = i;
 					problem = "";
@@ -4317,9 +4397,37 @@ int name_lookup(int Ind, cptr name, u16b party)
 			    && strcasecmp(p_ptr->accountname, "faith")
 			    && strcasecmp(p_ptr->accountname, "mikaelh")
 			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
-			
+
 			/* Check name */
 			if (!strcasecmp(q_ptr->name, name)) {
+				/* Never a problem */
+				target = i;
+
+				/* Finished looking */
+				break;
+			}
+		}
+
+		/* Then check accounts */
+		for (i = 1; i <= NumPlayers; i++) {
+			/* Check this one */
+			q_ptr = Players[i];
+
+			/* Skip if disconnected */
+			if (q_ptr->conn == NOT_CONNECTED) continue;
+
+			/* let admins chat */
+			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr)
+			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
+			    && strcasecmp(p_ptr->accountname, "kurzel")
+			    && strcasecmp(p_ptr->accountname, "moltor")
+			    && strcasecmp(p_ptr->accountname, "the_sandman")
+			    && strcasecmp(p_ptr->accountname, "faith")
+			    && strcasecmp(p_ptr->accountname, "mikaelh")
+			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
+
+			/* Check name */
+			if (!strcasecmp(q_ptr->accountname, name)) {
 				/* Never a problem */
 				target = i;
 
@@ -4410,9 +4518,37 @@ int name_lookup_quiet(int Ind, cptr name, u16b party)
 			    && strcasecmp(p_ptr->accountname, "faith")
 			    && strcasecmp(p_ptr->accountname, "mikaelh")
 			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
-			
+
 			/* Check name */
 			if (!strcasecmp(q_ptr->name, name)) {
+				/* Never a problem */
+				target = i;
+
+				/* Finished looking */
+				break;
+			}
+		}
+
+		/* Then check accounts */
+		for (i = 1; i <= NumPlayers; i++) {
+			/* Check this one */
+			q_ptr = Players[i];
+
+			/* Skip if disconnected */
+			if (q_ptr->conn == NOT_CONNECTED) continue;
+
+			/* let admins chat */
+			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr)
+			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
+			    && strcasecmp(p_ptr->accountname, "kurzel")
+			    && strcasecmp(p_ptr->accountname, "moltor")
+			    && strcasecmp(p_ptr->accountname, "the_sandman")
+			    && strcasecmp(p_ptr->accountname, "faith")
+			    && strcasecmp(p_ptr->accountname, "mikaelh")
+			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
+
+			/* Check name */
+			if (!strcasecmp(q_ptr->accountname, name)) {
 				/* Never a problem */
 				target = i;
 
