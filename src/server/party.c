@@ -1555,9 +1555,9 @@ int party_remove(int remover, cptr name)
 	}
 
 	/* See if this is the owner we're deleting */
-	if ((remover == Ind
+	if (remover == Ind
 #ifndef RPG_SERVER
-	    && in_irondeepdive(&p_ptr->wpos))
+	    && in_irondeepdive(&p_ptr->wpos)
 #endif
 	    ) {
 		/* Keep the party, just lose a member */
