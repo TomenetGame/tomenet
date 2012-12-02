@@ -4103,7 +4103,7 @@ int name_lookup_loose(int Ind, cptr name, u16b party)
 		}
 
 		/* Then check accounts */
-		for (i = 1; i <= NumPlayers; i++) {
+		if (!target) for (i = 1; i <= NumPlayers; i++) {
 			/* Check this one */
 			q_ptr = Players[i];
 
@@ -4270,7 +4270,7 @@ int name_lookup_loose_quiet(int Ind, cptr name, u16b party)
 		}
 
 		/* Then check accounts */
-		for (i = 1; i <= NumPlayers; i++) {
+		if (!target) for (i = 1; i <= NumPlayers; i++) {
 			/* Check this one */
 			q_ptr = Players[i];
 
@@ -4409,7 +4409,7 @@ int name_lookup(int Ind, cptr name, u16b party)
 		}
 
 		/* Then check accounts */
-		for (i = 1; i <= NumPlayers; i++) {
+		if (!target) for (i = 1; i <= NumPlayers; i++) {
 			/* Check this one */
 			q_ptr = Players[i];
 
@@ -4530,7 +4530,7 @@ int name_lookup_quiet(int Ind, cptr name, u16b party)
 		}
 
 		/* Then check accounts */
-		for (i = 1; i <= NumPlayers; i++) {
+		if (!target) for (i = 1; i <= NumPlayers; i++) {
 			/* Check this one */
 			q_ptr = Players[i];
 

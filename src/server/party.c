@@ -1282,6 +1282,11 @@ int party_add(int adder, cptr name)
 	Ind = name_lookup_loose(adder, name, FALSE);
 	if (Ind <= 0) return FALSE;
 
+	if (adder == Ind) {
+		msg_print(adder, "\377yYou cannot add yourself, you are already in the party.");
+		return FALSE;
+	}
+
 	/* Set pointer */
 	p_ptr = Players[Ind];
 
@@ -1524,9 +1529,7 @@ int party_remove(int remover, cptr name)
 	player_type *p_ptr;
 	player_type *q_ptr = Players[remover];
 	int party_id = q_ptr->party, Ind = 0;
-#ifdef RPG_SERVER
 	int i, j;
-#endif
 
 	/* Make sure this is the owner */
 	if (!streq(parties[party_id].owner, q_ptr->name) && !is_admin(q_ptr)) {
@@ -1551,16 +1554,15 @@ int party_remove(int remover, cptr name)
 		return FALSE;
 	}
 
-#ifndef RPG_SERVER
 	/* See if this is the owner we're deleting */
-	if (remover == Ind) del_party(party_id);
-
-	/* Keep the party, just lose a member */
-	else
-#else
-	if (remover == Ind) {
+	if ((remover == Ind
+#ifndef RPG_SERVER
+	    && in_irondeepdive(&p_ptr->wpos))
+#endif
+	    ) {
+		/* Keep the party, just lose a member */
 		for (i = 1; i <= NumPlayers; i++) {
-			if (is_admin(Players[i])) continue;
+//			if (is_admin(Players[i])) continue;
 			if (Players[i]->party == q_ptr->party && i != Ind) {
 				strcpy(parties[party_id].owner, Players[i]->name);
 				msg_print(i, "\374\377yYou are now the party owner!");
@@ -1580,6 +1582,10 @@ int party_remove(int remover, cptr name)
 			return TRUE;
 		}
 	}
+#ifndef RPG_SERVER
+	else if (remover == Ind)
+		del_party(party_id);
+	else
 #endif
 	{
 		/* Lose a member */
