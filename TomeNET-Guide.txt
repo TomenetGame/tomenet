@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 30. November 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 2. December 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.9c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -5312,7 +5312,7 @@ Miscellaneous challenges
 There are certain other challenges that neither really count as quests nor as
 events:
 
-Ironman Deep Dive Challenge
+Ironman Deep Dive Challenge (IDDC)
     There is exactly one designated huge ironman dungeon (or tower) on each
     server, normal one and rpg server, which is 127 levels in size and does not
     allow recalling in between, except for two 'dungeon towns' which will
@@ -5354,6 +5354,10 @@ Ironman Deep Dive Challenge
     while they are inside the ironman deep dive dungeon.
     Level requirements on items are not in effect while inside the ironman deep
     dive challenge either.
+
+    If the party leader dies inside the IDDC, the party isn't disbanded but
+    ownership of the party is transferred to another party member. (Same as on
+    RPG server.)
 
     NOTE: The Deep Dive dungeon requires your character to have zero experience
     points in order to be eligible to enter.
