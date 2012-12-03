@@ -7972,6 +7972,8 @@ See (0.2) for more information about cloaking.
 
 (5.17) How abilities, resistances and boni stack
 ------------------------------------------------
+(Also see (5.6) for basic information about damaage types and resistances.)
+
 The same resistance from two or more items in your equipment don't add to each
 other. For example you only need one item that provides fire resistance. If
 you equip two such items you won't get better resistance than with just one
