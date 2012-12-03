@@ -7210,6 +7210,13 @@ Amulet of Terken        Gives the power to see invisible, free action, and
 
 Misc
 --
+Spell scroll        Although called "scrolls" they actually persist and can be
+                    used infinite times. They may however get destroyed by
+                    certain damage effects (most notably fire, water and acid)
+                    same as regular scrolls.
+Spell crystal       They are like "spell scrolls", except they are used for
+                    mindcrafter spells. A specialty of these is that they
+                    ignore fire and water damage.
 Codex, Spellbook, Grimoire
                     These are magic books that may contain magic spells of any
                     type and school, be it for mages, priests, druids or
