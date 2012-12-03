@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 2. December 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 3. December 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.9c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -7212,11 +7212,13 @@ Misc
 --
 Spell scroll        Although called "scrolls" they actually persist and can be
                     used infinite times. They may however get destroyed by
-                    certain damage effects (most notably fire, water and acid)
-                    same as regular scrolls.
+                    certain damage effects (most notably fire and acid)
+                    same as regular scrolls. Spell scrolls ignore water damage
+                    though, which can harm regular scrolls.
 Spell crystal       They are like "spell scrolls", except they are used for
-                    mindcrafter spells. A specialty of these is that they
-                    ignore fire and water damage.
+                    mindcrafter spells. A specialty of spell crystals is that
+                    they ignore fire damage (and water damage, same as spell
+                    scrolls).
 Codex, Spellbook, Grimoire
                     These are magic books that may contain magic spells of any
                     type and school, be it for mages, priests, druids or
