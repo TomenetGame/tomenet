@@ -3121,7 +3121,7 @@ player_class class_info[MAX_CLASS] =
                 TERM_GREEN,
                 {-1, -3, 3, -1, 0, 2},
 		{19, 0, 0+100, 10, 0, 0},
-		25, 30, 32, 2,  16, 8, 48, 35,
+		25, 25, 32, 2,  16, 8, 48, 35,
 		7,  10, 12, 0,  0,  0, 20, 15,
 		4, 20, //2, 20,//4,20
 //		7, 20,
@@ -3241,7 +3241,7 @@ player_class class_info[MAX_CLASS] =
                 TERM_BLUE,
 		{ 2, 1, -2, 3, 1, -1},
 		{15, 0, 0, 19+100, 0, 0},
-		45, 32, 28, 5, 32, 24, 60, 66,
+		45, 28, 28, 5, 32, 24, 60, 66,
 		15, 10, 10, 0, 10, 10, 40, 40,// ..0,0,40,30
 		5, 15, //3, 25,//5, 25
 //		8, 25,
@@ -3433,7 +3433,7 @@ player_class class_info[MAX_CLASS] =
 //		 TERM_ORANGE, <- more confusing since they're supposed to use a monster form
 		{ 1, 0, 0, 1, 1, -4},
 		{19+100, 0, 0, 10+100, 0, 0},//21,19
-		25, 35, 28, 1, 18, 18, 60, 46,
+		25, 34, 28, 1, 18, 18, 60, 46,
 	         9, 10, 10, 0,  0,  0, 40, 25,
 		6, 30,//3, 40,//4, 25
 //		8, 40,
@@ -3598,8 +3598,8 @@ player_class class_info[MAX_CLASS] =
                 TERM_ORANGE,
 		{ 1, 0, 2, 3, 1, -1},
 		{0, 0, 0, 18+100, 0, 0},
-		30, 32, 28, 2,  24, 20, 56, 72,
-		8,  10, 10, 0,  0,  0,  30, 50,
+		30, 22, 28, 2,  24, 20, 56, 72,
+		8,  7, 10, 0,  0,  0,  30, 50,
 		5, 10,//3, 15,//5, 15
 //		8, 15,
                 {
@@ -3744,7 +3744,7 @@ player_class class_info[MAX_CLASS] =
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
 		10, 21, 54, 1,  13, 16, 60, 40, //was c_thb 29
-		2, 4,  10, 0,  0,  2,  35, 10,
+		2, 8,  10, 0,  0,  2,  35, 10,
 		8, 30,//5, 30,//7,30
 //		10, 30,
                 {
@@ -4125,7 +4125,7 @@ player_class class_info[MAX_CLASS] =
                 TERM_VIOLET,
 		{ 0, 0, 0, 0, 0, 0},
 		{19, 0, 0, 10, 0, 0},//20,10
-		30, 20, 20, 3,  15, 15, 50, 50,
+		30, 22, 20, 3,  15, 15, 50, 50,
 		10, 10,  10, 0,  5,  5,  25, 25,//..,0,0,25,25
 		6, 25, //3,  0,//5,0,
 //		8, 10,
@@ -4470,8 +4470,8 @@ player_class class_info[MAX_CLASS] =
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		30, 40, 30, 4, 25, 25, 50, 44,
-		8, 5, 10, 0, 10,  5, 20, 25,
+		30, 35, 30, 4, 25, 25, 50, 44,
+		8, 11, 10, 0, 10,  5, 20, 25,
 		5, 40,//5, 50
                 {
                         {
@@ -4984,7 +4984,7 @@ player_class class_info[MAX_CLASS] =
         //Great at searching, bad at stealth. Great @ MD? I say no because we don't want them carrying
         //support rods + runes
         //HP dice... Hm, tough question. What other skills will be made available to them? *Keeping @ 5 for now*
-		10, 20, 20,  2, 20, 30, 45, 40,
+		10, 23, 20,  2, 20, 30, 45, 40,
 		 0, 11, 10,  0,  3,  5, 20, 20,
 		5, 20,//5, 20
                 {
@@ -5201,8 +5201,8 @@ player_class class_info[MAX_CLASS] =
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		30, 30, 36,  3, 35, 14, 55, 45,
-		 0,  5,  5,  0,  3,  3, 26, 25,
+		30, 28, 36,  3, 35, 14, 55, 45,
+		 0,  9,  5,  0,  3,  3, 26, 25,
 //		5, 25,
 		6, 25,
                 {
