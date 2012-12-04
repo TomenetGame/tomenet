@@ -6311,6 +6311,7 @@ Disenchantment  This attack does massive damage and can also disenchant your
                 Resistance will cut damage to 6/7..6/12 and prevent
                 disenchantment of your equipment.
                 Breath damage is monster HP/6, it caps at 500.
+                Disenchantment bolts do 25+(4d5)+(level*3/2) damage.
                 If disenchantment hits items on the floor, it can even reduce
                 their magical (+X) pval bonus.
                 Artifacts have a chance to resist disenchantment.

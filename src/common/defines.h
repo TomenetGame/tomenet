@@ -5035,11 +5035,16 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF0_NO_ESCORT			0x00000010	/* monster will never occur in groups, like escorts or nests/pits */
 #define RF0_NO_NEST			0x00000020	/* monster will never occur in groups, like escorts or nests/pits */
 #define RF0_FINAL_GUARDIAN		0x00000040	/* monster is defined as FINAL_GUARDIAN_ in d_info.txt */
+#define RF0_BO_DISE			0x00000080
+#define RF0_BA_DISE		0x00000100
 
 #define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT | RF0_NO_NEST)
 
 #define RF0_PLAYER_SPELLS (0L)
-#define RF0_RADIUS_SPELLS (0L)
+/* monster spells are currently RF4+RF5+RF6 only (todo: add RF0)
+#define RF0_PLAYER_SPELLS (RF0_BO_DISE | RF0_BA_DISE)
+*/
+#define RF0_RADIUS_SPELLS (RF0_BA_DISE)
 
 
 /* currently disabled r_info.txt flags (not implemented or some other reason) */
@@ -5131,7 +5136,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
     (0L)
 
 #define RF0_BOLT_MASK \
-    (0L)
+    (RF0_BO_DISE)
 
 
 /* Hack -- summon spells */
@@ -5192,7 +5197,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 	(RF6_HAND_DOOM)
 
 #define RF0_ATTACK_MASK \
-	(0L)
+	(RF0_BO_DISE | RF0_BA_DISE)
 
 
 /*
@@ -5277,7 +5282,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 	RF6_S_SPIDER | RF6_S_HOUND | RF6_S_HYDRA | RF6_S_ANGEL | RF6_S_DEMON | RF6_S_UNDEAD | RF6_S_DRAGON | \
 	RF6_S_HI_UNDEAD | RF6_S_HI_DRAGON | RF6_S_WRAITH | RF6_S_UNIQUE)
 #define RF0_SPELLCASTER_MASK \
-	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE)
+	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_BO_DISE | RF0_BA_DISE)
 
 
 /* 

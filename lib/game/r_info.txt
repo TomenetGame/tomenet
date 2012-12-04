@@ -19605,11 +19605,8 @@ D:and it's causing quite some noise.
 #Nether Realm only
 N:1080:Minion of Doom
 G:p:B
-#I:140:20d300:20:150:50
-#W:97:8:0:20000
-I:130:10d300:20:150:50
-W:97:8:0:10000
-#E:1:1:1:2:1:1
+I:120:10d300:20:150:0
+W:97:8:0:5000
 E:0:0:0:0:0:0
 O:0:100:0:0
 B:GAZE:EXP_80:10d5
@@ -19621,12 +19618,10 @@ F:MOVE_BODY | NONLIVING | EVIL |
 F:IM_FIRE | RES_PLAS | RES_NETH | AURA_FIRE |
 F:NO_CONF | NO_SLEEP | NO_FEAR | NO_STUN | NO_CUT | 
 F:RES_COLD | RES_POIS | BLUEBAND | HAS_LITE | 
-#S:1_IN_5 |
-S:1_IN_4 |
-S:BRAIN_SMASH | MIND_BLAST | 
-S:BR_FIRE | BR_NETH
-D:An ghost army of corrupted souls who will raid the world
-D:to destroy mankind when the apocalypse begins.
+S:1_IN_3 |
+S:MIND_BLAST | BO_FIRE | BO_NETH | BO_DISE
+D:A spirit soldier of a vast army of corrupted souls
+D:who will raid the world when the apocalypse begins.
 
 N:1081:The Kung-Fu Yeek from Hell
 G:y:R

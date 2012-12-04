@@ -537,8 +537,8 @@ static cptr r_info_flags0[] =
 	"NO_ESCORT",
 	"NO_NEST",
 	"FINAL_GUARDIAN", /* should not be used in r_info, since it's set implicitely from d_info */
-	"X00000080",//8
-	"X00000100",
+	"BO_DISE",//8
+	"BA_DISE",
 	"X00000200",
 	"X00000400",
 	"X00000800",//12

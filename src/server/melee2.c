@@ -454,6 +454,8 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *
 	if (smart & SM_RES_DISEN)
 	{
 		if (int_outof(r_ptr, 100)) f4 &= ~RF4_BR_DISE;
+		if (int_outof(r_ptr, 100)) f0 &= ~RF0_BO_DISE;
+		if (int_outof(r_ptr, 100)) f0 &= ~RF0_BA_DISE;
 	}
 
 	if (smart & SM_RES_BLIND)
@@ -3468,7 +3470,7 @@ if (season_halloween) {
 //				msg_format(Ind, "%^s fails to blink.", m_name);
 				break;
 			}
-			
+
 /*			if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 				msg_format(Ind, "%^s fails to blink.", m_name);
 				break;
@@ -3500,7 +3502,7 @@ if (season_halloween) {
 //				msg_format(Ind, "%^s fails to teleport.", m_name);
 				break;
 			}
-			
+
 /*			if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 				msg_format(Ind, "%^s fails to teleport.", m_name);
 				break;
@@ -3556,7 +3558,7 @@ if (season_halloween) {
 				msg_format(Ind, "%^s fails to command you to return.", m_name);
 				break;
 			}
-			
+
 /*			if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 				msg_format(Ind, "%^s fails to command you to return.", m_name);
 				break;
@@ -3595,7 +3597,7 @@ if (season_halloween) {
 				msg_format(Ind, "%^s fails to teleport you away.", m_name);
 				break;
 			}
-			
+
 /*			if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 				msg_format(Ind, "%^s fails to teleport you away.", m_name);
 				break;
@@ -3627,7 +3629,7 @@ if (season_halloween) {
 				msg_format(Ind, "%^s fails to teleport you away.", m_name);
 				break;
 			}
-			
+
 /*			if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 				msg_format(Ind, "%^s fails to teleport you away.", m_name);
 				break;
@@ -4023,60 +4025,58 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 
 		/* RF0_S_HI_MONSTER */
 		case RF0_OFFSET+0:
-		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons help!", m_name);
 			for (k = 0; k < 1; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_MONSTER, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
-		}
-
 		/* RF0_S_HI_MONSTERS */
 		case RF0_OFFSET+1:
-		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons monsters!", m_name);
 			for (k = 0; k < 8; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_MONSTER, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
-		}
-
 		/* RF0_S_HI_UNIQUE */
 		case RF0_OFFSET+2:
-		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons special opponents!", m_name);
 			for (k = 0; k < 8; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_UNIQUE, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			for (k = 0; k < 8; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_UNDEAD, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
-			if (blind && count)
-			{
-				msg_print(Ind, "You hear many powerful things appear nearby.");
-			}
+			if (blind && count) msg_print(Ind, "You hear many powerful things appear nearby.");
 			break;
-		}
-
+		/* RF0_BO_DISE */
+		case RF0_OFFSET+3:
+			if (monst_check_antimagic(Ind, m_idx)) break;
+			disturb(Ind, 1, 0);
+			if (blind) msg_print(Ind, "Something mumbles.");
+			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a disenchantment bolt of", m_name);
+			bolt(Ind, m_idx, GF_DISENCHANT, 25 + damroll(4, 5) + (rlev * 3) / 2);
+			update_smart_learn(m_idx, DRS_DISEN);
+			break;
+		/* RF0_BA_DISE */
+		case RF0_OFFSET+4:
+			if (monst_check_antimagic(Ind, m_idx)) break;
+			disturb(Ind, 1, 0);
+			if (blind) msg_print(Ind, "Something mumbles.");
+			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a disenchantment ball of", m_name);
+			ball(Ind, m_idx, GF_DISENCHANT, (40 + damroll(6, 10) + rlev * 4), y, x, srad);
+			update_smart_learn(m_idx, DRS_DISEN);
+			break;
 	}
 
 
