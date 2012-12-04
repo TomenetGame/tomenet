@@ -1149,7 +1149,7 @@ int guild_add(int adder, cptr name) {
 		return(FALSE);
 	}
 
-	Ind = name_lookup_loose(adder, name, FALSE);
+	Ind = name_lookup_loose(adder, name, FALSE, TRUE);
 	if (Ind <= 0) return FALSE;
 	p_ptr = Players[Ind];
 
@@ -1279,7 +1279,7 @@ int party_add(int adder, cptr name)
 		return FALSE;
 	}
 
-	Ind = name_lookup_loose(adder, name, FALSE);
+	Ind = name_lookup_loose(adder, name, FALSE, TRUE);
 	if (Ind <= 0) return FALSE;
 
 	if (adder == Ind) {
@@ -1464,7 +1464,7 @@ int guild_remove(int remover, cptr name){
 		return FALSE;
 	}
 
-	Ind = name_lookup_loose(remover, name, FALSE);
+	Ind = name_lookup_loose(remover, name, FALSE, TRUE);
 
 	if (Ind <= 0)
 	{
@@ -1539,7 +1539,7 @@ int party_remove(int remover, cptr name)
 		return FALSE;
 	}
 
-	Ind = name_lookup_loose(remover, name, FALSE);
+	Ind = name_lookup_loose(remover, name, FALSE, TRUE);
 	if (Ind <= 0) return FALSE;
 	p_ptr = Players[Ind];
 
@@ -2037,9 +2037,9 @@ bool add_hostility(int Ind, cptr name, bool initiator)
 	bool bb = FALSE;
 
 #if 0 /* too risky? (exploitable) */
-	i = name_lookup_loose(Ind, name, TRUE);
+	i = name_lookup_loose(Ind, name, TRUE, TRUE);
 #else
-	i = name_lookup(Ind, name, TRUE);
+	i = name_lookup(Ind, name, TRUE, TRUE);
 #endif
 
 	if (!i) {
@@ -2183,7 +2183,7 @@ bool remove_hostility(int Ind, cptr name)
 	player_type *p_ptr = Players[Ind];
 	hostile_type *h_ptr, *i_ptr;
 	cptr p, q = NULL;
-	int i = name_lookup_loose(Ind, name, TRUE);
+	int i = name_lookup_loose(Ind, name, TRUE, TRUE);
 
 	if (!i)
 	{
@@ -2391,7 +2391,7 @@ bool add_ignore(int Ind, cptr name)
 	}
 #endif
 
-	i = name_lookup_loose(Ind, name, TRUE);
+	i = name_lookup_loose(Ind, name, TRUE, TRUE);
 	if (!i) {
 		return FALSE;
 	}
@@ -3561,7 +3561,7 @@ bool pilot_set(int Ind, cptr name)
 		return FALSE;
 	}
 
-	i = name_lookup_loose(Ind, name, TRUE);
+	i = name_lookup_loose(Ind, name, TRUE, TRUE);
 
 	if (!i) {
 		return FALSE;

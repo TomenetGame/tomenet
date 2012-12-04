@@ -3217,7 +3217,7 @@ static void player_talk_aux(int Ind, char *message)
 		if (len) {
 			struct rplist *w_player;
 			/* NAME_LOOKUP_LOOSE DESPERATELY NEEDS WORK */
-			target = name_lookup_loose_quiet(Ind, search, TRUE);
+			target = name_lookup_loose_quiet(Ind, search, TRUE, TRUE);
 
 			if (target) {
 				/* strip leading chat mode prefix,
@@ -3573,7 +3573,7 @@ static void player_talk_aux(int Ind, char *message)
 		struct rplist *w_player;
 
 		/* NAME_LOOKUP_LOOSE DESPERATELY NEEDS WORK */
-		target = name_lookup_loose_quiet(Ind, search, TRUE);
+		target = name_lookup_loose_quiet(Ind, search, TRUE, TRUE);
 #ifdef TOMENET_WORLDS
 		if (!target && cfg.worldd_privchat) {
 			w_player = world_find_player(search, 0);
@@ -3999,7 +3999,7 @@ bool is_a_vowel(int ch)
  *
  * if 'party' is TRUE, party name is also looked up.
  */
-int name_lookup_loose(int Ind, cptr name, u16b party)
+int name_lookup_loose(int Ind, cptr name, u16b party, bool include_account_names)
 {
 	int i, j, len, target = 0;
 	player_type *q_ptr, *p_ptr;
@@ -4103,7 +4103,7 @@ int name_lookup_loose(int Ind, cptr name, u16b party)
 		}
 
 		/* Then check accounts */
-		if (!target) for (i = 1; i <= NumPlayers; i++) {
+		if (include_account_names && !target) for (i = 1; i <= NumPlayers; i++) {
 			/* Check this one */
 			q_ptr = Players[i];
 
@@ -4166,7 +4166,7 @@ int name_lookup_loose(int Ind, cptr name, u16b party)
 }
 
 /* same as name_lookup_loose, but without warning message if no name was found */
-int name_lookup_loose_quiet(int Ind, cptr name, u16b party)
+int name_lookup_loose_quiet(int Ind, cptr name, u16b party, bool include_account_names)
 {
 	int i, j, len, target = 0;
 	player_type *q_ptr, *p_ptr;
@@ -4270,7 +4270,7 @@ int name_lookup_loose_quiet(int Ind, cptr name, u16b party)
 		}
 
 		/* Then check accounts */
-		if (!target) for (i = 1; i <= NumPlayers; i++) {
+		if (include_account_names && !target) for (i = 1; i <= NumPlayers; i++) {
 			/* Check this one */
 			q_ptr = Players[i];
 
@@ -4330,7 +4330,7 @@ int name_lookup_loose_quiet(int Ind, cptr name, u16b party)
 }
 
 /* copy/pasted from name_lookup_loose(), just without being loose.. */
-int name_lookup(int Ind, cptr name, u16b party)
+int name_lookup(int Ind, cptr name, u16b party, bool include_account_names)
 {
 	int i, j, len, target = 0;
 	player_type *q_ptr, *p_ptr;
@@ -4409,7 +4409,7 @@ int name_lookup(int Ind, cptr name, u16b party)
 		}
 
 		/* Then check accounts */
-		if (!target) for (i = 1; i <= NumPlayers; i++) {
+		if (include_account_names && !target) for (i = 1; i <= NumPlayers; i++) {
 			/* Check this one */
 			q_ptr = Players[i];
 
@@ -4451,7 +4451,7 @@ int name_lookup(int Ind, cptr name, u16b party)
 }
 
 /* copy/pasted from name_lookup_loose(), just without being loose.. but with quiet */
-int name_lookup_quiet(int Ind, cptr name, u16b party)
+int name_lookup_quiet(int Ind, cptr name, u16b party, bool include_account_names)
 {
 	int i, j, len, target = 0;
 	player_type *q_ptr, *p_ptr;
@@ -4530,7 +4530,7 @@ int name_lookup_quiet(int Ind, cptr name, u16b party)
 		}
 
 		/* Then check accounts */
-		if (!target) for (i = 1; i <= NumPlayers; i++) {
+		if (include_account_names && !target) for (i = 1; i <= NumPlayers; i++) {
 			/* Check this one */
 			q_ptr = Players[i];
 

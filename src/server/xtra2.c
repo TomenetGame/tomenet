@@ -8060,7 +8060,7 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", pvp ? "PVP" : "NOGHOS
 
 		/* Reward the killer if it was a PvP-mode char */
 		if (pvp) {
-			int killer = name_lookup_quiet(Ind, p_ptr->really_died_from, FALSE);
+			int killer = name_lookup_quiet(Ind, p_ptr->really_died_from, FALSE, FALSE);
 
 			/* reward him again, making restarting easier */
 			if (p_ptr->max_plv == MID_PVP_LEVEL)
@@ -8133,7 +8133,7 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", pvp ? "PVP" : "NOGHOS
 			}
 		} else { /* wasn't a pvp-mode death */
 			/* copy/paste from above pvp section, just for info */
-			int killer = name_lookup_quiet(Ind, p_ptr->really_died_from, FALSE);
+			int killer = name_lookup_quiet(Ind, p_ptr->really_died_from, FALSE, FALSE);
 			if (killer) {
 				if (Players[killer]->max_plv > p_ptr->max_plv) Players[killer]->kills_lower++;
 				else if (Players[killer]->max_plv < p_ptr->max_plv) Players[killer]->kills_higher++;
@@ -11047,8 +11047,8 @@ int get_player(int Ind, object_type *o_ptr)
 				if (strchr(ins2, '#')) *(strchr(ins2, '#')) = '\0';
 
 //				Ind2 = find_player_name(inscription);
-//				Ind2 = name_lookup_loose(Ind, (cptr)inscription, FALSE);
-				Ind2 = name_lookup_loose(Ind, ins2, FALSE);
+//				Ind2 = name_lookup_loose(Ind, (cptr)inscription,< FALSE, FALSE);
+				Ind2 = name_lookup_loose(Ind, ins2, FALSE, FALSE);
 				if (Ind2) ok = TRUE;
 			}
 		}
@@ -12109,7 +12109,7 @@ bool master_player(int Ind, char *parms){
 
 			break;
 		case 'A':	/* acquirement */
-			Ind2 = name_lookup(Ind, &parms[1], FALSE);
+			Ind2 = name_lookup(Ind, &parms[1], FALSE, FALSE);
 			if(Ind2)
 			{
 				player_type *p_ptr2 = Players[Ind2];
@@ -12123,7 +12123,7 @@ bool master_player(int Ind, char *parms){
 		case 'k':	/* admin wrath (preceed name with '!' for no-ghost kill */
 			i = 1;
 			if (parms[1] == '!') i = 2;
-			Ind2 = name_lookup(Ind, &parms[i], FALSE);
+			Ind2 = name_lookup(Ind, &parms[i], FALSE, FALSE);
 			if (Ind2) {
 				q_ptr = Players[Ind2];
 				msg_print(Ind2, "\377rYou are hit by a bolt from the blue!");

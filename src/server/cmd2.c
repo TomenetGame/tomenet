@@ -1079,7 +1079,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 	switch (args[1]) {
 		case '1':
 			/* Check house limit of target player! */
-			i = name_lookup_loose(Ind, &args[2], FALSE);
+			i = name_lookup_loose(Ind, &args[2], FALSE, FALSE);
 			if (!i) {
 				msg_print(Ind, "Target player isn't logged on.");
 				return(FALSE);
