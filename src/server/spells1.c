@@ -11118,6 +11118,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (Ind != -who) dam = (dam * 3) / 2; /* heals allies for 3/4 of the self-heal amount */
 			}
 
+#if 0 /* causes a prob with 'Cure Wounds' spell - targetting cannot determine if to skip vampires or not -_- */
 			if (p_ptr->ghost || (r_ptr->flags3 & RF3_UNDEAD) || p_ptr->suscep_life) {
 				if (rand_int(100) < p_ptr->skill_sav)
 					msg_print(Ind, "You shudder, but you resist the effect!");
@@ -11130,7 +11131,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					if (p_ptr->chp <= dam) dam = p_ptr->chp - 1;
 					take_hit(Ind, dam, killer, -who);
 				}
-			} else {
+			} else
+#endif
+			{
 				msg_format(Ind, "\377gYou are healed for %d hit points",dam);
 				//(spammy) msg_format_near(Ind, "\377g%s has been healed for %d hit points!.", p_ptr->name, dam);
 				if (IS_PLAYER(-who)) /* paranoia? */
