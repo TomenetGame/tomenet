@@ -11136,7 +11136,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			{
 				msg_format(Ind, "\377gYou are healed for %d hit points",dam);
 				//(spammy) msg_format_near(Ind, "\377g%s has been healed for %d hit points!.", p_ptr->name, dam);
-				if (IS_PLAYER(-who)) /* paranoia? */
+				if (IS_PLAYER(-who) /* paranoia? */
+				     && -who != Ind) /* don't notify ourselves about healing ourselves */
 					msg_format(-who, "\377w%s has been healed for \377g%d\377w hit points.", p_ptr->name, dam);
 
 				hp_player_quiet(Ind, dam, FALSE);
