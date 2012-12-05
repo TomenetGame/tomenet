@@ -3506,6 +3506,8 @@
 #define SV_CUSTOM_TOME_2	101
 #define SV_CUSTOM_TOME_3	102
 
+#define is_custom_tome(sval)	((sval) >= SV_CUSTOM_TOME_1 && (sval) <= SV_CUSTOM_TOME_3)
+
 
 /* For precious stones (TV_PRECIOUS_STONE) */
 /* order is from least rare to most rare (thanks, http://magmawiki.com/index.php/40d:Gem and some creative writing) */

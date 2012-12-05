@@ -783,8 +783,19 @@ void lua_fix_spellbooks(int spell, int mod)
 	/* scan world (includes MAngband-style houses) */
 	for (i = 0; i < o_max; i++) {
 		o_ptr = &o_list[i];
-		if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK && o_ptr->pval >= spell) {
-			o_ptr->pval += mod;
+		if (o_ptr->tval == TV_BOOK) {
+			if (o_ptr->sval == SV_SPELLBOOK && o_ptr->pval >= spell) o_ptr->pval += mod;
+			/* spells inside custom books */
+			if (is_custom_tome(o_ptr->sval)) {
+				if (o_ptr->xtra1 - 1 >= spell) o_ptr->xtra1 += mod;
+				if (o_ptr->xtra2 - 1 >= spell) o_ptr->xtra2 += mod;
+				if (o_ptr->xtra3 - 1 >= spell) o_ptr->xtra3 += mod;
+				if (o_ptr->xtra4 - 1 >= spell) o_ptr->xtra4 += mod;
+				if (o_ptr->xtra5 - 1 >= spell) o_ptr->xtra5 += mod;
+				if (o_ptr->xtra6 - 1 >= spell) o_ptr->xtra6 += mod;
+				if (o_ptr->xtra7 - 1 >= spell) o_ptr->xtra7 += mod;
+				if (o_ptr->xtra8 - 1 >= spell) o_ptr->xtra8 += mod;
+			}
 		}
 	}
 #endif
@@ -795,9 +806,19 @@ void lua_fix_spellbooks(int spell, int mod)
 		for (i = 0; i < h_ptr->stock_num; i++) {
 			o_ptr = &h_ptr->stock[i];
 			if (!o_ptr->k_idx) continue;
-			if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK
-			    && o_ptr->pval >= spell) {
-				o_ptr->pval += mod;
+			if (o_ptr->tval == TV_BOOK) {
+				if (o_ptr->sval == SV_SPELLBOOK && o_ptr->pval >= spell) o_ptr->pval += mod;
+				/* spells inside custom books */
+				if (is_custom_tome(o_ptr->sval)) {
+					if (o_ptr->xtra1 - 1 >= spell) o_ptr->xtra1 += mod;
+					if (o_ptr->xtra2 - 1 >= spell) o_ptr->xtra2 += mod;
+					if (o_ptr->xtra3 - 1 >= spell) o_ptr->xtra3 += mod;
+					if (o_ptr->xtra4 - 1 >= spell) o_ptr->xtra4 += mod;
+					if (o_ptr->xtra5 - 1 >= spell) o_ptr->xtra5 += mod;
+					if (o_ptr->xtra6 - 1 >= spell) o_ptr->xtra6 += mod;
+					if (o_ptr->xtra7 - 1 >= spell) o_ptr->xtra7 += mod;
+					if (o_ptr->xtra8 - 1 >= spell) o_ptr->xtra8 += mod;
+				}
 			}
 		}
 	}
