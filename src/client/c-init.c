@@ -1236,9 +1236,7 @@ static void init_artifact_list() {
 void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 	char buf[1024], *p1, *p2;
 	FILE *fff;
-	int l = 0;
-
-	int pl = -1, cl = strlen(cname);
+	int l = 0, pl = -1, cl = strlen(cname);
 	int pl_len = 80 - 3 - cl - 2; /* 80 - 3 - namelen = chars available per chat line; 3 for brackets+space, 2 for colour code */
 	int chars_per_pline = ((int)MSG_LEN / pl_len) * pl_len; /* chars usable in a paste_lines[] */
 	char tmp[MSG_LEN];
@@ -1260,7 +1258,6 @@ void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 			if (!p1 && !p2) break;
 			if (!p1) p1 = p2;
 			else if (p2 && p2 < p1) p1 = p2;
-			strcpy(buf, p1 + 1);
 			//strcpy(buf, p1 + 1); // overlapping strings
 			memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
 		}
