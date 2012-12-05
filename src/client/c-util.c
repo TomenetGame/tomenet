@@ -4570,15 +4570,15 @@ void interact_macros(void)
 						clear_from(10);
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose the targetting method:");
 						//Term_putstr(10, 11, -1, TERM_GREEN, "(\377UHINT: \377gAlso inscribe your ammo '!=' for auto-pickup!)");
-						Term_putstr(10, 12, -1, TERM_L_GREEN, "a) Target closest monster if such exists,");
-						Term_putstr(10, 13, -1, TERM_L_GREEN, "   otherwise cancel the action. (\377URecommended in most cases!\377G)");
-						Term_putstr(10, 15, -1, TERM_L_GREEN, "b) Target closest monster if such exists,");
-						Term_putstr(10, 16, -1, TERM_L_GREEN, "   otherwise prompt for direction.");
-						Term_putstr(10, 18, -1, TERM_L_GREEN, "c) Target closest monster if such exists,");
-						Term_putstr(10, 19, -1, TERM_L_GREEN, "   otherwise target own grid.");
-						Term_putstr(10, 21, -1, TERM_L_GREEN, "d) Target own grid (ie yourself).");
-						Term_putstr(10, 23, -1, TERM_L_GREEN, "e) Target friendly player with lowest hit points, cancel the");
-						Term_putstr(10, 24, -1, TERM_L_GREEN, "   action if no other player is nearby. (\377UFor 'Cure Wounds'.\377G)");
+						Term_putstr(10, 11, -1, TERM_L_GREEN, "a) Target closest monster if such exists,");
+						Term_putstr(10, 12, -1, TERM_L_GREEN, "   otherwise cancel action. (\377URecommended in most cases!\377G)");
+						Term_putstr(10, 14, -1, TERM_L_GREEN, "b) Target closest monster if such exists,");
+						Term_putstr(10, 15, -1, TERM_L_GREEN, "   otherwise prompt for direction.");
+						Term_putstr(10, 17, -1, TERM_L_GREEN, "c) Target closest monster if such exists,");
+						Term_putstr(10, 18, -1, TERM_L_GREEN, "   otherwise target own grid.");
+						Term_putstr(10, 20, -1, TERM_L_GREEN, "d) Target own grid (ie yourself).");
+						Term_putstr(10, 22, -1, TERM_L_GREEN, "e) Target friendly player with lowest hit points,");
+						Term_putstr(10, 23, -1, TERM_L_GREEN, "   cancel action if no player is nearby. (\377UEg for 'Cure Wounds'.\377G)");
 
 						while (TRUE) {
 							switch (choice = inkey()) {
