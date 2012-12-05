@@ -1432,13 +1432,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 	if (p_ptr->alert_afk_dam && p_ptr->afk && p_ptr->paging == 0) p_ptr->paging = 1;
 
 	/* Amulet of Immortality */
-	object_type *o_ptr = &p_ptr->inventory[INVEN_NECK];
-	/* Skip empty items */
-	if (o_ptr->k_idx) {
-		if (o_ptr->tval == TV_AMULET &&
-			(o_ptr->sval == SV_AMULET_INVINCIBILITY || o_ptr->sval == SV_AMULET_INVULNERABILITY))
-		return;
-	}
+	if (p_ptr->admin_invuln) return;
 
 	/* Heavenly invulnerability? */
 	if (p_ptr->martyr && !bypass_invuln) {
@@ -1811,13 +1805,7 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool
 	player_type *p_ptr = Players[Ind];
 
 	/* Amulet of Immortality */
-	object_type *o_ptr = &p_ptr->inventory[INVEN_NECK];
-	/* Skip empty items */
-	if (o_ptr->k_idx) {
-		if (o_ptr->tval == TV_AMULET &&
-		    (o_ptr->sval == SV_AMULET_INVINCIBILITY || o_ptr->sval == SV_AMULET_INVULNERABILITY))
-			return;
-	}
+	if (p_ptr->admin_invuln) return;
 
 	/* Paranoia */
 	if (p_ptr->death) return;
@@ -1857,7 +1845,7 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool
 		/* To preserve the players original (pre-ghost) cause
 		   of death, use died_from_list.  To preserve the original
 		   depth, use died_from_depth. */
-		
+
 		(void)strcpy(p_ptr->died_from, hit_from);
 		if (!p_ptr->ghost) {
 			strcpy(p_ptr->died_from_list, hit_from);

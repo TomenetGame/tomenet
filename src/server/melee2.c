@@ -7462,8 +7462,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				/* get him if allowed */
 				if ((m_ptr->owner == pd_ptr->id) || /* Don't attack your master! */
 				    /* Invincible players can't be atacked! */
-				    ((pd_ptr->inventory[INVEN_NECK].tval == TV_AMULET) &&
-		    		    (pd_ptr->inventory[INVEN_NECK].sval == SV_AMULET_INVINCIBILITY)))
+				    pd_ptr->admin_invinc)
 					continue;
 
 				/* did we choose this player for target in our previous turn?
@@ -7634,9 +7633,8 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			q_ptr = Players[p_idx_target];
 
 			/* Don't attack your master! Invincible players can't be atacked! */
-			if ((q_ptr && m_ptr->owner != q_ptr->id) &&
-			    !((q_ptr->inventory[INVEN_NECK].tval == TV_AMULET) &&
-			    (q_ptr->inventory[INVEN_NECK].sval == SV_AMULET_INVINCIBILITY)))
+			if (q_ptr && m_ptr->owner != q_ptr->id &&
+			    !q_ptr->admin_invinc)
 			{
 				/* Push past weaker players (unless leaving a wall) */
 				if ((r_ptr->flags2 & RF2_MOVE_BODY) &&
@@ -9283,8 +9281,7 @@ void process_monsters(void)
 				continue;
 
 			/* Skip if player wears amulet of invincibility - C. Blue */
-			if ((p_ptr->inventory[INVEN_NECK].tval == TV_AMULET) &&
-			    (p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_INVINCIBILITY)
+			if (p_ptr->admin_invinc
 			    && (!m_ptr->owner || (m_ptr->owner != p_ptr->id))) /* for Dungeon Master GF_DOMINATE */
 				continue;
 

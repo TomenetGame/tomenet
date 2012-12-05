@@ -5741,13 +5741,7 @@ void lose_exp(int Ind, s32b amount)
 	player_type *p_ptr = Players[Ind];
 
 	/* Amulet of Immortality */
-	object_type *o_ptr = &p_ptr->inventory[INVEN_NECK];
-	/* Skip empty items */
-	if (o_ptr->k_idx) {
-		if (o_ptr->tval == TV_AMULET &&
-		    (o_ptr->sval == SV_AMULET_INVINCIBILITY || o_ptr->sval == SV_AMULET_INVULNERABILITY))
-			return;
-	}
+	if (p_ptr->admin_invuln) return;
 
 	if (safe_area(Ind)) return;
 
@@ -7277,11 +7271,7 @@ void player_death(int Ind)
 		erase = TRUE;
 
 	/* Amulet of immortality prevents death */
-	o_ptr = &p_ptr->inventory[INVEN_NECK];
-	/* Skip empty items */
-	if (!erase &&
-	    o_ptr->k_idx && o_ptr->tval == TV_AMULET &&
-	    (o_ptr->sval == SV_AMULET_INVINCIBILITY || o_ptr->sval == SV_AMULET_INVULNERABILITY)) {
+	if (!erase && p_ptr->admin_invuln) {
 		if (just_fruitbat_transformation) p_ptr->fruit_bat = 0;
 		return;
 	}

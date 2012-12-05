@@ -3256,6 +3256,9 @@ void calc_boni(int Ind)
 	p_ptr->skill_dig = 0;
 
 
+	/* Special admin items */
+	p_ptr->admin_invuln = p_ptr->admin_invinc = FALSE;
+
 	/* Calc bonus body */
 	if (p_ptr->body_monster) calc_body_bonus(Ind);
 	else {	// if if or switch to switch, that is the problem :)
@@ -3534,7 +3537,7 @@ void calc_boni(int Ind)
 
 	if (p_ptr->pclass == CLASS_SHAMAN)
 		if (p_ptr->lev >= 20) p_ptr->see_inv = TRUE;
-	
+
 	if (p_ptr->pclass == CLASS_DRUID)
 		if (p_ptr->lev >= 10) p_ptr->pass_trees = TRUE;
 
@@ -3617,7 +3620,7 @@ void calc_boni(int Ind)
 			p_ptr->stat_add[i]--;
 		}
 	}
-	
+
 
 	/* Hack -- the dungeon master gets +50 speed. */
 	if (p_ptr->admin_dm) {
@@ -3638,7 +3641,7 @@ void calc_boni(int Ind)
 		p_ptr->inven_cnt++;
 		p_ptr->total_weight += o_ptr->weight * o_ptr->number;
 	}
-    
+
 	/* Apply the bonus from Druidism */
 	p_ptr->to_h += p_ptr->focus_val;
 	p_ptr->dis_to_h += p_ptr->focus_val;
@@ -3654,6 +3657,18 @@ void calc_boni(int Ind)
 
 		/* Skip missing items */
 		if (!o_ptr->k_idx) continue;
+
+
+		/* Special admin items */
+		if (o_ptr->tval == TV_AMULET) {
+			switch (o_ptr->sval) {
+			case SV_AMULET_INVINCIBILITY:
+				p_ptr->admin_invinc = TRUE;
+				/* fall through */
+			case SV_AMULET_INVULNERABILITY:
+				p_ptr->admin_invuln = TRUE;
+			}
+		}
 
 #ifdef EQUIPMENT_SET_BONUS
 		if (o_ptr->name1 == ART_RANDART) {

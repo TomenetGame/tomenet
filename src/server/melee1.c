@@ -238,14 +238,7 @@ static bool do_eat_item(int Ind, int m_idx)
 	int i, k;
 
         /* Amulet of Immortality */
-        o_ptr = &p_ptr->inventory[INVEN_NECK];
-        /* Skip empty items */
-        if (o_ptr->k_idx)
-        {
-                if (o_ptr->tval == TV_AMULET &&
-                    (o_ptr->sval == SV_AMULET_INVINCIBILITY || o_ptr->sval == SV_AMULET_INVULNERABILITY))
-	                return FALSE;
-        }
+        if (p_ptr->admin_invuln) return FALSE;
 
 	if (safe_area(Ind)) return TRUE;
 
