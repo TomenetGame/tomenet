@@ -4569,13 +4569,16 @@ void interact_macros(void)
 					if (strstr(buf2, "*t") && choice != mw_mimicidx) {
 						clear_from(10);
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose the targetting method:");
-						Term_putstr(10, 11, -1, TERM_GREEN, "(\377UHINT: \377gAlso inscribe your ammo '!=' for auto-pickup!)");
-						Term_putstr(10, 13, -1, TERM_L_GREEN, "a) Target closest monster if such exists,");
-						Term_putstr(10, 14, -1, TERM_L_GREEN, "   otherwise cancel the action. (Recommended)");
-						Term_putstr(10, 16, -1, TERM_L_GREEN, "b) Target closest monster if such exists,");
-						Term_putstr(10, 17, -1, TERM_L_GREEN, "   otherwise prompt for direction.");
-						Term_putstr(10, 19, -1, TERM_L_GREEN, "c) Target closest monster if such exists,");
-						Term_putstr(10, 20, -1, TERM_L_GREEN, "   otherwise target own grid.");
+						//Term_putstr(10, 11, -1, TERM_GREEN, "(\377UHINT: \377gAlso inscribe your ammo '!=' for auto-pickup!)");
+						Term_putstr(10, 12, -1, TERM_L_GREEN, "a) Target closest monster if such exists,");
+						Term_putstr(10, 13, -1, TERM_L_GREEN, "   otherwise cancel the action. (\377URecommended in most cases!\377G)");
+						Term_putstr(10, 15, -1, TERM_L_GREEN, "b) Target closest monster if such exists,");
+						Term_putstr(10, 16, -1, TERM_L_GREEN, "   otherwise prompt for direction.");
+						Term_putstr(10, 18, -1, TERM_L_GREEN, "c) Target closest monster if such exists,");
+						Term_putstr(10, 19, -1, TERM_L_GREEN, "   otherwise target own grid.");
+						Term_putstr(10, 21, -1, TERM_L_GREEN, "d) Target own grid (ie yourself).");
+						Term_putstr(10, 23, -1, TERM_L_GREEN, "e) Target friendly player with lowest hit points, cancel the");
+						Term_putstr(10, 24, -1, TERM_L_GREEN, "   action if no other player is nearby. (\377UFor 'Cure Wounds'.\377G)");
 
 						while (TRUE) {
 							switch (choice = inkey()) {
@@ -4590,7 +4593,7 @@ void interact_macros(void)
 								continue;
 							default:
 								/* invalid action -> exit wizard */
-								if (choice < 'a' || choice > 'c') {
+								if (choice < 'a' || choice > 'e') {
 //									i = -1;
 									continue;
 								}
@@ -4601,13 +4604,20 @@ void interact_macros(void)
 						if (i == -1) continue;
 
 						if (choice != 'c') {
-							strcpy(buf, "\\e)*t");
+							/* choose initial targetting mechanics */
+							if (choice == 'd') strcpy(buf, "\\e)*q");
+							else if (choice == 'e') strcpy(buf, "\\e)(");
+							else strcpy(buf, "\\e)*t");
+
 							/* We assume that '*t' is always the last part in the macro
 							   and that '\e)' is always the first part */
 							strncat(buf, buf2 + 3, strlen(buf2) - 5);
+
 							/* add new direction feature */
 							if (choice == 'b') strcat(buf, "+");
+							else if (choice == 'd') strcat(buf, "5");
 							else strcat(buf, "-");
+
 							/* replace old macro by this one */
 							strcpy(buf2, buf);
 						}
