@@ -3896,6 +3896,8 @@ static int Receive_play(int ind)
 			}
 		}
 
+		if (sex & MODE_DED_PVP) sex |= MODE_PVP;
+
 		/* Set his character info */
 		connp->sex = sex;
 		connp->race = race;

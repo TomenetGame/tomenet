@@ -5306,7 +5306,7 @@ void do_slash_cmd(int Ind, char *message)
 				int *id_list, i, n;
 				struct account *l_acc;
 				byte tmpm;
-				char colour_sequence[3];
+				char colour_sequence[3 + 1]; /* colour + dedicated slot marker */
 				if (tk < 1) {
 					msg_print(Ind, "Usage: /acclist <account name>");
 					return;
@@ -5325,6 +5325,8 @@ void do_slash_cmd(int Ind, char *message)
 						else if (tmpm & MODE_NO_GHOST) strcpy(colour_sequence, "\377D");
 						else if (tmpm & MODE_HARD) strcpy(colour_sequence, "\377s");
 						else strcpy(colour_sequence, "\377W");
+						if (tmpm & MODE_DED_IDDC) strcat(colour_sequence, "*");
+						if (tmpm & MODE_DED_PVP) strcat(colour_sequence, "*");
 						msg_format(Ind, "Character #%d: %s%s (%d) (ID: %d)", i+1, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), id_list[i]);
 					}
 					if (n) C_KILL(id_list, n, int);
