@@ -10294,7 +10294,7 @@ Note that not every skill is available to every profession (class).
                                 Also gives you a chance to salvage a trap kit
                                 from any trap when you disarm it!
 +Health                         Increases your hit point regeneration rate:
-                                (skill_level * 2)% chance to regenerate 1,5x
+                                (skill_level * 2)% chance to regenerate 1.5x
                                 the normal amount of HP per turn (stacks with
                                 REGEN items).
                                 Increases your hit points by 2 for each point.
