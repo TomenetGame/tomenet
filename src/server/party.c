@@ -1562,7 +1562,7 @@ int party_remove(int remover, cptr name)
 	    ) {
 		/* Keep the party, just lose a member */
 		for (i = 1; i <= NumPlayers; i++) {
-//			if (is_admin(Players[i])) continue;
+			if (is_admin(Players[i])) continue;
 			if (Players[i]->party == q_ptr->party && i != Ind) {
 				strcpy(parties[party_id].owner, Players[i]->name);
 				msg_print(i, "\374\377yYou are now the party owner!");
