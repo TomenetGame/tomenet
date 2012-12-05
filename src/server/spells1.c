@@ -8764,11 +8764,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Colour of the damage, either r (standard) or e (unique monster) */
 	char damcol = 'o';
 
-	int psi_resists = 0;
+	int psi_resists = 0, hack_dam = 0;
 
 	/* Hack -- messages */
 //	cptr act = NULL;
-	
+
 	/* For resist_time: Limit randomization of effect */
 	int time_influence_choices;
 
@@ -8784,6 +8784,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if (p_ptr->got_hit) return (FALSE);
 
 	r_ptr = &r_info[p_ptr->body_monster];
+
+	/* Catch healing hacks */
+	if (typ == GF_HEAL_PLAYER && dam >= 1000) {
+		hack_dam = dam - (dam % 1000);
+		dam = dam % 1000;
+	}
 
 	/* shadow running protects from taking ranged damage - C. Blue
 	   note: currently thereby also affecting friendly effects' 'damage'. */
@@ -8976,7 +8982,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					}
 				}
 			}
-			
+
 			/* Hostile players hit each other */
 			if (check_hostile(Ind, 0 - who)) {
 #ifdef EXPERIMENTAL_PVP_SPELL_DAM
@@ -8992,7 +8998,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* people not in the same party hit each other */
 			else if (!Players[0 - who]->party || !p_ptr->party ||
 				(!player_in_party(Players[0 - who]->party, Ind)))
-			{			
+			{
 #if 0			/* NO - C. Blue */
 #else			/* changed it to YES..  - still C. Blue - but added an if..*/
 			if (check_hostile(0 - who, Ind)) {
@@ -9408,7 +9414,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->resist_pois) dam = (dam + 2) / 3;
 			if (p_ptr->oppose_pois) dam = (dam + 2) / 3;
 			if (p_ptr->suscep_pois) dam = (dam + 2) * 2;
-				
+
 			//Runemaster Elemental Shield - Kurzel
 			if ((p_ptr->tim_elemshield && p_ptr->tim_elemshield_type == 4) && (!bypass_invuln)) {
 				if (p_ptr->csp > 0) {
@@ -9425,7 +9431,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					}
 				}
 			}
-	
+
 			if (fuzzy) msg_format(Ind, "You are hit by poison for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			take_hit(Ind, dam, killer, -who);
@@ -9454,7 +9460,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
                 (void)set_pushed(Ind, dam);
 		break;
 #endif
-                
+
 
 		case GF_HELL_FIRE:
 		if (p_ptr->body_monster && (r_ptr->flags3 & RF3_GOOD)) dam *= 2;
@@ -9497,7 +9503,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		take_hit(Ind, dam, killer, -who);
 		/* No backlash in PvP, similar to no GF_OLD_DRAIN - Kurzel */
 		break;
-		
+
 		case GF_BLIGHT:
 		if (p_ptr->suscep_life) dam = 0;
 		if (p_ptr->body_monster && ((r_ptr->flags3 & RF3_NONLIVING) || (r_ptr->flags3 & RF3_UNDEAD))) dam /= 4;
@@ -9511,7 +9517,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer, -who);
 		break;
-		
+
 		case GF_HOLY_FIRE:
 		if (p_ptr->suscep_evil) dam = (dam * 3) / 4;
 		if (p_ptr->suscep_good) dam *= 2;
@@ -10066,16 +10072,16 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else if ((p_ptr->immune_fire && (p_ptr->resist_cold || p_ptr->oppose_cold)) || (p_ptr->immune_cold && (p_ptr->resist_fire || p_ptr->oppose_fire))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
 			else if ((p_ptr->immune_fire && p_ptr->suscep_cold) || (p_ptr->immune_cold && p_ptr->suscep_fire)) dam = dam; //Immune + Susceptable. (1)
 			else if (p_ptr->immune_fire || p_ptr->immune_cold) dam = (dam + 1) / 2; //Immune + None. (1/2)
-			
+
 			else if ((p_ptr->resist_fire && p_ptr->oppose_fire) && (p_ptr->resist_cold && p_ptr->oppose_cold)) dam = (dam + 8) / 9; //Double + Double. (1/9)
 			else if (((p_ptr->resist_fire && p_ptr->oppose_fire) && (p_ptr->resist_cold || p_ptr->oppose_cold)) || ((p_ptr->resist_cold && p_ptr->oppose_cold) && (p_ptr->resist_fire || p_ptr->oppose_fire))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
 			else if (((p_ptr->resist_fire && p_ptr->oppose_fire) && p_ptr->suscep_cold) || ((p_ptr->resist_cold && p_ptr->oppose_cold) && p_ptr->suscep_fire)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
 			else if ((p_ptr->resist_fire && p_ptr->oppose_fire) || (p_ptr->resist_cold && p_ptr->oppose_cold)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
-			
+
 			else if ((p_ptr->resist_fire || p_ptr->oppose_fire) && (p_ptr->resist_cold || p_ptr->oppose_cold)) dam = (dam + 2) / 3; //Single + Single. (1/3)
 			else if (((p_ptr->resist_fire || p_ptr->oppose_fire) && p_ptr->suscep_cold) || ((p_ptr->resist_cold || p_ptr->oppose_cold) && p_ptr->suscep_fire)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
 			else if ((p_ptr->resist_fire || p_ptr->oppose_fire) || (p_ptr->resist_cold || p_ptr->oppose_cold)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-			
+
 			else if (p_ptr->suscep_fire && p_ptr->suscep_cold) dam *= 2; //Susceptable + Susceptable. (2)
 			else if (p_ptr->suscep_fire || p_ptr->suscep_cold) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
 
@@ -10107,7 +10113,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			break;
 		}
-		
+
 		/* Fire + Poison */
 		case GF_FIRE_POISON:
 		{
@@ -10121,16 +10127,16 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else if ((p_ptr->immune_fire && (p_ptr->resist_pois || p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_fire || p_ptr->oppose_fire))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
 			else if ((p_ptr->immune_fire && p_ptr->suscep_pois) || (p_ptr->immune_poison && p_ptr->suscep_fire)) dam = dam; //Immune + Susceptable. (1)
 			else if (p_ptr->immune_fire || p_ptr->immune_poison) dam = (dam + 1) / 2; //Immune + None. (1/2)
-			
+
 			else if ((p_ptr->resist_fire && p_ptr->oppose_fire) && (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) / 9; //Double + Double. (1/9)
 			else if (((p_ptr->resist_fire && p_ptr->oppose_fire) && (p_ptr->resist_pois || p_ptr->oppose_pois)) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && (p_ptr->resist_fire || p_ptr->oppose_fire))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
 			else if (((p_ptr->resist_fire && p_ptr->oppose_fire) && p_ptr->suscep_pois) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && p_ptr->suscep_fire)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
 			else if ((p_ptr->resist_fire && p_ptr->oppose_fire) || (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
-			
+
 			else if ((p_ptr->resist_fire || p_ptr->oppose_fire) && (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) / 3; //Single + Single. (1/3)
 			else if (((p_ptr->resist_fire || p_ptr->oppose_fire) && p_ptr->suscep_pois) || ((p_ptr->resist_pois || p_ptr->oppose_pois) && p_ptr->suscep_fire)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
 			else if ((p_ptr->resist_fire || p_ptr->oppose_fire) || (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-			
+
 			else if (p_ptr->suscep_fire && p_ptr->suscep_pois) dam *= 2; //Susceptable + Susceptable. (2)
 			else if (p_ptr->suscep_fire || p_ptr->suscep_pois) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
 
@@ -10142,9 +10148,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			{
 				(void)set_blind(Ind, p_ptr->blind + randint(5) + 2);
 			}
-			
+
 			take_hit(Ind, dam, killer, -who);
-			
+
 			/* Poison */
 			if (!(p_ptr->resist_pois || p_ptr->oppose_pois)) {
 				/* don't poison for too long in pvp */
@@ -10187,16 +10193,16 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else if ((p_ptr->immune_cold && (p_ptr->resist_pois || p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_cold || p_ptr->oppose_cold))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
 			else if ((p_ptr->immune_cold && p_ptr->suscep_pois) || (p_ptr->immune_poison && p_ptr->suscep_cold)) dam = dam; //Immune + Susceptable. (1)
 			else if (p_ptr->immune_cold || p_ptr->immune_poison) dam = (dam + 1) / 2; //Immune + None. (1/2)
-			
+
 			else if ((p_ptr->resist_cold && p_ptr->oppose_cold) && (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) / 9; //Double + Double. (1/9)
 			else if (((p_ptr->resist_cold && p_ptr->oppose_cold) && (p_ptr->resist_pois || p_ptr->oppose_pois)) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && (p_ptr->resist_cold || p_ptr->oppose_cold))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
 			else if (((p_ptr->resist_cold && p_ptr->oppose_cold) && p_ptr->suscep_pois) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && p_ptr->suscep_cold)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
 			else if ((p_ptr->resist_cold && p_ptr->oppose_cold) || (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
-			
+
 			else if ((p_ptr->resist_cold || p_ptr->oppose_cold) && (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) / 3; //Single + Single. (1/3)
 			else if (((p_ptr->resist_cold || p_ptr->oppose_cold) && p_ptr->suscep_pois) || ((p_ptr->resist_pois || p_ptr->oppose_pois) && p_ptr->suscep_cold)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
 			else if ((p_ptr->resist_cold || p_ptr->oppose_cold) || (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-			
+
 			else if (p_ptr->suscep_cold && p_ptr->suscep_pois) dam *= 2; //Susceptable + Susceptable. (2)
 			else if (p_ptr->suscep_cold || p_ptr->suscep_pois) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
 
@@ -10211,9 +10217,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			} else {
 				(void)set_slow(Ind, p_ptr->slow + rand_int(3) + 2);
 			}
-			
+
 			take_hit(Ind, dam, killer, -who);
-			
+
 			/* Poison */
 			if (!(p_ptr->resist_pois || p_ptr->oppose_pois)) {
 				/* don't poison for too long in pvp */
@@ -10242,7 +10248,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			break;
 		}
-		
+
 		/* Nether -- drain experience */
 		case GF_NETHER:
 		if (p_ptr->immune_neth)
@@ -10353,7 +10359,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		dam = 0;
 		break;
-		
+
 		/* Affliction -- random ailment (no sleep on players?) - Kurzel */
 		case GF_AFFLICT:
 		if (fuzzy) msg_print(Ind, "You are hit by something!");
@@ -10380,7 +10386,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		} else if (k==4) {
 			if (fuzzy || self) msg_print(Ind, "Something drains power from your muscles!");
 			else msg_format(Ind, "%^s drains power from your muscles!", killer);
-			
+
 			if (p_ptr->free_act)
 			{
 				msg_print(Ind, "You are unaffected!");
@@ -10644,7 +10650,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Energy Drain -- Should never 'freeze' players? - Kurzel */
 		case GF_STOP:
 			break;
-			
+
 		/* Gravity -- stun plus slowness plus teleport */
 		case GF_GRAVITY:
 			/* Feather fall lets us resist gravity */
@@ -10696,7 +10702,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (!p_ptr->resist_sound)
 				(void)set_stun(Ind, p_ptr->stun + randint(15));
 			break;
-			
+
 		/* Thunder -- elec plus sound plus light */
 		case GF_THUNDER:
 			k_elec = dam / 3; /* 33% ELEC damage, total elec damage is saved in 'k_elec' */
@@ -11021,7 +11027,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			(void)set_oppose_acid(Ind, dam); /* removed stacking */
 			break;
 		}
-	
+
 		case GF_RESCOLD_PLAYER:
 		{
 			(void)set_oppose_cold(Ind, dam); /* removed stacking */
@@ -11050,7 +11056,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			map_area(Ind);
 			break;
 		}
-			
 		case GF_DETECTCREATURE_PLAYER:
 		{
  			(void)detect_creatures(Ind);
@@ -11091,6 +11096,23 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_HEAL_PLAYER:
 		{
 			/* hacks */
+			dam += hack_dam;
+			if (dam >= 4000) { /* CCW */
+				dam -= 4000;
+				(void)set_blind(Ind, 0);
+				(void)set_cut(Ind, 0, 0);
+				(void)set_confused(Ind, 0);
+				(void)set_stun(Ind, 0);
+			} else if (dam >= 3000) { /* CSW */
+				dam -= 3000;
+				(void)set_blind(Ind, 0);
+				(void)set_cut(Ind, 0, 0);
+				(void)set_confused(Ind, 0);
+			} else if (dam >= 2000) { /* CLW */
+				dam -= 2000;
+				(void)set_blind(Ind, 0);
+				(void)set_cut(Ind, 0, 0);
+			}
 			if (dam >= 1000) { /* holy curing PBAoE */
 				dam -= 1000;
 				if (Ind != -who) dam = (dam * 3) / 2; /* heals allies for 3/4 of the self-heal amount */

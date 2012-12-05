@@ -5843,7 +5843,11 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
 	/* WRAITHFORM reduces damage/effect! when not hacking runecraft combination spells - Kurzel */
-	if (p_ptr->tim_wraith && !p_ptr->rcraft_project) dam /= 2;
+	if (p_ptr->tim_wraith && !p_ptr->rcraft_project) {
+		if (typ == GF_HEAL_PLAYER && dam >= 1000) {
+			dam = dam - (dam % 1000) + (dam % 1000) / 2;
+		} else dam /= 2;
+	}
 
 	/* Use the given direction */
 	tx = p_ptr->px + 99 * ddx[dir];
@@ -6035,7 +6039,7 @@ bool cast_fireworks(worldpos *wpos, int x, int y)
 		project_time_effect = EFF_FIREWORKS3;
 		typ -= 7 * 2;
 	}
-	
+
 	switch(typ) {
 	case 0: typ = GF_FW_FIRE; break;
 	case 1: typ = GF_FW_ELEC; break;
@@ -6313,7 +6317,11 @@ bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 	int flg = PROJECT_NORF | PROJECT_HIDE | PROJECT_STOP | PROJECT_KILL;//PROJECT_ITEM | PROJECT_GRID
 
 	/* WRAITHFORM reduces damage/effect! */
-	if (p_ptr->tim_wraith) dam /= 2;
+	if (p_ptr->tim_wraith) {
+		if (typ == GF_HEAL_PLAYER && dam >= 1000) {
+			dam = dam - (dam % 1000) + (dam % 1000) / 2;
+		} else dam /= 2;
+	}
 
 	/* Use the given direction */
 	tx = p_ptr->px + 99 * ddx[dir];

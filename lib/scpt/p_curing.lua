@@ -71,7 +71,18 @@ HCUREWOUNDS = add_spell
 	["stat"] =      A_WIS,
 	["direction"] = TRUE,
 	["spell"] =     function(args)
-			fire_grid_bolt(Ind, GF_HEAL_PLAYER, args.dir, get_curewounds_power(), " points at your wounds.")
+			local status_ailments
+			--hacks to cure effects same as potions would
+			if get_level(Ind, HCUREWOUNDS, 50) >= 24 then
+				status_ailments = 4000
+			elseif get_level(Ind, HCUREWOUNDS, 50) >= 10 then
+				status_ailments = 3000
+			elseif get_level(Ind, HCUREWOUNDS, 50) >= 4 then
+				status_ailments = 2000
+			else
+				status_ailments = 0
+			end
+			fire_grid_bolt(Ind, GF_HEAL_PLAYER, args.dir, status_ailments + get_curewounds_power(), " points at your wounds.")
 	end,
 	["info"] =      function()
 --			return "heal "..get_curewounds_power()
@@ -79,7 +90,9 @@ HCUREWOUNDS = add_spell
 	end,
 	["desc"] =      {
 		"Heals a certain amount of hitpoints of a friendly target",
-		"***Automatically projecting***",
+		"Also cures blindness and cuts at level 4",
+		"Also cures confusion at level 10",
+		"Also cures stun at level 24",
 	}
 }
 
