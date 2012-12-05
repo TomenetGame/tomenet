@@ -23,12 +23,21 @@ function get_healing_power2()
         return pow
 end
 
+function get_curewounds_dice()
+	local hd
+        hd = get_level(Ind, HCUREWOUNDS, 27) + 1
+        if (hd > 14) then hd = 14 end
+        return hd
+end
 function get_curewounds_power()
-        local pow
+	local pow
+--[[
         pow = get_level(Ind, HCUREWOUNDS, 200)
 	if pow > 112 then
 		pow = 112
 	end
+]]
+        pow = damroll(get_curewounds_dice(), 8)
         return pow
 end
 
@@ -65,7 +74,8 @@ HCUREWOUNDS = add_spell
 			fire_grid_bolt(Ind, GF_HEAL_PLAYER, args.dir, get_curewounds_power(), " points at your wounds.")
 	end,
 	["info"] =      function()
-			return "heal "..get_curewounds_power()
+--			return "heal "..get_curewounds_power()
+			return "heal "..get_curewounds_dice().."d8"
 	end,
 	["desc"] =      {
 		"Heals a certain amount of hitpoints of a friendly target",
