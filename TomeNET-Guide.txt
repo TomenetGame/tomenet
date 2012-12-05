@@ -1922,7 +1922,11 @@ that case, try again with different names.
 
 Now that you have logged in you can create a new player character which will
 represent you in the virtual world of Middle Earth!
-Player characters are identified by 3 names:
+To do so, press 'N' key in your character overview screen (showing you empty
+character slots, since you haven't created any characters yet) and then enter
+a name for your character. You may use the same name as your account name, if
+you like.
+Players logged on to the game are identified by 3 names:
 -Nickname (character's name)
 -Realname (account name)
 -Hostname (The hostname of the connecting computer)
@@ -1943,6 +1947,9 @@ If that doesn't seem to happen, ask an admin directly, when you see one
 chatting (Admin's names are displayed in dark blue in the chat).
 If the server's intro screen mentions to send an email to an admin, try that
 and specify your account name in it.
+
+You may continue reading at (3.1), which explains details of the character
+creation progress.
 
 
 
@@ -2124,6 +2131,27 @@ SOLUTION: Can be caused by some firewalls interacting with mumble's quality of
 
 (3.1) Creating a new character; character modes
 -----------------------------------------------
+To create a new character, you press either 'N' or 'D' key in your account
+overview screen. 'N' is the normal way for creating a new character.
+
+'D' is actually for creation a so-called 'dedicated' character:
+There are two character slots in your account that can be used for creating a
+character dedicated to each of these special ways of playing:
+ a) Ironman Deep Dive Challenge (see (4.13) for details)
+ b) Player versus Player (see 'PvP' further below in this section)
+If you create such a dedicated character, you will be unable to use it for
+anything else. The point of having dedicated character slots is to ensure that
+even if your account is full of characters, you still have one slot available
+to participate in IDDC and in PvP gameplay.
+Note: A dedicated IDDC character will be killed and erased if it fails to enter
+the IDDC dungeon (ie if it acquires any experience outside of it) or if it
+recalls out of it at one of the static towns. The kill message will be:
+"XXXX was killed by indetermination".
+
+However, since this is your first character, just press 'N' to start the
+creation progress, enter a character name, and continue reading.
+
+
 First you may choose your gender. This will not have actual influence on your
 strengths or weaknesses.
 
