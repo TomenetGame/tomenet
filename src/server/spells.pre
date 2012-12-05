@@ -549,6 +549,7 @@ extern char *lua_get_mon_name(int r_idx);
 extern void lua_towns_treset(void);
 extern long lua_player_exp(int level, int expfact);
 extern void lua_fix_spellbooks(int spell, int mod);
+extern void lua_fix_spellbooks_hackfix(int spell, int mod);
 extern void lua_arts_fix(int Ind);
 extern char* lua_get_last_chat_line();
 extern char* lua_get_last_chat_owner();

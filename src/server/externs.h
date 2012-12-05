@@ -1986,6 +1986,7 @@ extern bool first_player_joined;
 void lua_towns_treset(void);
 long lua_player_exp(int level, int expfact);
 extern void lua_fix_spellbooks(int spell, int mod);
+extern void lua_fix_spellbooks_hackfix(int spell, int mod);
 extern void lua_arts_fix(int Ind);
 void lua_get_pgestat(int Ind, int n);
 void lua_start_global_event(int Ind, int evtype, char *parm);
