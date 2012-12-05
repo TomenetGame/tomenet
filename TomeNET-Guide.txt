@@ -1955,9 +1955,9 @@ creation progress.
 
 (2.3) Client options
 --------------------
-By pressing the '=' key, you can access the options menu where you can tweak
-your client in some ways. Some of these options that aren't self-explaining
-or that are especially important are listed in detail here:
+By pressing the '=' key in game, you can access the options menu where you can
+tweak your client in some ways. Some of these options that aren't
+self-explaining or that are especially important are listed in detail here:
 
 (1 & 2) User Interface Options
     Rogue-like commands (rogue_like_commands)
