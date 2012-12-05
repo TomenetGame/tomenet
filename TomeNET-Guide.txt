@@ -2131,20 +2131,20 @@ SOLUTION: Can be caused by some firewalls interacting with mumble's quality of
 
 (3.1) Creating a new character; character modes
 -----------------------------------------------
-To create a new character, you press either 'N' or 'D' key in your account
+To create a new character, you press either 'N' or 'E' key in your account
 overview screen. 'N' is the normal way for creating a new character.
 
-'D' is actually for creation a so-called 'dedicated' character:
+'E' is for creating a so-called 'exclusive' (or 'dedicated') character:
 There are two character slots in your account that can be used for creating a
 character dedicated to each of these special ways of playing:
  a) Ironman Deep Dive Challenge (see (4.13) for details)
  b) Player versus Player (see 'PvP' further below in this section)
-If you create such a dedicated character, you will be unable to use it for
-anything else. The point of having dedicated character slots is to ensure that
+If you create such an exclusive character, you will be unable to use it for
+anything else. The point of having exclusive character slots is to ensure that
 even if your account is full of characters, you still have one slot available
 to participate in IDDC and in PvP gameplay.
 Note: A dedicated IDDC character will be killed and erased if it fails to enter
-the IDDC dungeon (ie if it acquires any experience outside of it) or if it
+the IDDC dungeon (that is if it acquires any experience outside of it) or if it
 recalls out of it at one of the static towns. The kill message will be:
 "XXXX was killed by indetermination".
 
@@ -5347,6 +5347,8 @@ Ironman Deep Dive Challenge (IDDC)
     always occur at dungeon level 40 and 80 respectively. If you recall at such
     a town it calls as withdrawing from the challenge and you won't make it on
     the leaderboard that can be viewed at the mayor's office in Bree.
+    (Note that 'IDDC-exclusive' characters can NOT recall out at static towns.
+    If they try, they are just 'killed by indetermnation' and erased.)
 
     Since you cannot recall out aside from these two towns, except if you reach
     the 127th floor of the dungeon, it is extremely likely that you will die
@@ -5370,8 +5372,9 @@ Ironman Deep Dive Challenge (IDDC)
     Inside the challenge dungeon you can acquire a kill quest via /quest
     command at level 1 already, instead of the usual minimum level of 5.
 
-    Since you cannot recall out before reaching the 127th floor, in case you
-    need to go offline you'll just have to log out inside the dungeon.
+    Since you cannot recall out before reaching the 127th floor (or in one of
+    the static towns), in case you need to go offline you'll just have to log
+    out inside the dungeon.
     Keep in mind that your character will stay in the game for about 30 more
     seconds during which it could be killed if in an unsafe place.
     Dungeon towns in general are free of any monster spawns.
