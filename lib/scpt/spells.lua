@@ -256,7 +256,7 @@ school_book[13] = {
 
 -- Create the book of Holy Curing (66-72)
 school_book[14] = {
-	HHEALING, HDELCURSES, HHEALING2, HCURING, HSANITY, HRESURRECT, HDELBB,
+	HCUREWOUNDS, HHEALING, HDELCURSES, HHEALING2, HCURING, HSANITY, HRESURRECT, HDELBB,
 }
 
 -- Create the book of Holy Support (73-79)

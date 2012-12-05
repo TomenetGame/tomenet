@@ -23,6 +23,15 @@ function get_healing_power2()
         return pow
 end
 
+function get_curewounds_power()
+        local pow
+        pow = get_level(Ind, HCUREWOUNDS, 200)
+	if pow > 112 then
+		pow = 112
+	end
+        return pow
+end
+
 -- Keep consistent with GHOST_XP_LOST
 function get_exp_loss()
 	local pow
@@ -41,6 +50,29 @@ function get_exp_loss()
 	return pow
 end
 
+HCUREWOUNDS = add_spell
+{
+	["name"] = 	"Cure Wounds",
+        ["school"] = 	{SCHOOL_HCURING},
+        ["am"] =	75,
+	["level"] =     3,
+	["mana"] =      3,
+	["mana_max"] =  30,
+	["fail"] =      15,
+	["stat"] =      A_WIS,
+	["direction"] = TRUE,
+	["spell"] =     function(args)
+			fire_grid_bolt(Ind, GF_HEAL_PLAYER, args.dir, get_curewounds_power(), " points at your wounds.")
+	end,
+	["info"] =      function()
+			return "heal "..get_curewounds_power()
+	end,
+	["desc"] =      {
+		"Heals a certain amount of hitpoints of a friendly target",
+		"***Automatically projecting***",
+	}
+}
+
 HHEALING = add_spell
 {
 	["name"] = 	"Heal",
@@ -52,16 +84,15 @@ HHEALING = add_spell
 	["fail"] =      25,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
-		hp_player(Ind, get_healing_power2())
-		fire_ball(Ind, GF_HEAL_PLAYER, 0, ((get_healing_power2() * 3) / 2), 1, " points at your wounds.")
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, 1000 + get_healing_power2(), 1, " points at your wounds.")
 	end,
 	["info"] =      function()
 			return "heal "..get_healing_percents().."% (max "..get_healing_cap()..") = "..get_healing_power2()
 	end,
 	["desc"] =      {
-		"Heals a percent of hitpoints up to a spell level-dependent cap",
+		"Heals a percentage of your hitpoints up to a spell level-dependent cap",
 		"The final cap is 400",
-		"Projecting it will heal 3/4 of that amount on other players",
+		"Projecting it will heal up to 3/4 of that amount on nearby players",
 		"***Automatically projecting***",
 	}
 }
@@ -78,14 +109,14 @@ HDELCURSES = add_spell
         ["fail"] =      40,
         ["stat"] =      A_WIS,
         ["spell"] =     function()
-                local done
-		if get_level(Ind, HDELCURSES, 50) >= 30 then done = remove_all_curse(Ind)
-                else done = remove_curse(Ind) end
-                if done == TRUE then msg_print(Ind, "The curse is broken!") end
-	        end,
+	                local done
+			if get_level(Ind, HDELCURSES, 50) >= 30 then done = remove_all_curse(Ind)
+            		else done = remove_curse(Ind) end
+	                if done == TRUE then msg_print(Ind, "The curse is broken!") end
+		        end,
         ["info"] =      function()
-                return ""
-	        end,
+	                return ""
+		        end,
         ["desc"] =      {
                 "Remove curses of worn objects",
                 "At level 30 switches to *remove curses*"

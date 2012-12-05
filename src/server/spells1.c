@@ -3625,7 +3625,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			earthquake(wpos, y, x, 0);
 			break;
 		}
-		
+
 		case GF_STONE_WALL:
 		{
 			/* Require a "naked" floor grid */
@@ -11090,12 +11090,32 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		case GF_HEAL_PLAYER:
 		{
-			if (!p_ptr->suscep_life)
-			{
-				msg_format(Ind, "\377gYou have been healed for %ld damage",dam);
-				msg_format_near(Ind, "\377g%s has been healed for %ld damage!.", p_ptr->name, dam);
+			/* hacks */
+			if (dam >= 1000) { /* holy curing PBAoE */
+				dam -= 1000;
+				if (Ind != -who) dam = (dam * 3) / 2; /* heals allies for 3/4 of the self-heal amount */
+			}
 
-				(void)hp_player(Ind, dam);
+			if (p_ptr->ghost || (r_ptr->flags3 & RF3_UNDEAD) || p_ptr->suscep_life) {
+				if (rand_int(100) < p_ptr->skill_sav)
+					msg_print(Ind, "You shudder, but you resist the effect!");
+				else {
+					/* Message */
+					msg_print(Ind, "You somehow feel.. cleaned!");
+					dam /= 3; /* full dam is too harsh */
+
+					/* Don't let the player get killed by it - mikaelh */
+					if (p_ptr->chp <= dam) dam = p_ptr->chp - 1;
+					take_hit(Ind, dam, killer, -who);
+				}
+			} else {
+				msg_format(Ind, "\377gYou are healed for %d hit points",dam);
+				//(spammy) msg_format_near(Ind, "\377g%s has been healed for %d hit points!.", p_ptr->name, dam);
+				if (IS_PLAYER(-who)) /* paranoia? */
+					msg_format(-who, "\377w%s has been healed for \377g%d\377w hit points.", p_ptr->name, dam);
+
+				hp_player_quiet(Ind, dam, FALSE);
+				dam = 0;
 			}
 			break;
 		}
@@ -11103,36 +11123,30 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* The druid spell; Note that it _damages_ undead-players instead of healing :-) - the_sandman */
 		case GF_HEALINGCLOUD:
 		{
-				if (p_ptr->ghost || (r_ptr->flags3 & RF3_UNDEAD) || p_ptr->suscep_life)
-				{
-						if (rand_int(100) < p_ptr->skill_sav)
-						{
-							msg_print(Ind, "You shudder, but you resist the effect!");
-						}
-						else
-						{
-							/* Message */
-							msg_print(Ind, "You somehow feel.. cleaned!");
-							dam /= 3; /* full dam is too harsh */
+			if (p_ptr->ghost || (r_ptr->flags3 & RF3_UNDEAD) || p_ptr->suscep_life) {
+				if (rand_int(100) < p_ptr->skill_sav)
+					msg_print(Ind, "You shudder, but you resist the effect!");
+				else {
+					/* Message */
+					msg_print(Ind, "You somehow feel.. cleaned!");
+					dam /= 3; /* full dam is too harsh */
 
-							/* Don't let the player get killed by it - mikaelh */
-							/* 'who' is hacked for GF_HEALINGCLOUD and killer would be "something weird" */
-							if (p_ptr->chp - dam > 0)
-							{
-								take_hit(Ind, dam, killer, -who);
-							}
-						}
+					/* Don't let the player get killed by it - mikaelh */
+					if (p_ptr->chp <= dam) dam = p_ptr->chp - 1;
+					take_hit(Ind, dam, killer, -who);
 				}
-				else
-				{
-						/* Healed */
-						msg_format(Ind, "\377gYou are healed for %d points.", dam);
-						hp_player_quiet(Ind, dam, FALSE);
-						dam = 0;
-				}
+			} else {
+				/* Healed */
+				msg_format(Ind, "\377gYou are healed for %d points.", dam);
+				//(spammy) msg_format_near(Ind, "\377g%s has been healed for %d hit points.", p_ptr->name, dam);
+
+				hp_player_quiet(Ind, dam, FALSE);
+				dam = 0;
+			}
 			break;
 		}
-		case GF_SPEED_PLAYER:		
+
+		case GF_SPEED_PLAYER:
 		{
 			if (dam > 10) dam = 10; /* cap speed bonus for others */
 			if (dam > p_ptr->lev / 3) dam = p_ptr->lev / 3; /* works less well for low level targets */
@@ -13331,7 +13345,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			else if (r_ptr->flags9 & RF9_SUSCEP_ACID)
 				dam *= 2;
 			break;
-			
+
 		case GF_HI_ACID:
 			if (r_ptr->flags3 & RF3_IM_ACID)
 				dam = 0;
@@ -13350,7 +13364,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			else if (r_ptr->flags9 & RF9_SUSCEP_ELEC)
 				dam *= 2;
 			break;
-			
+
 		case GF_HI_ELEC:
 			if (r_ptr->flags3 & RF3_IM_ELEC)
 				dam = 0;
@@ -13369,7 +13383,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
 				dam *= 2;
 			break;
-			
+
 		case GF_HI_FIRE:
 			if (r_ptr->flags3 & RF3_IM_FIRE)
 				dam = 0;
@@ -13388,7 +13402,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			else if (r_ptr->flags3 & RF3_SUSCEP_COLD)
 				dam *= 2;
 			break;
-			
+
 		case GF_HI_COLD:
 			if (r_ptr->flags3 & RF3_IM_COLD)
 				dam = 0;
@@ -13408,7 +13422,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			else if (r_ptr->flags9 & RF9_SUSCEP_POIS)
 				dam *= 2;
 			break;
-			
+
 		case GF_HI_POISON:
 			if ((r_ptr->flags3 & RF3_IM_POIS) ||
 			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
@@ -13488,7 +13502,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 //					dam *= 5; dam /= (randint(3)+4);
 			}
 			break;
-			
+
 		case GF_LIFE_FIRE:
 			if ((r_ptr->flags3 & RF3_NONLIVING) || (r_ptr->flags3 & RF3_UNDEAD))
 				dam = 0;
@@ -13512,7 +13526,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 //					dam *= 5; dam /= (randint(3)+4);
 			}
 			break;
-			
+
 		case GF_BLIGHT:
 			if ((r_ptr->flags3 & RF3_NONLIVING) || (r_ptr->flags3 & RF3_UNDEAD))
 				dam = 0;
@@ -13550,7 +13564,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			else if (r_ptr->flags9 & RF9_RES_FIRE)
 				dam = (dam * 3) / 5;
 			break;
-			
+
 		/* Runemaster Gestalts - Kurzel */
 		case GF_ACID_ELEC:
 			if ((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags3 & RF3_IM_ELEC)) dam = 0; //Immune + Immune. (0)
@@ -13619,7 +13633,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) && (r_ptr->flags9 & RF3_SUSCEP_FIRE)) dam *= 2; //Susceptable + Susceptable. (2)
 			else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) || (r_ptr->flags9 & RF3_SUSCEP_FIRE)) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
 			break;
-		
+
 		case GF_ELEC_COLD:
 			if ((r_ptr->flags3 & RF3_IM_ELEC) && (r_ptr->flags3 & RF3_IM_COLD)) dam = 0; //Immune + Immune. (0)
 			else if (((r_ptr->flags3 & RF3_IM_ELEC) && (r_ptr->flags9 & RF9_RES_COLD)) || ((r_ptr->flags3 & RF3_IM_COLD) && (r_ptr->flags9 & RF9_RES_ELEC))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
@@ -13663,7 +13677,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			else if ((r_ptr->flags9 & RF3_SUSCEP_FIRE) && (r_ptr->flags9 & RF3_SUSCEP_COLD)) dam *= 2; //Susceptable + Susceptable. (2)
 			else if ((r_ptr->flags9 & RF3_SUSCEP_FIRE) || (r_ptr->flags9 & RF3_SUSCEP_COLD)) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
 			break;
-		
+
 		case GF_FIRE_POISON:
 			if ((r_ptr->flags3 & RF3_IM_FIRE) && ((r_ptr->flags3 & RF3_IM_POIS) ||
 			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
@@ -13785,7 +13799,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			do_stun = 18;
 			if (r_ptr->flags9 & RF9_RES_SOUND) do_stun /= 4;
 			break;
-			
+
 		case GF_AFFLICT:
 			dam = 0;
 			break;
@@ -13836,7 +13850,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			    || (r_ptr->flags4 & RF3_UNDEAD))
 				dam /= 3;
 			break;
-			
+
 		case GF_STOP: //Note: Only drains energy.
 		{
 			dam = 0;
@@ -13888,7 +13902,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 				k /= 3;
 			dam = dam + k;
 			break;
-			
+
 		case GF_THUNDER:
 			k_elec = dam / 3; /* 33% ELEC damage */
 			if (r_ptr->flags3 & RF3_IM_ELEC)
@@ -13905,7 +13919,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 				k_sound /= 4;
 				do_stun = 0;
 			}
-			
+
 			k_lite = dam / 3; /* 33% LIGHT damage */
 			do_blind = damroll(3, (k_lite / 20)) + 1;
 			if (r_ptr->d_char == 'A') {
@@ -13916,7 +13930,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			} else if (r_ptr->flags3 & RF3_HURT_LITE) {
 				k_lite *= 2;
 			}
-			
+
 			dam = k_elec + k_sound + k_lite;
 			break;
 
@@ -13945,7 +13959,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 
 			dam = 0;
 			break;
-			
+
 		case GF_OLD_POLY:
 			do_poly = TRUE;
 			if ((r_ptr->flags1 & RF1_UNIQUE) ||

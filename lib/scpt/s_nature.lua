@@ -38,7 +38,6 @@ HEALING = add_spell
         ["mana_max"] = 	180,
         ["fail"] = 	30,
         ["spell"] = 	function()
-        		hp_player(Ind, get_healing_power())
                         if player.spell_project > 0 then
                                 fire_ball(Ind, GF_HEAL_PLAYER, 0, get_healing_power(), player.spell_project, "")
                         end
@@ -48,7 +47,7 @@ HEALING = add_spell
 	end,
         ["desc"] =	{
         		"Heals a percent of hitpoints up to a maximum of 400 points healed",
-			"Projecting it will heal half that amount on other players",
+			"Projecting it will heal up to half that amount on nearby players",
                         "***Affected by the Meta spell: Project Spell***",
         }
 }

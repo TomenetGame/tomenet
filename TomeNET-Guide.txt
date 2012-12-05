@@ -12423,6 +12423,10 @@ Holy Defense
                     and from evil in general at 50. Better than the spell.
 
 Holy Curing
+    Cure Wounds     Heals a fixed amount of hit points of a friendly target.
+                    (Use the 'target friendly' key, which is '('. See command
+                    reference section (0.2) for details about this key.)
+                    Required skill level for first spell level: 3.
     Healing         Heals a percentage of hit points.          (auto-project)
                     Required skill level for first spell level: 3.
     Remove Curses   Removes curses.

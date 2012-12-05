@@ -798,7 +798,7 @@ static void process_effects(void)
 		/* Hack -- Decode gf_type (for color). - Kurzel */
 		u32b typ_original = e_ptr->type;
 		e_ptr->type = e_ptr->type % HACK_GF_FACTOR;
-		
+
 		/* hack: animate the effect! Note that this is independant of the effect interval,
 		   as opposed to the other animation code below. - C. Blue */
 		if (!(turn % (cfg.fps / 5)) && e_ptr->time && spell_color_animation(e_ptr->type))
@@ -808,7 +808,7 @@ static void process_effects(void)
 				if (!in_bounds2(wpos, j, i)) continue;
 				everyone_lite_spot(wpos, j, i);
 			}
-			
+
 		/* Hack -- Restore runespell info. - Kurzel */
 		e_ptr->type = typ_original;
  #endif
@@ -849,7 +849,7 @@ static void process_effects(void)
 			erase_effects(k);
 			continue;
 		}
-		
+
 		/* Snowflakes disappear if they reach end of traversed screen */
 		if ((e_ptr->flags & EFF_SNOWING) && e_ptr->cy == MAX_HGT - 2) {
 			erase_effects(k);
@@ -889,19 +889,19 @@ static void process_effects(void)
 						/* Make the effect friendly after death - mikaelh */
 						who = PROJECTOR_PLAYER;
 					}
-					
+
 #ifdef ANIMATE_EFFECTS
  #ifndef FREQUENT_EFFECT_ANIMATION
 					/* Hack -- Decode gf_type (for color). - Kurzel */
 					u32b typ_original = e_ptr->type;
 					e_ptr->type = e_ptr->type % HACK_GF_FACTOR;
-					
+
 					/* C. Blue - hack: animate effects inbetween
 					   ie allow random changes in spell_color().
 					   Note: animation speed depends on effect interval. */
 					if (spell_color_animation(e_ptr->type))
 					    everyone_lite_spot(wpos, j, i);
-			
+
 					/* Hack -- Restore runespell info. - Kurzel */
 					e_ptr->type = typ_original;
  #endif
@@ -988,7 +988,7 @@ static void process_effects(void)
 					/* explosion is faster than flying upwards */
 //doesn't work					e_ptr->interval = 2;
 
-#if 0					
+#if 0
 					if (e_ptr->flags & EFF_FIREWORKS1) { /* simple rocket (line) */
 						if (i == e_ptr->cx && j == e_ptr->cy - e_ptr->rad) {
 							c_ptr->effect = k;

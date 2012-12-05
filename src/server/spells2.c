@@ -5890,6 +5890,10 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 #endif
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
 	snprintf(pattacker, 80, "%s%s", p_ptr->name, attacker);
+
+	/* affect self + players + monsters AND give credit on kill */
+	if (typ == GF_HEAL_PLAYER) flg |= PROJECT_PLAY;
+
 	return (project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
 }
 
@@ -6022,7 +6026,7 @@ bool cast_fireworks(worldpos *wpos, int x, int y)
 	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
 
 	int typ = rand_int(7 * 3); /* colour & style */
-	
+
 	if (typ < 7) project_time_effect = EFF_FIREWORKS1;
 	else if (typ < 7 * 2) {
 		project_time_effect = EFF_FIREWORKS2;
@@ -6192,7 +6196,6 @@ void swap_position(int Ind, int lty, int ltx){
 bool project_hook(int Ind, int typ, int dir, int dam, int flg, char *attacker)
 {
 	player_type *p_ptr = Players[Ind];
-	
 	int tx, ty;
 
 	/* WRAITHFORM reduces damage/effect! */
@@ -6329,6 +6332,10 @@ bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
 	snprintf(pattacker, 80, "%s%s", p_ptr->name, attacker);
+
+	/* affect self + players + monsters AND give credit on kill */
+	if (typ == GF_HEAL_PLAYER) flg |= PROJECT_PLAY;
+
 	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
 }
 
