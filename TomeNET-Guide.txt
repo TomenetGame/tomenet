@@ -12423,7 +12423,9 @@ Holy Defense
                     and from evil in general at 50. Better than the spell.
 
 Holy Curing
-    Cure Wounds     Heals a fixed amount of hit points of a friendly target.
+    Cure Wounds     Heals a fixed amount of hit points of a friendly target,
+                    which is capped at 14d8, the same amount a potion of cure
+                    critical wounds actually heals.
                     Required skill level for first spell level: 3.
                     In addition to healing hit points, it will start curing
                     status ailments at higher spell levels:
