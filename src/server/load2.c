@@ -1255,6 +1255,9 @@ static bool rd_extra(int Ind)
 
 	/* Class/Race/Gender/Party */
 	rd_byte(&p_ptr->prace);
+#ifdef ENABLE_KOBOLD /* Kobold was inserted in the middle, instead of added to the end of the races array */
+        if (older_than(4, 4, 28) && p_ptr->prace >= RACE_KOBOLD) p_ptr->prace++;
+#endif
         rd_byte(&p_ptr->pclass);
         if (!older_than(4, 4, 11)) rd_byte(&p_ptr->ptrait);
 	if (older_than(4, 3, 5)) { /* class order changed: warrior now first class, so newbies won't choose adventurer */
@@ -2743,6 +2746,9 @@ errr rd_server_savefile()
 			rd_u32b(&acct);
 			rd_s32b(&laston);
 			rd_byte(&race);
+#ifdef ENABLE_KOBOLD /* Kobold was inserted in the middle, instead of added to the end of the races array */
+		        if (s_older_than(4, 4, 28) && race >= RACE_KOBOLD) race++;
+#endif
 			rd_byte(&class);
 		        if (!s_older_than(4, 2, 2)) rd_byte(&mode); else mode = 0;
 			rd_byte(&level);

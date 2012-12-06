@@ -2266,6 +2266,48 @@ player_race race_info[MAX_RACE] =
                 },
         },
 
+#ifdef ENABLE_KOBOLD
+        {
+                "Kobold",
+                { -1, -1,  0,  2,  2, -2 },
+                10,  5,  0,  4, 15,  15, -5, 10,
+                8,  120,
+                11,  4,
+                66,  1, 150,  5,
+                62,  1, 120,  5,
+                5,
+		CFW+CFR+CFM+CFA+CFD+CFS+CFU+CFX, /* mh, adventurer?.. */
+                120,
+                {
+                        {
+                                SKILL_TRAPPING,
+                                '+', 0,
+                                '%', 110,
+                        },
+                        {
+                                SKILL_SNEAKINESS,
+                                '+', 0,
+                                '%', 105,
+                        },
+                        {
+                                SKILL_CLIMB,
+                                '+', 0,
+                                '+', 40,
+                        },
+                        {
+                                SKILL_SWIM,
+                                '+', 0,
+                                '+', 70,
+                        },
+                        {
+                                SKILL_SHOOT_TILL_KILL,
+                                '+', 1000,
+                                '+', 0,
+                        },
+                },
+        },
+#endif
+
         {
                 "Dark-Elf",
                 {  0,  2, 1,  3,  1,  -6 },
@@ -2704,48 +2746,6 @@ Only 70%-ify the skills that could potentially be updated when the player mutate
         },
 #endif
 
-#ifdef ENABLE_KOBOLD
-        {
-                "Kobold",
-                { -1, -1,  0,  2,  2, -2 },
-                10,  5,  0,  4, 15,  15, -5, 10,
-                8,  120,
-                11,  4,
-                66,  1, 150,  5,
-                62,  1, 120,  5,
-                5,
-		CFW+CFR+CFM+CFA+CFD+CFS+CFU+CFX, /* mh, adventurer?.. */
-                120,
-                {
-                        {
-                                SKILL_TRAPPING,
-                                '+', 0,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_SNEAKINESS,
-                                '+', 0,
-                                '%', 105,
-                        },
-                        {
-                                SKILL_CLIMB,
-                                '+', 0,
-                                '+', 40,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '+', 70,
-                        },
-                        {
-                                SKILL_SHOOT_TILL_KILL,
-                                '+', 1000,
-                                '+', 0,
-                        },
-                },
-        },
-#endif
-
 #if 0 // do not activate until I find a way to have a race in the server and not in the client
         {
                 "Exp 626",
@@ -2789,13 +2789,13 @@ char *special_prace_lookup[MAX_RACE] = {
 /* RACE_GOBLIN */ 	"Goblin",
 /* RACE_ENT */ 		"Ent",
 /* RACE_DRACONIAN */ 	"Draconian",
+#ifdef ENABLE_KOBOLD
+ /* RACE_KOBOLD*/	"Kobold"
+#endif
 /* RACE_DARK_ELF */ 	"Dark-Elven",
 /* RACE_VAMPIRE */ 	"Vampire",
 #ifdef ENABLE_MAIA
 /* RACE_MAIA */		"Maia",
-#endif
-#ifdef ENABLE_KOBOLD
- /* RACE_KOBOLD*/	"Kobold"
 #endif
 };
 

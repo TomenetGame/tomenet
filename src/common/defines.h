@@ -88,7 +88,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	4
-#define SF_VERSION_PATCH	27
+#define SF_VERSION_PATCH	28
 #define SF_VERSION_EXTRA	0
 
 
@@ -1460,12 +1460,20 @@
 #define RACE_GOBLIN	11
 #define RACE_ENT	12
 #define RACE_DRACONIAN	13
-#define RACE_DARK_ELF	14
-#define RACE_VAMPIRE	15
-//#ifdef ENABLE_MAIA
-#define RACE_MAIA	16
-#define RACE_KOBOLD	17
-//#endif
+#ifdef ENABLE_KOBOLD
+ #define RACE_KOBOLD	14
+ #define RACE_DARK_ELF	15
+ #define RACE_VAMPIRE	16
+ //#ifdef ENABLE_MAIA
+ #define RACE_MAIA	17
+ //#endif
+#else
+ #define RACE_DARK_ELF	14
+ #define RACE_VAMPIRE	15
+ //#ifdef ENABLE_MAIA
+ #define RACE_MAIA	16
+ //#endif
+#endif
 /* (or simply replace all those defines with p_info.txt) */
 
 /*

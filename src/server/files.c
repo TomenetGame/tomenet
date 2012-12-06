@@ -1045,7 +1045,7 @@ long total_points(int Ind)
 	u32b points, tmp_base, tmp1, tmp2, tmp3, tmp3a, bonusm, bonusd;
 	u32b lev_factoring;
 	player_type *p_ptr = Players[Ind];
-	
+
 	/* kill maggot for 100% bonus on total score? -> no
 	   why a little bonus for HELL mode? the honour for the player
 	   who chooses hell mode on his own is far greater without it. -> no
@@ -1066,7 +1066,7 @@ long total_points(int Ind)
 	{
 		bonusm += 25;
 	}
-	
+
 #ifndef ALT_EXPRATIO
 	/* Bonus might cause overflow at lvl 94+ - so maybe compensate */
 	tmp_base = (p_ptr->max_exp * 3) / 3; //leaving this, changing lev_factoring instead..
@@ -1141,12 +1141,13 @@ struct high_score
 	char cur_dun[4];                /* Current Dungeon Level (number) */
 	char max_lev[4];                /* Max Player Level (number) */
 	char max_dun[4];                /* Max Dungeon Level (number) */
-	
+
 	char how[50];           /* Method of death (string) */
 
 	char mode[1];		/* Difficulty/character mode */
 };
 
+#if 0 /* different format? */
 typedef struct high_score_old high_score_old;
 struct high_score_old
 {
@@ -1171,11 +1172,15 @@ struct high_score_old
 	char cur_dun[4];                /* Current Dungeon Level (number) */
 	char max_lev[4];                /* Max Player Level (number) */
 	char max_dun[4];                /* Max Dungeon Level (number) */
-	
+
 	char how[50];           /* Method of death (string) */
 
 	char mode[1];		/* Difficulty/character mode */
 };
+#else /* same format actually */
+typedef struct high_score high_score_old;
+#endif
+
 
 int highscore_send(char *buffer, int max) {
 	int len = 0, len2;
@@ -1704,10 +1709,10 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 
 	/* Hack - display if the player was a former winner */
 	char extra_info[40];
-	
+
 	/* Paranoia -- it may not have opened */
 	if (highscore_fd < 0) return;
-	
+
 	/* Temporary file */
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 
@@ -1832,7 +1837,7 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 //			strcpy(modecol, "\377w");
                         break;
 		}
-		
+
 		/* Hack ;) Remember if the player was a former winner */
 		if (the_score.how[strlen(the_score.how) - 1] == '\001')
 		{
@@ -3207,10 +3212,10 @@ bool highscore_remove(int Ind, int slot) {
 
 /* Hack: Update old high score file to new format - C. Blue */
 bool highscore_file_convert(int Ind) {
-	int	i;
+	int	i, entries;
 	high_score_old	oldscore[MAX_HISCORES];
 	high_score	newscore[MAX_HISCORES];
-        char buf[1024], mod[80];
+        char buf[1024];
 
         /* Build the filename */
         path_build(buf, 1024, ANGBAND_DIR_DATA, "scores.raw");
@@ -3228,12 +3233,16 @@ bool highscore_file_convert(int Ind) {
 		if (highscore_seek_old(i)) break;
 		if (highscore_read_old(&oldscore[i])) break;
 	}
+	entries = i;
 
         /* Shut the high score file */
         (void)fd_close(highscore_fd);
 
+#if 0 /* old conversion done once, for example */
 	/* convert entries */
-	for (i = 0; i < MAX_HISCORES; i++) {
+	for (i = 0; i < entries; i++) {
+		char mod[80];
+
 		strcpy(newscore[i].what, oldscore[i].what);
 		strcpy(newscore[i].pts, oldscore[i].pts);
 		strcpy(newscore[i].gold, oldscore[i].gold);
@@ -3269,7 +3278,38 @@ bool highscore_file_convert(int Ind) {
 		strcpy(newscore[i].how, oldscore[i].how);
 		strcpy(newscore[i].mode, oldscore[i].mode);
 	}
+#else /* new conversion: inserting RACE_KOBOLD */
+	for (i = 0; i < entries; i++) {
+		int r;
+		strcpy(newscore[i].what, oldscore[i].what);
+		strcpy(newscore[i].pts, oldscore[i].pts);
+		strcpy(newscore[i].gold, oldscore[i].gold);
+		strcpy(newscore[i].turns, oldscore[i].turns);
 
+		strcpy(newscore[i].day, oldscore[i].day);
+
+		strcpy(newscore[i].who, oldscore[i].who);
+		strcpy(newscore[i].whose, oldscore[i].whose);
+
+		strcpy(newscore[i].sex, oldscore[i].sex);
+
+		r = atoi(oldscore[i].p_r);
+		if (r >= RACE_KOBOLD) {
+			r++;
+			sprintf(newscore[i].p_r, "%2d", r);
+		} else strcpy(newscore[i].p_r, oldscore[i].p_r);
+
+		strcpy(newscore[i].p_c, oldscore[i].p_c);
+
+		strcpy(newscore[i].cur_lev, oldscore[i].cur_lev);
+		strcpy(newscore[i].cur_dun, oldscore[i].cur_dun);
+		strcpy(newscore[i].max_lev, oldscore[i].max_lev);
+		strcpy(newscore[i].max_dun, oldscore[i].max_dun);
+
+		strcpy(newscore[i].how, oldscore[i].how);
+		strcpy(newscore[i].mode, oldscore[i].mode);
+	}
+#endif
 	/* bam (delete file, simply) */
         highscore_fd = fd_open(buf, O_TRUNC);
         (void)fd_close(highscore_fd);
@@ -3288,7 +3328,7 @@ bool highscore_file_convert(int Ind) {
                 return(FALSE);
         }
 
-	for (i = 0; i < MAX_HISCORES; i++)
+	for (i = 0; i < entries; i++)
 	{
 		/* Skip to end */
 		if (highscore_seek(i)) return (-1);
