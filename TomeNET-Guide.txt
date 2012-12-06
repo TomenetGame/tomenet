@@ -12206,10 +12206,10 @@ Fire
                     Fire immunity at 50.
 
 Water
+    Frost Bolt      Fires a frost bolt at a target.
+                    Required skill level for first spell level: 8.
     Tidal Wave      Summons a monstrous tidal wave.
                     Required skill level for first spell level: 16.
-    Acid Bolt       Fires an acid bolt at a target.
-                    Required skill level for first spell level: 12.
     Ice Storm       Engulfs you in a storm of roaring cold.
                     Lv15: Turns into a storm of shards of ice.
                     Required skill level for first spell level: 22.
@@ -12230,8 +12230,6 @@ Air
                     Required skill level for first spell level: 3.
     Lightning Bolt  Fires a lightning bolt at a target.
                     Required skill level for first spell level: 6.
-    Frost Bolt      Fires a frost bolt at a target.
-                    Required skill level for first spell level: 8.
     Wings of Wind   Grants levitation (feather falling).
                     Lv16: Lets you fly.
                     Required skill level for first spell level: 16.
@@ -12250,6 +12248,8 @@ Air
 
 Earth
     Dig             Turns walls into mud.
+                    Required skill level for first spell level: 12.
+    Acid Bolt       Fires an acid bolt at a target.
                     Required skill level for first spell level: 12.
     Stone Prison    Creates a prison of granite walls around you.
                     Required skill level for first spell level: 25.
