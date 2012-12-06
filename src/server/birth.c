@@ -123,135 +123,135 @@ static hist_type bg[] =
 	{"Prince.  ",						99, 9, 54, 140},
 	{"King.  ",						100, 9, 54, 145},
 
-	{"You are one of several children of a Hobbit ",                 85, 10, 11, 45},
+	{"You are one of several children of a Hobbit ",        85, 10, 11, 45},
 	{"You are the only child of a Hobbit ",                 100, 10, 11, 55},
 
-	{"Bum.  ",                                                       20, 11, 3, 55},
-	{"Tavern Owner.  ",                                              30, 11, 3, 80},
-	{"Miller.  ",                                            40, 11, 3, 90},
-	{"Home Owner.  ",                                                50, 11, 3, 100},
-	{"Burglar.  ",                                           80, 11, 3, 110},
-	{"Warrior.  ",                                           95, 11, 3, 115},
-	{"Mage.  ",                                                      99, 11, 3, 125},
-	{"Clan Elder.  ",                                               100, 11, 3, 140},
+	{"Bum.  ",                                              20, 11, 3, 55},
+	{"Tavern Owner.  ",                                     30, 11, 3, 80},
+	{"Miller.  ",                                           40, 11, 3, 90},
+	{"Home Owner.  ",                                       50, 11, 3, 100},
+	{"Burglar.  ",                                          80, 11, 3, 110},
+	{"Warrior.  ",                                          95, 11, 3, 115},
+	{"Mage.  ",                                             99, 11, 3, 125},
+	{"Clan Elder.  ",                                       100, 11, 3, 140},
 
-	{"You are one of several children of a Gnome ",          85, 13, 14, 45},
+	{"You are one of several children of a Gnome ",         85, 13, 14, 45},
 	{"You are the only child of a Gnome ",                  100, 13, 14, 55},
 
-	{"Beggar.  ",                                            20, 14, 3, 55},
-	{"Braggart.  ",                                          50, 14, 3, 70},
-	{"Prankster.  ",                                                 75, 14, 3, 85},
-	{"Warrior.  ",                                           95, 14, 3, 100},
-	{"Mage.  ",                                                     100, 14, 3, 125},
+	{"Beggar.  ",                                           20, 14, 3, 55},
+	{"Braggart.  ",                                         50, 14, 3, 70},
+	{"Prankster.  ",                                        75, 14, 3, 85},
+	{"Warrior.  ",                                          95, 14, 3, 100},
+	{"Mage.  ",                                             100, 14, 3, 125},
 
-	{"You are one of two children of a Dwarven ",            25, 16, 17, 40},
-	{"You are the only child of a Dwarven ",                        100, 16, 17, 50},
+	{"You are one of two children of a Dwarven ",           25, 16, 17, 40},
+	{"You are the only child of a Dwarven ",                100, 16, 17, 50},
 
-	{"Thief.  ",                                             10, 17, 18, 60},
-	{"Prison Guard.  ",                                              25, 17, 18, 75},
-	{"Miner.  ",                                             75, 17, 18, 90},
-	{"Warrior.  ",                                           90, 17, 18, 110},
-	{"Priest.  ",                                            99, 17, 18, 130},
-	{"King.  ",                                                     100, 17, 18, 150},
+	{"Thief.  ",                                            10, 17, 18, 60},
+	{"Prison Guard.  ",                                     25, 17, 18, 75},
+	{"Miner.  ",                                            75, 17, 18, 90},
+	{"Warrior.  ",                                          90, 17, 18, 110},
+	{"Priest.  ",                                           99, 17, 18, 130},
+	{"King.  ",                                             100, 17, 18, 150},
 
-	{"You are the black sheep of the family.  ",             15, 18, 57, 10},
-	{"You are a credit to the family.  ",                    85, 18, 57, 50},
-	{"You are a well liked child.  ",                               100, 18, 57, 55},
+	{"You are the black sheep of the family.  ",            15, 18, 57, 10},
+	{"You are a credit to the family.  ",                   85, 18, 57, 50},
+	{"You are a well liked child.  ",                       100, 18, 57, 55},
 
-	{"Your mother was an Orc, but it is unacknowledged.  ",  25, 19, 20, 25},
+	{"Your mother was an Orc, but it is unacknowledged.  ", 25, 19, 20, 25},
 	{"Your father was an Orc, but it is unacknowledged.  ", 100, 19, 20, 25},
 
 	{"You are the adopted child ",                          100, 20, 2, 50},
 
-	{"Your mother was a Cave-Troll ",                                30, 22, 23, 20},
-	{"Your father was a Cave-Troll ",                                60, 22, 23, 25},
-	{"Your mother was a Hill-Troll ",                                75, 22, 23, 30},
-	{"Your father was a Hill-Troll ",                                90, 22, 23, 35},
-	{"Your mother was a Water-Troll ",                               95, 22, 23, 40},
-	{"Your father was a Water-Troll ",                              100, 22, 23, 45},
+	{"Your mother was a Cave-Troll ",                       30, 22, 23, 20},
+	{"Your father was a Cave-Troll ",                       60, 22, 23, 25},
+	{"Your mother was a Hill-Troll ",                       75, 22, 23, 30},
+	{"Your father was a Hill-Troll ",                       90, 22, 23, 35},
+	{"Your mother was a Water-Troll ",                      95, 22, 23, 40},
+	{"Your father was a Water-Troll ",                      100, 22, 23, 45},
 
-	{"Cook.  ",                                                       5, 23, 62, 60},
-	{"Warrior.  ",                                           95, 23, 62, 55},
-	{"Shaman.  ",                                            99, 23, 62, 65},
-	{"Clan Chief.  ",                                               100, 23, 62, 80},
+	{"Cook.  ",                                             5, 23, 62, 60},
+	{"Warrior.  ",                                          95, 23, 62, 55},
+	{"Shaman.  ",                                           99, 23, 62, 65},
+	{"Clan Chief.  ",                                       100, 23, 62, 80},
 
-	{"You have dark brown eyes, ",                           20, 50, 51, 50},
-	{"You have brown eyes, ",                                        60, 50, 51, 50},
-	{"You have hazel eyes, ",                                        70, 50, 51, 50},
-	{"You have green eyes, ",                                        80, 50, 51, 50},
-	{"You have blue eyes, ",                                         90, 50, 51, 50},
+	{"You have dark brown eyes, ",                          20, 50, 51, 50},
+	{"You have brown eyes, ",                               60, 50, 51, 50},
+	{"You have hazel eyes, ",                               70, 50, 51, 50},
+	{"You have green eyes, ",                               80, 50, 51, 50},
+	{"You have blue eyes, ",                                90, 50, 51, 50},
 	{"You have blue-gray eyes, ",                           100, 50, 51, 50},
 
-	{"straight ",                                            70, 51, 52, 50},
-	{"wavy ",                                                        90, 51, 52, 50},
-	{"curly ",                                                      100, 51, 52, 50},
+	{"straight ",                                           70, 51, 52, 50},
+	{"wavy ",                                               90, 51, 52, 50},
+	{"curly ",                                              100, 51, 52, 50},
 
-	{"black hair, ",                                                 30, 52, 53, 50},
-	{"brown hair, ",                                                 70, 52, 53, 50},
-	{"auburn hair, ",                                                80, 52, 53, 50},
-	{"red hair, ",                                           90, 52, 53, 50},
-	{"blond hair, ",                                                100, 52, 53, 50},
+	{"black hair, ",                                        30, 52, 53, 50},
+	{"brown hair, ",                                        70, 52, 53, 50},
+	{"auburn hair, ",                                       80, 52, 53, 50},
+	{"red hair, ",                                          90, 52, 53, 50},
+	{"blond hair, ",                                        100, 52, 53, 50},
 
-	{"and a very dark complexion.",                          10, 53, 0, 50},
-	{"and a dark complexion.",                                       30, 53, 0, 50},
-	{"and an average complexion.",                           80, 53, 0, 50},
-	{"and a fair complexion.",                                       90, 53, 0, 50},
+	{"and a very dark complexion.",                         10, 53, 0, 50},
+	{"and a dark complexion.",                              30, 53, 0, 50},
+	{"and an average complexion.",                          80, 53, 0, 50},
+	{"and a fair complexion.",                              90, 53, 0, 50},
 	{"and a very fair complexion.",                         100, 53, 0, 50},
 
-	{"You have light grey eyes, ",                           85, 54, 55, 50},
-	{"You have light blue eyes, ",                           95, 54, 55, 50},
+	{"You have light grey eyes, ",                          85, 54, 55, 50},
+	{"You have light blue eyes, ",                          95, 54, 55, 50},
 	{"You have light green eyes, ",                         100, 54, 55, 50},
 
-	{"straight ",                                            75, 55, 56, 50},
-	{"wavy ",                                                       100, 55, 56, 50},
+	{"straight ",                                           75, 55, 56, 50},
+	{"wavy ",                                               100, 55, 56, 50},
 
-	{"black hair, and a fair complexion.",                   75, 56, 0, 50},
-	{"brown hair, and a fair complexion.",                   85, 56, 0, 50},
-	{"blond hair, and a fair complexion.",                   95, 56, 0, 50},
+	{"black hair, and a fair complexion.",                  75, 56, 0, 50},
+	{"brown hair, and a fair complexion.",                  85, 56, 0, 50},
+	{"blond hair, and a fair complexion.",                  95, 56, 0, 50},
 	{"silver hair, and a fair complexion.",                 100, 56, 0, 50},
 
-	{"You have dark brown eyes, ",                           99, 57, 58, 50},
+	{"You have dark brown eyes, ",                          99, 57, 58, 50},
 	{"You have glowing red eyes, ",                         100, 57, 58, 60},
 
-	{"straight ",                                            90, 58, 59, 50},
-	{"wavy ",                                                       100, 58, 59, 50},
+	{"straight ",                                           90, 58, 59, 50},
+	{"wavy ",                                               100, 58, 59, 50},
 
-	{"black hair, ",                                                 75, 59, 60, 50},
-	{"brown hair, ",                                                100, 59, 60, 50},
+	{"black hair, ",                                        75, 59, 60, 50},
+	{"brown hair, ",                                        100, 59, 60, 50},
 
-	{"a one foot beard, ",                                   25, 60, 61, 50},
-	{"a two foot beard, ",                                   60, 60, 61, 51},
-	{"a three foot beard, ",                                         90, 60, 61, 53},
+	{"a one foot beard, ",                                  25, 60, 61, 50},
+	{"a two foot beard, ",                                  60, 60, 61, 51},
+	{"a three foot beard, ",                                90, 60, 61, 53},
 	{"a four foot beard, ",                                 100, 60, 61, 55},
 
-	{"and a dark complexion.",                                      100, 61, 0, 50},
+	{"and a dark complexion.",                              100, 61, 0, 50},
 
-	{"You have slime green eyes, ",                          60, 62, 63, 50},
-	{"You have puke yellow eyes, ",                          85, 62, 63, 50},
-	{"You have blue-bloodshot eyes, ",                               99, 62, 63, 50},
+	{"You have slime green eyes, ",                         60, 62, 63, 50},
+	{"You have puke yellow eyes, ",                         85, 62, 63, 50},
+	{"You have blue-bloodshot eyes, ",                      99, 62, 63, 50},
 	{"You have glowing red eyes, ",                         100, 62, 63, 55},
 
-	{"dirty ",                                                       33, 63, 64, 50},
-	{"mangy ",                                                       66, 63, 64, 50},
-	{"oily ",                                                       100, 63, 64, 50},
+	{"dirty ",                                              33, 63, 64, 50},
+	{"mangy ",                                              66, 63, 64, 50},
+	{"oily ",                                               100, 63, 64, 50},
 
-	{"sea-weed green hair, ",                                        33, 64, 65, 50},
-	{"bright red hair, ",                                    66, 64, 65, 50},
+	{"sea-weed green hair, ",                               33, 64, 65, 50},
+	{"bright red hair, ",                                   66, 64, 65, 50},
 	{"dark purple hair, ",                                  100, 64, 65, 50},
 
-	{"and green ",                                           25, 65, 66, 50},
-	{"and blue ",                                            50, 65, 66, 50},
-	{"and white ",                                           75, 65, 66, 50},
+	{"and green ",                                          25, 65, 66, 50},
+	{"and blue ",                                           50, 65, 66, 50},
+	{"and white ",                                          75, 65, 66, 50},
 	{"and black ",                                          100, 65, 66, 50},
 
-	{"ulcerous skin.",                                               33, 66, 0, 50},
-	{"scabby skin.",                                                 66, 66, 0, 50},
-	{"leprous skin.",                                               100, 66, 0, 50},
+	{"ulcerous skin.",                                      33, 66, 0, 50},
+	{"scabby skin.",                                        66, 66, 0, 50},
+	{"leprous skin.",                                       100, 66, 0, 50},
 
 
 	/* XXX lol.. change it */
 	{"You are one of several children of a dragon and a human.", 85, 89, 91, 50  },
-	{"You are the only child of a dragon and a human.", 100, 89, 91, 60 },
+	{"You are the only child of a dragon and a human.",      100, 89, 91, 60 },
 
 	{"You have a Green Eagle.", 30, 91, 0, 40 },
 	{"You have a Blue Eagle.", 55, 91, 0, 60 },
@@ -259,18 +259,18 @@ static hist_type bg[] =
 	{"You have a Bronze Eagle.", 90, 91, 0, 100 },
 	{"You have a Gold Eagle.", 100, 91, 0, 120},
 
-	{"You are of an unknown generation of the Ents.",        30, 94, 95, 30},
-	{"You are of the third generation of the Ents.",         40, 94, 95, 50},
-	{"You are of the second generation of the Ents.",        60, 94, 95, 60},
+	{"You are of an unknown generation of the Ents.",       30, 94, 95, 30},
+	{"You are of the third generation of the Ents.",        40, 94, 95, 50},
+	{"You are of the second generation of the Ents.",       60, 94, 95, 60},
 	{"You are of the first beings who awoke on Arda.",      100, 94, 95, 80},
 
 	{"You have green skin and unflexible members.",          50, 95, 0, 50},
-	{"You have brown skin and unflexible members.",         100, 95, 0, 50},
+	{"You have brown skin and unflexible members.",          100, 95, 0, 50},
 
 
 	/* Maiar background */
 	{"You are a Maiar spirit, bound to ", 				100, 100, 101, 70},
-	
+
 	{"Manwe Sulimo, King of the Valar.  ",				10,101,102,150},
 	{"Ulmo, King of the Sea.  ",					20,101,102,100},
 	{"Aule, the Smith.  ",						30,101,102,100},
@@ -286,17 +286,53 @@ static hist_type bg[] =
 	{"Vana the Ever-young.  ",					95,101,102,90},
 	{"Nessa the Dancer.  ",						100,101,102,90},
 
-
 /* //too long :(
 	{"You were sent to assist the Elves that stayed in the East.  ",			25,102,103,0},
 	{"You suspend your pilgrimage in Aman to spend some time in the mortal land.  ",	50,102,103,0},
 	{"Your ambition compels your physical manifestation here in Arda.  ",			75,102,103,0},
 	{"You were ordered to assist the humans and elves in the West.  ",			100,102,103,0},
 */
-	
 
-	{"Your physical form is Elven in feature.  ", 				50, 102, 54, 70},
+	{"Your physical form is Elven in feature.  ", 		50, 102, 54, 70},
 	{"You manifest as a Human to casual observers.  ", 	100, 102, 50, 70},
+
+	/* Kobold background */
+	{"You are the runt of ",				20, 103, 104, 40},
+	{"You come from ",					80, 103, 104, 50},
+	{"You are the largest of ",				100, 103, 104, 55},
+
+	{"a litter of 3 pups. ",				15, 104, 105, 45},
+	{"a litter of 4 pups. ",				40, 104, 105, 45},
+	{"a litter of 5 pups. ",				70, 104, 105, 50},
+	{"a litter of 6 pups. ",				85, 104, 105, 50},
+	{"a litter of 7 pups. ",				95, 104, 105, 55},
+	{"a litter of 8 pups. ",				100, 104, 105, 55},
+
+	{"Your father was a fungus farmer, ",			25, 105, 106, 40},
+	{"Your father was a hunter, ",				50, 105, 106, 45},
+	{"Your father was a warrior, ",				75, 105, 106, 50},
+	{"Your father was a shaman, ",				95, 105, 106, 55},
+	{"Your father was the tribal chief, ",			100, 105, 106, 60},
+
+	{"and your mother was a prisoner of war. ",		20, 106, 107, 45},
+	{"and your mother was a cook. ",			95, 106, 107, 50},
+	{"and your mother was one of the Chief's harem. ",	100, 106, 107, 55},
+
+	{"You have black eyes, ",				10, 107, 108, 50},
+	{"You have dark brown eyes, ",				40, 107, 108, 50},
+	{"You have brown eyes, ",				80, 107, 108, 50},
+	{"You have light brown eyes, ",				99, 107, 108, 50},
+	{"You have glowing red eyes, ",				100, 107, 108, 50},
+
+	{"a dark brown hide, ",					40, 108, 109, 50},
+	{"a reddish-brown hide, ",				60, 108, 109, 50},
+	{"an olive green hide, ",				95, 108, 109, 50},
+	{"a deep blue hide, ",					100, 108, 109, 50},
+
+	{"and large, flat teeth.",				10, 109, 0, 50},
+	{"and small, sharp teeth.",				90, 109, 0, 50},
+	{"and large, sharp teeth.",				100, 109, 0, 50},
+
 };
 
 
@@ -738,7 +774,7 @@ static void get_history(int Ind)
 #ifdef ENABLE_KOBOLD
 		case RACE_KOBOLD:
 		{
-			chart = 19; //ninjaed from goblins for now (beta)
+			chart = 103;
 			break;
 		}
 #endif
