@@ -2790,7 +2790,7 @@ char *special_prace_lookup[MAX_RACE] = {
 /* RACE_ENT */ 		"Ent",
 /* RACE_DRACONIAN */ 	"Draconian",
 #ifdef ENABLE_KOBOLD
- /* RACE_KOBOLD*/	"Kobold"
+ /* RACE_KOBOLD*/	"Kobold",
 #endif
 /* RACE_DARK_ELF */ 	"Dark-Elven",
 /* RACE_VAMPIRE */ 	"Vampire",
