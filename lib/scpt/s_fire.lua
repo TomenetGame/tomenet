@@ -32,6 +32,34 @@ GLOBELIGHT = add_spell
         }
 }
 
+function get_firebolt_dam()
+        return 5 + get_level(Ind, FIREBOLT, 25), 7 + get_level(Ind, FIREBOLT, 25) + 1
+end
+FIREBOLT = add_spell
+{
+        ["name"] =      "Fire bolt",
+        ["school"] =    SCHOOL_FIRE,
+        ["level"] =     10,
+        ["mana"] =      3,
+        ["mana_max"] =  12,
+        ["fail"] =      -10,
+        ["direction"] = TRUE,
+        ["ftk"] = 1,
+        ["spell"] =     function(args)
+                        fire_bolt(Ind, GF_FIRE, args.dir, damroll(get_firebolt_dam()), " casts a fire bolt for")
+        end,
+        ["info"] =      function()
+                        local x, y
+
+                        x, y = get_firebolt_dam()
+                        return "dam "..x.."d"..y
+        end,
+        ["desc"] =      {
+                        "Conjures up fire into a powerful bolt",
+                }
+}
+
+
 FIREFLASH = add_spell
 {
 	["name"] = 	"Fireflash",

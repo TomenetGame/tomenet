@@ -184,12 +184,12 @@ school_book[0] = {
 
 -- The book of the eternal flame (5-8)
 school_book[1] = {
-	GLOBELIGHT, FIREFLASH, FIERYAURA, FIREWALL,
+	GLOBELIGHT, FIREBOLT, FIREFLASH, FIERYAURA, FIREWALL,
 }
 
 -- The book of the blowing winds (9-13)
 school_book[2] = {
-        NOXIOUSCLOUD, POISONBLOOD, INVISIBILITY, AIRWINGS, THUNDERSTORM,
+        NOXIOUSCLOUD, LIGHTNINGBOLT, FROSTBOLT, POISONBLOOD, INVISIBILITY, AIRWINGS, THUNDERSTORM,
 }
 
 -- The book of the impenetrable earth (14-17)
@@ -200,7 +200,7 @@ school_book[3] = {
 
 -- The book of the everrunning wave (18-21)
 school_book[4] = {
-        VAPOR, ENTPOTION, TIDALWAVE, ICESTORM,
+        VAPOR, ACIDBOLT, ENTPOTION, TIDALWAVE, ICESTORM,
 }
 
 -- Create the book of translocation (22-27)

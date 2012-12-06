@@ -31,6 +31,60 @@ NOXIOUSCLOUD = add_spell
         }
 }
 
+function get_lightningbolt_dam()
+        return 3 + get_level(Ind, LIGHTNINGBOLT, 25), 5 + get_level(Ind, LIGHTNINGBOLT, 25) - 1
+end
+LIGHTNINGBOLT = add_spell
+{
+        ["name"] =      "Lightning Bolt",
+        ["school"] =    SCHOOL_AIR,
+        ["level"] =     6,
+        ["mana"] =      2,
+        ["mana_max"] =  10,
+        ["fail"] =      -10,
+        ["direction"] = TRUE,
+        ["ftk"] = 1,
+        ["spell"] =     function(args)
+                        fire_bolt(Ind, GF_AIR, args.dir, damroll(get_lightningbolt_dam()), " casts a lightning bolt for")
+        end,
+        ["info"] =      function()
+                        local x, y
+
+                        x, y = get_lightningbolt_dam()
+                        return "dam "..x.."d"..y
+        end,
+        ["desc"] =      {
+                        "Conjures up a powerful lightning bolt",
+                }
+}
+
+function get_frostbolt_dam()
+        return 4 + get_level(Ind, FROSTBOLT, 25), 6 + get_level(Ind, FROSTBOLT, 25) + 0
+end
+FROSTBOLT = add_spell
+{
+        ["name"] =      "Frost Bolt",
+        ["school"] =    SCHOOL_AIR,
+        ["level"] =     8,
+        ["mana"] =      2,
+        ["mana_max"] =  11,
+        ["fail"] =      -10,
+        ["direction"] = TRUE,
+        ["ftk"] = 1,
+        ["spell"] =     function(args)
+                        fire_bolt(Ind, GF_AIR, args.dir, damroll(get_frostbolt_dam()), " casts a frost bolt for")
+        end,
+        ["info"] =      function()
+                        local x, y
+
+                        x, y = get_frostbolt_dam()
+                        return "dam "..x.."d"..y
+        end,
+        ["desc"] =      {
+                        "Conjures up icy air into a powerful frost bolt",
+                }
+}
+
 AIRWINGS = add_spell
 {
 	["name"] = 	"Wings of Winds",

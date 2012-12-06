@@ -1,5 +1,32 @@
 -- handle the water school
 
+function get_acidbolt_dam()
+        return 6 + get_level(Ind, ACIDBOLT, 25), 8 + get_level(Ind, ACIDBOLT, 25) + 1
+end
+ACIDBOLT = add_spell
+{
+        ["name"] =      "Acid Bolt",
+        ["school"] =    SCHOOL_WATER,
+        ["level"] =     12,
+        ["mana"] =      3,
+        ["mana_max"] =  13,
+        ["fail"] =      -10,
+        ["direction"] = TRUE,
+        ["ftk"] = 1,
+        ["spell"] =     function(args)
+                        fire_bolt(Ind, GF_COLD, args.dir, damroll(get_acidbolt_dam()), " casts a acid bolt for")
+        end,
+        ["info"] =      function()
+                        local x, y
+
+                        x, y = get_acidbolt_dam()
+                        return "dam "..x.."d"..y
+        end,
+        ["desc"] =      {
+                        "Conjures up corroding acid into a powerful bolt",
+                }
+}
+
 TIDALWAVE = add_spell
 {
 	["name"] = 	"Tidal Wave",
@@ -32,7 +59,7 @@ ICESTORM = add_spell
         ["fail"] = 	20,
         ["spell"] = 	function()
         		local type
-        
+
         		if get_level(Ind, ICESTORM, 50) >= 15 then type = GF_ICE
                         else type = GF_COLD end
 --		        fire_wave(Ind, type, 0, 80 + get_level(Ind, ICESTORM, 200), 1 + get_level(Ind, ICESTORM, 3, 0), 20 + get_level(Ind, ICESTORM, 70), 10, EFF_STORM, " summons an ice storm for")
