@@ -1934,6 +1934,8 @@ static errr top_twenty(int Ind)
 
 	time_t ct = time((time_t*)0);
 
+	if (is_admin(p_ptr)) return 0;
+
 	/* No score file */
 	if (highscore_fd < 0)
 	{
