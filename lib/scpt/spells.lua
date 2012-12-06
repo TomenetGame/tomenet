@@ -2,7 +2,7 @@
 -- This file takes care of the schools of magic
 -- (Edit this file and funny funny things will happen :)
 
--- Create the schools
+-- Create the schools --
 
 SCHOOL_CONVEYANCE = add_school
 {
