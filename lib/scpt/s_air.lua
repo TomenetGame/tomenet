@@ -58,33 +58,6 @@ LIGHTNINGBOLT = add_spell
                 }
 }
 
-function get_frostbolt_dam()
-        return 4 + get_level(Ind, FROSTBOLT, 25), 6 + get_level(Ind, FROSTBOLT, 25) + 0
-end
-FROSTBOLT = add_spell
-{
-        ["name"] =      "Frost Bolt",
-        ["school"] =    SCHOOL_AIR,
-        ["level"] =     8,
-        ["mana"] =      2,
-        ["mana_max"] =  11,
-        ["fail"] =      -10,
-        ["direction"] = TRUE,
-        ["ftk"] = 1,
-        ["spell"] =     function(args)
-                        fire_bolt(Ind, GF_AIR, args.dir, damroll(get_frostbolt_dam()), " casts a frost bolt for")
-        end,
-        ["info"] =      function()
-                        local x, y
-
-                        x, y = get_frostbolt_dam()
-                        return "dam "..x.."d"..y
-        end,
-        ["desc"] =      {
-                        "Conjures up icy air into a powerful frost bolt",
-                }
-}
-
 AIRWINGS = add_spell
 {
 	["name"] = 	"Wings of Winds",

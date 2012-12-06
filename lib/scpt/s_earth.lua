@@ -51,6 +51,33 @@ DIG = add_spell
 		}
 }
 
+function get_acidbolt_dam()
+        return 6 + get_level(Ind, ACIDBOLT, 25), 8 + get_level(Ind, ACIDBOLT, 25) + 1
+end
+ACIDBOLT = add_spell
+{
+        ["name"] =      "Acid Bolt",
+        ["school"] =    SCHOOL_EARTH,
+        ["level"] =     12,
+        ["mana"] =      3,
+        ["mana_max"] =  13,
+        ["fail"] =      -10,
+        ["direction"] = TRUE,
+        ["ftk"] = 1,
+        ["spell"] =     function(args)
+                        fire_bolt(Ind, GF_COLD, args.dir, damroll(get_acidbolt_dam()), " casts a acid bolt for")
+        end,
+        ["info"] =      function()
+                        local x, y
+
+                        x, y = get_acidbolt_dam()
+                        return "dam "..x.."d"..y
+        end,
+        ["desc"] =      {
+                        "Conjures up corroding acid into a powerful bolt",
+                }
+}
+
 STONEPRISON = add_spell
 {
 	["name"] = 	"Stone Prison",

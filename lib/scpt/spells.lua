@@ -189,18 +189,18 @@ school_book[1] = {
 
 -- The book of the blowing winds (9-13)
 school_book[2] = {
-        NOXIOUSCLOUD, LIGHTNINGBOLT, FROSTBOLT, POISONBLOOD, INVISIBILITY, AIRWINGS, THUNDERSTORM,
+        NOXIOUSCLOUD, LIGHTNINGBOLT, POISONBLOOD, INVISIBILITY, AIRWINGS, THUNDERSTORM,
 }
 
 -- The book of the impenetrable earth (14-17)
 school_book[3] = {
 --        STONESKIN, DIG, STONEPRISON, SHAKE, STRIKE,
-        DIG, STONEPRISON, SHAKE, STRIKE,
+        DIG, ACIDBOLT, STONEPRISON, SHAKE, STRIKE,
 }
 
 -- The book of the everrunning wave (18-21)
 school_book[4] = {
-        VAPOR, ACIDBOLT, ENTPOTION, TIDALWAVE, ICESTORM,
+        VAPOR, FROSTBOLT, ENTPOTION, TIDALWAVE, ICESTORM,
 }
 
 -- Create the book of translocation (22-27)

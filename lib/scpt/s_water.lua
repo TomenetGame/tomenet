@@ -1,29 +1,29 @@
 -- handle the water school
 
-function get_acidbolt_dam()
-        return 6 + get_level(Ind, ACIDBOLT, 25), 8 + get_level(Ind, ACIDBOLT, 25) + 1
+function get_frostbolt_dam()
+        return 4 + get_level(Ind, FROSTBOLT, 25), 6 + get_level(Ind, FROSTBOLT, 25) + 0
 end
-ACIDBOLT = add_spell
+FROSTBOLT = add_spell
 {
-        ["name"] =      "Acid Bolt",
+        ["name"] =      "Frost Bolt",
         ["school"] =    SCHOOL_WATER,
-        ["level"] =     12,
-        ["mana"] =      3,
-        ["mana_max"] =  13,
+        ["level"] =     8,
+        ["mana"] =      2, 
+        ["mana_max"] =  11,
         ["fail"] =      -10,
         ["direction"] = TRUE,
         ["ftk"] = 1,
         ["spell"] =     function(args)
-                        fire_bolt(Ind, GF_COLD, args.dir, damroll(get_acidbolt_dam()), " casts a acid bolt for")
+                        fire_bolt(Ind, GF_AIR, args.dir, damroll(get_frostbolt_dam()), " casts a frost bolt for")
         end,
         ["info"] =      function()
                         local x, y
 
-                        x, y = get_acidbolt_dam()
+                        x, y = get_frostbolt_dam()
                         return "dam "..x.."d"..y
         end,
-        ["desc"] =      {
-                        "Conjures up corroding acid into a powerful bolt",
+        ["desc"] =      {  
+                        "Conjures up icy moisture into a powerful frost bolt",
                 }
 }
 
