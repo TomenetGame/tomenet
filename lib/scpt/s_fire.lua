@@ -37,7 +37,7 @@ function get_firebolt_dam()
 end
 FIREBOLT = add_spell
 {
-        ["name"] =      "Fire bolt",
+        ["name"] =      "Fire Bolt",
         ["school"] =    SCHOOL_FIRE,
         ["level"] =     10,
         ["mana"] =      3,
