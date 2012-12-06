@@ -2704,6 +2704,48 @@ Only 70%-ify the skills that could potentially be updated when the player mutate
         },
 #endif
 
+#ifdef ENABLE_KOBOLD
+        {
+                "Kobold",
+                { -1, -1,  0,  2,  2, -2 },
+                10,  5,  0,  4, 15,  15, -5, 10,
+                8,  120,
+                11,  4,
+                66,  1, 150,  5,
+                62,  1, 120,  5,
+                5,
+		CFW+CFR+CFM+CFA+CFD+CFS+CFU+CFX, /* mh, adventurer?.. */
+                120,
+                {
+                        {
+                                SKILL_TRAPPING,
+                                '+', 0,
+                                '%', 110,
+                        },
+                        {
+                                SKILL_SNEAKINESS,
+                                '+', 0,
+                                '%', 105,
+                        },
+                        {
+                                SKILL_CLIMB,
+                                '+', 0,
+                                '+', 40,
+                        },
+                        {
+                                SKILL_SWIM,
+                                '+', 0,
+                                '+', 70,
+                        },
+                        {
+                                SKILL_SHOOT_TILL_KILL,
+                                '+', 1000,
+                                '+', 0,
+                        },
+                },
+        },
+#endif
+
 #if 0 // do not activate until I find a way to have a race in the server and not in the client
         {
                 "Exp 626",
@@ -2732,11 +2774,11 @@ char *special_prace_lookup[MAX_RACE] = {
 /* RACE_HALF_ORC */ 	"Half-Orc",
 /* RACE_HALF_TROLL */ 	"Half-Troll",
 
-/* RACE_DUNADAN */ 	"Western", 
-/* According to Vir: 
- *  Dunedain: men of the West, 
- *  Dunadan:  man of the West. 
- * "You can't bend in English since it's not"... 
+/* RACE_DUNADAN */ 	"Western",
+/* According to Vir:
+ *  Dunedain: men of the West,
+ *  Dunadan:  man of the West.
+ * "You can't bend in English since it's not"...
  * "dun" == west, "edain" is men of the three great houses who travelled
  *  towards the light in the west in the first age befriending the elves.
  * Yes, I got the whole history off him =)
@@ -2750,7 +2792,10 @@ char *special_prace_lookup[MAX_RACE] = {
 /* RACE_DARK_ELF */ 	"Dark-Elven",
 /* RACE_VAMPIRE */ 	"Vampire",
 #ifdef ENABLE_MAIA
-/* RACE_MAIA */		"Maia"
+/* RACE_MAIA */		"Maia",
+#endif
+#ifdef ENABLE_KOBOLD
+ /* RACE_KOBOLD*/	"Kobold"
 #endif
 };
 
@@ -5382,46 +5427,46 @@ player_trait trait_info[MAX_TRAIT] = {
 	     This can be used to 'disable' all traits for a specific race: Just add it here. */
 		"N/A",
 #ifdef TEST_SERVER
-		0xFFFFFF & ~RFR,
+		0xFFFFFF & ~RFC,
 #else
 		0xFFFFFF, /* disable for all */
 #endif
 	},
 	{
 		"Blue lineage",
-		RFR,
+		RFC,
 	},
 	{
 		"White lineage",
-		RFR,
+		RFC,
 	},
 	{
 		"Red lineage",
-		RFR,
+		RFC,
 	},
 	{
 		"Black lineage",
-		RFR,
+		RFC,
 	},
 	{
 		"Green lineage",
-		RFR,
+		RFC,
 	},
 	{
 		"Multi-hued lineage",
-		RFR,
+		RFC,
 	},
 	{
 		"Bronze lineage",
-		RFR,
+		RFC,
 	},
 	{
 		"Silver lineage",
-		RFR,
+		RFC,
 	},
 	{
 		"Golden lineage",
-		RFR,
+		RFC,
 	},
 	{
 		"Law lineage",

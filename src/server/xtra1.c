@@ -3469,6 +3469,11 @@ void calc_boni(int Ind)
 		} else p_ptr->slow_digest = TRUE;
 	}
 #endif
+#ifdef ENABLE_KOBOLD
+	/* Kobolds */
+	else if (p_ptr->prace == RACE_KOBOLD)
+		p_ptr->resist_pois = TRUE;
+#endif
 
 #ifdef ENABLE_RCRAFT
 	//Runemaster upkeep boni spells - Kurzel

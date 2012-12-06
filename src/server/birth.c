@@ -734,7 +734,14 @@ static void get_history(int Ind)
 			chart = 100;
 			break;
 		}
-#endif 
+#endif
+#ifdef ENABLE_KOBOLD
+		case RACE_KOBOLD:
+		{
+			chart = 19; //ninjaed from goblins for now (beta)
+			break;
+		}
+#endif
 		default:
 		{
 			chart = 0;

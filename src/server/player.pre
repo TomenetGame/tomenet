@@ -237,7 +237,14 @@ typedef unsigned int u32b;
 #define RACE_DARK_ELF	14
 #define RACE_VAMPIRE	15
 #ifdef ENABLE_MAIA
-#define RACE_MAIA	16
+ #define RACE_MAIA	16
+ #ifdef ENABLE_KOBOLD
+  #define RACE_KOBOLD	17
+ #endif
+#else
+ #ifdef ENABLE_KOBOLD
+  #define RACE_KOBOLD	16
+ #endif
 #endif
 
 struct worldpos{

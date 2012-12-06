@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 5. December 2012 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.9c - official websites are:
+| Latest update: 6. December 2012 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.9d - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 |
@@ -10816,6 +10816,18 @@ Warrior is strongly recommended.
     after the initiation took place, see (6.2a) for details.
     Maia get a bonus on 'Sneakiness' and 'Stealth' no matter the alignment.
 
+- Kobold
+    These somewhat smallish dog-faced humanoids resist poison intrinsically.
+    They are able to take most roles, being somewhat better at archery than
+    close combat. Their intelligence is somewhat suspect, and although they do
+    not pick up careers as mages or other elaborate professions, but they do
+    become shamans or druids.
+    They can see in the dark thanks to infra-vision, have extraordinarily sharp
+    senses, and can move very silently, making them hard to spot. They are also
+    good at disarming traps.
+    Kobolds receive a bonus on 'Swimming' and 'Trapping' and a slight bonus on
+    'Sneakiness'.
+
 
 Here is a table showing boni/mali of the different races:
 (Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
@@ -10858,6 +10870,8 @@ Vampire     +2   0  -3  -1   0  -6      11      220%   150ft
             -2   3  20   2  13  -4  10 -10
 Maia        +2  +3  +3  +1  +1  +2      11      400%   100ft
              3  20   3   0   5   1  15   5
+Kobold      -1  -1   0  +2  +2  -2       8      120%    50ft
+            10   5   0   4  15  15  -5  10
 
 
 

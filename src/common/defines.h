@@ -435,9 +435,17 @@
  * Maximum number of player "race" types (see "table.c", etc)
  */
 #ifdef ENABLE_MAIA
- #define MAX_RACE	17
+ #ifdef ENABLE_KOBOLD
+  #define MAX_RACE	18
+ #else
+  #define MAX_RACE	17
+ #endif
 #else
- #define MAX_RACE	16
+ #ifdef ENABLE_KOBOLD
+  #define MAX_RACE	17
+ #else
+  #define MAX_RACE	16
+ #endif
 #endif
 
 
@@ -1456,6 +1464,7 @@
 #define RACE_VAMPIRE	15
 //#ifdef ENABLE_MAIA
 #define RACE_MAIA	16
+#define RACE_KOBOLD	17
 //#endif
 /* (or simply replace all those defines with p_info.txt) */
 
@@ -1501,27 +1510,28 @@
 /*
  * Traits' class flags, which traits are allowed for which race for choice
  */
-#define RFH	0x000001	/* Human */
+#define RFU	0x000001	/* Human */
 #define RFL	0x000002	/* Half-Elf */
 #define RFE	0x000004	/* Elf */
-#define RFA	0x000008	/* Hobbit */
+#define RFH	0x000008	/* Hobbit */
 
 #define RFG	0x000010	/* Gnome */
 #define RFD	0x000020	/* Dwarf */
 #define RFO	0x000040	/* Half-Orc */
 #define RFT	0x000080	/* Half-Troll */
 
-#define RFU	0x000100	/* Dunadan */
-#define RFI	0x000200	/* High-Elf */
+#define RFA	0x000100	/* Dunadan */
+#define RFF	0x000200	/* High-Elf */
 #define RFY	0x000400	/* Yeek */
-#define RFB	0x000800	/* Goblin */
+#define RFI	0x000800	/* Goblin */
 
 #define RFN	0x001000	/* Ent */
-#define RFR	0x002000	/* Draconian */
+#define RFC	0x002000	/* Draconian */
 #define RFK	0x004000	/* Dark-Elf */
 #define RFV	0x008000	/* Vampire */
 
 #define RFM	0x010000	/* Maia */
+#define RFB	0x020000	/* Kobold */
 
 
 /*

@@ -69,6 +69,7 @@
 #define ENABLE_GO_GAME		/* Allows players to play vs CPU games of Go/Weiqi/Baduk. - C. Blue */
 #endif
 #define ENABLE_MAIA		/* enable RACE_MAIA (formerly 'DIVINE' race) */
+#define ENABLE_KOBOLD		/* enable RACE_KOBOLD */
 
 /* Allow monsters with AI_ASTAR r_info flag to use A* pathfinding algorithm? - C. Blue */
 #define MONSTER_ASTAR
