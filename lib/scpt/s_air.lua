@@ -45,7 +45,7 @@ LIGHTNINGBOLT = add_spell
         ["direction"] = TRUE,
         ["ftk"] = 1,
         ["spell"] =     function(args)
-                        fire_bolt(Ind, GF_AIR, args.dir, damroll(get_lightningbolt_dam()), " casts a lightning bolt for")
+                        fire_bolt(Ind, GF_ELEC, args.dir, damroll(get_lightningbolt_dam()), " casts a lightning bolt for")
         end,
         ["info"] =      function()
                         local x, y

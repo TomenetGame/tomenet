@@ -65,7 +65,7 @@ ACIDBOLT = add_spell
         ["direction"] = TRUE,
         ["ftk"] = 1,
         ["spell"] =     function(args)
-                        fire_bolt(Ind, GF_COLD, args.dir, damroll(get_acidbolt_dam()), " casts a acid bolt for")
+                        fire_bolt(Ind, GF_ACID, args.dir, damroll(get_acidbolt_dam()), " casts a acid bolt for")
         end,
         ["info"] =      function()
                         local x, y
