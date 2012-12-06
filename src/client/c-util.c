@@ -4570,15 +4570,17 @@ void interact_macros(void)
 						clear_from(10);
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose the targetting method:");
 						//Term_putstr(10, 11, -1, TERM_GREEN, "(\377UHINT: \377gAlso inscribe your ammo '!=' for auto-pickup!)");
-						Term_putstr(10, 11, -1, TERM_L_GREEN, "a) Target closest monster if such exists,");
-						Term_putstr(10, 12, -1, TERM_L_GREEN, "   otherwise cancel action. (\377URecommended in most cases!\377G)");
+						Term_putstr(10, 12, -1, TERM_L_GREEN, "a) Target closest monster if such exists,");
+						Term_putstr(10, 13, -1, TERM_L_GREEN, "   otherwise cancel action. (\377URecommended in most cases!\377G)");
 						Term_putstr(10, 14, -1, TERM_L_GREEN, "b) Target closest monster if such exists,");
 						Term_putstr(10, 15, -1, TERM_L_GREEN, "   otherwise prompt for direction.");
-						Term_putstr(10, 17, -1, TERM_L_GREEN, "c) Target closest monster if such exists,");
-						Term_putstr(10, 18, -1, TERM_L_GREEN, "   otherwise target own grid.");
-						Term_putstr(10, 20, -1, TERM_L_GREEN, "d) Target own grid (ie yourself).");
-						Term_putstr(10, 22, -1, TERM_L_GREEN, "e) Target friendly player with lowest hit points,");
-						Term_putstr(10, 23, -1, TERM_L_GREEN, "   cancel action if no player is nearby. (\377UEg for 'Cure Wounds'.\377G)");
+						Term_putstr(10, 16, -1, TERM_L_GREEN, "c) Target closest monster if such exists,");
+						Term_putstr(10, 17, -1, TERM_L_GREEN, "   otherwise target own grid.");
+						Term_putstr(10, 18, -1, TERM_L_GREEN, "d) Target own grid (ie yourself).");
+						Term_putstr(10, 20, -1, TERM_L_GREEN, "e) Target most hurt friendly player,");
+						Term_putstr(10, 21, -1, TERM_L_GREEN, "   cancel action if no hurt player is nearby. (\377UEg for 'Cure Wounds'.\377G)");
+						Term_putstr(10, 22, -1, TERM_L_GREEN, "f) Target most hurt friendly player,");
+						Term_putstr(10, 23, -1, TERM_L_GREEN, "   target own grid instead if no hurt player is nearby.");
 
 						while (TRUE) {
 							switch (choice = inkey()) {
@@ -4593,7 +4595,7 @@ void interact_macros(void)
 								continue;
 							default:
 								/* invalid action -> exit wizard */
-								if (choice < 'a' || choice > 'e') {
+								if (choice < 'a' || choice > 'f') {
 //									i = -1;
 									continue;
 								}
@@ -4615,7 +4617,7 @@ void interact_macros(void)
 
 							/* add new direction feature */
 							if (choice == 'b') strcat(buf, "+");
-							else if (choice == 'd') strcat(buf, "5");
+							else if (choice == 'd' || choice == 'f') strcat(buf, "5");
 							else strcat(buf, "-");
 
 							/* replace old macro by this one */
