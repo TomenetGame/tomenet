@@ -12178,6 +12178,8 @@ Fire
                     Lv10: Damages monsters.
                     Lv25: Turns into a more powerful kind of light.
                     Required skill level for first spell level: 2.
+    Fire Bolt       Fires a fire bolt at a target.
+                    Required skill level for first spell level: 10.
     Fireflash       Conjures a fire ball.
                     Lv20: Turns into holy fire which is especially deadly to
                           evil opponents.
@@ -12192,6 +12194,8 @@ Fire
 Water
     Tidal Wave      Summons a monstrous tidal wave.
                     Required skill level for first spell level: 16.
+    Acid Bolt       Fires an acid bolt at a target.
+                    Required skill level for first spell level: 12.
     Ice Storm       Engulfs you in a storm of roaring cold.
                     Lv15: Turns into a storm of shards of ice.
                     Required skill level for first spell level: 22.
@@ -12210,6 +12214,10 @@ Air
     Noxious Cloud   Fires a poison cloud at a designated target.
                     Lv30: Unbreath cloud, irresistable.
                     Required skill level for first spell level: 3.
+    Lightning Bolt  Fires a lightning bolt at a target.
+                    Required skill level for first spell level: 6.
+    Frost Bolt      Fires a frost bolt at a target.
+                    Required skill level for first spell level: 8.
     Wings of Wind   Grants levitation (feather falling).
                     Lv16: Lets you fly.
                     Required skill level for first spell level: 16.
