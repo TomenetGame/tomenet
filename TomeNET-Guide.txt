@@ -2898,8 +2898,9 @@ case-sensitive, so don't save your macros to 'kinkan.prf' since your character
 actually starts with a capital 'K' or the file won't be loaded. Make sure
 the filename and character-, class- or race-name are exactly the same
 ('Dwarf.prf', 'High-Elf.prf', 'Ranger.prf'..).
-Another option is to save the macros to a file that is named like your account
-it will be automatically loaded on all chars of that account.
+Another option is to save the macros to a file named 'global.prf' (all lower
+case letters). This is a special macro file that will always be loaded, for
+all characters of yours.
 You can also save macros to <racename>.prf or to <classname>.prf, like
 Warrior.prf to have them being auto-loaded on all characters of that class.
 Priority order (latter one overrides prior one):
@@ -2917,7 +2918,8 @@ user-<operating system>.prf (loaded if under the specific operating system)
 
 These files can be used for saving your macros to without problems:
 -------------------------------------------------------------------
-<account name>.prf (for the account the player logged in with)
+'global.prf' (is always loaded for any character the player logs in with.
+               be sure to use all lower-case letters, not 'Global.prf'!)
 <race>.prf (for the specific race)
 <class>.prf (for the specific class)
 <character name>.prf (for the specific character the player logged in with)
