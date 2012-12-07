@@ -250,8 +250,10 @@ void initialize_main_pref_files(void)
 void initialize_player_pref_files(void){
 	char buf[1024];
 
+#if 0 /* disabled, since everyone only has 1 account anyway. It just disturbs macros if you have a character of same name. */
 	/* Access the "account" pref file */
 	sprintf(buf, "%s.prf", nick);
+#endif
 //	buf[0] = tolower(buf[0]);
 
 	/* Process that file */
