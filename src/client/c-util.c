@@ -3984,7 +3984,7 @@ void interact_macros(void)
 					Term_putstr(10, 12, -1, TERM_L_GREEN, "b) Read a scroll");
 					Term_putstr(10, 13, -1, TERM_L_GREEN, "c) Fire ranged weapon at closest enemy");
 					Term_putstr(10, 14, -1, TERM_L_GREEN, "d)/D) Cast school/mimic spell without a target (or target manually)");
-					Term_putstr(10, 15, -1, TERM_L_GREEN, "e)/E) Cast school/mimic spell that uses a target (attack spell)");
+					Term_putstr(10, 15, -1, TERM_L_GREEN, "e)/E) Cast school/mimic spell that uses a target");
 					Term_putstr(10, 16, -1, TERM_L_GREEN, "f) Cast a mimic spell by number (both targetted or not targetted)");
 					Term_putstr(10, 17, -1, TERM_L_GREEN, "g) Polymorph into a certain monster (mimicry users)");
 					Term_putstr(10, 18, -1, TERM_L_GREEN, "h) Draw runes to cast a runespell");
