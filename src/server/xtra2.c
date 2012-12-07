@@ -8207,10 +8207,10 @@ s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s\n", race_info[p_ptr->
 	else if (p_ptr->iron_winner) {
 		if (p_ptr->total_winner) {
 			snprintf(buf, sizeof(buf), "\374\377vThe iron emperor %s has retired to a warm, sunny climate.", p_ptr->name);
-			if (!is_admin(p_ptr)) l_printf("%s \\{v%s (%d) retired to a warm, sunny climate\n", showdate(), p_ptr->name, p_ptr->lev);
+			if (!is_admin(p_ptr)) l_printf("%s \\{v%s (%d) retired from the iron throne\n", showdate(), p_ptr->name, p_ptr->lev);
 		} else {
 			snprintf(buf, sizeof(buf), "\374\377sThe iron champion %s has retired to a warm, sunny climate.", p_ptr->name);
-			if (!is_admin(p_ptr)) l_printf("%s \\{s%s (%d) retired to a warm, sunny climate\n", showdate(), p_ptr->name, p_ptr->lev);
+			if (!is_admin(p_ptr)) l_printf("%s \\{s%s (%d) retired as an iron champion.\n", showdate(), p_ptr->name, p_ptr->lev);
 		}
 		s_printf("%s (%d) committed suicide. (Retirement)\n", p_ptr->name, p_ptr->lev);
 		death_type = DEATH_QUIT;
