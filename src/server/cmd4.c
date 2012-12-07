@@ -490,10 +490,12 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	else if (q_ptr->ghost) fprintf(fff, "\377rGhost ");
 	else if (q_ptr->total_winner) {
 		fprintf(fff, "\377v%s ",
-		    (q_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) ?
+		    q_ptr->iron_winner ? (q_ptr->male ? "Iron Emperor" : "Iron Empress") :
+		    ((q_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) ?
 			(q_ptr->male ? "Emperor" : "Empress") :
-			(q_ptr->male ? "King" : "Queen"));
+			(q_ptr->male ? "King" : "Queen")));
 	}
+	else if (q_ptr->iron_winner) fprintf(fff, "\377%cIron Champion ", attr);
 	else fprintf(fff, "\377%c", attr);
 
 	fprintf(fff, "%s, %sL%d \377%c", q_ptr->name, attr_p, q_ptr->lev, attr);
@@ -609,10 +611,12 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	else if (q_ptr->ghost) fprintf(fff, "\377rGhost ");
 	else if (q_ptr->total_winner) {
 		fprintf(fff, "\377v%s ",
-		    (q_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) ?
+		    q_ptr->iron_winner ? (q_ptr->male ? "Iron Emperor" : "Iron Empress") :
+		    ((q_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) ?
 			(q_ptr->male ? "Emperor" : "Empress") :
-			(q_ptr->male ? "King" : "Queen"));
+			(q_ptr->male ? "King" : "Queen")));
 	}
+	else if (q_ptr->iron_winner) fprintf(fff, "\377%cIron Champion ", attr);
 	else fprintf(fff, "\377%c", attr);
 
   #ifdef COMPACT_GENDER

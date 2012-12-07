@@ -1643,6 +1643,12 @@ if (p_ptr->updated_savegame == 0) {
 
 	rd_u16b(&p_ptr->total_winner);
 	if (!older_than(4, 3, 0)) rd_u16b(&p_ptr->once_winner);
+	if (!older_than(4, 4, 29)) {
+		rd_byte(&tmp8u);
+		if (tmp8u) p_ptr->iron_winner = TRUE;
+		rd_byte(&tmp8u);
+		if (tmp8u) p_ptr->iron_winner_ded = TRUE;
+	}
 
 	rd_s16b(&p_ptr->own1.wx);
 	rd_s16b(&p_ptr->own1.wy);

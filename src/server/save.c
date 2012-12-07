@@ -802,6 +802,8 @@ static void wr_extra(int Ind)
 	wr_u16b(panic_save);
 	wr_u16b(p_ptr->total_winner);
 	wr_u16b(p_ptr->once_winner);
+	wr_byte(p_ptr->iron_winner);
+	wr_byte(p_ptr->iron_winner_ded);
 
 	wr_s16b(p_ptr->own1.wx);
 	wr_s16b(p_ptr->own1.wy);

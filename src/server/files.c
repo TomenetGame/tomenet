@@ -978,9 +978,12 @@ void do_cmd_suicide(int Ind)
 	/* Hack -- clear ghost */
 	p_ptr->ghost = 0;
 
-	if (p_ptr->total_winner) kingly(Ind);
+	if (p_ptr->total_winner) {
+		if (p_ptr->iron_winner) kingly(Ind, 4);
+		else kingly(Ind, 1);
+	} else if (p_ptr->iron_winner) kingly(Ind, 3);
 	/* Retirement in Valinor? - C. Blue :) */
-	if (getlevel(&p_ptr->wpos) == 200) kingly2(Ind);
+	if (getlevel(&p_ptr->wpos) == 200) kingly(Ind, 2);
 
 	/* Kill him */
 	p_ptr->deathblow = 0;
@@ -1858,7 +1861,7 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 		fprintf(fff, "%s\n", out_val);
 
 		/* Another line of info */
-		if (strcmp(the_score.how, "winner") && strcmp(the_score.how, "*winner*"))
+		if (strcmp(the_score.how, "winner") && strcmp(the_score.how, "*winner*") && strcmp(the_score.how, "iron champion") && strcmp(the_score.how, "iron emperor"))
 			snprintf(out_val, sizeof(out_val),
 				"               Killed by %s\n"
 				"               on %s %d%s%s",
@@ -1870,6 +1873,14 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 		else if (!strcmp(the_score.how, "*winner*"))
 			snprintf(out_val, sizeof(out_val),
 				"               \377vRetired on the shores of Valinor\n"
+				"               on %s %d%s%s", wilderness ? "wilderness level" : "dungeon level", cdun, mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
+		else if (!strcmp(the_score.how, "iron champion"))
+			snprintf(out_val, sizeof(out_val),
+				"               \377sRetired iron champion\n"
+				"               on %s %d%s%s", wilderness ? "wilderness level" : "dungeon level", cdun, mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
+		else if (!strcmp(the_score.how, "iron emperor"))
+			snprintf(out_val, sizeof(out_val),
+				"               \377vRetired from the iron throne\n"
 				"               on %s %d%s%s", wilderness ? "wilderness level" : "dungeon level", cdun, mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
 
 		/* Hack -- some people die in the town */
@@ -2134,7 +2145,7 @@ static errr predict_score(int Ind, int line)
 /*
  * Change a player into a King!                 -RAK-
  */
-void kingly(int Ind)
+void kingly(int Ind, int type)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -2147,31 +2158,12 @@ void kingly(int Ind)
 
 	/* Fake death */
 	//(void)strcpy(p_ptr->died_from_list, "Ripe Old Age");
-	(void)strcpy(p_ptr->died_from_list, "winner");
-
-	/* Restore the experience */
-	p_ptr->exp = p_ptr->max_exp;
-
-	/* Restore the level */
-	p_ptr->lev = p_ptr->max_plv;
-
-	/* Hack -- Player gets an XP bonus for beating the game */
-	/* p_ptr->exp = p_ptr->max_exp += 10000000L; */
-}
-void kingly2(int Ind)
-{
-	player_type *p_ptr = Players[Ind];
-
-#if 0	// No, this makes Delete_player fail!
-	/* Hack -- retire in town */
-	p_ptr->wpos.wx=0;	// pfft, not 0 maybe
-	p_ptr->wpos.wy=0;
-	p_ptr->wpos.wz=0;
-#endif	// 0
-
-	/* Fake death */
-	//(void)strcpy(p_ptr->died_from_list, "Ripe Old Age");
-	(void)strcpy(p_ptr->died_from_list, "*winner*");
+	switch (type) {
+	case 1: strcpy(p_ptr->died_from_list, "winner"); break;
+	case 2: strcpy(p_ptr->died_from_list, "*winner*"); break;
+	case 3: strcpy(p_ptr->died_from_list, "iron champion"); break;
+	case 4: strcpy(p_ptr->died_from_list, "iron emperor"); break;
+	}
 
 	/* Restore the experience */
 	p_ptr->exp = p_ptr->max_exp;
@@ -2247,9 +2239,9 @@ void close_game(void)
 		if (p_ptr->death)
 		{
 			/* Handle retirement */
-			if (p_ptr->total_winner) kingly(i);
 		        /* Retirement in Valinor? - C. Blue :) */
-	    		if (getlevel(&p_ptr->wpos) == 200) kingly2(i);
+	    		if (getlevel(&p_ptr->wpos) == 200) kingly(i, 2);
+			else if (p_ptr->total_winner) kingly(i, 1);
 
 			/* Save memories */
 			if (!save_player(i)) msg_print(i, "death save failed!");

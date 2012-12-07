@@ -2673,14 +2673,49 @@ void recall_player(int Ind, char *message){
 #ifdef IRONDEEPDIVE_FIXED_TOWN_WITHDRAWAL
 		if (success) {
 #endif
-		sprintf(buf, "\374\377L***\377a%s made it through the Ironman Deep Dive challenge!\377L***", p_ptr->name);
-		msg_broadcast(0, buf);
-		l_printf("%s \\{U%s (%d) made it through the Ironman Deep Dive challenge\n", showdate(), p_ptr->name, p_ptr->lev);
+			p_ptr->iron_winner = TRUE;
+			msg_print(Ind, "\374\377L***\377aYou made it through the Ironman Deep Dive challenge!\377L***");
+			sprintf(buf, "\374\377L***\377a%s made it through the Ironman Deep Dive challenge!\377L***", p_ptr->name);
+			msg_broadcast(Ind, buf);
+			l_printf("%s \\{U%s (%d) made it through the Ironman Deep Dive challenge\n", showdate(), p_ptr->name, p_ptr->lev);
 #ifdef TOMENET_WORLDS
-                if (cfg.worldd_events) world_msg(buf);
+	                if (cfg.worldd_events) world_msg(buf);
 #endif
+		        /* enforce dedicated Ironman Deep Dive Challenge character slot usage */
+		        if (p_ptr->mode & MODE_DED_IDDC) {
+		                msg_print(Ind, "\377aYou return to town and may retire ('Q') when ready.");
+		                msg_print(Ind, "\377aIf you leave the town, retirement is assumed automatically.");
+
+				process_player_change_wpos(Ind);
+				p_ptr->recall_pos.wx = cfg.town_x;
+				p_ptr->recall_pos.wy = cfg.town_y;
+
+				wpcopy(&old_wpos, &p_ptr->wpos);
+				wpcopy(&p_ptr->wpos, &p_ptr->recall_pos);
+				new_players_on_depth(&old_wpos, -1, TRUE);
+				s_printf("Recalled: %s from %d,%d,%d to %d,%d,%d.\n", p_ptr->name,
+				    old_wpos.wx, old_wpos.wy, old_wpos.wz,
+				    p_ptr->recall_pos.wx, p_ptr->recall_pos.wy, p_ptr->recall_pos.wz);
+				new_players_on_depth(&p_ptr->wpos, 1, TRUE);
+				p_ptr->new_level_flag = TRUE;
+				set_invuln_short(Ind, RECALL_GOI_LENGTH);	// It runs out if attacking anyway
+				p_ptr->word_recall = 0;
+				process_player_change_wpos(Ind);
+
+				/* Restrict character to town */
+				p_ptr->iron_winner_ded = TRUE;
+		        }
 #ifdef IRONDEEPDIVE_FIXED_TOWN_WITHDRAWAL
 		} else {
+		        /* enforce dedicated Ironman Deep Dive Challenge character slot usage */
+		        if (p_ptr->mode & MODE_DED_IDDC) {
+		                msg_print(Ind, "\377RYou failed to complete the Ironman Deep Dive Challenge!");
+		                strcpy(p_ptr->died_from, "indetermination");
+		                p_ptr->deathblow = 0;
+		                p_ptr->death = TRUE;
+		                return;
+		        }
+
 			sprintf(buf, "\374\377s%s withdrew from the Ironman Deep Dive challenge.", p_ptr->name);
 			msg_broadcast(0, buf);
 #ifdef TOMENET_WORLDS
@@ -6067,6 +6102,11 @@ void dungeon(void)
 		player_type *p_ptr = Players[i]; 
 		if (p_ptr->conn == NOT_CONNECTED || !p_ptr->new_level_flag)
 			continue;
+		if (p_ptr->iron_winner_ded) {
+			p_ptr->new_level_flag = FALSE;
+			do_cmd_suicide(i);
+			continue;
+		}
 		process_player_change_wpos(i);
 	}
 
