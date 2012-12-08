@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 6. December 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 8. December 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.9d - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -120,8 +120,6 @@ Contents
     (5.17)  How abilities, resistances and boni stack
     (5.18)  Monster auras
     (5.19)  Experience-draining items
-    (5.20)  Runes & Runemastery (BETA)
-    (5.20a) Runemastery Tables (BETA)
     (5.21)  Digging
     (5.21a) Digging - Exact calculation
     (5.21b) Digging - Common example values
@@ -143,6 +141,8 @@ Contents
     (6.7c)  Useful low-level humanoid forms for weapon-using mimics
     (6.8)   Magic spells and prayers
     (6.8a)  Spell failure rate
+    (6.8b)  Runes & Runemastery
+    (6.8c)  Runespell tables
     (6.9)   Parties, Iron Teams, Guilds
     (6.10)  Magic Device skill/ability details
     (6.11)  Parrying and blocking
@@ -723,7 +723,6 @@ They all start with a slash '/' hence they're called slash commands:
             - forms you have learned if you're a druid, and their according
               polymorph codes so you don't have to look them up in (6.7b) if
               you forgot them;
-            - runecraft status details, if you're adept in runemastery;
             - pvp kills;
             - the in-game time and date, and whether it is day or night.
               (Note: If you want to know the server real-life time, use /time.)
@@ -3136,13 +3135,13 @@ Here is a list of all available ability codes:
 (included in '6' now: 9       Create ammunition (for archery skill))
 10      Set a monster trap (for trapping skill, see (4.7))
 11      Cast a magic spell / recite a holy prayer
+12      Draw a rune (for runecraft).
 13      Change combat stance (for combat stances skill)
 14      Check your chances of parrying and blocking (for melee fighters,
         see (6.11) for details about these abilities)
 15      Toggle 'Aura of Fear' if you have trained the according skill.
 16      Toggle 'Shivering Aura' if you have trained the according skill.
 17      Toggle 'Aura of Death' if you have trained the according skill.
-18      Draw a rune (for runemastery skill).
 
 After the ability code has been entered you need to press Enter to confirm it.
 In a macro, this is done by '\r' (one of the so-called escape sequences).
@@ -3209,8 +3208,8 @@ to their real functionality. They are:
     Example:  M@Phase Door\
     Becomes  \e)m@11\r@Phase Door\r  (cast spell 'Phase Door'.)
   R for drawing a rune
-    Examples:  Rcbiaa  or  Rcb\raa  or Rc\raa  to draw 3 or 2 or just 1 rune.
-    (The last two 'a' being spell-power and spell-type respectively.)
+    Examples:  Rcbaa  or Rc\raa  to draw 2 or just 1 rune.
+    (The last two 'a' being spell modifier and spell form respectively.)
   T for setting up a trap
     Example:  T13
     Set up the monster trap inscribed '@m1' or '@1' loaded with item inscribed
@@ -3930,7 +3929,9 @@ Spellbooks:
                 completely!
                 (If 'c' is omittted, the first spell will be chosen.)
 
-Runes:          See (5.20).
+Runes:          Auto-retaliate with the inscribed rune. The format is modifier
+    @Oaa        then type. To retaliate with a combination of runes, use the 
+	            same inscription for both runes. See (6.8c) for details.
 
 Any item:
     @OMd        Use innate mimic power 'd)' (for example).
@@ -5743,9 +5744,6 @@ which don't travel to their destination but arrive instantly (most notably ball
 spells and mindcrafter spells) will not be affected by monsters crossing your
 line of sight.
 
-Concerning runecraft, fire-till-kill mode will also stop casting when your fail
-chance for the selected spell is over 60%.
-
 To manually stop fire-till-kill without moving or performing any other action,
 just press the SPACE key. Note that SPACE also stops all other kinds of
 repeatable actions such as searching or tunnelling.
@@ -6219,7 +6217,7 @@ Poison          Poison resistance doesn't belong to the basic resistances but
                 caps at 800.
                 Stinking clouds, which are small poison balls, inflict 12d2
                 damage.
-Unbreath        A special type of poison, castable by mages and runemasters.
+Unbreath        A special type of poison, castable by mages.
                 This one will just deprive the air of all oxygen, thereby also
                 damaging poison immune monsters.
                 The only monsters immune to this are those that do not require
@@ -8114,1334 +8112,6 @@ experience points permanently. Here are some details about that process:
 
 
 
-(5.20) Runes & Runemastery (BETA)
---------------------------
-Runes are magical symbols used to summon and manipulate the raw elemental
-forces which sustain the world of life. They are the motivating force behind
-the traditional systems of magic in TomeNET. The istari spell-scrolls, for
-example, are composed of a series of complicated runes which both protect the
-mage from immediate harm, and create the desired effect: from fireballs to
-magical satiation.
-
-Runemasters are less methodical in their approach to magic. Having learned
-to summon elemental forces without the aid of the traditional precautions,
-limitations and potential inefficiencies of the complex istari spell system,
-Runemasters deal directly with the 'pure' substance of magic, and are limited
-only by their wits, their strength and their skill.
-
-This approach is not necessarily a safe one. Inexperienced Runemasters risk
-losing control of their spells, which can result in broken runes, physical
-damage, sickness, madness or even death. (See Penalties & Backlash below.)
-
-These risks are compounded when the Runemaster is blinded, stunned, low on
-magical stamina or simply attempting a particularly dangerous spell. While
-an Istar is always prevented from casting outside of his or her ability,
-Runemasters may continue making spell attempts with increased risks (drawing
-on his or her own health, if necessary), until the penalties are fatal.
-
-Runemasters are able to cast many kinds of spells, but it's important to note
-that some are much more difficult to manage than others. All rune-spells can
-either be projected at the world or a monster, or directed at the Runemaster
-for a different result. These are 'projection' and 'self' spells.
-
-Successful Runemasters will develop an affinity for a small number of runes.
-Eventually, they may come to a point where they can safely recite these runes
-from memory, especially when casting simple spells. However, having the
-physical runes present increases the chance of success, and mitigates many
-of the penalties of failing a rune-spell.
-
-Runemastery requires dexterous physical and intellectual manipulation of
-the rune-forms, requiring high INT and DEX character stats. For this reason,
-Runemasters also make decent thieves and fighters- some rune-spells may even
-boost the caster's combat abilities.
-
-To some extent, Runemasters will need to experiment to find out their own
-capabilities.
-
-
-Rune-spells:
-------------
-To cast a rune-spell, enter the m-key menu and select 'Draw a rune'.
-(Note: The ability code for drawing a rune is 18.)
-
-Rune-spells are made up of three components:
-    1. A combination of up to three runes
-    2. A spell-modifier (minimized, brief, etc.)
-    3. A spell-type (bolt, ball, self, etc.)
-
-Each component has different associated parameters- these can be viewed in
-the menu. When selecting runes, press return once you are finished, or enter
-the maximum of three runes and continue to the modifier selection. The menu
-will prompt for a direction if it is required after you're done.
-
-Each component has an associated level modifier, contributing to the overall
-level of skill needed to cast or even attempt to cast a rune-spell. For 
-reference, here is a list of base element levels, which are added and 
-normalized when taken in combination (higher is more difficult):
-
-Acid         ->   5
-Water        ->  15
-Electricity  ->   5
-Earth        ->  15
-Fire         ->   5
-Chaos        ->  35
-Cold         ->   5
-Nether       ->  30
-Poison       ->  10
-Nexus        ->  25
-Force        ->  20
-Time         ->  40
-
-While selecting components with the m-key menu or the macro wizard, the color
-of each component can give you an estimate of the level and fail rate for a
-particular spell. Keep in mind that it is impossible to attempt a rune-spell
-15 levels or higher above your effective skill level, and that your effective
-level is the lowest skill level of all utilized rune elements.
-
-Here is an explanation of the color system; remember to add 10% fail per 
-missing rune while judging the safety of a particular rune-spell (stun/blind
-status conditions may add up to 40% more fail):
-
-Blue   ->  Mastered (Requires high INT and DEX to achieve 0% fail)
-White  ->  Safe with Runes (Low fail rate, rarely penalized)
-Yellow ->  Acceptable with Runes (Medium fail rate, light penalty)
-Orange ->  Dangerous without Runes (High fail rate, medium penalty)
-Red    ->  Suicidal without Runes (Highest fail rate, harsh penalty)
-Slate  ->  Impossible (15+ skill levels below, or no skill)
-
-
-Penalties & Backlash:
----------------------
-Should your skill level be much lower than the level of the specified
-rune-spell, or if a number of penalties have accrued- by casting while
-stunned, blinded, from memory (no physical runes), or without enough MP,
-the risk of suffering backlash and other negative effects increases. In
-addition to an increased chance of outright failure of the rune-spell, high
-penalty levels also increase the danger of backlash effects. For this reason,
-experienced Runemasters will often try to minimize these penalties; having
-the physical runes for a rune-spell at hand is the first step in doing this.
-
-Keeping the correct runes in your inventory additionally serves to mitigate
-many of the more dangerous rune-spell backlash effects, breaking runes rather
-than the Runemaster. This is especially important once damaging effects of
-rune-spells begin to outpace the Runemaster's intrinsic durability; resisting
-one's own rune-spells can be an important factor for survival in critical
-situations.
-
-
-Gestalt, Exploding Spells:
---------------------------
-Runemastery is often a chaotic and unstable approach to magic, and many of
-the spells weaved by Runemasters combine elements in unlikely ways, with
-flashy and varied results. Gestalt spells combine the basic elements of
-acid, electricity, fire, cold, and even poison, to create an effect with
-the properties of each that contributes. Examples include combining cold
-and acid to produce an element with both properties, 'rime', or combining
-electricity and fire to produce 'flux', which can be later augmented with
-time, becoming 'plasma'.
-
-Exploding runespells encompass a powerful subcategory of the art, in which a
-projection such as a bolt, beam, ball, and even waves, clouds and storms
-strike the area around their targets with addition elemental damage. Instant
-effects (bolt, beam, ball) have a 1 in 2 chance to explode, while timed
-effects (waves, clouds, storms) have a chance to explode each tick. The
-order in which elements are combined determine the primary projection and 
-explosion in 3-rune spells. Experiment to get a feel for what best suits the
-situation.
-
-Multiplayer Spells:
--------------------
-Experienced runemasters skilled in manipulating 'time' runes can cast group 
-spells, charging party members with 'rune charges' which alter the effects of 
-certain 'combining' rune-spells. To begin, a runemaster must use the 'time' 
-self spell to synchronize their spells, otherwise they will not project nor 
-recieve rune charges. Upon casting a combining spell, the runemaster will 
-project up to two rune charges to nearby party members, which last for a 
-brief duration or until expended. A charged runemaster casting a combining 
-spell will recieve the benefits of the rune charges on a single cast, while 
-reciprocally producing new rune charges for nearby party members.
-
-An example: Runie A and Runie B both have synchronized their spells by casting 
-minimized-time-self spells. Standing nearby Runie B, Runie A casts a fire/time 
-spell, granting Runie B a 'fire' rune charge. Runie B then casts an acid/time 
-spell, which resolves as an acid/fire spell due to the 'fire' rune charge. If 
-Runie A was still within projection range, she would also recieve an 'acid' 
-rune charge.
-
-It is highly recommended to pre-plan spells when synchronizing with party 
-members, to avoid undesirable results.
-
-
-Rune Alacrity:
---------------
-A runemaster may additionally focus their efforts into casting spells most 
-elegantly and quickly, improving their base casting speed by up to 2 cpr. 
-Much like accomplished Istari who focus in spell-power, Rune Alacrity yields
-a net increase to overall rune-spell damage of 40% at cap, with increased 
-casting speed at level 25 and 50. Note that individual spell damage for 
-instantaneous spell effects will drop with casting speed, but timed effects
-will remain at full damage.
-
-
-Macros & Spell Construction:
-----------------------------
-Runemastery macros look like this (key translation in parenthesis):
-(Note: The ability code for runemastery is 18.)
-
-'Projection' one to three rune-spells use the following format:
-    \e)*tm@18\r[a-h]\r[a-h][a-h]-
-    \e)*tm@18\r[a-h][a-h]\r[a-h][a-h]-
-    \e)*tm@18\r[a-h][a-h][a-h][a-h][a-h]-
-
-'Self' one to three rune-spells (spell type 'b') us the following format:
-    \e)m@18\r[a-h]\r[a-h]b
-    \e)m@18\r[a-h][a-h]\r[a-h]b
-    \e)m@18\r[a-h][a-h][a-h][a-h]b
-
-Note that you must choose at least one and up to three runes, one
-imperative modifier, and one spell type. If you choose three runes for a
-spell, the \r is not required. [a-h] denotes the choice of a letter from
-a to h inclusive, which represents a rune, modifier, or type.
-
-Here is a single-rune element example, using fire (one-rune, code 'c'):
-
-'Projection' with 'Fire':
-    \e)*tm@18\rc\rac-  (fire--minimized--bolt)
-
-Which is a minimized fire bolt, a projection targetting a single opponent.
-
-A fire ball spell looks like this:
-    \e)*tm@18\re\rae-  (fire--minimized--ball)
-
-To increase the radius of the ball, adjust the modifier to something that
-sounds bigger (also increasing the level, difficulty and cost):
-
-A moderate fire ball:
-    \e)*tm@18\re\rbe-  (fire--moderate--ball)
-
-Or an expanded fire ball:
-    \e)*tm@18\re\rge-  (fire--expanded--ball)
-
-
-'Self' Spells with 'Fire':
-    \e)m@18\re\rab     (fire--minimized--self)
-
-Which is a minimized resist fire spell, a self-spell affecting the caster.
-
-A lengthened resist fire spell:
-    \e)m@18\re\rgb     (fire--lengthened--self)
-
-In the same way that you can increase or decrease a fire ball's radius, you can
-increase or decrease the duration of any timed spell by selecting 'lengthened'
-or 'brief'. Other modifiers may adjust the duration to a lesser extent.
-
-A brief resist fire spell:
-    \e)m@18\re\rfb     (fire--brief--self)
-
-
-Occasionally, more complex spells such as 'teleport to' or 'stone-to-mud'
-require a special macro that deviates from the examples above.
-
-Teleport-to requires that you set a target before casting:
-    \e)*tm@18\rbj\rab  (water/nexus--minimized--self)
-
-Stone-to-Mud, a projection with no *t...- (manual target):
-    \e)m@18\rbd\rac    (water/earth--minimized--bolt)
-
-Advanced runemasters may wish to create macro sets which construct spells
-on the fly, swap macro sets containing preset rune-spells, or set up
-combinations of macros to chain together spells quickly and efficiently.
-Spells with a lowered casting time might even be combined in one macro,
-creating a 'dual-cast' effect (especially true with the 'brief' modifier).
-
-Note that every modifier has drawbacks associated with the benefits of using
-it: higher cost, level, reduced damage, increased failure rates- check the
-specifics in the m-key menu before you create a new macro.
-
-
-Auto-retaliation & burst type:
-------------------------------
-The 'burst' spell type is also called a 'melee' spell. It is only usable on
-adjacent targets, a lashing-out of magical power at an opponent in melee range.
-It is technically a ball spell with a range and radius of a single tile.
-It is cheaper than a regular bolt, cannot be deflected, and usually does
-more damage. It may be difficult to use manually but it is very useful for
-auto-retaliation. Note that 'burst' spells take half the time to cast (2 cpr).
-
-If you inscribe @O[a-c][a-h][a-h] on a rune, you will retaliate with a spell
-of the selected runes in the order [abc] (up to three), modifier and type. For
-example, if you set the inscription to @Oaaa on a rune of fire, the 'burst' 
-spell type will be selected, with a 'minimized' spell modifier, and 'fire' will
-be the first element selected. This will result in retaliation with a minimized
-fire melee rune-spell. Inscribing @Obaa on another rune in addition to the fire 
-rune will add the second rune to the 'minimized' 'burst' retaliation as though 
-you chose fire, then the second rune in the wizard or m-key selectors.
-
-Inscribing multiple rune types with identical inscriptions will result with a
-retaliation spell that combines the elements of the inscribed runes. This takes
-the first rune found in your inventory with an @O[a-c][a-h][a-h] inscription, 
-and checks for other runes with the same @O[a-c][a-h][a-h] inscription format.
-For example, an inventory like so, resulting in a moderate wave of ice:
-    a) 1 'Gelum' Rune of Cold {+,1} {@Oabf}
-    b) 1 'Ostes' Rune of Earth {+,1} {@Oaaa}
-    c) 1 'Mio' Rune of Water {+,1} {@Obbf}
-Note that the earth rune in slot b) is skipped, as 'aa' does not match 'bf',
-which is the first spell constructor found in the runemaster's inventory.
-
-Although you can set any spell for retailation, some spells will be
-disabled, such as blink or teleport. Other spells that affect an area over time
-such as 'cloud' and 'storm' spells, and many self-spells with timed durations,
-make poor choices for auto-retaliation. Retaliation defaults to a burst if 
-inscribed incorrectly.
-
-
-Rune traps & upkeep:
---------------------
-Certain type 'self' spells will result in placing a 'rune trap'. That is an
-explosive charge of rune energy placed on the floor that will detonate when
-a monster runs across.
-
-Such traps are no longer under the full control of the runemaster: He cannot
-retract them, but he may attempt to disarm them as for any other trap.
-A runemaster has a much higher chance (usually succeeds) in disarming rune
-traps than other classes.
-
-Rune traps will remain drawing power from the rune master and thereby limiting
-the amount of concurrent rune traps he may set: Each rune trap taxes his amount
-of maximum mana, so when his mana pool capacity reaches zero that means he has
-set as many rune traps as possible at most.
-
-When a rune trap detonates its upkeep tax will be lifted from the mana pool.
-When a runemaster leaves the current level all rune traps will vanish and the
-upkeep tax be cancelled completely.
-
-Additionally, certain other self-spells may require upkeep. Casting these 
-'upkeep' spells toggles the benefit for the runemaster and the trade-off of a
-reduced mana pool. Certain upkeep spells may be incompatible, as stated in 
-their descriptions in the guide.
-
-Use the /ex command if you need to track rune traps or upkeep.
-
-
-Quickstart Guide:
------------------
-To get started, you'll probably want to macro a couple of minimized or
-moderate single rune (base element) attack spells; make sure the level isn't
-too high. Utilizing minimized burst auto-retaliation on a single element or
-(a bit riskier) minimized ball spells from full MP/HP can speed the early few
-levels. Runemasters excel at area damage, so be sure to take down packs of
-creatures while you still have starting runes to keep you safe from any major
-backlash effects. Keeping your MP high (use a mage staff, casters) is essential
-at early levels.
-
-Once you are around level 10, with enough skill to comfortably cast the basic
-elements of your choosing, macro a couple of spell types that work for a
-variety of situations. At this stage it is often best to invest more in potions
-than physical runes, as backlash is still minor, and the penalties for casting
-with HP not as severe. Risking high damage ball spells without MP to fuel them
-can be balanced by using a resist spell to reduce incoming backlash damage, and
-potions to sustain your HP.
-
-Around level 20, try to expand upon the variety of spell types and especially
-projection elements you have prepared. Build your macro set slowly as you gain
-levels, and be cautious when experimenting with new spells; not all self
-spells are beneficial, and unresisted backlash from your own projections can
-be lethal, especially when casting without runes or MP.
-
-
-Hints:
-------
-If you must experiment with high level spells, do this in a safe location
-(preferably somewhere that you are unable to be killed), bearing in mind that
-if you frequently fail or *fail* to cast a spell, you are not yet skillful
-enough to cast it: try a minimized version instead, or if that fails, increase
-your skill level and try again.
-
-The casting adjective will further elaborate on the difficulty of a spell
-compared to your skill. Ideally, you should try to choose spells where the
-average outcome is 'efficiently', or better. These are 'safe' spells, and tend
-to be more efficient than spells that you 'barely manage to', or 'clumsily'
-cast. (Note that this is not possible at skill level 1, where everything is
-dangerous.)
-
-
-(5.20a) Runemastery Tables (BETA)
---------------------------
-Runemastery covers a breadth of spells and effects, shown in the tables below.
-
-
-Single Elements
----------------
-A comprehensive listing of every single-rune projectable element.
-
--------------------------------------------------------------------------------
-Rune   |        | Projection     | Description
--------------------------------------------------------------------------------
-Acid   |        | Acid           | Acid damage.
-Water  |        | Water          | Water damage.
-Elec   |        | Lightning      | Lightning damage.
-Earth  |        | Shards         | Shard damage.
-Fire   |        | Fire           | Fire damage.
-Chaos  |        | Chaos          | Chaos damage. Polymorphs.
-Cold   |        | Frost          | Frost damage.
-Nether |        | Nether         | Nether damage.
-Poison |        | Gas            | Poison damage.
-Nexus  |        | Nexus          | Nexus damage.
-Force  |        | Force          | Force damage. Stuns.
-Time   |        | Time           | Time damage. Drains energy.
-
-
-2-Rune Elements
----------------
-A comprehensive listing of every 2-rune combination projectable element.
-
-** Note that 3-rune spells combine these on the fly (see 5.20 -- Gestalts,
-Exploding Spells for more info) and that the order of runes in a pair is
-unimportant; the order of pairs in a 3-rune spell determines which element is
-primary and which is secondary, experiment to find what suits you best.
-
--------------------------------------------------------------------------------
-Rune   | Rune   | Projection     | Description
--------------------------------------------------------------------------------
-Acid   | Water  | Dissolution    | Unresistable.
-Acid   | Elec   | Ions           | Acid and lightning damage.
-Acid   | Earth  | Corrosion      | Destroys doors and traps. Acid damage.
-Acid   | Fire   | Bile           | Acid and fire damage.
-Acid   | Chaos  | Perplexity     | Confusion damage. Confuses.
-Acid   | Cold   | Rime           | Acid and frost damage.
-Acid   | Nether | Annihilation   | Cuts the target's current hp by a percent.
-Acid   | Poison | Venom          | Acid and poison damage. Confuses.
-Acid   | Nexus  | Lightning      | Warps acid to generate electricity.
-Acid   | Force  | Ablation       | Acid damage. Critical damage if stunned.
-Acid   | Time   | Acid/Combine   | Combines acid. Defaults to acid damage.
-Water  | Elec   | Discharge      | Destroys doors and traps. Lightning damage.
-Water  | Earth  | Erosion        | Stone-to-mud. Destroys walls and doors.
-Water  | Fire   | Evaporation    | Destroys doors and traps. Fire damage.
-Water  | Chaos  | Polymorphing   | Attempts to polymorph the target.
-Water  | Cold   | Ice            | Cold and shard damage. Stuns.
-Water  | Nether | Duplicating    | Attempts to clone the target.
-Water  | Poison | Sleep          | Attempts to paralyze the target.
-Water  | Nexus  | Calling        | Tele-to. Returns the target to the caster.
-Water  | Force  | Pressure       | Water damage. Stuns.
-Water  | Time   | Water/Combine  | Combines water. Defaults to water damage.
-Elec   | Earth  | Thunder        | Lightning/light/sound damage. Blinds. Stuns.
-Elec   | Fire   | Flux           | Lightning and fire damage. May be improved.
-Elec   | Chaos  | Light          | Light damage. Blinds. Illuminates.
-Elec   | Cold   | Static         | Lightning and cold damage.
-Elec   | Nether | Darkness       | Darkness damage. Blinds. Darkens.
-Elec   | Poison | Jolting        | Lightning and poison damage. Stuns.
-Elec   | Nexus  | Acid           | Warps electricity to generate acid.
-Elec   | Force  | Zapping        | Lightning damage. Critical damage if stunned.
-Elec   | Time   | Elec/Combine   | Combines elec. Defaults to lightning damage.
-Earth  | Fire   | Detonations    | Fire/shard/sound damage. Destroys terrain.
-Earth  | Chaos  | Turmoil        | Quakes affected tiles. *Dangerous*
-Earth  | Cold   | Shattering     | Destroys doors and traps. Frost damage.
-Earth  | Nether | Ruination      | Wracks the target. May reduce stats and AC.
-Earth  | Poison | Concussion     | Stuns.
-Earth  | Nexus  | Gravity        | Gravity damage. Slows. Stuns. Phases.
-Earth  | Force  | Sound          | Sound damage. Stuns.
-Earth  | Time   | Shards/Combine | Combines earth. Defaults to shard damage.
-Fire   | Chaos  | Hellfire       | Fire damage. Slays good.
-Fire   | Cold   | Whitefire      | Fire and cold damage.
-Fire   | Nether | Lifefire       | Fire damage. Slays living. Backlash drain.
-Fire   | Poison | Ash            | Fire and poison damage. Blinds.
-Fire   | Nexus  | Frost          | Warps fire to generate cold.
-Fire   | Force  | Incineration   | Fire damage. Critical damage if stunned.
-Fire   | Time   | Fire/Combine   | Combines fire. Defaults to fire damage.
-Chaos  | Cold   | Wonder         | Produces a random runespell projection.
-Chaos  | Nether | Disenchantment | Disenchantment damage.
-Chaos  | Poison | Confusion      | Confuses.
-Chaos  | Nexus  | Order          | Unresistable.
-Chaos  | Force  | Entropy        | Impact damage. Stuns.
-Chaos  | Time   | Chaos/Combine  | Combines chaos. Defaults to chaos damage.
-Cold   | Nether | Blight         | Cold damage. Slays living.
-Cold   | Poison | Frostbite      | Cold and poison damage. Slows.
-Cold   | Nexus  | Fire           | Warps cold to generate fire.
-Cold   | Force  | Incineration   | Frost damage. Critical damage if stunned.
-Cold   | Time   | Cold/Combine   | Combines cold. Defaults to frost damage.
-Nether | Poison | Miasma         | Drains the target's current hp by a percent.
-Nether | Nexus  | Mana           | Mana damage.
-Nether | Force  | Disintegration | Disintegration damage. Destroys terrain.
-Nether | Time   | Nether/Combine | Combines nether. Defaults to nether damage.
-Poison | Force  | Toxins         | Gas damage. Critical damage if stunned.
-Poison | Nexus  | Unbreath       | Poison damage. Slays living.
-Poison | Time   | Stop           | Cuts energy.
-Nexus  | Force  | Teleportation  | Attempts to teleport the target.
-Nexus  | Time   | Stasis         | Attempts to hold the target.
-Force  | Time   | Inertia        | Inertia damage. Slows.
-
-
-Imperatives
------------
-A comprehensive effect listing of every spell modifier. Imperatives alter the
-nature of a spell, influencing level, cost, fail rate, damage, casting time, 
-radius, and duration. The 'chaotic' modifier uses a set of random values, 
-denoted by **.
-
--------------------------------------------------------------------------------
-Mod | Name       | Cost | Fail | Damage | Casting Time | Radius | Duration
--------------------------------------------------------------------------------
- -5 | Minimized  |  60% | -10% |   60%  |     100%     |   -1   |    80%
-  0 | Moderate   | 100% | + 0% |  100%  |     100%     |   +0   |   100%
-  5 | Maximized  | 150% | +10% |  150%  |     100%     |   +1   |   130%
- -1 | Compressed | 100% | - 5% |  130%  |     100%     |   -2   |    80%
- +1 | Expanded   | 130% | + 5% |  100%  |     100%     |   +2   |   130% 
- +3 | Brief      | 100% | - 5% |   80%  |      50%     |   +0   |    60%
- -3 | Lengthened | 130% | + 5% |   60%  |     100%     |   +0   |   150%
-  0 | Chaotic    |  **  |  **  |   **   |     100%     |   **   |    **%
-        
-
-Types
------
-A comprehensive effect listing of every spell type. Type controls the shape and
-area that a completed rune-spell will affect. Area of effect increases with
-level, but may be limited by projection elements.
-
--------------------------------------------------------------------------------
-Level Modifier | Name  | Description
--------------------------------------------------------------------------------
-        0      | Melee | Quick burst attack at melee retaliation range.
-        0      | Self  | Affects the caster or creates some special effect.
-        0      | Bolt  | Hits a single target in line of effect.
-        2      | Beam  | Hits every target in line of effect. May be deflected.
-        4      | Ball  | Explodes about a single target in line of effect.
-        1      | Wave  | Radiates outward from the caster. Hits rapidly.
-        3      | Cloud | Damages an area of effect over time around the target.
-        5      | Storm | Creates a damaging area that moves with the caster.
-
-
-(5.20b) Runemastery Self-spell Tables
--------------------------------------
-Self spells are usually beneficial to the caster, but may also have unusual or 
-harmful effects. Below is a comprehensive listing of self-spells. Spells 
-without a description will result in backlash of the combination's projection 
-elements. Spells listed as XOR will toggle off all others of the same type. 
-Note that 1 and 2-rune self spells do not rely on the order of runes to 
-determine the effect, while 3-rune self spells rely on the order of pairs to 
-determine the effect, the same as projections (see above). Note that some 
-combinations of runes may produce the same effect without regard to order.
-
--------------------------------------------------------------------------------
-Rune A | Rune B | Rune C | Description
--------------------------------------------------------------------------------
-Acid   |        |        | Temporary acid resistance.
-Water  |        |        | 
-Elec   |        |        | Temporary electricity resistance.
-Earth  |        |        | 
-Fire   |        |        | Temporary fire resistance.
-Chaos  |        |        | 
-Cold   |        |        | Temporary cold resistance.
-Nether |        |        | 
-Poison |        |        | Temporary poison resistance.
-Nexus  |        |        | 
-Force  |        |        | 
-Time   |        |        | Toggles synchronization-projection mode.
-
-Acid   | Water  |        | Summons clouds on random targets in range. Timed.
-Acid   | Elec   |        | Temporary acid and electricity resistance.
-Acid   | Earth  |        | Malicious effect. Corrodes the caster.
-Acid   | Fire   |        | Temporary acid and fire resistance.
-Acid   | Chaos  |        | Confusion brand. Upkeep.
-Acid   | Cold   |        | Temporary acid and cold resistance.
-Acid   | Nether |        | Annihilation brand. Upkeep.
-Acid   | Poison |        | Temporary acid and poison resistance.
-Acid   | Nexus  |        | Temporary electricity resistance. Projected.
-Acid   | Force  |        | Permanent acid resistance and brand. XOR Upkeep.
-Acid   | Time   |        | Prepare an acid rune charge. Sync-projected.
-
-Water  | Elec   |        | Malicious effect. Discharges the caster.
-Water  | Earth  |        | Improves tunneling. Upkeep.
-Water  | Fire   |        | Malicious effect. Evaporates the caster.
-Water  | Chaos  |        | Malicious effect. Polymorphs the caster.
-Water  | Cold   |        | Places an ice trap.
-Water  | Nether |        | Heals the caster. Fails if exhausted or undead.
-Water  | Poison |        | 
-Water  | Nexus  |        | Teleport forward. Requires a target.
-Water  | Force  |        | Feather falling. Upkeep.
-Water  | Time   |        | Prepare a water rune charge. Sync-projected.
-
-Elec   | Earth  |        | Fires bolts at random targets in range. Timed.
-Elec   | Fire   |        | Temporary electricity and fire resistance.
-Elec   | Chaos  |        | Calls light.
-Elec   | Cold   |        | Temporary electricity and cold resistance.
-Elec   | Nether |        | Calls darkness.
-Elec   | Poison |        | Temporary electricity and poison resistance.
-Elec   | Nexus  |        | Temporary acid resistance. Projected.
-Elec   | Force  |        | Permanent elec resistance and brand. XOR Upkeep.
-Elec   | Time   |        | Prepare an electricity rune charge. Sync-projected.
-
-Earth  | Fire   |        | Places a detonations trap.
-Earth  | Chaos  |        | Causes an earthquake centered on the caster.
-Earth  | Cold   |        | Malicious effect. Shatters the caster.
-Earth  | Nether |        | Malicious effect. Ruins the caster.
-Earth  | Poison |        | 
-Earth  | Nexus  |        | Line of sight tele-to. Requires a target. 
-Earth  | Force  |        | Increases effective stealth. Upkeep.
-Earth  | Time   |        | Prepare an earth rune charge. Sync-projected.
-
-Fire   | Chaos  |        | Increases effective necromancy. Upkeep.
-Fire   | Cold   |        | Temporary fire and cold resistance.
-Fire   | Nether |        | Malicious effect. Drains xp from the caster.
-Fire   | Poison |        | Temporary fire and poison resistance.
-Fire   | Nexus  |        | Temporary cold resistance. Projected.
-Fire   | Force  |        | Permanent fire resistance and brand. XOR Upkeep.
-Fire   | Time   |        | Prepare a fire rune charge. Sync-projected.
-
-Chaos  | Cold   |        | Malicious effect. Random effect.
-Chaos  | Nether |        | Remove curse. Targets the caster.
-Chaos  | Poison |        | 
-Chaos  | Nexus  |        | Dispel magic. Targets the caster.
-Chaos  | Force  |        | Temporary reflection and bonus to AC (up to +15).
-Chaos  | Time   |        | Prepare a chaos rune charge. Sync-projected.
-
-Cold   | Nether |        | Increases effective traumaturgy. Upkeep.
-Cold   | Poison |        | Temporary cold and poison resistance.
-Cold   | Nexus  |        | Temporary fire resistance. Projected.
-Cold   | Force  |        | Permanent cold resistance and brand. XOR Upkeep.
-Cold   | Time   |        | Prepare a cold rune charge. Sync-projected.
-
-Nether | Poison |        | 
-Nether | Nexus  |        | Recharge. Targets a single held item.
-Nether | Force  |        | Temporary invisibility.
-Nether | Time   |        | Prepare a nether rune charge. Sync-projected.
-
-Poison | Nexus  |        | Temporary poison resistance. Projected.
-Poison | Force  |        | Permanent poison resistance and brand. XOR Upkeep.
-Poison | Time   |        | Increased regeneration. Upkeep.
-
-Nexus  | Force  |        | Teleportation. Phase door if the radius is small.
-Nexus  | Time   |        | Temporary anti-teleportation.
-
-Force  | Time   |        | Temporary speed (up to +10).
-
-Acid   | Water  | Elec   | Ion clouds. XOR Timed.
-Acid   | Water  | Earth  | Corrosion clouds. XOR Timed.
-Acid   | Water  | Fire   | Bile clouds. XOR Timed.
-Acid   | Water  | Chaos  | Perplexity clouds. XOR Timed.
-Acid   | Water  | Cold   | Rime clouds. XOR Timed.
-Acid   | Water  | Nether | Annihilation clouds. XOR Timed.
-Acid   | Water  | Poison | Venom clouds. XOR Timed.
-Acid   | Water  | Nexus  | Lightning clouds. XOR Timed.
-Acid   | Water  | Force  | Ablation clouds. XOR Timed.
-Acid   | Water  | Time   | Acid clouds. XOR Timed.
-
-Acid   | Elec   | Water  | Temporary acid and electricity resistance.
-Acid   | Elec   | Earth  | Temporary acid and electricity resistance.
-Acid   | Elec   | Fire   | Temporary acid/elec/fire resistance.
-Acid   | Elec   | Chaos  | Temporary acid and electricity resistance.
-Acid   | Elec   | Cold   | Temporary acid/elec/cold resistance.
-Acid   | Elec   | Nether | Temporary acid and electricity resistance.
-Acid   | Elec   | Poison | Temporary acid/elec/poison resistance.
-Acid   | Elec   | Nexus  | Temporary acid/elec resistance. Projected.
-Acid   | Elec   | Force  | XOR Upkeep acid/elec resistance and brands.
-Acid   | Elec   | Time   | Temporary acid and electricity resistance.
-
-Acid   | Earth  | Water  | Backlash.
-Acid   | Earth  | Elec   | Backlash.
-Acid   | Earth  | Fire   | Backlash.
-Acid   | Earth  | Chaos  | Backlash.
-Acid   | Earth  | Cold   | Malicious. Corrodes and shatters the caster.
-Acid   | Earth  | Nether | Backlash.
-Acid   | Earth  | Poison | Backlash.
-Acid   | Earth  | Nexus  | Backlash.
-Acid   | Earth  | Force  | Backlash.
-Acid   | Earth  | Time   | Backlash.
-
-Acid   | Fire   | Water  | Temporary acid and fire resistance.
-Acid   | Fire   | Elec   | Temporary acid/elec/fire resistance.
-Acid   | Fire   | Earth  | Temporary acid and fire resistance.
-Acid   | Fire   | Chaos  | Temporary acid and fire resistance.
-Acid   | Fire   | Cold   | Temporary acid/fire/cold resistance.
-Acid   | Fire   | Nether | Temporary acid and fire resistance.
-Acid   | Fire   | Poison | Temporary acid/fire/poison resistance.
-Acid   | Fire   | Nexus  | Temporary acid/fire resistance. Projected.
-Acid   | Fire   | Force  | XOR Upkeep acid/fire resistance and brands.
-Acid   | Fire   | Time   | Temporary acid and fire resistance.
-
-Acid   | Chaos  | Water  | Dissolution exploding aura. XOR Timed.
-Acid   | Chaos  | Elec   | Ion exploding aura. XOR Timed.
-Acid   | Chaos  | Earth  | Corrosion exploding aura. XOR Timed.
-Acid   | Chaos  | Fire   | Bile exploding aura. XOR Timed.
-Acid   | Chaos  | Cold   | Rime exploding aura. XOR Timed.
-Acid   | Chaos  | Nether | Annihilation exploding aura. XOR Timed.
-Acid   | Chaos  | Poison | Venom exploding aura. XOR Timed.
-Acid   | Chaos  | Nexus  | Lightning exploding aura. XOR Timed.
-Acid   | Chaos  | Force  | Ablation exploding aura. XOR Timed.
-Acid   | Chaos  | Time   | Acid exploding aura. XOR Timed.
-
-Acid   | Cold   | Water  | Temporary acid and cold resistance.
-Acid   | Cold   | Elec   | Temporary acid/elec/cold resistance.
-Acid   | Cold   | Earth  | Malicious. Corrodes and shatters the caster.
-Acid   | Cold   | Fire   | Temporary acid and cold resistance.
-Acid   | Cold   | Chaos  | Temporary acid/cold/cold resistance.
-Acid   | Cold   | Nether | Temporary acid and cold resistance.
-Acid   | Cold   | Poison | Temporary acid/cold/poison resistance.
-Acid   | Cold   | Nexus  | Temporary acid/cold resistance. Projected.
-Acid   | Cold   | Force  | XOR Upkeep acid/cold resistance and brands.
-Acid   | Cold   | Time   | Temporary acid and cold resistance.
-
-Acid   | Nether | Water  | Dissolution trap. Upkeep.
-Acid   | Nether | Elec   | Ion trap. Upkeep.
-Acid   | Nether | Earth  | Corrosion trap. Upkeep.
-Acid   | Nether | Fire   | Bile trap. Upkeep.
-Acid   | Nether | Chaos  | Perplexity trap. Upkeep.
-Acid   | Nether | Cold   | Rime trap. Upkeep.
-Acid   | Nether | Poison | Venom trap. Upkeep.
-Acid   | Nether | Nexus  | Lightning trap. Upkeep.
-Acid   | Nether | Force  | Ablation trap. Upkeep.
-Acid   | Nether | Time   | Acid trap. Upkeep.
-
-Acid   | Poison | Water  | Temporary acid and poison resistance.
-Acid   | Poison | Elec   | Temporary acid/elec/poison resistance.
-Acid   | Poison | Earth  | Temporary acid and poison resistance.
-Acid   | Poison | Fire   | Temporary acid/fire/poison resistance.
-Acid   | Poison | Chaos  | Temporary acid and poison resistance.
-Acid   | Poison | Cold   | Temporary acid/cold/poison resistance.
-Acid   | Poison | Nether | Temporary acid and poison resistance.
-Acid   | Poison | Nexus  | Temporary acid/poison resistance. Projected.
-Acid   | Poison | Force  | XOR Upkeep acid/poison resistance and brands.
-Acid   | Poison | Time   | Temporary acid and poison resistance.
-
-Acid   | Nexus  | Water  | Malicious effect. Discharges the caster.
-Acid   | Nexus  | Elec   | Temporary elec resist and acid aura. Upkeep.
-Acid   | Nexus  | Earth  | Fires bolts at random targets in range. Timed.
-Acid   | Nexus  | Fire   | Temporary electricity and fire resistance.
-Acid   | Nexus  | Chaos  | Calls light.
-Acid   | Nexus  | Cold   | Temporary electricity and cold resistance.
-Acid   | Nexus  | Nether | Calls darkness.
-Acid   | Nexus  | Poison | Temporary electricity and poison resistance.
-Acid   | Nexus  | Force  | Permanent elec resistance and brand. XOR Upkeep.
-Acid   | Nexus  | Time   | Prepare an electricity rune charge. Sync-projected.
-
-Acid   | Force  | Water  | Dissolution exploding brand. XOR Timed.
-Acid   | Force  | Elec   | Ion exploding brand. XOR Timed.
-Acid   | Force  | Earth  | Corrosion exploding brand. XOR Timed.
-Acid   | Force  | Fire   | Bile exploding brand. XOR Timed.
-Acid   | Force  | Chaos  | Perplexity exploding brand. XOR Timed.
-Acid   | Force  | Cold   | Rime exploding brand. XOR Timed.
-Acid   | Force  | Nether | Annihilation exploding brand. XOR Timed.
-Acid   | Force  | Poison | Venom exploding brand. XOR Timed.
-Acid   | Force  | Nexus  | Lightning exploding brand. XOR Timed.
-Acid   | Force  | Time   | Acid exploding brand. XOR Timed.
-
-Acid   | Time   | Water  | Prepare acid/water rune charges. Sync-projected.
-Acid   | Time   | Elec   | Prepare acid/elec rune charges. Sync-projected.
-Acid   | Time   | Earth  | Prepare acid/earth rune charges. Sync-projected.
-Acid   | Time   | Fire   | Prepare acid/fire rune charges. Sync-projected.
-Acid   | Time   | Chaos  | Prepare acid/chaos rune charges. Sync-projected.
-Acid   | Time   | Cold   | Prepare acid/cold rune charges. Sync-projected.
-Acid   | Time   | Nether | Prepare acid/nether rune charges. Sync-projected.
-Acid   | Time   | Poison | 
-Acid   | Time   | Nexus  | 
-Acid   | Time   | Force  | 
-
-Water  | Elec   | Acid   | Backlash.
-Water  | Elec   | Earth  | Backlash.
-Water  | Elec   | Fire   | Malicious. Discharges and evaporates the caster.
-Water  | Elec   | Chaos  | Backlash.
-Water  | Elec   | Cold   | Backlash.
-Water  | Elec   | Nether | Backlash.
-Water  | Elec   | Poison | Backlash.
-Water  | Elec   | Nexus  | Backlash.
-Water  | Elec   | Force  | Backlash.
-Water  | Elec   | Time   | Backlash.
-
-Water  | Earth  | Acid   | 
-Water  | Earth  | Elec   | 
-Water  | Earth  | Fire   | 
-Water  | Earth  | Chaos  | 
-Water  | Earth  | Cold   | 
-Water  | Earth  | Nether | 
-Water  | Earth  | Poison | 
-Water  | Earth  | Nexus  | 
-Water  | Earth  | Force  | 
-Water  | Earth  | Time   | 
-
-Water  | Fire   | Acid   | Backlash.
-Water  | Fire   | Elec   | Malicious. Discharges and evaporates the caster.
-Water  | Fire   | Earth  | Backlash.
-Water  | Fire   | Chaos  | Backlash.
-Water  | Fire   | Cold   | Backlash.
-Water  | Fire   | Nether | Backlash.
-Water  | Fire   | Poison | Backlash.
-Water  | Fire   | Nexus  | Backlash.
-Water  | Fire   | Force  | Backlash.
-Water  | Fire   | Time   | Backlash.
-
-Water  | Chaos  | Acid   | Backlash.
-Water  | Chaos  | Elec   | Backlash.
-Water  | Chaos  | Earth  | Backlash.
-Water  | Chaos  | Fire   | Backlash.
-Water  | Chaos  | Cold   | Backlash.
-Water  | Chaos  | Nether | Backlash.
-Water  | Chaos  | Poison | Backlash.
-Water  | Chaos  | Nexus  | Backlash.
-Water  | Chaos  | Force  | Backlash.
-Water  | Chaos  | Time   | Backlash.
-
-Water  | Cold   | Acid   | Rime trap. Upkeep.
-Water  | Cold   | Elec   | Static trap. Upkeep.
-Water  | Cold   | Earth  | Shattering trap. Upkeep.
-Water  | Cold   | Fire   | Whitefire trap. Upkeep.
-Water  | Cold   | Chaos  | Wonder trap. Upkeep.
-Water  | Cold   | Nether | Blight trap. Upkeep.
-Water  | Cold   | Poison | Frostbite trap. Upkeep.
-Water  | Cold   | Nexus  | Fire trap. Upkeep.
-Water  | Cold   | Force  | Snapping trap. Upkeep.
-Water  | Cold   | Time   | Frost trap. Upkeep.
-
-Water  | Nether | Acid   | Backlash.
-Water  | Nether | Elec   | Backlash.
-Water  | Nether | Earth  | Backlash.
-Water  | Nether | Fire   | Backlash.
-Water  | Nether | Chaos  | Backlash.
-Water  | Nether | Cold   | Backlash.
-Water  | Nether | Poison | Backlash.
-Water  | Nether | Nexus  | Backlash.
-Water  | Nether | Force  | Backlash.
-Water  | Nether | Time   | Backlash.
-
-Water  | Poison | Acid   | Dissolution trap. Upkeep.
-Water  | Poison | Elec   | Discharge trap. Upkeep.
-Water  | Poison | Earth  | Erosion trap. Upkeep.
-Water  | Poison | Fire   | Evaporation trap. Upkeep.
-Water  | Poison | Chaos  | Polymorph trap. Upkeep.
-Water  | Poison | Cold   | Ice trap. Upkeep.
-Water  | Poison | Nether | Duplicating trap. Upkeep.
-Water  | Poison | Nexus  | Calling trap. Upkeep.
-Water  | Poison | Force  | Pressure trap. Upkeep.
-Water  | Poison | Time   | Water trap. Upkeep.
-
-Water  | Nexus  | Acid   | Dissolution exploding aura. XOR Timed.
-Water  | Nexus  | Elec   | Discharge exploding aura. XOR Timed.
-Water  | Nexus  | Earth  | Erosion exploding aura. XOR Timed.
-Water  | Nexus  | Fire   | Evaporation exploding aura. XOR Timed.
-Water  | Nexus  | Chaos  | Polymorphing exploding aura. XOR Timed.
-Water  | Nexus  | Cold   | Ice exploding aura. XOR Timed.
-Water  | Nexus  | Nether | Duplicating exploding aura. XOR Timed.
-Water  | Nexus  | Poison | Sleep exploding aura. XOR Timed.
-Water  | Nexus  | Force  | Pressure exploding aura. XOR Timed.
-Water  | Nexus  | Time   | Water exploding aura. XOR Timed.
-
-Water  | Force  | Acid   | Dissolution exploding brand. XOR Timed.
-Water  | Force  | Elec   | Dischrage exploding brand. XOR Timed.
-Water  | Force  | Earth  | Erosion exploding brand. XOR Timed.
-Water  | Force  | Fire   | Evaporation exploding brand. XOR Timed.
-Water  | Force  | Chaos  | Polymorphing exploding brand. XOR Timed.
-Water  | Force  | Cold   | Ice exploding brand. XOR Timed.
-Water  | Force  | Nether | Duplicating exploding brand. XOR Timed.
-Water  | Force  | Poison | Sleep exploding brand. XOR Timed.
-Water  | Force  | Nexus  | Calling exploding brand. XOR Timed.
-Water  | Force  | Time   | Water exploding brand. XOR Timed.
-
-Water  | Time   | Acid   | Prepare water/acid rune charges. Sync-projected.
-Water  | Time   | Elec   | Prepare water/elec rune charges. Sync-projected.
-Water  | Time   | Earth  | Prepare water/earth rune charges. Sync-projected.
-Water  | Time   | Fire   | Prepare water/fire rune charges. Sync-projected.
-Water  | Time   | Chaos  | Prepare water/chaos rune charges. Sync-projected.
-Water  | Time   | Cold   | Prepare water/cold rune charges. Sync-projected.
-Water  | Time   | Nether | Prepare water/nether rune charges. Sync-projected.
-Water  | Time   | Poison | 
-Water  | Time   | Nexus  | 
-Water  | Time   | Force  | 
-
-Elec   | Earth  | Acid   | Ion bolts. XOR Timed.
-Elec   | Earth  | Water  | Discharge bolts. XOR Timed.
-Elec   | Earth  | Fire   | Flux bolts. XOR Timed.
-Elec   | Earth  | Chaos  | Light bolts. XOR Timed.
-Elec   | Earth  | Cold   | Static bolts. XOR Timed.
-Elec   | Earth  | Nether | Darkness bolts. XOR Timed.
-Elec   | Earth  | Poison | Jolting bolts. XOR Timed.
-Elec   | Earth  | Nexus  | Acid bolts. XOR Timed.
-Elec   | Earth  | Force  | Zapping bolts. XOR Timed.
-Elec   | Earth  | Time   | Lightning bolts. XOR Timed.
-
-Elec   | Fire   | Acid   | Temporary acid/elec/fire resistance.
-Elec   | Fire   | Water  | Malicious. Discharges and evaporates the caster.
-Elec   | Fire   | Earth  | Temporary electricity and fire resistance.
-Elec   | Fire   | Chaos  | Temporary electricity and fire resistance.
-Elec   | Fire   | Cold   | Temporary elec/fire/cold resistance.
-Elec   | Fire   | Nether | Temporary electricity and fire resistance.
-Elec   | Fire   | Poison | Temporary elec/fire/poison resistance.
-Elec   | Fire   | Nexus  | Temporary elec/fire resistance. Projected.
-Elec   | Fire   | Force  | XOR Upkeep elec/fire resistance and brands.
-Elec   | Fire   | Time   | Temporary electricity and fire resistance.
-
-Elec   | Chaos  | Acid   | Ion trap. Upkeep.
-Elec   | Chaos  | Water  | Discharge trap. Upkeep.
-Elec   | Chaos  | Earth  | Thunder trap. Upkeep.
-Elec   | Chaos  | Fire   | Flux trap. Upkeep.
-Elec   | Chaos  | Cold   | Static trap. Upkeep.
-Elec   | Chaos  | Nether | Darkness trap. Upkeep.
-Elec   | Chaos  | Poison | Jolting trap. Upkeep.
-Elec   | Chaos  | Nexus  | Acid trap. Upkeep.
-Elec   | Chaos  | Force  | Zapping trap. Upkeep.
-Elec   | Chaos  | Time   | Lightning trap. Upkeep.
-
-Elec   | Cold   | Acid   | Temporary acid/elec/cold resistance.
-Elec   | Cold   | Water  | Temporary electricity and cold resistance.
-Elec   | Cold   | Earth  | Temporary electricity and cold resistance.
-Elec   | Cold   | Fire   | Temporary elec/fire/cold resistance.
-Elec   | Cold   | Chaos  | Temporary electricity and cold resistance.
-Elec   | Cold   | Nether | Temporary electricity and cold resistance.
-Elec   | Cold   | Poison | Temporary elec/cold/poison resistance.
-Elec   | Cold   | Nexus  | Temporary elec/cold resistance. Projected.
-Elec   | Cold   | Force  | XOR Upkeep elec/cold resistance and brands.
-Elec   | Cold   | Time   | Temporary electricity and cold resistance.
-
-Elec   | Nether | Acid   | Ion exploding aura. XOR Timed.
-Elec   | Nether | Water  | Discharge exploding aura. XOR Timed.
-Elec   | Nether | Earth  | Thunder exploding aura. XOR Timed.
-Elec   | Nether | Fire   | Flux exploding aura. XOR Timed.
-Elec   | Nether | Chaos  | Light exploding aura. XOR Timed.
-Elec   | Nether | Cold   | Static exploding aura. XOR Timed.
-Elec   | Nether | Poison | Jolting exploding aura. XOR Timed.
-Elec   | Nether | Nexus  | Acid exploding aura. XOR Timed.
-Elec   | Nether | Force  | Zapping exploding aura. XOR Timed.
-Elec   | Nether | Time   | Lightning exploding aura. XOR Timed.
-
-Elec   | Poison | Acid   | Temporary acid/elec/poison resistance.
-Elec   | Poison | Water  | Temporary electricity and poison resistance.
-Elec   | Poison | Earth  | Temporary electricity and poison resistance.
-Elec   | Poison | Fire   | Temporary elec/fire/poison resistance.
-Elec   | Poison | Chaos  | Temporary electricity and poison resistance.
-Elec   | Poison | Cold   | Temporary elec/cold/poison resistance.
-Elec   | Poison | Nether | Temporary electricity and poison resistance.
-Elec   | Poison | Nexus  | Temporary elec/poison resistance. Projected.
-Elec   | Poison | Force  | XOR Upkeep elec/poison resistance and brands.
-Elec   | Poison | Time   | Temporary electricity and poison resistance.
-
-Elec   | Nexus  | Acid   | Temporary acid resist and elec aura. Upkeep.
-Elec   | Nexus  | Water  | Summons clouds on random targets in range. Timed.
-Elec   | Nexus  | Earth  | Malicious effect. Corrodes the caster.
-Elec   | Nexus  | Fire   | Temporary acid and fire resistance.
-Elec   | Nexus  | Chaos  | Confusion brand. Upkeep.
-Elec   | Nexus  | Cold   | Temporary acid and cold resistance.
-Elec   | Nexus  | Nether | Annihilation brand. Upkeep.
-Elec   | Nexus  | Poison | Temporary acid and poison resistance.
-Elec   | Nexus  | Force  | Permanent acid resistance and brand. XOR Upkeep.
-Elec   | Nexus  | Time   | Prepare an acid rune charge. Sync-projected.
-
-Elec   | Force  | Acid   | Ion exploding brand. XOR Timed.
-Elec   | Force  | Water  | Discharge exploding brand. XOR Timed.
-Elec   | Force  | Earth  | Thunder exploding brand. XOR Timed.
-Elec   | Force  | Fire   | Flux exploding brand. XOR Timed.
-Elec   | Force  | Chaos  | Light exploding brand. XOR Timed.
-Elec   | Force  | Cold   | Static exploding brand. XOR Timed.
-Elec   | Force  | Nether | Darkness exploding brand. XOR Timed.
-Elec   | Force  | Poison | Jolting exploding brand. XOR Timed.
-Elec   | Force  | Nexus  | Acid exploding brand. XOR Timed.
-Elec   | Force  | Time   | Lightning exploding brand. XOR Timed.
-
-Elec   | Time   | Acid   | Prepare elec/acid rune charges. Sync-projected.
-Elec   | Time   | Water  | Prepare elec/water rune charges. Sync-projected.
-Elec   | Time   | Earth  | Prepare elec/earth rune charges. Sync-projected.
-Elec   | Time   | Fire   | Prepare elec/fire rune charges. Sync-projected.
-Elec   | Time   | Chaos  | Prepare elec/chaos rune charges. Sync-projected.
-Elec   | Time   | Cold   | Prepare elec/cold rune charges. Sync-projected.
-Elec   | Time   | Nether | Prepare elec/nether rune charges. Sync-projected.
-Elec   | Time   | Poison | 
-Elec   | Time   | Nexus  | 
-Elec   | Time   | Force  | 
-
-Earth  | Fire   | Acid   | Bile trap. Upkeep.
-Earth  | Fire   | Water  | Evaporation trap. Upkeep.
-Earth  | Fire   | Elec   | Flux trap. Upkeep.
-Earth  | Fire   | Chaos  | Hellfire trap. Upkeep.
-Earth  | Fire   | Cold   | Whitefire trap. Upkeep.
-Earth  | Fire   | Nether | Lifefire trap. Upkeep.
-Earth  | Fire   | Poison | Ash trap. Upkeep.
-Earth  | Fire   | Nexus  | Cold trap. Upkeep.
-Earth  | Fire   | Force  | Incineration trap. Upkeep.
-Earth  | Fire   | Time   | Fire trap. Upkeep.
-
-Earth  | Chaos  | Acid   | Backlash.
-Earth  | Chaos  | Water  | Backlash.
-Earth  | Chaos  | Elec   | Backlash.
-Earth  | Chaos  | Fire   | Backlash.
-Earth  | Chaos  | Cold   | Backlash.
-Earth  | Chaos  | Nether | Backlash.
-Earth  | Chaos  | Poison | Backlash.
-Earth  | Chaos  | Nexus  | Backlash.
-Earth  | Chaos  | Force  | Backlash.
-Earth  | Chaos  | Time   | Backlash.
-
-Earth  | Cold   | Acid   | Malicious. Corrodes and shatters the caster.
-Earth  | Cold   | Water  | Backlash.
-Earth  | Cold   | Elec   | Backlash.
-Earth  | Cold   | Fire   | Backlash.
-Earth  | Cold   | Chaos  | Backlash.
-Earth  | Cold   | Nether | Backlash.
-Earth  | Cold   | Poison | Backlash.
-Earth  | Cold   | Nexus  | Backlash.
-Earth  | Cold   | Force  | Backlash.
-Earth  | Cold   | Time   | Backlash.
-
-Earth  | Nether | Acid   | Backlash.
-Earth  | Nether | Water  | Backlash.
-Earth  | Nether | Elec   | Backlash.
-Earth  | Nether | Fire   | Backlash.
-Earth  | Nether | Chaos  | Backlash.
-Earth  | Nether | Cold   | Backlash.
-Earth  | Nether | Poison | Backlash.
-Earth  | Nether | Nexus  | Backlash.
-Earth  | Nether | Force  | Backlash.
-Earth  | Nether | Time   | Backlash.
-
-Earth  | Poison | Acid   | Corrosion trap. Upkeep.
-Earth  | Poison | Water  | Erosion trap. Upkeep.
-Earth  | Poison | Elec   | Thunder trap. Upkeep.
-Earth  | Poison | Fire   | Detonations trap. Upkeep.
-Earth  | Poison | Chaos  | Turmoil trap. Upkeep.
-Earth  | Poison | Cold   | Shattering trap. Upkeep.
-Earth  | Poison | Nether | Ruination trap. Upkeep.
-Earth  | Poison | Nexus  | Gravity trap. Upkeep.
-Earth  | Poison | Force  | Sound trap. Upkeep.
-Earth  | Poison | Time   | Shards trap. Upkeep.
-
-Earth  | Nexus  | Acid   | Corrosion exploding aura. XOR Timed.
-Earth  | Nexus  | Water  | Erosion exploding aura. XOR Timed.
-Earth  | Nexus  | Elec   | Thunder exploding aura. XOR Timed.
-Earth  | Nexus  | Fire   | Detonations exploding aura. XOR Timed.
-Earth  | Nexus  | Chaos  | Turmoil exploding aura. XOR Timed.
-Earth  | Nexus  | Cold   | Shattering exploding aura. XOR Timed.
-Earth  | Nexus  | Nether | Ruination exploding aura. XOR Timed.
-Earth  | Nexus  | Poison | Stun exploding aura. XOR Timed.
-Earth  | Nexus  | Force  | Sound exploding aura. XOR Timed.
-Earth  | Nexus  | Time   | Shards exploding aura. XOR Timed.
-
-Earth  | Force  | Acid   | Corrosion exploding brand. XOR Timed.
-Earth  | Force  | Water  | Erosion exploding brand. XOR Timed.
-Earth  | Force  | Elec   | Thunder exploding brand. XOR Timed.
-Earth  | Force  | Fire   | Detonations exploding brand. XOR Timed.
-Earth  | Force  | Chaos  | Turmoil exploding brand. XOR Timed.
-Earth  | Force  | Cold   | Shattering exploding brand. XOR Timed.
-Earth  | Force  | Nether | Ruination exploding brand. XOR Timed.
-Earth  | Force  | Poison | Stun exploding brand. XOR Timed.
-Earth  | Force  | Nexus  | Sound exploding brand. XOR Timed.
-Earth  | Force  | Time   | Shards exploding brand. XOR Timed.
-
-Earth  | Time   | Acid   | Prepare earth/acid rune charges. Sync-projected.
-Earth  | Time   | Water  | Prepare earth/water rune charges. Sync-projected.
-Earth  | Time   | Elec   | Prepare earth/elec rune charges. Sync-projected.
-Earth  | Time   | Fire   | Prepare earth/fire rune charges. Sync-projected.
-Earth  | Time   | Chaos  | Prepare earth/chaos rune charges. Sync-projected.
-Earth  | Time   | Cold   | Prepare earth/cold rune charges. Sync-projected.
-Earth  | Time   | Nether | Prepare earth/nether rune charges. Sync-projected.
-Earth  | Time   | Poison | 
-Earth  | Time   | Nexus  | 
-Earth  | Time   | Force  | 
-
-Fire   | Chaos  | Acid   | Hits all monsters in sight with bile.
-Fire   | Chaos  | Water  | Hits all monsters in sight with evaporation.
-Fire   | Chaos  | Elec   | Hits all monsters in sight with flux.
-Fire   | Chaos  | Earth  | Hits all monsters in sight with detonations.
-Fire   | Chaos  | Cold   | Hits all monsters in sight with whitefire.
-Fire   | Chaos  | Nether | Hits all monsters in sight with lifefire.
-Fire   | Chaos  | Poison | Hits all monsters in sight with ash.
-Fire   | Chaos  | Nexus  | Hits all monsters in sight with frost.
-Fire   | Chaos  | Force  | Hits all monsters in sight with incineration.
-Fire   | Chaos  | Time   | Hits all monsters in sight with fire.
-
-Fire   | Cold   | Acid   | Temporary acid/fire/cold resistance.
-Fire   | Cold   | Water  | Temporary fire and cold resistance.
-Fire   | Cold   | Elec   | Temporary elec/fire/cold resistance.
-Fire   | Cold   | Earth  | Temporary fire and cold resistance.
-Fire   | Cold   | Chaos  | Temporary fire and cold resistance.
-Fire   | Cold   | Nether | Temporary fire and cold resistance.
-Fire   | Cold   | Poison | Temporary fire/cold/poison resistance.
-Fire   | Cold   | Nexus  | Temporary fire and cold resistance. Projected.
-Fire   | Cold   | Force  | XOR Upkeep fire/cold resistance and brands.
-Fire   | Cold   | Time   | Temporary fire and cold resistance.
-
-Fire   | Nether | Acid   | Bile exploding aura. XOR Timed.
-Fire   | Nether | Water  | Evaporation exploding aura. XOR Timed.
-Fire   | Nether | Elec   | Flux exploding aura. XOR Timed.
-Fire   | Nether | Earth  | Detonations exploding aura. XOR Timed.
-Fire   | Nether | Chaos  | Hellfire exploding aura. XOR Timed.
-Fire   | Nether | Cold   | Whitefire exploding aura. XOR Timed.
-Fire   | Nether | Poison | Ash exploding aura. XOR Timed.
-Fire   | Nether | Nexus  | Cold exploding aura. XOR Timed.
-Fire   | Nether | Force  | Incineration exploding aura. XOR Timed.
-Fire   | Nether | Time   | Fire exploding aura. XOR Timed.
-
-Fire   | Poison | Acid   | Temporary acid/fire/poison resistance.
-Fire   | Poison | Water  | Temporary fire and poison resistance.
-Fire   | Poison | Elec   | Temporary elec/fire/poison resistance.
-Fire   | Poison | Earth  | Temporary fire and poison resistance.
-Fire   | Poison | Chaos  | Temporary fire and poison resistance.
-Fire   | Poison | Cold   | Temporary fire/cold/poison resistance.
-Fire   | Poison | Nether | Temporary fire and poison resistance.
-Fire   | Poison | Nexus  | Temporary fire and poison resistance. Projected.
-Fire   | Poison | Force  | XOR Upkeep fire/poison resistance and brands.
-Fire   | Poison | Time   | Temporary fire and poison resistance.
-
-Fire   | Nexus  | Acid   | Temporary acid and cold resistance.
-Fire   | Nexus  | Water  | Ice trap. Upkeep.
-Fire   | Nexus  | Elec   | Temporary elec and cold resistance.
-Fire   | Nexus  | Earth  | Malicious effect. Shatters the caster.
-Fire   | Nexus  | Chaos  | Malicious. Wonderous backlash.
-Fire   | Nexus  | Cold   | Temporary cold resist and fire aura. Upkeep.
-Fire   | Nexus  | Nether | Increases effective traumaturgy. Upkeep.
-Fire   | Nexus  | Poison | Temporary cold and poison resistance.
-Fire   | Nexus  | Force  | Permanent cold resistance and brand. XOR Upkeep.
-Fire   | Nexus  | Time   | Prepare a cold rune charge. Sync-projected.
-
-Fire   | Force  | Acid   | Bile exploding brand. XOR Timed.
-Fire   | Force  | Water  | Evaporation exploding brand. XOR Timed.
-Fire   | Force  | Elec   | Flux exploding brand. XOR Timed.
-Fire   | Force  | Earth  | Detonations exploding brand. XOR Timed.
-Fire   | Force  | Chaos  | Hellfire exploding brand. XOR Timed.
-Fire   | Force  | Cold   | Whitefire exploding brand. XOR Timed.
-Fire   | Force  | Nether | Lifefire exploding brand. XOR Timed.
-Fire   | Force  | Poison | Ash exploding brand. XOR Timed.
-Fire   | Force  | Nexus  | Frost exploding brand. XOR Timed.
-Fire   | Force  | Time   | Fire exploding brand. XOR Timed.
-
-Fire   | Time   | Acid   | Prepare fire/acid rune charges. Sync-projected.
-Fire   | Time   | Water  | Prepare fire/water rune charges. Sync-projected.
-Fire   | Time   | Elec   | Prepare fire/elec rune charges. Sync-projected.
-Fire   | Time   | Earth  | Prepare fire/earth rune charges. Sync-projected.
-Fire   | Time   | Chaos  | Prepare fire/chaos rune charges. Sync-projected.
-Fire   | Time   | Cold   | Prepare fire/cold rune charges. Sync-projected.
-Fire   | Time   | Nether | Prepare fire/nether rune charges. Sync-projected.
-Fire   | Time   | Poison | 
-Fire   | Time   | Nexus  | 
-Fire   | Time   | Force  | 
-
-Chaos  | Cold   | Acid   | Rime exploding aura. XOR Timed.
-Chaos  | Cold   | Water  | Ice exploding aura. XOR Timed.
-Chaos  | Cold   | Elec   | Static exploding aura. XOR Timed.
-Chaos  | Cold   | Earth  | Shattering exploding aura. XOR Timed.
-Chaos  | Cold   | Fire   | Whitefire exploding aura. XOR Timed.
-Chaos  | Cold   | Nether | Blight exploding aura. XOR Timed.
-Chaos  | Cold   | Poison | Frostbite exploding aura. XOR Timed.
-Chaos  | Cold   | Nexus  | Fire exploding aura. XOR Timed.
-Chaos  | Cold   | Force  | Snapping exploding aura. XOR Timed.
-Chaos  | Cold   | Time   | Frost exploding aura. XOR Timed.
-
-Chaos  | Nether | Acid   | 
-Chaos  | Nether | Water  | 
-Chaos  | Nether | Elec   | 
-Chaos  | Nether | Earth  | 
-Chaos  | Nether | Fire   | 
-Chaos  | Nether | Cold   | 
-Chaos  | Nether | Poison | 
-Chaos  | Nether | Nexus  | 
-Chaos  | Nether | Force  | 
-Chaos  | Nether | Time   | 
-
-Chaos  | Poison | Acid   | Perplexity trap. Upkeep.
-Chaos  | Poison | Water  | Polymorphing trap. Upkeep.
-Chaos  | Poison | Elec   | Light trap. Upkeep.
-Chaos  | Poison | Earth  | Turmoil trap. Upkeep.
-Chaos  | Poison | Fire   | Hellfire trap. Upkeep.
-Chaos  | Poison | Cold   | Wonder trap. Upkeep.
-Chaos  | Poison | Nether | Disenchantment trap. Upkeep.
-Chaos  | Poison | Nexus  | Order trap. Upkeep.
-Chaos  | Poison | Force  | Entropy trap. Upkeep.
-Chaos  | Poison | Time   | Chaos trap. Upkeep.
-
-Chaos  | Nexus  | Acid   | Protection from acid. Repels attackers. Timed.
-Chaos  | Nexus  | Water  | Dispel magic.
-Chaos  | Nexus  | Elec   | Protection from elec. Repels attackers. Timed.
-Chaos  | Nexus  | Earth  | Dispel magic.
-Chaos  | Nexus  | Fire   | Protection from fire. Repels attackers. Timed.
-Chaos  | Nexus  | Cold   | Protection from cold. Repels attackers. Timed.
-Chaos  | Nexus  | Nether | Dispel magic.
-Chaos  | Nexus  | Poison | Protection from poison. Repels attackers. Timed.
-Chaos  | Nexus  | Force  | Dispel magic.
-Chaos  | Nexus  | Time   | Dispel magic.
-
-Chaos  | Force  | Acid   | Perplexity exploding brand. XOR Timed.
-Chaos  | Force  | Water  | Polymorphing exploding brand. XOR Timed.
-Chaos  | Force  | Elec   | Light exploding brand. XOR Timed.
-Chaos  | Force  | Earth  | Turmoil exploding brand. XOR Timed.
-Chaos  | Force  | Fire   | Hellfire exploding brand. XOR Timed.
-Chaos  | Force  | Cold   | Wonder exploding brand. XOR Timed.
-Chaos  | Force  | Nether | Disenchantment exploding brand. XOR Timed.
-Chaos  | Force  | Poison | Confusion exploding brand. XOR Timed.
-Chaos  | Force  | Nexus  | Order exploding brand. XOR Timed.
-Chaos  | Force  | Time   | Chaos exploding brand. XOR Timed.
-
-Chaos  | Time   | Acid   | Prepare chaos/acid rune charges. Sync-projected.
-Chaos  | Time   | Water  | Prepare chaos/water rune charges. Sync-projected.
-Chaos  | Time   | Elec   | Prepare chaos/elec rune charges. Sync-projected.
-Chaos  | Time   | Earth  | Prepare chaos/earth rune charges. Sync-projected.
-Chaos  | Time   | Fire   | Prepare chaos/fire rune charges. Sync-projected.
-Chaos  | Time   | Cold   | Prepare chaos/cold rune charges. Sync-projected.
-Chaos  | Time   | Nether | Prepare chaos/nether rune charges. Sync-projected.
-Chaos  | Time   | Poison | 
-Chaos  | Time   | Nexus  | 
-Chaos  | Time   | Force  | 
-
-Cold   | Nether | Acid   | Hits all enemies in sight with rime.
-Cold   | Nether | Water  | Hits all enemies in sight with ice.
-Cold   | Nether | Elec   | Hits all enemies in sight with static.
-Cold   | Nether | Earth  | Hits all enemies in sight with shattering.
-Cold   | Nether | Fire   | Hits all enemies in sight with whitefire.
-Cold   | Nether | Chaos  | Hits all enemies in sight with wonder.
-Cold   | Nether | Poison | Hits all enemies in sight with frostbite.
-Cold   | Nether | Nexus  | Hits all enemies in sight with fire.
-Cold   | Nether | Force  | Hits all enemies in sight with snapping.
-Cold   | Nether | Time   | Hits all enemies in sight with frost.
-
-Cold   | Poison | Acid   | Temporary acid/cold/poison resistance.
-Cold   | Poison | Water  | Temporary cold and poison resistance.
-Cold   | Poison | Elec   | Temporary elec/cold/poison resistance.
-Cold   | Poison | Earth  | Temporary cold and poison resistance.
-Cold   | Poison | Fire   | Temporary fire/cold/poison resistance.
-Cold   | Poison | Chaos  | Temporary cold and poison resistance.
-Cold   | Poison | Nether | Temporary cold and poison resistance.
-Cold   | Poison | Nexus  | Temporary cold/poison resistance. Projected.
-Cold   | Poison | Force  | XOR Upkeep cold/poison resistance and brands.
-Cold   | Poison | Time   | Temporary cold and poison resistance.
-
-Cold   | Nexus  | Acid   | Temporary fire and acid resistance.
-Cold   | Nexus  | Water  | Malicious effect. Evaporates the caster.
-Cold   | Nexus  | Elec   | Temporary fire and elec resistance.
-Cold   | Nexus  | Earth  | Detonations trap. Upkeep.
-Cold   | Nexus  | Fire   | Temporary fire resist and cold aura. Upkeep.
-Cold   | Nexus  | Chaos  | Increases effective necromancy. Upkeep.
-Cold   | Nexus  | Nether | Malicious effect. Drains xp from the caster.
-Cold   | Nexus  | Poison | Temporary fire and poison resistance.
-Cold   | Nexus  | Force  | Permanent fire resistance and brand. XOR Upkeep.
-Cold   | Nexus  | Time   | Prepare a fire rune charge. Sync-projected.
-
-Cold   | Force  | Acid   | Rime exploding brand. XOR Timed.
-Cold   | Force  | Water  | Ice exploding brand. XOR Timed.
-Cold   | Force  | Elec   | Static exploding brand. XOR Timed.
-Cold   | Force  | Earth  | Shattering exploding brand. XOR Timed.
-Cold   | Force  | Fire   | Whitefire exploding brand. XOR Timed.
-Cold   | Force  | Chaos  | Wonder exploding brand. XOR Timed.
-Cold   | Force  | Nether | Blight exploding brand. XOR Timed.
-Cold   | Force  | Poison | Frostbite exploding brand. XOR Timed.
-Cold   | Force  | Nexus  | Fire exploding brand. XOR Timed.
-Cold   | Force  | Time   | Frost exploding brand. XOR Timed.
-
-Cold   | Time   | Acid   | Prepare cold/acid rune charges. Sync-projected.
-Cold   | Time   | Water  | Prepare cold/water rune charges. Sync-projected.
-Cold   | Time   | Elec   | Prepare cold/elec rune charges. Sync-projected.
-Cold   | Time   | Earth  | Prepare cold/earth rune charges. Sync-projected.
-Cold   | Time   | Fire   | Prepare cold/fire rune charges. Sync-projected.
-Cold   | Time   | Chaos  | Prepare cold/chaos rune charges. Sync-projected.
-Cold   | Time   | Nether | Prepare cold/nether rune charges. Sync-projected.
-Cold   | Time   | Poison | 
-Cold   | Time   | Nexus  | 
-Cold   | Time   | Force  | 
-
-Nether | Poison | Acid   | Annihilation trap. Upkeep.
-Nether | Poison | Water  | Duplication trap. Upkeep.
-Nether | Poison | Elec   | Darkness trap. Upkeep.
-Nether | Poison | Earth  | Ruination trap. Upkeep.
-Nether | Poison | Fire   | Lifefire trap. Upkeep.
-Nether | Poison | Chaos  | Disenchantment trap. Upkeep.
-Nether | Poison | Cold   | Blight trap. Upkeep.
-Nether | Poison | Nexus  | Mana trap. Upkeep.
-Nether | Poison | Force  | Disintegration trap. Upkeep.
-Nether | Poison | Time   | Nether trap. Upkeep.
-
-Nether | Nexus  | Acid   | Elemental disruption shield. Stops acid.
-Nether | Nexus  | Water  | Recharge.
-Nether | Nexus  | Elec   | Elemental disruption shield. Stops electricity.
-Nether | Nexus  | Earth  | Recharge.
-Nether | Nexus  | Fire   | Elemental disruption shield. Stops fire.
-Nether | Nexus  | Chaos  | Recharge.
-Nether | Nexus  | Cold   | Elemental disruption shield. Stops cold.
-Nether | Nexus  | Poison | Elemental disruption shield. Stops poison.
-Nether | Nexus  | Force  | Recharge.
-Nether | Nexus  | Time   | Recharge.
-
-Nether | Force  | Acid   | Annihilation exploding brand. XOR Timed.
-Nether | Force  | Water  | Duplication exploding brand. XOR Timed.
-Nether | Force  | Elec   | Darkness exploding brand. XOR Timed.
-Nether | Force  | Earth  | Ruination exploding brand. XOR Timed.
-Nether | Force  | Fire   | Lifefire exploding brand. XOR Timed.
-Nether | Force  | Chaos  | Disenchantment exploding brand. XOR Timed.
-Nether | Force  | Cold   | Blight exploding brand. XOR Timed.
-Nether | Force  | Poison | Miasma exploding brand. XOR Timed.
-Nether | Force  | Nexus  | Mana exploding brand. XOR Timed.
-Nether | Force  | Time   | Nether exploding brand. XOR Timed.
-
-Nether | Time   | Acid   | Prepare nether/acid rune charges. Sync-projected.
-Nether | Time   | Water  | Prepare nether/water rune charges. Sync-projected.
-Nether | Time   | Elec   | Prepare nether/elec rune charges. Sync-projected.
-Nether | Time   | Earth  | Prepare nether/earth rune charges. Sync-projected.
-Nether | Time   | Fire   | Prepare nether/fire rune charges. Sync-projected.
-Nether | Time   | Chaos  | Prepare nether/chaos rune charges. Sync-projected.
-Nether | Time   | Cold   | Prepare nether/cold rune charges. Sync-projected.
-Nether | Time   | Poison | 
-Nether | Time   | Nexus  | 
-Nether | Time   | Force  | 
-
-Poison | Nexus  | Acid   | Venom gale. Hits enemies in sight. XOR Timed.
-Poison | Nexus  | Water  | Sleep gale. Hits enemies in sight. XOR Timed.
-Poison | Nexus  | Elec   | Jolting gale. Hits enemies in sight. XOR Timed.
-Poison | Nexus  | Earth  | Stun gale. Hits enemies in sight. XOR Timed.
-Poison | Nexus  | Fire   | Ash gale. Hits enemies in sight. XOR Timed.
-Poison | Nexus  | Chaos  | Confusion gale. Hits enemies in sight. XOR Timed.
-Poison | Nexus  | Cold   | Frostbite gale. Hits enemies in sight. XOR Timed.
-Poison | Nexus  | Nether | Miasma gale. Hits enemies in sight. XOR Timed.
-Poison | Nexus  | Force  | Toxins gale. Hits enemies in sight. XOR Timed.
-Poison | Nexus  | Time   | Stop gale. Hits enemies in sight. XOR Timed.
-
-Poison | Force  | Acid   | Venom exploding brand. XOR Timed.
-Poison | Force  | Water  | Sleep exploding brand. XOR Timed.
-Poison | Force  | Elec   | Jolting exploding brand. XOR Timed.
-Poison | Force  | Earth  | Stun exploding brand. XOR Timed.
-Poison | Force  | Fire   | Ash exploding brand. XOR Timed.
-Poison | Force  | Chaos  | Confusion exploding brand. XOR Timed.
-Poison | Force  | Cold   | Frostbite exploding brand. XOR Timed.
-Poison | Force  | Nether | Miasma exploding brand. XOR Timed.
-Poison | Force  | Nexus  | Unbreath exploding brand. XOR Timed.
-Poison | Force  | Time   | Stop exploding brand. XOR Timed.
-
-Poison | Time   | Acid   | Venom trap. Upkeep.
-Poison | Time   | Water  | Sleep trap. Upkeep.
-Poison | Time   | Elec   | Jolting trap. Upkeep.
-Poison | Time   | Earth  | Stun trap. Upkeep.
-Poison | Time   | Fire   | Ash trap. Upkeep.
-Poison | Time   | Chaos  | Confusion trap. Upkeep.
-Poison | Time   | Cold   | Frostbite trap. Upkeep.
-Poison | Time   | Nether | Miasma trap. Upkeep.
-Poison | Time   | Nexus  | Unbreath trap. Upkeep.
-Poison | Time   | Force  | Toxins trap. Upkeep.
-
-Nexus  | Force  | Acid   | Acid teleport. Uses a portal if able.
-Nexus  | Force  | Water  | Teleportation.
-Nexus  | Force  | Elec   | Lightning teleport. Uses a portal if able.
-Nexus  | Force  | Earth  | Teleportation.
-Nexus  | Force  | Fire   | Fire teleport. Uses a portal if able.
-Nexus  | Force  | Chaos  | Teleportation.
-Nexus  | Force  | Cold   | Frost teleport. Uses a portal if able.
-Nexus  | Force  | Nether | Teleportation.
-Nexus  | Force  | Poison | Gas teleport. Uses a portal if able.
-Nexus  | Force  | Time   | Glyph of warding.
-
-Nexus  | Time   | Acid   | Memory portal. Linked to acid teleport. Upkeep.
-Nexus  | Time   | Water  | Circle of protection. Draws multiple glyphs.
-Nexus  | Time   | Elec   | Memory portal. Linked to acid teleport. Upkeep.
-Nexus  | Time   | Earth  | Circle of protection. Draws multiple glyphs.
-Nexus  | Time   | Fire   | Memory portal. Linked to acid teleport. Upkeep.
-Nexus  | Time   | Chaos  | Circle of protection. Draws multiple glyphs.
-Nexus  | Time   | Cold   | Memory portal. Linked to acid teleport. Upkeep.
-Nexus  | Time   | Nether | Circle of protection. Draws multiple glyphs.
-Nexus  | Time   | Poison | Memory portal. Linked to acid teleport. Upkeep.
-Nexus  | Time   | Force  | Glyph of warding.
-
-Force  | Time   | Acid   | Ablation trap. Upkeep.
-Force  | Time   | Water  | Pressure trap. Upkeep.
-Force  | Time   | Elec   | Zapping trap. Upkeep.
-Force  | Time   | Earth  | Sound trap. Upkeep.
-Force  | Time   | Fire   | Incineration trap. Upkeep.
-Force  | Time   | Chaos  | Order trap. Upkeep.
-Force  | Time   | Cold   | Snapping trap. Upkeep.
-Force  | Time   | Nether | Disintegration trap. Upkeep.
-Force  | Time   | Poison | Toxins trap. Upkeep.
-Force  | Time   | Nexus  | Glyph of warding.
-
-
-
 (5.21) Digging
 --------------
 Your chance to successfully tunnel through an obstacle depends on the obstacle
@@ -9556,7 +8226,7 @@ label or just '#' if the item name is very long and there's not enough space.
 
 
 Recharging can be done via shop service, a scroll, another magic device or a
-magic/rune spell. Devices that can be recharged are:
+magic spell. Devices that can be recharged are:
 
 -Wands
 -Staves
@@ -9589,7 +8259,6 @@ Means of recharging:
 -Scrolls            (60 power)
 -Thingol artifact   (60..100 power, depending on magic device skill)
 -Shop service       (80 power)
--Rune spell         (50 power)
 -Magic spell        (10..150 power)
 
 The power determines both, the chance of succeeding in recharging the item and
@@ -10083,14 +8752,13 @@ Note that not every skill is available to every profession (class).
         .Psycho-Power           Learn mindcrafter spells of psycho-power.
         .Thought Contact        Learn mindcrafter spells of tought contact.
         .Mental Intrusion       Learn mindcrafter spells of mental intrusion.
-    +Runecraft                  Determines how skillful you are in handling
-        +Rune Alacrity          specific magical symbols or Runes.
-        .Acid and Water         For more info about runes, see
-        .Lightning and Earth    '(5.20) Runes & Runemastery'.
-        .Fire and Chaos
-        .Cold and Nether
-        .Poison and Nexus
-        .Force and Time
+    +Runecraft                  See '(6.8b) Runes & Runemastery'.
+        .Light                  Learn to evoke light runes.
+        .Darkness               Learn to evoke darkness runes.
+        .Nexus                  Learn to evoke nexus runes.
+        .Nether                 Learn to evoke nether runes.
+        .Chaos                  Learn to evoke chaos runes.
+        .Mana                   Learn to evoke mana runes.
     .Mimicry                    Ability to shapechange into a monster!
                                 You also inherit the monsters abilities,
                                 weaknesses and resistances!
@@ -10430,12 +9098,14 @@ Modifications for becoming 'enlightened':
     Sword, blunt and polearm skill x 1.3.
     The four priestly schools x 2.4.
     Divination school x 1.7.
+    Light and mana runes x 2.0.
     Fear and shivering aura x 3.0.
 Modifications for becoming 'corrupted':
     The four priestly schools become disabled.
     Axe and martial arts skill x 1.3.
     Fire, air, conveyance school x 1.7.
     Udun school x 2.0.
+    Darkness and nether runes x 2.0.
     Necromancy and traumaturgy x 3.0.
     The three aura skills x 3.0.
 
@@ -10533,7 +9203,7 @@ Fighting        _'Combat'_, _'Weaponmastery'_, melee +hit boni
 Bows/Throw      _'Combat'_, _'Archery'_, ranged +hit boni
 Saving Throw    Wisdom, _level_, 'Meta', AM-shell
 Stealth         Mimic form weight, stealth items, _'Stealth'_, cloaking,
-                'Martial Arts', runecraft
+                'Martial Arts'
 Perception      search items, _'Sneakiness'_
 Searching       search items, _'Sneakiness'_, cloaking
 Disarming       Intelligence, dexterity, _'Trapping'_
@@ -10719,7 +9389,7 @@ Warrior is strongly recommended.
     instrinsically from birth.
     They receive a bonus on 'Thought Contact' and a large bonus on
     'Polearm-Mastery', 'Aura of Fear' and the magic schools 'Conveyance' and
-    'Fire'.
+    'Fire'. Draconians also recieve a moderate bonus to 'Nexus' rune magic.
 
 - Kobold
     These somewhat smallish dog-faced humanoids resist poison intrinsically.
@@ -10773,7 +9443,8 @@ Warrior is strongly recommended.
     Vampires hate 'Blunt' weapons, get a penalty on 'Divination' magic school,
     but receive a bonus on 'Mental Intrusion' and a large bonus on 'Necromancy'
     and all aura skills and a small bonus on 'Traumaturgy'. They cannot use
-    certain magic schools at all as described above.
+    certain magic schools at all as described above. As undead, Vampires gain
+    a moderate bonus to evoking 'Nether' runes.
 
 - Maia
     The Maiar are lesser spirits who are associated with one or more Valar, the
@@ -11210,15 +9881,17 @@ vary. For example a warrior cannot learn magic spells.
     tendency towards thievery, they are often mistaken for rogues.
     This roguish nature allows them to train in specific weapon proficiencies,
     although their lack of dedication leaves 'Weaponmastery' as an unattainable
-    goal. Some runemasters may be able to use rune-spells to enhance their
-    combat abilities.
+    goal. Runemasters are adept in some skills that are typical for rogues, 
+    although they lack their finesse. Runemasters are unable to to train in the
+    martial arts, but specialize in the use of boomerangs.
     Runemasters are adept in some skills that are typical for rogues, although
     they lack their finesse. Intelligence and dexterity are their primary
     attributes too.
-    For more information about runes, see '(5.20) Runes & Runemastery'.
+
+    For more information about runecraft, see '(6.8c) Runespell tables'.
     Note that runemasters don't need actual runes in their inventory to cast
-    rune spells. However, having the physical runes present increases the
-    chance to succeed greatly.
+    runespells. However, having the physical runes present increases the
+    chance to succeed greatly, and are required for some runespells.
 
     Hint: If you want to test rune combinations that pose a risk of going wrong
     badly, do so in the arena of the 'Arena Monster Challenge' event so you
@@ -12827,6 +11500,242 @@ rate is to increase the stat (INT or WIS) that the spell uses.
 Mimic powers use INT to determine fail rate, have a greater fail rate than
 other spells in general, and do not have a 'spell level'. Their effects are
 pretty much fixed.
+
+
+
+(6.8b) Runes & Runemastery
+--------------------------
+Runes are magical symbols used to summon and manipulate the raw elemental
+forces which sustain the world of life. They are the motivating force behind
+the traditional systems of magic in TomeNET. The istari spell scrolls, for
+example, are composed of a series of complicated runes which both protect the
+mage from immediate harm, and create the desired effect: from fireballs to
+magical satiation.
+
+Runemasters are less methodical in their approach to magic. Having learned
+to summon elemental forces without the aid of the traditional precautions,
+limitations and potential inefficiencies of the complex istari spell system,
+runemasters deal directly with the 'pure' substance of magic, and are limited
+only by their wits, their strength and their skill.
+
+This approach is not necessarily a safe one. Where as traditional spells from
+other schools of magic fail outright when something goes awry, the primordial
+energy incumbent to a runespell instead erupts forth, damaging the caster in
+the form of a spell backlash. Physical runes can be used to mitigate this 
+backlash should a runespell fail, absorbing the excess energy of the spell 
+before crumbling into dust. Runes may be activated to combine or decombine in
+stacks with other runes, sharing level requirement and discount. 
+
+As runemastery does not rely on books or spell scrolls to guide its magic, 
+runespells may be cast while blinded, although at increased rate of failure.
+Spell failure likewise increases while stunned, or simply when attempting a
+powerful spell. While an istar is always prevented from casting outside of 
+his or her ability, a runemaster may continue making spell attempts until the 
+backlash proves fatal.
+
+Runemasters are able to cast many kinds of spells, but it's important to note
+that some are much more difficult to manage than others. All runespells can
+either be projected at the world or a monster, or directed at the caster for 
+a different result. In addition, runespells fueled by physical runes may be 
+used to enchant non-artifact equipment that is wielded by the runemaster. The
+strength and success rates of these enchantments depend both on the skill of
+the runemaster and the power of the item that would result.
+
+Runemastery requires dexterous physical and intellectual manipulation of
+the rune forms, requiring high INT and DEX character stats. For this reason,
+runemasters also make decent thieves and fighters. To some extent,
+runemasters will need to experiment to find out their own capabilities.
+
+
+Runespells:
+-----------
+To cast a runespell, enter the m-key menu and select 'Draw a rune'.
+(Note: The ability code for drawing a rune is 12.)
+
+Runespells are made up of three components:
+    1. A single rune or combination of two runes
+    2. A spell modifier (minimized, brief, etc.)
+    3. A spell type (glyph, bolt, ball, etc.)
+
+Each component has different associated parameters, summarized in the menu. 
+When selecting runes, press return once you are finished, or enter the 
+maximum of two runes and continue to the modifier selection. The menu will 
+prompt for a direction if it is required after you're done. If the spell 
+targets an item, you must supply the letter corresponding to your choice of 
+equipment.
+
+
+Runespell Failure & Backlash:
+-----------------------------
+Runemasters can only truly fail enchantment type spells. Other spell types
+instead cause backlash against the caster when they would otherwise fail. 
+Having a physical rune corresponding to the invoked element or both runes of
+a combination element shields the runemaster from this backlash. When 
+lacking one or both of these physical runes, the caster of may experience 
+backlash. Keeping physical runes may become especially important once 
+damaging effects of runespells begin to outpace the runemaster's intrinsic 
+durability; resisting one's own spells can be an important factor for 
+survival in critical situations.
+
+INTelligence, DEXterity, and skill level affect spell failure rates for 
+runespells. Runespell type generally governs the level of a runespell,
+and is further modified by the spell modifier and then only somewhat by the 
+resulting element of the spell.
+
+
+Macros & Spell Construction:
+----------------------------
+Runemastery macros look like this (key translation in parenthesis):
+(Note: m@12\r invokes the m-key menu command for 'Draw a rune'.)
+
+Targetted runespells use the following format:
+    \e)*tm@12\r[a-f]\r[a-g][a-g]-  (rune, return, modifier, type, target)
+    \e)*tm@12\r[a-f][a-f][a-g][a-g]-  (rune, rune, modifier, type, target)
+
+Non-targetted runespells use the format:
+    \e)m@18\r[a-f]\r[a-g][a-g]  (rune, return, modifier, type)
+    \e)m@18\r[a-f][a-f][a-g][a-g]  (rune, rune, modifier, type)
+
+Note that you must choose at least one and up to two runes, one modifier, 
+and one type. If you choose two runes for a spell, the \r is not required. 
+[a-f] and [a-g] denote the choices of a letter from a to f or h,
+inclusive, which represents a rune or a modifier or type, respectively.
+ie. There are six base runes, so [a-f] represents a choice from rune 1-6.
+
+
+Examples:
+---------
+Here is a single rune example, invoking the element 'light' (rune 'a'):
+    \e)*tm@12\ra\raa-  (light--return--minimized--bolt)
+
+This spell launches a minimized bolt of light, a targetted projection 
+affecting up to a single opponent, dealing light damage if it successfully
+connects.
+
+A fire ball spell might look like this (runes 'a' and 'e' for 'fire'):
+    \e)*tm@12\raedd-  (light--chaos--moderate--ball)
+
+Note the following macro produces an identical effect (runes 'e' and 'a'):
+	\e)*tm@12\readd-  (chaos--light--moderate--ball)
+
+To increase the radius of the ball, adjust the modifier to something that
+sounds bigger, ie. choose a spell modifier that increases radius.
+
+A maximized ball of fire:
+    \e)*tm@12\raegd-  (light--chaos--maximized--ball)
+
+Or an expanded ball of fire, to produce something much larger:
+    \e)*tm@12\raeed-  (light--chaos--expanded--ball)
+
+Note that failure rate may become an obstacle to advanced spells at low 
+level. Basic spell types, modifiers, and elements are recommended.
+
+Advanced runemasters may wish to create macro sets which construct spells
+on the fly, swap macro sets containing preset runespells, or set up
+combinations of macros to chain together spells quickly and efficiently.
+Spells with a lowered casting time might even be combined in one macro,
+creating a 'dual-cast' effect (especially true with the 'brief' modifier).
+
+Note that every modifier has drawbacks associated with the benefits of using
+it: higher cost, level, reduced damage, increased failure rates- check the
+specifics in the m-key menu before you create a new macro. It is recommended
+that you keep physical runes in your inventory when experimenting with new 
+spells.
+
+
+Auto-retaliation:
+-----------------
+If you inscribe @O[a-g][a-g] on a rune in your inventory, you will retaliate
+with a spell of the selected modifier and type. For example, if you set the 
+inscription to @Oab on a rune of light, the 'bolt' spell type will be 
+selected, with a 'minimized' spell modifier.
+
+Although you can set most spells for retaliation, some spells may make poor 
+choices for auto-retaliation. Retaliation defaults to a bolt spell if the
+rune is inscribed incorrectly. Glyph type spells cannot be used for 
+retaliation, and default to bolts (letter 'g' becomes letter 'a').
+
+
+Hints:
+------
+The casting adjective will further elaborate on the difficulty of a spell
+compared to your skill. Ideally, you should try to choose spells where the
+average outcome is 'efficiently', or better. These are 'safe' spells, and tend
+to be more efficient than spells that you 'barely manage to', or 'clumsily'
+cast. You can use the mkey * display to see a list of spell failure rates.
+The macro wizard can also be used to assess the attributes of spells.
+
+
+
+(6.8c) Runespell Tables
+-----------------------
+Runemastery covers a breadth of effects, catalogued in the tables below.
+See section (5.6) for more information about elemental attacks.
+
+Basic Elements
+--------------
+A table of every element achievable through use of a single rune:
+------------------------------------
+Rune     |          | Element
+------------------------------------
+Light    |          | Light
+Darkness |          | Darkness
+Nexus    |          | Nexus
+Nether   |          | Nether
+Chaos    |          | Chaos
+Mana     |          | Mana
+
+Combination Elements
+--------------------
+A table of every element achievable through use of a combination of runes:
+------------------------------------
+Rune     | Rune     | Element        
+------------------------------------
+Light    | Darkness | Confusion
+Light    | Nexus    | Inertia
+Light    | Nether   | Lightning
+Light    | Chaos    | Fire
+Light    | Mana     | Water
+Darkness | Nexus    | Gravity
+Darkness | Nether   | Frost
+Darkness | Chaos    | Acid
+Darkness | Mana     | Poison
+Nexus    | Nether   | Time
+Nexus    | Chaos    | Sound
+Nexus    | Mana     | Shards
+Nether   | Chaos    | Disenchantment
+Nether   | Mana     | Force
+Chaos    | Mana     | Plasma
+
+Spell Modifiers
+---------------
+A table of every spell modifier. Modifiers alter the nature of a spell, 
+influencing level, cost, fail rate, damage, casting time, radius, and duration.
+-------------------------------------------------------------------------------
+Name       | Description
+-------------------------------------------------------------------------------
+Minimized  | Decreased damage, radius, duration, cost and failure rate.
+Lengthened | Increased duration, cost and failure rate. Decreased damage.
+Compressed | Decreased radius, duration and failure rate. Increased damage.
+Moderate   | Comparable to traditional spells in all aspects.
+Expanded   | Increased radius, duration, cost and failure rate. 
+Brief      | Decreased damage, duration, failure rate and casting time.
+Maximized  | Increased damage, radius, duration, cost and failure rate.
+
+Spell Types
+-----------
+A table of every spell type. Type controls the form of the runespell, also
+influencing level, cost, fail rate, damage, casting time, radius, and duration.
+-------------------------------------------------------------------------------
+Name    | Description
+-------------------------------------------------------------------------------
+Bolt    | Hits a single target in line of effect.
+Beam    | Hits every target in line of effect.
+Cloud   | Damages an area over time.
+Ball    | Instantly damages an area.
+Wave    | Radiates outward from the caster.
+Storm   | Moves with the caster.
+Rune    | Detonates when broken.
 
 
 
