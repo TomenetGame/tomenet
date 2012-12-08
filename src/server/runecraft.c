@@ -37,7 +37,7 @@
 
 /* Interface */
 //#define FEEDBACK_MESSAGE //Gives the caster a feedback message if penalized. (Disabled under the pretext that we want to reduce messages. The guide is now more explicit about failure of runespells.)
-#define RCRAFT_DEBUG //Enables debugging messages for the server.
+//#define RCRAFT_DEBUG //Enables debugging messages for the server.
 
 /** Internal Headers **/
 
