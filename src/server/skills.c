@@ -985,6 +985,7 @@ int invested_skill_points(int Ind, int i) {
 void fruit_bat_skills(player_type *p_ptr) {
 	p_ptr->s_info[SKILL_MASTERY].value = p_ptr->s_info[SKILL_MASTERY].mod = 0;
 	p_ptr->s_info[SKILL_SWORD].value = p_ptr->s_info[SKILL_SWORD].mod = 0;
+	p_ptr->s_info[SKILL_CRITS].value = p_ptr->s_info[SKILL_CRITS].mod = 0;
 	p_ptr->s_info[SKILL_BLUNT].value = p_ptr->s_info[SKILL_BLUNT].mod = 0;
 	p_ptr->s_info[SKILL_AXE].value = p_ptr->s_info[SKILL_AXE].mod = 0;
 	p_ptr->s_info[SKILL_POLEARM].value = p_ptr->s_info[SKILL_POLEARM].mod = 0;
